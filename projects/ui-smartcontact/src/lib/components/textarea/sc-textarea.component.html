@@ -7,7 +7,7 @@
     [cols]="cols() || null"
     [id]="inputId() || ''"
     [name]="name() || ''"
-    [attr.aria-describedby]="ariaDescribedBy()"
+    [attr.aria-describedby]="describedBy()"
     [disabled]="disabled()"
     [readOnly]="readonly()"
     [invalid]="invalid()"
@@ -17,3 +17,21 @@
     (input)="onInput($event)"
     (onResize)="resized.emit($event)">
 </textarea>
+@if (copyable()) {
+<sc-button
+    class="sc-textarea__copy"
+    size="sm"
+    variant="secondary"
+    appearance="text"
+    [icon]="copiado() ? 'check' : 'content_copy'"
+    [ariaLabel]="rotuloCopiar()"
+    [pTooltip]="rotuloCopiar()"
+    tooltipPosition="top"
+    (clicked)="copiar()" />
+<!-- El cambio de icono no se oye: el lector oye «Copiado» por aquí. -->
+<span class="sc-textarea__sr" aria-live="polite">{{ copiado() ? rotuloCopiar() : '' }}</span>
+}
+@if (footerText()) {
+<!-- Caja propia: el estilo de este componente va encapsulado y no alcanza el texto que pinta `sc-field-msg`. -->
+<div class="sc-textarea__ayuda"><sc-field-msg block="sc-textarea" [text]="footerText()" [msgId]="msgId()" /></div>
+}

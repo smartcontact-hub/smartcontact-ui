@@ -3,7 +3,7 @@
   "capturedAt": "2026-10-05",
   "viewport": "1440x900",
   "theme": "light",
-  "dsSelectors": 56,
+  "dsSelectors": 61,
   "screens": [
     {
       "id": "admin-agendas",
@@ -585,15 +585,27 @@
     },
     {
       "selector": "sc-empty-state",
-      "usedInSupervisor": 18
+      "usedInSupervisor": 22
+    },
+    {
+      "selector": "sc-fileupload",
+      "usedInSupervisor": 2
     },
     {
       "selector": "sc-gauge",
       "usedInSupervisor": 1
     },
     {
+      "selector": "sc-icon-tile",
+      "usedInSupervisor": 2
+    },
+    {
       "selector": "sc-inline-rename-cell",
       "usedInSupervisor": 4
+    },
+    {
+      "selector": "sc-inputtags",
+      "usedInSupervisor": 1
     },
     {
       "selector": "sc-message",
@@ -605,11 +617,11 @@
     },
     {
       "selector": "sc-password",
-      "usedInSupervisor": 1
+      "usedInSupervisor": 2
     },
     {
       "selector": "sc-slot",
-      "usedInSupervisor": 8
+      "usedInSupervisor": 13
     },
     {
       "selector": "sc-sticky-form-header",
@@ -617,7 +629,11 @@
     },
     {
       "selector": "sc-subsection",
-      "usedInSupervisor": 9
+      "usedInSupervisor": 18
+    },
+    {
+      "selector": "sc-tabs",
+      "usedInSupervisor": 2
     },
     {
       "selector": "sc-textarea",

@@ -1,0 +1,28 @@
+/*
+ * sc-icon-tile — la baldosa de un icono (DD-186). Medida sobre la maqueta del widget de resumen en proporción al texto:
+ * dos veces la letra (28 para 14), radio a una quinta parte (6) y el icono a algo más de la mitad (16). Su gris es frío
+ * y un paso más hondo que lo que tiene debajo, con un brillo arriba y una sombra mínima: se lee en relieve.
+ */
+
+.sc-icon-tile {
+  display: inline-grid;
+  flex-shrink: 0;
+  place-items: center;
+  inline-size: var(--sc-spacing-2);
+  block-size: var(--sc-spacing-2);
+  border-radius: var(--sc-radius-md);
+  background: color-mix(in srgb, var(--sc-text-heading) 6%, transparent);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--sc-bg-surface) 60%, transparent),
+    var(--sc-shadow-xs);
+  color: var(--sc-text-primary);
+}
+
+.sc-icon-tile--sm {
+  inline-size: var(--sc-spacing-1-75);
+  block-size: var(--sc-spacing-1-75);
+}
+
+.sc-icon-tile--strong {
+  color: var(--sc-text-heading);
+}

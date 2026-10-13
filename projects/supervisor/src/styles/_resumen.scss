@@ -131,6 +131,20 @@
   }
 }
 
+/* LA TARJETA DE DATOS (DD-185, DD-186): pares clave/valor en filas `sc-fact-row`, cada clave con su baldosa, en las
+ * tres fichas. Con la sombra difusa de la maqueta del widget: se lee como un widget que flota sobre la página, como su
+ * hermana destacada (DD-161). Siete entre filas: la fila mide lo que su baldosa. */
+.resumen__facts {
+  box-shadow: var(--sc-shadow-card);
+}
+
+.resumen__pairs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
+  margin: 0;
+}
+
 .resumen__head {
   display: flex;
   align-items: center;

@@ -49,7 +49,7 @@ export const CUANDO = {
   'sc-avatargroup': 'Para apilar varios avatares cuando importa «quiénes» y no «cuántos» exactamente.',
   'sc-badge': 'Para un contador o un rótulo muy corto PEGADO a otra cosa. Si va suelto en la fila, es `sc-tag`.',
   'sc-breadcrumb': 'Para decir dónde estás dentro de una jerarquía y poder subir. No es navegación principal.',
-  'sc-bulk-action-bar': 'Para las acciones que aparecen al seleccionar varias filas. Sale de la selección y desaparece con ella.',
+  'sc-bulk-action-bar': 'Para las acciones que aparecen al seleccionar varias filas. Sale con la selección; tras aplicar un cambio en lote, se queda para contarlo con su «Deshacer».',
   'sc-bulk-edit-menu': 'Para cambiar UN campo en muchos elementos a la vez, desde la barra de selección.',
   'sc-bulk-transcription-modal': 'Solo para el procesado masivo de conversaciones. Es específico del dominio y hoy solo lo usa la demo.',
   'sc-button': 'Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.',
@@ -92,6 +92,11 @@ export const CUANDO = {
   'sc-search': 'Para filtrar escribiendo. Solo se lleva el foco al entrar si buscar es LA acción de la pantalla.',
   'sc-section-card': 'Para una sección con título dentro de un formulario o una ficha.',
   'sc-select': 'Para elegir UNA de muchas. Si son pocas y caben a la vista, `sc-radiobutton` o `sc-selectbutton` ahorran un clic.',
+  'sc-icon-tile': 'Para dar a una fila de datos o a un título su icono con peso propio (un resumen). Un icono suelto junto a un texto es `sc-icon`; una persona, `sc-avatar`.',
+  'div[scFactRow]': 'Para pares clave/valor que se leen de un vistazo (un resumen), en un `dl`. Un campo que se edita es `sc-field`; muchos datos en columnas, `sc-datatable`.',
+  'sc-fileupload': 'Para subir uno o varios archivos con zona de soltar (audios, importaciones, adjuntos). La foto de una persona o entidad, con su recorte, es `sc-photo-upload`.',
+  'sc-inputtags': 'Para varios valores cortos que escribe el usuario (dominios, etiquetas libres, correos). Si salen de una lista cerrada, `sc-multiselect`; si es uno solo, `sc-inputtext`.',
+  'sc-tabs': 'Para vistas hermanas de una misma cosa que cambian lo de debajo (Chat y Email, Transcripción y Análisis). Para elegir el valor de un campo, `sc-selectbutton`.',
   'sc-selectbutton': 'Para elegir una opción de 2-4 que se explican solas, todas visibles. Si cambia de COLECCIÓN en vez de filtrar, son pestañas (DD-113).',
   'sc-skeleton': 'Para el hueco de lo que está cargando, con su forma. Evita el salto que da aparecer de golpe.',
   'sc-slot': 'Para una ranura con título dentro de una composición.',
@@ -131,4 +136,33 @@ export const MODULO_A_TEMA = {
  */
 export const CUBIERTO_POR_NUESTRO = {
   checkbox: 'sc-checkbox (custom: necesita el tercer estado, el grupo elegido a medias)',
+};
+
+/**
+ * Los componentes que tienen MAESTRO en el Kit: una página «❖ Nombre» en el fichero del DS
+ * (`khNq9dJKNi13pNllrqm6dx`), leídas por la API de Figma el 2026-10-09 (DD-190). Es la mitad del
+ * estado de un componente en sc-docs: «Ready» si tiene maestro en el Kit y página de demo,
+ * «Experimental» si le falta algo, «Deprecated» si su clase lleva `@deprecated`.
+ *
+ * El CI no llega a Figma, así que la lista vive aquí. Si se crea o se borra una página «❖» en el
+ * fichero, se actualiza esta lista (los nombres, tal cual, sin el «❖» ni espacios).
+ */
+export const KIT_MAESTROS = new Set([
+  'AutoComplete', 'CascadeSelect', 'Checkbox', 'ColorPicker', 'DatePicker', 'Editor', 'FloatLabel', 'IftaLabel',
+  'InputGroup', 'InputNumber', 'InputOtp', 'InputText', 'Knob', 'Listbox', 'MultiSelect', 'Password', 'RadioButton',
+  'Rating', 'Select', 'SelectButton', 'Slider', 'Textarea', 'ToggleButton', 'ToggleSwitch', 'TreeSelect', 'Button',
+  'SplitButton', 'SpeedDial', 'DataTable', 'DataView', 'OrderList', 'OrganizationChart', 'Paginator', 'PickList',
+  'Timeline', 'Tree', 'TreeTable', 'Accordion', 'Card', 'Divide', 'Fieldset', 'Panel', 'ScrollPanel', 'Splitter',
+  'Stepper', 'Tabs', 'Toolbar', 'ConfirmDialog', 'ConfirmPopup', 'Dialog', 'Drawer', 'Popover', 'Tooltip',
+  'FileUpload', 'Breadcrumb', 'ContextMenu', 'Dock', 'Menu', 'Menubar', 'MegaMenu', 'PanelMenu', 'TieredMenu',
+  'Message', 'Toast', 'Carousel', 'Galleria', 'Image', 'ImageCompare', 'Avatar', 'Badge', 'BlockUI', 'Chip',
+  'Inplace', 'MeterGroup', 'ScrollTop', 'Skeleton', 'ProgressBar', 'ProgressSpinner', 'Tag', 'Terminal',
+  'Custom modal', 'Sidebar', 'Navmenu', 'Section',
+]);
+
+/** Componente del DS → su página del Kit, cuando el nombre no casa solo (el Kit escribe «Divide»). */
+export const KIT_ALIAS = {
+  divider: 'Divide',
+  'section-card': 'Section',
+  avatargroup: 'Avatar',
 };

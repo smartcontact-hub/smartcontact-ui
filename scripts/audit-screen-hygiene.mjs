@@ -4,7 +4,7 @@
  * que hasta ahora SOLO vivían en la doc (AGENTS.md §UX de pantalla). Un principio
  * que no tiene gate se pudre: esto lo convierte en un chequeo.
  *
- * Gatea TRES cosas. Las dos primeras, como TRINQUETE por conteo (el mismo patrón
+ * Gatea SIETE cosas. La primera, la segunda y la cuarta, como TRINQUETE por conteo (el mismo patrón
  * que `audit:api-era`: la lista solo puede MENGUAR, y muerde en las dos direcciones):
  *
  * 1. EMOJIS EN LA INTERFAZ. Los iconos salen de `<sc-icon>` (Material Symbols); un
@@ -29,6 +29,27 @@
  *    Un `<label for>` vale solo para `sc-multiselect`, cuyo combobox es un `<input>`
  *    (medido el 2026-10-05); el span de `sc-select` no es etiquetable. Un `aria-label`
  *    en el host tampoco vale: no llega al combobox.
+ *
+ * 4. TOASTS DE UNA ACCIÓN DEL USUARIO (DD-191). El toast queda para lo que manda el SISTEMA
+ *    (una tarea en segundo plano que acaba). Lo que acaba de hacer el usuario se cuenta junto a
+ *    su contexto: `ResultadoAccionService.visto` si ya se ve, `enLaBarra` si guarda y se queda, o
+ *    un mensaje junto a su control. Solo en el Supervisor (las réplicas copian su app, DD-35).
+ *
+ * 5. GUIONES SUELTOS EN UNA PLANTILLA (DD-197), sin trinquete: ninguno. Una celda sin dato es
+ *    `<sc-celda-vacia>`: «—» a la vista, oculto al lector, que oye «Sin dato» (o su `texto`). Un «—»
+ *    escrito a mano el lector lo lee «guion», que es el motivo de Primer para dejarlas en blanco.
+ *    Solo plantillas `.html` del Supervisor; un «—» dentro de un texto del `.ts` no es una celda.
+ *
+ * 6. AYUDA ENTRE EL RÓTULO Y SU CONTROL (DD-198), sin trinquete: ninguna. La ayuda de un campo va debajo de su
+ *    control (`helperText`): rótulo y control son una pieza que se lee de un vistazo, y en una rejilla los controles
+ *    quedan a la misma altura. Se marca un `.field__help` escrito justo antes de un control suelto del DS. La única
+ *    excepción, una lista que crece, no lleva un control suelto detrás (su ayuda va bajo el título del grupo).
+ *
+ * 7. UN OBLIGATORIO QUE ACUSA DE PRIMERAS (DD-199), sin trinquete: ninguno. Lo que falta se dice cuando la persona ya
+ *    tuvo ocasión de rellenarlo, y eso lo decide `ocasionDeAvisar` (`shared/utils/alta-secciones.ts`). Se marca la
+ *    ficha que lo decide por su cuenta: un aviso que se enciende por el MODO (`mode() === 'edit' || …`, que en la
+ *    edición acusaba nada más encender «Tipificar llamadas») o que lee `.dejadas()` del alta sin pasar por ella. Solo
+ *    `.ts` del Supervisor; `canSave` y el resumen también miran el modo, pero no acusan, y no se marcan.
  *
  * QUÉ HACER SI SE PONE ROJO:
  *   · «nuevo incumplimiento» → arréglalo (usa `<sc-icon>` en vez del emoji; añade
@@ -147,6 +168,59 @@ export function sinComentariosEnSuSitio(texto, esHtml) {
   return esHtml ? limpio : enBlanco(enBlanco(limpio, /\/\*[\s\S]*?\*\//g), /(?<=^|\s)\/\/.*$/gm);
 }
 
+/**
+ * Los ficheros que pueden lanzar toasts, y cuántos (DD-191). La lista solo MENGUA.
+ * - `undo-stack`: el aviso con «Deshacer» de lo que se quita del inicio (un monitor, un widget), que desaparece sin dejar
+ *   sitio donde contarlo; el de un cambio en lote ya va en su barra (DD-196).
+ * - `conversations-page`: transcripciones y análisis en segundo plano, con su progreso y su resultado.
+ */
+export const TOAST_DEL_SISTEMA = {
+  'projects/supervisor/src/app/core/services/undo-stack.service.ts': 2,
+  'projects/supervisor/src/app/features/memory/pages/conversations/conversations-page.component.ts': 7,
+};
+
+/** Cuántos toasts lanza un fichero (`messages.add(`), sin contar los comentarios. */
+export function contarToasts(texto) {
+  return (sinComentarios(texto).match(/\bmessages\.add\(/g) ?? []).length;
+}
+
+/** Líneas de una plantilla con un «—» suelto de contenido: `>—<` o un `'—'` de respaldo (`|| '—'`, `?? '—'`, `: '—'`). */
+export function guionesSueltos(html) {
+  const limpio = sinComentariosEnSuSitio(html, true);
+  const lineas = [];
+  for (const m of limpio.matchAll(/>\s*—\s*<|(?:\|\||\?\?|:)\s*'—'/g)) {
+    lineas.push(limpio.slice(0, m.index).split('\n').length);
+  }
+  return lineas;
+}
+
+/** Los controles sueltos del DS: una fila, con su ayuda debajo. */
+const CONTROL_SUELTO = 'sc-(?:selectbutton|select|multiselect|inputtext|inputnumber|textarea|datepicker|password|inputtags)';
+
+/** Líneas de una plantilla con una ayuda (`.field__help`) escrita justo antes de un control suelto (DD-198). */
+export function ayudasEncima(html) {
+  const limpio = sinComentariosEnSuSitio(html, true);
+  // Dentro de la ayuda, nada que cierre su etiqueta: si no, la búsqueda saltaría de una ayuda a la siguiente.
+  const re = new RegExp(`<(\\w+)\\b[^>]*class="[^"]*\\bfield__help\\b[^"]*"[^>]*>(?:(?!</\\1>)[\\s\\S])*</\\1>\\s*<${CONTROL_SUELTO}\\b`, 'g');
+  return [...limpio.matchAll(re)].map((m) => limpio.slice(0, m.index).split('\n').length);
+}
+
+/** El modo de una ficha en una disyunción: `mode() === 'edit' ||`, `|| this.mode() !== 'create'`… */
+const MODO_O = /mode\(\)\s*[!=]==\s*'(?:edit|create|duplicate)'\s*\|\||\|\|\s*(?:this\.)?mode\(\)\s*[!=]==/;
+/** Lo que delata un aviso: quién acusa, el error, el intento de salir, las secciones dejadas. */
+const AVISO = /\bacusa|[eE]rrors?\b|Error\(|attempted|dejadas/;
+
+/** Líneas de un `.ts` que deciden por su cuenta cuándo se dice que falta algo, sin `ocasionDeAvisar` (DD-199). */
+export function acusaDePrimeras(texto) {
+  const lineas = [];
+  sinComentariosEnSuSitio(texto, false)
+    .split('\n')
+    .forEach((linea, i) => {
+      if ((MODO_O.test(linea) && AVISO.test(linea)) || /\.dejadas\(\)/.test(linea)) lineas.push(i + 1);
+    });
+  return lineas;
+}
+
 /** Las etiquetas `<sc-select` y `<sc-multiselect` de un texto ya sin comentarios. */
 const DESPLEGABLE = /<sc-(select|multiselect)\b/g;
 
@@ -212,7 +286,11 @@ if (process.argv[1] && process.argv[1].endsWith('audit-screen-hygiene.mjs')) {
 
   const emojis = {};
   const imgs = {};
+  const toasts = {};
   const sinNombre = [];
+  const guiones = [];
+  const encima = [];
+  const dePrimeras = [];
   let desplegables = 0;
   for (const f of ficheros) {
     const src = readFileSync(f, 'utf8');
@@ -220,16 +298,45 @@ if (process.argv[1] && process.argv[1].endsWith('audit-screen-hygiene.mjs')) {
     if (e > 0) emojis[f] = e;
     const i = contarImgSinDims(src);
     if (i > 0) imgs[f] = i;
+    if (f.startsWith('projects/supervisor/') && f.endsWith('.ts')) {
+      const t = contarToasts(src);
+      if (t > 0) toasts[f] = t;
+      if (!f.endsWith('.spec.ts') && !f.endsWith('/shared/utils/alta-secciones.ts')) {
+        for (const linea of acusaDePrimeras(src)) dePrimeras.push(`${f}:${linea}`);
+      }
+    }
     desplegables += (sinComentariosEnSuSitio(src, f.endsWith('.html')).match(DESPLEGABLE) ?? []).length;
     for (const linea of desplegablesSinNombre(src, f.endsWith('.html'))) sinNombre.push(`${f}:${linea}`);
+    if (f.startsWith('projects/supervisor/') && f.endsWith('.html')) {
+      for (const linea of guionesSueltos(src)) guiones.push(`${f}:${linea}`);
+      for (const linea of ayudasEncima(src)) encima.push(`${f}:${linea}`);
+    }
   }
 
   const problemas = [
     ...chequearTrinquete(emojis, EMOJI_PENDIENTES, 'emoji', 'usa <sc-icon> (o un flag SVG) en vez del emoji.'),
     ...chequearTrinquete(imgs, IMG_PENDIENTES, 'img/iframe sin dims', 'añade width+height o aspect-ratio.'),
+    ...chequearTrinquete(
+      toasts,
+      TOAST_DEL_SISTEMA,
+      'toast(s)',
+      'cuenta el resultado con `ResultadoAccionService` (`visto` si ya se ve, `enLaBarra` si guarda y se queda) o junto a su control (DD-191).',
+    ),
     ...sinNombre.map((donde) => [
       `${donde}: desplegable sin nombre (DD-133). PrimeNG lo nombraría con la opción elegida.`,
       '      → `ariaLabelledBy` con el id del rótulo que tiene a la vista o, sin rótulo, `ariaLabel`. Un `<label for>` solo nombra un sc-multiselect.',
+    ]),
+    ...guiones.map((donde) => [
+      `${donde}: «—» suelto (DD-197). El lector de pantalla lo lee «guion».`,
+      '      → `<sc-celda-vacia />` (con `[texto]` si el vacío tiene su porqué); si el vacío significa algo o es una cifra, escríbelo.',
+    ]),
+    ...encima.map((donde) => [
+      `${donde}: ayuda entre el rótulo y su control (DD-198).`,
+      '      → pásala al `helperText` del control, que la pinta debajo y la anuncia; si es una lista que crece, bajo su título.',
+    ]),
+    ...dePrimeras.map((donde) => [
+      `${donde}: decide por su cuenta cuándo acusa lo que falta (DD-199). Por el modo, acusa antes de que se pueda rellenar.`,
+      '      → `this.ocasion.acusa(seccion, falta)` con `ocasionDeAvisar` (shared/utils/alta-secciones.ts): al dejar la sección, o si lo guardado ya venía sin ello.',
     ]),
   ];
 
@@ -239,13 +346,15 @@ if (process.argv[1] && process.argv[1].endsWith('audit-screen-hygiene.mjs')) {
     `audit:screen-hygiene — ${ficheros.length} plantilla(s): ${totEmoji} emoji astral en ` +
       `${Object.keys(emojis).length} fichero(s), ${totImg} img/iframe sin dims en ${Object.keys(imgs).length} ` +
       `(trinquetes: emoji ${Object.keys(EMOJI_PENDIENTES).length}, img ${Object.keys(IMG_PENDIENTES).length}), ` +
-      `${sinNombre.length} de ${desplegables} desplegables sin nombre\n`,
+      `${sinNombre.length} de ${desplegables} desplegables sin nombre, ${guiones.length} guion(es) suelto(s), ${encima.length} ayuda(s) encima, ${dePrimeras.length} aviso(s) de primeras, ` +
+      `${Object.values(toasts).reduce((a, b) => a + b, 0)} toast(s) del sistema en ${Object.keys(toasts).length} fichero(s)\n`,
   );
 
   if (!problemas.length) {
     log(
-      '✓ audit:screen-hygiene OK — sin emojis nuevos en la interfaz, ninguna imagen nueva sin reservar su hueco y ' +
-        'cada desplegable con nombre.',
+      '✓ audit:screen-hygiene OK — sin emojis nuevos en la interfaz, ninguna imagen nueva sin reservar su hueco, ' +
+        'cada desplegable con nombre, ningún toast nuevo fuera de los del sistema, ningún «—» suelto, ninguna ayuda encima de su control ' +
+        'y ningún obligatorio que acuse de primeras.',
     );
     process.exit(0);
   }

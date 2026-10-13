@@ -37,7 +37,8 @@ const FORMULARIOS = [
    * Contact Center, que hasta entonces pintaba el suyo con una pieza propia. */
   { nombre: 'regla', ruta: 'conversaciones/reglas/nueva', secciones: 3 },
   { nombre: 'grupo', ruta: 'admin/grupos/editar/11', secciones: 4 },
-  { nombre: 'agente', ruta: 'admin/agentes/editar/1', secciones: 5 },
+  /* Cuatro, las de la ficha de grupo, desde DD-187 (General, Configuración, Recursos, Grupos); eran cinco. */
+  { nombre: 'agente', ruta: 'admin/agentes/editar/1', secciones: 4 },
   { nombre: 'usuario', ruta: 'admin/usuarios/editar/1', secciones: 3 },
   { nombre: 'contact center', ruta: 'config/aed/servicio', secciones: 3 },
 ] as const;

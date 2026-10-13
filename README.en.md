@@ -9,7 +9,7 @@
 
 [Español](README.md) · **English**
 
-Smart Contact's design system: **56 components `sc-*`** on top of Angular and PrimeNG, with a
+Smart Contact's design system: **61 components `sc-*`** on top of Angular and PrimeNG, with a
 theme in which **every value is traceable to the Figma Kit and machine-verifiable**.
 
 > 📖 **[Live documentation: sc-doc.pages.dev](https://sc-doc.pages.dev)** · component
@@ -83,7 +83,7 @@ npm run export:all     # npm tarballs into dist/archives/
 <!--sc:sec=verify-->
 
 ```bash
-npm run verify         # the 44 chained static checks (~40s)
+npm run verify         # the 47 chained static checks (~40s)
 npm run e2e            # browser smoke test (Playwright)
 npm run preflight      # gates + AOT builds (~8 min), before pushing; screenshots are compared in CI
 ```
@@ -96,8 +96,8 @@ three e2e nets and the other workflows.
 | Family | Commands | What it guarantees |
 | ------ | -------- | ------------------ |
 | Tokens | `tokens:gen` · `tokens:gen-component` · `tokens:gen-color` · `tokens:gen-cmp-color` · `tokens:gen-effects` · `tokens:parity` · `tokens:guard` · `tokens:export-clean` · `tokens:cmp-rewire` · `tokens:effects-rewire` · `tokens:type-parity` | Every theme value reproduces the Kit export, and `--p-*` never leaves the preset |
-| Screens | `audit:theme-scale` · `audit:border-surfaces` · `audit:screen-hygiene` · `audit:page-anatomy` · `audit:screen-vocabulary` · `audit:text-styles` · `audit:titulo-contenido` · `audit:query-order` · `audit:base-href` | Screens measure by token, with one shared vocabulary, no layout shifts and no `@media` or `@container` rule that source order leaves without effect |
-| Components | `audit:components` · `audit:api-era` · `audit:datatables` · `audit:datatable-slots` · `audit:primeng-coupling` · `audit:doc-snippets` · `test:components` | The public API, the coupling to PrimeNG and what the docs show all match the code |
+| Screens | `audit:theme-scale` · `audit:border-surfaces` · `audit:screen-hygiene` · `audit:interpunct` · `audit:page-anatomy` · `audit:screen-vocabulary` · `audit:text-styles` · `audit:css-literals` · `audit:titulo-contenido` · `audit:query-order` · `audit:base-href` | Screens measure by token, with one shared vocabulary, no layout shifts and no `@media` or `@container` rule that source order leaves without effect |
+| Components | `audit:components` · `audit:api-era` · `audit:datatables` · `audit:datatable-slots` · `audit:primeng-coupling` · `audit:primeng-catalog` · `audit:doc-snippets` · `test:components` | The public API, the coupling to PrimeNG, the table of its catalog and what the docs show all match the code |
 | Content and docs | `i18n:check` · `novedades:check` · `usage:check` · `variables:check` · `audit:seed-pii` · `audit:personal-names` · `docs:guard` · `docs:coherence` · `docs:readme-parity` | Genuinely multilingual, zero real contact data in demos, no personal names in the code, and no doc that lies |
 | Repo | `proto:check` · `explorations:check` · `audit:commit-attribution` · `guard:backticks` · `test:unit` · `typecheck` · `lint` · `build` | Frozen versions stay findable, no commit carries the tool's signature, types stay clean and the libs keep building |
 

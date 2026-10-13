@@ -5,8 +5,8 @@
 Contra **PrimeNG 22.1.0**, la versión INSTALADA — no la documentación de la web,
 que puede ir por delante.
 
-**45 componentes** del DS se usan en el Supervisor, y entre todos esconden
-**402 props** que PrimeNG sí documenta.
+**49 componentes** del DS se usan en el Supervisor, y entre todos esconden
+**483 props** que PrimeNG sí documenta.
 
 La regla es DD-113: *el nativo tal cual, adaptado con tokens*. Esconder una prop puede ser una
 decisión buena —los wrappers EXTENDED lo hacen a propósito— pero hasta ahora esa decisión no se
@@ -23,7 +23,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 ## Por componente
 
-### `sc-datatable` · 13 usos · primeng/table
+### `sc-datatable` · 15 usos · primeng/table
 
 **87 props nativas no expuestas**: `alwaysShowPaginator`, `ariaLabel`, `columnsInput`, `compareSelectionBy`, `contextMenu`, `contextMenuSelectionInput`, `csvSeparator`, `currency`, `currencyDisplay`, `currentPageReportTemplate`, `customSort`, `defaultSortOrder`, `display`, `editMode`, `editingRowKeysInput`, `expandedRowKeysInput`, `exportFilename`, `exportFunction`, `exportHeader`, `field`, `filterButtonProps`, `filterDelay`, `filterLocale`, `filterOn`, `filtersInput`, `frozenColumns`, `frozenValue`, `frozenWidth`, `groupRowsBy`, `groupRowsByOrder`, `hideOnClear`, `lazyLoadOnInit`, `loadingIcon`, `locale`, `localeMatcher`, `matchMode`, `matchModeOptions`, `maxConstraints`, `maxFractionDigits`, `metaKeySelection`, `minFractionDigits`, `multiSortMetaInput`, `operator`, `pageLinks`, `paginatorDropdownAppendTo`, `paginatorDropdownScrollHeight`, `paginatorLocale`, `paginatorPosition`, `paginatorStyleClass`, `placeholder`, `prefix`, `resetPageOnSort`, `rowExpandMode`, `rowGroupMode`, `rowHover`, `rowSelectable`, `rowTrackBy`, `selectAllInput`, `selectionPageOnly`, `showAddButton`, `showApplyButton`, `showButtons`, `showClearButton`, `showCurrentPageReport`, `showFirstLastIcon`, `showInitialSortBadge`, `showJumpToPageDropdown`, `showJumpToPageInput`, `showLoader`, `showMatchModes`, `showMenu`, `showOperator`, `showPageLinks`, `sortFieldInput`, `sortMode`, `sortOrderInput`, `stateKey`, `stateStorage`, `suffix`, `tableStyle`, `tableStyleClass`, `type`, `useGrouping`, `valueInput`, `virtualScrollDelay`, `virtualScrollItemSize`, `virtualScrollOptions`
 
@@ -31,11 +31,11 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **55 props nativas no expuestas**: `appendTo`, `ariaLabel`, `ariaLabelledBy`, `autoZIndex`, `autofocus`, `baseZIndex`, `clearButtonStyleClass`, `dataType`, `defaultDate`, `disabledDates`, `disabledDays`, `firstDayOfWeek`, `fluid`, `focusTrap`, `hideOnDateTimeSelect`, `hourFormat`, `icon`, `iconAriaLabel`, `iconDisplay`, `inputSize`, `inputStyle`, `inputStyleClass`, `keepInvalid`, `max`, `maxDateCount`, `maxlength`, `min`, `minlength`, `motionOptions`, `multipleSeparator`, `numberOfMonths`, `panelStyle`, `panelStyleClass`, `pattern`, `rangeSeparator`, `readonlyInput`, `responsiveOptions`, `selectOtherMonths`, `shortYearCutoff`, `showOnFocus`, `showOtherMonths`, `showSeconds`, `showTime`, `showWeek`, `startWeekFromFirstDayOfYear`, `step`, `stepHour`, `stepMinute`, `stepSecond`, `tabindex`, `timeOnly`, `timeSeparator`, `todayButtonStyleClass`, `touchUI`, `variant`
 
-### `sc-multiselect` · 15 usos · primeng/multiselect
+### `sc-multiselect` · 13 usos · primeng/multiselect
 
 **44 props nativas no expuestas**: `ariaFilterLabel`, `autoOptionFocus`, `autocomplete`, `autofocus`, `autofocusFilter`, `chipIcon`, `dataKey`, `displaySelectedLabel`, `dropdownIcon`, `filterFields`, `filterLocale`, `filterMatchMode`, `filterPlaceHolder`, `filterValue`, `fluid`, `focusOnHover`, `group`, `highlightOnSelect`, `id`, `lazy`, `loading`, `loadingIcon`, `motionOptions`, `optionGroupChildren`, `optionGroupLabel`, `overlayOptions`, `overlayVisible`, `panelStyle`, `panelStyleClass`, `readonly`, `resetFilterOnHide`, `scrollHeight`, `selectAll`, `selectOnFocus`, `showHeader`, `tabindex`, `tooltip`, `tooltipPosition`, `tooltipPositionStyle`, `tooltipStyleClass`, `variant`, `virtualScroll`, `virtualScrollItemSize`, `virtualScrollOptions`
 
-### `sc-select` · 58 usos · primeng/select
+### `sc-select` · 60 usos · primeng/select
 
 **43 props nativas no expuestas**: `ariaFilterLabel`, `autoOptionFocus`, `autofocus`, `autofocusFilter`, `checkmark`, `dataKey`, `dropdownIcon`, `filterFields`, `filterLocale`, `filterMatchMode`, `filterValue`, `fluid`, `focusOnHover`, `group`, `id`, `inputSize`, `lazy`, `loadingIcon`, `max`, `maxlength`, `min`, `minlength`, `motionOptions`, `multiple`, `optionGroupChildren`, `optionGroupLabel`, `overlayOptions`, `panelStyle`, `panelStyleClass`, `pattern`, `resetFilterOnHide`, `scrollHeight`, `selectOnFocus`, `step`, `tabindex`, `tooltip`, `tooltipPosition`, `tooltipPositionStyle`, `tooltipStyleClass`, `variant`, `virtualScroll`, `virtualScrollItemSize`, `virtualScrollOptions`
 
@@ -43,13 +43,25 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **35 props nativas no expuestas**: `acceptAriaLabel`, `acceptButtonStyleClass`, `acceptIcon`, `acceptLabel`, `acceptVisible`, `appendTo`, `autoZIndex`, `baseZIndex`, `blockScroll`, `breakpoints`, `closable`, `closeAriaLabel`, `closeOnEscape`, `defaultFocus`, `dismissableMask`, `draggable`, `focusTrap`, `header`, `icon`, `key`, `maskMotionOptions`, `maskStyleClass`, `message`, `modal`, `motionOptions`, `position`, `rejectAriaLabel`, `rejectButtonStyleClass`, `rejectIcon`, `rejectLabel`, `rejectVisible`, `rtl`, `style`, `styleClass`, `visible`
 
-### `sc-dialog` · 22 usos · primeng/dialog
+### `sc-inputtags` · 1 usos · primeng/inputtags
+
+**31 props nativas no expuestas**: `addOnTab`, `appendTo`, `autoOptionFocus`, `completeOnFocus`, `delay`, `focusOnHover`, `group`, `inputSize`, `inputStyle`, `inputStyleClass`, `maxlength`, `min`, `minQueryLength`, `minlength`, `motionOptions`, `name`, `optionDisabled`, `optionGroupChildren`, `optionGroupLabel`, `optionLabel`, `optionValue`, `overlayOptions`, `panelStyle`, `panelStyleClass`, `pattern`, `scrollHeight`, `step`, `suggestions`, `tabindex`, `typeahead`, `variant`
+
+### `sc-dialog` · 20 usos · primeng/dialog
 
 **29 props nativas no expuestas**: `appendTo`, `autoZIndex`, `baseZIndex`, `blockScroll`, `breakpoints`, `closeButtonProps`, `closeIcon`, `closeOnEscape`, `closeTabindex`, `contentStyle`, `contentStyleClass`, `focusOnShow`, `focusTrap`, `header`, `keepInViewport`, `maskMotionOptions`, `maskStyle`, `maskStyleClass`, `maximizable`, `maximizeButtonProps`, `maximizeIcon`, `minX`, `minY`, `minimizeIcon`, `motionOptions`, `rtl`, `showHeader`, `style`, `styleClass`
 
-### `sc-button` · 178 usos · primeng/button
+### `sc-fileupload` · 2 usos · primeng/fileupload
 
-**24 props nativas no expuestas**: `autofocus`, `badge`, `badgeSeverity`, `buttonProps`, `fluid`, `hostName`, `iconOnly`, `iconPos`, `link`, `loadingIcon`, `outlined`, `pButton`, `pButtonIconPT`, `pButtonLabelPT`, `pButtonLabelUnstyled`, `pButtonPT`, `pButtonUnstyled`, `plain`, `raised`, `severity`, `style`, `styleClass`, `tabindex`, `text`
+**24 props nativas no expuestas**: `cancelButtonProps`, `cancelIcon`, `cancelLabel`, `cancelStyleClass`, `chooseButtonProps`, `chooseIcon`, `chooseStyleClass`, `customUpload`, `filesInput`, `headers`, `invalidFileLimitMessageDetail`, `invalidFileLimitMessageSummary`, `method`, `previewWidth`, `removeStyleClass`, `showCancelButton`, `showUploadButton`, `style`, `styleClass`, `uploadButtonProps`, `uploadIcon`, `uploadLabel`, `uploadStyleClass`, `withCredentials`
+
+### `sc-textarea` · 7 usos · primeng/textarea, primeng/tooltip
+
+**24 props nativas no expuestas**: `appendTo`, `autoHide`, `content`, `escape`, `fitContent`, `hideDelay`, `hideOnEscape`, `life`, `pSize`, `pTextareaPT`, `pTextareaUnstyled`, `pTooltipPT`, `pTooltipUnstyled`, `positionLeft`, `positionStyle`, `positionTop`, `showDelay`, `showOnEllipsis`, `tooltipDisabled`, `tooltipEvent`, `tooltipOptions`, `tooltipPosition`, `tooltipStyleClass`, `tooltipZIndex`
+
+### `sc-button` · 187 usos · primeng/button
+
+**22 props nativas no expuestas**: `autofocus`, `badge`, `badgeSeverity`, `buttonProps`, `fluid`, `hostName`, `iconPos`, `link`, `loadingIcon`, `outlined`, `pButton`, `pButtonIconPT`, `pButtonLabelPT`, `pButtonLabelUnstyled`, `pButtonPT`, `pButtonUnstyled`, `plain`, `severity`, `style`, `styleClass`, `tabindex`, `text`
 
 ### `sc-drawer` · 3 usos · primeng/drawer
 
@@ -71,15 +83,19 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **7 props nativas no expuestas**: `fluid`, `iconPosition`, `invalid`, `pInputTextPT`, `pInputTextUnstyled`, `pSize`, `variant`
 
-### `sc-selectbutton` · 14 usos · primeng/selectbutton
+### `sc-selectbutton` · 17 usos · primeng/selectbutton
 
 **7 props nativas no expuestas**: `autofocus`, `dataKey`, `name`, `required`, `styleClass`, `tabindex`, `unselectable`
 
-### `sc-toggleswitch` · 33 usos · primeng/toggleswitch
+### `sc-tabs` · 2 usos · primeng/tabs
+
+**7 props nativas no expuestas**: `disabled`, `lazy`, `scrollStrategy`, `scrollable`, `selectOnFocus`, `showNavigators`, `tabindex`
+
+### `sc-toggleswitch` · 39 usos · primeng/toggleswitch
 
 **7 props nativas no expuestas**: `autofocus`, `falseValue`, `invalid`, `name`, `required`, `tabindex`, `trueValue`
 
-### `sc-inputnumber` · 10 usos · primeng/inputtext
+### `sc-inputnumber` · 12 usos · primeng/inputtext
 
 **5 props nativas no expuestas**: `fluid`, `pInputTextPT`, `pInputTextUnstyled`, `pSize`, `variant`
 
@@ -87,7 +103,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **4 props nativas no expuestas**: `badgeDisabled`, `badgeSize`, `severity`, `value`
 
-### `sc-inputtext` · 36 usos · primeng/inputtext
+### `sc-inputtext` · 44 usos · primeng/inputtext
 
 **4 props nativas no expuestas**: `pInputTextPT`, `pInputTextUnstyled`, `pSize`, `variant`
 
@@ -99,19 +115,15 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **3 props nativas no expuestas**: `closeIcon`, `life`, `motionOptions`
 
-### `sc-textarea` · 7 usos · primeng/textarea
-
-**3 props nativas no expuestas**: `pSize`, `pTextareaPT`, `pTextareaUnstyled`
-
 ### `sc-breadcrumb` · 1 usos · primeng/breadcrumb
 
 **2 props nativas no expuestas**: `style`, `styleClass`
 
-### `sc-chip` · 6 usos · primeng/chip
+### `sc-chip` · 5 usos · primeng/chip
 
 **2 props nativas no expuestas**: `chipProps`, `removeIcon`
 
-### `sc-password` · 1 usos · primeng/config, primeng/inputpassword
+### `sc-password` · 2 usos · primeng/config, primeng/inputpassword
 
 **1 props nativas no expuestas**: `mask`
 
@@ -123,7 +135,7 @@ Expone todo lo que PrimeNG documenta.
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-checkbox` · 39 usos · —
+### `sc-checkbox` · 47 usos · —
 
 Expone todo lo que PrimeNG documenta.
 
@@ -135,15 +147,15 @@ Expone todo lo que PrimeNG documenta.
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-delete-entity-dialog` · 11 usos · —
+### `sc-delete-entity-dialog` · 12 usos · —
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-divider` · 31 usos · primeng/divider
+### `sc-divider` · 24 usos · primeng/divider
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-empty-state` · 18 usos · —
+### `sc-empty-state` · 22 usos · —
 
 Expone todo lo que PrimeNG documenta.
 
@@ -152,6 +164,10 @@ Expone todo lo que PrimeNG documenta.
 Expone todo lo que PrimeNG documenta.
 
 ### `sc-gauge` · 1 usos · —
+
+Expone todo lo que PrimeNG documenta.
+
+### `sc-icon-tile` · 2 usos · —
 
 Expone todo lo que PrimeNG documenta.
 
@@ -171,7 +187,7 @@ Expone todo lo que PrimeNG documenta.
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-option-cards` · 1 usos · —
+### `sc-option-cards` · 2 usos · —
 
 Expone todo lo que PrimeNG documenta.
 
@@ -183,11 +199,11 @@ Expone todo lo que PrimeNG documenta.
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-section-card` · 26 usos · —
+### `sc-section-card` · 35 usos · —
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-slot` · 8 usos · —
+### `sc-slot` · 13 usos · —
 
 Expone todo lo que PrimeNG documenta.
 
@@ -195,20 +211,20 @@ Expone todo lo que PrimeNG documenta.
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-subsection` · 9 usos · —
+### `sc-subsection` · 18 usos · —
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-tag` · 28 usos · primeng/tag
+### `sc-tag` · 30 usos · primeng/tag
 
 Expone todo lo que PrimeNG documenta.
 
 ## El catálogo de PrimeNG que NO envolvemos
 
-Aura tematiza **97 componentes**. Envolvemos **30**,
-**9** se usan en NATIVO sin wrapper (la vía de DD-113) y **1** los cubre
+Aura tematiza **97 componentes**. Envolvemos **34**,
+**7** se usan en NATIVO sin wrapper (la vía de DD-113) y **1** los cubre
 una pieza nuestra hecha a mano.
-Quedan **57** que existen, están tematizados y funcionan — simplemente nadie los ha
+Quedan **55** que existen, están tematizados y funcionan — simplemente nadie los ha
 traído todavía.
 
 ⚠️ **«Sin envolver» NO quiere decir «descartado»**: quiere decir que la decisión no se ha tomado.
@@ -216,13 +232,13 @@ Si necesitas uno, envolverlo es más barato (y sale mejor) que construirlo a man
 su comportamiento, su accesibilidad y su movimiento ya resueltos. Cuando se decida que uno NO se
 quiere, el sitio de esa decisión es `docs/DECISIONS.md`, y entonces se puede anotar aquí.
 
-`accordion` · `autocomplete` · `blockui` · `carousel` · `cascadeselect` · `colorpicker` · `commandmenu` · `compare` · `confirmpopup` · `contextmenu` · `dataview` · `dock` · `editor` · `fieldset` · `fileupload` · `floatlabel` · `galleria` · `gallery` · `iftalabel` · `image` · `imagecompare` · `inlinemessage` · `inputchips` · `inputcolor` · `inputnumber` · `inputotp` · `inputtags` · `knob` · `label` · `megamenu` · `menubar` · `navigationmenu` · `orderlist` · `organizationchart` · `paginator` · `panelmenu` · `password` · `picklist` · `rating` · `ripple` · `scrollpanel` · `slider` · `speeddial` · `splitbutton` · `splitter` · `stepper` · `steps` · `tabmenu` · `tabview` · `terminal` · `tieredmenu` · `timeline` · `togglebutton` · `tree` · `treeselect` · `treetable` · `virtualscroller`
+`accordion` · `autocomplete` · `blockui` · `carousel` · `cascadeselect` · `colorpicker` · `commandmenu` · `compare` · `confirmpopup` · `contextmenu` · `dataview` · `dock` · `editor` · `fieldset` · `floatlabel` · `galleria` · `gallery` · `iftalabel` · `image` · `imagecompare` · `inlinemessage` · `inputchips` · `inputcolor` · `inputnumber` · `inputotp` · `knob` · `label` · `megamenu` · `menubar` · `navigationmenu` · `orderlist` · `organizationchart` · `paginator` · `panelmenu` · `password` · `picklist` · `rating` · `ripple` · `scrollpanel` · `slider` · `speeddial` · `splitbutton` · `splitter` · `stepper` · `steps` · `tabmenu` · `tabview` · `terminal` · `tieredmenu` · `timeline` · `togglebutton` · `tree` · `treeselect` · `treetable` · `virtualscroller`
 
 ### Usados en NATIVO, sin wrapper
 
 Entraron por la vía de DD-113: el nativo tal cual, adaptado solo con tokens. No hay nada que envolver.
 
-`inplace` · `listbox` · `menu` · `metergroup` · `scrollarea` · `sidebar` · `tabs` · `toolbar` · `tooltip`
+`inplace` · `listbox` · `menu` · `metergroup` · `scrollarea` · `sidebar` · `toolbar`
 
 ### Cubiertos por una pieza nuestra
 

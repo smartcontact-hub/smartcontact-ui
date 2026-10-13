@@ -30,153 +30,141 @@ fcaf40db:docs/handoff/supervisor-fichas.md`. El de Recursos (DD-163 a DD-167, #3
 `git show 4217ed41:docs/handoff/supervisor-fichas.md`. Y el de sc-docs y el peso de los iconos (#330, sin
 trampas propias): `git show 3ff6cd71:docs/handoff/supervisor-fichas.md`. El de Accesibilidad pendiente (#332, sin DD nueva ni trampas
 propias): `git show 540f246c:docs/handoff/supervisor-fichas.md``. El de supervisión y limpieza (2026-10-05, DD-168, #333, sin trampas propias): `git show
-60f8e617:docs/handoff/supervisor-fichas.md`.
+60f8e617:docs/handoff/supervisor-fichas.md`. El de las tres columnas sin cabecera (2026-10-05, DD-170, #337): `git show
+b49b56e0:docs/handoff/supervisor-fichas.md`. El de Tipificaciones (2026-10-05, DD-173, DD-174 y DD-177, #340): `git show
+a3e03136:docs/handoff/supervisor-fichas.md`. El del pulido de las fichas (2026-10-06, DD-176, #341): `git show
+0bf19647:docs/handoff/supervisor-fichas.md`. El de Repositorios en tarjetas (2026-10-06, DD-179, #347): `git show
+d4843e43:docs/handoff/supervisor-fichas.md`. El de ordenar por cualquier columna (2026-10-06, DD-180 y DD-181): `git show
+d94e5ad8:docs/handoff/supervisor-fichas.md`. El de las cuatro secciones en el mismo árbol (2026-10-06, DD-182, sin
+trampas propias): `git show 11c607cf:docs/handoff/supervisor-fichas.md`. El de la segunda vuelta de grupos
+(2026-10-07, DD-185, #355, sin trampas propias): `git show d4843e43:docs/handoff/supervisor-fichas.md`. Y el de la
+baldosa y la fila del resumen al DS (2026-10-07, DD-186, #356, sin trampas propias): `git show
+d94e5ad8:docs/handoff/supervisor-fichas.md`. El de la revisión de agentes y tipificaciones (2026-10-09, DD-187,
+#360, sin trampas propias): `git show 208019113e9b9fdad6a8c0f6c4338fcf4437260a:docs/handoff/supervisor-fichas.md`.
 
-## ✅ 2026-10-06 · Las cuatro secciones de la ficha de grupo, en el mismo árbol (DD-182)
+## ✅ 2026-10-13 · Fuera las notas de decisión
 
-> **Sello:** rama `arebury/daily-transcript-change-validation` sobre `main` en `60f8e617`.
+> **Sello:** rama `arebury/quitar-notas-equipo-main` sobre `main` `7711d83d`.
 
-- General, Recursos y Agentes pasan a `surface="subtle"` con un `sc-subsection` por bloque, como Distribución y colas
-  (DD-157). Clave nueva `groups.form.agents.assigned_title`. Medido en local: sin desborde a 1440 y 12 e2e en verde.
-- **Solo el prototipo**: Figma conserva el cuerpo anterior y el índice con sus bordes grises. Las fichas de agente y
-  usuario no se tocaron.
+- **Las ocho notas moradas, fuera** con su componente (`sc-nota-decision`), su globo (`_nota-decision.scss`) y
+  `decision_notes` en los cuatro idiomas: el equipo dio por resuelto lo que preguntaban (DD-187 §9). Queda lo
+  construido: el PIN solo con la extensión en el teléfono, sin filtro de estado en el listado, el punto proporcional,
+  «—» en las celdas vacías, «Deshacer» en la barra, la escalera, el nombre fijo y la ayuda debajo.
+- **Los huecos que solo servían a las notas, también:** `[scListHeadingNote]` (el título del listado vuelve a ser un
+  `h1` suelto, sin `.page__heading-row`) y `[scBulkResult]` en `sc-bulk-action-bar` del DS.
 
-## ✅ 2026-10-06 · Ordenar por cualquier columna, la barra de los listados y las casillas de cada columna (DD-180 y DD-181)
+## ✅ 2026-10-13 · Lo que falta se dice cuando ya hubo ocasión (DD-199)
 
-> **Sello:** rama `arebury/figma-make-prototipo-fiel`, con `main` dentro hasta #347 (`540f246c`); un commit en rojo y otro en verde por
-> bloque (DD-154).
-> Sale de una conversación con Figma Make sobre las tablas: lo que pidió la revisión, no lo que propuso Figma Make.
+> **Sello:** worktree `lancetfish`, rama `arebury/fix-no-initial-error` sobre `main` en `c5b95584`.
 
-- **1 · Ordenar (DD-180):** Grupos, por todas sus columnas (faltaban Teléfono, Canales y Servicios); Agentes, por todas
-  menos Estado, que cambia sola (faltaban Canales y Grupos). Canales, por cuántos tiene la fila y, con los mismos, por
-  cuáles (`compareChannels`, en `groups-data.ts`). Cinco cabeceras se salían con su flecha en algún idioma (la peor,
-  «Groupes», 16 px; «Prioridade» ya se salía 5 en `main`): ensanchadas lo justo, sin desplazamiento lateral a 1440.
-  «Columnas», a la altura del buscador (32,5; medía 27): enmienda DD-176 §7.
-- **2 · La barra, en dos grupos (DD-180 §4):** Columnas a 12,25 del buscador (estaba a 24,5) y la descarga con solo el
-  aire de su separador, 14 por lado (estaba a 53,5). El globo de Columnas y el menú de archivo son nodos vacíos en la
-  barra y sumaban un hueco de flex cada uno.
-- **3 · Las casillas de cada columna (DD-181):** en la tabla de agentes del grupo, cada canal y Habilitado llevan su
-  casilla de «todos» delante del rótulo, como Asignado (enmienda DD-176 §4). Un canal nunca se lleva el último de una
-  fila. **Coste:** con los tres canales (Online Support) la tabla desplaza 59 px a 1440.
-- **En local, en verde:** `listados-ordenar-columnas.spec.ts` (7, en rojo contra `main`), `asignacion-agentes-lista` y
-  `tabla-agentes-compacta` (en rojo antes del bloque 3), las vecinas de los listados (145) y de la ficha y el panel
-  (cinco pruebas fijaban los anchos de antes y se ponen al día: el panel crece lo que suman las casillas), y `revision`
-  de los dos listados y la ficha de grupo, en regla.
+- **El fallo:** al encender «Tipificar llamadas» en un grupo guardado, el desplegable nacía en rojo (borde, aviso y
+  punto en General) antes de poder elegir nada. La causa, en cuatro fichas: `mode() === 'edit' || …`, que al editar
+  hacía acusar en el acto a todo obligatorio vacío. Pasaba igual al quitar canales y al duplicar un agente o un usuario.
+- **La norma** (DD-199; principio 11 de AGENTS §«UX de pantalla» y su copia en sc-docs › Patrones): acusa al dejar la
+  sección sin ello, o al abrir si lo guardado ya venía sin ello; antes, el resumen y el motivo junto al botón, sin
+  rojo. El contenido equivocado, en vivo.
+- **La pieza:** `ocasionDeAvisar` (`shared/utils/alta-secciones.ts`), en grupo, agente, usuario y tipificación. «Lo
+  guardado» es lo que había la última vez que la ficha no tenía cambios.
+- **Que no vuelva:** regla 7 de `audit:screen-hygiene` (en `main` marcaba las 8 líneas) y
+  `sin-acusar-de-primeras.spec.ts` (3 pruebas, en rojo contra `main`). 68 e2e de las fichas, en verde en local.
+- **El pie «Atrás / Siguiente», revisado: se queda** (DD-158, «Descartado»): juntos a la izquierda, ni separados ni al
+  editar. Medido: el alta de agente ya los lleva en sus cuatro secciones (General, solo «Siguiente»; Grupos, solo
+  «Atrás»); al editar no los lleva ninguna ficha.
 
-## ✅ 2026-10-06 · Repositorios en tarjetas por grupo, con su panel (DD-179), en su PR
+## ✅ 2026-10-12 · Quick-wins de la auditoría UX Agentes/Grupos + columna Nivel
 
-> **Sello:** rama `arebury/premium-repository-hub-redesign` sobre `main` en `3ff6cd71`. **Un PR, un commit en rojo y
-> otro en verde (DD-154).** Sale de una maqueta de Figma Make («Premium Repository Hub»), estudiada en su código y su
-> comportamiento con `impeccable` y `better-ui`, e iterada en local antes de subir.
+> **Sello:** PR #375, mergeado en main.
+> Fuente: `docs/AUDIT-UX-AGENTES-VS-GRUPOS-2026-10.md` (rama aparte `docs/audit-ux-agentes-vs-grupos`, ya pusheada).
 
-- **El hub, en tarjetas por grupo:** icono, cifra, nombre y descripción; la rejilla de cuatro, tres o dos según el
-  grupo, y los grupos de dos juntos en una fila. Cabe sin desplazar a 1440 × 800 y 1366 × 768, en los cuatro idiomas.
-- **Un tono por grupo**, de los de etiqueta del DS (azul, morado, teal y naranja): el título, el icono, la cifra, el
-  borde al pasar y al marcar, el filtro elegido y el panel. Un icono por concepto (`sell` y `category`).
-- **El panel**, acoplado bajo la barra de la app: lo que hay dentro, de verdad, y «Abrir repositorio» arriba. Lo cierran
-  la X, Escape, su tarjeta y un clic fuera; con velo solo si taparía tarjetas, medido al abrir.
-- **El filtro por grupo** con transición del navegador y **los recientes** en el buscador vacío.
-- **En el DS:** `sc-drawer` `docked`, `sc-avatar` `labelColor` y `sc-tag` `bordered`, con su ejemplo en sc-docs y su
-  línea en el CHANGELOG.
-- **En local, en verde:** las 9 del hub (las 9 en rojo contra `main`, y las del clic fuera y el velo, también con el
-  fallo puesto a propósito); las guardas de la ruta (contraste en los dos temas, foco, iconos, identidad, agrupación y
-  piezas hechas a mano); el contraste de icono y título, medido a mano; `revision` en regla.
+- **6 quick-wins:** `channelsError` de Grupos avisa también al editar (como `phoneError`); mismo verbo
+  ("Selecciona…") en el aviso de "sin canales" de Grupos y Agentes; "Chats simultáneos" explica por qué
+  no se ve cuando el agente no atiende chat; "Permisos" de Agentes en 2 `sc-slot` (Acceso y dispositivos /
+  Grabación y seguimiento); icono en las 3 `sc-subsection` de Configuración; namespace i18n de Recursos
+  movido de `agents.form.resources.*` a uno neutro (`resources.*`), compartido de verdad por las dos fichas.
+- **`sc-link-button` (nuevo, local a Supervisor):** el candado "no permitido"/autoactivación de
+  `agent-channel-table` pasa de `<a><sc-icon></a>` suelto a un botón de solo icono que navega
+  (`<a [pButton] [routerLink]>`, directiva de PrimeNG, no el componente). Vive en
+  `shared/components/link-button/`, **no** en `@smartcontact-hub/components`: depende de `@angular/router`,
+  que el paquete publicado no tiene como peer dependency. No se tocó `sc-button` (DD-172 sigue en pie,
+  acotado a este caso).
+- **Columna "Nivel"** en `group-assignment-table` (tabla "Grupos" de la ficha de agente): `availableGroups`
+  gana `strategy`/`chatStrategy` del grupo (ya estaban en el store, se recortaban antes de llegar a la
+  tabla); columna fija con celda condicional por fila — selector 1-10 solo si ese grupo reparte por Niveles
+  en una familia que el agente tiene asignada, `sc-celda-vacia` si no. Mismo dato (`GroupAgentLink.levels`)
+  que ya usa la tabla del lado del grupo. Probado en el navegador real (Playwright): cambio de nivel desde
+  la ficha de agente, persiste y se ve igual desde la ficha del grupo.
+- **Abierto (gusto, sin regla):** la columna Nivel añade 9rem a `group-assignment-table` y a 1440 "Habilitado"
+  ya no cabe sin desplazar (antes iba ~18px justa, ahora ~162px corta) — scroll horizontal funciona bien, y
+  hay precedente ya aceptado en la tabla gemela (`agent-channel-table`, DD-181) de scrollear al ganar
+  columnas. No se tocó por no ser un número objetivamente equivocado, solo una decisión de densidad.
+- **Pendiente (abierto, gusto):** si se quiere, repasar los anchos de las dos tablas de asignación a la vez
+  para que quepan sin scroll a 1440 con Nivel incluido.
 
-**Trampas del lote:**
-- **`npm run revision` mide 0 relaciones en tarjetas** (y en los títulos de grupo del `Menu`): el aire entre grupos se
-  mide a mano, entre cajas de texto.
-- **`dismissible` de `p-drawer` solo cierra al pulsar el velo**: sin modal, el clic fuera lo pone la página.
-- **Un «clic fuera» a una coordenada puesta a ojo cayó dentro del panel acoplado** (empieza en 1090 a 1440) y navegó:
-  se pulsa un elemento de fuera (el `h1`), no un punto.
-- **Tocar un comentario de un componente del DS lo deja más nuevo que `dist/`**, y el hook no deja medir con
-  Playwright: reconstruye y reinicia el `ng serve`.
-- **`p-avatar` no tiene entrada de estilo**: el tono va con `[style.background]` sobre su elemento, que gana al tema.
+## ✅ 2026-10-13 · Salientes como chip+acción, Nivel sin overlay (pide Rafa tras la auditoría)
 
-## ✅ 2026-10-06 · El pulido de las fichas (DD-176), en un lote de ocho bloques, fundido (#341)
+> **Sello:** rama `design/salientes-nivel-maquetacion` sobre main, HEAD `10b9628c` (incluye #376: `fill` de
+> `sc-datatable`, que ya resolvió el tercer punto de abajo — las tablas cortas llegan al pie). Aún sin PR.
 
-> **Sello:** fundido en `main` como #341, con `main` dentro hasta #345 (DD-177); CI del PR en verde (leído). Un
-> commit en rojo y otro en verde por bloque (DD-154). Sale de la revisión de DD-170 en local. **Era DD-171 y luego DD-172**:
-> `main` fundió antes las suyas y Tipificaciones (#340) tomó DD-173, DD-174 y DD-177, así que se renumeró a DD-176
-> con todas sus citas.
+Rafa, tras ver la auditoría en vivo: ¿por qué Agentes tiene columna Salientes si Grupos no la tiene en su
+tabla de Agentes? El Nivel de Grupos "expande muchísimo". Y la tabla de Grupos en la ficha de Agente no
+llega al pie.
 
-- **1 · El nombre editable:** se cierra al salir (pulsar fuera, Tab) con lo escrito, y al cerrar el foco vuelve al
-  nombre. Lo encontró la revisión de interacción con Playwright (una sonda que anota y no afirma): la columna fija
-  cabe hasta 1440×520, al 200 % el orden es bueno y cambiar de sección deja la página arriba; solo falló esto.
-- **2 · Las ayudas, cortas:** 19 textos en los cuatro idiomas, `text-wrap: pretty` en las ayudas del DS y de la app,
-  y «Tiempo de ringing» con su ayuda «a otro agente». De 13 ayudas que se alargaban a 1440 quedan 3 en dos líneas, sin
-  palabras solas; lo vigila `fichas-textos.spec.ts`.
-- **3 · Las marcas del índice** (`sc-form-section-nav`), al final de su fila y en la misma vertical, con su hueco fijo.
-- **4 · La tabla de agentes del grupo**, compacta (`sm`) y cada columna a su rótulo: cabe a 1440 con tres canales (antes
-  desplazaba 181 px). **Sin paginación**, en la ficha y en el panel; con lista virtual la caja ocupa su tope (con
-  «Todos» se quedaba en 2 px). El porqué de la paginación (DD-151 no lo decía), en DD-176 §5. **La cabecera, una fila
-  de texto** alineada con sus controles y solo la casilla de «todos» de Asignado: elegida entre tres opciones en la
-  revisión, tras una investigación de SaaS de referencia y sistemas de diseño (DD-176 §4). Icono y casilla en cada
-  cabecera se probó antes y se descartó. La barra de filtro, de borde a borde.
-- **5 · «2/14 grupos seleccionados»** en la barra en lote del DS (`total`), y «2 de 14» para el lector.
-- **6 · El «Column Toggle» de primeng.dev**, tal cual, en los listados (sustituye el Listbox de DD-162), con su teclado
-  sin arrastrar. Medido contra primeng.dev.
-- **7 · «Administrativo», en marrón:** el color de etiqueta `brown`, nuevo en todo el DS (nueve colores, sc-docs, la
-  paleta de puntos y el selector de Etiquetas). El Kit no trae marrón: `amber-800` lleno con texto blanco (7,1:1).
-  Pendiente en Figma (`figma-pendiente` §36b).
-- **Una prueba ajena que falla en tanda:** `panel-agentes-monitor` «… dice en el foco que abre un menú» (de DD-171, la
-  otra sesión) pide `…menu-1_list` y en la tanda completa llega `…menu-2_list`; pasa 3 de 3 a solas.
+- **Salientes no es arbitrario:** es un campo DEL AGENTE (`defaultOutboundGroupId`), no del grupo —
+  en Grupos "saliente" es una propiedad fija del propio grupo (un teléfono, sin fila); en Agentes solo
+  tiene sentido ENTRE los grupos a los que el agente está asignado, que es la tabla que se edita. Por eso
+  vive ahí. Lo que sí era un problema real: un `sc-radiobutton` por fila se leía como "otro toggle más".
+  Cambiado a `sc-tag` (el valor ya es un hecho) en la fila elegida y `sc-button` de acción ("marcar como
+  saliente") en las demás — visualmente solo una fila destaca, no una columna entera de controles iguales.
+- **Nivel (lado Grupo, `agent-channel-table`):** `sc-select` de 10 opciones → `sc-inputnumber` (stepper
+  1-10, sin overlay). Es un entero ordenado, no una categoría. El lado Agente (`group-assignment-table`)
+  sigue con `sc-select`, sin tocar — no era el que Rafa señaló.
+- **Empty-state de las dos tablas gemelas:** el `<div scTableEmpty>` de texto plano pasa a `sc-empty-state`
+  (mismo patrón que `agenda-contacts-table`, que ya resolvía justo esto) — con `fill` del #376 la tarjeta
+  SIEMPRE llega al pie, así que un texto suelto arriba dejaba un hueco en blanco enorme debajo; el
+  empty-state centra icono+texto y lo llena.
+- **Pendiente:** abrir el PR.
 
-## ✅ 2026-10-05 · Tipificaciones, en un lote de tres bloques (DD-173, DD-174 y DD-177), fundido (#340)
+El del barrido de consistencia y sin punto medio entre datos (2026-10-06, DD-183, sin trampas propias), y el de
+la revisión de grupos del equipo y `sc-fileupload` (2026-10-06, DD-184, sin trampas propias): `git show
+a7ddc14b:docs/handoff/supervisor-fichas.md`.
 
-> **Sello:** rama `arebury/tipificaciones-creacion` sobre `main` en `b4d1f145`. **Un PR, un commit en rojo y otro en
-> verde por bloque (DD-154).** Sale de la propuesta de producto «Tipificaciones» (PDF, 2026-10-05), discutida punto por
-> punto y probada en local antes de subir.
+## ✅ 2026-10-11 · Lo que se decide de la auditoría de PrimeNG (DD-195)
 
-> **Fundido el 2026-10-06 (#340, `4217ed41`).** El título del squash cita DD-172, DD-173 y DD-174, los números de antes
-> de renumerar: mientras su CI corría entraron #342 (DD-172) y #343 (DD-175), y al fundir quedaron en DD-173 (el
-> modelo), DD-174 (la ficha) y DD-177 (el teléfono). El código, las pruebas y los docs ya citan estos.
+> **Sello:** rama `arebury/decisiones-auditoria` sobre main, HEAD `11c607cf`. Un PR; enseñado en local antes de subir.
 
-- **1 · Una tipificación es una ficha propia (DD-173):** su árbol de hasta tres niveles, su dirección, su comentario y
-  sus grupos por canal; una por dirección y canal en cada grupo. Repositorios › Tipificaciones con las columnas de la
-  propuesta, todas ordenables; importar y descargar detrás de UN icono (`importable` en `sc-list-page`; importar, como
-  las agendas). La ficha de grupo elige varias, con su fila y su «Editar», y pierde el «+» de la tipificación.
-- **2 · La ficha, sin saltos (DD-174):** el molde de las fichas (índice; el nombre encima); la dirección en un control y
-  el comentario en un interruptor; los niveles son las columnas (las tres siempre, la siguiente fantasma, la última con
-  su ×); añadir y renombrar en la línea de la columna; cada aviso en su línea reservada. Su prueba cazó una carrera:
-  dos «Añadir» seguidos y el segundo pisaba al primero (ahora `linkedSignal`).
-- **3 · Lo que verá el agente (DD-177):** a la derecha, el teléfono de sc-agent en su sección de Tipificación, calcado
-  de la réplica y para probarlo. Tokens nuevos `--sc-agent-window-*` (05-extensions) y su sombra con spread; en su
-  propia columna, porque la del resumen recortaba la sombra.
-- **En local, en verde:** las 17 de los tres bloques (en rojo antes de cada uno) y las 13 unitarias; las vecinas que
-  tocan tipificaciones (45, cuatro cambiadas a propósito); `revision` de la ficha, el alta, el listado y la ficha de
-  grupo; las guardas de tokens y de pantalla. Las mediciones sin saltos, con su medidor validado con un salto puesto.
-
-**Trampas del lote:**
-- **`git add -N` para que las guardas vean ficheros nuevos impide el `git stash`** (`not uptodate. Cannot merge`): quita
-  la marca (`git reset -- <rutas>`) antes de apartar, y vuelve a ponerla para pasar las guardas.
-- **La columna `.ficha-summary` desplaza por dentro** (`overflow-y: auto`) y corta todo lo que sale por los lados, también
-  una sombra: lo que tenga que salirse va en su propia columna del área `summary`.
-- **Un `.sc-dark` alrededor de una pieza no pone los campos de PrimeNG en oscuro**: sus `--p-*` se resuelven en la raíz.
-
-## ✅ 2026-10-05 · Las fichas en tres columnas sin cabecera: el nombre encima del índice (DD-170), fundido (#337)
-
-> **Sello:** fundido en `main` como HEAD `7d470054`; CI del PR y de `main`, en verde (leídos). Sale del marco de la
-> ficha de grupo en Figma («Landing page», nodo 2467:7078), leído contenedor a contenedor. En su CI salieron dos
-> pruebas que con DD-170 ya no medían nada (General ya cabía a 1280×720; las 10 filas cabían a 1512×945): rehechas.
-
-- **El molde, en las tres fichas:** el nombre y su línea van arriba de la columna del índice (dentro de `.page__rail`
-  en el DOM); la sección y el resumen arrancan a su altura; la rejilla es de una fila (`'rail main summary'`), y la
-  sección es la única columna que crece (812 a 1440, 1052 a 1920). Por debajo de 1340 la columna de la izquierda no
-  cambia y el resumen pasa a una franja encima de la sección.
-- **Fuera `sc-nombre-fijo` (DD-145 §1-§3):** el nombre ya no se va al bajar, porque vive en la columna fija. Fuera
-  también el `scroll-padding` que apartaba las anclas bajo la copia.
-- **Un nombre largo baja a dos líneas** y se corta al final de la segunda (también en `sc-name-inplace`, que ahora usa
-  los 196 enteros). En 196 caben unos 22 caracteres; todos los de la demo caben en una. Al pulsarlo para editarlo, el
-  título conserva su alto (el índice subía 24 px): `sc-name-inplace` pasa a `flow-root`, porque su `:host` sin
-  encapsular no casaba y se pintaba en línea. Del nombre a sus datos, 7: el campo de editar tapaba media línea.
-- **Los canales de General, en las columnas de Nombre y Prioridad** (`.checkbox-grid--3`): antes, a 3 y 6 px a 1440 y
-  86 px a 1920.
-- **En local, en verde:** las 38 del bloque (20 en rojo: 19 contra `main` y la del alto al editar, sin su arreglo), 126 vecinas, 63 de los barridos de las tres
-  fichas y `revision` (16 vistas, en regla). Mirado a 1440, 1280 (nombre en dos líneas), 1100 y con `?datos=tortura`.
-- **Figma:** `figma-pendiente` §35 pasa a DD-170 (grupo ya dibujado; faltan agente y usuario) y §36 se retira.
+- **Entran:** `sc-inputtags` en «Dominios permitidos» de Web Chat (sustituye campo, «Añadir» y chips; guarda minúsculas,
+  sin repetir y uno por etiqueta) y `sc-tabs` en Plantillas, el reproductor de Memory y «Uso» de sc-docs (el Monitor
+  sigue directo: arrastra y renombra). El ✕ de las etiquetas dice «Quitar» (`aria.removeLabel` de PrimeNG).
+- **No entran** (el porqué, en DD-195): Tree/TreeSelect, OrderList, `sc-inputnumber` sobre `p-inputnumber` y una sola
+  manera de editar un nombre. **Corregido:** la versión (22.1.0) y Sidebar, que se queda (es el menú lateral nuevo).
+- **Que no se vuelva a pasar:** `audit:primeng-catalog` (gate 47) y `tools/primeng-doc.mjs` con la versión buena y las
+  páginas de primeng.dev/llms. Figma: ficha 42 de `figma-pendiente` (lo de DD-184 a DD-187 y el InputTags).
 
 ## SIGUIENTE — sin preguntar
 
+-2b. **Componente tabla (otra sesión):** el «evolutivo» de la tabla con los devs (BI y voz). Propuesta de producto:
+   elegir UNA vez qué funciones de la Table de PrimeNG queremos y cerrarlo; hay un Excel con las de BI.
+   Punto de partida: `docs/AUDIT-PRIMENG-CATALOGO.md`. En la reunión: reordenar, ajustar ancho y arrastrar columnas
+   son lo que falta; una card de Jira con los observadores de componentes.
+
+-2. **Lo que queda de la auditoría de PrimeNG** (DD-195, `docs/AUDIT-PRIMENG-CATALOGO.md`, «Siguientes pasos»), revisado
+   el 2026-10-12. Cerrado con evidencia: las dos casillas son intencionales (el Column Toggle calca el ejemplo nativo
+   de PrimeNG con `[value]` + `ngModel` de array, que `sc-checkbox` —tri-estado, `state: TriState`— no modela; no es
+   una inconsistencia, son dos trabajos distintos); `sc-command-palette` se mantiene frente a CommandMenu (agrupa y
+   filtra igual, pero CommandMenu no trae overlay, Cmd+K global, Esc ni `/`, que es la mitad del componente —detalle
+   en el audit—).
+   **Queda abierto, y no es un hueco de estos cuatro componentes**: documentar Menu, Listbox, Toolbar y MeterGroup en
+   sc-docs no tiene dónde ir — el showcase solo tiene página para wrappers `sc-*` (`component-catalog.ts`), y no hay
+   precedente de página para un nativo sin wrapper (tampoco lo tienen Inplace, Tooltip, Sidebar o las pestañas del
+   Monitor, todos ya «bien directos»). Antes de escribir páginas nuevas, decidir la forma: ¿una categoría «Nativos»
+   en el catálogo?, ¿una sola página «PrimeNG directo» con una sección por módulo? Es una decisión de estructura del
+   showcase, no de este frente solo.
+-1. **`fichas-nombre-fijo.spec.ts`, intermitente en el CI (2026-10-06).** Falló cuatro veces en dos PRs (#349 y #350),
+   siempre en el shard 4/8, cada vez en una ficha distinta (agente a 1366, usuario a 1366, grupo a 1280) y con el mismo
+   mensaje, «X sigue a la vista»: en el punto donde debía estar el nombre devuelve el texto de la barra superior. Pasa al
+   relanzar el shard. **Sin medir la causa**; la hipótesis es de tiempo (`bajar` espera dos fotogramas y lee enseguida, y
+   en un runner cargado la cabecera fija aún no se ha asentado). Primer paso: repetir ese shard en bucle en el CI para
+   ver cuándo falla, y esperar a que el scroll se asiente antes de leer.
 0. **Repositorios en tarjetas (DD-179), en su PR.** Queda en Figma (`figma-pendiente`, la ficha de DD-179) y, para
    producto, fuera de lote: el oscuro en slate en vez de zinc (DD-79) y los grises de texto un paso más oscuros en
    claro (DD-106), que el análisis de la maqueta propuso y cambian todo el producto.

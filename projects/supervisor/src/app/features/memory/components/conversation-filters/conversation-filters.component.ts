@@ -169,7 +169,7 @@ export class ConversationFiltersComponent {
       ['directions', f.directions, 'memory.type_filter.directions', 'memory.type_filter.groups.direction'],
     ] as const) {
       const kept = on(group as Record<string, boolean>, prefix);
-      if (kept.length < Object.keys(group).length) out.push(chip(key, nameKey, kept.length ? list(kept) : '—'));
+      if (kept.length < Object.keys(group).length) out.push(chip(key, nameKey, kept.length ? list(kept) : this.translate.instant('memory.conversations.filters.none')));
     }
     // Procesamiento y multigrabación filtran cuando hay ALGUNO marcado.
     const rules = on(f.rules, 'memory.type_filter.rules');

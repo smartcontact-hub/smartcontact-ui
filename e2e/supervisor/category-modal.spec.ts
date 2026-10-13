@@ -41,7 +41,7 @@ test('crear una categoría la añade al listado', async ({ page }) => {
 test('un nombre duplicado bloquea el guardado y lo explica', async ({ page }) => {
   await goto(page, 'conversaciones/categorias');
 
-  const existing = (await page.locator('tbody tr td').first().innerText()).split('·')[0].trim();
+  const existing = (await page.locator('tbody tr .categories-table__name').first().innerText()).trim();
 
   await page.getByRole('button', { name: /nueva categoría/i }).click();
   const modal = page.locator('sc-memory-category-form-modal');

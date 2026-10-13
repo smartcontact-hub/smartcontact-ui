@@ -14,6 +14,31 @@ avisos de acción.
 
 Contexto completo: [`projects/cuscare/README.md`](../../projects/cuscare/README.md).
 
+## 2026-10-07 · La regla del filtro «Tipo de solicitud»: O dentro de cada origen, Y entre orígenes
+
+**Sello:** fundido en `main` desde la rama `arebury/cuscare-filtro-tipo-solicitud`, para que
+desarrollo lo vea en sc-cuscare.pages.dev.
+
+Sale de la reunión de producto y desarrollo del 2026-10-06 y de su pizarra. La regla pasa de
+«parejas» (IA y Agente con el MISMO tipo) a «IA (alguno) Y Agente (alguno)»: IA Devolución con
+Agente Baja ahora sale. Sin origen la lista de tipos está desactivada. Se retira el «Match» de
+las opciones; la marca de coincidencia de la tabla se queda como avance de fase 2. Contrato:
+[`docs/cuscare-request-type-match.md`](../cuscare-request-type-match.md). La semilla repartía
+las discrepancias entre solo dos tipos, así que el caso de la pizarra no existía en los datos;
+ahora recorren todos (IA y Agente con Baja y Devolución: 157 → 172 tickets).
+
+**Figma, al día el 2026-10-07** (fichero «Landing page»): la especificación para desarrollo de la
+página V3 (`2404:35544`) y su copia del Playground (`2395:3473`) llevan la regla nueva, la
+restricción lógica que pidió desarrollo (`ianatureofdemand IN (…) AND natureofdemand IN (…)`),
+la fila «Apagar el último origen» y la lista desactivada sin origen; el «Match» de las opciones
+está oculto, no borrado. El comentario de la V3 (`1736:13285`) dice lo mismo. Los maestros
+(`2395:4125`) ya no usan `Estado=Match`, que se queda en el componente marcado como fuera de uso.
+El botón «Abrir el prototipo» llevaba al pulsarlo la versión por filas (`v3-tipo-solicitud`);
+ahora va a sc-cuscare.pages.dev.
+
+**Abierto a revisión:** sin origen, la lista sale desactivada (lectura literal de
+«obligatoriamente uno de los dos»); la alternativa es abrir el panel con IA encendida.
+
 ## ✅ 2026-10-05 · Summary: las cuatro filas de «Customer info» y «Show more», con lo de este hand-off
 
 Hecho con la descripción de abajo («Lo que se vio al hacerlo y NO se hizo»), **sin verificar contra el

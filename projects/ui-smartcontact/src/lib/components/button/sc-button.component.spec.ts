@@ -53,3 +53,20 @@ describe('sc-button · aria-haspopup, aria-expanded y aria-controls en el botón
     expect(boton.hasAttribute('aria-controls')).toBe(false);
   });
 });
+
+describe('sc-button · iconOnly, la propiedad «Icon Only» del Kit', () => {
+  beforeEach(() => TestBed.configureTestingModule({}));
+
+  it('no pinta el rótulo y lo da como nombre accesible', async () => {
+    const { boton } = await montar({ label: 'Nueva agenda', icon: 'add', iconOnly: true });
+    expect(boton.classList.contains('p-button-icon-only')).toBe(true);
+    expect(boton.querySelector('.p-button-label')?.textContent?.trim() ?? '').toBe('');
+    expect(boton.getAttribute('aria-label')).toBe('Nueva agenda');
+  });
+
+  it('sin iconOnly, el rótulo se pinta y no hace falta nombre aparte', async () => {
+    const { boton } = await montar({ label: 'Nueva agenda', icon: 'add' });
+    expect(boton.classList.contains('p-button-icon-only')).toBe(false);
+    expect(boton.textContent).toContain('Nueva agenda');
+  });
+});

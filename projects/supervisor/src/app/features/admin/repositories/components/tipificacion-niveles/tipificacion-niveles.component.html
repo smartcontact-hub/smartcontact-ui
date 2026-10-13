@@ -1,134 +1,100 @@
-<div class="niveles">
-  @for (h of huecos(); track h.nivel) {
-    @switch (h.tipo) {
-      @case ('nivel') {
-        @let col = $any(h);
-        <section class="nivel" [attr.aria-labelledby]="'tip-nivel-' + col.nivel">
-          <header class="nivel__cabeza">
-            <h3 class="nivel__titulo sc-text-body-semibold" [id]="'tip-nivel-' + col.nivel">{{ titulo(col.nivel) | translate }}</h3>
-            <span class="nivel__cuenta sc-text-caption-regular">{{ col.opciones?.length ?? 0 }}</span>
-            <!-- Solo el último nivel en uso se quita: los de en medio sostienen a los de debajo. -->
-            @if (col.nivel === levels() - 1) {
-              <sc-button
-                class="nivel__quitar"
-                variant="secondary"
-                appearance="text"
-                size="sm"
-                icon="close"
-                [ariaLabel]="'repositories.tipificaciones.remove_level.' + (col.nivel + 1) | translate"
-                [pTooltip]="'repositories.tipificaciones.remove_level.' + (col.nivel + 1) | translate"
-                tooltipPosition="top"
-                (clicked)="pedirQuitarNivel()"
-              />
-            }
-          </header>
-
-          @if (col.opciones) {
-            <!-- El Listbox de primeng.dev tal cual: elegir enseña las hijas a la derecha; arrastrar ordena. Alto fijo. -->
-            <p-listbox
-              class="nivel__lista"
-              [options]="col.opciones"
-              optionLabel="label"
-              optionValue="id"
-              [dragdrop]="true"
-              scrollHeight="var(--sc-spacing-12-5)"
-              [listStyle]="{ 'min-height': 'var(--sc-spacing-12-5)' }"
-              [ariaLabel]="titulo(col.nivel) | translate"
-              [emptyMessage]="'repositories.tipificaciones.level_empty' | translate"
-              [selectionMessage]="'repositories.tipificaciones.level_selected' | translate"
-              [emptySelectionMessage]="'repositories.tipificaciones.level_none_selected' | translate"
-              [ngModel]="col.elegida?.id"
-              (ngModelChange)="elegir(col.nivel, $event)"
-              (onDrop)="soltar(col, $event)"
-            >
-              <ng-template #item let-opcion>
-                <span class="nivel__opcion">
-                  <span class="nivel__texto">{{ opcion.label }}</span>
-                  @if (incompleta(opcion, col.nivel)) {
-                    <sc-icon class="nivel__falta" name="error" size="inherit" aria-hidden="true" />
-                  } @else if (col.nivel < levels() - 1) {
-                    <span class="nivel__hijas sc-text-caption-regular">{{ opcion.children.length }}</span>
-                    <sc-icon class="nivel__flecha" name="chevron_right" size="inherit" aria-hidden="true" />
-                  }
-                </span>
-              </ng-template>
-            </p-listbox>
-
-            <!-- La línea de la columna: añade una opción, o renombra la elegida. Enter guarda; Escape deja de renombrar. -->
-            <div class="nivel__linea">
-              <sc-inputtext
-                class="nivel__campo"
-                fluid
-                [inputId]="'tip-linea-' + col.nivel"
-                [ariaLabel]="(editando()?.nivel === col.nivel ? 'repositories.tipificaciones.rename_field' : 'repositories.tipificaciones.add_field.' + (col.nivel + 1)) | translate"
-                [placeholder]="(col.padre ? 'repositories.tipificaciones.add_under' : 'repositories.tipificaciones.add_first') | translate: { name: col.padre ?? '' }"
-                [value]="borradores()[col.nivel] ?? ''"
-                [invalid]="mensaje(col).error && !!borradores()[col.nivel]?.trim()"
-                (valueChange)="escribir(col.nivel, $event)"
-                (keydown)="teclaEnLinea(col, $event)"
-              />
-              <sc-button
-                variant="primary"
-                appearance="outlined"
-                [icon]="editando()?.nivel === col.nivel ? 'check' : 'add'"
-                [ariaLabel]="(editando()?.nivel === col.nivel ? 'repositories.tipificaciones.rename_confirm' : 'repositories.tipificaciones.add_option') | translate"
-                [disabled]="!puedeGuardarLinea(col)"
-                (clicked)="guardarLinea(col)"
-              />
-            </div>
-
-            <!-- Lo que se hace con la elegida, siempre a la vista: apagado sin elegida, así nada aparece ni se mueve. -->
-            <div class="nivel__acciones" role="group" [attr.aria-label]="accion('repositories.tipificaciones.option_actions.group', col)">
-              <sc-button variant="secondary" appearance="text" size="sm" icon="edit" [disabled]="!col.elegida" [ariaLabel]="accion('repositories.tipificaciones.option_actions.rename', col)" [pTooltip]="accion('repositories.tipificaciones.option_actions.rename', col)" tooltipPosition="top" (clicked)="renombrar(col)" />
-              <sc-button variant="secondary" appearance="text" size="sm" icon="arrow_upward" [disabled]="posicion(col) <= 0" [ariaLabel]="accion('repositories.tipificaciones.option_actions.up', col)" [pTooltip]="accion('repositories.tipificaciones.option_actions.up', col)" tooltipPosition="top" (clicked)="mover(col, -1)" />
-              <sc-button variant="secondary" appearance="text" size="sm" icon="arrow_downward" [disabled]="posicion(col) < 0 || posicion(col) >= (col.opciones?.length ?? 0) - 1" [ariaLabel]="accion('repositories.tipificaciones.option_actions.down', col)" [pTooltip]="accion('repositories.tipificaciones.option_actions.down', col)" tooltipPosition="top" (clicked)="mover(col, 1)" />
-              <sc-button class="nivel__borrar" variant="secondary" appearance="text" size="sm" icon="delete" [disabled]="!col.elegida" [ariaLabel]="accion('repositories.tipificaciones.option_actions.delete', col)" [pTooltip]="accion('repositories.tipificaciones.option_actions.delete', col)" tooltipPosition="top" (clicked)="pedirEliminar(col)" />
-            </div>
-
-            <!-- La línea reservada: un error, qué se renombra, o lo que le falta a la columna. Nunca cambia de alto. -->
-            @let m = mensaje(col);
-            <p class="nivel__mensaje sc-text-caption-regular" [class.nivel__mensaje--error]="m.error" [attr.title]="m.texto || null">{{ m.texto }}</p>
-          } @else {
-            <!-- Sin elegida a la izquierda (su columna está vacía): el mismo alto, con el porqué. -->
-            <div class="nivel__espera sc-text-body-regular">
-              {{ 'repositories.tipificaciones.level_waiting.' + (col.nivel + 1) | translate }}
-            </div>
-          }
-        </section>
-      }
-
-      @case ('anadir') {
-        <!-- El nivel siguiente, como columna fantasma: añadirlo es pulsar donde iría. -->
-        <section class="nivel nivel--fantasma">
-          <header class="nivel__cabeza">
-            <h3 class="nivel__titulo nivel__titulo--fantasma sc-text-body-semibold">{{ titulo(h.nivel) | translate }}</h3>
-          </header>
-          <button type="button" class="nivel__anadir" (click)="anadirNivel()">
-            <sc-icon name="add_circle" size="lg" aria-hidden="true" />
-            <span class="sc-text-body-semibold">{{ 'repositories.tipificaciones.add_level.' + (h.nivel + 1) | translate }}</span>
-            <span class="nivel__anadir-ayuda sc-text-caption-regular">{{ 'repositories.tipificaciones.add_level_hint.' + (h.nivel + 1) | translate }}</span>
-          </button>
-        </section>
-      }
-
-      @case ('vacio') {
-        <div class="nivel nivel--vacio" aria-hidden="true"></div>
-      }
+<!-- La rejilla: una columna por nivel. Cada rama ocupa la fila entera y reparte sus opciones por las columnas con
+     `subgrid`, así cada nivel cae bajo su título. -->
+<div class="arbol" [style.--niveles]="niveles" role="group" [attr.aria-label]="'repositories.tipificaciones.section.categorization' | translate">
+  <div class="arbol__cabeza">
+    @for (nivel of columnas; track nivel) {
+      <div class="arbol__titulo">
+        <h3 class="sc-text-body-semibold" [id]="'tip-nivel-' + nivel">{{ titulo(nivel) | translate }}</h3>
+      </div>
     }
+  </div>
+
+  @if (ramas().length === 0) {
+    <p class="arbol__vacio sc-text-body-regular">{{ 'repositories.tipificaciones.tree_empty' | translate }}</p>
+  }
+
+  @for (opcion of ramas(); track opcion.id) {
+    <div class="arbol__rama">
+      <ng-container *ngTemplateOutlet="rama; context: { $implicit: opcion, padres: [], nivel: 0 }" />
+    </div>
   }
 </div>
 
-<!-- El estado del árbol entero, en su línea reservada: completo, qué falta, o que no pide categoría. -->
-@let e = estado();
-<p
-  class="niveles__estado sc-text-caption-semibold"
-  [class.niveles__estado--ok]="e.tono === 'ok'"
-  [class.niveles__estado--falta]="e.tono === 'falta'"
-  role="status"
->
-  <sc-icon [name]="e.tono === 'ok' ? 'check_circle' : e.tono === 'falta' ? 'error' : 'info'" size="inherit" [weight]="600" aria-hidden="true" />
-  <span class="niveles__estado-texto" [attr.title]="e.texto">{{ e.texto }}</span>
-</p>
+<!-- Una opción con lo que tiene debajo. Se llama a sí misma para cada hija. -->
+<ng-template #rama let-opcion let-padres="padres" let-nivel="nivel">
+  <div class="rama" [class.rama--hoja]="nivel === niveles - 1">
+    <div
+      class="opcion"
+      (dragover)="sobre($event, padres)"
+      (drop)="soltar($event, padres, opcion.id)"
+    >
+      <button
+        type="button"
+        class="opcion__tirador"
+        draggable="true"
+        [id]="'tip-mover-' + opcion.id"
+        [attr.aria-label]="accion('repositories.tipificaciones.option_actions.move', opcion)"
+        [pTooltip]="'repositories.tipificaciones.option_actions.move_hint' | translate"
+        tooltipPosition="top"
+        (dragstart)="empezarArrastre($event, padres, opcion.id)"
+        (dragend)="terminarArrastre()"
+        (keydown)="teclaTirador($event, padres, opcion.id)"
+      >
+        <sc-icon name="drag_indicator" size="md" aria-hidden="true" />
+      </button>
+      <sc-inputtext
+        class="opcion__campo"
+        fluid
+        [inputId]="'tip-op-' + opcion.id"
+        [ariaLabel]="(titulo(nivel) | translate) + ': ' + (opcion.label || ('repositories.tipificaciones.unnamed' | translate))"
+        [placeholder]="'repositories.tipificaciones.option_placeholder' | translate"
+        [value]="opcion.label"
+        [invalid]="invalida(opcion) && !!opcion.label"
+        (valueChange)="renombrar(padres, opcion.id, $event)"
+        (keydown)="tecla($event, padres, opcion)"
+        (focusout)="alSalir(padres, opcion)"
+      />
+      <!-- Añadir un nivel por debajo de ESTA opción: la flecha que baja hacia la columna de al lado, no el «+» de
+           «Añadir categoría». Siempre en su fila; la nueva sale la primera de la columna de al lado, a su altura. En el
+           último nivel no hay más abajo. A la talla del campo, como el resto de la fila (DD-187). -->
+      @if (nivel < niveles - 1) {
+        <sc-button
+          icon="subdirectory_arrow_right"
+          variant="secondary"
+          [ariaLabel]="'repositories.tipificaciones.add_under_aria' | translate: { name: opcion.label || ('repositories.tipificaciones.unnamed' | translate) }"
+          [pTooltip]="'repositories.tipificaciones.add_under_aria' | translate: { name: opcion.label || ('repositories.tipificaciones.unnamed' | translate) }"
+          tooltipPosition="top"
+          (clicked)="anadir([...padres, opcion.id], 'inicio')"
+        />
+      }
+      <sc-button
+        variant="secondary"
+        appearance="text"
+        icon="delete"
+        [ariaLabel]="accion('repositories.tipificaciones.option_actions.delete', opcion)"
+        [pTooltip]="accion('repositories.tipificaciones.option_actions.delete', opcion)"
+        tooltipPosition="top"
+        (clicked)="pedirEliminar(padres, opcion)"
+      />
+    </div>
+
+    @if (nivel < niveles - 1) {
+      <div class="rama__hijas">
+        @for (hija of opcion.children; track hija.id) {
+          <ng-container *ngTemplateOutlet="rama; context: { $implicit: hija, padres: [...padres, opcion.id], nivel: nivel + 1 }" />
+        }
+      </div>
+    }
+  </div>
+</ng-template>
+
+<!-- Lo que falta para guardar, bajo el árbol; completo, nada. -->
+@if (estado(); as e) {
+  <p class="niveles__estado sc-text-caption-semibold" role="status">
+    <sc-icon name="error" size="inherit" [weight]="600" aria-hidden="true" />
+    <span class="niveles__estado-texto" [attr.title]="e">{{ e }}</span>
+  </p>
+}
 
 <p class="visually-hidden" role="status">{{ anuncio() }}</p>
 
@@ -145,24 +111,6 @@
       </sc-button>
       <sc-button type="button" size="sm" variant="danger" (clicked)="confirmarEliminar()">
         <span>{{ 'common.delete' | translate }}</span>
-      </sc-button>
-    </div>
-  </sc-dialog>
-}
-
-@if (quitando(); as q) {
-  <sc-dialog
-    [visible]="true"
-    [title]="'repositories.tipificaciones.remove_level_title.' + (q.nivel + 1) | translate"
-    [subtitle]="(q.quitadas === 1 ? 'repositories.tipificaciones.remove_level_body_one' : 'repositories.tipificaciones.remove_level_body') | translate: { count: q.quitadas }"
-    (cancelled)="quitando.set(null)"
-  >
-    <div modal-actions>
-      <sc-button type="button" size="sm" variant="secondary" appearance="outlined" (clicked)="quitando.set(null)">
-        <span>{{ 'common.cancel' | translate }}</span>
-      </sc-button>
-      <sc-button type="button" size="sm" variant="danger" (clicked)="quitarNivel()">
-        <span>{{ 'repositories.tipificaciones.remove_level_confirm' | translate }}</span>
       </sc-button>
     </div>
   </sc-dialog>

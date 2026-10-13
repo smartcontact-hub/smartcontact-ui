@@ -17,7 +17,6 @@
   }
   @if (formDirty()) {
     <sc-button
-      size="sm"
       variant="secondary"
       appearance="outlined"
       [label]="'common.undo' | translate"
@@ -25,7 +24,6 @@
     />
   }
   <sc-button
-    size="sm"
     variant="primary"
     [disabled]="!canSave()"
     [loading]="saving()"
@@ -48,7 +46,7 @@
            «Nuevo usuario» hasta que se escribe el nombre, y al crear la ficha no salta (DD-130). -->
       <div class="headline">
         <div class="headline__who">
-          <h1 class="headline__name sc-text-h3-semibold" [title]="form().name">
+          <h1 class="headline__name sc-text-title-semibold" [title]="form().name">
             {{ form().name || ((mode() === 'duplicate' ? 'users.form.duplicate_title' : 'users.form.create_title') | translate) }}
           </h1>
           <span class="headline__meta sc-text-caption-regular" [title]="form().email">
@@ -78,10 +76,6 @@
     </div>
 
     <div class="page__main">
-      <!-- El mismo usuario abierto en otra pestaña (DD#169): el candado ya se cogía; ahora se dice. -->
-      @if (conflictWarning()) {
-        <sc-message class="ficha-conflict" severity="warning" icon="warning" [text]="'common.cross_tab_warning' | translate" />
-      }
 
       @switch (activeSection()) {
         @case ('user-section-identity') {
@@ -134,15 +128,15 @@
             [value]="summaryAccess().permisos"
             [of]="summaryAccess().totalPermisos"
           />
-          @for (s of summaryFacts(); track s.etiqueta) {
-            <div class="resumen__kpi">
-              <p class="resumen__label sc-text-caption-regular">
-                <sc-icon [name]="s.icono" size="inherit" aria-hidden="true" />
-                {{ s.etiqueta | translate }}
-              </p>
-              <p class="resumen__value sc-text-body-semibold">{{ s.valor }}</p>
-            </div>
-          }
+          <!-- Los datos sueltos, en una tarjeta con las filas del resumen de grupo (`sc-fact-row`, DD-186): la clave con su
+               baldosa y el valor a la derecha. -->
+          <div class="resumen__kpi resumen__facts">
+            <dl class="resumen__pairs">
+              @for (s of summaryFacts(); track s.etiqueta) {
+                <div scFactRow class="resumen__pair" [icon]="s.icono" [label]="s.etiqueta | translate">{{ s.valor }}</div>
+              }
+            </dl>
+          </div>
         </div>
       </section>
     </div>
@@ -309,7 +303,6 @@
       <p class="access-template sc-text-body-regular">
         <span>{{ 'users.form.template.label' | translate: { type: (typeLabelKeys[form().type] | translate) } }}</span>
         @if (templateDrift() > 0) {
-          <span aria-hidden="true">·</span>
           <span class="access-template__drift">{{ templateChangesKey(templateDrift()) | translate: { count: templateDrift() } }}</span>
           <sc-button type="button" size="sm" variant="contrast" appearance="text" (clicked)="resetToTemplate()">
             <span>{{ 'users.form.template.reset' | translate }}</span>

@@ -1,5 +1,5 @@
 <p-button
-    [label]="label()"
+    [label]="visibleLabel()"
     [disabled]="isInteractionDisabled()"
     [type]="type()"
     [iconPos]="iconPosition()"
@@ -12,6 +12,8 @@
     [text]="text()"
     [link]="link()"
     [rounded]="rounded()"
+    [raised]="raised()"
+    [plain]="plain()"
     [pt]="buttonPt()"
     (onClick)="onClick($event)">
     @if (customIcon(); as customIconTpl) {

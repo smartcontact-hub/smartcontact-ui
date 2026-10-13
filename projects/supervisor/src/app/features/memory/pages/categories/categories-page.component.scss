@@ -60,7 +60,7 @@
 }
 
 .categories-table__group {
-  margin-left: var(--sc-spacing-0-25);
+  margin-left: var(--sc-spacing-0-5);
   color: var(--sc-text-secondary);
 }
 
@@ -82,10 +82,6 @@
   font-variant-numeric: tabular-nums;
   font-size: var(--sc-font-size-200);
   color: var(--sc-text-primary);
-
-  &--empty {
-    color: var(--sc-text-secondary);
-  }
 }
 
 /* La fila inactiva se atenúa entera. El `<tr>` lo pinta `p-table`, así que

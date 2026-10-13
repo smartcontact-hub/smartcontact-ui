@@ -15,7 +15,7 @@
          arriba dice DÓNDE estás y esta línea dice QUÉ miras (modelo Snow UI,
          medido en `/orders`). Es el MISMO `<h1>` que S59 dejó oculto —no hay un
          encabezado nuevo—, así que sigue habiendo exactamente uno por documento. -->
-    <h1 class="page__heading sc-text-h3-semibold">{{ 'sidebar.repositories' | translate }}</h1>
+    <h1 class="page__heading sc-text-title-semibold">{{ 'sidebar.repositories' | translate }}</h1>
 
     <!-- El buscador (DD-165) y el filtro por categoría, en una línea (DD-179). -->
     <div class="hub__toolbar">
@@ -68,7 +68,7 @@
         [attr.data-tono]="section.tono"
         [attr.data-columnas]="columnas(section.cards.length)"
         [attr.aria-labelledby]="'repo-cat-' + section.id"
-        [style.view-transition-name]="'repo-cat-' + section.id"
+        [style.view-transition-name]="filtrando() ? 'repo-cat-' + section.id : null"
       >
         <!-- El título en el tono de su categoría (DD-179). -->
         <h2 class="cat__title sc-text-caption-semibold" [id]="'repo-cat-' + section.id">{{ section.titulo }}</h2>

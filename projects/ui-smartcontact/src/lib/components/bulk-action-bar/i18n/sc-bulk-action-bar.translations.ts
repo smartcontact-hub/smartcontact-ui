@@ -1,6 +1,6 @@
 /**
  * Copy fijo del componente, colocado (convención del DS). Aquí viven el rótulo
- * accesible de la región, el del botón de limpiar y los SUFIJOS por defecto
+ * accesible de la región, el de los botones de limpiar y de cerrar el resultado, el «Deshacer», y los SUFIJOS por defecto
  * («seleccionado/s») del resumen — desacoplados de las claves `common.bulk.*`
  * de la app de origen. Las etiquetas de la entidad (singular/plural) las
  * suministra el consumidor (normalmente vía `useBulkEntityI18n`).
@@ -13,6 +13,8 @@ export const SC_BULK_ACTION_BAR_TRANSLATIONS: Record<string, TranslationObject> 
       bulkActionBar: {
         region: 'Bulk actions',
         clearSelection: 'Clear selection',
+        closeResult: 'Close',
+        undo: 'Undo',
         selectedOne: 'selected',
         selectedOther: 'selected',
         of: 'of',
@@ -24,6 +26,8 @@ export const SC_BULK_ACTION_BAR_TRANSLATIONS: Record<string, TranslationObject> 
       bulkActionBar: {
         region: 'Acciones en bloque',
         clearSelection: 'Limpiar selección',
+        closeResult: 'Cerrar',
+        undo: 'Deshacer',
         selectedOne: 'seleccionado',
         selectedOther: 'seleccionados',
         of: 'de',

@@ -19,8 +19,9 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  * Lo que fija:
  *   1. Cada «+» abre su diálogo, que se llama como su botón; dentro, el formulario no abre otro, va a sangre (sin
  *      borde ni sombra) y a todo el ancho, y el título sale una vez.
- *   2. La tipificación ya no tiene «+» (DD-173): es un árbol de hasta tres niveles con su ficha, y no cabe en un
- *      diálogo. Se crea en Repositorios, y su alta lleva su título con género: «Nueva tipificación», no «Nuevo/a».
+ *   2. La tipificación no tiene «+» (DD-173): es un árbol con su ficha, y no cabe en un diálogo. Desde DD-187 se elige
+ *      en General › Postconversación. Se crea en Repositorios, y su alta lleva su título con género: «Nueva
+ *      tipificación», no «Nuevo/a». Y cada «+» rima con su desplegable: mediano, relleno y de su mismo alto.
  *   3. (Fundido en el 2.)
  *   4. Recursos ya no enseña Etiquetas (DD-142), y el grupo conserva las suyas al guardar: el campo se queda hecho y
  *      apagado, por si vuelve.
@@ -57,7 +58,7 @@ test('grupo 11 · cada «+» de Recursos abre su diálogo con el nombre de su bo
   await goto(page, 'admin/grupos/editar/11?seccion=recursos');
   const botones = masDeRecursos(page);
   const n = await botones.count();
-  // Agenda y plantillas de chat y de email (la etiqueta salió con DD-142 y la tipificación con DD-173): si faltan, la
+  // Agenda y plantillas de chat y de email (la etiqueta salió con DD-142; la tipificación, a General con DD-187): si faltan, la
   // prueba no recorre lo que dice.
   expect(n, 'los «+» de Recursos').toBeGreaterThanOrEqual(3);
 
@@ -85,38 +86,36 @@ test('grupo 11 · cada «+» de Recursos abre su diálogo con el nombre de su bo
   }
 });
 
-test('grupo 11 · cada «+» de Recursos es el solo icono de primeng.dev, redondo y con borde, junto a su desplegable', async ({ page }) => {
-  // Medido el 2026-10-05 a 1440: los cuatro eran de texto y `sm` (28 × 27, sin borde ni fondo) y flotaban sobre el
-  // rótulo, a 1,5 px del control y con su centro 31 px por encima del de él. Con forma visible se habrían pegado al
-  // control: van a su derecha, con el hueco de la casa, y redondos miden lo mismo de alto que de ancho.
+test('grupo 11 · cada «+» de Recursos es el solo icono del Kit, secundario y relleno, a la talla de su desplegable', async ({ page }) => {
+  // DD-187, que enmienda DD-167: el «+» rima con su campo. Junto a un desplegable mediano, el botón mediano de solo
+  // icono, tan alto como él, a su derecha con el hueco de la casa (7).
   await goto(page, 'admin/grupos/editar/11?seccion=recursos');
   const botones = masDeRecursos(page);
   await expect(botones).toHaveCount(3);
-  const lado = parseFloat(kitPx('button.root.iconOnlyWidth'));
+  const ancho = parseFloat(kitPx('button.root.iconOnlyWidth'));
 
   for (const boton of await botones.all()) {
     const nombre = (await boton.getAttribute('aria-label'))!;
-    const faltan = await boton.evaluate((el) =>
-      ['p-button-icon-only', 'p-button-rounded', 'p-button-outlined', 'p-button-secondary'].filter((c) => !el.classList.contains(c)),
-    );
-    expect(faltan, `${nombre}: el solo icono redondo, con borde y en gris`).toEqual([]);
+    const clases = await boton.evaluate((el) => [...el.classList]);
+    expect(['p-button-icon-only', 'p-button-secondary'].filter((c) => !clases.includes(c)), `${nombre}: solo icono y en gris`).toEqual([]);
+    expect(['p-button-rounded', 'p-button-outlined', 'p-button-sm'].filter((c) => clases.includes(c)), `${nombre}: relleno y mediano`).toEqual([]);
 
     const g = await boton.evaluate((el) => {
       const b = el.getBoundingClientRect();
       const c = el.closest('.field')!.querySelector('.p-select, .p-multiselect')!.getBoundingClientRect();
-      return { ancho: b.width, alto: b.height, hueco: b.left - c.right, centros: b.top + b.height / 2 - (c.top + c.height / 2) };
+      return { ancho: b.width, alto: b.height, altoCampo: c.height, hueco: b.left - c.right, centros: b.top + b.height / 2 - (c.top + c.height / 2) };
     });
-    expect(g.ancho, `${nombre}: el ancho del solo icono del Kit`).toBeCloseTo(lado, 1);
-    expect(g.alto, `${nombre}: redondo, tan alto como ancho`).toBeCloseTo(lado, 1);
+    expect(g.ancho, `${nombre}: el ancho del solo icono del Kit`).toBeCloseTo(ancho, 1);
+    expect(g.alto, `${nombre}: tan alto como su desplegable`).toBeCloseTo(g.altoCampo, 1);
     expect(g.hueco, `${nombre}: a la derecha del desplegable, con 7 de hueco`).toBeCloseTo(7, 0);
     expect(Math.abs(g.centros), `${nombre}: a la altura del desplegable`).toBeLessThanOrEqual(1);
   }
 });
 
-test('grupo 11 · la tipificación no tiene «+»: se crea en su ficha, con su título con género', async ({ page }) => {
-  await goto(page, 'admin/grupos/editar/11?seccion=recursos');
-  await expect(page.locator('sc-multiselect:has(#group-typification)')).toBeVisible();
-  await expect(page.locator('#group-section-resources').getByRole('button', { name: 'Nueva tipificación', exact: true })).toHaveCount(0);
+test('grupo 11 · la tipificación se elige en General y no tiene «+»: se crea en su ficha, con su título con género', async ({ page }) => {
+  await goto(page, 'admin/grupos/editar/11?seccion=general');
+  await expect(page.locator('sc-select:has(#group-typification)')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Nueva tipificación', exact: true })).toHaveCount(0);
 
   await goto(page, 'admin/tipificaciones');
   await page.locator('sc-top-bar').getByRole('button', { name: 'Nueva tipificación', exact: true }).click();
@@ -128,16 +127,17 @@ test('grupo 11 · la tipificación no tiene «+»: se crea en su ficha, con su t
 test('grupo 11 · Recursos no enseña Etiquetas, y el grupo conserva las suyas al guardar', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/11?seccion=recursos');
   const recursos = page.locator('#group-section-resources');
-  // Las tipificaciones a la vista: así el cero de abajo no es de una sección sin pintar.
-  await expect(recursos.locator('sc-multiselect:has(#group-typification)')).toBeVisible();
+  // Las agendas a la vista: así el cero de abajo no es de una sección sin pintar.
+  await expect(recursos.locator('sc-multiselect:has(#group-agendas)')).toBeVisible();
   await expect(recursos.locator('#group-labels')).toHaveCount(0);
   await expect(recursos.getByText('Etiquetas', { exact: true })).toHaveCount(0);
-  // El resumen cuenta lo que se ve: dos tipificaciones (DD-173), tres agendas y seis plantillas, sin las dos etiquetas.
-  await expect(page.locator('.ficha-summary')).toContainText(/Recursos\s*11(?!\d)/);
+  // El resumen cuenta lo que se ve: tres agendas y seis plantillas, sin las dos etiquetas. La tipificación ya no es de
+  // Recursos: la elige la Postconversación de General (DD-187).
+  await expect(page.locator('.ficha-summary')).toContainText(/Recursos\s*9(?!\d)/);
 
-  // Guardar no las tira: el grupo 11 sigue con las suyas, por si Etiquetas vuelve. El cambio: quitarle una tipificación.
-  await recursos.locator('sc-multiselect:has(#group-typification) .p-multiselect').click();
-  await page.locator('.p-multiselect-overlay .p-multiselect-option').filter({ hasText: 'Encuesta de calidad' }).click();
+  // Guardar no las tira: el grupo 11 sigue con las suyas, por si Etiquetas vuelve. El cambio: quitarle una agenda.
+  await recursos.locator('sc-multiselect:has(#group-agendas) .p-multiselect').click();
+  await page.locator('.p-multiselect-overlay .p-multiselect-option').filter({ hasText: 'Ventas Nacional' }).click();
   await page.keyboard.press('Escape');
   await page.getByRole('button', { name: 'Guardar', exact: true }).click();
   await expect(page.getByText('Grupo "Online Support" actualizado')).toBeVisible();

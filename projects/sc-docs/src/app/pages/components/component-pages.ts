@@ -161,6 +161,31 @@ export const SC_DEMO_COMPONENT_PAGES = [
     load: () => import('./selectbutton/selectbutton-demo.component').then((m) => m.SelectButtonDemoComponent),
   },
   {
+    path: 'fileupload',
+    label: 'FileUpload',
+    load: () => import('./fileupload/fileupload-demo.component').then((m) => m.FileUploadDemoComponent),
+  },
+  {
+    path: 'inputtags',
+    label: 'InputTags',
+    load: () => import('./inputtags/inputtags-demo.component').then((m) => m.InputTagsDemoComponent),
+  },
+  {
+    path: 'tabs',
+    label: 'Tabs',
+    load: () => import('./tabs/tabs-demo.component').then((m) => m.TabsDemoComponent),
+  },
+  {
+    path: 'icontile',
+    label: 'IconTile',
+    load: () => import('./icontile/icontile-demo.component').then((m) => m.IconTileDemoComponent),
+  },
+  {
+    path: 'factrow',
+    label: 'FactRow',
+    load: () => import('./factrow/factrow-demo.component').then((m) => m.FactRowDemoComponent),
+  },
+  {
     path: 'toggleswitch',
     label: 'ToggleSwitch',
     load: () => import('./toggleswitch/toggleswitch-demo.component').then((m) => m.ToggleSwitchDemoComponent),

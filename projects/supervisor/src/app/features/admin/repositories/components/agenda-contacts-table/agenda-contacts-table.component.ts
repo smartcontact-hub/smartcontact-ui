@@ -93,7 +93,7 @@ export class AgendaContactsTableComponent {
   protected readonly columns = computed<readonly ScColumnDef<AgendaContact>[]>(() => {
     this.lang();
     return [
-      { field: 'name', header: this.translate.instant('repositories.columns.name'), cellTemplate: this.nameTpl() },
+      { field: 'name', header: this.translate.instant('repositories.columns.name'), rowHeader: true, cellTemplate: this.nameTpl() },
       { field: 'phone', header: this.translate.instant('repositories.agendas.phone') },
       {
         field: ACCIONES,

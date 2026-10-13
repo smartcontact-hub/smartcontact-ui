@@ -25,7 +25,7 @@
   max-width: var(--measure);
   font-size: var(--sc-font-size-800);
   line-height: var(--sc-line-height-800);
-  font-weight: var(--sc-font-weight-bold);
+  font-weight: var(--sc-font-weight-semibold);
   letter-spacing: -0.01em;
 }
 
@@ -99,7 +99,7 @@
   max-width: var(--measure);
   font-size: var(--sc-font-size-h2);
   line-height: var(--sc-line-height-h2);
-  font-weight: var(--sc-font-weight-bold);
+  font-weight: var(--sc-font-weight-semibold);
   letter-spacing: -0.01em;
 }
 
@@ -116,7 +116,7 @@
   flex: none;
   font-variant-numeric: tabular-nums;
   font-size: var(--sc-font-size-300);
-  font-weight: var(--sc-font-weight-bold);
+  font-weight: var(--sc-font-weight-semibold);
   color: var(--sc-text-subtle);
 }
 
@@ -212,7 +212,7 @@ li code {
 .ref > summary::before {
   content: '›';
   font-family: var(--sc-font-family-mono);
-  font-weight: var(--sc-font-weight-bold);
+  font-weight: var(--sc-font-weight-semibold);
   color: var(--sc-text-accent);
   transition: transform var(--sc-transition-fast);
 }
@@ -411,7 +411,7 @@ li code {
   grid-row: 1 / span 2;
   font-variant-numeric: tabular-nums;
   font-size: var(--sc-font-size-300);
-  font-weight: var(--sc-font-weight-bold);
+  font-weight: var(--sc-font-weight-semibold);
   color: var(--sc-text-subtle);
 }
 

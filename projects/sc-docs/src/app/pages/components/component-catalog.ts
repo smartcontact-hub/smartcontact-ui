@@ -42,6 +42,8 @@ const CATEGORY: Record<string, ComponentCategory> = {
   search: 'Inputs',
   select: 'Inputs',
   selectbutton: 'Inputs',
+  fileupload: 'Inputs',
+  inputtags: 'Inputs',
   textarea: 'Inputs',
   toggleswitch: 'Inputs',
   // Datos
@@ -53,6 +55,8 @@ const CATEGORY: Record<string, ComponentCategory> = {
   gauge: 'Datos',
   inlinerenamecell: 'Datos',
   tag: 'Datos',
+  icontile: 'Datos',
+  factrow: 'Datos',
   // Overlays
   commandpalette: 'Overlays',
   confirmdialog: 'Overlays',
@@ -79,6 +83,7 @@ const CATEGORY: Record<string, ComponentCategory> = {
   slot: 'Layout',
   stickyformheader: 'Layout',
   subsection: 'Layout',
+  tabs: 'Layout',
   // Patrones
   bulkactionbar: 'Patrones',
   bulkeditmenu: 'Patrones',

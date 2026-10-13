@@ -22,6 +22,18 @@ const VIEWS_SNIPPET = `<span id="vistas-label">Vistas</span>
   ariaLabelledBy="vistas-label"
 />`;
 
+const HELP_SNIPPET = `<!-- La ayuda va debajo de las opciones, como en todo campo (DD-198); se anuncia con el grupo. -->
+<span id="fuente-label">Identificador del grupo</span>
+<sc-selectbutton
+  [options]="fuentes"
+  optionValue="value"
+  [allowEmpty]="false"
+  [value]="fuente()"
+  (valueChange)="fuente.set($event)"
+  ariaLabelledBy="fuente-label"
+  helperText="Lo que oye el cliente al entrar en la cola."
+/>`;
+
 /* El icono de cada opción es `sc-icon` (paquete `@smartcontact-hub/icons`) dentro de `#item`. */
 const ICONS_SNIPPET = `<sc-selectbutton
   [options]="temas"
@@ -55,6 +67,13 @@ export class SelectButtonDemoComponent {
   protected readonly viewsTpl = viewChild<TemplateRef<StoryContext>>('views');
   protected readonly iconsTpl = viewChild<TemplateRef<StoryContext>>('icons');
   protected readonly sizesTpl = viewChild<TemplateRef<StoryContext>>('sizes');
+  protected readonly helpTpl = viewChild<TemplateRef<StoryContext>>('help');
+  protected readonly fuentes = [
+    { label: 'Nada', value: 'none' },
+    { label: 'Texto a voz', value: 'tts' },
+    { label: 'Archivo', value: 'file' },
+  ];
+  protected readonly fuente = signal<unknown>('tts');
 
   protected readonly vistas = [
     { label: 'Todas', value: 'all' },
@@ -104,12 +123,14 @@ export class SelectButtonDemoComponent {
     const vw = this.viewsTpl();
     const ic = this.iconsTpl();
     const sz = this.sizesTpl();
-    if (!pg || !vw || !ic || !sz) return [];
+    const hp = this.helpTpl();
+    if (!pg || !vw || !ic || !sz || !hp) return [];
     return [
       { name: 'Playground', playground: true, template: pg },
       { name: 'Vistas de una lista', template: vw, snippet: VIEWS_SNIPPET },
       { name: 'Con icono', template: ic, snippet: ICONS_SNIPPET },
       { name: 'Tallas y estados', template: sz, snippet: SIZES_SNIPPET },
+      { name: 'Con ayuda', template: hp, snippet: HELP_SNIPPET },
     ];
   });
 }

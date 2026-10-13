@@ -16,7 +16,9 @@ import { SC_ICON_SIZE_DEFAULT, ScIconComponent } from '@smartcontact-hub/icons';
  * S62) quita la caja (fondo/borde/radio/padding lateral) para sangrar el
  * contenido. `anchorId` expone `[id]`/`[data-section-anchor]` + `scroll-margin-top`:
  * el id de la sección, y el aire para un enlace con `#` (el índice de secciones ya no
- * salta a anclas: cada sección es su propia dirección, DD-122).
+ * salta a anclas: cada sección es su propia dirección, DD-122). La acción de la sección
+ * va en la esquina derecha de su cabecera con `<sc-button scSectionActions …>` (DD-187).
+ * Solo con la cabecera fija: la plegable es un botón.
  */
 @Component({
   selector: 'sc-section-card',
@@ -62,11 +64,9 @@ export class ScSectionCardComponent {
    * página que quisiera el patrón tenía que copiarlo a mano —que es lo que pasaba en
    * `config/aed/*`— y a partir de ahí las dos copias derivan.
    *
-   * **Solo cambia la SEMÁNTICA, no el tamaño** (2026-09-09). Los dos niveles miden 14/20
-   * semibold, que es lo que hace la maqueta: en el archivo Supervisor no hay un solo texto por
-   * encima de 14, y «Agentes» y «Configuración» comparten estilo — los separa el icono, que solo
-   * lleva la cabecera. Hasta hoy el `1` subía a `h3` (18/24), un tamaño que salía de la ESCALA y
-   * no de ningún nodo que dibuje la pantalla, y que además dejaba corto al icono de 14.
+   * **Cambia la semántica y el tamaño** (2026-10-09, DD-188): con `1` el título es `Title` (20/28),
+   * el de la página; con `2`, `Subtitle` (16/24), el de una sección. Hasta entonces los dos medían
+   * `h3` (18/24) y la página no se distinguía de sus secciones.
    *
    * Un documento tiene UN solo `<h1>`, así que `1` es para una card por página. Lo vigila
    * `e2e/supervisor/page-identity.spec.ts`.
@@ -91,9 +91,9 @@ export class ScSectionCardComponent {
   protected readonly chevronDownIcon = 'expand_more';
   protected readonly chevronRightIcon = 'chevron_right';
   /**
-   * 14, no 16. Los DOS nodos de Figma que definen esta caja llevan el icono de la cabecera a
-   * 14×14: el maestro `Section` del DS (691:23976) y el `Block` de la maqueta (393:12589).
-   * `SC_ICON_SIZE_DEFAULT` es justo ese 14, el tamaño por defecto del Kit.
+   * El chevron de la variante plegable: 14, el tamaño por defecto del Kit (`SC_ICON_SIZE_DEFAULT`).
+   * No acompaña a un texto, así que no sigue al título. El icono que SÍ lo acompaña toma su tamaño,
+   * su peso y el eje óptico a su tamaño desde el SCSS (`--section-card-icon-size`, DD-189).
    */
   protected readonly headIconSize = SC_ICON_SIZE_DEFAULT;
 

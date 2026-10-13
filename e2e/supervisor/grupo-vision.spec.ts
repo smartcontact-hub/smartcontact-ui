@@ -81,7 +81,7 @@ test('Distribución y colas: un desbordamiento común y un bloque por canal acti
   await irA(page, 'Distribución y colas');
   const seccion = page.locator('#group-section-distribution');
 
-  await expect(seccion.getByText('Desbordar si todos los agentes están inactivos')).toHaveCount(1);
+  await expect(seccion.getByText('Desbordar conversaciones si no hay agentes conectados')).toHaveCount(1);
   for (const id of ['phone', 'chat', 'email']) {
     await expect(seccion.locator(`#group-channel-${id}`), id).toBeVisible();
   }
@@ -127,13 +127,13 @@ test('Chat: «Caducar sesión» a la vista; Web Chat con dominios y script; What
   await expect(chat.getByText('Caducar sesión', { exact: true })).toBeVisible();
   await expect(chat.getByText('Dominios permitidos')).toBeVisible();
   await expect(chat.getByRole('button', { name: 'Copiar código' })).toBeVisible();
-  await expect(chat.getByText('Número de WhatsApp')).toBeVisible();
+  await expect(chat.getByText('Número WhatsApp')).toBeVisible();
 
   // Sin WhatsApp, su número y sus mensajes desaparecen; Web Chat sigue.
   await irA(page, 'General');
   await canal(page, 'WhatsApp').click();
   await irA(page, 'Distribución y colas');
-  await expect(page.locator('#group-channel-chat').getByText('Número de WhatsApp')).toHaveCount(0);
+  await expect(page.locator('#group-channel-chat').getByText('Número WhatsApp')).toHaveCount(0);
   await expect(page.locator('#group-channel-chat').getByText('Dominios permitidos')).toBeVisible();
 });
 
@@ -148,7 +148,7 @@ const grupoDeAntes = {
   priority: 'Baja',
   channels: ['phone', 'chat'],
   strategy: 'Balanceada',
-  chatStrategy: 'Rotativa (por turnos)',
+  chatStrategy: 'Rotativa (por turnos)', // ya no existe: se lee con «Menos conversaciones atendidas»
   advanced: { queueSizeType: 'per_agent', queueSize: 7, maxQueueWaitSec: 99, serviceLevelSec: 33, transferSec: 11, wrapUpSec: 4 },
 };
 

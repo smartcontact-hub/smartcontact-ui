@@ -12,6 +12,8 @@
     [fluid]="args.fluid"
     [disabled]="args.disabled"
     [readonly]="args.readonly"
+    [helperText]="args.helperText || undefined"
+    [copyable]="args.copyable"
   />
 </ng-template>
 
@@ -24,5 +26,11 @@
     <sc-textarea placeholder="Inválido" [invalid]="true" />
     <sc-textarea placeholder="Deshabilitado" [disabled]="true" />
     <sc-textarea placeholder="Fluid" [fluid]="true" />
+  </div>
+</ng-template>
+
+<ng-template #copy>
+  <div class="col">
+    <sc-textarea [rows]="2" fluid readonly [copyable]="true" copyLabel="Copiar código" copiedLabel="Código copiado" helperText="Pega este código en la cabecera de la web." [value]="script" data-testid="sc-textarea-copiar" />
   </div>
 </ng-template>

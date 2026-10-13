@@ -14,7 +14,6 @@ import { DividerModule } from 'primeng/divider';
 import { Listbox, ListboxModule } from 'primeng/listbox';
 import { PopoverModule } from 'primeng/popover';
 import { ToggleButtonModule } from 'primeng/togglebutton';
-import { ScTagComponent } from '@smartcontact-hub/components';
 
 import { I18n, TrPipe } from '../../core/i18n/i18n';
 import { RequestOrigin } from '../../data/seed';
@@ -33,7 +32,8 @@ const plain = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerC
  * Filtro de la columna «Request type» (V3, SCC 2081), como el panel de Figma 1736:13257:
  * arriba el origen de la clasificación (ninguno de inicio, IA, Agente o los dos: dos p-togglebutton
  * separados) y debajo una lista de tipos con casillas, buscador y marcar-todo (p-listbox
- * nativo). La lógica vive en `request-type.ts`.
+ * nativo). La lista espera a que haya un origen encendido: sin origen no se filtra. La lógica
+ * vive en `request-type.ts`.
  *
  * Ley de similitud: cada origen lleva el color de su etiqueta en la tabla (IA gris, Agente
  * azul) en su botón. Es CSS de esta réplica sobre los componentes
@@ -45,7 +45,7 @@ const plain = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerC
 @Component({
   selector: 'app-request-type-filter',
   standalone: true,
-  imports: [FormsModule, DividerModule, ListboxModule, PopoverModule, ScTagComponent, ToggleButtonModule, TrPipe],
+  imports: [FormsModule, DividerModule, ListboxModule, PopoverModule, ToggleButtonModule, TrPipe],
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -121,22 +121,10 @@ const plain = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerC
           [ariaLabel]="'Request type' | tr"
           [emptyFilterMessage]="'No types match' | tr"
           scrollHeight="14rem"
+          [disabled]="!state().origins.length"
           [ngModel]="state().types"
           (ngModelChange)="onTypes($event)"
-        >
-          <ng-template #item let-option>
-            <span class="rtf-option">
-              <span class="rtf-option__label">{{ option.label }}</span>
-              <sc-tag
-                class="rtf-option__match"
-                [class.is-inactive]="!both() || !state().types.includes(option.value)"
-                [attr.aria-hidden]="!both() || !state().types.includes(option.value)"
-                value="Match"
-                severity="secondary"
-              />
-            </span>
-          </ng-template>
-        </p-listbox>
+        />
       </div>
     </p-popover>
   `,
@@ -320,25 +308,6 @@ const plain = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerC
       font-size: var(--sc-font-size-100);
     }
 
-    .rtf-option {
-      display: flex;
-      flex: 1;
-      min-width: 0;
-      align-items: center;
-      justify-content: space-between;
-      gap: var(--sc-spacing-0-5);
-    }
-    .rtf-option__label {
-      min-width: 0;
-    }
-    .rtf-option__match {
-      flex: none;
-    }
-    /* Reservar la etiqueta evita que los tipos cambien de línea al alternar los orígenes. */
-    .rtf-option__match.is-inactive {
-      visibility: hidden;
-    }
-
     /* Después de las transiciones base: la consulta debe ganar en la cascada. */
     @media (prefers-reduced-motion: reduce) {
       .rtf-origin__check, .rtf-trigger__chevron { transition: none; }
@@ -363,7 +332,6 @@ export class RequestTypeFilterComponent {
   };
 
   protected readonly active = computed(() => isRequestTypeActive(this.state()));
-  protected readonly both = computed(() => this.state().origins.length === ORIGINS.length);
 
   /**
    * Opciones en el idioma elegido, en `computed`: los componentes reciben la MISMA referencia
@@ -391,24 +359,30 @@ export class RequestTypeFilterComponent {
   protected readonly filterDescription = computed(() => {
     if (!this.active()) return this.i18n.t('No filter applied');
     const { origins, types } = this.state();
-    const originText = origins.length
-      ? `${this.i18n.t('Classified by')} ${origins.map((o) => this.i18n.t(ORIGIN_LABEL[o])).join(` ${this.i18n.t('AND')} `)}`
-      : this.i18n.t('Any classification origin');
+    const originText = `${this.i18n.t('Classified by')} ${origins.map((o) => this.i18n.t(ORIGIN_LABEL[o])).join(` ${this.i18n.t('AND')} `)}`;
     return `${this.typesSummary()}. ${originText}. ${types.map((t) => this.i18n.t(t)).join(', ')}`;
   });
 
-  /** Un origen sin tipos es preparación del panel, no un filtro persistente. */
+  /**
+   * Un origen sin tipos es preparación del panel, no un filtro persistente. Tampoco lo son unos
+   * tipos sin origen (se apagó el último): al cerrar, los dos vuelven al inicio.
+   */
   protected onClose(): void {
     this.open.set(false);
     this.listbox()?.resetFilter();
-    if (!this.active() && this.state().origins.length) this.clear();
+    const { origins, types } = this.state();
+    if (!this.active() && (origins.length || types.length)) this.clear();
   }
 
   protected isOn(o: RequestOrigin): boolean {
     return this.state().origins.includes(o);
   }
 
-  /** Enciende o apaga un origen. Ninguno encendido = cualquiera de los dos. */
+  /**
+   * Enciende o apaga un origen. Apagar el último conserva los tipos marcados, que dejan de
+   * filtrar hasta que vuelva a haber un origen: pasar de IA a Agente apagando primero IA no
+   * pierde la selección.
+   */
   protected toggleOrigin(o: RequestOrigin, on: boolean): void {
     const current = this.state().origins;
     // En el orden de ORIGINS, sea cual sea el orden en que se encendieron.

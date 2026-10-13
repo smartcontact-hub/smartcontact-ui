@@ -165,7 +165,7 @@ for (const { ruta, nombre, altoFila } of PAGINAS) {
         '.p-datatable-thead th:not(.sc-datatable__check)'
       )!;
       const tr = host.querySelector('.p-datatable-tbody > tr')!;
-      const td = tr.querySelector('td:not(.sc-datatable__check)')!;
+      const td = tr.querySelector(':scope > :not(.sc-datatable__check)')!;
       // NO todas las tablas `list` tienen selección: el trío de memory nunca la
       // tuvo. La casilla se mide SOLO si existe; exigirla convertía una
       // diferencia legítima en un fallo (y así petó la primera vez).
@@ -243,12 +243,18 @@ const PAGINAS_EN_FORMULARIO = [
    * ser tablas dentro de la ficha y son un `sc-multiselect` cada una (Recursos). */
   {
     ruta: 'admin/agentes/editar/1',
-    seccion: 'Grupos asignados',
+    /* «Grupos asignados» hasta DD-187, que deja la ficha de agente en las cuatro secciones de la de grupo. */
+    seccion: 'Grupos',
     nombre: 'grupos del agente',
     // 69 hasta Aura (2026-09-13); 50 → 46 el 2026-09-14, el chip de canal pasa a casilla; 46 → 44 el
-    // 2026-09-23, los grupos pierden el avatar de 24 y la fila la marca el interruptor. Su gemelo de
-    // abajo sigue en 46 porque sus filas son personas, que sí llevan cara.
-    altoFila: 44,
+    // 2026-09-23, los grupos pierden el avatar de 24 y la fila la marca el interruptor. 44 → 31 con DD-187:
+    // la tabla es la del grupo con las filas al revés (filtro Todos / Asignados / Sin asignar, buscador, una
+    // columna por canal, Salientes y Habilitado; ya no se rellena con un desplegable de añadir), y con ella
+    // la densidad compacta (`sm`) de su gemela de abajo: 2px de relleno en celda y cabecera. Mide menos que
+    // ella porque el nombre de un grupo va en una línea y el de un agente lleva su email debajo.
+    altoFila: 31,
+    paddingCelda: '2px',
+    paddingCabecera: '2px',
   },
   {
     ruta: 'admin/grupos/editar/1',
@@ -307,7 +313,7 @@ for (const caso of PAGINAS_EN_FORMULARIO) {
         '.p-datatable-thead th:not(.sc-datatable__check)'
       )!;
       const tr = host.querySelector('.p-datatable-tbody > tr')!;
-      const td = tr.querySelector('td:not(.sc-datatable__check)')!;
+      const td = tr.querySelector(':scope > :not(.sc-datatable__check)')!;
       return {
         altoFila: Math.round(tr.getBoundingClientRect().height),
         paddingCelda: cs(td, 'padding-top'),

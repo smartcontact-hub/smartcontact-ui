@@ -44,6 +44,7 @@ export const FRAGMENTOS = {
   8: [/sc-text-/, /token/i], //  la clase que se usa, y que un componente se cambia por su token
   9: [/7 · 14 · 28/, /doble/i], //  la escalera, y que entre grupos va al menos el doble que dentro
   10: [/pie de la pantalla/i, /desde donde empieza/i], // el tope se mide, no es una constante (DD-160)
+  11: [/ocasi[oó]n/i, /contenido/i], // cuándo acusa lo que falta, y que el error de contenido no espera (DD-199)
 };
 
 /** Recorta §«UX de pantalla» de AGENTS.md, hasta el siguiente encabezado de nivel 2. */

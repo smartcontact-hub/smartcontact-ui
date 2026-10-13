@@ -6,8 +6,9 @@
  * estilo, para poder escribir `class="sc-text-h2-semibold"` en vez de recordar
  * cuatro tokens sueltos.
  *
- * REGISTRA LOS 12 TEXT STYLES DEL FIGMA del DS "Smart-Contact Design System"
- * (leídos en vivo, 2026-09-07): 6 roles × 2 pesos. Cada clase BEBE de los
+ * REGISTRA LOS 14 TEXT STYLES DEL FIGMA del DS "Smart-Contact Design System"
+ * (leídos en vivo, 2026-09-07): 6 roles × 2 pesos, más Title y Subtitle, que
+ * entraron el 2026-10-09 solo en semibold (DD-188). Cada clase BEBE de los
  * tokens `--sc-*`; no fija ningún valor a mano. Si un text style se remapea en
  * Figma, se mueve el token en 02-semantic.css y estas clases lo siguen solas.
  *
@@ -15,7 +16,9 @@
  *   Display/display-*      64 / 78          display-1
  *   Heading/h1-*           48 / 58          h1
  *   Heading/h2-*           24 / 36          h2
+ *   Title/title-semibold   20 / 28          title       (título de la página)
  *   Heading/h3-*           18 / 24          h3
+ *   Subtitle/subtitle-semibold 16 / 24      subtitle-1  (título de sección)
  *   Body/body-*            14 / 20          body-2
  *   Caption/caption-*      12 / 18          caption
  *
@@ -29,8 +32,10 @@
 .sc-text-h1-semibold,
 .sc-text-h2-regular,
 .sc-text-h2-semibold,
+.sc-text-title-semibold,
 .sc-text-h3-regular,
 .sc-text-h3-semibold,
+.sc-text-subtitle-semibold,
 .sc-text-body-regular,
 .sc-text-body-semibold,
 .sc-text-caption-regular,
@@ -61,11 +66,23 @@
   line-height: var(--sc-line-height-h2);
 }
 
+/* Title — 20 / 28: el título de la página en las pantallas densas */
+.sc-text-title-semibold {
+  font-size: var(--sc-font-size-title);
+  line-height: var(--sc-line-height-title);
+}
+
 /* Heading 3 — 18 / 24 */
 .sc-text-h3-regular,
 .sc-text-h3-semibold {
   font-size: var(--sc-font-size-h3);
   line-height: var(--sc-line-height-h3);
+}
+
+/* Subtitle — 16 / 24: el título de una sección o de una tarjeta */
+.sc-text-subtitle-semibold {
+  font-size: var(--sc-font-size-subtitle-1);
+  line-height: var(--sc-line-height-subtitle-1);
 }
 
 /* Body — 14 / 20 */
@@ -95,7 +112,9 @@
 .sc-text-display-semibold,
 .sc-text-h1-semibold,
 .sc-text-h2-semibold,
+.sc-text-title-semibold,
 .sc-text-h3-semibold,
+.sc-text-subtitle-semibold,
 .sc-text-body-semibold,
 .sc-text-caption-semibold {
   font-weight: var(--sc-font-weight-semibold);

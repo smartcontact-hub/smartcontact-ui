@@ -20,10 +20,10 @@
       @if (isEditMode() && formDirty()) {
         <span class="form-save-reason sc-text-caption-regular" role="status">{{ 'common.unsaved_changes' | translate }}</span>
       }
-      <sc-button size="sm" type="button" variant="secondary" (clicked)="onCancel()">
+      <sc-button type="button" variant="secondary" (clicked)="onCancel()">
         <span>{{ 'common.cancel' | translate }}</span>
       </sc-button>
-      <sc-button size="sm" type="button" variant="primary" (clicked)="onSave()">
+      <sc-button type="button" variant="primary" (clicked)="onSave()">
         <span>
           @if (isEditMode()) {
             {{ 'memory.rules.builder.save_changes' | translate }}

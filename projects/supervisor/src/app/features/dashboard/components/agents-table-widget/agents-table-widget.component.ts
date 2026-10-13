@@ -39,7 +39,7 @@ export class AgentsTableWidgetComponent {
      * parte porque su texto lleva un espacio que no separa («T.\u00a0medio», en los cuatro idiomas). */
     const cifra = { align: 'right', width: '1%' } as const;
     return [
-      { field: 'name', header: t('agent'), cellTemplate: this.nameTpl() },
+      { field: 'name', header: t('agent'), rowHeader: true, cellTemplate: this.nameTpl() },
       { field: 'conversations', header: t('conversations'), ...cifra },
       { field: 'attended', header: t('attended'), ...cifra },
       { field: 'rejected', header: t('rejected'), ...cifra },

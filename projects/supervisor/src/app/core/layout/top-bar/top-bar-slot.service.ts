@@ -27,6 +27,13 @@ export class TopBarSlotService {
   /** Acciones primarias (template) a renderizar a la derecha de la TopBar. */
   readonly actions = signal<TemplateRef<unknown> | null>(null);
 
+  /**
+   * El resultado de la última acción de la página, junto a sus botones (DD-191): «Agente "X"
+   * actualizado» tras guardar sin salir de la ficha. Se queda hasta la siguiente acción y se va con
+   * las acciones de la página. Lo escribe `ResultadoAccionService`, no la página.
+   */
+  readonly resultado = signal<string | null>(null);
+
   set(component: Type<unknown>): void {
     this.component.set(component);
   }
@@ -41,5 +48,6 @@ export class TopBarSlotService {
 
   clearActions(): void {
     this.actions.set(null);
+    this.resultado.set(null);
   }
 }

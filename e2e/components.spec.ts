@@ -170,24 +170,27 @@ test.describe('sc-button', () => {
     await screenshotBaseline(page, 'button');
   });
 
-  test('«Solo icono», como en primeng.dev: cada botón con su nombre, y el «+» de crear es un círculo', async ({ page }) => {
+  test('«Solo icono», como en el Kit: cada botón con su nombre, y el «+» de añadir rima con su campo', async ({ page }) => {
     await gotoPage(page, 'button');
-    // Las cuatro formas que el DS expone (relleno, redondo, redondo con borde y redondo de texto), con sus siete
-    // variantes. Sin rótulo, el nombre es lo único que oye el lector.
+    // Las cinco formas del Kit (relleno, redondo, redondo con borde, redondo de texto y redondo con sombra), con sus
+    // ocho variantes rellenas. Sin rótulo, el nombre es lo único que oye el lector.
     const botones = page.getByTestId('sc-btn-solo-icono').getByRole('button');
-    await expect(botones).toHaveCount(28);
+    await expect(botones).toHaveCount(40);
     expect(await botones.evaluateAll((bs) => bs.filter((b) => !b.getAttribute('aria-label')).length), 'sin nombre').toBe(0);
 
-    // El «+» de crear (DD-167): redondo, con borde y secundario; un círculo del ancho de solo icono del Kit.
-    const mas = page.getByTestId('sc-btn-crear').getByRole('button', { name: 'Nueva agenda' });
-    const faltan = await mas.evaluate((el) =>
-      ['p-button-icon-only', 'p-button-rounded', 'p-button-outlined', 'p-button-secondary'].filter((c) => !el.classList.contains(c)),
-    );
-    expect(faltan, 'el solo icono redondo, con borde y en gris').toEqual([]);
-    const lado = parseFloat(kitPx('button.root.iconOnlyWidth'));
-    const caja = (await mas.boundingBox())!;
-    expect(caja.width, 'el ancho del solo icono del Kit').toBeCloseTo(lado, 1);
-    expect(caja.height, 'redondo: tan alto como ancho').toBeCloseTo(lado, 1);
+    // El «+» de añadir (DD-187, que corrige DD-167): el secundario relleno del Kit, a la talla de su campo. Rima con él:
+    // mediano junto a un select mediano y pequeño junto a uno pequeño, los dos del mismo alto que su campo.
+    for (const [id, talla, ancho] of [['sc-btn-crear', 'md', 'button.root.iconOnlyWidth'], ['sc-btn-crear-sm', 'sm', 'button.root.sm.iconOnlyWidth']] as const) {
+      const mas = page.getByTestId(id).getByRole('button', { name: 'Nueva agenda' });
+      const clases = await mas.evaluate((el) => [...el.classList]);
+      expect(clases.includes('p-button-icon-only') && clases.includes('p-button-secondary'), `${talla}: solo icono y en gris`).toBe(true);
+      expect(clases.includes('p-button-sm'), `${talla}: su talla`).toBe(talla === 'sm');
+      expect(['p-button-rounded', 'p-button-outlined'].filter((c) => clases.includes(c)), 'ni redondo ni con borde').toEqual([]);
+      const caja = (await mas.boundingBox())!;
+      expect(caja.width, `${talla}: el ancho del solo icono del Kit`).toBeCloseTo(parseFloat(kitPx(ancho)), 1);
+      const campo = (await page.getByTestId(id).locator('xpath=..').locator('.p-select').boundingBox())!;
+      expect(caja.height, `${talla}: tan alto como su campo`).toBeCloseTo(campo.height, 1);
+    }
   });
 });
 
@@ -394,6 +397,24 @@ test.describe('sc-textarea', () => {
     expect((await styleOf(sm, ['font-size']))['font-size']).toBe(kitPx('formField.sm.fontSize'));
     await screenshotBaseline(page, 'textarea');
   });
+
+  test('copyable: copiar va dentro del campo, solo con icono, el texto no pasa por debajo y dice «Copiado» (DD-198)', async ({ page, context }) => {
+    await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+    await gotoPage(page, 'textarea');
+    const host = page.getByTestId('sc-textarea-copiar');
+    const campo = host.locator('textarea');
+    const boton = host.getByRole('button', { name: 'Copiar código' });
+    const [c, b] = [await campo.boundingBox(), await boton.boundingBox()];
+    expect(b!.x + b!.width, 'dentro por la derecha').toBeLessThanOrEqual(c!.x + c!.width);
+    expect(b!.y, 'dentro por arriba').toBeGreaterThanOrEqual(c!.y);
+    // El texto deja el sitio del botón: el relleno de la derecha es al menos lo que ocupa el botón desde el borde.
+    const relleno = parseFloat((await styleOf(campo, ['padding-right']))['padding-right']);
+    expect(relleno, 'el texto no pasa por debajo').toBeGreaterThanOrEqual(c!.x + c!.width - b!.x);
+    await expect(boton).not.toContainText('Copiar');
+    await boton.click();
+    await expect(host.getByRole('button', { name: 'Código copiado' })).toBeVisible();
+    await expect(host.locator('[aria-live="polite"]')).toHaveText('Código copiado');
+  });
 });
 
 test.describe('sc-drawer', () => {
@@ -545,6 +566,87 @@ test.describe('sc-selectbutton', () => {
     await fallidas.click();
     await expect(fallidas).toHaveAttribute('aria-pressed', 'true');
     await expect(host.getByRole('button', { name: 'Todas' })).toHaveAttribute('aria-pressed', 'false');
+  });
+
+  test('la ayuda va debajo de las opciones y se anuncia con el grupo (DD-198)', async ({ page }) => {
+    await gotoPage(page, 'selectbutton');
+    const host = page.getByTestId('sc-selectbutton-ayuda');
+    const grupo = host.locator('p-selectbutton');
+    const ayuda = host.locator('.sc-selectbutton__msg');
+    await expect(ayuda).toHaveText('Lo que oye el cliente al entrar en la cola.');
+    const [g, a] = [await grupo.boundingBox(), await ayuda.boundingBox()];
+    expect(a!.y, 'la ayuda, debajo de las opciones').toBeGreaterThanOrEqual(g!.y + g!.height);
+    await expect(grupo).toHaveAccessibleDescription('Lo que oye el cliente al entrar en la cola.');
+  });
+});
+
+test.describe('sc-fact-row y sc-icon-tile', () => {
+  test('la fila es un par dt/dd dentro de un div del dl, con su baldosa decorativa y la clave como enlace', async ({ page }) => {
+    await gotoPage(page, 'factrow');
+    const lista = page.getByTestId('sc-fact-row-list');
+    // dl > div > dt + dd: la lista de definiciones sigue siendo válida (DD-186).
+    const estructura = await lista.evaluate((dl) =>
+      [...dl.children].map((div) => `${div.tagName}:${[...div.children].map((c) => c.tagName).join('+')}`),
+    );
+    expect(estructura).toEqual(['DIV:DT+DD', 'DIV:DT+DD', 'DIV:DT+DD']);
+    await expect(lista.getByRole('link', { name: 'Teléfono' })).toHaveAttribute('href', '#distribucion');
+    await expect(lista.locator('sc-icon-tile').first()).toHaveAttribute('aria-hidden', 'true');
+    // El valor, a la derecha de su clave.
+    const fila = lista.locator('.sc-fact-row').first();
+    const [clave, valor] = await Promise.all([fila.locator('dt').boundingBox(), fila.locator('dd').boundingBox()]);
+    expect(valor!.x).toBeGreaterThan(clave!.x + clave!.width);
+    // La píldora a 14, como los valores (`sc-tag size="md"`).
+    expect(await fila.locator('.p-tag').evaluate((e) => getComputedStyle(e).fontSize)).toBe('14px');
+  });
+});
+
+test.describe('sc-fileupload', () => {
+  test('zona de soltar, botón «Subir archivo» y entrega al elegir; un tipo que no es, se rechaza', async ({ page }) => {
+    await gotoPage(page, 'fileupload');
+    const host = page.getByTestId('sc-fileupload-audio');
+    await expect(host.getByRole('button', { name: 'Subir archivo' })).toBeVisible();
+    // Con `auto` no hay botón de «Cancelar» ni un segundo de subir: solo el de elegir.
+    await expect(host.getByRole('button', { name: /cancel/i })).toHaveCount(0);
+    await expect(host.getByRole('button')).toHaveCount(1);
+    await host.locator('input[type="file"]').setInputFiles({ name: 'espera.wav', mimeType: 'audio/wav', buffer: Buffer.from('RIFFdemo') });
+    await expect(page.getByText('espera.wav', { exact: true })).toHaveCount(1);
+    // `clearAfterSelect`: la lista se vacía, el nombre vive en el campo de al lado.
+    await expect(host.getByText('espera.wav')).toHaveCount(0);
+    await host.locator('input[type="file"]').setInputFiles({ name: 'voz.mp3', mimeType: 'audio/mpeg', buffer: Buffer.from('ID3') });
+    await expect(host.getByText(/voz\.mp3/)).toBeVisible();
+  });
+});
+
+test.describe('sc-inputtags', () => {
+  test('Enter y la coma añaden, Retroceso quita; la etiqueta y la ayuda llegan al campo de escribir', async ({ page }) => {
+    await gotoPage(page, 'inputtags');
+    const host = page.getByTestId('sc-inputtags-domains');
+    // El nombre y la descripción entran por `pt`: `p-inputtags` no pasa `inputId` a su campo (DD-195).
+    const input = host.getByRole('combobox', { name: 'Dominios permitidos' });
+    await expect(input).toHaveAccessibleDescription('Las webs donde se puede insertar el chat.');
+    await expect(host.locator('.p-chip')).toHaveCount(2);
+    await input.pressSequentially('blog.example.com,');
+    await expect(host.locator('.p-chip')).toHaveCount(3);
+    await input.fill('docs.example.com');
+    await input.press('Enter');
+    await expect(host.locator('.p-chip').last()).toHaveText('docs.example.com');
+    await input.press('Backspace');
+    await expect(host.locator('.p-chip')).toHaveCount(3);
+    expect(await styleOf(host.locator('.p-inputtags'), ['border-radius'])).toEqual({ 'border-radius': kitPx('formField.borderRadius') });
+  });
+});
+
+test.describe('sc-tabs', () => {
+  test('la tira lleva su nombre en el nodo tablist y cambia de pestaña con clic y flechas', async ({ page }) => {
+    await gotoPage(page, 'tabs');
+    const host = page.getByTestId('sc-tabs-icon');
+    await expect(host.getByRole('tablist', { name: 'Vistas de la conversación' })).toBeVisible();
+    await expect(host.getByRole('tab', { name: 'Transcripción' })).toHaveAttribute('aria-selected', 'true');
+    await host.getByRole('tab', { name: 'Análisis' }).click();
+    await expect(host.getByRole('tab', { name: 'Análisis' })).toHaveAttribute('aria-selected', 'true');
+    // La apagada se ve, pero no se elige.
+    await expect(host.getByRole('tab', { name: 'Auditoría' })).toHaveAttribute('aria-disabled', 'true');
+    await expect(host.locator('sc-icon')).toHaveCount(3);
   });
 });
 
@@ -1018,6 +1120,27 @@ test.describe('sc-bulk-action-bar', () => {
 
     await screenshotBaseline(page, 'bulkactionbar');
   });
+
+  test('tras aplicar, sin selección, cuenta el resultado con «Deshacer» pegado al texto (DD-196)', async ({ page }) => {
+    await gotoPage(page, 'bulkactionbar');
+    const host = page.getByTestId('sc-bulkbar-result');
+    await expect(host.locator('.bulk-bar'), 'sin resultado no se ve').toHaveCount(0);
+
+    await page.getByRole('button', { name: 'Aplicar un cambio' }).click();
+    const bar = host.locator('.bulk-bar');
+    await expect(bar.locator('.bulk-bar__summary')).toContainText('Cambio aplicado a 3 agentes');
+    // «Deshacer» va junto a su texto, en el resumen, y no en la otra punta de la barra.
+    const deshacer = bar.locator('.bulk-bar__summary').getByRole('button', { name: 'Deshacer' });
+    const [texto, boton] = [await bar.locator('sc-message').boundingBox(), await deshacer.boundingBox()];
+    expect(boton!.x - (texto!.x + texto!.width), 'Deshacer, pegado al texto').toBeLessThan(20);
+
+    await deshacer.click();
+    await expect(bar.locator('.bulk-bar__summary')).toContainText('Cambio revertido');
+    await expect(bar.getByRole('button', { name: 'Deshacer' })).toHaveCount(0);
+
+    await bar.getByRole('button', { name: 'Cerrar' }).click();
+    await expect(host.locator('.bulk-bar')).toHaveCount(0);
+  });
 });
 
 test.describe('sc-form-danger-zone', () => {
@@ -1461,21 +1584,44 @@ test.describe('sc-datatable', () => {
     const table = page.getByTestId('sc-datatable-frozen');
     await table.scrollIntoViewIfNeeded();
     const row = table.locator('tbody tr').first();
-    const left = row.locator('.p-datatable-frozen-column').first();
+    // La de la izquierda es la última fija de ese lado (la que lleva la sombra); delante va la casilla, también fija.
+    const left = row.locator('.sc-datatable__frozen-left-edge');
     const right = row.locator('.p-datatable-frozen-column').last();
+    const check = row.locator('td.sc-datatable__check');
     await expect(left).toHaveCSS('position', 'sticky');
     await expect(right).toHaveCSS('position', 'sticky');
+    await expect(check).toHaveCSS('position', 'sticky');
     await expect(left).toHaveCSS('box-shadow', 'none');
     await expect(right).not.toHaveCSS('box-shadow', 'none');
     await table.locator('.p-datatable-table-container').evaluate(el => { el.scrollLeft = el.scrollWidth; });
     await expect(left).not.toHaveCSS('box-shadow', 'none');
     await expect(right).toHaveCSS('box-shadow', 'none');
+    // DD-193: con la casilla sin fijar, PrimeNG dejaba el nombre a su ancho del borde y la casilla pasaba por debajo.
+    const pegadas = await table.locator('.p-datatable-table-container').evaluate(caja => {
+      const borde = caja.getBoundingClientRect().left;
+      const fila = caja.querySelector('tbody tr')!;
+      const casilla = fila.querySelector('td.sc-datatable__check')!.getBoundingClientRect();
+      const nombre = fila.querySelector('.sc-datatable__frozen-left-edge')!.getBoundingClientRect();
+      return { casilla: Math.round(casilla.left - borde), nombre: Math.round(nombre.left - casilla.right) };
+    });
+    expect(pegadas, 'la casilla en el borde y el nombre justo detrás, tras desplazar').toEqual({ casilla: 0, nombre: 0 });
     await table.locator('.p-datatable-table-container').evaluate(el => { el.scrollLeft = 0; });
     await row.locator('p-table-checkbox').click();
     await expect(row).toHaveClass(/p-datatable-row-selected/);
     const backgrounds = await right.evaluate(el => [getComputedStyle(el).backgroundColor, getComputedStyle(el.parentElement!).backgroundColor]);
     expect(backgrounds[0]).toBe(backgrounds[1]);
     expect(backgrounds[0]).not.toMatch(/transparent|rgba\([^)]*, 0\)/);
+    // DD-194: el nombre es la cabecera de su fila (`th`), pinta como su vecina `td` y, fijo, toma el fondo de la fila.
+    await expect(left).toHaveAttribute('scope', 'row');
+    const nombre = await left.evaluate(th => {
+      const td = th.nextElementSibling!;
+      const props = ['padding-left', 'padding-top', 'font-weight', 'font-size', 'text-align', 'border-bottom-width', 'border-bottom-color'];
+      return {
+        distintas: props.filter(p => getComputedStyle(th).getPropertyValue(p) !== getComputedStyle(td).getPropertyValue(p)),
+        fondo: getComputedStyle(th).backgroundColor === getComputedStyle(th.parentElement!).backgroundColor,
+      };
+    });
+    expect(nombre).toEqual({ distintas: [], fondo: true });
   });
 
   test('MVP: column-defs + cellTemplate, orden, selección, paginador, slots proyectados', async ({

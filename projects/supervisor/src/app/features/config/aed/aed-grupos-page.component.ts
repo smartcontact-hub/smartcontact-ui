@@ -1,20 +1,10 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  TemplateRef,
-  computed,
-  inject,
-  signal,
-  viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, TemplateRef, viewChild } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { MessageService } from 'primeng/api';
 
 import { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { injectLangChange } from '@core/utils/lang-change';
-import { TOAST_LIFE } from '@core/utils/toast-life';
 import { ChannelIconComponent } from '@shared/components';
 import { stableStringify } from '@shared/utils/form-dirty-state';
 import {
@@ -41,6 +31,7 @@ import {
   ScSelectComponent as SelectComponent,
   ScToggleSwitchComponent as ToggleSwitchComponent,
 } from '@smartcontact-hub/components';
+import { ResultadoAccionService } from '@core/services';
 
 /**
  * Contact Center › Grupos — `/config/aed/grupos`. Con esto nace cada grupo nuevo (DD-135).
@@ -76,7 +67,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AedGruposPageComponent implements DirtyAware {
-  private readonly messages = inject(MessageService);
+  private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
   private readonly store = inject(GroupDefaultsStore);
@@ -128,6 +119,10 @@ export class AedGruposPageComponent implements DirtyAware {
   protected readonly dirty = computed(
     () => stableStringify(this.form()) !== stableStringify(this.store.defaults()),
   );
+  /** Con cambios sin guardar, el «guardado» de la barra ya no vale (DD-191). */
+  private readonly limpiaResultado = effect(() => {
+    if (this.dirty()) this.resultado.limpiar();
+  });
   protected readonly canSave = computed(() => this.dirty() && !this.saving() && validQueueSize(this.form().phoneQueue) && validQueueSize(this.form().chatQueue));
   /** Público para el `formDirtyGuard` (canDeactivate) — confirma al salir con cambios. */
   readonly formDirty = this.dirty;
@@ -184,11 +179,7 @@ export class AedGruposPageComponent implements DirtyAware {
     setTimeout(() => {
       this.store.save(structuredClone(this.form()));
       this.saving.set(false);
-      this.messages.add({
-        severity: 'success',
-        summary: this.translate.instant('config.aed.subpages.grupos.toast.saved'),
-        life: TOAST_LIFE.success,
-      });
+      this.resultado.enLaBarra(this.translate.instant('config.aed.subpages.grupos.toast.saved'));
     }, 600);
   }
 }

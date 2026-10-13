@@ -1,0 +1,11 @@
+/*
+ * sc-fileupload — wrapper Extended sobre <p-fileupload>.
+ *
+ * El aspecto (cabecera, zona de soltar, filas de archivo, barra de progreso) lo pone el tema
+ * (`fileupload.*` en sc-preset). Aquí solo cómo se coloca el host.
+ */
+
+.sc-fileupload {
+  display: block;
+  max-width: 100%;
+}

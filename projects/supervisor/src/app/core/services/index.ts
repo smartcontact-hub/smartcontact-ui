@@ -14,7 +14,6 @@ export type { PaletteCommand } from './command-palette.service';
 
 export { DiscardDialogService } from './discard-dialog.service';
 
-export { CrossTabLockService } from './cross-tab-lock.service';
 
 export { SectionLinksService } from './section-links.service';
 
@@ -28,3 +27,5 @@ export { KeyboardShortcutsService } from './keyboard-shortcuts.service';
 
 export { UndoStackService } from './undo-stack.service';
 export type { UndoEntry } from './undo-stack.service';
+
+export { ResultadoAccionService } from './resultado-accion.service';

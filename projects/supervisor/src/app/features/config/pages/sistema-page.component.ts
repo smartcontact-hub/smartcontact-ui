@@ -8,7 +8,6 @@ import {
 } from '@angular/core';
 
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { MessageService } from 'primeng/api';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScSelectComponent as SelectComponent } from '@smartcontact-hub/components';
 import { ScInputTextComponent as InputTextComponent } from '@smartcontact-hub/components';
@@ -20,13 +19,7 @@ import { ScSelectButtonComponent as SelectButtonComponent } from '@smartcontact-
 import { injectLangChange } from '@core/utils/lang-change';
 import { direccionConJuego, JUEGOS_DE_DATOS, juegoDeDatos, recordarJuego } from '@core/services/juego-de-datos';
 
-import {
-  LanguageService,
-  ThemeService,
-  type AppLanguage,
-  type ThemeMode,
-} from '@core/services';
-import { TOAST_LIFE } from '@core/utils/toast-life';
+import { LanguageService, ResultadoAccionService, ThemeService, type AppLanguage, type ThemeMode } from '@core/services';
 
 import {
   ScConfirmService,
@@ -104,7 +97,7 @@ export class SistemaPageComponent {
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
   private readonly doc = inject(DOCUMENT);
-  private readonly messages = inject(MessageService);
+  private readonly resultado = inject(ResultadoAccionService);
   private readonly agentsStore = inject(AgentsStore);
 
   protected readonly settingsIcon = 'settings';
@@ -300,16 +293,10 @@ export class SistemaPageComponent {
       this.processing.set(false);
       this.selectedIds.set(new Set());
       this.confirmText.set('');
-      this.messages.add({
-        severity: 'success',
-        summary: this.translate.instant(
-          count === 1
-            ? 'config.seguridad.toast.regenerated_one'
-            : 'config.seguridad.toast.regenerated_many',
-          { count },
-        ),
-        life: TOAST_LIFE.success,
-      });
+      // El resultado ya se ve en el panel de abajo, con su descarga (DD-191).
+      this.resultado.visto(
+        this.translate.instant(count === 1 ? 'config.seguridad.toast.regenerated_one' : 'config.seguridad.toast.regenerated_many', { count }),
+      );
     }, 1500);
   }
 
@@ -333,11 +320,8 @@ export class SistemaPageComponent {
     link.click();
     URL.revokeObjectURL(url);
 
-    this.messages.add({
-      severity: 'success',
-      summary: this.translate.instant('config.seguridad.toast.csv_downloaded'),
-      life: TOAST_LIFE.success,
-    });
+    // La descarga la enseña el navegador (DD-191).
+    this.resultado.visto(this.translate.instant('config.seguridad.toast.csv_downloaded'));
   }
 
   private formatTimestamp(date: Date): string {

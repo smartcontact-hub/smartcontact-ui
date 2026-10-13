@@ -1,33 +1,18 @@
-import {
-  afterNextRender,
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  HostListener,
-  inject,
-  Injector,
-  input,
-  OnDestroy,
-  OnInit,
-  signal,
-  type TemplateRef,
-  viewChild,
-} from '@angular/core';
+import { afterNextRender, ChangeDetectionStrategy, Component, computed, effect, HostListener, inject, Injector, input, OnInit, signal, type TemplateRef, viewChild } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink, type UrlTree } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { MessageService } from 'primeng/api';
 import { TooltipModule } from 'primeng/tooltip';
+import { TipificacionArbolComponent } from '@features/admin/repositories/components/tipificacion-arbol/tipificacion-arbol.component';
 import { ScCheckboxComponent as CheckboxComponent } from '@smartcontact-hub/components';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
-import { CrossTabLockService, SectionLinksService } from '@core/services';
-import { TOAST_LIFE } from '@core/utils/toast-life';
+import { ResultadoAccionService, SectionLinksService } from '@core/services';
 import { injectLangChange } from '@core/utils/lang-change';
-import { AltaPieComponent, ChannelIconComponent, NameInplaceComponent, ResourceRowsComponent } from '@shared/components';
+import { AltaPieComponent, ChannelIconComponent, NameInplaceComponent, ResourceRowsComponent, type ResourceRow } from '@shared/components';
 import { changedKeys, createFormDirtyState } from '@shared/utils/form-dirty-state';
-import { llegarAAncla, llegarASeccion, seccionesDeAlta } from '@shared/utils/alta-secciones';
+import { llegarAAncla, llegarASeccion, ocasionDeAvisar, seccionesDeAlta } from '@shared/utils/alta-secciones';
 import {
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
   type FormNavSection,
@@ -35,11 +20,12 @@ import {
   ScMultiSelectComponent as MultiSelectComponent,
   ScInputNumberComponent as InputNumberComponent,
   ScSelectButtonComponent as SelectButtonComponent,
+  ScFileUploadComponent as FileUploadComponent,
   ScTextareaComponent as TextareaComponent,
   ScToggleSwitchComponent as ToggleSwitchComponent,
   ScDialogComponent as DialogComponent,
   ScSelectComponent as SelectComponent,
-  ScChipComponent as ChipComponent,
+  ScInputTagsComponent as InputTagsComponent,
   ScFormSectionNavComponent as FormSectionNavComponent,
   ScMessageComponent as MessageComponent,
   ScSectionCardComponent as SectionCardComponent,
@@ -57,14 +43,15 @@ import {
   GroupPriority,
   OUTBOUND_NUMBERS,
   PHONE_STRATEGIES,
+  PHONE_STRATEGY_HELP_KEYS,
   PRIORITY_LABEL_KEYS,
   RING_ALL_OPTIONS,
   SUB_STRATEGIES,
   DEFAULT_ANNOUNCEMENTS,
   GroupAdvanced,
   GroupAnnouncements,
-  UNAVAILABLE_STRATEGIES,
   VOICE_OPTIONS,
+  WHATSAPP_NUMBERS,
   groupDurationOptions,
   validQueueSize,
   type ChannelQueue,
@@ -72,6 +59,10 @@ import {
   type ChatSettings,
   type ChatSubchannel,
   DEFAULT_CHAT_SETTINGS,
+  DEFAULT_WRAP_UP,
+  type GroupWrapUp,
+  WRAP_UP_SCOPES,
+  type WrapUpScope,
   DEFAULT_CHAT_STRATEGY,
   FAMILY_LABEL_KEYS,
   type ChannelFamily,
@@ -81,11 +72,12 @@ import { GroupDefaultsStore } from '../state/group-defaults.store';
 import { HorariosStore } from '@features/admin/repositories/state/horarios.store';
 import { TipificacionesStore } from '@features/admin/repositories/state/tipificaciones.store';
 import { AgendasStore } from '@features/admin/repositories/state/agendas.store';
-import { AGENDA_FIELDS } from '@features/admin/repositories/instances/agendas';
-import { RepoFormPanelComponent, RepoFormSubmission } from '@features/admin/repositories/components/repo-form-panel.component';
+import {
+  RecursoDialogComponent,
+  type RecursoAbierto,
+} from '@features/admin/repositories/components/recurso-dialog/recurso-dialog.component';
 import { TemplatesStore } from '@features/admin/templates/state/templates.store';
 import type { TemplateType } from '@features/admin/templates/data/templates-data';
-import { TemplateFormPanelComponent, TemplateFormSubmission } from '@features/admin/templates/components/template-form-panel/template-form-panel.component';
 import { LabelsStore } from '@features/admin/labels/state/labels.store';
 import { LabelFormPanelComponent, LabelFormSubmission } from '@features/admin/labels/components/label-form-panel/label-form-panel.component';
 import { GroupsStore } from '../state/groups.store';
@@ -93,13 +85,11 @@ import { GroupsStore } from '../state/groups.store';
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
 import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links.store';
 import { agendasOfrecidas, idsVivos } from '@features/admin/services/recursos.core.mjs';
-import { asignarAGrupo, choquesDe, tipificacionesDeGrupo } from '@features/admin/repositories/state/tipificaciones.core.mjs';
 import { ResourceRowsService } from '@features/admin/services/resource-rows.service';
 import type { GroupAgentLink } from '@features/admin/services/group-agent-links.types';
 import {
   channelRemovalImpact,
   clampLinksToChannels,
-  familiesOf,
   hasChatFamily,
   removedFamilies,
   toggleChatFamily,
@@ -124,8 +114,8 @@ interface FormState {
   name: string;
   phone: string;
   priority: GroupPriority;
-  /** Las tipificaciones del grupo. Se guardan en cada tipificación, con sus canales: el grupo solo las elige. */
-  typificationIds: ReadonlySet<number>;
+  /** Lo que pide al agente al acabar: comentario y clasificación (revisión de tipificaciones del 2026-10-09). */
+  wrapUp: GroupWrapUp;
   scheduleIds: ReadonlySet<number>;
   templateIds: ReadonlySet<number>;
   labelIds: ReadonlySet<number>;
@@ -164,7 +154,7 @@ const SECTION_OF_FIELD: Readonly<Record<keyof FormState, string>> = {
   chat: 'group-section-distribution',
   announcements: 'group-section-distribution',
   advanced: 'group-section-distribution',
-  typificationIds: 'group-section-resources',
+  wrapUp: 'group-section-general',
   scheduleIds: 'group-section-resources',
   templateIds: 'group-section-resources',
   labelIds: 'group-section-resources',
@@ -204,14 +194,15 @@ const RESUMEN_NUMEROS = { phone: 'group-phone', whatsapp: 'group-chat-whatsapp' 
     MultiSelectComponent,
     InputNumberComponent,
     SelectButtonComponent,
+    FileUploadComponent,
     TextareaComponent,
     ToggleSwitchComponent,
     DialogComponent,
-    RepoFormPanelComponent,
-    TemplateFormPanelComponent,
+    RecursoDialogComponent,
     LabelFormPanelComponent,
-    ChipComponent,
+    InputTagsComponent,
     TooltipModule,
+    TipificacionArbolComponent,
     AltaPieComponent,
     ResourceRowsComponent,
     SelectComponent,
@@ -221,7 +212,7 @@ const RESUMEN_NUMEROS = { phone: 'group-phone', whatsapp: 'group-chat-whatsapp' 
   styleUrl: './group-form-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
+export class GroupFormPageComponent implements DirtyAware, OnInit {
   private readonly injector = inject(Injector);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -229,10 +220,9 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   private readonly groupsStore = inject(GroupsStore);
   private readonly agentsStore = inject(AgentsStore);
   private readonly linksStore = inject(GroupAgentLinksStore);
-  private readonly messages = inject(MessageService);
+  private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
-  private readonly crossTab = inject(CrossTabLockService);
   private readonly sectionLinks = inject(SectionLinksService);
   private readonly tipificacionesStore = inject(TipificacionesStore);
   private readonly agendasStore = inject(AgendasStore);
@@ -256,16 +246,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   protected readonly priorityKeys: Readonly<Record<string, string>> = PRIORITY_LABEL_KEYS;
   protected readonly channels = GROUP_CHANNELS;
   protected readonly channelKeys = CHANNEL_LABEL_KEYS;
-  /** Skills se ve pero no se elige, con su motivo escrito en la opción (SISMAC-1975). */
-  protected readonly phoneStrategyOptions = computed(() => {
-    this.lang();
-    return PHONE_STRATEGIES.map((s) => ({
-      label: s,
-      value: s,
-      disabled: UNAVAILABLE_STRATEGIES.has(s),
-      note: UNAVAILABLE_STRATEGIES.has(s) ? this.translate.instant('groups.form.fields.skills_unavailable') : null,
-    }));
-  });
+  protected readonly phoneStrategyOptions = PHONE_STRATEGIES.map((s) => ({ label: s, value: s }));
   protected readonly chatStrategies = CHAT_STRATEGIES;
   protected readonly chatSubStrategies = CHAT_SUB_STRATEGIES;
   protected readonly levelFamilies = computed<readonly ('phone' | 'chat')[]>(() => [
@@ -350,8 +331,42 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   /** General completa: nombre, que no se repita, y al menos un canal (con Chat, al menos uno de sus dos). */
   protected readonly generalValid = computed(() => {
     const f = this.form();
-    return f.name.trim().length > 0 && !this.nameTaken() && f.channels.size > 0;
+    return f.name.trim().length > 0 && !this.nameTaken() && f.channels.size > 0 && !this.typificationMissing();
   });
+
+  /** «Clasificar llamadas» encendido sin tipificación elegida: falta la tipificación. */
+  protected readonly typificationMissing = computed(() => this.form().wrapUp.classify && this.form().wrapUp.typificationId === null);
+
+  /** Que falte se dice en su campo cuando ya hubo ocasión de elegirla (DD-199): encender «Tipificar» no acusa. */
+  protected readonly typificationError = computed(() => this.typificationMissing() && this.acusaGeneral('typification'));
+
+  /** Lo obligatorio que falta ahora, por clave: de aquí sale cuándo se puede decir (`ocasion`). */
+  private readonly faltas = computed<readonly string[]>(() => {
+    const f = this.form();
+    return [
+      ...(f.name.trim() ? [] : ['name']),
+      ...(f.channels.size > 0 ? [] : ['channels']),
+      ...(this.typificationMissing() ? ['typification'] : []),
+      ...(this.phoneMissing() ? ['phone'] : []),
+    ];
+  });
+
+  /**
+   * Cuándo se dice lo que falta (DD-199): desde que se deja su sección sin ello, en el alta y al editar, o desde que se
+   * abre si lo guardado ya venía sin ello (DD-142). Antes, lo dicen el resumen y el motivo junto al botón, sin rojo.
+   */
+  private readonly ocasion = ocasionDeAvisar({
+    alta: this.alta,
+    editando: () => this.mode() === 'edit',
+    abierta: () => this.activeSection(),
+    cambios: () => this.dirtyState.dirty(),
+    faltas: () => this.faltas(),
+  });
+
+  /** En el alta, General no se deja sin lo suyo (es la puerta, DD-121): ahí la ocasión es el intento de salir. */
+  private acusaGeneral(falta: string): boolean {
+    return this.attemptedGeneral() || this.ocasion.acusa('group-section-general', falta);
+  }
 
   /**
    * Se ha intentado salir de General (o crear) sin completarla: desde entonces lo que falta se dice en su
@@ -365,22 +380,24 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
    */
   protected readonly phoneMissing = computed(() => this.hasPhone() && this.form().phone.trim().length === 0);
 
-  /** En el alta se ha salido de Distribución y colas sin él: desde entonces lo dice su campo, como el nombre. */
+  /** En el alta se ha intentado pasar de Distribución y colas sin él (es la segunda puerta, DD-158). */
   private readonly attemptedDistribution = signal(false);
 
-  /** El aviso bajo el teléfono saliente: al editar, siempre que falte; en el alta, tras salir de su sección sin él. */
+  /** El aviso bajo el teléfono saliente, cuando ya hubo ocasión de elegirlo (DD-199). */
   protected readonly phoneError = computed<string | null>(() =>
-    this.phoneMissing() && (this.mode() === 'edit' || this.attemptedDistribution()) ? 'groups.errors.phone_required' : null,
+    this.phoneMissing() && (this.attemptedDistribution() || this.ocasion.acusa('group-section-distribution', 'phone'))
+      ? 'groups.errors.phone_required'
+      : null,
   );
 
   /**
-   * Las secciones con algo obligatorio sin rellenar: su punto rojo en el índice. General (el nombre, y al menos un
-   * canal; un nombre repetido tampoco deja guardar) y, con Teléfono, Distribución y colas (su teléfono saliente). En
-   * el alta, solo después de intentar salir: el resumen ya dice qué falta sin acusar.
+   * El punto rojo del índice: la sección tiene un aviso a la vista. General (el nombre, repetido o vacío, los canales y
+   * la tipificación) y Distribución y colas (el teléfono saliente y la cola). Lo que falta, cuando ya hubo ocasión
+   * (DD-199); antes, el resumen ya dice qué falta sin acusar.
    */
   protected readonly sectionsWithErrors = computed<ReadonlySet<string>>(() => {
     const out = new Set<string>();
-    if (!this.generalValid() && (this.mode() === 'edit' || this.attemptedGeneral())) out.add('group-section-general');
+    if (this.nameError() || this.channelsError() || this.typificationError()) out.add('group-section-general');
     if (this.phoneError() || this.queueInvalid()) out.add('group-section-distribution');
     return out;
   });
@@ -406,14 +423,14 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     return out;
   });
 
-  /** El aviso bajo el nombre: repetido siempre; vacío, solo tras intentar salir de General. */
+  /** El aviso bajo el nombre: repetido, en vivo (es contenido); vacío, cuando ya hubo ocasión (DD-199). */
   protected readonly nameError = computed<string | null>(() => {
     if (this.nameTaken()) return 'groups.errors.name_taken';
-    if (this.attemptedGeneral() && this.form().name.trim().length === 0) return 'groups.errors.name_required';
+    if (this.form().name.trim().length === 0 && this.acusaGeneral('name')) return 'groups.errors.name_required';
     return null;
   });
 
-  protected readonly channelsError = computed(() => this.attemptedGeneral() && this.form().channels.size === 0);
+  protected readonly channelsError = computed(() => this.form().channels.size === 0 && this.acusaGeneral('channels'));
 
   /**
    * Ir a otra sección. Al editar, libre. En el ALTA, General es la puerta: sin nombre y sin canales las
@@ -439,10 +456,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       this.stayInDistribution();
       return Promise.resolve(false);
     }
-    // Al editar, salir de Distribución sin el teléfono saliente se deja, pero desde ahí su campo dice que falta.
-    if (this.activeSection() === 'group-section-distribution' && id !== 'group-section-distribution' && this.phoneMissing()) {
-      this.attemptedDistribution.set(true);
-    }
+    // Al editar, salir de Distribución sin el teléfono saliente se deja; desde ahí su campo dice que falta (`ocasion`).
     // En el alta, la sección se abre sin tocar la dirección: Atrás sale del alta (DD-122, DD-143).
     if (this.mode() === 'create') {
       this.alta.abrir(id);
@@ -491,7 +505,13 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     // General, abierta: es donde se dice lo que falta.
     this.alta.abrir('group-section-general');
     const nameMissing = this.form().name.trim().length === 0 || this.nameTaken();
-    const target = nameMissing ? 'group-name' : 'group-channels-phone';
+    const target = nameMissing
+      ? 'group-name'
+      : this.form().channels.size === 0
+        ? 'group-channels-phone'
+        : this.typificationMissing()
+          ? 'group-typification'
+          : 'group-channels-phone';
     afterNextRender(() => document.getElementById(target)?.focus(), { injector: this.injector });
   }
 
@@ -533,7 +553,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     if (f.channels.size === 0) return 'groups.errors.channels_required';
     if (this.phoneMissing()) return 'groups.errors.phone_required';
     if (this.queueInvalid()) return 'groups.form.advanced.queue_invalid';
-    if (this.typificationConflict()) return 'groups.errors.typification_conflict';
+    if (this.typificationMissing()) return 'groups.errors.typification_required';
     if (this.mode() === 'edit' && !this.dirtyState.dirty()) return 'common.no_changes';
     return null;
   });
@@ -566,8 +586,11 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
    *  (admin/AED/builder); `formDirty` queda de alias para el guard de salida. */
   private readonly dirtyState = createFormDirtyState(() => this.form());
   readonly formDirty = this.dirtyState.dirty;
-  protected readonly conflictWarning = signal(false);
-  private releaseLock: (() => void) | null = null;
+  /** «Copiar» pasa a «Copiado» dos segundos, como Primer (DD-191). */
+  /** Con cambios sin guardar, el «guardado» de la barra ya no vale (DD-191). */
+  private readonly limpiaResultado = effect(() => {
+    if (this.formDirty()) this.resultado.limpiar();
+  });
 
   protected readonly queueInvalid = computed(() =>
     (this.hasPhone() && !validQueueSize(this.form().phoneQueue)) ||
@@ -587,7 +610,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   }
 
   protected readonly canSave = computed(() => {
-    if (!this.generalValid() || this.phoneMissing() || this.queueInvalid() || this.typificationConflict()) return false;
+    if (!this.generalValid() || this.phoneMissing() || this.queueInvalid()) return false;
     // Al editar exige cambio neto (Guardar se apaga otra vez si deshaces); en el alta basta con General.
     return this.mode() === 'create' || this.dirtyState.dirty();
   });
@@ -607,17 +630,38 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     return off;
   });
   protected readonly familyLabelKeys = FAMILY_LABEL_KEYS;
-  /** Los subcanales de Chat que el grupo tiene: cada uno escribe sus propios mensajes de cola. */
-  protected readonly activeChatSubchannels = computed<readonly ChatSubchannel[]>(() => {
-    const subchannels: readonly ChatSubchannel[] = ['chat', 'whatsapp'];
-    return subchannels.filter((c) => this.form().channels.has(c));
+  /** Los mensajes de un subcanal, por su sitio en la ficha: el inicial y el final, y los dos que dependen del horario
+   *  (solo con uno elegido). */
+  protected readonly chatMessageGroups: Readonly<Record<'frame' | 'schedule', readonly { key: keyof ChatQueueMessages; labelKey: string; placeholderKey: string }[]>> = {
+    frame: [
+      { key: 'initial', labelKey: 'groups.form.chat.message_initial', placeholderKey: 'groups.form.chat.message_initial_placeholder' },
+      { key: 'final', labelKey: 'groups.form.chat.message_final', placeholderKey: 'groups.form.chat.message_final_placeholder' },
+    ],
+    schedule: [
+      { key: 'outOfSchedule', labelKey: 'groups.form.chat.message_schedule', placeholderKey: 'groups.form.chat.message_schedule_placeholder' },
+      { key: 'nonWorkingDay', labelKey: 'groups.form.chat.message_non_working_day', placeholderKey: 'groups.form.chat.message_non_working_day_placeholder' },
+    ],
+  };
+  protected chatMessageSet(set: 'frame' | 'schedule') {
+    return this.chatMessageGroups[set];
+  }
+  protected chatMessage(sub: ChatSubchannel, key: keyof ChatQueueMessages): string {
+    return this.form().chat.queueMessages[sub][key];
+  }
+  protected attendanceSchedule(sub: ChatSubchannel): number | null {
+    return this.form().chat.attendanceScheduleIds?.[sub] ?? null;
+  }
+  /** Los números de WhatsApp de la cuenta, más el que ya tuviera guardado el grupo, y «Sin número» para quitarlo. */
+  protected readonly whatsappOptions = computed(() => {
+    this.lang();
+    const numbers = new Set(WHATSAPP_NUMBERS);
+    const current = this.form().advanced.whatsappNumber;
+    if (current) numbers.add(current);
+    return [{ label: this.translate.instant('groups.form.summary.no_number'), value: '' }, ...[...numbers].map((n) => ({ label: n, value: n }))];
   });
-  /** Los tres mensajes de cola de un subcanal, en el orden en que los recibe el cliente. */
-  protected readonly chatMessageKeys: readonly { key: keyof ChatQueueMessages; labelKey: string; placeholderKey: string }[] = [
-    { key: 'onEnter', labelKey: 'groups.form.chat.message_on_enter', placeholderKey: 'groups.form.chat.message_on_enter_placeholder' },
-    { key: 'whileWaiting', labelKey: 'groups.form.chat.message_waiting', placeholderKey: 'groups.form.chat.message_waiting_placeholder' },
-    { key: 'noAgents', labelKey: 'groups.form.chat.message_no_agents', placeholderKey: 'groups.form.chat.message_no_agents_placeholder' },
-  ];
+  protected setWhatsappNumber(value: unknown): void {
+    this.setAdvanced('whatsappNumber', typeof value === 'string' ? value : '');
+  }
   /** Los subcanales de Chat que el grupo tiene, para la cabecera de su bloque: «Web Chat · WhatsApp». */
   protected readonly chatSubchannelLabels = computed(() => {
     this.lang();
@@ -625,7 +669,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     return subchannels
       .filter((c) => this.form().channels.has(c))
       .map((c) => this.translate.instant(this.channelKeys[c]))
-      .join(' · ');
+      .join(', ');
   });
   /** La casilla madre: marcada con los dos subcanales, a medias con uno. */
   protected readonly chatFamilyState = computed(() =>
@@ -634,21 +678,9 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   protected readonly isNiveles = computed(() => this.hasPhone() && this.form().strategy === 'Niveles');
   protected readonly isRingAll = computed(() => this.hasPhone() && this.form().strategy === 'Ring All');
 
-  /**
-   * Qué hace la estrategia de teléfono elegida, en una línea bajo el campo (DD-133). El texto sale del manual de usuario
-   * de Voice, que describe seis; Skills sale apagada con su motivo y no lleva ayuda.
-   */
-  private static readonly STRATEGY_HELP: Readonly<Record<string, string>> = {
-    Balanceada: 'groups.form.strategy_help.balanced',
-    'Menos conversaciones atendidas': 'groups.form.strategy_help.fewest_conversations',
-    'Más tiempo inactivo': 'groups.form.strategy_help.longest_idle',
-    Niveles: 'groups.form.strategy_help.levels',
-    'Ring All': 'groups.form.strategy_help.ring_all',
-    'Agente exclusivo': 'groups.form.strategy_help.exclusive',
-  };
-  protected readonly strategyHelpKey = computed<string | null>(
-    () => GroupFormPageComponent.STRATEGY_HELP[this.form().strategy] ?? null,
-  );
+  /** Qué hace la estrategia de teléfono elegida, en una línea bajo el campo (DD-133): `PHONE_STRATEGY_HELP_KEYS`,
+   *  compartida con el selector rápido del resumen. */
+  protected readonly strategyHelpKey = computed<string | null>(() => PHONE_STRATEGY_HELP_KEYS[this.form().strategy] ?? null);
 
   /** Los números asignados a la cuenta, sin escribir uno nuevo (DD-142). Y el que ya tuviera guardado el grupo, aunque
    *  no esté entre ellos: abrir la ficha no lo borra. */
@@ -664,40 +696,46 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
    */
   protected readonly conEtiquetas: boolean = false;
 
-  /** Las tipificaciones, por su nombre. Un grupo puede tener varias mientras no cubran lo mismo: una para entrantes
-   *  y otra para salientes, o una para el teléfono y otra para el chat (DD-173). */
+  /* ── La tipificación del grupo, en General (revisión de tipificaciones del 2026-10-09) ── */
+
+  /** Las tipificaciones de Repositorios, por su nombre: se elige UNA. */
   protected readonly typificationOptions = computed(() =>
     [...this.tipificacionesStore.items()]
       .sort((a, b) => a.name.localeCompare(b.name, 'es'))
       .map((t) => ({ label: t.name, value: t.id })),
   );
-  protected readonly typificationValue = computed(() => [...this.form().typificationIds]);
 
-  /**
-   * Dos tipificaciones del grupo que cubren la misma dirección por el mismo canal: el agente no sabría cuál le toca.
-   * Se mide como quedaría al guardar: las que se añaden entran con los canales del grupo.
-   */
-  protected readonly typificationConflict = computed<string | null>(() => {
-    this.lang();
-    const groupId = this.editingId() ?? -1;
-    const todas = this.tipificacionesStore.items();
-    const familias = familiesOf([...this.form().channels]);
-    const cambian = new Map(asignarAGrupo(todas, this.form().typificationIds, groupId, familias).map((t) => [t.id, t]));
-    const quedan = todas.map((t) => cambian.get(t.id) ?? t);
-    for (const t of quedan) {
-      if (!this.form().typificationIds.has(t.id)) continue;
-      const choque = choquesDe(t, quedan).find((c) => c.groupId === groupId);
-      if (choque) {
-        return this.translate.instant('groups.form.fields.typification_conflict', {
-          a: t.name,
-          b: choque.otherName,
-          direction: this.translate.instant(`repositories.tipificaciones.groups.conflict_direction.${choque.direction}`),
-          channel: this.translate.instant(FAMILY_LABEL_KEYS[choque.channel]),
-        });
-      }
-    }
-    return null;
+  /** La elegida, si sigue existiendo en Repositorios: su árbol es lo que se ve al pulsar «Ver». */
+  protected readonly typification = computed(() => {
+    const id = this.form().wrapUp.typificationId;
+    return id === null ? null : (this.tipificacionesStore.items().find((t) => t.id === id) ?? null);
   });
+
+  /** El diálogo con lo que tiene la tipificación elegida. */
+  protected readonly viendoTipificacion = signal(false);
+
+  /** Todas, solo las entrantes o solo las salientes. */
+  protected readonly wrapUpScopeOptions = computed(() => {
+    this.lang();
+    return WRAP_UP_SCOPES.map((value) => ({ value, label: this.translate.instant(`groups.form.wrapup.scope.${value}`) }));
+  });
+
+  /** «Tipificar llamadas» si el grupo solo atiende teléfono; con chat o email, «conversaciones». */
+  protected readonly classifyLabelKey = computed(() =>
+    [...this.form().channels].every((c) => c === 'phone') ? 'groups.form.wrapup.classify_calls' : 'groups.form.wrapup.classify',
+  );
+
+  protected setWrapUp<K extends keyof GroupWrapUp>(key: K, value: GroupWrapUp[K]): void {
+    this.form.update((f) => ({ ...f, wrapUp: { ...f.wrapUp, [key]: value } }));
+  }
+
+  protected onTypificationChange(value: unknown): void {
+    this.setWrapUp('typificationId', typeof value === 'number' ? value : null);
+  }
+
+  protected onWrapUpScopeChange(value: unknown): void {
+    if ((WRAP_UP_SCOPES as readonly unknown[]).includes(value)) this.setWrapUp('scope', value as WrapUpScope);
+  }
 
   /** Las agendas activas, y las ya puestas aunque estén inactivas (las guardadas y las de ahora): una inactiva puesta
    *  se puede quitar, pero no se ofrece para poner (DD-164). */
@@ -719,21 +757,17 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
 
   /* El resumen bajo cada campo (DD-164): qué es cada recurso y, al editar, su «Editar». En el alta no lo lleva: la
    * dirección no guarda la sección, y Atrás caería en un General vacío. */
-  protected readonly typificationRows = computed(() => {
-    this.lang();
-    return this.resourceRows.tipificaciones(this.form().typificationIds, this.mode() === 'edit');
-  });
   protected readonly agendaRows = computed(() => {
     this.lang();
-    return this.resourceRows.agendas(this.form().scheduleIds, this.mode() === 'edit');
+    return this.resourceRows.agendas(this.form().scheduleIds, true);
   });
   protected readonly chatTemplateRows = computed(() => {
     this.lang();
-    return this.resourceRows.templates(this.form().templateIds, 'chat', this.mode() === 'edit');
+    return this.resourceRows.templates(this.form().templateIds, 'chat', true);
   });
   protected readonly emailTemplateRows = computed(() => {
     this.lang();
-    return this.resourceRows.templates(this.form().templateIds, 'email', this.mode() === 'edit');
+    return this.resourceRows.templates(this.form().templateIds, 'email', true);
   });
 
   /**
@@ -816,8 +850,8 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   /** La estrategia de teléfono con lo que la completa, para el resumen. */
   protected phoneStrategySummary(): string {
     const f = this.form();
-    if (this.isRingAll()) return `${f.strategy} · ${this.translate.instant('groups.form.fields.ring_all_summary', { count: f.ringAllAgents })}`;
-    if (this.isNiveles()) return `${f.strategy} · ${f.subStrategy}`;
+    if (this.isRingAll()) return `${f.strategy}, ${this.translate.instant('groups.form.fields.ring_all_summary', { count: f.ringAllAgents })}`;
+    if (this.isNiveles()) return `${f.strategy}, ${f.subStrategy}`;
     return f.strategy;
   }
 
@@ -830,6 +864,8 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       email: a.email,
       presenceStatus: a.presenceStatus,
       allowedChannels: a.allowedChannels,
+      selfActivate: a.permissions?.selfActivate ?? false,
+      teams: a.teams,
     })),
   );
 
@@ -874,8 +910,10 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       phone: g.phone,
       priority: g.priority,
       // Lo borrado en Repositorios sale ANTES de marcar la ficha como guardada: ni se cuenta, ni se guarda de vuelta,
-      // ni la ficha abre con cambios por ello (DD-164). Las tipificaciones, las que lo tienen entre sus grupos.
-      typificationIds: new Set(tipificacionesDeGrupo(this.tipificacionesStore.items(), group.id).map((x) => x.tipificacion.id)),
+      // ni la ficha abre con cambios por ello (DD-164). Una tipificación borrada deja el grupo sin ella.
+      wrapUp: this.tipificacionesStore.items().some((t) => t.id === g.wrapUp.typificationId)
+        ? g.wrapUp
+        : { ...g.wrapUp, typificationId: null, classify: false },
       scheduleIds: new Set(idsVivos(g.schedules ?? [], this.agendasStore.items())),
       templateIds: new Set(idsVivos(g.templates ?? [], this.templatesStore.templates())),
       labelIds: new Set(idsVivos(g.labels ?? [], this.labelsStore.labels())),
@@ -895,9 +933,6 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     this.initialChannels.set(new Set(group.channels));
     this.initialLinks.set(seedLinks);
     this.dirtyState.markPristine();
-    this.releaseLock = this.crossTab.acquire('group', group.id, () =>
-      this.conflictWarning.set(true),
-    );
   }
 
   /** Cada sección en la dirección (`?seccion=agentes`): el índice enlaza a ellas, y al crear se abre la edición en
@@ -914,10 +949,6 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     return entry ? entry[0] : null;
   }
 
-  ngOnDestroy(): void {
-    this.releaseLock?.();
-    this.releaseLock = null;
-  }
 
   @HostListener('window:beforeunload', ['$event'])
   protected onBeforeUnload(event: BeforeUnloadEvent): void {
@@ -948,45 +979,16 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     if (typeof value === 'string') this.updateField('chatStrategy', value);
   }
 
-  protected onTypificationChange(value: unknown): void {
-    if (Array.isArray(value)) this.updateField('typificationIds', new Set(value as number[]));
+  /** Crear o editar una agenda o una plantilla sin salir de la ficha (DD-187): la ventana que abren el «+» de su campo y
+   *  el «Editar» de sus filas. La recién creada se AÑADE a lo ya elegido, no lo sustituye. */
+  protected readonly recursoAbierto = signal<RecursoAbierto | null>(null);
+
+  protected alCrearRecurso(r: RecursoAbierto, id: number): void {
+    if (r.tipo === 'agenda') this.onIdsChange('scheduleIds', [...this.form().scheduleIds, id]);
+    else this.form.update((f) => ({ ...f, templateIds: new Set([...f.templateIds, id]) }));
   }
 
-  /** Guarda en cada tipificación si usa este grupo: las nuevas, con los canales del grupo; las quitadas, sin él. */
-  private saveTypifications(groupId: number, channels: readonly GroupChannel[]): void {
-    const cambian = asignarAGrupo(this.tipificacionesStore.items(), this.form().typificationIds, groupId, familiesOf(channels));
-    for (const t of cambian) this.tipificacionesStore.updateItem(t.id, { groups: t.groups });
-  }
-
-  /** Mismo alivio que Tipificación (arriba), para los otros tres campos multiselección que solo tenían
-   *  «Gestionar en Repositorios»: Agendas, Plantillas (chat y email) y Etiquetas. Al guardar, el recién
-   *  creado se AÑADE a lo ya elegido, no lo sustituye. */
-  protected readonly creatingAgenda = signal(false);
-  protected readonly agendaFields = AGENDA_FIELDS;
-  protected readonly agendaExistingNames = computed(() => this.agendasStore.items().map((a) => a.name));
-
-  protected onCreateAgendaSubmit(submission: RepoFormSubmission): void {
-    const created = this.agendasStore.addItem({
-      name: submission['name'] ?? '',
-      contacts: [],
-      description: submission['description'] ?? '',
-      status: submission['status'] || 'active',
-    });
-    this.onIdsChange('scheduleIds', [...this.form().scheduleIds, created.id]);
-    this.creatingAgenda.set(false);
-  }
-
-  protected readonly creatingChatTemplate = signal(false);
-  protected readonly creatingEmailTemplate = signal(false);
-  protected readonly templateExistingTitles = computed(() => this.templatesStore.templates().map((t) => t.title));
-
-  protected onCreateTemplateSubmit(type: TemplateType, submission: TemplateFormSubmission): void {
-    const created = this.templatesStore.addTemplate(submission);
-    this.form.update((f) => ({ ...f, templateIds: new Set([...f.templateIds, created.id]) }));
-    if (type === 'chat') this.creatingChatTemplate.set(false);
-    else this.creatingEmailTemplate.set(false);
-  }
-
+  /** Etiquetas (apagado por DD-142): su ventana propia, como antes. */
   protected readonly creatingLabel = signal(false);
   protected readonly labelExistingNames = computed(() => this.labelsStore.labels().map((l) => l.name));
 
@@ -1057,27 +1059,17 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   }
 
   /** «Dominios permitidos» del script de chat (decisión de producto, 2026-09-20): en qué webs se puede insertar sin que
-   *  cualquiera lo copie. Texto libre en un campo + Enter/botón lo añade a la lista; sin duplicados. */
-  protected readonly domainInput = signal('');
-
-  protected addDomain(): void {
-    const value = this.domainInput().trim().toLowerCase();
-    if (!value) return;
-    const current = this.form().advanced.allowedDomains;
-    if (!current.includes(value)) this.setAdvanced('allowedDomains', [...current, value]);
-    this.domainInput.set('');
-  }
-
-  protected removeDomain(domain: string): void {
-    this.setAdvanced('allowedDomains', this.form().advanced.allowedDomains.filter((d) => d !== domain));
+   *  cualquiera lo copie. `sc-inputtags` los añade y los quita (DD-195); aquí se guardan en minúsculas, sin repetir y
+   *  uno por etiqueta: un dominio no lleva comas ni espacios, así que «a.com, b.com» con Enter son dos. */
+  protected setDomains(domains: readonly string[]): void {
+    const limpios = [...new Set(domains.flatMap((d) => d.toLowerCase().split(/[\s,]+/)).filter(Boolean))];
+    this.setAdvanced('allowedDomains', limpios);
   }
 
   /** El .wav elegido: de momento solo se guarda su nombre (demo). */
-  protected onAudioFile(key: 'holdMusicFile' | 'queueIdFile' | 'nextInLineFile', event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
+  protected onAudioFile(key: 'holdMusicFile' | 'queueIdFile' | 'nextInLineFile', files: readonly File[]): void {
+    const file = files[0];
     if (file) this.setAnnouncement(key, file.name);
-    input.value = '';
   }
 
   /** Segundos de un aviso: un campo vaciado se queda en su valor anterior, como los de la cola. */
@@ -1085,12 +1077,13 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     if (typeof value === 'number' && Number.isFinite(value) && value >= 0) this.setAnnouncement(key, value);
   }
 
-  /** Un mensaje periódico más: su .wav, cada 30 s hasta que se cambie. */
-  protected onPeriodicFile(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    if (file) this.setAnnouncement('periodicAnnouncements', [...this.form().announcements.periodicAnnouncements, { file: file.name, everySec: 30 }]);
-    input.value = '';
+  /** Un mensaje periódico más por cada .wav elegido: cada 30 s hasta que se cambie. */
+  protected onPeriodicFiles(files: readonly File[]): void {
+    if (files.length === 0) return;
+    this.setAnnouncement('periodicAnnouncements', [
+      ...this.form().announcements.periodicAnnouncements,
+      ...files.map((file) => ({ file: file.name, everySec: 30 })),
+    ]);
   }
 
   protected setPeriodicFrequency(index: number, value: unknown): void {
@@ -1105,17 +1098,17 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     this.setAnnouncement('periodicAnnouncements', this.form().announcements.periodicAnnouncements.filter((_, i) => i !== index));
   }
 
-  protected copyChatScript(): void {
-    void navigator.clipboard?.writeText(this.chatScript());
-    this.messages.add({ severity: 'success', summary: this.translate.instant('groups.form.advanced.script_copied'), life: TOAST_LIFE.success });
-  }
-
   protected onSubStrategyChange(value: unknown): void {
     if (typeof value === 'string') this.updateField('subStrategy', value);
   }
 
+  /** El aviso de costes de Ring All, cerrado por quien lo leyó: vuelve si baja de tres agentes y se sube otra vez. */
+  protected readonly ringAllWarningClosed = signal(false);
+
   protected onRingAllChange(value: unknown): void {
-    if (typeof value === 'number') this.updateField('ringAllAgents', value);
+    if (typeof value !== 'number') return;
+    if (value < 3) this.ringAllWarningClosed.set(false);
+    this.updateField('ringAllAgents', value);
   }
 
   protected toggleChannel(channel: GroupChannel): void {
@@ -1187,12 +1180,24 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     });
   }
 
-  /** Lo que le llega de Repositorios: tipificación, agendas, plantillas de sus canales y etiquetas. */
+  /** Lo que le llega de Repositorios en su sección Recursos: agendas, plantillas de sus canales y etiquetas. La
+   *  tipificación ya no: vive en General. */
   protected readonly resourceCount = computed(() => {
     const f = this.form();
     const templates = (this.hasChatFamily() ? this.chatTemplateValue().length : 0) + (this.hasEmail() ? this.emailTemplateValue().length : 0);
     // Las etiquetas cuentan solo si se ven (DD-142).
-    return f.typificationIds.size + f.scheduleIds.size + templates + (this.conEtiquetas ? f.labelIds.size : 0);
+    return f.scheduleIds.size + templates + (this.conEtiquetas ? f.labelIds.size : 0);
+  });
+
+  /** Los mismos recursos de `resourceCount`, con su nombre y su dato, para el panel rápido de Salida del resumen
+   *  (revisión de diseño, 2026-10-11): sin «Editar», es solo vista previa, y «Ver recursos» lleva a la sección. */
+  protected readonly summaryResourceRows = computed<readonly ResourceRow[]>(() => {
+    const f = this.form();
+    return [
+      ...this.resourceRows.agendas(f.scheduleIds, false),
+      ...(this.hasChatFamily() ? this.resourceRows.templates(f.templateIds, 'chat', false) : []),
+      ...(this.hasEmail() ? this.resourceRows.templates(f.templateIds, 'email', false) : []),
+    ];
   });
 
   /** Lo que falta para poder crear, en el orden de la ficha. Un nombre repetido no falta: se dice en su campo. */
@@ -1201,6 +1206,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     const missing: string[] = [];
     if (f.name.trim().length === 0) missing.push('common.summary_missing_name');
     if (f.channels.size === 0) missing.push('groups.form.summary.missing_channels');
+    if (this.typificationMissing()) missing.push('groups.form.summary.missing_typification');
     if (this.phoneMissing()) missing.push('groups.form.summary.missing_phone');
     return missing;
   });
@@ -1239,9 +1245,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     const priority = this.translate.instant('groups.form.summary.priority', {
       value: this.translate.instant(this.priorityKeys[f.priority]),
     });
-    if (!this.hasPhone()) return priority;
-    const phone = f.phone || this.translate.instant('groups.form.summary.no_phone');
-    return `${phone} · ${priority}`;
+    return this.hasPhone() && f.phone ? `${f.phone}, ${priority.toLocaleLowerCase()}` : priority;
   });
 
   protected save(): void {
@@ -1291,6 +1295,8 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
         // La de Chat vale para sus dos subcanales: un grupo solo de WhatsApp también la guarda.
         chatStrategy: hasChatFamily(f.channels) ? f.chatStrategy : undefined,
         chatSubStrategy: f.chatSubStrategy,
+        // Sin clasificar, no guarda una tipificación que no usa.
+        wrapUp: f.wrapUp.classify ? f.wrapUp : { ...f.wrapUp, typificationId: null },
       };
 
       if (this.mode() === 'create') {
@@ -1301,15 +1307,10 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       // Como Contact Center y la ficha de agente (decisión de producto, 2026-09-16): guardar se queda en la ficha, con su aviso.
       const editingId = this.editingId()!;
       this.groupsStore.updateGroup(editingId, { ...payload });
-      this.saveTypifications(editingId, payload.channels);
       this.linksStore.replaceLinksForGroup(editingId, this.normalizeLinks(this.withoutOrphans(f.links), editingId));
       const refreshed = this.groupsStore.getGroup(editingId);
       if (refreshed) this.initial.set(refreshed);
-      this.messages.add({
-        severity: 'success',
-        summary: this.translate.instant('groups.toasts.updated', { name: payload.name }),
-        life: TOAST_LIFE.success,
-      });
+      this.resultado.enLaBarra(this.translate.instant('groups.toasts.updated', { name: payload.name }));
       // Lo guardado pasa a ser la referencia para avisar si luego se quita un canal con agentes.
       this.initialChannels.set(new Set(f.channels));
       this.initialLinks.set(this.linksStore.linksForGroup(editingId));
@@ -1327,13 +1328,8 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     const f = this.form();
     const slug = this.sectionSlug(this.activeSection());
     const created = this.groupsStore.addGroup(payload);
-    this.saveTypifications(created.id, payload.channels);
     this.linksStore.replaceLinksForGroup(created.id, this.normalizeLinks(this.withoutOrphans(f.links), created.id));
-    this.messages.add({
-      severity: 'success',
-      summary: this.translate.instant('groups.toasts.created', { name: created.name }),
-      life: TOAST_LIFE.success,
-    });
+    const creado = this.translate.instant('groups.toasts.created', { name: created.name });
     this.dirtyState.markPristine();
     // `saving` sigue encendido hasta que se va (ver `activeSection`).
     void this.router
@@ -1341,6 +1337,8 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
         replaceUrl: true,
         queryParams: slug && slug !== 'general' ? { seccion: slug } : {},
       })
+      // Tras llegar a la ficha nueva: antes, el cambio de página se lo llevaría (DD-191).
+      .then(() => this.resultado.enLaBarra(creado))
       .finally(() => this.saving.set(false));
   }
 
@@ -1352,6 +1350,14 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
 
   protected cancelCascade(): void {
     this.cascadeConfirm.set(null);
+  }
+
+  /** La frase del aviso, con su número: «1 agente pierde», no «1 agentes pierden». */
+  protected cascadeBodyKey(c: { readonly affected: number; readonly orphaned: number }): string {
+    const base = 'groups.form.cascade.';
+    if (c.orphaned === 0) return base + (c.affected === 1 ? 'body_one' : 'body');
+    if (c.affected === 1) return base + 'body_orphaned_one';
+    return base + (c.orphaned === 1 ? 'body_orphaned_single' : 'body_orphaned');
   }
 
   protected confirmCascade(): void {
@@ -1381,13 +1387,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     this.linksStore.removeGroup(id);
     this.deleteVisible.set(false);
     this.dirtyState.markPristine();
-    this.messages.add({
-      severity: 'success',
-      summary: this.translate.instant('groups.toasts.deleted_single', {
-        name: group?.name ?? '',
-      }),
-      life: TOAST_LIFE.success,
-    });
+    this.resultado.visto(this.translate.instant('groups.toasts.deleted_single', { name: group?.name ?? '' }));
     void this.router.navigateByUrl('/admin/grupos');
   }
 
@@ -1399,7 +1399,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       name: '',
       phone: '',
       priority: defaults.priority,
-      typificationIds: new Set(),
+      wrapUp: DEFAULT_WRAP_UP,
       scheduleIds: new Set<number>(),
       templateIds: new Set<number>(),
       labelIds: new Set<number>(),

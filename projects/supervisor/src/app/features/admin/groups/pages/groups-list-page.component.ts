@@ -1,23 +1,14 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  signal,
-  type TemplateRef,
-  viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, type TemplateRef, untracked, viewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { MessageService, type MenuItem } from 'primeng/api';
+import { type MenuItem } from 'primeng/api';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
-import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
+import { ScButtonComponent as ButtonComponent, ScMessageComponent } from '@smartcontact-hub/components';
 
-import { UndoStackService, XlsxExportService } from '@core/services';
+import { ResultadoAccionService, XlsxExportService } from '@core/services';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
-import { TOAST_LIFE } from '@core/utils/toast-life';
 import { injectLangChange } from '@core/utils/lang-change';
-import { ChannelIconComponent, ListPageComponent } from '@shared/components';
+import { CeldaVaciaComponent, ChannelIconComponent, ListPageComponent } from '@shared/components';
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
 import {
   useBulkEntityI18n,
@@ -46,7 +37,6 @@ import {
   GroupChannel,
   GroupPriority,
   PHONE_STRATEGIES,
-  UNAVAILABLE_STRATEGIES,
   PRIORITY_LABEL_KEYS,
   chatStrategyOf,
   compareChannels,
@@ -79,6 +69,7 @@ const COLUMN_PREF_KEY = 'sc-groups-columns-v4';
 @Component({
   selector: 'sc-groups-list-page',
   imports: [
+    CeldaVaciaComponent,
     BulkEditMenuComponent,
     ButtonComponent,
     ChannelIconComponent,
@@ -93,6 +84,7 @@ const COLUMN_PREF_KEY = 'sc-groups-columns-v4';
     InlineRenameCellComponent,
     ListPageComponent,
     TranslateModule,
+    ScMessageComponent,
   ],
   templateUrl: './groups-list-page.component.html',
   styleUrl: './groups-list-page.component.scss',
@@ -103,15 +95,15 @@ export class GroupsListPageComponent {
   private readonly linksStore = inject(GroupAgentLinksStore);
   private readonly agentsStore = inject(AgentsStore);
   private readonly xlsx = inject(XlsxExportService);
-  private readonly messages = inject(MessageService);
+  private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
   private readonly router = inject(Router);
-  private readonly undoStack = inject(UndoStackService);
 
   /** CTA proyectado a la TopBar (modelo "todo arriba" S59): la banda de
    * page-header desaparece; identidad → breadcrumb, acción → barra. */
   private readonly topbarActions = viewChild<TemplateRef<unknown>>('topbarActions');
+  private readonly lista = viewChild.required<ListPageComponent<Group>>(ListPageComponent);
 
   constructor() {
     useTopbarActions(this.topbarActions);
@@ -149,6 +141,12 @@ export class GroupsListPageComponent {
 
   /** Selección: la lista la marca; de ella cuelgan la edición en lote, el borrado y el diálogo de impacto. */
   protected readonly selectedIds = signal<ReadonlySet<Group['id']>>(new Set());
+  /** Por qué una edición masiva no se aplicó, junto a su menú (DD-191). Se va al cambiar la selección. */
+  protected readonly bulkAviso = signal<string | null>(null);
+  private readonly limpiaBulkAviso = effect(() => {
+    this.selectedIds();
+    untracked(() => this.bulkAviso.set(null));
+  });
   protected readonly deleteTarget = signal<readonly Group[] | null>(null);
   protected readonly renamingId = signal<number | null>(null);
   protected readonly pendingBulkEdit = signal<PendingBulkEdit | null>(null);
@@ -188,7 +186,7 @@ export class GroupsListPageComponent {
         key: 'strategy',
         label: this.translate.instant('groups.table.strategy_phone'),
         // Skills no se puede elegir todavía (SISMAC-1975): tampoco en bloque.
-        values: PHONE_STRATEGIES.filter((s) => !UNAVAILABLE_STRATEGIES.has(s)).map((s) => ({ value: s, label: s })),
+        values: PHONE_STRATEGIES.map((s) => ({ value: s, label: s })),
       },
       {
         // Hasta el 2026-09-26 las de chat iban en la lista de «Estrategia» y se escribían en la de TELÉFONO.
@@ -340,9 +338,9 @@ export class GroupsListPageComponent {
         header: this.translate.instant('groups.table.strategy_chat'),
         sortable: true,
         cellTemplate: this.chatStrategyTpl(),
-        /* La etiqueta más ancha, «Menos conversaciones activas» (DD-141), pide 185 px más los 28 de la celda (medido a
-         * 1440, 2026-10-01). La cabecera pedía 171 (2026-09-26). */
-        width: '14rem',
+        /* La etiqueta más ancha, «Menos conversaciones atendidas», la misma que en teléfono desde que Chat dejó
+         * «activas» (DD-185): 15rem, como ella (medido a 1440, 2026-10-07). */
+        width: '15rem',
       },
       {
         field: 'services',
@@ -487,12 +485,9 @@ export class GroupsListPageComponent {
       this.linksStore.linksForGroup(source.id).map((l) => ({ ...l, groupId: created.id })),
     );
     this.duplicateOpen.set(false);
-    this.messages.add({
-      severity: 'success',
-      summary: this.translate.instant('groups.toasts.created', { name: created.name }),
-      life: TOAST_LIFE.success,
-    });
-    void this.router.navigateByUrl(`/admin/grupos/editar/${created.id}`);
+    const creado = this.translate.instant('groups.toasts.created', { name: created.name });
+    // El duplicado abre su ficha; el aviso, ya en ella (DD-191).
+    void this.router.navigateByUrl(`/admin/grupos/editar/${created.id}`).then(() => this.resultado.enLaBarra(creado));
   }
 
   protected onRowOpen(group: Group): void {
@@ -549,11 +544,8 @@ export class GroupsListPageComponent {
   protected onRenameCommit(id: number, value: string): void {
     this.groupsStore.updateGroup(id, { name: value });
     this.renamingId.set(null);
-    this.messages.add({
-      severity: 'secondary',
-      summary: this.translate.instant('groups.toasts.duplicated', { name: value }),
-      life: TOAST_LIFE.info,
-    });
+    // El nombre nuevo ya se ve en la fila: solo para el lector de pantalla (DD-191).
+    this.resultado.visto(this.translate.instant('groups.toasts.duplicated', { name: value }));
   }
 
   protected onRenameCancel(_id: number): void {
@@ -580,11 +572,7 @@ export class GroupsListPageComponent {
     const ids = this.selectedIds();
     // Ninguno de los elegidos tiene el canal de esa estrategia: se dice, y no se abre una vista previa vacía.
     if (!this.groups().some((g) => ids.has(g.id) && this.appliesTo(g, field))) {
-      this.messages.add({
-        severity: 'warn',
-        summary: this.translate.instant('groups.bulk_edit_none', { field: commit.fieldLabel }),
-        life: TOAST_LIFE.warn,
-      });
+      this.bulkAviso.set(this.translate.instant('groups.bulk_edit_none', { field: commit.fieldLabel }));
       return;
     }
     this.pendingBulkEdit.set({
@@ -607,15 +595,12 @@ export class GroupsListPageComponent {
     this.pendingBulkEdit.set(null);
     this.clearSelection();
 
-    this.undoStack.push(
-      this.translate.instant('common.bulk_updated', { count: remainingIds.length }),
-      this.translate.instant('common.change_reverted'),
-      () => {
-        for (const prev of snapshot) {
-          this.groupsStore.updateGroup(prev.id, prev);
-        }
-      },
-    );
+    // El resultado, con su «Deshacer», lo cuenta la barra de lote donde se aplicó (DD-196).
+    this.lista().contarLote(remainingIds.length, () => {
+      for (const prev of snapshot) {
+        this.groupsStore.updateGroup(prev.id, prev);
+      }
+    });
   }
 
   protected onBulkPreviewCancel(): void {
@@ -638,21 +623,11 @@ export class GroupsListPageComponent {
     if (ids.length === 1) {
       this.groupsStore.deleteGroup(ids[0]!);
       this.linksStore.removeGroup(ids[0]!);
-      this.messages.add({
-        severity: 'success',
-        summary: this.translate.instant('groups.toasts.deleted_single', {
-          name: toasted[0]!.name,
-        }),
-        life: TOAST_LIFE.success,
-      });
+      this.resultado.visto(this.translate.instant('groups.toasts.deleted_single', { name: toasted[0]!.name, }));
     } else {
       this.groupsStore.deleteGroups(ids);
       for (const id of ids) this.linksStore.removeGroup(id);
-      this.messages.add({
-        severity: 'success',
-        summary: this.translate.instant('groups.toasts.deleted_bulk', { count: ids.length }),
-        life: TOAST_LIFE.success,
-      });
+      this.resultado.visto(this.translate.instant('groups.toasts.deleted_bulk', { count: ids.length }));
     }
 
     this.deleteTarget.set(null);

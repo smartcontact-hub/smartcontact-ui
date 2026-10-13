@@ -17,8 +17,20 @@ export interface ContratoMiembro {
   } | null;
 }
 
-interface ComponenteContrato {
+/**
+ * El estado de un componente (DD-190), calculado por `scripts/component-audit.mjs`: «ready» si tiene
+ * maestro en el Kit y página de demo; «experimental» si le falta alguna (`faltas`); «deprecated» si
+ * su clase lleva `@deprecated` (`retirado` es su motivo).
+ */
+export interface EstadoComponente {
+  readonly estado: 'ready' | 'experimental' | 'deprecated';
+  readonly faltas: readonly ('kit' | 'demo')[];
+  readonly retirado: string | null;
+}
+
+interface ComponenteContrato extends EstadoComponente {
   readonly selector: string;
+  readonly name: string;
   readonly cuando: string | null;
   readonly contrato: readonly ContratoMiembro[];
 }
@@ -54,6 +66,24 @@ export class ComponentApiService {
     const lista = this.componentes();
     return lista ? new Map(lista.map((c) => [c.selector, c])) : null;
   });
+
+  /** Por la ruta de su página (`sectioncard`): el nombre sin guiones. */
+  private readonly porRuta = computed(() => {
+    const lista = this.componentes();
+    return lista ? new Map(lista.map((c) => [c.name.replace(/-/g, ''), c])) : null;
+  });
+
+  /** Su estado por selector, o `null` mientras carga o si no está. */
+  estado(selector: string): EstadoComponente | null {
+    this.cargar();
+    return this.porSelector()?.get(selector) ?? null;
+  }
+
+  /** Su estado por la ruta de su página, para el índice. */
+  estadoDeRuta(ruta: string): EstadoComponente | null {
+    this.cargar();
+    return this.porRuta()?.get(ruta) ?? null;
+  }
 
   /** El contrato de un componente, o `null` mientras carga o si no está. */
   contrato(selector: string): readonly ContratoMiembro[] | null {

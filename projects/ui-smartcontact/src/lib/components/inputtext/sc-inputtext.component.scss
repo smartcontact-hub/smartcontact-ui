@@ -24,9 +24,11 @@
   display: inline-flex;
   align-items: baseline;
   gap: 2px;
-  /* Figma spec: 14px / Inter Regular / line-height 21px. */
-  font-size: var(--sc-font-size-200);
-  font-weight: var(--sc-font-weight-medium);
+  /* La etiqueta de campo de las fichas, Caption semibold 12/18/600 (DD-100 §4): una sola en todo el sistema (DD-187).
+   * Antes 14 a 500, heredando 21 de interlineado, que no es de la rampa. */
+  font-size: var(--sc-font-size-caption);
+  line-height: var(--sc-line-height-caption);
+  font-weight: var(--sc-font-weight-semibold);
   color: var(--sc-text-secondary);
   margin-bottom: 2px;
 }
@@ -111,9 +113,9 @@
   display: block;
   min-height: 1.25em;
   margin-top: var(--sc-spacing-0-25);
-  /* Figma spec: 12px / Inter Regular / line-height 21px. */
+  /* Figma spec: 12px / Inter Regular / line-height 18px (caption). */
   font-size: var(--sc-font-size-100);
-  line-height: 1.45;
+  line-height: var(--sc-line-height-caption); /* caption, 18: la de las ayudas de página (era 1.45, 17,4) */
   color: var(--sc-text-subtle);
 }
 

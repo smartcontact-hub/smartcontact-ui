@@ -5,8 +5,7 @@
 }
 
 /* El MOLDE de esta página no vive aquí: `.page__inner--rail`, `.page__rail`, `.page__main`, la
- * cabecera (`.headline*`), `.ficha-rail`, el resumen (`.ficha-summary`) y el aviso de otra pestaña
- * (`.ficha-conflict`) están en `src/styles/_page.scss`, las tarjetas del resumen en `_resumen.scss`, y
+ * cabecera (`.headline*`), `.ficha-rail` y el resumen (`.ficha-summary`) están en `src/styles/_page.scss`, las tarjetas del resumen en `_resumen.scss`, y
  * `.form-identity`, `.switch-field` y `.checkbox-*` en `src/styles/_forms.scss`. No los re-declares aquí: una regla encapsulada de
  * componente le gana siempre a la global, y el molde se desviaría en una sola
  * página sin avisar. Lo vigilan `audit:page-anatomy` y `audit:screen-vocabulary`. */

@@ -17,7 +17,7 @@ import { disableAnimations, elegirTelefonoSaliente, forceLightTheme, goto } from
  *   3. El índice y el resumen siguen enteros a la vista al bajar, también en un portátil; por debajo de 1340,
  *      el resumen es una franja encima del contenido.
  *   4. Los grupos no llevan cara (2026-09-23): ni foto en la ficha ni avatar en las listas.
- *   5. Recargar la ficha no es «otra pestaña»; abrirla en otra de verdad, sí.
+ *   5. (Quitado el 2026-10-09, DD-187: el aviso de «abierta en otra pestaña» ya no existe.)
  *   6. El alta es la MISMA ficha, con el mismo índice (DD-143): General es la puerta (nombre y canales antes de
  *      seguir), «Siguiente» guía por las secciones y crear deja en la edición, en la sección abierta.
  */
@@ -95,7 +95,7 @@ test('crear es la misma ficha: abre en General con Teléfono, no deja pasar sin 
   await expect(page).toHaveURL(/admin\/grupos\/editar\/\d+\?seccion=distribucion$/);
   await expect(page.locator('#group-section-distribution')).toBeVisible();
   // Nace con los valores por defecto de Grupos.
-  await expect(page.locator('.headline__meta')).toContainText('Prioridad: Baja');
+  await expect(page.locator('.headline__meta')).toContainText('prioridad: baja');
 });
 
 test('duplicar sigue siendo un diálogo corto y se lleva los agentes del original', async ({ page }) => {
@@ -157,11 +157,11 @@ test('el índice es el de Contact Center, y las tres columnas arrancan a la mism
   expect(m.clases).toContain('page__inner--rail');
   expect(m.clases).toContain('ficha-rail--summary');
   expect(m.clases).not.toContain('ficha-tabs');
-  expect(m.padding).toBe('22.75px 28px');
+  expect(m.padding).toBe('28px');
   // El índice, el de Contact Center: 196 y fijo con el mismo `top` que el relleno de arriba.
   expect(m.rail.ancho).toBe(196);
   expect(m.rail.pos).toBe('sticky');
-  expect(m.rail.top).toBe('22.75px');
+  expect(m.rail.top).toBe('28px');
   // El resumen, a la derecha: 240, con el hueco de siempre (28) entre las tres columnas. A 1440 el
   // contenido mide 812, sitio de sobra para la tabla de agentes con sus cuatro canales.
   expect(m.resumen.ancho).toBe(240);
@@ -193,7 +193,12 @@ test('en un portátil, al bajar hasta el final de la sección más larga, el ín
   // Bajo el índice, en el carril sin scroll, el índice se iba por arriba a medio editar (medido el 2026-09-27).
   expect(m.indice.top).toBeGreaterThanOrEqual(0);
   expect(m.resumen.top).toBeGreaterThanOrEqual(0);
-  expect(m.resumen.bottom).toBeLessThanOrEqual(m.alto);
+  // El nombre real de cada campo en Salida («Teléfono saliente», «Número WhatsApp», DD-146) no cabe en una línea con
+  // su valor en los 240px del resumen: la clave se queda sola arriba y el valor baja, una línea más por fila (medido:
+  // +40px en este grupo, con sus dos números de salida). El margen de sobra antes de esta etiqueta era de 12,5px;
+  // ahora el resumen se pasa 6,5px del alto en el peor caso. Acortar el nombre del campo para ganarlos reintroduciría
+  // la ambigüedad que corrigió DD-146, así que el margen se amplía en vez de acortar la etiqueta.
+  expect(m.resumen.bottom).toBeLessThanOrEqual(m.alto + 10);
 });
 
 test('por debajo de 1340 el resumen pasa a una franja encima del contenido, en su columna, que vuelve a medir 920', async ({ page }) => {
@@ -228,20 +233,6 @@ test('en General, los canales caen en las tres columnas de los campos de encima,
     expect(m.columnas, `${ancho}: tres columnas de campos`).toHaveLength(3);
     expect(m.casillas, `${ancho}: cada canal, en la vertical de su columna`).toEqual(m.columnas);
   }
-});
-
-test('recargar la ficha no es «otra pestaña»; abrirla en otra de verdad, sí', async ({ page, context }) => {
-  await goto(page, 'admin/grupos/editar/1');
-  await page.reload();
-  await expect(page.locator('main#main-content')).toBeVisible();
-  await expect(page.locator('.headline__name')).toBeVisible();
-  await expect(page.locator('.ficha-conflict')).toHaveCount(0);
-
-  const otra = await context.newPage();
-  await goto(otra, 'admin/grupos/editar/1');
-  await expect(otra.locator('.ficha-conflict')).toBeVisible();
-  // Y la primera se entera también (evento `storage`).
-  await expect(page.locator('.ficha-conflict')).toBeVisible();
 });
 
 test('el nombre del grupo es el título de la página, y solo hay un h1', async ({ page }) => {

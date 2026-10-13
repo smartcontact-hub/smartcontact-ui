@@ -134,6 +134,12 @@ export class ScInputNumberComponent {
   protected readonly isInvalid = this.field.isInvalid;
   protected readonly footerText = this.field.footerText;
 
+  /** La talla llega al `pInputText` como `p-inputtext-sm/lg`, y el tema le da letra, interlineado y relleno del Kit, como
+   * en `sc-inputtext` (DD-91). Antes el wrapper los escribía a mano y el pequeño medía 30 de alto, no 27. */
+  protected readonly pSize = computed(() => {
+    const s = this.size();
+    return s === 'sm' ? 'small' : s === 'lg' ? 'large' : undefined;
+  });
   protected readonly hasSuffix = computed(() => !!this.suffix());
 
   /*

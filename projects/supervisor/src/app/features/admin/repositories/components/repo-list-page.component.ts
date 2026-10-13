@@ -12,7 +12,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { map, startWith } from 'rxjs';
-import { MessageService, type MenuItem } from 'primeng/api';
+import { type MenuItem } from 'primeng/api';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import {
   ScEmptyStateComponent as EmptyStateComponent, ScButtonComponent as ButtonComponent,
@@ -22,7 +22,6 @@ import { ClickOutsideDirective } from '@core/directives/click-outside.directive'
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { LanguageService } from '@core/services/language.service';
 import { XlsxExportService } from '@core/services/xlsx-export.service';
-import { TOAST_LIFE } from '@core/utils/toast-life';
 import { ListPageComponent } from '@shared/components';
 import {
   type ScColumnCellContext,
@@ -33,6 +32,7 @@ import {
 import { RepoFormPanelComponent, RepoFormSubmission } from './repo-form-panel.component';
 import { RepoEntity, RepoPageConfig, RepoStore } from './repo-types';
 import { injectLangChange } from '@core/utils/lang-change';
+import { ResultadoAccionService } from '@core/services';
 
 /**
  * Generic CRUD page used by all 9 repository instances. Driven by a
@@ -60,7 +60,7 @@ import { injectLangChange } from '@core/utils/lang-change';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RepoListPageComponent<T extends RepoEntity> {
-  private readonly messages = inject(MessageService);
+  private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
   private readonly xlsx = inject(XlsxExportService);
@@ -157,6 +157,8 @@ export class RepoListPageComponent<T extends RepoEntity> {
       field: c.key,
       header: this.translate.instant(c.labelKey),
       width: c.width,
+      /* La columna del nombre es la cabecera de su fila también con ancho propio (Intenciones, Reglas IA…), DD-194. */
+      rowHeader: c.emphasis,
       cellTemplate: cell,
     }));
   });
@@ -347,10 +349,7 @@ export class RepoListPageComponent<T extends RepoEntity> {
   }
 
   private toastSuccess(key: string, params: Record<string, string | number>): void {
-    this.messages.add({
-      severity: 'success',
-      summary: this.translate.instant(key, params),
-      life: TOAST_LIFE.success,
-    });
+    // El resultado ya se ve en la lista: solo para el lector de pantalla (DD-191).
+    this.resultado.visto(this.translate.instant(key, params));
   }
 }

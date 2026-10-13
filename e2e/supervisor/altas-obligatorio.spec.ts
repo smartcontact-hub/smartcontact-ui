@@ -8,7 +8,8 @@ import { disableAnimations, forceLightTheme, goto, irASeccion, pickSelectOption 
  * La revisión de producto del 2026-10-04 pidió tres cosas del alta:
  *   1. el ✓ salía en Recursos o en Agentes solo por pasar por ellas: no comprobaba nada, y un ✓ que no comprueba nada
  *      enseña a no fiarse de los demás. Ahora lo lleva la sección con algo obligatorio que se deja completa: General y,
- *      con Teléfono, Distribución y colas. En el agente y el usuario, Identidad;
+ *      con Teléfono, Distribución y colas. En el usuario, Identidad. En el agente, General y Grupos desde DD-187 (la
+ *      revisión de agentes del 2026-10-09 hace obligatorio al menos un grupo; hasta entonces, solo Identidad);
  *   2. con Teléfono, no se sale de Distribución y colas sin teléfono saliente, como no se sale de General sin nombre:
  *      son los dos controles del alta. Se puede volver a General, donde se quita Teléfono; y saltar desde el índice a
  *      Recursos o a Agentes lleva a Distribución, a decir lo que falta;
@@ -79,17 +80,31 @@ test('grupo · ✓ solo en las secciones con algo obligatorio: General y Distrib
   await expect(fila(page, 'Recursos').locator('.form-nav__done')).toHaveCount(0);
 });
 
-test('agente · ✓ solo en Identidad, que es la que tiene lo obligatorio', async ({ page }) => {
+test('agente · ✓ solo en las secciones con algo obligatorio: General y Grupos; Configuración y Recursos, nunca', async ({
+  page,
+}) => {
   await goto(page, 'admin/agentes/crear');
   await page.locator('#agent-name').fill(`E2E Obligatorio ${Date.now()}`);
+  await page.locator('#agent-email').fill(`e2e.obligatorio.${Date.now()}@example.com`);
   await pickSelectOption(page, page.locator('sc-select').filter({ has: page.locator('#agent-ext') }), /./);
   await siguiente(page).click();
+  await expect(actual(page)).toContainText('Configuración');
   await siguiente(page).click();
-  await expect(actual(page)).toContainText('Permisos');
+  await expect(actual(page)).toContainText('Recursos');
+  await siguiente(page).click();
+  await expect(actual(page)).toContainText('Grupos');
+  await page.locator('sc-group-assignment-table tbody tr').first().getByRole('checkbox', { name: /^Asignado —/ }).click();
+  await atras(page).click();
+  await expect(actual(page)).toContainText('Recursos');
 
-  await expect(fila(page, 'Identidad')).toHaveAccessibleName(completa);
-  await expect(fila(page, 'Grupos asignados')).not.toHaveAccessibleName(completa);
-  await expect(fila(page, 'Grupos asignados').locator('.form-nav__done')).toHaveCount(0);
+  await expect(fila(page, 'General')).toHaveAccessibleName(completa);
+  await expect(fila(page, 'Grupos')).toHaveAccessibleName(completa);
+  // Configuración se dejó, y sin nada obligatorio: no hay nada que dar por bueno.
+  await expect(fila(page, 'Configuración')).not.toHaveAccessibleName(completa);
+  await expect(fila(page, 'Configuración').locator('.form-nav__done')).toHaveCount(0);
+  await siguiente(page).click();
+  await expect(fila(page, 'Recursos')).not.toHaveAccessibleName(completa);
+  await expect(fila(page, 'Recursos').locator('.form-nav__done')).toHaveCount(0);
 });
 
 test('el pie: «Atrás» y «Siguiente» juntos a la izquierda, «Siguiente» el principal, rellenos y sin icono', async ({ page }) => {

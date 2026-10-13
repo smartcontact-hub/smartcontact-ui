@@ -21,7 +21,7 @@ test.beforeEach(async ({ page }) => {
 test('categorías · la fila abre la edición', async ({ page }) => {
   await goto(page, 'conversaciones/categorias');
 
-  const name = (await page.locator('tbody tr td').first().innerText()).split('·')[0].trim();
+  const name = (await page.locator('tbody tr .categories-table__name').first().innerText()).trim();
   await page.locator('tbody tr').first().click();
 
   const modal = page.locator('sc-memory-category-form-modal .p-dialog');

@@ -118,7 +118,7 @@ for (const { ruta, nombre } of FORMULARIOS) {
  * Dos familias desde el 2026-09-09, y la distinción es del CONTENEDOR, no del nivel del
  * documento (DD-61):
  *
- *   · **suelto sobre el lienzo** (`.page__heading`) → 18/600, el rol `h3`;
+ *   · **suelto sobre el lienzo** (`.page__heading`) → 20/600, el rol `title` (18/600, `h3`, hasta el 2026-10-09);
  *   · **contenido en su sección** (`sc-section-card [headingLevel]="1"`) → 14/600, el mismo
  *     tamaño que los títulos de sección de esa card, porque ahí el título ES la cabecera de la
  *     caja: lo que lo distingue es su icono, no su cuerpo. Es lo que mide la maqueta.
@@ -162,8 +162,10 @@ test('el título de página mide igual dentro de su familia', async ({ page }) =
    *
    * Lo que este test sigue defendiendo es lo de siempre: que DENTRO de una familia
    * no haya dos medidas. Si algún día vuelven a separarse, que sea escrito. */
-  expect(porFamilia('suelto'), detalle).toEqual(['18px/600']);
-  expect(porFamilia('contenido'), detalle).toEqual(['18px/600']);
+  /* Desde el 2026-10-09 las dos miden `Title` (20/600, DD-188): el Kit ganó un estilo para el título
+   * de la página, y la caja que titula la página (`headingLevel="1"`) sube con él. */
+  expect(porFamilia('suelto'), detalle).toEqual(['20px/600']);
+  expect(porFamilia('contenido'), detalle).toEqual(['20px/600']);
 
   // Y las dos familias están representadas: si una se queda vacía, el test dejó de mirar algo.
   expect(porFamilia('suelto').length, detalle).toBe(1);
