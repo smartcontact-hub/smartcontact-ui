@@ -48,6 +48,10 @@ test('rojo: frases reales de corrección disparan', () => {
     // Literales del usuario, 2026-10-05: la queja por gusto o por parecido, sin «no,» ni «te dije».
     'No me gusta que haya tanto layout shift. Podemos simplificar más el flujo de creación?',
     '[Image #1] no se parece en nada al telefono. Lo tienes en sc-agent',
+    // Literales del usuario, 2026-10-13: lo pedido sin construir y el criterio rebatido, que no se apuntaron.
+    'No me lo has hecho en local para todas las cabeceras',
+    'y me has mezclado fuentes que son incompletas',
+    'pero no tiene sentido poner en los headers de las columnas algunas con icono y otras sin',
   ])
     assert.ok(esCorreccion(f), `debía detectar: ${f}`);
 });
