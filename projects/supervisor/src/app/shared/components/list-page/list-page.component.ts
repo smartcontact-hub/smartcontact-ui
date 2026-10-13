@@ -477,8 +477,8 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
   protected readonly columnsPopoverPt = { content: { style: { padding: '0' } } };
 
   /**
-   * La columna en curso: la última enfocada (o pulsada) en la lista, la que mueven «Subir» y «Bajar» y la que lleva el
-   * foco al volver a la lista. Ordenar sin arrastrar (WCAG 2.1.1 y 2.5.7, DD-162).
+   * La columna en curso: la última enfocada (o pulsada) en la lista, la que mueven sus flechas y Alt+↑/↓, y la que lleva
+   * el foco al volver a la lista. Ordenar sin arrastrar (WCAG 2.1.1 y 2.5.7, DD-162).
    */
   protected readonly currentColumn = signal<string | null>(null);
 
@@ -495,8 +495,14 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
     return `${this.columnsTitleId}-${key}`;
   }
 
-  /** Las flechas van de una columna a otra (y Inicio y Fin, a la primera y la última); Espacio la marca, el nativo. */
+  /** Las flechas van de una columna a otra (y Inicio y Fin, a la primera y la última); con Alt, la mueven. Espacio la
+   *  marca, el nativo. */
   protected onColumnsKeydown(event: KeyboardEvent): void {
+    if (event.altKey && (event.key === 'ArrowUp' || event.key === 'ArrowDown')) {
+      event.preventDefault();
+      this.moveColumn(event.key === 'ArrowUp' ? -1 : 1);
+      return;
+    }
     const keys = this.movableColumns().map((o) => o.key);
     if (!keys.length) return;
     const from = Math.max(0, keys.indexOf(this.currentColumn() ?? keys[0]!));
@@ -511,7 +517,7 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
     this.focusColumn(keys[to]!);
   }
 
-  /** Pulsar una fila (fuera de su casilla) la deja en curso, para «Subir» y «Bajar» con el ratón. */
+  /** Pulsar una fila (fuera de su casilla) la deja en curso, con sus flechas para moverla con el ratón. */
   protected onColumnRowClick(key: string): void {
     if (!this.columnOptions().find((o) => o.key === key)?.locked) this.currentColumn.set(key);
   }
@@ -556,15 +562,27 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
   /** Lo que dice el lector tras mover: la columna y su puesto («Email, 3 de 10»). */
   protected readonly columnsAnnouncement = signal('');
 
-  protected moveColumn(delta: -1 | 1): void {
+  /**
+   * Mueve la columna en curso un puesto. La fila cambia de sitio en el DOM y con ella se iría el foco: vuelve a la flecha
+   * pulsada (o a la casilla, con Alt+↑/↓ o si esa flecha ya no puede), para poder repetir sin buscarla.
+   */
+  protected moveColumn(delta: -1 | 1, flecha?: 'up' | 'down'): void {
     const options = this.columnOptions();
-    const from = options.findIndex((o) => o.key === this.currentColumn());
+    const key = this.currentColumn();
+    const from = options.findIndex((o) => o.key === key);
     const move = this.columnMove();
-    if (from < 0 || !move || !(delta < 0 ? move.up : move.down)) return;
+    if (!key || from < 0 || !move || !(delta < 0 ? move.up : move.down)) return;
     this.reorderColumns(from, from + delta);
     this.columnsAnnouncement.set(
       this.translate.instant('common.columns_position', { column: move.label, position: from + delta + 1, total: options.length }),
     );
+    setTimeout(() => {
+      const casilla = this.document.getElementById(this.columnInputId(key));
+      const boton = flecha
+        ? casilla?.closest('.column-toggle__row')?.querySelector<HTMLButtonElement>(`[data-move="${flecha}"] button:not(:disabled)`)
+        : null;
+      (boton ?? casilla)?.focus();
+    });
   }
 
   /** El globo se ha cerrado. Con el foco dentro (Escape, o el botón que lo tenía), el foco vuelve al icono; si se cerró
@@ -586,7 +604,7 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
     this.reorderColumns(event.previousIndex, event.currentIndex);
   }
 
-  /** Mueve una columna de un puesto a otro de la lista, arrastrando o con «Subir» y «Bajar». Las visibles son las mismas. */
+  /** Mueve una columna de un puesto a otro de la lista, arrastrando o con sus flechas. Las visibles son las mismas. */
   private reorderColumns(from: number, to: number): void {
     const prefs = this.columnPrefs();
     const choices = this.columnChoices();

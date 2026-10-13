@@ -12,9 +12,10 @@
           <!-- ELEGIR Y ORDENAR COLUMNAS: el «Column Toggle» de primeng.dev/table, tal cual (DD-176, sustituye el Listbox de
                DD-162). El botón con su engranaje (outlined, secondary), a la altura del buscador de su barra; el Popover sin relleno; arriba, el título y
                «Restablecer»; una fila por columna con su asa, su casilla nativa y su nombre, que se arrastra para ordenar.
-               Lo único que el ejemplo no trae es el teclado sin arrastrar (WCAG 2.1.1 y 2.5.7, que DD-162 ya pedía): la
-               lista es una sola parada del tabulador, las flechas van de una columna a otra y «Subir» y «Bajar», al pie,
-               mueven la enfocada. Nombre (la fija) sale marcada, sin poder quitarse ni moverse. -->
+               Lo único que el ejemplo no trae es ordenar sin arrastrar (WCAG 2.1.1 y 2.5.7, que DD-162 ya pedía): la
+               lista es una sola parada del tabulador, las flechas van de una columna a otra, Alt+↑/↓ mueve la enfocada, y
+               la fila en curso lleva sus propias flechas para hacerlo con el ratón. Nombre (la fija) sale marcada, sin
+               poder quitarse ni moverse. -->
           <sc-button
             #columnsButton
             class="page__columns"
@@ -76,33 +77,38 @@
                       (click)="$event.stopPropagation()"
                     />
                     <label class="column-toggle__label sc-text-body-regular" [for]="columnInputId(opt.key)" (click)="$event.stopPropagation()">{{ opt.label }}</label>
+                    <!-- Ordenar sin arrastrar con el ratón (WCAG 2.5.7, DD-162): solo en la fila en curso, para que la lista
+                         siga siendo una parada del tabulador y no veinte. Su nombre dice cuál; el lector oye después a qué
+                         puesto llegó. -->
+                    @if (opt.key === currentColumn() && !opt.locked) {
+                      @let mover = columnMove();
+                      <span class="column-toggle__move" (click)="$event.stopPropagation()">
+                        <sc-button
+                          size="sm"
+                          variant="secondary"
+                          appearance="text"
+                          iconOnly
+                          icon="arrow_upward"
+                          data-move="up"
+                          [ariaLabel]="'common.columns_move_up_aria' | translate: { column: opt.label }"
+                          [disabled]="!mover?.up"
+                          (clicked)="moveColumn(-1, 'up')"
+                        />
+                        <sc-button
+                          size="sm"
+                          variant="secondary"
+                          appearance="text"
+                          iconOnly
+                          icon="arrow_downward"
+                          data-move="down"
+                          [ariaLabel]="'common.columns_move_down_aria' | translate: { column: opt.label }"
+                          [disabled]="!mover?.down"
+                          (clicked)="moveColumn(1, 'down')"
+                        />
+                      </span>
+                    }
                   </div>
                 }
-              </div>
-              <!-- Ordenar sin arrastrar (WCAG 2.1.1 y 2.5.7, DD-162): mueven la columna enfocada en la lista. Su nombre dice
-                   cuál; el lector oye después a qué puesto llegó. Primarios de texto, como «Añadir condición». -->
-              @let mover = columnMove();
-              <div class="page__columns-move">
-                <sc-button
-                  size="sm"
-                  variant="primary"
-                  appearance="text"
-                  icon="arrow_upward"
-                  [label]="'common.columns_move_up' | translate"
-                  [ariaLabel]="mover ? ('common.columns_move_up_aria' | translate: { column: mover.label }) : ('common.columns_move_up' | translate)"
-                  [disabled]="!mover?.up"
-                  (clicked)="moveColumn(-1)"
-                />
-                <sc-button
-                  size="sm"
-                  variant="primary"
-                  appearance="text"
-                  icon="arrow_downward"
-                  [label]="'common.columns_move_down' | translate"
-                  [ariaLabel]="mover ? ('common.columns_move_down_aria' | translate: { column: mover.label }) : ('common.columns_move_down' | translate)"
-                  [disabled]="!mover?.down"
-                  (clicked)="moveColumn(1)"
-                />
               </div>
               <span class="visually-hidden" aria-live="polite">{{ columnsAnnouncement() }}</span>
             </ng-template>
