@@ -1,0 +1,99 @@
+:host {
+  display: block;
+}
+
+.table-lab__heading-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sc-spacing-1);
+  flex-wrap: wrap;
+}
+
+.table-lab__intro {
+  color: var(--sc-text-secondary);
+  max-width: 68ch;
+
+  code {
+    font-family: var(--sc-font-family-mono);
+  }
+}
+
+.table-lab__frame {
+  margin-block-start: var(--sc-spacing-1-5);
+  transition: max-width 0.2s cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* Un botón por grupo (General, Selección y orden, Scroll y tamaño, Columnas, Contexto de la app):
+ * cada popover trae solo SUS knobs, en vez de un único botón con todo mezclado en un acordeón largo. */
+.table-lab-controls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1);
+  width: 18rem;
+  max-height: min(28rem, calc(100vh - 8rem));
+  overflow-y: auto;
+}
+
+.table-lab-controls__title {
+  margin: 0;
+}
+
+.table-lab-controls__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sc-spacing-0-75);
+}
+
+.table-lab-controls__label {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-25);
+  min-width: 0;
+}
+
+.table-lab-controls__label-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-375);
+}
+
+.table-lab-controls__hint {
+  color: var(--sc-text-secondary);
+  cursor: help;
+
+  &:hover,
+  &:focus-visible {
+    color: var(--sc-text-primary);
+  }
+}
+
+.table-lab-controls__label-code {
+  color: var(--sc-text-secondary);
+}
+
+.table-lab-controls__field {
+  min-width: 0;
+}
+
+.table-lab__country {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-375);
+}
+
+.table-lab__flag {
+  display: block;
+  border-radius: var(--sc-radius-0-25);
+  outline: 1px solid var(--sc-border-subtle);
+  outline-offset: -1px;
+}
+
+.table-lab__cluster {
+  position: fixed;
+  right: var(--sc-spacing-1-75);
+  bottom: var(--sc-spacing-1-75);
+  z-index: var(--sc-z-sidebar);
+  display: flex;
+  gap: var(--sc-spacing-1);
+}

@@ -95,6 +95,18 @@ export const routes: Routes = [
   },
 
   {
+    // Catálogo completo de funcionalidades de tabla (las 55 del Excel de BI, cruzadas con
+    // `sc-datatable`), checklist propio del navegador. No es documentación de un componente (no
+    // entra en «Componentes»): es una pantalla de una tarea concreta, como
+    // `validar`/`conexion`/`tema`. Enlazada desde la página de DataTable. Se abre por URL
+    // directa, en su propia pestaña. (El fichero sigue llamándose `tablas-bi` por dentro: el
+    // dato viene de ahí; lo que cambió es cómo se presenta.)
+    path: 'tablas-completo',
+    loadComponent: () =>
+      import('./pages/tablas-bi/tablas-bi.component').then((m) => m.TablasBiComponent),
+  },
+
+  {
     // Novedades: qué versión hay publicada y qué trae. Pinta un artefacto GENERADO desde
     // CHANGELOG.md (`public/novedades/_novedades.json`), igual que la galería de uso real y
     // el mapa de variables. Vive en la barra, no en el Lab: es lo primero que necesita

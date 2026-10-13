@@ -88,6 +88,18 @@ export const appRoutes: Routes = [
         loadChildren: () => import('./features/config/config.routes').then((m) => m.configRoutes),
       },
       {
+        path: 'lab/tabla',
+        loadComponent: () =>
+          import('./features/lab/table-lab-page.component').then((m) => m.TableLabPageComponent),
+      },
+      {
+        path: 'lab/arbol',
+        loadComponent: () =>
+          import('./features/lab/treetable-lab-page.component').then(
+            (m) => m.TreetableLabPageComponent,
+          ),
+      },
+      {
         path: '',
         loadChildren: () =>
           import('./features/supervision/supervision.routes').then((m) => m.supervisionRoutes),
