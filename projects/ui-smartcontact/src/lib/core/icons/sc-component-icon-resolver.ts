@@ -1,44 +1,10 @@
+import { resolveScIconName } from '@smartcontact-hub/icons';
+
 import type { ScButtonIconSize } from '../types/button.types';
 
-const SC_COMPONENT_ICON_ALIAS_MAP = {
-    'arrow-right': 'arrow_forward',
-    bars: 'menu',
-    bell: 'notifications',
-    'check-circle': 'check_circle',
-    copy: 'content_copy',
-    'exclamation-triangle': 'warning',
-    'external-link': 'open_in_new',
-    moon: 'dark_mode',
-    sparkles: 'auto_awesome',
-    'times-circle': 'error',
-    trash: 'delete',
-    user: 'person',
-    'window-maximize': 'open_in_full'
-} as const;
-
-const SC_COMPONENT_LEGACY_PRIME_ICON_MAP = {
-    'pi pi-align-left': 'menu',
-    'pi pi-arrow-right': 'arrow-right',
-    'pi pi-bars': 'bars',
-    'pi pi-bell': 'bell',
-    'pi pi-bolt': 'bolt',
-    'pi pi-check': 'check',
-    'pi pi-check-circle': 'check-circle',
-    'pi pi-copy': 'copy',
-    'pi pi-exclamation-triangle': 'exclamation-triangle',
-    'pi pi-external-link': 'external-link',
-    'pi pi-info-circle': 'info',
-    'pi pi-moon': 'moon',
-    'pi pi-refresh': 'refresh',
-    'pi pi-sparkles': 'sparkles',
-    'pi pi-times': 'close',
-    'pi pi-times-circle': 'times-circle',
-    'pi pi-trash': 'trash',
-    'pi pi-undo': 'undo',
-    'pi pi-upload': 'upload',
-    'pi pi-user': 'user',
-    'pi pi-window-maximize': 'window-maximize'
-} as const;
+// Los alias del DS (`trash` → `delete`) y los nombres heredados de PrimeIcons (`pi pi-trash`) viven en UN sitio: el
+// paquete de iconos (DD-200). Aquí había una copia de los dos mapas, idéntica el día que se quitó y sin nada que la
+// atara a la otra.
 
 type ScComponentIconOptions = {
     filled?: boolean;
@@ -46,21 +12,7 @@ type ScComponentIconOptions = {
 };
 
 function resolveScComponentIconName(icon: string): string {
-    const aliasName = SC_COMPONENT_ICON_ALIAS_MAP[icon as keyof typeof SC_COMPONENT_ICON_ALIAS_MAP];
-
-    if (aliasName) {
-        return aliasName;
-    }
-
-    const legacyIconName = SC_COMPONENT_LEGACY_PRIME_ICON_MAP[
-        icon as keyof typeof SC_COMPONENT_LEGACY_PRIME_ICON_MAP
-    ];
-
-    if (legacyIconName) {
-        return resolveScComponentIconName(legacyIconName);
-    }
-
-    return icon;
+    return resolveScIconName(icon) ?? icon;
 }
 
 function supportsScIconFontOptions(iconClass: string): boolean {
@@ -95,11 +47,8 @@ export function resolveScComponentIconClass(
         return undefined;
     }
 
-    const legacyIconName = SC_COMPONENT_LEGACY_PRIME_ICON_MAP[
-        normalizedIcon as keyof typeof SC_COMPONENT_LEGACY_PRIME_ICON_MAP
-    ];
-
-    if (normalizedIcon.includes(' ') && !legacyIconName) {
+    // Una clase ya armada (`sc-icon-font sc-icon-font--x`, `pi pi-x` sin traducción) pasa tal cual.
+    if (normalizedIcon.includes(' ') && !resolveScIconName(normalizedIcon)) {
         return appendScComponentIconOptions(normalizedIcon, options);
     }
 

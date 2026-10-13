@@ -64,7 +64,9 @@
     <span
       class="table__cell table__cell--levels sc-text-body-regular"
       tabindex="0"
+      role="note"
       [pTooltip]="detalle"
+      tooltipEvent="both"
       tooltipPosition="top"
       [attr.aria-label]="levelsLabel(t) + '. ' + detalle"
     >{{ levelsLabel(t) }}</span>

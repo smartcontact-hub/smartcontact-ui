@@ -84,7 +84,7 @@
             <div class="entity-form__list-value-card">
               <div class="entity-form__list-value-row">
                 <sc-inputtext class="entity-form__list-input" fluid [placeholder]="'memory.entities.form.list_value_placeholder' | translate" [value]="draft.value" (valueChange)="updateListValueText($index, $event)" />
-                <sc-button variant="secondary" appearance="text" size="sm" [icon]="trashIcon" [ariaLabel]="'memory.entities.form.list_remove' | translate" (clicked)="removeListValue($index)" />
+                <sc-button variant="secondary" appearance="text" size="sm" [icon]="removeIcon" [ariaLabel]="'memory.entities.form.list_remove' | translate" (clicked)="removeListValue($index)" />
               </div>
 
               @if (draft.expanded) {

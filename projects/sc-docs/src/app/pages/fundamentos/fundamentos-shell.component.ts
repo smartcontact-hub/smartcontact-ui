@@ -37,5 +37,6 @@ export class FundamentosShellComponent {
     { path: 'escala-color' },
     { path: 'tipografia' },
     { path: 'patrones' },
+    { path: 'iconos' },
   ];
 }

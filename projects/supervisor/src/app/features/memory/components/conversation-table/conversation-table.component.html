@@ -9,6 +9,7 @@
     [attr.aria-label]="'memory.conversations.open_aria_with_state' | translate: { id: conv.id, state: statusDescription(conv) }"
     [pTooltip]="statusDescription(conv)"
     tooltipPosition="top"
+    tooltipEvent="both"
     (click)="onStatusClick($event, conv)"
     (keydown)="onStatusKeydown($event, conv)"
   >

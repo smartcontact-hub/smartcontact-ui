@@ -82,6 +82,8 @@ export class EntityFormModalComponent {
   protected readonly databaseIcon = 'database';
   protected readonly plusIcon = 'add';
   protected readonly trashIcon = 'delete';
+  /** Quitar un valor de la lista: no destruye nada guardado, así que la X (DD-200). */
+  protected readonly removeIcon = 'close';
 
   protected readonly typeOptions: EntityTypeOption[] = [
     { value: 'text', labelKey: 'memory.entities.types.text' },

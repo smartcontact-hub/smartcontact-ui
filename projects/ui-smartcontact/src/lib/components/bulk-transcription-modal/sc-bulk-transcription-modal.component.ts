@@ -14,6 +14,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 
 import { ScButtonComponent } from '../button/sc-button.component';
+import { ScIconTileComponent } from '../icon-tile/sc-icon-tile.component';
 import { ScToggleSwitchComponent } from '../toggleswitch/sc-toggleswitch.component';
 import {
   SC_BULK_TRANSCRIPTION_MODAL_TRANSLATION_KEY,
@@ -74,7 +75,7 @@ export type ScBulkTranscriptionModalSurface = 'default' | 'dark' | 'green';
 @Component({
   selector: 'sc-bulk-transcription-modal',
   standalone: true,
-  imports: [NgClass, TranslatePipe, ScButtonComponent, ScToggleSwitchComponent],
+  imports: [NgClass, TranslatePipe, ScButtonComponent, ScIconTileComponent, ScToggleSwitchComponent],
   templateUrl: './sc-bulk-transcription-modal.component.html',
   styleUrl: './sc-bulk-transcription-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

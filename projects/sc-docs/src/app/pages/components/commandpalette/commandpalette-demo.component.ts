@@ -55,7 +55,7 @@ export class CommandPaletteDemoComponent {
     // como nombre Material, y action cableada. El DS no conoce nada de esto.
     const commands: readonly ScPaletteCommand[] = [
       { id: 'page:dashboard', label: 'Dashboard', category: 'Páginas', icon: 'home', action: run('Dashboard') },
-      { id: 'page:grupos', label: 'Grupos', category: 'Páginas', icon: 'groups', action: run('Grupos') },
+      { id: 'page:grupos', label: 'Grupos', category: 'Páginas', icon: 'group', action: run('Grupos') },
       { id: 'page:agentes', label: 'Agentes', category: 'Páginas', icon: 'headphones', action: run('Agentes') },
       { id: 'page:usuarios', label: 'Usuarios', category: 'Páginas', icon: 'person', action: run('Usuarios') },
       {

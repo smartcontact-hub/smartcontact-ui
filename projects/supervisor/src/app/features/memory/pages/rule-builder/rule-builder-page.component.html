@@ -57,13 +57,13 @@
 
       <div class="impact impact--rail sc-text-body-regular" aria-live="polite">
         <p class="impact__label">
-          <sc-icon name="leaderboard" [size]="15" aria-hidden="true" />
+          <sc-icon name="leaderboard" size="inherit" />
           {{ 'memory.rules.builder.cond.impact_title' | translate }}
         </p>
 
         @if (showEmptyImpact()) {
           <p class="impact__empty">
-            <sc-icon name="warning" [size]="15" aria-hidden="true" />
+            <sc-icon name="warning" size="inherit" />
             {{ 'memory.rules.builder.cond.val.impact_zero' | translate: { total: impactTotal() } }}
           </p>
         } @else {
@@ -119,6 +119,7 @@
                   @if (monthTrend(); as trend) {
                     <span
                       class="impact__trend"
+                      role="img"
                       [attr.aria-label]="
                         (trend === 'up'
                           ? 'memory.rules.builder.cond.trend_up'
@@ -144,7 +145,7 @@
            abierto; vive junto a las condiciones que describe (tarjeta 02). -->
       @if (submitted() && condBlocking()) {
         <p class="rule-notice rule-notice--error sc-text-body-regular" aria-live="polite">
-          <sc-icon name="error" [size]="15" aria-hidden="true" />
+          <sc-icon name="error" size="inherit" />
           {{ 'memory.rules.builder.cond.val.blocked' | translate }}
         </p>
       }
@@ -223,7 +224,7 @@
                    Campos y valores en negrita; conectores Y/O como badges. -->
               @let scope = scopeDescription();
               <div class="scope-desc" aria-live="polite">
-                <sc-icon class="scope-desc__icon" name="info" [size]="15" aria-hidden="true" />
+                <sc-icon class="scope-desc__icon" name="info" size="inherit" />
                 <span class="scope-desc__body">
                   <span class="scope-desc__lead">{{
                     'memory.rules.builder.cond.scope_lead' | translate

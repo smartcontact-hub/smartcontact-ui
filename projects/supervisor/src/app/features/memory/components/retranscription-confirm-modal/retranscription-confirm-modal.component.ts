@@ -61,7 +61,7 @@ export class RetranscriptionConfirmModalComponent {
   protected readonly confirmText = signal('');
   protected readonly isValid = computed(() => this.confirmText() === this.gateToken());
 
-  protected readonly retransIcon = 'rotate_left';
+  protected readonly retransIcon = 'description';
   protected readonly alertIcon = 'warning';
 
   constructor() {

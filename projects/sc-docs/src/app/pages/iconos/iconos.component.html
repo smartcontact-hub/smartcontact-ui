@@ -1,0 +1,155 @@
+<header class="hero">
+  <div class="hero__icon" aria-hidden="true"><sc-icon name="interests" [size]="20" /></div>
+  <div>
+    <p class="hero__eyebrow sc-text-caption-semibold">{{ 'chrome.nav.fundamentos' | translate }}</p>
+    <h1 class="hero__title">{{ 'fundamentos.iconos.title' | translate }}</h1>
+    <p class="hero__lead sc-text-body-regular" [innerHTML]="'fundamentos.iconos.lead' | translate"></p>
+  </div>
+</header>
+
+<!-- Cuándo: cada fila con su ejemplo vivo, el botón tal cual sale en una pantalla. -->
+<section class="bloque">
+  <h2 class="bloque__title sc-text-subtitle-semibold">{{ 'fundamentos.iconos.cuando.title' | translate }}</h2>
+  <ul class="cuando">
+    <li class="cuando__fila">
+      <div class="cuando__ejemplo">
+        <sc-button icon="more_vert" variant="secondary" appearance="text" [ariaLabel]="'fundamentos.iconos.cuando.solo.ejemplo' | translate" />
+      </div>
+      <div>
+        <h3 class="cuando__title sc-text-body-semibold">{{ 'fundamentos.iconos.cuando.solo.title' | translate }}</h3>
+        <p class="sc-text-body-regular">{{ 'fundamentos.iconos.cuando.solo.apply' | translate }}</p>
+        <p class="nota sc-text-caption-regular">{{ 'fundamentos.iconos.cuando.solo.note' | translate }}</p>
+      </div>
+    </li>
+    <li class="cuando__fila">
+      <div class="cuando__ejemplo">
+        <sc-button icon="view_column" variant="secondary" appearance="outlined" size="sm" [label]="'fundamentos.iconos.cuando.mixto.ejemplo' | translate" />
+      </div>
+      <div>
+        <h3 class="cuando__title sc-text-body-semibold">{{ 'fundamentos.iconos.cuando.mixto.title' | translate }}</h3>
+        <p class="sc-text-body-regular">{{ 'fundamentos.iconos.cuando.mixto.apply' | translate }}</p>
+      </div>
+    </li>
+    <li class="cuando__fila">
+      <div class="cuando__ejemplo">
+        <sc-button variant="secondary" appearance="outlined" size="sm" [label]="'fundamentos.iconos.cuando.texto.ejemplo' | translate" />
+      </div>
+      <div>
+        <h3 class="cuando__title sc-text-body-semibold">{{ 'fundamentos.iconos.cuando.texto.title' | translate }}</h3>
+        <p class="sc-text-body-regular">{{ 'fundamentos.iconos.cuando.texto.apply' | translate }}</p>
+      </div>
+    </li>
+  </ul>
+</section>
+
+<!-- Sí y no, en vivo. El «no» lleva `data-contraejemplo`: audit:icons no lo cuenta. -->
+<section class="bloque">
+  <h2 class="bloque__title sc-text-subtitle-semibold">{{ 'fundamentos.iconos.siNo.title' | translate }}</h2>
+  <div class="par">
+    <div class="par__col">
+      <p class="par__label sc-text-caption-semibold">
+        <sc-icon class="marca marca--si" name="check" [size]="16" />
+        <span>{{ 'fundamentos.iconos.siNo.si' | translate }}</span>
+      </p>
+      <div class="par__fila">
+        <sc-button icon="delete" variant="secondary" appearance="text" [ariaLabel]="'fundamentos.iconos.siNo.eliminar' | translate" />
+        <sc-button icon="close" variant="secondary" appearance="text" [ariaLabel]="'fundamentos.iconos.siNo.quitar' | translate" />
+        <sc-button icon="tune" variant="secondary" appearance="text" [ariaLabel]="'fundamentos.iconos.siNo.opciones' | translate" />
+      </div>
+      <p class="nota sc-text-caption-regular">{{ 'fundamentos.iconos.siNo.siNota' | translate }}</p>
+    </div>
+    <div class="par__col" data-contraejemplo>
+      <p class="par__label sc-text-caption-semibold">
+        <sc-icon class="marca marca--no" name="close" [size]="16" />
+        <span>{{ 'fundamentos.iconos.siNo.no' | translate }}</span>
+      </p>
+      <div class="par__fila">
+        <sc-button icon="close" variant="secondary" appearance="text" [ariaLabel]="'fundamentos.iconos.siNo.eliminar' | translate" />
+        <sc-button icon="delete" variant="secondary" appearance="text" [ariaLabel]="'fundamentos.iconos.siNo.quitar' | translate" />
+        <sc-button icon="menu" variant="secondary" appearance="text" [ariaLabel]="'fundamentos.iconos.siNo.opciones' | translate" />
+      </div>
+      <p class="nota sc-text-caption-regular">{{ 'fundamentos.iconos.siNo.noNota' | translate }}</p>
+    </div>
+  </div>
+</section>
+
+<section class="bloque">
+  <h2 class="bloque__title sc-text-subtitle-semibold">{{ 'fundamentos.iconos.reservados.title' | translate }}</h2>
+  <p class="bloque__lead sc-text-body-regular">{{ 'fundamentos.iconos.reservados.lead' | translate }}</p>
+  <table class="tabla sc-text-body-regular">
+    <thead>
+      <tr>
+        <th scope="col">{{ 'fundamentos.iconos.reservados.icono' | translate }}</th>
+        <th scope="col">{{ 'fundamentos.iconos.reservados.significa' | translate }}</th>
+        <th scope="col">{{ 'fundamentos.iconos.reservados.noSignifica' | translate }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (r of reservados; track r.icono) {
+        <tr>
+          <th scope="row">
+            <span class="tabla__icono">
+              <sc-icon [name]="r.icono" [size]="20" />
+              <code>{{ r.icono }}</code>
+            </span>
+          </th>
+          <td>{{ r.significa }}</td>
+          <td>{{ r.noSignifica }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</section>
+
+<section class="bloque">
+  <h2 class="bloque__title sc-text-subtitle-semibold">{{ 'fundamentos.iconos.conceptos.title' | translate }}</h2>
+  <p class="bloque__lead sc-text-body-regular" [innerHTML]="'fundamentos.iconos.conceptos.lead' | translate"></p>
+  <ul class="conceptos">
+    @for (c of conceptos; track c.clave) {
+      <li class="conceptos__item">
+        <sc-icon [name]="c.icono" [size]="20" />
+        <span class="conceptos__texto">
+          <span class="sc-text-body-regular">{{ 'fundamentos.iconos.conceptos.nombres.' + c.clave | translate }}</span>
+          <code class="conceptos__clave sc-text-caption-regular">SC_ICONS.{{ c.clave }}</code>
+        </span>
+      </li>
+    }
+  </ul>
+</section>
+
+<section class="bloque">
+  <h2 class="bloque__title sc-text-subtitle-semibold">{{ 'fundamentos.iconos.talla.title' | translate }}</h2>
+  <div class="talla">
+    <p class="talla__ejemplo sc-text-subtitle-semibold">
+      <sc-icon name="headphones" size="inherit" [weight]="600" [opticalSize]="20" />
+      {{ 'fundamentos.iconos.conceptos.nombres.agentes' | translate }}
+    </p>
+    <p class="sc-text-body-regular" [innerHTML]="'fundamentos.iconos.talla.inherit' | translate"></p>
+  </div>
+  <p class="sc-text-body-regular" [innerHTML]="'fundamentos.iconos.talla.suelto' | translate"></p>
+</section>
+
+<section class="bloque">
+  <h2 class="bloque__title sc-text-subtitle-semibold">{{ 'fundamentos.iconos.color.title' | translate }}</h2>
+  <p class="bloque__lead sc-text-body-regular" [innerHTML]="'fundamentos.iconos.color.lead' | translate"></p>
+  <ul class="tonos">
+    @for (t of tonos; track t.tono) {
+      <li class="tonos__item sc-text-body-regular">
+        <sc-icon [name]="t.icono" [tone]="t.tono" [size]="16" filled />
+        <span>{{ 'fundamentos.iconos.color.' + t.clave | translate }}</span>
+      </li>
+    }
+  </ul>
+</section>
+
+<section class="bloque">
+  <h2 class="bloque__title sc-text-subtitle-semibold">{{ 'fundamentos.iconos.a11y.title' | translate }}</h2>
+  <ul class="lista sc-text-body-regular">
+    <li [innerHTML]="'fundamentos.iconos.a11y.decorativo' | translate"></li>
+    <li [innerHTML]="'fundamentos.iconos.a11y.significado' | translate"></li>
+    <li [innerHTML]="'fundamentos.iconos.a11y.boton' | translate"></li>
+    <li [innerHTML]="'fundamentos.iconos.a11y.contraste' | translate"></li>
+  </ul>
+</section>
+
+<p class="foot sc-text-caption-regular" [innerHTML]="'fundamentos.iconos.foot' | translate"></p>

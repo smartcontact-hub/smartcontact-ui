@@ -9,7 +9,7 @@ import {
   signal,
 } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
+import { SC_ICONS, ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScSearchComponent as SearchComponent } from '@smartcontact-hub/components';
 import { ScButtonComponent as ButtonComponent, ScTabsComponent as TabsComponent } from '@smartcontact-hub/components';
 
@@ -214,8 +214,10 @@ export class ConversationPlayerModalComponent {
   protected readonly chatIcon = 'chat_bubble';
   protected readonly playIcon = 'play_arrow';
   protected readonly pauseIcon = 'pause';
-  protected readonly back10Icon = 'rotate_left';
-  protected readonly fwd10Icon = 'rotate_right';
+  // Los saltos llevan su cifra (DD-200): `rotate_left` decía a la vez «retroceder 10 s» y «re-transcribir».
+  protected readonly back10Icon = SC_ICONS.retroceder10;
+  protected readonly fwd10Icon = SC_ICONS.avanzar10;
+  protected readonly retranscribeIcon = SC_ICONS.transcribir;
   protected readonly searchIcon = 'search';
   protected readonly fileTextIcon = 'description';
   protected readonly fileXIcon = 'scan_delete';

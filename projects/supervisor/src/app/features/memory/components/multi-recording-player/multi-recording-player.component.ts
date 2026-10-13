@@ -53,8 +53,8 @@ export class MultiRecordingPlayerComponent {
 
   protected readonly playIcon = 'play_arrow';
   protected readonly pauseIcon = 'pause';
-  protected readonly back10Icon = 'rotate_left';
-  protected readonly fwd10Icon = 'rotate_right';
+  protected readonly back10Icon = 'replay_10';
+  protected readonly fwd10Icon = 'forward_10';
   protected readonly checkIcon = 'check';
 
   protected readonly durations = computed(() =>

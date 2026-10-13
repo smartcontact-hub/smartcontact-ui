@@ -117,7 +117,7 @@ const VACIO: Borrador = { name: '', description: '', agentIds: new Set() };
             </section>
           </sc-section-card>
 
-          <sc-section-card titleKey="repositories.equipos.agents" surface="card" icon="group">
+          <sc-section-card titleKey="repositories.equipos.agents" surface="card" icon="headphones">
             <section class="sub-section">
               <div class="assign">
                 <div class="assign__bar">

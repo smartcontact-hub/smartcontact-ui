@@ -98,7 +98,7 @@
             </span>
             <span class="caso__pie">
               @if (resultadoDe(c.id); as r) {
-                <span class="estrellas" [attr.aria-label]="estrellas(r) + ' de 3 estrellas'">
+                <span class="estrellas" role="img" [attr.aria-label]="estrellas(r) + ' de 3 estrellas'">
                   @for (k of [1, 2, 3]; track k) {
                     <svg class="estrella" [class.estrella--on]="k <= estrellas(r)" viewBox="0 0 24 24" aria-hidden="true">
                       <path d="M12 2.8l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.7l-5.9 3.1 1.2-6.5L2.5 9.7l6.6-.9z" />
@@ -156,7 +156,7 @@
 
     @if (cierre(); as r) {
       <div class="cierre" role="status" aria-live="polite">
-        <span class="estrellas estrellas--grande" [attr.aria-label]="estrellas(r) + ' de 3 estrellas'">
+        <span class="estrellas estrellas--grande" role="img" [attr.aria-label]="estrellas(r) + ' de 3 estrellas'">
           @for (k of [1, 2, 3]; track k) {
             <svg class="estrella" [class.estrella--on]="k <= estrellas(r)" [style.--k]="k" viewBox="0 0 24 24" aria-hidden="true">
               <path d="M12 2.8l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.7l-5.9 3.1 1.2-6.5L2.5 9.7l6.6-.9z" />

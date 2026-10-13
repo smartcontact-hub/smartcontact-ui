@@ -1,13 +1,8 @@
 <section class="sc-bulk-modal" [ngClass]="modalClasses()" role="dialog" aria-labelledby="bulk-transcription-title">
   <header class="sc-bulk-modal__header">
-    <sc-button
-      class="sc-bulk-modal__menu"
-      icon="menu"
-      [ariaLabel]="'sc.bulkTranscriptionModal.processingOptionsAriaLabel' | translate"
-      variant="primary"
-      appearance="text"
-      [rounded]="true">
-    </sc-button>
+    <!-- El icono del modal, decorativo (DD-200). Era un botón con la hamburguesa que no hacía nada: el lector lo
+         anunciaba como «Opciones de procesamiento, botón», y la hamburguesa abre la navegación. -->
+    <sc-icon-tile class="sc-bulk-modal__menu" icon="checklist" />
 
     <div class="sc-bulk-modal__heading">
       <h2 id="bulk-transcription-title">{{ 'sc.bulkTranscriptionModal.title' | translate }}</h2>

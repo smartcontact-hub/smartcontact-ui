@@ -1,0 +1,221 @@
+/* Vive dentro del shell de Fundamentos, con la medida de lectura de Patrones. Entre bloques, el doble que dentro
+ * (agrupación 7 · 14 · 28). */
+:host {
+  display: block;
+  max-width: 720px;
+  padding-bottom: var(--sc-spacing-5);
+}
+
+.hero {
+  display: flex;
+  gap: var(--sc-spacing-1);
+  align-items: flex-start;
+  margin-bottom: var(--sc-spacing-2-5);
+
+  &__icon {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--sc-spacing-3);
+    height: var(--sc-spacing-3);
+    border-radius: var(--sc-radius-md);
+    background: var(--sc-bg-subtle);
+    color: var(--sc-text-secondary);
+  }
+
+  &__eyebrow {
+    margin: 0;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--sc-text-subtle);
+  }
+
+  /* Tamaño y peso los pone `.demo-main h1` (styles.scss), el título de todas las secciones de la doc. */
+  &__title {
+    margin: var(--sc-spacing-0-125) 0 var(--sc-spacing-0-5);
+    color: var(--sc-text-primary);
+  }
+
+  &__lead {
+    margin: 0;
+    color: var(--sc-text-secondary);
+  }
+}
+
+.bloque {
+  margin-bottom: var(--sc-spacing-2);
+
+  &__title {
+    margin: 0 0 var(--sc-spacing-0-5);
+    color: var(--sc-text-primary);
+  }
+
+  &__lead {
+    margin: 0 0 var(--sc-spacing-1);
+    color: var(--sc-text-secondary);
+  }
+
+  p {
+    margin: 0;
+  }
+}
+
+.nota {
+  margin-top: var(--sc-spacing-0-25);
+  color: var(--sc-text-subtle);
+}
+
+/* Una sola rejilla para las tres filas: los ejemplos quedan en su columna, alineados. */
+.cuando {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: var(--sc-spacing-1);
+  align-items: start;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  &__fila {
+    display: contents;
+  }
+
+  &__ejemplo {
+    display: flex;
+    justify-content: center;
+  }
+
+  &__title {
+    margin: 0 0 var(--sc-spacing-0-25);
+    color: var(--sc-text-primary);
+  }
+}
+
+.par {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sc-spacing-1);
+
+  &__col {
+    padding: var(--sc-spacing-1);
+    border: 1px solid var(--sc-border-default);
+    border-radius: var(--sc-radius-md);
+  }
+
+  &__label {
+    display: flex;
+    gap: var(--sc-spacing-0-5);
+    align-items: center;
+    margin: 0 0 var(--sc-spacing-0-5);
+  }
+
+  &__fila {
+    display: flex;
+    gap: var(--sc-spacing-0-5);
+  }
+}
+
+.marca--si {
+  color: var(--sc-icon-success);
+}
+
+.marca--no {
+  color: var(--sc-icon-error);
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: var(--sc-spacing-0-5);
+    border-bottom: 1px solid var(--sc-border-default);
+    text-align: left;
+    vertical-align: middle;
+  }
+
+  thead th {
+    color: var(--sc-text-subtle);
+    font-weight: var(--sc-font-weight-semibold);
+  }
+
+  tbody th {
+    font-weight: var(--sc-font-weight-regular);
+  }
+
+  &__icono {
+    display: inline-flex;
+    gap: var(--sc-spacing-0-5);
+    align-items: center;
+  }
+}
+
+.conceptos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+  gap: var(--sc-spacing-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  &__item {
+    display: flex;
+    gap: var(--sc-spacing-0-5);
+    align-items: flex-start;
+  }
+
+  /* El nombre y, debajo, su clave: así una clave larga no pisa la columna de al lado. */
+  &__texto {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  &__clave {
+    color: var(--sc-text-subtle);
+    overflow-wrap: anywhere;
+  }
+}
+
+.talla {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
+  margin-bottom: var(--sc-spacing-0-5);
+
+  &__ejemplo {
+    display: inline-flex;
+    gap: var(--sc-spacing-0-5);
+    align-items: center;
+    color: var(--sc-text-primary);
+  }
+}
+
+.tonos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sc-spacing-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  &__item {
+    display: inline-flex;
+    gap: var(--sc-spacing-0-5);
+    align-items: center;
+  }
+}
+
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
+  margin: 0;
+  padding-left: var(--sc-spacing-1-25);
+}
+
+.foot {
+  margin-top: var(--sc-spacing-2);
+  color: var(--sc-text-subtle);
+}

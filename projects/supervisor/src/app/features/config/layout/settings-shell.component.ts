@@ -10,8 +10,8 @@ import { SectionLinksService } from '@core/services';
 /** Las tres secciones de Contact Center (Figma 224:9167): Servicio, Agentes y Grupos. */
 const SECCIONES = [
   { id: 'servicio', path: '/config/aed/servicio', labelKey: 'config.sidebar.servicio_label', icon: 'call' },
-  { id: 'agentes', path: '/config/aed/agentes', labelKey: 'config.sidebar.agentes_label', icon: 'person' },
-  { id: 'grupos', path: '/config/aed/grupos', labelKey: 'config.sidebar.grupos_label', icon: 'groups' },
+  { id: 'agentes', path: '/config/aed/agentes', labelKey: 'config.sidebar.agentes_label', icon: 'headphones' },
+  { id: 'grupos', path: '/config/aed/grupos', labelKey: 'config.sidebar.grupos_label', icon: 'group' },
 ] as const;
 
 /**

@@ -12,7 +12,6 @@ import {
 } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TextareaModule } from 'primeng/textarea';
-import { TooltipModule } from 'primeng/tooltip';
 
 import { ScComponentSize, ScInputVariant } from '../../core/types/theme-component.types';
 import { ScButtonComponent } from '../button/sc-button.component';
@@ -25,7 +24,7 @@ type PrimeTextareaSize = 'small' | 'large' | undefined;
 @Component({
     selector: 'sc-textarea',
     standalone: true,
-    imports: [TextareaModule, ScButtonComponent, ScFieldMsgComponent, TooltipModule, TranslateModule],
+    imports: [TextareaModule, ScButtonComponent, ScFieldMsgComponent, TranslateModule],
     templateUrl: './sc-textarea.component.html',
     styleUrl: './sc-textarea.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,

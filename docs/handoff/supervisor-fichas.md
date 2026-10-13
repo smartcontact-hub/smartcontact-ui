@@ -142,6 +142,11 @@ a7ddc14b:docs/handoff/supervisor-fichas.md`.
 
 ## SIGUIENTE — sin preguntar
 
+-3. **Salientes vuelve a radio button** (Rafa, 2026-10-13): en la pestaña Grupos de la ficha de un agente
+   (`group-assignment-table`), un `sc-radiobutton` por fila en vez de la etiqueta y la acción del #380. Al hacerlo,
+   reescribir el comentario de `outboundTpl`, que defiende lo contrario; el apartado «Salientes como chip+acción» queda
+   superado.
+
 -2b. **Componente tabla (otra sesión):** el «evolutivo» de la tabla con los devs (BI y voz). Propuesta de producto:
    elegir UNA vez qué funciones de la Table de PrimeNG queremos y cerrarlo; hay un Excel con las de BI.
    Punto de partida: `docs/AUDIT-PRIMENG-CATALOGO.md`. En la reunión: reordenar, ajustar ancho y arrastrar columnas
