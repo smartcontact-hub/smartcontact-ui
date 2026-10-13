@@ -17,7 +17,7 @@ import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { ResultadoAccionService, SectionLinksService } from '@core/services';
 import { injectLangChange } from '@core/utils/lang-change';
 import { AltaPieComponent } from '@shared/components';
-import { llegarASeccion, seccionesDeAlta } from '@shared/utils/alta-secciones';
+import { llegarASeccion, ocasionDeAvisar, seccionesDeAlta } from '@shared/utils/alta-secciones';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 import { GroupsStore } from '@features/admin/groups/state/groups.store';
 import { resolveGroup } from '@features/admin/groups/data/groups-data';
@@ -227,12 +227,23 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit {
 
   protected readonly canSave = computed(() => !this.blockedReason() && (this.mode() === 'create' || this.formDirty()));
 
-  /** Lo que falta, en el índice: al editar, siempre; en el alta, desde que se deja la sección (DD-143). */
+  /**
+   * Cuándo se dice lo que falta (DD-199): desde que se deja su sección sin ello, en el alta y al editar, o desde que se
+   * abre si lo guardado ya venía sin ello. Antes, lo dice el motivo junto al botón.
+   */
+  private readonly ocasion = ocasionDeAvisar({
+    alta: this.alta,
+    editando: () => this.mode() === 'edit',
+    abierta: () => this.activeSection(),
+    cambios: () => this.dirtyState.dirty(),
+    faltas: () => [...(this.generalCompleta() ? [] : [GENERAL]), ...(this.categoriasCompletas() ? [] : [CATEGORIAS])],
+  });
+
+  /** Lo que falta, en el índice, cuando ya hubo ocasión (DD-199): en el alta, desde que se deja la sección (DD-143). */
   protected readonly sectionsWithErrors = computed<ReadonlySet<string>>(() => {
-    const acusa = (id: string) => this.mode() === 'edit' || this.alta.dejadas().has(id);
     const errores = new Set<string>();
-    if (!this.generalCompleta() && acusa(GENERAL)) errores.add(GENERAL);
-    if (!this.categoriasCompletas() && acusa(CATEGORIAS)) errores.add(CATEGORIAS);
+    if (!this.generalCompleta() && this.ocasion.acusa(GENERAL, GENERAL)) errores.add(GENERAL);
+    if (!this.categoriasCompletas() && this.ocasion.acusa(CATEGORIAS, CATEGORIAS)) errores.add(CATEGORIAS);
     return errores;
   });
 

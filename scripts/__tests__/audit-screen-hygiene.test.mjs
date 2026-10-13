@@ -9,6 +9,7 @@ import {
   desplegablesSinNombre,
   guionesSueltos,
   ayudasEncima,
+  acusaDePrimeras,
 } from '../audit-screen-hygiene.mjs';
 
 // contarEmojis: cuenta SOLO emoji astral pictográfico (+FE0F) en texto renderizable.
@@ -160,4 +161,18 @@ test('ayudasEncima marca la ayuda justo antes de un control suelto, y no la de d
   // No salta de una ayuda que no precede a nada a otra que sí: marca solo la segunda, en su línea.
   assert.deepEqual(ayudasEncima('<p class="field__help">A</p>\n<div></div>\n<p class="field__help">B</p>\n<sc-select />'), [3]);
   assert.deepEqual(ayudasEncima('<!-- <p class="field__help">A</p><sc-select /> -->'), []);
+});
+
+test('acusaDePrimeras marca el aviso que se enciende por el modo o lee las dejadas, y no canSave ni un comentario', () => {
+  // Los dos de la ficha de grupo que acusaban al encender «Tipificar» o al quitar canales (DD-199).
+  assert.deepEqual(acusaDePrimeras("() => this.typificationMissing() && (this.mode() === 'edit' || this.attemptedGeneral()),"), [1]);
+  assert.deepEqual(acusaDePrimeras("x\nconst acusa = (id: string) => this.mode() !== 'create' || this.alta.dejadas().has(id);"), [2]);
+  assert.deepEqual(acusaDePrimeras('if (this.alta.dejadas().has(GENERAL)) out.add(GENERAL);'), [1]);
+  // Mirar el modo sin acusar: guardar en el alta sin cambios, el resumen.
+  assert.deepEqual(acusaDePrimeras("canSave = computed(() => !this.blockedReason() && (this.mode() === 'create' || this.formDirty()));"), []);
+  assert.deepEqual(acusaDePrimeras("if (this.mode() !== 'edit') return new Set();"), []);
+  // La que pasa por `ocasionDeAvisar`.
+  assert.deepEqual(acusaDePrimeras("this.form().channels.size === 0 && this.ocasion.acusa('group-section-general', 'channels')"), []);
+  // Un comentario que lo cuenta no es código, y las líneas no se descuadran.
+  assert.deepEqual(acusaDePrimeras("/* antes: mode() === 'edit' || attemptedGeneral()\n */\nconst a = this.alta.dejadas();"), [3]);
 });
