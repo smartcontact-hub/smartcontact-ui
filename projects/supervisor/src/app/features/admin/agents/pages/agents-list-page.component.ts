@@ -227,6 +227,7 @@ export class AgentsListPageComponent {
     return [
       {
         field: 'name',
+        skeleton: 'avatar',
         header: this.translate.instant('agents.table.name'),
         sortable: true,
         cellTemplate: this.nameTpl(),
@@ -277,6 +278,7 @@ export class AgentsListPageComponent {
         // renombrar: es la identidad de la columna para el selector y lo que hay
         // guardado en localStorage.
         field: 'type',
+        skeleton: 'tag',
         header: this.translate.instant('agents.table.type'),
         sortable: true,
         cellTemplate: this.typeTpl(),
@@ -284,6 +286,7 @@ export class AgentsListPageComponent {
       },
       {
         field: 'presence',
+        skeleton: 'tag',
         header: this.translate.instant('agents.table.presence'),
         cellTemplate: this.presenceTpl(),
         /* «Post-conversando» (122) + punto (7) + hueco (7) = 136 px de dato; con 10rem quedaban 132 (2026-09-24). */

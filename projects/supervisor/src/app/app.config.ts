@@ -19,6 +19,7 @@ import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 
 import { appRoutes } from './app.routes';
 import { ViewTransitionTracker, onlyQueryChanged } from './core/services/view-transition-tracker.service';
+import { ESPERA_SIMULADA_MS, esperaDeLaDemo } from './core/services/carga-simulada.service';
 
 /**
  * Clave de licencia de PrimeUI (tier community, caduca 2027-08-05).
@@ -59,6 +60,8 @@ export const appConfig: ApplicationConfig = {
     ),
     provideAnimationsAsync(),
     provideHttpClient(withFetch()),
+    // Lo que «tardan» los datos la primera vez que se abre una pantalla, para que se vea su esqueleto.
+    { provide: ESPERA_SIMULADA_MS, useFactory: esperaDeLaDemo },
     // SCDS theme frontier — `provideSmartContactUi` envuelve `providePrimeNG`
     // + el preset publicado (--sc-*) de `@smartcontact-hub/components`.
     // Las opciones se pasan VERBATIM respecto al `providePrimeNG` local previo

@@ -429,7 +429,7 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/table",
       "cva": false,
-      "inputs": 35,
+      "inputs": 37,
       "api": [
         "columnOrderChange",
         "columnResizeMode",
@@ -466,6 +466,8 @@
         "selectionMode",
         "showGridlines",
         "size",
+        "skeleton",
+        "skeletonRows",
         "sortChange",
         "sortField",
         "sortOrder",
@@ -478,7 +480,9 @@
         "virtualScroll",
         "visibleColumns"
       ],
-      "nested": [],
+      "nested": [
+        "sc-skeleton"
+      ],
       "hasDemo": true,
       "kit": true,
       "estado": "ready",

@@ -79,7 +79,17 @@ export interface ScColumnDef<T = unknown> {
    * defecto sí; `false` la deja fija (p. ej. la que da nombre a la fila).
    */
   readonly reorderable?: boolean;
+  /**
+   * Forma de la celda mientras la tabla pinta su esqueleto (`[skeleton]`), para que al llegar los datos no cambie nada:
+   * `text`, una barra de ancho variado (la receta de carga perezosa de primeng.dev/table); `avatar`, el círculo del avatar
+   * y una barra; `tag`, la píldora de una etiqueta; `action`, el cuadrado de un botón de solo icono pequeño; `none`, nada.
+   * Por defecto, `text`.
+   */
+  readonly skeleton?: ScColumnSkeleton;
 }
+
+/** Forma de una celda en el esqueleto de carga de `sc-datatable` (ver `ScColumnDef.skeleton`). */
+export type ScColumnSkeleton = 'text' | 'avatar' | 'tag' | 'action' | 'none';
 
 /**
  * Payload de los gestos de fila (`rowClick`, `rowContextMenu`).

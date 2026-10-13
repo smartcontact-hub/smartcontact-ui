@@ -35,6 +35,9 @@
    * (`<sc-datatable stickyHeader>`) se fijaba a ELLA, que no se desplaza, en vez
    * de a la página. `clip` no crea contenedor de scroll. Medido en Conversaciones. */
   overflow: clip;
+  /* El círculo del esqueleto de carga mide lo que el avatar de las listas (`[size]="32"` de `sc-illustrated-avatar`),
+   * no el `sc-avatar` del DS. */
+  --sc-datatable-skeleton-avatar-size: 2rem;
 }
 
 /* UNA TABLA DENTRO DE UNA SECCIÓN LLEGA AL PIE DE LA PANTALLA (DD-160).

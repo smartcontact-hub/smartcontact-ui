@@ -354,3 +354,69 @@ describe('sc-datatable · la columna que nombra la fila es su cabecera (DD-194)'
     fixture.destroy();
   });
 });
+
+describe('sc-datatable · esqueleto de carga', () => {
+  function montarConDatos(skeleton: boolean) {
+    TestBed.configureTestingModule({ imports: [ScDatatableComponent] });
+    const fixture = TestBed.createComponent(ScDatatableComponent);
+    fixture.componentRef.setInput('columns', COLS);
+    fixture.componentRef.setInput('value', [
+      { id: 1, nombre: 'Ana' },
+      { id: 2, nombre: 'Luis' },
+    ]);
+    fixture.componentRef.setInput('selectionMode', 'multiple');
+    fixture.componentRef.setInput('skeletonRows', 4);
+    fixture.componentRef.setInput('skeleton', skeleton);
+    fixture.detectChanges();
+    return fixture;
+  }
+
+  it('pinta sus filas, un esqueleto por celda y ningún dato', async () => {
+    const fixture = montarConDatos(true);
+    await fixture.whenStable();
+    const root: HTMLElement = fixture.nativeElement;
+    const filas = root.querySelectorAll('tbody tr');
+    expect(filas.length).toBe(4);
+    // 3 columnas + la casilla
+    expect(filas[0].querySelectorAll('p-skeleton').length).toBe(4);
+    expect(root.textContent).not.toContain('Ana');
+    expect(root.getAttribute('aria-busy')).toBe('true');
+    expect(root.querySelector('.sc-datatable__check-all input')?.hasAttribute('disabled')).toBe(true);
+    fixture.destroy();
+  });
+
+  it('cada columna pinta su forma: avatar, etiqueta, botón o nada', async () => {
+    TestBed.configureTestingModule({ imports: [ScDatatableComponent] });
+    const fixture = TestBed.createComponent(ScDatatableComponent);
+    fixture.componentRef.setInput('columns', [
+      { field: 'nombre', header: 'Nombre', skeleton: 'avatar' },
+      { field: 'grupo', header: 'Grupo' },
+      { field: 'estado', header: 'Estado', skeleton: 'tag' },
+      { field: 'acciones', header: '', skeleton: 'action' },
+      { field: 'vacia', header: '', skeleton: 'none' },
+    ]);
+    fixture.componentRef.setInput('skeletonRows', 2);
+    fixture.componentRef.setInput('skeleton', true);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const celdas = [...(fixture.nativeElement as HTMLElement).querySelectorAll('tbody tr')[0].children];
+    const formas = celdas.map((td) =>
+      [...td.querySelectorAll('sc-skeleton')].map((sk) => (sk.querySelector('.p-skeleton-circle') ? 'circle' : 'rectangle')),
+    );
+    expect(formas).toEqual([['circle', 'rectangle'], ['rectangle'], ['rectangle'], ['rectangle'], []]);
+    fixture.destroy();
+  });
+
+  it('al quitarlo, vuelven los datos y deja de estar ocupada', async () => {
+    const fixture = montarConDatos(true);
+    fixture.componentRef.setInput('skeleton', false);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const root: HTMLElement = fixture.nativeElement;
+    expect(root.querySelectorAll('tbody tr').length).toBe(2);
+    expect(root.querySelector('p-skeleton')).toBeNull();
+    expect(root.textContent).toContain('Ana');
+    expect(root.hasAttribute('aria-busy')).toBe(false);
+    fixture.destroy();
+  });
+});

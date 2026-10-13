@@ -48,3 +48,38 @@ p-sort-icon {
 :host(.sc-datatable--list) .sc-datatable__check {
   width: 40px;
 }
+
+/* La celda «avatar» del esqueleto: el círculo y la barra en línea, como el avatar y el nombre. La barra ocupa lo que deja
+ * el círculo; sin crecer, su ancho en % saldría de 0. El tamaño del círculo lo puede ajustar quien use la tabla con
+ * `--sc-datatable-skeleton-avatar-size` si su avatar no es el del DS. */
+.sc-datatable__skeleton-avatar {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+
+  > sc-skeleton:last-child {
+    flex: 1 1 auto;
+  }
+}
+
+/* La píldora de una etiqueta y el hueco del botón de fila miden la caja de lo que sustituyen, sacada de sus tokens: la
+ * etiqueta, su línea más su relleno (18 + 1,75 + 1,75 = 21,5); el botón pequeño de solo icono, su ancho y su línea más
+ * relleno y borde (18 + 3,5 + 3,5 + 1 + 1 = 27). La barra mide la línea; el resto lo pone la caja. Y van en línea y
+ * centradas, como la etiqueta y el botón de verdad en la tabla de listado (el tema, `listBehaviorCss`): así respetan la
+ * alineación de su columna y la fila del esqueleto mide lo que la de datos. */
+.sc-datatable__skeleton-tag,
+.sc-datatable__skeleton-action {
+  display: inline-flex;
+  justify-content: center;
+  vertical-align: middle;
+}
+
+.sc-datatable__skeleton-tag {
+  padding-block: var(--sc-cmp-tag-padding-y);
+}
+
+.sc-datatable__skeleton-action {
+  width: var(--sc-cmp-button-sm-icon-only-width);
+  padding-block: var(--sc-cmp-button-sm-padding-y);
+  border-block: 1px solid transparent;
+}

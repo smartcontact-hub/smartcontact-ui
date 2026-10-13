@@ -175,7 +175,11 @@ no a la librería. Dos de estas reglas ya son infraestructura del sistema (aquí
    que recolocan la página (layout shift). El componente ya existe (demo en `/components/skeleton`).
    **Por tiempos** (Primer, DD-188): por debajo de 1 s no se pinta nada, porque un indicador que
    parpadea hace la app más lenta; de 1 a 3 s, esqueleto; de 3 a 10 s, progreso con cifra; más de
-   10 s, en segundo plano sin bloquear. Un indicador por bloque, no por pieza.
+   10 s, en segundo plano sin bloquear. Un indicador por bloque, no por pieza. **La forma es la de
+   lo que viene** (DD-201): el círculo del avatar, la píldora de la etiqueta, el hueco del botón, barras
+   al ancho de un texto. En una tabla, `[skeleton]` de `sc-datatable` con `ScColumnDef.skeleton` en cada
+   columna; el ejemplo «DataTable» de primeng.dev tal cual (barras a todo el ancho) hace que al llegar
+   los datos cambie todo. Ejemplos en sc-docs → Skeleton, cada uno con «Recargar».
 3. **Copy sin relleno.** Un título que se explica solo NO lleva un subtítulo explicándolo. Un
    lead o descripción solo donde aporta algo no obvio (un catálogo, una regla no evidente). Si al
    quitar el texto no se pierde nada, quítalo.
@@ -322,7 +326,7 @@ no la otra. Cada fila apunta a la decisión o al gate que la sostiene; no hay fi
 | Cambiar el nombre o la forma de un valor que ya se guarda (una estrategia, un canal) | `normalize` en la configuración del almacén (`createVersionedStorage`): lo pone al día al leerlo, y lo siguiente que se guarde ya va al día | Subir `currentVersion`, que borra lo guardado y re-siembra; traducir el nombre al pintarlo en cada pantalla | DD-141 |
 | El estado de un agente en una pantalla (su etiqueta, un punto, un anillo que lo cuenta) | El `presenceStatus` del almacén de agentes (`AgentsStore`), el que pinta el listado; el Dashboard lo traduce con `PRESENCIA_EN_DASHBOARD` | Una lista de estados propia de la pantalla, o leer las semillas en vez del almacén | DD-139 |
 | Una cifra con su proporción en un resumen («8 de 11») | `sc-summary-kpi` del Supervisor: la cifra con «/total» y el `p-progress-spinner` nativo, que cuenta y se llena al abrir y al cambiar | `sc-gauge` (no se mueve y empieza en 96 px); un porcentaje; un anillo SVG a mano | DD-126 |
-| Una pantalla que espera datos | `sc-skeleton` con la FORMA del contenido, en su hueco | Spinner centrado; datos que recolocan la página al llegar | UX 2 |
+| Una pantalla que espera datos | `sc-skeleton` con la FORMA del contenido, en su hueco; en una tabla, `[skeleton]` de `sc-datatable` y la forma de cada columna (`ScColumnDef.skeleton`) | Spinner centrado; datos que recolocan la página al llegar; barras a todo el ancho de cada celda | UX 2 · DD-201 |
 | Un icono | `<sc-icon>` (Material Symbols) | Emojis; una segunda librería | UX 4 |
 | El icono de un concepto (Agentes, Eliminar, Columnas…) | `SC_ICONS.<concepto>` del paquete de iconos | Otro icono para lo mismo; un icono reservado con otro significado | DD-200 |
 | Un botón de solo icono | `sc-button` con `ariaLabel` (el tooltip sale solo, con ratón y teclado) | `pTooltip` que repite el nombre; `title`; un `<button>` con un `sc-icon` dentro | DD-200 |

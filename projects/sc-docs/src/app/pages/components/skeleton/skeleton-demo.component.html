@@ -18,12 +18,138 @@
   </div>
 </ng-template>
 
+<!-- «Shapes» de primeng.dev/skeleton, tal cual: rectángulo, redondeado, cuadrado y círculo. -->
 <ng-template #shapes>
-  <div class="col" style="max-width: 24rem">
-    <sc-skeleton data-testid="sc-skeleton" />
-    <sc-skeleton width="60%" />
-    <sc-skeleton height="4rem" />
-    <sc-skeleton shape="circle" size="3rem" />
-    <sc-skeleton animation="none" />
+  <div class="sk-formas">
+    <div class="sk-columna">
+      <span class="sc-text-body-semibold">Rectángulo</span>
+      <sc-skeleton data-testid="sc-skeleton" />
+      <sc-skeleton width="10rem" />
+      <sc-skeleton width="5rem" />
+      <sc-skeleton height="2rem" />
+      <sc-skeleton width="10rem" height="4rem" />
+    </div>
+    <div class="sk-columna">
+      <span class="sc-text-body-semibold">Redondeado</span>
+      <sc-skeleton borderRadius="var(--sc-radius-full)" />
+      <sc-skeleton width="10rem" borderRadius="var(--sc-radius-full)" />
+      <sc-skeleton width="5rem" borderRadius="var(--sc-radius-full)" />
+      <sc-skeleton height="2rem" borderRadius="var(--sc-radius-full)" />
+      <sc-skeleton width="10rem" height="4rem" borderRadius="var(--sc-radius-full)" />
+    </div>
+    <div class="sk-columna">
+      <span class="sc-text-body-semibold">Cuadrado</span>
+      <div class="sk-fila sk-fila--abajo">
+        <sc-skeleton size="2rem" />
+        <sc-skeleton size="3rem" />
+        <sc-skeleton size="4rem" />
+        <sc-skeleton size="5rem" />
+      </div>
+    </div>
+    <div class="sk-columna">
+      <span class="sc-text-body-semibold">Círculo</span>
+      <div class="sk-fila sk-fila--abajo">
+        <sc-skeleton shape="circle" size="2rem" />
+        <sc-skeleton shape="circle" size="3rem" />
+        <sc-skeleton shape="circle" size="4rem" />
+        <sc-skeleton shape="circle" size="5rem" />
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<!-- La tabla del DS con su esqueleto: `[skeleton]` y la forma de cada columna (`skeleton` en su definición). -->
+<ng-template #tabla>
+  <div class="col sk-ancho">
+    <sc-button variant="secondary" appearance="outlined" size="sm" icon="refresh" label="Recargar" [disabled]="cargaTabla.cargando()" (clicked)="cargaTabla.recargar()" />
+    <sc-datatable
+      variant="list"
+      dataKey="id"
+      [value]="agentes"
+      [columns]="columnasTabla()"
+      [skeleton]="cargaTabla.cargando()"
+      [skeletonRows]="agentes.length"
+      data-testid="sk-tabla"
+    />
+  </div>
+</ng-template>
+
+<!-- Celdas de la tabla con dato. Mientras carga las pinta el esqueleto, con la forma que dice cada columna. -->
+<ng-template #celdaNombre let-row>
+  <span class="sk-nombre">
+    <sc-avatar [label]="row.iniciales" />
+    <span>{{ row.nombre }}</span>
+  </span>
+</ng-template>
+<ng-template #celdaEstado let-row>
+  <sc-tag [value]="row.activo ? 'Activo' : 'Inactivo'" [severity]="row.activo ? 'success' : 'secondary'" />
+</ng-template>
+<ng-template #celdaAcciones let-row>
+  <sc-button variant="secondary" appearance="text" size="sm" icon="more_vert" [ariaLabel]="'Acciones de ' + row.nombre" />
+</ng-template>
+
+<!-- «List» de primeng.dev/skeleton: el círculo y dos líneas, con el avatar y los textos de una lista de agentes. -->
+<ng-template #lista>
+  <div class="col sk-ancho">
+    <sc-button variant="secondary" appearance="outlined" size="sm" icon="refresh" label="Recargar" [disabled]="cargaLista.cargando()" (clicked)="cargaLista.recargar()" />
+    <ul class="sk-lista" [attr.aria-busy]="cargaLista.cargando() || null" data-testid="sk-lista">
+      @for (a of agentes.slice(0, 4); track a.id) {
+        <li class="sk-lista__item">
+          @if (cargaLista.cargando()) {
+            <sc-skeleton shape="circle" size="var(--sc-cmp-avatar-lg-width)" />
+            <span class="sk-lista__textos">
+              <sc-skeleton width="7rem" />
+              <sc-skeleton width="5rem" />
+            </span>
+          } @else {
+            <sc-avatar size="large" [label]="a.iniciales" />
+            <span class="sk-lista__textos">
+              <span class="sc-text-body-semibold">{{ a.nombre }}</span>
+              <span class="sc-text-caption-regular sk-secundario">{{ a.grupo }}</span>
+            </span>
+          }
+        </li>
+      }
+    </ul>
+  </div>
+</ng-template>
+
+<!-- Un formulario de ficha: la etiqueta y el campo, cada uno con su forma. No está en primeng.dev; es lo que piden las
+     fichas y la Configuración al abrirse para editar. -->
+<ng-template #formulario>
+  <div class="col sk-ancho-form">
+    <sc-button variant="secondary" appearance="outlined" size="sm" icon="refresh" label="Recargar" [disabled]="cargaFormulario.cargando()" (clicked)="cargaFormulario.recargar()" />
+    <div class="sk-form" [attr.aria-busy]="cargaFormulario.cargando() || null" data-testid="sk-form">
+      @if (cargaFormulario.cargando()) {
+        @for (campo of [0, 1]; track campo) {
+          <div class="sk-campo">
+            <sc-skeleton width="5rem" height="var(--sc-line-height-100)" />
+            <sc-skeleton height="var(--sc-cmp-button-icon-only-width)" />
+          </div>
+        }
+      } @else {
+        <sc-inputtext label="Nombre" [value]="agentes[0].nombre" fluid />
+        <sc-inputtext label="Extensión" value="101" fluid />
+      }
+    </div>
+  </div>
+</ng-template>
+
+<!-- «Card» de primeng.dev/skeleton: cómo se compone un bloque con las formas (la imagen, a 10rem en vez de 150px). -->
+<ng-template #tarjeta>
+  <div class="sk-tarjeta">
+    <div class="sk-tarjeta__cabecera">
+      <sc-skeleton shape="circle" size="4rem" />
+      <div class="sk-tarjeta__textos">
+        <sc-skeleton width="10rem" />
+        <sc-skeleton width="5rem" />
+        <sc-skeleton height=".5rem" />
+      </div>
+    </div>
+    <sc-skeleton width="100%" height="10rem" />
+    <div class="sk-tarjeta__pie">
+      <sc-skeleton width="4rem" height="2rem" />
+      <sc-skeleton width="4rem" height="2rem" />
+    </div>
   </div>
 </ng-template>
