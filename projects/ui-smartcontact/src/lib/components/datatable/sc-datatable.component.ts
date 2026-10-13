@@ -582,9 +582,17 @@ export class ScDatatableComponent<T = unknown> {
   protected readonly pVirtualScrollItemSize = computed(() => this.rowHeight() || undefined);
   /** El CSS de «llega al pie» (DD-160): por lista virtual (la ventana lo necesita) o porque lo pide `fill`. */
   protected readonly visualFill = computed(() => this.pVirtualScroll() || this.fill());
-  /** Sin lista virtual, `flex` no pasa a PrimeNG: su modo flexible estira la tabla aunque tenga 3 filas. */
+  /**
+   * Sin pedir llegar al pie, `flex` no pasa a PrimeNG: su modo flexible estira la tabla aunque tenga 3 filas.
+   * Antes miraba solo `pVirtualScroll()` —la única vía que existía para llegar al pie—, así que con `fill`
+   * sin lista virtual la tabla pedía la clase `--fill` (`flex:1 1 auto` sobre `p-table`) pero PrimeNG seguía sin
+   * `scrollHeight`, sin su clase `p-datatable-flex-scrollable` y sin dar alto a `.p-datatable-table-container`:
+   * el contenedor de scroll quedaba más bajo que la caja (hueco vacío) o la desbordaba, según las filas
+   * (medido el 2026-10-13: 398px de contenedor en una caja de 574, y 591 en otra de 574). Ahora sigue la misma
+   * condición que `--fit`.
+   */
   protected readonly pScrollHeight = computed(() =>
-    this.scrollHeight() === 'flex' && !this.pVirtualScroll() ? undefined : this.scrollHeight(),
+    this.scrollHeight() === 'flex' && !this.visualFill() ? undefined : this.scrollHeight(),
   );
   /** Mientras no se ha medido la fila, se pinta solo la primera: medir no cuesta pintar 5.000. */
   protected readonly pValue = computed(() => {
