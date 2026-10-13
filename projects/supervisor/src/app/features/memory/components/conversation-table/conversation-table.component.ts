@@ -182,9 +182,9 @@ export class ConversationTableComponent {
       { field: 'status', header: t('status'), width: '77px', cellTemplate: this.statusTpl() },
       // 182: «sex., 13 de mar. · 12:50» (pt-BR) mide 150 + 28 de relleno, redondeado a 7.
       { field: 'date', header: t('date'), width: '182px', sortable: true, cellTemplate: this.whenTpl() },
-      { field: 'service', header: t('service'), sortable: true, cellTemplate: this.servicePillTpl() },
+      { field: 'service', header: t('service'), sortable: true, skeleton: 'tag', cellTemplate: this.servicePillTpl() },
       { field: 'origin', header: t('origin'), sortable: true, cellTemplate: this.textTpl() },
-      { field: 'group', header: t('group'), sortable: true, cellTemplate: this.groupPillTpl() },
+      { field: 'group', header: t('group'), sortable: true, skeleton: 'tag', cellTemplate: this.groupPillTpl() },
       { field: 'destination', header: t('destination'), sortable: true, cellTemplate: this.textTpl() },
       // 112: la cabecera francesa («Durée conv.») es la que manda, no la cifra.
       {

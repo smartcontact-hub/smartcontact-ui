@@ -33,6 +33,7 @@ import {
   ScRowStyleClassFn,
 } from '../../core/types/datatable.types';
 import { ScComponentSize } from '../../core/types/theme-component.types';
+import { ScSkeletonComponent } from '../skeleton/sc-skeleton.component';
 
 /**
  * Piel de la tabla. `list` es la GRAMÁTICA DE TABLA-LISTA de administración
@@ -80,7 +81,7 @@ export interface ScDatatableSortEvent {
  */
 @Component({
   selector: 'sc-datatable',
-  imports: [TableModule, NgClass, NgTemplateOutlet],
+  imports: [TableModule, NgClass, NgTemplateOutlet, ScSkeletonComponent],
   templateUrl: './sc-datatable.component.html',
   styleUrl: './sc-datatable.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -103,6 +104,9 @@ export interface ScDatatableSortEvent {
     '[class.sc-datatable--lg]': "size() === 'lg'",
     '[class.sc-datatable--gridlines]': 'showGridlines()',
     '[class.sc-datatable--resizable]': 'resizableColumns()',
+    // Con el esqueleto puesto, la tabla se anuncia ocupada: cada `p-skeleton` ya es `aria-hidden` (primeng.dev/skeleton,
+    // «Accessibility»).
+    '[attr.aria-busy]': 'skeleton() || null',
   },
 })
 export class ScDatatableComponent<T = unknown> {
@@ -228,6 +232,16 @@ export class ScDatatableComponent<T = unknown> {
   readonly stripedRows = input(false, { transform: booleanAttribute });
   readonly showGridlines = input(false, { transform: booleanAttribute });
   readonly loading = input(false, { transform: booleanAttribute });
+  /**
+   * Esqueleto de carga (regla 2 de «UX de pantalla», DD-188): la cabecera se queda y el cuerpo son `skeletonRows` filas
+   * con la forma de cada columna (`ScColumnDef.skeleton`). El ejemplo «DataTable» de primeng.dev/skeleton, una barra a
+   * todo el ancho por celda, hacía que al llegar los datos cambiara todo (filas de 33 contra 45, medido el 2026-10-13).
+   * Mientras dura, ninguna fila se marca ni se abre. No es `loading`: ese pinta encima de la tabla el spinner de
+   * `p-table`, el que la regla 2 descarta.
+   */
+  readonly skeleton = input(false, { transform: booleanAttribute });
+  /** Cuántas filas pinta el esqueleto. */
+  readonly skeletonRows = input(10);
 
   /**
    * Clases extra por fila — el equivalente a los `[class.table__row--x]` que
@@ -576,7 +590,11 @@ export class ScDatatableComponent<T = unknown> {
    * en vez de llenar el alto. Es un umbral de rendimiento, no una medida de diseño. */
   private static readonly VIRTUAL_MIN_ROWS = 100;
   private readonly virtualWanted = computed(
-    () => this.virtualScroll() && this.scrollable() && this.value().length > ScDatatableComponent.VIRTUAL_MIN_ROWS,
+    () =>
+      !this.skeleton() &&
+      this.virtualScroll() &&
+      this.scrollable() &&
+      this.value().length > ScDatatableComponent.VIRTUAL_MIN_ROWS,
   );
   protected readonly pVirtualScroll = computed(() => this.virtualWanted() && this.rowHeight() > 0);
   protected readonly pVirtualScrollItemSize = computed(() => this.rowHeight() || undefined);
@@ -594,8 +612,17 @@ export class ScDatatableComponent<T = unknown> {
   protected readonly pScrollHeight = computed(() =>
     this.scrollHeight() === 'flex' && !this.visualFill() ? undefined : this.scrollHeight(),
   );
+  /** Anchos de las barras del esqueleto: varían por fila y por columna, como un texto de verdad. */
+  private static readonly SKELETON_WIDTHS = ['60%', '40%', '55%', '45%', '50%'] as const;
+  protected skeletonWidth(rowIndex: number, colIndex: number): string {
+    const anchos = ScDatatableComponent.SKELETON_WIDTHS;
+    return anchos[(rowIndex + colIndex) % anchos.length];
+  }
+  /** Las filas del esqueleto: vacías, solo cuentan cuántas son. */
+  private readonly skeletonValue = computed(() => Array.from({ length: this.skeletonRows() }, () => ({})));
   /** Mientras no se ha medido la fila, se pinta solo la primera: medir no cuesta pintar 5.000. */
   protected readonly pValue = computed(() => {
+    if (this.skeleton()) return this.skeletonValue();
     const rows = this.value();
     return this.virtualWanted() && !this.rowHeight() ? rows.slice(0, 1) : rows;
   });

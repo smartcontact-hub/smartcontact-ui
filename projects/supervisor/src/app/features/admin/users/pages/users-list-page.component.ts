@@ -163,6 +163,7 @@ export class UsersListPageComponent {
     return [
       {
         field: 'name',
+        skeleton: 'avatar',
         header: this.translate.instant('users.table.name'),
         sortable: true,
         cellTemplate: this.nameTpl(),
@@ -184,6 +185,7 @@ export class UsersListPageComponent {
       },
       {
         field: 'type',
+        skeleton: 'tag',
         header: this.translate.instant('users.table.type'),
         sortable: true,
         cellTemplate: this.typeTpl(),
@@ -194,6 +196,7 @@ export class UsersListPageComponent {
       },
       {
         field: 'status',
+        skeleton: 'tag',
         header: this.translate.instant('users.table.status'),
         sortable: true,
         cellTemplate: this.statusTpl(),

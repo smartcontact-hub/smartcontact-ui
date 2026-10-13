@@ -2227,6 +2227,26 @@
           }
         },
         {
+          "nombre": "skeleton",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "false",
+          "requerido": false,
+          "descripcion": "Esqueleto de carga (regla 2 de «UX de pantalla», DD-188): la cabecera se queda y el cuerpo son `skeletonRows` filas con la forma de cada columna (`ScColumnDef.skeleton`). El ejemplo «DataTable» de primeng.dev/skeleton, una barra a todo el ancho por celda, hacía que al llegar los datos cambiara todo (filas de 33 contra 45, medido el 2026-10-13). Mientras dura, ninguna fila se marca ni se abre. No es `loading`: ese pinta encima de la tabla el spinner de `p-table`, el que la regla 2 descarta.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "skeletonRows",
+          "clase": "input",
+          "tipo": "number",
+          "porDefecto": "10",
+          "requerido": false,
+          "descripcion": "Cuántas filas pinta el esqueleto.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
           "nombre": "rowStyleClass",
           "clase": "input",
           "tipo": "ScRowStyleClassFn<T> | undefined",

@@ -116,12 +116,14 @@ export class RulesPageComponent {
       },
       {
         field: 'actions',
+        skeleton: 'tag',
         header: this.translate.instant('memory.rules.cols.actions'),
         width: '110px',
         cellTemplate: this.actionsTpl(),
       },
       {
         field: 'status',
+        skeleton: 'tag',
         header: this.translate.instant('memory.rules.cols.status'),
         width: '140px',
         cellTemplate: this.statusTpl(),

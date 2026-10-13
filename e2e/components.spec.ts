@@ -381,6 +381,26 @@ test.describe('sc-skeleton', () => {
     expect((await styleOf(sk, ['border-radius']))['border-radius']).toBe('6px');
     await screenshotBaseline(page, 'skeleton');
   });
+
+  /* La promesa de la página: el esqueleto con la forma del contenido mide lo que los datos, así que al llegar no
+   * cambia nada. La tabla es `[skeleton]` de `sc-datatable`; con el ejemplo «DataTable» de primeng.dev tal cual (una barra
+   * a todo el ancho por celda), sus filas medían 33 contra 45 (2026-10-13). */
+  test('con la forma del contenido, el bloque mide lo mismo cargando que con datos', async ({ page }) => {
+    await gotoPage(page, 'skeleton');
+    const medir = (id: string) =>
+      page.getByTestId(id).evaluate((el) => ({
+        bloque: Math.round(el.getBoundingClientRect().height),
+        filas: [...el.querySelectorAll('tbody tr, li')].map((f) => Math.round(f.getBoundingClientRect().height)),
+      }));
+    for (const id of ['sk-tabla', 'sk-lista']) {
+      const bloque = page.getByTestId(id);
+      const conDatos = await medir(id);
+      await bloque.locator('xpath=ancestor::div[contains(@class,"col")][1]').getByRole('button', { name: 'Recargar' }).click();
+      await expect(bloque.locator('p-skeleton').first()).toBeVisible();
+      expect(await medir(id), id).toEqual(conDatos);
+      await expect(bloque.locator('p-skeleton')).toHaveCount(0, { timeout: 5_000 });
+    }
+  });
 });
 
 test.describe('sc-textarea', () => {
