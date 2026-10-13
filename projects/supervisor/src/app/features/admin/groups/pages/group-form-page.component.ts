@@ -10,7 +10,7 @@ import { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { ResultadoAccionService, SectionLinksService } from '@core/services';
 import { injectLangChange } from '@core/utils/lang-change';
-import { AltaPieComponent, ChannelIconComponent, NameInplaceComponent, NotaDecisionComponent, ResourceRowsComponent, type ResourceRow } from '@shared/components';
+import { AltaPieComponent, ChannelIconComponent, NameInplaceComponent, ResourceRowsComponent, type ResourceRow } from '@shared/components';
 import { changedKeys, createFormDirtyState } from '@shared/utils/form-dirty-state';
 import { llegarAAncla, llegarASeccion, ocasionDeAvisar, seccionesDeAlta } from '@shared/utils/alta-secciones';
 import {
@@ -179,7 +179,6 @@ const RESUMEN_NUMEROS = { phone: 'group-phone', whatsapp: 'group-chat-whatsapp' 
     NgTemplateOutlet,
     ChannelIconComponent,
     NameInplaceComponent,
-    NotaDecisionComponent,
     CheckboxComponent,
     AgentChannelTableComponent,
     GroupIdentityFieldsComponent,

@@ -42,6 +42,17 @@ baldosa y la fila del resumen al DS (2026-10-07, DD-186, #356, sin trampas propi
 d94e5ad8:docs/handoff/supervisor-fichas.md`. El de la revisión de agentes y tipificaciones (2026-10-09, DD-187,
 #360, sin trampas propias): `git show 208019113e9b9fdad6a8c0f6c4338fcf4437260a:docs/handoff/supervisor-fichas.md`.
 
+## ✅ 2026-10-13 · Fuera las notas de decisión
+
+> **Sello:** rama `arebury/quitar-notas-equipo-main` sobre `main` `7711d83d`.
+
+- **Las ocho notas moradas, fuera** con su componente (`sc-nota-decision`), su globo (`_nota-decision.scss`) y
+  `decision_notes` en los cuatro idiomas: el equipo dio por resuelto lo que preguntaban (DD-187 §9). Queda lo
+  construido: el PIN solo con la extensión en el teléfono, sin filtro de estado en el listado, el punto proporcional,
+  «—» en las celdas vacías, «Deshacer» en la barra, la escalera, el nombre fijo y la ayuda debajo.
+- **Los huecos que solo servían a las notas, también:** `[scListHeadingNote]` (el título del listado vuelve a ser un
+  `h1` suelto, sin `.page__heading-row`) y `[scBulkResult]` en `sc-bulk-action-bar` del DS.
+
 ## ✅ 2026-10-13 · Lo que falta se dice cuando ya hubo ocasión (DD-199)
 
 > **Sello:** worktree `lancetfish`, rama `arebury/fix-no-initial-error` sobre `main` en `c5b95584`.

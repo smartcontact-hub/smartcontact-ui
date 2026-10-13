@@ -43,8 +43,6 @@
                     [attr.aria-expanded]="statusPopover.overlayVisible()"
                     (clicked)="statusPopover.toggle($event)"
                   />
-                  <!-- ¿Burbuja o aro para el estado? Lo decide el equipo (2026-10-09). -->
-                  <sc-nota-decision claveTitulo="decision_notes.presence_ring.title" claveTexto="decision_notes.presence_ring.body" />
                   @if (presenceChosen() > 0) {
                     <sc-tag severity="info" [value]="(presenceChosen() === 1 ? 'groups.form.assigned.filter_status_count_one' : 'groups.form.assigned.filter_status_count') | translate: { count: presenceChosen() }" />
                   }
