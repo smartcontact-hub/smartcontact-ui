@@ -1,0 +1,121 @@
+<main class="login">
+  <!-- La marca, a un lado: el isotipo de CusCare (por máscara, con el color del texto) y lo que hace la herramienta. -->
+  <section class="login__brand">
+    <!-- Formas grises que se mueven despacio (solo `transform`), detrás de la marca. Decorativas. -->
+    <div class="login__art" aria-hidden="true">
+      <span class="login__shape login__shape--a"></span>
+      <span class="login__shape login__shape--b"></span>
+      <span class="login__shape login__shape--c"></span>
+    </div>
+
+    <div class="login__logo">
+      <span class="login__logo-isotype" role="img" aria-label="CusCare"></span>
+      <span class="login__logo-name sc-text-h2-regular"><strong>Smart</strong>Cuscare</span>
+    </div>
+    <p class="login__claim sc-text-h3-regular">Manage your customers' tickets in one place.</p>
+  </section>
+
+  <section class="login__panel" aria-labelledby="login-title">
+    <div class="login__body">
+      @switch (view()) {
+        @case ('signin') {
+          <h1 id="login-title" class="login__title sc-text-h2-semibold">Welcome to CusCare</h1>
+
+          <sc-button
+            variant="secondary"
+            appearance="outlined"
+            size="lg"
+            fullWidth
+            label="Sign in with Microsoft"
+            (clicked)="onMicrosoft()"
+          >
+            <img class="login__microsoft-logo" src="/logos/microsoft-logo.svg" width="21" height="21" alt="" />
+          </sc-button>
+
+          <sc-divider class="login__divider" align="center">
+            <span class="sc-text-caption-regular">or</span>
+          </sc-divider>
+
+          <form class="login__form" novalidate (submit)="onSubmit($event)">
+            @if (rejected()) {
+              <sc-message severity="danger" variant="outlined" icon="error" text="The email or the password is not correct." />
+            }
+            <sc-inputtext
+              inputId="login-username"
+              name="username"
+              type="email"
+              size="lg"
+              autocomplete="username"
+              inputmode="email"
+              fluid
+              label="Email"
+              [value]="username()"
+              [error]="usernameError()"
+              [invalid]="rejected()"
+              (valueChange)="username.set($event)"
+            />
+            <sc-password
+              inputId="login-password"
+              name="password"
+              size="lg"
+              autocomplete="current-password"
+              fluid
+              label="Password"
+              showAriaLabel="Show password"
+              hideAriaLabel="Hide password"
+              [value]="password()"
+              [error]="passwordError()"
+              [invalid]="rejected()"
+              (valueChange)="password.set($event)"
+            />
+            <sc-button class="login__submit" type="submit" size="lg" fullWidth label="Sign in" />
+          </form>
+
+          <nav class="login__links" aria-label="Help">
+            <button type="button" class="login__link sc-text-body-regular" (click)="go('forgot')">
+              Forgot your password?
+            </button>
+          </nav>
+        }
+
+        @case ('forgot') {
+          <div class="login__intro">
+            <h1 id="login-title" class="sc-text-h2-semibold">Reset your password</h1>
+            <p class="login__lead sc-text-body-regular">Enter your email and we will send you the steps to choose a new one.</p>
+          </div>
+          <form class="login__form" novalidate (submit)="onReset($event)">
+            <sc-inputtext
+              inputId="reset-email"
+              name="email"
+              type="email"
+              size="lg"
+              autocomplete="username"
+              inputmode="email"
+              fluid
+              label="Email"
+              [value]="email()"
+              [error]="emailError()"
+              (valueChange)="email.set($event)"
+            />
+            <sc-button class="login__submit" type="submit" size="lg" fullWidth label="Send instructions" />
+          </form>
+          <nav class="login__links" aria-label="Help">
+            <button type="button" class="login__link sc-text-body-regular" (click)="go('signin')">Back to sign in</button>
+          </nav>
+        }
+
+        @case ('sent') {
+          <div class="login__intro">
+            <h1 id="login-title" class="sc-text-h2-semibold">Check your email</h1>
+            <p class="login__lead sc-text-body-regular">
+              If {{ email().trim() }} has an account, you will receive the steps to reset your password.
+            </p>
+          </div>
+          <sc-button size="lg" fullWidth label="Back to sign in" (clicked)="go('signin')" />
+        }
+      }
+    </div>
+
+    <p class="login__legal sc-text-caption-regular">© {{ year }} Digital Virgo</p>
+  </section>
+</main>

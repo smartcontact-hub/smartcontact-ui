@@ -1,0 +1,22 @@
+/* Fuentes de marca SELF-HOSPEDADAS.
+ *
+ * Antes venían de `fonts.googleapis.com` con dos `<link>` en `index.html`. Eso mandaba
+ * la IP de cada visitante a Google en la primera carga, y era la ÚNICA transferencia a
+ * un tercero que tenía esta app (no hay analítica ni cookies). Los ficheros son los
+ * mismos que publica Google: `@fontsource` los empaqueta desde ese upstream, así que
+ * esto no cambia un píxel, cambia de dónde salen los bytes.
+ *
+ * Subconjunto `latin` (la app es española). Pesos, los del contrato de tokens
+ * (`--sc-font-weight-*`: 400/500/600/700), que es justo lo que pedía el `<link>` de
+ * Google. Las familias se llaman EXACTAMENTE como las nombran `--sc-font-family-primary`
+ * ('Inter') y `--sc-font-family-secondary` ('Open Sans'). */
+@import '@fontsource/inter/latin-400.css';
+@import '@fontsource/inter/latin-500.css';
+@import '@fontsource/inter/latin-600.css';
+@import '@fontsource/inter/latin-700.css';
+@import '@fontsource/inter/latin-400-italic.css';
+
+/* Open Sans (secundaria) ya no se carga: los text styles del Figma son TODOS Inter,
+ * caption incluida, así que `--sc-font-family-caption` apunta ahora a la primaria
+ * (ver 02-semantic.css). Cargarla era peso muerto. El token
+ * `--sc-font-family-secondary` sigue existiendo como primitivo por si vuelve a usarse. */

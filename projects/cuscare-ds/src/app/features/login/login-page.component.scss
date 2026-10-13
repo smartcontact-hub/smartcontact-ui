@@ -1,0 +1,243 @@
+/*
+ * Acceso: la marca a un lado y un panel con el formulario al otro, como el del Supervisor; aquí la marca va en una
+ * tarjeta de color de marca, sin ilustración. Está fuera del shell (sin sidebar). Todo con tokens del DS.
+ */
+:host {
+  display: block;
+  background: var(--sc-color-slate-50);
+}
+
+.login {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: var(--sc-spacing-1);
+  min-height: 100dvh;
+  padding: var(--sc-spacing-1);
+}
+
+/* ── Marca ─────────────────────────────────────────────── */
+
+.login__brand {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sc-spacing-1-5);
+  padding: var(--sc-spacing-4);
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: var(--sc-radius-2xl);
+  background: var(--sc-color-slate-100);
+  color: var(--sc-text-heading);
+}
+
+/* ── Arte: formas grises que se mueven despacio ─────────────────────────────
+ * Solo `transform`, que no repinta la página, y quietas si se pide menos movimiento. Van en la mitad de abajo y
+ * en grises claros (slate 200 a 400) para que el texto de la marca se lea siempre. */
+.login__art {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.login__shape {
+  position: absolute;
+  display: block;
+  filter: blur(var(--sc-spacing-1));
+  will-change: transform;
+}
+
+.login__shape--a {
+  inset-inline-start: -15%;
+  inset-block-end: -25%;
+  inline-size: 75%;
+  aspect-ratio: 1;
+  border-radius: 42% 58% 55% 45% / 55% 45% 58% 42%;
+  background: linear-gradient(145deg, var(--sc-color-slate-200), var(--sc-color-slate-400));
+  animation: login-drift-a 26s ease-in-out infinite alternate;
+}
+
+.login__shape--b {
+  inset-inline-end: -20%;
+  inset-block-end: -10%;
+  inline-size: 70%;
+  aspect-ratio: 1;
+  border-radius: 58% 42% 40% 60% / 45% 58% 42% 55%;
+  background: linear-gradient(200deg, var(--sc-color-slate-300), var(--sc-color-slate-200));
+  animation: login-drift-b 32s ease-in-out infinite alternate;
+}
+
+.login__shape--c {
+  inset-inline-start: 25%;
+  inset-block-end: -35%;
+  inline-size: 55%;
+  aspect-ratio: 1;
+  border-radius: 50% 50% 38% 62% / 60% 40% 60% 40%;
+  background: linear-gradient(160deg, var(--sc-color-slate-300), var(--sc-color-slate-400));
+  opacity: 0.8;
+  animation: login-drift-c 38s ease-in-out infinite alternate;
+}
+
+@keyframes login-drift-a {
+  from {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+  }
+  to {
+    transform: translate(12%, -14%) rotate(40deg) scale(1.12);
+  }
+}
+
+@keyframes login-drift-b {
+  from {
+    transform: translate(0, 0) rotate(0deg) scale(1.05);
+  }
+  to {
+    transform: translate(-14%, -10%) rotate(-35deg) scale(0.94);
+  }
+}
+
+@keyframes login-drift-c {
+  from {
+    transform: translate(0, 0) rotate(0deg) scale(0.95);
+  }
+  to {
+    transform: translate(-10%, -18%) rotate(55deg) scale(1.1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .login__shape {
+    animation: none;
+  }
+}
+
+.login__logo {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-875);
+}
+
+.login__logo-isotype {
+  display: block;
+  inline-size: var(--sc-spacing-3);
+  block-size: var(--sc-spacing-3);
+  background-color: currentColor;
+  mask: url('/logos/cuscare-isotype.svg') center / contain no-repeat;
+}
+
+.login__logo-name {
+  color: inherit;
+}
+
+.login__claim {
+  margin: 0;
+  max-inline-size: var(--sc-spacing-25);
+}
+
+/* ── Panel ─────────────────────────────────────────────── */
+
+.login__panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--sc-spacing-2);
+  border-radius: var(--sc-radius-2xl);
+  background: var(--sc-bg-surface);
+  box-shadow: var(--sc-shadow-dialog);
+}
+
+/* Anclado arriba a una altura fija, no centrado: un aviso que aparece no mueve el título. */
+.login__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--sc-spacing-2);
+  inline-size: 100%;
+  max-inline-size: var(--sc-spacing-25);
+  padding-block-start: 18dvh;
+}
+
+.login__title {
+  margin: 0 0 var(--sc-spacing-1);
+  text-align: center;
+  color: var(--sc-text-heading);
+}
+
+.login__intro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  text-align: center;
+
+  h1 {
+    margin: 0;
+    color: var(--sc-text-heading);
+  }
+}
+
+.login__lead {
+  margin: 0;
+  color: var(--sc-text-secondary);
+}
+
+.login__microsoft-logo {
+  display: block;
+  flex-shrink: 0;
+}
+
+.login__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1);
+}
+
+/* El botón cierra el formulario: 14 más que entre campos, para que no se lea como un campo más. */
+.login__submit {
+  margin-top: var(--sc-spacing-1);
+}
+
+.login__links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--sc-spacing-1);
+}
+
+.login__link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--sc-text-link);
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &:focus-visible {
+    outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
+    outline-offset: var(--sc-focus-ring-offset);
+  }
+}
+
+.login__legal {
+  margin: 0;
+  color: var(--sc-text-secondary);
+}
+
+/* En pantallas estrechas la marca pasa arriba y el panel ocupa el ancho. */
+@media (max-width: 64rem) {
+  .login {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .login__brand {
+    padding: var(--sc-spacing-2);
+  }
+
+  .login__body {
+    padding-block-start: var(--sc-spacing-2);
+  }
+}

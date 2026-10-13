@@ -1,0 +1,91 @@
+/*
+ * El disparador de los filtros que abren un panel (Request type, ID, Productos): la caja de un campo del DS en tamaño
+ * md, la misma que `sc-search`, `sc-select` y los botones de la barra del Supervisor: texto de 14, relleno de `0-375`
+ * en vertical, línea de 20 y borde de 1 → 32,5 de alto. Con contador (o texto) y ×.
+ */
+.filter-trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-25);
+  inline-size: 100%;
+  padding-block: var(--sc-spacing-0-375);
+  padding-inline: var(--sc-spacing-0-625) var(--sc-spacing-0-5);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-100);
+  background: var(--sc-bg-surface);
+  color: var(--sc-text-secondary);
+
+  /* Como los campos del DS: al pasar el ratón, `slate-300`; abierto o con el foco dentro, el azul marino de marca
+   * (`focusBorderColor` del preset), no el azul de foco de los anillos. */
+  &:hover {
+    border-color: var(--sc-color-slate-300);
+  }
+
+  &--open,
+  &:focus-within {
+    border-color: var(--sc-bg-primary);
+  }
+
+  &__main {
+    display: flex;
+    flex: 1;
+    min-inline-size: 0;
+    align-items: center;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--sc-text-primary);
+    text-align: start;
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
+      outline-offset: var(--sc-focus-ring-offset);
+    }
+  }
+
+  &__placeholder {
+    color: var(--sc-text-secondary);
+  }
+
+  &__value {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__clear {
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: 0;
+    border-radius: var(--sc-radius-100);
+    background: none;
+    color: var(--sc-text-secondary);
+    cursor: pointer;
+
+    &:hover {
+      color: var(--sc-text-primary);
+    }
+
+    &:focus-visible {
+      outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
+      outline-offset: var(--sc-focus-ring-offset);
+    }
+  }
+
+  &__chevron {
+    flex: none;
+    transition: transform var(--sc-transition-fast) var(--sc-easing-default);
+  }
+
+  &--open &__chevron {
+    transform: rotate(180deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .filter-trigger__chevron {
+    transition: none;
+  }
+}

@@ -1,0 +1,86 @@
+<div #trigger class="filter-trigger" [class.filter-trigger--active]="active()" [class.filter-trigger--open]="open()">
+  <button
+    class="filter-trigger__main sc-text-body-regular"
+    type="button"
+    aria-haspopup="dialog"
+    aria-label="Filter by Request type"
+    [attr.aria-expanded]="open()"
+    [attr.aria-description]="description()"
+    (click)="pop.toggle($event, trigger)"
+  >
+    @if (active()) {
+      <span class="filter-trigger__value">{{ summary() }}</span>
+    } @else {
+      <span class="filter-trigger__placeholder">Select</span>
+    }
+  </button>
+  @if (active()) {
+    <button class="filter-trigger__clear" type="button" aria-label="Clear Request type filter" (click)="clear()">
+      <sc-icon name="close" [size]="14" />
+    </button>
+  }
+  <sc-icon class="filter-trigger__chevron" name="expand_more" [size]="14" />
+</div>
+
+<p-popover #pop [dt]="popoverTokens" ariaLabel="Request type" (onShow)="onShow()" (onHide)="onClose()">
+  <div class="rtf-panel">
+    <p class="rtf-label sc-text-body-semibold" id="rtf-origin">Classified by</p>
+    <div class="rtf-origins" role="group" aria-labelledby="rtf-origin">
+      @for (o of originOptions(); track o.value; let first = $first) {
+        @if (!first) {
+          <span class="rtf-origins__and sc-text-caption-regular">AND</span>
+        }
+        <p-togglebutton
+          class="rtf-origin"
+          [attr.data-origin]="o.value"
+          [dt]="o.value === 'agent' ? agentTokens : undefined"
+          [onLabel]="o.label"
+          [offLabel]="o.label"
+          [ngModel]="isOn(o.value)"
+          (ngModelChange)="toggleOrigin(o.value, $event)"
+        >
+          <ng-template #icon let-checked>
+            @if (checked) {
+              <sc-icon name="check" [size]="14" />
+            }
+          </ng-template>
+        </p-togglebutton>
+      }
+    </div>
+    <p-divider />
+    <p class="rtf-label sc-text-body-semibold">Request type</p>
+    <p-listbox
+      class="rtf-list"
+      [dt]="listboxTokens"
+      [options]="typeOptions()"
+      optionLabel="label"
+      optionValue="value"
+      filterBy="search"
+      [multiple]="true"
+      [checkbox]="true"
+      [filter]="true"
+      [showToggleAll]="true"
+      [metaKeySelection]="false"
+      filterPlaceHolder="Search type"
+      ariaFilterLabel="Search type"
+      ariaLabel="Request type"
+      emptyFilterMessage="No types match"
+      [scrollHeight]="listHeight"
+      [ngModel]="state().types"
+      (ngModelChange)="onTypes($event)"
+    >
+      <ng-template #item let-option>
+        <span class="rtf-option">
+          <span class="rtf-option__label">{{ option.label }}</span>
+          <sc-tag
+            class="rtf-option__match"
+            [class.rtf-option__match--hidden]="!both() || !state().types.includes(option.value)"
+            [attr.aria-hidden]="!both() || !state().types.includes(option.value)"
+            value="Match"
+            severity="secondary"
+          />
+        </span>
+      </ng-template>
+    </p-listbox>
+  </div>
+</p-popover>

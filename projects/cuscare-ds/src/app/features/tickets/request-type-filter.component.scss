@@ -1,0 +1,52 @@
+@use '../../shared/list-page/filter-trigger';
+
+/* El panel, dentro del popover (que se pinta en `<body>`: de ahí `::ng-deep` en lo que PrimeNG genera). */
+.rtf-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
+  inline-size: var(--sc-spacing-18);
+}
+
+.rtf-label {
+  margin: 0;
+  color: var(--sc-text-heading);
+}
+
+.rtf-origins {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+
+  &__and {
+    flex: none;
+    color: var(--sc-text-secondary);
+  }
+}
+
+.rtf-origin {
+  flex: 1;
+}
+
+.rtf-option {
+  display: flex;
+  flex: 1;
+  min-inline-size: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sc-spacing-0-5);
+
+  &__label {
+    min-inline-size: 0;
+  }
+
+  &__match {
+    flex: none;
+
+    /* Reservar su sitio evita que los tipos cambien de línea al alternar los orígenes. */
+    &--hidden {
+      visibility: hidden;
+    }
+  }
+}
+
