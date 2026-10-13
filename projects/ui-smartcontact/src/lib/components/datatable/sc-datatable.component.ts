@@ -90,10 +90,10 @@ export interface ScDatatableSortEvent {
     '[class.sc-datatable--overflow-left]': 'overflowLeft()',
     // `scrollHeight="flex"`: con lista virtual la tabla LLENA el alto (la lista virtual lo necesita);
     // sin ella, se AJUSTA a sus filas y solo hace scroll si no caben (DD-95).
-    '[class.sc-datatable--fill]': 'pVirtualScroll()',
+    '[class.sc-datatable--fill]': 'visualFill()',
     // Con scroll propio: el tema estiliza su barra sin preguntar a `p-table` por `.p-datatable-scrollable`.
     '[class.sc-datatable--scroll]': 'scrollable()',
-    '[class.sc-datatable--fit]': "scrollable() && scrollHeight() === 'flex' && !pVirtualScroll()",
+    '[class.sc-datatable--fit]': "scrollable() && scrollHeight() === 'flex' && !visualFill()",
     // Sin la clase si también es `scrollable`: ahí la cabecera ya la fija PrimeNG
     // dentro de la tabla, y el tema no tiene que preguntar a `p-table` por ello.
     '[class.sc-datatable--sticky-header]': 'stickyHeader() && !scrollable()',
@@ -172,6 +172,14 @@ export class ScDatatableComponent<T = unknown> {
    * se ven: la pantalla necesita su propio buscador.
    */
   readonly virtualScroll = input(false, { transform: booleanAttribute });
+  /**
+   * Llega al pie aunque no haga falta lista virtual: `sc-datatable--fill` nació atado 1:1 a
+   * `virtualScroll` (la ventana necesita un alto en firme), pero eso deja a una tabla corta
+   * —por debajo de las 100 filas de DD-176— con su tarjeta ajustada al contenido mientras el
+   * resto de la pantalla queda en blanco. Este input pide el mismo CSS de siempre (DD-160, sin
+   * reflow: mide `scLlegaAlPie` y lo aplica con `min`/`max-block-size`) sin forzar el gasto de la
+   * ventana virtual. (Medido 2026-10-12.) */
+  readonly fill = input(false, { transform: booleanAttribute });
   /**
    * Ancho de columna ajustable arrastrando el borde de su cabecera: el nativo de `p-table`
    * (`resizableColumns` + `pResizableColumn`, primeng.dev/table «Column Resize»), tal cual
@@ -469,6 +477,22 @@ export class ScDatatableComponent<T = unknown> {
     return clave ? (row as Record<string, unknown>)[clave] : row;
   }
 
+  /** Sin esto, `p-table` compara filas por REFERENCIA (su propio valor por defecto) y, en una tabla
+   *  cuyo `[value]` sale de un `computed()` que arma un objeto nuevo por fila en cada recálculo (p. ej.
+   *  `visibleRows` de `group-assignment-table`), CADA fila se destruye y se vuelve a montar al tocar
+   *  UNA sola celda — toda la tabla parpadea como si se hubiera reseteado entera (medido 2026-10-12,
+   *  12 interruptores recreados por un solo checkbox). Con `dataKey`, la identidad es el dato, no el
+   *  objeto que lo envuelve; soporta rutas con punto (`"group.id"`) como el propio `dataKey` de PrimeNG. */
+  protected readonly rowTrackBy = computed<(index: number, item: T) => unknown>(() => {
+    const clave = this.dataKey();
+    if (!clave) return (index, item) => item ?? index;
+    const pasos = clave.split('.');
+    return (index, item) => {
+      const valor = pasos.reduce<unknown>((o, k) => (o as Record<string, unknown> | undefined)?.[k], item);
+      return valor ?? index;
+    };
+  });
+
   /**
    * `mousedown` sobre la celda de la casilla. Solo cuenta si empieza SOBRE la
    * casilla: un `mousedown` en el hueco de la celda no va a togglear nada, y
@@ -556,6 +580,8 @@ export class ScDatatableComponent<T = unknown> {
   );
   protected readonly pVirtualScroll = computed(() => this.virtualWanted() && this.rowHeight() > 0);
   protected readonly pVirtualScrollItemSize = computed(() => this.rowHeight() || undefined);
+  /** El CSS de «llega al pie» (DD-160): por lista virtual (la ventana lo necesita) o porque lo pide `fill`. */
+  protected readonly visualFill = computed(() => this.pVirtualScroll() || this.fill());
   /** Sin lista virtual, `flex` no pasa a PrimeNG: su modo flexible estira la tabla aunque tenga 3 filas. */
   protected readonly pScrollHeight = computed(() =>
     this.scrollHeight() === 'flex' && !this.pVirtualScroll() ? undefined : this.scrollHeight(),

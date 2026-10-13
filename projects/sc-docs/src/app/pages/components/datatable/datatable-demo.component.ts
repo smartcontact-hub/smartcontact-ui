@@ -292,6 +292,7 @@ export class DatatableDemoComponent {
       { name: 'scrollHeight', control: { kind: 'text' }, description: 'Alto de ese scroll (p.ej. 240px).' },
       { name: 'stickyHeader', control: { kind: 'boolean' }, description: 'Cabecera fija al scroll de la página (sin scroll propio).' },
       { name: 'virtualScroll', control: { kind: 'boolean' }, description: 'Lista virtual con scroll propio: entra por encima de 100 filas (esta demo tiene 7).' },
+      { name: 'fill', control: { kind: 'boolean' }, description: 'Llega al pie de su contenedor aunque no haga falta lista virtual: mismo CSS de «llega al pie» (DD-160), sin pagar la ventana.' },
       { name: 'rowsFocusable', control: { kind: 'boolean' }, description: 'Las filas entran en el orden de tabulación.' },
       { name: 'tableMinWidth', control: { kind: 'text' }, description: 'Ancho mínimo (p.ej. 60rem): por debajo la tabla se desplaza de lado en vez de cortar texto.' },
       { name: 'resizableColumns', control: { kind: 'boolean' }, description: 'Ancho de columna ajustable arrastrando el borde de la cabecera (el nativo de p-table).' },
@@ -318,6 +319,7 @@ export class DatatableDemoComponent {
       scrollHeight: '240px',
       stickyHeader: false,
       virtualScroll: false,
+      fill: false,
       rowsFocusable: false,
       // Vacío: un ancho mínimo por defecto cambiaría la demo que miden los e2e.
       tableMinWidth: '',

@@ -2309,6 +2309,7 @@
         "outbound_none": "Sin teléfono en este grupo",
         "self_activate_hint": "Lo cambia el agente: tiene «Activación por grupo»",
         "active_self_aria": "Habilitado en {{name}}: lo cambia el agente",
+        "not_assigned_hint": "No asignado a {{name}}: se habilita al asignarlo",
         "not_allowed_hint": "{{channel}} no está entre sus canales (General)",
         "bulk_add": "Asignar al agente",
         "bulk_remove": "Quitar al agente",
