@@ -41,13 +41,14 @@ export const APPS = {
   cuscare: 'cuscare',
   agent: null,
   'agent-mini': null,
+  'cuscare-ds': null,
 };
 
 const PROPIOS = [
   [/^projects\/sc-docs\//, 'smoke'],
   [/^projects\/supervisor\//, 'supervisor'],
   [/^projects\/cuscare\//, 'cuscare'],
-  [/^projects\/(agent|agent-mini)\//, null],
+  [/^projects\/(agent|agent-mini|cuscare-ds)\//, null],
   [/^e2e\/supervisor\//, 'supervisor'],
   [/^e2e\/cuscare\//, 'cuscare'],
   [/^e2e\/(baselines|components\.spec\.ts-snapshots)\//, 'smoke'],

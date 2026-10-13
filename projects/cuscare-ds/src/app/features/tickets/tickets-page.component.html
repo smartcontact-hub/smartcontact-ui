@@ -1,0 +1,91 @@
+<!-- La lista (título, barra, tabla, selección) la monta `app-list-page`, la misma estructura que la lista de
+     Grupos del Supervisor. Aquí solo lo que es de Tickets: columnas y celdas, y las acciones. -->
+<app-list-page
+  heading="Tickets"
+  [rows]="rows"
+  [columns]="columns()"
+  [tableMinWidth]="tableMinWidth"
+  [columnChoices]="managedColumns"
+  columnStorageKey="cuscare-ds-tickets-columns_v2"
+  searchPlaceholder="Search tickets"
+  [searchFn]="matchesSearch"
+  [rowLabel]="rowLabel"
+  [filterDefs]="filters"
+  [filterTemplates]="filterTemplates()"
+  [sortFn]="sortFn"
+  [rowClass]="rowClass"
+  [rowSelectable]="selectable"
+  [(selectedIds)]="selectedIds"
+  tableTestId="tickets-table"
+  [pageSize]="100"
+  exportable
+  (exportRequest)="onExport($event)"
+>
+  <sc-button scListHeadingAction label="New ticket" icon="add" size="sm" />
+
+  <!-- Las cuatro acciones en bloque, a la vista como en producción: son los accesos directos de los agentes y actúan
+       sobre las filas marcadas, así que sin selección están apagadas. De momento solo la maqueta. -->
+  <ng-container ngProjectAs="[scListActions]">
+    <sc-button label="Assign" icon="arrow_drop_down" iconPosition="right" variant="secondary" appearance="outlined" [disabled]="!hasSelection()" />
+    <sc-button label="Change status" icon="arrow_drop_down" iconPosition="right" variant="secondary" appearance="outlined" [disabled]="!hasSelection()" />
+    <sc-button label="Cancellation" icon="arrow_drop_down" iconPosition="right" variant="secondary" appearance="outlined" [disabled]="!hasSelection()" />
+    <sc-button label="File" icon="arrow_drop_down" iconPosition="right" variant="secondary" appearance="outlined" [disabled]="!hasSelection()" />
+  </ng-container>
+</app-list-page>
+
+<ng-template #cell let-row let-col="col">
+  @switch (col.field) {
+    @case ('id') {
+      <!-- El tooltip del DS (`pTooltip`, con el tema de Smart Contact) sale al pasar por el texto del ticket bloqueado. -->
+      <span
+        class="tickets__id"
+        [pTooltip]="'In progress by: ' + row.assignedTo"
+        tooltipPosition="top"
+        [tooltipDisabled]="!row.locked"
+      >
+        @if (row.locked) {
+          <sc-icon name="lock" [size]="14" ariaLabel="Ticket blocked" class="tickets__lock" />
+        }
+        <span class="sc-text-body-regular">{{ row.id }}</span>
+        @if (row.badge) {
+          <sc-tag [value]="row.badge === 'new' ? 'New' : 'Updated'" [severity]="row.badge === 'new' ? 'success' : 'info'" />
+        }
+      </span>
+    }
+    @case ('status') {
+      <span class="tickets__text sc-text-body-regular">{{ statusLabel(row.status) }}</span>
+    }
+    @case ('requestTypes') {
+      <!-- Cada tipo con el color de su origen, el mismo de los botones del filtro: IA en gris, Agente en azul. Si el ticket
+           lo tiene de los dos, salen las dos etiquetas. -->
+      <span class="tickets__chips">
+        @for (t of row.requestTypes; track $index) {
+          <sc-tag [value]="t.label" [severity]="t.origin === 'agent' ? 'info' : 'secondary'" />
+        } @empty {
+          <span class="sc-text-body-regular">—</span>
+        }
+      </span>
+    }
+    @case ('products') {
+      <span class="tickets__chips">
+        @for (p of row.products; track p) {
+          <sc-tag severity="secondary" [value]="p" />
+        } @empty {
+          <span class="sc-text-body-regular">—</span>
+        }
+      </span>
+    }
+    @default {
+      <span class="tickets__text sc-text-body-regular">{{ text(row, col.field) }}</span>
+    }
+  }
+</ng-template>
+
+<!-- El filtro de «Request type»: un componente propio, que el filtro de la columna proyecta en su celda. -->
+<ng-template #requestTypeFilter let-value="value" let-set="set">
+  <app-request-type-filter
+    [state]="value ?? defaultRequestType"
+    [types]="requestTypes"
+    (stateChange)="set($event)"
+  />
+</ng-template>

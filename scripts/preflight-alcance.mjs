@@ -17,7 +17,7 @@
  * script compilaba las cinco apps en un Air de 16 GB. DD-155.
  */
 
-export const APPS = ['agent', 'agent-mini', 'supervisor', 'cuscare', 'sc-docs'];
+export const APPS = ['agent', 'agent-mini', 'supervisor', 'cuscare', 'cuscare-ds', 'sc-docs'];
 
 /** Tocar cualquiera de estas obliga a la cadena completa. */
 export const COMPARTIDO = [
