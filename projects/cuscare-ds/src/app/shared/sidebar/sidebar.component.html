@@ -1,0 +1,27 @@
+<aside
+  class="sidebar"
+  (mouseenter)="onEnter()"
+  (mouseleave)="onLeave()"
+  (focusin)="focusWithin.set(true)"
+  (focusout)="onFocusOut($event)"
+>
+  <div class="sidebar__brand">
+    <ng-content select="[appSidebarBrand]" />
+  </div>
+
+  <nav class="sidebar__nav" [attr.aria-label]="ariaLabel()">
+    @for (item of items(); track item.key) {
+      <button
+        type="button"
+        class="sidebar__item sc-text-body-regular"
+        [class.sidebar__item--active]="item.key === activeKey()"
+        [attr.aria-current]="item.key === activeKey() ? 'page' : null"
+        [attr.data-nav-key]="item.key"
+        (click)="select(item)"
+      >
+        <sc-icon class="sidebar__icon" [name]="item.icon" [size]="14" />
+        <span class="sidebar__label">{{ item.label }}</span>
+      </button>
+    }
+  </nav>
+</aside>

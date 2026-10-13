@@ -1,0 +1,292 @@
+<div class="page page--tabla">
+  <div class="page__inner page__inner--list">
+   <!-- Todo el cuerpo va en UNA sección de fondo blanco sobre el lienzo, como la pantalla de producción. -->
+   <section class="page__card">
+    <!-- El título vive en el cuerpo y dice QUÉ miras; uno por documento. -->
+    <div class="page__heading-row">
+      <h1 class="page__heading sc-text-h3-semibold">{{ heading() }}</h1>
+      <ng-content select="[scListHeadingAction]" />
+    </div>
+
+    <!-- La barra de herramientas es el `p-toolbar` de primeng.dev (DD-113): a la izquierda lo que cambia la vista (columnas y
+         buscador), a la derecha las acciones sobre las filas marcadas y la descarga. -->
+    <p-toolbar class="page__toolbar" aria-label="Table tools" [dt]="toolbarTokens">
+     <ng-template #start>
+      <div class="page__tools">
+      @if (columnPrefs(); as prefs) {
+        <!-- ELEGIR Y ORDENAR COLUMNAS: el «Column Toggle» de primeng.dev/table. Botón outlined a la altura del buscador;
+             Popover sin relleno con título y «Reset»; una fila por columna con su asa, su casilla y su nombre, que se
+             arrastra para ordenar. La lista es una sola parada del tabulador: las flechas van de una
+             columna a otra. La fija sale marcada, sin moverse. -->
+        <sc-button
+          #columnsButton
+          class="page__columns"
+          variant="secondary"
+          appearance="outlined"
+          icon="view_column"
+          [ariaLabel]="columnsAriaLabel()"
+          ariaHasPopup="dialog"
+          [ariaExpanded]="columnsOpen()"
+          (clicked)="columnsPop.toggle($event)"
+        />
+        <p-popover
+          #columnsPop
+          [style]="columnsPopoverStyle"
+          [pt]="columnsPopoverPt"
+          [focusOnShow]="false"
+          [ariaLabelledBy]="columnsTitleId"
+          (onShow)="onColumnsShow()"
+          (onHide)="onColumnsHide()"
+        >
+          <ng-template #content>
+            <div class="column-toggle__header">
+              <span class="column-toggle__title sc-text-body-semibold" [id]="columnsTitleId">Columns</span>
+              <sc-button variant="secondary" appearance="text" size="sm" icon="refresh" label="Reset" (clicked)="resetColumns()" />
+            </div>
+            <div
+              class="column-toggle__list"
+              cdkDropList
+              [cdkDropListData]="columnOptions()"
+              (cdkDropListDropped)="onColumnDrop($event)"
+              (keydown)="onColumnsKeydown($event)"
+            >
+              @for (opt of columnOptions(); track opt.key) {
+                <div
+                  class="column-toggle__row"
+                  [class.column-toggle__row--locked]="opt.locked"
+                  cdkDrag
+                  [cdkDragDisabled]="opt.locked"
+                  cdkDragPreviewClass="column-toggle-drag-preview"
+                  (focusin)="currentColumn.set(opt.key)"
+                  (click)="onColumnRowClick(opt.key)"
+                >
+                  <sc-icon class="column-toggle__handle" name="drag_handle" size="sm" aria-hidden="true" />
+                  <p-checkbox
+                    [inputId]="columnInputId(opt.key)"
+                    [value]="opt.key"
+                    [ngModel]="prefs.visible"
+                    [disabled]="opt.locked"
+                    [tabindex]="columnTabindex(opt.key)"
+                    (ngModelChange)="onVisibleChange($event)"
+                    (click)="$event.stopPropagation()"
+                  />
+                  <label class="column-toggle__label sc-text-body-regular" [for]="columnInputId(opt.key)" (click)="$event.stopPropagation()">{{ opt.label }}</label>
+                </div>
+              }
+            </div>
+          </ng-template>
+        </p-popover>
+      }
+      @if (searchPlaceholder(); as placeholder) {
+        <sc-search
+          class="page__search"
+          [placeholder]="placeholder"
+          shortcutHint="/"
+          clearAriaLabel="Clear search"
+          [value]="query()"
+          (valueChange)="query.set($event)"
+          (keydown)="onSearchKey($event)"
+        />
+      }
+      <!-- Los accesos directos de los agentes, pegados al buscador: actúan sobre las filas marcadas, así que van a la vista. -->
+      <div class="page__actions">
+        <ng-content select="[scListActions]" />
+      </div>
+      </div>
+     </ng-template>
+     <ng-template #end>
+      <!-- «Eliminar filtros» solo existe mientras hay algún filtro puesto; va junto a la descarga. -->
+      <div class="page__end">
+        @if (hasFilters()) {
+          <sc-button
+            variant="danger"
+            appearance="outlined"
+            icon="delete"
+            label="Delete filters"
+            (clicked)="clearFilters()"
+          />
+        }
+      @if (exportable()) {
+        <sc-button
+          variant="secondary"
+          appearance="outlined"
+          icon="download"
+          ariaLabel="Download"
+          (clicked)="onExport()"
+        />
+      }
+      </div>
+     </ng-template>
+    </p-toolbar>
+
+    <div class="table-card table-card--flat">
+      <sc-datatable
+        scrollable
+        scrollHeight="flex"
+        [virtualScroll]="!paginated()"
+        [paginator]="paginated()"
+        [rows]="pageSize()"
+        [rowsPerPageOptions]="$any(pageSizeOptions())"
+        [(first)]="first"
+        externalSort
+        [tableMinWidth]="effectiveTableMinWidth()"
+        variant="list"
+        [value]="displayed()"
+        [columns]="allColumns()"
+        [visibleColumns]="visibleColumns()"
+        dataKey="id"
+        selectionMode="multiple"
+        [rowSelectionAriaLabel]="rowAriaLabel"
+        selectAllAriaLabel="Select all"
+        [rowStyleClass]="rowStyleClass()"
+        [selection]="selectedRows()"
+        (selectionChange)="onSelectionChange($any($event))"
+        [attr.data-testid]="tableTestId()"
+      >
+        <!-- La cabecera es nuestra: dos filas, los nombres con su orden y, debajo, el filtro de cada columna. Las plantillas de
+             `sc-datatable` no ven la tabla de PrimeNG, así que el orden y la casilla de «todo» se pintan aquí. -->
+        <ng-template #header>
+          <tr>
+            <th class="list-check" scope="col" pFrozenColumn [frozen]="hasLeftFrozen()">
+              <p-checkbox
+                [binary]="true"
+                [ngModel]="allOnPage()"
+                [indeterminate]="someOnPage()"
+                ariaLabel="Select all on this page"
+                (onChange)="toggleAllOnPage($event.checked)"
+              />
+            </th>
+            @for (col of headerColumns(); track col.field) {
+              <th
+                scope="col"
+                pFrozenColumn
+                [frozen]="!!col.frozen"
+                [alignFrozen]="col.alignFrozen ?? 'left'"
+                [style.width]="col.width ?? null"
+                [attr.aria-sort]="col.sortable ? ariaSort(col.field) : null"
+              >
+                @if (col.sortable) {
+                  <button type="button" class="list-sort sc-text-body-semibold" (click)="toggleSort(col.field)">
+                    <span>{{ col.header }}</span>
+                    <!-- Los tres iconos de `p-sortIcon` (primeng.dev/table): sin orden, ascendente y descendente. -->
+                    @switch (sortOf(col.field)) {
+                      @case ('asc') {
+                        <svg data-p-icon="sort-amount-up-alt" class="p-sortable-column-icon"></svg>
+                      }
+                      @case ('desc') {
+                        <svg data-p-icon="sort-amount-down" class="p-sortable-column-icon"></svg>
+                      }
+                      @default {
+                        <svg data-p-icon="sort-alt" class="p-sortable-column-icon"></svg>
+                      }
+                    }
+                  </button>
+                } @else {
+                  <span class="sc-text-body-semibold">{{ col.header }}</span>
+                }
+              </th>
+            }
+          </tr>
+          @if (hasFilterRow()) {
+            <tr class="list-filters" (click)="focusFilterSearch()">
+              <th class="list-check" pFrozenColumn [frozen]="hasLeftFrozen()"></th>
+              @for (col of headerColumns(); track col.field) {
+                <th
+                  pFrozenColumn
+                  [frozen]="!!col.frozen"
+                  [alignFrozen]="col.alignFrozen ?? 'left'"
+                  [style.width]="col.width ?? null"
+                >
+                  @if (filterDefs()[col.field]; as def) {
+                    @switch (def.kind) {
+                      @case ('text') {
+                        <sc-inputtext
+                          size="md"
+                          fluid
+                          [placeholder]="def.placeholder ?? 'Type to filter'"
+                          [ariaLabel]="'Filter by ' + col.header"
+                          [value]="$any(filterValue(col.field)) ?? ''"
+                          (valueChange)="setFilter(col.field, $event)"
+                        />
+                      }
+                      @case ('select') {
+                          <sc-select
+                            size="md"
+                            [options]="$any(def.options ?? [])"
+                            optionLabel="label"
+                            optionValue="value"
+                            [filter]="!!def.search"
+                            filterPlaceholder="Search"
+                            emptyFilterMessage="No results"
+                            showClear
+                            [placeholder]="def.placeholder ?? 'Select'"
+                            [ariaLabel]="'Filter by ' + col.header"
+                            [value]="$any(filterValue(col.field))"
+                            (valueChange)="setFilter(col.field, $event)"
+                          />
+                      }
+                      @case ('multiselect') {
+                        <sc-multiselect
+                          size="md"
+                          [options]="$any(def.options ?? [])"
+                          optionLabel="label"
+                          optionValue="value"
+                          [filter]="!!def.search"
+                          filterPlaceholder="Search"
+                          emptyFilterMessage="No results"
+                          showClear
+                          [placeholder]="def.placeholder ?? 'Select'"
+                          [ariaLabel]="'Filter by ' + col.header"
+                          [value]="$any(filterValue(col.field)) ?? []"
+                          (valueChange)="setFilter(col.field, $event)"
+                        />
+                      }
+                      @case ('date') {
+                        <sc-datepicker
+                          size="md"
+                          selectionMode="range"
+                          showClear
+                          [placeholder]="def.placeholder ?? 'Select dates'"
+                          [range]="$any(filterValue(col.field)) ?? null"
+                          (rangeChange)="setFilter(col.field, $event)"
+                        />
+                      }
+                      @case ('optionsText') {
+                        <app-options-text-filter
+                          [options]="def.options ?? []"
+                          [columnLabel]="col.header"
+                          [textPlaceholder]="def.textPlaceholder ?? 'Type to search'"
+                          [value]="$any(filterValue(col.field))"
+                          (valueChange)="setFilter(col.field, $event)"
+                        />
+                      }
+                      @case ('custom') {
+                        <ng-container
+                          *ngTemplateOutlet="filterTemplates()[col.field]; context: filterContext(col.field)"
+                        />
+                      }
+                    }
+                  }
+                </th>
+              }
+            </tr>
+          }
+        </ng-template>
+        <ng-template #paginatorleft>
+          <span class="sc-text-body-regular">{{ pageReport() }}</span>
+        </ng-template>
+        <div scTableEmpty>
+          <sc-empty-state
+            icon="search_off"
+            titleKey="No results"
+            bodyKey="Nothing matches your search."
+            ctaKey="Clear search"
+            ctaIcon="close"
+            (cta)="query.set('')"
+          />
+        </div>
+      </sc-datatable>
+    </div>
+   </section>
+  </div>
+</div>

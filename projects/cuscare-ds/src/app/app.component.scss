@@ -1,0 +1,26 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background: var(--sc-color-slate-50);
+}
+
+/* El sidebar es fijo y se superpone al desplegarse: la página reserva su ancho plegado. */
+.app__main {
+  margin-left: var(--sc-sidebar-width);
+  height: 100vh;
+  background: var(--sc-color-slate-50);
+}
+
+/* El logo de CusCare como máscara, en el color del texto del sidebar. */
+.brand {
+  flex-shrink: 0;
+  inline-size: var(--sc-spacing-2-25);
+  block-size: var(--sc-spacing-2-25);
+  background-color: var(--sc-sidebar-fg);
+  mask: url('/logos/cuscare-isotype.svg') center / contain no-repeat;
+}
+
+/* El acceso va a pantalla completa. */
+.app__main--bare {
+  margin-left: 0;
+}

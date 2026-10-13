@@ -1,0 +1,98 @@
+/*
+ * Minimal reset — opinionated normalize.
+ * Goal: predictable box model, no margin collapsing surprises, accessible defaults.
+ *
+ * Wrapped in `@layer reset` and declared BEFORE `primeng` in
+ * `cssLayer.order` (app.config.ts). Reason: the generic `button { background:
+ * none; border: 0; padding: 0; }` reset would otherwise win against PrimeNG's
+ * `.p-button` styles (which live in `@layer primeng`). Unlayered CSS always
+ * beats layered CSS, so putting reset in a *lower-priority* layer lets
+ * PrimeNG's component styles take precedence on PrimeNG elements while still
+ * applying the reset to plain `<button>` elements that don't consume PrimeNG.
+ *
+ * AED's own component SCSS (`_buttons.scss`, `_forms.scss`, component-scoped
+ * .scss files) stays UNLAYERED — that way `.btn`, `.field`, and
+ * `::ng-deep .p-dialog` overrides keep winning over `@layer primeng`, which
+ * is the documented design for custom AED chrome.
+ */
+
+@layer reset {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  figure,
+  blockquote,
+  dl,
+  dd {
+    margin: 0;
+  }
+
+  ul[role='list'],
+  ol[role='list'] {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  img,
+  picture,
+  video,
+  canvas,
+  svg {
+    display: block;
+    max-width: 100%;
+  }
+
+  input,
+  button,
+  textarea,
+  select {
+    font: inherit;
+    color: inherit;
+  }
+
+  button {
+    cursor: pointer;
+    background: none;
+    border: 0;
+    padding: 0;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}

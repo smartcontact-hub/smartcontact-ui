@@ -1,0 +1,118 @@
+:host {
+  display: contents;
+}
+
+/*
+ * Plegado (80px) y desplegado (240px) con la franja FIJA: el desplegado se superpone a la página,
+ * que reserva `--sc-sidebar-width` a su izquierda. El ancho animado y la selección en cyan son los
+ * del tablero del sidebar (Figma 14912:6324).
+ */
+.sidebar {
+  --sidebar-label-opacity: 0;
+
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: var(--sc-z-sidebar);
+  width: var(--sc-sidebar-width-collapsed);
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--sc-sidebar-bg);
+  /* La raya contra el lienzo: en un sidebar claro es lo único que lo separa de la página. */
+  border-inline-end: 1px solid var(--sc-sidebar-border);
+  color: var(--sc-sidebar-fg);
+  transition: width var(--sc-transition-base) var(--sc-easing-emphasized);
+  will-change: width;
+
+  &__brand {
+    height: var(--sc-spacing-4);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-875);
+    padding: 0 var(--sc-spacing-0-875) 0 var(--sc-spacing-1-5);
+    border-bottom: 1px solid var(--sc-sidebar-border);
+  }
+
+  &__nav {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: var(--sc-spacing-0-875);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sc-spacing-0-25);
+    scrollbar-width: thin;
+    scrollbar-color: var(--sc-sidebar-scrollbar) transparent;
+  }
+
+  &__item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-5);
+    /* Plegado, el icono de 14px queda centrado en la franja de 80px: 12.25 (nav) + 21 + 7 = 40. */
+    padding: var(--sc-spacing-0-5) var(--sc-spacing-1-5);
+    text-align: left;
+    border: 0;
+    border-radius: var(--sc-radius-100);
+    background: transparent;
+    color: var(--sc-sidebar-fg);
+    cursor: pointer;
+    transition:
+      background var(--sc-transition-fast) var(--sc-easing-default),
+      color var(--sc-transition-fast) var(--sc-easing-default),
+      padding-left var(--sc-transition-base) var(--sc-easing-emphasized);
+
+    &:hover {
+      background: var(--sc-sidebar-item-hover-bg);
+    }
+
+    &:focus-visible {
+      outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
+      outline-offset: -2px;
+    }
+
+    /* Seleccionado: cyan con el texto en el navy de la barra. No cambia con el ratón encima. */
+    &--active,
+    &--active:hover {
+      background: var(--sc-sidebar-accent);
+      color: var(--sc-sidebar-bg);
+      font-weight: var(--sc-font-weight-semibold);
+    }
+  }
+
+  &__icon {
+    flex-shrink: 0;
+  }
+
+  /* La etiqueta se funde con el desplegado: así no asoma media letra durante el ensanche. */
+  &__label {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    opacity: var(--sidebar-label-opacity);
+    transition: opacity var(--sc-transition-fast) var(--sc-easing-default);
+  }
+
+  /* El elemento del logo que solo se ve desplegado (p. ej. el rótulo junto al isotipo). */
+  ::ng-deep .sidebar__reveal {
+    opacity: var(--sidebar-label-opacity);
+    transition: opacity var(--sc-transition-fast) var(--sc-easing-default) 60ms;
+  }
+}
+
+:host(.sidebar--expanded) .sidebar {
+  width: var(--sc-sidebar-width-expanded);
+  --sidebar-label-opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar,
+  .sidebar__item,
+  .sidebar__label {
+    transition: none;
+  }
+}

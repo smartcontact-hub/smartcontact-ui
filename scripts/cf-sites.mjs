@@ -60,23 +60,29 @@ const otras = (...apps) => apps.map((a) => `projects/${a}/*`);
 export const SITIOS = [
   {
     app: 'sc-docs', proyecto: 'sc-doc', script: 'build:docs', url: 'https://sc-doc.pages.dev',
-    excluye: [...NO_SE_PUBLICA, ...otras('supervisor', 'agent', 'cuscare', 'agent-mini')],
+    excluye: [...NO_SE_PUBLICA, ...otras('supervisor', 'agent', 'cuscare', 'cuscare-ds', 'agent-mini')],
   },
   {
     app: 'supervisor', proyecto: 'sc-supervisor', script: 'build:supervisor', url: 'https://sc-supervisor.pages.dev',
-    excluye: [...NO_SE_PUBLICA, ...otras('sc-docs', 'agent', 'cuscare', 'agent-mini')],
+    excluye: [...NO_SE_PUBLICA, ...otras('sc-docs', 'agent', 'cuscare', 'cuscare-ds', 'agent-mini')],
   },
   {
     app: 'agent', proyecto: 'sc-agent', script: 'build:agent', url: 'https://sc-agent.pages.dev',
-    excluye: [...NO_SE_PUBLICA, ...otras('sc-docs', 'supervisor', 'cuscare', 'agent-mini')],
+    excluye: [...NO_SE_PUBLICA, ...otras('sc-docs', 'supervisor', 'cuscare', 'cuscare-ds', 'agent-mini')],
   },
   {
     app: 'cuscare', proyecto: 'sc-cuscare', script: 'build:cuscare', url: 'https://sc-cuscare.pages.dev',
-    excluye: [...NO_SE_PUBLICA, ...otras('sc-docs', 'supervisor', 'agent', 'agent-mini')],
+    excluye: [...NO_SE_PUBLICA, ...otras('sc-docs', 'supervisor', 'agent', 'cuscare-ds', 'agent-mini')],
+  },
+  {
+    // CusCare hecha con el DS: independiente de la réplica `cuscare` (otro proyecto, otra url). Construye el DS, así que no
+    // excluye sus carpetas; y los demás sitios excluyen `projects/cuscare-ds`, para que un cambio aquí no reconstruya la réplica.
+    app: 'cuscare-ds', proyecto: 'sc-cuscare-ds', script: 'build:cuscare-ds', url: 'https://sc-cuscare-ds.pages.dev',
+    excluye: [...NO_SE_PUBLICA, ...otras('sc-docs', 'supervisor', 'agent', 'cuscare', 'agent-mini')],
   },
   {
     app: 'agent-mini', proyecto: 'agent-mini', script: 'build:agent-mini', url: 'https://agent-mini.pages.dev',
-    excluye: [...NO_SE_PUBLICA, ...otras('sc-docs', 'supervisor', 'cuscare'), ...DS],
+    excluye: [...NO_SE_PUBLICA, ...otras('sc-docs', 'supervisor', 'cuscare', 'cuscare-ds'), ...DS],
   },
 ];
 

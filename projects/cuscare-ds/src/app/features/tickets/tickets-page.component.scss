@@ -1,0 +1,31 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+/* Las celdas llevan su contenido en un `<span>` con clase propia: el `<td>` lo pinta el DS. */
+.tickets {
+  &__id {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-5);
+  }
+
+  &__lock {
+    color: var(--sc-text-danger, var(--sc-color-red-600));
+  }
+
+  &__chips {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: var(--sc-spacing-0-5);
+    overflow: hidden;
+  }
+
+  &__text {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
