@@ -1,0 +1,107 @@
+/* Disposición de los ejemplos de esqueleto. Los huecos siguen la escalera 7 · 14 · 28: dentro de una pieza, entre piezas
+ * y entre bloques. */
+
+.sk-formas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: var(--sc-spacing-2);
+  width: 100%;
+}
+
+/* Una columna de «Formas»: dentro de la rejilla no le llega el `.col` del lienzo, que solo vale para hijos directos. */
+.sk-columna {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
+}
+
+.sk-fila {
+  display: flex;
+  gap: var(--sc-spacing-0-5);
+}
+
+.sk-fila--abajo {
+  align-items: flex-end;
+}
+
+.sk-ancho {
+  max-width: 48rem;
+}
+
+.sk-ancho-form {
+  max-width: 24rem;
+}
+
+/* La celda del nombre: el avatar y el texto en línea. */
+.sk-nombre {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+}
+
+.sk-lista {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sk-lista__item {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+}
+
+.sk-lista__textos {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-25);
+}
+
+.sk-secundario {
+  color: var(--sc-text-secondary);
+}
+
+.sk-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1);
+}
+
+.sk-campo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
+}
+
+.sk-tarjeta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1);
+  width: 100%;
+  max-width: 24rem;
+  padding: var(--sc-spacing-1-5);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-md);
+  background: var(--sc-bg-surface);
+}
+
+.sk-tarjeta__cabecera {
+  display: flex;
+  gap: var(--sc-spacing-0-5);
+}
+
+.sk-tarjeta__textos {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
+}
+
+.sk-tarjeta__pie {
+  display: flex;
+  justify-content: space-between;
+}

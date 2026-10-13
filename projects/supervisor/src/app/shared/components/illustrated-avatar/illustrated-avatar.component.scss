@@ -1,3 +1,12 @@
+/* El host envuelve al círculo sin hueco: con el `.avatar` en línea (`inline-block`), el círculo se apoyaba en la línea
+ * base del texto y la caja medía 5 px más que él (37 con un avatar de 32), y una fila de tabla con foto medía 54 en vez de
+ * 49 (medido el 2026-10-13). `inline-flex` lo ajusta a su círculo; centrado en la línea, la caja que lo envuelve (el
+ * globo de presencia de Agentes) tampoco crece: un círculo más alto que la línea, centrado, ocupa justo lo que mide. */
+:host {
+  display: inline-flex;
+  vertical-align: middle;
+}
+
 .avatar {
   display: inline-block;
   position: relative;

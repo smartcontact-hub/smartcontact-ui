@@ -223,6 +223,9 @@ const LIST = "sc-datatable.sc-datatable--list";
  *   4. La fila seleccionada se distingue, en gris neutro: aquí se selecciona para actuar
  *      EN LOTE, no para marcar «la fila activa».
  *   5. La fila de «sin resultados» no es una fila de datos: sin fondo ni raya.
+ *   6. Una etiqueta o un botón no estiran la fila. Son cajas más altas que la línea de texto (22 y 27 contra 20), y
+ *      apoyadas en su línea base la alargaban: en Conversaciones, la celda de una etiqueta de 22 medía 26 y la fila 43
+ *      (2026-10-13). Centradas, la fila mide lo que su contenido, y lo mismo que su esqueleto de carga.
  */
 const listBehaviorCss = () => `
 ${LIST} .p-datatable-table {
@@ -264,6 +267,10 @@ ${LIST} .p-datatable-tbody > tr:has(> td[colspan]) {
 
 ${LIST} .p-datatable-tbody > tr:has(> td[colspan]) > td {
     border-bottom: 0;
+}
+
+${LIST} .p-datatable-tbody > tr > :is(td, th) :is(.p-tag, button) {
+    vertical-align: middle;
 }
 `;
 

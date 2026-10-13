@@ -134,6 +134,7 @@ export class CategoriesPageComponent {
       },
       {
         field: 'status',
+        skeleton: 'tag',
         header: this.translate.instant('memory.categories.cols.status'),
         width: '110px',
         cellTemplate: this.statusTpl(),

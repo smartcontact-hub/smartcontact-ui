@@ -16,6 +16,7 @@ import {
   type TemplateRef,
   viewChild,
 } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import type { MenuItem } from 'primeng/api';
 import { MenuModule } from 'primeng/menu';
@@ -42,7 +43,7 @@ import {
   ScSearchComponent,
 } from '@smartcontact-hub/components';
 import { LlegaAlPieDirective } from '@core/directives';
-import { ResultadoAccionService, UndoStackService } from '@core/services';
+import { CargaSimuladaService, ResultadoAccionService, UndoStackService } from '@core/services';
 import { escapeSearch } from '@core/utils/escape-search';
 import { injectLangChange } from '@core/utils/lang-change';
 
@@ -166,6 +167,13 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
    */
   readonly empty = input<boolean | undefined>(undefined);
   protected readonly isEmpty = computed(() => this.empty() ?? this.rows().length === 0);
+  /**
+   * La primera vez que se abre esta lista en la pestaña, sus filas «tardan» lo que tardaría el servidor y la tabla pinta
+   * su esqueleto (`CargaSimuladaService`). La clave es la ruta: cada pantalla espera una vez.
+   */
+  protected readonly cargando = inject(CargaSimuladaService).primeraVez(
+    inject(ActivatedRoute).snapshot.pathFromRoot.flatMap((r) => r.url.map((s) => s.path)).join('/'),
+  );
   readonly columns = input.required<readonly ScColumnDef<T>[]>();
 
   /** Opciones del selector de columnas (sin él, no hay selector). `key` = `field` de la columna. */
@@ -304,6 +312,7 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
       {
         field: ACTIONS_FIELD,
         stopRowClick: true,
+        skeleton: 'action',
         header: '',
         headerAriaLabel: this.translate.instant('common.actions'),
         /* Relleno de celda + botón de 28 + relleno: el «⋮» queda centrado. Con `3` (42) tocaba el borde derecho. Con
