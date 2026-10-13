@@ -24,15 +24,6 @@
   &__columns {
     margin-inline-end: var(--sc-spacing-0-5);
   }
-
-  /* «Subir» y «Bajar», al pie del globo, con la raya y el relleno de su cabecera (lo único que el ejemplo no trae:
-   * ordenar sin arrastrar, DD-162). */
-  &__columns-move {
-    display: flex;
-    gap: var(--sc-spacing-0-5);
-    padding: var(--sc-spacing-0-5) var(--sc-spacing-1-125);
-    border-block-start: 1px solid var(--sc-border-default);
-  }
 }
 
 /* EL GLOBO DE COLUMNAS, el «Column Toggle» de primeng.dev/table (DD-176). Sus utilidades de Tailwind, en el paso del Kit
@@ -78,6 +69,16 @@
 }
 
 .column-toggle__row--locked {
+  cursor: default;
+}
+
+/* Las flechas de la fila en curso, al final de la fila (WCAG 2.5.7, DD-162). Sin alto propio: el botón (27) cabe en
+ * el relleno de la fila (30,5) y no la estira al cambiar de fila en curso (medido: con alto, 37,5 y la lista saltaba). */
+.column-toggle__move {
+  display: inline-flex;
+  align-items: center;
+  block-size: 0;
+  margin-inline-start: auto;
   cursor: default;
 }
 

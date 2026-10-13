@@ -966,8 +966,6 @@
     "columns_count": "{0} colonnes",
     "columns_visible": "Colonnes, {{visible}} sur {{total}}",
     "columns_reset": "Réinitialiser",
-    "columns_move_up": "Monter",
-    "columns_move_down": "Descendre",
     "columns_move_up_aria": "Monter {{column}}",
     "columns_move_down_aria": "Descendre {{column}}",
     "columns_position": "{{column}}, {{position}} sur {{total}}",
