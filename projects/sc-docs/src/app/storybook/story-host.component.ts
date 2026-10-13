@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, linkedSignal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
@@ -13,7 +14,7 @@ import { ComponentApiService } from './component-api.service';
 import { EstadoComponenteComponent } from './estado-componente.component';
 import { ejesCandidatos } from './matriz.core.mjs';
 import { codificarArgs, decodificarArgs, slugHistoria, urlDeHistoria } from './story-url';
-import { ScArgs, StoryDef, StoryMeta } from './story.types';
+import { ScArgs, StoryControlsContext, StoryDef, StoryMeta } from './story.types';
 
 const TEMAS_URL: readonly TemaUrl[] = ['claro', 'oscuro', 'comparar'];
 
@@ -34,6 +35,7 @@ const TEMAS_URL: readonly TemaUrl[] = ['claro', 'oscuro', 'comparar'];
   selector: 'app-story-host',
   imports: [
     EstadoComponenteComponent,
+    NgTemplateOutlet,
     StoryAnatomyComponent,
     StoryCanvasComponent,
     StoryMatrizComponent,
@@ -87,6 +89,10 @@ const TEMAS_URL: readonly TemaUrl[] = ['claro', 'oscuro', 'comparar'];
               @if (meta().description) {
                 <p class="sb-host__desc">{{ meta().description }}</p>
               }
+              <!-- Opt-in: una página puede proyectar un aviso bajo la descripción (p. ej. un enlace a
+                   otra pantalla relacionada). Sin contenido proyectado, no pinta nada — las otras
+                   páginas no cambian. -->
+              <ng-content select="[sbHeaderExtra]" />
             </header>
 
             @for (s of stories(); track s.name) {
@@ -157,6 +163,8 @@ const TEMAS_URL: readonly TemaUrl[] = ['claro', 'oscuro', 'comparar'];
               [base]="meta().defaultArgs"
               [args]="playArgs()"
               (argsChange)="playArgs.set($event)"
+              [controlsTemplate]="playground()?.controlsTemplate ?? null"
+              [controlsContext]="controlsContext()"
             />
           }
         </div>
@@ -288,6 +296,14 @@ export class StoryHostComponent {
     if (!pagina) return null;
     return urlDeHistoria({ pagina, historia: this.slug(s), args: s.playground ? this.argsPlayUrl() : '', solo });
   }
+
+  /** Contexto de `[ng-template let-ctx]` para un `controlsTemplate` a medida: args + cómo mutarlos. */
+  protected readonly controlsContext = computed<{ $implicit: StoryControlsContext }>(() => ({
+    $implicit: {
+      args: this.playArgs(),
+      setArg: (name: string, value: unknown) => this.playArgs.set({ ...this.playArgs(), [name]: value }),
+    },
+  }));
 
   /** Código de una story: override propio, o serializado de `tag` + sus args (live en Playground), con lo que el
    *  contrato dice: lo requerido se escribe y lo que vale su valor por defecto, no. */

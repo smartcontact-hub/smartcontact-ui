@@ -2685,6 +2685,23 @@
       "mode_slim": "Slim",
       "anchor_aria": "Anclar el menú desplegado",
       "unanchor_aria": "Soltar el menú"
+    },
+    "tabla": {
+      "options_aria": "Opciones del laboratorio de tabla",
+      "controls_aria": "Controles de la tabla",
+      "context_label": "Contexto de la app",
+      "theme_label": "Tema",
+      "sidebar_label": "Sidebar desplegado",
+      "viewport_label": "Viewport",
+      "freeze_label": "Congelar «Agente»",
+      "switch_label": "Cambiar entre tabla y árbol"
+    },
+    "arbol": {
+      "context_label": "Contexto de la app",
+      "theme_label": "Tema",
+      "sidebar_label": "Sidebar desplegado",
+      "viewport_label": "Viewport",
+      "switch_label": "Cambiar entre tabla y árbol"
     }
   }
 }

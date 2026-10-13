@@ -1,7 +1,7 @@
 <aside
   class="sidebar"
   [class.sidebar--pinned]="pinned()"
-  [class.sidebar--expanded]="hovered()"
+  [class.sidebar--expanded]="hovered() || demo.forcedExpanded()"
   [attr.aria-label]="'sidebar.nav_aria' | translate"
   (mouseenter)="onEnter()"
   (mouseleave)="onLeave()"

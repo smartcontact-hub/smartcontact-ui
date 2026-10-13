@@ -1,0 +1,176 @@
+<div class="bi-page">
+  <header class="bi-page__head">
+    <h1>Tablas, al completo</h1>
+    <p>
+      Todo lo que puede hacer una tabla en el Design System, agrupado y ya comprobado contra el código de
+      <code>sc-datatable</code>. Toca un control: la tabla de arriba responde al momento, sin bajar a buscarla.
+    </p>
+    <a class="bi-page__lab-link" href="https://sc-supervisor.pages.dev/lab/tabla" target="_blank" rel="noopener">
+      Verla dentro de una pantalla real del Supervisor →
+    </a>
+  </header>
+
+  <div class="bi-page__sticky">
+    <div class="bi-coverage">
+      <div class="bi-coverage__bar" role="img" [attr.aria-label]="totales().ya + ' de ' + totales().total + ' ya las da el DS, ' + totales().sinBack + ' faltan de front, ' + totales().pideBack + ' piden back'">
+        <span class="bi-coverage__seg bi-coverage__seg--ya" [style.width.%]="coberturaPct().ya"></span>
+        <span class="bi-coverage__seg bi-coverage__seg--sin-back" [style.width.%]="coberturaPct().sinBack"></span>
+        <span class="bi-coverage__seg bi-coverage__seg--pide-back" [style.width.%]="coberturaPct().pideBack"></span>
+      </div>
+      <div class="bi-coverage__legend">
+        <sc-tag [value]="totales().ya + ' ya los da'" severity="success" />
+        <sc-tag [value]="totales().sinBack + ' falta solo front'" severity="warn" />
+        <sc-tag [value]="totales().pideBack + ' piden back'" severity="danger" />
+        <span class="bi-coverage__check">
+          {{ progresoChecklist().vistas }}/{{ totales().total }} revisadas · {{ progresoChecklist().interesan }} te interesan
+        </span>
+      </div>
+    </div>
+
+    <sc-datatable
+      class="bi-preview"
+      [value]="agentes"
+      [columns]="columnas"
+      dataKey="id"
+      [size]="$any(liveArgs()['size'])"
+      [showGridlines]="$any(liveArgs()['showGridlines'])"
+      [stripedRows]="$any(liveArgs()['stripedRows'])"
+      [selectionMode]="$any(liveArgs()['selectionMode'])"
+      [sortField]="$any(liveArgs()['sortField']) || undefined"
+      [paginator]="$any(liveArgs()['paginator'])"
+      [rows]="5"
+      [resizableColumns]="$any(liveArgs()['resizableColumns'])"
+      [reorderableColumns]="$any(liveArgs()['reorderableColumns'])"
+      [loading]="$any(liveArgs()['loading'])"
+      [scrollable]="$any(liveArgs()['scrollable'])"
+      scrollHeight="180px"
+      data-testid="tablas-bi-preview"
+    />
+
+    <div class="bi-toolbar">
+      <sc-search [value]="search()" (valueChange)="search.set($event)" placeholder="Buscar funcionalidad…" class="bi-toolbar__search" />
+      <sc-selectbutton
+        [options]="estadoOpciones"
+        optionValue="value"
+        [value]="estadoFiltro()"
+        (valueChange)="estadoFiltro.set($any($event))"
+        [allowEmpty]="false"
+        ariaLabel="Filtrar por estado del DS"
+      />
+      <sc-selectbutton
+        [options]="biOpciones"
+        optionValue="value"
+        [value]="biFiltro()"
+        (valueChange)="biFiltro.set($any($event))"
+        [allowEmpty]="false"
+        ariaLabel="Filtrar por prioridad de BI"
+      />
+      <label class="bi-toolbar__solo sc-text-caption-regular">
+        <sc-toggleswitch [checked]="soloInteresa()" (checkedChange)="soloInteresa.set($event)" ariaLabel="Solo lo que me interesa" />
+        Solo lo que me interesa
+      </label>
+      <sc-button
+        [label]="todoAbierto() ? 'Plegar todo' : 'Desplegar todo'"
+        appearance="outlined"
+        size="sm"
+        [disabled]="hayFiltroActivo()"
+        (click)="alternarTodo()"
+      />
+    </div>
+  </div>
+
+  <div class="bi-groups">
+    @for (g of gruposFiltrados(); track g.grupo) {
+      <sc-panel
+        class="bi-group"
+        [toggleable]="true"
+        [collapsed]="!estaAbierto(g.grupo)"
+        (collapsedChange)="toggleGrupo(g.grupo, !$event)"
+        [attr.data-testid]="'tablas-bi-group-' + g.grupo"
+      >
+        <ng-template #header let-titleId>
+          <span class="bi-group__header">
+            <span [id]="titleId" class="sc-text-body-semibold">{{ g.grupo }}</span>
+            @if (g.ya) {
+              <span class="bi-group__chip bi-group__chip--ya sc-text-caption-semibold">{{ g.ya }}</span>
+            }
+            @if (g.sinBack) {
+              <span class="bi-group__chip bi-group__chip--sin-back sc-text-caption-semibold">{{ g.sinBack }}</span>
+            }
+            @if (g.pideBack) {
+              <span class="bi-group__chip bi-group__chip--pide-back sc-text-caption-semibold">{{ g.pideBack }}</span>
+            }
+          </span>
+        </ng-template>
+        <div class="bi-group__rows">
+          @for (f of g.filas; track f.id) {
+            <article class="bi-row" [class]="'bi-row--' + f.estado" [attr.data-testid]="'tablas-bi-row-' + f.id">
+              <div class="bi-row__main">
+                <span class="bi-row__nombre sc-text-body-semibold">{{ f.nombre }}</span>
+                <sc-tag [value]="estadoLabel[f.estado]" [severity]="severidadEstado(f.estado)" size="sm" />
+                <sc-tag [value]="biLabel[f.bi]" [severity]="severidadBi(f.bi)" size="sm" />
+                @if (f.estimate) {
+                  <span class="bi-row__estimate sc-text-caption-regular">{{ f.estimate }}</span>
+                }
+              </div>
+              <p class="bi-row__nota sc-text-caption-regular">{{ f.nota }}</p>
+
+              <div class="bi-row__footer">
+                @if (f.live; as live) {
+                  <div class="bi-row__live">
+                    @switch (live.kind) {
+                      @case ('boolean') {
+                        <sc-toggleswitch
+                          [checked]="asBool(liveArgs()[live.argName])"
+                          (checkedChange)="setArg(live.argName, $event)"
+                          [ariaLabel]="f.nombre"
+                        />
+                      }
+                      @case ('select') {
+                        <sc-select
+                          [ariaLabel]="f.nombre"
+                          [options]="selectOptions(live)"
+                          optionLabel="label"
+                          optionValue="value"
+                          [value]="liveArgs()[live.argName]"
+                          (valueChange)="setArg(live.argName, $event)"
+                        />
+                      }
+                    }
+                    <span class="bi-row__live-hint sc-text-caption-regular">Mira la tabla de arriba</span>
+                  </div>
+                } @else if (f.demoRuta) {
+                  <a class="bi-row__demo" [routerLink]="'/' + f.demoRuta">Ver demo real →</a>
+                }
+
+                <div class="bi-row__checklist">
+                  <label class="sc-text-caption-regular">
+                    <sc-toggleswitch
+                      [checked]="marca(f.id).visto"
+                      (checkedChange)="toggleMarca(f.id, 'visto')"
+                      [ariaLabel]="'Ya vi ' + f.nombre"
+                    />
+                    Ya lo vi
+                  </label>
+                  <label class="sc-text-caption-regular">
+                    <sc-toggleswitch
+                      [checked]="marca(f.id).interesa"
+                      (checkedChange)="toggleMarca(f.id, 'interesa')"
+                      [ariaLabel]="f.nombre + ' me interesa'"
+                    />
+                    Me interesa
+                  </label>
+                </div>
+              </div>
+            </article>
+          }
+        </div>
+      </sc-panel>
+    } @empty {
+      <div class="bi-groups__empty">
+        <p class="sc-text-body-semibold">Nada casa con el filtro</p>
+        <p class="sc-text-caption-regular">Prueba a limpiar la búsqueda o los filtros de arriba.</p>
+      </div>
+    }
+  </div>
+</div>
