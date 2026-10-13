@@ -2685,6 +2685,23 @@
       "mode_slim": "Slim",
       "anchor_aria": "Fixar o menu expandido",
       "unanchor_aria": "Soltar o menu"
+    },
+    "tabla": {
+      "options_aria": "Opções do laboratório de tabela",
+      "controls_aria": "Controles da tabela",
+      "context_label": "Contexto do app",
+      "theme_label": "Tema",
+      "sidebar_label": "Menu expandido",
+      "viewport_label": "Viewport",
+      "freeze_label": "Congelar «Agente»",
+      "switch_label": "Alternar entre tabela e árvore"
+    },
+    "arbol": {
+      "context_label": "Contexto do app",
+      "theme_label": "Tema",
+      "sidebar_label": "Menu expandido",
+      "viewport_label": "Viewport",
+      "switch_label": "Alternar entre tabela e árvore"
     }
   }
 }

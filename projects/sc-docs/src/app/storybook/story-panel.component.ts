@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -11,13 +12,14 @@ import {
   model,
   signal,
   viewChild,
+  type TemplateRef,
 } from '@angular/core';
 
 import { ScButtonComponent } from '@smartcontact-hub/components';
 import { ScIconComponent } from '@smartcontact-hub/icons';
 
 import { StoryControlsComponent } from './story-controls.component';
-import { ArgType, ScArgs } from './story.types';
+import { ArgType, ScArgs, StoryControlsContext } from './story.types';
 
 /**
  * Hasta qué ancho de ventana el panel va POR ENCIMA de la página y no a su lado. La misma cifra está en
@@ -51,7 +53,7 @@ const leerPlegado = (): boolean => {
  */
 @Component({
   selector: 'app-story-panel',
-  imports: [ScButtonComponent, ScIconComponent, StoryControlsComponent],
+  imports: [NgTemplateOutlet, ScButtonComponent, ScIconComponent, StoryControlsComponent],
   styleUrl: './storybook.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
@@ -96,7 +98,11 @@ const leerPlegado = (): boolean => {
           </button>
         </header>
         <div class="sb-panel__cuerpo">
-          <app-story-controls [argTypes]="argTypes()" [args]="args()" [base]="base()" (argsChange)="args.set($event)" />
+          @if (controlsTemplate(); as ct) {
+            <ng-container *ngTemplateOutlet="ct; context: controlsContext()" />
+          } @else {
+            <app-story-controls [argTypes]="argTypes()" [args]="args()" [base]="base()" (argsChange)="args.set($event)" />
+          }
         </div>
       </aside>
     } @else {
@@ -123,6 +129,15 @@ export class StoryPanelComponent {
   readonly args = model.required<ScArgs>();
   /** Los de la ficha: «Restablecer» vuelve a ellos, y contra ellos se cuenta lo cambiado. */
   readonly base = input.required<ScArgs>();
+  /**
+   * Cuerpo a medida para ESTA ficha, en vez del `<app-story-controls>` genérico (grid plano de
+   * knobs). Para cuando una página necesita agrupar o relabelar sus knobs para una audiencia
+   * no-dev (DataTable). Sin este input, el panel sigue pintando el cuerpo genérico de siempre.
+   */
+  readonly controlsTemplate = input<TemplateRef<{ $implicit: StoryControlsContext }> | null>(null);
+  readonly controlsContext = input<{ $implicit: StoryControlsContext }>({
+    $implicit: { args: {}, setArg: () => undefined },
+  });
 
   private readonly destroyRef = inject(DestroyRef);
   private readonly botonCerrar = viewChild<ElementRef<HTMLButtonElement>>('cerrar');

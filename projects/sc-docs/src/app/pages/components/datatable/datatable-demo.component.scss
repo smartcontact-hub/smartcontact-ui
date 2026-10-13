@@ -1,0 +1,59 @@
+/* Controles del Playground de DataTable, agrupados por acordeón (DD pendiente de alta). Solo esta página:
+ * el grid plano de knobs del motor genérico (`storybook.scss` → `.sb-controls`) no cambia para el resto.
+ * Vive dentro del panel sticky de la ficha (`.sb-panel--abierto`, 20rem): una sola columna, como su cuerpo
+ * genérico — un grid de pares no cabría en ese ancho (medido tras DD-202). */
+
+.dt-demo__bi-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  margin-block-start: var(--sc-spacing-0-75);
+  padding: var(--sc-spacing-0-5) var(--sc-spacing-1);
+  border: 1px solid var(--sc-border-primary);
+  border-radius: var(--sc-radius-200);
+  background: var(--sc-bg-primary-subtle);
+  color: var(--sc-text-primary);
+  text-decoration: none;
+  font-weight: var(--sc-font-weight-semibold);
+
+  &:hover {
+    background: var(--sc-bg-primary-subtle-active);
+  }
+}
+
+.dt-controls {
+  display: flex;
+  flex-direction: column;
+  /* Hueco entre grupos ≥ 2× el hueco entre filas de un mismo grupo (better-layout): si no, el acordeón
+   * se lee como una lista continua y no como grupos independientes. */
+  gap: var(--sc-spacing-2);
+}
+
+.dt-controls__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sc-spacing-0-75);
+}
+
+.dt-controls__label {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.dt-controls__label-human {
+  color: var(--sc-text-primary);
+}
+
+.dt-controls__label-code {
+  color: var(--sc-text-secondary);
+}
+
+.dt-controls__label-desc {
+  color: var(--sc-text-secondary);
+}
+
+.dt-controls__field {
+  min-width: 0;
+}

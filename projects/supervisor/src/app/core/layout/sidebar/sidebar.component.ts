@@ -14,6 +14,7 @@ import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter, map, startWith } from 'rxjs/operators';
 
+import { SidebarDemoService } from '../../services/sidebar-demo.service';
 import { ViewTransitionTracker } from '../../services/view-transition-tracker.service';
 import { NAV_SECTIONS, type NavItem } from './nav-data';
 import { normalizeRoutePath } from './path-utils';
@@ -66,6 +67,7 @@ export class SidebarComponent {
   private readonly router = inject(Router);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly transitions = inject(ViewTransitionTracker);
+  protected readonly demo = inject(SidebarDemoService);
 
   protected readonly sections = NAV_SECTIONS;
   private readonly allItems = NAV_SECTIONS.flatMap((section) => section.items);

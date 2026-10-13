@@ -1,4 +1,8 @@
-<app-story-host [meta]="meta" [stories]="stories()" />
+<app-story-host [meta]="meta" [stories]="stories()">
+  <a sbHeaderExtra class="dt-demo__bi-link" routerLink="/tablas-completo">
+    Ver el catálogo completo de funcionalidades de tabla →
+  </a>
+</app-story-host>
 
 <ng-template #playground let-args>
   <sc-datatable
@@ -30,6 +34,56 @@
     [columnResizeMode]="args.columnResizeMode"
     [reorderableColumns]="args.reorderableColumns"
   />
+</ng-template>
+
+<!-- Controles a medida del Playground, para una audiencia no-dev (BI, PMs): agrupados en acordeón en vez
+     del grid plano de 21 knobs. `ctx` es el `StoryControlsContext` que pasa `story-host` (args en vivo +
+     `setArg`); cada grupo es un `sc-panel` plegable, «General» abierto por defecto. -->
+<ng-template #controls let-ctx>
+  <div class="dt-controls" data-testid="sc-datatable-controls">
+    @for (grupo of controlGroups; track grupo.title) {
+      <sc-panel [header]="grupo.title" [toggleable]="true" [collapsed]="!grupo.open" data-testid="sc-datatable-controls-group">
+        <div class="dt-controls__grid">
+          @for (at of grupo.knobs; track at.name) {
+            <div class="dt-controls__label">
+              <span class="dt-controls__label-human sc-text-body-semibold">{{ at.label }}</span>
+              <code class="dt-controls__label-code sc-text-caption-regular">{{ at.name }}</code>
+              @if (at.description) {
+                <span class="dt-controls__label-desc sc-text-caption-regular">{{ at.description }}</span>
+              }
+            </div>
+            <div class="dt-controls__field">
+              @switch (at.control.kind) {
+                @case ('boolean') {
+                  <sc-toggleswitch
+                    [checked]="asBool(ctx.args[at.name])"
+                    (checkedChange)="ctx.setArg(at.name, $event)"
+                    [ariaLabel]="at.label ?? at.name"
+                  />
+                }
+                @case ('select') {
+                  <sc-select
+                    [ariaLabel]="at.label ?? at.name"
+                    [options]="selectOptions(at)"
+                    optionLabel="label"
+                    optionValue="value"
+                    [value]="ctx.args[at.name]"
+                    (valueChange)="ctx.setArg(at.name, $event)"
+                  />
+                }
+                @case ('number') {
+                  <sc-inputnumber [value]="asNum(ctx.args[at.name])" (valueChange)="ctx.setArg(at.name, $event)" />
+                }
+                @default {
+                  <sc-inputtext [value]="asStr(ctx.args[at.name])" (valueChange)="ctx.setArg(at.name, $event)" />
+                }
+              }
+            </div>
+          }
+        </div>
+      </sc-panel>
+    }
+  </div>
 </ng-template>
 
 <ng-template #list>
