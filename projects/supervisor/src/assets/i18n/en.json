@@ -2739,7 +2739,12 @@
       "pin_row": "Pin {{name}} to the top",
       "unpin_row": "Unpin {{name}}",
       "expand": "Expand",
-      "collapse": "Collapse"
+      "collapse": "Collapse",
+      "page_report": "{first} to {last} of {totalRecords}",
+      "export_button": "Export",
+      "export_label": "Export button",
+      "export_selection_label": "Selected only",
+      "leave_and_return": "Leave and come back"
     },
     "arbol": {
       "context_label": "App context",
