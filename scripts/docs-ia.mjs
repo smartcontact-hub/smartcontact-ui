@@ -51,10 +51,21 @@ function aJs(expresion) {
 
 /**
  * Las constantes que EXPORTA el DS (`export const LABEL_COLORS = [...]`), por nombre y sin evaluar: una ficha que hace
- * `options: [...LABEL_COLORS]` las importa del paquete, y aquí se leen del fuente la primera vez que se nombran.
+ * `options: [...LABEL_COLORS]` las importa del paquete, y aquí se leen del fuente una vez, antes de la primera evaluación.
  */
 let exportadas = null;
 function constanteDelDs(nombre) {
+  return cargarExportadas().get(nombre);
+}
+
+/**
+ * Lee una vez todos los `.ts` del DS. Se llama ANTES de evaluar, fuera del tope de 1 s de `vm`: dentro, la primera ficha
+ * que nombraba una constante del DS pagaba esa lectura (184 ficheros, 163 ms en reposo) contra el tope, y con la máquina
+ * cargada (el preflight corre las pruebas en paralelo) pasaba de 1 s: la evaluación se cortaba, `meta` se quedaba sin
+ * leer y `docs-ia.test.mjs` caía en rojo uno de cada dos preflights (medido el 2026-10-14: 1,38 y 1,64 s al fallar,
+ * 0,38 s sola).
+ */
+function cargarExportadas() {
   if (!exportadas) {
     exportadas = new Map();
     const recorrer = (d) => {
@@ -74,7 +85,7 @@ function constanteDelDs(nombre) {
     };
     recorrer(join(root, 'projects/ui-smartcontact/src/lib'));
   }
-  return exportadas.get(nombre);
+  return exportadas;
 }
 
 /**
@@ -83,6 +94,7 @@ function constanteDelDs(nombre) {
  * un nombre, lo busca entre las constantes que exporta el DS.
  */
 function evaluar(expresion, conocidos, self) {
+  cargarExportadas();
   const ambito = new Proxy(conocidos, {
     has: (obj, k) => typeof k === 'string' && !(k in globalThis && !(k in obj)),
     get: (obj, k) => {
