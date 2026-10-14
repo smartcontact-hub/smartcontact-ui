@@ -17,12 +17,6 @@
           "cuando": "Hay más de 5 opciones o poco sitio. <code>filter</code> si pasan de unas 15 y hay que buscar; <code>group</code> si llevan cabeceras de grupo (un solo nivel). Con niveles de verdad, TreeSelect o CascadeSelect.",
           "aqui": "<code>sc-select</code>",
           "estado": "ds",
-          "wrappers": [
-            "sc-select"
-          ],
-          "apps": [
-            "cuscare"
-          ],
           "obsoleto": false
         },
         {
@@ -37,12 +31,6 @@
           "cuando": "Obsoleto: PrimeNG pide <code>p-select</code> con <code>multiple</code>. Lo envolvemos igual porque a <code>multiple</code> le faltan seis entradas que usamos (handoff del DS, «Fuera de PrimeNG jubilado»).",
           "aqui": "<code>sc-multiselect</code>",
           "estado": "ds",
-          "wrappers": [
-            "sc-multiselect"
-          ],
-          "apps": [
-            "cuscare"
-          ],
           "obsoleto": true
         },
         {
@@ -57,12 +45,6 @@
           "cuando": "Hay sitio y ver todas a la vez ayuda (comparar, revisar lo marcado). Trae <code>checkbox</code>, <code>filter</code>, <code>showToggleAll</code> y <code>dragdrop</code> para ordenar en la misma lista.",
           "aqui": "Sin wrapper: supervisor y cuscare-ds (sección 3)",
           "estado": "directo",
-          "wrappers": [],
-          "apps": [
-            "cuscare",
-            "cuscare-ds",
-            "supervisor"
-          ],
           "obsoleto": false
         },
         {
@@ -77,8 +59,6 @@
           "cuando": "La lista es larga o vive en el servidor y el usuario sabe qué busca. <code>multiple</code> para varios; <code>forceSelection</code> si solo vale lo de la lista.",
           "aqui": "Sin uso: descartado para añadir agentes a un grupo (sección 1)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -93,10 +73,6 @@
           "cuando": "De 2 a 5 opciones cortas que se entienden sin explicar y se cambian a menudo. Para cambiar de colección, Tabs.",
           "aqui": "<code>sc-selectbutton</code> (DD-113)",
           "estado": "ds",
-          "wrappers": [
-            "sc-selectbutton"
-          ],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -111,10 +87,6 @@
           "cuando": "Las opciones necesitan una frase para entenderse o compararse. Si se explican solas, SelectButton.",
           "aqui": "<code>sc-radiobutton</code>; <code>sc-option-cards</code> cuando cada opción se explica (sección 2)",
           "estado": "ds",
-          "wrappers": [
-            "sc-radiobutton"
-          ],
-          "apps": [],
           "obsoleto": false
         }
       ]
@@ -135,12 +107,6 @@
           "cuando": "El cambio se confirma al guardar, o la casilla es parte de una lista.",
           "aqui": "<code>sc-checkbox</code> propio, con su tri-estado (sección 2); <code>p-checkbox</code> directo en el «Column Toggle» (sección 3)",
           "estado": "directo",
-          "wrappers": [],
-          "apps": [
-            "cuscare-ds",
-            "sc-docs",
-            "supervisor"
-          ],
           "obsoleto": false
         },
         {
@@ -155,10 +121,6 @@
           "cuando": "El efecto es inmediato (habilitado, activo).",
           "aqui": "<code>sc-toggleswitch</code>",
           "estado": "ds",
-          "wrappers": [
-            "sc-toggleswitch"
-          ],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -173,11 +135,6 @@
           "cuando": "Una barra de herramientas (silenciar, negrita), donde un interruptor desentona.",
           "aqui": "Sin wrapper: cuscare-ds; en cuscare, réplica (DD-35)",
           "estado": "directo",
-          "wrappers": [],
-          "apps": [
-            "cuscare",
-            "cuscare-ds"
-          ],
           "obsoleto": false
         }
       ]
@@ -198,8 +155,6 @@
           "cuando": "Las opciones tienen niveles, vale elegir cualquiera y ayuda ver el árbol para orientarse. <code>filter</code> busca dentro.",
           "aqui": "Sin uso: descartado para tipificaciones (DD-195); caso abierto en sc-agent, al cerrar una conversación",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -214,8 +169,6 @@
           "cuando": "Hay que llegar a una hoja por pocos niveles bien conocidos (país, provincia, ciudad). No busca ni elige varias, y solo elige hojas.",
           "aqui": "Sin caso hoy (sección 4)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -230,8 +183,6 @@
           "cuando": "La jerarquía es el contenido de la pantalla, no un campo.",
           "aqui": "Sin uso: descartado para tipificaciones, que se dibujan en columnas por nivel (DD-174, DD-195)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         }
       ]
@@ -252,8 +203,6 @@
           "cuando": "Ordenar es la tarea entera. Para ordenar y además marcar, Listbox con <code>dragdrop</code> y <code>checkbox</code>.",
           "aqui": "Sin uso: descartado para las columnas (DD-176 §7)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -268,8 +217,6 @@
           "cuando": "Repartir un conjunto entre «disponibles» y «elegidos» viendo los dos lados, sobre todo si son cientos y hay que buscar.",
           "aqui": "Sin caso hoy (sección 4); se valoró para las columnas (DD-162)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         }
       ]
@@ -290,15 +237,6 @@
           "cuando": "La base de cualquier campo de texto.",
           "aqui": "<code>sc-inputtext</code> (y por dentro de <code>sc-inputnumber</code> y <code>sc-search</code>)",
           "estado": "ds",
-          "wrappers": [
-            "sc-inputnumber",
-            "sc-inputtext",
-            "sc-search"
-          ],
-          "apps": [
-            "sc-docs",
-            "supervisor"
-          ],
           "obsoleto": false
         },
         {
@@ -313,10 +251,6 @@
           "cuando": "El texto puede pasar de una línea (notas, mensajes).",
           "aqui": "<code>sc-textarea</code>",
           "estado": "ds",
-          "wrappers": [
-            "sc-textarea"
-          ],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -331,8 +265,6 @@
           "cuando": "El formato es fijo y conocido. Con teléfonos internacionales, de largo variable, no encaja.",
           "aqui": "Sin uso: «sin decidir» para teléfonos (sección 1)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -347,8 +279,6 @@
           "cuando": "Hay que restringir caracteres sin imponer un formato (solo cifras, sin espacios).",
           "aqui": "Sin caso hoy (sección 4)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -363,8 +293,6 @@
           "cuando": "Códigos de verificación.",
           "aqui": "Sin uso: con su pantalla (sección 1)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -379,10 +307,6 @@
           "cuando": "Siempre que se pida una contraseña.",
           "aqui": "<code>sc-password</code> (DD-110)",
           "estado": "ds",
-          "wrappers": [
-            "sc-password"
-          ],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -397,8 +321,6 @@
           "cuando": "Obsoleto: InputPassword.",
           "aqui": "Sin uso (sección 5)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": true
         },
         {
@@ -413,8 +335,6 @@
           "cuando": "El contenido necesita formato. Obsoleto: PrimeNG lo retirará a favor de un editor de pago.",
           "aqui": "Sin uso: «sin decidir» para las plantillas de email (sección 1)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": true
         },
         {
@@ -429,10 +349,6 @@
           "cuando": "El usuario escribe valores nuevos (dominios, palabras clave). Si solo valen los de una lista, MultiSelect o AutoComplete <code>multiple</code>.",
           "aqui": "<code>sc-inputtags</code> (DD-195)",
           "estado": "ds",
-          "wrappers": [
-            "sc-inputtags"
-          ],
-          "apps": [],
           "obsoleto": false
         }
       ]
@@ -453,8 +369,6 @@
           "cuando": "Cifras con moneda, decimales o separadores. Los enteros sin formato van por <code>sc-inputnumber</code> propio (sección 2).",
           "aqui": "<code>sc-inputnumber</code> va sobre InputText, no sobre este",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -469,8 +383,6 @@
           "cuando": "Importa más el rango que la cifra exacta (volumen, umbral), y la cifra se ve al lado.",
           "aqui": "Sin uso: con su pantalla (sección 1)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -485,8 +397,6 @@
           "cuando": "Casi nunca en una app de gestión: ocupa mucho y se lee peor que un Slider.",
           "aqui": "Sin uso: con su pantalla (sección 1)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -501,10 +411,6 @@
           "cuando": "Valoraciones de 1 a N.",
           "aqui": "Sin wrapper: supervisor (<code>lab/tabla</code>, solo lectura); «sin decidir» para la valoración del chat",
           "estado": "directo",
-          "wrappers": [],
-          "apps": [
-            "supervisor"
-          ],
           "obsoleto": false
         },
         {
@@ -519,10 +425,6 @@
           "cuando": "Cualquier fecha u hora.",
           "aqui": "<code>sc-datepicker</code>",
           "estado": "ds",
-          "wrappers": [
-            "sc-datepicker"
-          ],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -537,8 +439,6 @@
           "cuando": "Obsoleto: InputColor.",
           "aqui": "Sin uso; <code>sc-color-dot-picker</code> elige de la paleta (sección 2)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": true
         },
         {
@@ -553,8 +453,6 @@
           "cuando": "El color es libre. Si sale de una paleta cerrada, <code>sc-color-dot-picker</code>.",
           "aqui": "Sin caso hoy (sección 4)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         }
       ]
@@ -577,10 +475,6 @@
           "cuando": "Buscadores, o un icono que dice algo del valor.",
           "aqui": "Por dentro de <code>sc-search</code>",
           "estado": "ds",
-          "wrappers": [
-            "sc-search"
-          ],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -597,13 +491,6 @@
           "cuando": "La pieza es parte del valor (unidad, prefijo) o una acción del campo.",
           "aqui": "<code>sc-inputgroup</code>; el Addon, directo en supervisor (sección 3)",
           "estado": "ds",
-          "wrappers": [
-            "sc-inputgroup"
-          ],
-          "apps": [
-            "sc-docs",
-            "supervisor"
-          ],
           "obsoleto": false
         },
         {
@@ -618,8 +505,6 @@
           "cuando": "Formularios muy densos. Choca con el campo del DS, rótulo encima (DD-44).",
           "aqui": "Sin caso hoy (sección 4)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -634,8 +519,6 @@
           "cuando": "Lo mismo que FloatLabel.",
           "aqui": "Sin caso hoy (sección 4)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -650,8 +533,6 @@
           "cuando": "Pieza de los campos.",
           "aqui": "Sección 5",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -666,8 +547,6 @@
           "cuando": "Formularios a una columna.",
           "aqui": "Sección 5",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         }
       ]
@@ -688,13 +567,6 @@
           "cuando": "Obsoleto como componente: la 22 pide la directiva <code>[pButton]</code>.",
           "aqui": "<code>sc-button</code>, todavía sobre el componente (handoff del DS, «Fuera de PrimeNG jubilado»)",
           "estado": "ds",
-          "wrappers": [
-            "sc-button"
-          ],
-          "apps": [
-            "sc-docs",
-            "supervisor"
-          ],
           "obsoleto": true
         },
         {
@@ -709,8 +581,6 @@
           "cuando": "Acciones hermanas del mismo peso. Si se elige una entre ellas, SelectButton.",
           "aqui": "Sin caso hoy (sección 4)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -725,8 +595,6 @@
           "cuando": "Hay una acción principal clara y dos o más variantes («Guardar» y «Guardar como borrador»).",
           "aqui": "Sin caso hoy (sección 4)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -741,8 +609,6 @@
           "cuando": "Móvil o lienzos; no en escritorio de gestión.",
           "aqui": "Sin caso hoy (sección 4)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -757,11 +623,6 @@
           "cuando": "Agrupar las acciones de una vista o de una tabla.",
           "aqui": "Sin wrapper: supervisor y cuscare-ds (sección 3)",
           "estado": "directo",
-          "wrappers": [],
-          "apps": [
-            "cuscare-ds",
-            "supervisor"
-          ],
           "obsoleto": false
         },
         {
@@ -776,8 +637,6 @@
           "cuando": "Una paleta embebida. La de Cmd+K es <code>sc-command-palette</code> (sección 2).",
           "aqui": "Sin uso (sección 2)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         }
       ]
@@ -798,10 +657,6 @@
           "cuando": "El «⋮» de una fila, el menú de usuario. Desde la 22 sustituye a PanelMenu.",
           "aqui": "Sin wrapper: supervisor (sección 3)",
           "estado": "directo",
-          "wrappers": [],
-          "apps": [
-            "supervisor"
-          ],
           "obsoleto": false
         },
         {
@@ -816,8 +671,6 @@
           "cuando": "Acciones con un segundo nivel.",
           "aqui": "Sin caso hoy (sección 4)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -832,10 +685,6 @@
           "cuando": "Un atajo de lo que ya está en el «⋮», nunca el único camino.",
           "aqui": "Sin wrapper: supervisor, solo en <code>lab/arbol</code> (sección 3); en los listados, descartado: el «⋮» lo cubre (sección 1)",
           "estado": "directo",
-          "wrappers": [],
-          "apps": [
-            "supervisor"
-          ],
           "obsoleto": false
         },
         {
@@ -850,8 +699,6 @@
           "cuando": "La navegación superior de una web.",
           "aqui": "Sin caso hoy (sección 4)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -866,8 +713,6 @@
           "cuando": "Navegaciones con muchas secciones.",
           "aqui": "Sin caso hoy (sección 4)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -882,8 +727,6 @@
           "cuando": "Obsoleto: Menu con <code>toggleable</code>.",
           "aqui": "Sin caso hoy (sección 4)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": true
         },
         {
@@ -898,8 +741,6 @@
           "cuando": "Lanzadores; sin caso en gestión.",
           "aqui": "Sin caso hoy (sección 4)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         }
       ]
@@ -920,10 +761,6 @@
           "cuando": "Páginas de detalle bajo un listado.",
           "aqui": "<code>sc-breadcrumb</code> (DD-33)",
           "estado": "ds",
-          "wrappers": [
-            "sc-breadcrumb"
-          ],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -938,12 +775,6 @@
           "cuando": "Cambiar de colección o de vista (DD-113). Para filtrar la misma lista, SelectButton.",
           "aqui": "<code>sc-tabs</code>; <code>p-tabs</code> directo en el Monitor (sección 3)",
           "estado": "ds",
-          "wrappers": [
-            "sc-tabs"
-          ],
-          "apps": [
-            "supervisor"
-          ],
           "obsoleto": false
         },
         {
@@ -958,8 +789,6 @@
           "cuando": "El orden importa de verdad y cada paso depende del anterior.",
           "aqui": "Quitado a propósito de las altas (DD-143)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -974,8 +803,6 @@
           "cuando": "Fuera de la documentación; su sucesor es Stepper.",
           "aqui": "Sin caso (sección 4)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -990,10 +817,6 @@
           "cuando": "La navegación principal de una app.",
           "aqui": "Sin wrapper: supervisor, en laboratorio (DD-118)",
           "estado": "directo",
-          "wrappers": [],
-          "apps": [
-            "supervisor"
-          ],
           "obsoleto": false
         },
         {
@@ -1008,8 +831,6 @@
           "cuando": "Pieza de Table y DataView; suelto, en una lista propia.",
           "aqui": "Sección 5",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -1024,8 +845,6 @@
           "cuando": "Páginas muy largas.",
           "aqui": "Sin caso hoy (sección 4)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         }
       ]
@@ -1046,10 +865,6 @@
           "cuando": "Una tarea que se termina o se cancela antes de seguir.",
           "aqui": "<code>sc-dialog</code> (DD-140)",
           "estado": "ds",
-          "wrappers": [
-            "sc-dialog"
-          ],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -1064,10 +879,6 @@
           "cuando": "El contenido es un componente que se abre desde varios sitios.",
           "aqui": "<code>ScDynamicDialogService</code>; directo en sc-docs (sección 3)",
           "estado": "directo",
-          "wrappers": [],
-          "apps": [
-            "sc-docs"
-          ],
           "obsoleto": false
         },
         {
@@ -1082,10 +893,6 @@
           "cuando": "Consultar o editar algo sin perder la pantalla de detrás.",
           "aqui": "<code>sc-drawer</code>",
           "estado": "ds",
-          "wrappers": [
-            "sc-drawer"
-          ],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -1100,15 +907,6 @@
           "cuando": "Contenido pequeño e interactivo (filtros, columnas, una ficha corta).",
           "aqui": "Por dentro de <code>sc-column-selector</code> y <code>sc-group-popover</code>; directo en supervisor y cuscare-ds",
           "estado": "ds",
-          "wrappers": [
-            "sc-column-selector",
-            "sc-group-popover"
-          ],
-          "apps": [
-            "cuscare",
-            "cuscare-ds",
-            "supervisor"
-          ],
           "obsoleto": false
         },
         {
@@ -1123,14 +921,6 @@
           "cuando": "Solo texto, nunca algo que pulsar.",
           "aqui": "Por dentro de <code>sc-button</code> (DD-200); directo en supervisor y cuscare-ds",
           "estado": "ds",
-          "wrappers": [
-            "sc-button"
-          ],
-          "apps": [
-            "cuscare-ds",
-            "sc-docs",
-            "supervisor"
-          ],
           "obsoleto": false
         },
         {
@@ -1145,8 +935,6 @@
           "cuando": "Pieza interna.",
           "aqui": "Sección 5",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -1161,8 +949,6 @@
           "cuando": "Una operación que no admite cambios mientras dura.",
           "aqui": "Sin caso hoy (sección 4)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         }
       ]
@@ -1183,10 +969,6 @@
           "cuando": "Acciones graves o irreversibles. Para borrar una entidad, <code>sc-delete-entity-dialog</code> (sección 2).",
           "aqui": "<code>sc-confirmdialog</code>",
           "estado": "ds",
-          "wrappers": [
-            "sc-confirmdialog"
-          ],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -1201,8 +983,6 @@
           "cuando": "Confirmaciones pequeñas junto a lo que se pulsa (quitar una fila de una lista).",
           "aqui": "Sin uso: «sin decidir» (sección 1)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -1217,12 +997,6 @@
           "cuando": "Confirmar que algo pasó («Guardado») sin interrumpir.",
           "aqui": "<code>sc-toast</code>",
           "estado": "ds",
-          "wrappers": [
-            "sc-toast"
-          ],
-          "apps": [
-            "supervisor"
-          ],
           "obsoleto": false
         },
         {
@@ -1237,12 +1011,6 @@
           "cuando": "Algo que hay que leer en su sitio y se queda.",
           "aqui": "<code>sc-message</code>",
           "estado": "ds",
-          "wrappers": [
-            "sc-message"
-          ],
-          "apps": [
-            "sc-docs"
-          ],
           "obsoleto": false
         }
       ]
@@ -1263,10 +1031,6 @@
           "cuando": "Bloques sueltos. Para las secciones de una pantalla, <code>sc-section-card</code> (DD-57).",
           "aqui": "<code>sc-card</code>",
           "estado": "ds",
-          "wrappers": [
-            "sc-card"
-          ],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -1281,10 +1045,6 @@
           "cuando": "Bloques plegables sueltos.",
           "aqui": "<code>sc-panel</code>",
           "estado": "ds",
-          "wrappers": [
-            "sc-panel"
-          ],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -1299,8 +1059,6 @@
           "cuando": "Agrupar campos. Aquí lo hace <code>sc-subsection</code> (DD-157).",
           "aqui": "Descartado (sección 1)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -1315,8 +1073,6 @@
           "cuando": "Mucho contenido secundario que se consulta a trozos.",
           "aqui": "Descartado frente a <code>sc-slot collapsible</code> (DD-157)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -1331,14 +1087,6 @@
           "cuando": "Separar dos bloques.",
           "aqui": "<code>sc-divider</code>",
           "estado": "ds",
-          "wrappers": [
-            "sc-divider"
-          ],
-          "apps": [
-            "cuscare",
-            "cuscare-ds",
-            "sc-docs"
-          ],
           "obsoleto": false
         },
         {
@@ -1353,8 +1101,6 @@
           "cuando": "Un maestro y detalle donde el usuario quiere repartir el ancho.",
           "aqui": "Sin caso hoy (sección 4)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -1369,10 +1115,6 @@
           "cuando": "Zonas con scroll propio.",
           "aqui": "Sin wrapper: supervisor (sección 3)",
           "estado": "directo",
-          "wrappers": [],
-          "apps": [
-            "supervisor"
-          ],
           "obsoleto": false
         },
         {
@@ -1387,8 +1129,6 @@
           "cuando": "Obsoleto: ScrollArea.",
           "aqui": "Sin uso (sección 5)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": true
         },
         {
@@ -1403,10 +1143,6 @@
           "cuando": "Editar un dato suelto sin abrir un formulario.",
           "aqui": "Sin wrapper: <code>sc-name-inplace</code> del supervisor (sección 2)",
           "estado": "directo",
-          "wrappers": [],
-          "apps": [
-            "supervisor"
-          ],
           "obsoleto": false
         }
       ]
@@ -1427,15 +1163,6 @@
           "cuando": "Comparar registros por columnas.",
           "aqui": "<code>sc-datatable</code>",
           "estado": "ds",
-          "wrappers": [
-            "sc-datatable"
-          ],
-          "apps": [
-            "cuscare",
-            "cuscare-ds",
-            "sc-docs",
-            "supervisor"
-          ],
           "obsoleto": false
         },
         {
@@ -1450,10 +1177,6 @@
           "cuando": "Los registros tienen padre e hijos y además columnas.",
           "aqui": "Sin wrapper: supervisor (<code>lab/arbol</code>)",
           "estado": "directo",
-          "wrappers": [],
-          "apps": [
-            "supervisor"
-          ],
           "obsoleto": false
         },
         {
@@ -1468,8 +1191,6 @@
           "cuando": "Cada elemento es una tarjeta, no una fila.",
           "aqui": "Sin caso hoy (sección 4)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -1484,8 +1205,6 @@
           "cuando": "La historia de algo (un ticket, una conversación).",
           "aqui": "Sin uso: «sin decidir» (sección 1)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -1500,8 +1219,6 @@
           "cuando": "Jerarquías que se leen dibujadas.",
           "aqui": "Sin caso hoy (sección 4)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -1516,8 +1233,6 @@
           "cuando": "Listas muy largas fuera de una tabla o un Select.",
           "aqui": "Sección 5 (pieza de Table y Select)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -1532,8 +1247,6 @@
           "cuando": "Rara vez en una app de gestión.",
           "aqui": "Sin caso hoy (sección 4)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         }
       ]
@@ -1554,13 +1267,6 @@
           "cuando": "Leer un estado. Si el usuario la quita, Chip.",
           "aqui": "<code>sc-tag</code>",
           "estado": "ds",
-          "wrappers": [
-            "sc-tag"
-          ],
-          "apps": [
-            "cuscare",
-            "sc-docs"
-          ],
           "obsoleto": false
         },
         {
@@ -1575,10 +1281,6 @@
           "cuando": "Lo elegido se quita con su ×.",
           "aqui": "<code>sc-chip</code>",
           "estado": "ds",
-          "wrappers": [
-            "sc-chip"
-          ],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -1593,10 +1295,6 @@
           "cuando": "El contador de una pieza.",
           "aqui": "<code>sc-badge</code>",
           "estado": "ds",
-          "wrappers": [
-            "sc-badge"
-          ],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -1611,12 +1309,6 @@
           "cuando": "Avisos sobre un icono o un avatar.",
           "aqui": "Por dentro de <code>sc-avatar</code>; directo en supervisor",
           "estado": "ds",
-          "wrappers": [
-            "sc-avatar"
-          ],
-          "apps": [
-            "supervisor"
-          ],
           "obsoleto": false
         },
         {
@@ -1631,10 +1323,6 @@
           "cuando": "Identificar a alguien.",
           "aqui": "<code>sc-avatar</code>",
           "estado": "ds",
-          "wrappers": [
-            "sc-avatar"
-          ],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -1649,10 +1337,6 @@
           "cuando": "Un grupo de personas en poco sitio.",
           "aqui": "<code>sc-avatargroup</code>",
           "estado": "ds",
-          "wrappers": [
-            "sc-avatargroup"
-          ],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -1667,10 +1351,6 @@
           "cuando": "Esperas de 3 a 10 s, con cifra (DD-188).",
           "aqui": "<code>sc-progressbar</code>",
           "estado": "ds",
-          "wrappers": [
-            "sc-progressbar"
-          ],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -1685,12 +1365,6 @@
           "cuando": "Esperas cortas en una pieza; para una pantalla, Skeleton. Aquí también es el anillo del resumen (DD-161).",
           "aqui": "<code>sc-progressspinner</code>",
           "estado": "ds",
-          "wrappers": [
-            "sc-progressspinner"
-          ],
-          "apps": [
-            "supervisor"
-          ],
           "obsoleto": false
         },
         {
@@ -1705,10 +1379,6 @@
           "cuando": "Cómo se reparte un total.",
           "aqui": "Sin wrapper: supervisor, resumen de grupo (sección 3)",
           "estado": "directo",
-          "wrappers": [],
-          "apps": [
-            "supervisor"
-          ],
           "obsoleto": false
         },
         {
@@ -1723,10 +1393,6 @@
           "cuando": "Cargas de 1 a 3 s (DD-188, DD-201).",
           "aqui": "<code>sc-skeleton</code>",
           "estado": "ds",
-          "wrappers": [
-            "sc-skeleton"
-          ],
-          "apps": [],
           "obsoleto": false
         }
       ]
@@ -1747,10 +1413,6 @@
           "cuando": "Cualquier subida (DD-184). La foto de perfil, <code>sc-photo-upload</code> (sección 2).",
           "aqui": "<code>sc-fileupload</code>",
           "estado": "ds",
-          "wrappers": [
-            "sc-fileupload"
-          ],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -1765,8 +1427,6 @@
           "cuando": "Ver imágenes en grande. Sustituye a Galleria e Image.",
           "aqui": "Sin caso hoy (sección 4)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -1781,8 +1441,6 @@
           "cuando": "Obsoleto: Gallery.",
           "aqui": "Sin caso (sección 4)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": true
         },
         {
@@ -1797,8 +1455,6 @@
           "cuando": "Obsoleto: Gallery.",
           "aqui": "Sin caso (sección 4)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": true
         },
         {
@@ -1813,8 +1469,6 @@
           "cuando": "Obsoleto: Compare.",
           "aqui": "Sin caso (sección 4)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": true
         },
         {
@@ -1829,8 +1483,6 @@
           "cuando": "Enseñar un antes y un después. Sustituye a ImageCompare.",
           "aqui": "Sin caso hoy (sección 4)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -1845,8 +1497,6 @@
           "cuando": "Obsoleto: PrimeNG lo retirará a favor de gráficos de pago.",
           "aqui": "Sin caso hoy (sección 4)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": true
         }
       ]
@@ -1867,10 +1517,6 @@
           "cuando": null,
           "aqui": "Directo en supervisor (sección 3)",
           "estado": "directo",
-          "wrappers": [],
-          "apps": [
-            "supervisor"
-          ],
           "obsoleto": false
         },
         {
@@ -1885,8 +1531,6 @@
           "cuando": null,
           "aqui": "Sección 5",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -1901,8 +1545,6 @@
           "cuando": null,
           "aqui": "Sección 5: el arrastre del repo es el de CDK",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -1917,8 +1559,6 @@
           "cuando": null,
           "aqui": "Sección 5",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -1933,8 +1573,6 @@
           "cuando": null,
           "aqui": "Sección 5",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -1949,8 +1587,6 @@
           "cuando": null,
           "aqui": "Sección 5",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         },
         {
@@ -1965,8 +1601,6 @@
           "cuando": null,
           "aqui": "Sin caso hoy (sección 4)",
           "estado": "sin-uso",
-          "wrappers": [],
-          "apps": [],
           "obsoleto": false
         }
       ]
