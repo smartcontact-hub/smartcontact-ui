@@ -31,8 +31,8 @@ Las da el gate en cada `verify`; estas son las del 2026-10-14.
 |---|---|
 | Módulos de PrimeNG 22.1.0 con interfaz | 109 (sin contar las utilidades de base, `api`, `dom`, `utils`… ni los iconos) |
 | Envueltos por el DS | 37 módulos |
-| Usados directamente por alguna app, sin wrapper del DS | 14 (sección 3; cinco son directivas o piezas internas) |
-| Sin usar en ninguna parte | 58 (secciones 1, 4 y 5) |
+| Usados directamente por alguna app, sin wrapper del DS | 15 (sección 3; cinco son directivas o piezas internas) |
+| Sin usar en ninguna parte | 57 (secciones 1, 4 y 5) |
 
 ## 1. Lo que PrimeNG trae, no usamos y tiene un caso en el producto
 
@@ -238,7 +238,7 @@ Piezas que van alrededor de un campo, no campos.
 |---|---|---|---|
 | Menu | Lista de acciones, fija o emergente (`popup`); con `toggleable`, grupos plegables. | El «⋮» de una fila, el menú de usuario. Desde la 22 sustituye a PanelMenu. | Sin wrapper: supervisor (sección 3) |
 | TieredMenu | Menú con submenús en capas. | Acciones con un segundo nivel. | Sin caso hoy (sección 4) |
-| ContextMenu | Menú al clic derecho o pulsación larga. | Un atajo de lo que ya está en el «⋮», nunca el único camino. | Descartado: el «⋮» lo cubre (sección 1) |
+| ContextMenu | Menú al clic derecho o pulsación larga. | Un atajo de lo que ya está en el «⋮», nunca el único camino. | Sin wrapper: supervisor, solo en `lab/arbol` (sección 3); en los listados, descartado: el «⋮» lo cubre (sección 1) |
 | Menubar | Menú horizontal con desplegables. | La navegación superior de una web. | Sin caso hoy (sección 4) |
 | MegaMenu | Submenús en columnas, todos a la vez. | Navegaciones con muchas secciones. | Sin caso hoy (sección 4) |
 | PanelMenu | Menú vertical en acordeón. | Obsoleto: Menu con `toggleable`. | Sin caso hoy (sección 4) |
