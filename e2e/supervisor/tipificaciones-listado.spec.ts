@@ -45,17 +45,37 @@ test('importar, exportar y descargar la plantilla van detrás de un solo botón 
   await expect(icono).toHaveAttribute('aria-haspopup', 'menu');
   await icono.click();
   const menu = page.getByRole('menu');
-  await expect(menu.getByRole('menuitem')).toHaveText(['Importar…', 'Exportar', 'Descargar plantilla']);
+  await expect(menu.getByRole('menuitem')).toContainText(['Importar tipificaciones', 'Exportar tipificaciones', 'Descargar plantilla CSV']);
 
   const descarga = page.waitForEvent('download');
-  await menu.getByRole('menuitem', { name: 'Exportar', exact: true }).click();
+  await menu.getByRole('menuitem', { name: /^Exportar tipificaciones/ }).click();
   expect((await descarga).suggestedFilename()).toMatch(/^tipificaciones.*\.xlsx$/);
+});
+
+test('«Exportar» cuenta la selección o la búsqueda, y se apaga si no hay filas', async ({ page }) => {
+  await goto(page, 'admin/tipificaciones');
+  const acciones = page.getByRole('button', { name: 'Acciones', exact: true });
+  await acciones.click();
+  await expect(page.getByRole('menuitem', { name: /Exportar tipificaciones/ })).toContainText('Descarga el listado completo');
+  await page.keyboard.press('Escape');
+
+  await page.getByRole('row', { name: /Atención al cliente/ }).getByRole('checkbox').check();
+  await acciones.click();
+  const exportar = page.getByRole('menuitem', { name: /Exportar selección \(1\)/ });
+  await expect(exportar).toContainText('Descarga solo los registros seleccionados');
+  await page.keyboard.press('Escape');
+
+  await page.getByPlaceholder(/Buscar tipificación/).fill('zzzz');
+  await acciones.click();
+  const sinFilas = page.getByRole('menuitem', { name: /Exportar/ });
+  await expect(sinFilas).toContainText('No hay registros para exportar');
+  await expect(sinFilas).toHaveAttribute('aria-disabled', 'true');
 });
 
 test('importar: la vista previa dice qué entra, cada error con su línea y las que ya existen', async ({ page }) => {
   await goto(page, 'admin/tipificaciones');
   await page.getByRole('button', { name: 'Acciones', exact: true }).click();
-  await page.getByRole('menuitem', { name: 'Importar…' }).click();
+  await page.getByRole('menuitem', { name: /^Importar tipificaciones/ }).click();
   const dialogo = page.getByRole('dialog', { name: 'Importar tipificaciones' });
   const plantilla = page.waitForEvent('download');
   await dialogo.getByRole('button', { name: 'Descargar plantilla' }).click();

@@ -39,10 +39,29 @@
             [model]="fileMenuItems()"
             [popup]="true"
             appendTo="body"
-            styleClass="rules-kebab-menu"
+            [style]="fileMenuStyle"
+            [ariaLabel]="'labels.data_menu.heading' | translate"
             (onShow)="fileMenuOpen.set(true)"
             (onHide)="fileMenuOpen.set(false)"
-          />
+          >
+            <!-- «Template» de primeng.dev/menu: la cabecera del grupo (`submenuheader`) y una fila a medida (`item`) con su
+                 icono, su título y lo que hace. La plantilla va detrás de un separador, más pequeña. -->
+            <ng-template #submenuheader let-item>
+              <span class="data-menu__heading sc-text-caption-semibold">{{ item.label }}</span>
+            </ng-template>
+            <ng-template #item let-item>
+              <a class="p-menu-item-link data-menu__item" [class.data-menu__item--plantilla]="item.data?.plantilla" tabindex="-1">
+                <span class="data-menu__icon" [class]="item.icon" aria-hidden="true"></span>
+                <span class="data-menu__copy">
+                  <span class="data-menu__title sc-text-body-semibold">{{ item.label }}</span>
+                  <span class="data-menu__hint sc-text-caption-regular">{{ item.data?.hint }}</span>
+                </span>
+                @if (item.data?.plantilla) {
+                  <span class="data-menu__trail sc-icon-font sc-icon-font--download" aria-hidden="true"></span>
+                }
+              </a>
+            </ng-template>
+          </p-menu>
         }
         @if (columnPrefs(); as prefs) {
           <!-- ELEGIR Y ORDENAR COLUMNAS: el «Column Toggle» de primeng.dev/table, tal cual (DD-176, sustituye el Listbox de

@@ -1135,10 +1135,21 @@
       "assigned_agents": "Agents assignés",
       "sheet": "Étiquettes"
     },
-    "import_menu": "Importer…",
-    "download_menu": "Exporter",
     "actions_button": "Actions",
-    "template_menu": "Télécharger le modèle"
+    "data_menu": {
+      "heading": "Gérer les données",
+      "import_title": "Importer {{entity}}",
+      "import_hint": "Ajoute des enregistrements depuis un fichier CSV",
+      "export_title": "Exporter {{entity}}",
+      "export_selection": "Exporter la sélection ({{count}})",
+      "export_hint_all": "Télécharge la liste complète en Excel",
+      "export_hint_search": "Télécharge les résultats de la recherche",
+      "export_hint_selection": "Télécharge uniquement les enregistrements sélectionnés",
+      "export_hint_empty": "Aucun enregistrement à exporter",
+      "template_title": "Télécharger le modèle CSV",
+      "template_hint": "Le format de référence pour votre import.",
+      "entity_fallback": "enregistrements"
+    }
   },
   "templates": {
     "breadcrumb": "Modèles",

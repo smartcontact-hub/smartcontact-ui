@@ -207,7 +207,9 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
    * `(exportRequest)`.
    */
   readonly importable = input(false, { transform: booleanAttribute });
-  /** Suma «Descargar plantilla» al menú «Datos»: el CSV vacío con las columnas que la pantalla sabe importar. */
+  /** Lo que hace «Importar» en esta pantalla, en una frase (en Agendas, reemplazar o añadir). Sin él, el genérico. */
+  readonly importHint = input<string | undefined>(undefined);
+  /** Suma «Descargar plantilla» al menú «Acciones»: el CSV vacío con las columnas que la pantalla sabe importar. */
   readonly templateDownloadable = input(false, { transform: booleanAttribute });
 
   /** Menú de una fila: el mismo con «⋮» y con clic derecho. Sin él, no hay columna de acciones. Si una fila no tiene
@@ -787,41 +789,68 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
   /** El menú de importar y descargar, abierto: su botón lo dice (`aria-expanded`, en el `<button>` real). */
   protected readonly fileMenuOpen = signal(false);
 
-  /** El menú del icono de importar y descargar: «Importar…» abre lo que decida la pantalla; «Descargar», lo visible. */
-  protected readonly fileMenuItems = computed<MenuItem[]>(() => {
+  /** El ancho del panel «Acciones»: el paso del Kit más cercano al de la propuesta de producto. */
+  protected readonly fileMenuStyle = { width: 'var(--sc-spacing-25)' };
+
+  /** Lo que se nombra en el menú: las filas de la lista, en plural («tipificaciones»). */
+  private readonly dataEntity = computed(() => {
     this.lang();
-    return [
-      ...(this.importable()
-        ? [
-            {
-              label: this.translate.instant('labels.import_menu'),
-              icon: 'sc-icon-font sc-icon-font--upload',
-              command: () => this.importRequest.emit(),
-            },
-          ]
-        : []),
-      ...(this.exportable()
-        ? [
-            {
-              label: this.translate.instant('labels.download_menu'),
-              icon: 'sc-icon-font sc-icon-font--download',
-              command: () => this.onExport(),
-            },
-          ]
-        : []),
-      ...(this.templateDownloadable()
-        ? [
-            {
-              label: this.translate.instant('labels.template_menu'),
-              icon: 'sc-icon-font sc-icon-font--download',
-              command: () => this.templateRequest.emit(),
-            },
-          ]
-        : []),
-    ];
+    return this.bulkEntity()?.plural || this.translate.instant('labels.data_menu.entity_fallback');
   });
 
+  /**
+   * El menú «Acciones»: un grupo «Gestionar datos» con una fila por cosa que se puede hacer (título y lo que hace) y,
+   * detrás de un separador, la plantilla. Lo que dice cada fila sale de la pantalla: «Exportar» cuenta la selección o la
+   * búsqueda si las hay, y se apaga sin filas; lo que hace «Importar» lo dice la pantalla con `importHint`.
+   */
+  protected readonly fileMenuItems = computed<MenuItem[]>(() => {
+    this.lang();
+    const t = (key: string, params?: Record<string, string | number>) =>
+      this.translate.instant(`labels.data_menu.${key}`, params);
+    const entity = this.dataEntity();
+    const seleccion = this.selectedRows().length;
+    const sinFilas = this.displayed().length === 0;
+    const filas: MenuItem[] = [];
+    if (this.importable()) {
+      filas.push({
+        label: t('import_title', { entity }),
+        icon: 'sc-icon-font sc-icon-font--upload',
+        data: { hint: this.importHint() ?? t('import_hint') },
+        command: () => this.importRequest.emit(),
+      });
+    }
+    if (this.exportable()) {
+      filas.push({
+        label: seleccion > 0 ? t('export_selection', { count: seleccion }) : t('export_title', { entity }),
+        icon: 'sc-icon-font sc-icon-font--download',
+        disabled: sinFilas,
+        data: {
+          hint: sinFilas
+            ? t('export_hint_empty')
+            : seleccion > 0
+              ? t('export_hint_selection')
+              : this.query()
+                ? t('export_hint_search')
+                : t('export_hint_all'),
+        },
+        command: () => this.onExport(),
+      });
+    }
+    if (this.templateDownloadable()) {
+      if (filas.length > 0) filas.push({ separator: true });
+      filas.push({
+        label: t('template_title'),
+        icon: 'sc-icon-font sc-icon-font--description',
+        data: { hint: t('template_hint'), plantilla: true },
+        command: () => this.templateRequest.emit(),
+      });
+    }
+    return [{ label: t('heading'), items: filas }];
+  });
+
+  /** Descarga la selección si la hay y, si no, lo que se ve. */
   protected onExport(): void {
-    this.exportRequest.emit(this.displayed());
+    const seleccion = this.selectedRows();
+    this.exportRequest.emit(seleccion.length > 0 ? seleccion : this.displayed());
   }
 }
