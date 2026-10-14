@@ -5746,12 +5746,6 @@ sc-datatable .p-datatable-header:empty {
     display: none;
 }
 `;
-var reorderIndicatorCss = () => `
-sc-datatable .p-datatable-row-reorder-indicator-up,
-sc-datatable .p-datatable-row-reorder-indicator-down {
-    display: none !important;
-}
-`;
 var LIST = "sc-datatable.sc-datatable--list";
 var listBehaviorCss = () => `
 ${LIST} .p-datatable-table {
@@ -6060,7 +6054,6 @@ ${typographyRule(lgTypographySelectors, dt, "lg", fromDesignPx(16), fromDesignPx
 
 ${baseTableCss()}
 ${emptyCaptionCss()}
-${reorderIndicatorCss()}
 ${listBehaviorCss()}
 ${frozenColumnsCss()}
 ${rowHeaderCss()}

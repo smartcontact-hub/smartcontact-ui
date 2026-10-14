@@ -1,8 +1,8 @@
 {
-  "commit": "cb0c0301",
+  "commit": "81339712",
   "primeng": "22.1.0",
   "themes": "3.0.0",
-  "generado": "2026-10-14T16:04:46.282Z",
+  "generado": "2026-10-14T18:01:38.998Z",
   "comprobaciones": {
     "ceros": [],
     "raizPx": 16,
@@ -23,5 +23,5 @@
       "faltan": []
     }
   },
-  "version": "0.20261014.1604"
+  "version": "0.20261014.1801"
 }
