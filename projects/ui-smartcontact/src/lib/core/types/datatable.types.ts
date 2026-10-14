@@ -86,6 +86,75 @@ export interface ScColumnDef<T = unknown> {
    * Por defecto, `text`.
    */
   readonly skeleton?: ScColumnSkeleton;
+  /**
+   * Filtro de la columna: el `p-columnFilter` de primeng.dev/table «Filter» tal cual, en una fila bajo la cabecera o
+   * en un menú junto al título según `filterDisplay` de la tabla. Filtra por `field`.
+   */
+  readonly filter?: ScColumnFilter;
+  /**
+   * Cabecera de grupo (primeng.dev/table «Column Group»): las columnas SEGUIDAS con el mismo `group` comparten una
+   * celda encima de sus títulos. Las que no lo llevan ocupan las dos filas de la cabecera.
+   */
+  readonly group?: string;
+  /**
+   * El control con el que se edita la celda (primeng.dev/table «Cell Edit» y «Row Edit»): el `#input` de su
+   * `p-cellEditor`; el `#output` es la celda de siempre. Con `editMode` `cell` se abre al pulsar la celda; con `row`, con
+   * el lápiz de la fila. El control escribe en la fila (`row[field]`); deshacer lo cambiado es de quien usa la tabla.
+   */
+  readonly editTemplate?: TemplateRef<ScColumnCellContext<T>>;
+}
+
+/** Los nombres de los tres botones de editar una fila (`editMode: 'row'`), ya traducidos por quien usa la tabla. */
+export interface ScRowEditLabels {
+  readonly edit: string;
+  readonly save: string;
+  readonly cancel: string;
+}
+
+/** Payload de `rowEditInit`, `rowEditSave` y `rowEditCancel`: la fila y su índice en el render actual. */
+export interface ScDatatableRowEditEvent<T = unknown> {
+  readonly row: T;
+  readonly index: number;
+}
+
+/** Contexto de la plantilla propia de un filtro (`ScColumnFilter.template`): el `#filter` de `p-columnFilter`. */
+export interface ScColumnFilterContext {
+  /** El valor que tiene el filtro ahora. */
+  readonly $implicit: unknown;
+  /** Se llama con el valor nuevo para filtrar. */
+  readonly filterCallback: (value: unknown) => void;
+}
+
+/** El filtro de una columna (`ScColumnDef.filter`): los inputs de `p-columnFilter`, con sus mismos valores por defecto. */
+export interface ScColumnFilter {
+  /** El control que pinta PrimeNG: `text` (por defecto), `numeric`, `date` o `boolean`. */
+  readonly type?: 'text' | 'numeric' | 'date' | 'boolean';
+  /** Cómo compara (`contains`, `equals`, `in`, `gte`…). Sin él, el de PrimeNG para su `type`. */
+  readonly matchMode?: string;
+  readonly placeholder?: string;
+  /** Nombre accesible del control. Sin él, el título de la columna. */
+  readonly ariaLabel?: string;
+  /** Cuándo filtra el texto y el número: al pulsar Intro (por defecto) o al escribir. */
+  readonly filterOn?: 'enter' | 'input';
+  /**
+   * En fila: el botón que abre las opciones de comparación. Por defecto, sí. En `menu` no cuenta: ahí el menú ES el
+   * filtro, y en `p-column-filter` apagarlo lo quitaba entero.
+   */
+  readonly showMenu?: boolean;
+  /**
+   * El `numeric`: las flechas de subir y bajar. Por defecto, sí. En fila, con el botón de comparar al lado, no caben en
+   * una columna estrecha y se pisan (medido en 10rem): ahí, o el uno o las otras.
+   */
+  readonly showButtons?: boolean;
+  /** En menú: elegir cómo compara, Y/O entre reglas y añadir otra regla. Por defecto, sí los tres. */
+  readonly showMatchModes?: boolean;
+  readonly showOperator?: boolean;
+  readonly showAddButton?: boolean;
+  /**
+   * Un control propio en lugar del de PrimeNG (un `sc-select`, un `sc-multiselect`), como el «Agent» y el «Status»
+   * del ejemplo: recibe el valor y `filterCallback`.
+   */
+  readonly template?: TemplateRef<ScColumnFilterContext>;
 }
 
 /** Forma de una celda en el esqueleto de carga de `sc-datatable` (ver `ScColumnDef.skeleton`). */

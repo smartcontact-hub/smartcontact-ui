@@ -100,6 +100,8 @@ export class ScInputNumberComponent {
    * de un ajuste, de un interruptor). Se oye después de la ayuda propia, si la hay (DD-133).
    */
   readonly ariaDescribedBy = input<string>();
+  /** Nombre accesible cuando el campo va sin `label` visible: el editor de una celda de tabla, por ejemplo. */
+  readonly ariaLabel = input<string>();
 
   // ─── Number-specific ───────────────────────────────────────────────
   /** Valor mínimo admitido. */

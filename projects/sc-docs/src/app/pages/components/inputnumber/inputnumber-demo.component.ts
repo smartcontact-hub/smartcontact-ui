@@ -45,6 +45,7 @@ export class InputNumberDemoComponent {
       { name: 'required', control: { kind: 'boolean' } },
       { name: 'disabled', control: { kind: 'boolean' } },
       { name: 'readonly', control: { kind: 'boolean' } },
+      { name: 'ariaLabel', control: { kind: 'text' }, description: 'Nombre accesible sin label visible: el editor de una celda de tabla.' },
           { name: 'invalid', control: { kind: 'boolean' }, description: 'Marca el campo sin texto de error.' },
     ],
     defaultArgs: {
@@ -61,6 +62,7 @@ export class InputNumberDemoComponent {
       required: false,
       disabled: false,
       readonly: false,
+      ariaLabel: '',
           invalid: false,
     },
   };

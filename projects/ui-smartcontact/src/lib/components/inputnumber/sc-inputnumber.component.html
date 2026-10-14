@@ -26,6 +26,7 @@
     [attr.aria-invalid]="isInvalid() ? true : null"
     [attr.aria-describedby]="describedBy()"
     [attr.aria-required]="required() ? true : null"
+    [attr.aria-label]="ariaLabel() ?? null"
     [value]="displayValue()"
     (input)="onInput($event)"
     (focus)="onFocus($event)"

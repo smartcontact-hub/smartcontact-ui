@@ -2,6 +2,7 @@ import { NgClass, NgTemplateOutlet } from '@angular/common';
 import {
   afterRenderEffect,
   DestroyRef,
+  effect,
   ElementRef,
   inject,
   signal,
@@ -14,12 +15,16 @@ import {
   input,
   model,
   output,
+  untracked,
   viewChild,
 } from '@angular/core';
-import type { FilterMetadata } from 'primeng/api';
+import type { FilterMetadata, SortMeta } from 'primeng/api';
 import {
   Table,
   TableModule,
+  type TableEditCancelEvent,
+  type TableEditCompleteEvent,
+  type TableEditInitEvent,
   type TableFilterEvent,
   type TableLazyLoadEvent,
   type TablePageEvent,
@@ -29,12 +34,15 @@ import {
 
 import {
   ScColumnDef,
+  ScDatatableRowEditEvent,
   ScDatatableRowEvent,
   ScDatatableRowKeyEvent,
   ScRowAriaLabelFn,
+  ScRowEditLabels,
   ScRowStyleClassFn,
 } from '../../core/types/datatable.types';
 import { ScComponentSize } from '../../core/types/theme-component.types';
+import { ScButtonComponent } from '../button/sc-button.component';
 import { ScSkeletonComponent } from '../skeleton/sc-skeleton.component';
 
 /**
@@ -63,10 +71,14 @@ export type ScDatatableSelectionColumn = 'checkbox' | 'radio' | 'none';
 /** Mapa de filtros de p-table (por campo + `global`). */
 export type ScDatatableFilters = Record<string, FilterMetadata | FilterMetadata[]>;
 
-/** Payload de `sortChange` (orden single client-side). */
+/**
+ * Payload de `sortChange`. En `sortMode` `single`, la columna y su sentido; sin `field` (y `order` 0), la tabla se ha
+ * quedado sin orden (el tercer clic de `removableSort`). En `multiple`, `multiSortMeta` trae todas, por prioridad.
+ */
 export interface ScDatatableSortEvent {
   readonly field: string | undefined;
   readonly order: number;
+  readonly multiSortMeta?: readonly SortMeta[];
 }
 
 /**
@@ -93,7 +105,7 @@ export interface ScDatatableSortEvent {
  */
 @Component({
   selector: 'sc-datatable',
-  imports: [TableModule, NgClass, NgTemplateOutlet, ScSkeletonComponent],
+  imports: [TableModule, NgClass, NgTemplateOutlet, ScButtonComponent, ScSkeletonComponent],
   templateUrl: './sc-datatable.component.html',
   styleUrl: './sc-datatable.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -177,6 +189,18 @@ export class ScDatatableComponent<T = unknown> {
    * ENCIMA del orden que recibe, y un orden propio (una prioridad por rango, nombres con locale) no se ve.
    */
   readonly externalSort = input(false, { transform: booleanAttribute });
+  /**
+   * `multiple`: varias columnas a la vez, el `sortMode` de p-table tal cual (primeng.dev/table «Multiple Columns»).
+   * Un clic ordena por esa columna sola; Cmd/Ctrl+clic la añade detrás de las que ya había.
+   */
+  readonly sortMode = input<'single' | 'multiple'>('single');
+  /** Orden inicial en `multiple`, por prioridad (primeng.dev/table «Presort»): `[{ field, order }, …]`. */
+  readonly multiSortMeta = input<readonly SortMeta[] | undefined>(undefined);
+  /**
+   * El tercer clic en la misma columna quita el orden y las filas vuelven al de `value` (primeng.dev/table
+   * «Removable Sort»: allí es una receta con `customSort`; aquí, un input). Solo en `sortMode` `single`.
+   */
+  readonly removableSort = input(false, { transform: booleanAttribute });
 
   readonly size = input<ScComponentSize>('md');
 
@@ -307,7 +331,20 @@ export class ScDatatableComponent<T = unknown> {
   readonly filters = input<ScDatatableFilters | undefined>(undefined);
   /** Campos sobre los que aplica el filtro `global`. */
   readonly globalFilterFields = input<readonly string[] | undefined>(undefined);
-
+  /**
+   * Dónde van los filtros de las columnas con `ScColumnDef.filter` (primeng.dev/table «Filter»): `row`, una fila bajo
+   * la cabecera con un control por columna (el «Basic»); `menu`, un botón junto al título que abre sus reglas (el
+   * «Advanced»).
+   */
+  readonly filterDisplay = input<'row' | 'menu'>('row');
+  /**
+   * Cómo se editan las columnas con `ScColumnDef.editTemplate` (primeng.dev/table «Cell Edit» y «Row Edit»): `cell`,
+   * cada celda se abre al pulsarla y se cierra con Intro, Tab, Escape o clic fuera; `row`, una columna al final con
+   * un lápiz que abre la fila entera, y guardar o cancelar.
+   */
+  readonly editMode = input<'cell' | 'row'>('cell');
+  /** Los nombres de los botones de editar, guardar y cancelar la fila (`editMode: 'row'`), traducidos. */
+  readonly rowEditLabels = input<ScRowEditLabels>({ edit: 'Editar', save: 'Guardar', cancel: 'Cancelar' });
 
   /* ════════════════════════════════════════════════════════════════════════
    * LAS 38 RANURAS DE PLANTILLA DE p-table, REENVIADAS
@@ -382,6 +419,23 @@ export class ScDatatableComponent<T = unknown> {
   readonly lazyLoad = output<TableLazyLoadEvent>();
   /** Han cambiado los filtros de la tabla. */
   readonly filterChange = output<TableFilterEvent>();
+
+  /**
+   * Se ha abierto una celda para editarla (`editMode: 'cell'`): el `onEditInit` de p-table, con `field`, `index` y en
+   * `data` la fila entera. Va la fila y no el valor porque con el valor PrimeNG busca la fila por su índice en `value`,
+   * y con un filtro puesto ese índice es de otra.
+   */
+  readonly editInit = output<TableEditInitEvent>();
+  /** Se ha cerrado una celda con Intro, Tab o clic fuera: el `onEditComplete` de p-table, con el valor ya escrito. */
+  readonly editComplete = output<TableEditCompleteEvent>();
+  /** Se ha cerrado una celda con Escape: el `onEditCancel` de p-table. PrimeNG repone el valor que tenía al abrirla. */
+  readonly editCancel = output<TableEditCancelEvent>();
+  /** Se ha pulsado el lápiz de una fila (`editMode: 'row'`): es el momento de guardar una copia para poder cancelar. */
+  readonly rowEditInit = output<ScDatatableRowEditEvent<T>>();
+  /** Se ha pulsado guardar en una fila en edición. */
+  readonly rowEditSave = output<ScDatatableRowEditEvent<T>>();
+  /** Se ha pulsado cancelar en una fila en edición: quien usa la tabla repone los valores de su copia. */
+  readonly rowEditCancel = output<ScDatatableRowEditEvent<T>>();
 
   /**
    * Se ha marcado una fila: el `onRowSelect` de p-table tal cual (`data`, `index`, `type`: `row`, `checkbox` o
@@ -593,7 +647,11 @@ export class ScDatatableComponent<T = unknown> {
       const [ini, fin] = ancla <= idx ? [ancla, idx] : [idx, ancla];
       const conRango = [...this.selectionComoArray(nueva)];
       const vistos = new Set(conRango.map((r) => this.idDe(r)));
-      for (const fila of this.value().slice(ini, fin + 1)) {
+      // Los índices son los de la fila PINTADA: el tramo sale de lo que enseña la tabla (ordenado y filtrado), no de
+      // `value`, que ya no se reordena (ver `pValue`).
+      const t = this.table();
+      const pintadas = (t.filteredValue ?? t.value ?? this.value()) as readonly T[];
+      for (const fila of pintadas.slice(ini, fin + 1)) {
         const id = this.idDe(fila);
         if (!vistos.has(id)) {
           vistos.add(id);
@@ -610,9 +668,40 @@ export class ScDatatableComponent<T = unknown> {
     this.indicePendiente = null;
   }
 
+  /**
+   * Los tramos de la cabecera agrupada (`ScColumnDef.group`): columnas seguidas con el mismo grupo van juntas, y una
+   * sin grupo es un tramo de una. `null` si ninguna columna lleva grupo, que es la cabecera de una sola fila.
+   */
+  protected readonly headerSegments = computed<readonly { group: string | null; cols: ScColumnDef<T>[] }[] | null>(() => {
+    const cols = this.visibleCols();
+    if (!cols.some((c) => c.group)) return null;
+    const tramos: { group: string | null; cols: ScColumnDef<T>[] }[] = [];
+    for (const col of cols) {
+      const ultimo = tramos.at(-1);
+      if (col.group && ultimo?.group === col.group) ultimo.cols.push(col);
+      else tramos.push({ group: col.group ?? null, cols: [col] });
+    }
+    return tramos;
+  });
+  /** Las columnas de la segunda fila de una cabecera agrupada: las que están debajo de un grupo. */
+  protected readonly groupedCols = computed(() => this.headerSegments()?.filter((t) => t.group).flatMap((t) => t.cols) ?? []);
+  /** La fila de filtros se pinta si alguna columna visible filtra y los filtros van en fila. */
+  protected readonly filterRow = computed(() => this.filterDisplay() === 'row' && this.visibleCols().some((c) => c.filter));
+
+  /**
+   * Con la cabecera agrupada, ninguna columna se arrastra: p-table cuenta la posición de la columna entre las cabeceras
+   * con `pReorderableColumn` de su fila, y repartidas en dos filas la cuenta sale mal.
+   */
+  protected columnReorderable(col: ScColumnDef<T>): boolean {
+    return this.reorderableColumns() && col.reorderable !== false && !col.frozen && !this.headerSegments();
+  }
+
   /** colspan de la fila vacía: columnas VISIBLES + la de selección si se pinta. */
+  /** La columna del lápiz, al final: con `editMode: 'row'` y alguna columna que se pueda editar. */
+  protected readonly rowEditor = computed(() => this.editMode() === 'row' && this.visibleCols().some((c) => c.editTemplate));
+
   protected readonly colspan = computed<number>(
-    () => this.visibleCols().length + (this.selectionControl() ? 1 : 0),
+    () => this.visibleCols().length + (this.selectionControl() ? 1 : 0) + (this.rowEditor() ? 1 : 0),
   );
 
   /** Filtros para p-table: referencia estable `{}` cuando el consumidor no informa. */
@@ -660,12 +749,22 @@ export class ScDatatableComponent<T = unknown> {
   }
   /** Las filas del esqueleto: vacías, solo cuentan cuántas son. */
   private readonly skeletonValue = computed(() => Array.from({ length: this.skeletonRows() }, () => ({})));
-  /** Mientras no se ha medido la fila, se pinta solo la primera: medir no cuesta pintar 5.000. */
+  /**
+   * A p-table le llega una COPIA de `value`, no el array de quien usa la tabla: p-table ordena en sitio
+   * (`this.value.sort(...)`, primeng-table.mjs `sortSingle`), así que cada clic de orden reordenaba el array de la
+   * pantalla, y sin el orden de partida no hay a dónde volver al quitarlo (`removableSort`). `sortReset` pide una copia
+   * nueva, en el orden de `value`. Mientras no se ha medido la fila, se pinta solo la primera: medir no cuesta pintar
+   * 5.000.
+   */
+  private readonly sortReset = signal(0);
   protected readonly pValue = computed(() => {
     if (this.skeleton()) return this.skeletonValue();
+    this.sortReset();
     const rows = this.value();
-    return this.virtualWanted() && !this.rowHeight() ? rows.slice(0, 1) : rows;
+    return this.virtualWanted() && !this.rowHeight() ? rows.slice(0, 1) : [...rows];
   });
+  /** También una copia: p-table guarda el array que recibe y le hace `push` al añadir una columna con Cmd/Ctrl. */
+  protected readonly pMultiSortMeta = computed(() => this.multiSortMeta()?.map((meta) => ({ ...meta })));
 
   protected readonly rightFrozenEdge = computed(() =>
     this.visibleCols().find(c => c.frozen && c.alignFrozen === 'right')?.field,
@@ -682,6 +781,12 @@ export class ScDatatableComponent<T = unknown> {
      * coloca la pista con `--sc-datatable-thead-height`. Se mide porque el alto de la cabecera
      * cambia con la talla y con el texto de las columnas. */
     const destroyRef = inject(DestroyRef);
+    this.hostEl.addEventListener('click', this.apuntarCabecera, true);
+    this.hostEl.addEventListener('keydown', this.apuntarCabecera, true);
+    destroyRef.onDestroy(() => {
+      this.hostEl.removeEventListener('click', this.apuntarCabecera, true);
+      this.hostEl.removeEventListener('keydown', this.apuntarCabecera, true);
+    });
     // La sombra cuenta contenido oculto, no la existencia de una columna fija (DD-153).
     // Se observan ambos contenedores: PrimeNG cambia el dueño del scroll al virtualizar filas.
     afterRenderEffect(onCleanup => {
@@ -763,6 +868,23 @@ export class ScDatatableComponent<T = unknown> {
       observer.observe(box);
       onCleanup(() => observer.disconnect());
     });
+    /* p-table guarda el filtro de una columna como un valor en `row` y como una lista de reglas en `menu`, y cada
+     * `p-column-filter` lo crea solo si no existe: al pasar de fila a menú en vivo el menú heredaba el valor suelto y
+     * no se abría (`newCollection[Symbol.iterator] is not a function`, medido el 2026-10-14). Al cambiar de sitio, los
+     * filtros de columna se vacían; el global se queda. Corre antes de pintar la cabecera nueva. */
+    let filterDisplayAnterior: 'row' | 'menu' | undefined;
+    effect(() => {
+      const display = this.filterDisplay();
+      const cambia = filterDisplayAnterior !== undefined && display !== filterDisplayAnterior;
+      filterDisplayAnterior = display;
+      if (!cambia) return;
+      untracked(() => {
+        const table = this.table();
+        const global = table.filters['global'];
+        table.filters = global ? { global } : {};
+        table._filter();
+      });
+    });
   }
 
   /**
@@ -773,6 +895,27 @@ export class ScDatatableComponent<T = unknown> {
    */
   filterGlobal(value: string, matchMode = 'contains'): void {
     this.table().filterGlobal(value, matchMode);
+  }
+
+  /**
+   * Al quitar el último filtro, p-table vuelve a pintar todas las filas pero deja en el paginador la cuenta del filtrado
+   * anterior (`_filter` solo la recalcula si queda algún filtro): filtrar «Marta» y borrarlo dejaba 1 página para 150
+   * filas (medido el 2026-10-14). En cliente, sin filtrado, la cuenta vuelve a ser la de `value`.
+   */
+  protected onFilter(event: TableFilterEvent): void {
+    const table = this.table();
+    if (!this.lazy() && !table.filteredValue) table.totalRecords.set(this.pTotalRecords());
+    this.filterChange.emit(event);
+  }
+
+  /**
+   * Quita filtros, orden y página: el `clear()` de p-table, el botón «Clear» del ejemplo «Filter» de primeng.dev. Las
+   * filas vuelven al orden de `value`. El texto del buscador global es de quien lo pinta: lo vacía él.
+   */
+  clear(): void {
+    this.table().clear();
+    this.ultimoOrdenPulsado = null;
+    this.sortReset.update((n) => n + 1);
   }
 
   /** Lee `row[field]` sin indexar `unknown` directo en plantilla. */
@@ -791,7 +934,20 @@ export class ScDatatableComponent<T = unknown> {
   }
 
   protected onRowClick(event: MouseEvent, row: T, index: number): void {
+    // Pulsar una celda para editarla, o dentro de la fila que se está editando, es editar, no abrir la fila.
+    const target = event.target instanceof Element ? event.target : null;
+    if (target?.closest('.p-editable-column') || (this.editMode() === 'row' && this.table().isRowEditing(row))) return;
     this.rowClick.emit({ row, index, originalEvent: event });
+  }
+
+  /**
+   * Las teclas que nacen dentro de una celda con editor son del editor. La fila lleva el teclado de selección de
+   * PrimeNG, que atiende Inicio, Fin, flechas, Espacio, Intro y Cmd/Ctrl+A vengan de donde vengan: con Fin en el campo,
+   * la fila se llevaba el foco y lo siguiente que se escribía se perdía, y Cmd+A marcaba todas las filas (medido el
+   * 2026-10-14). Intro, Escape y Tab los sigue atendiendo `pEditableColumn`, que escucha en la misma celda.
+   */
+  protected onEditorKeydown(event: KeyboardEvent): void {
+    if (event.target !== event.currentTarget) event.stopPropagation();
   }
 
   protected onRowKeydown(event: KeyboardEvent, row: T, index: number): void {
@@ -878,7 +1034,49 @@ export class ScDatatableComponent<T = unknown> {
     this.columnWidthsChange.emit(widths);
   }
 
-  protected onSortEvent(event: { field?: string; order?: number }): void {
-    this.sortChange.emit({ field: event.field, order: event.order ?? 1 });
+  /**
+   * La cabecera que se acaba de pulsar (clic, Intro o Espacio): `onSort` sale igual de un clic que de un cambio de
+   * `sortField`/`sortOrder` o de filas, y solo el clic cuenta para el tercer clic de `removableSort`. Se apunta en la
+   * fase de captura, antes de que `pSortableColumn` ordene, y se olvida al acabar el gesto.
+   */
+  private cabeceraPulsada: string | null = null;
+  private ultimoOrdenPulsado: { readonly field: string; readonly order: number } | null = null;
+
+  private apuntarCabecera = (event: Event): void => {
+    if (event instanceof KeyboardEvent && event.key !== 'Enter' && event.key !== ' ') return;
+    const th = (event.target as HTMLElement | null)?.closest<HTMLElement>('thead th[data-field]');
+    if (!th) return;
+    this.cabeceraPulsada = th.dataset['field'] ?? null;
+    setTimeout(() => (this.cabeceraPulsada = null));
+  };
+
+  protected onSortEvent(event: { field?: string; order?: number; multisortmeta?: SortMeta[] }): void {
+    if (this.sortMode() === 'multiple') {
+      const metas = event.multisortmeta ?? [];
+      this.sortChange.emit({ field: metas[0]?.field, order: metas[0]?.order ?? 1, multiSortMeta: metas.map((m) => ({ ...m })) });
+      return;
+    }
+    const order = event.order ?? 1;
+    if (this.removableSort() && event.field && this.cabeceraPulsada === event.field) {
+      const antes = this.ultimoOrdenPulsado;
+      // PrimeNG alterna 1 → -1 → 1: el tercero, de vuelta a ascendente desde descendente, es el que quita el orden.
+      if (antes?.field === event.field && antes.order === -1 && order === 1) {
+        this.ultimoOrdenPulsado = null;
+        this.quitarOrden();
+        return;
+      }
+      this.ultimoOrdenPulsado = { field: event.field, order };
+    }
+    this.sortChange.emit({ field: event.field, order });
+  }
+
+  /** Sin orden: ninguna flecha y las filas en el orden de `value` (una copia nueva, la de antes ya está ordenada). */
+  private quitarOrden(): void {
+    const t = this.table();
+    t.sortField = null;
+    t.sortOrder = 1;
+    t.tableService.onSort(null);
+    this.sortReset.update((n) => n + 1);
+    this.sortChange.emit({ field: undefined, order: 0 });
   }
 }
