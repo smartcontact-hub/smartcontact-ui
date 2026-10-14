@@ -165,6 +165,13 @@ export class DatatableDemoComponent {
     { field: 'status', order: 1 },
     { field: 'name', order: 1 },
   ];
+  protected readonly filtersTpl = viewChild<TemplateRef<StoryContext>>('filters');
+  /** primeng.dev/table «Filter» y «Column Group»: un filtro por columna bajo la cabecera, y «Agente» sobre dos. */
+  protected readonly filterColumns: readonly ScColumnDef<Agent>[] = [
+    { field: 'name', header: 'Nombre', sortable: true, group: 'Agente', filter: { placeholder: 'Nombre', filterOn: 'input' } },
+    { field: 'extension', header: 'Extensión', width: '10rem', group: 'Agente', filter: { matchMode: 'startsWith', placeholder: '10', filterOn: 'input', showMenu: false } },
+    { field: 'status', header: 'Estado', width: '10rem', filter: { matchMode: 'equals', placeholder: 'active', filterOn: 'input', showMenu: false } },
+  ];
   protected readonly frozenColumns: readonly ScColumnDef<Agent>[] = [
     { field: 'name', header: 'Nombre', width: '14rem', frozen: true, rowHeader: true },
     { field: 'extension', header: 'Extensión' },
@@ -418,7 +425,8 @@ export class DatatableDemoComponent {
     // pintar la story MVP con la columna de estado sin su cellTemplate.
     const fr = this.frozenTpl();
     const ms = this.multiSortTpl();
-    if (!pg || !controls || !mvp || !lz || !gs || !ls || !st || !fr || !ms) return [];
+    const fi = this.filtersTpl();
+    if (!pg || !controls || !mvp || !lz || !gs || !ls || !st || !fr || !ms || !fi) return [];
     return [
       { name: 'Playground', playground: true, template: pg, controlsTemplate: controls },
       { name: 'Columnas, selección múltiple y paginador', template: mvp, snippet: MVP_SNIPPET },
@@ -430,6 +438,10 @@ export class DatatableDemoComponent {
       { name: 'Orden por varias columnas', template: ms, snippet: `<!-- sortMode="multiple": Cmd/Ctrl+clic añade una columna detrás de las que ya ordenan. -->
 <!-- multiSortMeta: el orden de entrada, por prioridad: [{ field: 'status', order: 1 }, { field: 'name', order: 1 }]. -->
 <sc-datatable [value]="agents()" [columns]="multiSortColumns" sortMode="multiple" [multiSortMeta]="presortMeta" removableSort dataKey="id" />` },
+      { name: 'Filtros por columna y cabecera agrupada', template: fi, snippet: `<!-- ScColumnDef.filter: { matchMode, placeholder, filterOn, showMenu, template… }, los inputs de p-column-filter. -->
+<!-- filterDisplay="row" los pone en una fila bajo la cabecera; "menu", en un botón junto al título con reglas Y/O. -->
+<!-- ScColumnDef.group: las columnas seguidas con el mismo group comparten una celda encima. dt.clear() lo quita todo. -->
+<sc-datatable [value]="agents()" [columns]="filterColumns" filterDisplay="row" dataKey="id" />` },
     ];
   });
 }

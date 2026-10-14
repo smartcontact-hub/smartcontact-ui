@@ -82,6 +82,11 @@
   gap: var(--sc-spacing-0-375);
 }
 
+/* Cada popover va junto a su botón en el racimo; su anfitrión no pinta caja, así que no cuenta como hueco del flex. */
+.table-lab__cluster p-popover {
+  display: contents;
+}
+
 .table-lab__caption {
   display: flex;
   align-items: center;

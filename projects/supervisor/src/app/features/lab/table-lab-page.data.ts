@@ -26,9 +26,9 @@ const LAST_NAMES = [
   'Clavero', 'Sala', 'Pons', 'Soto', 'Alsina', 'Bartra', 'Casas', 'Duran', 'Escoda', 'Fuster',
 ] as const;
 
-const TEAMS = ['Soporte Nivel 1', 'Soporte Nivel 2', 'Facturación'] as const;
+export const TABLE_LAB_TEAMS = ['Soporte Nivel 1', 'Soporte Nivel 2', 'Facturación'] as const;
 const STATUSES = ['online', 'busy', 'offline'] as const satisfies readonly TableLabAgent['status'][];
-const COUNTRIES = ['ES', 'FR', 'PT', 'MX', 'CO', 'AR', 'GB', 'DE', 'IT', 'BR'] as const satisfies readonly TableLabAgent['country'][];
+export const TABLE_LAB_COUNTRIES = ['ES', 'FR', 'PT', 'MX', 'CO', 'AR', 'GB', 'DE', 'IT', 'BR'] as const satisfies readonly TableLabAgent['country'][];
 
 /** 150 filas: por debajo de las 100, `sc-datatable` no activa la lista virtual (DD-176,
  *  `ScDatatableComponent.VIRTUAL_MIN_ROWS`), con menos muestra ese control del laboratorio no
@@ -42,15 +42,18 @@ const COUNTRIES = ['ES', 'FR', 'PT', 'MX', 'CO', 'AR', 'GB', 'DE', 'IT', 'BR'] a
 export const TABLE_LAB_AGENTS: readonly TableLabAgent[] = Array.from({ length: 150 }, (_, i) => {
   const first = FIRST_NAMES[i % FIRST_NAMES.length];
   const last = LAST_NAMES[(i * 7 + Math.floor(i / 30)) % LAST_NAMES.length];
-  const status = STATUSES[i % STATUSES.length];
+  // El estado gira una posición más cada tres filas: con `i % 3`, igual que el equipo, todo Facturación salía
+  // desconectado y sin tickets, y filtrar por los dos no daba nada. Así salen las nueve parejas equipo-estado.
+  const status = STATUSES[(i + Math.floor(i / 3)) % STATUSES.length];
   return {
     id: i + 1,
     name: `${first} ${last}`,
-    team: TEAMS[i % TEAMS.length],
+    team: TABLE_LAB_TEAMS[i % TABLE_LAB_TEAMS.length],
     status,
-    tickets: status === 'offline' ? 0 : ((i * 3) % 20) + 1,
+    // Con `i * 3`, como el país, cada país tenía siempre las mismas cifras (ningún ES ni FR pasaba de 12).
+    tickets: status === 'offline' ? 0 : ((i * 7 + Math.floor(i / 10)) % 20) + 1,
     rating: (i % 5) + 1,
     avatarUrl: `https://picsum.photos/seed/sc-table-lab-${i + 1}/128`,
-    country: COUNTRIES[(i * 3) % COUNTRIES.length],
+    country: TABLE_LAB_COUNTRIES[(i * 3) % TABLE_LAB_COUNTRIES.length],
   };
 });

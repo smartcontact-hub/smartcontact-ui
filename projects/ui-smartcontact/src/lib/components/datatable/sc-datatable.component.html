@@ -39,7 +39,7 @@
   (onSort)="onSortEvent($event)"
   (onPage)="page.emit($event)"
   (onLazyLoad)="lazyLoad.emit($event)"
-  (onFilter)="filterChange.emit($event)"
+  (onFilter)="onFilter($event)"
 >
   <ng-template #caption>
     @if (userCaption()) {
@@ -55,63 +55,138 @@
       *ngTemplateOutlet="userHeader()!; context: { $implicit: cols, frozen }"
     />
     } @else {
+    @let segmentos = headerSegments();
     <tr>
       @if (selectionControl() === 'checkbox') {
       <!-- La casilla se queda fija si hay una columna fija a la izquierda: PrimeNG coloca esa columna sumando el ancho de
            TODO lo que tiene delante, fijo o no, y sin esto la casilla pasaba por debajo del nombre (DD-193). -->
-      <th class="sc-datatable__check" scope="col" pFrozenColumn [frozen]="!!leftFrozenEdge()">
+      <th class="sc-datatable__check" scope="col" pFrozenColumn [frozen]="!!leftFrozenEdge()" [attr.rowspan]="segmentos ? 2 : null">
         <!-- `sc-datatable__check-all`: el gancho, NUESTRO, por el que el componente le pone el nombre (ver el
              `afterRenderEffect` de la casilla de «todas»). -->
         <p-table-header-checkbox class="sc-datatable__check-all" [ariaLabel]="selectAllAriaLabel()" [disabled]="skeleton()" />
       </th>
       } @else if (selectionControl() === 'radio') {
       <!-- Vacía, como en primeng.dev/table «Radio»: con una sola fila marcada no hay «todas». -->
-      <th class="sc-datatable__check" scope="col" pFrozenColumn [frozen]="!!leftFrozenEdge()"></th>
-      } @for (col of visibleCols(); track col.field) { @if (col.sortable) {
-      <th
-        scope="col"
-        [pSortableColumn]="col.field"
-        pFrozenColumn
-        [frozen]="!!col.frozen"
-        [alignFrozen]="col.alignFrozen ?? 'left'"
-        [class.sc-datatable__frozen-right-edge]="col.field === rightFrozenEdge()"
-        [class.sc-datatable__frozen-left-edge]="col.field === leftFrozenEdge()"
-        pResizableColumn
-        [pResizableColumnDisabled]="!resizableColumns()"
-        pReorderableColumn
-        [pReorderableColumnDisabled]="!reorderableColumns() || col.reorderable === false || !!col.frozen"
-        [attr.data-field]="col.field"
-        [style.width]="col.width ?? null"
-        [style.text-align]="col.align ?? null"
-        [attr.aria-label]="col.headerAriaLabel ?? null"
-      >
-        <!-- El texto va en su propio elemento: al pulsar, `pReorderableColumn` busca el tirador de ancho DENTRO
-             de lo pulsado, y con el texto suelto lo pulsado era el `th`, que lo contiene, así que nunca arrastraba
-             (medido: solo llegaba `mousedown`, sin `dragstart`). -->
-        <span class="sc-datatable__header-label">{{ col.header }}</span><p-sort-icon [field]="col.field" />
-      </th>
+      <th class="sc-datatable__check" scope="col" pFrozenColumn [frozen]="!!leftFrozenEdge()" [attr.rowspan]="segmentos ? 2 : null"></th>
+      } @if (segmentos) {
+      <!-- Cabecera agrupada (primeng.dev/table «Column Group»): arriba, una celda por grupo sobre sus columnas; las
+           columnas sin grupo ocupan las dos filas. -->
+      @for (segmento of segmentos; track $index) { @if (segmento.group) {
+      <th scope="colgroup" class="sc-datatable__group" [attr.colspan]="segmento.cols.length">{{ segmento.group }}</th>
       } @else {
-      <th
-        scope="col"
-        pFrozenColumn
-        [frozen]="!!col.frozen"
-        [alignFrozen]="col.alignFrozen ?? 'left'"
-        [class.sc-datatable__frozen-right-edge]="col.field === rightFrozenEdge()"
-        [class.sc-datatable__frozen-left-edge]="col.field === leftFrozenEdge()"
-        pResizableColumn
-        [pResizableColumnDisabled]="!resizableColumns()"
-        pReorderableColumn
-        [pReorderableColumnDisabled]="!reorderableColumns() || col.reorderable === false || !!col.frozen"
-        [attr.data-field]="col.field"
-        [style.width]="col.width ?? null"
-        [style.text-align]="col.align ?? null"
-        [attr.aria-label]="col.headerAriaLabel ?? null"
-      >
-        <span class="sc-datatable__header-label">{{ col.header }}</span>
-      </th>
+      <ng-container *ngTemplateOutlet="headerCell; context: { $implicit: segmento.cols[0], rowspan: 2 }" />
+      } } } @else { @for (col of visibleCols(); track col.field) {
+      <ng-container *ngTemplateOutlet="headerCell; context: { $implicit: col, rowspan: null }" />
       } }
     </tr>
+    @if (segmentos) {
+    <tr>
+      @for (col of groupedCols(); track col.field) {
+      <ng-container *ngTemplateOutlet="headerCell; context: { $implicit: col, rowspan: null }" />
+      }
+    </tr>
+    } @if (filterRow()) {
+    <!-- Filtros en fila (primeng.dev/table «Filter»): una celda por columna, con su filtro si lo tiene. -->
+    <tr class="sc-datatable__filter-row">
+      @if (selectionControl()) {
+      <th class="sc-datatable__check" pFrozenColumn [frozen]="!!leftFrozenEdge()"></th>
+      } @for (col of visibleCols(); track col.field) {
+      <th
+        pFrozenColumn
+        [frozen]="!!col.frozen"
+        [alignFrozen]="col.alignFrozen ?? 'left'"
+        [class.sc-datatable__frozen-right-edge]="col.field === rightFrozenEdge()"
+        [class.sc-datatable__frozen-left-edge]="col.field === leftFrozenEdge()"
+      >
+        @if (col.filter) {
+        <ng-container *ngTemplateOutlet="colFilter; context: { $implicit: col, display: 'row' }" />
+        }
+      </th>
+      }
+    </tr>
+    } }
+  </ng-template>
+
+  <!-- La celda de cabecera de una columna. Va dentro de `p-table` (no al final, como `cellContent`): sus directivas
+       (`pSortableColumn`, `pFrozenColumn`…) buscan la tabla por inyección, y una plantilla la busca desde donde se
+       declara. -->
+  <ng-template #headerCell let-col let-rowspan="rowspan">
+    @if (col.sortable) {
+    <th
+      scope="col"
+      [pSortableColumn]="col.field"
+      pFrozenColumn
+      [frozen]="!!col.frozen"
+      [alignFrozen]="col.alignFrozen ?? 'left'"
+      [class.sc-datatable__frozen-right-edge]="col.field === rightFrozenEdge()"
+      [class.sc-datatable__frozen-left-edge]="col.field === leftFrozenEdge()"
+      pResizableColumn
+      [pResizableColumnDisabled]="!resizableColumns()"
+      pReorderableColumn
+      [pReorderableColumnDisabled]="!columnReorderable(col)"
+      [attr.data-field]="col.field"
+      [attr.rowspan]="rowspan"
+      [style.width]="col.width ?? null"
+      [style.text-align]="col.align ?? null"
+      [attr.aria-label]="col.headerAriaLabel ?? null"
+    >
+      <!-- El texto va en su propio elemento: al pulsar, `pReorderableColumn` busca el tirador de ancho DENTRO
+           de lo pulsado, y con el texto suelto lo pulsado era el `th`, que lo contiene, así que nunca arrastraba
+           (medido: solo llegaba `mousedown`, sin `dragstart`). -->
+      <span class="sc-datatable__header-label">{{ col.header }}</span><p-sort-icon [field]="col.field" />
+      @if (col.filter && filterDisplay() === 'menu') {
+      <ng-container *ngTemplateOutlet="colFilter; context: { $implicit: col, display: 'menu' }" />
+      }
+    </th>
+    } @else {
+    <th
+      scope="col"
+      pFrozenColumn
+      [frozen]="!!col.frozen"
+      [alignFrozen]="col.alignFrozen ?? 'left'"
+      [class.sc-datatable__frozen-right-edge]="col.field === rightFrozenEdge()"
+      [class.sc-datatable__frozen-left-edge]="col.field === leftFrozenEdge()"
+      pResizableColumn
+      [pResizableColumnDisabled]="!resizableColumns()"
+      pReorderableColumn
+      [pReorderableColumnDisabled]="!columnReorderable(col)"
+      [attr.data-field]="col.field"
+      [attr.rowspan]="rowspan"
+      [style.width]="col.width ?? null"
+      [style.text-align]="col.align ?? null"
+      [attr.aria-label]="col.headerAriaLabel ?? null"
+    >
+      <span class="sc-datatable__header-label">{{ col.header }}</span>
+      @if (col.filter && filterDisplay() === 'menu') {
+      <ng-container *ngTemplateOutlet="colFilter; context: { $implicit: col, display: 'menu' }" />
+      }
+    </th>
     }
+  </ng-template>
+
+  <!-- El `p-column-filter` de una columna, con los valores por defecto de PrimeNG donde `ScColumnFilter` no dice nada. -->
+  <ng-template #colFilter let-col let-display="display">
+    <p-column-filter
+      class="sc-datatable__filter"
+      [field]="col.field"
+      [type]="col.filter.type ?? 'text'"
+      [display]="display"
+      [matchMode]="col.filter.matchMode"
+      [placeholder]="col.filter.placeholder"
+      [ariaLabel]="col.filter.ariaLabel ?? col.header"
+      [filterOn]="col.filter.filterOn ?? 'enter'"
+      [showMenu]="display === 'menu' || (col.filter.showMenu ?? true)"
+      [showButtons]="col.filter.showButtons ?? true"
+      [showMatchModes]="col.filter.showMatchModes ?? true"
+      [showOperator]="col.filter.showOperator ?? true"
+      [showAddButton]="col.filter.showAddButton ?? true"
+    >
+      @if (col.filter.template) {
+      <ng-template #filter let-value let-filterCallback="filterCallback">
+        <ng-container *ngTemplateOutlet="col.filter.template; context: { $implicit: value, filterCallback: filterCallback }" />
+      </ng-template>
+      }
+    </p-column-filter>
   </ng-template>
 
   <ng-template

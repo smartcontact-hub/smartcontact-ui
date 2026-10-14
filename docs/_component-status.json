@@ -1,6 +1,6 @@
 {
   "generated": "component-audit.mjs",
-  "summary": "61 componentes · 25 custom · 9 standard · 27 extended · 49 usados en Supervisor · estado (DD-190): 33 ready, 27 experimental, 1 deprecated.",
+  "summary": "61 componentes · 25 custom · 9 standard · 27 extended · 50 usados en Supervisor · estado (DD-190): 33 ready, 27 experimental, 1 deprecated.",
   "components": [
     {
       "name": "avatar",
@@ -378,7 +378,7 @@
         "kit"
       ],
       "retirado": null,
-      "usedInSupervisor": 0,
+      "usedInSupervisor": 1,
       "cuando": "Para que el usuario decida qué columnas ve en una tabla.",
       "sobreObsoleto": []
     },
@@ -429,7 +429,7 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/table",
       "cva": false,
-      "inputs": 42,
+      "inputs": 43,
       "api": [
         "columnOrderChange",
         "columnResizeMode",
@@ -439,6 +439,7 @@
         "externalSort",
         "fill",
         "filterChange",
+        "filterDisplay",
         "filters",
         "first",
         "firstChange",
@@ -1278,7 +1279,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 13,
+      "usedInSupervisor": 14,
       "cuando": "Para elegir VARIAS de una lista larga. Si son pocas y caben, casillas sueltas se leen mejor.",
       "sobreObsoleto": [
         {
@@ -1558,7 +1559,7 @@
         "kit"
       ],
       "retirado": null,
-      "usedInSupervisor": 12,
+      "usedInSupervisor": 13,
       "cuando": "Para filtrar escribiendo. Solo se lleva el foco al entrar si buscar es LA acción de la pantalla.",
       "sobreObsoleto": []
     },
@@ -1645,7 +1646,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 62,
+      "usedInSupervisor": 64,
       "cuando": "Para elegir UNA de muchas. Si son pocas y caben a la vista, `sc-radiobutton` o `sc-selectbutton` ahorran un clic.",
       "sobreObsoleto": []
     },
@@ -1942,7 +1943,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 45,
+      "usedInSupervisor": 44,
       "cuando": "Para encender o apagar algo CON EFECTO INMEDIATO. Si el cambio se guarda al enviar el formulario, `sc-checkbox`.",
       "sobreObsoleto": []
     }

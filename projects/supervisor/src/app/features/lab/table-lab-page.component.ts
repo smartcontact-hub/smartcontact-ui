@@ -1,18 +1,23 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signal, viewChild, type TemplateRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signal, viewChild, type Signal, type TemplateRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import {
   ScAvatarComponent,
+  ScColumnSelectorComponent,
   ScDatatableComponent,
   ScInputNumberComponent,
   ScInputTextComponent,
+  ScMultiSelectComponent,
+  ScSearchComponent,
   ScSelectButtonComponent,
   ScSelectComponent,
   ScTagComponent,
   ScToggleSwitchComponent,
   type ScColumnCellContext,
   type ScColumnDef,
+  type ScColumnFilter,
+  type ScColumnFilterContext,
   type ScDatatableSortEvent,
 } from '@smartcontact-hub/components';
 import { ScIconComponent } from '@smartcontact-hub/icons';
@@ -26,9 +31,20 @@ import { TooltipModule } from 'primeng/tooltip';
 
 import { SidebarDemoService } from '../../core/services/sidebar-demo.service';
 import { ThemeService, type ThemeMode } from '../../core/services/theme.service';
-import { TABLE_LAB_AGENTS, type TableLabAgent } from './table-lab-page.data';
+import { TABLE_LAB_AGENTS, TABLE_LAB_COUNTRIES, TABLE_LAB_TEAMS, type TableLabAgent } from './table-lab-page.data';
 
 type Viewport = 'desktop' | 'tablet';
+
+/** Un interruptor del laboratorio que no es un prop de la tabla (columnas fijas, filtros, el buscador…). */
+interface LabToggle {
+  readonly label: string;
+  readonly hint: string;
+  /** Lo que mueve en código, debajo de la etiqueta. */
+  readonly code: string;
+  readonly ariaKey: string;
+  readonly value: Signal<boolean>;
+  readonly set: (on: boolean) => void;
+}
 
 /** Tipo de control (knob) de un arg de `sc-datatable`. Copiado del Playground de sc-docs: ambas
  *  páginas describen el MISMO contrato del componente, cada una en su propia app. */
@@ -75,6 +91,7 @@ const ARG_TYPES: readonly ArgType[] = [
   { name: 'resizableColumns', label: 'Redimensionar columnas', control: { kind: 'boolean' }, description: 'Se puede arrastrar el borde de una columna para hacerla más ancha o más estrecha.' },
   { name: 'columnResizeMode', label: 'Modo de redimensión', control: { kind: 'select', options: ['fit', 'expand'] }, description: '«fit»: la tabla no cambia de ancho. «expand»: crece con la columna.' },
   { name: 'reorderableColumns', label: 'Reordenar columnas', control: { kind: 'boolean' }, description: 'Se puede arrastrar una columna entera para cambiarla de sitio.' },
+  { name: 'filterDisplay', label: 'Dónde van los filtros', control: { kind: 'select', options: ['row', 'menu'] }, description: 'row: una fila bajo la cabecera con un control por columna. menu: un botón junto al título que abre sus reglas (cómo compara, Y/O, varias reglas).' },
 ];
 
 const DEFAULT_ARGS: Record<string, unknown> = {
@@ -105,13 +122,25 @@ const DEFAULT_ARGS: Record<string, unknown> = {
   resizableColumns: false,
   columnResizeMode: 'fit',
   reorderableColumns: false,
+  filterDisplay: 'row',
 };
 
-const CONTROL_GROUP_DEFS: readonly { title: string; open: boolean; names: readonly string[] }[] = [
-  { title: 'General', open: true, names: ['paginator', 'rows', 'first', 'stripedRows', 'showGridlines', 'size', 'loading', 'skeleton', 'skeletonRows'] },
-  { title: 'Selección y orden', open: false, names: ['selectionMode', 'selectionColumn', 'metaKeySelection', 'rowsFocusable', 'sortField', 'sortOrder', 'sortMode', 'multiSortMeta', 'removableSort', 'externalSort'] },
-  { title: 'Scroll y tamaño', open: false, names: ['scrollable', 'scrollHeight', 'stickyHeader', 'virtualScroll', 'tableMinWidth'] },
-  { title: 'Columnas', open: false, names: ['resizableColumns', 'columnResizeMode', 'reorderableColumns'] },
+/** Un botón del racimo por grupo: su icono, sus knobs y, si los tiene, los interruptores del laboratorio. */
+interface ControlGroupDef {
+  readonly title: string;
+  readonly icon: string;
+  readonly names: readonly string[];
+  readonly toggles?: 'selection' | 'columns' | 'filters';
+  /** «Columnas extra», el único control del laboratorio que es un número. */
+  readonly extraColumns?: boolean;
+}
+
+const CONTROL_GROUP_DEFS: readonly ControlGroupDef[] = [
+  { title: 'General', icon: 'tune', names: ['paginator', 'rows', 'first', 'stripedRows', 'showGridlines', 'size', 'loading', 'skeleton', 'skeletonRows'] },
+  { title: 'Selección y orden', icon: 'checklist', toggles: 'selection', names: ['selectionMode', 'selectionColumn', 'metaKeySelection', 'rowsFocusable', 'sortField', 'sortOrder', 'sortMode', 'multiSortMeta', 'removableSort', 'externalSort'] },
+  { title: 'Scroll y tamaño', icon: 'swap_vert', names: ['scrollable', 'scrollHeight', 'stickyHeader', 'virtualScroll', 'tableMinWidth'] },
+  { title: 'Columnas', icon: 'view_column', toggles: 'columns', extraColumns: true, names: ['resizableColumns', 'columnResizeMode', 'reorderableColumns'] },
+  { title: 'Filtros', icon: 'filter_list', toggles: 'filters', names: ['filterDisplay'] },
 ];
 
 /** Máximo de columnas de relleno que añade «Columnas extra»: suficientes para forzar el scroll
@@ -135,10 +164,13 @@ const MAX_EXTRA_COLUMNS = 8;
     PopoverModule,
     RatingModule,
     ScAvatarComponent,
+    ScColumnSelectorComponent,
     ScDatatableComponent,
     ScIconComponent,
     ScInputNumberComponent,
     ScInputTextComponent,
+    ScMultiSelectComponent,
+    ScSearchComponent,
     ScSelectButtonComponent,
     ScSelectComponent,
     ScTagComponent,
@@ -176,7 +208,49 @@ export class TableLabPageComponent {
   protected readonly extraColumnsCount = signal(0);
   protected readonly maxExtraColumns = MAX_EXTRA_COLUMNS;
 
-  protected readonly columns = computed<readonly ScColumnDef<TableLabAgent>[]>(() => [
+  /** «Filtros por columna» (primeng.dev/table «Filter»): cada columna lleva el filtro que le toca a su dato. */
+  protected readonly columnFilters = signal(false);
+  /** «Buscador global»: un campo encima de la tabla que busca en agente, equipo y país, y «Limpiar». */
+  protected readonly globalSearch = signal(false);
+  protected readonly globalFilterFields: readonly string[] = ['name', 'team', 'country'];
+  protected readonly searchText = signal('');
+  /** «Cabecera agrupada» (primeng.dev/table «Column Group»): dos grupos sobre las columnas. */
+  protected readonly groupedHeader = signal(false);
+  /** «Elegir columnas» (primeng.dev/table «Column Toggle»): `sc-column-selector` encima de la tabla. */
+  protected readonly columnToggle = signal(false);
+  protected readonly visibleColumns = signal<readonly string[] | undefined>(undefined);
+
+  protected readonly teamFilterTpl = viewChild<TemplateRef<ScColumnFilterContext>>('teamFilterTpl');
+  protected readonly countryFilterTpl = viewChild<TemplateRef<ScColumnFilterContext>>('countryFilterTpl');
+  protected readonly statusFilterTpl = viewChild<TemplateRef<ScColumnFilterContext>>('statusFilterTpl');
+  protected readonly teamOptions = TABLE_LAB_TEAMS.map((team) => ({ label: team, value: team }));
+  protected readonly countryOptions = TABLE_LAB_COUNTRIES.map((country) => ({ label: country, value: country }));
+  protected readonly statusOptions = (['online', 'busy', 'offline'] as const).map((status) => ({ label: this.statusLabel(status), value: status }));
+
+  private readonly filters = computed<Partial<Record<string, ScColumnFilter>>>(() =>
+    this.columnFilters()
+      ? {
+          name: { placeholder: 'Agente', filterOn: 'input' },
+          team: { matchMode: 'equals', showMenu: false, template: this.teamFilterTpl() },
+          country: { matchMode: 'in', showMenu: false, template: this.countryFilterTpl() },
+          status: { matchMode: 'equals', showMenu: false, template: this.statusFilterTpl() },
+          // «Mayor o igual»: lo útil en una cifra («4 estrellas o más», «10 tickets o más»), sin menú ni flechas, que en
+          // la fila no caben al lado del número.
+          rating: { type: 'numeric', matchMode: 'gte', showMenu: false, showButtons: false, placeholder: '≥' },
+          tickets: { type: 'numeric', matchMode: 'gte', showMenu: false, showButtons: false, placeholder: '≥' },
+        }
+      : {},
+  );
+  private readonly groups = computed<Partial<Record<string, string>>>(() =>
+    this.groupedHeader()
+      ? { name: 'Datos del agente', team: 'Datos del agente', country: 'Datos del agente', status: 'Actividad', rating: 'Actividad', tickets: 'Actividad' }
+      : {},
+  );
+
+  protected readonly columns = computed<readonly ScColumnDef<TableLabAgent>[]>(() => {
+    const filters = this.filters();
+    const groups = this.groups();
+    const base: ScColumnDef<TableLabAgent>[] = [
     { field: 'id', header: '', headerAriaLabel: 'Avatar', cellTemplate: this.avatarTpl(), width: '3.5rem', skeleton: 'avatar' },
     { field: 'name', header: 'Agente', sortable: true, frozen: this.freezeFirstColumn() || undefined, rowHeader: this.freezeFirstColumn(), width: '12rem' },
     { field: 'team', header: 'Equipo', sortable: true, width: '10rem' },
@@ -193,16 +267,44 @@ export class TableLabPageComponent {
     ...(this.columnPickButton()
       ? [{ field: 'pick', header: '', headerAriaLabel: 'Elegir', cellTemplate: this.pickTpl(), width: '4rem', stopRowClick: true, skeleton: 'action' as const }]
       : []),
-  ]);
+    ];
+    return base.map((col) => ({ ...col, filter: filters[col.field], group: groups[col.field] }));
+  });
+
+  /** Las columnas que ofrece «Elegir columnas»: todas, con «Agente» fija porque nombra la fila. */
+  protected readonly selectorColumns = computed(() =>
+    this.columns().map((col) => ({ key: col.field, label: col.header || col.headerAriaLabel || col.field, locked: col.field === 'name' })),
+  );
+
+  protected onColumnToggleChange(on: boolean): void {
+    this.columnToggle.set(on);
+    // Apagado, vuelven todas: la tabla sin `visibleColumns` pinta las que declara.
+    if (!on) this.visibleColumns.set(undefined);
+  }
+
+  /** «Reordenar columnas»: la tabla no mueve nada por su cuenta, avisa del orden nuevo y la pantalla lo aplica. */
+  protected onColumnOrderChange(fields: readonly string[]): void {
+    this.visibleColumns.set(fields);
+    this.lastEvent.set(`columnOrderChange: ${fields.join(', ')}`);
+  }
+
+  protected onSearch(table: ScDatatableComponent<TableLabAgent>, text: string): void {
+    this.searchText.set(text);
+    table.filterGlobal(text, 'contains');
+  }
+
+  /** El «Clear» del ejemplo «Filter»: filtros, orden y página fuera, y el buscador vacío (ese texto es de la pantalla). */
+  protected clearTable(table: ScDatatableComponent<TableLabAgent>): void {
+    this.searchText.set('');
+    table.clear();
+  }
 
   // Los knobs reales de sc-datatable, igual que el Playground de sc-docs.
   protected readonly liveArgs = signal<Record<string, unknown>>({ ...DEFAULT_ARGS });
-  protected readonly controlGroups: readonly { title: string; open: boolean; knobs: readonly ArgType[] }[] =
-    CONTROL_GROUP_DEFS.map((g) => ({
-      title: g.title,
-      open: g.open,
-      knobs: g.names.map((n) => ARG_TYPES.find((at) => at.name === n)).filter((at): at is ArgType => !!at),
-    }));
+  protected readonly controlGroups: readonly (ControlGroupDef & { knobs: readonly ArgType[] })[] = CONTROL_GROUP_DEFS.map((g) => ({
+    ...g,
+    knobs: g.names.map((n) => ARG_TYPES.find((at) => at.name === n)).filter((at): at is ArgType => !!at),
+  }));
 
   protected setArg(name: string, value: unknown): void {
     this.liveArgs.update((args) => ({ ...args, [name]: value }));
@@ -273,6 +375,28 @@ export class TableLabPageComponent {
   protected pickAgent(agent: TableLabAgent): void {
     this.lastEvent.set(`Botón de la fila: ${agent.name}`);
   }
+
+  /** Los interruptores del laboratorio que no son props de la tabla, por grupo: una lista y una plantilla. */
+  protected readonly labToggles: Readonly<Record<'selection' | 'columns' | 'filters', readonly LabToggle[]>> = {
+    selection: [
+      { label: 'Botón en columna', code: 'cellTemplate', ariaKey: 'lab.tabla.pick_label', value: this.columnPickButton, set: (on) => this.columnPickButton.set(on),
+        hint: 'Añade al final un botón por fila que elige ese agente sin marcar la fila. Va en una plantilla de celda, no es un prop de la tabla.' },
+    ],
+    columns: [
+      { label: 'Congelar «Agente»', code: 'frozen', ariaKey: 'lab.tabla.freeze_label', value: this.freezeFirstColumn, set: (on) => this.freezeFirstColumn.set(on),
+        hint: 'La columna «Agente» se queda fija aunque la tabla se desplace de lado.' },
+      { label: 'Cabecera agrupada', code: 'group', ariaKey: 'lab.tabla.grouped_label', value: this.groupedHeader, set: (on) => this.groupedHeader.set(on),
+        hint: 'Una fila encima de los títulos agrupa las columnas: «Datos del agente» y «Actividad».' },
+      { label: 'Elegir columnas', code: 'visibleColumns', ariaKey: 'lab.tabla.column_toggle_label', value: this.columnToggle, set: (on) => this.onColumnToggleChange(on),
+        hint: 'Pone encima de la tabla el selector de columnas del DS: cuáles se ven y en qué orden.' },
+    ],
+    filters: [
+      { label: 'Filtros por columna', code: 'filter', ariaKey: 'lab.tabla.column_filters_label', value: this.columnFilters, set: (on) => this.columnFilters.set(on),
+        hint: 'Cada columna lleva su filtro: texto en «Agente», un desplegable en «Equipo» y «Estado», varios países a la vez, y números en «Valoración» y «Tickets».' },
+      { label: 'Buscador global', code: 'filterGlobal()', ariaKey: 'lab.tabla.global_search_label', value: this.globalSearch, set: (on) => this.globalSearch.set(on),
+        hint: 'Un buscador encima de la tabla que busca en agente, equipo y país a la vez, y «Limpiar», que quita filtros, orden y página.' },
+    ],
+  };
 
   /** «first» no hace nada sin «paginator»: PrimeNG solo lo suma al índice de fila cuando hay
    *  páginas (`primeng-table.mjs`: `paginator() ? first() + rowIndex : rowIndex`). Deshabilitarlo

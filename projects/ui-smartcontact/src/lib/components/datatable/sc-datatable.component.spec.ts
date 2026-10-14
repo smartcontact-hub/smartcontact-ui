@@ -521,3 +521,87 @@ describe('sc-datatable · orden', () => {
     fixture.destroy();
   });
 });
+
+describe('sc-datatable · filtros y cabecera agrupada', () => {
+  const FILAS: Fila[] = [{ id: 2, nombre: 'Berta' }, { id: 1, nombre: 'Anna' }, { id: 3, nombre: 'Carla' }];
+  const COLS_FILTRO: readonly ScColumnDef<Fila>[] = [
+    { field: 'id', header: 'ID', sortable: true },
+    { field: 'nombre', header: 'Nombre', filter: { filterOn: 'input' } },
+  ];
+
+  async function montarFiltrable(inputs: Record<string, unknown> = {}, cols: readonly ScColumnDef<Fila>[] = COLS_FILTRO) {
+    TestBed.configureTestingModule({ imports: [ScDatatableComponent] });
+    const fixture = TestBed.createComponent<ScDatatableComponent<Fila>>(ScDatatableComponent);
+    fixture.componentRef.setInput('columns', cols);
+    fixture.componentRef.setInput('value', FILAS);
+    for (const [k, v] of Object.entries(inputs)) fixture.componentRef.setInput(k, v);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    return fixture;
+  }
+
+  async function escribirFiltro(fixture: ComponentFixture<ScDatatableComponent<Fila>>, texto: string) {
+    const input = (fixture.nativeElement as HTMLElement).querySelector<HTMLInputElement>('.sc-datatable__filter-row input')!;
+    input.value = texto;
+    input.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+    await fixture.whenStable();
+  }
+
+  const nombresPintados = (root: HTMLElement) =>
+    [...root.querySelectorAll('tbody tr')].map((tr) => tr.children[1]?.textContent?.trim());
+
+  it('al borrar el último filtro, el paginador vuelve a contar todas las filas', async () => {
+    /* p-table solo recalcula la cuenta si queda algún filtro: borrar «Marta» dejaba 1 página para 150 filas. */
+    const fixture = await montarFiltrable({ paginator: true, rows: 1 });
+    const paginas = () => (fixture.nativeElement as HTMLElement).querySelectorAll('.p-paginator-page').length;
+    expect(paginas()).toBe(3);
+    await escribirFiltro(fixture, 'An');
+    expect(paginas()).toBe(1);
+    await escribirFiltro(fixture, '');
+    expect(paginas()).toBe(3);
+    fixture.destroy();
+  });
+
+  it('las columnas seguidas con el mismo group comparten una celda encima; las demás ocupan las dos filas', async () => {
+    const fixture = await montarFiltrable({}, [
+      { field: 'id', header: 'ID', group: 'Agente' },
+      { field: 'nombre', header: 'Nombre', group: 'Agente' },
+      { field: 'extra', header: 'Extra' },
+    ]);
+    const filasCabecera = (fixture.nativeElement as HTMLElement).querySelectorAll('thead tr');
+    expect(filasCabecera.length).toBe(2);
+    const grupo = filasCabecera[0].querySelector('th.sc-datatable__group')!;
+    expect(grupo.textContent?.trim()).toBe('Agente');
+    expect(grupo.getAttribute('colspan')).toBe('2');
+    expect(filasCabecera[0].querySelector('th[data-field="extra"]')!.getAttribute('rowspan')).toBe('2');
+    expect([...filasCabecera[1].querySelectorAll('th')].map((th) => th.textContent?.trim())).toEqual(['ID', 'Nombre']);
+    fixture.destroy();
+  });
+
+  it('al pasar de fila a menú con un filtro puesto, el filtro se vacía y el menú nace con su lista de reglas', async () => {
+    /* En fila, p-table guarda un valor suelto; en menú, una lista. El menú heredaba el valor y no se abría. */
+    const fixture = await montarFiltrable();
+    await escribirFiltro(fixture, 'An');
+    expect(nombresPintados(fixture.nativeElement)).toEqual(['Anna']);
+    fixture.componentRef.setInput('filterDisplay', 'menu');
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(nombresPintados(fixture.nativeElement)).toEqual(['Berta', 'Anna', 'Carla']);
+    const filtros = (fixture.componentInstance as unknown as { table: () => { filters: Record<string, unknown> } }).table().filters;
+    expect(Array.isArray(filtros['nombre'])).toBe(true);
+    expect((fixture.nativeElement as HTMLElement).querySelector('.sc-datatable__filter-row')).toBeNull();
+    fixture.destroy();
+  });
+
+  it('clear() quita filtro y orden, y las filas vuelven al orden de value', async () => {
+    const fixture = await montarFiltrable({ sortField: 'id' });
+    await escribirFiltro(fixture, 'a');
+    expect(nombresPintados(fixture.nativeElement)).toEqual(['Anna']);
+    fixture.componentInstance.clear();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(nombresPintados(fixture.nativeElement)).toEqual(['Berta', 'Anna', 'Carla']);
+    fixture.destroy();
+  });
+});

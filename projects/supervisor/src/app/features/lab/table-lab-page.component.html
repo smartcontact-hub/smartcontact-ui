@@ -20,8 +20,12 @@
     <div class="table-lab__frame" [style.max-width.rem]="viewport() === 'tablet' ? 48 : null">
       @for (remountKey of [tableRemountKey()]; track remountKey) {
         <sc-datatable
+          #dt
           [value]="agents"
           [columns]="columns()"
+          [visibleColumns]="visibleColumns()"
+          [globalFilterFields]="globalFilterFields"
+          [filterDisplay]="$any(liveArgs()['filterDisplay'])"
           dataKey="id"
           variant="list"
           [paginator]="$any(liveArgs()['paginator'])"
@@ -55,10 +59,30 @@
           [resizableColumns]="$any(liveArgs()['resizableColumns'])"
           [columnResizeMode]="$any(liveArgs()['columnResizeMode'])"
           [reorderableColumns]="$any(liveArgs()['reorderableColumns'])"
+          (columnOrderChange)="onColumnOrderChange($event)"
         >
           <!-- Lo que hay marcado, como la barra de los ejemplos de selección de primeng.dev: sin ella, marcar
                una fila no se nota más que en su color. -->
           <div scTableCaption class="table-lab__caption">
+            @if (globalSearch()) {
+              <sc-search
+                size="sm"
+                [value]="searchText()"
+                (valueChange)="onSearch(dt, $event)"
+                [placeholder]="'lab.tabla.search_placeholder' | translate"
+              />
+              <button pButton outlined severity="secondary" size="small" (click)="clearTable(dt)">
+                <sc-icon name="filter_alt_off" [size]="16" />
+                <span>Limpiar</span>
+              </button>
+            }
+            @if (columnToggle()) {
+              <sc-column-selector
+                [columns]="selectorColumns()"
+                storageKey="sc-lab-tabla-columnas"
+                (orderedVisibleChange)="visibleColumns.set($event)"
+              />
+            }
             @if (selectsByRow()) {
               <span class="sc-text-caption-regular table-lab__keys">
                 <kbd>↑</kbd> <kbd>↓</kbd> moverse, <kbd>Espacio</kbd> o <kbd>Intro</kbd> marcar
@@ -110,6 +134,46 @@
     />
     <span class="sc-text-caption-regular">{{ agent.country }}</span>
   </span>
+</ng-template>
+
+<!-- Los filtros con control propio, como «Agent» y «Status» en el ejemplo «Filter» de primeng.dev: reciben el valor y
+     `filterCallback`. -->
+<ng-template #teamFilterTpl let-value let-filterCallback="filterCallback">
+  <sc-select
+    size="sm"
+    [options]="teamOptions"
+    optionValue="value"
+    [value]="value"
+    [showClear]="true"
+    [placeholder]="'lab.tabla.filter_any' | translate"
+    [ariaLabel]="'lab.tabla.filter_team' | translate"
+    (valueChange)="filterCallback($event)"
+  />
+</ng-template>
+
+<ng-template #countryFilterTpl let-value let-filterCallback="filterCallback">
+  <sc-multiselect
+    size="sm"
+    [options]="countryOptions"
+    optionValue="value"
+    [value]="value ?? []"
+    [placeholder]="'lab.tabla.filter_any' | translate"
+    [ariaLabel]="'lab.tabla.filter_country' | translate"
+    (valueChange)="filterCallback($event?.length ? $event : null)"
+  />
+</ng-template>
+
+<ng-template #statusFilterTpl let-value let-filterCallback="filterCallback">
+  <sc-select
+    size="sm"
+    [options]="statusOptions"
+    optionValue="value"
+    [value]="value"
+    [showClear]="true"
+    [placeholder]="'lab.tabla.filter_any' | translate"
+    [ariaLabel]="'lab.tabla.filter_status' | translate"
+    (valueChange)="filterCallback($event)"
+  />
 </ng-template>
 
 <ng-template #pickTpl let-agent>
@@ -181,19 +245,75 @@
   <button pButton rounded severity="secondary" [attr.aria-label]="'lab.tabla.context_label' | translate" (click)="contextPop.toggle($event)">
     <sc-icon name="devices" [size]="16" />
   </button>
-  <button pButton rounded severity="secondary" [attr.aria-label]="controlGroups[0].title" (click)="generalPop.toggle($event)">
-    <sc-icon name="tune" [size]="16" />
-  </button>
-  <button pButton rounded severity="secondary" [attr.aria-label]="controlGroups[1].title" (click)="selectionPop.toggle($event)">
-    <sc-icon name="checklist" [size]="16" />
-  </button>
-  <button pButton rounded severity="secondary" [attr.aria-label]="controlGroups[2].title" (click)="scrollPop.toggle($event)">
-    <sc-icon name="swap_vert" [size]="16" />
-  </button>
-  <button pButton rounded severity="secondary" [attr.aria-label]="controlGroups[3].title" (click)="columnsPop.toggle($event)">
-    <sc-icon name="view_column" [size]="16" />
-  </button>
+  @for (group of controlGroups; track group.title) {
+    <button pButton rounded severity="secondary" [attr.aria-label]="group.title" (click)="groupPop.toggle($event)">
+      <sc-icon [name]="group.icon" [size]="16" />
+    </button>
+    <p-popover #groupPop [ariaLabel]="group.title">
+      <div class="table-lab-controls">
+        <p class="sc-text-body-semibold table-lab-controls__title">{{ group.title }}</p>
+        <ng-container *ngTemplateOutlet="knobGrid; context: { $implicit: group.knobs }" />
+        @if (group.toggles; as key) {
+          <ng-container *ngTemplateOutlet="labToggleGrid; context: { $implicit: labToggles[key] }" />
+        }
+        @if (group.extraColumns) {
+          <div class="table-lab-controls__grid">
+            <div class="table-lab-controls__label">
+              <span class="table-lab-controls__label-row">
+                <span class="sc-text-body-semibold">Columnas extra</span>
+                <sc-icon
+                  name="info"
+                  [size]="12"
+                  class="table-lab-controls__hint"
+                  pTooltip="Añade columnas de relleno para forzar el scroll horizontal: con solo 6 columnas la tabla siempre cabe."
+                  tooltipPosition="top"
+                  tooltipEvent="both"
+                  tabindex="0"
+                />
+              </span>
+              <code class="table-lab-controls__label-code sc-text-caption-regular">columns.length</code>
+            </div>
+            <div class="table-lab-controls__field">
+              <sc-inputnumber
+                [value]="extraColumnsCount()"
+                [min]="0"
+                [max]="maxExtraColumns"
+                (valueChange)="extraColumnsCount.set($any($event) ?? 0)"
+              />
+            </div>
+          </div>
+        }
+      </div>
+    </p-popover>
+  }
 </div>
+
+<!-- Los interruptores del laboratorio que no son props de la tabla: misma fila que un knob, con lo que mueven en
+     código debajo de la etiqueta. -->
+<ng-template #labToggleGrid let-toggles>
+  <div class="table-lab-controls__grid">
+    @for (toggle of toggles; track toggle.label) {
+      <div class="table-lab-controls__label">
+        <span class="table-lab-controls__label-row">
+          <span class="sc-text-body-semibold">{{ toggle.label }}</span>
+          <sc-icon
+            name="info"
+            [size]="12"
+            class="table-lab-controls__hint"
+            [pTooltip]="toggle.hint"
+            tooltipPosition="top"
+            tooltipEvent="both"
+            tabindex="0"
+          />
+        </span>
+        <code class="table-lab-controls__label-code sc-text-caption-regular">{{ toggle.code }}</code>
+      </div>
+      <div class="table-lab-controls__field">
+        <sc-toggleswitch [checked]="toggle.value()" (checkedChange)="toggle.set($event)" [ariaLabel]="toggle.ariaKey | translate" />
+      </div>
+    }
+  </div>
+</ng-template>
 
 <p-popover #contextPop [ariaLabel]="'lab.tabla.context_label' | translate">
   <div class="table-lab-controls" data-testid="table-lab-controls-context">
@@ -276,105 +396,5 @@
         />
       </div>
     </div>
-  </div>
-</p-popover>
-
-<p-popover #generalPop [ariaLabel]="controlGroups[0].title">
-  <div class="table-lab-controls" data-testid="table-lab-controls-general">
-    <p class="sc-text-body-semibold table-lab-controls__title">{{ controlGroups[0].title }}</p>
-    <ng-container *ngTemplateOutlet="knobGrid; context: { $implicit: controlGroups[0].knobs }" />
-  </div>
-</p-popover>
-
-<p-popover #selectionPop [ariaLabel]="controlGroups[1].title">
-  <div class="table-lab-controls" data-testid="table-lab-controls-selection">
-    <p class="sc-text-body-semibold table-lab-controls__title">{{ controlGroups[1].title }}</p>
-    <ng-container *ngTemplateOutlet="knobGrid; context: { $implicit: controlGroups[1].knobs }" />
-    <div class="table-lab-controls__grid">
-      <div class="table-lab-controls__label">
-        <span class="table-lab-controls__label-row">
-          <span class="sc-text-body-semibold">Botón en columna</span>
-          <sc-icon
-            name="info"
-            [size]="12"
-            class="table-lab-controls__hint"
-            pTooltip="Añade al final un botón por fila que elige ese agente sin marcar la fila. Va en una plantilla de celda, no es un prop de la tabla."
-            tooltipPosition="top"
-            tooltipEvent="both"
-            tabindex="0"
-          />
-        </span>
-        <code class="table-lab-controls__label-code sc-text-caption-regular">cellTemplate</code>
-      </div>
-      <div class="table-lab-controls__field">
-        <sc-toggleswitch
-          [checked]="columnPickButton()"
-          (checkedChange)="columnPickButton.set($event)"
-          [ariaLabel]="'lab.tabla.pick_label' | translate"
-        />
-      </div>
-    </div>
-  </div>
-</p-popover>
-
-<p-popover #scrollPop [ariaLabel]="controlGroups[2].title">
-  <div class="table-lab-controls" data-testid="table-lab-controls-scroll">
-    <p class="sc-text-body-semibold table-lab-controls__title">{{ controlGroups[2].title }}</p>
-    <ng-container *ngTemplateOutlet="knobGrid; context: { $implicit: controlGroups[2].knobs }" />
-  </div>
-</p-popover>
-
-<p-popover #columnsPop [ariaLabel]="controlGroups[3].title">
-  <div class="table-lab-controls" data-testid="table-lab-controls-columns">
-    <p class="sc-text-body-semibold table-lab-controls__title">{{ controlGroups[3].title }}</p>
-    <div class="table-lab-controls__grid">
-      <div class="table-lab-controls__label">
-        <span class="table-lab-controls__label-row">
-          <span class="sc-text-body-semibold">Congelar «Agente»</span>
-          <sc-icon
-            name="info"
-            [size]="12"
-            class="table-lab-controls__hint"
-            pTooltip="La columna «Agente» se queda fija aunque la tabla se desplace de lado."
-            tooltipPosition="top"
-            tooltipEvent="both"
-            tabindex="0"
-          />
-        </span>
-        <code class="table-lab-controls__label-code sc-text-caption-regular">frozen</code>
-      </div>
-      <div class="table-lab-controls__field">
-        <sc-toggleswitch
-          [checked]="freezeFirstColumn()"
-          (checkedChange)="freezeFirstColumn.set($event)"
-          [ariaLabel]="'lab.tabla.freeze_label' | translate"
-        />
-      </div>
-
-      <div class="table-lab-controls__label">
-        <span class="table-lab-controls__label-row">
-          <span class="sc-text-body-semibold">Columnas extra</span>
-          <sc-icon
-            name="info"
-            [size]="12"
-            class="table-lab-controls__hint"
-            pTooltip="Añade columnas de relleno para forzar el scroll horizontal: con solo 6 columnas la tabla siempre cabe."
-            tooltipPosition="top"
-            tooltipEvent="both"
-            tabindex="0"
-          />
-        </span>
-        <code class="table-lab-controls__label-code sc-text-caption-regular">columns.length</code>
-      </div>
-      <div class="table-lab-controls__field">
-        <sc-inputnumber
-          [value]="extraColumnsCount()"
-          [min]="0"
-          [max]="maxExtraColumns"
-          (valueChange)="extraColumnsCount.set($any($event) ?? 0)"
-        />
-      </div>
-    </div>
-    <ng-container *ngTemplateOutlet="knobGrid; context: { $implicit: controlGroups[3].knobs }" />
   </div>
 </p-popover>

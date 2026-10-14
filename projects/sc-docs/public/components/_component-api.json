@@ -2402,6 +2402,16 @@
           }
         },
         {
+          "nombre": "filterDisplay",
+          "clase": "input",
+          "tipo": "'row' | 'menu'",
+          "porDefecto": "'row'",
+          "requerido": false,
+          "descripcion": "Dónde van los filtros de las columnas con `ScColumnDef.filter` (primeng.dev/table «Filter»): `row`, una fila bajo la cabecera con un control por columna (el «Basic»); `menu`, un botón junto al título que abre sus reglas (el «Advanced»).",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
           "nombre": "sortChange",
           "clase": "output",
           "tipo": "ScDatatableSortEvent",
