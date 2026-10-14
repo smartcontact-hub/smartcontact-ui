@@ -15,16 +15,17 @@ async function cabeEnTabla(control: Locator) {
   });
 }
 
-// DD-176: el «Column Toggle» de primeng.dev: el botón «Columnas» con su engranaje abre un globo con una casilla por columna.
-test('Columnas es un botón con su engranaje y conteo accesible, conserva selección y teclado', async ({ page }) => {
+// DD-176: el «Column Toggle» de primeng.dev: el botón «Columnas» abre un globo con una casilla por columna. Desde la revisión de producto
+// va a la derecha de la barra y solo con su icono (su nombre accesible sigue diciendo «Columnas»).
+test('Columnas es un botón solo con icono y conteo accesible, conserva selección y teclado', async ({ page }) => {
   await forceLightTheme(page);
   await disableAnimations(page);
   await goto(page, 'admin/grupos');
   // Nueve: «Asignar agentes» salió del listado y su acción va en la cifra de agentes (DD-159).
   const control = selector(page).getByRole('button');
   await expect(control).toHaveAccessibleName('Columnas, 7 de 9');
-  await expect(selector(page).locator('.sc-icon-font--settings')).toHaveCount(1);
-  await expect(control).toContainText('Columnas');
+  await expect(selector(page).locator('.sc-icon-font--view_column')).toHaveCount(1);
+  await expect(control.locator('.p-button-label')).toHaveCount(0);
   await control.press('Enter');
   const lista = page.getByRole('dialog', { name: 'Columnas' });
   await lista.getByRole('checkbox', { name: 'ID', exact: true }).click();

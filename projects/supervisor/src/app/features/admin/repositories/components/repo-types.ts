@@ -66,6 +66,10 @@ export interface RepoPageConfig<T extends RepoEntity> {
    * lista.
    */
   readonly editRoute?: string;
+  /** Suma «Duplicar» al menú de la fila: la copia nace con un nombre que no se repite. */
+  readonly duplicable?: boolean;
+  /** Suma el botón «Columnas» (elegir y ordenar): la primera columna va fija. Se guarda por `filePrefix`. */
+  readonly columnChoices?: boolean;
 }
 
 /** Minimal store contract every repo instance must satisfy. */

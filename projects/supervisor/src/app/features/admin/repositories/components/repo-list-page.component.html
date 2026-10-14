@@ -35,6 +35,8 @@
   [rows]="sorted()"
   [empty]="false"
   [columns]="columns()"
+  [columnChoices]="columnDefs()"
+  [columnStorageKey]="columnPrefKey()"
   [searchPlaceholder]="'repositories.search_placeholder' | translate: { entity: entityPlural() }"
   [searchFn]="matchesSearch"
   [(query)]="searchQuery"

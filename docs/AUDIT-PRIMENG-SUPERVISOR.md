@@ -35,7 +35,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **44 props nativas no expuestas**: `ariaFilterLabel`, `autoOptionFocus`, `autocomplete`, `autofocus`, `autofocusFilter`, `chipIcon`, `dataKey`, `displaySelectedLabel`, `dropdownIcon`, `filterFields`, `filterLocale`, `filterMatchMode`, `filterPlaceHolder`, `filterValue`, `fluid`, `focusOnHover`, `group`, `highlightOnSelect`, `id`, `lazy`, `loading`, `loadingIcon`, `motionOptions`, `optionGroupChildren`, `optionGroupLabel`, `overlayOptions`, `overlayVisible`, `panelStyle`, `panelStyleClass`, `readonly`, `resetFilterOnHide`, `scrollHeight`, `selectAll`, `selectOnFocus`, `showHeader`, `tabindex`, `tooltip`, `tooltipPosition`, `tooltipPositionStyle`, `tooltipStyleClass`, `variant`, `virtualScroll`, `virtualScrollItemSize`, `virtualScrollOptions`
 
-### `sc-button` · 187 usos · primeng/button, primeng/tooltip
+### `sc-button` · 186 usos · primeng/button, primeng/tooltip
 
 **43 props nativas no expuestas**: `appendTo`, `autoHide`, `autofocus`, `badge`, `badgeSeverity`, `buttonProps`, `content`, `escape`, `fitContent`, `fluid`, `hideDelay`, `hideOnEscape`, `hostName`, `iconPos`, `life`, `link`, `loadingIcon`, `outlined`, `pButton`, `pButtonIconPT`, `pButtonLabelPT`, `pButtonLabelUnstyled`, `pButtonPT`, `pButtonUnstyled`, `pTooltipPT`, `pTooltipUnstyled`, `plain`, `positionLeft`, `positionStyle`, `positionTop`, `severity`, `showDelay`, `showOnEllipsis`, `style`, `styleClass`, `tabindex`, `text`, `tooltipDisabled`, `tooltipEvent`, `tooltipOptions`, `tooltipPosition`, `tooltipStyleClass`, `tooltipZIndex`
 
@@ -151,7 +151,7 @@ Expone todo lo que PrimeNG documenta.
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-divider` · 24 usos · primeng/divider
+### `sc-divider` · 23 usos · primeng/divider
 
 Expone todo lo que PrimeNG documenta.
 

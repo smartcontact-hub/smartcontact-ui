@@ -38,23 +38,23 @@ test('las columnas ordenan: por niveles, primero la de uno', async ({ page }) =>
   await expect(filas(page).last()).toContainText('Atención al cliente');
 });
 
-test('importar y descargar van detrás de un solo icono, con su menú', async ({ page }) => {
+test('importar, exportar y descargar la plantilla van detrás de un solo botón «Acciones», con su menú', async ({ page }) => {
   await goto(page, 'admin/tipificaciones');
   await expect(page.getByRole('button', { name: 'Exportar', exact: true })).toHaveCount(0);
-  const icono = page.getByRole('button', { name: 'Importar o descargar' });
+  const icono = page.getByRole('button', { name: 'Acciones', exact: true });
   await expect(icono).toHaveAttribute('aria-haspopup', 'menu');
   await icono.click();
   const menu = page.getByRole('menu');
-  await expect(menu.getByRole('menuitem')).toHaveText(['Importar…', 'Descargar']);
+  await expect(menu.getByRole('menuitem')).toHaveText(['Importar…', 'Exportar', 'Descargar plantilla']);
 
   const descarga = page.waitForEvent('download');
-  await menu.getByRole('menuitem', { name: 'Descargar' }).click();
+  await menu.getByRole('menuitem', { name: 'Exportar', exact: true }).click();
   expect((await descarga).suggestedFilename()).toMatch(/^tipificaciones.*\.xlsx$/);
 });
 
 test('importar: la vista previa dice qué entra, cada error con su línea y las que ya existen', async ({ page }) => {
   await goto(page, 'admin/tipificaciones');
-  await page.getByRole('button', { name: 'Importar o descargar' }).click();
+  await page.getByRole('button', { name: 'Acciones', exact: true }).click();
   await page.getByRole('menuitem', { name: 'Importar…' }).click();
   const dialogo = page.getByRole('dialog', { name: 'Importar tipificaciones' });
   const plantilla = page.waitForEvent('download');

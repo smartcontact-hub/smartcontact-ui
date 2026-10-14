@@ -32,10 +32,14 @@
   [rows]="tabRows()"
   [empty]="templates().length === 0"
   [columns]="columns()"
+  [columnChoices]="columnDefs()"
+  [columnStorageKey]="columnPrefKey"
   [searchPlaceholder]="'common.search' | translate"
   [searchFn]="matchesSearch"
   [(query)]="searchQuery"
   [rowMenu]="rowMenu"
+  exportable
+  (exportRequest)="onExport($event)"
   selectable
   [bulkEntity]="bulkEntity()"
   [rowLabel]="rowLabel"
