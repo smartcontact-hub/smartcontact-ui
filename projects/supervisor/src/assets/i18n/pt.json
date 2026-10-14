@@ -2732,7 +2732,14 @@
       "filter_status": "Filtrar por estado",
       "editable_label": "Colunas editáveis",
       "edit_name": "Nome do agente",
-      "edit_tickets": "Tickets abertos"
+      "edit_tickets": "Tickets abertos",
+      "row_detail_label": "Detalhe da linha",
+      "group_footer_label": "Rodapé do grupo",
+      "pin_rows_label": "Fixar linhas",
+      "pin_row": "Fixar {{name}} no topo",
+      "unpin_row": "Soltar {{name}}",
+      "expand": "Expandir",
+      "collapse": "Recolher"
     },
     "arbol": {
       "context_label": "Contexto do app",

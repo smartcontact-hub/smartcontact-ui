@@ -128,6 +128,16 @@
   color: var(--sc-text-subtle);
 }
 
+.table-lab__detail {
+  margin: 0;
+  color: var(--sc-text-secondary);
+  max-width: 68ch;
+}
+
+.table-lab__group-footer {
+  color: var(--sc-text-secondary);
+}
+
 /* Las teclas, con la caja del atajo de `sc-search`. El texto, el `sc-text-caption-regular` de su línea: `<kbd>` sale
  * en monoespaciada por la hoja del navegador, y aquí no hay mono. */
 .table-lab__keys kbd {

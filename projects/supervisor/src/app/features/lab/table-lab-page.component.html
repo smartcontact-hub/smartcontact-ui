@@ -21,7 +21,8 @@
       @for (remountKey of [tableRemountKey()]; track remountKey) {
         <sc-datatable
           #dt
-          [value]="agents"
+          [value]="tableValue()"
+          [frozenValue]="pinnedRows().length ? pinnedRows() : undefined"
           [columns]="columns()"
           [visibleColumns]="visibleColumns()"
           [globalFilterFields]="globalFilterFields"
@@ -43,7 +44,7 @@
           [(selection)]="selection"
           (rowSelect)="onRowSelect($event)"
           (rowUnselect)="onRowUnselect($event)"
-          [sortField]="$any(liveArgs()['sortField']) || undefined"
+          [sortField]="sortFieldArg()"
           [sortOrder]="$any(liveArgs()['sortOrder'])"
           [externalSort]="$any(liveArgs()['externalSort'])"
           [sortMode]="$any(liveArgs()['sortMode'])"
@@ -68,6 +69,17 @@
           (rowEditInit)="onRowEditInit($event)"
           (rowEditSave)="onRowEditSave($event)"
           (rowEditCancel)="onRowEditCancel($event)"
+          [rowGroupMode]="$any(liveArgs()['rowGroupMode']) || undefined"
+          [groupRowsBy]="$any(liveArgs()['groupRowsBy'])"
+          [expandableRowGroups]="$any(liveArgs()['expandableRowGroups'])"
+          [groupHeaderTemplate]="groupHeaderTpl"
+          [groupFooterTemplate]="groupFooter() ? groupFooterTpl : undefined"
+          [expansionTemplate]="rowDetail() ? expansionTpl : undefined"
+          [rowExpandLabels]="{ expand: 'lab.tabla.expand' | translate, collapse: 'lab.tabla.collapse' | translate }"
+          (rowExpand)="onRowExpand($event)"
+          (rowCollapse)="onRowCollapse($event)"
+          [reorderableRows]="$any(liveArgs()['reorderableRows'])"
+          (rowReorder)="onRowReorder($event)"
         >
           <!-- Lo que hay marcado, como la barra de los ejemplos de selección de primeng.dev: sin ella, marcar
                una fila no se nota más que en su color. -->
@@ -220,6 +232,35 @@
     (valueChange)="agent.tickets = $event ?? 0"
     [ariaLabel]="'lab.tabla.edit_tickets' | translate"
   />
+</ng-template>
+
+<!-- «Detalle de fila» (primeng.dev/table «Row Expansion»): lo que se despliega bajo la fila. -->
+<ng-template #expansionTpl let-agent>
+  <p class="sc-text-body-regular table-lab__detail">
+    {{ agent.name }} lleva {{ agent.tickets }} tickets abiertos en {{ agent.team }}, con clientes de {{ agent.country }}, y una
+    valoración de {{ agent.rating }} sobre 5.
+  </p>
+</ng-template>
+
+<!-- El título de cada grupo («Subheader»): el valor del campo y cuántos agentes hay. -->
+<ng-template #groupHeaderTpl let-agent>
+  <span>{{ groupTitle(agent) }}</span>
+  <sc-tag severity="secondary" [value]="groupAgents(agent).length + ''" />
+</ng-template>
+
+<ng-template #groupFooterTpl let-agent>
+  <span class="sc-text-caption-regular table-lab__group-footer">
+    {{ groupAgents(agent).length }} agentes, {{ groupTickets(agent) }} tickets abiertos
+  </span>
+</ng-template>
+
+<!-- «Fijar filas» (primeng.dev/table «Frozen Rows»): el botón la sube a las filas fijas o la devuelve. -->
+<ng-template #pinTpl let-agent>
+  @if (pinnedIds().has(agent.id)) {
+    <sc-button variant="secondary" appearance="text" size="sm" icon="keep_off" [ariaLabel]="'lab.tabla.unpin_row' | translate: { name: agent.name }" (clicked)="togglePin(agent)" />
+  } @else {
+    <sc-button variant="secondary" appearance="text" size="sm" icon="push_pin" [ariaLabel]="'lab.tabla.pin_row' | translate: { name: agent.name }" (clicked)="togglePin(agent)" />
+  }
 </ng-template>
 
 <ng-template #pickTpl let-agent>

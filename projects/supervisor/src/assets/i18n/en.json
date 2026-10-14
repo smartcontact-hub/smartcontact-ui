@@ -2732,7 +2732,14 @@
       "filter_status": "Filter by status",
       "editable_label": "Editable columns",
       "edit_name": "Agent name",
-      "edit_tickets": "Open tickets"
+      "edit_tickets": "Open tickets",
+      "row_detail_label": "Row detail",
+      "group_footer_label": "Group footer",
+      "pin_rows_label": "Pin rows",
+      "pin_row": "Pin {{name}} to the top",
+      "unpin_row": "Unpin {{name}}",
+      "expand": "Expand",
+      "collapse": "Collapse"
     },
     "arbol": {
       "context_label": "App context",
