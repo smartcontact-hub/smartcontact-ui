@@ -49,6 +49,43 @@ p-sort-icon {
   width: 40px;
 }
 
+/* El asa de arrastrar la fila y la flecha de desplegarla: columnas estrechas, como la de la casilla. */
+.sc-datatable__handle,
+.sc-datatable__expander {
+  width: var(--sc-spacing-2-5);
+  text-align: center;
+}
+
+.sc-datatable__drag-handle {
+  display: inline-flex;
+  color: var(--sc-text-secondary);
+  cursor: grab;
+}
+
+/* El título de un grupo de filas: la flecha (si se pliega) y el valor, en una línea. */
+.sc-datatable__group-title {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  font-weight: var(--sc-font-weight-semibold);
+}
+
+/* La celda que ocupa todo su grupo arranca arriba, a la altura de la primera fila. */
+.sc-datatable__rowspan {
+  vertical-align: top;
+}
+
+/* La columna de editar fila: lo que miden sus botones, en una línea. */
+.sc-datatable__row-editor {
+  white-space: nowrap;
+  text-align: end;
+}
+
+.sc-datatable__row-editor-actions {
+  display: inline-flex;
+  gap: var(--sc-spacing-0-25);
+}
+
 /* La celda «avatar» del esqueleto: el círculo y la barra en línea, como el avatar y el nombre. La barra ocupa lo que deja
  * el círculo; sin crecer, su ancho en % saldría de 0. El tamaño del círculo lo puede ajustar quien use la tabla con
  * `--sc-datatable-skeleton-avatar-size` si su avatar no es el del DS. */

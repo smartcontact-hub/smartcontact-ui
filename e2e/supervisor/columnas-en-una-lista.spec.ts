@@ -16,9 +16,9 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  *   3. arrastrar una fila mueve la columna en la tabla, y sigue ahí al volver a la página;
  *   4. «Restablecer» vuelve al orden y a las columnas de partida;
  *   5. las cabeceras de la tabla no se arrastran;
- *   6. con el teclado y sin arrastrar (WCAG 2.1.1 y 2.5.7, lo que el ejemplo no trae y DD-162 ya pedía): al abrir, el
- *      foco entra en la lista; las flechas van de una columna a otra, Espacio la marca o desmarca, Alt+↑/↓ la mueve, la
- *      fila en curso lleva sus flechas «Subir» y «Bajar» (no hay pie), y Escape vuelve al botón.
+ *   6. con el teclado y sin arrastrar (WCAG 2.1.1, lo que el ejemplo no trae y DD-162 ya pedía): al abrir, el foco
+ *      entra en la lista; las flechas van de una columna a otra, Espacio la marca o desmarca, Alt+↑/↓ la mueve, ninguna
+ *      fila lleva «Subir» y «Bajar» (DD-203), y Escape vuelve al botón.
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -117,7 +117,7 @@ test('las cabeceras de la tabla no se arrastran', async ({ page }) => {
   expect(await cabeceras(page)).toEqual(antes);
 });
 
-test('con el teclado y sin arrastrar: las flechas recorren, Espacio marca, Alt+flecha y las flechas de la fila mueven, y Escape vuelve', async ({ page }) => {
+test('con el teclado y sin arrastrar: las flechas recorren, Espacio marca, Alt+flecha mueve, y Escape vuelve', async ({ page }) => {
   await goto(page, 'admin/agentes');
   const antes = await cabeceras(page);
   const i = antes.indexOf('Email');
@@ -142,18 +142,8 @@ test('con el teclado y sin arrastrar: las flechas recorren, Espacio marca, Alt+f
   await page.keyboard.press('Alt+ArrowDown');
   await expect.poll(() => cabeceras(page)).toEqual(antes);
 
-  // Sin pie: las flechas van en la fila en curso, y solo en ella. La lista es una sola parada del tabulador: de ella, a
-  // «Subir».
-  await expect(globo(page).locator('.page__columns-move')).toHaveCount(0);
-  await expect(globo(page).locator('.column-toggle__move')).toHaveCount(1);
-  await page.keyboard.press('Tab');
-  await expect(page.getByRole('button', { name: 'Subir Email', exact: true })).toBeFocused();
-  await page.keyboard.press('Enter');
-  await expect.poll(async () => (await cabeceras(page)).slice(i - 1, i + 1)).toEqual(['Email', anterior]);
-  await page.keyboard.press('Tab');
-  await expect(page.getByRole('button', { name: 'Bajar Email', exact: true })).toBeFocused();
-  await page.keyboard.press('Enter');
-  await expect.poll(() => cabeceras(page)).toEqual(antes);
+  // Ni pie ni flechas en la fila: se ordena arrastrando o con Alt+↑/↓ (DD-203).
+  await expect(globo(page).getByRole('button', { name: /^(Subir|Bajar) / })).toHaveCount(0);
 
   await page.keyboard.press('Escape');
   await expect(globo(page)).toBeHidden();

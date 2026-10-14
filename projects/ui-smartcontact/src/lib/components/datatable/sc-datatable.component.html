@@ -14,6 +14,8 @@
   (onRowUnselect)="rowUnselect.emit($any($event))"
   [sortField]="sortField()"
   [sortOrder]="sortOrder()"
+  [sortMode]="sortMode()"
+  [multiSortMeta]="$any(pMultiSortMeta())"
   [customSort]="externalSort()"
   [size]="pSize()"
   [scrollable]="scrollable()"
@@ -37,7 +39,28 @@
   (onSort)="onSortEvent($event)"
   (onPage)="page.emit($event)"
   (onLazyLoad)="lazyLoad.emit($event)"
-  (onFilter)="filterChange.emit($event)"
+  (onFilter)="onFilter($event)"
+  [editMode]="editMode()"
+  (onEditInit)="editInit.emit($event)"
+  (onEditComplete)="editComplete.emit($event)"
+  (onEditCancel)="editCancel.emit($event)"
+  [expandedRowKeys]="pExpandedRowKeys()"
+  (onRowExpand)="rowExpand.emit($event)"
+  (onRowCollapse)="rowCollapse.emit($event)"
+  [rowGroupMode]="rowGroupMode()"
+  [groupRowsBy]="pGroupRowsBy()"
+  [frozenValue]="$any(pFrozenValue())"
+  (onRowReorder)="onRowReorder($event)"
+  [stateKey]="stateKey()"
+  [stateStorage]="stateStorage()"
+  (onStateSave)="onStateSave($event)"
+  (onStateRestore)="onStateRestore($event)"
+  [showCurrentPageReport]="showCurrentPageReport()"
+  [currentPageReportTemplate]="currentPageReportTemplate()"
+  [paginatorPosition]="paginatorPosition()"
+  [exportFilename]="exportFilename()"
+  [csvSeparator]="csvSeparator()"
+  [exportFunction]="pExportFunction()"
 >
   <ng-template #caption>
     @if (userCaption()) {
@@ -53,63 +76,150 @@
       *ngTemplateOutlet="userHeader()!; context: { $implicit: cols, frozen }"
     />
     } @else {
+    @let segmentos = headerSegments();
     <tr>
       @if (selectionControl() === 'checkbox') {
       <!-- La casilla se queda fija si hay una columna fija a la izquierda: PrimeNG coloca esa columna sumando el ancho de
            TODO lo que tiene delante, fijo o no, y sin esto la casilla pasaba por debajo del nombre (DD-193). -->
-      <th class="sc-datatable__check" scope="col" pFrozenColumn [frozen]="!!leftFrozenEdge()">
+      <th class="sc-datatable__check" scope="col" pFrozenColumn [frozen]="!!leftFrozenEdge()" [attr.rowspan]="segmentos ? 2 : null">
         <!-- `sc-datatable__check-all`: el gancho, NUESTRO, por el que el componente le pone el nombre (ver el
              `afterRenderEffect` de la casilla de «todas»). -->
         <p-table-header-checkbox class="sc-datatable__check-all" [ariaLabel]="selectAllAriaLabel()" [disabled]="skeleton()" />
       </th>
       } @else if (selectionControl() === 'radio') {
       <!-- Vacía, como en primeng.dev/table «Radio»: con una sola fila marcada no hay «todas». -->
-      <th class="sc-datatable__check" scope="col" pFrozenColumn [frozen]="!!leftFrozenEdge()"></th>
-      } @for (col of visibleCols(); track col.field) { @if (col.sortable) {
-      <th
-        scope="col"
-        [pSortableColumn]="col.field"
-        pFrozenColumn
-        [frozen]="!!col.frozen"
-        [alignFrozen]="col.alignFrozen ?? 'left'"
-        [class.sc-datatable__frozen-right-edge]="col.field === rightFrozenEdge()"
-        [class.sc-datatable__frozen-left-edge]="col.field === leftFrozenEdge()"
-        pResizableColumn
-        [pResizableColumnDisabled]="!resizableColumns()"
-        pReorderableColumn
-        [pReorderableColumnDisabled]="!reorderableColumns() || col.reorderable === false || !!col.frozen"
-        [attr.data-field]="col.field"
-        [style.width]="col.width ?? null"
-        [style.text-align]="col.align ?? null"
-        [attr.aria-label]="col.headerAriaLabel ?? null"
-      >
-        <!-- El texto va en su propio elemento: al pulsar, `pReorderableColumn` busca el tirador de ancho DENTRO
-             de lo pulsado, y con el texto suelto lo pulsado era el `th`, que lo contiene, así que nunca arrastraba
-             (medido: solo llegaba `mousedown`, sin `dragstart`). -->
-        <span class="sc-datatable__header-label">{{ col.header }}</span><p-sort-icon [field]="col.field" />
-      </th>
+      <th class="sc-datatable__check" scope="col" pFrozenColumn [frozen]="!!leftFrozenEdge()" [attr.rowspan]="segmentos ? 2 : null"></th>
+      } @if (reorderableRows()) {
+      <th class="sc-datatable__handle" scope="col" [attr.rowspan]="segmentos ? 2 : null"></th>
+      } @if (expander()) {
+      <th class="sc-datatable__expander" scope="col" [attr.rowspan]="segmentos ? 2 : null"></th>
+      } @if (segmentos) {
+      <!-- Cabecera agrupada (primeng.dev/table «Column Group»): arriba, una celda por grupo sobre sus columnas; las
+           columnas sin grupo ocupan las dos filas. -->
+      @for (segmento of segmentos; track $index) { @if (segmento.group) {
+      <th scope="colgroup" class="sc-datatable__group" [attr.colspan]="segmento.cols.length">{{ segmento.group }}</th>
       } @else {
+      <ng-container *ngTemplateOutlet="headerCell; context: { $implicit: segmento.cols[0], rowspan: 2 }" />
+      } } } @else { @for (col of visibleCols(); track col.field) {
+      <ng-container *ngTemplateOutlet="headerCell; context: { $implicit: col, rowspan: null }" />
+      } } @if (rowEditor()) {
+      <th class="sc-datatable__row-editor" scope="col" [attr.aria-label]="rowEditLabels().edit" [attr.rowspan]="segmentos ? 2 : null"></th>
+      }
+    </tr>
+    @if (segmentos) {
+    <tr>
+      @for (col of groupedCols(); track col.field) {
+      <ng-container *ngTemplateOutlet="headerCell; context: { $implicit: col, rowspan: null }" />
+      }
+    </tr>
+    } @if (filterRow()) {
+    <!-- Filtros en fila (primeng.dev/table «Filter»): una celda por columna, con su filtro si lo tiene. -->
+    <tr class="sc-datatable__filter-row">
+      @if (selectionControl()) {
+      <th class="sc-datatable__check" pFrozenColumn [frozen]="!!leftFrozenEdge()"></th>
+      } @if (reorderableRows()) {
+      <th class="sc-datatable__handle"></th>
+      } @if (expander()) {
+      <th class="sc-datatable__expander"></th>
+      } @for (col of visibleCols(); track col.field) {
       <th
-        scope="col"
         pFrozenColumn
         [frozen]="!!col.frozen"
         [alignFrozen]="col.alignFrozen ?? 'left'"
         [class.sc-datatable__frozen-right-edge]="col.field === rightFrozenEdge()"
         [class.sc-datatable__frozen-left-edge]="col.field === leftFrozenEdge()"
-        pResizableColumn
-        [pResizableColumnDisabled]="!resizableColumns()"
-        pReorderableColumn
-        [pReorderableColumnDisabled]="!reorderableColumns() || col.reorderable === false || !!col.frozen"
-        [attr.data-field]="col.field"
-        [style.width]="col.width ?? null"
-        [style.text-align]="col.align ?? null"
-        [attr.aria-label]="col.headerAriaLabel ?? null"
       >
-        <span class="sc-datatable__header-label">{{ col.header }}</span>
+        @if (col.filter) {
+        <ng-container *ngTemplateOutlet="colFilter; context: { $implicit: col, display: 'row' }" />
+        }
       </th>
-      } }
+      } @if (rowEditor()) {
+      <th class="sc-datatable__row-editor"></th>
+      }
     </tr>
+    } }
+  </ng-template>
+
+  <!-- La celda de cabecera de una columna. Va dentro de `p-table` (no al final, como `cellContent`): sus directivas
+       (`pSortableColumn`, `pFrozenColumn`…) buscan la tabla por inyección, y una plantilla la busca desde donde se
+       declara. -->
+  <ng-template #headerCell let-col let-rowspan="rowspan">
+    @if (col.sortable) {
+    <th
+      scope="col"
+      [pSortableColumn]="col.field"
+      pFrozenColumn
+      [frozen]="!!col.frozen"
+      [alignFrozen]="col.alignFrozen ?? 'left'"
+      [class.sc-datatable__frozen-right-edge]="col.field === rightFrozenEdge()"
+      [class.sc-datatable__frozen-left-edge]="col.field === leftFrozenEdge()"
+      pResizableColumn
+      [pResizableColumnDisabled]="!resizableColumns()"
+      pReorderableColumn
+      [pReorderableColumnDisabled]="!columnReorderable(col)"
+      [attr.data-field]="col.field"
+      [attr.rowspan]="rowspan"
+      [style.width]="col.width ?? null"
+      [style.text-align]="col.align ?? null"
+      [attr.aria-label]="col.headerAriaLabel ?? null"
+    >
+      <!-- El texto va en su propio elemento: al pulsar, `pReorderableColumn` busca el tirador de ancho DENTRO
+           de lo pulsado, y con el texto suelto lo pulsado era el `th`, que lo contiene, así que nunca arrastraba
+           (medido: solo llegaba `mousedown`, sin `dragstart`). -->
+      <span class="sc-datatable__header-label">{{ col.header }}</span><p-sort-icon [field]="col.field" />
+      @if (col.filter && filterDisplay() === 'menu') {
+      <ng-container *ngTemplateOutlet="colFilter; context: { $implicit: col, display: 'menu' }" />
+      }
+    </th>
+    } @else {
+    <th
+      scope="col"
+      pFrozenColumn
+      [frozen]="!!col.frozen"
+      [alignFrozen]="col.alignFrozen ?? 'left'"
+      [class.sc-datatable__frozen-right-edge]="col.field === rightFrozenEdge()"
+      [class.sc-datatable__frozen-left-edge]="col.field === leftFrozenEdge()"
+      pResizableColumn
+      [pResizableColumnDisabled]="!resizableColumns()"
+      pReorderableColumn
+      [pReorderableColumnDisabled]="!columnReorderable(col)"
+      [attr.data-field]="col.field"
+      [attr.rowspan]="rowspan"
+      [style.width]="col.width ?? null"
+      [style.text-align]="col.align ?? null"
+      [attr.aria-label]="col.headerAriaLabel ?? null"
+    >
+      <span class="sc-datatable__header-label">{{ col.header }}</span>
+      @if (col.filter && filterDisplay() === 'menu') {
+      <ng-container *ngTemplateOutlet="colFilter; context: { $implicit: col, display: 'menu' }" />
+      }
+    </th>
     }
+  </ng-template>
+
+  <!-- El `p-column-filter` de una columna, con los valores por defecto de PrimeNG donde `ScColumnFilter` no dice nada. -->
+  <ng-template #colFilter let-col let-display="display">
+    <p-column-filter
+      class="sc-datatable__filter"
+      [field]="col.field"
+      [type]="col.filter.type ?? 'text'"
+      [display]="display"
+      [matchMode]="col.filter.matchMode"
+      [placeholder]="col.filter.placeholder"
+      [ariaLabel]="col.filter.ariaLabel ?? col.header"
+      [filterOn]="col.filter.filterOn ?? 'enter'"
+      [showMenu]="display === 'menu' || (col.filter.showMenu ?? true)"
+      [showButtons]="col.filter.showButtons ?? true"
+      [showMatchModes]="col.filter.showMatchModes ?? true"
+      [showOperator]="col.filter.showOperator ?? true"
+      [showAddButton]="col.filter.showAddButton ?? true"
+    >
+      @if (col.filter.template) {
+      <ng-template #filter let-value let-filterCallback="filterCallback">
+        <ng-container *ngTemplateOutlet="col.filter.template; context: { $implicit: value, filterCallback: filterCallback }" />
+      </ng-template>
+      }
+    </p-column-filter>
   </ng-template>
 
   <ng-template
@@ -136,6 +246,10 @@
       <td class="sc-datatable__check" pFrozenColumn [frozen]="!!leftFrozenEdge()">
         <sc-skeleton shape="circle" size="var(--sc-cmp-radiobutton-width)" />
       </td>
+      } @if (reorderableRows()) {
+      <td class="sc-datatable__handle"></td>
+      } @if (expander()) {
+      <td class="sc-datatable__expander"></td>
       } @for (col of visibleCols(); track col.field; let c = $index) {
       <td
         pFrozenColumn
@@ -158,6 +272,10 @@
         <sc-skeleton [width]="skeletonWidth(rowIndex, c)" />
         } }
       </td>
+      } @if (rowEditor()) {
+      <td class="sc-datatable__row-editor">
+        <span class="sc-datatable__skeleton-action"><sc-skeleton size="var(--sc-line-height-100)" /></span>
+      </td>
       }
     </tr>
     } @else if (userBody()) {
@@ -177,12 +295,34 @@
       "
     />
     } @else {
+    <ng-container
+      *ngTemplateOutlet="dataRow; context: { $implicit: row, rowIndex, editing, expanded, rowgroup, rowspan }"
+    />
+    }
+  </ng-template>
+
+  <!-- La fila de datos, una sola vez para el cuerpo, las filas fijas y las de un grupo plegable. Va dentro de `p-table`:
+       sus directivas (`pSelectableRow`, `pEditableRow`, `pRowToggler`…) buscan la tabla desde donde se declaran. -->
+  <ng-template
+    #dataRow
+    let-row
+    let-rowIndex="rowIndex"
+    let-editing="editing"
+    let-expanded="expanded"
+    let-rowgroup="rowgroup"
+    let-rowspan="rowspan"
+  >
     <!-- `pSelectableRowIndex`, como el ejemplo «Multiple» de primeng.dev: sin él PrimeNG no sabe desde qué fila
          contar el tramo de Mayús+clic ni Mayús+Espacio, y solo marcaba la última. -->
     <tr
       [pSelectableRow]="row"
       [pSelectableRowIndex]="rowIndex"
       [pSelectableRowDisabled]="rowSelectDisabled()"
+      [pEditableRow]="row"
+      [pEditableRowDisabled]="!rowEditor()"
+      [pReorderableRow]="rowIndex"
+      [pReorderableRowDisabled]="!reorderableRows()"
+      [class.sc-datatable__row--expanded]="!!expanded"
       [ngClass]="rowClass(row, rowIndex)"
       (click)="onRowClick($event, row, rowIndex)"
       (contextmenu)="onRowContextMenu($event, row, rowIndex)"
@@ -214,10 +354,57 @@
       <td class="sc-datatable__check" pFrozenColumn [frozen]="!!leftFrozenEdge()" (click)="$event.stopPropagation()">
         <p-table-radio-button [value]="row" [index]="rowIndex" [ariaLabel]="rowSelectionAriaLabel()?.(row, rowIndex)" />
       </td>
+      } @if (reorderableRows()) {
+      <!-- El asa de primeng.dev/table «Reorder»: arrastrar la fila solo empieza desde aquí. -->
+      <td class="sc-datatable__handle" (click)="$event.stopPropagation()">
+        <span pReorderableRowHandle class="sc-datatable__drag-handle" aria-hidden="true"><sc-icon name="drag_indicator" [size]="16" /></span>
+      </td>
+      } @if (expander()) {
+      <!-- La flecha de primeng.dev/table «Row Expansion». La celda no dispara `rowClick`. -->
+      <td class="sc-datatable__expander" (click)="$event.stopPropagation()">
+        <sc-button
+          [pRowToggler]="row"
+          variant="secondary"
+          appearance="text"
+          size="sm"
+          [icon]="expanded ? 'expand_more' : 'chevron_right'"
+          [ariaLabel]="expanded ? rowExpandLabels().collapse : rowExpandLabels().expand"
+          [ariaExpanded]="!!expanded"
+        />
+      </td>
       } @for (col of visibleCols(); track col.field) {
       <!-- La columna que nombra la fila es su cabecera, como en Primer (DD-194): el lector de pantalla la
-           anuncia al recorrer la fila. Mismos atributos que la celda de datos; el aspecto lo iguala el tema. -->
-      @if (col.rowHeader) {
+           anuncia al recorrer la fila. Mismos atributos que la celda de datos; el aspecto lo iguala el tema.
+           Con `editTemplate` y `editMode: 'cell'`, la celda lleva `pEditableColumn` (primeng.dev/table «Cell Edit»);
+           solo entonces, porque cada una crea su efecto. El `p-cell-editor` va escrito dentro de cada celda y no en
+           una plantilla común: busca `pEditableColumn` y `pEditableRow` desde donde se declara. -->
+      @let cellEdit = !!col.editTemplate && editMode() === 'cell';
+      @if (col.field === rowspanField()) {
+      <!-- primeng.dev/table «Rowspan»: la celda del campo del grupo, solo en su primera fila, ocupa el grupo entero. -->
+      @if (rowgroup) {
+      <td class="sc-datatable__rowspan" [attr.rowspan]="rowspan" [style.text-align]="col.align ?? null">
+        <ng-container *ngTemplateOutlet="cellContent; context: { $implicit: row, rowIndex: rowIndex, col: col }" />
+      </td>
+      } } @else if (col.rowHeader && cellEdit) {
+      <th
+        scope="row"
+        pFrozenColumn
+        [frozen]="!!col.frozen"
+        [alignFrozen]="col.alignFrozen ?? 'left'"
+        [class.sc-datatable__frozen-right-edge]="col.field === rightFrozenEdge()"
+        [class.sc-datatable__frozen-left-edge]="col.field === leftFrozenEdge()"
+        [style.text-align]="col.align ?? null"
+        [pEditableColumn]="row"
+        [pEditableColumnField]="col.field"
+        [pEditableColumnRowIndex]="rowIndex"
+        (keydown)="onEditorKeydown($event)"
+      >
+        <p-cell-editor>
+          <ng-template #input><ng-container *ngTemplateOutlet="col.editTemplate; context: { $implicit: row, rowIndex: rowIndex, col: col }" /></ng-template>
+          <ng-template #output><ng-container *ngTemplateOutlet="cellContent; context: { $implicit: row, rowIndex: rowIndex, col: col }" /></ng-template>
+        </p-cell-editor>
+      </th>
+      } @else if (col.rowHeader) {
       <th
         scope="row"
         pFrozenColumn
@@ -227,9 +414,35 @@
         [class.sc-datatable__frozen-left-edge]="col.field === leftFrozenEdge()"
         [style.text-align]="col.align ?? null"
         (click)="col.stopRowClick ? $event.stopPropagation() : null"
+        (keydown)="col.editTemplate ? onEditorKeydown($event) : null"
       >
+        @if (col.editTemplate) {
+        <p-cell-editor>
+          <ng-template #input><ng-container *ngTemplateOutlet="col.editTemplate; context: { $implicit: row, rowIndex: rowIndex, col: col }" /></ng-template>
+          <ng-template #output><ng-container *ngTemplateOutlet="cellContent; context: { $implicit: row, rowIndex: rowIndex, col: col }" /></ng-template>
+        </p-cell-editor>
+        } @else {
         <ng-container *ngTemplateOutlet="cellContent; context: { $implicit: row, rowIndex: rowIndex, col: col }" />
+        }
       </th>
+      } @else if (cellEdit) {
+      <td
+        pFrozenColumn
+        [frozen]="!!col.frozen"
+        [alignFrozen]="col.alignFrozen ?? 'left'"
+        [class.sc-datatable__frozen-right-edge]="col.field === rightFrozenEdge()"
+        [class.sc-datatable__frozen-left-edge]="col.field === leftFrozenEdge()"
+        [style.text-align]="col.align ?? null"
+        [pEditableColumn]="row"
+        [pEditableColumnField]="col.field"
+        [pEditableColumnRowIndex]="rowIndex"
+        (keydown)="onEditorKeydown($event)"
+      >
+        <p-cell-editor>
+          <ng-template #input><ng-container *ngTemplateOutlet="col.editTemplate; context: { $implicit: row, rowIndex: rowIndex, col: col }" /></ng-template>
+          <ng-template #output><ng-container *ngTemplateOutlet="cellContent; context: { $implicit: row, rowIndex: rowIndex, col: col }" /></ng-template>
+        </p-cell-editor>
+      </td>
       } @else {
       <td
         pFrozenColumn
@@ -239,12 +452,32 @@
         [class.sc-datatable__frozen-left-edge]="col.field === leftFrozenEdge()"
         [style.text-align]="col.align ?? null"
         (click)="col.stopRowClick ? $event.stopPropagation() : null"
+        (keydown)="col.editTemplate ? onEditorKeydown($event) : null"
       >
+        @if (col.editTemplate) {
+        <p-cell-editor>
+          <ng-template #input><ng-container *ngTemplateOutlet="col.editTemplate; context: { $implicit: row, rowIndex: rowIndex, col: col }" /></ng-template>
+          <ng-template #output><ng-container *ngTemplateOutlet="cellContent; context: { $implicit: row, rowIndex: rowIndex, col: col }" /></ng-template>
+        </p-cell-editor>
+        } @else {
         <ng-container *ngTemplateOutlet="cellContent; context: { $implicit: row, rowIndex: rowIndex, col: col }" />
+        }
       </td>
-      } }
+      } } @if (rowEditor()) {
+      <!-- Lápiz, guardar y cancelar de primeng.dev/table «Row Edit», con `sc-button` de solo icono (DD-200: su
+           nombre sale en tooltip con ratón y teclado). La celda no dispara `rowClick`. -->
+      <td class="sc-datatable__row-editor" (click)="$event.stopPropagation()">
+        <span class="sc-datatable__row-editor-actions">
+          @if (editing) {
+          <sc-button pSaveEditableRow variant="secondary" appearance="text" size="sm" icon="check" [ariaLabel]="rowEditLabels().save" (clicked)="rowEditSave.emit({ row, index: rowIndex })" />
+          <sc-button pCancelEditableRow variant="secondary" appearance="text" size="sm" icon="close" [ariaLabel]="rowEditLabels().cancel" (clicked)="rowEditCancel.emit({ row, index: rowIndex })" />
+          } @else {
+          <sc-button pInitEditableRow variant="secondary" appearance="text" size="sm" icon="edit" [ariaLabel]="rowEditLabels().edit" (clicked)="rowEditInit.emit({ row, index: rowIndex })" />
+          }
+        </span>
+      </td>
+      }
     </tr>
-    }
   </ng-template>
 
   <ng-template #emptymessage let-cols let-frozen="frozen">
@@ -297,7 +530,7 @@
       "
     />
   </ng-template>
-  } @if (userExpandedrow()) {
+  } @if (userExpandedrow() || expander() || foldingGroups()) {
   <ng-template
     #expandedrow
     let-row
@@ -309,6 +542,16 @@
     let-rowgroup="rowgroup"
     let-rowspan="rowspan"
   >
+    @if (foldingGroups()) {
+    <!-- Grupo plegable: PrimeNG pinta cada fila del grupo desplegado por aquí, no por `#body`. -->
+    <ng-container *ngTemplateOutlet="dataRow; context: { $implicit: row, rowIndex, editing, expanded }" />
+    } @else if (expander()) {
+    <tr class="sc-datatable__expansion">
+      <td [attr.colspan]="colspan()">
+        <ng-container *ngTemplateOutlet="expansionTemplate()!; context: { $implicit: row, rowIndex, expanded }" />
+      </td>
+    </tr>
+    } @else {
     <ng-container
       *ngTemplateOutlet="
         userExpandedrow()!;
@@ -324,8 +567,9 @@
         }
       "
     />
+    }
   </ng-template>
-  } @if (userGroupheader()) {
+  } @if (userGroupheader() || subheaderGroups()) {
   <ng-template
     #groupheader
     let-row
@@ -337,6 +581,7 @@
     let-rowgroup="rowgroup"
     let-rowspan="rowspan"
   >
+    @if (userGroupheader()) {
     <ng-container
       *ngTemplateOutlet="
         userGroupheader()!;
@@ -352,8 +597,32 @@
         }
       "
     />
+    } @else {
+    <!-- El título de cada grupo, primeng.dev/table «Subheader»; con grupos plegables, con su flecha. -->
+    <tr pRowGroupHeader class="sc-datatable__group-row">
+      <td [attr.colspan]="colspan()">
+        <span class="sc-datatable__group-title">
+          @if (foldingGroups()) {
+          <sc-button
+            [pRowToggler]="row"
+            variant="secondary"
+            appearance="text"
+            size="sm"
+            [icon]="expanded ? 'expand_more' : 'chevron_right'"
+            [ariaLabel]="expanded ? rowExpandLabels().collapse : rowExpandLabels().expand"
+            [ariaExpanded]="!!expanded"
+          />
+          } @if (groupHeaderTemplate()) {
+          <ng-container *ngTemplateOutlet="groupHeaderTemplate()!; context: { $implicit: row, rowIndex, expanded }" />
+          } @else {
+          <span>{{ cellValue(row, groupRowsBy()!) }}</span>
+          }
+        </span>
+      </td>
+    </tr>
+    }
   </ng-template>
-  } @if (userGroupfooter()) {
+  } @if (userGroupfooter() || (subheaderGroups() && groupFooterTemplate())) {
   <ng-template
     #groupfooter
     let-row
@@ -365,6 +634,7 @@
     let-rowgroup="rowgroup"
     let-rowspan="rowspan"
   >
+    @if (userGroupfooter()) {
     <ng-container
       *ngTemplateOutlet="
         userGroupfooter()!;
@@ -380,8 +650,15 @@
         }
       "
     />
+    } @else {
+    <tr class="sc-datatable__group-footer">
+      <td [attr.colspan]="colspan()">
+        <ng-container *ngTemplateOutlet="groupFooterTemplate()!; context: { $implicit: row, rowIndex, expanded }" />
+      </td>
+    </tr>
+    }
   </ng-template>
-  } @if (userFrozenbody()) {
+  } @if (userFrozenbody() || frozenValue()) {
   <ng-template
     #frozenbody
     let-row
@@ -393,6 +670,7 @@
     let-rowgroup="rowgroup"
     let-rowspan="rowspan"
   >
+    @if (userFrozenbody()) {
     <ng-container
       *ngTemplateOutlet="
         userFrozenbody()!;
@@ -408,6 +686,9 @@
         }
       "
     />
+    } @else {
+    <ng-container *ngTemplateOutlet="dataRow; context: { $implicit: row, rowIndex, editing }" />
+    }
   </ng-template>
   } @if (userFrozenexpandedrow()) {
   <ng-template

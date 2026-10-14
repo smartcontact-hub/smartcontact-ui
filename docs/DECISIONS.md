@@ -148,6 +148,29 @@
 
 ---
 
+## DD-203 · 2026-10-14 — Ordenar columnas en los listados: sin «Subir» y «Bajar» en la fila
+
+**Contexto** · Las flechas «Subir» y «Bajar» que salían en la fila en curso del globo «Columnas» (DD-176 §7, antes
+al pie por DD-162) se pusieron para ordenar sin arrastrar con el ratón (WCAG 2.5.7). Al probar la tabla completa, se
+pidió quitarlas.
+
+**Decisión** · El globo «Columnas» ordena arrastrando la fila por su asa, como el ejemplo «Column Toggle» de
+primeng.dev, y con el teclado: Alt+↑/↓ mueve la columna enfocada, y el lector dice a qué puesto llegó. Ninguna fila
+lleva botones de mover.
+
+**Razón** · El globo vuelve a ser el ejemplo nativo tal cual: casilla, nombre y asa por fila, sin una segunda fila de
+controles que aparece al pulsar.
+
+**Descartadas** ·
+- *Dejarlas*: es lo que se pidió quitar.
+- *Enseñarlas solo al pasar el ratón*: ya salían solo en la fila en curso; seguían siendo dos botones de más.
+
+**Consecuencias** · Se pierde la alternativa de un solo clic al arrastre (WCAG 2.5.7, AA): quien no puede arrastrar
+con el ratón ordena con el teclado o con «Restablecer». Si una auditoría de accesibilidad lo pide, vuelve un mover sin
+arrastrar. `columnas-en-una-lista.spec.ts` comprueba que no hay «Subir» ni «Bajar», y Alt+↑/↓ sigue probado.
+
+---
+
 ## DD-202 · 2026-10-13 — sc-docs se queda con su motor y suma lo que tiene un Storybook: dirección por story, anchos, regla, contornos, accesibilidad, todas las combinaciones, controles en un panel lateral y una ficha en texto para agentes
 
 **Contexto** · Barrido del Storybook de Primer el 2026-10-13, por si convenía cambiar sc-docs a Storybook. Primer
@@ -1318,6 +1341,7 @@ fichas. Cada bloque va en su commit, con su prueba roja (DD-154).
    marca; «Subir» y «Bajar», al pie, mueven la enfocada (o la pulsada); al abrir, el foco entra en la lista, y Escape
    vuelve al botón. La fija (Nombre) sale marcada, sin asa y sin poder quitarse ni moverse.
    *(Enmendado por DD-180, 2026-10-06: el botón va en su tamaño normal, a la altura del buscador de su barra.)*
+   *(Enmendado por DD-203, 2026-10-14: sin «Subir» y «Bajar»; se ordena arrastrando o con Alt+↑/↓.)*
 8. **«Administrativo», en marrón**: el color de etiqueta `brown`, nuevo en la paleta del DS (`LabelColor`, nueve
    colores) y en todas sus etiquetas: `sc-tag` y `sc-chip` con `variant="label"`, la paleta de puntos y el selector de
    color de Etiquetas. La paleta del Kit no trae familia marrón: el marrón de la paleta es el ámbar oscuro, y la
