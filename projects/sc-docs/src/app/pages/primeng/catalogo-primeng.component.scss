@@ -1,0 +1,140 @@
+/* Página de consulta: tablas de cuatro columnas de texto, así que más ancha que la medida de lectura de Novedades.
+ * Agrupación 7 · 14 · 28: dentro de una familia, el doble de cerca que entre familias. */
+:host {
+  display: block;
+  max-width: 1200px;
+  padding-bottom: var(--sc-spacing-5);
+}
+
+.hero {
+  margin-bottom: var(--sc-spacing-2);
+
+  &__eyebrow {
+    margin: 0;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--sc-text-subtle);
+  }
+
+  /* Tamaño y peso los pone `.demo-main h1` (styles.scss), el título de todas las secciones de la doc. */
+  &__title {
+    margin: var(--sc-spacing-0-125) 0 var(--sc-spacing-0-5);
+    color: var(--sc-text-primary);
+  }
+
+  &__lead {
+    max-width: 72ch;
+    margin: 0;
+    color: var(--sc-text-secondary);
+  }
+}
+
+.controles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sc-spacing-1);
+  align-items: center;
+
+  &__buscar {
+    flex: 1 1 20rem;
+    max-width: 28rem;
+  }
+}
+
+.cuenta {
+  margin: var(--sc-spacing-0-5) 0 var(--sc-spacing-2);
+  color: var(--sc-text-subtle);
+}
+
+.familia {
+  margin-bottom: var(--sc-spacing-2);
+
+  &__titulo {
+    margin: 0 0 var(--sc-spacing-0-25);
+    color: var(--sc-text-primary);
+  }
+
+  &__pregunta {
+    margin: 0 0 var(--sc-spacing-0-5);
+    color: var(--sc-text-secondary);
+  }
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+
+  th,
+  td {
+    padding: var(--sc-spacing-0-5);
+    border-bottom: 1px solid var(--sc-border-default);
+    text-align: left;
+    vertical-align: top;
+    overflow-wrap: anywhere;
+  }
+
+  thead th {
+    color: var(--sc-text-subtle);
+    font-weight: var(--sc-font-weight-semibold);
+  }
+
+  /* Componente, para qué sirve, cuándo elegirlo y aquí: el juicio («cuándo») es lo que más se lee. */
+  th:nth-child(1) {
+    width: 18%;
+  }
+  th:nth-child(2) {
+    width: 26%;
+  }
+  th:nth-child(3) {
+    width: 34%;
+  }
+
+  &--sin-cuando th:nth-child(3) {
+    width: auto;
+  }
+
+  tbody th {
+    font-weight: var(--sc-font-weight-regular);
+  }
+
+  &__nombre {
+    display: block;
+    font-weight: var(--sc-font-weight-semibold);
+    color: var(--sc-text-primary);
+  }
+
+  a.tabla__nombre {
+    color: var(--sc-text-link);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  &__marcas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sc-spacing-0-25);
+    margin-top: var(--sc-spacing-0-25);
+  }
+}
+
+.vacio,
+.aviso {
+  margin: var(--sc-spacing-2) 0;
+  color: var(--sc-text-secondary);
+}
+
+.cargando {
+  display: grid;
+  gap: var(--sc-spacing-1);
+}
+
+/* Solo para el lector de pantalla: el nombre del buscador y el aviso de pestaña nueva. */
+.oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

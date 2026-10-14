@@ -1,0 +1,100 @@
+<header class="hero">
+  <p class="hero__eyebrow sc-text-caption-semibold">Smart Contact Design System</p>
+  <h1 class="hero__title">PrimeNG</h1>
+  <p class="hero__lead sc-text-body-regular">
+    Todo lo que trae PrimeNG 22, agrupado por el trabajo que hace: para qué sirve cada componente, cuándo
+    elegirlo frente a su vecino y si lo usamos. Un uso equivocado casi nunca es un componente que no sirve: es que un
+    hermano encajaba mejor.
+  </p>
+</header>
+
+@if (fallo()) {
+  <p class="aviso">
+    No se pudo cargar el catálogo. Está entero en
+    <a [href]="repo + 'docs/AUDIT-PRIMENG-CATALOGO.md'" target="_blank" rel="noopener">el documento del repositorio</a>,
+    sección 6.
+  </p>
+} @else if (familias()) {
+  <div class="controles">
+    <label class="oculto" for="catalogo-buscar">Buscar en el catálogo</label>
+    <sc-search
+      class="controles__buscar"
+      inputId="catalogo-buscar"
+      placeholder="Busca un componente o un caso: árbol, confirmar, fechas…"
+      clearAriaLabel="Borrar la búsqueda"
+      [value]="busqueda()"
+      (valueChange)="busqueda.set($event)"
+    />
+    <sc-selectbutton
+      ariaLabel="Filtrar por estado"
+      [options]="opciones"
+      optionLabel="label"
+      optionValue="value"
+      [allowEmpty]="false"
+      [value]="filtro()"
+      (valueChange)="filtro.set($any($event))"
+    />
+  </div>
+  <p class="cuenta sc-text-caption-regular">
+    <span aria-live="polite">{{ enVista() }} de {{ total() }}.</span>
+    Las secciones que se citan son las del
+    <a [href]="repo + 'docs/AUDIT-PRIMENG-CATALOGO.md'" target="_blank" rel="noopener">catálogo del repositorio</a>, y las
+    DD, las de <a [href]="repo + 'docs/DECISIONS.md'" target="_blank" rel="noopener">sus decisiones</a>.
+  </p>
+
+  @for (fam of visibles(); track fam.titulo) {
+    <section class="familia">
+      <h2 class="familia__titulo sc-text-subtitle-semibold">{{ fam.titulo }}</h2>
+      @if (fam.pregunta) {
+        <p class="familia__pregunta sc-text-body-regular" [innerHTML]="fam.pregunta"></p>
+      }
+      <table class="tabla sc-text-body-regular" [class.tabla--sin-cuando]="!conCuando(fam)">
+        <thead>
+          <tr>
+            <th scope="col">Componente</th>
+            <th scope="col">Para qué sirve</th>
+            @if (conCuando(fam)) {
+              <th scope="col">Elígelo cuando…</th>
+            }
+            <th scope="col">Aquí</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (r of fam.filas; track r.modulos[0]) {
+            <tr>
+              <th scope="row">
+                @if (r.enlace) {
+                  <a class="tabla__nombre" [href]="r.enlace" target="_blank" rel="noopener"
+                    >{{ r.nombres.join(' e ') }}<span class="oculto"> (primeng.dev, en otra pestaña)</span></a
+                  >
+                } @else {
+                  <span class="tabla__nombre">{{ r.nombres.join(' e ') }}</span>
+                }
+                <span class="tabla__marcas">
+                  <sc-tag [value]="estados[r.estado].texto" [severity]="estados[r.estado].severity" />
+                  @if (r.obsoleto) {
+                    <sc-tag value="Obsoleto" severity="warn" />
+                  }
+                </span>
+              </th>
+              <td [innerHTML]="r.sirve"></td>
+              @if (conCuando(fam)) {
+                <td [innerHTML]="r.cuando ?? ''"></td>
+              }
+              <td [innerHTML]="r.aqui"></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </section>
+  } @empty {
+    <p class="vacio sc-text-body-regular">Nada coincide. Prueba con otra palabra o con «Todos».</p>
+  }
+} @else {
+  <!-- Esqueleto mientras llega el artefacto: el hueco de los controles y de la primera tabla. -->
+  <div class="cargando">
+    <sc-skeleton height="36px" />
+    <sc-skeleton height="24px" width="30%" />
+    <sc-skeleton height="240px" />
+  </div>
+}
