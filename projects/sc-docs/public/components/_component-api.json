@@ -2007,6 +2007,31 @@
           }
         },
         {
+          "nombre": "selectionColumn",
+          "clase": "input",
+          "tipo": "ScDatatableSelectionColumn | undefined",
+          "porDefecto": "undefined",
+          "requerido": false,
+          "descripcion": "Con qué se marca la fila (`ScDatatableSelectionColumn`). Sin informar: casilla en `multiple`, clic en la fila en `single`, que es lo que hacían las tablas antes de existir este input. `radio` solo vale con `single` y `checkbox` solo con `multiple`; otra combinación se queda en el valor por defecto de su modo.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "metaKeySelection",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "false",
+          "requerido": false,
+          "descripcion": "El de p-table tal cual: con él, un clic en la fila sustituye la selección y Cmd/Ctrl+clic añade o quita. Solo cuenta cuando selecciona la fila (`selectionColumn` `none`); en pantallas táctiles PrimeNG lo ignora.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Defines whether metaKey should be considered for the selection. On touch enabled devices, metaKeySelection is turned off automatically.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
           "nombre": "sortField",
           "clase": "input",
           "tipo": "string | undefined",
@@ -2382,6 +2407,26 @@
           "nativo": null
         },
         {
+          "nombre": "rowSelect",
+          "clase": "output",
+          "tipo": "TableRowSelectEvent<T>",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Se ha marcado una fila: el `onRowSelect` de p-table tal cual (`data`, `index`, `type`: `row`, `checkbox` o `radiobutton`). Las filas que suma el rango con Mayús sobre la casilla no lo emiten una a una: las lleva `selectionChange`.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "rowUnselect",
+          "clase": "output",
+          "tipo": "TableRowUnSelectEvent<T>",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Se ha desmarcado una fila: el `onRowUnselect` de p-table tal cual.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
           "nombre": "rowClick",
           "clase": "output",
           "tipo": "ScDatatableRowEvent<T>",
@@ -2472,7 +2517,6 @@
         "matchModeOptions",
         "maxConstraints",
         "maxFractionDigits",
-        "metaKeySelection",
         "minFractionDigits",
         "multiSortMetaInput",
         "operator",
