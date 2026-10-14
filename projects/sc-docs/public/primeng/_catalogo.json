@@ -830,10 +830,12 @@
           "enlace": "https://primeng.dev/contextmenu",
           "sirve": "Menú al clic derecho o pulsación larga.",
           "cuando": "Un atajo de lo que ya está en el «⋮», nunca el único camino.",
-          "aqui": "Descartado: el «⋮» lo cubre (sección 1)",
-          "estado": "sin-uso",
+          "aqui": "Sin wrapper: supervisor, solo en <code>lab/arbol</code> (sección 3); en los listados, descartado: el «⋮» lo cubre (sección 1)",
+          "estado": "directo",
           "wrappers": [],
-          "apps": [],
+          "apps": [
+            "supervisor"
+          ],
           "obsoleto": false
         },
         {
