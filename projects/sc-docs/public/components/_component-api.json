@@ -2552,6 +2552,126 @@
           }
         },
         {
+          "nombre": "stateKey",
+          "clase": "input",
+          "tipo": "string | undefined",
+          "porDefecto": "undefined",
+          "requerido": false,
+          "descripcion": "Recordar el estado (primeng.dev/table «Stateful»): con una clave, la tabla guarda página, orden, filtros, anchos, selección y lo desplegado, y lo repone al volver. `stateStorage`: `session` dura hasta cerrar el navegador; `local`, hasta que se borre.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Unique identifier of a stateful table to use in state storage.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "stateStorage",
+          "clase": "input",
+          "tipo": "'session' | 'local'",
+          "porDefecto": "'session'",
+          "requerido": false,
+          "descripcion": null,
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Defines where a stateful table keeps its state, valid values are \"session\" for sessionStorage and \"local\" for localStorage.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "showCurrentPageReport",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "false",
+          "requerido": false,
+          "descripcion": "El texto del paginador (primeng.dev/table «Paginator»): con `showCurrentPageReport`, `currentPageReportTemplate` con `{first}`, `{last}`, `{totalRecords}`, `{currentPage}` y `{totalPages}`, ya traducido (el de por defecto es el de PrimeNG, en inglés).",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Whether to display current page report.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "currentPageReportTemplate",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": "'{currentPage} of {totalPages}'",
+          "requerido": false,
+          "descripcion": null,
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Template of the current page report element. Available placeholders are {currentPage},{totalPages},{rows},{first},{last} and {totalRecords}",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "paginatorPosition",
+          "clase": "input",
+          "tipo": "'bottom' | 'top' | 'both'",
+          "porDefecto": "'bottom'",
+          "requerido": false,
+          "descripcion": "Dónde va el paginador: abajo (por defecto), arriba o en los dos sitios.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Position of the paginator, options are \"top\", \"bottom\" or \"both\".",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "exportFilename",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": "'download'",
+          "requerido": false,
+          "descripcion": "Nombre del fichero de `exportCSV()`, sin el `.csv`.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Name of the exported file.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "csvSeparator",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": "','",
+          "requerido": false,
+          "descripcion": "Separador de columnas del CSV.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Character to use as the csv separator.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "exportFunction",
+          "clase": "input",
+          "tipo": "((cell: { data: unknown; field: string }) => unknown) | undefined",
+          "porDefecto": "undefined",
+          "requerido": false,
+          "descripcion": "Para exportar otro texto que el dato crudo: recibe `{ data, field }` y devuelve lo que va en la celda del CSV.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Export function.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
           "nombre": "sortChange",
           "clase": "output",
           "tipo": "ScDatatableSortEvent",
@@ -2682,6 +2802,26 @@
           "nativo": null
         },
         {
+          "nombre": "stateSave",
+          "clase": "output",
+          "tipo": "TableState",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "La tabla ha guardado su estado (`stateKey`): el `onStateSave` de p-table.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "stateRestore",
+          "clase": "output",
+          "tipo": "TableState",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "La tabla ha repuesto su estado guardado: el `onStateRestore` de p-table.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
           "nombre": "rowSelect",
           "clase": "output",
           "tipo": "TableRowSelectEvent<T>",
@@ -2759,17 +2899,13 @@
         "compareSelectionBy",
         "contextMenu",
         "contextMenuSelectionInput",
-        "csvSeparator",
         "currency",
         "currencyDisplay",
-        "currentPageReportTemplate",
         "customSort",
         "defaultSortOrder",
         "display",
         "editingRowKeysInput",
         "expandedRowKeysInput",
-        "exportFilename",
-        "exportFunction",
         "exportHeader",
         "field",
         "filterButtonProps",
@@ -2796,7 +2932,6 @@
         "paginatorDropdownAppendTo",
         "paginatorDropdownScrollHeight",
         "paginatorLocale",
-        "paginatorPosition",
         "paginatorStyleClass",
         "placeholder",
         "prefix",
@@ -2811,7 +2946,6 @@
         "showApplyButton",
         "showButtons",
         "showClearButton",
-        "showCurrentPageReport",
         "showFirstLastIcon",
         "showInitialSortBadge",
         "showJumpToPageDropdown",
@@ -2823,8 +2957,6 @@
         "showPageLinks",
         "sortFieldInput",
         "sortOrderInput",
-        "stateKey",
-        "stateStorage",
         "suffix",
         "tableStyle",
         "tableStyleClass",

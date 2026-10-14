@@ -14,6 +14,8 @@
     [metaKeySelection]="args.metaKeySelection"
     [paginator]="args.paginator"
     [rows]="args.rows"
+    [showCurrentPageReport]="args.showCurrentPageReport"
+    [paginatorPosition]="args.paginatorPosition"
     [first]="args.first"
     [stripedRows]="args.stripedRows"
     [showGridlines]="args.showGridlines"
@@ -258,6 +260,15 @@
   <sc-datatable [value]="orderedAgents()" [columns]="multiSortColumns" [reorderableRows]="true"
     (rowReorder)="orderedAgents.set($event.rows)" [frozenValue]="pinnedAgents" scrollable scrollHeight="240px"
     dataKey="id" data-testid="sc-datatable-row-order" />
+</ng-template>
+
+<ng-template #dataTools>
+  <sc-button label="Exportar CSV" icon="download" variant="secondary" appearance="outlined" size="sm"
+    (click)="dataTable.exportCSV()" data-testid="dt-export" />
+  <sc-datatable #dataTable [value]="agents()" [columns]="multiSortColumns" [paginator]="true" [rows]="3"
+    [showCurrentPageReport]="true" [currentPageReportTemplate]="pageReport" paginatorPosition="both"
+    exportFilename="agentes" csvSeparator=";" [exportFunction]="exportCell"
+    stateKey="sc-docs-datatable" stateStorage="session" dataKey="id" data-testid="sc-datatable-data-tools" />
 </ng-template>
 
 <ng-template #filters>

@@ -51,6 +51,16 @@
   [groupRowsBy]="pGroupRowsBy()"
   [frozenValue]="$any(pFrozenValue())"
   (onRowReorder)="onRowReorder($event)"
+  [stateKey]="stateKey()"
+  [stateStorage]="stateStorage()"
+  (onStateSave)="onStateSave($event)"
+  (onStateRestore)="onStateRestore($event)"
+  [showCurrentPageReport]="showCurrentPageReport()"
+  [currentPageReportTemplate]="currentPageReportTemplate()"
+  [paginatorPosition]="paginatorPosition()"
+  [exportFilename]="exportFilename()"
+  [csvSeparator]="csvSeparator()"
+  [exportFunction]="pExportFunction()"
 >
   <ng-template #caption>
     @if (userCaption()) {
