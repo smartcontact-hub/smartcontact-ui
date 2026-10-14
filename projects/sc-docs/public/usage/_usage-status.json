@@ -624,6 +624,10 @@
       "usedInSupervisor": 2
     },
     {
+      "selector": "sc-skeleton",
+      "usedInSupervisor": 1
+    },
+    {
       "selector": "sc-slot",
       "usedInSupervisor": 13
     },
