@@ -94,7 +94,10 @@ export class AgendaContactsTableComponent {
     this.lang();
     return [
       { field: 'name', header: this.translate.instant('repositories.columns.name'), rowHeader: true, cellTemplate: this.nameTpl() },
+      { field: 'surname', header: this.translate.instant('repositories.agendas.fields.surname') },
+      { field: 'company', header: this.translate.instant('repositories.agendas.fields.company') },
       { field: 'phone', header: this.translate.instant('repositories.agendas.phone') },
+      { field: 'emailWork', header: this.translate.instant('repositories.agendas.fields.emailWork') },
       {
         field: ACCIONES,
         header: '',

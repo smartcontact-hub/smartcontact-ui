@@ -52,6 +52,27 @@
       </section>
     </sc-section-card>
 
+    <!-- Cómo llama esta agenda a sus cinco campos personalizados (en Voice eran «Personalizado 1 a 5», fijos). -->
+    <sc-section-card titleKey="repositories.agendas.custom_labels_title" surface="card" icon="edit">
+      <section class="sub-section">
+        <p class="sc-text-body-regular">{{ 'repositories.agendas.custom_labels_hint' | translate }}</p>
+        <div class="grid grid--2">
+          @for (n of [1, 2, 3, 4, 5]; track n) {
+            <div class="field">
+              <sc-inputtext
+                [inputId]="'agenda-custom-' + n"
+                fluid
+                [label]="'repositories.agendas.custom_label_placeholder' | translate: { n }"
+                [placeholder]="'repositories.agendas.custom_label' | translate: { n }"
+                [value]="form().customLabels[n - 1]"
+                (valueChange)="updateCustomLabel(n - 1, $event)"
+              />
+            </div>
+          }
+        </div>
+      </section>
+    </sc-section-card>
+
     <sc-section-card titleKey="repositories.agendas.contacts" surface="card" icon="call">
       <section class="sub-section">
         <sc-agenda-contacts-table
@@ -71,13 +92,16 @@
 @if (contactDialog(); as dialog) {
   <sc-dialog
     [visible]="true"
+    width="46rem"
     [title]="(dialog.contact ? 'repositories.agendas.edit_contact' : 'repositories.agendas.add_contact') | translate"
     [hasFooter]="false"
     (cancelled)="contactDialog.set(null)"
   >
     <sc-repo-form-panel
       flush
-      [fields]="contactFields"
+      twoColumns
+      [showOptional]="false"
+      [fields]="contactFields()"
       [initial]="dialog.contact"
       [existingNames]="[]"
       [entitySingular]="'repositories.agendas.contact' | translate"
