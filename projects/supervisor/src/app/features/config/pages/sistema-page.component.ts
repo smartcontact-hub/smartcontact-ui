@@ -166,6 +166,8 @@ export class SistemaPageComponent {
       value: k,
     }));
   });
+  /** Como sus vecinos (maqueta sin almacén), guarda su valor mientras dura la página. */
+  protected readonly specialChars = signal(true);
   protected readonly processing = signal(false);
   protected readonly result = signal<RegenerationResult | null>(null);
 
