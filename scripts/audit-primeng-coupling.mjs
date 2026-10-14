@@ -99,7 +99,9 @@ const sh = (cmd) => {
 // DD-187: 63 → 69 por el interlineado de cinco textos sin token propio que heredaban el 1.5 del body (21 en vez de 20):
 // `.p-menu-item-label`, `.p-tooltip-text`, `.p-message-text` con `.p-message-sm` y `.p-message-lg`, y `.p-drawer-title`
 // (30 en vez de 28). PrimeNG no da token de interlineado para ninguno; en el preset viajan con el tema.
-const TOPE = { app: 6, ds: 12, preset: 69 };
+// 69 → 71 el 2026-10-14: `.p-datatable-row-reorder-indicator-up` y `-down`, las flechas que p-table pinta al arrastrar
+// una cabecera con `reorderableColumns`. El DS no las lleva (customs-catalog §8) y no hay token ni input para quitarlas.
+const TOPE = { app: 6, ds: 12, preset: 71 };
 
 /* Cuenta las clases `.p-*` que aparecen en SELECTORES, no en comentarios. Un
  * comentario que menciona `.p-datatable-*` para explicar POR QUÉ dependemos de
@@ -701,6 +703,8 @@ const COMPORTAMIENTO_PERMITIDO = {
     'DD-153: oculta solo el texto del selector compacto, preservando el alto y el input nativo con nombre accesible.',
   'sc-datatable .p-datatable-header:empty':
     'p-table pinta el caption aunque no se proyecte nada y deja una franja en blanco (css.ts, emptyCaptionCss).',
+  'sc-datatable .p-datatable-row-reorder-indicator-up, sc-datatable .p-datatable-row-reorder-indicator-down':
+    'sin las flechas al arrastrar una cabecera: la arrastrada ya va sombreada y la columna cambia al soltar (css.ts, reorderIndicatorCss, customs-catalog §8).',
   '.p-datatable-tbody > tr': 'hover de la gramática de tabla-lista, solo en filas que hacen algo (css.ts, listBehaviorCss, DD-66).',
   '.p-component.p-button': 'transiciones de 150 ms ease-out de la pulsación de better-ui, elegida en DD-113 (css.ts, buttonMotionCss).',
   '.p-component.p-button:active': 'al pulsar se encoge al 96 % y vuelve suave (css.ts, buttonMotionCss, DD-113, customs-catalog §8.1).',

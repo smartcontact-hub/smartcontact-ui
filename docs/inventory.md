@@ -34,7 +34,7 @@
 ## Clasificación (auto-generada)
 
 <!-- @audit:components — TABLA GENERADA por `node scripts/component-audit.mjs --write`. NO editar a mano. -->
-**61 componentes** · 25 custom · 9 standard · 27 extended · 49 usados en Supervisor · estado (DD-190): 33 ready, 27 experimental, 1 deprecated.
+**61 componentes** · 25 custom · 9 standard · 27 extended · 50 usados en Supervisor · estado (DD-190): 33 ready, 27 experimental, 1 deprecated.
 
 | Componente | Tipo | Estado | PrimeNG base | API propia | Anidados | Demo | Usos en Supervisor |
 |---|---|---|---|---|---|---|---|
@@ -50,10 +50,10 @@
 | `sc-checkbox` | CUSTOM | ready | — | 6 inputs | — | ✓ | 47 |
 | `sc-chip` | EXTENDED | ready | primeng/chip | 9 inputs | — | ✓ | 5 |
 | `sc-color-dot-picker` | CUSTOM | experimental (sin maestro en el Kit) | — | 1 inputs | — | ✓ | 3 |
-| `sc-column-selector` | STANDARD | experimental (sin maestro en el Kit) | primeng/popover | 1 inputs | — | ✓ | — |
+| `sc-column-selector` | STANDARD | experimental (sin maestro en el Kit) | primeng/popover | 1 inputs | — | ✓ | 1 |
 | `sc-command-palette` | CUSTOM | experimental (sin maestro en el Kit) | — | 0 inputs | — | ✓ | 4 |
 | `sc-confirmdialog` | STANDARD | ready | primeng/confirmdialog | 0 inputs | — | ✓ | 1 |
-| `sc-datatable` | EXTENDED | ready | primeng/table | 42 inputs | sc-skeleton | ✓ | 16 |
+| `sc-datatable` | EXTENDED | ready | primeng/table | 43 inputs | sc-skeleton | ✓ | 16 |
 | `sc-datepicker` | EXTENDED | ready | primeng/datepicker | 24 inputs | sc-field-label sc-button sc-field-msg | ✓ | 1 |
 | `sc-delete-entity-dialog` | CUSTOM | experimental (sin maestro en el Kit) | — | 2 inputs | sc-dialog sc-button | ✓ | 12 |
 | `sc-dialog` | EXTENDED | ready | primeng/dialog | 14 inputs | — | ✓ | 20 |
@@ -77,7 +77,7 @@
 | `sc-inputtext` | EXTENDED | ready | primeng/inputtext | 20 inputs | sc-field-label sc-field-msg | ✓ | 46 |
 | `sc-keyboard-shortcuts` | CUSTOM | experimental (sin maestro en el Kit) | — | 1 inputs | — | ✓ | 2 |
 | `sc-message` | EXTENDED | ready | primeng/message | 6 inputs | — | ✓ | 9 |
-| `sc-multiselect` | EXTENDED | ready | primeng/multiselect | 34 inputs | sc-field-label sc-field-msg | ✓ | 13 |
+| `sc-multiselect` | EXTENDED | ready | primeng/multiselect | 34 inputs | sc-field-label sc-field-msg | ✓ | 14 |
 | `sc-option-cards` | CUSTOM | experimental (sin maestro en el Kit ni demo) | — | 4 inputs | — | — | 2 |
 | `sc-panel` | EXTENDED | ready | primeng/panel | 6 inputs | — | ✓ | 1 |
 | `sc-password` | EXTENDED | ready | primeng/config, primeng/inputpassword | 19 inputs | sc-field-label sc-field-msg | ✓ | 2 |
@@ -86,9 +86,9 @@
 | `sc-progressbar` | EXTENDED | ready | primeng/progressbar | 4 inputs | — | ✓ | — |
 | `sc-progressspinner` | EXTENDED | ready | primeng/progressspinner | 4 inputs | — | ✓ | — |
 | `sc-radiobutton` | EXTENDED | ready | primeng/radiobutton | 7 inputs | — | ✓ | 2 |
-| `sc-search` | EXTENDED | experimental (sin maestro en el Kit) | primeng/iconfield, primeng/inputicon, primeng/inputtext | 11 inputs | — | ✓ | 12 |
+| `sc-search` | EXTENDED | experimental (sin maestro en el Kit) | primeng/iconfield, primeng/inputicon, primeng/inputtext | 11 inputs | — | ✓ | 13 |
 | `sc-section-card` | CUSTOM | ready | — | 9 inputs | sc-button | ✓ | 35 |
-| `sc-select` | EXTENDED | ready | primeng/select | 30 inputs | sc-field-label sc-field-msg | ✓ | 62 |
+| `sc-select` | EXTENDED | ready | primeng/select | 30 inputs | sc-field-label sc-field-msg | ✓ | 64 |
 | `sc-selectbutton` | EXTENDED | ready | primeng/selectbutton | 15 inputs | sc-field-msg | ✓ | 23 |
 | `sc-skeleton` | EXTENDED | ready | primeng/skeleton | 6 inputs | — | ✓ | — |
 | `sc-slot` | CUSTOM | experimental (sin maestro en el Kit) | — | 4 inputs | — | ✓ | 13 |
@@ -98,7 +98,7 @@
 | `sc-tag` | EXTENDED | ready | primeng/tag | 8 inputs | — | ✓ | 33 |
 | `sc-textarea` | EXTENDED | ready | primeng/textarea | 18 inputs | sc-button sc-field-msg | ✓ | 7 |
 | `sc-toast` | EXTENDED | ready | primeng/toast | 6 inputs | — | ✓ | — |
-| `sc-toggleswitch` | EXTENDED | ready | primeng/toggleswitch | 8 inputs | — | ✓ | 45 |
+| `sc-toggleswitch` | EXTENDED | ready | primeng/toggleswitch | 8 inputs | — | ✓ | 44 |
 <!-- @audit:components:end -->
 
 ## Gaps abiertos (el consumidor real los necesita; el DS aún no los cubre)

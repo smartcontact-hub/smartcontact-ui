@@ -584,6 +584,10 @@
       "usedInSupervisor": 4
     },
     {
+      "selector": "sc-column-selector",
+      "usedInSupervisor": 1
+    },
+    {
       "selector": "sc-empty-state",
       "usedInSupervisor": 22
     },

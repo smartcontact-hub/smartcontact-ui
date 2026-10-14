@@ -2,6 +2,7 @@ import { NgClass, NgTemplateOutlet } from '@angular/common';
 import {
   afterRenderEffect,
   DestroyRef,
+  effect,
   ElementRef,
   inject,
   signal,
@@ -14,6 +15,7 @@ import {
   input,
   model,
   output,
+  untracked,
   viewChild,
 } from '@angular/core';
 import type { FilterMetadata, SortMeta } from 'primeng/api';
@@ -323,6 +325,12 @@ export class ScDatatableComponent<T = unknown> {
   readonly filters = input<ScDatatableFilters | undefined>(undefined);
   /** Campos sobre los que aplica el filtro `global`. */
   readonly globalFilterFields = input<readonly string[] | undefined>(undefined);
+  /**
+   * Dónde van los filtros de las columnas con `ScColumnDef.filter` (primeng.dev/table «Filter»): `row`, una fila bajo
+   * la cabecera con un control por columna (el «Basic»); `menu`, un botón junto al título que abre sus reglas (el
+   * «Advanced»).
+   */
+  readonly filterDisplay = input<'row' | 'menu'>('row');
 
 
   /* ════════════════════════════════════════════════════════════════════════
@@ -630,6 +638,34 @@ export class ScDatatableComponent<T = unknown> {
     this.indicePendiente = null;
   }
 
+  /**
+   * Los tramos de la cabecera agrupada (`ScColumnDef.group`): columnas seguidas con el mismo grupo van juntas, y una
+   * sin grupo es un tramo de una. `null` si ninguna columna lleva grupo, que es la cabecera de una sola fila.
+   */
+  protected readonly headerSegments = computed<readonly { group: string | null; cols: ScColumnDef<T>[] }[] | null>(() => {
+    const cols = this.visibleCols();
+    if (!cols.some((c) => c.group)) return null;
+    const tramos: { group: string | null; cols: ScColumnDef<T>[] }[] = [];
+    for (const col of cols) {
+      const ultimo = tramos.at(-1);
+      if (col.group && ultimo?.group === col.group) ultimo.cols.push(col);
+      else tramos.push({ group: col.group ?? null, cols: [col] });
+    }
+    return tramos;
+  });
+  /** Las columnas de la segunda fila de una cabecera agrupada: las que están debajo de un grupo. */
+  protected readonly groupedCols = computed(() => this.headerSegments()?.filter((t) => t.group).flatMap((t) => t.cols) ?? []);
+  /** La fila de filtros se pinta si alguna columna visible filtra y los filtros van en fila. */
+  protected readonly filterRow = computed(() => this.filterDisplay() === 'row' && this.visibleCols().some((c) => c.filter));
+
+  /**
+   * Con la cabecera agrupada, ninguna columna se arrastra: p-table cuenta la posición de la columna entre las cabeceras
+   * con `pReorderableColumn` de su fila, y repartidas en dos filas la cuenta sale mal.
+   */
+  protected columnReorderable(col: ScColumnDef<T>): boolean {
+    return this.reorderableColumns() && col.reorderable !== false && !col.frozen && !this.headerSegments();
+  }
+
   /** colspan de la fila vacía: columnas VISIBLES + la de selección si se pinta. */
   protected readonly colspan = computed<number>(
     () => this.visibleCols().length + (this.selectionControl() ? 1 : 0),
@@ -799,6 +835,23 @@ export class ScDatatableComponent<T = unknown> {
       observer.observe(box);
       onCleanup(() => observer.disconnect());
     });
+    /* p-table guarda el filtro de una columna como un valor en `row` y como una lista de reglas en `menu`, y cada
+     * `p-column-filter` lo crea solo si no existe: al pasar de fila a menú en vivo el menú heredaba el valor suelto y
+     * no se abría (`newCollection[Symbol.iterator] is not a function`, medido el 2026-10-14). Al cambiar de sitio, los
+     * filtros de columna se vacían; el global se queda. Corre antes de pintar la cabecera nueva. */
+    let filterDisplayAnterior: 'row' | 'menu' | undefined;
+    effect(() => {
+      const display = this.filterDisplay();
+      const cambia = filterDisplayAnterior !== undefined && display !== filterDisplayAnterior;
+      filterDisplayAnterior = display;
+      if (!cambia) return;
+      untracked(() => {
+        const table = this.table();
+        const global = table.filters['global'];
+        table.filters = global ? { global } : {};
+        table._filter();
+      });
+    });
   }
 
   /**
@@ -809,6 +862,27 @@ export class ScDatatableComponent<T = unknown> {
    */
   filterGlobal(value: string, matchMode = 'contains'): void {
     this.table().filterGlobal(value, matchMode);
+  }
+
+  /**
+   * Al quitar el último filtro, p-table vuelve a pintar todas las filas pero deja en el paginador la cuenta del filtrado
+   * anterior (`_filter` solo la recalcula si queda algún filtro): filtrar «Marta» y borrarlo dejaba 1 página para 150
+   * filas (medido el 2026-10-14). En cliente, sin filtrado, la cuenta vuelve a ser la de `value`.
+   */
+  protected onFilter(event: TableFilterEvent): void {
+    const table = this.table();
+    if (!this.lazy() && !table.filteredValue) table.totalRecords.set(this.pTotalRecords());
+    this.filterChange.emit(event);
+  }
+
+  /**
+   * Quita filtros, orden y página: el `clear()` de p-table, el botón «Clear» del ejemplo «Filter» de primeng.dev. Las
+   * filas vuelven al orden de `value`. El texto del buscador global es de quien lo pinta: lo vacía él.
+   */
+  clear(): void {
+    this.table().clear();
+    this.ultimoOrdenPulsado = null;
+    this.sortReset.update((n) => n + 1);
   }
 
   /** Lee `row[field]` sin indexar `unknown` directo en plantilla. */

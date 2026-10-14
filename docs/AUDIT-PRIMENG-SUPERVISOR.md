@@ -5,8 +5,8 @@
 Contra **PrimeNG 22.1.0**, la versión INSTALADA — no la documentación de la web,
 que puede ir por delante.
 
-**49 componentes** del DS se usan en el Supervisor, y entre todos esconden
-**481 props** que PrimeNG sí documenta.
+**50 componentes** del DS se usan en el Supervisor, y entre todos esconden
+**492 props** que PrimeNG sí documenta.
 
 La regla es DD-113: *el nativo tal cual, adaptado con tokens*. Esconder una prop puede ser una
 decisión buena —los wrappers EXTENDED lo hacen a propósito— pero hasta ahora esa decisión no se
@@ -31,7 +31,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **55 props nativas no expuestas**: `appendTo`, `ariaLabel`, `ariaLabelledBy`, `autoZIndex`, `autofocus`, `baseZIndex`, `clearButtonStyleClass`, `dataType`, `defaultDate`, `disabledDates`, `disabledDays`, `firstDayOfWeek`, `fluid`, `focusTrap`, `hideOnDateTimeSelect`, `hourFormat`, `icon`, `iconAriaLabel`, `iconDisplay`, `inputSize`, `inputStyle`, `inputStyleClass`, `keepInvalid`, `max`, `maxDateCount`, `maxlength`, `min`, `minlength`, `motionOptions`, `multipleSeparator`, `numberOfMonths`, `panelStyle`, `panelStyleClass`, `pattern`, `rangeSeparator`, `readonlyInput`, `responsiveOptions`, `selectOtherMonths`, `shortYearCutoff`, `showOnFocus`, `showOtherMonths`, `showSeconds`, `showTime`, `showWeek`, `startWeekFromFirstDayOfYear`, `step`, `stepHour`, `stepMinute`, `stepSecond`, `tabindex`, `timeOnly`, `timeSeparator`, `todayButtonStyleClass`, `touchUI`, `variant`
 
-### `sc-multiselect` · 13 usos · primeng/multiselect
+### `sc-multiselect` · 14 usos · primeng/multiselect
 
 **44 props nativas no expuestas**: `ariaFilterLabel`, `autoOptionFocus`, `autocomplete`, `autofocus`, `autofocusFilter`, `chipIcon`, `dataKey`, `displaySelectedLabel`, `dropdownIcon`, `filterFields`, `filterLocale`, `filterMatchMode`, `filterPlaceHolder`, `filterValue`, `fluid`, `focusOnHover`, `group`, `highlightOnSelect`, `id`, `lazy`, `loading`, `loadingIcon`, `motionOptions`, `optionGroupChildren`, `optionGroupLabel`, `overlayOptions`, `overlayVisible`, `panelStyle`, `panelStyleClass`, `readonly`, `resetFilterOnHide`, `scrollHeight`, `selectAll`, `selectOnFocus`, `showHeader`, `tabindex`, `tooltip`, `tooltipPosition`, `tooltipPositionStyle`, `tooltipStyleClass`, `variant`, `virtualScroll`, `virtualScrollItemSize`, `virtualScrollOptions`
 
@@ -39,7 +39,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **43 props nativas no expuestas**: `appendTo`, `autoHide`, `autofocus`, `badge`, `badgeSeverity`, `buttonProps`, `content`, `escape`, `fitContent`, `fluid`, `hideDelay`, `hideOnEscape`, `hostName`, `iconPos`, `life`, `link`, `loadingIcon`, `outlined`, `pButton`, `pButtonIconPT`, `pButtonLabelPT`, `pButtonLabelUnstyled`, `pButtonPT`, `pButtonUnstyled`, `pTooltipPT`, `pTooltipUnstyled`, `plain`, `positionLeft`, `positionStyle`, `positionTop`, `severity`, `showDelay`, `showOnEllipsis`, `style`, `styleClass`, `tabindex`, `text`, `tooltipDisabled`, `tooltipEvent`, `tooltipOptions`, `tooltipPosition`, `tooltipStyleClass`, `tooltipZIndex`
 
-### `sc-select` · 62 usos · primeng/select
+### `sc-select` · 64 usos · primeng/select
 
 **43 props nativas no expuestas**: `ariaFilterLabel`, `autoOptionFocus`, `autofocus`, `autofocusFilter`, `checkmark`, `dataKey`, `dropdownIcon`, `filterFields`, `filterLocale`, `filterMatchMode`, `filterValue`, `fluid`, `focusOnHover`, `group`, `id`, `inputSize`, `lazy`, `loadingIcon`, `max`, `maxlength`, `min`, `minlength`, `motionOptions`, `multiple`, `optionGroupChildren`, `optionGroupLabel`, `overlayOptions`, `panelStyle`, `panelStyleClass`, `pattern`, `resetFilterOnHide`, `scrollHeight`, `selectOnFocus`, `step`, `tabindex`, `tooltip`, `tooltipPosition`, `tooltipPositionStyle`, `tooltipStyleClass`, `variant`, `virtualScroll`, `virtualScrollItemSize`, `virtualScrollOptions`
 
@@ -59,6 +59,10 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **24 props nativas no expuestas**: `cancelButtonProps`, `cancelIcon`, `cancelLabel`, `cancelStyleClass`, `chooseButtonProps`, `chooseIcon`, `chooseStyleClass`, `customUpload`, `filesInput`, `headers`, `invalidFileLimitMessageDetail`, `invalidFileLimitMessageSummary`, `method`, `previewWidth`, `removeStyleClass`, `showCancelButton`, `showUploadButton`, `style`, `styleClass`, `uploadButtonProps`, `uploadIcon`, `uploadLabel`, `uploadStyleClass`, `withCredentials`
 
+### `sc-column-selector` · 1 usos · primeng/popover
+
+**11 props nativas no expuestas**: `appendTo`, `ariaCloseLabel`, `ariaLabel`, `ariaLabelledBy`, `autoZIndex`, `baseZIndex`, `dismissable`, `focusOnShow`, `motionOptions`, `style`, `styleClass`
+
 ### `sc-drawer` · 3 usos · primeng/drawer
 
 **11 props nativas no expuestas**: `appendTo`, `ariaCloseLabel`, `autoZIndex`, `baseZIndex`, `blockScroll`, `closable`, `closeButtonProps`, `maskStyle`, `motionOptions`, `style`, `styleClass`
@@ -75,7 +79,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **7 props nativas no expuestas**: `ariaLabelledBy`, `autofocus`, `binary`, `disabled`, `invalid`, `required`, `tabindex`
 
-### `sc-search` · 12 usos · primeng/iconfield, primeng/inputicon, primeng/inputtext
+### `sc-search` · 13 usos · primeng/iconfield, primeng/inputicon, primeng/inputtext
 
 **7 props nativas no expuestas**: `fluid`, `iconPosition`, `invalid`, `pInputTextPT`, `pInputTextUnstyled`, `pSize`, `variant`
 
@@ -87,7 +91,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **7 props nativas no expuestas**: `disabled`, `lazy`, `scrollStrategy`, `scrollable`, `selectOnFocus`, `showNavigators`, `tabindex`
 
-### `sc-toggleswitch` · 45 usos · primeng/toggleswitch
+### `sc-toggleswitch` · 44 usos · primeng/toggleswitch
 
 **7 props nativas no expuestas**: `autofocus`, `falseValue`, `invalid`, `name`, `required`, `tabindex`, `trueValue`
 
