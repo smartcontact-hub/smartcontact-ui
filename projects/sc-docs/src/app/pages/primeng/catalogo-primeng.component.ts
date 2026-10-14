@@ -18,8 +18,6 @@ interface Fila {
   readonly cuando: string | null;
   readonly aqui: string;
   readonly estado: Estado;
-  readonly wrappers: readonly string[];
-  readonly apps: readonly string[];
   readonly obsoleto: boolean;
 }
 

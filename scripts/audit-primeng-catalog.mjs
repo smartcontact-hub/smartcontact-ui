@@ -117,6 +117,10 @@ const celdas = (fila) =>
  * La sección 6 como datos para la página «Todo PrimeNG» de sc-docs: cada familia con su pregunta y sus filas, y cada fila
  * con el estado que mide el repo (no el que dice el texto, que es juicio).
  *
+ * Solo sale lo que la página pinta. La lista de wrappers y la de apps se quedaron fuera el 2026-10-14: `main` se puso
+ * rojo cuando otro PR hizo que `sc-option-cards` envolviera RadioButton, un cambio que la página ni enseña. El estado
+ * (en el DS, sin wrapper, sin uso) cambia mucho menos.
+ *
  * @param {string} doc
  * @param {{ envueltoPor: Map<string, string[]>, directos: Map<string, Set<string>>, obsoletos: Set<string> }} repo
  */
@@ -150,8 +154,6 @@ export function catalogoParaDocs(doc, { envueltoPor, directos, obsoletos }) {
         cuando: c['Elígelo cuando…'] ? enLinea(c['Elígelo cuando…']) : null,
         aqui: enLinea(c['Aquí']),
         estado: wrappers.length ? 'ds' : apps.length ? 'directo' : 'sin-uso',
-        wrappers,
-        apps,
         obsoleto: modulos.some((m) => obsoletos.has(m)),
       };
     });
