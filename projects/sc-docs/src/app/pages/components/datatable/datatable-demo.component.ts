@@ -304,6 +304,8 @@ export class DatatableDemoComponent {
       { name: 'skeleton', label: 'Esqueleto de carga', control: { kind: 'boolean' }, description: 'Esqueleto de carga: la cabecera se queda y cada celda es un `p-skeleton`, como el ejemplo «DataTable» de primeng.dev/skeleton. Es el que piden las pantallas que esperan datos (regla 2 de «UX de pantalla»), no el spinner de `loading`.' },
       { name: 'skeletonRows', label: 'Filas del esqueleto', control: { kind: 'number', min: 1, max: 20, step: 1 }, description: 'Cuántas filas pinta el esqueleto.' },
       { name: 'selectionMode', label: 'Modo de selección', control: { kind: 'select', options: ['single', 'multiple'] } },
+      { name: 'selectionColumn', label: 'Con qué se marca', control: { kind: 'select', options: ['checkbox', 'radio', 'none'] }, description: 'Los cuatro ejemplos de primeng.dev/table «Selection»: checkbox (con multiple), radio (con single), none (sin columna: la fila y el teclado ↑ ↓ Espacio Intro). Si no casa con el modo, la tabla usa el de siempre: casilla en multiple, fila en single.' },
+      { name: 'metaKeySelection', label: 'Cmd/Ctrl para añadir', control: { kind: 'boolean' }, description: 'Cuando se marca clicando la fila: un clic sustituye la selección y Cmd/Ctrl+clic añade o quita.' },
       { name: 'sortField', label: 'Ordenar por columna', control: { kind: 'text' }, description: 'Columna por la que sale ordenada.' },
       { name: 'sortOrder', label: 'Sentido del orden', control: { kind: 'select', options: [1, -1] }, description: '1 ascendente, -1 descendente.' },
       { name: 'externalSort', label: 'Orden gestionado fuera', control: { kind: 'boolean' }, description: 'El orden lo pone quien usa la tabla: pinta la flecha y emite (sortChange), pero no mueve las filas.' },
@@ -325,6 +327,8 @@ export class DatatableDemoComponent {
       stripedRows: true,
       showGridlines: false,
       selectionMode: 'multiple',
+      selectionColumn: 'checkbox',
+      metaKeySelection: false,
       size: 'md',
       variant: 'default',
       loading: false,
@@ -352,14 +356,14 @@ export class DatatableDemoComponent {
   };
 
   /**
-   * Agrupación de los 21 knobs del Playground para no-devs (BI, PMs en la reunión de tablas):
+   * Agrupación de los knobs del Playground para no-devs (BI, PMs en la reunión de tablas):
    * híbrido entre el vocabulario del Excel de BI (Selección, Scroll, Columnas — mismas palabras
    * que en la reunión) y menos grupos que sus 17, para que cada acordeón quepa de un vistazo.
    * «General» empieza abierto (lo primero que se toca); el resto, plegado.
    */
   protected readonly controlGroupDefs: readonly { title: string; open: boolean; names: readonly string[] }[] = [
     { title: 'General', open: true, names: ['paginator', 'rows', 'first', 'stripedRows', 'showGridlines', 'size', 'variant', 'loading', 'skeleton', 'skeletonRows'] },
-    { title: 'Selección y orden', open: false, names: ['selectionMode', 'sortField', 'sortOrder', 'externalSort', 'rowsFocusable'] },
+    { title: 'Selección y orden', open: false, names: ['selectionMode', 'selectionColumn', 'metaKeySelection', 'rowsFocusable', 'sortField', 'sortOrder', 'externalSort'] },
     { title: 'Scroll y tamaño', open: false, names: ['scrollable', 'scrollHeight', 'stickyHeader', 'virtualScroll', 'fill', 'tableMinWidth'] },
     { title: 'Columnas', open: false, names: ['resizableColumns', 'columnResizeMode', 'reorderableColumns'] },
   ];

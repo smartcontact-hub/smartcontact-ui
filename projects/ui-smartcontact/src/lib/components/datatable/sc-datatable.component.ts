@@ -23,6 +23,8 @@ import {
   type TableFilterEvent,
   type TableLazyLoadEvent,
   type TablePageEvent,
+  type TableRowSelectEvent,
+  type TableRowUnSelectEvent,
 } from 'primeng/table';
 
 import {
@@ -47,6 +49,16 @@ import { ScSkeletonComponent } from '../skeleton/sc-skeleton.component';
  * del Comunicador, por ejemplo).
  */
 export type ScDatatableVariant = 'default' | 'list';
+
+/**
+ * Con qué se marca una fila, los cuatro casos de primeng.dev/table «Selection»:
+ *   - `checkbox`: una casilla por fila y la de «todas» en la cabecera; la fila no selecciona al clicarla, abre
+ *     (`Checkbox`). Es lo de siempre en `multiple`.
+ *   - `radio`: un botón de opción por fila; la fila no selecciona al clicarla (`Radio`). Solo con `single`.
+ *   - `none`: sin columna; selecciona el clic en la fila y el teclado de PrimeNG (↑ ↓ Inicio Fin Espacio Intro)
+ *     (`Single`, `Multiple`, `Keyboard`). Es lo de siempre en `single`.
+ */
+export type ScDatatableSelectionColumn = 'checkbox' | 'radio' | 'none';
 
 /** Mapa de filtros de p-table (por campo + `global`). */
 export type ScDatatableFilters = Record<string, FilterMetadata | FilterMetadata[]>;
@@ -143,6 +155,17 @@ export class ScDatatableComponent<T = unknown> {
   readonly selectionMode = input<'single' | 'multiple' | null>(null);
   /** Selección two-way: la fila (single) o el array de filas (multiple). */
   readonly selection = model<T | readonly T[] | null>(null);
+  /**
+   * Con qué se marca la fila (`ScDatatableSelectionColumn`). Sin informar: casilla en `multiple`, clic en la fila en
+   * `single`, que es lo que hacían las tablas antes de existir este input. `radio` solo vale con `single` y `checkbox`
+   * solo con `multiple`; otra combinación se queda en el valor por defecto de su modo.
+   */
+  readonly selectionColumn = input<ScDatatableSelectionColumn | undefined>(undefined);
+  /**
+   * El de p-table tal cual: con él, un clic en la fila sustituye la selección y Cmd/Ctrl+clic añade o quita. Solo
+   * cuenta cuando selecciona la fila (`selectionColumn` `none`); en pantallas táctiles PrimeNG lo ignora.
+   */
+  readonly metaKeySelection = input(false, { transform: booleanAttribute });
 
   /** Orden inicial (client-side; p-table reordena `value`). */
   readonly sortField = input<string | undefined>(undefined);
@@ -361,6 +384,15 @@ export class ScDatatableComponent<T = unknown> {
   readonly filterChange = output<TableFilterEvent>();
 
   /**
+   * Se ha marcado una fila: el `onRowSelect` de p-table tal cual (`data`, `index`, `type`: `row`, `checkbox` o
+   * `radiobutton`). Las filas que suma el rango con Mayús sobre la casilla no lo emiten una a una: las lleva
+   * `selectionChange`.
+   */
+  readonly rowSelect = output<TableRowSelectEvent<T>>();
+  /** Se ha desmarcado una fila: el `onRowUnselect` de p-table tal cual. */
+  readonly rowUnselect = output<TableRowUnSelectEvent<T>>();
+
+  /**
    * Click en la fila. **No se emite desde la celda de selección**: esa celda
    * corta la propagación, porque el reparto canónico es «la fila abre, la
    * casilla selecciona» y si el click de la casilla también abriera, marcar
@@ -421,16 +453,24 @@ export class ScDatatableComponent<T = unknown> {
   });
 
   /**
-   * En `multiple`, `pSelectableRow` de PrimeNG selecciona al clicar la fila —
-   * y eso choca con el modelo canónico que fijó la Ola 6: **la fila abre, la
-   * casilla selecciona**. Con los dos activos, un click hacía las dos cosas.
+   * Con columna de selección (casilla o radio), `pSelectableRow` de PrimeNG se apaga: seleccionar al clicar la
+   * fila choca con el modelo canónico que fijó la Ola 6, **la fila abre, la casilla selecciona**. Con los dos
+   * activos, un click hacía las dos cosas.
    *
-   * En `single` no se desactiva: ahí seleccionar ES clicar la fila, que es lo
-   * que ese modo significa en p-table.
+   * Sin columna (`selectionColumn` `none`) se queda encendido: ahí seleccionar ES clicar la fila, y con él llega el
+   * teclado de PrimeNG (↑ ↓ Inicio Fin Espacio Intro), que vive en esa misma directiva.
    */
-  protected readonly rowSelectDisabled = computed<boolean>(() => {
+  protected readonly rowSelectDisabled = computed<boolean>(
+    () => !this.selectionMode() || this.selectionControl() !== null,
+  );
+
+  /** La columna de selección que se pinta de verdad, o `null` si selecciona la fila (ver `selectionColumn`). */
+  protected readonly selectionControl = computed<'checkbox' | 'radio' | null>(() => {
     const mode = this.selectionMode();
-    return !mode || mode === 'multiple';
+    const column = this.selectionColumn();
+    if (mode === 'multiple') return column === 'none' ? null : 'checkbox';
+    if (mode === 'single') return column === 'radio' ? 'radio' : null;
+    return null;
   });
 
   /**
@@ -533,7 +573,7 @@ export class ScDatatableComponent<T = unknown> {
    * vuelvan a desincronizarse.
    */
   protected onCheckMousedown(event: MouseEvent, index: number): void {
-    if (this.selectionMode() !== 'multiple') return;
+    if (this.selectionControl() !== 'checkbox') return;
     if (!(event.target as HTMLElement | null)?.closest('.sc-datatable__check-box')) return;
     this.shiftAlPulsar = event.shiftKey;
     this.indicePendiente = index;
@@ -549,7 +589,7 @@ export class ScDatatableComponent<T = unknown> {
     const idx = this.indicePendiente;
     const ancla = this.anclaRango;
 
-    if (this.selectionMode() === 'multiple' && this.shiftAlPulsar && ancla !== null && idx !== null) {
+    if (this.selectionControl() === 'checkbox' && this.shiftAlPulsar && ancla !== null && idx !== null) {
       const [ini, fin] = ancla <= idx ? [ancla, idx] : [idx, ancla];
       const conRango = [...this.selectionComoArray(nueva)];
       const vistos = new Set(conRango.map((r) => this.idDe(r)));
@@ -570,9 +610,9 @@ export class ScDatatableComponent<T = unknown> {
     this.indicePendiente = null;
   }
 
-  /** colspan de la fila vacía: columnas VISIBLES + la de checkbox si aplica. */
+  /** colspan de la fila vacía: columnas VISIBLES + la de selección si se pinta. */
   protected readonly colspan = computed<number>(
-    () => this.visibleCols().length + (this.selectionMode() === 'multiple' ? 1 : 0),
+    () => this.visibleCols().length + (this.selectionControl() ? 1 : 0),
   );
 
   /** Filtros para p-table: referencia estable `{}` cuando el consumidor no informa. */
