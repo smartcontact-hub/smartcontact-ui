@@ -895,9 +895,13 @@
     },
     "dispatch": {
       "transcribing": "Generating transcription for {{n}} conversations…",
+      "transcribing_one": "Generating transcription for 1 conversation…",
       "analyzing": "Generating AI analysis for {{n}} conversations…",
+      "analyzing_one": "Generating AI analysis for 1 conversation…",
       "success": "{{n}} conversations processed successfully",
+      "success_one": "1 conversation processed successfully",
       "all_failed": "{{n}} transcriptions failed. Check 'Failed only' to retry.",
+      "all_failed_one": "The transcription failed. Check 'Failed only' to retry.",
       "partial": "{{ok}} processed, {{ko}} failed. Check 'Failed only' to retry."
     }
   },

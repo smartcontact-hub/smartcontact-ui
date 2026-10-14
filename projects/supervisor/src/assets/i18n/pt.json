@@ -895,9 +895,13 @@
     },
     "dispatch": {
       "transcribing": "Gerando transcrição de {{n}} conversas…",
+      "transcribing_one": "Gerando transcrição de 1 conversa…",
       "analyzing": "Gerando análise IA de {{n}} conversas…",
+      "analyzing_one": "Gerando análise IA de 1 conversa…",
       "success": "{{n}} conversas processadas com sucesso",
+      "success_one": "1 conversa processada com sucesso",
       "all_failed": "{{n}} transcrições falharam. Verifique 'Apenas falhas' para tentar novamente.",
+      "all_failed_one": "A transcrição falhou. Verifique 'Apenas falhas' para tentar novamente.",
       "partial": "{{ok}} processadas, {{ko}} falharam. Verifique 'Apenas falhas' para tentar novamente."
     }
   },

@@ -895,9 +895,13 @@
     },
     "dispatch": {
       "transcribing": "Génération de la transcription de {{n}} conversations…",
+      "transcribing_one": "Génération de la transcription de 1 conversation…",
       "analyzing": "Génération de l'analyse IA de {{n}} conversations…",
+      "analyzing_one": "Génération de l'analyse IA de 1 conversation…",
       "success": "{{n}} conversations traitées correctement",
+      "success_one": "1 conversation traitée correctement",
       "all_failed": "{{n}} transcriptions ont échoué. Vérifiez 'Échouées uniquement' pour réessayer.",
+      "all_failed_one": "La transcription a échoué. Vérifiez 'Échouées uniquement' pour réessayer.",
       "partial": "{{ok}} traitées, {{ko}} échouées. Vérifiez 'Échouées uniquement' pour réessayer."
     }
   },
