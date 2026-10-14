@@ -126,8 +126,7 @@
         [links]="form().links"
         [routing]="summaryRouting()"
         [outbound]="summaryOutbound()"
-        [resourceCount]="resourceCount()"
-        [resourceRows]="summaryResourceRows()"
+        [resources]="summaryResources()"
         [missing]="summaryMissing()"
         [creating]="mode() === 'create'"
         [ready]="mode() === 'create' && canSave()"
@@ -655,6 +654,7 @@
           </label>
           <div class="control-add">
             <sc-multiselect
+              #agendasSelect
               inputId="group-agendas"
               optionLabel="label"
               optionValue="value"
@@ -665,10 +665,14 @@
               [options]="scheduleOptions()"
               [value]="scheduleValue()"
               (valueChange)="onIdsChange('scheduleIds', $event)"
-            />
+            >
+              <!-- «Editar» en la propia opción, al pasar (revisión del 2026-10-14): sin lista de debajo. -->
+              <ng-template #item let-option>
+                <sc-resource-option [name]="option.label" (editar)="agendasSelect.hide(); recursoAbierto.set({ tipo: 'agenda', id: option.value })" />
+              </ng-template>
+            </sc-multiselect>
             <sc-button icon="add" variant="secondary" [ariaLabel]="'groups.form.fields.agenda_new' | translate" [pTooltip]="'groups.form.fields.agenda_new' | translate" tooltipPosition="top" (clicked)="recursoAbierto.set({ tipo: 'agenda', id: null })" />
           </div>
-          <sc-resource-rows [label]="'agents.form.advanced.agendas.title' | translate" [rows]="agendaRows()" (editar)="recursoAbierto.set({ tipo: 'agenda', id: +$event })" />
         </div>
 
         @if (hasChatFamily()) {
@@ -678,6 +682,7 @@
             </label>
             <div class="control-add">
               <sc-multiselect
+                #chatTemplatesSelect
                 inputId="group-templates-chat"
                 optionLabel="label"
                 optionValue="value"
@@ -688,10 +693,13 @@
                 [options]="chatTemplateOptions()"
                 [value]="chatTemplateValue()"
                 (valueChange)="onTemplatesChange('chat', $event)"
-              />
+              >
+                <ng-template #item let-option>
+                  <sc-resource-option [name]="option.label" (editar)="chatTemplatesSelect.hide(); recursoAbierto.set({ tipo: 'chat', id: option.value })" />
+                </ng-template>
+              </sc-multiselect>
               <sc-button icon="add" variant="secondary" [ariaLabel]="'groups.form.fields.template_new' | translate" [pTooltip]="'groups.form.fields.template_new' | translate" tooltipPosition="top" (clicked)="recursoAbierto.set({ tipo: 'chat', id: null })" />
             </div>
-            <sc-resource-rows [label]="'resources.templates_chat' | translate" [rows]="chatTemplateRows()" (editar)="recursoAbierto.set({ tipo: 'chat', id: +$event })" />
           </div>
         }
 
@@ -702,6 +710,7 @@
             </label>
             <div class="control-add">
               <sc-multiselect
+                #emailTemplatesSelect
                 inputId="group-templates-email"
                 optionLabel="label"
                 optionValue="value"
@@ -712,10 +721,13 @@
                 [options]="emailTemplateOptions()"
                 [value]="emailTemplateValue()"
                 (valueChange)="onTemplatesChange('email', $event)"
-              />
+              >
+                <ng-template #item let-option>
+                  <sc-resource-option [name]="option.label" (editar)="emailTemplatesSelect.hide(); recursoAbierto.set({ tipo: 'email', id: option.value })" />
+                </ng-template>
+              </sc-multiselect>
               <sc-button icon="add" variant="secondary" [ariaLabel]="'groups.form.fields.template_new' | translate" [pTooltip]="'groups.form.fields.template_new' | translate" tooltipPosition="top" (clicked)="recursoAbierto.set({ tipo: 'email', id: null })" />
             </div>
-            <sc-resource-rows [label]="'resources.templates_email' | translate" [rows]="emailTemplateRows()" (editar)="recursoAbierto.set({ tipo: 'email', id: +$event })" />
           </div>
         }
 
@@ -783,7 +795,8 @@
     titleKey="groups.form.section.agents"
     hintKey="groups.form.section.agents_hint"
   >
-    <sc-subsection titleKey="groups.form.agents.assigned_title">
+    <!-- Sin título propio: la sección ya se llama «Agentes asignados» (revisión del 2026-10-14). -->
+    <sc-subsection>
       <sc-agent-channel-table
         [groupChannels]="formGroupChannels()"
         [links]="form().links"
@@ -833,15 +846,26 @@
     <label class="field__label sc-text-caption-semibold" [for]="'group-' + channel + '-service-level'" [id]="'group-' + channel + '-service-level' + '-label'">{{ 'groups.form.advanced.service_level' | translate }}</label>
     <sc-select [inputId]="'group-' + channel + '-service-level'" [value]="queue.serviceLevelSec" [helperText]="'groups.form.advanced.service_level_hint' | translate" (valueChange)="setQueueNumber(channel, 'serviceLevelSec', $event)" optionValue="value" [options]="durationOptions(queue.serviceLevelSec, false)" [ariaLabelledBy]="'group-' + channel + '-service-level' + '-label'" />
   </div>
-  <!-- Dos opciones, ni una más: sin «Sin límite» (visión de producto de grupos, 2026-09-25). -->
-  <div class="field">
-    <label class="field__label sc-text-caption-semibold" [for]="'group-' + channel + '-queue-size'">{{ 'groups.form.advanced.queue_size' | translate }}</label>
-    <span class="inline-control inline-control--queue">
-      <span class="visually-hidden" [id]="'group-' + channel + '-queue-type' + '-label'">{{ 'groups.form.advanced.queue_type' | translate }}</span>
-      <sc-select size="sm" optionValue="value" [inputId]="'group-' + channel + '-queue-type'" [options]="queueSizeOptions()" [value]="queue.queueSizeType" [ariaLabelledBy]="'group-' + channel + '-queue-type' + '-label'" [ariaDescribedBy]="'group-' + channel + '-queue-help'" (valueChange)="setQueueType(channel, $event)" />
-      <sc-inputnumber class="field__number" size="sm" [inputId]="'group-' + channel + '-queue-size'" [ariaDescribedBy]="'group-' + channel + '-queue-help'" [min]="1" [max]="queue.queueSizeType === 'per_agent' ? 10 : undefined" [step]="1" [error]="queueSizeError(queue)" [value]="queue.queueSize" (valueChange)="setQueueNumber(channel, 'queueSize', $event)" />
-    </span>
-    <p class="field__help sc-text-caption-regular" [id]="'group-' + channel + '-queue-help'">{{ (queue.queueSizeType === 'fixed' ? 'groups.form.advanced.queue_fixed_hint' : 'groups.form.advanced.queue_per_agent_hint') | translate: { count: queue.queueSize } }}</p>
+  <!-- Dos opciones, ni una más: sin «Sin límite» (visión de producto de grupos, 2026-09-25). En tarjetas de radio, el
+       ejemplo «Card» de primeng.dev/radiobutton (`sc-option-cards`, revisión del 2026-10-14): cada una dice qué cuenta, y
+       la cifra va debajo, con la frase que la lee entera. -->
+  <div class="queue-size">
+    <div class="field">
+      <span class="field__label sc-text-caption-semibold" [id]="'group-' + channel + '-queue-type-label'">{{ 'groups.form.advanced.queue_size' | translate }}</span>
+      <sc-option-cards
+        orientation="vertical"
+        [name]="'group-' + channel + '-queue-type'"
+        [ariaLabelledBy]="'group-' + channel + '-queue-type-label'"
+        [options]="queueSizeOptions()"
+        [value]="queue.queueSizeType"
+        (valueChange)="setQueueType(channel, $event)"
+      />
+    </div>
+    <div class="field">
+      <label class="field__label sc-text-caption-semibold" [for]="'group-' + channel + '-queue-size'">{{ 'groups.form.advanced.queue_max' | translate }}</label>
+      <sc-inputnumber class="field__number" [inputId]="'group-' + channel + '-queue-size'" [ariaDescribedBy]="'group-' + channel + '-queue-help'" [min]="1" [max]="queue.queueSizeType === 'per_agent' ? 10 : undefined" [step]="1" [error]="queueSizeError(queue)" [value]="queue.queueSize" (valueChange)="setQueueNumber(channel, 'queueSize', $event)" />
+      <p class="field__help sc-text-caption-regular" [id]="'group-' + channel + '-queue-help'">{{ (queue.queueSizeType === 'fixed' ? 'groups.form.advanced.queue_fixed_hint' : 'groups.form.advanced.queue_per_agent_hint') | translate: { count: queue.queueSize } }}</p>
+    </div>
   </div>
 </ng-template>
 

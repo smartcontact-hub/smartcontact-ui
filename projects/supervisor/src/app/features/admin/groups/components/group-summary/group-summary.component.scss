@@ -217,7 +217,9 @@
 .resumen__pair-label {
   display: flex;
   align-items: center;
-  gap: var(--sc-spacing-0-625);
+  /* 7, el de `sc-fact-row` entre su baldosa y su clave: las claves de los botones y las de los enlaces empiezan en la
+   * misma vertical. */
+  gap: var(--sc-spacing-0-5);
   /* `--sc-text-primary`, no `--sc-text-secondary`: con el fondo sutil permanente encima
    * (`.resumen__pair-button`), el secundario bajaba de 4,52:1 a 4,37:1 — por debajo de AA
    * (medido por `theme-contrast`). */
