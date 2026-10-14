@@ -37,6 +37,12 @@ export type RepoFieldType = 'text' | 'textarea' | 'select';
 export interface RepoFieldDef {
   readonly key: string;
   readonly labelKey: string;
+  /** Una etiqueta ya escrita (no una clave): la de un campo que el usuario nombra, como «Personalizado 1». Gana a `labelKey`. */
+  readonly label?: string;
+  /** Un título de sección encima de este campo, si abre una: el formulario los agrupa. */
+  readonly sectionKey?: string;
+  /** Ocupa el ancho entero cuando el formulario va en dos columnas (una dirección, las notas). */
+  readonly wide?: boolean;
   readonly type: RepoFieldType;
   readonly required?: boolean;
   readonly placeholderKey?: string;

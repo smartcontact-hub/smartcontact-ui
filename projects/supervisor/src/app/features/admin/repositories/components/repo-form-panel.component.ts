@@ -62,6 +62,10 @@ export class RepoFormPanelComponent<T extends RepoEntity> implements OnInit, Aft
   /** Dentro de un diálogo (la ficha de grupo crea así desde Recursos): sin caja, sin título y sin `role="dialog"`,
    *  porque el diálogo ya pone los tres; el formulario ocupa su cuerpo. */
   readonly flush = input(false, { transform: booleanAttribute });
+  /** El formulario en dos columnas, con los títulos de sección (`sectionKey`) a todo el ancho: para el de un contacto. */
+  readonly twoColumns = input(false, { transform: booleanAttribute });
+  /** Dice «(opcional)» en cada campo que no es obligatorio. Con muchos campos opcionales, es ruido: se apaga. */
+  readonly showOptional = input(true, { transform: booleanAttribute });
 
   /** Una regla más, de quien lo usa (el teléfono de un contacto, DD-163): recibe los valores ya recortados y devuelve
    *  la clave del error, o nada. Va después de las de siempre (nombre, repetido, obligatorios). */

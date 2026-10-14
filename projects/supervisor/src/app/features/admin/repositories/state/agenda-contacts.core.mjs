@@ -27,13 +27,17 @@ export function telefonoValido(telefono) {
   return cifras >= 3 && cifras <= 15;
 }
 
+/** Lo que busca la búsqueda de texto además del teléfono: lo que se lee en la tabla. */
+const BUSCABLES = ['name', 'surname', 'company', 'position', 'emailWork', 'emailPersonal', 'emailOther'];
+
 /** ¿Encuentra la búsqueda este contacto? Como en las listas, por subcadena y sin mayúsculas, en el nombre y en el
  *  teléfono tal como se escribió. Y si lo buscado tiene forma de teléfono, también por sus cifras, como se comparan los
  *  repetidos: «900100200» encuentra «900 100 200». Un texto con cifras («ventas 2») no es un teléfono. */
 export function contactoCoincide(contacto, busqueda) {
   const q = String(busqueda ?? '').trim().toLowerCase();
   if (!q) return true;
-  if (contacto.name.toLowerCase().includes(q) || contacto.phone.includes(q)) return true;
+  if (contacto.phone.includes(q)) return true;
+  for (const clave of BUSCABLES) if (String(contacto[clave] ?? '').toLowerCase().includes(q)) return true;
   const cifras = normalizarTelefono(q);
   return FORMA_DE_TELEFONO.test(q) && /\d/.test(cifras) && normalizarTelefono(contacto.phone).includes(cifras);
 }
@@ -54,6 +58,44 @@ export function contactosDeNumeros(numeros) {
   return contactos;
 }
 
+/* ── Los campos de un contacto ──────────────────────────────────────────────────────────────────────────────────── */
+
+/**
+ * Los campos de un contacto y cómo se agrupan en su formulario, en el orden del formulario de Voice. `name` y `phone`
+ * son los de siempre y los únicos obligatorios: son los que coinciden con los del puesto de agente. El resto, opcional.
+ * `phone` es el «Teléfono trabajo» de Voice. Los cinco `custom` llevan una etiqueta que se edita en cada agenda.
+ */
+export const SECCIONES_DE_CONTACTO = [
+  { seccion: 'datos', campos: ['name', 'surname', 'company', 'position', 'website'] },
+  { seccion: 'telefonos', campos: ['phone', 'phoneHome', 'phonePersonal', 'phoneOther', 'fax'] },
+  { seccion: 'emails', campos: ['emailWork', 'emailPersonal', 'emailOther'] },
+  { seccion: 'trabajo', campos: ['workAddress', 'workZip', 'workCity', 'workProvince', 'workCountry'] },
+  { seccion: 'personal', campos: ['homeAddress', 'homeZip', 'homeCity', 'homeProvince', 'homeCountry'] },
+  { seccion: 'redes', campos: ['chat', 'twitter', 'facebook', 'linkedin'] },
+  { seccion: 'otros', campos: ['date', 'notes'] },
+  { seccion: 'personalizados', campos: ['custom1', 'custom2', 'custom3', 'custom4', 'custom5'] },
+];
+
+/** Los campos opcionales, en el orden del formulario. */
+export const CAMPOS_OPCIONALES = SECCIONES_DE_CONTACTO.flatMap((s) => s.campos).filter((c) => c !== 'name' && c !== 'phone');
+
+/** Las columnas de la plantilla y del CSV: nombre y teléfono primero (como siempre: un archivo de dos columnas sigue
+ *  valiendo) y luego el resto, en el orden del formulario. */
+export const CAMPOS_DEL_CSV = ['name', 'phone', ...CAMPOS_OPCIONALES];
+
+/** Los cinco campos personalizados. */
+export const CAMPOS_PERSONALIZADOS = ['custom1', 'custom2', 'custom3', 'custom4', 'custom5'];
+
+/** Un contacto a partir de lo escrito: nombre y teléfono, y de los demás campos solo los que llevan algo. */
+export function contactoDeValores(valores) {
+  const contacto = { name: String(valores.name ?? '').trim(), phone: String(valores.phone ?? '').trim() };
+  for (const clave of CAMPOS_OPCIONALES) {
+    const valor = String(valores[clave] ?? '').trim();
+    if (valor) contacto[clave] = valor;
+  }
+  return contacto;
+}
+
 /* ── Importar desde un CSV (DD-166) ─────────────────────────────────────────────────────────────────────────────── */
 
 /** Los contactos que caben en una agenda. La cuota de localStorage es una para todos los almacenes, y lo que la pasa se
@@ -63,10 +105,10 @@ export const TOPE_DE_CONTACTOS = 5000;
 /** La primera columna de la cabecera de la plantilla, en cualquiera de los cuatro idiomas de la app. */
 const CABECERA = /^(nombre|name|nom|nome)$/i;
 
-/** La plantilla: la cabecera y nada más, con `;` (lo que espera Excel en español) y con BOM, para que Excel la abra
+/** La plantilla: la cabecera con todos los campos (`CAMPOS_DEL_CSV`, ya en el idioma de la app) y nada más, con `;` (lo que espera Excel en español) y con BOM, para que Excel la abra
  *  como UTF-8 y no estropee las tildes. */
-export function plantillaCsv(nombre, telefono) {
-  return `\uFEFF${nombre};${telefono}\r\n`;
+export function plantillaCsv(cabecera) {
+  return `\uFEFF${cabecera.join(';')}\r\n`;
 }
 
 /** El texto de un CSV leído en bytes: UTF-8 si lo es (con o sin BOM) y, si no, windows-1252, que es como guarda Excel en
@@ -104,7 +146,8 @@ function campos(linea, separador) {
 }
 
 /**
- * Lo que entra en una agenda desde un CSV, una línea por contacto con su nombre y su teléfono, y lo que no:
+ * Lo que entra en una agenda desde un CSV, una línea por contacto (nombre, teléfono y, si los trae, los demás campos en
+ * el orden de la plantilla), y lo que no:
  * - el separador es el de la primera línea con datos: `;` si lo lleva (Excel en español), si no `,`;
  * - la cabecera de la plantilla, en cualquier idioma, y las líneas vacías no cuentan;
  * - una línea sin nombre, o con un teléfono que no vale, es un error, con su número de línea en el archivo. La regla es
@@ -124,7 +167,8 @@ export function parsearContactosCsv(texto, existentes, tope = TOPE_DE_CONTACTOS)
       if (!linea.trim()) return;
       const primera = separador === null;
       separador ??= linea.includes(';') ? ';' : ',';
-      const [name = '', phone = ''] = campos(linea, separador);
+      const columnas = campos(linea, separador);
+      const [name = '', phone = ''] = columnas;
       if (primera && CABECERA.test(name)) return;
       if (!name) return void resultado.errores.push({ linea: i + 1, motivo: 'nombre' });
       if (!telefonoValido(phone)) return void resultado.errores.push({ linea: i + 1, motivo: 'telefono' });
@@ -132,7 +176,7 @@ export function parsearContactosCsv(texto, existentes, tope = TOPE_DE_CONTACTOS)
       if (vistos.has(clave)) return void resultado.repetidos++;
       if (resultado.nuevos.length >= sitio) return void resultado.sobran++;
       vistos.add(clave);
-      resultado.nuevos.push({ name, phone });
+      resultado.nuevos.push(contactoDeValores(Object.fromEntries(CAMPOS_DEL_CSV.map((clave, i) => [clave, columnas[i] ?? '']))));
     });
   return resultado;
 }

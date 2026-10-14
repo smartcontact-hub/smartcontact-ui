@@ -25,8 +25,38 @@
     color: var(--sc-text-primary);
   }
 
+  /* Una columna, como siempre. En dos (`panel--two-columns`, el contacto) los títulos de sección y los campos anchos
+   * ocupan las dos. */
+  &__fields {
+    display: block;
+  }
+
+  &--two-columns &__fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--sc-spacing-1-125);
+  }
+
+  &__section {
+    grid-column: 1 / -1;
+    margin: var(--sc-spacing-0-5) 0 var(--sc-spacing-0-625);
+    padding-top: var(--sc-spacing-0-875);
+    border-top: 1px solid var(--sc-border-subtle);
+    color: var(--sc-text-heading);
+
+    &:first-child {
+      padding-top: 0;
+      border-top: 0;
+      margin-top: 0;
+    }
+  }
+
   &__field {
     margin-bottom: var(--sc-spacing-0-875);
+
+    &--wide {
+      grid-column: 1 / -1;
+    }
   }
 
   &__label {
