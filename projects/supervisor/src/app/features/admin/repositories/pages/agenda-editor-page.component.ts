@@ -7,7 +7,6 @@ import {
   ScInputTextComponent as InputTextComponent,
   ScMessageComponent as MessageComponent,
   ScSectionCardComponent as SectionCardComponent,
-  ScSelectComponent as SelectComponent,
 } from '@smartcontact-hub/components';
 
 import type { DirtyAware } from '@core/guards';
@@ -28,17 +27,17 @@ import {
   telefonoValido,
   TOPE_DE_CONTACTOS,
 } from '../state/agenda-contacts.core.mjs';
+import { hoy } from '@shared/utils/today';
 import { AgendasStore, type AgendaContact } from '../state/agendas.store';
 import { ResultadoAccionService } from '@core/services';
 
 interface AgendaDraft {
   readonly name: string;
   readonly description: string;
-  readonly status: string;
   readonly contacts: readonly AgendaContact[];
 }
 
-const VACIA: AgendaDraft = { name: '', description: '', status: 'active', contacts: [] };
+const VACIA: AgendaDraft = { name: '', description: '', contacts: [] };
 
 /** Los campos de un contacto, con el formulario de los «+» de Recursos (`sc-repo-form-panel`). */
 const CAMPOS_DE_CONTACTO: readonly RepoFieldDef[] = [
@@ -61,7 +60,6 @@ const CAMPOS_DE_CONTACTO: readonly RepoFieldDef[] = [
     MessageComponent,
     RepoFormPanelComponent,
     SectionCardComponent,
-    SelectComponent,
     TranslateModule,
   ],
   templateUrl: './agenda-editor-page.component.html',
@@ -94,14 +92,6 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
     if (this.formDirty()) this.resultado.limpiar();
   });
 
-  protected readonly statusOptions = computed(() => {
-    this.lang();
-    return [
-      { label: this.translate.instant('repositories.status.active'), value: 'active' },
-      { label: this.translate.instant('repositories.status.inactive'), value: 'inactive' },
-    ];
-  });
-
   /** El nombre no se repite entre agendas (sin contar la propia), como en el panel de la lista. */
   protected readonly nameTaken = computed(() => {
     const name = this.form().name.trim().toLowerCase();
@@ -132,7 +122,7 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
     }
     this.mode.set('edit');
     this.agendaId = agenda.id;
-    this.form.set({ name: agenda.name, description: agenda.description, status: agenda.status, contacts: agenda.contacts });
+    this.form.set({ name: agenda.name, description: agenda.description, contacts: agenda.contacts });
     this.dirtyState.markPristine();
   }
 
@@ -146,14 +136,14 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
     const f = this.form();
     const draft = { ...f, name: f.name.trim(), description: f.description.trim() };
     if (this.mode() === 'create') {
-      const created = this.store.addItem(draft);
+      const created = this.store.addItem({ ...draft, updatedAt: hoy() });
       this.dirtyState.markPristine();
       const creado = this.texto('repositories.toasts.created', created.name);
       // Tras llegar a la edición: antes, el cambio de página se lo llevaría (DD-191).
       void this.router.navigateByUrl(`/admin/agendas/editar/${created.id}`, { replaceUrl: true }).then(() => this.resultado.enLaBarra(creado));
       return;
     }
-    this.store.updateItem(this.agendaId!, draft);
+    this.store.updateItem(this.agendaId!, { ...draft, updatedAt: hoy() });
     this.form.set(draft);
     this.dirtyState.markPristine();
     this.resultado.enLaBarra(this.texto('repositories.toasts.updated', draft.name));

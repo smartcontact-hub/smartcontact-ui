@@ -115,26 +115,24 @@ for (const idioma of ['es', 'en', 'fr', 'pt']) {
   });
 }
 
-/* La barra: el buscador, el botón «Acciones» detrás del separador con su aire (14 por lado) y «Columnas» al final, a la
- * derecha (revisión de producto: se toca poco y está a mano). Antes, Columnas iba delante del buscador (DD-180 §4). */
-test('la barra: el buscador, «Acciones» detrás del separador con su aire, y Columnas a la derecha', async ({ page }) => {
+/* La barra: el buscador a la izquierda y, a la derecha y juntos, «Acciones» y «Columnas» a 7 como dos hermanos (revisión de
+ * producto: se tocan poco y están a mano). Antes, Columnas iba delante del buscador y la descarga detrás de un separador
+ * (DD-180 §4). */
+test('la barra: el buscador a la izquierda, y Acciones y Columnas juntas a la derecha', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   for (const ruta of ['/admin/grupos', '/admin/agentes']) {
     await goto(page, ruta);
     const m = await page.locator('.page__action-bar').evaluate((barra) => {
       const r = (s: string) => barra.querySelector(s)!.getBoundingClientRect();
-      const [columnas, buscador, separador, barraBox] = [r('.page__columns'), r('.page__search'), r('sc-divider .p-divider'), barra.getBoundingClientRect()];
-      const datos = barra.querySelector('sc-divider + sc-button')!.getBoundingClientRect();
+      const [columnas, buscador, acciones, barraBox] = [r('.page__columns'), r('.page__search'), r('.page__data'), barra.getBoundingClientRect()];
       return {
-        antesDelSeparador: separador.left - buscador.right,
-        despuesDelSeparador: datos.left - separador.right,
         columnasAlFinal: barraBox.right - columnas.right,
-        columnasDetras: columnas.left - datos.right,
+        accionesColumnas: columnas.left - acciones.right,
+        buscadorAntes: acciones.left - buscador.right,
       };
     });
-    expect(m.antesDelSeparador, `${ruta}: buscador → separador`).toBeCloseTo(14, 0);
-    expect(m.despuesDelSeparador, `${ruta}: separador → Acciones`).toBeCloseTo(14, 0);
     expect(m.columnasAlFinal, `${ruta}: Columnas pegada al borde derecho`).toBeCloseTo(0, 0);
-    expect(m.columnasDetras, `${ruta}: Columnas va detrás de Acciones`).toBeGreaterThan(0);
+    expect(m.accionesColumnas, `${ruta}: Acciones → Columnas`).toBeCloseTo(7, 0);
+    expect(m.buscadorAntes, `${ruta}: el buscador queda a la izquierda, lejos de Acciones`).toBeGreaterThan(14);
   }
 });

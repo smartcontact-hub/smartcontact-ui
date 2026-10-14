@@ -24,15 +24,14 @@ export class ResourceRowsService {
   /** Las cifras, con el separador de miles del idioma: en `es`, 1250 sin punto y 12.500 con él. */
   private readonly cifra = computed(() => new Intl.NumberFormat(this.language.locale()));
 
-  /** Una fila por agenda, en el orden en que se pusieron: cuántos contactos tiene y si está activa. */
+  /** Una fila por agenda, en el orden en que se pusieron: cuántos contactos tiene. */
   agendas(ids: Iterable<number>, editable: boolean): ResourceRow[] {
     const porId = new Map(this.agendasStore.items().map((a) => [a.id, a]));
     return [...ids].flatMap((id) => {
       const agenda = porId.get(id);
       if (!agenda) return [];
       const contactos = this.cuenta('repositories.agendas.contacts_count', agenda.contacts.length);
-      const estado = this.translate.instant(`repositories.status.${agenda.status}`);
-      return [{ id, name: agenda.name, detail: `${contactos}, ${estado.toLocaleLowerCase()}`, edit: editable ? { link: `/admin/agendas/editar/${id}` } : null }];
+      return [{ id, name: agenda.name, detail: contactos, edit: editable ? { link: `/admin/agendas/editar/${id}` } : null }];
     });
   }
 

@@ -18,16 +18,3 @@ export function idsVivos(ids, existentes) {
   const vivos = new Set([...existentes].map((e) => e.id));
   return [...ids].filter((id) => vivos.has(id));
 }
-
-/**
- * Las agendas que se ofrecen: las activas, y las ya puestas aunque estén inactivas. Una inactiva puesta no se apaga
- * en el desplegable, como los horarios: apagada, no se podría quitar.
- * @template {{ readonly id: number, readonly status: string }} A
- * @param {readonly A[]} agendas
- * @param {Iterable<number>} puestas
- * @returns {A[]}
- */
-export function agendasOfrecidas(agendas, puestas) {
-  const ya = new Set(puestas);
-  return agendas.filter((a) => a.status === 'active' || ya.has(a.id));
-}

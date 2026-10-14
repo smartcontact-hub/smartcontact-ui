@@ -1,4 +1,5 @@
 import { createRepoStore } from '@core/services/local-store.factory';
+import { hoy } from '@shared/utils/today';
 
 import { contactosDeNumeros, type AgendaContact } from './agenda-contacts.core.mjs';
 
@@ -13,7 +14,8 @@ export interface Agenda {
   readonly name: string;
   readonly contacts: readonly AgendaContact[];
   readonly description: string;
-  readonly status: string;
+  /** Cuándo se tocó por última vez (AAAA-MM-DD): una agenda cambia con el tiempo y eso es lo que ayuda a saber. */
+  readonly updatedAt: string;
 }
 
 /** Los contactos de una semilla, numerados en su orden. */
@@ -36,14 +38,14 @@ const SEED: readonly Agenda[] = [
     name: 'Ventas Nacional',
     contacts: contactos(['Centralita de ventas', '900 100 200'], ['Ventas a empresas', '900 100 201'], ['Ventas a particulares', '900 100 202']),
     description: 'Contactos de ventas para el mercado nacional',
-    status: 'active',
+    updatedAt: '2026-10-02',
   },
   {
     id: 2,
     name: 'Soporte Premium',
     contacts: contactos(['Soporte premium', '900 200 300'], ['Soporte premium fuera de horario', '900 200 301']),
     description: 'Líneas dedicadas a clientes premium',
-    status: 'active',
+    updatedAt: '2026-09-21',
   },
   {
     id: 3,
@@ -55,28 +57,28 @@ const SEED: readonly Agenda[] = [
       ['Pagos fraccionados', '900 300 403'],
     ),
     description: 'Contactos para la gestión de cobros e impagos',
-    status: 'active',
+    updatedAt: '2026-09-30',
   },
   {
     id: 4,
     name: 'Emergencias 24h',
     contacts: contactos(['Emergencias 24 horas', '900 400 500']),
     description: 'Línea de emergencias disponible 24 horas',
-    status: 'active',
+    updatedAt: '2026-08-18',
   },
   {
     id: 5,
     name: 'Internacional LATAM',
     contacts: contactos(['Atención en Estados Unidos', '+1 800 555 1234'], ['Atención en México', '+52 800 123 4567']),
     description: 'Contactos internacionales para Latinoamérica',
-    status: 'active',
+    updatedAt: '2026-09-05',
   },
   {
     id: 6,
     name: 'Soporte Técnico',
     contacts: contactos(['Soporte técnico', '900 500 600'], ['Incidencias graves', '900 500 601']),
     description: 'Líneas de soporte técnico general',
-    status: 'inactive',
+    updatedAt: '2026-07-29',
   },
   {
     id: 7,
@@ -87,30 +89,34 @@ const SEED: readonly Agenda[] = [
       ['Campaña de fidelización', '911 222 335'],
     ),
     description: 'Contactos para campañas salientes',
-    status: 'active',
+    updatedAt: '2026-10-09',
   },
   {
     id: 8,
     name: 'Retención',
     contacts: contactos(['Retención de clientes', '900 600 700']),
     description: 'Línea especializada en retención de clientes',
-    status: 'active',
+    updatedAt: '2026-08-30',
   },
   {
     id: 9,
     name: 'Directorio comercial',
     contacts: DIRECTORIO,
     description: 'Puntos de venta de la red comercial',
-    status: 'active',
+    updatedAt: '2026-10-12',
   },
 ];
 
 /** Lo guardado antes de DD-163 (`numbers`, un texto con comas) se lee como contactos sin nombre, sin subir la versión
  *  (AGENTS: «normalize», la vía que no borra). Lo que ya va al día sale tal cual. */
 export function agendaAlDia(guardada: Agenda): Agenda {
-  if (Array.isArray(guardada.contacts)) return guardada;
-  const { numbers, ...resto } = guardada as Agenda & { readonly numbers?: string };
-  return { ...resto, contacts: contactosDeNumeros(numbers) };
+  // Sin `status` (salió: activa o inactiva no aportaba) y con fecha de modificación, que antes no había.
+  const { numbers, status: _estado, ...resto } = guardada as Agenda & { readonly numbers?: string; readonly status?: string };
+  return {
+    ...resto,
+    contacts: Array.isArray(resto.contacts) ? resto.contacts : contactosDeNumeros(numbers),
+    updatedAt: resto.updatedAt ?? hoy(),
+  };
 }
 
 export const AgendasStore = createRepoStore<Agenda>('AgendasStore', {

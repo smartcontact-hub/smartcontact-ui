@@ -96,7 +96,10 @@
     [class.sc-text-body-semibold]="isEmphasis(col.field)"
     [class.sc-text-body-regular]="!isEmphasis(col.field)"
   >
-    @if (getStatusEntry(item, col.field); as status) {
+    @if (groupsFor(item, col.field); as grupos) {
+      <!-- «Grupos»: el MISMO desplegable que Tipificaciones y Agentes, con la cifra y, al pasar, cuáles. -->
+      <sc-group-popover [groups]="grupos" [countAriaLabel]="groupsAria(grupos.length)" />
+    } @else if (getStatusEntry(item, col.field); as status) {
       <!-- Estado con el `tag` del DS y su severidad (DD-76): Figma dibuja así el estado
            de Agentes. El tono lo declara cada instancia en su `statusMap`. -->
       <sc-tag [severity]="status.tone" [value]="status.labelKey | translate" />

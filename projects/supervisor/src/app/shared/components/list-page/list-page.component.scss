@@ -21,10 +21,20 @@
     margin-bottom: var(--sc-spacing-0-5);
   }
 
-  /* Columnas, a la derecha de la barra (revisión de producto): está a mano y se toca poco. Su margen automático
-   * empuja el botón al final; el globo (nodo vacío) va detrás y no suma hueco. */
-  &__columns {
+  /* A la derecha de la barra (revisión de producto), juntos y a 7 como dos hermanos: Acciones y Columnas se tocan poco
+   * y quedan a mano. El margen automático empuja el grupo al final; el globo de Columnas y el menú de Acciones son nodos
+   * vacíos (pintan en `body`) y no suman hueco. */
+  &__tools {
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-5);
     margin-inline-start: auto;
+
+    /* El menú y el globo no pintan aquí (van a `body`): sin caja, para que el hueco del grupo no los cuente. */
+    > p-menu,
+    > p-popover {
+      display: contents;
+    }
   }
 }
 

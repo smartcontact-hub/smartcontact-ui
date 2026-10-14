@@ -3,21 +3,16 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { agendasOfrecidas, idsVivos } from '../../projects/supervisor/src/app/features/admin/services/recursos.core.mjs';
+import { idsVivos } from '../../projects/supervisor/src/app/features/admin/services/recursos.core.mjs';
 
 const AGENDAS = [
-  { id: 1, status: 'active' },
-  { id: 6, status: 'inactive' },
-  { id: 7, status: 'active' },
+  { id: 1 },
+  { id: 6 },
+  { id: 7 },
 ];
 
 test('idsVivos: un id borrado en Repositorios sale, y el orden de lo puesto se queda', () => {
   assert.deepEqual(idsVivos([7, 99, 1], AGENDAS), [7, 1]);
   assert.deepEqual(idsVivos(new Set([99]), AGENDAS), []);
   assert.deepEqual(idsVivos([], AGENDAS), []);
-});
-
-test('agendasOfrecidas: las activas, y la inactiva solo si ya estaba puesta', () => {
-  assert.deepEqual(agendasOfrecidas(AGENDAS, []).map((a) => a.id), [1, 7]);
-  assert.deepEqual(agendasOfrecidas(AGENDAS, [6]).map((a) => a.id), [1, 6, 7]);
 });
