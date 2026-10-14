@@ -97,7 +97,7 @@ wrapper no tiene página en sc-docs ni medida en la línea base de estilos. El g
 usan. Solo las pestañas del Monitor siguen en `p-tabs` directo: se arrastran para ordenarse y se renombran con doble
 clic, y eso necesita sus directivas sobre cada `p-tab`.
 
-**Dónde vive en sc-docs un nativo sin wrapper** (decidido el 2026-10-14): en la página **PrimeNG** de sc-docs (`/#/primeng`),
+**Dónde vive en sc-docs un nativo sin wrapper** (decidido el 2026-10-14): en la página **Todo PrimeNG** de sc-docs (`/#/components/primeng`, bajo Componentes),
 que pinta la sección 6 con todos los módulos, su estado y su enlace a primeng.dev. Una página para todos, no una por
 nativo: se descartaron una categoría «Nativos» con una página por módulo (más trabajo y no enseña lo que no se usa) y
 las dos a la vez. Una página propia para un nativo se abre si llega a usarse en tres pantallas o más.

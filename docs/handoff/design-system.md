@@ -178,7 +178,7 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 **Sello:** rama `arebury/primeng-component-usage`, sobre HEAD `b25a8a27` (#400). Sale por el tope el tramo del 2026-10-13
 (DD-202): `git show b25a8a27:docs/handoff/design-system.md`.
 
-**Lo que cambia.** El catálogo (§6) dice de los 109 módulos para qué sirven y cuándo elegir cada uno frente a su vecino; §7 es el barrido de usos; sc-docs lo pinta en `/#/primeng`, que es también el sitio de los nativos sin wrapper. De paso: los avisos de Conversaciones salen (llevaban una clave que nadie pintaba) y las confirmaciones que destruyen abren en «Cancelar».
+**Lo que cambia.** El catálogo (§6) dice de los 109 módulos para qué sirven y cuándo elegir cada uno frente a su vecino; §7 es el barrido de usos; sc-docs lo pinta en `/#/components/primeng`, que es también el sitio de los nativos sin wrapper. De paso: los avisos de Conversaciones salen (llevaban una clave que nadie pintaba) y las confirmaciones que destruyen abren en «Cancelar».
 ⚠️ **La página sale de un artefacto** que reescribe `npm run primeng-catalog:gen` con el estado del repo: un `primeng/x` nuevo en una app lo deja atrás y `audit:primeng-catalog` se pone rojo hasta regenerarlo (pasó con ContextMenu en `lab/arbol`, #400: este PR lo regeneró al traer `main`).
 
 ## ✅ 2026-10-14 · El árbol de `/lab/arbol` hace los ejemplos de primeng.dev/treetable
