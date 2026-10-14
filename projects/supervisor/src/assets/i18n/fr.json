@@ -2739,7 +2739,12 @@
       "pin_row": "Épingler {{name}} en haut",
       "unpin_row": "Désépingler {{name}}",
       "expand": "Développer",
-      "collapse": "Réduire"
+      "collapse": "Réduire",
+      "page_report": "{first} à {last} sur {totalRecords}",
+      "export_button": "Exporter",
+      "export_label": "Bouton Exporter",
+      "export_selection_label": "Sélection uniquement",
+      "leave_and_return": "Partir et revenir"
     },
     "arbol": {
       "context_label": "Contexte de l'app",

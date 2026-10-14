@@ -77,6 +77,8 @@ interface ArgType {
 const ARG_TYPES: readonly ArgType[] = [
   { name: 'paginator', label: 'Paginación', control: { kind: 'boolean' }, description: 'Divide la tabla en páginas en vez de enseñarla entera de golpe.' },
   { name: 'rows', label: 'Filas por página', control: { kind: 'number', min: 1, max: 20, step: 1 }, description: 'Cuántas filas entran en cada página.' },
+  { name: 'showCurrentPageReport', label: 'Texto de la página', control: { kind: 'boolean' }, description: 'Junto a las páginas, qué filas se ven de cuántas: «1 a 10 de 150». El texto lo pone quien usa la tabla, ya traducido.' },
+  { name: 'paginatorPosition', label: 'Dónde va el paginador', control: { kind: 'select', options: ['bottom', 'top', 'both'] }, description: 'bottom: debajo de la tabla. top: encima. both: en los dos sitios, para tablas largas.' },
   { name: 'first', label: 'Primera fila visible', control: { kind: 'number', min: 0, max: 149, step: 1 }, description: 'Desde qué fila empieza a verse la página abierta. Solo hace algo con «Paginación» activada: sin páginas, se ven todas las filas igual.' },
   { name: 'stripedRows', label: 'Filas alternas (cebra)', control: { kind: 'boolean' }, description: 'Pinta las filas pares de otro color, para seguir la fila con la vista.' },
   { name: 'showGridlines', label: 'Líneas de rejilla', control: { kind: 'boolean' }, description: 'Dibuja líneas entre todas las celdas, como una cuadrícula.' },
@@ -107,12 +109,15 @@ const ARG_TYPES: readonly ArgType[] = [
   { name: 'groupRowsBy', label: 'Agrupar por', control: { kind: 'select', options: ['team', 'status', 'country'] }, description: 'El campo que forma los grupos: equipo, estado o país.' },
   { name: 'expandableRowGroups', label: 'Grupos plegables', control: { kind: 'boolean' }, description: 'Con subheader: una flecha en el título de cada grupo lo pliega y lo despliega. Salen plegados.' },
   { name: 'reorderableRows', label: 'Reordenar filas', control: { kind: 'boolean' }, description: 'Cada fila lleva un asa al principio para arrastrarla a otro sitio.' },
+  { name: 'stateStorage', label: 'Recordar el estado', control: { kind: 'select', options: ['', 'session', 'local'] }, description: 'La tabla guarda página, orden, filtros, anchos, lo marcado y lo desplegado, y lo repone al volver. session: mientras el navegador siga abierto. local: también al cerrarlo. «Salir y volver», encima de la tabla, la monta de nuevo como al volver a la pantalla.' },
   { name: 'filterDisplay', label: 'Dónde van los filtros', control: { kind: 'select', options: ['row', 'menu'] }, description: 'row: una fila bajo la cabecera con un control por columna. menu: un botón junto al título que abre sus reglas (cómo compara, Y/O, varias reglas).' },
 ];
 
 const DEFAULT_ARGS: Record<string, unknown> = {
   paginator: true,
   rows: 10,
+  showCurrentPageReport: false,
+  paginatorPosition: 'bottom',
   first: 0,
   stripedRows: true,
   showGridlines: false,
@@ -144,6 +149,7 @@ const DEFAULT_ARGS: Record<string, unknown> = {
   groupRowsBy: 'team',
   expandableRowGroups: false,
   reorderableRows: false,
+  stateStorage: '',
 };
 
 /** Un botón del racimo por grupo: su icono, sus knobs y, si los tiene, los interruptores del laboratorio. */
@@ -151,7 +157,7 @@ interface ControlGroupDef {
   readonly title: string;
   readonly icon: string;
   readonly names: readonly string[];
-  readonly toggles?: 'selection' | 'columns' | 'filters' | 'edit' | 'rows';
+  readonly toggles?: 'selection' | 'columns' | 'filters' | 'edit' | 'rows' | 'data';
   /** «Columnas extra», el único control del laboratorio que es un número. */
   readonly extraColumns?: boolean;
   /** A dos columnas: en una sola no cabe en el alto de la ventana. */
@@ -159,13 +165,14 @@ interface ControlGroupDef {
 }
 
 const CONTROL_GROUP_DEFS: readonly ControlGroupDef[] = [
-  { title: 'General', icon: 'tune', names: ['paginator', 'rows', 'first', 'stripedRows', 'showGridlines', 'size', 'loading', 'skeleton', 'skeletonRows'] },
+  { title: 'General', icon: 'tune', wide: true, names: ['paginator', 'rows', 'showCurrentPageReport', 'paginatorPosition', 'first', 'stripedRows', 'showGridlines', 'size', 'loading', 'skeleton', 'skeletonRows'] },
   { title: 'Selección y orden', icon: 'checklist', toggles: 'selection', wide: true, names: ['selectionMode', 'selectionColumn', 'metaKeySelection', 'rowsFocusable', 'sortField', 'sortOrder', 'sortMode', 'multiSortMeta', 'removableSort', 'externalSort'] },
   { title: 'Scroll y tamaño', icon: 'swap_vert', names: ['scrollable', 'scrollHeight', 'stickyHeader', 'virtualScroll', 'tableMinWidth'] },
   { title: 'Columnas', icon: 'view_column', toggles: 'columns', extraColumns: true, names: ['resizableColumns', 'columnResizeMode', 'reorderableColumns'] },
   { title: 'Filtros', icon: 'filter_list', toggles: 'filters', names: ['filterDisplay'] },
   { title: 'Edición', icon: 'edit', toggles: 'edit', names: ['editMode'] },
   { title: 'Filas', icon: 'table_rows', toggles: 'rows', names: ['rowGroupMode', 'groupRowsBy', 'expandableRowGroups', 'reorderableRows'] },
+  { title: 'Exportar y recordar', icon: 'download', toggles: 'data', names: ['stateStorage'] },
 ];
 
 /** Máximo de columnas de relleno que añade «Columnas extra»: suficientes para forzar el scroll
@@ -349,7 +356,7 @@ export class TableLabPageComponent {
     const groups = this.groups();
     const editors = this.editors();
     const base: ScColumnDef<TableLabAgent>[] = [
-    { field: 'id', header: '', headerAriaLabel: 'Avatar', cellTemplate: this.avatarTpl(), width: '3.5rem', skeleton: 'avatar' },
+    { field: 'id', header: '', headerAriaLabel: 'Avatar', cellTemplate: this.avatarTpl(), width: '3.5rem', skeleton: 'avatar', exportable: false },
     { field: 'name', header: 'Agente', sortable: true, frozen: this.freezeFirstColumn() || undefined, rowHeader: this.freezeFirstColumn(), width: '12rem' },
     { field: 'team', header: 'Equipo', sortable: true, width: '10rem' },
     { field: 'country', header: 'País', sortable: true, cellTemplate: this.countryTpl(), width: '8rem' },
@@ -361,12 +368,13 @@ export class TableLabPageComponent {
       header: `Dato extra ${i + 1}`,
       cellTemplate: this.extraTpl(),
       width: '10rem',
+      exportable: false,
     })),
     ...(this.pinRows()
-      ? [{ field: 'pin', header: '', headerAriaLabel: 'Fijar', cellTemplate: this.pinTpl(), width: '4rem', stopRowClick: true, skeleton: 'action' as const }]
+      ? [{ field: 'pin', header: '', headerAriaLabel: 'Fijar', cellTemplate: this.pinTpl(), width: '4rem', stopRowClick: true, skeleton: 'action' as const, exportable: false }]
       : []),
     ...(this.columnPickButton()
-      ? [{ field: 'pick', header: '', headerAriaLabel: 'Elegir', cellTemplate: this.pickTpl(), width: '4rem', stopRowClick: true, skeleton: 'action' as const }]
+      ? [{ field: 'pick', header: '', headerAriaLabel: 'Elegir', cellTemplate: this.pickTpl(), width: '4rem', stopRowClick: true, skeleton: 'action' as const, exportable: false }]
       : []),
     ];
     return base.map((col) => ({ ...col, filter: filters[col.field], group: groups[col.field], editTemplate: editors[col.field] }));
@@ -398,6 +406,34 @@ export class TableLabPageComponent {
   protected clearTable(table: ScDatatableComponent<TableLabAgent>): void {
     this.searchText.set('');
     table.clear();
+  }
+
+  /** «Botón Exportar» (primeng.dev/table «Export»): un botón encima de la tabla que descarga lo que se ve en CSV. */
+  protected readonly exportButton = signal(false);
+  /** «Solo las marcadas»: el mismo botón descarga solo las filas marcadas (`selectionOnly`). */
+  protected readonly exportSelectionOnly = signal(false);
+
+  /** En el CSV, el estado con su nombre y no con su clave. */
+  protected readonly exportCell = ({ data, field }: { data: unknown; field: string }): unknown =>
+    field === 'status' ? this.statusLabel(data as TableLabAgent['status']) : data;
+
+  protected exportCsv(table: ScDatatableComponent<TableLabAgent>): void {
+    table.exportCSV({ selectionOnly: this.exportSelectionOnly() });
+    this.lastEvent.set(this.exportSelectionOnly() ? `exportCSV: ${this.selectedAgents().length} filas marcadas` : 'exportCSV');
+  }
+
+  /** «Recordar el estado» (primeng.dev/table «Stateful»): la clave solo existe con un sitio donde guardar. */
+  protected readonly stateKeyArg = computed(() => (this.liveArgs()['stateStorage'] ? 'sc-lab-tabla' : undefined));
+  /** «Salir y volver»: monta la tabla otra vez, como al volver a la pantalla, para ver qué repone. */
+  private readonly remountCount = signal(0);
+
+  protected leaveAndReturn(): void {
+    this.remountCount.update((n) => n + 1);
+    this.lastEvent.set('Tabla montada de nuevo');
+  }
+
+  protected onStateRestore(): void {
+    this.lastEvent.set('stateRestore: estado repuesto');
   }
 
   // Los knobs reales de sc-datatable, igual que el Playground de sc-docs.
@@ -453,6 +489,15 @@ export class TableLabPageComponent {
   private eventAgentName(data: TableLabAgent | TableLabAgent[] | undefined): string {
     return Array.isArray(data) ? `${data.length} filas` : (data?.name ?? '');
   }
+
+  /**
+   * «Alto del scroll» es el alto del scroll propio: p-table lo pone de tope a la tabla aunque no haya scroll propio, y
+   * con «Scroll propio» apagado cortaba la página en la octava fila de diez.
+   */
+  protected readonly scrollHeightArg = computed(() => {
+    const args = this.liveArgs();
+    return args['scrollable'] || args['virtualScroll'] ? (args['scrollHeight'] as string) || undefined : undefined;
+  });
 
   /** El knob «Orden inicial por varias» va en texto (`team,name`, el menos es descendente); la tabla pide el array. */
   protected readonly multiSortMetaArg = computed<SortMeta[] | undefined>(() => {
@@ -519,7 +564,7 @@ export class TableLabPageComponent {
   }
 
   /** Los interruptores del laboratorio que no son props de la tabla, por grupo: una lista y una plantilla. */
-  protected readonly labToggles: Readonly<Record<'selection' | 'columns' | 'filters' | 'edit' | 'rows', readonly LabToggle[]>> = {
+  protected readonly labToggles: Readonly<Record<'selection' | 'columns' | 'filters' | 'edit' | 'rows' | 'data', readonly LabToggle[]>> = {
     selection: [
       { label: 'Botón en columna', code: 'cellTemplate', ariaKey: 'lab.tabla.pick_label', value: this.columnPickButton, set: (on) => this.columnPickButton.set(on),
         hint: 'Añade al final un botón por fila que elige ese agente sin marcar la fila. Va en una plantilla de celda, no es un prop de la tabla.' },
@@ -546,6 +591,12 @@ export class TableLabPageComponent {
       { label: 'Fijar filas', code: 'frozenValue', ariaKey: 'lab.tabla.pin_rows_label', value: this.pinRows, set: (on) => this.pinRows.set(on),
         hint: 'Un botón por fila la fija arriba mientras el resto hace scroll. Se ve con «Scroll propio» activado.' },
     ],
+    data: [
+      { label: 'Botón Exportar', code: 'exportCSV()', ariaKey: 'lab.tabla.export_label', value: this.exportButton, set: (on) => this.exportButton.set(on),
+        hint: 'Un botón encima de la tabla descarga en CSV las filas que se ven, filtradas y en su orden, con las columnas de datos.' },
+      { label: 'Solo las marcadas', code: 'selectionOnly', ariaKey: 'lab.tabla.export_selection_label', value: this.exportSelectionOnly, set: (on) => this.exportSelectionOnly.set(on),
+        hint: 'El botón Exportar descarga solo las filas marcadas.' },
+    ],
     edit: [
       { label: 'Columnas editables', code: 'editTemplate', ariaKey: 'lab.tabla.editable_label', value: this.editable, set: (on) => this.editable.set(on),
         hint: 'Agente, equipo, estado y tickets llevan un control para editarlos: un campo de texto, dos desplegables y un número.' },
@@ -561,9 +612,11 @@ export class TableLabPageComponent {
 
   /** `pResizableColumn`/`pReorderableColumn` crean su tirador una sola vez, en `ngAfterViewInit`:
    *  activarlos más tarde con el interruptor no los hace aparecer. Remontamos la tabla cuando
-   *  cambia cualquiera de los dos, para que el tirador se cree con el valor ya puesto. */
+   *  cambia cualquiera de los dos, para que el tirador se cree con el valor ya puesto. «Recordar el estado» también
+   *  remonta: p-table solo repone lo guardado al montarse. */
   protected readonly tableRemountKey = computed(
-    () => `${this.liveArgs()['resizableColumns']}-${this.liveArgs()['reorderableColumns']}-${this.liveArgs()['reorderableRows']}`,
+    () =>
+      `${this.liveArgs()['resizableColumns']}-${this.liveArgs()['reorderableColumns']}-${this.liveArgs()['reorderableRows']}-${this.liveArgs()['stateStorage']}-${this.remountCount()}`,
   );
 
   protected asStr(v: unknown): string {
