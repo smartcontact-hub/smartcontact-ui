@@ -209,16 +209,6 @@ sc-datatable .p-datatable-header:empty {
 }
 `;
 
-/* Las dos flechas que PrimeNG pinta encima y debajo de la cabecera al arrastrar una columna
- * (\`reorderableColumns\`) no las lleva el DS: la cabecera arrastrada ya va sombreada y la columna
- * cambia de sitio al soltar. Llevan la clase \`row-reorder\` aunque sean de columnas. */
-const reorderIndicatorCss = () => `
-sc-datatable .p-datatable-row-reorder-indicator-up,
-sc-datatable .p-datatable-row-reorder-indicator-down {
-    display: none !important;
-}
-`;
-
 const LIST = "sc-datatable.sc-datatable--list";
 
 /*
@@ -713,7 +703,6 @@ ${typographyRule(lgTypographySelectors, dt, "lg", fromDesignPx(16), fromDesignPx
 
 ${baseTableCss()}
 ${emptyCaptionCss()}
-${reorderIndicatorCss()}
 ${listBehaviorCss()}
 ${frozenColumnsCss()}
 ${rowHeaderCss()}

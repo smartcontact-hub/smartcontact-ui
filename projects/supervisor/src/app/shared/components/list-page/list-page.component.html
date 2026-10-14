@@ -64,7 +64,6 @@
                     [cdkDragDisabled]="opt.locked"
                     cdkDragPreviewClass="column-toggle-drag-preview"
                     (focusin)="currentColumn.set(opt.key)"
-                    (click)="onColumnRowClick(opt.key)"
                   >
                     <sc-icon class="column-toggle__handle" name="drag_handle" size="sm" aria-hidden="true" />
                     <p-checkbox
@@ -77,36 +76,6 @@
                       (click)="$event.stopPropagation()"
                     />
                     <label class="column-toggle__label sc-text-body-regular" [for]="columnInputId(opt.key)" (click)="$event.stopPropagation()">{{ opt.label }}</label>
-                    <!-- Ordenar sin arrastrar con el ratón (WCAG 2.5.7, DD-162): solo en la fila en curso, para que la lista
-                         siga siendo una parada del tabulador y no veinte. Su nombre dice cuál; el lector oye después a qué
-                         puesto llegó. -->
-                    @if (opt.key === currentColumn() && !opt.locked) {
-                      @let mover = columnMove();
-                      <span class="column-toggle__move" (click)="$event.stopPropagation()">
-                        <sc-button
-                          size="sm"
-                          variant="secondary"
-                          appearance="text"
-                          iconOnly
-                          icon="arrow_upward"
-                          data-move="up"
-                          [ariaLabel]="'common.columns_move_up_aria' | translate: { column: opt.label }"
-                          [disabled]="!mover?.up"
-                          (clicked)="moveColumn(-1, 'up')"
-                        />
-                        <sc-button
-                          size="sm"
-                          variant="secondary"
-                          appearance="text"
-                          iconOnly
-                          icon="arrow_downward"
-                          data-move="down"
-                          [ariaLabel]="'common.columns_move_down_aria' | translate: { column: opt.label }"
-                          [disabled]="!mover?.down"
-                          (clicked)="moveColumn(1, 'down')"
-                        />
-                      </span>
-                    }
                   </div>
                 }
               </div>
