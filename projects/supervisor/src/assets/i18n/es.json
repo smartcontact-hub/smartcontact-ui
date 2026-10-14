@@ -966,8 +966,6 @@
     "columns_count": "{0} columnas",
     "columns_visible": "Columnas, {{visible}} de {{total}}",
     "columns_reset": "Restablecer",
-    "columns_move_up_aria": "Subir {{column}}",
-    "columns_move_down_aria": "Bajar {{column}}",
     "columns_position": "{{column}}, {{position}} de {{total}}",
     "edit_field": "Editar campo",
     "preview_impact": "Previsualizar impacto",
@@ -2739,6 +2737,7 @@
       "leave_and_return": "Salir y volver"
     },
     "arbol": {
+      "options_aria": "Opciones del laboratorio de árbol",
       "context_label": "Contexto de la app",
       "theme_label": "Tema",
       "sidebar_label": "Sidebar desplegado",

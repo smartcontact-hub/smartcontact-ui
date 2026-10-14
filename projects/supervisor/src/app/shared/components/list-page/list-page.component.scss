@@ -72,16 +72,6 @@
   cursor: default;
 }
 
-/* Las flechas de la fila en curso, al final de la fila (WCAG 2.5.7, DD-162). Sin alto propio: el botón (27) cabe en
- * el relleno de la fila (30,5) y no la estira al cambiar de fila en curso (medido: con alto, 37,5 y la lista saltaba). */
-.column-toggle__move {
-  display: inline-flex;
-  align-items: center;
-  block-size: 0;
-  margin-inline-start: auto;
-  cursor: default;
-}
-
 .column-toggle__handle {
   flex: none;
   color: var(--sc-border-strong);
