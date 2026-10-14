@@ -17,6 +17,7 @@
  * sin esto se quedaba en el tope de la ficha y dejaba un hueco sobre el pie. */
 .agents-panel > sc-agent-channel-table {
   --table-card-tope: none;
+  --table-card-suelo: 0;
   display: flex;
   flex-direction: column;
   flex: 0 1 auto;

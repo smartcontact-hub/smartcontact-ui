@@ -1,6 +1,6 @@
 {
   "generated": "component-audit.mjs",
-  "summary": "61 componentes · 25 custom · 9 standard · 27 extended · 51 usados en Supervisor · estado (DD-190): 33 ready, 27 experimental, 1 deprecated.",
+  "summary": "61 componentes · 24 custom · 9 standard · 28 extended · 51 usados en Supervisor · estado (DD-190): 33 ready, 27 experimental, 1 deprecated.",
   "components": [
     {
       "name": "avatar",
@@ -244,7 +244,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 192,
+      "usedInSupervisor": 190,
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "sobreObsoleto": [
         {
@@ -744,11 +744,12 @@
       "kind": "CUSTOM",
       "primengBase": "—",
       "cva": false,
-      "inputs": 2,
+      "inputs": 3,
       "api": [
         "href",
         "icon",
-        "open"
+        "open",
+        "size"
       ],
       "nested": [],
       "hasDemo": true,
@@ -988,7 +989,7 @@
         "kit"
       ],
       "retirado": null,
-      "usedInSupervisor": 2,
+      "usedInSupervisor": 3,
       "cuando": "Para dar a una fila de datos o a un título su icono con peso propio (un resumen). Un icono suelto junto a un texto es `sc-icon`; una persona, `sc-avatar`.",
       "sobreObsoleto": []
     },
@@ -1324,15 +1325,16 @@
     {
       "name": "option-card",
       "selector": "sc-option-cards",
-      "provenance": "CUSTOM",
-      "kind": "CUSTOM",
-      "primengBase": "—",
+      "provenance": "WRAPPER",
+      "kind": "EXTENDED",
+      "primengBase": "primeng/radiobutton",
       "cva": false,
-      "inputs": 4,
+      "inputs": 5,
       "api": [
         "ariaLabelledBy",
         "disabled",
         "name",
+        "orientation",
         "value",
         "valueChange"
       ],
@@ -1345,7 +1347,7 @@
         "demo"
       ],
       "retirado": null,
-      "usedInSupervisor": 2,
+      "usedInSupervisor": 3,
       "cuando": "Para elegir una de pocas opciones que necesitan explicarse. Si se explican solas, `sc-selectbutton`.",
       "sobreObsoleto": []
     },
@@ -1557,7 +1559,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 2,
+      "usedInSupervisor": 3,
       "cuando": "Para elegir UNA de pocas opciones excluyentes, todas a la vista. Si son muchas, `sc-select`.",
       "sobreObsoleto": []
     },
@@ -1679,7 +1681,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 69,
+      "usedInSupervisor": 67,
       "cuando": "Para elegir UNA de muchas. Si son pocas y caben a la vista, `sc-radiobutton` o `sc-selectbutton` ahorran un clic.",
       "sobreObsoleto": []
     },
@@ -1809,13 +1811,14 @@
       "kind": "CUSTOM",
       "primengBase": "—",
       "cva": false,
-      "inputs": 5,
+      "inputs": 6,
       "api": [
         "collapsible",
         "hintKey",
         "icon",
         "initiallyCollapsed",
-        "titleId"
+        "titleId",
+        "titleKey"
       ],
       "nested": [],
       "hasDemo": true,
@@ -1875,7 +1878,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 34,
+      "usedInSupervisor": 33,
       "cuando": "Para clasificar o marcar un estado EN la fila. Si es un contador pegado a algo, `sc-badge`; si el usuario lo puede quitar, `sc-chip`.",
       "sobreObsoleto": []
     },
@@ -1976,7 +1979,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 45,
+      "usedInSupervisor": 43,
       "cuando": "Para encender o apagar algo CON EFECTO INMEDIATO. Si el cambio se guarda al enviar el formulario, `sc-checkbox`.",
       "sobreObsoleto": []
     }

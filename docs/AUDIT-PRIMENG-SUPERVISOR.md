@@ -6,7 +6,7 @@ Contra **PrimeNG 22.1.0**, la versión INSTALADA — no la documentación de la 
 que puede ir por delante.
 
 **51 componentes** del DS se usan en el Supervisor, y entre todos esconden
-**480 props** que PrimeNG sí documenta.
+**489 props** que PrimeNG sí documenta.
 
 La regla es DD-113: *el nativo tal cual, adaptado con tokens*. Esconder una prop puede ser una
 decisión buena —los wrappers EXTENDED lo hacen a propósito— pero hasta ahora esa decisión no se
@@ -35,11 +35,11 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **44 props nativas no expuestas**: `ariaFilterLabel`, `autoOptionFocus`, `autocomplete`, `autofocus`, `autofocusFilter`, `chipIcon`, `dataKey`, `displaySelectedLabel`, `dropdownIcon`, `filterFields`, `filterLocale`, `filterMatchMode`, `filterPlaceHolder`, `filterValue`, `fluid`, `focusOnHover`, `group`, `highlightOnSelect`, `id`, `lazy`, `loading`, `loadingIcon`, `motionOptions`, `optionGroupChildren`, `optionGroupLabel`, `overlayOptions`, `overlayVisible`, `panelStyle`, `panelStyleClass`, `readonly`, `resetFilterOnHide`, `scrollHeight`, `selectAll`, `selectOnFocus`, `showHeader`, `tabindex`, `tooltip`, `tooltipPosition`, `tooltipPositionStyle`, `tooltipStyleClass`, `variant`, `virtualScroll`, `virtualScrollItemSize`, `virtualScrollOptions`
 
-### `sc-button` · 192 usos · primeng/button, primeng/tooltip
+### `sc-button` · 190 usos · primeng/button, primeng/tooltip
 
 **43 props nativas no expuestas**: `appendTo`, `autoHide`, `autofocus`, `badge`, `badgeSeverity`, `buttonProps`, `content`, `escape`, `fitContent`, `fluid`, `hideDelay`, `hideOnEscape`, `hostName`, `iconPos`, `life`, `link`, `loadingIcon`, `outlined`, `pButton`, `pButtonIconPT`, `pButtonLabelPT`, `pButtonLabelUnstyled`, `pButtonPT`, `pButtonUnstyled`, `pTooltipPT`, `pTooltipUnstyled`, `plain`, `positionLeft`, `positionStyle`, `positionTop`, `severity`, `showDelay`, `showOnEllipsis`, `style`, `styleClass`, `tabindex`, `text`, `tooltipDisabled`, `tooltipEvent`, `tooltipOptions`, `tooltipPosition`, `tooltipStyleClass`, `tooltipZIndex`
 
-### `sc-select` · 69 usos · primeng/select
+### `sc-select` · 67 usos · primeng/select
 
 **43 props nativas no expuestas**: `ariaFilterLabel`, `autoOptionFocus`, `autofocus`, `autofocusFilter`, `checkmark`, `dataKey`, `dropdownIcon`, `filterFields`, `filterLocale`, `filterMatchMode`, `filterValue`, `fluid`, `focusOnHover`, `group`, `id`, `inputSize`, `lazy`, `loadingIcon`, `max`, `maxlength`, `min`, `minlength`, `motionOptions`, `multiple`, `optionGroupChildren`, `optionGroupLabel`, `overlayOptions`, `panelStyle`, `panelStyleClass`, `pattern`, `resetFilterOnHide`, `scrollHeight`, `selectOnFocus`, `step`, `tabindex`, `tooltip`, `tooltipPosition`, `tooltipPositionStyle`, `tooltipStyleClass`, `variant`, `virtualScroll`, `virtualScrollItemSize`, `virtualScrollOptions`
 
@@ -71,11 +71,15 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **11 props nativas no expuestas**: `appendTo`, `ariaCloseLabel`, `ariaLabel`, `ariaLabelledBy`, `autoZIndex`, `baseZIndex`, `dismissable`, `focusOnShow`, `motionOptions`, `style`, `styleClass`
 
+### `sc-option-cards` · 3 usos · primeng/radiobutton
+
+**9 props nativas no expuestas**: `ariaLabel`, `autofocus`, `binary`, `inputId`, `invalid`, `required`, `size`, `tabindex`, `variant`
+
 ### `sc-avatar` · 4 usos · primeng/avatar, primeng/overlaybadge
 
 **7 props nativas no expuestas**: `ariaLabelledBy`, `badgeDisabled`, `badgeSize`, `severity`, `style`, `styleClass`, `value`
 
-### `sc-radiobutton` · 2 usos · primeng/radiobutton
+### `sc-radiobutton` · 3 usos · primeng/radiobutton
 
 **7 props nativas no expuestas**: `ariaLabelledBy`, `autofocus`, `binary`, `disabled`, `invalid`, `required`, `tabindex`
 
@@ -91,7 +95,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **7 props nativas no expuestas**: `disabled`, `lazy`, `scrollStrategy`, `scrollable`, `selectOnFocus`, `showNavigators`, `tabindex`
 
-### `sc-toggleswitch` · 45 usos · primeng/toggleswitch
+### `sc-toggleswitch` · 43 usos · primeng/toggleswitch
 
 **7 props nativas no expuestas**: `autofocus`, `falseValue`, `invalid`, `name`, `required`, `tabindex`, `trueValue`
 
@@ -171,7 +175,7 @@ Expone todo lo que PrimeNG documenta.
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-icon-tile` · 2 usos · —
+### `sc-icon-tile` · 3 usos · —
 
 Expone todo lo que PrimeNG documenta.
 
@@ -188,10 +192,6 @@ Expone todo lo que PrimeNG documenta.
 Expone todo lo que PrimeNG documenta.
 
 ### `sc-keyboard-shortcuts` · 2 usos · —
-
-Expone todo lo que PrimeNG documenta.
-
-### `sc-option-cards` · 2 usos · —
 
 Expone todo lo que PrimeNG documenta.
 
@@ -223,7 +223,7 @@ Expone todo lo que PrimeNG documenta.
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-tag` · 34 usos · primeng/tag
+### `sc-tag` · 33 usos · primeng/tag
 
 Expone todo lo que PrimeNG documenta.
 

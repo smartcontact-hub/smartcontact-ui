@@ -10,7 +10,7 @@ import { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { ResultadoAccionService, SectionLinksService } from '@core/services';
 import { injectLangChange } from '@core/utils/lang-change';
-import { AltaPieComponent, ChannelIconComponent, NameInplaceComponent, ResourceRowsComponent, type ResourceRow } from '@shared/components';
+import { AltaPieComponent, ChannelIconComponent, NameInplaceComponent, ResourceOptionComponent } from '@shared/components';
 import { changedKeys, createFormDirtyState } from '@shared/utils/form-dirty-state';
 import { llegarAAncla, llegarASeccion, ocasionDeAvisar, seccionesDeAlta } from '@shared/utils/alta-secciones';
 import {
@@ -18,6 +18,7 @@ import {
   type FormNavSection,
   ScInputTextComponent as InputTextComponent,
   ScMultiSelectComponent as MultiSelectComponent,
+  ScOptionCardsComponent as OptionCardsComponent,
   ScInputNumberComponent as InputNumberComponent,
   ScSelectButtonComponent as SelectButtonComponent,
   ScFileUploadComponent as FileUploadComponent,
@@ -106,6 +107,7 @@ import {
   GroupSummaryComponent,
   type GroupSummaryDestino,
   type GroupSummaryOutbound,
+  type GroupSummaryResources,
   type GroupSummaryRouting,
   type GroupSummarySeccion,
 } from '../components/group-summary/group-summary.component';
@@ -192,6 +194,7 @@ const RESUMEN_NUMEROS = { phone: 'group-phone', whatsapp: 'group-chat-whatsapp' 
     DeleteEntityDialogComponent,
     InputTextComponent,
     MultiSelectComponent,
+    OptionCardsComponent,
     InputNumberComponent,
     SelectButtonComponent,
     FileUploadComponent,
@@ -204,7 +207,7 @@ const RESUMEN_NUMEROS = { phone: 'group-phone', whatsapp: 'group-chat-whatsapp' 
     TooltipModule,
     TipificacionArbolComponent,
     AltaPieComponent,
-    ResourceRowsComponent,
+    ResourceOptionComponent,
     SelectComponent,
     TranslateModule,
   ],
@@ -755,21 +758,6 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
   protected readonly emailTemplateValue = computed(() => this.templatesOf('email').filter((t) => this.form().templateIds.has(t.id)).map((t) => t.id));
   protected readonly hasEmail = computed(() => this.form().channels.has('email'));
 
-  /* El resumen bajo cada campo (DD-164): qué es cada recurso y, al editar, su «Editar». En el alta no lo lleva: la
-   * dirección no guarda la sección, y Atrás caería en un General vacío. */
-  protected readonly agendaRows = computed(() => {
-    this.lang();
-    return this.resourceRows.agendas(this.form().scheduleIds, true);
-  });
-  protected readonly chatTemplateRows = computed(() => {
-    this.lang();
-    return this.resourceRows.templates(this.form().templateIds, 'chat', true);
-  });
-  protected readonly emailTemplateRows = computed(() => {
-    this.lang();
-    return this.resourceRows.templates(this.form().templateIds, 'email', true);
-  });
-
   /**
    * Los saltos de Distribución y colas (DD-130): uno por bloque de canal activo, en su orden, y solo con dos o más
    * (con uno, la sección ya empieza en él). Con los cuatro canales la sección mide 2.355 px y nada nace plegado
@@ -835,8 +823,8 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
   protected readonly queueSizeOptions = computed(() => {
     this.lang();
     return [
-    { label: this.translate.instant('groups.form.advanced.queue_fixed'), value: 'fixed' },
-    { label: this.translate.instant('groups.form.advanced.queue_per_agent'), value: 'per_agent' },
+    { label: this.translate.instant('groups.form.advanced.queue_fixed'), value: 'fixed', description: this.translate.instant('groups.form.advanced.queue_fixed_desc') },
+    { label: this.translate.instant('groups.form.advanced.queue_per_agent'), value: 'per_agent', description: this.translate.instant('groups.form.advanced.queue_per_agent_desc') },
     ];
   });
   protected readonly cardOpeningOptions = computed(() => {
@@ -864,7 +852,6 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
       email: a.email,
       presenceStatus: a.presenceStatus,
       allowedChannels: a.allowedChannels,
-      selfActivate: a.permissions?.selfActivate ?? false,
       teams: a.teams,
     })),
   );
@@ -1182,21 +1169,20 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
 
   /** Lo que le llega de Repositorios en su sección Recursos: agendas, plantillas de sus canales y etiquetas. La
    *  tipificación ya no: vive en General. */
-  protected readonly resourceCount = computed(() => {
-    const f = this.form();
-    const templates = (this.hasChatFamily() ? this.chatTemplateValue().length : 0) + (this.hasEmail() ? this.emailTemplateValue().length : 0);
-    // Las etiquetas cuentan solo si se ven (DD-142).
-    return f.scheduleIds.size + templates + (this.conEtiquetas ? f.labelIds.size : 0);
-  });
-
-  /** Los mismos recursos de `resourceCount`, con su nombre y su dato, para el panel rápido de Salida del resumen
-   *  (revisión de diseño, 2026-10-11): sin «Editar», es solo vista previa, y «Ver recursos» lleva a la sección. */
-  protected readonly summaryResourceRows = computed<readonly ResourceRow[]>(() => {
+  /** Los recursos del grupo por tipo, con su nombre y su dato, para Recursos del resumen: Agendas siempre, y las
+   *  plantillas de los canales que atiende, como los campos de la sección (revisión del 2026-10-14). Sin «Editar»: es
+   *  solo vista previa, y «Ver recursos» lleva a la sección. */
+  protected readonly summaryResources = computed<readonly GroupSummaryResources[]>(() => {
+    this.lang();
     const f = this.form();
     return [
-      ...this.resourceRows.agendas(f.scheduleIds, false),
-      ...(this.hasChatFamily() ? this.resourceRows.templates(f.templateIds, 'chat', false) : []),
-      ...(this.hasEmail() ? this.resourceRows.templates(f.templateIds, 'email', false) : []),
+      { key: 'agendas', labelKey: 'agents.form.advanced.agendas.title', rows: this.resourceRows.agendas(f.scheduleIds, false) },
+      ...(this.hasChatFamily()
+        ? [{ key: 'chat' as const, labelKey: 'resources.templates_chat', rows: this.resourceRows.templates(f.templateIds, 'chat', false) }]
+        : []),
+      ...(this.hasEmail()
+        ? [{ key: 'email' as const, labelKey: 'resources.templates_email', rows: this.resourceRows.templates(f.templateIds, 'email', false) }]
+        : []),
     ];
   });
 

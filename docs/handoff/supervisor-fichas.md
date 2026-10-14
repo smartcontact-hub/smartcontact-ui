@@ -42,6 +42,32 @@ baldosa y la fila del resumen al DS (2026-10-07, DD-186, #356, sin trampas propi
 d94e5ad8:docs/handoff/supervisor-fichas.md`. El de la revisión de agentes y tipificaciones (2026-10-09, DD-187,
 #360, sin trampas propias): `git show 208019113e9b9fdad6a8c0f6c4338fcf4437260a:docs/handoff/supervisor-fichas.md`.
 
+## ✅ 2026-10-14 · Revisión de las fichas a 1440: nombres, resumen en una línea, Recursos y tablas que miden sus filas (DD-204)
+
+> **Sello:** worktree `undine`, rama `arebury/agentes-fila-cli` sobre `main` (con `origin/main` fundido el 2026-10-14).
+
+- **Nombres**: «Agentes asignados» (grupo) y «Grupos asignados» (agente) en el índice y la cabecera, sin subtítulo dentro
+  (`sc-subsection` sin `titleKey`). «Música de espera/transferencia».
+- **Resumen del grupo**: Distribución con Teléfono y «Teléfono saliente»; Recursos aparte, una fila por tipo (Agendas y
+  plantillas de los canales que atiende) con su panel. Fuera «Salida». La tarjeta de datos de las tres fichas, en caption
+  y con baldosa pequeña: a 1440 nada parte de línea.
+- **Recursos**: «Editar» es un lápiz en la opción del desplegable, al pasar (`sc-resource-option` + `#item` y `hide()`
+  nuevos en `sc-multiselect`). Fuera `sc-resource-rows`.
+- **Tamaño de cola**: tarjetas de radio, el ejemplo «Card» de primeng.dev sobre `sc-option-cards` (que pasa a ese dibujo
+  también en los dos «Descuelgue»). sc-docs › RadioButton › Tarjeta.
+- **Tablas de asignar**: `scLlegaAlPie` con `filasReservadas` en vez de `fill`: miden todas sus filas, con el pie de tope,
+  y no cambian de alto al filtrar (medido: 402 px con los cuatro filtros). Casillas, radio e interruptor centrados en la
+  fila. El panel rápido sigue con `fill`, y su tarjeta ahora encoge hasta su hueco (`--table-card-suelo: 0`): con 28
+  agentes pasaba por encima del pie y tapaba «Guardar».
+- **Agente**: sin columna Nivel; Salientes vuelve al radio; Habilitado sin candado con «Activación por grupo» (lo cambia
+  el supervisor, corrige DD-187 §2) y a 6,75 rem: cabe a 1440. Estado apagado si está Desconectado.
+- **Listado de agentes**: «Desconectado» en texto gris, sin etiqueta.
+- **Pruebas**: `recursos-resumen.spec.ts` reescrita para el lápiz; `tabla-al-pie.spec.ts` gana la de la tabla corta;
+  `agente-grupos-asignados.spec.ts`, nueva (sin Nivel, radio, sin candado, Desconectado). En local, a 1440, las 314 de
+  los specs tocados y vecinos, en verde tras corregir las que esperaban los nombres de antes.
+- **Trampa**: `--table-card-tope: none` anula también el suelo (`min(…, none)` no vale y cae en `auto`): quien ponga el
+  tope en `none` debe poner `--table-card-suelo`.
+
 ## ✅ 2026-10-13 · Fuera las notas de decisión
 
 > **Sello:** rama `arebury/quitar-notas-equipo-main` sobre `main` `7711d83d`.
@@ -141,11 +167,6 @@ a7ddc14b:docs/handoff/supervisor-fichas.md`.
   páginas de primeng.dev/llms. Figma: ficha 42 de `figma-pendiente` (lo de DD-184 a DD-187 y el InputTags).
 
 ## SIGUIENTE — sin preguntar
-
--3. **Salientes vuelve a radio button** (Rafa, 2026-10-13): en la pestaña Grupos de la ficha de un agente
-   (`group-assignment-table`), un `sc-radiobutton` por fila en vez de la etiqueta y la acción del #380. Al hacerlo,
-   reescribir el comentario de `outboundTpl`, que defiende lo contrario; el apartado «Salientes como chip+acción» queda
-   superado.
 
 -2b. **Componente tabla (otra sesión):** el «evolutivo» de la tabla con los devs (BI y voz). Propuesta de producto:
    elegir UNA vez qué funciones de la Table de PrimeNG queremos y cerrarlo; hay un Excel con las de BI.

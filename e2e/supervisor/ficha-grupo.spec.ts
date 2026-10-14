@@ -42,7 +42,7 @@ test('el índice lateral gobierna la ficha, y abre por General', async ({ page }
   // Y no vuelve la tira de pestañas: si reaparece, la forma se ha revertido a medias.
   await expect(page.locator('p-tabs')).toHaveCount(0);
 
-  await indice(page).getByText('Agentes', { exact: true }).click();
+  await indice(page).getByText('Agentes asignados', { exact: true }).click();
   await expect(page.locator('#group-section-agents')).toBeVisible();
   await expect(page.locator('#group-section-general')).toHaveCount(0);
 });
@@ -69,7 +69,7 @@ test('crear es la misma ficha: abre en General con Teléfono, no deja pasar sin 
   await page.getByRole('button', { name: 'Siguiente' }).click();
   await expect(general).toContainText('El nombre es obligatorio');
   await expect(page.locator('#group-name')).toBeFocused();
-  await indice(page).getByText('Agentes', { exact: true }).click();
+  await indice(page).getByText('Agentes asignados', { exact: true }).click();
   await expect(general).toBeVisible();
 
   // Un nombre que ya existe se dice en vivo.
@@ -112,7 +112,7 @@ test('duplicar sigue siendo un diálogo corto y se lleva los agentes del origina
 
   await expect(page).toHaveURL(/admin\/grupos\/editar\/\d+$/);
   await expect(page.locator('.headline__name')).toHaveText('Reclamaciones (copia)');
-  await indice(page).getByText('Agentes', { exact: true }).click();
+  await indice(page).getByText('Agentes asignados', { exact: true }).click();
   await expect(page.locator('.assign tbody tr').first()).toBeVisible();
 });
 

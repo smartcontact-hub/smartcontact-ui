@@ -65,9 +65,13 @@
   min-width: 0;
 }
 
-/* El error de la cifra crece hacia abajo; ambos controles conservan su borde superior y los 7 hasta la etiqueta. */
-.inline-control--queue {
-  align-items: flex-start;
+/* Tamaño de cola: las tarjetas del tipo y, debajo, la cifra. Entre las dos, 14: son hermanas, no etiqueta y control
+ * (AGENTS «UX de pantalla», 7 · 14 · 28). */
+.queue-size {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1);
+  min-width: 0;
 }
 
 .inline-control__suffix,

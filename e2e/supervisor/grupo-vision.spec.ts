@@ -38,7 +38,7 @@ test('la ficha navega por un índice lateral con las cuatro secciones de la visi
     'General',
     'Distribución y colas',
     'Recursos',
-    'Agentes',
+    'Agentes asignados',
   ]);
   // Ni la tira de pestañas de antes.
   await expect(page.locator('p-tabs')).toHaveCount(0);
@@ -101,7 +101,7 @@ test('Teléfono: saliente y música a la vista; los demás mensajes de la cola, 
 
   // El rótulo del teléfono saliente lleva su «*» de obligatorio desde DD-142, y el texto de un rótulo empieza por un
   // espacio que el casado por expresión regular no recorta (medido).
-  for (const visible of ['Teléfono saliente', 'Música de espera']) {
+  for (const visible of ['Teléfono saliente', 'Música de espera/transferencia']) {
     await expect(telefono.getByText(new RegExp(`^\\s*${visible}(\\s*\\*)?\\s*$`)), visible).toBeVisible();
   }
   // DD-157: los demás mensajes vuelven, plegados (DD-121 §6 los había sacado de la vista); el audio saliente, no.
@@ -112,10 +112,9 @@ test('Teléfono: saliente y música a la vista; los demás mensajes de la cola, 
   await telefono.getByRole('button', { name: /Mensajes en cola/ }).click();
   for (const dentro of plegados) await expect(telefono.getByText(dentro, { exact: true }), dentro).toBeVisible();
   await expect(page.getByText('Audio saliente', { exact: true })).toHaveCount(0);
-  // Capacidad de cola: dos opciones, ni una más.
-  await telefono.locator('#group-phone-queue-type').click();
-  await expect(page.getByRole('option')).toHaveText(['Fija', 'Variable']);
-  await page.keyboard.press('Escape');
+  // Capacidad de cola: dos opciones, ni una más, en tarjetas de radio (DD-204).
+  const modos = telefono.getByRole('radiogroup', { name: 'Tamaño de cola', exact: true });
+  await expect(modos.locator('.sc-option-card__label')).toHaveText(['Fija', 'Variable']);
 });
 
 test('Chat: «Caducar sesión» a la vista; Web Chat con dominios y script; WhatsApp con su número', async ({ page }) => {

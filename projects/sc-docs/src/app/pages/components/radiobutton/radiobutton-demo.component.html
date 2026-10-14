@@ -27,3 +27,18 @@
     <sc-radiobutton value="l" size="lg" name="sizes" data-testid="sc-radio-lg" />
   </div>
 </ng-template>
+
+<ng-template #card>
+  <div class="card-demo">
+    <span id="plan-label" class="card-demo__label">Elige un plan:</span>
+    <sc-option-cards
+      orientation="vertical"
+      name="plan"
+      ariaLabelledBy="plan-label"
+      [options]="plans"
+      [value]="plan()"
+      (valueChange)="plan.set($event)"
+      data-testid="sc-radio-card"
+    />
+  </div>
+</ng-template>
