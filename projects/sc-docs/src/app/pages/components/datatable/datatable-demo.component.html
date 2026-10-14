@@ -25,6 +25,8 @@
     [sortField]="args.sortField || undefined"
     [sortOrder]="args.sortOrder"
     [externalSort]="args.externalSort"
+    [sortMode]="args.sortMode"
+    [removableSort]="args.removableSort"
     [scrollable]="args.scrollable"
     [scrollHeight]="args.scrollHeight || undefined"
     [stickyHeader]="args.stickyHeader"
@@ -201,6 +203,12 @@
   <span class="dt-status" [attr.data-active]="agent.status === 'active'">
     {{ agent.status === 'active' ? 'Activo' : 'Inactivo' }}
   </span>
+</ng-template>
+
+<ng-template #multisort>
+  <sc-datatable [value]="agents()" [columns]="multiSortColumns" sortMode="multiple"
+    [multiSortMeta]="presortMeta" removableSort dataKey="id"
+    data-testid="sc-datatable-multisort" />
 </ng-template>
 
 <ng-template #frozen>

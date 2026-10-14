@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, TemplateRef, computed, signal, viewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import type { FilterMetadata } from 'primeng/api';
+import type { FilterMetadata, SortMeta } from 'primeng/api';
 import type { TableLazyLoadEvent } from 'primeng/table';
 
 import {
@@ -154,6 +154,17 @@ export class DatatableDemoComponent {
   protected readonly lazyTpl = viewChild<TemplateRef<StoryContext>>('lazy');
   protected readonly gesturesTpl = viewChild<TemplateRef<StoryContext>>('gestures');
   protected readonly frozenTpl = viewChild<TemplateRef<StoryContext>>('frozen');
+  protected readonly multiSortTpl = viewChild<TemplateRef<StoryContext>>('multisort');
+  /** primeng.dev/table «Multiple Columns» y «Presort»: sale ordenada por estado y, dentro, por nombre. */
+  protected readonly multiSortColumns: readonly ScColumnDef<Agent>[] = [
+    { field: 'name', header: 'Nombre', sortable: true },
+    { field: 'status', header: 'Estado', sortable: true, width: '10rem' },
+    { field: 'extension', header: 'Extensión', width: '10rem', align: 'center' },
+  ];
+  protected readonly presortMeta: readonly SortMeta[] = [
+    { field: 'status', order: 1 },
+    { field: 'name', order: 1 },
+  ];
   protected readonly frozenColumns: readonly ScColumnDef<Agent>[] = [
     { field: 'name', header: 'Nombre', width: '14rem', frozen: true, rowHeader: true },
     { field: 'extension', header: 'Extensión' },
@@ -309,6 +320,8 @@ export class DatatableDemoComponent {
       { name: 'sortField', label: 'Ordenar por columna', control: { kind: 'text' }, description: 'Columna por la que sale ordenada.' },
       { name: 'sortOrder', label: 'Sentido del orden', control: { kind: 'select', options: [1, -1] }, description: '1 ascendente, -1 descendente.' },
       { name: 'externalSort', label: 'Orden gestionado fuera', control: { kind: 'boolean' }, description: 'El orden lo pone quien usa la tabla: pinta la flecha y emite (sortChange), pero no mueve las filas.' },
+      { name: 'sortMode', label: 'Ordenar por varias', control: { kind: 'select', options: ['single', 'multiple'] }, description: 'multiple: un clic ordena por esa columna sola; Cmd/Ctrl+clic la añade detrás. El orden inicial va en [multiSortMeta].' },
+      { name: 'removableSort', label: 'Quitar el orden', control: { kind: 'boolean' }, description: 'El tercer clic en la misma columna quita el orden y las filas vuelven al de partida.' },
       { name: 'rowsFocusable', label: 'Filas navegables con teclado', control: { kind: 'boolean' }, description: 'Las filas entran en el orden de tabulación.' },
       { name: 'scrollable', label: 'Scroll propio', control: { kind: 'boolean' }, description: 'Cabecera fija y cuerpo con scroll propio.' },
       { name: 'scrollHeight', label: 'Alto del scroll', control: { kind: 'text' }, description: 'Alto de ese scroll (p.ej. 240px).' },
@@ -340,6 +353,8 @@ export class DatatableDemoComponent {
       sortField: '',
       sortOrder: 1,
       externalSort: false,
+      sortMode: 'single',
+      removableSort: false,
       scrollable: false,
       scrollHeight: '240px',
       stickyHeader: false,
@@ -363,7 +378,7 @@ export class DatatableDemoComponent {
    */
   protected readonly controlGroupDefs: readonly { title: string; open: boolean; names: readonly string[] }[] = [
     { title: 'General', open: true, names: ['paginator', 'rows', 'first', 'stripedRows', 'showGridlines', 'size', 'variant', 'loading', 'skeleton', 'skeletonRows'] },
-    { title: 'Selección y orden', open: false, names: ['selectionMode', 'selectionColumn', 'metaKeySelection', 'rowsFocusable', 'sortField', 'sortOrder', 'externalSort'] },
+    { title: 'Selección y orden', open: false, names: ['selectionMode', 'selectionColumn', 'metaKeySelection', 'rowsFocusable', 'sortField', 'sortOrder', 'sortMode', 'removableSort', 'externalSort'] },
     { title: 'Scroll y tamaño', open: false, names: ['scrollable', 'scrollHeight', 'stickyHeader', 'virtualScroll', 'fill', 'tableMinWidth'] },
     { title: 'Columnas', open: false, names: ['resizableColumns', 'columnResizeMode', 'reorderableColumns'] },
   ];
@@ -402,7 +417,8 @@ export class DatatableDemoComponent {
     // `st` (statusTpl) alimenta `columns()`; espera a que resuelva para no
     // pintar la story MVP con la columna de estado sin su cellTemplate.
     const fr = this.frozenTpl();
-    if (!pg || !controls || !mvp || !lz || !gs || !ls || !st || !fr) return [];
+    const ms = this.multiSortTpl();
+    if (!pg || !controls || !mvp || !lz || !gs || !ls || !st || !fr || !ms) return [];
     return [
       { name: 'Playground', playground: true, template: pg, controlsTemplate: controls },
       { name: 'Columnas, selección múltiple y paginador', template: mvp, snippet: MVP_SNIPPET },
@@ -411,6 +427,9 @@ export class DatatableDemoComponent {
       { name: 'variant="list" · la gramática de tabla-lista', template: ls, snippet: LIST_SNIPPET },
       { name: 'Columnas fijas', template: fr, snippet: `<!-- ScColumnDef: frozen fija la columna (alignFrozen elige el lado); rowHeader la pinta como <th scope="row">. -->
 <sc-datatable [value]="agents()" [columns]="frozenColumns" scrollable tableMinWidth="70rem" selectionMode="multiple" dataKey="id" />` },
+      { name: 'Orden por varias columnas', template: ms, snippet: `<!-- sortMode="multiple": Cmd/Ctrl+clic añade una columna detrás de las que ya ordenan. -->
+<!-- multiSortMeta: el orden de entrada, por prioridad: [{ field: 'status', order: 1 }, { field: 'name', order: 1 }]. -->
+<sc-datatable [value]="agents()" [columns]="multiSortColumns" sortMode="multiple" [multiSortMeta]="presortMeta" removableSort dataKey="id" />` },
     ];
   });
 }

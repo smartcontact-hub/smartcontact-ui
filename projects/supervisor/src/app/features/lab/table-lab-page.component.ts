@@ -13,9 +13,11 @@ import {
   ScToggleSwitchComponent,
   type ScColumnCellContext,
   type ScColumnDef,
+  type ScDatatableSortEvent,
 } from '@smartcontact-hub/components';
 import { ScIconComponent } from '@smartcontact-hub/icons';
 import { TranslateModule } from '@ngx-translate/core';
+import type { SortMeta } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { PopoverModule } from 'primeng/popover';
 import { RatingModule } from 'primeng/rating';
@@ -60,7 +62,10 @@ const ARG_TYPES: readonly ArgType[] = [
   { name: 'metaKeySelection', label: 'Cmd/Ctrl para añadir', control: { kind: 'boolean' }, description: 'Solo cuando se marca clicando la fila: un clic sustituye la selección y Cmd/Ctrl+clic añade o quita, Mayús+clic marca un tramo.' },
   { name: 'sortField', label: 'Ordenar por columna', control: { kind: 'text' }, description: 'Por qué columna sale ordenada la tabla nada más entrar.' },
   { name: 'sortOrder', label: 'Sentido del orden', control: { kind: 'select', options: [1, -1] }, description: '1 ascendente, -1 descendente.' },
-  { name: 'externalSort', label: 'Orden gestionado fuera', control: { kind: 'boolean' }, description: 'La tabla avisa de qué columna se pulsó para ordenar, pero no mueve las filas ella sola: lo hace quien la usa.' },
+  { name: 'externalSort', label: 'Orden gestionado fuera', control: { kind: 'boolean' }, description: 'La tabla avisa de qué columna se pulsó para ordenar (sale encima de la tabla, como sortChange), pero no mueve las filas ella sola: lo hace quien la usa.' },
+  { name: 'sortMode', label: 'Ordenar por varias', control: { kind: 'select', options: ['single', 'multiple'] }, description: 'multiple: un clic ordena por esa columna sola; Cmd/Ctrl+clic la añade detrás de las que ya había.' },
+  { name: 'multiSortMeta', label: 'Orden inicial por varias', control: { kind: 'select', options: ['', 'team,name', 'status,-tickets'] }, description: 'Solo con multiple: por qué columnas sale ordenada al entrar, por prioridad. El signo menos es descendente. En código es un array de { field, order }.' },
+  { name: 'removableSort', label: 'Quitar el orden', control: { kind: 'boolean' }, description: 'El tercer clic en la misma columna quita el orden y las filas vuelven al de partida.' },
   { name: 'rowsFocusable', label: 'Filas navegables con teclado', control: { kind: 'boolean' }, description: 'Se puede recorrer fila a fila con el tabulador del teclado.' },
   { name: 'scrollable', label: 'Scroll propio', control: { kind: 'boolean' }, description: 'La cabecera se queda fija arriba y el resto de la tabla hace scroll por su cuenta.' },
   { name: 'scrollHeight', label: 'Alto del scroll', control: { kind: 'text' }, description: 'Cuánto alto tiene ese scroll propio (p. ej. 240px).' },
@@ -88,6 +93,9 @@ const DEFAULT_ARGS: Record<string, unknown> = {
   sortField: '',
   sortOrder: 1,
   externalSort: false,
+  sortMode: 'single',
+  multiSortMeta: '',
+  removableSort: false,
   rowsFocusable: false,
   scrollable: false,
   scrollHeight: '420px',
@@ -101,7 +109,7 @@ const DEFAULT_ARGS: Record<string, unknown> = {
 
 const CONTROL_GROUP_DEFS: readonly { title: string; open: boolean; names: readonly string[] }[] = [
   { title: 'General', open: true, names: ['paginator', 'rows', 'first', 'stripedRows', 'showGridlines', 'size', 'loading', 'skeleton', 'skeletonRows'] },
-  { title: 'Selección y orden', open: false, names: ['selectionMode', 'selectionColumn', 'metaKeySelection', 'rowsFocusable', 'sortField', 'sortOrder', 'externalSort'] },
+  { title: 'Selección y orden', open: false, names: ['selectionMode', 'selectionColumn', 'metaKeySelection', 'rowsFocusable', 'sortField', 'sortOrder', 'sortMode', 'multiSortMeta', 'removableSort', 'externalSort'] },
   { title: 'Scroll y tamaño', open: false, names: ['scrollable', 'scrollHeight', 'stickyHeader', 'virtualScroll', 'tableMinWidth'] },
   { title: 'Columnas', open: false, names: ['resizableColumns', 'columnResizeMode', 'reorderableColumns'] },
 ];
@@ -243,6 +251,22 @@ export class TableLabPageComponent {
     return Array.isArray(data) ? `${data.length} filas` : (data?.name ?? '');
   }
 
+  /** El knob «Orden inicial por varias» va en texto (`team,name`, el menos es descendente); la tabla pide el array. */
+  protected readonly multiSortMetaArg = computed<SortMeta[] | undefined>(() => {
+    const raw = this.liveArgs()['multiSortMeta'];
+    if (typeof raw !== 'string' || !raw) return undefined;
+    return raw.split(',').map((part) => (part.startsWith('-') ? { field: part.slice(1), order: -1 } : { field: part, order: 1 }));
+  });
+
+  protected onSortChange(event: ScDatatableSortEvent): void {
+    const arrow = (order: number) => (order === -1 ? '↓' : '↑');
+    if (event.multiSortMeta) {
+      this.lastEvent.set(`sortChange: ${event.multiSortMeta.map((m) => `${m.field} ${arrow(m.order)}`).join(', ')}`);
+    } else {
+      this.lastEvent.set(event.field ? `sortChange: ${event.field} ${arrow(event.order)}` : 'sortChange: sin orden');
+    }
+  }
+
   /** «Botón en columna»: el ejemplo «Column» de primeng.dev, un botón en la fila que la elige sin marcarla. */
   protected readonly columnPickButton = signal(false);
 
@@ -274,7 +298,7 @@ export class TableLabPageComponent {
     return !!v;
   }
   protected selectOptions(at: ArgType): readonly { label: string; value: string | number }[] {
-    return at.control.kind === 'select' ? at.control.options.map((o) => ({ label: String(o), value: o })) : [];
+    return at.control.kind === 'select' ? at.control.options.map((o) => ({ label: o === '' ? 'ninguno' : String(o), value: o })) : [];
   }
 
   // El CONTEXTO de la app: tema, sidebar, viewport. No son props de la tabla, son del shell.

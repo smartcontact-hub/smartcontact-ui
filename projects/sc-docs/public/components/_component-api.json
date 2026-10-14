@@ -2062,6 +2062,41 @@
           "nativo": null
         },
         {
+          "nombre": "sortMode",
+          "clase": "input",
+          "tipo": "'single' | 'multiple'",
+          "porDefecto": "'single'",
+          "requerido": false,
+          "descripcion": "`multiple`: varias columnas a la vez, el `sortMode` de p-table tal cual (primeng.dev/table «Multiple Columns»). Un clic ordena por esa columna sola; Cmd/Ctrl+clic la añade detrás de las que ya había.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Defines whether sorting works on single column or on multiple columns.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "multiSortMeta",
+          "clase": "input",
+          "tipo": "readonly SortMeta[] | undefined",
+          "porDefecto": "undefined",
+          "requerido": false,
+          "descripcion": "Orden inicial en `multiple`, por prioridad (primeng.dev/table «Presort»): `[{ field, order }, …]`.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "removableSort",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "false",
+          "requerido": false,
+          "descripcion": "El tercer clic en la misma columna quita el orden y las filas vuelven al de `value` (primeng.dev/table «Removable Sort»: allí es una receta con `customSort`; aquí, un input). Solo en `sortMode` `single`.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
           "nombre": "size",
           "clase": "input",
           "tipo": "ScComponentSize",
@@ -2551,7 +2586,6 @@
         "showOperator",
         "showPageLinks",
         "sortFieldInput",
-        "sortMode",
         "sortOrderInput",
         "stateKey",
         "stateStorage",

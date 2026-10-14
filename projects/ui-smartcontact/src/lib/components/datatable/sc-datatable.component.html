@@ -14,6 +14,8 @@
   (onRowUnselect)="rowUnselect.emit($any($event))"
   [sortField]="sortField()"
   [sortOrder]="sortOrder()"
+  [sortMode]="sortMode()"
+  [multiSortMeta]="$any(pMultiSortMeta())"
   [customSort]="externalSort()"
   [size]="pSize()"
   [scrollable]="scrollable()"
