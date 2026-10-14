@@ -1,3 +1,4 @@
+import { Component, computed, signal, viewChild, type TemplateRef } from '@angular/core';
 import { TestBed, type ComponentFixture } from '@angular/core/testing';
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 
@@ -453,6 +454,501 @@ describe('sc-datatable · esqueleto de carga', () => {
     expect(root.querySelector('p-skeleton')).toBeNull();
     expect(root.textContent).toContain('Ana');
     expect(root.hasAttribute('aria-busy')).toBe(false);
+    fixture.destroy();
+  });
+});
+
+describe('sc-datatable · orden', () => {
+  const COLS_ORDEN: readonly ScColumnDef<Fila>[] = [
+    { field: 'id', header: 'ID', sortable: true },
+    { field: 'nombre', header: 'Nombre', sortable: true },
+  ];
+
+  async function montarOrdenable(filas: Fila[], inputs: Record<string, unknown> = {}) {
+    TestBed.configureTestingModule({ imports: [ScDatatableComponent] });
+    const fixture = TestBed.createComponent<ScDatatableComponent<Fila>>(ScDatatableComponent);
+    fixture.componentRef.setInput('columns', COLS_ORDEN);
+    fixture.componentRef.setInput('value', filas);
+    for (const [k, v] of Object.entries(inputs)) fixture.componentRef.setInput(k, v);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    return fixture;
+  }
+
+  const nombresPintados = (root: HTMLElement) =>
+    [...root.querySelectorAll('tbody tr')].map((tr) => tr.children[1]?.textContent?.trim());
+
+  it('ordena lo que pinta sin reordenar el array de quien usa la tabla', async () => {
+    /* p-table ordena en sitio el array que recibe: sin la copia, la pantalla veía su propio array reordenado y el
+     * orden de partida se perdía. */
+    const filas: Fila[] = [{ id: 2, nombre: 'B' }, { id: 1, nombre: 'A' }, { id: 3, nombre: 'C' }];
+    const fixture = await montarOrdenable(filas, { sortField: 'nombre' });
+    expect(nombresPintados(fixture.nativeElement)).toEqual(['A', 'B', 'C']);
+    expect(filas.map((f) => f.nombre)).toEqual(['B', 'A', 'C']);
+    fixture.destroy();
+  });
+
+  it('con removableSort, el tercer clic en la cabecera quita el orden y vuelve el de partida', async () => {
+    const filas: Fila[] = [{ id: 2, nombre: 'B' }, { id: 1, nombre: 'A' }, { id: 3, nombre: 'C' }];
+    const fixture = await montarOrdenable(filas, { removableSort: true });
+    const emitidos: unknown[] = [];
+    fixture.componentInstance.sortChange.subscribe((e) => emitidos.push(e));
+    const cabecera = (fixture.nativeElement as HTMLElement).querySelector<HTMLElement>('thead th[data-field="nombre"]')!;
+    for (let i = 0; i < 3; i++) {
+      cabecera.click();
+      fixture.detectChanges();
+      await fixture.whenStable();
+    }
+    expect(emitidos).toEqual([
+      { field: 'nombre', order: 1 },
+      { field: 'nombre', order: -1 },
+      { field: undefined, order: 0 },
+    ]);
+    expect(nombresPintados(fixture.nativeElement)).toEqual(['B', 'A', 'C']);
+    expect(cabecera.getAttribute('aria-sort')).toBe('none');
+    fixture.destroy();
+  });
+
+  it('sin removableSort, el tercer clic vuelve a ascendente, como p-table', async () => {
+    const fixture = await montarOrdenable([{ id: 2, nombre: 'B' }, { id: 1, nombre: 'A' }]);
+    const cabecera = (fixture.nativeElement as HTMLElement).querySelector<HTMLElement>('thead th[data-field="nombre"]')!;
+    for (let i = 0; i < 3; i++) {
+      cabecera.click();
+      fixture.detectChanges();
+      await fixture.whenStable();
+    }
+    expect(nombresPintados(fixture.nativeElement)).toEqual(['A', 'B']);
+    expect(cabecera.getAttribute('aria-sort')).toBe('ascending');
+    fixture.destroy();
+  });
+});
+
+describe('sc-datatable · filtros y cabecera agrupada', () => {
+  const FILAS: Fila[] = [{ id: 2, nombre: 'Berta' }, { id: 1, nombre: 'Anna' }, { id: 3, nombre: 'Carla' }];
+  const COLS_FILTRO: readonly ScColumnDef<Fila>[] = [
+    { field: 'id', header: 'ID', sortable: true },
+    { field: 'nombre', header: 'Nombre', filter: { filterOn: 'input' } },
+  ];
+
+  async function montarFiltrable(inputs: Record<string, unknown> = {}, cols: readonly ScColumnDef<Fila>[] = COLS_FILTRO) {
+    TestBed.configureTestingModule({ imports: [ScDatatableComponent] });
+    const fixture = TestBed.createComponent<ScDatatableComponent<Fila>>(ScDatatableComponent);
+    fixture.componentRef.setInput('columns', cols);
+    fixture.componentRef.setInput('value', FILAS);
+    for (const [k, v] of Object.entries(inputs)) fixture.componentRef.setInput(k, v);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    return fixture;
+  }
+
+  async function escribirFiltro(fixture: ComponentFixture<ScDatatableComponent<Fila>>, texto: string) {
+    const input = (fixture.nativeElement as HTMLElement).querySelector<HTMLInputElement>('.sc-datatable__filter-row input')!;
+    input.value = texto;
+    input.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+    await fixture.whenStable();
+  }
+
+  const nombresPintados = (root: HTMLElement) =>
+    [...root.querySelectorAll('tbody tr')].map((tr) => tr.children[1]?.textContent?.trim());
+
+  it('al borrar el último filtro, el paginador vuelve a contar todas las filas', async () => {
+    /* p-table solo recalcula la cuenta si queda algún filtro: borrar «Marta» dejaba 1 página para 150 filas. */
+    const fixture = await montarFiltrable({ paginator: true, rows: 1 });
+    const paginas = () => (fixture.nativeElement as HTMLElement).querySelectorAll('.p-paginator-page').length;
+    expect(paginas()).toBe(3);
+    await escribirFiltro(fixture, 'An');
+    expect(paginas()).toBe(1);
+    await escribirFiltro(fixture, '');
+    expect(paginas()).toBe(3);
+    fixture.destroy();
+  });
+
+  it('las columnas seguidas con el mismo group comparten una celda encima; las demás ocupan las dos filas', async () => {
+    const fixture = await montarFiltrable({}, [
+      { field: 'id', header: 'ID', group: 'Agente' },
+      { field: 'nombre', header: 'Nombre', group: 'Agente' },
+      { field: 'extra', header: 'Extra' },
+    ]);
+    const filasCabecera = (fixture.nativeElement as HTMLElement).querySelectorAll('thead tr');
+    expect(filasCabecera.length).toBe(2);
+    const grupo = filasCabecera[0].querySelector('th.sc-datatable__group')!;
+    expect(grupo.textContent?.trim()).toBe('Agente');
+    expect(grupo.getAttribute('colspan')).toBe('2');
+    expect(filasCabecera[0].querySelector('th[data-field="extra"]')!.getAttribute('rowspan')).toBe('2');
+    expect([...filasCabecera[1].querySelectorAll('th')].map((th) => th.textContent?.trim())).toEqual(['ID', 'Nombre']);
+    fixture.destroy();
+  });
+
+  it('al pasar de fila a menú con un filtro puesto, el filtro se vacía y el menú nace con su lista de reglas', async () => {
+    /* En fila, p-table guarda un valor suelto; en menú, una lista. El menú heredaba el valor y no se abría. */
+    const fixture = await montarFiltrable();
+    await escribirFiltro(fixture, 'An');
+    expect(nombresPintados(fixture.nativeElement)).toEqual(['Anna']);
+    fixture.componentRef.setInput('filterDisplay', 'menu');
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(nombresPintados(fixture.nativeElement)).toEqual(['Berta', 'Anna', 'Carla']);
+    const filtros = (fixture.componentInstance as unknown as { table: () => { filters: Record<string, unknown> } }).table().filters;
+    expect(Array.isArray(filtros['nombre'])).toBe(true);
+    expect((fixture.nativeElement as HTMLElement).querySelector('.sc-datatable__filter-row')).toBeNull();
+    fixture.destroy();
+  });
+
+  it('clear() quita filtro y orden, y las filas vuelven al orden de value', async () => {
+    const fixture = await montarFiltrable({ sortField: 'id' });
+    await escribirFiltro(fixture, 'a');
+    expect(nombresPintados(fixture.nativeElement)).toEqual(['Anna']);
+    fixture.componentInstance.clear();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(nombresPintados(fixture.nativeElement)).toEqual(['Berta', 'Anna', 'Carla']);
+    fixture.destroy();
+  });
+});
+
+describe('sc-datatable · edición', () => {
+  /* El editor lo pone quien usa la tabla, en su plantilla: hace falta un anfitrión que lo declare. */
+  @Component({
+    imports: [ScDatatableComponent],
+    template: `
+      <ng-template #editor let-fila><input class="editor" [value]="fila.nombre" (input)="fila.nombre = $any($event.target).value" /></ng-template>
+      <sc-datatable
+        [value]="filas"
+        [columns]="cols()"
+        [editMode]="modo()"
+        selectionMode="multiple"
+        dataKey="id"
+        (rowClick)="eventos.push('rowClick')"
+        (rowKeydown)="eventos.push('rowKeydown')"
+        (rowEditInit)="eventos.push('rowEditInit:' + $event.row.nombre)"
+        (rowEditCancel)="eventos.push('rowEditCancel:' + $event.row.nombre)"
+        (editComplete)="eventos.push('editComplete:' + $event.field)"
+      />
+    `,
+  })
+  class Anfitrion {
+    readonly filas: Fila[] = [{ id: 1, nombre: 'Anna' }, { id: 2, nombre: 'Berta' }];
+    readonly modo = signal<'cell' | 'row'>('cell');
+    readonly eventos: string[] = [];
+    private readonly editor = viewChild<TemplateRef<unknown>>('editor');
+    readonly cols = computed<ScColumnDef<Fila>[]>(() => [
+      { field: 'id', header: 'ID' },
+      { field: 'nombre', header: 'Nombre', editTemplate: this.editor() as never },
+    ]);
+  }
+
+  async function montarEditable(modo: 'cell' | 'row') {
+    TestBed.configureTestingModule({ imports: [Anfitrion] });
+    const fixture = TestBed.createComponent(Anfitrion);
+    fixture.componentInstance.modo.set(modo);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    return fixture;
+  }
+
+  const celdaNombre = (root: HTMLElement) => root.querySelectorAll<HTMLElement>('tbody tr')[0].querySelectorAll('td')[2];
+
+  it('por celda: pulsar la celda la abre sin disparar rowClick, y las teclas del editor no llegan a la fila', async () => {
+    const fixture = await montarEditable('cell');
+    const root = fixture.nativeElement as HTMLElement;
+    celdaNombre(root).click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const editor = celdaNombre(root).querySelector<HTMLInputElement>('input.editor');
+    expect(editor).not.toBeNull();
+    expect(fixture.componentInstance.eventos).not.toContain('rowClick');
+    /* Cmd+A en el campo marcaba todas las filas; Fin se llevaba el foco a la fila. */
+    editor!.dispatchEvent(new KeyboardEvent('keydown', { key: 'a', code: 'KeyA', metaKey: true, bubbles: true }));
+    editor!.dispatchEvent(new KeyboardEvent('keydown', { key: 'End', code: 'End', bubbles: true }));
+    fixture.detectChanges();
+    expect(fixture.componentInstance.eventos).not.toContain('rowKeydown');
+    expect(root.querySelectorAll('tbody tr.p-datatable-row-selected').length).toBe(0);
+    fixture.destroy();
+  });
+
+  it('por fila: el lápiz abre los editores de la fila y cancelar avisa para reponer', async () => {
+    const fixture = await montarEditable('row');
+    const root = fixture.nativeElement as HTMLElement;
+    const primera = () => root.querySelectorAll<HTMLElement>('tbody tr')[0];
+    expect(root.querySelectorAll('thead th.sc-datatable__row-editor').length).toBe(1);
+    primera().querySelector<HTMLButtonElement>('.sc-datatable__row-editor button')!.click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(primera().querySelector('input.editor')).not.toBeNull();
+    expect(root.querySelectorAll('tbody tr')[1].querySelector('input.editor')).toBeNull();
+    const botones = [...primera().querySelectorAll<HTMLButtonElement>('.sc-datatable__row-editor button')];
+    expect(botones.map((b) => b.getAttribute('aria-label'))).toEqual(['Guardar', 'Cancelar']);
+    botones[1].click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(primera().querySelector('input.editor')).toBeNull();
+    expect(fixture.componentInstance.eventos).toEqual(['rowEditInit:Anna', 'rowEditCancel:Anna']);
+    fixture.destroy();
+  });
+});
+
+describe('sc-datatable · filas: detalle, grupos y fijas', () => {
+  interface Agente {
+    readonly id: number;
+    readonly nombre: string;
+    readonly equipo: string;
+  }
+
+  @Component({
+    imports: [ScDatatableComponent],
+    template: `
+      <ng-template #detalle let-a><span class="detalle">Detalle de {{ a.nombre }}</span></ng-template>
+      <sc-datatable
+        [value]="filas"
+        [columns]="cols"
+        dataKey="id"
+        [expansionTemplate]="conDetalle() ? detalle : undefined"
+        [rowGroupMode]="modo()"
+        [groupRowsBy]="'equipo'"
+        [expandableRowGroups]="plegables()"
+        [frozenValue]="fijas()"
+      />
+    `,
+  })
+  class Anfitrion {
+    readonly filas: Agente[] = [
+      { id: 1, nombre: 'Anna', equipo: 'A' },
+      { id: 2, nombre: 'Berta', equipo: 'A' },
+      { id: 3, nombre: 'Carla', equipo: 'B' },
+    ];
+    readonly cols: ScColumnDef<Agente>[] = [
+      { field: 'equipo', header: 'Equipo' },
+      { field: 'nombre', header: 'Nombre' },
+    ];
+    readonly conDetalle = signal(false);
+    readonly modo = signal<'subheader' | 'rowspan' | undefined>(undefined);
+    readonly plegables = signal(false);
+    readonly fijas = signal<Agente[] | undefined>(undefined);
+  }
+
+  async function montarFilas(ajustes: (a: Anfitrion) => void) {
+    TestBed.configureTestingModule({ imports: [Anfitrion] });
+    const fixture = TestBed.createComponent(Anfitrion);
+    ajustes(fixture.componentInstance);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    return fixture;
+  }
+
+  it('el detalle despliega solo su fila, aunque llegue groupRowsBy sin agrupar', async () => {
+    /* Con groupRowsBy puesto, PrimeNG guarda lo desplegado por ese campo: desplegaba a la vez las dos del equipo A. */
+    const fixture = await montarFilas((a) => a.conDetalle.set(true));
+    const root = fixture.nativeElement as HTMLElement;
+    root.querySelector<HTMLButtonElement>('tbody tr td.sc-datatable__expander button')!.click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const detalles = [...root.querySelectorAll('tbody tr.sc-datatable__expansion')];
+    expect(detalles.map((tr) => tr.textContent?.trim())).toEqual(['Detalle de Anna']);
+    expect(detalles[0].querySelector('td')!.getAttribute('colspan')).toBe('3');
+    fixture.destroy();
+  });
+
+  it('grupos plegables: salen plegados y la flecha del título despliega solo su grupo', async () => {
+    const fixture = await montarFilas((a) => {
+      a.modo.set('subheader');
+      a.plegables.set(true);
+    });
+    const root = fixture.nativeElement as HTMLElement;
+    const titulos = () => [...root.querySelectorAll('tbody tr.sc-datatable__group-row')].map((tr) => tr.textContent?.trim());
+    const datos = () => root.querySelectorAll('tbody tr:not(.sc-datatable__group-row)').length;
+    expect(titulos()).toEqual(['A', 'B']);
+    expect(datos()).toBe(0);
+    root.querySelector<HTMLButtonElement>('tbody tr.sc-datatable__group-row button')!.click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(datos()).toBe(2);
+    fixture.destroy();
+  });
+
+  it('rowspan: la celda del grupo solo está en su primera fila y ocupa el grupo', async () => {
+    const fixture = await montarFilas((a) => a.modo.set('rowspan'));
+    const celdas = [...(fixture.nativeElement as HTMLElement).querySelectorAll('tbody td.sc-datatable__rowspan')];
+    // Un grupo de una fila no lleva `rowspan`: PrimeNG da nulo, que en HTML vale 1.
+    expect(celdas.map((td) => `${td.textContent?.trim()}:${td.getAttribute('rowspan')}`)).toEqual(['A:2', 'B:null']);
+    fixture.destroy();
+  });
+
+  it('frozenValue: las fijas van en su propio cuerpo, pintadas como las demás', async () => {
+    const fixture = await montarFilas((a) => a.fijas.set([{ id: 9, nombre: 'Fija', equipo: 'Z' }]));
+    const fijas = (fixture.nativeElement as HTMLElement).querySelectorAll('tbody.p-datatable-frozen-tbody:first-of-type tr');
+    expect([...fijas].map((tr) => tr.textContent?.replace(/\s+/g, ' ').trim())).toEqual(['Z Fija']);
+    fixture.destroy();
+  });
+});
+
+describe('sc-datatable · datos: exportar, recordar y paginador', () => {
+  const FILAS: Fila[] = [{ id: 2, nombre: 'Berta' }, { id: 1, nombre: 'Anna' }, { id: 3, nombre: 'Carla' }];
+  const COLS_DATOS: readonly ScColumnDef<Fila>[] = [
+    { field: 'id', header: 'ID', sortable: true },
+    { field: 'nombre', header: 'Nombre', sortable: true, filter: { filterOn: 'input' } },
+    { field: 'acciones', header: '', headerAriaLabel: 'Acciones', exportable: false },
+  ];
+
+  async function montarDatos(inputs: Record<string, unknown> = {}) {
+    TestBed.configureTestingModule({ imports: [ScDatatableComponent] });
+    const fixture = TestBed.createComponent<ScDatatableComponent<Fila>>(ScDatatableComponent);
+    fixture.componentRef.setInput('columns', COLS_DATOS);
+    fixture.componentRef.setInput('value', FILAS);
+    for (const [k, v] of Object.entries(inputs)) fixture.componentRef.setInput(k, v);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    return fixture;
+  }
+
+  /** jsdom no descarga: se queda con el texto del Blob y con el nombre del enlace. */
+  function capturarDescarga() {
+    const descarga = { csv: '', fichero: '' };
+    vi.stubGlobal(
+      'Blob',
+      class {
+        constructor(partes: unknown[]) {
+          descarga.csv = String(partes[1]);
+        }
+      },
+    );
+    vi.stubGlobal('URL', { createObjectURL: () => 'blob:prueba' });
+    vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(function (this: HTMLAnchorElement) {
+      descarga.fichero = this.getAttribute('download') ?? '';
+    });
+    return descarga;
+  }
+
+  const nombresPintados = (root: HTMLElement) =>
+    [...root.querySelectorAll('tbody tr')].map((tr) => tr.children[1]?.textContent?.trim());
+
+  async function clic(fixture: ComponentFixture<ScDatatableComponent<Fila>>, el: HTMLElement) {
+    el.click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+  }
+
+  it('exportCSV: las columnas visibles con su título, sin las no exportables, y las filas filtradas en su orden', async () => {
+    const descarga = capturarDescarga();
+    const fixture = await montarDatos({ sortField: 'nombre', sortOrder: -1, exportFilename: 'agentes' });
+    fixture.componentInstance.exportCSV();
+    expect(descarga.fichero).toBe('agentes.csv');
+    expect(descarga.csv).toBe('"ID","Nombre"\n"3","Carla"\n"2","Berta"\n"1","Anna"');
+    const input = (fixture.nativeElement as HTMLElement).querySelector<HTMLInputElement>('.sc-datatable__filter-row input')!;
+    input.value = 'B';
+    input.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.componentInstance.exportCSV();
+    expect(descarga.csv).toBe('"ID","Nombre"\n"2","Berta"');
+    // Las columnas se prestan solo durante la llamada: p-table vuelve a no tener ninguna.
+    expect((fixture.componentInstance as unknown as { table: () => { columns: unknown } }).table().columns).toBeUndefined();
+    fixture.destroy();
+  });
+
+  it('exportCSV: solo las ocultas fuera, con separador y exportFunction de quien usa la tabla', async () => {
+    const descarga = capturarDescarga();
+    const fixture = await montarDatos({
+      visibleColumns: ['nombre', 'acciones'],
+      csvSeparator: ';',
+      exportFunction: ({ data }: { data: unknown }) => (data === 'Anna' ? 'Anna "la jefa"' : String(data).toUpperCase()),
+    });
+    fixture.componentInstance.exportCSV();
+    // La comilla de lo que devuelve exportFunction va doblada, como la del dato crudo: sin eso, la fila salía rota.
+    expect(descarga.csv).toBe('"Nombre"\n"BERTA"\n"Anna ""la jefa"""\n"CARLA"');
+    fixture.destroy();
+  });
+
+  async function volverConEstado(inputs: Record<string, unknown>) {
+    TestBed.resetTestingModule();
+    const restaurados: unknown[] = [];
+    TestBed.configureTestingModule({ imports: [ScDatatableComponent] });
+    const fixture = TestBed.createComponent<ScDatatableComponent<Fila>>(ScDatatableComponent);
+    fixture.componentInstance.stateRestore.subscribe((s) => restaurados.push(s));
+    fixture.componentRef.setInput('columns', COLS_DATOS);
+    fixture.componentRef.setInput('value', FILAS);
+    for (const [k, v] of Object.entries(inputs)) fixture.componentRef.setInput(k, v);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    return { fixture, restaurados };
+  }
+
+  it('stateKey: al volver, repone la página y el orden descendente que tenía', async () => {
+    /* p-table repone y, en el mismo arranque, sus entradas lo pisan: volvía en la primera página y en ascendente. Y el
+     * filtro en fila sin escribir de «Nombre» se guardaba de forma que, al reponerlo, p-table buscaba su `[0]` y se rompía. */
+    sessionStorage.clear();
+    const inputs = { paginator: true, rows: 1, stateKey: 'sc-prueba' };
+    const primera = await montarDatos(inputs);
+    const cabecera = () => (primera.nativeElement as HTMLElement).querySelector<HTMLElement>('thead th[data-field="nombre"]')!;
+    await clic(primera, cabecera());
+    await clic(primera, cabecera());
+    await clic(primera, (primera.nativeElement as HTMLElement).querySelectorAll<HTMLElement>('.p-paginator-page')[2]);
+    expect(nombresPintados(primera.nativeElement)).toEqual(['Anna']);
+    primera.destroy();
+
+    const { fixture, restaurados } = await volverConEstado(inputs);
+    const root = fixture.nativeElement as HTMLElement;
+    expect(restaurados.length).toBe(1);
+    expect(nombresPintados(root)).toEqual(['Anna']);
+    expect(root.querySelector('thead th[data-field="nombre"]')!.getAttribute('aria-sort')).toBe('descending');
+    expect(fixture.componentInstance.first()).toBe(2);
+    fixture.destroy();
+    sessionStorage.clear();
+  });
+
+  it('stateKey: repone lo marcado y avisa por selectionChange', async () => {
+    sessionStorage.clear();
+    const inputs = { stateKey: 'sc-prueba', dataKey: 'id', selectionMode: 'multiple' };
+    const primera = await montarDatos(inputs);
+    await clic(primera, (primera.nativeElement as HTMLElement).querySelectorAll<HTMLElement>('tbody tr p-table-checkbox input')[1]);
+    expect((primera.componentInstance.selection() as Fila[]).map((f) => f.nombre)).toEqual(['Anna']);
+    primera.destroy();
+
+    const { fixture } = await volverConEstado(inputs);
+    await fixture.whenStable();
+    fixture.detectChanges();
+    expect((fixture.componentInstance.selection() as Fila[]).map((f) => f.nombre)).toEqual(['Anna']);
+    expect(fixture.nativeElement.querySelectorAll('tbody tr.p-datatable-row-selected, tbody tr[aria-selected="true"]').length).toBe(1);
+    fixture.destroy();
+    sessionStorage.clear();
+  });
+
+  it('stateKey: repone el filtro escrito en la fila de filtros', async () => {
+    sessionStorage.clear();
+    const inputs = { stateKey: 'sc-prueba', stateStorage: 'session' };
+    const primera = await montarDatos(inputs);
+    const input = (primera.nativeElement as HTMLElement).querySelector<HTMLInputElement>('.sc-datatable__filter-row input')!;
+    input.value = 'C';
+    input.dispatchEvent(new Event('input'));
+    primera.detectChanges();
+    await primera.whenStable();
+    expect(nombresPintados(primera.nativeElement)).toEqual(['Carla']);
+    primera.destroy();
+
+    const { fixture } = await volverConEstado(inputs);
+    const root = fixture.nativeElement as HTMLElement;
+    expect(nombresPintados(root)).toEqual(['Carla']);
+    expect(root.querySelector<HTMLInputElement>('.sc-datatable__filter-row input')!.value).toBe('C');
+    fixture.destroy();
+    sessionStorage.clear();
+  });
+
+  it('paginador: el texto de la página con su plantilla, y arriba y abajo con paginatorPosition both', async () => {
+    const fixture = await montarDatos({
+      paginator: true,
+      rows: 1,
+      showCurrentPageReport: true,
+      currentPageReportTemplate: '{first} a {last} de {totalRecords}',
+      paginatorPosition: 'both',
+    });
+    const root = fixture.nativeElement as HTMLElement;
+    expect(root.querySelectorAll('p-paginator').length).toBe(2);
+    expect(root.querySelector('.p-paginator-current')!.textContent?.trim()).toBe('1 a 1 de 3');
     fixture.destroy();
   });
 });

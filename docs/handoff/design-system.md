@@ -49,6 +49,10 @@
   (c) **Fuera de PrimeNG jubilado** (`WRAPPERS_SOBRE_COMPONENTE_OBSOLETO_MAX`, hoy 2 tras DD-172): quedan dos, y son de las que se proponen. `sc-button → [pButton]`: la directiva no trae `label`, `icon` ni salidas, y cambia el DOM de todos los botones (mueve las capturas y las 8 entradas `p-button` de `component-styles.json`; `component-structure.json` no tiene ninguna, medido el 2026-10-06). Coste medido y opciones: tramo del 2026-10-06. `sc-multiselect → p-select` con `multiple`: le faltan seis cosas que usamos (`showToggleAll`, `selectAll`, `selectionLimit`, `maxSelectedLabels`, `selectedItemsLabel`, `display`; medido en 22.1.0), y DD-153 eligió ampliar el envoltorio.
   (d) **La plantilla de PR promete lo que no sabe**: medido, ningún gate lee el checklist y solo 2 de sus 6 casillas están respaldadas (`verify` y tokens). Barato: que cada línea diga si la vigila un gate y que «no aplica» no se escriba con un tick. Gateables de verdad, si Rafa quiere: bump de versión y CHANGELOG.
   (e) **`preflightVivo` de `bash-guard` cuenta el preflight de CUALQUIER caja**: busca la carpeta en la línea de comandos, que es relativa (y en macOS `pgrep -af` da solo PIDs). Medido el 2026-09-28: el preflight de otra caja denegó `npm run build:supervisor` en esta. Arreglo: el `cwd` de cada PID (`lsof -a -p PID -d cwd`, `/proc/PID/cwd`), con su test en rojo.
+- **`sc-datatable` tras cubrir primeng.dev/table (2026-10-14)**: (a) el Playground de Datatable en sc-docs le pasa «Alto
+  del scroll» aunque «Scroll propio» esté apagado, y p-table lo pone de tope igual (240 px): mismo arreglo que `scrollHeightArg`
+  de `/lab/tabla`, y cambia `datatable-linux.png`; (b) el «Exportar» de los listados de administración (`exportRequest` de
+  `list-page`) aún no llama a `dt.exportCSV()`: antes, preguntar a producto si les basta un CSV.
 
 0. **«Aura + color de marca» y el export en un clic** (encargo del 2026-09-13; mediciones en
    `~/Documents/Claude/2026-09 aura-marca/`). Hecho: robot (DD-82, #152), paleta del export (DD-83), capturas
@@ -168,6 +172,20 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
+## ✅ 2026-10-14 · `sc-datatable` cubre primeng.dev/table, y se prueba entero en `/lab/tabla`
+
+**Sello:** rama `arebury/tabla-primeng-completa`, fundida en `aac647d6` (#393 a #396). Sale por el tope el tramo del
+2026-10-06 (DD-175): `git show b21fb85b:docs/handoff/design-system.md`.
+
+**Lo que cambia.** La tabla del DS hace los ejemplos de primeng.dev/table: selección, orden por varias, filtros, cabecera
+agrupada, edición por celda y por fila, detalle de fila, filas agrupadas, reordenar y fijar filas, exportar CSV, recordar
+el estado y el texto del paginador. Cada uno se toca en `/lab/tabla`, un grupo de controles por tema; el catálogo de BI ya
+no tiene nada «sin hacer» en el front.
+
+- ⚠️ **`stateKey` tapa dos fallos de PrimeNG 22** (`reponerEstado` y `onStateSave` de `sc-datatable.component.ts`): sus
+  entradas pisan lo repuesto en el mismo arranque, y un filtro en fila vacío rompía la tabla al volver. Al subir PrimeNG,
+  quita los dos y mira si la prueba «stateKey: al volver…» sigue verde.
+
 ## ✅ 2026-10-13 · sc-docs suma lo que tiene un Storybook, sin cambiarse a él (DD-202)
 
 **Sello:** rama `arebury/docs-storybook-vs-sc`, sobre HEAD `9845c34c` (#385). Sale por el tope el tramo del 2026-10-05
@@ -191,25 +209,6 @@ un panel a la derecha que marca lo tocado, la ficha para agentes (`docs:ia`) y u
 
 - ⚠️ **Los `aria-haspopup`/`expanded`/`controls` de `sc-button` ya no van por `[pt]`** (chocaba con el `pt` del tooltip):
   los escribe un `afterRenderEffect`. `audit:primeng-coupling` cuenta ya las entradas de una directiva (`[pTooltip]`).
-
-## ✅ 2026-10-06 · Lote 10 · velocidad: cola de capturas por rama, «sin máquina», aviso de estilos y DD libre (DD-175)
-
-**Sello:** rama `claude/lote-10-velocidad`, sobre HEAD `99534623` (#342), PR nuevo. Sale por el tope el tramo del 2026-10-04
-(DD-154 y DD-155): `git show 99534623:docs/handoff/design-system.md`.
-
-**Lo que cambia.** Cuatro huecos que en el #342 costaron colas y un CI de más (DD-175): `visual-baselines` encola por
-rama; `ci:verdict` sale con 7 cuando los únicos rojos son jobs sin máquina, y `-- --relanzar` los relanza una vez; el
-aviso de capturas del preflight da el comando de `component-styles` y no cuenta como pendiente lo que el robot ya
-comprobó; y el preflight avisa si tu número de DD ya lo usa un PR abierto (tests en `aviso-ledgers.test.mjs`).
-
-- ⚠️ **El 10.5 (envoltorios neutros en `component-styles`) se midió y no se hizo**: 267 entradas nuevas, 180 de celdas del
-  `datatable`. Para leer el botón de las piezas compuestas, prueba a no gastar nivel solo en los hosts `sc-*` y `p-*`, y
-  mide de nuevo.
-- **La nube, lista al arrancar** (mismo día, PR aparte): `cloud-node.sh` pone el Node del `.nvmrc`, completa el clon con sus
-  etiquetas y define `SC_CHROMIUM`, que las configs de Playwright usan (`scripts/playwright-navegador.mjs`).
-- **Plan sin ejecutar** (medido 2026-10-06): `sc-button → [pButton]`, 265 usos en 78 ficheros y 178 `(clicked)`; la
-  directiva no trae `label`, `icon`, `clicked`, el mapeo `variant`/`appearance` ni `type="button"`. `sc-multiselect →
-  p-select`: 14 usos, 13 con `maxSelectedLabels`/`selectedItemsLabel` y 3 con `display`, que `p-select` 22.1.2 no tiene.
 
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 
@@ -261,6 +260,7 @@ comprobó; y el preflight avisa si tu número de DD ya lo usa un PR abierto (tes
 | ~~**El botón de crear cambia de ancho entre listas**~~ → **HECHO, `bcab818` (2026-08-25)**: decisión de Rafa: el ancho no cambia sin motivo. `main.scss:205` → `.top-bar__actions button { min-width: 144px; max-width: 288px }`, anclado en clase NUESTRA. Los cinco (122–142px) aterrizan igual. Aplicado y en `main` |
 | ~~**Qué forma de ficha (agente, grupo, usuario)**~~ → **DECIDIDO** (DD-121, DD-122) | Índice lateral en las tres. Las variantes de `comparar/fichas` quedan de referencia; la rama se archiva con tag desde el portátil |
 | **B5b · prosa i18n del constructor** | Necesita ICU MessageFormat **y diseño**. Sigue aparcada |
+| **Qué flechas quitar al pulsar columnas** (2026-10-14) | Se quitaron las ↓↑ que PrimeNG pinta al arrastrar una cabecera para reordenarla. Si eran las de ordenar (junto al título), se reponen aquéllas y se quitan éstas |
 | ~~**Experimento en LOCAL: la escala al tamaño de Aura (16px por rem)**~~ → **DECIDIDO 2026-09-14 ([DD-91](../DECISIONS.md))** | Rafa eligió solo el interlineado con la rampa que existe (20/18): 32,5 y 27, sin perder filas. La escala se queda a 14. Medido también escala 16 + 20/18: 34 / 28 y 11 filas. Simulación en `~/Documents/Claude/2026-09 escala-16/`; el nombre por clave y el gate de la escala entraron en DD-89 |
 
 ## 🔌 Figma — tres servers, y caen por separado

@@ -14,6 +14,8 @@
     [metaKeySelection]="args.metaKeySelection"
     [paginator]="args.paginator"
     [rows]="args.rows"
+    [showCurrentPageReport]="args.showCurrentPageReport"
+    [paginatorPosition]="args.paginatorPosition"
     [first]="args.first"
     [stripedRows]="args.stripedRows"
     [showGridlines]="args.showGridlines"
@@ -25,6 +27,8 @@
     [sortField]="args.sortField || undefined"
     [sortOrder]="args.sortOrder"
     [externalSort]="args.externalSort"
+    [sortMode]="args.sortMode"
+    [removableSort]="args.removableSort"
     [scrollable]="args.scrollable"
     [scrollHeight]="args.scrollHeight || undefined"
     [stickyHeader]="args.stickyHeader"
@@ -201,6 +205,75 @@
   <span class="dt-status" [attr.data-active]="agent.status === 'active'">
     {{ agent.status === 'active' ? 'Activo' : 'Inactivo' }}
   </span>
+</ng-template>
+
+<ng-template #multisort>
+  <sc-datatable [value]="agents()" [columns]="multiSortColumns" sortMode="multiple"
+    [multiSortMeta]="presortMeta" removableSort dataKey="id"
+    data-testid="sc-datatable-multisort" />
+</ng-template>
+
+<ng-template #nameEditor let-agent>
+  <sc-inputtext size="sm" fluid [value]="agent.name" (valueChange)="agent.name = $event" ariaLabel="Nombre" />
+</ng-template>
+
+<ng-template #extensionEditor let-agent>
+  <sc-inputtext size="sm" fluid [value]="agent.extension" (valueChange)="agent.extension = $event" ariaLabel="Extensión" />
+</ng-template>
+
+<ng-template #cellEdit>
+  <sc-datatable [value]="editAgents" [columns]="editColumns()" editMode="cell" dataKey="id"
+    data-testid="sc-datatable-cell-edit" />
+</ng-template>
+
+<ng-template #rowEdit>
+  <sc-datatable [value]="editAgents" [columns]="editColumns()" editMode="row" [rowEditLabels]="rowEditLabels"
+    dataKey="id" (rowEditInit)="keepCopy($event.row)" (rowEditCancel)="restoreCopy($event.row)"
+    data-testid="sc-datatable-row-edit" />
+</ng-template>
+
+<ng-template #rowDetail let-agent>
+  <span>{{ agent.name }} atiende en la extensión {{ agent.extension }}.</span>
+</ng-template>
+
+<ng-template #groupHeader let-agent>
+  <span>{{ agent.status === 'active' ? 'Activos' : 'Inactivos' }}</span>
+</ng-template>
+
+<ng-template #groupFooter let-agent>
+  <span>{{ groupSize(agent.status) }} agentes</span>
+</ng-template>
+
+<ng-template #expansion>
+  <sc-datatable [value]="agents()" [columns]="multiSortColumns" [expansionTemplate]="rowDetail"
+    [expandedRowKeys]="expandedKeys" [rowExpandLabels]="expandLabels" dataKey="id"
+    data-testid="sc-datatable-expansion" />
+</ng-template>
+
+<ng-template #rowGroups>
+  <sc-datatable [value]="agents()" [columns]="multiSortColumns" rowGroupMode="subheader" groupRowsBy="status"
+    [groupHeaderTemplate]="groupHeader" [groupFooterTemplate]="groupFooter" [expandableRowGroups]="true"
+    [expandedRowKeys]="expandedGroups" dataKey="id" data-testid="sc-datatable-row-groups" />
+</ng-template>
+
+<ng-template #rowOrder>
+  <sc-datatable [value]="orderedAgents()" [columns]="multiSortColumns" [reorderableRows]="true"
+    (rowReorder)="orderedAgents.set($event.rows)" [frozenValue]="pinnedAgents" scrollable scrollHeight="240px"
+    dataKey="id" data-testid="sc-datatable-row-order" />
+</ng-template>
+
+<ng-template #dataTools>
+  <sc-button label="Exportar CSV" icon="download" variant="secondary" appearance="outlined" size="sm"
+    (click)="dataTable.exportCSV()" data-testid="dt-export" />
+  <sc-datatable #dataTable [value]="agents()" [columns]="multiSortColumns" [paginator]="true" [rows]="3"
+    [showCurrentPageReport]="true" [currentPageReportTemplate]="pageReport" paginatorPosition="both"
+    exportFilename="agentes" csvSeparator=";" [exportFunction]="exportCell"
+    stateKey="sc-docs-datatable" stateStorage="session" dataKey="id" data-testid="sc-datatable-data-tools" />
+</ng-template>
+
+<ng-template #filters>
+  <sc-datatable [value]="agents()" [columns]="filterColumns" filterDisplay="row" dataKey="id"
+    data-testid="sc-datatable-filters" />
 </ng-template>
 
 <ng-template #frozen>
