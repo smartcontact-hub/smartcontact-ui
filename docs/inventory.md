@@ -53,7 +53,7 @@
 | `sc-column-selector` | STANDARD | experimental (sin maestro en el Kit) | primeng/popover | 1 inputs | — | ✓ | 1 |
 | `sc-command-palette` | CUSTOM | experimental (sin maestro en el Kit) | — | 0 inputs | — | ✓ | 4 |
 | `sc-confirmdialog` | STANDARD | ready | primeng/confirmdialog | 0 inputs | — | ✓ | 1 |
-| `sc-datatable` | EXTENDED | ready | primeng/table | 43 inputs | sc-skeleton | ✓ | 16 |
+| `sc-datatable` | EXTENDED | ready | primeng/table | 45 inputs | sc-skeleton sc-button | ✓ | 16 |
 | `sc-datepicker` | EXTENDED | ready | primeng/datepicker | 24 inputs | sc-field-label sc-button sc-field-msg | ✓ | 1 |
 | `sc-delete-entity-dialog` | CUSTOM | experimental (sin maestro en el Kit) | — | 2 inputs | sc-dialog sc-button | ✓ | 12 |
 | `sc-dialog` | EXTENDED | ready | primeng/dialog | 14 inputs | — | ✓ | 20 |
@@ -72,9 +72,9 @@
 | `sc-impact-preview-dialog` | CUSTOM | experimental (sin maestro en el Kit) | — | 3 inputs | sc-dialog sc-button | ✓ | 3 |
 | `sc-inline-rename-cell` | CUSTOM | experimental (sin maestro en el Kit) | — | 2 inputs | — | ✓ | 4 |
 | `sc-inputgroup` | STANDARD | ready | primeng/inputgroup | 2 inputs | — | ✓ | 1 |
-| `sc-inputnumber` | EXTENDED | ready | primeng/inputtext | 17 inputs | sc-field-label sc-field-msg | ✓ | 15 |
+| `sc-inputnumber` | EXTENDED | ready | primeng/inputtext | 18 inputs | sc-field-label sc-field-msg | ✓ | 16 |
 | `sc-inputtags` | EXTENDED | experimental (sin maestro en el Kit) | primeng/inputtags | 18 inputs | sc-field-label sc-field-msg | ✓ | 1 |
-| `sc-inputtext` | EXTENDED | ready | primeng/inputtext | 20 inputs | sc-field-label sc-field-msg | ✓ | 46 |
+| `sc-inputtext` | EXTENDED | ready | primeng/inputtext | 20 inputs | sc-field-label sc-field-msg | ✓ | 47 |
 | `sc-keyboard-shortcuts` | CUSTOM | experimental (sin maestro en el Kit) | — | 1 inputs | — | ✓ | 2 |
 | `sc-message` | EXTENDED | ready | primeng/message | 6 inputs | — | ✓ | 9 |
 | `sc-multiselect` | EXTENDED | ready | primeng/multiselect | 34 inputs | sc-field-label sc-field-msg | ✓ | 14 |
@@ -88,7 +88,7 @@
 | `sc-radiobutton` | EXTENDED | ready | primeng/radiobutton | 7 inputs | — | ✓ | 2 |
 | `sc-search` | EXTENDED | experimental (sin maestro en el Kit) | primeng/iconfield, primeng/inputicon, primeng/inputtext | 11 inputs | — | ✓ | 13 |
 | `sc-section-card` | CUSTOM | ready | — | 9 inputs | sc-button | ✓ | 35 |
-| `sc-select` | EXTENDED | ready | primeng/select | 30 inputs | sc-field-label sc-field-msg | ✓ | 64 |
+| `sc-select` | EXTENDED | ready | primeng/select | 30 inputs | sc-field-label sc-field-msg | ✓ | 66 |
 | `sc-selectbutton` | EXTENDED | ready | primeng/selectbutton | 15 inputs | sc-field-msg | ✓ | 23 |
 | `sc-skeleton` | EXTENDED | ready | primeng/skeleton | 6 inputs | — | ✓ | — |
 | `sc-slot` | CUSTOM | experimental (sin maestro en el Kit) | — | 4 inputs | — | ✓ | 13 |

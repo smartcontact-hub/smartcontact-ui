@@ -165,6 +165,28 @@ export class DatatableDemoComponent {
     { field: 'status', order: 1 },
     { field: 'name', order: 1 },
   ];
+  protected readonly cellEditTpl = viewChild<TemplateRef<StoryContext>>('cellEdit');
+  protected readonly rowEditTpl = viewChild<TemplateRef<StoryContext>>('rowEdit');
+  private readonly nameEditor = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('nameEditor');
+  private readonly extensionEditor = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('extensionEditor');
+  /** primeng.dev/table «Cell Edit» y «Row Edit»: los editores escriben en la fila, así que van sobre una copia. */
+  protected readonly editAgents: Agent[] = AGENTS.map((agent) => ({ ...agent }));
+  protected readonly editColumns = computed<readonly ScColumnDef<Agent>[]>(() => [
+    { field: 'name', header: 'Nombre', editTemplate: this.nameEditor() },
+    { field: 'extension', header: 'Extensión', width: '10rem', editTemplate: this.extensionEditor() },
+    { field: 'status', header: 'Estado', width: '10rem' },
+  ]);
+  protected readonly rowEditLabels = { edit: 'Editar', save: 'Guardar', cancel: 'Cancelar' };
+  private readonly copies = new Map<number, Agent>();
+  /** El lápiz guarda una copia de la fila y cancelar la repone, como el ejemplo «Row Edit». */
+  protected keepCopy(agent: Agent): void {
+    this.copies.set(agent.id, { ...agent });
+  }
+  protected restoreCopy(agent: Agent): void {
+    const copy = this.copies.get(agent.id);
+    if (copy) Object.assign(agent, copy);
+    this.copies.delete(agent.id);
+  }
   protected readonly filtersTpl = viewChild<TemplateRef<StoryContext>>('filters');
   /** primeng.dev/table «Filter» y «Column Group»: un filtro por columna bajo la cabecera, y «Agente» sobre dos. */
   protected readonly filterColumns: readonly ScColumnDef<Agent>[] = [
@@ -426,7 +448,9 @@ export class DatatableDemoComponent {
     const fr = this.frozenTpl();
     const ms = this.multiSortTpl();
     const fi = this.filtersTpl();
-    if (!pg || !controls || !mvp || !lz || !gs || !ls || !st || !fr || !ms || !fi) return [];
+    const ce = this.cellEditTpl();
+    const re = this.rowEditTpl();
+    if (!pg || !controls || !mvp || !lz || !gs || !ls || !st || !fr || !ms || !fi || !ce || !re) return [];
     return [
       { name: 'Playground', playground: true, template: pg, controlsTemplate: controls },
       { name: 'Columnas, selección múltiple y paginador', template: mvp, snippet: MVP_SNIPPET },
@@ -442,6 +466,14 @@ export class DatatableDemoComponent {
 <!-- filterDisplay="row" los pone en una fila bajo la cabecera; "menu", en un botón junto al título con reglas Y/O. -->
 <!-- ScColumnDef.group: las columnas seguidas con el mismo group comparten una celda encima. dt.clear() lo quita todo. -->
 <sc-datatable [value]="agents()" [columns]="filterColumns" filterDisplay="row" dataKey="id" />` },
+      { name: 'Edición por celda', template: ce, snippet: `<!-- ScColumnDef.editTemplate: el control que edita la celda; escribe en la fila. -->
+<!-- Aquí, un sc-inputtext con [value]="agent.name" y (valueChange)="agent.name = $event". -->
+<!-- Se abre al pulsar la celda; Intro, Tab o clic fuera lo deja, Escape repone el valor de antes. -->
+<sc-datatable [value]="editAgents" [columns]="editColumns()" editMode="cell" dataKey="id" />` },
+      { name: 'Edición por fila', template: re, snippet: `<!-- editMode="row": un lápiz al final abre la fila entera, con guardar y cancelar. -->
+<!-- Cancelar no deshace solo: el lápiz avisa (rowEditInit) para guardar una copia y cancelar (rowEditCancel) para reponerla. -->
+<sc-datatable [value]="editAgents" [columns]="editColumns()" editMode="row" [rowEditLabels]="rowEditLabels"
+  dataKey="id" (rowEditInit)="keepCopy($event.row)" (rowEditCancel)="restoreCopy($event.row)" />` },
     ];
   });
 }

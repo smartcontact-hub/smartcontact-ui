@@ -1,3 +1,4 @@
+import { Component, computed, signal, viewChild, type TemplateRef } from '@angular/core';
 import { TestBed, type ComponentFixture } from '@angular/core/testing';
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 
@@ -602,6 +603,88 @@ describe('sc-datatable · filtros y cabecera agrupada', () => {
     fixture.detectChanges();
     await fixture.whenStable();
     expect(nombresPintados(fixture.nativeElement)).toEqual(['Berta', 'Anna', 'Carla']);
+    fixture.destroy();
+  });
+});
+
+describe('sc-datatable · edición', () => {
+  /* El editor lo pone quien usa la tabla, en su plantilla: hace falta un anfitrión que lo declare. */
+  @Component({
+    imports: [ScDatatableComponent],
+    template: `
+      <ng-template #editor let-fila><input class="editor" [value]="fila.nombre" (input)="fila.nombre = $any($event.target).value" /></ng-template>
+      <sc-datatable
+        [value]="filas"
+        [columns]="cols()"
+        [editMode]="modo()"
+        selectionMode="multiple"
+        dataKey="id"
+        (rowClick)="eventos.push('rowClick')"
+        (rowKeydown)="eventos.push('rowKeydown')"
+        (rowEditInit)="eventos.push('rowEditInit:' + $event.row.nombre)"
+        (rowEditCancel)="eventos.push('rowEditCancel:' + $event.row.nombre)"
+        (editComplete)="eventos.push('editComplete:' + $event.field)"
+      />
+    `,
+  })
+  class Anfitrion {
+    readonly filas: Fila[] = [{ id: 1, nombre: 'Anna' }, { id: 2, nombre: 'Berta' }];
+    readonly modo = signal<'cell' | 'row'>('cell');
+    readonly eventos: string[] = [];
+    private readonly editor = viewChild<TemplateRef<unknown>>('editor');
+    readonly cols = computed<ScColumnDef<Fila>[]>(() => [
+      { field: 'id', header: 'ID' },
+      { field: 'nombre', header: 'Nombre', editTemplate: this.editor() as never },
+    ]);
+  }
+
+  async function montarEditable(modo: 'cell' | 'row') {
+    TestBed.configureTestingModule({ imports: [Anfitrion] });
+    const fixture = TestBed.createComponent(Anfitrion);
+    fixture.componentInstance.modo.set(modo);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    return fixture;
+  }
+
+  const celdaNombre = (root: HTMLElement) => root.querySelectorAll<HTMLElement>('tbody tr')[0].querySelectorAll('td')[2];
+
+  it('por celda: pulsar la celda la abre sin disparar rowClick, y las teclas del editor no llegan a la fila', async () => {
+    const fixture = await montarEditable('cell');
+    const root = fixture.nativeElement as HTMLElement;
+    celdaNombre(root).click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const editor = celdaNombre(root).querySelector<HTMLInputElement>('input.editor');
+    expect(editor).not.toBeNull();
+    expect(fixture.componentInstance.eventos).not.toContain('rowClick');
+    /* Cmd+A en el campo marcaba todas las filas; Fin se llevaba el foco a la fila. */
+    editor!.dispatchEvent(new KeyboardEvent('keydown', { key: 'a', code: 'KeyA', metaKey: true, bubbles: true }));
+    editor!.dispatchEvent(new KeyboardEvent('keydown', { key: 'End', code: 'End', bubbles: true }));
+    fixture.detectChanges();
+    expect(fixture.componentInstance.eventos).not.toContain('rowKeydown');
+    expect(root.querySelectorAll('tbody tr.p-datatable-row-selected').length).toBe(0);
+    fixture.destroy();
+  });
+
+  it('por fila: el lápiz abre los editores de la fila y cancelar avisa para reponer', async () => {
+    const fixture = await montarEditable('row');
+    const root = fixture.nativeElement as HTMLElement;
+    const primera = () => root.querySelectorAll<HTMLElement>('tbody tr')[0];
+    expect(root.querySelectorAll('thead th.sc-datatable__row-editor').length).toBe(1);
+    primera().querySelector<HTMLButtonElement>('.sc-datatable__row-editor button')!.click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(primera().querySelector('input.editor')).not.toBeNull();
+    expect(root.querySelectorAll('tbody tr')[1].querySelector('input.editor')).toBeNull();
+    const botones = [...primera().querySelectorAll<HTMLButtonElement>('.sc-datatable__row-editor button')];
+    expect(botones.map((b) => b.getAttribute('aria-label'))).toEqual(['Guardar', 'Cancelar']);
+    botones[1].click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(primera().querySelector('input.editor')).toBeNull();
+    expect(fixture.componentInstance.eventos).toEqual(['rowEditInit:Anna', 'rowEditCancel:Anna']);
     fixture.destroy();
   });
 });

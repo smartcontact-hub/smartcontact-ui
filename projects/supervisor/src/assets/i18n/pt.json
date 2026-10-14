@@ -2729,7 +2729,10 @@
       "filter_any": "Todos",
       "filter_team": "Filtrar por equipa",
       "filter_country": "Filtrar por país",
-      "filter_status": "Filtrar por estado"
+      "filter_status": "Filtrar por estado",
+      "editable_label": "Colunas editáveis",
+      "edit_name": "Nome do agente",
+      "edit_tickets": "Tickets abertos"
     },
     "arbol": {
       "context_label": "Contexto do app",

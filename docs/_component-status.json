@@ -429,13 +429,17 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/table",
       "cva": false,
-      "inputs": 43,
+      "inputs": 45,
       "api": [
         "columnOrderChange",
         "columnResizeMode",
         "columnWidthsChange",
         "columns",
         "dataKey",
+        "editCancel",
+        "editComplete",
+        "editInit",
+        "editMode",
         "externalSort",
         "fill",
         "filterChange",
@@ -456,6 +460,10 @@
         "resizableColumns",
         "rowClick",
         "rowContextMenu",
+        "rowEditCancel",
+        "rowEditInit",
+        "rowEditLabels",
+        "rowEditSave",
         "rowKeydown",
         "rowSelect",
         "rowSelectionAriaLabel",
@@ -489,7 +497,8 @@
         "visibleColumns"
       ],
       "nested": [
-        "sc-skeleton"
+        "sc-skeleton",
+        "sc-button"
       ],
       "hasDemo": true,
       "kit": true,
@@ -1045,9 +1054,10 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/inputtext",
       "cva": false,
-      "inputs": 17,
+      "inputs": 18,
       "api": [
         "ariaDescribedBy",
+        "ariaLabel",
         "blurred",
         "disabled",
         "error",
@@ -1077,7 +1087,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 15,
+      "usedInSupervisor": 16,
       "cuando": "Para una cantidad acotada, con mínimo, máximo y paso. Si el número es un identificador (un teléfono, un código), es texto: `sc-inputtext`.",
       "sobreObsoleto": []
     },
@@ -1169,7 +1179,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 46,
+      "usedInSupervisor": 47,
       "cuando": "Para texto de una línea. Si puede ocupar varias, `sc-textarea`.",
       "sobreObsoleto": []
     },
@@ -1646,7 +1656,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 64,
+      "usedInSupervisor": 66,
       "cuando": "Para elegir UNA de muchas. Si son pocas y caben a la vista, `sc-radiobutton` o `sc-selectbutton` ahorran un clic.",
       "sobreObsoleto": []
     },

@@ -22,6 +22,9 @@ import type { FilterMetadata, SortMeta } from 'primeng/api';
 import {
   Table,
   TableModule,
+  type TableEditCancelEvent,
+  type TableEditCompleteEvent,
+  type TableEditInitEvent,
   type TableFilterEvent,
   type TableLazyLoadEvent,
   type TablePageEvent,
@@ -31,12 +34,15 @@ import {
 
 import {
   ScColumnDef,
+  ScDatatableRowEditEvent,
   ScDatatableRowEvent,
   ScDatatableRowKeyEvent,
   ScRowAriaLabelFn,
+  ScRowEditLabels,
   ScRowStyleClassFn,
 } from '../../core/types/datatable.types';
 import { ScComponentSize } from '../../core/types/theme-component.types';
+import { ScButtonComponent } from '../button/sc-button.component';
 import { ScSkeletonComponent } from '../skeleton/sc-skeleton.component';
 
 /**
@@ -99,7 +105,7 @@ export interface ScDatatableSortEvent {
  */
 @Component({
   selector: 'sc-datatable',
-  imports: [TableModule, NgClass, NgTemplateOutlet, ScSkeletonComponent],
+  imports: [TableModule, NgClass, NgTemplateOutlet, ScButtonComponent, ScSkeletonComponent],
   templateUrl: './sc-datatable.component.html',
   styleUrl: './sc-datatable.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -331,7 +337,14 @@ export class ScDatatableComponent<T = unknown> {
    * «Advanced»).
    */
   readonly filterDisplay = input<'row' | 'menu'>('row');
-
+  /**
+   * Cómo se editan las columnas con `ScColumnDef.editTemplate` (primeng.dev/table «Cell Edit» y «Row Edit»): `cell`,
+   * cada celda se abre al pulsarla y se cierra con Intro, Tab, Escape o clic fuera; `row`, una columna al final con
+   * un lápiz que abre la fila entera, y guardar o cancelar.
+   */
+  readonly editMode = input<'cell' | 'row'>('cell');
+  /** Los nombres de los botones de editar, guardar y cancelar la fila (`editMode: 'row'`), traducidos. */
+  readonly rowEditLabels = input<ScRowEditLabels>({ edit: 'Editar', save: 'Guardar', cancel: 'Cancelar' });
 
   /* ════════════════════════════════════════════════════════════════════════
    * LAS 38 RANURAS DE PLANTILLA DE p-table, REENVIADAS
@@ -406,6 +419,23 @@ export class ScDatatableComponent<T = unknown> {
   readonly lazyLoad = output<TableLazyLoadEvent>();
   /** Han cambiado los filtros de la tabla. */
   readonly filterChange = output<TableFilterEvent>();
+
+  /**
+   * Se ha abierto una celda para editarla (`editMode: 'cell'`): el `onEditInit` de p-table, con `field`, `index` y en
+   * `data` la fila entera. Va la fila y no el valor porque con el valor PrimeNG busca la fila por su índice en `value`,
+   * y con un filtro puesto ese índice es de otra.
+   */
+  readonly editInit = output<TableEditInitEvent>();
+  /** Se ha cerrado una celda con Intro, Tab o clic fuera: el `onEditComplete` de p-table, con el valor ya escrito. */
+  readonly editComplete = output<TableEditCompleteEvent>();
+  /** Se ha cerrado una celda con Escape: el `onEditCancel` de p-table. PrimeNG repone el valor que tenía al abrirla. */
+  readonly editCancel = output<TableEditCancelEvent>();
+  /** Se ha pulsado el lápiz de una fila (`editMode: 'row'`): es el momento de guardar una copia para poder cancelar. */
+  readonly rowEditInit = output<ScDatatableRowEditEvent<T>>();
+  /** Se ha pulsado guardar en una fila en edición. */
+  readonly rowEditSave = output<ScDatatableRowEditEvent<T>>();
+  /** Se ha pulsado cancelar en una fila en edición: quien usa la tabla repone los valores de su copia. */
+  readonly rowEditCancel = output<ScDatatableRowEditEvent<T>>();
 
   /**
    * Se ha marcado una fila: el `onRowSelect` de p-table tal cual (`data`, `index`, `type`: `row`, `checkbox` o
@@ -667,8 +697,11 @@ export class ScDatatableComponent<T = unknown> {
   }
 
   /** colspan de la fila vacía: columnas VISIBLES + la de selección si se pinta. */
+  /** La columna del lápiz, al final: con `editMode: 'row'` y alguna columna que se pueda editar. */
+  protected readonly rowEditor = computed(() => this.editMode() === 'row' && this.visibleCols().some((c) => c.editTemplate));
+
   protected readonly colspan = computed<number>(
-    () => this.visibleCols().length + (this.selectionControl() ? 1 : 0),
+    () => this.visibleCols().length + (this.selectionControl() ? 1 : 0) + (this.rowEditor() ? 1 : 0),
   );
 
   /** Filtros para p-table: referencia estable `{}` cuando el consumidor no informa. */
@@ -901,7 +934,20 @@ export class ScDatatableComponent<T = unknown> {
   }
 
   protected onRowClick(event: MouseEvent, row: T, index: number): void {
+    // Pulsar una celda para editarla, o dentro de la fila que se está editando, es editar, no abrir la fila.
+    const target = event.target instanceof Element ? event.target : null;
+    if (target?.closest('.p-editable-column') || (this.editMode() === 'row' && this.table().isRowEditing(row))) return;
     this.rowClick.emit({ row, index, originalEvent: event });
+  }
+
+  /**
+   * Las teclas que nacen dentro de una celda con editor son del editor. La fila lleva el teclado de selección de
+   * PrimeNG, que atiende Inicio, Fin, flechas, Espacio, Intro y Cmd/Ctrl+A vengan de donde vengan: con Fin en el campo,
+   * la fila se llevaba el foco y lo siguiente que se escribía se perdía, y Cmd+A marcaba todas las filas (medido el
+   * 2026-10-14). Intro, Escape y Tab los sigue atendiendo `pEditableColumn`, que escucha en la misma celda.
+   */
+  protected onEditorKeydown(event: KeyboardEvent): void {
+    if (event.target !== event.currentTarget) event.stopPropagation();
   }
 
   protected onRowKeydown(event: KeyboardEvent, row: T, index: number): void {

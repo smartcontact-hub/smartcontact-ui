@@ -60,6 +60,14 @@
           [columnResizeMode]="$any(liveArgs()['columnResizeMode'])"
           [reorderableColumns]="$any(liveArgs()['reorderableColumns'])"
           (columnOrderChange)="onColumnOrderChange($event)"
+          [editMode]="$any(liveArgs()['editMode'])"
+          [rowEditLabels]="{ edit: 'common.edit' | translate, save: 'common.save' | translate, cancel: 'common.cancel' | translate }"
+          (editInit)="onEditInit($event)"
+          (editComplete)="onEditComplete($event)"
+          (editCancel)="onEditCancel($event)"
+          (rowEditInit)="onRowEditInit($event)"
+          (rowEditSave)="onRowEditSave($event)"
+          (rowEditCancel)="onRowEditCancel($event)"
         >
           <!-- Lo que hay marcado, como la barra de los ejemplos de selección de primeng.dev: sin ella, marcar
                una fila no se nota más que en su color. -->
@@ -173,6 +181,44 @@
     [placeholder]="'lab.tabla.filter_any' | translate"
     [ariaLabel]="'lab.tabla.filter_status' | translate"
     (valueChange)="filterCallback($event)"
+  />
+</ng-template>
+
+<!-- Los editores de «Columnas editables» (primeng.dev/table «Cell Edit» y «Row Edit»): escriben en la fila. Con
+     `editMode: 'row'`, cancelar repone la copia que se guarda al pulsar el lápiz. -->
+<ng-template #nameEditTpl let-agent>
+  <sc-inputtext size="sm" fluid [value]="agent.name" (valueChange)="agent.name = $event" [ariaLabel]="'lab.tabla.edit_name' | translate" />
+</ng-template>
+
+<ng-template #teamEditTpl let-agent>
+  <sc-select
+    size="sm"
+    [options]="teamOptions"
+    optionValue="value"
+    [value]="agent.team"
+    (valueChange)="agent.team = $event"
+    [ariaLabel]="'lab.tabla.filter_team' | translate"
+  />
+</ng-template>
+
+<ng-template #statusEditTpl let-agent>
+  <sc-select
+    size="sm"
+    [options]="statusOptions"
+    optionValue="value"
+    [value]="agent.status"
+    (valueChange)="agent.status = $event"
+    [ariaLabel]="'lab.tabla.filter_status' | translate"
+  />
+</ng-template>
+
+<ng-template #ticketsEditTpl let-agent>
+  <sc-inputnumber
+    size="sm"
+    [min]="0"
+    [value]="agent.tickets"
+    (valueChange)="agent.tickets = $event ?? 0"
+    [ariaLabel]="'lab.tabla.edit_tickets' | translate"
   />
 </ng-template>
 

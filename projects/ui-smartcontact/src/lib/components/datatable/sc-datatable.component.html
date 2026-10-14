@@ -40,6 +40,10 @@
   (onPage)="page.emit($event)"
   (onLazyLoad)="lazyLoad.emit($event)"
   (onFilter)="onFilter($event)"
+  [editMode]="editMode()"
+  (onEditInit)="editInit.emit($event)"
+  (onEditComplete)="editComplete.emit($event)"
+  (onEditCancel)="editCancel.emit($event)"
 >
   <ng-template #caption>
     @if (userCaption()) {
@@ -77,7 +81,9 @@
       <ng-container *ngTemplateOutlet="headerCell; context: { $implicit: segmento.cols[0], rowspan: 2 }" />
       } } } @else { @for (col of visibleCols(); track col.field) {
       <ng-container *ngTemplateOutlet="headerCell; context: { $implicit: col, rowspan: null }" />
-      } }
+      } } @if (rowEditor()) {
+      <th class="sc-datatable__row-editor" scope="col" [attr.aria-label]="rowEditLabels().edit" [attr.rowspan]="segmentos ? 2 : null"></th>
+      }
     </tr>
     @if (segmentos) {
     <tr>
@@ -102,6 +108,8 @@
         <ng-container *ngTemplateOutlet="colFilter; context: { $implicit: col, display: 'row' }" />
         }
       </th>
+      } @if (rowEditor()) {
+      <th class="sc-datatable__row-editor"></th>
       }
     </tr>
     } }
@@ -235,6 +243,10 @@
         <sc-skeleton [width]="skeletonWidth(rowIndex, c)" />
         } }
       </td>
+      } @if (rowEditor()) {
+      <td class="sc-datatable__row-editor">
+        <span class="sc-datatable__skeleton-action"><sc-skeleton size="var(--sc-line-height-100)" /></span>
+      </td>
       }
     </tr>
     } @else if (userBody()) {
@@ -260,6 +272,8 @@
       [pSelectableRow]="row"
       [pSelectableRowIndex]="rowIndex"
       [pSelectableRowDisabled]="rowSelectDisabled()"
+      [pEditableRow]="row"
+      [pEditableRowDisabled]="!rowEditor()"
       [ngClass]="rowClass(row, rowIndex)"
       (click)="onRowClick($event, row, rowIndex)"
       (contextmenu)="onRowContextMenu($event, row, rowIndex)"
@@ -293,8 +307,31 @@
       </td>
       } @for (col of visibleCols(); track col.field) {
       <!-- La columna que nombra la fila es su cabecera, como en Primer (DD-194): el lector de pantalla la
-           anuncia al recorrer la fila. Mismos atributos que la celda de datos; el aspecto lo iguala el tema. -->
-      @if (col.rowHeader) {
+           anuncia al recorrer la fila. Mismos atributos que la celda de datos; el aspecto lo iguala el tema.
+           Con `editTemplate` y `editMode: 'cell'`, la celda lleva `pEditableColumn` (primeng.dev/table «Cell Edit»);
+           solo entonces, porque cada una crea su efecto. El `p-cell-editor` va escrito dentro de cada celda y no en
+           una plantilla común: busca `pEditableColumn` y `pEditableRow` desde donde se declara. -->
+      @let cellEdit = !!col.editTemplate && editMode() === 'cell';
+      @if (col.rowHeader && cellEdit) {
+      <th
+        scope="row"
+        pFrozenColumn
+        [frozen]="!!col.frozen"
+        [alignFrozen]="col.alignFrozen ?? 'left'"
+        [class.sc-datatable__frozen-right-edge]="col.field === rightFrozenEdge()"
+        [class.sc-datatable__frozen-left-edge]="col.field === leftFrozenEdge()"
+        [style.text-align]="col.align ?? null"
+        [pEditableColumn]="row"
+        [pEditableColumnField]="col.field"
+        [pEditableColumnRowIndex]="rowIndex"
+        (keydown)="onEditorKeydown($event)"
+      >
+        <p-cell-editor>
+          <ng-template #input><ng-container *ngTemplateOutlet="col.editTemplate; context: { $implicit: row, rowIndex: rowIndex, col: col }" /></ng-template>
+          <ng-template #output><ng-container *ngTemplateOutlet="cellContent; context: { $implicit: row, rowIndex: rowIndex, col: col }" /></ng-template>
+        </p-cell-editor>
+      </th>
+      } @else if (col.rowHeader) {
       <th
         scope="row"
         pFrozenColumn
@@ -304,9 +341,35 @@
         [class.sc-datatable__frozen-left-edge]="col.field === leftFrozenEdge()"
         [style.text-align]="col.align ?? null"
         (click)="col.stopRowClick ? $event.stopPropagation() : null"
+        (keydown)="col.editTemplate ? onEditorKeydown($event) : null"
       >
+        @if (col.editTemplate) {
+        <p-cell-editor>
+          <ng-template #input><ng-container *ngTemplateOutlet="col.editTemplate; context: { $implicit: row, rowIndex: rowIndex, col: col }" /></ng-template>
+          <ng-template #output><ng-container *ngTemplateOutlet="cellContent; context: { $implicit: row, rowIndex: rowIndex, col: col }" /></ng-template>
+        </p-cell-editor>
+        } @else {
         <ng-container *ngTemplateOutlet="cellContent; context: { $implicit: row, rowIndex: rowIndex, col: col }" />
+        }
       </th>
+      } @else if (cellEdit) {
+      <td
+        pFrozenColumn
+        [frozen]="!!col.frozen"
+        [alignFrozen]="col.alignFrozen ?? 'left'"
+        [class.sc-datatable__frozen-right-edge]="col.field === rightFrozenEdge()"
+        [class.sc-datatable__frozen-left-edge]="col.field === leftFrozenEdge()"
+        [style.text-align]="col.align ?? null"
+        [pEditableColumn]="row"
+        [pEditableColumnField]="col.field"
+        [pEditableColumnRowIndex]="rowIndex"
+        (keydown)="onEditorKeydown($event)"
+      >
+        <p-cell-editor>
+          <ng-template #input><ng-container *ngTemplateOutlet="col.editTemplate; context: { $implicit: row, rowIndex: rowIndex, col: col }" /></ng-template>
+          <ng-template #output><ng-container *ngTemplateOutlet="cellContent; context: { $implicit: row, rowIndex: rowIndex, col: col }" /></ng-template>
+        </p-cell-editor>
+      </td>
       } @else {
       <td
         pFrozenColumn
@@ -316,10 +379,31 @@
         [class.sc-datatable__frozen-left-edge]="col.field === leftFrozenEdge()"
         [style.text-align]="col.align ?? null"
         (click)="col.stopRowClick ? $event.stopPropagation() : null"
+        (keydown)="col.editTemplate ? onEditorKeydown($event) : null"
       >
+        @if (col.editTemplate) {
+        <p-cell-editor>
+          <ng-template #input><ng-container *ngTemplateOutlet="col.editTemplate; context: { $implicit: row, rowIndex: rowIndex, col: col }" /></ng-template>
+          <ng-template #output><ng-container *ngTemplateOutlet="cellContent; context: { $implicit: row, rowIndex: rowIndex, col: col }" /></ng-template>
+        </p-cell-editor>
+        } @else {
         <ng-container *ngTemplateOutlet="cellContent; context: { $implicit: row, rowIndex: rowIndex, col: col }" />
+        }
       </td>
-      } }
+      } } @if (rowEditor()) {
+      <!-- Lápiz, guardar y cancelar de primeng.dev/table «Row Edit», con `sc-button` de solo icono (DD-200: su
+           nombre sale en tooltip con ratón y teclado). La celda no dispara `rowClick`. -->
+      <td class="sc-datatable__row-editor" (click)="$event.stopPropagation()">
+        <span class="sc-datatable__row-editor-actions">
+          @if (editing) {
+          <sc-button pSaveEditableRow variant="secondary" appearance="text" size="sm" icon="check" [ariaLabel]="rowEditLabels().save" (clicked)="rowEditSave.emit({ row, index: rowIndex })" />
+          <sc-button pCancelEditableRow variant="secondary" appearance="text" size="sm" icon="close" [ariaLabel]="rowEditLabels().cancel" (clicked)="rowEditCancel.emit({ row, index: rowIndex })" />
+          } @else {
+          <sc-button pInitEditableRow variant="secondary" appearance="text" size="sm" icon="edit" [ariaLabel]="rowEditLabels().edit" (clicked)="rowEditInit.emit({ row, index: rowIndex })" />
+          }
+        </span>
+      </td>
+      }
     </tr>
     }
   </ng-template>

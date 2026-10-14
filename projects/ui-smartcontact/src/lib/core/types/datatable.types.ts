@@ -96,6 +96,25 @@ export interface ScColumnDef<T = unknown> {
    * celda encima de sus títulos. Las que no lo llevan ocupan las dos filas de la cabecera.
    */
   readonly group?: string;
+  /**
+   * El control con el que se edita la celda (primeng.dev/table «Cell Edit» y «Row Edit»): el `#input` de su
+   * `p-cellEditor`; el `#output` es la celda de siempre. Con `editMode` `cell` se abre al pulsar la celda; con `row`, con
+   * el lápiz de la fila. El control escribe en la fila (`row[field]`); deshacer lo cambiado es de quien usa la tabla.
+   */
+  readonly editTemplate?: TemplateRef<ScColumnCellContext<T>>;
+}
+
+/** Los nombres de los tres botones de editar una fila (`editMode: 'row'`), ya traducidos por quien usa la tabla. */
+export interface ScRowEditLabels {
+  readonly edit: string;
+  readonly save: string;
+  readonly cancel: string;
+}
+
+/** Payload de `rowEditInit`, `rowEditSave` y `rowEditCancel`: la fila y su índice en el render actual. */
+export interface ScDatatableRowEditEvent<T = unknown> {
+  readonly row: T;
+  readonly index: number;
 }
 
 /** Contexto de la plantilla propia de un filtro (`ScColumnFilter.template`): el `#filter` de `p-columnFilter`. */
