@@ -96,7 +96,7 @@ test('VERDE: «aria-label» en minúsculas no nombra el módulo Label', () => {
   assert.deepEqual(auditarCatalogo(r), []);
 });
 
-// La sección 6 que pinta `/primeng` en sc-docs: una familia de cuatro columnas y otra de tres.
+// La sección 6 que pinta «Todo PrimeNG» en sc-docs: una familia de cuatro columnas y otra de tres.
 const FAMILIAS = `## 6. Por familias
 
 ### 6.1 Elegir en una jerarquía

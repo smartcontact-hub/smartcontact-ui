@@ -14,7 +14,7 @@
  *   3. Cada `from 'primeng/<x>'` de una app (todo `projects/*` menos el DS y los tokens) que el DS no envuelve tiene su
  *      fila en la sección 3; y cada fila de la sección 3 sigue teniendo quien la importe.
  *   4. Nada de la sección 4 («sin caso») se usa: si algo de ahí lo envuelve el DS o lo importa una app, ya tiene caso.
- *   5. La página `/primeng` de sc-docs pinta la sección 6 (los módulos por familias) con el estado que mide este mismo
+ *   5. La página «Todo PrimeNG» de sc-docs (`/#/components/primeng`) pinta la sección 6 (los módulos por familias) con el estado que mide este mismo
  *      gate: su artefacto (`projects/sc-docs/public/primeng/_catalogo.json`) cuadra con el documento y con el repo.
  *      Se regenera con `npm run primeng-catalog:gen`.
  *
@@ -114,7 +114,7 @@ const celdas = (fila) =>
     .map((c) => c.trim().replace(/\\\|/g, '|'));
 
 /**
- * La sección 6 como datos para la página `/primeng` de sc-docs: cada familia con su pregunta y sus filas, y cada fila
+ * La sección 6 como datos para la página «Todo PrimeNG» de sc-docs: cada familia con su pregunta y sus filas, y cada fila
  * con el estado que mide el repo (no el que dice el texto, que es juicio).
  *
  * @param {string} doc
@@ -217,7 +217,7 @@ if (process.argv[1] && process.argv[1].endsWith('audit-primeng-catalog.mjs')) {
   const doc = readFileSync(join(ROOT, DOC), 'utf8');
   const errores = auditarCatalogo({ doc, ...repo });
 
-  // 5. La página `/primeng` de sc-docs: su artefacto sale de la sección 6 y del repo, y no se escribe a mano.
+  // 5. La página «Todo PrimeNG» de sc-docs (`/#/components/primeng`): su artefacto sale de la sección 6 y del repo, y no se escribe a mano.
   const ARTEFACTO = 'projects/sc-docs/public/primeng/_catalogo.json';
   const catalogo = catalogoParaDocs(doc, repo);
   const enCatalogo = new Set(catalogo.familias.flatMap((f) => f.filas.flatMap((r) => r.modulos)));
@@ -229,7 +229,7 @@ if (process.argv[1] && process.argv[1].endsWith('audit-primeng-catalog.mjs')) {
     writeFileSync(join(ROOT, ARTEFACTO), datos);
     process.stdout.write(`✓ ${enCatalogo.size} módulos a ${ARTEFACTO}\n`);
   } else if ((existsSync(join(ROOT, ARTEFACTO)) ? readFileSync(join(ROOT, ARTEFACTO), 'utf8') : '') !== datos)
-    errores.push(`${ARTEFACTO} no cuadra con la sección 6 o con el repo: la página /primeng enseñaría otra cosa. Regenera: npm run primeng-catalog:gen`);
+    errores.push(`${ARTEFACTO} no cuadra con la sección 6 o con el repo: la página «Todo PrimeNG» enseñaría otra cosa. Regenera: npm run primeng-catalog:gen`);
   const sinWrapper = [...repo.directos.keys()].filter((m) => !repo.envueltos.has(m)).length;
   const sinUso = repo.modulos.filter((m) => !repo.envueltos.has(m) && !repo.directos.has(m)).length;
   process.stdout.write(

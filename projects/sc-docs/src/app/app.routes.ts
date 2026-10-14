@@ -42,14 +42,6 @@ export const routes: Routes = [
       import('./pages/components/components.routes').then((m) => m.COMPONENT_ROUTES),
   },
   {
-    // Los componentes de PrimeNG por familias: para qué sirve cada uno, cuándo elegirlo frente a su vecino y si lo
-    // usamos. Pinta un artefacto GENERADO por `audit:primeng-catalog` desde `docs/AUDIT-PRIMENG-CATALOGO.md` §6, como
-    // Novedades desde el CHANGELOG. Es el sitio de los nativos sin wrapper, que no tenían página.
-    path: 'primeng',
-    loadComponent: () =>
-      import('./pages/primeng/catalogo-primeng.component').then((m) => m.CatalogoPrimengComponent),
-  },
-  {
     path: 'uso',
     loadComponent: () =>
       import('./pages/uso/usage-gallery.component').then((m) => m.UsageGalleryComponent),

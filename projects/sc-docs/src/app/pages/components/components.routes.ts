@@ -21,6 +21,14 @@ export const COMPONENT_ROUTES: Routes = [
         loadComponent: () =>
           import('./components-index.component').then((m) => m.ComponentsIndexComponent),
       },
+      {
+        // Todo PrimeNG por familias: para qué sirve cada componente, cuándo elegirlo frente a su vecino y si lo
+        // usamos. Vive bajo Componentes a propósito (la barra se queda en cinco secciones, `smoke.spec.ts`): es el
+        // cajón de lo que el DS no envuelve. Pinta un artefacto que escribe `audit:primeng-catalog`.
+        path: 'primeng',
+        loadComponent: () =>
+          import('../primeng/catalogo-primeng.component').then((m) => m.CatalogoPrimengComponent),
+      },
       ...SC_DEMO_COMPONENT_PAGES.map((page) => ({
         path: page.path,
         loadComponent: page.load as never,

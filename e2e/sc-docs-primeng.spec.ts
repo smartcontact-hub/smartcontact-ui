@@ -9,7 +9,7 @@ import { expect, test } from '@playwright/test';
  */
 test.describe('sc-docs · PrimeNG por familias', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/#/primeng');
+    await page.goto('/#/components/primeng');
     await page.locator('section.familia').first().waitFor();
   });
 
@@ -23,11 +23,12 @@ test.describe('sc-docs · PrimeNG por familias', () => {
 
   test('buscar un caso deja a los hermanos que lo resuelven', async ({ page }) => {
     await page.getByLabel('Buscar en el catálogo').fill('árbol');
-    await expect(page.locator('section.familia tbody th .tabla__nombre')).toHaveText([
-      /TreeSelect/,
-      /^Tree\b/,
-      /TreeTable/,
-    ]);
+    // Lo que contesta «árbol» cambia con los datos (ContextMenu cita `lab/arbol`): se pide que estén los tres
+    // hermanos de la jerarquía y que la búsqueda recorte de verdad, no la lista exacta.
+    const nombres = page.locator('section.familia tbody th .tabla__nombre');
+    for (const n of ['TreeSelect', 'Tree', 'TreeTable'])
+      await expect(nombres.filter({ hasText: new RegExp(`^${n} `) })).toHaveCount(1);
+    expect(await nombres.count()).toBeLessThan(10);
   });
 
   test('el filtro de obsoletos deja solo lo que PrimeNG retira, cada uno con su marca', async ({ page }) => {
