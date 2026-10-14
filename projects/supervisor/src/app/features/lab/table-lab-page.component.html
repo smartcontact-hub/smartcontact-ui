@@ -12,7 +12,7 @@
       />
     </div>
     <p class="sc-text-body-regular table-lab__intro">
-      La misma <code>sc-datatable</code> dentro del shell real, con sus 21 controles reales, los
+      La misma <code>sc-datatable</code> dentro del shell real, con sus controles reales, los
       mismos del Playground de sc-docs, para ver el efecto de cada uno ya puesta en una pantalla
       de verdad.
     </p>
@@ -34,6 +34,11 @@
           [skeleton]="$any(liveArgs()['skeleton'])"
           [skeletonRows]="$any(liveArgs()['skeletonRows'])"
           [selectionMode]="$any(liveArgs()['selectionMode'])"
+          [selectionColumn]="$any(liveArgs()['selectionColumn'])"
+          [metaKeySelection]="$any(liveArgs()['metaKeySelection'])"
+          [(selection)]="selection"
+          (rowSelect)="onRowSelect($event)"
+          (rowUnselect)="onRowUnselect($event)"
           [sortField]="$any(liveArgs()['sortField']) || undefined"
           [sortOrder]="$any(liveArgs()['sortOrder'])"
           [externalSort]="$any(liveArgs()['externalSort'])"
@@ -46,7 +51,27 @@
           [resizableColumns]="$any(liveArgs()['resizableColumns'])"
           [columnResizeMode]="$any(liveArgs()['columnResizeMode'])"
           [reorderableColumns]="$any(liveArgs()['reorderableColumns'])"
-        />
+        >
+          <!-- Lo que hay marcado, como la barra de los ejemplos de selección de primeng.dev: sin ella, marcar
+               una fila no se nota más que en su color. -->
+          <div scTableCaption class="table-lab__caption">
+            @if (selectsByRow()) {
+              <span class="sc-text-caption-regular table-lab__keys">
+                <kbd>↑</kbd> <kbd>↓</kbd> moverse, <kbd>Espacio</kbd> o <kbd>Intro</kbd> marcar
+              </span>
+            }
+            @if (lastEvent(); as event) {
+              <code class="sc-text-caption-regular table-lab__event">{{ event }}</code>
+            }
+            <span class="sc-text-body-regular table-lab__selected" aria-live="polite">
+              @switch (selectedAgents().length) {
+                @case (0) { Nada marcado }
+                @case (1) { Marcado: {{ selectedAgents()[0].name }}, {{ selectedTickets() }} tickets abiertos }
+                @default { {{ selectedAgents().length }} marcados, {{ selectedTickets() }} tickets abiertos }
+              }
+            </span>
+          </div>
+        </sc-datatable>
       }
     </div>
   </div>
@@ -81,6 +106,12 @@
     />
     <span class="sc-text-caption-regular">{{ agent.country }}</span>
   </span>
+</ng-template>
+
+<ng-template #pickTpl let-agent>
+  <button pButton rounded text severity="secondary" [attr.aria-label]="'lab.tabla.pick_row' | translate: { name: agent.name }" (click)="pickAgent(agent)">
+    <sc-icon name="search" [size]="16" />
+  </button>
 </ng-template>
 
 <ng-template #extraTpl let-agent let-col="col">
@@ -255,6 +286,30 @@
   <div class="table-lab-controls" data-testid="table-lab-controls-selection">
     <p class="sc-text-body-semibold table-lab-controls__title">{{ controlGroups[1].title }}</p>
     <ng-container *ngTemplateOutlet="knobGrid; context: { $implicit: controlGroups[1].knobs }" />
+    <div class="table-lab-controls__grid">
+      <div class="table-lab-controls__label">
+        <span class="table-lab-controls__label-row">
+          <span class="sc-text-body-semibold">Botón en columna</span>
+          <sc-icon
+            name="info"
+            [size]="12"
+            class="table-lab-controls__hint"
+            pTooltip="Añade al final un botón por fila que elige ese agente sin marcar la fila. Va en una plantilla de celda, no es un prop de la tabla."
+            tooltipPosition="top"
+            tooltipEvent="both"
+            tabindex="0"
+          />
+        </span>
+        <code class="table-lab-controls__label-code sc-text-caption-regular">cellTemplate</code>
+      </div>
+      <div class="table-lab-controls__field">
+        <sc-toggleswitch
+          [checked]="columnPickButton()"
+          (checkedChange)="columnPickButton.set($event)"
+          [ariaLabel]="'lab.tabla.pick_label' | translate"
+        />
+      </div>
+    </div>
   </div>
 </p-popover>
 

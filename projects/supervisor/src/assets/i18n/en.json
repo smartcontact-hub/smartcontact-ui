@@ -2694,7 +2694,9 @@
       "sidebar_label": "Sidebar expanded",
       "viewport_label": "Viewport",
       "freeze_label": "Freeze «Agent»",
-      "switch_label": "Switch between table and tree"
+      "switch_label": "Switch between table and tree",
+      "pick_label": "Button in a column",
+      "pick_row": "Pick {{name}}"
     },
     "arbol": {
       "context_label": "App context",
