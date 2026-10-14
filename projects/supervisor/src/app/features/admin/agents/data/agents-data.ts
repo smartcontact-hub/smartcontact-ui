@@ -35,8 +35,8 @@ export type PresenceTag = { readonly labelColor: LabelColor } | { readonly sever
  * La etiqueta de cada estado, la MISMA que en Contact Center › Servicio, donde se configuran:
  * Disponible verde; No disponible rojo, y en rojo también sus motivos (Baño, Comida, Formación), porque son maneras de
  * no estar disponible; Administrativo, la etiqueta nativa de aviso (`warn`), que en oscuro sigue amarilla (el ámbar
- * salía marrón). Los dos que allí no salen, porque no se eligen: Post-conversando en azul y Desconectado con la
- * etiqueta «Draft» de PrimeNG (`secondary`).
+ * salía marrón). Los dos que allí no salen, porque no se eligen: Post-conversando en azul y Desconectado en gris
+ * (`secondary`: su punto en el avatar; en el listado va como texto, sin etiqueta, para no pesar como un estado atendible).
  */
 export const PRESENCE_TAGS: Readonly<Record<PresenceStatus, PresenceTag>> = {
   disponible: { labelColor: 'green' },

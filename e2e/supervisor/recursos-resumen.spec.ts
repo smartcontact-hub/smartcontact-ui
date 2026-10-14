@@ -3,13 +3,13 @@ import { expect, test, type Page } from '@playwright/test';
 import { disableAnimations, forceLightTheme, goto, irASeccion } from './helpers';
 
 /**
- * EL RESUMEN DE CADA RECURSO, CON «EDITAR» (DD-164, DD-187).
+ * «EDITAR» DE CADA RECURSO, EN SU OPCIÓN (DD-204, que retira las filas de DD-164; la ventana sin salir, DD-187).
  *
- * La revisión de producto del 2026-10-04, sobre Recursos de las fichas: cada agenda o plantilla asignada era un chip con
- * su nombre, sin nada que dijera qué es (una agenda de 3 contactos y otra de 1.250 se veían iguales) ni cómo llegar a
- * editarla. Desde la revisión del 2026-10-09, «Editar» no sale de la ficha: abre la misma ventana que el «+». Lo que fija:
- *   1. bajo cada campo, una fila por recurso con su nombre, un dato y «Editar», que abre la ventana con sus datos sin
- *      salir de la ficha; al guardar, la fila lo dice;
+ * La revisión de producto del 2026-10-14, sobre Recursos de las fichas: la lista con «Editar» bajo cada campo repetía lo
+ * que ya dice el desplegable. «Editar» va en la propia opción, un lápiz que sale al pasar por ella, con su tooltip, y abre
+ * la misma ventana que el «+». Lo que fija:
+ *   1. bajo el campo no hay lista; el lápiz de una agenda abre su ventana con sus datos sin salir de la ficha ni marcar o
+ *      desmarcar la opción; al guardar, la opción lo dice;
  *   2. una plantilla, igual: su ventana, con su texto;
  *   3. se ofrecen las agendas activas, y la inactiva que ya estaba puesta, para poder quitarla;
  *   4. lo borrado en Repositorios no se cuenta ni se guarda, y la ficha no abre con cambios por ello;
@@ -22,54 +22,67 @@ test.beforeEach(async ({ page }) => {
   await disableAnimations(page);
 });
 
-/** Las filas bajo un campo de Recursos: la lista se llama como el campo. */
-const filas = (page: Page, campo: string) => page.getByRole('list', { name: campo, exact: true }).getByRole('listitem');
 const etiqueta = (page: Page, id: string) => page.locator(`sc-multiselect:has(#${id}) .p-multiselect-label`);
 
-/** Los textos de las opciones de un `sc-multiselect`, por el id de su campo. Lo deja cerrado. */
-const opciones = async (page: Page, id: string): Promise<string[]> => {
+/** Abre el desplegable de un campo de Recursos, por el id de su campo. */
+const abrir = async (page: Page, id: string): Promise<void> => {
   await page.locator(`sc-multiselect:has(#${id}) .p-multiselect`).click();
-  const lista = page.locator('.p-multiselect-overlay .p-multiselect-option');
-  await expect(lista.first()).toBeVisible();
-  const textos = (await lista.allInnerTexts()).map((t) => t.trim());
+  await expect(page.locator('.p-multiselect-overlay .p-multiselect-option').first()).toBeVisible();
+};
+
+/** La opción de un recurso en el desplegable abierto. */
+const opcion = (page: Page, nombre: string) => page.locator('.p-multiselect-overlay .p-multiselect-option', { hasText: nombre });
+
+/** Los nombres de las opciones de un `sc-multiselect`, por el id de su campo (sin el lápiz). Lo deja cerrado. */
+const opciones = async (page: Page, id: string): Promise<string[]> => {
+  await abrir(page, id);
+  const textos = (await page.locator('.p-multiselect-overlay .p-multiselect-option .resource-option__name').allInnerTexts()).map((t) => t.trim());
   await page.keyboard.press('Escape');
   return textos;
 };
 
-const marcar = async (page: Page, id: string, opcion: string): Promise<void> => {
-  await page.locator(`sc-multiselect:has(#${id}) .p-multiselect`).click();
-  await page.locator('.p-multiselect-overlay .p-multiselect-option', { hasText: opcion }).click();
+const marcar = async (page: Page, id: string, nombre: string): Promise<void> => {
+  await abrir(page, id);
+  await opcion(page, nombre).click();
   await page.keyboard.press('Escape');
 };
 
-test('grupo · cada agenda es una fila con sus contactos y su estado; «Editar» abre su ventana sin salir de la ficha', async ({
-  page,
-}) => {
+/** El lápiz de una opción: sale al pasar por ella. */
+const lapiz = async (page: Page, nombre: string) => {
+  await opcion(page, nombre).hover();
+  const boton = opcion(page, nombre).getByRole('button', { name: `Editar ${nombre}`, exact: true });
+  await expect(boton).toHaveCSS('opacity', '1');
+  return boton;
+};
+
+test('grupo · sin lista bajo el campo; el lápiz de una agenda abre su ventana sin salir ni marcar la opción', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/11?seccion=recursos');
-  const agendas = filas(page, 'Agendas');
-  await expect(agendas).toHaveCount(3);
-  await expect(agendas.first()).toContainText('Ventas Nacional');
-  await expect(agendas.first()).toContainText('3 contactos, activa');
-  // Los nombres ya están en las filas: el desplegable dice cuántas, no las repite.
+  await expect(page.getByRole('list', { name: 'Agendas', exact: true })).toHaveCount(0);
   await expect(etiqueta(page, 'group-agendas')).toHaveText('3 agendas');
 
-  await agendas.first().getByRole('button', { name: 'Editar Ventas Nacional' }).click();
+  await abrir(page, 'group-agendas');
+  // Sin pasar por ella, el lápiz no se ve: «Editar» no compite con lo que se elige.
+  await expect(opcion(page, 'Cobros').getByRole('button', { name: 'Editar Cobros', exact: true })).toHaveCSS('opacity', '0');
+  const editar = await lapiz(page, 'Ventas Nacional');
+  await expect(editar).toHaveAttribute('aria-haspopup', 'dialog');
+  await editar.click();
   const ventana = page.getByRole('dialog', { name: 'Editar agenda' });
   await expect(ventana.locator('#repo-field-name')).toHaveValue('Ventas Nacional');
   await expect(page).toHaveURL(/\/admin\/grupos\/editar\/11\?seccion=recursos$/);
+  // El clic se quedó en el lápiz: la lista se cerró y lo marcado sigue igual.
+  await expect(page.locator('.p-multiselect-overlay')).toHaveCount(0);
+  await expect(etiqueta(page, 'group-agendas')).toHaveText('3 agendas');
+
   await ventana.locator('#repo-field-name').fill('Ventas Nacional Norte');
   await ventana.getByRole('button', { name: 'Guardar', exact: true }).click();
   await expect(ventana).toBeHidden();
-  await expect(agendas.first()).toContainText('Ventas Nacional Norte');
+  expect(await opciones(page, 'group-agendas')).toContain('Ventas Nacional Norte');
 });
 
 test('grupo · una plantilla abre su ventana con su texto, sin salir de la ficha', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/11?seccion=recursos');
-  const chat = filas(page, 'Plantillas de chat');
-  await expect(chat).toHaveCount(6);
-  // El dato es el principio de su texto: el campo ya dice el canal, y lo pedido es saber qué es.
-  await expect(chat.first()).toContainText('Hola, soy {agente}.');
-  await chat.first().getByRole('button', { name: 'Editar Saludo inicial' }).click();
+  await abrir(page, 'group-templates-chat');
+  await (await lapiz(page, 'Saludo inicial')).click();
   const ventana = page.getByRole('dialog', { name: 'Editar plantilla' });
   await expect(ventana.locator('sc-template-form-panel input').first()).toHaveValue('Saludo inicial');
   await expect(page).toHaveURL(/\/admin\/grupos\/editar\/11\?seccion=recursos$/);
@@ -96,7 +109,6 @@ test('lo borrado en Repositorios no se cuenta ni se guarda, y la ficha no abre c
     );
   });
   await goto(page, 'admin/grupos/editar/11?seccion=recursos');
-  await expect(filas(page, 'Agendas')).toHaveCount(2);
   await expect(etiqueta(page, 'group-agendas')).toHaveText('2 agendas');
   await expect(page.locator('sc-top-bar').getByRole('button', { name: 'Deshacer' })).toHaveCount(0);
 
@@ -111,20 +123,19 @@ test('lo borrado en Repositorios no se cuenta ni se guarda, y la ficha no abre c
     .toEqual([1]);
 });
 
-test('agente · las agendas y sus «Editar»; en el alta, también', async ({ page }) => {
+test('agente · las agendas con su lápiz; en el alta, también', async ({ page }) => {
   await goto(page, 'admin/agentes/editar/3?seccion=recursos');
-  const agendas = filas(page, 'Agendas');
-  await expect(agendas).toHaveCount(2);
-  await expect(agendas.nth(1)).toContainText('Cobros');
-  await expect(agendas.nth(1)).toContainText('4 contactos, activa');
-  await expect(agendas.nth(1).getByRole('button', { name: 'Editar Cobros' })).toHaveAttribute('aria-haspopup', 'dialog');
+  await expect(etiqueta(page, 'agent-agendas')).toHaveText('2 agendas');
+  await abrir(page, 'agent-agendas');
+  await expect(await lapiz(page, 'Cobros')).toHaveAttribute('aria-haspopup', 'dialog');
+  await page.keyboard.press('Escape');
 
   await goto(page, 'admin/agentes/crear');
   await irASeccion(page, 'Recursos');
   await marcar(page, 'agent-agendas', 'Cobros');
-  await expect(filas(page, 'Agendas')).toHaveCount(1);
-  await expect(filas(page, 'Agendas')).toContainText('4 contactos, activa');
-  await filas(page, 'Agendas').getByRole('button', { name: 'Editar Cobros' }).click();
+  await expect(etiqueta(page, 'agent-agendas')).toHaveText('1 agenda');
+  await abrir(page, 'agent-agendas');
+  await (await lapiz(page, 'Cobros')).click();
   await expect(page.getByRole('dialog', { name: 'Editar agenda' })).toBeVisible();
   await expect(page).toHaveURL(/\/admin\/agentes\/crear/);
 });

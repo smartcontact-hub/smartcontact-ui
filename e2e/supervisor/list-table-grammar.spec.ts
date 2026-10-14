@@ -246,24 +246,27 @@ const PAGINAS_EN_FORMULARIO = [
    * ser tablas dentro de la ficha y son un `sc-multiselect` cada una (Recursos). */
   {
     ruta: 'admin/agentes/editar/1',
-    /* «Grupos asignados» hasta DD-187, que deja la ficha de agente en las cuatro secciones de la de grupo. */
-    seccion: 'Grupos',
+    /* «Grupos asignados» hasta DD-187, que deja la ficha de agente en las cuatro secciones de la de grupo;
+     * «Grupos» hasta DD-204, que vuelve a nombrar la relación. */
+    seccion: 'Grupos asignados',
     nombre: 'grupos del agente',
     // 69 hasta Aura (2026-09-13); 50 → 46 el 2026-09-14, el chip de canal pasa a casilla; 46 → 44 el
     // 2026-09-23, los grupos pierden el avatar de 24 y la fila la marca el interruptor. 44 → 31 con DD-187:
     // la tabla es la del grupo con las filas al revés (filtro Todos / Asignados / Sin asignar, buscador, una
     // columna por canal, Salientes y Habilitado; ya no se rellena con un desplegable de añadir), y con ella
     // la densidad compacta (`sm`) de su gemela de abajo: 2px de relleno en celda y cabecera. Mide menos que
-    // ella porque el nombre de un grupo va en una línea y el de un agente lleva su email debajo.
-    altoFila: 31,
+    // ella porque el nombre de un grupo va en una línea y el de un agente lleva su email debajo. 31 → 27 con
+    // DD-204: sale la columna Nivel, y con ella su campo numérico, que era lo más alto de la fila.
+    altoFila: 27,
     paddingCelda: '2px',
     paddingCabecera: '2px',
   },
   {
     ruta: 'admin/grupos/editar/1',
     /* «Agentes asignados» hasta el 2026-09-23 (item del índice de rail), «Canales y agentes» con
-     * las pestañas, y desde el 2026-09-26 «Agentes», otra vez en un índice lateral (DD-121). */
-    seccion: 'Agentes',
+     * las pestañas, desde el 2026-09-26 «Agentes», otra vez en un índice lateral (DD-121), y desde
+     * DD-204 otra vez «Agentes asignados». */
+    seccion: 'Agentes asignados',
     nombre: 'agentes del grupo',
     /* 65 → 69 el 2026-09-12, al unificar el chip de canal. Los dos editores
      * hermanos tenían su propia copia y no diferían solo en color: la de aquí

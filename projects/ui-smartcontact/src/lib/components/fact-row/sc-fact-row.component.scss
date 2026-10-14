@@ -72,6 +72,15 @@ a.sc-fact-row__link {
   overflow-wrap: anywhere;
 }
 
+/* `size="sm"`: clave y valor en caption, para una columna estrecha (el resumen de las fichas). */
+.sc-fact-row--sm {
+  .sc-fact-row__key,
+  .sc-fact-row__value {
+    font-size: var(--sc-font-size-caption);
+    line-height: var(--sc-line-height-caption);
+  }
+}
+
 /* En un contenedor ancho, el valor empieza en su columna: alineado con los de las filas de arriba y de abajo. */
 @container (min-width: 37.5rem) {
   .sc-fact-row__value {

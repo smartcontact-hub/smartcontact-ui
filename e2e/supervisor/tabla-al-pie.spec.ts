@@ -13,6 +13,9 @@ import { disableAnimations, forceLightTheme, goto, pickSelectOption } from './he
  *   2. y a la tabla no le sobra sitio: con 2 px más, la página tendría que desplazarse. Con el tope fijo de antes
  *      sobraban 158, y esos 2 px no movían nada.
  * En pantallas bajas la tabla no baja de su suelo (`scale/18`) y entonces sí desplaza la página: no se prueba aquí.
+ *
+ * Y lo contrario (DD-204): una tabla de asignar con POCAS filas no baja hasta el pie. Mide lo que todas sus filas (las
+ * de «Todos»), desde el principio y con cualquier filtro: no cambia de alto al filtrar y no deja media tarjeta vacía.
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -85,3 +88,29 @@ for (const [ancho, alto] of [
     expect(await desplaza(page), 'con 2 px más de tabla').toBeGreaterThanOrEqual(1);
   });
 }
+
+/* Los grupos de un agente: 14 en la semilla, que caben de sobra a 1440×900. */
+test('a 1440×900, la tabla de grupos del agente mide todas sus filas: no llega al pie y no cambia de alto al filtrar', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await goto(page, 'admin/agentes/editar/1?seccion=grupos');
+  const tabla = page.locator('sc-group-assignment-table');
+  const caja = tabla.locator('.table-card');
+  await caja.locator('tbody tr').first().waitFor();
+  await page.evaluate(() => document.fonts.ready);
+  const alto = () => caja.evaluate((el) => Math.round(el.getBoundingClientRect().height));
+  const altos: Record<string, number> = { Asignados: await alto() };
+  for (const filtro of ['Todos', 'Sin asignar', 'Asignados']) {
+    await tabla.getByRole('button', { name: filtro, exact: true }).click();
+    await expect.poll(alto, `con «${filtro}»`).toBe(altos['Asignados']);
+  }
+  // Con «Todos», la tarjeta es su tabla: ni le sobra una fila ni le falta.
+  await tabla.getByRole('button', { name: 'Todos', exact: true }).click();
+  const fila = await caja.locator('tbody tr').first().evaluate((el) => el.getBoundingClientRect().height);
+  const holgura = await caja.evaluate((el) => el.getBoundingClientRect().height - el.querySelector('table')!.getBoundingClientRect().height);
+  expect(holgura, 'lo que la tarjeta mide de más que su tabla').toBeLessThan(fila / 2);
+  // Y no baja hasta el pie: debajo queda página.
+  const debajo = await caja.evaluate((el) => document.querySelector('main#main-content')!.getBoundingClientRect().bottom - el.getBoundingClientRect().bottom);
+  expect(debajo, 'lo que queda bajo la tarjeta').toBeGreaterThan(fila * 3);
+});

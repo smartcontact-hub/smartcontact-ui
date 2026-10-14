@@ -25,8 +25,9 @@ export { ListPageComponent } from './list-page/list-page.component';
 // Una celda sin dato: «—» a la vista y «Sin dato» para el lector (DD-197).
 export { CeldaVaciaComponent } from './celda-vacia/celda-vacia.component';
 
-export { ResourceRowsComponent } from './resource-rows/resource-rows.component';
-export type { ResourceRow } from './resource-rows/resource-rows.component';
+// Una opción de un desplegable de recursos con su lápiz de «Editar» al pasar (revisión del 2026-10-14).
+export { ResourceOptionComponent } from './resource-option/resource-option.component';
+export type { ResourceRow } from './resource-option/resource-option.component';
 
 export { ChannelIconComponent } from './channel-icon/channel-icon.component';
 export type { ChannelIconKind } from './channel-icon/channel-icon.component';

@@ -1,0 +1,55 @@
+/* El nombre ocupa la opción y el lápiz va al final, apagado hasta que el puntero pasa por la opción o el teclado la
+ * enfoca: «Editar» no compite con lo que se elige. */
+:host {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  min-width: 0;
+}
+
+.resource-option__name {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.resource-option__edit {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  inline-size: var(--sc-spacing-1-75);
+  /* El alto de la línea de su opción (`1lh`): el lápiz no hace más alta la fila que lo lleva. */
+  block-size: 1lh;
+  padding: 0;
+  border: 0;
+  border-radius: var(--sc-radius-sm);
+  background: none;
+  color: var(--sc-icon-subtle);
+  cursor: pointer;
+  opacity: 0;
+  transition:
+    opacity var(--sc-transition-fast) ease,
+    background var(--sc-transition-fast) ease,
+    color var(--sc-transition-fast) ease;
+
+  &:hover {
+    background: var(--sc-bg-hover);
+    color: var(--sc-icon-primary);
+  }
+}
+
+/* Por su rol y su estado, no por las clases de PrimeNG (`audit:primeng-coupling`): la opción enfocada lleva
+ * `data-p-focused`. */
+:host-context([role='option']:hover) .resource-option__edit,
+:host-context([role='option'][data-p-focused='true']) .resource-option__edit {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .resource-option__edit {
+    transition: none;
+  }
+}

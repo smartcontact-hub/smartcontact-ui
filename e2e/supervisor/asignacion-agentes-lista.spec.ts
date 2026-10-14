@@ -10,8 +10,8 @@ async function seed(page: Page) {
     const names = ['Ana Mixta', 'Bruno Teléfono', 'Carla Chat', 'Darío Email', 'Elena Mixta', 'Fabio Chat'];
     const allowed = [['phone', 'chat'], ['phone'], ['chat'], ['email'], ['phone', 'chat'], ['chat']];
     localStorage.setItem('sc-agents-v', '3');
-    // Con sus permisos, como todo agente: la tabla del grupo lee de ellos la «Activación por grupo» (DD-187 §2). Sin
-    // ella, Habilitado es el interruptor de siempre.
+    // Con sus permisos, como todo agente. «Activación por grupo» ya no cambia Habilitado en la tabla (DD-204): se
+    // siembra apagada por ser lo que trae un agente sin tocar.
     localStorage.setItem('sc-agents', JSON.stringify(names.map((name, index) => ({
       id: index + 1, name, email: `persona${index + 1}@equipo.test`, code: `1000${index + 1}`,
       extension: '122', extensionType: 'webrtc', agentType: 'normal', status: 'active',
@@ -158,7 +158,7 @@ test('el alta muestra Todos con los 500 agentes disponibles, sin páginas y sin 
   // Sin teléfono saliente no se pasa de Distribución y colas (DD-158).
   await page.locator('sc-form-section-nav').getByText('Distribución y colas', { exact: true }).click();
   await pickSelectOption(page, page.locator('sc-select').filter({ has: page.locator('#group-phone') }), /./);
-  await page.locator('sc-form-section-nav').getByText('Agentes', { exact: true }).click();
+  await page.locator('sc-form-section-nav').getByText('Agentes asignados', { exact: true }).click();
   const table = page.locator('sc-agent-channel-table');
   await expect(table.getByRole('button', { name: 'Todos', exact: true })).toHaveAttribute('aria-pressed', 'true');
   // Sin páginas (DD-176): con más de 100, la tabla pinta solo las filas que se ven (DD-95), y se ven filas.

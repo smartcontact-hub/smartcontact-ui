@@ -28,7 +28,7 @@ test('los cuatro canales del grupo se asignan al agente por sus tres familias', 
   for (const c of ['Web Chat', 'WhatsApp', 'Email']) {
     await canal(page, c).click();
   }
-  await irA(page, 'Agentes');
+  await irA(page, 'Agentes asignados');
 
   await expect(page.getByRole('columnheader', { name: 'Chat', exact: true })).toHaveCount(1);
   await expect(page.getByRole('columnheader', { name: 'WhatsApp', exact: true })).toHaveCount(0);
@@ -75,7 +75,7 @@ test('el grupo permite habilitar el enlace sin bloquear sus canales', async ({ p
     localStorage.setItem('sc-group-agent-links', JSON.stringify([{ agentId: 1, groupId: 12, channels: ['phone', 'chat'], active: false }]));
   });
   await goto(page, 'admin/grupos/editar/12');
-  await irA(page, 'Agentes');
+  await irA(page, 'Agentes asignados');
   await expect(page.getByRole('columnheader', { name: 'Habilitado' })).toHaveCount(1);
   const disabled = page.locator('.assign tbody tr').filter({ has: page.locator('input[role="switch"]:not(:checked)') });
   await expect(disabled).toHaveCount(1);
@@ -86,7 +86,7 @@ test('el grupo permite habilitar el enlace sin bloquear sus canales', async ({ p
 test('un agente asignado tiene al menos un canal: la casilla del último está apagada y dice por qué', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/1');
   await canal(page, 'Web Chat').click();
-  await irA(page, 'Agentes');
+  await irA(page, 'Agentes asignados');
 
   const fila = page.locator('.assign tbody tr').first();
   const telefono = fila.getByRole('checkbox', { name: /Teléfono/ });
@@ -116,7 +116,7 @@ test('quitar un canal del grupo dice cuántos lo pierden y cuántos salen, y al 
   await expect(page.getByText('Grupo "ACD Demo C2CB" actualizado')).toBeVisible();
 
   await page.reload();
-  await irA(page, 'Agentes');
+  await irA(page, 'Agentes asignados');
   await expect(page.locator('sc-agent-channel-table tbody')).toContainText('No hay agentes');
 });
 

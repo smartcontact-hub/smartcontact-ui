@@ -51,8 +51,7 @@
   }
 
   /* Las envolturas de lo apagado: dan al tooltip un sitio que sí recibe el ratón. */
-  &__locked,
-  &__head {
+  &__locked {
     display: inline-flex;
   }
 
@@ -62,12 +61,14 @@
     gap: var(--sc-spacing-0-5);
     color: var(--sc-text-primary);
   }
+}
 
-  /* La celda de Nivel: casi siempre una familia, a veces dos (teléfono y chat, ambas en Niveles) — apiladas, no una
-   * columna por familia como en la tabla del grupo, porque aquí la condición es por FILA, no por tabla entera. */
-  &__levels {
-    display: flex;
-    flex-direction: column;
-    gap: var(--sc-spacing-0-5);
-  }
+/* El radio de Salientes, el interruptor de Habilitado y las casillas, centrados en su fila: en línea se apoyaban en la
+ * línea base del texto, el radio 2,5 px por debajo del centro y el interruptor 3 por encima, y la cabecera crecía 1,9 px
+ * cuando su casilla de «todos» pasaba a «algunos» (medido a 1440, 2026-10-14): la tabla cambiaba de alto al filtrar. */
+sc-checkbox,
+sc-radiobutton,
+sc-toggleswitch {
+  display: inline-flex;
+  vertical-align: middle;
 }
