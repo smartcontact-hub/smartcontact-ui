@@ -53,6 +53,7 @@
   del scroll» aunque «Scroll propio» esté apagado, y p-table lo pone de tope igual (240 px): mismo arreglo que `scrollHeightArg`
   de `/lab/tabla`, y cambia `datatable-linux.png`; (b) el «Exportar» de los listados de administración (`exportRequest` de
   `list-page`) aún no llama a `dt.exportCSV()`: antes, preguntar a producto si les basta un CSV.
+- **El barrido de PrimeNG (2026-10-14, §7 de `docs/AUDIT-PRIMENG-CATALOGO.md`)**: 25 candidatos sin decidir, los de teclado primero (barra del reproductor de Memory → `p-slider`, Numeración especial → `p-listbox`, menú del avatar → `p-menu`, hoja de atajos → `sc-dialog`, valor de una condición de regla → TreeSelect); cada uno con su pantalla. Quedan de 7.4: los «⋮» sin `ariaHasPopup`, los «—» a mano de cuscare-ds y el aviso parcial de Conversaciones («1 procesadas»).
 
 0. **«Aura + color de marca» y el export en un clic** (encargo del 2026-09-13; mediciones en
    `~/Documents/Claude/2026-09 aura-marca/`). Hecho: robot (DD-82, #152), paleta del export (DD-83), capturas
@@ -172,6 +173,14 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
+## ✅ 2026-10-14 · PrimeNG por familias: catálogo de 109, barrido de usos y página en sc-docs
+
+**Sello:** rama `arebury/primeng-component-usage`, sobre `b25a8a27` (#400). Sale por el tope el tramo del 2026-10-13
+(DD-202): `git show b25a8a27:docs/handoff/design-system.md`.
+
+**Lo que cambia.** El catálogo (§6) dice de los 109 módulos para qué sirven y cuándo elegir cada uno frente a su vecino; §7 es el barrido de usos; sc-docs lo pinta en `/#/primeng`, que es también el sitio de los nativos sin wrapper. De paso: los avisos de Conversaciones salen (llevaban una clave que nadie pintaba) y las confirmaciones que destruyen abren en «Cancelar».
+⚠️ **La página sale de un artefacto** que reescribe `npm run primeng-catalog:gen` con el estado del repo: un `primeng/x` nuevo en una app lo deja atrás y `audit:primeng-catalog` se pone rojo hasta regenerarlo (pasó con ContextMenu en `lab/arbol`, #400: este PR lo regeneró al traer `main`).
+
 ## ✅ 2026-10-14 · El árbol de `/lab/arbol` hace los ejemplos de primeng.dev/treetable
 
 **Sello:** rama `arebury/tabla-primeng-completa`, sobre `46d50885` (#399). Sale por el tope el tramo de iconos del
@@ -196,19 +205,6 @@ no tiene nada «sin hacer» en el front.
 - ⚠️ **`stateKey` tapa dos fallos de PrimeNG 22** (`reponerEstado` y `onStateSave` de `sc-datatable.component.ts`): sus
   entradas pisan lo repuesto en el mismo arranque, y un filtro en fila vacío rompía la tabla al volver. Al subir PrimeNG,
   quita los dos y mira si la prueba «stateKey: al volver…» sigue verde.
-
-## ✅ 2026-10-13 · sc-docs suma lo que tiene un Storybook, sin cambiarse a él (DD-202)
-
-**Sello:** rama `arebury/docs-storybook-vs-sc`, sobre HEAD `9845c34c` (#385). Sale por el tope el tramo del 2026-10-05
-(DD-172): `git show 9845c34c:docs/handoff/design-system.md`.
-
-**Lo que cambia.** Ocho piezas en sc-docs tras barrer el Storybook de Primer (DD-202): dirección por story, ancho en
-iframe, medir, contornos, axe con su trinquete (`e2e/sc-docs-a11y.spec.ts`), «Todas las combinaciones», los controles en
-un panel a la derecha que marca lo tocado, la ficha para agentes (`docs:ia`) y una captura por story (`docs:capturas`).
-
-- **Tras fundir**: lanzar `docs-capturas` con `rama=main` (o esperar al lunes); hasta entonces, fichas sin captura.
-- **Los 71 fallos de accesibilidad** (por regla, en DD-202): colordotpicker 18, progressbar 12, checkbox 10, inputtags 10,
-  gauge 7, datatable 4, radiobutton 3, tabs 3, grouppopover 2, chip 1, textarea 1. Cada arreglo baja el tope.
 
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 
@@ -260,6 +256,7 @@ un panel a la derecha que marca lo tocado, la ficha para agentes (`docs:ia`) y u
 | ~~**El botón de crear cambia de ancho entre listas**~~ → **HECHO, `bcab818` (2026-08-25)**: decisión de Rafa: el ancho no cambia sin motivo. `main.scss:205` → `.top-bar__actions button { min-width: 144px; max-width: 288px }`, anclado en clase NUESTRA. Los cinco (122–142px) aterrizan igual. Aplicado y en `main` |
 | ~~**Qué forma de ficha (agente, grupo, usuario)**~~ → **DECIDIDO** (DD-121, DD-122) | Índice lateral en las tres. Las variantes de `comparar/fichas` quedan de referencia; la rama se archiva con tag desde el portátil |
 | **B5b · prosa i18n del constructor** | Necesita ICU MessageFormat **y diseño**. Sigue aparcada |
+| **«Ayuda» del menú del avatar** (2026-10-14) | No hace nada al pulsarla (`top-bar.component.html`, sin `(click)`; tampoco en la plataforma). Rafa quiere enlazarla a una URL: falta que la pase |
 | ~~**Qué flechas quitar al pulsar columnas**~~ → **DECIDIDO 2026-10-14 ([DD-203](../DECISIONS.md))** | Eran «Subir» y «Bajar» del globo «Columnas» de los listados: fuera. Las ↓↑ de PrimeNG al arrastrar una cabecera, que se habían quitado por error, vuelven |
 | ~~**Experimento en LOCAL: la escala al tamaño de Aura (16px por rem)**~~ → **DECIDIDO 2026-09-14 ([DD-91](../DECISIONS.md))** | Rafa eligió solo el interlineado con la rampa que existe (20/18): 32,5 y 27, sin perder filas. La escala se queda a 14. Medido también escala 16 + 20/18: 34 / 28 y 11 filas. Simulación en `~/Documents/Claude/2026-09 escala-16/`; el nombre por clave y el gate de la escala entraron en DD-89 |
 
