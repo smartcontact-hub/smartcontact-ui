@@ -172,6 +172,17 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
+## ✅ 2026-10-14 · El árbol de `/lab/arbol` hace los ejemplos de primeng.dev/treetable
+
+**Sello:** rama `arebury/tabla-primeng-completa`, sobre `46d50885` (#399). Sale por el tope el tramo de iconos del
+2026-10-13 (DD-200): `git show 46d50885:docs/handoff/design-system.md`.
+
+**Lo que cambia.** `p-treetable` nativo, sin wrapper, con los 32 ejemplos de primeng.dev (cabecera agrupada con totales,
+selección, filtros, edición que suma al equipo, menú contextual, carga perezosa, congelar…): siete grupos en la píldora.
+
+- ⚠️ **Cinco trampas de PrimeNG 22, junto a su arreglo** en `treetable-lab-page.component.ts`: `selection` frente a
+  `selectionKeys`, `dataKey` en `node.data`, `totalRecords` vacío, `customSort` por nivel y el paginador que no recorta.
+
 ## ✅ 2026-10-14 · `sc-datatable` cubre primeng.dev/table, y se prueba entero en `/lab/tabla`
 
 **Sello:** rama `arebury/tabla-primeng-completa`, fundida en `aac647d6` (#393 a #396). Sale por el tope el tramo del
@@ -198,17 +209,6 @@ un panel a la derecha que marca lo tocado, la ficha para agentes (`docs:ia`) y u
 - **Tras fundir**: lanzar `docs-capturas` con `rama=main` (o esperar al lunes); hasta entonces, fichas sin captura.
 - **Los 71 fallos de accesibilidad** (por regla, en DD-202): colordotpicker 18, progressbar 12, checkbox 10, inputtags 10,
   gauge 7, datatable 4, radiobutton 3, tabs 3, grouppopover 2, chip 1, textarea 1. Cada arreglo baja el tope.
-
-## ✅ 2026-10-13 · Iconos: un icono, un significado (DD-200)
-
-**Sello:** rama `arebury/ux-ui-design-system`, sobre `2b409e92` (#384). Sale por el tope el tramo del 2026-10-04:
-`git show 20801911:docs/handoff/design-system.md`.
-
-**Lo que cambia.** Cada icono dice qué significa y `audit:icons` lo vigila; `sc-button` de solo icono pone su tooltip
-(también con teclado); `sc-icon` con tallas de la escala y `tone`; estados de conversación con forma; Fundamentos → Iconos.
-
-- ⚠️ **Los `aria-haspopup`/`expanded`/`controls` de `sc-button` ya no van por `[pt]`** (chocaba con el `pt` del tooltip):
-  los escribe un `afterRenderEffect`. `audit:primeng-coupling` cuenta ya las entradas de una directiva (`[pTooltip]`).
 
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 
