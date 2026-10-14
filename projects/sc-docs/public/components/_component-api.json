@@ -2437,6 +2437,121 @@
           "nativo": null
         },
         {
+          "nombre": "expansionTemplate",
+          "clase": "input",
+          "tipo": "TemplateRef<ScRowTemplateContext<T>> | undefined",
+          "porDefecto": "undefined",
+          "requerido": false,
+          "descripcion": "El detalle de una fila (primeng.dev/table «Row Expansion»): con él, una columna al principio lleva la flecha que despliega, debajo de la fila, una celda a todo lo ancho con esta plantilla. Necesita `dataKey`. No se combina con `rowGroupMode: 'subheader'`: ahí PrimeNG usa el mismo mecanismo para plegar grupos.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "expandedRowKeys",
+          "clase": "input",
+          "tipo": "Readonly<Record<string, boolean>>",
+          "porDefecto": "{}",
+          "requerido": false,
+          "descripcion": "Las filas (o los grupos) que salen desplegados, por su clave: `{ [dataKey]: true }`. La tabla trabaja sobre una copia.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "rowExpandLabels",
+          "clase": "input",
+          "tipo": "ScRowExpandLabels",
+          "porDefecto": "{ expand: 'Expandir', collapse: 'Contraer' }",
+          "requerido": false,
+          "descripcion": "Los nombres del botón de desplegar y plegar, traducidos.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "rowGroupMode",
+          "clase": "input",
+          "tipo": "'subheader' | 'rowspan' | undefined",
+          "porDefecto": "undefined",
+          "requerido": false,
+          "descripcion": "Filas agrupadas por el valor de `groupRowsBy` (primeng.dev/table «Row Group»): `subheader`, una fila de título antes de cada grupo (y un pie si hay `groupFooterTemplate`); `rowspan`, la celda de esa columna ocupa todo su grupo. Las filas tienen que llegar ordenadas por ese campo (`sortField`).",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Type of the row grouping, valid values are \"subheader\" and \"rowspan\".",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "groupRowsBy",
+          "clase": "input",
+          "tipo": "string | undefined",
+          "porDefecto": "undefined",
+          "requerido": false,
+          "descripcion": "El campo por el que se agrupa.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Field name to use in row grouping.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "groupHeaderTemplate",
+          "clase": "input",
+          "tipo": "TemplateRef<ScRowTemplateContext<T>> | undefined",
+          "porDefecto": "undefined",
+          "requerido": false,
+          "descripcion": "El título de cada grupo (`subheader`). Sin él, el valor del campo.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "groupFooterTemplate",
+          "clase": "input",
+          "tipo": "TemplateRef<ScRowTemplateContext<T>> | undefined",
+          "porDefecto": "undefined",
+          "requerido": false,
+          "descripcion": "El pie de cada grupo (`subheader`): totales, por ejemplo.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "expandableRowGroups",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "false",
+          "requerido": false,
+          "descripcion": "Los grupos se pliegan y despliegan con una flecha en su título (primeng.dev/table «Expandable Row Groups»). Lo desplegado se guarda por el valor del grupo: `expandedRowKeys` es `{ 'Facturación': true }`.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "reorderableRows",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "false",
+          "requerido": false,
+          "descripcion": "Filas que se ordenan arrastrándolas por su asa (primeng.dev/table «Reorder»). La tabla no cambia el orden de `value`: avisa con `rowReorder` y quien la usa lo aplica.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "frozenValue",
+          "clase": "input",
+          "tipo": "readonly T[] | undefined",
+          "porDefecto": "undefined",
+          "requerido": false,
+          "descripcion": "Filas fijas arriba mientras el resto hace scroll (primeng.dev/table «Frozen Rows»): se pintan como las demás y no salen en `value`. Con `scrollable`.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "An array of objects to display as frozen.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
           "nombre": "sortChange",
           "clase": "output",
           "tipo": "ScDatatableSortEvent",
@@ -2537,6 +2652,36 @@
           "nativo": null
         },
         {
+          "nombre": "rowExpand",
+          "clase": "output",
+          "tipo": "TableRowExpandEvent",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Se ha desplegado una fila o un grupo: el `onRowExpand` de p-table.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "rowCollapse",
+          "clase": "output",
+          "tipo": "TableRowCollapseEvent",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Se ha plegado una fila o un grupo: el `onRowCollapse` de p-table.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "rowReorder",
+          "clase": "output",
+          "tipo": "ScDatatableRowReorderEvent<T>",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Se ha soltado una fila arrastrada (`reorderableRows`): con las filas en su orden nuevo, para aplicarlo.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
           "nombre": "rowSelect",
           "clase": "output",
           "tipo": "TableRowSelectEvent<T>",
@@ -2633,9 +2778,7 @@
         "filterOn",
         "filtersInput",
         "frozenColumns",
-        "frozenValue",
         "frozenWidth",
-        "groupRowsBy",
         "groupRowsByOrder",
         "hideOnClear",
         "lazyLoadOnInit",
@@ -2659,7 +2802,6 @@
         "prefix",
         "resetPageOnSort",
         "rowExpandMode",
-        "rowGroupMode",
         "rowHover",
         "rowSelectable",
         "rowTrackBy",

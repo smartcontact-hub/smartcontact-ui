@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import {
   ScAvatarComponent,
+  ScButtonComponent,
   ScColumnSelectorComponent,
   ScDatatableComponent,
   ScInputNumberComponent,
@@ -19,6 +20,7 @@ import {
   type ScColumnFilter,
   type ScColumnFilterContext,
   type ScDatatableRowEditEvent,
+  type ScDatatableRowReorderEvent,
   type ScDatatableSortEvent,
 } from '@smartcontact-hub/components';
 import { ScIconComponent } from '@smartcontact-hub/icons';
@@ -31,6 +33,8 @@ import type {
   TableEditCancelEvent,
   TableEditCompleteEvent,
   TableEditInitEvent,
+  TableRowCollapseEvent,
+  TableRowExpandEvent,
   TableRowSelectEvent,
   TableRowUnSelectEvent,
 } from 'primeng/table';
@@ -99,6 +103,10 @@ const ARG_TYPES: readonly ArgType[] = [
   { name: 'columnResizeMode', label: 'Modo de redimensión', control: { kind: 'select', options: ['fit', 'expand'] }, description: '«fit»: la tabla no cambia de ancho. «expand»: crece con la columna.' },
   { name: 'reorderableColumns', label: 'Reordenar columnas', control: { kind: 'boolean' }, description: 'Se puede arrastrar una columna entera para cambiarla de sitio.' },
   { name: 'editMode', label: 'Cómo se edita', control: { kind: 'select', options: ['cell', 'row'] }, description: 'Con «Columnas editables»: cell, se pulsa una celda y se escribe (Intro, Tab o clic fuera lo deja; Escape lo deshace). row, un lápiz al final abre la fila entera, con guardar y cancelar.' },
+  { name: 'rowGroupMode', label: 'Agrupar filas', control: { kind: 'select', options: ['', 'subheader', 'rowspan'] }, description: 'subheader: un título antes de cada grupo. rowspan: la celda del campo ocupa su grupo entero. La tabla se ordena sola por ese campo.' },
+  { name: 'groupRowsBy', label: 'Agrupar por', control: { kind: 'select', options: ['team', 'status', 'country'] }, description: 'El campo que forma los grupos: equipo, estado o país.' },
+  { name: 'expandableRowGroups', label: 'Grupos plegables', control: { kind: 'boolean' }, description: 'Con subheader: una flecha en el título de cada grupo lo pliega y lo despliega. Salen plegados.' },
+  { name: 'reorderableRows', label: 'Reordenar filas', control: { kind: 'boolean' }, description: 'Cada fila lleva un asa al principio para arrastrarla a otro sitio.' },
   { name: 'filterDisplay', label: 'Dónde van los filtros', control: { kind: 'select', options: ['row', 'menu'] }, description: 'row: una fila bajo la cabecera con un control por columna. menu: un botón junto al título que abre sus reglas (cómo compara, Y/O, varias reglas).' },
 ];
 
@@ -132,6 +140,10 @@ const DEFAULT_ARGS: Record<string, unknown> = {
   reorderableColumns: false,
   filterDisplay: 'row',
   editMode: 'cell',
+  rowGroupMode: '',
+  groupRowsBy: 'team',
+  expandableRowGroups: false,
+  reorderableRows: false,
 };
 
 /** Un botón del racimo por grupo: su icono, sus knobs y, si los tiene, los interruptores del laboratorio. */
@@ -139,7 +151,7 @@ interface ControlGroupDef {
   readonly title: string;
   readonly icon: string;
   readonly names: readonly string[];
-  readonly toggles?: 'selection' | 'columns' | 'filters' | 'edit';
+  readonly toggles?: 'selection' | 'columns' | 'filters' | 'edit' | 'rows';
   /** «Columnas extra», el único control del laboratorio que es un número. */
   readonly extraColumns?: boolean;
   /** A dos columnas: en una sola no cabe en el alto de la ventana. */
@@ -153,6 +165,7 @@ const CONTROL_GROUP_DEFS: readonly ControlGroupDef[] = [
   { title: 'Columnas', icon: 'view_column', toggles: 'columns', extraColumns: true, names: ['resizableColumns', 'columnResizeMode', 'reorderableColumns'] },
   { title: 'Filtros', icon: 'filter_list', toggles: 'filters', names: ['filterDisplay'] },
   { title: 'Edición', icon: 'edit', toggles: 'edit', names: ['editMode'] },
+  { title: 'Filas', icon: 'table_rows', toggles: 'rows', names: ['rowGroupMode', 'groupRowsBy', 'expandableRowGroups', 'reorderableRows'] },
 ];
 
 /** Máximo de columnas de relleno que añade «Columnas extra»: suficientes para forzar el scroll
@@ -176,6 +189,7 @@ const MAX_EXTRA_COLUMNS = 8;
     PopoverModule,
     RatingModule,
     ScAvatarComponent,
+    ScButtonComponent,
     ScColumnSelectorComponent,
     ScDatatableComponent,
     ScIconComponent,
@@ -198,8 +212,66 @@ export class TableLabPageComponent {
   protected readonly theme = inject(ThemeService);
   private readonly sidebarDemo = inject(SidebarDemoService);
 
-  /** Una copia por visita: los editores escriben en la fila, y la muestra compartida no debe cambiar. */
-  protected readonly agents: TableLabAgent[] = TABLE_LAB_AGENTS.map((agent) => ({ ...agent }));
+  /**
+   * Una copia por visita: los editores escriben en la fila y arrastrar cambia el orden, y la muestra compartida no debe
+   * cambiar. Las filas fijas salen de `value` y van en `frozenValue`, como en primeng.dev/table «Frozen Rows».
+   */
+  protected readonly rows = signal<TableLabAgent[]>(TABLE_LAB_AGENTS.map((agent) => ({ ...agent })));
+  protected readonly pinnedIds = signal<ReadonlySet<number>>(new Set());
+  protected readonly tableValue = computed(() => this.rows().filter((agent) => !this.pinnedIds().has(agent.id)));
+  protected readonly pinnedRows = computed(() => this.rows().filter((agent) => this.pinnedIds().has(agent.id)));
+
+  /** «Detalle de fila», «Pie de grupo» y «Fijar filas»: plantillas y una columna, no props de la tabla. */
+  protected readonly rowDetail = signal(false);
+  protected readonly groupFooter = signal(false);
+  protected readonly pinRows = signal(false);
+  protected readonly pinTpl = viewChild<TemplateRef<ScColumnCellContext<TableLabAgent>>>('pinTpl');
+
+  protected togglePin(agent: TableLabAgent): void {
+    this.pinnedIds.update((ids) => {
+      const next = new Set(ids);
+      if (next.has(agent.id)) next.delete(agent.id);
+      else next.add(agent.id);
+      return next;
+    });
+  }
+
+  /** Con filas agrupadas, la tabla sale ordenada por el campo del grupo: PrimeNG agrupa filas SEGUIDAS. */
+  protected readonly sortFieldArg = computed(() => {
+    const args = this.liveArgs();
+    if (args['rowGroupMode']) return args['groupRowsBy'] as string;
+    return (args['sortField'] as string) || undefined;
+  });
+
+  /** El título de un grupo: el valor legible del campo y cuántos agentes tiene. */
+  protected groupTitle(agent: TableLabAgent): string {
+    const field = this.liveArgs()['groupRowsBy'] as keyof TableLabAgent;
+    const value = agent[field];
+    return field === 'status' ? this.statusLabel(agent.status) : String(value);
+  }
+
+  protected groupAgents(agent: TableLabAgent): readonly TableLabAgent[] {
+    const field = this.liveArgs()['groupRowsBy'] as keyof TableLabAgent;
+    return this.tableValue().filter((other) => other[field] === agent[field]);
+  }
+
+  protected groupTickets(agent: TableLabAgent): number {
+    return this.groupAgents(agent).reduce((sum, other) => sum + other.tickets, 0);
+  }
+
+  protected onRowExpand(event: TableRowExpandEvent): void {
+    this.lastEvent.set(`rowExpand: ${this.eventAgentName(event.data)}`);
+  }
+
+  protected onRowCollapse(event: TableRowCollapseEvent): void {
+    this.lastEvent.set(`rowCollapse: ${this.eventAgentName(event.data)}`);
+  }
+
+  /** La tabla no mueve `value`: avisa con el orden nuevo y aquí se aplica, con las fijas delante. */
+  protected onRowReorder(event: ScDatatableRowReorderEvent<TableLabAgent>): void {
+    this.rows.set([...this.pinnedRows(), ...event.rows]);
+    this.lastEvent.set(`rowReorder: fila ${event.dragIndex + 1} a ${event.dropIndex + 1}`);
+  }
 
   protected readonly statusTpl = viewChild<TemplateRef<ScColumnCellContext<TableLabAgent>>>('statusTpl');
   /** Contenido rico en celda: foto/avatar (`sc-avatar`) y estrellas (`p-rating`, ya con el tema del
@@ -290,6 +362,9 @@ export class TableLabPageComponent {
       cellTemplate: this.extraTpl(),
       width: '10rem',
     })),
+    ...(this.pinRows()
+      ? [{ field: 'pin', header: '', headerAriaLabel: 'Fijar', cellTemplate: this.pinTpl(), width: '4rem', stopRowClick: true, skeleton: 'action' as const }]
+      : []),
     ...(this.columnPickButton()
       ? [{ field: 'pick', header: '', headerAriaLabel: 'Elegir', cellTemplate: this.pickTpl(), width: '4rem', stopRowClick: true, skeleton: 'action' as const }]
       : []),
@@ -444,7 +519,7 @@ export class TableLabPageComponent {
   }
 
   /** Los interruptores del laboratorio que no son props de la tabla, por grupo: una lista y una plantilla. */
-  protected readonly labToggles: Readonly<Record<'selection' | 'columns' | 'filters' | 'edit', readonly LabToggle[]>> = {
+  protected readonly labToggles: Readonly<Record<'selection' | 'columns' | 'filters' | 'edit' | 'rows', readonly LabToggle[]>> = {
     selection: [
       { label: 'Botón en columna', code: 'cellTemplate', ariaKey: 'lab.tabla.pick_label', value: this.columnPickButton, set: (on) => this.columnPickButton.set(on),
         hint: 'Añade al final un botón por fila que elige ese agente sin marcar la fila. Va en una plantilla de celda, no es un prop de la tabla.' },
@@ -463,6 +538,14 @@ export class TableLabPageComponent {
       { label: 'Buscador global', code: 'filterGlobal()', ariaKey: 'lab.tabla.global_search_label', value: this.globalSearch, set: (on) => this.globalSearch.set(on),
         hint: 'Un buscador encima de la tabla que busca en agente, equipo y país a la vez, y «Limpiar», que quita filtros, orden y página.' },
     ],
+    rows: [
+      { label: 'Detalle de fila', code: 'expansionTemplate', ariaKey: 'lab.tabla.row_detail_label', value: this.rowDetail, set: (on) => this.rowDetail.set(on),
+        hint: 'Una flecha al principio de cada fila despliega debajo su detalle. Con «Agrupar filas» en subheader no se usa: ahí la flecha pliega grupos.' },
+      { label: 'Pie de grupo', code: 'groupFooterTemplate', ariaKey: 'lab.tabla.group_footer_label', value: this.groupFooter, set: (on) => this.groupFooter.set(on),
+        hint: 'Con subheader: debajo de cada grupo, cuántos agentes tiene y sus tickets abiertos.' },
+      { label: 'Fijar filas', code: 'frozenValue', ariaKey: 'lab.tabla.pin_rows_label', value: this.pinRows, set: (on) => this.pinRows.set(on),
+        hint: 'Un botón por fila la fija arriba mientras el resto hace scroll. Se ve con «Scroll propio» activado.' },
+    ],
     edit: [
       { label: 'Columnas editables', code: 'editTemplate', ariaKey: 'lab.tabla.editable_label', value: this.editable, set: (on) => this.editable.set(on),
         hint: 'Agente, equipo, estado y tickets llevan un control para editarlos: un campo de texto, dos desplegables y un número.' },
@@ -480,7 +563,7 @@ export class TableLabPageComponent {
    *  activarlos más tarde con el interruptor no los hace aparecer. Remontamos la tabla cuando
    *  cambia cualquiera de los dos, para que el tirador se cree con el valor ya puesto. */
   protected readonly tableRemountKey = computed(
-    () => `${this.liveArgs()['resizableColumns']}-${this.liveArgs()['reorderableColumns']}`,
+    () => `${this.liveArgs()['resizableColumns']}-${this.liveArgs()['reorderableColumns']}-${this.liveArgs()['reorderableRows']}`,
   );
 
   protected asStr(v: unknown): string {

@@ -111,6 +111,28 @@ export interface ScRowEditLabels {
   readonly cancel: string;
 }
 
+/** Contexto de `expansionTemplate`, `groupHeaderTemplate` y `groupFooterTemplate` de `sc-datatable`. */
+export interface ScRowTemplateContext<T = unknown> {
+  /** La fila: la desplegada, o la primera de su grupo. */
+  readonly $implicit: T;
+  readonly rowIndex: number;
+  /** Si la fila o el grupo están desplegados. */
+  readonly expanded?: boolean;
+}
+
+/** Los nombres del botón que despliega una fila o un grupo, ya traducidos por quien usa la tabla. */
+export interface ScRowExpandLabels {
+  readonly expand: string;
+  readonly collapse: string;
+}
+
+/** Payload de `rowReorder`: de dónde a dónde se arrastró la fila y las filas en su orden nuevo. */
+export interface ScDatatableRowReorderEvent<T = unknown> {
+  readonly dragIndex: number;
+  readonly dropIndex: number;
+  readonly rows: readonly T[];
+}
+
 /** Payload de `rowEditInit`, `rowEditSave` y `rowEditCancel`: la fila y su índice en el render actual. */
 export interface ScDatatableRowEditEvent<T = unknown> {
   readonly row: T;

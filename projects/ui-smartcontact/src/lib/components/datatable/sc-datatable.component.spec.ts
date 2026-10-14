@@ -688,3 +688,98 @@ describe('sc-datatable · edición', () => {
     fixture.destroy();
   });
 });
+
+describe('sc-datatable · filas: detalle, grupos y fijas', () => {
+  interface Agente {
+    readonly id: number;
+    readonly nombre: string;
+    readonly equipo: string;
+  }
+
+  @Component({
+    imports: [ScDatatableComponent],
+    template: `
+      <ng-template #detalle let-a><span class="detalle">Detalle de {{ a.nombre }}</span></ng-template>
+      <sc-datatable
+        [value]="filas"
+        [columns]="cols"
+        dataKey="id"
+        [expansionTemplate]="conDetalle() ? detalle : undefined"
+        [rowGroupMode]="modo()"
+        [groupRowsBy]="'equipo'"
+        [expandableRowGroups]="plegables()"
+        [frozenValue]="fijas()"
+      />
+    `,
+  })
+  class Anfitrion {
+    readonly filas: Agente[] = [
+      { id: 1, nombre: 'Anna', equipo: 'A' },
+      { id: 2, nombre: 'Berta', equipo: 'A' },
+      { id: 3, nombre: 'Carla', equipo: 'B' },
+    ];
+    readonly cols: ScColumnDef<Agente>[] = [
+      { field: 'equipo', header: 'Equipo' },
+      { field: 'nombre', header: 'Nombre' },
+    ];
+    readonly conDetalle = signal(false);
+    readonly modo = signal<'subheader' | 'rowspan' | undefined>(undefined);
+    readonly plegables = signal(false);
+    readonly fijas = signal<Agente[] | undefined>(undefined);
+  }
+
+  async function montarFilas(ajustes: (a: Anfitrion) => void) {
+    TestBed.configureTestingModule({ imports: [Anfitrion] });
+    const fixture = TestBed.createComponent(Anfitrion);
+    ajustes(fixture.componentInstance);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    return fixture;
+  }
+
+  it('el detalle despliega solo su fila, aunque llegue groupRowsBy sin agrupar', async () => {
+    /* Con groupRowsBy puesto, PrimeNG guarda lo desplegado por ese campo: desplegaba a la vez las dos del equipo A. */
+    const fixture = await montarFilas((a) => a.conDetalle.set(true));
+    const root = fixture.nativeElement as HTMLElement;
+    root.querySelector<HTMLButtonElement>('tbody tr td.sc-datatable__expander button')!.click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const detalles = [...root.querySelectorAll('tbody tr.sc-datatable__expansion')];
+    expect(detalles.map((tr) => tr.textContent?.trim())).toEqual(['Detalle de Anna']);
+    expect(detalles[0].querySelector('td')!.getAttribute('colspan')).toBe('3');
+    fixture.destroy();
+  });
+
+  it('grupos plegables: salen plegados y la flecha del título despliega solo su grupo', async () => {
+    const fixture = await montarFilas((a) => {
+      a.modo.set('subheader');
+      a.plegables.set(true);
+    });
+    const root = fixture.nativeElement as HTMLElement;
+    const titulos = () => [...root.querySelectorAll('tbody tr.sc-datatable__group-row')].map((tr) => tr.textContent?.trim());
+    const datos = () => root.querySelectorAll('tbody tr:not(.sc-datatable__group-row)').length;
+    expect(titulos()).toEqual(['A', 'B']);
+    expect(datos()).toBe(0);
+    root.querySelector<HTMLButtonElement>('tbody tr.sc-datatable__group-row button')!.click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(datos()).toBe(2);
+    fixture.destroy();
+  });
+
+  it('rowspan: la celda del grupo solo está en su primera fila y ocupa el grupo', async () => {
+    const fixture = await montarFilas((a) => a.modo.set('rowspan'));
+    const celdas = [...(fixture.nativeElement as HTMLElement).querySelectorAll('tbody td.sc-datatable__rowspan')];
+    // Un grupo de una fila no lleva `rowspan`: PrimeNG da nulo, que en HTML vale 1.
+    expect(celdas.map((td) => `${td.textContent?.trim()}:${td.getAttribute('rowspan')}`)).toEqual(['A:2', 'B:null']);
+    fixture.destroy();
+  });
+
+  it('frozenValue: las fijas van en su propio cuerpo, pintadas como las demás', async () => {
+    const fixture = await montarFilas((a) => a.fijas.set([{ id: 9, nombre: 'Fija', equipo: 'Z' }]));
+    const fijas = (fixture.nativeElement as HTMLElement).querySelectorAll('tbody.p-datatable-frozen-tbody:first-of-type tr');
+    expect([...fijas].map((tr) => tr.textContent?.replace(/\s+/g, ' ').trim())).toEqual(['Z Fija']);
+    fixture.destroy();
+  });
+});
