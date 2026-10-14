@@ -230,6 +230,36 @@
     data-testid="sc-datatable-row-edit" />
 </ng-template>
 
+<ng-template #rowDetail let-agent>
+  <span>{{ agent.name }} atiende en la extensión {{ agent.extension }}.</span>
+</ng-template>
+
+<ng-template #groupHeader let-agent>
+  <span>{{ agent.status === 'active' ? 'Activos' : 'Inactivos' }}</span>
+</ng-template>
+
+<ng-template #groupFooter let-agent>
+  <span>{{ groupSize(agent.status) }} agentes</span>
+</ng-template>
+
+<ng-template #expansion>
+  <sc-datatable [value]="agents()" [columns]="multiSortColumns" [expansionTemplate]="rowDetail"
+    [expandedRowKeys]="expandedKeys" [rowExpandLabels]="expandLabels" dataKey="id"
+    data-testid="sc-datatable-expansion" />
+</ng-template>
+
+<ng-template #rowGroups>
+  <sc-datatable [value]="agents()" [columns]="multiSortColumns" rowGroupMode="subheader" groupRowsBy="status"
+    [groupHeaderTemplate]="groupHeader" [groupFooterTemplate]="groupFooter" [expandableRowGroups]="true"
+    [expandedRowKeys]="expandedGroups" dataKey="id" data-testid="sc-datatable-row-groups" />
+</ng-template>
+
+<ng-template #rowOrder>
+  <sc-datatable [value]="orderedAgents()" [columns]="multiSortColumns" [reorderableRows]="true"
+    (rowReorder)="orderedAgents.set($event.rows)" [frozenValue]="pinnedAgents" scrollable scrollHeight="240px"
+    dataKey="id" data-testid="sc-datatable-row-order" />
+</ng-template>
+
 <ng-template #filters>
   <sc-datatable [value]="agents()" [columns]="filterColumns" filterDisplay="row" dataKey="id"
     data-testid="sc-datatable-filters" />

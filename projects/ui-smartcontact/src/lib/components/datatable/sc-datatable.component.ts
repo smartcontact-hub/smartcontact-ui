@@ -26,19 +26,26 @@ import {
   type TableEditCompleteEvent,
   type TableEditInitEvent,
   type TableFilterEvent,
+  type TableRowCollapseEvent,
+  type TableRowExpandEvent,
+  type TableRowReorderEvent,
   type TableLazyLoadEvent,
   type TablePageEvent,
   type TableRowSelectEvent,
   type TableRowUnSelectEvent,
 } from 'primeng/table';
+import { ScIconComponent } from '@smartcontact-hub/icons';
 
 import {
   ScColumnDef,
   ScDatatableRowEditEvent,
   ScDatatableRowEvent,
   ScDatatableRowKeyEvent,
+  ScDatatableRowReorderEvent,
   ScRowAriaLabelFn,
   ScRowEditLabels,
+  ScRowExpandLabels,
+  ScRowTemplateContext,
   ScRowStyleClassFn,
 } from '../../core/types/datatable.types';
 import { ScComponentSize } from '../../core/types/theme-component.types';
@@ -105,7 +112,7 @@ export interface ScDatatableSortEvent {
  */
 @Component({
   selector: 'sc-datatable',
-  imports: [TableModule, NgClass, NgTemplateOutlet, ScButtonComponent, ScSkeletonComponent],
+  imports: [TableModule, NgClass, NgTemplateOutlet, ScButtonComponent, ScIconComponent, ScSkeletonComponent],
   templateUrl: './sc-datatable.component.html',
   styleUrl: './sc-datatable.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -346,6 +353,47 @@ export class ScDatatableComponent<T = unknown> {
   /** Los nombres de los botones de editar, guardar y cancelar la fila (`editMode: 'row'`), traducidos. */
   readonly rowEditLabels = input<ScRowEditLabels>({ edit: 'Editar', save: 'Guardar', cancel: 'Cancelar' });
 
+  /**
+   * El detalle de una fila (primeng.dev/table «Row Expansion»): con él, una columna al principio lleva la flecha que
+   * despliega, debajo de la fila, una celda a todo lo ancho con esta plantilla. Necesita `dataKey`. No se combina con
+   * `rowGroupMode: 'subheader'`: ahí PrimeNG usa el mismo mecanismo para plegar grupos.
+   */
+  readonly expansionTemplate = input<TemplateRef<ScRowTemplateContext<T>> | undefined>(undefined);
+  /** Las filas (o los grupos) que salen desplegados, por su clave: `{ [dataKey]: true }`. La tabla trabaja sobre una copia. */
+  readonly expandedRowKeys = input<Readonly<Record<string, boolean>>>({});
+  /** Los nombres del botón de desplegar y plegar, traducidos. */
+  readonly rowExpandLabels = input<ScRowExpandLabels>({ expand: 'Expandir', collapse: 'Contraer' });
+
+  /**
+   * Filas agrupadas por el valor de `groupRowsBy` (primeng.dev/table «Row Group»): `subheader`, una fila de título
+   * antes de cada grupo (y un pie si hay `groupFooterTemplate`); `rowspan`, la celda de esa columna ocupa todo su
+   * grupo. Las filas tienen que llegar ordenadas por ese campo (`sortField`).
+   */
+  readonly rowGroupMode = input<'subheader' | 'rowspan' | undefined>(undefined);
+  /** El campo por el que se agrupa. */
+  readonly groupRowsBy = input<string | undefined>(undefined);
+  /** El título de cada grupo (`subheader`). Sin él, el valor del campo. */
+  readonly groupHeaderTemplate = input<TemplateRef<ScRowTemplateContext<T>> | undefined>(undefined);
+  /** El pie de cada grupo (`subheader`): totales, por ejemplo. */
+  readonly groupFooterTemplate = input<TemplateRef<ScRowTemplateContext<T>> | undefined>(undefined);
+  /**
+   * Los grupos se pliegan y despliegan con una flecha en su título (primeng.dev/table «Expandable Row Groups»). Lo
+   * desplegado se guarda por el valor del grupo: `expandedRowKeys` es `{ 'Facturación': true }`.
+   */
+  readonly expandableRowGroups = input(false, { transform: booleanAttribute });
+
+  /**
+   * Filas que se ordenan arrastrándolas por su asa (primeng.dev/table «Reorder»). La tabla no cambia el orden de
+   * `value`: avisa con `rowReorder` y quien la usa lo aplica.
+   */
+  readonly reorderableRows = input(false, { transform: booleanAttribute });
+
+  /**
+   * Filas fijas arriba mientras el resto hace scroll (primeng.dev/table «Frozen Rows»): se pintan como las demás y
+   * no salen en `value`. Con `scrollable`.
+   */
+  readonly frozenValue = input<readonly T[] | undefined>(undefined);
+
   /* ════════════════════════════════════════════════════════════════════════
    * LAS 38 RANURAS DE PLANTILLA DE p-table, REENVIADAS
    * ════════════════════════════════════════════════════════════════════════
@@ -436,6 +484,12 @@ export class ScDatatableComponent<T = unknown> {
   readonly rowEditSave = output<ScDatatableRowEditEvent<T>>();
   /** Se ha pulsado cancelar en una fila en edición: quien usa la tabla repone los valores de su copia. */
   readonly rowEditCancel = output<ScDatatableRowEditEvent<T>>();
+  /** Se ha desplegado una fila o un grupo: el `onRowExpand` de p-table. */
+  readonly rowExpand = output<TableRowExpandEvent>();
+  /** Se ha plegado una fila o un grupo: el `onRowCollapse` de p-table. */
+  readonly rowCollapse = output<TableRowCollapseEvent>();
+  /** Se ha soltado una fila arrastrada (`reorderableRows`): con las filas en su orden nuevo, para aplicarlo. */
+  readonly rowReorder = output<ScDatatableRowReorderEvent<T>>();
 
   /**
    * Se ha marcado una fila: el `onRowSelect` de p-table tal cual (`data`, `index`, `type`: `row`, `checkbox` o
@@ -700,8 +754,30 @@ export class ScDatatableComponent<T = unknown> {
   /** La columna del lápiz, al final: con `editMode: 'row'` y alguna columna que se pueda editar. */
   protected readonly rowEditor = computed(() => this.editMode() === 'row' && this.visibleCols().some((c) => c.editTemplate));
 
+  /** Agrupar por subcabecera, con su campo. */
+  protected readonly subheaderGroups = computed(() => this.rowGroupMode() === 'subheader' && !!this.groupRowsBy());
+  /** La columna que ocupa todo su grupo con `rowGroupMode: 'rowspan'`. */
+  protected readonly rowspanField = computed(() => (this.rowGroupMode() === 'rowspan' ? this.groupRowsBy() : undefined));
+  /** Grupos plegables: solo con subcabecera. */
+  protected readonly foldingGroups = computed(() => this.expandableRowGroups() && this.subheaderGroups());
+  /** La columna de la flecha que despliega el detalle de la fila. */
+  protected readonly expander = computed(() => !!this.expansionTemplate() && !this.subheaderGroups());
+  /**
+   * `groupRowsBy` solo llega a p-table si se agrupa: con él puesto, PrimeNG ordena por ese campo y guarda lo desplegado
+   * por su valor, así que «Detalle de fila» desplegaba a la vez todas las filas del mismo equipo (medido el 2026-10-14).
+   */
+  protected readonly pGroupRowsBy = computed(() => (this.rowGroupMode() ? this.groupRowsBy() : undefined));
+  /** Copias: p-table añade y quita claves en el objeto al desplegar, y no debe tocar el de quien usa la tabla. */
+  protected readonly pExpandedRowKeys = computed(() => ({ ...this.expandedRowKeys() }));
+  protected readonly pFrozenValue = computed(() => (this.frozenValue() ? [...this.frozenValue()!] : undefined));
+
   protected readonly colspan = computed<number>(
-    () => this.visibleCols().length + (this.selectionControl() ? 1 : 0) + (this.rowEditor() ? 1 : 0),
+    () =>
+      this.visibleCols().length +
+      (this.selectionControl() ? 1 : 0) +
+      (this.reorderableRows() ? 1 : 0) +
+      (this.expander() ? 1 : 0) +
+      (this.rowEditor() ? 1 : 0),
   );
 
   /** Filtros para p-table: referencia estable `{}` cuando el consumidor no informa. */
@@ -938,6 +1014,15 @@ export class ScDatatableComponent<T = unknown> {
     const target = event.target instanceof Element ? event.target : null;
     if (target?.closest('.p-editable-column') || (this.editMode() === 'row' && this.table().isRowEditing(row))) return;
     this.rowClick.emit({ row, index, originalEvent: event });
+  }
+
+  /** p-table ya ha movido la fila en su copia de `value`: se avisa con ese orden para que la pantalla lo aplique. */
+  protected onRowReorder(event: TableRowReorderEvent): void {
+    this.rowReorder.emit({
+      dragIndex: event.dragIndex ?? -1,
+      dropIndex: event.dropIndex ?? -1,
+      rows: [...(this.table().value as T[])],
+    });
   }
 
   /**
