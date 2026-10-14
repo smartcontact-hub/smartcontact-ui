@@ -18,6 +18,7 @@ import {
   type ScColumnDef,
   type ScColumnFilter,
   type ScColumnFilterContext,
+  type ScDatatableRowEditEvent,
   type ScDatatableSortEvent,
 } from '@smartcontact-hub/components';
 import { ScIconComponent } from '@smartcontact-hub/icons';
@@ -26,7 +27,13 @@ import type { SortMeta } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { PopoverModule } from 'primeng/popover';
 import { RatingModule } from 'primeng/rating';
-import type { TableRowSelectEvent, TableRowUnSelectEvent } from 'primeng/table';
+import type {
+  TableEditCancelEvent,
+  TableEditCompleteEvent,
+  TableEditInitEvent,
+  TableRowSelectEvent,
+  TableRowUnSelectEvent,
+} from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
 
 import { SidebarDemoService } from '../../core/services/sidebar-demo.service';
@@ -91,6 +98,7 @@ const ARG_TYPES: readonly ArgType[] = [
   { name: 'resizableColumns', label: 'Redimensionar columnas', control: { kind: 'boolean' }, description: 'Se puede arrastrar el borde de una columna para hacerla más ancha o más estrecha.' },
   { name: 'columnResizeMode', label: 'Modo de redimensión', control: { kind: 'select', options: ['fit', 'expand'] }, description: '«fit»: la tabla no cambia de ancho. «expand»: crece con la columna.' },
   { name: 'reorderableColumns', label: 'Reordenar columnas', control: { kind: 'boolean' }, description: 'Se puede arrastrar una columna entera para cambiarla de sitio.' },
+  { name: 'editMode', label: 'Cómo se edita', control: { kind: 'select', options: ['cell', 'row'] }, description: 'Con «Columnas editables»: cell, se pulsa una celda y se escribe (Intro, Tab o clic fuera lo deja; Escape lo deshace). row, un lápiz al final abre la fila entera, con guardar y cancelar.' },
   { name: 'filterDisplay', label: 'Dónde van los filtros', control: { kind: 'select', options: ['row', 'menu'] }, description: 'row: una fila bajo la cabecera con un control por columna. menu: un botón junto al título que abre sus reglas (cómo compara, Y/O, varias reglas).' },
 ];
 
@@ -123,6 +131,7 @@ const DEFAULT_ARGS: Record<string, unknown> = {
   columnResizeMode: 'fit',
   reorderableColumns: false,
   filterDisplay: 'row',
+  editMode: 'cell',
 };
 
 /** Un botón del racimo por grupo: su icono, sus knobs y, si los tiene, los interruptores del laboratorio. */
@@ -130,7 +139,7 @@ interface ControlGroupDef {
   readonly title: string;
   readonly icon: string;
   readonly names: readonly string[];
-  readonly toggles?: 'selection' | 'columns' | 'filters';
+  readonly toggles?: 'selection' | 'columns' | 'filters' | 'edit';
   /** «Columnas extra», el único control del laboratorio que es un número. */
   readonly extraColumns?: boolean;
   /** A dos columnas: en una sola no cabe en el alto de la ventana. */
@@ -143,6 +152,7 @@ const CONTROL_GROUP_DEFS: readonly ControlGroupDef[] = [
   { title: 'Scroll y tamaño', icon: 'swap_vert', names: ['scrollable', 'scrollHeight', 'stickyHeader', 'virtualScroll', 'tableMinWidth'] },
   { title: 'Columnas', icon: 'view_column', toggles: 'columns', extraColumns: true, names: ['resizableColumns', 'columnResizeMode', 'reorderableColumns'] },
   { title: 'Filtros', icon: 'filter_list', toggles: 'filters', names: ['filterDisplay'] },
+  { title: 'Edición', icon: 'edit', toggles: 'edit', names: ['editMode'] },
 ];
 
 /** Máximo de columnas de relleno que añade «Columnas extra»: suficientes para forzar el scroll
@@ -188,7 +198,8 @@ export class TableLabPageComponent {
   protected readonly theme = inject(ThemeService);
   private readonly sidebarDemo = inject(SidebarDemoService);
 
-  protected readonly agents: readonly TableLabAgent[] = TABLE_LAB_AGENTS;
+  /** Una copia por visita: los editores escriben en la fila, y la muestra compartida no debe cambiar. */
+  protected readonly agents: TableLabAgent[] = TABLE_LAB_AGENTS.map((agent) => ({ ...agent }));
 
   protected readonly statusTpl = viewChild<TemplateRef<ScColumnCellContext<TableLabAgent>>>('statusTpl');
   /** Contenido rico en celda: foto/avatar (`sc-avatar`) y estrellas (`p-rating`, ya con el tema del
@@ -222,6 +233,18 @@ export class TableLabPageComponent {
   protected readonly columnToggle = signal(false);
   protected readonly visibleColumns = signal<readonly string[] | undefined>(undefined);
 
+  /** «Columnas editables» (primeng.dev/table «Cell Edit» y «Row Edit»): agente, equipo, estado y tickets se editan. */
+  protected readonly editable = signal(false);
+  protected readonly nameEditTpl = viewChild<TemplateRef<ScColumnCellContext<TableLabAgent>>>('nameEditTpl');
+  protected readonly teamEditTpl = viewChild<TemplateRef<ScColumnCellContext<TableLabAgent>>>('teamEditTpl');
+  protected readonly statusEditTpl = viewChild<TemplateRef<ScColumnCellContext<TableLabAgent>>>('statusEditTpl');
+  protected readonly ticketsEditTpl = viewChild<TemplateRef<ScColumnCellContext<TableLabAgent>>>('ticketsEditTpl');
+  private readonly editors = computed<Partial<Record<string, TemplateRef<ScColumnCellContext<TableLabAgent>>>>>(() =>
+    this.editable()
+      ? { name: this.nameEditTpl(), team: this.teamEditTpl(), status: this.statusEditTpl(), tickets: this.ticketsEditTpl() }
+      : {},
+  );
+
   protected readonly teamFilterTpl = viewChild<TemplateRef<ScColumnFilterContext>>('teamFilterTpl');
   protected readonly countryFilterTpl = viewChild<TemplateRef<ScColumnFilterContext>>('countryFilterTpl');
   protected readonly statusFilterTpl = viewChild<TemplateRef<ScColumnFilterContext>>('statusFilterTpl');
@@ -252,6 +275,7 @@ export class TableLabPageComponent {
   protected readonly columns = computed<readonly ScColumnDef<TableLabAgent>[]>(() => {
     const filters = this.filters();
     const groups = this.groups();
+    const editors = this.editors();
     const base: ScColumnDef<TableLabAgent>[] = [
     { field: 'id', header: '', headerAriaLabel: 'Avatar', cellTemplate: this.avatarTpl(), width: '3.5rem', skeleton: 'avatar' },
     { field: 'name', header: 'Agente', sortable: true, frozen: this.freezeFirstColumn() || undefined, rowHeader: this.freezeFirstColumn(), width: '12rem' },
@@ -270,7 +294,7 @@ export class TableLabPageComponent {
       ? [{ field: 'pick', header: '', headerAriaLabel: 'Elegir', cellTemplate: this.pickTpl(), width: '4rem', stopRowClick: true, skeleton: 'action' as const }]
       : []),
     ];
-    return base.map((col) => ({ ...col, filter: filters[col.field], group: groups[col.field] }));
+    return base.map((col) => ({ ...col, filter: filters[col.field], group: groups[col.field], editTemplate: editors[col.field] }));
   });
 
   /** Las columnas que ofrece «Elegir columnas»: todas, con «Agente» fija porque nombra la fila. */
@@ -371,6 +395,47 @@ export class TableLabPageComponent {
     }
   }
 
+  /** Edición por celda: PrimeNG abre la celda, escribe en la fila y con Escape repone el valor de antes. */
+  protected onEditInit(event: TableEditInitEvent): void {
+    this.lastEvent.set(`editInit: ${event.field}, ${this.eventAgentName(event.data)}`);
+  }
+
+  protected onEditComplete(event: TableEditCompleteEvent): void {
+    this.lastEvent.set(`editComplete: ${event.field} = ${this.fieldValue(event.data, event.field)}, ${this.eventAgentName(event.data)}`);
+  }
+
+  /** PrimeNG avisa ANTES de reponer el valor: se lee en el siguiente turno, ya repuesto. */
+  protected onEditCancel(event: TableEditCancelEvent): void {
+    queueMicrotask(() =>
+      this.lastEvent.set(`editCancel: ${event.field} vuelve a ${this.fieldValue(event.data, event.field)}, ${this.eventAgentName(event.data)}`),
+    );
+  }
+
+  /** Edición por fila: el lápiz guarda una copia, cancelar la repone y guardar la descarta, como el ejemplo «Row Edit». */
+  private readonly rowCopies = new Map<number, TableLabAgent>();
+
+  protected onRowEditInit({ row }: ScDatatableRowEditEvent<TableLabAgent>): void {
+    this.rowCopies.set(row.id, { ...row });
+    this.lastEvent.set(`rowEditInit: ${row.name}`);
+  }
+
+  protected onRowEditSave({ row }: ScDatatableRowEditEvent<TableLabAgent>): void {
+    this.rowCopies.delete(row.id);
+    this.lastEvent.set(`rowEditSave: ${row.name}, ${row.team}, ${this.statusLabel(row.status)}, ${row.tickets} tickets`);
+  }
+
+  protected onRowEditCancel({ row }: ScDatatableRowEditEvent<TableLabAgent>): void {
+    const copy = this.rowCopies.get(row.id);
+    if (copy) Object.assign(row, copy);
+    this.rowCopies.delete(row.id);
+    this.lastEvent.set(`rowEditCancel: ${row.name}`);
+  }
+
+  private fieldValue(data: unknown, field: string | undefined): string {
+    const value = field && data && typeof data === 'object' ? (data as Record<string, unknown>)[field] : undefined;
+    return value == null ? '' : String(value);
+  }
+
   /** «Botón en columna»: el ejemplo «Column» de primeng.dev, un botón en la fila que la elige sin marcarla. */
   protected readonly columnPickButton = signal(false);
 
@@ -379,7 +444,7 @@ export class TableLabPageComponent {
   }
 
   /** Los interruptores del laboratorio que no son props de la tabla, por grupo: una lista y una plantilla. */
-  protected readonly labToggles: Readonly<Record<'selection' | 'columns' | 'filters', readonly LabToggle[]>> = {
+  protected readonly labToggles: Readonly<Record<'selection' | 'columns' | 'filters' | 'edit', readonly LabToggle[]>> = {
     selection: [
       { label: 'Botón en columna', code: 'cellTemplate', ariaKey: 'lab.tabla.pick_label', value: this.columnPickButton, set: (on) => this.columnPickButton.set(on),
         hint: 'Añade al final un botón por fila que elige ese agente sin marcar la fila. Va en una plantilla de celda, no es un prop de la tabla.' },
@@ -397,6 +462,10 @@ export class TableLabPageComponent {
         hint: 'Cada columna lleva su filtro: texto en «Agente», un desplegable en «Equipo» y «Estado», varios países a la vez, y números en «Valoración» y «Tickets».' },
       { label: 'Buscador global', code: 'filterGlobal()', ariaKey: 'lab.tabla.global_search_label', value: this.globalSearch, set: (on) => this.globalSearch.set(on),
         hint: 'Un buscador encima de la tabla que busca en agente, equipo y país a la vez, y «Limpiar», que quita filtros, orden y página.' },
+    ],
+    edit: [
+      { label: 'Columnas editables', code: 'editTemplate', ariaKey: 'lab.tabla.editable_label', value: this.editable, set: (on) => this.editable.set(on),
+        hint: 'Agente, equipo, estado y tickets llevan un control para editarlos: un campo de texto, dos desplegables y un número.' },
     ],
   };
 

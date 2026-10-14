@@ -2412,6 +2412,31 @@
           "nativo": null
         },
         {
+          "nombre": "editMode",
+          "clase": "input",
+          "tipo": "'cell' | 'row'",
+          "porDefecto": "'cell'",
+          "requerido": false,
+          "descripcion": "Cómo se editan las columnas con `ScColumnDef.editTemplate` (primeng.dev/table «Cell Edit» y «Row Edit»): `cell`, cada celda se abre al pulsarla y se cierra con Intro, Tab, Escape o clic fuera; `row`, una columna al final con un lápiz que abre la fila entera, y guardar o cancelar.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Defines the editing mode, valid values are \"cell\" and \"row\".",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "rowEditLabels",
+          "clase": "input",
+          "tipo": "ScRowEditLabels",
+          "porDefecto": "{ edit: 'Editar', save: 'Guardar', cancel: 'Cancelar' }",
+          "requerido": false,
+          "descripcion": "Los nombres de los botones de editar, guardar y cancelar la fila (`editMode: 'row'`), traducidos.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
           "nombre": "sortChange",
           "clase": "output",
           "tipo": "ScDatatableSortEvent",
@@ -2448,6 +2473,66 @@
           "porDefecto": null,
           "requerido": false,
           "descripcion": "Han cambiado los filtros de la tabla.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "editInit",
+          "clase": "output",
+          "tipo": "TableEditInitEvent",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Se ha abierto una celda para editarla (`editMode: 'cell'`): el `onEditInit` de p-table, con `field`, `index` y en `data` la fila entera. Va la fila y no el valor porque con el valor PrimeNG busca la fila por su índice en `value`, y con un filtro puesto ese índice es de otra.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "editComplete",
+          "clase": "output",
+          "tipo": "TableEditCompleteEvent",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Se ha cerrado una celda con Intro, Tab o clic fuera: el `onEditComplete` de p-table, con el valor ya escrito.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "editCancel",
+          "clase": "output",
+          "tipo": "TableEditCancelEvent",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Se ha cerrado una celda con Escape: el `onEditCancel` de p-table. PrimeNG repone el valor que tenía al abrirla.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "rowEditInit",
+          "clase": "output",
+          "tipo": "ScDatatableRowEditEvent<T>",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Se ha pulsado el lápiz de una fila (`editMode: 'row'`): es el momento de guardar una copia para poder cancelar.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "rowEditSave",
+          "clase": "output",
+          "tipo": "ScDatatableRowEditEvent<T>",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Se ha pulsado guardar en una fila en edición.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "rowEditCancel",
+          "clase": "output",
+          "tipo": "ScDatatableRowEditEvent<T>",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Se ha pulsado cancelar en una fila en edición: quien usa la tabla repone los valores de su copia.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -2536,7 +2621,6 @@
         "customSort",
         "defaultSortOrder",
         "display",
-        "editMode",
         "editingRowKeysInput",
         "expandedRowKeysInput",
         "exportFilename",
@@ -4913,6 +4997,16 @@
           "porDefecto": null,
           "requerido": false,
           "descripcion": "Ids, separados por espacios, de lo que describe el campo desde fuera: la ayuda que va al lado y no debajo (la fila de un ajuste, de un interruptor). Se oye después de la ayuda propia, si la hay (DD-133).",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "ariaLabel",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Nombre accesible cuando el campo va sin `label` visible: el editor de una celda de tabla, por ejemplo.",
           "origen": "nuestro",
           "nativo": null
         },

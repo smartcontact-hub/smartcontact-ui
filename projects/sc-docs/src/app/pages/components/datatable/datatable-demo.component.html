@@ -211,6 +211,25 @@
     data-testid="sc-datatable-multisort" />
 </ng-template>
 
+<ng-template #nameEditor let-agent>
+  <sc-inputtext size="sm" fluid [value]="agent.name" (valueChange)="agent.name = $event" ariaLabel="Nombre" />
+</ng-template>
+
+<ng-template #extensionEditor let-agent>
+  <sc-inputtext size="sm" fluid [value]="agent.extension" (valueChange)="agent.extension = $event" ariaLabel="Extensión" />
+</ng-template>
+
+<ng-template #cellEdit>
+  <sc-datatable [value]="editAgents" [columns]="editColumns()" editMode="cell" dataKey="id"
+    data-testid="sc-datatable-cell-edit" />
+</ng-template>
+
+<ng-template #rowEdit>
+  <sc-datatable [value]="editAgents" [columns]="editColumns()" editMode="row" [rowEditLabels]="rowEditLabels"
+    dataKey="id" (rowEditInit)="keepCopy($event.row)" (rowEditCancel)="restoreCopy($event.row)"
+    data-testid="sc-datatable-row-edit" />
+</ng-template>
+
 <ng-template #filters>
   <sc-datatable [value]="agents()" [columns]="filterColumns" filterDisplay="row" dataKey="id"
     data-testid="sc-datatable-filters" />

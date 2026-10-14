@@ -49,6 +49,17 @@ p-sort-icon {
   width: 40px;
 }
 
+/* La columna de editar fila: lo que miden sus botones, en una línea. */
+.sc-datatable__row-editor {
+  white-space: nowrap;
+  text-align: end;
+}
+
+.sc-datatable__row-editor-actions {
+  display: inline-flex;
+  gap: var(--sc-spacing-0-25);
+}
+
 /* La celda «avatar» del esqueleto: el círculo y la barra en línea, como el avatar y el nombre. La barra ocupa lo que deja
  * el círculo; sin crecer, su ancho en % saldría de 0. El tamaño del círculo lo puede ajustar quien use la tabla con
  * `--sc-datatable-skeleton-avatar-size` si su avatar no es el del DS. */

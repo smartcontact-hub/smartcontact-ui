@@ -2729,7 +2729,10 @@
       "filter_any": "All",
       "filter_team": "Filter by team",
       "filter_country": "Filter by country",
-      "filter_status": "Filter by status"
+      "filter_status": "Filter by status",
+      "editable_label": "Editable columns",
+      "edit_name": "Agent name",
+      "edit_tickets": "Open tickets"
     },
     "arbol": {
       "context_label": "App context",
