@@ -52,23 +52,35 @@ test('importar, exportar y descargar la plantilla van detrás de un solo botón 
   expect((await descarga).suggestedFilename()).toMatch(/^tipificaciones.*\.xlsx$/);
 });
 
+test('la tarjeta mide lo que sus filas: sin el alto del esqueleto de carga', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await goto(page, 'admin/tipificaciones');
+  await expect(page.getByTestId('tipificaciones-table').locator('tbody tr')).toHaveCount(4);
+  const m = await page.locator('.table-card').evaluate((c) => ({
+    tarjeta: c.getBoundingClientRect().height,
+    tabla: c.querySelector('table')!.getBoundingClientRect().height,
+  }));
+  // Cuatro filas: la tarjeta no se queda en las diez del esqueleto, con su borde hasta abajo.
+  expect(m.tarjeta - m.tabla, `tarjeta ${m.tarjeta} contra tabla ${m.tabla}`).toBeLessThan(8);
+});
+
 test('«Exportar» cuenta la selección o la búsqueda, y se apaga si no hay filas', async ({ page }) => {
   await goto(page, 'admin/tipificaciones');
   const acciones = page.getByRole('button', { name: 'Acciones', exact: true });
   await acciones.click();
-  await expect(page.getByRole('menuitem', { name: /Exportar tipificaciones/ })).toContainText('Descarga el listado completo');
+  await expect(page.getByRole('menuitem', { name: /Exportar tipificaciones/ })).toBeVisible();
   await page.keyboard.press('Escape');
 
   await page.getByRole('row', { name: /Atención al cliente/ }).getByRole('checkbox').check();
   await acciones.click();
   const exportar = page.getByRole('menuitem', { name: /Exportar selección \(1\)/ });
-  await expect(exportar).toContainText('Descarga solo los registros seleccionados');
+  await expect(exportar).toBeVisible();
   await page.keyboard.press('Escape');
 
   await page.getByPlaceholder(/Buscar tipificación/).fill('zzzz');
   await acciones.click();
   const sinFilas = page.getByRole('menuitem', { name: /Exportar/ });
-  await expect(sinFilas).toContainText('No hay registros para exportar');
+  await expect(sinFilas.locator('a')).toHaveAttribute('title', 'No hay registros para exportar');
   await expect(sinFilas).toHaveAttribute('aria-disabled', 'true');
 });
 

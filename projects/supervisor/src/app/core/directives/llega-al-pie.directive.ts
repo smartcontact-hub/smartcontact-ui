@@ -48,10 +48,12 @@ export class LlegaAlPieDirective {
 
   /** El alto de sus filas ahora, con el borde de la tarjeta; si es el mayor visto, pasa a ser el suelo. Sin filas (el
    *  mensaje de «Sin resultados», una celda que ocupa todas las columnas) no cuenta: si no, al limpiar la búsqueda las
-   *  filas se quedaban en el alto de ese mensaje. */
+   *  filas se quedaban en el alto de ese mensaje. Tampoco cuenta el esqueleto de carga: pinta diez filas falsas, y con
+   *  cuatro de verdad la tarjeta se quedaba en el alto de las diez, con su borde hasta abajo (medido en Tipificaciones:
+   *  479 px de tarjeta para 213 de filas). */
   private medirFilas(): void {
     const tabla = this.el.querySelector('table');
-    if (!tabla || tabla.querySelector('tbody > tr > td[colspan]')) return;
+    if (!tabla || tabla.querySelector('tbody > tr > td[colspan], tbody > tr.sc-datatable__skeleton-row')) return;
     const estilo = getComputedStyle(this.el);
     const borde = parseFloat(estilo.borderTopWidth) + parseFloat(estilo.borderBottomWidth);
     const filas = Math.ceil(tabla.getBoundingClientRect().height + borde);
