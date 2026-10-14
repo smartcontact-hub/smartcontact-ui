@@ -112,6 +112,7 @@
           "aqui": "<code>sc-radiobutton</code>; <code>sc-option-cards</code> cuando cada opción se explica (sección 2)",
           "estado": "ds",
           "wrappers": [
+            "sc-option-cards",
             "sc-radiobutton"
           ],
           "apps": [],
