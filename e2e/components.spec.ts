@@ -853,6 +853,8 @@ test.describe('sc-confirmdialog', () => {
     await expect(dialog).toBeVisible();
     expect((await styleOf(dialog, ['border-radius']))['border-radius']).toBe('12px');
     await expect(dialog.getByText('¿Eliminar el agente?')).toBeVisible();
+    // Una confirmación que destruye abre con el foco en la opción segura: un Intro de más no borra.
+    await expect(dialog.getByRole('button', { name: 'Cancelar' })).toBeFocused();
     await dialog.getByRole('button', { name: 'Eliminar' }).click();
     await expect(page.getByTestId('confirm-result')).toHaveText('aceptado');
     await page.getByTestId('confirm-primary').locator('button').click();
