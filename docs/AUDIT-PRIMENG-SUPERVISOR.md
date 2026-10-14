@@ -5,7 +5,7 @@
 Contra **PrimeNG 22.1.0**, la versión INSTALADA — no la documentación de la web,
 que puede ir por delante.
 
-**50 componentes** del DS se usan en el Supervisor, y entre todos esconden
+**51 componentes** del DS se usan en el Supervisor, y entre todos esconden
 **480 props** que PrimeNG sí documenta.
 
 La regla es DD-113: *el nativo tal cual, adaptado con tokens*. Esconder una prop puede ser una
@@ -31,15 +31,15 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **55 props nativas no expuestas**: `appendTo`, `ariaLabel`, `ariaLabelledBy`, `autoZIndex`, `autofocus`, `baseZIndex`, `clearButtonStyleClass`, `dataType`, `defaultDate`, `disabledDates`, `disabledDays`, `firstDayOfWeek`, `fluid`, `focusTrap`, `hideOnDateTimeSelect`, `hourFormat`, `icon`, `iconAriaLabel`, `iconDisplay`, `inputSize`, `inputStyle`, `inputStyleClass`, `keepInvalid`, `max`, `maxDateCount`, `maxlength`, `min`, `minlength`, `motionOptions`, `multipleSeparator`, `numberOfMonths`, `panelStyle`, `panelStyleClass`, `pattern`, `rangeSeparator`, `readonlyInput`, `responsiveOptions`, `selectOtherMonths`, `shortYearCutoff`, `showOnFocus`, `showOtherMonths`, `showSeconds`, `showTime`, `showWeek`, `startWeekFromFirstDayOfYear`, `step`, `stepHour`, `stepMinute`, `stepSecond`, `tabindex`, `timeOnly`, `timeSeparator`, `todayButtonStyleClass`, `touchUI`, `variant`
 
-### `sc-multiselect` · 14 usos · primeng/multiselect
+### `sc-multiselect` · 15 usos · primeng/multiselect
 
 **44 props nativas no expuestas**: `ariaFilterLabel`, `autoOptionFocus`, `autocomplete`, `autofocus`, `autofocusFilter`, `chipIcon`, `dataKey`, `displaySelectedLabel`, `dropdownIcon`, `filterFields`, `filterLocale`, `filterMatchMode`, `filterPlaceHolder`, `filterValue`, `fluid`, `focusOnHover`, `group`, `highlightOnSelect`, `id`, `lazy`, `loading`, `loadingIcon`, `motionOptions`, `optionGroupChildren`, `optionGroupLabel`, `overlayOptions`, `overlayVisible`, `panelStyle`, `panelStyleClass`, `readonly`, `resetFilterOnHide`, `scrollHeight`, `selectAll`, `selectOnFocus`, `showHeader`, `tabindex`, `tooltip`, `tooltipPosition`, `tooltipPositionStyle`, `tooltipStyleClass`, `variant`, `virtualScroll`, `virtualScrollItemSize`, `virtualScrollOptions`
 
-### `sc-button` · 187 usos · primeng/button, primeng/tooltip
+### `sc-button` · 192 usos · primeng/button, primeng/tooltip
 
 **43 props nativas no expuestas**: `appendTo`, `autoHide`, `autofocus`, `badge`, `badgeSeverity`, `buttonProps`, `content`, `escape`, `fitContent`, `fluid`, `hideDelay`, `hideOnEscape`, `hostName`, `iconPos`, `life`, `link`, `loadingIcon`, `outlined`, `pButton`, `pButtonIconPT`, `pButtonLabelPT`, `pButtonLabelUnstyled`, `pButtonPT`, `pButtonUnstyled`, `pTooltipPT`, `pTooltipUnstyled`, `plain`, `positionLeft`, `positionStyle`, `positionTop`, `severity`, `showDelay`, `showOnEllipsis`, `style`, `styleClass`, `tabindex`, `text`, `tooltipDisabled`, `tooltipEvent`, `tooltipOptions`, `tooltipPosition`, `tooltipStyleClass`, `tooltipZIndex`
 
-### `sc-select` · 66 usos · primeng/select
+### `sc-select` · 69 usos · primeng/select
 
 **43 props nativas no expuestas**: `ariaFilterLabel`, `autoOptionFocus`, `autofocus`, `autofocusFilter`, `checkmark`, `dataKey`, `dropdownIcon`, `filterFields`, `filterLocale`, `filterMatchMode`, `filterValue`, `fluid`, `focusOnHover`, `group`, `id`, `inputSize`, `lazy`, `loadingIcon`, `max`, `maxlength`, `min`, `minlength`, `motionOptions`, `multiple`, `optionGroupChildren`, `optionGroupLabel`, `overlayOptions`, `panelStyle`, `panelStyleClass`, `pattern`, `resetFilterOnHide`, `scrollHeight`, `selectOnFocus`, `step`, `tabindex`, `tooltip`, `tooltipPosition`, `tooltipPositionStyle`, `tooltipStyleClass`, `variant`, `virtualScroll`, `virtualScrollItemSize`, `virtualScrollOptions`
 
@@ -79,7 +79,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **7 props nativas no expuestas**: `ariaLabelledBy`, `autofocus`, `binary`, `disabled`, `invalid`, `required`, `tabindex`
 
-### `sc-search` · 13 usos · primeng/iconfield, primeng/inputicon, primeng/inputtext
+### `sc-search` · 14 usos · primeng/iconfield, primeng/inputicon, primeng/inputtext
 
 **7 props nativas no expuestas**: `fluid`, `iconPosition`, `invalid`, `pInputTextPT`, `pInputTextUnstyled`, `pSize`, `variant`
 
@@ -91,11 +91,11 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **7 props nativas no expuestas**: `disabled`, `lazy`, `scrollStrategy`, `scrollable`, `selectOnFocus`, `showNavigators`, `tabindex`
 
-### `sc-toggleswitch` · 44 usos · primeng/toggleswitch
+### `sc-toggleswitch` · 45 usos · primeng/toggleswitch
 
 **7 props nativas no expuestas**: `autofocus`, `falseValue`, `invalid`, `name`, `required`, `tabindex`, `trueValue`
 
-### `sc-inputnumber` · 16 usos · primeng/inputtext
+### `sc-inputnumber` · 20 usos · primeng/inputtext
 
 **5 props nativas no expuestas**: `fluid`, `pInputTextPT`, `pInputTextUnstyled`, `pSize`, `variant`
 
@@ -103,7 +103,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **4 props nativas no expuestas**: `badgeDisabled`, `badgeSize`, `severity`, `value`
 
-### `sc-inputtext` · 47 usos · primeng/inputtext
+### `sc-inputtext` · 48 usos · primeng/inputtext
 
 **4 props nativas no expuestas**: `pInputTextPT`, `pInputTextUnstyled`, `pSize`, `variant`
 
@@ -207,6 +207,10 @@ Expone todo lo que PrimeNG documenta.
 
 Expone todo lo que PrimeNG documenta.
 
+### `sc-skeleton` · 1 usos · primeng/skeleton
+
+Expone todo lo que PrimeNG documenta.
+
 ### `sc-slot` · 13 usos · —
 
 Expone todo lo que PrimeNG documenta.
@@ -226,9 +230,9 @@ Expone todo lo que PrimeNG documenta.
 ## El catálogo de PrimeNG que NO envolvemos
 
 Aura tematiza **97 componentes**. Envolvemos **34**,
-**9** se usan en NATIVO sin wrapper (la vía de DD-113) y **1** los cubre
+**10** se usan en NATIVO sin wrapper (la vía de DD-113) y **1** los cubre
 una pieza nuestra hecha a mano.
-Quedan **53** que existen, están tematizados y funcionan — simplemente nadie los ha
+Quedan **52** que existen, están tematizados y funcionan — simplemente nadie los ha
 traído todavía.
 
 ⚠️ **«Sin envolver» NO quiere decir «descartado»**: quiere decir que la decisión no se ha tomado.
@@ -236,13 +240,13 @@ Si necesitas uno, envolverlo es más barato (y sale mejor) que construirlo a man
 su comportamiento, su accesibilidad y su movimiento ya resueltos. Cuando se decida que uno NO se
 quiere, el sitio de esa decisión es `docs/DECISIONS.md`, y entonces se puede anotar aquí.
 
-`accordion` · `autocomplete` · `blockui` · `carousel` · `cascadeselect` · `colorpicker` · `commandmenu` · `compare` · `confirmpopup` · `contextmenu` · `dataview` · `dock` · `editor` · `fieldset` · `floatlabel` · `galleria` · `gallery` · `iftalabel` · `image` · `imagecompare` · `inlinemessage` · `inputchips` · `inputcolor` · `inputnumber` · `inputotp` · `knob` · `label` · `megamenu` · `menubar` · `navigationmenu` · `orderlist` · `organizationchart` · `paginator` · `panelmenu` · `password` · `picklist` · `ripple` · `scrollpanel` · `slider` · `speeddial` · `splitbutton` · `splitter` · `stepper` · `steps` · `tabmenu` · `tabview` · `terminal` · `tieredmenu` · `timeline` · `togglebutton` · `tree` · `treeselect` · `virtualscroller`
+`accordion` · `autocomplete` · `blockui` · `carousel` · `cascadeselect` · `colorpicker` · `commandmenu` · `compare` · `confirmpopup` · `dataview` · `dock` · `editor` · `fieldset` · `floatlabel` · `galleria` · `gallery` · `iftalabel` · `image` · `imagecompare` · `inlinemessage` · `inputchips` · `inputcolor` · `inputnumber` · `inputotp` · `knob` · `label` · `megamenu` · `menubar` · `navigationmenu` · `orderlist` · `organizationchart` · `paginator` · `panelmenu` · `password` · `picklist` · `ripple` · `scrollpanel` · `slider` · `speeddial` · `splitbutton` · `splitter` · `stepper` · `steps` · `tabmenu` · `tabview` · `terminal` · `tieredmenu` · `timeline` · `togglebutton` · `tree` · `treeselect` · `virtualscroller`
 
 ### Usados en NATIVO, sin wrapper
 
 Entraron por la vía de DD-113: el nativo tal cual, adaptado solo con tokens. No hay nada que envolver.
 
-`inplace` · `listbox` · `menu` · `metergroup` · `rating` · `scrollarea` · `sidebar` · `toolbar` · `treetable`
+`contextmenu` · `inplace` · `listbox` · `menu` · `metergroup` · `rating` · `scrollarea` · `sidebar` · `toolbar` · `treetable`
 
 ### Cubiertos por una pieza nuestra
 
