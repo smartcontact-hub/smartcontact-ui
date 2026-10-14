@@ -940,6 +940,8 @@
       "section_has_errors": "Esta sección tiene campos obligatorios sin rellenar"
     },
     "duplicate": "Duplicar",
+    "copy_suffix": "copia",
+    "duplicated_toast": "Copia creada: «{{name}}»",
     "create": "Crear",
     "units": {
       "seconds": "seg"
@@ -1133,9 +1135,10 @@
       "assigned_agents": "Agentes asignados",
       "sheet": "Labels"
     },
-    "import_export_button": "Importar o descargar",
     "import_menu": "Importar…",
-    "download_menu": "Descargar"
+    "download_menu": "Exportar",
+    "actions_button": "Acciones",
+    "template_menu": "Descargar plantilla"
   },
   "templates": {
     "breadcrumb": "Plantillas",
@@ -1158,6 +1161,7 @@
     },
     "table": {
       "title": "Título",
+      "type": "Canal",
       "body": "Contenido",
       "updated": "Actualizada"
     },

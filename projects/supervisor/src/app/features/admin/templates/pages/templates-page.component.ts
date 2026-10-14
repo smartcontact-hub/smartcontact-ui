@@ -19,10 +19,13 @@ import { ScButtonComponent as ButtonComponent, ScTabsComponent as TabsComponent 
 import { ClickOutsideDirective } from '@core/directives';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { injectLangChange } from '@core/utils/lang-change';
+import { XlsxExportService } from '@core/services/xlsx-export.service';
+import { copyName } from '@shared/utils/copy-name';
 
 import { ListPageComponent } from '@shared/components';
 import {
   useBulkEntityI18n,
+  type ColumnDef,
   type ScColumnCellContext,
   type ScColumnDef,
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
@@ -57,6 +60,7 @@ export class TemplatesPageComponent {
   private readonly templatesStore = inject(TemplatesStore);
   private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
+  private readonly xlsx = inject(XlsxExportService);
   private readonly lang = injectLangChange();
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
@@ -120,6 +124,17 @@ export class TemplatesPageComponent {
   private readonly titleTpl = viewChild<TemplateRef<ScColumnCellContext<Template>>>('titleTpl');
   private readonly bodyTpl = viewChild<TemplateRef<ScColumnCellContext<Template>>>('bodyTpl');
   private readonly updatedTpl = viewChild<TemplateRef<ScColumnCellContext<Template>>>('updatedTpl');
+
+  protected readonly columnPrefKey = 'sc-templates-columns-v1';
+
+  protected readonly columnDefs = computed<readonly ColumnDef[]>(() => {
+    this.lang();
+    return [
+      { key: 'title', label: this.translate.instant('templates.table.title'), locked: true },
+      { key: 'body', label: this.translate.instant('templates.table.body') },
+      { key: 'updatedAt', label: this.translate.instant('templates.table.updated') },
+    ];
+  });
 
   protected readonly columns = computed<readonly ScColumnDef<Template>[]>(() => {
     this.lang(); // cabeceras al día al cambiar de idioma (ver `injectLangChange`)
@@ -201,6 +216,24 @@ export class TemplatesPageComponent {
     this.toastSuccess('templates.toasts.updated', { name: submission.title });
   }
 
+  /** La copia, en el mismo canal y con un título que no se repite (el título es único). */
+  protected duplicar(tpl: Template): void {
+    const title = copyName(tpl.title, this.existingTitles(), this.translate.instant('common.copy_suffix'));
+    const copia = this.templatesStore.addTemplate({ title, type: tpl.type, body: tpl.body });
+    this.toastSuccess('common.duplicated_toast', { name: copia.title });
+  }
+
+  /** Descarga lo que se ve: título, canal y contenido en texto plano (sin las etiquetas del HTML). */
+  protected onExport(visibleRows: readonly Template[]): void {
+    const t = (k: string) => this.translate.instant(k);
+    this.xlsx.export({
+      headers: [t('templates.table.title'), t('templates.table.type'), t('templates.table.body')],
+      rows: visibleRows.map((r) => [r.title, r.type, r.body.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()]),
+      sheetName: t('templates.breadcrumb'),
+      filePrefix: 'plantillas',
+    });
+  }
+
   protected clearSelection(): void {
     this.selectedIds.set(new Set());
   }
@@ -251,6 +284,11 @@ export class TemplatesPageComponent {
         label: this.translate.instant('common.edit'),
         icon: 'sc-icon-font sc-icon-font--edit',
         command: () => this.onRowEdit(tpl),
+      },
+      {
+        label: this.translate.instant('common.duplicate'),
+        icon: 'sc-icon-font sc-icon-font--content_copy',
+        command: () => this.duplicar(tpl),
       },
       { separator: true },
       {

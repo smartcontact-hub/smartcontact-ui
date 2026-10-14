@@ -82,5 +82,7 @@ export class AgendasPageComponent {
     filePrefix: 'agendas',
     sheetNameKey: 'repositories.agendas.title',
     editRoute: '/admin/agendas',
+    duplicable: true,
+    columnChoices: true,
   };
 }

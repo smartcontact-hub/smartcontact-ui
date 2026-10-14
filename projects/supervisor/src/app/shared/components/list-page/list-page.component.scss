@@ -21,8 +21,10 @@
     margin-bottom: var(--sc-spacing-0-5);
   }
 
+  /* Columnas, a la derecha de la barra (revisión de producto): está a mano y se toca poco. Su margen automático
+   * empuja el botón al final; el globo (nodo vacío) va detrás y no suma hueco. */
   &__columns {
-    margin-inline-end: var(--sc-spacing-0-5);
+    margin-inline-start: auto;
   }
 }
 

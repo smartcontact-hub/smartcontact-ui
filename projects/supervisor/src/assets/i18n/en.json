@@ -945,6 +945,8 @@
     },
     "delete": "Delete",
     "duplicate": "Duplicate",
+    "copy_suffix": "copy",
+    "duplicated_toast": "Copy created: “{{name}}”",
     "edit": "Edit",
     "edit_named": "Edit {{name}}",
     "loading": "Loading…",
@@ -1133,9 +1135,10 @@
       "assigned_agents": "Assigned agents",
       "sheet": "Labels"
     },
-    "import_export_button": "Import or download",
     "import_menu": "Import…",
-    "download_menu": "Download"
+    "download_menu": "Export",
+    "actions_button": "Actions",
+    "template_menu": "Download template"
   },
   "templates": {
     "breadcrumb": "Templates",
@@ -1158,6 +1161,7 @@
     },
     "table": {
       "title": "Title",
+      "type": "Channel",
       "body": "Content",
       "updated": "Updated"
     },

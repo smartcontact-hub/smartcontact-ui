@@ -945,6 +945,8 @@
     },
     "delete": "Eliminar",
     "duplicate": "Duplicar",
+    "copy_suffix": "cópia",
+    "duplicated_toast": "Cópia criada: «{{name}}»",
     "edit": "Editar",
     "edit_named": "Editar {{name}}",
     "loading": "Carregando…",
@@ -1133,9 +1135,10 @@
       "assigned_agents": "Agentes atribuídos",
       "sheet": "Etiquetas"
     },
-    "import_export_button": "Importar ou transferir",
     "import_menu": "Importar…",
-    "download_menu": "Baixar"
+    "download_menu": "Exportar",
+    "actions_button": "Ações",
+    "template_menu": "Baixar modelo"
   },
   "templates": {
     "breadcrumb": "Modelos",
@@ -1158,6 +1161,7 @@
     },
     "table": {
       "title": "Título",
+      "type": "Canal",
       "body": "Conteúdo",
       "updated": "Atualizado"
     },

@@ -207,6 +207,8 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
    * `(exportRequest)`.
    */
   readonly importable = input(false, { transform: booleanAttribute });
+  /** Suma «Descargar plantilla» al menú «Datos»: el CSV vacío con las columnas que la pantalla sabe importar. */
+  readonly templateDownloadable = input(false, { transform: booleanAttribute });
 
   /** Menú de una fila: el mismo con «⋮» y con clic derecho. Sin él, no hay columna de acciones. Si una fila no tiene
    *  acciones (el menú sale vacío), el clic derecho no abre nada: un menú vacío es peor que ninguno. */
@@ -248,6 +250,7 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
   readonly rowOpen = output<T>();
   readonly exportRequest = output<readonly T[]>();
   readonly importRequest = output<void>();
+  readonly templateRequest = output<void>();
 
   protected readonly filtered = computed(() => {
     const q = this.query().toLowerCase().trim();
@@ -788,16 +791,33 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
   protected readonly fileMenuItems = computed<MenuItem[]>(() => {
     this.lang();
     return [
-      {
-        label: this.translate.instant('labels.import_menu'),
-        icon: 'sc-icon-font sc-icon-font--upload',
-        command: () => this.importRequest.emit(),
-      },
-      {
-        label: this.translate.instant('labels.download_menu'),
-        icon: 'sc-icon-font sc-icon-font--download',
-        command: () => this.onExport(),
-      },
+      ...(this.importable()
+        ? [
+            {
+              label: this.translate.instant('labels.import_menu'),
+              icon: 'sc-icon-font sc-icon-font--upload',
+              command: () => this.importRequest.emit(),
+            },
+          ]
+        : []),
+      ...(this.exportable()
+        ? [
+            {
+              label: this.translate.instant('labels.download_menu'),
+              icon: 'sc-icon-font sc-icon-font--download',
+              command: () => this.onExport(),
+            },
+          ]
+        : []),
+      ...(this.templateDownloadable()
+        ? [
+            {
+              label: this.translate.instant('labels.template_menu'),
+              icon: 'sc-icon-font sc-icon-font--download',
+              command: () => this.templateRequest.emit(),
+            },
+          ]
+        : []),
     ];
   });
 

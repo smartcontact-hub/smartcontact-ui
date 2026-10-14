@@ -24,6 +24,7 @@ import { LanguageService } from '@core/services/language.service';
 import { XlsxExportService } from '@core/services/xlsx-export.service';
 import { ListPageComponent } from '@shared/components';
 import {
+  type ColumnDef,
   type ScColumnCellContext,
   type ScColumnDef,
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
@@ -32,6 +33,7 @@ import {
 import { RepoFormPanelComponent, RepoFormSubmission } from './repo-form-panel.component';
 import { RepoEntity, RepoPageConfig, RepoStore } from './repo-types';
 import { injectLangChange } from '@core/utils/lang-change';
+import { copyName } from '@shared/utils/copy-name';
 import { ResultadoAccionService } from '@core/services';
 
 /**
@@ -165,6 +167,15 @@ export class RepoListPageComponent<T extends RepoEntity> {
     }));
   });
 
+  /** Las columnas que se pueden elegir y ordenar (solo si la pantalla lo pide): la primera, fija. */
+  protected readonly columnDefs = computed<readonly ColumnDef[] | undefined>(() => {
+    this.lang();
+    if (!this.config().columnChoices) return undefined;
+    return this.config().columns.map((c, i) => ({ key: c.key, label: this.translate.instant(c.labelKey), locked: i === 0 }));
+  });
+
+  protected readonly columnPrefKey = computed(() => `sc-${this.config().filePrefix}-columns-v1`);
+
   /** ¿Esta columna es la destacada (la que ancla el panel de edición)? */
   protected isEmphasis(key: string): boolean {
     return !!this.config().columns.find((c) => c.key === key)?.emphasis;
@@ -295,6 +306,15 @@ export class RepoListPageComponent<T extends RepoEntity> {
         icon: 'sc-icon-font sc-icon-font--edit',
         command: () => this.onRowEdit(item),
       },
+      ...(this.config().duplicable
+        ? [
+            {
+              label: this.translate.instant('common.duplicate'),
+              icon: 'sc-icon-font sc-icon-font--content_copy',
+              command: () => this.onRowDuplicate(item),
+            },
+          ]
+        : []),
       { separator: true },
       {
         // Puntos suspensivos porque lleva a la puerta tecleada
@@ -316,6 +336,14 @@ export class RepoListPageComponent<T extends RepoEntity> {
     }
     this.editingId.set(item.id);
     this.creating.set(false);
+  }
+
+  /** La copia: los mismos datos y un nombre que no se repite. Se queda en la lista, sin abrirla. */
+  protected onRowDuplicate(item: T): void {
+    const { id: _id, ...resto } = item;
+    const name = copyName(item.name, this.store().items().map((i) => i.name), this.translate.instant('common.copy_suffix'));
+    const copia = this.store().addItem({ ...resto, name } as Omit<T, 'id'>);
+    this.toastSuccess('common.duplicated_toast', { name: copia.name });
   }
 
   protected onRowDelete(item: T): void {
