@@ -12,23 +12,22 @@
     }
   </div>
   <span class="visually-hidden" aria-live="polite">{{ announcement() }}</span>
-  <div class="table-card table-card--al-pie" scLlegaAlPie>
-    <sc-datatable variant="list" size="sm" scrollable scrollHeight="flex" virtualScroll fill
+  <!-- Mide lo que todas sus filas, con el pie de la pantalla de tope: al filtrar o buscar no encoge (no baila), y con
+       pocos grupos no se estira hasta el fondo con un hueco en blanco (`[filasReservadas]` de `scLlegaAlPie`). -->
+  <div class="table-card table-card--al-pie" scLlegaAlPie [filasReservadas]="availableGroups().length">
+    <sc-datatable variant="list" size="sm" scrollable scrollHeight="flex" virtualScroll
       [value]="visibleRows()" [columns]="columns()" [tableMinWidth]="tableMinWidth" dataKey="group.id">
       <ng-template #header>
         <tr>
           @for (col of columns(); track col.field) {
             <th scope="col" [style.text-align]="col.align" [style.width]="col.width" [attr.aria-label]="col.header">
               @if (hasHeaderCheckbox(col.field)) {
-                <!-- La casilla de «todos» después del rótulo, como en la tabla del grupo (DD-185). Con «Activación por
-                     grupo», la de Habilitado se apaga y dice por qué. -->
-                <span class="assign__head" [pTooltip]="col.field === 'active' && selfActivate() ? ('agents.form.assigned.self_activate_hint' | translate) : undefined" tooltipPosition="top">
-                  <sc-checkbox [state]="headerState(col.field)" [disabled]="headerDisabled(col.field)" labelPosition="start"
-                    [ariaLabel]="'groups.form.assigned.column_all' | translate: { column: col.header }"
-                    (cycle)="toggleHeader(col.field)">
-                    @if (col.field !== 'assigned') { <span class="sc-text-body-semibold">{{ col.header }}</span> }
-                  </sc-checkbox>
-                </span>
+                <!-- La casilla de «todos» después del rótulo, como en la tabla del grupo (DD-185). -->
+                <sc-checkbox [state]="headerState(col.field)" [disabled]="headerDisabled(col.field)" labelPosition="start"
+                  [ariaLabel]="'groups.form.assigned.column_all' | translate: { column: col.header }"
+                  (cycle)="toggleHeader(col.field)">
+                  @if (col.field !== 'assigned') { <span class="sc-text-body-semibold">{{ col.header }}</span> }
+                </sc-checkbox>
               } @else { {{ col.header }} }
             </th>
           }
@@ -90,62 +89,27 @@
   }
 </ng-template>
 
-<!-- El nivel del agente (1 se atiende primero) en las familias donde ESTE grupo reparte por Niveles — solo las que
-     tiene asignadas; casi siempre una, a veces dos (quick-win de la auditoría UX, 2026-10). -->
-<ng-template #levelTpl let-row>
-  @if (levelFamilies(row).length > 0) {
-    <span class="assign__levels">
-      @for (family of levelFamilies(row); track family) {
-        <span [id]="'agent-level-' + family + '-label-' + row.group.id" class="visually-hidden">{{ 'groups.form.assigned.level_aria' | translate: { name: row.group.name, channel: (familyLabelKeys[family] | translate) } }}</span>
-        <sc-select
-          size="sm"
-          [inputId]="'agent-level-' + family + '-' + row.group.id"
-          [ariaLabelledBy]="'agent-level-' + family + '-label-' + row.group.id"
-          [options]="levelOptions"
-          [disabled]="pending()"
-          [value]="row.link?.levels?.[family] ?? 1"
-          (valueChange)="setLevel(row.group.id, family, $event)"
-        />
-      }
-    </span>
-  } @else {
-    <span class="assign__none sc-text-body-regular"><sc-celda-vacia [texto]="'common.not_applicable' | translate" /></span>
-  }
-</ng-template>
-
-<!-- Salientes: el grupo por el que salen sus llamadas. Solo uno, de los asignados con Teléfono marcado. Una etiqueta en
-     la fila elegida, no un radio button por fila (auditoría UX, 2026-10): el valor ya es un hecho (sc-tag), y marcarlo
-     en otra fila es una acción puntual, no un estado que toda la columna comparte visualmente. -->
+<!-- Salientes: el grupo por el que salen sus llamadas. Solo uno, de los asignados con Teléfono marcado: un radio por
+     fila, que es lo que es, una elección entre las filas (vuelve tras probar la etiqueta y el botón, 2026-10-14). -->
 <ng-template #outboundTpl let-row>
-  @if (row.group.id === outboundGroupId()) {
-    <sc-tag severity="info" icon="call_made" [value]="'agents.form.assigned.outbound_badge' | translate" />
-  } @else if (canBeOutbound(row)) {
-    <sc-button
-      variant="secondary"
-      appearance="text"
+  @if (canBeOutbound(row)) {
+    <sc-radiobutton
+      name="agent-outbound-group"
       size="sm"
-      icon="call_made"
-      [disabled]="pending()"
-      [ariaLabel]="'agents.form.assigned.outbound_set' | translate: { name: row.group.name }"
-      (clicked)="setOutbound(row.group.id)"
+      [value]="row.group.id"
+      [modelValue]="outboundGroupId()"
+      [ariaLabel]="'agents.form.assigned.outbound_aria' | translate: { name: row.group.name }"
+      (modelValueChange)="setOutbound(row.group.id)"
     />
   } @else {
     <span class="assign__none sc-text-body-regular"><sc-celda-vacia [texto]="'agents.form.assigned.outbound_none' | translate" /></span>
   }
 </ng-template>
 
-<!-- Habilitado. Con «Activación por grupo» lo decide el agente: se ve, apagado, y el tooltip dice por qué. -->
+<!-- Habilitado. Lo cambia el supervisor también con «Activación por grupo» (que deja al agente hacerlo, no se lo quita
+     a la ficha). -->
 <ng-template #activeTpl let-row>
-  @if (selfActivate() && row.link) {
-    <!-- Como en la tabla del grupo: el interruptor apagado y el candado que lleva a Configuración. -->
-    <span class="assign__permission">
-      <sc-toggleswitch size="sm" [checked]="row.link.active" [disabled]="true"
-        [ariaLabel]="'agents.form.assigned.active_self_aria' | translate: { name: row.group.name }" />
-      <sc-button variant="secondary" appearance="text" size="sm" icon="lock"
-        [ariaLabel]="'agents.form.assigned.self_activate_hint' | translate"
-        (clicked)="irA.emit('configuracion')" />
-    </span>
-  } @else if (!row.link) {
+  @if (!row.link) {
     <!-- Sin asignar: el interruptor apagado dice por qué, no solo que no se puede tocar. -->
     <sc-toggleswitch
       size="sm"

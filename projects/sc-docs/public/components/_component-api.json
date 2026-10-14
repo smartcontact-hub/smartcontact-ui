@@ -4119,6 +4119,16 @@
           "nativo": null
         },
         {
+          "nombre": "size",
+          "clase": "input",
+          "tipo": "'sm' | 'md'",
+          "porDefecto": "'md'",
+          "requerido": false,
+          "descripcion": "La talla: `md` (cuerpo, 14) o `sm` (caption, 12, con la baldosa pequeña) para una columna estrecha.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
           "nombre": "open",
           "clase": "output",
           "tipo": "MouseEvent",
@@ -6586,7 +6596,7 @@
     {
       "selector": "sc-option-cards",
       "name": "option-card",
-      "primengBase": "—",
+      "primengBase": "primeng/radiobutton",
       "estado": "experimental",
       "faltas": [
         "kit",
@@ -6612,8 +6622,13 @@
           "porDefecto": "null",
           "requerido": false,
           "descripcion": "Cuál está elegida, o `null` si ninguna.",
-          "origen": "nuestro",
-          "nativo": null
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Value of the radiobutton.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
         },
         {
           "nombre": "name",
@@ -6622,8 +6637,13 @@
           "porDefecto": null,
           "requerido": false,
           "descripcion": "Nombre del grupo de radios. Si no se da, uno estable por instancia.",
-          "origen": "nuestro",
-          "nativo": null
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "When present, it specifies that the name of the input.",
+            "porDefecto": "undefined",
+            "obsoleta": null,
+            "heredadaDe": "BaseEditableHolder"
+          }
         },
         {
           "nombre": "ariaLabelledBy",
@@ -6632,6 +6652,21 @@
           "porDefecto": null,
           "requerido": false,
           "descripcion": "`id` del rótulo que nombra el grupo entero (el `<label>` de la sección).",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Establishes relationships between the component and label(s) where its value should be one or more element IDs.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "orientation",
+          "clase": "input",
+          "tipo": "'horizontal' | 'vertical'",
+          "porDefecto": "'horizontal'",
+          "requerido": false,
+          "descripcion": "En fila (por defecto, a lo ancho) o en columna, como el ejemplo de primeng.dev: una debajo de otra.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -6642,8 +6677,13 @@
           "porDefecto": "false",
           "requerido": false,
           "descripcion": "Deshabilita la elección entera.",
-          "origen": "nuestro",
-          "nativo": null
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "When present, it specifies that the component should have disabled state style.",
+            "porDefecto": "false",
+            "obsoleta": null,
+            "heredadaDe": "BaseEditableHolder"
+          }
         },
         {
           "nombre": "valueChange",
@@ -6656,7 +6696,17 @@
           "nativo": null
         }
       ],
-      "ocultas": []
+      "ocultas": [
+        "ariaLabel",
+        "autofocus",
+        "binary",
+        "inputId",
+        "invalid",
+        "required",
+        "size",
+        "tabindex",
+        "variant"
+      ]
     },
     {
       "selector": "sc-panel",
@@ -8721,10 +8771,10 @@
         {
           "nombre": "titleKey",
           "clase": "input",
-          "tipo": "string",
-          "porDefecto": null,
-          "requerido": true,
-          "descripcion": "Clave de traducción del título. Clave, no texto: el componente traduce por dentro y se re- traduce solo al cambiar de idioma.",
+          "tipo": "string | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "Clave de traducción del título. Clave, no texto: el componente traduce por dentro y se re- traduce solo al cambiar de idioma. Sin título, la subsección es solo la tarjeta: para la que es la única de su sección y repetiría su nombre (la tabla de «Grupos asignados» de la ficha de agente, que ya lo dice la cabecera de la sección).",
           "origen": "nuestro",
           "nativo": null
         },

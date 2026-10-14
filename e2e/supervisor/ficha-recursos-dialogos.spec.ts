@@ -131,9 +131,10 @@ test('grupo 11 · Recursos no enseña Etiquetas, y el grupo conserva las suyas a
   await expect(recursos.locator('sc-multiselect:has(#group-agendas)')).toBeVisible();
   await expect(recursos.locator('#group-labels')).toHaveCount(0);
   await expect(recursos.getByText('Etiquetas', { exact: true })).toHaveCount(0);
-  // El resumen cuenta lo que se ve: tres agendas y seis plantillas, sin las dos etiquetas. La tipificación ya no es de
-  // Recursos: la elige la Postconversación de General (DD-187).
-  await expect(page.locator('.ficha-summary')).toContainText(/Recursos\s*9(?!\d)/);
+  // El resumen cuenta lo que se ve, por tipo (DD-204): tres agendas y seis plantillas de chat, sin las dos etiquetas. La
+  // tipificación ya no es de Recursos: la elige la Postconversación de General (DD-187).
+  await expect(page.locator('.ficha-summary')).toContainText(/Agendas\s*3(?!\d)/);
+  await expect(page.locator('.ficha-summary')).toContainText(/Plantillas de chat\s*6(?!\d)/);
 
   // Guardar no las tira: el grupo 11 sigue con las suyas, por si Etiquetas vuelve. El cambio: quitarle una agenda.
   await recursos.locator('sc-multiselect:has(#group-agendas) .p-multiselect').click();

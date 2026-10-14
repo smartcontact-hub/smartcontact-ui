@@ -8,7 +8,8 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  * Hasta el 2026-10-06 solo «Distribución y colas» seguía Section → Subsection → Slot (DD-157): General, Recursos
  * y Agentes eran una tarjeta blanca con bloques propios de la hoja de la ficha. Lo que fija, en las cuatro:
  *   1. la sección va sobre el fondo gris (`subtle`);
- *   2. cada bloque es un `sc-subsection`, con su título;
+ *   2. cada bloque es un `sc-subsection`, con su título (salvo el único de Agentes asignados, que repetiría el de la
+ *      sección: DD-204);
  *   3. ya no queda ningún bloque dibujado a mano (`.sub-section`).
  * General gana «Postconversación» con DD-187: comentarios y tipificación, que hasta entonces estaba en Recursos.
  */
@@ -23,7 +24,8 @@ const SECCIONES = [
   { clave: 'general', titulos: ['Identidad', 'Canales', 'Postconversación'] },
   { clave: 'distribucion', titulos: ['Reglas comunes', 'Teléfono', 'Chat', 'Email'] },
   { clave: 'recursos', titulos: ['Repositorios', 'Ficha de cliente'] },
-  { clave: 'agentes', titulos: ['Agentes asignados'] },
+  // Su única subsección va sin título: la sección ya se llama «Agentes asignados» (DD-204).
+  { clave: 'agentes', titulos: [] },
 ] as const;
 
 for (const { clave, titulos } of SECCIONES) {

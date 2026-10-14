@@ -7,6 +7,8 @@ import {
     output,
     ViewEncapsulation
 } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { RadioButtonModule } from 'primeng/radiobutton';
 
 /** Una opción de un `sc-option-cards`. */
 export interface ScOptionCardItem {
@@ -34,12 +36,17 @@ let seq = 0;
  * que importan; con más, o con nombres que se explican solos, el desplegable gana y este
  * componente no debe usarse.
  *
- * Por dentro es un grupo de RADIOS nativos: la navegación con flechas, el nombre accesible
- * y el estado los pone el navegador, no una reimplementación. La tarjeta es el `<label>`.
+ * Es el ejemplo «Card» de primeng.dev/radiobutton, tal cual (revisión del 2026-10-14): la tarjeta es
+ * el `<label>`, con el rótulo y su línea a la izquierda y el `p-radiobutton` nativo al final, arriba;
+ * el borde se pone del color primario en la elegida y el fondo se aclara al pasar. Antes pintaba su
+ * propia marca a la izquierda y un fondo tintado en la elegida: dos cosas que el ejemplo no tiene.
+ * Por dentro siguen siendo RADIOS nativos (los de `p-radiobutton`): la navegación con flechas, el
+ * nombre accesible y el estado los pone el navegador, y el anillo de foco es el del radio.
  */
 @Component({
     selector: 'sc-option-cards',
     standalone: true,
+    imports: [FormsModule, RadioButtonModule],
     templateUrl: './sc-option-card.component.html',
     styleUrl: './sc-option-card.component.scss',
     encapsulation: ViewEncapsulation.None,
@@ -57,6 +64,9 @@ export class ScOptionCardsComponent {
 
     /** `id` del rótulo que nombra el grupo entero (el `<label>` de la sección). */
     readonly ariaLabelledBy = input<string>();
+
+    /** En fila (por defecto, a lo ancho) o en columna, como el ejemplo de primeng.dev: una debajo de otra. */
+    readonly orientation = input<'horizontal' | 'vertical'>('horizontal');
 
     /** Deshabilita la elección entera. */
     readonly disabled = input(false, { transform: booleanAttribute });

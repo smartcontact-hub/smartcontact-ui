@@ -3,16 +3,20 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  contentChild,
   inject,
   input,
   model,
   output,
+  TemplateRef,
+  viewChild,
   ViewEncapsulation,
 } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 // `FormsModule` sigue haciendo falta: la plantilla usa `[ngModel]` como puente
 // INTERNO hacia `<p-multiselect>` (no es el CVA exterior, que se retiró).
 import { FormsModule } from '@angular/forms';
-import { MultiSelectModule } from 'primeng/multiselect';
+import { MultiSelect, MultiSelectModule } from 'primeng/multiselect';
 import type { MultiSelectPassThroughOptions } from 'primeng/types/multiselect';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { SC_SELECT_TRANSLATIONS } from '../select/i18n/sc-select.translations';
@@ -55,7 +59,7 @@ export type ScMultiSelectDisplay = 'chip' | 'comma';
 @Component({
   selector: 'sc-multiselect',
   standalone: true,
-  imports: [MultiSelectModule, FormsModule, ScFieldLabelComponent, ScFieldMsgComponent, ScIconComponent, TranslateModule],
+  imports: [MultiSelectModule, FormsModule, NgTemplateOutlet, ScFieldLabelComponent, ScFieldMsgComponent, ScIconComponent, TranslateModule],
   templateUrl: './sc-multiselect.component.html',
   styleUrl: './sc-multiselect.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -72,6 +76,21 @@ export type ScMultiSelectDisplay = 'chip' | 'comma';
   },
 })
 export class ScMultiSelectComponent {
+  /**
+   * La fila de cada opción, como `#item` de `p-multiselect` (primeng.dev/multiselect «Template»): el consumer escribe
+   * `<ng-template #item let-option>` dentro de `<sc-multiselect>` y aquí se re-emite hacia el control, porque su
+   * consulta no ve plantillas a través de doble proyección (mismo puente, y por qué el nombre es estático, que en
+   * `sc-select`).
+   */
+  protected readonly itemTpl = contentChild<TemplateRef<unknown>>('item');
+
+  private readonly control = viewChild(MultiSelect);
+
+  /** Cierra la lista: para una acción de la fila que abre otra ventana (editar el recurso de esa opción). */
+  hide(): void {
+    this.control()?.hide();
+  }
+
   constructor() {
     // El mismo diccionario que `sc-select`: lista vacía, filtro sin resultados, buscador y «N seleccionados».
     const translate = inject(TranslateService);

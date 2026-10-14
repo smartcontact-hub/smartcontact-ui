@@ -10,11 +10,15 @@
     }
   </div>
   <span class="visually-hidden" aria-live="polite">{{ announcement() }}</span>
-  <div class="table-card table-card--al-pie" scLlegaAlPie>
+  <!-- En la ficha mide lo que todas sus filas, con el pie de la pantalla de tope: al filtrar o buscar no encoge (no baila),
+       y con pocos agentes no se estira hasta el fondo con un hueco en blanco (`[filasReservadas]` de `scLlegaAlPie`). En el
+       panel rápido (`compact`) llena el hueco entre el título y el pie del panel (`fill`), como siempre. Con más de 100 la
+       lista virtual pide el alto entero, y lo tiene (`sc-datatable--fill`). -->
+  <div class="table-card table-card--al-pie" scLlegaAlPie [filasReservadas]="compact() ? null : availableAgents().length">
     <!-- Compacta (`sm`, la densidad nativa de PrimeNG) y sin páginas (DD-176): todas las filas del filtro, y lo que no
          cabe lo desplaza la tabla por dentro con la cabecera fija, hasta el pie de la pantalla (DD-160). Con más de 100,
          pinta solo las que se ven (`virtualScroll`, DD-95). -->
-    <sc-datatable variant="list" size="sm" scrollable scrollHeight="flex" virtualScroll fill
+    <sc-datatable variant="list" size="sm" scrollable scrollHeight="flex" virtualScroll [fill]="compact()"
       [value]="visibleRows()" [columns]="columns()" [tableMinWidth]="tableMinWidth()" dataKey="agent.id">
       <ng-template #header>
         <tr>
@@ -156,21 +160,9 @@
   />
 </ng-template>
 
+<!-- Habilitado lo cambia el supervisor también con «Activación por grupo», que deja al agente hacerlo y no se lo quita a
+     la ficha (revisión del 2026-10-14, que corrige el candado de DD-187 §2). -->
 <ng-template #activeTpl let-row>
-  @if (row.agent.selfActivate && row.link) {
-    <!-- «Activación por grupo»: se habilita el agente, no la ficha. Se ve, apagado, con el candado que lleva a su
-         Configuración (revisión de agentes del 2026-10-09; en Voice el interruptor desaparece). -->
-    <span class="assign__permission" [pTooltip]="'groups.form.assigned.self_activate_hint' | translate" tooltipPosition="top">
-      <sc-toggleswitch [checked]="row.link.active" [disabled]="true" [size]="compact() ? 'sm' : 'md'"
-        [ariaLabel]="'agents.form.assigned.active_self_aria' | translate: { name: row.agent.name }" />
-      <sc-link-button
-        icon="lock"
-        [routerLink]="['/admin/agentes/editar', row.agent.id]"
-        [queryParams]="{ seccion: 'configuracion' }"
-        [ariaLabel]="'groups.form.assigned.self_activate_link' | translate: { name: row.agent.name }"
-      />
-    </span>
-  } @else {
   <sc-toggleswitch
     [checked]="row.link?.active ?? false"
     [disabled]="!row.link || pending()"
@@ -178,5 +170,4 @@
     [ariaLabel]="'groups.form.assigned.active_aria' | translate: { name: row.agent.name }"
     (checkedChange)="toggleActive(row.agent.id, $event)"
   />
-  }
 </ng-template>

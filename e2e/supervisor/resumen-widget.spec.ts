@@ -120,7 +120,7 @@ test.describe('con los datos de siempre', () => {
   });
 
   test('sobre el tinte, el ámbar del aviso lo lleva el icono', async ({ page }) => {
-    // En el alta, «Salida» dice que al teléfono le falta su número, en una tarjeta que no es la destacada. Ahí el ámbar
+    // En el alta, Distribución dice que al teléfono le falta su número, en una tarjeta que no es la destacada. Ahí el ámbar
     // como texto no llega a AA (DD-126): lo lleva el icono, y el aviso no pierde su color.
     await goto(page, 'admin/grupos/crear');
     const aviso = resumen(page).locator('.resumen__warn', { hasText: 'Sin número' }).first();

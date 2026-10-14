@@ -54,8 +54,9 @@ const FICHAS = [
     prefijo: 'agent-section-',
     // Las cuatro de la ficha de grupo desde DD-187; hasta entonces, Identidad, Grupos asignados, Permisos, Recursos y
     // Avanzado.
-    orden: ['General', 'Configuración', 'Recursos', 'Grupos'],
-    trabajo: { rotulo: 'Grupos', seccion: 'grupos' },
+    // «Grupos asignados» desde DD-204: el nombre dice qué hay dentro, como «Servicios asignados» del usuario.
+    orden: ['General', 'Configuración', 'Recursos', 'Grupos asignados'],
+    trabajo: { rotulo: 'Grupos asignados', seccion: 'grupos' },
     campoNombre: '#agent-name',
     alta: 'Nuevo agente',
     // Su anillo (habilitado en grupos) y seis filas: Atiende por, Extensión, Grabación, Salientes, Recursos y Tipo de

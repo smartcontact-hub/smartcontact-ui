@@ -23,7 +23,7 @@ import { EMAIL_RE, PIN_RE } from '@core/utils/validators';
 import {
   AltaPieComponent,
   NameInplaceComponent,
-  ResourceRowsComponent,
+  ResourceOptionComponent,
   SummaryKpiComponent,
   SummaryStatusComponent,
 } from '@shared/components';
@@ -55,7 +55,6 @@ import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links
 import { canonicalizeChannels, GroupAgentLink, type Channel } from '@features/admin/services/group-agent-links.types';
 import { clampLinksToChannels } from '@features/admin/services/group-channels.core.mjs';
 import { agendasOfrecidas, idsVivos } from '@features/admin/services/recursos.core.mjs';
-import { ResourceRowsService } from '@features/admin/services/resource-rows.service';
 import { CHANNEL_FAMILIES, FAMILY_LABEL_KEYS } from '@features/admin/groups/data/groups-data';
 import { TemplatesStore } from '@features/admin/templates/state/templates.store';
 import {
@@ -179,7 +178,7 @@ function sameValues<T>(a: readonly T[], b: readonly T[]): boolean {
     SummaryKpiComponent,
     SummaryStatusComponent,
     AltaPieComponent,
-    ResourceRowsComponent,
+    ResourceOptionComponent,
     CheckboxComponent,
     DeleteEntityDialogComponent,
     RecursoDialogComponent,
@@ -233,7 +232,6 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
   private readonly templatesStore = inject(TemplatesStore);
   private readonly agendasStore = inject(AgendasStore);
   private readonly equipos = inject(EquiposStore);
-  private readonly resourceRows = inject(ResourceRowsService);
   private readonly confirmHost = inject(ScConfirmService);
 
   /** Guardar/Cancelar proyectados a la TopBar (modelo "todo arriba" S59):
@@ -296,11 +294,9 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
   protected readonly availableLanguages = AVAILABLE_LANGUAGES;
   protected readonly availableLabels = this.labelsStore.labels;
 
-  /** Roster of every group in the system, with channels and strategy — fed to the
-   * group-assignment table so it can render the correct chip cluster per row,
-   * the picker dropdown of joinable groups, and the Nivel column (quick-win de
-   * la auditoría UX, 2026-10: solo se incluía channels, sin strategy/chatStrategy
-   * la tabla no podía saber si el grupo reparte por Niveles). */
+  /** Roster of every group in the system, with its channels — fed to the
+   * group-assignment table so it can render the correct chip cluster per row
+   * and the picker dropdown of joinable groups. */
   protected readonly availableGroups = computed<
     readonly AgentGroupAssignmentRef[]
   >(() =>
@@ -308,8 +304,6 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
       id: g.id,
       name: g.name,
       channels: g.channels,
-      strategy: g.strategy,
-      chatStrategy: g.chatStrategy,
     }))
   );
 
@@ -328,15 +322,6 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
     this.equipos.items().map((g) => ({ label: g.name, value: g.id })),
   );
   protected readonly teamValue = computed(() => [...this.form().teamIds]);
-
-  /** Su fila bajo el campo, como agendas y plantillas (DD-164): qué es y su «Editar», que abre la ventana sin salir. */
-  protected readonly teamRows = computed(() => {
-    const porId = new Map(this.equipos.items().map((g) => [g.id, g]));
-    return [...this.form().teamIds].flatMap((id) => {
-      const g = porId.get(id);
-      return g ? [{ id, name: g.name, detail: g.description, edit: { link: `/admin/equipos/editar/${id}` } }] : [];
-    });
-  });
 
   protected onTeamsChange(ids: unknown[]): void {
     if (sameValues(ids as number[], this.teamValue())) return;
@@ -396,23 +381,8 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
   protected readonly chatTemplateValue = computed(() => this.idsOfType('chat'));
   protected readonly emailTemplateValue = computed(() => this.idsOfType('email'));
 
-  /* El resumen bajo cada campo (DD-164): qué es cada recurso y, al editar, su «Editar». En el alta y al duplicar no lo
-   * lleva: la dirección no guarda la sección, y Atrás caería en una ficha vacía. */
-  protected readonly agendaRows = computed(() => {
-    this.currentLang();
-    return this.resourceRows.agendas(this.form().scheduleIds, true);
-  });
-  protected readonly chatTemplateRows = computed(() => {
-    this.currentLang();
-    return this.resourceRows.templates(this.form().templateIds, 'chat', true);
-  });
-  protected readonly emailTemplateRows = computed(() => {
-    this.currentLang();
-    return this.resourceRows.templates(this.form().templateIds, 'email', true);
-  });
-
   /** Crear o editar una agenda, una plantilla de chat o un equipo sin salir de la ficha (DD-187): la ventana
-   *  que abren el «+» de su campo y el «Editar» de sus filas, como en Recursos del grupo. El recién creado se AÑADE a lo
+   *  que abren el «+» de su campo y el lápiz de cada opción, como en Recursos del grupo. El recién creado se AÑADE a lo
    *  elegido. */
   protected readonly recursoAbierto = signal<RecursoAbierto | null>(null);
 
@@ -799,7 +769,8 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
       return { ...f, permissions };
     });
   }
-  /** Los estados que se pueden poner a mano, y el que tiene ahora aunque no sea de esos (Post-conversando, por ejemplo). */
+  /** Los estados que se pueden poner a mano, y el que tiene ahora aunque no sea de esos (Post-conversando, por ejemplo).
+   *  Desconectado nunca se elige, y con él el campo se apaga: no hay sesión a la que cambiarle el estado. */
   protected readonly presenceOptions = computed<readonly PresenceStatus[]>(() => {
     const actual = this.form().presenceStatus;
     return this.presenceStates.includes(actual) ? this.presenceStates : [...this.presenceStates, actual];
