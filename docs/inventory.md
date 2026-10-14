@@ -45,7 +45,7 @@
 | `sc-bulk-action-bar` | CUSTOM | experimental (sin maestro en el Kit) | — | 3 inputs | sc-message sc-button | ✓ | 2 |
 | `sc-bulk-edit-menu` | CUSTOM | experimental (sin maestro en el Kit) | — | 2 inputs | sc-select sc-button | ✓ | 3 |
 | `sc-bulk-transcription-modal` | CUSTOM | experimental (sin maestro en el Kit) | — | 16 inputs | sc-icon-tile sc-button sc-toggleswitch | ✓ | — |
-| `sc-button` | EXTENDED | ready | primeng/button, primeng/tooltip | 20 inputs | — | ✓ | 187 |
+| `sc-button` | EXTENDED | ready | primeng/button, primeng/tooltip | 20 inputs | — | ✓ | 189 |
 | `sc-card` | STANDARD | ready | primeng/card | 3 inputs | — | ✓ | — |
 | `sc-checkbox` | CUSTOM | ready | — | 6 inputs | — | ✓ | 47 |
 | `sc-chip` | EXTENDED | ready | primeng/chip | 9 inputs | — | ✓ | 5 |
@@ -53,7 +53,7 @@
 | `sc-column-selector` | STANDARD | experimental (sin maestro en el Kit) | primeng/popover | 1 inputs | — | ✓ | 1 |
 | `sc-command-palette` | CUSTOM | experimental (sin maestro en el Kit) | — | 0 inputs | — | ✓ | 4 |
 | `sc-confirmdialog` | STANDARD | ready | primeng/confirmdialog | 0 inputs | — | ✓ | 1 |
-| `sc-datatable` | EXTENDED | ready | primeng/table | 45 inputs | sc-skeleton sc-button | ✓ | 16 |
+| `sc-datatable` | EXTENDED | ready | primeng/table | 55 inputs | sc-skeleton sc-button | ✓ | 16 |
 | `sc-datepicker` | EXTENDED | ready | primeng/datepicker | 24 inputs | sc-field-label sc-button sc-field-msg | ✓ | 1 |
 | `sc-delete-entity-dialog` | CUSTOM | experimental (sin maestro en el Kit) | — | 2 inputs | sc-dialog sc-button | ✓ | 12 |
 | `sc-dialog` | EXTENDED | ready | primeng/dialog | 14 inputs | — | ✓ | 20 |
@@ -95,7 +95,7 @@
 | `sc-sticky-form-header` | CUSTOM | deprecated | — | 4 inputs | sc-button | ✓ | 2 |
 | `sc-subsection` | CUSTOM | experimental (sin maestro en el Kit) | — | 5 inputs | — | ✓ | 18 |
 | `sc-tabs` | STANDARD | ready | primeng/tabs | 1 inputs | — | ✓ | 2 |
-| `sc-tag` | EXTENDED | ready | primeng/tag | 8 inputs | — | ✓ | 33 |
+| `sc-tag` | EXTENDED | ready | primeng/tag | 8 inputs | — | ✓ | 34 |
 | `sc-textarea` | EXTENDED | ready | primeng/textarea | 18 inputs | sc-button sc-field-msg | ✓ | 7 |
 | `sc-toast` | EXTENDED | ready | primeng/toast | 6 inputs | — | ✓ | — |
 | `sc-toggleswitch` | EXTENDED | ready | primeng/toggleswitch | 8 inputs | — | ✓ | 44 |

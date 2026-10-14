@@ -187,6 +187,20 @@ export class DatatableDemoComponent {
     if (copy) Object.assign(agent, copy);
     this.copies.delete(agent.id);
   }
+  protected readonly expansionTpl = viewChild<TemplateRef<StoryContext>>('expansion');
+  protected readonly rowGroupsTpl = viewChild<TemplateRef<StoryContext>>('rowGroups');
+  protected readonly rowOrderTpl = viewChild<TemplateRef<StoryContext>>('rowOrder');
+  /** primeng.dev/table «Row Expansion»: la primera fila sale desplegada. */
+  protected readonly expandedKeys: Readonly<Record<string, boolean>> = { 1: true };
+  protected readonly expandLabels = { expand: 'Ver detalle', collapse: 'Esconder detalle' };
+  /** «Expandable Row Groups»: lo desplegado va por el valor del grupo; sale abierto el de los activos. */
+  protected readonly expandedGroups: Readonly<Record<string, boolean>> = { active: true };
+  protected groupSize(status: Agent['status']): number {
+    return AGENTS.filter((agent) => agent.status === status).length;
+  }
+  /** «Reorder» y «Frozen Rows»: la tabla avisa del orden nuevo y la pantalla lo guarda; la primera va fija arriba. */
+  protected readonly pinnedAgents: readonly Agent[] = AGENTS.slice(0, 1);
+  protected readonly orderedAgents = signal<readonly Agent[]>(AGENTS.slice(1));
   protected readonly filtersTpl = viewChild<TemplateRef<StoryContext>>('filters');
   /** primeng.dev/table «Filter» y «Column Group»: un filtro por columna bajo la cabecera, y «Agente» sobre dos. */
   protected readonly filterColumns: readonly ScColumnDef<Agent>[] = [
@@ -450,7 +464,10 @@ export class DatatableDemoComponent {
     const fi = this.filtersTpl();
     const ce = this.cellEditTpl();
     const re = this.rowEditTpl();
-    if (!pg || !controls || !mvp || !lz || !gs || !ls || !st || !fr || !ms || !fi || !ce || !re) return [];
+    const ex = this.expansionTpl();
+    const rg = this.rowGroupsTpl();
+    const ro = this.rowOrderTpl();
+    if (!pg || !controls || !mvp || !lz || !gs || !ls || !st || !fr || !ms || !fi || !ce || !re || !ex || !rg || !ro) return [];
     return [
       { name: 'Playground', playground: true, template: pg, controlsTemplate: controls },
       { name: 'Columnas, selección múltiple y paginador', template: mvp, snippet: MVP_SNIPPET },
@@ -474,6 +491,21 @@ export class DatatableDemoComponent {
 <!-- Cancelar no deshace solo: el lápiz avisa (rowEditInit) para guardar una copia y cancelar (rowEditCancel) para reponerla. -->
 <sc-datatable [value]="editAgents" [columns]="editColumns()" editMode="row" [rowEditLabels]="rowEditLabels"
   dataKey="id" (rowEditInit)="keepCopy($event.row)" (rowEditCancel)="restoreCopy($event.row)" />` },
+      { name: 'Detalle de fila', template: ex, snippet: `<!-- expansionTemplate: lo que se despliega bajo la fila, a todo lo ancho; la flecha va en una columna al principio. -->
+<!-- expandedRowKeys: las que salen desplegadas, por su dataKey. -->
+<sc-datatable [value]="agents()" [columns]="multiSortColumns" [expansionTemplate]="rowDetail"
+  [expandedRowKeys]="expandedKeys" [rowExpandLabels]="expandLabels" dataKey="id" />` },
+      { name: 'Filas agrupadas', template: rg, snippet: `<!-- rowGroupMode="subheader": un título antes de cada grupo y, si hay groupFooterTemplate, un pie. -->
+<!-- rowGroupMode="rowspan": la celda de groupRowsBy ocupa su grupo entero. Las filas, ordenadas por ese campo. -->
+<!-- expandableRowGroups: una flecha en el título pliega el grupo; lo desplegado va por su valor ({ active: true }). -->
+<sc-datatable [value]="agents()" [columns]="multiSortColumns" rowGroupMode="subheader" groupRowsBy="status"
+  [groupHeaderTemplate]="groupHeader" [groupFooterTemplate]="groupFooter" [expandableRowGroups]="true"
+  [expandedRowKeys]="expandedGroups" dataKey="id" />` },
+      { name: 'Reordenar y fijar filas', template: ro, snippet: `<!-- reorderableRows: cada fila se arrastra por su asa; rowReorder trae las filas en su orden nuevo. -->
+<!-- frozenValue: filas fijas arriba mientras el resto hace scroll; no van en value. -->
+<sc-datatable [value]="orderedAgents()" [columns]="multiSortColumns" [reorderableRows]="true"
+  (rowReorder)="orderedAgents.set($event.rows)" [frozenValue]="pinnedAgents" scrollable scrollHeight="240px"
+  dataKey="id" />` },
     ];
   });
 }
