@@ -9,6 +9,9 @@
   [selectionMode]="selectionMode()"
   [selection]="selection()"
   (selectionChange)="onSelectionChange($any($event))"
+  [metaKeySelection]="metaKeySelection()"
+  (onRowSelect)="rowSelect.emit($any($event))"
+  (onRowUnselect)="rowUnselect.emit($any($event))"
   [sortField]="sortField()"
   [sortOrder]="sortOrder()"
   [customSort]="externalSort()"
@@ -51,7 +54,7 @@
     />
     } @else {
     <tr>
-      @if (selectionMode() === 'multiple') {
+      @if (selectionControl() === 'checkbox') {
       <!-- La casilla se queda fija si hay una columna fija a la izquierda: PrimeNG coloca esa columna sumando el ancho de
            TODO lo que tiene delante, fijo o no, y sin esto la casilla pasaba por debajo del nombre (DD-193). -->
       <th class="sc-datatable__check" scope="col" pFrozenColumn [frozen]="!!leftFrozenEdge()">
@@ -59,6 +62,9 @@
              `afterRenderEffect` de la casilla de «todas»). -->
         <p-table-header-checkbox class="sc-datatable__check-all" [ariaLabel]="selectAllAriaLabel()" [disabled]="skeleton()" />
       </th>
+      } @else if (selectionControl() === 'radio') {
+      <!-- Vacía, como en primeng.dev/table «Radio»: con una sola fila marcada no hay «todas». -->
+      <th class="sc-datatable__check" scope="col" pFrozenColumn [frozen]="!!leftFrozenEdge()"></th>
       } @for (col of visibleCols(); track col.field) { @if (col.sortable) {
       <th
         scope="col"
@@ -122,9 +128,13 @@
          etiqueta y barras de ancho variado, como la carga perezosa de primeng.dev/table. Así la fila mide lo que la de
          datos y al llegar no cambia nada. Sin `pSelectableRow` ni clics: hasta entonces no hay nada que marcar ni abrir. -->
     <tr class="sc-datatable__skeleton-row" aria-hidden="true">
-      @if (selectionMode() === 'multiple') {
+      @if (selectionControl() === 'checkbox') {
       <td class="sc-datatable__check" pFrozenColumn [frozen]="!!leftFrozenEdge()">
         <sc-skeleton size="var(--sc-cmp-checkbox-width)" />
+      </td>
+      } @else if (selectionControl() === 'radio') {
+      <td class="sc-datatable__check" pFrozenColumn [frozen]="!!leftFrozenEdge()">
+        <sc-skeleton shape="circle" size="var(--sc-cmp-radiobutton-width)" />
       </td>
       } @for (col of visibleCols(); track col.field; let c = $index) {
       <td
@@ -167,8 +177,11 @@
       "
     />
     } @else {
+    <!-- `pSelectableRowIndex`, como el ejemplo «Multiple» de primeng.dev: sin él PrimeNG no sabe desde qué fila
+         contar el tramo de Mayús+clic ni Mayús+Espacio, y solo marcaba la última. -->
     <tr
       [pSelectableRow]="row"
+      [pSelectableRowIndex]="rowIndex"
       [pSelectableRowDisabled]="rowSelectDisabled()"
       [ngClass]="rowClass(row, rowIndex)"
       (click)="onRowClick($event, row, rowIndex)"
@@ -176,7 +189,7 @@
       [attr.tabindex]="rowsFocusable() ? 0 : null"
       (keydown)="onRowKeydown($event, row, rowIndex)"
     >
-      @if (selectionMode() === 'multiple') {
+      @if (selectionControl() === 'checkbox') {
       <!-- `stopPropagation` en el click separa los dos gestos: marcar la
              casilla NO dispara `rowClick` (sin esto, seleccionar cinco filas
              abriría cinco veces el detalle). El `mousedown` captura el
@@ -195,6 +208,11 @@
           [value]="row"
           [ariaLabel]="rowSelectionAriaLabel()?.(row, rowIndex)"
         />
+      </td>
+      } @else if (selectionControl() === 'radio') {
+      <!-- Mismo reparto que la casilla: marcar el radio no dispara `rowClick`. -->
+      <td class="sc-datatable__check" pFrozenColumn [frozen]="!!leftFrozenEdge()" (click)="$event.stopPropagation()">
+        <p-table-radio-button [value]="row" [index]="rowIndex" [ariaLabel]="rowSelectionAriaLabel()?.(row, rowIndex)" />
       </td>
       } @for (col of visibleCols(); track col.field) {
       <!-- La columna que nombra la fila es su cabecera, como en Primer (DD-194): el lector de pantalla la

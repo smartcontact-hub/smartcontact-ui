@@ -43,6 +43,7 @@ type Interno = {
   visibleCols: () => readonly ScColumnDef<Fila>[];
   colspan: () => number;
   rowSelectDisabled: () => boolean;
+  selectionControl: () => 'checkbox' | 'radio' | null;
   onCheckMousedown: (event: MouseEvent, index: number) => void;
   onSelectionChange: (nueva: Fila | readonly Fila[] | null) => void;
   selection: { (): unknown; set: (v: unknown) => void };
@@ -122,6 +123,41 @@ describe('sc-datatable · quién selecciona al clicar la fila', () => {
   it('sin selección, la fila no selecciona nada', () => {
     const c = montar({ selectionMode: null });
     expect(c.rowSelectDisabled()).toBe(true);
+  });
+
+  it('en multiple sin columna (`none`) selecciona la fila, como el ejemplo «Multiple» de primeng.dev', () => {
+    const c = montar({ selectionMode: 'multiple', selectionColumn: 'none' });
+    expect(c.rowSelectDisabled()).toBe(false);
+    expect(c.selectionControl()).toBeNull();
+  });
+
+  it('en single con radio la fila NO selecciona: eso es del radio', () => {
+    const c = montar({ selectionMode: 'single', selectionColumn: 'radio' });
+    expect(c.rowSelectDisabled()).toBe(true);
+    expect(c.selectionControl()).toBe('radio');
+  });
+
+  it('una columna que no casa con el modo se queda en la de siempre de ese modo', () => {
+    expect(montar({ selectionMode: 'single', selectionColumn: 'checkbox' }).selectionControl()).toBeNull();
+    TestBed.resetTestingModule();
+    expect(montar({ selectionMode: 'multiple', selectionColumn: 'radio' }).selectionControl()).toBe('checkbox');
+  });
+});
+
+describe('sc-datatable · la columna de selección en el DOM', () => {
+  it('con radio pinta un `p-table-radio-button` por fila y suma su columna al colspan', async () => {
+    TestBed.configureTestingModule({ imports: [ScDatatableComponent] });
+    const fixture = TestBed.createComponent<ScDatatableComponent<Fila>>(ScDatatableComponent);
+    fixture.componentRef.setInput('columns', COLS);
+    fixture.componentRef.setInput('value', [{ id: 1, nombre: 'A' }, { id: 2, nombre: 'B' }]);
+    fixture.componentRef.setInput('selectionMode', 'single');
+    fixture.componentRef.setInput('selectionColumn', 'radio');
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const host = fixture.nativeElement as HTMLElement;
+    expect(host.querySelectorAll('tbody p-table-radio-button')).toHaveLength(2);
+    expect(host.querySelectorAll('tbody p-table-checkbox')).toHaveLength(0);
+    expect((fixture.componentInstance as unknown as Interno).colspan()).toBe(4);
   });
 });
 

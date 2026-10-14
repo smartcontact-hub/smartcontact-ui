@@ -82,6 +82,32 @@
   gap: var(--sc-spacing-0-375);
 }
 
+.table-lab__caption {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-1);
+  flex-wrap: wrap;
+}
+
+.table-lab__selected {
+  margin-inline-start: auto;
+}
+
+.table-lab__event {
+  color: var(--sc-text-subtle);
+}
+
+/* Las teclas, con la caja del atajo de `sc-search`. El texto, el `sc-text-caption-regular` de su línea: `<kbd>` sale
+ * en monoespaciada por la hoja del navegador, y aquí no hay mono. */
+.table-lab__keys kbd {
+  font-family: inherit;
+  color: var(--sc-text-subtle);
+  background: var(--sc-bg-elevated);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-100);
+  padding: var(--sc-spacing-0-25) var(--sc-spacing-0-5);
+}
+
 .table-lab__flag {
   display: block;
   border-radius: var(--sc-radius-0-25);
