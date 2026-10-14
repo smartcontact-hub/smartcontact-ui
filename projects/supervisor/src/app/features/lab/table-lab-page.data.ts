@@ -7,9 +7,9 @@ export interface TableLabAgent {
   /** Valoración de 0 a 5: para enseñar una celda con contenido rico (`p-rating`), no solo texto. */
   rating: number;
   /** Foto de ejemplo (picsum, seed fija por fila): demuestra `sc-avatar [image]`, sin inventar caras
-   *  realistas — es una foto cualquiera, no un retrato de una persona que no existe. */
+   *  realistas, es una foto cualquiera, no un retrato de una persona que no existe. */
   avatarUrl: string;
-  /** Código ISO del país del contacto (no del agente): el caso real de un AED internacional —
+  /** Código ISO del país del contacto (no del agente): el caso real de un AED internacional,
    *  qué bandera enseñar al lado del ticket para saber de qué mercado viene la llamada. */
   country: 'ES' | 'FR' | 'PT' | 'MX' | 'CO' | 'AR' | 'GB' | 'DE' | 'IT' | 'BR';
 }
@@ -31,11 +31,17 @@ const STATUSES = ['online', 'busy', 'offline'] as const satisfies readonly Table
 const COUNTRIES = ['ES', 'FR', 'PT', 'MX', 'CO', 'AR', 'GB', 'DE', 'IT', 'BR'] as const satisfies readonly TableLabAgent['country'][];
 
 /** 150 filas: por debajo de las 100, `sc-datatable` no activa la lista virtual (DD-176,
- *  `ScDatatableComponent.VIRTUAL_MIN_ROWS`) — con menos muestra, ese control del laboratorio no
- *  tendría nada que demostrar. */
+ *  `ScDatatableComponent.VIRTUAL_MIN_ROWS`), con menos muestra ese control del laboratorio no
+ *  tendría nada que demostrar.
+ *
+ *  Con los dos índices atados a `i % 30` el par nombre+apellido se repetía IDÉNTICO cada 30 filas
+ *  (30 filas, 5 veces en la muestra: cinco «Pablo Serra» exactos). El apellido suma un desplazamiento
+ *  por cada vuelta de 30 (`Math.floor(i / 30)`), así que el par no repite en las 150 filas Y sigue
+ *  cambiando fila a fila, no solo cada 5 (eso dejaba 5 apellidos iguales seguidos en el orden por
+ *  defecto). (Medido 2026-10-14.) */
 export const TABLE_LAB_AGENTS: readonly TableLabAgent[] = Array.from({ length: 150 }, (_, i) => {
   const first = FIRST_NAMES[i % FIRST_NAMES.length];
-  const last = LAST_NAMES[(i * 7) % LAST_NAMES.length];
+  const last = LAST_NAMES[(i * 7 + Math.floor(i / 30)) % LAST_NAMES.length];
   const status = STATUSES[i % STATUSES.length];
   return {
     id: i + 1,
