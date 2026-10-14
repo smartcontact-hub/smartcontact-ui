@@ -53,7 +53,7 @@
           (sortChange)="onSortChange($event)"
           [rowsFocusable]="$any(liveArgs()['rowsFocusable'])"
           [scrollable]="$any(liveArgs()['scrollable'])"
-          [scrollHeight]="$any(liveArgs()['scrollHeight']) || undefined"
+          [scrollHeight]="scrollHeightArg()"
           [stickyHeader]="$any(liveArgs()['stickyHeader'])"
           [virtualScroll]="$any(liveArgs()['virtualScroll'])"
           [tableMinWidth]="$any(liveArgs()['tableMinWidth']) || undefined"
@@ -80,6 +80,14 @@
           (rowCollapse)="onRowCollapse($event)"
           [reorderableRows]="$any(liveArgs()['reorderableRows'])"
           (rowReorder)="onRowReorder($event)"
+          [showCurrentPageReport]="$any(liveArgs()['showCurrentPageReport'])"
+          [currentPageReportTemplate]="'lab.tabla.page_report' | translate"
+          [paginatorPosition]="$any(liveArgs()['paginatorPosition'])"
+          exportFilename="agentes"
+          [exportFunction]="exportCell"
+          [stateKey]="stateKeyArg()"
+          [stateStorage]="$any(liveArgs()['stateStorage']) || 'session'"
+          (stateRestore)="onStateRestore()"
         >
           <!-- Lo que hay marcado, como la barra de los ejemplos de selección de primeng.dev: sin ella, marcar
                una fila no se nota más que en su color. -->
@@ -94,6 +102,17 @@
               <button pButton outlined severity="secondary" size="small" (click)="clearTable(dt)">
                 <sc-icon name="filter_alt_off" [size]="16" />
                 <span>Limpiar</span>
+              </button>
+            }
+            @if (exportButton()) {
+              <button pButton outlined severity="secondary" size="small" (click)="exportCsv(dt)">
+                <sc-icon name="download" [size]="16" />
+                <span>{{ 'lab.tabla.export_button' | translate }}</span>
+              </button>
+            }
+            @if (stateKeyArg()) {
+              <button pButton outlined severity="secondary" size="small" (click)="leaveAndReturn()">
+                {{ 'lab.tabla.leave_and_return' | translate }}
               </button>
             }
             @if (columnToggle()) {

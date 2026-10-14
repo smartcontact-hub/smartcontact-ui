@@ -1,7 +1,9 @@
 import { NgClass, NgTemplateOutlet } from '@angular/common';
 import {
+  afterNextRender,
   afterRenderEffect,
   DestroyRef,
+  Injector,
   effect,
   ElementRef,
   inject,
@@ -18,10 +20,11 @@ import {
   untracked,
   viewChild,
 } from '@angular/core';
-import type { FilterMetadata, SortMeta } from 'primeng/api';
+import type { FilterMetadata, SortMeta, TableState } from 'primeng/api';
 import {
   Table,
   TableModule,
+  type ExportCSVOptions,
   type TableEditCancelEvent,
   type TableEditCompleteEvent,
   type TableEditInitEvent,
@@ -394,6 +397,36 @@ export class ScDatatableComponent<T = unknown> {
    */
   readonly frozenValue = input<readonly T[] | undefined>(undefined);
 
+  /**
+   * Recordar el estado (primeng.dev/table «Stateful»): con una clave, la tabla guarda página, orden, filtros, anchos,
+   * selección y lo desplegado, y lo repone al volver. `stateStorage`: `session` dura hasta cerrar el navegador;
+   * `local`, hasta que se borre.
+   */
+  readonly stateKey = input<string | undefined>(undefined);
+  readonly stateStorage = input<'session' | 'local'>('session');
+
+  /**
+   * El texto del paginador (primeng.dev/table «Paginator»): con `showCurrentPageReport`, `currentPageReportTemplate`
+   * con `{first}`, `{last}`, `{totalRecords}`, `{currentPage}` y `{totalPages}`, ya traducido (el de por defecto es el
+   * de PrimeNG, en inglés).
+   */
+  readonly showCurrentPageReport = input(false, { transform: booleanAttribute });
+  readonly currentPageReportTemplate = input<string>('{currentPage} of {totalPages}');
+  /** Dónde va el paginador: abajo (por defecto), arriba o en los dos sitios. */
+  readonly paginatorPosition = input<'bottom' | 'top' | 'both'>('bottom');
+
+  /** Nombre del fichero de `exportCSV()`, sin el `.csv`. */
+  readonly exportFilename = input<string>('download');
+  /** Separador de columnas del CSV. */
+  readonly csvSeparator = input<string>(',');
+  /** Para exportar otro texto que el dato crudo: recibe `{ data, field }` y devuelve lo que va en la celda del CSV. */
+  readonly exportFunction = input<((cell: { data: unknown; field: string }) => unknown) | undefined>(undefined);
+  /** p-table escapa las comillas del dato crudo, pero no las de lo que devuelve `exportFunction`: una comilla rompía la fila. */
+  protected readonly pExportFunction = computed(() => {
+    const fn = this.exportFunction();
+    return fn ? (cell: { data: unknown; field: string }) => String(fn(cell) ?? '').replace(/"/g, '""') : undefined;
+  });
+
   /* ════════════════════════════════════════════════════════════════════════
    * LAS 38 RANURAS DE PLANTILLA DE p-table, REENVIADAS
    * ════════════════════════════════════════════════════════════════════════
@@ -490,6 +523,10 @@ export class ScDatatableComponent<T = unknown> {
   readonly rowCollapse = output<TableRowCollapseEvent>();
   /** Se ha soltado una fila arrastrada (`reorderableRows`): con las filas en su orden nuevo, para aplicarlo. */
   readonly rowReorder = output<ScDatatableRowReorderEvent<T>>();
+  /** La tabla ha guardado su estado (`stateKey`): el `onStateSave` de p-table. */
+  readonly stateSave = output<TableState>();
+  /** La tabla ha repuesto su estado guardado: el `onStateRestore` de p-table. */
+  readonly stateRestore = output<TableState>();
 
   /**
    * Se ha marcado una fila: el `onRowSelect` de p-table tal cual (`data`, `index`, `type`: `row`, `checkbox` o
@@ -851,6 +888,7 @@ export class ScDatatableComponent<T = unknown> {
   protected readonly overflowRight = signal(false);
   protected readonly overflowLeft = signal(false);
   private readonly hostEl = inject(ElementRef<HTMLElement>).nativeElement as HTMLElement;
+  private readonly injector = inject(Injector);
 
   constructor() {
     /* Con scroll propio, la barra de scroll empieza DEBAJO de la cabecera de columnas: el tema
@@ -1014,6 +1052,82 @@ export class ScDatatableComponent<T = unknown> {
     const target = event.target instanceof Element ? event.target : null;
     if (target?.closest('.p-editable-column') || (this.editMode() === 'row' && this.table().isRowEditing(row))) return;
     this.rowClick.emit({ row, index, originalEvent: event });
+  }
+
+  /**
+   * Descarga las filas como CSV (primeng.dev/table «Export»): las filtradas y en su orden, con las fijas delante; con
+   * `{ selectionOnly: true }`, solo las marcadas. Va por columnas visibles con `exportable` distinto de `false`, con el
+   * título de cada una. p-table exporta desde su `columns`, que esta tabla no le pasa (lo reordenaría en sitio): se las
+   * presta durante la llamada.
+   */
+  exportCSV(options?: ExportCSVOptions): void {
+    const table = this.table();
+    const previas = table.columns;
+    table.columns = this.visibleCols()
+      .filter((col) => col.exportable !== false)
+      .map((col) => ({ field: col.field, header: col.header || col.headerAriaLabel || col.field }));
+    try {
+      table.exportCSV(options);
+    } finally {
+      table.columns = previas;
+    }
+  }
+
+  /**
+   * p-table no sabe reponer un filtro en fila con valor falso (vacío, 0, `false`): lo lee como uno de menú, busca su `[0]`
+   * y la tabla se rompe al volver (medido con un filtro en fila sin escribir). Al guardar, esos se apartan en
+   * `scRowFilters` y se deja `filters` como objeto, aunque vacío: así p-table lo adopta tal cual y `onStateRestore` le
+   * devuelve los apartados antes de que filtre.
+   */
+  protected onStateSave(state: TableState): void {
+    const filtros: Record<string, FilterMetadata | FilterMetadata[]> = { ...(state.filters ?? {}) };
+    const apartados: Record<string, FilterMetadata> = {};
+    for (const [campo, filtro] of Object.entries(filtros)) {
+      if (!Array.isArray(filtro) && !filtro.value) {
+        apartados[campo] = filtro;
+        delete filtros[campo];
+      }
+    }
+    const key = this.stateKey();
+    if (key && Object.keys(apartados).length) {
+      const storage = this.stateStorage() === 'local' ? localStorage : sessionStorage;
+      storage.setItem(key, JSON.stringify({ ...state, filters: filtros, scRowFilters: apartados }));
+    }
+    this.stateSave.emit(state);
+  }
+
+  protected onStateRestore(state: TableState & { scRowFilters?: Record<string, FilterMetadata> }): void {
+    if (state.scRowFilters && state.filters) {
+      Object.assign(state.filters, state.scRowFilters);
+      delete state.scRowFilters;
+    }
+    afterNextRender(() => this.reponerEstado(state), { injector: this.injector });
+    this.stateRestore.emit(state);
+  }
+
+  /**
+   * p-table repone el estado al recibir `value`, pero en ese mismo arranque corren después sus efectos de entrada y lo
+   * pisan: `filters` y `expandedRowKeys` vuelven a lo que traen las entradas, `sortOrder` a 1, y el de `groupRowsBy`
+   * reordena, filtra otra vez y devuelve la página a la primera (medido en PrimeNG 22). Tras pintar se le devuelve lo
+   * repuesto; la página, la última, porque filtrar la pone a cero.
+   */
+  private reponerEstado(state: TableState): void {
+    const table = this.table();
+    if (state.filters) table.filters = state.filters;
+    if (state.expandedRowKeys) table.expandedRowKeys = state.expandedRowKeys;
+    if (this.sortMode() === 'multiple' && state.multiSortMeta) {
+      table.multiSortMeta = state.multiSortMeta;
+      table.sortMultiple();
+    } else if (state.sortField) {
+      table.sortField = state.sortField;
+      table.sortOrder = state.sortOrder ?? 1;
+      table.sortSingle();
+    } else if (table.hasFilter()) {
+      table._filter();
+    }
+    if (this.paginator() && state.first !== undefined) table.first.set(state.first);
+    table.saveState();
+    table.cd.markForCheck();
   }
 
   /** p-table ya ha movido la fila en su copia de `value`: se avisa con ese orden para que la pantalla lo aplique. */

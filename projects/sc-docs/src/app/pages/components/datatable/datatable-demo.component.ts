@@ -4,6 +4,7 @@ import type { FilterMetadata, SortMeta } from 'primeng/api';
 import type { TableLazyLoadEvent } from 'primeng/table';
 
 import {
+  ScButtonComponent,
   ScColumnCellContext,
   ScColumnDef,
   ScDatatableComponent,
@@ -135,6 +136,7 @@ protected readonly listRowClassFn: ScRowStyleClassFn<Agent> = () => 'sc-row--cli
   selector: 'app-datatable-demo',
   imports: [
     RouterLink,
+    ScButtonComponent,
     ScDatatableComponent,
     ScInputNumberComponent,
     ScInputTextComponent,
@@ -201,6 +203,11 @@ export class DatatableDemoComponent {
   /** «Reorder» y «Frozen Rows»: la tabla avisa del orden nuevo y la pantalla lo guarda; la primera va fija arriba. */
   protected readonly pinnedAgents: readonly Agent[] = AGENTS.slice(0, 1);
   protected readonly orderedAgents = signal<readonly Agent[]>(AGENTS.slice(1));
+  protected readonly dataToolsTpl = viewChild<TemplateRef<StoryContext>>('dataTools');
+  /** primeng.dev/table «Export»: en el CSV, el estado con su nombre y no con su clave. */
+  protected readonly exportCell = ({ data, field }: { data: unknown; field: string }): unknown =>
+    field === 'status' ? (data === 'active' ? 'Activo' : 'Inactivo') : data;
+  protected readonly pageReport = '{first} a {last} de {totalRecords}';
   protected readonly filtersTpl = viewChild<TemplateRef<StoryContext>>('filters');
   /** primeng.dev/table «Filter» y «Column Group»: un filtro por columna bajo la cabecera, y «Agente» sobre dos. */
   protected readonly filterColumns: readonly ScColumnDef<Agent>[] = [
@@ -349,6 +356,8 @@ export class DatatableDemoComponent {
     argTypes: [
       { name: 'paginator', label: 'Paginación', control: { kind: 'boolean' } },
       { name: 'rows', label: 'Filas por página', control: { kind: 'number', min: 1, max: 20, step: 1 } },
+      { name: 'showCurrentPageReport', label: 'Texto de la página', control: { kind: 'boolean' }, description: 'Junto a las páginas, qué filas se ven de cuántas, con [currentPageReportTemplate] ya traducido.' },
+      { name: 'paginatorPosition', label: 'Dónde va el paginador', control: { kind: 'select', options: ['bottom', 'top', 'both'] }, description: 'Debajo, encima o en los dos sitios.' },
       { name: 'first', label: 'Primera fila visible', control: { kind: 'number', min: 0, max: 6, step: 1 }, description: 'La primera fila de la página abierta, en las dos direcciones. Quien filtra las filas fuera de la tabla la vuelve a 0 al buscar.' },
       { name: 'stripedRows', label: 'Filas alternas (cebra)', control: { kind: 'boolean' } },
       { name: 'showGridlines', label: 'Líneas de rejilla', control: { kind: 'boolean' } },
@@ -379,6 +388,8 @@ export class DatatableDemoComponent {
     defaultArgs: {
       paginator: true,
       rows: 5,
+      showCurrentPageReport: false,
+      paginatorPosition: 'bottom',
       first: 0,
       stripedRows: true,
       showGridlines: false,
@@ -420,7 +431,7 @@ export class DatatableDemoComponent {
    * «General» empieza abierto (lo primero que se toca); el resto, plegado.
    */
   protected readonly controlGroupDefs: readonly { title: string; open: boolean; names: readonly string[] }[] = [
-    { title: 'General', open: true, names: ['paginator', 'rows', 'first', 'stripedRows', 'showGridlines', 'size', 'variant', 'loading', 'skeleton', 'skeletonRows'] },
+    { title: 'General', open: true, names: ['paginator', 'rows', 'showCurrentPageReport', 'paginatorPosition', 'first', 'stripedRows', 'showGridlines', 'size', 'variant', 'loading', 'skeleton', 'skeletonRows'] },
     { title: 'Selección y orden', open: false, names: ['selectionMode', 'selectionColumn', 'metaKeySelection', 'rowsFocusable', 'sortField', 'sortOrder', 'sortMode', 'removableSort', 'externalSort'] },
     { title: 'Scroll y tamaño', open: false, names: ['scrollable', 'scrollHeight', 'stickyHeader', 'virtualScroll', 'fill', 'tableMinWidth'] },
     { title: 'Columnas', open: false, names: ['resizableColumns', 'columnResizeMode', 'reorderableColumns'] },
@@ -467,7 +478,8 @@ export class DatatableDemoComponent {
     const ex = this.expansionTpl();
     const rg = this.rowGroupsTpl();
     const ro = this.rowOrderTpl();
-    if (!pg || !controls || !mvp || !lz || !gs || !ls || !st || !fr || !ms || !fi || !ce || !re || !ex || !rg || !ro) return [];
+    const dtl = this.dataToolsTpl();
+    if (!pg || !controls || !mvp || !lz || !gs || !ls || !st || !fr || !ms || !fi || !ce || !re || !ex || !rg || !ro || !dtl) return [];
     return [
       { name: 'Playground', playground: true, template: pg, controlsTemplate: controls },
       { name: 'Columnas, selección múltiple y paginador', template: mvp, snippet: MVP_SNIPPET },
@@ -506,6 +518,13 @@ export class DatatableDemoComponent {
 <sc-datatable [value]="orderedAgents()" [columns]="multiSortColumns" [reorderableRows]="true"
   (rowReorder)="orderedAgents.set($event.rows)" [frozenValue]="pinnedAgents" scrollable scrollHeight="240px"
   dataKey="id" />` },
+      { name: 'Exportar, recordar y paginador', template: dtl, snippet: `<!-- dt.exportCSV(): descarga lo que se ve, filtrado y en su orden; { selectionOnly: true }, solo lo marcado. -->
+<!-- ScColumnDef.exportable: false deja fuera una columna. exportFunction cambia el texto de una celda. -->
+<!-- stateKey + stateStorage: guarda página, orden, filtros, anchos, lo marcado y lo desplegado, y lo repone al volver. -->
+<sc-datatable #dt [value]="agents()" [columns]="multiSortColumns" [paginator]="true" [rows]="3"
+  [showCurrentPageReport]="true" [currentPageReportTemplate]="pageReport" paginatorPosition="both"
+  exportFilename="agentes" csvSeparator=";" [exportFunction]="exportCell"
+  stateKey="sc-docs-datatable" stateStorage="session" dataKey="id" />` },
     ];
   });
 }

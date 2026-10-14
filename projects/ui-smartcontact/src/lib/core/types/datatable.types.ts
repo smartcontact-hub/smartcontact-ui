@@ -102,6 +102,8 @@ export interface ScColumnDef<T = unknown> {
    * el lápiz de la fila. El control escribe en la fila (`row[field]`); deshacer lo cambiado es de quien usa la tabla.
    */
   readonly editTemplate?: TemplateRef<ScColumnCellContext<T>>;
+  /** Si la columna sale en `exportCSV()`. Por defecto, sí; `false` para las que no son datos (avatar, botones). */
+  readonly exportable?: boolean;
 }
 
 /** Los nombres de los tres botones de editar una fila (`editMode: 'row'`), ya traducidos por quien usa la tabla. */
