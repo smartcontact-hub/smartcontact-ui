@@ -486,8 +486,8 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
   protected readonly columnsPopoverPt = { content: { style: { padding: '0' } } };
 
   /**
-   * La columna en curso: la última enfocada (o pulsada) en la lista, la que mueven sus flechas y Alt+↑/↓, y la que lleva
-   * el foco al volver a la lista. Ordenar sin arrastrar (WCAG 2.1.1 y 2.5.7, DD-162).
+   * La columna en curso: la última enfocada en la lista, la que mueve Alt+↑/↓, y la que lleva el foco al volver a la
+   * lista. Ordenar con el teclado (WCAG 2.1.1, DD-162); sin «Subir» y «Bajar» en la fila (DD-203).
    */
   protected readonly currentColumn = signal<string | null>(null);
 
@@ -524,11 +524,6 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
     if (to < 0) return;
     event.preventDefault();
     this.focusColumn(keys[to]!);
-  }
-
-  /** Pulsar una fila (fuera de su casilla) la deja en curso, con sus flechas para moverla con el ratón. */
-  protected onColumnRowClick(key: string): void {
-    if (!this.columnOptions().find((o) => o.key === key)?.locked) this.currentColumn.set(key);
   }
 
   private focusColumn(key: string): void {
@@ -572,10 +567,10 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
   protected readonly columnsAnnouncement = signal('');
 
   /**
-   * Mueve la columna en curso un puesto. La fila cambia de sitio en el DOM y con ella se iría el foco: vuelve a la flecha
-   * pulsada (o a la casilla, con Alt+↑/↓ o si esa flecha ya no puede), para poder repetir sin buscarla.
+   * Mueve la columna en curso un puesto (Alt+↑/↓). La fila cambia de sitio en el DOM y con ella se iría el foco: vuelve a
+   * su casilla, para poder repetir sin buscarla.
    */
-  protected moveColumn(delta: -1 | 1, flecha?: 'up' | 'down'): void {
+  protected moveColumn(delta: -1 | 1): void {
     const options = this.columnOptions();
     const key = this.currentColumn();
     const from = options.findIndex((o) => o.key === key);
@@ -585,13 +580,7 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
     this.columnsAnnouncement.set(
       this.translate.instant('common.columns_position', { column: move.label, position: from + delta + 1, total: options.length }),
     );
-    setTimeout(() => {
-      const casilla = this.document.getElementById(this.columnInputId(key));
-      const boton = flecha
-        ? casilla?.closest('.column-toggle__row')?.querySelector<HTMLButtonElement>(`[data-move="${flecha}"] button:not(:disabled)`)
-        : null;
-      (boton ?? casilla)?.focus();
-    });
+    setTimeout(() => this.document.getElementById(this.columnInputId(key))?.focus());
   }
 
   /** El globo se ha cerrado. Con el foco dentro (Escape, o el botón que lo tenía), el foco vuelve al icono; si se cerró

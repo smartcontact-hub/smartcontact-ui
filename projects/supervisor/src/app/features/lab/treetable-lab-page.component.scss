@@ -88,5 +88,18 @@
   bottom: var(--sc-spacing-1-75);
   z-index: var(--sc-z-sidebar);
   display: flex;
-  gap: var(--sc-spacing-1);
+  /* Una píldora que se lee encima de cualquier fila, también de las marcadas: superficie, borde suave y la sombra de un
+   * desplegable, la caja de un globo. Los botones van sin fondo dentro, juntos; el de «Contexto de la app», el primero,
+   * aparte. */
+  align-items: center;
+  gap: var(--sc-spacing-0-25);
+  padding: var(--sc-spacing-0-375);
+  background: var(--sc-bg-surface);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-full);
+  box-shadow: var(--sc-shadow-dropdown);
+
+  > button:first-child {
+    margin-inline-end: var(--sc-spacing-0-5);
+  }
 }
