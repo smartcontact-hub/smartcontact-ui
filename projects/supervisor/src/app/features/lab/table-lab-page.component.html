@@ -349,12 +349,12 @@
 
 <!-- Un botón por grupo, cada uno con su propio icono: así se ve de un vistazo cuántos temas hay y
      cuál toca, en vez de un único botón que abre un acordeón largo con todo mezclado. -->
-<div class="table-lab__cluster">
-  <button pButton rounded severity="secondary" [attr.aria-label]="'lab.tabla.context_label' | translate" (click)="contextPop.toggle($event)">
+<div class="table-lab__cluster" role="group" [attr.aria-label]="'lab.tabla.options_aria' | translate">
+  <button pButton rounded text severity="secondary" [attr.aria-label]="'lab.tabla.context_label' | translate" (click)="contextPop.toggle($event)">
     <sc-icon name="devices" [size]="16" />
   </button>
   @for (group of controlGroups; track group.title) {
-    <button pButton rounded severity="secondary" [attr.aria-label]="group.title" (click)="groupPop.toggle($event)">
+    <button pButton rounded text severity="secondary" [attr.aria-label]="group.title" (click)="groupPop.toggle($event)">
       <sc-icon [name]="group.icon" [size]="16" />
     </button>
     <p-popover #groupPop [ariaLabel]="group.title">

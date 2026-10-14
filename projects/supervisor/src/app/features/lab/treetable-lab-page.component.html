@@ -150,20 +150,20 @@
   </div>
 </ng-template>
 
-<div class="treetable-lab__cluster">
-  <button pButton rounded severity="secondary" [attr.aria-label]="'lab.arbol.context_label' | translate" (click)="contextPop.toggle($event)">
+<div class="treetable-lab__cluster" role="group" [attr.aria-label]="'lab.arbol.options_aria' | translate">
+  <button pButton rounded text severity="secondary" [attr.aria-label]="'lab.arbol.context_label' | translate" (click)="contextPop.toggle($event)">
     <sc-icon name="devices" [size]="16" />
   </button>
-  <button pButton rounded severity="secondary" [attr.aria-label]="controlGroups[0].title" (click)="generalPop.toggle($event)">
+  <button pButton rounded text severity="secondary" [attr.aria-label]="controlGroups[0].title" (click)="generalPop.toggle($event)">
     <sc-icon name="tune" [size]="16" />
   </button>
-  <button pButton rounded severity="secondary" [attr.aria-label]="controlGroups[1].title" (click)="selectionPop.toggle($event)">
+  <button pButton rounded text severity="secondary" [attr.aria-label]="controlGroups[1].title" (click)="selectionPop.toggle($event)">
     <sc-icon name="checklist" [size]="16" />
   </button>
-  <button pButton rounded severity="secondary" [attr.aria-label]="controlGroups[2].title" (click)="scrollPop.toggle($event)">
+  <button pButton rounded text severity="secondary" [attr.aria-label]="controlGroups[2].title" (click)="scrollPop.toggle($event)">
     <sc-icon name="swap_vert" [size]="16" />
   </button>
-  <button pButton rounded severity="secondary" [attr.aria-label]="controlGroups[3].title" (click)="columnsPop.toggle($event)">
+  <button pButton rounded text severity="secondary" [attr.aria-label]="controlGroups[3].title" (click)="columnsPop.toggle($event)">
     <sc-icon name="view_column" [size]="16" />
   </button>
 </div>

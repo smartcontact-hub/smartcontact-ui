@@ -35,7 +35,7 @@ Ordenado por lo que ahorraría. «Caso» es dónde se usaría hoy.
 |---|---|---|---|
 | Alta | **InputTags** | «Dominios permitidos» de Web Chat (campo + «Añadir» + chips). También etiquetas libres. | **Hecho**: `sc-inputtags` (wrapper Extended), en los dominios de la ficha de grupo. Sustituye a las tres piezas hechas a mano. |
 | Alta | **TreeSelect · Tree** | Las tipificaciones son un árbol de niveles. | **No**: DD-187 §5 dibuja el árbol entero en columnas por nivel (DD-174), con «+» por fila y tirador, que Tree no da; y el grupo elige una tipificación entera (un desplegable), no una hoja. TreeSelect tendría caso en sc-agent, al cerrar una conversación: se decide allí. |
-| Alta | **OrderList** | Ordenar columnas en el selector de columnas de los listados. | **No**: DD-176 §7 ya calca el ejemplo «Column Toggle» de primeng.dev (Popover, Checkbox y arrastre), que es nativo; con teclado ordenan «Subir» y «Bajar» (DD-162). OrderList añadiría una segunda lista con sus cuatro botones de mover. |
+| Alta | **OrderList** | Ordenar columnas en el selector de columnas de los listados. | **No**: DD-176 §7 ya calca el ejemplo «Column Toggle» de primeng.dev (Popover, Checkbox y arrastre), que es nativo; con teclado ordena Alt+↑/↓ (DD-203). OrderList añadiría una segunda lista con sus cuatro botones de mover. |
 | Media | **CommandMenu** | La paleta de comandos (Cmd+K). | **No** (revisado): ver `sc-command-palette` en la sección 2. |
 | Media | **Editor** | El cuerpo de las plantillas de email (hoy, texto plano). | Sin decidir: sería nuevo; se abre con la pantalla. |
 | Media | **Rating** | La valoración del chat («de una a cinco estrellas», revisión del 2026-10-06) en el agente y en los informes. | Sin decidir: sería nuevo. |
