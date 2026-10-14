@@ -133,11 +133,13 @@ interface ControlGroupDef {
   readonly toggles?: 'selection' | 'columns' | 'filters';
   /** «Columnas extra», el único control del laboratorio que es un número. */
   readonly extraColumns?: boolean;
+  /** A dos columnas: en una sola no cabe en el alto de la ventana. */
+  readonly wide?: boolean;
 }
 
 const CONTROL_GROUP_DEFS: readonly ControlGroupDef[] = [
   { title: 'General', icon: 'tune', names: ['paginator', 'rows', 'first', 'stripedRows', 'showGridlines', 'size', 'loading', 'skeleton', 'skeletonRows'] },
-  { title: 'Selección y orden', icon: 'checklist', toggles: 'selection', names: ['selectionMode', 'selectionColumn', 'metaKeySelection', 'rowsFocusable', 'sortField', 'sortOrder', 'sortMode', 'multiSortMeta', 'removableSort', 'externalSort'] },
+  { title: 'Selección y orden', icon: 'checklist', toggles: 'selection', wide: true, names: ['selectionMode', 'selectionColumn', 'metaKeySelection', 'rowsFocusable', 'sortField', 'sortOrder', 'sortMode', 'multiSortMeta', 'removableSort', 'externalSort'] },
   { title: 'Scroll y tamaño', icon: 'swap_vert', names: ['scrollable', 'scrollHeight', 'stickyHeader', 'virtualScroll', 'tableMinWidth'] },
   { title: 'Columnas', icon: 'view_column', toggles: 'columns', extraColumns: true, names: ['resizableColumns', 'columnResizeMode', 'reorderableColumns'] },
   { title: 'Filtros', icon: 'filter_list', toggles: 'filters', names: ['filterDisplay'] },

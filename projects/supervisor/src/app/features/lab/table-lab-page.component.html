@@ -189,6 +189,7 @@
 <ng-template #knobGrid let-knobs>
   <div class="table-lab-controls__grid">
     @for (at of knobs; track at.name) {
+      <div class="table-lab-controls__item" [class.table-lab-controls__item--inline]="at.control.kind === 'boolean'">
       <div class="table-lab-controls__label">
         <span class="table-lab-controls__label-row">
           <span class="sc-text-body-semibold">{{ at.label }}</span>
@@ -235,6 +236,7 @@
           }
         }
       </div>
+      </div>
     }
   </div>
 </ng-template>
@@ -250,7 +252,7 @@
       <sc-icon [name]="group.icon" [size]="16" />
     </button>
     <p-popover #groupPop [ariaLabel]="group.title">
-      <div class="table-lab-controls">
+      <div class="table-lab-controls" [class.table-lab-controls--wide]="group.wide">
         <p class="sc-text-body-semibold table-lab-controls__title">{{ group.title }}</p>
         <ng-container *ngTemplateOutlet="knobGrid; context: { $implicit: group.knobs }" />
         @if (group.toggles; as key) {
@@ -258,6 +260,7 @@
         }
         @if (group.extraColumns) {
           <div class="table-lab-controls__grid">
+            <div class="table-lab-controls__item">
             <div class="table-lab-controls__label">
               <span class="table-lab-controls__label-row">
                 <span class="sc-text-body-semibold">Columnas extra</span>
@@ -281,6 +284,7 @@
                 (valueChange)="extraColumnsCount.set($any($event) ?? 0)"
               />
             </div>
+            </div>
           </div>
         }
       </div>
@@ -293,6 +297,7 @@
 <ng-template #labToggleGrid let-toggles>
   <div class="table-lab-controls__grid">
     @for (toggle of toggles; track toggle.label) {
+      <div class="table-lab-controls__item table-lab-controls__item--inline">
       <div class="table-lab-controls__label">
         <span class="table-lab-controls__label-row">
           <span class="sc-text-body-semibold">{{ toggle.label }}</span>
@@ -310,6 +315,7 @@
       </div>
       <div class="table-lab-controls__field">
         <sc-toggleswitch [checked]="toggle.value()" (checkedChange)="toggle.set($event)" [ariaLabel]="toggle.ariaKey | translate" />
+      </div>
       </div>
     }
   </div>
@@ -349,6 +355,7 @@
         </sc-selectbutton>
       </div>
 
+      <div class="table-lab-controls__item table-lab-controls__item--inline">
       <div class="table-lab-controls__label">
         <span class="table-lab-controls__label-row">
           <span class="sc-text-body-semibold">Sidebar desplegado</span>
@@ -369,6 +376,7 @@
           (checkedChange)="onSidebarExpandedChange($event)"
           [ariaLabel]="'lab.tabla.sidebar_label' | translate"
         />
+      </div>
       </div>
 
       <div class="table-lab-controls__label">
