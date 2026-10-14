@@ -134,10 +134,12 @@ test('la sección 6 sale con su pregunta, sus columnas y el estado que mide el r
   assert.equal(tree.cuando, 'Hay niveles y <code>filter</code> busca dentro.');
   assert.equal(tree.enlace, 'https://primeng.dev/treeselect');
   // «X e Y» es una fila para dos módulos; InputIcon no tiene página propia y se enlaza la de IconField.
-  assert.deepEqual([campo.modulos, campo.estado, campo.wrappers], [['iconfield', 'inputicon'], 'ds', ['sc-search']]);
+  assert.deepEqual([campo.modulos, campo.estado], [['iconfield', 'inputicon'], 'ds']);
+  // Solo lo que la página pinta: la lista de wrappers cambia en PRs ajenos y dejaba `main` en rojo.
+  assert.equal('wrappers' in campo, false);
   const [steps] = familias[1].filas;
   // Tres columnas: sin «Elígelo cuando…». Sin página en primeng.dev: sin enlace.
-  assert.deepEqual([steps.cuando, steps.enlace, steps.estado, steps.apps, steps.obsoleto], [null, null, 'directo', ['supervisor'], true]);
+  assert.deepEqual([steps.cuando, steps.enlace, steps.estado, steps.obsoleto], [null, null, 'directo', true]);
 });
 
 test('ROJO: un documento sin sección 6 no da una página vacía', () => {
