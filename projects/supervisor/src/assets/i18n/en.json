@@ -966,8 +966,6 @@
     "columns_count": "{0} columns",
     "columns_visible": "Columns, {{visible}} of {{total}}",
     "columns_reset": "Reset",
-    "columns_move_up_aria": "Move up {{column}}",
-    "columns_move_down_aria": "Move down {{column}}",
     "columns_position": "{{column}}, {{position}} of {{total}}",
     "edit_field": "Edit field",
     "preview_impact": "Preview impact",
@@ -2747,6 +2745,7 @@
       "leave_and_return": "Leave and come back"
     },
     "arbol": {
+      "options_aria": "Tree lab options",
       "context_label": "App context",
       "theme_label": "Theme",
       "sidebar_label": "Sidebar expanded",
