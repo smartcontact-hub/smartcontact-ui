@@ -64,6 +64,11 @@ export class ScConfirmService {
             this.confirmation.confirm({
                 header: req.title,
                 message: req.body,
+                // El foco abre en la opción segura cuando aceptar destruye o no es lo recomendado: si no,
+                // un Intro de más ejecuta (WAI-ARIA APG, «Dialog (Modal) Pattern»: con una acción
+                // irreversible, el foco inicial va al elemento menos destructivo). PrimeNG lo abre en
+                // «accept» por defecto.
+                defaultFocus: acceptTone === 'danger' || emphasizeReject ? 'reject' : 'accept',
                 // Material vía resolver — PrimeIcons no forma parte del DS.
                 icon: resolveScComponentIconClass(req.icon ?? 'exclamation-triangle'),
                 acceptButtonProps,

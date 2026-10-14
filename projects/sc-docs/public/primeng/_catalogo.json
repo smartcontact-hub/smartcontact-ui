@@ -1,0 +1,1975 @@
+{
+  "fuente": "docs/AUDIT-PRIMENG-CATALOGO.md",
+  "familias": [
+    {
+      "titulo": "Elegir de una lista",
+      "pregunta": "¿Cuántas opciones hay, caben a la vista y el usuario sabe ya lo que busca?",
+      "filas": [
+        {
+          "nombres": [
+            "Select"
+          ],
+          "modulos": [
+            "select"
+          ],
+          "enlace": "https://primeng.dev/select",
+          "sirve": "Uno de una lista cerrada que se despliega.",
+          "cuando": "Hay más de 5 opciones o poco sitio. <code>filter</code> si pasan de unas 15 y hay que buscar; <code>group</code> si llevan cabeceras de grupo (un solo nivel). Con niveles de verdad, TreeSelect o CascadeSelect.",
+          "aqui": "<code>sc-select</code>",
+          "estado": "ds",
+          "wrappers": [
+            "sc-select"
+          ],
+          "apps": [
+            "cuscare"
+          ],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "MultiSelect"
+          ],
+          "modulos": [
+            "multiselect"
+          ],
+          "enlace": "https://primeng.dev/multiselect",
+          "sirve": "Varios de una lista que se despliega.",
+          "cuando": "Obsoleto: PrimeNG pide <code>p-select</code> con <code>multiple</code>. Lo envolvemos igual porque a <code>multiple</code> le faltan seis entradas que usamos (handoff del DS, «Fuera de PrimeNG jubilado»).",
+          "aqui": "<code>sc-multiselect</code>",
+          "estado": "ds",
+          "wrappers": [
+            "sc-multiselect"
+          ],
+          "apps": [
+            "cuscare"
+          ],
+          "obsoleto": true
+        },
+        {
+          "nombres": [
+            "Listbox"
+          ],
+          "modulos": [
+            "listbox"
+          ],
+          "enlace": "https://primeng.dev/listbox",
+          "sirve": "La lista siempre a la vista; uno o varios.",
+          "cuando": "Hay sitio y ver todas a la vez ayuda (comparar, revisar lo marcado). Trae <code>checkbox</code>, <code>filter</code>, <code>showToggleAll</code> y <code>dragdrop</code> para ordenar en la misma lista.",
+          "aqui": "Sin wrapper: supervisor y cuscare-ds (sección 3)",
+          "estado": "directo",
+          "wrappers": [],
+          "apps": [
+            "cuscare",
+            "cuscare-ds",
+            "supervisor"
+          ],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "AutoComplete"
+          ],
+          "modulos": [
+            "autocomplete"
+          ],
+          "enlace": "https://primeng.dev/autocomplete",
+          "sirve": "Escribir y elegir entre sugerencias.",
+          "cuando": "La lista es larga o vive en el servidor y el usuario sabe qué busca. <code>multiple</code> para varios; <code>forceSelection</code> si solo vale lo de la lista.",
+          "aqui": "Sin uso: descartado para añadir agentes a un grupo (sección 1)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "SelectButton"
+          ],
+          "modulos": [
+            "selectbutton"
+          ],
+          "enlace": "https://primeng.dev/selectbutton",
+          "sirve": "Pocas opciones como botones, todas a la vista.",
+          "cuando": "De 2 a 5 opciones cortas que se entienden sin explicar y se cambian a menudo. Para cambiar de colección, Tabs.",
+          "aqui": "<code>sc-selectbutton</code> (DD-113)",
+          "estado": "ds",
+          "wrappers": [
+            "sc-selectbutton"
+          ],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "RadioButton"
+          ],
+          "modulos": [
+            "radiobutton"
+          ],
+          "enlace": "https://primeng.dev/radiobutton",
+          "sirve": "Una de pocas opciones, cada una con su texto.",
+          "cuando": "Las opciones necesitan una frase para entenderse o compararse. Si se explican solas, SelectButton.",
+          "aqui": "<code>sc-radiobutton</code>; <code>sc-option-cards</code> cuando cada opción se explica (sección 2)",
+          "estado": "ds",
+          "wrappers": [
+            "sc-radiobutton"
+          ],
+          "apps": [],
+          "obsoleto": false
+        }
+      ]
+    },
+    {
+      "titulo": "Sí o no",
+      "pregunta": "¿El cambio se aplica al momento o al guardar?",
+      "filas": [
+        {
+          "nombres": [
+            "Checkbox"
+          ],
+          "modulos": [
+            "checkbox"
+          ],
+          "enlace": "https://primeng.dev/checkbox",
+          "sirve": "Marcar sí o no, o varios de una lista corta.",
+          "cuando": "El cambio se confirma al guardar, o la casilla es parte de una lista.",
+          "aqui": "<code>sc-checkbox</code> propio, con su tri-estado (sección 2); <code>p-checkbox</code> directo en el «Column Toggle» (sección 3)",
+          "estado": "directo",
+          "wrappers": [],
+          "apps": [
+            "cuscare-ds",
+            "sc-docs",
+            "supervisor"
+          ],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "ToggleSwitch"
+          ],
+          "modulos": [
+            "toggleswitch"
+          ],
+          "enlace": "https://primeng.dev/toggleswitch",
+          "sirve": "Encender o apagar algo.",
+          "cuando": "El efecto es inmediato (habilitado, activo).",
+          "aqui": "<code>sc-toggleswitch</code>",
+          "estado": "ds",
+          "wrappers": [
+            "sc-toggleswitch"
+          ],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "ToggleButton"
+          ],
+          "modulos": [
+            "togglebutton"
+          ],
+          "enlace": "https://primeng.dev/togglebutton",
+          "sirve": "Un botón que se queda pulsado.",
+          "cuando": "Una barra de herramientas (silenciar, negrita), donde un interruptor desentona.",
+          "aqui": "Sin wrapper: cuscare-ds; en cuscare, réplica (DD-35)",
+          "estado": "directo",
+          "wrappers": [],
+          "apps": [
+            "cuscare",
+            "cuscare-ds"
+          ],
+          "obsoleto": false
+        }
+      ]
+    },
+    {
+      "titulo": "Elegir en una jerarquía",
+      "pregunta": "¿Vale elegir cualquier nivel o solo el último? ¿La jerarquía es un campo o es la pantalla?",
+      "filas": [
+        {
+          "nombres": [
+            "TreeSelect"
+          ],
+          "modulos": [
+            "treeselect"
+          ],
+          "enlace": "https://primeng.dev/treeselect",
+          "sirve": "Un desplegable con un árbol: uno, varios o con casillas (<code>selectionMode</code>).",
+          "cuando": "Las opciones tienen niveles, vale elegir cualquiera y ayuda ver el árbol para orientarse. <code>filter</code> busca dentro.",
+          "aqui": "Sin uso: descartado para tipificaciones (DD-195); caso abierto en sc-agent, al cerrar una conversación",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "CascadeSelect"
+          ],
+          "modulos": [
+            "cascadeselect"
+          ],
+          "enlace": "https://primeng.dev/cascadeselect",
+          "sirve": "Un desplegable por niveles, en columnas que se abren una tras otra.",
+          "cuando": "Hay que llegar a una hoja por pocos niveles bien conocidos (país, provincia, ciudad). No busca ni elige varias, y solo elige hojas.",
+          "aqui": "Sin caso hoy (sección 4)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "Tree"
+          ],
+          "modulos": [
+            "tree"
+          ],
+          "enlace": "https://primeng.dev/tree",
+          "sirve": "El árbol a la vista, con selección, casillas, arrastre y filtro.",
+          "cuando": "La jerarquía es el contenido de la pantalla, no un campo.",
+          "aqui": "Sin uso: descartado para tipificaciones, que se dibujan en columnas por nivel (DD-174, DD-195)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        }
+      ]
+    },
+    {
+      "titulo": "Ordenar y repartir",
+      "pregunta": "¿Se ordena una lista o se reparte entre dos?",
+      "filas": [
+        {
+          "nombres": [
+            "OrderList"
+          ],
+          "modulos": [
+            "orderlist"
+          ],
+          "enlace": "https://primeng.dev/orderlist",
+          "sirve": "Ordenar una lista con botones de mover y arrastre.",
+          "cuando": "Ordenar es la tarea entera. Para ordenar y además marcar, Listbox con <code>dragdrop</code> y <code>checkbox</code>.",
+          "aqui": "Sin uso: descartado para las columnas (DD-176 §7)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "PickList"
+          ],
+          "modulos": [
+            "picklist"
+          ],
+          "enlace": "https://primeng.dev/picklist",
+          "sirve": "Dos listas: pasar elementos de una a otra.",
+          "cuando": "Repartir un conjunto entre «disponibles» y «elegidos» viendo los dos lados, sobre todo si son cientos y hay que buscar.",
+          "aqui": "Sin caso hoy (sección 4); se valoró para las columnas (DD-162)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        }
+      ]
+    },
+    {
+      "titulo": "Escribir texto",
+      "pregunta": "¿El texto tiene formato fijo, caracteres prohibidos o varias líneas?",
+      "filas": [
+        {
+          "nombres": [
+            "InputText"
+          ],
+          "modulos": [
+            "inputtext"
+          ],
+          "enlace": "https://primeng.dev/inputtext",
+          "sirve": "Una línea de texto.",
+          "cuando": "La base de cualquier campo de texto.",
+          "aqui": "<code>sc-inputtext</code> (y por dentro de <code>sc-inputnumber</code> y <code>sc-search</code>)",
+          "estado": "ds",
+          "wrappers": [
+            "sc-inputnumber",
+            "sc-inputtext",
+            "sc-search"
+          ],
+          "apps": [
+            "sc-docs",
+            "supervisor"
+          ],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "Textarea"
+          ],
+          "modulos": [
+            "textarea"
+          ],
+          "enlace": "https://primeng.dev/textarea",
+          "sirve": "Varias líneas, con <code>autoResize</code>.",
+          "cuando": "El texto puede pasar de una línea (notas, mensajes).",
+          "aqui": "<code>sc-textarea</code>",
+          "estado": "ds",
+          "wrappers": [
+            "sc-textarea"
+          ],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "InputMask"
+          ],
+          "modulos": [
+            "inputmask"
+          ],
+          "enlace": "https://primeng.dev/inputmask",
+          "sirve": "Texto con un formato fijo (<code>99/99/9999</code>, <code>aaa-999</code>).",
+          "cuando": "El formato es fijo y conocido. Con teléfonos internacionales, de largo variable, no encaja.",
+          "aqui": "Sin uso: «sin decidir» para teléfonos (sección 1)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "KeyFilter"
+          ],
+          "modulos": [
+            "keyfilter"
+          ],
+          "enlace": "https://primeng.dev/keyfilter",
+          "sirve": "Directiva que impide teclear lo que no vale (<code>int</code>, <code>num</code>, <code>alphanum</code>, <code>email</code> o una expresión).",
+          "cuando": "Hay que restringir caracteres sin imponer un formato (solo cifras, sin espacios).",
+          "aqui": "Sin caso hoy (sección 4)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "InputOtp"
+          ],
+          "modulos": [
+            "inputotp"
+          ],
+          "enlace": "https://primeng.dev/inputotp",
+          "sirve": "Casillas para un código de un solo uso (<code>length</code>, <code>integerOnly</code>).",
+          "cuando": "Códigos de verificación.",
+          "aqui": "Sin uso: con su pantalla (sección 1)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "InputPassword"
+          ],
+          "modulos": [
+            "inputpassword"
+          ],
+          "enlace": "https://primeng.dev/inputpassword",
+          "sirve": "Contraseña con el ojo para verla.",
+          "cuando": "Siempre que se pida una contraseña.",
+          "aqui": "<code>sc-password</code> (DD-110)",
+          "estado": "ds",
+          "wrappers": [
+            "sc-password"
+          ],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "Password"
+          ],
+          "modulos": [
+            "password"
+          ],
+          "enlace": "https://primeng.dev/inputpassword",
+          "sirve": "La de antes, con medidor de fuerza.",
+          "cuando": "Obsoleto: InputPassword.",
+          "aqui": "Sin uso (sección 5)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": true
+        },
+        {
+          "nombres": [
+            "Editor"
+          ],
+          "modulos": [
+            "editor"
+          ],
+          "enlace": "https://primeng.dev/editor",
+          "sirve": "Texto con formato (negrita, listas, enlaces).",
+          "cuando": "El contenido necesita formato. Obsoleto: PrimeNG lo retirará a favor de un editor de pago.",
+          "aqui": "Sin uso: «sin decidir» para las plantillas de email (sección 1)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": true
+        },
+        {
+          "nombres": [
+            "InputTags"
+          ],
+          "modulos": [
+            "inputtags"
+          ],
+          "enlace": "https://primeng.dev/inputtags",
+          "sirve": "Varias etiquetas libres, con sugerencias si se quiere (<code>typeahead</code>).",
+          "cuando": "El usuario escribe valores nuevos (dominios, palabras clave). Si solo valen los de una lista, MultiSelect o AutoComplete <code>multiple</code>.",
+          "aqui": "<code>sc-inputtags</code> (DD-195)",
+          "estado": "ds",
+          "wrappers": [
+            "sc-inputtags"
+          ],
+          "apps": [],
+          "obsoleto": false
+        }
+      ]
+    },
+    {
+      "titulo": "Números, fechas y colores",
+      "pregunta": "¿Importa la cifra exacta o el orden de magnitud?",
+      "filas": [
+        {
+          "nombres": [
+            "InputNumber"
+          ],
+          "modulos": [
+            "inputnumber"
+          ],
+          "enlace": "https://primeng.dev/inputnumber",
+          "sirve": "Número con formato, topes y flechas.",
+          "cuando": "Cifras con moneda, decimales o separadores. Los enteros sin formato van por <code>sc-inputnumber</code> propio (sección 2).",
+          "aqui": "<code>sc-inputnumber</code> va sobre InputText, no sobre este",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "Slider"
+          ],
+          "modulos": [
+            "slider"
+          ],
+          "enlace": "https://primeng.dev/slider",
+          "sirve": "Un valor o un rango (<code>range</code>) arrastrando.",
+          "cuando": "Importa más el rango que la cifra exacta (volumen, umbral), y la cifra se ve al lado.",
+          "aqui": "Sin uso: con su pantalla (sección 1)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "Knob"
+          ],
+          "modulos": [
+            "knob"
+          ],
+          "enlace": "https://primeng.dev/knob",
+          "sirve": "Un dial para un número.",
+          "cuando": "Casi nunca en una app de gestión: ocupa mucho y se lee peor que un Slider.",
+          "aqui": "Sin uso: con su pantalla (sección 1)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "Rating"
+          ],
+          "modulos": [
+            "rating"
+          ],
+          "enlace": "https://primeng.dev/rating",
+          "sirve": "Estrellas para valorar, o para leer una valoración (<code>readonly</code>).",
+          "cuando": "Valoraciones de 1 a N.",
+          "aqui": "Sin wrapper: supervisor (<code>lab/tabla</code>, solo lectura); «sin decidir» para la valoración del chat",
+          "estado": "directo",
+          "wrappers": [],
+          "apps": [
+            "supervisor"
+          ],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "DatePicker"
+          ],
+          "modulos": [
+            "datepicker"
+          ],
+          "enlace": "https://primeng.dev/datepicker",
+          "sirve": "Fecha, rango (<code>selectionMode=\"range\"</code>), hora o mes.",
+          "cuando": "Cualquier fecha u hora.",
+          "aqui": "<code>sc-datepicker</code>",
+          "estado": "ds",
+          "wrappers": [
+            "sc-datepicker"
+          ],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "ColorPicker"
+          ],
+          "modulos": [
+            "colorpicker"
+          ],
+          "enlace": "https://primeng.dev/colorpicker",
+          "sirve": "Un color libre.",
+          "cuando": "Obsoleto: InputColor.",
+          "aqui": "Sin uso; <code>sc-color-dot-picker</code> elige de la paleta (sección 2)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": true
+        },
+        {
+          "nombres": [
+            "InputColor"
+          ],
+          "modulos": [
+            "inputcolor"
+          ],
+          "enlace": "https://primeng.dev/inputcolor",
+          "sirve": "Selector de color por piezas (área, deslizadores, cuentagotas).",
+          "cuando": "El color es libre. Si sale de una paleta cerrada, <code>sc-color-dot-picker</code>.",
+          "aqui": "Sin caso hoy (sección 4)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        }
+      ]
+    },
+    {
+      "titulo": "Montar un campo",
+      "pregunta": "Piezas que van alrededor de un campo, no campos.",
+      "filas": [
+        {
+          "nombres": [
+            "IconField",
+            "InputIcon"
+          ],
+          "modulos": [
+            "iconfield",
+            "inputicon"
+          ],
+          "enlace": "https://primeng.dev/iconfield",
+          "sirve": "Un icono dentro del campo.",
+          "cuando": "Buscadores, o un icono que dice algo del valor.",
+          "aqui": "Por dentro de <code>sc-search</code>",
+          "estado": "ds",
+          "wrappers": [
+            "sc-search"
+          ],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "InputGroup",
+            "InputGroupAddon"
+          ],
+          "modulos": [
+            "inputgroup",
+            "inputgroupaddon"
+          ],
+          "enlace": "https://primeng.dev/inputgroup",
+          "sirve": "Pegar al campo un texto, icono o botón.",
+          "cuando": "La pieza es parte del valor (unidad, prefijo) o una acción del campo.",
+          "aqui": "<code>sc-inputgroup</code>; el Addon, directo en supervisor (sección 3)",
+          "estado": "ds",
+          "wrappers": [
+            "sc-inputgroup"
+          ],
+          "apps": [
+            "sc-docs",
+            "supervisor"
+          ],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "FloatLabel"
+          ],
+          "modulos": [
+            "floatlabel"
+          ],
+          "enlace": "https://primeng.dev/floatlabel",
+          "sirve": "La etiqueta dentro del campo, que sube al escribir.",
+          "cuando": "Formularios muy densos. Choca con el campo del DS, rótulo encima (DD-44).",
+          "aqui": "Sin caso hoy (sección 4)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "IftaLabel"
+          ],
+          "modulos": [
+            "iftalabel"
+          ],
+          "enlace": "https://primeng.dev/iftalabel",
+          "sirve": "La etiqueta fija arriba, dentro del campo.",
+          "cuando": "Lo mismo que FloatLabel.",
+          "aqui": "Sin caso hoy (sección 4)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "Label"
+          ],
+          "modulos": [
+            "label"
+          ],
+          "enlace": "https://primeng.dev/label",
+          "sirve": "Tema para <code>&lt;label&gt;</code> (<code>pLabel</code>).",
+          "cuando": "Pieza de los campos.",
+          "aqui": "Sección 5",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "Fluid"
+          ],
+          "modulos": [
+            "fluid"
+          ],
+          "enlace": "https://primeng.dev/fluid",
+          "sirve": "Que los campos de dentro ocupen todo el ancho.",
+          "cuando": "Formularios a una columna.",
+          "aqui": "Sección 5",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        }
+      ]
+    },
+    {
+      "titulo": "Acciones",
+      "pregunta": "¿Hay una acción principal con variantes, o varias del mismo peso?",
+      "filas": [
+        {
+          "nombres": [
+            "Button"
+          ],
+          "modulos": [
+            "button"
+          ],
+          "enlace": "https://primeng.dev/button",
+          "sirve": "Una acción.",
+          "cuando": "Obsoleto como componente: la 22 pide la directiva <code>[pButton]</code>.",
+          "aqui": "<code>sc-button</code>, todavía sobre el componente (handoff del DS, «Fuera de PrimeNG jubilado»)",
+          "estado": "ds",
+          "wrappers": [
+            "sc-button"
+          ],
+          "apps": [
+            "sc-docs",
+            "supervisor"
+          ],
+          "obsoleto": true
+        },
+        {
+          "nombres": [
+            "ButtonGroup"
+          ],
+          "modulos": [
+            "buttongroup"
+          ],
+          "enlace": "https://primeng.dev/button",
+          "sirve": "Varios botones pegados en un bloque.",
+          "cuando": "Acciones hermanas del mismo peso. Si se elige una entre ellas, SelectButton.",
+          "aqui": "Sin caso hoy (sección 4)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "SplitButton"
+          ],
+          "modulos": [
+            "splitbutton"
+          ],
+          "enlace": "https://primeng.dev/splitbutton",
+          "sirve": "Una acción por defecto y sus variantes en un menú pegado.",
+          "cuando": "Hay una acción principal clara y dos o más variantes («Guardar» y «Guardar como borrador»).",
+          "aqui": "Sin caso hoy (sección 4)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "SpeedDial"
+          ],
+          "modulos": [
+            "speeddial"
+          ],
+          "enlace": "https://primeng.dev/speeddial",
+          "sirve": "Un botón flotante que abre varias acciones.",
+          "cuando": "Móvil o lienzos; no en escritorio de gestión.",
+          "aqui": "Sin caso hoy (sección 4)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "Toolbar"
+          ],
+          "modulos": [
+            "toolbar"
+          ],
+          "enlace": "https://primeng.dev/toolbar",
+          "sirve": "Barra con zonas de inicio, centro y fin.",
+          "cuando": "Agrupar las acciones de una vista o de una tabla.",
+          "aqui": "Sin wrapper: supervisor y cuscare-ds (sección 3)",
+          "estado": "directo",
+          "wrappers": [],
+          "apps": [
+            "cuscare-ds",
+            "supervisor"
+          ],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "CommandMenu"
+          ],
+          "modulos": [
+            "commandmenu"
+          ],
+          "enlace": "https://primeng.dev/commandmenu",
+          "sirve": "Lista de comandos con buscador, dentro de la página.",
+          "cuando": "Una paleta embebida. La de Cmd+K es <code>sc-command-palette</code> (sección 2).",
+          "aqui": "Sin uso (sección 2)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        }
+      ]
+    },
+    {
+      "titulo": "Menús",
+      "pregunta": "¿Tiene niveles? ¿Es navegación o acciones sobre algo?",
+      "filas": [
+        {
+          "nombres": [
+            "Menu"
+          ],
+          "modulos": [
+            "menu"
+          ],
+          "enlace": "https://primeng.dev/menu",
+          "sirve": "Lista de acciones, fija o emergente (<code>popup</code>); con <code>toggleable</code>, grupos plegables.",
+          "cuando": "El «⋮» de una fila, el menú de usuario. Desde la 22 sustituye a PanelMenu.",
+          "aqui": "Sin wrapper: supervisor (sección 3)",
+          "estado": "directo",
+          "wrappers": [],
+          "apps": [
+            "supervisor"
+          ],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "TieredMenu"
+          ],
+          "modulos": [
+            "tieredmenu"
+          ],
+          "enlace": "https://primeng.dev/tieredmenu",
+          "sirve": "Menú con submenús en capas.",
+          "cuando": "Acciones con un segundo nivel.",
+          "aqui": "Sin caso hoy (sección 4)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "ContextMenu"
+          ],
+          "modulos": [
+            "contextmenu"
+          ],
+          "enlace": "https://primeng.dev/contextmenu",
+          "sirve": "Menú al clic derecho o pulsación larga.",
+          "cuando": "Un atajo de lo que ya está en el «⋮», nunca el único camino.",
+          "aqui": "Sin wrapper: supervisor, solo en <code>lab/arbol</code> (sección 3); en los listados, descartado: el «⋮» lo cubre (sección 1)",
+          "estado": "directo",
+          "wrappers": [],
+          "apps": [
+            "supervisor"
+          ],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "Menubar"
+          ],
+          "modulos": [
+            "menubar"
+          ],
+          "enlace": "https://primeng.dev/menubar",
+          "sirve": "Menú horizontal con desplegables.",
+          "cuando": "La navegación superior de una web.",
+          "aqui": "Sin caso hoy (sección 4)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "MegaMenu"
+          ],
+          "modulos": [
+            "megamenu"
+          ],
+          "enlace": "https://primeng.dev/megamenu",
+          "sirve": "Submenús en columnas, todos a la vez.",
+          "cuando": "Navegaciones con muchas secciones.",
+          "aqui": "Sin caso hoy (sección 4)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "PanelMenu"
+          ],
+          "modulos": [
+            "panelmenu"
+          ],
+          "enlace": "https://primeng.dev/panelmenu",
+          "sirve": "Menú vertical en acordeón.",
+          "cuando": "Obsoleto: Menu con <code>toggleable</code>.",
+          "aqui": "Sin caso hoy (sección 4)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": true
+        },
+        {
+          "nombres": [
+            "Dock"
+          ],
+          "modulos": [
+            "dock"
+          ],
+          "enlace": "https://primeng.dev/dock",
+          "sirve": "Barra de iconos al estilo de un escritorio.",
+          "cuando": "Lanzadores; sin caso en gestión.",
+          "aqui": "Sin caso hoy (sección 4)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        }
+      ]
+    },
+    {
+      "titulo": "Navegar",
+      "pregunta": "¿Cambias de sitio, de vista hermana o de paso?",
+      "filas": [
+        {
+          "nombres": [
+            "Breadcrumb"
+          ],
+          "modulos": [
+            "breadcrumb"
+          ],
+          "enlace": "https://primeng.dev/breadcrumb",
+          "sirve": "Dónde estás en la jerarquía de páginas.",
+          "cuando": "Páginas de detalle bajo un listado.",
+          "aqui": "<code>sc-breadcrumb</code> (DD-33)",
+          "estado": "ds",
+          "wrappers": [
+            "sc-breadcrumb"
+          ],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "Tabs"
+          ],
+          "modulos": [
+            "tabs"
+          ],
+          "enlace": "https://primeng.dev/tabs",
+          "sirve": "Vistas hermanas en el mismo sitio.",
+          "cuando": "Cambiar de colección o de vista (DD-113). Para filtrar la misma lista, SelectButton.",
+          "aqui": "<code>sc-tabs</code>; <code>p-tabs</code> directo en el Monitor (sección 3)",
+          "estado": "ds",
+          "wrappers": [
+            "sc-tabs"
+          ],
+          "apps": [
+            "supervisor"
+          ],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "Stepper"
+          ],
+          "modulos": [
+            "stepper"
+          ],
+          "enlace": "https://primeng.dev/stepper",
+          "sirve": "Pasos en orden; <code>linear</code> impide saltarse uno.",
+          "cuando": "El orden importa de verdad y cada paso depende del anterior.",
+          "aqui": "Quitado a propósito de las altas (DD-143)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "Steps"
+          ],
+          "modulos": [
+            "steps"
+          ],
+          "enlace": null,
+          "sirve": "Indicador de pasos.",
+          "cuando": "Fuera de la documentación; su sucesor es Stepper.",
+          "aqui": "Sin caso (sección 4)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "Sidebar"
+          ],
+          "modulos": [
+            "sidebar"
+          ],
+          "enlace": "https://primeng.dev/sidebar",
+          "sirve": "El menú lateral nuevo de la 22 (raíl, plegado, <code>collapsible</code>).",
+          "cuando": "La navegación principal de una app.",
+          "aqui": "Sin wrapper: supervisor, en laboratorio (DD-118)",
+          "estado": "directo",
+          "wrappers": [],
+          "apps": [
+            "supervisor"
+          ],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "Paginator"
+          ],
+          "modulos": [
+            "paginator"
+          ],
+          "enlace": "https://primeng.dev/paginator",
+          "sirve": "Páginas de una colección.",
+          "cuando": "Pieza de Table y DataView; suelto, en una lista propia.",
+          "aqui": "Sección 5",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "ScrollTop"
+          ],
+          "modulos": [
+            "scrolltop"
+          ],
+          "enlace": "https://primeng.dev/scrolltop",
+          "sirve": "Botón de volver arriba.",
+          "cuando": "Páginas muy largas.",
+          "aqui": "Sin caso hoy (sección 4)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        }
+      ]
+    },
+    {
+      "titulo": "Capas",
+      "pregunta": "¿El usuario necesita ver lo de detrás mientras la usa? ¿Hay algo que pulsar dentro?",
+      "filas": [
+        {
+          "nombres": [
+            "Dialog"
+          ],
+          "modulos": [
+            "dialog"
+          ],
+          "enlace": "https://primeng.dev/dialog",
+          "sirve": "Ventana modal con contenido propio.",
+          "cuando": "Una tarea que se termina o se cancela antes de seguir.",
+          "aqui": "<code>sc-dialog</code> (DD-140)",
+          "estado": "ds",
+          "wrappers": [
+            "sc-dialog"
+          ],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "DynamicDialog"
+          ],
+          "modulos": [
+            "dynamicdialog"
+          ],
+          "enlace": "https://primeng.dev/dynamicdialog",
+          "sirve": "El mismo diálogo, abierto desde código con un componente dentro.",
+          "cuando": "El contenido es un componente que se abre desde varios sitios.",
+          "aqui": "<code>ScDynamicDialogService</code>; directo en sc-docs (sección 3)",
+          "estado": "directo",
+          "wrappers": [],
+          "apps": [
+            "sc-docs"
+          ],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "Drawer"
+          ],
+          "modulos": [
+            "drawer"
+          ],
+          "enlace": "https://primeng.dev/drawer",
+          "sirve": "Un panel que sale de un borde (<code>position</code>).",
+          "cuando": "Consultar o editar algo sin perder la pantalla de detrás.",
+          "aqui": "<code>sc-drawer</code>",
+          "estado": "ds",
+          "wrappers": [
+            "sc-drawer"
+          ],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "Popover"
+          ],
+          "modulos": [
+            "popover"
+          ],
+          "enlace": "https://primeng.dev/popover",
+          "sirve": "Una capa pegada a su botón, con contenido libre.",
+          "cuando": "Contenido pequeño e interactivo (filtros, columnas, una ficha corta).",
+          "aqui": "Por dentro de <code>sc-column-selector</code> y <code>sc-group-popover</code>; directo en supervisor y cuscare-ds",
+          "estado": "ds",
+          "wrappers": [
+            "sc-column-selector",
+            "sc-group-popover"
+          ],
+          "apps": [
+            "cuscare",
+            "cuscare-ds",
+            "supervisor"
+          ],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "Tooltip"
+          ],
+          "modulos": [
+            "tooltip"
+          ],
+          "enlace": "https://primeng.dev/tooltip",
+          "sirve": "Texto de ayuda al pasar o al enfocar.",
+          "cuando": "Solo texto, nunca algo que pulsar.",
+          "aqui": "Por dentro de <code>sc-button</code> (DD-200); directo en supervisor y cuscare-ds",
+          "estado": "ds",
+          "wrappers": [
+            "sc-button"
+          ],
+          "apps": [
+            "cuscare-ds",
+            "sc-docs",
+            "supervisor"
+          ],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "Overlay"
+          ],
+          "modulos": [
+            "overlay"
+          ],
+          "enlace": "https://primeng.dev/overlay",
+          "sirve": "La capa de Select, AutoComplete y compañía.",
+          "cuando": "Pieza interna.",
+          "aqui": "Sección 5",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "BlockUI"
+          ],
+          "modulos": [
+            "blockui"
+          ],
+          "enlace": "https://primeng.dev/blockui",
+          "sirve": "Tapa una zona o la página mientras algo trabaja.",
+          "cuando": "Una operación que no admite cambios mientras dura.",
+          "aqui": "Sin caso hoy (sección 4)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        }
+      ]
+    },
+    {
+      "titulo": "Confirmar y avisar",
+      "pregunta": "¿Es grave? ¿Tiene que quedarse a la vista?",
+      "filas": [
+        {
+          "nombres": [
+            "ConfirmDialog"
+          ],
+          "modulos": [
+            "confirmdialog"
+          ],
+          "enlace": "https://primeng.dev/confirmdialog",
+          "sirve": "Una pregunta de sí o no en un modal.",
+          "cuando": "Acciones graves o irreversibles. Para borrar una entidad, <code>sc-delete-entity-dialog</code> (sección 2).",
+          "aqui": "<code>sc-confirmdialog</code>",
+          "estado": "ds",
+          "wrappers": [
+            "sc-confirmdialog"
+          ],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "ConfirmPopup"
+          ],
+          "modulos": [
+            "confirmpopup"
+          ],
+          "enlace": "https://primeng.dev/confirmpopup",
+          "sirve": "La misma pregunta, pegada al botón que la lanza.",
+          "cuando": "Confirmaciones pequeñas junto a lo que se pulsa (quitar una fila de una lista).",
+          "aqui": "Sin uso: «sin decidir» (sección 1)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "Toast"
+          ],
+          "modulos": [
+            "toast"
+          ],
+          "enlace": "https://primeng.dev/toast",
+          "sirve": "Aviso flotante que se va solo (<code>life</code>).",
+          "cuando": "Confirmar que algo pasó («Guardado») sin interrumpir.",
+          "aqui": "<code>sc-toast</code>",
+          "estado": "ds",
+          "wrappers": [
+            "sc-toast"
+          ],
+          "apps": [
+            "supervisor"
+          ],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "Message"
+          ],
+          "modulos": [
+            "message"
+          ],
+          "enlace": "https://primeng.dev/message",
+          "sirve": "Aviso dentro de la página.",
+          "cuando": "Algo que hay que leer en su sitio y se queda.",
+          "aqui": "<code>sc-message</code>",
+          "estado": "ds",
+          "wrappers": [
+            "sc-message"
+          ],
+          "apps": [
+            "sc-docs"
+          ],
+          "obsoleto": false
+        }
+      ]
+    },
+    {
+      "titulo": "Agrupar contenido",
+      "pregunta": "¿La caja se pliega? ¿El usuario reparte el sitio?",
+      "filas": [
+        {
+          "nombres": [
+            "Card"
+          ],
+          "modulos": [
+            "card"
+          ],
+          "enlace": "https://primeng.dev/card",
+          "sirve": "Una caja de contenido.",
+          "cuando": "Bloques sueltos. Para las secciones de una pantalla, <code>sc-section-card</code> (DD-57).",
+          "aqui": "<code>sc-card</code>",
+          "estado": "ds",
+          "wrappers": [
+            "sc-card"
+          ],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "Panel"
+          ],
+          "modulos": [
+            "panel"
+          ],
+          "enlace": "https://primeng.dev/panel",
+          "sirve": "Una caja con cabecera que se pliega (<code>toggleable</code>).",
+          "cuando": "Bloques plegables sueltos.",
+          "aqui": "<code>sc-panel</code>",
+          "estado": "ds",
+          "wrappers": [
+            "sc-panel"
+          ],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "Fieldset"
+          ],
+          "modulos": [
+            "fieldset"
+          ],
+          "enlace": "https://primeng.dev/fieldset",
+          "sirve": "Un grupo de campos con leyenda, plegable.",
+          "cuando": "Agrupar campos. Aquí lo hace <code>sc-subsection</code> (DD-157).",
+          "aqui": "Descartado (sección 1)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "Accordion"
+          ],
+          "modulos": [
+            "accordion"
+          ],
+          "enlace": "https://primeng.dev/accordion",
+          "sirve": "Varias secciones plegables, una o varias abiertas (<code>multiple</code>).",
+          "cuando": "Mucho contenido secundario que se consulta a trozos.",
+          "aqui": "Descartado frente a <code>sc-slot collapsible</code> (DD-157)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "Divider"
+          ],
+          "modulos": [
+            "divider"
+          ],
+          "enlace": "https://primeng.dev/divider",
+          "sirve": "Una línea que separa.",
+          "cuando": "Separar dos bloques.",
+          "aqui": "<code>sc-divider</code>",
+          "estado": "ds",
+          "wrappers": [
+            "sc-divider"
+          ],
+          "apps": [
+            "cuscare",
+            "cuscare-ds",
+            "sc-docs"
+          ],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "Splitter"
+          ],
+          "modulos": [
+            "splitter"
+          ],
+          "enlace": "https://primeng.dev/splitter",
+          "sirve": "Paneles cuyo tamaño ajusta el usuario.",
+          "cuando": "Un maestro y detalle donde el usuario quiere repartir el ancho.",
+          "aqui": "Sin caso hoy (sección 4)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "ScrollArea"
+          ],
+          "modulos": [
+            "scrollarea"
+          ],
+          "enlace": "https://primeng.dev/scrollarea",
+          "sirve": "Zona con scroll y barras con el tema.",
+          "cuando": "Zonas con scroll propio.",
+          "aqui": "Sin wrapper: supervisor (sección 3)",
+          "estado": "directo",
+          "wrappers": [],
+          "apps": [
+            "supervisor"
+          ],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "ScrollPanel"
+          ],
+          "modulos": [
+            "scrollpanel"
+          ],
+          "enlace": "https://primeng.dev/scrollpanel",
+          "sirve": "La de antes.",
+          "cuando": "Obsoleto: ScrollArea.",
+          "aqui": "Sin uso (sección 5)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": true
+        },
+        {
+          "nombres": [
+            "Inplace"
+          ],
+          "modulos": [
+            "inplace"
+          ],
+          "enlace": "https://primeng.dev/inplace",
+          "sirve": "Un dato que al pulsarlo se vuelve editable.",
+          "cuando": "Editar un dato suelto sin abrir un formulario.",
+          "aqui": "Sin wrapper: <code>sc-name-inplace</code> del supervisor (sección 2)",
+          "estado": "directo",
+          "wrappers": [],
+          "apps": [
+            "supervisor"
+          ],
+          "obsoleto": false
+        }
+      ]
+    },
+    {
+      "titulo": "Datos y colecciones",
+      "pregunta": "¿Cada elemento es una fila, una tarjeta o un momento? ¿Tiene hijos?",
+      "filas": [
+        {
+          "nombres": [
+            "Table"
+          ],
+          "modulos": [
+            "table"
+          ],
+          "enlace": "https://primeng.dev/table",
+          "sirve": "Filas y columnas con orden, filtro, selección, páginas y lista virtual.",
+          "cuando": "Comparar registros por columnas.",
+          "aqui": "<code>sc-datatable</code>",
+          "estado": "ds",
+          "wrappers": [
+            "sc-datatable"
+          ],
+          "apps": [
+            "cuscare",
+            "cuscare-ds",
+            "sc-docs",
+            "supervisor"
+          ],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "TreeTable"
+          ],
+          "modulos": [
+            "treetable"
+          ],
+          "enlace": "https://primeng.dev/treetable",
+          "sirve": "Una tabla cuyas filas se despliegan en hijas.",
+          "cuando": "Los registros tienen padre e hijos y además columnas.",
+          "aqui": "Sin wrapper: supervisor (<code>lab/arbol</code>)",
+          "estado": "directo",
+          "wrappers": [],
+          "apps": [
+            "supervisor"
+          ],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "DataView"
+          ],
+          "modulos": [
+            "dataview"
+          ],
+          "enlace": "https://primeng.dev/dataview",
+          "sirve": "Lista o rejilla de tarjetas con orden y páginas (<code>layout</code>).",
+          "cuando": "Cada elemento es una tarjeta, no una fila.",
+          "aqui": "Sin caso hoy (sección 4)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "Timeline"
+          ],
+          "modulos": [
+            "timeline"
+          ],
+          "enlace": "https://primeng.dev/timeline",
+          "sirve": "Eventos en orden temporal.",
+          "cuando": "La historia de algo (un ticket, una conversación).",
+          "aqui": "Sin uso: «sin decidir» (sección 1)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "OrganizationChart"
+          ],
+          "modulos": [
+            "organizationchart"
+          ],
+          "enlace": "https://primeng.dev/organizationchart",
+          "sirve": "Un organigrama.",
+          "cuando": "Jerarquías que se leen dibujadas.",
+          "aqui": "Sin caso hoy (sección 4)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "Scroller"
+          ],
+          "modulos": [
+            "scroller"
+          ],
+          "enlace": "https://primeng.dev/scroller",
+          "sirve": "Lista virtual para miles de elementos.",
+          "cuando": "Listas muy largas fuera de una tabla o un Select.",
+          "aqui": "Sección 5 (pieza de Table y Select)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "Carousel"
+          ],
+          "modulos": [
+            "carousel"
+          ],
+          "enlace": "https://primeng.dev/carousel",
+          "sirve": "Elementos que pasan de lado.",
+          "cuando": "Rara vez en una app de gestión.",
+          "aqui": "Sin caso hoy (sección 4)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        }
+      ]
+    },
+    {
+      "titulo": "Estado, identidad y progreso",
+      "pregunta": "¿Se lee, se quita o se espera?",
+      "filas": [
+        {
+          "nombres": [
+            "Tag"
+          ],
+          "modulos": [
+            "tag"
+          ],
+          "enlace": "https://primeng.dev/tag",
+          "sirve": "Etiqueta de solo lectura (estado, categoría).",
+          "cuando": "Leer un estado. Si el usuario la quita, Chip.",
+          "aqui": "<code>sc-tag</code>",
+          "estado": "ds",
+          "wrappers": [
+            "sc-tag"
+          ],
+          "apps": [
+            "cuscare",
+            "sc-docs"
+          ],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "Chip"
+          ],
+          "modulos": [
+            "chip"
+          ],
+          "enlace": "https://primeng.dev/chip",
+          "sirve": "Un valor elegido que se puede quitar.",
+          "cuando": "Lo elegido se quita con su ×.",
+          "aqui": "<code>sc-chip</code>",
+          "estado": "ds",
+          "wrappers": [
+            "sc-chip"
+          ],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "Badge"
+          ],
+          "modulos": [
+            "badge"
+          ],
+          "enlace": "https://primeng.dev/badge",
+          "sirve": "Una cifra o un punto pequeño.",
+          "cuando": "El contador de una pieza.",
+          "aqui": "<code>sc-badge</code>",
+          "estado": "ds",
+          "wrappers": [
+            "sc-badge"
+          ],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "OverlayBadge"
+          ],
+          "modulos": [
+            "overlaybadge"
+          ],
+          "enlace": "https://primeng.dev/badge",
+          "sirve": "El Badge encima de otro elemento.",
+          "cuando": "Avisos sobre un icono o un avatar.",
+          "aqui": "Por dentro de <code>sc-avatar</code>; directo en supervisor",
+          "estado": "ds",
+          "wrappers": [
+            "sc-avatar"
+          ],
+          "apps": [
+            "supervisor"
+          ],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "Avatar"
+          ],
+          "modulos": [
+            "avatar"
+          ],
+          "enlace": "https://primeng.dev/avatar",
+          "sirve": "Una persona: foto, iniciales o icono.",
+          "cuando": "Identificar a alguien.",
+          "aqui": "<code>sc-avatar</code>",
+          "estado": "ds",
+          "wrappers": [
+            "sc-avatar"
+          ],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "AvatarGroup"
+          ],
+          "modulos": [
+            "avatargroup"
+          ],
+          "enlace": "https://primeng.dev/avatar",
+          "sirve": "Varios avatares apilados.",
+          "cuando": "Un grupo de personas en poco sitio.",
+          "aqui": "<code>sc-avatargroup</code>",
+          "estado": "ds",
+          "wrappers": [
+            "sc-avatargroup"
+          ],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "ProgressBar"
+          ],
+          "modulos": [
+            "progressbar"
+          ],
+          "enlace": "https://primeng.dev/progressbar",
+          "sirve": "Progreso con cifra, o sin ella mientras no se sabe.",
+          "cuando": "Esperas de 3 a 10 s, con cifra (DD-188).",
+          "aqui": "<code>sc-progressbar</code>",
+          "estado": "ds",
+          "wrappers": [
+            "sc-progressbar"
+          ],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "ProgressSpinner"
+          ],
+          "modulos": [
+            "progressspinner"
+          ],
+          "enlace": "https://primeng.dev/progressspinner",
+          "sirve": "Un giro de espera.",
+          "cuando": "Esperas cortas en una pieza; para una pantalla, Skeleton. Aquí también es el anillo del resumen (DD-161).",
+          "aqui": "<code>sc-progressspinner</code>",
+          "estado": "ds",
+          "wrappers": [
+            "sc-progressspinner"
+          ],
+          "apps": [
+            "supervisor"
+          ],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "MeterGroup"
+          ],
+          "modulos": [
+            "metergroup"
+          ],
+          "enlace": "https://primeng.dev/metergroup",
+          "sirve": "Varias medidas en una barra.",
+          "cuando": "Cómo se reparte un total.",
+          "aqui": "Sin wrapper: supervisor, resumen de grupo (sección 3)",
+          "estado": "directo",
+          "wrappers": [],
+          "apps": [
+            "supervisor"
+          ],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "Skeleton"
+          ],
+          "modulos": [
+            "skeleton"
+          ],
+          "enlace": "https://primeng.dev/skeleton",
+          "sirve": "El hueco con la forma de lo que viene.",
+          "cuando": "Cargas de 1 a 3 s (DD-188, DD-201).",
+          "aqui": "<code>sc-skeleton</code>",
+          "estado": "ds",
+          "wrappers": [
+            "sc-skeleton"
+          ],
+          "apps": [],
+          "obsoleto": false
+        }
+      ]
+    },
+    {
+      "titulo": "Archivos, imágenes y gráficos",
+      "pregunta": null,
+      "filas": [
+        {
+          "nombres": [
+            "FileUpload"
+          ],
+          "modulos": [
+            "fileupload"
+          ],
+          "enlace": "https://primeng.dev/fileupload",
+          "sirve": "Subir archivos: botón suelto o lista con arrastre.",
+          "cuando": "Cualquier subida (DD-184). La foto de perfil, <code>sc-photo-upload</code> (sección 2).",
+          "aqui": "<code>sc-fileupload</code>",
+          "estado": "ds",
+          "wrappers": [
+            "sc-fileupload"
+          ],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "Gallery"
+          ],
+          "modulos": [
+            "gallery"
+          ],
+          "enlace": "https://primeng.dev/gallery",
+          "sirve": "La galería nueva de la 22: pantalla completa, zoom, girar, descargar.",
+          "cuando": "Ver imágenes en grande. Sustituye a Galleria e Image.",
+          "aqui": "Sin caso hoy (sección 4)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "Galleria"
+          ],
+          "modulos": [
+            "galleria"
+          ],
+          "enlace": "https://primeng.dev/galleria",
+          "sirve": "La galería de antes.",
+          "cuando": "Obsoleto: Gallery.",
+          "aqui": "Sin caso (sección 4)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": true
+        },
+        {
+          "nombres": [
+            "Image"
+          ],
+          "modulos": [
+            "image"
+          ],
+          "enlace": "https://primeng.dev/image",
+          "sirve": "Imagen con vista previa.",
+          "cuando": "Obsoleto: Gallery.",
+          "aqui": "Sin caso (sección 4)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": true
+        },
+        {
+          "nombres": [
+            "ImageCompare"
+          ],
+          "modulos": [
+            "imagecompare"
+          ],
+          "enlace": "https://primeng.dev/imagecompare",
+          "sirve": "Comparar dos imágenes con un tirador.",
+          "cuando": "Obsoleto: Compare.",
+          "aqui": "Sin caso (sección 4)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": true
+        },
+        {
+          "nombres": [
+            "Compare"
+          ],
+          "modulos": [
+            "compare"
+          ],
+          "enlace": "https://primeng.dev/compare",
+          "sirve": "Dos imágenes o vistas una sobre otra, con un tirador que se mueve también con teclado.",
+          "cuando": "Enseñar un antes y un después. Sustituye a ImageCompare.",
+          "aqui": "Sin caso hoy (sección 4)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "Chart"
+          ],
+          "modulos": [
+            "chart"
+          ],
+          "enlace": "https://primeng.dev/chart",
+          "sirve": "Gráficos sobre Chart.js.",
+          "cuando": "Obsoleto: PrimeNG lo retirará a favor de gráficos de pago.",
+          "aqui": "Sin caso hoy (sección 4)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": true
+        }
+      ]
+    },
+    {
+      "titulo": "Directivas y utilidades",
+      "pregunta": "Ayudas de plantilla; no se eligen frente a un hermano.",
+      "filas": [
+        {
+          "nombres": [
+            "AutoFocus"
+          ],
+          "modulos": [
+            "autofocus"
+          ],
+          "enlace": "https://primeng.dev/autofocus",
+          "sirve": "Pone el foco en un elemento al cargar.",
+          "cuando": null,
+          "aqui": "Directo en supervisor (sección 3)",
+          "estado": "directo",
+          "wrappers": [],
+          "apps": [
+            "supervisor"
+          ],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "FocusTrap"
+          ],
+          "modulos": [
+            "focustrap"
+          ],
+          "enlace": "https://primeng.dev/focustrap",
+          "sirve": "Mantiene el foco dentro de una zona al tabular.",
+          "cuando": null,
+          "aqui": "Sección 5",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "DragDrop"
+          ],
+          "modulos": [
+            "dragdrop"
+          ],
+          "enlace": "https://primeng.dev/dragdrop",
+          "sirve": "Arrastrar y soltar (<code>pDraggable</code>, <code>pDroppable</code>).",
+          "cuando": null,
+          "aqui": "Sección 5: el arrastre del repo es el de CDK",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "AnimateOnScroll"
+          ],
+          "modulos": [
+            "animateonscroll"
+          ],
+          "enlace": "https://primeng.dev/animateonscroll",
+          "sirve": "Anima al entrar o salir de la vista.",
+          "cuando": null,
+          "aqui": "Sección 5",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "Ripple"
+          ],
+          "modulos": [
+            "ripple"
+          ],
+          "enlace": "https://primeng.dev/ripple",
+          "sirve": "La onda al pulsar.",
+          "cuando": null,
+          "aqui": "Sección 5",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "StyleClass"
+          ],
+          "modulos": [
+            "styleclass"
+          ],
+          "enlace": "https://primeng.dev/styleclass",
+          "sirve": "Pone y quita clases al entrar o salir.",
+          "cuando": null,
+          "aqui": "Sección 5",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        },
+        {
+          "nombres": [
+            "Terminal"
+          ],
+          "modulos": [
+            "terminal"
+          ],
+          "enlace": "https://primeng.dev/terminal",
+          "sirve": "Una consola de texto.",
+          "cuando": null,
+          "aqui": "Sin caso hoy (sección 4)",
+          "estado": "sin-uso",
+          "wrappers": [],
+          "apps": [],
+          "obsoleto": false
+        }
+      ]
+    }
+  ]
+}
