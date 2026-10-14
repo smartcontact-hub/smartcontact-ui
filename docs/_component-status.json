@@ -1,6 +1,6 @@
 {
   "generated": "component-audit.mjs",
-  "summary": "61 componentes · 24 custom · 9 standard · 28 extended · 50 usados en Supervisor · estado (DD-190): 33 ready, 27 experimental, 1 deprecated.",
+  "summary": "61 componentes · 24 custom · 9 standard · 28 extended · 51 usados en Supervisor · estado (DD-190): 33 ready, 27 experimental, 1 deprecated.",
   "components": [
     {
       "name": "avatar",
@@ -244,7 +244,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 185,
+      "usedInSupervisor": 190,
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "sobreObsoleto": [
         {
@@ -1111,7 +1111,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 16,
+      "usedInSupervisor": 20,
       "cuando": "Para una cantidad acotada, con mínimo, máximo y paso. Si el número es un identificador (un teléfono, un código), es texto: `sc-inputtext`.",
       "sobreObsoleto": []
     },
@@ -1203,7 +1203,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 47,
+      "usedInSupervisor": 48,
       "cuando": "Para texto de una línea. Si puede ocupar varias, `sc-textarea`.",
       "sobreObsoleto": []
     },
@@ -1313,7 +1313,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 14,
+      "usedInSupervisor": 15,
       "cuando": "Para elegir VARIAS de una lista larga. Si son pocas y caben, casillas sueltas se leen mejor.",
       "sobreObsoleto": [
         {
@@ -1594,7 +1594,7 @@
         "kit"
       ],
       "retirado": null,
-      "usedInSupervisor": 13,
+      "usedInSupervisor": 14,
       "cuando": "Para filtrar escribiendo. Solo se lleva el foco al entrar si buscar es LA acción de la pantalla.",
       "sobreObsoleto": []
     },
@@ -1681,7 +1681,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 64,
+      "usedInSupervisor": 67,
       "cuando": "Para elegir UNA de muchas. Si son pocas y caben a la vista, `sc-radiobutton` o `sc-selectbutton` ahorran un clic.",
       "sobreObsoleto": []
     },
@@ -1745,7 +1745,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 0,
+      "usedInSupervisor": 1,
       "cuando": "Para el hueco de lo que está cargando, con su forma. Evita el salto que da aparecer de golpe.",
       "sobreObsoleto": []
     },
@@ -1979,7 +1979,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 42,
+      "usedInSupervisor": 43,
       "cuando": "Para encender o apagar algo CON EFECTO INMEDIATO. Si el cambio se guarda al enviar el formulario, `sc-checkbox`.",
       "sobreObsoleto": []
     }
