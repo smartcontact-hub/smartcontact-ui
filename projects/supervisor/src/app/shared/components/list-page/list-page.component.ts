@@ -205,8 +205,6 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
    * `(exportRequest)`.
    */
   readonly importable = input(false, { transform: booleanAttribute });
-  /** Lo que hace «Importar» en esta pantalla, en una frase (en Agendas, reemplazar o añadir). Sin él, el genérico. */
-  readonly importHint = input<string | undefined>(undefined);
   /** Suma «Descargar plantilla» al menú «Acciones»: el CSV vacío con las columnas que la pantalla sabe importar. */
   readonly templateDownloadable = input(false, { transform: booleanAttribute });
 
@@ -786,9 +784,8 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
   });
 
   /**
-   * El menú «Acciones»: un grupo «Gestionar datos» con una fila por cosa que se puede hacer (título y lo que hace) y,
-   * detrás de un separador, la plantilla. Lo que dice cada fila sale de la pantalla: «Exportar» cuenta la selección o la
-   * búsqueda si las hay, y se apaga sin filas; lo que hace «Importar» lo dice la pantalla con `importHint`.
+   * El menú «Acciones»: una fila por cosa que se puede hacer (icono y título) y, detrás de un separador, la plantilla.
+   * «Exportar» cuenta la selección si la hay, y se apaga sin filas (su `title` dice por qué).
    */
   protected readonly fileMenuItems = computed<MenuItem[]>(() => {
     this.lang();
@@ -802,7 +799,6 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
       filas.push({
         label: t('import_title', { entity }),
         icon: 'sc-icon-font sc-icon-font--upload',
-        data: { hint: this.importHint() ?? t('import_hint') },
         command: () => this.importRequest.emit(),
       });
     }
@@ -811,15 +807,7 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
         label: seleccion > 0 ? t('export_selection', { count: seleccion }) : t('export_title', { entity }),
         icon: 'sc-icon-font sc-icon-font--download',
         disabled: sinFilas,
-        data: {
-          hint: sinFilas
-            ? t('export_hint_empty')
-            : seleccion > 0
-              ? t('export_hint_selection')
-              : this.query()
-                ? t('export_hint_search')
-                : t('export_hint_all'),
-        },
+        title: sinFilas ? t('export_empty') : undefined,
         command: () => this.onExport(),
       });
     }
@@ -828,11 +816,10 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
       filas.push({
         label: t('template_title'),
         icon: 'sc-icon-font sc-icon-font--file_export',
-        data: { hint: t('template_hint'), plantilla: true },
         command: () => this.templateRequest.emit(),
       });
     }
-    return [{ label: t('heading'), items: filas }];
+    return filas;
   });
 
   /** Descarga la selección si la hay y, si no, lo que se ve. */

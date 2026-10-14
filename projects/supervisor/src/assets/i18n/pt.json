@@ -1135,17 +1135,11 @@
     },
     "actions_button": "Ações",
     "data_menu": {
-      "heading": "Gerir dados",
       "import_title": "Importar {{entity}}",
-      "import_hint": "Adiciona registos a partir de um ficheiro CSV",
       "export_title": "Exportar {{entity}}",
       "export_selection": "Exportar seleção ({{count}})",
-      "export_hint_all": "Descarrega a lista completa em Excel",
-      "export_hint_search": "Descarrega os resultados da pesquisa",
-      "export_hint_selection": "Descarrega apenas os registos selecionados",
-      "export_hint_empty": "Não há registos para exportar",
+      "export_empty": "Não há registos para exportar",
       "template_title": "Baixar modelo CSV",
-      "template_hint": "O formato de referência para a sua importação.",
       "entity_fallback": "registos"
     }
   },
