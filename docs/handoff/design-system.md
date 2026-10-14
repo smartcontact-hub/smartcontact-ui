@@ -260,7 +260,7 @@ un panel a la derecha que marca lo tocado, la ficha para agentes (`docs:ia`) y u
 | ~~**El botón de crear cambia de ancho entre listas**~~ → **HECHO, `bcab818` (2026-08-25)**: decisión de Rafa: el ancho no cambia sin motivo. `main.scss:205` → `.top-bar__actions button { min-width: 144px; max-width: 288px }`, anclado en clase NUESTRA. Los cinco (122–142px) aterrizan igual. Aplicado y en `main` |
 | ~~**Qué forma de ficha (agente, grupo, usuario)**~~ → **DECIDIDO** (DD-121, DD-122) | Índice lateral en las tres. Las variantes de `comparar/fichas` quedan de referencia; la rama se archiva con tag desde el portátil |
 | **B5b · prosa i18n del constructor** | Necesita ICU MessageFormat **y diseño**. Sigue aparcada |
-| **Qué flechas quitar al pulsar columnas** (2026-10-14) | Se quitaron las ↓↑ que PrimeNG pinta al arrastrar una cabecera para reordenarla. Si eran las de ordenar (junto al título), se reponen aquéllas y se quitan éstas |
+| ~~**Qué flechas quitar al pulsar columnas**~~ → **DECIDIDO 2026-10-14 ([DD-203](../DECISIONS.md))** | Eran «Subir» y «Bajar» del globo «Columnas» de los listados: fuera. Las ↓↑ de PrimeNG al arrastrar una cabecera, que se habían quitado por error, vuelven |
 | ~~**Experimento en LOCAL: la escala al tamaño de Aura (16px por rem)**~~ → **DECIDIDO 2026-09-14 ([DD-91](../DECISIONS.md))** | Rafa eligió solo el interlineado con la rampa que existe (20/18): 32,5 y 27, sin perder filas. La escala se queda a 14. Medido también escala 16 + 20/18: 34 / 28 y 11 filas. Simulación en `~/Documents/Claude/2026-09 escala-16/`; el nombre por clave y el gate de la escala entraron en DD-89 |
 
 ## 🔌 Figma — tres servers, y caen por separado
