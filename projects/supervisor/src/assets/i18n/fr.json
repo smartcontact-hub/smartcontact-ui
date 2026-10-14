@@ -2698,7 +2698,9 @@
       "sidebar_label": "Menu déplié",
       "viewport_label": "Viewport",
       "freeze_label": "Figer «Agent»",
-      "switch_label": "Basculer entre tableau et arbre"
+      "switch_label": "Basculer entre tableau et arbre",
+      "pick_label": "Bouton dans une colonne",
+      "pick_row": "Choisir {{name}}"
     },
     "arbol": {
       "context_label": "Contexte de l'app",

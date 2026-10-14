@@ -2698,7 +2698,9 @@
       "sidebar_label": "Sidebar desplegado",
       "viewport_label": "Viewport",
       "freeze_label": "Congelar «Agente»",
-      "switch_label": "Cambiar entre tabla y árbol"
+      "switch_label": "Cambiar entre tabla y árbol",
+      "pick_label": "Botón en columna",
+      "pick_row": "Elegir a {{name}}"
     },
     "arbol": {
       "context_label": "Contexto de la app",
