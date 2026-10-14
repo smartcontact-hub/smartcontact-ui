@@ -25,6 +25,8 @@ import { XlsxExportService } from '@core/services/xlsx-export.service';
 import { ListPageComponent } from '@shared/components';
 import {
   type ColumnDef,
+  type GroupRef,
+  ScGroupPopoverComponent as GroupPopoverComponent,
   type ScColumnCellContext,
   type ScColumnDef,
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
@@ -34,6 +36,7 @@ import { RepoFormPanelComponent, RepoFormSubmission } from './repo-form-panel.co
 import { RepoEntity, RepoPageConfig, RepoStore } from './repo-types';
 import { injectLangChange } from '@core/utils/lang-change';
 import { copyName } from '@shared/utils/copy-name';
+import { hoy } from '@shared/utils/today';
 import { ResultadoAccionService } from '@core/services';
 
 /**
@@ -49,6 +52,7 @@ import { ResultadoAccionService } from '@core/services';
   imports: [
     EmptyStateComponent,
     ButtonComponent,
+    GroupPopoverComponent,
     ClickOutsideDirective,
     DeleteEntityDialogComponent,
     IconComponent,
@@ -194,7 +198,31 @@ export class RepoListPageComponent<T extends RepoEntity> {
     const column = cfg.columns.find((c) => c.key === key);
     if (!column) return '';
     const valor = column.accessor(item);
-    return column.kind === 'count' ? this.formatoCifra().format(Number(valor)) : valor;
+    if (column.kind === 'count') return this.formatoCifra().format(Number(valor));
+    if (column.kind === 'date') return this.formatoFecha().format(new Date(`${valor}T00:00:00`));
+    return valor;
+  }
+
+  /** Las fechas, en el formato del idioma: «2 oct 2026». */
+  private readonly formatoFecha = computed(
+    () => new Intl.DateTimeFormat(this.language.locale(), { day: 'numeric', month: 'short', year: 'numeric' }),
+  );
+
+  /** Los grupos que usan la fila, para el desplegable de la columna `groups`. */
+  protected groupsFor(item: T, key: string): readonly GroupRef[] | null {
+    const column = this.config().columns.find((c) => c.key === key);
+    return column?.kind === 'groups' && column.groups ? column.groups(item) : null;
+  }
+
+  protected groupsAria(count: number): string {
+    this.lang();
+    return this.translate.instant(`repositories.groups_aria${count === 1 ? '_one' : ''}`, { count });
+  }
+
+  /** Lo que se estampa al duplicar o guardar desde el panel: la fecha de modificación, si la lista la lleva. */
+  private modificada(): Partial<T> {
+    const campo = this.config().modifiedField;
+    return campo ? ({ [campo]: hoy() } as unknown as Partial<T>) : {};
   }
 
   /** Con editor propio (`editRoute`, DD-163) la fila lo abre, como en Grupos; sin él, la fila no abre nada. */
@@ -231,7 +259,7 @@ export class RepoListPageComponent<T extends RepoEntity> {
   }
 
   protected onCreateSubmit(submission: RepoFormSubmission): void {
-    const created = this.store().addItem(submission as unknown as Omit<T, 'id'>);
+    const created = this.store().addItem({ ...submission, ...this.modificada() } as unknown as Omit<T, 'id'>);
     this.creating.set(false);
     this.toastSuccess('repositories.toasts.created', {
       entity: this.entitySingular(),
@@ -240,7 +268,7 @@ export class RepoListPageComponent<T extends RepoEntity> {
   }
 
   protected onEditSubmit(id: number, submission: RepoFormSubmission): void {
-    this.store().updateItem(id, submission as unknown as Partial<T>);
+    this.store().updateItem(id, { ...submission, ...this.modificada() } as unknown as Partial<T>);
     this.editingId.set(null);
     const name = submission['name'] ?? '';
     this.toastSuccess('repositories.toasts.updated', {
@@ -342,7 +370,7 @@ export class RepoListPageComponent<T extends RepoEntity> {
   protected onRowDuplicate(item: T): void {
     const { id: _id, ...resto } = item;
     const name = copyName(item.name, this.store().items().map((i) => i.name), this.translate.instant('common.copy_suffix'));
-    const copia = this.store().addItem({ ...resto, name } as Omit<T, 'id'>);
+    const copia = this.store().addItem({ ...resto, name, ...this.modificada() } as Omit<T, 'id'>);
     this.toastSuccess('common.duplicated_toast', { name: copia.name });
   }
 

@@ -11,7 +11,7 @@ import { disableAnimations, forceLightTheme, goto, irASeccion } from './helpers'
  *   1. bajo cada campo, una fila por recurso con su nombre, un dato y «Editar», que abre la ventana con sus datos sin
  *      salir de la ficha; al guardar, la fila lo dice;
  *   2. una plantilla, igual: su ventana, con su texto;
- *   3. se ofrecen las agendas activas, y la inactiva que ya estaba puesta, para poder quitarla;
+ *   3. se ofrecen todas las agendas: ya no son activas ni inactivas;
  *   4. lo borrado en Repositorios no se cuenta ni se guarda, y la ficha no abre con cambios por ello;
  *   5. en un alta también se edita: no se sale de la ficha, así que no hay alta vacía a la que volver.
  */
@@ -42,14 +42,14 @@ const marcar = async (page: Page, id: string, opcion: string): Promise<void> => 
   await page.keyboard.press('Escape');
 };
 
-test('grupo · cada agenda es una fila con sus contactos y su estado; «Editar» abre su ventana sin salir de la ficha', async ({
+test('grupo · cada agenda es una fila con sus contactos; «Editar» abre su ventana sin salir de la ficha', async ({
   page,
 }) => {
   await goto(page, 'admin/grupos/editar/11?seccion=recursos');
   const agendas = filas(page, 'Agendas');
   await expect(agendas).toHaveCount(3);
   await expect(agendas.first()).toContainText('Ventas Nacional');
-  await expect(agendas.first()).toContainText('3 contactos, activa');
+  await expect(agendas.first()).toContainText('3 contactos');
   // Los nombres ya están en las filas: el desplegable dice cuántas, no las repite.
   await expect(etiqueta(page, 'group-agendas')).toHaveText('3 agendas');
 
@@ -75,11 +75,11 @@ test('grupo · una plantilla abre su ventana con su texto, sin salir de la ficha
   await expect(page).toHaveURL(/\/admin\/grupos\/editar\/11\?seccion=recursos$/);
 });
 
-test('se ofrecen las agendas activas, y la inactiva que ya estaba puesta, para poder quitarla', async ({ page }) => {
+test('se ofrecen todas las agendas, tengan o no la puesta el grupo', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/5?seccion=recursos');
   expect(await opciones(page, 'group-agendas')).toContain('Soporte Técnico');
   await goto(page, 'admin/grupos/editar/11?seccion=recursos');
-  expect(await opciones(page, 'group-agendas')).not.toContain('Soporte Técnico');
+  expect(await opciones(page, 'group-agendas')).toContain('Soporte Técnico');
 });
 
 test('lo borrado en Repositorios no se cuenta ni se guarda, y la ficha no abre con cambios por ello', async ({ page }) => {
@@ -90,8 +90,8 @@ test('lo borrado en Repositorios no se cuenta ni se guarda, y la ficha no abre c
     localStorage.setItem(
       'sc-agendas-repo',
       JSON.stringify([
-        { id: 1, name: 'Ventas Nacional', contacts: [], description: '', status: 'active' },
-        { id: 2, name: 'Soporte Premium', contacts: [], description: '', status: 'active' },
+        { id: 1, name: 'Ventas Nacional', contacts: [], description: '' },
+        { id: 2, name: 'Soporte Premium', contacts: [], description: '' },
       ]),
     );
   });
@@ -116,14 +116,14 @@ test('agente · las agendas y sus «Editar»; en el alta, también', async ({ pa
   const agendas = filas(page, 'Agendas');
   await expect(agendas).toHaveCount(2);
   await expect(agendas.nth(1)).toContainText('Cobros');
-  await expect(agendas.nth(1)).toContainText('4 contactos, activa');
+  await expect(agendas.nth(1)).toContainText('4 contactos');
   await expect(agendas.nth(1).getByRole('button', { name: 'Editar Cobros' })).toHaveAttribute('aria-haspopup', 'dialog');
 
   await goto(page, 'admin/agentes/crear');
   await irASeccion(page, 'Recursos');
   await marcar(page, 'agent-agendas', 'Cobros');
   await expect(filas(page, 'Agendas')).toHaveCount(1);
-  await expect(filas(page, 'Agendas')).toContainText('4 contactos, activa');
+  await expect(filas(page, 'Agendas')).toContainText('4 contactos');
   await filas(page, 'Agendas').getByRole('button', { name: 'Editar Cobros' }).click();
   await expect(page.getByRole('dialog', { name: 'Editar agenda' })).toBeVisible();
   await expect(page).toHaveURL(/\/admin\/agentes\/crear/);

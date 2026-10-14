@@ -84,7 +84,7 @@ import { GroupsStore } from '../state/groups.store';
 
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
 import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links.store';
-import { agendasOfrecidas, idsVivos } from '@features/admin/services/recursos.core.mjs';
+import { idsVivos } from '@features/admin/services/recursos.core.mjs';
 import { ResourceRowsService } from '@features/admin/services/resource-rows.service';
 import type { GroupAgentLink } from '@features/admin/services/group-agent-links.types';
 import {
@@ -737,12 +737,10 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
     if ((WRAP_UP_SCOPES as readonly unknown[]).includes(value)) this.setWrapUp('scope', value as WrapUpScope);
   }
 
-  /** Las agendas activas, y las ya puestas aunque estén inactivas (las guardadas y las de ahora): una inactiva puesta
-   *  se puede quitar, pero no se ofrece para poner (DD-164). */
-  protected readonly scheduleOptions = computed(() => {
-    const puestas = [...(this.initial()?.schedules ?? []), ...this.form().scheduleIds];
-    return agendasOfrecidas(this.agendasStore.items(), puestas).map((a) => ({ label: a.name, value: a.id }));
-  });
+  /** Las agendas de `Repositorios > Agendas`, todas: una agenda ya no es activa ni inactiva. */
+  protected readonly scheduleOptions = computed(() =>
+    this.agendasStore.items().map((a) => ({ label: a.name, value: a.id })),
+  );
   protected readonly scheduleValue = computed(() => [...this.form().scheduleIds]);
   protected readonly labelOptions = computed(() => this.labelsStore.labels().map((l) => ({ label: l.name, value: l.id })));
   protected readonly labelValue = computed(() => [...this.form().labelIds]);

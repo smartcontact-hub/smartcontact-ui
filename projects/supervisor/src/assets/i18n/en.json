@@ -1207,6 +1207,8 @@
     }
   },
   "repositories": {
+    "groups_aria": "{{count}} groups",
+    "groups_aria_one": "1 group",
     "emails": {
       "title": "Email",
       "mailboxes": "Mail accounts",
@@ -1297,6 +1299,8 @@
       "empty": "No {{entity}} yet"
     },
     "columns": {
+      "groups": "Groups",
+      "modified": "Modified",
       "name": "Name",
       "description": "Description",
       "status": "Status"

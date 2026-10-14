@@ -34,7 +34,6 @@ import {
   type ScColumnCellContext,
   type ScColumnDef,
   ScDatatableComponent,
-  ScDividerComponent,
   ScEmptyStateComponent,
   type ScDatatableRowEvent,
   type ScDatatableRowKeyEvent,
@@ -144,7 +143,6 @@ function normalizePrefs(choices: readonly ColumnDef[], stored: unknown): ColumnP
     ScBulkActionBarComponent,
     ScButtonComponent,
     ScDatatableComponent,
-    ScDividerComponent,
     ScEmptyStateComponent,
     ScIconComponent,
     ScSearchComponent,
@@ -840,7 +838,7 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
       if (filas.length > 0) filas.push({ separator: true });
       filas.push({
         label: t('template_title'),
-        icon: 'sc-icon-font sc-icon-font--description',
+        icon: 'sc-icon-font sc-icon-font--file_export',
         data: { hint: t('template_hint'), plantilla: true },
         command: () => this.templateRequest.emit(),
       });

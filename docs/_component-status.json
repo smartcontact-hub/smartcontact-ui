@@ -634,7 +634,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 23,
+      "usedInSupervisor": 22,
       "cuando": "Para separar visualmente dos bloques cuando el espacio no basta.",
       "sobreObsoleto": []
     },
@@ -927,7 +927,7 @@
         "kit"
       ],
       "retirado": null,
-      "usedInSupervisor": 5,
+      "usedInSupervisor": 6,
       "cuando": "Para asomar los grupos de algo sin salir de la fila.",
       "sobreObsoleto": []
     },
@@ -1642,7 +1642,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 62,
+      "usedInSupervisor": 61,
       "cuando": "Para elegir UNA de muchas. Si son pocas y caben a la vista, `sc-radiobutton` o `sc-selectbutton` ahorran un clic.",
       "sobreObsoleto": []
     },

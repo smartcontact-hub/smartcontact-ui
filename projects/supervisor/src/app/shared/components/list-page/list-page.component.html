@@ -19,157 +19,160 @@
             (keydown)="onSearchKey($event)"
           />
         }
-        @if (importable() || exportable() || templateDownloadable()) {
-          <!-- Importar, exportar y descargar la plantilla, detrás de UN botón «Acciones» con su nombre (revisión de producto:
-               el icono de importar/exportar no se entendía): tres botones de archivo seguidos eran ruido en la barra. El menú es el de las filas (`p-menu` en globo); lo que importa y cómo lo
-               decide la pantalla, con `(importRequest)`. -->
-          <sc-divider layout="vertical" />
-          <sc-button
-            variant="secondary"
-            appearance="outlined"
-            icon="expand_more"
-            iconPosition="right"
-            [label]="'labels.actions_button' | translate"
-            ariaHasPopup="menu"
-            [ariaExpanded]="fileMenuOpen()"
-            (clicked)="fileMenuRef.toggle($event)"
-          />
-          <p-menu
-            #fileMenuRef
-            [model]="fileMenuItems()"
-            [popup]="true"
-            appendTo="body"
-            [style]="fileMenuStyle"
-            [ariaLabel]="'labels.data_menu.heading' | translate"
-            (onShow)="fileMenuOpen.set(true)"
-            (onHide)="fileMenuOpen.set(false)"
-          >
-            <!-- «Template» de primeng.dev/menu: la cabecera del grupo (`submenuheader`) y una fila a medida (`item`) con su
-                 icono, su título y lo que hace. La plantilla va detrás de un separador, más pequeña. -->
-            <ng-template #submenuheader let-item>
-              <span class="data-menu__heading sc-text-caption-semibold">{{ item.label }}</span>
-            </ng-template>
-            <ng-template #item let-item>
-              <a class="p-menu-item-link data-menu__item" [class.data-menu__item--plantilla]="item.data?.plantilla" tabindex="-1">
-                <span class="data-menu__icon" [class]="item.icon" aria-hidden="true"></span>
-                <span class="data-menu__copy">
-                  <span class="data-menu__title sc-text-body-semibold">{{ item.label }}</span>
-                  <span class="data-menu__hint sc-text-caption-regular">{{ item.data?.hint }}</span>
-                </span>
-                @if (item.data?.plantilla) {
-                  <span class="data-menu__trail sc-icon-font sc-icon-font--download" aria-hidden="true"></span>
-                }
-              </a>
-            </ng-template>
-          </p-menu>
-        }
-        @if (columnPrefs(); as prefs) {
-          <!-- ELEGIR Y ORDENAR COLUMNAS: el «Column Toggle» de primeng.dev/table, tal cual (DD-176, sustituye el Listbox de
-               DD-162). El botón con su engranaje (outlined, secondary), a la altura del buscador de su barra; el Popover sin relleno; arriba, el título y
-               «Restablecer»; una fila por columna con su asa, su casilla nativa y su nombre, que se arrastra para ordenar.
-               Lo único que el ejemplo no trae es ordenar sin arrastrar (WCAG 2.1.1 y 2.5.7, que DD-162 ya pedía): la
-               lista es una sola parada del tabulador, las flechas van de una columna a otra, Alt+↑/↓ mueve la enfocada, y
-               la fila en curso lleva sus propias flechas para hacerlo con el ratón. Nombre (la fija) sale marcada, sin
-               poder quitarse ni moverse. -->
-          <sc-button
-            #columnsButton
-            class="page__columns"
-            variant="secondary"
-            appearance="outlined"
-            icon="view_column"
-            iconOnly
-            [ariaLabel]="columnsAriaLabel()"
-            [attr.title]="'common.columns' | translate"
-            ariaHasPopup="dialog"
-            [ariaExpanded]="columnsOpen()"
-            (clicked)="columnsPop.toggle($event)"
-          />
-          <p-popover
-            #columnsPop
-            [style]="columnsPopoverStyle"
-            [pt]="columnsPopoverPt"
-            [focusOnShow]="false"
-            [ariaLabelledBy]="columnsTitleId"
-            (onShow)="onColumnsShow()"
-            (onHide)="onColumnsHide()"
-          >
-            <ng-template #content>
-              <div class="column-toggle__header">
-                <span class="column-toggle__title sc-text-body-semibold" [id]="columnsTitleId">{{ 'common.columns' | translate }}</span>
-                <sc-button
-                  variant="secondary"
-                  appearance="text"
-                  size="sm"
-                  icon="refresh"
-                  [label]="'common.columns_reset' | translate"
-                  (clicked)="resetColumns()"
-                />
-              </div>
-              <div
-                class="column-toggle__list"
-                cdkDropList
-                [cdkDropListData]="columnOptions()"
-                (cdkDropListDropped)="onColumnDrop($event)"
-                (keydown)="onColumnsKeydown($event)"
-              >
-                @for (opt of columnOptions(); track opt.key) {
-                  <div
-                    class="column-toggle__row"
-                    [class.column-toggle__row--locked]="opt.locked"
-                    cdkDrag
-                    [cdkDragDisabled]="opt.locked"
-                    cdkDragPreviewClass="column-toggle-drag-preview"
-                    (focusin)="currentColumn.set(opt.key)"
-                    (click)="onColumnRowClick(opt.key)"
-                  >
-                    <sc-icon class="column-toggle__handle" name="drag_handle" size="sm" aria-hidden="true" />
-                    <p-checkbox
-                      [inputId]="columnInputId(opt.key)"
-                      [value]="opt.key"
-                      [ngModel]="prefs.visible"
-                      [disabled]="opt.locked"
-                      [tabindex]="columnTabindex(opt.key)"
-                      (ngModelChange)="onVisibleChange($event)"
-                      (click)="$event.stopPropagation()"
-                    />
-                    <label class="column-toggle__label sc-text-body-regular" [for]="columnInputId(opt.key)" (click)="$event.stopPropagation()">{{ opt.label }}</label>
-                    <!-- Ordenar sin arrastrar con el ratón (WCAG 2.5.7, DD-162): solo en la fila en curso, para que la lista
-                         siga siendo una parada del tabulador y no veinte. Su nombre dice cuál; el lector oye después a qué
-                         puesto llegó. -->
-                    @if (opt.key === currentColumn() && !opt.locked) {
-                      @let mover = columnMove();
-                      <span class="column-toggle__move" (click)="$event.stopPropagation()">
-                        <sc-button
-                          size="sm"
-                          variant="secondary"
-                          appearance="text"
-                          iconOnly
-                          icon="arrow_upward"
-                          data-move="up"
-                          [ariaLabel]="'common.columns_move_up_aria' | translate: { column: opt.label }"
-                          [disabled]="!mover?.up"
-                          (clicked)="moveColumn(-1, 'up')"
-                        />
-                        <sc-button
-                          size="sm"
-                          variant="secondary"
-                          appearance="text"
-                          iconOnly
-                          icon="arrow_downward"
-                          data-move="down"
-                          [ariaLabel]="'common.columns_move_down_aria' | translate: { column: opt.label }"
-                          [disabled]="!mover?.down"
-                          (clicked)="moveColumn(1, 'down')"
-                        />
-                      </span>
-                    }
-                  </div>
-                }
-              </div>
-              <span class="visually-hidden" aria-live="polite">{{ columnsAnnouncement() }}</span>
-            </ng-template>
-          </p-popover>
-        }
+        <!-- A la derecha, juntos: Acciones (importar, exportar, plantilla) y Columnas. Se tocan poco y quedan a mano. -->
+        <div class="page__tools">
+          @if (importable() || exportable() || templateDownloadable()) {
+            <!-- Importar, exportar y descargar la plantilla, detrás de UN botón «Acciones» con su nombre (revisión de producto:
+                 el icono de importar/exportar no se entendía): tres botones de archivo seguidos eran ruido en la barra. El menú es el de las filas (`p-menu` en globo); lo que importa y cómo lo
+                 decide la pantalla, con `(importRequest)`. -->
+            <sc-button
+              class="page__data"
+              variant="secondary"
+              appearance="outlined"
+              icon="expand_more"
+              iconPosition="right"
+              [label]="'labels.actions_button' | translate"
+              ariaHasPopup="menu"
+              [ariaExpanded]="fileMenuOpen()"
+              (clicked)="fileMenuRef.toggle($event)"
+            />
+            <p-menu
+              #fileMenuRef
+              [model]="fileMenuItems()"
+              [popup]="true"
+              appendTo="body"
+              [style]="fileMenuStyle"
+              [ariaLabel]="'labels.data_menu.heading' | translate"
+              (onShow)="fileMenuOpen.set(true)"
+              (onHide)="fileMenuOpen.set(false)"
+            >
+              <!-- «Template» de primeng.dev/menu: la cabecera del grupo (`submenuheader`) y una fila a medida (`item`) con su
+                   icono, su título y lo que hace. La plantilla va detrás de un separador, más pequeña. -->
+              <ng-template #submenuheader let-item>
+                <span class="data-menu__heading sc-text-caption-semibold">{{ item.label }}</span>
+              </ng-template>
+              <ng-template #item let-item>
+                <a class="p-menu-item-link data-menu__item" [class.data-menu__item--plantilla]="item.data?.plantilla" tabindex="-1">
+                  <span class="data-menu__icon" [class]="item.icon" aria-hidden="true"></span>
+                  <span class="data-menu__copy">
+                    <span class="data-menu__title sc-text-body-semibold">{{ item.label }}</span>
+                    <span class="data-menu__hint sc-text-caption-regular">{{ item.data?.hint }}</span>
+                  </span>
+                  @if (item.data?.plantilla) {
+                    <span class="data-menu__trail sc-icon-font sc-icon-font--download" aria-hidden="true"></span>
+                  }
+                </a>
+              </ng-template>
+            </p-menu>
+          }
+          @if (columnPrefs(); as prefs) {
+            <!-- ELEGIR Y ORDENAR COLUMNAS: el «Column Toggle» de primeng.dev/table, tal cual (DD-176, sustituye el Listbox de
+                 DD-162). El botón con su engranaje (outlined, secondary), a la altura del buscador de su barra; el Popover sin relleno; arriba, el título y
+                 «Restablecer»; una fila por columna con su asa, su casilla nativa y su nombre, que se arrastra para ordenar.
+                 Lo único que el ejemplo no trae es ordenar sin arrastrar (WCAG 2.1.1 y 2.5.7, que DD-162 ya pedía): la
+                 lista es una sola parada del tabulador, las flechas van de una columna a otra, Alt+↑/↓ mueve la enfocada, y
+                 la fila en curso lleva sus propias flechas para hacerlo con el ratón. Nombre (la fija) sale marcada, sin
+                 poder quitarse ni moverse. -->
+            <sc-button
+              #columnsButton
+              class="page__columns"
+              variant="secondary"
+              appearance="outlined"
+              icon="view_column"
+              iconOnly
+              [ariaLabel]="columnsAriaLabel()"
+              [attr.title]="'common.columns' | translate"
+              ariaHasPopup="dialog"
+              [ariaExpanded]="columnsOpen()"
+              (clicked)="columnsPop.toggle($event)"
+            />
+            <p-popover
+              #columnsPop
+              [style]="columnsPopoverStyle"
+              [pt]="columnsPopoverPt"
+              [focusOnShow]="false"
+              [ariaLabelledBy]="columnsTitleId"
+              (onShow)="onColumnsShow()"
+              (onHide)="onColumnsHide()"
+            >
+              <ng-template #content>
+                <div class="column-toggle__header">
+                  <span class="column-toggle__title sc-text-body-semibold" [id]="columnsTitleId">{{ 'common.columns' | translate }}</span>
+                  <sc-button
+                    variant="secondary"
+                    appearance="text"
+                    size="sm"
+                    icon="refresh"
+                    [label]="'common.columns_reset' | translate"
+                    (clicked)="resetColumns()"
+                  />
+                </div>
+                <div
+                  class="column-toggle__list"
+                  cdkDropList
+                  [cdkDropListData]="columnOptions()"
+                  (cdkDropListDropped)="onColumnDrop($event)"
+                  (keydown)="onColumnsKeydown($event)"
+                >
+                  @for (opt of columnOptions(); track opt.key) {
+                    <div
+                      class="column-toggle__row"
+                      [class.column-toggle__row--locked]="opt.locked"
+                      cdkDrag
+                      [cdkDragDisabled]="opt.locked"
+                      cdkDragPreviewClass="column-toggle-drag-preview"
+                      (focusin)="currentColumn.set(opt.key)"
+                      (click)="onColumnRowClick(opt.key)"
+                    >
+                      <sc-icon class="column-toggle__handle" name="drag_handle" size="sm" aria-hidden="true" />
+                      <p-checkbox
+                        [inputId]="columnInputId(opt.key)"
+                        [value]="opt.key"
+                        [ngModel]="prefs.visible"
+                        [disabled]="opt.locked"
+                        [tabindex]="columnTabindex(opt.key)"
+                        (ngModelChange)="onVisibleChange($event)"
+                        (click)="$event.stopPropagation()"
+                      />
+                      <label class="column-toggle__label sc-text-body-regular" [for]="columnInputId(opt.key)" (click)="$event.stopPropagation()">{{ opt.label }}</label>
+                      <!-- Ordenar sin arrastrar con el ratón (WCAG 2.5.7, DD-162): solo en la fila en curso, para que la lista
+                           siga siendo una parada del tabulador y no veinte. Su nombre dice cuál; el lector oye después a qué
+                           puesto llegó. -->
+                      @if (opt.key === currentColumn() && !opt.locked) {
+                        @let mover = columnMove();
+                        <span class="column-toggle__move" (click)="$event.stopPropagation()">
+                          <sc-button
+                            size="sm"
+                            variant="secondary"
+                            appearance="text"
+                            iconOnly
+                            icon="arrow_upward"
+                            data-move="up"
+                            [ariaLabel]="'common.columns_move_up_aria' | translate: { column: opt.label }"
+                            [disabled]="!mover?.up"
+                            (clicked)="moveColumn(-1, 'up')"
+                          />
+                          <sc-button
+                            size="sm"
+                            variant="secondary"
+                            appearance="text"
+                            iconOnly
+                            icon="arrow_downward"
+                            data-move="down"
+                            [ariaLabel]="'common.columns_move_down_aria' | translate: { column: opt.label }"
+                            [disabled]="!mover?.down"
+                            (clicked)="moveColumn(1, 'down')"
+                          />
+                        </span>
+                      }
+                    </div>
+                  }
+                </div>
+                <span class="visually-hidden" aria-live="polite">{{ columnsAnnouncement() }}</span>
+              </ng-template>
+            </p-popover>
+          }
+        </div>
       </div>
     }
 

@@ -54,7 +54,7 @@ import { GroupsStore } from '@features/admin/groups/state/groups.store';
 import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links.store';
 import { canonicalizeChannels, GroupAgentLink, type Channel } from '@features/admin/services/group-agent-links.types';
 import { clampLinksToChannels } from '@features/admin/services/group-channels.core.mjs';
-import { agendasOfrecidas, idsVivos } from '@features/admin/services/recursos.core.mjs';
+import { idsVivos } from '@features/admin/services/recursos.core.mjs';
 import { ResourceRowsService } from '@features/admin/services/resource-rows.service';
 import { CHANNEL_FAMILIES, FAMILY_LABEL_KEYS } from '@features/admin/groups/data/groups-data';
 import { TemplatesStore } from '@features/admin/templates/state/templates.store';
@@ -362,12 +362,10 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
    * ruido para tan poca información. El formulario sigue guardando un `Set` de ids por repositorio; aquí solo
    * se traduce a lo que habla `sc-multiselect` (una lista de ids) y de vuelta. */
 
-  /** Las agendas de `Repositorios > Agendas`: las activas, y las ya puestas aunque estén inactivas (las guardadas y las
-   *  de ahora). Una inactiva puesta se puede quitar, pero no se ofrece para poner (DD-164). */
-  protected readonly scheduleOptions = computed(() => {
-    const puestas = [...(this.initial()?.schedules ?? []), ...this.form().scheduleIds];
-    return agendasOfrecidas(this.agendasStore.items(), puestas).map((a: Agenda) => ({ label: a.name, value: a.id }));
-  });
+  /** Las agendas de `Repositorios > Agendas`, todas: una agenda ya no es activa ni inactiva. */
+  protected readonly scheduleOptions = computed(() =>
+    this.agendasStore.items().map((a: Agenda) => ({ label: a.name, value: a.id })),
+  );
   protected readonly scheduleValue = computed(() => [...this.form().scheduleIds]);
 
   protected onSchedulesChange(ids: unknown[]): void {

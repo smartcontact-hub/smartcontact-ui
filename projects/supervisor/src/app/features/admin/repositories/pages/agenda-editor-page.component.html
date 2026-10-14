@@ -38,17 +38,6 @@
               (valueChange)="update('name', $event)"
             />
           </div>
-          <div class="field">
-            <sc-select
-              inputId="agenda-status"
-              optionLabel="label"
-              optionValue="value"
-              [label]="'repositories.columns.status' | translate"
-              [options]="statusOptions()"
-              [value]="form().status"
-              (valueChange)="update('status', $any($event))"
-            />
-          </div>
           <div class="field field--full">
             <sc-inputtext
               inputId="agenda-description"

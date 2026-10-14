@@ -1,4 +1,5 @@
 import { Signal } from '@angular/core';
+import type { GroupRef } from '@smartcontact-hub/components';
 
 /** Material Symbols glyph name (e.g. `'call'`, `'inventory_2'`). */
 export type LucideIconData = string;
@@ -9,7 +10,7 @@ export interface RepoEntity {
 }
 
 /** Visual presentation for a column. `count` es una cifra: la lista la escribe con el separador de miles del idioma. */
-export type RepoColumnKind = 'text' | 'truncate' | 'status' | 'count';
+export type RepoColumnKind = 'text' | 'truncate' | 'status' | 'count' | 'date' | 'groups';
 
 export interface RepoColumnDef<T extends RepoEntity> {
   readonly key: string;
@@ -22,6 +23,8 @@ export interface RepoColumnDef<T extends RepoEntity> {
   readonly emphasis?: boolean;
   /** For `kind === 'status'`: maps the raw value to a translated label + tone. */
   readonly statusMap?: Readonly<Record<string, RepoStatusEntry>>;
+  /** Para `kind === 'groups'`: los grupos que usan la fila, para el desplegable de «Grupos» de siempre. */
+  readonly groups?: (item: T) => readonly GroupRef[];
 }
 
 export interface RepoStatusEntry {
@@ -70,6 +73,8 @@ export interface RepoPageConfig<T extends RepoEntity> {
   readonly duplicable?: boolean;
   /** Suma el botón «Columnas» (elegir y ordenar): la primera columna va fija. Se guarda por `filePrefix`. */
   readonly columnChoices?: boolean;
+  /** El campo (AAAA-MM-DD) que se pone a hoy al duplicar o guardar desde el panel de la lista. */
+  readonly modifiedField?: string;
 }
 
 /** Minimal store contract every repo instance must satisfy. */
