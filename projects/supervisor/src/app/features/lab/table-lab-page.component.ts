@@ -19,6 +19,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 import { PopoverModule } from 'primeng/popover';
 import { RatingModule } from 'primeng/rating';
+import type { TableRowSelectEvent, TableRowUnSelectEvent } from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
 
 import { SidebarDemoService } from '../../core/services/sidebar-demo.service';
@@ -41,8 +42,8 @@ interface ArgType {
 }
 
 /**
- * Los 21 knobs del Playground de DataTable en sc-docs (`datatable-demo.component.ts`), tal cual:
- * misma lista, mismas etiquetas. Es el contrato real de `sc-datatable`, no una versión reducida.
+ * Los knobs del Playground de DataTable en sc-docs (`datatable-demo.component.ts`), con sus mismas
+ * etiquetas. Es el contrato real de `sc-datatable`, no una versión reducida.
  */
 const ARG_TYPES: readonly ArgType[] = [
   { name: 'paginator', label: 'Paginación', control: { kind: 'boolean' }, description: 'Divide la tabla en páginas en vez de enseñarla entera de golpe.' },
@@ -55,6 +56,8 @@ const ARG_TYPES: readonly ArgType[] = [
   { name: 'skeleton', label: 'Esqueleto de carga', control: { kind: 'boolean' }, description: 'En vez del aviso de carga, pinta la forma de las filas mientras llegan los datos de verdad.' },
   { name: 'skeletonRows', label: 'Filas del esqueleto', control: { kind: 'number', min: 1, max: 20, step: 1 }, description: 'Cuántas filas de mentira pinta ese esqueleto de carga.' },
   { name: 'selectionMode', label: 'Modo de selección', control: { kind: 'select', options: ['single', 'multiple'] }, description: 'Si se puede marcar una sola fila, o varias a la vez.' },
+  { name: 'selectionColumn', label: 'Con qué se marca', control: { kind: 'select', options: ['checkbox', 'radio', 'none'] }, description: 'checkbox: una casilla por fila (con multiple). radio: un botón de opción por fila (con single). none: sin columna, se marca clicando la fila y con el teclado (↑ ↓ Espacio Intro). Si no casa con el modo, la tabla usa el de siempre: casilla en multiple, fila en single.' },
+  { name: 'metaKeySelection', label: 'Cmd/Ctrl para añadir', control: { kind: 'boolean' }, description: 'Solo cuando se marca clicando la fila: un clic sustituye la selección y Cmd/Ctrl+clic añade o quita, Mayús+clic marca un tramo.' },
   { name: 'sortField', label: 'Ordenar por columna', control: { kind: 'text' }, description: 'Por qué columna sale ordenada la tabla nada más entrar.' },
   { name: 'sortOrder', label: 'Sentido del orden', control: { kind: 'select', options: [1, -1] }, description: '1 ascendente, -1 descendente.' },
   { name: 'externalSort', label: 'Orden gestionado fuera', control: { kind: 'boolean' }, description: 'La tabla avisa de qué columna se pulsó para ordenar, pero no mueve las filas ella sola: lo hace quien la usa.' },
@@ -80,6 +83,8 @@ const DEFAULT_ARGS: Record<string, unknown> = {
   skeleton: false,
   skeletonRows: 8,
   selectionMode: 'multiple',
+  selectionColumn: 'checkbox',
+  metaKeySelection: false,
   sortField: '',
   sortOrder: 1,
   externalSort: false,
@@ -96,7 +101,7 @@ const DEFAULT_ARGS: Record<string, unknown> = {
 
 const CONTROL_GROUP_DEFS: readonly { title: string; open: boolean; names: readonly string[] }[] = [
   { title: 'General', open: true, names: ['paginator', 'rows', 'first', 'stripedRows', 'showGridlines', 'size', 'loading', 'skeleton', 'skeletonRows'] },
-  { title: 'Selección y orden', open: false, names: ['selectionMode', 'sortField', 'sortOrder', 'externalSort', 'rowsFocusable'] },
+  { title: 'Selección y orden', open: false, names: ['selectionMode', 'selectionColumn', 'metaKeySelection', 'rowsFocusable', 'sortField', 'sortOrder', 'externalSort'] },
   { title: 'Scroll y tamaño', open: false, names: ['scrollable', 'scrollHeight', 'stickyHeader', 'virtualScroll', 'tableMinWidth'] },
   { title: 'Columnas', open: false, names: ['resizableColumns', 'columnResizeMode', 'reorderableColumns'] },
 ];
@@ -109,7 +114,7 @@ const MAX_EXTRA_COLUMNS = 8;
  * Laboratorio local: `sc-datatable` dentro del shell real (sidebar y cabecera de verdad, no una
  * maqueta), para ver cómo se comporta en un contexto de app de verdad antes de llevarlo a una
  * pantalla de producto. El botón flotante («Contexto de la app») simula el ENTORNO: tema, sidebar,
- * viewport, el mismo patrón que `lab/sidebar`. El panel fijo de la derecha trae los 21 knobs
+ * viewport, el mismo patrón que `lab/sidebar`. El panel fijo de la derecha trae los knobs
  * REALES de `sc-datatable`, agrupados igual que el Playground de sc-docs, para tocar uno a uno y
  * ver el efecto sobre la tabla ya puesta en su sitio.
  */
@@ -150,6 +155,7 @@ export class TableLabPageComponent {
   protected readonly ratingTpl = viewChild<TemplateRef<ScColumnCellContext<TableLabAgent>>>('ratingTpl');
   protected readonly countryTpl = viewChild<TemplateRef<ScColumnCellContext<TableLabAgent>>>('countryTpl');
   protected readonly extraTpl = viewChild<TemplateRef<ScColumnCellContext<TableLabAgent>>>('extraTpl');
+  protected readonly pickTpl = viewChild<TemplateRef<ScColumnCellContext<TableLabAgent>>>('pickTpl');
 
   /** Columnas fijas (frozen): no es un prop de la tabla, es de la definición de columna, así que
    *  este toggle (en el grupo «Columnas») recalcula `columns()` en vez de tocar `liveArgs`. Misma
@@ -176,9 +182,12 @@ export class TableLabPageComponent {
       cellTemplate: this.extraTpl(),
       width: '10rem',
     })),
+    ...(this.columnPickButton()
+      ? [{ field: 'pick', header: '', headerAriaLabel: 'Elegir', cellTemplate: this.pickTpl(), width: '4rem', stopRowClick: true, skeleton: 'action' as const }]
+      : []),
   ]);
 
-  // Los 21 knobs reales de sc-datatable, igual que el Playground de sc-docs.
+  // Los knobs reales de sc-datatable, igual que el Playground de sc-docs.
   protected readonly liveArgs = signal<Record<string, unknown>>({ ...DEFAULT_ARGS });
   protected readonly controlGroups: readonly { title: string; open: boolean; knobs: readonly ArgType[] }[] =
     CONTROL_GROUP_DEFS.map((g) => ({
@@ -189,6 +198,56 @@ export class TableLabPageComponent {
 
   protected setArg(name: string, value: unknown): void {
     this.liveArgs.update((args) => ({ ...args, [name]: value }));
+    // Una fila en `single`, un array en `multiple`: lo marcado en un modo no vale en el otro.
+    if (name === 'selectionMode') this.selection.set(null);
+  }
+
+  /** La selección, en las dos direcciones (`[(selection)]`), para enseñar encima de la tabla qué hay marcado. */
+  protected readonly selection = signal<TableLabAgent | readonly TableLabAgent[] | null>(null);
+  protected readonly selectedAgents = computed<readonly TableLabAgent[]>(() => {
+    const sel = this.selection();
+    return sel === null ? [] : Array.isArray(sel) ? sel : [sel as TableLabAgent];
+  });
+  protected readonly selectedTickets = computed(() => this.selectedAgents().reduce((sum, a) => sum + a.tickets, 0));
+
+  /** Se marca clicando la fila: es cuando funcionan el teclado de PrimeNG y Cmd/Ctrl. Mismo cálculo que la tabla. */
+  protected readonly selectsByRow = computed(() => {
+    const mode = this.liveArgs()['selectionMode'];
+    const column = this.liveArgs()['selectionColumn'];
+    if (mode === 'multiple') return column === 'none';
+    return mode === 'single' && column !== 'radio';
+  });
+
+  /**
+   * El último evento de la tabla, el ejemplo «Events» de primeng.dev. Allí sale en un toast; aquí, en la barra de
+   * encima de la tabla: lo que hace el usuario se cuenta junto a lo que lo causó, y el toast queda para el sistema
+   * (DD-191, lo vigila `audit:screen-hygiene`).
+   */
+  protected readonly lastEvent = signal<string | null>(null);
+
+  private static readonly SELECT_TYPE: Readonly<Record<string, string>> = {
+    row: 'fila',
+    checkbox: 'casilla',
+    radiobutton: 'radio',
+  };
+
+  protected onRowSelect(event: TableRowSelectEvent<TableLabAgent>): void {
+    this.lastEvent.set(`rowSelect: ${this.eventAgentName(event.data)}, por ${TableLabPageComponent.SELECT_TYPE[event.type ?? ''] ?? event.type}`);
+  }
+
+  protected onRowUnselect(event: TableRowUnSelectEvent<TableLabAgent>): void {
+    this.lastEvent.set(`rowUnselect: ${this.eventAgentName(event.data)}, por ${TableLabPageComponent.SELECT_TYPE[event.type ?? ''] ?? event.type}`);
+  }
+
+  private eventAgentName(data: TableLabAgent | TableLabAgent[] | undefined): string {
+    return Array.isArray(data) ? `${data.length} filas` : (data?.name ?? '');
+  }
+
+  /** «Botón en columna»: el ejemplo «Column» de primeng.dev, un botón en la fila que la elige sin marcarla. */
+  protected readonly columnPickButton = signal(false);
+
+  protected pickAgent(agent: TableLabAgent): void {
+    this.lastEvent.set(`Botón de la fila: ${agent.name}`);
   }
 
   /** «first» no hace nada sin «paginator»: PrimeNG solo lo suma al índice de fila cuando hay

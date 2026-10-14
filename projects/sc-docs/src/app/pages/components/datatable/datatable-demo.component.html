@@ -10,6 +10,8 @@
     [columns]="playColumns"
     dataKey="id"
     [selectionMode]="args.selectionMode"
+    [selectionColumn]="args.selectionColumn"
+    [metaKeySelection]="args.metaKeySelection"
     [paginator]="args.paginator"
     [rows]="args.rows"
     [first]="args.first"
@@ -37,7 +39,7 @@
 </ng-template>
 
 <!-- Controles a medida del Playground, para una audiencia no-dev (BI, PMs): agrupados en acordeón en vez
-     del grid plano de 21 knobs. `ctx` es el `StoryControlsContext` que pasa `story-host` (args en vivo +
+     del grid plano de knobs. `ctx` es el `StoryControlsContext` que pasa `story-host` (args en vivo +
      `setArg`); cada grupo es un `sc-panel` plegable, «General» abierto por defecto. -->
 <ng-template #controls let-ctx>
   <div class="dt-controls" data-testid="sc-datatable-controls">
