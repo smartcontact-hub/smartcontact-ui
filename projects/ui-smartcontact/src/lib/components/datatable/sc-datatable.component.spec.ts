@@ -456,3 +456,68 @@ describe('sc-datatable · esqueleto de carga', () => {
     fixture.destroy();
   });
 });
+
+describe('sc-datatable · orden', () => {
+  const COLS_ORDEN: readonly ScColumnDef<Fila>[] = [
+    { field: 'id', header: 'ID', sortable: true },
+    { field: 'nombre', header: 'Nombre', sortable: true },
+  ];
+
+  async function montarOrdenable(filas: Fila[], inputs: Record<string, unknown> = {}) {
+    TestBed.configureTestingModule({ imports: [ScDatatableComponent] });
+    const fixture = TestBed.createComponent<ScDatatableComponent<Fila>>(ScDatatableComponent);
+    fixture.componentRef.setInput('columns', COLS_ORDEN);
+    fixture.componentRef.setInput('value', filas);
+    for (const [k, v] of Object.entries(inputs)) fixture.componentRef.setInput(k, v);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    return fixture;
+  }
+
+  const nombresPintados = (root: HTMLElement) =>
+    [...root.querySelectorAll('tbody tr')].map((tr) => tr.children[1]?.textContent?.trim());
+
+  it('ordena lo que pinta sin reordenar el array de quien usa la tabla', async () => {
+    /* p-table ordena en sitio el array que recibe: sin la copia, la pantalla veía su propio array reordenado y el
+     * orden de partida se perdía. */
+    const filas: Fila[] = [{ id: 2, nombre: 'B' }, { id: 1, nombre: 'A' }, { id: 3, nombre: 'C' }];
+    const fixture = await montarOrdenable(filas, { sortField: 'nombre' });
+    expect(nombresPintados(fixture.nativeElement)).toEqual(['A', 'B', 'C']);
+    expect(filas.map((f) => f.nombre)).toEqual(['B', 'A', 'C']);
+    fixture.destroy();
+  });
+
+  it('con removableSort, el tercer clic en la cabecera quita el orden y vuelve el de partida', async () => {
+    const filas: Fila[] = [{ id: 2, nombre: 'B' }, { id: 1, nombre: 'A' }, { id: 3, nombre: 'C' }];
+    const fixture = await montarOrdenable(filas, { removableSort: true });
+    const emitidos: unknown[] = [];
+    fixture.componentInstance.sortChange.subscribe((e) => emitidos.push(e));
+    const cabecera = (fixture.nativeElement as HTMLElement).querySelector<HTMLElement>('thead th[data-field="nombre"]')!;
+    for (let i = 0; i < 3; i++) {
+      cabecera.click();
+      fixture.detectChanges();
+      await fixture.whenStable();
+    }
+    expect(emitidos).toEqual([
+      { field: 'nombre', order: 1 },
+      { field: 'nombre', order: -1 },
+      { field: undefined, order: 0 },
+    ]);
+    expect(nombresPintados(fixture.nativeElement)).toEqual(['B', 'A', 'C']);
+    expect(cabecera.getAttribute('aria-sort')).toBe('none');
+    fixture.destroy();
+  });
+
+  it('sin removableSort, el tercer clic vuelve a ascendente, como p-table', async () => {
+    const fixture = await montarOrdenable([{ id: 2, nombre: 'B' }, { id: 1, nombre: 'A' }]);
+    const cabecera = (fixture.nativeElement as HTMLElement).querySelector<HTMLElement>('thead th[data-field="nombre"]')!;
+    for (let i = 0; i < 3; i++) {
+      cabecera.click();
+      fixture.detectChanges();
+      await fixture.whenStable();
+    }
+    expect(nombresPintados(fixture.nativeElement)).toEqual(['A', 'B']);
+    expect(cabecera.getAttribute('aria-sort')).toBe('ascending');
+    fixture.destroy();
+  });
+});
