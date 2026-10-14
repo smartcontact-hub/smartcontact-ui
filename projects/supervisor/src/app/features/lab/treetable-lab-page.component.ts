@@ -185,7 +185,7 @@ export class TreetableLabPageComponent {
   ];
 
   /** Mismo selector que `table-lab-page.component.ts`: navega entre `/lab/tabla` y `/lab/arbol`,
-   *  no cambia un prop — son componentes distintos. */
+   *  no cambia un prop, son componentes distintos. */
   private readonly router = inject(Router);
   protected readonly labOptions: { value: 'tabla' | 'arbol'; label: string }[] = [
     { value: 'tabla', label: 'Tabla' },

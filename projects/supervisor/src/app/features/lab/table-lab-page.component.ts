@@ -108,8 +108,8 @@ const MAX_EXTRA_COLUMNS = 8;
 /**
  * Laboratorio local: `sc-datatable` dentro del shell real (sidebar y cabecera de verdad, no una
  * maqueta), para ver cómo se comporta en un contexto de app de verdad antes de llevarlo a una
- * pantalla de producto. El botón flotante («Contexto de la app») simula el ENTORNO — tema, sidebar,
- * viewport, el mismo patrón que `lab/sidebar` —; el panel fijo de la derecha trae los 21 knobs
+ * pantalla de producto. El botón flotante («Contexto de la app») simula el ENTORNO: tema, sidebar,
+ * viewport, el mismo patrón que `lab/sidebar`. El panel fijo de la derecha trae los 21 knobs
  * REALES de `sc-datatable`, agrupados igual que el Playground de sc-docs, para tocar uno a uno y
  * ver el efecto sobre la tabla ya puesta en su sitio.
  */
@@ -145,29 +145,29 @@ export class TableLabPageComponent {
 
   protected readonly statusTpl = viewChild<TemplateRef<ScColumnCellContext<TableLabAgent>>>('statusTpl');
   /** Contenido rico en celda: foto/avatar (`sc-avatar`) y estrellas (`p-rating`, ya con el tema del
-   *  DS puesto — `sc-preset/rating.ts` — aunque el DS no tenga un wrapper propio todavía). */
+   *  DS puesto en `sc-preset/rating.ts`, aunque el DS no tenga un wrapper propio todavía). */
   protected readonly avatarTpl = viewChild<TemplateRef<ScColumnCellContext<TableLabAgent>>>('avatarTpl');
   protected readonly ratingTpl = viewChild<TemplateRef<ScColumnCellContext<TableLabAgent>>>('ratingTpl');
   protected readonly countryTpl = viewChild<TemplateRef<ScColumnCellContext<TableLabAgent>>>('countryTpl');
   protected readonly extraTpl = viewChild<TemplateRef<ScColumnCellContext<TableLabAgent>>>('extraTpl');
 
-  /** Columnas fijas (frozen): no es un prop de la tabla, es de la definición de columna — así que
+  /** Columnas fijas (frozen): no es un prop de la tabla, es de la definición de columna, así que
    *  este toggle (en el grupo «Columnas») recalcula `columns()` en vez de tocar `liveArgs`. Misma
    *  tabla, sin montar una segunda para enseñarlo. */
   protected readonly freezeFirstColumn = signal(false);
 
   /** Columnas de relleno: para ver el scroll horizontal de verdad hace falta que la tabla no
-   *  quepa en el ancho — con solo 6 columnas reales nunca se demuestra. Tampoco es un prop de la
+   *  quepa en el ancho, con solo 6 columnas reales nunca se demuestra. Tampoco es un prop de la
    *  tabla, así que vive aquí junto a `freezeFirstColumn`. */
   protected readonly extraColumnsCount = signal(0);
   protected readonly maxExtraColumns = MAX_EXTRA_COLUMNS;
 
   protected readonly columns = computed<readonly ScColumnDef<TableLabAgent>[]>(() => [
-    { field: 'id', header: '', headerAriaLabel: 'Avatar', cellTemplate: this.avatarTpl(), width: '3.5rem' },
+    { field: 'id', header: '', headerAriaLabel: 'Avatar', cellTemplate: this.avatarTpl(), width: '3.5rem', skeleton: 'avatar' },
     { field: 'name', header: 'Agente', sortable: true, frozen: this.freezeFirstColumn() || undefined, rowHeader: this.freezeFirstColumn(), width: '12rem' },
     { field: 'team', header: 'Equipo', sortable: true, width: '10rem' },
     { field: 'country', header: 'País', sortable: true, cellTemplate: this.countryTpl(), width: '8rem' },
-    { field: 'status', header: 'Estado', sortable: true, cellTemplate: this.statusTpl(), width: '8rem' },
+    { field: 'status', header: 'Estado', sortable: true, cellTemplate: this.statusTpl(), width: '8rem', skeleton: 'tag' },
     { field: 'rating', header: 'Valoración', sortable: true, cellTemplate: this.ratingTpl(), width: '9rem' },
     { field: 'tickets', header: 'Tickets abiertos', sortable: true, width: '10rem' },
     ...Array.from({ length: this.extraColumnsCount() }, (_, i) => ({
@@ -178,7 +178,7 @@ export class TableLabPageComponent {
     })),
   ]);
 
-  // ── Los 21 knobs reales de sc-datatable, igual que el Playground de sc-docs ──────────────────
+  // Los 21 knobs reales de sc-datatable, igual que el Playground de sc-docs.
   protected readonly liveArgs = signal<Record<string, unknown>>({ ...DEFAULT_ARGS });
   protected readonly controlGroups: readonly { title: string; open: boolean; knobs: readonly ArgType[] }[] =
     CONTROL_GROUP_DEFS.map((g) => ({
@@ -218,7 +218,7 @@ export class TableLabPageComponent {
     return at.control.kind === 'select' ? at.control.options.map((o) => ({ label: String(o), value: o })) : [];
   }
 
-  // ── El CONTEXTO de la app: tema, sidebar, viewport — no son props de la tabla, son del shell ──
+  // El CONTEXTO de la app: tema, sidebar, viewport. No son props de la tabla, son del shell.
   protected readonly sidebarExpanded = signal(false);
   protected readonly viewport = signal<Viewport>('desktop');
 
@@ -287,8 +287,8 @@ export class TableLabPageComponent {
   }
 
   /** `p-avatar` da prioridad a `label` sobre `image` SIEMPRE que los dos lleguen con valor (su
-   *  plantilla es `@if (label()) {...} @else if (image()) {...}`, sin mirar si la imagen cargó) —
-   *  por eso `sc-avatar` no basta con pasar los dos: hay que alternar a mano con `(imageError)`. */
+   *  plantilla es `@if (label()) {...} @else if (image()) {...}`, sin mirar si la imagen cargó).
+   *  Por eso `sc-avatar` no basta con pasar los dos: hay que alternar a mano con `(imageError)`. */
   protected readonly failedAvatarIds = signal<ReadonlySet<number>>(new Set());
 
   protected onAvatarImageError(id: number): void {
