@@ -28,123 +28,515 @@
       </button>
     </div>
 
-    <div class="treetable-lab__frame" [style.max-width.rem]="viewport() === 'tablet' ? 48 : null">
+    <div
+      class="treetable-lab__frame"
+      [class.treetable-lab__frame--flex]="flexScroll()"
+      [style.max-width.rem]="viewport() === 'tablet' ? 48 : null"
+    >
       @for (remountKey of [tableRemountKey()]; track remountKey) {
         <p-treetable
-          [value]="$any(nodes)"
-          [columns]="$any(columns)"
+          #tt
+          [value]="$any(tableValue())"
+          [columns]="$any(mainColumns())"
+          [frozenColumns]="$any(frozenColumns())"
+          [frozenWidth]="frozenName() ? '16rem' : undefined"
           dataKey="key"
-          [(collapsedKeys)]="collapsedKeys"
-          [paginator]="$any(liveArgs()['paginator'])"
-          [rows]="$any(liveArgs()['rows'])"
+          [collapsedKeys]="lazy() ? undefined : collapsedKeys()"
+          (collapsedKeysChange)="lazy() || collapsedKeys.set($event)"
+          [selectionMode]="$any(liveArgs()['selectionMode']) || undefined"
+          [(selectionKeys)]="selectionKeys"
+          (selectionKeysChange)="selectionKeysTick.update((n) => n + 1)"
+          [(selection)]="selection"
+          [metaKeySelection]="$any(liveArgs()['metaKeySelection'])"
+          (onNodeSelect)="onNodeSelect($event)"
+          (onNodeUnselect)="onNodeUnselect($event)"
+          (onNodeExpand)="onNodeExpand($event)"
+          (onNodeCollapse)="onNodeCollapse($event)"
+          [paginator]="paginatorArg()"
+          [rows]="rowsArg()"
+          [rowsPerPageOptions]="liveArgs()['rowsPerPageOptions'] ? [2, 4, 8] : undefined"
+          [showCurrentPageReport]="$any(liveArgs()['showCurrentPageReport'])"
+          [currentPageReportTemplate]="'lab.arbol.page_report' | translate"
+          [paginatorPosition]="$any(liveArgs()['paginatorPosition'])"
           [showGridlines]="$any(liveArgs()['showGridlines'])"
-          [loading]="$any(liveArgs()['loading'])"
+          [loading]="$any(liveArgs()['loading']) || lazyLoading()"
           [rowHover]="$any(liveArgs()['rowHover'])"
-          [selectionMode]="$any(liveArgs()['selectionMode'])"
+          [class.p-treetable-sm]="liveArgs()['size'] === 'sm'"
+          [class.p-treetable-lg]="liveArgs()['size'] === 'lg'"
           [sortField]="$any(liveArgs()['sortField']) || undefined"
           [sortOrder]="$any(liveArgs()['sortOrder'])"
-          [scrollable]="$any(liveArgs()['scrollable'])"
-          [scrollHeight]="$any(liveArgs()['scrollHeight']) || undefined"
+          [sortMode]="$any(liveArgs()['sortMode'])"
+          (onSort)="onSort($event)"
+          [customSort]="removableSort() && liveArgs()['sortMode'] !== 'multiple'"
+          (sortFunction)="onCustomSort($event, tt)"
+          [contextMenu]="contextMenu() ? cm : undefined"
+          [(contextMenuSelection)]="contextNode"
+          [scrollable]="scrollableArg()"
+          [scrollHeight]="scrollHeightArg()"
           [resizableColumns]="$any(liveArgs()['resizableColumns'])"
           [columnResizeMode]="$any(liveArgs()['columnResizeMode'])"
           [reorderableColumns]="$any(liveArgs()['reorderableColumns'])"
+          (onColReorder)="onColumnReorder($event)"
+          [filterMode]="$any(liveArgs()['filterMode'])"
+          [globalFilterFields]="['name']"
+          [lazy]="lazy()"
+          [totalRecords]="lazy() ? lazyTotal : tableValue().length"
+          (onLazyLoad)="onLazyLoad($event)"
+          (onEditComplete)="onEditComplete($event)"
         >
-          <ng-template #header let-cols>
-            <tr>
-              @for (col of cols; track col.field) {
-                <th
-                  [ttSortableColumn]="col.field"
-                  ttResizableColumn
-                  [ttResizableColumnDisabled]="!$any(liveArgs()['resizableColumns'])"
-                  ttReorderableColumn
-                  [ttReorderableColumnDisabled]="!$any(liveArgs()['reorderableColumns'])"
-                >
-                  {{ col.header }}
-                  <p-treetable-sort-icon [field]="col.field" />
-                </th>
+          <!-- Lo que hay marcado y el último evento, como la barra de /lab/tabla; con los interruptores, el título, el
+               buscador global y el selector de columnas de los ejemplos «Template», «Filter» y «Column Toggle». -->
+          <ng-template #caption>
+            <div class="treetable-lab__caption">
+              @if (templateParts()) {
+                <span class="sc-text-body-semibold">{{ 'lab.arbol.caption_title' | translate }}</span>
               }
-            </tr>
+              @if (globalSearch()) {
+                <sc-search
+                  size="sm"
+                  [value]="searchText()"
+                  (valueChange)="onSearch(tt, $event)"
+                  [placeholder]="'lab.arbol.search_placeholder' | translate"
+                />
+              }
+              @if (columnToggle()) {
+                <sc-multiselect
+                  size="sm"
+                  [options]="pickableColumns"
+                  optionLabel="header"
+                  optionValue="field"
+                  display="chip"
+                  [value]="pickedFields()"
+                  (valueChange)="pickedFields.set($any($event))"
+                  [placeholder]="'lab.arbol.columns_placeholder' | translate"
+                  [ariaLabel]="'lab.arbol.column_toggle_label' | translate"
+                />
+              }
+              @if (lastEvent(); as event) {
+                <code class="sc-text-caption-regular treetable-lab__event">{{ event }}</code>
+              }
+              <span class="sc-text-body-regular treetable-lab__selected" aria-live="polite">
+                @switch (markedCount()) {
+                  @case (0) { Nada marcado }
+                  @case (1) { 1 marcado }
+                  @default { {{ markedCount() }} marcados }
+                }
+              </span>
+            </div>
           </ng-template>
-          <ng-template #body let-rowNode let-rowData="rowData" let-cols="columns">
-            <tr [ttRow]="rowNode">
-              @for (col of cols; track col.field; let i = $index) {
-                <td>
-                  @if (i === 0) {
-                    <p-treetable-toggler [rowNode]="rowNode" />
-                    @if ($any(liveArgs()['selectionMode']) === 'checkbox') {
-                      <p-treetable-checkbox [value]="rowNode" />
-                    }
+
+          <!-- El colgroup de primeng.dev: con scroll propio hace falta para redimensionar («Scrollable»), y da el ancho de
+               cada columna con «Columnas anchas» y «Congelar». -->
+          @if (scrollableArg()) {
+            <ng-template #colgroup let-cols>
+              <colgroup>
+                @for (col of cols; track col.field) {
+                  <col [style.width]="colWidth(col)" />
+                }
+              </colgroup>
+            </ng-template>
+          }
+
+          <ng-template #header let-cols>
+            @if (grouped()) {
+              <!-- «Column Group»: las columnas sin grupo ocupan las dos filas; las de un grupo comparten la celda de arriba. -->
+              <tr>
+                @for (cell of headerCells(cols); track $index) {
+                  @if (cell.kind === 'column') {
+                    <th rowspan="2" [ttSortableColumn]="cell.col.field" [ttSortableColumnDisabled]="cell.col.field === 'actions'">
+                      {{ cell.col.header }}
+                      @if (cell.col.field !== 'actions') {
+                        <p-treetable-sort-icon [field]="cell.col.field" />
+                      }
+                    </th>
+                  } @else {
+                    <th [attr.colspan]="cell.span" class="treetable-lab__group-cell">{{ cell.label }}</th>
                   }
-                  @switch (col.field) {
-                    @case ('name') {
-                      {{ rowData.name }}
+                }
+              </tr>
+              <tr>
+                @for (col of cols; track col.field) {
+                  @if (col.group) {
+                    <th [ttSortableColumn]="col.field">
+                      {{ col.groupHeader }}
+                      <p-treetable-sort-icon [field]="col.field" />
+                    </th>
+                  }
+                }
+              </tr>
+            } @else {
+              <tr>
+                @for (col of cols; track col.field) {
+                  <th
+                    [ttSortableColumn]="col.field"
+                    [ttSortableColumnDisabled]="col.field === 'actions'"
+                    ttResizableColumn
+                    [ttResizableColumnDisabled]="!$any(liveArgs()['resizableColumns'])"
+                    ttReorderableColumn
+                    [ttReorderableColumnDisabled]="!$any(liveArgs()['reorderableColumns'])"
+                  >
+                    {{ col.header }}
+                    @if (col.field !== 'actions') {
+                      <p-treetable-sort-icon [field]="col.field" />
                     }
-                    @case ('role') {
-                      <sc-tag [severity]="roleSeverity(rowData.role)" [value]="rowData.role" />
-                    }
-                    @case ('status') {
-                      @if (rowData.status) {
-                        <sc-tag [severity]="statusSeverity(rowData.status)" [value]="statusLabel(rowData.status)" />
+                  </th>
+                }
+              </tr>
+            }
+            @if (columnFilters()) {
+              <!-- «Filter»: una fila de filtros bajo los títulos, cada uno con tt.filter(valor, campo, cómo compara). -->
+              <tr>
+                @for (col of cols; track col.field) {
+                  <th>
+                    @switch (col.field) {
+                      @case ('name') {
+                        <sc-inputtext
+                          size="sm"
+                          fluid
+                          [placeholder]="'lab.arbol.filter_name' | translate"
+                          [ariaLabel]="'lab.arbol.filter_name' | translate"
+                          (valueChange)="tt.filter($event, 'name', 'contains')"
+                        />
+                      }
+                      @case ('role') {
+                        <sc-select
+                          size="sm"
+                          [options]="roleOptions"
+                          optionValue="value"
+                          [showClear]="true"
+                          [placeholder]="'lab.arbol.filter_any' | translate"
+                          [ariaLabel]="'lab.arbol.filter_role' | translate"
+                          (valueChange)="filterColumn(tt, $event, 'role', 'equals')"
+                        />
+                      }
+                      @case ('status') {
+                        <sc-select
+                          size="sm"
+                          [options]="statusOptions"
+                          optionValue="value"
+                          [showClear]="true"
+                          [placeholder]="'lab.arbol.filter_any' | translate"
+                          [ariaLabel]="'lab.arbol.filter_status' | translate"
+                          (valueChange)="filterColumn(tt, $event, 'status', 'equals')"
+                        />
+                      }
+                      @case ('tickets') {
+                        <sc-inputnumber
+                          size="sm"
+                          [min]="0"
+                          placeholder="≥"
+                          [ariaLabel]="'lab.arbol.filter_tickets' | translate"
+                          (valueChange)="filterColumn(tt, $event, 'tickets', 'gte')"
+                        />
+                      }
+                      @case ('closed') {
+                        <sc-inputnumber
+                          size="sm"
+                          [min]="0"
+                          placeholder="≥"
+                          [ariaLabel]="'lab.arbol.filter_closed' | translate"
+                          (valueChange)="filterColumn(tt, $event, 'closed', 'gte')"
+                        />
                       }
                     }
-                    @case ('tickets') {
-                      {{ rowData.tickets }}
+                  </th>
+                }
+              </tr>
+            }
+          </ng-template>
+
+          <ng-template #body let-rowNode let-rowData="rowData" let-cols="columns">
+            @if (skeleton()) {
+              <tr>
+                @for (col of cols; track col.field; let first = $first) {
+                  <td>
+                    <sc-skeleton [width]="first ? '60%' : '40%'" />
+                  </td>
+                }
+              </tr>
+            } @else {
+              <tr
+                [ttRow]="rowNode"
+                [ttSelectableRow]="rowNode"
+                [ttSelectableRowDisabled]="!selectable()"
+                [ttContextMenuRow]="rowNode"
+                [ttContextMenuRowDisabled]="!contextMenu()"
+                [class.treetable-lab__row--muted]="conditionalStyle() && rowData.status === 'offline'"
+                [class.treetable-lab__row--sized]="frozenName()"
+              >
+                @for (col of cols; track col.field; let first = $first) {
+                  <td
+                    [ttEditableColumn]="rowData"
+                    [ttEditableColumnField]="col.field"
+                    [ttEditableColumnDisabled]="!isEditable(rowData, col.field)"
+                    [class.treetable-lab__cell--alert]="conditionalStyle() && col.field === 'tickets' && rowData.role === 'Agente' && rowData.tickets >= 15"
+                  >
+                    @if (first && !frozenName()) {
+                      <ng-container *ngTemplateOutlet="firstCell; context: { $implicit: rowNode, rowData, field: col.field }" />
+                    } @else if (isEditable(rowData, col.field)) {
+                      <p-treetable-cell-editor>
+                        <ng-template #input>
+                          <ng-container *ngTemplateOutlet="editor; context: { $implicit: rowData, field: col.field }" />
+                        </ng-template>
+                        <ng-template #output>
+                          <ng-container *ngTemplateOutlet="cell; context: { $implicit: rowData, field: col.field }" />
+                        </ng-template>
+                      </p-treetable-cell-editor>
+                    } @else {
+                      <ng-container *ngTemplateOutlet="cell; context: { $implicit: rowData, field: col.field }" />
                     }
-                  }
-                </td>
+                  </td>
+                }
+              </tr>
+            }
+          </ng-template>
+
+          <!-- La primera celda: la flecha, la casilla (con «checkbox») y el valor, en una línea, como los ejemplos. Dentro
+               del árbol, porque la flecha y la casilla lo buscan donde se declara la plantilla. -->
+          <ng-template #firstCell let-rowNode let-rowData="rowData" let-field="field">
+            <div class="treetable-lab__first-cell">
+              <p-treetable-toggler [rowNode]="rowNode" />
+              @if ($any(liveArgs()['selectionMode']) === 'checkbox') {
+                <p-treetable-checkbox [value]="rowNode" />
               }
+              <ng-container *ngTemplateOutlet="cell; context: { $implicit: rowData, field }" />
+            </div>
+          </ng-template>
+
+          <!-- «Frozen Columns»: la columna fija se pinta en su propio cuerpo, con la flecha y la casilla. -->
+          @if (frozenName()) {
+            <ng-template #frozenbody let-rowNode let-rowData="rowData">
+              <tr
+                [ttRow]="rowNode"
+                [ttSelectableRow]="rowNode"
+                [ttSelectableRowDisabled]="!selectable()"
+                [class.treetable-lab__row--muted]="conditionalStyle() && rowData.status === 'offline'"
+                class="treetable-lab__row--sized"
+              >
+                <td>
+                  <ng-container *ngTemplateOutlet="firstCell; context: { $implicit: rowNode, rowData, field: 'name' }" />
+                </td>
+              </tr>
+            </ng-template>
+          }
+
+          <!-- «Column Group»: el pie con los totales. -->
+          @if (grouped()) {
+            <ng-template #footer let-cols>
+              <tr class="treetable-lab__totals">
+                @for (cell of footerCells(cols); track $index) {
+                  @if (cell.kind === 'label') {
+                    <td [attr.colspan]="cell.span" class="treetable-lab__total-label">{{ 'lab.arbol.total' | translate }}</td>
+                  } @else {
+                    <td>
+                      @if (cell.col.numeric) {
+                        {{ total(cell.col.field) }}
+                      }
+                    </td>
+                  }
+                }
+              </tr>
+            </ng-template>
+          }
+
+          <ng-template #emptymessage let-cols>
+            <tr>
+              <td [attr.colspan]="cols?.length">{{ 'lab.arbol.empty' | translate }}</td>
             </tr>
           </ng-template>
+
+          <!-- «Paginator Template»: un botón a cada lado de las páginas. -->
+          @if (paginatorTemplate()) {
+            <ng-template #paginatorleft>
+              <sc-button
+                variant="secondary"
+                appearance="text"
+                iconOnly
+                icon="refresh"
+                [ariaLabel]="'lab.arbol.reload' | translate"
+                (clicked)="reload()"
+              />
+            </ng-template>
+            <ng-template #paginatorright>
+              <sc-button
+                variant="secondary"
+                appearance="text"
+                iconOnly
+                icon="download"
+                [ariaLabel]="'lab.arbol.download' | translate"
+                (clicked)="lastEvent.set('Descargar')"
+              />
+            </ng-template>
+          }
+
+          <!-- «Template»: el pie del árbol con «Recargar». -->
+          @if (templateParts()) {
+            <ng-template #summary>
+              <sc-button variant="secondary" appearance="outlined" icon="refresh" [label]="'lab.arbol.reload' | translate" (clicked)="reload()" />
+            </ng-template>
+          }
         </p-treetable>
       }
     </div>
   </div>
 </div>
 
+<!-- En el body: dentro del contenido del shell, que hace scroll, saldría desplazado del clic. -->
+<p-contextmenu #cm [model]="contextItems()" appendTo="body" />
+
+<ng-template #cell let-row let-field="field">
+  @switch (field) {
+    @case ('name') {
+      <span [class.treetable-lab__team-name]="row.role === 'Equipo'">{{ row.name }}</span>
+    }
+    @case ('role') {
+      <sc-tag [severity]="roleSeverity(row.role)" [value]="row.role" />
+    }
+    @case ('status') {
+      @if (row.status) {
+        <sc-tag [severity]="statusSeverity(row.status)" [value]="statusLabel(row.status)" />
+      }
+    }
+    @case ('tickets') {
+      {{ row.tickets }}
+    }
+    @case ('closed') {
+      {{ row.closed }}
+    }
+    @case ('actions') {
+      <span class="treetable-lab__actions">
+        <sc-button
+          variant="secondary"
+          appearance="text"
+          size="sm"
+          iconOnly
+          icon="visibility"
+          [ariaLabel]="'lab.arbol.view_row' | translate: { name: row.name }"
+          (clicked)="lastEvent.set('Ver: ' + row.name)"
+        />
+        <sc-button
+          variant="secondary"
+          appearance="text"
+          size="sm"
+          iconOnly
+          icon="edit"
+          [ariaLabel]="'lab.arbol.edit_row' | translate: { name: row.name }"
+          (clicked)="lastEvent.set('Editar: ' + row.name)"
+        />
+      </span>
+    }
+  }
+</ng-template>
+
+<!-- «Edit»: el control de cada celda editable, que escribe en la fila. -->
+<ng-template #editor let-row let-field="field">
+  @switch (field) {
+    @case ('status') {
+      <sc-select
+        size="sm"
+        [options]="statusOptions"
+        optionValue="value"
+        [value]="row.status"
+        (valueChange)="row.status = $event"
+        [ariaLabel]="'lab.arbol.filter_status' | translate"
+      />
+    }
+    @case ('tickets') {
+      <sc-inputnumber
+        size="sm"
+        [min]="0"
+        [value]="row.tickets"
+        (valueChange)="row.tickets = $event ?? 0"
+        [ariaLabel]="'lab.arbol.edit_tickets' | translate"
+      />
+    }
+    @case ('closed') {
+      <sc-inputnumber
+        size="sm"
+        [min]="0"
+        [value]="row.closed"
+        (valueChange)="row.closed = $event ?? 0"
+        [ariaLabel]="'lab.arbol.edit_closed' | translate"
+      />
+    }
+  }
+</ng-template>
+
 <ng-template #knobGrid let-knobs>
   <div class="treetable-lab-controls__grid">
     @for (at of knobs; track at.name) {
-      <div class="treetable-lab-controls__label">
-        <span class="treetable-lab-controls__label-row">
-          <span class="sc-text-body-semibold">{{ at.label }}</span>
-          <sc-icon
-            name="info"
-            [size]="12"
-            class="treetable-lab-controls__hint"
-            [pTooltip]="at.description"
-            tooltipPosition="top"
-            tooltipEvent="both"
-            tabindex="0"
-          />
-        </span>
-        <code class="treetable-lab-controls__label-code sc-text-caption-regular">{{ at.name }}</code>
+      <div class="treetable-lab-controls__item" [class.treetable-lab-controls__item--inline]="at.control.kind === 'boolean'">
+        <div class="treetable-lab-controls__label">
+          <span class="treetable-lab-controls__label-row">
+            <span class="sc-text-body-semibold">{{ at.label }}</span>
+            <sc-icon
+              name="info"
+              [size]="12"
+              class="treetable-lab-controls__hint"
+              [pTooltip]="at.description"
+              tooltipPosition="top"
+              tooltipEvent="both"
+              tabindex="0"
+            />
+          </span>
+          <code class="treetable-lab-controls__label-code sc-text-caption-regular">{{ at.name }}</code>
+        </div>
+        <div class="treetable-lab-controls__field">
+          @switch (at.control.kind) {
+            @case ('boolean') {
+              <sc-toggleswitch
+                [checked]="asBool(liveArgs()[at.name])"
+                (checkedChange)="setArg(at.name, $event)"
+                [ariaLabel]="at.label"
+              />
+            }
+            @case ('select') {
+              <sc-select
+                [ariaLabel]="at.label"
+                [options]="selectOptions(at)"
+                optionLabel="label"
+                optionValue="value"
+                [value]="liveArgs()[at.name]"
+                (valueChange)="setArg(at.name, $event)"
+              />
+            }
+            @case ('number') {
+              <sc-inputnumber [value]="asNum(liveArgs()[at.name])" (valueChange)="setArg(at.name, $event)" [ariaLabel]="at.label" />
+            }
+            @default {
+              <sc-inputtext [value]="asStr(liveArgs()[at.name])" (valueChange)="setArg(at.name, $event)" [ariaLabel]="at.label" />
+            }
+          }
+        </div>
       </div>
-      <div class="treetable-lab-controls__field">
-        @switch (at.control.kind) {
-          @case ('boolean') {
-            <sc-toggleswitch
-              [checked]="asBool(liveArgs()[at.name])"
-              (checkedChange)="setArg(at.name, $event)"
-              [ariaLabel]="at.label"
+    }
+  </div>
+</ng-template>
+
+<!-- Los interruptores del laboratorio que no son props del árbol: misma fila que un knob, con lo que mueven en código
+     debajo de la etiqueta. -->
+<ng-template #labToggleGrid let-toggles>
+  <div class="treetable-lab-controls__grid">
+    @for (toggle of toggles; track toggle.label) {
+      <div class="treetable-lab-controls__item treetable-lab-controls__item--inline">
+        <div class="treetable-lab-controls__label">
+          <span class="treetable-lab-controls__label-row">
+            <span class="sc-text-body-semibold">{{ toggle.label }}</span>
+            <sc-icon
+              name="info"
+              [size]="12"
+              class="treetable-lab-controls__hint"
+              [pTooltip]="toggle.hint"
+              tooltipPosition="top"
+              tooltipEvent="both"
+              tabindex="0"
             />
-          }
-          @case ('select') {
-            <sc-select
-              [ariaLabel]="at.label"
-              [options]="selectOptions(at)"
-              optionLabel="label"
-              optionValue="value"
-              [value]="liveArgs()[at.name]"
-              (valueChange)="setArg(at.name, $event)"
-            />
-          }
-          @case ('number') {
-            <sc-inputnumber [value]="asNum(liveArgs()[at.name])" (valueChange)="setArg(at.name, $event)" />
-          }
-          @default {
-            <sc-inputtext [value]="asStr(liveArgs()[at.name])" (valueChange)="setArg(at.name, $event)" />
-          }
-        }
+          </span>
+          <code class="treetable-lab-controls__label-code sc-text-caption-regular">{{ toggle.code }}</code>
+        </div>
+        <div class="treetable-lab-controls__field">
+          <sc-toggleswitch [checked]="toggle.value()" (checkedChange)="toggle.set($event)" [ariaLabel]="toggle.ariaKey | translate" />
+        </div>
       </div>
     }
   </div>
@@ -154,128 +546,108 @@
   <button pButton rounded text severity="secondary" [attr.aria-label]="'lab.arbol.context_label' | translate" (click)="contextPop.toggle($event)">
     <sc-icon name="devices" [size]="16" />
   </button>
-  <button pButton rounded text severity="secondary" [attr.aria-label]="controlGroups[0].title" (click)="generalPop.toggle($event)">
-    <sc-icon name="tune" [size]="16" />
-  </button>
-  <button pButton rounded text severity="secondary" [attr.aria-label]="controlGroups[1].title" (click)="selectionPop.toggle($event)">
-    <sc-icon name="checklist" [size]="16" />
-  </button>
-  <button pButton rounded text severity="secondary" [attr.aria-label]="controlGroups[2].title" (click)="scrollPop.toggle($event)">
-    <sc-icon name="swap_vert" [size]="16" />
-  </button>
-  <button pButton rounded text severity="secondary" [attr.aria-label]="controlGroups[3].title" (click)="columnsPop.toggle($event)">
-    <sc-icon name="view_column" [size]="16" />
-  </button>
+  @for (group of controlGroups; track group.title) {
+    <button pButton rounded text severity="secondary" [attr.aria-label]="group.title" (click)="groupPop.toggle($event)">
+      <sc-icon [name]="group.icon" [size]="16" />
+    </button>
+    <p-popover #groupPop [ariaLabel]="group.title">
+      <div class="treetable-lab-controls" [class.treetable-lab-controls--wide]="group.wide">
+        <p class="sc-text-body-semibold treetable-lab-controls__title">{{ group.title }}</p>
+        @if (group.knobs.length) {
+          <ng-container *ngTemplateOutlet="knobGrid; context: { $implicit: group.knobs }" />
+        }
+        <ng-container *ngTemplateOutlet="labToggleGrid; context: { $implicit: labToggles[group.toggles] }" />
+      </div>
+    </p-popover>
+  }
 </div>
 
 <p-popover #contextPop [ariaLabel]="'lab.arbol.context_label' | translate">
   <div class="treetable-lab-controls" data-testid="treetable-lab-controls-context">
     <p class="sc-text-body-semibold treetable-lab-controls__title">Contexto de la app</p>
     <div class="treetable-lab-controls__grid">
-      <div class="treetable-lab-controls__label">
-        <span class="treetable-lab-controls__label-row">
-          <span class="sc-text-body-semibold">Tema</span>
-          <sc-icon
-            name="info"
-            [size]="12"
-            class="treetable-lab-controls__hint"
-            pTooltip="Cambia la app entre claro, oscuro, o lo que tenga puesto el sistema."
-            tooltipPosition="top"
-            tooltipEvent="both"
-            tabindex="0"
-          />
-        </span>
-      </div>
-      <div class="treetable-lab-controls__field">
-        <sc-selectbutton
-          [options]="themeOptions"
-          optionValue="value"
-          [allowEmpty]="false"
-          [value]="theme.mode()"
-          (valueChange)="selectTheme($event)"
-          [ariaLabel]="'lab.arbol.theme_label' | translate"
-        >
-          <ng-template #item let-option>
-            <sc-icon [name]="option.icon" size="inherit" />
-            <span>{{ option.label }}</span>
-          </ng-template>
-        </sc-selectbutton>
-      </div>
-
-      <div class="treetable-lab-controls__label">
-        <span class="treetable-lab-controls__label-row">
-          <span class="sc-text-body-semibold">Sidebar desplegado</span>
-          <sc-icon
-            name="info"
-            [size]="12"
-            class="treetable-lab-controls__hint"
-            pTooltip="Obliga al menú lateral a quedarse abierto, para ver cuánto sitio le deja al árbol."
-            tooltipPosition="top"
-            tooltipEvent="both"
-            tabindex="0"
-          />
-        </span>
-      </div>
-      <div class="treetable-lab-controls__field">
-        <sc-toggleswitch
-          [checked]="sidebarExpanded()"
-          (checkedChange)="onSidebarExpandedChange($event)"
-          [ariaLabel]="'lab.arbol.sidebar_label' | translate"
-        />
+      <div class="treetable-lab-controls__item">
+        <div class="treetable-lab-controls__label">
+          <span class="treetable-lab-controls__label-row">
+            <span class="sc-text-body-semibold">Tema</span>
+            <sc-icon
+              name="info"
+              [size]="12"
+              class="treetable-lab-controls__hint"
+              pTooltip="Cambia la app entre claro, oscuro, o lo que tenga puesto el sistema."
+              tooltipPosition="top"
+              tooltipEvent="both"
+              tabindex="0"
+            />
+          </span>
+        </div>
+        <div class="treetable-lab-controls__field">
+          <sc-selectbutton
+            [options]="themeOptions"
+            optionValue="value"
+            [allowEmpty]="false"
+            [value]="theme.mode()"
+            (valueChange)="selectTheme($event)"
+            [ariaLabel]="'lab.arbol.theme_label' | translate"
+          >
+            <ng-template #item let-option>
+              <sc-icon [name]="option.icon" size="inherit" />
+              <span>{{ option.label }}</span>
+            </ng-template>
+          </sc-selectbutton>
+        </div>
       </div>
 
-      <div class="treetable-lab-controls__label">
-        <span class="treetable-lab-controls__label-row">
-          <span class="sc-text-body-semibold">Viewport</span>
-          <sc-icon
-            name="info"
-            [size]="12"
-            class="treetable-lab-controls__hint"
-            pTooltip="Simula una pantalla más estrecha, como una tablet."
-            tooltipPosition="top"
-            tooltipEvent="both"
-            tabindex="0"
+      <div class="treetable-lab-controls__item treetable-lab-controls__item--inline">
+        <div class="treetable-lab-controls__label">
+          <span class="treetable-lab-controls__label-row">
+            <span class="sc-text-body-semibold">Sidebar desplegado</span>
+            <sc-icon
+              name="info"
+              [size]="12"
+              class="treetable-lab-controls__hint"
+              pTooltip="Obliga al menú lateral a quedarse abierto, para ver cuánto sitio le deja al árbol."
+              tooltipPosition="top"
+              tooltipEvent="both"
+              tabindex="0"
+            />
+          </span>
+        </div>
+        <div class="treetable-lab-controls__field">
+          <sc-toggleswitch
+            [checked]="sidebarExpanded()"
+            (checkedChange)="onSidebarExpandedChange($event)"
+            [ariaLabel]="'lab.arbol.sidebar_label' | translate"
           />
-        </span>
+        </div>
       </div>
-      <div class="treetable-lab-controls__field">
-        <sc-selectbutton
-          [options]="viewportOptions"
-          optionValue="value"
-          [allowEmpty]="false"
-          [value]="viewport()"
-          (valueChange)="selectViewport($event)"
-          [ariaLabel]="'lab.arbol.viewport_label' | translate"
-        />
+
+      <div class="treetable-lab-controls__item">
+        <div class="treetable-lab-controls__label">
+          <span class="treetable-lab-controls__label-row">
+            <span class="sc-text-body-semibold">Viewport</span>
+            <sc-icon
+              name="info"
+              [size]="12"
+              class="treetable-lab-controls__hint"
+              pTooltip="Simula una pantalla más estrecha, como una tablet."
+              tooltipPosition="top"
+              tooltipEvent="both"
+              tabindex="0"
+            />
+          </span>
+        </div>
+        <div class="treetable-lab-controls__field">
+          <sc-selectbutton
+            [options]="viewportOptions"
+            optionValue="value"
+            [allowEmpty]="false"
+            [value]="viewport()"
+            (valueChange)="selectViewport($event)"
+            [ariaLabel]="'lab.arbol.viewport_label' | translate"
+          />
+        </div>
       </div>
     </div>
-  </div>
-</p-popover>
-
-<p-popover #generalPop [ariaLabel]="controlGroups[0].title">
-  <div class="treetable-lab-controls" data-testid="treetable-lab-controls-general">
-    <p class="sc-text-body-semibold treetable-lab-controls__title">{{ controlGroups[0].title }}</p>
-    <ng-container *ngTemplateOutlet="knobGrid; context: { $implicit: controlGroups[0].knobs }" />
-  </div>
-</p-popover>
-
-<p-popover #selectionPop [ariaLabel]="controlGroups[1].title">
-  <div class="treetable-lab-controls" data-testid="treetable-lab-controls-selection">
-    <p class="sc-text-body-semibold treetable-lab-controls__title">{{ controlGroups[1].title }}</p>
-    <ng-container *ngTemplateOutlet="knobGrid; context: { $implicit: controlGroups[1].knobs }" />
-  </div>
-</p-popover>
-
-<p-popover #scrollPop [ariaLabel]="controlGroups[2].title">
-  <div class="treetable-lab-controls" data-testid="treetable-lab-controls-scroll">
-    <p class="sc-text-body-semibold treetable-lab-controls__title">{{ controlGroups[2].title }}</p>
-    <ng-container *ngTemplateOutlet="knobGrid; context: { $implicit: controlGroups[2].knobs }" />
-  </div>
-</p-popover>
-
-<p-popover #columnsPop [ariaLabel]="controlGroups[3].title">
-  <div class="treetable-lab-controls" data-testid="treetable-lab-controls-columns">
-    <p class="sc-text-body-semibold treetable-lab-controls__title">{{ controlGroups[3].title }}</p>
-    <ng-container *ngTemplateOutlet="knobGrid; context: { $implicit: controlGroups[3].knobs }" />
   </div>
 </p-popover>

@@ -43,7 +43,7 @@ Ordenado por lo que ahorraría. «Caso» es dónde se usaría hoy.
 | Media | **InputMask** | Teléfonos y extensiones con formato. | Sin decidir: validación propia (`telefonoValido`); ojo con los internacionales. |
 | Media | **ConfirmPopup** | Confirmaciones pequeñas junto al botón (quitar un contacto, un trigger). | Sin decidir: hoy son diálogos enteros. |
 | Baja | **Accordion · Fieldset** | Los slots plegables («Mensajes en cola») y las subsecciones. | No compensa: `sc-slot collapsible` y `sc-subsection` llevan el árbol del DS (DD-157). |
-| Baja | **ContextMenu** | Clic derecho en las filas de los listados. | No: el «⋮» ya lo cubre. |
+| Baja | **ContextMenu** | Clic derecho en las filas de los listados. | No en los listados: el «⋮» ya lo cubre. Solo en el laboratorio del árbol (sección 3). |
 | Baja | **InputOtp** | Un segundo factor en el acceso, si llega. | Con su pantalla. |
 | Baja | **Stepper** | Las altas largas. | Se quitó a propósito (DD-143): no vuelve sin motivo nuevo. |
 | Baja | **Slider · Knob** | Volúmenes y umbrales. | Con su pantalla. |
@@ -84,6 +84,7 @@ wrapper no tiene página en sc-docs ni medida en la línea base de estilos. El g
 | Sidebar | supervisor (página de laboratorio) | **Se queda.** Es el menú lateral nuevo de la 22, en prueba para la versión «no se cierra nada» del sidebar (frente `supervisor-sidebar`, DD-118). |
 | Rating | supervisor (`lab/tabla`, celda de «Valoración» en modo `readonly`) | El nativo tal cual (DD-113): el DS ya trae el tema listo (`sc-preset/rating.ts`), sin wrapper propio todavía. Demuestra contenido rico en celda (estrellas), no sustituye ningún componente del DS. |
 | TreeTable | supervisor (`lab/arbol`) | El nativo tal cual: el DS ya trae el tema listo (`sc-preset/treetable.ts`), sin wrapper propio todavía. Jerarquía de verdad (equipos → agentes), no una tabla plana, no sustituye a `sc-datatable`. |
+| ContextMenu | supervisor (`lab/arbol`, «Menú contextual») | El nativo tal cual, solo en el laboratorio: es el ejemplo «ContextMenu» de primeng.dev/treetable (`ttContextMenuRow`), en el `body` para que salga en el clic. En los listados sigue sin caso: el «⋮» ya lo cubre. |
 
 **Tabs** ya tiene wrapper (`sc-tabs`, DD-195): Plantillas, el reproductor de Memory y la página «Uso» de sc-docs lo
 usan. Solo las pestañas del Monitor siguen en `p-tabs` directo: se arrastran para ordenarse y se renombran con doble

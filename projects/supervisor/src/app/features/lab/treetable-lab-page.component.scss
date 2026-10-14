@@ -1,5 +1,7 @@
 :host {
   display: block;
+  /* Sitio para la píldora flotante de abajo: sin él, al final del scroll tapa la última fila o el paginador. */
+  padding-block-end: var(--sc-spacing-4);
 }
 
 .treetable-lab__heading-row {
@@ -30,15 +32,119 @@
   transition: max-width 0.2s cubic-bezier(0.2, 0, 0, 1);
 }
 
-/* Un botón por grupo (Contexto, General, Selección y orden, Scroll y tamaño, Columnas): cada
- * popover trae solo SUS knobs, mismo patrón que `table-lab-page.component.scss`. */
+/* «Scroll flexible» (primeng.dev/treetable «Flex Scroll»): el árbol, en `scrollHeight="flex"`, ocupa lo que le deja su
+ * recuadro, y la esquina del recuadro lo estira o lo encoge. El ejemplo lo enseña en un diálogo maximizable. */
+.treetable-lab__frame--flex {
+  display: flex;
+  flex-direction: column;
+  block-size: 20rem;
+  min-block-size: 10rem;
+  resize: vertical;
+  overflow: hidden;
+  border: 1px dashed var(--sc-border-default);
+  border-radius: var(--sc-radius-100);
+
+  p-treetable {
+    flex: 1 1 auto;
+    min-block-size: 0;
+  }
+}
+
+.treetable-lab__caption {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-1);
+  flex-wrap: wrap;
+}
+
+.treetable-lab__event {
+  color: var(--sc-text-subtle);
+}
+
+.treetable-lab__selected {
+  margin-inline-start: auto;
+}
+
+/* La flecha, la casilla y el valor en una línea, como el `flex items-center gap-2` de los ejemplos. */
+.treetable-lab__first-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+}
+
+/* El nombre del equipo, más marcado que el de sus agentes: el ejemplo «Column Group» lo pinta en `font-medium`. */
+.treetable-lab__team-name {
+  font-weight: var(--sc-font-weight-semibold);
+}
+
+.treetable-lab__group-cell {
+  text-align: center;
+}
+
+.treetable-lab__totals {
+  font-weight: var(--sc-font-weight-semibold);
+}
+
+.treetable-lab__total-label {
+  text-align: end;
+}
+
+/* «Estilo condicional» (primeng.dev/treetable «Conditional Style»): la fila del agente desconectado, en gris, y la
+ * cifra alta, en rojo. Sin capa, gana al fondo de fila del tema, que va en `@layer primeng`. */
+/* Neutro, no `--sc-bg-subtle`: ese es azul en los dos temas y la fila se lee como marcada. */
+.treetable-lab__row--muted {
+  background: var(--sc-bg-default);
+}
+
+.treetable-lab__cell--alert {
+  color: var(--sc-text-danger);
+  font-weight: var(--sc-font-weight-semibold);
+}
+
+/* «Congelar «Nombre»»: la columna fija va en otra tabla, y sus filas tienen que medir lo mismo que las de al lado (el
+ * ejemplo les da 57px a las dos): 56, el paso de la escala más cercano, cabe la fila más alta, la de las etiquetas. */
+.treetable-lab__row--sized {
+  block-size: var(--sc-spacing-4);
+}
+
+.treetable-lab__actions {
+  display: inline-flex;
+  gap: var(--sc-spacing-0-25);
+}
+
+/* Un botón por grupo (Contexto, General, Selección y orden…): cada popover trae solo SUS knobs, mismo patrón que
+ * `table-lab-page.component.scss`. Cada panel cabe entero sin scroll; el scroll queda para ventanas bajas. */
 .treetable-lab-controls {
   display: flex;
   flex-direction: column;
   gap: var(--sc-spacing-1);
   width: 18rem;
-  max-height: min(28rem, calc(100vh - 8rem));
+  max-height: calc(100vh - 8rem);
   overflow-y: auto;
+}
+
+.treetable-lab-controls--wide {
+  width: 36rem;
+
+  .treetable-lab-controls__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--sc-spacing-1-5);
+  }
+}
+
+.treetable-lab-controls__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-25);
+  min-width: 0;
+}
+
+/* Un interruptor no necesita su propia línea: va a la derecha de su etiqueta. */
+.treetable-lab-controls__item--inline {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sc-spacing-0-75);
 }
 
 .treetable-lab-controls__title {
@@ -80,6 +186,11 @@
 
 .treetable-lab-controls__field {
   min-width: 0;
+}
+
+/* Cada popover va junto a su botón en el racimo; su anfitrión no pinta caja, así que no cuenta como hueco del flex. */
+.treetable-lab__cluster p-popover {
+  display: contents;
 }
 
 .treetable-lab__cluster {
