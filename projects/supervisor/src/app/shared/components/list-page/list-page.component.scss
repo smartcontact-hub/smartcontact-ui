@@ -125,3 +125,61 @@
     max-width: 480px;
   }
 }
+
+/* EL MENÚ «ACCIONES» (importar, exportar, descargar plantilla): el `p-menu` en popup de primeng.dev con su plantilla de
+ * fila (`#item`) y de cabecera (`#submenuheader`). Todo en tokens del DS: el color, la escala de texto y el radio salen
+ * del tema (claro y oscuro). Cada fila: su icono, su título y lo que hace; la plantilla, detrás de un separador, más
+ * pequeña y con su flecha de descarga. */
+.data-menu__heading {
+  display: block;
+  padding: var(--sc-spacing-0-625) var(--sc-spacing-0-625) var(--sc-spacing-0-25);
+  color: var(--sc-text-subtle);
+}
+
+.data-menu__item {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-875);
+  padding: var(--sc-spacing-0-875) var(--sc-spacing-0-625);
+  /* Radio concéntrico con el panel: el del panel menos el relleno de su lista (DD-192). */
+  border-radius: calc(var(--sc-radius-200) - var(--sc-spacing-0-25));
+  cursor: pointer;
+}
+
+.data-menu__icon {
+  flex-shrink: 0;
+  color: var(--sc-icon-secondary);
+}
+
+.data-menu__copy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-25);
+  min-width: 0;
+}
+
+.data-menu__title {
+  color: var(--sc-text-primary);
+}
+
+.data-menu__hint {
+  color: var(--sc-text-subtle);
+}
+
+.data-menu__item--plantilla {
+  padding-block: var(--sc-spacing-0-625);
+
+  .data-menu__title {
+    color: var(--sc-text-secondary);
+  }
+
+  &:hover .data-menu__title {
+    text-decoration: underline;
+    text-underline-offset: var(--sc-spacing-0-25);
+  }
+}
+
+.data-menu__trail {
+  margin-inline-start: auto;
+  color: var(--sc-icon-secondary);
+}

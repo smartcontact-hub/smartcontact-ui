@@ -1135,10 +1135,21 @@
       "assigned_agents": "Assigned agents",
       "sheet": "Labels"
     },
-    "import_menu": "Import…",
-    "download_menu": "Export",
     "actions_button": "Actions",
-    "template_menu": "Download template"
+    "data_menu": {
+      "heading": "Manage data",
+      "import_title": "Import {{entity}}",
+      "import_hint": "Adds records from a CSV file",
+      "export_title": "Export {{entity}}",
+      "export_selection": "Export selection ({{count}})",
+      "export_hint_all": "Downloads the full list as Excel",
+      "export_hint_search": "Downloads the search results",
+      "export_hint_selection": "Downloads only the selected records",
+      "export_hint_empty": "There are no records to export",
+      "template_title": "Download CSV template",
+      "template_hint": "The reference format for your import.",
+      "entity_fallback": "records"
+    }
   },
   "templates": {
     "breadcrumb": "Templates",

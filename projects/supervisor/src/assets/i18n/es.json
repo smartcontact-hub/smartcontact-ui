@@ -1135,10 +1135,21 @@
       "assigned_agents": "Agentes asignados",
       "sheet": "Labels"
     },
-    "import_menu": "Importar…",
-    "download_menu": "Exportar",
     "actions_button": "Acciones",
-    "template_menu": "Descargar plantilla"
+    "data_menu": {
+      "heading": "Gestionar datos",
+      "import_title": "Importar {{entity}}",
+      "import_hint": "Añade registros desde un archivo CSV",
+      "export_title": "Exportar {{entity}}",
+      "export_selection": "Exportar selección ({{count}})",
+      "export_hint_all": "Descarga el listado completo en Excel",
+      "export_hint_search": "Descarga los resultados de la búsqueda",
+      "export_hint_selection": "Descarga solo los registros seleccionados",
+      "export_hint_empty": "No hay registros para exportar",
+      "template_title": "Descargar plantilla CSV",
+      "template_hint": "El formato de referencia para tu importación.",
+      "entity_fallback": "registros"
+    }
   },
   "templates": {
     "breadcrumb": "Plantillas",
