@@ -1,18 +1,11 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  ElementRef,
-  inject,
-  signal,
-  viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { NgComponentOutlet, NgTemplateOutlet } from '@angular/common';
 import { Router } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import type { MenuItem } from 'primeng/api';
+import { MenuModule } from 'primeng/menu';
 
-import { ClickOutsideDirective } from '../../directives/click-outside.directive';
+import { injectLangChange } from '@core/utils/lang-change';
 import { BreadcrumbService } from '../../services/breadcrumb.service';
 import { AuthService } from '../../services/auth.service';
 import { TopBarSlotService } from './top-bar-slot.service';
@@ -20,7 +13,6 @@ import { TopBarSlotService } from './top-bar-slot.service';
 // paquete, cuya visibilidad la posee `ScKeyboardShortcutsService` publicado.
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScBreadcrumbComponent, ScKeyboardShortcutsService, ScMessageComponent } from '@smartcontact-hub/components';
-import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { IllustratedAvatarComponent } from '@shared/components';
 
@@ -33,16 +25,15 @@ const AYUDA_URL = 'https://supervisor.smart-contact.com/#/login';
  * The avatar is the {@link IllustratedAvatarComponent}: hashed from the
  * supervisor's name so the chrome shares a visual language with the
  * agents list (where the same component renders each agent's portrait).
- * The menu popover is anchored to the avatar and dismissed by
- * {@link ClickOutsideDirective}; Esc returns focus to the trigger.
+ * Its menu is the native `p-menu` in popup mode: focus, arrows, outside click
+ * and Esc (which returns focus to the avatar) come with it.
  */
 @Component({
   selector: 'sc-top-bar',
   imports: [
-    ButtonComponent,
-    ClickOutsideDirective,
     IconComponent,
     IllustratedAvatarComponent,
+    MenuModule,
     NgComponentOutlet,
     NgTemplateOutlet,
     ScBreadcrumbComponent,
@@ -59,6 +50,9 @@ export class TopBarComponent {
   private readonly breadcrumbs = inject(BreadcrumbService);
   private readonly shortcuts = inject(ScKeyboardShortcutsService);
   private readonly topBarSlot = inject(TopBarSlotService);
+  private readonly translate = inject(TranslateService);
+  /** Los textos del menú salen de `instant()`: se recalculan al cambiar de idioma. */
+  private readonly lang = injectLangChange();
 
   protected readonly trail = this.breadcrumbs.trail;
 
@@ -91,7 +85,31 @@ export class TopBarComponent {
   protected readonly userPhone = '+34 917 945 449';
 
   protected readonly userMenuOpen = signal(false);
-  private readonly avatarBtn = viewChild<ElementRef<HTMLButtonElement>>('avatarBtn');
+  /** Id del `p-menu`, para el `aria-controls` del avatar. */
+  protected readonly userMenuId = 'sc-top-bar-user-menu';
+
+  protected readonly userMenuItems = computed<MenuItem[]>(() => {
+    this.lang();
+    return [
+      // La raya entre la identidad y las acciones, con el separador del propio menú.
+      { separator: true },
+      {
+        label: this.translate.instant('topbar.keyboard_shortcuts'),
+        icon: 'sc-icon-font sc-icon-font--keyboard',
+        command: () => this.openShortcuts(),
+      },
+      {
+        label: this.translate.instant('topbar.user.help'),
+        icon: 'sc-icon-font sc-icon-font--help',
+        command: () => this.openHelp(),
+      },
+      {
+        label: this.translate.instant('topbar.user.logout'),
+        icon: 'sc-icon-font sc-icon-font--logout',
+        command: () => void this.signOut(),
+      },
+    ];
+  });
 
   protected goToDashboard(): void {
     void this.router.navigateByUrl('/dashboard');
@@ -101,17 +119,8 @@ export class TopBarComponent {
     this.shortcuts.toggle();
   }
 
-  protected toggleUserMenu(): void {
-    this.userMenuOpen.update((open) => !open);
-  }
-
-  protected closeUserMenu(): void {
-    this.userMenuOpen.set(false);
-  }
-
   /** «Ayuda» lleva al Supervisor de producción, en otra pestaña: esta app no tiene ayuda propia. */
   protected openHelp(): void {
-    this.userMenuOpen.set(false);
     window.open(AYUDA_URL, '_blank', 'noopener');
   }
 
@@ -121,16 +130,7 @@ export class TopBarComponent {
    * se queda, sigue dentro con su sesión.
    */
   protected async signOut(): Promise<void> {
-    this.userMenuOpen.set(false);
     const left = await this.router.navigateByUrl('/login', { state: { signedOut: true } });
     if (left) this.auth.signOut();
-  }
-
-  /** Esc closes the menu and returns focus to the avatar trigger. */
-  protected onMenuKeydown(event: KeyboardEvent): void {
-    if (event.key !== 'Escape' || !this.userMenuOpen()) return;
-    event.preventDefault();
-    this.userMenuOpen.set(false);
-    this.avatarBtn()?.nativeElement.focus();
   }
 }

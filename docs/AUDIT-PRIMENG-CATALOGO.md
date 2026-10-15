@@ -52,7 +52,7 @@ Ordenado por lo que ahorraría. «Caso» es dónde se usaría hoy.
 | Baja | **ContextMenu** | Clic derecho en las filas de los listados. | No en los listados: el «⋮» ya lo cubre. Solo en el laboratorio del árbol (sección 3). |
 | Baja | **InputOtp** | Un segundo factor en el acceso, si llega. | Con su pantalla. |
 | Baja | **Stepper** | Las altas largas. | Se quitó a propósito (DD-143): no vuelve sin motivo nuevo. |
-| Baja | **Slider · Knob** | Volúmenes y umbrales. | Con su pantalla. |
+| Baja | **Knob** | Volúmenes y umbrales. | Con su pantalla. Slider ya se usa: sección 3. |
 | Baja | **AutoComplete** | Añadir un agente a un grupo escribiendo su nombre. | No: lo cubre el buscador de la tabla de asignación. |
 
 ## 2. Lo nuestro que repite algo nativo
@@ -81,7 +81,8 @@ wrapper no tiene página en sc-docs ni medida en la línea base de estilos. El g
 |---|---|---|
 | Editor | supervisor (el contenido de una plantilla: `template-editor-page`) | El nativo tal cual (DD-113), con su barra a medida del canal (`#header`) y los `formats` que cada canal admite (WhatsApp, solo negrita, cursiva y tachado); el DS ya trae el tema (`sc-preset/editor.ts`). **Riesgo conocido:** PrimeNG avisa de que lo retirará a favor de un editor de pago; el contenido que guarda (HTML saneado, o el texto de WhatsApp) no depende de Quill, así que cambiarlo solo toca la página del editor. Sin wrapper todavía: una pantalla. |
 | Menu | supervisor (el menú de fila de Reglas, Entidades y la agenda; el «⋮» del Monitor) | En la página PrimeNG de sc-docs (nota de abajo); envolverlo, si llega a hacer falta. |
-| Listbox | supervisor, cuscare | En la página PrimeNG de sc-docs (nota de abajo). |
+| Listbox | supervisor (Numeración especial y Regeneración de contraseñas, en Sistema; el asistente de widgets), cuscare | En la página PrimeNG de sc-docs (nota de abajo). |
+| Slider | supervisor (la barra del reproductor de Memory, candidato 1 del barrido) | El nativo tal cual (DD-113): el DS ya trae el tema (`sc-preset/slider.ts`). En la página PrimeNG de sc-docs (nota de abajo). |
 | Toolbar | supervisor | En la página PrimeNG de sc-docs (nota de abajo). |
 | Checkbox | supervisor (el «Column Toggle», DD-176 §7), sc-docs | **Bien directo** (revisado): el «Column Toggle» calca el ejemplo nativo de primeng.dev (DD-176 §7), que liga cada casilla a un array por `[value]` + un `ngModel` compartido. `sc-checkbox` no modela ese patrón — su `state` es `input.required<TriState>()` (none/some/all), pensado para una casilla de «todos» por columna, no para una lista de casillas binarias independientes (`projects/ui-smartcontact/src/lib/components/checkbox/sc-checkbox.component.ts`). Dos casillas con trabajos distintos, no una inconsistencia. |
 | Inplace | supervisor (`sc-name-inplace`) | Bien directo: ver sección 2. |
@@ -197,7 +198,7 @@ Los 109, agrupados por el trabajo que hacen. Un uso equivocado casi nunca es «e
 | Componente | Para qué sirve | Elígelo cuando… | Aquí |
 |---|---|---|---|
 | InputNumber | Número con formato, topes y flechas. | Cifras con moneda, decimales o separadores. Los enteros sin formato van por `sc-inputnumber` propio (sección 2). | `sc-inputnumber` va sobre InputText, no sobre este |
-| Slider | Un valor o un rango (`range`) arrastrando. | Importa más el rango que la cifra exacta (volumen, umbral), y la cifra se ve al lado. | Sin uso: con su pantalla (sección 1) |
+| Slider | Un valor o un rango (`range`) arrastrando. | Importa más el rango que la cifra exacta (volumen, umbral), y la cifra se ve al lado. | Sin wrapper: supervisor (sección 3) |
 | Knob | Un dial para un número. | Casi nunca en una app de gestión: ocupa mucho y se lee peor que un Slider. | Sin uso: con su pantalla (sección 1) |
 | Rating | Estrellas para valorar, o para leer una valoración (`readonly`). | Valoraciones de 1 a N. | Sin wrapper: supervisor (`lab/tabla`, solo lectura); «sin decidir» para la valoración del chat |
 | DatePicker | Fecha, rango (`selectionMode="range"`), hora o mes. | Cualquier fecha u hora. | `sc-datepicker` |
@@ -456,5 +457,10 @@ Leídos en el código; sin medir en el navegador.
    14 a 20 y 22) y lo que queda de 7.4; 10, 11, 13, 21 y 24 cambian cómo se ve la pantalla y esperan a que se vean el
    antes y el después; 6, 12 y 23 esperan una respuesta de desarrollo; 25 se queda como está (el Lab no lo ve ningún
    cliente). Del 26 al 29 se deciden igual. Lo decidido que sea regla va a «Bifurcaciones al componer» de AGENTS.md.
+   **Ronda de teclado, hecha el 2026-10-15**: 2, 3, 4, 5, 7 y el reproductor de una grabación (1), con su prueba en
+   `e2e/supervisor/barrido-teclado.spec.ts`. En el 4, los atajos pasan a ser una opción del menú: un botón dentro del
+   `#start` de `p-menu` no se alcanza con el teclado. Quedan: el 8 (seis categorías no caben en un `sc-selectbutton`
+   de 443 px; se decidió mantener las fichas en 3×2 con radios a la vista), el reproductor de varias grabaciones (su
+   barra va en tramos y cambiarla cambia cómo se ve) y el 14 (medir antes qué oye el lector).
 6. **La sección 6 en sc-docs**: hecho el 2026-10-14, la página PrimeNG. Si cambias la sección 6, `npm run
    primeng-catalog:gen` rehace su artefacto (el gate se pone rojo hasta entonces).

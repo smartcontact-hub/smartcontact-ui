@@ -171,29 +171,18 @@
   }
 }
 
+/* La lista la pinta el tema (`p-listbox`); aquí, la cifra de encima y las columnas de cada agente. */
 .agent-list {
-  border: 1px solid var(--sc-border-default);
-  border-radius: var(--sc-radius-100);
-  max-height: 320px;
-  overflow-y: auto;
+  display: block;
   margin-bottom: var(--sc-spacing-1-125);
 
-  &__head {
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    display: flex;
-    align-items: center;
-    gap: var(--sc-spacing-0-875);
-    padding: var(--sc-spacing-0-5) var(--sc-spacing-0-875);
-    background: var(--sc-bg-default);
-    border-bottom: 1px solid var(--sc-border-default);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+  &__count {
+    margin: 0 0 var(--sc-spacing-0-5);
     color: var(--sc-text-subtle);
   }
 
   &__empty {
+    margin: 0 0 var(--sc-spacing-1-125);
     padding: var(--sc-spacing-1-75) var(--sc-spacing-0-875);
     text-align: center;
     color: var(--sc-text-subtle);
@@ -201,43 +190,20 @@
 }
 
 .agent-row {
-  width: 100%;
+  flex: 1;
+  min-width: 0;
   display: flex;
   align-items: center;
   gap: var(--sc-spacing-0-875);
-  padding: var(--sc-spacing-0-875);
-  background: transparent;
-  border: 0;
-  border-bottom: 1px solid var(--sc-border-subtle);
-  cursor: pointer;
-  text-align: left;
-  transition: background var(--sc-transition-fast) var(--sc-easing-default);
-
-  &:last-child {
-    border-bottom: 0;
-  }
-
-  &:hover {
-    background: var(--sc-bg-default);
-  }
-
-  &--selected {
-    background: var(--sc-bg-default);
-  }
 
   &__code {
-    width: 48px;
+    flex-shrink: 0;
     color: var(--sc-text-subtle);
     font-variant-numeric: tabular-nums;
   }
 
   &__name {
     flex: 1;
-    color: var(--sc-text-secondary);
-
-    .agent-row--selected & {
-      font-weight: var(--sc-font-weight-regular);
-    }
   }
 
   &__ext {
@@ -245,7 +211,7 @@
   }
 
   &__email {
-    max-width: 160px;
+    max-width: var(--sc-spacing-12-5);
     color: var(--sc-text-subtle);
     overflow: hidden;
     text-overflow: ellipsis;
@@ -313,10 +279,4 @@
     flex-direction: column;
     align-items: flex-start;
   }
-}
-
-/* El buscador es `sc-search` del DS; aquí solo el hueco que deja debajo. */
-.search {
-  display: block;
-  margin-bottom: var(--sc-spacing-0-875);
 }
