@@ -392,6 +392,12 @@ table.table {
       color: var(--sc-text-secondary);
     }
   }
+
+  /* El segmentado de un par, alineado con el texto de las casillas de debajo. */
+  .type-filter-group__pair {
+    display: block;
+    padding-inline: var(--sc-spacing-0-75);
+  }
 }
 
 /* Memory · el estado de reglas y categorías (Activa/Inactiva) es `<sc-tag [severity]>` del DS

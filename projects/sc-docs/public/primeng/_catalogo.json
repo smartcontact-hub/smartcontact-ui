@@ -669,8 +669,8 @@
           "enlace": "https://primeng.dev/tieredmenu",
           "sirve": "Menú con submenús en capas.",
           "cuando": "Acciones con un segundo nivel.",
-          "aqui": "Sin caso hoy (sección 4)",
-          "estado": "sin-uso",
+          "aqui": "Sin wrapper: el «⋮» de cada widget del Monitor (sección 3)",
+          "estado": "directo",
           "obsoleto": false
         },
         {
@@ -966,7 +966,7 @@
           ],
           "enlace": "https://primeng.dev/confirmdialog",
           "sirve": "Una pregunta de sí o no en un modal.",
-          "cuando": "Acciones graves o irreversibles. Para borrar una entidad, <code>sc-delete-entity-dialog</code> (sección 2).",
+          "cuando": "La consecuencia hay que explicarla (borrar una rama con sus hijas) o no hay un botón al que pegarse (al guardar, al salir). Para borrar una entidad, <code>sc-delete-entity-dialog</code> (sección 2).",
           "aqui": "<code>sc-confirmdialog</code>",
           "estado": "ds",
           "obsoleto": false
@@ -980,9 +980,9 @@
           ],
           "enlace": "https://primeng.dev/confirmpopup",
           "sirve": "La misma pregunta, pegada al botón que la lanza.",
-          "cuando": "Confirmaciones pequeñas junto a lo que se pulsa (quitar una fila de una lista).",
-          "aqui": "Sin uso: «sin decidir» (sección 1)",
-          "estado": "sin-uso",
+          "cuando": "Una pregunta de una frase sobre lo que se acaba de pulsar, aunque no se deshaga (DD-205).",
+          "aqui": "<code>sc-confirmdialog</code> con <code>target</code> en <code>ScConfirmService.request</code>",
+          "estado": "ds",
           "obsoleto": false
         },
         {
