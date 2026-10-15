@@ -2473,6 +2473,7 @@
       "extension_required": "Selecciona una extensión",
       "channels_required": "Selecciona al menos un canal",
       "email_invalid": "Introduce un email válido",
+      "phone_invalid": "El teléfono no es válido: usa cifras, con un + delante si lleva prefijo.",
       "pin_invalid": "El PIN debe tener entre 3 y 6 dígitos",
       "phone_required": "Escribe el teléfono móvil: la extensión suena en él",
       "email_required": "Escribe el email",

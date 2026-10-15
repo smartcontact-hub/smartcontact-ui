@@ -898,7 +898,9 @@
         <ng-container *ngTemplateOutlet="filePicker; context: { key: file, id: id }" />
       </div>
     } @else if ($any(form().announcements)[source] === 'tts') {
-      <sc-inputtext size="sm" [inputId]="id + '-text'" [ariaLabel]="(label | translate) + ': ' + ('groups.form.announcements.tts_text' | translate)" [placeholder]="'groups.form.announcements.tts_text' | translate" [value]="$any(form().announcements)[text]" (valueChange)="setAnnouncement(text, $event ?? '')" />
+      <!-- Lo que oirá el cliente, entero y en varias líneas, como los mensajes de Chat (candidato 20 del barrido). -->
+      <label class="visually-hidden" [for]="id + '-text'">{{ (label | translate) + ': ' + ('groups.form.announcements.tts_text' | translate) }}</label>
+      <sc-textarea [inputId]="id + '-text'" [rows]="2" autoResize fluid [placeholder]="'groups.form.announcements.tts_text' | translate" [value]="$any(form().announcements)[text]" (valueChange)="setAnnouncement(text, $event ?? '')" />
     }
   </div>
 </ng-template>

@@ -6,6 +6,7 @@ import {
   ScButtonComponent as ButtonComponent,
   ScDialogComponent as DialogComponent,
   ScInputTextComponent as InputTextComponent,
+  ScRadioButtonComponent as RadioButtonComponent,
   ScSelectComponent as SelectComponent,
 } from '@smartcontact-hub/components';
 import { SC_ICON_SIZE_LG, ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
@@ -49,6 +50,7 @@ import { WidgetViewComponent } from '../widget-view/widget-view.component';
     DialogComponent,
     IconComponent,
     InputTextComponent,
+    RadioButtonComponent,
     SelectComponent,
     WidgetCardComponent,
     WidgetViewComponent,
