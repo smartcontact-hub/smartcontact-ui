@@ -40,8 +40,12 @@ licencia Community:
 - Menos de 1 millón de dólares de ingresos anuales, menos de 5 desarrolladores en total, menos de 10 empleados y menos
   de 3 millones de capital externo; máximo 4 puestos.
 - La clave vale 12 meses y se renueva sin coste confirmando que se sigue cumpliendo; hay 30 días de gracia.
-- **No se puede publicar la clave para que otros la usen.** Que vaya dentro del bundle de la app está permitido; que
-  esté en el código fuente de un repo público es lo que hay que resolver.
+- **No se puede publicar la clave para que otros la usen.** Que vaya dentro del bundle de la app está permitido y
+  la licencia dice que no lleva datos sensibles.
+
+Decisión: la clave se queda en el código. Medido el 15 de octubre con una cadena de control que no aparece: la clave
+(262 caracteres) ya está en el JavaScript público de `sc-supervisor.pages.dev`, así que sacarla del repo no la
+esconde, y costaría tocar cinco apps y el panel de Cloudflare. Se revisa si cambia la licencia o el modelo de uso.
 
 La clave actual vence el 5 de agosto de 2027. Renovarla antes, y confirmar con la empresa que se cumplen los topes.
 
