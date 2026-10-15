@@ -46,25 +46,28 @@ test('cada canal es un bloque con sus partes dentro, y cada parte pesa más que 
     const parte = await tamano(canal.locator('h4').first());
     const etiqueta = await tamano(canal.locator('.field__label').first());
     expect(parte, `${id}: el título de una parte, más grande que la etiqueta de un campo`).toBeGreaterThan(etiqueta);
+    // Un peldaño de la rampa por nivel (DD-206 §13): la sección sobre su bloque, y el bloque sobre su parte. Con el
+    // bloque y la parte a 14, «Teléfono» y su «Distribución» pesaban igual.
+    const bloque = await tamano(canal.locator('.sc-subsection__title').first());
+    const seccion = await tamano(page.locator('.section-card__title').first());
+    expect(bloque, `${id}: el título del bloque, más grande que el de una parte`).toBeGreaterThan(parte);
+    expect(seccion, `${id}: el título de la sección, más grande que el de su bloque`).toBeGreaterThan(bloque);
   }
 });
 
-test('Chat: distribución, cola, y por subcanal sus mensajes, su horario y su acceso; WhatsApp sin número no sigue', async ({ page }) => {
+test('Chat: distribución, cola, y una parte por subcanal con su nombre (Web Chat y WhatsApp), como sus casillas en General', async ({ page }) => {
   await goto(page, DISTRIBUCION);
-  expect(await partes(page.locator('#group-channel-chat'))).toEqual([
-    'Distribución',
-    'Cola',
-    'Mensajes de Web Chat',
-    'Horario de Web Chat',
-    'Dominios y scripts de Web Chat',
-    'Acceso WhatsApp',
-  ]);
+  expect(await partes(page.locator('#group-channel-chat'))).toEqual(['Distribución', 'Cola', 'Web Chat', 'WhatsApp']);
 });
 
 test('Teléfono: la música va en la cola, y los demás mensajes, plegados y sin «anuncio»', async ({ page }) => {
   await goto(page, DISTRIBUCION);
   const tel = page.locator('#group-channel-phone');
-  expect(await partes(tel)).toEqual(['Distribución', 'Cola', 'Mensajes en cola']);
+  expect(await partes(tel)).toEqual(['Distribución', 'Llamadas salientes', 'Cola', 'Mensajes en cola']);
+  // Lo que sale del grupo, junto y en su parte: el número que ve el cliente y el audio de esas llamadas.
+  const salientes = tel.locator('sc-slot').filter({ has: page.getByRole('heading', { name: 'Llamadas salientes', exact: true }) });
+  await expect(salientes.locator('#group-phone')).toBeVisible();
+  await expect(salientes.getByText('Audio saliente', { exact: true })).toBeVisible();
   const cola = tel.locator('sc-slot').filter({ has: page.getByRole('heading', { name: 'Cola', exact: true }) });
   await expect(cola.getByText('Música de espera/transferencia', { exact: true })).toBeVisible();
 

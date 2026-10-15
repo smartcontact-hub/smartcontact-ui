@@ -1,12 +1,12 @@
 :host {
   display: block;
   margin-bottom: var(--sc-spacing-1-5);
-  /* El icono de la cabecera mide lo que su título (DD-189): `Subtitle` (16) en una sección y
+  /* El icono de la cabecera mide lo que su título (DD-189): `h3` (18) en una sección (DD-206 §13) y
    * `Title` (20) en la caja que titula la página. Su peso es el del título (600) y el eje óptico
    * va a 20, el mínimo de Material Symbols, que engorda el trazo en tamaños pequeños hasta
    * igualarlo con la letra en semibold. Medido contra 14 (hoy), opsz 24 y 40 y el alto de línea:
    * con 14 se quedaba corto y fino junto a un título de 20, y a 28 dominaba la cabecera. */
-  --section-card-icon-size: var(--sc-font-size-subtitle-1);
+  --section-card-icon-size: var(--sc-font-size-h3);
 }
 
 .section-card {
@@ -84,8 +84,13 @@
     align-self: center;
   }
 
-  /* `Subtitle/subtitle-semibold` (16/24) desde el 2026-10-09 (DD-188); `h3` (18/24) desde el
-   * 2026-09-12, y antes `body-2` (14/20).
+  /* `Heading/h3-semibold` (18/24) desde el 2026-10-15 (DD-206 §13); `Subtitle` (16/24) desde el 2026-10-09 (DD-188);
+   * `h3` (18/24) desde el 2026-09-12, y antes `body-2` (14/20).
+   *
+   * Por qué vuelve a 18: el bloque de dentro (`sc-subsection`) sube a `Subtitle` (16) para separarse de sus partes
+   * (`sc-slot`, 14), y la sección no puede medir lo mismo que su bloque. Con la página en `Title` (20), cada nivel queda
+   * a un peldaño de la rampa del Kit: página 20, sección 18, bloque 16, parte 14. El motivo de bajarla a 16 (página y
+   * sección a 18 las dos) ya no existe desde que la página es `Title`.
    *
    * Por qué no se quedó en 14: medía lo mismo que su contenido y solo lo separaba el peso, así
    * que no establecía jerarquía (medido en `config/aed/agentes`: 14/20/600 contra 14/21/400).
@@ -99,10 +104,10 @@
    * Hasta que pase a `Subtitle`, el código va por delante: anotado en `docs/figma-pendiente.md`. */
   &__title {
     margin: 0;
-    font-family: var(--sc-font-family-subtitle-1);
-    font-size: var(--sc-font-size-subtitle-1);
-    line-height: var(--sc-line-height-subtitle-1);
-    font-weight: var(--sc-font-weight-subtitle-1);
+    font-family: var(--sc-font-family-h3);
+    font-size: var(--sc-font-size-h3);
+    line-height: var(--sc-line-height-h3);
+    font-weight: var(--sc-font-weight-h3);
     /* `heading` y no `primary`: el título medía EXACTAMENTE el mismo gris que el texto
      * de debajo, así que la jerarquía la llevaban solo el tamaño y el peso. Con el rol
      * de título sube a 12.16:1 y el cuerpo se queda en 7.38 — un escalón de color que

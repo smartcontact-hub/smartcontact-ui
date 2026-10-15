@@ -156,11 +156,10 @@
   align-items: center;
 }
 
-/* Teléfono (Distribución) y Recursos (Salida), la excepción a «cada fila es un enlace» (revisión de diseño, 2026-10-11,
- * sobre crítica de better-ui): antes tenían el enlace a la sección Y un botón de más pegados, a un dedo de
- * distancia y con dos destinos distintos — quien quería cambiar el reparto podía acabar en Distribución y colas sin
- * querer. Ahora la fila ENTERA es un solo botón: la clave, el valor y el chevron. Ir a la sección se queda en
- * «Configurar colas» / «Ver recursos», al pie del panel. */
+/* Cada fila de Recursos, la excepción a «cada fila es un enlace» (revisión de diseño, 2026-10-11, sobre crítica de
+ * better-ui): antes tenía el enlace a la sección Y un botón de más pegados, a un dedo de distancia y con dos
+ * destinos distintos. Ahora la fila ENTERA es un solo botón: la clave, el valor y el chevron. Ir a la sección se
+ * queda en «Ver recursos», al pie del panel. (Teléfono tuvo el mismo botón hasta la revisión del 2026-10-15.) */
 .resumen__pair-button {
   display: flex;
   align-items: center;

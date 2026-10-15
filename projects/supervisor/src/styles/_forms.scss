@@ -264,9 +264,11 @@
    * tampoco declaraba `display`), y se arregla aquí porque es el mismo mueble: etiqueta
    * arriba, ayuda debajo, que es como lo apila la referencia en `switch-field__copy`.
    */
+  /* Sin margen propio: el `gap` del campo ya la pone a 7 de su control, como la ayuda de los campos del DS. Con
+   * 3,5 de más quedaba a 10,5 (medido en la ficha de grupo, 2026-10-15). */
   &__help {
     display: block;
-    margin-top: var(--sc-spacing-0-25);
+    margin-top: 0;
     color: var(--sc-text-subtle);
     /* Sin una palabra sola en la última línea (DD-176). */
     text-wrap: pretty;

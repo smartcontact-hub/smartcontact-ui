@@ -2,6 +2,8 @@ import {
   booleanAttribute,
   ChangeDetectionStrategy,
   Component,
+  computed,
+  effect,
   input,
   output,
   viewChild,
@@ -23,9 +25,15 @@ import { ScIconComponent } from '@smartcontact-hub/icons';
  * Qué añade el wrapper, y por qué:
  *   - **Sin servidor por defecto.** El prototipo no sube a ningún sitio: sin `url`, la subida es propia
  *     (`customUpload`) y el componente solo entrega los archivos (`uploaded`). Con `url`, PrimeNG hace el envío.
- *   - **`auto` por defecto**: el archivo se entrega al elegirlo y desaparecen los botones «Subir» y «Cancelar».
+ *   - **`auto` por defecto**: el archivo se entrega al elegirlo y desaparecen los botones «Subir» y «Cancelar». Con
+ *     `[auto]="false"`, el «Advanced» de primeng.dev entero: «Elegir», «Subir» y «Cancelar», el archivo pendiente con su
+ *     barra, y al subir, a la lista de subidos (los audios de Grupos, revisión del 2026-10-15).
  *   - **`clearAfterSelect`** para quien guarda el archivo en otro sitio (un campo del formulario): la lista se vacía
  *     tras entregar, así el nombre no se pinta dos veces.
+ *   - **`saved`: lo ya guardado, en la lista del propio componente** (revisión del 2026-10-15). Quien guarda el archivo
+ *     en un campo le pasa lo que hay, y sale como sale en primeng.dev un archivo ya subido: su nombre, su tamaño, la
+ *     marca de subido y su ✕ (`savedRemoved`). Sin servidor, lo elegido se da por subido al entregarlo, como hace
+ *     PrimeNG tras una subida que sale bien; con `saved`, la lista es la que diga quien lo usa.
  *   - **Los textos llegan traducidos.** PrimeNG los toma de su locale (inglés); `chooseLabel`, `dropLabel` y los
  *     avisos de tipo y tamaño se pasan escritos en el idioma de la pantalla.
  *   - **La plantilla `#empty` va dentro**, con el texto de `dropLabel` (la consulta de `p-fileupload` no ve una
@@ -43,6 +51,13 @@ import { ScIconComponent } from '@smartcontact-hub/icons';
  *
  * Figma: `❖ FileUpload` del Smart Contact Prime kit (pendiente de nodo, `docs/figma-pendiente.md`).
  */
+/** Un archivo ya guardado: lo que la lista necesita para pintarlo como subido. */
+export interface ScSavedFile {
+  readonly name: string;
+  /** En bytes. */
+  readonly size: number;
+}
+
 @Component({
   selector: 'sc-fileupload',
   standalone: true,
@@ -73,13 +88,22 @@ export class ScFileUploadComponent {
   readonly url = input<string>();
   /** Vacía la lista tras entregar: para quien guarda el archivo en otro sitio. */
   readonly clearAfterSelect = input(false, { transform: booleanAttribute });
+  /** Lo ya guardado, que sale en la lista como subido. Con él, la lista la manda quien lo pasa. */
+  readonly saved = input<readonly ScSavedFile[]>();
 
   /** Texto del botón de elegir, traducido. */
   readonly chooseLabel = input<string>();
-  /** Icono del botón de elegir, del DS (`sc-icon`): por defecto, el de subida. */
-  readonly chooseIconName = input('upload');
+  /** Textos de «Subir» y «Cancelar» (sin `auto`), traducidos. Sin ellos, los del locale de PrimeNG. */
+  readonly uploadLabel = input<string>();
+  readonly cancelLabel = input<string>();
+  /** Icono del botón de elegir, del DS (`sc-icon`). Por defecto, el de cada ejemplo de primeng.dev: el «+» en
+   *  `advanced` (su icono de serie) y la flecha de subida en `basic` (`chooseIcon="pi pi-upload"`). */
+  readonly chooseIconName = input<string>();
+  protected readonly chooseIcon = computed(() => this.chooseIconName() ?? (this.mode() === 'basic' ? 'upload' : 'add'));
   /** Texto de la zona de soltar, traducido. Sin él, la zona queda vacía. */
   readonly dropLabel = input<string>();
+  /** Nombre de la ✕ de cada archivo, traducido: la de PrimeNG es un botón de solo icono sin nombre. */
+  readonly removeLabel = input<string>();
   /** Avisos de archivo rechazado, con los mismos `{0}` que PrimeNG (nombre del archivo, tamaño o tipos admitidos). */
   readonly invalidFileSizeMessageSummary = input('{0}: Invalid file size, ');
   readonly invalidFileSizeMessageDetail = input('maximum upload size is {0}.');
@@ -94,8 +118,48 @@ export class ScFileUploadComponent {
   readonly fileRemoved = output<File>();
   /** La lista se vació, por quien usa el componente o por `clearAfterSelect`. */
   readonly cleared = output<void>();
+  /** Uno de los guardados (`saved`) quitado con su ✕. */
+  readonly savedRemoved = output<ScSavedFile>();
 
   private readonly fu = viewChild<FileUpload>('fu');
+
+  /**
+   * Por el passthrough: el nombre de la ✕ (`pcFileRemoveButton`) y el icono de «Elegir» fuera del lector. PrimeNG pone
+   * `aria-label="true"` al envoltorio del icono propio (`#chooseicon`) y, sin `aria-hidden`, el botón se llamaba «true
+   * Elegir»; su icono de serie lleva los dos atributos y se llama «Choose» (medido en primeng.dev, 2026-10-15).
+   */
+  protected readonly pt = computed(() => {
+    const label = this.removeLabel();
+    return {
+      pcChooseButton: { icon: { 'aria-hidden': 'true' } },
+      ...(label ? { pcFileRemoveButton: { root: { 'aria-label': label } } } : {}),
+    };
+  });
+
+  constructor() {
+    // Lo guardado, en la lista de subidos de PrimeNG. Solo lee nombre y tamaño (y el tipo, para la miniatura de una
+    // imagen), así que no hace falta el contenido del archivo.
+    effect(() => {
+      const saved = this.saved();
+      const fu = this.fu();
+      if (!fu || saved === undefined) return;
+      fu.uploadedFiles.set(saved.map((f) => ({ name: f.name, size: f.size, type: '' }) as unknown as File));
+    });
+  }
+
+  /** Sin `url` la subida es nuestra: lo entregado pasa a subido, como tras una subida de PrimeNG que sale bien. */
+  protected onUploadHandler(files: File[]): void {
+    this.uploaded.emit(files);
+    if (this.url() || this.clearAfterSelect()) return;
+    const fu = this.fu();
+    if (!fu) return;
+    if (this.saved() === undefined) fu.uploadedFiles.update((ya) => [...ya, ...files]);
+    queueMicrotask(() => fu.clear());
+  }
+
+  protected onRemoveUploaded(file: File): void {
+    if (this.saved() !== undefined) this.savedRemoved.emit({ name: file.name, size: file.size });
+  }
 
   protected onSelect(event: { currentFiles: File[] }): void {
     if (event.currentFiles.length === 0) return; // todo rechazado: PrimeNG ya dice por qué, y vaciar borraría el aviso

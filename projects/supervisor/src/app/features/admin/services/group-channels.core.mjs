@@ -83,9 +83,9 @@ export function linkWithFamilies(link) {
  * Migra el nivel antiguo sin reemplazar niveles nuevos. Teléfono nuevo prevalece;
  * el antiguo solo rellena su ausencia. Chat y el resto del enlace se conservan.
  * Sin formato antiguo devuelve el mismo objeto.
- * @template {{ level?: number, levels?: { phone?: number, chat?: number } }} L
+ * @template {{ level?: number, levels?: { phone?: number, chat?: number, email?: number } }} L
  * @param {L} link
- * @returns {Omit<L, 'level'> & { levels?: { phone?: number, chat?: number } }}
+ * @returns {Omit<L, 'level'> & { levels?: { phone?: number, chat?: number, email?: number } }}
  */
 export function linkWithLevels(link) {
   if (!Object.hasOwn(link, 'level')) return link;
@@ -185,7 +185,7 @@ export function toggleLinkChannel(link, channel, options = {}) {
 /**
  * Un enlace nuevo: con TODAS las familias que ofrece el grupo, habilitado. Los niveles solo se ponen si se
  * piden; cada familia sin nivel explícito usa 1.
- * @param {{ agentId: number, groupId: number, groupChannels: readonly string[], allowedChannels?: readonly string[], levels?: { phone?: number, chat?: number } }} input
+ * @param {{ agentId: number, groupId: number, groupChannels: readonly string[], allowedChannels?: readonly string[], levels?: { phone?: number, chat?: number, email?: number } }} input
  */
 export function newLinkFor({ agentId, groupId, groupChannels, allowedChannels, levels }) {
   const link = { agentId, groupId, channels: permittedFamilies(groupChannels, allowedChannels), active: true };
@@ -212,10 +212,10 @@ export function channelRemovalImpact(links, removedChannels) {
 }
 
 /**
- * ¿Dicen lo mismo dos enlaces del mismo agente? Canales (sin mirar el orden), los dos niveles
+ * ¿Dicen lo mismo dos enlaces del mismo agente? Canales (sin mirar el orden), los niveles
  * (1 por familia si no lo tiene) y si está habilitado.
- * @param {{ channels: readonly string[], active: boolean, levels?: { phone?: number, chat?: number } }} a
- * @param {{ channels: readonly string[], active: boolean, levels?: { phone?: number, chat?: number } }} b
+ * @param {{ channels: readonly string[], active: boolean, levels?: { phone?: number, chat?: number, email?: number } }} a
+ * @param {{ channels: readonly string[], active: boolean, levels?: { phone?: number, chat?: number, email?: number } }} b
  */
 function sameLink(a, b) {
   const ca = canonicalizeChannels(a.channels);
@@ -224,6 +224,7 @@ function sameLink(a, b) {
     a.active === b.active &&
     (a.levels?.phone ?? 1) === (b.levels?.phone ?? 1) &&
     (a.levels?.chat ?? 1) === (b.levels?.chat ?? 1) &&
+    (a.levels?.email ?? 1) === (b.levels?.email ?? 1) &&
     ca.length === cb.length &&
     ca.every((c, i) => c === cb[i])
   );
@@ -233,8 +234,8 @@ function sameLink(a, b) {
  * Cuántos agentes cambian entre dos juegos de enlaces del mismo grupo: los que entran, los que
  * salen y los que siguen pero cambian de canales o de nivel. Es la N de «Guardar (N)» del panel
  * rápido de agentes: lo que se va a escribir, dicho en agentes y no en casillas.
- * @param {readonly { agentId: number, channels: readonly string[], active: boolean, levels?: { phone?: number, chat?: number } }[]} before
- * @param {readonly { agentId: number, channels: readonly string[], active: boolean, levels?: { phone?: number, chat?: number } }[]} after
+ * @param {readonly { agentId: number, channels: readonly string[], active: boolean, levels?: { phone?: number, chat?: number, email?: number } }[]} before
+ * @param {readonly { agentId: number, channels: readonly string[], active: boolean, levels?: { phone?: number, chat?: number, email?: number } }[]} after
  * @returns {{ added: number, removed: number, changed: number, total: number }}
  */
 export function diffLinks(before, after) {

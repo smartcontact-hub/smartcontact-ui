@@ -214,7 +214,7 @@ export class AgentChannelTableComponent {
     input.required<readonly AgentChannelTableAgent[]>();
   readonly groupId = input.required<number>();
   /** Una columna identificada por cada familia con estrategia Niveles. */
-  readonly levelFamilies = input<readonly ('phone' | 'chat')[]>([]);
+  readonly levelFamilies = input<readonly ('phone' | 'chat' | 'email')[]>([]);
   readonly compact = input(false);
 
   /** Reserva el nombre antes de sumar niveles y canales: la tabla desplaza dentro de su caja,
@@ -451,8 +451,8 @@ export class AgentChannelTableComponent {
     this.linksChange.emit(this.links().map((l) => (l.agentId === agentId ? { ...l, levels: { ...l.levels, [family]: value } } : l)));
   }
 
-  protected levelFamily(field: string): 'phone' | 'chat' {
-    return field === 'level-chat' ? 'chat' : 'phone';
+  protected levelFamily(field: string): 'phone' | 'chat' | 'email' {
+    return field === 'level-chat' ? 'chat' : field === 'level-email' ? 'email' : 'phone';
   }
 
   // -- helpers -------------------------------------------------------
