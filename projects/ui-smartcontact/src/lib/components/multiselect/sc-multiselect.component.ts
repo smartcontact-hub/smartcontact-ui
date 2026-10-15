@@ -17,6 +17,7 @@ import { NgTemplateOutlet } from '@angular/common';
 // INTERNO hacia `<p-multiselect>` (no es el CVA exterior, que se retiró).
 import { FormsModule } from '@angular/forms';
 import { ChipModule } from 'primeng/chip';
+import { TimesCircleIcon } from 'primeng/icons/timescircle';
 import { MultiSelect, MultiSelectModule } from 'primeng/multiselect';
 import type { MultiSelectPassThroughOptions } from 'primeng/types/multiselect';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -65,7 +66,17 @@ export type ScMultiSelectChipOverflow = 'count' | 'more';
 @Component({
   selector: 'sc-multiselect',
   standalone: true,
-  imports: [ChipModule, MultiSelectModule, FormsModule, NgTemplateOutlet, ScFieldLabelComponent, ScFieldMsgComponent, ScIconComponent, TranslateModule],
+  imports: [
+    ChipModule,
+    MultiSelectModule,
+    FormsModule,
+    NgTemplateOutlet,
+    ScFieldLabelComponent,
+    ScFieldMsgComponent,
+    ScIconComponent,
+    TimesCircleIcon,
+    TranslateModule,
+  ],
   templateUrl: './sc-multiselect.component.html',
   styleUrl: './sc-multiselect.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

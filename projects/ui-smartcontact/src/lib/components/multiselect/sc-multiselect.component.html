@@ -47,7 +47,9 @@
     [invalid]="isInvalid()"
   >
     @if (moreChips()) {
-      <!-- Las primeras etiquetas, que se quitan con su «×» como las de PrimeNG (mismas clases), y otra con cuántas faltan. -->
+      <!-- Las primeras etiquetas, que se quitan con su «×» como las de PrimeNG (mismas clases), y otra con cuántas faltan.
+           La «×» va en plantilla, como hace MultiSelect con la suya: así el botón es el `span` que pone Chip y el glifo,
+           oculto al lector, ya no se enfoca (el `svg` por defecto de Chip lleva `aria-hidden` y `tabindex` a la vez). -->
       <ng-template #selecteditems let-selected let-removeChip="removeChip">
         @for (option of selected.slice(0, maxSelectedLabels()); track $index) {
           <div class="p-multiselect-chip-item">
@@ -56,7 +58,11 @@
               [label]="chipLabel(option)"
               [removable]="!disabled()"
               (onRemove)="removeChip(chipValue(option), $event)"
-            />
+            >
+              <ng-template #removeicon>
+                <svg data-p-icon="times-circle"></svg>
+              </ng-template>
+            </p-chip>
           </div>
         }
         @if (selected.length > maxSelectedLabels()) {
