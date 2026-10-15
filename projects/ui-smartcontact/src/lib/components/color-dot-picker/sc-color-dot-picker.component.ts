@@ -36,7 +36,7 @@ export class ScColorDotPickerComponent {
   readonly options = input.required<readonly ColorDotOption[]>();
   /** El color elegido. Enlace de dos sentidos: `[(value)]`. */
   readonly value = model.required<string>();
-  /** Rótulo accesible del radiogroup. Default 'Color' (idéntico es/en). */
+  /** Rótulo accesible del grupo de colores. Default 'Color' (idéntico es/en). */
   readonly ariaLabel = input<string>('Color');
 
   /** La opción elegida, para escribir su nombre debajo. */
