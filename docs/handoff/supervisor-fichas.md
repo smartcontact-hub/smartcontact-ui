@@ -48,8 +48,7 @@ e3a6c4b1:docs/handoff/supervisor-fichas.md`.
 
 ## ✅ 2026-10-15 · Revisión de producto de las tablas y Repositorios (DD-210)
 
-> **Sello:** worktree `seabiscuit`, rama `arebury/revision-1015-tablas` sobre `main` `c24c921c` (con el PR 2 ya fundido,
-> #425). PR 3 de 3, #426.
+> **Sello:** PR 3 de 3, fundido en `main` como #426 (`d4f22f0e`), con el PR 2 (#425) ya dentro.
 
 - **Textos**: «+ Nueva X» en la barra y en el vacío de cada tabla (repositorios con su `createTitleKey`), «Buscar
   {entidades}…» en todas, también dentro de las fichas, y «Acciones» con «Importar» y «Exportar» a secas; la plantilla
@@ -70,7 +69,7 @@ e3a6c4b1:docs/handoff/supervisor-fichas.md`.
 
 ## ✅ 2026-10-15 · Revisión de producto de la ficha de agente: salientes en un desplegable y los iconos de la lista (DD-209)
 
-> **Sello:** worktree `seabiscuit`, rama `arebury/revision-1015-agente` sobre `main` HEAD `e3a6c4b1` (con el PR 1, #416). PR 2 de 3.
+> **Sello:** PR 2 de 3, fundido en `main` como #425 (`c24c921c`), con el PR 1 (#416) ya dentro.
 
 - **Salientes**: fuera la columna de radios de `group-assignment-table`. Debajo de la tabla, a 28, el desplegable «Grupo
   para llamadas salientes» con los asignados que tienen Teléfono marcado; sin ninguno, apagado con «Asigna un grupo con
@@ -87,7 +86,7 @@ e3a6c4b1:docs/handoff/supervisor-fichas.md`.
 
 ## ✅ 2026-10-15 · Revisión de producto de la ficha de grupo: resumen, Ring All, tipificación, audios, Email y rejilla (DD-206)
 
-> **Sello:** worktree `seabiscuit`, rama `arebury/revision-1015-grupos` sobre `main` `a2a837d4`. PR 1 de 3 del plan.
+> **Sello:** PR 1 de 3, fundido en `main` como #416 (`08f4b2ef`).
 
 - **Resumen**: Teléfono y Email son enlaces a su bloque, como Chat; fuera el selector rápido de estrategia.
 - **Ring All**: `RING_ALL_ALLOWED_MAX = 2`; elegir 3 o más vuelve a 2 y lo dice. **Tipificar conversaciones** siempre,
@@ -165,8 +164,6 @@ a7ddc14b:docs/handoff/supervisor-fichas.md`.
 
 ## SIGUIENTE — sin preguntar
 
--3. **Fundir el PR 3 (#426, DD-210) de la revisión del 2026-10-15** cuando su CI esté en verde: el 2 (#425, DD-209) ya
-   está en `main`. Capturas de GroupPopover y MultiSelect regeneradas con el robot.
 -2b. **Componente tabla (otra sesión):** el «evolutivo» de la tabla con los devs (BI y voz). Propuesta de producto:
    elegir UNA vez qué funciones de la Table de PrimeNG queremos y cerrarlo; hay un Excel con las de BI.
    Punto de partida: `docs/AUDIT-PRIMENG-CATALOGO.md`. En la reunión: reordenar, ajustar ancho y arrastrar columnas
