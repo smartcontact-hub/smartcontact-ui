@@ -4,7 +4,7 @@ import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-import { FICHEROS, cerosNuevos, comparaPreset, contratoDelPlugin, diferencias, extendDesdeKit, ficherosDistintos, hayCambios, leeme, paqueteNpm, retirados, variables } from '../tema-zip.mjs';
+import { FICHEROS, cerosNuevos, codigoDePrimeTek, comparaPreset, contratoDelPlugin, diferencias, extendDesdeKit, ficherosDistintos, hayCambios, leeme, paqueteNpm, retirados, variables } from '../tema-zip.mjs';
 
 const hoja = ($value) => ({ $value });
 const CUSTOM = {
@@ -118,4 +118,15 @@ test('guía: los tokens retirados salen por su nombre, y sin retirados no hay l�
   assert.match(con, /Tokens de diseño retirados .*`--sc-dialog-padding-x`, `--sc-toast-close`/);
   const sin = leeme({ ...base, comprobaciones: { ...ok, diferencia: { ...dif, retirados: [] } } });
   assert.doesNotMatch(sin, /retirados/);
+});
+
+test('licencia: el paquete no lleva código de PrimeTek dentro, y pide @primeuix/themes al consumidor', () => {
+  assert.deepEqual(codigoDePrimeTek(['projects/ui-smartcontact/src/lib/theme/sc-preset/index.ts', '<stdin>']), []);
+  assert.deepEqual(
+    codigoDePrimeTek(['node_modules/@primeuix/themes/dist/aura/index.mjs', 'node_modules/primeng/fesm2022/primeng-button.mjs', 'a.ts']),
+    ['node_modules/@primeuix/themes/dist/aura/index.mjs', 'node_modules/primeng/fesm2022/primeng-button.mjs'],
+  );
+  const p = paqueteNpm({ commit: 'abc1234', generado: '2026-09-04T09:05:00Z' });
+  assert.match(p.peerDependencies['@primeuix/themes'], /^\^3\./);
+  assert.match(leeme({ version: '0.1.1', commit: 'abc', generado: '2026-09-04', comprobaciones: { diferencia: { anterior: false }, contratoPlugin: { promete: 0, faltan: [] }, raizPx: 16, ceros: [] } }), /@primeuix\/themes/);
 });

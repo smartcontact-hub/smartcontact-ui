@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Los cinco sitios de Cloudflare Pages, en UN solo sitio.
+ * Los seis sitios de Cloudflare Pages, en UN solo sitio.
  *
  * Cada app del repo se publica en un proyecto de Cloudflare, se construye con un script de
  * `package.json` y se sirve en una url. Esos cuatro datos vivían partidos en dos listas —

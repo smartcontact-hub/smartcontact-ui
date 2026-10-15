@@ -2,7 +2,7 @@
 
 > **Esto es lo que se enlaza desde Jira y Confluence. La URL de producción, no.**
 >
-> Los cinco sitios sirven `main`, así que su URL enseña siempre lo último. Un enlace a esa URL
+> Los seis sitios sirven `main`, así que su URL enseña siempre lo último. Un enlace a esa URL
 > dentro de un ticket envejece solo: el desarrollador que lo abre semanas después ve una pantalla
 > que ya no es la que su ticket especifica, y no tiene forma de saberlo.
 >
@@ -43,7 +43,7 @@ etiqueta, y cada etiqueta `proto/*` su fila.
 
 - **Apuntar el proyecto de Cloudflare a una rama de feature.** El sitio se queda huérfano en
   cuanto esa rama se borra al mergear. Pasó con `feat/cuscare` y otra vez con `agent-mini`. La
-  *production branch* de los cinco proyectos se queda en `main`.
+  *production branch* de los seis proyectos se queda en `main`.
 - **Mantener viva una rama por entrega.** Habría que rebasarla y decidir qué entra, para siempre.
   Congelada no hace falta tocarla nunca.
 - **Borrar la etiqueta al cerrar el ticket.** La etiqueta pesa nada y es lo único que sobrevive a

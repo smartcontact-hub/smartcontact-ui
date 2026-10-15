@@ -25,7 +25,7 @@ const LATENCY_MS = 700;
 /**
  * Sesión simulada del Supervisor.
  *
- * NO protege rutas: la app sigue abriéndose sin entrar, a propósito. Los cinco sitios
+ * NO protege rutas: la app sigue abriéndose sin entrar, a propósito. Los seis sitios
  * sirven `main` a desarrolladores y a enlaces pegados en Jira, y un guardia mandaría cada
  * enlace profundo al login. El día que haya backend, el guardia y el token viven aquí.
  */
