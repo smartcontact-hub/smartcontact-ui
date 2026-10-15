@@ -194,6 +194,13 @@ Postconversación y de la Cola distraía, y el «o suelta aquí» del uploader i
    subcanal va en una parte con su nombre, «Web Chat» y «WhatsApp», como sus casillas en General (eran seis partes,
    cada una con el subcanal en el título), y el horario, en su columna; en Recursos, las agendas en su fila y las
    plantillas juntas debajo. `sc-textarea` va siempre en columna: sin ayuda dejaba 7 px de línea debajo del campo.
+12. **Cada audio en su fila, y un solo ritmo de texto y de aire** (segundo barrido, sobre las altas y ediciones de grupo
+   y de agente): el uploader de la música, del audio saliente y de los mensajes con «Archivo» ocupa la fila entera (en
+   media columna, nombre, «Subido» y ✕ caían en tres alturas); la Cola se lee en tres grupos a 28 (tiempos, capacidad y
+   música); toda ayuda va a 7 de su control (`.field__help` sumaba 3,5 al hueco del campo, y `sc-selectbutton`,
+   `sc-inputtags` y `sc-textarea` se quedaban en 3,5 por copiar el margen de `sc-inputtext` sin su `gap`); los
+   selectores de botones de las fichas, a tamaño de campo (el pequeño queda para las barras de las tablas); y en Recursos
+   del agente, agendas y equipos en una fila y las plantillas debajo, como en el grupo.
 
 **Razón** · Cada cambio sale de la revisión o de lo pedido después por escrito. El uploader de primeng.dev ya enseña lo
 que se pidió (ver qué hay, quitarlo y subir otro) sin piezas propias: `sc-fileupload` gana `saved`, `savedRemoved` y
@@ -220,7 +227,8 @@ imagen (customs-catalog §8; el tope `ds` de `audit:primeng-coupling` pasa a 13)
 la pregunta de DD-121 sobre los anuncios periódicos de postventa. Vigilan esto `resumen-enlazado.spec.ts`,
 `ficha-grupo-revision-equipo.spec.ts`, `grupo-tiempos-horarios.spec.ts`, `grupo-vision.spec.ts`,
 `tipificaciones-listado.spec.ts`, `ficha-grupo-canales.spec.ts`, `ficha-grupo-niveles.spec.ts` (Niveles en Email),
-`ficha-grupo-distribucion-orden.spec.ts` (las partes de cada canal) y `components.spec.ts` (`sc-fileupload`).
+`ficha-grupo-distribucion-orden.spec.ts` (las partes de cada canal) y `components.spec.ts` (`sc-fileupload`, el
+hueco de `sc-textarea` y «ayuda de campo»).
 
 ---
 

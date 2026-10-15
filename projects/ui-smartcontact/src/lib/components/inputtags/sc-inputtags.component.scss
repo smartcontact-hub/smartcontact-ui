@@ -27,8 +27,10 @@
   font-weight: var(--sc-font-weight-medium);
 }
 
+/* A 7 del campo, como en los demás del DS: el `gap` del host pone 3,5 y esto el resto, como en `sc-inputtext`. */
 .sc-inputtags__msg {
   display: block;
+  margin-top: var(--sc-spacing-0-25);
   font-size: var(--sc-font-size-caption);
   line-height: var(--sc-line-height-caption);
   color: var(--sc-text-subtle);

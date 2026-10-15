@@ -448,6 +448,23 @@ test.describe('sc-textarea', () => {
   });
 });
 
+test.describe('ayuda de campo', () => {
+  /* La ayuda va a 7 de su control en todos los campos del DS (la especificación de Figma de `sc-select`). Tres se quedaban
+   * a 3,5: copiaron el margen de `sc-inputtext` sin el `gap` del host que lo completa (barrido de las fichas, 2026-10-15). */
+  for (const [pagina, id, control, ayuda] of [
+    ['selectbutton', 'sc-selectbutton-ayuda', '.p-selectbutton', '.sc-selectbutton__msg'],
+    ['inputtags', 'sc-inputtags-domains', '.p-inputtags', '.sc-inputtags__msg'],
+    ['textarea', 'sc-textarea-copiar', 'textarea', '.sc-textarea__ayuda'],
+  ] as const) {
+    test(`${id}: la ayuda, a 7 del control`, async ({ page }) => {
+      await gotoPage(page, pagina);
+      const host = page.getByTestId(id);
+      const [c, a] = [await host.locator(control).first().boundingBox(), await host.locator(ayuda).first().boundingBox()];
+      expect(a!.y - (c!.y + c!.height)).toBeCloseTo(7, 0);
+    });
+  }
+});
+
 test.describe('sc-drawer', () => {
   test('abre, renderiza la cabecera con el relleno del Kit y cierra', async ({ page }) => {
     await gotoPage(page, 'drawer');

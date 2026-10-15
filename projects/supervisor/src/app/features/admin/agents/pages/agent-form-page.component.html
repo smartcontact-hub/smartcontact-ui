@@ -626,7 +626,34 @@
           </div>
         </div>
 
-        <!-- Como en el grupo: las plantillas de chat, solo si atiende chat. -->
+        <div class="field">
+          <label class="field__label sc-text-caption-semibold" for="agent-teams">
+            {{ 'repositories.equipos.title' | translate }}
+          </label>
+          <div class="control-add">
+          <sc-multiselect
+            #teamsSelect
+            inputId="agent-teams"
+            optionLabel="label"
+            optionValue="value"
+            [filter]="true"
+            [maxSelectedLabels]="0"
+            [selectedItemsLabel]="(teamValue().length === 1 ? 'resources.teams_count_one' : 'resources.teams_count') | translate"
+            [placeholder]="'resources.none_m' | translate"
+            [helperText]="'resources.teams_hint' | translate"
+            [options]="teamOptions()"
+            [value]="teamValue()"
+            (valueChange)="onTeamsChange($event)"
+          >
+            <ng-template #item let-option>
+              <sc-resource-option [name]="option.label" (editar)="teamsSelect.hide(); recursoAbierto.set({ tipo: 'equipo', id: option.value })" />
+            </ng-template>
+          </sc-multiselect>
+            <sc-button icon="add" variant="secondary" [ariaLabel]="'groups.form.fields.team_new' | translate" [pTooltip]="'groups.form.fields.team_new' | translate" tooltipPosition="top" (clicked)="recursoAbierto.set({ tipo: 'equipo', id: null })" />
+          </div>
+        </div>
+
+        <!-- Como en el grupo: las plantillas de chat, solo si atiende chat, en su fila debajo de las agendas y los equipos. -->
         @if (attendsChat()) {
           <div class="field">
             <label class="field__label sc-text-caption-semibold" for="agent-templates-chat">
@@ -654,33 +681,6 @@
             </div>
           </div>
         }
-
-        <div class="field">
-          <label class="field__label sc-text-caption-semibold" for="agent-teams">
-            {{ 'repositories.equipos.title' | translate }}
-          </label>
-          <div class="control-add">
-          <sc-multiselect
-            #teamsSelect
-            inputId="agent-teams"
-            optionLabel="label"
-            optionValue="value"
-            [filter]="true"
-            [maxSelectedLabels]="0"
-            [selectedItemsLabel]="(teamValue().length === 1 ? 'resources.teams_count_one' : 'resources.teams_count') | translate"
-            [placeholder]="'resources.none_m' | translate"
-            [helperText]="'resources.teams_hint' | translate"
-            [options]="teamOptions()"
-            [value]="teamValue()"
-            (valueChange)="onTeamsChange($event)"
-          >
-            <ng-template #item let-option>
-              <sc-resource-option [name]="option.label" (editar)="teamsSelect.hide(); recursoAbierto.set({ tipo: 'equipo', id: option.value })" />
-            </ng-template>
-          </sc-multiselect>
-            <sc-button icon="add" variant="secondary" [ariaLabel]="'groups.form.fields.team_new' | translate" [pTooltip]="'groups.form.fields.team_new' | translate" tooltipPosition="top" (clicked)="recursoAbierto.set({ tipo: 'equipo', id: null })" />
-          </div>
-        </div>
       </div>
 
       <!-- Dónde se crean y se editan. -->

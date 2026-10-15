@@ -42,10 +42,10 @@
 }
 
 /* La ayuda, como la de los demás campos del DS (`sc-selectbutton__msg`, `sc-inputnumber__msg`): el texto hereda de
- * esta caja su letra y su color. */
+ * esta caja su letra y su color, y va a 7 del campo. El host no tiene `gap`: el margen la pone entera. */
 .sc-textarea__ayuda {
   display: block;
-  margin-top: var(--sc-spacing-0-25);
+  margin-top: var(--sc-spacing-0-5);
   font-size: var(--sc-font-size-100);
   line-height: var(--sc-line-height-caption);
   color: var(--sc-text-subtle);

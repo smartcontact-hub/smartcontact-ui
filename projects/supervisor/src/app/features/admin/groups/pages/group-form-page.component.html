@@ -432,9 +432,10 @@
                 (valueChange)="onPhoneValueChange($event)"
               />
             </div>
-            <!-- Solo si backoffice lo habilita para el cliente (revisión del 2026-10-15; como en Voice). -->
+            <!-- Solo si backoffice lo habilita para el cliente (revisión del 2026-10-15; como en Voice). En su fila, como
+                 todo audio: en media columna, la fila del archivo partía nombre, «Subido» y ✕ en tres alturas. -->
             @if (conAudioSaliente) {
-              <div class="field">
+              <div class="field field--full">
                 <span class="field__label sc-text-caption-semibold" id="group-outbound-audio-label">{{ 'groups.form.announcements.outbound_audio' | translate }}</span>
                 <div class="upload-field" role="group" aria-labelledby="group-outbound-audio-label" aria-describedby="group-outbound-audio-help">
                   <ng-container *ngTemplateOutlet="filePicker; context: { key: 'outboundAudioFile', id: 'group-outbound-audio', help: 'groups.form.announcements.outbound_audio_info' }" />
@@ -444,10 +445,10 @@
           </div>
         </sc-slot>
 
-        <!-- La música va con la cola, junto al tiempo máximo: es lo que suena mientras se espera, y lo único que
-             casi todos cambian (revisión de producto del 2026-10-04). No es un recurso. -->
+        <!-- La música va con la cola: es lo que suena mientras se espera, y lo único que casi todos cambian (revisión de
+             producto del 2026-10-04). No es un recurso. Va en su fila, después de los tiempos y de la capacidad. -->
         <sc-slot titleKey="groups.form.distribution.queue">
-          <div class="grid grid--2 queue-fields">
+          <div class="queue-fields">
             <ng-container *ngTemplateOutlet="queueFields; context: { channel: 'phone', queue: form().phoneQueue }" />
             <div class="field">
               <span class="field__label sc-text-caption-semibold" id="group-hold-music-label">{{ 'groups.form.announcements.hold_music' | translate }}</span>
@@ -463,7 +464,8 @@
              Llamadas salientes, con el teléfono saliente. -->
         <sc-slot titleKey="groups.form.distribution.queue_messages" hintKey="groups.form.distribution.queue_messages_hint" collapsible initiallyCollapsed>
           <div class="queue-messages">
-            <div class="grid grid--2">
+            <!-- Uno debajo del otro: con «Archivo», el uploader ocupa la fila entera, como todo audio. -->
+            <div class="grid">
               <ng-container *ngTemplateOutlet="audioSource; context: { label: 'groups.form.announcements.queue_id', help: 'groups.form.announcements.queue_id_info', source: 'queueIdSource', file: 'queueIdFile', text: 'queueIdText', id: 'group-queue-id' }" />
               <ng-container *ngTemplateOutlet="audioSource; context: { label: 'groups.form.announcements.next_in_line', help: 'groups.form.announcements.next_in_line_info', source: 'nextInLineSource', file: 'nextInLineFile', text: 'nextInLineText', id: 'group-next-in-line' }" />
             </div>
@@ -571,7 +573,7 @@
         </sc-slot>
 
         <sc-slot titleKey="groups.form.distribution.queue">
-          <div class="grid grid--2 queue-fields">
+          <div class="queue-fields">
             <ng-container *ngTemplateOutlet="queueFields; context: { channel: 'chat', queue: form().chatQueue }" />
           </div>
         </sc-slot>
@@ -642,7 +644,7 @@
         </sc-slot>
 
         <sc-slot titleKey="groups.form.distribution.queue">
-          <div class="grid grid--2 queue-fields">
+          <div class="queue-fields">
             <ng-container *ngTemplateOutlet="queueFields; context: { channel: 'email', queue: form().emailQueue }" />
           </div>
         </sc-slot>
@@ -786,7 +788,8 @@
          las cuatro secciones es su casa menos mala, y la visión la cuenta entre los recursos (DD-121). -->
     <sc-subsection titleKey="groups.form.resources.client_card" hintKey="groups.form.resources.client_card_hint">
       <div class="bloque">
-      <sc-selectbutton size="sm" optionValue="value" [allowEmpty]="false" [options]="cardOpeningOptions()" [value]="form().advanced.cardOpening" [ariaLabel]="'groups.form.advanced.card_opening' | translate" (valueChange)="setAdvanced('cardOpening', $any($event))" />
+      <!-- A tamaño de campo, como todos los selectores de botones de las fichas (el pequeño es de las barras de las tablas). -->
+      <sc-selectbutton optionValue="value" [allowEmpty]="false" [options]="cardOpeningOptions()" [value]="form().advanced.cardOpening" [ariaLabel]="'groups.form.advanced.card_opening' | translate" (valueChange)="setAdvanced('cardOpening', $any($event))" />
       <div class="grid grid--2">
         <div class="field">
           <label class="field__label sc-text-caption-semibold" for="group-card-url">{{ 'groups.form.advanced.card_url' | translate }}</label>
@@ -860,6 +863,8 @@
 <!-- La cola de UN canal: Teléfono y Chat tienen cada uno la suya (visión de producto de grupos, 2026-09-25), con
      los mismos campos. Los `id` llevan el canal: los dos bloques pueden estar en la misma sección. -->
 <ng-template #queueFields let-channel="channel" let-queue="queue">
+  <!-- Dos grupos y su aire entre ellos (7 · 14 · 28): los tiempos, y la capacidad (tipo y cifra). -->
+  <div class="grid grid--2">
   <div class="field">
     <label class="field__label sc-text-caption-semibold" [for]="'group-' + channel + '-max-wait'" [id]="'group-' + channel + '-max-wait' + '-label'">{{ 'groups.form.advanced.max_queue_wait' | translate }}</label>
     <sc-select [inputId]="'group-' + channel + '-max-wait'" [value]="queue.maxQueueWaitSec" [helperText]="'groups.form.advanced.max_queue_wait_hint' | translate" (valueChange)="setQueueNumber(channel, 'maxQueueWaitSec', $event)" optionValue="value" [options]="durationOptions(queue.maxQueueWaitSec, false)" [ariaLabelledBy]="'group-' + channel + '-max-wait' + '-label'" />
@@ -868,11 +873,12 @@
     <label class="field__label sc-text-caption-semibold" [for]="'group-' + channel + '-service-level'" [id]="'group-' + channel + '-service-level' + '-label'">{{ 'groups.form.advanced.service_level' | translate }}</label>
     <sc-select [inputId]="'group-' + channel + '-service-level'" [value]="queue.serviceLevelSec" [helperText]="'groups.form.advanced.service_level_hint' | translate" (valueChange)="setQueueNumber(channel, 'serviceLevelSec', $event)" optionValue="value" [options]="durationOptions(queue.serviceLevelSec, false)" [ariaLabelledBy]="'group-' + channel + '-service-level' + '-label'" />
   </div>
+  </div>
   <!-- Dos opciones, ni una más: sin «Sin límite» (visión de producto de grupos, 2026-09-25). En tarjetas de radio, el
        ejemplo «Card» de primeng.dev/radiobutton (`sc-option-cards`, revisión del 2026-10-14): cada una dice qué cuenta, y
        la cifra va debajo, con la frase que la lee entera. A todo el ancho, una tarjeta en cada columna de la rejilla
        (revisión del 2026-10-15); la cifra, en la columna de la izquierda de la fila siguiente. -->
-  <div class="queue-size">
+  <div class="queue-size grid grid--2">
     <div class="field field--full">
       <span class="field__label sc-text-caption-semibold" [id]="'group-' + channel + '-queue-type-label'">{{ 'groups.form.advanced.queue_size' | translate }}</span>
       <sc-option-cards
@@ -930,7 +936,7 @@
   <div class="field">
     <span class="field__label sc-text-caption-semibold" [id]="id + '-label'">{{ label | translate }}</span>
     <!-- La ayuda, debajo de las opciones como en todo campo (DD-198); el archivo o el texto que abre la opción, después. -->
-    <sc-selectbutton size="sm" optionValue="value" [allowEmpty]="false" [options]="audioSourceOptions()" [value]="$any(form().announcements)[source]" [ariaLabel]="label | translate" [helperText]="help | translate" (valueChange)="setAnnouncement(source, $any($event))" />
+    <sc-selectbutton optionValue="value" [allowEmpty]="false" [options]="audioSourceOptions()" [value]="$any(form().announcements)[source]" [ariaLabel]="label | translate" [helperText]="help | translate" (valueChange)="setAnnouncement(source, $any($event))" />
     @if ($any(form().announcements)[source] === 'file') {
       <div class="upload-field">
         <ng-container *ngTemplateOutlet="filePicker; context: { key: file, id: id }" />

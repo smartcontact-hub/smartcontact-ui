@@ -56,8 +56,8 @@ a2a837d4:docs/handoff/supervisor-fichas.md`.
 - **Email**: las seis estrategias de Teléfono (Niveles con «Dentro de cada nivel» y la columna «Nivel Email»), tiempo
   de ringing y su cola. Desbordar sigue en «Reglas comunes».
 - **Rejilla** (DD-205 §10 y §11): Tipificar bajo su interruptor; «Tamaño de cola» a dos columnas (`--sc-option-cards-gap`);
-  «Llamadas salientes» en Teléfono; «Web Chat» y «WhatsApp» como partes de Chat; Recursos en dos filas; `sc-textarea`
-  siempre en columna.
+  «Llamadas salientes» en Teléfono; «Web Chat» y «WhatsApp» como partes de Chat; Recursos en dos filas; cada audio en
+  su fila; toda ayuda a 7 de su control (DS incluido); `sc-textarea` siempre en columna.
 - **Pruebas**: en local, a 1440, las de grupo, las 2 de `sc-fileupload` y la de Niveles en Email (enrojece sin él).
 - **Trampas**: `p-select` no acepta que le cambies el valor dentro de su propio `onChange`: para devolverlo a 2 hace falta
   `setTimeout(() => select.value.set(2))`. Y un `ng serve` que pilla `dist/` a medio construir se queda en error aunque
