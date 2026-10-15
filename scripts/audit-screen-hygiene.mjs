@@ -312,12 +312,9 @@ export function rolesAMano(texto, esHtml) {
  * candidato en la sección 7 del catálogo, que la arregla, o lo que la deja como está.
  */
 export const ROLES_A_MANO = {
-  // Candidato 4: el menú del avatar, a `p-menu` con `popup` como los otros nueve.
-  'projects/supervisor/src/app/core/layout/top-bar/top-bar.component.html': 3,
-  // Candidato 1, el deslizador. Los radios de las grabaciones traen su propio teclado (`onLabelKeydown`).
+  // Candidato 1 en el reproductor de varias grabaciones: su barra va partida en tramos, y pasarla a `p-slider` cambia
+  // cómo se ve (queda por decidir). Los radios de las grabaciones traen su propio teclado (`onLabelKeydown`).
   'projects/supervisor/src/app/features/memory/components/multi-recording-player/multi-recording-player.component.html': 2,
-  // Candidato 1: la barra del reproductor, a `p-slider`.
-  'projects/supervisor/src/app/features/memory/components/conversation-player-modal/conversation-player-modal.component.html': 1,
   // Candidato 28: el selector de datos de prueba de Memory, un menú de radios sin teclado.
   'projects/supervisor/src/app/features/memory/components/mock-sample-switcher/mock-sample-switcher.component.html': 2,
   // Candidato 29: los paneles de alta en línea, un `role="dialog"` que no es modal. Meten el foco y cierran con Escape;
@@ -325,10 +322,9 @@ export const ROLES_A_MANO = {
   'projects/supervisor/src/app/features/admin/labels/components/label-form-panel/label-form-panel.component.html': 1,
   'projects/supervisor/src/app/features/admin/repositories/components/repo-form-panel.component.html': 1,
   'projects/supervisor/src/app/features/admin/templates/components/template-form-panel/template-form-panel.component.html': 1,
-  // Candidato 8: la categoría del asistente de widgets, a `sc-selectbutton`.
+  // Candidato 8: la categoría del asistente de widgets. Seis no caben en un `sc-selectbutton` de 443 px (medido el
+  // 2026-10-15: los rótulos se cortan); queda por decidir con qué se sustituye.
   'projects/supervisor/src/app/features/dashboard/components/widget-assistant/widget-assistant.component.html': 1,
-  // Candidato 5: la hoja de atajos, a `sc-dialog` (DD-140).
-  'projects/ui-smartcontact/src/lib/components/keyboard-shortcuts/sc-keyboard-shortcuts.component.html': 1,
   // Candidato 26: el color de una etiqueta (Etiquetas del Supervisor), radios sin flechas.
   'projects/ui-smartcontact/src/lib/components/color-dot-picker/sc-color-dot-picker.component.html': 1,
   // Candidato 27: `role="menu"` sobre casillas nativas; las columnas ya van con `sc-multiselect iconOnly` (DD-153).

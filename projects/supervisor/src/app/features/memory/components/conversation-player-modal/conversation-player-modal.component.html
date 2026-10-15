@@ -33,31 +33,18 @@
 
             <span class="player-audio__time">{{ currentTimeLabel() }}</span>
 
-            <button
-              type="button"
+            <!-- `p-slider` de primeng.dev (candidato 1 del barrido): flechas, Re Pág y Av Pág de 10 en 10 segundos,
+                 Inicio, Fin y arrastre. Antes era un botón con role="slider" que solo atendía al clic. -->
+            <p-slider
               class="player-audio__scrub"
-              role="slider"
+              [ngModel]="currentTime()"
+              (ngModelChange)="onSeek($event)"
+              [min]="0"
+              [max]="totalDuration()"
+              [step]="1"
               [disabled]="!playerEnabled()"
-              [attr.aria-label]="'memory.player.audio.seek' | translate"
-              [attr.aria-valuemin]="0"
-              [attr.aria-valuemax]="totalDuration()"
-              [attr.aria-valuenow]="currentTime()"
-              (click)="onScrubClick($event)"
-            >
-              <span class="player-audio__track">
-                <span
-                  aria-hidden="true"
-                  class="player-audio__fill"
-                  [style.transform]="'scaleX(' + progressPct() / 100 + ')'"
-                ></span>
-                <span
-                  aria-hidden="true"
-                  class="player-audio__thumb"
-                  [class.player-audio__thumb--visible]="isPlaying()"
-                  [style.left.%]="progressPct()"
-                ></span>
-              </span>
-            </button>
+              [ariaLabel]="'memory.player.audio.seek' | translate"
+            />
 
             <span class="player-audio__time">{{ totalDurationLabel() }}</span>
           </div>

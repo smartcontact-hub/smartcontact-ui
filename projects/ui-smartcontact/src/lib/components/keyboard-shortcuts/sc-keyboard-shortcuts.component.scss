@@ -2,81 +2,8 @@
   display: contents;
 }
 
-.kbd-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgb(var(--sc-shadow-color-rgb) / 0.45);
-  z-index: var(--sc-z-modal-backdrop);
-  animation: kbd-backdrop-in var(--sc-transition-fast) var(--sc-easing-default);
-}
-
+/* La caja, la cabecera y el cierre son los de `sc-dialog`; aquí solo el contenido. */
 .kbd-sheet {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: min(440px, calc(100vw - 32px));
-  max-height: 80vh;
-  display: flex;
-  flex-direction: column;
-  background: var(--sc-bg-surface);
-  border: 1px solid var(--sc-border-default);
-  border-radius: var(--sc-radius-300);
-  box-shadow: var(--sc-shadow-dialog);
-  z-index: var(--sc-z-modal);
-  overflow: hidden;
-  animation: kbd-sheet-in var(--sc-transition-base) var(--sc-easing-emphasized);
-
-  &__head {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: var(--sc-spacing-1-125) var(--sc-spacing-1-5);
-    border-bottom: 1px solid var(--sc-border-subtle);
-  }
-
-  &__title {
-    margin: 0;
-    font-family: var(--sc-font-family-h4);
-    font-size: var(--sc-font-size-h4);
-    line-height: var(--sc-line-height-h4);
-    font-weight: var(--sc-font-weight-h4);
-    color: var(--sc-text-primary);
-  }
-
-  &__close {
-    width: 28px;
-    height: 28px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    /* DD-24 — botón transparente al font-size: su icono companion
-       (`size="inherit"`) rima con el control (14), no con el reset UA. */
-    font-size: inherit;
-    padding: 0;
-    border: 0;
-    border-radius: var(--sc-radius-100);
-    background: transparent;
-    color: var(--sc-text-secondary);
-    cursor: pointer;
-
-    &:hover {
-      background: var(--sc-bg-secondary-hover);
-    }
-
-    &:focus-visible {
-      outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
-      outline-offset: var(--sc-focus-ring-offset);
-    }
-  }
-
-  &__body {
-    flex: 1 1 auto;
-    overflow-y: auto;
-    padding: var(--sc-spacing-0-875) var(--sc-spacing-1-5) var(--sc-spacing-1-125);
-  }
-
   &__group {
     & + & {
       margin-top: var(--sc-spacing-1-125);
@@ -129,32 +56,5 @@
       background: var(--sc-bg-default);
       color: var(--sc-text-secondary);
     }
-  }
-}
-
-@keyframes kbd-backdrop-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes kbd-sheet-in {
-  from {
-    opacity: 0;
-    transform: translate(-50%, calc(-50% + 8px));
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, -50%);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .kbd-backdrop,
-  .kbd-sheet {
-    animation: none;
   }
 }

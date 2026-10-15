@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ListboxModule } from 'primeng/listbox';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScChipComponent as ChipComponent, ScMessageComponent } from '@smartcontact-hub/components';
-import { ScSearchComponent as SearchComponent } from '@smartcontact-hub/components';
-import { ScCheckboxComponent as CheckboxComponent } from '@smartcontact-hub/components';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 import {
   ScDividerComponent as DividerComponent,
@@ -31,8 +31,8 @@ import { ResultadoAccionService } from '@core/services';
   selector: 'sc-numeracion-especial-section',
   imports: [
     ChipComponent,
-    SearchComponent,
-    CheckboxComponent,
+    FormsModule,
+    ListboxModule,
     ButtonComponent,
     IconComponent,
     SectionCardComponent,
@@ -50,14 +50,12 @@ export class NumeracionEspecialSectionComponent {
 
   protected readonly hashIcon = 'tag';
   protected readonly infoIcon = 'info';
-  protected readonly searchIcon = 'search';
-  protected readonly closeIcon = 'close';
   protected readonly saveIcon = 'save';
 
-  protected readonly countries = COUNTRY_PREFIXES;
+  /** Copia mutable: `p-listbox` pide un array, no uno de solo lectura. */
+  protected readonly countries: CountryPrefix[] = [...COUNTRY_PREFIXES];
 
   protected readonly selectedCodes = signal<ReadonlySet<string>>(new Set());
-  protected readonly searchQuery = signal('');
   protected readonly dirty = signal(false);
   /** Lo guardado, junto a los botones de la sección (DD-191); se va con el siguiente cambio. */
   protected readonly guardadoAviso = signal<string | null>(null);
@@ -66,39 +64,21 @@ export class NumeracionEspecialSectionComponent {
   });
   protected readonly saving = signal(false);
 
-  protected readonly filtered = computed(() => {
-    const query = this.searchQuery().toLowerCase().trim();
-    if (!query) return this.countries;
-    return this.countries.filter(
-      (c) =>
-        c.name.toLowerCase().includes(query) ||
-        c.prefix.includes(query) ||
-        c.code.toLowerCase().includes(query),
-    );
-  });
-
   protected readonly selectedCountries = computed(() => {
     const codes = this.selectedCodes();
     if (codes.size === 0) return [] as readonly CountryPrefix[];
     return this.countries.filter((c) => codes.has(c.code));
   });
 
-  protected isSelected(code: string): boolean {
-    return this.selectedCodes().has(code);
-  }
+  /** El valor del listbox: los códigos marcados, en el orden de la lista. */
+  protected readonly selectedList = computed(() => this.selectedCountries().map((c) => c.code));
 
-  protected toggle(code: string): void {
-    this.selectedCodes.update((current) => {
-      const next = new Set(current);
-      if (next.has(code)) next.delete(code);
-      else next.add(code);
-      return next;
-    });
+  protected setSelected(codes: readonly string[] | null): void {
+    this.selectedCodes.set(new Set(codes ?? []));
     this.dirty.set(true);
   }
 
-  protected remove(code: string, event?: MouseEvent): void {
-    event?.stopPropagation();
+  protected remove(code: string): void {
     this.selectedCodes.update((current) => {
       const next = new Set(current);
       next.delete(code);
@@ -123,14 +103,5 @@ export class NumeracionEspecialSectionComponent {
         this.translate.instant(count === 1 ? 'config.aed.toast.saved_one' : 'config.aed.toast.saved_many', { count }),
       );
     }, 600);
-  }
-
-  protected onSearchKey(event: KeyboardEvent): void {
-    if (event.key !== 'Escape') return;
-    if (this.searchQuery()) {
-      this.searchQuery.set('');
-    } else {
-      (event.target as HTMLInputElement).blur();
-    }
   }
 }

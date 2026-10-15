@@ -1553,14 +1553,17 @@ test.describe('sc-command-palette', () => {
 });
 
 test.describe('sc-keyboard-shortcuts', () => {
-  test('cheat-sheet: botón y ? abren (default colocado + i18n es), Esc cierra', async ({ page }) => {
+  test('cheat-sheet: botón y ? abren (default colocado + i18n es), Esc cierra y devuelve el foco', async ({ page }) => {
     await gotoPage(page, 'keyboardshortcuts');
-    const sheet = page.locator('.kbd-sheet[role="dialog"]');
+    const sheet = page.getByRole('dialog', { name: 'Atajos de teclado' });
     await expect(sheet).toBeHidden();
 
     // abre vía open() del servicio (botón demo) → contenido del default colocado.
-    await page.getByTestId('open-shortcuts').click();
+    const opener = page.getByTestId('open-shortcuts');
+    await opener.click();
     await expect(sheet).toBeVisible();
+    // Es un `sc-dialog` (DD-140): el foco entra al abrir. La capa propia de antes lo dejaba en el botón.
+    await expect.poll(() => sheet.evaluate((el) => el.contains(document.activeElement))).toBe(true);
 
     // default colocado: 2 grupos intrínsecos, i18n resuelto (es), 4+3 = 7 filas.
     await expect(sheet.locator('.kbd-sheet__group')).toHaveCount(2);
@@ -1570,9 +1573,10 @@ test.describe('sc-keyboard-shortcuts', () => {
     ]);
     await expect(sheet.locator('.kbd-sheet__row')).toHaveCount(7);
 
-    // Esc cierra.
+    // Esc cierra y el foco vuelve a quien lo abrió.
     await page.keyboard.press('Escape');
     await expect(sheet).toBeHidden();
+    await expect(opener).toBeFocused();
 
     // la tecla `?` (atajo intrínseco del DS) también abre el cheat-sheet.
     await page.keyboard.press('?');

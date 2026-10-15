@@ -198,25 +198,6 @@
     box-shadow: 0 0 0 2px var(--sc-border-accent);
   }
 
-  &__menu {
-    position: absolute;
-    /* Drop the popover a touch off the avatar's right edge so it
-     * doesn't crowd the topbar's right padding — we want the menu
-     * to feel deliberately placed, not jammed under the trigger. */
-    right: calc(-1 * var(--sc-spacing-0-5));
-    top: calc(100% + var(--sc-spacing-0-875));
-    width: 296px;
-    background: var(--sc-bg-surface);
-    border: 1px solid var(--sc-border-default);
-    border-radius: var(--sc-radius-300);
-    box-shadow: var(--sc-shadow-popover);
-    z-index: var(--sc-z-popover);
-    padding: var(--sc-spacing-0-875);
-    /* Spring-feeling enter via cubic-bezier — no library, no JS. */
-    animation: top-bar__menu-in 200ms cubic-bezier(0.16, 1, 0.3, 1);
-    transform-origin: top right;
-  }
-
   &__menu-identity {
     display: flex;
     align-items: center;
@@ -247,43 +228,6 @@
     color: var(--sc-text-subtle);
     line-height: 1.4;
   }
-
-  &__menu-actions {
-    padding-top: var(--sc-spacing-0-875);
-    margin-top: var(--sc-spacing-0-875);
-    border-top: 1px solid var(--sc-border-subtle);
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  &__menu-item {
-    width: 100%;
-    display: inline-flex;
-    align-items: center;
-    gap: var(--sc-spacing-0-875);
-    padding: var(--sc-spacing-0-875) var(--sc-spacing-1-125);
-    color: var(--sc-text-secondary);
-    background: transparent;
-    border: 0;
-    border-radius: var(--sc-radius-100);
-    cursor: pointer;
-    text-align: left;
-    transition: background var(--sc-transition-fast) var(--sc-easing-default);
-
-    & > sc-icon {
-      color: var(--sc-icon-subtle);
-    }
-
-    &:hover {
-      background: var(--sc-bg-surface);
-    }
-
-    &:focus-visible {
-      outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
-      outline-offset: -2px;
-    }
-  }
 }
 
 /* Viewports estrechos (≤640px): la barra es una fila flex pensada para
@@ -306,27 +250,8 @@
   }
 }
 
-@keyframes top-bar__menu-in {
-  from {
-    opacity: 0;
-    transform: translateY(-4px) scale(0.97);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .top-bar__menu {
-    animation: none;
-  }
   .top-bar__avatar {
     transition: none;
   }
-}
-
-/* Atajos de teclado: `sc-button` del DS. Aquí solo que no se encoja en la fila. */
-.top-bar__menu-shortcut {
-  flex-shrink: 0;
 }

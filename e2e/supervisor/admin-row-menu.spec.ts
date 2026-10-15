@@ -65,8 +65,9 @@ test('usuarios · el click derecho abre el MISMO menú que el kebab', async ({ p
 
   expect(fromKebab).not.toEqual([]);
   expect(fromRightClick).toEqual(fromKebab);
-  // Y hay UN solo menú de fila montado, no uno por fila (el de «Acciones», en la barra, es otro).
-  await expect(page.locator('p-menu:not(.page__tools > p-menu)')).toHaveCount(1);
+  // Y hay UN solo menú de fila montado, no uno por fila. Dentro del contenido de la página: el de «Acciones», en la
+  // barra de la lista, es otro, y el del avatar vive en la barra de arriba.
+  await expect(page.locator('main#main-content p-menu:not(.page__tools > p-menu)')).toHaveCount(1);
 });
 
 test('el borrado avisa con puntos suspensivos solo si lleva a la puerta tecleada', async ({
