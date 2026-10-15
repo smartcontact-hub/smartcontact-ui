@@ -59,7 +59,14 @@
           }
           <span class="headline__meta sc-text-caption-regular">
             @if (form().extension) {
-              {{ 'agents.form.fields.extension' | translate }} {{ form().extension }}, {{ 'agents.ext_kind.' + form().extensionType | translate | lowercase }}
+              <!-- Dónde suena, en icono y no en palabra, como en la lista (revisión de producto del 2026-10-15). El rótulo va
+                   dentro de la misma fila para llevar su hueco: tras un espacio, la tinta del icono rozaba la «n». -->
+              <ng-container
+                *ngTemplateOutlet="
+                  extensionNumber;
+                  context: { etiqueta: 'agents.form.fields.extension' | translate, numero: form().extension, tipo: form().extensionType }
+                "
+              />
             } @else {
               {{ 'agents.form.fields.extension_empty' | translate }}
             }
@@ -145,7 +152,27 @@
           <div class="resumen__kpi resumen__facts">
             <dl class="resumen__pairs">
               @for (s of summaryFacts(); track s.etiqueta) {
-                <div scFactRow size="sm" class="resumen__pair" [icon]="s.icono" [label]="s.etiqueta | translate" [href]="summaryHrefs()[s.seccion]" (open)="pulsarResumen($event, { seccion: s.seccion, ancla: s.ancla })">{{ s.valor }}</div>
+                <div scFactRow size="sm" tone="brand" class="resumen__pair" [icon]="s.graba === undefined ? s.icono : null" [label]="s.etiqueta | translate" [href]="summaryHrefs()[s.seccion]" (open)="pulsarResumen($event, { seccion: s.seccion, ancla: s.ancla })">
+                  <!-- Grabación, con su REC en el color de las demás filas: relleno si graba, de contorno si no. Sin rojo, que
+                       en la app dice «error» (DD-209 §4). -->
+                  @if (s.graba !== undefined) {
+                    <sc-icon scFactIcon [name]="s.icono" [size]="14" [filled]="s.graba" aria-hidden="true" />
+                  }
+                  @if (s.canales?.length) {
+                    <!-- Cada canal con su icono y su nombre para el lector, como la columna Canales de la lista. -->
+                    <span class="sc-channel-row">
+                      @for (c of s.canales; track c) {
+                        <span class="sc-channel-row__item" role="img" [attr.data-channel]="c" [attr.aria-label]="familyLabelKeys[c] | translate" [attr.title]="familyLabelKeys[c] | translate">
+                          <sc-channel-icon [channel]="c" />
+                        </span>
+                      }
+                    </span>
+                  } @else if (s.extension) {
+                    <ng-container *ngTemplateOutlet="extensionNumber; context: s.extension" />
+                  } @else {
+                    {{ s.valor }}
+                  }
+                </div>
               }
             </dl>
           </div>
@@ -154,6 +181,20 @@
     </div>
   </div>
 </div>
+
+<!-- La extensión: el icono de dónde suena (navegador o teléfono), con su nombre para el lector, y el número. -->
+<ng-template #extensionNumber let-numero="numero" let-tipo="tipo" let-etiqueta="etiqueta">
+  @let tipoNombre = 'agents.ext_kind.' + tipo | translate;
+  <span class="ext">
+    @if (etiqueta) {
+      <span>{{ etiqueta }}</span>
+    }
+    <span class="ext__kind" role="img" [attr.aria-label]="tipoNombre" [attr.title]="tipoNombre">
+      <sc-icon [name]="extensionIcon(tipo)" size="sm" aria-hidden="true" />
+    </span>
+    {{ numero }}
+  </span>
+</ng-template>
 
 <sc-delete-entity-dialog
   [visible]="deleteVisible()"

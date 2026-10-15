@@ -53,7 +53,7 @@
       "attended": "Attended",
       "rejected": "Rejected",
       "transferred": "Transferred",
-      "avg_time": "Avg.\u00a0time",
+      "avg_time": "Avg. time",
       "totals": "Totals"
     },
     "group_panel": {
@@ -225,7 +225,7 @@
       "col_conversation": "Conversation",
       "col_time": "Time",
       "col_agent": "Agent",
-      "col_in_state": "In\u00a0this\u00a0state"
+      "col_in_state": "In this state"
     },
     "assistant": {
       "title_new": "Create widget",
@@ -2401,9 +2401,8 @@
         "no_results": "No group matches the filter.",
         "channel_not_offered": "This group does not offer the channel",
         "filter_label": "Filter by assignment",
-        "col_outbound": "Outbound",
-        "outbound_aria": "Their outbound calls, through {{name}}",
-        "outbound_none": "No phone in this group",
+        "outbound_label": "Group for outbound calls",
+        "outbound_empty": "Assign a group with phone",
         "not_assigned_hint": "Not assigned to {{name}}: it turns on once assigned",
         "not_allowed_hint": "{{channel}} is not among their channels (General)",
         "bulk_add": "Assign to the agent",
@@ -2451,7 +2450,7 @@
         "missing_channel": "a channel",
         "missing_group": "a group",
         "missing_outbound": "a group for outbound calls",
-        "attends_by": "Works on",
+        "channels": "Channels",
         "no_channels": "No channels",
         "none": "None"
       },

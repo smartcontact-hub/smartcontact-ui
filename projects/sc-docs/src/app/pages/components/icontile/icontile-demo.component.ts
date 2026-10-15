@@ -5,7 +5,8 @@ import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../
 
 const SIZES_SNIPPET = `<sc-icon-tile icon="call" />
 <sc-icon-tile icon="call" size="sm" />
-<sc-icon-tile icon="alt_route" tone="strong" />`;
+<sc-icon-tile icon="alt_route" tone="strong" />
+<sc-icon-tile icon="call_made" tone="brand" />`;
 
 /** Demo de `sc-icon-tile` en formato story (motor «Storybook-like»). */
 @Component({
@@ -26,7 +27,7 @@ export class IconTileDemoComponent {
     argTypes: [
       { name: 'icon', control: { kind: 'text' } },
       { name: 'size', control: { kind: 'select', options: ['md', 'sm'] } },
-      { name: 'tone', control: { kind: 'select', options: ['default', 'strong'] } },
+      { name: 'tone', control: { kind: 'select', options: ['default', 'strong', 'brand'] } },
     ],
     defaultArgs: { icon: 'call', size: 'md', tone: 'default' },
   };

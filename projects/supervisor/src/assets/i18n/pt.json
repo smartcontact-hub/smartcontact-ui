@@ -53,7 +53,7 @@
       "attended": "Atendidas",
       "rejected": "Rejeitadas",
       "transferred": "Transferidas",
-      "avg_time": "T.\u00a0médio",
+      "avg_time": "T. médio",
       "totals": "Totais"
     },
     "group_panel": {
@@ -225,7 +225,7 @@
       "col_conversation": "Conversa",
       "col_time": "Tempo",
       "col_agent": "Agente",
-      "col_in_state": "Neste\u00a0estado"
+      "col_in_state": "Neste estado"
     },
     "assistant": {
       "title_new": "Criar widget",
@@ -2401,9 +2401,8 @@
         "no_results": "Nenhum grupo corresponde ao filtro.",
         "channel_not_offered": "Este grupo não oferece o canal",
         "filter_label": "Filtrar por atribuição",
-        "col_outbound": "Saídas",
-        "outbound_aria": "As chamadas de saída, por {{name}}",
-        "outbound_none": "Sem telefone neste grupo",
+        "outbound_label": "Grupo para chamadas de saída",
+        "outbound_empty": "Atribua um grupo com telefone",
         "not_assigned_hint": "Não atribuído a {{name}}: liga-se ao atribuir",
         "not_allowed_hint": "{{channel}} não está entre os seus canais (Geral)",
         "bulk_add": "Atribuir ao agente",
@@ -2451,7 +2450,7 @@
         "missing_channel": "um canal",
         "missing_group": "um grupo",
         "missing_outbound": "um grupo para as saídas",
-        "attends_by": "Atende por",
+        "channels": "Canais",
         "no_channels": "Sem canais",
         "none": "Nenhum"
       },

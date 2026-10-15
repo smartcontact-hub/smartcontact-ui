@@ -65,10 +65,11 @@
   color: var(--sc-icon-subtle);
 }
 
-/* Grabación: el REC en el rojo de icono del tema, el de las cosas que están pasando. */
+/* Grabación: el REC relleno en el gris de los demás glifos de la fila (Canales, Extensión). Antes, rojo: en la app el
+ * rojo dice «error», y grabar no lo es; que grabe ya lo dice que esté el icono y que vaya relleno (DD-209 §4). */
 .recording {
   display: inline-flex;
-  color: var(--sc-icon-error);
+  color: var(--sc-icon-secondary);
 }
 
 /* El panel de fila y el menú contextual propios murieron en la Ola 2: ambos

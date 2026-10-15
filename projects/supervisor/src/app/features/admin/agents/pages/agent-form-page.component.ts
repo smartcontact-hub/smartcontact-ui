@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, effect, HostListener, inject, Injector, input, OnInit, signal, type TemplateRef, viewChild } from '@angular/core';
-import { LowerCasePipe, NgTemplateOutlet } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink, type UrlTree } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map, startWith } from 'rxjs';
@@ -14,6 +14,7 @@ import type {
 import { ScButtonComponent as ButtonComponent,
   ScFactRowComponent as FactRowComponent,
 } from '@smartcontact-hub/components';
+import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 
 import { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
@@ -22,6 +23,7 @@ import { ScConfirmService } from '@smartcontact-hub/components';
 import { EMAIL_RE, PIN_RE } from '@core/utils/validators';
 import {
   AltaPieComponent,
+  ChannelIconComponent,
   NameInplaceComponent,
   ResourceOptionComponent,
   SummaryKpiComponent,
@@ -80,6 +82,7 @@ import {
   DESTINO_KEYS,
   DestinoCol,
   DestinoKey,
+  EXTENSION_ICONS,
   EXTENSION_TYPES,
   ExtensionType,
   PERMISSION_MATRIX_KEYS,
@@ -161,6 +164,20 @@ interface DestinoDelResumen {
   readonly ancla?: string | null;
 }
 
+/**
+ * Una fila del resumen: su clave, su valor en texto y adónde lleva. Tres se dicen con iconos, como en la lista
+ * (revisión de producto del 2026-10-15): los canales, cada uno con el suyo; la extensión, con el de dónde suena; y la
+ * grabación, con el REC propio, rojo si graba y gris si no.
+ */
+interface FilaDelResumen extends DestinoDelResumen {
+  readonly icono: string;
+  readonly valor: string;
+  readonly etiqueta: string;
+  readonly canales?: readonly Channel[];
+  readonly extension?: { readonly numero: string; readonly tipo: ExtensionType };
+  readonly graba?: boolean;
+}
+
 /** ¿Son la misma selección, sin importar el orden? */
 function sameValues<T>(a: readonly T[], b: readonly T[]): boolean {
   if (a.length !== b.length) return false;
@@ -173,8 +190,9 @@ function sameValues<T>(a: readonly T[], b: readonly T[]): boolean {
   imports: [
     FactRowComponent,
     NgTemplateOutlet,
-    LowerCasePipe,
     ButtonComponent,
+    ChannelIconComponent,
+    IconComponent,
     NameInplaceComponent,
     SummaryKpiComponent,
     SummaryStatusComponent,
@@ -580,7 +598,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
    * si se graban sus llamadas, por qué grupo salen y, en un cliente con CusCare, de qué tipo es. Cada fila lleva a su
    * campo (DD-146).
    */
-  protected readonly summaryFacts = computed(() => {
+  protected readonly summaryFacts = computed<readonly FilaDelResumen[]>(() => {
     this.currentLang();
     const f = this.form();
     const t = (key: string) => this.translate.instant(key);
@@ -591,22 +609,26 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
     // Familias (DD-147): «Chat» es Web Chat y WhatsApp.
     const etiquetas: Readonly<Record<string, string>> = FAMILY_LABEL_KEYS;
     const saliente = this.outboundGroupId();
-    const filas = [
+    const filas: FilaDelResumen[] = [
       // Por dónde le llega trabajo: los canales de sus grupos habilitados (DD-147), así que lleva a Grupos, donde se
-      // cambia; los que PUEDE atender son las casillas de General (barrido de consistencia, 2026-10-09).
+      // cambia; los que PUEDE atender son las casillas de General (barrido de consistencia, 2026-10-09). «Canales», con
+      // el icono de cada uno, como la columna de la lista (revisión de producto del 2026-10-15; antes, «Atiende por»).
       {
         icono: 'forum',
         valor: canales.length ? canales.map((c) => t(etiquetas[c])).join(', ') : t('agents.form.summary.no_channels'),
-        etiqueta: 'agents.form.summary.attends_by',
+        etiqueta: 'agents.form.summary.channels',
         seccion: 'agent-section-groups',
         ancla: null,
+        canales,
       },
+      // El número, con el icono de dónde suena (navegador o teléfono) en vez de la palabra, como la lista.
       {
         icono: 'dialpad',
-        valor: f.extension ? `${f.extension}, ${t(`agents.ext_kind.${f.extensionType}`).toLowerCase()}` : t('agents.form.fields.extension_empty'),
+        valor: f.extension || t('agents.form.fields.extension_empty'),
         etiqueta: 'agents.form.fields.extension',
         seccion: 'agent-section-general',
         ancla: 'agent-ext',
+        extension: f.extension ? { numero: f.extension, tipo: f.extensionType } : undefined,
       },
       {
         icono: 'radio_button_checked',
@@ -614,6 +636,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
         etiqueta: 'agents.form.section.recording',
         seccion: 'agent-section-config',
         ancla: 'agent-recording',
+        graba: f.permissions.recording,
       },
       {
         icono: 'call_made',
@@ -643,6 +666,12 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
     return filas;
   });
 
+  /** El glifo de cada tipo de extensión y el nombre de cada canal, para los iconos de la cabecera y del resumen. */
+  protected extensionIcon(tipo: ExtensionType): string {
+    return EXTENSION_ICONS[tipo];
+  }
+  protected readonly familyLabelKeys: Readonly<Record<string, string>> = FAMILY_LABEL_KEYS;
+
   /** Lo que le llega de Repositorios en Recursos: agendas, plantillas de chat (si atiende chat) y equipos. */
   private readonly resourceCount = computed(() => {
     const f = this.form();
@@ -651,8 +680,8 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
 
   /**
    * El grupo de sus salientes: el elegido si sigue valiendo (asignado y con Teléfono marcado) y, si no, el primero de sus
-   * grupos con Teléfono. Es obligatorio (revisión de agentes), así que siempre hay uno en cuanto se puede: el radio de la tabla lo
-   * enseña marcado y se cambia con un clic. Sin ningún grupo con Teléfono, falta (`faltas`).
+   * grupos con Teléfono. Es obligatorio (revisión de agentes), así que siempre hay uno en cuanto se puede: el desplegable
+   * bajo la tabla lo enseña elegido. Sin ningún grupo con Teléfono, falta (`faltas`).
    */
   protected readonly outboundGroupId = computed<number | null>(() => {
     const elegibles = this.linksVistos().filter((l) => l.channels.includes('phone'));

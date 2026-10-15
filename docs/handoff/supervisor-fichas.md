@@ -42,7 +42,26 @@ baldosa y la fila del resumen al DS (2026-10-07, DD-186, #356, sin trampas propi
 d94e5ad8:docs/handoff/supervisor-fichas.md`. El de la revisión de agentes y tipificaciones (2026-10-09, DD-187,
 #360, sin trampas propias): `git show 208019113e9b9fdad6a8c0f6c4338fcf4437260a:docs/handoff/supervisor-fichas.md`.
 El de lo que se decide de la auditoría de PrimeNG (2026-10-11, DD-195, sin trampas propias): `git show
-a2a837d4:docs/handoff/supervisor-fichas.md`.
+a2a837d4:docs/handoff/supervisor-fichas.md`. El de los quick-wins de la auditoría UX con la columna Nivel (2026-10-12,
+#375) y el de Salientes como etiqueta y botón (2026-10-13, superado por DD-204 y DD-209), sin trampas propias: `git show
+e3a6c4b1:docs/handoff/supervisor-fichas.md`.
+
+## ✅ 2026-10-15 · Revisión de producto de la ficha de agente: salientes en un desplegable y los iconos de la lista (DD-209)
+
+> **Sello:** worktree `seabiscuit`, rama `arebury/revision-1015-agente` sobre `main` HEAD `e3a6c4b1` (con el PR 1, #416). PR 2 de 3.
+
+- **Salientes**: fuera la columna de radios de `group-assignment-table`. Debajo de la tabla, a 28, el desplegable «Grupo
+  para llamadas salientes» con los asignados que tienen Teléfono marcado; sin ninguno, apagado con «Asigna un grupo con
+  teléfono»; sin Teléfono en sus canales, no sale. En la tabla, `call_made` junto al nombre del elegido, con su globo.
+  La regla de antes sigue: el primero con Teléfono por defecto, obligatorio si atiende teléfono. Corrige DD-204 §8.
+- **Resumen y cabecera**: «Canales» (antes «Atiende por») con `sc-channel-icon` por canal; la extensión con `language` o
+  `smartphone` y su nombre para el lector, sin la palabra; Grabación con su REC por `scFactIcon`, relleno si graba y de
+  contorno si no, sin color propio; y en la lista, el REC deja el rojo por el gris de los glifos (§4: nada de arcoíris).
+  `EXTENSION_ICONS` pasa a `agents-data.ts`, compartido con la lista.
+- **Tarjeta de datos** (§6): la plana del grupo en las tres fichas (sale de `group-summary.scss` a `_resumen.scss`) y sus
+  baldosas en el degradado de la destacada: `tone="brand"`, nuevo en `sc-icon-tile` y `sc-fact-row` (DS, con su knob).
+- **Pruebas**: `agente-grupos-asignados.spec.ts` reescrita (desplegable, flecha, apagado) y `ficha-agente-resumen-iconos`
+  nueva (3 iconos, el REC sin color propio y la misma tarjeta, de baldosas del color de la destacada, en las tres fichas). En local, a 1440, las de agentes y resúmenes, en verde.
 
 ## ✅ 2026-10-15 · Revisión de producto de la ficha de grupo: resumen, Ring All, tipificación, audios, Email y rejilla (DD-206)
 
@@ -118,69 +137,15 @@ a2a837d4:docs/handoff/supervisor-fichas.md`.
   editar. Medido: el alta de agente ya los lleva en sus cuatro secciones (General, solo «Siguiente»; Grupos, solo
   «Atrás»); al editar no los lleva ninguna ficha.
 
-## ✅ 2026-10-12 · Quick-wins de la auditoría UX Agentes/Grupos + columna Nivel
-
-> **Sello:** PR #375, mergeado en main.
-> Fuente: `docs/AUDIT-UX-AGENTES-VS-GRUPOS-2026-10.md` (rama aparte `docs/audit-ux-agentes-vs-grupos`, ya pusheada).
-
-- **6 quick-wins:** `channelsError` de Grupos avisa también al editar (como `phoneError`); mismo verbo
-  ("Selecciona…") en el aviso de "sin canales" de Grupos y Agentes; "Chats simultáneos" explica por qué
-  no se ve cuando el agente no atiende chat; "Permisos" de Agentes en 2 `sc-slot` (Acceso y dispositivos /
-  Grabación y seguimiento); icono en las 3 `sc-subsection` de Configuración; namespace i18n de Recursos
-  movido de `agents.form.resources.*` a uno neutro (`resources.*`), compartido de verdad por las dos fichas.
-- **`sc-link-button` (nuevo, local a Supervisor):** el candado "no permitido"/autoactivación de
-  `agent-channel-table` pasa de `<a><sc-icon></a>` suelto a un botón de solo icono que navega
-  (`<a [pButton] [routerLink]>`, directiva de PrimeNG, no el componente). Vive en
-  `shared/components/link-button/`, **no** en `@smartcontact-hub/components`: depende de `@angular/router`,
-  que el paquete publicado no tiene como peer dependency. No se tocó `sc-button` (DD-172 sigue en pie,
-  acotado a este caso).
-- **Columna "Nivel"** en `group-assignment-table` (tabla "Grupos" de la ficha de agente): `availableGroups`
-  gana `strategy`/`chatStrategy` del grupo (ya estaban en el store, se recortaban antes de llegar a la
-  tabla); columna fija con celda condicional por fila — selector 1-10 solo si ese grupo reparte por Niveles
-  en una familia que el agente tiene asignada, `sc-celda-vacia` si no. Mismo dato (`GroupAgentLink.levels`)
-  que ya usa la tabla del lado del grupo. Probado en el navegador real (Playwright): cambio de nivel desde
-  la ficha de agente, persiste y se ve igual desde la ficha del grupo.
-- **Abierto (gusto, sin regla):** la columna Nivel añade 9rem a `group-assignment-table` y a 1440 "Habilitado"
-  ya no cabe sin desplazar (antes iba ~18px justa, ahora ~162px corta) — scroll horizontal funciona bien, y
-  hay precedente ya aceptado en la tabla gemela (`agent-channel-table`, DD-181) de scrollear al ganar
-  columnas. No se tocó por no ser un número objetivamente equivocado, solo una decisión de densidad.
-- **Pendiente (abierto, gusto):** si se quiere, repasar los anchos de las dos tablas de asignación a la vez
-  para que quepan sin scroll a 1440 con Nivel incluido.
-
-## ✅ 2026-10-13 · Salientes como chip+acción, Nivel sin overlay (pide Rafa tras la auditoría)
-
-> **Sello:** rama `design/salientes-nivel-maquetacion` sobre main, HEAD `2ea670cd` (incluye #376: `fill` de
-> `sc-datatable`, que ya resolvió el tercer punto de abajo — las tablas cortas llegan al pie). Aún sin PR.
-
-Rafa, tras ver la auditoría en vivo: ¿por qué Agentes tiene columna Salientes si Grupos no la tiene en su
-tabla de Agentes? El Nivel de Grupos "expande muchísimo". Y la tabla de Grupos en la ficha de Agente no
-llega al pie.
-
-- **Salientes no es arbitrario:** es un campo DEL AGENTE (`defaultOutboundGroupId`), no del grupo —
-  en Grupos "saliente" es una propiedad fija del propio grupo (un teléfono, sin fila); en Agentes solo
-  tiene sentido ENTRE los grupos a los que el agente está asignado, que es la tabla que se edita. Por eso
-  vive ahí. Lo que sí era un problema real: un `sc-radiobutton` por fila se leía como "otro toggle más".
-  Cambiado a `sc-tag` (el valor ya es un hecho) en la fila elegida y `sc-button` de acción ("marcar como
-  saliente") en las demás — visualmente solo una fila destaca, no una columna entera de controles iguales.
-- **Nivel (lado Grupo, `agent-channel-table`):** `sc-select` de 10 opciones → `sc-inputnumber` (stepper
-  1-10, sin overlay). Es un entero ordenado, no una categoría. El lado Agente (`group-assignment-table`)
-  sigue con `sc-select`, sin tocar — no era el que Rafa señaló.
-- **Empty-state de las dos tablas gemelas:** el `<div scTableEmpty>` de texto plano pasa a `sc-empty-state`
-  (mismo patrón que `agenda-contacts-table`, que ya resolvía justo esto) — con `fill` del #376 la tarjeta
-  SIEMPRE llega al pie, así que un texto suelto arriba dejaba un hueco en blanco enorme debajo; el
-  empty-state centra icono+texto y lo llena.
-- **Pendiente:** abrir el PR.
-
 El del barrido de consistencia y sin punto medio entre datos (2026-10-06, DD-183, sin trampas propias), y el de
 la revisión de grupos del equipo y `sc-fileupload` (2026-10-06, DD-184, sin trampas propias): `git show
 a7ddc14b:docs/handoff/supervisor-fichas.md`.
 
 ## SIGUIENTE — sin preguntar
 
--3. **PR 2 y PR 3 de la revisión del 2026-10-15** (plan en `~/.claude/plans/tengo-transcripci-n-con-una-foamy-barto.md`):
-   la ficha de agente (Salientes como desplegable bajo la tabla, grabación y extensión con icono, «Canales») y las
+-3. **PR 3 de la revisión del 2026-10-15** (plan en `~/.claude/plans/tengo-transcripci-n-con-una-foamy-barto.md`): las
    tablas comunes y Repositorios («+ Nueva X», «Buscar {entidades}…», la celda de grupos, anchos al abrir, un solo
-   diálogo de importar, subcategorías, grupos en plantillas, agendas). Cada uno, enseñado en local antes de subir.
+   diálogo de importar, subcategorías, grupos en plantillas, agendas). Enseñado en local antes de subir.
 -2b. **Componente tabla (otra sesión):** el «evolutivo» de la tabla con los devs (BI y voz). Propuesta de producto:
    elegir UNA vez qué funciones de la Table de PrimeNG queremos y cerrarlo; hay un Excel con las de BI.
    Punto de partida: `docs/AUDIT-PRIMENG-CATALOGO.md`. En la reunión: reordenar, ajustar ancho y arrastrar columnas

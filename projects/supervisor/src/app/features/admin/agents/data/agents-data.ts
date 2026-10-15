@@ -82,6 +82,11 @@ export const CLIENTE_CON_CUSCARE = true;
 /** Dónde suena: `phone`, en su teléfono móvil; `webrtc`, en el navegador, con Smart Contact Agent. */
 export type ExtensionType = 'phone' | 'webrtc';
 export const EXTENSION_TYPES: readonly ExtensionType[] = ['webrtc', 'phone'];
+/** El glifo de cada tipo de extensión: la llamada va por un teléfono o por la web. Lo usan la lista y la ficha. */
+export const EXTENSION_ICONS: Readonly<Record<ExtensionType, string>> = {
+  phone: 'smartphone',
+  webrtc: 'language',
+};
 /** Las tres de Contact Center › Servicio («Tipo de descuelgue»), con sus palabras. Una para llamadas y chats: que
  *  fueran distintas no tenía sentido para comercial ni para postventa (revisión de agentes del 2026-10-09). */
 export type PickupType = 'manual' | 'auto' | 'auto_preview';

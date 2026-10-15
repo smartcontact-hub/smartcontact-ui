@@ -13,12 +13,19 @@ import { ScIconComponent } from '@smartcontact-hub/icons';
  * El icono es decorativo (`aria-hidden`): lo que dice lo dice el texto de al lado. Uno del DS por `icon`, u otro propio
  * proyectado dentro (el de un canal, por ejemplo).
  *
+ * `tone="brand"`: la baldosa en el degradado de la marca, el de la cifra destacada del resumen, con el icono en blanco.
+ * Para que la tarjeta de datos haga eco de la destacada que tiene encima (revisión de producto del 2026-10-15).
+ *
  * Uso:
  * ```html
  * <sc-icon-tile icon="call_made" />
  * <sc-icon-tile size="sm"><app-channel-icon channel="whatsapp" /></sc-icon-tile>
+ * <sc-icon-tile icon="call_made" tone="brand" />
  * ```
  */
+/** El tono de la baldosa: el gris de siempre, el icono en el color de los títulos, o el degradado de la marca. */
+export type ScIconTileTone = 'default' | 'strong' | 'brand';
+
 @Component({
   selector: 'sc-icon-tile',
   standalone: true,
@@ -36,6 +43,7 @@ import { ScIconComponent } from '@smartcontact-hub/icons';
     class: 'sc-icon-tile',
     '[class.sc-icon-tile--sm]': "size() === 'sm'",
     '[class.sc-icon-tile--strong]': "tone() === 'strong'",
+    '[class.sc-icon-tile--brand]': "tone() === 'brand'",
     'aria-hidden': 'true',
   },
 })
@@ -44,8 +52,9 @@ export class ScIconTileComponent {
   readonly icon = input<string | null>(null);
   /** `md`: 28 con el icono a 16, para texto de 14. `sm`: 24,5 con el icono a 14, para texto de 12. */
   readonly size = input<'sm' | 'md'>('md');
-  /** `strong`: el icono en el color de los títulos (el de un encabezado); por defecto, el del texto. */
-  readonly tone = input<'default' | 'strong'>('default');
+  /** `strong`: el icono en el color de los títulos (el de un encabezado); `brand`: la baldosa en el degradado de la
+   *  marca y el icono en blanco; por defecto, el gris y el color del texto. */
+  readonly tone = input<ScIconTileTone>('default');
 
   protected readonly iconSize = computed(() => (this.size() === 'sm' ? 14 : 16));
 }

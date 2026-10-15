@@ -47,3 +47,15 @@
     outline-offset: var(--sc-focus-ring-offset);
   }
 }
+
+/* La extensión, como la columna de la lista: el icono de dónde suena delante del número, en el gris de icono. */
+.ext {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+}
+
+.ext__kind {
+  display: inline-flex;
+  color: var(--sc-icon-subtle);
+}

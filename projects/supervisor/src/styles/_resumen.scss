@@ -132,10 +132,14 @@
 }
 
 /* LA TARJETA DE DATOS (DD-185, DD-186): pares clave/valor en filas `sc-fact-row`, cada clave con su baldosa, en las
- * tres fichas. Con la sombra difusa de la maqueta del widget: se lee como un widget que flota sobre la página, como su
- * hermana destacada (DD-161). Siete entre filas: la fila mide lo que su baldosa. */
+ * tres fichas. La misma en agente, grupo y usuario (DD-209 §6): la tarjeta plana del grupo (decisión de producto,
+ * 2026-10-11), blanca y con borde fino, sin el tinte de `.resumen__kpi`; y sus baldosas en el degradado de la marca
+ * (`tone="brand"`), el de la cifra destacada que tiene encima, que es lo que le da el color. Siete entre filas: la
+ * fila mide lo que su baldosa. */
 .resumen__facts {
-  box-shadow: var(--sc-shadow-card);
+  background: var(--sc-bg-surface);
+  border: 1px solid var(--sc-border-subtle);
+  border-radius: var(--sc-radius-xl);
 }
 
 .resumen__pairs {

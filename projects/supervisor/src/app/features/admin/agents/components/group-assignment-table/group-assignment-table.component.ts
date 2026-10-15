@@ -20,9 +20,9 @@ import {
   ScCheckboxComponent as CheckboxComponent,
   ScConfirmService,
   ScEmptyStateComponent as EmptyStateComponent,
-  ScRadioButtonComponent as RadioButtonComponent,
   ScSearchComponent as SearchComponent,
   ScSelectButtonComponent as SelectButtonComponent,
+  ScSelectComponent as SelectComponent,
   ScButtonComponent as ButtonComponent,
   ScTagComponent as TagComponent,
   ScToggleSwitchComponent as ToggleSwitchComponent,
@@ -32,6 +32,7 @@ import {
   type ScColumnCellContext,
   type ScColumnDef,
 } from '@smartcontact-hub/components';
+import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { LlegaAlPieDirective } from '@core/directives';
 
 import {
@@ -65,12 +66,12 @@ interface VisibleRow {
 
 /**
  * Los anchos, en rem, como los de la tabla de agentes del grupo (`COLUMN_REM` de `agent-channel-table`), de la que esta
- * es la gemela: la misma densidad compacta y las mismas casillas de «todos» en la cabecera. Salientes, su rótulo más
- * largo («Sortantes»/«Outbound», 70 px) con el relleno: 6,5. Sin columna de Nivel: el nivel del agente se pone en el
- * grupo, que es quien reparte por niveles; y Habilitado, sin el candado, en lo que mide (revisión del 2026-10-14). Suma
- * 45 rem: a 1440 cabe en su caja (746) sin desplazar.
+ * es la gemela: la misma densidad compacta y las mismas casillas de «todos» en la cabecera. Sin columna de Nivel: el
+ * nivel del agente se pone en el grupo, que es quien reparte por niveles; y Habilitado, sin el candado, en lo que mide
+ * (revisión del 2026-10-14). Sin columna de Salientes: es un desplegable bajo la tabla (revisión del 2026-10-15). Suma
+ * 38,5 rem: a 1440 cabe en su caja (746) sin desplazar.
  */
-const REM = { assigned: 3.5, group: 12, channel: { phone: 7, chat: 4.5, email: 4.75 }, outbound: 6.5, enabled: 6.75 } as const;
+const REM = { assigned: 3.5, group: 12, channel: { phone: 7, chat: 4.5, email: 4.75 }, enabled: 6.75 } as const;
 
 /**
  * Los grupos de un agente, dentro de su ficha: LA MISMA TABLA que los agentes de un grupo (revisión de agentes del
@@ -78,11 +79,15 @@ const REM = { assigned: 3.5, group: 12, channel: { phone: 7, chat: 4.5, email: 4
  * asigna marcando Asignado (DD-151), cada canal en su columna con su casilla de «todos» (DD-181) y Habilitado.
  *
  *   [Asignados ▾] [ Buscar grupo…                 ]
- *   ☑  Grupo           ☑ Teléfono  ☑ Chat  ☑ Email   Salientes   ☑ Habilitado
- *   ☑  Soporte L1         ☑          ☑       —           ◉           ●━○
+ *   ☑  Grupo           ☑ Teléfono  ☑ Chat  ☑ Email   ☑ Habilitado
+ *   ☑  Soporte L1 ↗       ☑          ☑       —          ●━○
  *
- * Y una columna que solo tiene este lado: **Salientes**, el grupo por el que salen sus llamadas. Uno, de los asignados
- * con Teléfono marcado.
+ *   Grupo para llamadas salientes
+ *   [ Soporte L1                ▾ ]
+ *
+ * Y lo que solo tiene este lado: **el grupo de sus llamadas salientes**, uno de los asignados con Teléfono marcado. Un
+ * desplegable bajo la tabla, y en la tabla, la flecha `call_made` junto al nombre del elegido (DD-209 §1, que corrige el
+ * radio por fila de DD-204 §8): es una sola elección, no una por fila.
  *
  * «Activación por grupo» (Configuración) deja al agente habilitarse él mismo en cada grupo, pero no le quita Habilitado
  * al supervisor: se cambia aquí igual (revisión del 2026-10-14, que corrige el candado de DD-187 §2). Lo mismo en la
@@ -100,10 +105,11 @@ const REM = { assigned: 3.5, group: 12, channel: { phone: 7, chat: 4.5, email: 4
     TagComponent,
     DatatableComponent,
     EmptyStateComponent,
+    IconComponent,
     LlegaAlPieDirective,
-    RadioButtonComponent,
     SearchComponent,
     SelectButtonComponent,
+    SelectComponent,
     ToggleSwitchComponent,
     TooltipModule,
     TranslateModule,
@@ -127,7 +133,6 @@ export class GroupAssignmentTableComponent {
   private readonly assignedTpl = viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('assignedTpl');
   private readonly groupTpl = viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('groupTpl');
   private readonly channelTpl = viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('channelTpl');
-  private readonly outboundTpl = viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('outboundTpl');
   private readonly activeTpl = viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('activeTpl');
 
   protected readonly columns = computed<readonly ScColumnDef<VisibleRow>[]>(() => {
@@ -156,14 +161,6 @@ export class GroupAssignmentTableComponent {
         stopRowClick: true,
       })),
       {
-        field: 'outbound',
-        header: this.translate.instant('agents.form.assigned.col_outbound'),
-        width: `${REM.outbound}rem`,
-        align: 'center' as const,
-        cellTemplate: this.outboundTpl(),
-        stopRowClick: true,
-      },
-      {
         field: 'active',
         header: this.translate.instant('agents.form.assigned.col_active'),
         width: `${REM.enabled}rem`,
@@ -176,7 +173,7 @@ export class GroupAssignmentTableComponent {
 
   /** Lo que suman las columnas: el mínimo de la tabla, que desplaza por dentro antes que cortar el nombre. */
   protected readonly tableMinWidth = `${
-    REM.assigned + REM.group + CHANNEL_FAMILIES.reduce((s, f) => s + REM.channel[f], 0) + REM.outbound + REM.enabled
+    REM.assigned + REM.group + CHANNEL_FAMILIES.reduce((s, f) => s + REM.channel[f], 0) + REM.enabled
   }rem`;
 
   readonly links = input.required<readonly GroupAgentLink[]>();
@@ -249,13 +246,23 @@ export class GroupAssignmentTableComponent {
     return !!link && isLastChannel(link, channel);
   }
 
-  /** Puede ser el de sus salientes: asignado y con Teléfono marcado. */
-  protected canBeOutbound(row: VisibleRow): boolean {
-    return this.hasChannel(row.link, 'phone');
+  /** Los que pueden ser el de sus salientes: asignados y con Teléfono marcado, en el orden de la tabla. Con todos los
+   *  asignados, no solo los que deja ver el filtro. */
+  protected readonly outboundOptions = computed(() => {
+    const links = new Map(this.links().map((l) => [l.groupId, l]));
+    return this.availableGroups().filter((g) => {
+      const link = links.get(g.id);
+      return !!link && clampLinksToChannels([link], g.channels, () => this.allowedChannels())[0].channels.includes('phone');
+    });
+  });
+
+  /** El elegido para sus salientes: lleva la flecha junto al nombre. */
+  protected isOutbound(row: VisibleRow): boolean {
+    return row.group.id === this.outboundGroupId() && this.hasChannel(row.link, 'phone');
   }
 
-  protected setOutbound(groupId: number): void {
-    this.outboundGroupChange.emit(groupId);
+  protected setOutbound(groupId: number | null): void {
+    if (groupId !== null) this.outboundGroupChange.emit(groupId);
   }
 
   // -- La casilla de «todos» de cada columna (DD-180, DD-181) ---------------------------------------------------------

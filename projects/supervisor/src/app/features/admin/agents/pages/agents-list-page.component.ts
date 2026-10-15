@@ -38,6 +38,7 @@ import {
   AGENT_TYPE_LABEL_KEYS,
   AGENT_TYPES,
   Agent,
+  EXTENSION_ICONS,
   ExtensionType,
   PRESENCE_LABEL_KEYS,
   PRESENCE_TAGS,
@@ -64,12 +65,6 @@ interface PendingBulkEdit {
 /* v5 (2026-09-24): columnas nuevas (Email, Teléfono, Grabación), fuera Activación, y el ID detrás del nombre.
  * Una lista guardada no las conoce. Salta la v4, que usó la rama `comparar/fichas` en el mismo origen local. */
 const COLUMN_PREF_KEY = 'sc-agents-columns-v5';
-
-/** El glifo de cada tipo de extensión: la llamada va por un teléfono o por la web. */
-const EXTENSION_ICONS: Readonly<Record<ExtensionType, string>> = {
-  phone: 'smartphone',
-  webrtc: 'language',
-};
 
 @Component({
   selector: 'sc-agents-list-page',

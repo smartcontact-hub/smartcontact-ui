@@ -149,9 +149,9 @@
   }
 </ng-template>
 
-<!-- El REC rojo donde se graba y nada donde no: la columna solo contesta sí o no, y así se barre
-     de un vistazo. `radio_button_checked` relleno, el botón de grabar de siempre; el dashboard dejó de usarlo para
-     «opción elegida». -->
+<!-- El REC donde se graba y nada donde no: la columna solo contesta sí o no, y así se barre de un vistazo. En el gris
+     de los demás glifos, sin rojo (DD-209 §4). `radio_button_checked` relleno, el botón de grabar de siempre; el
+     dashboard dejó de usarlo para «opción elegida». -->
 <ng-template #recordingTpl let-agent>
   @if (agent.permissions.recording) {
     @let recording = 'agents.permission.recording' | translate;
