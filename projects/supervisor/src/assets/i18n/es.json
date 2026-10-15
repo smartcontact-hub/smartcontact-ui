@@ -1148,6 +1148,31 @@
     }
   },
   "templates": {
+    "import": {
+      "title": "Importar plantillas",
+      "template": "Descargar plantilla",
+      "template_file": "plantilla-plantillas",
+      "choose": "Elegir archivo",
+      "choose_other": "Elegir otro archivo",
+      "add": "Se crearán {{count}} plantillas",
+      "add_one": "Se creará 1 plantilla",
+      "nothing": "No hay plantillas nuevas que crear.",
+      "errors": "{{count}} líneas con error, que no se crean:",
+      "errors_one": "1 línea con error, que no se crea:",
+      "error_line": "Línea {{line}}: {{reason}}",
+      "reason_titulo": "falta el título",
+      "reason_canal": "el canal no es chat, email ni WhatsApp",
+      "reason_contenido": "falta el contenido",
+      "more_errors": "y {{count}} más",
+      "duplicates": "{{count}} ya existían o se repiten en el archivo.",
+      "duplicates_one": "1 ya existía o se repite en el archivo.",
+      "over": "{{count}} no caben: el tope es {{max}} plantillas.",
+      "over_one": "1 no cabe: el tope es {{max}} plantillas.",
+      "confirm": "Crear {{count}} plantillas",
+      "confirm_one": "Crear 1 plantilla",
+      "done": "{{count}} plantillas creadas",
+      "done_one": "1 plantilla creada"
+    },
     "breadcrumb": "Plantillas",
     "page_title": "Plantillas",
     "create_button": "Nueva plantilla",
@@ -1159,7 +1184,8 @@
     },
     "type": {
       "chat": "Chat",
-      "email": "Email"
+      "email": "Email",
+      "whatsapp": "WhatsApp"
     },
     "empty": {
       "title": "Aún no hay plantillas",
@@ -1170,7 +1196,8 @@
       "title": "Título",
       "type": "Canal",
       "body": "Contenido",
-      "updated": "Actualizada"
+      "updated": "Actualizada",
+      "groups": "Grupos"
     },
     "no_results": {
       "text": "No hay plantillas de {{tab}} en este filtro.",
@@ -1184,7 +1211,23 @@
       "channel": "Canal",
       "body": "Contenido",
       "body_placeholder": "Escribe el contenido de la plantilla...",
-      "variables_hint": "Variables: {agente}, {cliente}, {ref}, {fecha}"
+      "variables_hint": "Variables: {agente}, {cliente}, {ref}, {fecha}",
+      "summary_missing_title": "título",
+      "summary_missing_body": "contenido",
+      "create_submit": "Crear plantilla",
+      "create_breadcrumb": "Nueva plantilla",
+      "edit_breadcrumb": "Editar plantilla",
+      "section_general": "General",
+      "section_content": "Contenido",
+      "section_groups": "Grupos",
+      "groups": "Grupos que la usan",
+      "groups_placeholder": "Ningún grupo",
+      "whatsapp_hint": "WhatsApp solo admite negrita, cursiva y tachado.",
+      "format_bold": "Negrita",
+      "format_italic": "Cursiva",
+      "format_underline": "Subrayado",
+      "format_strike": "Tachado",
+      "format_link": "Enlace"
     },
     "errors": {
       "title_required": "El título es obligatorio",

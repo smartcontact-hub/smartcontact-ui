@@ -81,3 +81,6 @@ export function parsearContactosCsv(
   tope?: number,
 ): ImportacionDeContactos;
 
+
+/** Los campos de una línea de CSV: un campo entre comillas puede llevar el separador. */
+export function campos(linea: string, separador: string): string[];

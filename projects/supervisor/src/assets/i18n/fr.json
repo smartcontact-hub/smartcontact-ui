@@ -1148,6 +1148,31 @@
     }
   },
   "templates": {
+    "import": {
+      "title": "Importer des modèles",
+      "template": "Télécharger le modèle",
+      "template_file": "modele-modeles",
+      "choose": "Choisir un fichier",
+      "choose_other": "Choisir un autre fichier",
+      "add": "{{count}} modèles seront créés",
+      "add_one": "1 modèle sera créé",
+      "nothing": "Aucun nouveau modèle à créer.",
+      "errors": "{{count}} lignes en erreur, qui ne sont pas créées :",
+      "errors_one": "1 ligne en erreur, qui n’est pas créée :",
+      "error_line": "Ligne {{line}} : {{reason}}",
+      "reason_titulo": "le titre est manquant",
+      "reason_canal": "le canal n’est ni chat, ni e-mail, ni WhatsApp",
+      "reason_contenido": "le contenu est manquant",
+      "more_errors": "et {{count}} de plus",
+      "duplicates": "{{count}} existaient déjà ou se répètent dans le fichier.",
+      "duplicates_one": "1 existait déjà ou se répète dans le fichier.",
+      "over": "{{count}} ne tiennent pas : la limite est de {{max}} modèles.",
+      "over_one": "1 ne tient pas : la limite est de {{max}} modèles.",
+      "confirm": "Créer {{count}} modèles",
+      "confirm_one": "Créer 1 modèle",
+      "done": "{{count}} modèles créés",
+      "done_one": "1 modèle créé"
+    },
     "breadcrumb": "Modèles",
     "page_title": "Modèles",
     "create_button": "Nouveau modèle",
@@ -1159,7 +1184,8 @@
     },
     "type": {
       "chat": "Chat",
-      "email": "Email"
+      "email": "Email",
+      "whatsapp": "WhatsApp"
     },
     "empty": {
       "title": "Pas encore de modèles",
@@ -1170,7 +1196,8 @@
       "title": "Titre",
       "type": "Canal",
       "body": "Contenu",
-      "updated": "Mis à jour"
+      "updated": "Mis à jour",
+      "groups": "Groupes"
     },
     "no_results": {
       "text": "Aucun modèle de {{tab}} dans ce filtre.",
@@ -1184,7 +1211,23 @@
       "channel": "Canal",
       "body": "Contenu",
       "body_placeholder": "Écrivez le contenu du modèle...",
-      "variables_hint": "Variables : {agent}, {client}, {ref}, {date}"
+      "variables_hint": "Variables : {agent}, {client}, {ref}, {date}",
+      "summary_missing_title": "titre",
+      "summary_missing_body": "contenu",
+      "create_submit": "Créer un modèle",
+      "create_breadcrumb": "Nouveau modèle",
+      "edit_breadcrumb": "Éditer le modèle",
+      "section_general": "Général",
+      "section_content": "Contenu",
+      "section_groups": "Groupes",
+      "groups": "Groupes qui l’utilisent",
+      "groups_placeholder": "Aucun groupe",
+      "whatsapp_hint": "WhatsApp ne prend en charge que le gras, l’italique et le barré.",
+      "format_bold": "Gras",
+      "format_italic": "Italique",
+      "format_underline": "Souligné",
+      "format_strike": "Barré",
+      "format_link": "Lien"
     },
     "errors": {
       "title_required": "Le titre est obligatoire",

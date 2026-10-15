@@ -123,7 +123,7 @@ export function decodificarCsv(bytes) {
 
 /** Los campos de una línea. Un campo entre comillas puede llevar el separador, y dentro `""` es una comilla. Un campo
  *  entre comillas no puede partir la línea: un contacto no lo necesita. */
-function campos(linea, separador) {
+export function campos(linea, separador) {
   const salida = [];
   let actual = '';
   let entreComillas = false;
