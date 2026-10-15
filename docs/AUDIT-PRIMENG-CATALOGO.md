@@ -364,7 +364,8 @@ medida en el navegador**: cada fila dice qué falta medir. Nada está decidido; 
 regla, a la tabla «Bifurcaciones al componer» de AGENTS.md.
 
 Casi todos los usos están bien elegidos o ya los decidió una DD; salen 25 candidatos. Donde más pesan es en piezas hechas a mano que imitan a un nativo (un `role="slider"`, un `role="menu"`, un
-grupo de radios con botones) y no traen su teclado.
+grupo de radios con botones) y no traen su teclado. Desde el 2026-10-15 esas piezas las vigila `audit:screen-hygiene` (8),
+que al estrenarse sumó cuatro que el barrido no vio: del 26 al 29.
 
 ### 7.1 Teclado y lector que hoy no funcionan
 
@@ -378,6 +379,10 @@ grupo de radios con botones) y no traen su teclado.
 | 6 | Reglas de Memory, valor de una condición (`rule-condition-value-picker.component.html:1`) | Desplegable a mano: 500 agentes como botones; la tipificación, un árbol de tres niveles aplanado | MultiSelect con `group` y `filter`; para la tipificación, **TreeSelect** con `selectionMode="checkbox"` y sin propagar | Teclado y lector como en cualquier desplegable | Media; preguntar si elegir «Ventas» incluye sus hijas. DD-195 descartó TreeSelect para otro caso, no este |
 | 7 | Ficha de grupo, estrategia en el resumen (`group-summary.component.html:104`) | Tres `<button role="radio">` con su ayuda | `sc-option-cards` (radios nativos) | Flechas entre opciones, y un grupo de radios de verdad para el lector | Media; medir si cabe en 240 px |
 | 8 | Monitor, categoría del asistente de widgets (`widget-assistant.component.html:15`) | Seis `<button role="radio">` | `sc-selectbutton` con `#item` | Flechas entre opciones | Media-baja; puede no caber |
+| 26 | Etiquetas, el color de una etiqueta (`sc-color-dot-picker.component.html:1`, del DS) | Botones con `role="radio"`, sin flechas | `sc-selectbutton` con `#item`, o radios nativos | Flechas entre colores, como en cualquier grupo de opciones | Media; lo cazó el gate, sin medir |
+| 27 | Lab, selector de columnas (`sc-column-selector.component.html:12`, del DS) | `role="menu"` sobre casillas nativas | `sc-multiselect iconOnly`, como las tablas (DD-153) | El lector deja de anunciar un menú que no lo es | Media; solo lo usan el Lab y su demo de sc-docs |
+| 28 | Memory, selector de datos de prueba (`mock-sample-switcher.component.html:19`) | `role="menu"` con `menuitemradio` a mano dentro de un Popover | `p-menu` con `popup` | Abrirlo y recorrerlo con teclado | Baja; es una herramienta de demo |
+| 29 | Etiquetas, Repositorios y Plantillas, el panel de alta en línea (`label-form-panel`, `repo-form-panel`, `template-form-panel`) | `role="dialog"` no modal: mete el foco y cierra con Escape | Medir si devuelve el foco al cerrar; si no, `p-popover` o `sc-dialog` | Quien usa teclado vuelve a su sitio al cerrar | Baja; puede estar bien, falta medirlo |
 
 ### 7.2 Avisos y confirmaciones fuera de su sitio
 
@@ -447,7 +452,9 @@ Leídos en el código; sin medir en el navegador.
    Toolbar y MeterGroup ya tienen sitio en sc-docs desde el 2026-10-14: la página PrimeNG (nota de la sección 3).
 3. **`sc-command-palette` frente a CommandMenu** (sección 2) — revisado el 2026-10-12: se mantiene.
 4. Cuando suba PrimeNG, el gate se pone rojo: rehacer esta tabla con la versión nueva.
-5. **El barrido (sección 7)**: cada candidato se decide con su pantalla; lo decidido va a una DD y, si es una regla,
-   a «Bifurcaciones al componer» de AGENTS.md. Los fallos de 7.4 no esperan a eso.
+5. **El barrido (sección 7), decidido el 2026-10-15**: se hacen los que ya resuelve una DD o una regla (1 a 5, 7, 8, 9,
+   14 a 20 y 22) y lo que queda de 7.4; 10, 11, 13, 21 y 24 cambian cómo se ve la pantalla y esperan a que se vean el
+   antes y el después; 6, 12 y 23 esperan una respuesta de desarrollo; 25 se queda como está (el Lab no lo ve ningún
+   cliente). Del 26 al 29 se deciden igual. Lo decidido que sea regla va a «Bifurcaciones al componer» de AGENTS.md.
 6. **La sección 6 en sc-docs**: hecho el 2026-10-14, la página PrimeNG. Si cambias la sección 6, `npm run
    primeng-catalog:gen` rehace su artefacto (el gate se pone rojo hasta entonces).

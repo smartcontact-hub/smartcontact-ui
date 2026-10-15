@@ -53,7 +53,7 @@
   del scroll» aunque «Scroll propio» esté apagado, y p-table lo pone de tope igual (240 px): mismo arreglo que `scrollHeightArg`
   de `/lab/tabla`, y cambia `datatable-linux.png`; (b) el «Exportar» de los listados de administración (`exportRequest` de
   `list-page`) aún no llama a `dt.exportCSV()`: antes, preguntar a producto si les basta un CSV.
-- **El barrido de PrimeNG (2026-10-14, §7 de `docs/AUDIT-PRIMENG-CATALOGO.md`)**: 25 candidatos sin decidir, los de teclado primero (barra del reproductor de Memory → `p-slider`, Numeración especial → `p-listbox`, menú del avatar → `p-menu`, hoja de atajos → `sc-dialog`, valor de una condición de regla → TreeSelect); cada uno con su pantalla. Quedan de 7.4: los «⋮» sin `ariaHasPopup`, los «—» a mano de cuscare-ds y el aviso parcial de Conversaciones («1 procesadas»).
+- **El barrido de PrimeNG (§7 de `docs/AUDIT-PRIMENG-CATALOGO.md`), decidido el 2026-10-15** (su «Siguientes pasos» 5): se hacen los 16 que ya resuelve una DD o una regla, en tres tandas (teclado, campos, avisos), cada una enseñada en local antes de subir; 10, 11, 13, 21 y 24 esperan a que se vean el antes y el después (artefacto en preparación); 6, 12 y 23 esperan a desarrollo. Las piezas a mano las vigila `audit:screen-hygiene` (8), con su trinquete en `ROLES_A_MANO`: al arreglar una, baja su número. Quedan de 7.4: los «⋮» sin `ariaHasPopup`, los «—» a mano de cuscare-ds y el aviso parcial de Conversaciones («1 procesadas»).
 
 0. **«Aura + color de marca» y el export en un clic** (encargo del 2026-09-13; mediciones en
    `~/Documents/Claude/2026-09 aura-marca/`). Hecho: robot (DD-82, #152), paleta del export (DD-83), capturas

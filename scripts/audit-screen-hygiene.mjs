@@ -4,7 +4,7 @@
  * que hasta ahora SOLO vivían en la doc (AGENTS.md §UX de pantalla). Un principio
  * que no tiene gate se pudre: esto lo convierte en un chequeo.
  *
- * Gatea SIETE cosas. La primera, la segunda y la cuarta, como TRINQUETE por conteo (el mismo patrón
+ * Gatea OCHO cosas. La primera, la segunda, la cuarta y la octava, como TRINQUETE por conteo (el mismo patrón
  * que `audit:api-era`: la lista solo puede MENGUAR, y muerde en las dos direcciones):
  *
  * 1. EMOJIS EN LA INTERFAZ. Los iconos salen de `<sc-icon>` (Material Symbols); un
@@ -51,6 +51,13 @@
  *    edición acusaba nada más encender «Tipificar llamadas») o que lee `.dejadas()` del alta sin pasar por ella. Solo
  *    `.ts` del Supervisor; `canSave` y el resumen también miran el modo, pero no acusan, y no se marcan.
  *
+ * 8. PIEZAS HECHAS A MANO QUE IMITAN A UN NATIVO (sección 6 de `docs/AUDIT-PRIMENG-CATALOGO.md`). Un `role="slider"`,
+ *    `role="menuitem"` o `role="radio"` puesto a mano promete el teclado del nativo (flechas, Inicio y Fin, el foco
+ *    dentro y de vuelta), y casi nunca lo trae: fue lo que más pesó en el barrido de la sección 7. Se marca cada
+ *    elemento que se pone uno de esos roles o `aria-modal`, y el aviso dice qué nativo usar. Un `<p-*>` no: ahí el rol
+ *    nombra al nativo. Un `radiogroup` tampoco: alrededor de radios nativos es lo correcto. Mira el Supervisor,
+ *    cuscare-ds y la librería del DS (plantillas y `template:` en línea); no las réplicas (DD-35) ni sc-docs.
+ *
  * QUÉ HACER SI SE PONE ROJO:
  *   · «nuevo incumplimiento» → arréglalo (usa `<sc-icon>` en vez del emoji; añade
  *     `width`/`height` o `aspect-ratio` a la imagen). NO lo añadas al trinquete.
@@ -59,6 +66,8 @@
  *   · «ya está a 0» → quita la entrada del trinquete.
  *   · «desplegable sin nombre» → dale el rótulo que tiene a la vista (`ariaLabelledBy`
  *     con el id de ese rótulo) o, si no tiene, `ariaLabel`.
+ *   · «pieza a mano» → el nativo que nombra el aviso, leída antes su documentación entera
+ *     (`node tools/primeng-doc.mjs <x>`). Si de verdad no sirve, es una decisión de producto: se anota aquí con su porqué.
  *
  * ES ESTÁTICO y PURO respecto al texto (funciones exportadas → testeable).
  */
@@ -242,6 +251,96 @@ export function desplegablesSinNombre(texto, esHtml) {
   return lineas;
 }
 
+/**
+ * Los roles que prometen un teclado que PrimeNG ya trae hecho, y su nativo con la familia de la sección 6 del catálogo.
+ * Sin `radiogroup`: alrededor de radios nativos (`sc-radiobutton`, `input type="radio"`) es lo correcto.
+ */
+export const NATIVO_DEL_ROL = {
+  slider: '`p-slider` (6.6)',
+  spinbutton: '`sc-inputnumber` (6.6)',
+  menu: '`p-menu` o `p-tieredmenu` (6.9)',
+  menubar: '`p-menubar` (6.9)',
+  menuitem: '`p-menu` o `p-tieredmenu` (6.9)',
+  menuitemcheckbox: '`p-menu` o `p-tieredmenu` (6.9)',
+  menuitemradio: '`p-menu` o `p-tieredmenu` (6.9)',
+  radio: '`sc-selectbutton`, `sc-radiobutton` o `sc-option-cards` (6.1)',
+  listbox: '`p-listbox` o `sc-select` (6.1)',
+  option: '`p-listbox` o `sc-select` (6.1)',
+  combobox: '`sc-select` o `p-autocomplete` (6.1)',
+  checkbox: '`sc-checkbox` (6.2)',
+  switch: '`sc-toggleswitch` (6.2)',
+  tree: '`p-tree` o `p-treeselect` (6.3)',
+  treeitem: '`p-tree` o `p-treeselect` (6.3)',
+  tablist: '`p-tabs` (6.10)',
+  tab: '`p-tabs` (6.10)',
+  dialog: '`sc-dialog` o `p-popover` (6.11)',
+  alertdialog: '`p-confirmdialog` o `p-confirmpopup` (6.12)',
+};
+
+/** Un `.ts` con solo sus `template:` en línea a la vista; lo demás, en blanco y con las líneas en su sitio. */
+export function soloPlantillas(ts) {
+  let salida = ts.replace(/[^\n]/g, ' ');
+  for (const m of ts.matchAll(/\btemplate:\s*`([^`]*)`/g)) {
+    const desde = m.index + m[0].indexOf('`') + 1;
+    salida = salida.slice(0, desde) + m[1] + salida.slice(desde + m[1].length);
+  }
+  return salida;
+}
+
+/**
+ * Las piezas de una plantilla que se ponen a mano un rol de `NATIVO_DEL_ROL` o `aria-modal`: `{ linea, rol }`, una por
+ * elemento. Vale el rol escrito (`role="slider"`) y el que se enlaza con un literal (`[attr.role]="x ? 'radio' : null"`).
+ * Un `<p-*>` no cuenta: ahí el rol nombra al nativo.
+ */
+export function rolesAMano(texto, esHtml) {
+  const limpio = sinComentariosEnSuSitio(esHtml ? texto : soloPlantillas(texto), true);
+  const piezas = [];
+  for (const m of limpio.matchAll(/<([a-zA-Z][\w-]*)\b/g)) {
+    if (m[1].startsWith('p-')) continue;
+    const etiqueta = limpio.slice(m.index, finDeEtiqueta(limpio, m.index));
+    const escrito = etiqueta.match(/\srole="([\w-]+)"/)?.[1];
+    const enlazado = [...(etiqueta.match(/\s\[attr\.role\]="([^"]*)"/)?.[1] ?? '').matchAll(/'([\w-]+)'/g)].map((r) => r[1]);
+    const rol = [escrito, ...enlazado].find((r) => r && r in NATIVO_DEL_ROL);
+    const modal = /\s(?:aria-modal|\[attr\.aria-modal\])=/.test(etiqueta);
+    if (rol || modal) piezas.push({ linea: limpio.slice(0, m.index).split('\n').length, rol: rol ?? 'dialog' });
+  }
+  return piezas;
+}
+
+/**
+ * TRINQUETE de piezas a mano (fichero → nº de elementos). Solo mengua. Cada entrada dice por qué sigue: el número del
+ * candidato en la sección 7 del catálogo, que la arregla, o lo que la deja como está.
+ */
+export const ROLES_A_MANO = {
+  // Candidato 4: el menú del avatar, a `p-menu` con `popup` como los otros nueve.
+  'projects/supervisor/src/app/core/layout/top-bar/top-bar.component.html': 3,
+  // Candidato 1, el deslizador. Los radios de las grabaciones traen su propio teclado (`onLabelKeydown`).
+  'projects/supervisor/src/app/features/memory/components/multi-recording-player/multi-recording-player.component.html': 2,
+  // Candidato 1: la barra del reproductor, a `p-slider`.
+  'projects/supervisor/src/app/features/memory/components/conversation-player-modal/conversation-player-modal.component.html': 1,
+  // Candidato 28: el selector de datos de prueba de Memory, un menú de radios sin teclado.
+  'projects/supervisor/src/app/features/memory/components/mock-sample-switcher/mock-sample-switcher.component.html': 2,
+  // Candidato 29: los paneles de alta en línea, un `role="dialog"` que no es modal. Meten el foco y cierran con Escape;
+  // falta medir si lo devuelven al cerrar.
+  'projects/supervisor/src/app/features/admin/labels/components/label-form-panel/label-form-panel.component.html': 1,
+  'projects/supervisor/src/app/features/admin/repositories/components/repo-form-panel.component.html': 1,
+  'projects/supervisor/src/app/features/admin/templates/components/template-form-panel/template-form-panel.component.html': 1,
+  // Candidato 7: la estrategia del resumen, a `sc-option-cards`.
+  'projects/supervisor/src/app/features/admin/groups/components/group-summary/group-summary.component.html': 1,
+  // Candidato 8: la categoría del asistente de widgets, a `sc-selectbutton`.
+  'projects/supervisor/src/app/features/dashboard/components/widget-assistant/widget-assistant.component.html': 1,
+  // Candidato 5: la hoja de atajos, a `sc-dialog` (DD-140).
+  'projects/ui-smartcontact/src/lib/components/keyboard-shortcuts/sc-keyboard-shortcuts.component.html': 1,
+  // Candidato 26: el color de una etiqueta (Etiquetas del Supervisor), radios sin flechas.
+  'projects/ui-smartcontact/src/lib/components/color-dot-picker/sc-color-dot-picker.component.html': 1,
+  // Candidato 27: `role="menu"` sobre casillas nativas; las columnas ya van con `sc-multiselect iconOnly` (DD-153).
+  'projects/ui-smartcontact/src/lib/components/column-selector/sc-column-selector.component.html': 1,
+  // Se queda: frente a CommandMenu se decidió mantenerla (sección 2 del catálogo, revisado el 2026-10-12).
+  'projects/ui-smartcontact/src/lib/components/command-palette/sc-command-palette.component.html': 1,
+  // Se queda hasta rehacer el port: solo lo usa la demo de sc-docs y su cabecera explica por qué no se adopta.
+  'projects/ui-smartcontact/src/lib/components/bulk-transcription-modal/sc-bulk-transcription-modal.component.html': 1,
+};
+
 /** Compara el estado medido contra un trinquete. Devuelve la lista de problemas. */
 export function chequearTrinquete(actual, congelado, etiqueta, comoArreglar) {
   const problemas = [];
@@ -291,6 +390,8 @@ if (process.argv[1] && process.argv[1].endsWith('audit-screen-hygiene.mjs')) {
   const guiones = [];
   const encima = [];
   const dePrimeras = [];
+  const roles = {};
+  const piezasDe = {};
   let desplegables = 0;
   for (const f of ficheros) {
     const src = readFileSync(f, 'utf8');
@@ -307,6 +408,13 @@ if (process.argv[1] && process.argv[1].endsWith('audit-screen-hygiene.mjs')) {
     }
     desplegables += (sinComentariosEnSuSitio(src, f.endsWith('.html')).match(DESPLEGABLE) ?? []).length;
     for (const linea of desplegablesSinNombre(src, f.endsWith('.html'))) sinNombre.push(`${f}:${linea}`);
+    if (/^projects\/(?:supervisor|cuscare-ds|ui-smartcontact\/src)\//.test(f) && !f.endsWith('.spec.ts')) {
+      const piezas = rolesAMano(src, f.endsWith('.html'));
+      if (piezas.length) {
+        roles[f] = piezas.length;
+        piezasDe[f] = piezas;
+      }
+    }
     if (f.startsWith('projects/supervisor/') && f.endsWith('.html')) {
       for (const linea of guionesSueltos(src)) guiones.push(`${f}:${linea}`);
       for (const linea of ayudasEncima(src)) encima.push(`${f}:${linea}`);
@@ -322,6 +430,20 @@ if (process.argv[1] && process.argv[1].endsWith('audit-screen-hygiene.mjs')) {
       'toast(s)',
       'cuenta el resultado con `ResultadoAccionService` (`visto` si ya se ve, `enLaBarra` si guarda y se queda) o junto a su control (DD-191).',
     ),
+    ...chequearTrinquete(
+      roles,
+      ROLES_A_MANO,
+      'pieza(s) hecha(s) a mano',
+      'usa el nativo que dice cada línea de abajo (sección 6 de `docs/AUDIT-PRIMENG-CATALOGO.md`).',
+    ),
+    ...Object.entries(roles)
+      .filter(([f, n]) => n > (ROLES_A_MANO[f] ?? 0))
+      .flatMap(([f]) =>
+        piezasDe[f].map(({ linea, rol }) => [
+          `${f}:${linea}: role="${rol}" a mano, sin el teclado del nativo.`,
+          `      → ${NATIVO_DEL_ROL[rol]}; su documentación entera con \`node tools/primeng-doc.mjs <x>\`.`,
+        ]),
+      ),
     ...sinNombre.map((donde) => [
       `${donde}: desplegable sin nombre (DD-133). PrimeNG lo nombraría con la opción elegida.`,
       '      → `ariaLabelledBy` con el id del rótulo que tiene a la vista o, sin rótulo, `ariaLabel`. Un `<label for>` solo nombra un sc-multiselect.',
@@ -347,14 +469,15 @@ if (process.argv[1] && process.argv[1].endsWith('audit-screen-hygiene.mjs')) {
       `${Object.keys(emojis).length} fichero(s), ${totImg} img/iframe sin dims en ${Object.keys(imgs).length} ` +
       `(trinquetes: emoji ${Object.keys(EMOJI_PENDIENTES).length}, img ${Object.keys(IMG_PENDIENTES).length}), ` +
       `${sinNombre.length} de ${desplegables} desplegables sin nombre, ${guiones.length} guion(es) suelto(s), ${encima.length} ayuda(s) encima, ${dePrimeras.length} aviso(s) de primeras, ` +
+      `${Object.values(roles).reduce((a, b) => a + b, 0)} pieza(s) a mano en ${Object.keys(roles).length} fichero(s), ` +
       `${Object.values(toasts).reduce((a, b) => a + b, 0)} toast(s) del sistema en ${Object.keys(toasts).length} fichero(s)\n`,
   );
 
   if (!problemas.length) {
     log(
       '✓ audit:screen-hygiene OK — sin emojis nuevos en la interfaz, ninguna imagen nueva sin reservar su hueco, ' +
-        'cada desplegable con nombre, ningún toast nuevo fuera de los del sistema, ningún «—» suelto, ninguna ayuda encima de su control ' +
-        'y ningún obligatorio que acuse de primeras.',
+        'cada desplegable con nombre, ningún toast nuevo fuera de los del sistema, ningún «—» suelto, ninguna ayuda encima de su control, ' +
+        'ningún obligatorio que acuse de primeras y ninguna pieza nueva hecha a mano que imite a un nativo.',
     );
     process.exit(0);
   }
