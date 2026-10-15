@@ -1,4 +1,4 @@
-# Apunta en la pantalla de *Deployments* qué está publicado en cada uno de los cinco sitios,
+# Apunta en la pantalla de *Deployments* qué está publicado en cada uno de los seis sitios,
 # DESPUÉS de comprobarlo.
 #
 # Cloudflare despliega solo al empujar a `main`; GitHub no se entera de nada, así que esa
@@ -73,7 +73,7 @@ jobs:
           node-version: 22
       # Sin `npm ci`: el script es Node pelado (fetch nativo), así no espera a una instalación
       # para empezar a mirar los sitios.
-      - name: Registrar los 5 sitios (comprobando que sirven el commit)
+      - name: Registrar los 6 sitios (comprobando que sirven el commit)
         run: node scripts/record-deploy.mjs "${{ inputs.sha || github.sha }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

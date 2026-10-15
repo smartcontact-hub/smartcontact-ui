@@ -133,5 +133,5 @@ acceso restringido. Se puede leer, enlazar, citar y forkear para evaluarlo o pro
 cualquier otro uso necesita permiso por escrito. Las dependencias conservan su licencia (las
 tipografías que viajan en los sitios publicados son OFL 1.1).
 
-El aviso legal de los cinco sitios es una página del propio sc-docs:
+El aviso legal de los seis sitios es una página del propio sc-docs:
 [sc-doc.pages.dev/#/aviso-legal](https://sc-doc.pages.dev/#/aviso-legal).

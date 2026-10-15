@@ -10,7 +10,7 @@
  *
  * Contesta la pregunta que se hace al final de cada sesión, «¿puedo cerrar este chat?», para
  * todas a la vez. Una caja se cierra cuando está VACÍA: el PR fundido y el CI leído. Verde y sin
- * fundir no es trabajo entregado, porque los cinco sitios sirven `main` (NEXT-SESSION.md).
+ * fundir no es trabajo entregado, porque los seis sitios sirven `main` (NEXT-SESSION.md).
  *
  * No duplica `ci:verdict`, que es el veredicto PROFUNDO de UNA rama (lee el run del workflow y lo
  * casa con tu HEAD). Esto es la vista ancha: qué cajas hay y cuál pide algo.

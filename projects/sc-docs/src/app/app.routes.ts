@@ -117,7 +117,7 @@ export const routes: Routes = [
   },
 
   {
-    // Aviso legal de los CINCO sitios públicos, no solo de este. Vive aquí porque sc-docs es
+    // Aviso legal de los SEIS sitios públicos, no solo de este. Vive aquí porque sc-docs es
     // el único con cromo propio: las réplicas (`agent`, `cuscare`, `agent-mini`) copian una
     // herramienta real y un pie que el original no tiene rompería la réplica (DD-35).
     path: 'aviso-legal',

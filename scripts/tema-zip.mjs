@@ -10,7 +10,8 @@
  * mismo CSS que el del código en los 97 componentes, y un valor tocado en el paquete lo caza.
  *
  * Qué lleva:
- *   sc-preset.mjs                 preset de PrimeNG (Aura + lo nuestro + el extend del plugin), sin dependencias
+ *   sc-preset.mjs                 preset de PrimeNG (lo nuestro + el extend del plugin). Aura y `definePreset` NO van dentro:
+ *                                 se importan de `@primeuix/themes`, que instala quien lo usa, con su licencia (DD-207)
  *   sc-preset.d.ts                el tipo, para importarlo desde TypeScript
  *   smartcontact-tokens.css       las 6 capas de tokens `--sc-*` (claro y `.sc-dark`) que el preset lee
  *   smartcontact-typography.css   las clases `.sc-text-*` de los 12 estilos de texto
@@ -37,6 +38,13 @@ const ROOT = process.env.SC_ROOT ? resolve(process.env.SC_ROOT) : resolve(import
 const LAYERS = ['01-primitive', '02-semantic', '03-palette', '04-component', '05-extensions', '07-dark'];
 const STYLES = join(ROOT, 'projects/design-tokens/src/lib/styles');
 const OPCIONES = { prefix: 'p', darkModeSelector: '.sc-dark' };
+
+/**
+ * Código de PrimeTek que ha entrado en el bundle, a partir de las entradas que dice esbuild que ha leído.
+ * Tiene que salir vacío: la licencia PrimeUI prohíbe redistribuir el software para que otros desarrollen con
+ * él (eso es la licencia OEM), y un paquete publicado que lleve dentro `@primeuix/themes` lo hace.
+ */
+export const codigoDePrimeTek = (entradas) => entradas.filter((f) => /node_modules\/(?:@primeuix|@primeui|primeng)\//.test(f)).sort();
 
 /** `--sc-*` de un CSS, por ámbito (claro u oscuro según su regla). */
 export function variables(css) {
@@ -180,6 +188,8 @@ export const paqueteNpm = ({ commit, generado }) => {
     },
     files: ['sc-preset.mjs', 'sc-preset.d.ts', ...FICHEROS.filter((x) => x.endsWith('.css')), 'README.md', 'manifiesto.json'],
     sideEffects: ['*.css'],
+    // El preset importa Aura y `definePreset` de aquí; no van dentro del paquete (licencia PrimeUI, DD-207).
+    peerDependencies: { '@primeuix/themes': '^3.0.0' },
     license: 'UNLICENSED',
     repository: { type: 'git', url: 'https://github.com/smartcontact-hub/smartcontact-ui.git' },
     smartcontact: { commit },
@@ -188,7 +198,16 @@ export const paqueteNpm = ({ commit, generado }) => {
 
 async function cssDelPreset(ruta) {
   const { Theme } = await import(pathToFileURL(join(ROOT, 'node_modules/@primeuix/styled/dist/index.mjs')).href);
-  const preset = (await import(`${pathToFileURL(ruta).href}?t=${Date.now()}`)).default;
+  // El preset publicado importa `@primeuix/themes` por nombre y Node lo resuelve desde donde está el fichero: se lee
+  // desde una copia dentro de `node_modules` del repo, que sí lo tiene. Un zip anterior con Aura dentro también vale.
+  const copia = join(ROOT, 'node_modules', `.tema-zip-${process.pid}-${Date.now()}.mjs`);
+  writeFileSync(copia, readFileSync(ruta));
+  let preset;
+  try {
+    preset = (await import(pathToFileURL(copia).href)).default;
+  } finally {
+    rmSync(copia, { force: true });
+  }
   // La semántica común se guarda UNA vez: metida en cada componente, un cambio común hace que los 97
   // «cambien» y el informe no dice nada (medido la primera vez: 97 de 97).
   // `style` es el CSS de reglas, no de variables: el global sale en `getCommon`, el de cada componente
@@ -235,7 +254,7 @@ aplicaciones de Smart Contact, por lo que los componentes se muestran de forma i
 
 | Fichero | Descripción |
 |---|---|
-| \`sc-preset.mjs\` | Preset de PrimeNG (Aura con la identidad de Smart Contact). Incluye las variables \`extend\` que genera el plugin de Figma (\`--p-typography-*\`, \`--p-app-typography-*\`, \`--p-presence-*\`, \`--p-component-custommodal-*\`). |
+| \`sc-preset.mjs\` | Preset de PrimeNG (la identidad de Smart Contact sobre Aura, que viene de \`@primeuix/themes\`). Incluye las variables \`extend\` que genera el plugin de Figma (\`--p-typography-*\`, \`--p-app-typography-*\`, \`--p-presence-*\`, \`--p-component-custommodal-*\`). |
 | \`sc-preset.d.ts\` | Declaración de tipos para TypeScript. |
 | \`smartcontact-tokens.css\` | Tokens de diseño \`--sc-*\`, modo claro y oscuro. |
 | \`smartcontact-typography.css\` | Estilos de texto \`.sc-text-*\`. |
@@ -244,6 +263,8 @@ aplicaciones de Smart Contact, por lo que los componentes se muestran de forma i
 ## Requisitos
 
 - Angular con PrimeNG 21 o superior.
+- \`@primeuix/themes\` 3.x instalado en el proyecto (\`npm install @primeuix/themes\`). El preset importa de ahí Aura y
+  \`definePreset\`: el paquete no los incluye, porque son de PrimeTek y se usan bajo la licencia PrimeUI del proyecto.
 - Tamaño de fuente raíz de 16 px (\`html { font-size: 100% }\`).
 - Fuente Inter disponible en la aplicación.
 
@@ -325,7 +346,10 @@ if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {
   const extendNuestro = (await import(pathToFileURL(join(temporal, 'extend.mjs')).href)).default;
   rmSync(temporal, { recursive: true, force: true });
   const extendPlugin = extendDesdeKit(custom, declaradas, extendNuestro);
-  await build({
+  const bundle = await build({
+    metafile: true,
+    // `@primeuix/themes` se queda como `import` del paquete: lo resuelve quien lo instala, bajo su licencia.
+    external: ['@primeuix/themes', '@primeuix/themes/*'],
     stdin: {
       contents: `import { definePreset } from '@primeuix/themes';\nimport scPreset from ${JSON.stringify(join(PRESET, 'index.ts'))};\nexport default definePreset(scPreset, { extend: ${JSON.stringify(extendPlugin)} });\n`,
       resolveDir: ROOT,
@@ -340,6 +364,7 @@ if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {
     absWorkingDir: ROOT,
     logLevel: 'error',
   });
+  const incluidoDePrimeTek = codigoDePrimeTek(Object.keys(bundle.metafile.inputs));
   writeFileSync(join(OUT, 'sc-preset.d.ts'), '/** Preset de PrimeNG de Smart Contact (Aura + marca). */\ndeclare const scPreset: Record<string, unknown>;\nexport default scPreset;\n');
   writeFileSync(join(OUT, 'smartcontact-tokens.css'), tokensCss);
   writeFileSync(join(OUT, 'smartcontact-typography.css'), readFileSync(join(STYLES, 'base/typography.css'), 'utf8'));
@@ -367,6 +392,7 @@ if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {
   // 4. El contrato del plugin: cada variable que su `extend` promete existe en el tema empaquetado.
   const declaradasPreset = new Set([...`${cssAhora.comun}\n${Object.values(cssAhora.componentes).join('\n')}`.matchAll(/(--p-[\w-]+)\s*:/g)].map((m) => m[1]));
   comprobaciones.contratoPlugin = { promete: contratoDelPlugin(custom).length, faltan: contratoDelPlugin(custom).filter((v) => !declaradasPreset.has(v)) };
+  comprobaciones.sinCodigoDePrimeTek = { incluye: incluidoDePrimeTek };
   const manifiesto = { commit, primeng: version('primeng'), themes: version('@primeuix/themes'), generado: new Date().toISOString(), comprobaciones };
   manifiesto.version = paqueteNpm(manifiesto).version;
   writeFileSync(join(OUT, 'manifiesto.json'), `${JSON.stringify(manifiesto, null, 2)}\n`);
@@ -375,6 +401,10 @@ if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {
 
   if (comprobaciones.ceros.length) {
     console.error(`✗ ${comprobaciones.ceros.length} token(s) pasan a 0: ${comprobaciones.ceros.slice(0, 5).join(', ')}`);
+    process.exit(1);
+  }
+  if (comprobaciones.sinCodigoDePrimeTek.incluye.length) {
+    console.error(`✗ el paquete llevaría código de PrimeTek dentro (${comprobaciones.sinCodigoDePrimeTek.incluye.slice(0, 3).join(', ')}): su licencia no permite redistribuirlo sin la OEM. Déjalo en \`external\`.`);
     process.exit(1);
   }
   if (comprobaciones.contratoPlugin.faltan.length) {

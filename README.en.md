@@ -136,5 +136,5 @@ may read, link to, quote and fork it to evaluate it or propose changes; any othe
 written permission. Dependencies keep their own licences (the fonts shipped with the published
 sites are OFL 1.1).
 
-The legal notice for all five sites is a page of sc-docs itself:
+The legal notice for all six sites is a page of sc-docs itself:
 [sc-doc.pages.dev/#/aviso-legal](https://sc-doc.pages.dev/#/aviso-legal).

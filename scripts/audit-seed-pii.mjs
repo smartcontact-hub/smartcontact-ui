@@ -256,7 +256,7 @@ if (process.argv[1] && process.argv[1].endsWith('audit-seed-pii.mjs')) {
     for (const lineas of problemas) log('  ' + lineas.join('\n  '));
     log();
     log(`  ${problemas.length} problema(s). El repo es PÚBLICO y estos ficheros se sirven en`);
-    log('  los cinco sitios: un teléfono o un correo de verdad aquí es un dato publicado.');
+    log('  los seis sitios: un teléfono o un correo de verdad aquí es un dato publicado.');
     process.exit(1);
   }
 
