@@ -282,7 +282,7 @@ table.table {
  * responde un botón al dedo es del SISTEMA — exportabas el tema, lo montabas en
  * otro sitio y los botones dejaban de chascar. Que el Kit no publique un token
  * de micro-interacción no convertía esto en propiedad de una app. Lo que queda
- * aquí son tres clases NUESTRAS, así que ya no pisa nada del tema y no arrastra
+ * aquí son dos clases NUESTRAS, así que ya no pisa nada del tema y no arrastra
  * ningún `.p-*` con ellas.
  *
  * Hover/focus con transición corta para que el estado se sienta vivo y no
@@ -290,8 +290,7 @@ table.table {
  * el click debe dar respuesta táctil instantánea, no el desvanecido del hover.
  */
 .empty-state__cta,
-.rename__btn,
-.profile-tabs__tab {
+.rename__btn {
   transition:
     background-color 100ms ease,
     border-color 100ms ease,
@@ -463,83 +462,13 @@ table.table {
   }
 }
 
-/* Memory · Rules conflict popover (iter 9d-2).
- * `<p-popover>` con appendTo:body monta fuera del scope component.
- */
-.rules-conflict-popover {
-  .conflict-popover {
-    max-width: 320px;
-    padding: var(--sc-spacing-0-875) var(--sc-spacing-1-125);
-
-    h3 {
-      margin: 0 0 4px 0;
-      font-size: var(--sc-font-size-subtitle-2);
-      line-height: var(--sc-line-height-subtitle-2);
-      font-weight: var(--sc-font-weight-subtitle-2);
-      color: var(--sc-text-primary);
-    }
-  }
-
-  .conflict-popover__desc {
-    margin: 0 0 var(--sc-spacing-0-875) 0;
-    font-size: var(--sc-font-size-100);
-    line-height: var(--sc-line-height-caption);
-    color: var(--sc-text-secondary);
-  }
-
-  .conflict-popover__list {
-    margin: 0 0 var(--sc-spacing-0-875) 0;
-    padding: 0;
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-
-    li {
-      padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
-      background: var(--sc-bg-elevated);
-      border-radius: var(--sc-radius-100);
-      font-size: var(--sc-font-size-100);
-    }
-
-    strong {
-      font-weight: var(--sc-font-weight-regular);
-      color: var(--sc-text-primary);
-    }
-  }
-
-  .conflict-popover__meta {
-    color: var(--sc-text-secondary);
-    margin-left: 4px;
-  }
-
-  .conflict-popover__winner {
-    margin: 0 0 var(--sc-spacing-0-875) 0;
-    padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
-    background: var(--sc-bg-primary-subtle);
-    border-radius: var(--sc-radius-100);
-    font-size: var(--sc-font-size-100);
-    line-height: var(--sc-line-height-caption);
-    color: var(--sc-text-primary);
-  }
-
-  .conflict-popover__hint {
-    margin: 0;
-    font-size: var(--sc-font-size-50);
-    line-height: var(--sc-line-height-caption);
-    color: var(--sc-text-secondary);
-    font-style: italic;
-  }
-}
-
 /*
  * Honour `prefers-reduced-motion`: drop the press transform entirely so
  * users with motion sensitivity get a calm interface.
  */
 @media (prefers-reduced-motion: reduce) {
   .empty-state__cta,
-  .rename__btn,
-  .profile-tabs__tab {
+  .rename__btn {
     transition: none;
 
     &:active {

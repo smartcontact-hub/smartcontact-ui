@@ -82,13 +82,6 @@
    */
   margin-inline: var(--sc-spacing-0-875);
 
-  /* Sin caja no hay filo con el que casar: en un bloque a sangre (`.plain-section`, hoy «Valores por
-   * defecto» de grupos) el contenido arranca en la vertical del título. Las fichas de agente y usuario
-   * también iban sin caja hasta el 2026-09-27; desde DD-122 van en su `sc-section-card`, como la de grupo. */
-  .plain-section & {
-    margin-inline: 0;
-  }
-
   &__head {
     display: flex;
     flex-direction: column;
@@ -168,22 +161,11 @@
   &--3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
-
-  /*
-   * La variante 70/30 de la maqueta: 578.5 + 24.5 + 214 sobre los 817 útiles. La usan
-   * "Recepción de conversaciones" (2286:5581) y las dos filas de URL de "Notificaciones"
-   * (2286:5558) — un campo ancho a la izquierda y una columna estrecha de opciones a la
-   * derecha.
-   */
-  &--wide-narrow {
-    grid-template-columns: minmax(0, 578.5fr) minmax(0, 214fr);
-  }
 }
 
 @media (max-width: 720px) {
   .grid--2,
-  .grid--3,
-  .grid--wide-narrow {
+  .grid--3 {
     grid-template-columns: 1fr;
   }
 }
@@ -458,62 +440,6 @@
   }
 }
 
-/* ------------------------------------------------------------------ *
- * La ficha — a quién editas, en la cabeza del índice de las fichas de agente,
- * grupo y usuario. Solo lectura; los campos se editan en su sección.
- *
- * DESDE EL 2026-09-14 SIN PANEL. Era un bloque gray-50 con radio 12 y la pastilla de
- * estado dibujada a mano (`.pill`, con su animación de «latido»). En Contact Center el
- * rail no tiene color —lo único que pinta es el item activo— y una caja gris encima del
- * índice era la primera cosa que hacía que las dos pantallas no se parecieran. Ahora la
- * ficha arranca en la misma vertical que el texto de los items (`0-625`, el relleno de
- * cada item) y el estado es un `sc-tag` del DS (DD-77).
- * ------------------------------------------------------------------ */
-.ficha {
-  display: flex;
-  align-items: center;
-  gap: var(--sc-spacing-0-875);
-  padding: var(--sc-spacing-0-25) var(--sc-spacing-0-625);
-  min-width: 0;
-
-  &__avatar {
-    flex: 0 0 auto;
-  }
-
-  &__body {
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--sc-spacing-0-25);
-  }
-
-  /* La métrica la pone `.sc-text-body-semibold` en la plantilla. */
-  &__name,
-  &__meta {
-    max-width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  &__name {
-    color: var(--sc-text-heading);
-  }
-
-  /* Email, teléfono o extensión. Recorta: medido el 2026-09-14, el email de
-   * «mario.supervisor@empresa.com» se salía 22px por la derecha del rail. */
-  &__meta {
-    color: var(--sc-text-subtle);
-  }
-}
-
-/* Eliminar, al pie del índice: un `sc-button` del DS; aquí solo vive su SITIO. Fuera
- * del recorrido principal, alineado con el texto de los items. */
-.rail-delete {
-  align-self: flex-start;
-}
-
 /* Rail del formulario (columna izquierda de `.page__inner--with-panel`): ficha
  * de identidad + índice de secciones + la zona de peligro al fondo.
  *
@@ -549,40 +475,4 @@
   @media (max-width: 1024px) {
     position: static;
   }
-}
-
-/* EL BLOQUE A SANGRE de las fichas «una página + pestañas» (grupo, usuario, agente): el contenido
- * de una pestaña, sin caja. Vive aquí porque lo usan las tres fichas (DD-65).
- *
- * No declara ni fondo, ni borde, ni radio: por eso no es una «caja a mano» de las que persigue
- * `audit:screen-vocabulary`, es la ausencia de una. Y por eso su contenido tampoco lleva la
- * sangría de 12.25 de `.sub-section`: esa sangría existe para casar con el filo de la tarjeta, y
- * aquí no hay filo.
- *
- * 28 entre los dos bloques que contiene (canales y agentes) contra los 14 de dentro de cada uno:
- * es el 2× que pide la regla de agrupación para que se vea dónde acaba uno. En la maqueta iban a
- * 14 los dos, que es la misma distancia fuera que dentro. */
-.plain-section {
-  display: flex;
-  flex-direction: column;
-  /* 14 entre los dos bloques que contiene (canales y agentes), que con los 14 de
-   * `.plain-block + .plain-block` hacen los 28 de la nota de arriba. Desde el 2026-09-22 ya no hay
-   * rótulo dentro: el nombre de la sección lo dice su pestaña. */
-  gap: var(--sc-spacing-1);
-  scroll-margin-top: var(--sc-form-anchor-offset);
-}
-
-/* Y 28 entre bloque y bloque (los 14 del `gap` más estos 14): el doble de los 14 de dentro de cada
- * uno, que es lo que pide la regla para que se vea dónde acaba «Canales» y empieza «Agentes». */
-.plain-block + .plain-block {
-  margin-block-start: var(--sc-spacing-1);
-}
-
-/* El equivalente de `.sub-section` sin la sangría. Mismo `gap`: las filas de dentro de un bloque
- * se separan igual dé caja o no. */
-.plain-block {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sc-spacing-1);
-  min-inline-size: 0;
 }
