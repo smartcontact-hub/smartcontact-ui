@@ -91,7 +91,7 @@
                 <!-- `sc-inputtags` (DD-195, candidato 16 del barrido): cada sinónimo se ve como se guarda y se quita con su ✕.
                      La coma sigue cerrando uno, así que la pista de la coma vale igual. -->
                 <div class="entity-form__synonyms-block">
-                  <sc-inputtags size="sm" [label]="'memory.entities.form.synonyms_label' | translate" [inputId]="'syn-input-' + $index" [placeholder]="'memory.entities.form.synonyms_placeholder' | translate" [value]="draft.synonyms" (valueChange)="updateListValueSynonyms($index, $event)" />
+                  <sc-inputtags size="sm" [label]="'memory.entities.form.synonyms_label' | translate" [inputId]="'syn-input-' + $index" [placeholder]="draft.synonyms.length ? '' : ('memory.entities.form.synonyms_placeholder' | translate)" [value]="draft.synonyms" (valueChange)="updateListValueSynonyms($index, $event)" />
                 </div>
               } @else {
                 <sc-button variant="secondary" appearance="link" size="sm" [label]="'memory.entities.form.add_synonyms' | translate" (clicked)="toggleListValueSynonyms($index)" />

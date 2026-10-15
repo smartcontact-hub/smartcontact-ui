@@ -1111,7 +1111,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 20,
+      "usedInSupervisor": 21,
       "cuando": "Para una cantidad acotada, con mínimo, máximo y paso. Si el número es un identificador (un teléfono, un código), es texto: `sc-inputtext`.",
       "sobreObsoleto": []
     },
@@ -1157,7 +1157,7 @@
         "kit"
       ],
       "retirado": null,
-      "usedInSupervisor": 1,
+      "usedInSupervisor": 2,
       "cuando": "Para varios valores cortos que escribe el usuario (dominios, etiquetas libres, correos). Si salen de una lista cerrada, `sc-multiselect`; si es uno solo, `sc-inputtext`.",
       "sobreObsoleto": []
     },
@@ -1203,7 +1203,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 50,
+      "usedInSupervisor": 47,
       "cuando": "Para texto de una línea. Si puede ocupar varias, `sc-textarea`.",
       "sobreObsoleto": []
     },
@@ -1561,7 +1561,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 3,
+      "usedInSupervisor": 4,
       "cuando": "Para elegir UNA de pocas opciones excluyentes, todas a la vista. Si son muchas, `sc-select`.",
       "sobreObsoleto": []
     },
@@ -1924,7 +1924,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 7,
+      "usedInSupervisor": 8,
       "cuando": "Para texto que puede ocupar varias líneas: una descripción, una nota, el motivo de algo. Si siempre cabe en una, `sc-inputtext`.",
       "sobreObsoleto": []
     },
