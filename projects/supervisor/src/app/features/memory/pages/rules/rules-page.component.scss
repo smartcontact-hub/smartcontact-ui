@@ -72,25 +72,6 @@
   }
 }
 
-.rules-handle {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--sc-spacing-0-25);
-  color: var(--sc-text-secondary);
-  cursor: grab;
-  font-variant-numeric: tabular-nums;
-
-  &:active {
-    cursor: grabbing;
-  }
-
-  &__num {
-    font-size: var(--sc-font-size-200);
-    font-weight: var(--sc-font-weight-semibold);
-    color: var(--sc-text-primary);
-  }
-}
-
 /* El bloque de feedback visual de CDK DragDrop se fue con `.rules-table`: tres
  * de sus cuatro reglas colgaban de ese selector, y en `features/memory` no hay
  * ningún `cdkDrag` (el MVP DD-28 no prioriza reglas, así que no se arrastran). */
