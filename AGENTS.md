@@ -333,6 +333,10 @@ no la otra. Cada fila apunta a la decisión o al gate que la sostiene; no hay fi
 | Un control con su teclado (deslizador, menú, grupo de opciones, pestañas, capa) o dudar entre dos parecidos | El nativo de su familia en la sección 6 de `docs/AUDIT-PRIMENG-CATALOGO.md`: la pregunta que abre la familia decide entre hermanos, y su «Elígelo cuando…» dice cuál | Un `role="slider"`, `role="menuitem"`, `role="radio"` o `aria-modal` puestos a mano en un `div` o un `button`: prometen un teclado que no traen | `audit:screen-hygiene` (8) |
 | Un diálogo modal con contenido propio (un alta sin salir de la ficha, un aviso con su detalle) | `sc-dialog` con su `title`, que es su nombre para el lector; lo de dentro, sin rol propio | Un `role="dialog"` en lo que va dentro (sale un diálogo dentro de otro); un `p-dialog` a pelo sin nombre | DD-140 |
 | Borrar una entidad desde su ficha | `sc-form-danger-zone` + `sc-delete-entity-dialog` (el patrón de las nueve fichas que ya lo usan, ver `docs/inventory.md`) | `sc-confirmdialog` genérico; borrar sin confirmar | `docs/inventory.md` |
+| Confirmar con una frase lo que se acaba de pulsar (marcar una columna entera, «Expirar contraseña») | `ScConfirmService.request({ …, target })` con lo pulsado: un `p-confirmpopup` pegado a ello, y el foco vuelve ahí al cerrar (no lo apagues mientras pregunta) | El diálogo centrado para una frase; un globo propio | DD-205 |
+| Confirmar algo cuya consecuencia hay que explicar (una rama con sus hijas) o sin un botón al que pegarse (al guardar, al salir) | `ScConfirmService.request` sin `target`: el `p-confirmdialog` centrado | El globo: tapa poco y explica poco | DD-205 |
+| Un menú de acciones con un segundo nivel (los filtros de un widget) | `p-tieredmenu` con `popup`; lo que quita o borra, con `styleClass: 'sc-menu-item--danger'` | `p-menu` con los grupos planos | DD-205 |
+| Filtrar por un par que reparte todo (tipo, canal, dirección) | `sc-selectbutton multiple [allowEmpty]="false"`: no se queda vacío | Dos casillas sueltas, que dejan la tabla en 0 | DD-205 |
 | Dos flujos que se ven distintos y parece un bug | Mira DD-36 y DD-53 antes de uniformar | Igualarlos «para que cuadren» | DD-36, DD-53 |
 
 ---
@@ -348,7 +352,7 @@ Agents MUST follow this order:
 3. If you touched tokens/theme → follow [`docs/guia-tokens.md`](docs/guia-tokens.md)
    §2.bis / §2.ter (the two sync paths).
 4. Document the change in `docs/` and map it in `docs/DOCS-INDEX.md` (enforced by `docs:guard`).
-5. Run verification: `npm run verify` — and before pushing, the **8 steps of `ci.yml`**.
+5. Run verification: `npm run verify` — and before pushing, the **steps of `ci.yml`**.
 
 Do not skip steps.
 

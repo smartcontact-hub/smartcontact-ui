@@ -78,21 +78,9 @@
 .animate-sc-bump {
   animation: sc-bump 260ms var(--sc-ease-out, cubic-bezier(0.16, 1, 0.3, 1));
 }
-.animate-sc-pulse {
-  animation: sc-pulse 360ms var(--sc-ease-out, cubic-bezier(0.16, 1, 0.3, 1));
-}
-.animate-sc-shake {
-  animation: sc-shake 280ms ease;
-}
-.animate-sc-delta-fly {
-  animation: sc-delta-fly 750ms var(--sc-ease-out, cubic-bezier(0.16, 1, 0.3, 1)) forwards;
-}
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-sc-bump,
-  .animate-sc-pulse,
-  .animate-sc-shake,
-  .animate-sc-delta-fly {
+  .animate-sc-bump {
     animation: none !important;
   }
 }

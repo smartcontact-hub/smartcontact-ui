@@ -1080,7 +1080,8 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
     this.updateField('loginExtOverride', checked);
   }
 
-  protected async requestExpirePassword(): Promise<void> {
+  /** Pregunta en un globo pegado al botón (no en un diálogo centrado): pregunta y resultado, en el mismo sitio. */
+  protected async requestExpirePassword(event?: MouseEvent): Promise<void> {
     const name =
       this.form().name || this.translate.instant('agents.entity_singular');
     const ok = await this.confirmHost.request({
@@ -1093,6 +1094,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
       ),
       rejectLabel: this.translate.instant('common.cancel'),
       acceptTone: 'danger',
+      target: event?.currentTarget ?? event?.target ?? null,
     });
     if (!ok) return;
     this.expiraAviso.set(this.translate.instant('agents.form.advanced.sesion.expire_toast', { name }));

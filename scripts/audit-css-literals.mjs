@@ -41,6 +41,8 @@ const log = (s = '') => process.stdout.write(s + '\n');
  *
  * DS 15 → 13 y 42 → 38 el mismo día, con el barrido tipográfico del flujo de grupos: `sc-inputnumber` deja su letra y
  * su relleno al tema por `pSize` (DD-91) y su sufijo y el globo de agentes pasan a los tokens de caption.
+ *
+ * Supervisor 49 → 46 y 43 → 39 el 2026-10-15: sale el CSS que no casaba con ninguna plantilla (69 reglas en 20 hojas).
  */
 export const ZONAS = [
   { nombre: 'DS · tipografía', dirs: ['projects/ui-smartcontact/src/lib/components'], tipo: 'tipografia', max: 13 },
@@ -49,13 +51,13 @@ export const ZONAS = [
     nombre: 'Supervisor · tipografía',
     dirs: ['projects/supervisor/src/app', 'projects/supervisor/src/styles'],
     tipo: 'tipografia',
-    max: 49,
+    max: 46,
   },
   {
     nombre: 'Supervisor · espaciado',
     dirs: ['projects/supervisor/src/app', 'projects/supervisor/src/styles'],
     tipo: 'espaciado',
-    max: 43,
+    max: 39,
   },
 ];
 

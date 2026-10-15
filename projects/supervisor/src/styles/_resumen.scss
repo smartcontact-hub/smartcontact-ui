@@ -145,28 +145,12 @@
   margin: 0;
 }
 
-.resumen__head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--sc-spacing-0-5);
-  margin: 0;
-}
-
 /* `inline-block` para que la animación de la cifra (`scale`) tenga caja propia. Las cifras no
  * bailan al cambiar de dígito. */
 .resumen__digits {
   display: inline-block;
   color: var(--sc-text-primary);
   font-variant-numeric: tabular-nums;
-}
-
-/* Un número o una estrategia larga («Niveles · Menos conversaciones atendidas») parte línea antes que recortarse:
- * un dato del resumen que hay que abrir para leerlo no resume nada. */
-.resumen__value {
-  margin: 0;
-  color: var(--sc-text-primary);
-  overflow-wrap: anywhere;
 }
 
 /* ─── La cifra principal, con color (DD-161) ────────────────────────────────────────────────────────────
@@ -183,7 +167,7 @@
   background-image: linear-gradient(135deg, var(--sc-bg-primary-active), var(--sc-bg-primary) 55%, var(--sc-bg-primary-hover));
   box-shadow: var(--sc-shadow-card);
 
-  :is(.resumen__count, .resumen__of, .resumen__digits, .resumen__value, .resumen__label, .resumen__note) {
+  :is(.resumen__count, .resumen__of, .resumen__digits, .resumen__label, .resumen__note) {
     color: inherit;
   }
 

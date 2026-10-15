@@ -48,7 +48,7 @@ app: [docs/consumer-onboarding.md](docs/consumer-onboarding.md) (in Spanish).
 ## The apps in this repo
 <!--sc:sec=apps-->
 
-Five of them, all five live on Cloudflare Pages.
+Six of them, all six live on Cloudflare Pages.
 
 | App | What it is | In production |
 | --- | ---------- | ------------- |
@@ -57,9 +57,10 @@ Five of them, all five live on Cloudflare Pages.
 | [`agent`](projects/agent/README.md) | Replica of the agent dashboard | [sc-agent.pages.dev](https://sc-agent.pages.dev) |
 | [`agent-mini`](projects/agent-mini/README.md) | Replica of the standalone Communicator | [agent-mini.pages.dev](https://agent-mini.pages.dev) |
 | [`cuscare`](projects/cuscare/README.md) | Replica of the ticketing tool | [sc-cuscare.pages.dev](https://sc-cuscare.pages.dev) |
+| `cuscare-ds` | The same tool, built with `sc-*` | [sc-cuscare-ds.pages.dev](https://sc-cuscare-ds.pages.dev) |
 
 The apps in this repo **import the DS straight from `dist/`**, through `tsconfig` paths, not
-as an npm package. That way you touch a token and see it instantly across all five, with
+as an npm package. That way you touch a token and see it instantly across all of them, with
 nothing published. The reasoning is in [DD-17](docs/DECISIONS.md); why publishing per release
 does not reopen it, in DD-58.
 

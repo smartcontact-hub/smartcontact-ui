@@ -1,7 +1,7 @@
 import { booleanAttribute, ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CdkDragHandle } from '@angular/cdk/drag-drop';
-import { MenuModule } from 'primeng/menu';
+import { TieredMenuModule } from 'primeng/tieredmenu';
 import type { MenuItem } from 'primeng/api';
 import { ScButtonComponent as ButtonComponent, ScPanelComponent as PanelComponent, type ScPanelSeverity } from '@smartcontact-hub/components';
 import { ScChipComponent as ChipComponent, ScTagComponent as TagComponent } from '@smartcontact-hub/components';
@@ -24,7 +24,8 @@ let widgetMenuIdCounter = 0;
  * borde de alerta en `severity`. Sin `toggleable`: con él, `p-panel` pondría el mismo id en su botón
  * de colapsar y en el título. El menú replica el del original (medido el 2026-09-14):
  * «Channels and types» con Tipo y Canal de opción única (solo en los widgets que se filtran),
- * «Edit» (abre el asistente con el widget cargado) y «Delete widget».
+ * «Edit» (abre el asistente con el widget cargado) y «Delete widget». El original pone Tipo y Canal planos (doce filas,
+ * «Quitar» bajo siete filtros); aquí cada uno es un submenú de `p-tieredmenu` y el menú se queda en cuatro filas.
  *
  * Alerta: borde y etiqueta con el MOTIVO («6 en espera»), no solo color, y con icono distinto
  * para aviso y para crítico.
@@ -37,7 +38,7 @@ let widgetMenuIdCounter = 0;
  */
 @Component({
   selector: 'sc-dashboard-widget-card',
-  imports: [TranslateModule, MenuModule, CdkDragHandle, ButtonComponent, ChipComponent, PanelComponent, TagComponent],
+  imports: [TranslateModule, TieredMenuModule, CdkDragHandle, ButtonComponent, ChipComponent, PanelComponent, TagComponent],
   templateUrl: './widget-card.component.html',
   styleUrl: './widget-card.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -63,7 +64,7 @@ export class WidgetCardComponent {
 
   protected readonly kebabIcon = 'more_vert';
 
-  /** Id del `p-menu`, para `aria-controls` en el ⋮: el mismo en los dos, único por widget. */
+  /** Id del `p-tieredmenu`, para `aria-controls` en el ⋮: el mismo en los dos, único por widget. */
   protected readonly menuId = `sc-dashboard-widget-menu-${++widgetMenuIdCounter}`;
 
   /** Si el menú del ⋮ está abierto, para su `aria-expanded` (DD-133). */

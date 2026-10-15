@@ -68,7 +68,7 @@
     },
     {
       "componente": "confirmpopup",
-      "envuelto": false
+      "envuelto": true
     },
     {
       "componente": "contextmenu",
@@ -1818,7 +1818,7 @@
     {
       "selector": "sc-confirmdialog",
       "name": "confirmdialog",
-      "primengBase": "primeng/confirmdialog",
+      "primengBase": "primeng/confirmdialog, primeng/confirmpopup",
       "estado": "ready",
       "faltas": [],
       "retirado": null,

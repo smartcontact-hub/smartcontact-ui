@@ -20,12 +20,6 @@
    * dentro de la celda, porque el `<td>` lo pinta el DS. */
   &__cell {
     color: var(--sc-text-secondary);
-
-    /* El ancho (96px) y la alineación derecha los declara la column-def; aquí
-     * queda solo lo que era de `.table__td--num` y no cabe en ella. */
-    &--num {
-      font-variant-numeric: tabular-nums;
-    }
   }
 }
 

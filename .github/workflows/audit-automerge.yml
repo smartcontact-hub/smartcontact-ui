@@ -10,7 +10,9 @@
 #      se planta y lo deja para revisión humana. Es la condición dura.
 #   2. Solo corre si el CI de ese commit terminó en SUCCESS (TODOS sus jobs; docs:guard y
 #      docs:coherence viven dentro del job `verify`, y son los que pueden romperse con un .md).
-#   3. Es un doc de backlog: su contenido no ejecuta nada ni entra en ningún build.
+#   3. Solo funde commits de este repo, y solo el commit exacto que pasó el CI (`--match-head-commit`):
+#      si alguien empuja otro encima mientras tanto, no se funde.
+#   4. Es un doc de backlog: su contenido no ejecuta nada ni entra en ningún build.
 #
 # Lo que NO hace: mergear ningún otro PR. Los demás siguen siendo decisión del mantenedor, y el
 # recordatorio de los lunes se los recuerda.
@@ -30,8 +32,9 @@ permissions:
 
 jobs:
   automerge:
-    # Solo si el CI pasó. Un CI rojo NO se auto-mergea nunca.
-    if: github.event.workflow_run.conclusion == 'success'
+    # Solo si el CI pasó (un CI rojo NO se auto-mergea nunca) y solo si el commit viene de ESTE repo:
+    # el robot funde sin que nadie mire, así que no puede fundir lo que llega de un fork.
+    if: github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_repository.full_name == github.repository
     runs-on: ubuntu-latest
     steps:
       # Solo el script que escribe el mensaje del squash, y de `main` (lo que corre un `workflow_run`
@@ -76,4 +79,4 @@ jobs:
           CUERPO=$(printf '%s' "$PR_JSON" | node scripts/mensaje-squash.mjs cuerpo)
 
           echo "PR #$PR — CI verde y solo toca docs/AUDIT-SEMANAL.md. Mergeando como: $ASUNTO"
-          gh pr merge "$PR" --repo "$REPO" --squash --delete-branch --subject "$ASUNTO" --body "$CUERPO"
+          gh pr merge "$PR" --repo "$REPO" --squash --match-head-commit "$SHA" --delete-branch --subject "$ASUNTO" --body "$CUERPO"
