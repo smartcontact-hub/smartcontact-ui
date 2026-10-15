@@ -88,7 +88,7 @@ verificados esperando en el PR #22 desde hacía 9 días. Había tres PRs así �
 
 ### Pasada D — El panel de Cloudflare (lo que ningún gate del repo puede ver)
 
-Los cinco sitios se construyen con lo que diga el panel de Cloudflare, no el repo: comando de
+Los seis sitios se construyen con lo que diga el panel de Cloudflare, no el repo: comando de
 build, output dir, rama de producción y `NODE_VERSION`. Un cambio ahí rompe todos los commits por
 igual y en silencio (2026-09-09: supervisor publicaba sin sello porque su comando no pasaba por
 `stamp-build.mjs`). `npm run audit:cf-config` lo lee por API y compara. Necesita un token

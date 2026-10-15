@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Apunta en GitHub qué está publicado en cada uno de los cinco sitios, DESPUÉS de comprobarlo.
+ * Apunta en GitHub qué está publicado en cada uno de los seis sitios, DESPUÉS de comprobarlo.
  *
  * El repo ya tuvo una pantalla de *Deployments* mintiendo tres meses (GitHub Pages, retirado en
  * DD-17, seguía figurando como último despliegue). La lección no es "no tengamos la pantalla",
@@ -102,7 +102,7 @@ async function relacionConCabeza(sha, cabeza) {
  *
  * El caso que la motiva (2026-09-10): tres commits seguidos a main en 7 minutos
  * (`8cc9bce`, `287f075`, `7812c38`). Cloudflare marcó `skipped` los tres builds de producción
- * al entrar el siguiente, así que ninguno de los cinco sitios llegó a servirlos jamás, y este
+ * al entrar el siguiente, así que ninguno de los seis sitios llegó a servirlos jamás, y este
  * registro escribió **15 despliegues rojos** que no podían volverse verdes nunca. Un commit
  * adelantado no es un despliegue roto: no se registra, y lo registra la comprobación del que
  * quedó arriba.

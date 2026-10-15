@@ -28,7 +28,7 @@
  *
  * Qué afirma, y nada más: cada `projects/<app>/src/index.html` declara
  * exactamente una `<base href="/">`. No opina sobre despliegues en subcarpeta
- * (ninguno de los cinco sitios lo hace: los cinco sirven en la raíz de su
+ * (ninguno de los seis sitios lo hace: los seis sirven en la raíz de su
  * dominio). Si algún día uno se sirve bajo `/algo/`, esa app necesita
  * `--base-href` en su build y ESTE guardián hay que cambiarlo a propósito, que
  * es justo lo que se quiere: que el cambio sea deliberado y no un resto de

@@ -70,7 +70,7 @@ module.exports = tseslint.config(
     languageOptions: {
       // `fetch` y `setTimeout` son globales de Node desde hace varias mayores, pero la lista
       // es explícita y se escribió cuando ningún script de aquí salía a la red. Los estrena
-      // `record-deploy.mjs`, que sondea los cinco sitios publicados.
+      // `record-deploy.mjs`, que sondea los seis sitios publicados.
       globals: {
         process: 'readonly',
         console: 'readonly',
