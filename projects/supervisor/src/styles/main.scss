@@ -462,8 +462,12 @@ table.table {
   .mock-sample-switcher__popover {
     z-index: var(--sc-z-popover) !important;
 
-    .p-popover-content {
-      padding: 0 !important;
+    /* Once conjuntos con su descripción no caben en una pantalla de 900: la lista desplaza dentro del menú, como hacía
+     * el globo de antes, y las flechas llevan la opción enfocada a la vista. */
+    .p-menu-list {
+      max-height: 70vh;
+      overflow-y: auto;
+      overscroll-behavior: contain;
     }
   }
 }

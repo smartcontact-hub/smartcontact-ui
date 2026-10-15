@@ -24,6 +24,7 @@ import {
 } from '@smartcontact-hub/components';
 import { LABEL_COLOR_OPTIONS, Label, LabelColor } from '../../data/labels-data';
 import { injectLangChange } from '@core/utils/lang-change';
+import { focoDeVueltaAlCerrar } from '@core/utils/foco-de-vuelta';
 
 export interface LabelFormSubmission {
   readonly name: string;
@@ -53,6 +54,11 @@ export interface LabelFormSubmission {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LabelFormPanelComponent implements OnInit, AfterViewInit {
+  constructor() {
+    // Al cerrarse, el foco vuelve al botón que lo abrió (candidato 29 del barrido; antes se iba al `body`).
+    focoDeVueltaAlCerrar();
+  }
+
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();

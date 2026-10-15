@@ -22,6 +22,10 @@
     overflow: hidden;
   }
 
+  &__vacia {
+    color: var(--sc-text-subtle);
+  }
+
   &__text {
     display: block;
     overflow: hidden;

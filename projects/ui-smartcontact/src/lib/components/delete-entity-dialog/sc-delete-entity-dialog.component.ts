@@ -10,7 +10,6 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { MessageService } from 'primeng/api';
 
 import { ScIconComponent } from '@smartcontact-hub/icons';
 
@@ -18,6 +17,7 @@ import { ScClipboardService } from '../../core/services/sc-clipboard.service';
 import { ScDialogComponent } from '../dialog/sc-dialog.component';
 import { SC_DELETE_ENTITY_DIALOG_TRANSLATIONS } from './i18n/sc-delete-entity-dialog.translations';
 import { ScButtonComponent } from '../button/sc-button.component';
+import { ScMessageComponent } from '../message/sc-message.component';
 
 export interface DeletableEntity {
   readonly id: number;
@@ -41,8 +41,8 @@ export interface DeletableEntity {
  * `DeleteEntityDialog` (DD#163, DD#172).
  *
  * Acoplamiento §5 saldado: `ScClipboardService` se porta al paquete
- * (autocontenido). `MessageService` (PrimeNG) se inyecta OPCIONAL — el toast de
- * «copiado» es nice-to-have; sin infra de toast el copiado sigue funcionando.
+ * (autocontenido). Copiar no lanza toast: el acierto lo dice el ✓ del botón (y el lector lo oye en una región
+ * viva oculta), y el fallo, un `sc-message` bajo el campo que se queda hasta el siguiente intento (DD-191).
  *
  * i18n: los nombres de entidad/items los suministra el consumidor; todo el
  * chrome vive en el diccionario colocado `sc.deleteEntityDialog.*` (sin claves
@@ -51,15 +51,13 @@ export interface DeletableEntity {
 @Component({
   selector: 'sc-delete-entity-dialog',
   standalone: true,
-  imports: [ScButtonComponent, FormsModule, ScIconComponent, ScDialogComponent, TranslateModule],
+  imports: [ScButtonComponent, FormsModule, ScIconComponent, ScDialogComponent, ScMessageComponent, TranslateModule],
   templateUrl: './sc-delete-entity-dialog.component.html',
   styleUrl: './sc-delete-entity-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScDeleteEntityDialogComponent {
   private readonly clipboard = inject(ScClipboardService);
-  /** Opcional: el toast de «copiado» degrada si no hay infra de toast. */
-  private readonly messages = inject(MessageService, { optional: true });
   private readonly translate = inject(TranslateService);
 
   /** Si el diálogo se ve. Lo controla el consumidor: este componente no se abre ni se cierra solo. */
@@ -97,6 +95,7 @@ export class ScDeleteEntityDialogComponent {
 
   protected readonly confirmText = signal('');
   protected readonly copied = signal(false);
+  protected readonly copyFailed = signal(false);
 
   /** La línea de detalle del modo que toque. */
   protected readonly detailMessage = computed(() =>
@@ -155,26 +154,16 @@ export class ScDeleteEntityDialogComponent {
       this.items();
       this.confirmText.set('');
       this.copied.set(false);
+      this.copyFailed.set(false);
     });
   }
 
   protected onCopy(): void {
     void this.clipboard.copy(this.confirmTarget()).then((ok) => {
-      if (ok) {
-        this.copied.set(true);
-        this.messages?.add({
-          severity: 'success',
-          summary: this.translate.instant('sc.deleteEntityDialog.copied'),
-          life: 2000,
-        });
-        setTimeout(() => this.copied.set(false), 2000);
-      } else {
-        this.messages?.add({
-          severity: 'error',
-          summary: this.translate.instant('sc.deleteEntityDialog.copyFailed'),
-          life: 3000,
-        });
-      }
+      this.copyFailed.set(!ok);
+      if (!ok) return;
+      this.copied.set(true);
+      setTimeout(() => this.copied.set(false), 2000);
     });
   }
 

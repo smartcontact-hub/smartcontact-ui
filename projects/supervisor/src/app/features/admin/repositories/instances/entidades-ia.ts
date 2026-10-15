@@ -146,7 +146,7 @@ const FIELDS: readonly RepoFieldDef[] = [
   {
     key: 'status',
     labelKey: 'repositories.columns.status',
-    type: 'select',
+    type: 'switch',
     options: [
       { value: 'active', labelKey: 'repositories.status.active' },
       { value: 'inactive', labelKey: 'repositories.status.inactive' },

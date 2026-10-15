@@ -51,13 +51,13 @@ export const ZONAS = [
     nombre: 'Supervisor · tipografía',
     dirs: ['projects/supervisor/src/app', 'projects/supervisor/src/styles'],
     tipo: 'tipografia',
-    max: 46,
+    max: 45,
   },
   {
     nombre: 'Supervisor · espaciado',
     dirs: ['projects/supervisor/src/app', 'projects/supervisor/src/styles'],
     tipo: 'espaciado',
-    max: 39,
+    max: 38,
   },
 ];
 

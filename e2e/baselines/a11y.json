@@ -12,14 +12,6 @@
       "aria-hidden-focus": 1
     }
   },
-  "colordotpicker": {
-    "basico": {
-      "target-size": 9
-    },
-    "playground": {
-      "target-size": 9
-    }
-  },
   "datatable": {
     "columnas-fijas": {
       "label": 1
@@ -46,11 +38,6 @@
     },
     "sobre-un-total": {
       "svg-img-alt": 1
-    }
-  },
-  "grouppopover": {
-    "pocos-y-muchos": {
-      "target-size": 2
     }
   },
   "inputtags": {

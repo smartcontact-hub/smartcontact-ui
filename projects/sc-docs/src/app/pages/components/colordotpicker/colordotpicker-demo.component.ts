@@ -39,7 +39,7 @@ export class ColorDotPickerDemoComponent {
     tag: 'sc-color-dot-picker',
     title: 'ColorDotPicker',
     description:
-      'Fila de puntos de color seleccionables — el picker categórico de 9 colores del DS (radiogroup). Two-way `[(value)]`; los colores se pasan por `ColorDotOption.color`, así que no acopla la paleta.',
+      'Fila de puntos de color seleccionables — el picker categórico de 9 colores del DS, sobre el SelectButton de PrimeNG (Tab entre colores, Espacio elige, el nombre del elegido debajo). Two-way `[(value)]`; los colores se pasan por `ColorDotOption.color`, así que no acopla la paleta.',
     argTypes: [
       { name: 'value', control: { kind: 'select', options: [...LABEL_COLORS] } },
       { name: 'ariaLabel', control: { kind: 'text' } },

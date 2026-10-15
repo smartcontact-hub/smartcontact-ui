@@ -103,6 +103,8 @@ function normalizePrefs(choices: readonly ColumnDef[], stored: unknown): ColumnP
   return { order, visible: order.filter((k) => visibleSet.has(k)), widths };
 }
 
+let listRowMenuIdCounter = 0;
+
 /**
  * PANTALLA DE LISTA (`<sc-list-page>`, DD-97, 2026-09-14).
  *
@@ -673,6 +675,12 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
 
   /* ── Menú de fila: UNO para toda la tabla, el mismo con «⋮» y con clic derecho ─────────────── */
   private readonly menuTarget = signal<T | null>(null);
+  protected readonly rowMenuOpen = signal(false);
+  protected readonly rowMenuId = `sc-list-row-menu-${++listRowMenuIdCounter}`;
+  /** Si el menú de fila es el de esta fila (uno solo para toda la tabla). */
+  protected esLaDelMenu(row: T): boolean {
+    return this.menuTarget() === row;
+  }
 
   /** Estable: solo cambia al apuntar a otra fila (recrearlo en cada ciclo perdía el primer clic) o de idioma. */
   protected readonly menuItems = computed<MenuItem[]>(() => {
