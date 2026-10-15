@@ -861,6 +861,19 @@ test.describe('sc-confirmdialog', () => {
     await page.locator('.p-confirmdialog').getByRole('button', { name: 'Cancelar' }).click();
     await expect(page.getByTestId('confirm-result')).toHaveText('rechazado');
   });
+
+  test('con `target`, la misma pregunta sale en un globo pegado al botón, y Escape devuelve el foco (DD-205)', async ({ page }) => {
+    await gotoPage(page, 'confirmdialog');
+    const boton = page.getByTestId('confirm-popup').locator('button');
+    await boton.click();
+    const globo = page.getByRole('alertdialog', { name: '¿Expirar contraseña?' });
+    await expect(globo).toHaveClass(/p-confirmpopup/);
+    await expect(page.locator('.p-confirmdialog')).toHaveCount(0);
+    await expect(globo.getByRole('button', { name: 'Cancelar' })).toBeFocused();
+    await page.keyboard.press('Escape');
+    await expect(boton).toBeFocused();
+    await expect(page.getByTestId('confirm-result')).toHaveText('rechazado');
+  });
 });
 
 test.describe('sc-inputtext', () => {

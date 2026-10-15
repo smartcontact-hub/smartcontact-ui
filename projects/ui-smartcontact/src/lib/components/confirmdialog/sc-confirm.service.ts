@@ -29,7 +29,16 @@ export interface ScConfirmRequest {
      * porque un confirm informativo con triángulo de peligro miente al usuario.
      */
     readonly icon?: string;
+    /**
+     * El botón que la pide. Con él, la pregunta sale en un `p-confirmpopup` pegado a ese botón en vez de en el
+     * diálogo centrado: se ve lo que va a cambiar mientras se decide. El título no se pinta en el globo; queda como
+     * su nombre para el lector.
+     */
+    readonly target?: EventTarget | null;
 }
+
+/** Clave del `p-confirmpopup` que monta `<sc-confirmdialog>`; el diálogo, sin clave, no la atiende. */
+export const SC_CONFIRM_POPUP_KEY = 'sc-confirm-popup';
 
 /**
  * Confirmación programática del DS. Respaldada por el `ConfirmationService`
@@ -62,6 +71,7 @@ export class ScConfirmService {
                 : { severity: 'secondary' as const, label: req.rejectLabel };
 
             this.confirmation.confirm({
+                ...(req.target ? { key: SC_CONFIRM_POPUP_KEY, target: req.target } : {}),
                 header: req.title,
                 message: req.body,
                 // El foco abre en la opción segura cuando aceptar destruye o no es lo recomendado: si no,
