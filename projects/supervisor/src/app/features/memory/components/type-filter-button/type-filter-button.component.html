@@ -30,23 +30,25 @@
     </header>
 
     <div class="type-filter-panel__body">
-      <section class="type-filter-group">
-        <h4 class="sc-text-caption-semibold">{{ 'memory.type_filter.groups.type' | translate }}</h4>
-        <sc-checkbox [state]="(filters().types.interna) ? 'all' : 'none'" (cycle)="updateTypes('interna', $event)">{{ 'memory.type_filter.types.interna' | translate }}</sc-checkbox>
-        <sc-checkbox [state]="(filters().types.externa) ? 'all' : 'none'" (cycle)="updateTypes('externa', $event)">{{ 'memory.type_filter.types.externa' | translate }}</sc-checkbox>
-      </section>
-
-      <section class="type-filter-group">
-        <h4 class="sc-text-caption-semibold">{{ 'memory.type_filter.groups.channel' | translate }}</h4>
-        <sc-checkbox [state]="(filters().channels.llamada) ? 'all' : 'none'" (cycle)="updateChannels('llamada', $event)">{{ 'memory.type_filter.channels.llamada' | translate }}</sc-checkbox>
-        <sc-checkbox [state]="(filters().channels.chat) ? 'all' : 'none'" (cycle)="updateChannels('chat', $event)">{{ 'memory.type_filter.channels.chat' | translate }}</sc-checkbox>
-      </section>
-
-      <section class="type-filter-group">
-        <h4 class="sc-text-caption-semibold">{{ 'memory.type_filter.groups.direction' | translate }}</h4>
-        <sc-checkbox [state]="(filters().directions.entrante) ? 'all' : 'none'" (cycle)="updateDirections('entrante', $event)">{{ 'memory.type_filter.directions.entrante' | translate }}</sc-checkbox>
-        <sc-checkbox [state]="(filters().directions.saliente) ? 'all' : 'none'" (cycle)="updateDirections('saliente', $event)">{{ 'memory.type_filter.directions.saliente' | translate }}</sc-checkbox>
-      </section>
+      <!-- Los tres pares que reparten TODAS las conversaciones (tipo, canal, dirección): un segmentado de varios
+           con al menos uno marcado. Con dos casillas se podían quitar las dos y la tabla se quedaba en 0. -->
+      @for (par of pares(); track par.key) {
+        <section class="type-filter-group">
+          <h4 class="sc-text-caption-semibold" [id]="panelId + '-' + par.key">{{ par.titleKey | translate }}</h4>
+          <sc-selectbutton
+            class="type-filter-group__pair"
+            size="sm"
+            fluid
+            multiple
+            [allowEmpty]="false"
+            [options]="par.options"
+            optionValue="value"
+            [ariaLabelledBy]="panelId + '-' + par.key"
+            [value]="par.value"
+            (valueChange)="updatePair(par.key, $event)"
+          />
+        </section>
+      }
 
       <hr class="type-filter-panel__divider" aria-hidden="true" />
 
