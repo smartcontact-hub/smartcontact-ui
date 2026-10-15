@@ -14,6 +14,7 @@ import {
 // INTERNO hacia `<p-datepicker>` (no es el CVA exterior, que se retiró).
 import { FormsModule } from '@angular/forms';
 import { DatePicker, DatePickerModule } from 'primeng/datepicker';
+import type { DatePickerPassThrough } from 'primeng/types/datepicker';
 import { ScButtonComponent } from '../button/sc-button.component';
 import { ScFieldLabelComponent } from '../field/sc-field-label.component';
 import { ScFieldMsgComponent } from '../field/sc-field-msg.component';
@@ -156,6 +157,21 @@ export class ScDatepickerComponent {
   protected readonly msgId = this.field.msgId;
   protected readonly isInvalid = this.field.isInvalid;
   protected readonly footerText = this.field.footerText;
+
+  /**
+   * Los `aria-*` del campo van al `<input>` que recibe el foco, por passthrough (`pt.pcInputText`): un lector de
+   * pantalla anuncia los del elemento enfocado, y en la envoltura `<p-datepicker>` no llegaban (medido en
+   * `sc-datepicker.component.spec.ts`). Mismo arreglo que `sc-select` (DD-133).
+   */
+  protected readonly pt = computed<DatePickerPassThrough>(() => ({
+    pcInputText: {
+      root: {
+        'aria-describedby': this.footerText() ? this.msgId() : null,
+        'aria-required': this.required() ? 'true' : null,
+        'aria-invalid': this.isInvalid() ? 'true' : null,
+      },
+    },
+  }));
 
   private readonly panel = createScPanelSizing('sc-datepicker', this.size);
   protected readonly pSize = this.panel.pSize;
