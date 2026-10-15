@@ -381,8 +381,8 @@
           "enlace": "https://primeng.dev/slider",
           "sirve": "Un valor o un rango (<code>range</code>) arrastrando.",
           "cuando": "Importa más el rango que la cifra exacta (volumen, umbral), y la cifra se ve al lado.",
-          "aqui": "Sin uso: con su pantalla (sección 1)",
-          "estado": "sin-uso",
+          "aqui": "Sin wrapper: supervisor (sección 3)",
+          "estado": "directo",
           "obsoleto": false
         },
         {
