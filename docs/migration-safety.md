@@ -149,6 +149,10 @@ cambió**.
   visual de pantallas representativas. `tokens:parity` + `audit:theme-scale`
   detectan la mayoría de roturas de slots.
 - **Cambiar API pública de un componente** → major bump + deprecation.
+- **Retirar un token `--sc-*` o una entrada, salida o valor de un componente** → no se borra en un minor. Se marca
+  `@deprecated` (componentes) o se deja como alias con el valor de antes en un bloque «en desuso» fuera de las zonas
+  `@sc-gen` (tokens), se lista en la sección *Deprecated* del CHANGELOG y se retira en el siguiente major. Un token
+  que nadie lee en este repo no basta para borrarlo: el contrato lo leen también los consumidores externos.
 
 ### 🔴 Peligroso (NO hacer sin causa muy justificada)
 
