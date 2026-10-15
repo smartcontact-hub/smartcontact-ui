@@ -401,8 +401,7 @@ sc-dashboard-widget-card.cdk-drag-placeholder {
 @media (prefers-reduced-motion: reduce) {
   .dash-enter,
   .dash-leave,
-  .dash-flash::after,
-  .dashboard-head__alerts-count--in {
+  .dash-flash::after {
     animation: none;
   }
 

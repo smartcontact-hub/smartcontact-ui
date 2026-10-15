@@ -286,8 +286,12 @@ export class GroupAssignmentTableComponent {
     return on === 0 ? 'none' : on === rows.length ? 'all' : 'some';
   }
 
+  /**
+   * Sin `pending()`: la pregunta sale en un globo pegado a esta casilla, y al cerrarlo el foco vuelve a ella; deshabilitada
+   * mientras pregunta, no lo aceptaría y se iría al `body`. La segunda pulsación la corta `toggleHeader`.
+   */
   protected headerDisabled(field: string): boolean {
-    return this.pending() || this.bulkTargets(field).length === 0;
+    return this.bulkTargets(field).length === 0;
   }
 
   private bulkTargets(field: string): readonly VisibleRow[] {
@@ -308,7 +312,7 @@ export class GroupAssignmentTableComponent {
   }
 
   /** Cambia la columna entera en las filas a la vista; con dos o más, confirma antes (DD-151). */
-  protected async toggleHeader(field: string): Promise<void> {
+  protected async toggleHeader(field: string, celda?: HTMLElement): Promise<void> {
     if (this.pending()) return;
     const rows = this.bulkTargets(field);
     if (!rows.length) return;
@@ -319,6 +323,7 @@ export class GroupAssignmentTableComponent {
         rows.length >= 2 &&
         !(await this.confirm.request({
           title: this.translate.instant('groups.form.assigned.bulk_title'),
+        target: celda?.querySelector('input') ?? celda,
           body: this.translate.instant('agents.form.assigned.bulk_body', { action: this.bulkAction(field, remove), count: rows.length }),
           acceptLabel: this.translate.instant('groups.form.assigned.bulk_confirm'),
           rejectLabel: this.translate.instant('common.cancel'),

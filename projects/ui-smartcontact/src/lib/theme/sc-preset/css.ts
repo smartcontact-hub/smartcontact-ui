@@ -549,19 +549,26 @@ const buttonMotionCss = () => `
  * El nombre pasa a `sc-menu-item--danger`: `rules-` era el rastro de la
  * pantalla donde nació, y ya se usaba en nueve. Se pasa por `styleClass` en el
  * `MenuItem`; PrimeNG la deja en el `<li>`, así que baja al enlace y a su icono.
+ * Vale igual en `p-tieredmenu` (el menú de la tarjeta de widget, que agrupa en
+ * submenús): sus piezas se llaman `p-tieredmenu-item-*` en vez de `p-menu-item-*`.
  */
 const dangerMenuItemCss = () => `
 .sc-menu-item--danger .p-menu-item-link,
-.sc-menu-item--danger .p-menu-item-icon {
+.sc-menu-item--danger .p-menu-item-icon,
+.sc-menu-item--danger .p-tieredmenu-item-link,
+.sc-menu-item--danger .p-tieredmenu-item-icon {
     color: var(--sc-text-danger);
 }
 
-.sc-menu-item--danger .p-menu-item-content:hover {
+.sc-menu-item--danger .p-menu-item-content:hover,
+.sc-menu-item--danger .p-tieredmenu-item-content:hover {
     background: var(--sc-bg-danger-subtle);
 }
 
 .sc-menu-item--danger .p-menu-item-content:hover .p-menu-item-link,
-.sc-menu-item--danger .p-menu-item-content:hover .p-menu-item-icon {
+.sc-menu-item--danger .p-menu-item-content:hover .p-menu-item-icon,
+.sc-menu-item--danger .p-tieredmenu-item-content:hover .p-tieredmenu-item-link,
+.sc-menu-item--danger .p-tieredmenu-item-content:hover .p-tieredmenu-item-icon {
     color: var(--sc-text-danger);
 }
 `;

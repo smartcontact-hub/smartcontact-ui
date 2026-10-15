@@ -41,31 +41,6 @@
  * `tag` de la librería de Figma (2026-09-13). */
 
 /* ------------------------------------------------------------------ *
- * Numeric columns get an explicit narrow width + right alignment.
- *
- * `table.table` runs with `table-layout: fixed` (set globally in
- * main.scss) so sort indicators don't reshuffle widths when they
- * appear. A side effect of fixed layout: columns without an explicit
- * width split the remaining space evenly.
- *
- * Floor numeric columns at 96 px and right-align with tabular-nums
- * for visual rhythm (digits aligned regardless of glyph width).
- *
- * Selector convention: dos formas conviven en el codebase por inercia
- * histórica — AED groups usa `.table__td--num` (BEM modifier doble) y
- * Memory + AED agents usan `.table__th-num` / `.table__td-num` (dash
- * único). Cubrir ambas mantiene consistencia visual sin refactor BEM.
- * ------------------------------------------------------------------ */
-.table__th-num,
-.table__th--num,
-.table__td-num,
-.table__td--num {
-  width: 96px;
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-
-/* ------------------------------------------------------------------ *
  * Sortable header — keyboard focus ring.
  *
  * `aedSortable` directive (see `core/directives/sortable-header`) sets
@@ -80,24 +55,6 @@
   outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
   outline-offset: -2px;
   background: var(--sc-bg-secondary-subtle);
-}
-
-/* ------------------------------------------------------------------ *
- * sc-table-zebra — alternating row tint instead of per-row 1px border.
- *
- * The full-width 1px border line per row is the most generic "data
- * table" treatment that exists. Subtle zebra (5% surface darken on
- * even rows) gives the eye a horizontal guide without painting a
- * grid. Apply via `.table.sc-table-zebra` to opt in.
- * ------------------------------------------------------------------ */
-.sc-table-zebra {
-  tbody tr {
-    border-bottom: 0;
-
-    &:nth-child(even) {
-      background: var(--sc-bg-default);
-    }
-  }
 }
 
 /* ------------------------------------------------------------------ *

@@ -167,11 +167,6 @@
     color: var(--sc-text-secondary);
   }
 
-  &__opt-check {
-    color: var(--sc-text-accent);
-    flex-shrink: 0;
-  }
-
   /* Checkbox (izquierda) — indica multiselección. Marcado = sky (acento del picker). */
   &__check {
     flex-shrink: 0;
@@ -230,11 +225,6 @@
   &__group-caret {
     flex-shrink: 0;
     font-size: var(--sc-font-size-300);
-  }
-
-  &__group-name {
-    flex: 1;
-    text-align: left;
   }
 
   &__group-count {

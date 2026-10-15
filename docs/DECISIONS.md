@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Fase 1, PrimeNG como referencia (decisión de producto, 2026-10-15): primero el nativo, después su `sc-*`, y cada excepción escrita junto al código · una pregunta de una frase sobre lo que se pulsa, en un `p-confirmpopup` pegado a ello (`ScConfirmService.request({ target })`); lo que hay que explicar, en el diálogo · los filtros por pares no se vacían (`sc-selectbutton multiple [allowEmpty]="false"`) · el «⋮» del widget en `p-tieredmenu` | DD-205 |
 > | Revisión de las fichas a 1440 (2026-10-14): «Agentes asignados» y «Grupos asignados» sin subtítulo dentro (`sc-subsection` sin título) · el resumen del grupo se llama como la ficha (Distribución con el teléfono saliente, Recursos una fila por tipo, fuera «Salida»), en caption · «Editar» de un recurso en su opción del desplegable (`sc-resource-option`, `#item` de `sc-multiselect`) · Tamaño de cola en tarjetas de radio (`sc-option-cards`, el ejemplo «Card» de primeng.dev) · las tablas de asignar miden todas sus filas (`filasReservadas`) · Habilitado lo cambia el supervisor también con «Activación por grupo» · sin columna Nivel en los grupos del agente, Salientes con radio · Desconectado: gris en el listado, Estado apagado en la ficha (enmienda DD-187 §2 y DD-164 §1) | DD-204 |
 > | El esqueleto de carga con la forma de su contenido: en una tabla, `[skeleton]` de `sc-datatable` y la forma de cada columna (`ScColumnDef.skeleton`: `avatar`, `tag`, `action`, texto) · no el ejemplo «DataTable» de primeng.dev tal cual · una caja más alta que la línea no estira la celda · la carga simulada del Supervisor: 1,5 s la primera vez, nada para un robot salvo `?latencia=1` | DD-201 |
 > | Un icono, un significado: `SC_ICONS` (un icono por concepto) y `SC_ICON_RESERVADOS` (la X cierra o quita, la papelera elimina, la hamburguesa abre la navegación) · el botón de solo icono enseña su nombre en un tooltip, también con teclado · `sc-icon` solo en tallas de la escala, color con `tone` · `audit:icons` | DD-200 |
@@ -146,6 +147,53 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-205 · 2026-10-15 — Fase 1, PrimeNG como referencia: confirmar en un globo junto a lo que se pulsa, filtros por pares que no se vacían y el menú del widget en submenús
+
+**Contexto** · El barrido de usos del catálogo de PrimeNG (`docs/AUDIT-PRIMENG-CATALOGO.md` §7, 2026-10-14) dejó cinco
+candidatos que cambian cómo se ve la pantalla: 10, 11, 13, 21 y 24. Se enseñaron el antes y el después, y la decisión de
+producto (2026-10-15) fue una estrategia en tres fases: primero PrimeNG como estándar, después el design system
+consolidado y por último la personalización de UX/UI. Esta DD es la primera aplicación de la fase 1.
+
+**Decisión** ·
+1. **Criterios de la fase 1**, decisión deliberada de producto: primero el componente de PrimeNG; si el DS ya lo
+   envuelve, su `sc-*`; nada hecho a mano si PrimeNG lo cubre; sin sobrescribir CSS ni cambiar un comportamiento
+   nativo sin una razón funcional; teclado y accesibilidad se mantienen; cada excepción se escribe junto al código con
+   su porqué; nada que ya funciona se rompe.
+2. **Confirmar.** Una pregunta de una frase sobre lo que se acaba de pulsar va en un `p-confirmpopup` pegado a ello:
+   `ScConfirmService.request({ …, target })`, y `sc-confirmdialog` monta los dos. Si hay que explicar la consecuencia o
+   no hay un botón al que pegarse (al guardar, al salir), sigue el `p-confirmdialog` centrado; borrar una entidad, en
+   `sc-delete-entity-dialog`. Lo usan las casillas de «todos» de las dos tablas de asignar (10) y «Expirar
+   contraseña» (13). Borrar una rama de tipificación con sus hijas (11) se queda en diálogo.
+3. **«Más filtros» de Conversaciones (21).** Cada par (tipo, canal, dirección) es un `sc-selectbutton multiple
+   [allowEmpty]="false"`: PrimeNG no deja quitar el último marcado, así que la tabla no llega a 0 por un filtro.
+4. **El «⋮» de cada widget del Monitor (24).** `p-tieredmenu`: Tipo y Canal son submenús y el menú pasa de doce filas a
+   cuatro, con «Quitar widget» en rojo y al final.
+
+**Razón** · Medido a 1440 en local. El globo cae 10 px bajo la casilla y junto al botón (se da la vuelta si debajo no
+cabe); abre con el foco en «Cancelar» cuando aceptar no se deshace, y Escape devuelve el foco a quien preguntó. En los
+filtros, ni el ratón ni el Espacio quitan el último de un par. En el menú, la flecha derecha abre el submenú y la
+izquierda vuelve. Las cuatro pruebas de `e2e/supervisor/barrido-visibles.spec.ts` se ponen rojas con la pieza de antes.
+
+**Excepciones** ·
+- El globo lleva tope de ancho, `--sc-spacing-25` (350 px, lo que mide el toast): Aura no le pone ninguno y una frase
+  larga lo estira fuera de la pantalla; el Kit no da medida (comentario en `sc-confirmdialog.component.ts`).
+- Las casillas de «todos» ya no se apagan mientras preguntan: apagadas no aceptan el foco de vuelta, que se iba al
+  `body`. La segunda pulsación la sigue cortando `toggleHeader`.
+- El rojo de `sc-menu-item--danger` cubre también `p-tieredmenu-item-*` en el tema: la misma regla con los nombres de
+  las piezas de TieredMenu.
+
+**Descartadas** ·
+- ConfirmPopup también en el 11: borrar una rama con sus hijas tiene una consecuencia que explicar.
+- Menu con `toggleable` para el 24 (la otra opción del barrido): sus grupos se despliegan dentro del mismo menú, que
+  vuelve a crecer al abrir uno. TieredMenu es el hermano que la sección 6.9 del catálogo da para acciones con un
+  segundo nivel.
+- En el 21, las casillas con un aviso cuando un par se queda vacío: avisa del error en vez de no dejarlo pasar.
+
+**Consecuencias** · Cuatro filas nuevas en «Bifurcaciones al componer» de AGENTS.md. En el catálogo, ConfirmPopup pasa
+a «Hecho» y TieredMenu a la sección 3. Las fases 2 y 3 no tienen fecha: cada una se abre con su propia DD.
 
 ---
 
@@ -6937,6 +6985,12 @@ ser «main + el cambio». Pendiente, y no se hace aquí: que la portada del PR d
 ha verificado, para que un PR del plugin no se pueda fundir a ciegas (hoy lo dice solo el estado
 del run).
 
+**Ampliado el 2026-10-15** · La exención de `ci.yml` vale solo para la rama del MISMO repo: la premisa
+(«todo lo que llega por esa rama pasó por el robot») no se cumple en un fork, que puede llamar así a su rama
+y saltarse los cinco checks obligatorios. La condición exige además `head.repo.full_name == github.repository`.
+El robot de auto-merge de la auditoría semanal aplica el mismo criterio: solo funde commits de este repo y
+solo el que pasó el CI (`--match-head-commit`).
+
 ---
 
 ## DD-67 · 2026-09-11 — Los 12 text styles son los únicos: el 500 no es «casi», no existe
@@ -9134,6 +9188,11 @@ Rounded; las apps reales, Outlined.
 self-hospedado (~340KB) en vez del CDN. El `font-display` del @fontsource es `swap` (el
 CDN usaba `block`): posible FOUT breve de la ligadura en carga fría — aceptable (fuente
 local, ya vigente en sc-demo).
+
+**Actualizado el 2026-10-15:** hoy el DS carga la variante con todos los ejes (`latin-full-normal.woff2`,
+3,96 MB) y con `font-display: block` (`material-symbols.css`): se ocultan las ligaduras hasta que la fuente
+carga, en vez del `swap` descrito arriba. La elección del `block` se midió el 2026-09-18 (comentario del CSS);
+el peso no se ha vuelto a medir.
 
 **Abierto (no bloquea):** el **peso** del icono a la par de la tipografía y el ajuste
 fino de ejes (wght/fill/opsz) sigue pendiente — la otra mitad del item de iconografía

@@ -48,13 +48,12 @@ npm run build:supervisor   # build de producción
 
 ## Gaps mecánicos abiertos (lote W4)
 
-3 componentes locales en [`src/app/shared/components/`](src/app/shared/components)
+2 componentes locales en [`src/app/shared/components/`](src/app/shared/components)
 esperan que el DS cierre un gap para poder borrarse:
 
 | Local | Espera en el DS |
 |---|---|
 | `illustrated-avatar` | `sc-avatar [size]` (px numérico) |
 | `label-chip` | `sc-tag [size]="'xs'"` |
-| `confirm-host` | `ScConfirmRequest { icon? }` |
 
 Seguimiento en [`../../NEXT-SESSION.md`](../../NEXT-SESSION.md).
