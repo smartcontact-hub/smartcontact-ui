@@ -7,12 +7,12 @@ import {
   DOCUMENT,
 } from '@angular/core';
 
+import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ListboxModule } from 'primeng/listbox';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScSelectComponent as SelectComponent } from '@smartcontact-hub/components';
 import { ScInputTextComponent as InputTextComponent } from '@smartcontact-hub/components';
-import { ScSearchComponent as SearchComponent } from '@smartcontact-hub/components';
-import { ScCheckboxComponent as CheckboxComponent } from '@smartcontact-hub/components';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 import { ScSectionCardComponent as SectionCardComponent } from '@smartcontact-hub/components';
 import { ScSelectButtonComponent as SelectButtonComponent } from '@smartcontact-hub/components';
@@ -76,8 +76,8 @@ const APP_DATA_PREFIX = 'sc-';
   imports: [
     SelectComponent,
     InputTextComponent,
-    SearchComponent,
-    CheckboxComponent,
+    FormsModule,
+    ListboxModule,
     ButtonComponent,
     IconComponent,
     SelectButtonComponent,
@@ -146,7 +146,6 @@ export class SistemaPageComponent {
   /* `regenOpen` se fue: el estado de plegado vive dentro de `sc-section-card`, que es
    * quien pinta la cabecera-botón. Tenerlo aquí además obligaba a mantener los dos en
    * sincronía a mano. */
-  protected readonly searchQuery = signal('');
   protected readonly selectedIds = signal<ReadonlySet<number>>(new Set());
   protected readonly confirmText = signal('');
   /** Políticas de contraseña (maqueta): opciones traducidas para `sc-select`. */
@@ -175,24 +174,12 @@ export class SistemaPageComponent {
     this.agentsStore.agents().filter((a) => a.status === 'active'),
   );
 
-  protected readonly filteredAgents = computed(() => {
-    const query = this.searchQuery().toLowerCase().trim();
-    const all = this.activeAgents();
-    if (!query) return all;
-    return all.filter(
-      (a) =>
-        a.name.toLowerCase().includes(query) ||
-        a.code.toLowerCase().includes(query) ||
-        a.extension.includes(query) ||
-        (a.email?.toLowerCase().includes(query) ?? false),
-    );
-  });
-
-  protected readonly allFilteredSelected = computed(() => {
-    const filtered = this.filteredAgents();
-    if (filtered.length === 0) return false;
+  /** El valor del listbox: los ids marcados, en el orden de la lista. */
+  protected readonly selectedList = computed(() => {
     const selected = this.selectedIds();
-    return filtered.every((a) => selected.has(a.id));
+    return this.activeAgents()
+      .filter((a) => selected.has(a.id))
+      .map((a) => a.id);
   });
 
   protected readonly canExecute = computed(
@@ -247,39 +234,12 @@ export class SistemaPageComponent {
     this.doc.defaultView?.location.reload();
   }
 
-  protected toggleAll(): void {
-    const filtered = this.filteredAgents();
-    const allSelected = this.allFilteredSelected();
-    this.selectedIds.update((current) => {
-      const next = new Set(current);
-      for (const agent of filtered) {
-        if (allSelected) next.delete(agent.id);
-        else next.add(agent.id);
-      }
-      return next;
-    });
-  }
-
-  protected toggleOne(id: number): void {
-    this.selectedIds.update((current) => {
-      const next = new Set(current);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
+  protected setSelectedAgents(ids: readonly number[] | null): void {
+    this.selectedIds.set(new Set(ids ?? []));
   }
 
   protected onConfirmInput(value: string): void {
     this.confirmText.set(value.toUpperCase());
-  }
-
-  protected onSearchKey(event: KeyboardEvent): void {
-    if (event.key !== 'Escape') return;
-    if (this.searchQuery()) {
-      this.searchQuery.set('');
-    } else {
-      (event.target as HTMLInputElement).blur();
-    }
   }
 
   protected regenerate(): void {
