@@ -38,6 +38,10 @@
       [value]="visibles()"
       [columns]="columns()"
       [paginator]="visibles().length > 0"
+      rowsFocusable
+      [rowStyleClass]="rowClass"
+      (rowClick)="onRowClick($event)"
+      (rowKeydown)="onRowKeydown($event)"
       [(first)]="first"
       [rows]="10"
       [rowsPerPageOptions]="[10, 25, 50]"

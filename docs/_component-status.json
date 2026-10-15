@@ -528,7 +528,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 16,
+      "usedInSupervisor": 17,
       "cuando": "Para datos tabulares con columnas comparables. Si cada fila es en realidad un formulario, NO es una tabla.",
       "sobreObsoleto": []
     },
@@ -733,7 +733,7 @@
         "kit"
       ],
       "retirado": null,
-      "usedInSupervisor": 22,
+      "usedInSupervisor": 24,
       "cuando": "Para cuando no hay nada que enseñar: dice por qué está vacío y qué hacer. Una lista vacía sin esto parece rota.",
       "sobreObsoleto": []
     },
@@ -1594,7 +1594,7 @@
         "kit"
       ],
       "retirado": null,
-      "usedInSupervisor": 14,
+      "usedInSupervisor": 15,
       "cuando": "Para filtrar escribiendo. Solo se lleva el foco al entrar si buscar es LA acción de la pantalla.",
       "sobreObsoleto": []
     },
@@ -1625,7 +1625,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 36,
+      "usedInSupervisor": 37,
       "cuando": "Para una sección con título dentro de un formulario o una ficha.",
       "sobreObsoleto": []
     },
@@ -1719,7 +1719,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 23,
+      "usedInSupervisor": 24,
       "cuando": "Para elegir una opción de 2-4 que se explican solas, todas visibles. Si cambia de COLECCIÓN en vez de filtrar, son pestañas (DD-113).",
       "sobreObsoleto": []
     },

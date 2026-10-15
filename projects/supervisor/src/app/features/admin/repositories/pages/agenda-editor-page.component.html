@@ -52,7 +52,9 @@
       </section>
     </sc-section-card>
 
-    <!-- Cómo llama esta agenda a sus cinco campos personalizados (en Voice eran «Personalizado 1 a 5», fijos). -->
+    <!-- Cómo llama esta agenda a sus cinco campos personalizados (en Voice eran «Personalizado 1 a 5», fijos). Al crear
+         no sale: aún no hay contactos que los usen; aparece al editar. -->
+    @if (mode() === 'edit') {
     <sc-section-card titleKey="repositories.agendas.custom_labels_title" surface="card" icon="edit">
       <section class="sub-section">
         <p class="sc-text-body-regular">{{ 'repositories.agendas.custom_labels_hint' | translate }}</p>
@@ -72,6 +74,7 @@
         </div>
       </section>
     </sc-section-card>
+    }
 
     <sc-section-card titleKey="repositories.agendas.contacts" surface="card" icon="call">
       <section class="sub-section">
@@ -81,6 +84,17 @@
           (importar)="abrirImportar()"
           (edit)="contactDialog.set({ contact: $event })"
           (remove)="removeContact($event)"
+        />
+      </section>
+    </sc-section-card>
+
+    <!-- Los agentes que ven esta agenda, la última sección: quién la tiene (en Voice, un muro de casillas). -->
+    <sc-section-card titleKey="repositories.agendas.section_agents" surface="card" icon="headphones">
+      <section class="sub-section">
+        <sc-agenda-agents-table
+          [agents]="agentsStore.agents()"
+          [selected]="form().agentIds"
+          (selectedChange)="update('agentIds', $event)"
         />
       </section>
     </sc-section-card>
@@ -117,7 +131,6 @@
 @if (importOpen()) {
   <sc-dialog [visible]="true" [title]="'repositories.agendas.import_title' | translate" (cancelled)="cerrarImportar()">
     <div class="importar">
-      <p class="sc-text-body-regular">{{ importAyuda() }}</p>
       <div class="importar__acciones">
         <sc-button
           size="sm"

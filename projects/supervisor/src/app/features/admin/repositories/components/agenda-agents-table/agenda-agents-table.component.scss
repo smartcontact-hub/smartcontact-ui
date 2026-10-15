@@ -1,0 +1,25 @@
+/* Como la tabla de contactos: la barra (buscador, filtro y cuántos hay) y, debajo, la tabla, hermanos a 14. */
+:host {
+  display: block;
+}
+
+.agents {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1);
+}
+
+.agents__bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sc-spacing-0-5);
+}
+
+.agents__search {
+  flex: 1 1 var(--sc-spacing-18);
+}
+
+.agents__summary {
+  color: var(--sc-text-subtle);
+}

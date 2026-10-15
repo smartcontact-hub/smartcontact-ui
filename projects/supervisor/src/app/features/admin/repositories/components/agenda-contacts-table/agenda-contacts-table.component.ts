@@ -15,6 +15,8 @@ import type { MenuItem } from 'primeng/api';
 import { MenuModule } from 'primeng/menu';
 import {
   type ScColumnCellContext,
+  type ScDatatableRowEvent,
+  type ScDatatableRowKeyEvent,
   type ScColumnDef,
   ScButtonComponent as ButtonComponent,
   ScDatatableComponent as DatatableComponent,
@@ -110,6 +112,21 @@ export class AgendaContactsTableComponent {
       },
     ];
   });
+
+  /** Pulsar una fila abre su editor, como en las listas de la plataforma (la fila se abre; «⋮» lleva el resto). Con
+   *  Mayús se salta, para marcar sin abrir. */
+  protected onRowClick(event: ScDatatableRowEvent<AgendaContact>): void {
+    if (event.originalEvent.shiftKey) return;
+    this.edit.emit(event.row);
+  }
+
+  /** WCAG 2.1.1: si la fila se abre con el ratón, se abre con el teclado: Intro, con el foco en la fila. */
+  protected onRowKeydown(event: ScDatatableRowKeyEvent<AgendaContact>): void {
+    const native = event.originalEvent;
+    if ((native.target as HTMLElement | null)?.tagName === 'TR' && native.key === 'Enter') this.edit.emit(event.row);
+  }
+
+  protected readonly rowClass = () => 'sc-row--clickable';
 
   /* Un solo menú para toda la tabla, como en las listas: se repuebla al apuntar a otra fila. */
   private readonly menuTarget = signal<AgendaContact | null>(null);
