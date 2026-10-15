@@ -62,13 +62,14 @@ for (const [ancho, alto] of [
   });
 }
 
-/* Los contactos de una agenda (DD-163) son la otra tabla dentro de una sección: la misma regla, sobre la agenda grande a
- * 50 filas por página, que no caben. */
+/* Los contactos de una agenda (DD-163) ya NO llegan al pie: le sigue la sección «Agentes», y llegar al pie la dejaba en
+ * cuatro filas con scroll por dentro (medido con el editor ya con «Agentes»). La tarjeta mide lo que sus filas, y la
+ * página es la que desplaza. */
 for (const [ancho, alto] of [
   [1440, 900],
   [1512, 945],
 ] as const) {
-  test(`a ${ancho}×${alto}, la tabla de contactos llega al pie: la página no desplaza y a la tabla no le sobra sitio`, async ({
+  test(`a ${ancho}×${alto}, la tabla de contactos mide lo que sus filas: sin scroll por dentro y con «Agentes» debajo`, async ({
     page,
   }) => {
     await page.setViewportSize({ width: ancho, height: alto });
@@ -78,14 +79,13 @@ for (const [ancho, alto] of [
     await pickSelectOption(page, caja.locator('.p-paginator'), /^50$/);
     await expect(caja.locator('tbody tr')).toHaveCount(50);
     await page.evaluate(() => document.fonts.ready);
-    expect(await desplaza(page), 'lo que la página desplaza').toBeLessThanOrEqual(0);
-    expect(await caja.locator('.p-datatable-table-container').evaluate((c) => c.scrollHeight > c.clientHeight)).toBe(true);
-    await caja.evaluate((el) => {
-      const alto = `${el.getBoundingClientRect().height + 2}px`;
-      el.style.maxBlockSize = alto;
-      el.style.minBlockSize = alto;
+    expect(await caja.locator('.p-datatable-table-container').evaluate((c) => c.scrollHeight > c.clientHeight + 1), 'scroll por dentro').toBe(false);
+    // La sección «Agentes» queda debajo de la tabla, no encima.
+    const orden = await page.evaluate(() => {
+      const y = (s: string) => document.querySelector(s)!.getBoundingClientRect().top;
+      return y('sc-agenda-agents-table') > y('sc-agenda-contacts-table');
     });
-    expect(await desplaza(page), 'con 2 px más de tabla').toBeGreaterThanOrEqual(1);
+    expect(orden).toBe(true);
   });
 }
 

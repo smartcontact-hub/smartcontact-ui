@@ -1,4 +1,5 @@
 import { Signal } from '@angular/core';
+import type { GroupRef } from '@smartcontact-hub/components';
 
 /** Material Symbols glyph name (e.g. `'call'`, `'inventory_2'`). */
 export type LucideIconData = string;
@@ -9,7 +10,7 @@ export interface RepoEntity {
 }
 
 /** Visual presentation for a column. `count` es una cifra: la lista la escribe con el separador de miles del idioma. */
-export type RepoColumnKind = 'text' | 'truncate' | 'status' | 'count';
+export type RepoColumnKind = 'text' | 'truncate' | 'status' | 'count' | 'date' | 'groups';
 
 export interface RepoColumnDef<T extends RepoEntity> {
   readonly key: string;
@@ -22,6 +23,8 @@ export interface RepoColumnDef<T extends RepoEntity> {
   readonly emphasis?: boolean;
   /** For `kind === 'status'`: maps the raw value to a translated label + tone. */
   readonly statusMap?: Readonly<Record<string, RepoStatusEntry>>;
+  /** Para `kind === 'groups'`: los grupos que usan la fila, para el desplegable de «Grupos» de siempre. */
+  readonly groups?: (item: T) => readonly GroupRef[];
 }
 
 export interface RepoStatusEntry {
@@ -34,6 +37,12 @@ export type RepoFieldType = 'text' | 'textarea' | 'select';
 export interface RepoFieldDef {
   readonly key: string;
   readonly labelKey: string;
+  /** Una etiqueta ya escrita (no una clave): la de un campo que el usuario nombra, como «Personalizado 1». Gana a `labelKey`. */
+  readonly label?: string;
+  /** Un título de sección encima de este campo, si abre una: el formulario los agrupa. */
+  readonly sectionKey?: string;
+  /** Ocupa el ancho entero cuando el formulario va en dos columnas (una dirección, las notas). */
+  readonly wide?: boolean;
   readonly type: RepoFieldType;
   readonly required?: boolean;
   readonly placeholderKey?: string;
@@ -66,6 +75,12 @@ export interface RepoPageConfig<T extends RepoEntity> {
    * lista.
    */
   readonly editRoute?: string;
+  /** Suma «Duplicar» al menú de la fila: la copia nace con un nombre que no se repite. */
+  readonly duplicable?: boolean;
+  /** Suma el botón «Columnas» (elegir y ordenar): la primera columna va fija. Se guarda por `filePrefix`. */
+  readonly columnChoices?: boolean;
+  /** El campo (AAAA-MM-DD) que se pone a hoy al duplicar o guardar desde el panel de la lista. */
+  readonly modifiedField?: string;
 }
 
 /** Minimal store contract every repo instance must satisfy. */

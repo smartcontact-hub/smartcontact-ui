@@ -589,7 +589,7 @@
     },
     {
       "selector": "sc-empty-state",
-      "usedInSupervisor": 22
+      "usedInSupervisor": 24
     },
     {
       "selector": "sc-fileupload",

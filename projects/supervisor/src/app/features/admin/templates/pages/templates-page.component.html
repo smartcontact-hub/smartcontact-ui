@@ -1,41 +1,33 @@
-<!-- Modelo "todo arriba" (experiment S59): sin banda de page-header. La
-     identidad la da el breadcrumb de la TopBar; el CTA (y su panel de creación
-     inline) se proyectan a la barra vía TopBarSlotService. -->
+<!-- Modelo "todo arriba" (experiment S59): sin banda de page-header. La identidad la da el breadcrumb de la TopBar; el CTA se
+     proyecta a la barra vía TopBarSlotService y lleva al editor de la plantilla. -->
 <ng-template #topbarActions>
-  <div
-    class="page__create-anchor"
-    (scClickOutside)="closeCreatePanel()"
-    [scClickOutsideEnabled]="creating()"
-  >
-    <sc-button class="top-bar__cta" type="button" variant="primary" (clicked)="onCreateClick()">
-      <sc-icon [name]="plusIcon" size="inherit" />
-      <span>{{ 'templates.create_button' | translate }}</span>
-    </sc-button>
-
-    @if (creating()) {
-      <div class="page__panel-anchor">
-        <sc-template-form-panel
-          [defaultType]="activeTab()"
-          [existingTitles]="existingTitles()"
-          (save)="onCreateSubmit($event)"
-          (cancelled)="closeCreatePanel()"
-        />
-      </div>
-    }
-  </div>
+  <sc-button class="top-bar__cta" type="button" variant="primary" (clicked)="onCreateClick()">
+    <sc-icon [name]="plusIcon" size="inherit" />
+    <span>{{ 'templates.create_button' | translate }}</span>
+  </sc-button>
 </ng-template>
 
-<!-- La lista (título, barra, tabla, selección, menú de fila) la monta `sc-list-page` (DD-97). Aquí solo lo
-     que es de Plantillas: las pestañas, columnas y celdas, el panel de edición, acciones y diálogos. -->
+<!-- La lista (título, barra, tabla, selección, menú de fila) la monta `sc-list-page` (DD-97). Aquí solo lo que es de
+     Plantillas: las pestañas, columnas y celdas, acciones y diálogos. La fila abre su editor, en su propia página. -->
 <sc-list-page
   [heading]="'templates.breadcrumb' | translate"
   [rows]="tabRows()"
   [empty]="templates().length === 0"
   [columns]="columns()"
+  [columnChoices]="columnDefs()"
+  [columnStorageKey]="columnPrefKey"
   [searchPlaceholder]="'common.search' | translate"
   [searchFn]="matchesSearch"
   [(query)]="searchQuery"
   [rowMenu]="rowMenu"
+  rowOpenable
+  (rowOpen)="onRowOpen($event)"
+  exportable
+  importable
+  templateDownloadable
+  (exportRequest)="onExport($event)"
+  (importRequest)="abrirImportar()"
+  (templateRequest)="descargarPlantilla()"
   selectable
   [bulkEntity]="bulkEntity()"
   [rowLabel]="rowLabel"
@@ -48,7 +40,7 @@
     scListBeforeToolbar
     class="tabs"
     [ariaLabel]="'templates.form.channel' | translate"
-    [tabs]="[{ value: 'chat', label: 'templates.type.chat' | translate }, { value: 'email', label: 'templates.type.email' | translate }]"
+    [tabs]="tabs()"
     [value]="activeTab()"
     (valueChange)="onTabChange($event)"
   />
@@ -59,7 +51,7 @@
     titleKey="templates.empty.title"
     bodyKey="templates.empty.text"
     ctaKey="templates.empty.cta"
-    (cta)="creating.set(true)"
+    (cta)="onCreateClick()"
   />
 
   <ng-container ngProjectAs="[scListBulkActions]">
@@ -73,26 +65,15 @@
      las resuelvan; `columns()` las recoge. Contexto `{ $implicit: tpl }`. -->
 <ng-template #titleTpl let-tpl>
   <span class="table__title-text sc-text-body-semibold">{{ tpl.title }}</span>
-
-  @if (editingId() === tpl.id) {
-    <div
-      class="page__panel-anchor page__panel-anchor--row"
-      (scClickOutside)="closeEditPanel()"
-      [scClickOutsideEnabled]="editingId() === tpl.id"
-    >
-      <sc-template-form-panel
-        [initial]="tpl"
-        [defaultType]="activeTab()"
-        [existingTitles]="existingTitles()"
-        (save)="onEditSubmit(tpl.id, $event)"
-        (cancelled)="closeEditPanel()"
-      />
-    </div>
-  }
 </ng-template>
 
 <ng-template #bodyTpl let-tpl>
-  <span class="table__body-text sc-text-body-regular" [title]="tpl.body">{{ tpl.body }}</span>
+  <span class="table__body-text sc-text-body-regular" [title]="plainBody(tpl)">{{ plainBody(tpl) }}</span>
+</ng-template>
+
+<ng-template #groupsTpl let-tpl>
+  @let grupos = groupsOf(tpl);
+  <sc-group-popover [groups]="grupos" [countAriaLabel]="groupsAria(grupos.length)" />
 </ng-template>
 
 <ng-template #updatedTpl let-tpl>
@@ -110,3 +91,64 @@
   (cancelled)="cancelDelete()"
   (confirm)="confirmDelete($event)"
 />
+
+<!-- Importar plantillas de un CSV: la plantilla, el archivo y, antes de crear nada, qué entra y qué no. -->
+@if (importOpen()) {
+  <sc-dialog [visible]="true" [title]="'templates.import.title' | translate" (cancelled)="cerrarImportar()">
+    <div class="importar">
+      <div class="importar__acciones">
+        <sc-button
+          size="sm"
+          variant="secondary"
+          appearance="text"
+          icon="download"
+          [label]="'templates.import.template' | translate"
+          (clicked)="descargarPlantilla()"
+        />
+        <!-- El input nativo va oculto y lo abre un botón del DS: fuera del tabulador y del lector, que si no anuncian un
+             segundo botón «Choose File» en inglés. -->
+        <input #archivo class="visually-hidden" type="file" tabindex="-1" aria-hidden="true" accept=".csv,text/csv" (change)="onImportFile($event)" />
+        <sc-button
+          size="sm"
+          variant="secondary"
+          appearance="outlined"
+          icon="upload"
+          [label]="(importPreview() ? 'templates.import.choose_other' : 'templates.import.choose') | translate"
+          (clicked)="archivo.click()"
+        />
+      </div>
+      @if (importResumen(); as resumen) {
+        <div class="importar__vista" role="status">
+          <p class="sc-text-body-semibold">{{ resumen.entran }}</p>
+          @if (resumen.errores) {
+            <p class="sc-text-body-regular">{{ resumen.errores }}</p>
+            <ul class="importar__errores sc-text-caption-regular">
+              @for (linea of resumen.lineas; track $index) {
+                <li>{{ linea }}</li>
+              }
+              @if (resumen.mas) {
+                <li>{{ resumen.mas }}</li>
+              }
+            </ul>
+          }
+          @if (resumen.repetidas) {
+            <p class="sc-text-body-regular">{{ resumen.repetidas }}</p>
+          }
+          @if (resumen.sobran) {
+            <p class="sc-text-body-regular">{{ resumen.sobran }}</p>
+          }
+        </div>
+      }
+    </div>
+    <div modal-actions>
+      <sc-button type="button" size="sm" variant="secondary" appearance="outlined" (clicked)="cerrarImportar()">
+        <span>{{ 'common.cancel' | translate }}</span>
+      </sc-button>
+      @if (importResumen()?.confirmar; as confirmar) {
+        <sc-button type="button" size="sm" (clicked)="confirmarImportar()">
+          <span>{{ confirmar }}</span>
+        </sc-button>
+      }
+    </div>
+  </sc-dialog>
+}

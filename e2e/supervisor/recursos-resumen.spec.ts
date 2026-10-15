@@ -11,7 +11,7 @@ import { disableAnimations, forceLightTheme, goto, irASeccion } from './helpers'
  *   1. bajo el campo no hay lista; el lápiz de una agenda abre su ventana con sus datos sin salir de la ficha ni marcar o
  *      desmarcar la opción; al guardar, la opción lo dice;
  *   2. una plantilla, igual: su ventana, con su texto;
- *   3. se ofrecen las agendas activas, y la inactiva que ya estaba puesta, para poder quitarla;
+ *   3. se ofrecen todas las agendas: ya no son activas ni inactivas;
  *   4. lo borrado en Repositorios no se cuenta ni se guarda, y la ficha no abre con cambios por ello;
  *   5. en un alta también se edita: no se sale de la ficha, así que no hay alta vacía a la que volver.
  */
@@ -88,23 +88,23 @@ test('grupo · una plantilla abre su ventana con su texto, sin salir de la ficha
   await expect(page).toHaveURL(/\/admin\/grupos\/editar\/11\?seccion=recursos$/);
 });
 
-test('se ofrecen las agendas activas, y la inactiva que ya estaba puesta, para poder quitarla', async ({ page }) => {
+test('se ofrecen todas las agendas, tengan o no la puesta el grupo', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/5?seccion=recursos');
   expect(await opciones(page, 'group-agendas')).toContain('Soporte Técnico');
   await goto(page, 'admin/grupos/editar/11?seccion=recursos');
-  expect(await opciones(page, 'group-agendas')).not.toContain('Soporte Técnico');
+  expect(await opciones(page, 'group-agendas')).toContain('Soporte Técnico');
 });
 
 test('lo borrado en Repositorios no se cuenta ni se guarda, y la ficha no abre con cambios por ello', async ({ page }) => {
   // La agenda 3 (Cobros), puesta en el grupo 11, ya no existe.
   await page.addInitScript(() => {
     if (localStorage.getItem('sc-agendas-repo')) return;
-    localStorage.setItem('sc-agendas-repo-v', '1');
+    localStorage.setItem('sc-agendas-repo-v', '2');
     localStorage.setItem(
       'sc-agendas-repo',
       JSON.stringify([
-        { id: 1, name: 'Ventas Nacional', contacts: [], description: '', status: 'active' },
-        { id: 2, name: 'Soporte Premium', contacts: [], description: '', status: 'active' },
+        { id: 1, name: 'Ventas Nacional', contacts: [], description: '' },
+        { id: 2, name: 'Soporte Premium', contacts: [], description: '' },
       ]),
     );
   });

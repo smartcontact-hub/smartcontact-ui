@@ -7,7 +7,6 @@ import {
   ScInputTextComponent as InputTextComponent,
   ScMessageComponent as MessageComponent,
   ScSectionCardComponent as SectionCardComponent,
-  ScSelectComponent as SelectComponent,
 } from '@smartcontact-hub/components';
 
 import type { DirtyAware } from '@core/guards';
@@ -16,35 +15,39 @@ import { LanguageService } from '@core/services/language.service';
 import { injectLangChange } from '@core/utils/lang-change';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 
+import { AgendaAgentsTableComponent } from '../components/agenda-agents-table/agenda-agents-table.component';
 import { AgendaContactsTableComponent } from '../components/agenda-contacts-table/agenda-contacts-table.component';
 import { RepoFormPanelComponent, type RepoFormSubmission } from '../components/repo-form-panel.component';
 import type { RepoFieldDef } from '../components/repo-types';
 import {
   decodificarCsv,
+  CAMPOS_DEL_CSV,
+  contactoDeValores,
   type ImportacionDeContactos,
+  SECCIONES_DE_CONTACTO,
   normalizarTelefono,
   parsearContactosCsv,
   plantillaCsv,
   telefonoValido,
   TOPE_DE_CONTACTOS,
 } from '../state/agenda-contacts.core.mjs';
+import { hoy } from '@shared/utils/today';
+import { AgentsStore } from '@features/admin/agents/state/agents.store';
 import { AgendasStore, type AgendaContact } from '../state/agendas.store';
 import { ResultadoAccionService } from '@core/services';
 
 interface AgendaDraft {
   readonly name: string;
   readonly description: string;
-  readonly status: string;
   readonly contacts: readonly AgendaContact[];
+  /** Las etiquetas de los cinco campos personalizados: una por campo, vacía = la de siempre. */
+  readonly customLabels: readonly string[];
+  /** Los agentes que ven esta agenda: es lo que dice cada agente en sus `schedules`, no algo de la agenda. */
+  readonly agentIds: readonly number[];
 }
 
-const VACIA: AgendaDraft = { name: '', description: '', status: 'active', contacts: [] };
-
-/** Los campos de un contacto, con el formulario de los «+» de Recursos (`sc-repo-form-panel`). */
-const CAMPOS_DE_CONTACTO: readonly RepoFieldDef[] = [
-  { key: 'name', labelKey: 'repositories.columns.name', type: 'text', required: true },
-  { key: 'phone', labelKey: 'repositories.agendas.phone', type: 'text', inputType: 'tel', required: true },
-];
+const SIN_ETIQUETAS: readonly string[] = ['', '', '', '', ''];
+const VACIA: AgendaDraft = { name: '', description: '', contacts: [], customLabels: SIN_ETIQUETAS, agentIds: [] };
 
 /**
  * El editor de una agenda (DD-163): su nombre, su estado y sus contactos. Va en su propia ruta, como las fichas, para que
@@ -54,6 +57,7 @@ const CAMPOS_DE_CONTACTO: readonly RepoFieldDef[] = [
 @Component({
   selector: 'sc-agenda-editor-page',
   imports: [
+    AgendaAgentsTableComponent,
     AgendaContactsTableComponent,
     ButtonComponent,
     DialogComponent,
@@ -61,7 +65,6 @@ const CAMPOS_DE_CONTACTO: readonly RepoFieldDef[] = [
     MessageComponent,
     RepoFormPanelComponent,
     SectionCardComponent,
-    SelectComponent,
     TranslateModule,
   ],
   templateUrl: './agenda-editor-page.component.html',
@@ -72,6 +75,7 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly store = inject(AgendasStore);
+  protected readonly agentsStore = inject(AgentsStore);
   private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
   private readonly language = inject(LanguageService);
@@ -92,14 +96,6 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
   /** Con cambios sin guardar, el «guardado» de la barra ya no vale (DD-191). */
   private readonly limpiaResultado = effect(() => {
     if (this.formDirty()) this.resultado.limpiar();
-  });
-
-  protected readonly statusOptions = computed(() => {
-    this.lang();
-    return [
-      { label: this.translate.instant('repositories.status.active'), value: 'active' },
-      { label: this.translate.instant('repositories.status.inactive'), value: 'inactive' },
-    ];
   });
 
   /** El nombre no se repite entre agendas (sin contar la propia), como en el panel de la lista. */
@@ -132,7 +128,17 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
     }
     this.mode.set('edit');
     this.agendaId = agenda.id;
-    this.form.set({ name: agenda.name, description: agenda.description, status: agenda.status, contacts: agenda.contacts });
+    this.form.set({
+      name: agenda.name,
+      description: agenda.description,
+      contacts: agenda.contacts,
+      customLabels: SIN_ETIQUETAS.map((_, i) => agenda.customLabels?.[i] ?? ''),
+      agentIds: this.agentsStore
+        .agents()
+        .filter((a) => a.schedules?.includes(agenda.id))
+        .map((a) => a.id)
+        .sort((a, b) => a - b),
+    });
     this.dirtyState.markPristine();
   }
 
@@ -145,18 +151,33 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
     if (!this.canSave()) return;
     const f = this.form();
     const draft = { ...f, name: f.name.trim(), description: f.description.trim() };
+    // Lo de la agenda y lo de sus agentes se guardan en sitios distintos: los agentes llevan sus agendas.
+    const { agentIds, ...datos } = draft;
     if (this.mode() === 'create') {
-      const created = this.store.addItem(draft);
+      const created = this.store.addItem({ ...datos, updatedAt: hoy() });
+      this.asignarAgentes(created.id, agentIds);
       this.dirtyState.markPristine();
       const creado = this.texto('repositories.toasts.created', created.name);
       // Tras llegar a la edición: antes, el cambio de página se lo llevaría (DD-191).
       void this.router.navigateByUrl(`/admin/agendas/editar/${created.id}`, { replaceUrl: true }).then(() => this.resultado.enLaBarra(creado));
       return;
     }
-    this.store.updateItem(this.agendaId!, draft);
+    this.store.updateItem(this.agendaId!, { ...datos, updatedAt: hoy() });
+    this.asignarAgentes(this.agendaId!, agentIds);
     this.form.set(draft);
     this.dirtyState.markPristine();
     this.resultado.enLaBarra(this.texto('repositories.toasts.updated', draft.name));
+  }
+
+  /** Pone o quita esta agenda de las `schedules` de cada agente que cambió: solo toca a los que cambian. */
+  private asignarAgentes(agendaId: number, ids: readonly number[]): void {
+    const deben = new Set(ids);
+    for (const agente of this.agentsStore.agents()) {
+      const tiene = agente.schedules?.includes(agendaId) ?? false;
+      if (tiene === deben.has(agente.id)) continue;
+      const resto = (agente.schedules ?? []).filter((id) => id !== agendaId);
+      this.agentsStore.updateAgent(agente.id, { schedules: deben.has(agente.id) ? [...resto, agendaId] : resto });
+    }
   }
 
   protected discard(): void {
@@ -165,7 +186,39 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
 
   /* ── Contactos ────────────────────────────────────────────────────────── */
 
-  protected readonly contactFields = CAMPOS_DE_CONTACTO;
+  /**
+   * Los campos del formulario de un contacto: los de Voice, agrupados, con nombre y teléfono (los de siempre, los que
+   * coinciden con los del puesto de agente) como únicos obligatorios. Los personalizados llevan la etiqueta de ESTA
+   * agenda, o «Personalizado N».
+   */
+  protected readonly contactFields = computed<readonly RepoFieldDef[]>(() => {
+    this.lang();
+    const etiquetas = this.form().customLabels;
+    return SECCIONES_DE_CONTACTO.flatMap(({ seccion, campos }) =>
+      campos.map((clave, i): RepoFieldDef => {
+        const personalizado = clave.startsWith('custom');
+        const n = personalizado ? Number(clave.slice(6)) : 0;
+        return {
+          key: clave,
+          labelKey: clave === 'name' ? 'repositories.columns.name' : clave === 'phone' ? 'repositories.agendas.phone' : `repositories.agendas.fields.${clave}`,
+          label: personalizado ? etiquetas[n - 1]?.trim() || this.translate.instant('repositories.agendas.custom_label', { n }) : undefined,
+          sectionKey: i === 0 ? `repositories.agendas.sections.${seccion}` : undefined,
+          wide: clave === 'workAddress' || clave === 'homeAddress' || clave === 'notes' || clave === 'website',
+          type: clave === 'notes' ? 'textarea' : 'text',
+          inputType: clave.startsWith('phone') || clave === 'fax' ? 'tel' : 'text',
+          required: clave === 'name' || clave === 'phone',
+        };
+      }),
+    );
+  });
+
+  /** Cómo se llama el campo personalizado N en esta agenda. */
+  protected readonly etiquetaPersonalizada = (n: number): string =>
+    this.form().customLabels[n - 1]?.trim() || this.translate.instant('repositories.agendas.custom_label', { n });
+
+  protected updateCustomLabel(index: number, value: string): void {
+    this.form.update((f) => ({ ...f, customLabels: f.customLabels.map((l, i) => (i === index ? value : l)) }));
+  }
   /** El diálogo de un contacto: `null` cerrado; con `contact: null`, para añadir. */
   protected readonly contactDialog = signal<{ readonly contact: AgendaContact | null } | null>(null);
 
@@ -181,13 +234,13 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
 
   protected onContactSave(values: RepoFormSubmission): void {
     const editing = this.contactDialog()?.contact ?? null;
-    const name = values['name'] ?? '';
-    const phone = values['phone'] ?? '';
+    // Todos los campos: lo vaciado se quita (no se arrastra lo de antes) y lo escrito se guarda sin espacios de más.
+    const datos = contactoDeValores(values);
     this.form.update((f) => {
-      if (editing) return { ...f, contacts: f.contacts.map((c) => (c.id === editing.id ? { ...c, name, phone } : c)) };
+      if (editing) return { ...f, contacts: f.contacts.map((c) => (c.id === editing.id ? { id: c.id, ...datos } : c)) };
       // Arriba, donde se ve: al final, en la agenda grande caería en la última página.
       const id = f.contacts.reduce((max, c) => Math.max(max, c.id), 0) + 1;
-      return { ...f, contacts: [{ id, name, phone }, ...f.contacts] };
+      return { ...f, contacts: [{ id, ...datos }, ...f.contacts] };
     });
     this.contactDialog.set(null);
   }
@@ -231,10 +284,6 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
       confirmar: vista.nuevos.length > 0 ? frase('import_confirm', vista.nuevos.length) : null,
     };
   });
-  protected readonly importAyuda = computed(() => {
-    this.lang();
-    return this.translate.instant('repositories.agendas.import_help', { max: this.formatoCifra().format(TOPE_DE_CONTACTOS) });
-  });
 
   protected abrirImportar(): void {
     this.importPreview.set(null);
@@ -249,7 +298,17 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
   /** La plantilla: solo la cabecera, en el idioma de la app, con `;` y BOM para Excel. */
   protected descargarPlantilla(): void {
     const t = (clave: string) => this.translate.instant(`repositories.agendas.${clave}`);
-    const blob = new Blob([plantillaCsv(t('import_template_name'), t('import_template_phone'))], { type: 'text/csv;charset=utf-8;' });
+    // La cabecera, con los nombres de los campos en el idioma de la app y los personalizados como los llama esta agenda.
+    const cabecera = CAMPOS_DEL_CSV.map((clave) =>
+      clave === 'name'
+        ? this.translate.instant('repositories.columns.name')
+        : clave === 'phone'
+          ? t('phone')
+          : clave.startsWith('custom')
+            ? this.etiquetaPersonalizada(Number(clave.slice(6)))
+            : t(`fields.${clave}`),
+    );
+    const blob = new Blob([plantillaCsv(cabecera)], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
@@ -274,7 +333,7 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
     if (!vista || vista.nuevos.length === 0) return;
     this.form.update((f) => {
       let id = f.contacts.reduce((max, c) => Math.max(max, c.id), 0);
-      const nuevos = vista.nuevos.map((c) => ({ id: ++id, name: c.name, phone: c.phone }));
+      const nuevos = vista.nuevos.map((c) => ({ id: ++id, ...c }));
       return { ...f, contacts: [...nuevos, ...f.contacts] };
     });
     this.cerrarImportar();

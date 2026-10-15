@@ -27,9 +27,10 @@
     />
   </div>
 
-  <!-- La tarjeta llega al pie de la pantalla, medida desde donde empieza (DD-160); lo que no cabe lo desplaza ella. Sin
-       filas no hay páginas: una agenda recién creada enseñaba el paginador apagado bajo el vacío. -->
-  <div class="table-card table-card--al-pie" scLlegaAlPie>
+  <!-- La tarjeta mide lo que sus filas: ya no es la última sección del editor (le sigue «Agentes»), y llegar al pie la
+       dejaba en cuatro filas con scroll por dentro. Sin filas no hay páginas: una agenda recién creada enseñaba el
+       paginador apagado bajo el vacío. -->
+  <div class="table-card">
     <sc-datatable
       variant="list"
       scrollable
@@ -38,6 +39,10 @@
       [value]="visibles()"
       [columns]="columns()"
       [paginator]="visibles().length > 0"
+      rowsFocusable
+      [rowStyleClass]="rowClass"
+      (rowClick)="onRowClick($event)"
+      (rowKeydown)="onRowKeydown($event)"
       [(first)]="first"
       [rows]="10"
       [rowsPerPageOptions]="[10, 25, 50]"

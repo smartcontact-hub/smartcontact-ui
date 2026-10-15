@@ -47,16 +47,16 @@ test('añadir un contacto valida el teléfono y no lo repite; guardar lo deja en
   await page.getByRole('button', { name: 'Añadir contacto' }).click();
   const dialogo = page.getByRole('dialog', { name: 'Añadir contacto' });
   await dialogo.getByLabel('Nombre').fill('Ventas al por mayor');
-  await dialogo.getByLabel('Teléfono').fill('900 1OO 203');
+  await dialogo.getByLabel('Teléfono', { exact: true }).fill('900 1OO 203');
   await dialogo.getByRole('button', { name: 'Crear' }).click();
   await expect(dialogo).toContainText('El teléfono no es válido');
 
   // El mismo número que «Centralita de ventas», escrito con guiones: se compara por sus cifras.
-  await dialogo.getByLabel('Teléfono').fill('900-100-200');
+  await dialogo.getByLabel('Teléfono', { exact: true }).fill('900-100-200');
   await dialogo.getByRole('button', { name: 'Crear' }).click();
   await expect(dialogo).toContainText('ya está en esta agenda');
 
-  await dialogo.getByLabel('Teléfono').fill('900 100 203');
+  await dialogo.getByLabel('Teléfono', { exact: true }).fill('900 100 203');
   await dialogo.getByRole('button', { name: 'Crear' }).click();
   await expect(dialogo).toBeHidden();
   await expect(filas(page)).toHaveCount(4);
@@ -112,7 +112,7 @@ test('crear una agenda: «Crear» del listado lleva al editor vacío, y al crear
 
 test('lo guardado antes como texto con comas se lee como contactos sin nombre, sin repetidos', async ({ page }) => {
   await page.addInitScript(() => {
-    localStorage.setItem('sc-agendas-repo-v', '1');
+    localStorage.setItem('sc-agendas-repo-v', '2');
     localStorage.setItem(
       'sc-agendas-repo',
       JSON.stringify([{ id: 1, name: 'Vieja', numbers: '900 100 200, 900-100-200, 900 100 201', description: '', status: 'active' }]),
@@ -150,7 +150,7 @@ test('en la agenda grande, buscar o añadir desde otra página vuelve a la prime
   await page.getByRole('button', { name: 'Añadir contacto' }).first().click();
   const dialogo = page.getByRole('dialog', { name: 'Añadir contacto' });
   await dialogo.getByLabel('Nombre').fill('Punto de venta nuevo');
-  await dialogo.getByLabel('Teléfono').fill('900 799 999');
+  await dialogo.getByLabel('Teléfono', { exact: true }).fill('900 799 999');
   await dialogo.getByRole('button', { name: 'Crear' }).click();
   await expect(filas(page).first()).toContainText('Punto de venta nuevo');
 });

@@ -21,8 +21,20 @@
     margin-bottom: var(--sc-spacing-0-5);
   }
 
-  &__columns {
-    margin-inline-end: var(--sc-spacing-0-5);
+  /* A la derecha de la barra (revisión de producto), juntos y a 7 como dos hermanos: Acciones y Columnas se tocan poco
+   * y quedan a mano. El margen automático empuja el grupo al final; el globo de Columnas y el menú de Acciones son nodos
+   * vacíos (pintan en `body`) y no suman hueco. */
+  &__tools {
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-5);
+    margin-inline-start: auto;
+
+    /* El menú y el globo no pintan aquí (van a `body`): sin caja, para que el hueco del grupo no los cuente. */
+    > p-menu,
+    > p-popover {
+      display: contents;
+    }
   }
 }
 
@@ -112,4 +124,26 @@
      * Pendiente de un token de ancho de campo. */
     max-width: 480px;
   }
+}
+
+/* EL MENÚ «ACCIONES» (importar, exportar, descargar plantilla): el `p-menu` en popup de primeng.dev con su plantilla de
+ * fila (`#item`). Una línea por acción, icono y título, para que el menú sea bajo. Todo en tokens del DS: el color, la
+ * escala de texto y el radio salen del tema (claro y oscuro). La plantilla va detrás de un separador. */
+.data-menu__item {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-625);
+  padding: var(--sc-spacing-0-5) var(--sc-spacing-0-625);
+  /* Radio concéntrico con el panel: el del panel menos el relleno de su lista (DD-192). */
+  border-radius: calc(var(--sc-radius-200) - var(--sc-spacing-0-25));
+  cursor: pointer;
+}
+
+.data-menu__icon {
+  flex-shrink: 0;
+  color: var(--sc-icon-secondary);
+}
+
+.data-menu__title {
+  color: var(--sc-text-primary);
 }

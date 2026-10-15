@@ -44,7 +44,6 @@ Ordenado por lo que ahorraría. «Caso» es dónde se usaría hoy.
 | Alta | **TreeSelect · Tree** | Las tipificaciones son un árbol de niveles. | **No**: DD-187 §5 dibuja el árbol entero en columnas por nivel (DD-174), con «+» por fila y tirador, que Tree no da; y el grupo elige una tipificación entera (un desplegable), no una hoja. TreeSelect tendría caso en sc-agent, al cerrar una conversación: se decide allí. |
 | Alta | **OrderList** | Ordenar columnas en el selector de columnas de los listados. | **No**: DD-176 §7 ya calca el ejemplo «Column Toggle» de primeng.dev (Popover, Checkbox y arrastre), que es nativo; con teclado ordena Alt+↑/↓ (DD-203). OrderList añadiría una segunda lista con sus cuatro botones de mover. |
 | Media | **CommandMenu** | La paleta de comandos (Cmd+K). | **No** (revisado): ver `sc-command-palette` en la sección 2. |
-| Media | **Editor** | El cuerpo de las plantillas de email (hoy, texto plano). | Sin decidir: sería nuevo; se abre con la pantalla. |
 | Media | **Rating** | La valoración del chat («de una a cinco estrellas», revisión del 2026-10-06) en el agente y en los informes. | Sin decidir: sería nuevo. |
 | Media | **Timeline** | La historia de un ticket en CusCare y la de una conversación en Memory. | Sin decidir. CusCare es réplica (DD-35): allí no se toca. |
 | Media | **InputMask** | Teléfonos y extensiones con formato. | Sin decidir: validación propia (`telefonoValido`); ojo con los internacionales. |
@@ -80,6 +79,7 @@ wrapper no tiene página en sc-docs ni medida en la línea base de estilos. El g
 
 | Módulo | Quién | Veredicto |
 |---|---|---|
+| Editor | supervisor (el contenido de una plantilla: `template-editor-page`) | El nativo tal cual (DD-113), con su barra a medida del canal (`#header`) y los `formats` que cada canal admite (WhatsApp, solo negrita, cursiva y tachado); el DS ya trae el tema (`sc-preset/editor.ts`). **Riesgo conocido:** PrimeNG avisa de que lo retirará a favor de un editor de pago; el contenido que guarda (HTML saneado, o el texto de WhatsApp) no depende de Quill, así que cambiarlo solo toca la página del editor. Sin wrapper todavía: una pantalla. |
 | Menu | supervisor (el menú de fila de Reglas, Entidades y la agenda; el «⋮» del Monitor) | En la página PrimeNG de sc-docs (nota de abajo); envolverlo, si llega a hacer falta. |
 | Listbox | supervisor, cuscare | En la página PrimeNG de sc-docs (nota de abajo). |
 | Toolbar | supervisor | En la página PrimeNG de sc-docs (nota de abajo). |
@@ -187,7 +187,7 @@ Los 109, agrupados por el trabajo que hacen. Un uso equivocado casi nunca es «e
 | InputOtp | Casillas para un código de un solo uso (`length`, `integerOnly`). | Códigos de verificación. | Sin uso: con su pantalla (sección 1) |
 | InputPassword | Contraseña con el ojo para verla. | Siempre que se pida una contraseña. | `sc-password` (DD-110) |
 | Password | La de antes, con medidor de fuerza. | Obsoleto: InputPassword. | Sin uso (sección 5) |
-| Editor | Texto con formato (negrita, listas, enlaces). | El contenido necesita formato. Obsoleto: PrimeNG lo retirará a favor de un editor de pago. | Sin uso: «sin decidir» para las plantillas de email (sección 1) |
+| Editor | Texto con formato (negrita, listas, enlaces). | El contenido necesita formato. Obsoleto: PrimeNG lo retirará a favor de un editor de pago. | En uso: el contenido de las plantillas (sección 3) |
 | InputTags | Varias etiquetas libres, con sugerencias si se quiere (`typeahead`). | El usuario escribe valores nuevos (dominios, palabras clave). Si solo valen los de una lista, MultiSelect o AutoComplete `multiple`. | `sc-inputtags` (DD-195) |
 
 ### 6.6 Números, fechas y colores

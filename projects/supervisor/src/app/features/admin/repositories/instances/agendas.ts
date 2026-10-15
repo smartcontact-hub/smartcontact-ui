@@ -1,10 +1,16 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 
+import { type GroupRef } from '@smartcontact-hub/components';
+import { GroupsStore } from '@features/admin/groups/state/groups.store';
+
 import { RepoListPageComponent } from '../components/repo-list-page.component';
 import { RepoColumnDef, RepoFieldDef, RepoPageConfig } from '../components/repo-types';
 import { type Agenda, AgendasStore } from '../state/agendas.store';
 
-const COLUMNS: readonly RepoColumnDef<Agenda>[] = [
+/** Las columnas: nombre, cuántos contactos, en qué grupos se usa y cuándo se tocó por última vez. Sin Estado (activa o
+ *  inactiva no aportaba: para una nueva se duplica una) ni fecha de creación (una agenda cambia con el tiempo, y lo que
+ *  ayuda es saber cuándo se modificó). */
+const columnas = (gruposDe: (agenda: Agenda) => readonly GroupRef[]): readonly RepoColumnDef<Agenda>[] => [
   {
     key: 'name',
     labelKey: 'repositories.columns.name',
@@ -23,15 +29,20 @@ const COLUMNS: readonly RepoColumnDef<Agenda>[] = [
     accessor: (i) => String(i.contacts.length),
   },
   {
-    key: 'status',
-    labelKey: 'repositories.columns.status',
-    kind: 'status',
-    width: '96px',
-    accessor: (i) => i.status,
-    statusMap: {
-      active: { labelKey: 'repositories.status.active', tone: 'success' },
-      inactive: { labelKey: 'repositories.status.inactive', tone: 'secondary' },
-    },
+    // En qué grupos se usa: lo dice cada grupo, en su ficha, con el mismo desplegable que Tipificaciones.
+    key: 'groups',
+    labelKey: 'repositories.columns.groups',
+    kind: 'groups',
+    width: '6.5rem',
+    accessor: (i) => String(gruposDe(i).length),
+    groups: gruposDe,
+  },
+  {
+    key: 'updatedAt',
+    labelKey: 'repositories.columns.modified',
+    kind: 'date',
+    width: '9.5rem',
+    accessor: (i) => i.updatedAt,
   },
 ];
 
@@ -50,15 +61,6 @@ export const AGENDA_FIELDS: readonly RepoFieldDef[] = [
     type: 'text',
     placeholderKey: 'repositories.placeholders.description',
   },
-  {
-    key: 'status',
-    labelKey: 'repositories.columns.status',
-    type: 'select',
-    options: [
-      { value: 'active', labelKey: 'repositories.status.active' },
-      { value: 'inactive', labelKey: 'repositories.status.inactive' },
-    ],
-  },
 ];
 
 @Component({
@@ -69,6 +71,15 @@ export const AGENDA_FIELDS: readonly RepoFieldDef[] = [
 })
 export class AgendasPageComponent {
   protected readonly store = inject(AgendasStore);
+  private readonly groupsStore = inject(GroupsStore);
+
+  /** Los grupos que la tienen puesta (lo dice cada grupo, en su ficha). */
+  private readonly gruposDe = (agenda: Agenda): readonly GroupRef[] =>
+    this.groupsStore
+      .groups()
+      .filter((g) => g.schedules?.includes(agenda.id))
+      .map((g) => ({ id: g.id, name: g.name, active: true }));
+
   protected readonly config: RepoPageConfig<Agenda> = {
     titleKey: 'repositories.agendas.title',
     entitySingularKey: 'repositories.agendas.singular',
@@ -76,11 +87,14 @@ export class AgendasPageComponent {
     entityPluralKey: 'repositories.agendas.plural',
     icon: 'call',
     breadcrumbExtraKey: 'repositories.agendas.title',
-    columns: COLUMNS,
+    columns: columnas(this.gruposDe),
     fields: AGENDA_FIELDS,
     searchKeys: ['name', 'description'],
     filePrefix: 'agendas',
     sheetNameKey: 'repositories.agendas.title',
     editRoute: '/admin/agendas',
+    duplicable: true,
+    columnChoices: true,
+    modifiedField: 'updatedAt',
   };
 }

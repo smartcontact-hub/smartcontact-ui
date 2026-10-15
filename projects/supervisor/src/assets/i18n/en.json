@@ -949,6 +949,8 @@
     },
     "delete": "Delete",
     "duplicate": "Duplicate",
+    "copy_suffix": "copy",
+    "duplicated_toast": "Copy created: “{{name}}”",
     "edit": "Edit",
     "edit_named": "Edit {{name}}",
     "loading": "Loading…",
@@ -1135,11 +1137,42 @@
       "assigned_agents": "Assigned agents",
       "sheet": "Labels"
     },
-    "import_export_button": "Import or download",
-    "import_menu": "Import…",
-    "download_menu": "Download"
+    "actions_button": "Actions",
+    "data_menu": {
+      "import_title": "Import {{entity}}",
+      "export_title": "Export {{entity}}",
+      "export_selection": "Export selection ({{count}})",
+      "export_empty": "There are no records to export",
+      "template_title": "Download CSV template",
+      "entity_fallback": "records"
+    }
   },
   "templates": {
+    "import": {
+      "title": "Import templates",
+      "template": "Download template",
+      "template_file": "templates-template",
+      "choose": "Choose file",
+      "choose_other": "Choose another file",
+      "add": "{{count}} templates will be created",
+      "add_one": "1 template will be created",
+      "nothing": "There are no new templates to create.",
+      "errors": "{{count}} lines with errors, which are not created:",
+      "errors_one": "1 line with an error, which is not created:",
+      "error_line": "Line {{line}}: {{reason}}",
+      "reason_titulo": "the title is missing",
+      "reason_canal": "the channel is not chat, email or WhatsApp",
+      "reason_contenido": "the content is missing",
+      "more_errors": "and {{count}} more",
+      "duplicates": "{{count}} already existed or are repeated in the file.",
+      "duplicates_one": "1 already existed or is repeated in the file.",
+      "over": "{{count}} do not fit: the limit is {{max}} templates.",
+      "over_one": "1 does not fit: the limit is {{max}} templates.",
+      "confirm": "Create {{count}} templates",
+      "confirm_one": "Create 1 template",
+      "done": "{{count}} templates created",
+      "done_one": "1 template created"
+    },
     "breadcrumb": "Templates",
     "page_title": "Templates",
     "create_button": "New template",
@@ -1151,7 +1184,8 @@
     },
     "type": {
       "chat": "Chat",
-      "email": "Email"
+      "email": "Email",
+      "whatsapp": "WhatsApp"
     },
     "empty": {
       "title": "No templates yet",
@@ -1160,8 +1194,10 @@
     },
     "table": {
       "title": "Title",
+      "type": "Channel",
       "body": "Content",
-      "updated": "Updated"
+      "updated": "Updated",
+      "groups": "Groups"
     },
     "no_results": {
       "text": "No {{tab}} templates in this filter.",
@@ -1175,7 +1211,23 @@
       "channel": "Channel",
       "body": "Content",
       "body_placeholder": "Write the template content...",
-      "variables_hint": "Variables: {agent}, {customer}, {ref}, {date}"
+      "variables_hint": "Variables: {agent}, {customer}, {ref}, {date}",
+      "summary_missing_title": "title",
+      "summary_missing_body": "content",
+      "create_submit": "Create template",
+      "create_breadcrumb": "New template",
+      "edit_breadcrumb": "Edit template",
+      "section_general": "General",
+      "section_content": "Content",
+      "section_groups": "Groups",
+      "groups": "Groups that use it",
+      "groups_placeholder": "No group",
+      "whatsapp_hint": "WhatsApp only supports bold, italic and strikethrough.",
+      "format_bold": "Bold",
+      "format_italic": "Italic",
+      "format_underline": "Underline",
+      "format_strike": "Strikethrough",
+      "format_link": "Link"
     },
     "errors": {
       "title_required": "Title is required",
@@ -1194,6 +1246,8 @@
     }
   },
   "repositories": {
+    "groups_aria": "{{count}} groups",
+    "groups_aria_one": "1 group",
     "emails": {
       "title": "Email",
       "mailboxes": "Mail accounts",
@@ -1284,6 +1338,8 @@
       "empty": "No {{entity}} yet"
     },
     "columns": {
+      "groups": "Groups",
+      "modified": "Modified",
       "name": "Name",
       "description": "Description",
       "status": "Status"
@@ -1351,11 +1407,64 @@
       "contacts_no_results": "No contact matches “{{query}}”.",
       "import": "Import",
       "import_title": "Import contacts",
-      "import_help": "One contact per line, with its name and phone separated by a semicolon, as in the template. Up to {{max}} contacts per address book.",
+      "section_agents": "Agents",
+      "agents_search": "Search agents…",
+      "agents_filter_all": "All",
+      "agents_filter_assigned": "Assigned ({{count}})",
+      "agents_filter_aria": "Show agents",
+      "agents_summary": "{{count}} of {{total}} assigned",
+      "agents_row_aria": "Assign the agenda to {{name}}",
+      "agents_select_all": "Select or clear the agents shown",
+      "agents_code": "Code",
+      "agents_email": "Email",
+      "agents_no_results": "No agent matches “{{query}}”.",
+      "agents_none_assigned": "No agents are assigned yet.",
+      "agents_empty": "There are no agents yet",
       "import_template": "Download template",
       "import_template_file": "address-book-template",
-      "import_template_name": "name",
-      "import_template_phone": "phone",
+      "fields": {
+        "surname": "Surname",
+        "company": "Company",
+        "position": "Position",
+        "website": "Website",
+        "phoneHome": "Home phone",
+        "phonePersonal": "Personal phone",
+        "phoneOther": "Other phone",
+        "fax": "Fax",
+        "emailWork": "Work email",
+        "emailPersonal": "Personal email",
+        "emailOther": "Other email",
+        "workAddress": "Work address",
+        "workZip": "Work postcode",
+        "workCity": "Work city",
+        "workProvince": "Work province",
+        "workCountry": "Work country",
+        "homeAddress": "Home address",
+        "homeZip": "Home postcode",
+        "homeCity": "Home city",
+        "homeProvince": "Home province",
+        "homeCountry": "Home country",
+        "chat": "Chat",
+        "twitter": "Twitter",
+        "facebook": "Facebook",
+        "linkedin": "LinkedIn",
+        "date": "Date",
+        "notes": "Notes"
+      },
+      "sections": {
+        "datos": "Contact details",
+        "telefonos": "Phones",
+        "emails": "Emails",
+        "trabajo": "Work address",
+        "personal": "Home address",
+        "redes": "Social and chat",
+        "otros": "Other",
+        "personalizados": "Custom fields"
+      },
+      "custom_label": "Custom {{n}}",
+      "custom_labels_title": "Custom field labels",
+      "custom_labels_hint": "Each agenda can name its five custom fields as it likes. Without a label they are called “Custom 1” to “Custom 5”.",
+      "custom_label_placeholder": "Label of Custom {{n}}",
       "import_choose": "Choose file",
       "import_choose_other": "Choose another file",
       "import_add": "{{count}} contacts will be added",

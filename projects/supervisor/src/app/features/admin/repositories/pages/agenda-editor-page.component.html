@@ -38,17 +38,6 @@
               (valueChange)="update('name', $event)"
             />
           </div>
-          <div class="field">
-            <sc-select
-              inputId="agenda-status"
-              optionLabel="label"
-              optionValue="value"
-              [label]="'repositories.columns.status' | translate"
-              [options]="statusOptions()"
-              [value]="form().status"
-              (valueChange)="update('status', $any($event))"
-            />
-          </div>
           <div class="field field--full">
             <sc-inputtext
               inputId="agenda-description"
@@ -63,6 +52,30 @@
       </section>
     </sc-section-card>
 
+    <!-- Cómo llama esta agenda a sus cinco campos personalizados (en Voice eran «Personalizado 1 a 5», fijos). Al crear
+         no sale: aún no hay contactos que los usen; aparece al editar. -->
+    @if (mode() === 'edit') {
+    <sc-section-card titleKey="repositories.agendas.custom_labels_title" surface="card" icon="edit">
+      <section class="sub-section">
+        <p class="sc-text-body-regular">{{ 'repositories.agendas.custom_labels_hint' | translate }}</p>
+        <div class="grid grid--2">
+          @for (n of [1, 2, 3, 4, 5]; track n) {
+            <div class="field">
+              <sc-inputtext
+                [inputId]="'agenda-custom-' + n"
+                fluid
+                [label]="'repositories.agendas.custom_label_placeholder' | translate: { n }"
+                [placeholder]="'repositories.agendas.custom_label' | translate: { n }"
+                [value]="form().customLabels[n - 1]"
+                (valueChange)="updateCustomLabel(n - 1, $event)"
+              />
+            </div>
+          }
+        </div>
+      </section>
+    </sc-section-card>
+    }
+
     <sc-section-card titleKey="repositories.agendas.contacts" surface="card" icon="call">
       <section class="sub-section">
         <sc-agenda-contacts-table
@@ -74,6 +87,17 @@
         />
       </section>
     </sc-section-card>
+
+    <!-- Los agentes que ven esta agenda, la última sección: quién la tiene (en Voice, un muro de casillas). -->
+    <sc-section-card titleKey="repositories.agendas.section_agents" surface="card" icon="headphones">
+      <section class="sub-section">
+        <sc-agenda-agents-table
+          [agents]="agentsStore.agents()"
+          [selected]="form().agentIds"
+          (selectedChange)="update('agentIds', $event)"
+        />
+      </section>
+    </sc-section-card>
   </div>
 </div>
 
@@ -82,13 +106,16 @@
 @if (contactDialog(); as dialog) {
   <sc-dialog
     [visible]="true"
+    width="46rem"
     [title]="(dialog.contact ? 'repositories.agendas.edit_contact' : 'repositories.agendas.add_contact') | translate"
     [hasFooter]="false"
     (cancelled)="contactDialog.set(null)"
   >
     <sc-repo-form-panel
       flush
-      [fields]="contactFields"
+      twoColumns
+      [showOptional]="false"
+      [fields]="contactFields()"
       [initial]="dialog.contact"
       [existingNames]="[]"
       [entitySingular]="'repositories.agendas.contact' | translate"
@@ -104,7 +131,6 @@
 @if (importOpen()) {
   <sc-dialog [visible]="true" [title]="'repositories.agendas.import_title' | translate" (cancelled)="cerrarImportar()">
     <div class="importar">
-      <p class="sc-text-body-regular">{{ importAyuda() }}</p>
       <div class="importar__acciones">
         <sc-button
           size="sm"

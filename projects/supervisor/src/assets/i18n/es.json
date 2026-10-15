@@ -944,6 +944,8 @@
       "section_has_errors": "Esta sección tiene campos obligatorios sin rellenar"
     },
     "duplicate": "Duplicar",
+    "copy_suffix": "copia",
+    "duplicated_toast": "Copia creada: «{{name}}»",
     "create": "Crear",
     "units": {
       "seconds": "seg"
@@ -1135,11 +1137,42 @@
       "assigned_agents": "Agentes asignados",
       "sheet": "Labels"
     },
-    "import_export_button": "Importar o descargar",
-    "import_menu": "Importar…",
-    "download_menu": "Descargar"
+    "actions_button": "Acciones",
+    "data_menu": {
+      "import_title": "Importar {{entity}}",
+      "export_title": "Exportar {{entity}}",
+      "export_selection": "Exportar selección ({{count}})",
+      "export_empty": "No hay registros para exportar",
+      "template_title": "Descargar plantilla CSV",
+      "entity_fallback": "registros"
+    }
   },
   "templates": {
+    "import": {
+      "title": "Importar plantillas",
+      "template": "Descargar plantilla",
+      "template_file": "plantilla-plantillas",
+      "choose": "Elegir archivo",
+      "choose_other": "Elegir otro archivo",
+      "add": "Se crearán {{count}} plantillas",
+      "add_one": "Se creará 1 plantilla",
+      "nothing": "No hay plantillas nuevas que crear.",
+      "errors": "{{count}} líneas con error, que no se crean:",
+      "errors_one": "1 línea con error, que no se crea:",
+      "error_line": "Línea {{line}}: {{reason}}",
+      "reason_titulo": "falta el título",
+      "reason_canal": "el canal no es chat, email ni WhatsApp",
+      "reason_contenido": "falta el contenido",
+      "more_errors": "y {{count}} más",
+      "duplicates": "{{count}} ya existían o se repiten en el archivo.",
+      "duplicates_one": "1 ya existía o se repite en el archivo.",
+      "over": "{{count}} no caben: el tope es {{max}} plantillas.",
+      "over_one": "1 no cabe: el tope es {{max}} plantillas.",
+      "confirm": "Crear {{count}} plantillas",
+      "confirm_one": "Crear 1 plantilla",
+      "done": "{{count}} plantillas creadas",
+      "done_one": "1 plantilla creada"
+    },
     "breadcrumb": "Plantillas",
     "page_title": "Plantillas",
     "create_button": "Nueva plantilla",
@@ -1151,7 +1184,8 @@
     },
     "type": {
       "chat": "Chat",
-      "email": "Email"
+      "email": "Email",
+      "whatsapp": "WhatsApp"
     },
     "empty": {
       "title": "Aún no hay plantillas",
@@ -1160,8 +1194,10 @@
     },
     "table": {
       "title": "Título",
+      "type": "Canal",
       "body": "Contenido",
-      "updated": "Actualizada"
+      "updated": "Actualizada",
+      "groups": "Grupos"
     },
     "no_results": {
       "text": "No hay plantillas de {{tab}} en este filtro.",
@@ -1175,7 +1211,23 @@
       "channel": "Canal",
       "body": "Contenido",
       "body_placeholder": "Escribe el contenido de la plantilla...",
-      "variables_hint": "Variables: {agente}, {cliente}, {ref}, {fecha}"
+      "variables_hint": "Variables: {agente}, {cliente}, {ref}, {fecha}",
+      "summary_missing_title": "título",
+      "summary_missing_body": "contenido",
+      "create_submit": "Crear plantilla",
+      "create_breadcrumb": "Nueva plantilla",
+      "edit_breadcrumb": "Editar plantilla",
+      "section_general": "General",
+      "section_content": "Contenido",
+      "section_groups": "Grupos",
+      "groups": "Grupos que la usan",
+      "groups_placeholder": "Ningún grupo",
+      "whatsapp_hint": "WhatsApp solo admite negrita, cursiva y tachado.",
+      "format_bold": "Negrita",
+      "format_italic": "Cursiva",
+      "format_underline": "Subrayado",
+      "format_strike": "Tachado",
+      "format_link": "Enlace"
     },
     "errors": {
       "title_required": "El título es obligatorio",
@@ -1194,6 +1246,8 @@
     }
   },
   "repositories": {
+    "groups_aria": "{{count}} grupos",
+    "groups_aria_one": "1 grupo",
     "emails": {
       "title": "Email",
       "mailboxes": "Cuentas de correo",
@@ -1284,6 +1338,8 @@
       "empty": "No hay {{entity}} todavía"
     },
     "columns": {
+      "groups": "Grupos",
+      "modified": "Modificada",
       "name": "Nombre",
       "description": "Descripción",
       "status": "Estado"
@@ -1351,11 +1407,64 @@
       "contacts_no_results": "Ningún contacto coincide con «{{query}}».",
       "import": "Importar",
       "import_title": "Importar contactos",
-      "import_help": "Un contacto por línea, con su nombre y su teléfono separados por punto y coma, como en la plantilla. Hasta {{max}} contactos por agenda.",
+      "section_agents": "Agentes",
+      "agents_search": "Buscar agentes…",
+      "agents_filter_all": "Todos",
+      "agents_filter_assigned": "Asignados ({{count}})",
+      "agents_filter_aria": "Mostrar agentes",
+      "agents_summary": "{{count}} de {{total}} asignados",
+      "agents_row_aria": "Asignar la agenda a {{name}}",
+      "agents_select_all": "Marcar o desmarcar los agentes que se ven",
+      "agents_code": "Código",
+      "agents_email": "Email",
+      "agents_no_results": "Ningún agente coincide con «{{query}}».",
+      "agents_none_assigned": "Aún no hay agentes asignados.",
+      "agents_empty": "No hay agentes todavía",
       "import_template": "Descargar plantilla",
       "import_template_file": "plantilla-agenda",
-      "import_template_name": "nombre",
-      "import_template_phone": "teléfono",
+      "fields": {
+        "surname": "Apellidos",
+        "company": "Empresa",
+        "position": "Puesto",
+        "website": "Sitio web",
+        "phoneHome": "Teléfono casa",
+        "phonePersonal": "Teléfono personal",
+        "phoneOther": "Teléfono otro",
+        "fax": "Fax",
+        "emailWork": "Email trabajo",
+        "emailPersonal": "Email personal",
+        "emailOther": "Email otro",
+        "workAddress": "Dirección trabajo",
+        "workZip": "Código postal trabajo",
+        "workCity": "Localidad trabajo",
+        "workProvince": "Provincia trabajo",
+        "workCountry": "País trabajo",
+        "homeAddress": "Dirección personal",
+        "homeZip": "Código postal personal",
+        "homeCity": "Localidad personal",
+        "homeProvince": "Provincia personal",
+        "homeCountry": "País personal",
+        "chat": "Chat",
+        "twitter": "Twitter",
+        "facebook": "Facebook",
+        "linkedin": "LinkedIn",
+        "date": "Fecha",
+        "notes": "Notas"
+      },
+      "sections": {
+        "datos": "Datos del contacto",
+        "telefonos": "Teléfonos",
+        "emails": "Emails",
+        "trabajo": "Dirección de trabajo",
+        "personal": "Dirección personal",
+        "redes": "Redes y chat",
+        "otros": "Otros",
+        "personalizados": "Campos personalizados"
+      },
+      "custom_label": "Personalizado {{n}}",
+      "custom_labels_title": "Etiquetas de los campos personalizados",
+      "custom_labels_hint": "Cada agenda puede llamar a sus cinco campos personalizados como quiera. Sin etiqueta, se llaman «Personalizado 1» a «Personalizado 5».",
+      "custom_label_placeholder": "Etiqueta de Personalizado {{n}}",
       "import_choose": "Elegir archivo",
       "import_choose_other": "Elegir otro archivo",
       "import_add": "Se añadirán {{count}} contactos",

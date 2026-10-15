@@ -949,6 +949,8 @@
     },
     "delete": "Supprimer",
     "duplicate": "Dupliquer",
+    "copy_suffix": "copie",
+    "duplicated_toast": "Copie créée : « {{name}} »",
     "edit": "Éditer",
     "edit_named": "Éditer {{name}}",
     "loading": "Chargement…",
@@ -1135,11 +1137,42 @@
       "assigned_agents": "Agents assignés",
       "sheet": "Étiquettes"
     },
-    "import_export_button": "Importer ou télécharger",
-    "import_menu": "Importer…",
-    "download_menu": "Télécharger"
+    "actions_button": "Actions",
+    "data_menu": {
+      "import_title": "Importer {{entity}}",
+      "export_title": "Exporter {{entity}}",
+      "export_selection": "Exporter la sélection ({{count}})",
+      "export_empty": "Aucun enregistrement à exporter",
+      "template_title": "Télécharger le modèle CSV",
+      "entity_fallback": "enregistrements"
+    }
   },
   "templates": {
+    "import": {
+      "title": "Importer des modèles",
+      "template": "Télécharger le modèle",
+      "template_file": "modele-modeles",
+      "choose": "Choisir un fichier",
+      "choose_other": "Choisir un autre fichier",
+      "add": "{{count}} modèles seront créés",
+      "add_one": "1 modèle sera créé",
+      "nothing": "Aucun nouveau modèle à créer.",
+      "errors": "{{count}} lignes en erreur, qui ne sont pas créées :",
+      "errors_one": "1 ligne en erreur, qui n’est pas créée :",
+      "error_line": "Ligne {{line}} : {{reason}}",
+      "reason_titulo": "le titre est manquant",
+      "reason_canal": "le canal n’est ni chat, ni e-mail, ni WhatsApp",
+      "reason_contenido": "le contenu est manquant",
+      "more_errors": "et {{count}} de plus",
+      "duplicates": "{{count}} existaient déjà ou se répètent dans le fichier.",
+      "duplicates_one": "1 existait déjà ou se répète dans le fichier.",
+      "over": "{{count}} ne tiennent pas : la limite est de {{max}} modèles.",
+      "over_one": "1 ne tient pas : la limite est de {{max}} modèles.",
+      "confirm": "Créer {{count}} modèles",
+      "confirm_one": "Créer 1 modèle",
+      "done": "{{count}} modèles créés",
+      "done_one": "1 modèle créé"
+    },
     "breadcrumb": "Modèles",
     "page_title": "Modèles",
     "create_button": "Nouveau modèle",
@@ -1151,7 +1184,8 @@
     },
     "type": {
       "chat": "Chat",
-      "email": "Email"
+      "email": "Email",
+      "whatsapp": "WhatsApp"
     },
     "empty": {
       "title": "Pas encore de modèles",
@@ -1160,8 +1194,10 @@
     },
     "table": {
       "title": "Titre",
+      "type": "Canal",
       "body": "Contenu",
-      "updated": "Mis à jour"
+      "updated": "Mis à jour",
+      "groups": "Groupes"
     },
     "no_results": {
       "text": "Aucun modèle de {{tab}} dans ce filtre.",
@@ -1175,7 +1211,23 @@
       "channel": "Canal",
       "body": "Contenu",
       "body_placeholder": "Écrivez le contenu du modèle...",
-      "variables_hint": "Variables : {agent}, {client}, {ref}, {date}"
+      "variables_hint": "Variables : {agent}, {client}, {ref}, {date}",
+      "summary_missing_title": "titre",
+      "summary_missing_body": "contenu",
+      "create_submit": "Créer un modèle",
+      "create_breadcrumb": "Nouveau modèle",
+      "edit_breadcrumb": "Éditer le modèle",
+      "section_general": "Général",
+      "section_content": "Contenu",
+      "section_groups": "Groupes",
+      "groups": "Groupes qui l’utilisent",
+      "groups_placeholder": "Aucun groupe",
+      "whatsapp_hint": "WhatsApp ne prend en charge que le gras, l’italique et le barré.",
+      "format_bold": "Gras",
+      "format_italic": "Italique",
+      "format_underline": "Souligné",
+      "format_strike": "Barré",
+      "format_link": "Lien"
     },
     "errors": {
       "title_required": "Le titre est obligatoire",
@@ -1194,6 +1246,8 @@
     }
   },
   "repositories": {
+    "groups_aria": "{{count}} groupes",
+    "groups_aria_one": "1 groupe",
     "emails": {
       "title": "Email",
       "mailboxes": "Comptes de messagerie",
@@ -1284,6 +1338,8 @@
       "empty": "Pas encore de {{entity}}"
     },
     "columns": {
+      "groups": "Groupes",
+      "modified": "Modifiée",
       "name": "Nom",
       "description": "Description",
       "status": "État"
@@ -1351,11 +1407,64 @@
       "contacts_no_results": "Aucun contact ne correspond à « {{query}} ».",
       "import": "Importer",
       "import_title": "Importer des contacts",
-      "import_help": "Un contact par ligne, avec son nom et son téléphone séparés par un point-virgule, comme dans le modèle. Jusqu'à {{max}} contacts par carnet.",
+      "section_agents": "Agents",
+      "agents_search": "Rechercher des agents…",
+      "agents_filter_all": "Tous",
+      "agents_filter_assigned": "Assignés ({{count}})",
+      "agents_filter_aria": "Afficher les agents",
+      "agents_summary": "{{count}} sur {{total}} affectés",
+      "agents_row_aria": "Affecter l’agenda à {{name}}",
+      "agents_select_all": "Cocher ou décocher les agents affichés",
+      "agents_code": "Code",
+      "agents_email": "Email",
+      "agents_no_results": "Aucun agent ne correspond à « {{query}} ».",
+      "agents_none_assigned": "Aucun agent affecté pour le moment.",
+      "agents_empty": "Aucun agent pour le moment",
       "import_template": "Télécharger le modèle",
       "import_template_file": "modele-carnet",
-      "import_template_name": "nom",
-      "import_template_phone": "téléphone",
+      "fields": {
+        "surname": "Nom de famille",
+        "company": "Entreprise",
+        "position": "Poste",
+        "website": "Site web",
+        "phoneHome": "Téléphone domicile",
+        "phonePersonal": "Téléphone personnel",
+        "phoneOther": "Téléphone autre",
+        "fax": "Fax",
+        "emailWork": "E-mail professionnel",
+        "emailPersonal": "E-mail personnel",
+        "emailOther": "E-mail autre",
+        "workAddress": "Adresse professionnelle",
+        "workZip": "Code postal professionnel",
+        "workCity": "Ville professionnelle",
+        "workProvince": "Région professionnelle",
+        "workCountry": "Pays professionnel",
+        "homeAddress": "Adresse personnelle",
+        "homeZip": "Code postal personnel",
+        "homeCity": "Ville personnelle",
+        "homeProvince": "Région personnelle",
+        "homeCountry": "Pays personnel",
+        "chat": "Chat",
+        "twitter": "Twitter",
+        "facebook": "Facebook",
+        "linkedin": "LinkedIn",
+        "date": "Date",
+        "notes": "Notes"
+      },
+      "sections": {
+        "datos": "Données du contact",
+        "telefonos": "Téléphones",
+        "emails": "E-mails",
+        "trabajo": "Adresse professionnelle",
+        "personal": "Adresse personnelle",
+        "redes": "Réseaux et chat",
+        "otros": "Autres",
+        "personalizados": "Champs personnalisés"
+      },
+      "custom_label": "Personnalisé {{n}}",
+      "custom_labels_title": "Libellés des champs personnalisés",
+      "custom_labels_hint": "Chaque agenda peut nommer ses cinq champs personnalisés comme il veut. Sans libellé, ils s’appellent « Personnalisé 1 » à « Personnalisé 5 ».",
+      "custom_label_placeholder": "Libellé de Personnalisé {{n}}",
       "import_choose": "Choisir un fichier",
       "import_choose_other": "Choisir un autre fichier",
       "import_add": "{{count}} contacts seront ajoutés",

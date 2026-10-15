@@ -4,9 +4,13 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 
 import {
+  CAMPOS_DEL_CSV,
   contactoCoincide,
+  contactoDeValores,
   contactosDeNumeros,
   normalizarTelefono,
+  parsearContactosCsv,
+  plantillaCsv,
   telefonoValido,
 } from '../../projects/supervisor/src/app/features/admin/repositories/state/agenda-contacts.core.mjs';
 
@@ -57,4 +61,44 @@ test('contactoCoincide: el nombre y el teléfono por subcadena; un teléfono, ta
   // Sin cifras no hay teléfono que comparar: un guion no encuentra cualquier cosa.
   assert.equal(contactoCoincide(centralita, '-'), false);
   assert.equal(contactoCoincide(centralita, '911'), false);
+});
+
+test('los 34 campos de Voice: nombre y teléfono primero, sin repetirse', () => {
+  assert.equal(CAMPOS_DEL_CSV.length, 34);
+  assert.deepEqual(CAMPOS_DEL_CSV.slice(0, 2), ['name', 'phone']);
+  assert.equal(new Set(CAMPOS_DEL_CSV).size, 34);
+});
+
+test('contactoDeValores: nombre y teléfono, y de los demás solo los que llevan algo', () => {
+  assert.deepEqual(contactoDeValores({ name: ' Ana ', phone: '900 100 200', company: ' ACME ', fax: '  ', custom2: 'VIP' }), {
+    name: 'Ana',
+    phone: '900 100 200',
+    company: 'ACME',
+    custom2: 'VIP',
+  });
+});
+
+test('contactoCoincide: también por apellidos, empresa y email', () => {
+  const c = { id: 1, name: 'Ana', phone: '900 100 200', surname: 'Pérez', company: 'ACME', emailWork: 'ana@acme.test' };
+  assert.equal(contactoCoincide(c, 'pérez'), true);
+  assert.equal(contactoCoincide(c, 'acme'), true);
+  assert.equal(contactoCoincide(c, 'ana@'), true);
+  assert.equal(contactoCoincide(c, 'zzz'), false);
+});
+
+test('plantillaCsv: todas las columnas con `;` y BOM; parsearContactosCsv lee los campos en ese orden', () => {
+  const plantilla = plantillaCsv(CAMPOS_DEL_CSV);
+  assert.ok(plantilla.startsWith('\uFEFFname;phone;surname;'));
+  assert.equal(plantilla.trim().split(';').length, 34);
+  // Un archivo de DOS columnas, como el de antes, sigue valiendo.
+  assert.deepEqual(parsearContactosCsv('Ana;900 100 200\nLuis;900 100 201', []).nuevos, [
+    { name: 'Ana', phone: '900 100 200' },
+    { name: 'Luis', phone: '900 100 201' },
+  ]);
+  // Con más columnas, entran en el orden de la plantilla: apellidos, empresa…
+  const vista = parsearContactosCsv('Ana;900 100 200;Pérez;ACME;Jefa\n', []);
+  assert.deepEqual(vista.nuevos, [{ name: 'Ana', phone: '900 100 200', surname: 'Pérez', company: 'ACME', position: 'Jefa' }]);
+  // El último campo de la plantilla (custom5) entra si el archivo llega hasta él.
+  const fila = ['Ana', '900 100 200', ...Array(31).fill(''), 'X'].join(';');
+  assert.equal(parsearContactosCsv(fila, []).nuevos[0].custom5, 'X');
 });

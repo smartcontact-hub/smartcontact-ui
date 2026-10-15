@@ -38,24 +38,56 @@ test('las columnas ordenan: por niveles, primero la de uno', async ({ page }) =>
   await expect(filas(page).last()).toContainText('Atención al cliente');
 });
 
-test('importar y descargar van detrás de un solo icono, con su menú', async ({ page }) => {
+test('importar, exportar y descargar la plantilla van detrás de un solo botón «Acciones», con su menú', async ({ page }) => {
   await goto(page, 'admin/tipificaciones');
   await expect(page.getByRole('button', { name: 'Exportar', exact: true })).toHaveCount(0);
-  const icono = page.getByRole('button', { name: 'Importar o descargar' });
+  const icono = page.getByRole('button', { name: 'Acciones', exact: true });
   await expect(icono).toHaveAttribute('aria-haspopup', 'menu');
   await icono.click();
   const menu = page.getByRole('menu');
-  await expect(menu.getByRole('menuitem')).toHaveText(['Importar…', 'Descargar']);
+  await expect(menu.getByRole('menuitem')).toContainText(['Importar tipificaciones', 'Exportar tipificaciones', 'Descargar plantilla CSV']);
 
   const descarga = page.waitForEvent('download');
-  await menu.getByRole('menuitem', { name: 'Descargar' }).click();
+  await menu.getByRole('menuitem', { name: /^Exportar tipificaciones/ }).click();
   expect((await descarga).suggestedFilename()).toMatch(/^tipificaciones.*\.xlsx$/);
+});
+
+test('la tarjeta mide lo que sus filas: sin el alto del esqueleto de carga', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await goto(page, 'admin/tipificaciones');
+  await expect(page.getByTestId('tipificaciones-table').locator('tbody tr')).toHaveCount(4);
+  const m = await page.locator('.table-card').evaluate((c) => ({
+    tarjeta: c.getBoundingClientRect().height,
+    tabla: c.querySelector('table')!.getBoundingClientRect().height,
+  }));
+  // Cuatro filas: la tarjeta no se queda en las diez del esqueleto, con su borde hasta abajo.
+  expect(m.tarjeta - m.tabla, `tarjeta ${m.tarjeta} contra tabla ${m.tabla}`).toBeLessThan(8);
+});
+
+test('«Exportar» cuenta la selección o la búsqueda, y se apaga si no hay filas', async ({ page }) => {
+  await goto(page, 'admin/tipificaciones');
+  const acciones = page.getByRole('button', { name: 'Acciones', exact: true });
+  await acciones.click();
+  await expect(page.getByRole('menuitem', { name: /Exportar tipificaciones/ })).toBeVisible();
+  await page.keyboard.press('Escape');
+
+  await page.getByRole('row', { name: /Atención al cliente/ }).getByRole('checkbox').check();
+  await acciones.click();
+  const exportar = page.getByRole('menuitem', { name: /Exportar selección \(1\)/ });
+  await expect(exportar).toBeVisible();
+  await page.keyboard.press('Escape');
+
+  await page.getByPlaceholder(/Buscar tipificación/).fill('zzzz');
+  await acciones.click();
+  const sinFilas = page.getByRole('menuitem', { name: /Exportar/ });
+  await expect(sinFilas.locator('a')).toHaveAttribute('title', 'No hay registros para exportar');
+  await expect(sinFilas).toHaveAttribute('aria-disabled', 'true');
 });
 
 test('importar: la vista previa dice qué entra, cada error con su línea y las que ya existen', async ({ page }) => {
   await goto(page, 'admin/tipificaciones');
-  await page.getByRole('button', { name: 'Importar o descargar' }).click();
-  await page.getByRole('menuitem', { name: 'Importar…' }).click();
+  await page.getByRole('button', { name: 'Acciones', exact: true }).click();
+  await page.getByRole('menuitem', { name: /^Importar tipificaciones/ }).click();
   const dialogo = page.getByRole('dialog', { name: 'Importar tipificaciones' });
   const plantilla = page.waitForEvent('download');
   await dialogo.getByRole('button', { name: 'Descargar plantilla' }).click();
