@@ -12,53 +12,28 @@
     </span>
   </div>
 
-  <!-- Row 2 · segmented bar with active scrub overlay + playhead -->
-  <div class="multi-rec__bar-wrap">
-    <div class="multi-rec__bar">
-      @for (rec of recordings(); track rec.id; let idx = $index) {
-        @let isActive = idx === selectedIndex();
-        <div
-          class="multi-rec__seg"
-          [class.multi-rec__seg--active]="isActive"
-          [class.multi-rec__seg--divider]="idx > 0"
+  <!-- Row 2 · la barra, partida en tramos por su duración. El tramo activo es el `p-slider` de primeng.dev tal cual
+       (candidato 1 del barrido, como el reproductor de una grabación): flechas, Re Pág y Av Pág de 10 en 10 segundos,
+       Inicio, Fin y arrastre. Antes era un botón con role="slider" que solo atendía al clic. Los demás tramos son su
+       misma pista sin mando: de tramo se cambia en la fila de abajo. -->
+  <div class="multi-rec__bar">
+    @for (rec of recordings(); track rec.id; let idx = $index) {
+      @if (idx === selectedIndex()) {
+        <p-slider
+          class="multi-rec__scrub"
           [style.flexGrow]="fractions()[idx]"
-          [style.flexBasis.px]="0"
-        >
-          @if (isActive) {
-            <span
-              aria-hidden="true"
-              class="multi-rec__fill"
-              [style.width.%]="progressFracInSeg() * 100"
-            ></span>
-          }
-        </div>
+          [ngModel]="currentTime()"
+          (ngModelChange)="onSeek($event)"
+          [min]="0"
+          [max]="totalDuration()"
+          [step]="1"
+          [disabled]="!playerEnabled()"
+          [ariaLabel]="'memory.player.multi.aria_seek' | translate"
+          [pt]="{ input: { 'aria-valuetext': currentTimeLabel() } }"
+        />
+      } @else {
+        <span aria-hidden="true" class="multi-rec__seg" [style.flexGrow]="fractions()[idx]"></span>
       }
-    </div>
-
-    <!-- Click-to-seek overlay, solo sobre segmento activo -->
-    <button
-      type="button"
-      role="slider"
-      class="multi-rec__scrub"
-      [disabled]="!playerEnabled()"
-      [attr.tabindex]="playerEnabled() ? 0 : -1"
-      [attr.aria-label]="'memory.player.multi.aria_seek' | translate"
-      [attr.aria-valuemin]="0"
-      [attr.aria-valuemax]="totalDuration()"
-      [attr.aria-valuenow]="currentTime()"
-      [attr.aria-valuetext]="currentTimeLabel()"
-      [style.left.%]="activeLeftPct()"
-      [style.width.%]="activeWidthPct()"
-      (click)="onScrubClick($event)"
-    ></button>
-
-    @if (playerEnabled()) {
-      <span
-        aria-hidden="true"
-        class="multi-rec__playhead"
-        [class.multi-rec__playhead--visible]="isPlaying()"
-        [style.left.%]="playheadPct()"
-      ></span>
     }
   </div>
 
