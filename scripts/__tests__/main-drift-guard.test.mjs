@@ -1,10 +1,11 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { aviso, deriva, fetchSiToca } from '../hooks/main-drift-guard.mjs';
+import { alArrancar } from '../hooks/compact-card.mjs';
 
 // Sin las `GIT_*` heredadas: dentro de un hook de git (el pre-push corre `verify`), GIT_DIR apunta al
 // repositorio de verdad y estos git escribirían EN ÉL (lo vigila `pre-push-hook.test.mjs`).
@@ -77,4 +78,15 @@ test('el fetch se hace como mucho cada 5 minutos', () => {
   assert.equal(fetchSiToca(yo, t0), true);
   assert.equal(fetchSiToca(yo, t0 + 60_000), false);
   assert.equal(fetchSiToca(yo, t0 + 5 * 60_000 + 1), true);
+});
+
+test('en un worktree enlazado, las marcas van al .git de verdad y no dentro de la carpeta', () => {
+  const { yo } = escenario();
+  const wt = join(mkdtempSync(join(tmpdir(), 'drift-wt-')), 'wt');
+  git(yo, 'worktree', 'add', '-q', '-b', 'otra-rama', wt);
+  const comun = git(wt, 'rev-parse', '--path-format=absolute', '--git-common-dir');
+  fetchSiToca(wt, 1_000_000_000_000);
+  alArrancar(wt, 'sesion-x');
+  assert.equal(existsSync(join(comun, 'sc-hooks', 'main-drift-fetch')), true, 'la marca del fetch va al git común');
+  assert.equal(existsSync(join(wt, comun)), false, 'nada de un árbol con la ruta absoluta dentro del worktree');
 });

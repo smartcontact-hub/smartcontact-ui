@@ -7084,6 +7084,12 @@ ser «main + el cambio». Pendiente, y no se hace aquí: que la portada del PR d
 ha verificado, para que un PR del plugin no se pueda fundir a ciegas (hoy lo dice solo el estado
 del run).
 
+**Ampliado el 2026-10-15** · La exención de `ci.yml` vale solo para la rama del MISMO repo: la premisa
+(«todo lo que llega por esa rama pasó por el robot») no se cumple en un fork, que puede llamar así a su rama
+y saltarse los cinco checks obligatorios. La condición exige además `head.repo.full_name == github.repository`.
+El robot de auto-merge de la auditoría semanal aplica el mismo criterio: solo funde commits de este repo y
+solo el que pasó el CI (`--match-head-commit`).
+
 ---
 
 ## DD-67 · 2026-09-11 — Los 12 text styles son los únicos: el 500 no es «casi», no existe
@@ -9281,6 +9287,11 @@ Rounded; las apps reales, Outlined.
 self-hospedado (~340KB) en vez del CDN. El `font-display` del @fontsource es `swap` (el
 CDN usaba `block`): posible FOUT breve de la ligadura en carga fría — aceptable (fuente
 local, ya vigente en sc-demo).
+
+**Actualizado el 2026-10-15:** hoy el DS carga la variante con todos los ejes (`latin-full-normal.woff2`,
+3,96 MB) y con `font-display: block` (`material-symbols.css`): se ocultan las ligaduras hasta que la fuente
+carga, en vez del `swap` descrito arriba. La elección del `block` se midió el 2026-09-18 (comentario del CSS);
+el peso no se ha vuelto a medir.
 
 **Abierto (no bloquea):** el **peso** del icono a la par de la tipografía y el ajuste
 fino de ejes (wght/fill/opsz) sigue pendiente — la otra mitad del item de iconografía
