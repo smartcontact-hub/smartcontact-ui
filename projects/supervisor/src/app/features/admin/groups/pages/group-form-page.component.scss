@@ -42,19 +42,6 @@
   gap: var(--sc-spacing-0-5);
 }
 
-/* Los canales apagados, tras las cajas: sueltos sobre el gris de la sección. */
-.channel-off-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sc-spacing-0-5);
-}
-
-/* «X no está activo · actívalo en General»: la pista de que el bloque existe, sin controles muertos. */
-.channel-off {
-  margin: 0;
-  color: var(--sc-text-subtle);
-}
-
 /* Un control con lo que lo acompaña en la misma línea: «Suena en [3] agentes a la vez», la capacidad
  * (Fijo / Por agente conectado + la cifra) o la música con su archivo. */
 .inline-control {
@@ -65,13 +52,10 @@
   min-width: 0;
 }
 
-/* Tamaño de cola: las tarjetas del tipo y, debajo, la cifra. Entre las dos, 14: son hermanas, no etiqueta y control
- * (AGENTS «UX de pantalla», 7 · 14 · 28). */
-.queue-size {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sc-spacing-1);
-  min-width: 0;
+/* Tamaño de cola: las tarjetas del tipo a todo el ancho, una por columna (su hueco es el de las columnas), y debajo, a
+ * 14, la cifra en la primera columna: son hermanas, no etiqueta y control (AGENTS «UX de pantalla», 7 · 14 · 28). */
+.queue-size__cards {
+  --sc-option-cards-gap: var(--sc-spacing-1-75);
 }
 
 .inline-control__suffix,
@@ -118,38 +102,43 @@
   }
 }
 
-/* Un archivo guardado y, debajo, la zona para subir otro (`sc-fileupload`). */
-/* El archivo y su botón, en una línea: el nombre (o «Música por defecto») y «Subir archivo» detrás, sin caja de soltar
- * (`mode="basic"`, revisión del 2026-10-09). Si no caben, el botón baja. */
+/* Un audio: el uploader «Advanced» de primeng.dev a todo el ancho de su fila, y su ayuda debajo (DD-198). */
 .upload-field {
   display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--sc-spacing-0-5) var(--sc-spacing-1);
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
 }
 
-
-/* La capacidad compone tipo y cifra: su fila se separa de los tiempos, conservando la alineación con la música. */
+/* La cola, en grupos separados como grupos (7 · 14 · 28): los tiempos, la capacidad (tipo y cifra) y, en Teléfono, la
+ * música en su fila. */
 .queue-fields {
-  row-gap: var(--sc-spacing-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-2);
 }
 
-/* La tipificación del grupo, en General: cada ajuste en su línea, a 14 (AGENTS «UX de pantalla» 9). Clasificar y con
- * cuál comparten fila, como en la propuesta de producto; la tipificación, del ancho de una columna de campos. */
+/* La postconversación del grupo, en General: los dos interruptores, uno por línea, a 14 (AGENTS «UX de pantalla» 9), y
+ * lo que abre «Tipificar conversaciones» colgado de él, con su borde en el texto del interruptor (el ancho del
+ * interruptor más su hueco), en las dos columnas de la ficha (revisión del 2026-10-15). */
 .wrapup {
   display: flex;
   flex-direction: column;
   gap: var(--sc-spacing-1);
 }
 
-.wrapup__classify {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--sc-spacing-1);
+.wrapup__nested {
+  padding-inline-start: calc(var(--sc-cmp-toggleswitch-width) + var(--sc-spacing-1-143));
 }
 
-.wrapup__select {
-  flex: 0 1 var(--sc-spacing-25);
-  min-width: 0;
+/* Bajo la tipificación elegida, qué es y «Ver detalle», en una línea si cabe. */
+.wrapup__detail {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  column-gap: var(--sc-spacing-0-5);
+}
+
+.wrapup__description {
+  margin: 0;
+  color: var(--sc-text-secondary);
 }

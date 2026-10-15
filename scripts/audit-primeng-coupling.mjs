@@ -101,7 +101,9 @@ const sh = (cmd) => {
 // (30 en vez de 28). PrimeNG no da token de interlineado para ninguno; en el preset viajan con el tema.
 // DD-205: 69 → 72 porque el «⋮» del widget pasa a `p-tieredmenu` y el rojo de `sc-menu-item--danger` tiene que
 // llegarle: `.p-tieredmenu-item-link`, `-icon` y `-content`, las mismas tres piezas que ya cubría en `p-menu`.
-const TOPE = { app: 6, ds: 12, preset: 72 };
+// DD-206: `ds` 12 → 13 por `.p-fileupload-file-thumbnail`: PrimeNG pinta una miniatura rota para un archivo que no
+// es imagen (los audios de Grupos); no hay token ni `pt` que la quite solo en ese caso (customs-catalog §8).
+const TOPE = { app: 6, ds: 13, preset: 72 };
 
 /* Cuenta las clases `.p-*` que aparecen en SELECTORES, no en comentarios. Un
  * comentario que menciona `.p-datatable-*` para explicar POR QUÉ dependemos de
@@ -710,6 +712,8 @@ const COMPORTAMIENTO_PERMITIDO = {
   '.p-component.p-button:disabled:active, .p-component.p-button[aria-disabled="true"]:active': 'ídem, al pulsarlo (buttonMotionCss).',
   ':host ::ng-deep .p-toast .p-toast-message-icon, :host ::ng-deep .p-toast .p-toast-close-button':
     'el toast del Supervisor pinta su propio icono y su cierre (app.component.scss, uno de los 6 de `app`).',
+  ".sc-fileupload .p-fileupload-file-thumbnail:is([src=''], :not([src]))":
+    'PrimeNG pinta la miniatura aunque el archivo no sea una imagen: un `<img>` roto, sin `src` o con él vacío, con su alt (los audios de Grupos, revisión del 2026-10-15).',
 };
 const cambiosNativos = [];
 for (const fs of Object.values(HOGARES)) {

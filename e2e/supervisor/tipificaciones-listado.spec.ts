@@ -113,7 +113,9 @@ test('importar: la vista previa dice qué entra, cada error con su línea y las 
 test('el grupo elige una tipificación, ve su árbol sin salir y, si tipifica, no guarda sin ella', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/11?seccion=general');
   await expect(page.locator('sc-select:has(#group-typification)')).toContainText('Atención al cliente');
-  await page.getByRole('button', { name: 'Ver qué tiene «Atención al cliente»' }).click();
+  // Bajo el desplegable, qué es y «Ver detalle» (revisión del 2026-10-15; antes, el icono de tres rayas).
+  await expect(page.locator('.wrapup__description')).toHaveText('Motivo de la conversación de un cliente');
+  await page.getByRole('button', { name: 'Ver detalle de «Atención al cliente»' }).click();
   const arbol = page.getByRole('dialog', { name: 'Atención al cliente' });
   await expect(arbol).toContainText('Consulta');
   await expect(arbol.getByRole('link', { name: 'Editar en Repositorios' })).toHaveAttribute(

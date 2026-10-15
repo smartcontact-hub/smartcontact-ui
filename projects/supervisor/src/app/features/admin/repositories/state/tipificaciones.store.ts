@@ -30,7 +30,7 @@ const SEED: readonly Tipificacion[] = [
   {
     id: 1,
     name: 'Atención al cliente',
-    description: 'Motivo de la llamada o del chat de un cliente',
+    description: 'Motivo de la conversación de un cliente',
     levels: 3,
     options: arbol([
       [
@@ -100,7 +100,8 @@ const normalize = (t: Tipificacion): Tipificacion => ({
 export const TipificacionesStore = createRepoStore<Tipificacion>('TipificacionesStore', {
   storageKey: 'sc-tipificaciones',
   versionKey: 'sc-tipificaciones-v',
-  currentVersion: 1,
+  // 2: «Motivo de la conversación de un cliente» (revisión del 2026-10-15).
+  currentVersion: 2,
   defaults: SEED,
   normalize,
 });

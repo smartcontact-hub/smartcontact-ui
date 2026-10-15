@@ -87,18 +87,3 @@ test('Regeneración de contraseñas: «marcar todo» y Espacio cambian la cifra 
   await page.keyboard.press('Space');
   await expect(seccion.locator('.agent-list__count')).toHaveText(`${total - 1} seleccionados`);
 });
-
-test('resumen del grupo: la estrategia rápida es un grupo de radios que cambia con las flechas', async ({ page }) => {
-  await goto(page, 'admin/grupos/editar/11');
-  await page.locator('[aria-controls="group-summary-quick-strategy"]').first().click();
-  const radios = page.getByRole('radiogroup', { name: 'Cambiar la distribución de teléfono' });
-  await expect(radios.getByRole('radio')).toHaveCount(3);
-
-  const elegida = radios.locator('label:has(input:checked)');
-  const antes = (await elegida.textContent())?.trim() ?? '';
-  await radios.locator('input:checked').focus();
-  await page.keyboard.press('ArrowDown');
-  await expect(elegida).not.toHaveText(antes);
-  // Las flechas eligen al momento: el panel se queda abierto para seguir eligiendo.
-  await expect(radios).toBeVisible();
-});

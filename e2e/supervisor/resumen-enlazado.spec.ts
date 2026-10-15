@@ -88,13 +88,25 @@ test('la fila de Chat en Distribución lleva al bloque de su canal, a la vista y
   expect(caja.visto, 'Distribución › Chat: nada lo tapa').toBe(true);
 });
 
-test('la fila de Teléfono en Distribución abre su panel rápido, no navega (es la excepción, DD-146)', async ({ page }) => {
+test('la fila de Teléfono es un enlace como las demás: sin selector rápido de estrategia (revisión del 2026-10-15)', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/11');
-  const boton = resumen(page).getByRole('group', { name: 'Distribución' }).getByRole('button', { name: /^Teléfono/ });
-  await expect(boton).toHaveAttribute('aria-expanded', 'false');
-  await boton.click();
-  await expect(page).toHaveURL(/\/admin\/grupos\/editar\/11$/);
-  await expect(boton).toHaveAttribute('aria-expanded', 'true');
+  const distribucion = resumen(page).getByRole('group', { name: 'Distribución' });
+  await expect(distribucion.getByRole('button', { name: /^Teléfono/ })).toHaveCount(0);
+  await expect(distribucion.locator('.resumen__quick')).toHaveCount(0);
+  const zona = await arribaDeLaZona(page);
+  for (const canal of [
+    { fila: 'Teléfono', titulo: '#group-channel-phone-title' },
+    { fila: 'Email', titulo: '#group-channel-email-title' },
+  ]) {
+    await goto(page, 'admin/grupos/editar/11');
+    await resumen(page).getByRole('group', { name: 'Distribución' }).getByRole('link', { name: canal.fila, exact: true }).click();
+    await expect(page).toHaveURL(/\?seccion=distribucion$/);
+    const titulo = page.locator(canal.titulo);
+    await expect(titulo, `Distribución › ${canal.fila}`).toBeFocused();
+    const caja = await titulo.evaluate(sinNadaEncima);
+    expect(caja.top, `Distribución › ${canal.fila}: dentro de la zona que se desplaza`).toBeGreaterThanOrEqual(zona - 0.5);
+    expect(caja.visto, `Distribución › ${canal.fila}: nada lo tapa`).toBe(true);
+  }
 });
 
 test('cada número de Distribución lleva a su campo: el teléfono saliente y el de WhatsApp', async ({ page }) => {
@@ -167,10 +179,10 @@ test('cada enlace del resumen se pulsa en al menos 24 × 24, también a 1366 × 
   await page.setViewportSize({ width: 1366, height: 660 });
   await goto(page, 'admin/grupos/editar/11');
   const enlaces = resumen(page).locator('.resumen__enlace, a.sc-fact-row__link');
-  // Agentes habilitados, Distribución y Recursos (título), Chat, Teléfono saliente y Número WhatsApp: 6. Teléfono y
-  // cada tipo de recurso son un botón, no un enlace (revisión de diseño, 2026-10-11) — no entran aquí, «Ver recursos»
-  // tiene su propia prueba en el test del alta.
-  await expect(enlaces).toHaveCount(6);
+  // Agentes habilitados, Distribución y Recursos (título), Teléfono, Chat, Email, Teléfono saliente y Número WhatsApp:
+  // 8 (Teléfono es enlace desde la revisión del 2026-10-15; Email tiene estrategia propia). Cada tipo de recurso es un
+  // botón, no un enlace (revisión de diseño, 2026-10-11) — no entra aquí; «Ver recursos» tiene su prueba en el alta.
+  await expect(enlaces).toHaveCount(8);
   // Las cuatro esquinas de un cuadrado de 24 centrado en el enlace caen en él: así se pulsa aunque pinte 18 de alto. Es
   // la prueba del navegador (`elementFromPoint`), no la caja que se pinta.
   const fuera = await enlaces.evaluateAll((els) =>

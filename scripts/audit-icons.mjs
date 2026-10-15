@@ -404,7 +404,7 @@ function objetoQueEnvuelve(fuente, i) {
 export const PENDIENTES = {
     'projects/supervisor/src/app/features/admin/agents/pages/agent-form-page.component.html': 3,
     'projects/supervisor/src/app/features/admin/groups/components/agent-channel-table/agent-channel-table.component.html': 1,
-    'projects/supervisor/src/app/features/admin/groups/pages/group-form-page.component.html': 8,
+    'projects/supervisor/src/app/features/admin/groups/pages/group-form-page.component.html': 6,
     'projects/supervisor/src/app/features/admin/groups/pages/group-form-page.component.ts': 1,
     'projects/supervisor/src/app/shared/components/list-page/list-page.component.html': 2,
 };

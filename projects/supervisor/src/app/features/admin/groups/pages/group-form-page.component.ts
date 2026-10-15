@@ -46,9 +46,12 @@ import {
   PHONE_STRATEGIES,
   PHONE_STRATEGY_HELP_KEYS,
   PRIORITY_LABEL_KEYS,
+  RING_ALL_ALLOWED_MAX,
   RING_ALL_OPTIONS,
   SUB_STRATEGIES,
   DEFAULT_ANNOUNCEMENTS,
+  audioFileOf,
+  type AudioFile,
   GroupAdvanced,
   GroupAnnouncements,
   VOICE_OPTIONS,
@@ -65,6 +68,8 @@ import {
   WRAP_UP_SCOPES,
   type WrapUpScope,
   DEFAULT_CHAT_STRATEGY,
+  DEFAULT_EMAIL_STRATEGY,
+  EMAIL_STRATEGIES,
   FAMILY_LABEL_KEYS,
   type ChannelFamily,
   resolveGroup,
@@ -126,6 +131,7 @@ interface FormState {
   /** La cola y los tiempos de cada canal (visión de producto de grupos, 2026-09-25). */
   phoneQueue: ChannelQueue;
   chatQueue: ChannelQueue;
+  emailQueue: ChannelQueue;
   chat: ChatSettings;
   channels: ReadonlySet<GroupChannel>;
   strategy: string;
@@ -133,6 +139,8 @@ interface FormState {
   ringAllAgents: number;
   chatStrategy: string;
   chatSubStrategy: string;
+  emailStrategy: string;
+  emailSubStrategy: string;
   links: readonly GroupAgentLink[];
 }
 
@@ -153,6 +161,9 @@ const SECTION_OF_FIELD: Readonly<Record<keyof FormState, string>> = {
   chatSubStrategy: 'group-section-distribution',
   phoneQueue: 'group-section-distribution',
   chatQueue: 'group-section-distribution',
+  emailQueue: 'group-section-distribution',
+  emailStrategy: 'group-section-distribution',
+  emailSubStrategy: 'group-section-distribution',
   chat: 'group-section-distribution',
   announcements: 'group-section-distribution',
   advanced: 'group-section-distribution',
@@ -173,6 +184,13 @@ const RESUMEN_SECCIONES: Readonly<Record<GroupSummarySeccion, string>> = {
 
 /** Los campos de los números de Salida, en Distribución y colas: el teléfono saliente y el de WhatsApp. */
 const RESUMEN_NUMEROS = { phone: 'group-phone', whatsapp: 'group-chat-whatsapp' } as const;
+
+/** Los canales con cola propia, y el campo de la ficha que la guarda. */
+type QueueChannel = 'phone' | 'chat' | 'email';
+const QUEUE_FIELD = { phone: 'phoneQueue', chat: 'chatQueue', email: 'emailQueue' } as const satisfies Record<QueueChannel, keyof FormState>;
+
+/** Los audios de un solo archivo de la ficha. */
+type AudioKey = 'holdMusicFile' | 'queueIdFile' | 'nextInLineFile' | 'outboundAudioFile';
 
 @Component({
   selector: 'sc-group-form-page',
@@ -251,10 +269,12 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
   protected readonly channelKeys = CHANNEL_LABEL_KEYS;
   protected readonly phoneStrategyOptions = PHONE_STRATEGIES.map((s) => ({ label: s, value: s }));
   protected readonly chatStrategies = CHAT_STRATEGIES;
+  protected readonly emailStrategyOptions = EMAIL_STRATEGIES.map((s) => ({ label: s, value: s }));
   protected readonly chatSubStrategies = CHAT_SUB_STRATEGIES;
-  protected readonly levelFamilies = computed<readonly ('phone' | 'chat')[]>(() => [
+  protected readonly levelFamilies = computed<readonly ('phone' | 'chat' | 'email')[]>(() => [
     ...(this.isNiveles() ? ['phone' as const] : []),
     ...(this.hasChatFamily() && this.form().chatStrategy === 'Niveles' ? ['chat' as const] : []),
+    ...(this.isEmailNiveles() ? ['email' as const] : []),
   ]);
   protected readonly subStrategies = SUB_STRATEGIES;
   protected readonly ringAllOptions = RING_ALL_OPTIONS;
@@ -597,7 +617,8 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
 
   protected readonly queueInvalid = computed(() =>
     (this.hasPhone() && !validQueueSize(this.form().phoneQueue)) ||
-    (this.hasChatFamily() && !validQueueSize(this.form().chatQueue)));
+    (this.hasChatFamily() && !validQueueSize(this.form().chatQueue)) ||
+    (this.hasEmail() && !validQueueSize(this.form().emailQueue)));
 
   protected attendanceOptions(channel: ChatSubchannel) {
     this.lang();
@@ -624,15 +645,6 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
   protected readonly hasWebChat = computed(() => this.form().channels.has('chat'));
   protected readonly hasWhatsApp = computed(() => this.form().channels.has('whatsapp'));
   protected readonly hasPhone = computed(() => this.form().channels.has('phone'));
-  /** Las familias de canal que el grupo NO tiene, en el orden de Distribución y colas. */
-  protected readonly inactiveFamilies = computed<readonly ('phone' | 'chat' | 'email')[]>(() => {
-    const off: ('phone' | 'chat' | 'email')[] = [];
-    if (!this.hasPhone()) off.push('phone');
-    if (!this.hasChatFamily()) off.push('chat');
-    if (!this.hasEmail()) off.push('email');
-    return off;
-  });
-  protected readonly familyLabelKeys = FAMILY_LABEL_KEYS;
   /** Los mensajes de un subcanal, por su sitio en la ficha: el inicial y el final, y los dos que dependen del horario
    *  (solo con uno elegido). */
   protected readonly chatMessageGroups: Readonly<Record<'frame' | 'schedule', readonly { key: keyof ChatQueueMessages; labelKey: string; placeholderKey: string }[]>> = {
@@ -684,6 +696,9 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
   /** Qué hace la estrategia de teléfono elegida, en una línea bajo el campo (DD-133): `PHONE_STRATEGY_HELP_KEYS`,
    *  compartida con el selector rápido del resumen. */
   protected readonly strategyHelpKey = computed<string | null>(() => PHONE_STRATEGY_HELP_KEYS[this.form().strategy] ?? null);
+  /** Email, con las mismas estrategias y la misma ayuda que Teléfono (Voice). */
+  protected readonly isEmailNiveles = computed(() => this.hasEmail() && this.form().emailStrategy === 'Niveles');
+  protected readonly emailStrategyHelpKey = computed<string | null>(() => PHONE_STRATEGY_HELP_KEYS[this.form().emailStrategy] ?? null);
 
   /** Los números asignados a la cuenta, sin escribir uno nuevo (DD-142). Y el que ya tuviera guardado el grupo, aunque
    *  no esté entre ellos: abrir la ficha no lo borra. */
@@ -722,11 +737,6 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
     this.lang();
     return WRAP_UP_SCOPES.map((value) => ({ value, label: this.translate.instant(`groups.form.wrapup.scope.${value}`) }));
   });
-
-  /** «Tipificar llamadas» si el grupo solo atiende teléfono; con chat o email, «conversaciones». */
-  protected readonly classifyLabelKey = computed(() =>
-    [...this.form().channels].every((c) => c === 'phone') ? 'groups.form.wrapup.classify_calls' : 'groups.form.wrapup.classify',
-  );
 
   protected setWrapUp<K extends keyof GroupWrapUp>(key: K, value: GroupWrapUp[K]): void {
     this.form.update((f) => ({ ...f, wrapUp: { ...f.wrapUp, [key]: value } }));
@@ -799,9 +809,9 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
       ? 'groups.form.advanced.queue_variable_error' : 'groups.form.advanced.queue_integer_error');
   }
 
-  protected setQueueType(channel: 'phone' | 'chat', value: unknown): void {
+  protected setQueueType(channel: QueueChannel, value: unknown): void {
     if (value !== 'fixed' && value !== 'per_agent') return;
-    const field = channel === 'phone' ? 'phoneQueue' : 'chatQueue';
+    const field = QUEUE_FIELD[channel];
     this.form.update(f => ({ ...f, [field]: { ...f[field], queueSizeType: value,
       queueSize: value === 'per_agent' && f[field].queueSizeType !== value ? 2 : f[field].queueSize } }));
   }
@@ -902,17 +912,27 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
       scheduleIds: new Set(idsVivos(g.schedules ?? [], this.agendasStore.items())),
       templateIds: new Set(idsVivos(g.templates ?? [], this.templatesStore.templates())),
       labelIds: new Set(idsVivos(g.labels ?? [], this.labelsStore.labels())),
-      announcements: g.announcements,
+      announcements: {
+        ...g.announcements,
+        holdMusicFile: audioFileOf(g.announcements.holdMusicFile),
+        queueIdFile: audioFileOf(g.announcements.queueIdFile),
+        nextInLineFile: audioFileOf(g.announcements.nextInLineFile),
+        outboundAudioFile: audioFileOf(g.announcements.outboundAudioFile),
+      },
       advanced: g.advanced,
       phoneQueue: g.phoneQueue,
       chatQueue: g.chatQueue,
+      emailQueue: g.emailQueue,
       chat: g.chat,
       channels: new Set(group.channels),
       strategy: group.strategy,
       subStrategy: group.subStrategy ?? SUB_STRATEGIES[0]!,
-      ringAllAgents: group.ringAllAgents ?? RING_ALL_OPTIONS[0]!,
+      // Lo guardado con más de lo permitido (antes de la revisión del 2026-10-15) se abre con lo permitido.
+      ringAllAgents: Math.min(group.ringAllAgents ?? RING_ALL_OPTIONS[0]!, RING_ALL_ALLOWED_MAX),
       chatStrategy: group.chatStrategy ?? DEFAULT_CHAT_STRATEGY,
       chatSubStrategy: group.chatSubStrategy ?? CHAT_SUB_STRATEGIES[0]!,
+      emailStrategy: group.emailStrategy ?? DEFAULT_EMAIL_STRATEGY,
+      emailSubStrategy: group.emailSubStrategy ?? SUB_STRATEGIES[0]!,
       links: seedLinks,
     });
     this.initialChannels.set(new Set(group.channels));
@@ -964,6 +984,14 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
     if (typeof value === 'string') this.updateField('chatStrategy', value);
   }
 
+  protected onEmailStrategyValueChange(value: unknown): void {
+    if (typeof value === 'string') this.updateField('emailStrategy', value);
+  }
+
+  protected onEmailSubStrategyChange(value: unknown): void {
+    if (typeof value === 'string') this.updateField('emailSubStrategy', value);
+  }
+
   /** Crear o editar una agenda o una plantilla sin salir de la ficha (DD-187): la ventana que abren el «+» de su campo y
    *  el «Editar» de sus filas. La recién creada se AÑADE a lo ya elegido, no lo sustituye. */
   protected readonly recursoAbierto = signal<RecursoAbierto | null>(null);
@@ -1006,13 +1034,13 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
   }
 
   /** La cola de un canal: cada uno la suya. */
-  protected setQueue<K extends keyof ChannelQueue>(channel: 'phone' | 'chat', key: K, value: ChannelQueue[K]): void {
-    const field = channel === 'phone' ? 'phoneQueue' : 'chatQueue';
+  protected setQueue<K extends keyof ChannelQueue>(channel: QueueChannel, key: K, value: ChannelQueue[K]): void {
+    const field = QUEUE_FIELD[channel];
     this.form.update((f) => ({ ...f, [field]: { ...f[field], [key]: value } }));
   }
 
   /** Números de la cola: como los de Avanzado, un campo vaciado se queda en su valor anterior. */
-  protected setQueueNumber(channel: 'phone' | 'chat', key: 'queueSize' | 'maxQueueWaitSec' | 'serviceLevelSec' | 'transferSec', value: unknown): void {
+  protected setQueueNumber(channel: QueueChannel, key: 'queueSize' | 'maxQueueWaitSec' | 'serviceLevelSec' | 'transferSec', value: unknown): void {
     if (typeof value === 'number' && Number.isFinite(value)) this.setQueue(channel, key, value);
   }
 
@@ -1051,16 +1079,39 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
     this.setAdvanced('allowedDomains', limpios);
   }
 
-  /** El .wav elegido: de momento solo se guarda su nombre (demo). */
-  protected onAudioFile(key: 'holdMusicFile' | 'queueIdFile' | 'nextInLineFile', files: readonly File[]): void {
+  /** El audio elegido: su nombre y su tamaño (demo: el archivo no se sube a ningún sitio). */
+  protected onAudioFile(key: AudioKey, files: readonly File[]): void {
     const file = files[0];
-    if (file) this.setAnnouncement(key, file.name);
+    if (file) this.setAnnouncement(key, { name: file.name, size: file.size });
   }
 
-  /** Segundos de un aviso: un campo vaciado se queda en su valor anterior, como los de la cola. */
-  protected setAnnouncementNumber(key: 'avgWaitSec', value: unknown): void {
-    if (typeof value === 'number' && Number.isFinite(value) && value >= 0) this.setAnnouncement(key, value);
+  /** Lo guardado de cada audio, para la lista del uploader. La misma lista mientras no cambie: el uploader la pinta
+   *  cada vez que le llega una nueva. */
+  private audioGuardado(key: AudioKey) {
+    return computed<readonly AudioFile[]>(
+      () => {
+        const audio = this.form().announcements[key];
+        return audio ? [audio] : [];
+      },
+      { equal: (a, b) => a.length === b.length && a.every((x, i) => x.name === b[i]!.name && x.size === b[i]!.size) },
+    );
   }
+  private readonly audiosGuardados: Readonly<Record<AudioKey, () => readonly AudioFile[]>> = {
+    holdMusicFile: this.audioGuardado('holdMusicFile'),
+    queueIdFile: this.audioGuardado('queueIdFile'),
+    nextInLineFile: this.audioGuardado('nextInLineFile'),
+    outboundAudioFile: this.audioGuardado('outboundAudioFile'),
+  };
+  /** Para la plantilla, que pasa la clave como texto. */
+  protected audioGuardadoDe(key: string): readonly AudioFile[] {
+    return this.audiosGuardados[key as AudioKey]();
+  }
+
+  /** «Audio saliente» lo habilita backoffice por cliente; sin él, el campo no sale (revisión del 2026-10-15). Esta
+   *  demo lo tiene habilitado. */
+  protected readonly conAudioSaliente = true;
+  /** Los audios admiten .wav y .mp3 (desarrollo, 2026-10-15). */
+  protected readonly audioAccept = '.wav,.mp3,audio/wav,audio/mpeg';
 
   /** Un mensaje periódico más por cada .wav elegido: cada 30 s hasta que se cambie. */
   protected onPeriodicFiles(files: readonly File[]): void {
@@ -1087,12 +1138,23 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
     if (typeof value === 'string') this.updateField('subStrategy', value);
   }
 
-  /** El aviso de costes de Ring All, cerrado por quien lo leyó: vuelve si baja de tres agentes y se sube otra vez. */
-  protected readonly ringAllWarningClosed = signal(false);
+  /** Ring All a la vez: dos agentes los tiene cualquiera; tres o más los activa el administrador (revisión del
+   *  2026-10-15). Elegir más de lo permitido deja el valor en lo permitido y lo dice junto al campo. */
+  protected readonly ringAllAllowedMax = RING_ALL_ALLOWED_MAX;
+  /** Se intentó pasar de lo permitido: sale el aviso hasta que se cierra. */
+  protected readonly ringAllBlocked = signal(false);
+  private readonly ringAllSelect = viewChild<SelectComponent>('ringAllSelect');
 
   protected onRingAllChange(value: unknown): void {
     if (typeof value !== 'number') return;
-    if (value < 3) this.ringAllWarningClosed.set(false);
+    if (value > RING_ALL_ALLOWED_MAX) {
+      this.ringAllBlocked.set(true);
+      this.updateField('ringAllAgents', RING_ALL_ALLOWED_MAX);
+      // El desplegable ya pinta lo elegido, y el campo no cambia (seguía en lo permitido): se le devuelve lo permitido
+      // en la vuelta siguiente, cuando su `ngModel` ya ha visto lo elegido y nota el cambio.
+      setTimeout(() => this.ringAllSelect()?.value.set(RING_ALL_ALLOWED_MAX));
+      return;
+    }
     this.updateField('ringAllAgents', value);
   }
 
@@ -1124,6 +1186,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
     const routing: GroupSummaryRouting[] = [];
     if (this.hasPhone()) routing.push({ family: 'phone', text: this.phoneStrategySummary() });
     if (this.hasChatFamily()) routing.push({ family: 'chat', text: this.form().chatStrategy });
+    if (this.hasEmail()) routing.push({ family: 'email', text: this.form().emailStrategy });
     return routing;
   });
 
@@ -1271,6 +1334,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
         advanced: f.advanced,
         phoneQueue: f.phoneQueue,
         chatQueue: f.chatQueue,
+        emailQueue: f.emailQueue,
         chat: f.chat,
         channels: Array.from(f.channels),
         strategy: f.strategy,
@@ -1279,6 +1343,8 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
         // La de Chat vale para sus dos subcanales: un grupo solo de WhatsApp también la guarda.
         chatStrategy: hasChatFamily(f.channels) ? f.chatStrategy : undefined,
         chatSubStrategy: f.chatSubStrategy,
+        emailStrategy: f.channels.has('email') ? f.emailStrategy : undefined,
+        emailSubStrategy: this.isEmailNiveles() ? f.emailSubStrategy : undefined,
         // Sin clasificar, no guarda una tipificación que no usa.
         wrapUp: f.wrapUp.classify ? f.wrapUp : { ...f.wrapUp, typificationId: null },
       };
@@ -1392,6 +1458,8 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
       // Cada canal nace con SU cola, su estrategia y (Chat) su cierre por inactividad de los valores por defecto.
       phoneQueue: { ...defaults.phoneQueue },
       chatQueue: { ...defaults.chatQueue },
+      // Contact Center aún no fija los de Email: nace con la cola de Chat, el otro canal escrito.
+      emailQueue: { ...defaults.chatQueue },
       chat: { ...DEFAULT_CHAT_SETTINGS, ...defaults.chat },
       channels: new Set<GroupChannel>(['phone']),
       strategy: defaults.strategy,
@@ -1399,6 +1467,8 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
       ringAllAgents: RING_ALL_OPTIONS[0]!,
       chatStrategy: defaults.chatStrategy,
       chatSubStrategy: CHAT_SUB_STRATEGIES[0]!,
+      emailStrategy: DEFAULT_EMAIL_STRATEGY,
+      emailSubStrategy: SUB_STRATEGIES[0]!,
       links: [],
     };
   }

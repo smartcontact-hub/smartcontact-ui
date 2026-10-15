@@ -82,6 +82,10 @@ export const SUB_STRATEGIES: readonly string[] = ['Balanceada', 'Más tiempo ina
 /** Ring All suena a la vez en 2 a 10 agentes; por defecto 2 (SISMAC-1975). */
 export const RING_ALL_OPTIONS: readonly number[] = [2, 3, 4, 5, 6, 7, 8, 9, 10];
 
+/** Lo que Ring All deja a cualquiera: dos a la vez. De tres en adelante lo activa el administrador (revisión del
+ *  2026-10-15), y esta demo no lo tiene activado. */
+export const RING_ALL_ALLOWED_MAX = 2;
+
 /** Niveles de reparto por familia: enteros de 1 a 10. */
 export const LEVEL_OPTIONS: readonly number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
@@ -122,21 +126,36 @@ export interface PeriodicAnnouncement {
   readonly everySec: number;
 }
 
+/** Un audio guardado: su nombre y su tamaño, lo que enseña la fila del uploader de primeng.dev (revisión del
+ *  2026-10-15). Admite .wav y .mp3 (desarrollo lo confirmó el mismo día). */
+export interface AudioFile {
+  readonly name: string;
+  /** En bytes. */
+  readonly size: number;
+}
+
+/** Lo guardado antes del 2026-10-15 era solo el nombre: se lee con tamaño 0. */
+export function audioFileOf(stored: AudioFile | string | null | undefined): AudioFile | null {
+  if (!stored) return null;
+  return typeof stored === 'string' ? { name: stored, size: 0 } : stored;
+}
+
 export interface GroupAnnouncements {
-  /** Nombre del .wav; null = la música por defecto. La misma música sirve para espera y transferencia
+  /** El audio; null = la música por defecto. La misma música sirve para espera y transferencia
    *  (postventa, 2026-09-18: «debería de ser la misma»), así que es un solo campo. */
-  readonly holdMusicFile: string | null;
+  readonly holdMusicFile: AudioFile | null;
   readonly queueIdSource: AudioSource;
-  readonly queueIdFile: string | null;
+  readonly queueIdFile: AudioFile | null;
   /** Lo que lee la voz cuando la fuente es «Texto a voz». */
   readonly queueIdText: string;
   readonly nextInLineSource: AudioSource;
-  readonly nextInLineFile: string | null;
+  readonly nextInLineFile: AudioFile | null;
   readonly nextInLineText: string;
   readonly voice: string;
   readonly periodicAnnouncements: readonly PeriodicAnnouncement[];
-  /** «Audio saliente» del Figma de la migración. No está en el manual: qué suena y cuándo, por confirmar con desarrollo. */
-  readonly outboundAudioFile: string | null;
+  /** «Audio saliente»: lo que suena en las llamadas que hace el grupo (el aviso legal que el agente pone al cliente).
+   *  Solo lo ve quien lo tiene habilitado en backoffice (revisión del 2026-10-15). */
+  readonly outboundAudioFile: AudioFile | null;
   readonly announceAvgWait: boolean;
   readonly avgWaitSec: number;
   readonly announcePosition: boolean;
@@ -231,6 +250,12 @@ export const CHAT_SUB_STRATEGIES = DEFAULT_CHAT_STRATEGY_OPTIONS;
 
 /** Con la que reparte un grupo de ejemplo con Chat que no ha elegido otra. Uno nuevo nace con la de Contact Center. */
 export const DEFAULT_CHAT_STRATEGY = CHAT_STRATEGIES[0]!;
+
+/** Email reparte con las seis de Voice, como Teléfono (revisión del 2026-10-15, calcado de la ficha de grupo de Voice):
+ *  Niveles lleva el nivel de cada agente para Email y su «Dentro de cada nivel»; Ring All, sin cifra, como allí. Nace
+ *  con la que Voice trae marcada, «Agente con menos llamadas atendidas». */
+export const EMAIL_STRATEGIES: readonly string[] = PHONE_STRATEGIES;
+export const DEFAULT_EMAIL_STRATEGY = 'Menos conversaciones atendidas';
 
 /** Las estrategias que cambiaron de nombre, con el de ahora: reparten conversaciones, no llamadas ni chats (DD-141). Y las
  *  que salieron en la revisión de grupos del 2026-10-06 (Rotativa no existe en Voice; Skills, sin skills por agente), con
@@ -396,6 +421,7 @@ export interface ResolvedGroup extends Group {
   readonly advanced: GroupAdvanced;
   readonly phoneQueue: ChannelQueue;
   readonly chatQueue: ChannelQueue;
+  readonly emailQueue: ChannelQueue;
   readonly chat: ChatSettings;
   readonly wrapUp: GroupWrapUp;
 }
@@ -416,6 +442,7 @@ export function resolveGroup(group: Group): ResolvedGroup {
     advanced,
     phoneQueue: { ...legacyQueue, ...group.phoneQueue },
     chatQueue: { ...legacyQueue, ...group.chatQueue },
+    emailQueue: { ...legacyQueue, ...group.emailQueue },
     wrapUp: { ...DEFAULT_WRAP_UP, ...(group.wrapUp ?? SEED_WRAP_UP[group.id]) },
     chat: {
       ...DEFAULT_CHAT_SETTINGS,
@@ -457,6 +484,10 @@ export interface Group {
   readonly channels: readonly GroupChannel[];
   readonly strategy: string;
   readonly chatStrategy?: string;
+  /** Con la que reparte Email. Sin ella, `DEFAULT_EMAIL_STRATEGY`. */
+  readonly emailStrategy?: string;
+  /** «Dentro de cada nivel» de Email, si reparte por Niveles. */
+  readonly emailSubStrategy?: string;
   readonly labels?: readonly number[];
   readonly templates?: readonly number[];
   readonly subStrategy?: string;
@@ -473,6 +504,8 @@ export interface Group {
   readonly phoneQueue?: ChannelQueue;
   /** La cola y los tiempos de Chat (Web Chat y WhatsApp). Sin ella, los de `advanced`. */
   readonly chatQueue?: ChannelQueue;
+  /** La cola y los tiempos de Email, como en Voice. Sin ella, los de `advanced`. */
+  readonly emailQueue?: ChannelQueue;
   readonly chat?: ChatSettings;
   readonly schedules?: readonly number[];
   /** Draft flag — set on duplicated entities until the user saves (DD#294 in the React prototype). */
@@ -552,7 +585,7 @@ export const GROUPS_SEED: readonly Group[] = [
     priority: 'Baja',
     channels: ['phone'],
     strategy: 'Ring All',
-    ringAllAgents: 3,
+    ringAllAgents: 2,
   },
   {
     id: 8,

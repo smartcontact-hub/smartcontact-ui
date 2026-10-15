@@ -9,3 +9,18 @@
   display: block;
   max-width: 100%;
 }
+
+/* El texto de la zona de soltar es nuestro (`#empty`): con la letra y el gris de una ayuda, no con la del cuerpo, que
+ * pesaba más que el rótulo del campo (revisión del 2026-10-15). */
+.sc-fileupload__drop {
+  font-size: var(--sc-font-size-caption);
+  line-height: var(--sc-line-height-caption);
+  color: var(--sc-text-secondary);
+}
+
+/* PrimeNG pinta la miniatura de cada archivo aunque no sea una imagen: sin `objectURL` queda un `<img>` roto, sin
+ * `src` o con él vacío, que enseña su `alt`, el nombre repetido (un audio, revisión del 2026-10-15). Solo en ese caso,
+ * fuera; la de una imagen se queda como en primeng.dev. customs-catalog §8. */
+.sc-fileupload .p-fileupload-file-thumbnail:is([src=''], :not([src])) {
+  display: none;
+}

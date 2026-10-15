@@ -66,6 +66,26 @@ test('Chat normaliza y guarda Dentro de cada nivel; Contact Center excluye Nivel
   }
 });
 
+test('Email reparte por Niveles como Teléfono: su «Dentro de cada nivel» y su columna en Agentes asignados', async ({ page }) => {
+  await page.addInitScript(() => {
+    if (localStorage.getItem('sc-groups')) return;
+    localStorage.setItem('sc-groups-v', '4');
+    localStorage.setItem('sc-groups', JSON.stringify([{ id: 11, code: '20011', name: 'Niveles en Email', phone: '917945449', priority: 'Baja', channels: ['phone', 'email'], strategy: 'Balanceada', emailStrategy: 'Niveles' }]));
+    localStorage.setItem('sc-group-agent-links-v', '1');
+    localStorage.setItem('sc-group-agent-links', JSON.stringify([{ agentId: 1, groupId: 11, channels: ['phone', 'email'], active: true, levels: { phone: 5, email: 3 } }]));
+  });
+  await goto(page, 'admin/grupos/editar/11?seccion=distribucion');
+  await expect(page.locator('#group-email-sub-strategy')).toBeVisible();
+  await goto(page, 'admin/grupos/editar/11?seccion=agentes');
+  const table = page.locator('sc-agent-channel-table');
+  await expect(table.getByRole('columnheader', { name: 'Nivel Email', exact: true })).toHaveCount(1);
+  await expect(table.getByRole('columnheader', { name: 'Nivel Teléfono', exact: true })).toHaveCount(0);
+  await expect(level(page, 'Email')).toHaveValue('3');
+  await level(page, 'Email').fill('7');
+  await page.getByRole('button', { name: 'Guardar', exact: true }).click();
+  await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('sc-group-agent-links')!)[0].levels.email)).toBe(7);
+});
+
 for (const theme of ['light', 'dark']) {
   for (const width of [1024, 1440]) {
     test(`columnas y ancho con ambos niveles: ${theme} ${width}`, async ({ page }) => {

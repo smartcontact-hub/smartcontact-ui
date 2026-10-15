@@ -52,12 +52,14 @@
     align-self: center;
   }
 
+  /* `Subtitle/subtitle-semibold` (16/24), un peldaño por encima de sus partes (`sc-slot`, 14) y uno por debajo de la
+   * sección (18): con los dos a 14, «Teléfono» y su «Distribución» pesaban igual (DD-206 §13). */
   &__title {
     margin: 0;
-    font-family: var(--sc-font-family-body-2);
-    font-size: var(--sc-font-size-body-2);
-    line-height: var(--sc-line-height-body-2);
-    font-weight: var(--sc-font-weight-semibold);
+    font-family: var(--sc-font-family-subtitle-1);
+    font-size: var(--sc-font-size-subtitle-1);
+    line-height: var(--sc-line-height-subtitle-1);
+    font-weight: var(--sc-font-weight-subtitle-1);
     color: var(--sc-text-primary);
   }
 

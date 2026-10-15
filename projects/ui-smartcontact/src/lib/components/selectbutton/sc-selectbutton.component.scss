@@ -19,10 +19,12 @@
   width: 100%;
 }
 
-/* La ayuda, como la de los demás campos del DS (`sc-inputnumber__msg`, `sc-select__msg`). */
+/* La ayuda, como la de los demás campos del DS (`sc-inputnumber__msg`, `sc-select__msg`): a 7 del control. Aquí el host
+ * no tiene `gap`, así que el margen la pone entera; con 3,5 quedaba a la mitad que en los demás (medido en las fichas de
+ * grupo y de agente, 2026-10-15). */
 .sc-selectbutton__msg {
   display: block;
-  margin-top: var(--sc-spacing-0-25);
+  margin-top: var(--sc-spacing-0-5);
   font-size: var(--sc-font-size-100);
   line-height: var(--sc-line-height-caption);
   color: var(--sc-text-subtle);
