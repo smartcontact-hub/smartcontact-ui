@@ -428,7 +428,8 @@ Leídos en el código; sin medir en el navegador.
 - **«Nueva regla» y los «⋮» de fila** no dicen que abren un menú (`ariaHasPopup`, `ariaExpanded`; DD-171).
 - **cuscare-ds escribe «—» a mano en celdas** (`tickets-page.component.html:66` y `:75`; DD-197).
 - **Antes de los candidatos 2, 3 y 6**: `sc-select` y `sc-multiselect` no pasan `group`, `optionGroupLabel`,
-  `optionGroupChildren` ni `virtualScroll`. Hace falta el nativo directo (DD-113) o abrirlas en el wrapper.
+  `optionGroupChildren` ni `virtualScroll`. Hace falta el nativo directo (DD-113) o abrirlas en el wrapper. Desde el
+  2026-10-16, `sc-multiselect` pasa los tres de grupo (el 6) y abre con el foco (`show()`); `virtualScroll`, aún no.
 
 ### 7.5 Descartes, para no volver a mirarlos
 
@@ -497,6 +498,12 @@ Leídos en el código; sin medir en el navegador.
    casillas es el de la descarga en lote heredada del SC (grabaciones y chats a la vez, y un aviso de que las borradas
    o vacías no entran), y en el reproductor solo cabe una casilla. Ahora el reproductor baja el fichero en un clic, y
    una llamada sin grabación tiene el botón apagado, como antes tenía su única casilla; el modal se queda en la
-   descarga en lote de Conversaciones. Prueba en `e2e/supervisor/barrido-avisos.spec.ts`. Queda el 6.
+   descarga en lote de Conversaciones. Prueba en `e2e/supervisor/barrido-avisos.spec.ts`. Y el 6, el último: el valor
+   de una condición de Reglas es un `sc-multiselect` con buscador, «marcar todo» y secciones (grupos e individuales en
+   Agente; una por categoría en Tipificación), que se abre solo con el foco al elegir el campo. Lo que dependía de
+   desarrollo se resolvió sin cambiar el dato: marcar «Ventas» sigue siendo solo «Ventas», como en el desplegable de
+   antes, y marcar todo sigue siendo el comodín («Todos, incluye nuevos»). Prueba en
+   `e2e/supervisor/barrido-teclado.spec.ts`. El barrido queda cerrado: lo que no se hizo tiene su porqué en 7.5 o en
+   esta lista (el 11, el 17 y el 25).
 6. **La sección 6 en sc-docs**: hecho el 2026-10-14, la página PrimeNG. Si cambias la sección 6, `npm run
    primeng-catalog:gen` rehace su artefacto (el gate se pone rojo hasta entonces).

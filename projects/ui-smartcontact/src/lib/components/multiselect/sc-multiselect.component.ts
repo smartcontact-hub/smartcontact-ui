@@ -108,6 +108,11 @@ export class ScMultiSelectComponent {
     this.control()?.hide();
   }
 
+  /** Abre la lista y le da el foco: para un flujo guiado que, al elegir lo anterior, lleva directo a este campo. */
+  show(): void {
+    this.control()?.show(true);
+  }
+
   constructor() {
     // El mismo diccionario que `sc-select`: lista vacía, filtro sin resultados, buscador y «N seleccionados».
     const translate = inject(TranslateService);
@@ -157,6 +162,15 @@ export class ScMultiSelectComponent {
   readonly optionValue = input<string>();
   /** Campo de la opción (o función) que la deja fija: se ve, pero no se puede marcar ni desmarcar. */
   readonly optionDisabled = input<string | ((option: unknown) => boolean)>();
+  /**
+   * Opciones por grupos, cada uno con su cabecera (primeng.dev/multiselect «Group»): `options` es entonces la lista de
+   * grupos, con su rótulo en `optionGroupLabel` y sus opciones en `optionGroupChildren`. La cabecera no se marca.
+   */
+  readonly group = input(false, { transform: booleanAttribute });
+  /** Campo del grupo con su rótulo. */
+  readonly optionGroupLabel = input<string>('label');
+  /** Campo del grupo con sus opciones. */
+  readonly optionGroupChildren = input<string>('items');
   /** How to render selected items inside the input. */
   readonly display = input<ScMultiSelectDisplay>('comma');
   /** Show search/filter input inside the dropdown. */

@@ -700,14 +700,9 @@
           "est_projection": "≈ {{day}} al día, ≈ {{month}} al mes, a este ritmo.",
           "pick_all": "Todos",
           "pick_all_hint": "incluye nuevos",
-          "search": "Buscar…",
-          "pick_all_row": "Todos: se aplica a cualquiera, incluidos los nuevos.",
-          "pick_manual": "Elegir manualmente",
           "pick_groups": "Grupos (sus miembros)",
           "enabled_members": "{{count}} agentes habilitados",
           "pick_individuals": "Individuales",
-          "pick_empty": "Sin resultados.",
-          "select_all": "Seleccionar todo (cualquiera)",
           "remove": "Quitar",
           "val": {
             "incomplete": "Falta elegir un valor.",
@@ -729,7 +724,6 @@
           "impact_hero_other": "{{count}} conversaciones",
           "trend_up": "El alcance ha subido respecto al cambio anterior",
           "trend_down": "El alcance ha bajado respecto al cambio anterior",
-          "toggle_category_aria": "Contraer o expandir categoría",
           "duration_min": "Duración mínima",
           "duration_max": "Duración máxima",
           "duration_value": "Duración"

@@ -53,6 +53,21 @@ const MENOS_VISTOS_SNIPPET = `<!-- Con OBJETOS hay que decir qué campo se lee y
 <!-- "emptyMessage" es la lista vacía; "emptyFilterMessage" es "filtraste y no hay". -->
 <sc-multiselect label="Sin opciones" [options]="[]" emptyMessage="Todavía no hay grupos" />
 
+<!-- "group": las opciones van por secciones, cada una con su cabecera, que no se marca.
+     "optionGroupLabel" es el campo del rótulo de la sección y "optionGroupChildren" el de sus
+     opciones. Es el valor de una condición de Reglas: grupos e individuales. -->
+<sc-multiselect
+  label="Por secciones"
+  [options]="porSecciones"
+  [group]="true"
+  optionGroupLabel="nombre"
+  optionGroupChildren="opciones"
+  optionLabel="name"
+  optionValue="id"
+  [filter]="true"
+  placeholder="Grupos o agentes"
+/>
+
 <!-- "optionDisabled" deja una opción FIJA: se ve marcada y no se quita. Sin rótulo visible,
      "ariaLabel" le da nombre. Es el selector de columnas de las listas del Supervisor. -->
 <sc-multiselect
@@ -94,6 +109,11 @@ export class MultiSelectDemoComponent {
     { id: 'alta', name: 'Alta' },
     { id: 'media', name: 'Media' },
     { id: 'baja', name: 'Baja' },
+  ];
+  /** Opciones por secciones (`group`), con sus campos propios para enseñar `optionGroupLabel` y `optionGroupChildren`. */
+  readonly porSecciones = [
+    { nombre: 'Grupos', opciones: [{ id: 'g-soporte', name: 'Soporte' }, { id: 'g-ventas', name: 'Ventas' }] },
+    { nombre: 'Agentes', opciones: [{ id: 'a-lucia', name: 'Lucía Pardo' }, { id: 'a-marcos', name: 'Marcos Vidal' }] },
   ];
 
   /** Lo que devuelve el de objetos: son los `id`, no los objetos — que es lo que hace `optionValue`. */

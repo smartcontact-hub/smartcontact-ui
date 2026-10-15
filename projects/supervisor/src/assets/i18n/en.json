@@ -700,14 +700,9 @@
           "est_projection": "≈ {{day}} per day, ≈ {{month}} per month, at this rate.",
           "pick_all": "All",
           "pick_all_hint": "includes new ones",
-          "search": "Search…",
-          "pick_all_row": "All: applies to anyone, including new ones.",
-          "pick_manual": "Choose manually",
           "pick_groups": "Groups (their members)",
           "enabled_members": "{{count}} enabled agents",
           "pick_individuals": "Individuals",
-          "pick_empty": "No results.",
-          "select_all": "Select all (any)",
           "remove": "Remove",
           "val": {
             "incomplete": "Pick a value.",
@@ -729,7 +724,6 @@
           "impact_hero_other": "{{count}} conversations",
           "trend_up": "Reach went up since your last change",
           "trend_down": "Reach went down since your last change",
-          "toggle_category_aria": "Collapse or expand category",
           "duration_min": "Minimum duration",
           "duration_max": "Maximum duration",
           "duration_value": "Duration"
