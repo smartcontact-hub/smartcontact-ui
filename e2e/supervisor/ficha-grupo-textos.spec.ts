@@ -201,13 +201,20 @@ test('un grupo nuevo caduca la sesión de chat a los 5 minutos si se enciende', 
 test('el tamaño de cola dice qué cuenta cada modo: Fija, el total; Variable, por agente conectado', async ({
   page,
 }) => {
-  // El grupo 1 trae la cola fija de 50 de la semilla.
+  // El grupo 1 trae la cola fija de 50 de la semilla. Los dos modos, en tarjetas de radio (DD-204): cada una dice qué
+  // cuenta, y la ayuda de la cifra lo lee entero.
   await goto(page, 'admin/grupos/editar/1?seccion=distribucion');
   const telefono = page.locator('#group-channel-phone');
+  const modos = telefono.getByRole('radiogroup', { name: 'Tamaño de cola', exact: true });
+  await expect(modos.getByRole('radio')).toHaveCount(2);
+  await expect(modos.locator('label', { hasText: 'Fija' })).toContainText('Conversaciones en espera en total.');
+  await expect(modos.locator('label', { hasText: 'Variable' })).toContainText('Conversaciones en cola por cada agente conectado.');
+  await expect(modos.getByRole('radio', { name: /Fija/ })).toBeChecked();
   const ayuda = telefono.locator('.field', { has: page.locator('#group-phone-queue-size') }).locator('.field__help');
   await expect(ayuda).toHaveText('Hasta 50 conversaciones en espera en total. ');
 
-  await pickSelectOption(page, page.locator('#group-phone-queue-type'), 'Variable');
+  await modos.locator('label', { hasText: 'Variable' }).click();
+  await expect(modos.getByRole('radio', { name: /Variable/ })).toBeChecked();
   await expect(ayuda).toHaveText('2 conversaciones en cola por agente conectado.');
 });
 

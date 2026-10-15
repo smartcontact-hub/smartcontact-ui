@@ -133,10 +133,13 @@
 
 <!-- El estado se VE y no se cambia desde la lista, así que es una etiqueta y no un botón: la
      misma de Contact Center › Servicio, con sus colores (`PRESENCE_TAGS`). «Desconectado» (no tener la sesión
-     abierta, por eso se fue la columna «Activación») es la «Draft» de primeng.dev/tag. -->
+     abierta, por eso se fue la columna «Activación») va sin etiqueta, en el gris de la celda: es la ausencia de estado
+     y no debe pesar lo mismo que los que sí se atienden. -->
 <ng-template #presenceTpl let-agent>
   @if (agent.presenceStatus; as presence) {
-    @if (presenceLabelColor(presence); as color) {
+    @if (presence === 'desconectado') {
+      <span class="cell sc-text-caption-regular">{{ presenceLabelKey(presence) | translate }}</span>
+    } @else if (presenceLabelColor(presence); as color) {
       <sc-tag variant="label" [labelColor]="color" [value]="presenceLabelKey(presence) | translate" />
     } @else {
       <sc-tag [severity]="presenceSeverity(presence)" [value]="presenceLabelKey(presence) | translate" />

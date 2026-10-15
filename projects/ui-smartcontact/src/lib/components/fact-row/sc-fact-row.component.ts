@@ -19,6 +19,9 @@ import { ScIconTileComponent } from '../icon-tile/sc-icon-tile.component';
  *
  * En un contenedor ancho (≥ 37,5 rem, `@container`), el valor empieza en su columna en vez de pegarse a la derecha.
  *
+ * `size="sm"`: clave y valor en caption (12) y la baldosa pequeña (24,5), para una columna estrecha donde con la letra de
+ * cuerpo el valor bajaba de línea según lo que se tocara (el resumen de las fichas a 1440, revisión del 2026-10-14).
+ *
  * Uso:
  * ```html
  * <dl>
@@ -37,12 +40,12 @@ import { ScIconTileComponent } from '../icon-tile/sc-icon-tile.component';
     <dt class="sc-fact-row__key">
       @if (href(); as link) {
         <a class="sc-fact-row__link" [href]="link" (click)="open.emit($event)">
-          <sc-icon-tile [icon]="icon()"><ng-content select="[scFactIcon]" /></sc-icon-tile>
+          <sc-icon-tile [icon]="icon()" [size]="size()"><ng-content select="[scFactIcon]" /></sc-icon-tile>
           <span>{{ label() }}</span>
         </a>
       } @else {
         <span class="sc-fact-row__link">
-          <sc-icon-tile [icon]="icon()"><ng-content select="[scFactIcon]" /></sc-icon-tile>
+          <sc-icon-tile [icon]="icon()" [size]="size()"><ng-content select="[scFactIcon]" /></sc-icon-tile>
           <span>{{ label() }}</span>
         </span>
       }
@@ -52,7 +55,7 @@ import { ScIconTileComponent } from '../icon-tile/sc-icon-tile.component';
   styleUrl: './sc-fact-row.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  host: { class: 'sc-fact-row' },
+  host: { class: 'sc-fact-row', '[class.sc-fact-row--sm]': "size() === 'sm'" },
 })
 export class ScFactRowComponent {
   /** La clave, ya traducida. */
@@ -61,6 +64,8 @@ export class ScFactRowComponent {
   readonly icon = input<string | null>(null);
   /** Adónde lleva la clave. Sin `href`, la clave es texto. */
   readonly href = input<string | null>(null);
+  /** La talla: `md` (cuerpo, 14) o `sm` (caption, 12, con la baldosa pequeña) para una columna estrecha. */
+  readonly size = input<'sm' | 'md'>('md');
 
   /** El clic en la clave, con su evento: la app decide si navega por su cuenta. */
   readonly open = output<MouseEvent>();

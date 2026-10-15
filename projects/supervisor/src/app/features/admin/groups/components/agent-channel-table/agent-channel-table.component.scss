@@ -112,3 +112,11 @@
 .assign__filter-title {
   color: var(--sc-text-secondary);
 }
+
+/* El interruptor de Habilitado y las casillas, centrados en su fila: en línea se apoyaban en la línea base del texto, el
+ * interruptor 3 px por encima del centro (medido a 1440, 2026-10-14), como en la tabla gemela del agente. */
+sc-checkbox,
+sc-toggleswitch {
+  display: inline-flex;
+  vertical-align: middle;
+}

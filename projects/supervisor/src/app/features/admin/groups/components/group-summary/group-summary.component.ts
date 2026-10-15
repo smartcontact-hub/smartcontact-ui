@@ -35,12 +35,21 @@ export interface GroupSummaryOutbound {
   readonly number: string;
 }
 
+/** Lo asignado de un tipo de recurso, para su fila de Recursos y su panel rápido: agendas, o plantillas de un canal. */
+export interface GroupSummaryResources {
+  readonly key: 'agendas' | 'chat' | 'email';
+  /** El nombre de su campo en Recursos («Agendas», «Plantillas de chat»). */
+  readonly labelKey: string;
+  /** Los recursos de verdad, ya resueltos (DD-164): su nombre y su dato. */
+  readonly rows: readonly ResourceRow[];
+}
+
 /** Las secciones de la ficha a las que lleva el resumen (DD-146). */
 export type GroupSummarySeccion = 'agentes' | 'distribucion' | 'recursos';
 
 /**
  * Adónde lleva lo que se pulsa en el resumen: una sección y, dentro de Distribución y colas, el bloque de un canal
- * (las filas de Distribución) o un número (las de Salida). La ficha lo traduce a su sección y a su ancla.
+ * (las filas de Distribución) o un número (las del teléfono saliente y el WhatsApp). La ficha lo traduce a su sección y a su ancla.
  */
 export interface GroupSummaryDestino {
   readonly seccion: GroupSummarySeccion;
@@ -67,26 +76,27 @@ interface ChannelRow {
  * y nada con movimiento reducido). El grupo se lee igual en su panel de supervisión y en su ficha.
  *
  * Cada cifra contesta una pregunta de verdad, y ninguna es decorativa: una tarjeta que no puede
- * decir nada (Salida en un grupo solo de chat web) no se pinta.
+ * decir nada no se pinta. Cada grupo se llama como su sección de la ficha, y cada fila como su campo (revisión del
+ * 2026-10-14: «Salida» no existía en la ficha).
  *   · Agentes habilitados: cuántos atienden de los asignados (los demás, deshabilitados), y cuántos cada canal.
  *     Un canal activo sin nadie que lo atienda sale en aviso, con icono y texto (el color solo no
  *     basta, WCAG 1.4.1).
- *   · Distribución: la estrategia de cada familia de canales.
- *   · Salida: el teléfono saliente y el número de WhatsApp.
- *   · Recursos: cuántos le llegan desde Repositorios.
+ *   · Distribución: la estrategia de cada familia de canales, y el teléfono saliente y el número de WhatsApp, que en
+ *     la ficha son campos de Distribución y colas.
+ *   · Recursos: lo que le llega desde Repositorios, por tipo (agendas y plantillas de los canales que atiende).
  *
  * Y lleva a donde se arregla lo que dice (DD-146): el rótulo de cada tarjeta, a su sección; cada fila de
- * Distribución, al bloque de su canal; cada fila de Salida, a su número. Son enlaces de verdad, con la dirección de
+ * Distribución, al bloque de su canal o a su número. Son enlaces de verdad, con la dirección de
  * la sección, y la ficha resuelve el clic en su sitio (en el alta, sin tocar la dirección y con General de puerta).
  *
- * Distribución y Salida, además, abren un panel rápido (revisión de diseño, 2026-10-11, sobre el prototipo del
+ * Teléfono y cada tipo de recurso, además, abren un panel rápido (revisión de diseño, 2026-10-11, sobre el prototipo del
  * encargo): uno abierto a la vez, como el original. El de Teléfono en Distribución trae las tres estrategias que
  * no piden nada más (`DEFAULT_STRATEGY_OPTIONS`, SISMAC-1975), con la misma frase de ayuda que el campo real
  * (`PHONE_STRATEGY_HELP_KEYS`, DD-133): elegir una la aplica al momento (`cambiarReparto`). Las otras tres
  * (Niveles, Ring All, Agente exclusivo) necesitan algo más y se quedan en Distribución y colas, donde ya lleva
- * el enlace de la fila; Chat no tiene esta ayuda documentada, así que se queda solo con su enlace. El de Salida
- * lleva los recursos de verdad del grupo (`resourceRows`, DD-164: agendas y plantillas, con su nombre y su dato,
- * las mismas filas que ya pinta Recursos) — nunca los «Línea principal» / «Guion de atención» fijos del
+ * el enlace de la fila; Chat no tiene esta ayuda documentada, así que se queda solo con su enlace. El de cada
+ * recurso lleva los recursos de verdad del grupo (DD-164: agendas y plantillas, con su nombre y su dato) — nunca los
+ * «Línea principal» / «Guion de atención» fijos del
  * prototipo: ese grupo puede no tener ni uno ni el otro, y esto no inventa contenido.
  *
  * El rótulo dice «Distribución», no «Reparto» (nombre antiguo del 2026-10-11, corregido el mismo día): la
@@ -117,10 +127,8 @@ export class GroupSummaryComponent {
   readonly links = input.required<readonly GroupAgentLink[]>();
   readonly routing = input<readonly GroupSummaryRouting[]>([]);
   readonly outbound = input<readonly GroupSummaryOutbound[]>([]);
-  readonly resourceCount = input(0);
-  /** Los recursos de verdad del grupo, para el panel rápido de Salida: agendas y plantillas, ya resueltos
-   *  (DD-164). Sin ellos, el panel se queda solo con «Ver recursos». */
-  readonly resourceRows = input<readonly ResourceRow[]>([]);
+  /** Los recursos del grupo por tipo, para Recursos: una fila por tipo con su cifra y su panel rápido. */
+  readonly resources = input<readonly GroupSummaryResources[]>([]);
   /** Claves de lo que falta para poder crear (nombre, canales). Vacío = nada. */
   readonly missing = input<readonly string[]>([]);
   /** Es un alta: el estado está siempre, y dice «Listo para crear» cuando `ready`. */
@@ -136,13 +144,13 @@ export class GroupSummaryComponent {
 
   protected readonly channelKeys = CHANNEL_LABEL_KEYS;
   protected readonly familyKeys = FAMILY_LABEL_KEYS;
-  /** El nombre de cada fila de Salida es el del campo real al que lleva («Teléfono saliente», «Número
-   *  WhatsApp»), no el genérico del canal: el mismo criterio que igualó «Reparto» con «Distribución». */
+  /** El nombre de cada número es el del campo real al que lleva («Teléfono saliente», «Número WhatsApp»), no el
+   *  genérico del canal: el mismo criterio que igualó «Reparto» con «Distribución». */
   protected readonly outboundKeys = OUTBOUND_LABEL_KEYS;
   /** Las tres estrategias de teléfono que el selector rápido puede poner sin pedir nada más. */
   protected readonly quickStrategyOptions = DEFAULT_STRATEGY_OPTIONS;
   /** Qué panel rápido está abierto: uno a la vez, como el prototipo del encargo. */
-  protected readonly expandedQuick = signal<'reparto' | 'salida' | null>(null);
+  protected readonly expandedQuick = signal<'reparto' | GroupSummaryResources['key'] | null>(null);
   /** La barra de cada canal va en la cifra destacada (DD-161): su pista, translúcida en el color claro de la tarjeta. */
   protected readonly meterDt = { meters: { background: 'color-mix(in srgb, var(--sc-text-inverse) 25%, transparent)' } };
 
@@ -174,7 +182,7 @@ export class GroupSummaryComponent {
     return PHONE_STRATEGY_HELP_KEYS[valor] ?? null;
   }
 
-  protected toggleQuick(panel: 'reparto' | 'salida'): void {
+  protected toggleQuick(panel: 'reparto' | GroupSummaryResources['key']): void {
     this.expandedQuick.update((actual) => (actual === panel ? null : panel));
   }
 

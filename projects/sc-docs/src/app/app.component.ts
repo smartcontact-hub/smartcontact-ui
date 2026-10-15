@@ -110,6 +110,7 @@ export class AppComponent {
     const sections: ScPaletteCommand[] = [
       { id: 's-fund', label: t('chrome.nav.fundamentos'), category: sectionCat, icon: 'category', action: () => this.go('/fundamentos') },
       { id: 's-comp', label: t('chrome.nav.componentes'), category: sectionCat, icon: 'widgets', action: () => this.go('/components') },
+      { id: 's-primeng', label: t('chrome.nav.primeng'), category: sectionCat, icon: 'view_list', keywords: ['catalogo', 'nativos', 'familias'], action: () => this.go('/components/primeng') },
       { id: 's-uso', label: t('chrome.nav.uso'), category: sectionCat, icon: 'dashboard', action: () => this.go('/uso') },
       { id: 's-reglas', label: t('chrome.nav.reglas'), category: sectionCat, icon: 'rule', action: () => this.go('/reglas') },
     ];

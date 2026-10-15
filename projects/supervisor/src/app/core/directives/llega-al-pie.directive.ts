@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { DestroyRef, Directive, ElementRef, afterEveryRender, inject } from '@angular/core';
+import { DestroyRef, Directive, ElementRef, afterEveryRender, inject, input } from '@angular/core';
 
 /**
  * HASTA EL PIE DE LA PANTALLA (DD-160): lo que hace scroll por dentro dentro de una sección (la tabla de agentes del
@@ -18,6 +18,11 @@ import { DestroyRef, Directive, ElementRef, afterEveryRender, inject } from '@an
  * Y `--alto-visto`, el alto MAYOR que han tenido sus filas en esta visita (su `<table>` y el borde de la tarjeta). La
  * tarjeta lo usa de suelo: mide lo que sus filas (DD-95 §1: con tres, una tarjeta hasta el fondo se veía vacía) y, al
  * buscar o filtrar, no encoge por debajo de lo que llegó a medir; el marco no baila (revisión del 2026-10-09).
+ *
+ * Con `filasReservadas`, ese suelo se calcula de primeras para TODAS las filas que puede llegar a enseñar (la cabecera
+ * más N veces una fila): una tabla de asignar que abre en «Asignados» ya mide lo que medirá con «Todos», y al cambiar
+ * de filtro no crece ni encoge. Sustituye a `fill` en las tablas de asignar: con `fill` la tarjeta bajaba siempre
+ * hasta el pie, y cinco grupos dejaban media pantalla de tarjeta vacía (revisión del 2026-10-14).
  */
 @Directive({ selector: '[scLlegaAlPie]' })
 export class LlegaAlPieDirective {
@@ -25,6 +30,9 @@ export class LlegaAlPieDirective {
   private readonly document = inject(DOCUMENT);
   private ultimo = '';
   private visto = 0;
+
+  /** Cuántas filas puede llegar a enseñar la tabla, con cualquier filtro: su alto es el suelo desde el principio. */
+  readonly filasReservadas = input<number | null>(null);
 
   constructor() {
     afterEveryRender({ read: () => this.medir() });
@@ -56,10 +64,18 @@ export class LlegaAlPieDirective {
     if (!tabla || tabla.querySelector('tbody > tr > td[colspan], tbody > tr.sc-datatable__skeleton-row')) return;
     const estilo = getComputedStyle(this.el);
     const borde = parseFloat(estilo.borderTopWidth) + parseFloat(estilo.borderBottomWidth);
-    const filas = Math.ceil(tabla.getBoundingClientRect().height + borde);
+    const filas = Math.ceil(Math.max(tabla.getBoundingClientRect().height, this.altoReservado(tabla)) + borde);
     if (filas <= this.visto) return;
     this.visto = filas;
     this.el.style.setProperty('--alto-visto', `${filas}px`);
+  }
+
+  /** La cabecera más `filasReservadas` veces su primera fila; 0 sin reserva o sin una fila que medir. */
+  private altoReservado(tabla: HTMLTableElement): number {
+    const n = this.filasReservadas();
+    const fila = tabla.querySelector('tbody > tr');
+    if (!n || !fila) return 0;
+    return (tabla.tHead?.getBoundingClientRect().height ?? 0) + n * fila.getBoundingClientRect().height;
   }
 
   /** Lo que hay por debajo del elemento hasta el final del contenido de la zona. */

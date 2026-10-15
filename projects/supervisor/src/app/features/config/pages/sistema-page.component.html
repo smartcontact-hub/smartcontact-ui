@@ -157,7 +157,8 @@
             </p>
           </div>
           <sc-toggleswitch
-            [checked]="true"
+            [checked]="specialChars()"
+            (checkedChange)="specialChars.set($event)"
             [ariaLabel]="'config.seguridad.policies.special_chars' | translate"
             ariaDescribedBy="sistema-special-chars-hint"
           />

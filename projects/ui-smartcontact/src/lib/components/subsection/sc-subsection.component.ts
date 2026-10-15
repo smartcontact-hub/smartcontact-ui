@@ -22,9 +22,11 @@ import { SC_ICON_SIZE_LG, ScIconComponent } from '@smartcontact-hub/icons';
 export class ScSubsectionComponent {
   /**
    * Clave de traducción del título. Clave, no texto: el componente traduce por dentro y se re-
-   * traduce solo al cambiar de idioma.
+   * traduce solo al cambiar de idioma. Sin título, la subsección es solo la tarjeta: para la que es
+   * la única de su sección y repetiría su nombre (la tabla de «Grupos asignados» de la ficha de
+   * agente, que ya lo dice la cabecera de la sección).
    */
-  readonly titleKey = input.required<string>();
+  readonly titleKey = input<string | null>(null);
   /** Clave de traducción de la aclaración bajo el título. */
   readonly hintKey = input<string | null>(null);
   /** Icono junto al título. Decorativo. */

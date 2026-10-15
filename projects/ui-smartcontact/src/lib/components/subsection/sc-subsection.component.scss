@@ -72,5 +72,10 @@
   &__body {
     /* El header ya da el padding superior; el body cierra los lados + abajo. */
     padding: 0 var(--sc-spacing-1-143) var(--sc-spacing-1-143);
+
+    /* Sin título no hay header que lo dé: el mismo relleno por los cuatro lados. */
+    &--solo {
+      padding-block-start: var(--sc-spacing-1-143);
+    }
   }
 }

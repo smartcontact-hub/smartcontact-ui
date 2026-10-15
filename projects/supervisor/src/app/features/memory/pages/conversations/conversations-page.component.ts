@@ -32,8 +32,11 @@ import type { Conversation } from '../../data/conversation.types';
 import { EMPTY_FILTERS } from '../../data/conversation-filters.types';
 import { ConversationsStore } from '../../state/conversations.store';
 import { TopBarSlotService } from '../../../../core/layout/top-bar/top-bar-slot.service';
-import { TOAST_LIFE } from '@core/utils/toast-life';
+import { DISPATCH_TOAST_KEY, TOAST_LIFE } from '@core/utils/toast-life';
 import { ResultadoAccionService } from '@core/services';
+
+/** La clave en singular (`<clave>_one`) cuando es una sola: «1 conversaciones» no se escribe. */
+const unaOVarias = (clave: string, n: number): string => (n === 1 ? `${clave}_one` : clave);
 
 /**
  * Pantalla principal del módulo Memory (`/conversaciones`).
@@ -64,6 +67,7 @@ import { ResultadoAccionService } from '@core/services';
  * NO incluye todavía: sticky toast post-confirmación, filtros por columna,
  * estado "en proceso". Ver `docs/memory-migration-inventory.md` §10.
  */
+
 @Component({
   selector: 'sc-memory-conversations-page',
   imports: [
@@ -293,14 +297,14 @@ export class ConversationsPageComponent implements OnInit, OnDestroy {
     includeAnalysis: boolean,
   ): Promise<void> {
     if (ids.length === 0) return;
-    const progressKey = 'dispatch-progress';
+    const progressKey = DISPATCH_TOAST_KEY;
 
     // Fase 1: sticky "Generando transcripción de N…"
     this.messages.clear(progressKey);
     this.messages.add({
       key: progressKey,
       severity: 'info',
-      summary: this.translate.instant('memory.dispatch.transcribing', { n: ids.length }),
+      summary: this.translate.instant(unaOVarias('memory.dispatch.transcribing', ids.length), { n: ids.length }),
       sticky: true,
       closable: true,
     });
@@ -313,7 +317,7 @@ export class ConversationsPageComponent implements OnInit, OnDestroy {
       this.messages.add({
         key: progressKey,
         severity: 'info',
-        summary: this.translate.instant('memory.dispatch.analyzing', {
+        summary: this.translate.instant(unaOVarias('memory.dispatch.analyzing', result.successIds.length), {
           n: result.successIds.length,
         }),
         sticky: true,
@@ -327,16 +331,18 @@ export class ConversationsPageComponent implements OnInit, OnDestroy {
     this.messages.clear(progressKey);
     if (result.failedIds.length === 0) {
       this.messages.add({
+        key: progressKey,
         severity: 'success',
-        summary: this.translate.instant('memory.dispatch.success', {
+        summary: this.translate.instant(unaOVarias('memory.dispatch.success', result.successIds.length), {
           n: result.successIds.length,
         }),
         life: TOAST_LIFE.success,
       });
     } else if (result.successIds.length === 0) {
       this.messages.add({
+        key: progressKey,
         severity: 'error',
-        summary: this.translate.instant('memory.dispatch.all_failed', {
+        summary: this.translate.instant(unaOVarias('memory.dispatch.all_failed', result.failedIds.length), {
           n: result.failedIds.length,
         }),
         // Un error no se cierra solo (DD-191): se queda hasta que se cierra a mano.
@@ -344,6 +350,7 @@ export class ConversationsPageComponent implements OnInit, OnDestroy {
       });
     } else {
       this.messages.add({
+        key: progressKey,
         severity: 'warn',
         summary: this.translate.instant('memory.dispatch.partial', {
           ok: result.successIds.length,
@@ -411,12 +418,12 @@ export class ConversationsPageComponent implements OnInit, OnDestroy {
   }
 
   protected async onPlayerRequestAnalysis(id: string): Promise<void> {
-    const progressKey = 'dispatch-progress';
+    const progressKey = DISPATCH_TOAST_KEY;
     this.messages.clear(progressKey);
     this.messages.add({
       key: progressKey,
       severity: 'info',
-      summary: this.translate.instant('memory.dispatch.analyzing', { n: 1 }),
+      summary: this.translate.instant('memory.dispatch.analyzing_one', { n: 1 }),
       sticky: true,
       closable: true,
     });
@@ -426,8 +433,9 @@ export class ConversationsPageComponent implements OnInit, OnDestroy {
     this.messages.clear(progressKey);
     if (result.successIds.length > 0) {
       this.messages.add({
+        key: progressKey,
         severity: 'success',
-        summary: this.translate.instant('memory.dispatch.success', {
+        summary: this.translate.instant(unaOVarias('memory.dispatch.success', result.successIds.length), {
           n: result.successIds.length,
         }),
         life: TOAST_LIFE.success,

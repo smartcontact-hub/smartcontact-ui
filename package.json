@@ -32,6 +32,7 @@
     "proto:freeze": "node scripts/proto-freeze.mjs",
     "audit:primeng-coupling": "node scripts/audit-primeng-coupling.mjs",
     "audit:primeng-catalog": "node scripts/audit-primeng-catalog.mjs",
+    "primeng-catalog:gen": "node scripts/audit-primeng-catalog.mjs --write",
     "audit:seed-pii": "node scripts/audit-seed-pii.mjs",
     "audit:personal-names": "node scripts/audit-personal-names.mjs",
     "audit:commit-attribution": "node scripts/audit-commit-attribution.mjs",

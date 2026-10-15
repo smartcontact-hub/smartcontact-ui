@@ -20,9 +20,9 @@ import {
   ScCheckboxComponent as CheckboxComponent,
   ScConfirmService,
   ScEmptyStateComponent as EmptyStateComponent,
+  ScRadioButtonComponent as RadioButtonComponent,
   ScSearchComponent as SearchComponent,
   ScSelectButtonComponent as SelectButtonComponent,
-  ScSelectComponent as SelectComponent,
   ScButtonComponent as ButtonComponent,
   ScTagComponent as TagComponent,
   ScToggleSwitchComponent as ToggleSwitchComponent,
@@ -39,7 +39,6 @@ import {
   type ChannelFamily,
   FAMILY_LABEL_KEYS,
   GroupChannel,
-  LEVEL_OPTIONS,
 } from '@features/admin/groups/data/groups-data';
 import { Channel, GroupAgentLink } from '@features/admin/services/group-agent-links.types';
 import {
@@ -57,9 +56,6 @@ export interface AgentGroupAssignmentRef {
   readonly id: number;
   readonly name: string;
   readonly channels: readonly GroupChannel[];
-  /** La estrategia de teléfono y de chat del grupo: solo para saber si reparte por Niveles (columna Nivel). */
-  readonly strategy?: string;
-  readonly chatStrategy?: string;
 }
 
 interface VisibleRow {
@@ -70,9 +66,11 @@ interface VisibleRow {
 /**
  * Los anchos, en rem, como los de la tabla de agentes del grupo (`COLUMN_REM` de `agent-channel-table`), de la que esta
  * es la gemela: la misma densidad compacta y las mismas casillas de «todos» en la cabecera. Salientes, su rótulo más
- * largo («Sortantes»/«Outbound», 70 px) con el relleno: 6,5.
+ * largo («Sortantes»/«Outbound», 70 px) con el relleno: 6,5. Sin columna de Nivel: el nivel del agente se pone en el
+ * grupo, que es quien reparte por niveles; y Habilitado, sin el candado, en lo que mide (revisión del 2026-10-14). Suma
+ * 45 rem: a 1440 cabe en su caja (746) sin desplazar.
  */
-const REM = { assigned: 3.5, group: 12, channel: { phone: 7, chat: 4.5, email: 4.75 }, level: 9, outbound: 6.5, enabled: 9.5 } as const;
+const REM = { assigned: 3.5, group: 12, channel: { phone: 7, chat: 4.5, email: 4.75 }, outbound: 6.5, enabled: 6.75 } as const;
 
 /**
  * Los grupos de un agente, dentro de su ficha: LA MISMA TABLA que los agentes de un grupo (revisión de agentes del
@@ -86,8 +84,9 @@ const REM = { assigned: 3.5, group: 12, channel: { phone: 7, chat: 4.5, email: 4
  * Y una columna que solo tiene este lado: **Salientes**, el grupo por el que salen sus llamadas. Uno, de los asignados
  * con Teléfono marcado.
  *
- * Con «Activación por grupo» encendido el agente se habilita él mismo en cada grupo (Configuración): Habilitado se ve,
- * pero no se toca aquí. Lo mismo en la tabla del grupo.
+ * «Activación por grupo» (Configuración) deja al agente habilitarse él mismo en cada grupo, pero no le quita Habilitado
+ * al supervisor: se cambia aquí igual (revisión del 2026-10-14, que corrige el candado de DD-187 §2). Lo mismo en la
+ * tabla del grupo.
  *
  * No persiste nada: el formulario tiene el `links` canónico y lo guarda en `GroupAgentLinksStore`.
  */
@@ -102,9 +101,9 @@ const REM = { assigned: 3.5, group: 12, channel: { phone: 7, chat: 4.5, email: 4
     DatatableComponent,
     EmptyStateComponent,
     LlegaAlPieDirective,
+    RadioButtonComponent,
     SearchComponent,
     SelectButtonComponent,
-    SelectComponent,
     ToggleSwitchComponent,
     TooltipModule,
     TranslateModule,
@@ -128,7 +127,6 @@ export class GroupAssignmentTableComponent {
   private readonly assignedTpl = viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('assignedTpl');
   private readonly groupTpl = viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('groupTpl');
   private readonly channelTpl = viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('channelTpl');
-  private readonly levelTpl = viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('levelTpl');
   private readonly outboundTpl = viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('outboundTpl');
   private readonly activeTpl = viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('activeTpl');
 
@@ -158,14 +156,6 @@ export class GroupAssignmentTableComponent {
         stopRowClick: true,
       })),
       {
-        field: 'level',
-        header: this.translate.instant('agents.form.assigned.col_level'),
-        width: `${REM.level}rem`,
-        align: 'center' as const,
-        cellTemplate: this.levelTpl(),
-        stopRowClick: true,
-      },
-      {
         field: 'outbound',
         header: this.translate.instant('agents.form.assigned.col_outbound'),
         width: `${REM.outbound}rem`,
@@ -186,7 +176,7 @@ export class GroupAssignmentTableComponent {
 
   /** Lo que suman las columnas: el mínimo de la tabla, que desplaza por dentro antes que cortar el nombre. */
   protected readonly tableMinWidth = `${
-    REM.assigned + REM.group + CHANNEL_FAMILIES.reduce((s, f) => s + REM.channel[f], 0) + REM.level + REM.outbound + REM.enabled
+    REM.assigned + REM.group + CHANNEL_FAMILIES.reduce((s, f) => s + REM.channel[f], 0) + REM.outbound + REM.enabled
   }rem`;
 
   readonly links = input.required<readonly GroupAgentLink[]>();
@@ -195,13 +185,11 @@ export class GroupAssignmentTableComponent {
   readonly allowedChannels = input<readonly Channel[]>(CHANNEL_FAMILIES);
   /** El grupo de sus llamadas salientes. */
   readonly outboundGroupId = input<number | null>(null);
-  /** «Activación por grupo»: Habilitado lo cambia el agente, no la ficha. */
-  readonly selfActivate = input(false);
   readonly linksChange = output<readonly GroupAgentLink[]>();
   readonly outboundGroupChange = output<number | null>();
-  /** Los candados llevan a donde se cambia lo que bloquea: sus canales (General) o «Activación por grupo»
-   *  (Configuración). Como el candado de la tabla del grupo, que enlaza a la ficha del agente (DD-150). */
-  readonly irA = output<'canales' | 'configuracion'>();
+  /** El candado de un canal que el agente no tiene lleva a donde se cambia: sus canales (General). Como el candado de
+   *  la tabla del grupo, que enlaza a la ficha del agente (DD-150). */
+  readonly irA = output<'canales'>();
 
   /** Cuántos grupos asignados se han quedado sin canal: lo dice la barra, como en la tabla del grupo. */
   protected readonly sinCanal = computed(() => this.visibleRows().filter((r) => r.link && r.link.channels.length === 0).length);
@@ -261,24 +249,6 @@ export class GroupAssignmentTableComponent {
     return !!link && isLastChannel(link, channel);
   }
 
-  protected readonly levelOptions = LEVEL_OPTIONS;
-  protected readonly familyLabelKeys = FAMILY_LABEL_KEYS;
-
-  /** Las familias de ESTA fila con nivel: el grupo reparte por Niveles en ellas y el agente las tiene asignadas. Vacío
-   *  si el grupo no reparte por Niveles en ninguna, o si las tiene pero el agente no está en esos canales (DD-121: el
-   *  nivel es del agente dentro del grupo, no tiene sentido sin el canal). */
-  protected levelFamilies(row: VisibleRow): readonly ('phone' | 'chat')[] {
-    const families: ('phone' | 'chat')[] = [];
-    if (row.group.strategy === 'Niveles' && this.hasChannel(row.link, 'phone')) families.push('phone');
-    if (row.group.chatStrategy === 'Niveles' && this.hasChannel(row.link, 'chat')) families.push('chat');
-    return families;
-  }
-
-  protected setLevel(groupId: number, family: 'phone' | 'chat', value: unknown): void {
-    if (typeof value !== 'number' || !LEVEL_OPTIONS.includes(value)) return;
-    this.linksChange.emit(this.links().map((l) => (l.groupId === groupId ? { ...l, levels: { ...l.levels, [family]: value } } : l)));
-  }
-
   /** Puede ser el de sus salientes: asignado y con Teléfono marcado. */
   protected canBeOutbound(row: VisibleRow): boolean {
     return this.hasChannel(row.link, 'phone');
@@ -317,7 +287,7 @@ export class GroupAssignmentTableComponent {
   }
 
   protected headerDisabled(field: string): boolean {
-    return this.pending() || (field === 'active' && this.selfActivate()) || this.bulkTargets(field).length === 0;
+    return this.pending() || this.bulkTargets(field).length === 0;
   }
 
   private bulkTargets(field: string): readonly VisibleRow[] {
@@ -416,7 +386,6 @@ export class GroupAssignmentTableComponent {
   }
 
   protected toggleActive(groupId: number, active: boolean): void {
-    if (this.selfActivate()) return;
     this.linksChange.emit(this.links().map((l) => (l.groupId === groupId ? { ...l, active } : l)));
   }
 }
