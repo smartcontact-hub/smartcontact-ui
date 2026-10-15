@@ -5962,16 +5962,21 @@ var buttonMotionCss = () => `
 `;
 var dangerMenuItemCss = () => `
 .sc-menu-item--danger .p-menu-item-link,
-.sc-menu-item--danger .p-menu-item-icon {
+.sc-menu-item--danger .p-menu-item-icon,
+.sc-menu-item--danger .p-tieredmenu-item-link,
+.sc-menu-item--danger .p-tieredmenu-item-icon {
     color: var(--sc-text-danger);
 }
 
-.sc-menu-item--danger .p-menu-item-content:hover {
+.sc-menu-item--danger .p-menu-item-content:hover,
+.sc-menu-item--danger .p-tieredmenu-item-content:hover {
     background: var(--sc-bg-danger-subtle);
 }
 
 .sc-menu-item--danger .p-menu-item-content:hover .p-menu-item-link,
-.sc-menu-item--danger .p-menu-item-content:hover .p-menu-item-icon {
+.sc-menu-item--danger .p-menu-item-content:hover .p-menu-item-icon,
+.sc-menu-item--danger .p-tieredmenu-item-content:hover .p-tieredmenu-item-link,
+.sc-menu-item--danger .p-tieredmenu-item-content:hover .p-tieredmenu-item-icon {
     color: var(--sc-text-danger);
 }
 `;
