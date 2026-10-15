@@ -40,7 +40,7 @@ on:
 
 # El PR de `design-tokens-sync` lo verifica el workflow `tokens-sync` (regenera
 # primitivos antes de verificar); aquí lo saltamos para no dar un rojo de drift
-# espurio. En el merge a main, esto corre igual (push → main). El guard va en cada
+# espurio. Solo si la rama es de ESTE repo (DD-68): un fork con ese nombre corre la CI entera. En el merge a main, esto corre igual (push → main). El guard va en cada
 # job porque GitHub Actions no tiene un `if` a nivel de workflow.
 jobs:
   # Qué suites e2e necesita el cambio (DD-117, `scripts/ci-cambios.mjs`): un PR que solo toca
@@ -50,7 +50,7 @@ jobs:
   # dependen de él: corren siempre.
   changes:
     runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request' || github.head_ref != 'design-tokens-sync'
+    if: github.event_name != 'pull_request' || (github.head_ref != 'design-tokens-sync' || github.event.pull_request.head.repo.full_name != github.repository)
     outputs:
       smoke: ${{ steps.decide.outputs.smoke }}
       supervisor: ${{ steps.decide.outputs.supervisor }}
@@ -64,7 +64,7 @@ jobs:
 
   verify:
     runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request' || github.head_ref != 'design-tokens-sync'
+    if: github.event_name != 'pull_request' || (github.head_ref != 'design-tokens-sync' || github.event.pull_request.head.repo.full_name != github.repository)
     steps:
       # Historia entera: `audit:commit-attribution` mira los commits del PR por encima de
       # `origin/main`, y con el clon superficial de por defecto no los ve (se pone rojo diciéndolo).
@@ -81,7 +81,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request' || github.head_ref != 'design-tokens-sync'
+    if: github.event_name != 'pull_request' || (github.head_ref != 'design-tokens-sync' || github.event.pull_request.head.repo.full_name != github.repository)
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -110,7 +110,7 @@ jobs:
   e2e-smoke:
     runs-on: ubuntu-latest
     needs: changes
-    if: ${{ !cancelled() && (github.event_name != 'pull_request' || github.head_ref != 'design-tokens-sync') && (needs.changes.result != 'success' || needs.changes.outputs.smoke == 'true') }}
+    if: ${{ !cancelled() && (github.event_name != 'pull_request' || (github.head_ref != 'design-tokens-sync' || github.event.pull_request.head.repo.full_name != github.repository)) && (needs.changes.result != 'success' || needs.changes.outputs.smoke == 'true') }}
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -161,7 +161,7 @@ jobs:
     name: e2e-supervisor (${{ matrix.shard }}/8)
     runs-on: ubuntu-latest
     needs: changes
-    if: ${{ !cancelled() && (github.event_name != 'pull_request' || github.head_ref != 'design-tokens-sync') && (needs.changes.result != 'success' || needs.changes.outputs.supervisor == 'true') }}
+    if: ${{ !cancelled() && (github.event_name != 'pull_request' || (github.head_ref != 'design-tokens-sync' || github.event.pull_request.head.repo.full_name != github.repository)) && (needs.changes.result != 'success' || needs.changes.outputs.supervisor == 'true') }}
     strategy:
       fail-fast: false
       matrix:
@@ -214,13 +214,13 @@ jobs:
   e2e-supervisor:
     runs-on: ubuntu-latest
     needs: [changes, e2e-supervisor-parte]
-    if: always() && (github.event_name != 'pull_request' || github.head_ref != 'design-tokens-sync')
+    if: always() && (github.event_name != 'pull_request' || (github.head_ref != 'design-tokens-sync' || github.event.pull_request.head.repo.full_name != github.repository))
     steps:
       - run: test "${{ needs.e2e-supervisor-parte.result }}" = success || test "${{ needs.e2e-supervisor-parte.result }}-${{ needs.changes.outputs.supervisor }}" = skipped-false
   e2e-cuscare:
     runs-on: ubuntu-latest
     needs: changes
-    if: ${{ !cancelled() && (github.event_name != 'pull_request' || github.head_ref != 'design-tokens-sync') && (needs.changes.result != 'success' || needs.changes.outputs.cuscare == 'true') }}
+    if: ${{ !cancelled() && (github.event_name != 'pull_request' || (github.head_ref != 'design-tokens-sync' || github.event.pull_request.head.repo.full_name != github.repository)) && (needs.changes.result != 'success' || needs.changes.outputs.cuscare == 'true') }}
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5

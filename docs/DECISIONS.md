@@ -6985,6 +6985,12 @@ ser «main + el cambio». Pendiente, y no se hace aquí: que la portada del PR d
 ha verificado, para que un PR del plugin no se pueda fundir a ciegas (hoy lo dice solo el estado
 del run).
 
+**Ampliado el 2026-10-15** · La exención de `ci.yml` vale solo para la rama del MISMO repo: la premisa
+(«todo lo que llega por esa rama pasó por el robot») no se cumple en un fork, que puede llamar así a su rama
+y saltarse los cinco checks obligatorios. La condición exige además `head.repo.full_name == github.repository`.
+El robot de auto-merge de la auditoría semanal aplica el mismo criterio: solo funde commits de este repo y
+solo el que pasó el CI (`--match-head-commit`).
+
 ---
 
 ## DD-67 · 2026-09-11 — Los 12 text styles son los únicos: el 500 no es «casi», no existe
