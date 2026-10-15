@@ -2024,7 +2024,7 @@ var button_default = {
       }
     },
     borderRadius: "var(--sc-cmp-button-border-radius)",
-    raisedShadow: "0 0.071429rem 0.357143rem 0 #0000001f, 0 0.142857rem 0.142857rem 0 #00000024, 0 0.214286rem 0.071429rem -0.142857rem #00000033",
+    raisedShadow: "var(--sc-cmp-button-raised-shadow)",
     iconOnlyWidth: "var(--sc-cmp-button-icon-only-width)",
     transitionDuration: "{form.field.transition.duration}",
     roundedBorderRadius: "var(--sc-cmp-button-rounded-border-radius)"
@@ -4013,7 +4013,7 @@ var timeline_default = {
     content: {
       size: "var(--sc-cmp-timeline-event-marker-content-size)",
       background: "{primary.color}",
-      insetShadow: "0 0.071429rem 0.071429rem 0 #0000001f, 0 0.071429rem 0 0 #0000000f",
+      insetShadow: "var(--sc-cmp-timeline-event-marker-content-inset-shadow)",
       borderRadius: "0.1875rem"
     },
     background: "{content.background}",
@@ -5080,7 +5080,7 @@ var scrollpanel_default = {
 var splitbutton_default = {
   root: {
     borderRadius: "{form.field.border.radius}",
-    raisedShadow: "0 0.071429rem 0.357143rem 0 #0000001f, 0 0.142857rem 0.142857rem 0 #00000024, 0 0.214286rem 0.071429rem -0.142857rem #00000033",
+    raisedShadow: "var(--sc-cmp-splitbutton-raised-shadow)",
     roundedBorderRadius: "var(--sc-cmp-splitbutton-rounded-border-radius)"
   }
 };
@@ -5316,7 +5316,7 @@ var togglebutton_default = {
     },
     padding: "var(--sc-cmp-togglebutton-content-padding-y) var(--sc-cmp-togglebutton-content-padding-x)",
     borderRadius: "{content.border.radius}",
-    checkedShadow: "0 0.071429rem 0.142857rem 0 #0000000a, 0 0.071429rem 0.142857rem 0 #00000005"
+    checkedShadow: "var(--sc-cmp-togglebutton-content-checked-shadow)"
   },
   colorScheme: {
     dark: {
