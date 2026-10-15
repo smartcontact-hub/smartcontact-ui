@@ -39,9 +39,10 @@ test('el asistente de widget no cambia de tamaño al cambiar de categoría', asy
   expect(Object.values(base).every(Boolean), `falta alguna caja del asistente: ${JSON.stringify(base)}`).toBe(true);
 
   for (const categoria of ['Grupos', 'Agentes', 'Nodo IA', 'Tipificaciones', 'Campañas', 'Servicios']) {
+    // Radios del navegador dentro de cada ficha (candidato 8 del barrido): se marcan con `checked`, no con `aria-checked`.
     const radio = dialog.getByRole('radio', { name: categoria });
     await radio.click();
-    await expect(radio).toHaveAttribute('aria-checked', 'true');
+    await expect(radio).toBeChecked();
     expect(await geometria(page), `saltó al elegir «${categoria}»`).toEqual(base);
   }
 });

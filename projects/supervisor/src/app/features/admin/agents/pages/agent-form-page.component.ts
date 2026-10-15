@@ -62,6 +62,7 @@ import {
   TemplateType,
 } from '@features/admin/templates/data/templates-data';
 import { AgendasStore, type Agenda } from '@features/admin/repositories/state/agendas.store';
+import { telefonoValido } from '@features/admin/repositories/state/agenda-contacts.core.mjs';
 import {
   RecursoDialogComponent,
   type RecursoAbierto,
@@ -517,8 +518,8 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
     return out;
   });
 
-  /** Un email o un PIN mal escritos: no faltan, se dicen en su campo, pero no dejan guardar. */
-  private readonly formatoMal = computed(() => !!this.emailError() || !!this.pinError());
+  /** Un email, un teléfono o un PIN mal escritos: no faltan, se dicen en su campo, pero no dejan guardar. */
+  private readonly formatoMal = computed(() => !!this.emailError() || !!this.phoneError() || !!this.pinError());
 
   /** Los enlaces como los ve la tabla: con los canales que el grupo ofrece y el agente tiene. */
   private readonly linksVistos = computed(() => {
@@ -819,6 +820,16 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
     return EMAIL_RE.test(email) ? null : 'agents.errors.email_invalid';
   });
 
+  /**
+   * El teléfono, si se escribe, con la misma regla que la agenda (`telefonoValido`, DD-163): un `+` opcional y de 3
+   * a 15 cifras. Es el móvil donde suena la extensión: «abc» no se puede guardar (candidato 18 del barrido).
+   */
+  protected readonly phoneError = computed<string | null>(() => {
+    const phone = this.form().phone.trim();
+    if (phone.length === 0) return null;
+    return telefonoValido(phone) ? null : 'agents.errors.phone_invalid';
+  });
+
   /** El PIN solo se ve (y solo cuenta) con la extensión en el teléfono. */
   protected readonly pinError = computed<string | null>(() => {
     const pin = this.form().pin.trim();
@@ -843,6 +854,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
     const falta = this.faltas()[0];
     if (falta) return falta.motivo;
     if (this.emailError()) return this.emailError();
+    if (this.phoneError()) return this.phoneError();
     if (this.pinError()) return this.pinError();
     if (this.mode() === 'edit' && !this.dirtyState.dirty()) return 'common.no_changes';
     return null;
