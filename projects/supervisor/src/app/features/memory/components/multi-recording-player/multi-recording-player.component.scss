@@ -37,83 +37,27 @@
     color: var(--sc-text-secondary);
   }
 
-  &__bar-wrap {
-    position: relative;
-    width: 100%;
-    height: 12px;
-  }
-
+  /* La barra: el tramo activo es un `p-slider` con el aspecto del tema (`sc-preset/slider.ts`), y cada tramo se centra
+   * en el alto de su mando. */
   &__bar {
-    position: absolute;
-    inset-inline: 0;
-    top: 50%;
-    height: 6px;
     display: flex;
-    transform: translateY(-50%);
-    overflow: hidden;
-    border-radius: var(--sc-radius-full);
-  }
-
-  &__seg {
-    position: relative;
-    height: 100%;
-    background: var(--sc-border-default);
-
-    &--active {
-      background: var(--sc-bg-info-subtle);
-    }
-
-    &--divider {
-      border-left: 2px solid var(--sc-bg-default);
-    }
-  }
-
-  &__fill {
-    position: absolute;
-    inset-block: 0;
-    left: 0;
-    transform-origin: left;
-    background: var(--sc-bg-accent);
-    transition: width 150ms ease;
-    will-change: width;
+    align-items: center;
+    gap: var(--sc-spacing-0-125);
   }
 
   &__scrub {
-    position: absolute;
-    inset-block: 0;
-    padding: 0;
-    border: 0;
-    background: transparent;
-    cursor: pointer;
-    border-radius: var(--sc-radius-full);
-
-    &:focus-visible {
-      outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
-      outline-offset: var(--sc-focus-ring-offset);
-    }
-
-    &:disabled {
-      cursor: not-allowed;
-      opacity: 0.5;
-    }
+    flex-basis: 0;
+    min-width: 0;
   }
 
-  &__playhead {
-    pointer-events: none;
-    position: absolute;
-    top: 50%;
-    width: 12px;
-    height: 12px;
-    transform: translate(-50%, -50%);
-    background: var(--sc-bg-accent);
-    border-radius: var(--sc-radius-full);
-    box-shadow: var(--sc-shadow-sm);
-    opacity: 0;
-    transition: opacity 150ms ease;
-
-    &--visible {
-      opacity: 1;
-    }
+  /* Un tramo inactivo es la pista del slider sin mando, con su color y su radio del tema. El alto no tiene token: son
+   * los 3 px de `track.size` (`sc-preset/slider.ts`), y `barrido-teclado.spec.ts` comprueba que miden lo mismo. */
+  &__seg {
+    flex-basis: 0;
+    min-width: 0;
+    height: 3px;
+    background: var(--sc-border-default);
+    border-radius: var(--sc-radius-md);
   }
 
   &__labels {

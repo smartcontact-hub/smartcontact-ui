@@ -312,9 +312,9 @@ export function rolesAMano(texto, esHtml) {
  * candidato en la sección 7 del catálogo, que la arregla, o lo que la deja como está.
  */
 export const ROLES_A_MANO = {
-  // Candidato 1 en el reproductor de varias grabaciones: su barra va partida en tramos, y pasarla a `p-slider` cambia
-  // cómo se ve (queda por decidir). Los radios de las grabaciones traen su propio teclado (`onLabelKeydown`).
-  'projects/supervisor/src/app/features/memory/components/multi-recording-player/multi-recording-player.component.html': 2,
+  // Los radios de las grabaciones del reproductor de varias, con su propio teclado (`onLabelKeydown`). Su barra ya es
+  // un `p-slider` en el tramo activo (candidato 1, 2026-10-16).
+  'projects/supervisor/src/app/features/memory/components/multi-recording-player/multi-recording-player.component.html': 1,
   // Candidato 29: los paneles de alta en línea, un diálogo no modal (el patrón de WAI-ARIA, no una imitación): meten el
   // foco, cierran con Escape y, desde el 2026-10-15, devuelven el foco a quien los abrió (`focoDeVueltaAlCerrar`).
   'projects/supervisor/src/app/features/admin/labels/components/label-form-panel/label-form-panel.component.html': 1,
