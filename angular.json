@@ -192,7 +192,8 @@
             "tsConfig": "projects/supervisor/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "allowedCommonJsDependencies": [
-              "exceljs"
+              "exceljs",
+              "quill-delta"
             ],
             "assets": [
               {

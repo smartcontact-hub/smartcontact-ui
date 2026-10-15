@@ -135,13 +135,13 @@ test.describe('plantillas', () => {
     await goto(page, 'admin/plantillas');
   });
 
-  test('la tabla es del DS y conserva sus cinco columnas', async ({ page }) => {
+  test('la tabla es del DS y conserva sus columnas', async ({ page }) => {
     const table = page.locator(TPL_TABLE);
     await expect(table).toBeVisible();
     await expect(page.locator('table.table')).toHaveCount(0);
 
-    // Casilla + Título + Contenido + Actualizada + acciones.
-    await expect(table.locator('.p-datatable-thead th')).toHaveCount(5);
+    // Casilla + Título + Contenido + Grupos + Actualizada + acciones.
+    await expect(table.locator('.p-datatable-thead th')).toHaveCount(6);
 
     /* El cuerpo se recorta a una línea. Es lo que impide que una plantilla
      * larga rompa el alto de la fila, y depende de que el `<span>` proyectado

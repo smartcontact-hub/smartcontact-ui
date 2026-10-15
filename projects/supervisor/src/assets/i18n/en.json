@@ -1148,6 +1148,31 @@
     }
   },
   "templates": {
+    "import": {
+      "title": "Import templates",
+      "template": "Download template",
+      "template_file": "templates-template",
+      "choose": "Choose file",
+      "choose_other": "Choose another file",
+      "add": "{{count}} templates will be created",
+      "add_one": "1 template will be created",
+      "nothing": "There are no new templates to create.",
+      "errors": "{{count}} lines with errors, which are not created:",
+      "errors_one": "1 line with an error, which is not created:",
+      "error_line": "Line {{line}}: {{reason}}",
+      "reason_titulo": "the title is missing",
+      "reason_canal": "the channel is not chat, email or WhatsApp",
+      "reason_contenido": "the content is missing",
+      "more_errors": "and {{count}} more",
+      "duplicates": "{{count}} already existed or are repeated in the file.",
+      "duplicates_one": "1 already existed or is repeated in the file.",
+      "over": "{{count}} do not fit: the limit is {{max}} templates.",
+      "over_one": "1 does not fit: the limit is {{max}} templates.",
+      "confirm": "Create {{count}} templates",
+      "confirm_one": "Create 1 template",
+      "done": "{{count}} templates created",
+      "done_one": "1 template created"
+    },
     "breadcrumb": "Templates",
     "page_title": "Templates",
     "create_button": "New template",
@@ -1159,7 +1184,8 @@
     },
     "type": {
       "chat": "Chat",
-      "email": "Email"
+      "email": "Email",
+      "whatsapp": "WhatsApp"
     },
     "empty": {
       "title": "No templates yet",
@@ -1170,7 +1196,8 @@
       "title": "Title",
       "type": "Channel",
       "body": "Content",
-      "updated": "Updated"
+      "updated": "Updated",
+      "groups": "Groups"
     },
     "no_results": {
       "text": "No {{tab}} templates in this filter.",
@@ -1184,7 +1211,23 @@
       "channel": "Channel",
       "body": "Content",
       "body_placeholder": "Write the template content...",
-      "variables_hint": "Variables: {agent}, {customer}, {ref}, {date}"
+      "variables_hint": "Variables: {agent}, {customer}, {ref}, {date}",
+      "summary_missing_title": "title",
+      "summary_missing_body": "content",
+      "create_submit": "Create template",
+      "create_breadcrumb": "New template",
+      "edit_breadcrumb": "Edit template",
+      "section_general": "General",
+      "section_content": "Content",
+      "section_groups": "Groups",
+      "groups": "Groups that use it",
+      "groups_placeholder": "No group",
+      "whatsapp_hint": "WhatsApp only supports bold, italic and strikethrough.",
+      "format_bold": "Bold",
+      "format_italic": "Italic",
+      "format_underline": "Underline",
+      "format_strike": "Strikethrough",
+      "format_link": "Link"
     },
     "errors": {
       "title_required": "Title is required",

@@ -60,6 +60,9 @@ const RUTAS = [
   'admin/agentes/editar/1',
   'admin/labels',
   'admin/plantillas',
+  // El editor de una plantilla, en el alta y con su contenido y sus grupos.
+  'admin/plantillas/crear',
+  'admin/plantillas/editar/2',
   'admin/repositorios',
   'admin/agendas',
   // El editor de una agenda (DD-163), en el alta y con contactos.
@@ -88,7 +91,7 @@ const ALTAS = [
   'conversaciones/entidades',
   'conversaciones/categorias',
   'admin/labels',
-  'admin/plantillas',
+  /* «Nueva plantilla» navega a su editor (que se mide en RUTAS); no tiene panel de alta. */
   /* Desde DD-163, «Crear» de Agendas navega a su editor; el diálogo es «Añadir contacto», dentro del editor. El alta
    * (`/crear`) no entra: su primer botón es «Crear agenda», que guarda. */
   'admin/agendas/editar/1',
