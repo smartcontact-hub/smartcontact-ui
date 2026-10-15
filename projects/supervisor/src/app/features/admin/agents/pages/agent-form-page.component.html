@@ -59,9 +59,14 @@
           }
           <span class="headline__meta sc-text-caption-regular">
             @if (form().extension) {
-              <!-- Dónde suena, en icono y no en palabra, como en la lista (revisión de producto del 2026-10-15). -->
-              {{ 'agents.form.fields.extension' | translate }}
-              <ng-container *ngTemplateOutlet="extensionNumber; context: { numero: form().extension, tipo: form().extensionType }" />
+              <!-- Dónde suena, en icono y no en palabra, como en la lista (revisión de producto del 2026-10-15). El rótulo va
+                   dentro de la misma fila para llevar su hueco: tras un espacio, la tinta del icono rozaba la «n». -->
+              <ng-container
+                *ngTemplateOutlet="
+                  extensionNumber;
+                  context: { etiqueta: 'agents.form.fields.extension' | translate, numero: form().extension, tipo: form().extensionType }
+                "
+              />
             } @else {
               {{ 'agents.form.fields.extension_empty' | translate }}
             }
@@ -178,9 +183,12 @@
 </div>
 
 <!-- La extensión: el icono de dónde suena (navegador o teléfono), con su nombre para el lector, y el número. -->
-<ng-template #extensionNumber let-numero="numero" let-tipo="tipo">
+<ng-template #extensionNumber let-numero="numero" let-tipo="tipo" let-etiqueta="etiqueta">
   @let tipoNombre = 'agents.ext_kind.' + tipo | translate;
   <span class="ext">
+    @if (etiqueta) {
+      <span>{{ etiqueta }}</span>
+    }
     <span class="ext__kind" role="img" [attr.aria-label]="tipoNombre" [attr.title]="tipoNombre">
       <sc-icon [name]="extensionIcon(tipo)" size="sm" aria-hidden="true" />
     </span>

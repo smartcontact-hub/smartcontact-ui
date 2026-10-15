@@ -155,7 +155,8 @@ test('solo WhatsApp conserva Chat al guardar y el panel conserva su columna para
   await goto(page, 'admin/agentes/editar/1?seccion=grupos');
   // La casilla de la fila: desde DD-187 la columna Chat lleva también su casilla de «todos» en la cabecera.
   await expect(page.locator('.assign').getByRole('checkbox', { name: /^Online Support — Chat/ })).toBeChecked();
-  await expect(page.getByRole('region', { name: 'Resumen' })).toContainText('Chat');
+  // Desde DD-209, «Canales» del resumen dice cada canal con su icono y su nombre para el lector, como la lista.
+  await expect(page.getByRole('region', { name: 'Resumen' }).getByRole('img', { name: 'Chat', exact: true })).toHaveCount(1);
   await goto(page, 'admin/agentes');
   const fila = page.locator('tbody tr', { hasText: 'Tom Hanks' });
   await expect(fila.getByRole('img', { name: 'Chat', exact: true })).toHaveCount(1);
@@ -165,6 +166,6 @@ test('el resumen del agente solo cuenta familias ofrecidas por sus grupos, igual
   await sembrarEnlaces(page, [{ agentId: 1, groupId: 1, channels: ['phone', 'email'], active: true }]);
   await goto(page, 'admin/agentes/editar/1');
   const resumen = page.getByRole('region', { name: 'Resumen' });
-  await expect(resumen).toContainText('Teléfono');
-  await expect(resumen).not.toContainText('Email');
+  await expect(resumen.getByRole('img', { name: 'Teléfono', exact: true })).toHaveCount(1);
+  await expect(resumen.getByRole('img', { name: 'Email', exact: true })).toHaveCount(0);
 });
