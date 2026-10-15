@@ -76,7 +76,10 @@
               </svg>
             </ng-template>
           </sc-button>
-          <sc-button variant="secondary" appearance="text" size="sm" [icon]="downloadIcon" [ariaLabel]="(isChat() ? 'memory.player.actions.download_chat' : 'memory.player.actions.download_audio' ) | translate" (clicked)="onDownload()" />
+          <!-- Descarga directa (candidato 12 del barrido): de una conversación solo hay una cosa que bajar, el audio o el
+               chat, así que no pregunta. Una llamada sin grabación no tiene nada que bajar: el botón se apaga, y el cuerpo
+               ya dice «No hay grabación». El modal con casillas se queda para la descarga en lote de Conversaciones. -->
+          <sc-button variant="secondary" appearance="text" size="sm" [icon]="downloadIcon" [ariaLabel]="(isChat() ? 'memory.player.actions.download_chat' : 'memory.player.actions.download_audio' ) | translate" [disabled]="downloadDisabled()" (clicked)="onDownload()" />
         </span>
       </div>
 
@@ -291,12 +294,3 @@
   </div>
 </sc-dialog>
 
-<!-- Modal de descarga (S47 §10 #4). hasRecordings/hasChats derivados de la
-     conversación activa: chat sin audio → recordings disabled. -->
-<sc-memory-download-modal
-  [visible]="downloadModalVisible()"
-  [hasRecordings]="!isChat() && !!conversation()?.hasRecording"
-  [hasChats]="isChat()"
-  (confirm)="onDownloadConfirmed($event)"
-  (cancelled)="onDownloadCancelled()"
-/>

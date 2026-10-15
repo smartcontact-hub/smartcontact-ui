@@ -18,7 +18,6 @@ import { ScButtonComponent as ButtonComponent, ScTabsComponent as TabsComponent 
 
 import { ScDialogComponent as DialogComponent } from '@smartcontact-hub/components';
 import type { Conversation, Recording, TranscriptionLine } from '../../data/conversation.types';
-import { DownloadModalComponent } from '../download-modal/download-modal.component';
 import { MultiRecordingPlayerComponent } from '../multi-recording-player/multi-recording-player.component';
 import { formatTime, parseDurationSeconds } from '@shared/utils/audio';
 import { ResultadoAccionService } from '@core/services';
@@ -67,7 +66,6 @@ import { ResultadoAccionService } from '@core/services';
     ButtonComponent,
     IconComponent,
     DialogComponent,
-    DownloadModalComponent,
     MultiRecordingPlayerComponent,
     FormsModule,
     SliderModule,
@@ -100,7 +98,6 @@ export class ConversationPlayerModalComponent {
 
   protected readonly activeTab = signal<'transcription' | 'analysis'>('transcription');
   /** Estado del modal de descarga (S47 §10 #4). NULL/false = oculto. */
-  protected readonly downloadModalVisible = signal<boolean>(false);
   protected readonly isPlaying = signal(false);
   protected readonly currentTime = signal(0);
   protected readonly searchTerm = signal('');
@@ -340,23 +337,20 @@ export class ConversationPlayerModalComponent {
     this.requestRetranscriptionConfirm.emit(c.id);
   }
 
+  /** Nada que bajar: una llamada sin grabación (lo que el modal de antes dejaba sin ninguna casilla). */
+  protected readonly downloadDisabled = computed(() => {
+    const c = this.conversation();
+    return !c || (!this.isChat() && !c.hasRecording);
+  });
+
   /**
-   * Abre el modal de descarga (DownloadModalComponent) para que el usuario
-   * elija qué descargar (grabaciones / chats) con aviso GDPR explícito.
-   * Pre-S47 esto era toast directo — el modal añade la confirmación de
-   * scope + el aviso de privacidad antes del trigger backend.
+   * Descarga lo único que tiene la conversación: el audio de una llamada o los mensajes de un chat. Antes abría el modal
+   * de casillas de la descarga en lote, con una sola casilla posible (candidato 12 del barrido).
    */
   protected onDownload(): void {
-    this.downloadModalVisible.set(true);
-  }
-
-  protected onDownloadConfirmed(opts: {
-    readonly recordings: boolean;
-    readonly chats: boolean;
-  }): void {
-    this.downloadModalVisible.set(false);
     const conv = this.conversation();
-    if (!conv) return;
+    if (!conv || this.downloadDisabled()) return;
+    const opts = { recordings: !this.isChat(), chats: this.isChat() };
     // Mock GDPR export: genera blob JSON con metadata + transcripción +
     // análisis filtrado por `opts`. En producción real backend, este
     // handler llama al endpoint con `opts` como payload y backend devuelve
@@ -409,10 +403,6 @@ export class ConversationPlayerModalComponent {
 
     // La descarga la enseña el navegador (DD-191).
     this.resultado.visto(this.translate.instant('memory.player.download_success'));
-  }
-
-  protected onDownloadCancelled(): void {
-    this.downloadModalVisible.set(false);
   }
 
   protected isAgentSpeaker(speaker: string): boolean {

@@ -89,3 +89,25 @@ test('datos de prueba de Conversaciones: un menú que se recorre con flechas y e
   await page.keyboard.press('Enter');
   await expect(actual).not.toHaveText(antes);
 });
+
+test('reproductor: descargar baja el fichero en un clic, sin modal, y una llamada sin grabación lo tiene apagado (12)', async ({
+  page,
+}) => {
+  await goto(page, 'conversaciones');
+  const abrir = (id: string) =>
+    page.locator('[data-testid="conversations-table"] .p-datatable-tbody > tr').filter({ hasText: id }).locator('td').nth(3).click();
+  const player = page.locator('sc-memory-conversation-player-modal .p-dialog');
+
+  await abrir('OUT6677ZZ');
+  const descarga = page.waitForEvent('download');
+  await player.getByRole('button', { name: 'Descargar audio' }).click();
+  expect((await descarga).suggestedFilename()).toMatch(/^memory-export-OUT6677ZZ-/);
+  await expect(page.getByText('Selecciona qué descargar')).toHaveCount(0);
+  await page.keyboard.press('Escape');
+  await expect(player).toBeHidden();
+
+  // Una llamada sin grabación: nada que bajar. Antes abría un modal con su única casilla apagada y sin salida.
+  await abrir('INT9911QQ');
+  await expect(player.getByText('No hay grabación de esta llamada')).toBeVisible();
+  await expect(player.getByRole('button', { name: 'Descargar audio' })).toBeDisabled();
+});

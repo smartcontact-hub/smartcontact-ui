@@ -493,6 +493,10 @@ Leídos en el código; sin medir en el navegador.
    como está (ver 7.5). El 23, hecho el mismo día: lo resolvía el repo. DD-152 quiere el mismo control en la ficha y
    en Contact Center, y DD-184 §3 pasó la ficha a minutos escritos tras revisarla contra Voice; Contact Center se había
    quedado con el desplegable de 5 a 60. Ahora los dos escriben los minutos (`sc-inputnumber`, desde 1), y el catálogo
-   de minutos sale del código. Prueba en `e2e/supervisor/grupo-tiempos-horarios.spec.ts`. Quedan 6 y 12.
+   de minutos sale del código. Prueba en `e2e/supervisor/grupo-tiempos-horarios.spec.ts`. El 12, también: el modal de
+   casillas es el de la descarga en lote heredada del SC (grabaciones y chats a la vez, y un aviso de que las borradas
+   o vacías no entran), y en el reproductor solo cabe una casilla. Ahora el reproductor baja el fichero en un clic, y
+   una llamada sin grabación tiene el botón apagado, como antes tenía su única casilla; el modal se queda en la
+   descarga en lote de Conversaciones. Prueba en `e2e/supervisor/barrido-avisos.spec.ts`. Queda el 6.
 6. **La sección 6 en sc-docs**: hecho el 2026-10-14, la página PrimeNG. Si cambias la sección 6, `npm run
    primeng-catalog:gen` rehace su artefacto (el gate se pone rojo hasta entonces).
