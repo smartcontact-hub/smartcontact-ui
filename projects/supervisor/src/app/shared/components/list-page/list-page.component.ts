@@ -305,10 +305,49 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
    * Lo que mide cada columna compacta al abrir la lista con sus filas, en rem y entre sus topes: la primera vez, sin
    * anchos arrastrados, se ajusta a su contenido. Se mide una vez (y otra si cambia el idioma, que cambia las
    * cabeceras): buscar, filtrar o desplazarse no lo recalcula. Lo arrastrado a mano manda y se recuerda; «Restablecer»
-   * vuelve a esto. Solo en las listas que eligen columnas, que son las que se ensanchan a mano.
+   * vuelve a medir. Solo en las listas que eligen columnas, que son las que se ensanchan a mano.
+   *
+   * Y SE RECUERDA, como lo arrastrado: medido al llegar los datos, el esqueleto de carga salía con los anchos de la
+   * plantilla y las columnas se movían al llegar las filas (`esqueleto-carga.spec.ts`). Guardado, desde la segunda vez
+   * el esqueleto sale ya con lo medido; solo la primera apertura de cada lista se reajusta (decisión de producto del
+   * 2026-10-15).
    */
   protected readonly anchosDePartida = signal<Readonly<Record<string, string>>>({});
   private idiomaMedido: string | null = null;
+
+  /** Dónde se guarda lo medido: junto a las preferencias de columnas, con el idioma en que se midió. */
+  private readonly claveMedidos = computed(() => {
+    const key = this.columnStorageKey();
+    return key ? `${key}:medidos` : null;
+  });
+
+  private leerMedidos(): void {
+    const clave = this.claveMedidos();
+    if (!clave) return;
+    try {
+      const guardado: unknown = JSON.parse(localStorage.getItem(clave) ?? 'null');
+      if (!guardado || typeof guardado !== 'object') return;
+      const { idioma, anchos } = guardado as { idioma?: unknown; anchos?: unknown };
+      if (idioma !== untracked(this.lang) || !anchos || typeof anchos !== 'object') return;
+      const validos = Object.entries(anchos).filter(([, v]) => typeof v === 'string' && /^\d+(\.\d+)?rem$/.test(v));
+      this.idiomaMedido = idioma;
+      this.anchosDePartida.set(Object.fromEntries(validos));
+    } catch {
+      /* Sin almacenamiento o con algo que no es lo nuestro: se mide al tener filas. */
+    }
+  }
+
+  private guardarMedidos(): void {
+    const clave = this.claveMedidos();
+    if (!clave) return;
+    try {
+      const anchos = this.anchosDePartida();
+      if (Object.keys(anchos).length) localStorage.setItem(clave, JSON.stringify({ idioma: this.idiomaMedido, anchos }));
+      else localStorage.removeItem(clave);
+    } catch {
+      /* Sin almacenamiento: lo medido vale mientras dure la página. */
+    }
+  }
 
   private readonly medirAlTenerFilas = effect(() => {
     if (!this.columnChoices() || this.cargando() || this.displayed().length === 0) return;
@@ -362,6 +401,7 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
     tabla.removeAttribute(marca);
     estilo.remove();
     this.anchosDePartida.update((a) => ({ ...a, ...medidas }));
+    this.guardarMedidos();
   }
 
   /** El ancho de la tarjeta de la tabla, medido al cambiar (la ventana, el menú lateral o la selección). */
@@ -431,6 +471,7 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
   ngOnInit(): void {
     const key = this.columnStorageKey();
     if (!key) return;
+    this.leerMedidos();
     try {
       const raw = localStorage.getItem(key);
       if (raw) this.storedPrefs.set(JSON.parse(raw));
@@ -492,10 +533,12 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
   }
 
   /** «Restablecer»: el orden, las columnas y los anchos de partida, como el `reset()` del ejemplo. Los anchos arrastrados
-   *  se olvidan: vuelven los medidos al abrir (revisión de producto del 2026-10-15). */
+   *  se olvidan y lo medido se vuelve a medir con las filas de ahora (revisión de producto del 2026-10-15). */
   protected resetColumns(): void {
     const choices = this.columnChoices();
     if (!choices) return;
+    this.anchosDePartida.set({});
+    this.guardarMedidos();
     this.savePrefs(normalizePrefs(choices, undefined));
   }
 

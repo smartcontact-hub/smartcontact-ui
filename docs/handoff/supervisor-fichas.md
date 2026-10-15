@@ -59,7 +59,8 @@ e3a6c4b1:docs/handoff/supervisor-fichas.md`.
 - **Comunes**: `sc-import-dialog` (las tres copias fuera; la ayuda, solo en Tipificaciones, porque Agendas la quitó esa
   mañana) y `sc-column-toggle` con `column-prefs.ts` (el globo de Columnas sale de `sc-list-page`, con buscador pasadas
   12 columnas). Anchos de partida medidos en `sc-list-page` (`anchosDePartida`): solo columnas con ancho, esperando a
-  que la lista virtual pinte; «Restablecer» los devuelve.
+  que la lista virtual pinte; se guardan en `<clave>:medidos` con su idioma para que el esqueleto de la segunda
+  apertura ya los lleve (el CI lo cazó en `esqueleto-carga`); «Restablecer» vuelve a medir.
 - **Repositorios**: «+ Añadir subcategoría» por categoría; grupos de una plantilla con «+N más» y apagados sin su canal;
   editores en gris; agentes de agenda sin «Código»; un contacto sin obligatorios (también al importar) y la tabla de
   contactos con sus 34 columnas a elegir. «El menú de arriba desaparece» no se reproduce (§14).

@@ -177,8 +177,12 @@ otros datos sobraba o faltaba sitio. El menú «Acciones» repetía la entidad (
    cada columna compacta (las que traen ancho: cifras, fechas, estados) mide su contenido, entre 3,5 y 20 rem. No se
    recalcula al buscar, filtrar ni desplazarse; sí al cambiar de idioma, que cambia las cabeceras. El nombre y la
    descripción se reparten el resto, y la descripción corta con «…» lo que no cabe. Lo arrastrado a mano manda y se
-   recuerda; «Restablecer» lo olvida y vuelve a lo medido (corrige DD-176 en ese punto). Las listas sin selector de
-   columnas (Horarios y los demás repositorios pequeños) conservan sus anchos escritos.
+   recuerda; «Restablecer» lo olvida y vuelve a medir (corrige DD-176 en ese punto). Las listas sin selector de
+   columnas (Horarios y los demás repositorios pequeños) conservan sus anchos escritos. **Lo medido también se recuerda**
+   (con el idioma en que se midió, junto a las preferencias de columnas): medido en cada apertura, el esqueleto de
+   DD-201 salía con los anchos de la plantilla y las columnas se movían al llegar las filas. Desde la segunda apertura de
+   cada lista el esqueleto sale ya con lo medido; solo la primera se reajusta una vez (decisión de producto del
+   2026-10-15).
 5. **«Acciones» = «Importar» y «Exportar»** (o «Exportar selección (N)»), sin la entidad: la página ya dice de qué es la
    lista. «Descargar plantilla CSV» sale del menú y se queda en el diálogo de importar.
 6. **Un solo diálogo de importar** (`sc-import-dialog`, en `shared/components`) en Tipificaciones, Plantillas y Agendas,
@@ -655,7 +659,8 @@ datos y varía el ancho de las barras.
    centrados en su línea (`listBehaviorCss` del tema), y el avatar ilustrado del Supervisor es `inline-flex` centrado:
    apoyados en la línea base dejaban 4 o 5 px muertos. Las filas con foto pasan de 54 a 49 y las de Conversaciones de 43
    a 39; con eso, en los 10 listados medidos la fila del esqueleto mide lo que la de datos (en Conversaciones, a 0,25 px)
-   y las columnas no cambian de ancho.
+   y las columnas no cambian de ancho. *(Desde DD-210 §4, en las listas que miden sus columnas, desde su segunda
+   apertura: la primera se reajusta una vez al llegar las filas.)*
 3. **La carga simulada del Supervisor** (`CargaSimuladaService`): la primera vez que se abre una pantalla en la pestaña,
    sus datos «tardan» 1,5 s, dentro de la franja del esqueleto; al volver ya están. Sin espera para un navegador
    automático (`navigator.webdriver`) salvo con `?latencia=1`; `?latencia=0` la quita. La enciende `app.config`, así que
