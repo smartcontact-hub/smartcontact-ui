@@ -32,7 +32,7 @@
         <button
           type="button"
           class="sc-dialog__close"
-          [attr.aria-label]="closeAriaLabel()"
+          [attr.aria-label]="closeAriaLabel() || ('sc.dialog.close' | translate)"
           (click)="onClose()"
         >
           <sc-icon [name]="closeIcon" [size]="iconSizeLg" />

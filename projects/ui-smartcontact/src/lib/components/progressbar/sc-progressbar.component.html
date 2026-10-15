@@ -1,3 +1,10 @@
-<p-progress-bar [value]="value()" [showValue]="showValue()" [unit]="unit()" [mode]="mode()">
+<p-progress-bar
+    [value]="value()"
+    [showValue]="showValue()"
+    [unit]="unit()"
+    [mode]="mode()"
+    [attr.aria-label]="ariaLabel()"
+    [attr.aria-labelledby]="ariaLabelledBy()"
+>
     <ng-content></ng-content>
 </p-progress-bar>

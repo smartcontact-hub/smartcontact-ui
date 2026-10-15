@@ -42,6 +42,8 @@ export * from './lib/components/group-popover/group-popover.types';
 export * from './lib/components/column-selector/sc-column-selector.component';
 export * from './lib/components/confirmdialog/sc-confirmdialog.component';
 export * from './lib/components/confirmdialog/sc-confirm.service';
+// Solo el tipo: es el que nombran los alias `@deprecated` de tamaño (`ScInputSize`…); las factorías de ese fichero son internas.
+export type { ScFieldSize } from './lib/components/field/sc-field';
 export * from './lib/components/inputtext/sc-inputtext.component';
 export * from './lib/components/password/sc-password.component';
 export * from './lib/components/select/sc-select.component';

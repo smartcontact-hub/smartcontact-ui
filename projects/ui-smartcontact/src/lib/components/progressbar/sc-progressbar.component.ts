@@ -18,4 +18,13 @@ export class ScProgressBarComponent {
     readonly unit = input('%');
 
     readonly mode = input<ScProgressBarMode>('determinate');
+
+    /**
+     * Nombre accesible de la barra (WCAG 4.1.2): qué progreso mide ("Subida del fichero"). Sin él, el lector de
+     * pantalla anuncia "barra de progreso" a secas. Si ya hay un texto visible que la nombra, `ariaLabelledBy`.
+     */
+    readonly ariaLabel = input<string | null>(null);
+
+    /** El id de un texto visible que nombra la barra; tiene prioridad sobre `ariaLabel`. */
+    readonly ariaLabelledBy = input<string | null>(null);
 }

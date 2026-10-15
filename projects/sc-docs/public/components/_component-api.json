@@ -3270,8 +3270,8 @@
         {
           "nombre": "clearLabel",
           "clase": "input",
-          "tipo": "string",
-          "porDefecto": "'Limpiar'",
+          "tipo": "string | null",
+          "porDefecto": "null",
           "requerido": false,
           "descripcion": "Rótulo del botón que vacía la fecha en el pie con atajos.",
           "origen": "nuestro",
@@ -3592,8 +3592,8 @@
         {
           "nombre": "closeAriaLabel",
           "clase": "input",
-          "tipo": "string",
-          "porDefecto": "'Cerrar'",
+          "tipo": "string | null",
+          "porDefecto": "null",
           "requerido": false,
           "descripcion": "aria-label del botón de cierre (resuelto por el consumidor).",
           "origen": "nativo",
@@ -6997,8 +6997,8 @@
         {
           "nombre": "showAriaLabel",
           "clase": "input",
-          "tipo": "string",
-          "porDefecto": "'Mostrar contraseña'",
+          "tipo": "string | null",
+          "porDefecto": "null",
           "requerido": false,
           "descripcion": "Nombre accesible del botón cuando la contraseña está oculta (i18n lo resuelve el consumidor).",
           "origen": "nuestro",
@@ -7007,8 +7007,8 @@
         {
           "nombre": "hideAriaLabel",
           "clase": "input",
-          "tipo": "string",
-          "porDefecto": "'Ocultar contraseña'",
+          "tipo": "string | null",
+          "porDefecto": "null",
           "requerido": false,
           "descripcion": "Nombre accesible del botón cuando la contraseña está visible.",
           "origen": "nuestro",
@@ -7296,6 +7296,26 @@
             "obsoleta": null,
             "heredadaDe": null
           }
+        },
+        {
+          "nombre": "ariaLabel",
+          "clase": "input",
+          "tipo": "string | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "Nombre accesible de la barra (WCAG 4.1.2): qué progreso mide (\"Subida del fichero\"). Sin él, el lector de pantalla anuncia \"barra de progreso\" a secas. Si ya hay un texto visible que la nombra, `ariaLabelledBy`.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "ariaLabelledBy",
+          "clase": "input",
+          "tipo": "string | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "El id de un texto visible que nombra la barra; tiene prioridad sobre `ariaLabel`.",
+          "origen": "nuestro",
+          "nativo": null
         }
       ],
       "ocultas": [
@@ -7613,8 +7633,8 @@
         {
           "nombre": "clearAriaLabel",
           "clase": "input",
-          "tipo": "string",
-          "porDefecto": "'Clear search'",
+          "tipo": "string | null",
+          "porDefecto": "null",
           "requerido": false,
           "descripcion": "Aria-label del botón clear (i18n key resuelto por el consumer).",
           "origen": "nuestro",

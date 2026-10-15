@@ -78,12 +78,10 @@
   "progressbar": {
     "modos": {
       "aria-allowed-attr": 3,
-      "aria-progressbar-name": 3,
       "aria-valid-attr-value": 3
     },
     "playground": {
       "aria-allowed-attr": 1,
-      "aria-progressbar-name": 1,
       "aria-valid-attr-value": 1
     }
   },

@@ -9,9 +9,9 @@ import {
 import { ScProgressBarComponent } from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
-const MODES_SNIPPET = `<sc-progressbar [value]="40" />
-<sc-progressbar [value]="80" [showValue]="false" />
-<sc-progressbar mode="indeterminate" />`;
+const MODES_SNIPPET = `<sc-progressbar [value]="40" ariaLabel="Subida del fichero" />
+<sc-progressbar [value]="80" [showValue]="false" ariaLabel="Importación de contactos" />
+<sc-progressbar mode="indeterminate" ariaLabel="Cargando datos" />`;
 
 /** Demo de `sc-progressbar` en formato story (motor «Storybook-like»). */
 @Component({

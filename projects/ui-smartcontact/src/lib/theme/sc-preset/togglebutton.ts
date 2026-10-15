@@ -39,7 +39,7 @@ import type { ToggleButtonDesignTokens } from '@primeuix/themes/types/togglebutt
         },
         padding: "var(--sc-cmp-togglebutton-content-padding-y) var(--sc-cmp-togglebutton-content-padding-x)",
         borderRadius: "{content.border.radius}",
-        checkedShadow: "0 0.071429rem 0.142857rem 0 #0000000a, 0 0.071429rem 0.142857rem 0 #00000005"
+        checkedShadow: "var(--sc-cmp-togglebutton-content-checked-shadow)"
     },
     colorScheme: {
         dark: {

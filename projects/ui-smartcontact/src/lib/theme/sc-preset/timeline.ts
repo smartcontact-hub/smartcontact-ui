@@ -19,7 +19,7 @@ import type { TimelineDesignTokens } from '@primeuix/themes/types/timeline';
         content: {
             size: "var(--sc-cmp-timeline-event-marker-content-size)",
             background: "{primary.color}",
-            insetShadow: "0 0.071429rem 0.071429rem 0 #0000001f, 0 0.071429rem 0 0 #0000000f",
+            insetShadow: "var(--sc-cmp-timeline-event-marker-content-inset-shadow)",
             borderRadius: "0.1875rem"
         },
         background: "{content.background}",

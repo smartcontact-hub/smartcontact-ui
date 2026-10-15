@@ -200,3 +200,13 @@
     animation: none;
   }
 }
+
+/* Solo para el lector de pantalla: anuncia el comando resaltado por las flechas. */
+.palette__anuncio {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

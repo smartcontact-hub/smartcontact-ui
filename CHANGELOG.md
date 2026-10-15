@@ -81,6 +81,11 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
 
 ### Changed
 
+- **`@smartcontact-hub/components`** — `appendTo` de `sc-select` y `sc-multiselect` pasa de `'body' | null` (por defecto
+  `null`, el panel dentro del componente) a `'body' | 'self'` (por defecto `'body'`, el panel en el `<body>`, donde no
+  lo recorta una tarjeta o un diálogo con `overflow: hidden`). Quien dependía de que el panel se quedara dentro, que
+  pase `appendTo="self"`; `null` ya no es un valor admitido. Cambió después de 1.0.0 (`d2459189`) sin esta nota.
+
 - **`@smartcontact-hub/components`** — `sc-drawer` modal es un diálogo (WCAG 2.4.3 y 4.1.2): se anuncia con
   `role="dialog"`, `aria-modal` y su título por nombre; al abrirse lleva el foco al primer control de su contenido, y
   al cerrarse lo devuelve a quien lo abrió, si sigue en la página, también cuando lo cierra el padre con `visible`.
@@ -167,11 +172,13 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
   cambia de alto, no solo cuando cambia la ventana. Con «reducir movimiento», el listado de agentes del Supervisor
   salía sin ninguna fila: la lista virtual contaba en el fotograma en que la tabla aún medía 0. Sin API nueva.
 
-### Removed
+### Deprecated
 
-- **`@smartcontact-hub/styles`** — se retira `--sc-font-size-caption-bold`: ningún uso en apps, DS, scripts ni docs,
-  y era lo último del juego que se retiró con el mismo criterio en #194 (sus pesos y familias). El paquete del tema lo
-  nombra entre los retirados.
+- **`@smartcontact-hub/styles`** — 31 tokens que no lee ninguna pantalla de este repo quedan **en desuso y se retiran en
+  2.0.0**: `--sc-font-weight-display-1`, `--sc-font-weight-h2`, `--sc-font-weight-body-1`, `--sc-font-weight-body-3`, `--sc-font-weight-caption-bold`, `--sc-font-family-display-1`, `--sc-font-family-h1`, `--sc-font-family-h2`, `--sc-font-family-body-3`, `--sc-font-family-caption-bold`, `--sc-dialog-divider`, `--sc-dialog-head-icon-size`, `--sc-dialog-padding-x`, `--sc-dialog-padding-y`, `--sc-toast-close`, `--sc-toast-gap-actions`, `--sc-toast-close-button-width`, `--sc-toast-close-button-height`, `--sc-toast-close-button-radius`, `--sc-toast-close-icon-size`, `--sc-toast-success-icon`, `--sc-toast-info-icon`, `--sc-toast-warn-icon`, `--sc-toast-error-icon`, `--sc-toast-secondary-bg`, `--sc-toast-secondary-border`, `--sc-toast-secondary-icon`, `--sc-toast-violet-icon`, `--sc-shadow-focus-ring-rgb`, `--sc-shadow-focus-ring`, `--sc-font-size-caption-bold`. Se habían quitado después de 1.0.0 (#194 y la limpieza posterior de
+  `--sc-font-size-caption-bold`), lo que rompía la promesa de esta cabecera (`--sc-*` solo rompe en un major). Siguen
+  definidos con el valor de antes, en un bloque propio fuera de las zonas generadas. Quien los use, que los cambie
+  por el token de su rol (la guía del tema los nombra).
 
 ## [1.0.0] — 2026-09-09
 

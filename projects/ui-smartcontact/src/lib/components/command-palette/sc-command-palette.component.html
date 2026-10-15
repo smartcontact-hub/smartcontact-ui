@@ -23,6 +23,8 @@
     </div>
 
     <div class="palette__body">
+      <!-- Las flechas mueven el resaltado, no el foco: el lector no lo oye si no se lo anunciamos. -->
+      <span class="palette__anuncio" aria-live="polite">{{ activeLabel() }}</span>
       @if (filtered().length === 0) {
         <div class="palette__empty">{{ 'sc.commandPalette.empty' | translate }}</div>
       } @else {
@@ -34,6 +36,7 @@
               <button
                 #itemEl
                 type="button"
+                tabindex="-1"
                 class="palette__item"
                 [class.palette__item--active]="highlighted() === indexOf(cmd)"
                 (mousemove)="onItemHover(cmd)"
