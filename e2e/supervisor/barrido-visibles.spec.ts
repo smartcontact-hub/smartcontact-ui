@@ -32,13 +32,15 @@ test('tabla de agentes del grupo: la casilla de «todos» pregunta en un globo j
 test('«Expirar contraseña» pregunta junto al botón, con el foco en Cancelar porque no se deshace', async ({ page }) => {
   await goto(page, 'admin/agentes/editar/1?seccion=configuracion');
   await page.locator('main').getByRole('button', { name: /Avanzado/ }).click();
-  const boton = page.getByRole('button', { name: 'Expirar contraseña' });
+  // En `main`: el globo vive fuera, y su «Expirar contraseña» se llama igual mientras se va.
+  const boton = page.locator('main').getByRole('button', { name: 'Expirar contraseña' });
   await boton.click();
 
   const globo = page.getByRole('alertdialog', { name: '¿Expirar contraseña?' });
   await expect(globo).toHaveClass(/p-confirmpopup/);
   await expect(globo.getByRole('button', { name: 'Cancelar' })).toBeFocused();
   await page.keyboard.press('Escape');
+  await expect(globo).toHaveCount(0);
   await expect(boton).toBeFocused();
 });
 
