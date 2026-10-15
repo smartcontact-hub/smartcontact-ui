@@ -51,35 +51,35 @@
     </div>
   }
 
-  <!--
-    Wrapper hosts the keydown listener so Esc can close the menu from
-    anywhere inside it (avatar trigger or menu items). The avatar
-    `<button>` below is the real focusable target — silencing the
-    a11y rule, same intentional pattern as the group-popover wrapper.
-  -->
-   
-  <div
-    class="top-bar__user"
-    (scClickOutside)="closeUserMenu()"
-    [scClickOutsideEnabled]="userMenuOpen()"
-    (keydown)="onMenuKeydown($event)"
-  >
+  <div class="top-bar__user">
     <button
-      #avatarBtn
       type="button"
       class="top-bar__avatar"
       [class.top-bar__avatar--open]="userMenuOpen()"
       aria-haspopup="menu"
       [attr.aria-expanded]="userMenuOpen()"
+      [attr.aria-controls]="userMenuId"
       [attr.aria-label]="userName"
-      (click)="toggleUserMenu()"
+      (click)="userMenu.toggle($event)"
     >
       <sc-illustrated-avatar [name]="userName" size="var(--sc-cmp-avatar-width)" />
       <span class="top-bar__avatar-presence" aria-hidden="true"></span>
     </button>
 
-    @if (userMenuOpen()) {
-      <div class="top-bar__menu" role="menu">
+    <!-- El menú de primeng.dev con `popup` (candidato 4 del barrido): mete el foco, flechas, Inicio, Fin y Escape,
+         que devuelve el foco al avatar. La identidad va en `#start`, como en su ejemplo «template»; los atajos son
+         una opción más, porque un botón dentro de `#start` no se alcanza con el teclado (medido el 2026-10-15). -->
+    <p-menu
+      #userMenu
+      [id]="userMenuId"
+      [model]="userMenuItems()"
+      [popup]="true"
+      appendTo="body"
+      [ariaLabel]="userName"
+      (onShow)="userMenuOpen.set(true)"
+      (onHide)="userMenuOpen.set(false)"
+    >
+      <ng-template #start>
         <div class="top-bar__menu-identity">
           <sc-illustrated-avatar [name]="userName" [size]="44" />
           <div class="top-bar__menu-meta">
@@ -88,19 +88,8 @@
               {{ 'topbar.user.role_admin' | translate }}, {{ userPhone }}
             </span>
           </div>
-          <sc-button class="top-bar__menu-shortcut" variant="secondary" appearance="text" size="sm" icon="keyboard" [ariaLabel]="'topbar.keyboard_shortcuts' | translate" (clicked)="openShortcuts()" />
         </div>
-        <div class="top-bar__menu-actions">
-          <button type="button" class="top-bar__menu-item sc-text-body-regular" role="menuitem" (click)="openHelp()">
-            <sc-icon name="help" size="inherit" />
-            <span>{{ 'topbar.user.help' | translate }}</span>
-          </button>
-          <button type="button" class="top-bar__menu-item sc-text-body-regular" role="menuitem" (click)="signOut()">
-            <sc-icon name="logout" size="inherit" />
-            <span>{{ 'topbar.user.logout' | translate }}</span>
-          </button>
-        </div>
-      </div>
-    }
+      </ng-template>
+    </p-menu>
   </div>
 </header>

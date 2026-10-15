@@ -8,7 +8,9 @@ import {
   output,
   signal,
 } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { SliderModule } from 'primeng/slider';
 import { SC_ICONS, ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScSearchComponent as SearchComponent } from '@smartcontact-hub/components';
 import { ScButtonComponent as ButtonComponent, ScTabsComponent as TabsComponent } from '@smartcontact-hub/components';
@@ -67,6 +69,8 @@ import { ResultadoAccionService } from '@core/services';
     DialogComponent,
     DownloadModalComponent,
     MultiRecordingPlayerComponent,
+    FormsModule,
+    SliderModule,
     TranslateModule,
   ],
   templateUrl: './conversation-player-modal.component.html',
@@ -159,11 +163,6 @@ export class ConversationPlayerModalComponent {
     }
     const c = this.conversation();
     return parseDurationSeconds(c?.duration) || 103;
-  });
-
-  protected readonly progressPct = computed(() => {
-    const total = this.totalDuration();
-    return total > 0 ? (this.currentTime() / total) * 100 : 0;
   });
 
   protected readonly filteredLines = computed<readonly TranscriptionLine[]>(() => {
@@ -288,12 +287,9 @@ export class ConversationPlayerModalComponent {
     this.currentTime.set(Math.min(this.totalDuration(), this.currentTime() + 10));
   }
 
-  protected onScrubClick(event: MouseEvent): void {
+  protected onSeek(t: number): void {
     if (!this.playerEnabled()) return;
-    const target = event.currentTarget as HTMLElement;
-    const rect = target.getBoundingClientRect();
-    const ratio = (event.clientX - rect.left) / rect.width;
-    this.currentTime.set(Math.max(0, Math.min(this.totalDuration(), ratio * this.totalDuration())));
+    this.currentTime.set(Math.max(0, Math.min(this.totalDuration(), t)));
   }
 
   protected onMultiSeek(t: number): void {

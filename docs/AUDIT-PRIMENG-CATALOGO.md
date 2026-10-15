@@ -456,5 +456,10 @@ Leídos en el código; sin medir en el navegador.
    14 a 20 y 22) y lo que queda de 7.4; 10, 11, 13, 21 y 24 cambian cómo se ve la pantalla y esperan a que se vean el
    antes y el después; 6, 12 y 23 esperan una respuesta de desarrollo; 25 se queda como está (el Lab no lo ve ningún
    cliente). Del 26 al 29 se deciden igual. Lo decidido que sea regla va a «Bifurcaciones al componer» de AGENTS.md.
+   **Ronda de teclado, hecha el 2026-10-15**: 2, 3, 4, 5, 7 y el reproductor de una grabación (1), con su prueba en
+   `e2e/supervisor/barrido-teclado.spec.ts`. En el 4, los atajos pasan a ser una opción del menú: un botón dentro del
+   `#start` de `p-menu` no se alcanza con el teclado. Quedan: el 8 (seis categorías no caben en un `sc-selectbutton`
+   de 443 px; se decidió mantener las fichas en 3×2 con radios a la vista), el reproductor de varias grabaciones (su
+   barra va en tramos y cambiarla cambia cómo se ve) y el 14 (medir antes qué oye el lector).
 6. **La sección 6 en sc-docs**: hecho el 2026-10-14, la página PrimeNG. Si cambias la sección 6, `npm run
    primeng-catalog:gen` rehace su artefacto (el gate se pone rojo hasta entonces).

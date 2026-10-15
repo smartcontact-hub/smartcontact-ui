@@ -51,72 +51,31 @@
   }
 }
 
-.country-list {
-  border: 1px solid var(--sc-border-default);
-  border-radius: var(--sc-radius-100);
-  max-height: 380px;
-  overflow-y: auto;
-  background: var(--sc-bg-surface);
-
-  &__empty {
-    padding: var(--sc-spacing-2-75) var(--sc-spacing-0-875);
-    text-align: center;
-    color: var(--sc-text-subtle);
-  }
-}
-
+/* La lista la pinta el tema (`p-listbox`); aquí, las columnas de cada país dentro de su opción. */
 .country-row {
-  width: 100%;
+  flex: 1;
+  min-width: 0;
   display: flex;
   align-items: center;
   gap: var(--sc-spacing-0-875);
-  padding: var(--sc-spacing-0-875);
-  background: transparent;
-  border: 0;
-  border-bottom: 1px solid var(--sc-border-subtle);
-  cursor: pointer;
-  text-align: left;
-  transition: background var(--sc-transition-fast) var(--sc-easing-default);
-
-  &:last-child {
-    border-bottom: 0;
-  }
-
-  &:hover {
-    background: var(--sc-bg-default);
-  }
-
-  &--selected {
-    background: var(--sc-bg-default);
-  }
-
-  &:focus-visible {
-    outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
-    outline-offset: -2px;
-  }
 
   &__flag {
     font-size: var(--sc-font-size-400);
     line-height: 1;
-    width: 24px;
+    width: var(--sc-spacing-1-75);
     text-align: center;
     flex-shrink: 0;
   }
 
   &__name {
     flex: 1;
-    color: var(--sc-text-secondary);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-
-    .country-row--selected & {
-      font-weight: var(--sc-font-weight-regular);
-    }
   }
 
   &__code {
-    width: 24px;
+    width: var(--sc-spacing-1-75);
     text-align: center;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -124,31 +83,10 @@
   }
 
   &__prefix {
-    width: 56px;
+    width: var(--sc-spacing-4);
     text-align: right;
     color: var(--sc-text-subtle);
     font-variant-numeric: tabular-nums;
-  }
-
-  &__remove {
-    flex-shrink: 0;
-    background: transparent;
-    border: 0;
-    color: var(--sc-icon-disabled);
-    cursor: pointer;
-    padding: var(--sc-spacing-0-25);
-    transition:
-      color var(--sc-transition-fast) var(--sc-easing-default),
-      opacity var(--sc-transition-fast) var(--sc-easing-default);
-    opacity: 0;
-
-    .country-row:hover & {
-      opacity: 1;
-    }
-
-    &:hover {
-      color: var(--sc-text-secondary);
-    }
   }
 }
 
@@ -166,10 +104,4 @@
     flex-wrap: wrap;
     gap: var(--sc-spacing-0-25);
   }
-}
-
-/* El buscador es `sc-search` del DS; aquí solo el hueco que deja debajo. */
-.search {
-  display: block;
-  margin-bottom: var(--sc-spacing-0-875);
 }

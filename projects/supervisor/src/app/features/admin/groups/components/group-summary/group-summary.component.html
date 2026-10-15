@@ -102,26 +102,17 @@
               }
               @if (r.family === 'phone' && expandedQuick() === 'reparto') {
                 <div id="group-summary-quick-strategy" class="resumen__quick">
-                  <div role="radiogroup" [attr.aria-label]="'groups.form.summary.routing_quick' | translate">
-                    @for (opcion of quickStrategyOptions; track opcion) {
-                      <button
-                        type="button"
-                        role="radio"
-                        [attr.aria-checked]="opcion === r.text"
-                        class="resumen__quick-option"
-                        [class.resumen__quick-option--chosen]="opcion === r.text"
-                        (click)="elegirQuickStrategy(opcion)"
-                      >
-                        <span class="resumen__quick-option-text">
-                          <strong class="sc-text-caption-semibold">{{ opcion }}</strong>
-                          @if (quickStrategyHelpKey(opcion); as helpKey) {
-                            <small class="sc-text-caption-regular">{{ helpKey | translate }}</small>
-                          }
-                        </span>
-                        <span class="resumen__quick-radio" aria-hidden="true"></span>
-                      </button>
-                    }
-                  </div>
+                  <!-- `sc-option-cards` (candidato 7 del barrido): radios nativos, con flechas entre opciones. Las flechas
+                       eligen al momento, como en cualquier grupo de radios, así que el panel no se cierra al elegir. -->
+                  <span id="group-summary-quick-strategy-label" class="visually-hidden">{{ 'groups.form.summary.routing_quick' | translate }}</span>
+                  <sc-option-cards
+                    orientation="vertical"
+                    name="group-summary-quick-strategy"
+                    ariaLabelledBy="group-summary-quick-strategy-label"
+                    [options]="quickStrategyCards()"
+                    [value]="r.text"
+                    (valueChange)="elegirQuickStrategy($event)"
+                  />
                   <a class="resumen__quick-link sc-text-caption-regular" [href]="hrefs().distribucion" (click)="pulsar($event, { seccion: 'distribucion', canal: r.family })">
                     {{ 'groups.form.summary.routing_see' | translate }}
                     <sc-icon name="chevron_right" size="inherit" aria-hidden="true" />
