@@ -9189,6 +9189,11 @@ self-hospedado (~340KB) en vez del CDN. El `font-display` del @fontsource es `sw
 CDN usaba `block`): posible FOUT breve de la ligadura en carga fría — aceptable (fuente
 local, ya vigente en sc-demo).
 
+**Actualizado el 2026-10-15:** hoy el DS carga la variante con todos los ejes (`latin-full-normal.woff2`,
+3,96 MB) y con `font-display: block` (`material-symbols.css`): se ocultan las ligaduras hasta que la fuente
+carga, en vez del `swap` descrito arriba. La elección del `block` se midió el 2026-09-18 (comentario del CSS);
+el peso no se ha vuelto a medir.
+
 **Abierto (no bloquea):** el **peso** del icono a la par de la tipografía y el ajuste
 fino de ejes (wght/fill/opsz) sigue pendiente — la otra mitad del item de iconografía
 del ROADMAP. ~~Y el icono de cabecera de `ScConfirmService` (API `icon?`).~~ → **HECHO**: `sc-confirm.service.ts:31` lo declara y `:68` resuelve `req.icon ?? 'exclamation-triangle'` (verificado 2026-08-13).
