@@ -186,6 +186,35 @@
 
 ## Revisión de componentes
 
+### `sc-dialog` emite dos veces `cancelled` y `hidden` (2026-10-15)
+- **Qué**: `sc-dialog` atiende `(visibleChange)` y `(onHide)` con el mismo `onClose()`. PrimeNG emite los dos al
+  cerrar (X, Esc o máscara), así que cada salida sale dos veces, y `cancelled` también sale cuando el padre cierra
+  el diálogo tras confirmar. Medido en `docs/AUDIT-INGENIERIA-2026-10.md`.
+- **Por qué se difiere**: hoy no daña. Los handlers del Supervisor solo ponen una señal a su valor, y arreglarlo
+  cambia el comportamiento de unos 48 bindings.
+- **Disparador**: el primer consumidor cuyo `cancelled` haga algo más que cerrar, o el próximo cambio en `sc-dialog`.
+- **Validación**: una spec de emisiones (una vez cada salida con X, Esc y cierre programático) y los diálogos del
+  Supervisor sin cambios de comportamiento.
+
+### Salida `keydown` de `sc-search` (2026-10-15)
+- **Qué**: se llama igual que el evento nativo, que también sube desde el `<input>`: llega dos veces. El Supervisor
+  y `cuscare-ds` lo esquivan.
+- **Por qué se difiere**: quitar una salida pública rompe API (`docs/migration-safety.md`).
+- **Disparador**: el corte de 2.0.0, o `@deprecated` si antes se toca el componente.
+- **Validación**: los dos consumidores siguen atendiendo Escape una sola vez.
+
+### Errores de guardado y de exportación sin sitio donde verse (2026-10-15)
+- **Qué**: `local-store.factory.ts` traga el error de cuota de `localStorage` (la pantalla dice "guardado" y al
+  recargar se pierde) y `xlsx-export.service.ts` no recoge el fallo de cargar `exceljs` (el clic no hace nada).
+  Medido en `docs/AUDIT-INGENIERIA-2026-10.md`.
+- **Por qué se difiere**: la cuota solo se alcanza con unas cinco fotos casi al tope de 800 KB, y mostrar el error
+  exige un patrón nuevo: el toast está en un trinquete que solo puede menguar (DD-191).
+- **Cómo, si se retoma**: un `sc-message` junto al control (Guardar, exportar), que no se cierra solo; `write()`
+  del factory devuelve si guardó.
+- **Disparador**: el primer caso real de datos que no se guardan, o dejar de depender de `localStorage` como
+  almacén de datos de demostración.
+- **Validación**: un test con un `Storage` que lanza, y una e2e que llena la cuota y comprueba que el aviso sale.
+
 ### El avatar que se vuelve check al elegirlo (2026-09-24)
 - **Qué**: el patrón de la demo de primeng.dev/chip: al marcar un elemento, su avatar (o su icono) se
   sustituye por un check dentro del mismo círculo, y al desmarcarlo vuelve. Es el de Gmail y Google Contactos.
