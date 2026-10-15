@@ -162,7 +162,7 @@
 </ng-template>
 
 <ng-template #groupsTpl let-agent>
-  <sc-group-popover [groups]="groupsForAgent(agent.id)" />
+  <sc-group-popover display="adaptive" [groups]="groupsForAgent(agent.id)" />
 </ng-template>
 
 <!-- Los equipos, por su nombre: se buscan con el buscador de la lista. -->

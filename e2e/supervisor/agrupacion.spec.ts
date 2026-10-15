@@ -92,7 +92,7 @@ const ALTAS = [
   'conversaciones/categorias',
   'admin/labels',
   /* «Nueva plantilla» navega a su editor (que se mide en RUTAS); no tiene panel de alta. */
-  /* Desde DD-163, «Crear» de Agendas navega a su editor; el diálogo es «Añadir contacto», dentro del editor. El alta
+  /* Desde DD-163, «Nueva agenda» navega a su editor; el diálogo es «Nuevo contacto», dentro del editor. El alta
    * (`/crear`) no entra: su primer botón es «Crear agenda», que guarda. */
   'admin/agendas/editar/1',
   'admin/horarios',

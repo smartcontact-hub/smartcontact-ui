@@ -16,7 +16,6 @@ import { type MenuItem } from 'primeng/api';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import {
   ScButtonComponent as ButtonComponent,
-  ScDialogComponent as DialogComponent,
   ScGroupPopoverComponent as GroupPopoverComponent,
   ScTabsComponent as TabsComponent,
 } from '@smartcontact-hub/components';
@@ -28,7 +27,7 @@ import { XlsxExportService } from '@core/services/xlsx-export.service';
 import { GroupsStore } from '@features/admin/groups/state/groups.store';
 import { copyName } from '@shared/utils/copy-name';
 
-import { ListPageComponent } from '@shared/components';
+import { ImportDialogComponent, ListPageComponent } from '@shared/components';
 import {
   useBulkEntityI18n,
   type ColumnDef,
@@ -56,10 +55,10 @@ import { ResultadoAccionService } from '@core/services';
     TabsComponent,
     ButtonComponent,
     DeleteEntityDialogComponent,
-    DialogComponent,
     EmptyStateComponent,
     GroupPopoverComponent,
     IconComponent,
+    ImportDialogComponent,
     ListPageComponent,
     TranslateModule,
   ],

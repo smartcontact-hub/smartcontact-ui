@@ -55,17 +55,6 @@
         (keydown)="tecla($event, padres, opcion)"
         (focusout)="alSalir(padres, opcion)"
       />
-      <!-- Añadir un nivel por debajo de ESTA opción: la flecha que baja hacia la columna de al lado, no el «+» de
-           «Añadir categoría». Siempre en su fila; la nueva sale la primera de la columna de al lado, a su altura. En el
-           último nivel no hay más abajo. A la talla del campo, como el resto de la fila (DD-187). -->
-      @if (nivel < niveles - 1) {
-        <sc-button
-          icon="subdirectory_arrow_right"
-          variant="secondary"
-          [ariaLabel]="'repositories.tipificaciones.add_under_aria' | translate: { name: opcion.label || ('repositories.tipificaciones.unnamed' | translate) }"
-          (clicked)="anadir([...padres, opcion.id], 'inicio')"
-        />
-      }
       <sc-button
         variant="secondary"
         appearance="text"
@@ -80,6 +69,20 @@
         @for (hija of opcion.children; track hija.id) {
           <ng-container *ngTemplateOutlet="rama; context: { $implicit: hija, padres: [...padres, opcion.id], nivel: nivel + 1 }" />
         }
+        <!-- Añadir una subcategoría a ESTA opción: al pie de sus hijas, en la columna del nivel siguiente, con su nombre
+             escrito. Uno por categoría y no una flecha en cada fila (revisión de producto del 2026-10-15); la nueva sale
+             la última. Intro en una opción sigue añadiendo su hermana. En el último nivel no hay más abajo. -->
+        <div class="rama__anadir">
+          <sc-button
+            icon="add"
+            size="sm"
+            variant="secondary"
+            appearance="text"
+            [label]="'repositories.tipificaciones.add_subcategory' | translate"
+            [ariaLabel]="'repositories.tipificaciones.add_under_aria' | translate: { name: opcion.label || ('repositories.tipificaciones.unnamed' | translate) }"
+            (clicked)="anadir([...padres, opcion.id], 'fin')"
+          />
+        </div>
       </div>
     }
   </div>

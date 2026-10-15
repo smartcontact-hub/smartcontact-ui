@@ -35,7 +35,7 @@ test('el molde de las fichas: el nombre encima del índice, con sus dos seccione
   await expect(carril.locator('sc-form-section-nav')).toContainText('Categorías');
 });
 
-test('«Añadir categoría» pone la primera del primer nivel; la flecha de una fila, la primera debajo de ella', async ({ page }) => {
+test('«Añadir categoría» pone la primera del primer nivel; «Añadir subcategoría», la última debajo de la suya', async ({ page }) => {
   await goto(page, 'admin/tipificaciones/editar/1?seccion=categorias');
   await expect(primerNivel(page)).toHaveCount(3);
 
@@ -49,10 +49,13 @@ test('«Añadir categoría» pone la primera del primer nivel; la flecha de una 
   const consulta = page.locator('sc-tipificacion-niveles .arbol__rama').filter({ has: page.getByRole('textbox', { name: 'Primer nivel: Consulta' }) });
   // Solo sus hijas directas (el segundo nivel), no las nietas.
   const segundo = consulta.locator(':scope > .rama > .rama__hijas > .rama > .opcion input');
-  await expect(segundo.first()).toBeFocused();
+  await expect(segundo.last()).toBeFocused();
   await page.keyboard.type('Cobros');
   await expect(segundo).toHaveCount(3);
-  await expect(segundo.first()).toHaveValue('Cobros');
+  await expect(segundo.last()).toHaveValue('Cobros');
+  // Uno por opción que puede tener hijas (Consulta y sus tres del segundo nivel; el tercero no), y ninguna flecha por fila.
+  await expect(consulta.getByRole('button', { name: /^Añadir subcategoría a / })).toHaveCount(4);
+  await expect(page.locator('sc-tipificacion-niveles sc-button[icon="subdirectory_arrow_right"]')).toHaveCount(0);
 });
 
 test('un nombre repetido entre hermanas se dice bajo el árbol y no deja guardar; completo, no hay línea', async ({ page }) => {

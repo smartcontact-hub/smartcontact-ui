@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Revisión de las tablas y Repositorios (2026-10-15): «+ Nueva X» y «Buscar {entidades}…» · la celda de grupos según cuántos (`display="adaptive"` de `sc-group-popover`) · cada columna compacta a su contenido al abrir, y «Restablecer» vuelve ahí · «Acciones» con «Importar» y «Exportar», y la plantilla en el diálogo · un solo `sc-import-dialog` · «+ Añadir subcategoría» por categoría · los grupos de una plantilla con «+N más» y apagados sin su canal · un contacto sin obligatorios, y sus columnas a elegir (`sc-column-toggle`) | DD-210 |
 > | Revisión de la ficha de agente (2026-10-15): el grupo de sus salientes, en un desplegable bajo la tabla y con su flecha junto al nombre, no un radio por fila · el resumen y la cabecera con los iconos de la lista: «Canales» con el de cada canal, la extensión con el de dónde suena, Grabación con su REC relleno o de contorno · sin color nuevo: el REC deja el rojo, en la ficha y en la lista · la tarjeta de datos, la misma en las tres fichas (plana, blanca y con borde) y con sus baldosas en el degradado de la cifra destacada (`tone="brand"` de `sc-icon-tile` y `sc-fact-row`) | DD-209 |
 > | Fase 1, PrimeNG como referencia (decisión de producto, 2026-10-15): primero el nativo, después su `sc-*`, y cada excepción escrita junto al código · una pregunta de una frase sobre lo que se pulsa, en un `p-confirmpopup` pegado a ello (`ScConfirmService.request({ target })`); lo que hay que explicar, en el diálogo · los filtros por pares no se vacían (`sc-selectbutton multiple [allowEmpty]="false"`) · el «⋮» del widget en `p-tieredmenu` | DD-205 |
 > | Revisión de las fichas a 1440 (2026-10-14): «Agentes asignados» y «Grupos asignados» sin subtítulo dentro (`sc-subsection` sin título) · el resumen del grupo se llama como la ficha (Distribución con el teléfono saliente, Recursos una fila por tipo, fuera «Salida»), en caption · «Editar» de un recurso en su opción del desplegable (`sc-resource-option`, `#item` de `sc-multiselect`) · Tamaño de cola en tarjetas de radio (`sc-option-cards`, el ejemplo «Card» de primeng.dev) · las tablas de asignar miden todas sus filas (`filasReservadas`) · Habilitado lo cambia el supervisor también con «Activación por grupo» · sin columna Nivel en los grupos del agente, Salientes con radio · Desconectado: gris en el listado, Estado apagado en la ficha (enmienda DD-187 §2 y DD-164 §1) | DD-204 |
@@ -148,6 +149,84 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-210 · 2026-10-15 — Revisión de las tablas y de Repositorios: crear dice qué crea, buscar nombra la lista, la celda de grupos según cuántos, las columnas a su contenido y un solo diálogo de importar
+
+**Contexto** · Revisión de producto del 2026-10-15 sobre las tablas de Administración y de Repositorios (Plantillas,
+Tipificaciones, Agendas). Cada lista decía «Crear» sin decir qué, y el buscador enumeraba los campos («Buscar agente por
+nombre, ID, extensión, email o teléfono…»). La celda de grupos decía «0» o «1» con su desplegable para un solo nombre.
+Los anchos de las columnas estaban medidos a mano con el dato más largo de la semilla en cuatro idiomas (DD-102): con
+otros datos sobraba o faltaba sitio. El menú «Acciones» repetía la entidad («Importar tipificaciones») y traía
+«Descargar plantilla CSV», que también estaba en el diálogo. Había tres copias del diálogo de importar.
+
+**Decisión** ·
+1. **Crear, «+ Nueva X»**, en la barra y en el vacío de cada tabla: el título del alta de cada repositorio («Nuevo
+   horario», «Nueva agenda»), «Nueva cuenta de correo» y «Nuevo trigger» en Email, «Nueva label», «Nueva plantilla»,
+   «Nueva regla» y «Nuevo contacto». Antes, «Crear», «Crear plantilla», «Crear label», «Crear primera regla» y
+   «Añadir contacto».
+2. **Buscar, «Buscar {entidades}…»**, sin la lista de campos, también en las tablas de dentro (contactos, agentes de la
+   agenda, grupos del agente, agentes del grupo), en el hub de Repositorios y en Conversaciones.
+3. **La celda que cuenta grupos, según cuántos** (`display="adaptive"`, nuevo en `sc-group-popover`): ninguno, «—» en
+   gris suave y «Sin grupos» para el lector; uno, su nombre, con «…» y su globo si no cabe; dos o más, la cifra con su
+   desplegable. En Agentes, Plantillas, Tipificaciones y los repositorios con grupos. La cifra de Agentes y la de
+   Servicios del listado de grupos siguen siendo cifras (la de Agentes abre la asignación, DD-159). Corrige DD-197 §3
+   solo para esta celda.
+4. **Cada columna, a su contenido al abrir.** En las listas que eligen columnas, la primera vez que se pintan con filas,
+   cada columna compacta (las que traen ancho: cifras, fechas, estados) mide su contenido, entre 3,5 y 20 rem. No se
+   recalcula al buscar, filtrar ni desplazarse; sí al cambiar de idioma, que cambia las cabeceras. El nombre y la
+   descripción se reparten el resto, y la descripción corta con «…» lo que no cabe. Lo arrastrado a mano manda y se
+   recuerda; «Restablecer» lo olvida y vuelve a medir (corrige DD-176 en ese punto). Las listas sin selector de
+   columnas (Horarios y los demás repositorios pequeños) conservan sus anchos escritos. **Lo medido también se recuerda**
+   (con el idioma en que se midió, junto a las preferencias de columnas): medido en cada apertura, el esqueleto de
+   DD-201 salía con los anchos de la plantilla y las columnas se movían al llegar las filas. Desde la segunda apertura de
+   cada lista el esqueleto sale ya con lo medido; solo la primera se reajusta una vez (decisión de producto del
+   2026-10-15).
+5. **«Acciones» = «Importar» y «Exportar»** (o «Exportar selección (N)»), sin la entidad: la página ya dice de qué es la
+   lista. «Descargar plantilla CSV» sale del menú y se queda en el diálogo de importar.
+6. **Un solo diálogo de importar** (`sc-import-dialog`, en `shared/components`) en Tipificaciones, Plantillas y Agendas,
+   con sus tres copias fuera. La ayuda del formato, solo en Tipificaciones (una línea por camino del árbol).
+7. **Tipificaciones, «+ Añadir subcategoría»** con su texto, al pie de las opciones de cada categoría, en la columna del
+   nivel siguiente, con su nombre accesible («Añadir subcategoría a «Consulta»»): uno por categoría, y la nueva sale la
+   última. Fuera la flecha «↳» de cada fila (corrige DD-187 §11). Siguen Intro (añade la hermana), arrastrar y el tope
+   de tres niveles.
+8. **Plantillas, «Grupos que la usan»**: hasta tres etiquetas y «+N más» (`chipOverflow="more"`, nuevo en
+   `sc-multiselect`), y apagados, con su porqué («No atiende Chat»), los grupos que no atienden el canal de la plantilla.
+9. **Editores en gris**: plantilla, agenda y tipificación pasan sus secciones a la superficie gris (`subtle`), como las
+   fichas.
+10. **Agendas, «Agentes» sin la columna «Código»**, ni se busca por él: es un dato de posventa.
+11. **Un contacto sin campos obligatorios**, pero no se guarda sin al menos uno con texto (solo espacios no vale); el
+    teléfono, si lo hay, válido y sin repetir. Importar sigue la misma regla, como pedía DD-166 §3 (que decía «nombre
+    obligatorio»): una línea sin ningún dato es una línea vacía, y dos contactos sin teléfono no son repetidos.
+12. **Los contactos de una agenda, con «Columnas»**: las cinco de siempre de partida y las 34 a elegir, con buscador
+    (pasadas 12 columnas), «Restablecer» y la elección guardada. El «Column Toggle» de las listas (DD-176) pasa a su
+    componente, `sc-column-toggle`, y lo comparten las dos.
+13. **Importar contactos sigue añadiendo**, con su detección de repetidos: en la lista para desarrollo va como trabajo
+    nuevo frente a Voice.
+14. **«Desaparecía el menú de arriba» al editar una agenda: no se reproduce.** Medido a 1440: al abrir, al escribir, al
+    bajar hasta «Agentes», con los diálogos de contacto y de importar abiertos, y en el alta, la barra sigue arriba con
+    su miga y su «Guardar». Si vuelve a verse, con captura.
+
+**Razón** · Un botón que dice qué crea y un buscador que dice qué busca se entienden sin leer la tabla, y lo que busca
+cada uno cambia sin cambiar el texto. Una columna medida sobre sus datos cabe con los datos de cada cliente, no con los
+de la semilla.
+
+**Descartadas** ·
+- **La ayuda del formato en los tres diálogos**, como apuntaba el plan de la revisión: en Agendas se había quitado esa
+  misma mañana, por revisión de producto de Agendas, y Plantillas nunca la tuvo.
+- **Medir también el nombre y la descripción**: con la descripción a su tope, la fila se cortaba con sitio libre al
+  final (en Tipificaciones, 301 px sobrantes en la columna del «⋮»).
+- **Medir en cuanto llegan las filas**: la lista virtual las pinta un fotograma después, y Email de Agentes medía lo de
+  las dos primeras filas y cortaba la tercera.
+- **Quitar el ensanchar a mano** en las tablas con pocas columnas (la otra opción que se habló): se queda, porque el
+  ajuste al abrir ya evita el desplazamiento lateral en ellas.
+
+**Consecuencias** · DS: `display` y `emptyAriaLabel` en `sc-group-popover`, y `chipOverflow` en `sc-multiselect`, con sus
+ejemplos en sc-docs y la nota 49 de `docs/figma-pendiente.md`. `sc-list-page` pierde `templateDownloadable` y
+`(templateRequest)`. Pruebas: `tablas-revision-1015.spec.ts` nueva; `listado-acciones-fijas.spec.ts` pasa a 1024 (a 1366
+la tabla de Grupos ya cabe y el «⋮» no lleva sombra); al día los textos en las de tipificaciones, plantillas, agendas y
+Email; `agenda-agentes.spec.ts` espera a que la búsqueda filtre antes de leer la fila.
 
 ---
 
@@ -580,7 +659,8 @@ datos y varía el ancho de las barras.
    centrados en su línea (`listBehaviorCss` del tema), y el avatar ilustrado del Supervisor es `inline-flex` centrado:
    apoyados en la línea base dejaban 4 o 5 px muertos. Las filas con foto pasan de 54 a 49 y las de Conversaciones de 43
    a 39; con eso, en los 10 listados medidos la fila del esqueleto mide lo que la de datos (en Conversaciones, a 0,25 px)
-   y las columnas no cambian de ancho.
+   y las columnas no cambian de ancho. *(Desde DD-210 §4, en las listas que miden sus columnas, desde su segunda
+   apertura: la primera se reajusta una vez al llegar las filas.)*
 3. **La carga simulada del Supervisor** (`CargaSimuladaService`): la primera vez que se abre una pantalla en la pestaña,
    sus datos «tardan» 1,5 s, dentro de la franja del esqueleto; al volver ya están. Sin espera para un navegador
    automático (`navigator.webdriver`) salvo con `?latencia=1`; `?latencia=0` la quita. La enciende `app.config`, así que
@@ -765,7 +845,7 @@ que ahí no hay nada a propósito. (2) Lo pinta `sc-celda-vacia`, en el gris sua
 oculto al lector, que oye «Sin dato» o, cuando el vacío tiene su porqué, su `texto` («No aplica» en las estrategias de
 Grupos; «canal no ofrecido» y «sin saliente» en la ficha de agente, que ya lo decían en un `aria-label` que un `span`
 no anuncia). (3) Si el vacío significa algo concreto o es una cifra, se escribe: «Usada en» de Categorías pasa a «0»,
-como las cifras de Grupos. (4) `audit:screen-hygiene` no deja ningún «—» suelto en una plantilla del Supervisor.
+como las cifras de Grupos. *(Corregido por DD-210 §3 en la celda que cuenta grupos: ninguno es «—».)* (4) `audit:screen-hygiene` no deja ningún «—» suelto en una plantilla del Supervisor.
 
 **Razón** · Se queda lo que se ve bien y se quita el único motivo de Primer para dejarlas en blanco. Nombrar el
 porqué al lector le da más que el guion a la vista: «No aplica» no es lo mismo que un dato que falta.
@@ -1179,7 +1259,8 @@ grupos por canal, y su editor solo enseñaba la rama elegida.
     árbol; «Eliminar» de las barras masivas y los pies de los paneles de crear van en pequeño, como el resto de su barra
     y de los diálogos; «Tamaño de cola» de Contact Center, en mediano como su página. Enmienda DD-167 (era el redondo con
     borde). **En Categorías**, las dos formas de añadir no se confunden: «Añadir categoría», con rótulo, en el título del
-    primer nivel, y en cada fila la flecha «↳» de «Añadir subcategoría a…»; el tirador aparece al pasar por la fila.
+    primer nivel, y en cada fila la flecha «↳» de «Añadir subcategoría a…» *(corregido por DD-210 §7: un «+ Añadir
+    subcategoría» al pie de cada categoría)*; el tirador aparece al pasar por la fila.
     **Una sola etiqueta de campo**: la propia de los campos del DS pasa a la de las fichas, 12/18/600, y los enlaces de
     texto de Recursos a 12/600. **El multiselect lleva la flecha del Kit**, la de `sc-select` (14, centrada): desde
     DD-153 llevaba la de Material, 2,5 px por encima del centro; solo el de «Columnas» cambia la flecha por su icono.
@@ -1641,7 +1722,7 @@ fichas. Cada bloque va en su commit, con su prueba roja (DD-154).
    «Restablecer» (texto, secondary, small) arriba, con su raya; una fila por columna con su asa, su casilla nativa
    (`p-checkbox`) y su nombre, que se arrastra para ordenar (`cdkDrag`, como el ejemplo), con la fila arrastrada y su
    hueco del ejemplo. «Restablecer» vuelve al orden y a las columnas de partida, como su `reset()`; los anchos
-   arrastrados se quedan. Botón, Popover y casilla son los nativos con los tokens del preset, así que el editor de
+   arrastrados se quedan *(corregido por DD-210 §4: se olvidan y vuelven los medidos al abrir)*. Botón, Popover y casilla son los nativos con los tokens del preset, así que el editor de
    temas de PrimeNG los lee tal cual; lo que el ejemplo pinta con utilidades de Tailwind va en el paso del Kit más
    cercano y en los semánticos que salen de los mismos de Aura (el globo, 15,75rem por los 18 del ejemplo, que no son
    un paso del Kit). Medido contra primeng.dev el 2026-10-05: botón 92×27 (91×28), cabecera 53 (53), filas 31 (32).
@@ -2158,7 +2239,8 @@ La página de Button de sc-docs aún no tiene una sección «Solo icono» como l
 3. **Antes de añadir nada, la vista previa dice qué entra** («Se añadirán N contactos»), cada línea con error con su
    número («Línea 3: el teléfono no es válido»; las 20 primeras, y de las demás cuántas son), los repetidos (los que ya
    están en la agenda o salen dos veces en el archivo, comparados por sus cifras) y lo que no cabe. Las reglas son las
-   del diálogo de un contacto: nombre obligatorio y el teléfono de DD-163.
+   del diálogo de un contacto: nombre obligatorio y el teléfono de DD-163. *(Corregido por DD-210 §11: ningún campo
+   obligatorio, al menos uno con texto.)*
 4. **Lo importado entra en el formulario**, arriba y sin guardar: Guardar y Deshacer, como un contacto añadido a mano.
 5. **Se lee lo que guarda una hoja de cálculo**: `;` o `,` (el de la primera línea con datos), campos entre comillas
    con `""`, el BOM, la cabecera en los cuatro idiomas y las líneas vacías. El archivo se lee en UTF-8 y, si no lo es,
@@ -5598,7 +5680,8 @@ nunca (aquí, en las listas). Medido en las tres listas de admin, de 1024 a 1920
 anchos, las columnas miden lo mismo: Canales o Grupos con media columna vacía y el nombre recortado al lado.
 
 **Decisión** · (1) Cada columna de dato corto lleva el ancho del dato más largo en los cuatro idiomas, con la
-cabecera y su flecha de orden en una línea (medido, no a ojo). El nombre, y en Usuarios también el email, se
+cabecera y su flecha de orden en una línea (medido, no a ojo). *(Desde DD-210 §4, en las listas que eligen columnas
+lo miden solas al abrir, sobre sus filas.)* El nombre, y en Usuarios también el email, se
 reparten el resto. (2) `sc-datatable` gana `tableMinWidth` (va a `tableStyle` de `p-table`) y `<sc-list-page>` lo
 pasa: la suma de lo que necesita cada columna (Agentes 66rem, Usuarios 61rem, Grupos 56rem). Por debajo, la tabla
 se desplaza de lado dentro de su contenedor de scroll (DD-95) en vez de estrechar columnas.

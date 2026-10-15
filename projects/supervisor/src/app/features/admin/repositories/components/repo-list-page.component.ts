@@ -127,6 +127,14 @@ export class RepoListPageComponent<T extends RepoEntity> {
   );
 
   /** Nombre singular de la entidad, traducido. Dependency: config + lang. */
+  /**
+   * El botón de crear dice qué crea: «+ Nueva agenda», «+ Nuevo horario» (revisión de producto del 2026-10-15), con el
+   * título del panel de alta de cada repositorio. Sin él, «Nuevo/a {{entity}}».
+   */
+  protected readonly createLabelKey = computed(() => this.config().createTitleKey ?? 'repositories.form.create_title');
+  /** El vacío no pasa parámetros a su botón: sin título propio, «Crear». */
+  protected readonly emptyCtaKey = computed(() => this.config().createTitleKey ?? 'common.create');
+
   protected readonly entitySingular = computed(() => {
     this.currentLang();
     return this.translate.instant(this.config().entitySingularKey);

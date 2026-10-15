@@ -8,6 +8,16 @@
       [value]="query()"
       (valueChange)="query.set($event)"
     />
+    <!-- Las columnas: las cinco de siempre y las 34 de un contacto a elegir, con buscador (revisión de producto del
+         2026-10-15). Junto al buscador: las dos cambian lo que se ve. -->
+    <sc-column-toggle
+      class="contacts__columns"
+      [options]="toggleOptions()"
+      [visible]="prefs().visible"
+      (visibleChange)="onVisibleChange($event)"
+      (reorder)="onReorder($event.from, $event.to)"
+      (restore)="onResetColumns()"
+    />
     <!-- Importar abre su diálogo en el editor, que es quien guarda (DD-166). -->
     <sc-button
       size="sm"
@@ -38,6 +48,8 @@
       dataKey="id"
       [value]="visibles()"
       [columns]="columns()"
+      [visibleColumns]="visibleColumns()"
+      [tableMinWidth]="tableMinWidth()"
       [paginator]="visibles().length > 0"
       rowsFocusable
       [rowStyleClass]="rowClass"

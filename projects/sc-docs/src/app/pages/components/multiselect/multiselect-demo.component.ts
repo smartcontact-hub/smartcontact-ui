@@ -16,6 +16,8 @@ const BASICO_SNIPPET = `<!-- El valor va en dos sentidos y es un ARRAY: "[(value
 const ESTADOS_SNIPPET = `<!-- El valor va en dos sentidos y es un ARRAY: "[(value)]". -->
 <sc-multiselect label="Grupos" [options]="groups" placeholder="Selecciona grupos" [(value)]="value" />
 <sc-multiselect label="Con chips" [options]="groups" display="chip" />
+<!-- chipOverflow="more": pasado el tope, las primeras etiquetas y «+N más», en vez de «N seleccionados». -->
+<sc-multiselect label="Con chips y «+N más»" [options]="groups" display="chip" chipOverflow="more" [maxSelectedLabels]="2" [value]="todos" />
 <sc-multiselect label="Con filtro" [options]="groups" [filter]="true" filterPlaceholder="Buscar grupo" />
 <sc-multiselect label="Con error" [options]="groups" error="Selecciona al menos uno" />`;
 
@@ -98,6 +100,7 @@ export class MultiSelectDemoComponent {
   protected readonly elegidos = signal<unknown[]>([]);
 
   readonly groups = ['Soporte', 'Ventas', 'Postventa', 'Calidad'];
+  readonly todos = [...this.groups];
   readonly value = signal<unknown[]>([]);
 
   protected readonly meta: StoryMeta = {

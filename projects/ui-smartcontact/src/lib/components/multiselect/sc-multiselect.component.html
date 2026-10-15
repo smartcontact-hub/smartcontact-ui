@@ -30,7 +30,7 @@
     [showToggleAll]="showToggleAll()"
     [selectAll]="null"
     [selectionLimit]="selectionLimit() ?? null"
-    [maxSelectedLabels]="maxSelectedLabels()"
+    [maxSelectedLabels]="$any(controlMaxSelectedLabels())"
     [selectedItemsLabel]="selectedItemsLabel() ?? ('sc.select.selected' | translate)"
     [showClear]="showClear()"
     [emptyFilterMessage]="emptyFilterMessage() ?? ('sc.select.empty_filter' | translate)"
@@ -46,6 +46,35 @@
     [pt]="pt()"
     [invalid]="isInvalid()"
   >
+    @if (moreChips()) {
+      <!-- Las primeras etiquetas, que se quitan con su «×» como las de PrimeNG (mismas clases), y otra con cuántas faltan.
+           La «×» va en plantilla, como hace MultiSelect con la suya: así el botón es el `span` que pone Chip y el glifo,
+           oculto al lector, ya no se enfoca (el `svg` por defecto de Chip lleva `aria-hidden` y `tabindex` a la vez). -->
+      <ng-template #selecteditems let-selected let-removeChip="removeChip">
+        @for (option of selected.slice(0, maxSelectedLabels()); track $index) {
+          <div class="p-multiselect-chip-item">
+            <p-chip
+              class="p-multiselect-chip"
+              [label]="chipLabel(option)"
+              [removable]="!disabled()"
+              (onRemove)="removeChip(chipValue(option), $event)"
+            >
+              <ng-template #removeicon>
+                <svg data-p-icon="times-circle"></svg>
+              </ng-template>
+            </p-chip>
+          </div>
+        }
+        @if (selected.length > maxSelectedLabels()) {
+          <div class="p-multiselect-chip-item">
+            <p-chip
+              class="p-multiselect-chip sc-multiselect__more"
+              [label]="'sc.select.more' | translate: { count: selected.length - maxSelectedLabels() }"
+            />
+          </div>
+        }
+      </ng-template>
+    }
     @if (itemTpl(); as tpl) {
       <ng-template #item let-data>
         <ng-container *ngTemplateOutlet="tpl; context: { $implicit: data }" />

@@ -1,4 +1,5 @@
 import {
+  afterNextRender,
   booleanAttribute,
   ChangeDetectionStrategy,
   Component,
@@ -8,23 +9,21 @@ import {
   effect,
   ElementRef,
   inject,
+  Injector,
   input,
   model,
   type OnInit,
   output,
   signal,
   type TemplateRef,
+  untracked,
   viewChild,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import type { MenuItem } from 'primeng/api';
 import { MenuModule } from 'primeng/menu';
-import { FormsModule } from '@angular/forms';
-import { CdkDrag, CdkDropList, moveItemInArray, type CdkDragDrop } from '@angular/cdk/drag-drop';
-import { CheckboxModule } from 'primeng/checkbox';
-import { PopoverModule } from 'primeng/popover';
-import { ScIconComponent } from '@smartcontact-hub/icons';
+import { moveItemInArray } from '@angular/cdk/drag-drop';
 
 import {
   type BulkActionEntityLabels,
@@ -46,6 +45,9 @@ import { CargaSimuladaService, ResultadoAccionService, UndoStackService } from '
 import { escapeSearch } from '@core/utils/escape-search';
 import { injectLangChange } from '@core/utils/lang-change';
 
+import { type ColumnPrefs, normalizePrefs } from '../column-toggle/column-prefs';
+import { ColumnToggleComponent } from '../column-toggle/column-toggle.component';
+
 /** Id de columna reservado para la del menú de fila; ninguna pantalla puede usarlo. */
 const ACTIONS_FIELD = '__actions';
 /** El ancho máximo de la columna que crece (la del nombre) en una tabla ancha. */
@@ -56,52 +58,13 @@ const NOMBRE_TOPE = '24rem';
  * con el nombre fijo, en vez de comérselo: a 1024 Nombre medía 32 px en Agentes.
  */
 const NOMBRE_MINIMO = '15rem';
-
 /**
- * Lo que se recuerda de la tabla de cada lista al volver: qué columnas se ven, en qué orden (el de TODAS, también
- * las ocultas, para que una columna que se vuelve a enseñar salga donde estaba) y los anchos arrastrados, en rem.
- * Lo guarda la lista y no `stateKey` de `p-table`, que restaura además el orden de filas y la SELECCIÓN (medido en
- * `primeng-table.mjs`, `restoreState`): se volvería a una lista con filas marcadas.
+ * Los topes del ancho de partida de una columna compacta (una cifra, una fecha, un estado: las que traen ancho), medido
+ * sobre su contenido (revisión de producto del 2026-10-15). Las que crecen (el nombre, una descripción) se reparten el
+ * sitio como siempre, y la descripción corta con «…» lo que no cabe.
  */
-interface ColumnPrefs {
-  readonly order: readonly string[];
-  readonly visible: readonly string[];
-  readonly widths: Readonly<Record<string, string>>;
-}
-
-/**
- * Lo guardado, contrastado con las columnas de hoy: fuera las que ya no existen, las nuevas al final (visibles
- * según su `defaultVisible`) y las fijas (`locked`) en su sitio y siempre visibles. Lee también el formato del
- * selector anterior (`sc-column-selector`: la lista de visibles en su orden), para no perder lo que cada uno tenía.
- */
-function normalizePrefs(choices: readonly ColumnDef[], stored: unknown): ColumnPrefs {
-  const keys = choices.map((c) => c.key);
-  const known = (k: unknown): k is string => typeof k === 'string' && keys.includes(k);
-  const raw = (stored ?? {}) as Partial<Record<keyof ColumnPrefs, unknown>>;
-  const legacy = Array.isArray(stored) ? stored.filter(known) : null;
-  const storedOrder = legacy ?? (Array.isArray(raw.order) ? raw.order.filter(known) : []);
-  const storedVisible = legacy ?? (Array.isArray(raw.visible) ? raw.visible.filter(known) : null);
-  const fresh = keys.filter((k) => !storedOrder.includes(k));
-
-  const order = [...storedOrder, ...fresh].filter((k) => !choices.find((c) => c.key === k)?.locked);
-  choices.forEach((c, i) => {
-    if (c.locked) order.splice(i, 0, c.key);
-  });
-
-  const visibleSet = new Set(
-    storedVisible
-      ? [...storedVisible, ...fresh.filter((k) => choices.find((c) => c.key === k)?.defaultVisible !== false)]
-      : choices.filter((c) => c.defaultVisible !== false).map((c) => c.key),
-  );
-  for (const c of choices) if (c.locked) visibleSet.add(c.key);
-
-  const widths: Record<string, string> = {};
-  if (raw.widths && typeof raw.widths === 'object')
-    for (const [k, v] of Object.entries(raw.widths as Record<string, unknown>))
-      if (known(k) && typeof v === 'string' && /^\d+(\.\d+)?rem$/.test(v)) widths[k] = v;
-
-  return { order, visible: order.filter((k) => visibleSet.has(k)), widths };
-}
+const ANCHO_MINIMO = 3.5;
+const ANCHO_TOPE = 20;
 
 let listRowMenuIdCounter = 0;
 
@@ -135,18 +98,13 @@ let listRowMenuIdCounter = 0;
 @Component({
   selector: 'sc-list-page',
   imports: [
-    CdkDrag,
+    ColumnToggleComponent,
     LlegaAlPieDirective,
-    CdkDropList,
-    CheckboxModule,
-    FormsModule,
     MenuModule,
-    PopoverModule,
     ScBulkActionBarComponent,
     ScButtonComponent,
     ScDatatableComponent,
     ScEmptyStateComponent,
-    ScIconComponent,
     ScSearchComponent,
     TranslateModule,
   ],
@@ -157,6 +115,7 @@ let listRowMenuIdCounter = 0;
 export class ListPageComponent<T extends { readonly id: number | string }> implements OnInit {
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
+  private readonly document = inject(DOCUMENT);
 
   readonly heading = input.required<string>();
   readonly rows = input.required<readonly T[]>();
@@ -202,13 +161,11 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
 
   readonly exportable = input(false, { transform: booleanAttribute });
   /**
-   * Si también importa: entonces importar y descargar van detrás de un solo icono, con su menú (revisión de producto,
-   * Tipificaciones). Lo que se importa y cómo lo decide la pantalla, con `(importRequest)`; descargar sigue siendo
-   * `(exportRequest)`.
+   * Si también importa: «Importar» va en el menú «Acciones», junto a «Exportar». Lo que se importa y cómo lo decide la
+   * pantalla, con `(importRequest)`; la plantilla vacía se descarga dentro de su diálogo (`sc-import-dialog`), no en el
+   * menú (revisión de producto del 2026-10-15).
    */
   readonly importable = input(false, { transform: booleanAttribute });
-  /** Suma «Descargar plantilla» al menú «Acciones»: el CSV vacío con las columnas que la pantalla sabe importar. */
-  readonly templateDownloadable = input(false, { transform: booleanAttribute });
 
   /** Menú de una fila: el mismo con «⋮» y con clic derecho. Sin él, no hay columna de acciones. Si una fila no tiene
    *  acciones (el menú sale vacío), el clic derecho no abre nada: un menú vacío es peor que ninguno. */
@@ -250,7 +207,6 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
   readonly rowOpen = output<T>();
   readonly exportRequest = output<readonly T[]>();
   readonly importRequest = output<void>();
-  readonly templateRequest = output<void>();
 
   protected readonly filtered = computed(() => {
     const q = this.query().toLowerCase().trim();
@@ -303,7 +259,7 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
     const nombre = this.campoNombre();
     const cols = this.columns().map((c) => ({
       ...c,
-      width: prefs?.widths[c.field] ?? c.width ?? (tope ? NOMBRE_TOPE : undefined),
+      width: prefs?.widths[c.field] ?? this.anchosDePartida()[c.field] ?? c.width ?? (tope ? NOMBRE_TOPE : undefined),
       reorderable: !locked.has(c.field),
       frozen: c.frozen ?? c.field === nombre,
       rowHeader: c.rowHeader ?? c.field === nombre,
@@ -342,6 +298,112 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
     return fija ?? (primera && !primera.width ? primera.field : undefined);
   });
 
+  /* ── Anchos de partida: cada columna, a lo que mide su contenido (revisión de producto del 2026-10-15) ───────────── */
+
+  private readonly injector = inject(Injector);
+  /**
+   * Lo que mide cada columna compacta al abrir la lista con sus filas, en rem y entre sus topes: la primera vez, sin
+   * anchos arrastrados, se ajusta a su contenido. Se mide una vez (y otra si cambia el idioma, que cambia las
+   * cabeceras): buscar, filtrar o desplazarse no lo recalcula. Lo arrastrado a mano manda y se recuerda; «Restablecer»
+   * vuelve a medir. Solo en las listas que eligen columnas, que son las que se ensanchan a mano.
+   *
+   * Y SE RECUERDA, como lo arrastrado: medido al llegar los datos, el esqueleto de carga salía con los anchos de la
+   * plantilla y las columnas se movían al llegar las filas (`esqueleto-carga.spec.ts`). Guardado, desde la segunda vez
+   * el esqueleto sale ya con lo medido; solo la primera apertura de cada lista se reajusta (decisión de producto del
+   * 2026-10-15).
+   */
+  protected readonly anchosDePartida = signal<Readonly<Record<string, string>>>({});
+  private idiomaMedido: string | null = null;
+
+  /** Dónde se guarda lo medido: junto a las preferencias de columnas, con el idioma en que se midió. */
+  private readonly claveMedidos = computed(() => {
+    const key = this.columnStorageKey();
+    return key ? `${key}:medidos` : null;
+  });
+
+  private leerMedidos(): void {
+    const clave = this.claveMedidos();
+    if (!clave) return;
+    try {
+      const guardado: unknown = JSON.parse(localStorage.getItem(clave) ?? 'null');
+      if (!guardado || typeof guardado !== 'object') return;
+      const { idioma, anchos } = guardado as { idioma?: unknown; anchos?: unknown };
+      if (idioma !== untracked(this.lang) || !anchos || typeof anchos !== 'object') return;
+      const validos = Object.entries(anchos).filter(([, v]) => typeof v === 'string' && /^\d+(\.\d+)?rem$/.test(v));
+      this.idiomaMedido = idioma;
+      this.anchosDePartida.set(Object.fromEntries(validos));
+    } catch {
+      /* Sin almacenamiento o con algo que no es lo nuestro: se mide al tener filas. */
+    }
+  }
+
+  private guardarMedidos(): void {
+    const clave = this.claveMedidos();
+    if (!clave) return;
+    try {
+      const anchos = this.anchosDePartida();
+      if (Object.keys(anchos).length) localStorage.setItem(clave, JSON.stringify({ idioma: this.idiomaMedido, anchos }));
+      else localStorage.removeItem(clave);
+    } catch {
+      /* Sin almacenamiento: lo medido vale mientras dure la página. */
+    }
+  }
+
+  private readonly medirAlTenerFilas = effect(() => {
+    if (!this.columnChoices() || this.cargando() || this.displayed().length === 0) return;
+    const idioma = this.lang();
+    const visibles = this.visibleColumns() ?? [];
+    untracked(() => {
+      if (idioma !== this.idiomaMedido) {
+        this.idiomaMedido = idioma;
+        this.anchosDePartida.set({});
+      }
+      const nombre = this.campoNombre();
+      const medidos = this.anchosDePartida();
+      const compactas = new Set(this.columns().filter((c) => c.width).map((c) => c.field));
+      const faltan = visibles.filter((f) => compactas.has(f) && f !== nombre && !medidos[f]);
+      if (faltan.length) afterNextRender(() => this.medirColumnas(faltan), { injector: this.injector });
+    });
+  });
+
+  /**
+   * Mide lo que pide cada columna: un instante con la tabla en su ancho natural (`table-layout: auto`, sin anchos y sin
+   * partir líneas), lo que mide su cabecera, y vuelta atrás en el mismo fotograma, sin que se vea.
+   */
+  private medirColumnas(fields: readonly string[], intentos = 30): void {
+    const tabla = this.tarjeta()?.nativeElement.querySelector('table');
+    if (!tabla) return;
+    /* La lista virtual pinta sus filas un fotograma después de recibirlas: medida antes, una columna medía lo de las dos
+     * primeras filas (Email de Agentes cortaba la tercera). Se espera a tener a la vista las que caben, o todas. */
+    const pintadas = tabla.querySelectorAll('tbody > tr:not(.p-datatable-emptymessage)').length;
+    if (pintadas < Math.min(this.displayed().length, 10) && intentos > 0) {
+      requestAnimationFrame(() => this.medirColumnas(fields, intentos - 1));
+      return;
+    }
+    const rem = parseFloat(getComputedStyle(this.document.documentElement).fontSize) || 16;
+    const marca = 'data-sc-midiendo';
+    const estilo = this.document.createElement('style');
+    estilo.textContent =
+      `table[${marca}]{table-layout:auto!important;width:max-content!important;min-width:0!important}` +
+      `table[${marca}] :is(th,td){width:auto!important;min-width:0!important;max-width:none!important;white-space:nowrap!important}`;
+    this.document.head.append(estilo);
+    tabla.setAttribute(marca, '');
+    const medidas: Record<string, string> = {};
+    for (const field of fields) {
+      const th = tabla.querySelector(`thead th[data-field="${CSS.escape(field)}"]`);
+      if (!th) continue;
+      // Al píxel de arriba y 2 de holgura: con la tabla fija, una columna justa redondeaba hacia abajo y la flecha de
+      // orden se salía 1 px de su cabecera (Teléfono, Servicios y Agentes de Grupos).
+      const px = Math.ceil(th.getBoundingClientRect().width) + 2;
+      const ancho = Math.min(Math.max(px / rem, ANCHO_MINIMO), ANCHO_TOPE);
+      medidas[field] = `${+ancho.toFixed(3)}rem`;
+    }
+    tabla.removeAttribute(marca);
+    estilo.remove();
+    this.anchosDePartida.update((a) => ({ ...a, ...medidas }));
+    this.guardarMedidos();
+  }
+
   /** El ancho de la tarjeta de la tabla, medido al cambiar (la ventana, el menú lateral o la selección). */
   private readonly anchoTarjeta = signal(0);
   private readonly tarjeta = viewChild<ElementRef<HTMLElement>>('tarjeta');
@@ -378,7 +440,7 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
     let crecen = 0;
     let nombreCrece = false;
     for (const c of cols) {
-      const w = prefs?.widths[c.field] ?? c.width;
+      const w = prefs?.widths[c.field] ?? this.anchosDePartida()[c.field] ?? c.width;
       if (!w) {
         crecen++;
         if (c.field === nombre) nombreCrece = true;
@@ -409,6 +471,7 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
   ngOnInit(): void {
     const key = this.columnStorageKey();
     if (!key) return;
+    this.leerMedidos();
     try {
       const raw = localStorage.getItem(key);
       if (raw) this.storedPrefs.set(JSON.parse(raw));
@@ -416,14 +479,6 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
       /* Sin almacenamiento (ventana privada, bloqueado): la lista sale con sus columnas por defecto. */
     }
   }
-
-  protected readonly columnsAriaLabel = computed(() => {
-    this.lang();
-    return this.translate.instant('common.columns_visible', {
-      visible: this.columnPrefs()?.visible.length ?? 0,
-      total: this.columnChoices()?.length ?? 0,
-    });
-  });
 
   private savePrefs(next: ColumnPrefs): void {
     this.storedPrefs.set(next);
@@ -454,7 +509,10 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
     }
     const { fijas, crecen, nombreCrece, extras, rem } = this.medidaColumnas();
     if (!nombreCrece) return manual;
-    const manualPx = manual?.endsWith('rem') ? parseFloat(manual) * rem : manual?.endsWith('px') ? parseFloat(manual) : 0;
+    /* Con los anchos medidos al abrir, el mínimo escrito a mano (la suma de los anchos de la plantilla) ya no dice lo que
+     * mide la fila: manda lo medido. */
+    const medido = Object.keys(this.anchosDePartida()).length > 0;
+    const manualPx = medido ? 0 : manual?.endsWith('rem') ? parseFloat(manual) * rem : manual?.endsWith('px') ? parseFloat(manual) : 0;
     return `${Math.ceil(Math.max(manualPx, fijas + extras + crecen * parseFloat(NOMBRE_MINIMO) * rem))}px`;
   });
 
@@ -464,149 +522,29 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
     return this.rowMenu() && this.rowMenuColumn() ? [...prefs.visible, ACTIONS_FIELD] : prefs.visible;
   });
 
-  /** El globo: qué columnas se ven. El orden no lo toca (se ordena arrastrando en el mismo globo). */
-  protected onVisibleChange(keys: readonly unknown[]): void {
+  /** El globo de columnas (`sc-column-toggle`): qué columnas se ven. El orden no lo toca (se ordena arrastrando en el
+   *  mismo globo). Las fijas se quedan aunque lleguen sin marcar. */
+  protected onVisibleChange(keys: readonly string[]): void {
     const prefs = this.columnPrefs();
     if (!prefs) return;
-    const chosen = new Set(keys.filter((k): k is string => typeof k === 'string'));
+    const chosen = new Set(keys);
     for (const c of this.columnChoices() ?? []) if (c.locked) chosen.add(c.key);
     this.savePrefs({ ...prefs, visible: prefs.order.filter((k) => chosen.has(k)) });
   }
 
-  /** El globo de columnas, abierto: su botón lo dice (`aria-expanded`). */
-  protected readonly columnsOpen = signal(false);
-
-  private readonly document = inject(DOCUMENT);
-  /** El icono de columnas: al cerrar el globo con el foco dentro, vuelve aquí. */
-  private readonly columnsButton = viewChild('columnsButton', { read: ElementRef });
-  /** Del título del globo cuelgan su nombre y los ids de sus casillas. */
-  protected readonly columnsTitleId = `columnas-${Math.random().toString(36).slice(2, 8)}`;
-
-  /** El ancho del globo: el paso del Kit más cercano a los 18rem del ejemplo (`w-72`). */
-  protected readonly columnsPopoverStyle = { width: 'var(--sc-spacing-18)' };
-
-  /** El contenido del globo sin relleno, como el ejemplo (`[pt]="{ content: 'p-0!' }"`): lo ponen su cabecera y su lista. */
-  protected readonly columnsPopoverPt = { content: { style: { padding: '0' } } };
-
-  /**
-   * La columna en curso: la última enfocada en la lista, la que mueve Alt+↑/↓, y la que lleva el foco al volver a la
-   * lista. Ordenar con el teclado (WCAG 2.1.1, DD-162); sin «Subir» y «Bajar» en la fila (DD-203).
-   */
-  protected readonly currentColumn = signal<string | null>(null);
-
-  /** Las columnas que se pueden enfocar: las que no son fijas (la fija va con su casilla apagada). */
-  private readonly movableColumns = computed(() => this.columnOptions().filter((o) => !o.locked));
-
-  /** La lista es una sola parada del tabulador: solo la columna en curso (o la primera movible) lleva `tabindex` 0. */
-  protected columnTabindex(key: string): number {
-    const active = this.currentColumn() ?? this.movableColumns()[0]?.key;
-    return key === active ? 0 : -1;
-  }
-
-  protected columnInputId(key: string): string {
-    return `${this.columnsTitleId}-${key}`;
-  }
-
-  /** Las flechas van de una columna a otra (y Inicio y Fin, a la primera y la última); con Alt, la mueven. Espacio la
-   *  marca, el nativo. */
-  protected onColumnsKeydown(event: KeyboardEvent): void {
-    if (event.altKey && (event.key === 'ArrowUp' || event.key === 'ArrowDown')) {
-      event.preventDefault();
-      this.moveColumn(event.key === 'ArrowUp' ? -1 : 1);
-      return;
-    }
-    const keys = this.movableColumns().map((o) => o.key);
-    if (!keys.length) return;
-    const from = Math.max(0, keys.indexOf(this.currentColumn() ?? keys[0]!));
-    const to =
-      event.key === 'ArrowDown' ? Math.min(keys.length - 1, from + 1)
-      : event.key === 'ArrowUp' ? Math.max(0, from - 1)
-      : event.key === 'Home' ? 0
-      : event.key === 'End' ? keys.length - 1
-      : -1;
-    if (to < 0) return;
-    event.preventDefault();
-    this.focusColumn(keys[to]!);
-  }
-
-  private focusColumn(key: string): void {
-    this.currentColumn.set(key);
-    this.document.getElementById(this.columnInputId(key))?.focus();
-  }
-
-  /**
-   * Al abrir, el foco entra en la lista, en la columna en curso: el globo cuelga de `<body>` y, sin esto, con el teclado
-   * no se llegaba (medido el 2026-10-05, DD-162). Se enfoca aquí y no con `focusOnShow`, que iría a «Restablecer».
-   */
-  protected onColumnsShow(): void {
-    this.columnsOpen.set(true);
-    const key = this.currentColumn() ?? this.movableColumns()[0]?.key;
-    if (key) setTimeout(() => this.focusColumn(key));
-  }
-
-  /** «Restablecer»: el orden y las columnas de partida, como el `reset()` del ejemplo. Los anchos arrastrados se quedan. */
+  /** «Restablecer»: el orden, las columnas y los anchos de partida, como el `reset()` del ejemplo. Los anchos arrastrados
+   *  se olvidan y lo medido se vuelve a medir con las filas de ahora (revisión de producto del 2026-10-15). */
   protected resetColumns(): void {
-    const prefs = this.columnPrefs();
     const choices = this.columnChoices();
-    if (!prefs || !choices) return;
-    this.savePrefs({ ...normalizePrefs(choices, undefined), widths: prefs.widths });
-    this.columnsAnnouncement.set('');
+    if (!choices) return;
+    this.anchosDePartida.set({});
+    this.guardarMedidos();
+    this.savePrefs(normalizePrefs(choices, undefined));
   }
 
-  /** Si la columna en curso sube o baja: sin salir de la lista ni pasar por encima de una fija. `null` si es fija o no hay. */
-  protected readonly columnMove = computed(() => {
-    const options = this.columnOptions();
-    const index = options.findIndex((o) => o.key === this.currentColumn());
-    const current = options[index];
-    if (!current || current.locked) return null;
-    return {
-      label: current.label,
-      up: index > 0 && !options[index - 1]!.locked,
-      down: index < options.length - 1 && !options[index + 1]!.locked,
-    };
-  });
-
-  /** Lo que dice el lector tras mover: la columna y su puesto («Email, 3 de 10»). */
-  protected readonly columnsAnnouncement = signal('');
-
-  /**
-   * Mueve la columna en curso un puesto (Alt+↑/↓). La fila cambia de sitio en el DOM y con ella se iría el foco: vuelve a
-   * su casilla, para poder repetir sin buscarla.
-   */
-  protected moveColumn(delta: -1 | 1): void {
-    const options = this.columnOptions();
-    const key = this.currentColumn();
-    const from = options.findIndex((o) => o.key === key);
-    const move = this.columnMove();
-    if (!key || from < 0 || !move || !(delta < 0 ? move.up : move.down)) return;
-    this.reorderColumns(from, from + delta);
-    this.columnsAnnouncement.set(
-      this.translate.instant('common.columns_position', { column: move.label, position: from + delta + 1, total: options.length }),
-    );
-    setTimeout(() => this.document.getElementById(this.columnInputId(key))?.focus());
-  }
-
-  /** El globo se ha cerrado. Con el foco dentro (Escape, o el botón que lo tenía), el foco vuelve al icono; si se cerró
-   *  pulsando fuera, el foco es de lo pulsado y no se toca. */
-  protected onColumnsHide(): void {
-    this.columnsOpen.set(false);
-    this.columnsAnnouncement.set('');
-    const active = this.document.activeElement;
-    if (!active || active === this.document.body) {
-      (this.columnsButton()?.nativeElement as HTMLElement | undefined)?.querySelector('button')?.focus();
-    }
-  }
-
-  /**
-   * Se ha soltado una fila en el globo (DD-176, `cdkDropList` como el ejemplo). Las visibles se quedan las mismas; el orden es el de la lista. Las
-   * fijas vuelven a su sitio aunque se suelten encima (`normalizePrefs`).
-   */
-  protected onColumnDrop(event: Pick<CdkDragDrop<unknown>, 'previousIndex' | 'currentIndex'>): void {
-    this.reorderColumns(event.previousIndex, event.currentIndex);
-  }
-
-  /** Mueve una columna de un puesto a otro de la lista, arrastrando o con sus flechas. Las visibles son las mismas. */
-  private reorderColumns(from: number, to: number): void {
+  /** Mueve una columna de un puesto a otro de la lista, arrastrando o con Alt+↑/↓. Las visibles son las mismas; las fijas
+   *  vuelven a su sitio aunque se suelten encima (`normalizePrefs`). */
+  protected reorderColumns(from: number, to: number): void {
     const prefs = this.columnPrefs();
     const choices = this.columnChoices();
     if (!prefs || !choices || from === to) return;
@@ -621,7 +559,8 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
     const prefs = this.columnPrefs();
     if (!prefs) return;
     const base = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
-    const measured = new Set(this.columns().filter((c) => c.width).map((c) => c.field));
+    const partida = this.anchosDePartida();
+    const measured = new Set(this.columns().filter((c) => c.width || partida[c.field]).map((c) => c.field));
     const widths: Record<string, string> = { ...prefs.widths };
     for (const [field, px] of Object.entries(widthsPx))
       if (measured.has(field) && px > 0) widths[field] = `${+(px / base).toFixed(3)}rem`;
@@ -785,46 +724,32 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
   /** El ancho del panel «Acciones»: el paso del Kit más cercano al de la propuesta de producto. */
   protected readonly fileMenuStyle = { width: 'var(--sc-spacing-25)' };
 
-  /** Lo que se nombra en el menú: las filas de la lista, en plural («tipificaciones»). */
-  private readonly dataEntity = computed(() => {
-    this.lang();
-    return this.bulkEntity()?.plural || this.translate.instant('labels.data_menu.entity_fallback');
-  });
-
   /**
-   * El menú «Acciones»: una fila por cosa que se puede hacer (icono y título) y, detrás de un separador, la plantilla.
-   * «Exportar» cuenta la selección si la hay, y se apaga sin filas (su `title` dice por qué).
+   * El menú «Acciones»: una fila por cosa que se puede hacer, con su icono, y sin nombrar las filas: la página ya dice
+   * de qué es la lista (revisión de producto del 2026-10-15). «Exportar» cuenta la selección si la hay
+   * («Exportar selección (3)»), y se apaga sin filas (su `title` dice por qué).
    */
   protected readonly fileMenuItems = computed<MenuItem[]>(() => {
     this.lang();
     const t = (key: string, params?: Record<string, string | number>) =>
       this.translate.instant(`labels.data_menu.${key}`, params);
-    const entity = this.dataEntity();
     const seleccion = this.selectedRows().length;
     const sinFilas = this.displayed().length === 0;
     const filas: MenuItem[] = [];
     if (this.importable()) {
       filas.push({
-        label: t('import_title', { entity }),
+        label: t('import_title'),
         icon: 'sc-icon-font sc-icon-font--upload',
         command: () => this.importRequest.emit(),
       });
     }
     if (this.exportable()) {
       filas.push({
-        label: seleccion > 0 ? t('export_selection', { count: seleccion }) : t('export_title', { entity }),
+        label: seleccion > 0 ? t('export_selection', { count: seleccion }) : t('export_title'),
         icon: 'sc-icon-font sc-icon-font--download',
         disabled: sinFilas,
         title: sinFilas ? t('export_empty') : undefined,
         command: () => this.onExport(),
-      });
-    }
-    if (this.templateDownloadable()) {
-      if (filas.length > 0) filas.push({ separator: true });
-      filas.push({
-        label: t('template_title'),
-        icon: 'sc-icon-font sc-icon-font--file_export',
-        command: () => this.templateRequest.emit(),
       });
     }
     return filas;

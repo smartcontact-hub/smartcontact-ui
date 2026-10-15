@@ -82,6 +82,7 @@
 <ng-template #estados>
   <div class="col">
     <sc-multiselect label="Con chips" [options]="groups" display="chip" />
+    <sc-multiselect label="Con chips y «+N más»" [options]="groups" display="chip" chipOverflow="more" [maxSelectedLabels]="2" [value]="todos" data-testid="sc-multiselect-more" />
     <sc-multiselect label="Con filtro" [options]="groups" [filter]="true" filterPlaceholder="Buscar grupo" />
     <sc-multiselect label="Con error" [options]="groups" error="Selecciona al menos uno" data-testid="sc-multiselect-error" />
   </div>

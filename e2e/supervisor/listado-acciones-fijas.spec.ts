@@ -42,7 +42,9 @@ for (const oscuro of [false, true]) {
   test(`El menú fijo con ID, ancho arrastrado y fondos opacos · ${oscuro ? 'oscuro' : 'claro'}`, async ({ page }) => {
     await (oscuro ? forceDarkTheme : forceLightTheme)(page);
     await disableAnimations(page);
-    await page.setViewportSize({ width: 1366, height: 768 });
+    // A 1024 la tabla se desborda y el «⋮» va fijo con su sombra. A 1366 ya no: desde la revisión de producto del
+    // 2026-10-15 cada columna arranca en lo que mide su contenido, y la fila cabe.
+    await page.setViewportSize({ width: 1024, height: 768 });
     await goto(page, 'admin/grupos');
     await selector(page).getByRole('button').click();
     await page.getByRole('dialog', { name: 'Columnas' }).getByRole('checkbox', { name: 'ID', exact: true }).click();
@@ -50,11 +52,13 @@ for (const oscuro of [false, true]) {
     const cabecera = page.locator('th[data-field="code"]');
     const tirador = await cabecera.locator('.p-datatable-column-resizer').boundingBox();
     expect(tirador).not.toBeNull();
+    // Arranca en lo que mide su contenido (revisión de producto del 2026-10-15): se compara con lo de antes de arrastrar.
+    const antes = await cabecera.evaluate((el) => el.getBoundingClientRect().width);
     await page.mouse.move(tirador!.x + tirador!.width / 2, tirador!.y + tirador!.height / 2);
     await page.mouse.down();
     await page.mouse.move(tirador!.x + 45, tirador!.y + tirador!.height / 2, { steps: 12 });
     await page.mouse.up();
-    expect(await cabecera.evaluate(el => el.getBoundingClientRect().width)).toBeGreaterThan(125);
+    expect(await cabecera.evaluate((el) => el.getBoundingClientRect().width)).toBeGreaterThan(antes + 30);
     await page.evaluate(() => document.fonts.ready);
     const fila = primeraFila(page);
     const menu = fila.locator('.rules-kebab-btn button');

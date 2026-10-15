@@ -170,12 +170,15 @@ export function parsearContactosCsv(texto, existentes, tope = TOPE_DE_CONTACTOS)
       const columnas = campos(linea, separador);
       const [name = '', phone = ''] = columnas;
       if (primera && CABECERA.test(name)) return;
-      if (!name) return void resultado.errores.push({ linea: i + 1, motivo: 'nombre' });
-      if (!telefonoValido(phone)) return void resultado.errores.push({ linea: i + 1, motivo: 'telefono' });
+      // Las reglas del diálogo de un contacto (revisión de producto del 2026-10-15): ningún campo obligatorio. Una línea
+      // sin ningún dato (`;;;` de una hoja de cálculo) es una línea vacía, y un teléfono, si lo hay, tiene que valer.
+      if (!columnas.some((c) => c.trim())) return;
+      if (phone.trim() && !telefonoValido(phone)) return void resultado.errores.push({ linea: i + 1, motivo: 'telefono' });
+      // Repetido es el mismo teléfono: dos contactos sin teléfono no lo son.
       const clave = normalizarTelefono(phone);
-      if (vistos.has(clave)) return void resultado.repetidos++;
+      if (clave && vistos.has(clave)) return void resultado.repetidos++;
       if (resultado.nuevos.length >= sitio) return void resultado.sobran++;
-      vistos.add(clave);
+      if (clave) vistos.add(clave);
       resultado.nuevos.push(contactoDeValores(Object.fromEntries(CAMPOS_DEL_CSV.map((clave, i) => [clave, columnas[i] ?? '']))));
     });
   return resultado;

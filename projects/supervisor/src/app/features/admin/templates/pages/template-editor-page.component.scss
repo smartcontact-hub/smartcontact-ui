@@ -17,3 +17,15 @@
   margin: var(--sc-spacing-0-5) 0 0;
   color: var(--sc-text-subtle);
 }
+
+/* Una opción de «Grupos que la usan»: su nombre y, si no atiende el canal, por qué está apagada, en una línea. */
+.grupo-opcion {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sc-spacing-0-5);
+  min-width: 0;
+}
+
+.grupo-opcion__motivo {
+  color: var(--sc-text-subtle);
+}

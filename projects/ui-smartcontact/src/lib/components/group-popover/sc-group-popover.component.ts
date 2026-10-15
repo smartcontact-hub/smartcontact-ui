@@ -2,7 +2,9 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
+  ElementRef,
   computed,
+  effect,
   inject,
   input,
   output,
@@ -13,8 +15,9 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { SC_GROUP_POPOVER_TRANSLATIONS } from './i18n/sc-group-popover.translations';
 import { Popover, PopoverModule } from 'primeng/popover';
+import { TooltipModule } from 'primeng/tooltip';
 
-import type { GroupRef } from './group-popover.types';
+import type { GroupRef, ScGroupPopoverDisplay } from './group-popover.types';
 
 const HOVER_LEAVE_DELAY_MS = 150;
 let groupPopoverIdCounter = 0;
@@ -34,10 +37,13 @@ let groupPopoverIdCounter = 0;
  */
 @Component({
   selector: 'sc-group-popover',
-  imports: [PopoverModule, TranslateModule],
+  imports: [PopoverModule, TooltipModule, TranslateModule],
   templateUrl: './sc-group-popover.component.html',
   styleUrl: './sc-group-popover.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '[class.group-popover--single]': 'single()',
+  },
 })
 export class ScGroupPopoverComponent {
   protected readonly namesId = `sc-group-popover-names-${++groupPopoverIdCounter}`;
@@ -52,6 +58,13 @@ export class ScGroupPopoverComponent {
    */
   readonly countAriaLabel = input<string | null>(null);
   /**
+   * Qué pinta la celda (`ScGroupPopoverDisplay`). Con `adaptive`, ninguno es «—» y uno es su nombre: la cifra con su
+   * desplegable solo cuando hay varios que enseñar.
+   */
+  readonly display = input<ScGroupPopoverDisplay>('count');
+  /** Lo que oye el lector cuando no hay ninguno, con `adaptive`. Sin él, «Sin grupos». */
+  readonly emptyAriaLabel = input<string | null>(null);
+  /**
    * Se pulsó la cifra (clic, Intro o Espacio): lo que se hace con esa relación, si quien la pinta lo quiere (abrir
    * la asignación de un grupo). Al pasar por encima o con el foco, la cifra sigue enseñando los nombres; al
    * pulsarla, el globo se cierra. Sin nadie que la escuche, pulsar solo cierra el globo.
@@ -63,6 +76,21 @@ export class ScGroupPopoverComponent {
   private leaveTimer: ReturnType<typeof setTimeout> | null = null;
 
   protected readonly count = computed(() => this.groups().length);
+  protected readonly adaptive = computed(() => this.display() === 'adaptive');
+  /** El único grupo, con `adaptive`: se escribe su nombre en vez de la cifra. */
+  protected readonly single = computed(() => (this.adaptive() && this.count() === 1 ? this.groups()[0]! : null));
+
+  /** Si el nombre no cabe en su columna: entonces, y solo entonces, lleva su globo con el nombre entero. */
+  protected readonly truncated = signal(false);
+  private readonly singleName = viewChild<ElementRef<HTMLElement>>('singleName');
+  private readonly medirNombre = effect((onCleanup) => {
+    const el = this.singleName()?.nativeElement;
+    this.single(); // otro nombre en la misma celda (la tabla recicla filas al desplazarse): se vuelve a medir
+    if (!el || typeof ResizeObserver === 'undefined') return;
+    const observer = new ResizeObserver(() => this.truncated.set(el.scrollWidth > el.clientWidth));
+    observer.observe(el);
+    onCleanup(() => observer.disconnect());
+  });
   /** Los nombres en una frase, para la descripción del botón. */
   protected readonly names = computed(() => this.groups().map((group) => group.name).join(', '));
 

@@ -9,7 +9,8 @@ export const SC_GROUP_POPOVER_TRANSLATIONS: Record<string, TranslationObject> = 
         sc: {
             groupPopover: {
                 count: '{{count}} groups',
-                countShort: '{{count}}'
+                countShort: '{{count}}',
+                none: 'No groups'
             }
         }
     },
@@ -17,7 +18,8 @@ export const SC_GROUP_POPOVER_TRANSLATIONS: Record<string, TranslationObject> = 
         sc: {
             groupPopover: {
                 count: '{{count}} grupos',
-                countShort: '{{count}}'
+                countShort: '{{count}}',
+                none: 'Sin grupos'
             }
         }
     }

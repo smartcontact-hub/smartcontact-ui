@@ -31,14 +31,25 @@ test('parsearContactosCsv: cada error con su línea del archivo; los repetidos s
     'nombre;teléfono\nSin teléfono;abc\n;900 100 300\nCentralita bis;900-100-200\nCopia;900 100 400\nOtra copia;900100400',
     [CENTRALITA],
   );
-  assert.deepEqual(r.errores, [
-    { linea: 2, motivo: 'telefono' },
-    { linea: 3, motivo: 'nombre' },
+  // Sin nombre no es error (ningún campo es obligatorio); un teléfono que no vale, sí.
+  assert.deepEqual(r.errores, [{ linea: 2, motivo: 'telefono' }]);
+  assert.deepEqual(r.nuevos, [
+    { name: '', phone: '900 100 300' },
+    { name: 'Copia', phone: '900 100 400' },
   ]);
-  assert.deepEqual(r.nuevos, [{ name: 'Copia', phone: '900 100 400' }]);
   // El de la agenda (escrito con guiones) y el repetido dentro del propio archivo.
   assert.equal(r.repetidos, 2);
   assert.equal(r.sobran, 0);
+});
+
+test('parsearContactosCsv: basta un dato; sin ninguno es una línea vacía, y dos sin teléfono no se repiten', () => {
+  const r = parsearContactosCsv('nombre;teléfono\nSolo nombre;\n;;\nOtro solo nombre;', [CENTRALITA]);
+  assert.deepEqual(r.errores, []);
+  assert.deepEqual(r.nuevos, [
+    { name: 'Solo nombre', phone: '' },
+    { name: 'Otro solo nombre', phone: '' },
+  ]);
+  assert.equal(r.repetidos, 0);
 });
 
 test('parsearContactosCsv: con la agenda en el tope, lo que no cabe se cuenta y no entra', () => {

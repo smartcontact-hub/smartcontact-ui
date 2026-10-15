@@ -46,6 +46,28 @@ a2a837d4:docs/handoff/supervisor-fichas.md`. El de los quick-wins de la auditor�
 #375) y el de Salientes como etiqueta y botón (2026-10-13, superado por DD-204 y DD-209), sin trampas propias: `git show
 e3a6c4b1:docs/handoff/supervisor-fichas.md`.
 
+## ✅ 2026-10-15 · Revisión de producto de las tablas y Repositorios (DD-210)
+
+> **Sello:** worktree `seabiscuit`, rama `arebury/revision-1015-tablas` sobre `main` `c24c921c` (con el PR 2 ya fundido,
+> #425). PR 3 de 3, #426.
+
+- **Textos**: «+ Nueva X» en la barra y en el vacío de cada tabla (repositorios con su `createTitleKey`), «Buscar
+  {entidades}…» en todas, también dentro de las fichas, y «Acciones» con «Importar» y «Exportar» a secas; la plantilla
+  CSV sale del menú (`sc-list-page` pierde `templateDownloadable`).
+- **DS**: `sc-group-popover` gana `display="adaptive"` (ninguno «—», uno su nombre, varios la cifra) y `sc-multiselect`,
+  `chipOverflow="more"` («+N más»); los dos con su ejemplo en sc-docs y la nota 49 de Figma.
+- **Comunes**: `sc-import-dialog` (las tres copias fuera; la ayuda, solo en Tipificaciones, porque Agendas la quitó esa
+  mañana) y `sc-column-toggle` con `column-prefs.ts` (el globo de Columnas sale de `sc-list-page`, con buscador pasadas
+  12 columnas). Anchos de partida medidos en `sc-list-page` (`anchosDePartida`): solo columnas con ancho, esperando a
+  que la lista virtual pinte; se guardan en `<clave>:medidos` con su idioma para que el esqueleto de la segunda
+  apertura ya los lleve (el CI lo cazó en `esqueleto-carga`); «Restablecer» vuelve a medir.
+- **Repositorios**: «+ Añadir subcategoría» por categoría; grupos de una plantilla con «+N más» y apagados sin su canal;
+  editores en gris; agentes de agenda sin «Código»; un contacto sin obligatorios (también al importar) y la tabla de
+  contactos con sus 34 columnas a elegir. «El menú de arriba desaparece» no se reproduce (§14).
+- **Pruebas**: `tablas-revision-1015.spec.ts` nueva (5); ajustadas las de textos, `listado-acciones-fijas` a 1024 y la
+  carrera de `agenda-agentes`. En local, a 1440: 250 de listas y repositorios, 6 de componente y la línea de estilos
+  (solo altas nuevas) en verde.
+
 ## ✅ 2026-10-15 · Revisión de producto de la ficha de agente: salientes en un desplegable y los iconos de la lista (DD-209)
 
 > **Sello:** worktree `seabiscuit`, rama `arebury/revision-1015-agente` sobre `main` HEAD `e3a6c4b1` (con el PR 1, #416). PR 2 de 3.
@@ -143,9 +165,8 @@ a7ddc14b:docs/handoff/supervisor-fichas.md`.
 
 ## SIGUIENTE — sin preguntar
 
--3. **PR 3 de la revisión del 2026-10-15** (plan en `~/.claude/plans/tengo-transcripci-n-con-una-foamy-barto.md`): las
-   tablas comunes y Repositorios («+ Nueva X», «Buscar {entidades}…», la celda de grupos, anchos al abrir, un solo
-   diálogo de importar, subcategorías, grupos en plantillas, agendas). Enseñado en local antes de subir.
+-3. **Fundir el PR 3 (#426, DD-210) de la revisión del 2026-10-15** cuando su CI esté en verde: el 2 (#425, DD-209) ya
+   está en `main`. Capturas de GroupPopover y MultiSelect regeneradas con el robot.
 -2b. **Componente tabla (otra sesión):** el «evolutivo» de la tabla con los devs (BI y voz). Propuesta de producto:
    elegir UNA vez qué funciones de la Table de PrimeNG queremos y cerrarlo; hay un Excel con las de BI.
    Punto de partida: `docs/AUDIT-PRIMENG-CATALOGO.md`. En la reunión: reordenar, ajustar ancho y arrastrar columnas

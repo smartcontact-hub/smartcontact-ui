@@ -38,17 +38,17 @@ test('las columnas ordenan: por niveles, primero la de uno', async ({ page }) =>
   await expect(filas(page).last()).toContainText('Atención al cliente');
 });
 
-test('importar, exportar y descargar la plantilla van detrás de un solo botón «Acciones», con su menú', async ({ page }) => {
+test('importar y exportar van detrás de un solo botón «Acciones», sin nombrar la lista ni la plantilla', async ({ page }) => {
   await goto(page, 'admin/tipificaciones');
   await expect(page.getByRole('button', { name: 'Exportar', exact: true })).toHaveCount(0);
   const icono = page.getByRole('button', { name: 'Acciones', exact: true });
   await expect(icono).toHaveAttribute('aria-haspopup', 'menu');
   await icono.click();
   const menu = page.getByRole('menu');
-  await expect(menu.getByRole('menuitem')).toContainText(['Importar tipificaciones', 'Exportar tipificaciones', 'Descargar plantilla CSV']);
+  await expect(menu.getByRole('menuitem')).toHaveText(['Importar', 'Exportar']);
 
   const descarga = page.waitForEvent('download');
-  await menu.getByRole('menuitem', { name: /^Exportar tipificaciones/ }).click();
+  await menu.getByRole('menuitem', { name: 'Exportar', exact: true }).click();
   expect((await descarga).suggestedFilename()).toMatch(/^tipificaciones.*\.xlsx$/);
 });
 
@@ -68,7 +68,7 @@ test('«Exportar» cuenta la selección o la búsqueda, y se apaga si no hay fil
   await goto(page, 'admin/tipificaciones');
   const acciones = page.getByRole('button', { name: 'Acciones', exact: true });
   await acciones.click();
-  await expect(page.getByRole('menuitem', { name: /Exportar tipificaciones/ })).toBeVisible();
+  await expect(page.getByRole('menuitem', { name: 'Exportar', exact: true })).toBeVisible();
   await page.keyboard.press('Escape');
 
   await page.getByRole('row', { name: /Atención al cliente/ }).getByRole('checkbox').check();
@@ -77,7 +77,7 @@ test('«Exportar» cuenta la selección o la búsqueda, y se apaga si no hay fil
   await expect(exportar).toBeVisible();
   await page.keyboard.press('Escape');
 
-  await page.getByPlaceholder(/Buscar tipificación/).fill('zzzz');
+  await page.getByPlaceholder('Buscar tipificaciones…').fill('zzzz');
   await acciones.click();
   const sinFilas = page.getByRole('menuitem', { name: /Exportar/ });
   await expect(sinFilas.locator('a')).toHaveAttribute('title', 'No hay registros para exportar');
@@ -87,7 +87,7 @@ test('«Exportar» cuenta la selección o la búsqueda, y se apaga si no hay fil
 test('importar: la vista previa dice qué entra, cada error con su línea y las que ya existen', async ({ page }) => {
   await goto(page, 'admin/tipificaciones');
   await page.getByRole('button', { name: 'Acciones', exact: true }).click();
-  await page.getByRole('menuitem', { name: /^Importar tipificaciones/ }).click();
+  await page.getByRole('menuitem', { name: 'Importar', exact: true }).click();
   const dialogo = page.getByRole('dialog', { name: 'Importar tipificaciones' });
   const plantilla = page.waitForEvent('download');
   await dialogo.getByRole('button', { name: 'Descargar plantilla' }).click();

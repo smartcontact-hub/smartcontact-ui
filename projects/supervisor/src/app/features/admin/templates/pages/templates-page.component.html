@@ -16,7 +16,7 @@
   [columns]="columns()"
   [columnChoices]="columnDefs()"
   [columnStorageKey]="columnPrefKey"
-  [searchPlaceholder]="'common.search' | translate"
+  [searchPlaceholder]="'templates.search_placeholder' | translate"
   [searchFn]="matchesSearch"
   [(query)]="searchQuery"
   [rowMenu]="rowMenu"
@@ -24,10 +24,8 @@
   (rowOpen)="onRowOpen($event)"
   exportable
   importable
-  templateDownloadable
   (exportRequest)="onExport($event)"
   (importRequest)="abrirImportar()"
-  (templateRequest)="descargarPlantilla()"
   selectable
   [bulkEntity]="bulkEntity()"
   [rowLabel]="rowLabel"
@@ -50,7 +48,7 @@
     [icon]="fileStackIcon"
     titleKey="templates.empty.title"
     bodyKey="templates.empty.text"
-    ctaKey="templates.empty.cta"
+    ctaKey="templates.create_button"
     (cta)="onCreateClick()"
   />
 
@@ -73,7 +71,7 @@
 
 <ng-template #groupsTpl let-tpl>
   @let grupos = groupsOf(tpl);
-  <sc-group-popover [groups]="grupos" [countAriaLabel]="groupsAria(grupos.length)" />
+  <sc-group-popover display="adaptive" [groups]="grupos" [countAriaLabel]="groupsAria(grupos.length)" />
 </ng-template>
 
 <ng-template #updatedTpl let-tpl>
@@ -94,61 +92,12 @@
 
 <!-- Importar plantillas de un CSV: la plantilla, el archivo y, antes de crear nada, qué entra y qué no. -->
 @if (importOpen()) {
-  <sc-dialog [visible]="true" [title]="'templates.import.title' | translate" (cancelled)="cerrarImportar()">
-    <div class="importar">
-      <div class="importar__acciones">
-        <sc-button
-          size="sm"
-          variant="secondary"
-          appearance="text"
-          icon="download"
-          [label]="'templates.import.template' | translate"
-          (clicked)="descargarPlantilla()"
-        />
-        <!-- El input nativo va oculto y lo abre un botón del DS: fuera del tabulador y del lector, que si no anuncian un
-             segundo botón «Choose File» en inglés. -->
-        <input #archivo class="visually-hidden" type="file" tabindex="-1" aria-hidden="true" accept=".csv,text/csv" (change)="onImportFile($event)" />
-        <sc-button
-          size="sm"
-          variant="secondary"
-          appearance="outlined"
-          icon="upload"
-          [label]="(importPreview() ? 'templates.import.choose_other' : 'templates.import.choose') | translate"
-          (clicked)="archivo.click()"
-        />
-      </div>
-      @if (importResumen(); as resumen) {
-        <div class="importar__vista" role="status">
-          <p class="sc-text-body-semibold">{{ resumen.entran }}</p>
-          @if (resumen.errores) {
-            <p class="sc-text-body-regular">{{ resumen.errores }}</p>
-            <ul class="importar__errores sc-text-caption-regular">
-              @for (linea of resumen.lineas; track $index) {
-                <li>{{ linea }}</li>
-              }
-              @if (resumen.mas) {
-                <li>{{ resumen.mas }}</li>
-              }
-            </ul>
-          }
-          @if (resumen.repetidas) {
-            <p class="sc-text-body-regular">{{ resumen.repetidas }}</p>
-          }
-          @if (resumen.sobran) {
-            <p class="sc-text-body-regular">{{ resumen.sobran }}</p>
-          }
-        </div>
-      }
-    </div>
-    <div modal-actions>
-      <sc-button type="button" size="sm" variant="secondary" appearance="outlined" (clicked)="cerrarImportar()">
-        <span>{{ 'common.cancel' | translate }}</span>
-      </sc-button>
-      @if (importResumen()?.confirmar; as confirmar) {
-        <sc-button type="button" size="sm" (clicked)="confirmarImportar()">
-          <span>{{ confirmar }}</span>
-        </sc-button>
-      }
-    </div>
-  </sc-dialog>
+  <sc-import-dialog
+    [title]="'templates.import.title' | translate"
+    [summary]="importResumen()"
+    (templateRequest)="descargarPlantilla()"
+    (fileSelected)="onImportFile($event)"
+    (confirmed)="confirmarImportar()"
+    (cancelled)="cerrarImportar()"
+  />
 }

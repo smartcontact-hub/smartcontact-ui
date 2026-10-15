@@ -13,6 +13,9 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  *   1. En un listado con foto, uno con el «⋮» y Conversaciones, la fila del esqueleto mide lo que la de datos y las
  *      columnas no cambian de ancho.
  *   2. Un navegador automático no espera si no lo pide `?latencia=1`: el resto de pruebas ve los datos al entrar.
+ *   3. Las listas que eligen columnas miden sus anchos al llegar las filas (DD-210 §4) y lo recuerdan: la primera
+ *      apertura de cada lista se reajusta una vez y, desde la segunda, el esqueleto sale ya con lo medido (decisión de
+ *      producto del 2026-10-15). Por eso, en esas, se mide la segunda apertura.
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -29,8 +32,18 @@ const medir = (page: import('@playwright/test').Page) =>
     columnas: [...tabla.querySelectorAll('thead th')].map((th) => Math.round(th.getBoundingClientRect().width)),
   }));
 
-for (const ruta of ['admin/usuarios', 'admin/grupos', 'conversaciones']) {
+for (const [ruta, mide] of [
+  ['admin/usuarios', true],
+  ['admin/grupos', true],
+  ['conversaciones', false],
+] as const) {
   test(`${ruta}: la fila del esqueleto mide lo que la de datos`, async ({ page }) => {
+    if (mide) {
+      await page.goto(`/${ruta}`);
+      await expect
+        .poll(() => page.evaluate(() => Object.keys(localStorage).some((k) => k.endsWith(':medidos'))), { message: 'no guardó lo medido' })
+        .toBe(true);
+    }
     // Sin `goto`: espera además a que se pliegue la barra lateral, y eso se come parte de los 1,5 s que dura el
     // esqueleto; en un runner frío se los comió enteros (CI del 2026-10-15, admin/usuarios). Aquí no se clica nada.
     await page.goto(`/${ruta}?latencia=1`);

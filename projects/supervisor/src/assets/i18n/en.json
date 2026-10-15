@@ -305,7 +305,7 @@
       },
       "filters": {
         "none": "None",
-        "search_placeholder": "Search",
+        "search_placeholder": "Search conversations…",
         "services_label": "Services",
         "date_label": "Date",
         "groups_label": "ACD Groups",
@@ -579,7 +579,6 @@
       "no_active_banner": "No rule is active: new conversations won't be transcribed or classified automatically.",
       "empty_title": "No rules yet",
       "empty_desc": "Rules automate what gets recorded, transcribed and analyzed from conversations entering the system.",
-      "empty_cta": "Create first rule",
       "active_title": "Active rule",
       "no_active_hint": "No active rules. Activate a rule to start applying it.",
       "inactive_title": "Inactive",
@@ -959,7 +958,6 @@
     "edit": "Edit",
     "edit_named": "Edit {{name}}",
     "loading": "Loading…",
-    "search": "Search...",
     "search_clear": "Clear search",
     "search_no_results": "No results",
     "remove": "Remove {{name}}",
@@ -1029,7 +1027,13 @@
     "select_all": "Select all",
     "form_index_aria": "Form index",
     "filter_count": "{{shown}} of {{total}}",
-    "next": "Next"
+    "next": "Next",
+    "import": {
+      "template": "Download template",
+      "choose": "Choose file",
+      "choose_other": "Choose another file"
+    },
+    "columns_search": "Search columns…"
   },
   "topbar": {
     "go_to_dashboard": "Go to dashboard",
@@ -1087,8 +1091,7 @@
     "entity_plural": "labels",
     "empty": {
       "title": "No labels yet",
-      "text": "Create your first label to organize and filter your agents",
-      "cta": "Create label"
+      "text": "Create your first label to organize and filter your agents"
     },
     "table": {
       "name": "Name",
@@ -1144,21 +1147,17 @@
     },
     "actions_button": "Actions",
     "data_menu": {
-      "import_title": "Import {{entity}}",
-      "export_title": "Export {{entity}}",
+      "import_title": "Import",
+      "export_title": "Export",
       "export_selection": "Export selection ({{count}})",
-      "export_empty": "There are no records to export",
-      "template_title": "Download CSV template",
-      "entity_fallback": "records"
-    }
+      "export_empty": "There are no records to export"
+    },
+    "search_placeholder": "Search labels…"
   },
   "templates": {
     "import": {
       "title": "Import templates",
-      "template": "Download template",
       "template_file": "templates-template",
-      "choose": "Choose file",
-      "choose_other": "Choose another file",
       "add": "{{count}} templates will be created",
       "add_one": "1 template will be created",
       "nothing": "There are no new templates to create.",
@@ -1194,8 +1193,7 @@
     },
     "empty": {
       "title": "No templates yet",
-      "text": "Create your first message template to speed up service",
-      "cta": "Create template"
+      "text": "Create your first message template to speed up service"
     },
     "table": {
       "title": "Title",
@@ -1232,7 +1230,8 @@
       "format_italic": "Italic",
       "format_underline": "Underline",
       "format_strike": "Strikethrough",
-      "format_link": "Link"
+      "format_link": "Link",
+      "group_without_channel": "Doesn't handle {{channel}}"
     },
     "errors": {
       "title_required": "Title is required",
@@ -1248,7 +1247,8 @@
       "updated": "Template \"{{name}}\" updated",
       "deleted_single": "Template \"{{name}}\" deleted",
       "deleted_bulk": "{{count}} templates deleted"
-    }
+    },
+    "search_placeholder": "Search templates…"
   },
   "repositories": {
     "groups_aria": "{{count}} groups",
@@ -1257,7 +1257,6 @@
       "title": "Email",
       "mailboxes": "Mail accounts",
       "triggers": "Triggers",
-      "create": "Create",
       "created": "Created on",
       "modified": "Modified on",
       "total": "Total emails",
@@ -1322,7 +1321,7 @@
         }
       }
     },
-    "search_placeholder": "Search {{entity}}...",
+    "search_placeholder": "Search {{entity}}…",
     "errors": {
       "name_required": "Name is required",
       "duplicate_name": "A {{entity}} with this name already exists",
@@ -1358,7 +1357,7 @@
     },
     "hub": {
       "coming_soon": "Coming soon",
-      "search": "Search repositories",
+      "search": "Search repositories…",
       "item_aria": "{{name}} ({{count}})",
       "no_results": "No repository matches “{{query}}”.",
       "categories": {
@@ -1405,9 +1404,9 @@
       "contact": "contact",
       "phone": "Phone",
       "no_name": "Unnamed",
-      "add_contact": "Add contact",
+      "add_contact": "New contact",
       "edit_contact": "Edit contact",
-      "search_contacts": "Search by name or phone",
+      "search_contacts": "Search contacts…",
       "contacts_empty": "This address book has no contacts yet",
       "contacts_no_results": "No contact matches “{{query}}”.",
       "import": "Import",
@@ -1420,12 +1419,10 @@
       "agents_summary": "{{count}} of {{total}} assigned",
       "agents_row_aria": "Assign the agenda to {{name}}",
       "agents_select_all": "Select or clear the agents shown",
-      "agents_code": "Code",
       "agents_email": "Email",
       "agents_no_results": "No agent matches “{{query}}”.",
       "agents_none_assigned": "No agents are assigned yet.",
       "agents_empty": "There are no agents yet",
-      "import_template": "Download template",
       "import_template_file": "address-book-template",
       "fields": {
         "surname": "Surname",
@@ -1470,15 +1467,12 @@
       "custom_labels_title": "Custom field labels",
       "custom_labels_hint": "Each agenda can name its five custom fields as it likes. Without a label they are called “Custom 1” to “Custom 5”.",
       "custom_label_placeholder": "Label of Custom {{n}}",
-      "import_choose": "Choose file",
-      "import_choose_other": "Choose another file",
       "import_add": "{{count}} contacts will be added",
       "import_add_one": "1 contact will be added",
       "import_nothing": "There are no new contacts to add.",
       "import_errors": "{{count}} lines with errors, which are not added:",
       "import_errors_one": "1 line with an error, which is not added:",
       "import_error_line": "Line {{line}}: {{reason}}",
-      "import_reason_name": "the name is missing",
       "import_reason_phone": "the phone number is not valid",
       "import_more_errors": "and {{count}} more",
       "import_duplicates": "{{count}} were already in the address book or are repeated in the file.",
@@ -1491,7 +1485,8 @@
       "errors": {
         "name_taken": "There is already an address book with this name.",
         "phone_invalid": "This phone number is not valid: use digits, with a + in front if it has a prefix.",
-        "phone_taken": "That phone number is already in this address book."
+        "phone_taken": "That phone number is already in this address book.",
+        "contact_empty": "Fill in at least one detail of the contact."
       }
     },
     "horarios": {
@@ -1514,7 +1509,7 @@
       "description_placeholder": "E.g. Why a customer got in touch",
       "create_submit": "Create typification",
       "edit_breadcrumb": "Edit typification",
-      "search_placeholder": "Search typifications by name or description...",
+      "search_placeholder": "Search typifications…",
       "no_results_query": "No typifications match “{{query}}”.",
       "empty_title": "No typifications yet",
       "empty_body": "Create the first one, or import them with the template.",
@@ -1541,10 +1536,7 @@
       },
       "import_title": "Import typifications",
       "import_help": "One line per tree path, as in the template: name, description and up to three levels. Lines with the same name are the same typification: its description goes on the first one. Up to {{max}} typifications per file.",
-      "import_template": "Download template",
       "import_template_file": "typifications-template",
-      "import_choose": "Choose file",
-      "import_choose_other": "Choose another file",
       "import_create": "{{count}} typifications will be created",
       "import_create_one": "1 typification will be created",
       "import_nothing": "There are no new typifications to create.",
@@ -1630,7 +1622,8 @@
       "in_use": "Used by {{count}} groups: {{groups}}. If you delete it, they stop classifying until you choose another one.",
       "in_use_bulk_one": "Used by the group {{groups}}. If you delete them, that group stops classifying until you choose another one.",
       "in_use_bulk": "Used by {{count}} groups: {{groups}}. If you delete them, they stop classifying until you choose another one.",
-      "and_more": "{{count}} more"
+      "and_more": "{{count}} more",
+      "add_subcategory": "Add subcategory"
     },
     "variables": {
       "title": "Variables",
@@ -1734,7 +1727,7 @@
   "users": {
     "page_title": "Users",
     "create_button": "New user",
-    "search_placeholder": "Search user by name, email, identifier...",
+    "search_placeholder": "Search users…",
     "no_results_query": "No users match “{{query}}”.",
     "entity_singular": "user",
     "table": {
@@ -1887,7 +1880,7 @@
       "duplicate_subtitle": "Copies the agents, channels and settings of «{{source}}». Not the outbound phone.",
       "copy_name": "{{name}} (copy)"
     },
-    "search_placeholder": "Search group by name, ID, phone, priority or strategy...",
+    "search_placeholder": "Search groups…",
     "no_results_query": "No groups match “{{query}}”.",
     "entity_singular": "group",
     "table": {
@@ -1945,7 +1938,7 @@
         "filter_status_count": "{{count}} filters",
         "filter_status_count_one": "1 filter",
         "filter_status_clear": "Clear filters",
-        "query_placeholder": "Search by name or email…",
+        "query_placeholder": "Search agents…",
         "empty_title": "No assigned agents",
         "empty": "Pick them in \"Add agents\", top right.",
         "no_results": "No agents match the filter.",
@@ -2237,7 +2230,7 @@
   "agents": {
     "page_title": "Agents",
     "create_button": "New agent",
-    "search_placeholder": "Search agent by name, ID, extension, email or phone...",
+    "search_placeholder": "Search agents…",
     "no_results_query": "No agents match “{{query}}”.",
     "entity_singular": "agent",
     "table": {
@@ -2397,7 +2390,7 @@
         "active_aria": "Enabled in {{name}}",
         "remove_aria": "Remove agent from {{name}}",
         "add_placeholder": "Add group…",
-        "filter_placeholder": "Search group…",
+        "filter_placeholder": "Search groups…",
         "no_results": "No group matches the filter.",
         "channel_not_offered": "This group does not offer the channel",
         "filter_label": "Filter by assignment",

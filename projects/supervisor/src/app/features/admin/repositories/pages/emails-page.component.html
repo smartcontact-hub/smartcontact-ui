@@ -2,16 +2,16 @@
   <div class="page__inner">
     <h1 class="page__heading sc-text-title-semibold">{{ 'repositories.emails.title' | translate }}</h1>
 
-    <!-- Cuentas de correo y triggers, cada uno con su «Crear» (la pestaña Emails de Voice). -->
+    <!-- Cuentas de correo y triggers, cada uno con su «+ Nueva cuenta de correo» y «+ Nuevo trigger» (la pestaña Emails de Voice). -->
     <sc-section-card titleKey="repositories.emails.mailboxes" surface="card" icon="mail">
       <section class="sub-section">
       <div class="emails__bar">
-        <sc-button size="sm" variant="secondary" appearance="outlined" icon="add" [label]="'repositories.emails.create' | translate" (clicked)="crear('cuentas')" />
+        <sc-button size="sm" variant="secondary" appearance="outlined" icon="add" [label]="'repositories.emails.mailbox.create_title' | translate" (clicked)="crear('cuentas')" />
       </div>
       <div class="table-card">
         <sc-datatable variant="list" dataKey="id" [value]="mailboxes.items()" [columns]="mailboxColumns()">
           <div scTableEmpty>
-            <sc-empty-state icon="mail" titleKey="repositories.emails.mailboxes_empty" ctaKey="repositories.emails.create" (cta)="crear('cuentas')" />
+            <sc-empty-state icon="mail" titleKey="repositories.emails.mailboxes_empty" ctaKey="repositories.emails.mailbox.create_title" (cta)="crear('cuentas')" />
           </div>
         </sc-datatable>
       </div>
@@ -21,12 +21,12 @@
     <sc-section-card titleKey="repositories.emails.triggers" surface="card" icon="bolt">
       <section class="sub-section">
       <div class="emails__bar">
-        <sc-button size="sm" variant="secondary" appearance="outlined" icon="add" [label]="'repositories.emails.create' | translate" (clicked)="crear('triggers')" />
+        <sc-button size="sm" variant="secondary" appearance="outlined" icon="add" [label]="'repositories.emails.trigger.create_title' | translate" (clicked)="crear('triggers')" />
       </div>
       <div class="table-card">
         <sc-datatable variant="list" dataKey="id" [value]="triggers.items()" [columns]="triggerColumns()">
           <div scTableEmpty>
-            <sc-empty-state icon="bolt" titleKey="repositories.emails.triggers_empty" ctaKey="repositories.emails.create" (cta)="crear('triggers')" />
+            <sc-empty-state icon="bolt" titleKey="repositories.emails.triggers_empty" ctaKey="repositories.emails.trigger.create_title" (cta)="crear('triggers')" />
           </div>
         </sc-datatable>
       </div>

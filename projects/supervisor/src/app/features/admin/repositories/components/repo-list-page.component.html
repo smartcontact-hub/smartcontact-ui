@@ -9,7 +9,7 @@
   >
     <sc-button class="top-bar__cta" type="button" variant="primary" (clicked)="onCreateClick()">
       <sc-icon [name]="plusIcon" size="inherit" />
-      <span>{{ 'common.create' | translate }}</span>
+      <span>{{ createLabelKey() | translate: { entity: entitySingular() } }}</span>
     </sc-button>
 
     @if (creating()) {
@@ -68,7 +68,7 @@
         icon="inventory_2"
         titleKey="repositories.no_results.empty"
         [params]="{ entity: entityPlural() }"
-        ctaKey="common.create"
+        [ctaKey]="emptyCtaKey()"
         (cta)="onCreateClick()"
       />
     }
@@ -97,8 +97,8 @@
     [class.sc-text-body-regular]="!isEmphasis(col.field)"
   >
     @if (groupsFor(item, col.field); as grupos) {
-      <!-- «Grupos»: el MISMO desplegable que Tipificaciones y Agentes, con la cifra y, al pasar, cuáles. -->
-      <sc-group-popover [groups]="grupos" [countAriaLabel]="groupsAria(grupos.length)" />
+      <!-- «Grupos»: la MISMA celda que Tipificaciones y Agentes: «—» sin ninguno, el nombre si es uno, y con varios la cifra y, al pasar, cuáles. -->
+      <sc-group-popover display="adaptive" [groups]="grupos" [countAriaLabel]="groupsAria(grupos.length)" />
     } @else if (getStatusEntry(item, col.field); as status) {
       <!-- Estado con el `tag` del DS y su severidad (DD-76): Figma dibuja así el estado
            de Agentes. El tono lo declara cada instancia en su `statusMap`. -->

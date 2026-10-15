@@ -16,6 +16,8 @@ import { NgTemplateOutlet } from '@angular/common';
 // `FormsModule` sigue haciendo falta: la plantilla usa `[ngModel]` como puente
 // INTERNO hacia `<p-multiselect>` (no es el CVA exterior, que se retiró).
 import { FormsModule } from '@angular/forms';
+import { ChipModule } from 'primeng/chip';
+import { TimesCircleIcon } from 'primeng/icons/timescircle';
 import { MultiSelect, MultiSelectModule } from 'primeng/multiselect';
 import type { MultiSelectPassThroughOptions } from 'primeng/types/multiselect';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -42,6 +44,11 @@ type ScMultiSelectPassThrough = MultiSelectPassThroughOptions & {
 /** @deprecated Usa `ScFieldSize`. Alias conservado por compatibilidad de imports. */
 export type ScMultiSelectSize = ScFieldSize;
 export type ScMultiSelectDisplay = 'chip' | 'comma';
+/**
+ * Con `display="chip"`, qué pasa al pasar de `maxSelectedLabels`. `count` (el de PrimeNG): las etiquetas se cambian por
+ * «N seleccionados». `more`: se quedan las primeras y otra dice cuántas faltan («+2 más»).
+ */
+export type ScMultiSelectChipOverflow = 'count' | 'more';
 
 /**
  * Smart Contact multi-select. Wraps PrimeNG `<p-multiselect>` with the
@@ -59,7 +66,17 @@ export type ScMultiSelectDisplay = 'chip' | 'comma';
 @Component({
   selector: 'sc-multiselect',
   standalone: true,
-  imports: [MultiSelectModule, FormsModule, NgTemplateOutlet, ScFieldLabelComponent, ScFieldMsgComponent, ScIconComponent, TranslateModule],
+  imports: [
+    ChipModule,
+    MultiSelectModule,
+    FormsModule,
+    NgTemplateOutlet,
+    ScFieldLabelComponent,
+    ScFieldMsgComponent,
+    ScIconComponent,
+    TimesCircleIcon,
+    TranslateModule,
+  ],
   templateUrl: './sc-multiselect.component.html',
   styleUrl: './sc-multiselect.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -151,6 +168,11 @@ export class ScMultiSelectComponent {
   readonly selectionLimit = input<number>();
   /** When `display='comma'`, fold to "N items selected" after this many. */
   readonly maxSelectedLabels = input<number>(3);
+  /**
+   * Con `display="chip"`, qué se ve al pasar de `maxSelectedLabels` (`ScMultiSelectChipOverflow`). Con `more`, lo elegido
+   * se sigue leyendo sin abrir la lista (revisión de producto del 2026-10-15, los grupos de una plantilla).
+   */
+  readonly chipOverflow = input<ScMultiSelectChipOverflow>('count');
   /** Lo que dice el campo plegado con varias marcadas: «{0} seleccionados» en el idioma de la app
    *  (`sc.select.selected`), salvo que se pase. */
   readonly selectedItemsLabel = input<string>();
@@ -229,6 +251,22 @@ export class ScMultiSelectComponent {
   protected readonly hasPrimitiveOptions = this.optionState.hasPrimitiveOptions;
   protected readonly resolvedOptionLabel = this.optionState.resolvedOptionLabel;
   protected readonly resolvedOptionValue = this.optionState.resolvedOptionValue;
+
+  /** Etiquetas con «+N más»: las corta la plantilla `#selecteditems`, y a PrimeNG no se le pasa tope (si no, cambiaría
+   *  las etiquetas por «N seleccionados» y el campo dejaría de medir como un campo con etiquetas). */
+  protected readonly moreChips = computed(() => this.display() === 'chip' && this.chipOverflow() === 'more');
+  protected readonly controlMaxSelectedLabels = computed(() => (this.moreChips() ? null : this.maxSelectedLabels()));
+
+  /** El texto y el valor de una opción elegida, para pintar su etiqueta y quitarla. */
+  protected chipLabel(option: unknown): string {
+    const key = this.resolvedOptionLabel();
+    return String(key && option && typeof option === 'object' ? (option as Record<string, unknown>)[key] : option);
+  }
+
+  protected chipValue(option: unknown): unknown {
+    const key = this.resolvedOptionValue();
+    return key && option && typeof option === 'object' ? (option as Record<string, unknown>)[key] : option;
+  }
 
   protected onModelChange(v: unknown[]): void {
     this.value.set(v ?? []);

@@ -14,6 +14,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import type { MenuItem } from 'primeng/api';
 import { MenuModule } from 'primeng/menu';
 import {
+  type ColumnDef,
   type ScColumnCellContext,
   type ScDatatableRowEvent,
   type ScDatatableRowKeyEvent,
@@ -25,12 +26,19 @@ import {
 } from '@smartcontact-hub/components';
 
 import { injectLangChange } from '@core/utils/lang-change';
+import { ColumnToggleComponent, normalizePrefs } from '@shared/components';
 
 import { contactoCoincide } from '../../state/agenda-contacts.core.mjs';
 import type { AgendaContact } from '../../state/agendas.store';
 
 /** El campo de la columna del menú de fila: no es un dato del contacto. */
 const ACCIONES = '__acciones';
+
+/** Las columnas de partida, en su orden: las cinco de siempre. Las otras 29 se eligen en «Columnas». */
+const COLUMNAS_DE_PARTIDA = ['name', 'surname', 'company', 'phone', 'emailWork'];
+
+/** Dónde se recuerda qué columnas se ven: una para todas las agendas, como cada lista guarda la suya. */
+const CLAVE_DE_COLUMNAS = 'sc-agenda-contacts-columns';
 
 let agendaContactMenuIdCounter = 0;
 
@@ -49,6 +57,7 @@ let agendaContactMenuIdCounter = 0;
   selector: 'sc-agenda-contacts-table',
   imports: [
     ButtonComponent,
+    ColumnToggleComponent,
     DatatableComponent,
     EmptyStateComponent,
     MenuModule,
@@ -64,6 +73,8 @@ export class AgendaContactsTableComponent {
   private readonly lang = injectLangChange();
 
   readonly contacts = input.required<readonly AgendaContact[]>();
+  /** Los 34 campos de un contacto con el nombre que tienen en esta agenda (los personalizados, con su etiqueta). */
+  readonly fields = input.required<readonly { readonly key: string; readonly label: string }[]>();
   /** «Añadir contacto», desde la barra o desde el vacío. */
   readonly add = output<void>();
   /** «Importar»: el editor abre su diálogo (DD-166). */
@@ -89,17 +100,90 @@ export class AgendaContactsTableComponent {
       !antes || ahora.query !== antes.source.query || ahora.total > antes.source.total ? 0 : antes.value,
   });
 
+  /* ── Columnas: las cinco de siempre y las 34 a elegir (revisión de producto del 2026-10-15) ────────────────────── */
+
+  /** Las de partida primero, en su orden, y luego las demás en el del formulario. Nombre es la fija. */
+  private readonly choices = computed<readonly ColumnDef[]>(() => {
+    const fields = this.fields();
+    const enOrden = [
+      ...COLUMNAS_DE_PARTIDA.map((key) => fields.find((f) => f.key === key)).filter((f) => !!f),
+      ...fields.filter((f) => !COLUMNAS_DE_PARTIDA.includes(f.key)),
+    ];
+    return enOrden.map((f) => ({
+      key: f.key,
+      label: f.label,
+      locked: f.key === 'name',
+      defaultVisible: COLUMNAS_DE_PARTIDA.includes(f.key),
+    }));
+  });
+
+  private readonly stored = signal<unknown>(this.leerColumnas());
+  protected readonly prefs = computed(() => normalizePrefs(this.choices(), this.stored()));
+
+  protected readonly toggleOptions = computed(() => {
+    const choices = this.choices();
+    return this.prefs().order.map((key) => {
+      const c = choices.find((x) => x.key === key)!;
+      return { key, label: c.label, locked: !!c.locked };
+    });
+  });
+
+  /** Lo que pinta la tabla, en el orden elegido; el «⋮», siempre al final. */
+  protected readonly visibleColumns = computed(() => [...this.prefs().visible, ACCIONES]);
+
+  /** Con muchas columnas, la tabla se desplaza de lado dentro de su tarjeta en vez de estrujarlas (DD-102): unas 10rem
+   *  por columna y el «⋮». */
+  protected readonly tableMinWidth = computed(() => `${this.prefs().visible.length * 10 + 3.5}rem`);
+
+  private leerColumnas(): unknown {
+    try {
+      const raw = localStorage.getItem(CLAVE_DE_COLUMNAS);
+      return raw ? JSON.parse(raw) : undefined;
+    } catch {
+      /* Sin almacenamiento (ventana privada, bloqueado): la tabla sale con sus columnas de partida. */
+      return undefined;
+    }
+  }
+
+  private guardarColumnas(order: readonly string[], visible: readonly string[]): void {
+    const next = normalizePrefs(this.choices(), { order, visible });
+    this.stored.set(next);
+    try {
+      localStorage.setItem(CLAVE_DE_COLUMNAS, JSON.stringify({ order: next.order, visible: next.visible }));
+    } catch {
+      /* Sin almacenamiento: el cambio vale mientras dure la página. */
+    }
+  }
+
+  protected onVisibleChange(keys: readonly string[]): void {
+    const order = this.prefs().order;
+    this.guardarColumnas(order, order.filter((k) => keys.includes(k) || k === 'name'));
+  }
+
+  protected onReorder(from: number, to: number): void {
+    const order = [...this.prefs().order];
+    const [movida] = order.splice(from, 1);
+    order.splice(to, 0, movida!);
+    this.guardarColumnas(order, order.filter((k) => this.prefs().visible.includes(k)));
+  }
+
+  protected onResetColumns(): void {
+    const partida = normalizePrefs(this.choices(), undefined);
+    this.guardarColumnas(partida.order, partida.visible);
+  }
+
   private readonly nameTpl = viewChild<TemplateRef<ScColumnCellContext<AgendaContact>>>('nameTpl');
   private readonly actionsTpl = viewChild<TemplateRef<ScColumnCellContext<AgendaContact>>>('actionsTpl');
 
   protected readonly columns = computed<readonly ScColumnDef<AgendaContact>[]>(() => {
     this.lang();
     return [
-      { field: 'name', header: this.translate.instant('repositories.columns.name'), rowHeader: true, cellTemplate: this.nameTpl() },
-      { field: 'surname', header: this.translate.instant('repositories.agendas.fields.surname') },
-      { field: 'company', header: this.translate.instant('repositories.agendas.fields.company') },
-      { field: 'phone', header: this.translate.instant('repositories.agendas.phone') },
-      { field: 'emailWork', header: this.translate.instant('repositories.agendas.fields.emailWork') },
+      ...this.fields().map(
+        (f): ScColumnDef<AgendaContact> =>
+          f.key === 'name'
+            ? { field: 'name', header: f.label, rowHeader: true, cellTemplate: this.nameTpl() }
+            : { field: f.key, header: f.label },
+      ),
       {
         field: ACCIONES,
         header: '',

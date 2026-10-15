@@ -3,23 +3,23 @@ import { expect, test, type Page } from '@playwright/test';
 import { goto } from './helpers';
 
 /**
- * LOS 34 CAMPOS DE UN CONTACTO, COMO EN VOICE (revisión de producto de Agendas). Nombre y teléfono son los de siempre y
- * los únicos obligatorios: coinciden con los del puesto de agente. El resto es opcional y va agrupado en secciones;
- * los cinco personalizados llevan la etiqueta que cada agenda les pone («Personalizado 1» a «Personalizado 5» si no).
+ * LOS 34 CAMPOS DE UN CONTACTO, COMO EN VOICE (revisión de producto de Agendas), agrupados en secciones; los cinco
+ * personalizados llevan la etiqueta que cada agenda les pone («Personalizado 1» a «Personalizado 5» si no). Desde la
+ * revisión de producto del 2026-10-15 ninguno es obligatorio, pero un contacto no se guarda sin al menos un dato.
  */
 test.use({ storageState: { cookies: [], origins: [] } });
 
 const dialogo = (page: Page, nombre: string) => page.getByRole('dialog', { name: nombre });
 
-test('añadir un contacto: 34 campos en secciones, y solo nombre y teléfono obligatorios', async ({ page }) => {
+test('añadir un contacto: 34 campos en secciones, sin «(opcional)» en cada uno', async ({ page }) => {
   await goto(page, 'admin/agendas/editar/1');
-  await page.getByRole('button', { name: 'Añadir contacto' }).click();
-  const d = dialogo(page, 'Añadir contacto');
+  await page.getByRole('button', { name: 'Nuevo contacto' }).click();
+  const d = dialogo(page, 'Nuevo contacto');
   await expect(d.locator('.panel__field')).toHaveCount(34);
   for (const seccion of ['Datos del contacto', 'Teléfonos', 'Emails', 'Dirección de trabajo', 'Dirección personal', 'Redes y chat', 'Otros', 'Campos personalizados']) {
     await expect(d.getByRole('heading', { name: seccion })).toBeVisible();
   }
-  // Sin «(opcional)» en cada uno de los 32: sería ruido.
+  // Sin «(opcional)» en cada uno de los 34: sería ruido.
   await expect(d.getByText('(opcional)')).toHaveCount(0);
 
   await d.getByLabel('Nombre', { exact: true }).fill('Ana');
@@ -39,11 +39,27 @@ test('añadir un contacto: 34 campos en secciones, y solo nombre y teléfono obl
   await expect(e.getByLabel('Email trabajo')).toHaveValue('ana@acme.test');
 });
 
+test('ningún campo es obligatorio, pero un contacto no se guarda sin ningún dato: solo espacios no vale', async ({ page }) => {
+  await goto(page, 'admin/agendas/editar/1');
+  await page.getByRole('button', { name: 'Nuevo contacto' }).click();
+  const d = dialogo(page, 'Nuevo contacto');
+  await d.getByRole('button', { name: 'Crear' }).click();
+  await expect(d).toContainText('Escribe al menos un dato del contacto.');
+  await d.getByLabel('Empresa').fill('   ');
+  await d.getByRole('button', { name: 'Crear' }).click();
+  await expect(d).toContainText('Escribe al menos un dato del contacto.');
+  // Sin nombre ni teléfono, con un solo dato, se guarda.
+  await d.getByLabel('Empresa').fill('Solo empresa SL');
+  await d.getByRole('button', { name: 'Crear' }).click();
+  await expect(d).toBeHidden();
+  await expect(page.locator('sc-agenda-contacts-table .p-datatable-tbody > tr').first()).toContainText('Solo empresa SL');
+});
+
 test('cada agenda pone su etiqueta a los campos personalizados, y sale en el formulario y se guarda', async ({ page }) => {
   await goto(page, 'admin/agendas/editar/1');
   await page.locator('#agenda-custom-1').fill('Cliente VIP');
-  await page.getByRole('button', { name: 'Añadir contacto' }).click();
-  const d = dialogo(page, 'Añadir contacto');
+  await page.getByRole('button', { name: 'Nuevo contacto' }).click();
+  const d = dialogo(page, 'Nuevo contacto');
   await expect(d.getByLabel('Cliente VIP')).toBeVisible();
   await expect(d.getByLabel('Personalizado 1')).toHaveCount(0);
   await expect(d.getByLabel('Personalizado 2')).toBeVisible();

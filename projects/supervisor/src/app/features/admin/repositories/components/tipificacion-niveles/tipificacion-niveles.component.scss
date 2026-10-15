@@ -66,6 +66,13 @@
 }
 
 
+/* «Añadir subcategoría», bajo la última hija, en la columna del nivel siguiente: a su inicio, a la altura del texto de
+ * los campos de encima. */
+.rama__anadir {
+  grid-column: 1;
+  justify-self: start;
+}
+
 /* Una opción: el tirador, su nombre y la papelera, en una línea. */
 .opcion {
   grid-column: 1;
