@@ -403,7 +403,7 @@
             <ng-container *ngTemplateOutlet="transferField; context: { channel: 'phone', queue: form().phoneQueue }" />
             <div class="field">
               <label class="field__label sc-text-caption-semibold" for="group-wrap-up" [id]="'group-wrap-up-label'">{{ 'groups.form.advanced.wrap_up' | translate }}</label>
-              <sc-select inputId="group-wrap-up" [value]="form().advanced.wrapUpSec" [helperText]="'groups.form.advanced.wrap_up_hint' | translate" (valueChange)="setAdvancedNumber('wrapUpSec', $event)" optionValue="value" [options]="durationOptions(form().advanced.wrapUpSec, false)" [ariaLabelledBy]="'group-wrap-up-label'" />
+              <sc-select inputId="group-wrap-up" [value]="form().advanced.wrapUpSec" [helperText]="'groups.form.advanced.wrap_up_hint' | translate" (valueChange)="setAdvancedNumber('wrapUpSec', $event)" optionValue="value" [options]="durationOptions(form().advanced.wrapUpSec)" [ariaLabelledBy]="'group-wrap-up-label'" />
             </div>
           </div>
         </sc-slot>
@@ -869,11 +869,11 @@
   <div class="grid grid--2">
   <div class="field">
     <label class="field__label sc-text-caption-semibold" [for]="'group-' + channel + '-max-wait'" [id]="'group-' + channel + '-max-wait' + '-label'">{{ 'groups.form.advanced.max_queue_wait' | translate }}</label>
-    <sc-select [inputId]="'group-' + channel + '-max-wait'" [value]="queue.maxQueueWaitSec" [helperText]="'groups.form.advanced.max_queue_wait_hint' | translate" (valueChange)="setQueueNumber(channel, 'maxQueueWaitSec', $event)" optionValue="value" [options]="durationOptions(queue.maxQueueWaitSec, false)" [ariaLabelledBy]="'group-' + channel + '-max-wait' + '-label'" />
+    <sc-select [inputId]="'group-' + channel + '-max-wait'" [value]="queue.maxQueueWaitSec" [helperText]="'groups.form.advanced.max_queue_wait_hint' | translate" (valueChange)="setQueueNumber(channel, 'maxQueueWaitSec', $event)" optionValue="value" [options]="durationOptions(queue.maxQueueWaitSec)" [ariaLabelledBy]="'group-' + channel + '-max-wait' + '-label'" />
   </div>
   <div class="field">
     <label class="field__label sc-text-caption-semibold" [for]="'group-' + channel + '-service-level'" [id]="'group-' + channel + '-service-level' + '-label'">{{ 'groups.form.advanced.service_level' | translate }}</label>
-    <sc-select [inputId]="'group-' + channel + '-service-level'" [value]="queue.serviceLevelSec" [helperText]="'groups.form.advanced.service_level_hint' | translate" (valueChange)="setQueueNumber(channel, 'serviceLevelSec', $event)" optionValue="value" [options]="durationOptions(queue.serviceLevelSec, false)" [ariaLabelledBy]="'group-' + channel + '-service-level' + '-label'" />
+    <sc-select [inputId]="'group-' + channel + '-service-level'" [value]="queue.serviceLevelSec" [helperText]="'groups.form.advanced.service_level_hint' | translate" (valueChange)="setQueueNumber(channel, 'serviceLevelSec', $event)" optionValue="value" [options]="durationOptions(queue.serviceLevelSec)" [ariaLabelledBy]="'group-' + channel + '-service-level' + '-label'" />
   </div>
   </div>
   <!-- Dos opciones, ni una más: sin «Sin límite» (visión de producto de grupos, 2026-09-25). En tarjetas de radio, el
@@ -903,7 +903,7 @@
 <ng-template #transferField let-channel="channel" let-queue="queue">
   <div class="field">
     <label class="field__label sc-text-caption-semibold" [for]="'group-' + channel + '-transfer'" [id]="'group-' + channel + '-transfer' + '-label'">{{ 'groups.form.advanced.transfer' | translate }}</label>
-    <sc-select [inputId]="'group-' + channel + '-transfer'" [value]="queue.transferSec" [helperText]="'groups.form.advanced.transfer_hint' | translate" (valueChange)="setQueueNumber(channel, 'transferSec', $event)" optionValue="value" [options]="durationOptions(queue.transferSec, false)" [ariaLabelledBy]="'group-' + channel + '-transfer' + '-label'" />
+    <sc-select [inputId]="'group-' + channel + '-transfer'" [value]="queue.transferSec" [helperText]="'groups.form.advanced.transfer_hint' | translate" (valueChange)="setQueueNumber(channel, 'transferSec', $event)" optionValue="value" [options]="durationOptions(queue.transferSec)" [ariaLabelledBy]="'group-' + channel + '-transfer' + '-label'" />
   </div>
 </ng-template>
 

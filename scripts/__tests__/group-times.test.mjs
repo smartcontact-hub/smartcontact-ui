@@ -11,15 +11,14 @@ new Function('module', 'exports', js)(mod, mod.exports);
 const { groupDurationOptions, validQueueSize, resolveGroup } = mod.exports;
 
 test('los tiempos fijos guardan segundos y las etiquetas respetan el idioma', () => {
-  assert.deepEqual(groupDurationOptions(10, false, 'es').map(x => x.value), [5, 10, 15, 20, 25, 30, 60, 90, 120, 180, 240, 300, 600, 900, 1800]);
-  assert.equal(groupDurationOptions(90, false, 'es').find(x => x.value === 90).label, '1,5 min');
-  assert.equal(groupDurationOptions(90, false, 'en').find(x => x.value === 90).label, '1.5 min');
-  assert.deepEqual(groupDurationOptions(5, true, 'es').map(x => x.value), [5, 10, 15, 30, 60]);
+  assert.deepEqual(groupDurationOptions(10, 'es').map(x => x.value), [5, 10, 15, 20, 25, 30, 60, 90, 120, 180, 240, 300, 600, 900, 1800]);
+  assert.equal(groupDurationOptions(90, 'es').find(x => x.value === 90).label, '1,5 min');
+  assert.equal(groupDurationOptions(90, 'en').find(x => x.value === 90).label, '1.5 min');
 });
 
 test('los valores anteriores fuera del catálogo se conservan sin duplicarlos ni tocar el modelo', () => {
   for (const current of [0, 11, 33, 99, 240]) {
-    const options = groupDurationOptions(current, false, 'es');
+    const options = groupDurationOptions(current, 'es');
     assert.equal(options.filter(x => x.value === current).length, 1);
   }
   const before = { id: 11, channels: ['chat'], advanced: { transferSec: 11 }, chat: { inactivityMinutes: 17, attendanceScheduleIds: { chat: 2, whatsapp: 3 } }, schedules: [4] };

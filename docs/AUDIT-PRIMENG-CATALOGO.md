@@ -490,6 +490,9 @@ Leídos en el código; sin medir en el navegador.
    **Lo que quedaba, decidido el 2026-10-16**: el reproductor de varias grabaciones lleva `p-slider` en el tramo activo,
    con el aspecto del tema (el mismo que el de una grabación), y los demás tramos son su misma pista sin mando: de tramo
    se cambia en la fila de etiquetas, como antes. Prueba en `e2e/supervisor/barrido-teclado.spec.ts`. El 17 se queda
-   como está (ver 7.5). Quedan 6, 12 y 23, que esperan a desarrollo.
+   como está (ver 7.5). El 23, hecho el mismo día: lo resolvía el repo. DD-152 quiere el mismo control en la ficha y
+   en Contact Center, y DD-184 §3 pasó la ficha a minutos escritos tras revisarla contra Voice; Contact Center se había
+   quedado con el desplegable de 5 a 60. Ahora los dos escriben los minutos (`sc-inputnumber`, desde 1), y el catálogo
+   de minutos sale del código. Prueba en `e2e/supervisor/grupo-tiempos-horarios.spec.ts`. Quedan 6 y 12.
 6. **La sección 6 en sc-docs**: hecho el 2026-10-14, la página PrimeNG. Si cambias la sección 6, `npm run
    primeng-catalog:gen` rehace su artefacto (el gate se pone rojo hasta entonces).

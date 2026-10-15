@@ -186,7 +186,7 @@ test('«Desbordar sesión» sale de la ficha y de Contact Center, y lo que tení
 test('«Caducar sesión» nace con 5 minutos en Contact Center', async ({ page }) => {
   await goto(page, 'config/aed/grupos');
   await page.locator('#grupos-chat-inactivity-on').click();
-  await expect(page.locator('#grupos-chat-inactivity')).toHaveText('5 min');
+  await expect(page.locator('#grupos-chat-inactivity')).toHaveValue(/^5/);
 });
 
 test('un grupo nuevo caduca la sesión de chat a los 5 minutos si se enciende', async ({ page }) => {
