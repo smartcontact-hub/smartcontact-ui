@@ -799,9 +799,9 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
     () => `<script src="https://chat.smart-contact.com/widget.js" data-group="${this.editingId() ?? 'nuevo'}" async></script>`,
   );
 
-  protected durationOptions(value: number, minutes = false) {
+  protected durationOptions(value: number) {
     this.lang();
-    return groupDurationOptions(value, minutes, this.translate.currentLang || 'es');
+    return groupDurationOptions(value, this.translate.currentLang || 'es');
   }
 
   protected queueSizeError(queue: ChannelQueue): string | undefined {

@@ -79,9 +79,9 @@ export class AedGruposPageComponent implements DirtyAware {
   protected readonly priorityKeys: Readonly<Record<string, string>> = PRIORITY_LABEL_KEYS;
   protected readonly voiceOptions = VOICE_OPTIONS;
 
-  protected durationOptions(value: number, minutes = false) {
+  protected durationOptions(value: number) {
     this.lang();
-    return groupDurationOptions(value, minutes, this.translate.currentLang || 'es');
+    return groupDurationOptions(value, this.translate.currentLang || 'es');
   }
 
   protected queueSizeError(queue: ChannelQueue): string | undefined {

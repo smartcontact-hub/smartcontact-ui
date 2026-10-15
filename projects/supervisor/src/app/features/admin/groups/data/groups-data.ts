@@ -321,19 +321,21 @@ export interface ChannelQueue {
   readonly transferSec: number;
 }
 
-/** Catálogos de D3; los valores guardados fuera de ellos siguen siendo legibles, sin migrarlos. */
+/**
+ * Catálogo de D3; los valores guardados fuera de él siguen siendo legibles, sin migrarlos. La inactividad de chat ya no
+ * tiene catálogo: sus minutos se escriben, en la ficha y en Contact Center (DD-184 §3).
+ */
 export const GROUP_TIME_SECONDS = [5, 10, 15, 20, 25, 30, 60, 90, 120, 180, 240, 300, 600, 900, 1800] as const;
-export const CHAT_INACTIVITY_MINUTES = [5, 10, 15, 30, 60] as const;
 
 /** Los números de WhatsApp de la cuenta, de los que se elige el del grupo. */
 export const WHATSAPP_NUMBERS: readonly string[] = ['+34 900 100 200', '+34 900 100 201'];
 
-export function groupDurationOptions(current: number, minutes: boolean, locale: string): readonly { label: string; value: number }[] {
-  const catalog: readonly number[] = minutes ? CHAT_INACTIVITY_MINUTES : GROUP_TIME_SECONDS;
+export function groupDurationOptions(current: number, locale: string): readonly { label: string; value: number }[] {
+  const catalog: readonly number[] = GROUP_TIME_SECONDS;
   const values = catalog.includes(current) ? catalog : [...catalog, current];
   const format = new Intl.NumberFormat(locale, { maximumFractionDigits: 10 });
-  return values.map(value => ({ value, label: minutes ? `${format.format(value)} min`
-    : value >= 60 && value % 30 === 0 ? `${format.format(value / 60)} min` : `${format.format(value)} s` }));
+  return values.map(value => ({ value, label: value >= 60 && value % 30 === 0
+    ? `${format.format(value / 60)} min` : `${format.format(value)} s` }));
 }
 
 /** Las colas cuentan conversaciones enteras; solo Variable limita la cifra a diez. */
