@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  inject,
   input,
   model,
   output,
@@ -17,6 +18,8 @@ import { ScButtonComponent } from '../button/sc-button.component';
 import { ScFieldLabelComponent } from '../field/sc-field-label.component';
 import { ScFieldMsgComponent } from '../field/sc-field-msg.component';
 import { createScFieldState, createScPanelSizing, type ScFieldSize } from '../field/sc-field';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { SC_DATEPICKER_TRANSLATIONS } from './i18n/sc-datepicker.translations';
 
 /** @deprecated Usa `ScFieldSize`. Alias conservado por compatibilidad de imports. */
 export type ScDatepickerSize = ScFieldSize;
@@ -53,7 +56,7 @@ export interface ScDatepickerPreset {
 @Component({
   selector: 'sc-datepicker',
   standalone: true,
-  imports: [DatePickerModule, FormsModule, ScButtonComponent, ScFieldLabelComponent, ScFieldMsgComponent],
+  imports: [DatePickerModule, FormsModule, ScButtonComponent, ScFieldLabelComponent, ScFieldMsgComponent, TranslateModule],
   templateUrl: './sc-datepicker.component.html',
   styleUrl: './sc-datepicker.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -68,6 +71,14 @@ export interface ScDatepickerPreset {
   },
 })
 export class ScDatepickerComponent {
+  constructor() {
+    // Copy fijo colocado: registra solo el diccionario del componente.
+    const translate = inject(TranslateService);
+    for (const [language, dict] of Object.entries(SC_DATEPICKER_TRANSLATIONS)) {
+      translate.setTranslation(language, dict, true);
+    }
+  }
+
   // ─── Chrome ────────────────────────────────────────────────────────
   readonly size = input<ScFieldSize>('md');
   /**
@@ -120,7 +131,7 @@ export class ScDatepickerComponent {
    */
   readonly presets = input<readonly ScDatepickerPreset[]>([]);
   /** Rótulo del botón que vacía la fecha en el pie con atajos. */
-  readonly clearLabel = input<string>('Limpiar');
+  readonly clearLabel = input<string | null>(null);
 
   // ─── Two-way value binding ─────────────────────────────────────────
   /** La fecha elegida, o `null` si no hay ninguna. Enlace de dos sentidos: `[(value)]`. */

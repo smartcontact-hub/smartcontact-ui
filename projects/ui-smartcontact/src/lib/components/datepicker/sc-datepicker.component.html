@@ -43,7 +43,7 @@
         @for (preset of presets(); track preset.label) {
           <sc-button variant="secondary" appearance="text" size="sm" [label]="preset.label" (clicked)="applyPreset(preset)" />
         }
-        <sc-button class="sc-datepicker__presets-clear" variant="secondary" appearance="text" size="sm" [label]="clearLabel()" (clicked)="clearFromBar()" />
+        <sc-button class="sc-datepicker__presets-clear" variant="secondary" appearance="text" size="sm" [label]="clearLabel() || ('sc.datepicker.clear' | translate)" (clicked)="clearFromBar()" />
       </div>
     </ng-template>
   }

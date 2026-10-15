@@ -1,10 +1,12 @@
-import { booleanAttribute, ChangeDetectionStrategy, Component, computed, effect, input, model, output } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, computed, effect, inject, input, model, output } from '@angular/core';
 import { DialogModule } from 'primeng/dialog';
 import type { DialogPassThrough } from 'primeng/types/dialog';
 
 import { ScIconComponent, SC_ICON_SIZE_LG } from '@smartcontact-hub/icons';
 
 import { ScDialogPosition } from '../../core/types/theme-component.types';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { SC_DIALOG_TRANSLATIONS } from './i18n/sc-dialog.translations';
 
 let modalIdCounter = 0;
 
@@ -60,7 +62,7 @@ let modalIdCounter = 0;
 @Component({
   selector: 'sc-dialog',
   standalone: true,
-  imports: [DialogModule, ScIconComponent],
+  imports: [DialogModule, ScIconComponent, TranslateModule],
   templateUrl: './sc-dialog.component.html',
   styleUrl: './sc-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -96,7 +98,7 @@ export class ScDialogComponent {
    */
   readonly flushBody = input(false, { transform: booleanAttribute });
   /** aria-label del botón de cierre (resuelto por el consumidor). */
-  readonly closeAriaLabel = input<string>('Cerrar');
+  readonly closeAriaLabel = input<string | null>(null);
 
   // ─── Passthrough del wrapper fino (catálogo de desarrollo) ─────────
   readonly modal = input(true, { transform: booleanAttribute });
@@ -135,6 +137,11 @@ export class ScDialogComponent {
   private triggerEl: HTMLElement | null = null;
 
   constructor() {
+    // Copy fijo colocado: registra solo el diccionario del componente.
+    const translate = inject(TranslateService);
+    for (const [language, dict] of Object.entries(SC_DIALOG_TRANSLATIONS)) {
+      translate.setTranslation(language, dict, true);
+    }
     let wasOpen = false;
     effect(() => {
       const open = this.visible();

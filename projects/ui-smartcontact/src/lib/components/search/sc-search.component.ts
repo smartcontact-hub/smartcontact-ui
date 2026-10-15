@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  inject,
   input,
   model,
   output,
@@ -15,6 +16,8 @@ import { InputTextModule } from 'primeng/inputtext';
 
 import { ScIconComponent } from '@smartcontact-hub/icons';
 import { createScFieldState, type ScFieldSize } from '../field/sc-field';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { SC_SEARCH_TRANSLATIONS } from './i18n/sc-search.translations';
 
 /** @deprecated Usa `ScFieldSize`. Alias conservado por compatibilidad de imports. */
 export type ScSearchSize = ScFieldSize;
@@ -39,7 +42,7 @@ export type ScSearchSize = ScFieldSize;
 @Component({
   selector: 'sc-search',
   standalone: true,
-  imports: [IconFieldModule, InputIconModule, InputTextModule, ScIconComponent],
+  imports: [IconFieldModule, InputIconModule, InputTextModule, ScIconComponent, TranslateModule],
   templateUrl: './sc-search.component.html',
   styleUrl: './sc-search.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -54,6 +57,14 @@ export type ScSearchSize = ScFieldSize;
   },
 })
 export class ScSearchComponent {
+  constructor() {
+    // Copy fijo colocado: registra solo el diccionario del componente.
+    const translate = inject(TranslateService);
+    for (const [language, dict] of Object.entries(SC_SEARCH_TRANSLATIONS)) {
+      translate.setTranslation(language, dict, true);
+    }
+  }
+
   // ─── Chrome inputs ─────────────────────────────────────────────────
   /**
    * Talla del campo: `sm`, `md` o `lg`. Mueve alto, tipografía y espaciado a la rampa del Kit; no
@@ -92,7 +103,7 @@ export class ScSearchComponent {
    */
   readonly shortcutHint = input<string>();
   /** Aria-label del botón clear (i18n key resuelto por el consumer). */
-  readonly clearAriaLabel = input<string>('Clear search');
+  readonly clearAriaLabel = input<string | null>(null);
 
   // ─── Two-way value binding ─────────────────────────────────────────
   /** El texto buscado. Enlace de dos sentidos: `[(value)]`. */

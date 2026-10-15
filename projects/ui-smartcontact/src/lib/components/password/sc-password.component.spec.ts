@@ -7,7 +7,8 @@
  */
 import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { describe, expect, it } from 'vitest';
+import { provideTranslateService, TranslateService } from '@ngx-translate/core';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 import { ScPasswordComponent } from './sc-password.component';
 
@@ -21,6 +22,9 @@ class Host {
   readonly ayuda = signal<string | undefined>(undefined);
   readonly valor = signal('');
 }
+
+// El componente trae su diccionario (es/en/fr/pt) y lo pinta con el idioma activo: sin uno, el nombre sería la clave.
+beforeEach(() => TestBed.configureTestingModule({ providers: [provideTranslateService({ lang: 'es' })] }));
 
 function montar(opciones: { feedback?: boolean; ayuda?: string } = {}) {
   const fixture = TestBed.createComponent(Host);
@@ -119,5 +123,16 @@ describe('sc-password · el botón de mostrar', () => {
     boton.click();
     fixture.detectChanges();
     expect(input.type).toBe('password');
+  });
+
+  it('el nombre sale en el idioma activo y cambia con él', () => {
+    const traduccion = TestBed.inject(TranslateService);
+    traduccion.use('en');
+    const { raiz, fixture } = montar({ feedback: false });
+    const boton = raiz.querySelector<HTMLButtonElement>('button.sc-password__toggle')!;
+    expect(boton.getAttribute('aria-label')).toBe('Show password');
+    traduccion.use('fr');
+    fixture.detectChanges();
+    expect(boton.getAttribute('aria-label')).toBe('Afficher le mot de passe');
   });
 });
