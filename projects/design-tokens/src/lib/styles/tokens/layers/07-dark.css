@@ -560,4 +560,10 @@
    * chevron al 0.4 da 3,36:1 en fila con hover y el texto de 12 px al 0.5, 5,19:1. */
   --sc-sidebar-bg: var(--sc-bg-surface);
   --sc-sidebar-divider: var(--sc-border-default);
+
+  /* ---------- Alias en desuso (se retiran en 2.0.0) ---------- */
+  /* La variante oscura de los alias en desuso de 05-extensions.css que tenían una distinta. */
+  --sc-shadow-focus-ring-rgb: 74 143 255;
+  --sc-dialog-divider: var(--sc-color-zinc-700);
+  --sc-toast-close: var(--sc-color-zinc-200);
 }
