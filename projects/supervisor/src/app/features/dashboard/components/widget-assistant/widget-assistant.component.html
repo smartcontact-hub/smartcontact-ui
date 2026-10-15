@@ -12,20 +12,27 @@
         <h3 id="assistant-category" class="assistant__label sc-text-body-semibold">
           {{ 'dashboard.assistant.category' | translate }}
         </h3>
+        <!-- Seis fichas en 3×2 con un radio de verdad a la vista (candidato 8 del barrido): las flechas pasan de una a
+             otra, como en cualquier grupo de radios. Son un filtro de una sola opción dentro del diálogo (cambian la
+             lista de abajo), no navegación. En un `sc-selectbutton` no caben: los rótulos se cortaban en 443 px. -->
         <div class="assistant__categories" role="radiogroup" aria-labelledby="assistant-category">
           @for (c of categories; track c) {
-            <button
-              type="button"
-              role="radio"
+            <label
               class="assistant__category sc-text-caption-regular"
               [class.assistant__category--active]="c === category()"
               [class.assistant__category--empty]="emptyCategories().has(c)"
-              [attr.aria-checked]="c === category()"
-              (click)="pickCategory(c)"
             >
+              <sc-radiobutton
+                class="assistant__category-radio"
+                name="assistant-category"
+                [inputId]="'assistant-category-' + c"
+                [value]="c"
+                [modelValue]="category()"
+                (modelValueChange)="pickCategory($any($event))"
+              />
               <sc-icon [name]="categoryIcon[c]" [size]="iconSize" aria-hidden="true" />
               {{ categoryKey(c) | translate }}
-            </button>
+            </label>
           }
         </div>
       </section>

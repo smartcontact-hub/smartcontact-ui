@@ -609,7 +609,7 @@
     },
     {
       "selector": "sc-inputtags",
-      "usedInSupervisor": 1
+      "usedInSupervisor": 2
     },
     {
       "selector": "sc-message",
@@ -645,7 +645,7 @@
     },
     {
       "selector": "sc-textarea",
-      "usedInSupervisor": 7
+      "usedInSupervisor": 8
     }
   ]
 }

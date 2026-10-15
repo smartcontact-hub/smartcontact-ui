@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, effect, HostListener, inject, signal, type OnInit, type TemplateRef, viewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { ScButtonComponent as ButtonComponent, ScCheckboxComponent as CheckboxComponent, ScInputTextComponent as InputTextComponent, ScMessageComponent, ScPasswordComponent as PasswordComponent, ScSectionCardComponent as SectionCardComponent, ScSelectComponent as SelectComponent } from '@smartcontact-hub/components';
+import { ScButtonComponent as ButtonComponent, ScCheckboxComponent as CheckboxComponent, ScInputNumberComponent as InputNumberComponent, ScInputTextComponent as InputTextComponent, ScMessageComponent, ScPasswordComponent as PasswordComponent, ScSectionCardComponent as SectionCardComponent, ScSelectComponent as SelectComponent } from '@smartcontact-hub/components';
 
 import type { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
@@ -47,6 +47,7 @@ const VACIO: MailboxDraft = {
   imports: [
     ButtonComponent,
     CheckboxComponent,
+    InputNumberComponent,
     InputTextComponent,
     PasswordComponent,
     SectionCardComponent,
@@ -147,6 +148,12 @@ export class EmailCuentaEditorPageComponent implements DirtyAware, OnInit {
 
   protected setName(name: string): void {
     this.form.update((f) => ({ ...f, name }));
+  }
+
+  /** El puerto se guarda como texto; el campo lo trata como número, y vacío si no hay uno válido. */
+  protected portOf(which: 'incoming' | 'outgoing'): number | null {
+    const port = Number(this.form()[which].port);
+    return Number.isInteger(port) && port > 0 ? port : null;
   }
 
   protected setServer(which: 'incoming' | 'outgoing', key: keyof MailServer, value: string): void {

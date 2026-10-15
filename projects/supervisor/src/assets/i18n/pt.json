@@ -2464,6 +2464,7 @@
       "extension_required": "Selecione um ramal",
       "channels_required": "Selecione pelo menos um canal",
       "email_invalid": "Insira um email válido",
+      "phone_invalid": "O telefone não é válido: use dígitos, com um + na frente se tiver prefixo.",
       "pin_invalid": "O PIN deve ter entre 3 e 6 dígitos",
       "phone_required": "Escreva o telemóvel: a extensão toca nele",
       "email_required": "Escreva o email",

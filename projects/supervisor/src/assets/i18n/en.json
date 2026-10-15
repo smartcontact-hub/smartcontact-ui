@@ -2464,6 +2464,7 @@
       "extension_required": "Select an extension",
       "channels_required": "Select at least one channel",
       "email_invalid": "Enter a valid email",
+      "phone_invalid": "This phone number is not valid: use digits, with a + in front if it has a prefix.",
       "pin_invalid": "PIN must have between 3 and 6 digits",
       "phone_required": "Enter the mobile phone: the extension rings on it",
       "email_required": "Enter the email",

@@ -48,7 +48,8 @@
             <sc-inputtext [inputId]="'mailbox-' + side + '-host'" fluid [label]="'repositories.emails.mailbox.host' | translate" [value]="form()[side === 'incoming' ? 'incoming' : 'outgoing'].host" (valueChange)="setServer(side === 'incoming' ? 'incoming' : 'outgoing', 'host', $event)" />
           </div>
           <div class="field">
-            <sc-inputtext [inputId]="'mailbox-' + side + '-port'" fluid [label]="'repositories.emails.mailbox.port' | translate" [value]="form()[side === 'incoming' ? 'incoming' : 'outgoing'].port" (valueChange)="setServer(side === 'incoming' ? 'incoming' : 'outgoing', 'port', $event)" />
+            <!-- Un número de 1 a 65535 (candidato 19 del barrido): ni letras ni puertos imposibles. -->
+            <sc-inputnumber [inputId]="'mailbox-' + side + '-port'" [label]="'repositories.emails.mailbox.port' | translate" [min]="1" [max]="65535" [value]="portOf(side === 'incoming' ? 'incoming' : 'outgoing')" (valueChange)="setServer(side === 'incoming' ? 'incoming' : 'outgoing', 'port', $event === null ? '' : '' + $event)" />
           </div>
           <div class="field">
             <sc-inputtext [inputId]="'mailbox-' + side + '-user'" fluid [label]="'repositories.emails.mailbox.user' | translate" [value]="form()[side === 'incoming' ? 'incoming' : 'outgoing'].user" (valueChange)="setServer(side === 'incoming' ? 'incoming' : 'outgoing', 'user', $event)" />
