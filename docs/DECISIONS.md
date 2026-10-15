@@ -209,6 +209,13 @@ dejó sin reescribir; la decisión se revirtió con el coste a la vista.
 4. **El `pre-push` frena** cualquier rama que cuelgue de los seis commits que introdujeron los números, también con
    `SKIP_PREFLIGHT`, y dice cómo rebasar: `git rebase --onto origin/main $(git merge-base <rama> a3f1876e) <rama>`.
 
+**Lo que salió mal** · Se verificó el contenido a fondo (números, árboles, protección) pero no se corrió `npm run verify`
+sobre la copia reescrita antes de empujar. `docs:coherence` exige que cada sello `HEAD` de `docs/handoff/` exista en git,
+y 18 apuntaban a SHA que ya no existían: el CI de `main` estuvo en rojo hasta que se remaparon con el fichero
+`commit-map` que deja `git-filter-repo`. Quien repita una reescritura corre `verify` sobre la copia, con todas las
+etiquetas traídas, ANTES de forzar el push, y comprueba los sellos contra una clonación limpia: en una copia local los
+objetos viejos siguen existiendo y el gate no los ve.
+
 **Lo que NO resuelve** · Los `refs/pull/*` de GitHub no se pueden reescribir: los commits viejos siguen descargables
 por SHA hasta que GitHub Support los purgue, y la petición se puede enviar ahora que el resto está limpio. Los forks y
 las copias locales anteriores conservan los números. Cambiaron los SHA de unos 2.400 commits y las etiquetas
