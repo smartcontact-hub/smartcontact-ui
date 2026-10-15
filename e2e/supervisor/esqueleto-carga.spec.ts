@@ -31,7 +31,9 @@ const medir = (page: import('@playwright/test').Page) =>
 
 for (const ruta of ['admin/usuarios', 'admin/grupos', 'conversaciones']) {
   test(`${ruta}: la fila del esqueleto mide lo que la de datos`, async ({ page }) => {
-    await goto(page, `${ruta}?latencia=1`);
+    // Sin `goto`: espera además a que se pliegue la barra lateral, y eso se come parte de los 1,5 s que dura el
+    // esqueleto; en un runner frío se los comió enteros (CI del 2026-10-15, admin/usuarios). Aquí no se clica nada.
+    await page.goto(`/${ruta}?latencia=1`);
     const esqueletos = page.locator('sc-datatable p-skeleton');
     await expect(esqueletos.first()).toBeVisible();
     const cargando = await medir(page);

@@ -62,7 +62,8 @@
         @for (t of row.requestTypes; track $index) {
           <sc-tag [value]="t.label" [severity]="t.origin === 'agent' ? 'info' : 'secondary'" />
         } @empty {
-          <span class="sc-text-body-regular">—</span>
+          <!-- Sin dato (DD-197): el guion en gris suave para la vista, «Sin dato» para el lector. -->
+          <span class="tickets__vacia sc-text-body-regular" aria-hidden="true">—</span><span class="visually-hidden">Sin dato</span>
         }
       </span>
     }
@@ -71,7 +72,8 @@
         @for (p of row.products; track p) {
           <sc-tag severity="secondary" [value]="p" />
         } @empty {
-          <span class="sc-text-body-regular">—</span>
+          <!-- Sin dato (DD-197): el guion en gris suave para la vista, «Sin dato» para el lector. -->
+          <span class="tickets__vacia sc-text-body-regular" aria-hidden="true">—</span><span class="visually-hidden">Sin dato</span>
         }
       </span>
     }

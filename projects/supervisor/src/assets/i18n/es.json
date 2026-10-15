@@ -524,7 +524,8 @@
       "data_prefix": "Datos:",
       "list_header": "Conjuntos de prueba",
       "trigger_title": "Cambiar conjunto de datos de demo (solo en prototipo)",
-      "trigger_aria": "Cambiar conjunto de datos de demo"
+      "trigger_aria": "Cambiar conjunto de datos de demo",
+      "current_aria": "{{label}}, en uso"
     },
     "mock_samples": {
       "default": {
@@ -902,7 +903,11 @@
       "success_one": "1 conversación procesada correctamente",
       "all_failed": "{{n}} transcripciones fallaron. Revisa 'Solo fallidas' para reintentarlas.",
       "all_failed_one": "La transcripción falló. Revisa 'Solo fallidas' para reintentarla.",
-      "partial": "{{ok}} procesadas, {{ko}} fallaron. Revisa 'Solo fallidas' para reintentarlas."
+      "partial": "{{ok}}, {{ko}}",
+      "partial_ok": "{{n}} procesadas",
+      "partial_ok_one": "1 procesada",
+      "partial_ko": "{{n}} fallaron. Revisa 'Solo fallidas' para reintentarlas.",
+      "partial_ko_one": "1 falló. Revisa 'Solo fallidas' para reintentarla."
     }
   },
   "common": {

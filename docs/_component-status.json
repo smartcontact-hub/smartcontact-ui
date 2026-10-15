@@ -345,7 +345,9 @@
       "api": [
         "ariaLabel"
       ],
-      "nested": [],
+      "nested": [
+        "sc-selectbutton"
+      ],
       "hasDemo": true,
       "kit": false,
       "estado": "experimental",
@@ -600,6 +602,7 @@
       ],
       "nested": [
         "sc-dialog",
+        "sc-message",
         "sc-button"
       ],
       "hasDemo": true,
@@ -1981,7 +1984,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 43,
+      "usedInSupervisor": 44,
       "cuando": "Para encender o apagar algo CON EFECTO INMEDIATO. Si el cambio se guarda al enviar el formulario, `sc-checkbox`.",
       "sobreObsoleto": []
     }

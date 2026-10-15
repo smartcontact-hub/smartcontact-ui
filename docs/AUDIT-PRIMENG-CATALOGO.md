@@ -80,7 +80,7 @@ wrapper no tiene página en sc-docs ni medida en la línea base de estilos. El g
 | Módulo | Quién | Veredicto |
 |---|---|---|
 | Editor | supervisor (el contenido de una plantilla: `template-editor-page`) | El nativo tal cual (DD-113), con su barra a medida del canal (`#header`) y los `formats` que cada canal admite (WhatsApp, solo negrita, cursiva y tachado); el DS ya trae el tema (`sc-preset/editor.ts`). **Riesgo conocido:** PrimeNG avisa de que lo retirará a favor de un editor de pago; el contenido que guarda (HTML saneado, o el texto de WhatsApp) no depende de Quill, así que cambiarlo solo toca la página del editor. Sin wrapper todavía: una pantalla. |
-| Menu | supervisor (el menú de fila de Reglas, Entidades y la agenda; el «⋮» de las pestañas del Monitor) | En la página PrimeNG de sc-docs (nota de abajo); envolverlo, si llega a hacer falta. |
+| Menu | supervisor (el menú de fila de Reglas, Entidades y la agenda; el «⋮» de las pestañas del Monitor; los datos de prueba de Conversaciones, candidato 28) | En la página PrimeNG de sc-docs (nota de abajo); envolverlo, si llega a hacer falta. |
 | TieredMenu | supervisor (el «⋮» de cada widget del Monitor, candidato 24 del barrido) | El nativo tal cual (DD-113, DD-205): Tipo y Canal son submenús y el menú se queda en cuatro filas. El rojo de «Quitar widget» lo pone el tema (`sc-menu-item--danger`, también sobre `p-tieredmenu-item-*`). En la página PrimeNG de sc-docs (nota de abajo). |
 | Listbox | supervisor (Numeración especial y Regeneración de contraseñas, en Sistema; el asistente de widgets), cuscare | En la página PrimeNG de sc-docs (nota de abajo). |
 | Slider | supervisor (la barra del reproductor de Memory, candidato 1 del barrido) | El nativo tal cual (DD-113): el DS ya trae el tema (`sc-preset/slider.ts`). En la página PrimeNG de sc-docs (nota de abajo). |
@@ -472,5 +472,17 @@ Leídos en el código; sin medir en el navegador.
    a abrirlo en `sc-inputtext`), 19 (`sc-inputnumber` de 1 a 65535) y 20 (`sc-textarea` con `autoResize` y nombre).
    Prueba: `e2e/supervisor/barrido-campos.spec.ts`. El 17 espera a producto: con `sc-inputtags` los motivos perderían
    su rojo, porque el wrapper no expone `#item`.
+   **Ronda de avisos y lo que quedaba, hecha el 2026-10-15**: 9 (la foto rechazada lo dice en la línea de su ayuda, en
+   rojo, y no se va), 15 (copiar: el ✓ y una región viva para el lector; el fallo, un `sc-message` que se queda), 22
+   (Estado, interruptor: tipo `switch` de `repo-form-panel`), 14 (la cifra lleva los nombres como descripción; el
+   globo queda solo para la vista), 26 (`sc-color-dot-picker` sobre `sc-selectbutton`, con el nombre del elegido
+   debajo; su teclado es el de SelectButton, Tab y Espacio, porque PrimeNG 22 no conecta sus flechas), 27 (sin
+   `role="menu"`), 28 (`p-menu` emergente; la lista sigue al foco), 29 (los paneles de alta devuelven el foco al
+   cerrarse, `focoDeVueltaAlCerrar`) y lo de 7.4: los «⋮» de fila y «Nueva regla» con `ariaHasPopup` y `ariaExpanded`,
+   el «—» de cuscare-ds con su «Sin dato», el plural del aviso parcial. Prueba: `e2e/supervisor/barrido-avisos.spec.ts`.
+   Medido en el 26: los puntos sin elegir, sobre el fondo del segmentado (#eceff3), quedan bajo 3:1 en gris (2,56),
+   naranja (2,43), ámbar (1,86), verde (2,2) y turquesa (2,16); el color no es lo único que dice cuál es (el nombre se
+   lee debajo y lo oye el lector), así que la paleta no se toca sin decisión. Queda el reproductor de varias
+   grabaciones (cambia cómo se ve), el 17 (producto) y 6, 12 y 23 (desarrollo).
 6. **La sección 6 en sc-docs**: hecho el 2026-10-14, la página PrimeNG. Si cambias la sección 6, `npm run
    primeng-catalog:gen` rehace su artefacto (el gate se pone rojo hasta entonces).

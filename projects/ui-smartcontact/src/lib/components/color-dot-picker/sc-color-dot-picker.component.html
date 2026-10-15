@@ -1,16 +1,18 @@
-<div class="picker" role="radiogroup" [attr.aria-label]="ariaLabel()">
-  @for (option of options(); track option.value) {
-    <button
-      type="button"
-      role="radio"
-      [attr.aria-checked]="option.value === value()"
-      [attr.aria-label]="option.label"
-      [title]="option.label"
-      class="picker__swatch"
-      [class.picker__swatch--selected]="option.value === value()"
-      (click)="select(option)"
-    >
-      <span class="picker__dot" [style.background]="option.color"></span>
-    </button>
-  }
-</div>
+<!-- Un SelectButton de PrimeNG con un punto por color (candidato 26 del barrido; antes, botones con role="radio" a
+     mano, sin teclado de grupo). El teclado es el de SelectButton: Tab pasa de un color a otro y Espacio elige; cada
+     opción se oye por su nombre. El nombre del elegido se ve debajo: el color no puede ser lo único que dice cuál es. -->
+<sc-selectbutton
+  size="sm"
+  optionLabel="label"
+  optionValue="value"
+  [options]="options()"
+  [allowEmpty]="false"
+  [ariaLabel]="ariaLabel()"
+  [helperText]="elegido()?.label"
+  [value]="value()"
+  (valueChange)="onValue($event)"
+>
+  <ng-template #item let-option>
+    <span class="picker__dot" [style.background]="option.color" aria-hidden="true"></span>
+  </ng-template>
+</sc-selectbutton>
