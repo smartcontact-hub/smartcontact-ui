@@ -34,6 +34,47 @@ const DIRECTORIO = Array.from({ length: 1250 }, (_, i): AgendaContact => {
   return { id: i + 1, name: `Punto de venta ${String(i + 1).padStart(4, '0')}`, phone: `900 ${n.slice(0, 3)} ${n.slice(3)}` };
 });
 
+/**
+ * Una agenda de ejemplo con contactos que llevan casi todos los campos (empresa, correo, direcciones, personalizados):
+ * nombres de actores y actrices de Hollywood, para ver y editar un contacto completo. Ningún teléfono ni correo es un
+ * literal (`audit:seed-pii`): salen de la posición de cada uno.
+ */
+const ESTRELLAS: readonly (readonly [string, string, string, string, string])[] = [
+  ['Meryl', 'Streep', 'Sunset Pictures', 'Productora ejecutiva', 'Los Ángeles'],
+  ['Tom', 'Hanks', 'Golden Reel Studios', 'Director de casting', 'Los Ángeles'],
+  ['Cate', 'Blanchett', 'Silver Screen Films', 'Directora de estudio', 'Nueva York'],
+  ['Denzel', 'Washington', 'Marquee Entertainment', 'Productor', 'Atlanta'],
+  ['Viola', 'Davis', 'Blue Curtain Media', 'Agente de talentos', 'Nueva York'],
+  ['Leonardo', 'DiCaprio', 'Harbor Light Pictures', 'Productor ejecutivo', 'Los Ángeles'],
+  ['Natalie', 'Portman', 'Eastside Cinema', 'Directora de distribución', 'Nueva York'],
+  ['Morgan', 'Freeman', 'Riverbend Studios', 'Director de programación', 'Memphis'],
+];
+const SEGMENTOS = ['Premium', 'Oro', 'Plata'] as const;
+const CLIENTES_VIP: AgendaContact[] = ESTRELLAS.map(([name, surname, company, position, city], i): AgendaContact => {
+  const slug = company.toLowerCase().replace(/\s+/g, '-');
+  const serie = String(100 + i);
+  return {
+    id: i + 1,
+    name,
+    surname,
+    company,
+    position,
+    website: `https://${slug}.example.com`,
+    phone: `900 810 ${serie}`,
+    phoneHome: `900 811 ${serie}`,
+    phonePersonal: `600 812 ${serie}`,
+    emailWork: `${name}.${surname}`.toLowerCase() + '@example.com',
+    emailPersonal: `${name}${surname}`.toLowerCase() + '@example.org',
+    workAddress: `Avenida del Cine ${10 + i}`,
+    workZip: `9${String(1000 + i * 7)}`,
+    workCity: city,
+    workCountry: 'Estados Unidos',
+    notes: 'Contacto de ejemplo',
+    custom1: String(2014 + i),
+    custom2: SEGMENTOS[i % SEGMENTOS.length],
+  };
+});
+
 const SEED: readonly Agenda[] = [
   {
     id: 1,
@@ -107,6 +148,14 @@ const SEED: readonly Agenda[] = [
     description: 'Puntos de venta de la red comercial',
     updatedAt: '2026-10-12',
   },
+  {
+    id: 10,
+    name: 'Clientes VIP',
+    contacts: CLIENTES_VIP,
+    description: 'Contactos de ejemplo con todos sus campos rellenos',
+    updatedAt: '2026-10-13',
+    customLabels: ['Cliente desde', 'Segmento', '', '', ''],
+  },
 ];
 
 /** Lo guardado antes de DD-163 (`numbers`, un texto con comas) se lee como contactos sin nombre, sin subir la versión
@@ -124,7 +173,8 @@ export function agendaAlDia(guardada: Agenda): Agenda {
 export const AgendasStore = createRepoStore<Agenda>('AgendasStore', {
   storageKey: 'sc-agendas-repo',
   versionKey: 'sc-agendas-repo-v',
-  currentVersion: 1,
+  /** 2: la agenda «Clientes VIP», con contactos de ejemplo completos (2026-10-15): quien tenga la lista de antes carga la nueva. */
+  currentVersion: 2,
   defaults: SEED,
   normalize: agendaAlDia,
 });

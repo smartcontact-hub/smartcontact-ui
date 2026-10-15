@@ -99,7 +99,7 @@ test('lo borrado en Repositorios no se cuenta ni se guarda, y la ficha no abre c
   // La agenda 3 (Cobros), puesta en el grupo 11, ya no existe.
   await page.addInitScript(() => {
     if (localStorage.getItem('sc-agendas-repo')) return;
-    localStorage.setItem('sc-agendas-repo-v', '1');
+    localStorage.setItem('sc-agendas-repo-v', '2');
     localStorage.setItem(
       'sc-agendas-repo',
       JSON.stringify([

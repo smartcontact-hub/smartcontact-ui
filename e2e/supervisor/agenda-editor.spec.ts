@@ -112,7 +112,7 @@ test('crear una agenda: «Crear» del listado lleva al editor vacío, y al crear
 
 test('lo guardado antes como texto con comas se lee como contactos sin nombre, sin repetidos', async ({ page }) => {
   await page.addInitScript(() => {
-    localStorage.setItem('sc-agendas-repo-v', '1');
+    localStorage.setItem('sc-agendas-repo-v', '2');
     localStorage.setItem(
       'sc-agendas-repo',
       JSON.stringify([{ id: 1, name: 'Vieja', numbers: '900 100 200, 900-100-200, 900 100 201', description: '', status: 'active' }]),

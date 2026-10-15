@@ -15,6 +15,7 @@ import { LanguageService } from '@core/services/language.service';
 import { injectLangChange } from '@core/utils/lang-change';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 
+import { AgendaAgentsTableComponent } from '../components/agenda-agents-table/agenda-agents-table.component';
 import { AgendaContactsTableComponent } from '../components/agenda-contacts-table/agenda-contacts-table.component';
 import { RepoFormPanelComponent, type RepoFormSubmission } from '../components/repo-form-panel.component';
 import type { RepoFieldDef } from '../components/repo-types';
@@ -31,6 +32,7 @@ import {
   TOPE_DE_CONTACTOS,
 } from '../state/agenda-contacts.core.mjs';
 import { hoy } from '@shared/utils/today';
+import { AgentsStore } from '@features/admin/agents/state/agents.store';
 import { AgendasStore, type AgendaContact } from '../state/agendas.store';
 import { ResultadoAccionService } from '@core/services';
 
@@ -40,10 +42,12 @@ interface AgendaDraft {
   readonly contacts: readonly AgendaContact[];
   /** Las etiquetas de los cinco campos personalizados: una por campo, vacía = la de siempre. */
   readonly customLabels: readonly string[];
+  /** Los agentes que ven esta agenda: es lo que dice cada agente en sus `schedules`, no algo de la agenda. */
+  readonly agentIds: readonly number[];
 }
 
 const SIN_ETIQUETAS: readonly string[] = ['', '', '', '', ''];
-const VACIA: AgendaDraft = { name: '', description: '', contacts: [], customLabels: SIN_ETIQUETAS };
+const VACIA: AgendaDraft = { name: '', description: '', contacts: [], customLabels: SIN_ETIQUETAS, agentIds: [] };
 
 /**
  * El editor de una agenda (DD-163): su nombre, su estado y sus contactos. Va en su propia ruta, como las fichas, para que
@@ -53,6 +57,7 @@ const VACIA: AgendaDraft = { name: '', description: '', contacts: [], customLabe
 @Component({
   selector: 'sc-agenda-editor-page',
   imports: [
+    AgendaAgentsTableComponent,
     AgendaContactsTableComponent,
     ButtonComponent,
     DialogComponent,
@@ -70,6 +75,7 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly store = inject(AgendasStore);
+  protected readonly agentsStore = inject(AgentsStore);
   private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
   private readonly language = inject(LanguageService);
@@ -127,6 +133,11 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
       description: agenda.description,
       contacts: agenda.contacts,
       customLabels: SIN_ETIQUETAS.map((_, i) => agenda.customLabels?.[i] ?? ''),
+      agentIds: this.agentsStore
+        .agents()
+        .filter((a) => a.schedules?.includes(agenda.id))
+        .map((a) => a.id)
+        .sort((a, b) => a - b),
     });
     this.dirtyState.markPristine();
   }
@@ -140,18 +151,33 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
     if (!this.canSave()) return;
     const f = this.form();
     const draft = { ...f, name: f.name.trim(), description: f.description.trim() };
+    // Lo de la agenda y lo de sus agentes se guardan en sitios distintos: los agentes llevan sus agendas.
+    const { agentIds, ...datos } = draft;
     if (this.mode() === 'create') {
-      const created = this.store.addItem({ ...draft, updatedAt: hoy() });
+      const created = this.store.addItem({ ...datos, updatedAt: hoy() });
+      this.asignarAgentes(created.id, agentIds);
       this.dirtyState.markPristine();
       const creado = this.texto('repositories.toasts.created', created.name);
       // Tras llegar a la edición: antes, el cambio de página se lo llevaría (DD-191).
       void this.router.navigateByUrl(`/admin/agendas/editar/${created.id}`, { replaceUrl: true }).then(() => this.resultado.enLaBarra(creado));
       return;
     }
-    this.store.updateItem(this.agendaId!, { ...draft, updatedAt: hoy() });
+    this.store.updateItem(this.agendaId!, { ...datos, updatedAt: hoy() });
+    this.asignarAgentes(this.agendaId!, agentIds);
     this.form.set(draft);
     this.dirtyState.markPristine();
     this.resultado.enLaBarra(this.texto('repositories.toasts.updated', draft.name));
+  }
+
+  /** Pone o quita esta agenda de las `schedules` de cada agente que cambió: solo toca a los que cambian. */
+  private asignarAgentes(agendaId: number, ids: readonly number[]): void {
+    const deben = new Set(ids);
+    for (const agente of this.agentsStore.agents()) {
+      const tiene = agente.schedules?.includes(agendaId) ?? false;
+      if (tiene === deben.has(agente.id)) continue;
+      const resto = (agente.schedules ?? []).filter((id) => id !== agendaId);
+      this.agentsStore.updateAgent(agente.id, { schedules: deben.has(agente.id) ? [...resto, agendaId] : resto });
+    }
   }
 
   protected discard(): void {
@@ -257,10 +283,6 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
       sobran: vista.sobran > 0 ? frase('import_over', vista.sobran) : null,
       confirmar: vista.nuevos.length > 0 ? frase('import_confirm', vista.nuevos.length) : null,
     };
-  });
-  protected readonly importAyuda = computed(() => {
-    this.lang();
-    return this.translate.instant('repositories.agendas.import_help', { max: this.formatoCifra().format(TOPE_DE_CONTACTOS) });
   });
 
   protected abrirImportar(): void {
