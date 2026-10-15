@@ -2,7 +2,7 @@
  * CONGELAR UN PROTOTIPO · el enlace que se pega en Jira o Confluence no puede apuntar a algo vivo.
  * ================================================================================================
  *
- * El problema. Los cinco sitios sirven `main`: la URL de producción SIEMPRE enseña lo último.
+ * El problema. Los seis sitios sirven `main`: la URL de producción SIEMPRE enseña lo último.
  * Cuando ese enlace viaja a un ticket, el desarrollador que lo abre semanas después ve una
  * pantalla que ya no es la que especifica su ticket, y no tiene forma de saberlo. El prototipo
  * deja de ser una referencia y pasa a ser una fuente de dudas.
@@ -45,11 +45,12 @@ const root = resolve(import.meta.dirname, '..');
 const TABLA = resolve(root, 'docs/PROTOTIPOS.md');
 const log = (s = '') => process.stdout.write(s + '\n');
 
-/** Los cinco sitios y el nombre de su proyecto en Cloudflare Pages (de donde sale la URL). */
+/** Los seis sitios y el nombre de su proyecto en Cloudflare Pages (de donde sale la URL). Los vigila `cf-sites.test.mjs`. */
 export const SITIOS = {
   supervisor: 'sc-supervisor',
   agent: 'sc-agent',
   cuscare: 'sc-cuscare',
+  'cuscare-ds': 'sc-cuscare-ds',
   'sc-docs': 'sc-doc',
   'agent-mini': 'agent-mini',
 };
@@ -108,7 +109,7 @@ if (process.argv.includes('--check')) {
     const urlOk = urlEsperada ? f.url === urlEsperada : false;
     log(`  ${tieneTag && urlOk ? '✔' : '✘'} ${f.ticket.padEnd(14)} ${f.etiqueta.padEnd(22)} ${f.app}`);
     if (!tieneTag) problemas.push(`${f.ticket}: la tabla nombra \`${f.etiqueta}\` y esa etiqueta no existe`);
-    if (!SITIOS[f.app]) problemas.push(`${f.ticket}: "${f.app}" no es una de las cinco apps`);
+    if (!SITIOS[f.app]) problemas.push(`${f.ticket}: "${f.app}" no es una de las apps`);
     else if (!urlOk) problemas.push(`${f.ticket}: la URL debería ser ${urlEsperada} y pone ${f.url || '(nada)'}`);
   }
   for (const t of tags) {
@@ -212,7 +213,7 @@ if (!ticket || !app || !que) {
 
 if (!SITIOS[app]) {
   rl?.close();
-  log(`✘ "${app}" no es uno de los cinco sitios: ${APPS.join(', ')}`);
+  log(`✘ "${app}" no es uno de los sitios: ${APPS.join(', ')}`);
   process.exit(1);
 }
 if (malTicket(ticket)) {

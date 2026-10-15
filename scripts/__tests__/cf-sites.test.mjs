@@ -147,3 +147,8 @@ test('solo ignora el DS una app cuyo build no lo construye ni lo importa', () =>
     assert.deepEqual(mencionesDelDs(app), [], `projects/${app} menciona el DS`);
   }
 });
+
+test('proto-freeze conoce los mismos sitios que el catálogo (su lista iba a mano y se quedó sin cuscare-ds)', () => {
+  const fuente = readFileSync(fileURLToPath(import.meta.resolve('../proto-freeze.mjs')), 'utf8');
+  for (const s of SITIOS) assert.match(fuente, new RegExp(`['"]?${s.app}['"]?: '${s.proyecto}'`), `${s.app} falta en proto-freeze.mjs`);
+});
