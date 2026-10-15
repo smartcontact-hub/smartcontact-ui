@@ -41,7 +41,7 @@
 > **Sello: rama `sidebar-produccion`, sobre `origin/main` HEAD `d02dffa7`.**
 
 **Qué decidió Rafa.** El sidebar de `main` es el de https://c1ae0539.sc-supervisor.pages.dev/solo-sidebar (tag
-`archive/comparar-sidebar-sin-cerrar-al-abrir-2026-09-16`, `65185e3b`): «no es mi favorito, pero eventualmente con
+`archive/comparar-sidebar-sin-cerrar-al-abrir-2026-09-16`, `4a95116b`): «no es mi favorito, pero eventualmente con
 primeng dev podamos lograr meter el otro». Se trabaja sobre esa base. «No se cierra nada» (tramo de abajo) queda como la
 favorita, pendiente del Sidebar de primeng.dev.
 
