@@ -48,8 +48,8 @@ e3a6c4b1:docs/handoff/supervisor-fichas.md`.
 
 ## ✅ 2026-10-15 · Revisión de producto de las tablas y Repositorios (DD-210)
 
-> **Sello:** worktree `seabiscuit`, rama `arebury/revision-1015-tablas` sobre la del PR 2 (`db259813`, con `main` `e3a6c4b1`
-> dentro). PR 3 de 3: hasta que el PR 2 funda, su diff lleva también el del PR 2.
+> **Sello:** worktree `seabiscuit`, rama `arebury/revision-1015-tablas` sobre `main` `c24c921c` (con el PR 2 ya fundido,
+> #425). PR 3 de 3, #426.
 
 - **Textos**: «+ Nueva X» en la barra y en el vacío de cada tabla (repositorios con su `createTitleKey`), «Buscar
   {entidades}…» en todas, también dentro de las fichas, y «Acciones» con «Importar» y «Exportar» a secas; la plantilla
@@ -165,9 +165,8 @@ a7ddc14b:docs/handoff/supervisor-fichas.md`.
 
 ## SIGUIENTE — sin preguntar
 
--3. **Subir los PR 2 (DD-209) y 3 (DD-210) de la revisión del 2026-10-15**, hechos en local: el 2 primero; el 3 va
-   encima y, cuando el 2 funda, se funde `main` en él para que su diff sea solo el suyo. Las capturas de sc-docs de
-   IconTile, FactRow, GroupPopover y MultiSelect, con el robot de capturas.
+-3. **Fundir el PR 3 (#426, DD-210) de la revisión del 2026-10-15** cuando su CI esté en verde: el 2 (#425, DD-209) ya
+   está en `main`. Capturas de GroupPopover y MultiSelect regeneradas con el robot.
 -2b. **Componente tabla (otra sesión):** el «evolutivo» de la tabla con los devs (BI y voz). Propuesta de producto:
    elegir UNA vez qué funciones de la Table de PrimeNG queremos y cerrarlo; hay un Excel con las de BI.
    Punto de partida: `docs/AUDIT-PRIMENG-CATALOGO.md`. En la reunión: reordenar, ajustar ancho y arrastrar columnas
