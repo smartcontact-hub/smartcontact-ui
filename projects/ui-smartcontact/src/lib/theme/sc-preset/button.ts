@@ -67,7 +67,7 @@ import type { ButtonDesignTokens } from '@primeuix/themes/types/button';
             }
         },
         borderRadius: "var(--sc-cmp-button-border-radius)",
-        raisedShadow: "0 0.071429rem 0.357143rem 0 #0000001f, 0 0.142857rem 0.142857rem 0 #00000024, 0 0.214286rem 0.071429rem -0.142857rem #00000033",
+        raisedShadow: "var(--sc-cmp-button-raised-shadow)",
         iconOnlyWidth: "var(--sc-cmp-button-icon-only-width)",
         transitionDuration: "{form.field.transition.duration}",
         roundedBorderRadius: "var(--sc-cmp-button-rounded-border-radius)"
