@@ -38,7 +38,12 @@
       (ngModelChange)="confirmText.set($event)"
       autocomplete="off"
     />
+    <!-- El acierto lo dice el ✓; aquí, para el lector. -->
+    <span class="delete-entity__live" aria-live="polite">{{ copied() ? ('sc.deleteEntityDialog.copied' | translate) : '' }}</span>
   </div>
+  @if (copyFailed()) {
+    <sc-message severity="danger" size="sm" [text]="'sc.deleteEntityDialog.copyFailed' | translate" />
+  }
 
   <div modal-actions>
     <sc-button

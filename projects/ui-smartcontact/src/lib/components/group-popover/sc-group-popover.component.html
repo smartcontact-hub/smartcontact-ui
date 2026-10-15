@@ -3,6 +3,7 @@
   type="button"
   class="group-popover__trigger"
   [attr.aria-label]="countAriaLabel() ?? ('sc.groupPopover.count' | translate: { count: count() })"
+  [attr.aria-describedby]="count() > 0 ? namesId : null"
   (mouseenter)="onTriggerEnter($event)"
   (mouseleave)="onPointerLeave()"
   (focus)="onTriggerFocus($event)"
@@ -13,7 +14,12 @@
   {{ 'sc.groupPopover.countShort' | translate: { count: count() } }}
 </button>
 
-<p-popover #pop styleClass="group-popover__panel" appendTo="body">
+<!-- Los nombres, para el lector: los dice después de la cifra al enfocarla. Un texto `hidden` vale como descripción. -->
+<span [id]="namesId" hidden>{{ names() }}</span>
+
+<!-- El globo es solo para la vista: Popover se anuncia como diálogo modal y el foco nunca entra (se abre al pasar
+     o al enfocar la cifra), así que para el lector sobra; los nombres ya los lleva la descripción. -->
+<p-popover #pop styleClass="group-popover__panel" appendTo="body" [pt]="popoverPt">
   @if (count() > 0) {
     <div class="group-popover__body" (mouseenter)="onPanelEnter()" (mouseleave)="onPointerLeave()">
       <ul class="group-popover__list">

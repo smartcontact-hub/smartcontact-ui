@@ -51,6 +51,12 @@
     }
   }
 
+  &__switch {
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-875);
+  }
+
   &__field {
     margin-bottom: var(--sc-spacing-0-875);
 

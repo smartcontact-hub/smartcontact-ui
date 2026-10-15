@@ -21,15 +21,17 @@ import {
   ScButtonComponent as ButtonComponent,
   ScInputTextComponent as InputTextComponent,
   ScSelectComponent as SelectComponent,
+  ScToggleSwitchComponent as ToggleSwitchComponent,
 } from '@smartcontact-hub/components';
 import { RepoEntity, RepoFieldDef } from './repo-types';
+import { focoDeVueltaAlCerrar } from '@core/utils/foco-de-vuelta';
 
 export type RepoFormSubmission = Readonly<Record<string, string>>;
 
 /**
  * Generic create / edit panel rendered by `<sc-repo-list-page>` for every
- * repository instance. Field set is data-driven; supports text, textarea and
- * select inputs. Validates required fields and the duplicate-name constraint
+ * repository instance. Field set is data-driven; supports text, textarea,
+ * select and switch inputs. Validates required fields and the duplicate-name constraint
  * (case-insensitive, ignoring the current record).
  */
 @Component({
@@ -41,6 +43,7 @@ export type RepoFormSubmission = Readonly<Record<string, string>>;
     IconComponent,
     InputTextComponent,
     SelectComponent,
+    ToggleSwitchComponent,
     TranslateModule,
   ],
   templateUrl: './repo-form-panel.component.html',
@@ -48,6 +51,11 @@ export type RepoFormSubmission = Readonly<Record<string, string>>;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RepoFormPanelComponent<T extends RepoEntity> implements OnInit, AfterViewInit {
+  constructor() {
+    // Al cerrarse, el foco vuelve al botón que lo abrió (candidato 29 del barrido; antes se iba al `body`).
+    focoDeVueltaAlCerrar();
+  }
+
   private readonly translate = inject(TranslateService);
 
   readonly fields = input.required<readonly RepoFieldDef[]>();
@@ -93,7 +101,7 @@ export class RepoFormPanelComponent<T extends RepoEntity> implements OnInit, Aft
       if (seed) {
         const raw = (seed as unknown as Record<string, unknown>)[field.key];
         next[field.key] = raw == null ? '' : String(raw);
-      } else if (field.type === 'select' && field.options?.length) {
+      } else if ((field.type === 'select' || field.type === 'switch') && field.options?.length) {
         next[field.key] = field.options[0]!.value;
       } else {
         next[field.key] = '';
@@ -109,6 +117,21 @@ export class RepoFormPanelComponent<T extends RepoEntity> implements OnInit, Aft
   protected onChange(key: string, value: string): void {
     this.values.update((current) => ({ ...current, [key]: value }));
     if (this.error()) this.error.set('');
+  }
+
+  /** Un interruptor está encendido si vale su primera opción. */
+  protected switchOn(field: RepoFieldDef): boolean {
+    return this.values()[field.key] === field.options?.[0]?.value;
+  }
+
+  protected onSwitchChange(field: RepoFieldDef, on: boolean): void {
+    const value = field.options?.[on ? 0 : 1]?.value;
+    if (value !== undefined) this.onChange(field.key, value);
+  }
+
+  /** El rótulo del estado en que está el interruptor, junto a él. */
+  protected switchLabelKey(field: RepoFieldDef): string {
+    return field.options?.[this.switchOn(field) ? 0 : 1]?.labelKey ?? '';
   }
 
   protected onSelectValueChange(key: string, value: unknown): void {

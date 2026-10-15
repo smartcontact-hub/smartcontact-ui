@@ -1,9 +1,12 @@
 <button
   type="button"
   class="mock-sample-switcher__trigger sc-text-caption-regular"
-  (click)="op.toggle($event)"
+  (click)="menu.toggle($event)"
   [title]="'memory.mock_sample_switcher.trigger_title' | translate"
   [attr.aria-label]="'memory.mock_sample_switcher.trigger_aria' | translate"
+  aria-haspopup="menu"
+  [attr.aria-expanded]="menuOpen()"
+  [attr.aria-controls]="menuId"
 >
   <span class="mock-sample-switcher__chip sc-text-caption-semibold">{{
     'memory.mock_sample_switcher.chip_label' | translate
@@ -15,28 +18,28 @@
   <span class="mock-sample-switcher__current sc-text-caption-semibold">{{ currentSample().labelKey | translate }}</span>
 </button>
 
-<p-popover #op styleClass="mock-sample-switcher__popover">
-  <div class="mock-sample-switcher__list" role="menu">
-    <span class="mock-sample-switcher__list-label sc-text-caption-regular">{{
-      'memory.mock_sample_switcher.list_header' | translate
-    }}</span>
-    @for (s of samples; track s.id) {
-      <button
-        type="button"
-        class="mock-sample-switcher__item"
-        [class.is-active]="s.id === currentId()"
-        role="menuitemradio"
-        [attr.aria-checked]="s.id === currentId()"
-        (click)="selectSample(s.id); op.hide()"
-      >
-        <div class="mock-sample-switcher__item-head">
-          <span class="mock-sample-switcher__item-title sc-text-body-semibold">{{ s.labelKey | translate }}</span>
-          @if (s.id === currentId()) {
-            <sc-icon class="mock-sample-switcher__item-check" [name]="checkIcon" size="inherit" />
-          }
-        </div>
-        <p class="mock-sample-switcher__item-desc">{{ s.descriptionKey | translate }}</p>
-      </button>
-    }
-  </div>
-</p-popover>
+<!-- `p-menu` emergente (candidato 28 del barrido de PrimeNG): flechas, Intro y Escape de serie, y el foco vuelve al
+     botón. Cada opción pinta su título y su descripción con `#item`; el nombre que oye el lector es su `label`. -->
+<p-menu
+  #menu
+  [id]="menuId"
+  [model]="menuItems()"
+  [popup]="true"
+  appendTo="body"
+  styleClass="mock-sample-switcher__popover"
+  (onShow)="menuOpen.set(true)"
+  (onHide)="menuOpen.set(false)"
+>
+  <!-- El enlace con `data-pc-section="itemlink"` es el que pulsa el Intro de p-menu: sin él, el teclado no elige. -->
+  <ng-template #item let-item>
+    <a class="p-menu-item-link mock-sample-switcher__item" data-pc-section="itemlink" tabindex="-1" [class.is-active]="item.activo">
+      <div class="mock-sample-switcher__item-head">
+        <span class="mock-sample-switcher__item-title sc-text-body-semibold">{{ item.titulo }}</span>
+        @if (item.activo) {
+          <sc-icon class="mock-sample-switcher__item-check" [name]="checkIcon" size="inherit" />
+        }
+      </div>
+      <p class="mock-sample-switcher__item-desc">{{ item.descripcion }}</p>
+    </a>
+  </ng-template>
+</p-menu>

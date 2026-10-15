@@ -203,12 +203,25 @@
     size="sm"
     icon="more_vert"
     [ariaLabel]="'labels.row_menu' | translate"
+    ariaHasPopup="menu"
+    [ariaExpanded]="rowMenuOpen() && esLaDelMenu(row)"
+    [ariaControls]="rowMenuId"
     (clicked)="openRowMenu(row, rowMenuRef, $event)"
   />
 </ng-template>
 
-<!-- Menú ÚNICO para toda la tabla: «⋮» y clic derecho abren este mismo (R3). -->
-<p-menu #rowMenuRef [model]="menuItems()" [popup]="true" appendTo="body" styleClass="rules-kebab-menu" />
+<!-- Menú ÚNICO para toda la tabla: «⋮» y clic derecho abren este mismo (R3). El «⋮» de la fila que lo abrió dice que
+     está abierto (DD-171). -->
+<p-menu
+  #rowMenuRef
+  [id]="rowMenuId"
+  [model]="menuItems()"
+  [popup]="true"
+  appendTo="body"
+  styleClass="rules-kebab-menu"
+  (onShow)="rowMenuOpen.set(true)"
+  (onHide)="rowMenuOpen.set(false)"
+/>
 
 @if (selectable() && bulkEntity(); as entity) {
   <!-- Con filas marcadas, sus acciones; tras aplicar un cambio en lote, la misma barra lo cuenta con su «Deshacer» (DD-196). -->

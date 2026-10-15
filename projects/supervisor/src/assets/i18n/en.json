@@ -524,7 +524,8 @@
       "data_prefix": "Data:",
       "list_header": "Test datasets",
       "trigger_title": "Switch demo data set (prototype only)",
-      "trigger_aria": "Switch demo data set"
+      "trigger_aria": "Switch demo data set",
+      "current_aria": "{{label}}, in use"
     },
     "mock_samples": {
       "default": {
@@ -902,7 +903,11 @@
       "success_one": "1 conversation processed successfully",
       "all_failed": "{{n}} transcriptions failed. Check 'Failed only' to retry.",
       "all_failed_one": "The transcription failed. Check 'Failed only' to retry.",
-      "partial": "{{ok}} processed, {{ko}} failed. Check 'Failed only' to retry."
+      "partial": "{{ok}}, {{ko}}",
+      "partial_ok": "{{n}} processed",
+      "partial_ok_one": "1 processed",
+      "partial_ko": "{{n}} failed. Check 'Failed only' to retry them.",
+      "partial_ko_one": "1 failed. Check 'Failed only' to retry it."
     }
   },
   "common": {

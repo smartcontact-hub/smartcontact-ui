@@ -352,9 +352,10 @@ export class ConversationsPageComponent implements OnInit, OnDestroy {
       this.messages.add({
         key: progressKey,
         severity: 'warn',
+        // Cada cifra con su número: «1 procesada, 2 fallaron», no «1 procesadas».
         summary: this.translate.instant('memory.dispatch.partial', {
-          ok: result.successIds.length,
-          ko: result.failedIds.length,
+          ok: this.translate.instant(unaOVarias('memory.dispatch.partial_ok', result.successIds.length), { n: result.successIds.length }),
+          ko: this.translate.instant(unaOVarias('memory.dispatch.partial_ko', result.failedIds.length), { n: result.failedIds.length }),
         }),
         sticky: true,
       });

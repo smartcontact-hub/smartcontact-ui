@@ -32,7 +32,8 @@ export interface RepoStatusEntry {
   readonly tone: 'success' | 'secondary' | 'warning' | 'danger' | 'info';
 }
 
-export type RepoFieldType = 'text' | 'textarea' | 'select';
+/** `switch`: un interruptor de dos estados (Activa o Inactiva); con dos opciones, un desplegable pedía dos clics. */
+export type RepoFieldType = 'text' | 'textarea' | 'select' | 'switch';
 
 export interface RepoFieldDef {
   readonly key: string;
@@ -46,7 +47,7 @@ export interface RepoFieldDef {
   readonly type: RepoFieldType;
   readonly required?: boolean;
   readonly placeholderKey?: string;
-  /** Required for `type === 'select'`. First option is the default. */
+  /** Required for `type === 'select'` and `'switch'`. First option is the default; in a switch, it is «on». */
   readonly options?: readonly { readonly value: string; readonly labelKey: string }[];
   /** `tel` para un teléfono: el teclado del móvil y el autocompletado lo reconocen. Por defecto, `text`. */
   readonly inputType?: 'text' | 'tel';

@@ -22,6 +22,7 @@ import { ScInputTextComponent as InputTextComponent } from '@smartcontact-hub/co
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 import { ScSelectButtonComponent as SelectButtonComponent } from '@smartcontact-hub/components';
 import { Template, TemplateType } from '../../data/templates-data';
+import { focoDeVueltaAlCerrar } from '@core/utils/foco-de-vuelta';
 
 export interface TemplateFormSubmission {
   readonly title: string;
@@ -44,6 +45,11 @@ export interface TemplateFormSubmission {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TemplateFormPanelComponent implements OnInit, AfterViewInit {
+  constructor() {
+    // Al cerrarse, el foco vuelve al botón que lo abrió (candidato 29 del barrido; antes se iba al `body`).
+    focoDeVueltaAlCerrar();
+  }
+
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
 
   readonly initial = input<Template | null>(null);

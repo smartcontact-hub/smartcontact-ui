@@ -895,6 +895,9 @@ test.describe('sc-column-selector', () => {
     await expect(overlay).toBeVisible();
     await expect(overlay.getByText('Nombre')).toBeVisible();
     await expect(overlay.getByText('Grupo')).toBeVisible();
+    // Un globo con casillas, no un menú (candidato 27 del barrido): se llama como su botón y no promete un menú.
+    await expect(overlay.getByRole('menu')).toHaveCount(0);
+    await expect(overlay).toHaveAttribute('aria-label', /.+/);
     expect((await styleOf(overlay, ['border-radius']))['border-radius']).toBe('6px');
     await screenshotBaseline(page, 'columnselector');
   });
@@ -1336,20 +1339,28 @@ test.describe('sc-delete-entity-dialog', () => {
 });
 
 test.describe('sc-color-dot-picker', () => {
-  test('9 swatches (con el marrón, DD-176), aria-checked en el seleccionado, click cambia (two-way)', async ({ page }) => {
+  test('9 colores (con el marrón, DD-176) en un SelectButton: el elegido pulsado y con su nombre debajo, clic y teclado cambian (two-way)', async ({ page }) => {
     await gotoPage(page, 'colordotpicker');
     const picker = page.getByTestId('sc-dotpicker');
+    const colores = picker.getByRole('button');
 
-    // 9 colores categóricos
-    await expect(picker.locator('.picker__swatch')).toHaveCount(9);
+    // 9 colores categóricos, cada uno con su nombre para el lector
+    await expect(colores).toHaveCount(9);
 
-    // inicial 'blue' (índice 6) → aria-checked
-    await expect(picker.locator('[aria-checked="true"]')).toHaveAttribute('aria-label', 'blue');
+    // inicial 'blue' (índice 6): pulsado, y su nombre escrito debajo
+    await expect(picker.locator('[aria-pressed="true"]')).toHaveAttribute('aria-label', 'blue');
+    await expect(picker.locator('.sc-selectbutton__msg')).toHaveText('blue');
 
-    // click en el primero (gray) → two-way actualiza
-    await picker.locator('.picker__swatch').first().click();
+    // clic en el primero (gray) → two-way actualiza
+    await colores.first().click();
     await expect(page.getByTestId('dotpicker-value')).toHaveText('seleccionado: gray');
 
+    // con teclado (DD-205, candidato 26): el de SelectButton, Tab pasa al siguiente y Espacio lo elige
+    await page.keyboard.press('Tab');
+    await page.keyboard.press('Space');
+    await expect(picker.locator('[aria-pressed="true"]')).not.toHaveAttribute('aria-label', 'gray');
+
+    await colores.first().click();
     await screenshotBaseline(page, 'colordotpicker');
   });
 });
