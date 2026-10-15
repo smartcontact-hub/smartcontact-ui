@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, output, ViewEncapsulation } from '@angular/core';
 
-import { ScIconTileComponent } from '../icon-tile/sc-icon-tile.component';
+import { ScIconTileComponent, type ScIconTileTone } from '../icon-tile/sc-icon-tile.component';
 
 /**
  * Una fila de datos: la clave, con su icono en una baldosa (`sc-icon-tile`), a la izquierda, y el valor a la derecha;
@@ -22,6 +22,9 @@ import { ScIconTileComponent } from '../icon-tile/sc-icon-tile.component';
  * `size="sm"`: clave y valor en caption (12) y la baldosa pequeña (24,5), para una columna estrecha donde con la letra de
  * cuerpo el valor bajaba de línea según lo que se tocara (el resumen de las fichas a 1440, revisión del 2026-10-14).
  *
+ * `tone`: el de su baldosa (`sc-icon-tile`). `brand` la pone en el degradado de la marca, como en el resumen de las
+ * fichas, bajo su cifra destacada.
+ *
  * Uso:
  * ```html
  * <dl>
@@ -40,12 +43,12 @@ import { ScIconTileComponent } from '../icon-tile/sc-icon-tile.component';
     <dt class="sc-fact-row__key">
       @if (href(); as link) {
         <a class="sc-fact-row__link" [href]="link" (click)="open.emit($event)">
-          <sc-icon-tile [icon]="icon()" [size]="size()"><ng-content select="[scFactIcon]" /></sc-icon-tile>
+          <sc-icon-tile [icon]="icon()" [size]="size()" [tone]="tone()"><ng-content select="[scFactIcon]" /></sc-icon-tile>
           <span>{{ label() }}</span>
         </a>
       } @else {
         <span class="sc-fact-row__link">
-          <sc-icon-tile [icon]="icon()" [size]="size()"><ng-content select="[scFactIcon]" /></sc-icon-tile>
+          <sc-icon-tile [icon]="icon()" [size]="size()" [tone]="tone()"><ng-content select="[scFactIcon]" /></sc-icon-tile>
           <span>{{ label() }}</span>
         </span>
       }
@@ -66,6 +69,8 @@ export class ScFactRowComponent {
   readonly href = input<string | null>(null);
   /** La talla: `md` (cuerpo, 14) o `sm` (caption, 12, con la baldosa pequeña) para una columna estrecha. */
   readonly size = input<'sm' | 'md'>('md');
+  /** El tono de su baldosa: el gris de siempre, `strong` o el degradado de la marca (`brand`). */
+  readonly tone = input<ScIconTileTone>('default');
 
   /** El clic en la clave, con su evento: la app decide si navega por su cuenta. */
   readonly open = output<MouseEvent>();

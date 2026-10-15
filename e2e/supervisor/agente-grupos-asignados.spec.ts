@@ -7,7 +7,9 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  *
  * Lo que fija, en la tabla de la ficha de agente:
  *   1. Sin columna Nivel (el nivel lo pone el grupo, que es quien reparte por niveles), y a 1440 cabe sin desplazar.
- *   2. Salientes es un radio por fila: uno elegido, y elegir otro lo cambia y se guarda.
+ *   2. El grupo de sus salientes, en un desplegable bajo la tabla (revisión de producto del 2026-10-15, que corrige el
+ *      radio por fila de DD-204 §8): elegir otro lo cambia y se guarda, y en la tabla el elegido lleva su flecha. Sin
+ *      ningún grupo con teléfono, el desplegable sale apagado y dice por qué.
  *   3. Con «Activación por grupo», Habilitado lo sigue cambiando el supervisor: el interruptor se toca, sin candado.
  *   4. Desconectado no se cambia desde la ficha: el Estado se ve apagado.
  */
@@ -18,12 +20,12 @@ test.beforeEach(async ({ page }) => {
   await disableAnimations(page);
 });
 
-test('sin columna Nivel, y a 1440 la tabla cabe sin desplazar', async ({ page }) => {
+test('sin columnas Nivel ni Salientes, y a 1440 la tabla cabe sin desplazar', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await goto(page, 'admin/agentes/editar/1?seccion=grupos');
   const tabla = page.locator('sc-group-assignment-table');
   await tabla.locator('tbody tr').first().waitFor();
-  await expect(tabla.getByRole('columnheader')).toHaveText(['', 'Grupo', /Teléfono/, /Chat/, /Email/, 'Salientes', /Habilitado/]);
+  await expect(tabla.getByRole('columnheader')).toHaveText(['', 'Grupo', /Teléfono/, /Chat/, /Email/, /Habilitado/]);
   await expect(tabla.getByRole('columnheader', { name: /^Nivel/ })).toHaveCount(0);
   const desborda = await tabla
     .locator('.p-datatable-table-container')
@@ -31,16 +33,23 @@ test('sin columna Nivel, y a 1440 la tabla cabe sin desplazar', async ({ page })
   expect(desborda, 'lo que la tabla desplaza de lado').toBeLessThanOrEqual(0);
 });
 
-test('Salientes es un radio por fila: elegir otro grupo lo cambia y se guarda', async ({ page }) => {
+test('el grupo de sus salientes, en un desplegable bajo la tabla: elegir otro lo cambia, lleva la flecha y se guarda', async ({ page }) => {
   await goto(page, 'admin/agentes/editar/1?seccion=grupos');
   const tabla = page.locator('sc-group-assignment-table');
-  const radios = tabla.getByRole('radio', { name: /^Sus llamadas salientes, por / });
-  await expect(radios.first()).toBeVisible();
-  await expect(tabla.getByRole('radio', { checked: true })).toHaveCount(1);
-  const otro = tabla.getByRole('radio', { name: 'Sus llamadas salientes, por Campaigns', exact: true });
-  await otro.check();
-  await expect(otro).toBeChecked();
-  await expect(tabla.getByRole('radio', { checked: true })).toHaveCount(1);
+  await expect(tabla.getByRole('radio')).toHaveCount(0);
+  const desplegable = tabla.getByRole('combobox', { name: 'Grupo para llamadas salientes' });
+  await expect(desplegable).toBeEnabled();
+  // Va debajo de la tabla, no en una columna.
+  const finTabla = await tabla.locator('.table-card').evaluate((e) => e.getBoundingClientRect().bottom);
+  expect(await desplegable.evaluate((e) => e.getBoundingClientRect().top)).toBeGreaterThan(finTabla);
+  const flecha = tabla.getByRole('img', { name: 'Grupo para llamadas salientes' });
+  await expect(flecha, 'una sola fila lleva la flecha').toHaveCount(1);
+
+  await desplegable.click();
+  await page.getByRole('option', { name: 'Campaigns', exact: true }).click();
+  await expect(tabla.locator('.p-select-label')).toHaveText('Campaigns');
+  await expect(flecha).toHaveCount(1);
+  await expect(tabla.locator('tbody tr', { has: page.getByRole('img', { name: 'Grupo para llamadas salientes' }) })).toContainText('Campaigns');
   await page.locator('sc-top-bar').getByRole('button', { name: 'Guardar' }).click();
   await expect
     .poll(() =>
@@ -50,7 +59,20 @@ test('Salientes es un radio por fila: elegir otro grupo lo cambia y se guarda', 
     )
     .toBeDefined();
   await goto(page, 'admin/agentes/editar/1?seccion=grupos');
-  await expect(page.locator('sc-group-assignment-table').getByRole('radio', { name: 'Sus llamadas salientes, por Campaigns', exact: true })).toBeChecked();
+  await expect(page.locator('sc-group-assignment-table .assign__outbound .p-select-label')).toHaveText('Campaigns');
+});
+
+test('sin ningún grupo con teléfono, el desplegable de salientes sale apagado y dice por qué', async ({ page }) => {
+  await goto(page, 'admin/agentes/editar/1?seccion=grupos');
+  const tabla = page.locator('sc-group-assignment-table');
+  // Quita todos sus grupos con la casilla de «todos» de Asignado, que pregunta antes.
+  await tabla.getByRole('checkbox', { name: 'Cambiar Asignado en los resultados filtrados' }).click();
+  await page.getByRole('button', { name: 'Confirmar', exact: true }).click();
+  await expect(tabla.getByRole('checkbox', { name: /^Asignado — / , checked: true })).toHaveCount(0);
+  const desplegable = tabla.getByRole('combobox', { name: 'Grupo para llamadas salientes' });
+  await expect(desplegable).toBeDisabled();
+  await expect(tabla.locator('.assign__outbound')).toContainText('Asigna un grupo con teléfono');
+  await expect(tabla.getByRole('img', { name: 'Grupo para llamadas salientes' })).toHaveCount(0);
 });
 
 test('con «Activación por grupo», Habilitado lo cambia el supervisor: sin candado, en las dos tablas', async ({ page }) => {

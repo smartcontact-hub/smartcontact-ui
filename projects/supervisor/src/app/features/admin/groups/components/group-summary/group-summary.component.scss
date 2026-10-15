@@ -77,20 +77,9 @@
   gap: var(--sc-spacing-1);
 }
 
-/* ────────────────────────────────────────────────────────────────────────────────────────────────────────
- * LA TARJETA PLANA (decisión de producto, 2026-10-11, reconciliada con el Kit el mismo día): el blanco liso y el borde fino
- * —en vez del tinte de marca de `.resumen__kpi`— siguen siendo la excepción, sobre la referencia de iconos en
- * fila del encargo. Pero cada color y cada tamaño de letra son ya tokens `--sc-*` y clases `.sc-text-*`, como
- * el resto de la ficha: no quedan valores a mano fuera de los `gap`/`padding` finos que la escala no cubre
- * (ninguno de los dos tramos, 14-base, cae en 13 o 11 px).
- * ──────────────────────────────────────────────────────────────────────────────────────────────────────── */
-
-.resumen__facts {
-  background: var(--sc-bg-surface);
-  border: 1px solid var(--sc-border-subtle);
-  border-radius: var(--sc-radius-xl);
-  box-shadow: none;
-}
+/* La tarjeta plana (blanca y con borde fino) ya no es de aquí: la llevan las tres fichas, en `_resumen.scss` (DD-209 §6).
+ * Cada color y cada tamaño de letra son tokens `--sc-*` y clases `.sc-text-*`: no quedan valores a mano fuera de los
+ * `gap`/`padding` finos que la escala no cubre (ninguno de los dos tramos, 14-base, cae en 13 o 11 px). */
 
 .resumen__title-row {
   color: var(--sc-text-secondary);

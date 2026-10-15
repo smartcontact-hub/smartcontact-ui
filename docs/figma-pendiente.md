@@ -1245,6 +1245,14 @@ menú, y la iconografía de transcripciones tiene sus tres insignias.
 - **Ayudas de campo**: a 7 de su control en todos los campos (la especificación de `sc-select`); `SelectButton`,
   `InputTags` y `Textarea` las dibujaban a 3,5.
 
+## 48 · Resumen de las fichas: la tarjeta de datos plana en las tres y sus baldosas en el color de la marca (2026-10-15, DD-209)
+
+- **IconTile**: el maestro gana la variante `Tone=Brand`: el relleno, el degradado de 135° de la tarjeta destacada del
+  resumen (`bg/primary-active` → `bg/primary` al 55 % → `bg/primary-hover`), el icono en `text/inverse` y un brillo
+  arriba del mismo blanco al 18 %. Sin tokens nuevos.
+- **Tarjeta de datos del resumen**: blanca (`bg/surface`) con borde de 1 en `border/subtle` y radio `radius/xl`, sin
+  sombra, en agente, grupo y usuario; sus baldosas, `Tone=Brand`.
+
 ## Lo de estas semanas que NO va a Figma, y por qué
 
 - **El juego de datos** (Demo · Editorial · Tortura, en Configuración → Sistema → Datos; DD-124): es una herramienta de

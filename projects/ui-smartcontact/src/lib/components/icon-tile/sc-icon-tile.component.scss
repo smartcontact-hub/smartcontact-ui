@@ -26,3 +26,15 @@
 .sc-icon-tile--strong {
   color: var(--sc-text-heading);
 }
+
+/* La de la marca: el mismo degradado que la cifra destacada del resumen (`.resumen__kpi--destacada`, DD-161), con los
+ * tres tonos del botón principal, y el icono en el texto que va encima de ellos. El tono central también de color de
+ * fondo, por si la imagen no se pinta (colores forzados, impresión). El brillo de arriba, del blanco del icono. */
+.sc-icon-tile--brand {
+  background-color: var(--sc-bg-primary);
+  background-image: linear-gradient(135deg, var(--sc-bg-primary-active), var(--sc-bg-primary) 55%, var(--sc-bg-primary-hover));
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--sc-text-inverse) 18%, transparent),
+    var(--sc-shadow-xs);
+  color: var(--sc-text-inverse);
+}

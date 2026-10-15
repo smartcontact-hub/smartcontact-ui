@@ -99,8 +99,10 @@ test('tabla, resúmenes y listado solo cuentan las familias permitidas, aunque e
   const row = page.locator('sc-group-assignment-table tbody tr', { hasText: 'Grupo mixto' });
   await expect(row.getByRole('checkbox', { name: /Teléfono.*no está entre los canales/i })).toBeDisabled();
   await expect(row.getByRole('checkbox', { name: /Teléfono.*no está entre los canales/i })).not.toBeChecked();
-  // Los datos sueltos van en filas `sc-fact-row` (DD-186): «Atiende por», con su valor en su `dd`.
-  await expect(summary.locator('.resumen__pair', { hasText: 'Atiende por' }).locator('dd')).toHaveText('Chat');
+  // Los datos sueltos van en filas `sc-fact-row` (DD-186): «Canales», con el icono de cada uno en su `dd`, como la lista.
+  const canales = summary.locator('.resumen__pair', { hasText: 'Canales' }).locator('dd');
+  await expect(canales.getByRole('img', { name: 'Chat', exact: true })).toHaveCount(1);
+  await expect(canales.getByRole('img', { name: 'Teléfono', exact: true })).toHaveCount(0);
   await goto(page, 'admin/agentes');
   const listed = page.locator('tbody tr', { hasText: 'Agente Chat' });
   await expect(listed.getByRole('img', { name: 'Chat', exact: true })).toHaveCount(1);

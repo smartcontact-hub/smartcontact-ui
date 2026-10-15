@@ -4129,6 +4129,16 @@
           "nativo": null
         },
         {
+          "nombre": "tone",
+          "clase": "input",
+          "tipo": "ScIconTileTone",
+          "porDefecto": "'default'",
+          "requerido": false,
+          "descripcion": "El tono de su baldosa: el gris de siempre, `strong` o el degradado de la marca (`brand`).",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
           "nombre": "open",
           "clase": "output",
           "tipo": "MouseEvent",
@@ -4998,10 +5008,10 @@
         {
           "nombre": "tone",
           "clase": "input",
-          "tipo": "'default' | 'strong'",
+          "tipo": "ScIconTileTone",
           "porDefecto": "'default'",
           "requerido": false,
-          "descripcion": "`strong`: el icono en el color de los títulos (el de un encabezado); por defecto, el del texto.",
+          "descripcion": "`strong`: el icono en el color de los títulos (el de un encabezado); `brand`: la baldosa en el degradado de la marca y el icono en blanco; por defecto, el gris y el color del texto.",
           "origen": "nuestro",
           "nativo": null
         }

@@ -66,14 +66,14 @@
                (revisión del 2026-10-11) sale en la revisión del 2026-10-15; la estrategia se cambia en su campo. -->
           <dl class="resumen__pairs">
             @for (r of routing(); track r.family) {
-              <div scFactRow size="sm" class="resumen__pair" [label]="familyKey(r.family) | translate" [href]="hrefs().distribucion" (open)="pulsar($event, { seccion: 'distribucion', canal: r.family })">
+              <div scFactRow size="sm" tone="brand" class="resumen__pair" [label]="familyKey(r.family) | translate" [href]="hrefs().distribucion" (open)="pulsar($event, { seccion: 'distribucion', canal: r.family })">
                 <sc-channel-icon scFactIcon [channel]="r.family" [size]="14" />
                 {{ r.text }}
               </div>
             }
             <!-- El teléfono saliente (y el número de WhatsApp), con el nombre de su campo en Distribución. -->
             @for (o of outbound(); track o.channel) {
-              <div scFactRow size="sm" class="resumen__pair" [label]="outboundKeys[o.channel] | translate" [href]="hrefs().distribucion" (open)="pulsar($event, { seccion: 'distribucion', salida: o.channel })">
+              <div scFactRow size="sm" tone="brand" class="resumen__pair" [label]="outboundKeys[o.channel] | translate" [href]="hrefs().distribucion" (open)="pulsar($event, { seccion: 'distribucion', salida: o.channel })">
                 <sc-channel-icon scFactIcon [channel]="o.channel" [size]="14" />
                 @if (o.number) {
                   {{ o.number }}
@@ -110,9 +110,9 @@
               >
                 <span class="resumen__pair-label sc-text-caption-regular">
                   @if (tipo.key === 'agendas') {
-                    <sc-icon-tile size="sm" icon="library_books" />
+                    <sc-icon-tile size="sm" tone="brand" icon="library_books" />
                   } @else {
-                    <sc-icon-tile size="sm"><sc-channel-icon [channel]="tipo.key" [size]="14" /></sc-icon-tile>
+                    <sc-icon-tile size="sm" tone="brand"><sc-channel-icon [channel]="tipo.key" [size]="14" /></sc-icon-tile>
                   }
                   {{ tipo.labelKey | translate }}
                 </span>

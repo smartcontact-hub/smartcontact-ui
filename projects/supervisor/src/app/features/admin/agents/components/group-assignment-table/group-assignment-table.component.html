@@ -38,6 +38,28 @@
       </div>
     </sc-datatable>
   </div>
+  <!-- El grupo de sus llamadas salientes: una sola elección, de los asignados con Teléfono marcado. Un desplegable bajo
+       la tabla y no un radio por fila (DD-209 §1, corrige DD-204 §8). Sin ninguno, apagado y
+       con su motivo. Solo si atiende teléfono. -->
+  @if (allowed('phone')) {
+    <div class="grid grid--2 assign__outbound">
+      <div class="field">
+        <label id="agent-outbound-label" class="field__label sc-text-caption-semibold" for="agent-outbound">{{ 'agents.form.assigned.outbound_label' | translate }}</label>
+        <sc-select
+          inputId="agent-outbound"
+          ariaLabelledBy="agent-outbound-label"
+          optionLabel="name"
+          optionValue="id"
+          [options]="outboundOptions()"
+          [value]="outboundGroupId()"
+          [disabled]="outboundOptions().length === 0"
+          [placeholder]="outboundOptions().length === 0 ? ('agents.form.summary.none' | translate) : ''"
+          [helperText]="outboundOptions().length === 0 ? ('agents.form.assigned.outbound_empty' | translate) : undefined"
+          (valueChange)="setOutbound($any($event))"
+        />
+      </div>
+    </div>
+  }
 </div>
 
 <!-- Celdas. Fuera del `<sc-datatable>` para que `viewChild` las resuelva. -->
@@ -53,7 +75,16 @@
 <ng-template #groupTpl let-row>
   <span class="assign__name">
     <span class="assign__identity">
-      <span class="assign__name-label sc-text-body-semibold" [title]="row.group.name">{{ row.group.name }}</span>
+      <span class="assign__title">
+        <span class="assign__name-label sc-text-body-semibold" [title]="row.group.name">{{ row.group.name }}</span>
+        <!-- El de sus salientes, con la flecha de «llamada que sale» junto al nombre, como el resumen. -->
+        @if (isOutbound(row)) {
+          @let saliente = 'agents.form.assigned.outbound_label' | translate;
+          <span class="assign__outbound-mark" role="img" [attr.aria-label]="saliente" [pTooltip]="saliente" tooltipPosition="top">
+            <sc-icon name="call_made" size="sm" aria-hidden="true" />
+          </span>
+        }
+      </span>
       @if (!compatible(row.group)) { <span class="assign__note sc-text-caption-regular">{{ 'groups.form.assigned.incompatible' | translate }}</span> }
     </span>
     @if (row.link && row.link.channels.length === 0) {
@@ -86,23 +117,6 @@
       [ariaLabel]="row.group.name + ' — ' + col.header"
       (cycle)="toggleChannel(row.group.id, col.field)"
     />
-  }
-</ng-template>
-
-<!-- Salientes: el grupo por el que salen sus llamadas. Solo uno, de los asignados con Teléfono marcado: un radio por
-     fila, que es lo que es, una elección entre las filas (vuelve tras probar la etiqueta y el botón, 2026-10-14). -->
-<ng-template #outboundTpl let-row>
-  @if (canBeOutbound(row)) {
-    <sc-radiobutton
-      name="agent-outbound-group"
-      size="sm"
-      [value]="row.group.id"
-      [modelValue]="outboundGroupId()"
-      [ariaLabel]="'agents.form.assigned.outbound_aria' | translate: { name: row.group.name }"
-      (modelValueChange)="setOutbound(row.group.id)"
-    />
-  } @else {
-    <span class="assign__none sc-text-body-regular"><sc-celda-vacia [texto]="'agents.form.assigned.outbound_none' | translate" /></span>
   }
 </ng-template>
 

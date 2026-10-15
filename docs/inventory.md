@@ -60,7 +60,7 @@
 | `sc-divider` | STANDARD | ready | primeng/divider | 3 inputs | — | ✓ | 22 |
 | `sc-drawer` | EXTENDED | ready | primeng/drawer | 11 inputs | — | ✓ | 3 |
 | `sc-empty-state` | CUSTOM | experimental (sin maestro en el Kit) | — | 4 inputs | sc-button | ✓ | 24 |
-| `div[scFactRow]` | CUSTOM | experimental (sin maestro en el Kit) | — | 3 inputs | — | ✓ | — |
+| `div[scFactRow]` | CUSTOM | experimental (sin maestro en el Kit) | — | 4 inputs | — | ✓ | — |
 | `sc-field-label` | CUSTOM | experimental (sin maestro en el Kit ni demo) | — | 3 inputs | — | — | — |
 | `sc-field-msg` | CUSTOM | experimental (sin maestro en el Kit ni demo) | — | 2 inputs | — | — | — |
 | `sc-fileupload` | EXTENDED | ready | primeng/fileupload | 21 inputs | — | ✓ | 2 |
@@ -85,10 +85,10 @@
 | `sc-photo-upload` | CUSTOM | experimental (sin maestro en el Kit) | — | 6 inputs | — | ✓ | 2 |
 | `sc-progressbar` | EXTENDED | ready | primeng/progressbar | 6 inputs | — | ✓ | — |
 | `sc-progressspinner` | EXTENDED | ready | primeng/progressspinner | 4 inputs | — | ✓ | — |
-| `sc-radiobutton` | EXTENDED | ready | primeng/radiobutton | 7 inputs | — | ✓ | 4 |
+| `sc-radiobutton` | EXTENDED | ready | primeng/radiobutton | 7 inputs | — | ✓ | 3 |
 | `sc-search` | EXTENDED | experimental (sin maestro en el Kit) | primeng/iconfield, primeng/inputicon, primeng/inputtext | 11 inputs | — | ✓ | 13 |
 | `sc-section-card` | CUSTOM | ready | — | 9 inputs | sc-button | ✓ | 40 |
-| `sc-select` | EXTENDED | ready | primeng/select | 30 inputs | sc-field-label sc-field-msg | ✓ | 68 |
+| `sc-select` | EXTENDED | ready | primeng/select | 30 inputs | sc-field-label sc-field-msg | ✓ | 69 |
 | `sc-selectbutton` | EXTENDED | ready | primeng/selectbutton | 15 inputs | sc-field-msg | ✓ | 26 |
 | `sc-skeleton` | EXTENDED | ready | primeng/skeleton | 6 inputs | — | ✓ | 1 |
 | `sc-slot` | CUSTOM | experimental (sin maestro en el Kit) | — | 4 inputs | — | ✓ | 12 |

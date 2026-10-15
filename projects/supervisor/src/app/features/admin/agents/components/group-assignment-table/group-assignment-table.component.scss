@@ -35,6 +35,25 @@
     min-width: 0;
   }
 
+  /* El nombre y, en el de sus salientes, la flecha a 7: una pieza. */
+  &__title {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-5);
+    min-width: 0;
+  }
+
+  &__outbound-mark {
+    display: inline-flex;
+    flex-shrink: 0;
+    color: var(--sc-icon-secondary);
+  }
+
+  /* El desplegable de sus salientes, otro grupo: a 28 de la tabla, el doble que la barra de la tabla (7 · 14 · 28). */
+  &__outbound {
+    margin-block-start: var(--sc-spacing-1);
+  }
+
   &__name-label {
     color: var(--sc-text-primary);
     overflow: hidden;
@@ -63,11 +82,10 @@
   }
 }
 
-/* El radio de Salientes, el interruptor de Habilitado y las casillas, centrados en su fila: en línea se apoyaban en la
- * línea base del texto, el radio 2,5 px por debajo del centro y el interruptor 3 por encima, y la cabecera crecía 1,9 px
- * cuando su casilla de «todos» pasaba a «algunos» (medido a 1440, 2026-10-14): la tabla cambiaba de alto al filtrar. */
+/* El interruptor de Habilitado y las casillas, centrados en su fila: en línea se apoyaban en la línea base del texto, el
+ * interruptor 3 px por encima del centro, y la cabecera crecía 1,9 px cuando su casilla de «todos» pasaba a «algunos»
+ * (medido a 1440, 2026-10-14): la tabla cambiaba de alto al filtrar. */
 sc-checkbox,
-sc-radiobutton,
 sc-toggleswitch {
   display: inline-flex;
   vertical-align: middle;

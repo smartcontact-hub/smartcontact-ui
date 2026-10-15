@@ -133,7 +133,7 @@
           <div class="resumen__kpi resumen__facts">
             <dl class="resumen__pairs">
               @for (s of summaryFacts(); track s.etiqueta) {
-                <div scFactRow size="sm" class="resumen__pair" [icon]="s.icono" [label]="s.etiqueta | translate">{{ s.valor }}</div>
+                <div scFactRow size="sm" tone="brand" class="resumen__pair" [icon]="s.icono" [label]="s.etiqueta | translate">{{ s.valor }}</div>
               }
             </dl>
           </div>

@@ -38,8 +38,9 @@ export class FactRowDemoComponent {
       { name: 'label', control: { kind: 'text' } },
       { name: 'icon', control: { kind: 'text' } },
       { name: 'href', control: { kind: 'text' } },
+      { name: 'tone', control: { kind: 'select', options: ['default', 'strong', 'brand'] } },
     ],
-    defaultArgs: { label: 'Teléfono', icon: 'call', href: '' },
+    defaultArgs: { label: 'Teléfono', icon: 'call', href: '', tone: 'default' },
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {

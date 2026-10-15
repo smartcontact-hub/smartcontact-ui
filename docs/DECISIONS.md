@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Revisión de la ficha de agente (2026-10-15): el grupo de sus salientes, en un desplegable bajo la tabla y con su flecha junto al nombre, no un radio por fila · el resumen y la cabecera con los iconos de la lista: «Canales» con el de cada canal, la extensión con el de dónde suena, Grabación con su REC relleno o de contorno · sin color nuevo: el REC deja el rojo, en la ficha y en la lista · la tarjeta de datos, la misma en las tres fichas (plana, blanca y con borde) y con sus baldosas en el degradado de la cifra destacada (`tone="brand"` de `sc-icon-tile` y `sc-fact-row`) | DD-209 |
 > | Fase 1, PrimeNG como referencia (decisión de producto, 2026-10-15): primero el nativo, después su `sc-*`, y cada excepción escrita junto al código · una pregunta de una frase sobre lo que se pulsa, en un `p-confirmpopup` pegado a ello (`ScConfirmService.request({ target })`); lo que hay que explicar, en el diálogo · los filtros por pares no se vacían (`sc-selectbutton multiple [allowEmpty]="false"`) · el «⋮» del widget en `p-tieredmenu` | DD-205 |
 > | Revisión de las fichas a 1440 (2026-10-14): «Agentes asignados» y «Grupos asignados» sin subtítulo dentro (`sc-subsection` sin título) · el resumen del grupo se llama como la ficha (Distribución con el teléfono saliente, Recursos una fila por tipo, fuera «Salida»), en caption · «Editar» de un recurso en su opción del desplegable (`sc-resource-option`, `#item` de `sc-multiselect`) · Tamaño de cola en tarjetas de radio (`sc-option-cards`, el ejemplo «Card» de primeng.dev) · las tablas de asignar miden todas sus filas (`filasReservadas`) · Habilitado lo cambia el supervisor también con «Activación por grupo» · sin columna Nivel en los grupos del agente, Salientes con radio · Desconectado: gris en el listado, Estado apagado en la ficha (enmienda DD-187 §2 y DD-164 §1) | DD-204 |
 > | El esqueleto de carga con la forma de su contenido: en una tabla, `[skeleton]` de `sc-datatable` y la forma de cada columna (`ScColumnDef.skeleton`: `avatar`, `tag`, `action`, texto) · no el ejemplo «DataTable» de primeng.dev tal cual · una caja más alta que la línea no estira la celda · la carga simulada del Supervisor: 1,5 s la primera vez, nada para un robot salvo `?latencia=1` | DD-201 |
@@ -147,6 +148,45 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-209 · 2026-10-15 — Revisión de la ficha de agente: el grupo de sus salientes en un desplegable, y el resumen y la cabecera con los iconos de la lista
+
+**Contexto** · Revisión de producto del 2026-10-15 sobre la ficha de agente. La columna Salientes de «Grupos asignados»
+ponía un radio en cada fila con teléfono: una columna entera de controles iguales para una sola elección, que se leía
+como otra casilla más. En el resumen, la grabación decía «Sí» o «No» con el mismo icono en los dos casos, y la lista la
+marcaba con un REC rojo que destacaba más que nada en la fila; la extensión decía «122, navegador» con la palabra, cuando la lista lo dice con un icono;
+y «Atiende por» listaba los canales en texto, cuando la columna de la lista se llama «Canales» y los dice con su icono.
+
+**Decisión** ·
+1. **El grupo de sus salientes, en un desplegable bajo la tabla**: «Grupo para llamadas salientes», a 28 de la tabla
+   (otro grupo, 7 · 14 · 28), con los asignados que tienen Teléfono marcado, en el orden de la tabla. Sin ninguno, sale
+   apagado y dice por qué: «Asigna un grupo con teléfono». Si el agente no tiene Teléfono entre sus canales, no sale. En
+   la tabla, el elegido lleva `call_made` junto al nombre, con su nombre para el lector y su globo. La regla no cambia:
+   el primero con Teléfono por defecto, obligatorio si atiende teléfono. Corrige DD-204 §8.
+2. **«Canales»**, antes «Atiende por», con el icono de cada canal y su nombre para el lector, como la columna de la lista.
+3. **La extensión, con el icono de dónde suena** (`language` en el navegador, `smartphone` en el teléfono) delante del
+   número, bajo el nombre y en el resumen, sin la palabra. El mapa de iconos (`EXTENSION_ICONS`) pasa a los datos del
+   agente y lo comparten la lista y la ficha.
+4. **Grabación con su REC propio** en la baldosa (`scFactIcon`), en el color de las demás filas: relleno si graba y de
+   contorno si no; el texto «Sí» o «No» se queda. En la lista, el REC relleno pasa del rojo al gris de los demás glifos
+   de la fila (`--sc-icon-secondary`, el de Canales). Sin color nuevo: el rojo dice «error» en la app y grabar no lo es;
+   el violeta y el celeste, los dos del Kit sin significado, sobran cuando el relleno y la presencia del icono ya
+   distinguen sí de no, y el celeste es el de los enlaces (se probó un color por fila, y uno para Grabación y otro para
+   Salientes: la revisión pidió no hacer un arcoíris).
+5. **Sin cambios**: la casilla a la derecha de «Llamadas», Estado y Tipo de agente, y Recursos con su diálogo.
+6. **La tarjeta de datos, la misma en las tres fichas, y con el color de la marca en sus baldosas**: la plana del grupo
+   (decisión de producto del 2026-10-11, blanca y con borde fino) pasa a agente y usuario, que llevaban el tinte de
+   `.resumen__kpi` con sombra; y sus baldosas, en el degradado de la cifra destacada que tienen encima, con el icono en
+   el texto que va sobre él (`tone="brand"`, nuevo en `sc-icon-tile` y en `sc-fact-row`). Un solo color, el de la
+   marca, y ninguno nuevo: da vida al resumen y lo ata a la tarjeta de arriba sin arcoíris. En oscuro sigue a la
+   destacada, que se aclara. Se probaron también una tarjeta de cristal (blanca con velo azul y baldosas en relieve) y
+   las baldosas en el celeste de lo que se pulsa, que competía con los enlaces.
+
+**Razón** · Una elección es un control, no uno por fila: el desplegable dice qué está elegido y deja cambiarlo sin una
+columna que compite con los canales, y la flecha en la tabla responde a «¿cuál era?» sin bajar. La ficha y la lista
+dicen lo mismo con el mismo icono: quien ya leyó la lista no tiene que traducir la ficha.
 
 ---
 
@@ -384,7 +424,8 @@ otras cosas, con un subtítulo dentro que repetía «Agentes asignados».
    DD-187 §2).
 7. **Sin columna Nivel en los grupos del agente**: el nivel lo pone el grupo, que es quien reparte por niveles (retira la
    columna de #375). Habilitado mide lo suyo sin el candado (6,75 rem): la tabla cabe a 1440 sin desplazar.
-8. **Salientes vuelve a ser un radio por fila** (revierte #380 en ese punto): es una elección entre las filas.
+8. **Salientes vuelve a ser un radio por fila** (revierte #380 en ese punto): es una elección entre las filas. *(Corregido
+   por DD-209 §1: un desplegable bajo la tabla.)*
 9. **Desconectado**: en el listado, texto gris sin etiqueta; en la ficha, el Estado se ve apagado (no hay sesión a la
    que cambiarle el estado), y nunca se ofrece como opción.
 10. **«Música de espera/transferencia»**, el nombre del campo: suena también al transferir.
