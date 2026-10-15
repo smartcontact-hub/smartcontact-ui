@@ -10,6 +10,8 @@ import {
   guionesSueltos,
   ayudasEncima,
   acusaDePrimeras,
+  rolesAMano,
+  NATIVO_DEL_ROL,
 } from '../audit-screen-hygiene.mjs';
 
 // contarEmojis: cuenta SOLO emoji astral pictográfico (+FE0F) en texto renderizable.
@@ -175,4 +177,42 @@ test('acusaDePrimeras marca el aviso que se enciende por el modo o lee las dejad
   assert.deepEqual(acusaDePrimeras("this.form().channels.size === 0 && this.ocasion.acusa('group-section-general', 'channels')"), []);
   // Un comentario que lo cuenta no es código, y las líneas no se descuadran.
   assert.deepEqual(acusaDePrimeras("/* antes: mode() === 'edit' || attemptedGeneral()\n */\nconst a = this.alta.dejadas();"), [3]);
+});
+
+// rolesAMano (8): una pieza hecha a mano que promete el teclado de un nativo. El valor está también en lo que NO marca.
+
+test('rolesAMano ROJO: el deslizador del reproductor, un botón con role="slider"', () => {
+  assert.deepEqual(rolesAMano('<p>x</p>\n<button\n  type="button"\n  role="slider"\n  (click)="seek($event)"\n></button>', true), [
+    { linea: 2, rol: 'slider' },
+  ]);
+});
+
+test('rolesAMano ROJO: el rol enlazado con un literal y el `aria-modal` sin rol', () => {
+  assert.deepEqual(rolesAMano('<div [attr.role]="flush() ? null : \'dialog\'"></div>', true), [{ linea: 1, rol: 'dialog' }]);
+  assert.deepEqual(rolesAMano('<section aria-modal="true"></section>', true), [{ linea: 1, rol: 'dialog' }]);
+});
+
+test('rolesAMano ROJO: un `>` dentro de un atributo no corta la etiqueta antes del rol', () => {
+  assert.equal(rolesAMano('<li (click)="n > 0 && go()" role="menuitem">a</li>', true).length, 1);
+});
+
+test('rolesAMano VERDE: en un `<p-*>` el rol nombra al nativo', () => {
+  assert.deepEqual(rolesAMano('<p-popover #op role="dialog" [attr.aria-label]="t">x</p-popover>', true), []);
+});
+
+test('rolesAMano VERDE: un radiogroup alrededor de radios nativos, y un rol sin teclado propio', () => {
+  assert.deepEqual(rolesAMano('<div role="radiogroup"><sc-radiobutton inputId="a" /></div><span role="status"></span>', true), []);
+});
+
+test('rolesAMano VERDE: un rol citado en un comentario', () => {
+  assert.deepEqual(rolesAMano('<!-- antes era un <div role="tab"> -->\n<p>x</p>', true), []);
+});
+
+test('rolesAMano: en un `.ts` mira solo el `template:` en línea, con su línea real', () => {
+  const ts = "const sel = '[role=\"menuitem\"]';\n/** <div role=\"dialog\"> */\n@Component({\n  template: `\n    <div role=\"tab\"></div>`,\n})";
+  assert.deepEqual(rolesAMano(ts, false), [{ linea: 5, rol: 'tab' }]);
+});
+
+test('NATIVO_DEL_ROL: cada rol apunta a una familia de la sección 6 del catálogo', () => {
+  for (const [rol, nativo] of Object.entries(NATIVO_DEL_ROL)) assert.match(nativo, /\(6\.\d+\)$/, rol);
 });
