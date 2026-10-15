@@ -48,7 +48,8 @@ test('Mensajes en cola · la ayuda va debajo del segmentado, los dos controles a
   await id.getByRole('button', { name: 'Sin locución' }).click();
   const quieta = (await caja(id.locator('.sc-selectbutton__msg'))).y;
   await id.getByRole('button', { name: 'Texto a voz' }).click();
-  const texto = id.locator('input');
+  // El texto que lee la voz es un área de texto desde el candidato 20 del barrido (`sc-textarea autoResize`).
+  const texto = id.getByRole('textbox');
   await expect(texto).toBeVisible();
   expect((await caja(id.locator('.sc-selectbutton__msg'))).y, 'la ayuda no salta al elegir').toBe(quieta);
   expect((await caja(texto)).y, 'el texto, después de la ayuda').toBeGreaterThan(quieta);

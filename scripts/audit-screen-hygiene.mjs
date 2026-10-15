@@ -322,9 +322,6 @@ export const ROLES_A_MANO = {
   'projects/supervisor/src/app/features/admin/labels/components/label-form-panel/label-form-panel.component.html': 1,
   'projects/supervisor/src/app/features/admin/repositories/components/repo-form-panel.component.html': 1,
   'projects/supervisor/src/app/features/admin/templates/components/template-form-panel/template-form-panel.component.html': 1,
-  // Candidato 8: la categoría del asistente de widgets. Seis no caben en un `sc-selectbutton` de 443 px (medido el
-  // 2026-10-15: los rótulos se cortan); queda por decidir con qué se sustituye.
-  'projects/supervisor/src/app/features/dashboard/components/widget-assistant/widget-assistant.component.html': 1,
   // Candidato 26: el color de una etiqueta (Etiquetas del Supervisor), radios sin flechas.
   'projects/ui-smartcontact/src/lib/components/color-dot-picker/sc-color-dot-picker.component.html': 1,
   // Candidato 27: `role="menu"` sobre casillas nativas; las columnas ya van con `sc-multiselect iconOnly` (DD-153).

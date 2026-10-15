@@ -240,6 +240,7 @@
             autocomplete="tel"
             [required]="phoneRequired()"
             [helperText]="phoneRequired() ? ('agents.form.fields.phone_required_hint' | translate) : undefined"
+            [error]="phoneError() ? (phoneError()! | translate) : undefined"
             [value]="form().phone"
             (valueChange)="updateField('phone', $event)"
           />

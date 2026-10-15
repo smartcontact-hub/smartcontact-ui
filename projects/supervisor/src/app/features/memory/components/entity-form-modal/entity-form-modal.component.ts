@@ -13,7 +13,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ScTextareaComponent as TextareaComponent } from '@smartcontact-hub/components';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
-import { ScInputTextComponent as InputTextComponent } from '@smartcontact-hub/components';
+import { ScInputTagsComponent as InputTagsComponent, ScInputTextComponent as InputTextComponent } from '@smartcontact-hub/components';
 import { ScDialogComponent as DialogComponent } from '@smartcontact-hub/components';
 import { ScSelectComponent as SelectComponent } from '@smartcontact-hub/components';
 
@@ -27,7 +27,7 @@ interface EntityTypeOption {
 
 interface ListValueDraft {
   value: string;
-  synonymsCsv: string;
+  synonyms: readonly string[];
   expanded: boolean;
 }
 
@@ -45,7 +45,7 @@ interface ListValueDraft {
  *   - Type (select 18 tipos, locked en edit)
  *   - Format (opcional, hint string)
  *   - List values (solo si type === 'list'): por valor, opcional
- *     synonyms (CSV en UI, array al persistir). Trigger collapsable
+ *     synonyms (etiquetas en `sc-inputtags`, array al persistir). Trigger collapsable
  *     "Añadir sinónimos" por row — patrón 1:1 con React legacy.
  *
  * Modos:
@@ -59,6 +59,7 @@ interface ListValueDraft {
     ButtonComponent,
     FormsModule,
     InputTextComponent,
+    InputTagsComponent,
     DialogComponent,
     SelectComponent,
     TranslateModule,
@@ -153,7 +154,7 @@ export class EntityFormModalComponent {
         this.listValues.set(
           e.config?.listValues?.map((v) => ({
             value: v.value,
-            synonymsCsv: v.synonyms.join(', '),
+            synonyms: v.synonyms,
             expanded: v.synonyms.length > 0,
           })) ?? [],
         );
@@ -180,15 +181,15 @@ export class EntityFormModalComponent {
   }
 
   protected addListValue(): void {
-    this.listValues.update((arr) => [...arr, { value: '', synonymsCsv: '', expanded: false }]);
+    this.listValues.update((arr) => [...arr, { value: '', synonyms: [], expanded: false }]);
   }
 
   protected updateListValueText(index: number, value: string): void {
     this.listValues.update((arr) => arr.map((d, i) => (i === index ? { ...d, value } : d)));
   }
 
-  protected updateListValueSynonyms(index: number, synonymsCsv: string): void {
-    this.listValues.update((arr) => arr.map((d, i) => (i === index ? { ...d, synonymsCsv } : d)));
+  protected updateListValueSynonyms(index: number, synonyms: readonly string[]): void {
+    this.listValues.update((arr) => arr.map((d, i) => (i === index ? { ...d, synonyms } : d)));
   }
 
   protected toggleListValueSynonyms(index: number): void {
@@ -211,8 +212,7 @@ export class EntityFormModalComponent {
       .filter((d) => d.value.trim().length > 0)
       .map((d) => ({
         value: d.value.trim(),
-        synonyms: d.synonymsCsv
-          .split(',')
+        synonyms: d.synonyms
           .map((s) => s.trim())
           .filter((s) => s.length > 0),
       }));

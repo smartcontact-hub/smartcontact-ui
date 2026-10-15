@@ -467,5 +467,10 @@ Leídos en el código; sin medir en el navegador.
    pegado a la casilla o al botón; 21 es un `sc-selectbutton` de varios por par que no se queda vacío; 24, un
    `p-tieredmenu` con Tipo y Canal en submenús. El 11 sigue en diálogo: borra una rama con sus hijas, y eso es una
    confirmación compleja. Prueba: `e2e/supervisor/barrido-visibles.spec.ts`.
+   **Ronda de campos, hecha el 2026-10-15**: 8 (las seis categorías en fichas 3×2 con su radio a la vista, un grupo de
+   radios nativo con flechas), 16 (`sc-inputtags`), 18 (el teléfono con `telefonoValido`; el PIN con KeyFilter espera
+   a abrirlo en `sc-inputtext`), 19 (`sc-inputnumber` de 1 a 65535) y 20 (`sc-textarea` con `autoResize` y nombre).
+   Prueba: `e2e/supervisor/barrido-campos.spec.ts`. El 17 espera a producto: con `sc-inputtags` los motivos perderían
+   su rojo, porque el wrapper no expone `#item`.
 6. **La sección 6 en sc-docs**: hecho el 2026-10-14, la página PrimeNG. Si cambias la sección 6, `npm run
    primeng-catalog:gen` rehace su artefacto (el gate se pone rojo hasta entonces).
