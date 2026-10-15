@@ -907,14 +907,13 @@
   </div>
 </ng-template>
 
-<!-- Elegir un audio: el «Advanced» de primeng.dev tal cual (revisión del 2026-10-15, que deshace el «basic» del
-     2026-10-09), sin `auto`: «Elegir», «Subir» y «Cancelar» con sus textos de PrimeNG, la zona de soltar, lo elegido
-     pendiente con su barra y, al subirlo, en la lista de subidos con su ✕. Un solo archivo: subir otro lo sustituye.
-     Debajo, los formatos (DD-198). -->
+<!-- Elegir un audio: el «Advanced» de primeng.dev (revisión del 2026-10-15, que deshace el «basic» del 2026-10-09)
+     con `auto`, su modo nativo sin «Subir» ni «Cancelar»: la ficha ya tiene «Guardar», y con un solo archivo la ✕ de
+     su fila es la que lo quita. «Elegir» con su texto de PrimeNG, la zona de soltar y, lo elegido, en la lista de
+     subidos. Un solo archivo: elegir otro lo sustituye. Debajo, los formatos (DD-198). -->
 <ng-template #filePicker let-key="key" let-id="id" let-help="help">
   <sc-fileupload
     [id]="id + '-upload'"
-    [auto]="false"
     [accept]="audioAccept"
     [saved]="audioGuardadoDe(key)"
     [dropLabel]="'groups.form.announcements.drop_file' | translate"

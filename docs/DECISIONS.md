@@ -206,10 +206,12 @@ Postconversación y de la Cola distraía, y el «o suelta aquí» del uploader i
    `h3` (18), el bloque (`sc-subsection`) a `Subtitle` (16) y la parte (`sc-slot`) en `Body` (14); la página sigue en
    `Title` (20). Con bloque y parte a 14, «Teléfono» y su «Distribución» pesaban igual. Enmienda DD-188, que bajó la
    sección a 16 cuando la página también medía 18: desde que la página es `Title`, 18 ya no la iguala.
-14. **El FileUpload «Advanced» de primeng.dev entero en los audios**: sin `auto`, «Elegir» (con su «+»), «Subir» y
-   «Cancelar» con los textos de PrimeNG (traducidos ahora en los cuatro idiomas), lo elegido pendiente con su barra y, al
-   subir, en la lista de subidos; el grupo guarda el audio al subirlo. `sc-fileupload` gana `uploadLabel` y
-   `cancelLabel`, su icono de elegir es el de cada ejemplo (el «+» en `advanced`, la flecha en `basic`), oculta la
+14. **El FileUpload «Advanced» de primeng.dev en los audios, con `auto`**: «Elegir» (con su «+») y el texto de
+   PrimeNG, la zona de soltar y lo elegido, en la lista de subidos con su ✕. Sin «Subir» ni «Cancelar», que `auto` ya
+   quita de serie: la ficha tiene «Guardar», y con un solo archivo la ✕ de su fila es la que lo quita (se probó el
+   ejemplo entero, con lo elegido pendiente y su barra, y la revisión lo descartó por eso). «Subir» y «Cancelar» van
+   traducidos en los cuatro idiomas para quien use el ejemplo entero, que la doc del DS enseña en su propia historia.
+   `sc-fileupload` gana `uploadLabel` y `cancelLabel`, su icono de elegir es el de cada ejemplo (el «+» en `advanced`, la flecha en `basic`), oculta la
    miniatura rota también sin `src`, y su icono propio sale del lector por el passthrough: PrimeNG le pone
    `aria-label="true"` y el botón se llamaba «true Elegir» (el de serie lleva `aria-hidden` y se llama «Choose»). El nombre del archivo, a 7 de su tamaño y no a 2, y los botones secundarios en su
    gris: son del Kit.

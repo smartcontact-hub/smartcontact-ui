@@ -51,8 +51,8 @@ a2a837d4:docs/handoff/supervisor-fichas.md`.
 - **Resumen**: Teléfono y Email son enlaces a su bloque, como Chat; fuera el selector rápido de estrategia.
 - **Ring All**: `RING_ALL_ALLOWED_MAX = 2`; elegir 3 o más vuelve a 2 y lo dice. **Tipificar conversaciones** siempre,
   con la descripción de la tipificación y «Ver detalle»; el árbol sin «N niveles, N opciones».
-- **Audios**: el «Advanced» de primeng.dev entero, sin `auto` (DS: `saved`, `savedRemoved`, `removeLabel`, `uploadLabel`,
-  `cancelLabel`), en música, identificador, «Eres el siguiente» y el audio saliente (`conAudioSaliente`). .wav y .mp3.
+- **Audios**: el «Advanced» de primeng.dev con `auto`, sin «Subir» ni «Cancelar» (DS: `saved`, `savedRemoved`,
+  `removeLabel`; `uploadLabel` y `cancelLabel` para el ejemplo entero), en música, identificador, «Eres el siguiente» y el audio saliente (`conAudioSaliente`). .wav y .mp3.
 - **Email**: las seis estrategias de Teléfono (Niveles con «Dentro de cada nivel» y la columna «Nivel Email»), tiempo
   de ringing y su cola. Desbordar sigue en «Reglas comunes».
 - **Rejilla** (DD-206 §10 y §11): Tipificar bajo su interruptor; «Tamaño de cola» a dos columnas (`--sc-option-cards-gap`);

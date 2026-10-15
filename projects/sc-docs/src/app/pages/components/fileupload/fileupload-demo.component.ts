@@ -12,11 +12,8 @@ const AUDIO_SNIPPET = `<sc-fileupload
 <span>{{ musica() ?? 'Música por defecto' }}</span>`;
 
 const SAVED_SNIPPET = `<sc-fileupload
-  [auto]="false"
   accept=".wav,.mp3,audio/wav,audio/mpeg"
   chooseLabel="Elegir"
-  uploadLabel="Subir"
-  cancelLabel="Cancelar"
   dropLabel="o suelta aquí el archivo."
   removeLabel="Quitar archivo"
   [saved]="guardado()"
@@ -49,6 +46,15 @@ const RULES_SNIPPET = `<sc-fileupload
 />
 <!-- Con url="https://…" PrimeNG envía los archivos; sin ella, solo se entregan por (uploaded). -->`;
 
+const ADVANCED_SNIPPET = `<sc-fileupload
+  [auto]="false"
+  [multiple]="true"
+  chooseLabel="Elegir"
+  uploadLabel="Subir"
+  cancelLabel="Cancelar"
+  dropLabel="o suelta aquí los archivos."
+/>`;
+
 const BASIC_SNIPPET = `<sc-fileupload mode="basic" chooseLabel="Subir archivo" accept=".csv" />`;
 
 /** Demo de `sc-fileupload` en formato story (motor «Storybook-like»). */
@@ -63,6 +69,7 @@ export class FileUploadDemoComponent {
   protected readonly audioTpl = viewChild<TemplateRef<StoryContext>>('audio');
   protected readonly savedTpl = viewChild<TemplateRef<StoryContext>>('saved');
   protected readonly listTpl = viewChild<TemplateRef<StoryContext>>('list');
+  protected readonly advancedTpl = viewChild<TemplateRef<StoryContext>>('advanced');
   protected readonly basicTpl = viewChild<TemplateRef<StoryContext>>('basic');
   protected readonly rulesTpl = viewChild<TemplateRef<StoryContext>>('rules');
 
@@ -99,13 +106,15 @@ export class FileUploadDemoComponent {
     const li = this.listTpl();
     const ba = this.basicTpl();
     const ru = this.rulesTpl();
-    if (!pg || !au || !sa || !li || !ba || !ru) return [];
+    const ad = this.advancedTpl();
+    if (!pg || !au || !sa || !li || !ba || !ru || !ad) return [];
     return [
       { name: 'Playground', playground: true, template: pg },
       { name: 'Un audio, guardado en el campo', template: au, snippet: AUDIO_SNIPPET },
       { name: 'Un audio, guardado en su lista', template: sa, snippet: SAVED_SNIPPET },
       { name: 'Varios archivos, con su lista', template: li, snippet: LIST_SNIPPET },
       { name: 'Validación y envío', template: ru, snippet: RULES_SNIPPET },
+      { name: 'Con «Subir» y «Cancelar»', template: ad, snippet: ADVANCED_SNIPPET },
       { name: 'Básico', template: ba, snippet: BASIC_SNIPPET },
     ];
   });
