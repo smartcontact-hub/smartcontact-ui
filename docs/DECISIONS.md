@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Fase 1, PrimeNG como referencia (decisión de producto, 2026-10-15): primero el nativo, después su `sc-*`, y cada excepción escrita junto al código · una pregunta de una frase sobre lo que se pulsa, en un `p-confirmpopup` pegado a ello (`ScConfirmService.request({ target })`); lo que hay que explicar, en el diálogo · los filtros por pares no se vacían (`sc-selectbutton multiple [allowEmpty]="false"`) · el «⋮» del widget en `p-tieredmenu` | DD-205 |
 > | Revisión de las fichas a 1440 (2026-10-14): «Agentes asignados» y «Grupos asignados» sin subtítulo dentro (`sc-subsection` sin título) · el resumen del grupo se llama como la ficha (Distribución con el teléfono saliente, Recursos una fila por tipo, fuera «Salida»), en caption · «Editar» de un recurso en su opción del desplegable (`sc-resource-option`, `#item` de `sc-multiselect`) · Tamaño de cola en tarjetas de radio (`sc-option-cards`, el ejemplo «Card» de primeng.dev) · las tablas de asignar miden todas sus filas (`filasReservadas`) · Habilitado lo cambia el supervisor también con «Activación por grupo» · sin columna Nivel en los grupos del agente, Salientes con radio · Desconectado: gris en el listado, Estado apagado en la ficha (enmienda DD-187 §2 y DD-164 §1) | DD-204 |
 > | El esqueleto de carga con la forma de su contenido: en una tabla, `[skeleton]` de `sc-datatable` y la forma de cada columna (`ScColumnDef.skeleton`: `avatar`, `tag`, `action`, texto) · no el ejemplo «DataTable» de primeng.dev tal cual · una caja más alta que la línea no estira la celda · la carga simulada del Supervisor: 1,5 s la primera vez, nada para un robot salvo `?latencia=1` | DD-201 |
 > | Un icono, un significado: `SC_ICONS` (un icono por concepto) y `SC_ICON_RESERVADOS` (la X cierra o quita, la papelera elimina, la hamburguesa abre la navegación) · el botón de solo icono enseña su nombre en un tooltip, también con teclado · `sc-icon` solo en tallas de la escala, color con `tone` · `audit:icons` | DD-200 |
@@ -149,7 +150,7 @@
 
 ---
 
-## DD-205 · 2026-10-15 — Revisión de la ficha de grupo: el resumen sin selector rápido, Ring All a dos, «Tipificar conversaciones» con su descripción, los audios en el uploader de primeng.dev, Email con su estrategia y su cola, y Postconversación y Cola en la rejilla de dos columnas
+## DD-206 · 2026-10-15 — Revisión de la ficha de grupo: el resumen sin selector rápido, Ring All a dos, «Tipificar conversaciones» con su descripción, los audios en el uploader de primeng.dev, Email con su estrategia y su cola, y Postconversación y Cola en la rejilla de dos columnas
 
 **Contexto** · Revisión de producto del 2026-10-15 sobre la ficha de grupo, y lo que se pidió después por escrito: la
 fila de Teléfono del resumen abría un selector de estrategia que nadie pedía; Ring All dejaba elegir 3 o más agentes a la
@@ -229,6 +230,53 @@ la pregunta de DD-121 sobre los anuncios periódicos de postventa. Vigilan esto 
 `tipificaciones-listado.spec.ts`, `ficha-grupo-canales.spec.ts`, `ficha-grupo-niveles.spec.ts` (Niveles en Email),
 `ficha-grupo-distribucion-orden.spec.ts` (las partes de cada canal) y `components.spec.ts` (`sc-fileupload`, el
 hueco de `sc-textarea` y «ayuda de campo»).
+
+---
+
+## DD-205 · 2026-10-15 — Fase 1, PrimeNG como referencia: confirmar en un globo junto a lo que se pulsa, filtros por pares que no se vacían y el menú del widget en submenús
+
+**Contexto** · El barrido de usos del catálogo de PrimeNG (`docs/AUDIT-PRIMENG-CATALOGO.md` §7, 2026-10-14) dejó cinco
+candidatos que cambian cómo se ve la pantalla: 10, 11, 13, 21 y 24. Se enseñaron el antes y el después, y la decisión de
+producto (2026-10-15) fue una estrategia en tres fases: primero PrimeNG como estándar, después el design system
+consolidado y por último la personalización de UX/UI. Esta DD es la primera aplicación de la fase 1.
+
+**Decisión** ·
+1. **Criterios de la fase 1**, decisión deliberada de producto: primero el componente de PrimeNG; si el DS ya lo
+   envuelve, su `sc-*`; nada hecho a mano si PrimeNG lo cubre; sin sobrescribir CSS ni cambiar un comportamiento
+   nativo sin una razón funcional; teclado y accesibilidad se mantienen; cada excepción se escribe junto al código con
+   su porqué; nada que ya funciona se rompe.
+2. **Confirmar.** Una pregunta de una frase sobre lo que se acaba de pulsar va en un `p-confirmpopup` pegado a ello:
+   `ScConfirmService.request({ …, target })`, y `sc-confirmdialog` monta los dos. Si hay que explicar la consecuencia o
+   no hay un botón al que pegarse (al guardar, al salir), sigue el `p-confirmdialog` centrado; borrar una entidad, en
+   `sc-delete-entity-dialog`. Lo usan las casillas de «todos» de las dos tablas de asignar (10) y «Expirar
+   contraseña» (13). Borrar una rama de tipificación con sus hijas (11) se queda en diálogo.
+3. **«Más filtros» de Conversaciones (21).** Cada par (tipo, canal, dirección) es un `sc-selectbutton multiple
+   [allowEmpty]="false"`: PrimeNG no deja quitar el último marcado, así que la tabla no llega a 0 por un filtro.
+4. **El «⋮» de cada widget del Monitor (24).** `p-tieredmenu`: Tipo y Canal son submenús y el menú pasa de doce filas a
+   cuatro, con «Quitar widget» en rojo y al final.
+
+**Razón** · Medido a 1440 en local. El globo cae 10 px bajo la casilla y junto al botón (se da la vuelta si debajo no
+cabe); abre con el foco en «Cancelar» cuando aceptar no se deshace, y Escape devuelve el foco a quien preguntó. En los
+filtros, ni el ratón ni el Espacio quitan el último de un par. En el menú, la flecha derecha abre el submenú y la
+izquierda vuelve. Las cuatro pruebas de `e2e/supervisor/barrido-visibles.spec.ts` se ponen rojas con la pieza de antes.
+
+**Excepciones** ·
+- El globo lleva tope de ancho, `--sc-spacing-25` (350 px, lo que mide el toast): Aura no le pone ninguno y una frase
+  larga lo estira fuera de la pantalla; el Kit no da medida (comentario en `sc-confirmdialog.component.ts`).
+- Las casillas de «todos» ya no se apagan mientras preguntan: apagadas no aceptan el foco de vuelta, que se iba al
+  `body`. La segunda pulsación la sigue cortando `toggleHeader`.
+- El rojo de `sc-menu-item--danger` cubre también `p-tieredmenu-item-*` en el tema: la misma regla con los nombres de
+  las piezas de TieredMenu.
+
+**Descartadas** ·
+- ConfirmPopup también en el 11: borrar una rama con sus hijas tiene una consecuencia que explicar.
+- Menu con `toggleable` para el 24 (la otra opción del barrido): sus grupos se despliegan dentro del mismo menú, que
+  vuelve a crecer al abrir uno. TieredMenu es el hermano que la sección 6.9 del catálogo da para acciones con un
+  segundo nivel.
+- En el 21, las casillas con un aviso cuando un par se queda vacío: avisa del error en vez de no dejarlo pasar.
+
+**Consecuencias** · Cuatro filas nuevas en «Bifurcaciones al componer» de AGENTS.md. En el catálogo, ConfirmPopup pasa
+a «Hecho» y TieredMenu a la sección 3. Las fases 2 y 3 no tienen fecha: cada una se abre con su propia DD.
 
 ---
 
@@ -4665,7 +4713,7 @@ exactamente el desbordamiento y dónde se configura su destino; si «Desbordar s
 estrategia o capacidad propias; si la URL del script de Web Chat la pone cada grupo o la plataforma; si el backend
 tendrá un permiso de WhatsApp por agente (el AED en vivo solo tiene Tlf / Chat / Email); qué ve el cliente en cola si
 se quita un canal o se cambia la estrategia de un grupo activo; el choque con postventa (2026-09-18), que pidió
-más de un anuncio periódico en teléfono (resuelto: varios, cada uno con su frecuencia; DD-205); y, desde DD-130, qué secciones y permisos trae cada tipo de usuario
+más de un anuncio periódico en teléfono (resuelto: varios, cada uno con su frecuencia; DD-206); y, desde DD-130, qué secciones y permisos trae cada tipo de usuario
 (respondida en DD-132). Fuera a propósito: la forma de las fichas de agente y usuario, y
 `/config/aed/grupos`, la página vieja de Configuración, que no está conectada con la ficha (DD-135 la conecta: es donde
 se fija con qué nace un grupo). Vigilan esto

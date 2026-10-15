@@ -44,7 +44,7 @@ d94e5ad8:docs/handoff/supervisor-fichas.md`. El de la revisión de agentes y tip
 El de lo que se decide de la auditoría de PrimeNG (2026-10-11, DD-195, sin trampas propias): `git show
 a2a837d4:docs/handoff/supervisor-fichas.md`.
 
-## ✅ 2026-10-15 · Revisión de producto de la ficha de grupo: resumen, Ring All, tipificación, audios, Email y rejilla (DD-205)
+## ✅ 2026-10-15 · Revisión de producto de la ficha de grupo: resumen, Ring All, tipificación, audios, Email y rejilla (DD-206)
 
 > **Sello:** worktree `seabiscuit`, rama `arebury/revision-1015-grupos` sobre `main` `a2a837d4`. PR 1 de 3 del plan.
 
@@ -55,7 +55,7 @@ a2a837d4:docs/handoff/supervisor-fichas.md`.
   identificador, «Eres el siguiente» y el audio saliente nuevo (`conAudioSaliente`). Admite .wav y .mp3.
 - **Email**: las seis estrategias de Teléfono (Niveles con «Dentro de cada nivel» y la columna «Nivel Email»), tiempo
   de ringing y su cola. Desbordar sigue en «Reglas comunes».
-- **Rejilla** (DD-205 §10 y §11): Tipificar bajo su interruptor; «Tamaño de cola» a dos columnas (`--sc-option-cards-gap`);
+- **Rejilla** (DD-206 §10 y §11): Tipificar bajo su interruptor; «Tamaño de cola» a dos columnas (`--sc-option-cards-gap`);
   «Llamadas salientes» en Teléfono; «Web Chat» y «WhatsApp» como partes de Chat; Recursos en dos filas; cada audio en
   su fila; toda ayuda a 7 de su control (DS incluido); `sc-textarea` siempre en columna.
 - **Pruebas**: en local, a 1440, las de grupo, las 2 de `sc-fileupload` y la de Niveles en Email (enrojece sin él).
@@ -254,7 +254,7 @@ a7ddc14b:docs/handoff/supervisor-fichas.md`.
   referencia).
 - **Devs:** el resto de preguntas abiertas de DD-121: el destino del desbordamiento, el script de Web Chat, WhatsApp por
   agente y qué ve el cliente en cola si se toca un grupo activo. «Audio saliente» y los campos de Email los respondió la
-  revisión del 2026-10-15 (DD-205).
+  revisión del 2026-10-15 (DD-206).
 - **Rafa:** revisar usuarios contra el Supervisor real. Y en el portátil: poner el 4405 al día con `main` y borrar el
   worktree y la rama `codex/supervisor-f-listado` (`f90f7187`, una copia de F), la local y la del remoto; desde la
   nube no se puede.

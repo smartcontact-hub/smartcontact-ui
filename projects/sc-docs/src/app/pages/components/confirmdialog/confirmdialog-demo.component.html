@@ -16,3 +16,8 @@
   <sc-button label="Descartar cambios (énfasis reject)" appearance="outlined" (clicked)="ask('danger', 'reject')" />
   <p>Resultado: <span>{{ result() }}</span></p>
 </ng-template>
+
+<ng-template #popup>
+  <sc-button label="Expirar contraseña" variant="secondary" appearance="outlined" data-testid="confirm-popup" (clicked)="askNear($event)" />
+  <p>Resultado: <span>{{ result() }}</span></p>
+</ng-template>

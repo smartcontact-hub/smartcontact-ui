@@ -43,24 +43,6 @@
   &__updated-text {
     color: var(--sc-text-subtle);
   }
-
-  /* El relleno y el centrado los pone la lista; aquí solo el contenido. */
-  &__no-results {
-    > sc-icon {
-      display: inline-block;
-      color: var(--sc-icon-disabled);
-      margin-bottom: var(--sc-spacing-0-5);
-    }
-  }
-
-  &__no-results-title {
-    color: var(--sc-text-secondary);
-  }
-
-  &__no-results-text {
-    margin-top: var(--sc-spacing-0-25);
-    color: var(--sc-text-subtle);
-  }
 }
 
 /* El panel de fila y el menú contextual propios murieron en la Ola 2: ambos

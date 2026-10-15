@@ -99,9 +99,11 @@ const sh = (cmd) => {
 // DD-187: 63 → 69 por el interlineado de cinco textos sin token propio que heredaban el 1.5 del body (21 en vez de 20):
 // `.p-menu-item-label`, `.p-tooltip-text`, `.p-message-text` con `.p-message-sm` y `.p-message-lg`, y `.p-drawer-title`
 // (30 en vez de 28). PrimeNG no da token de interlineado para ninguno; en el preset viajan con el tema.
-// 2026-10-15: `ds` 12 → 13 por `.p-fileupload-file-thumbnail`: PrimeNG pinta una miniatura rota para un archivo que no
+// DD-205: 69 → 72 porque el «⋮» del widget pasa a `p-tieredmenu` y el rojo de `sc-menu-item--danger` tiene que
+// llegarle: `.p-tieredmenu-item-link`, `-icon` y `-content`, las mismas tres piezas que ya cubría en `p-menu`.
+// DD-206: `ds` 12 → 13 por `.p-fileupload-file-thumbnail`: PrimeNG pinta una miniatura rota para un archivo que no
 // es imagen (los audios de Grupos); no hay token ni `pt` que la quite solo en ese caso (customs-catalog §8).
-const TOPE = { app: 6, ds: 13, preset: 69 };
+const TOPE = { app: 6, ds: 13, preset: 72 };
 
 /* Cuenta las clases `.p-*` que aparecen en SELECTORES, no en comentarios. Un
  * comentario que menciona `.p-datatable-*` para explicar POR QUÉ dependemos de

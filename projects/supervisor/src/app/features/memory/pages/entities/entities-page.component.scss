@@ -100,27 +100,6 @@
   max-height: max-content;
 }
 
-.entities-empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--sc-spacing-0-875);
-  padding: var(--sc-spacing-1-75);
-  background: var(--sc-bg-surface);
-  border: 1px dashed var(--sc-border-default);
-  border-radius: var(--sc-radius-300);
-
-  sc-icon {
-    color: var(--sc-text-secondary);
-  }
-
-  p {
-    margin: 0;
-    font-size: var(--sc-font-size-200);
-    color: var(--sc-text-secondary);
-  }
-}
-
 /* Celdas de las dos tablas. El chrome de la tabla (tarjeta, cabecera, filas,
  * separadores, hover) ya no vive aquí: lo ponen `.table-card` global y
  * `styles/_sc-datatable-list.scss` (`.list-table`), porque los `<th>`/`<tr>`/

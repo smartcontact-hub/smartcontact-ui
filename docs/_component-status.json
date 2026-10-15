@@ -299,7 +299,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 44,
+      "usedInSupervisor": 38,
       "cuando": "Para un sí/no independiente, o para la casilla de un grupo elegido A MEDIAS (tiene tercer estado). Para activar algo al instante, `sc-toggleswitch`.",
       "sobreObsoleto": []
     },
@@ -408,7 +408,7 @@
       "selector": "sc-confirmdialog",
       "provenance": "WRAPPER",
       "kind": "STANDARD",
-      "primengBase": "primeng/confirmdialog",
+      "primengBase": "primeng/confirmdialog, primeng/confirmpopup",
       "cva": false,
       "inputs": 0,
       "api": [],
@@ -1724,7 +1724,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 25,
+      "usedInSupervisor": 26,
       "cuando": "Para elegir una opción de 2-4 que se explican solas, todas visibles. Si cambia de COLECCIÓN en vez de filtrar, son pestañas (DD-113).",
       "sobreObsoleto": []
     },

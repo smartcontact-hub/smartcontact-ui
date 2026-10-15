@@ -572,7 +572,7 @@
               appearance="outlined"
               [icon]="keyIcon"
               [label]="'agents.form.advanced.sesion.expire_pwd' | translate"
-              (clicked)="requestExpirePassword()"
+              (clicked)="requestExpirePassword($event)"
             />
             <!-- Lo hecho, junto al botón que lo hizo (DD-191). -->
             @if (expiraAviso(); as aviso) {

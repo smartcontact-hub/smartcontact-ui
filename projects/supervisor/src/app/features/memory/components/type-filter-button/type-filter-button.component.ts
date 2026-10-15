@@ -2,8 +2,11 @@ import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScCheckboxComponent as CheckboxComponent } from '@smartcontact-hub/components';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 import { ScBadgeComponent as BadgeComponent } from '@smartcontact-hub/components';
-import { ChangeDetectionStrategy, Component, computed, model } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
+import { ScSelectButtonComponent as SelectButtonComponent } from '@smartcontact-hub/components';
+import { ChangeDetectionStrategy, Component, computed, inject, model } from '@angular/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+
+import { injectLangChange } from '@core/utils/lang-change';
 import { PopoverModule } from 'primeng/popover';
 
 
@@ -33,9 +36,11 @@ import {
  * status/multirec TODOS unchecked (no filtra). `hasActiveFilters`
  * detecta divergencia vs defaults para encender el dot accent.
  */
+let typeFilterIdCounter = 0;
+
 @Component({
   selector: 'sc-memory-type-filter-button',
-  imports: [BadgeComponent, CheckboxComponent, ButtonComponent, IconComponent, PopoverModule, TranslateModule],
+  imports: [BadgeComponent, CheckboxComponent, ButtonComponent, IconComponent, PopoverModule, SelectButtonComponent, TranslateModule],
   templateUrl: './type-filter-button.component.html',
   styleUrl: './type-filter-button.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -44,6 +49,38 @@ export class TypeFilterButtonComponent {
   readonly filters = model.required<MemoryConversationFilters>();
 
   protected readonly filterIcon = 'filter_alt';
+
+  private readonly translate = inject(TranslateService);
+  private readonly lang = injectLangChange();
+
+  protected readonly panelId = `memory-type-filter-${++typeFilterIdCounter}`;
+
+  /** Los tres pares, cada uno con lo marcado: un segmentado de varios que no se queda vacío. */
+  protected readonly pares = computed(() => {
+    const f = this.filters();
+    this.lang();
+    const par = (key: 'types' | 'channels' | 'directions', titleKey: string) => {
+      const grupo = f[key] as unknown as Record<string, boolean>;
+      return {
+        key,
+        titleKey,
+        options: Object.keys(grupo).map((value) => ({ value, label: this.translate.instant(`memory.type_filter.${key}.${value}`) })),
+        value: Object.keys(grupo).filter((k) => grupo[k]),
+      };
+    };
+    return [
+      par('types', 'memory.type_filter.groups.type'),
+      par('channels', 'memory.type_filter.groups.channel'),
+      par('directions', 'memory.type_filter.groups.direction'),
+    ];
+  });
+
+  protected updatePair(key: 'types' | 'channels' | 'directions', value: unknown): void {
+    const marcados = Array.isArray(value) ? (value as string[]) : [];
+    const f = this.filters();
+    const grupo = f[key] as unknown as Record<string, boolean>;
+    this.filters.set({ ...f, [key]: Object.fromEntries(Object.keys(grupo).map((k) => [k, marcados.includes(k)])) });
+  }
 
   /** Cuántos de los seis grupos del panel filtran algo. */
   protected readonly activeGroupCount = computed(() => {
@@ -68,21 +105,6 @@ export class TypeFilterButtonComponent {
     if (f.multirec.onlyMulti || f.multirec.onlyPartial) return true;
     return false;
   });
-
-  protected updateTypes(key: 'interna' | 'externa', value: boolean): void {
-    const f = this.filters();
-    this.filters.set({ ...f, types: { ...f.types, [key]: value } });
-  }
-
-  protected updateChannels(key: 'llamada' | 'chat', value: boolean): void {
-    const f = this.filters();
-    this.filters.set({ ...f, channels: { ...f.channels, [key]: value } });
-  }
-
-  protected updateDirections(key: 'entrante' | 'saliente', value: boolean): void {
-    const f = this.filters();
-    this.filters.set({ ...f, directions: { ...f.directions, [key]: value } });
-  }
 
   protected updateRules(
     key: 'recording' | 'transcription' | 'classification',
