@@ -58,6 +58,30 @@ test('reproductor: la barra avanza con las flechas y con Re Pág', async ({ page
   await expect(actual).toHaveText('00:11');
 });
 
+test('reproductor de varias grabaciones: el tramo activo es la barra, que avanza con las flechas y con Re Pág', async ({
+  page,
+}) => {
+  await goto(page, 'conversaciones');
+  await page.locator('.mock-sample-switcher__trigger').click();
+  await page.getByRole('menuitem', { name: 'Solo multi-grabación' }).click();
+  await page.locator('[data-testid="conversations-table"] .p-datatable-tbody > tr').first().locator('td').nth(3).click();
+  const player = page.locator('sc-memory-multi-recording-player');
+  await expect(player).toBeVisible();
+
+  // Una sola barra con mando, la del tramo activo; los demás tramos son pista sin mando.
+  const barra = player.getByRole('slider', { name: 'Buscar posición en el tramo activo' });
+  await expect(barra).toHaveCount(1);
+  const alto = (selector: string) => player.locator(selector).first().evaluate((el) => el.getBoundingClientRect().height);
+  expect(await alto('.multi-rec__seg'), 'un tramo inactivo mide lo que la pista del slider').toBe(await alto('.p-slider-track'));
+  const actual = player.locator('.multi-rec__time');
+  await barra.focus();
+  await page.keyboard.press('ArrowRight');
+  await expect(actual).toContainText('00:01 /');
+  await page.keyboard.press('PageUp');
+  await expect(actual).toContainText('00:11 /');
+  await expect(barra).toHaveAttribute('aria-valuetext', '00:11');
+});
+
 test('Numeración especial: una lista con flechas y Espacio, y su buscador por prefijo', async ({ page }) => {
   await goto(page, 'config/sistema');
   const seccion = page.locator('sc-numeracion-especial-section');
@@ -77,6 +101,8 @@ test('Regeneración de contraseñas: «marcar todo» y Espacio cambian la cifra 
   const seccion = page.locator('sc-section-card').filter({ hasText: 'Regeneración de contraseñas' }).first();
   await seccion.locator('button[aria-expanded="false"]').first().click();
   const lista = seccion.getByRole('listbox', { name: 'Regeneración de contraseñas' });
+  // `count()` no espera: sin esto, cuenta antes de que la sección desplegada pinte sus filas.
+  await expect(lista.getByRole('option').first()).toBeVisible();
   const total = await lista.getByRole('option').count();
   expect(total, 'la lista enseña los agentes activos').toBeGreaterThan(0);
 

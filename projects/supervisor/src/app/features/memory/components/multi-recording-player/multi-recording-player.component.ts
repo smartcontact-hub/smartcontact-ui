@@ -1,7 +1,9 @@
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { SliderModule } from 'primeng/slider';
 
 
 import type { Recording } from '../../data/conversation.types';
@@ -16,8 +18,8 @@ import { formatTime, parseDurationSeconds } from '@shared/utils/audio';
  *
  *   1. Transport (back10 · play · fwd10) + tiempo acumulado del tramo activo.
  *   2. Bar horizontal segmentado proporcionalmente por duración de tramo.
- *      Segmento activo lleva fill de progreso + playhead; click DENTRO de
- *      su área busca posición. Segmentos inactivos son visuales — el
+ *      El tramo activo es un `p-slider` (busca dentro del tramo, con el
+ *      teclado o arrastrando). Segmentos inactivos son visuales — el
  *      switch de tramo se hace en la fila 3 (semántica single-purpose).
  *   3. Labels alineadas con anchos de segmento. La activa lleva color
  *      `info-strong`; flechas ←↑→↓ navegan el radiogroup.
@@ -32,7 +34,7 @@ import { formatTime, parseDurationSeconds } from '@shared/utils/audio';
  */
 @Component({
   selector: 'sc-memory-multi-recording-player',
-  imports: [ButtonComponent, IconComponent, TranslateModule],
+  imports: [ButtonComponent, FormsModule, IconComponent, SliderModule, TranslateModule],
   templateUrl: './multi-recording-player.component.html',
   styleUrl: './multi-recording-player.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -73,25 +75,6 @@ export class MultiRecordingPlayerComponent {
     return idx < 0 ? 0 : idx;
   });
 
-  /** Cumulative left% del segmento activo dentro del bar global. */
-  protected readonly activeLeftPct = computed(() => {
-    const fr = this.fractions();
-    const idx = this.selectedIndex();
-    return fr.slice(0, idx).reduce((a, b) => a + b, 0) * 100;
-  });
-
-  protected readonly activeWidthPct = computed(() => this.fractions()[this.selectedIndex()] * 100);
-
-  protected readonly progressFracInSeg = computed(() => {
-    const total = this.totalDuration();
-    if (total <= 0) return 0;
-    return Math.min(1, this.currentTime() / total);
-  });
-
-  protected readonly playheadPct = computed(
-    () => this.activeLeftPct() + this.activeWidthPct() * this.progressFracInSeg(),
-  );
-
   protected readonly currentTimeLabel = computed(() => formatTime(this.currentTime()));
   protected readonly totalDurationLabel = computed(() => formatTime(this.totalDuration()));
 
@@ -110,13 +93,9 @@ export class MultiRecordingPlayerComponent {
     this.togglePlay.emit();
   }
 
-  protected onScrubClick(event: MouseEvent): void {
+  protected onSeek(t: number): void {
     if (!this.playerEnabled()) return;
-    const target = event.currentTarget as HTMLElement;
-    const rect = target.getBoundingClientRect();
-    const fracInSeg = (event.clientX - rect.left) / rect.width;
-    const clamped = Math.max(0, Math.min(1, fracInSeg));
-    this.seek.emit(clamped * this.totalDuration());
+    this.seek.emit(t);
   }
 
   protected onSelectRecording(id: string): void {

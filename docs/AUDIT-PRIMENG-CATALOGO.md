@@ -443,6 +443,10 @@ Leídos en el código; sin medir en el navegador.
 - **Selects cortos de 2 a 6 opciones** en listas de ajustes: un segmentado rompería la columna de controles. El tipo
   de entidad (18 opciones) ya salta al teclear la inicial.
 - **Secciones del usuario como Tree**: la madre habilita a la hija, no la selecciona.
+- **Los motivos de «No disponible» (17) en `sc-inputtags`**, decidido el 2026-10-16: su rojo dice «No disponible», como
+  en la columna Estado de Agentes, y el wrapper no lo pinta (no expone `#item`). Lo que ganaría, pegar varios de una
+  vez, es raro en una lista de pocos motivos, y la fila ya se maneja con el teclado. Se reabre si `sc-inputtags` expone
+  `#item` por otro caso.
 - **Transcripción como Timeline o Scroller**: burbujas de alto variable, sin tamaños que pidan lista virtual.
 - **Se reabren si…**: destino del correo (15 opciones sin `filter`) si un cliente pasa de unos 20 grupos; servicios
   del usuario (8 casillas) si son decenas; el reembolso de cuscare-ds si producción lo enseña en dos grupos.
@@ -482,7 +486,10 @@ Leídos en el código; sin medir en el navegador.
    el «—» de cuscare-ds con su «Sin dato», el plural del aviso parcial. Prueba: `e2e/supervisor/barrido-avisos.spec.ts`.
    Medido en el 26: los puntos sin elegir, sobre el fondo del segmentado (#eceff3), quedan bajo 3:1 en gris (2,56),
    naranja (2,43), ámbar (1,86), verde (2,2) y turquesa (2,16); el color no es lo único que dice cuál es (el nombre se
-   lee debajo y lo oye el lector), así que la paleta no se toca sin decisión. Queda el reproductor de varias
-   grabaciones (cambia cómo se ve), el 17 (producto) y 6, 12 y 23 (desarrollo).
+   lee debajo y lo oye el lector), así que la paleta no se toca sin decisión.
+   **Lo que quedaba, decidido el 2026-10-16**: el reproductor de varias grabaciones lleva `p-slider` en el tramo activo,
+   con el aspecto del tema (el mismo que el de una grabación), y los demás tramos son su misma pista sin mando: de tramo
+   se cambia en la fila de etiquetas, como antes. Prueba en `e2e/supervisor/barrido-teclado.spec.ts`. El 17 se queda
+   como está (ver 7.5). Quedan 6, 12 y 23, que esperan a desarrollo.
 6. **La sección 6 en sc-docs**: hecho el 2026-10-14, la página PrimeNG. Si cambias la sección 6, `npm run
    primeng-catalog:gen` rehace su artefacto (el gate se pone rojo hasta entonces).
