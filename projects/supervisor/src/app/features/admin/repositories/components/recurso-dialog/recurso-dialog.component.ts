@@ -10,6 +10,7 @@ import {
 import { TemplatesStore } from '@features/admin/templates/state/templates.store';
 import { AGENDA_FIELDS } from '../../instances/agendas';
 import { EQUIPO_FIELDS } from '../../instances/equipos';
+import { hoy } from '@shared/utils/today';
 import { AgendasStore } from '../../state/agendas.store';
 import { EquiposStore } from '../../state/equipos.store';
 import { RepoFormPanelComponent, type RepoFormSubmission } from '../repo-form-panel.component';
@@ -116,8 +117,8 @@ export class RecursoDialogComponent {
   protected guardarAgenda(s: RepoFormSubmission): void {
     const datos = { name: s['name'] ?? '', description: s['description'] ?? '', status: s['status'] || 'active' };
     const id = this.id();
-    if (id === null) this.creado.emit(this.agendasStore.addItem({ ...datos, contacts: [] }).id);
-    else this.agendasStore.updateItem(id, datos);
+    if (id === null) this.creado.emit(this.agendasStore.addItem({ ...datos, contacts: [], updatedAt: hoy() }).id);
+    else this.agendasStore.updateItem(id, { ...datos, updatedAt: hoy() });
     this.cerrar.emit();
   }
 

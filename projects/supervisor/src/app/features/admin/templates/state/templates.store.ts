@@ -14,7 +14,8 @@ export class TemplatesStore {
   private readonly store: LocalStore<Template> = createLocalStore<Template>({
     storageKey: 'sc-templates',
     versionKey: 'sc-templates-v',
-    currentVersion: 1,
+    /** 2: las plantillas de WhatsApp de ejemplo (2026-10-15). */
+    currentVersion: 2,
     defaults: TEMPLATES_SEED,
   });
 

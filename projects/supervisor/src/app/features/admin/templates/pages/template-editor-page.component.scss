@@ -1,0 +1,19 @@
+/* El editor de una plantilla: arquetipo de editor (`page__inner`), sobre el lienzo como Sistema, como el de agendas. Las
+ * secciones se apilan con el margen que les da el DS; los campos usan el vocabulario de `styles/_forms.scss`. */
+:host {
+  display: block;
+  height: 100%;
+  background: var(--sc-bg-canvas);
+}
+
+/* El editor llena el ancho de su sección; su alto (de sobra para escribir: en el panel de la lista, la caja era de tres
+ * líneas) lo da su `style`, como en el ejemplo de primeng.dev/editor. */
+.template-editor {
+  display: block;
+  inline-size: 100%;
+}
+
+.template-editor__hint {
+  margin: var(--sc-spacing-0-5) 0 0;
+  color: var(--sc-text-subtle);
+}

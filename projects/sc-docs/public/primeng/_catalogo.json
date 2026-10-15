@@ -333,8 +333,8 @@
           "enlace": "https://primeng.dev/editor",
           "sirve": "Texto con formato (negrita, listas, enlaces).",
           "cuando": "El contenido necesita formato. Obsoleto: PrimeNG lo retirará a favor de un editor de pago.",
-          "aqui": "Sin uso: «sin decidir» para las plantillas de email (sección 1)",
-          "estado": "sin-uso",
+          "aqui": "En uso: el contenido de las plantillas (sección 3)",
+          "estado": "directo",
           "obsoleto": true
         },
         {

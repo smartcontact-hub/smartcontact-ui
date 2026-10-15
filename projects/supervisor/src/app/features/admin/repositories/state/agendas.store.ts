@@ -1,4 +1,5 @@
 import { createRepoStore } from '@core/services/local-store.factory';
+import { hoy } from '@shared/utils/today';
 
 import { contactosDeNumeros, type AgendaContact } from './agenda-contacts.core.mjs';
 
@@ -13,7 +14,10 @@ export interface Agenda {
   readonly name: string;
   readonly contacts: readonly AgendaContact[];
   readonly description: string;
-  readonly status: string;
+  /** Cuándo se tocó por última vez (AAAA-MM-DD): una agenda cambia con el tiempo y eso es lo que ayuda a saber. */
+  readonly updatedAt: string;
+  /** Cómo llama esta agenda a sus cinco campos personalizados; vacío, «Personalizado N» (se resuelve al mostrarlo). */
+  readonly customLabels?: readonly string[];
 }
 
 /** Los contactos de una semilla, numerados en su orden. */
@@ -30,20 +34,61 @@ const DIRECTORIO = Array.from({ length: 1250 }, (_, i): AgendaContact => {
   return { id: i + 1, name: `Punto de venta ${String(i + 1).padStart(4, '0')}`, phone: `900 ${n.slice(0, 3)} ${n.slice(3)}` };
 });
 
+/**
+ * Una agenda de ejemplo con contactos que llevan casi todos los campos (empresa, correo, direcciones, personalizados):
+ * nombres de actores y actrices de Hollywood, para ver y editar un contacto completo. Ningún teléfono ni correo es un
+ * literal (`audit:seed-pii`): salen de la posición de cada uno.
+ */
+const ESTRELLAS: readonly (readonly [string, string, string, string, string])[] = [
+  ['Meryl', 'Streep', 'Sunset Pictures', 'Productora ejecutiva', 'Los Ángeles'],
+  ['Tom', 'Hanks', 'Golden Reel Studios', 'Director de casting', 'Los Ángeles'],
+  ['Cate', 'Blanchett', 'Silver Screen Films', 'Directora de estudio', 'Nueva York'],
+  ['Denzel', 'Washington', 'Marquee Entertainment', 'Productor', 'Atlanta'],
+  ['Viola', 'Davis', 'Blue Curtain Media', 'Agente de talentos', 'Nueva York'],
+  ['Leonardo', 'DiCaprio', 'Harbor Light Pictures', 'Productor ejecutivo', 'Los Ángeles'],
+  ['Natalie', 'Portman', 'Eastside Cinema', 'Directora de distribución', 'Nueva York'],
+  ['Morgan', 'Freeman', 'Riverbend Studios', 'Director de programación', 'Memphis'],
+];
+const SEGMENTOS = ['Premium', 'Oro', 'Plata'] as const;
+const CLIENTES_VIP: AgendaContact[] = ESTRELLAS.map(([name, surname, company, position, city], i): AgendaContact => {
+  const slug = company.toLowerCase().replace(/\s+/g, '-');
+  const serie = String(100 + i);
+  return {
+    id: i + 1,
+    name,
+    surname,
+    company,
+    position,
+    website: `https://${slug}.example.com`,
+    phone: `900 810 ${serie}`,
+    phoneHome: `900 811 ${serie}`,
+    phonePersonal: `600 812 ${serie}`,
+    emailWork: `${name}.${surname}`.toLowerCase() + '@example.com',
+    emailPersonal: `${name}${surname}`.toLowerCase() + '@example.org',
+    workAddress: `Avenida del Cine ${10 + i}`,
+    workZip: `9${String(1000 + i * 7)}`,
+    workCity: city,
+    workCountry: 'Estados Unidos',
+    notes: 'Contacto de ejemplo',
+    custom1: String(2014 + i),
+    custom2: SEGMENTOS[i % SEGMENTOS.length],
+  };
+});
+
 const SEED: readonly Agenda[] = [
   {
     id: 1,
     name: 'Ventas Nacional',
     contacts: contactos(['Centralita de ventas', '900 100 200'], ['Ventas a empresas', '900 100 201'], ['Ventas a particulares', '900 100 202']),
     description: 'Contactos de ventas para el mercado nacional',
-    status: 'active',
+    updatedAt: '2026-10-02',
   },
   {
     id: 2,
     name: 'Soporte Premium',
     contacts: contactos(['Soporte premium', '900 200 300'], ['Soporte premium fuera de horario', '900 200 301']),
     description: 'Líneas dedicadas a clientes premium',
-    status: 'active',
+    updatedAt: '2026-09-21',
   },
   {
     id: 3,
@@ -55,28 +100,28 @@ const SEED: readonly Agenda[] = [
       ['Pagos fraccionados', '900 300 403'],
     ),
     description: 'Contactos para la gestión de cobros e impagos',
-    status: 'active',
+    updatedAt: '2026-09-30',
   },
   {
     id: 4,
     name: 'Emergencias 24h',
     contacts: contactos(['Emergencias 24 horas', '900 400 500']),
     description: 'Línea de emergencias disponible 24 horas',
-    status: 'active',
+    updatedAt: '2026-08-18',
   },
   {
     id: 5,
     name: 'Internacional LATAM',
     contacts: contactos(['Atención en Estados Unidos', '+1 800 555 1234'], ['Atención en México', '+52 800 123 4567']),
     description: 'Contactos internacionales para Latinoamérica',
-    status: 'active',
+    updatedAt: '2026-09-05',
   },
   {
     id: 6,
     name: 'Soporte Técnico',
     contacts: contactos(['Soporte técnico', '900 500 600'], ['Incidencias graves', '900 500 601']),
     description: 'Líneas de soporte técnico general',
-    status: 'inactive',
+    updatedAt: '2026-07-29',
   },
   {
     id: 7,
@@ -87,36 +132,49 @@ const SEED: readonly Agenda[] = [
       ['Campaña de fidelización', '911 222 335'],
     ),
     description: 'Contactos para campañas salientes',
-    status: 'active',
+    updatedAt: '2026-10-09',
   },
   {
     id: 8,
     name: 'Retención',
     contacts: contactos(['Retención de clientes', '900 600 700']),
     description: 'Línea especializada en retención de clientes',
-    status: 'active',
+    updatedAt: '2026-08-30',
   },
   {
     id: 9,
     name: 'Directorio comercial',
     contacts: DIRECTORIO,
     description: 'Puntos de venta de la red comercial',
-    status: 'active',
+    updatedAt: '2026-10-12',
+  },
+  {
+    id: 10,
+    name: 'Clientes VIP',
+    contacts: CLIENTES_VIP,
+    description: 'Contactos de ejemplo con todos sus campos rellenos',
+    updatedAt: '2026-10-13',
+    customLabels: ['Cliente desde', 'Segmento', '', '', ''],
   },
 ];
 
 /** Lo guardado antes de DD-163 (`numbers`, un texto con comas) se lee como contactos sin nombre, sin subir la versión
  *  (AGENTS: «normalize», la vía que no borra). Lo que ya va al día sale tal cual. */
 export function agendaAlDia(guardada: Agenda): Agenda {
-  if (Array.isArray(guardada.contacts)) return guardada;
-  const { numbers, ...resto } = guardada as Agenda & { readonly numbers?: string };
-  return { ...resto, contacts: contactosDeNumeros(numbers) };
+  // Sin `status` (salió: activa o inactiva no aportaba) y con fecha de modificación, que antes no había.
+  const { numbers, status: _estado, ...resto } = guardada as Agenda & { readonly numbers?: string; readonly status?: string };
+  return {
+    ...resto,
+    contacts: Array.isArray(resto.contacts) ? resto.contacts : contactosDeNumeros(numbers),
+    updatedAt: resto.updatedAt ?? hoy(),
+  };
 }
 
 export const AgendasStore = createRepoStore<Agenda>('AgendasStore', {
   storageKey: 'sc-agendas-repo',
   versionKey: 'sc-agendas-repo-v',
-  currentVersion: 1,
+  /** 2: la agenda «Clientes VIP», con contactos de ejemplo completos (2026-10-15): quien tenga la lista de antes carga la nueva. */
+  currentVersion: 2,
   defaults: SEED,
   normalize: agendaAlDia,
 });

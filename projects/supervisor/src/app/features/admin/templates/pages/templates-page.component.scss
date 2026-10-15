@@ -4,27 +4,9 @@
   background: var(--sc-bg-canvas);
 }
 
-/* La página, la barra y la tabla las pinta `sc-list-page` (DD-97). Aquí las pestañas, los paneles y las celdas. */
-.page {
-  &__create-anchor {
-    position: relative;
-  }
+/* La página, la barra y la tabla las pinta `sc-list-page` (DD-97). Aquí las pestañas y las celdas. */
 
-  &__panel-anchor {
-    position: absolute;
-    right: 0;
-    top: calc(100% + var(--sc-spacing-0-25));
-    z-index: var(--sc-z-dropdown);
-
-    &--row {
-      left: var(--sc-spacing-0-875);
-      right: auto;
-    }
-  }
-
-}
-
-/* Chat · Email son las pestañas de primeng.dev (`p-tabs`) tal cual: solo texto, como su ejemplo
+/* Chat · Email · WhatsApp son las pestañas de primeng.dev (`p-tabs`) tal cual: solo texto, como su ejemplo
  * básico. Sin contador ni icono (DD-113): la tabla ya enseña las plantillas, y el icono repetía la
  * palabra. La tira, la raya que se desliza y la activa las pone el tema; aquí solo el aire: 14 hasta el buscador, el
  * mismo peldaño que del título a las pestañas (DD-192; antes 21). */
@@ -84,3 +66,32 @@
 /* El panel de fila y el menú contextual propios murieron en la Ola 2: ambos
  * los sustituye el <p-menu> compartido, y el botón usa `.rules-kebab-btn`,
  * el kebab global de `main.scss`. */
+
+/* El diálogo de importar: las dos acciones juntas y, debajo, la vista previa, otro grupo. */
+.importar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1);
+
+  p {
+    margin: 0;
+  }
+}
+
+.importar__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sc-spacing-0-5);
+}
+
+.importar__vista {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
+}
+
+.importar__errores {
+  margin: 0;
+  padding-inline-start: var(--sc-spacing-1-25);
+  color: var(--sc-text-subtle);
+}

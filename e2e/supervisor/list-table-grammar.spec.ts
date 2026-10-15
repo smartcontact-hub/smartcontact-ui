@@ -112,18 +112,21 @@ const ABREN_FILA = [
   { ruta: 'conversaciones/entidades', nombre: 'entidades' },
   // Desde DD-163 la fila de una agenda abre su editor, como la de un grupo: cursor, foco y Enter.
   { ruta: 'admin/agendas', nombre: 'agendas' },
+  // Los contactos de una agenda (en repositorios): la fila abre su editor, en un diálogo.
+  { ruta: 'admin/agendas/editar/10', nombre: 'repositorios · contactos de una agenda' },
 ] as const;
 
 /**
  * Las tres de memory abren un MODAL, no una ruta. El test de teclado de abajo
  * comprueba la URL, que para ellas no cambia; se les mide el cursor y el
  * `tabindex` igual, y la apertura por teclado la fija `sibling-pages.spec.ts`,
- * que sabe esperar al diálogo.
+ * que sabe esperar al diálogo. Los contactos de una agenda abren el suyo igual: su Intro lo cubre `agenda-agentes.spec.ts`.
  */
 const ABREN_MODAL = new Set([
   'conversaciones/reglas',
   'conversaciones/categorias',
   'conversaciones/entidades',
+  'admin/agendas/editar/10',
 ]);
 
 /** El contrato. Medido sobre la tabla original antes de migrarla (B4), y vuelto a medir

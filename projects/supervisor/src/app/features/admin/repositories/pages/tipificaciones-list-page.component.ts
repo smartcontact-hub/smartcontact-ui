@@ -29,6 +29,7 @@ import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { ResultadoAccionService, XlsxExportService } from '@core/services';
 import { LanguageService } from '@core/services/language.service';
 import { injectLangChange } from '@core/utils/lang-change';
+import { copyName } from '@shared/utils/copy-name';
 import { CeldaVaciaComponent, ListPageComponent } from '@shared/components';
 import { GroupsStore } from '@features/admin/groups/state/groups.store';
 import { resolveGroup } from '@features/admin/groups/data/groups-data';
@@ -217,6 +218,11 @@ export class TipificacionesListPageComponent {
       icon: 'sc-icon-font sc-icon-font--edit',
       command: () => this.onRowOpen(t),
     },
+    {
+      label: this.translate.instant('common.duplicate'),
+      icon: 'sc-icon-font sc-icon-font--content_copy',
+      command: () => this.duplicar(t),
+    },
     { separator: true },
     {
       label: this.translate.instant('common.delete_gate'),
@@ -225,6 +231,14 @@ export class TipificacionesListPageComponent {
       command: () => this.deleteTarget.set([t]),
     },
   ];
+
+  /** La copia, con el mismo árbol y un nombre que no se repite; se queda en la lista, sin abrirla. */
+  protected duplicar(t: Tipificacion): void {
+    const { id: _id, ...resto } = t;
+    const name = copyName(t.name, this.store.items().map((i) => i.name), this.translate.instant('common.copy_suffix'));
+    const copia = this.store.addItem({ ...resto, name });
+    this.toast(this.translate.instant('common.duplicated_toast', { name: copia.name }));
+  }
 
   protected requestDeleteSelection(): void {
     const ids = this.selectedIds();

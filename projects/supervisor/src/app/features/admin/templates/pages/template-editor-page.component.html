@@ -1,0 +1,114 @@
+<!-- Guardar y Deshacer suben a la barra de arriba, como en las fichas: el motivo, visible y solo cuando falta algo;
+     «Deshacer», solo si hay algo que deshacer. -->
+<ng-template #topbarActions>
+  @if (blockedReason(); as reason) {
+    <span class="form-save-reason sc-text-caption-regular">{{ reason }}</span>
+  } @else if (mode() === 'edit' && formDirty()) {
+    <span class="form-save-reason sc-text-caption-regular" role="status">{{ 'common.unsaved_changes' | translate }}</span>
+  }
+  @if (formDirty()) {
+    <sc-button variant="secondary" appearance="outlined" [label]="'common.undo' | translate" (clicked)="discard()" />
+  }
+  <sc-button
+    variant="primary"
+    [disabled]="!canSave()"
+    [label]="(mode() === 'create' ? 'templates.form.create_submit' : 'common.save') | translate"
+    (clicked)="save()"
+  />
+</ng-template>
+
+<div class="page">
+  <div class="page__inner">
+    <!-- La identidad, como en las fichas: el título de la plantilla, o «Nueva plantilla» mientras no lo tiene. -->
+    <h1 class="page__heading sc-text-title-semibold">{{ form().title.trim() || ('templates.form.create_title' | translate) }}</h1>
+
+    <sc-section-card titleKey="templates.form.section_general" surface="card" icon="description">
+      <section class="sub-section">
+        <div class="grid grid--2">
+          <div class="field">
+            <sc-inputtext
+              inputId="template-title"
+              fluid
+              required
+              [label]="'templates.form.title' | translate"
+              [placeholder]="'templates.form.title_placeholder' | translate"
+              [value]="form().title"
+              [error]="titleTaken() ? ('templates.errors.duplicate_title' | translate) : undefined"
+              (valueChange)="update('title', $event)"
+            />
+          </div>
+          <div class="field">
+            <span class="field__label sc-text-caption-semibold" [id]="'template-channel-label'">{{ 'templates.form.channel' | translate }}</span>
+            <sc-selectbutton
+              [options]="typeOptions()"
+              optionValue="value"
+              [allowEmpty]="false"
+              [value]="form().type"
+              (valueChange)="update('type', $any($event))"
+              ariaLabelledBy="template-channel-label"
+            />
+          </div>
+        </div>
+      </section>
+    </sc-section-card>
+
+    <!-- El contenido: el editor de primeng.dev/editor, tal cual, con su barra a medida del canal. Se vuelve a montar al cambiar
+         de canal porque Quill lee sus formatos al nacer. -->
+    <sc-section-card titleKey="templates.form.section_content" surface="card" icon="edit_note">
+      <section class="sub-section">
+        @for (canal of [form().type]; track canal) {
+          <p-editor
+            class="template-editor"
+            [ngModel]="form().html"
+            (ngModelChange)="onHtml($event)"
+            [style]="editorStyle"
+            [formats]="formatos()"
+            [placeholder]="editorPlaceholder()"
+          >
+            <ng-template #header>
+              <span class="ql-formats">
+                <button type="button" class="ql-bold" [attr.aria-label]="'templates.form.format_bold' | translate"></button>
+                <button type="button" class="ql-italic" [attr.aria-label]="'templates.form.format_italic' | translate"></button>
+                @if (canal !== 'whatsapp') {
+                  <button type="button" class="ql-underline" [attr.aria-label]="'templates.form.format_underline' | translate"></button>
+                }
+                <button type="button" class="ql-strike" [attr.aria-label]="'templates.form.format_strike' | translate"></button>
+              </span>
+              @if (canal !== 'whatsapp') {
+                <span class="ql-formats">
+                  <button type="button" class="ql-link" [attr.aria-label]="'templates.form.format_link' | translate"></button>
+                </span>
+              }
+            </ng-template>
+          </p-editor>
+        }
+        <p class="template-editor__hint sc-text-caption-regular">
+          {{ (form().type === 'whatsapp' ? 'templates.form.whatsapp_hint' : 'templates.form.variables_hint') | translate }}
+          @if (form().type === 'whatsapp') {
+            {{ 'templates.form.variables_hint' | translate }}
+          }
+        </p>
+      </section>
+    </sc-section-card>
+
+    <sc-section-card titleKey="templates.form.section_groups" surface="card" icon="group">
+      <section class="sub-section">
+        <div class="field field--full">
+          <sc-multiselect
+            inputId="template-groups"
+            optionLabel="label"
+            optionValue="value"
+            [filter]="true"
+            display="chip"
+            [maxSelectedLabels]="3"
+            [label]="'templates.form.groups' | translate"
+            [placeholder]="'templates.form.groups_placeholder' | translate"
+            [options]="groupOptions()"
+            [value]="groupValue()"
+            (valueChange)="onGroups($event)"
+          />
+        </div>
+      </section>
+    </sc-section-card>
+  </div>
+</div>

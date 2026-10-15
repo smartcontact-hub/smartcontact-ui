@@ -34,7 +34,6 @@ import {
   type ScColumnCellContext,
   type ScColumnDef,
   ScDatatableComponent,
-  ScDividerComponent,
   ScEmptyStateComponent,
   type ScDatatableRowEvent,
   type ScDatatableRowKeyEvent,
@@ -144,7 +143,6 @@ function normalizePrefs(choices: readonly ColumnDef[], stored: unknown): ColumnP
     ScBulkActionBarComponent,
     ScButtonComponent,
     ScDatatableComponent,
-    ScDividerComponent,
     ScEmptyStateComponent,
     ScIconComponent,
     ScSearchComponent,
@@ -207,6 +205,8 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
    * `(exportRequest)`.
    */
   readonly importable = input(false, { transform: booleanAttribute });
+  /** Suma «Descargar plantilla» al menú «Acciones»: el CSV vacío con las columnas que la pantalla sabe importar. */
+  readonly templateDownloadable = input(false, { transform: booleanAttribute });
 
   /** Menú de una fila: el mismo con «⋮» y con clic derecho. Sin él, no hay columna de acciones. Si una fila no tiene
    *  acciones (el menú sale vacío), el clic derecho no abre nada: un menú vacío es peor que ninguno. */
@@ -248,6 +248,7 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
   readonly rowOpen = output<T>();
   readonly exportRequest = output<readonly T[]>();
   readonly importRequest = output<void>();
+  readonly templateRequest = output<void>();
 
   protected readonly filtered = computed(() => {
     const q = this.query().toLowerCase().trim();
@@ -773,24 +774,57 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
   /** El menú de importar y descargar, abierto: su botón lo dice (`aria-expanded`, en el `<button>` real). */
   protected readonly fileMenuOpen = signal(false);
 
-  /** El menú del icono de importar y descargar: «Importar…» abre lo que decida la pantalla; «Descargar», lo visible. */
-  protected readonly fileMenuItems = computed<MenuItem[]>(() => {
+  /** El ancho del panel «Acciones»: el paso del Kit más cercano al de la propuesta de producto. */
+  protected readonly fileMenuStyle = { width: 'var(--sc-spacing-25)' };
+
+  /** Lo que se nombra en el menú: las filas de la lista, en plural («tipificaciones»). */
+  private readonly dataEntity = computed(() => {
     this.lang();
-    return [
-      {
-        label: this.translate.instant('labels.import_menu'),
-        icon: 'sc-icon-font sc-icon-font--upload',
-        command: () => this.importRequest.emit(),
-      },
-      {
-        label: this.translate.instant('labels.download_menu'),
-        icon: 'sc-icon-font sc-icon-font--download',
-        command: () => this.onExport(),
-      },
-    ];
+    return this.bulkEntity()?.plural || this.translate.instant('labels.data_menu.entity_fallback');
   });
 
+  /**
+   * El menú «Acciones»: una fila por cosa que se puede hacer (icono y título) y, detrás de un separador, la plantilla.
+   * «Exportar» cuenta la selección si la hay, y se apaga sin filas (su `title` dice por qué).
+   */
+  protected readonly fileMenuItems = computed<MenuItem[]>(() => {
+    this.lang();
+    const t = (key: string, params?: Record<string, string | number>) =>
+      this.translate.instant(`labels.data_menu.${key}`, params);
+    const entity = this.dataEntity();
+    const seleccion = this.selectedRows().length;
+    const sinFilas = this.displayed().length === 0;
+    const filas: MenuItem[] = [];
+    if (this.importable()) {
+      filas.push({
+        label: t('import_title', { entity }),
+        icon: 'sc-icon-font sc-icon-font--upload',
+        command: () => this.importRequest.emit(),
+      });
+    }
+    if (this.exportable()) {
+      filas.push({
+        label: seleccion > 0 ? t('export_selection', { count: seleccion }) : t('export_title', { entity }),
+        icon: 'sc-icon-font sc-icon-font--download',
+        disabled: sinFilas,
+        title: sinFilas ? t('export_empty') : undefined,
+        command: () => this.onExport(),
+      });
+    }
+    if (this.templateDownloadable()) {
+      if (filas.length > 0) filas.push({ separator: true });
+      filas.push({
+        label: t('template_title'),
+        icon: 'sc-icon-font sc-icon-font--file_export',
+        command: () => this.templateRequest.emit(),
+      });
+    }
+    return filas;
+  });
+
+  /** Descarga la selección si la hay y, si no, lo que se ve. */
   protected onExport(): void {
-    this.exportRequest.emit(this.displayed());
+    const seleccion = this.selectedRows();
+    this.exportRequest.emit(seleccion.length > 0 ? seleccion : this.displayed());
   }
 }

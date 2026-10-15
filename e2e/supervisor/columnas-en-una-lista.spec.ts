@@ -54,8 +54,8 @@ test('el botón «Columnas» dice en el foco que abre un diálogo, y si ya está
 
 test('el botón «Columnas» abre su globo: título, «Restablecer» y una fila por columna, con su asa y su casilla', async ({ page }) => {
   await goto(page, 'admin/agentes');
-  await expect(boton(page)).toContainText('Columnas');
-  await expect(boton(page).locator('.sc-icon-font--settings'), 'el engranaje del ejemplo').toHaveCount(1);
+  await expect(boton(page).locator('.p-button-label'), 'solo icono, sin texto').toHaveCount(0);
+  await expect(boton(page).locator('.sc-icon-font--view_column'), 'el icono de columnas').toHaveCount(1);
   await boton(page).click();
   await expect(globo(page)).toBeVisible();
   await expect(globo(page).locator('.column-toggle__title')).toHaveText('Columnas');

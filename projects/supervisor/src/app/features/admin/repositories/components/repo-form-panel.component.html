@@ -1,6 +1,7 @@
 <div
   class="panel"
   [class.panel--flush]="flush()"
+  [class.panel--two-columns]="twoColumns()"
   [attr.role]="flush() ? null : 'dialog'"
   [attr.aria-label]="flush() ? null : (tituloKey() | translate: { entity: entitySingular() })"
 >
@@ -8,11 +9,15 @@
     <h3 class="panel__title sc-text-body-semibold">{{ tituloKey() | translate: { entity: entitySingular() } }}</h3>
   }
 
+  <div class="panel__fields">
   @for (field of fields(); track field.key; let i = $index) {
-    <div class="panel__field">
+    @if (field.sectionKey) {
+      <h4 class="panel__section sc-text-body-semibold">{{ field.sectionKey | translate }}</h4>
+    }
+    <div class="panel__field" [class.panel__field--wide]="field.wide">
       <label class="panel__label sc-text-caption-semibold" [attr.for]="'repo-field-' + field.key" [id]="'repo-field-' + field.key + '-label'">
-        {{ field.labelKey | translate }}
-        @if (!field.required) {
+        {{ field.label ?? (field.labelKey | translate) }}
+        @if (!field.required && showOptional()) {
           <span class="panel__hint sc-text-caption-regular">({{ 'common.optional' | translate }})</span>
         }
       </label>
@@ -53,6 +58,7 @@
       }
     </div>
   }
+  </div>
 
   <div class="panel__error-slot">
     @if (error()) {

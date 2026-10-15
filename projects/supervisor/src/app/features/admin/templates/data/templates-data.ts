@@ -1,4 +1,6 @@
-export type TemplateType = 'chat' | 'email';
+/** El canal de una plantilla. El contenido de WhatsApp es su texto, con sus marcas (`*negrita*`, `_cursiva_`, `~tachado~`);
+ *  el de chat y correo, HTML saneado (`templates.core.mjs`). */
+export type TemplateType = 'chat' | 'email' | 'whatsapp';
 
 export interface Template {
   readonly id: number;
@@ -9,7 +11,7 @@ export interface Template {
   readonly updatedAt: string;
 }
 
-export const TEMPLATE_TYPES: readonly TemplateType[] = ['chat', 'email'];
+export const TEMPLATE_TYPES: readonly TemplateType[] = ['chat', 'email', 'whatsapp'];
 
 export const TEMPLATES_SEED: readonly Template[] = [
   {
@@ -107,5 +109,21 @@ export const TEMPLATES_SEED: readonly Template[] = [
     body: 'Estimado/a {cliente}, le informamos de nuestra nueva promoción vigente hasta {fecha}.',
     createdAt: '2026-01-08',
     updatedAt: '2026-01-08',
+  },
+  {
+    id: 13,
+    title: 'Confirmación de cita',
+    type: 'whatsapp',
+    body: 'Hola {cliente}, le confirmamos su cita el *{fecha}*.\nResponda _SÍ_ para confirmarla o _NO_ para cambiarla.',
+    createdAt: '2026-09-20',
+    updatedAt: '2026-09-20',
+  },
+  {
+    id: 14,
+    title: 'Aviso de pago pendiente',
+    type: 'whatsapp',
+    body: 'Hola {cliente}, tiene un pago pendiente de *{importe}*. Si ya lo ha realizado, ignore este mensaje.',
+    createdAt: '2026-09-28',
+    updatedAt: '2026-10-05',
   },
 ];
