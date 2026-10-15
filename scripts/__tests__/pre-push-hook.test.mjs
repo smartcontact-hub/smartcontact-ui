@@ -126,3 +126,45 @@ test('ningún test lanza git heredando el entorno de git', () => {
       "Filtra el entorno: Object.fromEntries(Object.entries(process.env).filter(([k]) => !k.startsWith('GIT_')))",
   );
 });
+
+/*
+ * El freno de la reescritura del 15 de octubre de 2026: los commits de antes llevaban teléfonos de la extracción de la
+ * app real y se quitaron de TODA la historia. Una rama vieja que se empuje tal cual los devuelve a GitHub, y eso no es un
+ * fallo de calidad que `SKIP_PREFLIGHT` pueda saltarse. Se prueba con un repo temporal y un commit «retirado» fabricado
+ * (`SC_COMMITS_RETIRADOS`): el hook de verdad lleva los seis reales.
+ */
+function repoConCommit() {
+  const dir = mkdtempSync(join(tmpdir(), 'sc-retirado-'));
+  const git = (...a) => spawnSync('git', a, { cwd: dir, env: SIN_GIT, encoding: 'utf8' });
+  git('init', '-b', 'main');
+  git('-c', 'user.name=t', '-c', 'user.email=t@example.invalid', 'commit', '--allow-empty', '-m', 'retirado');
+  const sha = git('rev-parse', 'HEAD').stdout.trim();
+  return { dir, sha };
+}
+
+test('pre-push: una rama que lleva un commit retirado no sube, ni con SKIP_PREFLIGHT', () => {
+  const { dir, sha } = repoConCommit();
+  const r = spawnSync('bash', [HOOK, 'origin', 'https://example.invalid/x.git'], {
+    cwd: dir,
+    input: `refs/heads/vieja ${sha} refs/heads/vieja ${CEROS}\n`,
+    encoding: 'utf8',
+    env: { ...SIN_GIT, SKIP_PREFLIGHT: '1', SC_COMMITS_RETIRADOS: sha, NVM_DIR: '/dev/null' },
+    timeout: 60_000,
+  });
+  assert.notEqual(r.status, 0, `ROJO: debe frenar:\n${r.stdout}${r.stderr}`);
+  assert.match(r.stdout + r.stderr, /reescritura del historial/);
+  assert.match(r.stdout + r.stderr, /rebase --onto origin\/main/);
+});
+
+test('pre-push: sin commits retirados en la rama, el freno no interviene', () => {
+  const { dir, sha } = repoConCommit();
+  const r = spawnSync('bash', [HOOK, 'origin', 'https://example.invalid/x.git'], {
+    cwd: dir,
+    input: `refs/heads/nueva ${sha} refs/heads/nueva ${CEROS}\n`,
+    encoding: 'utf8',
+    env: { ...SIN_GIT, SKIP_PREFLIGHT: '1', SC_COMMITS_RETIRADOS: 'a'.repeat(40), NVM_DIR: '/dev/null' },
+    timeout: 60_000,
+  });
+  assert.equal(r.status, 0, `VERDE: nada retirado, SKIP_PREFLIGHT sale como siempre:\n${r.stdout}${r.stderr}`);
+  assert.doesNotMatch(r.stdout + r.stderr, /reescritura del historial/);
+});

@@ -7,7 +7,7 @@
 
 ## ✅ 2026-10-01 · El sidebar sigue a su tablero de Figma (DD-137)
 
-> **Sello: rama `arebury/sidebar-theme-icon-colors`, sobre `origin/main` HEAD `99818fb2`.**
+> **Sello: rama `arebury/sidebar-theme-icon-colors`, sobre `origin/main` HEAD `3b0a12ef`.**
 
 **Figma** (tablero `14912:6324`):
 - Los iconos grises y los padres sin cyan tenían un solo origen: Smart-Contact Icons pinta un gris dentro del dibujo
@@ -38,7 +38,7 @@
 
 ## ✅ 2026-09-23 · En producción va «abrir no cierra las demás» (DD-118)
 
-> **Sello: rama `sidebar-produccion`, sobre `origin/main` HEAD `b55e3017`.**
+> **Sello: rama `sidebar-produccion`, sobre `origin/main` HEAD `d02dffa7`.**
 
 **Qué decidió Rafa.** El sidebar de `main` es el de https://c1ae0539.sc-supervisor.pages.dev/solo-sidebar (tag
 `archive/comparar-sidebar-sin-cerrar-al-abrir-2026-09-16`, `65185e3b`): «no es mi favorito, pero eventualmente con
@@ -56,7 +56,7 @@ desplegado.
 
 ## ✅ 2026-09-16 · Regla oficial (sustituida en producción por el tramo de arriba): en el sidebar no se cierra nada
 
-> **Sello: rama `comparar/sidebar` (no se funde), HEAD `3c3e76c1`.** Vivo:
+> **Sello: rama `comparar/sidebar` (no se funde), HEAD `d160ddac`.** Vivo:
 > https://comparar-sidebar.sc-supervisor.pages.dev/solo-sidebar · tarjeta «Sidebar» del Lab con las versiones anteriores.
 
 **Qué decidió Rafa.** Una categoría solo se abre o se cierra con su propio clic. Lo abierto sigue abierto al sacar el
@@ -76,7 +76,7 @@ cierra las demás» (y enmendó DD-112), y DD-137 siguió el tablero. Lo de 2026
 
 ## ✅ 2026-09-15 · El sidebar se pliega a 80px, marca un solo padre y abre y cierra sin saltos (SISMAC-4340)
 
-> **Sello: rama `arebury/sidebar-plegado-80`, sobre `origin/main` HEAD `cc3c7d72`.**
+> **Sello: rama `arebury/sidebar-plegado-80`, sobre `origin/main` HEAD `85caaa87`.**
 
 **Qué hay.** Lo que decide DD-112, en `projects/supervisor/src/app/core/layout/sidebar/`: plegado a 80px con filas
 contenidas, items nuevos con sus rutas (placeholder) y textos en los cuatro idiomas, un solo padre en cyan, abrir y

@@ -72,7 +72,7 @@ para mantener sus enlaces; esa sección documenta el prototipo anterior.
 
 ## ✅ 2026-09-25 · Prototipo del filtro «Tipo de solicitud» (V3) y la app en inglés o castellano
 
-**Sello:** HEAD `313e21cd` en la rama `v3-tipo-solicitud`, **no en `main` a propósito**. El CI no
+**Sello:** HEAD `043b3930` en la rama `v3-tipo-solicitud`, **no en `main` a propósito**. El CI no
 ha corrido (no corre en push de rama) y se publicó sin preflight, como excepción acordada para
 un prototipo de apoyo.
 

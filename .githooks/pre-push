@@ -18,6 +18,30 @@
 
 set -euo pipefail
 
+# FRENO DE LA REESCRITURA DEL 15 DE OCTUBRE DE 2026 (DD-207, D3 de docs/AUDIT-INGENIERIA-2026-10.md).
+# Estos seis commits llevaban teléfonos de la extracción de la app real y se quitaron de TODA la historia de
+# GitHub. Una rama vieja que se empuje tal cual los devuelve, y eso no es un fallo de calidad: por eso va ANTES de
+# `SKIP_PREFLIGHT`, que no lo salta. Solo corre si el commit existe en tu copia (un clon nuevo no lo tiene).
+# `SC_COMMITS_RETIRADOS` lo sustituye en los tests; vacío, lo apaga.
+# git pasa las refs del push por stdin, y se leen UNA VEZ: dos bucles leyendo del mismo tubo dejaban ciego al
+# segundo (el primero se lo comía entero). Con here-string, además, el `while` no corre en subshell.
+REFS_DEL_PUSH="$(cat)"
+COMMITS_RETIRADOS="${SC_COMMITS_RETIRADOS-ac7a2168d22191f28b4716d45bf13f941dfdfa19 7cedc8f8fe6d5c8965026daff0150e650cdbeedd 49ad3824435868c2bc166532ef7531d39f1201dd 153e187a3bfdc5c1b44ba7378c05c319cd6e11d2 bc07c4d7e6a9497290a493b5f63455925fe9036e cbfe38ada289c1c533fb543fe1d91f9adaf54330}"
+while read -r _local_ref local_sha _remote_ref _remote_sha; do
+  [ -z "${local_sha:-}" ] && continue
+  case "$local_sha" in 0000000000000000000000000000000000000000) continue ;; esac
+  for retirado in $COMMITS_RETIRADOS; do
+    git cat-file -e "$retirado^{commit}" 2>/dev/null || continue
+    if git merge-base --is-ancestor "$retirado" "$local_sha" 2>/dev/null; then
+      printf '\n\033[31m✘ pre-push: esta rama lleva commits de antes de la reescritura del historial (15 de octubre de 2026).\033[0m\n'
+      printf '  Llevaban teléfonos de la extracción de la app real; subirla los devuelve a GitHub. Rebásala sobre el main nuevo:\n'
+      printf '    git fetch origin && git rebase --onto origin/main $(git merge-base <rama> a3f1876e) <rama>\n'
+      printf '  SKIP_PREFLIGHT no salta esto: no es un gate de calidad, es una fuga de datos.\n\n'
+      exit 1
+    fi
+  done
+done <<< "$REFS_DEL_PUSH"
+
 if [ "${SKIP_PREFLIGHT:-0}" = "1" ]; then
   printf '\n\033[33m⚠ preflight SALTADO (SKIP_PREFLIGHT=1). El CI es ahora tu única red.\033[0m\n\n'
   exit 0
@@ -45,7 +69,6 @@ fi
 # git pasa las refs del push por stdin, y se leen UNA VEZ: dos bucles leyendo del mismo tubo
 # dejaban ciego al segundo (el primero se lo comía entero). Con here-string, además, el `while`
 # no corre en subshell y las variables sobreviven.
-REFS_DEL_PUSH="$(cat)"
 
 # BORRAR una rama remota no sube código: el sha local es todo ceros y no hay árbol que verificar.
 # Y AGENTS manda limpiar la rama en cuanto el PR se funde, «sin preguntar». Con el gate delante,

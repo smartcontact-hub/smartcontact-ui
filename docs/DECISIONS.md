@@ -150,6 +150,30 @@
 
 ---
 
+## DD-208 · 2026-10-15 — Se reescribe el historial público para quitar los teléfonos de la extracción
+
+**Contexto** · Siete teléfonos de la extracción de la app real estuvieron en el historial público desde el 26 de agosto
+(`findings/`, y los datos semilla de `agent` y `agent-mini`). Se quitaron del árbol el 7 de septiembre (PR #58) pero
+siguieron en los commits viejos, alcanzables desde `main`, `v1.0.0` y las ramas archivadas. `audit-seed-pii.mjs` ya
+dice que un teléfono inventado y uno real se ven igual, así que no se dieron por inventados. D3 de la auditoría lo
+dejó sin reescribir; la decisión se revirtió con el coste a la vista.
+
+**Decisión** ·
+1. **Se reescribe toda la historia** con `git-filter-repo`: cada número pasa a uno de los inventados que declara
+   `audit-seed-pii.mjs`, con el mismo formato (espacios, guiones, `+34`). También en los mensajes de commit.
+2. **Se verifica antes de empujar**: ninguna forma de los números en ramas ni etiquetas (con una sonda que sí los
+   encuentra en el original), árbol de la punta de `main` idéntico y mismo número de commits, y el remoto sin cambios
+   durante el proceso. Se hizo antes en seco sobre una copia.
+3. **Se empuja con la protección de `main` quitada el tiempo justo** y restaurada siempre; después se comprobó que es
+   idéntica a la original.
+4. **El `pre-push` frena** cualquier rama que cuelgue de los seis commits que introdujeron los números, también con
+   `SKIP_PREFLIGHT`, y dice cómo rebasar: `git rebase --onto origin/main $(git merge-base <rama> a3f1876e) <rama>`.
+
+**Lo que NO resuelve** · Los `refs/pull/*` de GitHub no se pueden reescribir: los commits viejos siguen descargables
+por SHA hasta que GitHub Support los purgue, y la petición se puede enviar ahora que el resto está limpio. Los forks y
+las copias locales anteriores conservan los números. Cambiaron los SHA de unos 2.400 commits y las etiquetas
+`v1.0.0` y `archive/*`; las ramas locales sin subir de otras sesiones cuelgan de la historia vieja.
+
 ## DD-207 · 2026-10-15 — El tema publicado no redistribuye código de PrimeTek: Aura queda como dependencia de quien lo instala
 
 **Contexto** · `scripts/tema-zip.mjs` empaquetaba con esbuild (`bundle: true`) `@primeuix/themes` —Aura y `definePreset`—

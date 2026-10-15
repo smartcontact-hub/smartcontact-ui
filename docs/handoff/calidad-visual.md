@@ -126,7 +126,7 @@
 
 ## ✅ 2026-09-28 (7) · Las decisiones de Figma, tomadas, y un script que aplica las variables verificando cada una
 
-**Sello:** rama `claude/ui-improvement-reddit-iykxgx`, sobre `origin/main` HEAD `ac02acc6` (#264 a #269 fundidos).
+**Sello:** rama `claude/ui-improvement-reddit-iykxgx`, sobre `origin/main` HEAD `9f6dc19b` (#264 a #269 fundidos).
 
 **Qué pasó.**
 - **Seis de las siete decisiones de `figma-pendiente`, tomadas:**
@@ -149,7 +149,7 @@
 
 ## ✅ 2026-09-27 (6) · El panel de grupos deja de inventar sus conectados (DD-129)
 
-> **Sello:** fusionado en `main` con #267, HEAD `16ff7930`.
+> **Sello:** fusionado en `main` con #267, HEAD `47b84e02`.
 > Numerado (6) al fundir: el tramo (5) de abajo (#264) llegó antes a `main` con el mismo número.
 
 **Qué pasó.** La «Consecuencia» que el tramo (4) dejó sin tocar: el panel de grupos (`buildWidget`, case
@@ -165,7 +165,7 @@ el resto de pendientes de ESPERANDO A RAFA de arriba.
 
 ## ✅ 2026-09-27 (5) · El editorial, sin rastro de generado; las reglas casan con cualquier juego; y Figma, a punto
 
-**Sello:** fusionado en `main` con #264, HEAD `e4e18564`.
+**Sello:** fusionado en `main` con #264, HEAD `729ac5c8`.
 
 **Qué pasó.**
 - **Las dos cosas del editorial que esperaban decisión, hechas** (DD-124), solo en el editorial:
@@ -197,7 +197,7 @@ el resto de pendientes de ESPERANDO A RAFA de arriba.
 
 ## ✅ 2026-09-27 (4) · El monitor deja de contradecirse, la tortura llega a lo que vive en memoria, y revisión editorial
 
-**Sello:** fusionado en `main` con #263, HEAD `4f4f2018`.
+**Sello:** fusionado en `main` con #263, HEAD `31f48268`.
 
 **Qué pasó.**
 - **El «sin verificar» del tramo (3) era un fallo** (DD-127). La tabla de «Monitor x» enseñaba 8 de los 10 agentes de su

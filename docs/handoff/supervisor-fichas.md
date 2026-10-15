@@ -149,7 +149,7 @@ a2a837d4:docs/handoff/supervisor-fichas.md`.
 
 ## ✅ 2026-10-13 · Salientes como chip+acción, Nivel sin overlay (pide Rafa tras la auditoría)
 
-> **Sello:** rama `design/salientes-nivel-maquetacion` sobre main, HEAD `10b9628c` (incluye #376: `fill` de
+> **Sello:** rama `design/salientes-nivel-maquetacion` sobre main, HEAD `2ea670cd` (incluye #376: `fill` de
 > `sc-datatable`, que ya resolvió el tercer punto de abajo — las tablas cortas llegan al pie). Aún sin PR.
 
 Rafa, tras ver la auditoría en vivo: ¿por qué Agentes tiene columna Salientes si Grupos no la tiene en su
