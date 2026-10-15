@@ -10,40 +10,36 @@
         <p>{{ 'config.aed.info' | translate }}</p>
       </div>
 
-      <sc-search class="search" [placeholder]="'config.aed.search_placeholder' | translate" [value]="searchQuery()" (valueChange)="searchQuery.set($event)" (keydown)="onSearchKey($event)" [clearAriaLabel]="'labels.clear_search' | translate" />
-
-      <div class="country-list">
-        @if (filtered().length === 0) {
-          <div class="country-list__empty sc-text-caption-regular">
-            {{ 'config.aed.no_results' | translate: { query: searchQuery() } }}
-          </div>
-        } @else {
-          @for (country of filtered(); track country.code) {
-            <button
-              type="button"
-              class="country-row"
-              [class.country-row--selected]="isSelected(country.code)"
-              (click)="toggle(country.code)"
-            >
-              <sc-checkbox [state]="(isSelected(country.code)) ? 'all' : 'none'" (cycle)="toggle(country.code)" [ariaLabel]="country.name" (click)="$event.stopPropagation()" />
-              <span class="country-row__flag" aria-hidden="true">{{ country.flag }}</span>
-              <span class="country-row__name sc-text-body-regular">{{ country.name }}</span>
-              <span class="country-row__code sc-text-caption-regular">{{ country.code }}</span>
-              <span class="country-row__prefix sc-text-caption-regular">{{ country.prefix }}</span>
-              @if (isSelected(country.code)) {
-                <button
-                  type="button"
-                  class="country-row__remove"
-                  (click)="remove(country.code, $event)"
-                  [attr.aria-label]="'common.delete' | translate"
-                >
-                  <sc-icon [name]="closeIcon" size="inherit" />
-                </button>
-              }
-            </button>
-          }
-        }
-      </div>
+      <!-- Listbox de primeng.dev (candidato 2 del barrido): una parada de Tab, flechas y Espacio para marcar, con su
+           buscador por nombre, prefijo o código ISO. Antes, cada país era un botón con una casilla y otro botón dentro. -->
+      <p-listbox
+        class="country-list"
+        multiple
+        checkbox
+        filter
+        [showToggleAll]="false"
+        [options]="countries"
+        optionLabel="name"
+        optionValue="code"
+        filterBy="name,prefix,code"
+        scrollHeight="var(--sc-spacing-25)"
+        [filterPlaceHolder]="'config.aed.search_placeholder' | translate"
+        [ariaFilterLabel]="'config.aed.search_placeholder' | translate"
+        [emptyFilterMessage]="'common.search_no_results' | translate"
+        [ariaLabel]="'config.aed.section.title' | translate"
+        [ngModel]="selectedList()"
+        (ngModelChange)="setSelected($event)"
+        fluid
+      >
+        <ng-template #item let-country>
+          <span class="country-row">
+            <span class="country-row__flag" aria-hidden="true">{{ country.flag }}</span>
+            <span class="country-row__name">{{ country.name }}</span>
+            <span class="country-row__code sc-text-caption-regular">{{ country.code }}</span>
+            <span class="country-row__prefix sc-text-caption-regular">{{ country.prefix }}</span>
+          </span>
+        </ng-template>
+      </p-listbox>
 
       @if (selectedCodes().size > 0) {
         <div class="chips">

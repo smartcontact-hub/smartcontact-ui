@@ -197,53 +197,51 @@
           <p>{{ 'config.seguridad.regen.use_case' | translate }}</p>
         </div>
 
-        <sc-search class="search" [placeholder]="'config.seguridad.regen.search_placeholder' | translate" [value]="searchQuery()" (valueChange)="searchQuery.set($event)" (keydown)="onSearchKey($event)" [clearAriaLabel]="'labels.clear_search' | translate" />
-
-        <div class="agent-list">
-          <div class="agent-list__head sc-text-caption-semibold">
-            <sc-checkbox [state]="allFilteredSelected() ? 'all' : selectedIds().size > 0 ? 'some' : 'none'" (cycle)="toggleAll()" [ariaLabel]="'labels.select_all' | translate" />
-            <span>
-              @if (selectedIds().size > 0) {
-                {{
-                  'config.seguridad.regen.selected_count'
-                    | translate: { count: selectedIds().size }
-                }}
-              } @else {
-                {{
-                  'config.seguridad.regen.active_count'
-                    | translate: { count: activeAgents().length }
-                }}
-              }
-            </span>
-          </div>
-
-          @if (filteredAgents().length === 0) {
-            <div class="agent-list__empty sc-text-caption-regular">
-              @if (activeAgents().length === 0) {
-                {{ 'config.seguridad.regen.no_active_agents' | translate }}
-              } @else {
-                {{ 'config.seguridad.regen.no_results' | translate }}
-              }
-            </div>
+        <p class="agent-list__count sc-text-caption-semibold" role="status">
+          @if (selectedIds().size > 0) {
+            {{ 'config.seguridad.regen.selected_count' | translate: { count: selectedIds().size } }}
           } @else {
-            @for (agent of filteredAgents(); track agent.id) {
-              <button
-                type="button"
-                class="agent-row"
-                [class.agent-row--selected]="selectedIds().has(agent.id)"
-                (click)="toggleOne(agent.id)"
-              >
-                <sc-checkbox [state]="(selectedIds().has(agent.id)) ? 'all' : 'none'" (cycle)="toggleOne(agent.id)" [ariaLabel]="agent.name" (click)="$event.stopPropagation()" />
+            {{ 'config.seguridad.regen.active_count' | translate: { count: activeAgents().length } }}
+          }
+        </p>
+
+        @if (activeAgents().length === 0) {
+          <p class="agent-list__empty sc-text-caption-regular">{{ 'config.seguridad.regen.no_active_agents' | translate }}</p>
+        } @else {
+          <!-- Listbox de primeng.dev (candidato 3 del barrido): una parada de Tab, flechas y Espacio, «marcar todo» en
+               su cabecera y su buscador por nombre, código, extensión o email. La casilla «todo» de Listbox no tiene
+               estado intermedio: la cifra de arriba dice cuántos van marcados. -->
+          <p-listbox
+            class="agent-list"
+            multiple
+            checkbox
+            filter
+            showToggleAll
+            [options]="activeAgents()"
+            optionLabel="name"
+            optionValue="id"
+            filterBy="name,code,extension,email"
+            scrollHeight="var(--sc-spacing-18)"
+            [filterPlaceHolder]="'config.seguridad.regen.search_placeholder' | translate"
+            [ariaFilterLabel]="'config.seguridad.regen.search_placeholder' | translate"
+            [emptyFilterMessage]="'config.seguridad.regen.no_results' | translate"
+            [ariaLabel]="'config.seguridad.regen.title' | translate"
+            [ngModel]="selectedList()"
+            (ngModelChange)="setSelectedAgents($event)"
+            fluid
+          >
+            <ng-template #item let-agent>
+              <span class="agent-row">
                 <span class="agent-row__code sc-text-caption-regular">{{ agent.code }}</span>
-                <span class="agent-row__name sc-text-body-regular">{{ agent.name }}</span>
+                <span class="agent-row__name">{{ agent.name }}</span>
                 <span class="agent-row__ext sc-text-caption-regular">ext. {{ agent.extension }}</span>
                 @if (agent.email) {
                   <span class="agent-row__email sc-text-caption-regular">{{ agent.email }}</span>
                 }
-              </button>
-            }
-          }
-        </div>
+              </span>
+            </ng-template>
+          </p-listbox>
+        }
 
         @if (selectedIds().size > 0) {
           <div class="confirm">

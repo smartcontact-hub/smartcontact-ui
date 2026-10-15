@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, HostListener, inject, input } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { ScIconComponent } from '@smartcontact-hub/icons';
 
 import { isTypingTarget } from '../../core/utils/is-typing-target';
 import { ScCommandPaletteService } from '../command-palette/sc-command-palette.service';
+import { ScDialogComponent } from '../dialog/sc-dialog.component';
 import { SC_KEYBOARD_SHORTCUTS_TRANSLATIONS } from './i18n/sc-keyboard-shortcuts.translations';
 import { ScKeyboardShortcutsService } from './sc-keyboard-shortcuts.service';
 
@@ -43,8 +43,7 @@ export const SC_KEYBOARD_SHORTCUTS_DEFAULT_GROUPS: readonly ScShortcutGroup[] = 
 
 /**
  * Cheat-sheet de atajos de teclado, disparado por la tecla `?` desde cualquier
- * parte de la app. Renderiza un overlay modal-like que lista cada atajo agrupado
- * por propósito. Se suprime mientras el usuario tipea en un input/textarea/select
+ * parte de la app. Es un `sc-dialog` que lista cada atajo agrupado por propósito. Se suprime mientras el usuario tipea en un input/textarea/select
  * (o contenteditable) para que `?` escriba el carácter en vez de abrir la ayuda.
  *
  * Se monta una vez en el shell. La visibilidad la posee `ScKeyboardShortcutsService`
@@ -54,7 +53,7 @@ export const SC_KEYBOARD_SHORTCUTS_DEFAULT_GROUPS: readonly ScShortcutGroup[] = 
  */
 @Component({
   selector: 'sc-keyboard-shortcuts',
-  imports: [ScIconComponent, TranslateModule],
+  imports: [ScDialogComponent, TranslateModule],
   templateUrl: './sc-keyboard-shortcuts.component.html',
   styleUrl: './sc-keyboard-shortcuts.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -67,7 +66,6 @@ export class ScKeyboardShortcutsComponent {
    * o extiende con `[groups]="[...SC_KEYBOARD_SHORTCUTS_DEFAULT_GROUPS, miGrupo]"`. */
   readonly groups = input<readonly ScShortcutGroup[]>(SC_KEYBOARD_SHORTCUTS_DEFAULT_GROUPS);
 
-  protected readonly closeIcon = 'close';
   protected readonly visible = this.shortcuts.visible;
 
   constructor() {
@@ -80,13 +78,6 @@ export class ScKeyboardShortcutsComponent {
 
   @HostListener('document:keydown', ['$event'])
   onKeydown(event: KeyboardEvent): void {
-    /* Esc cierra si está abierto. Se maneja incluso tipeando — el usuario
-     * presiona Esc para descartar paneles, eso tiene prioridad. */
-    if (this.visible() && event.key === 'Escape') {
-      event.preventDefault();
-      this.shortcuts.close();
-      return;
-    }
 
     /* `?` abre el cheat-sheet — pero solo cuando el usuario no está tipeando en
      * un elemento editable; si no, `?` dentro de un campo robaría el carácter. */
@@ -96,10 +87,6 @@ export class ScKeyboardShortcutsComponent {
       event.preventDefault();
       this.shortcuts.toggle();
     }
-  }
-
-  protected onBackdropClick(): void {
-    this.shortcuts.close();
   }
 
   protected onClose(): void {

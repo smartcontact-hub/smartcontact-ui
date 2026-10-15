@@ -1,14 +1,17 @@
-import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MeterGroupModule } from 'primeng/metergroup';
 import type { MeterItem } from 'primeng/types/metergroup';
 import {
   ScFactRowComponent as FactRowComponent,
   ScIconTileComponent as IconTileComponent,
+  ScOptionCardsComponent,
+  type ScOptionCardItem,
 } from '@smartcontact-hub/components';
 import { ScIconComponent } from '@smartcontact-hub/icons';
 
 import { AnimateOnChangeDirective } from '@core/directives';
+import { injectLangChange } from '@core/utils/lang-change';
 import { ChannelIconComponent, SummaryKpiComponent, SummaryStatusComponent, type ResourceRow } from '@shared/components';
 import type { GroupAgentLink } from '@features/admin/services/group-agent-links.types';
 import { familiesOf } from '@features/admin/services/group-channels.core.mjs';
@@ -116,6 +119,7 @@ interface ChannelRow {
     AnimateOnChangeDirective,
     SummaryKpiComponent,
     SummaryStatusComponent,
+    ScOptionCardsComponent,
   ],
   templateUrl: './group-summary.component.html',
   styleUrl: './group-summary.component.scss',
@@ -147,8 +151,18 @@ export class GroupSummaryComponent {
   /** El nombre de cada número es el del campo real al que lleva («Teléfono saliente», «Número WhatsApp»), no el
    *  genérico del canal: el mismo criterio que igualó «Reparto» con «Distribución». */
   protected readonly outboundKeys = OUTBOUND_LABEL_KEYS;
-  /** Las tres estrategias de teléfono que el selector rápido puede poner sin pedir nada más. */
-  protected readonly quickStrategyOptions = DEFAULT_STRATEGY_OPTIONS;
+  private readonly translate = inject(TranslateService);
+  /** Las ayudas salen de `instant()`: se recalculan al cambiar de idioma. */
+  private readonly lang = injectLangChange();
+
+  /** Las tres estrategias de teléfono que el selector rápido puede poner sin pedir nada más, con la línea que dice qué hace. */
+  protected readonly quickStrategyCards = computed<readonly ScOptionCardItem[]>(() => {
+    this.lang();
+    return DEFAULT_STRATEGY_OPTIONS.map((valor) => {
+      const helpKey = PHONE_STRATEGY_HELP_KEYS[valor];
+      return { value: valor, label: valor, description: helpKey ? this.translate.instant(helpKey) : undefined };
+    });
+  });
   /** Qué panel rápido está abierto: uno a la vez, como el prototipo del encargo. */
   protected readonly expandedQuick = signal<'reparto' | GroupSummaryResources['key'] | null>(null);
   /** La barra de cada canal va en la cifra destacada (DD-161): su pista, translúcida en el color claro de la tarjeta. */
@@ -178,17 +192,12 @@ export class GroupSummaryComponent {
     return FAMILY_LABEL_KEYS[family];
   }
 
-  protected quickStrategyHelpKey(valor: string): string | null {
-    return PHONE_STRATEGY_HELP_KEYS[valor] ?? null;
-  }
-
   protected toggleQuick(panel: 'reparto' | GroupSummaryResources['key']): void {
     this.expandedQuick.update((actual) => (actual === panel ? null : panel));
   }
 
   protected elegirQuickStrategy(valor: string): void {
     this.cambiarReparto.emit(valor);
-    this.expandedQuick.set(null);
   }
 
   /** Un clic sin teclas va al sitio en la ficha; con Cmd, Ctrl, Mayús o el botón central, el navegador abre la dirección. */

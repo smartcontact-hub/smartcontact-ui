@@ -39,65 +39,9 @@
   }
 }
 
+/* El aspecto es el de `p-slider` en el tema (`sc-preset/slider.ts`); aquí solo que ocupe la fila. */
 .player-audio__scrub {
-  position: relative;
-  display: flex;
-  align-items: center;
   flex: 1;
-  height: 20px;
-  border: 0;
-  background: transparent;
-  cursor: pointer;
-  border-radius: var(--sc-radius-full);
-
-  &:disabled {
-    cursor: not-allowed;
-    opacity: 0.5;
-  }
-  &:focus-visible {
-    outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
-    outline-offset: var(--sc-focus-ring-offset);
-  }
-}
-
-.player-audio__track {
-  position: relative;
-  width: 100%;
-  height: 6px;
-  border-radius: var(--sc-radius-full);
-  background: var(--sc-bg-disabled);
-  overflow: visible;
-}
-
-.player-audio__fill {
-  position: absolute;
-  inset: 0;
-  border-radius: var(--sc-radius-full);
-  background: var(--sc-bg-primary);
-  transform-origin: left center;
-  transition: transform 200ms ease-out;
-  will-change: transform;
-}
-
-.player-audio__thumb {
-  pointer-events: none;
-  position: absolute;
-  top: 50%;
-  width: 12px;
-  height: 12px;
-  margin-left: -var(--sc-spacing-0-25);
-  margin-top: -var(--sc-spacing-0-25);
-  border-radius: 50%;
-  background: var(--sc-bg-primary);
-  box-shadow: var(--sc-shadow-sm);
-  opacity: 0;
-  transition: opacity 200ms ease-out;
-}
-
-.player-audio:hover .player-audio__thumb,
-.player-audio__scrub:focus-visible .player-audio__thumb,
-.player-audio__thumb--visible {
-  opacity: 1;
 }
 
 /* ─── Tabs ─────────────────────────────────────────────────── */

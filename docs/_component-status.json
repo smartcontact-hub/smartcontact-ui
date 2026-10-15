@@ -244,7 +244,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 195,
+      "usedInSupervisor": 194,
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "sobreObsoleto": [
         {
@@ -299,7 +299,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 47,
+      "usedInSupervisor": 44,
       "cuando": "Para un sí/no independiente, o para la casilla de un grupo elegido A MEDIAS (tiene tercer estado). Para activar algo al instante, `sc-toggleswitch`.",
       "sobreObsoleto": []
     },
@@ -1218,7 +1218,9 @@
       "api": [
         "groups"
       ],
-      "nested": [],
+      "nested": [
+        "sc-dialog"
+      ],
       "hasDemo": true,
       "kit": false,
       "estado": "experimental",
@@ -1347,7 +1349,7 @@
         "demo"
       ],
       "retirado": null,
-      "usedInSupervisor": 3,
+      "usedInSupervisor": 4,
       "cuando": "Para elegir una de pocas opciones que necesitan explicarse. Si se explican solas, `sc-selectbutton`.",
       "sobreObsoleto": []
     },
@@ -1594,7 +1596,7 @@
         "kit"
       ],
       "retirado": null,
-      "usedInSupervisor": 15,
+      "usedInSupervisor": 13,
       "cuando": "Para filtrar escribiendo. Solo se lleva el foco al entrar si buscar es LA acción de la pantalla.",
       "sobreObsoleto": []
     },
