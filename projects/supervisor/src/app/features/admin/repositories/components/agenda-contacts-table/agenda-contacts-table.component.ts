@@ -24,7 +24,6 @@ import {
   ScSearchComponent as SearchComponent,
 } from '@smartcontact-hub/components';
 
-import { LlegaAlPieDirective } from '@core/directives';
 import { injectLangChange } from '@core/utils/lang-change';
 
 import { contactoCoincide } from '../../state/agenda-contacts.core.mjs';
@@ -37,7 +36,7 @@ const ACCIONES = '__acciones';
  * Los contactos de una agenda (DD-163): buscador, tabla con paginador y menú de fila (Editar, Eliminar).
  *
  * Es la tabla de una sección con campos encima, así que va como la de Agentes de la ficha (`agent-channel-table`):
- * llega al pie de la pantalla, medida desde donde empieza (`scLlegaAlPie` y `.table-card--al-pie`, DD-160), y pagina
+ * mide lo que sus filas (con «Agentes» debajo ya no llega al pie, DD-160), y pagina
  * en vez de pintar una lista virtual, que pide un alto fijo.
  *
  * Vive en su propio componente, como las otras tablas dentro de un formulario: `audit:datatables` deduce la ruta de una
@@ -50,7 +49,6 @@ const ACCIONES = '__acciones';
     ButtonComponent,
     DatatableComponent,
     EmptyStateComponent,
-    LlegaAlPieDirective,
     MenuModule,
     SearchComponent,
     TranslateModule,

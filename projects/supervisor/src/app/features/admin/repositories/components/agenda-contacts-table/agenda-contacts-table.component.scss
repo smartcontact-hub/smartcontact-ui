@@ -1,5 +1,5 @@
 /* El buscador y «Añadir contacto», y debajo la tabla: hermanos, a 14 (UX de pantalla, regla 9). La tarjeta y su tope
- * al pie son de `.table-card--al-pie` (`styles/_sc-list-table.scss`, DD-160). */
+ * mide lo que sus filas: ya no llega al pie (le sigue la sección «Agentes»). */
 :host {
   display: block;
 }
