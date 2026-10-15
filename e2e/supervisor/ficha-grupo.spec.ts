@@ -188,7 +188,7 @@ test('en un portátil, al bajar hasta el final de la sección más larga, el ín
 
   const m = await page.evaluate(() => {
     const caja = (sel: string) => (document.querySelector(sel) as HTMLElement).getBoundingClientRect();
-    return { indice: caja('sc-form-section-nav'), resumen: caja('sc-group-summary'), alto: window.innerHeight };
+    return { indice: caja('sc-form-section-nav'), resumen: caja('.ficha-summary'), alto: window.innerHeight };
   });
   // Bajo el índice, en el carril sin scroll, el índice se iba por arriba a medio editar (medido el 2026-09-27).
   expect(m.indice.top).toBeGreaterThanOrEqual(0);
@@ -198,6 +198,8 @@ test('en un portátil, al bajar hasta el final de la sección más larga, el ín
   // +40px en este grupo, con sus dos números de salida). El margen de sobra antes de esta etiqueta era de 12,5px;
   // ahora el resumen se pasa 6,5px del alto en el peor caso. Acortar el nombre del campo para ganarlos reintroduciría
   // la ambigüedad que corrigió DD-146, así que el margen se amplía en vez de acortar la etiqueta.
+  // Desde la revisión del 2026-10-15 Email tiene estrategia y su fila en el resumen: a este alto el resumen ya no cabe
+  // entero y se desplaza dentro de su columna (`.ficha-summary`, alto máximo y scroll propio). Se mide esa caja.
   expect(m.resumen.bottom).toBeLessThanOrEqual(m.alto + 10);
 });
 

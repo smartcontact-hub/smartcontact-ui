@@ -4416,6 +4416,16 @@
           "nativo": null
         },
         {
+          "nombre": "saved",
+          "clase": "input",
+          "tipo": "readonly ScSavedFile[]",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Lo ya guardado, que sale en la lista como subido. Con él, la lista la manda quien lo pasa.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
           "nombre": "chooseLabel",
           "clase": "input",
           "tipo": "string",
@@ -4447,6 +4457,16 @@
           "porDefecto": null,
           "requerido": false,
           "descripcion": "Texto de la zona de soltar, traducido. Sin él, la zona queda vacía.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "removeLabel",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Nombre de la ✕ de cada archivo, traducido: la de PrimeNG es un botón de solo icono sin nombre.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -4547,6 +4567,16 @@
           "porDefecto": null,
           "requerido": false,
           "descripcion": "La lista se vació, por quien usa el componente o por `clearAfterSelect`.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "savedRemoved",
+          "clase": "output",
+          "tipo": "ScSavedFile",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Uno de los guardados (`saved`) quitado con su ✕.",
           "origen": "nuestro",
           "nativo": null
         }

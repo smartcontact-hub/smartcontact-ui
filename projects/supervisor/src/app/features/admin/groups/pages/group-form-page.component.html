@@ -132,7 +132,6 @@
         [ready]="mode() === 'create' && canSave()"
         [hrefs]="summaryHrefs()"
         (ir)="irDesdeResumen($event)"
-        (cambiarReparto)="onStrategyValueChange($event)"
       />
     </div>
   </div>
@@ -261,21 +260,24 @@
           </div>
         </div>
 
-        <!-- Clasificar y con cuál, en la misma fila; la tipificación y en cuáles aparecen al encenderlo. -->
-        <div class="wrapup__classify">
-          <div class="switch-field">
-            <sc-toggleswitch
-              [checked]="form().wrapUp.classify"
-              [ariaLabel]="classifyLabelKey() | translate"
-              (checkedChange)="setWrapUp('classify', $event)"
-            />
-            <div class="switch-field__copy">
-              <span class="switch-field__label sc-text-body-regular">{{ classifyLabelKey() | translate }}</span>
-            </div>
+        <div class="switch-field">
+          <sc-toggleswitch
+            [checked]="form().wrapUp.classify"
+            [ariaLabel]="'groups.form.wrapup.classify' | translate"
+            (checkedChange)="setWrapUp('classify', $event)"
+          />
+          <div class="switch-field__copy">
+            <span class="switch-field__label sc-text-body-regular">{{ 'groups.form.wrapup.classify' | translate }}</span>
           </div>
-          @if (form().wrapUp.classify) {
-            <div class="control-add wrapup__select">
-              <span id="group-typification-label" class="visually-hidden">{{ 'groups.form.wrapup.typification' | translate }}</span>
+        </div>
+
+        <!-- Lo que pide tipificar, colgado de su interruptor y alineado con su texto: un solo borde para los dos
+             interruptores y otro para lo que abren (revisión del 2026-10-15, antes en la fila del interruptor). Dos
+             campos con su rótulo, en las columnas de la ficha: con cuál y en qué conversaciones. -->
+        @if (form().wrapUp.classify) {
+          <div class="wrapup__nested grid grid--2">
+            <div class="field">
+              <label id="group-typification-label" class="field__label sc-text-caption-semibold" for="group-typification">{{ 'groups.form.wrapup.typification' | translate }}</label>
               <sc-select
                 inputId="group-typification"
                 ariaLabelledBy="group-typification-label"
@@ -288,42 +290,41 @@
                 [value]="form().wrapUp.typificationId"
                 (valueChange)="onTypificationChange($event)"
               />
-              <!-- Qué tiene: su árbol entero, y «Editar en Repositorios», que lleva a su ficha. El botón a la talla de su
-                   control, como los «+» de Recursos (DD-187). -->
+              <!-- Qué es, bajo su campo (DD-198): su descripción y «Ver detalle», que abre su árbol entero con «Editar en
+                   Repositorios». Sustituye al botón de las tres rayas de sc-agent, que se leía como «más acciones»
+                   (revisión del 2026-10-15; `menu` es de la navegación, DD-200). -->
               @if (typification(); as t) {
-                <!-- Las tres rayas de «Tipificar» en sc-agent: el mismo signo que ve el agente al tipificar. -->
-                <sc-button
-                  icon="menu"
-                  variant="secondary"
-                  [ariaLabel]="'groups.form.wrapup.view' | translate: { name: t.name }"
-                  [pTooltip]="'groups.form.wrapup.view' | translate: { name: t.name }"
-                  tooltipPosition="top"
-                  aria-haspopup="dialog"
-                  (clicked)="viendoTipificacion.set(true)"
-                />
+                <div class="wrapup__detail">
+                  @if (t.description) {
+                    <p class="wrapup__description sc-text-caption-regular">{{ t.description }}</p>
+                  }
+                  <sc-button
+                    appearance="text"
+                    size="sm"
+                    [label]="'groups.form.wrapup.view_detail' | translate"
+                    [ariaLabel]="'groups.form.wrapup.view' | translate: { name: t.name }"
+                    aria-haspopup="dialog"
+                    (clicked)="viendoTipificacion.set(true)"
+                  />
+                </div>
+              }
+              <!-- Lo que falta, bajo su campo: al editar, o en el alta desde que se intenta salir (DD-199). -->
+              @if (typificationError()) {
+                <p class="field__error sc-text-caption-regular" role="alert">{{ 'groups.errors.typification_required' | translate }}</p>
               }
             </div>
-          }
-        </div>
-
-        <!-- Lo que falta, bajo su campo, como los canales: al editar, o en el alta desde que se intenta salir. -->
-        @if (typificationError()) {
-          <p class="field__error sc-text-caption-regular" role="alert">{{ 'groups.errors.typification_required' | translate }}</p>
-        }
-
-        @if (form().wrapUp.classify) {
-          <div class="field">
-            <span id="group-wrapup-scope-label" class="visually-hidden">{{ 'groups.form.wrapup.scope_label' | translate }}</span>
-            <sc-selectbutton
-              size="sm"
-              ariaLabelledBy="group-wrapup-scope-label"
-              [allowEmpty]="false"
-              [options]="wrapUpScopeOptions()"
-              optionLabel="label"
-              optionValue="value"
-              [value]="form().wrapUp.scope"
-              (valueChange)="onWrapUpScopeChange($event)"
-            />
+            <div class="field">
+              <span id="group-wrapup-scope-label" class="field__label sc-text-caption-semibold">{{ 'groups.form.wrapup.scope_label' | translate }}</span>
+              <sc-selectbutton
+                ariaLabelledBy="group-wrapup-scope-label"
+                [allowEmpty]="false"
+                [options]="wrapUpScopeOptions()"
+                optionLabel="label"
+                optionValue="value"
+                [value]="form().wrapUp.scope"
+                (valueChange)="onWrapUpScopeChange($event)"
+              />
+            </div>
           </div>
         }
       </div>
@@ -406,10 +407,11 @@
             @if (isRingAll()) {
               <div class="field">
                 <label id="group-ring-all-label" class="field__label sc-text-caption-semibold" for="group-ring-all">{{ 'groups.form.fields.ring_all' | translate }}</label>
-                <sc-select inputId="group-ring-all" ariaLabelledBy="group-ring-all-label" [options]="ringAllOptions" [value]="form().ringAllAgents" (valueChange)="onRingAllChange($event)" />
-                <!-- Con tres o más agentes a la vez, el aviso de costes, pegado a lo que lo causa y que se cierra (como en Voice). -->
-                @if (form().ringAllAgents >= 3 && !ringAllWarningClosed()) {
-                  <sc-message severity="warn" icon="warning" closable [text]="'groups.form.strategy_help.ring_all_warning' | translate" (closed)="ringAllWarningClosed.set(true)" />
+                <sc-select #ringAllSelect inputId="group-ring-all" ariaLabelledBy="group-ring-all-label" [options]="ringAllOptions" [value]="form().ringAllAgents" (valueChange)="onRingAllChange($event)" />
+                <!-- Tres o más a la vez los activa el administrador: si se eligen, el campo vuelve a dos y lo dice aquí,
+                     pegado a lo que lo causa y que se cierra (revisión del 2026-10-15). -->
+                @if (ringAllBlocked()) {
+                  <sc-message severity="warn" icon="warning" closable [text]="'groups.form.strategy_help.ring_all_not_available' | translate" (closed)="ringAllBlocked.set(false)" />
                 }
               </div>
             }
@@ -424,6 +426,16 @@
               <label class="field__label sc-text-caption-semibold" for="group-wrap-up" [id]="'group-wrap-up-label'">{{ 'groups.form.advanced.wrap_up' | translate }}</label>
               <sc-select inputId="group-wrap-up" [value]="form().advanced.wrapUpSec" [helperText]="'groups.form.advanced.wrap_up_hint' | translate" (valueChange)="setAdvancedNumber('wrapUpSec', $event)" optionValue="value" [options]="durationOptions(form().advanced.wrapUpSec, false)" [ariaLabelledBy]="'group-wrap-up-label'" />
             </div>
+            <!-- El audio de las llamadas que hace el grupo, en el bloque de su teléfono saliente. Solo si backoffice lo
+                 habilita para el cliente (revisión del 2026-10-15; como en Voice). -->
+            @if (conAudioSaliente) {
+              <div class="field">
+                <span class="field__label sc-text-caption-semibold" id="group-outbound-audio-label">{{ 'groups.form.announcements.outbound_audio' | translate }}</span>
+                <div class="upload-field" role="group" aria-labelledby="group-outbound-audio-label" aria-describedby="group-outbound-audio-help">
+                  <ng-container *ngTemplateOutlet="filePicker; context: { key: 'outboundAudioFile', id: 'group-outbound-audio', help: 'groups.form.announcements.outbound_audio_info' }" />
+                </div>
+              </div>
+            }
           </div>
         </sc-slot>
 
@@ -434,13 +446,7 @@
             <ng-container *ngTemplateOutlet="queueFields; context: { channel: 'phone', queue: form().phoneQueue }" />
             <div class="field">
               <span class="field__label sc-text-caption-semibold" id="group-hold-music-label">{{ 'groups.form.announcements.hold_music' | translate }}</span>
-              <div class="upload-field" role="group" aria-labelledby="group-hold-music-label">
-                @if (form().announcements.holdMusicFile; as archivo) {
-                  <span class="inline-control">
-                    <span class="inline-control__value sc-text-body-regular">{{ archivo }}</span>
-                    <sc-button size="sm" variant="secondary" appearance="text" [label]="'groups.form.announcements.remove_music' | translate" (clicked)="setAnnouncement('holdMusicFile', null)" />
-                  </span>
-                }
+              <div class="upload-field" role="group" aria-labelledby="group-hold-music-label" aria-describedby="group-hold-music-help">
                 <ng-container *ngTemplateOutlet="filePicker; context: { key: 'holdMusicFile', id: 'group-hold-music' }" />
               </div>
             </div>
@@ -448,8 +454,8 @@
         </sc-slot>
 
         <!-- Los demás mensajes de la cola vuelven a la vista (salieron el 2026-09-25 y seguían en el modelo), plegados:
-             casi nunca se cambian. Sin la palabra «anuncio»: son mensajes, como en Chat (DD-157). «Audio saliente» sigue
-             fuera, pendiente de desarrollo. -->
+             casi nunca se cambian. Sin la palabra «anuncio»: son mensajes, como en Chat (DD-157). «Audio saliente» va en
+             Distribución, con el teléfono saliente. -->
         <sc-slot titleKey="groups.form.distribution.queue_messages" hintKey="groups.form.distribution.queue_messages_hint" collapsible initiallyCollapsed>
           <div class="queue-messages">
             <div class="grid grid--2">
@@ -461,7 +467,7 @@
                  bajo el título y no al final, donde bajaría con cada fila (DD-198). -->
             <div class="field">
               <span class="field__label sc-text-caption-semibold" id="group-periodic-label">{{ 'groups.form.announcements.periodic' | translate }}</span>
-              <p id="group-periodic-help" class="field__help sc-text-caption-regular">{{ 'groups.form.announcements.periodic_info' | translate }}</p>
+              <p id="group-periodic-help" class="field__help sc-text-caption-regular">{{ 'groups.form.announcements.periodic_info' | translate }} {{ 'groups.form.announcements.audio_formats' | translate }}</p>
               <div class="periodic-list" role="group" aria-labelledby="group-periodic-label" aria-describedby="group-periodic-help">
                 @for (periodic of form().announcements.periodicAnnouncements; track $index) {
                   <span class="inline-control">
@@ -471,7 +477,7 @@
                     <sc-button size="sm" variant="secondary" appearance="text" icon="delete" [ariaLabel]="'groups.form.announcements.remove_periodic_aria' | translate: { file: periodic.file }" (clicked)="removePeriodicAnnouncement($index)" />
                   </span>
                 }
-                <sc-fileupload mode="basic" id="group-periodic-upload" [multiple]="true" [clearAfterSelect]="true" accept=".wav,audio/wav" [chooseLabel]="'groups.form.announcements.choose_file' | translate" [invalidFileTypeMessageSummary]="'groups.form.announcements.invalid_type' | translate" [invalidFileTypeMessageDetail]="'groups.form.announcements.invalid_type_detail' | translate" (filesSelected)="onPeriodicFiles($event)" />
+                <sc-fileupload mode="basic" id="group-periodic-upload" [multiple]="true" [clearAfterSelect]="true" [accept]="audioAccept" [chooseLabel]="'groups.form.announcements.choose_file' | translate" [invalidFileTypeMessageSummary]="'groups.form.announcements.invalid_type' | translate" [invalidFileTypeMessageDetail]="'groups.form.announcements.invalid_type_detail' | translate" (filesSelected)="onPeriodicFiles($event)" />
               </div>
             </div>
 
@@ -487,11 +493,8 @@
                 <sc-toggleswitch [checked]="form().announcements.announceAvgWait" [ariaLabel]="'groups.form.announcements.avg_wait' | translate" ariaDescribedBy="group-avg-wait-hint" (checkedChange)="setAnnouncement('announceAvgWait', $event)" />
                 <div class="switch-field__copy">
                   <span class="switch-field__label sc-text-body-regular">{{ 'groups.form.announcements.avg_wait' | translate }}</span>
-                  <!-- La ayuda nombra la cifra: «Pon el tiempo que oirá». -->
-                  <label id="group-avg-wait-hint" class="switch-field__hint sc-text-caption-regular" for="group-avg-wait">{{ 'groups.form.announcements.avg_wait_hint' | translate }}</label>
-                  @if (form().announcements.announceAvgWait) {
-                    <sc-inputnumber class="field__number" size="sm" inputId="group-avg-wait" [min]="0" suffix="s" [value]="form().announcements.avgWaitSec" (valueChange)="setAnnouncementNumber('avgWaitSec', $event)" />
-                  }
+                  <!-- Sin cifra: el tiempo que oye el cliente lo calcula el sistema (revisión del 2026-10-15). -->
+                  <p id="group-avg-wait-hint" class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.announcements.avg_wait_hint' | translate }}</p>
                 </div>
               </div>
               <div class="switch-field switch-field--top">
@@ -621,19 +624,35 @@
       </sc-subsection>
     }
 
+    <!-- Email, calcado de la ficha de grupo de Voice (revisión del 2026-10-15): las mismas seis estrategias que Teléfono,
+         con su ayuda, «Dentro de cada nivel» con Niveles, su tiempo de timbrado y su cola. El desborde es de «Reglas
+         comunes». -->
     @if (hasEmail()) {
       <sc-subsection id="group-channel-email" titleId="group-channel-email-title" icon="mail" [titleKey]="channelKeys.email">
-        <p class="channel-note sc-text-caption-regular">{{ 'groups.form.distribution.email_note' | translate }}</p>
+        <sc-slot titleKey="groups.form.distribution.routing">
+          <div class="grid grid--2">
+            <div class="field">
+              <label id="group-email-strategy-label" class="field__label sc-text-caption-semibold" for="group-email-strategy">{{ 'groups.form.fields.strategy' | translate }}</label>
+              <sc-select inputId="group-email-strategy" ariaLabelledBy="group-email-strategy-label" optionLabel="label" optionValue="value" [options]="emailStrategyOptions" [value]="form().emailStrategy" [helperText]="emailStrategyHelpKey() ? (emailStrategyHelpKey()! | translate) : undefined" (valueChange)="onEmailStrategyValueChange($event)" />
+            </div>
+            @if (isEmailNiveles()) {
+              <div class="field">
+                <label id="group-email-sub-strategy-label" class="field__label sc-text-caption-semibold" for="group-email-sub-strategy">{{ 'groups.form.fields.sub_strategy' | translate }}</label>
+                <sc-select inputId="group-email-sub-strategy" ariaLabelledBy="group-email-sub-strategy-label" [options]="subStrategies" [value]="form().emailSubStrategy" (valueChange)="onEmailSubStrategyChange($event)" />
+              </div>
+            }
+            <ng-container *ngTemplateOutlet="transferField; context: { channel: 'email', queue: form().emailQueue }" />
+          </div>
+        </sc-slot>
+
+        <sc-slot titleKey="groups.form.distribution.queue">
+          <div class="grid grid--2 queue-fields">
+            <ng-container *ngTemplateOutlet="queueFields; context: { channel: 'email', queue: form().emailQueue }" />
+          </div>
+        </sc-slot>
       </sc-subsection>
     }
 
-    @if (inactiveFamilies().length > 0) {
-      <div class="channel-off-list">
-        @for (family of inactiveFamilies(); track family) {
-          <p class="channel-off sc-text-caption-regular">{{ 'groups.form.distribution.inactive' | translate: { channel: (familyLabelKeys[family] | translate) } }}</p>
-        }
-      </div>
-    }
   </sc-section-card>
 </ng-template>
 
@@ -848,12 +867,13 @@
   </div>
   <!-- Dos opciones, ni una más: sin «Sin límite» (visión de producto de grupos, 2026-09-25). En tarjetas de radio, el
        ejemplo «Card» de primeng.dev/radiobutton (`sc-option-cards`, revisión del 2026-10-14): cada una dice qué cuenta, y
-       la cifra va debajo, con la frase que la lee entera. -->
+       la cifra va debajo, con la frase que la lee entera. A todo el ancho, una tarjeta en cada columna de la rejilla
+       (revisión del 2026-10-15); la cifra, en la columna de la izquierda de la fila siguiente. -->
   <div class="queue-size">
-    <div class="field">
+    <div class="field field--full">
       <span class="field__label sc-text-caption-semibold" [id]="'group-' + channel + '-queue-type-label'">{{ 'groups.form.advanced.queue_size' | translate }}</span>
       <sc-option-cards
-        orientation="vertical"
+        class="queue-size__cards"
         [name]="'group-' + channel + '-queue-type'"
         [ariaLabelledBy]="'group-' + channel + '-queue-type-label'"
         [options]="queueSizeOptions()"
@@ -876,12 +896,28 @@
   </div>
 </ng-template>
 
-<!-- Elegir un .wav: el `p-fileupload` de primeng.dev (`sc-fileupload`), con su zona de soltar. Entrega el nombre y se
-     vacía: el archivo elegido se ve en el campo de al lado, no dos veces (DD-184). -->
-<!-- El modo «basic» de primeng.dev: solo el botón, sin la caja de soltar (revisión del 2026-10-09: «solo el texto y el
-     botón, sin caja»). El nombre del archivo, o «Música por defecto», lo dice el texto de al lado. -->
-<ng-template #filePicker let-key="key" let-id="id">
-  <sc-fileupload mode="basic" [id]="id + '-upload'" [clearAfterSelect]="true" accept=".wav,audio/wav" [chooseLabel]="'groups.form.announcements.choose_file' | translate" [invalidFileTypeMessageSummary]="'groups.form.announcements.invalid_type' | translate" [invalidFileTypeMessageDetail]="'groups.form.announcements.invalid_type_detail' | translate" (filesSelected)="onAudioFile(key, $event)" />
+<!-- Elegir un audio: el «Advanced» de primeng.dev tal cual (`sc-fileupload` en su modo por defecto, revisión del
+     2026-10-15, que deshace el «basic» del 2026-10-09): «Subir archivo», la zona de soltar y, con lo guardado, su fila
+     con nombre, tamaño y ✕ para quitarlo. Un solo archivo: elegir otro lo sustituye. Debajo, los formatos (DD-198). -->
+<ng-template #filePicker let-key="key" let-id="id" let-help="help">
+  <sc-fileupload
+    [id]="id + '-upload'"
+    [accept]="audioAccept"
+    [saved]="audioGuardadoDe(key)"
+    [chooseLabel]="'groups.form.announcements.choose_file' | translate"
+    [dropLabel]="'groups.form.announcements.drop_file' | translate"
+    [removeLabel]="'groups.form.announcements.remove_file' | translate"
+    [invalidFileTypeMessageSummary]="'groups.form.announcements.invalid_type' | translate"
+    [invalidFileTypeMessageDetail]="'groups.form.announcements.invalid_type_detail' | translate"
+    (filesSelected)="onAudioFile($any(key), $event)"
+    (savedRemoved)="setAnnouncement($any(key), null)"
+  />
+  <p class="field__help sc-text-caption-regular" [id]="id + '-help'">
+    @if (help) {
+      {{ help | translate }}
+    }
+    {{ 'groups.form.announcements.audio_formats' | translate }}
+  </p>
 </ng-template>
 
 <!-- Un mensaje de la cola de Teléfono que puede no decir nada, leerse con la voz sintética o ser un .wav propio
@@ -894,7 +930,6 @@
     <sc-selectbutton size="sm" optionValue="value" [allowEmpty]="false" [options]="audioSourceOptions()" [value]="$any(form().announcements)[source]" [ariaLabel]="label | translate" [helperText]="help | translate" (valueChange)="setAnnouncement(source, $any($event))" />
     @if ($any(form().announcements)[source] === 'file') {
       <div class="upload-field">
-        <span class="inline-control__value sc-text-body-regular">{{ $any(form().announcements)[file] ?? ('groups.form.announcements.no_file' | translate) }}</span>
         <ng-container *ngTemplateOutlet="filePicker; context: { key: file, id: id }" />
       </div>
     } @else if ($any(form().announcements)[source] === 'tts') {

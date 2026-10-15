@@ -62,72 +62,14 @@
             </a>
           </p>
           <!-- Cada fila, `sc-fact-row` del DS (DD-186): la clave con su baldosa y el valor a la derecha, y un
-               enlace de verdad a su sección (DD-146). La de Teléfono es la excepción (revisión de diseño,
-               2026-10-11): en vez de enlace, es UN solo botón que abre el selector rápido —antes tenía el enlace Y
-               un botón de más pegados, dos objetivos a un dedo de distancia que hacían cosas distintas; quien
-               quería cambiar el reparto podía acabar en Distribución y colas sin querer. El botón lleva las tres
-               estrategias que no piden nada más, con su misma ayuda que el campo real (DD-133), y su propio
-               «Configurar colas» al pie para cuando sí hace falta la sección entera. -->
+               enlace de verdad a su sección (DD-146). Teléfono igual que Chat: el selector rápido de su reparto
+               (revisión del 2026-10-11) sale en la revisión del 2026-10-15; la estrategia se cambia en su campo. -->
           <dl class="resumen__pairs">
             @for (r of routing(); track r.family) {
-              @if (r.family === 'phone') {
-                <div class="resumen__routing-row">
-                  <button
-                    type="button"
-                    class="resumen__pair-button"
-                    [class.resumen__pair-button--active]="expandedQuick() === 'reparto'"
-                    [attr.aria-expanded]="expandedQuick() === 'reparto'"
-                    aria-controls="group-summary-quick-strategy"
-                    (click)="toggleQuick('reparto')"
-                  >
-                    <span class="resumen__pair-label sc-text-caption-regular">
-                      <sc-icon-tile size="sm"><sc-channel-icon [channel]="r.family" [size]="14" /></sc-icon-tile>
-                      {{ familyKey(r.family) | translate }}
-                    </span>
-                    <span class="resumen__pair-value sc-text-caption-semibold">
-                      {{ r.text }}
-                      <span class="resumen__pair-chevron">
-                        <sc-icon name="chevron_right" size="inherit" aria-hidden="true" [class.resumen__pair-chevron--hidden]="expandedQuick() === 'reparto'" />
-                        <sc-icon name="expand_more" size="inherit" aria-hidden="true" [class.resumen__pair-chevron--hidden]="expandedQuick() !== 'reparto'" />
-                      </span>
-                    </span>
-                    <span class="visually-hidden">{{ 'groups.form.summary.routing_quick' | translate }}</span>
-                  </button>
-                </div>
-              } @else {
-                <div scFactRow size="sm" class="resumen__pair" [label]="familyKey(r.family) | translate" [href]="hrefs().distribucion" (open)="pulsar($event, { seccion: 'distribucion', canal: r.family })">
-                  <sc-channel-icon scFactIcon [channel]="r.family" [size]="14" />
-                  {{ r.text }}
-                </div>
-              }
-              @if (r.family === 'phone' && expandedQuick() === 'reparto') {
-                <div id="group-summary-quick-strategy" class="resumen__quick">
-                  <div role="radiogroup" [attr.aria-label]="'groups.form.summary.routing_quick' | translate">
-                    @for (opcion of quickStrategyOptions; track opcion) {
-                      <button
-                        type="button"
-                        role="radio"
-                        [attr.aria-checked]="opcion === r.text"
-                        class="resumen__quick-option"
-                        [class.resumen__quick-option--chosen]="opcion === r.text"
-                        (click)="elegirQuickStrategy(opcion)"
-                      >
-                        <span class="resumen__quick-option-text">
-                          <strong class="sc-text-caption-semibold">{{ opcion }}</strong>
-                          @if (quickStrategyHelpKey(opcion); as helpKey) {
-                            <small class="sc-text-caption-regular">{{ helpKey | translate }}</small>
-                          }
-                        </span>
-                        <span class="resumen__quick-radio" aria-hidden="true"></span>
-                      </button>
-                    }
-                  </div>
-                  <a class="resumen__quick-link sc-text-caption-regular" [href]="hrefs().distribucion" (click)="pulsar($event, { seccion: 'distribucion', canal: r.family })">
-                    {{ 'groups.form.summary.routing_see' | translate }}
-                    <sc-icon name="chevron_right" size="inherit" aria-hidden="true" />
-                  </a>
-                </div>
-              }
+              <div scFactRow size="sm" class="resumen__pair" [label]="familyKey(r.family) | translate" [href]="hrefs().distribucion" (open)="pulsar($event, { seccion: 'distribucion', canal: r.family })">
+                <sc-channel-icon scFactIcon [channel]="r.family" [size]="14" />
+                {{ r.text }}
+              </div>
             }
             <!-- El teléfono saliente (y el número de WhatsApp), con el nombre de su campo en Distribución. -->
             @for (o of outbound(); track o.channel) {

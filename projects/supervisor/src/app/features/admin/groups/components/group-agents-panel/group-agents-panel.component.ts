@@ -104,11 +104,12 @@ export class GroupAgentsPanelComponent {
   private readonly families = computed(() => familiesOf(this.channels()));
 
   /** Con la estrategia Niveles, el nivel de cada agente va en su fila, como en la ficha. */
-  protected readonly levelFamilies = computed<readonly ('phone' | 'chat')[]>(() => {
+  protected readonly levelFamilies = computed<readonly ('phone' | 'chat' | 'email')[]>(() => {
     const group = this.group();
     return [
       ...(group && this.families().includes('phone') && group.strategy === 'Niveles' ? ['phone' as const] : []),
       ...(group && this.families().includes('chat') && group.chatStrategy === 'Niveles' ? ['chat' as const] : []),
+      ...(group && this.families().includes('email') && group.emailStrategy === 'Niveles' ? ['email' as const] : []),
     ];
   });
 

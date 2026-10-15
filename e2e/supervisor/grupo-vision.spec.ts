@@ -101,17 +101,17 @@ test('Teléfono: saliente y música a la vista; los demás mensajes de la cola, 
 
   // El rótulo del teléfono saliente lleva su «*» de obligatorio desde DD-142, y el texto de un rótulo empieza por un
   // espacio que el casado por expresión regular no recorta (medido).
-  for (const visible of ['Teléfono saliente', 'Música de espera/transferencia']) {
+  // «Audio saliente», con el teléfono saliente: lo habilita backoffice y esta demo lo tiene (revisión del 2026-10-15).
+  for (const visible of ['Teléfono saliente', 'Música de espera/transferencia', 'Audio saliente']) {
     await expect(telefono.getByText(new RegExp(`^\\s*${visible}(\\s*\\*)?\\s*$`)), visible).toBeVisible();
   }
-  // DD-157: los demás mensajes vuelven, plegados (DD-121 §6 los había sacado de la vista); el audio saliente, no.
+  // DD-157: los demás mensajes vuelven, plegados (DD-121 §6 los había sacado de la vista).
   const plegados = ['Voz de los mensajes', 'Identificador del grupo', '«Eres el siguiente»'];
-  for (const fuera of [...plegados, 'Audio saliente']) {
+  for (const fuera of plegados) {
     await expect(page.getByText(fuera, { exact: true }), fuera).toHaveCount(0);
   }
   await telefono.getByRole('button', { name: /Mensajes en cola/ }).click();
   for (const dentro of plegados) await expect(telefono.getByText(dentro, { exact: true }), dentro).toBeVisible();
-  await expect(page.getByText('Audio saliente', { exact: true })).toHaveCount(0);
   // Capacidad de cola: dos opciones, ni una más, en tarjetas de radio (DD-204).
   const modos = telefono.getByRole('radiogroup', { name: 'Tamaño de cola', exact: true });
   await expect(modos.locator('.sc-option-card__label')).toHaveText(['Fija', 'Variable']);

@@ -58,13 +58,12 @@ test('sin Teléfono, su bloque se va de Distribución y deja la línea que dice 
   await canal(page, 'Teléfono').click();
 
   /* Solo se ve lo que aplica (visión de producto de grupos, 2026-09-25): ni su bloque ni el
-   * teléfono saliente. Pero no se esfuma sin rastro: una línea dice que existe y dónde se
-   * enciende (la decisión del 2026-09-23 contra las secciones que desaparecen). Y el índice no
-   * encoge: sigue con sus cuatro secciones. */
+   * teléfono saliente. Sin la línea «Teléfono no está activo: actívalo en General» desde la revisión
+   * del 2026-10-15. Y el índice no encoge: sigue con sus cuatro secciones. */
   await irA(page, 'Distribución y colas');
   await expect(page.locator('#group-channel-phone')).toHaveCount(0);
   await expect(page.locator('#group-phone')).toHaveCount(0);
-  await expect(page.locator('#group-section-distribution')).toContainText('Teléfono no está activo: actívalo en General');
+  await expect(page.locator('#group-section-distribution')).not.toContainText('no está activo');
   await expect(page.locator('sc-form-section-nav .form-nav__item')).toHaveCount(4);
 });
 

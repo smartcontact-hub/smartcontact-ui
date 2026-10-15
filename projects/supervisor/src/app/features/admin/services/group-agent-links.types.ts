@@ -40,11 +40,11 @@ export interface GroupAgentLink {
    * Nivel del agente por familia (1 se atiende primero) para la estrategia Niveles.
    * Se conserva aunque la estrategia cambie, para no perderlo si vuelve.
    */
-  readonly levels?: { readonly phone?: number; readonly chat?: number };
+  readonly levels?: { readonly phone?: number; readonly chat?: number; readonly email?: number };
 }
 
 /** El nivel de una familia del enlace, 1 si no lo tiene. */
-export function levelOf(link: GroupAgentLink, family: 'phone' | 'chat'): number {
+export function levelOf(link: GroupAgentLink, family: 'phone' | 'chat' | 'email'): number {
   return link.levels?.[family] ?? 1;
 }
 

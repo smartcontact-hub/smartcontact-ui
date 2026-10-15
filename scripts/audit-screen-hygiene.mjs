@@ -325,8 +325,6 @@ export const ROLES_A_MANO = {
   'projects/supervisor/src/app/features/admin/labels/components/label-form-panel/label-form-panel.component.html': 1,
   'projects/supervisor/src/app/features/admin/repositories/components/repo-form-panel.component.html': 1,
   'projects/supervisor/src/app/features/admin/templates/components/template-form-panel/template-form-panel.component.html': 1,
-  // Candidato 7: la estrategia del resumen, a `sc-option-cards`.
-  'projects/supervisor/src/app/features/admin/groups/components/group-summary/group-summary.component.html': 1,
   // Candidato 8: la categoría del asistente de widgets, a `sc-selectbutton`.
   'projects/supervisor/src/app/features/dashboard/components/widget-assistant/widget-assistant.component.html': 1,
   // Candidato 5: la hoja de atajos, a `sc-dialog` (DD-140).

@@ -639,6 +639,20 @@ test.describe('sc-fileupload', () => {
     await host.locator('input[type="file"]').setInputFiles({ name: 'voz.mp3', mimeType: 'audio/mpeg', buffer: Buffer.from('ID3') });
     await expect(host.getByText(/voz\.mp3/)).toBeVisible();
   });
+
+  test('`saved`: lo guardado sale como subido, sin miniatura rota; elegir otro lo sustituye y la ✕ con nombre lo quita', async ({ page }) => {
+    await gotoPage(page, 'fileupload');
+    const host = page.getByTestId('sc-fileupload-saved');
+    const filas = host.locator('.p-fileupload-file');
+    await expect(filas).toHaveCount(1);
+    await expect(filas).toContainText('musica-espera.wav');
+    await expect(filas.locator('.p-fileupload-file-thumbnail')).toBeHidden();
+    await host.locator('input[type="file"]').setInputFiles({ name: 'otra.mp3', mimeType: 'audio/mpeg', buffer: Buffer.from('ID3') });
+    await expect(filas).toHaveCount(1);
+    await expect(filas).toContainText('otra.mp3');
+    await host.getByRole('button', { name: 'Quitar archivo' }).click();
+    await expect(filas).toHaveCount(0);
+  });
 });
 
 test.describe('sc-inputtags', () => {

@@ -601,7 +601,7 @@
     },
     {
       "selector": "sc-icon-tile",
-      "usedInSupervisor": 3
+      "usedInSupervisor": 2
     },
     {
       "selector": "sc-inline-rename-cell",
@@ -629,7 +629,7 @@
     },
     {
       "selector": "sc-slot",
-      "usedInSupervisor": 13
+      "usedInSupervisor": 15
     },
     {
       "selector": "sc-sticky-form-header",

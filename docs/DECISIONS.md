@@ -149,6 +149,74 @@
 
 ---
 
+## DD-205 · 2026-10-15 — Revisión de la ficha de grupo: el resumen sin selector rápido, Ring All a dos, «Tipificar conversaciones» con su descripción, los audios en el uploader de primeng.dev, Email con su estrategia y su cola, y Postconversación y Cola en la rejilla de dos columnas
+
+**Contexto** · Revisión de producto del 2026-10-15 sobre la ficha de grupo, y lo que se pidió después por escrito: la
+fila de Teléfono del resumen abría un selector de estrategia que nadie pedía; Ring All dejaba elegir 3 o más agentes a la
+vez, que solo se activa a petición; «Tipificar llamadas» salía en grupos que también atienden chat; el botón de tres
+rayas junto a la tipificación se leía como «más acciones»; el diálogo del árbol repetía «3 niveles, 30 opciones»; la
+música se subía con un botón y su nombre suelto, sin poder verla ni quitarla en su sitio; faltaba el audio de las
+llamadas salientes que Voice enseña cuando backoffice lo habilita; «Anunciar el tiempo medio de espera» pedía una cifra
+que calcula el sistema; los avisos «X no está activo: actívalo en General» sobraban; y un grupo con Email no tenía
+ningún campo de Email, cuando Voice le pide estrategia, tiempos y cola. En la misma revisión por escrito: la alineación de
+Postconversación y de la Cola distraía, y el «o suelta aquí» del uploader iba en un estilo de texto que no era el de la ficha.
+
+**Decisión** ·
+1. **El resumen, sin selector rápido**: Teléfono es un enlace a su bloque, como Chat. La estrategia se cambia en su
+   campo (retira el panel de la revisión del 2026-10-11; los de Recursos se quedan).
+2. **Ring All a dos**: dos agentes a la vez los tiene cualquiera; elegir 3 o más deja el campo en 2 y lo dice junto a
+   él: «Opción no disponible. Para su activación consulte con su administrador.», que se cierra. Lo guardado con más se
+   abre con 2. Sustituye al aviso de costes de DD-185 §3.
+3. **«Tipificar conversaciones» siempre**, también en un grupo solo de teléfono.
+4. **La tipificación elegida dice qué es**: su descripción bajo el desplegable y un botón de texto «Ver detalle» que
+   abre su árbol. Fuera el botón de tres rayas (corrige DD-187 §5; `menu` es de la navegación, DD-200). El árbol, sin la
+   línea «N niveles, N opciones». El ejemplo y la pista de la descripción hablan de «conversación».
+5. **Los audios de un archivo, en el «Advanced» de primeng.dev tal cual**: música de espera/transferencia, identificador
+   del grupo, «Eres el siguiente» y audio saliente. «Subir archivo», la zona de soltar y, con lo guardado, su fila con
+   nombre, tamaño, «Subido» y su ✕ («Quitar archivo»); elegir otro lo sustituye. Debajo, «Admite archivos .wav y .mp3.»
+   (desarrollo confirmó el .mp3 el mismo día). Deshace el «basic» de la revisión del 2026-10-09. Los mensajes periódicos
+   siguen en su lista con frecuencia y aceptan .mp3.
+6. **Audio saliente**, en Distribución de Teléfono, con el teléfono saliente: lo habilita backoffice por cliente y esta
+   demo lo tiene (`conAudioSaliente`). Corrige DD-157 §4.
+7. **«Anunciar el tiempo medio de espera» sin cifra**: el cliente oye la espera habitual que calcula el sistema.
+8. **Fuera las líneas «X no está activo: actívalo en General»** al pie de Distribución y colas.
+9. **Email con lo que pide Voice** (el grupo de Voice medido el 2026-09-20 y sus capturas del 2026-10-15): las seis
+   estrategias de Teléfono (Niveles incluida, con «Dentro de cada nivel» y su columna «Nivel Email» en Agentes
+   asignados), tiempo de ringing y su cola (espera máxima, % de servicio y tamaño fijo o variable), como Chat. Sale en
+   el resumen con su estrategia. Un grupo nuevo nace con «Menos conversaciones atendidas» y la cola de Chat de Contact
+   Center. Desbordar sigue en «Reglas comunes», no por canal como en Voice.
+10. **Una rejilla de dos columnas para Postconversación y Cola**: los campos de «Tipificar conversaciones» van debajo
+   de su interruptor, alineados con su texto y con rótulo visible («Tipificación», «En qué conversaciones se tipifica»);
+   las tarjetas de «Tamaño de cola» ocupan las dos columnas de los campos, y debajo van «Máximo de conversaciones» y la
+   música. El texto de soltar del uploader es una línea de ayuda, con el estilo de las demás.
+
+**Razón** · Cada cambio sale de la revisión o de lo pedido después por escrito. El uploader de primeng.dev ya enseña lo
+que se pidió (ver qué hay, quitarlo y subir otro) sin piezas propias: `sc-fileupload` gana `saved`, `savedRemoved` y
+`removeLabel`, y sin servidor da la subida por hecha, como PrimeNG tras una subida que sale bien. Los campos de Email
+calcan el inventario del grupo de Voice (`strategyEmail`, `timeout_transfer_email`, `timeout_email`,
+`time_serviceEmail`, `maxlenEmail`/`maxlenEmailAgents`) y sus estrategias, las de Teléfono. Las tarjetas a lo ancho de las
+dos columnas leen como un campo más de la rejilla; apiladas o con otro hueco, abrían un borde que no seguía nada.
+
+**Descartadas** ·
+- *Las opciones de 3 a 10 apagadas en el desplegable*: lo pedido es que elegirlas vuelva a 2 y lo diga.
+- *Un tooltip con la descripción al pasar por la tipificación*: un tooltip no lleva enlaces, y la descripción a la vista
+  no pide pasar el ratón.
+- *Un botón de escuchar en la fila del audio*: deja de ser el nativo; queda para cuando se pida.
+- *Desbordar por canal, como Voice*: la ficha lo tiene en «Reglas comunes» y ninguna revisión pidió separarlo.
+- *Los campos de Tipificar a todo el ancho, sin sangría*: dejaba de verse que dependen de su interruptor.
+
+**Consecuencias** · El modelo guarda cada audio como `{ name, size }` (lo de antes, solo el nombre, se lee con tamaño
+0) y el grupo gana `emailStrategy`, `emailSubStrategy` y `emailQueue`; los niveles por agente admiten Email.
+`sc-option-cards` gana la variable `--sc-option-cards-gap`, para igualar su hueco al de la rejilla que la contiene. `sc-fileupload` oculta la miniatura rota de un archivo que no es
+imagen (customs-catalog §8; el tope `ds` de `audit:primeng-coupling` pasa a 13). PrimeNG traduce «Pendiente» y
+«Subido». A 1366 × 660 el resumen de un grupo con los tres canales ya no cabe entero y se desplaza en su columna. Cierra
+la pregunta de DD-121 sobre los anuncios periódicos de postventa. Vigilan esto `resumen-enlazado.spec.ts`,
+`ficha-grupo-revision-equipo.spec.ts`, `grupo-tiempos-horarios.spec.ts`, `grupo-vision.spec.ts`,
+`tipificaciones-listado.spec.ts`, `ficha-grupo-canales.spec.ts`, `ficha-grupo-niveles.spec.ts` (Niveles en Email) y
+`components.spec.ts` (`sc-fileupload`).
+
+---
+
 ## DD-204 · 2026-10-14 — Revisión de las fichas de grupo y de agente: los nombres de sus secciones, el resumen en una línea, Recursos con «Editar» en la opción, tarjetas de radio y tablas que miden sus filas
 
 **Contexto** · Revisión de producto del 2026-10-14, a 1440 (un MacBook Air), sobre las fichas de grupo y de agente y el
@@ -4582,7 +4650,7 @@ exactamente el desbordamiento y dónde se configura su destino; si «Desbordar s
 estrategia o capacidad propias; si la URL del script de Web Chat la pone cada grupo o la plataforma; si el backend
 tendrá un permiso de WhatsApp por agente (el AED en vivo solo tiene Tlf / Chat / Email); qué ve el cliente en cola si
 se quita un canal o se cambia la estrategia de un grupo activo; el choque con postventa (2026-09-18), que pidió
-más de un anuncio periódico en teléfono; y, desde DD-130, qué secciones y permisos trae cada tipo de usuario
+más de un anuncio periódico en teléfono (resuelto: varios, cada uno con su frecuencia; DD-205); y, desde DD-130, qué secciones y permisos trae cada tipo de usuario
 (respondida en DD-132). Fuera a propósito: la forma de las fichas de agente y usuario, y
 `/config/aed/grupos`, la página vieja de Configuración, que no está conectada con la ficha (DD-135 la conecta: es donde
 se fija con qué nace un grupo). Vigilan esto

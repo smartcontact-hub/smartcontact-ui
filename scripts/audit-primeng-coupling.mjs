@@ -99,7 +99,9 @@ const sh = (cmd) => {
 // DD-187: 63 → 69 por el interlineado de cinco textos sin token propio que heredaban el 1.5 del body (21 en vez de 20):
 // `.p-menu-item-label`, `.p-tooltip-text`, `.p-message-text` con `.p-message-sm` y `.p-message-lg`, y `.p-drawer-title`
 // (30 en vez de 28). PrimeNG no da token de interlineado para ninguno; en el preset viajan con el tema.
-const TOPE = { app: 6, ds: 12, preset: 69 };
+// 2026-10-15: `ds` 12 → 13 por `.p-fileupload-file-thumbnail`: PrimeNG pinta una miniatura rota para un archivo que no
+// es imagen (los audios de Grupos); no hay token ni `pt` que la quite solo en ese caso (customs-catalog §8).
+const TOPE = { app: 6, ds: 13, preset: 69 };
 
 /* Cuenta las clases `.p-*` que aparecen en SELECTORES, no en comentarios. Un
  * comentario que menciona `.p-datatable-*` para explicar POR QUÉ dependemos de
@@ -708,6 +710,8 @@ const COMPORTAMIENTO_PERMITIDO = {
   '.p-component.p-button:disabled:active, .p-component.p-button[aria-disabled="true"]:active': 'ídem, al pulsarlo (buttonMotionCss).',
   ':host ::ng-deep .p-toast .p-toast-message-icon, :host ::ng-deep .p-toast .p-toast-close-button':
     'el toast del Supervisor pinta su propio icono y su cierre (app.component.scss, uno de los 6 de `app`).',
+  ".sc-fileupload .p-fileupload-file-thumbnail[src='']":
+    'PrimeNG pinta la miniatura aunque el archivo no sea una imagen: un `<img src="">` roto con su alt (los audios de Grupos, revisión del 2026-10-15).',
 };
 const cambiosNativos = [];
 for (const fs of Object.values(HOGARES)) {

@@ -4,7 +4,7 @@ import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { ScDialogComponent as DialogComponent } from '@smartcontact-hub/components';
 
-import { totalDeOpciones, type Tipificacion } from '../../state/tipificaciones.core.mjs';
+import type { Tipificacion } from '../../state/tipificaciones.core.mjs';
 
 /**
  * QUÉ TIENE UNA TIPIFICACIÓN, visto desde donde se asigna (revisión de tipificaciones del 2026-10-09): en la ficha de
@@ -12,6 +12,7 @@ import { totalDeOpciones, type Tipificacion } from '../../state/tipificaciones.c
  * niveles y «Editar en Repositorios»). Un diálogo con su nombre y su descripción arriba, y el árbol con LAS MISMAS
  * columnas que su editor (`tipificacion-niveles`): una por nivel, con todas las ramas a la vez, no solo la elegida.
  * Solo lectura: las opciones son texto, no cajas, porque aquí no se escriben. Se edita en su ficha, en Repositorios.
+ * Sin la línea «N niveles, N opciones» bajo la descripción (revisión del 2026-10-15): el árbol ya lo enseña.
  */
 @Component({
   selector: 'sc-tipificacion-arbol',
@@ -27,10 +28,6 @@ import { totalDeOpciones, type Tipificacion } from '../../state/tipificaciones.c
       [closeAriaLabel]="'common.close' | translate"
       (cancelled)="cerrar.emit()"
     >
-      <p class="mapa__dato sc-text-caption-regular">
-        {{ (t.levels === 1 ? 'repositories.tipificaciones.levels_count_one' : 'repositories.tipificaciones.levels_count') | translate: { count: t.levels } }},
-        {{ (total() === 1 ? 'repositories.tipificaciones.options_count_one' : 'repositories.tipificaciones.options_count') | translate: { count: total() } }}
-      </p>
       <div class="mapa" [style.--niveles]="t.levels">
         <div class="mapa__cabeza">
           @for (nivel of columnas(); track nivel) {
@@ -65,10 +62,6 @@ import { totalDeOpciones, type Tipificacion } from '../../state/tipificaciones.c
     </ng-template>
   `,
   styles: `
-    .mapa__dato {
-      margin: 0 0 var(--sc-spacing-1);
-      color: var(--sc-text-secondary);
-    }
     /* La rejilla del editor: una columna por nivel; cada rama hereda las columnas con subgrid, sin hueco propio. */
     .mapa {
       display: grid;
@@ -128,6 +121,5 @@ export class TipificacionArbolComponent {
   readonly tipificacion = input.required<Tipificacion>();
   readonly visible = input(false);
   readonly cerrar = output<void>();
-  protected readonly total = computed(() => totalDeOpciones(this.tipificacion().options));
   protected readonly columnas = computed(() => Array.from({ length: this.tipificacion().levels }, (_, i) => i));
 }

@@ -15,17 +15,15 @@ import { familiesOf } from '@features/admin/services/group-channels.core.mjs';
 
 import {
   CHANNEL_LABEL_KEYS,
-  DEFAULT_STRATEGY_OPTIONS,
   FAMILY_LABEL_KEYS,
   OUTBOUND_LABEL_KEYS,
-  PHONE_STRATEGY_HELP_KEYS,
   type ChannelFamily,
   type GroupChannel,
 } from '../../data/groups-data';
 
 /** Cómo reparte una familia de canales: Teléfono, o Chat (Web Chat y WhatsApp comparten estrategia). */
 export interface GroupSummaryRouting {
-  readonly family: 'phone' | 'chat';
+  readonly family: ChannelFamily;
   readonly text: string;
 }
 
@@ -53,7 +51,7 @@ export type GroupSummarySeccion = 'agentes' | 'distribucion' | 'recursos';
  */
 export interface GroupSummaryDestino {
   readonly seccion: GroupSummarySeccion;
-  readonly canal?: 'phone' | 'chat';
+  readonly canal?: ChannelFamily;
   readonly salida?: 'phone' | 'whatsapp';
 }
 
@@ -89,20 +87,15 @@ interface ChannelRow {
  * Distribución, al bloque de su canal o a su número. Son enlaces de verdad, con la dirección de
  * la sección, y la ficha resuelve el clic en su sitio (en el alta, sin tocar la dirección y con General de puerta).
  *
- * Teléfono y cada tipo de recurso, además, abren un panel rápido (revisión de diseño, 2026-10-11, sobre el prototipo del
- * encargo): uno abierto a la vez, como el original. El de Teléfono en Distribución trae las tres estrategias que
- * no piden nada más (`DEFAULT_STRATEGY_OPTIONS`, SISMAC-1975), con la misma frase de ayuda que el campo real
- * (`PHONE_STRATEGY_HELP_KEYS`, DD-133): elegir una la aplica al momento (`cambiarReparto`). Las otras tres
- * (Niveles, Ring All, Agente exclusivo) necesitan algo más y se quedan en Distribución y colas, donde ya lleva
- * el enlace de la fila; Chat no tiene esta ayuda documentada, así que se queda solo con su enlace. El de cada
- * recurso lleva los recursos de verdad del grupo (DD-164: agendas y plantillas, con su nombre y su dato) — nunca los
- * «Línea principal» / «Guion de atención» fijos del
- * prototipo: ese grupo puede no tener ni uno ni el otro, y esto no inventa contenido.
+ * Cada tipo de recurso, además, abre un panel rápido (revisión de diseño, 2026-10-11, sobre el prototipo del
+ * encargo): uno abierto a la vez, como el original. Lleva los recursos de verdad del grupo (DD-164: agendas y
+ * plantillas, con su nombre y su dato) — nunca los «Línea principal» / «Guion de atención» fijos del prototipo: ese
+ * grupo puede no tener ni uno ni el otro, y esto no inventa contenido. Teléfono tuvo el suyo, con las tres
+ * estrategias que no piden nada más; salió en la revisión del 2026-10-15: la estrategia se cambia en su campo.
  *
  * El rótulo dice «Distribución», no «Reparto» (nombre antiguo del 2026-10-11, corregido el mismo día): la
  * sección a la que lleva se llama «Distribución y colas» y su propia cabecera dentro dice «Distribución»; dos
- * palabras para lo mismo confundían más de lo que ahorraban letras. `cambiarReparto` se queda con su nombre: es
- * un identificador interno, no lo lee nadie en pantalla.
+ * palabras para lo mismo confundían más de lo que ahorraban letras.
  */
 @Component({
   selector: 'sc-group-summary',
@@ -139,18 +132,14 @@ export class GroupSummaryComponent {
   readonly hrefs = input.required<Readonly<Record<GroupSummarySeccion, string>>>();
   /** Se pulsó algo del resumen, sin teclas: la ficha va a su sitio. */
   readonly ir = output<GroupSummaryDestino>();
-  /** Se eligió una estrategia de teléfono en el selector rápido: la ficha la aplica al campo real. */
-  readonly cambiarReparto = output<string>();
 
   protected readonly channelKeys = CHANNEL_LABEL_KEYS;
   protected readonly familyKeys = FAMILY_LABEL_KEYS;
   /** El nombre de cada número es el del campo real al que lleva («Teléfono saliente», «Número WhatsApp»), no el
    *  genérico del canal: el mismo criterio que igualó «Reparto» con «Distribución». */
   protected readonly outboundKeys = OUTBOUND_LABEL_KEYS;
-  /** Las tres estrategias de teléfono que el selector rápido puede poner sin pedir nada más. */
-  protected readonly quickStrategyOptions = DEFAULT_STRATEGY_OPTIONS;
   /** Qué panel rápido está abierto: uno a la vez, como el prototipo del encargo. */
-  protected readonly expandedQuick = signal<'reparto' | GroupSummaryResources['key'] | null>(null);
+  protected readonly expandedQuick = signal<GroupSummaryResources['key'] | null>(null);
   /** La barra de cada canal va en la cifra destacada (DD-161): su pista, translúcida en el color claro de la tarjeta. */
   protected readonly meterDt = { meters: { background: 'color-mix(in srgb, var(--sc-text-inverse) 25%, transparent)' } };
 
@@ -178,17 +167,8 @@ export class GroupSummaryComponent {
     return FAMILY_LABEL_KEYS[family];
   }
 
-  protected quickStrategyHelpKey(valor: string): string | null {
-    return PHONE_STRATEGY_HELP_KEYS[valor] ?? null;
-  }
-
-  protected toggleQuick(panel: 'reparto' | GroupSummaryResources['key']): void {
+  protected toggleQuick(panel: GroupSummaryResources['key']): void {
     this.expandedQuick.update((actual) => (actual === panel ? null : panel));
-  }
-
-  protected elegirQuickStrategy(valor: string): void {
-    this.cambiarReparto.emit(valor);
-    this.expandedQuick.set(null);
   }
 
   /** Un clic sin teclas va al sitio en la ficha; con Cmd, Ctrl, Mayús o el botón central, el navegador abre la dirección. */

@@ -41,6 +41,27 @@ trampas propias): `git show 11c607cf:docs/handoff/supervisor-fichas.md`. El de l
 baldosa y la fila del resumen al DS (2026-10-07, DD-186, #356, sin trampas propias): `git show
 d94e5ad8:docs/handoff/supervisor-fichas.md`. El de la revisión de agentes y tipificaciones (2026-10-09, DD-187,
 #360, sin trampas propias): `git show 208019113e9b9fdad6a8c0f6c4338fcf4437260a:docs/handoff/supervisor-fichas.md`.
+El de lo que se decide de la auditoría de PrimeNG (2026-10-11, DD-195, sin trampas propias): `git show
+a2a837d4:docs/handoff/supervisor-fichas.md`.
+
+## ✅ 2026-10-15 · Revisión de producto de la ficha de grupo: resumen, Ring All, tipificación, audios, Email y rejilla (DD-205)
+
+> **Sello:** worktree `seabiscuit`, rama `arebury/revision-1015-grupos` sobre `main` `a2a837d4`. PR 1 de 3 del plan.
+
+- **Resumen**: Teléfono y Email son enlaces a su bloque, como Chat; fuera el selector rápido de estrategia.
+- **Ring All**: `RING_ALL_ALLOWED_MAX = 2`; elegir 3 o más vuelve a 2 y lo dice. **Tipificar conversaciones** siempre,
+  con la descripción de la tipificación y «Ver detalle»; el árbol sin «N niveles, N opciones».
+- **Audios**: `sc-fileupload` advanced de primeng.dev con `saved`, `savedRemoved` y `removeLabel` (DS), en música,
+  identificador, «Eres el siguiente» y el audio saliente nuevo (`conAudioSaliente`). Admite .wav y .mp3.
+- **Email**: las seis estrategias de Teléfono (Niveles con «Dentro de cada nivel» y la columna «Nivel Email»), tiempo
+  de ringing y su cola. Desbordar sigue en «Reglas comunes».
+- **Rejilla**: Postconversación con los campos de Tipificar bajo su interruptor, alineados con su texto; las tarjetas de
+  «Tamaño de cola» a lo ancho de las dos columnas (`--sc-option-cards-gap`, nueva en el DS). `npm run revision`, en regla.
+- **Pruebas**: en local, a 1440, las 147 de grupo, las 2 de `sc-fileupload` y la nueva de Niveles en Email
+  (`ficha-grupo-niveles.spec.ts`, enrojece sin Niveles).
+- **Trampas**: `p-select` no acepta que le cambies el valor dentro de su propio `onChange`: para devolverlo a 2 hace falta
+  `setTimeout(() => select.value.set(2))`. Y un `ng serve` que pilla `dist/` a medio construir se queda en error aunque
+  el build acabe: reinícialo (el de sc-docs tapaba la página con `vite-error-overlay` y la prueba fallaba en el clic).
 
 ## ✅ 2026-10-14 · Revisión de las fichas a 1440: nombres, resumen en una línea, Recursos y tablas que miden sus filas (DD-204)
 
@@ -154,20 +175,12 @@ El del barrido de consistencia y sin punto medio entre datos (2026-10-06, DD-183
 la revisión de grupos del equipo y `sc-fileupload` (2026-10-06, DD-184, sin trampas propias): `git show
 a7ddc14b:docs/handoff/supervisor-fichas.md`.
 
-## ✅ 2026-10-11 · Lo que se decide de la auditoría de PrimeNG (DD-195)
-
-> **Sello:** rama `arebury/decisiones-auditoria` sobre main, HEAD `11c607cf`. Un PR; enseñado en local antes de subir.
-
-- **Entran:** `sc-inputtags` en «Dominios permitidos» de Web Chat (sustituye campo, «Añadir» y chips; guarda minúsculas,
-  sin repetir y uno por etiqueta) y `sc-tabs` en Plantillas, el reproductor de Memory y «Uso» de sc-docs (el Monitor
-  sigue directo: arrastra y renombra). El ✕ de las etiquetas dice «Quitar» (`aria.removeLabel` de PrimeNG).
-- **No entran** (el porqué, en DD-195): Tree/TreeSelect, OrderList, `sc-inputnumber` sobre `p-inputnumber` y una sola
-  manera de editar un nombre. **Corregido:** la versión (22.1.0) y Sidebar, que se queda (es el menú lateral nuevo).
-- **Que no se vuelva a pasar:** `audit:primeng-catalog` (gate 47) y `tools/primeng-doc.mjs` con la versión buena y las
-  páginas de primeng.dev/llms. Figma: ficha 42 de `figma-pendiente` (lo de DD-184 a DD-187 y el InputTags).
-
 ## SIGUIENTE — sin preguntar
 
+-3. **PR 2 y PR 3 de la revisión del 2026-10-15** (plan en `~/.claude/plans/tengo-transcripci-n-con-una-foamy-barto.md`):
+   la ficha de agente (Salientes como desplegable bajo la tabla, grabación y extensión con icono, «Canales») y las
+   tablas comunes y Repositorios («+ Nueva X», «Buscar {entidades}…», la celda de grupos, anchos al abrir, un solo
+   diálogo de importar, subcategorías, grupos en plantillas, agendas). Cada uno, enseñado en local antes de subir.
 -2b. **Componente tabla (otra sesión):** el «evolutivo» de la tabla con los devs (BI y voz). Propuesta de producto:
    elegir UNA vez qué funciones de la Table de PrimeNG queremos y cerrarlo; hay un Excel con las de BI.
    Punto de partida: `docs/AUDIT-PRIMENG-CATALOGO.md`. En la reunión: reordenar, ajustar ancho y arrastrar columnas
@@ -239,9 +252,9 @@ a7ddc14b:docs/handoff/supervisor-fichas.md`.
 - **Producto:** validar en producción el índice único y las tres fichas en su molde (DD-122), con el antes y después.
   La forma de agente y usuario ya está decidida: el índice lateral (las variantes de `comparar/fichas` quedan de
   referencia).
-- **Devs:** qué es «Audio saliente» (solo sale en el Figma; anotado en `groups-data.ts`; «Desbordar sesión» lo
-  respondió la revisión de producto, DD-141), y el resto de preguntas abiertas de DD-121: el destino del desbordamiento, Email, el script de Web Chat, WhatsApp por
-  agente y qué ve el cliente en cola si se toca un grupo activo.
+- **Devs:** el resto de preguntas abiertas de DD-121: el destino del desbordamiento, el script de Web Chat, WhatsApp por
+  agente y qué ve el cliente en cola si se toca un grupo activo. «Audio saliente» y los campos de Email los respondió la
+  revisión del 2026-10-15 (DD-205).
 - **Rafa:** revisar usuarios contra el Supervisor real. Y en el portátil: poner el 4405 al día con `main` y borrar el
   worktree y la rama `codex/supervisor-f-listado` (`f90f7187`, una copia de F), la local y la del remoto; desde la
   nube no se puede.

@@ -5,7 +5,8 @@ import { disableAnimations, forceLightTheme, goto, pickSelectOption } from './he
 /**
  * LA REVISIÓN DE GRUPOS DEL EQUIPO (2026-10-06): lo que fija.
  *   1. Skills no está entre las estrategias de teléfono, ni Rotativa entre las de chat.
- *   2. Ring All lleva SIEMPRE su aviso de costes y su campo se llama «Nº agentes simultáneos».
+ *   2. Ring All: su campo se llama «Nº agentes simultáneos», y tres o más a la vez los activa el administrador
+ *      (revisión del 2026-10-15): elegirlos deja el campo en 2 y lo dice junto a él.
  *   3. Sin número de WhatsApp no hay mensajes ni horario de WhatsApp; con él, sí.
  *   4. Los mensajes de horario de un subcanal solo aparecen con un horario elegido.
  *   5. Los tiempos admiten más de dos minutos.
@@ -32,19 +33,22 @@ test('las estrategias no traen Skills ni Rotativa', async ({ page }) => {
   await expect(page.getByRole('option')).toHaveText(['Menos conversaciones atendidas', 'Balanceada', 'Niveles']);
 });
 
-test('Ring All: «Nº agentes simultáneos» y el aviso de costes a partir de 3, que se cierra', async ({ page }) => {
+test('Ring All: «Nº agentes simultáneos»; 3 o más vuelve a 2 con «Opción no disponible», que se cierra', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/11?seccion=distribucion');
   const telefono = page.locator('#group-channel-phone');
-  await expect(telefono.getByText('Esta estrategia puede generar costes adicionales')).toHaveCount(0);
   await pickSelectOption(page, page.locator('#group-strategy'), 'Ring All');
   await expect(telefono.locator('label[for="group-ring-all"]')).toHaveText('Nº agentes simultáneos');
-  // Con 2 no hay aviso; con 3 o más aparece junto al campo que lo causa, y el usuario lo cierra.
-  const aviso = telefono.getByText('Esta estrategia puede generar costes adicionales al multiplicar el número de llamadas salientes.');
+  const campo = page.locator('#group-ring-all');
+  const aviso = telefono.getByText('Opción no disponible. Para su activación consulte con su administrador.');
+  // Con 2 no hay aviso; con 3 el campo vuelve a 2 y el aviso sale junto a él, y el usuario lo cierra.
   await expect(aviso).toHaveCount(0);
-  await pickSelectOption(page, page.locator('#group-ring-all'), /^\s*3\s*$/);
-  await expect(aviso).toBeVisible();
-  await expect(telefono.locator('.field', { has: page.locator('#group-ring-all') }).getByText('Esta estrategia puede')).toBeVisible();
+  await pickSelectOption(page, campo, /^\s*3\s*$/);
+  await expect(campo).toHaveText(/^\s*2\s*$/);
+  await expect(telefono.locator('.field', { has: campo }).getByText('Opción no disponible')).toBeVisible();
   await telefono.getByRole('button', { name: /cerrar|close/i }).click();
+  await expect(aviso).toHaveCount(0);
+  // El 2 se elige sin aviso.
+  await pickSelectOption(page, campo, /^\s*2\s*$/);
   await expect(aviso).toHaveCount(0);
 });
 
@@ -70,7 +74,7 @@ test('los tiempos llegan a 5 minutos y más', async ({ page }) => {
   await expect(page.locator('#group-phone-max-wait')).toHaveText('5 min');
 });
 
-test('subir audios: botón «Subir archivo», varios periódicos y rechazo de otros tipos', async ({ page }) => {
+test('subir audios: botón «Subir archivo», varios periódicos, .wav y .mp3, y rechazo de otros tipos', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/11?seccion=distribucion');
   const telefono = page.locator('#group-channel-phone');
   await expect(telefono.locator('#group-hold-music-upload').getByRole('button', { name: 'Subir archivo' })).toBeVisible();
@@ -85,9 +89,13 @@ test('subir audios: botón «Subir archivo», varios periódicos y rechazo de ot
   await expect(lista.getByText('uno.wav', { exact: true })).toHaveCount(1);
   await expect(lista.getByText('dos.wav', { exact: true })).toHaveCount(1);
 
-  await page.locator('#group-hold-music-upload input[type="file"]').setInputFiles({ name: 'voz.mp3', mimeType: 'audio/mpeg', buffer: Buffer.from('ID3') });
+  // .wav y .mp3 entran (desarrollo, 2026-10-15); otro tipo se rechaza y lo dice.
+  const musica = page.locator('#group-hold-music-upload');
+  await musica.locator('input[type="file"]').setInputFiles({ name: 'voz.mp3', mimeType: 'audio/mpeg', buffer: Buffer.from('ID3') });
+  await expect(musica.locator('.p-fileupload-file')).toContainText('voz.mp3');
+  await musica.locator('input[type="file"]').setInputFiles({ name: 'nota.txt', mimeType: 'text/plain', buffer: Buffer.from('hola') });
   await expect(telefono.getByText('tipo de archivo no válido', { exact: false })).toBeVisible();
-  await expect(telefono.getByText('voz.mp3', { exact: false })).toHaveCount(1);
+  await expect(telefono.getByText('Admite archivos .wav y .mp3.').first()).toBeVisible();
 });
 
 test('el estado se filtra desde la cabecera del agente, con los no disponibles juntos, y no hay columna «Estado»', async ({ page }) => {

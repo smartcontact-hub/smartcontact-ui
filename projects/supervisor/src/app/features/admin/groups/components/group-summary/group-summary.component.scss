@@ -157,11 +157,10 @@
   align-items: center;
 }
 
-/* Teléfono (Distribución) y Recursos (Salida), la excepción a «cada fila es un enlace» (revisión de diseño, 2026-10-11,
- * sobre crítica de better-ui): antes tenían el enlace a la sección Y un botón de más pegados, a un dedo de
- * distancia y con dos destinos distintos — quien quería cambiar el reparto podía acabar en Distribución y colas sin
- * querer. Ahora la fila ENTERA es un solo botón: la clave, el valor y el chevron. Ir a la sección se queda en
- * «Configurar colas» / «Ver recursos», al pie del panel. */
+/* Cada fila de Recursos, la excepción a «cada fila es un enlace» (revisión de diseño, 2026-10-11, sobre crítica de
+ * better-ui): antes tenía el enlace a la sección Y un botón de más pegados, a un dedo de distancia y con dos
+ * destinos distintos. Ahora la fila ENTERA es un solo botón: la clave, el valor y el chevron. Ir a la sección se
+ * queda en «Ver recursos», al pie del panel. (Teléfono tuvo el mismo botón hasta la revisión del 2026-10-15.) */
 .resumen__pair-button {
   display: flex;
   align-items: center;
@@ -283,76 +282,6 @@
   background: var(--sc-bg-secondary-subtle);
   border-radius: var(--sc-radius-md);
   animation: resumen-quick-appear 0.18s cubic-bezier(0.2, 0, 0, 1);
-}
-
-.resumen__quick-option {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--sc-spacing-0-625);
-  width: 100%;
-  padding: var(--sc-spacing-0-875) var(--sc-spacing-0-75);
-  text-align: start;
-  border: 1px solid var(--sc-border-subtle);
-  border-radius: var(--sc-radius-md);
-  transition: border-color 0.18s ease, background 0.18s ease, scale 0.1s ease;
-
-  &:hover {
-    border-color: var(--sc-border-accent);
-  }
-
-  &:focus-visible {
-    outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
-    outline-offset: var(--sc-focus-ring-offset);
-  }
-
-  &:active {
-    scale: 0.96;
-  }
-
-  &--chosen {
-    background: var(--sc-bg-selected);
-    border-color: var(--sc-border-accent);
-  }
-}
-
-.resumen__quick-option-text {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sc-spacing-0-25);
-  min-width: 0;
-
-  strong {
-    color: var(--sc-text-heading);
-  }
-
-  small {
-    color: var(--sc-text-secondary);
-  }
-}
-
-/* El punto del radio, a mano: no hay `sc-radiobutton` que valga sin un `ngModel`/`FormControl` para tres botones
- * con su propia tarjeta de texto (`better-ui`: una sola forma por estado, sin icono aparte del borde y el relleno). */
-.resumen__quick-radio {
-  flex: 0 0 auto;
-  display: grid;
-  place-items: center;
-  inline-size: 13px;
-  block-size: 13px;
-  border: 1px solid var(--sc-border-strong);
-  border-radius: 50%;
-
-  .resumen__quick-option--chosen & {
-    border-color: var(--sc-border-accent);
-
-    &::after {
-      content: '';
-      inline-size: var(--sc-spacing-0-375);
-      block-size: var(--sc-spacing-0-375);
-      background: var(--sc-icon-accent);
-      border-radius: 50%;
-    }
-  }
 }
 
 /* El pie de cada panel rápido: «Configurar colas» en Distribución, «Ver recursos» en Salida. Lleva a la sección entera

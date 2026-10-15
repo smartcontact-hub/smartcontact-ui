@@ -64,6 +64,9 @@ export function primengTranslation(
     dateIsNot: t('primeng.date_is_not'),
     dateBefore: t('primeng.date_before'),
     dateAfter: t('primeng.date_after'),
+    // La marca de cada archivo en `p-fileupload` («Advanced»): pendiente de subir o ya subido (los audios de Grupos).
+    pending: t('primeng.pending'),
+    completed: t('primeng.completed'),
     aria: { ...ariaActual, removeLabel: t('primeng.remove') },
   };
 }

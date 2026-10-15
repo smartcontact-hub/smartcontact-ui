@@ -11,8 +11,9 @@
 .sc-option-cards {
     display: flex;
     flex-wrap: wrap;
-    /* `gap-3` (12): 12,25 (`scale/0-875`). */
-    gap: var(--sc-spacing-0-875);
+    /* `gap-3` (12): 12,25 (`scale/0-875`). Quien las pone en las columnas de una rejilla iguala el hueco al de sus
+     * columnas con `--sc-option-cards-gap` (la cola de la ficha de grupo, 2026-10-15). */
+    gap: var(--sc-option-cards-gap, var(--sc-spacing-0-875));
 
     &--vertical {
         flex-direction: column;
