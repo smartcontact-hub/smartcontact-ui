@@ -250,30 +250,6 @@
     color: var(--sc-text-primary);
   }
 
-  /* El índice como BADGE, no como texto gris delante del título: la página son
-   * tres pasos y el número es lo que lo cuenta. Como texto suelto se leía como
-   * decoración; en pastilla se lee como posición dentro de una secuencia.
-   *
-   * Círculo de tamaño fijo (`min-width` = `height`) para que 01, 02 y 03
-   * ocupen exactamente lo mismo y los títulos arranquen alineados en las tres
-   * tarjetas — si el badge creciera con el contenido, la columna bailaría. */
-  &__num {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    min-width: var(--sc-spacing-1-75);
-    height: var(--sc-spacing-1-75);
-    padding: 0 var(--sc-spacing-0-25);
-    border-radius: var(--sc-radius-full);
-    background: var(--sc-bg-info-subtle);
-    color: var(--sc-text-primary);
-    font-size: var(--sc-font-size-100);
-    font-variant-numeric: tabular-nums;
-    font-weight: var(--sc-font-weight-semibold);
-    line-height: 1;
-  }
-
   /* Identidad IA: chispa inline en el título. */
   &__spark {
     display: inline-flex;
