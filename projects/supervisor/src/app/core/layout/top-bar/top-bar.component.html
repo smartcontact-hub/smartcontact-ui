@@ -91,7 +91,7 @@
           <sc-button class="top-bar__menu-shortcut" variant="secondary" appearance="text" size="sm" icon="keyboard" [ariaLabel]="'topbar.keyboard_shortcuts' | translate" (clicked)="openShortcuts()" />
         </div>
         <div class="top-bar__menu-actions">
-          <button type="button" class="top-bar__menu-item sc-text-body-regular" role="menuitem">
+          <button type="button" class="top-bar__menu-item sc-text-body-regular" role="menuitem" (click)="openHelp()">
             <sc-icon name="help" size="inherit" />
             <span>{{ 'topbar.user.help' | translate }}</span>
           </button>

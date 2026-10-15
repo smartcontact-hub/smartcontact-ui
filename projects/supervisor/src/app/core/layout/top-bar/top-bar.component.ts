@@ -24,6 +24,9 @@ import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/componen
 
 import { IllustratedAvatarComponent } from '@shared/components';
 
+/** Dónde lleva «Ayuda» del menú del avatar (2026-10-14). */
+const AYUDA_URL = 'https://supervisor.smart-contact.com/#/login';
+
 /**
  * TopBar — breadcrumb trail on the left, avatar with user menu on the right.
  *
@@ -104,6 +107,12 @@ export class TopBarComponent {
 
   protected closeUserMenu(): void {
     this.userMenuOpen.set(false);
+  }
+
+  /** «Ayuda» lleva al Supervisor de producción, en otra pestaña: esta app no tiene ayuda propia. */
+  protected openHelp(): void {
+    this.userMenuOpen.set(false);
+    window.open(AYUDA_URL, '_blank', 'noopener');
   }
 
   /**
