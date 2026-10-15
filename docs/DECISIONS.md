@@ -150,6 +150,32 @@
 
 ---
 
+## DD-207 · 2026-10-15 — El tema publicado no redistribuye código de PrimeTek: Aura queda como dependencia de quien lo instala
+
+**Contexto** · `scripts/tema-zip.mjs` empaquetaba con esbuild (`bundle: true`) `@primeuix/themes` —Aura y `definePreset`—
+dentro de `sc-preset.mjs`, y el workflow `tema-zip` lo publica en la rama pública `tema-zip` como `smartcontact-tema.tgz`
+para un equipo externo. La licencia PrimeUI (el mismo texto en PrimeNG 22.1.0 y en `@primeuix/themes` 3.0.0) deja usar la
+librería bajo la Community con sus topes, pero prohíbe distribuir el software «as-is, bundled, or with superficial
+modifications» para que otros lo usen como librería o herramienta de desarrollo, y eso lo cubre la licencia OEM. No hay
+excepción para presets ni temas derivados. DD-88 solo trataba la licencia del plugin de Figma.
+
+**Decisión** ·
+1. **Aura se queda fuera del bundle**: `@primeuix/themes` pasa a `external` y `sc-preset.mjs` lo importa por nombre. El
+   paquete declara `@primeuix/themes` 3.x como `peerDependency` y la guía lo dice en Requisitos.
+2. **Una comprobación que falla**: `tema-zip.mjs` mira las entradas que esbuild ha leído y sale con 1 si alguna cuelga de
+   `node_modules/@primeuix`, `@primeui` o `primeng` (`codigoDePrimeTek`, con su test).
+3. **No se pide la licencia OEM por ahora.** Si el modelo de distribución llegara a necesitar una licencia comercial o
+   OEM, se para la publicación y se decide antes de seguir.
+4. **Las dependencias y sus licencias se documentan** en `docs/licencias-primeui.md`.
+
+**Medido** · El tema generado sin Aura dentro produce el mismo CSS que el anterior: 0 variables distintas, semántica
+común y reglas iguales, 0 componentes cambian (la comparación de `tema-zip.mjs` con el zip previo). `sc-preset.mjs` pasa
+de 319 KB a 181 KB.
+
+**Lo que NO resuelve** · Las versiones ya publicadas en la rama `tema-zip` siguen llevando Aura dentro: hay que decidir si
+se reescribe esa rama. Con Aura fuera, la versión de `@primeuix/themes` la pone el equipo externo y el preset está hecho
+para la 3.x. Y la clave de licencia sigue en cinco `app.config.ts` de un repo público.
+
 ## DD-206 · 2026-10-15 — Revisión de la ficha de grupo: el resumen sin selector rápido, Ring All a dos, «Tipificar conversaciones» con su descripción, los audios en el uploader de primeng.dev, Email con su estrategia y su cola, y Postconversación y Cola en la rejilla de dos columnas
 
 **Contexto** · Revisión de producto del 2026-10-15 sobre la ficha de grupo, y lo que se pidió después por escrito: la
