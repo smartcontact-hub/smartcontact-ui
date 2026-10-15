@@ -3,6 +3,7 @@ import {
   Component,
   computed,
   inject,
+  signal,
   type TemplateRef,
   viewChild,
 } from '@angular/core';
@@ -153,6 +154,8 @@ export class RulesPageComponent {
     });
   }
 
+  /** «Nueva regla» abre un menú: lo dice, y si está abierto (DD-171). */
+  protected readonly newRuleMenuOpen = signal(false);
   protected readonly newRuleMenuItems: MenuItem[] = [
     {
       label: 'Regla de transcripción',

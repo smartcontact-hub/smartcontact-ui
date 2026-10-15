@@ -570,7 +570,8 @@
       "data_prefix": "Données :",
       "list_header": "Jeux de test",
       "trigger_title": "Changer de jeu de données de démo (prototype uniquement)",
-      "trigger_aria": "Changer de jeu de données de démo"
+      "trigger_aria": "Changer de jeu de données de démo",
+      "current_aria": "{{label}}, en cours"
     },
     "rules": {
       "page_title": "Règles",
@@ -902,7 +903,11 @@
       "success_one": "1 conversation traitée correctement",
       "all_failed": "{{n}} transcriptions ont échoué. Vérifiez 'Échouées uniquement' pour réessayer.",
       "all_failed_one": "La transcription a échoué. Vérifiez 'Échouées uniquement' pour réessayer.",
-      "partial": "{{ok}} traitées, {{ko}} échouées. Vérifiez 'Échouées uniquement' pour réessayer."
+      "partial": "{{ok}}, {{ko}}",
+      "partial_ok": "{{n}} traitées",
+      "partial_ok_one": "1 traitée",
+      "partial_ko": "{{n}} échouées. Vérifiez 'Échouées uniquement' pour réessayer.",
+      "partial_ko_one": "1 échouée. Vérifiez 'Échouées uniquement' pour réessayer."
     }
   },
   "common": {

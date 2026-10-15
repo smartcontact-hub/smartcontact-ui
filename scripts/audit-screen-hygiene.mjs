@@ -315,17 +315,11 @@ export const ROLES_A_MANO = {
   // Candidato 1 en el reproductor de varias grabaciones: su barra va partida en tramos, y pasarla a `p-slider` cambia
   // cómo se ve (queda por decidir). Los radios de las grabaciones traen su propio teclado (`onLabelKeydown`).
   'projects/supervisor/src/app/features/memory/components/multi-recording-player/multi-recording-player.component.html': 2,
-  // Candidato 28: el selector de datos de prueba de Memory, un menú de radios sin teclado.
-  'projects/supervisor/src/app/features/memory/components/mock-sample-switcher/mock-sample-switcher.component.html': 2,
-  // Candidato 29: los paneles de alta en línea, un `role="dialog"` que no es modal. Meten el foco y cierran con Escape;
-  // falta medir si lo devuelven al cerrar.
+  // Candidato 29: los paneles de alta en línea, un diálogo no modal (el patrón de WAI-ARIA, no una imitación): meten el
+  // foco, cierran con Escape y, desde el 2026-10-15, devuelven el foco a quien los abrió (`focoDeVueltaAlCerrar`).
   'projects/supervisor/src/app/features/admin/labels/components/label-form-panel/label-form-panel.component.html': 1,
   'projects/supervisor/src/app/features/admin/repositories/components/repo-form-panel.component.html': 1,
   'projects/supervisor/src/app/features/admin/templates/components/template-form-panel/template-form-panel.component.html': 1,
-  // Candidato 26: el color de una etiqueta (Etiquetas del Supervisor), radios sin flechas.
-  'projects/ui-smartcontact/src/lib/components/color-dot-picker/sc-color-dot-picker.component.html': 1,
-  // Candidato 27: `role="menu"` sobre casillas nativas; las columnas ya van con `sc-multiselect iconOnly` (DD-153).
-  'projects/ui-smartcontact/src/lib/components/column-selector/sc-column-selector.component.html': 1,
   // Se queda: frente a CommandMenu se decidió mantenerla (sección 2 del catálogo, revisado el 2026-10-12).
   'projects/ui-smartcontact/src/lib/components/command-palette/sc-command-palette.component.html': 1,
   // Se queda hasta rehacer el port: solo lo usa la demo de sc-docs y su cabecera explica por qué no se adopta.

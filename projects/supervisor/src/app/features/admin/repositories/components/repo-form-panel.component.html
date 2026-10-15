@@ -44,6 +44,13 @@
             </ng-template>
           </sc-select>
         }
+        @case ('switch') {
+          <!-- El rótulo de arriba es su nombre; el estado se ve al lado y el lector ya lo oye del propio interruptor. -->
+          <div class="panel__switch">
+            <sc-toggleswitch [inputId]="'repo-field-' + field.key" [checked]="switchOn(field)" (checkedChange)="onSwitchChange(field, $event)" />
+            <span class="sc-text-body-regular" aria-hidden="true">{{ switchLabelKey(field) | translate }}</span>
+          </div>
+        }
         @default {
           <sc-inputtext
             #firstInput

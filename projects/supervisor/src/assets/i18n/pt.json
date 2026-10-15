@@ -570,7 +570,8 @@
       "data_prefix": "Dados:",
       "list_header": "Conjuntos de teste",
       "trigger_title": "Trocar o conjunto de dados de demo (apenas no protótipo)",
-      "trigger_aria": "Trocar o conjunto de dados de demo"
+      "trigger_aria": "Trocar o conjunto de dados de demo",
+      "current_aria": "{{label}}, em uso"
     },
     "rules": {
       "page_title": "Regras",
@@ -902,7 +903,11 @@
       "success_one": "1 conversa processada com sucesso",
       "all_failed": "{{n}} transcrições falharam. Verifique 'Apenas falhas' para tentar novamente.",
       "all_failed_one": "A transcrição falhou. Verifique 'Apenas falhas' para tentar novamente.",
-      "partial": "{{ok}} processadas, {{ko}} falharam. Verifique 'Apenas falhas' para tentar novamente."
+      "partial": "{{ok}}, {{ko}}",
+      "partial_ok": "{{n}} processadas",
+      "partial_ok_one": "1 processada",
+      "partial_ko": "{{n}} falharam. Verifique 'Apenas falhas' para tentar novamente.",
+      "partial_ko_one": "1 falhou. Verifique 'Apenas falhas' para tentar novamente."
     }
   },
   "common": {

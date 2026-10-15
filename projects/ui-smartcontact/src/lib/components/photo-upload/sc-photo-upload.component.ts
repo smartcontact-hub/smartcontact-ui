@@ -9,7 +9,6 @@ import {
   viewChild,
 } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { MessageService } from 'primeng/api';
 
 import { SC_ICON_SIZE_3XL, SC_ICON_SIZE_LG, ScIconComponent } from '@smartcontact-hub/icons';
 
@@ -18,6 +17,7 @@ import { SC_PHOTO_UPLOAD_TRANSLATIONS } from './i18n/sc-photo-upload.translation
 
 const MAX_BYTES = 800 * 1024;
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif'];
+let photoUploadIdCounter = 0;
 
 /**
  * Selector de foto de entidad. **Bespoke as-is** (decisión §10): input file
@@ -26,9 +26,10 @@ const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif'];
  * (§4.2) por hash del nombre, usando el helper compartido
  * `buildIllustrationSrc` (misma fuente que `sc-avatar`).
  *
- * `MessageService` (PrimeNG) se inyecta **opcional**: los toasts de validación
- * degradan si no hay infra de toast. i18n colocado en `sc.photoUpload.*`. Iconos
- * vía `@smartcontact-hub/icons` (§4.6).
+ * Una foto rechazada (tipo o tamaño) se dice en la línea de la ayuda, en rojo, y se queda hasta que se elige
+ * otra o se quita la que hay (DD-191: lo de un control, a su lado; un error no se cierra solo). Antes era un
+ * toast abajo a la derecha que se iba a los 3,5 s, lejos de la foto. i18n colocado en `sc.photoUpload.*`.
+ * Iconos vía `@smartcontact-hub/icons` (§4.6).
  */
 @Component({
   selector: 'sc-photo-upload',
@@ -39,7 +40,6 @@ const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif'];
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScPhotoUploadComponent {
-  private readonly messages = inject(MessageService, { optional: true });
   private readonly translate = inject(TranslateService);
 
   /** La foto actual, o `null` si no hay. Sin ella se pinta una ilustración de reserva. */
@@ -66,6 +66,9 @@ export class ScPhotoUploadComponent {
   protected readonly iconSize3xl = SC_ICON_SIZE_3XL;
   protected readonly iconSizeLg = SC_ICON_SIZE_LG;
   protected readonly hovering = signal(false);
+  /** Clave del porqué de la última foto rechazada; sin ella, la línea dice la ayuda. */
+  protected readonly errorKey = signal<string | null>(null);
+  protected readonly hintId = `sc-photo-upload-hint-${++photoUploadIdCounter}`;
 
   private readonly fileInput = viewChild.required<ElementRef<HTMLInputElement>>('fileInput');
 
@@ -91,21 +94,14 @@ export class ScPhotoUploadComponent {
     if (!file) return;
 
     if (!ALLOWED_TYPES.includes(file.type)) {
-      this.messages?.add({
-        severity: 'error',
-        summary: this.translate.instant('sc.photoUpload.invalidType'),
-        life: 3500,
-      });
+      this.errorKey.set('sc.photoUpload.invalidType');
       return;
     }
     if (file.size > MAX_BYTES) {
-      this.messages?.add({
-        severity: 'error',
-        summary: this.translate.instant('sc.photoUpload.tooLarge'),
-        life: 3500,
-      });
+      this.errorKey.set('sc.photoUpload.tooLarge');
       return;
     }
+    this.errorKey.set(null);
 
     const reader = new FileReader();
     reader.onload = () => {
@@ -116,6 +112,7 @@ export class ScPhotoUploadComponent {
   }
 
   protected onRemove(): void {
+    this.errorKey.set(null);
     this.photoChange.emit(null);
   }
 }

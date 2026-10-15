@@ -3,7 +3,15 @@
      "nueva regla") se proyectan a la barra vía TopBarSlotService. El p-menu
      hace appendTo="body" y se ancla al botón vía toggle($event). -->
 <ng-template #topbarActions>
-  <sc-button class="top-bar__cta" type="button" variant="primary" (clicked)="newRuleMenu.toggle($event)">
+  <sc-button
+    class="top-bar__cta"
+    type="button"
+    variant="primary"
+    ariaHasPopup="menu"
+    [ariaExpanded]="newRuleMenuOpen()"
+    ariaControls="rules-new-menu"
+    (clicked)="newRuleMenu.toggle($event)"
+  >
     <sc-icon [name]="plusIcon" size="inherit" />
     <span>{{ 'memory.rules.new_rule' | translate }}</span>
   </sc-button>
@@ -14,10 +22,13 @@
      dónde viva en el DOM; se ancla al botón que le pasa su $event. -->
 <p-menu
   #newRuleMenu
+  id="rules-new-menu"
   [model]="newRuleMenuItems"
   [popup]="true"
   appendTo="body"
   styleClass="rules-new-menu"
+  (onShow)="newRuleMenuOpen.set(true)"
+  (onHide)="newRuleMenuOpen.set(false)"
 />
 
 <!-- La lista (título, tabla, menú de fila) la monta `sc-list-page` (DD-97). Aquí solo lo que es de Reglas: el

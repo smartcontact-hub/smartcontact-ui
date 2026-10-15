@@ -32,6 +32,8 @@ import type { AgendaContact } from '../../state/agendas.store';
 /** El campo de la columna del menú de fila: no es un dato del contacto. */
 const ACCIONES = '__acciones';
 
+let agendaContactMenuIdCounter = 0;
+
 /**
  * Los contactos de una agenda (DD-163): buscador, tabla con paginador y menú de fila (Editar, Eliminar).
  *
@@ -128,6 +130,12 @@ export class AgendaContactsTableComponent {
 
   /* Un solo menú para toda la tabla, como en las listas: se repuebla al apuntar a otra fila. */
   private readonly menuTarget = signal<AgendaContact | null>(null);
+  protected readonly menuOpen = signal(false);
+  protected readonly menuId = `sc-agenda-contact-menu-${++agendaContactMenuIdCounter}`;
+  /** Si el menú (uno para toda la tabla) es el de esta fila: su «⋮» dice que está abierto (DD-171). */
+  protected esLaDelMenu(contacto: AgendaContact): boolean {
+    return this.menuTarget() === contacto;
+  }
   protected readonly menuItems = computed<MenuItem[]>(() => {
     this.lang();
     const contacto = this.menuTarget();

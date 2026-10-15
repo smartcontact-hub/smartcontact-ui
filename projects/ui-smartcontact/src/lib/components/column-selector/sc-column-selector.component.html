@@ -8,8 +8,10 @@
   <sc-icon [name]="columnsIcon" size="inherit" />
 </button>
 
-<p-popover #popover [appendTo]="'body'" styleClass="sc-column-popover">
-  <div class="panel" role="menu">
+<!-- Un globo con casillas nativas, no un menú (candidato 27 del barrido): sin `role="menu"`, el lector anuncia lo que
+     hay. El globo se llama como su botón. -->
+<p-popover #popover [appendTo]="'body'" styleClass="sc-column-popover" [ariaLabel]="buttonLabel()">
+  <div class="panel">
     <div class="panel__head">
       <span>{{ buttonLabel() }}</span>
       <button

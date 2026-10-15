@@ -17,6 +17,7 @@ import { Popover, PopoverModule } from 'primeng/popover';
 import type { GroupRef } from './group-popover.types';
 
 const HOVER_LEAVE_DELAY_MS = 150;
+let groupPopoverIdCounter = 0;
 
 /**
  * Inline cell that shows the group count and reveals a small floating list
@@ -39,6 +40,8 @@ const HOVER_LEAVE_DELAY_MS = 150;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScGroupPopoverComponent {
+  protected readonly namesId = `sc-group-popover-names-${++groupPopoverIdCounter}`;
+  protected readonly popoverPt = { root: { 'aria-hidden': 'true' } };
   /** Los grupos que se listan en el globo. */
   readonly groups = input.required<readonly GroupRef[]>();
   /**
@@ -60,6 +63,8 @@ export class ScGroupPopoverComponent {
   private leaveTimer: ReturnType<typeof setTimeout> | null = null;
 
   protected readonly count = computed(() => this.groups().length);
+  /** Los nombres en una frase, para la descripción del botón. */
+  protected readonly names = computed(() => this.groups().map((group) => group.name).join(', '));
 
   constructor() {
     // Copy fijo colocado: registra solo el diccionario del componente.

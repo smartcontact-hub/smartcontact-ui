@@ -52,6 +52,16 @@
     color: var(--sc-icon-success);
   }
 
+  /* Fuera de la vista pero en el árbol de accesibilidad: el lector oye «Copiado» sin un toast. */
+  &__live {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
   &__confirm-input {
     width: 100%;
     padding: var(--sc-spacing-0-5) var(--sc-spacing-0-875);
