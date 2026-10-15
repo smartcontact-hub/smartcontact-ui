@@ -16,7 +16,7 @@
  */
 import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const git = (cwd, args, opts = {}) => execFileSync('git', args, { cwd, encoding: 'utf8', timeout: 8000, ...opts }).trim();
@@ -24,7 +24,8 @@ const GUIA = ['CLAUDE.md', 'AGENTS.md', 'LEARNINGS.md', 'NEXT-SESSION.md', 'docs
 
 function rutaSesion(cwd, id) {
   const gitDir = git(cwd, ['rev-parse', '--git-dir']);
-  const dir = join(cwd, gitDir, 'sc-hooks');
+  // `resolve`, no `join`: en un worktree enlazado `--git-dir` es absoluto y `join` lo pegaba detrás del cwd.
+  const dir = join(resolve(cwd, gitDir), 'sc-hooks');
   mkdirSync(dir, { recursive: true });
   return join(dir, `session-${id}.sha`);
 }

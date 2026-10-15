@@ -48,7 +48,7 @@ existe: [docs/consumer-onboarding.md](docs/consumer-onboarding.md).
 ## Las apps del repo
 <!--sc:sec=apps-->
 
-Cinco, las cinco en producción en Cloudflare Pages.
+Seis, las seis en producción en Cloudflare Pages.
 
 | App | Qué es | En producción |
 | --- | ------ | ------------- |
@@ -57,9 +57,10 @@ Cinco, las cinco en producción en Cloudflare Pages.
 | [`agent`](projects/agent/README.md) | Réplica del dashboard del agente | [sc-agent.pages.dev](https://sc-agent.pages.dev) |
 | [`agent-mini`](projects/agent-mini/README.md) | Réplica del Comunicador suelto | [agent-mini.pages.dev](https://agent-mini.pages.dev) |
 | [`cuscare`](projects/cuscare/README.md) | Réplica de la herramienta de tickets | [sc-cuscare.pages.dev](https://sc-cuscare.pages.dev) |
+| `cuscare-ds` | La misma herramienta, hecha con `sc-*` | [sc-cuscare-ds.pages.dev](https://sc-cuscare-ds.pages.dev) |
 
 Las apps de este repo **importan el DS desde `dist/`**, por rutas de `tsconfig`, no como
-paquete de npm. Así tocas un token y lo ves al instante en las cinco, sin publicar nada. El
+paquete de npm. Así tocas un token y lo ves al instante en todas, sin publicar nada. El
 porqué, en [DD-17](docs/DECISIONS.md); por qué publicar por release no lo reabre, en DD-58.
 
 > ⚠️ **Las réplicas (`agent`, `agent-mini`, `cuscare`) no se tokenizan, y es a propósito**
