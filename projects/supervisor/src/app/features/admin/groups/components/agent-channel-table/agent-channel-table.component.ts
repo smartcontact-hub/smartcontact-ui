@@ -60,8 +60,6 @@ export interface AgentChannelTableAgent {
   readonly email?: string;
   readonly presenceStatus?: PresenceStatus;
   readonly allowedChannels?: readonly Channel[];
-  /** «Activación por grupo» (su Configuración): se habilita él mismo en cada grupo, y aquí no se toca. */
-  readonly selfActivate?: boolean;
   /** Sus equipos (Repositorios › Equipos): se filtra por ellos. */
   readonly teams?: readonly number[];
 }
@@ -79,7 +77,8 @@ interface VisibleRow {
  * la letra de la cabecera (600, 14 px); la casilla, 15,75, y su hueco, 7:
  *   · Asignado: casilla, hueco y «Atribuído» (65): 100.
  *   · Cada canal, casilla, hueco y su rótulo: «Téléphone» (72), «Chat» (32) y «Email» (37): 112, 72 y 76.
- *   · Habilitado: casilla, hueco y «Habilitado» (69): 108.
+ *   · Habilitado: casilla, hueco y «Habilitado» (69): 108. Llevaba 9,5 rem por el candado de «Activación por grupo» al
+ *     lado del interruptor; sin él (revisión del 2026-10-14), lo medido.
  *   · Estado: su etiqueta más larga, «Post-conversation», 123 px.
  *   · Agente: avatar (24), hueco y nombre y email en dos líneas. En la ficha es un MÍNIMO: la columna crece con el
  *     sitio que haya, y un email más largo que su sitio se corta con «…» y el `title` (DD-124). Con 11,625 cabe el
@@ -90,8 +89,8 @@ interface VisibleRow {
 const CHANNEL_REM: Readonly<Record<ChannelFamily, number>> = { phone: 7, chat: 4.5, email: 4.75 };
 
 export const COLUMN_REM = {
-  regular: { assigned: 3.5, agent: 14, level: 9, channel: CHANNEL_REM, enabled: 9.5 },
-  compact: { assigned: 3.5, agent: 16.25, level: 9, channel: CHANNEL_REM, enabled: 9.5 },
+  regular: { assigned: 3.5, agent: 14, level: 9, channel: CHANNEL_REM, enabled: 6.75 },
+  compact: { assigned: 3.5, agent: 16.25, level: 9, channel: CHANNEL_REM, enabled: 6.75 },
 } as const;
 
 /** Lo que suman las columnas con esos canales y `levels` niveles: el mínimo de la tabla y el ancho del panel. */
@@ -332,7 +331,7 @@ export class AgentChannelTableComponent {
   private headerRows(field: string): readonly VisibleRow[] {
     return this.visibleRows().filter((row) =>
       field === 'assigned' ? !!row.link || this.compatible(row.agent)
-        : field === 'active' ? !!row.link && !row.agent.selfActivate
+        : field === 'active' ? !!row.link
           : !!row.link && this.allowed(row.agent, field));
   }
 
@@ -436,7 +435,6 @@ export class AgentChannelTableComponent {
   }
 
   protected toggleActive(agentId: number, active: boolean): void {
-    if (this.agentById().get(agentId)?.selfActivate) return;
     this.linksChange.emit(this.links().map(link => link.agentId === agentId ? { ...link, active } : link));
   }
 

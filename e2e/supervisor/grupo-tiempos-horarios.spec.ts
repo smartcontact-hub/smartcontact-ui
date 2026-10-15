@@ -30,8 +30,12 @@ for (const surface of ['ficha', 'defaults'] as const) {
 
   test(`${surface}: cola Variable nace en 2, admite enteros hasta 10 y Fija no tiene tope`, async ({ page }) => {
     await goto(page, route);
-    const type = page.locator(`#${prefix}-phone-queue-type`);
-    await pickSelectOption(page, type, 'Variable');
+    // En la ficha, el modo va en tarjetas de radio (DD-204); en Contact Center, en su desplegable de fila de ajuste.
+    const modo = (nombre: 'Fija' | 'Variable') =>
+      surface === 'ficha'
+        ? page.locator('#group-channel-phone').getByRole('radiogroup', { name: 'Tamaño de cola', exact: true }).locator('label', { hasText: nombre }).click()
+        : pickSelectOption(page, page.locator('#grupos-phone-queue-type'), nombre);
+    await modo('Variable');
     const size = page.locator(`#${prefix}-phone-queue-size`);
     await expect(size).toHaveValue('2');
     await expect(size).toHaveAttribute('max', '10');
@@ -40,7 +44,7 @@ for (const surface of ['ficha', 'defaults'] as const) {
     await expect(page.getByRole('button', { name: 'Guardar', exact: true })).toBeDisabled();
     await size.fill('11'); await size.press('Tab');
     await expect(size).toHaveValue('10');
-    await pickSelectOption(page, type, 'Fija');
+    await modo('Fija');
     await expect(size).not.toHaveAttribute('max', /./);
     await size.fill('125'); await size.press('Tab');
     await page.getByRole('button', { name: 'Guardar', exact: true }).click();
@@ -99,7 +103,7 @@ test('Web Chat y WhatsApp guardan horarios independientes y solo ofrecen los act
 
 test('música: elegir, cambiar y quitar mantiene un solo nombre y recupera el estado vacío', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/11?seccion=distribucion');
-  const music = page.getByRole('group', { name: 'Música de espera', exact: true });
+  const music = page.getByRole('group', { name: 'Música de espera/transferencia', exact: true });
   // Vacío no muestra «Predeterminada» (quitado esta sesión): solo el botón de subir, sin nombre de archivo.
   await expect(music.getByRole('button', { name: 'Subir archivo' })).toBeVisible();
   await expect(music.getByText('espera.wav', { exact: true })).toHaveCount(0);

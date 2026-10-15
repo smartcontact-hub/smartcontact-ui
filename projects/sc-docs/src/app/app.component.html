@@ -38,6 +38,9 @@
         </a>
         @if (onComponents()) {
           <div class="demo-sidebar__sub">
+            <a class="demo-sidebar__sublink" routerLink="/components/primeng" routerLinkActive="is-active">{{
+              'chrome.nav.primeng' | translate
+            }}</a>
             @for (group of groups; track group.category) {
               <button
                 type="button"

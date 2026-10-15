@@ -145,7 +145,7 @@
           <div class="resumen__kpi resumen__facts">
             <dl class="resumen__pairs">
               @for (s of summaryFacts(); track s.etiqueta) {
-                <div scFactRow class="resumen__pair" [icon]="s.icono" [label]="s.etiqueta | translate" [href]="summaryHrefs()[s.seccion]" (open)="pulsarResumen($event, { seccion: s.seccion, ancla: s.ancla })">{{ s.valor }}</div>
+                <div scFactRow size="sm" class="resumen__pair" [icon]="s.icono" [label]="s.etiqueta | translate" [href]="summaryHrefs()[s.seccion]" (open)="pulsarResumen($event, { seccion: s.seccion, ancla: s.ancla })">{{ s.valor }}</div>
               }
             </dl>
           </div>
@@ -315,11 +315,14 @@
             <label id="agent-presence-label" class="field__label sc-text-caption-semibold" for="agent-presence">
               {{ 'agents.form.fields.state' | translate }}
             </label>
+            <!-- Desconectado no se cambia desde aquí: el agente no tiene la sesión abierta, así que no hay a quién ponerle
+                 otro estado. El campo se ve, apagado, con el suyo. -->
             <sc-select
               inputId="agent-presence"
               ariaLabelledBy="agent-presence-label"
               [options]="presenceOptions()"
               [value]="form().presenceStatus"
+              [disabled]="form().presenceStatus === 'desconectado'"
               (valueChange)="onPresenceValueChange($event)"
             >
               <ng-template #item let-p>{{ presenceKeys[p] | translate }}</ng-template>
@@ -602,6 +605,7 @@
           </label>
           <div class="control-add">
             <sc-multiselect
+              #agendasSelect
               inputId="agent-agendas"
               optionLabel="label"
               optionValue="value"
@@ -612,10 +616,14 @@
               [options]="scheduleOptions()"
               [value]="scheduleValue()"
               (valueChange)="onSchedulesChange($event)"
-            />
+            >
+              <!-- «Editar» en la propia opción, al pasar (revisión del 2026-10-14): sin lista de debajo. -->
+              <ng-template #item let-option>
+                <sc-resource-option [name]="option.label" (editar)="agendasSelect.hide(); recursoAbierto.set({ tipo: 'agenda', id: option.value })" />
+              </ng-template>
+            </sc-multiselect>
             <sc-button icon="add" variant="secondary" [ariaLabel]="'groups.form.fields.agenda_new' | translate" [pTooltip]="'groups.form.fields.agenda_new' | translate" tooltipPosition="top" (clicked)="recursoAbierto.set({ tipo: 'agenda', id: null })" />
           </div>
-          <sc-resource-rows [label]="'agents.form.advanced.agendas.title' | translate" [rows]="agendaRows()" (editar)="recursoAbierto.set({ tipo: 'agenda', id: +$event })" />
         </div>
 
         <!-- Como en el grupo: las plantillas de chat, solo si atiende chat. -->
@@ -626,6 +634,7 @@
             </label>
             <div class="control-add">
               <sc-multiselect
+                #chatTemplatesSelect
                 inputId="agent-templates-chat"
                 optionLabel="label"
                 optionValue="value"
@@ -636,10 +645,13 @@
                 [options]="chatTemplateOptions()"
                 [value]="chatTemplateValue()"
                 (valueChange)="onTemplatesChange('chat', $event)"
-              />
+              >
+                <ng-template #item let-option>
+                  <sc-resource-option [name]="option.label" (editar)="chatTemplatesSelect.hide(); recursoAbierto.set({ tipo: 'chat', id: option.value })" />
+                </ng-template>
+              </sc-multiselect>
               <sc-button icon="add" variant="secondary" [ariaLabel]="'groups.form.fields.template_new' | translate" [pTooltip]="'groups.form.fields.template_new' | translate" tooltipPosition="top" (clicked)="recursoAbierto.set({ tipo: 'chat', id: null })" />
             </div>
-            <sc-resource-rows [label]="'resources.templates_chat' | translate" [rows]="chatTemplateRows()" (editar)="recursoAbierto.set({ tipo: 'chat', id: +$event })" />
           </div>
         }
 
@@ -649,6 +661,7 @@
           </label>
           <div class="control-add">
           <sc-multiselect
+            #teamsSelect
             inputId="agent-teams"
             optionLabel="label"
             optionValue="value"
@@ -660,10 +673,13 @@
             [options]="teamOptions()"
             [value]="teamValue()"
             (valueChange)="onTeamsChange($event)"
-          />
+          >
+            <ng-template #item let-option>
+              <sc-resource-option [name]="option.label" (editar)="teamsSelect.hide(); recursoAbierto.set({ tipo: 'equipo', id: option.value })" />
+            </ng-template>
+          </sc-multiselect>
             <sc-button icon="add" variant="secondary" [ariaLabel]="'groups.form.fields.team_new' | translate" [pTooltip]="'groups.form.fields.team_new' | translate" tooltipPosition="top" (clicked)="recursoAbierto.set({ tipo: 'equipo', id: null })" />
           </div>
-          <sc-resource-rows [label]="'repositories.equipos.title' | translate" [rows]="teamRows()" (editar)="recursoAbierto.set({ tipo: 'equipo', id: +$event })" />
         </div>
       </div>
 
@@ -683,17 +699,17 @@
     titleKey="agents.form.section.groups"
     hintKey="agents.form.section.groups_hint"
   >
-    <sc-subsection titleKey="agents.form.assigned.title">
+    <!-- Sin título propio: la sección ya se llama «Grupos asignados» (revisión del 2026-10-14). -->
+    <sc-subsection>
       <sc-group-assignment-table
         [links]="form().links"
         [availableGroups]="availableGroups()"
         [agentId]="editingId() ?? 0"
         [allowedChannels]="form().allowedChannels"
         [outboundGroupId]="outboundGroupId()"
-        [selfActivate]="form().permissions.selfActivate"
         (linksChange)="onLinksChange($event)"
         (outboundGroupChange)="updateField('defaultOutboundGroupId', $event)"
-        (irA)="$event === 'canales' ? irDesdeResumen({ seccion: 'agent-section-general', ancla: 'agent-channels-title' }) : irDesdeResumen({ seccion: 'agent-section-config' })"
+        (irA)="irDesdeResumen({ seccion: 'agent-section-general', ancla: 'agent-channels-title' })"
       />
     </sc-subsection>
   </sc-section-card>

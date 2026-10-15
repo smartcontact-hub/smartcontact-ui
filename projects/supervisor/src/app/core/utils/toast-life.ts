@@ -20,3 +20,12 @@ export const TOAST_LIFE = {
   /** Errores — el usuario necesita tiempo para leer qué pasó. */
   error: 6000,
 } as const;
+
+/**
+ * Clave de los toasts de transcripción y análisis de Conversaciones (DD-191 §4).
+ * Un mensaje con clave solo lo pinta un `<p-toast>` con la misma clave, así que
+ * el shell monta uno propio para ella: sin él, el progreso no salía nunca. Su
+ * resultado va por la misma clave, para que progreso y resultado se apilen en
+ * un solo contenedor y el siguiente lote limpie el anterior.
+ */
+export const DISPATCH_TOAST_KEY = 'dispatch-progress';

@@ -1,28 +1,39 @@
+<!-- Un aviso, pinte el contenedor que lo pinte. -->
+<ng-template #toastItem let-message>
+  <div
+    class="sc-toast"
+    role="status"
+    aria-live="assertive"
+    aria-atomic="true"
+    [attr.data-severity]="message.severity ?? 'info'"
+  >
+    <div class="sc-toast__icon" aria-hidden="true">
+      <sc-icon [name]="iconFor(message.severity)" [size]="14" />
+    </div>
+    <div class="sc-toast__body">
+      @if (message.summary) {
+        <div class="sc-toast__title">{{ message.summary }}</div>
+      }
+      @if (message.detail) {
+        <div class="sc-toast__message">{{ message.detail }}</div>
+      }
+    </div>
+    @if (message.data?.undoEntryId; as undoId) {
+      <sc-button class="sc-toast__action" variant="secondary" appearance="outlined" size="sm" [label]="'common.undo' | translate" (clicked)="onUndoClick(undoId)" />
+    }
+    <sc-button class="sc-toast__close" variant="secondary" appearance="text" size="sm" [icon]="closeIcon" [ariaLabel]="'common.close' | translate" (clicked)="onClose()" />
+  </div>
+</ng-template>
+
 <p-toast position="bottom-right">
   <ng-template let-message #message>
-    <div
-      class="sc-toast"
-      role="status"
-      aria-live="assertive"
-      aria-atomic="true"
-      [attr.data-severity]="message.severity ?? 'info'"
-    >
-      <div class="sc-toast__icon" aria-hidden="true">
-        <sc-icon [name]="iconFor(message.severity)" [size]="14" />
-      </div>
-      <div class="sc-toast__body">
-        @if (message.summary) {
-          <div class="sc-toast__title">{{ message.summary }}</div>
-        }
-        @if (message.detail) {
-          <div class="sc-toast__message">{{ message.detail }}</div>
-        }
-      </div>
-      @if (message.data?.undoEntryId; as undoId) {
-        <sc-button class="sc-toast__action" variant="secondary" appearance="outlined" size="sm" [label]="'common.undo' | translate" (clicked)="onUndoClick(undoId)" />
-      }
-      <sc-button class="sc-toast__close" variant="secondary" appearance="text" size="sm" [icon]="closeIcon" [ariaLabel]="'common.close' | translate" (clicked)="onClose()" />
-    </div>
+    <ng-container *ngTemplateOutlet="toastItem; context: { $implicit: message }" />
+  </ng-template>
+</p-toast>
+<!-- Transcripción y análisis de Conversaciones (DD-191 §4): su clave solo la pinta un contenedor con la misma. -->
+<p-toast position="bottom-right" [key]="dispatchToastKey">
+  <ng-template let-message #message>
+    <ng-container *ngTemplateOutlet="toastItem; context: { $implicit: message }" />
   </ng-template>
 </p-toast>
 <sc-confirmdialog />

@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { auditarCatalogo, filasSeccion3 } from '../audit-primeng-catalog.mjs';
+import { auditarCatalogo, catalogoParaDocs, filasSeccion3 } from '../audit-primeng-catalog.mjs';
 
 // Una tabla mínima que está al día con el repo fabricado de abajo; cada prueba le rompe una cosa (LEARNINGS #2).
 const DOC = `# Auditoría
@@ -94,4 +94,54 @@ test('VERDE: «aria-label» en minúsculas no nombra el módulo Label', () => {
   assert.equal(auditarCatalogo(r).length, 1);
   r.doc = `${DOC}\n## 5. Directivas\n\nLabel (\`pLabel\`).\n`;
   assert.deepEqual(auditarCatalogo(r), []);
+});
+
+// La sección 6 que pinta «Todo PrimeNG» en sc-docs: una familia de cuatro columnas y otra de tres.
+const FAMILIAS = `## 6. Por familias
+
+### 6.1 Elegir en una jerarquía
+
+¿Vale elegir cualquier nivel?
+
+| Componente | Para qué sirve | Elígelo cuando… | Aquí |
+|---|---|---|---|
+| TreeSelect | Un árbol en un desplegable. | Hay niveles y \`filter\` busca dentro. | Sin uso |
+| IconField e InputIcon | Un icono en el campo. | Buscadores. | Por dentro de \`sc-search\` |
+
+### 6.2 Directivas y utilidades
+
+| Componente | Para qué sirve | Aquí |
+|---|---|---|
+| Steps | Indicador de pasos. | Sin caso |
+
+## Siguientes pasos
+`;
+
+const medido = () => ({
+  envueltoPor: new Map([['iconfield', ['sc-search']], ['inputicon', ['sc-search']]]),
+  directos: new Map([['steps', new Set(['supervisor'])]]),
+  obsoletos: new Set(['steps']),
+});
+
+test('la sección 6 sale con su pregunta, sus columnas y el estado que mide el repo, no el texto', () => {
+  const { familias } = catalogoParaDocs(FAMILIAS, medido());
+  assert.deepEqual(familias.map((f) => [f.titulo, f.pregunta, f.filas.length]), [
+    ['Elegir en una jerarquía', '¿Vale elegir cualquier nivel?', 2],
+    ['Directivas y utilidades', null, 1],
+  ]);
+  const [tree, campo] = familias[0].filas;
+  assert.equal(tree.estado, 'sin-uso');
+  assert.equal(tree.cuando, 'Hay niveles y <code>filter</code> busca dentro.');
+  assert.equal(tree.enlace, 'https://primeng.dev/treeselect');
+  // «X e Y» es una fila para dos módulos; InputIcon no tiene página propia y se enlaza la de IconField.
+  assert.deepEqual([campo.modulos, campo.estado], [['iconfield', 'inputicon'], 'ds']);
+  // Solo lo que la página pinta: la lista de wrappers cambia en PRs ajenos y dejaba `main` en rojo.
+  assert.equal('wrappers' in campo, false);
+  const [steps] = familias[1].filas;
+  // Tres columnas: sin «Elígelo cuando…». Sin página en primeng.dev: sin enlace.
+  assert.deepEqual([steps.cuando, steps.enlace, steps.estado, steps.obsoleto], [null, null, 'directo', true]);
+});
+
+test('ROJO: un documento sin sección 6 no da una página vacía', () => {
+  assert.throws(() => catalogoParaDocs(DOC, medido()), /sección 6/);
 });

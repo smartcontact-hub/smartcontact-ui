@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, HostListener, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -20,6 +21,7 @@ import {
 } from '@core/services';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { NAV_ICONS } from '@core/icons/nav-icons';
+import { DISPATCH_TOAST_KEY } from '@core/utils/toast-life';
 // El confirm ya NO es local: la copia de la app era verbatim del DS (misma
 // lógica de botones, mismo `<p-confirmdialog />`, mismo SCSS) y el resolver del
 // DS produce exactamente la misma clase de icono que la app hardcodeaba
@@ -49,6 +51,7 @@ const APP_SHORTCUT_GROUP: ScShortcutGroup = {
     ScCommandPaletteComponent,
     ScConfirmDialogComponent,
     IconComponent,
+    NgTemplateOutlet,
     ScKeyboardShortcutsComponent,
     RouterOutlet,
     ToastModule,
@@ -90,6 +93,7 @@ export class AppComponent {
   ];
 
   protected readonly closeIcon = 'close';
+  protected readonly dispatchToastKey = DISPATCH_TOAST_KEY;
 
   constructor() {
     // Alimenta el renderer publicado `<sc-command-palette>` con los comandos

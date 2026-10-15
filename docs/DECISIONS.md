@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Revisión de las fichas a 1440 (2026-10-14): «Agentes asignados» y «Grupos asignados» sin subtítulo dentro (`sc-subsection` sin título) · el resumen del grupo se llama como la ficha (Distribución con el teléfono saliente, Recursos una fila por tipo, fuera «Salida»), en caption · «Editar» de un recurso en su opción del desplegable (`sc-resource-option`, `#item` de `sc-multiselect`) · Tamaño de cola en tarjetas de radio (`sc-option-cards`, el ejemplo «Card» de primeng.dev) · las tablas de asignar miden todas sus filas (`filasReservadas`) · Habilitado lo cambia el supervisor también con «Activación por grupo» · sin columna Nivel en los grupos del agente, Salientes con radio · Desconectado: gris en el listado, Estado apagado en la ficha (enmienda DD-187 §2 y DD-164 §1) | DD-204 |
 > | El esqueleto de carga con la forma de su contenido: en una tabla, `[skeleton]` de `sc-datatable` y la forma de cada columna (`ScColumnDef.skeleton`: `avatar`, `tag`, `action`, texto) · no el ejemplo «DataTable» de primeng.dev tal cual · una caja más alta que la línea no estira la celda · la carga simulada del Supervisor: 1,5 s la primera vez, nada para un robot salvo `?latencia=1` | DD-201 |
 > | Un icono, un significado: `SC_ICONS` (un icono por concepto) y `SC_ICON_RESERVADOS` (la X cierra o quita, la papelera elimina, la hamburguesa abre la navegación) · el botón de solo icono enseña su nombre en un tooltip, también con teclado · `sc-icon` solo en tallas de la escala, color con `tone` · `audit:icons` | DD-200 |
 > | Lo que falta se dice cuando ya hubo ocasión: al dejar su sección sin ello, o al abrir si lo guardado ya venía sin ello · el campo que aparece al encender una opción nace callado · duplicar es un alta · antes, el resumen y el motivo junto al botón, sin rojo · el contenido equivocado, en vivo (`ocasionDeAvisar`, regla 7 de `audit:screen-hygiene`; precisa DD-142) | DD-199 |
@@ -145,6 +146,65 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-204 · 2026-10-14 — Revisión de las fichas de grupo y de agente: los nombres de sus secciones, el resumen en una línea, Recursos con «Editar» en la opción, tarjetas de radio y tablas que miden sus filas
+
+**Contexto** · Revisión de producto del 2026-10-14, a 1440 (un MacBook Air), sobre las fichas de grupo y de agente y el
+listado de agentes. Lo que se vio: «Desconectado» pesaba lo mismo que un estado atendible; la tarjeta de datos del
+resumen del grupo partía de línea según lo que se tocara («918371548» bajaba solo); «Salida» no existía en la ficha y
+llevaba dentro los recursos; los recursos repetían bajo su campo una lista con «Editar»; «Tamaño de cola» era un
+desplegable de dos opciones con su cifra al lado; las tablas de asignar bajaban siempre hasta el pie (cinco grupos
+dejaban media pantalla de tarjeta vacía); la columna Nivel en los grupos del agente; el radio de Salientes, cambiado por
+una etiqueta y un botón (#380); el candado de «Activación por grupo»; y «Agentes» o «Grupos» que se llamaban igual que
+otras cosas, con un subtítulo dentro que repetía «Agentes asignados».
+
+**Decisión** ·
+1. **Las secciones se llaman por lo que tienen**: «Agentes asignados» en el grupo y «Grupos asignados» en el agente, en el
+   índice y en la cabecera de la sección, sin subtítulo dentro que lo repita (`sc-subsection` sin `titleKey`: solo la
+   tarjeta).
+2. **El resumen del grupo se llama como la ficha**: Distribución lleva la estrategia de cada canal y el teléfono saliente
+   (y el número de WhatsApp), que en la ficha son campos de Distribución y colas; Recursos va aparte, una fila por tipo
+   (Agendas, y las plantillas de los canales que atiende) con su panel rápido. Fuera «Salida». La tarjeta de datos, en
+   las tres fichas, en caption (12) y con la baldosa pequeña (24,5): clave y valor caben en una línea en la columna de 240.
+3. **«Editar» de un recurso, en la propia opción del desplegable**: un lápiz que sale al pasar por ella, con su tooltip
+   (`sc-resource-option` en la plantilla `#item` de `sc-multiselect`, que la gana). Fuera la lista bajo el campo
+   (`sc-resource-rows`, DD-164). El lápiz no entra en el tabulador: con teclado se edita en Repositorios.
+4. **Tamaño de cola, en tarjetas de radio**: el ejemplo «Card» de primeng.dev/radiobutton tal cual, sobre
+   `sc-option-cards` (el radio nativo al final, borde primario en la elegida, fondo al pasar), con la cifra debajo. Las
+   otras dos tarjetas del Supervisor (los dos «Descuelgue») pasan al mismo dibujo. En sc-docs, RadioButton › Tarjeta.
+5. **Las tablas de asignar miden todas sus filas, no la pantalla**: `scLlegaAlPie` con `filasReservadas` reserva desde el
+   principio el alto de la cabecera más todas las filas que la tabla puede enseñar, con el pie de la pantalla de tope.
+   Al filtrar o buscar no cambia de alto; con pocas filas no deja la tarjeta vacía. Sustituye a `fill` en las dos. En
+   el panel rápido del listado de grupos la tabla sigue llenando su hueco, y ahora encoge hasta él
+   (`--table-card-suelo: 0`): con el tope en `none` el suelo caía en `auto` y, con 28 agentes, la tabla pasaba por
+   encima del pie del panel y tapaba «Guardar».
+6. **«Habilitado» lo cambia el supervisor** también con «Activación por grupo»: ese permiso deja al agente habilitarse
+   en cada grupo, no se lo quita a la ficha. Fuera el candado y el interruptor apagado, en las dos tablas (corrige
+   DD-187 §2).
+7. **Sin columna Nivel en los grupos del agente**: el nivel lo pone el grupo, que es quien reparte por niveles (retira la
+   columna de #375). Habilitado mide lo suyo sin el candado (6,75 rem): la tabla cabe a 1440 sin desplazar.
+8. **Salientes vuelve a ser un radio por fila** (revierte #380 en ese punto): es una elección entre las filas.
+9. **Desconectado**: en el listado, texto gris sin etiqueta; en la ficha, el Estado se ve apagado (no hay sesión a la
+   que cambiarle el estado), y nunca se ofrece como opción.
+10. **«Música de espera/transferencia»**, el nombre del campo: suena también al transferir.
+
+**Razón** · Cada nombre de la pantalla, el de su sitio en la ficha: dos palabras para lo mismo (o una palabra para dos
+cosas) obligan a traducir. Una tarjeta que cambia de alto mientras se edita al lado distrae del campo que se toca. La
+tarjeta de radio es la de primeng.dev (DD-113), y elegir entre dos tamaños de cola es elegir qué cuenta, no un número.
+Una tabla que se queda en su sitio al filtrar no tiene por qué ocupar lo que no usa.
+
+**Descartadas** ·
+- *La cifra de la cola dentro de la tarjeta elegida*: un campo dentro de un `<label>` mueve el radio al pulsarlo.
+- *Una fila de Recursos con el total*: «Recursos 2» bajo el título «Recursos» repetía la palabra y no decía de qué.
+- *Seguir con `fill` en las tablas de asignar*: era justo lo que estiraba la tarjeta.
+- *Un candado distinto (persona, información)*: el supervisor sí lo cambia, así que no hay nada que bloquear.
+
+**Consecuencias** · `sc-subsection` acepta no llevar título; `sc-multiselect` gana `#item` y `hide()`; `sc-option-cards`
+pinta el `p-radiobutton` nativo y gana `orientation`. Las tablas de asignar pierden la casilla centrada en la línea base
+(ahora centradas en su fila). Contact Center › Grupos sigue con «Tamaño de cola» en un desplegable: allí es una fila de
+ajuste, no una ficha.
 
 ---
 
@@ -829,6 +889,8 @@ grupos por canal, y su editor solo enseñaba la rama elegida.
 2. **Su tabla de grupos es la del grupo**, con las filas al revés (filtro, buscador, Asignado, un canal por columna con
    su casilla de «todos», Habilitado) y la columna **Salientes**. Con «Activación por grupo», Habilitado se ve apagado
    con el candado que lleva a Configuración, en las dos tablas (en Voice desaparece; así se ve el estado y el porqué).
+   *(Enmendado por DD-204, 2026-10-14: Habilitado lo cambia el supervisor también con «Activación por grupo», sin
+   candado; y la tabla del agente pierde la columna Nivel.)*
 3. **Quitar canales hace lo mismo en las dos fichas**: una asignación sin canales no existe; la que se queda sin ninguno
    sale al guardar, después de «Vas a quitar canales» y «Sí, quitar». Enmienda DD-150 (la ficha de agente conservaba la
    asignación vacía y la de grupo la quitaba, DD-147).
@@ -1907,7 +1969,8 @@ calculándolo a su manera.
 
 **Decisión.**
 1. **Bajo cada campo, una fila por recurso** (`sc-resource-rows`, pieza de la app): su nombre, un dato y «Editar», con
-   un nombre accesible que dice de cuál es («Editar Ventas Nacional»):
+   un nombre accesible que dice de cuál es («Editar Ventas Nacional»). *(Enmendado por DD-204, 2026-10-14: en las
+   fichas no hay filas bajo el campo; «Editar» es un lápiz en la opción del desplegable, `sc-resource-option`.)*
    - agenda: cuántos contactos y su estado («1250 contactos · Activa», la cifra con el separador del idioma) → su
      editor (DD-163);
    - plantilla: el principio de su texto, que es lo que dice qué es (el campo ya dice el canal) →

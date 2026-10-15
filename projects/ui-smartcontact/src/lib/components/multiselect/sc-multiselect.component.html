@@ -46,6 +46,11 @@
     [pt]="pt()"
     [invalid]="isInvalid()"
   >
+    @if (itemTpl(); as tpl) {
+      <ng-template #item let-data>
+        <ng-container *ngTemplateOutlet="tpl; context: { $implicit: data }" />
+      </ng-template>
+    }
     <!-- La flecha es la del Kit, la misma que en sc-select (el SVG de PrimeNG, 14 y centrado). Solo el de solo icono
          (DD-153, «Columnas») cambia la flecha por su icono, por la plantilla nativa `#dropdownicon`. -->
     @if (iconOnly()) {

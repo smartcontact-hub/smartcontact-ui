@@ -53,7 +53,9 @@
  * producto (2026-09-18): la ficha entera se ve sin salir de la pantalla.
  *
  * Quien la aloja en otro marco (el panel rápido del listado de grupos) cambia el tope con `--table-card-tope`: allí el
- * alto lo reparte su columna flexible, no la ventana.
+ * alto lo reparte su columna flexible, no la ventana. Y el suelo con `--table-card-suelo`: con el tope en `none`, el
+ * `min()` del suelo no vale, cae en `auto`, y la tarjeta no encogía por debajo de sus filas: con 28 agentes pasaba por
+ * encima del pie del panel y tapaba «Guardar» (medido el 2026-10-14).
  */
 .table-card--al-pie {
   display: flex;
@@ -63,7 +65,10 @@
   /* Mide lo que sus filas, con el pie de la pantalla de tope, y al filtrar Asignados o buscar no baja del alto que llegó
    * a medir (`--alto-visto`, de `scLlegaAlPie`): el marco no baila ni se queda en una raya (revisión del 2026-10-09). */
   max-block-size: var(--table-card-tope, max(var(--sc-spacing-18), var(--llega-al-pie, 100dvh)));
-  min-block-size: min(var(--alto-visto, 0px), var(--table-card-tope, max(var(--sc-spacing-18), var(--llega-al-pie, 100dvh))));
+  min-block-size: var(
+    --table-card-suelo,
+    min(var(--alto-visto, 0px), var(--table-card-tope, max(var(--sc-spacing-18), var(--llega-al-pie, 100dvh))))
+  );
 }
 
 .table-card--al-pie > sc-datatable {
