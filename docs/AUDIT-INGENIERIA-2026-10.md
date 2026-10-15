@@ -120,9 +120,9 @@ como cambio), daño real hoy y un coste y riesgo menores que ese daño. El repo 
   quita en vez de corregirla. Los dos README a la vez, por `docs:readme-parity`.
 - Coste: 1 h. Riesgo: ninguno.
 
-**Fuera del repo** (ajustes de GitHub): activar secret scanning, push protection y solo las alertas de
-Dependabot, y aprobar las ejecuciones de todo colaborador externo. Hoy los tres primeros están desactivados
-(`gh api`). Las alertas no abren PRs ni gastan CI.
+**Fuera del repo** (ajustes de GitHub, hecho el 15 de octubre con `gh api`): secret scanning, push protection y
+alertas de Dependabot activados, y la aprobación pedida a todo colaborador externo en vez de solo al primerizo. Las
+actualizaciones automáticas de Dependabot siguen apagadas a propósito: abren PRs y cada uno gasta una CI entera.
 
 Verificación del lote: `test:unit`, `docs:guard`, `docs:coherence`, `preflight:scope` y la CI del PR leída con `ci:verdict`.
 
@@ -153,9 +153,9 @@ Verificación del lote: `test:unit`, `docs:guard`, `docs:coherence`, `preflight:
   regeneran a propósito con `visual-baselines` cuando el cambio es deliberado, 5 tocan el Supervisor y 3 no
   tienen un job fallido. Los rojos que se miraron eran aciertos de la CI, no inestabilidad.
 
-### PR-3 · DS: contrato y accesibilidad antes de publicar 1.1.0 (1,5 días)
+### PR-3 · DS: contrato y accesibilidad antes de publicar 1.1.0 (hecho en el PR #417)
 
-**9. El contrato de tokens que promete el CHANGELOG** (CONFIRMADO; depende de la decisión D2)
+**9. El contrato de tokens que promete el CHANGELOG** (CONFIRMADO; resuelto con alias, decisión D2)
 - Evidencia: el commit `0efaf40f` (#194, después de `v1.0.0`) quita 30 tokens `--sc-*` (33 líneas, con su copia
   oscura) y se suma `--sc-font-size-caption-bold`: 31. Ninguno volvió con otro nombre. Van como "preparada
   1.1.0", un minor. `CHANGELOG.md:5-7`, DD-58 y `docs/consumer-onboarding.md:64` dicen que `--sc-*` es contrato
@@ -164,19 +164,29 @@ Verificación del lote: `test:unit`, `docs:guard`, `docs:coherence`, `preflight:
 - Por qué: lo consume un equipo externo (tema-zip). Publicar 1.1.0 así rompe una promesa escrita.
 - Coste: 2 h. Alias `@deprecated` fuera de las zonas `@sc-gen` (la vía que no borra, LEARNINGS #15) o cortar
   2.0.0; en los dos casos, la lista completa en el CHANGELOG. Riesgo: bajo, es aditivo.
+- Hecho: los 31 vuelven como alias en un bloque «Alias en desuso» al final de `05-extensions.css` y de
+  `07-dark.css`, fuera de las zonas generadas. El CHANGELOG los lista en `Deprecated` y anota el cambio de
+  `appendTo`. La regla queda escrita en `docs/migration-safety.md`: retirar algo público se hace con alias en
+  desuso y en un major.
 
 **10. Exportar `ScFieldSize`**: seis alias `@deprecated` dicen "Usa `ScFieldSize`" (por ejemplo
-`sc-inputtext.component.ts:16`) y `public-api.ts` no lo exporta. Una línea, sin riesgo.
+`sc-inputtext.component.ts:16`) y `public-api.ts` no lo exporta. Una línea, sin riesgo. Hecho.
 
 **11. Etiquetas por defecto en el idioma de la app** (CONFIRMADO)
 - Hay textos fijos en español o inglés en `sc-chip`, `sc-search`, `sc-dialog`, `sc-progressspinner`,
   `sc-password` (`:127-129`) y `sc-datepicker` (`:123`), mientras otros 17 componentes ya usan diccionario.
 - Por qué: con el Supervisor en inglés, francés o portugués el lector de pantalla anuncia otro idioma.
   Coste: 2 h. Riesgo: bajo, son textos accesibles y no cambian lo que se ve.
+- Hecho para cuatro: `sc-dialog`, `sc-search`, `sc-password` y `sc-datepicker`. `sc-chip` y `sc-progressspinner`
+  salen: ninguna de las apps los usa, y un cambio sin consumidor es coste sin daño que pagar. Medido: el defecto
+  lo usan sin sobrescribir 20 de 21 `sc-dialog`, 5 de 14 `sc-search`, 1 de 3 `sc-password` y 1 de 2
+  `sc-datepicker`. Las entradas de etiqueta pasan a `string | null` y el componente exige `TranslateService`,
+  peer ya documentado en `docs/consumer-onboarding.md`.
 
 **12. `sc-progressbar` con nombre accesible** (CONFIRMADO): sin entrada de nombre
 (`projects/ui-smartcontact/src/lib/components/progressbar/sc-progressbar.component.ts:13-21`); la baseline de
 axe guarda 4 fallos `aria-progressbar-name`. Coste: 30 min más su knob en sc-docs. La baseline de axe baja.
+Hecho: `ariaLabel` y `ariaLabelledBy`, y el tope baja de 4 a 0.
 
 **13. Ayuda del datepicker y foco de la paleta de comandos**
 - Datepicker (PROBABLE; primero se mide): `sc-datepicker.html:31-35` pone `aria-describedby`, `aria-invalid` y
@@ -186,6 +196,13 @@ axe guarda 4 fallos `aria-progressbar-name`. Coste: 30 min más su knob en sc-do
   Supervisor, declara `role=dialog aria-modal` y no atrapa ni devuelve el foco. Se compone con el `p-dialog`
   nativo, que ya lo hace.
 - Coste: 4,5 h. Riesgo: medio, cambia comportamiento; lleva e2e de teclado y los barridos de foco.
+- Resultado del datepicker: CONFIRMADO. Una spec que busca el `<input>` por su id lo encontraba sin ninguno de
+  los tres `aria-*`. Se pasan por `pt.pcInputText.root`, como `sc-select` con `pt.label` (DD-133).
+- Resultado de la paleta: CONFIRMADO con una spec que enrojecía en tres cosas (Tab salía, el foco no volvía y el
+  resaltado no se anunciaba). No se compuso con `p-dialog`: se arregló en el sitio, con Tab fijo en el campo,
+  retorno del foco y una región `aria-live`. El patrón combobox con `listbox` y `option` a mano se descartó: lo
+  prohíbe la regla 8 de `audit:screen-hygiene`, y el nativo (`p-listbox`) obliga a reescribir la paleta. Queda
+  sin resolver que la lista no sea un `listbox` para el lector; solo lo resolvería el nativo.
 
 **14. Las cuatro sombras que se escapan del Kit** (CONFIRMADO)
 - Evidencia: `scripts/effects-rewire.mjs:77` busca `shadow:` en minúscula y no ve `raisedShadow`
@@ -195,16 +212,24 @@ axe guarda 4 fallos `aria-progressbar-name`. Coste: 30 min más su knob en sc-do
   `*Shadow` y prueba roja. Riesgo: si el valor generado no es idéntico al hex, cambia una sombra; se comprueba
   antes que es un no-op, y si no lo es, se para y se enseña.
 
+Hecho con una prueba roja primero: el gate de sombras ahora ve `*Shadow` y las cuatro quedan atadas a su
+token (valor idéntico, comprobado con `report`).
+
 Verificación del lote: `verify` entero, `test:components` con specs nuevas, la baseline de axe, `preflight:scope`,
 la CI completa del Supervisor y la revisión de las pantallas tocadas.
+
+Lección del lote: un cambio de accesibilidad en un componente mueve tres baselines que nadie recuerda a la vez,
+los topes de axe, las capturas de `visual-baselines` y el HTML de `e2e/baselines/component-structure.json`. El
+primer CI del PR salió rojo por la tercera. Quien toque el DOM de un componente regenera las tres antes de abrir
+el PR.
 
 ## 6. Decisiones que no son código
 
 | | Decisión | Evidencia | Recomendación |
 |---|---|---|---|
-| D1 | Licencia de PrimeNG 22 | `LICENSE.md` de `primeng` 22.1.0: "PrimeUI License", gratis solo con menos de 10 empleados y menos de 5 desarrolladores. Las cinco `app.config.ts` llevan una clave de tipo community/dev que vence el 5 de agosto de 2027. `scripts/tema-zip.mjs:13,330-334` empaqueta Aura dentro de un `sc-preset.mjs` publicado: eso es redistribución. DD-88 solo habla de la licencia del plugin | Que alguien de empresa confirme si la licencia del plugin cubre esto. Después, una DD y el vencimiento en `docs/traspaso.md`. Es HIPÓTESIS si se cumplen las condiciones |
+| D1 | Licencia de PrimeNG 22 | La licencia Community/dev permite usar PrimeNG en las apps, con tope de 4 puestos, menos de 10 empleados y renovación anual. Prohíbe distribuir el software "as-is, bundled, or with superficial modifications" para que otros lo usen como librería o herramienta de desarrollo, y eso exige una licencia OEM. El texto no exceptúa presets ni temas derivados. `@primeuix/themes` (Aura) lleva la misma licencia PrimeUI. `scripts/tema-zip.mjs` lo empaqueta con esbuild (`bundle: true`) dentro del `sc-preset.mjs` publicado como `smartcontact-tema`. La clave está además en cinco `app.config.ts` de un repo público, y la licencia prohíbe publicarla para que otros la usen | CONFIRMADO que lo que cubre la licencia no incluye esa redistribución. Opción barata: dejar `@primeuix/themes` como dependencia externa del bundle, porque el equipo externo ya lo tiene con PrimeNG y bajo su licencia. O pedir a PrimeTek la OEM por escrito. Después, una DD y el vencimiento de la clave en `docs/traspaso.md` |
 | D2 | 1.1.0 con alias o 2.0.0 | Punto 9 | Alias `@deprecated` hasta 2.0 |
-| D3 | Teléfonos en el historial público | Tres teléfonos de la extracción de la réplica siguen en un commit antiguo de los datos de paridad de `findings/`, alcanzable desde `main`; el árbol actual los tiene tachados (`findings/STATUS.md`) | Averiguar si son líneas de prueba del entorno de desarrollo. Reescribir la historia rompe clones y las etiquetas `proto/*`, que son los enlaces de los tickets |
+| D3 | Teléfonos en el historial público | Tres teléfonos de la extracción de la réplica están en seis commits de los datos de paridad de `findings/`, de finales de agosto y principios de septiembre, alcanzables desde `main`, desde `v1.0.0`, desde las ramas archivadas y desde unos 390 `refs/pull/*`. El árbol actual los tiene tachados (`findings/STATUS.md`). El commit que los retiró dice que eran "de verdad" | Decidido no reescribir. Reescribir cambia los SHA de unos 600 commits y la etiqueta `v1.0.0` con su release, rompe PRs abiertas y las ramas locales de otras sesiones, y no sirve de mucho: los `refs/pull/*` son de solo lectura y los commits viejos siguen descargables por SHA hasta que GitHub Support los purgue. Si son de personas reales, la vía que funciona es la petición de purga a GitHub Support. Si son inventados no hay daño. Pendiente de confirmar cuál de los dos es |
 
 ## 7. Lo que sale del roadmap, y lo que queda intacto
 
