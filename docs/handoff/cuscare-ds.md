@@ -1,7 +1,7 @@
 # Frente · CusCare con el DS — hand-off
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
-> **Sello:** 2026-10-13 · HEAD `b49b56e0` — primer tramo (listado de Tickets, inicio de sesión) listo para publicar.
+> **Sello:** 2026-10-13 · HEAD `86ac19bf` — primer tramo (listado de Tickets, inicio de sesión) listo para publicar.
 
 `projects/cuscare-ds` es CusCare hecha con los componentes `sc-*` y los tokens `--sc-*`. Es independiente de
 `projects/cuscare` (la réplica sin DS, que se conserva tal cual como referencia): otro proyecto de Cloudflare

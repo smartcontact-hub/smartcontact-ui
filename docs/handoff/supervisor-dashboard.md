@@ -16,7 +16,7 @@ tabular antes. Lo vigila `cajon-foco.spec.ts`, junto a `panel-agentes-monitor.sp
 
 ## ✅ 2026-10-01 · Cada agente enseña en el Dashboard el estado que tiene en Administración
 
-> **Sello: rama `areses/kind-liskov-9cae8c`, sobre `origin/main` HEAD `74583514` (con #295 fundido encima: su DD-138
+> **Sello: rama `areses/kind-liskov-9cae8c`, sobre `origin/main` HEAD `d1f846ed` (con #295 fundido encima: su DD-138
 > llegó antes, así que esta es la DD-139).**
 
 **Qué pasaba** (medido por id, ejecutando los dos ficheros): de los 10 agentes de la demo, 6 (ids 5 a 10) salían en un
@@ -42,7 +42,7 @@ no toca y que pasó 9 de 9 corrido solo. Cerrado: lo arregló #299, y la prueba 
 
 ## ✅ 2026-09-28 · El detalle de una cifra ya no corta el tiempo por la derecha
 
-> **Sello: rama `areses/magical-vaughan-5cf689`, sobre `origin/main` HEAD `212debe8`.**
+> **Sello: rama `areses/magical-vaughan-5cf689`, sobre `origin/main` HEAD `ad014f26`.**
 
 **Qué pasaba** (medido en producción a 1440, claro y oscuro): el panel «En curso (23)» medía los 20rem de PrimeNG y
 la tabla 300 px en una caja de 287,5; el contenedor recortaba los 12,5 de más y el tiempo se leía «9:1». Lo empujaba
@@ -65,7 +65,7 @@ Rama `arebury/arreglos-que-se-notan`.
 
 ## ✅ 2026-09-15 · La tarjeta de widget pasa a ser un sc-panel
 
-> **Sello: rama `arebury/dashboard-widget-card-panel` (caja `bladderwrack`), sobre `origin/main` HEAD `a4c2209`
+> **Sello: rama `arebury/dashboard-widget-card-panel` (caja `bladderwrack`), sobre `origin/main` HEAD `8238ff7`
 > (#186 cabecera propia y aviso de sc-panel, #187 `fill` que no se ensancha).**
 > Local: `npm run ng -- serve supervisor --port 4311` → `http://localhost:4311/dashboard` (tras `build:design-tokens`
 > y `build:components`: el servidor no vigila `dist/`).
@@ -86,7 +86,7 @@ se sale de su tarjeta, mira primero si su contenedor es `grid` o `flex` sin `min
 
 ## ✅ 2026-09-14 · El Monitor del Supervisor queda adaptado y subido en su rama, para iterar con Rafa
 
-> **Sello: rama `arebury/dashboard-adapt-supervisor-monitor` (caja `volute`), sobre `origin/main` HEAD `c55f857`;
+> **Sello: rama `arebury/dashboard-adapt-supervisor-monitor` (caja `volute`), sobre `origin/main` HEAD `b292ea0`;
 > fundido como #184 el 2026-09-14.**
 
 **Qué hay.** Adaptación del «Monitor» del Supervisor real (`supervisor.smart-contact.com/aed/#/private/monitor`)

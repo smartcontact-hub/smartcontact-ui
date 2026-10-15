@@ -3,7 +3,7 @@
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes. Lo durable vive en `docs/` y en
 > `projects/agent/docs/`.
-> **Sello: 2026-08-31 (s37) — HEAD `ce92b18`. CI verde, todo en `main`.**
+> **Sello: 2026-08-31 (s37) — HEAD `9d09d6b`. CI verde, todo en `main`.**
 >
 > ⚠️ Este fichero estuvo sellado en `020928a` mientras entraban **12 commits más** (7 tocando
 > `projects/agent`). Si vuelve a pasar, la lista de abajo es la que miente primero.

@@ -175,7 +175,7 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 
 ## ✅ 2026-10-14 · PrimeNG por familias: catálogo de 109, barrido de usos y página en sc-docs
 
-**Sello:** rama `arebury/primeng-component-usage`, sobre HEAD `b25a8a27` (#400). Sale por el tope el tramo del 2026-10-13
+**Sello:** rama `arebury/primeng-component-usage`, sobre HEAD `6ddbec7d` (#400). Sale por el tope el tramo del 2026-10-13
 (DD-202): `git show b25a8a27:docs/handoff/design-system.md`.
 
 **Lo que cambia.** El catálogo (§6) dice de los 109 módulos para qué sirven y cuándo elegir cada uno frente a su vecino; §7 es el barrido de usos; sc-docs lo pinta en `/#/components/primeng`, que es también el sitio de los nativos sin wrapper. De paso: los avisos de Conversaciones salen (llevaban una clave que nadie pintaba) y las confirmaciones que destruyen abren en «Cancelar».

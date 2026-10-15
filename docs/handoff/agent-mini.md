@@ -2,7 +2,7 @@
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes.
-> **Sello: 2026-09-01 — HEAD `0b1d210`. CI verde (run 33526420436, 5/5), todo en `main`.**
+> **Sello: 2026-09-01 — HEAD `61eb761`. CI verde (run 33526420436, 5/5), todo en `main`.**
 > **Vivo en `agent-mini.pages.dev`, producción por `main`** (repuntado 2026-09-01,
 > verificado sirviendo `e3874c3`; el bundle lleva «Estados», «Mensajes», «Seleccione grupo»).
 >
