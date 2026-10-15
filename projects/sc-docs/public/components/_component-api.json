@@ -7296,6 +7296,26 @@
             "obsoleta": null,
             "heredadaDe": null
           }
+        },
+        {
+          "nombre": "ariaLabel",
+          "clase": "input",
+          "tipo": "string | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "Nombre accesible de la barra (WCAG 4.1.2): qué progreso mide (\"Subida del fichero\"). Sin él, el lector de pantalla anuncia \"barra de progreso\" a secas. Si ya hay un texto visible que la nombra, `ariaLabelledBy`.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "ariaLabelledBy",
+          "clase": "input",
+          "tipo": "string | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "El id de un texto visible que nombra la barra; tiene prioridad sobre `ariaLabel`.",
+          "origen": "nuestro",
+          "nativo": null
         }
       ],
       "ocultas": [

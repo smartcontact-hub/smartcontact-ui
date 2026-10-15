@@ -1495,8 +1495,10 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/progressbar",
       "cva": false,
-      "inputs": 4,
+      "inputs": 6,
       "api": [
+        "ariaLabel",
+        "ariaLabelledBy",
         "mode",
         "showValue",
         "unit",

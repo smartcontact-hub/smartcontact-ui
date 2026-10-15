@@ -13,14 +13,15 @@
       [showValue]="args.showValue"
       [unit]="args.unit"
       [mode]="args.mode"
+      ariaLabel="Progreso de la tarea"
     />
   </div>
 </ng-template>
 
 <ng-template #modes>
   <div class="col">
-    <sc-progressbar [value]="40" data-testid="sc-progressbar" />
-    <sc-progressbar [value]="80" [showValue]="false" />
-    <sc-progressbar mode="indeterminate" />
+    <sc-progressbar [value]="40" ariaLabel="Subida del fichero" data-testid="sc-progressbar" />
+    <sc-progressbar [value]="80" [showValue]="false" ariaLabel="Importación de contactos" />
+    <sc-progressbar mode="indeterminate" ariaLabel="Cargando datos" />
   </div>
 </ng-template>
