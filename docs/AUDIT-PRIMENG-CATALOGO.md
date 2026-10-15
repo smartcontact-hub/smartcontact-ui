@@ -25,14 +25,14 @@
 
 ## Cifras
 
-Las da el gate en cada `verify`; estas son las del 2026-10-14.
+Las da el gate en cada `verify`; estas son las del 2026-10-15.
 
 | | Cuántos |
 |---|---|
 | Módulos de PrimeNG 22.1.0 con interfaz | 109 (sin contar las utilidades de base, `api`, `dom`, `utils`… ni los iconos) |
-| Envueltos por el DS | 37 módulos |
-| Usados directamente por alguna app, sin wrapper del DS | 15 (sección 3; cinco son directivas o piezas internas) |
-| Sin usar en ninguna parte | 57 (secciones 1, 4 y 5) |
+| Envueltos por el DS | 38 módulos |
+| Usados directamente por alguna app, sin wrapper del DS | 18 (sección 3; cinco son directivas o piezas internas) |
+| Sin usar en ninguna parte | 53 (secciones 1, 4 y 5) |
 
 ## 1. Lo que PrimeNG trae, no usamos y tiene un caso en el producto
 
@@ -47,7 +47,7 @@ Ordenado por lo que ahorraría. «Caso» es dónde se usaría hoy.
 | Media | **Rating** | La valoración del chat («de una a cinco estrellas», revisión del 2026-10-06) en el agente y en los informes. | Sin decidir: sería nuevo. |
 | Media | **Timeline** | La historia de un ticket en CusCare y la de una conversación en Memory. | Sin decidir. CusCare es réplica (DD-35): allí no se toca. |
 | Media | **InputMask** | Teléfonos y extensiones con formato. | Sin decidir: validación propia (`telefonoValido`); ojo con los internacionales. |
-| Media | **ConfirmPopup** | Confirmaciones pequeñas junto al botón (quitar un contacto, un trigger). | Sin decidir: hoy son diálogos enteros. |
+| Media | **ConfirmPopup** | Confirmaciones pequeñas junto al botón (quitar un contacto, un trigger). | **Hecho** (DD-205): `sc-confirmdialog` lo monta junto al diálogo y `ScConfirmService.request({ target })` lo abre pegado a lo que pregunta. Lo usan las casillas de «todos» de las tablas de asignar y «Expirar contraseña». |
 | Baja | **Accordion · Fieldset** | Los slots plegables («Mensajes en cola») y las subsecciones. | No compensa: `sc-slot collapsible` y `sc-subsection` llevan el árbol del DS (DD-157). |
 | Baja | **ContextMenu** | Clic derecho en las filas de los listados. | No en los listados: el «⋮» ya lo cubre. Solo en el laboratorio del árbol (sección 3). |
 | Baja | **InputOtp** | Un segundo factor en el acceso, si llega. | Con su pantalla. |
@@ -80,7 +80,8 @@ wrapper no tiene página en sc-docs ni medida en la línea base de estilos. El g
 | Módulo | Quién | Veredicto |
 |---|---|---|
 | Editor | supervisor (el contenido de una plantilla: `template-editor-page`) | El nativo tal cual (DD-113), con su barra a medida del canal (`#header`) y los `formats` que cada canal admite (WhatsApp, solo negrita, cursiva y tachado); el DS ya trae el tema (`sc-preset/editor.ts`). **Riesgo conocido:** PrimeNG avisa de que lo retirará a favor de un editor de pago; el contenido que guarda (HTML saneado, o el texto de WhatsApp) no depende de Quill, así que cambiarlo solo toca la página del editor. Sin wrapper todavía: una pantalla. |
-| Menu | supervisor (el menú de fila de Reglas, Entidades y la agenda; el «⋮» del Monitor) | En la página PrimeNG de sc-docs (nota de abajo); envolverlo, si llega a hacer falta. |
+| Menu | supervisor (el menú de fila de Reglas, Entidades y la agenda; el «⋮» de las pestañas del Monitor) | En la página PrimeNG de sc-docs (nota de abajo); envolverlo, si llega a hacer falta. |
+| TieredMenu | supervisor (el «⋮» de cada widget del Monitor, candidato 24 del barrido) | El nativo tal cual (DD-113, DD-205): Tipo y Canal son submenús y el menú se queda en cuatro filas. El rojo de «Quitar widget» lo pone el tema (`sc-menu-item--danger`, también sobre `p-tieredmenu-item-*`). En la página PrimeNG de sc-docs (nota de abajo). |
 | Listbox | supervisor (Numeración especial y Regeneración de contraseñas, en Sistema; el asistente de widgets), cuscare | En la página PrimeNG de sc-docs (nota de abajo). |
 | Slider | supervisor (la barra del reproductor de Memory, candidato 1 del barrido) | El nativo tal cual (DD-113): el DS ya trae el tema (`sc-preset/slider.ts`). En la página PrimeNG de sc-docs (nota de abajo). |
 | Toolbar | supervisor | En la página PrimeNG de sc-docs (nota de abajo). |
@@ -106,7 +107,7 @@ las dos a la vez. Una página propia para un nativo se abre si llega a usarse en
 ## 4. Sin caso en el producto hoy
 
 Carousel, Galleria, Gallery, Image, ImageCompare, Compare, Dock, SpeedDial, Terminal, OrganizationChart, PickList, DataView,
-MegaMenu, Menubar, PanelMenu, TieredMenu, Splitter, ScrollTop, BlockUI, CascadeSelect, ButtonGroup, SplitButton,
+MegaMenu, Menubar, PanelMenu, Splitter, ScrollTop, BlockUI, CascadeSelect, ButtonGroup, SplitButton,
 FloatLabel, IftaLabel, InputColor, KeyFilter, Chart, Steps (la documentación ya no lo trae; su sucesor es Stepper).
 Se reabren si aparece el caso.
 
@@ -238,7 +239,7 @@ Piezas que van alrededor de un campo, no campos.
 | Componente | Para qué sirve | Elígelo cuando… | Aquí |
 |---|---|---|---|
 | Menu | Lista de acciones, fija o emergente (`popup`); con `toggleable`, grupos plegables. | El «⋮» de una fila, el menú de usuario. Desde la 22 sustituye a PanelMenu. | Sin wrapper: supervisor (sección 3) |
-| TieredMenu | Menú con submenús en capas. | Acciones con un segundo nivel. | Sin caso hoy (sección 4) |
+| TieredMenu | Menú con submenús en capas. | Acciones con un segundo nivel. | Sin wrapper: el «⋮» de cada widget del Monitor (sección 3) |
 | ContextMenu | Menú al clic derecho o pulsación larga. | Un atajo de lo que ya está en el «⋮», nunca el único camino. | Sin wrapper: supervisor, solo en `lab/arbol` (sección 3); en los listados, descartado: el «⋮» lo cubre (sección 1) |
 | Menubar | Menú horizontal con desplegables. | La navegación superior de una web. | Sin caso hoy (sección 4) |
 | MegaMenu | Submenús en columnas, todos a la vez. | Navegaciones con muchas secciones. | Sin caso hoy (sección 4) |
@@ -279,8 +280,8 @@ Piezas que van alrededor de un campo, no campos.
 
 | Componente | Para qué sirve | Elígelo cuando… | Aquí |
 |---|---|---|---|
-| ConfirmDialog | Una pregunta de sí o no en un modal. | Acciones graves o irreversibles. Para borrar una entidad, `sc-delete-entity-dialog` (sección 2). | `sc-confirmdialog` |
-| ConfirmPopup | La misma pregunta, pegada al botón que la lanza. | Confirmaciones pequeñas junto a lo que se pulsa (quitar una fila de una lista). | Sin uso: «sin decidir» (sección 1) |
+| ConfirmDialog | Una pregunta de sí o no en un modal. | La consecuencia hay que explicarla (borrar una rama con sus hijas) o no hay un botón al que pegarse (al guardar, al salir). Para borrar una entidad, `sc-delete-entity-dialog` (sección 2). | `sc-confirmdialog` |
+| ConfirmPopup | La misma pregunta, pegada al botón que la lanza. | Una pregunta de una frase sobre lo que se acaba de pulsar, aunque no se deshaga (DD-205). | `sc-confirmdialog` con `target` en `ScConfirmService.request` |
 | Toast | Aviso flotante que se va solo (`life`). | Confirmar que algo pasó («Guardado») sin interrumpir. | `sc-toast` |
 | Message | Aviso dentro de la página. | Algo que hay que leer en su sitio y se queda. | `sc-message` |
 
@@ -462,5 +463,9 @@ Leídos en el código; sin medir en el navegador.
    `#start` de `p-menu` no se alcanza con el teclado. Quedan: el 8 (seis categorías no caben en un `sc-selectbutton`
    de 443 px; se decidió mantener las fichas en 3×2 con radios a la vista), el reproductor de varias grabaciones (su
    barra va en tramos y cambiarla cambia cómo se ve) y el 14 (medir antes qué oye el lector).
+   **Cambios visibles, hechos el 2026-10-15** (decisión de producto, DD-205): 10 y 13 preguntan en un ConfirmPopup
+   pegado a la casilla o al botón; 21 es un `sc-selectbutton` de varios por par que no se queda vacío; 24, un
+   `p-tieredmenu` con Tipo y Canal en submenús. El 11 sigue en diálogo: borra una rama con sus hijas, y eso es una
+   confirmación compleja. Prueba: `e2e/supervisor/barrido-visibles.spec.ts`.
 6. **La sección 6 en sc-docs**: hecho el 2026-10-14, la página PrimeNG. Si cambias la sección 6, `npm run
    primeng-catalog:gen` rehace su artefacto (el gate se pone rojo hasta entonces).

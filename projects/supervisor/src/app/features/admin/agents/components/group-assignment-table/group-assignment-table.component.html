@@ -20,12 +20,12 @@
       <ng-template #header>
         <tr>
           @for (col of columns(); track col.field) {
-            <th scope="col" [style.text-align]="col.align" [style.width]="col.width" [attr.aria-label]="col.header">
+            <th #celda scope="col" [style.text-align]="col.align" [style.width]="col.width" [attr.aria-label]="col.header">
               @if (hasHeaderCheckbox(col.field)) {
                 <!-- La casilla de «todos» después del rótulo, como en la tabla del grupo (DD-185). -->
                 <sc-checkbox [state]="headerState(col.field)" [disabled]="headerDisabled(col.field)" labelPosition="start"
                   [ariaLabel]="'groups.form.assigned.column_all' | translate: { column: col.header }"
-                  (cycle)="toggleHeader(col.field)">
+                  (cycle)="toggleHeader(col.field, celda)">
                   @if (col.field !== 'assigned') { <span class="sc-text-body-semibold">{{ col.header }}</span> }
                 </sc-checkbox>
               } @else { {{ col.header }} }
