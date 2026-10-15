@@ -1,6 +1,6 @@
 # Smart Contact · Tema para PrimeNG
 
-Versión 0.20261015.1920 · 2026-10-15 · origen: Design System de Smart Contact (`f330614b`)
+Versión 0.20261015.2025 · 2026-10-15 · origen: Design System de Smart Contact (`f1d6d685`)
 
 Tema oficial de Smart Contact para aplicaciones Angular con PrimeNG. Es el mismo tema que utilizan las
 aplicaciones de Smart Contact, por lo que los componentes se muestran de forma idéntica en ambos entornos.
@@ -9,7 +9,7 @@ aplicaciones de Smart Contact, por lo que los componentes se muestran de forma i
 
 | Fichero | Descripción |
 |---|---|
-| `sc-preset.mjs` | Preset de PrimeNG (Aura con la identidad de Smart Contact). Incluye las variables `extend` que genera el plugin de Figma (`--p-typography-*`, `--p-app-typography-*`, `--p-presence-*`, `--p-component-custommodal-*`). |
+| `sc-preset.mjs` | Preset de PrimeNG (la identidad de Smart Contact sobre Aura, que viene de `@primeuix/themes`). Incluye las variables `extend` que genera el plugin de Figma (`--p-typography-*`, `--p-app-typography-*`, `--p-presence-*`, `--p-component-custommodal-*`). |
 | `sc-preset.d.ts` | Declaración de tipos para TypeScript. |
 | `smartcontact-tokens.css` | Tokens de diseño `--sc-*`, modo claro y oscuro. |
 | `smartcontact-typography.css` | Estilos de texto `.sc-text-*`. |
@@ -18,6 +18,8 @@ aplicaciones de Smart Contact, por lo que los componentes se muestran de forma i
 ## Requisitos
 
 - Angular con PrimeNG 21 o superior.
+- `@primeuix/themes` 3.x instalado en el proyecto (`npm install @primeuix/themes`). El preset importa de ahí Aura y
+  `definePreset`: el paquete no los incluye, porque son de PrimeTek y se usan bajo la licencia PrimeUI del proyecto.
 - Tamaño de fuente raíz de 16 px (`html { font-size: 100% }`).
 - Fuente Inter disponible en la aplicación.
 
@@ -68,11 +70,11 @@ instalada figura en la cabecera de este documento y en `node_modules/smartcontac
 
 ## Cambios respecto a la versión anterior
 
-- Ficheros modificados: sc-preset.mjs, smartcontact-tokens.css.
-- Tokens de diseño modificados: 34.
+- Ficheros modificados: sc-preset.mjs.
+- Tokens de diseño modificados: 0.
 - Estilos comunes del tema: sin cambios.
 - Reglas CSS del tema: sin cambios.
-- Componentes con estilos modificados: button, splitbutton, timeline, togglebutton.
+- Componentes con estilos modificados: ninguno.
 
 ## Comprobaciones de esta versión
 
