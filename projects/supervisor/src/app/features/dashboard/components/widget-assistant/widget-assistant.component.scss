@@ -33,7 +33,7 @@
     color: var(--sc-text-primary);
   }
 
-  /* ─── Categorías: seis botones de radio con icono, en 3×2 ─── */
+  /* ─── Categorías: seis fichas en 3×2, cada una con su radio a la vista ─── */
   &__categories {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -41,6 +41,7 @@
   }
 
   &__category {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -60,7 +61,8 @@
       color: var(--sc-text-primary);
     }
 
-    &:focus-visible {
+    /* El foco lo lleva el radio de dentro; la ficha entera lo enseña, que es lo que se ve como opción. */
+    &:has(:focus-visible) {
       outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
       outline-offset: var(--sc-focus-ring-offset);
     }
@@ -76,6 +78,13 @@
       color: var(--sc-text-subtle);
       border-style: dashed;
     }
+  }
+
+  /* El radio, en la esquina de arriba: dice que la ficha se elige, sin mover el icono ni el rótulo del centro. */
+  &__category-radio {
+    position: absolute;
+    top: var(--sc-spacing-0-375);
+    right: var(--sc-spacing-0-375);
   }
 
   /* ─── Vista previa ─── */
