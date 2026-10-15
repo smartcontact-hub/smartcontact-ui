@@ -21,7 +21,9 @@ test('la página de Email tiene sus dos listas, cada una con «Crear»', async (
   await expect(page.getByRole('heading', { name: 'Email', exact: true, level: 1 })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Cuentas de correo' })).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Triggers' })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Crear', exact: true })).toHaveCount(2);
+  // Cada tabla con su botón de crear, que dice qué crea (revisión de producto del 2026-10-15).
+  await expect(page.getByRole('button', { name: 'Nueva cuenta de correo', exact: true })).toHaveCount(1);
+  await expect(page.getByRole('button', { name: 'Nuevo trigger', exact: true })).toHaveCount(1);
   await expect(page.getByRole('columnheader', { name: 'Emails totales' })).toBeVisible();
   await expect(page.getByRole('button', { name: /^Editar: / })).not.toHaveCount(0);
 });

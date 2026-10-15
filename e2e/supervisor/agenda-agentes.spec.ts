@@ -44,6 +44,8 @@ test('agentes: buscar, ver solo los asignados, asignar uno y guardar lo deja en 
 
   const buscador = seccionAgentes(page).getByPlaceholder('Buscar agentes…');
   await buscador.fill('Miguel Palacios');
+  // La fila buscada, ya filtrada: sin esperar, la primera podía ser aún la de antes de buscar.
+  await expect(filasAgentes(page)).toHaveCount(1);
   const fila = filasAgentes(page).first();
   const casilla = fila.getByRole('checkbox');
   const estabaMarcada = await casilla.isChecked();

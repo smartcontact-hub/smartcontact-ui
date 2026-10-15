@@ -104,9 +104,19 @@ export class TemplateEditorPageComponent implements DirtyAware, OnInit {
     return this.translate.instant(`templates.form.body_placeholder`);
   });
 
-  protected readonly groupOptions = computed(() =>
-    this.groupsStore.groups().map((g) => ({ label: g.name, value: g.id })),
-  );
+  /** Los grupos, y apagados los que no atienden el canal de la plantilla, con su porqué: una plantilla de WhatsApp no
+   *  le sirve a un grupo sin WhatsApp. */
+  protected readonly groupOptions = computed(() => {
+    this.lang();
+    const type = this.form().type;
+    const reason = this.translate.instant('templates.form.group_without_channel', {
+      channel: this.translate.instant(`templates.type.${type}`),
+    });
+    return this.groupsStore.groups().map((g) => {
+      const atiende = g.channels.includes(type);
+      return { label: g.name, value: g.id, disabled: !atiende, reason: atiende ? null : reason };
+    });
+  });
 
   /** El título no se repite entre plantillas (sin contar la propia), como en el panel de antes. */
   protected readonly titleTaken = computed(() => {

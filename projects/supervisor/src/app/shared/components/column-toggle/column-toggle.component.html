@@ -1,0 +1,83 @@
+<sc-button
+  #button
+  variant="secondary"
+  appearance="outlined"
+  icon="view_column"
+  iconOnly
+  [size]="size()"
+  [ariaLabel]="ariaLabel()"
+  ariaHasPopup="dialog"
+  [ariaExpanded]="open()"
+  (clicked)="pop.toggle($event)"
+/>
+<p-popover
+  #pop
+  [style]="popoverStyle"
+  [pt]="popoverPt"
+  [focusOnShow]="false"
+  [ariaLabelledBy]="titleId"
+  (onShow)="onShow()"
+  (onHide)="onHide()"
+>
+  <ng-template #content>
+    <div class="column-toggle__header">
+      <span class="column-toggle__title sc-text-body-semibold" [id]="titleId">{{ 'common.columns' | translate }}</span>
+      <sc-button
+        variant="secondary"
+        appearance="text"
+        size="sm"
+        icon="restart_alt"
+        [label]="'common.columns_reset' | translate"
+        (clicked)="onReset()"
+      />
+    </div>
+    @if (searchable()) {
+      <div class="column-toggle__search">
+        <sc-search
+          size="sm"
+          [placeholder]="'common.columns_search' | translate"
+          [clearAriaLabel]="'labels.clear_search' | translate"
+          [value]="query()"
+          (valueChange)="query.set($event)"
+          (keydown)="onSearchKey($event)"
+        />
+      </div>
+    }
+    <div
+      class="column-toggle__list"
+      [class.column-toggle__list--scroll]="searchable()"
+      cdkDropList
+      [cdkDropListData]="shown()"
+      [cdkDropListDisabled]="!sortable()"
+      (cdkDropListDropped)="onDrop($event)"
+      (keydown)="onListKeydown($event)"
+    >
+      @for (opt of shown(); track opt.key) {
+        <div
+          class="column-toggle__row"
+          [class.column-toggle__row--locked]="opt.locked"
+          [class.column-toggle__row--static]="!sortable()"
+          cdkDrag
+          [cdkDragDisabled]="opt.locked || !sortable()"
+          cdkDragPreviewClass="column-toggle-drag-preview"
+          (focusin)="current.set(opt.key)"
+        >
+          <sc-icon class="column-toggle__handle" name="drag_handle" size="sm" aria-hidden="true" />
+          <p-checkbox
+            [inputId]="inputIdOf(opt.key)"
+            [value]="opt.key"
+            [ngModel]="visible()"
+            [disabled]="opt.locked"
+            [tabindex]="tabindexOf(opt.key)"
+            (ngModelChange)="onVisibleChange($event)"
+            (click)="$event.stopPropagation()"
+          />
+          <label class="column-toggle__label sc-text-body-regular" [for]="inputIdOf(opt.key)" (click)="$event.stopPropagation()">{{ opt.label }}</label>
+        </div>
+      } @empty {
+        <p class="column-toggle__empty sc-text-body-regular">{{ 'labels.no_results.title' | translate }}</p>
+      }
+    </div>
+    <span class="visually-hidden" aria-live="polite">{{ announcement() }}</span>
+  </ng-template>
+</p-popover>

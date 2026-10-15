@@ -46,7 +46,7 @@ const RUTAS = [
   'admin/grupos/crear',
   'admin/labels',
   'admin/repositorios',
-  // El editor de una agenda (DD-163): campos, buscador, «Añadir contacto», menú de fila y paginador.
+  // El editor de una agenda (DD-163): campos, buscador, «Nuevo contacto», menú de fila y paginador.
   'admin/agendas/editar/1',
   'config/aed/servicio',
   'config/sistema',

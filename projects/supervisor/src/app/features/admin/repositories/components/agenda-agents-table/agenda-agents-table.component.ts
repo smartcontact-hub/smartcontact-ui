@@ -59,7 +59,7 @@ export class AgendaAgentsTableComponent {
     return this.agents().filter(
       (a) =>
         (this.filter() === 'all' || set.has(a.id)) &&
-        (!q || a.name.toLowerCase().includes(q) || a.code.toLowerCase().includes(q) || (a.email ?? '').toLowerCase().includes(q)),
+        (!q || a.name.toLowerCase().includes(q) || (a.email ?? '').toLowerCase().includes(q)),
     );
   });
 
@@ -77,11 +77,11 @@ export class AgendaAgentsTableComponent {
 
   private readonly emailTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('emailTpl');
 
+  /** Nombre y email, sin el código de agente: es de posventa y aquí sobraba (revisión de producto del 2026-10-15). */
   protected readonly columns = computed<readonly ScColumnDef<Agent>[]>(() => {
     this.lang();
     return [
       { field: 'name', header: this.translate.instant('repositories.columns.name'), rowHeader: true },
-      { field: 'code', header: this.translate.instant('repositories.agendas.agents_code'), width: '8rem' },
       { field: 'email', header: this.translate.instant('repositories.agendas.agents_email'), cellTemplate: this.emailTpl() },
     ];
   });

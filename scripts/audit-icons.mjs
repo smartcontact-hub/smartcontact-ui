@@ -77,7 +77,6 @@ export const VERBO_A_CONCEPTO = [
     [/^(descargar|exportar)\b/, 'descargar'],
     [/^importar\b/, 'importar'],
     [/^copiar\b/, 'copiar'],
-    [/^anadir sub/, 'anadirDebajo'],
     [/^(anadir|nuevo|nueva|crear)\b/, 'anadir'],
     [/^retroceder\b.*segundos/, 'retroceder10'],
     [/^avanzar\b.*segundos/, 'avanzar10'],
@@ -406,7 +405,6 @@ export const PENDIENTES = {
     'projects/supervisor/src/app/features/admin/groups/components/agent-channel-table/agent-channel-table.component.html': 1,
     'projects/supervisor/src/app/features/admin/groups/pages/group-form-page.component.html': 6,
     'projects/supervisor/src/app/features/admin/groups/pages/group-form-page.component.ts': 1,
-    'projects/supervisor/src/app/shared/components/list-page/list-page.component.html': 2,
 };
 
 /* ── main ──────────────────────────────────────────────────────────────────── */

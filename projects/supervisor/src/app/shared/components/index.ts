@@ -22,6 +22,16 @@ export type { IllustratedAvatarPool } from './illustrated-avatar/illustrated-ava
 
 export { ListPageComponent } from './list-page/list-page.component';
 
+// Elegir y ordenar columnas: el «Column Toggle» de primeng.dev/table (DD-176), en las listas y en la tabla de contactos.
+export { ColumnToggleComponent } from './column-toggle/column-toggle.component';
+export type { ColumnToggleOption } from './column-toggle/column-toggle.component';
+export { normalizePrefs } from './column-toggle/column-prefs';
+export type { ColumnPrefs } from './column-toggle/column-prefs';
+
+// Importar de un CSV: el mismo diálogo en Tipificaciones, Plantillas y Agendas (DD-166, revisión del 2026-10-15).
+export { ImportDialogComponent } from './import-dialog/import-dialog.component';
+export type { ImportSummary } from './import-dialog/import-dialog.component';
+
 // Una celda sin dato: «—» a la vista y «Sin dato» para el lector (DD-197).
 export { CeldaVaciaComponent } from './celda-vacia/celda-vacia.component';
 

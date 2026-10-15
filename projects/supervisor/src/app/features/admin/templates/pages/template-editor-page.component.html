@@ -22,7 +22,7 @@
     <!-- La identidad, como en las fichas: el título de la plantilla, o «Nueva plantilla» mientras no lo tiene. -->
     <h1 class="page__heading sc-text-title-semibold">{{ form().title.trim() || ('templates.form.create_title' | translate) }}</h1>
 
-    <sc-section-card titleKey="templates.form.section_general" surface="card" icon="description">
+    <sc-section-card titleKey="templates.form.section_general" surface="subtle" icon="description">
       <section class="sub-section">
         <div class="grid grid--2">
           <div class="field">
@@ -54,7 +54,7 @@
 
     <!-- El contenido: el editor de primeng.dev/editor, tal cual, con su barra a medida del canal. Se vuelve a montar al cambiar
          de canal porque Quill lee sus formatos al nacer. -->
-    <sc-section-card titleKey="templates.form.section_content" surface="card" icon="edit_note">
+    <sc-section-card titleKey="templates.form.section_content" surface="subtle" icon="edit_note">
       <section class="sub-section">
         @for (canal of [form().type]; track canal) {
           <p-editor
@@ -91,22 +91,35 @@
       </section>
     </sc-section-card>
 
-    <sc-section-card titleKey="templates.form.section_groups" surface="card" icon="group">
+    <sc-section-card titleKey="templates.form.section_groups" surface="subtle" icon="group">
       <section class="sub-section">
         <div class="field field--full">
+          <!-- Hasta tres etiquetas y «+N más»; los grupos que no atienden el canal de la plantilla, apagados y con su
+               porqué (revisión de producto del 2026-10-15). -->
           <sc-multiselect
             inputId="template-groups"
             optionLabel="label"
             optionValue="value"
+            optionDisabled="disabled"
             [filter]="true"
             display="chip"
+            chipOverflow="more"
             [maxSelectedLabels]="3"
             [label]="'templates.form.groups' | translate"
             [placeholder]="'templates.form.groups_placeholder' | translate"
             [options]="groupOptions()"
             [value]="groupValue()"
             (valueChange)="onGroups($event)"
-          />
+          >
+            <ng-template #item let-option>
+              <span class="grupo-opcion">
+                <span class="grupo-opcion__nombre">{{ option.label }}</span>
+                @if (option.reason) {
+                  <span class="grupo-opcion__motivo sc-text-caption-regular">{{ option.reason }}</span>
+                }
+              </span>
+            </ng-template>
+          </sc-multiselect>
         </div>
       </section>
     </sc-section-card>

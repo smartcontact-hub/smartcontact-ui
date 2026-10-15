@@ -305,7 +305,7 @@
       },
       "filters": {
         "none": "Nenhum",
-        "search_placeholder": "Pesquisar",
+        "search_placeholder": "Pesquisar conversas…",
         "services_label": "Serviços",
         "date_label": "Data",
         "groups_label": "Grupos ACD",
@@ -579,7 +579,6 @@
       "no_active_banner": "Nenhuma regra está ativa: as novas conversas não serão transcritas nem classificadas automaticamente.",
       "empty_title": "Ainda sem regras",
       "empty_desc": "As regras automatizam o que é gravado, transcrito e analisado das conversas que entram no sistema.",
-      "empty_cta": "Criar primeira regra",
       "active_title": "Regra ativa",
       "no_active_hint": "Nenhuma regra ativa. Ative uma regra para começar a aplicá-la.",
       "inactive_title": "Inativas",
@@ -959,7 +958,6 @@
     "edit": "Editar",
     "edit_named": "Editar {{name}}",
     "loading": "Carregando…",
-    "search": "Buscar...",
     "search_clear": "Limpar busca",
     "search_no_results": "Sem resultados",
     "remove": "Remover {{name}}",
@@ -1029,7 +1027,13 @@
     "select_all": "Selecionar tudo",
     "form_index_aria": "Índice do formulário",
     "filter_count": "{{shown}} de {{total}}",
-    "next": "Seguinte"
+    "next": "Seguinte",
+    "import": {
+      "template": "Baixar modelo",
+      "choose": "Escolher arquivo",
+      "choose_other": "Escolher outro arquivo"
+    },
+    "columns_search": "Buscar colunas…"
   },
   "topbar": {
     "go_to_dashboard": "Ir ao dashboard",
@@ -1087,8 +1091,7 @@
     "entity_plural": "etiquetas",
     "empty": {
       "title": "Ainda sem etiquetas",
-      "text": "Crie sua primeira etiqueta para organizar e filtrar seus agentes",
-      "cta": "Criar etiqueta"
+      "text": "Crie sua primeira etiqueta para organizar e filtrar seus agentes"
     },
     "table": {
       "name": "Nome",
@@ -1144,21 +1147,17 @@
     },
     "actions_button": "Ações",
     "data_menu": {
-      "import_title": "Importar {{entity}}",
-      "export_title": "Exportar {{entity}}",
+      "import_title": "Importar",
+      "export_title": "Exportar",
       "export_selection": "Exportar seleção ({{count}})",
-      "export_empty": "Não há registos para exportar",
-      "template_title": "Baixar modelo CSV",
-      "entity_fallback": "registos"
-    }
+      "export_empty": "Não há registos para exportar"
+    },
+    "search_placeholder": "Buscar etiquetas…"
   },
   "templates": {
     "import": {
       "title": "Importar modelos",
-      "template": "Baixar modelo",
       "template_file": "modelo-modelos",
-      "choose": "Escolher arquivo",
-      "choose_other": "Escolher outro arquivo",
       "add": "Serão criados {{count}} modelos",
       "add_one": "Será criado 1 modelo",
       "nothing": "Não há modelos novos para criar.",
@@ -1194,8 +1193,7 @@
     },
     "empty": {
       "title": "Ainda sem modelos",
-      "text": "Crie seu primeiro modelo de mensagem para agilizar o atendimento",
-      "cta": "Criar modelo"
+      "text": "Crie seu primeiro modelo de mensagem para agilizar o atendimento"
     },
     "table": {
       "title": "Título",
@@ -1232,7 +1230,8 @@
       "format_italic": "Itálico",
       "format_underline": "Sublinhado",
       "format_strike": "Rasurado",
-      "format_link": "Ligação"
+      "format_link": "Ligação",
+      "group_without_channel": "Não atende {{channel}}"
     },
     "errors": {
       "title_required": "O título é obrigatório",
@@ -1248,7 +1247,8 @@
       "updated": "Modelo \"{{name}}\" atualizado",
       "deleted_single": "Modelo \"{{name}}\" eliminado",
       "deleted_bulk": "{{count}} modelos eliminados"
-    }
+    },
+    "search_placeholder": "Buscar modelos…"
   },
   "repositories": {
     "groups_aria": "{{count}} grupos",
@@ -1257,7 +1257,6 @@
       "title": "Email",
       "mailboxes": "Contas de correio",
       "triggers": "Triggers",
-      "create": "Criar",
       "created": "Data de criação",
       "modified": "Data de modificação",
       "total": "Emails totais",
@@ -1322,7 +1321,7 @@
         }
       }
     },
-    "search_placeholder": "Buscar {{entity}}...",
+    "search_placeholder": "Buscar {{entity}}…",
     "errors": {
       "name_required": "O nome é obrigatório",
       "duplicate_name": "Já existe um/uma {{entity}} com este nome",
@@ -1358,7 +1357,7 @@
     },
     "hub": {
       "coming_soon": "Em breve",
-      "search": "Buscar repositórios",
+      "search": "Buscar repositórios…",
       "item_aria": "{{name}} ({{count}})",
       "no_results": "Nenhum repositório corresponde a “{{query}}”.",
       "categories": {
@@ -1405,9 +1404,9 @@
       "contact": "contato",
       "phone": "Telefone",
       "no_name": "Sem nome",
-      "add_contact": "Adicionar contato",
+      "add_contact": "Novo contato",
       "edit_contact": "Editar contato",
-      "search_contacts": "Buscar por nome ou telefone",
+      "search_contacts": "Buscar contatos…",
       "contacts_empty": "Esta agenda ainda não tem contatos",
       "contacts_no_results": "Nenhum contato corresponde a “{{query}}”.",
       "import": "Importar",
@@ -1420,12 +1419,10 @@
       "agents_summary": "{{count}} de {{total}} atribuídos",
       "agents_row_aria": "Atribuir a agenda a {{name}}",
       "agents_select_all": "Marcar ou desmarcar os agentes visíveis",
-      "agents_code": "Código",
       "agents_email": "Email",
       "agents_no_results": "Nenhum agente corresponde a «{{query}}».",
       "agents_none_assigned": "Ainda não há agentes atribuídos.",
       "agents_empty": "Ainda não há agentes",
-      "import_template": "Baixar modelo",
       "import_template_file": "modelo-agenda",
       "fields": {
         "surname": "Apelidos",
@@ -1470,15 +1467,12 @@
       "custom_labels_title": "Etiquetas dos campos personalizados",
       "custom_labels_hint": "Cada agenda pode chamar aos seus cinco campos personalizados como quiser. Sem etiqueta, chamam-se «Personalizado 1» a «Personalizado 5».",
       "custom_label_placeholder": "Etiqueta de Personalizado {{n}}",
-      "import_choose": "Escolher arquivo",
-      "import_choose_other": "Escolher outro arquivo",
       "import_add": "Serão adicionados {{count}} contatos",
       "import_add_one": "Será adicionado 1 contato",
       "import_nothing": "Não há contatos novos para adicionar.",
       "import_errors": "{{count}} linhas com erro, que não são adicionadas:",
       "import_errors_one": "1 linha com erro, que não é adicionada:",
       "import_error_line": "Linha {{line}}: {{reason}}",
-      "import_reason_name": "falta o nome",
       "import_reason_phone": "o telefone não é válido",
       "import_more_errors": "e mais {{count}}",
       "import_duplicates": "{{count}} já estavam na agenda ou se repetem no arquivo.",
@@ -1491,7 +1485,8 @@
       "errors": {
         "name_taken": "Já existe uma agenda com este nome.",
         "phone_invalid": "O telefone não é válido: use dígitos, com um + na frente se tiver prefixo.",
-        "phone_taken": "Esse telefone já está nesta agenda."
+        "phone_taken": "Esse telefone já está nesta agenda.",
+        "contact_empty": "Preencha pelo menos um dado do contato."
       }
     },
     "horarios": {
@@ -1514,7 +1509,7 @@
       "description_placeholder": "Ex. Motivo da conversa de um cliente",
       "create_submit": "Criar tipificação",
       "edit_breadcrumb": "Editar tipificação",
-      "search_placeholder": "Pesquisar tipificação por nome ou descrição...",
+      "search_placeholder": "Pesquisar tipificações…",
       "no_results_query": "Nenhuma tipificação corresponde a «{{query}}».",
       "empty_title": "Ainda não há tipificações",
       "empty_body": "Crie a primeira, ou importe-as com o modelo.",
@@ -1541,10 +1536,7 @@
       },
       "import_title": "Importar tipificações",
       "import_help": "Uma linha por caminho da árvore, como no modelo: nome, descrição e até três níveis. As linhas com o mesmo nome são a mesma tipificação: a descrição vai na primeira. Até {{max}} tipificações por ficheiro.",
-      "import_template": "Baixar modelo",
       "import_template_file": "modelo-tipificacoes",
-      "import_choose": "Escolher arquivo",
-      "import_choose_other": "Escolher outro arquivo",
       "import_create": "Serão criadas {{count}} tipificações",
       "import_create_one": "Será criada 1 tipificação",
       "import_nothing": "Não há tipificações novas para criar.",
@@ -1630,7 +1622,8 @@
       "in_use": "Usada por {{count}} grupos: {{groups}}. Ao eliminá-la, deixam de tipificar até você escolher outra.",
       "in_use_bulk_one": "Usadas pelo grupo {{groups}}. Ao eliminá-las, esse grupo deixa de tipificar até você escolher outra.",
       "in_use_bulk": "Usadas por {{count}} grupos: {{groups}}. Ao eliminá-las, deixam de tipificar até você escolher outra.",
-      "and_more": "mais {{count}}"
+      "and_more": "mais {{count}}",
+      "add_subcategory": "Adicionar subcategoria"
     },
     "variables": {
       "title": "Variáveis",
@@ -1734,7 +1727,7 @@
   "users": {
     "page_title": "Usuários",
     "create_button": "Novo usuário",
-    "search_placeholder": "Buscar usuário por nome, email, identificador...",
+    "search_placeholder": "Buscar usuários…",
     "no_results_query": "Nenhum usuário corresponde a “{{query}}”.",
     "entity_singular": "usuário",
     "table": {
@@ -1887,7 +1880,7 @@
       "duplicate_subtitle": "Copia os agentes, os canais e as definições de «{{source}}». O telefone de saída, não.",
       "copy_name": "{{name}} (cópia)"
     },
-    "search_placeholder": "Buscar grupo por nome, ID, telefone, prioridade ou estratégia...",
+    "search_placeholder": "Buscar grupos…",
     "no_results_query": "Nenhum grupo corresponde a “{{query}}”.",
     "entity_singular": "grupo",
     "table": {
@@ -1945,7 +1938,7 @@
         "filter_status_count": "{{count}} filtros",
         "filter_status_count_one": "1 filtro",
         "filter_status_clear": "Limpar filtros",
-        "query_placeholder": "Pesquisar por nome ou email…",
+        "query_placeholder": "Pesquisar agentes…",
         "empty_title": "Sem agentes atribuídos",
         "empty": "Escolha-os em «Adicionar agentes», no canto superior direito.",
         "no_results": "Nenhum agente corresponde ao filtro.",
@@ -2237,7 +2230,7 @@
   "agents": {
     "page_title": "Agentes",
     "create_button": "Novo agente",
-    "search_placeholder": "Buscar agente por nome, ID, ramal, email ou telefone...",
+    "search_placeholder": "Pesquisar agentes…",
     "no_results_query": "Nenhum agente corresponde a “{{query}}”.",
     "entity_singular": "agente",
     "table": {
@@ -2397,7 +2390,7 @@
         "active_aria": "Habilitado em {{name}}",
         "remove_aria": "Remover agente de {{name}}",
         "add_placeholder": "Adicionar grupo…",
-        "filter_placeholder": "Buscar grupo…",
+        "filter_placeholder": "Buscar grupos…",
         "no_results": "Nenhum grupo corresponde ao filtro.",
         "channel_not_offered": "Este grupo não oferece o canal",
         "filter_label": "Filtrar por atribuição",

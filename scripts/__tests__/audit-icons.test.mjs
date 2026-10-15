@@ -45,7 +45,8 @@ test('normaliza: minúsculas, sin tildes, sin ¿ ni interpolaciones', () => {
 test('concepto por la primera palabra; «Cerrar sesión» no es cerrar', () => {
   assert.equal(conceptoDe('Eliminar alternativa'), 'eliminar');
   assert.equal(conceptoDe('Cerrar sesión'), null);
-  assert.equal(conceptoDe('Añadir subcategoría a «X»'), 'anadirDebajo');
+  // Desde DD-210 §7, «Añadir subcategoría» es el «+» con texto al pie de cada categoría, no la flecha de cada fila.
+  assert.equal(conceptoDe('Añadir subcategoría a «X»'), 'anadir');
   assert.equal(conceptoDe('Avanzar 10 segundos'), 'avanzar10');
   assert.equal(conceptoDe('Avanzar'), null);
 });

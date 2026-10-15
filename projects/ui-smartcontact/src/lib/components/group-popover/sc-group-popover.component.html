@@ -1,21 +1,37 @@
-<button
-  #trigger
-  type="button"
-  class="group-popover__trigger"
-  [attr.aria-label]="countAriaLabel() ?? ('sc.groupPopover.count' | translate: { count: count() })"
-  [attr.aria-describedby]="count() > 0 ? namesId : null"
-  (mouseenter)="onTriggerEnter($event)"
-  (mouseleave)="onPointerLeave()"
-  (focus)="onTriggerFocus($event)"
-  (blur)="onPointerLeave()"
-  (keydown)="onKeydown($event)"
-  (click)="onClick()"
->
-  {{ 'sc.groupPopover.countShort' | translate: { count: count() } }}
-</button>
+@if (adaptive() && count() === 0) {
+  <!-- Ninguno: el «—» de una celda sin dato (DD-197), oculto al lector, que oye «Sin grupos». -->
+  <span class="group-popover__empty" aria-hidden="true">—</span>
+  <span class="group-popover__hidden">{{ emptyAriaLabel() ?? ('sc.groupPopover.none' | translate) }}</span>
+} @else if (single(); as group) {
+  <!-- Uno: su nombre, sin desplegable. Si no cabe, «…» y el nombre entero en su globo. -->
+  <span
+    #singleName
+    class="group-popover__name"
+    [pTooltip]="group.name"
+    [tooltipDisabled]="!truncated()"
+    tooltipPosition="top"
+    >{{ group.name }}</span
+  >
+} @else {
+  <button
+    #trigger
+    type="button"
+    class="group-popover__trigger"
+    [attr.aria-label]="countAriaLabel() ?? ('sc.groupPopover.count' | translate: { count: count() })"
+    [attr.aria-describedby]="count() > 0 ? namesId : null"
+    (mouseenter)="onTriggerEnter($event)"
+    (mouseleave)="onPointerLeave()"
+    (focus)="onTriggerFocus($event)"
+    (blur)="onPointerLeave()"
+    (keydown)="onKeydown($event)"
+    (click)="onClick()"
+  >
+    {{ 'sc.groupPopover.countShort' | translate: { count: count() } }}
+  </button>
 
-<!-- Los nombres, para el lector: los dice después de la cifra al enfocarla. Un texto `hidden` vale como descripción. -->
-<span [id]="namesId" hidden>{{ names() }}</span>
+  <!-- Los nombres, para el lector: los dice después de la cifra al enfocarla. Un texto `hidden` vale como descripción. -->
+  <span [id]="namesId" hidden>{{ names() }}</span>
+}
 
 <!-- El globo es solo para la vista: Popover se anuncia como diálogo modal y el foco nunca entra (se abre al pasar
      o al enfocar la cifra), así que para el lector sobra; los nombres ya los lleva la descripción. -->

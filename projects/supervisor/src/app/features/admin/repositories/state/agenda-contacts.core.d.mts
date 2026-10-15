@@ -69,7 +69,7 @@ export function decodificarCsv(bytes: Uint8Array): string;
 export interface ImportacionDeContactos {
   readonly nuevos: readonly Omit<AgendaContact, 'id'>[];
   /** Cada línea que no entra por error, con su número en el archivo. */
-  readonly errores: readonly { readonly linea: number; readonly motivo: 'nombre' | 'telefono' }[];
+  readonly errores: readonly { readonly linea: number; readonly motivo: 'telefono' }[];
   /** Los que ya estaban en la agenda o se repiten en el archivo. */
   readonly repetidos: number;
   /** Los que pasarían la agenda del tope. */

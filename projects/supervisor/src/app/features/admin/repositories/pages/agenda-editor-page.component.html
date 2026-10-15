@@ -23,7 +23,7 @@
     <h1 class="page__heading sc-text-title-semibold">{{ form().name.trim() || ('repositories.agendas.create_title' | translate) }}</h1>
 
 
-    <sc-section-card titleKey="repositories.agendas.section_general" surface="card" icon="contacts">
+    <sc-section-card titleKey="repositories.agendas.section_general" surface="subtle" icon="contacts">
       <section class="sub-section">
         <div class="grid grid--2">
           <div class="field">
@@ -55,7 +55,7 @@
     <!-- Cómo llama esta agenda a sus cinco campos personalizados (en Voice eran «Personalizado 1 a 5», fijos). Al crear
          no sale: aún no hay contactos que los usen; aparece al editar. -->
     @if (mode() === 'edit') {
-    <sc-section-card titleKey="repositories.agendas.custom_labels_title" surface="card" icon="edit">
+    <sc-section-card titleKey="repositories.agendas.custom_labels_title" surface="subtle" icon="edit">
       <section class="sub-section">
         <p class="sc-text-body-regular">{{ 'repositories.agendas.custom_labels_hint' | translate }}</p>
         <div class="grid grid--2">
@@ -76,10 +76,11 @@
     </sc-section-card>
     }
 
-    <sc-section-card titleKey="repositories.agendas.contacts" surface="card" icon="call">
+    <sc-section-card titleKey="repositories.agendas.contacts" surface="subtle" icon="call">
       <section class="sub-section">
         <sc-agenda-contacts-table
           [contacts]="form().contacts"
+          [fields]="contactColumns()"
           (add)="contactDialog.set({ contact: null })"
           (importar)="abrirImportar()"
           (edit)="contactDialog.set({ contact: $event })"
@@ -89,7 +90,7 @@
     </sc-section-card>
 
     <!-- Los agentes que ven esta agenda, la última sección: quién la tiene (en Voice, un muro de casillas). -->
-    <sc-section-card titleKey="repositories.agendas.section_agents" surface="card" icon="headphones">
+    <sc-section-card titleKey="repositories.agendas.section_agents" surface="subtle" icon="headphones">
       <section class="sub-section">
         <sc-agenda-agents-table
           [agents]="agentsStore.agents()"
@@ -102,7 +103,7 @@
 </div>
 
 <!-- Añadir o editar un contacto con el formulario de los «+» de Recursos (`sc-repo-form-panel`, a sangre en el
-     diálogo): el nombre lo exige el panel, y el teléfono, `validateContact`. -->
+     diálogo). Ningún campo obligatorio: `validateContact` pide al menos uno con texto y, si hay teléfono, que valga. -->
 @if (contactDialog(); as dialog) {
   <sc-dialog
     [visible]="true"
@@ -119,6 +120,7 @@
       [initial]="dialog.contact"
       [existingNames]="[]"
       [entitySingular]="'repositories.agendas.contact' | translate"
+      [nameRequired]="false"
       [validate]="validateContact"
       (save)="onContactSave($event)"
       (cancelled)="contactDialog.set(null)"
@@ -129,61 +131,12 @@
 <!-- Importar contactos de un CSV, como en Voice (DD-166): la plantilla, el archivo y, antes de añadir nada, qué entra y
      qué no. Lo que entra va al formulario, sin guardar. -->
 @if (importOpen()) {
-  <sc-dialog [visible]="true" [title]="'repositories.agendas.import_title' | translate" (cancelled)="cerrarImportar()">
-    <div class="importar">
-      <div class="importar__acciones">
-        <sc-button
-          size="sm"
-          variant="secondary"
-          appearance="text"
-          icon="download"
-          [label]="'repositories.agendas.import_template' | translate"
-          (clicked)="descargarPlantilla()"
-        />
-        <!-- El input nativo va oculto y lo abre un botón del DS, como en los mensajes de la ficha de grupo: fuera del
-             tabulador y del lector, que si no anuncian un segundo botón «Choose File» en inglés. -->
-        <input #archivo class="visually-hidden" type="file" tabindex="-1" aria-hidden="true" accept=".csv,text/csv" (change)="onImportFile($event)" />
-        <sc-button
-          size="sm"
-          variant="secondary"
-          appearance="outlined"
-          icon="upload"
-          [label]="(importPreview() ? 'repositories.agendas.import_choose_other' : 'repositories.agendas.import_choose') | translate"
-          (clicked)="archivo.click()"
-        />
-      </div>
-      @if (importResumen(); as resumen) {
-        <div class="importar__vista" role="status">
-          <p class="sc-text-body-semibold">{{ resumen.entran }}</p>
-          @if (resumen.errores) {
-            <p class="sc-text-body-regular">{{ resumen.errores }}</p>
-            <ul class="importar__errores sc-text-caption-regular">
-              @for (linea of resumen.lineas; track $index) {
-                <li>{{ linea }}</li>
-              }
-              @if (resumen.mas) {
-                <li>{{ resumen.mas }}</li>
-              }
-            </ul>
-          }
-          @if (resumen.repetidos) {
-            <p class="sc-text-body-regular">{{ resumen.repetidos }}</p>
-          }
-          @if (resumen.sobran) {
-            <p class="sc-text-body-regular">{{ resumen.sobran }}</p>
-          }
-        </div>
-      }
-    </div>
-    <div modal-actions>
-      <sc-button type="button" size="sm" variant="secondary" appearance="outlined" (clicked)="cerrarImportar()">
-        <span>{{ 'common.cancel' | translate }}</span>
-      </sc-button>
-      @if (importResumen()?.confirmar; as confirmar) {
-        <sc-button type="button" size="sm" (clicked)="confirmarImportar()">
-          <span>{{ confirmar }}</span>
-        </sc-button>
-      }
-    </div>
-  </sc-dialog>
+  <sc-import-dialog
+    [title]="'repositories.agendas.import_title' | translate"
+    [summary]="importResumen()"
+    (templateRequest)="descargarPlantilla()"
+    (fileSelected)="onImportFile($event)"
+    (confirmed)="confirmarImportar()"
+    (cancelled)="cerrarImportar()"
+  />
 }

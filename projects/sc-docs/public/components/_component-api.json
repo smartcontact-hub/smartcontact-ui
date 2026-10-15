@@ -4921,7 +4921,7 @@
     {
       "selector": "sc-group-popover",
       "name": "group-popover",
-      "primengBase": "primeng/popover",
+      "primengBase": "primeng/popover, primeng/tooltip",
       "estado": "experimental",
       "faltas": [
         "kit"
@@ -4950,6 +4950,26 @@
           "nativo": null
         },
         {
+          "nombre": "display",
+          "clase": "input",
+          "tipo": "ScGroupPopoverDisplay",
+          "porDefecto": "'count'",
+          "requerido": false,
+          "descripcion": "Qué pinta la celda (`ScGroupPopoverDisplay`). Con `adaptive`, ninguno es «—» y uno es su nombre: la cifra con su desplegable solo cuando hay varios que enseñar.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "emptyAriaLabel",
+          "clase": "input",
+          "tipo": "string | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "Lo que oye el lector cuando no hay ninguno, con `adaptive`. Sin él, «Sin grupos».",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
           "nombre": "activated",
           "clase": "output",
           "tipo": "void",
@@ -4965,13 +4985,33 @@
         "ariaCloseLabel",
         "ariaLabel",
         "ariaLabelledBy",
+        "autoHide",
         "autoZIndex",
         "baseZIndex",
+        "content",
         "dismissable",
+        "escape",
+        "fitContent",
         "focusOnShow",
+        "hideDelay",
+        "hideOnEscape",
+        "life",
         "motionOptions",
+        "pTooltipPT",
+        "pTooltipUnstyled",
+        "positionLeft",
+        "positionStyle",
+        "positionTop",
+        "showDelay",
+        "showOnEllipsis",
         "style",
-        "styleClass"
+        "styleClass",
+        "tooltipDisabled",
+        "tooltipEvent",
+        "tooltipOptions",
+        "tooltipPosition",
+        "tooltipStyleClass",
+        "tooltipZIndex"
       ]
     },
     {
@@ -6127,7 +6167,7 @@
     {
       "selector": "sc-multiselect",
       "name": "multiselect",
-      "primengBase": "primeng/multiselect",
+      "primengBase": "primeng/chip, primeng/multiselect",
       "estado": "ready",
       "faltas": [],
       "retirado": null,
@@ -6165,8 +6205,13 @@
           "porDefecto": "'view_column'",
           "requerido": false,
           "descripcion": "Icono del selector compacto. El desplegable normal conserva expand_more.",
-          "origen": "nuestro",
-          "nativo": null
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Defines the icon to display.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
         },
         {
           "nombre": "label",
@@ -6175,8 +6220,13 @@
           "porDefecto": null,
           "requerido": false,
           "descripcion": "Etiqueta del campo. Se pinta con `sc-field-label` y es la que ata su `for` al `id` del control, así que **sin ella el campo no tiene nombre accesible** (o se le da uno por `ariaLabel`).",
-          "origen": "nuestro",
-          "nativo": null
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Defines the text to display.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
         },
         {
           "nombre": "required",
@@ -6252,10 +6302,10 @@
           "descripcion": null,
           "origen": "nativo",
           "nativo": {
-            "descripcion": "When present, it specifies that the component should have disabled state style.",
-            "porDefecto": "false",
+            "descripcion": "When present, it specifies that the element should be disabled.",
+            "porDefecto": null,
             "obsoleta": null,
-            "heredadaDe": "BaseEditableHolder"
+            "heredadaDe": null
           }
         },
         {
@@ -6479,6 +6529,16 @@
           }
         },
         {
+          "nombre": "chipOverflow",
+          "clase": "input",
+          "tipo": "ScMultiSelectChipOverflow",
+          "porDefecto": "'count'",
+          "requerido": false,
+          "descripcion": "Con `display=\"chip\"`, qué se ve al pasar de `maxSelectedLabels` (`ScMultiSelectChipOverflow`). Con `more`, lo elegido se sigue leyendo sin abrir la lista (revisión de producto del 2026-10-15, los grupos de una plantilla).",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
           "nombre": "selectedItemsLabel",
           "clase": "input",
           "tipo": "string",
@@ -6615,12 +6675,14 @@
         }
       ],
       "ocultas": [
+        "alt",
         "ariaFilterLabel",
         "autoOptionFocus",
         "autocomplete",
         "autofocus",
         "autofocusFilter",
         "chipIcon",
+        "chipProps",
         "dataKey",
         "displaySelectedLabel",
         "dropdownIcon",
@@ -6634,6 +6696,7 @@
         "group",
         "highlightOnSelect",
         "id",
+        "image",
         "lazy",
         "loading",
         "loadingIcon",
@@ -6645,6 +6708,8 @@
         "panelStyle",
         "panelStyleClass",
         "readonly",
+        "removable",
+        "removeIcon",
         "resetFilterOnHide",
         "scrollHeight",
         "selectAll",

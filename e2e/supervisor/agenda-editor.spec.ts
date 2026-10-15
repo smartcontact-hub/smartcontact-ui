@@ -44,8 +44,8 @@ test('el listado dice cuántos contactos tiene cada agenda, y la fila abre su ed
 
 test('añadir un contacto valida el teléfono y no lo repite; guardar lo deja en la agenda', async ({ page }) => {
   await goto(page, 'admin/agendas/editar/1');
-  await page.getByRole('button', { name: 'Añadir contacto' }).click();
-  const dialogo = page.getByRole('dialog', { name: 'Añadir contacto' });
+  await page.getByRole('button', { name: 'Nuevo contacto' }).click();
+  const dialogo = page.getByRole('dialog', { name: 'Nuevo contacto' });
   await dialogo.getByLabel('Nombre').fill('Ventas al por mayor');
   await dialogo.getByLabel('Teléfono', { exact: true }).fill('900 1OO 203');
   await dialogo.getByRole('button', { name: 'Crear' }).click();
@@ -100,7 +100,7 @@ test('Atrás con cambios sin guardar avisa; descartar no guarda', async ({ page 
 
 test('crear una agenda: «Crear» del listado lleva al editor vacío, y al crearla se queda en su edición', async ({ page }) => {
   await goto(page, 'admin/agendas');
-  await page.locator('sc-top-bar').getByRole('button', { name: 'Crear' }).click();
+  await page.locator('sc-top-bar').getByRole('button', { name: 'Nueva agenda' }).click();
   await expect(page).toHaveURL(/\/admin\/agendas\/crear$/);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Nueva agenda');
   await page.locator('#agenda-name').fill('Proveedores');
@@ -147,8 +147,8 @@ test('en la agenda grande, buscar o añadir desde otra página vuelve a la prime
 
   await tabla(page).getByRole('searchbox').fill('');
   await paginador.getByRole('button', { name: '5', exact: true }).click();
-  await page.getByRole('button', { name: 'Añadir contacto' }).first().click();
-  const dialogo = page.getByRole('dialog', { name: 'Añadir contacto' });
+  await page.getByRole('button', { name: 'Nuevo contacto' }).first().click();
+  const dialogo = page.getByRole('dialog', { name: 'Nuevo contacto' });
   await dialogo.getByLabel('Nombre').fill('Punto de venta nuevo');
   await dialogo.getByLabel('Teléfono', { exact: true }).fill('900 799 999');
   await dialogo.getByRole('button', { name: 'Crear' }).click();

@@ -19,7 +19,6 @@ import {
   type ScColumnCellContext,
   type ScColumnDef,
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
-  ScDialogComponent as DialogComponent,
   ScEmptyStateComponent as EmptyStateComponent,
   ScGroupPopoverComponent as GroupPopoverComponent,
   useBulkEntityI18n,
@@ -30,7 +29,7 @@ import { ResultadoAccionService, XlsxExportService } from '@core/services';
 import { LanguageService } from '@core/services/language.service';
 import { injectLangChange } from '@core/utils/lang-change';
 import { copyName } from '@shared/utils/copy-name';
-import { CeldaVaciaComponent, ListPageComponent } from '@shared/components';
+import { CeldaVaciaComponent, ImportDialogComponent, ListPageComponent } from '@shared/components';
 import { GroupsStore } from '@features/admin/groups/state/groups.store';
 import { resolveGroup } from '@features/admin/groups/data/groups-data';
 
@@ -63,10 +62,10 @@ const COLUMN_PREF_KEY = 'sc-tipificaciones-columns-v2';
     CeldaVaciaComponent,
     ButtonComponent,
     DeleteEntityDialogComponent,
-    DialogComponent,
     EmptyStateComponent,
     GroupPopoverComponent,
     IconComponent,
+    ImportDialogComponent,
     ListPageComponent,
     TooltipModule,
     TranslateModule,

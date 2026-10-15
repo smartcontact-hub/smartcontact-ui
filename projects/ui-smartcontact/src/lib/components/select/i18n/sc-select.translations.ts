@@ -9,8 +9,8 @@
 import type { TranslationObject } from '@ngx-translate/core';
 
 export const SC_SELECT_TRANSLATIONS: Record<string, TranslationObject> = {
-  es: { sc: { select: { empty: 'Sin opciones', empty_filter: 'Sin resultados', search: 'Buscar', selected: '{0} seleccionados' } } },
-  en: { sc: { select: { empty: 'No options', empty_filter: 'No results', search: 'Search', selected: '{0} selected' } } },
-  fr: { sc: { select: { empty: 'Aucune option', empty_filter: 'Aucun résultat', search: 'Rechercher', selected: '{0} sélectionnés' } } },
-  pt: { sc: { select: { empty: 'Sem opções', empty_filter: 'Sem resultados', search: 'Pesquisar', selected: '{0} selecionados' } } },
+  es: { sc: { select: { empty: 'Sin opciones', empty_filter: 'Sin resultados', search: 'Buscar', selected: '{0} seleccionados', more: '+{{count}} más' } } },
+  en: { sc: { select: { empty: 'No options', empty_filter: 'No results', search: 'Search', selected: '{0} selected', more: '+{{count}} more' } } },
+  fr: { sc: { select: { empty: 'Aucune option', empty_filter: 'Aucun résultat', search: 'Rechercher', selected: '{0} sélectionnés', more: '+{{count}} de plus' } } },
+  pt: { sc: { select: { empty: 'Sem opções', empty_filter: 'Sem resultados', search: 'Pesquisar', selected: '{0} selecionados', more: '+{{count}} mais' } } },
 };

@@ -72,6 +72,9 @@ export class RepoFormPanelComponent<T extends RepoEntity> implements OnInit, Aft
   readonly flush = input(false, { transform: booleanAttribute });
   /** El formulario en dos columnas, con los títulos de sección (`sectionKey`) a todo el ancho: para el de un contacto. */
   readonly twoColumns = input(false, { transform: booleanAttribute });
+  /** Sin nombre obligatorio: un contacto se guarda con cualquier dato, sea cual sea (revisión de producto del 2026-10-15).
+   *  Lo que haga falta entonces lo dice `validate`. */
+  readonly nameRequired = input(true, { transform: booleanAttribute });
   /** Dice «(opcional)» en cada campo que no es obligatorio. Con muchos campos opcionales, es ruido: se apaga. */
   readonly showOptional = input(true, { transform: booleanAttribute });
 
@@ -164,12 +167,12 @@ export class RepoFormPanelComponent<T extends RepoEntity> implements OnInit, Aft
   private checkValues(): boolean {
     const values = this.values();
     const name = (values['name'] ?? '').trim();
-    if (!name) {
+    if (!name && this.nameRequired()) {
       this.error.set(this.translate.instant('repositories.errors.name_required'));
       return false;
     }
     const initialName = this.initial()?.name ?? '';
-    const duplicate = this.existingNames().some(
+    const duplicate = !!name && this.existingNames().some(
       (n) =>
         n.toLowerCase() === name.toLowerCase() && n.toLowerCase() !== initialName.toLowerCase(),
     );

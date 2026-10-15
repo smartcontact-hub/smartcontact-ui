@@ -31,7 +31,7 @@
   [heading]="'labels.breadcrumb' | translate"
   [rows]="sorted()"
   [columns]="columns()"
-  [searchPlaceholder]="'common.search' | translate"
+  [searchPlaceholder]="'labels.search_placeholder' | translate"
   [searchFn]="matchesSearch"
   [(query)]="searchQuery"
   exportable
@@ -48,7 +48,7 @@
     [icon]="tagIcon"
     titleKey="labels.empty.title"
     bodyKey="labels.empty.text"
-    ctaKey="labels.empty.cta"
+    ctaKey="labels.create_button"
     (cta)="creating.set(true)"
   />
 

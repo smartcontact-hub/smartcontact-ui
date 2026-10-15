@@ -10,3 +10,10 @@ export interface GroupRef {
   readonly name: string;
   readonly active: boolean;
 }
+
+/**
+ * Qué pinta la celda. `count` (por defecto): siempre la cifra, que enseña los nombres al pasar. `adaptive`: según
+ * cuántos haya (revisión de producto del 2026-10-15): ninguno, «—» en gris suave y «Sin grupos» para el lector; uno,
+ * su nombre, con «…» y su globo si no cabe; dos o más, la cifra con su desplegable.
+ */
+export type ScGroupPopoverDisplay = 'count' | 'adaptive';

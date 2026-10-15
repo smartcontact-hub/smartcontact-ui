@@ -84,7 +84,8 @@ test('un título repetido no se guarda', async ({ page }) => {
 test('grupos: asignar uno desde la plantilla lo deja en la tabla', async ({ page }) => {
   await goto(page, 'admin/plantillas/editar/2');
   await page.locator('sc-multiselect:has(#template-groups) .p-multiselect').click();
-  await page.locator('.p-multiselect-overlay .p-multiselect-option').first().click();
+  // El primero que atiende el canal de la plantilla: los demás salen apagados (revisión de producto del 2026-10-15).
+  await page.locator('.p-multiselect-overlay .p-multiselect-option:not([data-p-disabled="true"])').first().click();
   await page.keyboard.press('Escape');
   await expect(page.locator('sc-top-bar').getByRole('button', { name: 'Guardar' })).toBeEnabled();
   await page.locator('sc-top-bar').getByRole('button', { name: 'Guardar' }).click();
@@ -93,7 +94,7 @@ test('grupos: asignar uno desde la plantilla lo deja en la tabla', async ({ page
     .toBeGreaterThan(0);
 });
 
-test('duplicar crea la copia con su nombre; «Acciones» trae importar, exportar y la plantilla', async ({ page }) => {
+test('duplicar crea la copia con su nombre; «Acciones» trae importar y exportar', async ({ page }) => {
   await goto(page, 'admin/plantillas');
   const fila = page.locator('[data-testid="templates-table"] .p-datatable-tbody > tr', { hasText: 'Saludo inicial' });
   await fila.getByLabel('Más acciones').click();
@@ -101,13 +102,13 @@ test('duplicar crea la copia con su nombre; «Acciones» trae importar, exportar
   await expect(page.locator('[data-testid="templates-table"] .p-datatable-tbody > tr', { hasText: 'Saludo inicial (copia)' })).toBeVisible();
 
   await page.getByRole('button', { name: 'Acciones', exact: true }).click();
-  await expect(page.getByRole('menuitem')).toHaveText([/Importar plantillas/, /Exportar plantillas/, /Descargar plantilla CSV/]);
+  await expect(page.getByRole('menuitem')).toHaveText(['Importar', 'Exportar']);
 });
 
 test('importar: la vista previa dice qué entra y qué no, y lo importado aparece en su pestaña', async ({ page }) => {
   await goto(page, 'admin/plantillas');
   await page.getByRole('button', { name: 'Acciones', exact: true }).click();
-  await page.getByRole('menuitem', { name: /Importar plantillas/ }).click();
+  await page.getByRole('menuitem', { name: 'Importar', exact: true }).click();
   const d = page.getByRole('dialog', { name: 'Importar plantillas' });
   const csv = ['Título;Canal;Contenido', 'Recordatorio;WhatsApp;Hola *{cliente}*\\nHasta pronto', ';chat;sin título', 'Saludo inicial;chat;repetida'].join('\n');
   await d.locator('input[type="file"]').setInputFiles({ name: 'plantillas.csv', mimeType: 'text/csv', buffer: Buffer.from(csv, 'utf8') });

@@ -1,0 +1,107 @@
+/* El botón, en la barra de su tabla; el globo no pinta aquí (va a `body`): sin caja, para que no sume hueco. */
+:host {
+  display: inline-flex;
+
+  > p-popover {
+    display: contents;
+  }
+}
+
+/* EL GLOBO DE COLUMNAS, el «Column Toggle» de primeng.dev/table (DD-176). Sus utilidades de Tailwind, en el paso del Kit
+ * más cercano y en los tokens semánticos que salen de los mismos de Aura (medido en primeng.dev el 2026-10-05):
+ *   · cabecera `px-4 py-3` (16 · 12) → 15,75 · 12,25, con la raya `border-surface-200` → `--sc-border-default` (slate-200);
+ *   · título `text-sm font-semibold` → `sc-text-body-semibold` (14);
+ *   · lista `py-2` (8) → 8,75, y `max-h-80 overflow-auto`, que solo hace falta con muchas (las que llevan buscador);
+ *   · fila `px-3 py-1.5 mx-1 gap-2 rounded-md` (12 · 6 · 4 · 8 · 6) → 12,25 · 5,25 · 3,5 · 8,75 · radio md, y
+ *     `hover:bg-surface-100` → `--sc-bg-hover`; se arrastra (`cursor-move`), salvo la fija;
+ *   · asa `bars` de 14 en `text-surface-400` → `drag_handle` en `--sc-border-strong` (slate-400): decorativa, sin texto;
+ *   · nombre `text-sm` → `sc-text-body-regular`.
+ * Botón, Popover y casilla son los nativos, con los tokens del preset: el editor de temas de PrimeNG los lee tal cual. */
+.column-toggle__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sc-spacing-0-625);
+  padding: var(--sc-spacing-0-875) var(--sc-spacing-1-125);
+  border-block-end: 1px solid var(--sc-border-default);
+}
+
+.column-toggle__title {
+  color: var(--sc-text-heading);
+}
+
+/* El buscador, con muchas columnas: bajo la cabecera, con el relleno de sus filas. */
+.column-toggle__search {
+  padding: var(--sc-spacing-0-625) var(--sc-spacing-1-125) 0;
+}
+
+.column-toggle__list {
+  padding-block: var(--sc-spacing-0-625);
+}
+
+/* `max-h-80 overflow-auto` del ejemplo (20rem), en el paso del Kit más cercano (`scale/25`, 350): con buscador son
+ * muchas, y el globo no pasa de la pantalla. */
+.column-toggle__list--scroll {
+  max-height: var(--sc-spacing-25);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.column-toggle__row {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-625);
+  padding: var(--sc-spacing-0-375) var(--sc-spacing-0-875);
+  margin-inline: var(--sc-spacing-0-25);
+  border-radius: var(--sc-radius-200);
+  cursor: move;
+  user-select: none;
+
+  &:hover {
+    background: var(--sc-bg-hover);
+  }
+}
+
+.column-toggle__row--locked,
+.column-toggle__row--static {
+  cursor: default;
+}
+
+.column-toggle__handle {
+  flex: none;
+  color: var(--sc-border-strong);
+}
+
+.column-toggle__label {
+  color: var(--sc-text-primary);
+  cursor: pointer;
+}
+
+.column-toggle__row--locked .column-toggle__label {
+  cursor: default;
+}
+
+/* La fija no se mueve, y mientras se busca no se ordena: sin asa a la vista, y su hueco se queda para que las casillas
+ * sigan en columna. */
+.column-toggle__row--locked .column-toggle__handle,
+.column-toggle__row--static .column-toggle__handle {
+  visibility: hidden;
+}
+
+.column-toggle__empty {
+  margin: 0;
+  padding: var(--sc-spacing-0-375) var(--sc-spacing-1-125);
+  color: var(--sc-text-secondary);
+}
+
+/* La fila mientras se arrastra, y su hueco: los del ejemplo (`--p-content-background`, `--p-content-border-radius` y
+ * `--p-overlay-popover-shadow`, en sus semánticos). */
+.column-toggle-drag-preview {
+  background: var(--sc-bg-surface);
+  border-radius: var(--sc-radius-200);
+  box-shadow: var(--sc-shadow-dropdown);
+}
+
+.column-toggle__list .cdk-drag-placeholder {
+  opacity: 0.4;
+}

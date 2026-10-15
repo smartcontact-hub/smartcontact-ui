@@ -1253,6 +1253,16 @@ menú, y la iconografía de transcripciones tiene sus tres insignias.
 - **Tarjeta de datos del resumen**: blanca (`bg/surface`) con borde de 1 en `border/subtle` y radio `radius/xl`, sin
   sombra, en agente, grupo y usuario; sus baldosas, `Tone=Brand`.
 
+## 49 · Tablas: la celda de grupos según cuántos, y el multiselect con «+N más» (2026-10-15, DD-210)
+
+- **GroupPopover**: el maestro gana la variante `Display=Adaptive` con sus tres casos: ninguno, «—» en `text/subtle`;
+  uno, el nombre del grupo en `text/primary`, sin subrayado, cortado con «…» si no cabe; dos o más, la cifra con su
+  subrayado de puntos, como hoy (`Display=Count`).
+- **MultiSelect**, `Display=Chip`: pasado el tope, las primeras etiquetas y otra con «+N más», sin «×» (`chipOverflow`
+  `more`); hoy el maestro solo enseña «N seleccionados».
+- **Opción apagada con su porqué** en un desplegable (los grupos de una plantilla): el nombre apagado y, a su lado, el
+  motivo en `caption` y `text/subtle` («No atiende Chat»).
+
 ## Lo de estas semanas que NO va a Figma, y por qué
 
 - **El juego de datos** (Demo · Editorial · Tortura, en Configuración → Sistema → Datos; DD-124): es una herramienta de

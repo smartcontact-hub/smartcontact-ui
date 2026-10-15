@@ -10,8 +10,8 @@
   gap: var(--sc-spacing-1);
 }
 
-/* El buscador y, a su derecha, las dos acciones: 7 entre ellas, que van juntas, y 14 hasta el buscador, que es otra
- * cosa (los 7 del hueco más los 7 de su margen). */
+/* El buscador y Columnas, que cambian lo que se ve, a 7; y a su derecha las dos acciones: 7 entre ellas, que van
+ * juntas, y 14 hasta Columnas, que es otra cosa (los 7 del hueco más los 7 de su margen). */
 .contacts__bar {
   display: flex;
   align-items: center;
@@ -20,6 +20,9 @@
 
 .contacts__search {
   flex: 1 1 auto;
+}
+
+.contacts__columns {
   margin-inline-end: var(--sc-spacing-0-5);
 }
 

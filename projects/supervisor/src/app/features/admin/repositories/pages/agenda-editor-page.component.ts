@@ -13,6 +13,7 @@ import type { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { LanguageService } from '@core/services/language.service';
 import { injectLangChange } from '@core/utils/lang-change';
+import { ImportDialogComponent } from '@shared/components';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 
 import { AgendaAgentsTableComponent } from '../components/agenda-agents-table/agenda-agents-table.component';
@@ -61,6 +62,7 @@ const VACIA: AgendaDraft = { name: '', description: '', contacts: [], customLabe
     AgendaContactsTableComponent,
     ButtonComponent,
     DialogComponent,
+    ImportDialogComponent,
     InputTextComponent,
     MessageComponent,
     RepoFormPanelComponent,
@@ -187,9 +189,9 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
   /* ── Contactos ────────────────────────────────────────────────────────── */
 
   /**
-   * Los campos del formulario de un contacto: los de Voice, agrupados, con nombre y teléfono (los de siempre, los que
-   * coinciden con los del puesto de agente) como únicos obligatorios. Los personalizados llevan la etiqueta de ESTA
-   * agenda, o «Personalizado N».
+   * Los campos del formulario de un contacto: los de Voice, agrupados. Ninguno es obligatorio, pero no se guarda sin al
+   * menos uno con texto (`validateContact`; revisión de producto del 2026-10-15). Los personalizados llevan la etiqueta
+   * de ESTA agenda, o «Personalizado N».
    */
   protected readonly contactFields = computed<readonly RepoFieldDef[]>(() => {
     this.lang();
@@ -206,10 +208,29 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
           wide: clave === 'workAddress' || clave === 'homeAddress' || clave === 'notes' || clave === 'website',
           type: clave === 'notes' ? 'textarea' : 'text',
           inputType: clave.startsWith('phone') || clave === 'fax' ? 'tel' : 'text',
-          required: clave === 'name' || clave === 'phone',
         };
       }),
     );
+  });
+
+  /**
+   * Los 34 campos de un contacto, en el orden del CSV, con el nombre que tienen en esta agenda: la cabecera de la
+   * plantilla y las columnas que puede enseñar la tabla de contactos.
+   */
+  protected readonly contactColumns = computed(() => {
+    this.lang();
+    const t = (clave: string) => this.translate.instant(`repositories.agendas.${clave}`);
+    return CAMPOS_DEL_CSV.map((clave) => ({
+      key: clave,
+      label:
+        clave === 'name'
+          ? this.translate.instant('repositories.columns.name')
+          : clave === 'phone'
+            ? t('phone')
+            : clave.startsWith('custom')
+              ? this.etiquetaPersonalizada(Number(clave.slice(6)))
+              : t(`fields.${clave}`),
+    }));
   });
 
   /** Cómo se llama el campo personalizado N en esta agenda. */
@@ -222,9 +243,14 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
   /** El diálogo de un contacto: `null` cerrado; con `contact: null`, para añadir. */
   protected readonly contactDialog = signal<{ readonly contact: AgendaContact | null } | null>(null);
 
-  /** El teléfono, válido y sin repetir en la agenda (comparado por sus cifras). Devuelve la clave del error. */
+  /**
+   * Al menos un dato con texto (solo espacios no cuenta: llegan ya recortados) y, si lleva teléfono, válido y sin repetir
+   * en la agenda (comparado por sus cifras). Devuelve la clave del error.
+   */
   protected readonly validateContact = (values: RepoFormSubmission): string | null => {
+    if (!Object.values(values).some((v) => !!v)) return 'repositories.agendas.errors.contact_empty';
     const phone = values['phone'] ?? '';
+    if (!phone) return null;
     if (!telefonoValido(phone)) return 'repositories.agendas.errors.phone_invalid';
     const propio = this.contactDialog()?.contact?.id ?? null;
     const clave = normalizarTelefono(phone);
@@ -275,11 +301,11 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
       lineas: vistos.map((e) =>
         this.translate.instant('repositories.agendas.import_error_line', {
           line: e.linea,
-          reason: this.translate.instant(e.motivo === 'nombre' ? 'repositories.agendas.import_reason_name' : 'repositories.agendas.import_reason_phone'),
+          reason: this.translate.instant('repositories.agendas.import_reason_phone'),
         }),
       ),
       mas: resto > 0 ? this.translate.instant('repositories.agendas.import_more_errors', { count: cifra(resto) }) : null,
-      repetidos: vista.repetidos > 0 ? frase('import_duplicates', vista.repetidos) : null,
+      repetidas: vista.repetidos > 0 ? frase('import_duplicates', vista.repetidos) : null,
       sobran: vista.sobran > 0 ? frase('import_over', vista.sobran) : null,
       confirmar: vista.nuevos.length > 0 ? frase('import_confirm', vista.nuevos.length) : null,
     };
@@ -299,15 +325,7 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
   protected descargarPlantilla(): void {
     const t = (clave: string) => this.translate.instant(`repositories.agendas.${clave}`);
     // La cabecera, con los nombres de los campos en el idioma de la app y los personalizados como los llama esta agenda.
-    const cabecera = CAMPOS_DEL_CSV.map((clave) =>
-      clave === 'name'
-        ? this.translate.instant('repositories.columns.name')
-        : clave === 'phone'
-          ? t('phone')
-          : clave.startsWith('custom')
-            ? this.etiquetaPersonalizada(Number(clave.slice(6)))
-            : t(`fields.${clave}`),
-    );
+    const cabecera = this.contactColumns().map((c) => c.label);
     const blob = new Blob([plantillaCsv(cabecera)], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
