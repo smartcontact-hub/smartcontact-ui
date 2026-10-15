@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { canonShadow, pickToken } from '../effects-rewire.mjs';
+import { canonShadow, pickToken, shadowConHex } from '../effects-rewire.mjs';
 
 // effects-rewire: la canonización compara el shadow del preset (design-rem) con el token (px).
 
@@ -38,4 +38,16 @@ test('pickToken · sin token de su componente → cae al primero con ese valor (
 
 test('pickToken · valor fuera del Kit → null (no se repunta)', () => {
   assert.equal(pickToken('x', '0 9 9 9 #abcdef', new Map([['sc-cmp-a-shadow', '0 1 2 0 #fff']])), null);
+});
+
+test('shadowConHex · ve también las claves camelCase (raisedShadow, checkedShadow, insetShadow), no solo `shadow`', () => {
+  assert.deepEqual(shadowConHex('        shadow: "0 1px 2px 0 #1212170d",'), { key: 'shadow', raw: '0 1px 2px 0 #1212170d' });
+  assert.deepEqual(shadowConHex('        raisedShadow: "0 0.071429rem 0.357143rem 0 #0000001f",'), { key: 'raisedShadow', raw: '0 0.071429rem 0.357143rem 0 #0000001f' });
+  assert.equal(shadowConHex('            insetShadow: "0 0.071429rem 0.071429rem 0 #0000001f, 0 0.071429rem 0 0 #0000000f",')?.key, 'insetShadow');
+  assert.equal(shadowConHex('        checkedShadow: "0 0.071429rem 0.142857rem 0 #0000000a",')?.key, 'checkedShadow');
+});
+
+test('shadowConHex · ignora none y var(): ya leen un token', () => {
+  assert.equal(shadowConHex('        shadow: "none",'), null);
+  assert.equal(shadowConHex('        raisedShadow: "var(--sc-cmp-button-raised-shadow)",'), null);
 });

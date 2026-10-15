@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  inject,
   input,
   model,
   output,
@@ -13,10 +14,13 @@ import {
 // INTERNO hacia `<p-datepicker>` (no es el CVA exterior, que se retiró).
 import { FormsModule } from '@angular/forms';
 import { DatePicker, DatePickerModule } from 'primeng/datepicker';
+import type { DatePickerPassThrough } from 'primeng/types/datepicker';
 import { ScButtonComponent } from '../button/sc-button.component';
 import { ScFieldLabelComponent } from '../field/sc-field-label.component';
 import { ScFieldMsgComponent } from '../field/sc-field-msg.component';
 import { createScFieldState, createScPanelSizing, type ScFieldSize } from '../field/sc-field';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { SC_DATEPICKER_TRANSLATIONS } from './i18n/sc-datepicker.translations';
 
 /** @deprecated Usa `ScFieldSize`. Alias conservado por compatibilidad de imports. */
 export type ScDatepickerSize = ScFieldSize;
@@ -53,7 +57,7 @@ export interface ScDatepickerPreset {
 @Component({
   selector: 'sc-datepicker',
   standalone: true,
-  imports: [DatePickerModule, FormsModule, ScButtonComponent, ScFieldLabelComponent, ScFieldMsgComponent],
+  imports: [DatePickerModule, FormsModule, ScButtonComponent, ScFieldLabelComponent, ScFieldMsgComponent, TranslateModule],
   templateUrl: './sc-datepicker.component.html',
   styleUrl: './sc-datepicker.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -68,6 +72,14 @@ export interface ScDatepickerPreset {
   },
 })
 export class ScDatepickerComponent {
+  constructor() {
+    // Copy fijo colocado: registra solo el diccionario del componente.
+    const translate = inject(TranslateService);
+    for (const [language, dict] of Object.entries(SC_DATEPICKER_TRANSLATIONS)) {
+      translate.setTranslation(language, dict, true);
+    }
+  }
+
   // ─── Chrome ────────────────────────────────────────────────────────
   readonly size = input<ScFieldSize>('md');
   /**
@@ -120,7 +132,7 @@ export class ScDatepickerComponent {
    */
   readonly presets = input<readonly ScDatepickerPreset[]>([]);
   /** Rótulo del botón que vacía la fecha en el pie con atajos. */
-  readonly clearLabel = input<string>('Limpiar');
+  readonly clearLabel = input<string | null>(null);
 
   // ─── Two-way value binding ─────────────────────────────────────────
   /** La fecha elegida, o `null` si no hay ninguna. Enlace de dos sentidos: `[(value)]`. */
@@ -145,6 +157,21 @@ export class ScDatepickerComponent {
   protected readonly msgId = this.field.msgId;
   protected readonly isInvalid = this.field.isInvalid;
   protected readonly footerText = this.field.footerText;
+
+  /**
+   * Los `aria-*` del campo van al `<input>` que recibe el foco, por passthrough (`pt.pcInputText`): un lector de
+   * pantalla anuncia los del elemento enfocado, y en la envoltura `<p-datepicker>` no llegaban (medido en
+   * `sc-datepicker.component.spec.ts`). Mismo arreglo que `sc-select` (DD-133).
+   */
+  protected readonly pt = computed<DatePickerPassThrough>(() => ({
+    pcInputText: {
+      root: {
+        'aria-describedby': this.footerText() ? this.msgId() : null,
+        'aria-required': this.required() ? 'true' : null,
+        'aria-invalid': this.isInvalid() ? 'true' : null,
+      },
+    },
+  }));
 
   private readonly panel = createScPanelSizing('sc-datepicker', this.size);
   protected readonly pSize = this.panel.pSize;

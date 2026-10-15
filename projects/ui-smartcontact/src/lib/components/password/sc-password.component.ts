@@ -19,6 +19,8 @@ import { ScIconComponent } from '@smartcontact-hub/icons';
 import { ScFieldLabelComponent } from '../field/sc-field-label.component';
 import { ScFieldMsgComponent } from '../field/sc-field-msg.component';
 import { createScFieldState, type ScFieldSize } from '../field/sc-field';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { SC_PASSWORD_TRANSLATIONS } from './i18n/sc-password.translations';
 
 /** Los patrones de PrimeNG para medir la fuerza: media y fuerte (débil es cualquier otra cosa que no esté vacía). */
 const MEDIA = /^(((?=.*[a-z])(?=.*[A-Z]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*[0-9])))(?=.{6,})/;
@@ -48,7 +50,7 @@ function fuerzaDe(valor: string): 0 | 1 | 2 | 3 {
 @Component({
   selector: 'sc-password',
   standalone: true,
-  imports: [InputPassword, ScIconComponent, ScFieldLabelComponent, ScFieldMsgComponent],
+  imports: [InputPassword, ScIconComponent, ScFieldLabelComponent, ScFieldMsgComponent, TranslateModule],
   templateUrl: './sc-password.component.html',
   styleUrl: './sc-password.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -62,6 +64,14 @@ function fuerzaDe(valor: string): 0 | 1 | 2 | 3 {
   },
 })
 export class ScPasswordComponent {
+  constructor() {
+    // Copy fijo colocado: registra solo el diccionario del componente.
+    const translate = inject(TranslateService);
+    for (const [language, dict] of Object.entries(SC_PASSWORD_TRANSLATIONS)) {
+      translate.setTranslation(language, dict, true);
+    }
+  }
+
   private readonly primeng = inject(PrimeNG);
 
   // ─── Inputs (los mismos que sc-inputtext donde aplican) ────────────
@@ -124,9 +134,9 @@ export class ScPasswordComponent {
   /** Botón para mostrar u ocultar la contraseña. */
   readonly toggleMask = input(true, { transform: booleanAttribute });
   /** Nombre accesible del botón cuando la contraseña está oculta (i18n lo resuelve el consumidor). */
-  readonly showAriaLabel = input<string>('Mostrar contraseña');
+  readonly showAriaLabel = input<string | null>(null);
   /** Nombre accesible del botón cuando la contraseña está visible. */
-  readonly hideAriaLabel = input<string>('Ocultar contraseña');
+  readonly hideAriaLabel = input<string | null>(null);
 
   // ─── Two-way value binding (signal-friendly) ───────────────────────
   /** Current value. Use `[(value)]="signalName"` from consumers. */

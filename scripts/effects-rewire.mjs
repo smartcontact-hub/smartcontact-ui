@@ -67,6 +67,16 @@ export function pickToken(comp, canon, tokens) {
   return byVal.find((n) => n.startsWith(`sc-cmp-${comp}-`)) ?? byVal[0];
 }
 
+/**
+ * La sombra con hex de una línea de un preset, o null. Vale cualquier clave que acabe en `shadow` o `Shadow`
+ * (`shadow`, `raisedShadow`, `checkedShadow`, `insetShadow`…): buscar solo `shadow:` en minúscula dejaba sin vigilar
+ * los hex de las camelCase. Solo literales con hex: ignora `none` y `var()`.
+ */
+export function shadowConHex(linea) {
+  const m = linea.match(/\b(\w*[sS]hadow):\s*"([^"]*#[^"]+)"/);
+  return m ? { key: m[1], raw: m[2] } : null;
+}
+
 /** Escanea los presets de componente → [{ file, comp, line, raw, canon, token }]. base.ts EXCLUIDO. */
 export function scan(tokens) {
   const rows = [];
@@ -74,11 +84,11 @@ export function scan(tokens) {
     const comp = file.replace('.ts', '');
     const lines = readFileSync(resolve(PRESET_DIR, file), 'utf8').split('\n');
     lines.forEach((ln, i) => {
-      const m = ln.match(/shadow:\s*"([^"]*#[^"]+)"/); // solo literales con hex (ignora 'none' y var())
+      const m = shadowConHex(ln);
       if (!m) return;
-      const canon = canonShadow(m[1]);
+      const canon = canonShadow(m.raw);
       const token = canon ? pickToken(comp, canon, tokens) : null;
-      rows.push({ file, comp, line: i + 1, raw: m[1], canon, token });
+      rows.push({ file, comp, line: i + 1, key: m.key, raw: m.raw, canon, token });
     });
   }
   return rows;
@@ -111,7 +121,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
       const p = resolve(PRESET_DIR, file);
       let txt = readFileSync(p, 'utf8');
       for (const r of frs) {
-        txt = txt.replace(`shadow: "${r.raw}"`, `shadow: "var(--${r.token})"`);
+        txt = txt.replace(`${r.key}: "${r.raw}"`, `${r.key}: "var(--${r.token})"`);
         n++;
       }
       writeFileSync(p, txt);

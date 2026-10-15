@@ -49,6 +49,8 @@ export class ScCommandPaletteComponent {
   protected readonly host = inject(ScCommandPaletteService);
 
   protected readonly searchIcon = 'search';
+  /** Quien tenía el foco al abrir: se le devuelve al cerrar. */
+  private opener: HTMLElement | null = null;
   protected readonly query = signal('');
   protected readonly highlighted = signal(0);
 
@@ -85,9 +87,14 @@ export class ScCommandPaletteComponent {
     /* Reset palette state every time it opens, and focus the search input. */
     effect(() => {
       if (this.host.visible()) {
+        this.opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
         this.query.set('');
         this.highlighted.set(0);
         queueMicrotask(() => this.searchInput()?.nativeElement.focus());
+      } else if (this.opener) {
+        // Un diálogo modal devuelve el foco a quien lo abrió; si la acción ya navegó y ese nodo no está, no hay a quién.
+        if (this.opener.isConnected) this.opener.focus();
+        this.opener = null;
       }
     });
 
@@ -120,6 +127,12 @@ export class ScCommandPaletteComponent {
     }
     if (!this.host.visible()) return;
     switch (event.key) {
+      case 'Tab':
+        // El foco vive en el campo de búsqueda (las flechas mueven el resaltado, no el foco): Tab no tiene a dónde ir
+        // sin salirse a un fondo que `aria-modal` dice inerte.
+        event.preventDefault();
+        this.searchInput()?.nativeElement.focus();
+        break;
       case 'Escape':
         event.preventDefault();
         this.host.close();
@@ -138,6 +151,9 @@ export class ScCommandPaletteComponent {
         break;
     }
   }
+
+  /** Etiqueta del comando resaltado, para la región `aria-live` que lo anuncia. */
+  protected readonly activeLabel = computed(() => this.filtered()[this.highlighted()]?.label ?? '');
 
   protected indexOf(cmd: ScPaletteCommand): number {
     return this.filtered().findIndex((c) => c.id === cmd.id);

@@ -25,7 +25,7 @@
       type="button"
       class="sc-search__clear"
       (click)="onClear()"
-      [attr.aria-label]="clearAriaLabel()"
+      [attr.aria-label]="clearAriaLabel() || ('sc.search.clear' | translate)"
     >
       <sc-icon [name]="clearIcon" size="inherit" />
     </button>
