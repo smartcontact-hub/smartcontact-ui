@@ -1719,7 +1719,7 @@
           "tipo": "string",
           "porDefecto": "'Color'",
           "requerido": false,
-          "descripcion": "Rótulo accesible del radiogroup. Default 'Color' (idéntico es/en).",
+          "descripcion": "Rótulo accesible del grupo de colores. Default 'Color' (idéntico es/en).",
           "origen": "nuestro",
           "nativo": null
         }
