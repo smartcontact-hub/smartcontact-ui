@@ -49,22 +49,19 @@ test('cada canal es un bloque con sus partes dentro, y cada parte pesa más que 
   }
 });
 
-test('Chat: distribución, cola, y por subcanal sus mensajes, su horario y su acceso; WhatsApp sin número no sigue', async ({ page }) => {
+test('Chat: distribución, cola, y una parte por subcanal con su nombre (Web Chat y WhatsApp), como sus casillas en General', async ({ page }) => {
   await goto(page, DISTRIBUCION);
-  expect(await partes(page.locator('#group-channel-chat'))).toEqual([
-    'Distribución',
-    'Cola',
-    'Mensajes de Web Chat',
-    'Horario de Web Chat',
-    'Dominios y scripts de Web Chat',
-    'Acceso WhatsApp',
-  ]);
+  expect(await partes(page.locator('#group-channel-chat'))).toEqual(['Distribución', 'Cola', 'Web Chat', 'WhatsApp']);
 });
 
 test('Teléfono: la música va en la cola, y los demás mensajes, plegados y sin «anuncio»', async ({ page }) => {
   await goto(page, DISTRIBUCION);
   const tel = page.locator('#group-channel-phone');
-  expect(await partes(tel)).toEqual(['Distribución', 'Cola', 'Mensajes en cola']);
+  expect(await partes(tel)).toEqual(['Distribución', 'Llamadas salientes', 'Cola', 'Mensajes en cola']);
+  // Lo que sale del grupo, junto y en su parte: el número que ve el cliente y el audio de esas llamadas.
+  const salientes = tel.locator('sc-slot').filter({ has: page.getByRole('heading', { name: 'Llamadas salientes', exact: true }) });
+  await expect(salientes.locator('#group-phone')).toBeVisible();
+  await expect(salientes.getByText('Audio saliente', { exact: true })).toBeVisible();
   const cola = tel.locator('sc-slot').filter({ has: page.getByRole('heading', { name: 'Cola', exact: true }) });
   await expect(cola.getByText('Música de espera/transferencia', { exact: true })).toBeVisible();
 

@@ -55,10 +55,10 @@ a2a837d4:docs/handoff/supervisor-fichas.md`.
   identificador, «Eres el siguiente» y el audio saliente nuevo (`conAudioSaliente`). Admite .wav y .mp3.
 - **Email**: las seis estrategias de Teléfono (Niveles con «Dentro de cada nivel» y la columna «Nivel Email»), tiempo
   de ringing y su cola. Desbordar sigue en «Reglas comunes».
-- **Rejilla**: Postconversación con los campos de Tipificar bajo su interruptor, alineados con su texto; las tarjetas de
-  «Tamaño de cola» a lo ancho de las dos columnas (`--sc-option-cards-gap`, nueva en el DS). `npm run revision`, en regla.
-- **Pruebas**: en local, a 1440, las 147 de grupo, las 2 de `sc-fileupload` y la nueva de Niveles en Email
-  (`ficha-grupo-niveles.spec.ts`, enrojece sin Niveles).
+- **Rejilla** (DD-205 §10 y §11): Tipificar bajo su interruptor; «Tamaño de cola» a dos columnas (`--sc-option-cards-gap`);
+  «Llamadas salientes» en Teléfono; «Web Chat» y «WhatsApp» como partes de Chat; Recursos en dos filas; `sc-textarea`
+  siempre en columna.
+- **Pruebas**: en local, a 1440, las de grupo, las 2 de `sc-fileupload` y la de Niveles en Email (enrojece sin él).
 - **Trampas**: `p-select` no acepta que le cambies el valor dentro de su propio `onChange`: para devolverlo a 2 hace falta
   `setTimeout(() => select.value.set(2))`. Y un `ng serve` que pilla `dist/` a medio construir se queda en error aunque
   el build acabe: reinícialo (el de sc-docs tapaba la página con `vite-error-overlay` y la prueba fallaba en el clic).

@@ -91,7 +91,7 @@
 | `sc-select` | EXTENDED | ready | primeng/select | 30 inputs | sc-field-label sc-field-msg | ✓ | 68 |
 | `sc-selectbutton` | EXTENDED | ready | primeng/selectbutton | 15 inputs | sc-field-msg | ✓ | 25 |
 | `sc-skeleton` | EXTENDED | ready | primeng/skeleton | 6 inputs | — | ✓ | 1 |
-| `sc-slot` | CUSTOM | experimental (sin maestro en el Kit) | — | 4 inputs | — | ✓ | 15 |
+| `sc-slot` | CUSTOM | experimental (sin maestro en el Kit) | — | 4 inputs | — | ✓ | 12 |
 | `sc-sticky-form-header` | CUSTOM | deprecated | — | 4 inputs | sc-button | ✓ | 2 |
 | `sc-subsection` | CUSTOM | experimental (sin maestro en el Kit) | — | 6 inputs | — | ✓ | 18 |
 | `sc-tabs` | STANDARD | ready | primeng/tabs | 1 inputs | — | ✓ | 2 |

@@ -211,7 +211,7 @@ Expone todo lo que PrimeNG documenta.
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-slot` · 15 usos · —
+### `sc-slot` · 12 usos · —
 
 Expone todo lo que PrimeNG documenta.
 

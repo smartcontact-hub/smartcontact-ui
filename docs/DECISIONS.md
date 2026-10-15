@@ -189,6 +189,11 @@ Postconversación y de la Cola distraía, y el «o suelta aquí» del uploader i
    de su interruptor, alineados con su texto y con rótulo visible («Tipificación», «En qué conversaciones se tipifica»);
    las tarjetas de «Tamaño de cola» ocupan las dos columnas de los campos, y debajo van «Máximo de conversaciones» y la
    música. El texto de soltar del uploader es una línea de ayuda, con el estilo de las demás.
+11. **Cada cosa en la parte que la nombra** (barrido de maquetación de todas las pantallas de grupos): Teléfono gana
+   «Llamadas salientes» (el teléfono y el audio salientes, que iban partidos por Distribución); en Chat, lo de cada
+   subcanal va en una parte con su nombre, «Web Chat» y «WhatsApp», como sus casillas en General (eran seis partes,
+   cada una con el subcanal en el título), y el horario, en su columna; en Recursos, las agendas en su fila y las
+   plantillas juntas debajo. `sc-textarea` va siempre en columna: sin ayuda dejaba 7 px de línea debajo del campo.
 
 **Razón** · Cada cambio sale de la revisión o de lo pedido después por escrito. El uploader de primeng.dev ya enseña lo
 que se pidió (ver qué hay, quitarlo y subir otro) sin piezas propias: `sc-fileupload` gana `saved`, `savedRemoved` y
@@ -204,6 +209,8 @@ dos columnas leen como un campo más de la rejilla; apiladas o con otro hueco, a
 - *Un botón de escuchar en la fila del audio*: deja de ser el nativo; queda para cuando se pida.
 - *Desbordar por canal, como Voice*: la ficha lo tiene en «Reglas comunes» y ninguna revisión pidió separarlo.
 - *Los campos de Tipificar a todo el ancho, sin sangría*: dejaba de verse que dependen de su interruptor.
+- *«Llamadas salientes» al final de Teléfono, como el acceso de los subcanales en Chat*: el teléfono saliente es
+  obligatorio y quedaba debajo de «Mensajes en cola», que nace plegado.
 
 **Consecuencias** · El modelo guarda cada audio como `{ name, size }` (lo de antes, solo el nombre, se lee con tamaño
 0) y el grupo gana `emailStrategy`, `emailSubStrategy` y `emailQueue`; los niveles por agente admiten Email.
@@ -212,8 +219,8 @@ imagen (customs-catalog §8; el tope `ds` de `audit:primeng-coupling` pasa a 13)
 «Subido». A 1366 × 660 el resumen de un grupo con los tres canales ya no cabe entero y se desplaza en su columna. Cierra
 la pregunta de DD-121 sobre los anuncios periódicos de postventa. Vigilan esto `resumen-enlazado.spec.ts`,
 `ficha-grupo-revision-equipo.spec.ts`, `grupo-tiempos-horarios.spec.ts`, `grupo-vision.spec.ts`,
-`tipificaciones-listado.spec.ts`, `ficha-grupo-canales.spec.ts`, `ficha-grupo-niveles.spec.ts` (Niveles en Email) y
-`components.spec.ts` (`sc-fileupload`).
+`tipificaciones-listado.spec.ts`, `ficha-grupo-canales.spec.ts`, `ficha-grupo-niveles.spec.ts` (Niveles en Email),
+`ficha-grupo-distribucion-orden.spec.ts` (las partes de cada canal) y `components.spec.ts` (`sc-fileupload`).
 
 ---
 

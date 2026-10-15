@@ -422,6 +422,13 @@ test.describe('sc-textarea', () => {
     await screenshotBaseline(page, 'textarea');
   });
 
+  test('sin ayuda, el campo mide lo que su textarea: sin el hueco de línea que separaba de más al campo siguiente', async ({ page }) => {
+    await gotoPage(page, 'textarea');
+    const host = page.getByTestId('sc-textarea');
+    const [h, t] = [await host.boundingBox(), await host.locator('textarea').boundingBox()];
+    expect(Math.round(h!.y + h!.height)).toBe(Math.round(t!.y + t!.height));
+  });
+
   test('copyable: copiar va dentro del campo, solo con icono, el texto no pasa por debajo y dice «Copiado» (DD-198)', async ({ page, context }) => {
     await context.grantPermissions(['clipboard-read', 'clipboard-write']);
     await gotoPage(page, 'textarea');

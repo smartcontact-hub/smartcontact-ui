@@ -383,27 +383,6 @@
                    anuncia con el campo. Sustituye a las dos ayudas sueltas de Niveles y Agente exclusivo. -->
               <sc-select inputId="group-strategy" ariaLabelledBy="group-strategy-label" optionLabel="label" optionValue="value" [options]="phoneStrategyOptions" [value]="form().strategy" [helperText]="strategyHelpKey() ? (strategyHelpKey()! | translate) : undefined" (valueChange)="onStrategyValueChange($event)" />
             </div>
-            <!-- El número que ve el cliente cuando le llama un agente del grupo: un campo principal del canal, no
-                 un dato de identidad (visión de producto de grupos, 2026-09-25). -->
-            <div class="field">
-              <!-- Obligatorio con Teléfono, como el nombre, y de los números asignados: no se escribe (DD-142). -->
-              <label id="group-phone-label" class="field__label sc-text-caption-semibold" for="group-phone">
-                {{ 'groups.form.fields.phone' | translate }}
-                <span class="field__required" aria-hidden="true">*</span>
-              </label>
-              <!-- `for` no nombra un `span[role=combobox]`: sin `ariaLabelledBy`, el lector leía el número como nombre (DD-133). -->
-              <sc-select
-                inputId="group-phone"
-                ariaLabelledBy="group-phone-label"
-                required
-                [options]="phoneOptions()"
-                [value]="form().phone || null"
-                [placeholder]="'groups.form.fields.phone_placeholder' | translate"
-                [helperText]="'groups.form.fields.phone_hint' | translate"
-                [error]="phoneError() ? (phoneError()! | translate) : undefined"
-                (valueChange)="onPhoneValueChange($event)"
-              />
-            </div>
             @if (isRingAll()) {
               <div class="field">
                 <label id="group-ring-all-label" class="field__label sc-text-caption-semibold" for="group-ring-all">{{ 'groups.form.fields.ring_all' | translate }}</label>
@@ -426,8 +405,34 @@
               <label class="field__label sc-text-caption-semibold" for="group-wrap-up" [id]="'group-wrap-up-label'">{{ 'groups.form.advanced.wrap_up' | translate }}</label>
               <sc-select inputId="group-wrap-up" [value]="form().advanced.wrapUpSec" [helperText]="'groups.form.advanced.wrap_up_hint' | translate" (valueChange)="setAdvancedNumber('wrapUpSec', $event)" optionValue="value" [options]="durationOptions(form().advanced.wrapUpSec, false)" [ariaLabelledBy]="'group-wrap-up-label'" />
             </div>
-            <!-- El audio de las llamadas que hace el grupo, en el bloque de su teléfono saliente. Solo si backoffice lo
-                 habilita para el cliente (revisión del 2026-10-15; como en Voice). -->
+          </div>
+        </sc-slot>
+
+        <!-- Lo que sale del grupo, en su parte y justo después de cómo reparte: el número que ve el cliente cuando le llama
+             un agente (un campo principal del canal, visión de producto de grupos, 2026-09-25) y el audio de esas llamadas.
+             En Distribución, el número compartía fila con la estrategia y el audio iba tres filas más abajo. -->
+        <sc-slot titleKey="groups.form.distribution.outbound">
+          <div class="grid grid--2">
+            <div class="field">
+              <!-- Obligatorio con Teléfono, como el nombre, y de los números asignados: no se escribe (DD-142). -->
+              <label id="group-phone-label" class="field__label sc-text-caption-semibold" for="group-phone">
+                {{ 'groups.form.fields.phone' | translate }}
+                <span class="field__required" aria-hidden="true">*</span>
+              </label>
+              <!-- `for` no nombra un `span[role=combobox]`: sin `ariaLabelledBy`, el lector leía el número como nombre (DD-133). -->
+              <sc-select
+                inputId="group-phone"
+                ariaLabelledBy="group-phone-label"
+                required
+                [options]="phoneOptions()"
+                [value]="form().phone || null"
+                [placeholder]="'groups.form.fields.phone_placeholder' | translate"
+                [helperText]="'groups.form.fields.phone_hint' | translate"
+                [error]="phoneError() ? (phoneError()! | translate) : undefined"
+                (valueChange)="onPhoneValueChange($event)"
+              />
+            </div>
+            <!-- Solo si backoffice lo habilita para el cliente (revisión del 2026-10-15; como en Voice). -->
             @if (conAudioSaliente) {
               <div class="field">
                 <span class="field__label sc-text-caption-semibold" id="group-outbound-audio-label">{{ 'groups.form.announcements.outbound_audio' | translate }}</span>
@@ -455,7 +460,7 @@
 
         <!-- Los demás mensajes de la cola vuelven a la vista (salieron el 2026-09-25 y seguían en el modelo), plegados:
              casi nunca se cambian. Sin la palabra «anuncio»: son mensajes, como en Chat (DD-157). «Audio saliente» va en
-             Distribución, con el teléfono saliente. -->
+             Llamadas salientes, con el teléfono saliente. -->
         <sc-slot titleKey="groups.form.distribution.queue_messages" hintKey="groups.form.distribution.queue_messages_hint" collapsible initiallyCollapsed>
           <div class="queue-messages">
             <div class="grid grid--2">
@@ -571,20 +576,15 @@
           </div>
         </sc-slot>
 
-        <!-- Después de Distribución y Cola, lo propio de cada subcanal y en este orden (revisión de grupos, 2026-10-06):
-             Web Chat con sus mensajes, su horario y su acceso, y luego WhatsApp con su número, mensajes y horario. Web Chat y
-             WhatsApp comparten cola, pero no hablan igual: cada uno escribe los suyos. Vacío = no se envía nada. -->
+        <!-- Después de Distribución y Cola, lo propio de cada subcanal, en una parte con su nombre, el de su casilla en
+             General: Web Chat con sus mensajes, su horario y su acceso, y WhatsApp con su número, mensajes y horario
+             (revisión de grupos, 2026-10-06). Eran seis partes sueltas, cada una con su divisor y el subcanal repetido en
+             el título. Web Chat y WhatsApp comparten cola, pero no hablan igual: cada uno escribe los suyos. -->
         @if (hasWebChat()) {
-          <sc-slot titleKey="groups.form.distribution.webchat_messages" hintKey="groups.form.chat.messages_hint">
-            <ng-container *ngTemplateOutlet="chatMessages; context: { sub: 'chat', set: 'frame' }" />
-          </sc-slot>
-
-          <sc-slot titleKey="groups.form.distribution.webchat_schedule">
-            <ng-container *ngTemplateOutlet="chatSchedule; context: { sub: 'chat' }" />
-          </sc-slot>
-
-          <sc-slot titleKey="groups.form.distribution.webchat_access">
+          <sc-slot [titleKey]="channelKeys.chat" hintKey="groups.form.distribution.webchat_hint">
             <div class="grid">
+              <ng-container *ngTemplateOutlet="chatMessages; context: { sub: 'chat', set: 'frame' }" />
+              <ng-container *ngTemplateOutlet="chatSchedule; context: { sub: 'chat' }" />
               <div class="field">
                 <label class="field__label sc-text-caption-semibold" for="group-chat-domain">{{ 'groups.form.advanced.allowed_domains' | translate }}</label>
                 <!-- `p-inputtags` de primeng.dev (DD-195): Enter, la coma, pegar o salir del campo añaden; cada dominio se quita
@@ -601,25 +601,21 @@
         }
 
         @if (hasWhatsApp()) {
-          <sc-slot titleKey="groups.form.distribution.whatsapp_number">
-            <div class="grid grid--2">
-              <div class="field">
-                <label id="group-chat-whatsapp-label" class="field__label sc-text-caption-semibold" for="group-chat-whatsapp">{{ 'groups.form.advanced.whatsapp_number' | translate }}</label>
-                <sc-select inputId="group-chat-whatsapp" ariaLabelledBy="group-chat-whatsapp-label" optionLabel="label" optionValue="value" [options]="whatsappOptions()" [value]="form().advanced.whatsappNumber" (valueChange)="setWhatsappNumber($event)" />
+          <sc-slot [titleKey]="channelKeys.whatsapp" hintKey="groups.form.distribution.whatsapp_hint">
+            <div class="grid">
+              <div class="grid grid--2">
+                <div class="field">
+                  <label id="group-chat-whatsapp-label" class="field__label sc-text-caption-semibold" for="group-chat-whatsapp">{{ 'groups.form.advanced.whatsapp_number' | translate }}</label>
+                  <sc-select inputId="group-chat-whatsapp" ariaLabelledBy="group-chat-whatsapp-label" optionLabel="label" optionValue="value" [options]="whatsappOptions()" [value]="form().advanced.whatsappNumber" (valueChange)="setWhatsappNumber($event)" />
+                </div>
               </div>
+              <!-- Sin número, WhatsApp no tiene a quién escribir ni de dónde: lo que sigue no se pinta. -->
+              @if (form().advanced.whatsappNumber) {
+                <ng-container *ngTemplateOutlet="chatMessages; context: { sub: 'whatsapp', set: 'frame' }" />
+                <ng-container *ngTemplateOutlet="chatSchedule; context: { sub: 'whatsapp' }" />
+              }
             </div>
           </sc-slot>
-
-          <!-- Sin número, WhatsApp no tiene a quién escribir ni de dónde: lo que sigue no se pinta. -->
-          @if (form().advanced.whatsappNumber) {
-            <sc-slot titleKey="groups.form.distribution.whatsapp_messages" hintKey="groups.form.chat.messages_hint">
-              <ng-container *ngTemplateOutlet="chatMessages; context: { sub: 'whatsapp', set: 'frame' }" />
-            </sc-slot>
-
-            <sc-slot titleKey="groups.form.distribution.whatsapp_schedule">
-              <ng-container *ngTemplateOutlet="chatSchedule; context: { sub: 'whatsapp' }" />
-            </sc-slot>
-          }
         }
       </sc-subsection>
     }
@@ -666,6 +662,8 @@
   >
     <sc-subsection titleKey="sidebar.repositories">
       <div class="bloque">
+      <!-- Las agendas en su fila y las plantillas juntas en la de debajo: en la misma rejilla, «Plantillas de chat» iba
+           al lado de las agendas y «Plantillas de email» bajaba sola. -->
       <div class="grid grid--2">
         <div class="field">
           <label class="field__label sc-text-caption-semibold" for="group-agendas">
@@ -693,7 +691,9 @@
             <sc-button icon="add" variant="secondary" [ariaLabel]="'groups.form.fields.agenda_new' | translate" [pTooltip]="'groups.form.fields.agenda_new' | translate" tooltipPosition="top" (clicked)="recursoAbierto.set({ tipo: 'agenda', id: null })" />
           </div>
         </div>
+      </div>
 
+      <div class="grid grid--2">
         @if (hasChatFamily()) {
           <div class="field">
             <label class="field__label sc-text-caption-semibold" for="group-templates-chat">
@@ -844,9 +844,12 @@
      «fuera de horario» ni día no valorable. -->
 <ng-template #chatSchedule let-sub="sub">
   <div class="grid">
-    <div class="field">
-      <label [id]="'group-' + sub + '-schedule-label'" class="field__label sc-text-caption-semibold" [for]="'group-' + sub + '-schedule'">{{ 'groups.form.chat.attendance_schedule' | translate }}</label>
-      <sc-select [inputId]="'group-' + sub + '-schedule'" [ariaLabelledBy]="'group-' + sub + '-schedule-label'" optionValue="value" optionDisabled="disabled" [options]="attendanceOptions(sub)" [value]="attendanceSchedule(sub)" (valueChange)="setAttendanceSchedule(sub, $event)" />
+    <!-- En su columna, como los demás desplegables de la sección: a todo el ancho era el único. -->
+    <div class="grid grid--2">
+      <div class="field">
+        <label [id]="'group-' + sub + '-schedule-label'" class="field__label sc-text-caption-semibold" [for]="'group-' + sub + '-schedule'">{{ 'groups.form.chat.attendance_schedule' | translate }}</label>
+        <sc-select [inputId]="'group-' + sub + '-schedule'" [ariaLabelledBy]="'group-' + sub + '-schedule-label'" optionValue="value" optionDisabled="disabled" [options]="attendanceOptions(sub)" [value]="attendanceSchedule(sub)" (valueChange)="setAttendanceSchedule(sub, $event)" />
+      </div>
     </div>
     @if (attendanceSchedule(sub) !== null) {
       <ng-container *ngTemplateOutlet="chatMessages; context: { sub: sub, set: 'schedule' }" />

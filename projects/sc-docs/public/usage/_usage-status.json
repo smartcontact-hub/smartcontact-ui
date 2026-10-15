@@ -629,7 +629,7 @@
     },
     {
       "selector": "sc-slot",
-      "usedInSupervisor": 15
+      "usedInSupervisor": 12
     },
     {
       "selector": "sc-sticky-form-header",

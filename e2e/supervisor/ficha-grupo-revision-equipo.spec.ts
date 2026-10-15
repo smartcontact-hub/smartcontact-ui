@@ -55,11 +55,13 @@ test('Ring All: «Nº agentes simultáneos»; 3 o más vuelve a 2 con «Opción 
 test('WhatsApp: sin número no hay mensajes ni horario; Web Chat: los mensajes de horario piden un horario', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/11?seccion=distribucion');
   const chat = page.locator('#group-channel-chat');
-  await expect(chat.getByText('Mensajes de WhatsApp')).toHaveCount(0);
-  await expect(chat.getByText('Horario de WhatsApp')).toHaveCount(0);
+  const mensajesWhatsApp = chat.locator('[id^="group-chat-msg-whatsapp-"]');
+  const horarioWhatsApp = chat.locator('#group-whatsapp-schedule');
+  await expect(mensajesWhatsApp).toHaveCount(0);
+  await expect(horarioWhatsApp).toHaveCount(0);
   await pickSelectOption(page, page.locator('#group-chat-whatsapp'), '+34 900 100 200');
-  await expect(chat.getByText('Mensajes de WhatsApp')).toBeVisible();
-  await expect(chat.getByText('Horario de WhatsApp')).toBeVisible();
+  await expect(mensajesWhatsApp.first()).toBeVisible();
+  await expect(horarioWhatsApp).toBeVisible();
 
   await expect(chat.getByText('Mensaje de horario', { exact: true })).toHaveCount(0);
   await pickSelectOption(page, page.locator('#group-chat-schedule'), 'Turno Mañana');

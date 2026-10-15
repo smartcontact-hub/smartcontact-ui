@@ -2,14 +2,16 @@
  * sc-textarea con `copyable` (DD-198): el botón de copiar va DENTRO del campo, arriba a la derecha, y el texto le deja
  * su sitio. 42 (`--sc-spacing-3`) = 7 de aire + 28 del botón pequeño de solo icono + 7.
  */
-/* Con ayuda o con copiar: el control y debajo su ayuda, sin el hueco de línea que deja un `textarea` en línea. */
-:host(.sc-textarea--stack) {
+/* El control y, si la lleva, debajo su ayuda, sin el hueco de línea que deja un `textarea` en línea: 7 px bajo el campo
+ * que separaban de más al campo siguiente (medido en la ficha de grupo, Web Chat, 2026-10-15). Antes solo con ayuda o
+ * con copiar (`.sc-textarea--stack`, que sigue en la etiqueta). */
+:host {
   display: inline-flex;
   flex-direction: column;
   max-width: 100%;
 }
 
-:host(.sc-textarea--stack.sc-textarea--fluid) {
+:host(.sc-textarea--fluid) {
   display: flex;
 }
 
