@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { rutaInterna } from '@shared/utils/ruta-interna.core.mjs';
 
 /**
  * Marca de la PESTAÑA: con ella la app se enmarca en el laboratorio del Sidebar en vez del shell.
@@ -56,9 +57,11 @@ export const appRoutes: Routes = [
     canActivate: [
       () => {
         sessionStorage.setItem(LAB_SIDEBAR_KEY, '1');
+        // Solo rutas de ESTA app: `//dominio-ajeno` empieza por `/` y el navegador lo resuelve como otro dominio.
         const to = new URLSearchParams(location.search).get('to');
-        const target = to?.startsWith('/') ? to : localStorage.getItem(LAB_SIDEBAR_RETURN_KEY);
-        location.assign(target?.startsWith('/') && !target.startsWith('/lab/') ? target : '/config/aed');
+        const target =
+          rutaInterna(to, location.origin) ?? rutaInterna(localStorage.getItem(LAB_SIDEBAR_RETURN_KEY), location.origin);
+        location.assign(target && !target.startsWith('/lab/') ? target : '/config/aed');
         return false;
       },
     ],
