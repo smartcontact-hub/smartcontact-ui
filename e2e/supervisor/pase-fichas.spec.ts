@@ -58,10 +58,11 @@ test.describe('la franja, por debajo de 1340', () => {
           Math.round(e.getBoundingClientRect().left)
         )
       );
-    // Chat y los dos números, todos en Distribución (DD-204): Teléfono y cada tipo de recurso son un botón, no un `scFactRow`, y
-    // quedan fuera de la subrejilla a propósito (revisión de diseño, 2026-10-11: «quedan a su aire en su propia
-    // fila»). Sobre una lista vacía, «todos alineados» se cumpliría.
-    expect(xs).toHaveLength(3);
+    // Teléfono, Chat, Email y los dos números, todos en Distribución (DD-204): Teléfono es un enlace como Chat desde
+    // DD-206 §1, y cada tipo de recurso, un botón que no es un `scFactRow` y queda fuera de la subrejilla a propósito
+    // (revisión de diseño, 2026-10-11: «quedan a su aire en su propia fila»). Sobre una lista vacía, «todos alineados»
+    // se cumpliría.
+    expect(xs).toHaveLength(5);
     expect(new Set(xs).size, `x de cada valor: ${xs.join(', ')}`).toBe(1);
   });
 });

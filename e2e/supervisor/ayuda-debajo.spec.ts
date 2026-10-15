@@ -26,7 +26,7 @@ const abrirMensajesEnCola = async (page: Page) => {
   if ((await plegado.getAttribute('aria-expanded')) === 'false') await plegado.click();
 };
 
-test('Mensajes en cola · la ayuda va debajo del segmentado, los dos controles a la misma altura, y no salta', async ({ page }) => {
+test('Mensajes en cola · la ayuda va debajo del segmentado, un mensaje debajo del otro, y no salta', async ({ page }) => {
   await abrirMensajesEnCola(page);
   const campo = (nombre: string) => page.locator('.field', { has: page.getByText(nombre, { exact: true }) });
   const id = campo('Identificador del grupo');
@@ -41,8 +41,8 @@ test('Mensajes en cola · la ayuda va debajo del segmentado, los dos controles a
   expect(ayuda.y, 'la ayuda, debajo de las opciones').toBeGreaterThanOrEqual(opciones.y + opciones.height);
   await expect(id.locator('p-selectbutton')).toHaveAccessibleDescription(await id.locator('.sc-selectbutton__msg').innerText());
 
-  // En la rejilla, los dos segmentados a la misma altura aunque sus ayudas midan distinto.
-  expect(Math.round((await caja(siguiente.locator('p-selectbutton'))).y)).toBe(Math.round(opciones.y));
+  // Uno debajo del otro desde DD-206 §12: con «Archivo», el uploader ocupa la fila entera, como todo audio.
+  expect((await caja(siguiente.locator('p-selectbutton'))).y, '«Eres el siguiente», debajo de la ayuda del identificador').toBeGreaterThan(ayuda.y + ayuda.height);
 
   // Lo que abre la opción va después de la ayuda, y la ayuda no se mueve.
   await id.getByRole('button', { name: 'Sin locución' }).click();
