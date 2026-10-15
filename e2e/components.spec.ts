@@ -664,7 +664,7 @@ test.describe('sc-fileupload', () => {
     await expect(host.getByText(/voz\.mp3/)).toBeVisible();
   });
 
-  test('`saved`: lo guardado sale como subido, sin miniatura rota; elegir otro lo sustituye y la ✕ con nombre lo quita', async ({ page }) => {
+  test('`saved` sin `auto`: lo guardado sale como subido; lo elegido, pendiente con su barra; subirlo lo sustituye, y la ✕ con nombre lo quita', async ({ page }) => {
     await gotoPage(page, 'fileupload');
     const host = page.getByTestId('sc-fileupload-saved');
     const filas = host.locator('.p-fileupload-file');
@@ -672,8 +672,14 @@ test.describe('sc-fileupload', () => {
     await expect(filas).toContainText('musica-espera.wav');
     await expect(filas.locator('.p-fileupload-file-thumbnail')).toBeHidden();
     await host.locator('input[type="file"]').setInputFiles({ name: 'otra.mp3', mimeType: 'audio/mpeg', buffer: Buffer.from('ID3') });
+    // El «Advanced» de primeng.dev: el archivo elegido, pendiente y con la barra, sin miniatura rota; el guardado sigue.
+    await expect(filas).toHaveCount(2);
+    await expect(host.locator('.p-progressbar')).toBeVisible();
+    await expect(filas.first().locator('.p-fileupload-file-thumbnail')).toBeHidden();
+    await host.getByRole('button', { name: 'Subir', exact: true }).click();
     await expect(filas).toHaveCount(1);
     await expect(filas).toContainText('otra.mp3');
+    await expect(host.locator('.p-progressbar')).toHaveCount(0);
     await host.getByRole('button', { name: 'Quitar archivo' }).click();
     await expect(filas).toHaveCount(0);
   });

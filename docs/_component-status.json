@@ -821,10 +821,11 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/fileupload",
       "cva": false,
-      "inputs": 19,
+      "inputs": 21,
       "api": [
         "accept",
         "auto",
+        "cancelLabel",
         "chooseIconName",
         "chooseLabel",
         "clearAfterSelect",
@@ -845,6 +846,7 @@
         "removeLabel",
         "saved",
         "savedRemoved",
+        "uploadLabel",
         "uploaded",
         "url"
       ],

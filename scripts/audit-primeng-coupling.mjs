@@ -712,8 +712,8 @@ const COMPORTAMIENTO_PERMITIDO = {
   '.p-component.p-button:disabled:active, .p-component.p-button[aria-disabled="true"]:active': 'ídem, al pulsarlo (buttonMotionCss).',
   ':host ::ng-deep .p-toast .p-toast-message-icon, :host ::ng-deep .p-toast .p-toast-close-button':
     'el toast del Supervisor pinta su propio icono y su cierre (app.component.scss, uno de los 6 de `app`).',
-  ".sc-fileupload .p-fileupload-file-thumbnail[src='']":
-    'PrimeNG pinta la miniatura aunque el archivo no sea una imagen: un `<img src="">` roto con su alt (los audios de Grupos, revisión del 2026-10-15).',
+  ".sc-fileupload .p-fileupload-file-thumbnail:is([src=''], :not([src]))":
+    'PrimeNG pinta la miniatura aunque el archivo no sea una imagen: un `<img>` roto, sin `src` o con él vacío, con su alt (los audios de Grupos, revisión del 2026-10-15).',
 };
 const cambiosNativos = [];
 for (const fs of Object.values(HOGARES)) {

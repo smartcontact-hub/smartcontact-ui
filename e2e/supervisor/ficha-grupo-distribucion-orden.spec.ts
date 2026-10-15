@@ -46,6 +46,12 @@ test('cada canal es un bloque con sus partes dentro, y cada parte pesa más que 
     const parte = await tamano(canal.locator('h4').first());
     const etiqueta = await tamano(canal.locator('.field__label').first());
     expect(parte, `${id}: el título de una parte, más grande que la etiqueta de un campo`).toBeGreaterThan(etiqueta);
+    // Un peldaño de la rampa por nivel (DD-206 §13): la sección sobre su bloque, y el bloque sobre su parte. Con el
+    // bloque y la parte a 14, «Teléfono» y su «Distribución» pesaban igual.
+    const bloque = await tamano(canal.locator('.sc-subsection__title').first());
+    const seccion = await tamano(page.locator('.section-card__title').first());
+    expect(bloque, `${id}: el título del bloque, más grande que el de una parte`).toBeGreaterThan(parte);
+    expect(seccion, `${id}: el título de la sección, más grande que el de su bloque`).toBeGreaterThan(bloque);
   }
 });
 

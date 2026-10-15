@@ -12,12 +12,15 @@ const AUDIO_SNIPPET = `<sc-fileupload
 <span>{{ musica() ?? 'Música por defecto' }}</span>`;
 
 const SAVED_SNIPPET = `<sc-fileupload
+  [auto]="false"
   accept=".wav,.mp3,audio/wav,audio/mpeg"
-  chooseLabel="Subir archivo"
+  chooseLabel="Elegir"
+  uploadLabel="Subir"
+  cancelLabel="Cancelar"
   dropLabel="o suelta aquí el archivo."
   removeLabel="Quitar archivo"
   [saved]="guardado()"
-  (filesSelected)="guardar($event)"
+  (uploaded)="guardar($event)"
   (savedRemoved)="guardado.set([])"
 />
 <p>Admite archivos .wav y .mp3.</p>`;

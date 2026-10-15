@@ -101,23 +101,30 @@ test('Web Chat y WhatsApp guardan horarios independientes y solo ofrecen los act
   await expect.poll(() => stored(page, 'ficha')).toMatchObject({ chat: { attendanceScheduleIds: { chat: 2, whatsapp: null } } });
 });
 
-test('música: elegir, cambiar y quitar deja un solo archivo en la lista del uploader y recupera el estado vacío', async ({ page }) => {
+test('música: elegir, subir, cambiar y quitar deja un solo archivo en la lista del uploader y recupera el estado vacío', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/11?seccion=distribucion');
   const music = page.getByRole('group', { name: 'Música de espera/transferencia', exact: true });
-  // El «Advanced» de primeng.dev (revisión del 2026-10-15): vacío, solo «Subir archivo» y la zona de soltar.
-  await expect(music.getByRole('button', { name: 'Subir archivo' })).toBeVisible();
+  // El «Advanced» de primeng.dev tal cual (revisión del 2026-10-15): «Elegir», «Subir» y «Cancelar», y la zona de soltar.
+  for (const boton of ['Elegir', 'Subir', 'Cancelar']) await expect(music.getByRole('button', { name: boton, exact: true })).toBeVisible();
   await expect(music.locator('.p-fileupload-file')).toHaveCount(0);
   const input = page.locator('#group-hold-music-upload input[type="file"]');
   await input.setInputFiles({ name: 'espera.wav', mimeType: 'audio/wav', buffer: Buffer.from('RIFFdemo') });
-  // Su fila: nombre, tamaño y «Subido», sin la miniatura rota de un archivo que no es imagen.
+  // Elegido: pendiente, con la barra de progreso, sin la miniatura rota de un archivo que no es imagen.
   const fila = music.locator('.p-fileupload-file');
   await expect(fila).toHaveCount(1);
   await expect(fila).toContainText('espera.wav');
   await expect(fila).toContainText('8.000 B'); // el tamaño como lo escribe PrimeNG (`formatSize`, tres decimales)
-  await expect(fila).toContainText('Subido');
+  await expect(fila).toContainText('Pendiente');
+  await expect(music.locator('.p-progressbar')).toBeVisible();
   await expect(fila.locator('.p-fileupload-file-thumbnail')).toBeHidden();
-  // Un solo archivo: elegir otro lo sustituye.
+  // Subido: a la lista de subidos, y la barra se va.
+  await music.getByRole('button', { name: 'Subir', exact: true }).click();
+  await expect(fila).toHaveCount(1);
+  await expect(fila).toContainText('Subido');
+  await expect(music.locator('.p-progressbar')).toHaveCount(0);
+  // Un solo archivo: subir otro lo sustituye.
   await input.setInputFiles({ name: 'otra.wav', mimeType: 'audio/wav', buffer: Buffer.from('RIFFdemo') });
+  await music.getByRole('button', { name: 'Subir', exact: true }).click();
   await expect(fila).toHaveCount(1);
   await expect(fila).toContainText('otra.wav');
   await page.getByRole('button', { name: 'Guardar', exact: true }).click();
@@ -127,7 +134,7 @@ test('música: elegir, cambiar y quitar deja un solo archivo en la lista del upl
   await expect(fila).toContainText('otra.wav');
   await music.getByRole('button', { name: 'Quitar archivo' }).click();
   await expect(fila).toHaveCount(0);
-  await expect(music.getByRole('button', { name: 'Subir archivo' })).toBeVisible();
+  await expect(music.getByText('o suelta aquí el archivo.')).toBeVisible();
   await page.getByRole('button', { name: 'Guardar', exact: true }).click();
   await expect.poll(() => stored(page, 'ficha')).toMatchObject({ announcements: { holdMusicFile: null } });
 });

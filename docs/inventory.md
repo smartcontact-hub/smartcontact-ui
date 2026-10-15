@@ -63,7 +63,7 @@
 | `div[scFactRow]` | CUSTOM | experimental (sin maestro en el Kit) | — | 3 inputs | — | ✓ | — |
 | `sc-field-label` | CUSTOM | experimental (sin maestro en el Kit ni demo) | — | 3 inputs | — | — | — |
 | `sc-field-msg` | CUSTOM | experimental (sin maestro en el Kit ni demo) | — | 2 inputs | — | — | — |
-| `sc-fileupload` | EXTENDED | ready | primeng/fileupload | 19 inputs | — | ✓ | 2 |
+| `sc-fileupload` | EXTENDED | ready | primeng/fileupload | 21 inputs | — | ✓ | 2 |
 | `sc-form-danger-zone` | CUSTOM | experimental (sin maestro en el Kit) | — | 3 inputs | sc-button | ✓ | — |
 | `sc-form-section-nav` | CUSTOM | experimental (sin maestro en el Kit) | — | 7 inputs | — | ✓ | 6 |
 | `sc-gauge` | CUSTOM | experimental (sin maestro en el Kit) | — | 9 inputs | — | ✓ | 1 |

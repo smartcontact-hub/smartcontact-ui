@@ -25,7 +25,9 @@ import { ScIconComponent } from '@smartcontact-hub/icons';
  * Qué añade el wrapper, y por qué:
  *   - **Sin servidor por defecto.** El prototipo no sube a ningún sitio: sin `url`, la subida es propia
  *     (`customUpload`) y el componente solo entrega los archivos (`uploaded`). Con `url`, PrimeNG hace el envío.
- *   - **`auto` por defecto**: el archivo se entrega al elegirlo y desaparecen los botones «Subir» y «Cancelar».
+ *   - **`auto` por defecto**: el archivo se entrega al elegirlo y desaparecen los botones «Subir» y «Cancelar». Con
+ *     `[auto]="false"`, el «Advanced» de primeng.dev entero: «Elegir», «Subir» y «Cancelar», el archivo pendiente con su
+ *     barra, y al subir, a la lista de subidos (los audios de Grupos, revisión del 2026-10-15).
  *   - **`clearAfterSelect`** para quien guarda el archivo en otro sitio (un campo del formulario): la lista se vacía
  *     tras entregar, así el nombre no se pinta dos veces.
  *   - **`saved`: lo ya guardado, en la lista del propio componente** (revisión del 2026-10-15). Quien guarda el archivo
@@ -91,8 +93,13 @@ export class ScFileUploadComponent {
 
   /** Texto del botón de elegir, traducido. */
   readonly chooseLabel = input<string>();
-  /** Icono del botón de elegir, del DS (`sc-icon`): por defecto, el de subida. */
-  readonly chooseIconName = input('upload');
+  /** Textos de «Subir» y «Cancelar» (sin `auto`), traducidos. Sin ellos, los del locale de PrimeNG. */
+  readonly uploadLabel = input<string>();
+  readonly cancelLabel = input<string>();
+  /** Icono del botón de elegir, del DS (`sc-icon`). Por defecto, el de cada ejemplo de primeng.dev: el «+» en
+   *  `advanced` (su icono de serie) y la flecha de subida en `basic` (`chooseIcon="pi pi-upload"`). */
+  readonly chooseIconName = input<string>();
+  protected readonly chooseIcon = computed(() => this.chooseIconName() ?? (this.mode() === 'basic' ? 'upload' : 'add'));
   /** Texto de la zona de soltar, traducido. Sin él, la zona queda vacía. */
   readonly dropLabel = input<string>();
   /** Nombre de la ✕ de cada archivo, traducido: la de PrimeNG es un botón de solo icono sin nombre. */
@@ -116,10 +123,17 @@ export class ScFileUploadComponent {
 
   private readonly fu = viewChild<FileUpload>('fu');
 
-  /** El nombre de la ✕ entra por el passthrough de su botón (`pcFileRemoveButton`). */
+  /**
+   * Por el passthrough: el nombre de la ✕ (`pcFileRemoveButton`) y el icono de «Elegir» fuera del lector. PrimeNG pone
+   * `aria-label="true"` al envoltorio del icono propio (`#chooseicon`) y, sin `aria-hidden`, el botón se llamaba «true
+   * Elegir»; su icono de serie lleva los dos atributos y se llama «Choose» (medido en primeng.dev, 2026-10-15).
+   */
   protected readonly pt = computed(() => {
     const label = this.removeLabel();
-    return label ? { pcFileRemoveButton: { root: { 'aria-label': label } } } : undefined;
+    return {
+      pcChooseButton: { icon: { 'aria-hidden': 'true' } },
+      ...(label ? { pcFileRemoveButton: { root: { 'aria-label': label } } } : {}),
+    };
   });
 
   constructor() {

@@ -6,7 +6,7 @@ Contra **PrimeNG 22.1.0**, la versión INSTALADA — no la documentación de la 
 que puede ir por delante.
 
 **51 componentes** del DS se usan en el Supervisor, y entre todos esconden
-**489 props** que PrimeNG sí documenta.
+**487 props** que PrimeNG sí documenta.
 
 La regla es DD-113: *el nativo tal cual, adaptado con tokens*. Esconder una prop puede ser una
 decisión buena —los wrappers EXTENDED lo hacen a propósito— pero hasta ahora esa decisión no se
@@ -57,7 +57,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 ### `sc-fileupload` · 2 usos · primeng/fileupload
 
-**24 props nativas no expuestas**: `cancelButtonProps`, `cancelIcon`, `cancelLabel`, `cancelStyleClass`, `chooseButtonProps`, `chooseIcon`, `chooseStyleClass`, `customUpload`, `filesInput`, `headers`, `invalidFileLimitMessageDetail`, `invalidFileLimitMessageSummary`, `method`, `previewWidth`, `removeStyleClass`, `showCancelButton`, `showUploadButton`, `style`, `styleClass`, `uploadButtonProps`, `uploadIcon`, `uploadLabel`, `uploadStyleClass`, `withCredentials`
+**22 props nativas no expuestas**: `cancelButtonProps`, `cancelIcon`, `cancelStyleClass`, `chooseButtonProps`, `chooseIcon`, `chooseStyleClass`, `customUpload`, `filesInput`, `headers`, `invalidFileLimitMessageDetail`, `invalidFileLimitMessageSummary`, `method`, `previewWidth`, `removeStyleClass`, `showCancelButton`, `showUploadButton`, `style`, `styleClass`, `uploadButtonProps`, `uploadIcon`, `uploadStyleClass`, `withCredentials`
 
 ### `sc-column-selector` · 1 usos · primeng/popover
 

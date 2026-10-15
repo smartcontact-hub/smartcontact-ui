@@ -76,10 +76,10 @@ test('los tiempos llegan a 5 minutos y más', async ({ page }) => {
   await expect(page.locator('#group-phone-max-wait')).toHaveText('5 min');
 });
 
-test('subir audios: botón «Subir archivo», varios periódicos, .wav y .mp3, y rechazo de otros tipos', async ({ page }) => {
+test('subir audios: «Elegir», «Subir» y «Cancelar» como en primeng.dev, varios periódicos, .wav y .mp3, y rechazo de otros tipos', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/11?seccion=distribucion');
   const telefono = page.locator('#group-channel-phone');
-  await expect(telefono.locator('#group-hold-music-upload').getByRole('button', { name: 'Subir archivo' })).toBeVisible();
+  for (const boton of ['Elegir', 'Subir', 'Cancelar']) await expect(telefono.locator('#group-hold-music-upload').getByRole('button', { name: boton, exact: true })).toBeVisible();
 
   await telefono.getByRole('button', { name: /Mensajes en cola/ }).click();
   const periodicos = page.locator('#group-periodic-upload input[type="file"]');
@@ -94,6 +94,7 @@ test('subir audios: botón «Subir archivo», varios periódicos, .wav y .mp3, y
   // .wav y .mp3 entran (desarrollo, 2026-10-15); otro tipo se rechaza y lo dice.
   const musica = page.locator('#group-hold-music-upload');
   await musica.locator('input[type="file"]').setInputFiles({ name: 'voz.mp3', mimeType: 'audio/mpeg', buffer: Buffer.from('ID3') });
+  await musica.getByRole('button', { name: 'Subir', exact: true }).click();
   await expect(musica.locator('.p-fileupload-file')).toContainText('voz.mp3');
   await musica.locator('input[type="file"]').setInputFiles({ name: 'nota.txt', mimeType: 'text/plain', buffer: Buffer.from('hola') });
   await expect(telefono.getByText('tipo de archivo no válido', { exact: false })).toBeVisible();

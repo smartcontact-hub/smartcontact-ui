@@ -1018,7 +1018,7 @@ nativo; se mide y se decide con Rafa).
 | `.resumen__ring-value` (la clase que `[pt]="{ value: … }"` pone al «N%» de `p-progress-spinner`) | Oculta el «N%» del anillo del resumen de las fichas | El ejemplo «Preview» de ProgressSpinner en primeng.dev lo oculta igual; DD-126 | se queda: a 42 px no se lee y la cifra grande ya lo dice |
 | `.sc-multiselect--icon-only .p-multiselect-label-container` | Oculta el texto del control compacto manteniendo el alto nativo; icono y nombre accesible conservan su función | DD-153, F | se queda: libera espacio en la barra sin reemplazar el selector |
 | `sc-datatable.sc-datatable--overflow-right .sc-datatable__frozen-right-edge, sc-datatable.sc-datatable--overflow-left .sc-datatable__frozen-left-edge` | Sombra de las columnas fijas solo mientras ocultan contenido desplazable; desaparece al llegar al borde | DD-153, F | se queda: indica contenido detrás de la acción fija |
-| `.sc-fileupload .p-fileupload-file-thumbnail[src='']` | Oculta la miniatura de un archivo que no es imagen (PrimeNG pinta un `<img src="">` roto con el nombre en su `alt`); la de una imagen sigue | Los audios de la ficha de grupo, revisión del 2026-10-15 | se queda: primeng.dev solo enseña imágenes y no tiene el caso |
+| `.sc-fileupload .p-fileupload-file-thumbnail:is([src=''], :not([src]))` | Oculta la miniatura de un archivo que no es imagen (PrimeNG pinta un `<img>` roto, sin `src` o con él vacío, con el nombre en su `alt`); la de una imagen sigue | Los audios de la ficha de grupo, revisión del 2026-10-15 | se queda: primeng.dev solo enseña imágenes y no tiene el caso |
 
 ### 8.1 El botón que se encoge al pulsarlo · se queda, con la receta de better-ui (2026-09-15)
 

@@ -438,7 +438,8 @@
               <div class="field field--full">
                 <span class="field__label sc-text-caption-semibold" id="group-outbound-audio-label">{{ 'groups.form.announcements.outbound_audio' | translate }}</span>
                 <div class="upload-field" role="group" aria-labelledby="group-outbound-audio-label" aria-describedby="group-outbound-audio-help">
-                  <ng-container *ngTemplateOutlet="filePicker; context: { key: 'outboundAudioFile', id: 'group-outbound-audio', help: 'groups.form.announcements.outbound_audio_info' }" />
+                  <!-- Su ayuda, solo los formatos, como la música: «para las llamadas que hace el grupo» ya lo dice su parte. -->
+                  <ng-container *ngTemplateOutlet="filePicker; context: { key: 'outboundAudioFile', id: 'group-outbound-audio' }" />
                 </div>
               </div>
             }
@@ -491,7 +492,8 @@
             <div class="grid grid--2">
               <div class="field">
                 <label id="group-voice-label" class="field__label sc-text-caption-semibold" for="group-voice">{{ 'groups.form.announcements.voice' | translate }}</label>
-                <sc-select inputId="group-voice" ariaLabelledBy="group-voice-label" [options]="voiceOptions" [value]="form().announcements.voice" [helperText]="'groups.form.announcements.voice_hint' | translate" (valueChange)="setAnnouncement('voice', $any($event))" />
+                <!-- Sin ayuda: repetía el rótulo («la voz que lee los mensajes»), y el campo va solo en su fila. -->
+                <sc-select inputId="group-voice" ariaLabelledBy="group-voice-label" [options]="voiceOptions" [value]="form().announcements.voice" (valueChange)="setAnnouncement('voice', $any($event))" />
               </div>
             </div>
 
@@ -905,20 +907,21 @@
   </div>
 </ng-template>
 
-<!-- Elegir un audio: el «Advanced» de primeng.dev tal cual (`sc-fileupload` en su modo por defecto, revisión del
-     2026-10-15, que deshace el «basic» del 2026-10-09): «Subir archivo», la zona de soltar y, con lo guardado, su fila
-     con nombre, tamaño y ✕ para quitarlo. Un solo archivo: elegir otro lo sustituye. Debajo, los formatos (DD-198). -->
+<!-- Elegir un audio: el «Advanced» de primeng.dev tal cual (revisión del 2026-10-15, que deshace el «basic» del
+     2026-10-09), sin `auto`: «Elegir», «Subir» y «Cancelar» con sus textos de PrimeNG, la zona de soltar, lo elegido
+     pendiente con su barra y, al subirlo, en la lista de subidos con su ✕. Un solo archivo: subir otro lo sustituye.
+     Debajo, los formatos (DD-198). -->
 <ng-template #filePicker let-key="key" let-id="id" let-help="help">
   <sc-fileupload
     [id]="id + '-upload'"
+    [auto]="false"
     [accept]="audioAccept"
     [saved]="audioGuardadoDe(key)"
-    [chooseLabel]="'groups.form.announcements.choose_file' | translate"
     [dropLabel]="'groups.form.announcements.drop_file' | translate"
     [removeLabel]="'groups.form.announcements.remove_file' | translate"
     [invalidFileTypeMessageSummary]="'groups.form.announcements.invalid_type' | translate"
     [invalidFileTypeMessageDetail]="'groups.form.announcements.invalid_type_detail' | translate"
-    (filesSelected)="onAudioFile($any(key), $event)"
+    (uploaded)="onAudioFile($any(key), $event)"
     (savedRemoved)="setAnnouncement($any(key), null)"
   />
   <p class="field__help sc-text-caption-regular" [id]="id + '-help'">

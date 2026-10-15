@@ -380,7 +380,9 @@
   >
     <!-- En el orden de la revisión de agentes (2026-10-09): grabar lo primero, después los interruptores de Contact
          Center (activación por grupo, dispositivos, externos y conversaciones pendientes) y luego la matriz. -->
-    <sc-subsection icon="admin_panel_settings" titleKey="agents.form.section.permissions" hintKey="agents.form.section.permissions_hint">
+    <!-- Los bloques sin icono, como los de General y los de la ficha de grupo: allí solo los llevan los canales, donde el
+         glifo dice cuál es (barrido de las fichas, 2026-10-15). Aquí eran decoración. -->
+    <sc-subsection titleKey="agents.form.section.permissions" hintKey="agents.form.section.permissions_hint">
       <!-- Dos slots (quick-win de la auditoría UX, 2026-10): acceso/dispositivos primero, grabación y
            seguimiento después, mismo patrón que los bloques de canal de Grupos (sc-slot por subconjunto). -->
       <sc-slot titleKey="agents.form.permissions.slot_access">
@@ -459,7 +461,7 @@
       </sc-slot>
     </sc-subsection>
 
-    <sc-subsection icon="call" titleKey="agents.form.section.calls" hintKey="agents.form.section.calls_hint">
+    <sc-subsection titleKey="agents.form.section.calls" hintKey="agents.form.section.calls_hint">
       <sc-permission-matrix
         [rows]="matrixRows()"
         [columns]="matrixColumns()"
@@ -472,7 +474,7 @@
       />
     </sc-subsection>
 
-    <sc-subsection icon="tune" titleKey="agents.form.section.advanced" hintKey="agents.form.section.advanced_hint" collapsible initiallyCollapsed>
+    <sc-subsection titleKey="agents.form.section.advanced" hintKey="agents.form.section.advanced_hint" collapsible initiallyCollapsed>
       <!-- En el orden de la revisión: descuelgue, chats simultáneos (si atiende chat), idiomas, orden aleatorio, URL y sesión. -->
       <div class="bloque">
         <div class="field field--full">

@@ -25,16 +25,21 @@
   </div>
 </ng-template>
 
-<!-- Lo guardado en la lista del propio componente, como un archivo ya subido en primeng.dev (los audios de Grupos). -->
+<!-- Lo guardado en la lista del propio componente, como un archivo ya subido en primeng.dev (los audios de Grupos): sin
+     `auto`, el «Advanced» entero, con «Elegir», «Subir» y «Cancelar», lo elegido pendiente con su barra y, al subir, a la
+     lista de subidos. -->
 <ng-template #saved>
   <div class="col">
     <sc-fileupload
+      [auto]="false"
       accept=".wav,.mp3,audio/wav,audio/mpeg"
-      chooseLabel="Subir archivo"
+      chooseLabel="Elegir"
+      uploadLabel="Subir"
+      cancelLabel="Cancelar"
       dropLabel="o suelta aquí el archivo."
       removeLabel="Quitar archivo"
       [saved]="guardado()"
-      (filesSelected)="guardar($event)"
+      (uploaded)="guardar($event)"
       (savedRemoved)="guardado.set([])"
       data-testid="sc-fileupload-saved"
     />

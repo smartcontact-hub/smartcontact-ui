@@ -4441,12 +4441,42 @@
           }
         },
         {
+          "nombre": "uploadLabel",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Textos de «Subir» y «Cancelar» (sin `auto`), traducidos. Sin ellos, los del locale de PrimeNG.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Label of the upload button. Defaults to PrimeNG Locale configuration.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "cancelLabel",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": null,
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Label of the cancel button. Defaults to PrimeNG Locale configuration.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
           "nombre": "chooseIconName",
           "clase": "input",
           "tipo": "string",
-          "porDefecto": "'upload'",
+          "porDefecto": null,
           "requerido": false,
-          "descripcion": "Icono del botón de elegir, del DS (`sc-icon`): por defecto, el de subida.",
+          "descripcion": "Icono del botón de elegir, del DS (`sc-icon`). Por defecto, el de cada ejemplo de primeng.dev: el «+» en `advanced` (su icono de serie) y la flecha de subida en `basic` (`chooseIcon=\"pi pi-upload\"`).",
           "origen": "nuestro",
           "nativo": null
         },
@@ -4584,7 +4614,6 @@
       "ocultas": [
         "cancelButtonProps",
         "cancelIcon",
-        "cancelLabel",
         "cancelStyleClass",
         "chooseButtonProps",
         "chooseIcon",
@@ -4603,7 +4632,6 @@
         "styleClass",
         "uploadButtonProps",
         "uploadIcon",
-        "uploadLabel",
         "uploadStyleClass",
         "withCredentials"
       ]

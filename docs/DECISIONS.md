@@ -202,6 +202,22 @@ Postconversación y de la Cola distraía, y el «o suelta aquí» del uploader i
    `sc-inputtags` y `sc-textarea` se quedaban en 3,5 por copiar el margen de `sc-inputtext` sin su `gap`); los
    selectores de botones de las fichas, a tamaño de campo (el pequeño queda para las barras de las tablas); y en Recursos
    del agente, agendas y equipos en una fila y las plantillas debajo, como en el grupo.
+13. **Un peldaño de la rampa por nivel de título** (aprobado tras el segundo barrido): la sección (`sc-section-card`) a
+   `h3` (18), el bloque (`sc-subsection`) a `Subtitle` (16) y la parte (`sc-slot`) en `Body` (14); la página sigue en
+   `Title` (20). Con bloque y parte a 14, «Teléfono» y su «Distribución» pesaban igual. Enmienda DD-188, que bajó la
+   sección a 16 cuando la página también medía 18: desde que la página es `Title`, 18 ya no la iguala.
+14. **El FileUpload «Advanced» de primeng.dev entero en los audios**: sin `auto`, «Elegir» (con su «+»), «Subir» y
+   «Cancelar» con los textos de PrimeNG (traducidos ahora en los cuatro idiomas), lo elegido pendiente con su barra y, al
+   subir, en la lista de subidos; el grupo guarda el audio al subirlo. `sc-fileupload` gana `uploadLabel` y
+   `cancelLabel`, su icono de elegir es el de cada ejemplo (el «+» en `advanced`, la flecha en `basic`), oculta la
+   miniatura rota también sin `src`, y su icono propio sale del lector por el passthrough: PrimeNG le pone
+   `aria-label="true"` y el botón se llamaba «true Elegir» (el de serie lleva `aria-hidden` y se llama «Choose»). El nombre del archivo, a 7 de su tamaño y no a 2, y los botones secundarios en su
+   gris: son del Kit.
+15. **Menos ruido sin romper la simetría**: fuera dos ayudas que repetían el rótulo y no tienen vecino al lado («Voz de
+   los mensajes» y la frase de «Audio saliente», que se queda con los formatos, como la música); las de «% de servicio» y
+   «Tiempo entre llamadas» se quedan porque comparten fila con otra que la tiene, y la de «Tiempo de ringing» la fijó una
+   revisión (DD-176). Reescribirlas pide el texto de las fuentes (DD-133). Y los bloques de Configuración del agente
+   (Permisos, Llamadas, Avanzado) pierden su icono: como en la ficha de grupo, el icono queda para los canales.
 
 **Razón** · Cada cambio sale de la revisión o de lo pedido después por escrito. El uploader de primeng.dev ya enseña lo
 que se pidió (ver qué hay, quitarlo y subir otro) sin piezas propias: `sc-fileupload` gana `saved`, `savedRemoved` y

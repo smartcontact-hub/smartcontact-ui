@@ -51,13 +51,13 @@ a2a837d4:docs/handoff/supervisor-fichas.md`.
 - **Resumen**: Teléfono y Email son enlaces a su bloque, como Chat; fuera el selector rápido de estrategia.
 - **Ring All**: `RING_ALL_ALLOWED_MAX = 2`; elegir 3 o más vuelve a 2 y lo dice. **Tipificar conversaciones** siempre,
   con la descripción de la tipificación y «Ver detalle»; el árbol sin «N niveles, N opciones».
-- **Audios**: `sc-fileupload` advanced de primeng.dev con `saved`, `savedRemoved` y `removeLabel` (DS), en música,
-  identificador, «Eres el siguiente» y el audio saliente nuevo (`conAudioSaliente`). Admite .wav y .mp3.
+- **Audios**: el «Advanced» de primeng.dev entero, sin `auto` (DS: `saved`, `savedRemoved`, `removeLabel`, `uploadLabel`,
+  `cancelLabel`), en música, identificador, «Eres el siguiente» y el audio saliente (`conAudioSaliente`). .wav y .mp3.
 - **Email**: las seis estrategias de Teléfono (Niveles con «Dentro de cada nivel» y la columna «Nivel Email»), tiempo
   de ringing y su cola. Desbordar sigue en «Reglas comunes».
 - **Rejilla** (DD-206 §10 y §11): Tipificar bajo su interruptor; «Tamaño de cola» a dos columnas (`--sc-option-cards-gap`);
   «Llamadas salientes» en Teléfono; «Web Chat» y «WhatsApp» como partes de Chat; Recursos en dos filas; cada audio en
-  su fila; toda ayuda a 7 de su control (DS incluido); `sc-textarea` siempre en columna.
+  su fila; toda ayuda a 7 de su control (DS incluido); `sc-textarea` en columna; títulos a 18 · 16 · 14 (§12 a §15).
 - **Pruebas**: en local, a 1440, las de grupo, las 2 de `sc-fileupload` y la de Niveles en Email (enrojece sin él).
 - **Trampas**: `p-select` no acepta que le cambies el valor dentro de su propio `onChange`: para devolverlo a 2 hace falta
   `setTimeout(() => select.value.set(2))`. Y un `ng serve` que pilla `dist/` a medio construir se queda en error aunque

@@ -1235,6 +1235,16 @@ menú, y la iconografía de transcripciones tiene sus tres insignias.
 
 ---
 
+## 47 · Fichas: un peldaño de la rampa por nivel de título, y el FileUpload «Advanced» entero (2026-10-15, DD-206)
+
+- **Títulos**: el maestro `Section` (691:23956) pasa su cabecera a `Heading/h3-semibold` (18/24) y `Subsection` (nodo
+  `12610:23080`) la suya a `Subtitle/subtitle-semibold` (16/24); `Slot` se queda en `Body/body-semibold` (14/20). La
+  página sigue en `Title` (20/28). En código desde DD-206 §13.
+- **FileUpload**: los audios de la ficha de grupo usan el «Advanced» sin `auto`: «Elegir» (con el «+»), «Subir» y
+  «Cancelar», el archivo pendiente con su barra y, al subir, en la lista de subidos. La ficha 42 dibujaba solo «Elegir».
+- **Ayudas de campo**: a 7 de su control en todos los campos (la especificación de `sc-select`); `SelectButton`,
+  `InputTags` y `Textarea` las dibujaban a 3,5.
+
 ## Lo de estas semanas que NO va a Figma, y por qué
 
 - **El juego de datos** (Demo · Editorial · Tortura, en Configuración → Sistema → Datos; DD-124): es una herramienta de
