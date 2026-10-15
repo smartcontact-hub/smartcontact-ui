@@ -352,7 +352,7 @@ Agents MUST follow this order:
 3. If you touched tokens/theme → follow [`docs/guia-tokens.md`](docs/guia-tokens.md)
    §2.bis / §2.ter (the two sync paths).
 4. Document the change in `docs/` and map it in `docs/DOCS-INDEX.md` (enforced by `docs:guard`).
-5. Run verification: `npm run verify` — and before pushing, the **8 steps of `ci.yml`**.
+5. Run verification: `npm run verify` — and before pushing, the **steps of `ci.yml`**.
 
 Do not skip steps.
 

@@ -20,7 +20,7 @@
  */
 import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 // Sin las `GIT_*` heredadas: que el `cwd` mande, aunque alguien lo llame desde dentro de un hook de git.
@@ -32,7 +32,8 @@ const SOBRE_DE_AGENTE = /^\s*<(?:cross-session-message|task-notification|schedul
 
 /** `fetch` de origin/main si el último fue hace más de 5 minutos. Devuelve si lo intentó. */
 export function fetchSiToca(cwd, ahora = Date.now()) {
-  const dir = join(cwd, git(cwd, ['rev-parse', '--git-common-dir']), 'sc-hooks');
+  // `resolve`, no `join`: en un worktree enlazado git devuelve la ruta ABSOLUTA, y `join` la pegaba detrás del cwd.
+  const dir = join(resolve(cwd, git(cwd, ['rev-parse', '--git-common-dir'])), 'sc-hooks');
   mkdirSync(dir, { recursive: true });
   const marca = join(dir, 'main-drift-fetch');
   const ultimo = existsSync(marca) ? Number(readFileSync(marca, 'utf8')) || 0 : 0;
