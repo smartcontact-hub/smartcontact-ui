@@ -77,7 +77,7 @@
 
 ## ✅ 2026-10-13 · El esqueleto de carga con la forma de su contenido (DD-201)
 
-**Sello:** rama `arebury/skeleton-tablas-barrido-primeng`, sobre `origin/main` `9845c34c`.
+**Sello:** rama `arebury/skeleton-tablas-barrido-primeng`, sobre `origin/main` `43fa0cd2`.
 
 **Qué pasó.**
 - **Barrido** de dónde pintaría el Supervisor un esqueleto con servidor: 18 listados por `sc-list-page`, tablas
@@ -93,7 +93,7 @@
 
 ## ✅ 2026-10-09 · El estudio de Primer: título de página a 20, sección a 16, la barra a una altura y sin 700
 
-**Sello:** rama `arebury/design-system-primer-research`, sobre `origin/main` `d94e5ad8`.
+**Sello:** rama `arebury/design-system-primer-research`, sobre `origin/main` `d22cdafa`.
 
 **Qué pasó.**
 - **Estudio de Primer (GitHub) y medición** de github.com contra sc-supervisor a 1440: lo que más separa es el contraste

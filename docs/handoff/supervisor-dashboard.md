@@ -7,7 +7,7 @@
 
 ## ✅ 2026-10-05 · El panel de agentes del Monitor se lleva el foco, y Escape lo cierra (DD-168, actualización)
 
-> **Sello:** rama `areses/sweet-fermat-r9cxzw`, sobre `origin/main` `b4d1f145` (#339), en el PR de los lotes 5 a 9.
+> **Sello:** rama `areses/sweet-fermat-r9cxzw`, sobre `origin/main` `5f27ad84` (#339), en el PR de los lotes 5 a 9.
 
 **Qué cambia.** El panel rápido que abre «Agentes» en el widget «Grupos» es un `sc-drawer` modal, y el cajón ahora se
 anuncia como diálogo con su título («Agentes · <grupo>»), lleva el foco a su primer control al abrirse y lo devuelve a

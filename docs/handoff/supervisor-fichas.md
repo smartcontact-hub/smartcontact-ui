@@ -7,49 +7,48 @@
 >
 > Nace el 2026-09-16. El tramo anterior (las tres formas de ficha, 2026-09-15) vive en `design-system.md`.
 > El tramo del 2026-09-23 (grupos sin foto, alta en diálogo) sale de aquí por el tope de 6: `git show
-> 4f4f2018:docs/handoff/supervisor-fichas.md` o el tag `archive/handoff-fichas-2026-09-27`. Su trampa (`main`
+> 31f48268:docs/handoff/supervisor-fichas.md` o el tag `archive/handoff-fichas-2026-09-27`. Su trampa (`main`
 > se mueve bajo un worktree local) ya vive en LEARNINGS #21. El del 2026-09-24 (el alta de grupo rima con
-> Identidad, DD-119) sale por el mismo tope: `git show 16ff7930:docs/handoff/supervisor-fichas.md`. Y el de las
-tablas tras la revisión del equipo (2026-09-24, cinco PRs): `git show 197c5579:docs/handoff/supervisor-fichas.md`;
+> Identidad, DD-119) sale por el mismo tope: `git show 47b84e02:docs/handoff/supervisor-fichas.md`. Y el de las
+tablas tras la revisión del equipo (2026-09-24, cinco PRs): `git show 96b3e407:docs/handoff/supervisor-fichas.md`;
 sus dos trampas suben a «Trampas del frente». El de la visión de producto de grupos (2026-09-26, DD-121) sale por el
-mismo tope: `git show f63d13aa:docs/handoff/supervisor-fichas.md`; sus trampas de `p-drawer`, `p-table` y el carril de
+mismo tope: `git show 23ff8413:docs/handoff/supervisor-fichas.md`; sus trampas de `p-drawer`, `p-table` y el carril de
 Contact Center suben a «Trampas del frente». El de un solo índice (2026-09-27, DD-122), igual: `git show
 7458351:docs/handoff/supervisor-fichas.md`; sus trampas también suben. Y el del resumen como widget (2026-09-27,
-DD-126): `git show 0990ff3b:docs/handoff/supervisor-fichas.md`, con sus trampas arriba. Y los dos del 2026-09-27
-(el «Eliminar» a AA, DD-128, y el pase de diseño, DD-130): `git show 004498dc:docs/handoff/supervisor-fichas.md`; las
+DD-126): `git show bbac5030:docs/handoff/supervisor-fichas.md`, con sus trampas arriba. Y los dos del 2026-09-27
+(el «Eliminar» a AA, DD-128, y el pase de diseño, DD-130): `git show 2b88796b:docs/handoff/supervisor-fichas.md`; las
 cuatro trampas del pase suben a «Trampas del frente». Y el de la revisión de producto del 2026-10-01 (H, los diálogos de
-Recursos, D1, D2, R, G1, G2a y G2b): `git show 001bcf5f:docs/handoff/supervisor-fichas.md`; sus trampas suben a
-«Trampas del frente». Los del 2026-09-28 y del 2026-09-29: `git show c6a9cd59:…` y `git show 2a894b1c:…`. El de E2
+Recursos, D1, D2, R, G1, G2a y G2b): `git show 98c8dee1:docs/handoff/supervisor-fichas.md`; sus trampas suben a
+«Trampas del frente». Los del 2026-09-28 y del 2026-09-29: `git show 52159b90:…` y `git show d496ac74:…`. El de E2
 (DD-149, sin trampas propias): `git show a7bca7c0:docs/handoff/supervisor-fichas.md`. El de E3 (DD-150, tampoco):
-`git show c065d664:docs/handoff/supervisor-fichas.md`. El de E4 (DD-151, tampoco): `git show 7d70bfb9:…`. El de D3
-(DD-152, tampoco): `git show e7e0e8f3:docs/handoff/supervisor-fichas.md`. El de F (DD-153, tampoco): `git show
-f41d3ce6:docs/handoff/supervisor-fichas.md`; el de E1b, `git show faf25027:docs/handoff/supervisor-fichas.md`. El de lo que dejó F
-(DD-156, la lista virtual con «reducir movimiento»): `git show 5cc9af78:docs/handoff/supervisor-fichas.md`. Y el de la
+`git show 2b2674ed:docs/handoff/supervisor-fichas.md`. El de E4 (DD-151, tampoco): `git show 3d75da8f:…`. El de D3
+(DD-152, tampoco): `git show f0452c1a:docs/handoff/supervisor-fichas.md`. El de F (DD-153, tampoco): `git show
+2d0e2d9a:docs/handoff/supervisor-fichas.md`; el de E1b, `git show c90780cd:docs/handoff/supervisor-fichas.md`. El de lo que dejó F
+(DD-156, la lista virtual con «reducir movimiento»): `git show d21a8c03:docs/handoff/supervisor-fichas.md`. Y el de la
 revisión de producto del 2026-10-04 (DD-157 a DD-162, #325, sin trampas propias): `git show
-fcaf40db:docs/handoff/supervisor-fichas.md`. El de Recursos (DD-163 a DD-167, #327, sin trampas propias):
-`git show 4217ed41:docs/handoff/supervisor-fichas.md`. Y el de sc-docs y el peso de los iconos (#330, sin
-trampas propias): `git show 3ff6cd71:docs/handoff/supervisor-fichas.md`. El de Accesibilidad pendiente (#332, sin DD nueva ni trampas
-propias): `git show 540f246c:docs/handoff/supervisor-fichas.md``. El de supervisión y limpieza (2026-10-05, DD-168, #333, sin trampas propias): `git show
-60f8e617:docs/handoff/supervisor-fichas.md`. El de las tres columnas sin cabecera (2026-10-05, DD-170, #337): `git show
-b49b56e0:docs/handoff/supervisor-fichas.md`. El de Tipificaciones (2026-10-05, DD-173, DD-174 y DD-177, #340): `git show
-a3e03136:docs/handoff/supervisor-fichas.md`. El del pulido de las fichas (2026-10-06, DD-176, #341): `git show
-0bf19647:docs/handoff/supervisor-fichas.md`. El de Repositorios en tarjetas (2026-10-06, DD-179, #347): `git show
-d4843e43:docs/handoff/supervisor-fichas.md`. El de ordenar por cualquier columna (2026-10-06, DD-180 y DD-181): `git show
-d94e5ad8:docs/handoff/supervisor-fichas.md`. El de las cuatro secciones en el mismo árbol (2026-10-06, DD-182, sin
-trampas propias): `git show 11c607cf:docs/handoff/supervisor-fichas.md`. El de la segunda vuelta de grupos
-(2026-10-07, DD-185, #355, sin trampas propias): `git show d4843e43:docs/handoff/supervisor-fichas.md`. Y el de la
+d95c0f6f:docs/handoff/supervisor-fichas.md`. El de Recursos (DD-163 a DD-167, #327, sin trampas propias):
+`git show 74f3ab14:docs/handoff/supervisor-fichas.md`. Y el de sc-docs y el peso de los iconos (#330, sin
+trampas propias): `git show 4c777dd0:docs/handoff/supervisor-fichas.md`. El de Accesibilidad pendiente (#332, sin DD nueva ni trampas
+propias): `git show e636c143:docs/handoff/supervisor-fichas.md``. El de supervisión y limpieza (2026-10-05, DD-168, #333, sin trampas propias): `git show
+4deb46f9:docs/handoff/supervisor-fichas.md`. El de las tres columnas sin cabecera (2026-10-05, DD-170, #337): `git show
+86ac19bf:docs/handoff/supervisor-fichas.md`. El de Tipificaciones (2026-10-05, DD-173, DD-174 y DD-177, #340): `git show
+5ca7133d:docs/handoff/supervisor-fichas.md`. El del pulido de las fichas (2026-10-06, DD-176, #341): `git show
+a3c77efc:docs/handoff/supervisor-fichas.md`. El de Repositorios en tarjetas (2026-10-06, DD-179, #347): `git show
+dedbc7d6:docs/handoff/supervisor-fichas.md`. El de ordenar por cualquier columna (2026-10-06, DD-180 y DD-181): `git show
+d22cdafa:docs/handoff/supervisor-fichas.md`. El de las cuatro secciones en el mismo árbol (2026-10-06, DD-182, sin
+trampas propias): `git show 03c7fb78:docs/handoff/supervisor-fichas.md`. El de la segunda vuelta de grupos
+(2026-10-07, DD-185, #355, sin trampas propias): `git show dedbc7d6:docs/handoff/supervisor-fichas.md`. Y el de la
 baldosa y la fila del resumen al DS (2026-10-07, DD-186, #356, sin trampas propias): `git show
-d94e5ad8:docs/handoff/supervisor-fichas.md`. El de la revisión de agentes y tipificaciones (2026-10-09, DD-187,
-#360, sin trampas propias): `git show 208019113e9b9fdad6a8c0f6c4338fcf4437260a:docs/handoff/supervisor-fichas.md`.
+d22cdafa:docs/handoff/supervisor-fichas.md`. El de la revisión de agentes y tipificaciones (2026-10-09, DD-187,
+#360, sin trampas propias): `git show a35419972b9fcbd0cec596d8f975690b55611bb9:docs/handoff/supervisor-fichas.md`.
 El de lo que se decide de la auditoría de PrimeNG (2026-10-11, DD-195, sin trampas propias): `git show
-a2a837d4:docs/handoff/supervisor-fichas.md`. El de los quick-wins de la auditoría UX con la columna Nivel (2026-10-12,
+3b9cd31a:docs/handoff/supervisor-fichas.md`. El de los quick-wins de la auditoría UX con la columna Nivel (2026-10-12,
 #375) y el de Salientes como etiqueta y botón (2026-10-13, superado por DD-204 y DD-209), sin trampas propias: `git show
 e3a6c4b1:docs/handoff/supervisor-fichas.md`.
 
 ## ✅ 2026-10-15 · Revisión de producto de las tablas y Repositorios (DD-210)
 
-> **Sello:** worktree `seabiscuit`, rama `arebury/revision-1015-tablas` sobre `main` `c24c921c` (con el PR 2 ya fundido,
-> #425). PR 3 de 3, #426.
+> **Sello:** PR 3 de 3, fundido en `main` como #426, HEAD `d4f22f0e`, con el PR 2 (#425) ya dentro.
 
 - **Textos**: «+ Nueva X» en la barra y en el vacío de cada tabla (repositorios con su `createTitleKey`), «Buscar
   {entidades}…» en todas, también dentro de las fichas, y «Acciones» con «Importar» y «Exportar» a secas; la plantilla
@@ -70,7 +69,7 @@ e3a6c4b1:docs/handoff/supervisor-fichas.md`.
 
 ## ✅ 2026-10-15 · Revisión de producto de la ficha de agente: salientes en un desplegable y los iconos de la lista (DD-209)
 
-> **Sello:** worktree `seabiscuit`, rama `arebury/revision-1015-agente` sobre `main` HEAD `e3a6c4b1` (con el PR 1, #416). PR 2 de 3.
+> **Sello:** PR 2 de 3, fundido en `main` como #425, HEAD `c24c921c`, con el PR 1 (#416) ya dentro.
 
 - **Salientes**: fuera la columna de radios de `group-assignment-table`. Debajo de la tabla, a 28, el desplegable «Grupo
   para llamadas salientes» con los asignados que tienen Teléfono marcado; sin ninguno, apagado con «Asigna un grupo con
@@ -87,7 +86,7 @@ e3a6c4b1:docs/handoff/supervisor-fichas.md`.
 
 ## ✅ 2026-10-15 · Revisión de producto de la ficha de grupo: resumen, Ring All, tipificación, audios, Email y rejilla (DD-206)
 
-> **Sello:** worktree `seabiscuit`, rama `arebury/revision-1015-grupos` sobre `main` `a2a837d4`. PR 1 de 3 del plan.
+> **Sello:** PR 1 de 3, fundido en `main` como #416, HEAD `08f4b2ef`.
 
 - **Resumen**: Teléfono y Email son enlaces a su bloque, como Chat; fuera el selector rápido de estrategia.
 - **Ring All**: `RING_ALL_ALLOWED_MAX = 2`; elegir 3 o más vuelve a 2 y lo dice. **Tipificar conversaciones** siempre,
@@ -132,7 +131,7 @@ e3a6c4b1:docs/handoff/supervisor-fichas.md`.
 
 ## ✅ 2026-10-13 · Fuera las notas de decisión
 
-> **Sello:** rama `arebury/quitar-notas-equipo-main` sobre `main` `7711d83d`.
+> **Sello:** rama `arebury/quitar-notas-equipo-main` sobre `main` `9f0827ca`.
 
 - **Las ocho notas moradas, fuera** con su componente (`sc-nota-decision`), su globo (`_nota-decision.scss`) y
   `decision_notes` en los cuatro idiomas: el equipo dio por resuelto lo que preguntaban (DD-187 §9). Queda lo
@@ -143,7 +142,7 @@ e3a6c4b1:docs/handoff/supervisor-fichas.md`.
 
 ## ✅ 2026-10-13 · Lo que falta se dice cuando ya hubo ocasión (DD-199)
 
-> **Sello:** worktree `lancetfish`, rama `arebury/fix-no-initial-error` sobre `main` en `c5b95584`.
+> **Sello:** worktree `lancetfish`, rama `arebury/fix-no-initial-error` sobre `main` en `4136af3a`.
 
 - **El fallo:** al encender «Tipificar llamadas» en un grupo guardado, el desplegable nacía en rojo (borde, aviso y
   punto en General) antes de poder elegir nada. La causa, en cuatro fichas: `mode() === 'edit' || …`, que al editar
@@ -165,8 +164,6 @@ a7ddc14b:docs/handoff/supervisor-fichas.md`.
 
 ## SIGUIENTE — sin preguntar
 
--3. **Fundir el PR 3 (#426, DD-210) de la revisión del 2026-10-15** cuando su CI esté en verde: el 2 (#425, DD-209) ya
-   está en `main`. Capturas de GroupPopover y MultiSelect regeneradas con el robot.
 -2b. **Componente tabla (otra sesión):** el «evolutivo» de la tabla con los devs (BI y voz). Propuesta de producto:
    elegir UNA vez qué funciones de la Table de PrimeNG queremos y cerrarlo; hay un Excel con las de BI.
    Punto de partida: `docs/AUDIT-PRIMENG-CATALOGO.md`. En la reunión: reordenar, ajustar ancho y arrastrar columnas
@@ -242,7 +239,7 @@ a7ddc14b:docs/handoff/supervisor-fichas.md`.
   agente y qué ve el cliente en cola si se toca un grupo activo. «Audio saliente» y los campos de Email los respondió la
   revisión del 2026-10-15 (DD-206).
 - **Rafa:** revisar usuarios contra el Supervisor real. Y en el portátil: poner el 4405 al día con `main` y borrar el
-  worktree y la rama `codex/supervisor-f-listado` (`f90f7187`, una copia de F), la local y la del remoto; desde la
+  worktree y la rama `codex/supervisor-f-listado` (`aff63656`, una copia de F), la local y la del remoto; desde la
   nube no se puede.
 
 **Trampas del frente:**
