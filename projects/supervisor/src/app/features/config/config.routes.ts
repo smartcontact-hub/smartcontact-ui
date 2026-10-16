@@ -30,6 +30,9 @@ export const configRoutes: Routes = [
     data: { breadcrumb: { labelKey: 'config.aed.title', link: false } },
     loadComponent: () =>
       import('./layout/settings-shell.component').then((m) => m.SettingsShellComponent),
+    // Un solo borrador para las tres secciones (DD-211 §7): el guardián avisa al salir de Contact Center, no al
+    // cambiar de sección.
+    canDeactivate: [formDirtyGuard],
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'servicio' },
       {
@@ -39,7 +42,6 @@ export const configRoutes: Routes = [
         },
         loadComponent: () =>
           import('./aed/aed-servicio-page.component').then((m) => m.AedServicioPageComponent),
-        canDeactivate: [formDirtyGuard],
       },
       {
         path: 'agentes',
@@ -48,7 +50,6 @@ export const configRoutes: Routes = [
         },
         loadComponent: () =>
           import('./aed/aed-agentes-page.component').then((m) => m.AedAgentesPageComponent),
-        canDeactivate: [formDirtyGuard],
       },
       {
         path: 'grupos',
@@ -57,7 +58,6 @@ export const configRoutes: Routes = [
         },
         loadComponent: () =>
           import('./aed/aed-grupos-page.component').then((m) => m.AedGruposPageComponent),
-        canDeactivate: [formDirtyGuard],
       },
     ],
   },

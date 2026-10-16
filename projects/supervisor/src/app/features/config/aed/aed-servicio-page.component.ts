@@ -2,8 +2,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
-  HostListener,
-  TemplateRef,
   computed,
   effect,
   inject,
@@ -12,11 +10,7 @@ import {
 } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
-import { DirtyAware } from '@core/guards';
-import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
-
 import {
-  ScButtonComponent as ButtonComponent,
   ScCheckboxComponent as CheckboxComponent,
   ScChipComponent as ChipComponent,
   ScDividerComponent as DividerComponent,
@@ -34,9 +28,8 @@ import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
  * (`sc-inputgroup` + addon + `pInputText`), que es como lo documenta su propia ficha. */
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { InputTextModule } from 'primeng/inputtext';
-import { stableStringify } from '../../../shared/utils/form-dirty-state';
 import { injectLangChange } from '@core/utils/lang-change';
-import { ResultadoAccionService } from '@core/services';
+import { ContactCenterBorradorService } from './contact-center-borrador.service';
 
 interface VisibilidadEstados {
   postConversando: boolean;
@@ -85,7 +78,7 @@ interface FormState {
 }
 
 /**
- * Las tres opciones de descuelgue, con su LÍNEA de qué hace cada una.
+ * Las opciones de descuelgue, con su LÍNEA de qué hace cada una. Sin «Automático con preview» (DD-211 §2).
  *
  * Estaban en un desplegable, o sea tres nombres escondidos tras un clic, y «Automático con
  * preview» no dice en ninguna parte qué es el preview. Son POCAS (tres), EXCLUYENTES y lo
@@ -94,7 +87,7 @@ interface FormState {
  * ⚠️ Las tres descripciones son la lectura razonable de cada modo, **no un dato medido**:
  * hay que confirmarlas con producto, igual que las de los estados.
  */
-const DESCUELGUE_OPTIONS = ['manual', 'auto', 'auto_preview'] as const;
+const DESCUELGUE_OPTIONS = ['manual', 'auto'] as const;
 
 const DEFAULT_FORM: FormState = {
   estadosNoDisponibles: ['Baño', 'Comida', 'Formación'],
@@ -189,8 +182,8 @@ const BLOQUEO_RULES: readonly {
  * General defaults page — `/config/aed/servicio` (rótulo "General").
  * Figma Supervisor `1:12270`.
  *
- * Página flush de una columna con guardado único en la TopBar (modelo
- * "todo arriba" S59): cabecera con icono + secciones separadas por
+ * Página flush de una columna; se guarda con las otras dos secciones, con el «Guardar» de la barra
+ * (DD-211 §7): cabecera con icono + secciones separadas por
  * divisores. Secciones (orden Figma): Estados de agentes · Bloqueo de
  * puesto por inactividad · Configuración de ventana de llamada y
  * transferencia · Estados visibles por el agente · Aviso de
@@ -200,7 +193,6 @@ const BLOQUEO_RULES: readonly {
 @Component({
   selector: 'sc-aed-servicio-page',
   imports: [
-    ButtonComponent,
     CheckboxComponent,
     ChipComponent,
     DividerComponent,
@@ -221,8 +213,7 @@ const BLOQUEO_RULES: readonly {
   styleUrls: ['./aed-defaults-page.component.scss', './aed-servicio-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AedServicioPageComponent implements DirtyAware {
-  private readonly resultado = inject(ResultadoAccionService);
+export class AedServicioPageComponent {
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
   protected readonly addIcon = 'add';
@@ -245,12 +236,12 @@ export class AedServicioPageComponent implements DirtyAware {
   protected readonly notifEventos = NOTIF_EVENTOS;
   protected readonly notifCanales = NOTIF_CANALES;
 
-  /** Estado original (guardado). `dirty` se deriva comparando con esto, así
-   * que deshacer los cambios (volver a los valores originales) desactiva el
-   * guardar — no hay cambio que persistir. */
-  private readonly pristine = signal<FormState>(this.cloneDefault());
-  protected readonly form = signal<FormState>(this.cloneDefault());
-  protected readonly saving = signal(false);
+  /** Su parte del borrador de Contact Center (DD-211 §7): la misma al volver a la sección. Sin backend, guardar solo
+   *  la da por guardada. */
+  protected readonly form = inject(ContactCenterBorradorService).parte<FormState>('servicio', {
+    inicial: () => this.cloneDefault(),
+    persistir: () => undefined,
+  });
 
   /**
    * Alta EN LÍNEA, no en modal.
@@ -269,28 +260,7 @@ export class AedServicioPageComponent implements DirtyAware {
   protected readonly draft = signal('');
   private readonly draftField = viewChild<ElementRef<HTMLElement>>('draftField');
 
-  protected readonly dirty = computed(
-    () => stableStringify(this.form()) !== stableStringify(this.pristine()),
-  );
-
-  /** Con cambios sin guardar, el «guardado» de la barra ya no vale (DD-191). */
-
-  private readonly limpiaResultado = effect(() => {
-
-    if (this.dirty()) this.resultado.limpiar();
-
-  });
-  protected readonly canSave = computed(() => this.dirty() && !this.saving());
-
-  /** Público para el `formDirtyGuard` (canDeactivate) — confirma al salir con cambios. */
-  readonly formDirty = this.dirty;
-
-  /** Guardar/Cancelar proyectados a la TopBar (modelo "todo arriba" S59). */
-  private readonly topbarActions = viewChild<TemplateRef<unknown>>('topbarActions');
-
   constructor() {
-    useTopbarActions(this.topbarActions);
-
     /*
      * El foco al campo de alta, por EFECTO y no por `setTimeout`.
      *
@@ -441,44 +411,6 @@ export class AedServicioPageComponent implements DirtyAware {
 
   protected onAlertingChange(value: 'nombre' | 'telefono'): void {
     this.update('alertingTipo', value);
-  }
-
-  /* ---------- Save / cancel (TopBar) ---------- */
-
-  /*
-   * `⌘S` / `Ctrl+S` guarda, y salir con cambios avisa.
-   *
-   * No es un invento: es literalmente lo que ya hacen `agent-form`, `group-form` y
-   * `user-form`. Las tres pantallas de Config no lo tenían, así que el mismo gesto
-   * funcionaba en la mitad de la aplicación y en la otra mitad no — que es peor que no
-   * tenerlo en ninguna, porque enseña a no fiarse.
-   */
-  @HostListener('document:keydown', ['$event'])
-  protected onKeydown(event: KeyboardEvent): void {
-    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's') {
-      event.preventDefault();
-      if (this.canSave() && !this.saving()) this.save();
-    }
-  }
-
-  @HostListener('window:beforeunload', ['$event'])
-  protected onBeforeUnload(event: BeforeUnloadEvent): void {
-    if (this.dirty() && !this.saving()) event.preventDefault();
-  }
-
-  protected cancel(): void {
-    this.form.set(structuredClone(this.pristine()));
-    this.stopAdding();
-  }
-
-  protected save(): void {
-    if (!this.canSave()) return;
-    this.saving.set(true);
-    setTimeout(() => {
-      this.saving.set(false);
-      this.pristine.set(structuredClone(this.form()));
-      this.resultado.enLaBarra(this.translate.instant('config.aed.subpages.servicio.toast.saved'));
-    }, 600);
   }
 
   private cloneDefault(): FormState {

@@ -1,21 +1,3 @@
-<ng-template #topbarActions>
-  @if (dirty()) {
-    <sc-button
-      variant="secondary"
-      appearance="outlined"
-      [label]="'common.undo' | translate"
-      (clicked)="cancel()"
-    />
-  }
-  <sc-button
-    variant="primary"
-    [disabled]="!canSave()"
-    [loading]="saving()"
-    [label]="'common.save' | translate"
-    (clicked)="save()"
-  />
-</ng-template>
-
 <div class="page">
   <div class="page__inner">
     <!-- El título de la página vive en el CUERPO, no en la barra: la miga de
