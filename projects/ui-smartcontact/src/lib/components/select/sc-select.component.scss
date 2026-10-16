@@ -149,6 +149,34 @@
   color: var(--sc-text-disabled);
 }
 
+/* ────────────────────────────────────────────────────────────────────
+ * Solo lectura (DD-211 §10), como sc-inputtext: sin borde, sobre el fondo
+ * suave, con el texto a contraste completo y sin la flecha (que es la seña
+ * de que se abre; se oculta sin dejar de ocupar su sitio, para que el campo
+ * mida lo mismo). El foco está en el combobox de dentro: al llegar con el
+ * teclado, el anillo de foco del sistema rodea el campo.
+ * ────────────────────────────────────────────────────────────────────
+ */
+.sc-select--readonly .sc-select__control {
+  border-color: transparent;
+  background: var(--sc-bg-default);
+  box-shadow: none;
+
+  &,
+  & * {
+    cursor: default;
+  }
+
+  &:has(:focus-visible) {
+    outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
+    outline-offset: var(--sc-focus-ring-offset);
+  }
+}
+
+.sc-select--readonly .sc-select__dropdown {
+  visibility: hidden;
+}
+
 /* ─── Overlay panel sizes ─────────────────────────────────────────────
  * El panel del `<p-select>` se renderiza en <body>, fuera del componente.
  * Como este componente usa ViewEncapsulation.None, sus reglas son globales:

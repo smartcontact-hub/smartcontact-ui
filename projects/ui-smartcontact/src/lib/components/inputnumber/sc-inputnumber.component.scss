@@ -128,3 +128,20 @@
 .sc-inputnumber--disabled .sc-inputnumber__suffix {
   color: var(--sc-text-disabled);
 }
+
+/* ────────────────────────────────────────────────────────────────────
+ * Solo lectura (DD-211 §10), como sc-inputtext: sin borde, sobre el fondo
+ * suave y con el texto a contraste completo; al llegar con el teclado, el
+ * anillo de foco del sistema.
+ * ────────────────────────────────────────────────────────────────────
+ */
+.sc-inputnumber--readonly:not(.sc-inputnumber--disabled) .sc-inputnumber__control {
+  border-color: transparent;
+  background: var(--sc-bg-default);
+  box-shadow: none;
+  cursor: default;
+}
+.sc-inputnumber--readonly:not(.sc-inputnumber--disabled) .sc-inputnumber__control:focus-visible {
+  outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
+  outline-offset: var(--sc-focus-ring-offset);
+}

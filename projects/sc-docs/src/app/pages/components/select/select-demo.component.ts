@@ -31,7 +31,8 @@ const MENOS_VISTOS_SNIPPET = `<!-- "invalid" marca el campo SIN texto de error: 
      se cuenta en otro sitio (un resumen arriba del formulario). -->
 <sc-select label="Estado inválido" [options]="groups" [invalid]="true" placeholder="Marca el campo sin decir por qué" />
 
-<!-- "readonly" deja ver el valor y no deja cambiarlo; distinto de "disabled", que además lo apaga. -->
+<!-- "readonly" deja ver el valor y no deja cambiarlo: sin borde ni flecha, sobre el fondo suave (DD-211 §10);
+     distinto de "disabled", que además lo apaga. -->
 <sc-select label="Solo lectura" [options]="groups" [readonly]="true" [value]="groups[0]" />
 
 <!-- "editable" deja escribir un valor que no está en la lista, además de elegir uno. -->

@@ -48,6 +48,7 @@ export type ScInputType = 'text' | 'email' | 'password' | 'tel' | 'url' | 'searc
     '[class.sc-inputtext--lg]': "size() === 'lg'",
     '[class.sc-inputtext--invalid]': 'isInvalid()',
     '[class.sc-inputtext--disabled]': 'disabled()',
+    '[class.sc-inputtext--readonly]': 'readonly()',
     '[class.sc-inputtext--filled]': 'filled()',
     '[class.sc-inputtext--ifta]': 'iftaLabel()',
   },
@@ -95,7 +96,8 @@ export class ScInputTextComponent {
   readonly disabled = input(false, { transform: booleanAttribute });
   /**
    * El valor se ve pero no se edita. A diferencia de `disabled`, **sigue siendo enfocable y se
-   * puede copiar**.
+   * puede copiar**, y el texto no se apaga. Tampoco parece editable: sin borde, sobre el fondo suave
+   * (DD-211 §10).
    */
   readonly readonly = input(false, { transform: booleanAttribute });
   /**

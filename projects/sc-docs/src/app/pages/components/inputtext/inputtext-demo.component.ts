@@ -17,7 +17,9 @@ const STATES_SNIPPET = `<sc-inputtext label="Obligatorio" [required]="true" help
 <sc-inputtext label="Con error" error="El nombre no es válido" />
 <sc-inputtext label="Filled" [filled]="true" />
 <sc-inputtext label="IftaLabel" [iftaLabel]="true" placeholder=" " />
-<sc-inputtext label="Deshabilitado" [disabled]="true" />`;
+<sc-inputtext label="Deshabilitado" [disabled]="true" />
+<!-- "readonly": el valor se ve, se enfoca y se copia; sin borde, sobre el fondo suave (DD-211 §10). -->
+<sc-inputtext label="Solo lectura" value="4815" [readonly]="true" />`;
 
 const SIZES_SNIPPET = `<sc-inputtext label="Small" size="sm" />
 <sc-inputtext label="Medium" />
