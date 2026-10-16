@@ -58,7 +58,8 @@ export class UndoStackService {
   }
 
   /**
-   * Un deshacer que cuenta su resultado en la barra de lote de su lista, no en un toast (DD-196). Vive mientras la
+   * Un deshacer con su botón en la barra de lote de su lista (DD-196); el resultado lo cuenta además un toast sin
+   * botón (DD-211 §5), que se va solo. Vive mientras la
    * barra lo enseña: no caduca solo, y quien lo registra lo `olvida` al cerrar la barra o al salir de la página. Ctrl+Z
    * también lo deshace. Devuelve el id para el botón «Deshacer» de la barra.
    */

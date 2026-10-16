@@ -89,13 +89,14 @@
       </section>
     </sc-section-card>
 
-    <!-- Los agentes que ven esta agenda, la última sección: quién la tiene (en Voice, un muro de casillas). -->
-    <sc-section-card titleKey="repositories.agendas.section_agents" surface="subtle" icon="headphones">
+    <!-- A quién se asigna, la última sección: el árbol Grupos → Agentes (DD-211 §1). En Voice era un muro de casillas. -->
+    <sc-section-card titleKey="repositories.agendas.section_agents" surface="subtle" icon="group">
       <section class="sub-section">
-        <sc-agenda-agents-table
+        <sc-agenda-assignment-tree
+          [grupos]="gruposParaAgenda()"
           [agents]="agentsStore.agents()"
-          [selected]="form().agentIds"
-          (selectedChange)="update('agentIds', $event)"
+          [asignacion]="form().asignacion"
+          (asignacionChange)="update('asignacion', $event)"
         />
       </section>
     </sc-section-card>

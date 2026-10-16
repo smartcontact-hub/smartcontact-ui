@@ -19,8 +19,7 @@ export interface XlsxExportOptions {
 
 /**
  * Shared XLSX export service. Builds a styled worksheet (bold grey header row,
- * auto-fit column widths) and triggers a timestamped download. The download itself is the result:
- * it is only announced to screen readers (DD-191).
+ * auto-fit column widths) and triggers a timestamped download, told with a toast (DD-211 §5).
  */
 @Injectable({ providedIn: 'root' })
 export class XlsxExportService {
@@ -80,7 +79,7 @@ export class XlsxExportService {
       count: rows.length,
       sheet: sheetName.toLowerCase(),
     });
-    // La descarga la enseña el navegador: solo para el lector de pantalla (DD-191).
-    this.resultado.visto(summary);
+    // El resultado, en un toast (DD-211 §5).
+    this.resultado.contar(summary);
   }
 }

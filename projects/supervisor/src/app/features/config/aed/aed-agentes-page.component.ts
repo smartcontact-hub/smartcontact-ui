@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, TemplateRef, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import type {
   ScMatrixColumn,
@@ -7,10 +7,7 @@ import type {
   ScMatrixToggle,
 } from '@smartcontact-hub/components';
 
-import { DirtyAware } from '@core/guards';
-import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { injectLangChange } from '@core/utils/lang-change';
-import { stableStringify } from '@shared/utils/form-dirty-state';
 import {
   AgentDefaults,
   AgentPermissions,
@@ -24,7 +21,6 @@ import type { Channel } from '@features/admin/services/group-agent-links.types';
 import { AgentDefaultsStore } from '@features/admin/agents/state/agent-defaults.store';
 
 import {
-  ScButtonComponent as ButtonComponent,
   ScCheckboxComponent as CheckboxComponent,
   ScDividerComponent as DividerComponent,
   ScInputTextComponent as InputTextComponent,
@@ -32,7 +28,7 @@ import {
   ScSectionCardComponent as SectionCardComponent,
   ScToggleSwitchComponent as ToggleSwitchComponent,
 } from '@smartcontact-hub/components';
-import { ResultadoAccionService } from '@core/services';
+import { ContactCenterBorradorService } from './contact-center-borrador.service';
 
 /**
  * Contact Center › Agentes — `/config/aed/agentes`. Con esto nace cada agente nuevo (DD-135).
@@ -43,12 +39,12 @@ import { ResultadoAccionService } from '@core/services';
  *
  * Hasta el 2026-09-29 era la réplica de la maqueta (Figma Supervisor 393:12562), que no guardaba nada y tenía sus
  * propias filas («Llamadas internas»), sus propias columnas («Permisos») y un título de la URL que la ficha no tiene.
- * Guardado único en la TopBar.
+ * Se guarda con las otras dos secciones, con el «Guardar» de la barra (DD-211 §7): su formulario es una parte del
+ * borrador de Contact Center.
  */
 @Component({
   selector: 'sc-aed-agentes-page',
   imports: [
-    ButtonComponent,
     CheckboxComponent,
     DividerComponent,
     InputTextComponent,
@@ -61,34 +57,18 @@ import { ResultadoAccionService } from '@core/services';
   styleUrls: ['./aed-defaults-page.component.scss', './aed-agentes-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AedAgentesPageComponent implements DirtyAware {
-  private readonly resultado = inject(ResultadoAccionService);
+export class AedAgentesPageComponent {
   private readonly translate = inject(TranslateService);
   /* El idioma como DEPENDENCIA de los computed de la matriz: `translate.instant()` es una llamada, no una señal, y
    * sin esto las cabeceras y los nombres de fila se congelan al cambiar de idioma (§6 de `audit:datatables`). */
   private readonly lang = injectLangChange();
   private readonly store = inject(AgentDefaultsStore);
 
-  protected readonly form = signal<AgentDefaults>(structuredClone(this.store.defaults()));
-  protected readonly saving = signal(false);
-
-  /** Dirty real = el form difiere de lo guardado (deshacer cambios → no deja guardar). */
-  protected readonly dirty = computed(
-    () => stableStringify(this.form()) !== stableStringify(this.store.defaults()),
-  );
-  /** Con cambios sin guardar, el «guardado» de la barra ya no vale (DD-191). */
-  private readonly limpiaResultado = effect(() => {
-    if (this.dirty()) this.resultado.limpiar();
+  /** Su parte del borrador de Contact Center: la misma al volver a la sección, con lo que se dejó sin guardar. */
+  protected readonly form = inject(ContactCenterBorradorService).parte<AgentDefaults>('agentes', {
+    inicial: () => this.store.defaults(),
+    persistir: (valor) => this.store.save(valor),
   });
-  protected readonly canSave = computed(() => this.dirty() && !this.saving());
-  /** Público para el `formDirtyGuard` (canDeactivate) — confirma al salir con cambios. */
-  readonly formDirty = this.dirty;
-
-  private readonly topbarActions = viewChild<TemplateRef<unknown>>('topbarActions');
-
-  constructor() {
-    useTopbarActions(this.topbarActions);
-  }
 
   /** Filas y columnas de la matriz, ya traducidas: el DS no traduce contenido. Las mismas que la ficha de agente. */
   protected readonly matrixRows = computed<readonly ScMatrixRow[]>(() => {
@@ -139,19 +119,5 @@ export class AedAgentesPageComponent implements DirtyAware {
 
   protected setIframeUrl(value: string): void {
     this.form.update((f) => ({ ...f, iframeUrl: value }));
-  }
-
-  protected cancel(): void {
-    this.form.set(structuredClone(this.store.defaults()));
-  }
-
-  protected save(): void {
-    if (!this.canSave()) return;
-    this.saving.set(true);
-    setTimeout(() => {
-      this.store.save(structuredClone(this.form()));
-      this.saving.set(false);
-      this.resultado.enLaBarra(this.translate.instant('config.aed.subpages.agentes.toast.saved'));
-    }, 600);
   }
 }

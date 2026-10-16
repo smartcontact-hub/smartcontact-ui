@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Revisión de producto del 2026-10-16: a quién se asigna una agenda, en un árbol Grupo → Agentes (`p-treetable`), por persona, con grupos enteros dinámicos y «Sin grupo» · la ficha de agente: el PIN lo asigna el sistema y solo se ve al editar, «Navegador» deshabilitado sin WebRTC (`optionDisabled`), Agentes y Grupos en el Destino de las llamadas, fuera «Automático con preview» y «Actualizar teléfono en login», sin Teléfono no se ve lo de las llamadas · el globo de confirmación cerrado sin responder es «no» · la ficha de grupo: el audio saliente con los mensajes de la cola, la estrategia en una línea en el resumen, cada canal con su nivel al lado · el resultado de una acción, en un toast (sustituye DD-191 y DD-196) · ✓ en toda sección que se deja completa (enmienda DD-158) · Contact Center con un solo Guardar · SelectButton entero en sc-docs · un campo de solo lectura no parece editable (sin borde, sobre el fondo suave) | DD-211 |
 > | Revisión de las tablas y Repositorios (2026-10-15): «+ Nueva X» y «Buscar {entidades}…» · la celda de grupos según cuántos (`display="adaptive"` de `sc-group-popover`) · cada columna compacta a su contenido al abrir, y «Restablecer» vuelve ahí · «Acciones» con «Importar» y «Exportar», y la plantilla en el diálogo · un solo `sc-import-dialog` · «+ Añadir subcategoría» por categoría · los grupos de una plantilla con «+N más» y apagados sin su canal · un contacto sin obligatorios, y sus columnas a elegir (`sc-column-toggle`) | DD-210 |
 > | Revisión de la ficha de agente (2026-10-15): el grupo de sus salientes, en un desplegable bajo la tabla y con su flecha junto al nombre, no un radio por fila · el resumen y la cabecera con los iconos de la lista: «Canales» con el de cada canal, la extensión con el de dónde suena, Grabación con su REC relleno o de contorno · sin color nuevo: el REC deja el rojo, en la ficha y en la lista · la tarjeta de datos, la misma en las tres fichas (plana, blanca y con borde) y con sus baldosas en el degradado de la cifra destacada (`tone="brand"` de `sc-icon-tile` y `sc-fact-row`) | DD-209 |
 > | Fase 1, PrimeNG como referencia (decisión de producto, 2026-10-15): primero el nativo, después su `sc-*`, y cada excepción escrita junto al código · una pregunta de una frase sobre lo que se pulsa, en un `p-confirmpopup` pegado a ello (`ScConfirmService.request({ target })`); lo que hay que explicar, en el diálogo · los filtros por pares no se vacían (`sc-selectbutton multiple [allowEmpty]="false"`) · el «⋮» del widget en `p-tieredmenu` | DD-205 |
@@ -51,12 +52,12 @@
 > | Lo que falta se dice cuando ya hubo ocasión: al dejar su sección sin ello, o al abrir si lo guardado ya venía sin ello · el campo que aparece al encender una opción nace callado · duplicar es un alta · antes, el resumen y el motivo junto al botón, sin rojo · el contenido equivocado, en vivo (`ocasionDeAvisar`, regla 7 de `audit:screen-hygiene`; precisa DD-142) | DD-199 |
 > | La ayuda de un campo va debajo de su control (`helperText`, también en `sc-selectbutton` y `sc-textarea`) · lo que abre la opción, después · una lista que crece, bajo su título · copiar va dentro de `sc-textarea copyable`, solo con icono | DD-198 |
 > | Una celda sin dato: «—» en gris suave, oculto al lector, que oye «Sin dato» o su porqué («No aplica»), con `sc-celda-vacia` · si el vacío significa algo o es una cifra, se escribe («0») · ningún «—» suelto en una plantilla (`audit:screen-hygiene`) | DD-197 |
-> | Un cambio en lote se cuenta en su barra: «Cambio aplicado a 2 grupos» con «Deshacer» pegado al texto, sin irse sola, hasta cerrarla o volver a marcar (`contarLote` de `sc-list-page`, `result` de `sc-bulk-action-bar`) · el toast con «Deshacer», solo para lo que desaparece sin sitio (el inicio) | DD-196 |
+> | Un cambio en lote se cuenta en su barra: «Cambio aplicado a 2 grupos» con «Deshacer» pegado al texto, sin irse sola, hasta cerrarla o volver a marcar (`contarLote` de `sc-list-page`, `result` de `sc-bulk-action-bar`) · el toast con «Deshacer», solo para lo que desaparece sin sitio (el inicio) · **desde DD-211 §5, además, el toast de toda acción** | DD-196 |
 > | Antes de construir una pieza, ¿la trae PrimeNG? La tabla del catálogo (`docs/AUDIT-PRIMENG-CATALOGO.md`, la vigila `audit:primeng-catalog`) · varios valores cortos en un campo, `sc-inputtags`; vistas hermanas, `sc-tabs` | DD-195 |
 > | La celda que nombra la fila es su cabecera (`<th scope="row">`, `rowHeader` en `ScColumnDef`) en las 27 tablas del Supervisor que tienen nombre · se ve igual: el tema repite para ella las reglas de celda de PrimeNG | DD-194 |
 > | En una lista estrecha el nombre se queda: columna fija a la izquierda (con la casilla), y la tabla desplaza de lado · el mínimo de la tabla nunca deja menos de 15rem al nombre | DD-193 |
 > | La cabecera de página en la escalera: barra → título 28, título → lo que titula 14, buscador → su tabla 7 · el borde de la página, 28 por los cuatro lados y una sola vez, en el molde | DD-192 |
-> | El toast, solo para lo que manda el sistema: lo ya visible, solo al lector (`visto`); guardar y quedarse, junto a los botones de la barra (`enLaBarra`); lo de un control, a su lado · un error no se cierra solo | DD-191 |
+> | ~~El toast, solo para lo que manda el sistema: lo ya visible, solo al lector (`visto`); guardar y quedarse, junto a los botones de la barra (`enLaBarra`)~~ **sustituida por DD-211 §5** (el resultado de una acción, en un toast: `ResultadoAccionService.contar`); sigue: lo de un control, a su lado · un error no se cierra solo | DD-191 |
 > | Cada componente dice en sc-docs si está listo (maestro en el Kit y demo), es experimental (le falta algo, y dice qué) o está retirado (`@deprecated`, con su motivo) · el índice etiqueta solo la excepción | DD-190 |
 > | El icono que acompaña a un texto sigue a su estilo: su tamaño, su peso y el eje óptico a su tamaño (20, el mínimo, en pequeño) · en la cabecera de `sc-section-card`, 16 en sección y 20 en página | DD-189 |
 > | Lo que se adopta de Primer: el título de página a 20 (`Title`) y el de sección a 16 (`Subtitle`), dos text styles nuevos del Kit · el botón principal de la barra en md · sin 700 fuera del Kit · la carga por tiempos · el texto principal a slate-900 en el plan de color · la escala se queda, con una medida por relación · el toast solo para eventos del sistema | DD-188 |
@@ -77,7 +78,7 @@
 > | La cifra principal del resumen, con el degradado del botón principal y el anillo en el color de su texto: una por ficha | DD-161 |
 > | Una tabla dentro de una sección llega al pie de la pantalla: tope medido desde donde empieza (`scLlegaAlPie`), con suelo | DD-160 |
 > | En el listado de Grupos, la cifra de agentes abre su asignación y sale la columna «Asignar»; en Agentes, la de grupos ya llevaba a su sección | DD-159 |
-> | El alta: ✓ solo en secciones con algo obligatorio, el teléfono saliente como segunda puerta del grupo y «Atrás / Siguiente» como el Stepper vertical | DD-158 |
+> | El alta: ~~✓ solo en secciones con algo obligatorio~~ (✓ en toda sección que se deja completa desde DD-211 §6), el teléfono saliente como segunda puerta del grupo y «Atrás / Siguiente» como el Stepper vertical | DD-158 |
 > | Distribución y colas con el árbol del DS (canal = subsección, parte = slot), Chat en el orden de Teléfono y los mensajes de la cola plegados | DD-157 |
 > | El estado del agente en su columna de la tabla de agentes del grupo; cada columna medida, y el panel las suma | DD-156 |
 > | Tiempos con catálogo, cola Fija/Variable, horarios de atención por subcanal y música en un control | DD-152 |
@@ -149,6 +150,128 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-211 · 2026-10-16 — Revisión de producto de agendas, fichas, Contact Center y toasts: a quién se asigna una agenda en un árbol por persona, el PIN del sistema, el resultado en un toast y un solo Guardar en Contact Center
+
+**Contexto** · Revisión de producto del 2026-10-16 de los flujos de grupos y agentes, sobre lo fundido el 2026-10-15
+(DD-206, DD-209 y DD-210). Una agenda se asignaba a agentes uno a uno (una tabla plana de 500) y los grupos la llevaban
+aparte, en su ficha, sin que nada los juntara; en la migración hay clientes con agentes sueltos. En la ficha de agente,
+el PIN se escribía a mano en el alta; el tipo de extensión ofrecía el navegador aunque el cliente no tuviera agentes
+WebRTC; el Destino de las llamadas no tenía agentes ni grupos; quedaban «Automático con preview» y «Actualizar teléfono en
+login»; y sin Teléfono seguían a la vista la grabación y los permisos de llamadas. El globo de confirmación de la edición
+en bloque dejaba las casillas bloqueadas al cerrarlo con un clic fuera. El resultado de guardar salía junto a los botones
+de la barra (DD-191) y cada sección de Contact Center guardaba por su cuenta, con un «¿Descartar cambios?» al cambiar de
+sección que las fichas no tienen.
+
+**Decisión** ·
+1. **Agendas: «Grupos y agentes», un árbol** (`sc-agenda-assignment-tree`, sobre el `p-treetable` nativo, como
+   `/lab/arbol`): cada grupo, plegado, con sus agentes debajo y, al final, «Sin grupo» con los que no están en
+   ninguno; buscador y el filtro «Todos / Asignados (n)» de la tabla de antes. Las reglas
+   (`agenda-asignacion.core.mjs`):
+   - la selección es **por persona**: un agente marcado lo está en todos los grupos donde aparece, y marcar un grupo marca
+     a sus agentes también en los otros;
+   - un grupo marcado **entero es dinámico**: la agenda se guarda en el grupo (`Group.schedules`) y quien entre después
+     en él también la tiene; los agentes que la tienen por él no la llevan además sueltos;
+   - marcar uno a uno a todos los agentes de un grupo lo deja entero (dinámico); quitar a uno, desde ese grupo o desde
+     otro, lo deja parcial y deja de ser dinámico; un grupo sin agentes solo está entero si se marca él;
+   - «Sin grupo» nunca es dinámico: sus agentes se guardan sueltos (`Agent.schedules`), como los clientes migrados;
+   - **la regla vale también al leer lo guardado**: un grupo cuyos agentes ya tienen todos la agenda (sueltos o por otro
+     grupo entero) se ve entero, y se guarda entero la próxima vez que se guarde la agenda. Abrirla no la ensucia.
+   El listado de agendas cambia «Grupos» por **«Grupos y agentes»**: los grupos enteros y, detrás, los agentes sueltos,
+   con la celda de DD-210 §3, sacados con las mismas funciones que el árbol (`estructuraDe`, `deLoGuardado`,
+   `paraGuardar`): el listado dice lo mismo que el editor.
+2. **Ficha de agente:**
+   - **PIN**: lo asigna el sistema al crear (el primero libre, de tres cifras en adelante); en el alta no sale y al editar
+     se ve de solo lectura, con la extensión en el teléfono (sigue DD-187 §9).
+   - **Sin WebRTC contratado** (`CLIENTE_CON_WEBRTC`, encendida en la demo, como `CLIENTE_CON_CUSCARE`): «Navegador» se
+     ve deshabilitado en el selector (`optionDisabled`, el ejemplo «Disabled» de primeng.dev/selectbutton), con su
+     porqué en la ayuda, y el tipo queda en Teléfono al crear, al duplicar y al guardar.
+   - **Destino**: filas **Agentes** y **Grupos** en la matriz de Llamadas y Transferencias, también en Contact Center ›
+     Agentes; de fábrica, permitidas, como Fijos y Móviles (son destinos internos). Lo guardado antes no las trae: se
+     leen como de fábrica (`agenteAlDia`, el `normalize` del store), porque antes no había nada que las restringiera;
+     igual que Contact Center lee lo suyo (`AgentDefaultsStore`).
+   - **Avanzado**: fuera **«Automático con preview»** (también de Contact Center › Servicio; lo guardado con él se lee
+     como automático) y **«Actualizar teléfono en login»**.
+   - **Sin el canal Teléfono** no se ven «Grabar llamadas», la matriz de Llamadas ni las filas Grabación y Salientes del
+     resumen (el desplegable de salientes ya no salía, DD-209 §1). Lo guardado se queda, oculto. «Gestión de
+     dispositivos» sí se ve: también sirve al chat.
+3. **El globo de confirmación cerrado sin responder es «no»** (`ScConfirmService.popupClosed`, DS): `p-confirmpopup` se
+   cierra solo con un clic fuera, al desplazar la página o al cambiar el tamaño de la ventana sin llamar a «reject», y
+   la tabla de grupos del agente y la de agentes del grupo esperaban su respuesta con las casillas bloqueadas.
+4. **Ficha de grupo:**
+   - **El audio saliente**, con los demás audios, en «Mensajes en cola» y con el mismo uploader, con su ayuda (para qué
+     llamadas es); sale de «Llamadas salientes» (corrige DD-206 §6 y §11).
+   - **La estrategia en el resumen, en una línea**: «Menos conversaciones atendidas» (y más con Niveles) partía la fila
+     en tres en la columna de 240. Se corta con «…» y el globo la dice entera. El texto no cambia.
+   - **En la tabla de agentes, cada canal y su nivel al lado**: Teléfono, Nivel Teléfono, Chat, Nivel Chat, Email, Nivel
+     Email.
+5. **El resultado de una acción del usuario, en un toast** (sustituye DD-191 y, en su barra, matiza DD-196): crear,
+   guardar, duplicar, eliminar, importar o exportar lo dice `ResultadoAccionService.contar`, el mismo toast de éxito
+   abajo a la derecha en toda la app; fuera el texto junto a los botones de la barra. Un cambio en lote suma el toast y
+   su barra sigue con «Deshacer» (el toast se va solo). Dicen ya su resultado los que no decían nada: borrar una cuenta
+   de correo o un trigger, y crear o editar una agenda, un equipo o una plantilla desde una ficha. Lo que es de un
+   control (copiar, probar una conexión) sigue a su lado. `audit:screen-hygiene` deja lanzar toasts al servicio y solo a
+   él (y a los dos de antes). El toast va **fuera de la pila de capas de PrimeNG** (`[autoZIndex]="false"`, a
+   `--sc-z-toast`): `p-dialog` solo se cierra con Esc si es la capa de arriba, y con un toast en pantalla (descargar el
+   audio desde el reproductor) dejaba de cerrarse. Con un diálogo modal abierto, el toast queda bajo su velo.
+6. **✓ en toda sección que se deja completa** en las altas, también en las que no tienen nada obligatorio
+   (Configuración y Recursos del agente, Recursos y Agentes del grupo…): con solo pasar están completas (corrige DD-158).
+   Al editar, sin ✓, como hasta ahora.
+7. **Contact Center, un solo Guardar** (`ContactCenterBorradorService`, del armazón): Servicio, Agentes y Grupos se
+   editan como una ficha. Cambiar de sección no pregunta ni pierde nada, el índice marca las secciones con cambios,
+   «Guardar», «Deshacer» y «Cambios sin guardar» van una vez en la barra, Ctrl+S guarda, y el aviso de cambios sin
+   guardar salta al salir de Contact Center (el guardián pasa de cada sección a la ruta de Contact Center).
+8. **sc-docs › SelectButton** con los ejemplos de primeng.dev que no tenían story propia: Múltiple, Inválido,
+   Deshabilitado (entero y por opción) y A todo el ancho. Forms no aplica: `sc-selectbutton` no es un control de
+   formularios (DD-44).
+9. **Lo que depende de lo contratado no se apaga en el prototipo** (decisión de producto): se anota en Figma (nota 50).
+   Con **Call Blending**: «Llamadas salientes» del grupo (teléfono y audio saliente), el «Grupo para llamadas salientes»
+   del agente, «Solo salientes» en la tipificación del grupo y lo saliente de los resúmenes y del listado. Con
+   **CusCare**: el tipo de agente (DD-187 §1). Con **WebRTC**: el navegador, §2.
+10. **Un campo de solo lectura no parece editable** (DS: `sc-inputtext`, `sc-inputnumber`, `sc-textarea` y `sc-select`,
+    clase `--readonly`): el PIN de §2 se veía como un campo para escribir. Ni PrimeNG ni el Kit tienen un aspecto de
+    solo lectura, y el borde es la seña de que se puede escribir: el campo **pierde el borde** y se queda sobre el fondo
+    suave (`--sc-bg-default`), con el texto a contraste completo (no es `disabled`: se lee, se enfoca y se copia), sin
+    borde al pasar ni al enfocar, y con el anillo de foco del sistema (`--sc-border-focus`) al llegar con el teclado.
+    El desplegable además oculta la flecha (su clase propia por `pt.dropdown`, sin tocar la de PrimeNG) sin dejar de
+    ocupar su sitio, y el área de texto, el asa de cambiar el tamaño. Lo usan el PIN y el código de Web Chat de la ficha de grupo (DD-198). En sc-docs, «Solo lectura»
+    en los estados de los cuatro.
+
+**Razón** · La asignación por persona es como la piensa quien asigna («a Ángel»), y el grupo entero dinámico resuelve la
+migración: lo que había suelto se carga suelto. Un PIN que asigna el sistema no se puede escribir mal ni repetir. Un
+toast igual en toda la app se ve venga uno de donde venga (las fichas, los diálogos, las listas), y la barra lo partía
+entre «lo ya visible», «guardar y quedarse» y nada. Contact Center usa el mismo índice que las fichas (DD-122), y un mismo
+índice que unas veces pregunta al cambiar de sección y otras no enseña a no fiarse de él.
+
+**Descartadas** ·
+- **La casilla nativa del árbol** (`p-treetable-checkbox` con `selectionMode="checkbox"`): sale con `tabindex="-1"` y sin
+  nombre para el lector, y su propagación es por fila: la misma persona en otro grupo no se enteraba. `sc-checkbox`
+  (tri-estado) con el nombre de su fila. Como toda casilla de «todos» del DS, la de un grupo parcial lo desmarca entero;
+  la segunda vez lo marca.
+- **Que un grupo con todos sus agentes marcados uno a uno no fuera dinámico**, con una marca aparte: el padre se marca
+  solo cuando lo están todos sus hijos, y una casilla marcada que no significa «el grupo» era una regla oculta.
+- **Ocultar «Navegador» sin WebRTC**: deshabilitado se ve que existe y por qué no se elige.
+- **Quitar solo el aviso al cambiar de sección en Contact Center**, guardando cada una por su cuenta: lo que no se
+  guardaba se perdía sin avisar.
+- **El toast además del texto en la barra**: el mismo resultado dos veces.
+- **Que un grupo cuyos agentes ya tienen todos la agenda siga sin ser entero al abrirla** (solo pasaría a entero al
+  marcarlo): su casilla saldría parcial con todos sus hijos marcados, y el primer clic en cualquier otra casilla lo
+  pasaría a entero igual, porque la regla se aplica a todo el árbol en cada cambio.
+- **Destino: leer apagado lo que no se guardó** (Agentes y Grupos): un agente migrado perdía las transferencias a
+  compañeros, que antes nadie le había quitado.
+- **Solo lectura como texto suelto** (sin caja): el código de Web Chat necesita su caja para el botón de copiar, y el
+  valor dejaría de alinear con los campos de al lado.
+
+**Consecuencias** · Al abrir una agenda, un grupo cuyos agentes ya la tenían todos (sueltos o por otro grupo entero) sale
+entero, en el editor y en el listado, y se guarda como dinámico al guardar la agenda: es la regla del §1, y producto
+debe saberlo para la migración (en los datos de ejemplo, «Emergencias 24h» la lleva entera «Grupo pedidos» y salen
+enteros también Online Support, Soporte Taller y Telemarketing).
+Pruebas: `agenda-agentes.spec.ts` reescrita (árbol, persona, dinámico, parcial, «Sin grupo», listado), `agenda-asignacion`
+de `test:unit` nueva y, al día, las de lote, Contact Center, altas, PIN, audio saliente y tablas. DS: `popupClosed` en
+`ScConfirmService`. Fuera `sc-agenda-agents-table` y el resultado de la barra (`TopBarSlotService.resultado`). En
+Figma, la nota 50 de `docs/figma-pendiente.md`.
 
 ---
 

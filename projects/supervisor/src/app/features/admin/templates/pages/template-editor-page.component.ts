@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, HostListener, inject, signal, type OnInit, type TemplateRef, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, HostListener, inject, signal, type OnInit, type TemplateRef, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -83,10 +83,6 @@ export class TemplateEditorPageComponent implements DirtyAware, OnInit {
   protected readonly form = signal<TemplateDraft>({ title: '', type: 'chat', html: '', groupIds: [] });
   private readonly dirtyState = createFormDirtyState(() => this.form());
   readonly formDirty = this.dirtyState.dirty;
-  /** Con cambios sin guardar, el «guardado» de la barra ya no vale (DD-191). */
-  private readonly limpiaResultado = effect(() => {
-    if (this.formDirty()) this.resultado.limpiar();
-  });
 
   protected readonly types = TEMPLATE_TYPES;
   /** El alto del editor (barra incluida): el paso del Kit más cercano a un cuerpo de mensaje largo. */
@@ -190,17 +186,17 @@ export class TemplateEditorPageComponent implements DirtyAware, OnInit {
       this.asignarGrupos(created.id, f.groupIds);
       this.dirtyState.markPristine();
       const creado = this.translate.instant('templates.toasts.created', { name: created.title });
-      // Tras llegar a la edición: antes, el cambio de página se lo llevaría (DD-191).
+      // El toast, ya en la ficha a la que se llega (DD-211 §5).
       void this.router
         .navigateByUrl(`/admin/plantillas/editar/${created.id}`, { replaceUrl: true })
-        .then(() => this.resultado.enLaBarra(creado));
+        .then(() => this.resultado.contar(creado));
       return;
     }
     this.store.updateTemplate(this.templateId!, { title, type: f.type, body });
     this.asignarGrupos(this.templateId!, f.groupIds);
     this.form.set({ ...f, title });
     this.dirtyState.markPristine();
-    this.resultado.enLaBarra(this.translate.instant('templates.toasts.updated', { name: title }));
+    this.resultado.contar(this.translate.instant('templates.toasts.updated', { name: title }));
   }
 
   /** Pone o quita la plantilla de las `templates` de cada grupo que cambió: solo toca a los que cambian. */

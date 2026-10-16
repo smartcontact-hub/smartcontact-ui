@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ScDialogComponent } from '@smartcontact-hub/components';
 
 import type { TemplateType } from '@features/admin/templates/data/templates-data';
@@ -11,6 +11,7 @@ import { TemplatesStore } from '@features/admin/templates/state/templates.store'
 import { AGENDA_FIELDS } from '../../instances/agendas';
 import { EQUIPO_FIELDS } from '../../instances/equipos';
 import { hoy } from '@shared/utils/today';
+import { ResultadoAccionService } from '@core/services';
 import { AgendasStore } from '../../state/agendas.store';
 import { EquiposStore } from '../../state/equipos.store';
 import { RepoFormPanelComponent, type RepoFormSubmission } from '../repo-form-panel.component';
@@ -90,6 +91,8 @@ export class RecursoDialogComponent {
   private readonly agendasStore = inject(AgendasStore);
   private readonly templatesStore = inject(TemplatesStore);
   private readonly equiposStore = inject(EquiposStore);
+  private readonly translate = inject(TranslateService);
+  private readonly resultado = inject(ResultadoAccionService);
 
   readonly recurso = input.required<RecursoAbierto>();
   /** El recurso nuevo, para que la ficha lo añada a lo elegido. */
@@ -119,6 +122,7 @@ export class RecursoDialogComponent {
     const id = this.id();
     if (id === null) this.creado.emit(this.agendasStore.addItem({ ...datos, contacts: [], updatedAt: hoy() }).id);
     else this.agendasStore.updateItem(id, { ...datos, updatedAt: hoy() });
+    this.contar(id === null, 'repositories.agendas.singular', datos.name);
     this.cerrar.emit();
   }
 
@@ -127,6 +131,7 @@ export class RecursoDialogComponent {
     const id = this.id();
     if (id === null) this.creado.emit(this.equiposStore.addItem(datos).id);
     else this.equiposStore.updateItem(id, datos);
+    this.contar(id === null, 'repositories.equipos.singular', datos.name);
     this.cerrar.emit();
   }
 
@@ -134,7 +139,14 @@ export class RecursoDialogComponent {
     const id = this.id();
     if (id === null) this.creado.emit(this.templatesStore.addTemplate(s).id);
     else this.templatesStore.updateTemplate(id, s);
+    this.resultado.contar(this.translate.instant(id === null ? 'templates.toasts.created' : 'templates.toasts.updated', { name: s.title }));
     this.cerrar.emit();
+  }
+
+  /** Crear o guardar desde la ficha no decía nada: el resultado, en un toast como en Repositorios (DD-211 §5). */
+  private contar(creado: boolean, entidad: string, name: string): void {
+    const key = creado ? 'repositories.toasts.created' : 'repositories.toasts.updated';
+    this.resultado.contar(this.translate.instant(key, { entity: this.translate.instant(entidad), name }));
   }
 
   private buscar<T extends { readonly id: number }>(items: readonly T[], id: number | null): T | null {

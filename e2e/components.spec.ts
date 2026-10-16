@@ -448,6 +448,41 @@ test.describe('sc-textarea', () => {
   });
 });
 
+test.describe('solo lectura (DD-211 §10)', () => {
+  /* Un campo de solo lectura no parece editable: sin borde (la seña de que se puede escribir), sobre otro fondo que el
+   * campo editable de la misma página y con el texto igual de oscuro (no es `disabled`). El desplegable, sin flecha. */
+  for (const [pagina, id, editable, control] of [
+    ['inputtext', 'sc-inputtext-readonly', 'sc-inputtext', 'input'],
+    ['inputnumber', 'sc-inputnumber-readonly', 'sc-inputnumber', 'input'],
+    ['textarea', 'sc-textarea-readonly', 'sc-textarea', 'textarea'],
+    ['select', 'sc-select-readonly', 'sc-select', '.sc-select__control'],
+  ] as const) {
+    test(`${id}: sin borde, sobre el fondo suave, con el texto a contraste completo`, async ({ page }) => {
+      await gotoPage(page, pagina);
+      const props = ['border-top-color', 'background-color', 'color'];
+      const ro = await styleOf(page.getByTestId(id).locator(control).first(), props);
+      const ed = await styleOf(page.getByTestId(editable).locator(control).first(), props);
+      expect(ro['border-top-color'], 'sin borde').toBe('rgba(0, 0, 0, 0)');
+      expect(ed['border-top-color'], 'el editable, con borde').not.toBe('rgba(0, 0, 0, 0)');
+      expect(ro['background-color'], 'otro fondo que el editable').not.toBe(ed['background-color']);
+      expect(ro['color'], 'el texto no se apaga').toBe(ed['color']);
+    });
+  }
+
+  test('sc-textarea-readonly: sin el asa de cambiar el tamaño', async ({ page }) => {
+    await gotoPage(page, 'textarea');
+    expect((await styleOf(page.getByTestId('sc-textarea-readonly').locator('textarea'), ['resize']))['resize']).toBe('none');
+  });
+
+  test('sc-select-readonly: sin la flecha, que deja su sitio', async ({ page }) => {
+    await gotoPage(page, 'select');
+    const flecha = page.getByTestId('sc-select-readonly').locator('.sc-select__dropdown');
+    await expect(flecha).toHaveCount(1);
+    expect((await styleOf(flecha, ['visibility']))['visibility']).toBe('hidden');
+    await expect(page.getByTestId('sc-select').locator('.sc-select__dropdown')).toBeVisible();
+  });
+});
+
 test.describe('ayuda de campo', () => {
   /* La ayuda va a 7 de su control en todos los campos del DS (la especificación de Figma de `sc-select`). Tres se quedaban
    * a 3,5: copiaron el margen de `sc-inputtext` sin el `gap` del host que lo completa (barrido de las fichas, 2026-10-15). */

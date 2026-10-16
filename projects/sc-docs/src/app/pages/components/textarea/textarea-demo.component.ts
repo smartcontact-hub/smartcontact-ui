@@ -14,6 +14,8 @@ const STATES_SNIPPET = `<sc-textarea placeholder="Auto-resize" [autoResize]="tru
 <sc-textarea placeholder="Large" size="lg" />
 <sc-textarea placeholder="Inválido" [invalid]="true" />
 <sc-textarea placeholder="Deshabilitado" [disabled]="true" />
+<!-- "readonly": como sc-inputtext, sin borde y sobre el fondo suave (DD-211 §10). -->
+<sc-textarea placeholder="Solo lectura" value="Solo lectura: se ve, se enfoca y se copia." [readonly]="true" />
 <sc-textarea placeholder="Fluid" [fluid]="true" />`;
 
 const COPY_SNIPPET = `<!-- Para lo que se lee y se copia: el botón va dentro, solo con su icono (DD-198). -->

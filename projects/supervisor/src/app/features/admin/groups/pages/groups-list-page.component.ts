@@ -489,8 +489,8 @@ export class GroupsListPageComponent {
     );
     this.duplicateOpen.set(false);
     const creado = this.translate.instant('groups.toasts.created', { name: created.name });
-    // El duplicado abre su ficha; el aviso, ya en ella (DD-191).
-    void this.router.navigateByUrl(`/admin/grupos/editar/${created.id}`).then(() => this.resultado.enLaBarra(creado));
+    // El toast, ya en la ficha a la que se llega (DD-211 §5).
+    void this.router.navigateByUrl(`/admin/grupos/editar/${created.id}`).then(() => this.resultado.contar(creado));
   }
 
   protected onRowOpen(group: Group): void {
@@ -547,8 +547,8 @@ export class GroupsListPageComponent {
   protected onRenameCommit(id: number, value: string): void {
     this.groupsStore.updateGroup(id, { name: value });
     this.renamingId.set(null);
-    // El nombre nuevo ya se ve en la fila: solo para el lector de pantalla (DD-191).
-    this.resultado.visto(this.translate.instant('groups.toasts.duplicated', { name: value }));
+    // El resultado, en un toast (DD-211 §5).
+    this.resultado.contar(this.translate.instant('groups.toasts.duplicated', { name: value }));
   }
 
   protected onRenameCancel(_id: number): void {
@@ -626,11 +626,11 @@ export class GroupsListPageComponent {
     if (ids.length === 1) {
       this.groupsStore.deleteGroup(ids[0]!);
       this.linksStore.removeGroup(ids[0]!);
-      this.resultado.visto(this.translate.instant('groups.toasts.deleted_single', { name: toasted[0]!.name, }));
+      this.resultado.contar(this.translate.instant('groups.toasts.deleted_single', { name: toasted[0]!.name, }));
     } else {
       this.groupsStore.deleteGroups(ids);
       for (const id of ids) this.linksStore.removeGroup(id);
-      this.resultado.visto(this.translate.instant('groups.toasts.deleted_bulk', { count: ids.length }));
+      this.resultado.contar(this.translate.instant('groups.toasts.deleted_bulk', { count: ids.length }));
     }
 
     this.deleteTarget.set(null);

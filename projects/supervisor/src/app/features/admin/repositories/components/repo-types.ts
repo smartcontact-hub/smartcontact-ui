@@ -25,6 +25,9 @@ export interface RepoColumnDef<T extends RepoEntity> {
   readonly statusMap?: Readonly<Record<string, RepoStatusEntry>>;
   /** Para `kind === 'groups'`: los grupos que usan la fila, para el desplegable de «Grupos» de siempre. */
   readonly groups?: (item: T) => readonly GroupRef[];
+  /** Para `kind === 'groups'`: lo que oye el lector en la cifra, si no son solo grupos («N grupos y agentes»). Lleva
+   *  `{{count}}` y su forma para uno en `<clave>_one`. */
+  readonly groupsAriaKey?: string;
 }
 
 export interface RepoStatusEntry {

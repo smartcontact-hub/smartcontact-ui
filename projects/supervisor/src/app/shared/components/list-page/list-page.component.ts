@@ -656,7 +656,7 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
     this.selectedIds.set(new Set());
   }
 
-  /* ─── El resultado de la acción en lote, en su barra (DD-196) ───────────────────────────────────────────────── */
+  /* ─── El resultado de la acción en lote: un toast, y en su barra con «Deshacer» (DD-196, DD-211 §5) ─────────── */
 
   private readonly deshacer = inject(UndoStackService);
   private readonly resultadoAccion = inject(ResultadoAccionService);
@@ -665,9 +665,9 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
   protected readonly resultadoLote = signal<{ readonly texto: string; readonly deshacerId: string | null } | null>(null);
 
   /**
-   * La página aplicó un cambio en lote a `cuantos` filas: la barra se queda donde estaba y lo cuenta, con «Deshacer»,
-   * hasta que se cierra, se vuelve a seleccionar o se sale de la página. Sin toast: el resultado sale donde se hizo la
-   * acción y no tapa filas (DD-196). `deshacer` devuelve las filas a como estaban.
+   * La página aplicó un cambio en lote a `cuantos` filas: lo dice un toast, como toda acción (DD-211 §5), y la barra se
+   * queda donde estaba y lo cuenta con «Deshacer» hasta que se cierra, se vuelve a seleccionar o se sale de la página:
+   * el toast se va solo y el deshacer tiene que seguir a mano (DD-196). `deshacer` devuelve las filas a como estaban.
    */
   contarLote(cuantos: number, deshacer: () => void): void {
     this.cerrarResultadoLote();
@@ -677,10 +677,10 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
     const revertido = this.translate.instant('common.change_reverted');
     const deshacerId = this.deshacer.registrar(revertido, deshacer, () => {
       this.resultadoLote.set({ texto: revertido, deshacerId: null });
-      this.resultadoAccion.visto(revertido);
+      this.resultadoAccion.contar(revertido);
     });
     this.resultadoLote.set({ texto, deshacerId });
-    this.resultadoAccion.visto(texto);
+    this.resultadoAccion.contar(texto);
   }
 
   protected deshacerLote(): void {

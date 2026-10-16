@@ -348,8 +348,8 @@ export class UsersListPageComponent {
   protected onRenameCommit(id: number, value: string): void {
     this.usersStore.updateUser(id, { name: value });
     this.renamingId.set(null);
-    // El nombre nuevo ya se ve en la fila: solo para el lector de pantalla (DD-191).
-    this.resultado.visto(this.translate.instant('users.toasts.duplicated', { name: value }));
+    // El resultado, en un toast (DD-211 §5).
+    this.resultado.contar(this.translate.instant('users.toasts.duplicated', { name: value }));
   }
 
   protected onRenameCancel(_id: number): void {
@@ -377,10 +377,10 @@ export class UsersListPageComponent {
 
     if (ids.length === 1) {
       this.usersStore.deleteUser(ids[0]!);
-      this.resultado.visto(this.translate.instant('users.toasts.deleted_single', { name: toasted[0]!.name, }));
+      this.resultado.contar(this.translate.instant('users.toasts.deleted_single', { name: toasted[0]!.name, }));
     } else {
       this.usersStore.deleteUsers(ids);
-      this.resultado.visto(this.translate.instant('users.toasts.deleted_bulk', { count: ids.length }));
+      this.resultado.contar(this.translate.instant('users.toasts.deleted_bulk', { count: ids.length }));
     }
 
     this.deleteTarget.set(null);

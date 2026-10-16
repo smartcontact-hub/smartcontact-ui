@@ -60,6 +60,7 @@ export type ScSelectSize = ScFieldSize;
     '[class.sc-select--lg]': "size() === 'lg'",
     '[class.sc-select--invalid]': 'isInvalid()',
     '[class.sc-select--disabled]': 'disabled()',
+    '[class.sc-select--readonly]': 'readonly() && !disabled()',
     '[class.sc-select--filled]': 'filled()',
     '[class.sc-select--ifta]': 'iftaLabel()',
   },
@@ -93,7 +94,10 @@ export class ScSelectComponent {
   readonly invalid = input(false, { transform: booleanAttribute });
   readonly placeholder = input<string>('');
   readonly disabled = input(false, { transform: booleanAttribute });
-  /** Solo lectura (paridad con sc-inputtext / catálogo de desarrollo). */
+  /**
+   * El valor se ve pero no se cambia: no abre la lista. Como sc-inputtext, no parece editable: sin borde, sobre el
+   * fondo suave y sin la flecha (DD-211 §10).
+   */
   readonly readonly = input(false, { transform: booleanAttribute });
   readonly inputId = input<string>();
   /**
@@ -259,6 +263,8 @@ export class ScSelectComponent {
     option: ({ context }: { context?: { disabled?: boolean } }) => ({
       'aria-disabled': context?.disabled ? 'true' : null,
     }),
+    // Una clase propia en la flecha, para ocultarla en solo lectura sin depender de la clase interna de PrimeNG.
+    dropdown: { class: 'sc-select__dropdown' },
   }));
 
   private readonly panel = createScPanelSizing('sc-select', this.size);

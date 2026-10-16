@@ -115,10 +115,11 @@ test('plantillas: hasta tres grupos y «+N más», y los que no atienden su cana
   await expect(etiquetas.nth(3)).toHaveText(/^\+\d+ más$/);
 });
 
-test('agendas: los agentes sin «Código», y los contactos con sus columnas a elegir, con buscador', async ({ page }) => {
+test('agendas: el árbol de grupos y agentes sin «Código», y los contactos con sus columnas a elegir, con buscador', async ({ page }) => {
   await goto(page, 'admin/agendas/editar/1');
-  const agentes = page.locator('sc-agenda-agents-table');
-  await expect(agentes.getByRole('columnheader')).toHaveText(['', 'Nombre', 'Email']);
+  // Desde DD-211 §1, el árbol «Grupos y agentes»: nombre y email, sin «Código».
+  const agentes = page.locator('sc-agenda-assignment-tree');
+  await expect(agentes.getByRole('columnheader')).toHaveText(['Grupos y agentes', 'Email']);
 
   const contactos = page.locator('sc-agenda-contacts-table');
   const cabeceras = contactos.locator('thead th[data-field]');

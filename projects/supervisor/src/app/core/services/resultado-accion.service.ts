@@ -1,36 +1,23 @@
-import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { Injectable, inject } from '@angular/core';
+import { MessageService } from 'primeng/api';
 
-import { TopBarSlotService } from '../layout/top-bar/top-bar-slot.service';
+import { TOAST_LIFE } from '../utils/toast-life';
 
 /**
- * Dónde se cuenta el resultado de una acción del usuario (DD-191). El toast queda para lo que manda
- * el SISTEMA (una tarea en segundo plano que acaba, una conexión que cae); lo que acaba de hacer el
- * usuario se cuenta junto a su contexto, como Primer:
+ * Cómo se cuenta el resultado de una acción del usuario (DD-211 §5, que sustituye a DD-191 y DD-196): un toast de
+ * éxito, abajo a la derecha y el mismo en toda la app, al crear, guardar, duplicar, eliminar, importar o exportar
+ * («Grupo "Ventas" creado»). El aviso lleva `role="status"` (`app.component.html`): el lector lo anuncia solo.
  *
- * - `visto`: el resultado YA se ve (la fila nueva en la lista, la que desaparece, la ficha a la que
- *   se llega, la descarga del navegador). No se pinta nada más; solo se anuncia al lector de
- *   pantalla, que no ve el cambio.
- * - `enLaBarra`: guardar sin salir de la ficha. Junto a los botones de la barra, hasta la siguiente
- *   acción: la página llama a `limpiar` en cuanto vuelve a haber cambios sin guardar.
+ * Un cambio en lote, además, se queda contado en su barra con «Deshacer» (`contarLote` de `sc-list-page`): el toast se
+ * va y el deshacer tiene que seguir a mano. Un resultado que es de un control (copiar, probar una conexión) sigue en un
+ * `sc-message` junto a él.
  */
 @Injectable({ providedIn: 'root' })
 export class ResultadoAccionService {
-  private readonly lector = inject(LiveAnnouncer);
-  private readonly barra = inject(TopBarSlotService);
+  private readonly messages = inject(MessageService);
 
-  /** El resultado ya está a la vista: solo para el lector de pantalla. */
-  visto(texto: string): void {
-    void this.lector.announce(texto, 'polite');
-  }
-
-  /** Guardar y quedarse: el resultado junto a los botones de la barra. */
-  enLaBarra(texto: string): void {
-    this.barra.resultado.set(texto);
-  }
-
-  /** Vuelve a haber cambios (o empieza otra acción): el resultado anterior ya no vale. */
-  limpiar(): void {
-    this.barra.resultado.set(null);
+  /** La acción ha salido bien: lo dice un toast de éxito. */
+  contar(texto: string): void {
+    this.messages.add({ severity: 'success', summary: texto, life: TOAST_LIFE.success });
   }
 }

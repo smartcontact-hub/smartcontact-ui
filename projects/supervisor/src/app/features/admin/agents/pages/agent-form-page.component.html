@@ -291,8 +291,7 @@
     </sc-subsection>
 
     <!-- La extensión y DÓNDE suena, juntas y arriba; el tipo de agente, debajo y solo en un cliente con CusCare. Sin
-         PIN ni «Cuenta activa»: el PIN se va siempre, y estar activo ya se decide en cada grupo. La presencia inicial,
-         solo al editar. -->
+         «Cuenta activa»: estar activo ya se decide en cada grupo. El PIN y la presencia, solo al editar. -->
     <sc-subsection titleKey="agents.form.section.extension" hintKey="agents.form.section.extension_hint">
       <div class="grid grid--3">
         <div class="field">
@@ -323,30 +322,26 @@
             [options]="extensionTypeOptions()"
             optionLabel="label"
             optionValue="value"
+            optionDisabled="disabled"
             [value]="form().extensionType"
-            [helperText]="'agents.form.fields.extension_type_hint.' + form().extensionType | translate"
+            [helperText]="extensionTypeHint() | translate"
             (valueChange)="onExtensionTypeChange($event)"
           />
         </div>
 
-        <!-- El PIN, solo con la extensión en el teléfono: es con lo que el agente se activa desde él. Producto pidió quitarlo;
-             se queda aquí, con su nota, hasta que el equipo decida. -->
-        @if (phoneRequired()) {
+        <!-- El PIN, al editar y con la extensión en el teléfono: es con lo que el agente se activa desde él. Lo asigna el
+             sistema al crear el agente, así que en el alta no sale y aquí no se cambia (DD-211 §2). -->
+        @if (phoneRequired() && mode() === 'edit') {
           <div class="field">
             <label class="field__label sc-text-caption-semibold" for="agent-pin">
               {{ 'agents.form.fields.pin' | translate }}
-              <span class="field__hint sc-text-caption-regular">({{ 'common.optional' | translate }})</span>
             </label>
             <sc-inputtext
               inputId="agent-pin"
               type="text"
-              inputmode="numeric"
-              autocomplete="off"
-              [maxlength]="6"
+              [readonly]="true"
               [value]="form().pin"
               [helperText]="'agents.form.fields.pin_hint' | translate"
-              [error]="pinError() ? (pinError()! | translate) : undefined"
-              (valueChange)="updateField('pin', $event)"
             />
           </div>
         }
@@ -476,17 +471,20 @@
 
       <sc-slot titleKey="agents.form.permissions.slot_tracking">
         <div class="bloque">
-          <div class="switch-field">
-            <sc-toggleswitch
-              inputId="agent-recording"
-              [checked]="form().permissions.recording"
-              [ariaLabel]="'agents.form.fields.recording' | translate"
-              (checkedChange)="onRecordingChange($event)"
-            />
-            <div class="switch-field__copy">
-              <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.fields.recording' | translate }}</span>
+          <!-- Grabar llamadas, solo si atiende teléfono (DD-211 §2). -->
+          @if (attendsPhone()) {
+            <div class="switch-field">
+              <sc-toggleswitch
+                inputId="agent-recording"
+                [checked]="form().permissions.recording"
+                [ariaLabel]="'agents.form.fields.recording' | translate"
+                (checkedChange)="onRecordingChange($event)"
+              />
+              <div class="switch-field__copy">
+                <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.fields.recording' | translate }}</span>
+              </div>
             </div>
-          </div>
+          }
 
           <!-- «Gestionar pérdidas»: del agente, no del grupo (revisión de tipificaciones, 2026-10-09). -->
           <div class="switch-field">
@@ -503,18 +501,21 @@
       </sc-slot>
     </sc-subsection>
 
-    <sc-subsection titleKey="agents.form.section.calls" hintKey="agents.form.section.calls_hint">
-      <sc-permission-matrix
-        [rows]="matrixRows()"
-        [columns]="matrixColumns()"
-        [checked]="matrixChecked()"
-        [rowHeader]="'agents.form.permissions.destino' | translate"
-        [ariaLabel]="'agents.form.permissions.calls_section' | translate"
-        selectableColumns
-        (cellToggle)="onMatrixToggle($event)"
-        (columnToggle)="onMatrixColumnToggle($event)"
-      />
-    </sc-subsection>
+    <!-- A quién llama y transfiere: solo si atiende teléfono (DD-211 §2). -->
+    @if (attendsPhone()) {
+      <sc-subsection titleKey="agents.form.section.calls" hintKey="agents.form.section.calls_hint">
+        <sc-permission-matrix
+          [rows]="matrixRows()"
+          [columns]="matrixColumns()"
+          [checked]="matrixChecked()"
+          [rowHeader]="'agents.form.permissions.destino' | translate"
+          [ariaLabel]="'agents.form.permissions.calls_section' | translate"
+          selectableColumns
+          (cellToggle)="onMatrixToggle($event)"
+          (columnToggle)="onMatrixColumnToggle($event)"
+        />
+      </sc-subsection>
+    }
 
     <sc-subsection titleKey="agents.form.section.advanced" hintKey="agents.form.section.advanced_hint" collapsible initiallyCollapsed>
       <!-- En el orden de la revisión: descuelgue, chats simultáneos (si atiende chat), idiomas, orden aleatorio, URL y sesión. -->
@@ -591,19 +592,6 @@
             [value]="form().iframeUrl"
             (valueChange)="updateField('iframeUrl', $event)"
           />
-        </div>
-
-        <div class="switch-field switch-field--top">
-          <sc-toggleswitch
-            ariaDescribedBy="agent-login-override-hint"
-            [checked]="form().loginExtOverride"
-            [ariaLabel]="'agents.form.advanced.sesion.login_ext_override' | translate"
-            (checkedChange)="onLoginExtOverrideChange($event)"
-          />
-          <div class="switch-field__copy">
-            <span class="switch-field__label sc-text-body-regular">{{ 'agents.form.advanced.sesion.login_ext_override' | translate }}</span>
-            <p id="agent-login-override-hint" class="switch-field__hint sc-text-caption-regular">{{ 'agents.form.advanced.sesion.login_ext_override_hint' | translate }}</p>
-          </div>
         </div>
 
         @if (mode() === 'edit') {

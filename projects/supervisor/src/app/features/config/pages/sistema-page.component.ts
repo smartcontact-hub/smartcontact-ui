@@ -255,8 +255,8 @@ export class SistemaPageComponent {
       this.processing.set(false);
       this.selectedIds.set(new Set());
       this.confirmText.set('');
-      // El resultado ya se ve en el panel de abajo, con su descarga (DD-191).
-      this.resultado.visto(
+      // El resultado, en un toast (DD-211 §5).
+      this.resultado.contar(
         this.translate.instant(count === 1 ? 'config.seguridad.toast.regenerated_one' : 'config.seguridad.toast.regenerated_many', { count }),
       );
     }, 1500);
@@ -282,8 +282,8 @@ export class SistemaPageComponent {
     link.click();
     URL.revokeObjectURL(url);
 
-    // La descarga la enseña el navegador (DD-191).
-    this.resultado.visto(this.translate.instant('config.seguridad.toast.csv_downloaded'));
+    // El resultado, en un toast (DD-211 §5).
+    this.resultado.contar(this.translate.instant('config.seguridad.toast.csv_downloaded'));
   }
 
   private formatTimestamp(date: Date): string {

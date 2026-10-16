@@ -444,10 +444,10 @@ export class RuleBuilderPageComponent implements DirtyAware {
 
     if (this.isEditMode()) {
       this.rulesStore.updateRule(this.ruleId()!, base);
-      this.resultado.visto(this.translate.instant('memory.rules.builder.updated_toast'));
+      this.resultado.contar(this.translate.instant('memory.rules.builder.updated_toast'));
     } else {
       this.rulesStore.addRule(base);
-      this.resultado.visto(this.translate.instant('memory.rules.builder.created_toast'));
+      this.resultado.contar(this.translate.instant('memory.rules.builder.created_toast'));
     }
     // Just saved → the current form IS the clean state; don't prompt on the way out.
     this.dirtyState.markPristine();

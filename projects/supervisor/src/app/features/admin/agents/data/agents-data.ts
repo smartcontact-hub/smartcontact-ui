@@ -79,6 +79,13 @@ export const AGENT_TYPE_LABEL_KEYS: Readonly<Record<AgentType, string>> = {
  */
 export const CLIENTE_CON_CUSCARE = true;
 
+/**
+ * Si el cliente tiene contratados agentes en el navegador (WebRTC). Sin ellos, todos suenan en el teléfono: la ficha
+ * enseña «Navegador» deshabilitado (`optionDisabled` del SelectButton de primeng.dev) y el tipo queda en Teléfono
+ * (DD-211 §2). El cliente de la demo los tiene.
+ */
+export const CLIENTE_CON_WEBRTC = true;
+
 /** Dónde suena: `phone`, en su teléfono móvil; `webrtc`, en el navegador, con Smart Contact Agent. */
 export type ExtensionType = 'phone' | 'webrtc';
 export const EXTENSION_TYPES: readonly ExtensionType[] = ['webrtc', 'phone'];
@@ -87,10 +94,11 @@ export const EXTENSION_ICONS: Readonly<Record<ExtensionType, string>> = {
   phone: 'smartphone',
   webrtc: 'language',
 };
-/** Las tres de Contact Center › Servicio («Tipo de descuelgue»), con sus palabras. Una para llamadas y chats: que
- *  fueran distintas no tenía sentido para comercial ni para postventa (revisión de agentes del 2026-10-09). */
-export type PickupType = 'manual' | 'auto' | 'auto_preview';
-export const PICKUP_TYPES: readonly PickupType[] = ['manual', 'auto', 'auto_preview'];
+/** Las de Contact Center › Servicio («Tipo de descuelgue»), con sus palabras. Una para llamadas y chats: que fueran
+ *  distintas no tenía sentido para comercial ni para postventa (revisión de agentes del 2026-10-09). Sin «Automático con
+ *  preview» (DD-211 §2): lo guardado con él se lee como automático. */
+export type PickupType = 'manual' | 'auto';
+export const PICKUP_TYPES: readonly PickupType[] = ['manual', 'auto'];
 
 export interface AgentPermissions {
   readonly manageDevices: boolean;
@@ -98,6 +106,10 @@ export interface AgentPermissions {
   readonly externalDevices: boolean;
   readonly callsEnabled: boolean;
   readonly transfersEnabled: boolean;
+  /** A otros agentes y a grupos (DD-211 §2). Lo guardado antes no lo trae: se lee como de fábrica, permitido
+   *  (`agenteAlDia`), porque antes no se restringía. */
+  readonly callsDestAgents: boolean;
+  readonly callsDestGroups: boolean;
   readonly callsDestFixed: boolean;
   readonly callsDestMobile: boolean;
   readonly callsDestInternational: boolean;
@@ -106,9 +118,11 @@ export interface AgentPermissions {
   readonly transfersDestMobile: boolean;
   readonly transfersDestInternational: boolean;
   readonly transfersDestSpecial: boolean;
+  readonly transfersDestAgents: boolean;
+  readonly transfersDestGroups: boolean;
   readonly recording: boolean;
   /** «Gestión de conversaciones pendientes»: el agente gestiona las pérdidas (revisión de agentes del 2026-10-09: es del
-   *  agente, no del grupo). Lo guardado antes no lo trae: se lee apagado. */
+   *  agente, no del grupo). Lo guardado antes no lo trae: se lee como de fábrica, apagado (`agenteAlDia`). */
   readonly pendingConversations: boolean;
 }
 
@@ -120,6 +134,10 @@ export const SEED_AGENT_PERMISSIONS: AgentPermissions = {
   externalDevices: false,
   callsEnabled: true,
   transfersEnabled: true,
+  callsDestAgents: true,
+  callsDestGroups: true,
+  transfersDestAgents: true,
+  transfersDestGroups: true,
   callsDestFixed: true,
   callsDestMobile: true,
   callsDestInternational: false,
@@ -132,16 +150,19 @@ export const SEED_AGENT_PERMISSIONS: AgentPermissions = {
   pendingConversations: false,
 };
 
-/** Las filas de la matriz de permisos: a qué numeración llama o transfiere el agente. */
-export type DestinoKey = 'fijos' | 'moviles' | 'internacionales' | 'especial';
+/** Las filas de la matriz de permisos: a quién llama o transfiere el agente, otros agentes y grupos (DD-211 §2), y a
+ *  qué numeración. */
+export type DestinoKey = 'agentes' | 'grupos' | 'fijos' | 'moviles' | 'internacionales' | 'especial';
 /** Sus columnas. */
 export type DestinoCol = 'llamada' | 'transferencia';
 
-export const DESTINO_KEYS: readonly DestinoKey[] = ['fijos', 'moviles', 'internacionales', 'especial'];
+export const DESTINO_KEYS: readonly DestinoKey[] = ['agentes', 'grupos', 'fijos', 'moviles', 'internacionales', 'especial'];
 
 /** Cada casilla de la matriz (destino × llamada o transferencia) es una clave de `AgentPermissions`. La misma matriz
  *  en la ficha de agente y en Contact Center › Agentes. */
 export const PERMISSION_MATRIX_KEYS: Readonly<Record<DestinoKey, Record<DestinoCol, keyof AgentPermissions>>> = {
+  agentes: { llamada: 'callsDestAgents', transferencia: 'transfersDestAgents' },
+  grupos: { llamada: 'callsDestGroups', transferencia: 'transfersDestGroups' },
   fijos: { llamada: 'callsDestFixed', transferencia: 'transfersDestFixed' },
   moviles: { llamada: 'callsDestMobile', transferencia: 'transfersDestMobile' },
   internacionales: { llamada: 'callsDestInternational', transferencia: 'transfersDestInternational' },
@@ -167,6 +188,10 @@ export const FACTORY_AGENT_DEFAULTS: AgentDefaults = {
     externalDevices: true,
     callsEnabled: true,
     transfersEnabled: true,
+    callsDestAgents: true,
+    callsDestGroups: true,
+    transfersDestAgents: true,
+    transfersDestGroups: true,
     callsDestFixed: true,
     callsDestMobile: true,
     callsDestInternational: true,
@@ -220,9 +245,16 @@ export interface Agent {
   readonly labels?: readonly number[];
   readonly schedules?: readonly number[];
   readonly templates?: readonly number[];
-  /** When true, the agent's `extension` field is auto-updated on login. */
+  /** «Actualizar teléfono en login»: fuera de la ficha (DD-211 §2); ya no se lee ni se escribe. */
   readonly loginExtOverride?: boolean;
   /** Draft flag — set on duplicated entities until the user saves (DD#294). */
+}
+
+/** Lo guardado antes de un permiso nuevo no lo trae: se lee como de fábrica, igual que lo de Contact Center
+ *  (`AgentDefaultsStore`), sin subir la versión (AGENTS: «normalize», la vía que no borra). Agentes y Grupos del
+ *  Destino salen permitidos (DD-211 §2): antes no había nada que los restringiera. */
+export function agenteAlDia(guardado: Agent): Agent {
+  return { ...guardado, permissions: { ...FACTORY_AGENT_DEFAULTS.permissions, ...guardado.permissions } };
 }
 
 export interface ExtensionOption {

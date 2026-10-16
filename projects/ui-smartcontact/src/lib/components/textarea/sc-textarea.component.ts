@@ -31,6 +31,7 @@ type PrimeTextareaSize = 'small' | 'large' | undefined;
     host: {
         '[class.sc-textarea--copyable]': 'copyable()',
         '[class.sc-textarea--fluid]': 'fluid()',
+        '[class.sc-textarea--readonly]': 'readonly() && !disabled()',
         // Con ayuda o con copiar, el campo se apila (control y debajo su ayuda) y pierde el hueco de línea de debajo.
         '[class.sc-textarea--stack]': 'copyable() || !!footerText()',
     },
@@ -90,7 +91,8 @@ export class ScTextareaComponent {
 
     /**
      * El valor se ve pero no se edita. A diferencia de `disabled`, **sigue siendo enfocable y se
-     * puede copiar**.
+     * puede copiar**, y el texto no se apaga. Tampoco parece editable: sin borde, sobre el fondo suave
+     * (DD-211 §10).
      */
     readonly readonly = input(false, { transform: booleanAttribute });
 

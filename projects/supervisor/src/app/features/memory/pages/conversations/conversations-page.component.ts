@@ -239,8 +239,8 @@ export class ConversationsPageComponent implements OnInit, OnDestroy {
     const ids = [...this.selectedIds()];
     this.conversationsStore.markAsRead(ids);
     this.conversationsStore.clearSelection();
-    // Las filas dejan de marcarse en el acto: solo para el lector de pantalla (DD-191).
-    this.resultado.visto(this.translate.instant('memory.bulk.mark_read_toast', { n }));
+    // El resultado, en un toast (DD-211 §5).
+    this.resultado.contar(this.translate.instant('memory.bulk.mark_read_toast', { n }));
   }
 
   protected onBulkModalClose(): void {
@@ -262,11 +262,11 @@ export class ConversationsPageComponent implements OnInit, OnDestroy {
     // player-modal (S47 §10 #4). En producción este punto llamará al
     // endpoint de descarga.
     if (opts.recordings) {
-      // Sin backend, no hay descarga que enseñe el navegador: el aviso, en la barra (DD-191).
-      this.resultado.enLaBarra(this.translate.instant('memory.bulk.download_audio_toast', { n }));
+      // El resultado, en un toast (DD-211 §5).
+      this.resultado.contar(this.translate.instant('memory.bulk.download_audio_toast', { n }));
     }
     if (opts.chats) {
-      this.resultado.enLaBarra(this.translate.instant('memory.bulk.download_chat_toast', { n }));
+      this.resultado.contar(this.translate.instant('memory.bulk.download_chat_toast', { n }));
     }
   }
 
@@ -465,7 +465,7 @@ export class ConversationsPageComponent implements OnInit, OnDestroy {
         return;
       case 'mark-read':
         this.conversationsStore.markAsRead([conversation.id]);
-        this.resultado.visto(this.translate.instant('memory.bulk.mark_read_toast', { n: 1 }));
+        this.resultado.contar(this.translate.instant('memory.bulk.mark_read_toast', { n: 1 }));
         return;
     }
   }

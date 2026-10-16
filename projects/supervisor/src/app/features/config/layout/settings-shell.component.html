@@ -3,6 +3,16 @@
      Hasta el 2026-09-14 vivía aquí escrito a mano y los formularios de admin tenían
      otro, así que la misma app eran dos pantallas de ajustes distintas. Y desde el
      2026-09-27 el índice también es el mismo (DD-122). -->
+<!-- Un solo «Guardar» y un solo «Deshacer» para las tres secciones (DD-211 §7), como en las fichas: «Deshacer» solo
+     si hay algo que deshacer, y en palabras que hay cambios sin guardar; el índice marca dónde están. -->
+<ng-template #topbarActions>
+  @if (borrador.dirty()) {
+    <span class="form-save-reason sc-text-caption-regular" role="status">{{ 'common.unsaved_changes' | translate }}</span>
+    <sc-button variant="secondary" appearance="outlined" [label]="'common.undo' | translate" (clicked)="discard()" />
+  }
+  <sc-button variant="primary" [disabled]="!borrador.canSave()" [loading]="borrador.saving()" [label]="'common.save' | translate" (clicked)="save()" />
+</ng-template>
+
 <div class="page__inner page__inner--rail">
   <div class="page__rail">
     <sc-form-section-nav
@@ -10,6 +20,7 @@
       [activeId]="activeId()"
       titleKey="config.sidebar.title"
       [flush]="true"
+      [sectionsWithChanges]="borrador.conCambios()"
       (activeChange)="go($event)"
     />
   </div>

@@ -13,7 +13,9 @@ const STATES_SNIPPET = `<sc-inputnumber label="Cantidad" placeholder="0" />
 <sc-inputnumber label="Con límites" [min]="0" [max]="100" />
 <sc-inputnumber label="Con sufijo" suffix="agentes" [value]="5" />
 <sc-inputnumber label="Con error" error="Fuera de rango" />
-<sc-inputnumber label="Deshabilitado" [disabled]="true" />`;
+<sc-inputnumber label="Deshabilitado" [disabled]="true" />
+<!-- "readonly": como sc-inputtext, sin borde y sobre el fondo suave (DD-211 §10). -->
+<sc-inputnumber label="Solo lectura" suffix="agentes" [value]="12" [readonly]="true" />`;
 
 /** Demo de `sc-inputnumber` en formato story (motor «Storybook-like»). */
 @Component({

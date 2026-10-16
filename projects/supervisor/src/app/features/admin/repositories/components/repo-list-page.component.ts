@@ -222,9 +222,10 @@ export class RepoListPageComponent<T extends RepoEntity> {
     return column?.kind === 'groups' && column.groups ? column.groups(item) : null;
   }
 
-  protected groupsAria(count: number): string {
+  protected groupsAria(count: number, key: string): string {
     this.lang();
-    return this.translate.instant(`repositories.groups_aria${count === 1 ? '_one' : ''}`, { count });
+    const base = this.config().columns.find((c) => c.key === key)?.groupsAriaKey ?? 'repositories.groups_aria';
+    return this.translate.instant(`${base}${count === 1 ? '_one' : ''}`, { count });
   }
 
   /** Lo que se estampa al duplicar o guardar desde el panel: la fecha de modificación, si la lista la lleva. */
@@ -415,7 +416,7 @@ export class RepoListPageComponent<T extends RepoEntity> {
   }
 
   private toastSuccess(key: string, params: Record<string, string | number>): void {
-    // El resultado ya se ve en la lista: solo para el lector de pantalla (DD-191).
-    this.resultado.visto(this.translate.instant(key, params));
+    // El resultado, en un toast (DD-211 §5).
+    this.resultado.contar(this.translate.instant(key, params));
   }
 }

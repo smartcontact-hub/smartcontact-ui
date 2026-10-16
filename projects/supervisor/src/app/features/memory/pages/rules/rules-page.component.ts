@@ -251,7 +251,7 @@ export class RulesPageComponent {
   private duplicateRule(rule: Rule): void {
     const copy = this.rulesStore.duplicateRule(rule.id);
     if (!copy) return;
-    this.resultado.visto(this.translate.instant('memory.rules.duplicated_toast'));
+    this.resultado.contar(this.translate.instant('memory.rules.duplicated_toast'));
   }
 
   private async confirmDelete(rule: Rule): Promise<void> {
@@ -264,6 +264,6 @@ export class RulesPageComponent {
     });
     if (!accepted) return;
     this.rulesStore.deleteRule(rule.id);
-    this.resultado.visto(this.translate.instant('memory.rules.deleted_toast', { name: rule.name }));
+    this.resultado.contar(this.translate.instant('memory.rules.deleted_toast', { name: rule.name }));
   }
 }

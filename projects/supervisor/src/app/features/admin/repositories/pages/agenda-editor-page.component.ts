@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, HostListener, inject, signal, type OnInit, type TemplateRef, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, HostListener, inject, signal, type OnInit, type TemplateRef, viewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -16,7 +16,10 @@ import { injectLangChange } from '@core/utils/lang-change';
 import { ImportDialogComponent } from '@shared/components';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 
-import { AgendaAgentsTableComponent } from '../components/agenda-agents-table/agenda-agents-table.component';
+import {
+  AgendaAssignmentTreeComponent,
+  type GrupoParaAgenda,
+} from '../components/agenda-assignment-tree/agenda-assignment-tree.component';
 import { AgendaContactsTableComponent } from '../components/agenda-contacts-table/agenda-contacts-table.component';
 import { RepoFormPanelComponent, type RepoFormSubmission } from '../components/repo-form-panel.component';
 import type { RepoFieldDef } from '../components/repo-types';
@@ -32,8 +35,18 @@ import {
   telefonoValido,
   TOPE_DE_CONTACTOS,
 } from '../state/agenda-contacts.core.mjs';
+import {
+  deLoGuardado,
+  estructuraDe,
+  gruposConMiembros,
+  paraGuardar,
+  type Asignacion,
+  type Estructura,
+} from '../state/agenda-asignacion.core.mjs';
 import { hoy } from '@shared/utils/today';
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
+import { GroupsStore } from '@features/admin/groups/state/groups.store';
+import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links.store';
 import { AgendasStore, type AgendaContact } from '../state/agendas.store';
 import { ResultadoAccionService } from '@core/services';
 
@@ -43,12 +56,13 @@ interface AgendaDraft {
   readonly contacts: readonly AgendaContact[];
   /** Las etiquetas de los cinco campos personalizados: una por campo, vacía = la de siempre. */
   readonly customLabels: readonly string[];
-  /** Los agentes que ven esta agenda: es lo que dice cada agente en sus `schedules`, no algo de la agenda. */
-  readonly agentIds: readonly number[];
+  /** A quién se asigna (DD-211 §1): los grupos enteros, que lo dicen en sus `schedules`, y las personas que la tienen,
+   *  también por un grupo entero; las sueltas lo dicen en sus `schedules`. No es algo de la agenda. */
+  readonly asignacion: Asignacion;
 }
 
 const SIN_ETIQUETAS: readonly string[] = ['', '', '', '', ''];
-const VACIA: AgendaDraft = { name: '', description: '', contacts: [], customLabels: SIN_ETIQUETAS, agentIds: [] };
+const VACIA: AgendaDraft = { name: '', description: '', contacts: [], customLabels: SIN_ETIQUETAS, asignacion: { grupos: [], agentes: [] } };
 
 /**
  * El editor de una agenda (DD-163): su nombre, su estado y sus contactos. Va en su propia ruta, como las fichas, para que
@@ -58,7 +72,7 @@ const VACIA: AgendaDraft = { name: '', description: '', contacts: [], customLabe
 @Component({
   selector: 'sc-agenda-editor-page',
   imports: [
-    AgendaAgentsTableComponent,
+    AgendaAssignmentTreeComponent,
     AgendaContactsTableComponent,
     ButtonComponent,
     DialogComponent,
@@ -78,6 +92,8 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
   private readonly router = inject(Router);
   private readonly store = inject(AgendasStore);
   protected readonly agentsStore = inject(AgentsStore);
+  private readonly groupsStore = inject(GroupsStore);
+  private readonly linksStore = inject(GroupAgentLinksStore);
   private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
   private readonly language = inject(LanguageService);
@@ -89,16 +105,27 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
     useTopbarActions(this.topbarActions);
   }
 
+  /** Los grupos con sus agentes, para el árbol «Grupos y agentes»: quién está en cada grupo lo dicen los vínculos. */
+  protected readonly gruposParaAgenda = computed<readonly GrupoParaAgenda[]>(() =>
+    gruposConMiembros(
+      this.groupsStore.groups().map((g) => ({ id: g.id, name: g.name })),
+      this.linksStore.links(),
+    ),
+  );
+
+  private readonly estructura = computed<Estructura>(() =>
+    estructuraDe(
+      this.gruposParaAgenda(),
+      this.agentsStore.agents().map((a) => a.id),
+    ),
+  );
+
   protected readonly mode = signal<'create' | 'edit'>('create');
   private agendaId: number | null = null;
 
   protected readonly form = signal<AgendaDraft>(VACIA);
   private readonly dirtyState = createFormDirtyState(() => this.form());
   readonly formDirty = this.dirtyState.dirty;
-  /** Con cambios sin guardar, el «guardado» de la barra ya no vale (DD-191). */
-  private readonly limpiaResultado = effect(() => {
-    if (this.formDirty()) this.resultado.limpiar();
-  });
 
   /** El nombre no se repite entre agendas (sin contar la propia), como en el panel de la lista. */
   protected readonly nameTaken = computed(() => {
@@ -135,11 +162,11 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
       description: agenda.description,
       contacts: agenda.contacts,
       customLabels: SIN_ETIQUETAS.map((_, i) => agenda.customLabels?.[i] ?? ''),
-      agentIds: this.agentsStore
-        .agents()
-        .filter((a) => a.schedules?.includes(agenda.id))
-        .map((a) => a.id)
-        .sort((a, b) => a - b),
+      asignacion: deLoGuardado(
+        this.groupsStore.groups().filter((g) => g.schedules?.includes(agenda.id)).map((g) => g.id),
+        this.agentsStore.agents().filter((a) => a.schedules?.includes(agenda.id)).map((a) => a.id),
+        this.estructura(),
+      ),
     });
     this.dirtyState.markPristine();
   }
@@ -153,32 +180,44 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
     if (!this.canSave()) return;
     const f = this.form();
     const draft = { ...f, name: f.name.trim(), description: f.description.trim() };
-    // Lo de la agenda y lo de sus agentes se guardan en sitios distintos: los agentes llevan sus agendas.
-    const { agentIds, ...datos } = draft;
+    // Lo de la agenda y a quién se asigna se guardan en sitios distintos: los grupos y los agentes llevan sus agendas.
+    const { asignacion, ...datos } = draft;
     if (this.mode() === 'create') {
       const created = this.store.addItem({ ...datos, updatedAt: hoy() });
-      this.asignarAgentes(created.id, agentIds);
+      this.asignar(created.id, asignacion);
       this.dirtyState.markPristine();
       const creado = this.texto('repositories.toasts.created', created.name);
-      // Tras llegar a la edición: antes, el cambio de página se lo llevaría (DD-191).
-      void this.router.navigateByUrl(`/admin/agendas/editar/${created.id}`, { replaceUrl: true }).then(() => this.resultado.enLaBarra(creado));
+      // El toast, ya en la ficha a la que se llega (DD-211 §5).
+      void this.router.navigateByUrl(`/admin/agendas/editar/${created.id}`, { replaceUrl: true }).then(() => this.resultado.contar(creado));
       return;
     }
     this.store.updateItem(this.agendaId!, { ...datos, updatedAt: hoy() });
-    this.asignarAgentes(this.agendaId!, agentIds);
+    this.asignar(this.agendaId!, asignacion);
     this.form.set(draft);
     this.dirtyState.markPristine();
-    this.resultado.enLaBarra(this.texto('repositories.toasts.updated', draft.name));
+    this.resultado.contar(this.texto('repositories.toasts.updated', draft.name));
   }
 
-  /** Pone o quita esta agenda de las `schedules` de cada agente que cambió: solo toca a los que cambian. */
-  private asignarAgentes(agendaId: number, ids: readonly number[]): void {
-    const deben = new Set(ids);
+  /**
+   * Pone o quita esta agenda de las `schedules` de cada grupo y de cada agente que cambió: solo toca a los que cambian.
+   * Los grupos enteros la llevan ellos (dinámicos: quien entre después también la tendrá); los agentes, solo los que no
+   * la tienen ya por un grupo entero (DD-211 §1).
+   */
+  private asignar(agendaId: number, asignacion: Asignacion): void {
+    const { grupos, agentesSueltos } = paraGuardar(asignacion, this.estructura());
+    const enGrupo = new Set(grupos);
+    for (const grupo of this.groupsStore.groups()) {
+      const tiene = grupo.schedules?.includes(agendaId) ?? false;
+      if (tiene === enGrupo.has(grupo.id)) continue;
+      const resto = (grupo.schedules ?? []).filter((id) => id !== agendaId);
+      this.groupsStore.updateGroup(grupo.id, { schedules: enGrupo.has(grupo.id) ? [...resto, agendaId] : resto });
+    }
+    const sueltos = new Set(agentesSueltos);
     for (const agente of this.agentsStore.agents()) {
       const tiene = agente.schedules?.includes(agendaId) ?? false;
-      if (tiene === deben.has(agente.id)) continue;
+      if (tiene === sueltos.has(agente.id)) continue;
       const resto = (agente.schedules ?? []).filter((id) => id !== agendaId);
-      this.agentsStore.updateAgent(agente.id, { schedules: deben.has(agente.id) ? [...resto, agendaId] : resto });
+      this.agentsStore.updateAgent(agente.id, { schedules: sueltos.has(agente.id) ? [...resto, agendaId] : resto });
     }
   }
 

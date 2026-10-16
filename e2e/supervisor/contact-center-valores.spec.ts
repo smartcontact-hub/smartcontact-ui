@@ -36,7 +36,8 @@ const casilla = (page: Page, fila: string, columna: string) =>
 const canal = (page: Page, nombre: string) =>
   page.locator('#group-section-general sc-checkbox').filter({ hasText: new RegExp(`^\\s*${nombre}\\s*$`) });
 
-const DESTINOS = ['Fijos', 'Móviles', 'Internacionales', 'Numeración especial'] as const;
+/** Agentes y Grupos, delante, desde DD-211 §2: de fábrica, permitidos. */
+const DESTINOS = ['Agentes', 'Grupos', 'Fijos', 'Móviles', 'Internacionales', 'Numeración especial'] as const;
 const COLUMNAS = ['Llamadas', 'Transferencias'] as const;
 const OVERFLOW = 'Desbordar conversaciones si no hay agentes conectados';
 
@@ -75,7 +76,8 @@ test('lo que se guarda en Contact Center › Grupos es con lo que nace un grupo 
   await pickSelectOption(page, esperaChat, '1,5 min');
   await page.locator('#grupos-chat-inactivity-on').click();
   await page.getByRole('button', { name: 'Guardar' }).click();
-  await expect(page.getByText('Parámetros de grupos guardados')).toBeVisible();
+  // Un solo Guardar y un solo toast para las tres secciones (DD-211 §7).
+  await expect(page.getByText('Contact Center guardado')).toBeVisible();
 
   await goto(page, 'admin/grupos/crear');
   await expect(page.locator('#group-priority')).toHaveText('Baja');
@@ -149,7 +151,8 @@ test('lo que se guarda en Contact Center › Agentes es con lo que nace un agent
   await interruptor(page, 'Dispositivos externos').click();
   await page.locator('#agentes-iframe-url').fill('https://crm.ejemplo.com/ficha');
   await page.getByRole('button', { name: 'Guardar' }).click();
-  await expect(page.getByText('Parámetros de agentes guardados')).toBeVisible();
+  // Un solo Guardar y un solo toast para las tres secciones (DD-211 §7).
+  await expect(page.getByText('Contact Center guardado')).toBeVisible();
 
   await goto(page, 'admin/agentes/crear');
   await irASeccion(page, 'Configuración');

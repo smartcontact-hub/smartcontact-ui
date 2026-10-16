@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input, output, ViewEncapsulation } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, input, output, ViewEncapsulation } from '@angular/core';
 
 import { ScIconTileComponent, type ScIconTileTone } from '../icon-tile/sc-icon-tile.component';
 
@@ -24,6 +24,10 @@ import { ScIconTileComponent, type ScIconTileTone } from '../icon-tile/sc-icon-t
  *
  * `tone`: el de su baldosa (`sc-icon-tile`). `brand` la pone en el degradado de la marca, como en el resumen de las
  * fichas, bajo su cifra destacada.
+ *
+ * `truncate`: el valor en una línea, a la derecha de su clave, y lo que no cabe se corta con «…». Para un valor largo en
+ * una columna estrecha (la estrategia en el resumen del grupo, DD-211 §4), que si no partía la fila en tres. Envuelve el
+ * valor en un elemento (un `span`): un texto suelto no se puede cortar. Dile entero en un tooltip a quien lo pinte.
  *
  * Uso:
  * ```html
@@ -58,7 +62,7 @@ import { ScIconTileComponent, type ScIconTileTone } from '../icon-tile/sc-icon-t
   styleUrl: './sc-fact-row.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  host: { class: 'sc-fact-row', '[class.sc-fact-row--sm]': "size() === 'sm'" },
+  host: { class: 'sc-fact-row', '[class.sc-fact-row--sm]': "size() === 'sm'", '[class.sc-fact-row--truncate]': 'truncate()' },
 })
 export class ScFactRowComponent {
   /** La clave, ya traducida. */
@@ -71,6 +75,8 @@ export class ScFactRowComponent {
   readonly size = input<'sm' | 'md'>('md');
   /** El tono de su baldosa: el gris de siempre, `strong` o el degradado de la marca (`brand`). */
   readonly tone = input<ScIconTileTone>('default');
+  /** El valor en una línea, cortado con «…» si no cabe (va envuelto en un elemento). */
+  readonly truncate = input(false, { transform: booleanAttribute });
 
   /** El clic en la clave, con su evento: la app decide si navega por su cuenta. */
   readonly open = output<MouseEvent>();

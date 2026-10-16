@@ -18,6 +18,12 @@
   height: 100%;
 }
 
+/* El toast, por encima de la página y fuera de la pila de PrimeNG (`[autoZIndex]="false"`, DD-211 §5): con un diálogo
+ * modal abierto queda bajo su velo, pero no le quita el Esc ni el foco. */
+p-toast {
+  z-index: var(--sc-z-toast);
+}
+
 /*
  * PrimeNG wraps each toast in `.p-toast-message-content`. Strip its
  * default padding/background so our `.sc-toast` is the only chrome.

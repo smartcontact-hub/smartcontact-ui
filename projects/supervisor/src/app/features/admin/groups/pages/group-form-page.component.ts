@@ -1,4 +1,4 @@
-import { afterNextRender, ChangeDetectionStrategy, Component, computed, effect, HostListener, inject, Injector, input, OnInit, signal, type TemplateRef, viewChild } from '@angular/core';
+import { afterNextRender, ChangeDetectionStrategy, Component, computed, HostListener, inject, Injector, input, OnInit, signal, type TemplateRef, viewChild } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink, type UrlTree } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TooltipModule } from 'primeng/tooltip';
@@ -310,9 +310,8 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
    */
   protected readonly alta = seccionesDeAlta({
     secciones: this.navSections,
-    // ✓ solo donde hay algo obligatorio (DD-158): General, y Distribución si el grupo tiene Teléfono (su teléfono
-    // saliente). Recursos y Agentes no lo llevan nunca.
-    obligatoria: (id) => id === 'group-section-general' || (id === 'group-section-distribution' && this.hasPhone()),
+    // ✓ en toda sección que se deja completa (DD-211 §6): Recursos y Agentes, con solo pasar; General y Distribución
+    // (su teléfono saliente, si tiene Teléfono), con lo suyo.
     completa: (id) =>
       id === 'group-section-general' ? this.generalValid() : id !== 'group-section-distribution' || (!this.phoneMissing() && !this.queueInvalid()),
   });
@@ -610,10 +609,6 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
   private readonly dirtyState = createFormDirtyState(() => this.form());
   readonly formDirty = this.dirtyState.dirty;
   /** «Copiar» pasa a «Copiado» dos segundos, como Primer (DD-191). */
-  /** Con cambios sin guardar, el «guardado» de la barra ya no vale (DD-191). */
-  private readonly limpiaResultado = effect(() => {
-    if (this.formDirty()) this.resultado.limpiar();
-  });
 
   protected readonly queueInvalid = computed(() =>
     (this.hasPhone() && !validQueueSize(this.form().phoneQueue)) ||
@@ -1360,7 +1355,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
       this.linksStore.replaceLinksForGroup(editingId, this.normalizeLinks(this.withoutOrphans(f.links), editingId));
       const refreshed = this.groupsStore.getGroup(editingId);
       if (refreshed) this.initial.set(refreshed);
-      this.resultado.enLaBarra(this.translate.instant('groups.toasts.updated', { name: payload.name }));
+      this.resultado.contar(this.translate.instant('groups.toasts.updated', { name: payload.name }));
       // Lo guardado pasa a ser la referencia para avisar si luego se quita un canal con agentes.
       this.initialChannels.set(new Set(f.channels));
       this.initialLinks.set(this.linksStore.linksForGroup(editingId));
@@ -1387,8 +1382,8 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
         replaceUrl: true,
         queryParams: slug && slug !== 'general' ? { seccion: slug } : {},
       })
-      // Tras llegar a la ficha nueva: antes, el cambio de página se lo llevaría (DD-191).
-      .then(() => this.resultado.enLaBarra(creado))
+      // El toast, ya en la ficha a la que se llega (DD-211 §5).
+      .then(() => this.resultado.contar(creado))
       .finally(() => this.saving.set(false));
   }
 
@@ -1437,7 +1432,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
     this.linksStore.removeGroup(id);
     this.deleteVisible.set(false);
     this.dirtyState.markPristine();
-    this.resultado.visto(this.translate.instant('groups.toasts.deleted_single', { name: group?.name ?? '' }));
+    this.resultado.contar(this.translate.instant('groups.toasts.deleted_single', { name: group?.name ?? '' }));
     void this.router.navigateByUrl('/admin/grupos');
   }
 

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, HostListener, inject, Injector, input, signal, type OnInit, type TemplateRef, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, HostListener, inject, Injector, input, signal, type OnInit, type TemplateRef, viewChild } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { ActivatedRoute, Router, type UrlTree } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -110,10 +110,6 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit {
   protected readonly form = signal<Borrador>(NUEVA);
   private readonly dirtyState = createFormDirtyState(() => this.form());
   readonly formDirty = this.dirtyState.dirty;
-  /** Con cambios sin guardar, el «guardado» de la barra ya no vale (DD-191). */
-  private readonly limpiaResultado = effect(() => {
-    if (this.formDirty()) this.resultado.limpiar();
-  });
   protected readonly deleteVisible = signal(false);
 
   /* ── El índice ────────────────────────────────────────────────────────── */
@@ -137,7 +133,6 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit {
    *  repetir) tienen algo obligatorio y llevan ✓ al dejarlas completas. */
   protected readonly alta = seccionesDeAlta({
     secciones: this.navSections,
-    obligatoria: () => true,
     completa: (id) => (id === GENERAL ? this.generalCompleta() : this.categoriasCompletas()),
   });
 
@@ -311,13 +306,13 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit {
           replaceUrl: true,
           queryParams: slug && slug !== 'general' ? { seccion: slug } : {},
         })
-        .then(() => this.resultado.enLaBarra(creado));
+        .then(() => this.resultado.contar(creado));
       return;
     }
     this.store.updateItem(this.editingId()!, borrador);
     this.form.set(borrador);
     this.dirtyState.markPristine();
-    this.resultado.enLaBarra(this.texto('repositories.toasts.updated', borrador.name));
+    this.resultado.contar(this.texto('repositories.toasts.updated', borrador.name));
   }
 
   protected discard(): void {
@@ -344,7 +339,7 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit {
     this.store.deleteItem(id);
     this.deleteVisible.set(false);
     this.dirtyState.markPristine();
-    this.resultado.visto(this.texto('repositories.toasts.deleted_single', name));
+    this.resultado.contar(this.texto('repositories.toasts.deleted_single', name));
     void this.router.navigateByUrl('/admin/tipificaciones');
   }
 

@@ -178,22 +178,29 @@ export class AgentChannelTableComponent {
           cellTemplate: this.agentTpl(),
         },
         /* El estado de la persona va en la burbuja de su avatar (DD-185), no en una columna: el email gana el sitio. */
-        /* Con la estrategia Niveles, el nivel de cada agente va en su fila: donde ya se decide quién atiende qué. */
-        ...this.levelFamilies().map((family) => ({
-          field: `level-${family}`,
-          header: this.translate.instant('groups.form.assigned.col_level', { channel: this.translate.instant(FAMILY_LABEL_KEYS[family]) }),
-          width: `${rem.level}rem`,
-          cellTemplate: this.levelTpl(),
-          stopRowClick: true,
-        })),
-        ...this.families().map((ch) => ({
-          field: ch,
-          header: this.translate.instant(FAMILY_LABEL_KEYS[ch]),
-          width: `${rem.channel[ch]}rem`,
-          align: 'center' as const,
-          cellTemplate: this.channelTpl(),
-          stopRowClick: true,
-        })),
+        /* Cada canal y, con la estrategia Niveles, su nivel justo detrás: Teléfono, Nivel Teléfono, Chat, Nivel Chat…
+           (DD-211 §4). El nivel va en la fila de cada agente: donde ya se decide quién atiende qué. */
+        ...this.families().flatMap((ch): ScColumnDef<VisibleRow>[] => [
+          {
+            field: ch,
+            header: this.translate.instant(FAMILY_LABEL_KEYS[ch]),
+            width: `${rem.channel[ch]}rem`,
+            align: 'center' as const,
+            cellTemplate: this.channelTpl(),
+            stopRowClick: true,
+          },
+          ...(this.levelFamilies().includes(ch)
+            ? [
+                {
+                  field: `level-${ch}`,
+                  header: this.translate.instant('groups.form.assigned.col_level', { channel: this.translate.instant(FAMILY_LABEL_KEYS[ch]) }),
+                  width: `${rem.level}rem`,
+                  cellTemplate: this.levelTpl(),
+                  stopRowClick: true,
+                },
+              ]
+            : []),
+        ]),
         {
           field: 'active',
           header: this.translate.instant('groups.form.assigned.col_active'),

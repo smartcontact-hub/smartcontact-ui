@@ -131,3 +131,23 @@
 .sc-inputtext--disabled .sc-inputtext__label {
   color: var(--sc-text-disabled);
 }
+
+/* ────────────────────────────────────────────────────────────────────
+ * Solo lectura (DD-211 §10): el valor se ve, se enfoca y se copia, pero el
+ * campo no parece editable. Pierde el borde —la seña de que se puede
+ * escribir— y se queda en el fondo suave, con el texto a contraste completo
+ * (no es `disabled`). Sin borde al pasar ni al enfocar: al llegar con el
+ * teclado lleva el anillo de foco del sistema. Igual en sc-inputnumber,
+ * sc-textarea y sc-select.
+ * ────────────────────────────────────────────────────────────────────
+ */
+.sc-inputtext--readonly:not(.sc-inputtext--disabled) .sc-inputtext__control {
+  border-color: transparent;
+  background: var(--sc-bg-default);
+  box-shadow: none;
+  cursor: default;
+}
+.sc-inputtext--readonly:not(.sc-inputtext--disabled) .sc-inputtext__control:focus-visible {
+  outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
+  outline-offset: var(--sc-focus-ring-offset);
+}

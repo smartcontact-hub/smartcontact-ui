@@ -207,7 +207,7 @@ export class CategoriesPageComponent {
   protected onFormSaved(cat: Category): void {
     const wasEdit = this.formCategory() !== null;
     this.formOpen.set(false);
-    this.resultado.visto(this.translate.instant( wasEdit ? 'memory.categories.form.updated_toast' : 'memory.categories.form.created_toast', { name: cat.name }, ));
+    this.resultado.contar(this.translate.instant( wasEdit ? 'memory.categories.form.updated_toast' : 'memory.categories.form.created_toast', { name: cat.name }, ));
   }
 
   protected formatDate(iso: string): string {
@@ -221,7 +221,7 @@ export class CategoriesPageComponent {
   private duplicateCategory(cat: Category): void {
     const copy = this.categoriesStore.duplicateCategory(cat.id);
     if (!copy) return;
-    this.resultado.visto(this.translate.instant('memory.categories.duplicated_toast', { name: copy.name }));
+    this.resultado.contar(this.translate.instant('memory.categories.duplicated_toast', { name: copy.name }));
   }
 
   private async confirmDelete(cat: Category): Promise<void> {
@@ -234,6 +234,6 @@ export class CategoriesPageComponent {
     });
     if (!accepted) return;
     this.categoriesStore.deleteCategory(cat.id);
-    this.resultado.visto(this.translate.instant('memory.categories.deleted_toast', { name: cat.name }));
+    this.resultado.contar(this.translate.instant('memory.categories.deleted_toast', { name: cat.name }));
   }
 }

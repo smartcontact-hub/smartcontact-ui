@@ -1405,18 +1405,23 @@
       "contacts_no_results": "Aucun contact ne correspond à « {{query}} ».",
       "import": "Importer",
       "import_title": "Importer des contacts",
-      "section_agents": "Agents",
-      "agents_search": "Rechercher des agents…",
+      "section_agents": "Groupes et agents",
       "agents_filter_all": "Tous",
       "agents_filter_assigned": "Assignés ({{count}})",
       "agents_filter_aria": "Afficher les agents",
-      "agents_summary": "{{count}} sur {{total}} affectés",
       "agents_row_aria": "Affecter l’agenda à {{name}}",
-      "agents_select_all": "Cocher ou décocher les agents affichés",
       "agents_email": "Email",
       "agents_no_results": "Aucun agent ne correspond à « {{query}} ».",
       "agents_none_assigned": "Aucun agent affecté pour le moment.",
       "agents_empty": "Aucun agent pour le moment",
+      "assigned_aria_one": "1 groupe ou agent",
+      "assigned_aria": "{{count}} groupes et agents",
+      "group_row_aria": "Attribuer l'annuaire à tout le groupe {{name}}",
+      "assign_help": "Un agent coché l'est dans tous ses groupes. Un groupe entier donne aussi l'annuaire à qui le rejoindra plus tard.",
+      "assign_search": "Rechercher des groupes ou des agents…",
+      "assign_summary": "{{count}} agents sur {{total}} et {{groups}} groupes entiers",
+      "col_groups_agents": "Groupes et agents",
+      "no_group": "Sans groupe",
       "import_template_file": "modele-carnet",
       "fields": {
         "surname": "Nom de famille",
@@ -2046,6 +2051,7 @@
         "remove_periodic_aria": "Retirer {{file}}",
         "every": "Toutes les",
         "outbound_audio": "Audio sortant",
+        "outbound_audio_info": "Ce que le client entend quand un agent du groupe l'appelle.",
         "voice": "Voix des messages",
         "voice_hint": "La voix de synthèse qui lit les messages du groupe.",
         "notices_title": "Avis",
@@ -2332,8 +2338,6 @@
         },
         "sesion": {
           "title": "Session",
-          "login_ext_override": "Mettre à jour le téléphone à la connexion",
-          "login_ext_override_hint": "Si l'agent se connecte depuis un autre appareil, son extension est mise à jour automatiquement",
           "security": "Sécurité",
           "expire_pwd": "Expirer le mot de passe",
           "expire_pwd_hint": "Impose un nouveau mot de passe à la prochaine connexion",
@@ -2359,7 +2363,7 @@
         "phone": "Téléphone mobile",
         "email": "Email",
         "pin": "PIN",
-        "pin_hint": "3-6 chiffres. Utilisé pour l'auto-activation depuis le téléphone.",
+        "pin_hint": "Attribué par le système à la création de l'agent. Sert à s'activer depuis le téléphone.",
         "labels": "Étiquettes assignées",
         "active": "Compte actif",
         "active_hint": "Active le compte de l’agent. La présence et l’activation dans chaque groupe se gèrent séparément.",
@@ -2367,7 +2371,8 @@
         "extension_type": "Type d'extension",
         "extension_type_hint": {
           "webrtc": "Sonne dans le navigateur, avec Smart Contact Agent.",
-          "phone": "Sonne sur son téléphone portable."
+          "phone": "Sonne sur son téléphone portable.",
+          "sin_webrtc": "Téléphone uniquement : les agents dans le navigateur (WebRTC) ne sont pas souscrits."
         },
         "phone_required_hint": "Les appels sonnent sur ce téléphone.",
         "state": "État"
@@ -2413,6 +2418,8 @@
         "col_transferencia": "Transferts",
         "toggle_all_llamada": "Activer/désactiver tous les appels",
         "toggle_all_transferencia": "Activer/désactiver tous les transferts",
+        "row_agentes": "Agents",
+        "row_grupos": "Groupes",
         "row_fijos": "Fixes",
         "row_moviles": "Mobiles",
         "row_internacionales": "Internationaux",
@@ -2456,7 +2463,6 @@
       "channels_required": "Sélectionnez au moins un canal",
       "email_invalid": "Entrez un email valide",
       "phone_invalid": "Ce numéro n'est pas valide : utilisez des chiffres, avec un + devant s'il a un indicatif.",
-      "pin_invalid": "Le PIN doit avoir entre 3 et 6 chiffres",
       "phone_required": "Saisissez le téléphone portable : l'extension y sonne",
       "email_required": "Saisissez l'e-mail",
       "group_required": "Attribuez au moins un groupe",
@@ -2509,7 +2515,8 @@
       "saving": "Sauvegarde...",
       "toast": {
         "saved_one": "Numérotation spéciale sauvegardée (1 pays)",
-        "saved_many": "Numérotation spéciale sauvegardée ({{count}} pays)"
+        "saved_many": "Numérotation spéciale sauvegardée ({{count}} pays)",
+        "saved": "Contact Center enregistré"
       },
       "subpages": {
         "servicio": {
@@ -2575,10 +2582,6 @@
               "auto": {
                 "label": "Automatique",
                 "desc": "La conversation se connecte seule à l'arrivée."
-              },
-              "auto_preview": {
-                "label": "Automatique avec aperçu",
-                "desc": "Elle se connecte seule, en montrant d'abord les données du contact."
               }
             }
           },
@@ -2595,26 +2598,17 @@
             "col_conversacion": "Conversation",
             "col_url": "Adresse web"
           },
-          "toast": {
-            "saved": "Configuration enregistrée"
-          },
           "edit_crumb": "Modifier général"
         },
         "agentes": {
           "heading": "Agents",
           "hint": "Chaque nouvel agent démarre avec ces valeurs. Elles se modifient ensuite dans sa fiche.",
-          "toast": {
-            "saved": "Paramètres des agents enregistrés"
-          },
           "edit_crumb": "Modifier l'agent"
         },
         "grupos": {
           "heading": "Groupes",
           "hint": "Chaque nouveau groupe démarre avec ces valeurs. Elles se modifient ensuite dans sa fiche.",
           "strategy_hint": "Niveaux, Ring All, Skills et Agent exclusif se choisissent dans la fiche de chaque groupe, où ils se configurent.",
-          "toast": {
-            "saved": "Paramètres des groupes enregistrés"
-          },
           "edit_crumb": "Modifier le groupe"
         }
       },

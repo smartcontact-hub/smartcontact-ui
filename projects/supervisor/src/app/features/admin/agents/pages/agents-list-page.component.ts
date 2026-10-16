@@ -489,8 +489,8 @@ export class AgentsListPageComponent {
   protected onRenameCommit(id: number, value: string): void {
     this.agentsStore.updateAgent(id, { name: value });
     this.renamingId.set(null);
-    // El nombre nuevo ya se ve en la fila: solo para el lector de pantalla (DD-191).
-    this.resultado.visto(this.translate.instant('agents.toasts.duplicated', { name: value }));
+    // El resultado, en un toast (DD-211 §5).
+    this.resultado.contar(this.translate.instant('agents.toasts.duplicated', { name: value }));
   }
 
   /** Cancel the inline rename — also drops the just-created draft so the user
@@ -575,11 +575,11 @@ export class AgentsListPageComponent {
     if (ids.length === 1) {
       this.agentsStore.deleteAgent(ids[0]!);
       this.linksStore.removeAgent(ids[0]!);
-      this.resultado.visto(this.translate.instant('agents.toasts.deleted_single', { name: toasted[0]!.name, }));
+      this.resultado.contar(this.translate.instant('agents.toasts.deleted_single', { name: toasted[0]!.name, }));
     } else {
       this.agentsStore.deleteAgents(ids);
       for (const id of ids) this.linksStore.removeAgent(id);
-      this.resultado.visto(this.translate.instant('agents.toasts.deleted_bulk', { count: ids.length }));
+      this.resultado.contar(this.translate.instant('agents.toasts.deleted_bulk', { count: ids.length }));
     }
 
     this.deleteTarget.set(null);

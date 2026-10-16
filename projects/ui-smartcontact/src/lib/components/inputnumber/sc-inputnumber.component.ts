@@ -46,6 +46,7 @@ export type ScInputNumberSize = ScFieldSize;
     '[class.sc-inputnumber--lg]': "size() === 'lg'",
     '[class.sc-inputnumber--invalid]': 'isInvalid()',
     '[class.sc-inputnumber--disabled]': 'disabled()',
+    '[class.sc-inputnumber--readonly]': 'readonly()',
     '[class.sc-inputnumber--has-suffix]': 'hasSuffix()',
     '[style.--sc-inputnumber-suffix-pad]': 'suffixPad()',
   },
@@ -82,7 +83,8 @@ export class ScInputNumberComponent {
   readonly disabled = input(false, { transform: booleanAttribute });
   /**
    * El valor se ve pero no se edita. A diferencia de `disabled`, **sigue siendo enfocable y se
-   * puede copiar**.
+   * puede copiar**, y el texto no se apaga. Tampoco parece editable: sin borde, sobre el fondo suave
+   * (DD-211 §10).
    */
   readonly readonly = input(false, { transform: booleanAttribute });
   /**

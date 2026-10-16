@@ -1,12 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, TemplateRef, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
-import { DirtyAware } from '@core/guards';
-import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { injectLangChange } from '@core/utils/lang-change';
 import { ChannelIconComponent } from '@shared/components';
-import { stableStringify } from '@shared/utils/form-dirty-state';
 import {
   CHANNEL_LABEL_KEYS,
   DEFAULT_CHAT_STRATEGY_OPTIONS,
@@ -23,7 +20,6 @@ import {
 import { GroupDefaultsStore } from '@features/admin/groups/state/group-defaults.store';
 
 import {
-  ScButtonComponent as ButtonComponent,
   ScDividerComponent as DividerComponent,
   ScInputNumberComponent as InputNumberComponent,
   ScSectionCardComponent as SectionCardComponent,
@@ -31,7 +27,7 @@ import {
   ScSelectComponent as SelectComponent,
   ScToggleSwitchComponent as ToggleSwitchComponent,
 } from '@smartcontact-hub/components';
-import { ResultadoAccionService } from '@core/services';
+import { ContactCenterBorradorService } from './contact-center-borrador.service';
 
 /**
  * Contact Center › Grupos — `/config/aed/grupos`. Con esto nace cada grupo nuevo (DD-135).
@@ -46,12 +42,11 @@ import { ResultadoAccionService } from '@core/services';
  *
  * Mismos campos, opciones y frases que la ficha (`groups-data.ts`), y lo que guarda lo lee la ficha al crear
  * (`GroupDefaultsStore`). Estrategias según SISMAC-1975 en COA. Patrón LISTA DE AJUSTES (nombre a la izquierda,
- * control a la derecha) y guardado único en la TopBar.
+ * control a la derecha). Se guarda con las otras dos secciones, con el «Guardar» de la barra (DD-211 §7).
  */
 @Component({
   selector: 'sc-aed-grupos-page',
   imports: [
-    ButtonComponent,
     ChannelIconComponent,
     DividerComponent,
     InputNumberComponent,
@@ -66,8 +61,7 @@ import { ResultadoAccionService } from '@core/services';
   styleUrls: ['./aed-defaults-page.component.scss', './aed-grupos-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AedGruposPageComponent implements DirtyAware {
-  private readonly resultado = inject(ResultadoAccionService);
+export class AedGruposPageComponent {
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
   private readonly store = inject(GroupDefaultsStore);
@@ -112,26 +106,12 @@ export class AedGruposPageComponent implements DirtyAware {
     ];
   });
 
-  protected readonly form = signal<GroupDefaults>(structuredClone(this.store.defaults()));
-  protected readonly saving = signal(false);
-
-  /** Dirty real = el form difiere de lo guardado (deshacer cambios → no deja guardar). */
-  protected readonly dirty = computed(
-    () => stableStringify(this.form()) !== stableStringify(this.store.defaults()),
-  );
-  /** Con cambios sin guardar, el «guardado» de la barra ya no vale (DD-191). */
-  private readonly limpiaResultado = effect(() => {
-    if (this.dirty()) this.resultado.limpiar();
+  /** Su parte del borrador de Contact Center (DD-211 §7). Con un tamaño de cola que no vale, no se guarda. */
+  protected readonly form = inject(ContactCenterBorradorService).parte<GroupDefaults>('grupos', {
+    inicial: () => this.store.defaults(),
+    persistir: (valor) => this.store.save(valor),
+    valido: (valor) => validQueueSize(valor.phoneQueue) && validQueueSize(valor.chatQueue),
   });
-  protected readonly canSave = computed(() => this.dirty() && !this.saving() && validQueueSize(this.form().phoneQueue) && validQueueSize(this.form().chatQueue));
-  /** Público para el `formDirtyGuard` (canDeactivate) — confirma al salir con cambios. */
-  readonly formDirty = this.dirty;
-
-  private readonly topbarActions = viewChild<TemplateRef<unknown>>('topbarActions');
-
-  constructor() {
-    useTopbarActions(this.topbarActions);
-  }
 
   protected setField<K extends 'strategy' | 'chatStrategy' | 'priority' | 'voice'>(key: K, value: unknown): void {
     if (typeof value === 'string') this.form.update((f) => ({ ...f, [key]: value }));
@@ -167,19 +147,5 @@ export class AedGruposPageComponent implements DirtyAware {
     if (typeof value === 'number' && Number.isFinite(value) && value >= 1) {
       this.form.update((f) => ({ ...f, chat: { ...f.chat, inactivityMinutes: value } }));
     }
-  }
-
-  protected cancel(): void {
-    this.form.set(structuredClone(this.store.defaults()));
-  }
-
-  protected save(): void {
-    if (!this.canSave()) return;
-    this.saving.set(true);
-    setTimeout(() => {
-      this.store.save(structuredClone(this.form()));
-      this.saving.set(false);
-      this.resultado.enLaBarra(this.translate.instant('config.aed.subpages.grupos.toast.saved'));
-    }, 600);
   }
 }

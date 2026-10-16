@@ -101,12 +101,12 @@ test('Teléfono: saliente y música a la vista; los demás mensajes de la cola, 
 
   // El rótulo del teléfono saliente lleva su «*» de obligatorio desde DD-142, y el texto de un rótulo empieza por un
   // espacio que el casado por expresión regular no recorta (medido).
-  // «Audio saliente», con el teléfono saliente: lo habilita backoffice y esta demo lo tiene (revisión del 2026-10-15).
-  for (const visible of ['Teléfono saliente', 'Música de espera/transferencia', 'Audio saliente']) {
+  for (const visible of ['Teléfono saliente', 'Música de espera/transferencia']) {
     await expect(telefono.getByText(new RegExp(`^\\s*${visible}(\\s*\\*)?\\s*$`)), visible).toBeVisible();
   }
-  // DD-157: los demás mensajes vuelven, plegados (DD-121 §6 los había sacado de la vista).
-  const plegados = ['Voz de los mensajes', 'Identificador del grupo', '«Eres el siguiente»'];
+  // DD-157: los demás mensajes vuelven, plegados (DD-121 §6 los había sacado de la vista). «Audio saliente», con ellos
+  // desde DD-211 §4: lo habilita backoffice y esta demo lo tiene (revisión del 2026-10-15).
+  const plegados = ['Voz de los mensajes', 'Identificador del grupo', '«Eres el siguiente»', 'Audio saliente'];
   for (const fuera of plegados) {
     await expect(page.getByText(fuera, { exact: true }), fuera).toHaveCount(0);
   }

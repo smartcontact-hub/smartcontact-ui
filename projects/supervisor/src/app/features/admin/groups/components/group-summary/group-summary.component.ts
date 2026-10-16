@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { MeterGroupModule } from 'primeng/metergroup';
+import { TooltipModule } from 'primeng/tooltip';
 import type { MeterItem } from 'primeng/types/metergroup';
 import {
   ScFactRowComponent as FactRowComponent,
@@ -109,6 +110,7 @@ interface ChannelRow {
     AnimateOnChangeDirective,
     SummaryKpiComponent,
     SummaryStatusComponent,
+    TooltipModule,
   ],
   templateUrl: './group-summary.component.html',
   styleUrl: './group-summary.component.scss',

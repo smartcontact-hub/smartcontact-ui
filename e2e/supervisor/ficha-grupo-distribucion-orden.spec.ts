@@ -64,10 +64,11 @@ test('Teléfono: la música va en la cola, y los demás mensajes, plegados y sin
   await goto(page, DISTRIBUCION);
   const tel = page.locator('#group-channel-phone');
   expect(await partes(tel)).toEqual(['Distribución', 'Llamadas salientes', 'Cola', 'Mensajes en cola']);
-  // Lo que sale del grupo, junto y en su parte: el número que ve el cliente y el audio de esas llamadas.
+  // Lo que sale del grupo, en su parte: el número que ve el cliente. Su audio va con los demás audios, en «Mensajes en
+  // cola» (DD-211 §4).
   const salientes = tel.locator('sc-slot').filter({ has: page.getByRole('heading', { name: 'Llamadas salientes', exact: true }) });
   await expect(salientes.locator('#group-phone')).toBeVisible();
-  await expect(salientes.getByText('Audio saliente', { exact: true })).toBeVisible();
+  await expect(salientes.getByText('Audio saliente', { exact: true })).toHaveCount(0);
   const cola = tel.locator('sc-slot').filter({ has: page.getByRole('heading', { name: 'Cola', exact: true }) });
   await expect(cola.getByText('Música de espera/transferencia', { exact: true })).toBeVisible();
 
@@ -83,6 +84,7 @@ test('Teléfono: la música va en la cola, y los demás mensajes, plegados y sin
     'Anunciar el tiempo medio de espera',
     'Anunciar la posición en la cola',
     'Anunciar al agente cuánto ha esperado el cliente',
+    'Audio saliente',
   ]) {
     await expect(tel.getByText(rotulo, { exact: true }), rotulo).toBeVisible();
   }
