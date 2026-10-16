@@ -44,7 +44,32 @@ d22cdafa:docs/handoff/supervisor-fichas.md`. El de la revisión de agentes y tip
 El de lo que se decide de la auditoría de PrimeNG (2026-10-11, DD-195, sin trampas propias): `git show
 3b9cd31a:docs/handoff/supervisor-fichas.md`. El de los quick-wins de la auditoría UX con la columna Nivel (2026-10-12,
 #375) y el de Salientes como etiqueta y botón (2026-10-13, superado por DD-204 y DD-209), sin trampas propias: `git show
-e3a6c4b1:docs/handoff/supervisor-fichas.md`.
+e3a6c4b1:docs/handoff/supervisor-fichas.md`. El de lo que falta se dice cuando ya hubo ocasión (2026-10-13, DD-199, sin
+trampas propias): `git show b23f6b5f:docs/handoff/supervisor-fichas.md`.
+
+## ✅ 2026-10-16 · Revisión de producto: agendas en árbol, la ficha de agente, toasts y un solo Guardar en Contact Center (DD-211)
+
+> **Sello:** rama `arebury/revision-producto-1016` sobre `main` `b23f6b5f`, un PR.
+
+- **Agendas**: «Grupos y agentes» es un árbol (`sc-agenda-assignment-tree`, `p-treetable` nativo, casillas `sc-checkbox`)
+  por persona, con grupos enteros dinámicos (en `Group.schedules`) y «Sin grupo». Las reglas, puras y probadas, en
+  `agenda-asignacion.core.mjs` (`scripts/__tests__/agenda-asignacion.test.mjs`). El listado, «Grupos y agentes». Fuera
+  `sc-agenda-agents-table`.
+- **Agente**: PIN del sistema (`nextPin` en `agents.store.ts`) y de solo lectura al editar; `CLIENTE_CON_WEBRTC` con
+  «Navegador» deshabilitado; Agentes y Grupos en el Destino; fuera «Automático con preview» y «Actualizar teléfono en
+  login»; `attendsPhone` oculta lo de las llamadas.
+- **DS**: `ScConfirmService.popupClosed`: el globo cerrado sin responder resuelve «no» y desbloquea las casillas.
+- **Grupo**: audio saliente en «Mensajes en cola»; la estrategia del resumen en una línea; canal y nivel juntos.
+- **Toasts**: `ResultadoAccionService.contar` (fuera `visto`, `enLaBarra` y `limpiar`, y la zona de la barra);
+  `TOAST_DEL_SISTEMA` con el servicio; AGENTS.md §7 reescrita.
+- **Altas**: ✓ en toda sección que se deja completa (`seccionesDeAlta` sin `obligatoria`).
+- **Contact Center**: `ContactCenterBorradorService` en el armazón, con el guardián en la ruta de Contact Center.
+- **sc-docs**: SelectButton con Múltiple, Inválido, Deshabilitado y A todo el ancho. `tools/primeng-doc.mjs` no corre en
+  la nube sin acceso a la API de GitHub de primefaces/primeng: se leyó la doc con un clon parcial de
+  `apps/showcase/doc/selectbutton`.
+- **Figma**: nota 50 de `figma-pendiente.md` (lo que depende de Call Blending, CusCare y WebRTC, anotado y no apagado).
+- **Trampa**: `p-treetable-checkbox` refresca su casilla con `selectionSource$` y no al cambiar `[selectionKeys]`: un mapa
+  nuevo desde fuera no repinta las casillas. Por eso el árbol pinta las suyas.
 
 ## ✅ 2026-10-15 · Revisión de producto de las tablas y Repositorios (DD-210)
 
@@ -139,24 +164,6 @@ e3a6c4b1:docs/handoff/supervisor-fichas.md`.
   «—» en las celdas vacías, «Deshacer» en la barra, la escalera, el nombre fijo y la ayuda debajo.
 - **Los huecos que solo servían a las notas, también:** `[scListHeadingNote]` (el título del listado vuelve a ser un
   `h1` suelto, sin `.page__heading-row`) y `[scBulkResult]` en `sc-bulk-action-bar` del DS.
-
-## ✅ 2026-10-13 · Lo que falta se dice cuando ya hubo ocasión (DD-199)
-
-> **Sello:** worktree `lancetfish`, rama `arebury/fix-no-initial-error` sobre `main` en `4136af3a`.
-
-- **El fallo:** al encender «Tipificar llamadas» en un grupo guardado, el desplegable nacía en rojo (borde, aviso y
-  punto en General) antes de poder elegir nada. La causa, en cuatro fichas: `mode() === 'edit' || …`, que al editar
-  hacía acusar en el acto a todo obligatorio vacío. Pasaba igual al quitar canales y al duplicar un agente o un usuario.
-- **La norma** (DD-199; principio 11 de AGENTS §«UX de pantalla» y su copia en sc-docs › Patrones): acusa al dejar la
-  sección sin ello, o al abrir si lo guardado ya venía sin ello; antes, el resumen y el motivo junto al botón, sin
-  rojo. El contenido equivocado, en vivo.
-- **La pieza:** `ocasionDeAvisar` (`shared/utils/alta-secciones.ts`), en grupo, agente, usuario y tipificación. «Lo
-  guardado» es lo que había la última vez que la ficha no tenía cambios.
-- **Que no vuelva:** regla 7 de `audit:screen-hygiene` (en `main` marcaba las 8 líneas) y
-  `sin-acusar-de-primeras.spec.ts` (3 pruebas, en rojo contra `main`). 68 e2e de las fichas, en verde en local.
-- **El pie «Atrás / Siguiente», revisado: se queda** (DD-158, «Descartado»): juntos a la izquierda, ni separados ni al
-  editar. Medido: el alta de agente ya los lleva en sus cuatro secciones (General, solo «Siguiente»; Grupos, solo
-  «Atrás»); al editar no los lleva ninguna ficha.
 
 El del barrido de consistencia y sin punto medio entre datos (2026-10-06, DD-183, sin trampas propias), y el de
 la revisión de grupos del equipo y `sc-fileupload` (2026-10-06, DD-184, sin trampas propias): `git show
