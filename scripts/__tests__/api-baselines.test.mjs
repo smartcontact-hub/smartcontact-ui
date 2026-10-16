@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { aviso, capturasDeSpec, capturasPendientes, comprobadasPorRobot, estilosPendientes, slugDe, tablaPintada } from '../api-baselines.mjs';
+import { aviso, capturasDeSpec, capturasPendientes, comprobadasPorRobot, estilosPendientes, estructuraPendiente, slugDe, tablaPintada } from '../api-baselines.mjs';
 
 // El caso que lo motivó es #325 (2026-10-04): `sc-group-popover` ganó la salida `activated`, su página de sc-docs creció
 // 142 px y `e2e-smoke` cayó en el CI por `grouppopover-linux.png`. Cada prueba fija una de las dos mitades: que avise
@@ -149,4 +149,32 @@ test('rojo: la pieza cambió DESPUÉS del robot (o está sin commitear) → sigu
   assert.deepEqual([...comprobadasPorRobot(sinCommitear, ['select'])], []);
   const p = capturasPendientes({ apiAntes: api(), apiAhora: api(), cambiados: toca('select'), capturas: CAPTURAS, comprobadas: new Set() });
   assert.deepEqual(p, [{ slug: 'select', porque: ['el componente'] }]);
+});
+
+// Fallo 3, del #431 (2026-10-16): un ejemplo nuevo en la página de sc-docs de `sc-multiselect` añadió una instancia y un
+// ancla. Cayeron las dos líneas base en e2e-smoke y costó un CI de más. La de estilos no miraba la página y la de
+// estructura no la miraba nadie; el aviso de estilos que sí salía quedó cinco líneas por encima del final, sin leer.
+const DEMO = 'projects/sc-docs/src/app/pages/components/multiselect/multiselect-demo.component.html';
+
+test('rojo, el caso del #431: la plantilla de la página de sc-docs avisa de las dos líneas base', () => {
+  assert.deepEqual(estilosPendientes({ cambiados: [DEMO], estilos: new Set(['multiselect']) }), ['multiselect']);
+  assert.deepEqual(estructuraPendiente({ cambiados: [DEMO], estructura: new Set(['multiselect']) }), ['multiselect']);
+  const texto = aviso([], 'mi-rama', ['multiselect'], ['multiselect']);
+  assert.match(texto, /SC_UPDATE_STRUCTURE=1 npx playwright test component-structure/);
+  assert.match(texto, /ng serve/);
+});
+
+test('verde: con la línea base de estructura tocada en la rama, o la lógica de la página, no avisa', () => {
+  const estructura = new Set(['multiselect']);
+  assert.deepEqual(estructuraPendiente({ cambiados: [DEMO, 'e2e/baselines/component-structure.json'], estructura }), []);
+  assert.deepEqual(estructuraPendiente({ cambiados: [DEMO.replace('.html', '.ts')], estructura }), []);
+  assert.deepEqual(estructuraPendiente({ cambiados: [DEMO], estructura: new Set(['select']) }), []);
+});
+
+test('la última línea del aviso resume todo lo pendiente: un registro se lee por la cola', () => {
+  const texto = aviso([{ slug: 'multiselect', porque: ['su página'] }], 'mi-rama', ['multiselect'], ['multiselect']);
+  const ultima = texto.trim().split('\n').at(-1);
+  assert.match(ultima, /estilos \(multiselect\)/);
+  assert.match(ultima, /estructura \(multiselect\)/);
+  assert.match(ultima, /multiselect-linux\.png/);
 });
