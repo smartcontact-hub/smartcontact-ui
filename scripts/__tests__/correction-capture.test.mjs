@@ -11,6 +11,7 @@ import {
   enrutar,
   esCierre,
   esCorreccion,
+  frases,
   ultimaFrase,
   leer,
   pendientes,
@@ -119,6 +120,10 @@ test('verde: un sobre de otro agente tampoco arranca un /reflect', () => {
   const cabecera = SOBRES[0].split('\n')[0];
   assert.equal(esCierre(`${cabecera}\ncerramos`), false);
   assert.equal(esCierre(`${cabecera}\nYa está el fix; ¿algo más o cerramos esta sesión?`), false);
+  // Y el sobre de una tarea de fondo, ahora que se prueban TODOS los trozos y no solo el último.
+  const aviso = SOBRES_HERRAMIENTA[0].split('\n').slice(0, 3).join('\n');
+  assert.equal(esCierre(`${aviso}\nEl CI está en verde. ¿Sigo con el siguiente frente o cerramos esta sesión?`), false);
+  assert.ok(esCierre('El CI está en verde. ¿Sigo con el siguiente frente o cerramos esta sesión?'), 'sin sobre tiene que disparar');
 });
 
 test('registrar apunta en la carpeta del proyecto y cuenta por sesión; leer filtra por horas', () => {
@@ -168,6 +173,37 @@ test('rojo: los mensajes de cierre disparan', () => {
     'lo dejamos aquí, cerramos la sesión',
     // Literal del usuario, 2026-09-23: el cierre al final de una cadena de órdenes con «y».
     'va pues adelante con identidad, y commit y push y cerramos',
+    // Literales de los transcripts de tres semanas (2026-09-25 a 2026-10-16) que se escapaban: el
+    // relleno de delante del verbo era solo «venga|vale|ok|okey|bueno|bien».
+    'pues cerramos',
+    'entonces cerramos?',
+    'entonces cerramos',
+    'ok entonces cerramos',
+    'pues voy a cerrar esta sesion',
+    'vale entonces cierro por aqui',
+    'Y ya con eso yo creo que cerramos',
+    'quedan commits pendientes? aceptalos si no entran en conflicto. Y protocolo de cierre',
+    // El cierre en un trozo del MEDIO: probar solo la última frase lo perdía.
+    'vale cierra todo de verdad y entonces cerramos. Sigue tu criterio.',
+    // Cada palabra del relleno, una vez.
+    'gracias cerramos',
+    'perfecto, cerramos por hoy',
+    'genial cerramos',
+    'de acuerdo, cerramos',
+    'así que cerramos',
+    'luego cerramos la sesión',
+    'después cerramos',
+    'ya cerramos',
+    'con eso cerramos',
+    'creo que cerramos',
+    // «voy a / puedo» delante de «cerrar sesión», y «cierro».
+    'voy a cerrar la sesión',
+    '¿puedo cerrar sesión?',
+    'cierro',
+    'bueno, cierro la sesión',
+    'protocolo de cierre',
+    'y el protocolo de cierre.',
+    'cierra la sesión con protocolo',
   ])
     assert.ok(esCierre(f), `debía detectar cierre: ${f}`);
 });
@@ -188,10 +224,53 @@ test('verde: mencionar la palabra no es cerrar', () => {
     'arregla el bug y cerramos el ticket',
     '¿lo dejo abierto o cerramos el modal al guardar?',
     'mira si el drawer se queda abierto o cierra el foco dentro',
+    // Vecinos de la segunda ampliación (más relleno, «cierro», «voy a / puedo», todos los trozos):
+    // el verbo está, pero lo que lleva detrás, o delante, no es la sesión.
+    'cerramos el ticket en Jira',
+    'el botón de cerrar sesión no va',
+    'si cierro el ordenador, pasa algo?',
+    'cierra cuando esté verde',
+    'avísame cuando cierre el CI',
+    'cierra el frente y súbelo',
+    'cerramos en cuanto pase el CI',
+    '¿cerramos el modal al guardar?',
+    'pues cierro el drawer al guardar',
+    'vale, voy a cerrar el modal',
+    'entonces cerramos el modal y seguimos',
+    // «cerrar sesión» se ancla al final como «cerramos»: en un trozo del medio, «Cerrar sesión no
+    // hace nada» describe un fallo.
+    'mira el header. Cerrar sesión no hace nada',
+    'el protocolo de cierre de AGENTS.md tiene un paso de más',
+    'protocolo de cierre: falta el paso 6',
+    // El relleno cuenta como palabra entera, no como prefijo.
+    'yate cerramos',
+    'puesto cerramos',
+    'okupa cierro',
     '',
     undefined,
   ])
     assert.equal(esCierre(f), false, `no debía detectar cierre: ${f}`);
+});
+
+// Un texto pegado trae los cierres de otros en el medio: la transcripción de una reunión, lo que
+// contestó otra sesión. Pasado el tope de longitud, solo cuentan el mensaje entero y su última frase.
+test('verde: un cierre en el MEDIO de un texto largo pegado no es del usuario', () => {
+  const relleno = 'Speaker 2: y puedo editar los factores dentro de la agenda sin salir del flujo.\n'.repeat(15);
+  const pegado = `mira esta transcripción:\n${relleno}Entonces, cierro\nSpeaker 1: vale.\n${relleno}`;
+  assert.ok(pegado.length > 1000, 'la sonda tiene que pasar del tope');
+  assert.equal(esCierre(pegado), false);
+  assert.ok(esCierre(`${pegado}\nvale, pues cerramos`), 'el cierre del usuario al final sigue contando');
+  assert.ok(esCierre(`Entonces, cierro\nSpeaker 1: vale.\n${relleno.slice(0, 300)}`), 'corto, el trozo del medio cuenta');
+});
+
+test('frases: parte por fin de frase, coma, salto y el «o» o el «y» que encadenan', () => {
+  assert.deepEqual(frases('vale cierra todo de verdad y entonces cerramos. Sigue tu criterio.'), [
+    'vale cierra todo de verdad',
+    'entonces cerramos',
+    'Sigue tu criterio',
+  ]);
+  assert.deepEqual(frases('¿algo más o cerramos?\nok'), ['¿algo más', 'cerramos', 'ok']);
+  assert.deepEqual(frases(''), []);
 });
 
 test('ultimaFrase: parte por fin de frase, coma y el «o» de la alternativa', () => {

@@ -72,27 +72,42 @@ const PATRONES = [
 // Cierre = el verbo ABRE la frase y no lleva más objeto que la sesión. «cerramos el ticket en
 // Jira» o «el botón de cerrar sesión no va» hablan de otra cosa: un falso positivo aquí arranca un
 // /reflect a mitad de tarea, que es peor que no tenerlo (LEARNINGS #2).
+// Delante del verbo cabe RELLENO, una o varias palabras enteras: «Y ya con eso yo creo que
+// cerramos». Con solo «venga|vale|ok|okey|bueno|bien» se escapaban «pues cerramos», «entonces
+// cerramos?» o «pues voy a cerrar esta sesion», frases de cierre reales de los transcripts de tres
+// semanas (medido el 2026-10-16).
+const RELLENO = String.raw`(?:venga|vale|okey|ok|bueno|bien|pues|entonces|gracias|perfecto|genial|de\s+acuerdo|ya|y|as[ií]\s+que|luego|despu[eé]s|con\s+eso|(?:yo\s+)?creo\s+que)`;
+const ARRANQUE = String.raw`^[\s,.:;¿¡–-]*(?:${RELLENO}[\s,.:;¿¡–-]+)*`;
+const SESION = String.raw`(?:(?:la|esta)\s+)?sesi[oó]n`;
+// Detrás del verbo, solo la sesión o un remate («ya», «por hoy», «con protocolo»…), y nada más
+// hasta el final.
+const OBJETO = String.raw`(?:\s+(?:ya|aqu[ií]|por\s+hoy|por\s+aqu[ií]|esto|el\s+d[ií]a|${SESION}|con\s+(?:el\s+)?protocolo(?:\s+de\s+cierre)?))*\s*[.!?…]*\s*$`;
+const cierre = (cuerpo) => new RegExp(ARRANQUE + cuerpo + OBJETO, 'i');
 const CIERRES = [
   /^\s*\/reflect\b/i,
-  /^\s*(?:venga|vale|ok|okey|bueno|bien)?[\s,.:;¿–-]*cerramos\b(?:\s+(?:ya|aqu[ií]|por\s+hoy|por\s+aqu[ií]|esto|el\s+d[ií]a|(?:la|esta)\s+sesi[oó]n|sesi[oó]n))?\s*[.!?…]*\s*$/i,
-  /^\s*(?:venga|vale|ok|okey|bueno|bien)?[\s,.:;¿–-]*cierra\s+(?:la\s+)?sesi[oó]n\b/i,
-  /^\s*(?:vamos\s+a\s+|podemos\s+|quiero\s+|hay\s+que\s+|toca\s+)?cerrar\s+(?:la\s+)?sesi[oó]n\b/i,
+  cierre(String.raw`(?:cerramos|cierro)\b`),
+  cierre(String.raw`cierra\s+${SESION}`),
+  cierre(String.raw`(?:voy\s+a\s+|vamos\s+a\s+|puedo\s+|podemos\s+|quiero\s+|hay\s+que\s+|toca\s+)?cerrar\s+${SESION}`),
+  cierre(String.raw`(?:el\s+)?protocolo\s+de\s+cierre`),
 ];
 
 /**
  * El cierre suele venir AL FINAL de un mensaje más largo: «¿algo más que hacer o cerramos esta
  * sesión?». Anclar solo al principio se lo perdía — pasó con un mensaje real del 2026-09-10, con
- * el hook recién puesto delante. Se parte por fin de frase y por el «o» que abre la alternativa, y
- * se prueba la ÚLTIMA frase: «arregla el bug o cerramos el ticket» sigue en verde porque lo que va
- * detrás del verbo no es la sesión. Y por el «y» que encadena órdenes: «adelante, y commit y push y
- * cerramos» (2026-09-23) se escapó entero porque su última frase empezaba por «y commit».
+ * el hook recién puesto delante. Se parte por fin de frase y por el «o» que abre la alternativa:
+ * «arregla el bug o cerramos el ticket» sigue en verde porque lo que va detrás del verbo no es la
+ * sesión. Y por el «y» que encadena órdenes: «adelante, y commit y push y cerramos» (2026-09-23) se
+ * escapó entero porque su última frase empezaba por «y commit».
+ * Se prueban TODOS los trozos, no solo el último: «vale cierra todo de verdad y entonces cerramos.
+ * Sigue tu criterio.» (2026-10) lleva el cierre en el del medio.
  */
-export const ultimaFrase = (texto) =>
+export const frases = (texto) =>
   String(texto)
     .split(/[.!?\n,]+|\s+[oy]\s+/i)
     .map((c) => c.trim())
-    .filter(Boolean)
-    .at(-1) ?? '';
+    .filter(Boolean);
+
+export const ultimaFrase = (texto) => frases(texto).at(-1) ?? '';
 
 // Los mensajes de OTRA SESIÓN entran por el mismo hueco que los del usuario, y su cuerpo suele traer
 // «te dije» o «rectifico lo que te dije»: es el agente que escribe corrigiéndose A SÍ MISMO, no
@@ -110,14 +125,20 @@ export const esDeOtroAgente = (texto) => typeof texto === 'string' && SOBRE_DE_A
 export const esCorreccion = (texto) =>
   typeof texto === 'string' && !esDeOtroAgente(texto) && PATRONES.some((p) => p.test(texto));
 
-// El sobre también filtra el CIERRE, y desde que `ultimaFrase` existe no es opcional: los patrones
-// de CIERRES siguen anclados en `^`, pero se prueban además contra la última frase del mensaje, que
-// no lo está. Un sobre de otra sesión acabado en «…o cerramos esta sesión?» arrancaría un /reflect
-// a mitad de tarea sin que el usuario haya dicho nada — el falso positivo que CIERRES evita arriba.
-export const esCierre = (texto) =>
-  typeof texto === 'string' &&
-  !esDeOtroAgente(texto) &&
-  CIERRES.some((p) => p.test(texto) || p.test(ultimaFrase(texto)));
+// El sobre también filtra el CIERRE, y desde que se prueban los trozos no es opcional: los patrones
+// de CIERRES siguen anclados en `^`, pero se prueban además contra cada frase del mensaje, que no lo
+// está. Un sobre de otra sesión acabado en «…o cerramos esta sesión?» arrancaría un /reflect a mitad
+// de tarea sin que el usuario haya dicho nada — el falso positivo que CIERRES evita arriba.
+// Los trozos del MEDIO solo cuentan en un mensaje corto: un texto pegado (lo que dijo otra sesión,
+// una transcripción de reunión) trae los cierres de otros. En tres semanas de transcripts
+// (2026-10-16), los cierres reales que solo caza un trozo del medio miden ≤473 caracteres, y los
+// falsos, ≥2.202. Pasado el tope se vuelve a lo de antes: el mensaje entero y su última frase.
+const TOPE_TROZOS = 1000;
+export const esCierre = (texto) => {
+  if (typeof texto !== 'string' || esDeOtroAgente(texto)) return false;
+  const trozos = texto.length <= TOPE_TROZOS ? frases(texto) : [ultimaFrase(texto)];
+  return [texto, ...trozos].some((f) => CIERRES.some((p) => p.test(f)));
+};
 
 /** Raíz del repo (este fichero vive en `scripts/hooks/`). */
 export const RAIZ = resolve(fileURLToPath(import.meta.url), '../../..');
