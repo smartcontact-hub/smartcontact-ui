@@ -1,0 +1,84 @@
+<div class="asignacion">
+  <div class="asignacion__bar">
+    <sc-search
+      class="asignacion__search"
+      [placeholder]="'repositories.agendas.assign_search' | translate"
+      [clearAriaLabel]="'labels.clear_search' | translate"
+      [value]="query()"
+      (valueChange)="query.set($event)"
+    />
+    <sc-selectbutton
+      [options]="filterOptions()"
+      optionValue="value"
+      [allowEmpty]="false"
+      [value]="filter()"
+      (valueChange)="filter.set($any($event))"
+      [ariaLabel]="'repositories.agendas.agents_filter_aria' | translate"
+    />
+    <span class="asignacion__summary sc-text-caption-regular" role="status">{{ summary() }}</span>
+  </div>
+  <!-- La regla, en una línea: lo que no se ve en la casilla es que un grupo entero es dinámico. -->
+  <p class="asignacion__ayuda sc-text-caption-regular">{{ 'repositories.agendas.assign_help' | translate }}</p>
+
+  <div class="table-card">
+    <p-treetable
+      [value]="nodos()"
+      [columns]="columnas()"
+      dataKey="key"
+      [scrollable]="true"
+      scrollHeight="var(--sc-spacing-25)"
+      (onNodeExpand)="abrir($event)"
+      (onNodeCollapse)="cerrar($event)"
+    >
+      <ng-template #header let-columns>
+        <tr>
+          @for (col of columns; track col.field) {
+            <th scope="col">{{ col.header }}</th>
+          }
+        </tr>
+      </ng-template>
+
+      <ng-template #body let-rowNode let-rowData="rowData">
+        <tr [ttRow]="rowNode" [class.asignacion__padre]="rowData.tipo !== 'agente'">
+          <td>
+            <div class="asignacion__primera">
+              <p-treetable-toggler [rowNode]="rowNode" />
+              <sc-checkbox size="sm" [state]="estado(rowData)" [ariaLabel]="ariaDe(rowData)" (cycle)="pulsar(rowData, $event)">
+                {{ rowData.nombre }}
+              </sc-checkbox>
+            </div>
+          </td>
+          <td>
+            @if (rowData.tipo === 'agente') {
+              @if (rowData.email) {
+                {{ rowData.email }}
+              } @else {
+                <sc-celda-vacia />
+              }
+            }
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template #emptymessage>
+        <tr>
+          <td [attr.colspan]="2">
+            @if (query() || filter() === 'assigned') {
+              <sc-empty-state
+                icon="search_off"
+                titleKey="labels.no_results.title"
+                [bodyKey]="filter() === 'assigned' && !query() ? 'repositories.agendas.agents_none_assigned' : 'repositories.agendas.agents_no_results'"
+                [params]="{ query: query() }"
+                ctaKey="labels.clear_search"
+                ctaIcon="close"
+                (cta)="query.set(''); filter.set('all')"
+              />
+            } @else {
+              <sc-empty-state icon="headphones" titleKey="repositories.agendas.agents_empty" />
+            }
+          </td>
+        </tr>
+      </ng-template>
+    </p-treetable>
+  </div>
+</div>
