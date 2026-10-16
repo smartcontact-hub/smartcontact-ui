@@ -89,3 +89,25 @@ a.sc-fact-row__link {
     text-align: start;
   }
 }
+
+/* `truncate`: clave y valor en una línea; la clave no encoge y el valor ocupa lo que queda y corta con «…» lo que no
+ * cabe. El valor es un contenedor flexible, así que lo que lleva dentro es un bloque que puede cortar su texto. */
+.sc-fact-row--truncate {
+  flex-wrap: nowrap;
+
+  .sc-fact-row__key {
+    flex: none;
+  }
+
+  .sc-fact-row__value {
+    flex: 1 1 0;
+    min-width: 0;
+    white-space: nowrap;
+
+    > * {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+}

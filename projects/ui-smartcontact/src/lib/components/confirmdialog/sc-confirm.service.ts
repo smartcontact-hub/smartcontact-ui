@@ -49,12 +49,26 @@ export const SC_CONFIRM_POPUP_KEY = 'sc-confirm-popup';
 export class ScConfirmService {
     private readonly confirmation = inject(ConfirmationService);
 
+    /** La respuesta del globo abierto: el globo puede cerrarse sin pasar por «reject» (ver `popupClosed`). */
+    private pendingPopup: ((value: boolean) => void) | null = null;
+
     /**
      * Muestra una confirmación. Resuelve `true` al aceptar, `false` al
-     * rechazar (botón, ESC u otra `request()` que la supersede).
+     * rechazar (botón, ESC, cerrar el globo sin responder u otra `request()` que la supersede).
      */
     request(req: ScConfirmRequest): Promise<boolean> {
-        return new Promise<boolean>((resolve) => {
+        return new Promise<boolean>((resolveOnce) => {
+            let settled = false;
+            const resolve = (value: boolean): void => {
+                if (settled) return;
+                settled = true;
+                if (this.pendingPopup === resolve) this.pendingPopup = null;
+                resolveOnce(value);
+            };
+            if (req.target) {
+                this.pendingPopup?.(false);
+                this.pendingPopup = resolve;
+            }
             const acceptTone = req.acceptTone ?? 'primary';
             const emphasizeReject = req.emphasis === 'reject';
 
@@ -87,6 +101,16 @@ export class ScConfirmService {
                 reject: () => resolve(false)
             });
         });
+    }
+
+    /**
+     * El globo se ha cerrado. `p-confirmpopup` se cierra solo, sin llamar a «reject», con un clic fuera, al
+     * desplazar la página o al cambiar el tamaño de la ventana (PrimeNG 22.1: `hide()` en sus escuchas de
+     * documento); sin esto la promesa se quedaba sin resolver y quien esperaba la respuesta, bloqueado (DD-211 §3).
+     * Cerrar sin responder es no aceptar. Tras aceptar o rechazar no hace nada: la promesa ya se resolvió.
+     */
+    popupClosed(): void {
+        this.pendingPopup?.(false);
     }
 }
 

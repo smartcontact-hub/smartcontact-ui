@@ -17,6 +17,13 @@ const ICON_SNIPPET = `<!-- Un icono propio, proyectado en la baldosa -->
   Sin número
 </div>`;
 
+/* Un valor largo en una columna estrecha: en una línea, con «…» y el texto entero en su tooltip. */
+const TRUNCATE_SNIPPET = `<dl>
+  <div scFactRow label="Teléfono" icon="call" size="sm" truncate>
+    <span title="Niveles, Menos conversaciones atendidas">Niveles, Menos conversaciones atendidas</span>
+  </div>
+</dl>`;
+
 /** Demo de `sc-fact-row` (`div[scFactRow]`) en formato story. */
 @Component({
   selector: 'app-factrow-demo',
@@ -28,6 +35,7 @@ export class FactRowDemoComponent {
   protected readonly playgroundTpl = viewChild<TemplateRef<StoryContext>>('playground');
   protected readonly listTpl = viewChild<TemplateRef<StoryContext>>('list');
   protected readonly iconTpl = viewChild<TemplateRef<StoryContext>>('iconProj');
+  protected readonly truncateTpl = viewChild<TemplateRef<StoryContext>>('truncateStory');
 
   protected readonly meta: StoryMeta = {
     tag: 'sc-fact-row',
@@ -39,19 +47,22 @@ export class FactRowDemoComponent {
       { name: 'icon', control: { kind: 'text' } },
       { name: 'href', control: { kind: 'text' } },
       { name: 'tone', control: { kind: 'select', options: ['default', 'strong', 'brand'] } },
+      { name: 'truncate', control: { kind: 'boolean' } },
     ],
-    defaultArgs: { label: 'Teléfono', icon: 'call', href: '', tone: 'default' },
+    defaultArgs: { label: 'Teléfono', icon: 'call', href: '', tone: 'default', truncate: false },
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {
     const pg = this.playgroundTpl();
     const li = this.listTpl();
     const ic = this.iconTpl();
-    if (!pg || !li || !ic) return [];
+    const tr = this.truncateTpl();
+    if (!pg || !li || !ic || !tr) return [];
     return [
       { name: 'Playground', playground: true, template: pg },
       { name: 'Una lista de datos', template: li, snippet: LIST_SNIPPET },
       { name: 'Con un icono propio', template: ic, snippet: ICON_SNIPPET },
+      { name: 'Valor largo en una línea', template: tr, snippet: TRUNCATE_SNIPPET },
     ];
   });
 }

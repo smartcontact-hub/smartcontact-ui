@@ -75,3 +75,60 @@
     />
   </div>
 </ng-template>
+
+<ng-template #multiple>
+  <div class="col">
+    <sc-selectbutton
+      [multiple]="true"
+      [options]="pagos"
+      optionValue="value"
+      [value]="pagosElegidos()"
+      (valueChange)="pagosElegidos.set($event)"
+      ariaLabel="Formas de pago"
+      data-testid="sc-selectbutton-multiple"
+    />
+  </div>
+</ng-template>
+
+<ng-template #invalid>
+  <div class="col">
+    <sc-selectbutton
+      [options]="vistas"
+      optionValue="value"
+      [value]="obligatoria()"
+      [invalid]="obligatoria() === null"
+      (valueChange)="obligatoria.set($event)"
+      ariaLabel="Vista obligatoria"
+      data-testid="sc-selectbutton-invalid"
+    />
+  </div>
+</ng-template>
+
+<ng-template #disabledStory>
+  <div class="col">
+    <sc-selectbutton [disabled]="true" [options]="vistas" optionValue="value" [value]="'all'" ariaLabel="Vistas deshabilitadas" />
+    <sc-selectbutton
+      [options]="extensiones"
+      optionValue="value"
+      optionDisabled="disabled"
+      [allowEmpty]="false"
+      [value]="'phone'"
+      ariaLabel="Dónde suena"
+      data-testid="sc-selectbutton-option-disabled"
+    />
+  </div>
+</ng-template>
+
+<ng-template #fluid>
+  <div class="col">
+    <sc-selectbutton
+      [fluid]="true"
+      [options]="vistas"
+      optionValue="value"
+      [value]="vista()"
+      (valueChange)="vista.set($event)"
+      ariaLabel="Vistas a todo el ancho"
+      data-testid="sc-selectbutton-fluid"
+    />
+  </div>
+</ng-template>

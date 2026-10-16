@@ -2,7 +2,7 @@
 
 <ng-template #playground let-args>
   <dl class="col">
-    <div scFactRow [label]="args.label" [icon]="args.icon" [href]="args.href || null" [tone]="args.tone">918 371 548</div>
+    <div scFactRow [label]="args.label" [icon]="args.icon" [href]="args.href || null" [tone]="args.tone" [truncate]="args.truncate"><span>918 371 548</span></div>
   </dl>
 </ng-template>
 
@@ -21,6 +21,14 @@
     <div scFactRow label="WhatsApp">
       <svg scFactIcon width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 4h16v12H5.17L4 17.17V4z"/></svg>
       Sin número
+    </div>
+  </dl>
+</ng-template>
+
+<ng-template #truncateStory>
+  <dl class="col" style="max-width: var(--sc-spacing-18)" data-testid="sc-fact-row-truncate">
+    <div scFactRow label="Teléfono" icon="call" size="sm" truncate>
+      <span title="Niveles, Menos conversaciones atendidas">Niveles, Menos conversaciones atendidas</span>
     </div>
   </dl>
 </ng-template>
