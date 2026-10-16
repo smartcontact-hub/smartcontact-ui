@@ -5368,7 +5368,7 @@
           "tipo": "boolean",
           "porDefecto": "false",
           "requerido": false,
-          "descripcion": "El valor se ve pero no se edita. A diferencia de `disabled`, **sigue siendo enfocable y se puede copiar**.",
+          "descripcion": "El valor se ve pero no se edita. A diferencia de `disabled`, **sigue siendo enfocable y se puede copiar**, y el texto no se apaga. Tampoco parece editable: sin borde, sobre el fondo suave (DD-211 §10).",
           "origen": "nuestro",
           "nativo": null
         },
@@ -5927,7 +5927,7 @@
           "tipo": "boolean",
           "porDefecto": "false",
           "requerido": false,
-          "descripcion": "El valor se ve pero no se edita. A diferencia de `disabled`, **sigue siendo enfocable y se puede copiar**.",
+          "descripcion": "El valor se ve pero no se edita. A diferencia de `disabled`, **sigue siendo enfocable y se puede copiar**, y el texto no se apaga. Tampoco parece editable: sin borde, sobre el fondo suave (DD-211 §10).",
           "origen": "nuestro",
           "nativo": null
         },
@@ -8088,7 +8088,7 @@
           "tipo": "boolean",
           "porDefecto": "false",
           "requerido": false,
-          "descripcion": "Solo lectura (paridad con sc-inputtext / catálogo de desarrollo).",
+          "descripcion": "El valor se ve pero no se cambia: no abre la lista. Como sc-inputtext, no parece editable: sin borde, sobre el fondo suave y sin la flecha (DD-211 §10).",
           "origen": "nativo",
           "nativo": {
             "descripcion": "When present, it specifies that the component cannot be edited.",
@@ -9308,7 +9308,7 @@
           "tipo": "boolean",
           "porDefecto": "false",
           "requerido": false,
-          "descripcion": "El valor se ve pero no se edita. A diferencia de `disabled`, **sigue siendo enfocable y se puede copiar**.",
+          "descripcion": "El valor se ve pero no se edita. A diferencia de `disabled`, **sigue siendo enfocable y se puede copiar**, y el texto no se apaga. Tampoco parece editable: sin borde, sobre el fondo suave (DD-211 §10).",
           "origen": "nuestro",
           "nativo": null
         },
