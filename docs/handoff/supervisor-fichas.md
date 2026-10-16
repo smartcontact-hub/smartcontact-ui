@@ -68,8 +68,11 @@ trampas propias): `git show b23f6b5f:docs/handoff/supervisor-fichas.md`.
   la nube sin acceso a la API de GitHub de primefaces/primeng: se leyó la doc con un clon parcial de
   `apps/showcase/doc/selectbutton`.
 - **Figma**: nota 50 de `figma-pendiente.md` (lo que depende de Call Blending, CusCare y WebRTC, anotado y no apagado).
-- **Trampa**: `p-treetable-checkbox` refresca su casilla con `selectionSource$` y no al cambiar `[selectionKeys]`: un mapa
-  nuevo desde fuera no repinta las casillas. Por eso el árbol pinta las suyas.
+- **Trampas**: `p-treetable-checkbox` refresca su casilla con `selectionSource$` y no al cambiar `[selectionKeys]`: un
+  mapa nuevo desde fuera no repinta las casillas; por eso el árbol pinta las suyas. Un toast que entra en la pila de
+  capas de PrimeNG (`autoZIndex`) le quita el Esc a un `p-dialog` abierto. Y en la nube, el `ng serve` de :4405 no
+  siempre ve un cambio de código (medido: un arreglo de Contact Center no llegó hasta reiniciarlo): reinícialo, por su
+  pid, antes de fiarte de un e2e (un `pkill -f` con el patrón en la línea de órdenes se mata a sí mismo, exit 144).
 
 ## ✅ 2026-10-15 · Revisión de producto de las tablas y Repositorios (DD-210)
 

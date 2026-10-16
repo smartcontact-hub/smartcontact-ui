@@ -176,7 +176,8 @@ test('«Desbordar sesión» sale de la ficha y de Contact Center, y lo que tení
   await expect(page.getByText('Desbordar sesión', { exact: true })).toHaveCount(0);
   await pickSelectOption(page, page.locator('#grupos-priority'), 'Media');
   await page.getByRole('button', GUARDAR).click();
-  await expect(page.getByText('Parámetros de grupos guardados')).toBeVisible();
+  // Un solo Guardar y un solo toast para las tres secciones (DD-211 §7).
+  await expect(page.getByText('Contact Center guardado')).toBeVisible();
   const enContactCenter = await page.evaluate(
     () => JSON.parse(localStorage.getItem('sc-group-defaults') ?? '[]')[0]?.advanced?.overflowSession,
   );

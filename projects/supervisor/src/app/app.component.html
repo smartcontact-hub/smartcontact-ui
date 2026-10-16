@@ -25,13 +25,15 @@
   </div>
 </ng-template>
 
-<p-toast position="bottom-right">
+<!-- Fuera de la pila de capas de PrimeNG (`autoZIndex` en falso), a `--sc-z-toast`: un diálogo modal se cierra con Esc
+     solo si es la capa de arriba, y con el toast de toda acción (DD-211 §5) en pantalla dejaba de hacerlo. -->
+<p-toast position="bottom-right" [autoZIndex]="false">
   <ng-template let-message #message>
     <ng-container *ngTemplateOutlet="toastItem; context: { $implicit: message }" />
   </ng-template>
 </p-toast>
 <!-- Transcripción y análisis de Conversaciones (DD-191 §4): su clave solo la pinta un contenedor con la misma. -->
-<p-toast position="bottom-right" [key]="dispatchToastKey">
+<p-toast position="bottom-right" [key]="dispatchToastKey" [autoZIndex]="false">
   <ng-template let-message #message>
     <ng-container *ngTemplateOutlet="toastItem; context: { $implicit: message }" />
   </ng-template>

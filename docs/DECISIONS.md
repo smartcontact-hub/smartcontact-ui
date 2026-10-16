@@ -208,7 +208,9 @@ sección que las fichas no tienen.
    su barra sigue con «Deshacer» (el toast se va solo). Dicen ya su resultado los que no decían nada: borrar una cuenta
    de correo o un trigger, y crear o editar una agenda, un equipo o una plantilla desde una ficha. Lo que es de un
    control (copiar, probar una conexión) sigue a su lado. `audit:screen-hygiene` deja lanzar toasts al servicio y solo a
-   él (y a los dos de antes).
+   él (y a los dos de antes). El toast va **fuera de la pila de capas de PrimeNG** (`[autoZIndex]="false"`, a
+   `--sc-z-toast`): `p-dialog` solo se cierra con Esc si es la capa de arriba, y con un toast en pantalla (descargar el
+   audio desde el reproductor) dejaba de cerrarse. Con un diálogo modal abierto, el toast queda bajo su velo.
 6. **✓ en toda sección que se deja completa** en las altas, también en las que no tienen nada obligatorio
    (Configuración y Recursos del agente, Recursos y Agentes del grupo…): con solo pasar están completas (corrige DD-158).
    Al editar, sin ✓, como hasta ahora.
