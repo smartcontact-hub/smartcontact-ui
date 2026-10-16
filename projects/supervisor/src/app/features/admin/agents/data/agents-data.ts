@@ -106,7 +106,8 @@ export interface AgentPermissions {
   readonly externalDevices: boolean;
   readonly callsEnabled: boolean;
   readonly transfersEnabled: boolean;
-  /** A otros agentes y a grupos (DD-211 §2). Lo guardado antes no lo trae: se lee apagado. */
+  /** A otros agentes y a grupos (DD-211 §2). Lo guardado antes no lo trae: se lee como de fábrica, permitido
+   *  (`agenteAlDia`), porque antes no se restringía. */
   readonly callsDestAgents: boolean;
   readonly callsDestGroups: boolean;
   readonly callsDestFixed: boolean;
@@ -121,7 +122,7 @@ export interface AgentPermissions {
   readonly transfersDestGroups: boolean;
   readonly recording: boolean;
   /** «Gestión de conversaciones pendientes»: el agente gestiona las pérdidas (revisión de agentes del 2026-10-09: es del
-   *  agente, no del grupo). Lo guardado antes no lo trae: se lee apagado. */
+   *  agente, no del grupo). Lo guardado antes no lo trae: se lee como de fábrica, apagado (`agenteAlDia`). */
   readonly pendingConversations: boolean;
 }
 
@@ -247,6 +248,13 @@ export interface Agent {
   /** «Actualizar teléfono en login»: fuera de la ficha (DD-211 §2); ya no se lee ni se escribe. */
   readonly loginExtOverride?: boolean;
   /** Draft flag — set on duplicated entities until the user saves (DD#294). */
+}
+
+/** Lo guardado antes de un permiso nuevo no lo trae: se lee como de fábrica, igual que lo de Contact Center
+ *  (`AgentDefaultsStore`), sin subir la versión (AGENTS: «normalize», la vía que no borra). Agentes y Grupos del
+ *  Destino salen permitidos (DD-211 §2): antes no había nada que los restringiera. */
+export function agenteAlDia(guardado: Agent): Agent {
+  return { ...guardado, permissions: { ...FACTORY_AGENT_DEFAULTS.permissions, ...guardado.permissions } };
 }
 
 export interface ExtensionOption {

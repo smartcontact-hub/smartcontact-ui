@@ -7,7 +7,7 @@ import { disableAnimations, forceLightTheme, goto, irASeccion } from './helpers'
  *   1. el globo de la edición en bloque, cerrado con un clic fuera, desbloquea las casillas (§3);
  *   2. la ficha de agente: el PIN, que no sale en el alta y al editar es de solo lectura; sin Teléfono, ni «Grabar
  *      llamadas», ni la matriz de Llamadas, ni Grabación y Salientes en el resumen; Agentes y Grupos en el Destino; fuera
- *      «Automático con preview» y «Actualizar teléfono en login» (§2);
+ *      «Automático con preview» y «Actualizar teléfono en login» (§2); un campo de solo lectura no parece editable (§10);
  *   3. la ficha de grupo: el audio saliente en «Mensajes en cola»; cada canal con su nivel al lado (§4);
  *   4. el resultado de guardar, en un toast, y nada junto a los botones de la barra (§5);
  *   5. ✓ en la sección sin obligatorios que se deja en un alta (§6);
@@ -51,6 +51,25 @@ test('§2 · el PIN no sale en el alta y, al editar con la extensión en el tel�
   await expect(pin).toBeVisible();
   await expect(pin).toHaveAttribute('readonly', /.*/);
   await expect(pin).not.toHaveValue('');
+
+  // Y no parece editable (§10): sin borde, sobre el fondo suave, con el texto a contraste completo; el email, editable,
+  // tiene su borde y su fondo de campo.
+  const estilo = (id: string) =>
+    page.locator(id).evaluate((el) => {
+      const s = getComputedStyle(el);
+      return { borde: s.borderTopColor, fondo: s.backgroundColor, texto: s.color };
+    });
+  const [delPin, delEmail] = [await estilo('#agent-pin'), await estilo('#agent-email')];
+  expect(delPin.borde, 'el PIN, sin borde').toBe('rgba(0, 0, 0, 0)');
+  expect(delEmail.borde, 'el email, con borde').not.toBe('rgba(0, 0, 0, 0)');
+  expect(delPin.fondo, 'el PIN, sobre otro fondo').not.toBe(delEmail.fondo);
+  expect(delPin.texto, 'el texto del PIN no se apaga').toBe(delEmail.texto);
+  // Se llega con el teclado, y se ve dónde está el foco aunque no haya borde.
+  await pin.focus();
+  await page.keyboard.press('Shift+Tab');
+  await page.keyboard.press('Tab');
+  await expect(pin).toBeFocused();
+  expect(await pin.evaluate((el) => getComputedStyle(el).outlineStyle)).toBe('solid');
 });
 
 test('§2 · sin Teléfono no se ve lo de las llamadas, ni en Configuración ni en el resumen', async ({ page }) => {
@@ -86,6 +105,28 @@ test('§2 · Agentes y Grupos en el Destino; sin «Automático con preview» ni 
   await goto(page, 'config/aed/servicio');
   await expect(page.getByText('Tipo de descuelgue')).toBeVisible();
   await expect(page.getByText('Automático con preview')).toHaveCount(0);
+});
+
+test('§2 · un agente guardado antes de Agentes y Grupos en el Destino los tiene permitidos, como de fábrica', async ({ page }) => {
+  // Lo guardado antes no traía esas cuatro claves: se guarda la lista y se le quitan, como estaría en un navegador de antes.
+  await goto(page, 'admin/agentes/editar/1?seccion=configuracion');
+  await page.getByRole('checkbox', { name: 'Fijos — Llamadas', exact: true }).click();
+  await page.locator('sc-top-bar').getByRole('button', { name: 'Guardar', exact: true }).click();
+  await expect(toast(page)).toBeVisible();
+  await page.evaluate(() => {
+    const agentes = JSON.parse(localStorage.getItem('sc-agents') ?? '[]') as { permissions: Record<string, boolean> }[];
+    for (const a of agentes) {
+      for (const k of ['callsDestAgents', 'callsDestGroups', 'transfersDestAgents', 'transfersDestGroups']) delete a.permissions[k];
+    }
+    localStorage.setItem('sc-agents', JSON.stringify(agentes));
+  });
+
+  await goto(page, 'admin/agentes/editar/2?seccion=configuracion');
+  for (const destino of ['Agentes', 'Grupos']) {
+    for (const columna of ['Llamadas', 'Transferencias']) {
+      await expect(page.getByRole('checkbox', { name: `${destino} — ${columna}`, exact: true })).toBeChecked();
+    }
+  }
 });
 
 test('§4 · el audio saliente va con los mensajes de la cola, no con el teléfono saliente', async ({ page }) => {

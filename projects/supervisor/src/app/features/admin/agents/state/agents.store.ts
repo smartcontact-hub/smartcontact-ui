@@ -1,7 +1,7 @@
 import { computed, Injectable } from '@angular/core';
 
 import { createLocalStore, LocalStore } from '@core/services';
-import { Agent, AGENTS_SEED, AgentType, PresenceStatus } from '../data/agents-data';
+import { Agent, agenteAlDia, AGENTS_SEED, AgentType, PresenceStatus } from '../data/agents-data';
 import { bulkUpdatePatch } from '@core/utils/store-helpers';
 
 /** Fields exposed to bulk edit (subset that is safe to set across many rows). */
@@ -33,6 +33,7 @@ export class AgentsStore {
      *  agents and Hollywood names (2026-09-14), so a browser with the old list loads the new one. */
     currentVersion: 3,
     defaults: AGENTS_SEED,
+    normalize: agenteAlDia,
   });
 
   readonly agents = this.store.items;
