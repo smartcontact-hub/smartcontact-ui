@@ -16,9 +16,14 @@
  *     cuenta: regenerar no cambiaría nada y el aviso sería falso;
  *   · la carpeta del componente en el DS y su página en sc-docs.
  * Y solo avisa de las capturas que existen (`screenshotBaseline` en `components.spec.ts`) y que este cambio no ha tocado,
- * ni el robot ha comprobado después del último cambio de su pieza. Además, la línea base de ESTILOS
- * (`component-styles.json`): si cambia la plantilla o la hoja de una pieza que está en ella y la rama no la ha
- * regenerado, da el comando para hacerlo en local (DD-175).
+ * ni el robot ha comprobado después del último cambio de su pieza. Además, las líneas base de ESTILOS
+ * (`component-styles.json`) y de ESTRUCTURA (`component-structure.json`): si cambia la plantilla o la hoja de una pieza
+ * que está en ellas, o la plantilla de su página de sc-docs, y la rama no las ha regenerado, da el comando para hacerlo
+ * en local (DD-175). La última línea del aviso resume todo lo pendiente: un registro se lee por la cola.
+ *
+ * La página cuenta desde el #431 (2026-10-16): un ejemplo nuevo en la de `sc-multiselect` añadió una instancia y un
+ * ancla, las dos líneas base cayeron en e2e-smoke y costó un CI de más. La de estilos sí se avisó, cinco líneas por
+ * encima del final del preflight, y no se leyó; la de estructura no la avisaba nada.
  *
  * Uso: node scripts/api-baselines.mjs (lo llama `preflight-scope` al final; nunca sale en rojo).
  */
@@ -30,6 +35,7 @@ export const API = 'projects/sc-docs/public/components/_component-api.json';
 export const SPEC = 'e2e/components.spec.ts';
 const CAPTURAS = 'e2e/components.spec.ts-snapshots';
 export const ESTILOS = 'e2e/baselines/component-styles.json';
+export const ESTRUCTURA = 'e2e/baselines/component-structure.json';
 /** El asunto con que el workflow `visual-baselines` commitea sobre la rama. */
 export const ROBOT = 'chore(e2e): baselines visuales regeneradas en Linux';
 
@@ -62,19 +68,38 @@ export function comprobadasPorRobot(commits, slugs) {
 }
 
 /**
- * Las piezas cuya línea base de ESTILOS (`component-styles.json`) mueve este cambio y que la rama no ha regenerado. Solo
- * cuentan la plantilla y la hoja de estilos de la pieza del DS: la lógica no cambia lo que se pinta por sí sola, y avisar
- * de ella enseñaría a ignorar el aviso. Medido en el #342: cinco plantillas cambiadas, e2e-smoke en rojo y un CI de más.
- * `estilos`: las claves de la línea base (los slugs de sc-docs).
+ * La pieza cuyo pintado mueve una ruta: la plantilla o la hoja de la pieza del DS, o la plantilla de su página de sc-docs
+ * (una instancia o un ancla nuevas). La lógica (`.ts`) no cambia lo que se pinta por sí sola, y avisar de ella enseñaría
+ * a ignorar el aviso.
+ */
+function piezaPintada(ruta) {
+  const ds = /^projects\/ui-smartcontact\/src\/lib\/components\/([^/]+)\/[^/]+\.(html|s?css)$/.exec(ruta);
+  if (ds) return slugDe(ds[1]);
+  const docs = /^projects\/sc-docs\/src\/app\/pages\/components\/([^/]+)\/[^/]+\.html$/.exec(ruta);
+  return docs ? docs[1] : null;
+}
+
+/** Las piezas de una línea base que mueve este cambio, si la rama no la ha regenerado. */
+function lineaBasePendiente(fichero, { cambiados, piezas }) {
+  if (cambiados.includes(fichero)) return [];
+  return [...new Set(cambiados.map(piezaPintada).filter((p) => p && piezas.has(p)))].sort();
+}
+
+/**
+ * Las piezas cuya línea base de ESTILOS (`component-styles.json`) mueve este cambio y que la rama no ha regenerado.
+ * Medido en el #342: cinco plantillas cambiadas, e2e-smoke en rojo y un CI de más. `estilos`: las claves de la línea
+ * base (los slugs de sc-docs).
  */
 export function estilosPendientes({ cambiados, estilos }) {
-  if (cambiados.includes(ESTILOS)) return [];
-  const piezas = new Set();
-  for (const ruta of cambiados) {
-    const ds = /^projects\/ui-smartcontact\/src\/lib\/components\/([^/]+)\/[^/]+\.(html|s?css)$/.exec(ruta);
-    if (ds && estilos.has(slugDe(ds[1]))) piezas.add(slugDe(ds[1]));
-  }
-  return [...piezas].sort();
+  return lineaBasePendiente(ESTILOS, { cambiados, piezas: estilos });
+}
+
+/**
+ * Lo mismo con la de ESTRUCTURA (`component-structure.json`), que guarda el HTML de cada instancia de la página y
+ * cuántas hay (#431). `estructura`: sus claves como slugs (`sc-multiselect` → `multiselect`).
+ */
+export function estructuraPendiente({ cambiados, estructura }) {
+  return lineaBasePendiente(ESTRUCTURA, { cambiados, piezas: estructura });
 }
 
 /** Los nombres de las capturas de `components.spec.ts`: el segundo argumento de cada `screenshotBaseline`. */
@@ -131,8 +156,8 @@ export function capturasPendientes({ apiAntes, apiAhora, cambiados, capturas, co
     .map(([slug, porque]) => ({ slug, porque }));
 }
 
-/** El aviso, listo para imprimir; vacío si no hay nada pendiente. */
-export function aviso(pendientes, rama, estilos = []) {
+/** El aviso, listo para imprimir; vacío si no hay nada pendiente. Su última línea lo resume todo. */
+export function aviso(pendientes, rama, estilos = [], estructura = []) {
   const partes = [];
   if (estilos.length) {
     partes.push(
@@ -141,16 +166,31 @@ export function aviso(pendientes, rama, estilos = []) {
       '',
     );
   }
-  if (!pendientes.length) return partes.join('\n');
-  const filas = pendientes.map((p) => `    ${p.slug}-linux.png  (cambia ${p.porque.join(' y ')})`);
-  return [
-    ...partes,
-    `\n⚠️ CAPTURAS DE SC-DOCS SIN REGENERAR (${pendientes.length}). El CI las compara en e2e-smoke y caería:`,
-    ...filas,
-    `    Tras el push, y ANTES de abrir el PR: lanza el workflow visual-baselines con rama=${rama}, trae su commit y`,
-    '    mira cada PNG. Un commit del robot sobre un PR ya abierto deja su CI sin jobs.',
-    '',
-  ].join('\n');
+  if (estructura.length) {
+    partes.push(
+      `\n⚠️ LÍNEA BASE DE ESTRUCTURA SIN REGENERAR (${estructura.join(', ')}). e2e-smoke compara ${ESTRUCTURA} y caería.`,
+      '    En local, con sc-docs en `ng serve` (un build de producción escribe otros comentarios en el HTML):',
+      '    SC_DOCS_URL=<su URL> SC_UPDATE_STRUCTURE=1 npx playwright test component-structure — y revisa el diff del JSON.',
+      '',
+    );
+  }
+  if (pendientes.length) {
+    const filas = pendientes.map((p) => `    ${p.slug}-linux.png  (cambia ${p.porque.join(' y ')})`);
+    partes.push(
+      `\n⚠️ CAPTURAS DE SC-DOCS SIN REGENERAR (${pendientes.length}). El CI las compara en e2e-smoke y caería:`,
+      ...filas,
+      `    Tras el push, y ANTES de abrir el PR: lanza el workflow visual-baselines con rama=${rama}, trae su commit y`,
+      '    mira cada PNG. Un commit del robot sobre un PR ya abierto deja su CI sin jobs.',
+      '',
+    );
+  }
+  if (!partes.length) return '';
+  const resumen = [
+    estilos.length && `estilos (${estilos.join(', ')})`,
+    estructura.length && `estructura (${estructura.join(', ')})`,
+    pendientes.length && `capturas (${pendientes.map((p) => `${p.slug}-linux.png`).join(', ')})`,
+  ].filter(Boolean);
+  return [...partes, `⚠️ Líneas base pendientes antes del PR: ${resumen.join('; ')}. El detalle, arriba.`].join('\n');
 }
 
 const git = (args) => execFileSync('git', args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], maxBuffer: 64 * 1024 * 1024 }).trim();
@@ -182,11 +222,14 @@ function main() {
     const sucio = git(['diff', '--name-only', 'HEAD']).split('\n').filter(Boolean);
     if (sucio.length) commits.unshift({ subject: '(árbol de trabajo)', files: sucio });
     const comprobadas = comprobadasPorRobot(commits, capturas);
-    const estilos = new Set(Object.keys(existsSync(ESTILOS) ? JSON.parse(readFileSync(ESTILOS, 'utf8')) : {}));
+    const claves = (fichero) => Object.keys(existsSync(fichero) ? JSON.parse(readFileSync(fichero, 'utf8')) : {});
+    const estilos = new Set(claves(ESTILOS));
+    const estructura = new Set(claves(ESTRUCTURA).map((tag) => slugDe(tag.replace(/^sc-/, ''))));
     const texto = aviso(
       capturasPendientes({ apiAntes, apiAhora, cambiados, capturas, comprobadas }),
       rama,
       estilosPendientes({ cambiados, estilos }),
+      estructuraPendiente({ cambiados, estructura }),
     );
     if (texto) console.log(texto);
   } catch (e) {
