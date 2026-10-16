@@ -556,8 +556,11 @@ log('✔ Ninguna pantalla declara tipografía fuera de los 14 roles.');
  *
  * 78 → 65 el 2026-10-15: sale el CSS que no casaba con ninguna plantilla (69 reglas en 20 hojas), entre él el popover
  * de conflictos de reglas, la ficha del rail y el resumen viejo del constructor de reglas.
+ *
+ * 65 → 59 el 2026-10-16: el valor de una condición de Reglas pasa a `sc-multiselect` (candidato 6 del barrido de
+ * PrimeNG) y sale la hoja del desplegable hecho a mano.
  */
-export const TIPOGRAFIA_SUELTA_MAX = 65;
+export const TIPOGRAFIA_SUELTA_MAX = 59;
 
 /**
  * El mismo trinquete para **sc-docs**, el showcase del DS — el que peor predicaba con el ejemplo:

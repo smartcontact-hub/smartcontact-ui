@@ -63,6 +63,18 @@
       emptyMessage="Todavía no hay grupos"
       data-testid="sc-multiselect-empty"
     />
+    <sc-multiselect
+      label="Por secciones"
+      [options]="porSecciones"
+      [group]="true"
+      optionGroupLabel="nombre"
+      optionGroupChildren="opciones"
+      optionLabel="name"
+      optionValue="id"
+      [filter]="true"
+      placeholder="Grupos o agentes"
+      data-testid="sc-multiselect-grupos"
+    />
     <p>Elegidos: «{{ elegidos().join(', ') || '—' }}»</p>
     <sc-multiselect
       [options]="columnas"

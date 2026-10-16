@@ -43,6 +43,9 @@ const log = (s = '') => process.stdout.write(s + '\n');
  * su relleno al tema por `pSize` (DD-91) y su sufijo y el globo de agentes pasan a los tokens de caption.
  *
  * Supervisor 49 → 46 y 43 → 39 el 2026-10-15: sale el CSS que no casaba con ninguna plantilla (69 reglas en 20 hojas).
+ *
+ * Supervisor 45 → 42 y 38 → 36 el 2026-10-16: el valor de una condición de Reglas pasa a `sc-multiselect` (candidato 6
+ * del barrido de PrimeNG) y sale la hoja del desplegable hecho a mano.
  */
 export const ZONAS = [
   { nombre: 'DS · tipografía', dirs: ['projects/ui-smartcontact/src/lib/components'], tipo: 'tipografia', max: 13 },
@@ -51,13 +54,13 @@ export const ZONAS = [
     nombre: 'Supervisor · tipografía',
     dirs: ['projects/supervisor/src/app', 'projects/supervisor/src/styles'],
     tipo: 'tipografia',
-    max: 45,
+    max: 42,
   },
   {
     nombre: 'Supervisor · espaciado',
     dirs: ['projects/supervisor/src/app', 'projects/supervisor/src/styles'],
     tipo: 'espaciado',
-    max: 38,
+    max: 36,
   },
 ];
 

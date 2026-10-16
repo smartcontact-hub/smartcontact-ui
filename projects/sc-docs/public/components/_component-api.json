@@ -6439,6 +6439,51 @@
           }
         },
         {
+          "nombre": "group",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "false",
+          "requerido": false,
+          "descripcion": "Opciones por grupos, cada uno con su cabecera (primeng.dev/multiselect «Group»): `options` es entonces la lista de grupos, con su rótulo en `optionGroupLabel` y sus opciones en `optionGroupChildren`. La cabecera no se marca.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Whether to display options as grouped when nested options are provided.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "optionGroupLabel",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": "'label'",
+          "requerido": false,
+          "descripcion": "Campo del grupo con su rótulo.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Name of the label field of an option group.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "optionGroupChildren",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": "'items'",
+          "requerido": false,
+          "descripcion": "Campo del grupo con sus opciones.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Name of the options field of an option group.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
           "nombre": "display",
           "clase": "input",
           "tipo": "ScMultiSelectDisplay",
@@ -6693,7 +6738,6 @@
         "filterValue",
         "fluid",
         "focusOnHover",
-        "group",
         "highlightOnSelect",
         "id",
         "image",
@@ -6701,8 +6745,6 @@
         "loading",
         "loadingIcon",
         "motionOptions",
-        "optionGroupChildren",
-        "optionGroupLabel",
         "overlayOptions",
         "overlayVisible",
         "panelStyle",

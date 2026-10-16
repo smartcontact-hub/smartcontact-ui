@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { disableAnimations, forceLightTheme, goto } from './helpers';
+import { disableAnimations, forceLightTheme, goto, irASeccion, pickSelectOption } from './helpers';
 
 /**
  * El teclado de las piezas que el barrido de PrimeNG pasó a su nativo (sección 7 de `docs/AUDIT-PRIMENG-CATALOGO.md`).
@@ -80,6 +80,39 @@ test('reproductor de varias grabaciones: el tramo activo es la barra, que avanza
   await page.keyboard.press('PageUp');
   await expect(actual).toContainText('00:11 /');
   await expect(barra).toHaveAttribute('aria-valuetext', '00:11');
+});
+
+test('reglas: el valor de una condición es un multiselect que se abre solo, con flechas, Intro y «todos» (6)', async ({
+  page,
+}) => {
+  await goto(page, 'conversaciones/reglas/nueva?type=classification');
+  await irASeccion(page, 'Alcance');
+  const fila = page.locator('.cond-row').first();
+  const valor = fila.locator('sc-rule-condition-value-picker');
+  const lista = page.locator('.p-multiselect-list');
+
+  // Al elegir el campo, la lista se abre y el foco pasa a «Valor»: se sigue con el teclado.
+  await pickSelectOption(page, fila.locator('.cond-row__field'), 'Agente');
+  await expect(lista).toBeVisible();
+  await expect(page.getByRole('combobox', { name: 'Valor' })).toBeFocused();
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('Enter');
+  await expect(lista.getByRole('option', { selected: true })).toHaveCount(1);
+  await page.keyboard.press('Escape');
+  await expect(valor).toContainText('Atención General');
+
+  // Marcar todo es el comodín: cualquiera, también los que se añadan.
+  await valor.locator('.p-multiselect').click();
+  await page.locator('.p-multiselect-header .p-checkbox').click();
+  await page.keyboard.press('Escape');
+  await expect(valor).toContainText('Todos (incluye nuevos)');
+
+  // Tipificación: marcar la categoría es la categoría, no sus hijas (como antes).
+  await pickSelectOption(page, fila.locator('.cond-row__field'), 'Tipificación');
+  await valor.locator('.p-multiselect').click();
+  // La cabecera del grupo también lleva `role="option"` en PrimeNG, con el mismo nombre: la opción es la que se marca.
+  await lista.locator('li[aria-label="Ventas"]').click();
+  await expect(lista.getByRole('option', { selected: true })).toHaveCount(1);
 });
 
 test('Numeración especial: una lista con flechas y Espacio, y su buscador por prefijo', async ({ page }) => {

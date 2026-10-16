@@ -1,35 +1,41 @@
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
-import { ScSearchComponent as SearchComponent } from '@smartcontact-hub/components';
-import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
+import { ScMultiSelectComponent as MultiSelectComponent } from '@smartcontact-hub/components';
 import {
   ChangeDetectionStrategy,
   Component,
   computed,
   effect,
-  ElementRef,
-  HostListener,
   inject,
   input,
   model,
-  signal,
+  untracked,
+  viewChild,
 } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
-
+import { injectLangChange } from '@core/utils/lang-change';
 import { ConditionResolverService } from '../../data/condition-resolver.service';
 import type { ConditionRef, ConditionValue, RefKind } from '../../data/condition.types';
 
 interface PickerOption {
+  /** Valor de la opción en el multiselect (`refKey`). */
+  readonly key: string;
   readonly ref: ConditionRef;
+  /** Nombre completo: lo que se busca y lo que oye el lector (en tipificación, la ruta entera). */
   readonly label: string;
-  /** Subtexto (p.ej. "12 agentes" en un grupo, o el rol del agente). */
+  /** Lo que se lee en la fila: en tipificación, la ruta sin su categoría, que ya es la cabecera del grupo. */
+  readonly itemLabel: string;
+  /** Subtexto (la familia de una categoría IA). */
   readonly sub?: string;
+  /** Solo los grupos como miembros vivos (`agentGroup`). */
   readonly memberCount?: number;
-  /** Categoría padre para agrupar (tipificación); ausente → lista plana. */
-  readonly group?: string;
-  /** Profundidad en el árbol (tipificación): 1 = categoría padre, ≥2 = hoja. */
-  readonly depth?: number;
+  /** Una hoja de tipificación, bajo su categoría. */
+  readonly nested?: boolean;
+}
+
+interface PickerGroup {
+  readonly label: string;
+  readonly items: readonly PickerOption[];
 }
 
 export function refKey(ref: ConditionRef): string {
@@ -39,18 +45,18 @@ export function refKey(ref: ConditionRef): string {
 }
 
 /**
- * Picker de valor de una condición lista (constructor v2). Feature-scoped (NO en
- * el DS lib: `sc-multiselect` no reenvía `pTemplate`, así que el picker rico —
- * buscador + seleccionados/disponibles + "seleccionar todo"→comodín + grupos
- * como miembros vivos — es custom).
+ * Picker de valor de una condición lista (constructor v2), sobre `sc-multiselect` (candidato 6 del barrido de PrimeNG:
+ * el desplegable hecho a mano no tenía flechas ni lector).
  *
- * Mecanismo "ambas": para `refKind='agent'` el panel lista agentes individuales
- * Y grupos (con contador de miembros vivo). Elegir un grupo guarda
- * `{kind:'agentGroup', id}` → "los miembros del grupo X ahora".
+ * Mecanismo "ambas": para `refKind='agent'` la lista trae los grupos (con su contador de miembros vivo) y los agentes
+ * individuales, en dos secciones. Elegir un grupo guarda `{kind:'agentGroup', id}` → "los miembros del grupo X ahora".
+ * Las tipificaciones van por categorías; marcar la categoría es esa categoría, no sus hijas (como antes).
+ *
+ * Marcar todo es el comodín (`mode: 'any'`): cualquiera, también los que se añadan.
  */
 @Component({
   selector: 'sc-rule-condition-value-picker',
-  imports: [SearchComponent, ButtonComponent, FormsModule, IconComponent, TranslateModule],
+  imports: [IconComponent, MultiSelectComponent, TranslateModule],
   templateUrl: './rule-condition-value-picker.component.html',
   styleUrl: './rule-condition-value-picker.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -59,177 +65,115 @@ export class RuleConditionValuePickerComponent {
   readonly refKind = input.required<RefKind>();
   readonly value = model.required<ConditionValue>();
   readonly placeholder = input('Seleccionar…');
-  /** Flujo guiado: al pasar a true, el panel se auto-abre (tras elegir el campo). */
+  /** Flujo guiado: al pasar a true, la lista se abre sola (tras elegir el campo). */
   readonly autoOpen = input(false);
 
   private readonly resolver = inject(ConditionResolverService);
-  private readonly host = inject(ElementRef<HTMLElement>);
+  private readonly translate = inject(TranslateService);
+  private readonly lang = injectLangChange();
+  private readonly picker = viewChild.required(MultiSelectComponent);
 
   constructor() {
-    // Flujo guiado: auto-abrir el panel cuando `autoOpen` pasa a true. El efecto
-    // NO lee `open()`, así que cerrar (clic fuera) no lo re-dispara.
+    // Después de que el desplegable de «Campo», al cerrarse, devuelva el foco a su campo: si no, se lo quita.
     effect(() => {
-      if (this.autoOpen()) this.openPanel();
+      if (!this.autoOpen()) return;
+      const picker = this.picker();
+      untracked(() => setTimeout(() => picker.show()));
     });
   }
 
-  protected readonly addIcon = 'add';
-  protected readonly closeIcon = 'close';
-  protected readonly checkIcon = 'check';
-  protected readonly searchIcon = 'search';
-
-  protected readonly open = signal(false);
-  /** El panel se abre hacia arriba si no cabe debajo (evita tapar el resumen +
-   *  el preview de impacto cuando la condición está en la parte baja del form). */
-  protected readonly openUp = signal(false);
-  protected readonly search = signal('');
-
   protected readonly isAny = computed(() => this.value().mode === 'any');
 
-  protected readonly selectedRefs = computed<readonly ConditionRef[]>(() => {
+  private readonly selectedRefs = computed<readonly ConditionRef[]>(() => {
     const v = this.value();
     return v.mode === 'refs' ? v.refs : [];
   });
 
-  private readonly selectedKeys = computed(() => new Set(this.selectedRefs().map(refKey)));
-
-  protected readonly chips = computed(() =>
-    this.selectedRefs().map((r) => ({ ref: r, key: refKey(r), label: this.resolver.label(r) })),
-  );
-
-  /** Catálogo base del refKind (agentes/grupos/servicios/tipificaciones). */
-  private readonly entityOptions = computed<PickerOption[]>(() => {
-    switch (this.refKind()) {
-      case 'service':
-        return this.resolver.services.map((name) => ({ ref: { kind: 'service', name }, label: name }));
-      case 'group':
-        return this.resolver.groups.map((g) => ({ ref: { kind: 'group', id: g.id }, label: g.name }));
-      case 'agent':
-        return this.resolver.agents.map((a) => ({ ref: { kind: 'agent', id: a.id }, label: a.name }));
-      case 'tipificacion':
-        return this.resolver.tipificaciones.map((t) => ({
-          ref: { kind: 'tipificacion', id: t.id },
-          label: t.path.join(' / '),
-          group: t.path[0],
-          depth: t.path.length,
-        }));
-      case 'category':
-        return this.resolver.categories().map((c) => ({
-          ref: { kind: 'category', id: c.id },
-          label: c.name,
-          sub: c.group,
-        }));
-    }
-  });
-
-  /** Solo `agent`: grupos como sus miembros vivos (`agentGroup`). */
-  private readonly groupOptions = computed<PickerOption[]>(() =>
+  /** Los grupos como sus miembros vivos (`agentGroup`), solo para `agent`. */
+  private readonly memberGroups = computed<PickerOption[]>(() =>
     this.refKind() === 'agent'
-      ? this.resolver.groups.map((g) => ({
-          ref: { kind: 'agentGroup', id: g.id },
-          label: g.name,
-          memberCount: this.resolver.memberCount(g.id),
-        }))
+      ? this.resolver.groups.map((g) => {
+          const ref: ConditionRef = { kind: 'agentGroup', id: g.id };
+          return { key: refKey(ref), ref, label: g.name, itemLabel: g.name, memberCount: this.resolver.memberCount(g.id) };
+        })
       : [],
   );
 
-  protected readonly filteredEntities = computed(() => filterBy(this.entityOptions(), this.search()));
-  protected readonly filteredGroups = computed(() => filterBy(this.groupOptions(), this.search()));
-
-  /** Agrupa las entidades filtradas por su `group` (categoría) — solo cuando lo
-   *  tienen (tipificación). `null` = lista plana (servicios/grupos/agentes). */
-  protected readonly entityGroups = computed<
-    { name: string; parent?: PickerOption; children: PickerOption[] }[] | null
-  >(() => {
-    const opts = this.filteredEntities();
-    if (!opts.some((o) => o.group)) return null;
-    const order: string[] = [];
-    const byGroup = new Map<string, { parent?: PickerOption; children: PickerOption[] }>();
-    for (const o of opts) {
-      const g = o.group ?? '—';
-      let entry = byGroup.get(g);
-      if (!entry) {
-        entry = { children: [] };
-        byGroup.set(g, entry);
-        order.push(g);
-      }
-      // depth 1 = nodo categoría (padre, con checkbox propio); ≥2 = hoja.
-      if (o.depth === 1) entry.parent = o;
-      else entry.children.push(o);
-    }
-    return order.map((name) => {
-      const e = byGroup.get(name)!;
-      return { name, parent: e.parent, children: e.children };
+  /** El catálogo del refKind (agentes, grupos, servicios, tipificaciones o categorías IA). */
+  private readonly entities = computed<PickerOption[]>(() => {
+    const option = (ref: ConditionRef, label: string, extra: Partial<PickerOption> = {}): PickerOption => ({
+      key: refKey(ref),
+      ref,
+      label,
+      itemLabel: label,
+      ...extra,
     });
+    switch (this.refKind()) {
+      case 'service':
+        return this.resolver.services.map((name) => option({ kind: 'service', name }, name));
+      case 'group':
+        return this.resolver.groups.map((g) => option({ kind: 'group', id: g.id }, g.name));
+      case 'agent':
+        return this.resolver.agents.map((a) => option({ kind: 'agent', id: a.id }, a.name));
+      case 'tipificacion':
+        return this.resolver.tipificaciones.map((t) =>
+          option({ kind: 'tipificacion', id: t.id }, t.path.join(' / '), {
+            itemLabel: t.path.length > 1 ? t.path.slice(1).join(' / ') : t.path[0],
+            nested: t.path.length > 1,
+            sub: t.path[0],
+          }),
+        );
+      case 'category':
+        return this.resolver.categories().map((c) => option({ kind: 'category', id: c.id }, c.name, { sub: c.group }));
+    }
   });
 
-  /** Categorías colapsadas (por nombre) en el panel de tipificación. */
-  private readonly collapsedGroups = signal<ReadonlySet<string>>(new Set());
-  protected isGroupCollapsed(name: string): boolean {
-    return this.collapsedGroups().has(name);
-  }
-  protected toggleGroup(name: string): void {
-    this.collapsedGroups.update((s) => {
-      const next = new Set(s);
-      if (next.has(name)) next.delete(name);
-      else next.add(name);
-      return next;
-    });
-  }
+  /** Con secciones: los agentes (grupos e individuales) y las tipificaciones (por su categoría). */
+  protected readonly grouped = computed(() => this.refKind() === 'agent' || this.refKind() === 'tipificacion');
 
-  protected isSelected(ref: ConditionRef): boolean {
-    return this.selectedKeys().has(refKey(ref));
-  }
+  protected readonly options = computed<readonly (PickerOption | PickerGroup)[]>(() => {
+    this.lang();
+    const entities = this.entities();
+    if (this.refKind() === 'agent') {
+      return [
+        { label: this.translate.instant('memory.rules.builder.cond.pick_groups'), items: this.memberGroups() },
+        { label: this.translate.instant('memory.rules.builder.cond.pick_individuals'), items: entities },
+      ];
+    }
+    if (this.refKind() === 'tipificacion') {
+      const byCategory = new Map<string, PickerOption[]>();
+      for (const o of entities) {
+        const category = o.sub ?? o.label;
+        byCategory.set(category, [...(byCategory.get(category) ?? []), { ...o, sub: undefined }]);
+      }
+      return [...byCategory].map(([label, items]) => ({ label, items }));
+    }
+    return entities;
+  });
 
-  protected toggleOpen(): void {
-    if (this.open()) this.close();
-    else this.openPanel();
-  }
+  private readonly allOptions = computed(() => [...this.memberGroups(), ...this.entities()]);
 
-  /** Abre el panel decidiendo la dirección: si debajo no caben ~320px (descontando
-   *  el footer sticky) y arriba hay más sitio, abre hacia arriba. No lee `open()`
-   *  para que sea seguro llamarlo desde el efecto de auto-open. */
-  private openPanel(): void {
-    const r = this.host.nativeElement.getBoundingClientRect();
-    const below = window.innerHeight - r.bottom - 80;
-    this.openUp.set(below < 320 && r.top > below);
-    this.open.set(true);
-  }
+  /** Lo marcado, como claves; con el comodín, todas. */
+  protected readonly selectedKeys = computed<string[]>(() =>
+    this.isAny() ? this.allOptions().map((o) => o.key) : this.selectedRefs().map(refKey),
+  );
 
-  protected close(): void {
-    this.open.set(false);
-    this.search.set('');
-  }
+  protected readonly anyLabel = computed(() => {
+    this.lang();
+    return `${this.translate.instant('memory.rules.builder.cond.pick_all')} (${this.translate.instant('memory.rules.builder.cond.pick_all_hint')})`;
+  });
 
-  protected toggle(ref: ConditionRef): void {
-    const current = this.selectedRefs();
-    const k = refKey(ref);
-    const next = this.selectedKeys().has(k)
-      ? current.filter((r) => refKey(r) !== k)
-      : [...current, ref];
-    this.value.set({ mode: 'refs', refs: next });
+  protected onChange(keys: unknown[]): void {
+    const all = this.allOptions();
+    if (all.length > 0 && keys.length === all.length) {
+      this.value.set({ mode: 'any' });
+      return;
+    }
+    const byKey = new Map(all.map((o) => [o.key, o.ref]));
+    // Lo marcado que ya no está en el catálogo (un agente dado de baja) se conserva: no se ve en la lista, así que
+    // nadie lo ha desmarcado.
+    const fuera = this.selectedRefs().filter((r) => !byKey.has(refKey(r)));
+    const refs = keys.flatMap((k) => byKey.get(String(k)) ?? []);
+    this.value.set({ mode: 'refs', refs: [...fuera, ...refs] });
   }
-
-  protected removeChip(ref: ConditionRef): void {
-    this.toggle(ref);
-  }
-
-  protected selectAll(): void {
-    this.value.set({ mode: 'any' });
-    this.close();
-  }
-
-  protected clearAny(): void {
-    this.value.set({ mode: 'refs', refs: [] });
-  }
-
-  @HostListener('document:pointerdown', ['$event'])
-  protected onDocPointerDown(ev: PointerEvent): void {
-    if (this.open() && !this.host.nativeElement.contains(ev.target as Node)) this.close();
-  }
-}
-
-function filterBy(opts: readonly PickerOption[], q: string): PickerOption[] {
-  const s = q.trim().toLowerCase();
-  return s ? opts.filter((o) => o.label.toLowerCase().includes(s)) : [...opts];
 }

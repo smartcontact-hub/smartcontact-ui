@@ -45,7 +45,7 @@ test('crear una regla con condición de Categoría IA y operador "no es"', async
   await pickSelectOption(page, page.locator('.cond-row__field').first(), 'Categoría IA');
 
   // El picker DEBE tener opciones (esto es exactamente lo que estaba roto).
-  const options = page.locator('.vpick__panel .vpick__opt');
+  const options = page.locator('.p-multiselect-list').getByRole('option');
   await expect(options.first()).toBeVisible();
   const optionCount = await options.count();
   expect(optionCount).toBeGreaterThan(0);
