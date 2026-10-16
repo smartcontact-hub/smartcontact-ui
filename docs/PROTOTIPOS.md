@@ -54,5 +54,7 @@ etiqueta, y cada etiqueta `proto/*` su fila.
 | Ticket | Fecha | App | Etiqueta | URL congelada | Qué cubre |
 | --- | --- | --- | --- | --- | --- |
 <!-- proto:freeze inserta aquí, más reciente primero -->
+| SISMAC-4058 | 2026-10-16 | supervisor | `proto/SISMAC-4058` | [proto-sismac-4058.sc-supervisor.pages.dev](https://proto-sismac-4058.sc-supervisor.pages.dev) | Grupos: alta y edición tras la revisión de producto del 2026-10-15 (DD-206). El mismo build trae agentes, tablas y Repositorios |
+| SISMAC-4062 | 2026-10-16 | supervisor | `proto/SISMAC-4062` | [proto-sismac-4062.sc-supervisor.pages.dev](https://proto-sismac-4062.sc-supervisor.pages.dev) | Agentes: alta y edición tras la revisión de producto del 2026-10-15 (DD-209). El mismo build trae grupos, tablas y Repositorios |
+| SISMAC-4064 | 2026-10-16 | supervisor | `proto/SISMAC-4064` | [proto-sismac-4064.sc-supervisor.pages.dev](https://proto-sismac-4064.sc-supervisor.pages.dev) | Repositorios y las tablas comunes tras la revisión de producto del 2026-10-15 (DD-210). El mismo build trae grupos y agentes |
 
-*(Todavía no hay ninguna. La primera se congela con el comando de arriba.)*
