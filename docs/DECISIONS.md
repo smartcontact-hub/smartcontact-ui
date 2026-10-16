@@ -153,6 +153,31 @@
 
 ---
 
+## DD-212 · 2026-10-16 — Un ticket ya congelado vuelve como versión nueva (`-v2`), y la anterior no se mueve
+
+**Contexto** · Las tarjetas de grupos, agentes y Repositorios (SISMAC-4058, 4062 y 4064) se congelaron con la revisión
+del 2026-10-15 (#433), y la del 2026-10-16 (DD-211) las cambia. `npm run proto` no dejaba congelar dos veces un ticket
+(DD-56: un enlace congelado no cambia nunca) y mandaba a pedir otro ticket, pero el trabajo es el mismo y sus
+tarjetas también.
+
+**Decisión** · Un ticket que vuelve con otra revisión se congela como **versión nueva**: `SISMAC-4058-v2`, luego `-v3`,
+con su etiqueta (`proto/SISMAC-4058-v2`), su rama y su URL (`proto-sismac-4058-v2.sc-supervisor.pages.dev`). La versión
+anterior no se mueve. `npm run proto` ve que el ticket ya está congelado y ofrece la siguiente; sin terminal, la nombra
+para pasarla con `--ticket`. `proto:check` lee las filas con versión. En la tarjeta se pega la URL nueva, al lado de
+la vieja. Lo puro va en `scripts/proto-freeze.core.mjs`, con su prueba (`proto-freeze.test.mjs`).
+
+**Razón** · Mantiene lo que DD-56 protege, que un enlace pegado en Jira siga enseñando lo que enseñaba, sin obligar a
+abrir una tarjeta nueva para cada revisión del mismo trabajo.
+
+**Descartadas** ·
+- **Mover la etiqueta a la revisión nueva**: las mismas URL cambiarían por debajo, justo lo que DD-56 prohíbe.
+- **Un ticket nuevo por revisión**: el trabajo y quien lo sigue están en la tarjeta de siempre.
+
+**Consecuencias** · Las tres versiones del 2026-10-16 se congelaron sobre el commit de #436 en `main` (`96c2d514`):
+SISMAC-4058-v2, SISMAC-4062-v2 y SISMAC-4064-v2, en `docs/PROTOTIPOS.md`.
+
+---
+
 ## DD-211 · 2026-10-16 — Revisión de producto de agendas, fichas, Contact Center y toasts: a quién se asigna una agenda en un árbol por persona, el PIN del sistema, el resultado en un toast y un solo Guardar en Contact Center
 
 **Contexto** · Revisión de producto del 2026-10-16 de los flujos de grupos y agentes, sobre lo fundido el 2026-10-15

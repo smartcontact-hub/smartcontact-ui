@@ -25,6 +25,12 @@ la fila de abajo, y —si dices que sí a la segunda pregunta— publica las dos
 de minutos después responde `https://proto-sismac-3780.sc-supervisor.pages.dev`, y **ésa** es la
 que se pega en Jira y en Confluence.
 
+**Un ticket que vuelve con otra revisión se congela como versión nueva** (DD-212): `npm run proto`
+con el mismo ticket ve que ya está congelado y ofrece la siguiente, `SISMAC-3780-v2` (luego `-v3`…),
+con su etiqueta, su rama y su URL propias. La versión anterior no se mueve: su enlace ya está en
+Jira y tiene que seguir enseñando lo que enseñaba. En la tarjeta se pega la URL nueva, al lado de
+la vieja.
+
 Publicar es inmediato: el hook de pre-push reconoce que un push de `proto/*` sube punteros a un
 commit que ya está en `main` (o sea, que ya pasó su preflight y su CI) y no repite la cadena. Lo
 comprueba, no se fía: si el commit no está en `main`, corre el gate entero como con cualquier otro
@@ -54,6 +60,9 @@ etiqueta, y cada etiqueta `proto/*` su fila.
 | Ticket | Fecha | App | Etiqueta | URL congelada | Qué cubre |
 | --- | --- | --- | --- | --- | --- |
 <!-- proto:freeze inserta aquí, más reciente primero -->
+| SISMAC-4058-v2 | 2026-10-16 | supervisor | `proto/SISMAC-4058-v2` | [proto-sismac-4058-v2.sc-supervisor.pages.dev](https://proto-sismac-4058-v2.sc-supervisor.pages.dev) | Grupos: alta y edición tras la revisión de producto del 2026-10-16 (DD-211): el audio saliente con los mensajes de la cola, la estrategia en una línea, cada canal con su nivel, ✓ en el alta y el toast. El mismo build trae agentes, agendas y Contact Center |
+| SISMAC-4062-v2 | 2026-10-16 | supervisor | `proto/SISMAC-4062-v2` | [proto-sismac-4062-v2.sc-supervisor.pages.dev](https://proto-sismac-4062-v2.sc-supervisor.pages.dev) | Agentes: alta y edición tras la revisión de producto del 2026-10-16 (DD-211): el PIN del sistema y de solo lectura, «Navegador» sin WebRTC, Agentes y Grupos en el Destino, sin Teléfono no se ve lo de las llamadas. El mismo build trae grupos y agendas |
+| SISMAC-4064-v2 | 2026-10-16 | supervisor | `proto/SISMAC-4064-v2` | [proto-sismac-4064-v2.sc-supervisor.pages.dev](https://proto-sismac-4064-v2.sc-supervisor.pages.dev) | Repositorios tras la revisión de producto del 2026-10-16 (DD-211): a quién se asigna una agenda, en un árbol «Grupos y agentes», y el resultado de cada acción en un toast. El mismo build trae grupos y agentes |
 | SISMAC-4058 | 2026-10-16 | supervisor | `proto/SISMAC-4058` | [proto-sismac-4058.sc-supervisor.pages.dev](https://proto-sismac-4058.sc-supervisor.pages.dev) | Grupos: alta y edición tras la revisión de producto del 2026-10-15 (DD-206). El mismo build trae agentes, tablas y Repositorios |
 | SISMAC-4062 | 2026-10-16 | supervisor | `proto/SISMAC-4062` | [proto-sismac-4062.sc-supervisor.pages.dev](https://proto-sismac-4062.sc-supervisor.pages.dev) | Agentes: alta y edición tras la revisión de producto del 2026-10-15 (DD-209). El mismo build trae grupos, tablas y Repositorios |
 | SISMAC-4064 | 2026-10-16 | supervisor | `proto/SISMAC-4064` | [proto-sismac-4064.sc-supervisor.pages.dev](https://proto-sismac-4064.sc-supervisor.pages.dev) | Repositorios y las tablas comunes tras la revisión de producto del 2026-10-15 (DD-210). El mismo build trae grupos y agentes |
