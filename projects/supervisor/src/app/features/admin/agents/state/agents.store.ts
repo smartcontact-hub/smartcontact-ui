@@ -15,6 +15,15 @@ function nextCode(items: readonly Agent[]): string {
   return String(maxN + 1);
 }
 
+/** El primer PIN libre, de tres cifras en adelante (el formato del teléfono: de 3 a 6). Lo asigna el sistema al crear
+ *  el agente; la ficha solo lo enseña (DD-211 §2). */
+function nextPin(items: readonly Agent[]): string {
+  const usados = new Set(items.map((a) => a.pin).filter((p): p is string => !!p));
+  let n = 100;
+  while (usados.has(String(n))) n++;
+  return String(n);
+}
+
 @Injectable({ providedIn: 'root' })
 export class AgentsStore {
   private readonly store: LocalStore<Agent> = createLocalStore<Agent>({
@@ -40,7 +49,7 @@ export class AgentsStore {
   });
 
   addAgent(data: Omit<Agent, 'id' | 'code'>): Agent {
-    return this.store.addItem({ ...data, code: nextCode(this.agents()) });
+    return this.store.addItem({ ...data, code: nextCode(this.agents()), pin: data.pin || nextPin(this.agents()) });
   }
 
   updateAgent(id: number, updates: Partial<Agent>): void {

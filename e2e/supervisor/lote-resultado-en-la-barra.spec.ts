@@ -3,12 +3,13 @@ import { expect, test, type Page } from '@playwright/test';
 import { disableAnimations, forceLightTheme, goto } from './helpers';
 
 /**
- * EL RESULTADO DE UN CAMBIO EN LOTE SE CUENTA EN SU BARRA, NO EN UN TOAST (DD-196).
+ * EL RESULTADO DE UN CAMBIO EN LOTE: UN TOAST, Y EN SU BARRA CON «DESHACER» (DD-196, DD-211 §5).
  *
- * Medido el 2026-10-11 en Grupos a 1440: tras aplicar un cambio en lote salía un toast abajo a la derecha que tapaba la
- * última fila, decía «1 elementos actualizados» y se iba a los 8 s con su «Deshacer». Ahora la barra de lote se queda
- * donde estaba y lo cuenta («Cambio aplicado a 2 grupos») con «Deshacer» pegado al texto, sin irse sola, hasta que se
- * cierra o se vuelve a marcar una fila. Deshacer (o Ctrl+Z) devuelve las filas y deja «Cambio revertido».
+ * Medido el 2026-10-11 en Grupos a 1440: tras aplicar un cambio en lote salía un toast que se iba a los 8 s con su
+ * «Deshacer». Desde DD-196 la barra de lote se queda donde estaba y lo cuenta («Cambio aplicado a 2 grupos») con
+ * «Deshacer» pegado al texto, sin irse sola, hasta que se cierra o se vuelve a marcar una fila. Desde DD-211 §5, además,
+ * lo dice el toast de toda acción, sin botón: el toast se va solo y el deshacer sigue en la barra. Deshacer (o Ctrl+Z)
+ * devuelve las filas y deja «Cambio revertido».
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -40,7 +41,7 @@ const aplicarMedia = async (page: Page) => {
   await page.getByRole('dialog', { name: /Aplicar cambio/ }).getByRole('button', { name: 'Aplicar' }).click();
 };
 
-test('Grupos · el cambio en lote se cuenta en la barra con «Deshacer», sin toast y sin irse solo', async ({ page }) => {
+test('Grupos · el cambio en lote lo dice un toast y la barra, que se queda con «Deshacer»', async ({ page }) => {
   await page.clock.install();
   await goto(page, 'admin/grupos');
   await expect(await prioridad(page, 'Reclamaciones')).toHaveText('Alta');
@@ -49,14 +50,18 @@ test('Grupos · el cambio en lote se cuenta en la barra con «Deshacer», sin to
   const barra = page.locator('sc-bulk-action-bar .bulk-bar');
   await expect(barra).toContainText('Cambio aplicado a 2 grupos');
   await expect(await prioridad(page, 'Reclamaciones')).toHaveText('Media');
-  await expect(page.locator('.p-toast-message'), 'ningún toast').toHaveCount(0);
+  const toast = page.locator('.p-toast-message');
+  await expect(toast, 'el toast de toda acción').toHaveCount(1);
+  await expect(toast).toContainText('Cambio aplicado a 2 grupos');
+  await expect(toast.getByRole('button', { name: 'Deshacer' }), 'el deshacer va en la barra, no en el toast').toHaveCount(0);
 
   // La barra no tapa ninguna fila: la tarjeta de la tabla acaba antes de que empiece.
   const [tarjeta, caja] = [await page.locator('.table-card').boundingBox(), await barra.boundingBox()];
   expect(tarjeta!.y + tarjeta!.height, 'la tabla acaba antes que la barra').toBeLessThanOrEqual(caja!.y);
 
-  // El toast se iba a los 8 s; la barra sigue con su «Deshacer».
+  // El toast se va solo; la barra sigue con su «Deshacer».
   await page.clock.fastForward(15_000);
+  await expect(toast, 'el toast ya se fue').toHaveCount(0);
   const deshacer = barra.getByRole('button', { name: 'Deshacer', exact: true });
   await expect(deshacer).toBeVisible();
 
@@ -64,7 +69,7 @@ test('Grupos · el cambio en lote se cuenta en la barra con «Deshacer», sin to
   await expect(await prioridad(page, 'Reclamaciones')).toHaveText('Alta');
   await expect(barra).toContainText('Cambio revertido');
   await expect(deshacer, 'lo deshecho no se vuelve a deshacer').toHaveCount(0);
-  await expect(page.locator('.p-toast-message'), 'tampoco al deshacer').toHaveCount(0);
+  await expect(toast, 'también al deshacer').toContainText('Cambio revertido');
 
   await barra.getByRole('button', { name: 'Cerrar' }).click();
   await expect(barra).toHaveCount(0);

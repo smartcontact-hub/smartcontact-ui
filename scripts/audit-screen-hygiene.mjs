@@ -30,10 +30,10 @@
  *    (medido el 2026-10-05); el span de `sc-select` no es etiquetable. Un `aria-label`
  *    en el host tampoco vale: no llega al combobox.
  *
- * 4. TOASTS DE UNA ACCIÓN DEL USUARIO (DD-191). El toast queda para lo que manda el SISTEMA
- *    (una tarea en segundo plano que acaba). Lo que acaba de hacer el usuario se cuenta junto a
- *    su contexto: `ResultadoAccionService.visto` si ya se ve, `enLaBarra` si guarda y se queda, o
- *    un mensaje junto a su control. Solo en el Supervisor (las réplicas copian su app, DD-35).
+ * 4. TOASTS SUELTOS (DD-211 §5, que sustituye a DD-191). El resultado de una acción del usuario
+ *    es un toast, pero UNO: lo lanza `ResultadoAccionService.contar`, igual en toda la app. Una
+ *    página no llama a `messages.add` por su cuenta; lo que es de un control (copiar, probar una
+ *    conexión) va en un mensaje junto a él. Solo en el Supervisor (las réplicas copian su app, DD-35).
  *
  * 5. GUIONES SUELTOS EN UNA PLANTILLA (DD-197), sin trinquete: ninguno. Una celda sin dato es
  *    `<sc-celda-vacia>`: «—» a la vista, oculto al lector, que oye «Sin dato» (o su `texto`). Un «—»
@@ -178,12 +178,14 @@ export function sinComentariosEnSuSitio(texto, esHtml) {
 }
 
 /**
- * Los ficheros que pueden lanzar toasts, y cuántos (DD-191). La lista solo MENGUA.
+ * Los ficheros que pueden lanzar toasts, y cuántos (DD-191, DD-211 §5). La lista solo MENGUA.
+ * - `resultado-accion`: el resultado de una acción del usuario, el mismo toast en toda la app (DD-211 §5).
  * - `undo-stack`: el aviso con «Deshacer» de lo que se quita del inicio (un monitor, un widget), que desaparece sin dejar
- *   sitio donde contarlo; el de un cambio en lote ya va en su barra (DD-196).
+ *   sitio donde contarlo; el «Deshacer» de un cambio en lote va en su barra (DD-196).
  * - `conversations-page`: transcripciones y análisis en segundo plano, con su progreso y su resultado.
  */
 export const TOAST_DEL_SISTEMA = {
+  'projects/supervisor/src/app/core/services/resultado-accion.service.ts': 1,
   'projects/supervisor/src/app/core/services/undo-stack.service.ts': 2,
   'projects/supervisor/src/app/features/memory/pages/conversations/conversations-page.component.ts': 7,
 };
@@ -413,7 +415,7 @@ if (process.argv[1] && process.argv[1].endsWith('audit-screen-hygiene.mjs')) {
       toasts,
       TOAST_DEL_SISTEMA,
       'toast(s)',
-      'cuenta el resultado con `ResultadoAccionService` (`visto` si ya se ve, `enLaBarra` si guarda y se queda) o junto a su control (DD-191).',
+      'cuenta el resultado con `ResultadoAccionService.contar`, el mismo toast en toda la app, o junto a su control (DD-211 §5).',
     ),
     ...chequearTrinquete(
       roles,

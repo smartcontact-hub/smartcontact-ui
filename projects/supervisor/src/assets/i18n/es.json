@@ -1405,18 +1405,23 @@
       "contacts_no_results": "Ningún contacto coincide con «{{query}}».",
       "import": "Importar",
       "import_title": "Importar contactos",
-      "section_agents": "Agentes",
-      "agents_search": "Buscar agentes…",
+      "section_agents": "Grupos y agentes",
       "agents_filter_all": "Todos",
       "agents_filter_assigned": "Asignados ({{count}})",
       "agents_filter_aria": "Mostrar agentes",
-      "agents_summary": "{{count}} de {{total}} asignados",
       "agents_row_aria": "Asignar la agenda a {{name}}",
-      "agents_select_all": "Marcar o desmarcar los agentes que se ven",
       "agents_email": "Email",
       "agents_no_results": "Ningún agente coincide con «{{query}}».",
       "agents_none_assigned": "Aún no hay agentes asignados.",
       "agents_empty": "No hay agentes todavía",
+      "assigned_aria_one": "1 grupo o agente",
+      "assigned_aria": "{{count}} grupos y agentes",
+      "group_row_aria": "Asignar la agenda a todo el grupo {{name}}",
+      "assign_help": "Un agente marcado lo está en todos sus grupos. Un grupo entero le da la agenda también a quien entre después en él.",
+      "assign_search": "Buscar grupos o agentes…",
+      "assign_summary": "{{count}} de {{total}} agentes y {{groups}} grupos enteros",
+      "col_groups_agents": "Grupos y agentes",
+      "no_group": "Sin grupo",
       "import_template_file": "plantilla-agenda",
       "fields": {
         "surname": "Apellidos",
@@ -2046,6 +2051,7 @@
         "remove_periodic_aria": "Quitar {{file}}",
         "every": "Cada",
         "outbound_audio": "Audio saliente",
+        "outbound_audio_info": "Lo que oye el cliente cuando le llama un agente del grupo.",
         "voice": "Voz de los mensajes",
         "voice_hint": "La voz sintética que lee los mensajes del grupo.",
         "notices_title": "Avisos",
@@ -2335,8 +2341,6 @@
         },
         "sesion": {
           "title": "Sesión",
-          "login_ext_override": "Actualizar teléfono en login",
-          "login_ext_override_hint": "Si el agente inicia sesión desde otro dispositivo, su extensión se actualiza automáticamente",
           "security": "Seguridad",
           "expire_pwd": "Expirar contraseña",
           "expire_pwd_hint": "Obliga a crear una contraseña nueva al volver a entrar",
@@ -2362,7 +2366,7 @@
         "phone": "Teléfono móvil",
         "email": "Email",
         "pin": "PIN",
-        "pin_hint": "3-6 dígitos. Se usa para auto-activación desde el teléfono.",
+        "pin_hint": "Lo asigna el sistema al crear el agente. Con él se activa desde el teléfono.",
         "labels": "Etiquetas asignadas",
         "active": "Cuenta activa",
         "active_hint": "Activa la cuenta del agente. La presencia y la habilitación en cada grupo se gestionan por separado.",
@@ -2370,7 +2374,8 @@
         "extension_type": "Tipo de extensión",
         "extension_type_hint": {
           "webrtc": "Suena en el navegador, con Smart Contact Agent.",
-          "phone": "Suena en su teléfono móvil."
+          "phone": "Suena en su teléfono móvil.",
+          "sin_webrtc": "Solo teléfono: los agentes en el navegador (WebRTC) no están contratados."
         },
         "phone_required_hint": "Las llamadas suenan en este teléfono.",
         "state": "Estado"
@@ -2416,6 +2421,8 @@
         "col_transferencia": "Transferencias",
         "toggle_all_llamada": "Activar/desactivar todas las llamadas",
         "toggle_all_transferencia": "Activar/desactivar todas las transferencias",
+        "row_agentes": "Agentes",
+        "row_grupos": "Grupos",
         "row_fijos": "Fijos",
         "row_moviles": "Móviles",
         "row_internacionales": "Internacionales",
@@ -2456,7 +2463,6 @@
       "channels_required": "Selecciona al menos un canal",
       "email_invalid": "Introduce un email válido",
       "phone_invalid": "El teléfono no es válido: usa cifras, con un + delante si lleva prefijo.",
-      "pin_invalid": "El PIN debe tener entre 3 y 6 dígitos",
       "phone_required": "Escribe el teléfono móvil: la extensión suena en él",
       "email_required": "Escribe el email",
       "group_required": "Asigna al menos un grupo",
@@ -2509,7 +2515,8 @@
       "saving": "Guardando...",
       "toast": {
         "saved_one": "Numeración especial guardada (1 país)",
-        "saved_many": "Numeración especial guardada ({{count}} países)"
+        "saved_many": "Numeración especial guardada ({{count}} países)",
+        "saved": "Contact Center guardado"
       },
       "subpages": {
         "servicio": {
@@ -2575,10 +2582,6 @@
               "auto": {
                 "label": "Automático",
                 "desc": "La conversación se conecta sola al llegar."
-              },
-              "auto_preview": {
-                "label": "Automático con preview",
-                "desc": "Se conecta sola, y antes el agente ve los datos del contacto."
               }
             }
           },
@@ -2595,26 +2598,17 @@
             "col_conversacion": "Conversación",
             "col_url": "Dirección web"
           },
-          "toast": {
-            "saved": "Configuración guardada"
-          },
           "edit_crumb": "Editar general"
         },
         "agentes": {
           "heading": "Agentes",
           "hint": "Con esto nace cada agente nuevo. Luego se cambia en su ficha.",
-          "toast": {
-            "saved": "Parámetros de agentes guardados"
-          },
           "edit_crumb": "Editar agente"
         },
         "grupos": {
           "heading": "Grupos",
           "hint": "Con esto nace cada grupo nuevo. Luego se cambia en su ficha.",
           "strategy_hint": "Niveles, Ring All, Skills y Agente exclusivo se eligen en la ficha de cada grupo, donde se configuran.",
-          "toast": {
-            "saved": "Parámetros de grupos guardados"
-          },
           "edit_crumb": "Editar grupo"
         }
       },

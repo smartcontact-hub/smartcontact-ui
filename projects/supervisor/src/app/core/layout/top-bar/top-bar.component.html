@@ -36,15 +36,6 @@
 
   <!-- Acciones primarias de la página (CTA en listas, Guardar/Cancelar en
        formularios) proyectadas vía template → modelo "todo arriba" (S59). -->
-  <!-- El resultado de la última acción, junto a los botones que la lanzaron (DD-191). La zona está
-       siempre en el DOM, también sin acciones (el Monitor), para que el lector de pantalla anuncie
-       lo que entra en ella. -->
-  <div class="top-bar__resultado" role="status">
-    @if (resultado(); as r) {
-      <sc-message severity="success" variant="simple" size="sm" icon="check_circle" [text]="r" />
-    }
-  </div>
-
   @if (slotActions(); as actions) {
     <div class="top-bar__actions">
       <ng-container [ngTemplateOutlet]="actions" />

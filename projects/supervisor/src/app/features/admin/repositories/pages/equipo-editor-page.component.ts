@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, HostListener, inject, linkedSignal, signal, type OnInit, type TemplateRef, untracked, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, HostListener, inject, linkedSignal, signal, type OnInit, type TemplateRef, untracked, viewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -259,10 +259,6 @@ export class EquipoEditorPageComponent implements DirtyAware, OnInit {
   protected readonly form = signal<Borrador>(VACIO);
   private readonly dirtyState = createFormDirtyState(() => this.form());
   readonly formDirty = this.dirtyState.dirty;
-  /** Con cambios sin guardar, el «guardado» de la barra ya no vale (DD-191). */
-  private readonly limpiaResultado = effect(() => {
-    if (this.formDirty()) this.resultado.limpiar();
-  });
 
   protected readonly columns = computed<readonly ScColumnDef<Agent>[]>(() => {
     this.lang();
@@ -396,8 +392,8 @@ export class EquipoEditorPageComponent implements DirtyAware, OnInit {
       entity: this.translate.instant('repositories.equipos.singular'),
       name: datos.name,
     });
-    // Crear abre la edición, y el aviso va tras llegar; guardar se queda en la ficha (DD-191).
-    if (this.grupoId === null) void this.router.navigate(['/admin/equipos/editar', id], { replaceUrl: true }).then(() => this.resultado.enLaBarra(texto));
-    else this.resultado.enLaBarra(texto);
+    // El toast, ya en la ficha a la que se llega (DD-211 §5).
+    if (this.grupoId === null) void this.router.navigate(['/admin/equipos/editar', id], { replaceUrl: true }).then(() => this.resultado.contar(texto));
+    else this.resultado.contar(texto);
   }
 }

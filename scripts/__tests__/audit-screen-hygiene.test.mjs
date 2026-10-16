@@ -12,6 +12,7 @@ import {
   acusaDePrimeras,
   rolesAMano,
   NATIVO_DEL_ROL,
+  TOAST_DEL_SISTEMA,
 } from '../audit-screen-hygiene.mjs';
 
 // contarEmojis: cuenta SOLO emoji astral pictográfico (+FE0F) en texto renderizable.
@@ -138,11 +139,16 @@ test('EXCLUYE los desplegables de un comentario, en HTML y en TS, sin mover la l
   assert.deepEqual(desplegablesSinNombre('// un <sc-multiselect> de ejemplo\nconst x = 1;', false), []);
 });
 
-// DD-191: un toast se cuenta por su llamada, no por un comentario que la nombre.
+// DD-191, DD-211 §5: un toast se cuenta por su llamada, no por un comentario que la nombre; y quien lo pide al servicio
+// común (`contar`) no lanza uno propio.
 test('contarToasts cuenta las llamadas y no los comentarios', () => {
   const src = "// this.messages.add({ ... }) en un comentario\nthis.messages.add({ severity: 'success' });\n/* this.messages.add( */\nthis.messages.add({ severity: 'error' });";
   assert.equal(contarToasts(src), 2);
-  assert.equal(contarToasts('this.resultado.visto(texto);'), 0);
+  assert.equal(contarToasts('this.resultado.contar(texto);'), 0);
+});
+
+test('el toast de una acción del usuario lo lanza solo `ResultadoAccionService`', () => {
+  assert.equal(TOAST_DEL_SISTEMA['projects/supervisor/src/app/core/services/resultado-accion.service.ts'], 1);
 });
 
 // DD-197: una celda sin dato es `<sc-celda-vacia>`; un «—» de contenido escrito a mano, el lector lo lee «guion».

@@ -65,10 +65,12 @@
                enlace de verdad a su sección (DD-146). Teléfono igual que Chat: el selector rápido de su reparto
                (revisión del 2026-10-11) sale en la revisión del 2026-10-15; la estrategia se cambia en su campo. -->
           <dl class="resumen__pairs">
+            <!-- La estrategia, en una línea: «Menos conversaciones atendidas» (y más con Niveles) partía la fila en tres
+                 en la columna de 240. Se corta con «…» y el globo la dice entera; el lector la lee entera (DD-211 §4). -->
             @for (r of routing(); track r.family) {
-              <div scFactRow size="sm" tone="brand" class="resumen__pair" [label]="familyKey(r.family) | translate" [href]="hrefs().distribucion" (open)="pulsar($event, { seccion: 'distribucion', canal: r.family })">
+              <div scFactRow size="sm" tone="brand" truncate class="resumen__pair" [label]="familyKey(r.family) | translate" [href]="hrefs().distribucion" (open)="pulsar($event, { seccion: 'distribucion', canal: r.family })">
                 <sc-channel-icon scFactIcon [channel]="r.family" [size]="14" />
-                {{ r.text }}
+                <span [pTooltip]="r.text" tooltipPosition="top">{{ r.text }}</span>
               </div>
             }
             <!-- El teléfono saliente (y el número de WhatsApp), con el nombre de su campo en Distribución. -->

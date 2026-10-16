@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, HostListener, inject, signal, type OnInit, type TemplateRef, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, HostListener, inject, signal, type OnInit, type TemplateRef, viewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ScButtonComponent as ButtonComponent, ScCheckboxComponent as CheckboxComponent, ScInputNumberComponent as InputNumberComponent, ScInputTextComponent as InputTextComponent, ScMessageComponent, ScPasswordComponent as PasswordComponent, ScSectionCardComponent as SectionCardComponent, ScSelectComponent as SelectComponent } from '@smartcontact-hub/components';
@@ -83,10 +83,6 @@ export class EmailCuentaEditorPageComponent implements DirtyAware, OnInit {
   protected readonly form = signal<MailboxDraft>(VACIO);
   private readonly dirtyState = createFormDirtyState(() => this.form());
   readonly formDirty = this.dirtyState.dirty;
-  /** Con cambios sin guardar, el «guardado» de la barra ya no vale (DD-191). */
-  private readonly limpiaResultado = effect(() => {
-    if (this.formDirty()) this.resultado.limpiar();
-  });
 
   protected readonly actionOptions = computed(() => {
     this.lang();
@@ -202,14 +198,14 @@ export class EmailCuentaEditorPageComponent implements DirtyAware, OnInit {
       const created = this.store.addItem({ ...draft, createdAt: ahora(), modifiedAt: ahora(), totalEmails: 0 });
       this.dirtyState.markPristine();
       const creado = this.texto('repositories.toasts.created', created.name);
-      // Tras llegar a la edición: antes, el cambio de página se lo llevaría (DD-191).
-      void this.router.navigateByUrl(`/admin/emails/cuentas/editar/${created.id}`, { replaceUrl: true }).then(() => this.resultado.enLaBarra(creado));
+      // El toast, ya en la ficha a la que se llega (DD-211 §5).
+      void this.router.navigateByUrl(`/admin/emails/cuentas/editar/${created.id}`, { replaceUrl: true }).then(() => this.resultado.contar(creado));
       return;
     }
     this.store.updateItem(this.mailboxId!, { ...draft, createdAt: this.createdAt, modifiedAt: ahora(), totalEmails: this.totalEmails });
     this.form.set(draft);
     this.dirtyState.markPristine();
-    this.resultado.enLaBarra(this.texto('repositories.toasts.updated', draft.name));
+    this.resultado.contar(this.texto('repositories.toasts.updated', draft.name));
   }
 
   protected discard(): void {

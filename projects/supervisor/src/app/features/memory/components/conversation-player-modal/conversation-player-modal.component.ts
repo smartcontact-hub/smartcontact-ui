@@ -401,8 +401,8 @@ export class ConversationPlayerModalComponent {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
-    // La descarga la enseña el navegador (DD-191).
-    this.resultado.visto(this.translate.instant('memory.player.download_success'));
+    // El resultado, en un toast (DD-211 §5).
+    this.resultado.contar(this.translate.instant('memory.player.download_success'));
   }
 
   protected isAgentSpeaker(speaker: string): boolean {

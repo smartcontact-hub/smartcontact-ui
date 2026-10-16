@@ -3,13 +3,14 @@ import { expect, test, type Locator, type Page } from '@playwright/test';
 import { disableAnimations, forceLightTheme, goto, irASeccion, pickSelectOption } from './helpers';
 
 /**
- * EN EL ALTA, ✓ SOLO DONDE HAY ALGO QUE RELLENAR, Y EL TELÉFONO SALIENTE ES PUERTA (DD-158).
+ * EN EL ALTA, ✓ EN TODA SECCIÓN QUE SE DEJA COMPLETA, Y EL TELÉFONO SALIENTE ES PUERTA (DD-158, DD-211 §6).
  *
  * La revisión de producto del 2026-10-04 pidió tres cosas del alta:
- *   1. el ✓ salía en Recursos o en Agentes solo por pasar por ellas: no comprobaba nada, y un ✓ que no comprueba nada
- *      enseña a no fiarse de los demás. Ahora lo lleva la sección con algo obligatorio que se deja completa: General y,
- *      con Teléfono, Distribución y colas. En el usuario, Identidad. En el agente, General y Grupos desde DD-187 (la
- *      revisión de agentes del 2026-10-09 hace obligatorio al menos un grupo; hasta entonces, solo Identidad);
+ *   1. el ✓ solo donde había algo obligatorio (DD-158). La revisión del 2026-10-16 lo cambia (DD-211 §6): lo lleva toda
+ *      sección que se deja completa, y la que no tiene nada obligatorio lo está con solo pasar (Recursos y Agentes del
+ *      grupo, Configuración y Recursos del agente, Acceso del usuario): el índice dice por dónde se ha pasado ya. Las
+ *      que tienen algo obligatorio, solo completas: General y, con Teléfono, Distribución y colas; en el agente,
+ *      General y Grupos;
  *   2. con Teléfono, no se sale de Distribución y colas sin teléfono saliente, como no se sale de General sin nombre:
  *      son los dos controles del alta. Se puede volver a General, donde se quita Teléfono; y saltar desde el índice a
  *      Recursos o a Agentes lleva a Distribución, a decir lo que falta;
@@ -60,7 +61,7 @@ test('grupo · sin teléfono saliente no se sale de Distribución y colas; a Gen
   await expect(actual(page)).toContainText('Recursos');
 });
 
-test('grupo · ✓ solo en las secciones con algo obligatorio: General y Distribución; Recursos y Agentes, nunca', async ({ page }) => {
+test('grupo · ✓ en toda sección que se deja completa: General y Distribución, y también Recursos y Agentes (DD-211 §6)', async ({ page }) => {
   await grupoConNombre(page);
   await pickSelectOption(page, page.locator('sc-select').filter({ has: page.locator('#group-phone') }), /./);
   await siguiente(page).click();
@@ -72,15 +73,15 @@ test('grupo · ✓ solo en las secciones con algo obligatorio: General y Distrib
 
   await expect(fila(page, 'General')).toHaveAccessibleName(completa);
   await expect(fila(page, 'Distribución y colas')).toHaveAccessibleName(completa);
-  // Agentes se dejó, y sin nada obligatorio: no hay nada que dar por bueno.
-  await expect(fila(page, 'Agentes')).not.toHaveAccessibleName(completa);
-  await expect(fila(page, 'Agentes').locator('.form-nav__done')).toHaveCount(0);
+  // Agentes se dejó, y sin nada obligatorio está completa con solo pasar: lleva ✓ (DD-211 §6, corrige DD-158).
+  await expect(fila(page, 'Agentes')).toHaveAccessibleName(completa);
+  await expect(fila(page, 'Agentes').locator('.form-nav__done')).toHaveCount(1);
   await siguiente(page).click();
-  await expect(fila(page, 'Recursos')).not.toHaveAccessibleName(completa);
-  await expect(fila(page, 'Recursos').locator('.form-nav__done')).toHaveCount(0);
+  await expect(fila(page, 'Recursos')).toHaveAccessibleName(completa);
+  await expect(fila(page, 'Recursos').locator('.form-nav__done')).toHaveCount(1);
 });
 
-test('agente · ✓ solo en las secciones con algo obligatorio: General y Grupos; Configuración y Recursos, nunca', async ({
+test('agente · ✓ en toda sección que se deja completa: General y Grupos, y también Configuración y Recursos (DD-211 §6)', async ({
   page,
 }) => {
   await goto(page, 'admin/agentes/crear');
@@ -99,12 +100,12 @@ test('agente · ✓ solo en las secciones con algo obligatorio: General y Grupos
 
   await expect(fila(page, 'General')).toHaveAccessibleName(completa);
   await expect(fila(page, 'Grupos')).toHaveAccessibleName(completa);
-  // Configuración se dejó, y sin nada obligatorio: no hay nada que dar por bueno.
-  await expect(fila(page, 'Configuración')).not.toHaveAccessibleName(completa);
-  await expect(fila(page, 'Configuración').locator('.form-nav__done')).toHaveCount(0);
+  // Configuración se dejó, y sin nada obligatorio está completa con solo pasar: lleva ✓ (DD-211 §6).
+  await expect(fila(page, 'Configuración')).toHaveAccessibleName(completa);
+  await expect(fila(page, 'Configuración').locator('.form-nav__done')).toHaveCount(1);
   await siguiente(page).click();
-  await expect(fila(page, 'Recursos')).not.toHaveAccessibleName(completa);
-  await expect(fila(page, 'Recursos').locator('.form-nav__done')).toHaveCount(0);
+  await expect(fila(page, 'Recursos')).toHaveAccessibleName(completa);
+  await expect(fila(page, 'Recursos').locator('.form-nav__done')).toHaveCount(1);
 });
 
 test('el pie: «Atrás» y «Siguiente» juntos a la izquierda, «Siguiente» el principal, rellenos y sin icono', async ({ page }) => {
@@ -128,11 +129,11 @@ test('el pie: «Atrás» y «Siguiente» juntos a la izquierda, «Siguiente» el
   await expect(siguiente(page).locator('sc-icon, .p-button-icon')).toHaveCount(0);
 });
 
-test('usuario · ✓ solo en Identidad', async ({ page }) => {
+test('usuario · Acceso, sin nada obligatorio, lleva ✓ al dejarla (DD-211 §6)', async ({ page }) => {
   await goto(page, 'admin/usuarios/crear');
   await irASeccion(page, 'Acceso');
   await siguiente(page).click();
   await expect(actual(page)).toContainText('Servicios asignados');
-  await expect(fila(page, 'Acceso')).not.toHaveAccessibleName(completa);
-  await expect(fila(page, 'Acceso').locator('.form-nav__done')).toHaveCount(0);
+  await expect(fila(page, 'Acceso')).toHaveAccessibleName(completa);
+  await expect(fila(page, 'Acceso').locator('.form-nav__done')).toHaveCount(1);
 });

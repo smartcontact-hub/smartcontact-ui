@@ -252,7 +252,7 @@ export class LabelsPageComponent {
   }
 
   private toastSuccess(key: string, params?: Record<string, string | number>): void {
-    // El resultado ya se ve en la lista: solo para el lector de pantalla (DD-191).
-    this.resultado.visto(this.translate.instant(key, params));
+    // El resultado, en un toast (DD-211 §5).
+    this.resultado.contar(this.translate.instant(key, params));
   }
 }

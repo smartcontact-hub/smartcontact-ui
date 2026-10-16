@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, HostListener, inject, Injector, input, OnInit, signal, type TemplateRef, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, HostListener, inject, Injector, input, OnInit, signal, type TemplateRef, viewChild } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink, type UrlTree } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -20,7 +20,7 @@ import { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { ResultadoAccionService, SectionLinksService } from '@core/services';
 import { ScConfirmService } from '@smartcontact-hub/components';
-import { EMAIL_RE, PIN_RE } from '@core/utils/validators';
+import { EMAIL_RE } from '@core/utils/validators';
 import {
   AltaPieComponent,
   ChannelIconComponent,
@@ -79,6 +79,7 @@ import {
   AVAILABLE_EXTENSIONS,
   AVAILABLE_LANGUAGES,
   CLIENTE_CON_CUSCARE,
+  CLIENTE_CON_WEBRTC,
   DESTINO_KEYS,
   DestinoCol,
   DestinoKey,
@@ -98,8 +99,8 @@ import {
   GroupAssignmentTableComponent,
 } from '../components/group-assignment-table/group-assignment-table.component';
 
-/* Sin PIN ni «Cuenta activa» en pantalla (revisión de agentes del 2026-10-09): se guardan como estaban. Tampoco las
- * Etiquetas ni las Plantillas de email, que salen de Recursos. */
+/* Sin «Cuenta activa» en pantalla (revisión de agentes del 2026-10-09): se guarda como estaba. Tampoco las Etiquetas ni
+ * las Plantillas de email, que salen de Recursos. El PIN, de solo lectura: lo asigna el store al crear (DD-211 §2). */
 interface FormState {
   name: string;
   extension: string;
@@ -114,7 +115,6 @@ interface FormState {
   randomOrder: boolean;
   maxChats: number;
   iframeUrl: string;
-  loginExtOverride: boolean;
   links: readonly GroupAgentLink[];
   defaultOutboundGroupId: number | null;
   permissions: AgentPermissions;
@@ -149,7 +149,6 @@ const AGENT_SECTION_OF_FIELD: Readonly<Record<keyof FormState, string>> = {
   maxChats: 'agent-section-config',
   languages: 'agent-section-config',
   iframeUrl: 'agent-section-config',
-  loginExtOverride: 'agent-section-config',
   labelIds: 'agent-section-resources',
   scheduleIds: 'agent-section-resources',
   templateIds: 'agent-section-resources',
@@ -277,17 +276,38 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
     }));
   });
 
-  /** Dónde suena: en el navegador o en su teléfono móvil. */
+  /** Dónde suena: en el navegador o en su teléfono móvil. Sin WebRTC contratado, el navegador se ve pero no se elige. */
   protected readonly extensionTypeOptions = computed(() => {
     this.currentLang();
-    return EXTENSION_TYPES.map((value) => ({ value, label: this.translate.instant(`agents.ext_kind.${value}`) }));
+    return EXTENSION_TYPES.map((value) => ({
+      value,
+      label: this.translate.instant(`agents.ext_kind.${value}`),
+      disabled: value === 'webrtc' && !this.conWebRtc,
+    }));
   });
+
+  /** El cliente tiene agentes en el navegador: si no, la extensión suena siempre en el teléfono (DD-211 §2). */
+  protected readonly conWebRtc = CLIENTE_CON_WEBRTC;
+
+  /** La ayuda del tipo de extensión: dónde suena o, sin WebRTC, por qué solo puede ser el teléfono. */
+  protected readonly extensionTypeHint = computed(() =>
+    this.conWebRtc ? `agents.form.fields.extension_type_hint.${this.form().extensionType}` : 'agents.form.fields.extension_type_hint.sin_webrtc',
+  );
+
+  /** El tipo de extensión que se puede guardar: sin WebRTC, el teléfono. */
+  private tipoExtension(tipo: ExtensionType): ExtensionType {
+    return this.conWebRtc ? tipo : 'phone';
+  }
 
   /** Con la extensión en el teléfono, el móvil es obligatorio: es donde suena. */
   protected readonly phoneRequired = computed(() => this.form().extensionType === 'phone');
 
   /** Lo del chat (chats simultáneos, idiomas, plantillas de chat) solo sale si atiende chat. */
   protected readonly attendsChat = computed(() => this.form().allowedChannels.includes('chat'));
+
+  /** Lo de las llamadas (grabarlas, a quién llama y transfiere, la grabación y las salientes del resumen) solo sale si
+   *  atiende teléfono (DD-211 §2). Lo guardado se queda como estaba, oculto, como lo del chat. */
+  protected readonly attendsPhone = computed(() => this.form().allowedChannels.includes('phone'));
 
   /** El tipo de agente solo existe en un cliente con CusCare. */
   protected readonly conCusCare = CLIENTE_CON_CUSCARE;
@@ -459,11 +479,10 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
   /**
    * EL ALTA, CON EL ÍNDICE DE LA EDICIÓN (DD-143), también al duplicar: las mismas secciones, en cualquier orden
    * (DD-130: aquí no hay puerta), con ✓ en las que se dejan completas y «Atrás / Siguiente» al pie. General y Grupos
-   * tienen algo obligatorio (`faltas`); Configuración y Recursos, no.
+   * tienen algo obligatorio (`faltas`); Configuración y Recursos, no, y llevan ✓ al dejarlas (DD-211 §6).
    */
   protected readonly alta = seccionesDeAlta({
     secciones: this.navSections,
-    obligatoria: (id) => id === 'agent-section-general' || id === 'agent-section-groups',
     completa: (id) => !this.faltas().some((f) => f.seccion === id) && (id !== 'agent-section-general' || !this.formatoMal()),
   });
 
@@ -536,8 +555,8 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
     return out;
   });
 
-  /** Un email, un teléfono o un PIN mal escritos: no faltan, se dicen en su campo, pero no dejan guardar. */
-  private readonly formatoMal = computed(() => !!this.emailError() || !!this.phoneError() || !!this.pinError());
+  /** Un email o un teléfono mal escritos: no faltan, se dicen en su campo, pero no dejan guardar. */
+  private readonly formatoMal = computed(() => !!this.emailError() || !!this.phoneError());
 
   /** Los enlaces como los ve la tabla: con los canales que el grupo ofrece y el agente tiene. */
   private readonly linksVistos = computed(() => {
@@ -630,22 +649,27 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
         ancla: 'agent-ext',
         extension: f.extension ? { numero: f.extension, tipo: f.extensionType } : undefined,
       },
-      {
-        icono: 'radio_button_checked',
-        valor: t(f.permissions.recording ? 'common.yes' : 'common.no'),
-        etiqueta: 'agents.form.section.recording',
-        seccion: 'agent-section-config',
-        ancla: 'agent-recording',
-        graba: f.permissions.recording,
-      },
-      {
-        icono: 'call_made',
-        valor: (saliente !== null ? grupos.get(saliente)?.name : null) ?? t('agents.form.summary.none'),
-        etiqueta: 'agents.form.summary.outbound',
-        seccion: 'agent-section-groups',
-        ancla: null,
-      },
     ];
+    // La grabación y las salientes son de las llamadas: sin Teléfono no se dicen (DD-211 §2).
+    if (this.attendsPhone()) {
+      filas.push(
+        {
+          icono: 'radio_button_checked',
+          valor: t(f.permissions.recording ? 'common.yes' : 'common.no'),
+          etiqueta: 'agents.form.section.recording',
+          seccion: 'agent-section-config',
+          ancla: 'agent-recording',
+          graba: f.permissions.recording,
+        },
+        {
+          icono: 'call_made',
+          valor: (saliente !== null ? grupos.get(saliente)?.name : null) ?? t('agents.form.summary.none'),
+          etiqueta: 'agents.form.summary.outbound',
+          seccion: 'agent-section-groups',
+          ancla: null,
+        },
+      );
+    }
     // Lo que le llega de Repositorios, como en el resumen del grupo.
     filas.push({
       icono: 'library_books',
@@ -859,13 +883,6 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
     return telefonoValido(phone) ? null : 'agents.errors.phone_invalid';
   });
 
-  /** El PIN solo se ve (y solo cuenta) con la extensión en el teléfono. */
-  protected readonly pinError = computed<string | null>(() => {
-    const pin = this.form().pin.trim();
-    if (!this.phoneRequired() || pin.length === 0) return null;
-    return PIN_RE.test(pin) ? null : 'agents.errors.pin_invalid';
-  });
-
   /** Por qué NO se puede guardar, en palabras. Alimenta el `title` y el
    *  `aria-describedby` del botón: un control deshabilitado sin motivo obliga
    *  al usuario a adivinar cuál de los campos le falta.
@@ -884,12 +901,11 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
     if (falta) return falta.motivo;
     if (this.emailError()) return this.emailError();
     if (this.phoneError()) return this.phoneError();
-    if (this.pinError()) return this.pinError();
     if (this.mode() === 'edit' && !this.dirtyState.dirty()) return 'common.no_changes';
     return null;
   });
   /** Lo que falta para poder crear, en el orden de la ficha, para el resumen (DD-136). Los errores de formato (email,
-   *  PIN) no faltan: se dicen en su campo. */
+   *  teléfono) no faltan: se dicen en su campo. */
   protected readonly summaryMissing = computed<readonly string[]>(() => this.faltas().map((f) => f.resumen));
   /** El motivo que se ENSEÑA junto al botón: solo lo que falta rellenar. «No hay
    *  cambios» se queda en el `title` del botón apagado, que ya lo dice. */
@@ -908,10 +924,6 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
   readonly formDirty = this.dirtyState.dirty;
   /** Lo que dice «Caducar contraseña» al hacerse, junto a su botón (DD-191). */
   protected readonly expiraAviso = signal<string | null>(null);
-  /** Con cambios sin guardar, el «guardado» de la barra ya no vale (DD-191). */
-  private readonly limpiaResultado = effect(() => {
-    if (this.formDirty()) this.resultado.limpiar();
-  });
 
   protected readonly mode = computed<'edit' | 'duplicate' | 'create'>(() => {
     if (this.editingId()) return 'edit';
@@ -958,11 +970,11 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
         phone: agent.phone ?? '',
         email: agent.email ?? '',
         pin: agent.pin ?? '',
-        pickupType: agent.pickupType ?? 'auto',
+        // Lo guardado con «Automático con preview», que ya no existe, se lee como automático (DD-211 §2).
+        pickupType: agent.pickupType === 'manual' ? 'manual' : 'auto',
         randomOrder: agent.randomOrder ?? false,
         maxChats: agent.maxChats ?? 4,
         iframeUrl: agent.iframeUrl ?? '',
-        loginExtOverride: agent.loginExtOverride ?? false,
         links: this.linksStore.linksForAgent(agent.id),
         defaultOutboundGroupId: agent.defaultOutboundGroupId ?? null,
         permissions: { ...agent.permissions },
@@ -1002,16 +1014,16 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
         email: '',
         pin: '',
         // Resto del payload copiado tal cual.
-        extensionType: source.extensionType,
+        extensionType: this.tipoExtension(source.extensionType),
         agentType: source.agentType,
         status: source.status,
         presenceStatus: source.presenceStatus ?? 'disponible',
         phone: source.phone ?? '',
-        pickupType: source.pickupType ?? 'auto',
+        // Lo guardado con «Automático con preview», que ya no existe, se lee como automático (DD-211 §2).
+        pickupType: source.pickupType === 'manual' ? 'manual' : 'auto',
         randomOrder: source.randomOrder ?? false,
         maxChats: source.maxChats ?? 4,
         iframeUrl: source.iframeUrl ?? '',
-        loginExtOverride: source.loginExtOverride ?? false,
         links: this.linksStore.linksForAgent(source.id),
         defaultOutboundGroupId: source.defaultOutboundGroupId ?? null,
         permissions: { ...source.permissions },
@@ -1096,17 +1108,13 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
     }
   }
 
-  /** El tipo de descuelgue: una de las tres tarjetas. */
+  /** El tipo de descuelgue: una de las dos tarjetas. */
   protected onPickupValueChange(value: unknown): void {
     if ((PICKUP_TYPES as readonly unknown[]).includes(value)) this.updateField('pickupType', value as PickupType);
   }
 
   protected onExtensionTypeChange(value: unknown): void {
     if ((EXTENSION_TYPES as readonly unknown[]).includes(value)) this.updateField('extensionType', value as ExtensionType);
-  }
-
-  protected onLoginExtOverrideChange(checked: boolean): void {
-    this.updateField('loginExtOverride', checked);
   }
 
   /** Pregunta en un globo pegado al botón (no en un diálogo centrado): pregunta y resultado, en el mismo sitio. */
@@ -1234,7 +1242,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
       const payload: Omit<Agent, 'id' | 'code'> = {
         name: f.name.trim(),
         extension: f.extension,
-        extensionType: f.extensionType,
+        extensionType: this.tipoExtension(f.extensionType),
         // Sin CusCare no hay tipos: todos son normales.
         agentType: this.conCusCare ? f.agentType : 'normal',
         status: f.status,
@@ -1249,7 +1257,6 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
         randomOrder: f.randomOrder,
         maxChats: f.maxChats,
         iframeUrl: f.iframeUrl.trim() || undefined,
-        loginExtOverride: f.loginExtOverride,
         photo: f.photo ?? undefined,
         languages: f.languages.length > 0 ? f.languages : undefined,
         labels: f.labelIds.size > 0 ? Array.from(f.labelIds) : undefined,
@@ -1272,7 +1279,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
         this.form.update(current => ({ ...current, links: this.linksStore.linksForAgent(editingId) }));
         const refreshed = this.agentsStore.getAgent(editingId);
         if (refreshed) this.initial.set(refreshed);
-        this.resultado.enLaBarra(this.translate.instant('agents.toasts.updated', { name: payload.name }));
+        this.resultado.contar(this.translate.instant('agents.toasts.updated', { name: payload.name }));
       } else {
         this.createAgent(payload);
         return;
@@ -1301,8 +1308,8 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
         replaceUrl: true,
         queryParams: slug && slug !== 'general' ? { seccion: slug } : {},
       })
-      // Tras llegar a la ficha nueva: antes, el cambio de página se lo llevaría (DD-191).
-      .then(() => this.resultado.enLaBarra(creado))
+      // El toast, ya en la ficha a la que se llega (DD-211 §5).
+      .then(() => this.resultado.contar(creado))
       .finally(() => this.saving.set(false));
   }
 
@@ -1342,7 +1349,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
     this.linksStore.removeAgent(id);
     this.deleteVisible.set(false);
     this.dirtyState.markPristine();
-    this.resultado.visto(this.translate.instant('agents.toasts.deleted_single', { name: agent?.name ?? '' }));
+    this.resultado.contar(this.translate.instant('agents.toasts.deleted_single', { name: agent?.name ?? '' }));
     void this.router.navigateByUrl('/admin/agentes');
   }
 
@@ -1352,7 +1359,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
     return {
       name: '',
       extension: '',
-      extensionType: 'webrtc',
+      extensionType: this.tipoExtension('webrtc'),
       agentType: 'normal',
       status: 'active',
       presenceStatus: 'disponible',
@@ -1363,7 +1370,6 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
       randomOrder: false,
       maxChats: 4,
       iframeUrl: defaults.iframeUrl,
-      loginExtOverride: false,
       links: [],
       defaultOutboundGroupId: null,
       permissions: { ...defaults.permissions },

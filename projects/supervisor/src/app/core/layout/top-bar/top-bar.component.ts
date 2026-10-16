@@ -12,7 +12,7 @@ import { TopBarSlotService } from './top-bar-slot.service';
 // El cheat-sheet de atajos ahora lo renderiza `<sc-keyboard-shortcuts>` del
 // paquete, cuya visibilidad la posee `ScKeyboardShortcutsService` publicado.
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
-import { ScBreadcrumbComponent, ScKeyboardShortcutsService, ScMessageComponent } from '@smartcontact-hub/components';
+import { ScBreadcrumbComponent, ScKeyboardShortcutsService } from '@smartcontact-hub/components';
 
 import { IllustratedAvatarComponent } from '@shared/components';
 
@@ -37,7 +37,6 @@ const AYUDA_URL = 'https://supervisor.smart-contact.com/#/login';
     NgComponentOutlet,
     NgTemplateOutlet,
     ScBreadcrumbComponent,
-    ScMessageComponent,
     TranslateModule,
   ],
   templateUrl: './top-bar.component.html',
@@ -78,7 +77,6 @@ export class TopBarComponent {
   /** Acciones primarias de la página (CTA / Guardar-Cancelar) proyectadas vía
    * template. Modelo "todo arriba" (experiment S59). */
   protected readonly slotActions = this.topBarSlot.actions;
-  protected readonly resultado = this.topBarSlot.resultado;
 
   /* Hard-coded today; eventually flows from a Supervisor / session service. */
   protected readonly userName = 'Mario Supervisor';

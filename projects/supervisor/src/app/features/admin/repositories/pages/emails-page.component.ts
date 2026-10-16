@@ -12,6 +12,7 @@ import {
 } from '@smartcontact-hub/components';
 
 import { LanguageService } from '@core/services/language.service';
+import { ResultadoAccionService } from '@core/services';
 import { injectLangChange } from '@core/utils/lang-change';
 
 import { type EmailTrigger, EmailTriggersStore, type Mailbox, MailboxesStore } from '../state/emails.store';
@@ -41,6 +42,7 @@ export class EmailsPageComponent {
   private readonly router = inject(Router);
   private readonly translate = inject(TranslateService);
   private readonly language = inject(LanguageService);
+  private readonly resultado = inject(ResultadoAccionService);
   private readonly lang = injectLangChange();
   protected readonly mailboxes = inject(MailboxesStore);
   protected readonly triggers = inject(EmailTriggersStore);
@@ -116,5 +118,8 @@ export class EmailsPageComponent {
     if (b.tipo === 'cuentas') this.mailboxes.deleteItem(b.id);
     else this.triggers.deleteItem(b.id);
     this.borrar.set(null);
+    // Borrar no decía nada: el resultado, en un toast como en el resto de listas (DD-211 §5).
+    const entidad = this.translate.instant(b.tipo === 'cuentas' ? 'repositories.emails.mailbox_singular' : 'repositories.emails.trigger_singular');
+    this.resultado.contar(this.translate.instant('repositories.toasts.deleted_single', { entity: entidad, name: b.name }));
   }
 }

@@ -165,8 +165,8 @@ export class GroupAgentsPanelComponent {
       group.id,
       clampLinksToChannels(this.links(), group.channels, link => this.agentsStore.getAgent(link.agentId)?.allowedChannels).map((l) => (l.groupId === group.id ? l : { ...l, groupId: group.id })),
     );
-    // El panel se cierra: el resultado, en la barra de la página (DD-191).
-    this.resultado.enLaBarra(this.translate.instant('groups.agents_panel.saved', { name: group.name }));
+    // El resultado, en un toast (DD-211 §5).
+    this.resultado.contar(this.translate.instant('groups.agents_panel.saved', { name: group.name }));
     this.close();
   }
 

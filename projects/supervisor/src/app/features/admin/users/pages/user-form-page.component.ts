@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, HostListener, inject, Injector, input, OnInit, signal, type TemplateRef, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, HostListener, inject, Injector, input, OnInit, signal, type TemplateRef, viewChild } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { ActivatedRoute, Router, type UrlTree } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -201,10 +201,6 @@ export class UserFormPageComponent implements DirtyAware, OnInit {
    *  (admin/AED/builder); `formDirty` queda de alias para el guard de salida. */
   private readonly dirtyState = createFormDirtyState(() => this.form());
   readonly formDirty = this.dirtyState.dirty;
-  /** Con cambios sin guardar, el «guardado» de la barra ya no vale (DD-191). */
-  private readonly limpiaResultado = effect(() => {
-    if (this.formDirty()) this.resultado.limpiar();
-  });
 
   /**
    * EL ÍNDICE DE LA FICHA (DD-122): el mismo de la ficha de grupo y de Contact Center, con UN orden en
@@ -252,7 +248,6 @@ export class UserFormPageComponent implements DirtyAware, OnInit {
    */
   protected readonly alta = seccionesDeAlta({
     secciones: this.navSections,
-    obligatoria: (id) => id === 'user-section-identity',
     completa: (id) =>
       id !== 'user-section-identity' || (this.form().name.trim().length > 0 && EMAIL_RE.test(this.form().email.trim())),
   });
@@ -605,7 +600,7 @@ export class UserFormPageComponent implements DirtyAware, OnInit {
         this.usersStore.updateUser(editingId, { ...payload });
         const refreshed = this.usersStore.getUser(editingId);
         if (refreshed) this.initial.set(refreshed);
-        this.resultado.enLaBarra(this.translate.instant('users.toasts.updated', { name: payload.name }));
+        this.resultado.contar(this.translate.instant('users.toasts.updated', { name: payload.name }));
         this.saving.set(false);
         this.dirtyState.markPristine();
         return;
@@ -620,8 +615,8 @@ export class UserFormPageComponent implements DirtyAware, OnInit {
           replaceUrl: true,
           queryParams: slug && slug !== 'identidad' ? { seccion: slug } : {},
         })
-        // Tras llegar a la ficha nueva: antes, el cambio de página se lo llevaría (DD-191).
-        .then(() => this.resultado.enLaBarra(creado))
+        // El toast, ya en la ficha a la que se llega (DD-211 §5).
+        .then(() => this.resultado.contar(creado))
         .finally(() => this.saving.set(false));
     }, 400);
   }
@@ -647,7 +642,7 @@ export class UserFormPageComponent implements DirtyAware, OnInit {
     this.usersStore.deleteUser(id);
     this.deleteVisible.set(false);
     this.dirtyState.markPristine();
-    this.resultado.visto(this.translate.instant('users.toasts.deleted_single', { name: user?.name ?? '' }));
+    this.resultado.contar(this.translate.instant('users.toasts.deleted_single', { name: user?.name ?? '' }));
     void this.router.navigateByUrl('/admin/usuarios');
   }
 

@@ -232,7 +232,7 @@ export class EntitiesPageComponent {
   protected onFormSaved(entity: Entity): void {
     const wasEdit = this.formEntity() !== null;
     this.formOpen.set(false);
-    this.resultado.visto(this.translate.instant( wasEdit ? 'memory.entities.form.updated_toast' : 'memory.entities.form.created_toast', { name: entity.name }, ));
+    this.resultado.contar(this.translate.instant( wasEdit ? 'memory.entities.form.updated_toast' : 'memory.entities.form.created_toast', { name: entity.name }, ));
   }
 
   private async confirmDelete(entity: Entity): Promise<void> {
@@ -245,6 +245,6 @@ export class EntitiesPageComponent {
     });
     if (!accepted) return;
     this.entitiesStore.deleteEntity(entity.id);
-    this.resultado.visto(this.translate.instant('memory.entities.deleted_toast', { name: entity.name }));
+    this.resultado.contar(this.translate.instant('memory.entities.deleted_toast', { name: entity.name }));
   }
 }

@@ -375,7 +375,7 @@ export class TipificacionesListPageComponent {
   }
 
   private toast(summary: string): void {
-    // Lo importado ya se ve en la lista: solo para el lector de pantalla (DD-191).
-    this.resultado.visto(summary);
+    // El resultado, en un toast (DD-211 §5).
+    this.resultado.contar(summary);
   }
 }

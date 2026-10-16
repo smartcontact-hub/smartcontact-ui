@@ -409,8 +409,8 @@
         </sc-slot>
 
         <!-- Lo que sale del grupo, en su parte y justo después de cómo reparte: el número que ve el cliente cuando le llama
-             un agente (un campo principal del canal, visión de producto de grupos, 2026-09-25) y el audio de esas llamadas.
-             En Distribución, el número compartía fila con la estrategia y el audio iba tres filas más abajo. -->
+             un agente (un campo principal del canal, visión de producto de grupos, 2026-09-25). Su audio va con los demás
+             audios, en Mensajes en cola (DD-211 §4). -->
         <sc-slot titleKey="groups.form.distribution.outbound">
           <div class="grid grid--2">
             <div class="field">
@@ -432,17 +432,6 @@
                 (valueChange)="onPhoneValueChange($event)"
               />
             </div>
-            <!-- Solo si backoffice lo habilita para el cliente (revisión del 2026-10-15; como en Voice). En su fila, como
-                 todo audio: en media columna, la fila del archivo partía nombre, «Subido» y ✕ en tres alturas. -->
-            @if (conAudioSaliente) {
-              <div class="field field--full">
-                <span class="field__label sc-text-caption-semibold" id="group-outbound-audio-label">{{ 'groups.form.announcements.outbound_audio' | translate }}</span>
-                <div class="upload-field" role="group" aria-labelledby="group-outbound-audio-label" aria-describedby="group-outbound-audio-help">
-                  <!-- Su ayuda, solo los formatos, como la música: «para las llamadas que hace el grupo» ya lo dice su parte. -->
-                  <ng-container *ngTemplateOutlet="filePicker; context: { key: 'outboundAudioFile', id: 'group-outbound-audio' }" />
-                </div>
-              </div>
-            }
           </div>
         </sc-slot>
 
@@ -461,14 +450,25 @@
         </sc-slot>
 
         <!-- Los demás mensajes de la cola vuelven a la vista (salieron el 2026-09-25 y seguían en el modelo), plegados:
-             casi nunca se cambian. Sin la palabra «anuncio»: son mensajes, como en Chat (DD-157). «Audio saliente» va en
-             Llamadas salientes, con el teléfono saliente. -->
+             casi nunca se cambian. Sin la palabra «anuncio»: son mensajes, como en Chat (DD-157). «Audio saliente» va aquí,
+             con los demás audios y el mismo uploader (DD-211 §4, que lo saca de Llamadas salientes). -->
         <sc-slot titleKey="groups.form.distribution.queue_messages" hintKey="groups.form.distribution.queue_messages_hint" collapsible initiallyCollapsed>
           <div class="queue-messages">
             <!-- Uno debajo del otro: con «Archivo», el uploader ocupa la fila entera, como todo audio. -->
             <div class="grid">
               <ng-container *ngTemplateOutlet="audioSource; context: { label: 'groups.form.announcements.queue_id', help: 'groups.form.announcements.queue_id_info', source: 'queueIdSource', file: 'queueIdFile', text: 'queueIdText', id: 'group-queue-id' }" />
               <ng-container *ngTemplateOutlet="audioSource; context: { label: 'groups.form.announcements.next_in_line', help: 'groups.form.announcements.next_in_line_info', source: 'nextInLineSource', file: 'nextInLineFile', text: 'nextInLineText', id: 'group-next-in-line' }" />
+              <!-- Solo si backoffice lo habilita para el cliente (revisión del 2026-10-15; como en Voice). En su fila, como
+                   todo audio: en media columna, la fila del archivo partía nombre, «Subido» y ✕ en tres alturas. -->
+              @if (conAudioSaliente) {
+                <div class="field">
+                  <span class="field__label sc-text-caption-semibold" id="group-outbound-audio-label">{{ 'groups.form.announcements.outbound_audio' | translate }}</span>
+                  <div class="upload-field" role="group" aria-labelledby="group-outbound-audio-label" aria-describedby="group-outbound-audio-help">
+                    <!-- Su ayuda dice para qué llamadas es: aquí ya no la tiene al lado del teléfono saliente. -->
+                    <ng-container *ngTemplateOutlet="filePicker; context: { key: 'outboundAudioFile', id: 'group-outbound-audio', help: 'groups.form.announcements.outbound_audio_info' }" />
+                  </div>
+                </div>
+              }
             </div>
 
             <!-- Más de uno, cada uno con su .wav y su frecuencia (postventa, 2026-09-18). Es una lista que crece: su ayuda va
