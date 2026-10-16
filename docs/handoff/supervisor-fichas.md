@@ -53,12 +53,16 @@ trampas propias): `git show b23f6b5f:docs/handoff/supervisor-fichas.md`.
 
 - **Agendas**: «Grupos y agentes» es un árbol (`sc-agenda-assignment-tree`, `p-treetable` nativo, casillas `sc-checkbox`)
   por persona, con grupos enteros dinámicos (en `Group.schedules`) y «Sin grupo». Las reglas, puras y probadas, en
-  `agenda-asignacion.core.mjs` (`scripts/__tests__/agenda-asignacion.test.mjs`). El listado, «Grupos y agentes». Fuera
-  `sc-agenda-agents-table`.
+  `agenda-asignacion.core.mjs` (`scripts/__tests__/agenda-asignacion.test.mjs`). El listado, «Grupos y agentes», sacado
+  con las mismas funciones que el árbol (`estructuraDe`, `deLoGuardado`, `paraGuardar`): dice lo mismo que el editor,
+  también el grupo que sale entero al leer porque sus agentes ya la tenían todos. Fuera `sc-agenda-agents-table`.
 - **Agente**: PIN del sistema (`nextPin` en `agents.store.ts`) y de solo lectura al editar; `CLIENTE_CON_WEBRTC` con
-  «Navegador» deshabilitado; Agentes y Grupos en el Destino; fuera «Automático con preview» y «Actualizar teléfono en
-  login»; `attendsPhone` oculta lo de las llamadas.
-- **DS**: `ScConfirmService.popupClosed`: el globo cerrado sin responder resuelve «no» y desbloquea las casillas.
+  «Navegador» deshabilitado; Agentes y Grupos en el Destino, y lo guardado sin ellos se lee como de fábrica
+  (`agenteAlDia`, el `normalize` de `AgentsStore`); fuera «Automático con preview» y «Actualizar teléfono en login»;
+  `attendsPhone` oculta lo de las llamadas.
+- **DS**: `ScConfirmService.popupClosed`: el globo cerrado sin responder resuelve «no». **Solo lectura** en `sc-inputtext`,
+  `sc-inputnumber`, `sc-textarea` y `sc-select` (§10): sin borde, sobre `--sc-bg-default`, anillo de foco con el
+  teclado; el select sin flecha (clase propia por `pt.dropdown`), el textarea sin asa; en sc-docs, en sus estados.
 - **Grupo**: audio saliente en «Mensajes en cola»; la estrategia del resumen en una línea; canal y nivel juntos.
 - **Toasts**: `ResultadoAccionService.contar` (fuera `visto`, `enLaBarra` y `limpiar`, y la zona de la barra);
   `TOAST_DEL_SISTEMA` con el servicio; AGENTS.md §7 reescrita.
@@ -72,7 +76,10 @@ trampas propias): `git show b23f6b5f:docs/handoff/supervisor-fichas.md`.
   mapa nuevo desde fuera no repinta las casillas; por eso el árbol pinta las suyas. Un toast que entra en la pila de
   capas de PrimeNG (`autoZIndex`) le quita el Esc a un `p-dialog` abierto. Y en la nube, el `ng serve` de :4405 no
   siempre ve un cambio de código (medido: un arreglo de Contact Center no llegó hasta reiniciarlo): reinícialo, por su
-  pid, antes de fiarte de un e2e (un `pkill -f` con el patrón en la línea de órdenes se mata a sí mismo, exit 144).
+  pid, antes de fiarte de un e2e (un `pkill -f` con el patrón en la línea de órdenes se mata a sí mismo, exit 144; sin
+  `ss`, el pid lo da `lsof -nP -iTCP:4405 -sTCP:LISTEN`). Un cambio del DS no llega a las apps sin `npm run
+  build:components` y reiniciar su `ng serve` (leen `dist/`). Los `*.pages.dev` no se alcanzan desde la nube: para ver
+  una prueba en rojo, se quita el arreglo en local.
 
 ## ✅ 2026-10-15 · Revisión de producto de las tablas y Repositorios (DD-210)
 

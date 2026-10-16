@@ -1269,14 +1269,18 @@ menú, y la iconografía de transcripciones tiene sus tres insignias.
   columna, y el email en la segunda; el grupo en `body-semibold`, plegado; «Sin grupo» el último. Encima, el buscador,
   «Todos / Asignados (n)», «N de M agentes y G grupos enteros» y la regla en una línea en `caption` y `text/subtle`.
   Anota el comportamiento: un agente marcado lo está en todos sus grupos; un grupo entero es dinámico; quitar a uno lo
-  deja parcial.
+  deja parcial; un grupo cuyos agentes ya la tienen todos sale entero también al abrir la agenda, y el listado lo cuenta
+  igual.
 - **Anotaciones de lo contratado** (el prototipo lo enseña todo; en producción se oculta):
   - **Call Blending**: «Llamadas salientes» del grupo (teléfono y audio saliente), «Grupo para llamadas salientes» del
     agente, «Solo salientes» en la tipificación del grupo, la fila del teléfono saliente en los resúmenes y su columna
     en el listado.
   - **CusCare**: el campo «Tipo de agente» y su fila del resumen.
   - **WebRTC**: sin él, «Navegador» deshabilitado en «Dónde suena» y la ayuda «Solo teléfono…».
-- **Ficha de agente**: el PIN no sale en el alta; al editar, de solo lectura. Sin Teléfono, sin «Grabar llamadas», sin la
+- **Estado «Solo lectura» de los campos** (InputText, InputNumber, Textarea y Select del Kit, que hoy no lo tienen): sin
+  borde, fondo `bg/default`, texto `text/primary` a contraste completo; en el Select, sin la flecha (que deja su
+  sitio), y en el Textarea, sin el asa de cambiar el tamaño. Con el foco de teclado, el anillo de foco del sistema. Es el del PIN y el del código de Web Chat.
+- **Ficha de agente**: el PIN no sale en el alta; al editar, de solo lectura (el estado de arriba). Sin Teléfono, sin «Grabar llamadas», sin la
   matriz de Llamadas y sin Grabación ni Salientes en el resumen. La matriz con Agentes y Grupos encima de Fijos. Fuera
   «Automático con preview» y «Actualizar teléfono en login».
 - **Edición en bloque de las tablas de asignar**: el globo junto a la casilla; mientras pregunta, las casillas de las
