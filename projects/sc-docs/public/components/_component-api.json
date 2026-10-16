@@ -4139,6 +4139,16 @@
           "nativo": null
         },
         {
+          "nombre": "truncate",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "false",
+          "requerido": false,
+          "descripcion": "El valor en una línea, cortado con «…» si no cabe (va envuelto en un elemento).",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
           "nombre": "open",
           "clase": "output",
           "tipo": "MouseEvent",

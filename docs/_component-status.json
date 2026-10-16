@@ -244,7 +244,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 183,
+      "usedInSupervisor": 179,
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "sobreObsoleto": [
         {
@@ -299,7 +299,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 38,
+      "usedInSupervisor": 39,
       "cuando": "Para un sí/no independiente, o para la casilla de un grupo elegido A MEDIAS (tiene tercer estado). Para activar algo al instante, `sc-toggleswitch`.",
       "sobreObsoleto": []
     },
@@ -530,7 +530,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 17,
+      "usedInSupervisor": 16,
       "cuando": "Para datos tabulares con columnas comparables. Si cada fila es en realidad un formulario, NO es una tabla.",
       "sobreObsoleto": []
     },
@@ -747,13 +747,14 @@
       "kind": "CUSTOM",
       "primengBase": "—",
       "cva": false,
-      "inputs": 4,
+      "inputs": 5,
       "api": [
         "href",
         "icon",
         "open",
         "size",
-        "tone"
+        "tone",
+        "truncate"
       ],
       "nested": [],
       "hasDemo": true,
@@ -1266,7 +1267,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 9,
+      "usedInSupervisor": 8,
       "cuando": "Para un aviso EN LA PÁGINA, junto a lo que explica. Si es el resultado de una acción y puede desaparecer, `sc-toast`.",
       "sobreObsoleto": []
     },
@@ -1998,7 +1999,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 44,
+      "usedInSupervisor": 43,
       "cuando": "Para encender o apagar algo CON EFECTO INMEDIATO. Si el cambio se guarda al enviar el formulario, `sc-checkbox`.",
       "sobreObsoleto": []
     }
