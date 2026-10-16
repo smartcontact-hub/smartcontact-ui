@@ -15,7 +15,8 @@
  * Lo que sí. Tres piezas, y ninguna necesita mantenimiento:
  *
  *   1. Una ETIQUETA git `proto/<TICKET>`. Es el registro durable: apunta a un commit exacto y no
- *      caduca ni aunque se borre todo lo demás.
+ *      caduca ni aunque se borre todo lo demás. Si el ticket vuelve con otra revisión, la versión
+ *      nueva es `proto/<TICKET>-v2` (luego -v3…), y la anterior no se mueve (DD-212).
  *   2. Una RAMA `proto/<ticket>` creada desde esa etiqueta y que NO SE TOCA NUNCA. Cloudflare le
  *      da su preview solo, y esa URL sirve ese build para siempre. Una rama que nadie mergea ni
  *      actualiza no da conflictos: su coste de mantenimiento es cero, y si algún día estorba se
@@ -41,6 +42,8 @@ import { createInterface } from 'node:readline/promises';
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 
+import { filas, malTicket, ramaDe, siguienteVersion, urlDe as urlDeProyecto } from './proto-freeze.core.mjs';
+
 const root = resolve(import.meta.dirname, '..');
 const TABLA = resolve(root, 'docs/PROTOTIPOS.md');
 const log = (s = '') => process.stdout.write(s + '\n');
@@ -63,33 +66,9 @@ export function etiquetas() {
   return salida ? salida.split('\n').map((t) => t.trim()).filter(Boolean) : [];
 }
 
-/**
- * Filas de la tabla, parseadas. Una fila es
- * `| TICKET | fecha | app | `proto/TICKET` | URL | qué cubre |`
- */
-export function filas(md) {
-  const out = [];
-  for (const linea of md.split('\n')) {
-    const m = /^\|\s*([A-Z][A-Z0-9]*-\d+)\s*\|/.exec(linea);
-    if (!m) continue;
-    const celdas = linea.split('|').slice(1, -1).map((c) => c.trim());
-    out.push({
-      ticket: celdas[0],
-      fecha: celdas[1],
-      app: celdas[2],
-      etiqueta: (celdas[3] || '').replace(/`/g, ''),
-      url: (celdas[4] || '').replace(/^\[.*\]\(|\)$/g, ''),
-      que: celdas[5],
-      linea,
-    });
-  }
-  return out;
-}
-
-/** El nombre de rama que Cloudflare convierte en subdominio: minúsculas y sin `/`. */
-export const ramaDe = (ticket) => 'proto/' + ticket.toLowerCase();
-export const urlDe = (ticket, app) =>
-  `https://proto-${ticket.toLowerCase()}.${SITIOS[app]}.pages.dev`;
+/** Las filas de la tabla, el nombre de rama y la URL viven en `proto-freeze.core.mjs`, que se prueba sin git. */
+export { filas, ramaDe };
+export const urlDe = (ticket, app) => urlDeProyecto(ticket, SITIOS[app]);
 
 // ── modo --check ─────────────────────────────────────────────────────────────────
 if (process.argv.includes('--check')) {
@@ -183,7 +162,6 @@ let ticket = arg('ticket');
 let app = arg('app');
 let que = arg('que');
 
-const malTicket = (t) => (/^[A-Z][A-Z0-9]*-\d+$/.test(t) ? null : 'Se espera algo como SISMAC-3780.');
 
 if (!ticket || !app || !que) {
   log('');
@@ -222,19 +200,36 @@ if (malTicket(ticket)) {
   process.exit(1);
 }
 
+/*
+ * Una versión congelada no se re-congela: su enlace ya está en Jira y tiene que seguir enseñando lo
+ * mismo. Si el ticket vuelve con otra revisión, se congela su versión siguiente (`-v2`, `-v3`…) y la
+ * anterior se queda donde está (DD-212).
+ */
+if (etiquetas().includes('proto/' + ticket)) {
+  const siguiente = siguienteVersion(ticket, etiquetas());
+  log('');
+  log(`${ticket} ya está congelado, y esa versión no se mueve: su enlace ya está en Jira.`);
+  if (!rl) {
+    log(`✘ Para congelar una versión nueva del mismo ticket:  --ticket ${siguiente}`);
+    process.exit(1);
+  }
+  const otra = await preguntar(`¿Congelo la versión nueva, ${siguiente}? (s/n)  `, (r) =>
+    /^[snSN]$/.test(r) ? null : 'Escribe s o n.',
+  );
+  if (/^[nN]$/.test(otra)) {
+    rl.close();
+    log('Nada hecho.');
+    process.exit(0);
+  }
+  ticket = siguiente;
+}
+
 const etiqueta = 'proto/' + ticket;
 const rama = ramaDe(ticket);
 const url = urlDe(ticket, app);
 const hoy = new Date().toISOString().slice(0, 10);
 const sha = git('rev-parse', '--short', 'HEAD');
 const ramaActual = git('rev-parse', '--abbrev-ref', 'HEAD');
-
-if (etiquetas().includes(etiqueta)) {
-  rl?.close();
-  log(`✘ ${ticket} ya está congelado. Una versión congelada no se re-congela: si el ticket`);
-  log('  cambió de alcance, congela el siguiente con su propio ticket.');
-  process.exit(1);
-}
 
 log('');
 log('Esto es lo que voy a hacer:');
