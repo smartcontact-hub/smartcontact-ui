@@ -80,7 +80,7 @@
   `hind` (`arebury/agents-groups-users-ds`, sin commit el 2026-09-14): toca también Usuarios, Grupos y
   `audit-page-anatomy`, así que rebasa sobre DD-98 antes de subir.
 - ~~**La baseline `datatable` de `e2e:visual`, en rojo en `main`**~~ → cerrado: no se reproduce desde el preflight de
-  #175 (2026-09-14), y `visual-baselines` la regeneró en #330 sin moverse. El detalle, en `git show c065d664:` este fichero.
+  #175 (2026-09-14), y `visual-baselines` la regeneró en #330 sin moverse. El detalle, en `git show 2b2674ed:` este fichero.
 - **Acceso (DD-110), a juicio de Rafa**: la intensidad del fondo (`amplitude` 0.045 ≈ 64 px), la frase de marca de la
   izquierda y el texto del botón de Microsoft en pt/fr (de memoria).
 
@@ -176,15 +176,15 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 ## ✅ 2026-10-14 · PrimeNG por familias: catálogo de 109, barrido de usos y página en sc-docs
 
 **Sello:** rama `arebury/primeng-component-usage`, sobre HEAD `6ddbec7d` (#400). Sale por el tope el tramo del 2026-10-13
-(DD-202): `git show b25a8a27:docs/handoff/design-system.md`.
+(DD-202): `git show 6ddbec7d:docs/handoff/design-system.md`.
 
 **Lo que cambia.** El catálogo (§6) dice de los 109 módulos para qué sirven y cuándo elegir cada uno frente a su vecino; §7 es el barrido de usos; sc-docs lo pinta en `/#/components/primeng`, que es también el sitio de los nativos sin wrapper. De paso: los avisos de Conversaciones salen (llevaban una clave que nadie pintaba) y las confirmaciones que destruyen abren en «Cancelar».
 ⚠️ **La página sale de un artefacto** que reescribe `npm run primeng-catalog:gen` con el estado del repo: un `primeng/x` nuevo en una app lo deja atrás y `audit:primeng-catalog` se pone rojo hasta regenerarlo (pasó con ContextMenu en `lab/arbol`, #400: este PR lo regeneró al traer `main`).
 
 ## ✅ 2026-10-14 · El árbol de `/lab/arbol` hace los ejemplos de primeng.dev/treetable
 
-**Sello:** rama `arebury/tabla-primeng-completa`, sobre `46d50885` (#399). Sale por el tope el tramo de iconos del
-2026-10-13 (DD-200): `git show 46d50885:docs/handoff/design-system.md`.
+**Sello:** rama `arebury/tabla-primeng-completa`, sobre `a26d7fab` (#399). Sale por el tope el tramo de iconos del
+2026-10-13 (DD-200): `git show a26d7fab:docs/handoff/design-system.md`.
 
 **Lo que cambia.** `p-treetable` nativo, sin wrapper, con los 32 ejemplos de primeng.dev (cabecera agrupada con totales,
 selección, filtros, edición que suma al equipo, menú contextual, carga perezosa, congelar…): siete grupos en la píldora.
@@ -194,8 +194,8 @@ selección, filtros, edición que suma al equipo, menú contextual, carga perezo
 
 ## ✅ 2026-10-14 · `sc-datatable` cubre primeng.dev/table, y se prueba entero en `/lab/tabla`
 
-**Sello:** rama `arebury/tabla-primeng-completa`, fundida en `aac647d6` (#393 a #396). Sale por el tope el tramo del
-2026-10-06 (DD-175): `git show b21fb85b:docs/handoff/design-system.md`.
+**Sello:** rama `arebury/tabla-primeng-completa`, fundida en `a30b5138` (#393 a #396). Sale por el tope el tramo del
+2026-10-06 (DD-175): `git show 5d9ae4df:docs/handoff/design-system.md`.
 
 **Lo que cambia.** La tabla del DS hace los ejemplos de primeng.dev/table: selección, orden por varias, filtros, cabecera
 agrupada, edición por celda y por fila, detalle de fila, filas agrupadas, reordenar y fijar filas, exportar CSV, recordar
