@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 
 import { type GroupRef } from '@smartcontact-hub/components';
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
@@ -7,6 +7,7 @@ import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links
 
 import { RepoListPageComponent } from '../components/repo-list-page.component';
 import { RepoColumnDef, RepoFieldDef, RepoPageConfig } from '../components/repo-types';
+import { deLoGuardado, estructuraDe, gruposConMiembros, paraGuardar } from '../state/agenda-asignacion.core.mjs';
 import { type Agenda, AgendasStore } from '../state/agendas.store';
 
 /** Las columnas: nombre, cuántos contactos, a quién se asigna y cuándo se tocó por última vez. Sin Estado (activa o
@@ -79,16 +80,29 @@ export class AgendasPageComponent {
   private readonly agentsStore = inject(AgentsStore);
   private readonly linksStore = inject(GroupAgentLinksStore);
 
-  /** Los grupos que la tienen enteros (lo dice cada grupo) y los agentes que la tienen sueltos, sin los que ya la
-   *  tienen por uno de esos grupos: como lo enseña el árbol del editor. */
+  private readonly estructura = computed(() =>
+    estructuraDe(
+      gruposConMiembros(this.groupsStore.groups(), this.linksStore.links()),
+      this.agentsStore.agents().map((a) => a.id),
+    ),
+  );
+
+  /** Los grupos enteros y los agentes que la tienen sueltos, sin los que ya la tienen por uno de esos grupos: lo mismo
+   *  que enseña el árbol del editor y que guardaría, con la misma regla (un grupo cuyos agentes la tienen todos sale
+   *  entero, DD-211 §1). */
   private readonly asignadosDe = (agenda: Agenda): readonly GroupRef[] => {
-    const grupos = this.groupsStore.groups().filter((g) => g.schedules?.includes(agenda.id));
-    const enteros = new Set(grupos.map((g) => g.id));
-    const cubiertos = new Set(this.linksStore.links().filter((l) => enteros.has(l.groupId)).map((l) => l.agentId));
-    const agentes = this.agentsStore.agents().filter((a) => a.schedules?.includes(agenda.id) && !cubiertos.has(a.id));
+    const estructura = this.estructura();
+    const guardada = deLoGuardado(
+      this.groupsStore.groups().filter((g) => g.schedules?.includes(agenda.id)).map((g) => g.id),
+      this.agentsStore.agents().filter((a) => a.schedules?.includes(agenda.id)).map((a) => a.id),
+      estructura,
+    );
+    const { grupos, agentesSueltos } = paraGuardar(guardada, estructura);
+    const enteros = new Set(grupos);
+    const sueltos = new Set(agentesSueltos);
     return [
-      ...grupos.map((g) => ({ id: g.id, name: g.name, active: true })),
-      ...agentes.map((a) => ({ id: a.id, name: a.name, active: true })),
+      ...this.groupsStore.groups().filter((g) => enteros.has(g.id)).map((g) => ({ id: g.id, name: g.name, active: true })),
+      ...this.agentsStore.agents().filter((a) => sueltos.has(a.id)).map((a) => ({ id: a.id, name: a.name, active: true })),
     ];
   };
 

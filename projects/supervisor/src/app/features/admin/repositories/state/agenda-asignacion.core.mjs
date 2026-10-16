@@ -39,6 +39,32 @@ export const claveSinGrupo = (/** @type {number} */ a) => `sin-a${a}`;
 const ordenados = (ids) => [...new Set(ids)].sort((x, y) => x - y);
 
 /**
+ * Cada grupo con sus agentes, sacados de los vínculos grupo-agente, en el orden de los vínculos y sin repetir.
+ * @template {{ readonly id: number }} G
+ * @param {readonly G[]} grupos
+ * @param {readonly { readonly groupId: number; readonly agentId: number }[]} vinculos
+ * @returns {(G & { readonly miembros: readonly number[] })[]}
+ */
+export function gruposConMiembros(grupos, vinculos) {
+  /** @type {Map<number, Set<number>>} */
+  const porGrupo = new Map();
+  for (const v of vinculos) porGrupo.set(v.groupId, (porGrupo.get(v.groupId) ?? new Set()).add(v.agentId));
+  return grupos.map((g) => ({ ...g, miembros: [...(porGrupo.get(g.id) ?? [])] }));
+}
+
+/**
+ * La estructura del árbol: cada grupo con sus agentes y, aparte, los agentes que no están en ninguno. La sacan de aquí
+ * el árbol, el editor y el listado de agendas, para que los tres vean lo mismo.
+ * @param {readonly GrupoDeArbol[]} grupos
+ * @param {readonly number[]} agentes
+ * @returns {Estructura}
+ */
+export function estructuraDe(grupos, agentes) {
+  const enGrupo = new Set(grupos.flatMap((g) => g.miembros));
+  return { grupos: grupos.map((g) => ({ id: g.id, miembros: g.miembros })), sinGrupo: agentes.filter((a) => !enGrupo.has(a)) };
+}
+
+/**
  * Las dos reglas que se cumplen siempre: los agentes de un grupo entero están marcados, y un grupo con agentes que los
  * tiene a todos marcados está entero.
  * @param {Asignacion} asig
@@ -131,7 +157,9 @@ export function claves(asig, estructura) {
 
 /**
  * Lo guardado, como asignación: los grupos que la llevan y las personas que la llevan sueltas, más los agentes de esos
- * grupos.
+ * grupos. Normaliza también al leer: un grupo cuyos agentes ya la tienen todos (sueltos o por otro grupo entero) se
+ * ve entero, como si se hubieran marcado uno a uno, y se guardará entero. El árbol no tiene otra forma de pintarlo:
+ * con todos sus agentes marcados, la casilla del grupo está marcada.
  * @param {readonly number[]} gruposConAgenda
  * @param {readonly number[]} agentesConAgenda
  * @param {Estructura} estructura

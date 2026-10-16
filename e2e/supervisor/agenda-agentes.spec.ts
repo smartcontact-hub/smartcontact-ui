@@ -102,9 +102,23 @@ test('árbol: buscar y «Sin grupo»; el agente sin grupo se guarda suelto, en e
   expect(enAgenda).not.toHaveProperty('agentIds');
 });
 
-test('listado: la columna «Grupos y agentes» dice a quién se asigna cada agenda', async ({ page }) => {
+test('listado: la columna «Grupos y agentes» dice lo mismo que el árbol del editor, con la misma regla de grupo entero', async ({
+  page,
+}) => {
+  // «Emergencias 24h» (la 4) la lleva entero «Grupo pedidos», y los agentes de Online Support, Soporte Taller y
+  // Telemarketing ya la tienen todos (por ese grupo o sueltos): el árbol los enseña enteros, y el listado también.
+  const enteros = ['Grupo pedidos', 'Online Support', 'Soporte Taller', 'Telemarketing'];
+  await goto(page, 'admin/agendas/editar/4');
+  await expect(arbol(page).getByRole('status')).toHaveText(new RegExp(` y ${enteros.length} grupos enteros$`));
+  await arbol(page).getByRole('button', { name: /^Asignados/ }).click();
+  for (const grupo of enteros) {
+    await expect(arbol(page).getByRole('checkbox', { name: `Asignar la agenda a todo el grupo ${grupo}`, exact: true })).toBeChecked();
+  }
+
   await goto(page, 'admin/agendas');
   await expect(page.getByRole('columnheader', { name: 'Grupos y agentes' })).toBeVisible();
+  const cifra = page.getByTestId('repo-table').locator('tbody tr', { hasText: 'Emergencias 24h' }).locator('.group-popover__trigger');
+  for (const grupo of enteros) await expect(cifra).toHaveAccessibleDescription(new RegExp(grupo));
 });
 
 test('contactos: pulsar la fila abre su editor con todos sus campos', async ({ page }) => {

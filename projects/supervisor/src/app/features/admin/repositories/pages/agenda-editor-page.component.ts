@@ -35,7 +35,14 @@ import {
   telefonoValido,
   TOPE_DE_CONTACTOS,
 } from '../state/agenda-contacts.core.mjs';
-import { deLoGuardado, paraGuardar, type Asignacion, type Estructura } from '../state/agenda-asignacion.core.mjs';
+import {
+  deLoGuardado,
+  estructuraDe,
+  gruposConMiembros,
+  paraGuardar,
+  type Asignacion,
+  type Estructura,
+} from '../state/agenda-asignacion.core.mjs';
 import { hoy } from '@shared/utils/today';
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
 import { GroupsStore } from '@features/admin/groups/state/groups.store';
@@ -99,20 +106,19 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
   }
 
   /** Los grupos con sus agentes, para el árbol «Grupos y agentes»: quién está en cada grupo lo dicen los vínculos. */
-  protected readonly gruposParaAgenda = computed<readonly GrupoParaAgenda[]>(() => {
-    const porGrupo = new Map<number, number[]>();
-    for (const l of this.linksStore.links()) porGrupo.set(l.groupId, [...(porGrupo.get(l.groupId) ?? []), l.agentId]);
-    return this.groupsStore.groups().map((g) => ({ id: g.id, name: g.name, miembros: [...new Set(porGrupo.get(g.id) ?? [])] }));
-  });
+  protected readonly gruposParaAgenda = computed<readonly GrupoParaAgenda[]>(() =>
+    gruposConMiembros(
+      this.groupsStore.groups().map((g) => ({ id: g.id, name: g.name })),
+      this.linksStore.links(),
+    ),
+  );
 
-  private readonly estructura = computed<Estructura>(() => {
-    const grupos = this.gruposParaAgenda();
-    const enGrupo = new Set(grupos.flatMap((g) => g.miembros));
-    return {
-      grupos: grupos.map((g) => ({ id: g.id, miembros: g.miembros })),
-      sinGrupo: this.agentsStore.agents().filter((a) => !enGrupo.has(a.id)).map((a) => a.id),
-    };
-  });
+  private readonly estructura = computed<Estructura>(() =>
+    estructuraDe(
+      this.gruposParaAgenda(),
+      this.agentsStore.agents().map((a) => a.id),
+    ),
+  );
 
   protected readonly mode = signal<'create' | 'edit'>('create');
   private agendaId: number | null = null;

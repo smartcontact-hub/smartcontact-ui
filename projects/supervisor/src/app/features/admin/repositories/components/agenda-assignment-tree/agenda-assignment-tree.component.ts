@@ -20,6 +20,7 @@ import {
   claveGrupo,
   claves,
   claveSinGrupo,
+  estructuraDe,
   type Asignacion,
   type Estructura,
   type Intencion,
@@ -87,13 +88,12 @@ export class AgendaAssignmentTreeComponent {
   private readonly abiertas = signal<ReadonlySet<string>>(new Set());
 
   /** La estructura del árbol: cada grupo con sus agentes y los que no están en ninguno. */
-  protected readonly estructura = computed<Estructura>(() => {
-    const enGrupo = new Set(this.grupos().flatMap((g) => g.miembros));
-    return {
-      grupos: this.grupos().map((g) => ({ id: g.id, miembros: g.miembros })),
-      sinGrupo: this.agents().filter((a) => !enGrupo.has(a.id)).map((a) => a.id),
-    };
-  });
+  protected readonly estructura = computed<Estructura>(() =>
+    estructuraDe(
+      this.grupos(),
+      this.agents().map((a) => a.id),
+    ),
+  );
 
   private readonly estados = computed(() => claves(this.asignacion(), this.estructura()));
   private readonly asignados = computed(() => new Set(this.asignacion().agentes));

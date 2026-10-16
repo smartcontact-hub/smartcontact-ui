@@ -10,6 +10,8 @@ import {
   claves,
   CLAVE_SIN_GRUPO,
   deLoGuardado,
+  estructuraDe,
+  gruposConMiembros,
   paraGuardar,
 } from '../../projects/supervisor/src/app/features/admin/repositories/state/agenda-asignacion.core.mjs';
 
@@ -95,4 +97,34 @@ test('lo guardado: los agentes de los grupos que la llevan cuentan como marcados
 test('al guardar, quien la tiene por un grupo entero no la lleva además suelta', () => {
   const a = aplicar(aplicar(vacia, estructura, { tipo: 'grupo', id: 3, marcar: true }), estructura, { tipo: 'agente', id: 1, marcar: true });
   assert.deepEqual(paraGuardar(a, estructura), { grupos: [3], agentesSueltos: [1] });
+});
+
+test('lo guardado: un grupo cuyos agentes ya la tienen todos sale entero, y se guarda entero', () => {
+  // Ángel (1) y el 2 la tienen sueltos: el grupo 1 son ellos dos, así que se ve entero, como marcado uno a uno.
+  const a = deLoGuardado([], [1, 2], estructura);
+  assert.deepEqual(a.grupos, [1]);
+  assert.deepEqual(paraGuardar(a, estructura), { grupos: [1], agentesSueltos: [] });
+});
+
+test('la estructura: cada grupo con sus agentes de los vínculos, sin repetir, y aparte los que no están en ninguno', () => {
+  const vinculos = [
+    { groupId: 1, agentId: 2 },
+    { groupId: 1, agentId: 1 },
+    { groupId: 1, agentId: 2 },
+    { groupId: 2, agentId: 1 },
+  ];
+  const grupos = gruposConMiembros([{ id: 1, name: 'Ventas' }, { id: 2, name: 'Soporte' }, { id: 3, name: 'Vacío' }], vinculos);
+  assert.deepEqual(grupos, [
+    { id: 1, name: 'Ventas', miembros: [2, 1] },
+    { id: 2, name: 'Soporte', miembros: [1] },
+    { id: 3, name: 'Vacío', miembros: [] },
+  ]);
+  assert.deepEqual(estructuraDe(grupos, [1, 2, 7]), {
+    grupos: [
+      { id: 1, miembros: [2, 1] },
+      { id: 2, miembros: [1] },
+      { id: 3, miembros: [] },
+    ],
+    sinGrupo: [7],
+  });
 });

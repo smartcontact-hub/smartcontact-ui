@@ -24,6 +24,11 @@ export function claveGrupo(g: number): string;
 export function claveAgente(g: number, a: number): string;
 export const CLAVE_SIN_GRUPO: string;
 export function claveSinGrupo(a: number): string;
+export function gruposConMiembros<G extends { readonly id: number }>(
+  grupos: readonly G[],
+  vinculos: readonly { readonly groupId: number; readonly agentId: number }[],
+): (G & { readonly miembros: readonly number[] })[];
+export function estructuraDe(grupos: readonly GrupoDeArbol[], agentes: readonly number[]): Estructura;
 export function normalizar(asig: Asignacion, estructura: Estructura): Asignacion;
 export function aplicar(asig: Asignacion, estructura: Estructura, intencion: Intencion): Asignacion;
 export function claves(asig: Asignacion, estructura: Estructura): Record<string, EstadoDeCasilla>;
