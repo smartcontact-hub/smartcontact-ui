@@ -256,7 +256,7 @@
   --sc-cmp-checkbox-icon-sm-size: 0.546875rem; /* 8.75px */
   --sc-cmp-checkbox-icon-lg-size: 0.875rem; /* 14px */
   --sc-cmp-dialog-header-gap: 0.4375rem; /* 7px */
-  --sc-cmp-dialog-footer-gap: 0.328125rem; /* 5.25px */
+  --sc-cmp-dialog-footer-gap: 0.65625rem; /* 10.5px */
   --sc-cmp-tag-gap: 0.21875rem; /* 3.5px */
   --sc-cmp-tag-icon-size: 0.546875rem; /* 8.75px */
   --sc-cmp-chip-border-radius: 1rem; /* 16px */
@@ -695,7 +695,7 @@
   --sc-cmp-button-outlined-help-hover-background: var(--sc-color-purple-50);
   --sc-cmp-button-outlined-help-active-background: var(--sc-color-purple-100);
   --sc-cmp-button-outlined-help-border-color: var(--sc-color-purple-200);
-  --sc-cmp-button-outlined-danger-color: var(--sc-color-red-500);
+  --sc-cmp-button-outlined-danger-color: var(--sc-color-red-600);
   --sc-cmp-button-outlined-danger-hover-background: var(--sc-color-red-50);
   --sc-cmp-button-outlined-danger-active-background: var(--sc-color-red-100);
   --sc-cmp-button-outlined-danger-border-color: var(--sc-color-red-200);
@@ -816,7 +816,7 @@
   --sc-cmp-skeleton-background: var(--sc-color-slate-200);
   --sc-cmp-slider-handle-content-background: var(--sc-color-slate-0);
   --sc-cmp-tag-secondary-background: var(--sc-color-slate-100);
-  --sc-cmp-tag-secondary-color: var(--sc-color-slate-600);
+  --sc-cmp-tag-secondary-color: var(--sc-color-slate-700);
   --sc-cmp-tag-success-background: var(--sc-color-green-100);
   --sc-cmp-tag-success-color: var(--sc-color-green-700);
   --sc-cmp-tag-info-background: var(--sc-color-sky-100);
@@ -833,8 +833,8 @@
   --sc-cmp-togglebutton-checked-border-color: var(--sc-color-slate-100);
   --sc-cmp-togglebutton-hover-background: var(--sc-color-slate-100);
   --sc-cmp-togglebutton-border-color: var(--sc-color-slate-100);
-  --sc-cmp-togglebutton-icon-color: var(--sc-color-slate-500);
-  --sc-cmp-togglebutton-icon-hover-color: var(--sc-color-slate-700);
+  --sc-cmp-togglebutton-icon-color: var(--sc-color-slate-700);
+  --sc-cmp-togglebutton-icon-hover-color: var(--sc-color-slate-900);
   --sc-cmp-togglebutton-icon-checked-color: var(--sc-color-slate-900);
   --sc-cmp-togglebutton-content-checked-background: var(--sc-color-slate-0);
   --sc-cmp-toast-info-background: color-mix(in srgb, var(--sc-color-sky-50) 95%, transparent);

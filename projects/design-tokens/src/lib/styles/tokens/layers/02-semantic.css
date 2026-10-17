@@ -25,13 +25,13 @@
   --sc-text-on-primary: var(--sc-color-slate-0);
   --sc-bg-surface: var(--sc-color-slate-0);
   --sc-border-default: var(--sc-color-slate-200);
-  --sc-text-primary: var(--sc-color-slate-700);
+  --sc-text-primary: var(--sc-color-slate-900);
   --sc-bg-secondary-hover: var(--sc-color-slate-100);
   --sc-border-strong: var(--sc-color-slate-400);
   --sc-bg-disabled: var(--sc-color-slate-200);
   --sc-border-error: var(--sc-color-red-400);
   --sc-text-disabled: var(--sc-color-slate-500);
-  --sc-text-secondary: var(--sc-color-slate-600);
+  --sc-text-secondary: var(--sc-color-slate-700);
   /* @sc-gen:semantic-color-light:end */
 
   /* `--sc-icon-subtle` sale de la zona generada por la MISMA razón que
