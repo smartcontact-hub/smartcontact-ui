@@ -146,9 +146,9 @@ const GRAMATICA = {
   cabecera: {
     fontSize: '14px', // Aura: la cabecera escribe a tamaño de texto
     fontWeight: '600', // --sc-font-weight-semibold
-    // El color del texto (`{text.color}` de Aura → nuestro slate-700). Hasta el
-    // 2026-09-13 era slate-600 secundario, que ya daba AA; este da más.
-    color: 'rgb(79, 86, 99)',
+    // El color del texto (`{text.color}` de Aura → nuestro slate-900 desde el export del
+    // 2026-10-17, DD-188). Fue slate-700 y, hasta el 2026-09-13, slate-600 secundario.
+    color: 'rgb(24, 29, 38)',
     padding: '8px', // Aura `datatable.header.cell.padding` (0.5rem)
   },
   anchoCasilla: 40,

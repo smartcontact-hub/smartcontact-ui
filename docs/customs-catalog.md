@@ -261,7 +261,8 @@ que dependía de una hoja de página está cerrado:
 | Qué | Medido | Por qué no se toca aquí |
 |---|---|---|
 | ~~`--sc-text-subtle`~~ | ~~2.04:1~~ → **4.52:1** | **Decidido y hecho el 2026-07-19** — ver §1.7. |
-| `--sc-text-secondary` sobre `--sc-bg-default` | 4.25:1 (y 3.92 sobre slate-100) | Ya aceptado en §1.5: subirlo más lo pega a `text-primary` y rompe la jerarquía. |
+| ~~`--sc-text-secondary` sobre `--sc-bg-default`~~ | ~~4.25:1 (y 3.92 sobre slate-100)~~ | **Cerrado el 2026-10-17**: sube a slate-700 con el export de ese día (DD-106) y el principal a slate-900 (DD-188), así que la jerarquía se conserva. |
+| Otros textos en slate-600 sobre el lienzo y slate-100 | 4.25:1 y 3.92:1 | Medido el 2026-10-17 al quitar el par de `CONOCIDOS_CLARO`: dos etiquetas de botón de 12 px en `admin/agendas/editar/1` y un texto de 14 px en `conversaciones/reglas/nueva?seccion=alcance`. El par se queda hasta decidir su color. |
 | ~~`p-button-danger`~~ | ~~3.76:1~~ → **4.83:1** | **Arreglado el 2026-09-15** — ver §1.8. |
 | ~~`p-button-secondary` `outlined`~~ | ~~2.95:1~~ → **4.52:1** | **Arreglado el 2026-09-27** — ver §1.8. |
 | ~~`p-button-secondary` `text`~~ | ~~2.95:1~~ → **4.52:1** | **Arreglado el 2026-10-05** — ver §1.11, DD-169. |
@@ -327,6 +328,13 @@ volver a llenarse. Más `theme-contrast.spec.ts`, de cuya lista de conocidos sal
 auxiliar a valores que cumplan. Entonces las dos filas vuelven a `enforce` y esta entrada
 se borra.
 
+**2026-10-17.** El export de ese día trae `form.field.icon.color` y `navigation.item.icon.color` en
+`surface.600`, y sus dos filas vuelven a `enforce` contra slate-600. El mismo día `subtle` sube a
+**slate-700** con el secundario (DD-106), así que el marcador de campo, que lo lee, también: en
+Figma `form/field/placeholder/color` pasa a `surface/700` y su fila de `color-map.mjs` sigue en
+`diverge` hasta el próximo export. Y el Kit tiene ya `semantic/text/subtle` (colección Custom), a
+slate-700 en claro.
+
 ---
 
 ### 1.8 Los tres últimos botones bajo AA · 2026-07-19, cerrada el 2026-09-27
@@ -373,6 +381,12 @@ vigila nadie.
 **Cómo se cierra**: que el Kit suba `button.danger.background`,
 `button.outlined.secondary.color` y `button.text.danger.color`. Entonces las filas de
 `EXCLUDE` y el bloque del preset se borran.
+
+**Cerrada el 2026-10-17.** El export de ese día trajo el Kit a los mismos valores (`docs/figma-pendiente.md`
+§12 y §19). Las filas de `EXCLUDE` salieron, los dos valores a mano de `04-component.css` también, y el
+`danger` sólido en claro lee `var(--sc-cmp-button-danger-*)`, como ya hacía el oscuro: desde #177
+`cmp-color-rewire` acepta los slots de `root`. El generador escribe los mismos colores que había a mano
+(comparado línea a línea).
 
 ### 1.9 `--sc-border-subtle` existía solo en claro · 2026-07-22
 
@@ -428,6 +442,9 @@ referencia de paleta en `sc-preset/togglebutton.ts`, como el `danger` sólido de
 
 **Cómo se cierra**: que el Kit suba `togglebutton.color` en claro (`docs/figma-pendiente.md` §8). El guard ya acepta los slots de `root` (#177), así que entonces el
 preset lee `var(--sc-cmp-togglebutton-*)` y el bloque a mano se borra.
+
+**Cerrada el 2026-10-17**: el export de ese día dice `surface.700` y `surface.900`. Las dos filas salieron de
+`EXCLUDE` y el preset lee `var(--sc-cmp-togglebutton-color)` y `-hover-color`, con el mismo valor.
 
 ---
 

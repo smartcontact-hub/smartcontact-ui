@@ -145,3 +145,9 @@ test('el contrato cubre las 3 tallas x 2 propiedades, sin duplicados', () => {
     assert.match(c.kitFamily, /^(font|line)\.(size|height)$/);
   }
 });
+
+test('custom · los textos de un solo modo del export del 2026-10-17 son divergencia: en el tema manda el DS', () => {
+  const { unmatched, byKind } = classify('aura/custom', ['semantic.text.inverse', 'semantic.text.heading', 'semantic.text.subtle']);
+  assert.deepEqual(unmatched, []);
+  assert.equal(byKind['divergence'].length, 3);
+});

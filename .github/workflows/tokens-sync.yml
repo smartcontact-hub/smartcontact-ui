@@ -40,6 +40,13 @@ concurrency:
 jobs:
   sync:
     runs-on: ubuntu-latest
+    # Con `shell: bash` explícito GitHub corre `bash -eo pipefail`; sin él, `bash -e` a secas, y los pasos
+    # que guardan su log con `| tee` salían en verde aunque el comando fallara (el `outcome` era el de
+    # `tee`). Así llegó «Verde» el PR #439 con verify parado en la paridad y un e2e en rojo (2026-10-17).
+    # Lo vigila `scripts/__tests__/workflow-pipefail.test.mjs`.
+    defaults:
+      run:
+        shell: bash
     steps:
       - uses: actions/checkout@v5
         with:
@@ -249,8 +256,9 @@ jobs:
                 git worktree add -q --detach "$PUB" && git -C "$PUB" checkout -q --orphan capturas && git -C "$PUB" rm -rfq --ignore-unmatch .
               fi
               mkdir -p "$PUB/${{ github.run_id }}"
+              # `|| true`: las capturas solo informan, y con pipefail un fallo aquí cortaría la portada del PR.
               node -e 'const r=require(process.argv[1]); for (const x of r.filter((x)=>x.distintos>0)) console.log(x.antes+"\n"+x.despues)' "$RUNNER_TEMP/capturas/resumen.json" \
-                | while read -r f; do cp "$RUNNER_TEMP/capturas/$f" "$PUB/${{ github.run_id }}/"; done
+                | while read -r f; do cp "$RUNNER_TEMP/capturas/$f" "$PUB/${{ github.run_id }}/"; done || true
               if [ -n "$(ls -A "$PUB/${{ github.run_id }}")" ]; then
                 git -C "$PUB" add -A && git -C "$PUB" commit -qm "Capturas del run ${{ github.run_id }} [skip ci]" \
                   && git -C "$PUB" push -q origin HEAD:refs/heads/tokens-sync-capturas \
@@ -275,7 +283,8 @@ jobs:
             fi
             gh api "repos/${{ github.repository }}/statuses/$ROBOT_SHA" -f state="$STATE" -f context="tokens-sync" -f description="$DESC" -f target_url="$RUN_URL" > /dev/null \
               || echo "::warning title=Check no escrito::no se pudo poner el estado tokens-sync en $ROBOT_SHA."
-            if gh pr view design-tokens-sync --json state --jq .state 2>/dev/null | grep -q OPEN; then
+            # Sin tubo a `grep -q`: con pipefail, un `gh` cortado por SIGPIPE daría «no hay PR abierto».
+            if [ "$(gh pr view design-tokens-sync --json state --jq .state 2>/dev/null)" = "OPEN" ]; then
               # La portada se REESCRIBE en cada run: así el sha verificado es siempre el del último.
               gh pr edit design-tokens-sync --body-file "$RUNNER_TEMP/body.md" && echo "PR ya abierto — portada actualizada." \
                 || echo "::warning title=Portada no actualizada::gh pr edit falló; el sha verificado es $ROBOT_SHA."

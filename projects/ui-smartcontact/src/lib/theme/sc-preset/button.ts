@@ -362,11 +362,10 @@ import type { ButtonDesignTokens } from '@primeuix/themes/types/button';
                  * de 500/600/700 a 600/700/800, para conservar el recorrido
                  * reposo → hover → pulsado. red-600 con blanco da **4.83:1**.
                  *
-                 * Divergencia declarada (2026-09-15): los seis slots están en
-                 * `EXCLUDE` de `cmp-color-map.mjs`, así que el generador no
-                 * emite su `--sc-cmp-button-danger-*` y el valor se queda aquí.
-                 * Cuando Figma lo suba (`figma-pendiente.md`), se quitan esas
-                 * filas y se lee la variable. Ver customs-catalog §1.8.
+                 * Fue divergencia declarada (2026-09-15) hasta el export del
+                 * 2026-10-17, que trajo el Kit a esa misma rampa
+                 * (`figma-pendiente.md` §12): se lee la variable. Ver
+                 * customs-catalog §1.8.
                  *
                  * `focusRing` se queda en {red.500}: es un anillo, no lleva
                  * texto encima, y no cambiarlo evita mover una señal de foco. */
@@ -375,14 +374,14 @@ import type { ButtonDesignTokens } from '@primeuix/themes/types/button';
                     focusRing: {
                         color: "var(--sc-cmp-button-danger-focus-ring-color)"
                     },
-                    background: "{red.600}",
+                    background: "var(--sc-cmp-button-danger-background)",
                     hoverColor: "var(--sc-cmp-button-danger-hover-color)",
                     activeColor: "var(--sc-cmp-button-danger-active-color)",
-                    borderColor: "{red.600}",
-                    hoverBackground: "{red.700}",
-                    activeBackground: "{red.800}",
-                    hoverBorderColor: "{red.700}",
-                    activeBorderColor: "{red.800}"
+                    borderColor: "var(--sc-cmp-button-danger-border-color)",
+                    hoverBackground: "var(--sc-cmp-button-danger-hover-background)",
+                    activeBackground: "var(--sc-cmp-button-danger-active-background)",
+                    hoverBorderColor: "var(--sc-cmp-button-danger-hover-border-color)",
+                    activeBorderColor: "var(--sc-cmp-button-danger-active-border-color)"
                 },
                 primary: {
                     color: "{primary.contrast.color}",
