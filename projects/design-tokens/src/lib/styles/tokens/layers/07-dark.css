@@ -48,9 +48,10 @@
    *
    * success y warning se declaran aquí porque su valor CLARO subió al 700
    * para cumplir AA sobre blanco; sin este bloque, el 700 se colaría en
-   * oscuro y caería a 3.37. `text-info` no hace falta: es un alias de
-   * `text-accent` y las custom properties se resuelven en el punto de uso. */
-  --sc-text-accent: var(--sc-color-sky-400);
+   * oscuro y caería a 3.37. `text-info` se declara aquí porque en claro ya no es un
+   * alias de `text-accent` (que ahora es violeta): se queda en sky. */
+  --sc-text-accent: var(--sc-text-violet);
+  --sc-text-info: var(--sc-color-sky-400);
   --sc-text-link: var(--sc-color-sky-400);
   --sc-text-success: var(--sc-color-green-600);
   --sc-text-warning: var(--sc-color-yellow-600);
@@ -526,7 +527,7 @@
   /* Los iconos de color siguen a su texto. Heredaban el paso del claro (sky-600, red-600…),
    * calculado contra blanco: el mismo agujero que tenían los `--sc-text-*` de color. */
   --sc-icon-link: var(--sc-text-link);
-  --sc-icon-accent: var(--sc-text-accent);
+  --sc-icon-accent: var(--sc-color-sky-400);
   --sc-icon-info: var(--sc-text-info);
   --sc-icon-success: var(--sc-text-success);
   --sc-icon-warning: var(--sc-text-warning);

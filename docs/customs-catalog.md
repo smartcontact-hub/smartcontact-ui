@@ -154,6 +154,15 @@ así que el cambio sobrevive a `npm run tokens:import` y ningún gate lo marca c
 **Consecuencia que conviene saber**: por eso mismo, **ningún gate vigila estos tokens**.
 `token-parity` §6 solo cruza lo que está en `scripts/color-map.mjs`, y accent no está.
 
+**Actualización 2026-10-17: el TEXTO de accent pasa a violeta.** `--sc-text-accent` sigue a
+`--sc-text-violet` (violet-700 en claro, **7.10:1**; violet-400 en oscuro, **6.51:1**), que es
+el violeta de `semantic/text/accent` en Figma (Custom: violet/700 claro, violet/400 oscuro). Lo que NO cambia, a propósito:
+`--sc-text-link` e `--sc-text-info` (y su icono) siguen en sky, y `--sc-bg-accent`,
+`--sc-border-accent` e `--sc-icon-accent` también. `info` dejó de ser alias de accent para no
+arrastrar el estado «información» al violeta. **Coste conocido**: texto de accent violeta junto
+a fondos o bordes de accent sky es el desajuste que retiró este apartado; se acepta por decisión
+de producto y se revisa si aparece una pantalla que mezcle los dos.
+
 ---
 
 ### 1.5 Texto secundario → slate-600 (AA) · 2026-07-19
