@@ -197,9 +197,8 @@ variable cuando su nombre es único y avisa.
 
 **Hecho el 2026-10-17 para el export de ese día**, salvo lo que se dice abajo: las 52 filas de `PENDIENTE_FIGMA`
 (quedan las tres separadas), las filas de `EXCLUDE`, las dos de iconos de `color-map.mjs` a `enforce`,
-`togglebutton.ts`, `--sc-text-subtle` y `--sc-text-heading`. El marcador de campo sigue en `diverge`: en Figma ya es
-`surface/700` (sigue a `subtle`) y pasa a `enforce` con el próximo export. Lo decidido el 2026-09-28 para `sc-dialog`
-y la etiqueta IFTA sigue pendiente.
+`togglebutton.ts`, `--sc-text-subtle` y `--sc-text-heading`. El marcador de campo pasó a `enforce` con el tercer envío
+del mismo día (ficha 19). Lo decidido el 2026-09-28 para `sc-dialog` y la etiqueta IFTA sigue pendiente.
 
 **Las dos excepciones de `theme-contrast` NO salen** (medido el 2026-10-17): sin ellas aparecen otros textos en
 slate-600 que no son el secundario. Dos etiquetas de botón de 12 px en `admin/agendas/editar/1` (4,25:1 sobre el
@@ -839,7 +838,9 @@ cuatro en slate-600 (4,52:1 sobre blanco).
 
 **El marcador, un paso más (2026-10-17):** en código lo pinta `--sc-text-subtle`, que ese día sube a slate-700 con el
 secundario (DD-106). Para que Figma y código digan lo mismo, `form/field/placeholder/color` pasó también a
-`surface/700` en el fichero, después del push. Viaja en el siguiente; hasta entonces su fila sigue en `diverge`.
+`surface/700` en el fichero, después del push. **Llegó con el tercer envío del mismo día** (`8f030ffb`): su fila pasa a
+`enforce` contra `--sc-text-subtle`, que en claro escribe ya el generador. El robot no abrió PR porque un run cancelado
+borró el envío (ver «Herramientas»); entró a mano, con el arreglo del robot.
 
 ---
 
@@ -1367,6 +1368,28 @@ menú, y la iconografía de transcripciones tiene sus tres insignias.
 
 Si manda el código, los tres son repuntes a variables que ya existen.
 
+## 52 · El tema del plugin que recibe el equipo externo lleva Custom con el valor del oscuro (medido el 2026-10-17)
+
+**Estado:** pendiente · **Dónde:** fichero del DS, colección Custom: `semantic/text/heading`, `subtle`, `inverse` y
+`accent` · **Evidencia:** `tema-plugin.zip` de la rama `tema-zip` (export `7b06bcce`, `ts/extend.ts`) y el export del
+2026-10-17.
+
+- El plugin exporta Custom con un solo valor, el del modo oscuro: `heading = {surface.0}`, `subtle = {zinc.400}`,
+  `inverse = {surface.900}` y `accent = {violet.400}`. En el tema de nuestras apps manda el DS (`tema-zip.mjs`,
+  `MANDA_EL_DS`), pero el del plugin (DD-88) lo lleva tal cual: en claro, un título con `text.heading` sale blanco sobre
+  blanco.
+- **Repunte posible para tres.** En las dos columnas de Custom: `semantic/text/heading` → `text/color` (900 y 0, los
+  valores de hoy), `semantic/text/subtle` → `text/muted/color` (700 y zinc 400) y `semantic/text/inverse` →
+  `primary/contrast/color` (blanco y zinc 900). **Mídelo antes:** que el plugin exporte un alias a otra colección como
+  referencia (`{text.color}`) y no como su valor, y qué modo fijan las capas que usan cada variable (el título: 53 de
+  `❖ Sidebar`, 1 de `❖ Navmenu` y 1 de `🌈 Colors`).
+- **`accent` no tiene repunte:** ninguna variable del esquema de color vale violet 700 en claro y violet 400 en oscuro.
+  Pide una variable nueva en el esquema de color (otra sesión), o se queda anotado.
+- Después del export, se revisan `MANDA_EL_DS` y el bucket de esas claves en `coverage-map.mjs`.
+
+**Cómo sabes que está hecho:** en `tema-plugin.zip`, `ts/extend.ts` dice `heading: "{text.color}"`,
+`subtle: "{text.muted.color}"` e `inverse: "{primary.contrast.color}"`.
+
 ---
 
 ## Lo de estas semanas que NO va a Figma, y por qué
@@ -1411,7 +1434,11 @@ Si manda el código, los tres son repuntes a variables que ya existen.
   `tokens-sync` (import, `verify`, e2e, capturas de antes y después) → PR a `main`. El plugin empuja **dos veces**
   («design tokens» y «theme»): el primer run se cancela y deja la portada en rojo hasta que acaba el segundo. Hasta
   el 2026-10-17 el robot podía decir «Verde» con verify o el e2e en rojo (sus pasos guardaban el log con `| tee` sin
-  `pipefail`); lo vigila `workflow-pipefail.test.mjs`. Además, `tokens-check` comenta un
+  `pipefail`); lo vigila `workflow-pipefail.test.mjs`. Y hasta ese día **el run cancelado borraba el envío nuevo**: su
+  paso de reset corría con `always()` y forzaba la rama a main antes de que el run siguiente la leyera (dos veces
+  seguidas el 2026-10-17). Ahora corre con `!cancelled()` y empuja con `--force-with-lease`; lo vigila
+  `workflow-push-cancelado.test.mjs`. Si un envío no abre PR, mira el log del paso «Resetear»: «Export == main» con un
+  export distinto es este fallo. Además, `tokens-check` comenta un
   veredicto rápido, y al fundir, `tema-zip` publica el tema del equipo externo.
 - **Solo viajan por el export las variables:** las fichas 4, 8, 12, 14 y 19, la variable nueva de la 2, los bordes de
   Tabs (9) y el hueco entre botones del diálogo (17). El dibujo no lo recoge el robot.

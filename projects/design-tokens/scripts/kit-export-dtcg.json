@@ -5484,7 +5484,7 @@
         "placeholder": {
           "color": {
             "$type": "color",
-            "$value": "{surface.600}"
+            "$value": "{surface.700}"
           }
         },
         "float": {

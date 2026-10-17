@@ -98,7 +98,9 @@ export const COLOR = [
   // Borde de campo: fue divergencia («gray-200, jerarquía propia», 1,34:1) hasta DD-87 (2026-09-14), que lo
   // devuelve a Aura quitando el override del tema. Ahora el tema pinta `{surface.300}`, lo mismo que el Kit.
   { mode: 'light', exp: 'form.field.border.color', token: 'sc-color-slate-300', kind: 'enforce' },
-  { mode: 'light', exp: 'form.field.placeholder.color', token: null, kind: 'diverge', reason: 'placeholder = --sc-text-subtle, slate-700 desde el 2026-10-17 (DD-106) vs Kit surface-600 en el export de ese día. En Figma ya es surface/700: pasa a enforce contra sc-color-slate-700 con el próximo export. DD-87.' },
+  // El marcador lo pinta `--sc-text-subtle` (`base.ts`, `placeholderColor`). Fue divergencia hasta que el export
+  // dijo `{surface.700}` (tercer envío del 2026-10-17), el mismo slate-700 del código: DD-106.
+  { mode: 'light', exp: 'form.field.placeholder.color', token: 'sc-text-subtle', kind: 'enforce' },
   { mode: 'light', exp: 'overlay.select.background', token: null, kind: 'diverge', reason: '--sc-bg-elevated (elevación propia) vs Kit surface-0' },
   // `text.muted.color` FUE divergencia de marca desde julio (el Kit daba surface-500 = 2.95:1 sobre
   // blanco, bajo AA en sus 178 usos) y volvió a enforce el 2026-08-24: el sync del Theme Designer

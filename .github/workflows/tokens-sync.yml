@@ -182,8 +182,12 @@ jobs:
 
       # Aunque verify/e2e fallen (drift en capas curadas), publicamos la rama limpia + PR
       # como banco de trabajo; el veredicto va en la portada y en el check `tokens-sync`.
+      # `!cancelled()` y NO `always()`: un run se cancela porque llegó OTRO push del plugin, y con
+      # `always()` este paso corría igual y forzaba la rama a SU estado, borrando ese push nuevo antes
+      # de que su run lo leyera. Pasó dos veces seguidas el 2026-10-17 (runs 39068153047 y 39068274930):
+      # el export con el marcador a 700 no llegó a ningún PR. Lo vigila `workflow-push-cancelado.test.mjs`.
       - name: Resetear design-tokens-sync a main + el cambio, y abrir/actualizar PR
-        if: always()
+        if: ${{ !cancelled() }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           IMPORT: ${{ steps.import.outcome }}
@@ -233,7 +237,13 @@ jobs:
           #   · Pero Cloudflare Pages TAMBIÉN obedece [skip ci] → se saltaría el build y el preview
           #     de la rama quedaría CONGELADO (prod mostraba el cambio, el preview de rama no).
           #   El preview de rama es justo lo que el diseñador mira → no se puede saltar su build.
-          git push --force origin HEAD:design-tokens-sync
+          #
+          # Con `--force-with-lease` contra el sha que este run leyó: si el plugin empujó otra vez
+          # mientras tanto, el push falla en vez de borrar lo nuevo, y lo procesa el run de ese push.
+          if ! git push --force-with-lease="design-tokens-sync:$PLUGIN_SHA" origin HEAD:design-tokens-sync; then
+            echo "::warning title=Rama movida::otro push del plugin llegó durante este run (leído $PLUGIN_SHA); no se toca la rama, lo procesa su run."
+            exit 0
+          fi
 
           if [ "$CHANGED" = 0 ]; then
             # Revert / no-op: no hay nada que revisar → cierra el PR si quedó abierto.
@@ -298,7 +308,8 @@ jobs:
       # El run sale del color del veredicto: los pasos de arriba no cortan el job para que el PR
       # se escriba siempre, así que el rojo se declara aquí.
       - name: Veredicto del run
-        if: always()
+        # Un run cancelado no tiene veredicto: lo da el run del push que lo canceló.
+        if: ${{ !cancelled() }}
         env:
           IMPORT: ${{ steps.import.outcome }}
           CEROS: ${{ steps.ceros.outcome }}
