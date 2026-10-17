@@ -109,6 +109,11 @@ export const hayCambios = (d) => !d.anterior || d.ficheros.length > 0;
  */
 const MANDA_EL_DS = {
   'semantic.text.accent': 'var(--sc-text-accent)',
+  // El plugin exporta Custom con un solo modo, el oscuro (export del 2026-10-17): con el valor del Kit, en claro el
+  // título saldría en blanco y el texto invertido en slate-900. Nuestro token lleva los dos modos.
+  'semantic.text.inverse': 'var(--sc-text-inverse)',
+  'semantic.text.heading': 'var(--sc-text-heading)',
+  'semantic.text.subtle': 'var(--sc-text-subtle)',
   'component.dialog.icon.color': 'var(--sc-dialog-head-icon-fg)',
 };
 

@@ -69,6 +69,11 @@ export const BUCKETS = [
   // El Kit exporta violet.400 sin modo; el DS usa violet-700 en claro (7,10:1 sobre blanco,
   // violet-400 da 2,72) y violet-400 en oscuro. La decide la accesibilidad, no la marca.
   { group: 'aura/custom', test: /^semantic\.text\.accent$/, kind: 'divergence', note: 'Kit {violet.400} · DS --sc-text-accent = violet-700 claro / violet-400 oscuro por contraste (customs-catalog §1.4)' },
+  // Llegaron con el export del 2026-10-17. En Figma tienen sus dos modos y casan con el código (inverse surface/0 ·
+  // surface/900, heading slate/900 · surface/0, subtle slate/700 · zinc/400), pero el plugin exporta Custom con el
+  // valor del modo OSCURO solo. El valor del export no vale para el claro: en el tema publicado manda el token del DS
+  // (`tema-zip.mjs`, MANDA_EL_DS), que se escribe a mano en 02-semantic.css y 07-dark.css.
+  { group: 'aura/custom', test: /^semantic\.text\.(inverse|heading|subtle)$/, kind: 'divergence', note: 'export de un solo modo (el oscuro) · DS --sc-text-inverse/-heading/-subtle con sus dos modos, a mano; en el tema publicado manda el DS' },
 
   // Presencia: el DS TIENE sus tokens (--sc-presence-*, 03-palette.css:83-88) pero
   // ni los valores ni los NOMBRES coinciden — el Kit trae available/unavailable/
