@@ -96,10 +96,15 @@ se corta a medias, se retoma en el siguiente.
 ### Paso 2 · Variables de color, push y PR del robot (~30 min)
 
 - [x] **Fichas 8, 12, 14 y 19:** los 21 repuntes, hechos en el fichero el 2026-10-17 con
-      `node tools/figma-pendiente.mjs color` (comprobados uno a uno después). **Falta el push** y su PR.
+      `node tools/figma-pendiente.mjs color` (comprobados uno a uno después). Push el mismo día: el robot abrió
+      el PR #439, y el código que lo completa (paso 6) va en otro PR con el mismo export.
 - [x] **La variable nueva `text/heading/color` (ficha 2): no se crea.** El Kit ya tiene `semantic/text/heading`
-      (colección Custom: claro `slate/800`, oscuro `surface/0`), lo mismo que `--sc-text-heading`. El título de
-      `Section` se repuntó a ella el 2026-10-17. Que suba a `slate/900` (decisión 3) está pendiente: ver ficha 2.
+      (colección Custom), lo mismo que `--sc-text-heading`. El título de `Section` se repuntó a ella y, con la
+      decisión 3, su claro pasó a `slate/900` el 2026-10-17 (ver ficha 2).
+- ⚠️ **El plugin exporta la colección Custom con un solo modo, el oscuro** (medido en el export del 2026-10-17:
+      `semantic.text.heading` = `{surface.0}`, `accent` = `{violet.400}`). Nada que viva solo en Custom llega bien
+      al claro por el export: esas claves se escriben a mano en código y, en el tema publicado, manda el DS
+      (`scripts/tema-zip.mjs`, `MANDA_EL_DS`).
 - [ ] Empuja cuando el PR del paso 1 esté **fundido**. El robot reescribe la misma rama: si empujas antes, actualiza
       aquel PR en vez de abrir otro, y los dos cambios quedan mezclados.
 - [ ] **Qué esperar:**
@@ -190,6 +195,17 @@ variable cuando su nombre es único y avisa.
 
 ### Paso 6 · Después, en el repo (una sesión de código; pásale este fichero)
 
+**Hecho el 2026-10-17 para el export de ese día**, salvo lo que se dice abajo: las 52 filas de `PENDIENTE_FIGMA`
+(quedan las tres separadas), las filas de `EXCLUDE`, las dos de iconos de `color-map.mjs` a `enforce`,
+`togglebutton.ts`, `--sc-text-subtle` y `--sc-text-heading`. El marcador de campo sigue en `diverge`: en Figma ya es
+`surface/700` (sigue a `subtle`) y pasa a `enforce` con el próximo export. Lo decidido el 2026-09-28 para `sc-dialog`
+y la etiqueta IFTA sigue pendiente.
+
+**Las dos excepciones de `theme-contrast` NO salen** (medido el 2026-10-17): sin ellas aparecen otros textos en
+slate-600 que no son el secundario. Dos etiquetas de botón de 12 px en `admin/agendas/editar/1` (4,25:1 sobre el
+lienzo) y un texto de 14 px en `conversaciones/reglas/nueva?seccion=alcance` (3,92:1 sobre slate-100). Falta decidir su
+color; hasta entonces el par se queda, con su motivo escrito en el spec.
+
 - **Tras el PR del paso 1:** quitar de `PENDIENTE_FIGMA` (`scripts/sizing-map.mjs`) las filas que señale
   `token-parity`. En las tres separadas, la fila pasa a leer `…padding.y` y `…padding.x`.
 - **Tras el PR del paso 2**, cada divergencia que el Kit ya dice igual:
@@ -270,10 +286,10 @@ Se suma lo que se haga en los pasos 1 a 3 del plan.
 - **`--sc-text-heading`** (slate-800 en claro, blanco en oscuro) para los títulos de sección. **Ya existe en Figma**
   (medido el 2026-10-17): `semantic/text/heading`, colección Custom, claro `slate/800` y oscuro `surface/0`. El título
   de `Section` se repuntó a ella el 2026-10-17 (antes iba a `text/color`). No se crea `text/heading/color`.
-  **Pendiente, la decisión 3** (subirla a `slate/900`, porque `text/color` ya está en `surface/900`): es un repunte,
-  pero `semantic/text/heading` la usan también 53 capas de `❖ Sidebar`, 1 de `❖ Navmenu` y 1 de `🌈 Colors`, y el
-  código de la barra lateral no pinta con `--sc-text-heading`. Confirmar que esas capas pueden oscurecerse antes de
-  repuntar.
+  **Decisión 3, hecha el 2026-10-17:** su claro pasa a `slate/900`, porque `text/color` ya está en `surface/900` y el
+  título no puede ser más claro que su contenido. Las otras capas que la usan se miraron antes: 53 de `❖ Sidebar`, todas
+  en la tabla «Sidebar (Para desarrollo)» (rótulos y nombres de icono sobre blanco, no la barra del producto), 1 de
+  `❖ Navmenu` y 1 de `🌈 Colors`. En código, `--sc-text-heading` a slate-900 el mismo día.
 - **Tarjetas de opción (`sc-option-cards`)** en Servicio, en lugar del modal `103:2718`: es una maqueta del
   Supervisor.
 - **La etiqueta IFTA (dentro del campo): decidido el 2026-09-28, a 400 en todas.** En código iba a 600 en `sc-select` y
@@ -504,7 +520,7 @@ sc-docs, lado a lado, pintan la papelera del mismo tamaño.
 
 ## 8 · Grises intermedios: los textos y la opción no elegida, un paso más oscuros (2026-09-14)
 
-**Estado:** **HECHO en el fichero el 2026-10-17** (las 8 filas); falta el push y el paso 6 · decidido el 2026-09-14
+**Estado:** **HECHO en el fichero el 2026-10-17** (las 8 filas); push y paso 6 el mismo día (export del 2026-10-17) · decidido el 2026-09-14
 (DD-106) · **Evidencia:** verificado de punta a
 punta en código, no en el fichero. Se simuló este cambio en `kit-export-dtcg.json`, `tokens:import` lo escribió y el
 Supervisor pintó los grises nuevos (`theme-contrast`: 53 de 53). Las rutas de variable salen del export; el 2026-09-27
@@ -636,7 +652,7 @@ hace falta crear variables.
 
 ## 12 · Los botones rojos en claro, un paso más oscuros por contraste (2026-09-15)
 
-**Estado:** **HECHO en el fichero el 2026-10-17** (las 8 variables); falta el push y el paso 6 · **Evidencia:** export
+**Estado:** **HECHO en el fichero el 2026-10-17** (las 8 variables); push y paso 6 el mismo día (export del 2026-10-17) · **Evidencia:** export
 de `main` (comprobado el 2026-09-27) y el guard
 `tokens:cmp-rewire`.
 
@@ -688,7 +704,7 @@ que la historia «Al pulsar» de `#/components/button` en sc-docs.
 
 ## 14 · La etiqueta «Draft» (secundaria) no llega al contraste (2026-09-24)
 
-**Estado:** **HECHO en el fichero el 2026-10-17**; falta el push · **Dónde:** variable `tag/secondary/color` de
+**Estado:** **HECHO en el fichero el 2026-10-17**, con su push · **Dónde:** variable `tag/secondary/color` de
 `aura/component/light`: era `surface/600`, pasa a
 **`surface/700`** · **Esfuerzo:** un cambio de alias · **Evidencia:** medido en el navegador y en el código generado;
 el alias, en el export del 2026-09-27.
@@ -806,7 +822,7 @@ Kit no lo dibuja.
 
 ## 19 · Cuatro grises del Kit bajo AA que el código ya sube (2026-07 a 2026-09)
 
-**Estado:** **HECHO en el fichero el 2026-10-17** (las 4); falta el push y el paso 6 · **Evidencia:** export del
+**Estado:** **HECHO en el fichero el 2026-10-17** (las 4); push y paso 6 el mismo día (export del 2026-10-17) · **Evidencia:** export del
 2026-09-27 y las divergencias declaradas en `scripts/color-map.mjs` y
 `scripts/cmp-color-map.mjs` (DD-87, DD-111). Cada fila dice «revertir cuando el Kit suba el suyo». El código pinta los
 cuatro en slate-600 (4,52:1 sobre blanco).
@@ -820,6 +836,10 @@ cuatro en slate-600 (4,52:1 sobre blanco).
 
 **Cómo sabes que está hecho:** tras el push y el paso 6, las cuatro filas salen de `EXCLUDE` y de las divergencias de
 `color-map.mjs`, y `tokens:parity` sigue en verde.
+
+**El marcador, un paso más (2026-10-17):** en código lo pinta `--sc-text-subtle`, que ese día sube a slate-700 con el
+secundario (DD-106). Para que Figma y código digan lo mismo, `form/field/placeholder/color` pasó también a
+`surface/700` en el fichero, después del push. Viaja en el siguiente; hasta entonces su fila sigue en `diverge`.
 
 ---
 
@@ -1388,7 +1408,10 @@ Si manda el código, los tres son repuntes a variables que ya existen.
 ## Herramientas
 
 - **El loop del export** (`docs/guia-tokens.md` §2.bis): push en el plugin → rama `design-tokens-sync` → el workflow
-  `tokens-sync` (import, `verify`, e2e, capturas de antes y después) → PR a `main`. Además, `tokens-check` comenta un
+  `tokens-sync` (import, `verify`, e2e, capturas de antes y después) → PR a `main`. El plugin empuja **dos veces**
+  («design tokens» y «theme»): el primer run se cancela y deja la portada en rojo hasta que acaba el segundo. Hasta
+  el 2026-10-17 el robot podía decir «Verde» con verify o el e2e en rojo (sus pasos guardaban el log con `| tee` sin
+  `pipefail`); lo vigila `workflow-pipefail.test.mjs`. Además, `tokens-check` comenta un
   veredicto rápido, y al fundir, `tema-zip` publica el tema del equipo externo.
 - **Solo viajan por el export las variables:** las fichas 4, 8, 12, 14 y 19, la variable nueva de la 2, los bordes de
   Tabs (9) y el hueco entre botones del diálogo (17). El dibujo no lo recoge el robot.
