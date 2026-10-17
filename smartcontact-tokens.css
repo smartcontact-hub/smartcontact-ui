@@ -745,12 +745,15 @@
    * Y no es teórico: su consumidor real es el trazo de `sc-gauge`
    * (`sc-gauge.component.scss:24`), medido. Es el mismo criterio de dos comentarios
    * más arriba —cuando el paso del Kit no cumple, se sube uno— aplicado al listón
-   * de gráficos en vez de al de texto. */
-  --sc-icon-accent: var(--sc-color-sky-600);
+   * de gráficos en vez de al de texto.
+   *
+   * `icon-accent` sigue a su texto (violeta, `docs/customs-catalog.md §1.4`); `icon-info`
+   * deja de ser su alias y se queda en sky con `text-info`. */
+  --sc-icon-accent: var(--sc-text-accent);
   --sc-icon-success: var(--sc-color-green-600);
   --sc-icon-warning: var(--sc-color-yellow-700);
   --sc-icon-error: var(--sc-color-red-600);
-  --sc-icon-info: var(--sc-icon-accent);
+  --sc-icon-info: var(--sc-color-sky-600);
   --sc-icon-violet: var(--sc-color-violet-500);
 
   --sc-icon-on-primary: var(--sc-color-slate-0);
@@ -2663,7 +2666,7 @@
   /* Los iconos de color siguen a su texto. Heredaban el paso del claro (sky-600, red-600…),
    * calculado contra blanco: el mismo agujero que tenían los `--sc-text-*` de color. */
   --sc-icon-link: var(--sc-text-link);
-  --sc-icon-accent: var(--sc-color-sky-400);
+  --sc-icon-accent: var(--sc-text-accent);
   --sc-icon-info: var(--sc-text-info);
   --sc-icon-success: var(--sc-text-success);
   --sc-icon-warning: var(--sc-text-warning);
