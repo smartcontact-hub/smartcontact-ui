@@ -161,13 +161,8 @@
   &--3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
-}
 
-@media (max-width: 720px) {
-  .grid--2,
-  .grid--3 {
-    grid-template-columns: 1fr;
-  }
+  /* Por debajo de 720, una columna: el paso va con el de `.checkbox-grid--3`, más abajo. */
 }
 
 /* ------------------------------------------------------------------ *
@@ -318,6 +313,23 @@
   &--3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     column-gap: var(--sc-spacing-1-75);
+  }
+}
+
+/* EL PASO A UNA COLUMNA, uno para todas las rejillas de campos y para la de casillas que va en sus columnas: si cada
+ * una se plegara por su lado, a algún ancho una iría en tres y la otra en una (los canales del agente seguían en tres
+ * por debajo de 720, con los campos de encima ya en una). Va detrás de las dos rejillas para ganarles por orden. */
+@media (max-width: 720px) {
+  .grid--2,
+  .grid--3,
+  .checkbox-grid--3 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* En una columna, «dos columnas» abría una segunda pista vacía: el campo medía el hueco (24,5) más que su vecino de
+   * debajo (el email y el teléfono del agente). */
+  .field--span-2 {
+    grid-column: auto;
   }
 }
 

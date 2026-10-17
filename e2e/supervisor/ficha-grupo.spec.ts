@@ -1,6 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 
-import { disableAnimations, elegirTelefonoSaliente, forceLightTheme, goto } from './helpers';
+import { columnasACadaAncho, disableAnimations, elegirTelefonoSaliente, forceLightTheme, goto } from './helpers';
 
 /**
  * LA FICHA DE GRUPO — índice lateral con cuatro secciones y el resumen a la derecha; el alta es la misma
@@ -219,21 +219,22 @@ test('por debajo de 1340 el resumen pasa a una franja encima del contenido, en s
 
 test('en General, los canales caen en las tres columnas de los campos de encima, en cualquier ancho', async ({ page }) => {
   // 1920: con la rejilla de casillas que se rellena sola (`auto-fill`) salían cuatro columnas y «Chat» caía 86 px a la
-  // izquierda de «Prioridad»; a 1440, 3 px (medido en producción el 2026-10-05, DD-170).
+  // izquierda de «Prioridad»; a 1440, 3 px (medido en producción el 2026-10-05, DD-170). Y entre 1340 y 1410 los campos
+  // pasaban a una columna, a todo el ancho, con los canales debajo en tres (medido en producción el 2026-10-17).
+  await goto(page, 'admin/grupos/editar/1');
+  const casillas = async () =>
+    page.evaluate(() =>
+      [...document.querySelectorAll('.checkbox-grid--3 > .checkbox-stack')].map((e) => Math.round(e.getBoundingClientRect().left * 4) / 4),
+    );
+  for (const { ancho, columnas } of await columnasACadaAncho(page, '.identity-fields, .checkbox-grid--3')) {
+    const [campos, canales] = columnas;
+    expect(campos, `${ancho}: las columnas de los campos`).toHaveLength(ancho > 720 ? 3 : 1);
+    expect(canales, `${ancho}: los canales, en las columnas de los campos`).toEqual(campos);
+  }
+  // Y cada casilla, en su columna, no solo la pista: a 1440 y a 1920, las tres.
   for (const ancho of [1440, 1920]) {
-    await page.setViewportSize({ width: ancho, height: 900 });
-    await goto(page, 'admin/grupos/editar/1');
-    const m = await page.evaluate(() => {
-      const campos = document.querySelector('.identity-fields')!;
-      const pistas = getComputedStyle(campos).gridTemplateColumns.split(' ').map(parseFloat);
-      const hueco = parseFloat(getComputedStyle(campos).columnGap);
-      const x0 = campos.getBoundingClientRect().left;
-      const columnas = pistas.map((_, i) => x0 + pistas.slice(0, i).reduce((a, b) => a + b + hueco, 0));
-      const casillas = [...document.querySelectorAll('.checkbox-grid > .checkbox-stack')].map((e) => e.getBoundingClientRect().left);
-      return { columnas: columnas.map((x) => Math.round(x * 4) / 4), casillas: casillas.map((x) => Math.round(x * 4) / 4) };
-    });
-    expect(m.columnas, `${ancho}: tres columnas de campos`).toHaveLength(3);
-    expect(m.casillas, `${ancho}: cada canal, en la vertical de su columna`).toEqual(m.columnas);
+    const [{ columnas }] = await columnasACadaAncho(page, '.identity-fields', [ancho]);
+    expect(await casillas(), `${ancho}: cada canal, en la vertical de su columna`).toEqual(columnas[0]);
   }
 });
 

@@ -1,4 +1,4 @@
-<div class="identity-fields">
+<div class="identity-fields grid" [class.grid--3]="!apilada()" [class.identity-fields--apilada]="apilada()">
   <div class="field">
     <label class="field__label sc-text-caption-semibold" [for]="idPrefix() + '-name'">
       {{ 'groups.form.fields.name' | translate }}
