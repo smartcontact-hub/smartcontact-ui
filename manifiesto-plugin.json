@@ -1,0 +1,48 @@
+{
+  "plugin": "7b06bcce",
+  "generado": "2026-10-17T20:47:50.876Z",
+  "comprobaciones": {
+    "ceros": [
+      "claro|--p-divider-vertical-padding"
+    ],
+    "raizPx": 14,
+    "pesosPx": [
+      "claro|--p-typography-font-weight-regular",
+      "claro|--p-typography-font-weight-medium",
+      "claro|--p-typography-font-weight-semibold",
+      "claro|--p-typography-font-weight-bold"
+    ],
+    "diferencia": {
+      "anterior": false,
+      "variables": 0
+    },
+    "distancia": {
+      "total": 1998,
+      "distintas": 652,
+      "soloDensidad": 382,
+      "pct": 33,
+      "ejemplos": [
+        "claro|--p-icon-size: plugin 16px · nuestro 14px",
+        "claro|--p-overlay-navigation-shadow: plugin 0 4px 6px -1px #0000001a, 0 2px 4px -2px #0000001a · nuestro 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a",
+        "claro|--p-overlay-modal-padding: plugin 18px · nuestro 15.75px",
+        "claro|--p-overlay-modal-shadow: plugin 0 20px 25px -5px #0000001a, 0 8px 10px -6px #0000001a · nuestro 0 8px 10px -6px #0000001a, 0 20px 25px -5px #0000001a",
+        "claro|--p-overlay-popover-padding: plugin 10px · nuestro 8.75px",
+        "claro|--p-overlay-popover-shadow: plugin 0 4px 6px -1px #0000001a, 0 2px 4px -2px #0000001a · nuestro 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a",
+        "claro|--p-overlay-select-shadow: plugin 0 4px 6px -1px #0000001a, 0 2px 4px -2px #0000001a · nuestro 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a",
+        "claro|--p-navigation-submenu-icon-size: plugin 12px · nuestro 10.5px",
+        "claro|--p-navigation-submenu-icon-color: plugin #aeb6c2 · nuestro #6f7784",
+        "claro|--p-navigation-submenu-icon-focus-color: plugin #8f97a3 · nuestro #4f5663",
+        "claro|--p-navigation-submenu-icon-active-color: plugin #8f97a3 · nuestro #4f5663",
+        "claro|--p-navigation-submenu-label-padding: plugin 4px 10px · nuestro 3.5px 8.75px",
+        "claro|--p-navigation-submenu-label-font-weight: plugin 600px · nuestro 600",
+        "claro|--p-navigation-item-padding: plugin 4px 10px · nuestro 3.5px 8.75px",
+        "claro|--p-navigation-item-gap: plugin 8px · nuestro 7px",
+        "claro|--p-navigation-item-focus-color: plugin #181d26 · nuestro #2f3642",
+        "claro|--p-navigation-item-active-color: plugin #181d26 · nuestro #2f3642",
+        "claro|--p-navigation-item-icon-focus-color: plugin #8f97a3 · nuestro #4f5663",
+        "claro|--p-navigation-item-icon-active-color: plugin #8f97a3 · nuestro #4f5663",
+        "claro|--p-navigation-list-padding: plugin 4px · nuestro 3.5px"
+      ]
+    }
+  }
+}
