@@ -145,11 +145,25 @@ const COMPONENTS = [
 
 type Estilos = Record<string, Record<string, string>>;
 
+/** La página de componente montada: el hermano del `<router-outlet>` del shell de sc-docs. */
+const VISTA = 'main.demo-main app-storybook-shell > router-outlet + *';
+
 const stylesOf = async (page: Page, route: string, tag: string, esperados?: number): Promise<Estilos> => {
+  // La página que se va se marca ANTES de navegar, y abajo se espera a que salga del DOM. La
+  // espera por `tag` no basta cuando la página anterior ya lo contiene: los controles del
+  // Playground pintan con el DS (`sc-toggleswitch` para un booleano), y la de `textarea`, con su
+  // `autoResize`, cumplía la espera de `toggleswitch`. Con las dos en cinco anclas desde #370,
+  // el `toHaveCount` tampoco frenaba, y mientras llegaba el chunk perezoso de la ruta nueva se
+  // medía la vieja: rojo en `main` el 2026-10-17 (run 39064895684), reproducido en local
+  // retrasando los chunks.
+  await page.evaluate((sel) => document.querySelector(sel)?.setAttribute('data-vista-saliente', ''), VISTA);
   await page.goto(`/#/components/${route}`);
   // Best-effort y acotada, como en `component-structure`: la espera es de conveniencia, no
   // una aserción. Sin timeout tumba el build sin que falle nada (ya pasó con el datepicker).
   await page.waitForLoadState('networkidle', { timeout: 10_000 }).catch(() => undefined);
+  await expect(page.locator('[data-vista-saliente]'), `${route}: la página anterior sigue montada`).toHaveCount(0, {
+    timeout: 15_000,
+  });
   // LA espera que importa: hasta que el componente de ESTA ruta está en el DOM, las anclas
   // que se leen son las de la página anterior (ver el comentario de COMPONENTS). Y si la
   // ruta se renombra, esto falla en vez de congelar un baseline vacío en verde para siempre.
