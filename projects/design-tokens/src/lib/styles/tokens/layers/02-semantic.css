@@ -31,6 +31,7 @@
   --sc-bg-disabled: var(--sc-color-slate-200);
   --sc-border-error: var(--sc-color-red-400);
   --sc-text-disabled: var(--sc-color-slate-500);
+  --sc-text-subtle: var(--sc-color-slate-700);
   --sc-text-secondary: var(--sc-color-slate-700);
   /* @sc-gen:semantic-color-light:end */
 
@@ -118,10 +119,11 @@
    * y el peso (decisión 3 de `docs/figma-pendiente.md`). Y `subtle` a slate-700, con el
    * secundario (DD-106). Las dos viven en el Kit como `semantic/text/heading` y
    * `semantic/text/subtle` (colección Custom); el plugin las exporta con un solo modo, el
-   * oscuro, así que se escriben aquí a mano y no las genera el export (`coverage-map.mjs`).
+   * oscuro, así que `heading` se escribe aquí a mano (`coverage-map.mjs`). `subtle` en claro
+   * la escribe el generador, en la zona de arriba, desde `form.field.placeholder.color`, que
+   * el export dice `{surface.700}` desde el tercer envío del 2026-10-17 (`color-map.mjs`).
    */
   --sc-text-heading: var(--sc-color-slate-900);
-  --sc-text-subtle: var(--sc-color-slate-700);
   --sc-text-inverse: var(--sc-color-slate-0);
   /* Accent de TEXTO = violeta (2026-10-17, `docs/customs-catalog.md §1.4`): sigue a
    * `--sc-text-violet` (violet-700 en claro, 7.10:1; violet-400 en oscuro, 6.51:1).

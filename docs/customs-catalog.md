@@ -333,7 +333,8 @@ se borra.
 **slate-700** con el secundario (DD-106), así que el marcador de campo, que lo lee, también: en
 Figma `form/field/placeholder/color` pasa a `surface/700` y su fila de `color-map.mjs` sigue en
 `diverge` hasta el próximo export. Y el Kit tiene ya `semantic/text/subtle` (colección Custom), a
-slate-700 en claro.
+slate-700 en claro. El tercer envío de ese día trae el marcador en `surface.700`: su fila pasa a
+`enforce` contra `--sc-text-subtle`, que en claro escribe ya el generador. No queda divergencia.
 
 ---
 
