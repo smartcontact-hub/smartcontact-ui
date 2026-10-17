@@ -576,12 +576,10 @@
   --sc-text-heading: var(--sc-color-slate-800);
   --sc-text-subtle: var(--sc-color-slate-600);
   --sc-text-inverse: var(--sc-color-slate-0);
-  /* Accent = SKY de marca (unificado 2026-07-18, `docs/customs-catalog.md §1.4`).
-   * Antes cyan-600: era un resto del andamiaje inicial, nunca documentado como
-   * divergencia consciente, y el rename DD-23 que llevó `info` a sky no revisó
-   * este alias. Convivían dos acentos (fondo sky con texto cyan). Además
-   * cyan-600 sobre blanco daba 3.46:1 — bajo AA; sky-600 da 6.80:1. */
-  --sc-text-accent: var(--sc-color-sky-600);
+  /* Accent de TEXTO = violeta (2026-10-17, `docs/customs-catalog.md §1.4`): sigue a
+   * `--sc-text-violet` (violet-700 en claro, 7.10:1; violet-400 en oscuro, 6.51:1).
+   * El fondo, el borde y el icono de accent siguen en sky; `link` e `info` también. */
+  --sc-text-accent: var(--sc-text-violet);
   --sc-text-link: var(--sc-color-sky-600);
   /* success y warning suben un paso: green-600 daba 3.30:1 sobre blanco y
    * el warn-600 daba 3.19:1 — los dos bajo el 4.5 de AA para texto normal.
@@ -591,7 +589,7 @@
   --sc-text-success: var(--sc-color-green-700);
   --sc-text-warning: var(--sc-color-yellow-700);
   --sc-text-danger: var(--sc-color-red-600);
-  --sc-text-info: var(--sc-text-accent);
+  --sc-text-info: var(--sc-color-sky-600);
   --sc-text-violet: var(--sc-color-violet-700);
   --sc-text-on-secondary: var(--sc-color-slate-800);
   /* OBLIGATORIO al pasar accent a sky: slate-800 daba 5.89:1 sobre cyan-500,
@@ -2186,9 +2184,10 @@
    *
    * success y warning se declaran aquí porque su valor CLARO subió al 700
    * para cumplir AA sobre blanco; sin este bloque, el 700 se colaría en
-   * oscuro y caería a 3.37. `text-info` no hace falta: es un alias de
-   * `text-accent` y las custom properties se resuelven en el punto de uso. */
-  --sc-text-accent: var(--sc-color-sky-400);
+   * oscuro y caería a 3.37. `text-info` se declara aquí porque en claro ya no es un
+   * alias de `text-accent` (que ahora es violeta): se queda en sky. */
+  --sc-text-accent: var(--sc-text-violet);
+  --sc-text-info: var(--sc-color-sky-400);
   --sc-text-link: var(--sc-color-sky-400);
   --sc-text-success: var(--sc-color-green-600);
   --sc-text-warning: var(--sc-color-yellow-600);
@@ -2664,7 +2663,7 @@
   /* Los iconos de color siguen a su texto. Heredaban el paso del claro (sky-600, red-600…),
    * calculado contra blanco: el mismo agujero que tenían los `--sc-text-*` de color. */
   --sc-icon-link: var(--sc-text-link);
-  --sc-icon-accent: var(--sc-text-accent);
+  --sc-icon-accent: var(--sc-color-sky-400);
   --sc-icon-info: var(--sc-text-info);
   --sc-icon-success: var(--sc-text-success);
   --sc-icon-warning: var(--sc-text-warning);
