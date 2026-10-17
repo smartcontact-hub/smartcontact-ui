@@ -270,3 +270,35 @@ export const elegirTelefonoSaliente = async (page: Page, numero = '917945449', i
   await opcion.click();
 };
 
+/** De 1024 a 1920 cada 10, y uno por debajo de 720, donde las rejillas de `styles/_forms.scss` pasan a una columna. */
+export const ANCHOS_DE_FICHA: readonly number[] = [...Array.from({ length: 90 }, (_, i) => 1024 + i * 10), 700];
+
+/**
+ * Dónde arranca cada columna de las rejillas que casan con `selector`, en el orden del DOM, a cada ancho de ventana y
+ * sin recargar: para las que deben caer en la misma vertical (DD-170 §6). Medir dos anchos no basta: a 1440 y a 1920
+ * cuadraban, y entre 1340 y 1410 la de los campos pasaba a una columna mientras la de los canales seguía en tres
+ * (medido el 2026-10-17).
+ */
+export const columnasACadaAncho = async (
+  page: Page,
+  selector: string,
+  anchos: readonly number[] = ANCHOS_DE_FICHA,
+): Promise<{ ancho: number; columnas: number[][] }[]> => {
+  const out: { ancho: number; columnas: number[][] }[] = [];
+  for (const ancho of anchos) {
+    await page.setViewportSize({ width: ancho, height: 900 });
+    const columnas = await page.evaluate(async (sel) => {
+      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+      return [...document.querySelectorAll(sel)].map((rejilla) => {
+        const cs = getComputedStyle(rejilla);
+        const pistas = cs.gridTemplateColumns.split(' ').map(parseFloat);
+        const hueco = parseFloat(cs.columnGap) || 0;
+        const x0 = rejilla.getBoundingClientRect().left + parseFloat(cs.paddingLeft);
+        return pistas.map((_, i) => Math.round((x0 + pistas.slice(0, i).reduce((a, b) => a + b + hueco, 0)) * 4) / 4);
+      });
+    }, selector);
+    out.push({ ancho, columnas });
+  }
+  return out;
+};
+

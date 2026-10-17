@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { disableAnimations, forceLightTheme, goto } from './helpers';
+import { columnasACadaAncho, disableAnimations, forceLightTheme, goto } from './helpers';
 
 test.use({ storageState: { cookies: [], origins: [] } });
 test.beforeEach(async ({ page }) => { await forceLightTheme(page); await disableAnimations(page); });
@@ -134,4 +134,15 @@ test('la ficha del agente tampoco permite asignar un grupo sin ninguna familia c
   const incompatible = table.locator('tbody tr', { hasText: 'Grupo telefónico' });
   await expect(incompatible).toContainText('Sin canales compatibles');
   await expect(incompatible.getByRole('checkbox', { name: /^Asignado —/ })).toBeDisabled();
+});
+
+test('en General, los canales caen en las tres columnas de los campos de encima, en cualquier ancho', async ({ page }) => {
+  // Las dos rejillas de campos (`.grid--3`) pasan a una columna por debajo de 720; la de los canales seguía en tres.
+  await goto(page, 'admin/agentes/editar/1');
+  const sel = '#agent-section-general .grid--3, #agent-section-general .checkbox-grid--3';
+  for (const { ancho, columnas } of await columnasACadaAncho(page, sel)) {
+    expect(columnas, `${ancho}: dos rejillas de campos y la de los canales`).toHaveLength(3);
+    expect(columnas[0], `${ancho}: las columnas de los campos`).toHaveLength(ancho > 720 ? 3 : 1);
+    for (const otra of columnas.slice(1)) expect(otra, `${ancho}: en las columnas de los campos`).toEqual(columnas[0]);
+  }
 });

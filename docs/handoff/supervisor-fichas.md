@@ -45,7 +45,21 @@ El de lo que se decide de la auditoría de PrimeNG (2026-10-11, DD-195, sin tram
 3b9cd31a:docs/handoff/supervisor-fichas.md`. El de los quick-wins de la auditoría UX con la columna Nivel (2026-10-12,
 #375) y el de Salientes como etiqueta y botón (2026-10-13, superado por DD-204 y DD-209), sin trampas propias: `git show
 e3a6c4b1:docs/handoff/supervisor-fichas.md`. El de lo que falta se dice cuando ya hubo ocasión (2026-10-13, DD-199, sin
-trampas propias): `git show b23f6b5f:docs/handoff/supervisor-fichas.md`.
+trampas propias): `git show b23f6b5f:docs/handoff/supervisor-fichas.md`. El de fuera las notas de decisión (2026-10-13, DD-187
+§9, sin trampas propias), con los punteros a DD-183 y DD-184: `git show 8d0d82c1:docs/handoff/supervisor-fichas.md`.
+
+## ✅ 2026-10-17 · Los campos y los canales de General, en las mismas columnas a cualquier ancho (DD-170 §6)
+
+> **Sello:** rama `arebury/fix-supervisor-select-alignment` sobre `main` `8d0d82c1`, un PR.
+
+- **Ficha de grupo**: `sc-group-identity-fields` en fila es un `.grid.grid--3` (fuera su `@container` de 720, que en la
+  ficha caía entre 1344 y 1404, de 1024 a 1134 y por debajo de 900); en el diálogo de duplicar, `apilada`.
+- **`_forms.scss`**: un solo paso a una columna por debajo de 720 para `.grid--2`, `.grid--3` y `.checkbox-grid--3`
+  (los canales del agente seguían en tres), y `.field--span-2` sin pista vacía en una columna (email 24,5 de más).
+- **Pruebas**: `columnasACadaAncho` (helpers) barre de 1024 a 1914 cada 10 y 700; la usan la de los canales del grupo
+  (antes solo 1440 y 1920, fuera del hueco) y una nueva del agente. Rojas contra `main`.
+- **Trampa**: dos rejillas que comparten columnas se pliegan con la MISMA regla (pieza contra ventana discrepan en algún
+  tramo, y dos anchos no lo ven). Barrido de 23 vistas de formulario, de 600 a 1920: 8 en producción, 0 con el cambio.
 
 ## ✅ 2026-10-16 · Revisión de producto: agendas en árbol, la ficha de agente, toasts y un solo Guardar en Contact Center (DD-211)
 
@@ -163,21 +177,6 @@ trampas propias): `git show b23f6b5f:docs/handoff/supervisor-fichas.md`.
   los specs tocados y vecinos, en verde tras corregir las que esperaban los nombres de antes.
 - **Trampa**: `--table-card-tope: none` anula también el suelo (`min(…, none)` no vale y cae en `auto`): quien ponga el
   tope en `none` debe poner `--table-card-suelo`.
-
-## ✅ 2026-10-13 · Fuera las notas de decisión
-
-> **Sello:** rama `arebury/quitar-notas-equipo-main` sobre `main` `9f0827ca`.
-
-- **Las ocho notas moradas, fuera** con su componente (`sc-nota-decision`), su globo (`_nota-decision.scss`) y
-  `decision_notes` en los cuatro idiomas: el equipo dio por resuelto lo que preguntaban (DD-187 §9). Queda lo
-  construido: el PIN solo con la extensión en el teléfono, sin filtro de estado en el listado, el punto proporcional,
-  «—» en las celdas vacías, «Deshacer» en la barra, la escalera, el nombre fijo y la ayuda debajo.
-- **Los huecos que solo servían a las notas, también:** `[scListHeadingNote]` (el título del listado vuelve a ser un
-  `h1` suelto, sin `.page__heading-row`) y `[scBulkResult]` en `sc-bulk-action-bar` del DS.
-
-El del barrido de consistencia y sin punto medio entre datos (2026-10-06, DD-183, sin trampas propias), y el de
-la revisión de grupos del equipo y `sc-fileupload` (2026-10-06, DD-184, sin trampas propias): `git show
-a7ddc14b:docs/handoff/supervisor-fichas.md`.
 
 ## SIGUIENTE — sin preguntar
 
