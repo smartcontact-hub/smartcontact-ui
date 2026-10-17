@@ -66,10 +66,9 @@ export const BUCKETS = [
   { group: 'aura/custom', test: /^primitive\.typography\.line\.height\./, kind: 'flows', note: 'fuente de --sc-line-height-* (01-primitive.css:274+) — valores 1:1' },
   { group: 'aura/custom', test: /^primitive\.typography\.font\.weight\./, kind: 'flows', note: 'fuente de --sc-font-weight-* (01-primitive.css:288-291) — valores 1:1' },
 
-  // El Kit pide violet; el DS usa sky por CONTRASTE, y está razonado en el sitio
-  // (02-semantic.css:101-106: cyan-600 daba 3,46 y sky-600 da 6,80). Misma clase de
-  // divergencia que focus.ring.color: la decide la accesibilidad, no la marca.
-  { group: 'aura/custom', test: /^semantic\.text\.accent$/, kind: 'divergence', note: 'Kit {violet.400} · DS --sc-text-accent = sky-600 por contraste (02-semantic.css:101-106)' },
+  // El Kit exporta violet.400 sin modo; el DS usa violet-700 en claro (7,10:1 sobre blanco,
+  // violet-400 da 2,72) y violet-400 en oscuro. La decide la accesibilidad, no la marca.
+  { group: 'aura/custom', test: /^semantic\.text\.accent$/, kind: 'divergence', note: 'Kit {violet.400} · DS --sc-text-accent = violet-700 claro / violet-400 oscuro por contraste (customs-catalog §1.4)' },
 
   // Presencia: el DS TIENE sus tokens (--sc-presence-*, 03-palette.css:83-88) pero
   // ni los valores ni los NOMBRES coinciden — el Kit trae available/unavailable/
