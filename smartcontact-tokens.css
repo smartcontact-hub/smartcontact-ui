@@ -484,13 +484,13 @@
   --sc-text-on-primary: var(--sc-color-slate-0);
   --sc-bg-surface: var(--sc-color-slate-0);
   --sc-border-default: var(--sc-color-slate-200);
-  --sc-text-primary: var(--sc-color-slate-700);
+  --sc-text-primary: var(--sc-color-slate-900);
   --sc-bg-secondary-hover: var(--sc-color-slate-100);
   --sc-border-strong: var(--sc-color-slate-400);
   --sc-bg-disabled: var(--sc-color-slate-200);
   --sc-border-error: var(--sc-color-red-400);
   --sc-text-disabled: var(--sc-color-slate-500);
-  --sc-text-secondary: var(--sc-color-slate-600);
+  --sc-text-secondary: var(--sc-color-slate-700);
   /* @sc-gen:semantic-color-light:end */
 
   /* `--sc-icon-subtle` sale de la zona generada por la MISMA razón que
@@ -504,7 +504,10 @@
    * cumple es slate-600, el mismo al que sube `text-subtle`, que es lo
    * coherente: el icono de un hint y su texto deben pesar igual.
    *
-   * Se cierra cuando el Kit suba su `form.field.icon.color`. */
+   * Cerrada el 2026-10-17: el Kit subió `form.field.icon.color` y `navigation.item.icon.color`
+   * a `surface/600` (ficha 19 de `docs/figma-pendiente.md`). Sus filas de `color-map.mjs`
+   * vuelven a `enforce` contra la primitiva slate-600, así que si el Kit lo bajara,
+   * `tokens:parity` lo cantaría. El valor se queda aquí, escrito a mano. */
   --sc-icon-subtle: var(--sc-color-slate-600);
 
   /* `--sc-text-secondary` YA NO VIVE AQUÍ: subió a la zona `@sc-gen` de arriba el
@@ -569,12 +572,15 @@
    * En OSCURO sube a `slate-0` por el mismo motivo: `primary` ya es `slate-50`, así que
    * el escalón libre está en el blanco puro, no más abajo.
    *
-   * ⚠️ ROL NUEVO, y por ahora SOLO EN CÓDIGO: el Kit no tiene un text color de título.
-   * Hay que crearlo en Figma para que `tools/figma-export-parity.mjs` siga saliendo con
-   * cero divergencias. A la bandeja del frente.
+   * Desde el 2026-10-17, `heading` a slate-900: el texto principal subió a slate-900
+   * (DD-188) y el título, a 800, quedaba más claro que su contenido. Lo separan el tamaño
+   * y el peso (decisión 3 de `docs/figma-pendiente.md`). Y `subtle` a slate-700, con el
+   * secundario (DD-106). Las dos viven en el Kit como `semantic/text/heading` y
+   * `semantic/text/subtle` (colección Custom); el plugin las exporta con un solo modo, el
+   * oscuro, así que se escriben aquí a mano y no las genera el export (`coverage-map.mjs`).
    */
-  --sc-text-heading: var(--sc-color-slate-800);
-  --sc-text-subtle: var(--sc-color-slate-600);
+  --sc-text-heading: var(--sc-color-slate-900);
+  --sc-text-subtle: var(--sc-color-slate-700);
   --sc-text-inverse: var(--sc-color-slate-0);
   /* Accent de TEXTO = violeta (2026-10-17, `docs/customs-catalog.md §1.4`): sigue a
    * `--sc-text-violet` (violet-700 en claro, 7.10:1; violet-400 en oscuro, 6.51:1).
@@ -1215,7 +1221,7 @@
   --sc-cmp-checkbox-icon-sm-size: 0.546875rem; /* 8.75px */
   --sc-cmp-checkbox-icon-lg-size: 0.875rem; /* 14px */
   --sc-cmp-dialog-header-gap: 0.4375rem; /* 7px */
-  --sc-cmp-dialog-footer-gap: 0.328125rem; /* 5.25px */
+  --sc-cmp-dialog-footer-gap: 0.65625rem; /* 10.5px */
   --sc-cmp-tag-gap: 0.21875rem; /* 3.5px */
   --sc-cmp-tag-icon-size: 0.546875rem; /* 8.75px */
   --sc-cmp-chip-border-radius: 1rem; /* 16px */
@@ -1621,9 +1627,15 @@
   --sc-cmp-button-help-active-border-color: var(--sc-color-purple-700);
   --sc-cmp-button-help-border-color: var(--sc-color-purple-500);
   --sc-cmp-button-help-focus-ring-color: var(--sc-color-purple-500);
+  --sc-cmp-button-danger-background: var(--sc-color-red-600);
   --sc-cmp-button-danger-color: var(--sc-color-slate-0);
+  --sc-cmp-button-danger-hover-background: var(--sc-color-red-700);
   --sc-cmp-button-danger-hover-color: var(--sc-color-slate-0);
+  --sc-cmp-button-danger-hover-border-color: var(--sc-color-red-700);
+  --sc-cmp-button-danger-active-background: var(--sc-color-red-800);
   --sc-cmp-button-danger-active-color: var(--sc-color-slate-0);
+  --sc-cmp-button-danger-active-border-color: var(--sc-color-red-800);
+  --sc-cmp-button-danger-border-color: var(--sc-color-red-600);
   --sc-cmp-button-danger-focus-ring-color: var(--sc-color-red-500);
   --sc-cmp-button-contrast-background: var(--sc-color-slate-950);
   --sc-cmp-button-contrast-color: var(--sc-color-slate-0);
@@ -1635,6 +1647,7 @@
   --sc-cmp-button-contrast-active-border-color: var(--sc-color-slate-800);
   --sc-cmp-button-contrast-border-color: var(--sc-color-slate-950);
   --sc-cmp-button-contrast-focus-ring-color: var(--sc-color-slate-950);
+  --sc-cmp-button-outlined-secondary-color: var(--sc-color-slate-600);
   --sc-cmp-button-outlined-secondary-hover-background: var(--sc-color-slate-50);
   --sc-cmp-button-outlined-secondary-active-background: var(--sc-color-slate-100);
   --sc-cmp-button-outlined-secondary-border-color: var(--sc-color-slate-200);
@@ -1654,7 +1667,7 @@
   --sc-cmp-button-outlined-help-hover-background: var(--sc-color-purple-50);
   --sc-cmp-button-outlined-help-active-background: var(--sc-color-purple-100);
   --sc-cmp-button-outlined-help-border-color: var(--sc-color-purple-200);
-  --sc-cmp-button-outlined-danger-color: var(--sc-color-red-500);
+  --sc-cmp-button-outlined-danger-color: var(--sc-color-red-600);
   --sc-cmp-button-outlined-danger-hover-background: var(--sc-color-red-50);
   --sc-cmp-button-outlined-danger-active-background: var(--sc-color-red-100);
   --sc-cmp-button-outlined-danger-border-color: var(--sc-color-red-200);
@@ -1680,6 +1693,7 @@
   --sc-cmp-button-text-help-color: var(--sc-color-purple-500);
   --sc-cmp-button-text-help-hover-background: var(--sc-color-purple-50);
   --sc-cmp-button-text-help-active-background: var(--sc-color-purple-100);
+  --sc-cmp-button-text-danger-color: var(--sc-color-red-600);
   --sc-cmp-button-text-danger-hover-background: var(--sc-color-red-50);
   --sc-cmp-button-text-danger-active-background: var(--sc-color-red-100);
   --sc-cmp-button-text-plain-color: var(--sc-color-slate-700);
@@ -1775,7 +1789,7 @@
   --sc-cmp-skeleton-background: var(--sc-color-slate-200);
   --sc-cmp-slider-handle-content-background: var(--sc-color-slate-0);
   --sc-cmp-tag-secondary-background: var(--sc-color-slate-100);
-  --sc-cmp-tag-secondary-color: var(--sc-color-slate-600);
+  --sc-cmp-tag-secondary-color: var(--sc-color-slate-700);
   --sc-cmp-tag-success-background: var(--sc-color-green-100);
   --sc-cmp-tag-success-color: var(--sc-color-green-700);
   --sc-cmp-tag-info-background: var(--sc-color-sky-100);
@@ -1787,13 +1801,15 @@
   --sc-cmp-tag-contrast-background: var(--sc-color-slate-950);
   --sc-cmp-tag-contrast-color: var(--sc-color-slate-0);
   --sc-cmp-togglebutton-background: var(--sc-color-slate-100);
+  --sc-cmp-togglebutton-color: var(--sc-color-slate-700);
   --sc-cmp-togglebutton-checked-background: var(--sc-color-slate-100);
   --sc-cmp-togglebutton-checked-color: var(--sc-color-slate-900);
   --sc-cmp-togglebutton-checked-border-color: var(--sc-color-slate-100);
   --sc-cmp-togglebutton-hover-background: var(--sc-color-slate-100);
+  --sc-cmp-togglebutton-hover-color: var(--sc-color-slate-900);
   --sc-cmp-togglebutton-border-color: var(--sc-color-slate-100);
-  --sc-cmp-togglebutton-icon-color: var(--sc-color-slate-500);
-  --sc-cmp-togglebutton-icon-hover-color: var(--sc-color-slate-700);
+  --sc-cmp-togglebutton-icon-color: var(--sc-color-slate-700);
+  --sc-cmp-togglebutton-icon-hover-color: var(--sc-color-slate-900);
   --sc-cmp-togglebutton-icon-checked-color: var(--sc-color-slate-900);
   --sc-cmp-togglebutton-content-checked-background: var(--sc-color-slate-0);
   --sc-cmp-toast-info-background: color-mix(in srgb, var(--sc-color-sky-50) 95%, transparent);
@@ -1842,43 +1858,14 @@
   --sc-cmp-tooltip-color: var(--sc-color-slate-0);
   /* @sc-gen:cmp-color-light:end */
 
-  /* ---------- Botón `outlined secondary`: su etiqueta estaba bajo AA ----------
-   *
-   * Fuera de la zona `@sc-gen` y con su slot en `EXCLUDE` (cmp-color-map),
-   * porque es una divergencia consciente del Kit. Mismo mecanismo que ya usan
-   * los bordes de `info`.
-   *
-   * El Kit da `slate-500` para la etiqueta: **2.95:1** sobre blanco. Es el
-   * botón "Añadir" de AED, un control primario de esa pantalla, no un adorno.
-   * `slate-600` da 4.52 — el mismo escalón al que subieron `text-secondary`
-   * (§1.5) y `text-subtle` (§1.7), por la misma aritmética: sobre blanco solo
-   * cumplen dos pasos de la rampa de grises.
-   *
-   * El OTRO fallo de botón, el `danger` sólido, NO se arregla aquí: sus
-   * `--sc-cmp-button-danger-*` corresponden a otro slot y no los lee nadie
-   * (comprobado midiendo el píxel). Va en el preset, por referencia de
-   * paleta. Ver `sc-preset/button.ts` y customs-catalog §1.8.
-   *
-   * Se cierra cuando el Kit suba `button.outlined.secondary.color`. */
-  --sc-cmp-button-outlined-secondary-color: var(--sc-color-slate-600);
-
-  /* ---------- Botón `danger` de TEXTO: su etiqueta estaba bajo AA ----------
-   *
-   * Fuera de la zona `@sc-gen` y con su slot en `EXCLUDE` (cmp-color-map), mismo mecanismo que
-   * `outlined secondary` arriba. El Kit da `red-500` para la etiqueta: **3.76:1** sobre blanco
-   * — el «Eliminar» de la cabecera de las fichas de grupo, agente y usuario. El sólido ya subió
-   * a `red-600` (§1.8, 2026-09-15); este es el mismo par de colores, así que da el mismo
-   * **4.83:1**. A diferencia del sólido, este slot SÍ lo consume el preset por token
-   * (comprobado: `sc-preset/button.ts` lee `var(--sc-cmp-button-text-danger-color)`), así que
-   * va por token en vez de por referencia de paleta. Ver customs-catalog §1.8.
-   *
-   * Se cierra cuando el Kit suba `button.text.danger.color`. */
-  --sc-cmp-button-text-danger-color: var(--sc-color-red-600);
+  /* `outlined secondary` (slate-600) y el `danger` de TEXTO (red-600) se escribían aquí a mano
+   * hasta el 2026-10-17: el export de ese día trajo el Kit a esos mismos valores y ahora los
+   * escribe el generador en la zona de arriba (customs-catalog §1.8). */
 
   /* ---------- Botón `secondary` de TEXTO: su etiqueta estaba bajo AA ----------
    *
-   * Fuera de la zona `@sc-gen` y con su slot en `EXCLUDE` (cmp-color-map), mismo mecanismo que
-   * los dos de arriba. El Kit da `slate-500` para la etiqueta: **2.95:1** sobre blanco — el
+   * Fuera de la zona `@sc-gen` y con su slot en `EXCLUDE` (cmp-color-map). El Kit da
+   * `slate-500` para la etiqueta: **2.95:1** sobre blanco — el
    * «Añadir alternativa (O)» del constructor de reglas (DD-169), un control de flujo, no un
    * adorno. Es el MISMO color que `outlined secondary`, en otra `appearance`: el Kit los emite
    * como dos filas distintas (`button.outlined.secondary.color` / `button.text.secondary.color`),

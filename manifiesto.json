@@ -1,34 +1,52 @@
 {
-  "commit": "4fc75469",
+  "commit": "edced112",
   "primeng": "22.1.0",
   "themes": "3.0.0",
-  "generado": "2026-10-17T18:20:02.888Z",
+  "generado": "2026-10-17T20:01:05.134Z",
   "comprobaciones": {
     "ceros": [],
     "raizPx": 16,
     "diferencia": {
       "anterior": true,
       "ficheros": [
+        "sc-preset.mjs",
         "smartcontact-tokens.css"
       ],
       "variables": [
-        "claro|--sc-icon-accent",
-        "claro|--sc-icon-info",
-        "oscuro|--sc-icon-accent"
+        "claro|--sc-cmp-button-danger-active-background",
+        "claro|--sc-cmp-button-danger-active-border-color",
+        "claro|--sc-cmp-button-danger-background",
+        "claro|--sc-cmp-button-danger-border-color",
+        "claro|--sc-cmp-button-danger-hover-background",
+        "claro|--sc-cmp-button-danger-hover-border-color",
+        "claro|--sc-cmp-button-outlined-danger-color",
+        "claro|--sc-cmp-dialog-footer-gap",
+        "claro|--sc-cmp-tag-secondary-color",
+        "claro|--sc-cmp-togglebutton-color",
+        "claro|--sc-cmp-togglebutton-hover-color",
+        "claro|--sc-cmp-togglebutton-icon-color",
+        "claro|--sc-cmp-togglebutton-icon-hover-color",
+        "claro|--sc-text-heading",
+        "claro|--sc-text-primary",
+        "claro|--sc-text-secondary",
+        "claro|--sc-text-subtle"
       ],
       "retirados": [],
-      "semanticaComun": false,
+      "semanticaComun": true,
       "reglasCss": false,
-      "componentes": []
+      "componentes": [
+        "button",
+        "togglebutton"
+      ]
     },
     "cambia": true,
     "contratoPlugin": {
-      "promete": 65,
+      "promete": 68,
       "faltan": []
     },
     "sinCodigoDePrimeTek": {
       "incluye": []
     }
   },
-  "version": "0.20261017.1820"
+  "version": "0.20261017.2001"
 }

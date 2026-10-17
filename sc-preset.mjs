@@ -1468,11 +1468,10 @@ var button_default = {
          * de 500/600/700 a 600/700/800, para conservar el recorrido
          * reposo → hover → pulsado. red-600 con blanco da **4.83:1**.
          *
-         * Divergencia declarada (2026-09-15): los seis slots están en
-         * `EXCLUDE` de `cmp-color-map.mjs`, así que el generador no
-         * emite su `--sc-cmp-button-danger-*` y el valor se queda aquí.
-         * Cuando Figma lo suba (`figma-pendiente.md`), se quitan esas
-         * filas y se lee la variable. Ver customs-catalog §1.8.
+         * Fue divergencia declarada (2026-09-15) hasta el export del
+         * 2026-10-17, que trajo el Kit a esa misma rampa
+         * (`figma-pendiente.md` §12): se lee la variable. Ver
+         * customs-catalog §1.8.
          *
          * `focusRing` se queda en {red.500}: es un anillo, no lleva
          * texto encima, y no cambiarlo evita mover una señal de foco. */
@@ -1481,14 +1480,14 @@ var button_default = {
           focusRing: {
             color: "var(--sc-cmp-button-danger-focus-ring-color)"
           },
-          background: "{red.600}",
+          background: "var(--sc-cmp-button-danger-background)",
           hoverColor: "var(--sc-cmp-button-danger-hover-color)",
           activeColor: "var(--sc-cmp-button-danger-active-color)",
-          borderColor: "{red.600}",
-          hoverBackground: "{red.700}",
-          activeBackground: "{red.800}",
-          hoverBorderColor: "{red.700}",
-          activeBorderColor: "{red.800}"
+          borderColor: "var(--sc-cmp-button-danger-border-color)",
+          hoverBackground: "var(--sc-cmp-button-danger-hover-background)",
+          activeBackground: "var(--sc-cmp-button-danger-active-background)",
+          hoverBorderColor: "var(--sc-cmp-button-danger-hover-border-color)",
+          activeBorderColor: "var(--sc-cmp-button-danger-active-border-color)"
         },
         primary: {
           color: "{primary.contrast.color}",
@@ -4495,14 +4494,13 @@ var togglebutton_default = {
         checkedColor: "var(--sc-cmp-togglebutton-icon-checked-color)"
       },
       root: {
-        /* DIVERGENCIA por AA (customs-catalog §1.10, 2026-09-14): el Kit da `surface.500` para la
-         * opción no elegida, 2,56:1 sobre su carril `surface.100` (lo cazó `theme-contrast` en las
-         * vistas de Conversaciones). `surface.700` da 6,40:1. El hover sube un paso más, a
-         * `surface.900`, para que siga respondiendo al ratón. Declarada en `cmp-color-map.mjs` (EXCLUDE):
-         * cuando el Kit suba el suyo (`figma-pendiente.md` §8), se quitan esas filas y se lee la variable. */
-        color: "{surface.700}",
+        /* Fue divergencia por AA (customs-catalog §1.10, 2026-09-14): el Kit daba `surface.500` para la
+         * opción no elegida, 2,56:1 sobre su carril `surface.100`. Desde el export del 2026-10-17 el Kit
+         * dice `surface.700` (6,40:1) y `surface.900` al pasar el ratón, lo mismo que se pintaba a mano:
+         * se lee la variable (`figma-pendiente.md` §8). */
+        color: "var(--sc-cmp-togglebutton-color)",
         background: "var(--sc-cmp-togglebutton-background)",
-        hoverColor: "{surface.900}",
+        hoverColor: "var(--sc-cmp-togglebutton-hover-color)",
         borderColor: "var(--sc-cmp-togglebutton-border-color)",
         checkedColor: "var(--sc-cmp-togglebutton-checked-color)",
         hoverBackground: "var(--sc-cmp-togglebutton-hover-background)",
@@ -5322,7 +5320,7 @@ var preset = definePreset(Aura, normalizeDesignRem({
 var sc_preset_default = preset;
 
 // <stdin>
-var stdin_default = definePreset2(sc_preset_default, { extend: { "primitive": { "typography": { "font": { "weight": { "regular": "var(--sc-font-weight-regular)", "medium": "var(--sc-font-weight-medium)", "semibold": "var(--sc-font-weight-semibold)", "bold": "var(--sc-font-weight-bold)" }, "size": { "100": "var(--sc-font-size-100)", "200": "var(--sc-font-size-200)", "300": "var(--sc-font-size-300)", "400": "var(--sc-font-size-400)", "450": "var(--sc-font-size-450)", "500": "var(--sc-font-size-500)", "650": "var(--sc-font-size-650)", "800": "var(--sc-font-size-800)", "900": "var(--sc-font-size-900)" }, "family": { "inter": "Inter" }, "style": { "regular": "Regular", "medium": "Medium", "semibold": "Semi Bold", "bold": "Bold" } }, "line": { "height": { "100": "var(--sc-line-height-100)", "200": "var(--sc-line-height-200)", "300": "var(--sc-line-height-300)", "450": "var(--sc-line-height-450)", "500": "var(--sc-line-height-500)", "650": "var(--sc-line-height-650)", "800": "var(--sc-line-height-800)", "900": "var(--sc-line-height-900)" } } } }, "semantic": { "text": { "accent": "var(--sc-text-accent)" }, "presence": { "available": "{green.400}", "unavailable": "{red.400}", "administrative": "{red.600}", "talking": "{cyan.400}", "wrapup": "{cyan.600}" } }, "component": { "custommodal": { "background": "{overlay.modal.background}", "color": "{overlay.modal.color}", "border": { "color": "{overlay.modal.border.color}", "radius": "{overlay.modal.border.radius}" }, "header": { "padding": "{overlay.modal.padding}", "gap": "var(--sc-scale-0-5)" }, "subheader": { "padding": "{overlay.modal.padding}", "gap": "var(--sc-scale-0-5)", "color": "{form.field.float.label.color}" }, "title": { "font": { "size": "{primitive.typography.font.size.400}", "weight": "{primitive.typography.font.weight.semibold}" } }, "footer": { "gap": "var(--sc-scale-0-5)", "padding": { "top": "0", "right": "{overlay.modal.padding}", "bottom": "{overlay.modal.padding}", "left": "{overlay.modal.padding}" } }, "content": { "padding": { "top": "0", "right": "{overlay.modal.padding}", "bottom": "{overlay.modal.padding}", "left": "{overlay.modal.padding}" } }, "error": { "background": "#ef444429", "color": "{red.500}", "border": { "color": "#b91c1c5c" } }, "warn": { "background": "#eab30829", "color": "{yellow.300}", "border": { "color": "#a162075c" } } }, "dialog": { "icon": { "color": "var(--sc-dialog-head-icon-fg)" } } } } });
+var stdin_default = definePreset2(sc_preset_default, { extend: { "primitive": { "typography": { "font": { "weight": { "regular": "var(--sc-font-weight-regular)", "medium": "var(--sc-font-weight-medium)", "semibold": "var(--sc-font-weight-semibold)", "bold": "var(--sc-font-weight-bold)" }, "size": { "100": "var(--sc-font-size-100)", "200": "var(--sc-font-size-200)", "300": "var(--sc-font-size-300)", "400": "var(--sc-font-size-400)", "450": "var(--sc-font-size-450)", "500": "var(--sc-font-size-500)", "650": "var(--sc-font-size-650)", "800": "var(--sc-font-size-800)", "900": "var(--sc-font-size-900)" }, "family": { "inter": "Inter" }, "style": { "regular": "Regular", "medium": "Medium", "semibold": "Semi Bold", "bold": "Bold" } }, "line": { "height": { "100": "var(--sc-line-height-100)", "200": "var(--sc-line-height-200)", "300": "var(--sc-line-height-300)", "450": "var(--sc-line-height-450)", "500": "var(--sc-line-height-500)", "650": "var(--sc-line-height-650)", "800": "var(--sc-line-height-800)", "900": "var(--sc-line-height-900)" } } } }, "semantic": { "text": { "accent": "var(--sc-text-accent)", "inverse": "var(--sc-text-inverse)", "heading": "var(--sc-text-heading)", "subtle": "var(--sc-text-subtle)" }, "presence": { "available": "{green.400}", "unavailable": "{red.400}", "administrative": "{red.600}", "talking": "{cyan.400}", "wrapup": "{cyan.600}" } }, "component": { "custommodal": { "background": "{overlay.modal.background}", "color": "{overlay.modal.color}", "border": { "color": "{overlay.modal.border.color}", "radius": "{overlay.modal.border.radius}" }, "header": { "padding": "{overlay.modal.padding}", "gap": "var(--sc-scale-0-5)" }, "subheader": { "padding": "{overlay.modal.padding}", "gap": "var(--sc-scale-0-5)", "color": "{form.field.float.label.color}" }, "title": { "font": { "size": "{primitive.typography.font.size.400}", "weight": "{primitive.typography.font.weight.semibold}" } }, "footer": { "gap": "var(--sc-scale-0-5)", "padding": { "top": "0", "right": "{overlay.modal.padding}", "bottom": "{overlay.modal.padding}", "left": "{overlay.modal.padding}" } }, "content": { "padding": { "top": "0", "right": "{overlay.modal.padding}", "bottom": "{overlay.modal.padding}", "left": "{overlay.modal.padding}" } }, "error": { "background": "#ef444429", "color": "{red.500}", "border": { "color": "#b91c1c5c" } }, "warn": { "background": "#eab30829", "color": "{yellow.300}", "border": { "color": "#a162075c" } } }, "dialog": { "icon": { "color": "var(--sc-dialog-head-icon-fg)" } } } } });
 export {
   stdin_default as default
 };
