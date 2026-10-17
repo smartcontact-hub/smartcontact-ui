@@ -133,11 +133,10 @@ const RUTAS_SUELO = [...RUTAS, 'supervision', 'conversaciones/reglas/nueva'] as 
  *     con lo que se iguala a `secondary` y el tercer nivel de gris desaparece
  *     en claro. Ver `customs-catalog` §1.7. Su par ya no se informa: se gatea.
  *
- *  2. `--sc-text-secondary` sobre `--sc-bg-default` → **4.25:1**, y sobre
- *     slate-100 → **3.92:1**. Límite ya documentado y aceptado a propósito en
- *     `customs-catalog` §1.5: subirlo a slate-700 lo arreglaría pero lo deja
- *     a un paso de `--sc-text-primary` y entonces "secundario" no significa
- *     nada. Se cambiaría un fallo de contraste por uno de jerarquía.
+ *  2. ~~`--sc-text-secondary`~~ sobre `--sc-bg-default` (4.25:1) y slate-100
+ *     (3.92:1) — **el secundario, resuelto el 2026-10-17**: sube a slate-700
+ *     (DD-106) y el principal a slate-900 (DD-188). Su par de excepciones se
+ *     queda por otros dos textos en slate-600 que destapó quitarlas (abajo).
  *
  *  3. `p-button-danger` — blanco sobre red-500 → **3.76:1**. Preset del DS.
  *
@@ -145,20 +144,16 @@ const RUTAS_SUELO = [...RUTAS, 'supervision', 'conversaciones/reglas/nueva'] as 
  *     → **2.95:1**. Es el botón "Añadir" de AED, un control primario de la
  *     pantalla. Preset del DS.
  */
-const CONOCIDOS_CLARO = [
+const CONOCIDOS_CLARO: string[] = [
   // 1 · --sc-text-subtle          → FUERA desde el 2026-07-19 (§1.7). Cumple.
   // 3 · p-button-danger           → FUERA desde el 2026-07-19 (§1.8). Cumple.
   // 4 · p-button-secondary outlined → FUERA desde el 2026-07-19 (§1.8). Cumple.
-  //
-  // Queda UNO, y es el único de toda la app: `--sc-text-secondary` sobre el
-  // LIENZO (no sobre tarjeta). 4.25:1, y 3.92 sobre slate-100. Aceptado a
-  // propósito en §1.5 — subirlo a slate-700 lo pega a `text-primary` y cambia
-  // un fallo de contraste por uno de jerarquía. Sobre tarjeta (que es donde
-  // vive la mayor parte del texto secundario) mide 4.52 y cumple.
-  //
-  // Se perdona con su FONDO, no solo con su color: el lienzo (slate-50) y slate-100. Hasta el
-  // 2026-09-27 bastaba el color, y así pasó sin verse el secundario sobre el tinte de marca del
-  // resumen de las fichas (3,96:1, DD-126): cualquier fondo nuevo bajo el gris quedaba perdonado.
+  // 2 · `--sc-text-secondary` sobre el lienzo (4.25:1) y sobre slate-100 (3.92) → el secundario y
+  //     `subtle` suben a slate-700 el 2026-10-17 (DD-106) y ya no caen aquí. Pero las dos líneas de
+  //     abajo SIGUEN perdonando slate-600 sobre esos fondos, porque al quitarlas (medido ese día) salen
+  //     otros dos que tapaban: dos etiquetas de botón de 12 px en `admin/agendas/editar/1` y un texto de
+  //     14 px sobre slate-100 en `conversaciones/reglas/nueva?seccion=alcance`. No son del secundario;
+  //     anotado en `docs/figma-pendiente.md` (paso 6) para decidir su color.
   'bg=rgb(247,248,250) fg=rgb(111,119,132)',
   'bg=rgb(236,239,243) fg=rgb(111,119,132)',
   // 5 · `p-button-danger` + `text` → RESUELTO el 2026-09-27 (DD-128, customs-catalog §1.8): el

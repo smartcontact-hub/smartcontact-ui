@@ -18,49 +18,20 @@
 /** Slots que NO se generan (divergencia de marca / afinado a mano). Se siembra vacío;
  *  se añade una fila cuando una reconciliación export↔código decide preservar el valor. */
 export const EXCLUDE = new Set([
-  // ── etiqueta del botón `outlined secondary` (light) · 2026-07-19 ──────────────
-  //    El Kit da slate-500 = 2.95:1 sobre blanco. Es el "Añadir" de AED, un control
-  //    primario, no un adorno. slate-600 (4.52) — el mismo escalón al que subieron
-  //    text-secondary y text-subtle, por la misma aritmética: sobre blanco solo
-  //    cumplen dos pasos de la rampa de grises.
-  //    El otro fallo de botón (el `danger` sólido) NO se cura por aquí: sus tokens
-  //    no los consume nadie. Va por referencia de paleta en `sc-preset/button.ts`.
-  //    Se borra cuando el Kit suba el suyo. Ver customs-catalog §1.8.
-  'light:button.outlined.secondary.color',
-  // ── botón `danger` sólido (light) · 2026-09-15 ─────────────────────────────────
-  //    El Kit (y Aura) lo pinta red-500 con texto blanco: 3,76:1, no llega a AA. Se queda un paso más oscuro
-  //    (red-600, 4,83:1; hover y active también un paso), DD-87. Estaba escrito como paleta en el preset y
-  //    el guard no lo veía; ahora es una divergencia declarada. Se borra cuando Figma lo suba
-  //    (`docs/figma-pendiente.md`).
-  'light:button.danger.background',
-  'light:button.danger.border.color',
-  'light:button.danger.hover.background',
-  'light:button.danger.hover.border.color',
-  'light:button.danger.active.background',
-  'light:button.danger.active.border.color',
-  // ── etiqueta del botón `danger` de TEXTO (light) · 2026-09-27 (DD-128) ──────────
-  //    El sólido subió a red-600 arriba (2026-09-15); el de texto (`appearance="text"`, el
-  //    «Eliminar» de las fichas) se quedó en red-500 = 3,76:1 sobre blanco. A diferencia del
-  //    sólido, este SÍ lo consume el preset por token (`--sc-cmp-button-text-danger-color`,
-  //    `sc-preset/button.ts`), así que va por el mismo mecanismo que `outlined.secondary` arriba:
-  //    fuera de la zona `@sc-gen`, valor a mano en `04-component.css`. Se borra cuando Figma suba
-  //    `button.text.danger.color`. Ver customs-catalog §1.8.
-  'light:button.text.danger.color',
+  // Retiradas el 2026-10-17, porque el export de ese día trajo el Kit al valor que ya pintaba el código
+  // (`docs/figma-pendiente.md` §8, §12 y §19): `outlined.secondary` (slate-600), el `danger` sólido
+  // (red-600 · 700 · 800), el `danger` de texto (red-600) y la opción no elegida de SelectButton
+  // (slate-700, hover slate-900). Ahora las escribe el generador. Ver customs-catalog §1.8 y §1.10.
+  //
   // ── etiqueta del botón `secondary` de TEXTO (light) · 2026-10-05 (DD-169) ──────────
-  //    El Kit da slate-500 = 2.95:1 sobre blanco — el mismo valor que `outlined.secondary` arriba,
+  //    El Kit da slate-500 = 2.95:1 sobre blanco — el mismo valor que tenía `outlined.secondary`,
   //    porque es el MISMO color en otra `appearance`. Es el «Añadir alternativa (O)» del
-  //    constructor de reglas, un control de flujo, no un adorno; §1.8 (2026-09-27) decía
-  //    "cierra la lista" y este slot se quedó fuera porque `outlined` y `text` son filas
-  //    DISTINTAS del export (`button.outlined.secondary.color` / `button.text.secondary.color`).
-  //    Mismo mecanismo: slate-600 (4.52), fuera de la zona `@sc-gen`, valor a mano en
-  //    `04-component.css`. Se borra cuando el Kit suba `button.text.secondary.color`. Ver
+  //    constructor de reglas, un control de flujo, no un adorno; `outlined` y `text` son filas
+  //    DISTINTAS del export (`button.outlined.secondary.color` / `button.text.secondary.color`),
+  //    y el Kit solo subió la primera. slate-600 (4.52), fuera de la zona `@sc-gen`, valor a mano
+  //    en `04-component.css`. Se borra cuando el Kit suba `button.text.secondary.color`. Ver
   //    customs-catalog §1.11.
   'light:button.text.secondary.color',
-  // ── opción no elegida de SelectButton (light) · 2026-09-14 ──────────────────────
-  //    El Kit da surface-500 sobre su carril: 2,56:1. El código va a surface-700 (6,40:1) y el hover a
-  //    surface-900 (customs-catalog §1.10). Se borra cuando Figma haga `figma-pendiente.md` §8.
-  'light:togglebutton.color',
-  'light:togglebutton.hover.color',
   // ── success text (dark): antes la DS curaba su green-950 de marca y aquí no se espejaba.
   //    Desde el 2026-09-14 green-950 sale del export (DD-83), así que el valor ya es el mismo;
   //    las filas se quedan excluidas para no cambiar dos cosas a la vez. Se pueden quitar.

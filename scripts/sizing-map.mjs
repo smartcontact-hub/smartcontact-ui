@@ -511,27 +511,16 @@ export const DIVERGE_SIZING = [];
  *   - `token-parity.mjs` compara el preset con ese paso y AVISA cuando el export ya dice lo mismo: es la
  *     señal de que Figma está alineado y la fila sobra.
  * Lo que hay que hacer en Figma, fila a fila: `docs/figma-pendiente.md` §4. `paso: '0'` = cero.
+ *
+ * Eran 55. Las 52 que el Kit ya alineó (export del 2026-09-28, medido en el fichero el 2026-10-17) salieron
+ * de la lista: el generador las lee del export con el mismo valor. Quedan las tres que en el Kit son UNA
+ * variable donde Aura pone dos valores; separarlas pide variables nuevas en Figma.
  */
 /** @param {string} paso @param {...string} labels @returns {{ label: string, paso: string }[]} */
 const aura = (paso, ...labels) => labels.map((label) => ({ label, paso }));
 /** @type {{ label: string, paso: string }[]} */
 export const PENDIENTE_FIGMA = [
-  ...aura('0-25', 'list.option.paddingY', 'list.optionGroup.paddingY', 'navigation.item.paddingY', 'navigation.submenuLabel.paddingY', 'message.content.sm.paddingY'),
-  ...aura('0-625', 'list.option.paddingX', 'list.optionGroup.paddingX', 'navigation.item.paddingX', 'navigation.submenuLabel.paddingX',
-    'tooltip.paddingX', 'message.content.paddingX', 'radiobutton.icon.size', 'badge.root.fontSize'),
-  ...aura('0-75', 'navigation.submenuIcon.size', 'message.content.lg.paddingX', 'radiobutton.icon.lg.size', 'badge.lg.fontSize'),
-  ...aura('0-375', 'tooltip.paddingY', 'tag.root.paddingX', 'message.content.paddingY', 'divider.vertical.content.paddingY',
-    'divider.horizontal.content.paddingX', 'divider.vertical.paddingY', 'badge.root.paddingX', 'paginator.root.paddingY'),
-  ...aura('0-5', 'message.content.lg.paddingY', 'message.content.sm.paddingX', 'badge.sm.fontSize'),
-  ...aura('0-875', 'divider.horizontal.paddingX', 'paginator.root.paddingX'),
+  ...aura('0-375', 'divider.vertical.paddingY'),
+  ...aura('0-875', 'divider.horizontal.paddingX'),
   ...aura('0', 'inputgroup.addon.paddingY'),
-  ...aura('1', 'panel.toggleableHeader.paddingX', 'panel.header.padding'),
-  ...aura('1-125', 'popover.root.arrowOffset', 'radiobutton.root.width', 'radiobutton.root.height', 'progressbar.root.height',
-    'card.body.padding', 'badge.sm.minWidth', 'badge.sm.height'),
-  ...aura('1-25', 'radiobutton.root.lg.width', 'radiobutton.root.lg.height', 'badge.root.minWidth', 'badge.root.height',
-    'avatar.lg.fontSize', 'avatar.lg.icon.size'),
-  ...aura('1-5', 'confirmdialog.icon.size', 'badge.lg.minWidth', 'badge.lg.height'),
-  ...aura('2-25', 'inputgroup.addon.minWidth', 'paginator.jumpToPageInput.maxWidth', 'paginator.navButton.width', 'paginator.navButton.height'),
-  ...aura('neg-1-25', 'avatar.xl.group.offset'),
-  ...aura('neg-0-625', 'avatar.group.offset'),
 ];

@@ -69,14 +69,13 @@ import type { ToggleButtonDesignTokens } from '@primeuix/themes/types/togglebutt
                 checkedColor: "var(--sc-cmp-togglebutton-icon-checked-color)"
             },
             root: {
-                /* DIVERGENCIA por AA (customs-catalog §1.10, 2026-09-14): el Kit da `surface.500` para la
-                 * opción no elegida, 2,56:1 sobre su carril `surface.100` (lo cazó `theme-contrast` en las
-                 * vistas de Conversaciones). `surface.700` da 6,40:1. El hover sube un paso más, a
-                 * `surface.900`, para que siga respondiendo al ratón. Declarada en `cmp-color-map.mjs` (EXCLUDE):
-                 * cuando el Kit suba el suyo (`figma-pendiente.md` §8), se quitan esas filas y se lee la variable. */
-                color: "{surface.700}",
+                /* Fue divergencia por AA (customs-catalog §1.10, 2026-09-14): el Kit daba `surface.500` para la
+                 * opción no elegida, 2,56:1 sobre su carril `surface.100`. Desde el export del 2026-10-17 el Kit
+                 * dice `surface.700` (6,40:1) y `surface.900` al pasar el ratón, lo mismo que se pintaba a mano:
+                 * se lee la variable (`figma-pendiente.md` §8). */
+                color: "var(--sc-cmp-togglebutton-color)",
                 background: "var(--sc-cmp-togglebutton-background)",
-                hoverColor: "{surface.900}",
+                hoverColor: "var(--sc-cmp-togglebutton-hover-color)",
                 borderColor: "var(--sc-cmp-togglebutton-border-color)",
                 checkedColor: "var(--sc-cmp-togglebutton-checked-color)",
                 hoverBackground: "var(--sc-cmp-togglebutton-hover-background)",
