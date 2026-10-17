@@ -17,6 +17,15 @@
 > cada fila de la tabla de la ficha 4 y cada variable citada. **No contra el fichero de Figma**: esa sesión no
 > tenía server de Figma. Lo que solo se ve en el fichero lo marca cada ficha con **«mídelo antes»**. Ninguna ficha
 > está hecha: en todas las que tocan una variable, el export aún dice el valor de antes.
+>
+> ✅ **Sesión en el fichero del 2026-10-17**, con el bridge sobre `khNq9dJKNi13pNllrqm6dx`. Regla: **solo repuntes**
+> a variables y estilos que ya existen. Ni variables, ni propiedades, ni variantes, ni dibujo nuevos, para que el plugin
+> siga leyendo el tema de PrimeNG tal cual. Lo que pide algo que no existe queda para otra sesión, y su ficha lo dice.
+> Versiones guardadas en el fichero: «antes de figma-pendiente (2026-10-17)» y «figma-pendiente: repuntes
+> (2026-10-17)». Al cerrar, cada colección tenía las mismas variables que al empezar (medido).
+>
+> **El maestro `Section` del fichero del DS es `12610:23284`** (página `❖ Section`, `13644:4169`). El `691:23956` que
+> citan esta guía y el código no existe en este fichero (medido el 2026-10-17).
 
 
 **Repositorios en tarjetas por grupo (DD-179, 2026-10-06).** El hub no tiene página en el fichero del Supervisor
@@ -63,8 +72,8 @@ se corta a medias, se retoma en el siguiente.
 
 ### Paso 0 · Antes de tocar nada (15 min)
 
-- [ ] Guarda una versión del fichero del DS (*File → Save to version history*), con un nombre como «antes de
-      figma-pendiente». Guarda otra al acabar cada paso.
+- [x] Guarda una versión del fichero del DS (*File → Save to version history*), con un nombre como «antes de
+      figma-pendiente». Guarda otra al acabar cada paso. **Hecho el 2026-10-17.**
 - [ ] Repasa **«Decisiones»**, justo debajo: seis tomadas el 2026-09-28 y una pendiente (los buscadores). Si no
       decides una, sáltate esa ficha: las demás no dependen de ella.
 - [ ] Plugin `primeui-figma-plugin-v4`, panel *GitHub Settings*: owner `smartcontact-hub`, repositorio
@@ -75,8 +84,10 @@ se corta a medias, se retoma en el siguiente.
 
 ### Paso 1 · Variables de medida, push y PR del robot (~45 min)
 
-- [ ] **Ficha 4:** 52 alias, 3 variables que se separan en dos y `toast/blur` en claro. Con el bridge, las 53 que no
-      hay que separar las hace `tools/figma-pendiente.mjs` (ver «El script», debajo). Las 3 que se separan, a mano.
+- [x] **Ficha 4:** los 52 alias y `toast/blur` en claro **ya estaban** en el fichero y en el export desde el
+      2026-09-28 (#276; medido el 2026-10-17: 52 de 52 y `toast/blur` a 10 en los dos modos). Lo que falta es código:
+      quitar esas filas de `PENDIENTE_FIGMA` (paso 6).
+- [ ] **Ficha 4, las 3 que se separan en dos:** piden variables nuevas (`…/padding/y` y `…/padding/x`). Otra sesión.
 - [ ] *Push* en el plugin. En segundos sale un run de `tokens-sync`; si no sale ninguno, el push no llevaba
       cambios. Si el plugin dice «does not match», ciérralo y vuelve a abrirlo.
 - [ ] El robot abre el PR «chore(tokens): sync del Theme Designer». **Qué esperar:** ningún cambio visual, porque
@@ -84,7 +95,11 @@ se corta a medias, se retoma en el siguiente.
 
 ### Paso 2 · Variables de color, push y PR del robot (~30 min)
 
-- [ ] **Fichas 8, 12, 14 y 19, y la variable nueva `text/heading/color` (ficha 2):** `node tools/figma-pendiente.mjs color`.
+- [x] **Fichas 8, 12, 14 y 19:** los 21 repuntes, hechos en el fichero el 2026-10-17 con
+      `node tools/figma-pendiente.mjs color` (comprobados uno a uno después). **Falta el push** y su PR.
+- [x] **La variable nueva `text/heading/color` (ficha 2): no se crea.** El Kit ya tiene `semantic/text/heading`
+      (colección Custom: claro `slate/800`, oscuro `surface/0`), lo mismo que `--sc-text-heading`. El título de
+      `Section` se repuntó a ella el 2026-10-17. Que suba a `slate/900` (decisión 3) está pendiente: ver ficha 2.
 - [ ] Empuja cuando el PR del paso 1 esté **fundido**. El robot reescribe la misma rama: si empujas antes, actualiza
       aquel PR en vez de abrir otro, y los dos cambios quedan mezclados.
 - [ ] **Qué esperar:**
@@ -100,14 +115,25 @@ se corta a medias, se retoma en el siguiente.
 
 Por orden, de lo que más se usa a lo que menos:
 
-- [ ] **16** · `Section`, a 17,5 arriba y abajo.
-- [ ] **17** · El diálogo: la botonera a 28 del último campo, 14 entre campos y 10,5 entre botones (marco a 15,75, decidido).
-- [ ] **6** · La miga, subrayada al pasar el ratón.
-- [ ] **9** · Tabs (peso, bordes y flechas), el punto del Badge y el hueco de «Añadir widget».
+- [x] **16** · `Section`, a 17,5 arriba y abajo. **Hecho el 2026-10-17** (`12610:23284`, las cuatro variantes).
+- [x] **17** · El diálogo: 10,5 entre botones (`dialog/footer/gap` → `scale/0-75`), **hecho el 2026-10-17**.
+- [ ] **17** · La botonera a 28 del último campo y 14 entre campos: el maestro `dialog` (`243:9556`) no tiene variante
+      con formulario, solo texto. Crearla es otra sesión; en las maquetas, paso 5.
+- [ ] **6** · La miga, subrayada al pasar el ratón: es dibujo nuevo, no un repunte. Otra sesión.
+- [x] **9** · Tabs, el peso: atado a `tabs/tab/font/weight` (600), **hecho el 2026-10-17**. El trazo de abajo de cada
+      pestaña, atado a `tabs/tab/border/width`.
+- [ ] **9** · Tabs, los bordes a 0 y transparente: son valores, no repuntes (el Kit no tiene variable de transparente ni
+      de cero para eso). Sin decidir. Las flechas, el punto del Badge y el hueco de «Añadir widget»: nuevos, otra sesión.
 - [ ] **11** · Panel con `Severity`.
 - [ ] **13** · El botón pulsado, al 96 %.
 - [ ] **5** · El índice lateral, como componente.
 - [ ] **29** · El icono a 600 junto a su texto semibold: el del título de `Section` y el de la fila activa del índice.
+      **No se puede repuntar:** el icono de `Section` es un glifo de la librería Material Icons (`Style` = Filled,
+      Outlined, Round, Sharp, Two Tone), que no tiene eje de peso (medido el 2026-10-17).
+- [x] **40 y 47** · El icono de `Section`, a 18 atado a `primitive/typography/font/size/400` (el tamaño de su título
+      `h3`), y el de `.Subsection` (`12610:23193`), a 16 atado a `…/size/300`; el título de `.Subsection`, a
+      `Subtitle/subtitle-semibold`. **Hecho el 2026-10-17.** El icono que cuelga (ficha 40) es solo del `Block`.
+- [x] **22** · En `Section`, del icono al título: el 8 suelto pasa a `scale/0-625` (8,75). **Hecho el 2026-10-17.**
 - [ ] **2** · La pastilla sin punto y a 600. La etiqueta IFTA se queda en 400 (decidido): en Figma no hay que tocarla.
 - [ ] **24** · El icono de `button-default` y el texto de `inputtext`, atados al tamaño de letra.
 - [ ] **21 y 20** · Los iconos huérfanos (se publica Smart-Contact-Icons), y después el tablero de la barra lateral de
@@ -115,7 +141,8 @@ Por orden, de lo que más se usa a lo que menos:
 - [ ] **7** · El glifo de los iconos, si el `IconSet` ata la caja (decidido). Va el último porque cambia cómo se ven todas las
       maquetas.
 - [ ] **Otro push:** las fichas 9 (los bordes de Tabs) y 17 (`dialog/footer/gap`) también cambian variables
-      (`node tools/figma-pendiente.mjs componentes`). Qué
+      (`node tools/figma-pendiente.mjs componentes`). El 2026-10-17 solo se aplicó `dialog/footer/gap`, y viaja en el
+      push del paso 2. Qué
       esperar del PR del robot: nada visual en las pestañas, porque el código ya las pinta así (DD-107); en los
       diálogos nativos de PrimeNG, 10,5 entre botones, como ya tiene `sc-dialog`.
 
@@ -240,10 +267,13 @@ Se suma lo que se haga en los pasos 1 a 3 del plan.
   color ya está en el fondo y en el texto. El `<p-tag>` sin variante sigue al Kit: `tag/font/weight` es bold (700).
   **En Figma:** la pastilla de etiqueta sin punto y con el texto a semibold. **Mídelo antes:** qué peso dibuja hoy el
   maestro. Esta ficha decía 500; la variable dice 700.
-- **`--sc-text-heading`** (slate-800 en claro, blanco en oscuro) para los títulos de sección: existe solo en código.
-  **En Figma:** la crea el script (`color`): `text/heading/color`, con claro `surface/900` (decidido el 2026-09-28) y
-  oscuro `surface/0`. A mano, atarle el título de `Section`. El generador no la lee hasta que `color-map.mjs` tenga su
-  fila (paso 6).
+- **`--sc-text-heading`** (slate-800 en claro, blanco en oscuro) para los títulos de sección. **Ya existe en Figma**
+  (medido el 2026-10-17): `semantic/text/heading`, colección Custom, claro `slate/800` y oscuro `surface/0`. El título
+  de `Section` se repuntó a ella el 2026-10-17 (antes iba a `text/color`). No se crea `text/heading/color`.
+  **Pendiente, la decisión 3** (subirla a `slate/900`, porque `text/color` ya está en `surface/900`): es un repunte,
+  pero `semantic/text/heading` la usan también 53 capas de `❖ Sidebar`, 1 de `❖ Navmenu` y 1 de `🌈 Colors`, y el
+  código de la barra lateral no pinta con `--sc-text-heading`. Confirmar que esas capas pueden oscurecerse antes de
+  repuntar.
 - **Tarjetas de opción (`sc-option-cards`)** en Servicio, en lugar del modal `103:2718`: es una maqueta del
   Supervisor.
 - **La etiqueta IFTA (dentro del campo): decidido el 2026-09-28, a 400 en todas.** En código iba a 600 en `sc-select` y
@@ -271,9 +301,18 @@ export no tiene variables para esto.
 
 ## 4 · Las medidas de PrimeOne que Aura 3 cambió: el código ya sigue a Aura (2026-09-14)
 
-**Estado:** pendiente · **Evidencia:** export del Kit y builds (DD-97). **Verificado el 2026-09-27:** las 55 filas de
-la tabla casan una a una con `PENDIENTE_FIGMA` (`scripts/sizing-map.mjs`) en colección, ruta, valor de hoy y valor de
-Aura; también las tres que se separan.
+**Estado:** las 52 de alias y `toast/blur`, **HECHAS** en Figma y en el export desde el 2026-09-28 (#276; medido en el
+fichero el 2026-10-17). Falta quitar sus filas de `PENDIENTE_FIGMA` (paso 6). Las tres que se separan, pendientes:
+piden variables nuevas, otra sesión. · **Evidencia:** export del Kit y builds (DD-97). **Verificado el 2026-09-27:**
+las 55 filas de la tabla casan una a una con `PENDIENTE_FIGMA` (`scripts/sizing-map.mjs`) en colección, ruta, valor
+de hoy y valor de Aura; también las tres que se separan.
+
+**Lo medido en el fichero el 2026-10-17 para las tres que se separan.** `divider/horizontal/padding` (0) solo ata el
+relleno de arriba y abajo de la raya horizontal; `divider/vertical/padding` (0), el de los lados de la vertical; e
+`inputgroup/addon/padding` (`scale/0-5`), los cuatro lados de los 12 maestros del addon. El tramo de raya antes o
+después del contenido (`Align=Left|Right|Top|Bottom`) es un rectángulo de 17,5 suelto, que es lo que el código pinta
+con el relleno de Aura (12,25 en horizontal, 5,25 en vertical). Y el addon con 0 arriba y abajo, como Aura, se
+encogería en Figma: en código su alto lo da el campo de al lado.
 
 PrimeOne 4.0.0 dibujó el Aura de 2024, y Aura 3 cambió 55 de esas medidas. El código ya lleva el valor de Aura con el
 **paso de escala con el nombre del rem de Aura** (como DD-81), que es una variable que ya existe. Mientras Figma no
@@ -465,7 +504,8 @@ sc-docs, lado a lado, pintan la papelera del mismo tamaño.
 
 ## 8 · Grises intermedios: los textos y la opción no elegida, un paso más oscuros (2026-09-14)
 
-**Estado:** pendiente de hacer en el fichero · decidido el 2026-09-14 (DD-106) · **Evidencia:** verificado de punta a
+**Estado:** **HECHO en el fichero el 2026-10-17** (las 8 filas); falta el push y el paso 6 · decidido el 2026-09-14
+(DD-106) · **Evidencia:** verificado de punta a
 punta en código, no en el fichero. Se simuló este cambio en `kit-export-dtcg.json`, `tokens:import` lo escribió y el
 Supervisor pintó los grises nuevos (`theme-contrast`: 53 de 53). Las rutas de variable salen del export; el 2026-09-27
 todas decían aún la columna «Hoy».
@@ -596,7 +636,8 @@ hace falta crear variables.
 
 ## 12 · Los botones rojos en claro, un paso más oscuros por contraste (2026-09-15)
 
-**Estado:** pendiente de hacer en el fichero · **Evidencia:** export de `main` (comprobado el 2026-09-27) y el guard
+**Estado:** **HECHO en el fichero el 2026-10-17** (las 8 variables); falta el push y el paso 6 · **Evidencia:** export
+de `main` (comprobado el 2026-09-27) y el guard
 `tokens:cmp-rewire`.
 
 - **El sólido.** El Kit pinta el botón `danger` en `red/500` con texto blanco: **3,76:1**, no llega a AA. El código usa
@@ -647,7 +688,8 @@ que la historia «Al pulsar» de `#/components/button` en sc-docs.
 
 ## 14 · La etiqueta «Draft» (secundaria) no llega al contraste (2026-09-24)
 
-**Estado:** pendiente · **Dónde:** variable `tag/secondary/color` de `aura/component/light`: hoy `surface/600`, pasa a
+**Estado:** **HECHO en el fichero el 2026-10-17**; falta el push · **Dónde:** variable `tag/secondary/color` de
+`aura/component/light`: era `surface/600`, pasa a
 **`surface/700`** · **Esfuerzo:** un cambio de alias · **Evidencia:** medido en el navegador y en el código generado;
 el alias, en el export del 2026-09-27.
 
@@ -686,7 +728,8 @@ copien su fila · **Evidencia:** los nodos son los que cita el código; el códi
 
 ## 16 · La caja de sección, 17,5 arriba y abajo en las dos pieles (2026-09-27)
 
-**Estado:** pendiente · **Dónde:** el maestro `Section` del DS (691:23956, relleno vertical atado a `scale/1-625`) y el
+**Estado:** `Section` **HECHO el 2026-10-17** (`12610:23284`: arriba y abajo atados a `scale/1-25` en las cuatro
+variantes); el `Block`, pendiente (paso 5) · **Dónde:** el maestro `Section` del DS (relleno vertical atado a `scale/1-625`) y el
 `Block` del Supervisor (393:12587, atado a `scale/1-75`) · **Esfuerzo:** revincular el relleno de arriba y de abajo de
 los dos a **`scale/1-25`** · **Evidencia:** los nodos y sus variables son los que cita
 `sc-section-card.component.scss`; el código, comprobado el 2026-09-27.
@@ -763,7 +806,8 @@ Kit no lo dibuja.
 
 ## 19 · Cuatro grises del Kit bajo AA que el código ya sube (2026-07 a 2026-09)
 
-**Estado:** pendiente · **Evidencia:** export del 2026-09-27 y las divergencias declaradas en `scripts/color-map.mjs` y
+**Estado:** **HECHO en el fichero el 2026-10-17** (las 4); falta el push y el paso 6 · **Evidencia:** export del
+2026-09-27 y las divergencias declaradas en `scripts/color-map.mjs` y
 `scripts/cmp-color-map.mjs` (DD-87, DD-111). Cada fila dice «revertir cuando el Kit suba el suyo». El código pinta los
 cuatro en slate-600 (4,52:1 sobre blanco).
 
@@ -1291,6 +1335,19 @@ menú, y la iconografía de transcripciones tiene sus tres insignias.
 - **Contact Center**: «Guardar» y «Deshacer» una vez en la barra para las tres secciones, y el punto de cambios en el
   índice.
 - **Ficha de grupo**: el audio saliente en «Mensajes en cola»; en la tabla de agentes, cada canal con su nivel al lado.
+
+## 51 · `.Subsection` mide distinto que `sc-subsection` (medido el 2026-10-17)
+
+**Estado:** sin decidir; no lo cita ninguna DD · **Dónde:** `.Subsection` (`12610:23193`, cinco variantes) contra
+`sc-subsection.component.scss`.
+
+- Relleno de arriba y de abajo: Figma 22,75 (`scale/1-625`), código 16 (`scale/1-143`).
+- Del título al contenido: Figma 8,75 (`scale/0-625`), código 16 (el relleno de abajo de la cabecera).
+- Del icono al título: Figma 12 suelto, código 8,75 (`scale/0-625`).
+
+Si manda el código, los tres son repuntes a variables que ya existen.
+
+---
 
 ## Lo de estas semanas que NO va a Figma, y por qué
 

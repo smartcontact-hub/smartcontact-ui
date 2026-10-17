@@ -18,7 +18,7 @@
  *
  * Uso:  node tools/figma-pendiente.mjs <tanda> [--aplicar]
  *   medidas      ficha 4: las variables de PENDIENTE_FIGMA que no hay que separar, y el desenfoque del toast en claro
- *   color        fichas 8, 12, 14 y 19, y la variable nueva del título de sección (ficha 2)
+ *   color        fichas 8, 12, 14 y 19
  *   componentes  fichas 9 (los bordes de las pestañas) y 17 (el hueco entre botones del diálogo)
  */
 import { readFileSync } from 'node:fs';
@@ -103,20 +103,10 @@ function color() {
     cambio('19', LUZ_SEM, 'navigation/item/icon/color', alias('surface/400'), alias('surface/600')),
     cambio('19', LUZ_SEM, 'form/field/placeholder/color', alias('surface/500'), alias('surface/600')),
   ];
-  // Ficha 2: el título de sección tiene su variable en código (`--sc-text-heading`) y no en el Kit. Se crea con los dos
-  // modos: claro a surface/900 (decisión del 2026-09-28) y oscuro a surface/0, el blanco que ya pinta el código.
-  const crear = [
-    {
-      ficha: '2',
-      variable: 'text/heading/color',
-      coleccion: COLECCION[LUZ_SEM],
-      modos: [
-        { capa: LUZ_SEM, alias: 'surface/900' },
-        { capa: 'aura/semantic/dark', alias: 'surface/0' },
-      ],
-    },
-  ];
-  return { cambios, crear, manuales: ['Atar el título de `Section` a la variable nueva text/heading/color (ficha 2).'] };
+  // Ficha 2: el título de sección no necesita variable nueva. El Kit ya tiene `semantic/text/heading` (colección Custom),
+  // y el título de `Section` apunta a ella desde el 2026-10-17. Subirla a slate/900 (decisión 3) toca también la barra
+  // lateral: va aparte, a mano.
+  return { cambios };
 }
 
 /** Fichas 9 y 17. */
