@@ -1370,19 +1370,36 @@ Si manda el código, los tres son repuntes a variables que ya existen.
 
 ## 52 · El tema del plugin que recibe el equipo externo lleva Custom con el valor del oscuro (medido el 2026-10-17)
 
-**Estado:** pendiente · **Dónde:** fichero del DS, colección Custom: `semantic/text/heading`, `subtle`, `inverse` y
-`accent` · **Evidencia:** `tema-plugin.zip` de la rama `tema-zip` (export `7b06bcce`, `ts/extend.ts`) y el export del
-2026-10-17.
+**Estado:** el repunte de los tres, **HECHO en el fichero el 2026-10-18** (en las dos columnas de Custom); falta
+publicar la librería y empujar desde el plugin. `accent`, sin repunte · **Dónde:** fichero del DS, colección Custom:
+`semantic/text/heading`, `subtle`, `inverse` y `accent` · **Evidencia:** `tema-plugin.zip` de la rama `tema-zip`
+(export `7b06bcce`, `ts/extend.ts`) y el export del 2026-10-17.
+
+**Medido el 2026-10-18, antes de tocar:**
+
+- **El fallo, con el motor de temas de PrimeNG** (`@primeuix/styled`, como `tema-plugin-zip.mjs`): con el zip publicado,
+  en claro el título sale `#ffffff` sobre `#ffffff` (1,00:1), el sutil `#a1a1aa` (2,56:1), el acento `#a78bfa` (2,72:1)
+  y el inverso oscuro, `#181d26`, cuando debe ser blanco.
+- **El arreglo, simulado sobre una copia del zip:** con `{text.color}`, `{text.muted.color}` y
+  `{primary.contrast.color}`, el título sale slate-900 y blanco (16,90 y 17,72:1), el sutil slate-700 y zinc-400 (7,38 y
+  6,91:1) y el inverso blanco y zinc-900: lo mismo que `tema-smartcontact.zip`.
+- **Cómo exporta el plugin:** Custom tiene dos columnas (Light, la de por defecto, y Dark) y el export lleva solo la Dark.
+  Un alias de Custom a otra colección sale como referencia: `component/custommodal/background` apunta a
+  `overlay/modal/background` y el export dice `"{overlay.modal.background}"` (47 alias así en Custom).
+- **Ninguna capa cambia:** en las 98 páginas del fichero, 63 capas usan esas tres variables (53 en `❖ Sidebar`, 4 en
+  `❖ Section`, 3 en `🌈 Colors`, 2 en `⚪️ Internal Components` y 1 en `❖ Navmenu`), y todas resuelven el mismo color
+  antes y después (`resolveForConsumer`). El fichero del Supervisor no se miró: su clave no está en el repo.
+- **Para deshacerlo:** `heading` Light → `Primitive/slate/900`, Dark → `Semantic Color Scheme/surface/0`; `subtle` Light
+  → `Primitive/slate/700`, Dark → `Primitive/zinc/400`; `inverse` Light → `Semantic Color Scheme/surface/0`, Dark →
+  `Semantic Color Scheme/surface/900`. Las colecciones conservan el número de variables (Custom, 68).
 
 - El plugin exporta Custom con un solo valor, el del modo oscuro: `heading = {surface.0}`, `subtle = {zinc.400}`,
   `inverse = {surface.900}` y `accent = {violet.400}`. En el tema de nuestras apps manda el DS (`tema-zip.mjs`,
   `MANDA_EL_DS`), pero el del plugin (DD-88) lo lleva tal cual: en claro, un título con `text.heading` sale blanco sobre
   blanco.
-- **Repunte posible para tres.** En las dos columnas de Custom: `semantic/text/heading` → `text/color` (900 y 0, los
-  valores de hoy), `semantic/text/subtle` → `text/muted/color` (700 y zinc 400) y `semantic/text/inverse` →
-  `primary/contrast/color` (blanco y zinc 900). **Mídelo antes:** que el plugin exporte un alias a otra colección como
-  referencia (`{text.color}`) y no como su valor, y qué modo fijan las capas que usan cada variable (el título: 53 de
-  `❖ Sidebar`, 1 de `❖ Navmenu` y 1 de `🌈 Colors`).
+- **El repunte (hecho el 2026-10-18).** En las dos columnas de Custom: `semantic/text/heading` → `text/color` (900 y 0,
+  los valores de antes), `semantic/text/subtle` → `text/muted/color` (700 y zinc 400) y `semantic/text/inverse` →
+  `primary/contrast/color` (blanco y zinc 900).
 - **`accent` no tiene repunte:** ninguna variable del esquema de color vale violet 700 en claro y violet 400 en oscuro.
   Pide una variable nueva en el esquema de color (otra sesión), o se queda anotado.
 - Después del export, se revisan `MANDA_EL_DS` y el bucket de esas claves en `coverage-map.mjs`.
