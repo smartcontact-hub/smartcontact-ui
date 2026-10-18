@@ -6,7 +6,7 @@
 >
 > **Ficheros:**
 > - «Smart-Contact Design System» — `khNq9dJKNi13pNllrqm6dx` (110 páginas): las variables del Kit y los maestros.
-> - El fichero del **Supervisor** (las maquetas). Su clave no está en el repo; el código cita sus nodos como
+> - El fichero del **Supervisor** (las maquetas), `Hjyy41SYKqcRuIzCGggfYH`. El código cita sus nodos como
 >   «Figma Supervisor 393:…» o «2286:…».
 > - PrimeOne 4.0.0 — `bJ01Ym4NrCvxFm7dJXvhqp`, solo de referencia.
 >
@@ -1341,6 +1341,11 @@ menú, y la iconografía de transcripciones tiene sus tres insignias.
 
 ## 50 · Agendas en árbol, la ficha de agente con lo contratado y el toast de toda acción (2026-10-16, DD-211)
 
+**Estado:** **hecho el 2026-10-18** en el fichero del Supervisor para las fichas de grupo y agente y el listado de
+grupos: las anotaciones de lo contratado, la ficha de agente (el PIN, anotado; la matriz con Agentes y Grupos), el globo
+de la edición en bloque (anotado), el ✓ de las altas, el toast y lo de la ficha de grupo. **Queda:** el árbol de agendas
+y Contact Center (no entraron en ese pase) y el estado «Solo lectura», que pide variantes nuevas en el Kit.
+
 - **Agenda › «Grupos y agentes»**: el árbol (TreeTable) con la flecha, la casilla tri-estado y el nombre en la primera
   columna, y el email en la segunda; el grupo en `body-semibold`, plegado; «Sin grupo» el último. Encima, el buscador,
   «Todos / Asignados (n)», «N de M agentes y G grupos enteros» y la regla en una línea en `caption` y `text/subtle`.
@@ -1421,6 +1426,36 @@ sin repunte: al equipo externo le bastaría una línea en `extend.ts`, `accent: 
 **Cómo sabes que está hecho:** en `tema-plugin.zip`, `ts/extend.ts` dice `heading: "{text.color}"`,
 `subtle: "{text.muted.color}"` e `inverse: "{primary.contrast.color}"`.
 
+## 53 · Lo que el Kit no tiene para las fichas de grupo y agente y el listado de grupos (medido el 2026-10-18)
+
+**Estado:** sin hacer; en las maquetas del Supervisor va ajustado a la app y anotado, sin tocar la librería · **Dónde:**
+fichero del DS, y el del Supervisor (secciones `2934:580` y `2970:4752`, hand-off `2997:47`) · **Evidencia:** cada caso,
+medido contra sc-supervisor.pages.dev a 1440.
+
+- **Botones:** `button-small` de texto sin el borde transparente de 1 de PrimeNG (25 de alto en vez de 27; las filas
+  del listado se van a 30). En `button`, el icono de dentro no está atado a «Left Icon» ni a «Icon»: sale el ✓ del
+  maestro y hay que cambiarlo a mano.
+- **Tablas:** las celdas Small del Kit van a 5,25 × 7 (`datatable/body|header/cell/sm/padding`) y las de PrimeNG small a
+  2 × 6; `datatable-header-cell` con el texto en alto automático (22 en vez de 25) y su variante Selected pinta
+  `highlight` (en PrimeNG 22 la ordenada se queda blanca); `datatable-selection-cell` Small, con la casilla pequeña.
+- **Menú:** `menu` lleva sus filas fijas, sin slot; `menu-item` mide 21 (texto de 14 de alto) frente a 27, y no tiene
+  variante de peligro.
+- **Formularios:** la casilla sin `indeterminate`; InputNumber sin la variante sin botones ni con sufijo; sin el estado
+  «Solo lectura» (§50).
+- **Piezas:** el `Toast` del Kit es el de PrimeNG (350, título verde y detalle) y el de la app, `sc-toast` (293), se
+  compone con las variables `toast/*`; sin estilo Body medium; avatar sin 24; overlaybadge sin punto; ProgressSpinner
+  solo indeterminado; sin `kbd` (el atajo «/» del buscador) ni `sc-empty-state`.
+- **Variables:** sin `icon/secondary` (`--sc-icon-secondary`; se usa `slate/600`) ni familia `azure`; la sombra de la
+  barra de lote es `popover/shadow` (0,10 negro) y la de la app, `rgb(15, 23, 42)` al 8 y al 6 %.
+- **Iconos que faltan en Smart-Contact Icons:** `check_circle`, `library_books`, `alt_route`, `filter_list`,
+  `content_copy`, `search_off`, `manage_accounts`, `photo_camera`, `dialpad`, `radio_button_checked`, `call_made`,
+  `badge` y `language`. En el dibujo va el más cercano y la anotación dice el real.
+- **La copia del DS** (`C5soC7CxcuKSIFPEDCd3gz`) tiene arreglados los botones de texto con su borde, el tooltip con
+  máximo de 157,5 y la celda de selección small. Llevarlos al oficial es una decisión de diseño pendiente.
+
+**Cómo sabes que está hecho:** cada maestro mide lo que la app (botón de texto small 28 × 27, celda small 2 × 6, fila de
+menú 27) y las maquetas dejan de necesitar el ajuste a mano.
+
 ---
 
 ## Lo de estas semanas que NO va a Figma, y por qué
@@ -1435,8 +1470,9 @@ sin repunte: al equipo externo le bastaría una línea en `extend.ts`, `accent: 
   - el texto libre de Conversaciones, hasta dos líneas y «…»;
   - la fila de totales lleva raya arriba.
 - **La regla R4 y la medida de agrupación** (DD-125): son medidas del build, no del dibujo.
-- **Las fichas enteras de agente, grupo y usuario** no tienen maqueta desde DD-121 y DD-122; las fichas 5 y 18 cubren
-  sus piezas. Maquetarlas es trabajo de diseño, no un pendiente.
+- **Las fichas enteras de agente, grupo y usuario** no tenían maqueta desde DD-121 y DD-122. Las de grupo y agente,
+  con el listado de grupos, se maquetaron el 2026-10-18 (§53); la de usuario sigue sin ella, y maquetarla es trabajo de
+  diseño, no un pendiente.
 
 ---
 
