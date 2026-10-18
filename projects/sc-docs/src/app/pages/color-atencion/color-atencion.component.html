@@ -1,0 +1,360 @@
+<article class="ca">
+  <!-- ── CABECERA ────────────────────────────────────────────────────────────────────────────── -->
+  <header class="ca__head">
+    <p class="eyebrow sc-text-caption-semibold">Propuesta del Lab</p>
+    <h1 class="sc-text-h1-semibold">Un color para dirigir la atención</h1>
+    <p class="lead sc-text-h3-regular">
+      El Supervisor es casi monocromo y su botón principal es del mismo marino que los títulos. Qué color podría llevar,
+      cómo quedaría en el resto de la interfaz y qué implica en los tokens.
+    </p>
+    <div class="ca__meta">
+      <sc-tag severity="warn" value="Sin aplicar" />
+      <span class="sc-text-caption-regular">Medido el 18/10/2026 sobre el build de <code>main</code></span>
+      <a class="cta sc-text-body-semibold" [href]="presentacion" target="_blank" rel="noopener">
+        Abrir la presentación <span aria-hidden="true">↗</span>
+      </a>
+    </div>
+
+    <nav class="jump" aria-label="Secciones de esta página">
+      <a class="jump__item" href="#ca-alternativas" (click)="$event.preventDefault(); ir('ca-alternativas')">
+        <span class="jump__n sc-text-h3-semibold">{{ candidatos.length - 1 }}</span>
+        <span class="sc-text-caption-semibold">Alternativas medidas</span>
+      </a>
+      <a class="jump__item" href="#ca-muestra" (click)="$event.preventDefault(); ir('ca-muestra')">
+        <span class="jump__n sc-text-h3-semibold">{{ piezas }}</span>
+        <span class="sc-text-caption-semibold">Piezas en la muestra</span>
+      </a>
+      <a class="jump__item" href="#ca-tokens" (click)="$event.preventDefault(); ir('ca-tokens')">
+        <span class="jump__n sc-text-h3-semibold">{{ totalLectores }}</span>
+        <span class="sc-text-caption-semibold">Sitios que leen el primario</span>
+      </a>
+      <a class="jump__item" href="#ca-otros" (click)="$event.preventDefault(); ir('ca-otros')">
+        <span class="jump__n sc-text-h3-semibold">17</span>
+        <span class="sc-text-caption-semibold">Sistemas comparados</span>
+      </a>
+    </nav>
+  </header>
+
+  <!-- ── PUNTO DE PARTIDA ───────────────────────────────────────────────────────────────────── -->
+  <section class="sec" aria-labelledby="ca-partida-t">
+    <header class="sec__head">
+      <h2 id="ca-partida-t" class="sc-text-h2-semibold">El punto de partida</h2>
+    </header>
+    <div class="stats">
+      <div class="stat">
+        <p class="stat__n sc-text-h1-semibold">0,1–0,7 %</p>
+        <p class="sc-text-body-regular">de los píxeles tienen color en Reglas, Conversaciones, fichas y altas (a 1440, en claro). En GitHub, 1,1 %.</p>
+      </div>
+      <div class="stat">
+        <p class="stat__n sc-text-h1-semibold">1,13:1</p>
+        <p class="sc-text-body-regular">entre el botón principal y el texto de los títulos: casi el mismo marino.</p>
+      </div>
+      <div class="stat">
+        <p class="stat__n sc-text-h1-semibold">6,5 %</p>
+        <p class="sc-text-body-regular">del alta de agente es marino: la barra lateral (el 72 %), la tarjeta de resumen y el botón, que es el trozo más pequeño.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── ALTERNATIVAS ───────────────────────────────────────────────────────────────────────── -->
+  <section class="sec" id="ca-alternativas" aria-labelledby="ca-alt-t">
+    <header class="sec__head">
+      <h2 id="ca-alt-t" class="sc-text-h2-semibold">Las alternativas</h2>
+      <p class="sec__lead sc-text-body-regular">
+        Ocho colores de la paleta del Kit en el botón principal, cada uno con su pareja en oscuro. El texto necesita 4,5:1;
+        el botón contra la página, 3:1 para verse como control.
+      </p>
+    </header>
+
+    <div class="tabla-wrap">
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th scope="col" class="sc-text-caption-semibold">Color, en claro y en oscuro</th>
+            <th scope="col" class="sc-text-caption-semibold">Texto del botón</th>
+            <th scope="col" class="sc-text-caption-semibold">Botón contra la página</th>
+            <th scope="col" class="sc-text-caption-semibold">Viveza</th>
+            <th scope="col" class="sc-text-caption-semibold">Con qué se confunde</th>
+            <th scope="col" class="sc-text-caption-semibold">Veredicto</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (c of candidatos; track c.id) {
+            <tr [attr.data-veredicto]="c.veredicto">
+              <th scope="row">
+                <span class="nombre sc-text-body-semibold">{{ c.nombre }}</span>
+                <span class="pares">
+                  <span class="boton sc-text-body-semibold" [style.background]="paso(c.claro.fondo)" [style.color]="paso(c.claro.texto)">Guardar</span>
+                  <span class="pares__oscuro">
+                    <span class="boton sc-text-body-semibold" [style.background]="paso(c.oscuro.fondo)" [style.color]="paso(c.oscuro.texto)">Guardar</span>
+                  </span>
+                </span>
+              </th>
+              <td class="num">
+                <span [class.mal]="!pasa(c.medidas.claro.texto, 4.5)">{{ fmt(c.medidas.claro.texto) }}</span>
+                <span class="sep" aria-hidden="true">/</span>
+                <span [class.mal]="!pasa(c.medidas.oscuro.texto, 4.5)">{{ fmt(c.medidas.oscuro.texto) }}</span>
+              </td>
+              <td class="num">
+                <span [class.mal]="!pasa(c.medidas.claro.pagina, 3)">{{ fmt(c.medidas.claro.pagina) }}</span>
+                <span class="sep" aria-hidden="true">/</span>
+                <span [class.mal]="!pasa(c.medidas.oscuro.pagina, 3)">{{ fmt(c.medidas.oscuro.pagina) }}</span>
+              </td>
+              <td class="num">
+                <span class="viveza" [style.--v]="c.viveza / 0.25">{{ fmt(c.viveza, 3) }}</span>
+              </td>
+              <td class="sc-text-caption-regular confunde">
+                <span>Tono: {{ c.vecino }}</span>
+                <span [attr.data-nivel]="nivelDaltonismo(c)">
+                  Daltonismo:
+                  @if (c.daltonismo.valor !== null) {
+                    <span class="num">{{ fmt(c.daltonismo.valor, 3) }},</span>
+                  }
+                  {{ c.daltonismo.texto }}
+                </span>
+              </td>
+              <td class="veredicto">
+                <sc-tag [severity]="veredicto[c.veredicto].severity" [value]="veredicto[c.veredicto].label" />
+                <p class="sc-text-caption-regular">{{ c.motivo }}</p>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <p class="nota sc-text-caption-regular">
+      Viveza: croma OKLCH del color en claro. Daltonismo: la distancia más corta a un estado (éxito, aviso, peligro o
+      enlace) con deuteranopía o protanopía; el DS ya acepta {{ fmt(referencia, 3) }} entre éxito y aviso, y por debajo de 0,05
+      dos colores se ven iguales. Medido con Playwright sobre los tokens del build; WCAG 2.x, APCA y Machado (2009).
+    </p>
+  </section>
+
+  <!-- ── MUESTRA EN VIVO ────────────────────────────────────────────────────────────────────── -->
+  <section class="sec" id="ca-muestra" aria-labelledby="ca-muestra-t">
+    <header class="sec__head">
+      <h2 id="ca-muestra-t" class="sc-text-h2-semibold">Cómo quedaría en el resto de la interfaz</h2>
+      <p class="sec__lead sc-text-body-regular">
+        Una alta en miniatura con componentes del DS. «Solo el botón» es la propuesta; «Toda la variable» es el atajo de
+        cambiar <code>--sc-bg-primary</code>, y enseña todo lo que arrastra. La tabla de abajo se mide sola.
+      </p>
+    </header>
+
+    <div class="mandos">
+      <sc-selectbutton
+        [options]="opcionesCandidato"
+        optionLabel="label"
+        optionValue="value"
+        [allowEmpty]="false"
+        [(value)]="muestraC"
+        ariaLabel="Color del botón principal"
+        size="sm"
+      />
+      <div class="mandos__fila">
+        <sc-selectbutton
+          [options]="opcionesAlcance"
+          optionLabel="label"
+          optionValue="value"
+          [allowEmpty]="false"
+          [(value)]="muestraAlcance"
+          ariaLabel="Alcance del cambio"
+          size="sm"
+        />
+        <sc-selectbutton
+          [options]="opcionesAcento"
+          optionLabel="label"
+          optionValue="value"
+          [allowEmpty]="false"
+          [(value)]="muestraAcento"
+          ariaLabel="Color del acento"
+          size="sm"
+        />
+        <sc-selectbutton
+          [options]="opcionesTema"
+          optionLabel="label"
+          optionValue="value"
+          [allowEmpty]="false"
+          [(value)]="muestraTema"
+          ariaLabel="Tema"
+          size="sm"
+        />
+      </div>
+    </div>
+
+    <iframe
+      class="muestra"
+      width="1200"
+      height="720"
+      [src]="muestraSrc()"
+      [style.height.px]="altoMuestra()"
+      title="Muestra: el color candidato en una alta hecha con componentes del DS"
+    ></iframe>
+  </section>
+
+  <!-- ── PANTALLAS REALES ───────────────────────────────────────────────────────────────────── -->
+  <section class="sec" aria-labelledby="ca-real-t">
+    <header class="sec__head">
+      <h2 id="ca-real-t" class="sc-text-h2-semibold">En pantallas reales</h2>
+      <p class="sec__lead sc-text-body-regular">
+        El Supervisor con datos editoriales, a 1440. Solo cambia el botón principal, como haría la variable de componente.
+        Arrastra la barra para comparar con hoy.
+      </p>
+    </header>
+
+    <div class="mandos">
+      <div class="mandos__fila">
+        <sc-selectbutton
+          [options]="opcionesCaptura"
+          optionLabel="label"
+          optionValue="value"
+          [allowEmpty]="false"
+          [(value)]="capC"
+          ariaLabel="Color en la captura"
+          size="sm"
+        />
+        <sc-selectbutton
+          [options]="opcionesPantalla"
+          optionLabel="label"
+          optionValue="value"
+          [allowEmpty]="false"
+          [(value)]="capPantalla"
+          ariaLabel="Pantalla"
+          size="sm"
+        />
+        <sc-selectbutton
+          [options]="opcionesTema"
+          optionLabel="label"
+          optionValue="value"
+          [allowEmpty]="false"
+          [(value)]="capTema"
+          ariaLabel="Tema de la captura"
+          size="sm"
+        />
+      </div>
+    </div>
+
+    <figure class="comparar" [style.--corte]="corte() + '%'">
+      <img class="comparar__img" [src]="capAntes()" width="1440" height="900" alt="Hoy: el botón principal en marino" />
+      <img
+        class="comparar__img comparar__despues"
+        [src]="capDespues()"
+        width="1440"
+        height="900"
+        [alt]="'Con ' + capCandidato().nombre + ' en el botón principal'"
+      />
+      <span class="comparar__raya" aria-hidden="true"></span>
+      <span class="comparar__tag comparar__tag--l sc-text-caption-semibold">Hoy</span>
+      <span class="comparar__tag comparar__tag--r sc-text-caption-semibold">{{ capCandidato().nombre }}</span>
+      <input
+        class="comparar__rango"
+        type="range"
+        min="0"
+        max="100"
+        [value]="corte()"
+        (input)="alCortar($event)"
+        aria-label="Comparar hoy con el candidato"
+      />
+    </figure>
+    @if (capIgual()) {
+      <p class="nota sc-text-caption-regular">En oscuro, el botón principal ya es azul hoy (DD-81): las dos mitades son la misma.</p>
+    }
+  </section>
+
+  <!-- ── TOKENS ─────────────────────────────────────────────────────────────────────────────── -->
+  <section class="sec" id="ca-tokens" aria-labelledby="ca-tokens-t">
+    <header class="sec__head">
+      <h2 id="ca-tokens-t" class="sc-text-h2-semibold">¿Es un solo cambio?</h2>
+      <p class="sec__lead sc-text-body-regular">
+        No. El botón principal no tiene variable propia: lee <code>--sc-bg-primary</code>, como otros
+        {{ totalLectores - 1 }} sitios. Cambiarla son dos líneas y repinta todo esto:
+      </p>
+    </header>
+
+    <div class="lectores">
+      @for (l of lectores; track l.donde) {
+        <div class="lector">
+          <p class="lector__n sc-text-h1-semibold">{{ l.cuantos }}</p>
+          <p class="sc-text-body-semibold">{{ l.donde }}</p>
+          <p class="sc-text-caption-regular">{{ l.que }}</p>
+        </div>
+      }
+    </div>
+
+    <h3 class="sub sc-text-h3-semibold">Cómo se haría bien: solo el botón</h3>
+    <ol class="camino">
+      @for (p of camino; track p.titulo) {
+        <li>
+          <p class="sc-text-body-semibold">{{ p.titulo }}</p>
+          <p class="sc-text-caption-regular">{{ p.texto }}</p>
+        </li>
+      }
+    </ol>
+    <p class="nota sc-text-caption-regular">
+      El camino ya existe para los demás colores de componente (los botones secundarios, por ejemplo): el generador los
+      saca del Kit y el preset los lee. El primario se quedó fuera porque en Figma apunta al tema.
+    </p>
+
+    <h3 class="sub sc-text-h3-semibold">Lo que hay que decidir aparte</h3>
+    <ul class="decisiones">
+      @for (d of decisiones; track d) {
+        <li class="sc-text-body-regular">{{ d }}</li>
+      }
+    </ul>
+  </section>
+
+  <!-- ── OTROS SISTEMAS ─────────────────────────────────────────────────────────────────────── -->
+  <section class="sec" id="ca-otros" aria-labelledby="ca-otros-t">
+    <header class="sec__head">
+      <h2 id="ca-otros-t" class="sc-text-h2-semibold">Lo que hacen otros 17 sistemas</h2>
+      <p class="sec__lead sc-text-body-regular">Cada nombre, en el color de su botón principal, leído de sus tokens o su código publicados.</p>
+    </header>
+
+    <div class="bandos">
+      @for (b of bandos; track b.id) {
+        <article class="bando">
+          <header class="bando__head">
+            <span class="bando__n sc-text-h1-semibold">{{ b.sistemas.length }}</span>
+            <span class="sc-text-body-semibold">{{ b.titulo }}</span>
+            @if (b.nuestro) {
+              <span class="bando__nuestro sc-text-caption-semibold">{{ b.nuestro }}</span>
+            }
+          </header>
+          <div class="bando__botones">
+            @for (s of b.sistemas; track s.nombre) {
+              <span class="sistema sc-text-caption-semibold" [style.background]="s.boton">{{ s.nombre }}</span>
+            }
+          </div>
+          <p class="sc-text-caption-regular">{{ b.texto }}</p>
+        </article>
+      }
+      <article class="bando bando--cero">
+        <header class="bando__head">
+          <span class="bando__n sc-text-h1-semibold">0</span>
+          <span class="sc-text-body-semibold">Cian</span>
+        </header>
+        <p class="sc-text-caption-regular">Ninguno. Sería identidad propia, no un patrón que el usuario ya conozca.</p>
+      </article>
+    </div>
+
+    <ul class="hallazgos">
+      @for (h of hallazgos; track h) {
+        <li class="sc-text-body-regular">{{ h }}</li>
+      }
+    </ul>
+  </section>
+
+  <!-- ── REGLAS ─────────────────────────────────────────────────────────────────────────────── -->
+  <section class="sec" aria-labelledby="ca-reglas-t">
+    <header class="sec__head">
+      <h2 id="ca-reglas-t" class="sc-text-h2-semibold">Las reglas que proponemos</h2>
+      <p class="sec__lead sc-text-body-regular">Valen para cualquiera de los colores de arriba.</p>
+    </header>
+    <ol class="reglas">
+      @for (r of reglas; track r.titulo) {
+        <li>
+          <p class="sc-text-body-semibold">{{ r.titulo }}</p>
+          <p class="sc-text-caption-regular">{{ r.texto }}</p>
+        </li>
+      }
+    </ol>
+  </section>
+</article>

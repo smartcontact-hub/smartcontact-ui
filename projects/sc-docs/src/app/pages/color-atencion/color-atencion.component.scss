@@ -1,0 +1,520 @@
+/*
+ * Color de atención · la misma gramática que el Lab (cabecera, índice con cifras, secciones con contenedor de consulta)
+ * para que se lea como parte de él. El color de la página sale de roles del sistema; la PALETA cruda solo aparece en
+ * las muestras de candidatos, que es justo lo que se enseña (sc-docs puede pintarla: `token-guard`, regla 8).
+ */
+
+:host {
+  display: block;
+}
+
+.ca {
+  --measure: 66ch;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+  --fast: 150ms;
+
+  max-width: 76rem;
+}
+
+.ca > * + * {
+  margin-top: var(--sc-spacing-4);
+}
+
+code {
+  font-family: var(--sc-font-family-mono);
+}
+
+/* ── CABECERA ───────────────────────────────────────────────────────────────────────────────── */
+
+.eyebrow {
+  margin: 0 0 var(--sc-spacing-0-5);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--sc-text-accent);
+}
+
+.ca__head h1 {
+  margin: 0;
+  max-width: var(--measure);
+  letter-spacing: -0.01em;
+  color: var(--sc-text-heading);
+}
+
+.lead {
+  margin: var(--sc-spacing-1) 0 0;
+  max-width: var(--measure);
+  color: var(--sc-text-secondary);
+}
+
+.ca__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sc-spacing-0-5) var(--sc-spacing-1);
+  margin-top: var(--sc-spacing-1);
+  color: var(--sc-text-secondary);
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-375);
+  color: var(--sc-text-link);
+  text-decoration: none;
+}
+
+.cta:hover {
+  text-decoration: underline;
+}
+
+.jump {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: var(--sc-spacing-0-875);
+  margin-top: var(--sc-spacing-2);
+}
+
+.jump__item {
+  display: grid;
+  gap: var(--sc-spacing-0-25);
+  padding: var(--sc-spacing-0-875) var(--sc-spacing-1);
+  border: 1px solid var(--sc-border-subtle);
+  border-radius: var(--sc-radius-lg);
+  background: var(--sc-bg-surface);
+  color: var(--sc-text-primary);
+  text-decoration: none;
+  transition:
+    border-color var(--fast) var(--ease),
+    background var(--fast) var(--ease);
+}
+
+.jump__item:hover {
+  border-color: var(--sc-border-accent);
+  background: var(--sc-bg-hover);
+}
+
+.jump__item:focus-visible {
+  outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
+  outline-offset: var(--sc-focus-ring-offset);
+}
+
+.jump__n {
+  color: var(--sc-text-heading);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── SECCIÓN ────────────────────────────────────────────────────────────────────────────────── */
+
+.sec {
+  container-type: inline-size;
+  scroll-margin-top: var(--sc-spacing-2);
+}
+
+.sec__head {
+  margin-bottom: var(--sc-spacing-1-5);
+}
+
+.sec__head h2 {
+  margin: 0;
+  letter-spacing: -0.01em;
+  color: var(--sc-text-heading);
+}
+
+.sec__lead {
+  margin: var(--sc-spacing-0-375) 0 0;
+  max-width: var(--measure);
+  color: var(--sc-text-secondary);
+}
+
+.sub {
+  margin: var(--sc-spacing-2) 0 var(--sc-spacing-1);
+  color: var(--sc-text-heading);
+}
+
+.nota {
+  margin: var(--sc-spacing-1) 0 0;
+  max-width: var(--measure);
+  color: var(--sc-text-subtle);
+}
+
+p {
+  margin: 0;
+}
+
+/* ── PUNTO DE PARTIDA ───────────────────────────────────────────────────────────────────────── */
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: var(--sc-spacing-1);
+}
+
+.stat {
+  display: grid;
+  gap: var(--sc-spacing-0-5);
+  align-content: start;
+  padding: var(--sc-spacing-1);
+  border: 1px solid var(--sc-border-subtle);
+  border-radius: var(--sc-radius-lg);
+  background: var(--sc-bg-surface);
+  color: var(--sc-text-secondary);
+}
+
+.stat__n {
+  letter-spacing: -0.02em;
+  color: var(--sc-text-heading);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── TABLA DE CANDIDATOS ────────────────────────────────────────────────────────────────────── */
+
+.tabla-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--sc-border-subtle);
+  border-radius: var(--sc-radius-lg);
+  background: var(--sc-bg-surface);
+}
+
+.tabla {
+  width: 100%;
+  min-width: 52rem;
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: var(--sc-spacing-0-75) var(--sc-spacing-0-875);
+    border-bottom: 1px solid var(--sc-border-subtle);
+    text-align: start;
+    vertical-align: top;
+  }
+
+  thead th {
+    color: var(--sc-text-secondary);
+    white-space: nowrap;
+  }
+
+  tbody tr:last-child > * {
+    border-bottom: 0;
+  }
+
+  tbody th {
+    color: var(--sc-text-heading);
+    font-weight: var(--sc-font-weight-regular);
+  }
+
+  .nombre {
+    display: block;
+    margin-bottom: var(--sc-spacing-0-5);
+    white-space: nowrap;
+  }
+
+  /* Lo descartado se queda en la tabla (es parte de la respuesta) pero pesa menos. */
+  tr[data-veredicto='descartado'] > :not(.veredicto) {
+    opacity: 0.72;
+  }
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: var(--sc-text-primary);
+}
+
+.sep {
+  margin: 0 var(--sc-spacing-0-25);
+  color: var(--sc-text-subtle);
+}
+
+.mal {
+  color: var(--sc-text-danger);
+  font-weight: var(--sc-font-weight-semibold);
+}
+
+/* Cada candidato en su botón, en claro y sobre el lienzo oscuro: el par se juzga sobre su fondo, no sobre el de la tabla. */
+.pares {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+}
+
+.pares__oscuro {
+  display: inline-flex;
+  padding: var(--sc-spacing-0-375);
+  border-radius: var(--sc-radius-md);
+  background: var(--sc-color-zinc-950);
+}
+
+.boton {
+  display: inline-block;
+  padding: var(--sc-cmp-button-padding-y) var(--sc-cmp-button-padding-x);
+  border-radius: var(--sc-cmp-button-border-radius);
+  white-space: nowrap;
+}
+
+/* La viveza, como una barra: 0,25 de croma llena la pista. */
+.viveza {
+  display: inline-grid;
+  gap: var(--sc-spacing-0-25);
+
+  &::after {
+    content: '';
+    display: block;
+    width: 4rem;
+    height: var(--sc-spacing-0-375);
+    border-radius: var(--sc-radius-full);
+    background: linear-gradient(
+      to right,
+      var(--sc-text-secondary) calc(var(--v) * 100%),
+      var(--sc-bg-subtle) calc(var(--v) * 100%)
+    );
+  }
+}
+
+/* Tono y daltonismo, uno debajo del otro: lo que hace que un color se lea como otro. */
+.confunde {
+  display: grid;
+  gap: var(--sc-spacing-0-375);
+  max-width: 14rem;
+  color: var(--sc-text-secondary);
+}
+
+[data-nivel='mal'] {
+  color: var(--sc-text-danger);
+}
+
+[data-nivel='justo'] {
+  color: var(--sc-text-warning);
+}
+
+.veredicto {
+  min-width: 15rem;
+
+  p {
+    margin-top: var(--sc-spacing-0-375);
+    color: var(--sc-text-secondary);
+  }
+}
+
+/* ── MUESTRA ────────────────────────────────────────────────────────────────────────────────── */
+
+.mandos {
+  display: grid;
+  gap: var(--sc-spacing-0-5);
+  margin-bottom: var(--sc-spacing-1);
+}
+
+.mandos__fila {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sc-spacing-0-5) var(--sc-spacing-1);
+}
+
+.muestra {
+  display: block;
+  width: 100%;
+  border: 1px solid var(--sc-border-subtle);
+  border-radius: var(--sc-radius-lg);
+  background: var(--sc-bg-canvas);
+}
+
+/* ── PANTALLAS REALES ───────────────────────────────────────────────────────────────────────── */
+
+.comparar {
+  position: relative;
+  margin: 0;
+  max-width: 100%;
+  aspect-ratio: 1440 / 900;
+  border: 1px solid var(--sc-border-subtle);
+  border-radius: var(--sc-radius-lg);
+  overflow: hidden;
+  background: var(--sc-bg-subtle);
+}
+
+.comparar__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.comparar__despues {
+  clip-path: inset(0 0 0 var(--corte, 50%));
+}
+
+.comparar__raya {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--corte, 50%);
+  width: 2px;
+  margin-left: -1px;
+  background: var(--sc-border-focus);
+  pointer-events: none;
+}
+
+.comparar__tag {
+  position: absolute;
+  bottom: var(--sc-spacing-1);
+  padding: var(--sc-spacing-0-25) var(--sc-spacing-0-5);
+  border-radius: var(--sc-radius-sm);
+  background: var(--sc-bg-elevated);
+  color: var(--sc-text-heading);
+  box-shadow: var(--sc-shadow-sm);
+  pointer-events: none;
+}
+
+.comparar__tag--l {
+  left: var(--sc-spacing-1);
+}
+
+.comparar__tag--r {
+  right: var(--sc-spacing-1);
+}
+
+/* El control es un rango de verdad (teclado y lector de pantalla), transparente encima de la imagen. */
+.comparar__rango {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: ew-resize;
+}
+
+.comparar:has(.comparar__rango:focus-visible) {
+  outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
+  outline-offset: var(--sc-focus-ring-offset);
+}
+
+/* ── TOKENS ─────────────────────────────────────────────────────────────────────────────────── */
+
+.lectores {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: var(--sc-spacing-1);
+}
+
+.lector {
+  display: grid;
+  gap: var(--sc-spacing-0-375);
+  align-content: start;
+  padding: var(--sc-spacing-1);
+  border: 1px solid var(--sc-border-subtle);
+  border-radius: var(--sc-radius-lg);
+  background: var(--sc-bg-surface);
+
+  .sc-text-caption-regular {
+    color: var(--sc-text-secondary);
+  }
+}
+
+.lector__n {
+  color: var(--sc-text-heading);
+  font-variant-numeric: tabular-nums;
+}
+
+.camino,
+.reglas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: var(--sc-spacing-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: paso;
+
+  li {
+    counter-increment: paso;
+    display: grid;
+    gap: var(--sc-spacing-0-375);
+    align-content: start;
+    padding-top: var(--sc-spacing-0-875);
+    border-top: 2px solid var(--sc-border-default);
+  }
+
+  li::before {
+    content: counter(paso);
+    font-family: var(--sc-font-family-mono);
+    color: var(--sc-text-subtle);
+  }
+
+  .sc-text-caption-regular {
+    color: var(--sc-text-secondary);
+  }
+}
+
+.decisiones,
+.hallazgos {
+  display: grid;
+  gap: var(--sc-spacing-0-5);
+  max-width: var(--measure);
+  margin: 0;
+  padding-inline-start: var(--sc-spacing-1-5);
+}
+
+.hallazgos {
+  margin-top: var(--sc-spacing-1-5);
+}
+
+/* ── OTROS SISTEMAS ─────────────────────────────────────────────────────────────────────────── */
+
+.bandos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: var(--sc-spacing-1);
+}
+
+.bando {
+  display: grid;
+  gap: var(--sc-spacing-0-875);
+  align-content: start;
+  padding: var(--sc-spacing-1);
+  border: 1px solid var(--sc-border-subtle);
+  border-radius: var(--sc-radius-lg);
+  background: var(--sc-bg-surface);
+
+  .sc-text-caption-regular {
+    color: var(--sc-text-secondary);
+  }
+}
+
+.bando--cero {
+  border-style: dashed;
+  border-color: var(--sc-border-default);
+}
+
+.bando__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sc-spacing-0-5);
+  color: var(--sc-text-heading);
+}
+
+.bando__n {
+  font-variant-numeric: tabular-nums;
+}
+
+.bando__nuestro {
+  padding: 0 var(--sc-spacing-0-375);
+  border-radius: var(--sc-radius-sm);
+  background: var(--sc-bg-subtle);
+  color: var(--sc-text-secondary);
+}
+
+.bando__botones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sc-spacing-0-375);
+}
+
+/* El botón de otro producto, con SU color: el texto va en blanco porque así lo pintan todos ellos. */
+.sistema {
+  padding: var(--sc-spacing-0-25) var(--sc-spacing-0-5);
+  border-radius: var(--sc-radius-sm);
+  color: var(--sc-color-slate-0);
+  box-shadow: inset 0 0 0 1px var(--sc-border-subtle);
+  white-space: nowrap;
+}

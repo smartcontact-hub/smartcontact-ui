@@ -225,6 +225,15 @@ export interface Lab {
 
 export const LABS: readonly Lab[] = [
   {
+    id: 'lab-color-atencion',
+    title: 'Color de atención',
+    question: '¿Qué color lleva el botón principal, cómo queda en el resto de la interfaz y qué implica en los tokens?',
+    controls: ['Ocho colores', 'Solo el botón o toda la variable', 'Tema'],
+    where: 'Los mandos encima de la muestra y de las capturas.',
+    href: '/#/color-de-atencion',
+    label: 'sc-doc.pages.dev/#/color-de-atencion',
+  },
+  {
     id: 'lab-sidebar',
     title: 'Sidebar, el de PrimeNG',
     question: '¿Cómo se comporta el menú lateral en cada modo, y cuál queremos?',

@@ -1,0 +1,605 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Color de atención del Supervisor</title>
+<style>
+@font-face { font-family: Inter; font-weight: 400; font-display: swap; src: url(fonts/inter-latin-400-normal.woff2) format('woff2'); }
+@font-face { font-family: Inter; font-weight: 500; font-display: swap; src: url(fonts/inter-latin-500-normal.woff2) format('woff2'); }
+@font-face { font-family: Inter; font-weight: 600; font-display: swap; src: url(fonts/inter-latin-600-normal.woff2) format('woff2'); }
+@font-face { font-family: Inter; font-weight: 700; font-display: swap; src: url(fonts/inter-latin-700-normal.woff2) format('woff2'); }
+@font-face { font-family: Inter; font-weight: 800; font-display: swap; src: url(fonts/inter-latin-800-normal.woff2) format('woff2'); }
+@font-face { font-family: 'JetBrains Mono'; font-weight: 400; font-display: swap; src: url(fonts/jetbrains-mono-latin-400-normal.woff2) format('woff2'); }
+@font-face { font-family: 'JetBrains Mono'; font-weight: 500; font-display: swap; src: url(fonts/jetbrains-mono-latin-500-normal.woff2) format('woff2'); }
+@font-face { font-family: 'JetBrains Mono'; font-weight: 600; font-display: swap; src: url(fonts/jetbrains-mono-latin-600-normal.woff2) format('woff2'); }
+
+/* Escenario 16:9 de 1920×1080 escalado a la ventana; en una pantalla estrecha, las diapositivas se apilan. El marino de
+   la marca de fondo y el cian de acento. Una idea por diapositiva, y la imagen manda: el texto, lo justo. */
+:root {
+  --navy-950: #05080d; --navy-900: #0b1019; --navy-800: #131b2b; --navy-700: #1b273d;
+  --ink: #ffffff; --soft: #c6ccd6; --muted: #aeb6c2; --line: rgba(255, 255, 255, .12); --line-strong: rgba(255, 255, 255, .24);
+  --cyan: #51d5e6; --cyan-300: #7be1ef; --cyan-glow: rgba(81, 213, 230, .18);
+  --ok: #4ade80; --no: #f87171; --warn: #fbbf24;
+  --display: Inter, 'Helvetica Neue', Arial, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body { background: var(--navy-950); color: var(--ink); font-family: var(--display); -webkit-font-smoothing: antialiased; overflow: hidden; }
+
+#viewport { position: fixed; inset: 0; overflow: hidden; }
+#deck { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; }
+#bg { position: absolute; inset: 0; background: radial-gradient(1300px 900px at 50% 42%, var(--navy-700) 0%, var(--navy-900) 55%, var(--navy-950) 100%); }
+#grid { position: absolute; inset: 0; background-image: radial-gradient(circle, rgba(255, 255, 255, .06) 1.4px, transparent 1.6px); background-size: 42px 42px; }
+#glow { position: absolute; width: 1500px; height: 1500px; left: 900px; top: -560px; border-radius: 50%; background: radial-gradient(circle, rgba(81, 213, 230, .12) 0%, rgba(81, 213, 230, 0) 60%); pointer-events: none; }
+
+.slide { position: absolute; inset: 0; padding: 80px 120px 128px; display: flex; flex-direction: column; visibility: hidden; }
+.slide.is-active { visibility: visible; }
+.eyebrow { font-family: var(--mono); font-weight: 600; font-size: 20px; letter-spacing: .16em; text-transform: uppercase; color: var(--cyan); margin-bottom: 20px; }
+.title { font-weight: 800; font-size: 72px; line-height: 1.02; letter-spacing: -0.045em; text-wrap: balance; max-width: 1600px; }
+.title em { font-style: normal; color: var(--cyan); }
+.lead { margin-top: 20px; font-size: 30px; line-height: 1.38; color: var(--soft); max-width: 1200px; text-wrap: pretty; }
+.small { font-size: 22px; line-height: 1.45; color: var(--muted); }
+code, .mono { font-family: var(--mono); }
+.stage { flex: 1; min-height: 0; margin-top: 36px; display: flex; gap: 48px; align-items: flex-start; }
+
+/* Capturas: con marco, señales encima y lupa al pasar; un clic las abre a pantalla completa. */
+.shot { position: relative; border-radius: 14px; overflow: hidden; box-shadow: 0 30px 80px rgba(0, 0, 0, .45), 0 0 0 1px var(--line-strong); background: var(--navy-900); }
+.shot img { display: block; width: 100%; height: auto; }
+.shot[data-zoom] { cursor: zoom-in; }
+.shot[data-zoom]::after { content: '⤢'; position: absolute; right: 14px; top: 12px; width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; font-size: 22px; color: var(--ink); background: rgba(5, 8, 13, .78); box-shadow: 0 0 0 1px var(--line-strong); opacity: 0; transition: opacity .2s; }
+.shot[data-zoom]:hover::after { opacity: 1; }
+.mark { position: absolute; border: 3px solid var(--cyan); border-radius: 10px; box-shadow: 0 0 0 6px var(--cyan-glow); pointer-events: none; }
+.mark span { position: absolute; left: 50%; top: calc(100% + 10px); transform: translateX(-50%); white-space: nowrap; font-family: var(--mono); font-size: 18px; font-weight: 600; color: var(--navy-950); background: var(--cyan); padding: 4px 10px; border-radius: 6px; }
+.mark.up span { top: auto; bottom: calc(100% + 10px); }
+.mark.left span { top: 50%; left: auto; right: calc(100% + 12px); transform: translateY(-50%); }
+.mark.right span { top: 50%; left: calc(100% + 12px); transform: translateY(-50%); }
+.mark.inside span { top: auto; bottom: 12px; }
+.cap { margin-top: 14px; font-size: 21px; line-height: 1.35; color: var(--muted); }
+.cap b { color: var(--ink); font-weight: 600; }
+
+.chip { display: inline-flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 18px; font-weight: 600; padding: 7px 14px; border-radius: 999px; color: var(--cyan-300); background: rgba(81, 213, 230, .1); box-shadow: inset 0 0 0 1px rgba(123, 225, 239, .35); white-space: nowrap; }
+.chip.quiet { color: var(--soft); background: transparent; box-shadow: inset 0 0 0 1px var(--line-strong); }
+.chips { display: flex; flex-wrap: wrap; gap: 12px; }
+
+.big { font-weight: 800; font-size: 132px; line-height: .9; letter-spacing: -0.05em; font-variant-numeric: tabular-nums; }
+.big small { font-size: .42em; color: var(--muted); letter-spacing: -0.02em; margin-left: 6px; }
+
+/* Portada */
+.cover { justify-content: center; }
+.cover .logo { width: 116px; color: var(--ink); margin-bottom: 56px; }
+.cover .title { font-size: 136px; max-width: 1400px; }
+.cover .chips { margin-top: 56px; }
+
+/* Galería de otros productos */
+.gallery { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 26px 28px; margin-top: 34px; width: 1420px; max-width: 100%; }
+.gallery figure { margin: 0; }
+.gallery .shot { aspect-ratio: 16 / 10; }
+.gallery figcaption { margin-top: 12px; display: flex; align-items: center; gap: 12px; font-size: 22px; font-weight: 700; }
+.gallery figcaption i { width: 16px; height: 16px; border-radius: 5px; box-shadow: 0 0 0 1px var(--line-strong); }
+.gallery figcaption span { font-weight: 400; color: var(--muted); font-size: 19px; }
+
+/* Bandos */
+.camps { display: grid; grid-template-columns: 1.5fr 1.15fr 1fr .7fr; gap: 24px; margin-top: 44px; }
+.camp { border-radius: 20px; padding: 28px; background: rgba(11, 16, 25, .55); box-shadow: inset 0 0 0 1px var(--line); display: flex; flex-direction: column; gap: 18px; }
+.camp .big { font-size: 112px; }
+.camp h3 { font-size: 28px; letter-spacing: -0.02em; }
+.camp .note { font-family: var(--mono); font-size: 16px; color: var(--muted); letter-spacing: .04em; }
+.camp.zero { box-shadow: inset 0 0 0 2px rgba(81, 213, 230, .45); background: rgba(81, 213, 230, .06); }
+.camp.zero .big { color: var(--cyan); }
+.btns { display: flex; flex-wrap: wrap; gap: 8px; }
+.btns span { font-size: 16px; font-weight: 600; padding: 8px 12px; border-radius: 8px; color: #fff; box-shadow: 0 0 0 1px rgba(255, 255, 255, .22); white-space: nowrap; }
+
+/* Rueda */
+.wheel-wrap { --w: 620px; position: relative; width: var(--w); max-width: 100%; aspect-ratio: 1; flex: none; margin-top: -30px; }
+.wheel { position: absolute; inset: 15.6%; border-radius: 50%;
+  background: conic-gradient(from 0deg, oklch(.72 .15 0), oklch(.72 .15 30) 30deg, oklch(.72 .15 60) 60deg, oklch(.72 .15 90) 90deg, oklch(.72 .15 120) 120deg, oklch(.72 .15 150) 150deg, oklch(.72 .15 180) 180deg, oklch(.72 .15 210) 210deg, oklch(.72 .15 240) 240deg, oklch(.72 .15 270) 270deg, oklch(.72 .15 300) 300deg, oklch(.72 .15 330) 330deg, oklch(.72 .15 360) 360deg);
+  -webkit-mask: radial-gradient(circle closest-side, transparent 67.5%, #000 68%, #000 99.4%, transparent 100%); mask: radial-gradient(circle closest-side, transparent 67.5%, #000 68%, #000 99.4%, transparent 100%); opacity: .9; }
+.wheel-center { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); text-align: center; }
+.wheel-center b { display: block; font-size: 40px; font-weight: 800; letter-spacing: -0.03em; }
+.wheel-center span { font-family: var(--mono); font-size: 14px; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; }
+.pin { position: absolute; width: 22px; height: 22px; margin: -11px 0 0 -11px; border-radius: 50%; border: 3px solid var(--navy-950); box-shadow: 0 0 0 2px var(--ink); }
+.pin.free { box-shadow: 0 0 0 2px var(--cyan), 0 0 0 9px var(--cyan-glow); }
+.pin-label { position: absolute; transform: translate(-50%, -50%); white-space: nowrap; font-size: 19px; font-weight: 600; line-height: 1.15; text-align: center; }
+.pin-label small { display: block; font-family: var(--mono); font-size: 14px; font-weight: 500; color: var(--muted); letter-spacing: .04em; }
+.pin-label.no { color: var(--muted); }
+.pin-label.free { color: var(--cyan); }
+.owners { list-style: none; display: grid; gap: 22px; margin-top: 30px; }
+.owners li { display: grid; grid-template-columns: 30px 1fr; gap: 18px; align-items: baseline; font-size: 30px; line-height: 1.3; color: var(--soft); }
+.owners li i { width: 22px; height: 22px; border-radius: 50%; transform: translateY(2px); }
+.owners b { color: var(--ink); }
+
+/* Candidatos */
+.cands { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px; margin-top: 40px; }
+.cand { border-radius: 18px; padding: 24px; background: rgba(11, 16, 25, .55); box-shadow: inset 0 0 0 1px var(--line); display: flex; flex-direction: column; gap: 14px; }
+.cand.out { opacity: .5; }
+.cand .pair { display: flex; gap: 12px; align-items: center; }
+.cand .pair span { font-size: 22px; font-weight: 600; padding: 12px 20px; border-radius: 9px; }
+.cand .pair .dk { padding: 7px; border-radius: 12px; background: #09090b; box-shadow: 0 0 0 1px var(--line-strong); }
+.cand .pair .dk span { font-size: 16px; padding: 8px 12px; }
+.cand h3 { font-size: 26px; letter-spacing: -0.02em; }
+.cand .ratio { font-family: var(--mono); font-size: 19px; color: var(--soft); }
+.cand .ratio .no { color: var(--no); font-weight: 600; }
+.v { align-self: flex-start; font-family: var(--mono); font-size: 15px; font-weight: 600; letter-spacing: .04em; padding: 5px 10px; border-radius: 7px; }
+.v.si { color: #062e16; background: var(--ok); } .v.mt { color: #3b2603; background: var(--warn); } .v.nn { color: #3f0a0a; background: var(--no); } .v.hy { color: var(--navy-950); background: var(--soft); }
+
+/* Comparador */
+.compare { position: relative; width: 1080px; aspect-ratio: 1440 / 900; max-width: 100%; border-radius: 14px; overflow: hidden; box-shadow: 0 30px 80px rgba(0, 0, 0, .45), 0 0 0 1px var(--line-strong); cursor: ew-resize; touch-action: none; user-select: none; flex: none; }
+.compare img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none; }
+.compare .after { clip-path: inset(0 0 0 var(--cut, 50%)); }
+.compare .handle { position: absolute; top: 0; bottom: 0; left: var(--cut, 50%); width: 3px; margin-left: -1.5px; background: var(--cyan); box-shadow: 0 0 0 6px var(--cyan-glow); }
+.compare .handle::after { content: ''; position: absolute; left: 50%; top: 50%; width: 44px; height: 44px; transform: translate(-50%, -50%); border-radius: 50%; background: var(--cyan); box-shadow: 0 6px 20px rgba(0, 0, 0, .4); }
+.compare .tag { position: absolute; bottom: 16px; font-family: var(--mono); font-size: 16px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; padding: 6px 12px; border-radius: 8px; background: rgba(5, 8, 13, .84); }
+.compare .tag.l { left: 16px; } .compare .tag.r { right: 16px; color: var(--cyan); }
+.compare:focus-visible { outline: 3px solid var(--cyan); outline-offset: 6px; }
+.zoom-btn { position: absolute; right: 14px; top: 12px; width: 44px; height: 44px; border-radius: 10px; border: 0; font-size: 22px; color: var(--ink); background: rgba(5, 8, 13, .84); box-shadow: 0 0 0 1px var(--line-strong); cursor: zoom-in; }
+.toggles { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 14px; }
+.aside { flex: 1; min-width: 0; }
+.seg { display: inline-flex; padding: 4px; border-radius: 10px; background: rgba(255, 255, 255, .06); box-shadow: 0 0 0 1px var(--line); }
+.seg button { font: 600 18px/1 var(--display); color: var(--muted); background: transparent; border: 0; padding: 10px 16px; border-radius: 7px; cursor: pointer; }
+.seg button[aria-pressed='true'] { background: var(--ink); color: var(--navy-950); }
+.seg button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+.note { min-height: 1.4em; margin-top: 12px; font-size: 19px; color: var(--muted); }
+
+/* Diagramas (gramática de diagram-design: tinta, un solo acento, sin sombras) */
+.sankey { width: 100%; height: auto; display: block; margin-top: 10px; }
+.sankey .hd text { font-family: var(--mono); font-size: 15px; font-weight: 600; letter-spacing: .18em; fill: var(--muted); }
+.sankey .r { fill: rgba(198, 204, 214, .16); }
+.sankey .a { fill: rgba(81, 213, 230, .55); }
+.sankey .b { fill: var(--ink); }
+.sankey .ba { fill: var(--cyan); }
+.sankey .lb text { paint-order: stroke; stroke: var(--navy-900); stroke-width: 8px; stroke-linejoin: round; }
+.sankey .nm { font-size: 24px; font-weight: 700; fill: var(--ink); }
+.sankey .nm.mono { font-family: var(--mono); font-size: 24px; font-weight: 600; }
+.sankey .q { font-family: var(--mono); font-size: 18px; fill: var(--muted); }
+.sankey .acc { fill: var(--cyan); }
+.callout { display: flex; gap: 18px; align-items: center; margin-top: 8px; font-size: 26px; color: var(--soft); }
+.callout b { color: var(--ink); }
+.chain { display: flex; align-items: stretch; gap: 0; margin-top: 30px; }
+.node { flex: 1; border-radius: 14px; padding: 20px 22px; box-shadow: inset 0 0 0 1.5px var(--line-strong); display: flex; flex-direction: column; gap: 6px; }
+.node small { font-family: var(--mono); font-size: 14px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+.node b { font-size: 25px; letter-spacing: -0.01em; }
+.node code { font-size: 17px; color: var(--cyan-300); }
+.node.acc { box-shadow: inset 0 0 0 2px var(--cyan); background: rgba(81, 213, 230, .07); }
+.arrow { width: 56px; flex: none; display: grid; place-items: center; color: var(--muted); }
+.arrow svg { width: 40px; height: 16px; }
+.duo { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 34px; }
+.duo .cap { display: flex; gap: 12px; align-items: baseline; }
+
+/* Reglas */
+.rules { list-style: none; counter-reset: r; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 30px 80px; margin-top: 48px; }
+.rules li { counter-increment: r; display: grid; grid-template-columns: 64px 1fr; align-items: baseline; font-size: 34px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
+.rules li::before { content: counter(r, decimal-leading-zero); font-family: var(--mono); font-weight: 600; font-size: 22px; color: var(--cyan); }
+.rules li span { grid-column: 2; font-size: 22px; font-weight: 400; letter-spacing: 0; color: var(--muted); margin-top: 6px; }
+
+/* Decisión */
+.opts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px; margin-top: 44px; }
+.opt { border-radius: 18px; padding: 26px; background: rgba(11, 16, 25, .55); box-shadow: inset 0 0 0 1px var(--line); display: flex; flex-direction: column; gap: 14px; }
+.opt .sample { align-self: flex-start; font-size: 24px; font-weight: 600; padding: 14px 24px; border-radius: 10px; }
+.opt h3 { font-size: 30px; letter-spacing: -0.02em; }
+.opt p { font-size: 21px; line-height: 1.38; color: var(--soft); }
+.after-steps { margin-top: 40px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; font-size: 22px; color: var(--muted); }
+.after-steps a { color: var(--cyan-300); }
+
+/* Pie, navegación y progreso */
+#chrome { position: absolute; left: 120px; right: 120px; bottom: 46px; display: flex; align-items: center; gap: 24px; font-family: var(--mono); font-size: 17px; color: var(--muted); }
+#chrome .brand { display: flex; align-items: center; gap: 12px; letter-spacing: .04em; }
+#chrome .brand svg { width: 26px; color: var(--ink); }
+#chrome .spacer { flex: 1; }
+#count { font-variant-numeric: tabular-nums; letter-spacing: .08em; }
+#chrome button { font: inherit; color: var(--ink); background: rgba(255, 255, 255, .06); border: 0; box-shadow: 0 0 0 1px var(--line); width: 48px; height: 48px; border-radius: 12px; cursor: pointer; display: grid; place-items: center; }
+#chrome button:hover { background: rgba(255, 255, 255, .12); }
+#chrome button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+#chrome button svg { width: 22px; height: 22px; }
+#progress { position: absolute; left: 0; bottom: 0; height: 4px; width: 100%; background: rgba(255, 255, 255, .06); }
+#progress i { display: block; height: 100%; width: 0; background: var(--cyan); }
+.hint { font-size: 15px; color: rgba(174, 182, 194, .7); }
+
+/* Ampliar: fuera del escenario escalado, a pantalla completa. */
+#zoom { position: fixed; inset: 0; z-index: 50; display: grid; grid-template-rows: 1fr auto; place-items: center; gap: 14px; padding: 28px 28px 22px; background: rgba(5, 8, 13, .94); cursor: zoom-out; }
+#zoom[hidden] { display: none; }
+#zoom img { max-width: 100%; max-height: calc(100vh - 96px); object-fit: contain; border-radius: 10px; box-shadow: 0 0 0 1px var(--line-strong); }
+#zoom p { font-size: 17px; color: var(--soft); text-align: center; }
+#zoom button { position: fixed; top: 18px; right: 18px; width: 48px; height: 48px; border-radius: 12px; border: 0; font-size: 26px; color: var(--ink); background: rgba(255, 255, 255, .1); cursor: pointer; }
+
+/* Pantalla estrecha: se apila y se lee bajando. */
+@media (max-width: 760px) {
+  body { overflow: auto; background: radial-gradient(900px 600px at 50% 0%, var(--navy-700), var(--navy-950)); }
+  #viewport { position: static; overflow: visible; }
+  #deck { position: static; width: auto; height: auto; transform: none !important; }
+  #bg, #grid, #glow, #chrome, #progress { display: none; }
+  .slide { position: relative; inset: auto; visibility: visible; padding-block: 52px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); border-bottom: 1px solid var(--line); }
+  .eyebrow { font-size: 13px; margin-bottom: 12px; }
+  .title, .cover .title { font-size: 36px; }
+  .lead { font-size: 18px; }
+  .stage, .duo { flex-direction: column; grid-template-columns: 1fr; gap: 24px; }
+  .gallery, .camps, .cands, .opts, .rules { grid-template-columns: 1fr; }
+  .big, .camp .big { font-size: 64px; }
+  .owners li, .rules li { font-size: 20px; } .rules li span { font-size: 15px; }
+  .wheel-wrap { --w: 340px; margin-top: 0; }
+  .wheel-center b { font-size: 24px; } .wheel-center span { font-size: 10px; }
+  .pin { width: 14px; height: 14px; margin: -7px 0 0 -7px; border-width: 2px; }
+  .pin-label { font-size: 12px; } .pin-label small { font-size: 10px; }
+  .compare, .shot { width: 100% !important; }
+  .chain { flex-direction: column; } .arrow { width: auto; height: 32px; transform: rotate(90deg); }
+  .cover .logo { width: 64px; margin-bottom: 28px; }
+  .chip { white-space: normal; font-size: 13px; }
+  .cap, .callout, .opt p, .after-steps { font-size: 15px; }
+  .mark span { font-size: 11px; }
+}
+@media (prefers-reduced-motion: reduce) { .mark { box-shadow: none; } }
+</style>
+</head>
+<body>
+<div id="viewport">
+<div id="deck" aria-roledescription="presentación">
+  <div id="bg"></div><div id="grid"></div><div id="glow"></div>
+
+  <!-- 1 · Portada -->
+  <section class="slide cover is-active" aria-label="Portada">
+    <div class="logo" data-a><svg viewBox="0 0 109 98" xmlns="http://www.w3.org/2000/svg" aria-label="Smart Contact" role="img"><path d="M71.6506 15.536C66.4333 15.536 61.6258 13.8336 57.7066 10.9819C60.0628 14.6681 61.4453 19.0358 61.4453 23.7332C61.4453 28.074 60.2594 32.1299 58.2231 35.6312C62.0424 33.0061 66.6649 31.4653 71.6506 31.4653C74.7684 31.4653 77.7395 32.0816 80.4673 33.1743C78.5344 30.5524 77.3793 27.3212 77.3793 23.8165C77.3793 19.8754 78.831 16.2806 81.2172 13.5138C78.2877 14.8064 75.0567 15.536 71.6506 15.536Z" fill="currentColor" fill-opacity="0.45"/>
+        <path d="M37.3499 81.8761C42.5672 81.8761 47.3753 83.5791 51.293 86.4308C48.9367 82.7463 47.5546 78.3847 47.5546 73.6874C47.5546 69.3449 48.7411 65.2806 50.7774 61.7809C46.9581 64.4044 42.3356 65.9469 37.3499 65.9469C34.2321 65.9469 31.261 65.3289 28.5332 64.2378C30.4661 66.858 31.6208 70.0892 31.6208 73.5939C31.6208 77.5366 30.1695 81.1299 27.7833 83.8983C30.7128 82.6057 33.9438 81.8761 37.3499 81.8761Z" fill="currentColor" fill-opacity="0.45"/>
+        <path d="M37.703 0C50.8156 0 61.4453 10.6256 61.4453 23.7332C61.4453 36.839 50.8156 47.4647 37.703 47.4647C24.5905 47.4647 13.9624 36.839 13.9624 23.7332C13.9624 10.6256 24.5905 0 37.703 0Z" fill="currentColor"/>
+        <path d="M93.1898 8.01218C101.921 8.01218 109 15.0882 109 23.8165C109 32.5466 101.921 39.6225 93.1898 39.6225C84.458 39.6225 77.3793 32.5466 77.3793 23.8165C77.3793 15.0882 84.458 8.01218 93.1898 8.01218Z" fill="currentColor"/>
+        <path d="M71.2952 97.4189C58.1827 97.4189 47.5546 86.7933 47.5546 73.6874C47.5546 60.5798 58.1827 49.9542 71.2952 49.9542C84.4078 49.9542 95.0358 60.5798 95.0358 73.6874C95.0358 86.7933 84.4078 97.4189 71.2952 97.4189Z" fill="currentColor"/>
+        <path d="M15.8104 89.3982C7.07869 89.3982 0 82.3222 0 73.5939C0 64.8638 7.07869 57.7879 15.8104 57.7879C24.5421 57.7879 31.6208 64.8638 31.6208 73.5939C31.6208 82.3222 24.5421 89.3982 15.8104 89.3982Z" fill="currentColor"/></svg></div>
+    <p class="eyebrow" data-a>Smart Contact Design System / Supervisor</p>
+    <h1 class="title" data-a>Un color para dirigir la <em>atención</em></h1>
+    <p class="lead" data-a>Qué color lleva el botón principal, y qué cuesta cambiarlo.</p>
+    <div class="chips" data-a><span class="chip">Propuesta, octubre de 2026</span><span class="chip quiet">Sin aplicar</span></div>
+  </section>
+
+  <!-- 2 · El problema -->
+  <section class="slide" aria-label="El problema">
+    <p class="eyebrow" data-a>El problema</p>
+    <h2 class="title" data-a>¿Dónde se pulsa?</h2>
+    <div class="stage" style="margin-top: 30px; justify-content: center">
+      <div class="shot" data-a data-zoom data-cap="Alta de agente hoy, a 1440, tema claro" data-shot="alta" style="width: 1160px">
+        <img src="img/sup-alta-hoy-claro.jpg" width="1440" height="900" alt="Alta de agente en el Supervisor: todo es marino, gris y blanco, también los botones">
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 · Por qué no se ve -->
+  <section class="slide" aria-label="Por qué no se ve">
+    <p class="eyebrow" data-a>Por qué no se ve</p>
+    <h2 class="title" data-a>El botón es del mismo marino que todo lo demás</h2>
+    <div class="stage" style="margin-top: 30px">
+      <div class="shot" data-a data-zoom data-cap="La misma pantalla, solo con el marino del botón (#1b273d)" data-shot="marino" style="width: 1080px; flex: none">
+        <img src="img/sup-alta-marino.jpg" width="1440" height="900" alt="La misma pantalla con todo lavado salvo el marino: barra lateral, tarjeta de resumen, seis iconos, tres casillas y el botón Siguiente">
+      </div>
+      <div style="flex: 1; padding-top: 40px" data-a>
+        <p class="big">2<small>%</small></p>
+        <p class="lead" style="margin-top: 14px; font-size: 28px">del marino de esta pantalla es el botón.</p>
+        <p class="lead" style="margin-top: 44px; font-size: 28px">El resto es barra lateral, tarjeta, iconos y casillas. <b style="color: var(--ink)">El ojo va a lo grande.</b></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 · Otros SaaS -->
+  <section class="slide" aria-label="Otros SaaS">
+    <p class="eyebrow" data-a>Otros SaaS</p>
+    <h2 class="title" data-a>También son sobrios, y el botón se ve a la primera</h2>
+    <div class="gallery" data-a>
+      <figure><div class="shot" data-zoom data-full="img/otro-atlassian.jpg" data-cap="Atlassian, captura del 18/10/2026 a 1440" data-shot="otro-atlassian"><img src="img/otro-atlassian-recorte.jpg" width="720" height="450" alt="Inicio de sesión de Atlassian: el botón Continue, azul, es lo único con color"></div><figcaption><i style="background:#1868db"></i>Atlassian <span>azul</span></figcaption></figure>
+      <figure><div class="shot" data-zoom data-full="img/otro-notion.jpg" data-cap="Notion, captura del 18/10/2026 a 1440" data-shot="otro-notion"><img src="img/otro-notion-recorte.jpg" width="720" height="450" alt="Inicio de sesión de Notion: el botón Continue, azul"></div><figcaption><i style="background:#2383e2"></i>Notion <span>azul</span></figcaption></figure>
+      <figure><div class="shot" data-zoom data-full="img/otro-vercel.jpg" data-cap="Vercel, captura del 18/10/2026 a 1440" data-shot="otro-vercel"><img src="img/otro-vercel-recorte.jpg" width="720" height="450" alt="Inicio de sesión de Vercel: Continue with Email, en negro"></div><figcaption><i style="background:#171717"></i>Vercel <span>tinta neutra</span></figcaption></figure>
+      <figure><div class="shot" data-zoom data-full="img/otro-gitlab.jpg" data-cap="GitLab, captura del 18/10/2026 a 1440" data-shot="otro-gitlab"><img src="img/otro-gitlab-recorte.jpg" width="720" height="450" alt="Repositorio de GitLab: el botón Code, en gris oscuro"></div><figcaption><i style="background:#3a383d"></i>GitLab <span>tinta neutra</span></figcaption></figure>
+      <figure><div class="shot" data-zoom data-full="img/otro-github.jpg" data-cap="GitHub, captura del 18/10/2026 a 1440" data-shot="otro-github"><img src="img/otro-github-recorte.jpg" width="720" height="450" alt="Repositorio de GitHub: el botón Code, verde"></div><figcaption><i style="background:#1f883d"></i>GitHub <span>verde propio</span></figcaption></figure>
+      <figure><div class="shot" data-zoom data-full="img/otro-linear.jpg" data-cap="Linear, captura del 18/10/2026 a 1440" data-shot="otro-linear"><img src="img/otro-linear-recorte.jpg" width="720" height="450" alt="Inicio de sesión de Linear: Continue with Google, en su azul violáceo"></div><figcaption><i style="background:#6d78d5"></i>Linear <span>color propio</span></figcaption></figure>
+    </div>
+  </section>
+
+  <!-- 5 · Tres caminos -->
+  <section class="slide" aria-label="Tres caminos">
+    <p class="eyebrow" data-a>17 sistemas de diseño</p>
+    <h2 class="title" data-a>Tres caminos. Ninguno es <em>cian</em>.</h2>
+    <div class="camps" data-a>
+      <article class="camp"><p class="big">8</p><h3>Azul de interacción</h3><div class="btns"><span style="background:#0f62fe">IBM</span><span style="background:#066afe">Salesforce</span><span style="background:#0f6cbd">Microsoft</span><span style="background:#1868db">Atlassian</span><span style="background:#1f73b7">Zendesk</span><span style="background:#0263e0">Twilio</span><span style="background:#2143a2">Genesys</span><span style="background:#2383e2">Notion</span></div><p class="note">COMO NUESTRO OSCURO</p></article>
+      <article class="camp"><p class="big">5</p><h3>Tinta neutra</h3><div class="btns"><span style="background:#171717">Vercel</span><span style="background:#303030">Shopify</span><span style="background:#3a383d">GitLab</span><span style="background:#292929">Adobe</span><span style="background:#12344d">Freshworks</span></div><p class="note">COMO NUESTRO CLARO</p></article>
+      <article class="camp"><p class="big">4</p><h3>Color propio</h3><div class="btns"><span style="background:#533afd">Stripe</span><span style="background:#6d78d5">Linear</span><span style="background:#00884f">Aircall</span><span style="background:#1f883d">GitHub</span></div></article>
+      <article class="camp zero"><p class="big">0</p><h3>Cian</h3><p class="note">SERÍA IDENTIDAD PROPIA</p></article>
+    </div>
+    <p class="small" data-a style="margin-top: 26px">10 de los 17 lo escriben: <b style="color: var(--ink)">un botón principal por vista.</b></p>
+  </section>
+
+  <!-- 6 · Qué tonos quedan -->
+  <section class="slide" aria-label="Qué tonos quedan">
+    <p class="eyebrow" data-a>Qué tonos quedan</p>
+    <h2 class="title" data-a>Casi cada tono ya significa algo</h2>
+    <div class="stage" style="gap: 70px">
+      <div class="wheel-wrap" id="wheel" data-a><div class="wheel"></div><div class="wheel-center" style="top: 42%"><b>Tono</b><span>paleta del Kit</span></div></div>
+      <ul class="owners" data-a>
+        <li><i style="background:#16a34a"></i><span><b>Verde, ámbar y rojo</b>: estados.</span></li>
+        <li><i style="background:#1464fe"></i><span><b>Azul</b>: la marca y el enlace.</span></li>
+        <li><i style="background:#8b5cf6"></i><span><b>Violeta</b>: suena a interfaz hecha con IA.</span></li>
+        <li><i style="background:#51d5e6"></i><span><b>Cian</b>: libre. Ya es nuestro, en la barra lateral.</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 7 · Candidatos -->
+  <section class="slide" aria-label="Ocho candidatos">
+    <p class="eyebrow" data-a>Ocho candidatos</p>
+    <h2 class="title" data-a>Medidos en claro y en oscuro</h2>
+    <div class="cands" data-a>
+      <article class="cand"><div class="pair"><span style="background:#1b273d;color:#ffffff">Guardar</span><div class="dk"><span style="background:#7db3ff;color:#18181b">Guardar</span></div></div><h3>Marino, hoy</h3><p class="ratio">14,96 claro, 8,24 oscuro</p><p class="ratio">Contrasta, pero no destaca</p><span class="v hy">Hoy</span></article>
+      <article class="cand"><div class="pair"><span style="background:#0d4fd4;color:#ffffff">Guardar</span><div class="dk"><span style="background:#7db3ff;color:#18181b">Guardar</span></div></div><h3>Azul 600</h3><p class="ratio">6,80 claro, 8,24 oscuro</p><p class="ratio">Como nuestro oscuro</p><span class="v si">Recomendable</span></article>
+      <article class="cand"><div class="pair"><span style="background:#21717d;color:#ffffff">Guardar</span><div class="dk"><span style="background:#7be1ef;color:#18181b">Guardar</span></div></div><h3>Cian 700</h3><p class="ratio">5,64 claro, 11,69 oscuro</p><p class="ratio">Nuestro cian, accesible</p><span class="v si">Recomendable</span></article>
+      <article class="cand"><div class="pair"><span style="background:#0f766e;color:#ffffff">Guardar</span><div class="dk"><span style="background:#5eead4;color:#18181b">Guardar</span></div></div><h3>Teal 700</h3><p class="ratio">5,47 claro, 11,98 oscuro</p><p class="ratio">Roza el verde de éxito</p><span class="v mt">Con matices</span></article>
+      <article class="cand"><div class="pair"><span style="background:#51d5e6;color:#1b273d">Guardar</span><div class="dk"><span style="background:#51d5e6;color:#1b273d">Guardar</span></div></div><h3>Cian 400</h3><p class="ratio">8,55 claro, 8,55 oscuro</p><p class="ratio">Contra el blanco, <span class="no">1,75:1</span></p><span class="v mt">Con matices</span></article>
+      <article class="cand out"><div class="pair"><span style="background:#15803d;color:#ffffff">Guardar</span><div class="dk"><span style="background:#4ade80;color:#18181b">Guardar</span></div></div><h3>Verde 700</h3><p class="ratio">5,02 claro, 10,17 oscuro</p><p class="ratio">Es el verde de éxito</p><span class="v nn">Descartado</span></article>
+      <article class="cand out"><div class="pair"><span style="background:#c2410c;color:#ffffff">Guardar</span><div class="dk"><span style="background:#fb923c;color:#18181b">Guardar</span></div></div><h3>Naranja 700</h3><p class="ratio">5,18 claro, 7,83 oscuro</p><p class="ratio">Se confunde con peligro</p><span class="v nn">Descartado</span></article>
+      <article class="cand out"><div class="pair"><span style="background:#6d28d9;color:#ffffff">Guardar</span><div class="dk"><span style="background:#a78bfa;color:#18181b">Guardar</span></div></div><h3>Violeta 700</h3><p class="ratio">7,10 claro, 6,51 oscuro</p><p class="ratio">Suena a IA</p><span class="v nn">Descartado</span></article>
+    </div>
+    <p class="small" data-a style="margin-top: 20px">Contraste del texto del botón. Se pide 4,5:1.</p>
+  </section>
+
+  <!-- 8 · En pantallas reales -->
+  <section class="slide" aria-label="En pantallas reales">
+    <p class="eyebrow" data-a>En pantallas reales</p>
+    <h2 class="title" data-a>Así se vería</h2>
+    <div class="stage" style="margin-top: 30px">
+      <div data-a style="flex: none">
+        <div class="compare" id="compare" tabindex="0" role="slider" aria-label="Comparar hoy y la opción" aria-valuemin="0" aria-valuemax="100" aria-valuenow="20">
+          <img class="before" id="img-before" src="img/sup-alta-hoy-claro.jpg" alt="Hoy: botón principal en marino">
+          <img class="after" id="img-after" src="img/sup-alta-cian-700-claro.jpg" alt="Opción: botón principal en cian 700 con texto blanco">
+          <div class="handle"></div>
+          <span class="tag l">Hoy</span><span class="tag r" id="tag-r">Cian 700</span>
+          <button type="button" class="zoom-btn" id="cmp-zoom" aria-label="Ampliar la opción">⤢</button>
+        </div>
+        <p class="note" id="cmp-note" aria-live="polite"></p>
+      </div>
+      <div class="aside" data-a>
+        <div class="seg" role="group" aria-label="Opción" id="opciones"><button type="button" data-op="azul" aria-pressed="false">Azul 600</button><button type="button" data-op="cian-700" aria-pressed="true">Cian 700</button><button type="button" data-op="teal" aria-pressed="false">Teal 700</button><button type="button" data-op="cian-400" aria-pressed="false">Cian 400</button></div>
+        <div class="toggles"><div class="seg" role="group" aria-label="Pantalla"><button type="button" id="p-alta" aria-pressed="true">Alta de agente</button><button type="button" id="p-regla" aria-pressed="false">Nueva regla</button></div>
+        <div class="seg" role="group" aria-label="Tema"><button type="button" id="t-claro" aria-pressed="true">Claro</button><button type="button" id="t-oscuro" aria-pressed="false">Oscuro</button></div></div>
+        <p class="big" id="opt-ratio" style="margin-top: 56px">5,64<small>:1</small></p>
+        <p class="small" style="margin-top: 26px">contraste del texto del botón</p>
+        <p class="lead" id="opt-why" style="font-size: 26px; margin-top: 28px">Nuestro cian, oscurecido para que pase con texto blanco.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9 · La cascada -->
+  <section class="slide" aria-label="Es un solo cambio">
+    <p class="eyebrow" data-a>¿Es un solo cambio?</p>
+    <h2 class="title" data-a><em>No.</em> El botón comparte su variable con 33 sitios</h2>
+    <div data-a><svg class="sankey" viewBox="0 0 1660 680" style="width: 1520px; max-width: 100%" role="img" aria-labelledby="sk-t sk-d">
+<title id="sk-t">Una variable, 34 sitios</title><desc id="sk-d">--sc-bg-primary la leen 19 componentes de PrimeNG, 9 componentes propios y 6 pantallas del Supervisor. De esos 34 sitios, solo uno es el botón principal; los otros 33 cambiarían sin querer.</desc>
+<g class="hd"><text x="336" y="30" text-anchor="middle">UNA VARIABLE</text><text x="806" y="30" text-anchor="middle">QUIÉN LA LEE</text><text x="1276" y="30" text-anchor="middle">QUÉ CAMBIA</text></g>
+<g transform="translate(0 36)"><g class="ribs"><path class="r" d="M342,156 C571.0,156 571.0,92 800,92 L800,308 C571.0,308 571.0,372 342,372 Z"/><path class="r" d="M342,372 C571.0,372 571.0,372 800,372 L800,480 C571.0,480 571.0,480 342,480 Z"/><path class="r" d="M342,480 C571.0,480 571.0,544 800,544 L800,616 C571.0,616 571.0,552 342,552 Z"/><path class="r" d="M812,92 C1041.0,92 1041.0,188 1270,188 L1270,404 C1041.0,404 1041.0,308 812,308 Z"/><path class="r" d="M812,372 C1041.0,372 1041.0,404 1270,404 L1270,512 C1041.0,512 1041.0,480 812,480 Z"/><path class="r" d="M812,544 C1041.0,544 1041.0,512 1270,512 L1270,584 C1041.0,584 1041.0,616 812,616 Z"/><path class="a" d="M342,144 C571.0,144 571.0,80 800,80 L800,92 C571.0,92 571.0,156 342,156 Z"/><path class="a" d="M812,80 C1041.0,80 1041.0,112 1270,112 L1270,124 C1041.0,124 1041.0,92 812,92 Z"/></g>
+<g class="bars"><rect class="b" x="330" y="144" width="12" height="408"/><rect class="b" x="800" y="80" width="12" height="228"/><rect class="b" x="800" y="372" width="12" height="108"/><rect class="b" x="800" y="544" width="12" height="72"/><rect class="ba" x="1270" y="112" width="12" height="12"/><rect class="b" x="1270" y="188" width="12" height="396"/></g>
+<g class="lb"><text class="nm mono" x="314" y="344" text-anchor="end">--sc-bg-primary</text><text class="q" x="314" y="372" text-anchor="end">34 sitios</text><text class="nm" x="806" y="50" text-anchor="middle">Componentes de PrimeNG</text><text class="q" x="806" y="70" text-anchor="middle">19</text><text class="nm" x="806" y="338" text-anchor="middle">Componentes propios</text><text class="q" x="806" y="360" text-anchor="middle">9</text><text class="nm" x="806" y="510" text-anchor="middle">Pantallas del Supervisor</text><text class="q" x="806" y="532" text-anchor="middle">6</text><text class="nm acc" x="1298" y="120">El botón principal</text><text class="q acc" x="1298" y="144">1</text><text class="nm" x="1298" y="372">Lo que cambia sin querer</text><text class="q" x="1298" y="398">33: casillas, pestañas,</text><text class="q" x="1298" y="420">interruptores, la cifra</text><text class="q" x="1298" y="442">del resumen…</text></g></g>
+</svg></div>
+    <p class="callout" data-a><span class="chip">Probado</span> Con cian 400 en esa variable, <b>cambian 9 de 12 piezas</b> de un alta y 8 no llegan al contraste.</p>
+  </section>
+
+  <!-- 10 · La forma sencilla -->
+  <section class="slide" aria-label="La forma sencilla">
+    <p class="eyebrow" data-a>La forma sencilla</p>
+    <h2 class="title" data-a>Solo el botón: se decide en Figma</h2>
+    <div class="chain" data-a>
+      <div class="node"><small>Figma</small><b>Repuntar el botón</b><code>button/primary</code></div>
+      <div class="arrow" aria-hidden="true"><svg viewBox="0 0 40 16"><path d="M0 8h34M28 2l7 6-7 6" fill="none" stroke="currentColor" stroke-width="2"/></svg></div>
+      <div class="node"><small>Se genera solo</small><b>Su variable propia</b><code>--sc-cmp-button-primary-*</code></div>
+      <div class="arrow" aria-hidden="true"><svg viewBox="0 0 40 16"><path d="M0 8h34M28 2l7 6-7 6" fill="none" stroke="currentColor" stroke-width="2"/></svg></div>
+      <div class="node"><small>Un fichero</small><b>El preset la lee</b><code>button.ts</code></div>
+      <div class="arrow" aria-hidden="true"><svg viewBox="0 0 40 16"><path d="M0 8h34M28 2l7 6-7 6" fill="none" stroke="currentColor" stroke-width="2"/></svg></div>
+      <div class="node acc"><small>Resultado</small><b>Cambia 1 pieza de 12</b><code>el resto, igual</code></div>
+    </div>
+    <div class="duo" data-a>
+      <figure><div class="shot" data-zoom data-cap="Toda la variable con cian 400: cambian 9 de 12 piezas y 8 no llegan al contraste"><img src="img/muestra-variable.jpg" alt="Alta en miniatura con todo en cian: casillas, interruptor, pestañas, índice y botón de texto"></div><p class="cap"><span class="v nn">Atajo</span> <b>Toda la variable:</b> 9 de 12 cambian.</p></figure>
+      <figure><div class="shot" data-zoom data-cap="Solo el botón con cian 400: cambia 1 de 12 piezas"><img src="img/muestra-boton.jpg" alt="Alta en miniatura con solo el botón principal en cian"></div><p class="cap"><span class="v si">Propuesta</span> <b>Solo el botón:</b> 1 de 12.</p></figure>
+    </div>
+  </section>
+
+  <!-- 11 · Reglas -->
+  <section class="slide" aria-label="Las reglas">
+    <p class="eyebrow" data-a>Las reglas</p>
+    <h2 class="title" data-a>Siete reglas para el color</h2>
+    <ol class="rules" data-a>
+      <li>Un trabajo y pocos sitios<span>Más color reparte la atención.</span></li>
+      <li>Un botón principal por vista<span>El resto, secundarios.</span></li>
+      <li>Su color es solo del botón<span>Casillas y selección no lo heredan.</span></li>
+      <li>Un color claro va de fondo<span>Con texto oscuro. Nunca letra clara sobre blanco.</span></li>
+      <li>Ni violeta ni morado<span>Tampoco para la IA.</span></li>
+      <li>El acento es lo que se pulsa<span>Una cifra va en el color de los títulos.</span></li>
+      <li>Un color nuevo se mide antes<span>Tono, contraste en los dos temas y daltonismo.</span></li>
+    </ol>
+  </section>
+
+  <!-- 12 · Qué decidimos -->
+  <section class="slide" aria-label="Qué decidimos">
+    <p class="eyebrow" data-a>Qué decidimos</p>
+    <h2 class="title" data-a>Cuatro opciones que pasan</h2>
+    <div class="opts" data-a>
+      <div class="opt"><span class="sample" style="background:#0d4fd4;color:#fff">Guardar</span><span class="v si">Recomendable</span><h3>Azul 600</h3><p>Lo que hace la mayoría y nuestro oscuro. Cerca de la marca.</p></div>
+      <div class="opt"><span class="sample" style="background:#21717d;color:#fff">Guardar</span><span class="v si">Recomendable</span><h3>Cian 700</h3><p>Nuestro cian, accesible en los dos temas. Apagado.</p></div>
+      <div class="opt"><span class="sample" style="background:#0f766e;color:#fff">Guardar</span><span class="v mt">Con matices</span><h3>Teal 700</h3><p>Funciona en oscuro. Cerca del verde de éxito.</p></div>
+      <div class="opt"><span class="sample" style="background:#51d5e6;color:#1b273d">Guardar</span><span class="v mt">Con matices</span><h3>Cian 400</h3><p>El más vivo. En claro se pierde contra el blanco.</p></div>
+    </div>
+    <p class="after-steps" data-a><span class="chip quiet">Ahora no</span> Grupos y agentes están pasando a Figma. Después: Figma, el preset, contraste y una DD. <a href="../../#/color-de-atencion">Tocarlo en el Lab ↗</a></p>
+  </section>
+
+  <div id="chrome">
+    <div class="brand"><svg viewBox="0 0 109 98" aria-hidden="true"><path d="M71.6506 15.536C66.4333 15.536 61.6258 13.8336 57.7066 10.9819C60.0628 14.6681 61.4453 19.0358 61.4453 23.7332C61.4453 28.074 60.2594 32.1299 58.2231 35.6312C62.0424 33.0061 66.6649 31.4653 71.6506 31.4653C74.7684 31.4653 77.7395 32.0816 80.4673 33.1743C78.5344 30.5524 77.3793 27.3212 77.3793 23.8165C77.3793 19.8754 78.831 16.2806 81.2172 13.5138C78.2877 14.8064 75.0567 15.536 71.6506 15.536Z" fill="currentColor" fill-opacity="0.45"/>
+        <path d="M37.3499 81.8761C42.5672 81.8761 47.3753 83.5791 51.293 86.4308C48.9367 82.7463 47.5546 78.3847 47.5546 73.6874C47.5546 69.3449 48.7411 65.2806 50.7774 61.7809C46.9581 64.4044 42.3356 65.9469 37.3499 65.9469C34.2321 65.9469 31.261 65.3289 28.5332 64.2378C30.4661 66.858 31.6208 70.0892 31.6208 73.5939C31.6208 77.5366 30.1695 81.1299 27.7833 83.8983C30.7128 82.6057 33.9438 81.8761 37.3499 81.8761Z" fill="currentColor" fill-opacity="0.45"/>
+        <path d="M37.703 0C50.8156 0 61.4453 10.6256 61.4453 23.7332C61.4453 36.839 50.8156 47.4647 37.703 47.4647C24.5905 47.4647 13.9624 36.839 13.9624 23.7332C13.9624 10.6256 24.5905 0 37.703 0Z" fill="currentColor"/>
+        <path d="M93.1898 8.01218C101.921 8.01218 109 15.0882 109 23.8165C109 32.5466 101.921 39.6225 93.1898 39.6225C84.458 39.6225 77.3793 32.5466 77.3793 23.8165C77.3793 15.0882 84.458 8.01218 93.1898 8.01218Z" fill="currentColor"/>
+        <path d="M71.2952 97.4189C58.1827 97.4189 47.5546 86.7933 47.5546 73.6874C47.5546 60.5798 58.1827 49.9542 71.2952 49.9542C84.4078 49.9542 95.0358 60.5798 95.0358 73.6874C95.0358 86.7933 84.4078 97.4189 71.2952 97.4189Z" fill="currentColor"/>
+        <path d="M15.8104 89.3982C7.07869 89.3982 0 82.3222 0 73.5939C0 64.8638 7.07869 57.7879 15.8104 57.7879C24.5421 57.7879 31.6208 64.8638 31.6208 73.5939C31.6208 82.3222 24.5421 89.3982 15.8104 89.3982Z" fill="currentColor"/></svg>Un color para dirigir la atención</div>
+    <div class="spacer"></div>
+    <span class="hint">← → para avanzar, F pantalla completa, clic en una captura para ampliarla</span>
+    <span id="count">01 / 12</span>
+    <button type="button" id="prev" aria-label="Diapositiva anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+    <button type="button" id="next" aria-label="Diapositiva siguiente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+  </div>
+  <div id="progress"><i></i></div>
+</div>
+</div>
+
+<div id="zoom" hidden role="dialog" aria-modal="true" aria-label="Captura ampliada"><img alt=""><p></p><button type="button" aria-label="Cerrar">×</button></div>
+
+<script src="lib/gsap.min.js"></script>
+<script>
+/* Las señales sobre cada captura, en fracciones de la imagen (medidas con Playwright sobre el build y en cada web). */
+const CAJAS = {
+  alta: [{ x: .2306, y: .7644, w: .0571, h: .0361, t: 'Aquí', side: 'right' }],
+  marino: [{ x: 0, y: 0, w: .0556, h: 1, t: 'Barra lateral', side: 'right' }, { x: .8139, y: .1433, w: .1667, h: .1211, t: 'Tarjeta', side: 'left' }, { x: .8219, y: .2928, w: .017, h: .2022, t: '6 iconos', side: 'left' }, { x: .2528, y: .6744, w: .368, h: .0178, t: 'Casillas' }, { x: .2306, y: .7644, w: .0571, h: .0361, t: 'El botón', side: 'right' }],
+  'otro-atlassian': [{ x: 0.2778, y: 0.4578, w: 0.4444, h: 0.0888 }],
+  'otro-notion': [{ x: 0.25, y: 0.4556, w: 0.5, h: 0.0888 }],
+  'otro-vercel': [{ x: 0.2778, y: 0.4567, w: 0.4444, h: 0.0888 }],
+  'otro-gitlab': [{ x: 0.4467, y: 0.3312, w: 0.1074, h: 0.0712 }],
+  'otro-github': [{ x: 0.4253, y: 0.4666, w: 0.1512, h: 0.0712 }],
+  'otro-linear': [{ x: 0.3, y: 0.4512, w: 0.4, h: 0.0978 }],
+};
+
+(() => {
+  const deck = document.getElementById('deck');
+  const slides = [...document.querySelectorAll('.slide')];
+  const count = document.getElementById('count');
+  const bar = document.querySelector('#progress i');
+  const narrow = () => matchMedia('(max-width: 760px)').matches;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const G = window.gsap;
+  let current = 0;
+
+  const fit = () => {
+    if (narrow()) { deck.style.transform = ''; return; }
+    const s = Math.min(innerWidth / 1920, innerHeight / 1080);
+    deck.style.transform = `translate(${(innerWidth - 1920 * s) / 2}px, ${(innerHeight - 1080 * s) / 2}px) scale(${s})`;
+  };
+  addEventListener('resize', fit); fit();
+
+  /* Señales */
+  document.querySelectorAll('[data-shot]').forEach((shot) => {
+    (CAJAS[shot.dataset.shot] || []).forEach((c) => {
+      const m = document.createElement('div');
+      m.className = 'mark' + (c.side ? ' ' + c.side : c.y > .5 ? ' up' : '');
+      Object.assign(m.style, { left: `calc(${c.x * 100}% - 7px)`, top: `calc(${c.y * 100}% - 7px)`, width: `calc(${c.w * 100}% + 14px)`, height: `calc(${c.h * 100}% + 14px)` });
+      if (c.t) m.innerHTML = `<span>${c.t}</span>`;
+      shot.appendChild(m);
+    });
+  });
+
+  /* Ampliar */
+  const zoom = document.getElementById('zoom');
+  const zImg = zoom.querySelector('img'), zCap = zoom.querySelector('p');
+  const abrir = (src, cap) => { zImg.src = src; zImg.alt = cap || ''; zCap.textContent = cap || ''; zoom.hidden = false; zoom.querySelector('button').focus(); };
+  const cerrar = () => { zoom.hidden = true; };
+  zoom.addEventListener('click', cerrar);
+  document.querySelectorAll('[data-zoom]').forEach((el) => {
+    el.addEventListener('click', () => { const img = el.querySelector('img'); abrir(el.dataset.full || img.src, el.dataset.cap || img.alt); });
+  });
+
+  /* La rueda: marca, estados y candidatos en su ángulo de tono OKLCH. */
+  const PINS = [
+    { h: 262, n: 'Marca', c: '#1464fe' }, { h: 150, n: 'Éxito', c: '#16a34a' }, { h: 66, n: 'Aviso', c: '#ca8a04' }, { h: 27, n: 'Peligro', c: '#dc2626' },
+    { h: 207, n: 'Cian', s: 'libre', c: '#51d5e6', k: 'free' }, { h: 186, n: 'Teal', c: '#14b8a6', k: 'no', inner: true },
+    { h: 1, n: 'Pink', c: '#ec4899', k: 'no' }, { h: 323, n: 'Fuchsia', c: '#d946ef', k: 'no' }, { h: 293, n: 'Violeta', c: '#8b5cf6', k: 'no' },
+  ];
+  const wheel = document.getElementById('wheel');
+  const at = (el, h, r) => { const a = (h * Math.PI) / 180; el.style.left = `${50 + r * Math.sin(a)}%`; el.style.top = `${50 - r * Math.cos(a)}%`; };
+  PINS.forEach((p) => {
+    const pin = document.createElement('i'); pin.className = `pin ${p.k || ''}`; pin.style.background = p.c; at(pin, p.h, 29);
+    const label = document.createElement('span'); label.className = `pin-label ${p.k || ''}`; at(label, p.h, p.inner ? 17 : 42.5);
+    label.innerHTML = `${p.n}<small>${p.h}°${p.s ? ' ' + p.s : ''}</small>`;
+    wheel.append(pin, label);
+  });
+
+  /* Antes y después */
+  const cmp = document.getElementById('compare');
+  const imgB = document.getElementById('img-before'), imgA = document.getElementById('img-after');
+  let pantalla = 'alta', tema = 'claro', opcion = 'cian-700';
+  const setCut = (v) => { v = Math.max(0, Math.min(100, v)); cmp.style.setProperty('--cut', v + '%'); cmp.setAttribute('aria-valuenow', Math.round(v)); };
+  const OPC = {
+    azul: { tag: 'Azul 600', ratio: '6,80', why: 'El azul del enlace. En oscuro ya es así.', alt: 'botón principal en azul sky 600 con texto blanco' },
+    'cian-700': { tag: 'Cian 700', ratio: '5,64', why: 'Nuestro cian, oscurecido para que pase con texto blanco.', alt: 'botón principal en cian 700 con texto blanco' },
+    teal: { tag: 'Teal 700', ratio: '5,47', why: 'Pasa en los dos temas, pero roza el verde de éxito.', alt: 'botón principal en teal 700 con texto blanco' },
+    'cian-400': { tag: 'Cian 400', ratio: '8,55', why: 'El más vivo, pero en claro casi no se separa del blanco (1,75:1).', alt: 'botón principal en cian 400 con texto marino' },
+  };
+  const note = document.getElementById('cmp-note'), tagR = document.getElementById('tag-r');
+  const pick = () => {
+    const mismo = opcion === 'azul' && tema === 'oscuro';
+    imgB.src = `img/sup-${pantalla}-hoy-${tema}.jpg`;
+    imgA.src = mismo ? imgB.src : `img/sup-${pantalla}-${opcion}-${tema}.jpg`;
+    imgA.alt = `Opción: ${OPC[opcion].alt}`;
+    tagR.textContent = OPC[opcion].tag;
+    note.textContent = mismo ? 'En oscuro, el botón ya es azul hoy: las dos mitades son iguales.' : '';
+    document.getElementById('opt-ratio').innerHTML = `${OPC[opcion].ratio}<small>:1</small>`;
+    document.getElementById('opt-why').textContent = OPC[opcion].why;
+  };
+  const press = (on, off) => { on.setAttribute('aria-pressed', 'true'); off.setAttribute('aria-pressed', 'false'); };
+  const ops = [...document.querySelectorAll('#opciones [data-op]')];
+  ops.forEach((b) => { b.onclick = () => { opcion = b.dataset.op; ops.forEach((o) => o.setAttribute('aria-pressed', String(o === b))); pick(); }; });
+  const pA = document.getElementById('p-alta'), pR = document.getElementById('p-regla'), tC = document.getElementById('t-claro'), tO = document.getElementById('t-oscuro');
+  pA.onclick = () => { pantalla = 'alta'; press(pA, pR); pick(); };
+  pR.onclick = () => { pantalla = 'regla'; press(pR, pA); pick(); };
+  tC.onclick = () => { tema = 'claro'; press(tC, tO); pick(); };
+  tO.onclick = () => { tema = 'oscuro'; press(tO, tC); pick(); };
+  document.getElementById('cmp-zoom').addEventListener('click', (e) => { e.stopPropagation(); abrir(imgA.src, `${OPC[opcion].tag} en ${pantalla === 'alta' ? 'el alta de agente' : 'la nueva regla'}, tema ${tema}`); });
+  document.getElementById('cmp-zoom').addEventListener('pointerdown', (e) => e.stopPropagation());
+  const fromEvent = (e) => { const r = cmp.getBoundingClientRect(); setCut(((e.clientX - r.left) / r.width) * 100); };
+  cmp.addEventListener('pointerdown', (e) => { cmp.setPointerCapture(e.pointerId); fromEvent(e); });
+  cmp.addEventListener('pointermove', (e) => { if (cmp.hasPointerCapture(e.pointerId)) fromEvent(e); });
+  cmp.addEventListener('keydown', (e) => {
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    e.stopPropagation(); e.preventDefault();
+    const v = parseFloat(cmp.style.getPropertyValue('--cut')) || 20;
+    setCut(v + (e.key === 'ArrowRight' ? 5 : -5));
+  });
+  setCut(20);
+
+  /* Entrada de cada diapositiva */
+  const enter = (i) => {
+    const s = slides[i];
+    if (!G || reduce || narrow()) return;
+    G.fromTo(s.querySelectorAll('[data-a]'), { y: 26, opacity: 0 }, { y: 0, opacity: 1, duration: .7, ease: 'power3.out', stagger: .08, clearProps: 'transform,opacity' });
+    s.querySelectorAll('.mark').forEach((m, k) => G.fromTo(m, { scale: 1.5, opacity: 0 }, { scale: 1, opacity: 1, duration: .55, delay: 1 + k * .25, ease: 'back.out(2)', clearProps: 'transform,opacity' }));
+    s.querySelectorAll('.pin, .pin-label').forEach((p, k) => G.fromTo(p, { opacity: 0 }, { opacity: 1, duration: .45, delay: .4 + k * .05, clearProps: 'opacity' }));
+    s.querySelectorAll('.btns span').forEach((c, k) => G.fromTo(c, { scale: .6, opacity: 0 }, { scale: 1, opacity: 1, duration: .4, delay: .5 + k * .035, ease: 'back.out(2)', clearProps: 'transform,opacity' }));
+    s.querySelectorAll('.cand, .opt, .gallery figure').forEach((c, k) => G.fromTo(c, { y: 22, opacity: 0 }, { y: 0, opacity: 1, duration: .55, delay: .25 + k * .07, ease: 'power2.out', clearProps: 'transform,opacity' }));
+    /* La cascada: primero la variable, luego quién la lee, y al final el botón solo frente a todo lo demás. */
+    const sk = s.querySelector('.sankey');
+    if (sk) {
+      G.fromTo(sk.querySelectorAll('.bars rect'), { scaleY: 0, transformOrigin: '50% 50%' }, { scaleY: 1, duration: .5, stagger: .08, delay: .3, ease: 'power2.out', clearProps: 'transform' });
+      G.fromTo(sk.querySelectorAll('.ribs path'), { opacity: 0 }, { opacity: 1, duration: .6, stagger: .12, delay: .6, clearProps: 'opacity' });
+      G.fromTo(sk.querySelectorAll('.lb text'), { opacity: 0 }, { opacity: 1, duration: .4, stagger: .05, delay: 1, clearProps: 'opacity' });
+    }
+    s.querySelectorAll('.chain .node, .chain .arrow').forEach((n, k) => G.fromTo(n, { opacity: 0, x: -16 }, { opacity: 1, x: 0, duration: .45, delay: .35 + k * .12, clearProps: 'transform,opacity' }));
+    if (s.contains(cmp)) { const o = { v: 100 }; setCut(100); G.timeline({ delay: .6, onUpdate: () => setCut(o.v) }).to(o, { v: 0, duration: 1.6, ease: 'power2.inOut' }).to(o, { v: 20, duration: 1, ease: 'power2.out' }, '+=.7'); }
+  };
+
+  const go = (i, push = true) => {
+    i = Math.max(0, Math.min(slides.length - 1, i));
+    if (narrow()) { slides[i].scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' }); current = i; return; }
+    if (i === current && slides[i].classList.contains('is-active')) return;
+    slides[current]?.classList.remove('is-active');
+    slides[i].classList.add('is-active');
+    current = i;
+    count.textContent = `${String(i + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}`;
+    if (G && !reduce) G.to(bar, { width: `${((i + 1) / slides.length) * 100}%`, duration: .5, ease: 'power2.out' }); else bar.style.width = `${((i + 1) / slides.length) * 100}%`;
+    if (push) history.replaceState(null, '', `#${i + 1}`);
+    enter(i);
+  };
+
+  document.getElementById('prev').onclick = () => go(current - 1);
+  document.getElementById('next').onclick = () => go(current + 1);
+  addEventListener('keydown', (e) => {
+    if (!zoom.hidden) { if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') { e.preventDefault(); cerrar(); } return; }
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); go(current + 1); }
+    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); go(current - 1); }
+    else if (e.key === 'Home') go(0); else if (e.key === 'End') go(slides.length - 1);
+    else if (e.key === 'f' || e.key === 'F') { (document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen?.())?.catch?.(() => {}); }
+  });
+  addEventListener('hashchange', () => { const h = parseInt(location.hash.slice(1), 10); if (Number.isFinite(h) && h - 1 !== current) go(h - 1, false); });
+  const start = parseInt(location.hash.slice(1), 10);
+  slides[0].classList.remove('is-active'); current = -1;
+  go(Number.isFinite(start) ? start - 1 : 0, false);
+})();
+</script>
+</body>
+</html>
