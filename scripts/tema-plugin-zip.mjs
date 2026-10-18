@@ -9,7 +9,8 @@
  * lo publica junto al nuestro, diciendo en llano cuánto se aparta de lo que pintan nuestras apps.
  *
  * Qué comprueba (el manifiesto lo cuenta; solo el punto 1 pone rojo):
- *   1. ningún token que tenía valor pasa a 0 (respecto al zip anterior y respecto a nuestro tema);
+ *   1. ningún token que tenía valor pasa a 0 (respecto al zip anterior y respecto a nuestro tema), salvo
+ *      las medidas de `PENDIENTE_FIGMA`: el Kit las dibuja a 0 a sabiendas y el manifiesto las cuenta aparte;
  *   2. la raíz para la que está pensado: el plugin escribe los rem por el nombre del paso de escala
  *      (`{scale.1-125}` → `1.125rem`), que a raíz 16 pinta un 14 % más grande que el Kit;
  *   3. pesos de letra escritos con «px», que el navegador descarta;
@@ -21,6 +22,8 @@ import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
+
+import { PENDIENTE_FIGMA } from './sizing-map.mjs';
 
 const ROOT = process.env.SC_ROOT ? resolve(process.env.SC_ROOT) : resolve(import.meta.dirname, '..');
 const LAYERS = ['01-primitive', '02-semantic', '03-palette', '04-component', '05-extensions', '07-dark'];
@@ -108,6 +111,29 @@ export function pesosConPx(mapa) {
 
 const cero = (v) => /^0(px)?$/.test(v);
 
+/**
+ * Las variables `--p-*` de `PENDIENTE_FIGMA` (DD-97): medidas que el código ya lleva a Aura y el Kit aún
+ * dibuja a 0, porque separarlas pide variables nuevas en Figma. `divider.vertical.paddingY` →
+ * `--p-divider-vertical-padding`, el shorthand que el preset parte en dos.
+ */
+export function variablesPendientes(pendientes = PENDIENTE_FIGMA) {
+  const kebab = (s) => s.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
+  return new Set(pendientes.map(({ label }) => `--p-${label.replace(/[XY]$/, '').split('.').map(kebab).join('-')}`));
+}
+
+/**
+ * Tokens que el plugin deja a 0 teniendo valor, respecto a nuestro tema y al export anterior. Los de
+ * `PENDIENTE_FIGMA` van aparte y no paran el zip: hasta el #440 el `| tee` se tragaba el rojo y el zip salía
+ * igual; con `pipefail`, el `divider/vertical/padding` del Kit (0) paró el export del 2026-10-18. PURA.
+ */
+export function tokensACero({ plugin, nuestro, anterior = null, claves, pendientes = variablesPendientes() }) {
+  const vsNuestro = claves.filter((k) => nuestro.has(k) && cero(resolver(plugin, k)) && !cero(resolver(nuestro, k)) && /^[\d.]+px/.test(resolver(nuestro, k)));
+  const vsAnterior = anterior ? claves.filter((k) => anterior.has(k) && cero(resolver(plugin, k)) && !cero(resolver(anterior, k))) : [];
+  const todos = [...new Set([...vsAnterior, ...vsNuestro])];
+  const pendiente = (k) => pendientes.has(k.split('|')[1]);
+  return { ceros: todos.filter((k) => !pendiente(k)), pendientesDeFigma: todos.filter(pendiente) };
+}
+
 async function cssDe(preset) {
   const { Theme } = await import(pathToFileURL(join(ROOT, 'node_modules/@primeuix/styled/dist/index.mjs')).href);
   Theme.setTheme({ preset, options: OPCIONES });
@@ -133,7 +159,7 @@ Export \`${m.plugin}\` del plugin, tal cual sale de Figma: carpetas \`ts/\` y \`
 
 ## Comprobaciones
 
-- Tokens que pasan a 0: ${m.comprobaciones.ceros.length ? m.comprobaciones.ceros.slice(0, 8).join(', ') : 'ninguno'}.
+- Tokens que pasan a 0: ${m.comprobaciones.ceros.length ? m.comprobaciones.ceros.slice(0, 8).join(', ') : 'ninguno'}.${m.comprobaciones.cerosPendientesDeFigma?.length ? `\n- A 0 porque Figma aún dibuja la medida anterior a Aura (pendiente conocido, no es un fallo del export): ${m.comprobaciones.cerosPendientesDeFigma.join(', ')}.` : ''}
 - Raíz para la que está pensado: **${m.comprobaciones.raizPx ?? 'sin medir'} px**.${m.comprobaciones.raizPx === 14 ? ' Si vuestra página tiene la raíz a 16, las medidas salen un 14 % más grandes que en Figma.' : ''}
 - Pesos de letra escritos con «px» (el navegador los ignora): ${m.comprobaciones.pesosPx.length}.
 - Respecto al export anterior: ${m.comprobaciones.diferencia.anterior ? `${m.comprobaciones.diferencia.variables} variables cambian.` : 'es el primero publicado así.'}
@@ -174,13 +200,12 @@ if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {
   const distintas = comparables.filter((k) => resolver(mapaPlugin, k) !== resolver(mapaNuestro, k));
   const deDensidad = distintas.filter((k) => soloDensidad(resolver(mapaPlugin, k), resolver(mapaNuestro, k)));
   // 1 · ceros: respecto a nuestro tema y respecto al export anterior
-  const cerosVsNuestro = comparables.filter((k) => cero(resolver(mapaPlugin, k)) && !cero(resolver(mapaNuestro, k)) && /^[\d.]+px/.test(resolver(mapaNuestro, k)));
   let anterior = null;
   if (ANTERIOR && existsSync(join(ANTERIOR, 'ts/index.ts'))) {
     const a = await cssDe(await empaquetar(join(ANTERIOR, 'ts/index.ts')));
     anterior = new Map([...a.comun, ...a.componentes]);
   }
-  const cerosVsAnterior = anterior ? clavesP.filter((k) => anterior.has(k) && cero(resolver(mapaPlugin, k)) && !cero(resolver(anterior, k))) : [];
+  const ceros = tokensACero({ plugin: mapaPlugin, nuestro: mapaNuestro, anterior, claves: clavesP });
   // 2 · raíz: el plugin escribe cada paso de escala como rem POR SU NOMBRE (`{scale.1}` → `1rem`), así que
   // la raíz para la que está pensado es lo que vale `scale/1` en el Kit. Comparar medidas de dos fechas
   // distintas (primera versión) daba 12 y no decía nada.
@@ -191,7 +216,8 @@ if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {
     plugin: process.env.SC_PLUGIN_SHA ?? 'desconocido',
     generado: new Date().toISOString(),
     comprobaciones: {
-      ceros: [...new Set([...cerosVsAnterior, ...cerosVsNuestro])],
+      ceros: ceros.ceros,
+      cerosPendientesDeFigma: ceros.pendientesDeFigma,
       raizPx,
       pesosPx: pesosConPx(mapaPlugin),
       diferencia: { anterior: Boolean(anterior), variables: anterior ? clavesP.filter((k) => resolver(mapaPlugin, k) !== resolver(anterior, k)).length : 0 },
