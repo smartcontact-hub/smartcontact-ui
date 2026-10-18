@@ -1370,8 +1370,11 @@ Si manda el código, los tres son repuntes a variables que ya existen.
 
 ## 52 · El tema del plugin que recibe el equipo externo lleva Custom con el valor del oscuro (medido el 2026-10-17)
 
-**Estado:** el repunte de los tres, **HECHO en el fichero el 2026-10-18** (en las dos columnas de Custom); falta
-publicar la librería y empujar desde el plugin. `accent`, sin repunte · **Dónde:** fichero del DS, colección Custom:
+**Estado:** el repunte de los tres, **HECHO en el fichero el 2026-10-18** (en las dos columnas de Custom), con la
+librería publicada y el tema empujado ese día (envío `8309a90c`, que ya los lleva). Falta que el robot publique
+`tema-plugin.zip`: la guarda de ceros lo paró por el divider (§Herramientas); tras fundir su arreglo, un envío más del
+tema. `accent`, sin repunte: al equipo externo le basta una línea en `extend.ts`,
+`accent: "light-dark({violet.700}, {violet.400})"` (medida con el motor de PrimeNG: 7,10 y 6,51:1) · **Dónde:** fichero del DS, colección Custom:
 `semantic/text/heading`, `subtle`, `inverse` y `accent` · **Evidencia:** `tema-plugin.zip` de la rama `tema-zip`
 (export `7b06bcce`, `ts/extend.ts`) y el export del 2026-10-17.
 
@@ -1455,7 +1458,12 @@ publicar la librería y empujar desde el plugin. `accent`, sin repunte · **Dón
   paso de reset corría con `always()` y forzaba la rama a main antes de que el run siguiente la leyera (dos veces
   seguidas el 2026-10-17). Ahora corre con `!cancelled()` y empuja con `--force-with-lease`; lo vigila
   `workflow-push-cancelado.test.mjs`. Si un envío no abre PR, mira el log del paso «Resetear»: «Export == main» con un
-  export distinto es este fallo. Además, `tokens-check` comenta un
+  export distinto es este fallo. **Un arreglo del workflow no rige hasta el envío siguiente al reset**: el robot corre
+  el `tokens-sync.yml` de la rama del plugin, no el de `main`, así que el primer envío del 2026-10-18 aún corrió el
+  viejo y volvió a perder el tema. **El tema del plugin no se publica si un token pasa a 0** (`tema-plugin-zip.mjs`);
+  hasta el #440 el `| tee` se tragaba ese rojo y salía igual. Las medidas de `PENDIENTE_FIGMA` (§4), que el Kit dibuja a
+  0 a sabiendas, no lo paran: el LEEME del zip las cuenta aparte. Si `tema-zip` no se mueve tras un envío del tema, mira
+  el paso «Export del plugin para el equipo externo». Además, `tokens-check` comenta un
   veredicto rápido, y al fundir, `tema-zip` publica el tema del equipo externo.
 - **Solo viajan por el export las variables:** las fichas 4, 8, 12, 14 y 19, la variable nueva de la 2, los bordes de
   Tabs (9) y el hueco entre botones del diálogo (17). El dibujo no lo recoge el robot.
