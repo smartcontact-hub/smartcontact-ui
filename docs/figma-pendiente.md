@@ -251,7 +251,7 @@ color; hasta entonces el par se queda, con su motivo escrito en el spec.
 8. **Aparcadas, no para esta sesión:**
    - el color del botón principal (ROADMAP, «Decisiones de marca pendientes»: decisión de marca);
    - borrar la colección «App» (ficha 26);
-   - el botón de solo icono, que no es cuadrado, y la hora del datepicker (ficha 25).
+   - el botón de solo icono, que no es cuadrado (ficha 25; la hora del datepicker ya está a 14).
 
 ---
 
@@ -506,7 +506,9 @@ lateral y menús.
 
 - **Qué mirar en el fichero:** si el `IconSet` y los maestros que lo usan atan el glifo al tamaño de su caja (ancho y
   alto atados a la variable de font-size, DD-24). Si es así, la vía más limpia es agrandar el glifo dentro de la caja un
-  33 % (24/18) sin tocar la caja, que es lo que hace el código.
+  33 % (24/18) sin tocar la caja, que es lo que hace el código. **Medido el 2026-10-18** en el botón de solo icono
+  (`11:368`): la caja es una instancia de la librería de iconos, a 14 y sin variable, y el dibujo de dentro escala con
+  ella (restricción `SCALE`). El 33 % se hace en la librería de iconos y llega a todas las instancias al publicarla.
 - **El índice lateral** (ficha 5) es una sola pieza desde DD-122, en cinco pantallas. En código lleva el icono a 14 de
   caja; en Figma, `IconSet` `393:12581` a 20, que pinta más o menos lo mismo. Con esta ficha hecha, ese 20 baja a 14.
 - **Se queda fuera, a propósito:** la réplica `agent` no calibra (DD-35). Sus tamaños se midieron sobre el Comunicador
@@ -918,13 +920,18 @@ antes**.
 
 ---
 
-## 25 · Aparcado: el botón de solo icono no es cuadrado, y la hora del datepicker (2026-09-14)
+## 25 · Aparcado: el botón de solo icono no es cuadrado; la hora del datepicker, hecha (2026-09-14)
 
-**Estado:** aparcado, sin lado decidido · **Evidencia:** DD-91, «Consecuencias».
+**Estado:** el botón, aparcado (un píxel no se ve); la hora, **HECHA el 2026-10-18** · **Evidencia:** DD-91,
+«Consecuencias».
 
 - El botón de solo icono mide 31,5 × 32,5. El ancho es `button/icon/only/width` = `scale/2-25`, y el alto sale del
   interlineado atado. Un píxel no se ve; si se decide cuadrarlo, el alto sale de la misma variable.
-- La hora del datepicker va a 17,5 en Figma y a 14 en código.
+- **La hora del datepicker, de 17,5 a 14 en Figma**, como el código y como Aura (`timePicker.fontSize` =
+  `{typography.font.size}`, el mismo token que los días). A 17,5 pesaba más que el título del mes (14, medium) y los
+  devs, que construyen desde Figma, se habrían apartado del tema. Cambiados los 5 textos de `datepicker-bar`, variante
+  `Type=Time Picker` (`2070:39179`): 12, los dos «:», 47 y pm, sin variable, como los días. Las dos instancias de la
+  página heredan (10 textos); la variante pasa de 95,5 a 91,5 de alto. **Para deshacerlo:** esos 5 textos a 17,5.
 
 ---
 
@@ -940,9 +947,12 @@ que importaba.
 
 ## 27 · Tokenizar los text styles: la raíz común de cuatro fallos (2026-08-07)
 
-**Estado:** pendiente, sin prisa · **Evidencia:** `docs/ROADMAP.md`, «Tokenizar los text styles del Figma»
-(SISMAC-4074); entregable en la página `Feedback`, sección `14015-179`. **No re-medido desde el 2026-08-07:** es una
-pista, no un estado.
+**Estado:** en el fichero, **hecho** (medido el 2026-10-18: los 14 text styles atan tamaño, interlineado y peso a
+variable); falta re-validar los cuatro componentes · **Evidencia:** `docs/ROADMAP.md`, «Tokenizar los text styles del
+Figma» (SISMAC-4074); entregable en la página `Feedback`, sección `14015-179`.
+
+Para el equipo externo, cada text style es una clase de `smartcontact-typography.css` (rama `tema-zip`) con su mismo
+nombre: `Body/body-regular` → `sc-text-body-regular`. El LEEME del paquete les dice que lo importen, no cómo se usa.
 
 Select, MultiSelect, Chip y Toast fallaban en la validación web ↔ Figma por lo mismo: los estilos de texto de Figma no
 exportan su tamaño y su interlineado como variables. Antes de actuar, iguala el estado de cada componente: varias
@@ -1370,11 +1380,11 @@ Si manda el código, los tres son repuntes a variables que ya existen.
 
 ## 52 · El tema del plugin que recibe el equipo externo lleva Custom con el valor del oscuro (medido el 2026-10-17)
 
-**Estado:** el repunte de los tres, **HECHO en el fichero el 2026-10-18** (en las dos columnas de Custom), con la
-librería publicada y el tema empujado ese día (envío `8309a90c`, que ya los lleva). Falta que el robot publique
-`tema-plugin.zip`: la guarda de ceros lo paró por el divider (§Herramientas); tras fundir su arreglo, un envío más del
-tema. `accent`, sin repunte: al equipo externo le basta una línea en `extend.ts`,
-`accent: "light-dark({violet.700}, {violet.400})"` (medida con el motor de PrimeNG: 7,10 y 6,51:1) · **Dónde:** fichero del DS, colección Custom:
+**Estado:** **HECHO el 2026-10-18** para los tres: repunte en las dos columnas de Custom, librería publicada y
+`tema-plugin.zip` publicado (`b4028a0d`, export `cf1f0c99`). Medido en ese zip con el motor de PrimeNG: en claro, el
+título pasa de 1,00 a 16,90:1 y el sutil de 2,56 a 7,38:1; el inverso, blanco; el oscuro, igual que antes. `accent`,
+sin repunte: al equipo externo le bastaría una línea en `extend.ts`, `accent: "light-dark({violet.700},
+{violet.400})"` (7,10 y 6,51:1), pero el color del acento está en revisión: no se pasa hasta decidirlo · **Dónde:** fichero del DS, colección Custom:
 `semantic/text/heading`, `subtle`, `inverse` y `accent` · **Evidencia:** `tema-plugin.zip` de la rama `tema-zip`
 (export `7b06bcce`, `ts/extend.ts`) y el export del 2026-10-17.
 
