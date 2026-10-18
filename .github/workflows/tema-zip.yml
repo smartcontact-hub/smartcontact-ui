@@ -75,6 +75,9 @@ jobs:
           cp "$RUNNER_TEMP/$(tail -1 "$RUNNER_TEMP/tgz.txt")" "$PUB/smartcontact-tema.tgz"
           # Los mismos ficheros sueltos en la raíz: la rama también se instala como dependencia git.
           (cd "$RUNNER_TEMP/tema" && cp README.md manifiesto.json package.json sc-preset.mjs sc-preset.d.ts smartcontact-tokens.css smartcontact-typography.css "$PUB/")
+          # La guía del 2026-09-14 (`LEEME.md`) ya no la escribe nadie: la sustituye `README.md`. Fuera, para que
+          # quien navega la rama no siga la instalación vieja.
+          rm -f "$PUB/LEEME.md"
           git -C "$PUB" config user.name "github-actions[bot]"
           git -C "$PUB" config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git -C "$PUB" add -A
