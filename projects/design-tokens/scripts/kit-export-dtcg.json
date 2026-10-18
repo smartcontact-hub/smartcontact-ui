@@ -6467,15 +6467,15 @@
         },
         "inverse": {
           "$type": "color",
-          "$value": "{surface.900}"
+          "$value": "{primary.contrast.color}"
         },
         "heading": {
           "$type": "color",
-          "$value": "{surface.0}"
+          "$value": "{text.color}"
         },
         "subtle": {
           "$type": "color",
-          "$value": "{zinc.400}"
+          "$value": "{text.muted.color}"
         }
       },
       "presence": {
