@@ -4,7 +4,7 @@ import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-import { FICHEROS, cerosNuevos, codigoDePrimeTek, comparaPreset, contratoDelPlugin, diferencias, extendDesdeKit, ficherosDistintos, hayCambios, leeme, paqueteNpm, retirados, variables } from '../tema-zip.mjs';
+import { FICHEROS, cerosNuevos, codigoDePrimeTek, comparaPreset, contratoDelPlugin, diferencias, estiloDeFigma, estilosDeTexto, extendDesdeKit, ficherosDistintos, hayCambios, leeme, paqueteNpm, retirados, variables } from '../tema-zip.mjs';
 
 const hoja = ($value) => ({ $value });
 const CUSTOM = {
@@ -139,4 +139,24 @@ test('licencia: el paquete no lleva código de PrimeTek dentro, y pide @primeuix
   const p = paqueteNpm({ commit: 'abc1234', generado: '2026-09-04T09:05:00Z' });
   assert.match(p.peerDependencies['@primeuix/themes'], /^\^3\./);
   assert.match(leeme({ version: '0.1.1', commit: 'abc', generado: '2026-09-04', comprobaciones: { diferencia: { anterior: false }, contratoPlugin: { promete: 0, faltan: [] }, raizPx: 16, ceros: [] } }), /@primeuix\/themes/);
+});
+
+test('estilos de texto: las 14 clases del CSS, cada una con el nombre de su estilo en Figma', async () => {
+  const { readFileSync } = await import('node:fs');
+  const css = readFileSync(join(import.meta.dirname, '../../projects/design-tokens/src/lib/styles/base/typography.css'), 'utf8');
+  const clases = estilosDeTexto(css);
+  assert.equal(clases.length, 14, 'los 14 text styles del fichero del DS');
+  assert.equal(clases[0], 'display-regular', 'de mayor a menor, como el panel de Figma');
+  assert.equal(estiloDeFigma('h1-semibold'), 'Heading/h1-semibold');
+  assert.equal(estiloDeFigma('body-regular'), 'Body/body-regular');
+  assert.equal(estiloDeFigma('subtitle-semibold'), 'Subtitle/subtitle-semibold');
+});
+
+test('leeme: explica que el estilo de Figma es la clase, con la tabla de los que lleva el paquete', () => {
+  const m = { version: '0.1.1', commit: 'abc', generado: '2026-10-18', estilosTexto: ['h1-semibold', 'body-regular'], comprobaciones: { diferencia: { anterior: false }, contratoPlugin: { promete: 0, faltan: [] }, raizPx: 16, ceros: [] } };
+  const texto = leeme(m);
+  assert.match(texto, /## Estilos de texto/);
+  assert.match(texto, /class="sc-text-body-regular"/);
+  assert.match(texto, /\| `Heading\/h1-semibold` \| `sc-text-h1-semibold` \|/);
+  assert.doesNotMatch(leeme({ ...m, estilosTexto: [] }), /\| `Body\//, 'sin clases, sin tabla');
 });

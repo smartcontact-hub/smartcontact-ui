@@ -14,7 +14,7 @@
  *                                 se importan de `@primeuix/themes`, que instala quien lo usa, con su licencia (DD-207)
  *   sc-preset.d.ts                el tipo, para importarlo desde TypeScript
  *   smartcontact-tokens.css       las 6 capas de tokens `--sc-*` (claro y `.sc-dark`) que el preset lee
- *   smartcontact-typography.css   las clases `.sc-text-*` de los 12 estilos de texto
+ *   smartcontact-typography.css   las clases `.sc-text-*`, una por estilo de texto de Figma
  *   package.json                  la rama publicada es el paquete npm `smartcontact-tema` (DD-93)
  *   README.md                     guía de instalación y verificación
  *   manifiesto.json               versiones, commit y las comprobaciones
@@ -232,6 +232,26 @@ async function cssDelPreset(ruta) {
 }
 
 /** Guía del paquete (`README.md`). La lee un equipo de desarrollo externo: redacción neutra y profesional. */
+/** Orden del panel de estilos de Figma, de mayor a menor. */
+const ORDEN_ESTILOS = ['display', 'h1', 'h2', 'h3', 'title', 'subtitle', 'body', 'caption'];
+
+/**
+ * Las clases `.sc-text-*` de `smartcontact-typography.css`, sin el prefijo y en el orden de Figma. El README
+ * las saca de aquí para que la tabla no se desfase del CSS que se publica. PURA.
+ */
+export function estilosDeTexto(css) {
+  const nombres = [...new Set([...String(css).matchAll(/^\.sc-text-([a-z0-9-]+)\b/gm)].map((m) => m[1]))];
+  const rango = (n) => { const i = ORDEN_ESTILOS.indexOf(n.split('-')[0]); return i === -1 ? ORDEN_ESTILOS.length : i; };
+  return nombres.sort((a, b) => rango(a) - rango(b) || a.localeCompare(b));
+}
+
+/** El nombre del text style en Figma (grupo/estilo, como en su panel): `h1-semibold` → `Heading/h1-semibold`. */
+export function estiloDeFigma(nombre) {
+  const raiz = nombre.split('-')[0];
+  const grupo = /^h\d$/.test(raiz) ? 'Heading' : raiz.charAt(0).toUpperCase() + raiz.slice(1);
+  return `${grupo}/${nombre}`;
+}
+
 export const leeme = (m) => {
   const d = m.comprobaciones.diferencia;
   const c = m.comprobaciones.contratoPlugin;
@@ -248,6 +268,10 @@ export const leeme = (m) => {
         `- Componentes con estilos modificados: ${lista(d.componentes)}.`,
       ].join('\n')
     : '- Primera versión distribuida como paquete.';
+  const estilos = m.estilosTexto ?? [];
+  const tablaEstilos = estilos.length
+    ? `\n\n| Estilo en Figma | Clase |\n|---|---|\n${estilos.map((n) => `| \`${estiloDeFigma(n)}\` | \`sc-text-${n}\` |`).join('\n')}`
+    : '';
   return `# Smart Contact · Tema para PrimeNG
 
 Versión ${m.version ?? '—'} · ${String(m.generado ?? '').slice(0, 10)} · origen: Design System de Smart Contact (\`${m.commit}\`)
@@ -299,6 +323,13 @@ aplicaciones de Smart Contact, por lo que los componentes se muestran de forma i
    \`\`\`
 
 4. Modo oscuro: añadir la clase \`sc-dark\` al elemento \`<html>\`. Afecta a la vez a los tokens y al preset.
+
+## Estilos de texto
+
+Cada estilo de texto de Figma tiene una clase en \`smartcontact-typography.css\` con el mismo nombre. Un texto que en
+Figma lleva el estilo \`Body/body-regular\` se escribe con \`class="sc-text-body-regular"\`. La clase aplica tamaño,
+interlineado, peso y familia desde los tokens \`--sc-*\`, así que el componente no necesita declarar \`font-size\` ni
+\`line-height\`.${tablaEstilos}
 
 ## Verificación
 
@@ -372,7 +403,8 @@ if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {
   const incluidoDePrimeTek = codigoDePrimeTek(Object.keys(bundle.metafile.inputs));
   writeFileSync(join(OUT, 'sc-preset.d.ts'), '/** Preset de PrimeNG de Smart Contact (Aura + marca). */\ndeclare const scPreset: Record<string, unknown>;\nexport default scPreset;\n');
   writeFileSync(join(OUT, 'smartcontact-tokens.css'), tokensCss);
-  writeFileSync(join(OUT, 'smartcontact-typography.css'), readFileSync(join(STYLES, 'base/typography.css'), 'utf8'));
+  const tipografia = readFileSync(join(STYLES, 'base/typography.css'), 'utf8');
+  writeFileSync(join(OUT, 'smartcontact-typography.css'), tipografia);
 
   const commit = (() => { try { return execFileSync('git', ['rev-parse', '--short', 'HEAD'], { cwd: ROOT, encoding: 'utf8' }).trim(); } catch { return 'desconocido'; } })();
   const version = (p) => JSON.parse(readFileSync(join(ROOT, 'node_modules', p, 'package.json'), 'utf8')).version;
@@ -398,7 +430,7 @@ if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {
   const declaradasPreset = new Set([...`${cssAhora.comun}\n${Object.values(cssAhora.componentes).join('\n')}`.matchAll(/(--p-[\w-]+)\s*:/g)].map((m) => m[1]));
   comprobaciones.contratoPlugin = { promete: contratoDelPlugin(custom).length, faltan: contratoDelPlugin(custom).filter((v) => !declaradasPreset.has(v)) };
   comprobaciones.sinCodigoDePrimeTek = { incluye: incluidoDePrimeTek };
-  const manifiesto = { commit, primeng: version('primeng'), themes: version('@primeuix/themes'), generado: new Date().toISOString(), comprobaciones };
+  const manifiesto = { commit, primeng: version('primeng'), themes: version('@primeuix/themes'), generado: new Date().toISOString(), estilosTexto: estilosDeTexto(tipografia), comprobaciones };
   manifiesto.version = paqueteNpm(manifiesto).version;
   writeFileSync(join(OUT, 'manifiesto.json'), `${JSON.stringify(manifiesto, null, 2)}\n`);
   writeFileSync(join(OUT, 'README.md'), leeme(manifiesto));
