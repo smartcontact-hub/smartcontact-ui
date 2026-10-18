@@ -72,8 +72,15 @@ export const BUCKETS = [
   // Llegaron con el export del 2026-10-17. En Figma tienen sus dos modos y casan con el código (inverse surface/0 ·
   // surface/900, heading slate/900 · surface/0, subtle slate/700 · zinc/400), pero el plugin exporta Custom con el
   // valor del modo OSCURO solo. El valor del export no vale para el claro: en el tema publicado manda el token del DS
-  // (`tema-zip.mjs`, MANDA_EL_DS), que se escribe a mano en 02-semantic.css y 07-dark.css.
-  { group: 'aura/custom', test: /^semantic\.text\.(inverse|heading|subtle)$/, kind: 'divergence', note: 'export de un solo modo (el oscuro) · DS --sc-text-inverse/-heading/-subtle con sus dos modos, a mano; en el tema publicado manda el DS' },
+  // (`tema-zip.mjs`, MANDA_EL_DS), que se escribe a mano en 02-semantic.css y 07-dark.css. `success` entró en el Kit el
+  // 2026-10-18 (green/700 · green/600, la marca «hecha» del índice): el export la traerá en green-600, que en claro no
+  // llega a 4,5:1 sobre blanco.
+  { group: 'aura/custom', test: /^semantic\.text\.(inverse|heading|subtle|success)$/, kind: 'divergence', note: 'export de un solo modo (el oscuro) · DS --sc-text-inverse/-heading/-subtle/-success con sus dos modos, a mano; en el tema publicado manda el DS' },
+  // Entraron en el Kit el 2026-10-18 con los componentes del resumen de las fichas (icon-tile, fact-row,
+  // group-summary): espejo de --sc-text-warning (yellow/700 · yellow/600), --sc-border-subtle (slate/100 · zinc/800;
+  // en oscuro el código mezcla zinc-800 al 75 % con la superficie y Figma no mezcla) y --sc-bg-secondary-subtle
+  // (slate/50 · zinc/900). Mismo caso que los de arriba: el export solo lleva el modo oscuro.
+  { group: 'aura/custom', test: /^semantic\.(text\.warning|border\.subtle|bg\.secondary-subtle)$/, kind: 'divergence', note: 'export de un solo modo (el oscuro) · DS --sc-text-warning/--sc-border-subtle/--sc-bg-secondary-subtle con sus dos modos; en el tema publicado manda el DS' },
 
   // Presencia: el DS TIENE sus tokens (--sc-presence-*, 03-palette.css:83-88) pero
   // ni los valores ni los NOMBRES coinciden — el Kit trae available/unavailable/
