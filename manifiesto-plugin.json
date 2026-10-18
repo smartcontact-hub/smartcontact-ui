@@ -1,8 +1,9 @@
 {
-  "plugin": "7b06bcce",
-  "generado": "2026-10-17T20:47:50.876Z",
+  "plugin": "cf1f0c99",
+  "generado": "2026-10-18T11:24:12.120Z",
   "comprobaciones": {
-    "ceros": [
+    "ceros": [],
+    "cerosPendientesDeFigma": [
       "claro|--p-divider-vertical-padding"
     ],
     "raizPx": 14,
@@ -13,8 +14,8 @@
       "claro|--p-typography-font-weight-bold"
     ],
     "diferencia": {
-      "anterior": false,
-      "variables": 0
+      "anterior": true,
+      "variables": 3
     },
     "distancia": {
       "total": 1998,
