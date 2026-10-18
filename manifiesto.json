@@ -1,30 +1,45 @@
 {
-  "commit": "9d9b364a",
+  "commit": "ef407460",
   "primeng": "22.1.0",
   "themes": "3.0.0",
-  "generado": "2026-10-17T21:27:19.697Z",
+  "generado": "2026-10-18T12:17:52.243Z",
+  "estilosTexto": [
+    "display-regular",
+    "display-semibold",
+    "h1-regular",
+    "h1-semibold",
+    "h2-regular",
+    "h2-semibold",
+    "h3-regular",
+    "h3-semibold",
+    "title-semibold",
+    "subtitle-semibold",
+    "body-regular",
+    "body-semibold",
+    "caption-regular",
+    "caption-semibold"
+  ],
   "comprobaciones": {
     "ceros": [],
     "raizPx": 16,
     "diferencia": {
       "anterior": true,
-      "ficheros": [
-        "smartcontact-tokens.css"
-      ],
+      "ficheros": [],
       "variables": [],
       "retirados": [],
       "semanticaComun": false,
       "reglasCss": false,
-      "componentes": []
+      "componentes": [],
+      "guia": true
     },
-    "cambia": true,
     "contratoPlugin": {
       "promete": 68,
       "faltan": []
     },
     "sinCodigoDePrimeTek": {
       "incluye": []
-    }
+    },
+    "cambia": true
   },
-  "version": "0.20261017.2127"
+  "version": "0.20261018.1217"
 }

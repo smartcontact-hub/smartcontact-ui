@@ -1,6 +1,6 @@
 # Smart Contact · Tema para PrimeNG
 
-Versión 0.20261017.2127 · 2026-10-17 · origen: Design System de Smart Contact (`9d9b364a`)
+Versión 0.20261018.1217 · 2026-10-18 · origen: Design System de Smart Contact (`ef407460`)
 
 Tema oficial de Smart Contact para aplicaciones Angular con PrimeNG. Es el mismo tema que utilizan las
 aplicaciones de Smart Contact, por lo que los componentes se muestran de forma idéntica en ambos entornos.
@@ -50,6 +50,30 @@ aplicaciones de Smart Contact, por lo que los componentes se muestran de forma i
 
 4. Modo oscuro: añadir la clase `sc-dark` al elemento `<html>`. Afecta a la vez a los tokens y al preset.
 
+## Estilos de texto
+
+Cada estilo de texto de Figma tiene una clase en `smartcontact-typography.css` con el mismo nombre. Un texto que en
+Figma lleva el estilo `Body/body-regular` se escribe con `class="sc-text-body-regular"`. La clase aplica tamaño,
+interlineado, peso y familia desde los tokens `--sc-*`, así que el componente no necesita declarar `font-size` ni
+`line-height`.
+
+| Estilo en Figma | Clase |
+|---|---|
+| `Display/display-regular` | `sc-text-display-regular` |
+| `Display/display-semibold` | `sc-text-display-semibold` |
+| `Heading/h1-regular` | `sc-text-h1-regular` |
+| `Heading/h1-semibold` | `sc-text-h1-semibold` |
+| `Heading/h2-regular` | `sc-text-h2-regular` |
+| `Heading/h2-semibold` | `sc-text-h2-semibold` |
+| `Heading/h3-regular` | `sc-text-h3-regular` |
+| `Heading/h3-semibold` | `sc-text-h3-semibold` |
+| `Title/title-semibold` | `sc-text-title-semibold` |
+| `Subtitle/subtitle-semibold` | `sc-text-subtitle-semibold` |
+| `Body/body-regular` | `sc-text-body-regular` |
+| `Body/body-semibold` | `sc-text-body-semibold` |
+| `Caption/caption-regular` | `sc-text-caption-regular` |
+| `Caption/caption-semibold` | `sc-text-caption-semibold` |
+
 ## Verificación
 
 Con la aplicación en ejecución, en la consola del navegador:
@@ -70,7 +94,8 @@ instalada figura en la cabecera de este documento y en `node_modules/smartcontac
 
 ## Cambios respecto a la versión anterior
 
-- Ficheros modificados: smartcontact-tokens.css.
+- Ficheros modificados: ninguno.
+- Esta guía: modificada.
 - Tokens de diseño modificados: 0.
 - Estilos comunes del tema: sin cambios.
 - Reglas CSS del tema: sin cambios.
