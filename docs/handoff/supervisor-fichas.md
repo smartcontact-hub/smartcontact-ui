@@ -47,6 +47,25 @@ El de lo que se decide de la auditoría de PrimeNG (2026-10-11, DD-195, sin tram
 e3a6c4b1:docs/handoff/supervisor-fichas.md`. El de lo que falta se dice cuando ya hubo ocasión (2026-10-13, DD-199, sin
 trampas propias): `git show b23f6b5f:docs/handoff/supervisor-fichas.md`. El de fuera las notas de decisión (2026-10-13, DD-187
 §9, sin trampas propias), con los punteros a DD-183 y DD-184: `git show 8d0d82c1:docs/handoff/supervisor-fichas.md`.
+El de la revisión de las fichas a 1440 (2026-10-14, DD-204): `git show 62244684:docs/handoff/supervisor-fichas.md`;
+su trampa del suelo de la tarjeta sube a «Trampas del frente».
+
+## ✅ 2026-10-18 · Grupos y agentes en Figma para desarrollo: listado, altas, ediciones y su hand-off
+
+> **Sello:** sin código. Fichero del Supervisor (`Hjyy41SYKqcRuIzCGggfYH`); en el repo, solo docs (rama
+> `arebury/figma-fichas-handoff` sobre `main` `62244684`).
+
+- **Dónde está**: página «Grupos», sección `2934:580` (el listado `2985:4006` y sus estados de selección, menú y sin
+  resultados a su derecha; el alta y la edición de grupo); página «Agentes», sección `2970:4752` (alta y edición de
+  agente); página «Hand-off: Grupos y agentes» (`2997:47`): qué cambia (DD-211), lo que depende de lo contratado
+  (Call Blending, CusCare, WebRTC), cómo leer las maquetas y las reglas comunes.
+- **Cómo está hecho**: instancias y variables de «Smart-Contact Design System», medidas de sc-supervisor.pages.dev a
+  1440 (de 0 a 1 px por pantalla) y las specs en anotaciones de Dev Mode con sus cuatro categorías. Tablas en
+  `size="small"`: el listado, cabecera 25 y fila 32.
+- **Lo que el Kit no tiene** (`figma-pendiente` §53) va en la maqueta ajustado a la app, con su anotación; la librería
+  no se toca. El estado «Solo lectura» (PIN y script de Web Chat) va anotado, sin dibujar (§50).
+- **Trampa**: el fichero de la copia del DS con la tabla en slots (`C5soC7CxcuKSIFPEDCd3gz`, sección `16862:6447`) se
+  quedó con un placeholder del buscador anterior a `main`; lo que manda es el listado del Supervisor.
 
 ## ✅ 2026-10-17 · Los campos y los canales de General, en las mismas columnas a cualquier ancho (DD-170 §6)
 
@@ -152,32 +171,6 @@ trampas propias): `git show b23f6b5f:docs/handoff/supervisor-fichas.md`. El de f
   `setTimeout(() => select.value.set(2))`. Y un `ng serve` que pilla `dist/` a medio construir se queda en error aunque
   el build acabe: reinícialo (el de sc-docs tapaba la página con `vite-error-overlay` y la prueba fallaba en el clic).
 
-## ✅ 2026-10-14 · Revisión de las fichas a 1440: nombres, resumen en una línea, Recursos y tablas que miden sus filas (DD-204)
-
-> **Sello:** worktree `undine`, rama `arebury/agentes-fila-cli` sobre `main` (con `origin/main` fundido el 2026-10-14).
-
-- **Nombres**: «Agentes asignados» (grupo) y «Grupos asignados» (agente) en el índice y la cabecera, sin subtítulo dentro
-  (`sc-subsection` sin `titleKey`). «Música de espera/transferencia».
-- **Resumen del grupo**: Distribución con Teléfono y «Teléfono saliente»; Recursos aparte, una fila por tipo (Agendas y
-  plantillas de los canales que atiende) con su panel. Fuera «Salida». La tarjeta de datos de las tres fichas, en caption
-  y con baldosa pequeña: a 1440 nada parte de línea.
-- **Recursos**: «Editar» es un lápiz en la opción del desplegable, al pasar (`sc-resource-option` + `#item` y `hide()`
-  nuevos en `sc-multiselect`). Fuera `sc-resource-rows`.
-- **Tamaño de cola**: tarjetas de radio, el ejemplo «Card» de primeng.dev sobre `sc-option-cards` (que pasa a ese dibujo
-  también en los dos «Descuelgue»). sc-docs › RadioButton › Tarjeta.
-- **Tablas de asignar**: `scLlegaAlPie` con `filasReservadas` en vez de `fill`: miden todas sus filas, con el pie de tope,
-  y no cambian de alto al filtrar (medido: 402 px con los cuatro filtros). Casillas, radio e interruptor centrados en la
-  fila. El panel rápido sigue con `fill`, y su tarjeta ahora encoge hasta su hueco (`--table-card-suelo: 0`): con 28
-  agentes pasaba por encima del pie y tapaba «Guardar».
-- **Agente**: sin columna Nivel; Salientes vuelve al radio; Habilitado sin candado con «Activación por grupo» (lo cambia
-  el supervisor, corrige DD-187 §2) y a 6,75 rem: cabe a 1440. Estado apagado si está Desconectado.
-- **Listado de agentes**: «Desconectado» en texto gris, sin etiqueta.
-- **Pruebas**: `recursos-resumen.spec.ts` reescrita para el lápiz; `tabla-al-pie.spec.ts` gana la de la tabla corta;
-  `agente-grupos-asignados.spec.ts`, nueva (sin Nivel, radio, sin candado, Desconectado). En local, a 1440, las 314 de
-  los specs tocados y vecinos, en verde tras corregir las que esperaban los nombres de antes.
-- **Trampa**: `--table-card-tope: none` anula también el suelo (`min(…, none)` no vale y cae en `auto`): quien ponga el
-  tope en `none` debe poner `--table-card-suelo`.
-
 ## SIGUIENTE — sin preguntar
 
 -2b. **Componente tabla (otra sesión):** el «evolutivo» de la tabla con los devs (BI y voz). Propuesta de producto:
@@ -254,11 +247,15 @@ trampas propias): `git show b23f6b5f:docs/handoff/supervisor-fichas.md`. El de f
 - **Devs:** el resto de preguntas abiertas de DD-121: el destino del desbordamiento, el script de Web Chat, WhatsApp por
   agente y qué ve el cliente en cola si se toca un grupo activo. «Audio saliente» y los campos de Email los respondió la
   revisión del 2026-10-15 (DD-206).
+- **Decisión de diseño:** llevar o no al DS oficial lo que la copia arregló (el borde de 1 de los botones de texto, el
+  tooltip con máximo y la celda de selección small; `figma-pendiente` §53). No bloquea las maquetas.
 - **Rafa:** revisar usuarios contra el Supervisor real. Y en el portátil: poner el 4405 al día con `main` y borrar el
   worktree y la rama `codex/supervisor-f-listado` (`aff63656`, una copia de F), la local y la del remoto; desde la
   nube no se puede.
 
 **Trampas del frente:**
+- **`--table-card-tope: none` anula también el suelo** (`min(…, none)` no vale y cae en `auto`): quien ponga el tope
+  en `none` debe poner `--table-card-suelo` (DD-204).
 - Los iconos añaden su glifo a `textContent`; el lector no lo oye. `toHaveText` debe distinguirlo.
 - Un inputnumber con sufijo lo antepone a su descripción accesible. En cloud root, simula bloqueo de Git con
   `.git/config.lock`, no chmod.
