@@ -32,11 +32,13 @@ test('extend del plugin: a nuestro token si existe, el valor del Kit si no, y lo
 test('extend del plugin: los textos de Custom que el plugin exporta con un solo modo van a nuestro token', () => {
   // El plugin exporta la colección Custom con el valor del modo OSCURO (medido en el export del 2026-10-17):
   // con el del Kit, el tema publicado pintaría en claro el título en blanco y el texto invertido en slate-900.
-  const oscuro = { semantic: { text: { inverse: hoja('{surface.900}'), heading: hoja('{surface.0}'), subtle: hoja('{zinc.400}') } } };
+  const oscuro = { semantic: { text: { inverse: hoja('{surface.900}'), heading: hoja('{surface.0}'), subtle: hoja('{zinc.400}'), success: hoja('{green.600}') } } };
   const e = extendDesdeKit(oscuro, new Set());
   assert.equal(e.semantic.text.inverse, 'var(--sc-text-inverse)');
   assert.equal(e.semantic.text.heading, 'var(--sc-text-heading)');
   assert.equal(e.semantic.text.subtle, 'var(--sc-text-subtle)');
+  // En claro, green-600 no llega a 4,5:1 sobre blanco; el token del DS va a green-700 (02-semantic.css).
+  assert.equal(e.semantic.text.success, 'var(--sc-text-success)');
 });
 
 test('contrato del plugin: los nombres que da el runtime (sin primitive./semantic., con component./app.)', () => {
