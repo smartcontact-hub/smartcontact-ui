@@ -128,6 +128,10 @@ const MANDA_EL_DS = {
   'semantic.text.subtle': 'var(--sc-text-subtle)',
   // Entró en el Kit el 2026-10-18 con green-700 y green-600; el export solo lleva el 600, que en claro no pasa AA.
   'semantic.text.success': 'var(--sc-text-success)',
+  // Entraron el 2026-10-18 con el resumen de las fichas; el export solo lleva el modo oscuro.
+  'semantic.text.warning': 'var(--sc-text-warning)',
+  'semantic.border.subtle': 'var(--sc-border-subtle)',
+  'semantic.bg.secondary-subtle': 'var(--sc-bg-secondary-subtle)',
   'component.dialog.icon.color': 'var(--sc-dialog-head-icon-fg)',
 };
 

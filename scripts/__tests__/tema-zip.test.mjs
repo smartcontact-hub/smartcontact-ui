@@ -41,6 +41,14 @@ test('extend del plugin: los textos de Custom que el plugin exporta con un solo 
   assert.equal(e.semantic.text.success, 'var(--sc-text-success)');
 });
 
+test('extend del plugin: aviso, borde suave y fondo suave del resumen van a nuestro token', () => {
+  const oscuro = { semantic: { text: { warning: hoja('{yellow.600}') }, border: { subtle: hoja('{zinc.800}') }, bg: { 'secondary-subtle': hoja('{zinc.900}') } } };
+  const e = extendDesdeKit(oscuro, new Set());
+  assert.equal(e.semantic.text.warning, 'var(--sc-text-warning)');
+  assert.equal(e.semantic.border.subtle, 'var(--sc-border-subtle)');
+  assert.equal(e.semantic.bg['secondary-subtle'], 'var(--sc-bg-secondary-subtle)');
+});
+
 test('contrato del plugin: los nombres que da el runtime (sin primitive./semantic., con component./app.)', () => {
   assert.deepEqual(contratoDelPlugin(CUSTOM), [
     '--p-typography-font-size-100', '--p-typography-font-size-950', '--p-typography-font-weight-semibold',

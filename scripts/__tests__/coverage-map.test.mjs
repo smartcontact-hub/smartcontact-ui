@@ -157,3 +157,9 @@ test('custom · el texto de éxito del Kit (2026-10-18, green-700 claro y green-
   assert.deepEqual(unmatched, []);
   assert.equal(byKind['divergence'].length, 1);
 });
+
+test('custom · aviso, borde suave y fondo suave del resumen de las fichas (2026-10-18) son divergencia', () => {
+  const { unmatched, byKind } = classify('aura/custom', ['semantic.text.warning', 'semantic.border.subtle', 'semantic.bg.secondary-subtle']);
+  assert.deepEqual(unmatched, []);
+  assert.equal(byKind['divergence'].length, 3);
+});
