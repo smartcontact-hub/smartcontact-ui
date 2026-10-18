@@ -952,7 +952,8 @@ variable); falta re-validar los cuatro componentes · **Evidencia:** `docs/ROADM
 Figma» (SISMAC-4074); entregable en la página `Feedback`, sección `14015-179`.
 
 Para el equipo externo, cada text style es una clase de `smartcontact-typography.css` (rama `tema-zip`) con su mismo
-nombre: `Body/body-regular` → `sc-text-body-regular`. El LEEME del paquete les dice que lo importen, no cómo se usa.
+nombre: `Body/body-regular` → `sc-text-body-regular`. El `README.md` del paquete lo explica, con la tabla de las 14
+(«Estilos de texto», generada del CSS por `tema-zip.mjs`).
 
 Select, MultiSelect, Chip y Toast fallaban en la validación web ↔ Figma por lo mismo: los estilos de texto de Figma no
 exportan su tamaño y su interlineado como variables. Antes de actuar, iguala el estado de cada componente: varias
