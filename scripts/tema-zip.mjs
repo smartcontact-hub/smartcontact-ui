@@ -23,7 +23,7 @@
  *   1. ningún token que tenía valor pasa a 0 (un 0 le gana al respaldo de `var()`);
  *   2. base de rem: el preset está pensado para raíz 16 (lo normaliza el tema, `rem-scale.ts`);
  *   3. diferencia con el zip anterior: ficheros, variables, reglas CSS y componentes que cambian.
- *      Se publica si cambia un FICHERO (`hayCambios`); el desglose solo explica.
+ *      Se publica si cambia un FICHERO o la parte fija de la guía (`hayCambios`); el desglose solo explica.
  *   4. contrato del plugin: cada variable del `extend` que exporta el plugin existe en el tema (DD-93).
  *
  * Uso: node scripts/tema-zip.mjs <salida> [--anterior <carpeta del zip anterior>]
@@ -101,7 +101,19 @@ export function comparaPreset(antes, ahora) {
  * ¿Hay que publicar? Manda que cambie un fichero, no el desglose: el desglose es para la guía y ya se
  * dejó una parte fuera una vez (2026-09-14, #160 cambió `css.ts`, el zip dijo «no cambia» y no se publicó).
  */
-export const hayCambios = (d) => !d.anterior || d.ficheros.length > 0;
+export const hayCambios = (d) => !d.anterior || d.ficheros.length > 0 || d.guia === true;
+
+/** La guía sin lo que cambia en cada vuelta: la línea de versión, fecha y commit, y desde «Cambios» hasta el final. */
+const parteFija = (texto) => String(texto).split('\n## Cambios respecto a la versión anterior')[0].replace(/^Versión .*$/m, '');
+
+/**
+ * ¿Cambia la guía que lee el equipo externo? Cuenta como cambio: hasta el 2026-10-18 solo contaban los ficheros del
+ * tema, y #448 añadió «Estilos de texto» a la guía sin que el zip se publicara («no cambia»).
+ */
+export function guiaDistinta(dirAntes, textoAhora) {
+  const antes = join(dirAntes, 'README.md');
+  return !existsSync(antes) || parteFija(readFileSync(antes, 'utf8')) !== parteFija(textoAhora);
+}
 
 /**
  * Divergencias escritas en `coverage-map.mjs` (grupo `aura/custom`): en estas claves manda el DS, no
@@ -259,6 +271,7 @@ export const leeme = (m) => {
   const cambios = d.anterior
     ? [
         `- Ficheros modificados: ${lista(d.ficheros)}.`,
+        ...(d.guia ? ['- Esta guía: modificada.'] : []),
         `- Tokens de diseño modificados: ${d.variables.length}.`,
         ...(d.retirados?.length
           ? [`- Tokens de diseño retirados (si el código del proyecto los referencia, esas propiedades dejan de aplicarse): ${d.retirados.map((t) => `\`${t}\``).join(', ')}.`]
@@ -425,13 +438,15 @@ if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {
       ...(hayAnterior ? comparaPreset(cssAntes, cssAhora) : { semanticaComun: false, reglasCss: false, componentes: [] }),
     },
   };
-  comprobaciones.cambia = hayCambios(comprobaciones.diferencia);
   // 4. El contrato del plugin: cada variable que su `extend` promete existe en el tema empaquetado.
   const declaradasPreset = new Set([...`${cssAhora.comun}\n${Object.values(cssAhora.componentes).join('\n')}`.matchAll(/(--p-[\w-]+)\s*:/g)].map((m) => m[1]));
   comprobaciones.contratoPlugin = { promete: contratoDelPlugin(custom).length, faltan: contratoDelPlugin(custom).filter((v) => !declaradasPreset.has(v)) };
   comprobaciones.sinCodigoDePrimeTek = { incluye: incluidoDePrimeTek };
   const manifiesto = { commit, primeng: version('primeng'), themes: version('@primeuix/themes'), generado: new Date().toISOString(), estilosTexto: estilosDeTexto(tipografia), comprobaciones };
   manifiesto.version = paqueteNpm(manifiesto).version;
+  // La guía se compara ya escrita: su parte fija no depende de lo que decide `cambia`.
+  comprobaciones.diferencia.guia = hayAnterior && guiaDistinta(ANTERIOR, leeme(manifiesto));
+  comprobaciones.cambia = hayCambios(comprobaciones.diferencia);
   writeFileSync(join(OUT, 'manifiesto.json'), `${JSON.stringify(manifiesto, null, 2)}\n`);
   writeFileSync(join(OUT, 'README.md'), leeme(manifiesto));
   writeFileSync(join(OUT, 'package.json'), `${JSON.stringify(paqueteNpm(manifiesto), null, 2)}\n`);

@@ -4,7 +4,7 @@ import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-import { FICHEROS, cerosNuevos, codigoDePrimeTek, comparaPreset, contratoDelPlugin, diferencias, estiloDeFigma, estilosDeTexto, extendDesdeKit, ficherosDistintos, hayCambios, leeme, paqueteNpm, retirados, variables } from '../tema-zip.mjs';
+import { FICHEROS, cerosNuevos, codigoDePrimeTek, comparaPreset, contratoDelPlugin, diferencias, estiloDeFigma, estilosDeTexto, extendDesdeKit, ficherosDistintos, guiaDistinta, hayCambios, leeme, paqueteNpm, retirados, variables } from '../tema-zip.mjs';
 
 const hoja = ($value) => ({ $value });
 const CUSTOM = {
@@ -159,4 +159,16 @@ test('leeme: explica que el estilo de Figma es la clase, con la tabla de los que
   assert.match(texto, /class="sc-text-body-regular"/);
   assert.match(texto, /\| `Heading\/h1-semibold` \| `sc-text-h1-semibold` \|/);
   assert.doesNotMatch(leeme({ ...m, estilosTexto: [] }), /\| `Body\//, 'sin clases, sin tabla');
+});
+
+test('guía: un cambio en su parte fija publica; la versión, la fecha y el desglose de cambios, no', () => {
+  // El caso del 2026-10-18: #448 añadió «Estilos de texto» a la guía y el zip dijo «no cambia» (solo miraba ficheros).
+  const base = { commit: 'abc', generado: '2026-10-17', estilosTexto: ['body-regular'], comprobaciones: { diferencia: { anterior: false }, contratoPlugin: { promete: 0, faltan: [] }, raizPx: 16, ceros: [] } };
+  const dir = mkdtempSync(join(tmpdir(), 'guia-'));
+  writeFileSync(join(dir, 'README.md'), leeme({ ...base, version: '0.1.1' }));
+  const otraVuelta = leeme({ ...base, version: '0.1.2', commit: 'def', generado: '2026-10-18', comprobaciones: { ...base.comprobaciones, diferencia: { anterior: true, ficheros: [], variables: ['x'], semanticaComun: true, reglasCss: false, componentes: ['menu'] } } });
+  assert.equal(guiaDistinta(dir, otraVuelta), false, 'solo cambian la cabecera y el desglose');
+  assert.equal(guiaDistinta(dir, leeme({ ...base, version: '0.1.1', estilosTexto: ['body-regular', 'h1-semibold'] })), true, 'una fila nueva en la tabla');
+  assert.equal(guiaDistinta(mkdtempSync(join(tmpdir(), 'sin-guia-')), otraVuelta), true, 'sin guía publicada se publica');
+  assert.equal(hayCambios({ anterior: true, ficheros: [], guia: true }), true);
 });
