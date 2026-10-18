@@ -1,6 +1,6 @@
 {
-  "plugin": "cf1f0c99",
-  "generado": "2026-10-18T11:24:12.120Z",
+  "plugin": "795fe65a",
+  "generado": "2026-10-18T15:58:39.536Z",
   "comprobaciones": {
     "ceros": [],
     "cerosPendientesDeFigma": [
@@ -15,7 +15,7 @@
     ],
     "diferencia": {
       "anterior": true,
-      "variables": 3
+      "variables": 0
     },
     "distancia": {
       "total": 1998,

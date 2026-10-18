@@ -1,6 +1,6 @@
 # Export del plugin de Figma (Theme Designer)
 
-Export `cf1f0c99` del plugin, tal cual sale de Figma: carpetas `ts/` y `js/`, un fichero por componente.
+Export `795fe65a` del plugin, tal cual sale de Figma: carpetas `ts/` y `js/`, un fichero por componente.
 
 ## Comprobaciones
 
@@ -8,7 +8,7 @@ Export `cf1f0c99` del plugin, tal cual sale de Figma: carpetas `ts/` y `js/`, un
 - A 0 porque Figma aún dibuja la medida anterior a Aura (pendiente conocido, no es un fallo del export): claro|--p-divider-vertical-padding.
 - Raíz para la que está pensado: **14 px**. Si vuestra página tiene la raíz a 16, las medidas salen un 14 % más grandes que en Figma.
 - Pesos de letra escritos con «px» (el navegador los ignora): 4.
-- Respecto al export anterior: 3 variables cambian.
+- Respecto al export anterior: 0 variables cambian.
 
 ## Cuánto se parece a lo que pintan nuestras apps
 
