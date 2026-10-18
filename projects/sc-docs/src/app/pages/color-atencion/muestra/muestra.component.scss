@@ -1,0 +1,218 @@
+/*
+ * La muestra vive sola en su iframe: pinta su propio suelo (`--sc-bg-canvas`) y no lleva el marco de la doc. Todo
+ * color sale de un rol, para que el candidato que reescribe las variables en la raíz llegue a cada pieza igual que
+ * llegaría en el Supervisor. Agrupación 7 · 14 · 28: dentro de un grupo, 7 o 14; entre grupos, el doble.
+ */
+
+:host {
+  display: block;
+  background: var(--sc-bg-canvas);
+  color: var(--sc-text-primary);
+}
+
+.ms {
+  display: grid;
+  gap: var(--sc-spacing-2);
+  padding: var(--sc-spacing-1);
+}
+
+.ms__app {
+  border: 1px solid var(--sc-border-subtle);
+  border-radius: var(--sc-radius-lg);
+  background: var(--sc-bg-canvas);
+  overflow: hidden;
+}
+
+.ms__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--sc-spacing-1);
+  padding: var(--sc-spacing-1) var(--sc-spacing-1-5);
+  border-bottom: 1px solid var(--sc-border-subtle);
+}
+
+.ms__ruta {
+  margin: 0;
+  color: var(--sc-text-subtle);
+}
+
+.ms__titulo {
+  margin: 0;
+  color: var(--sc-text-heading);
+}
+
+.ms__acciones {
+  display: flex;
+  gap: var(--sc-spacing-0-5);
+}
+
+.ms__cuerpo {
+  display: grid;
+  grid-template-columns: minmax(10rem, 13rem) minmax(0, 1fr) minmax(12rem, 15rem);
+  gap: var(--sc-spacing-1-5);
+  padding: var(--sc-spacing-1-5);
+  align-items: start;
+}
+
+.ms__tarjeta,
+.ms__resumen {
+  display: grid;
+  gap: var(--sc-spacing-1);
+  padding: var(--sc-spacing-1);
+  border: 1px solid var(--sc-border-subtle);
+  border-radius: var(--sc-radius-lg);
+  background: var(--sc-bg-surface);
+  min-width: 0;
+}
+
+.ms__subtitulo {
+  margin: 0;
+  color: var(--sc-text-heading);
+}
+
+/* El anillo de foco, pintado quieto: un foco de verdad se iría en cuanto el ratón tocase otra cosa. */
+.ms__foco {
+  border-radius: var(--sc-radius-md);
+  outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
+  outline-offset: var(--sc-focus-ring-offset);
+}
+
+.ms__texto {
+  margin: 0;
+}
+
+.ms__acento {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-25);
+  color: var(--sc-text-accent);
+  font-weight: var(--sc-font-weight-semibold);
+
+  sc-icon {
+    color: var(--sc-icon-accent);
+  }
+}
+
+.ms__enlace {
+  color: var(--sc-text-link);
+}
+
+.ms__grupo {
+  display: grid;
+  gap: var(--sc-spacing-0-5);
+  margin: 0;
+  padding: 0;
+  border: 0;
+
+  legend {
+    padding: 0;
+    margin-bottom: var(--sc-spacing-0-5);
+    color: var(--sc-text-secondary);
+  }
+}
+
+.ms__fila {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sc-spacing-0-5) var(--sc-spacing-1);
+}
+
+.ms__fila--entre {
+  justify-content: space-between;
+}
+
+.ms__opcion {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+}
+
+.ms__cifra {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-875);
+
+  p {
+    margin: 0;
+  }
+}
+
+.ms__suave {
+  color: var(--sc-text-subtle);
+}
+
+/* ── INFORME ─────────────────────────────────────────────────────────────────────────────────── */
+
+.ms__informe {
+  display: grid;
+  gap: var(--sc-spacing-0-5);
+
+  h2 {
+    margin: 0;
+    color: var(--sc-text-heading);
+  }
+}
+
+.ms__tabla {
+  width: 100%;
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: var(--sc-spacing-0-375) var(--sc-spacing-0-5);
+    border-bottom: 1px solid var(--sc-border-subtle);
+    text-align: start;
+    font-weight: var(--sc-font-weight-regular);
+    vertical-align: middle;
+  }
+
+  thead th {
+    color: var(--sc-text-secondary);
+    font-weight: var(--sc-font-weight-semibold);
+  }
+
+  td {
+    white-space: nowrap;
+  }
+
+  code {
+    color: var(--sc-text-secondary);
+  }
+}
+
+.ms__cambia th {
+  color: var(--sc-text-heading);
+  font-weight: var(--sc-font-weight-semibold);
+}
+
+.ms__marca {
+  margin-inline-start: var(--sc-spacing-0-375);
+  padding: 0 var(--sc-spacing-0-375);
+  border-radius: var(--sc-radius-sm);
+  background: var(--sc-bg-subtle);
+  color: var(--sc-text-secondary);
+}
+
+.ms__chip {
+  display: inline-block;
+  width: var(--sc-spacing-1);
+  height: var(--sc-spacing-1);
+  margin-inline-end: var(--sc-spacing-0-375);
+  border-radius: var(--sc-radius-sm);
+  box-shadow: inset 0 0 0 1px var(--sc-border-default);
+  vertical-align: middle;
+}
+
+.ms__malo {
+  color: var(--sc-text-danger);
+}
+
+/* El iframe es más estrecho que la página: por debajo de 760px la muestra se apila. */
+@media (max-width: 760px) {
+  .ms__cuerpo {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

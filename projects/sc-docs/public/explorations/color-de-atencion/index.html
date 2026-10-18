@@ -1,0 +1,664 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Color de atención del Supervisor</title>
+<style>
+@font-face { font-family: Inter; font-weight: 400; font-display: swap; src: url(fonts/inter-latin-400-normal.woff2) format('woff2'); }
+@font-face { font-family: Inter; font-weight: 500; font-display: swap; src: url(fonts/inter-latin-500-normal.woff2) format('woff2'); }
+@font-face { font-family: Inter; font-weight: 600; font-display: swap; src: url(fonts/inter-latin-600-normal.woff2) format('woff2'); }
+@font-face { font-family: Inter; font-weight: 700; font-display: swap; src: url(fonts/inter-latin-700-normal.woff2) format('woff2'); }
+@font-face { font-family: Inter; font-weight: 800; font-display: swap; src: url(fonts/inter-latin-800-normal.woff2) format('woff2'); }
+@font-face { font-family: 'JetBrains Mono'; font-weight: 400; font-display: swap; src: url(fonts/jetbrains-mono-latin-400-normal.woff2) format('woff2'); }
+@font-face { font-family: 'JetBrains Mono'; font-weight: 500; font-display: swap; src: url(fonts/jetbrains-mono-latin-500-normal.woff2) format('woff2'); }
+@font-face { font-family: 'JetBrains Mono'; font-weight: 600; font-display: swap; src: url(fonts/jetbrains-mono-latin-600-normal.woff2) format('woff2'); }
+
+/* Escenario 16:9 de 1920×1080 escalado a la ventana, como el vídeo de lanzamiento; en una pantalla estrecha,
+   las diapositivas se apilan. Un solo mundo visual: el marino de la marca, con el cian de la propuesta como acento. */
+:root {
+  --navy-950: #05080d; --navy-900: #0b1019; --navy-800: #131b2b; --navy-700: #1b273d; --navy-600: #243452;
+  --ink: #ffffff; --soft: #c6ccd6; --muted: #aeb6c2; --line: rgba(255, 255, 255, .12); --line-strong: rgba(255, 255, 255, .22);
+  --cyan: #51d5e6; --cyan-300: #7be1ef; --cyan-glow: rgba(81, 213, 230, .16);
+  --ok: #4ade80; --no: #f87171;
+  --display: Inter, 'Helvetica Neue', Arial, sans-serif;
+  --body: Inter, 'Helvetica Neue', Arial, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body { background: var(--navy-950); color: var(--ink); font-family: var(--body); -webkit-font-smoothing: antialiased; overflow: hidden; }
+
+#viewport { position: fixed; inset: 0; overflow: hidden; }
+#deck { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; }
+#bg { position: absolute; inset: 0; background: radial-gradient(1300px 900px at 50% 42%, var(--navy-700) 0%, var(--navy-900) 55%, var(--navy-950) 100%); }
+#grid { position: absolute; inset: 0; background-image: radial-gradient(circle, rgba(255, 255, 255, .06) 1.4px, transparent 1.6px); background-size: 42px 42px; }
+#glow { position: absolute; width: 1500px; height: 1500px; left: 900px; top: -560px; border-radius: 50%; background: radial-gradient(circle, rgba(81, 213, 230, .13) 0%, rgba(81, 213, 230, 0) 60%); pointer-events: none; }
+
+.slide { position: absolute; inset: 0; padding: 84px 120px 128px; display: flex; flex-direction: column; visibility: hidden; }
+.slide.is-active { visibility: visible; }
+
+.eyebrow { font-family: var(--mono); font-weight: 600; font-size: 21px; letter-spacing: .16em; text-transform: uppercase; color: var(--cyan); margin-bottom: 26px; }
+.title { font-family: var(--display); font-weight: 800; font-size: 76px; line-height: 1; letter-spacing: -0.045em; text-wrap: balance; max-width: 1500px; }
+.title em { font-style: normal; color: var(--cyan); }
+.lead { margin-top: 28px; font-size: 30px; line-height: 1.42; color: var(--soft); max-width: 1180px; text-wrap: pretty; }
+.small { font-size: 22px; line-height: 1.45; color: var(--muted); }
+.mono { font-family: var(--mono); }
+code { font-family: var(--mono); font-size: .88em; color: var(--ink); }
+
+.row { display: flex; gap: 72px; align-items: flex-start; margin-top: 44px; min-height: 0; flex: 1; }
+.col { min-width: 0; }
+
+/* Capturas reales: marco con la sombra justa y una señal sobre el botón principal. */
+.shot { position: relative; border-radius: 14px; overflow: hidden; box-shadow: 0 30px 80px rgba(0, 0, 0, .45), 0 0 0 1px var(--line-strong); background: var(--navy-900); }
+.shot img { display: block; width: 100%; height: auto; }
+.mark { position: absolute; border: 3px solid var(--cyan); border-radius: 10px; box-shadow: 0 0 0 6px var(--cyan-glow); pointer-events: none; }
+.mark span { position: absolute; left: 50%; top: calc(100% + 12px); transform: translateX(-50%); white-space: nowrap; font-family: var(--mono); font-size: 17px; font-weight: 600; color: var(--navy-950); background: var(--cyan); padding: 4px 10px; border-radius: 6px; }
+.mark.up span { top: auto; bottom: calc(100% + 12px); }
+.mark.left span { top: 50%; left: auto; right: calc(100% + 12px); transform: translateY(-50%); }
+
+.stat { display: flex; flex-direction: column; gap: 10px; padding-bottom: 36px; margin-bottom: 36px; border-bottom: 1px solid var(--line); }
+.stat:last-child { border-bottom: 0; margin-bottom: 0; }
+.stat b { font-family: var(--display); font-weight: 800; font-size: 120px; line-height: .9; letter-spacing: -0.05em; font-variant-numeric: tabular-nums; }
+.stat.compact { padding-bottom: 0; margin-bottom: 0; border: 0; }
+.stat.compact b { font-size: 88px; }
+.stat.compact p { font-size: 22px; }
+.stat b small { font-size: .45em; letter-spacing: -0.02em; color: var(--muted); font-weight: 700; margin-left: 8px; }
+.stat p { font-size: 25px; line-height: 1.4; color: var(--soft); max-width: 520px; }
+
+.roles { list-style: none; display: grid; gap: 14px; margin-top: 22px; }
+.roles li { display: grid; grid-template-columns: 24px 120px 1fr; gap: 16px; align-items: baseline; font-size: 21px; line-height: 1.35; color: var(--soft); }
+.roles i { width: 22px; height: 22px; border-radius: 6px; display: block; transform: translateY(3px); box-shadow: 0 0 0 1px var(--line-strong); }
+.roles b { color: var(--ink); font-weight: 600; }
+.quote { margin-top: 28px; padding-left: 24px; border-left: 3px solid var(--cyan); font-size: 24px; line-height: 1.4; color: var(--ink); }
+.quote cite { display: block; margin-top: 8px; font-style: normal; font-family: var(--mono); font-size: 17px; color: var(--muted); letter-spacing: .04em; }
+
+/* Otros sistemas: cuatro bandos, cada sistema dibujado como su propio botón principal */
+.camps { display: grid; grid-template-columns: 1.55fr 1.2fr 1fr .8fr; gap: 22px; margin-top: 40px; }
+.camp { border: 1px solid var(--line); border-radius: 18px; padding: 26px 26px 24px; background: rgba(11, 16, 25, .55); display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.camp header { display: flex; align-items: baseline; gap: 14px; }
+.camp header b { font-family: var(--display); font-weight: 800; font-size: 64px; line-height: .9; letter-spacing: -0.05em; font-variant-numeric: tabular-nums; }
+.camp header span { font-size: 22px; font-weight: 700; line-height: 1.2; letter-spacing: -0.01em; }
+.camp p { font-size: 19px; line-height: 1.42; color: var(--soft); }
+.camp p b { color: var(--ink); font-weight: 600; }
+.btns { display: flex; flex-wrap: wrap; gap: 8px; }
+.btns span { font-size: 15px; font-weight: 600; padding: 7px 11px; border-radius: 7px; color: #fff; box-shadow: 0 0 0 1px rgba(255, 255, 255, .22); white-space: nowrap; }
+.camp.none { border-style: dashed; border-color: rgba(81, 213, 230, .45); background: rgba(81, 213, 230, .05); }
+.camp.none header b { color: var(--cyan); }
+.camp.ours { border-color: rgba(255, 255, 255, .28); }
+.tag-ours { font-family: var(--mono); font-size: 13px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--navy-950); background: var(--soft); padding: 3px 8px; border-radius: 5px; align-self: flex-start; }
+.takeaways { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; margin-top: 26px; }
+.takeaways p { font-size: 19px; line-height: 1.42; color: var(--soft); padding-top: 14px; border-top: 2px solid var(--cyan); }
+.takeaways b { color: var(--ink); }
+.source { margin-top: 18px; font-family: var(--mono); font-size: 14px; color: rgba(174, 182, 194, .75); letter-spacing: .02em; }
+.btn-sample { align-self: flex-start; font-size: 18px; font-weight: 600; padding: 9px 16px; border-radius: 8px; }
+
+/* La rueda de tonos */
+.wheel-wrap { --w: 620px; position: relative; width: var(--w); max-width: 100%; aspect-ratio: 1; flex: none; margin-top: -24px; }
+.wheel { position: absolute; inset: 15.6%; border-radius: 50%;
+  background: conic-gradient(from 0deg, oklch(.72 .15 0), oklch(.72 .15 30) 30deg, oklch(.72 .15 60) 60deg, oklch(.72 .15 90) 90deg, oklch(.72 .15 120) 120deg, oklch(.72 .15 150) 150deg, oklch(.72 .15 180) 180deg, oklch(.72 .15 210) 210deg, oklch(.72 .15 240) 240deg, oklch(.72 .15 270) 270deg, oklch(.72 .15 300) 300deg, oklch(.72 .15 330) 330deg, oklch(.72 .15 360) 360deg);
+  -webkit-mask: radial-gradient(circle closest-side, transparent 67.5%, #000 68%, #000 99.4%, transparent 100%); mask: radial-gradient(circle closest-side, transparent 67.5%, #000 68%, #000 99.4%, transparent 100%); opacity: .9; }
+.wheel-center { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); text-align: center; }
+.wheel-center b { display: block; font-size: 40px; font-weight: 800; letter-spacing: -0.03em; }
+.wheel-center span { font-family: var(--mono); font-size: 14px; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; }
+.pin { position: absolute; width: 22px; height: 22px; margin: -11px 0 0 -11px; border-radius: 50%; border: 3px solid var(--navy-950); box-shadow: 0 0 0 2px var(--ink); }
+.pin.free { box-shadow: 0 0 0 2px var(--cyan), 0 0 0 9px var(--cyan-glow); }
+.pin-label { position: absolute; transform: translate(-50%, -50%); white-space: nowrap; font-size: 19px; font-weight: 600; line-height: 1.15; text-align: center; color: var(--ink); }
+.pin-label small { display: block; font-family: var(--mono); font-size: 14px; font-weight: 500; color: var(--muted); letter-spacing: .04em; }
+.pin-label.no { color: var(--muted); }
+.pin-label.free { color: var(--cyan); }
+.verdicts { list-style: none; display: grid; gap: 14px; font-size: 22px; line-height: 1.35; color: var(--soft); }
+.verdicts b { color: var(--ink); font-weight: 600; }
+.trio { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 28px; }
+.trio figure { margin: 0; }
+.trio .shot { border-radius: 10px; }
+.trio figcaption { margin-top: 10px; font-size: 17px; line-height: 1.35; color: var(--muted); }
+.trio figcaption b { color: var(--ink); }
+
+/* Cian: muestras */
+.swatches { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 26px; margin-top: 52px; max-width: 1480px; }
+.sw { border-radius: 18px; padding: 34px 36px; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 18px; box-shadow: 0 0 0 1px var(--line); }
+.sw .sample { font-size: 40px; font-weight: 700; letter-spacing: -0.02em; }
+.sw .what { grid-column: 1 / -1; font-family: var(--mono); font-size: 17px; letter-spacing: .04em; opacity: .9; }
+.sw .verdict { font-family: var(--mono); font-weight: 600; font-size: 30px; padding: 8px 16px; border-radius: 10px; background: var(--navy-950); }
+.sw .verdict.ok { color: var(--ok); }
+.sw .verdict.no { color: var(--no); }
+
+/* Antes y después */
+.compare { position: relative; width: 860px; aspect-ratio: 1440 / 900; max-width: 100%; border-radius: 14px; overflow: hidden; box-shadow: 0 30px 80px rgba(0, 0, 0, .45), 0 0 0 1px var(--line-strong); cursor: ew-resize; touch-action: none; user-select: none; }
+.compare img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.compare .after { clip-path: inset(0 0 0 var(--cut, 50%)); }
+.compare .handle { position: absolute; top: 0; bottom: 0; left: var(--cut, 50%); width: 3px; margin-left: -1.5px; background: var(--cyan); box-shadow: 0 0 0 6px var(--cyan-glow); }
+.compare .handle::after { content: ''; position: absolute; left: 50%; top: 50%; width: 46px; height: 46px; transform: translate(-50%, -50%); border-radius: 50%; background: var(--cyan); box-shadow: 0 6px 20px rgba(0, 0, 0, .4); }
+.compare .tag { position: absolute; bottom: 18px; font-family: var(--mono); font-size: 16px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; padding: 6px 12px; border-radius: 8px; background: rgba(5, 8, 13, .82); color: var(--ink); }
+.compare .tag.l { left: 18px; } .compare .tag.r { right: 18px; color: var(--cyan); }
+.compare:focus-visible { outline: 3px solid var(--cyan); outline-offset: 6px; }
+.toggles { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+.seg { display: inline-flex; padding: 4px; border-radius: 10px; background: rgba(255, 255, 255, .06); box-shadow: 0 0 0 1px var(--line); }
+.seg button { font: 600 18px/1 var(--body); color: var(--muted); background: transparent; border: 0; padding: 10px 16px; border-radius: 7px; cursor: pointer; }
+.seg button[aria-pressed='true'] { background: var(--ink); color: var(--navy-950); }
+.seg button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+
+/* Alternativas */
+.alt { width: 100%; border-collapse: collapse; margin-top: 30px; font-size: 21px; }
+.alt th, .alt td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+.alt thead th { font-family: var(--mono); font-size: 14px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.alt tbody th { font-weight: 700; white-space: nowrap; }
+.alt td { color: var(--soft); }
+.alt .n { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--ink); }
+.alt .n i { font-style: normal; color: var(--muted); margin: 0 6px; }
+.alt .no { color: var(--no); font-weight: 700; }
+.alt .pair { display: inline-flex; gap: 8px; }
+.alt .pair span { font-size: 15px; font-weight: 600; padding: 6px 11px; border-radius: 7px; }
+.alt .pair .dk { padding: 5px; border-radius: 9px; background: #09090b; box-shadow: 0 0 0 1px var(--line-strong); }
+.alt tr.out > :not(:last-child) { opacity: .55; }
+.v { display: inline-block; font-family: var(--mono); font-size: 14px; font-weight: 600; letter-spacing: .04em; padding: 4px 9px; border-radius: 6px; white-space: nowrap; }
+.v.si { color: #062e16; background: var(--ok); } .v.mt { color: #3b2603; background: #fbbf24; } .v.nn { color: #3f0a0a; background: var(--no); } .v.hy { color: var(--navy-950); background: var(--soft); }
+.alt td.why { font-size: 18px; line-height: 1.35; max-width: 520px; }
+
+/* ¿Un solo cambio? */
+.big-no { font-family: var(--display); font-weight: 800; font-size: 200px; line-height: .8; letter-spacing: -0.06em; color: var(--cyan); }
+.readers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; margin-top: 8px; }
+.readers div { border-top: 2px solid var(--line-strong); padding-top: 16px; }
+.readers b { display: block; font-family: var(--display); font-size: 64px; font-weight: 800; letter-spacing: -0.04em; line-height: 1; }
+.readers span { display: block; margin-top: 8px; font-size: 20px; line-height: 1.38; color: var(--soft); }
+.versus { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-top: 40px; }
+.versus div { border-radius: 16px; padding: 24px 26px; box-shadow: 0 0 0 1px var(--line); background: rgba(11, 16, 25, .55); }
+.versus div.good { box-shadow: 0 0 0 1px rgba(81, 213, 230, .4); background: rgba(81, 213, 230, .06); }
+.versus b { display: block; font-size: 25px; margin-bottom: 8px; }
+.versus span { font-size: 20px; line-height: 1.4; color: var(--soft); }
+.versus .k { font-family: var(--mono); font-size: 15px; color: var(--muted); display: block; margin-top: 12px; }
+
+/* Reglas */
+.rules { list-style: none; counter-reset: r; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 30px 72px; margin-top: 52px; }
+.rules li { counter-increment: r; display: grid; grid-template-columns: 64px 1fr; gap: 6px 0; }
+.rules li::before { content: counter(r, decimal-leading-zero); grid-row: 1 / span 2; font-family: var(--mono); font-weight: 600; font-size: 22px; color: var(--cyan); padding-top: 6px; }
+.rules b { font-size: 30px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
+.rules span { font-size: 21px; line-height: 1.42; color: var(--muted); }
+
+/* Siguiente paso */
+.steps { list-style: none; counter-reset: s; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px; margin-top: 56px; }
+.steps li { counter-increment: s; border-top: 2px solid var(--line-strong); padding-top: 22px; font-size: 24px; line-height: 1.38; color: var(--soft); }
+.steps li::before { content: counter(s); display: block; font-family: var(--mono); font-size: 18px; font-weight: 600; color: var(--muted); margin-bottom: 12px; }
+.steps b { color: var(--ink); font-weight: 600; display: block; margin-bottom: 6px; }
+.decide { margin-top: 48px; display: grid; grid-template-columns: 250px repeat(3, minmax(0, 1fr)); gap: 26px; align-items: start; padding: 30px 34px; border-radius: 18px; background: rgba(81, 213, 230, .06); box-shadow: 0 0 0 1px rgba(81, 213, 230, .32); }
+.decide > p { font-size: 26px; font-weight: 700; line-height: 1.2; }
+.decide--4 { grid-template-columns: 200px repeat(4, minmax(0, 1fr)); gap: 22px; }
+.opt { display: flex; flex-direction: column; gap: 12px; font-size: 19px; line-height: 1.4; color: var(--soft); }
+.opt b { color: var(--ink); font-weight: 600; font-size: 21px; }
+.opt .btn-sample { font-size: 19px; padding: 11px 20px; }
+.opt .ratio { font-family: var(--mono); font-size: 16px; color: var(--muted); }
+.note { font-size: 18px; line-height: 1.4; color: var(--muted); margin-top: 14px; min-height: 1.4em; }
+
+/* Portada */
+.cover { justify-content: center; }
+.cover .logo { width: 120px; color: var(--ink); margin-bottom: 64px; }
+.cover .title { font-size: 132px; max-width: 1400px; }
+.cover .meta { margin-top: 60px; display: flex; gap: 18px; flex-wrap: wrap; }
+.pill { font-family: var(--mono); font-size: 19px; color: var(--cyan-300); padding: 10px 18px; border-radius: 999px; border: 1px solid rgba(123, 225, 239, .35); background: rgba(81, 213, 230, .1); white-space: nowrap; }
+.pill.quiet { color: var(--muted); border-color: var(--line-strong); background: transparent; }
+
+/* Pie, navegación y progreso */
+#chrome { position: absolute; left: 120px; right: 120px; bottom: 46px; display: flex; align-items: center; gap: 24px; font-family: var(--mono); font-size: 17px; color: var(--muted); }
+#chrome .brand { display: flex; align-items: center; gap: 12px; letter-spacing: .04em; }
+#chrome .brand svg { width: 26px; color: var(--ink); }
+#chrome .spacer { flex: 1; }
+#count { font-variant-numeric: tabular-nums; letter-spacing: .08em; }
+#chrome button { font: inherit; color: var(--ink); background: rgba(255, 255, 255, .06); border: 0; box-shadow: 0 0 0 1px var(--line); width: 48px; height: 48px; border-radius: 12px; cursor: pointer; display: grid; place-items: center; }
+#chrome button:hover { background: rgba(255, 255, 255, .12); }
+#chrome button:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+#chrome button svg { width: 22px; height: 22px; }
+#progress { position: absolute; left: 0; bottom: 0; height: 4px; width: 100%; background: rgba(255, 255, 255, .06); }
+#progress i { display: block; height: 100%; width: 0; background: var(--cyan); }
+.hint { font-size: 15px; color: rgba(174, 182, 194, .7); }
+
+/* Pantalla estrecha: las diapositivas se apilan y se leen bajando. */
+@media (max-width: 760px) {
+  body { overflow: auto; }
+  #viewport { position: static; overflow: visible; }
+  #deck { position: static; width: auto; height: auto; transform: none !important; }
+  #bg, #grid, #glow, #chrome, #progress { display: none; }
+  body { background: radial-gradient(900px 600px at 50% 0%, var(--navy-700), var(--navy-950)); }
+  .slide { position: relative; inset: auto; visibility: visible; padding-block: 56px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); border-bottom: 1px solid var(--line); }
+  .eyebrow { font-size: 13px; margin-bottom: 14px; }
+  .title, .cover .title { font-size: 38px; }
+  .lead { font-size: 18px; margin-top: 16px; }
+  .row { flex-direction: column; gap: 32px; margin-top: 28px; }
+  .stat b { font-size: 64px; } .stat p { font-size: 17px; }
+  .roles li { grid-template-columns: 20px 110px 1fr; font-size: 16px; gap: 10px; }
+  .quote { font-size: 18px; }
+  .camps, .takeaways, .swatches, .rules, .steps, .trio { grid-template-columns: 1fr; }
+  .camp header b { font-size: 44px; } .camp p, .takeaways p, .verdicts, .steps li, .opt { font-size: 16px; }
+  .wheel-wrap { --w: 340px; margin-top: 0; }
+  .wheel-center b { font-size: 24px; } .wheel-center span { font-size: 10px; }
+  .pin { width: 14px; height: 14px; margin: -7px 0 0 -7px; border-width: 2px; }
+  .pin-label { font-size: 12px; } .pin-label small { font-size: 10px; }
+  .sw .sample { font-size: 24px; } .sw .verdict { font-size: 18px; }
+  .compare { width: 100%; }
+  .rules b { font-size: 20px; } .rules span { font-size: 16px; }
+  .decide { grid-template-columns: 1fr; }
+  .cover .logo { width: 64px; margin-bottom: 28px; }
+  .alt { font-size: 14px; } .alt td.why { font-size: 13px; } .readers, .versus { grid-template-columns: 1fr; }
+  .big-no { font-size: 96px; } .readers b { font-size: 40px; } .readers span, .versus span { font-size: 15px; }
+  .alt-wrap { overflow-x: auto; }
+  .pill { white-space: normal; font-size: 13px; }
+}
+@media (prefers-reduced-motion: reduce) { .mark { box-shadow: none; } }
+</style>
+</head>
+<body>
+<div id="viewport">
+<div id="deck" aria-roledescription="presentación">
+  <div id="bg"></div><div id="grid"></div><div id="glow"></div>
+
+  <!-- 1 · Portada -->
+  <section class="slide cover is-active" aria-label="Portada">
+    <div class="logo" data-a>
+      <svg viewBox="0 0 109 98" xmlns="http://www.w3.org/2000/svg" aria-label="Smart Contact" role="img">
+        <path d="M71.6506 15.536C66.4333 15.536 61.6258 13.8336 57.7066 10.9819C60.0628 14.6681 61.4453 19.0358 61.4453 23.7332C61.4453 28.074 60.2594 32.1299 58.2231 35.6312C62.0424 33.0061 66.6649 31.4653 71.6506 31.4653C74.7684 31.4653 77.7395 32.0816 80.4673 33.1743C78.5344 30.5524 77.3793 27.3212 77.3793 23.8165C77.3793 19.8754 78.831 16.2806 81.2172 13.5138C78.2877 14.8064 75.0567 15.536 71.6506 15.536Z" fill="currentColor" fill-opacity="0.45"/>
+        <path d="M37.3499 81.8761C42.5672 81.8761 47.3753 83.5791 51.293 86.4308C48.9367 82.7463 47.5546 78.3847 47.5546 73.6874C47.5546 69.3449 48.7411 65.2806 50.7774 61.7809C46.9581 64.4044 42.3356 65.9469 37.3499 65.9469C34.2321 65.9469 31.261 65.3289 28.5332 64.2378C30.4661 66.858 31.6208 70.0892 31.6208 73.5939C31.6208 77.5366 30.1695 81.1299 27.7833 83.8983C30.7128 82.6057 33.9438 81.8761 37.3499 81.8761Z" fill="currentColor" fill-opacity="0.45"/>
+        <path d="M37.703 0C50.8156 0 61.4453 10.6256 61.4453 23.7332C61.4453 36.839 50.8156 47.4647 37.703 47.4647C24.5905 47.4647 13.9624 36.839 13.9624 23.7332C13.9624 10.6256 24.5905 0 37.703 0Z" fill="currentColor"/>
+        <path d="M93.1898 8.01218C101.921 8.01218 109 15.0882 109 23.8165C109 32.5466 101.921 39.6225 93.1898 39.6225C84.458 39.6225 77.3793 32.5466 77.3793 23.8165C77.3793 15.0882 84.458 8.01218 93.1898 8.01218Z" fill="currentColor"/>
+        <path d="M71.2952 97.4189C58.1827 97.4189 47.5546 86.7933 47.5546 73.6874C47.5546 60.5798 58.1827 49.9542 71.2952 49.9542C84.4078 49.9542 95.0358 60.5798 95.0358 73.6874C95.0358 86.7933 84.4078 97.4189 71.2952 97.4189Z" fill="currentColor"/>
+        <path d="M15.8104 89.3982C7.07869 89.3982 0 82.3222 0 73.5939C0 64.8638 7.07869 57.7879 15.8104 57.7879C24.5421 57.7879 31.6208 64.8638 31.6208 73.5939C31.6208 82.3222 24.5421 89.3982 15.8104 89.3982Z" fill="currentColor"/>
+      </svg>
+    </div>
+    <p class="eyebrow" data-a>Smart Contact Design System / Supervisor</p>
+    <h1 class="title" data-a>Un color para dirigir la <em>atención</em></h1>
+    <p class="lead" data-a>El Supervisor es casi monocromo. Qué hacen GitHub y otros SaaS, qué hemos medido en nuestras pantallas y qué proponemos.</p>
+    <div class="meta" data-a><span class="pill">Propuesta de diseño, octubre de 2026</span><span class="pill quiet">Sin aplicar: los flujos de grupos y agentes están pasando a Figma</span></div>
+  </section>
+
+  <!-- 2 · El punto de partida -->
+  <section class="slide" aria-label="El punto de partida">
+    <p class="eyebrow" data-a>El punto de partida</p>
+    <h2 class="title" data-a>Todo es marino, gris y blanco. El botón principal también.</h2>
+    <div class="row">
+      <div class="col" style="flex: 0 0 960px" data-a>
+        <div class="shot" data-shot="alta-claro">
+          <img src="img/sup-alta-hoy-claro.jpg" width="1440" height="900" alt="Alta de agente en el Supervisor, tema claro: los botones Crear agente y Siguiente son marino oscuro, como el texto">
+        </div>
+      </div>
+      <div class="col" style="flex: 1">
+        <div class="stat" data-a><b data-count="0.7" data-from="0.1" data-dec="1" data-suffix=" %">0,1–0,7<small>%</small></b><p>de los píxeles tienen color en Reglas, Conversaciones, fichas y altas (a 1440, tema claro).</p></div>
+        <div class="stat" data-a><b>1,13<small>: 1</small></b><p>entre el botón principal y el texto de los títulos. Y ese marino es también la barra lateral y la tarjeta de resumen: el botón no es el único bloque oscuro.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 · GitHub -->
+  <section class="slide" aria-label="Cómo lo hace GitHub">
+    <p class="eyebrow" data-a>La referencia: GitHub (Primer)</p>
+    <h2 class="title" data-a>GitHub también es sobrio. Pone su poco color donde hay que actuar.</h2>
+    <div class="row">
+      <div class="col" style="flex: 0 0 840px" data-a>
+        <div class="shot" data-shot="github-claro">
+          <img src="img/github-repo-claro.jpg" width="1440" height="900" alt="Página de un repositorio en GitHub, tema claro: el único botón verde es Code">
+        </div>
+        <p class="small" style="margin-top: 14px; font-size: 19px">Repositorio público <code>primer/react</code>, sin sesión, a 1440. Un solo botón primario en cada página medida.</p>
+      </div>
+      <div class="col" style="flex: 1">
+        <div class="stat compact" data-a><b>1,1<small>%</small></b><p>de los píxeles con color: casi todo, enlaces azules y el botón verde.</p></div>
+        <ul class="roles" data-a>
+          <li><i style="background:#1f883d"></i><b>Verde</b><span>La acción principal. El mismo token que «éxito».</span></li>
+          <li><i style="background:#fd8c73"></i><b>Coral</b><span>Estás aquí: solo la raya de la pestaña activa.</span></li>
+          <li><i style="background:#0969da"></i><b>Azul</b><span>Lo que se pulsa o informa. Acento y enlace son lo mismo.</span></li>
+          <li><i style="background:#8250df"></i><b>Morado</b><span>Un estado: completado (un PR fusionado).</span></li>
+          <li><i style="background:#59636e"></i><b>Gris</b><span>La IA: Copilot va en gris, como cualquier bot.</span></li>
+        </ul>
+        <p class="quote" data-a>«Only use one primary Button on a page.»<cite>Guía de Button, primer.style</cite></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 · Otros sistemas -->
+  <section class="slide" aria-label="Otros sistemas de diseño">
+    <p class="eyebrow" data-a>Otros 17 sistemas de diseño</p>
+    <h2 class="title" data-a>Cómo marcan el botón principal. Cada nombre, en el color de su botón.</h2>
+    <div class="camps" data-a>
+      <article class="camp">
+        <header><b>8</b><span>Azul de interacción</span></header>
+        <div class="btns"><span style="background:#0f62fe">IBM Carbon</span><span style="background:#066afe">Salesforce</span><span style="background:#0f6cbd">Microsoft Fluent</span><span style="background:#1868db">Atlassian</span><span style="background:#1f73b7">Zendesk</span><span style="background:#0263e0">Twilio</span><span style="background:#2143a2">Genesys</span><span style="background:#2383e2">Notion</span></div>
+        <p>Botón, enlace y foco en el mismo azul. En Zendesk, Twilio y Genesys <b>no es el color de su marca</b>. Es lo que hace hoy nuestro tema oscuro.</p>
+      </article>
+      <article class="camp ours">
+        <header><b>5</b><span>Tinta neutra</span></header>
+        <div class="btns"><span style="background:#171717">Vercel</span><span style="background:#303030">Shopify</span><span style="background:#3a383d">GitLab</span><span style="background:#292929">Adobe</span><span style="background:#12344d">Freshworks</span></div>
+        <p>Casi negro o marino, y el azul queda para los enlaces. <b>Es nuestro tema claro de hoy.</b> Funciona cuando el botón es el único bloque oscuro.</p>
+        <span class="tag-ours">Aquí estamos</span>
+      </article>
+      <article class="camp">
+        <header><b>4</b><span>Otro color propio</span></header>
+        <div class="btns"><span style="background:#533afd">Stripe</span><span style="background:#6d78d5">Linear</span><span style="background:#00884f">Aircall</span><span style="background:#1f883d">GitHub</span></div>
+        <p>Su color de marca, salvo GitHub, que usa el verde de «éxito».</p>
+      </article>
+      <article class="camp none">
+        <header><b>0</b><span>Cian</span></header>
+        <p>Ninguno. Sería <b>identidad propia</b>, no un patrón que el usuario ya conozca de otras herramientas.</p>
+      </article>
+    </div>
+    <div class="takeaways" data-a>
+      <p><b>Un botón principal por vista:</b> lo escriben 10 de los 17. Atlassian: «compiten por la atención».</p>
+      <p><b>La IA sin color propio</b> en 7: icono, etiqueta o brillo en sus colores de siempre. Twilio: «que sea nueva no obliga a inventar patrones».</p>
+      <p><b>GitLab pasó a neutro en junio de 2026</b> para que, cuando aparezca color, se sepa por qué.</p>
+    </div>
+    <p class="source" data-a>Tokens, código y guías públicas de cada sistema, consultados el 18/10/2026. Intercom y Talkdesk no publican el suyo.</p>
+  </section>
+
+  <!-- 5 · Violeta -->
+  <section class="slide" aria-label="Por qué no el violeta">
+    <p class="eyebrow" data-a>Lo que descartamos</p>
+    <h2 class="title" data-a>El violeta suena a interfaz hecha con IA</h2>
+    <div class="row">
+      <div class="col" style="flex: 1; max-width: 1060px">
+        <ul class="verdicts" data-a style="font-size: 26px; gap: 24px">
+          <li><b>Los modelos aprendieron el índigo de Tailwind UI.</b> Su creador pidió perdón en agosto de 2025 por haberlo puesto en todos sus botones. Morado con chispas es hoy la firma de una interfaz generada.</li>
+          <li><b>En Primer, el morado es un estado:</b> completado. No es un acento ni el color de la IA.</li>
+          <li><b>El repo ya lo había dicho:</b> la maqueta del constructor de reglas quitó su violeta, y la DD-209 dice que el violeta del Kit sobra.</li>
+          <li><b>La IA no necesita color propio.</b> Se reconoce por su icono y su texto, como Copilot en GitHub.</li>
+        </ul>
+      </div>
+      <div class="col" style="flex: 0 0 300px" data-a>
+        <div class="shot" style="border-radius: 16px"><img src="img/sup-impacto-violeta.jpg" width="321" height="537" alt="Tarjeta Impacto estimado del constructor de reglas, con la frase 6 conversaciones en violeta" style="width: 300px"></div>
+        <p class="small" style="margin-top: 16px">Hoy, en código: la frase del impacto del constructor de reglas, en violeta desde el 17/10.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 · La rueda -->
+  <section class="slide" aria-label="Qué tonos quedan libres">
+    <p class="eyebrow" data-a>Qué tonos quedan libres</p>
+    <h2 class="title" data-a>Casi todo lo que no es marca ya es un estado</h2>
+    <div class="row" style="gap: 40px">
+      <div class="wheel-wrap" id="wheel" data-a>
+        <div class="wheel"></div>
+        <div class="wheel-center" style="top: 42%"><b>Tono</b><span>OKLCH, paleta del Kit</span></div>
+      </div>
+      <div class="col" style="flex: 1">
+        <ul class="verdicts" data-a>
+          <li><b>Naranja, ámbar y amarillo:</b> con deuteranopía son el aviso.</li>
+          <li><b>Rosa:</b> a 10° del peligro. <b>Lima y esmeralda:</b> del éxito. <b>Índigo:</b> de la marca.</li>
+          <li><b>Fuchsia:</b> en claro se ve morado; con protanopía, como el azul del enlace.</li>
+          <li><b>Pink</b> se lee como el punto rojo de error; <b>teal</b>, como el ✓ verde. Así, en el índice de un alta:</li>
+        </ul>
+        <div class="trio" data-a>
+          <figure><div class="shot"><img src="img/indice-pink.jpg" alt="Índice del alta de agente con la sección activa en pink junto al punto rojo de error"></div><figcaption><b>Pink</b> junto al error</figcaption></figure>
+          <figure><div class="shot"><img src="img/indice-teal.jpg" alt="Índice del alta de agente con la sección activa en teal junto al check verde"></div><figcaption><b>Teal</b> junto al ✓</figcaption></figure>
+          <figure><div class="shot"><img src="img/indice-fuchsia.jpg" alt="Índice del alta de agente con la sección activa en fuchsia, que se ve morado"></div><figcaption><b>Fuchsia</b>, morado en claro</figcaption></figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 · El cian -->
+  <section class="slide" aria-label="El cian funciona de fondo">
+    <p class="eyebrow" data-a>El cian de la marca</p>
+    <h2 class="title" data-a>El cian funciona de fondo, y como letra solo sobre oscuro</h2>
+    <div class="swatches" data-a>
+      <div class="sw" style="background:#ffffff; color:#1b273d"><span class="sample" style="color:#51d5e6">Guardar cambios</span><span class="verdict no">1,75:1</span><span class="what" style="color:#4f5663">Texto cian 400 sobre blanco. Del 300 al 500: de 1,52 a 2,06</span></div>
+      <div class="sw" style="background:#51d5e6; color:#ffffff"><span class="sample">Guardar cambios</span><span class="verdict no">1,75:1</span><span class="what" style="color:#1b273d">Texto blanco sobre cian 400</span></div>
+      <div class="sw" style="background:#51d5e6; color:#1b273d"><span class="sample">Guardar cambios</span><span class="verdict ok">8,55:1</span><span class="what">Texto marino sobre cian 400. Negro sobre cian: de 10 a 14</span></div>
+      <div class="sw" style="background:#1b273d; color:#7be1ef"><span class="sample">Guardar cambios</span><span class="verdict ok">9,87:1</span><span class="what" style="color:#aeb6c2">Texto cian 300 sobre marino, como en la barra lateral</span></div>
+    </div>
+    <p class="small" data-a style="margin-top: 30px">Un texto normal necesita 4,5:1 (WCAG AA). Contraste calculado con los valores del Kit y medido en pantalla.</p>
+  </section>
+
+  <!-- 7 bis · Las alternativas -->
+  <section class="slide" aria-label="Las alternativas">
+    <p class="eyebrow" data-a>Más allá del cian</p>
+    <h2 class="title" data-a>Ocho colores medidos en el botón principal</h2>
+    <div class="alt-wrap" data-a>
+      <table class="alt">
+        <thead><tr><th>Color</th><th>Claro y oscuro</th><th>Texto</th><th>Contra la página</th><th>Veredicto</th><th></th></tr></thead>
+        <tbody>
+          <tr><th>Marino (hoy)</th><td><span class="pair"><span style="background:#1b273d;color:#ffffff">Guardar</span><span class="dk"><span style="background:#7db3ff;color:#18181b">Guardar</span></span></span></td><td class="n">14,96<i>/</i>8,24</td><td class="n">14,96<i>/</i>9,25</td><td><span class="v hy">Hoy</span></td><td class="why">Es el marino de los títulos y de la barra lateral.</td></tr>
+          <tr><th>Azul sky 600</th><td><span class="pair"><span style="background:#0d4fd4;color:#ffffff">Guardar</span><span class="dk"><span style="background:#7db3ff;color:#18181b">Guardar</span></span></span></td><td class="n">6,80<i>/</i>8,24</td><td class="n">6,80<i>/</i>9,25</td><td><span class="v si">Recomendable</span></td><td class="why">El más vivo de los que pasan; el azul del enlace y de nuestro oscuro.</td></tr>
+          <tr><th>Cian 700</th><td><span class="pair"><span style="background:#21717d;color:#ffffff">Guardar</span><span class="dk"><span style="background:#7be1ef;color:#18181b">Guardar</span></span></span></td><td class="n">5,64<i>/</i>11,69</td><td class="n">5,64<i>/</i>13,13</td><td><span class="v si">Recomendable</span></td><td class="why">El cian de la barra, oscurecido. Lejos de marca y estados; apagado.</td></tr>
+          <tr><th>Teal 700</th><td><span class="pair"><span style="background:#0f766e;color:#ffffff">Guardar</span><span class="dk"><span style="background:#5eead4;color:#18181b">Guardar</span></span></span></td><td class="n">5,47<i>/</i>11,98</td><td class="n">5,47<i>/</i>13,45</td><td><span class="v mt">Con matices</span></td><td class="why">A 37° del verde de éxito: junto a un ✓ puede leerse «hecho».</td></tr>
+          <tr><th>Cian 400, texto marino</th><td><span class="pair"><span style="background:#51d5e6;color:#1b273d">Guardar</span><span class="dk"><span style="background:#51d5e6;color:#1b273d">Guardar</span></span></span></td><td class="n">8,55<i>/</i>8,55</td><td class="n"><span class="no">1,75</span><i>/</i>11,38</td><td><span class="v mt">Con matices</span></td><td class="why">En claro casi no se separa del blanco, y como letra no pasa.</td></tr>
+          <tr class="out"><th>Verde 700</th><td><span class="pair"><span style="background:#15803d;color:#ffffff">Guardar</span><span class="dk"><span style="background:#4ade80;color:#18181b">Guardar</span></span></span></td><td class="n">5,02<i>/</i>10,17</td><td class="n">5,02<i>/</i>11,42</td><td><span class="v nn">Descartado</span></td><td class="why">Es el verde de «éxito».</td></tr>
+          <tr class="out"><th>Naranja 700</th><td><span class="pair"><span style="background:#c2410c;color:#ffffff">Guardar</span><span class="dk"><span style="background:#fb923c;color:#18181b">Guardar</span></span></span></td><td class="n">5,18<i>/</i>7,83</td><td class="n">5,18<i>/</i>8,79</td><td><span class="v nn">Descartado</span></td><td class="why">A 11° del peligro; con daltonismo, casi igual.</td></tr>
+          <tr class="out"><th>Violeta 700</th><td><span class="pair"><span style="background:#6d28d9;color:#ffffff">Guardar</span><span class="dk"><span style="background:#a78bfa;color:#18181b">Guardar</span></span></span></td><td class="n">7,10<i>/</i>6,51</td><td class="n">7,10<i>/</i>7,31</td><td><span class="v nn">Descartado</span></td><td class="why">Firma de interfaz hecha con IA; con deuteranopía, el enlace.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small" data-a style="margin-top: 20px">Contraste WCAG, en claro / en oscuro. El texto pide 4,5:1; el botón contra la página, 3:1. Daltonismo y viveza, en la página del Lab.</p>
+  </section>
+
+  <!-- 8 · La propuesta -->
+  <section class="slide" aria-label="La propuesta">
+    <p class="eyebrow" data-a>Las opciones, en pantallas reales</p>
+    <h2 class="title" data-a>El botón principal, en <em>otro color</em></h2>
+    <div class="row" style="margin-top: 40px">
+      <div class="col" data-a>
+        <div class="toggles">
+          <div class="seg" role="group" aria-label="Opción" id="opciones"><button type="button" data-op="azul" aria-pressed="false">Azul 600</button><button type="button" data-op="cian-700" aria-pressed="true">Cian 700</button><button type="button" data-op="teal" aria-pressed="false">Teal 700</button><button type="button" data-op="cian-400" aria-pressed="false">Cian 400</button></div>
+          <div class="seg" role="group" aria-label="Pantalla"><button type="button" id="p-alta" aria-pressed="true">Alta de agente</button><button type="button" id="p-regla" aria-pressed="false">Nueva regla</button></div>
+          <div class="seg" role="group" aria-label="Tema"><button type="button" id="t-claro" aria-pressed="true">Claro</button><button type="button" id="t-oscuro" aria-pressed="false">Oscuro</button></div>
+        </div>
+        <div class="compare" id="compare" tabindex="0" role="slider" aria-label="Comparar hoy y propuesta" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50">
+          <img class="before" id="img-before" src="img/sup-alta-hoy-claro.jpg" alt="Hoy: botón principal en marino">
+          <img class="after" id="img-after" src="img/sup-alta-cian-700-claro.jpg" alt="Opción: botón principal en cian 700 con texto blanco">
+          <div class="handle"></div>
+          <span class="tag l">Hoy</span><span class="tag r" id="tag-r">Cian 700</span>
+        </div>
+        <p class="note" id="cmp-note" aria-live="polite"></p>
+      </div>
+      <div class="col" style="flex: 1; padding-top: 72px">
+        <div class="stat" data-a><b id="opt-ratio">5,64<small>: 1</small></b><p id="opt-what">Texto blanco sobre cian 700 en claro; en oscuro, cian 300 con texto oscuro (11,69:1).</p></div>
+        <ul class="verdicts" data-a>
+          <li id="opt-why"><b>El cian de la barra lateral,</b> oscurecido para que pase con texto blanco. Lejos de marca y estados, pero apagado.</li>
+          <li><b>Solo el botón.</b> Las casillas, los interruptores y la selección no cambian.</li>
+          <li><b>Uno por vista.</b> Hoy el alta de agente tiene dos: «Crear agente» y «Siguiente».</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 bis · ¿Un solo cambio? -->
+  <section class="slide" aria-label="Es un solo cambio">
+    <p class="eyebrow" data-a>Lo que implica en los tokens</p>
+    <div class="row" style="flex: none; margin-top: 36px; gap: 56px; align-items: flex-end">
+      <p class="big-no" data-a>No.</p>
+      <h2 class="title" data-a style="font-size: 64px; max-width: 1100px">El botón no tiene variable propia: lee la del primario, y esa la leen 34 sitios más</h2>
+    </div>
+    <div class="readers" data-a style="margin-top: 40px">
+      <div><b>19</b><span>componentes de PrimeNG: casilla, radio, interruptor, pestañas, progreso, el botón de texto…</span></div>
+      <div><b>9</b><span>componentes propios: el índice de secciones, el mosaico de icono, el foco de dos piezas…</span></div>
+      <div><b>6</b><span>pantallas del Supervisor, entre ellas la cifra principal del resumen (DD-161).</span></div>
+    </div>
+    <div class="versus" data-a>
+      <div><b>El atajo: cambiar la variable</b><span>Dos líneas. Con cian 400, cambian 9 de 12 piezas de un alta y 8 se quedan por debajo del contraste.</span><span class="k">--sc-bg-primary</span></div>
+      <div class="good"><b>Lo bueno: solo el botón</b><span>Repuntar <code>button/primary</code> en Figma; el generador crea sus variables y el preset las lee. Un fichero de código.</span><span class="k">--sc-cmp-button-primary-*</span></div>
+    </div>
+  </section>
+
+  <!-- 9 · Reglas -->
+  <section class="slide" aria-label="Las reglas">
+    <p class="eyebrow" data-a>Las reglas que proponemos</p>
+    <h2 class="title" data-a>Siete reglas para usar el color</h2>
+    <ol class="rules" data-a>
+      <li><b>Un trabajo y pocos sitios</b><span>Más color en más sitios no dirige la atención: la reparte.</span></li>
+      <li><b>Un botón principal por vista</b><span>Los demás, secundarios.</span></li>
+      <li><b>Su color es solo del botón</b><span>Casillas, interruptores y selección no lo heredan.</span></li>
+      <li><b>Un color claro va de fondo</b><span>Con texto oscuro, o como letra sobre fondo oscuro. Nunca letra clara sobre blanco.</span></li>
+      <li><b>Ni violeta ni morado</b><span>Tampoco para la IA: se marca con su icono y su texto.</span></li>
+      <li><b>El acento es lo que se pulsa</b><span>Una cifra principal va en el color de los títulos.</span></li>
+      <li><b>Un color nuevo se mide antes</b><span>Distancia de tono a marca y estados, contraste en claro y oscuro, y daltonismo.</span></li>
+    </ol>
+  </section>
+
+  <!-- 10 · Siguiente paso -->
+  <section class="slide" aria-label="Siguiente paso">
+    <p class="eyebrow" data-a>Siguiente paso</p>
+    <h2 class="title" data-a>No se aplica todavía</h2>
+    <p class="lead" data-a>Los flujos de grupos y agentes están pasando a Figma. Cuando acaben, el cambio va en este orden:</p>
+    <ol class="steps" data-a style="margin-top: 40px">
+      <li><b>Figma</b>Las variables de <code>button/primary</code>, solo para los botones.</li>
+      <li><b>Código</b>El botón lee esas variables y se apunta en el catálogo de excepciones.</li>
+      <li><b>Contraste</b>La prueba de contraste en los dos temas.</li>
+      <li><b>Decisión</b>Queda registrada como DD, con estas medidas.</li>
+    </ol>
+    <div class="decide decide--4" data-a>
+      <p>Lo que hay que decidir</p>
+      <div class="opt"><span class="btn-sample" style="background:#0d4fd4;color:#ffffff">Guardar</span><b>Azul sky 600</b><span class="ratio">6,80:1; en oscuro ya es azul</span><span>El patrón de 8 de 17 y el de nuestro oscuro. Cerca de la marca.</span></div>
+      <div class="opt"><span class="btn-sample" style="background:#21717d;color:#ffffff">Guardar</span><b>Cian 700</b><span class="ratio">5,64:1 y 11,69:1</span><span>Nuestro cian, accesible en los dos temas. Apagado.</span></div>
+      <div class="opt"><span class="btn-sample" style="background:#0f766e;color:#ffffff">Guardar</span><b>Teal 700</b><span class="ratio">5,47:1 y 11,98:1</span><span>Funciona en oscuro; cerca del verde de éxito.</span></div>
+      <div class="opt"><span class="btn-sample" style="background:#51d5e6;color:#1b273d">Guardar</span><b>Cian 400</b><span class="ratio">8,55:1; 1,75:1 contra el blanco</span><span>El más vivo; el que menos se separa de la página.</span></div>
+    </div>
+    <p class="small" data-a style="margin-top: 20px">O dejar el marino y que sea el único bloque oscuro de la pantalla, como GitLab y Vercel. Para tocarlo todo en vivo: <a href="../../#/color-de-atencion" style="color: var(--cyan-300)">la página del Lab en sc-docs</a>.</p>
+  </section>
+
+  <div id="chrome">
+    <div class="brand"><svg viewBox="0 0 109 98" aria-hidden="true"><path d="M71.6506 15.536C66.4333 15.536 61.6258 13.8336 57.7066 10.9819C60.0628 14.6681 61.4453 19.0358 61.4453 23.7332C61.4453 28.074 60.2594 32.1299 58.2231 35.6312C62.0424 33.0061 66.6649 31.4653 71.6506 31.4653C74.7684 31.4653 77.7395 32.0816 80.4673 33.1743C78.5344 30.5524 77.3793 27.3212 77.3793 23.8165C77.3793 19.8754 78.831 16.2806 81.2172 13.5138C78.2877 14.8064 75.0567 15.536 71.6506 15.536Z" fill="currentColor" fill-opacity="0.45"/><path d="M37.3499 81.8761C42.5672 81.8761 47.3753 83.5791 51.293 86.4308C48.9367 82.7463 47.5546 78.3847 47.5546 73.6874C47.5546 69.3449 48.7411 65.2806 50.7774 61.7809C46.9581 64.4044 42.3356 65.9469 37.3499 65.9469C34.2321 65.9469 31.261 65.3289 28.5332 64.2378C30.4661 66.858 31.6208 70.0892 31.6208 73.5939C31.6208 77.5366 30.1695 81.1299 27.7833 83.8983C30.7128 82.6057 33.9438 81.8761 37.3499 81.8761Z" fill="currentColor" fill-opacity="0.45"/><path d="M37.703 0C50.8156 0 61.4453 10.6256 61.4453 23.7332C61.4453 36.839 50.8156 47.4647 37.703 47.4647C24.5905 47.4647 13.9624 36.839 13.9624 23.7332C13.9624 10.6256 24.5905 0 37.703 0Z" fill="currentColor"/><path d="M93.1898 8.01218C101.921 8.01218 109 15.0882 109 23.8165C109 32.5466 101.921 39.6225 93.1898 39.6225C84.458 39.6225 77.3793 32.5466 77.3793 23.8165C77.3793 15.0882 84.458 8.01218 93.1898 8.01218Z" fill="currentColor"/><path d="M71.2952 97.4189C58.1827 97.4189 47.5546 86.7933 47.5546 73.6874C47.5546 60.5798 58.1827 49.9542 71.2952 49.9542C84.4078 49.9542 95.0358 60.5798 95.0358 73.6874C95.0358 86.7933 84.4078 97.4189 71.2952 97.4189Z" fill="currentColor"/><path d="M15.8104 89.3982C7.07869 89.3982 0 82.3222 0 73.5939C0 64.8638 7.07869 57.7879 15.8104 57.7879C24.5421 57.7879 31.6208 64.8638 31.6208 73.5939C31.6208 82.3222 24.5421 89.3982 15.8104 89.3982Z" fill="currentColor"/></svg>Un color para dirigir la atención</div>
+    <div class="spacer"></div>
+    <span class="hint">← → para avanzar, F para pantalla completa</span>
+    <span id="count">01 / 12</span>
+    <button type="button" id="prev" aria-label="Diapositiva anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+    <button type="button" id="next" aria-label="Diapositiva siguiente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+  </div>
+  <div id="progress"><i></i></div>
+</div>
+</div>
+
+<script src="lib/gsap.min.js"></script>
+<script>
+/* Cajas de los botones principales en las capturas (fracciones de 1440×900), medidas con Playwright. */
+const CAJAS = {
+  'alta-claro': [{ x: .2306, y: .7644, w: .0571, h: .0361, t: 'Siguiente' }, { x: .8774, y: .0136, w: .0740, h: .0361, t: 'Crear agente', left: true }],
+  'github-claro': [{ x: .6300, y: .2944, w: .0756, h: .0356, t: 'Code' }],
+};
+
+(() => {
+  const deck = document.getElementById('deck');
+  const slides = [...document.querySelectorAll('.slide')];
+  const count = document.getElementById('count');
+  const bar = document.querySelector('#progress i');
+  const narrow = () => matchMedia('(max-width: 760px)').matches;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const G = window.gsap;
+  let current = 0;
+
+  /* Escala del escenario */
+  const fit = () => {
+    if (narrow()) { deck.style.transform = ''; return; }
+    const s = Math.min(innerWidth / 1920, innerHeight / 1080);
+    deck.style.transform = `translate(${(innerWidth - 1920 * s) / 2}px, ${(innerHeight - 1080 * s) / 2}px) scale(${s})`;
+  };
+  addEventListener('resize', fit); fit();
+
+  /* Señales sobre los botones */
+  document.querySelectorAll('[data-shot]').forEach((shot) => {
+    (CAJAS[shot.dataset.shot] || []).forEach((c) => {
+      const m = document.createElement('div');
+      m.className = 'mark' + (c.left ? ' left' : c.y > .5 ? ' up' : '');
+      Object.assign(m.style, { left: `calc(${c.x * 100}% - 8px)`, top: `calc(${c.y * 100}% - 8px)`, width: `calc(${c.w * 100}% + 16px)`, height: `calc(${c.h * 100}% + 16px)` });
+      m.innerHTML = `<span>${c.t}</span>`;
+      shot.appendChild(m);
+    });
+  });
+
+  /* La rueda: marca, estados y candidatos en su ángulo de tono. */
+  const PINS = [
+    { h: 262, n: 'Marca', c: '#1464fe' }, { h: 150, n: 'Éxito', c: '#16a34a' },
+    { h: 66, n: 'Aviso', c: '#ca8a04' }, { h: 27, n: 'Peligro', c: '#dc2626' },
+    { h: 207, n: 'Cian', s: 'libre', c: '#51d5e6', k: 'free' }, { h: 186, n: 'Teal', c: '#14b8a6', k: 'no', inner: true },
+    { h: 1, n: 'Pink', c: '#ec4899', k: 'no' }, { h: 323, n: 'Fuchsia', c: '#d946ef', k: 'no' }, { h: 293, n: 'Violeta', c: '#8b5cf6', k: 'no' },
+  ];
+  const wheel = document.getElementById('wheel');
+  const at = (el, h, r) => { const a = (h * Math.PI) / 180; el.style.left = `${50 + r * Math.sin(a)}%`; el.style.top = `${50 - r * Math.cos(a)}%`; };
+  PINS.forEach((p) => {
+    const pin = document.createElement('i');
+    pin.className = `pin ${p.k || ''}`; pin.style.background = p.c; at(pin, p.h, 29);
+    const label = document.createElement('span');
+    label.className = `pin-label ${p.k || ''}`; at(label, p.h, p.inner ? 17 : 42.5);
+    label.innerHTML = `${p.n}<small>${p.h}°${p.s ? ' ' + p.s : ''}</small>`;
+    wheel.append(pin, label);
+  });
+
+  /* Antes y después */
+  const cmp = document.getElementById('compare');
+  const imgB = document.getElementById('img-before'), imgA = document.getElementById('img-after');
+  let pantalla = 'alta', tema = 'claro', opcion = 'cian-700';
+  const setCut = (v) => { v = Math.max(0, Math.min(100, v)); cmp.style.setProperty('--cut', v + '%'); cmp.setAttribute('aria-valuenow', Math.round(v)); };
+  const OPC = {
+    azul: { tag: 'Azul 600', ratio: '6,80', what: 'Texto blanco sobre sky 600 en claro. En oscuro ya es sky 300 con texto oscuro: 8,24:1.', why: '<b>Es el azul del enlace</b> y el del botón en oscuro desde la DD-81. Lo hacen 8 de los 17.', alt: 'botón principal en azul sky 600 con texto blanco' },
+    'cian-700': { tag: 'Cian 700', ratio: '5,64', what: 'Texto blanco sobre cian 700 en claro; en oscuro, cian 300 con texto oscuro (11,69:1).', why: '<b>El cian de la barra lateral,</b> oscurecido para que pase con texto blanco. Lejos de marca y estados, pero apagado.', alt: 'botón principal en cian 700 con texto blanco' },
+    teal: { tag: 'Teal 700', ratio: '5,47', what: 'Texto blanco sobre teal 700 en claro; en oscuro, teal 300 con texto oscuro (11,98:1).', why: '<b>Funciona en los dos temas,</b> pero está a 37° del verde de éxito: junto a un ✓ puede leerse como «hecho».', alt: 'botón principal en teal 700 con texto blanco' },
+    'cian-400': { tag: 'Cian 400', ratio: '8,55', what: 'Texto marino sobre cian 400, igual en claro y en oscuro.', why: '<b>El más vivo de los cian,</b> pero en claro casi no se separa de la página blanca (1,75:1) y como letra no pasa.', alt: 'botón principal en cian 400 con texto marino' },
+  };
+  const note = document.getElementById('cmp-note'), tagR = document.getElementById('tag-r');
+  const pick = () => {
+    const mismo = opcion === 'azul' && tema === 'oscuro';
+    imgB.src = `img/sup-${pantalla}-hoy-${tema}.jpg`;
+    imgA.src = mismo ? imgB.src : `img/sup-${pantalla}-${opcion}-${tema}.jpg`;
+    imgA.alt = `Opción: ${OPC[opcion].alt}`;
+    tagR.textContent = OPC[opcion].tag;
+    note.textContent = mismo ? 'En oscuro, el botón principal ya es azul hoy (DD-81): las dos mitades son iguales.' : '';
+    document.getElementById('opt-ratio').innerHTML = `${OPC[opcion].ratio}<small>: 1</small>`;
+    document.getElementById('opt-what').textContent = OPC[opcion].what;
+    document.getElementById('opt-why').innerHTML = OPC[opcion].why;
+  };
+  const press = (on, off) => { on.setAttribute('aria-pressed', 'true'); off.setAttribute('aria-pressed', 'false'); };
+  const ops = [...document.querySelectorAll('#opciones [data-op]')];
+  const pA = document.getElementById('p-alta'), pR = document.getElementById('p-regla'), tC = document.getElementById('t-claro'), tO = document.getElementById('t-oscuro');
+  ops.forEach((b) => { b.onclick = () => { opcion = b.dataset.op; ops.forEach((o) => o.setAttribute('aria-pressed', String(o === b))); pick(); }; });
+  pA.onclick = () => { pantalla = 'alta'; press(pA, pR); pick(); };
+  pR.onclick = () => { pantalla = 'regla'; press(pR, pA); pick(); };
+  tC.onclick = () => { tema = 'claro'; press(tC, tO); pick(); };
+  tO.onclick = () => { tema = 'oscuro'; press(tO, tC); pick(); };
+  const fromEvent = (e) => { const r = cmp.getBoundingClientRect(); setCut(((e.clientX - r.left) / r.width) * 100); };
+  cmp.addEventListener('pointerdown', (e) => { cmp.setPointerCapture(e.pointerId); fromEvent(e); });
+  cmp.addEventListener('pointermove', (e) => { if (cmp.hasPointerCapture(e.pointerId)) fromEvent(e); });
+  cmp.addEventListener('keydown', (e) => {
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    e.stopPropagation(); e.preventDefault();
+    const v = parseFloat(cmp.style.getPropertyValue('--cut')) || 50;
+    setCut(v + (e.key === 'ArrowRight' ? 5 : -5));
+  });
+  setCut(50);
+
+  /* Entrada de cada diapositiva */
+  const enter = (i) => {
+    const s = slides[i];
+    if (!G || reduce || narrow()) return;
+    G.fromTo(s.querySelectorAll('[data-a]'), { y: 28, opacity: 0 }, { y: 0, opacity: 1, duration: .7, ease: 'power3.out', stagger: .08, clearProps: 'transform,opacity' });
+    s.querySelectorAll('.mark').forEach((m, k) => G.fromTo(m, { scale: 1.6, opacity: 0 }, { scale: 1, opacity: 1, duration: .6, delay: .6 + k * .15, ease: 'back.out(2)', clearProps: 'transform,opacity' }));
+    s.querySelectorAll('.pin').forEach((p, k) => G.fromTo(p, { opacity: 0, scale: .4 }, { opacity: 1, scale: 1, duration: .5, delay: .4 + k * .08, ease: 'back.out(2)', clearProps: 'transform,opacity' }));
+    s.querySelectorAll('.pin-label').forEach((p, k) => G.fromTo(p, { opacity: 0 }, { opacity: 1, duration: .5, delay: .55 + k * .08, clearProps: 'opacity' }));
+    s.querySelectorAll('.camp').forEach((c, k) => G.fromTo(c, { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: .6, delay: .25 + k * .12, ease: 'power2.out', clearProps: 'transform,opacity' }));
+    s.querySelectorAll('.btns span').forEach((c, k) => G.fromTo(c, { scale: .6, opacity: 0 }, { scale: 1, opacity: 1, duration: .4, delay: .5 + k * .035, ease: 'back.out(2)', clearProps: 'transform,opacity' }));
+    if (s.contains(cmp)) { const o = { v: 100 }; setCut(100); G.timeline({ delay: .6, onUpdate: () => setCut(o.v) }).to(o, { v: 0, duration: 1.6, ease: 'power2.inOut' }).to(o, { v: 20, duration: 1, ease: 'power2.out' }, '+=.7'); }
+  };
+
+  const go = (i, push = true) => {
+    i = Math.max(0, Math.min(slides.length - 1, i));
+    if (narrow()) { slides[i].scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' }); current = i; return; }
+    if (i === current && slides[i].classList.contains('is-active')) return;
+    slides[current]?.classList.remove('is-active');
+    slides[i].classList.add('is-active');
+    current = i;
+    count.textContent = `${String(i + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}`;
+    if (G && !reduce) G.to(bar, { width: `${((i + 1) / slides.length) * 100}%`, duration: .5, ease: 'power2.out' }); else bar.style.width = `${((i + 1) / slides.length) * 100}%`;
+    if (push) history.replaceState(null, '', `#${i + 1}`);
+    enter(i);
+  };
+
+  document.getElementById('prev').onclick = () => go(current - 1);
+  document.getElementById('next').onclick = () => go(current + 1);
+  addEventListener('keydown', (e) => {
+    if (e.target.closest && e.target.closest('input, textarea')) return;
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); go(current + 1); }
+    else if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); go(current - 1); }
+    else if (e.key === 'Home') go(0); else if (e.key === 'End') go(slides.length - 1);
+    else if (e.key === 'f' || e.key === 'F') { (document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen?.())?.catch?.(() => {}); }
+  });
+  addEventListener('hashchange', () => { const h = parseInt(location.hash.slice(1), 10); if (Number.isFinite(h) && h - 1 !== current) go(h - 1, false); });
+  const start = parseInt(location.hash.slice(1), 10);
+  slides[0].classList.remove('is-active'); current = -1;
+  go(Number.isFinite(start) ? start - 1 : 0, false);
+})();
+</script>
+</body>
+</html>

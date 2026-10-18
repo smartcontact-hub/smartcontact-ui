@@ -57,6 +57,19 @@ export const routes: Routes = [
     path: 'lab',
     loadComponent: () => import('./pages/lab/lab.component').then((m) => m.LabComponent),
   },
+  {
+    // Estudio del color del botón principal y del acento: una PROPUESTA, sin aplicar. Laboratorio del Lab (página con su
+    // conmutador dentro); la muestra va aparte porque la página la pinta en un iframe (`?solo=1`), donde puede reescribir
+    // las variables en la raíz sin tocar la doc.
+    path: 'color-de-atencion',
+    loadComponent: () =>
+      import('./pages/color-atencion/color-atencion.component').then((m) => m.ColorAtencionComponent),
+  },
+  {
+    path: 'color-de-atencion/muestra',
+    loadComponent: () =>
+      import('./pages/color-atencion/muestra/muestra.component').then((m) => m.ColorAtencionMuestraComponent),
+  },
 
   {
     // Guía interna de validación visual, enlazada desde el Lab y protegida por clave.

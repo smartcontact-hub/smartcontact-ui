@@ -1,0 +1,125 @@
+<!-- Una alta en miniatura: lo justo para ver dónde cae el color del botón y del acento. Un solo botón principal
+     (regla 2 del estudio), y cada pieza con su `data-pieza`, que es lo que mide el componente. -->
+<div class="ms">
+  <div class="ms__app">
+    <header class="ms__head">
+      <div>
+        <p class="ms__ruta sc-text-caption-regular">Administración / Agentes</p>
+        <h1 class="ms__titulo sc-text-h3-semibold">Nuevo agente</h1>
+      </div>
+      <div class="ms__acciones">
+        <sc-button variant="secondary" label="Cancelar" />
+        <sc-button data-pieza="boton" label="Crear agente" />
+      </div>
+    </header>
+
+    <div class="ms__cuerpo">
+      <div class="ms__indice" data-pieza="indice">
+        <sc-form-section-nav [sections]="secciones" activeId="general" />
+      </div>
+
+      <section class="ms__tarjeta" aria-label="General">
+        <h2 class="ms__subtitulo sc-text-body-semibold">General</h2>
+
+        <div class="ms__foco" data-pieza="foco">
+          <sc-inputtext label="Nombre" placeholder="Agente de pruebas" fluid />
+        </div>
+
+        <p class="ms__texto sc-text-body-regular">
+          Atenderá
+          <span class="ms__acento" data-pieza="acento"
+            ><sc-icon name="bolt" [size]="16" aria-hidden="true" /> 6 conversaciones al día</span
+          >.
+          <a class="ms__enlace" data-pieza="enlace" href="#" (click)="$event.preventDefault()">Cómo se calcula</a>
+        </p>
+
+        <fieldset class="ms__grupo">
+          <legend class="sc-text-caption-semibold">Canales</legend>
+          <div class="ms__fila">
+            <span data-pieza="casilla"><sc-checkbox state="all">Teléfono</sc-checkbox></span>
+            <sc-checkbox state="all">Chat</sc-checkbox>
+            <sc-checkbox state="none">Email</sc-checkbox>
+          </div>
+        </fieldset>
+
+        <div class="ms__fila ms__fila--entre">
+          <label class="sc-text-body-regular" for="ms-grabacion">Grabar las llamadas</label>
+          <span data-pieza="interruptor"><sc-toggleswitch inputId="ms-grabacion" checked /></span>
+        </div>
+
+        <fieldset class="ms__grupo">
+          <legend class="sc-text-caption-semibold">Tipo de extensión</legend>
+          <div class="ms__fila">
+            <span class="ms__opcion" data-pieza="radio">
+              <sc-radiobutton inputId="ms-nav" name="ms-tipo" value="navegador" [(modelValue)]="tipoAgente" />
+              <label for="ms-nav" class="sc-text-body-regular">Navegador</label>
+            </span>
+            <span class="ms__opcion">
+              <sc-radiobutton inputId="ms-tel" name="ms-tipo" value="telefono" [(modelValue)]="tipoAgente" />
+              <label for="ms-tel" class="sc-text-body-regular">Teléfono</label>
+            </span>
+          </div>
+        </fieldset>
+
+        <div data-pieza="boton-texto">
+          <sc-button appearance="text" icon="add" label="Añadir otra extensión" />
+        </div>
+      </section>
+
+      <aside class="ms__resumen" aria-label="Resumen">
+        <div class="ms__cifra">
+          <span data-pieza="mosaico"><sc-icon-tile icon="group" tone="brand" /></span>
+          <div>
+            <p class="sc-text-h3-semibold">3</p>
+            <p class="sc-text-caption-regular ms__suave">grupos asignados</p>
+          </div>
+        </div>
+        <div data-pieza="pestana">
+          <sc-tabs [tabs]="pestanas" ariaLabel="Vista del resumen" value="resumen" />
+        </div>
+        <div data-pieza="progreso">
+          <sc-progressbar [value]="60" ariaLabel="Perfil completado" />
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- Lo que cambia y cómo se lee: la página no tiene que adivinarlo, lo mide esto. -->
+  <section class="ms__informe" aria-labelledby="ms-informe-t">
+    <h2 id="ms-informe-t" class="sc-text-body-semibold">
+      Cambian {{ cambian() }} de {{ lecturas().length }} piezas@if (fallan()) {<span class="ms__malo"
+          >, y {{ fallan() }} no llegan al contraste</span
+        >
+      }
+    </h2>
+    <table class="ms__tabla">
+      <thead>
+        <tr>
+          <th scope="col" class="sc-text-caption-semibold">Pieza</th>
+          <th scope="col" class="sc-text-caption-semibold">Color</th>
+          <th scope="col" class="sc-text-caption-semibold">Contraste</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (l of lecturas(); track l.id) {
+          <tr [class.ms__cambia]="l.cambia">
+            <th scope="row" class="sc-text-caption-regular">
+              {{ l.label }}
+              @if (l.cambia) {
+                <span class="ms__marca sc-text-caption-semibold">cambia</span>
+              }
+            </th>
+            <td>
+              <span class="ms__chip" [style.background]="l.color" aria-hidden="true"></span>
+              <code class="sc-text-caption-regular">{{ l.color }}</code>
+            </td>
+            <td class="sc-text-caption-regular" [class.ms__malo]="l.ratio !== null && l.ratio < l.umbral">
+              {{ fmt(l.ratio) }}:1
+              <span class="ms__suave">(pide {{ umbralTxt(l.umbral) }})</span>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </section>
+</div>
