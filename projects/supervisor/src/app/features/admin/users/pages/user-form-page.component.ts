@@ -208,7 +208,7 @@ export class UserFormPageComponent implements DirtyAware, OnInit {
    * EL ÍNDICE DE LA FICHA (DD-122): el mismo de la ficha de grupo y de Contact Center, con UN orden en
    * los dos modos, el de sus dependencias: quién es (Identidad), a qué tiene acceso (Acceso) y qué
    * supervisa (Servicios). Hasta el 2026-09-27 fueron pestañas y, al editar, Identidad iba en medio.
-   * Abre en la primera; el listado enlaza directo a Acceso (`?seccion=acceso`), que es donde se trabaja.
+   * Abre en la primera, también desde el listado (DD-213; hasta entonces el listado enlazaba a Acceso).
    */
   protected readonly navSections = computed<readonly FormNavSection[]>(() => {
     const identity: FormNavSection = {
