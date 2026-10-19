@@ -1,6 +1,6 @@
 {
   "generado": "scripts/docs-capturas.mjs",
-  "fecha": "2026-10-13",
+  "fecha": "2026-10-19",
   "viewport": "1280x900",
   "tema": "claro",
   "fichas": {
@@ -376,6 +376,10 @@
         "tamanos": {
           "nombre": "Tamaños",
           "png": "radiobutton/tamanos.png"
+        },
+        "tarjeta": {
+          "nombre": "Tarjeta",
+          "png": "radiobutton/tarjeta.png"
         }
       }
     },
@@ -587,6 +591,10 @@
         "al-pulsar-la-cifra": {
           "nombre": "Al pulsar la cifra",
           "png": "grouppopover/al-pulsar-la-cifra.png"
+        },
+        "segun-cuantos": {
+          "nombre": "Según cuántos",
+          "png": "grouppopover/segun-cuantos.png"
         }
       }
     },
@@ -620,6 +628,10 @@
         "tonos-y-enfasis": {
           "nombre": "Tonos y énfasis",
           "png": "confirmdialog/tonos-y-enfasis.png"
+        },
+        "junto-al-boton": {
+          "nombre": "Junto al botón",
+          "png": "confirmdialog/junto-al-boton.png"
         }
       }
     },
@@ -731,6 +743,22 @@
         "con-ayuda": {
           "nombre": "Con ayuda",
           "png": "selectbutton/con-ayuda.png"
+        },
+        "multiple": {
+          "nombre": "Múltiple",
+          "png": "selectbutton/multiple.png"
+        },
+        "invalido": {
+          "nombre": "Inválido",
+          "png": "selectbutton/invalido.png"
+        },
+        "deshabilitado": {
+          "nombre": "Deshabilitado",
+          "png": "selectbutton/deshabilitado.png"
+        },
+        "a-todo-el-ancho": {
+          "nombre": "A todo el ancho",
+          "png": "selectbutton/a-todo-el-ancho.png"
         }
       }
     },
@@ -750,6 +778,10 @@
           "nombre": "Un audio, guardado en el campo",
           "png": "fileupload/un-audio-guardado-en-el-campo.png"
         },
+        "un-audio-guardado-en-su-lista": {
+          "nombre": "Un audio, guardado en su lista",
+          "png": "fileupload/un-audio-guardado-en-su-lista.png"
+        },
         "varios-archivos-con-su-lista": {
           "nombre": "Varios archivos, con su lista",
           "png": "fileupload/varios-archivos-con-su-lista.png"
@@ -757,6 +789,10 @@
         "validacion-y-envio": {
           "nombre": "Validación y envío",
           "png": "fileupload/validacion-y-envio.png"
+        },
+        "con-subir-y-cancelar": {
+          "nombre": "Con «Subir» y «Cancelar»",
+          "png": "fileupload/con-subir-y-cancelar.png"
         },
         "basico": {
           "nombre": "Básico",
@@ -848,6 +884,10 @@
         "con-un-icono-propio": {
           "nombre": "Con un icono propio",
           "png": "factrow/con-un-icono-propio.png"
+        },
+        "valor-largo-en-una-linea": {
+          "nombre": "Valor largo en una línea",
+          "png": "factrow/valor-largo-en-una-linea.png"
         }
       }
     },
@@ -1088,9 +1128,11 @@
     "colordotpicker": {
       "anatomia": [
         "sc-color-dot-picker",
-        "  div",
-        "    button",
-        "      span"
+        "  sc-selectbutton.sc-selectbutton",
+        "    p-selectbutton.p-component.p-selectbutton",
+        "      p-togglebutton.p-component.p-inputfield-sm.p-ripple.p-togglebutton.p-togglebutton-sm",
+        "        span.p-togglebutton-content",
+        "          span"
       ],
       "historias": {
         "playground": {
@@ -1134,7 +1176,9 @@
     },
     "keyboardshortcuts": {
       "anatomia": [
-        "sc-keyboard-shortcuts"
+        "sc-keyboard-shortcuts",
+        "  sc-dialog",
+        "    p-dialog"
       ],
       "historias": {
         "playground": {
@@ -1190,6 +1234,38 @@
         "columnas-fijas": {
           "nombre": "Columnas fijas",
           "png": "datatable/columnas-fijas.png"
+        },
+        "orden-por-varias-columnas": {
+          "nombre": "Orden por varias columnas",
+          "png": "datatable/orden-por-varias-columnas.png"
+        },
+        "filtros-por-columna-y-cabecera-agrupada": {
+          "nombre": "Filtros por columna y cabecera agrupada",
+          "png": "datatable/filtros-por-columna-y-cabecera-agrupada.png"
+        },
+        "edicion-por-celda": {
+          "nombre": "Edición por celda",
+          "png": "datatable/edicion-por-celda.png"
+        },
+        "edicion-por-fila": {
+          "nombre": "Edición por fila",
+          "png": "datatable/edicion-por-fila.png"
+        },
+        "detalle-de-fila": {
+          "nombre": "Detalle de fila",
+          "png": "datatable/detalle-de-fila.png"
+        },
+        "filas-agrupadas": {
+          "nombre": "Filas agrupadas",
+          "png": "datatable/filas-agrupadas.png"
+        },
+        "reordenar-y-fijar-filas": {
+          "nombre": "Reordenar y fijar filas",
+          "png": "datatable/reordenar-y-fijar-filas.png"
+        },
+        "exportar-recordar-y-paginador": {
+          "nombre": "Exportar, recordar y paginador",
+          "png": "datatable/exportar-recordar-y-paginador.png"
         }
       }
     },
