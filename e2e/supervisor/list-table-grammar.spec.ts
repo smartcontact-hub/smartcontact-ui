@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 
+import { kitPx } from '../kit-metrics';
 import { colorEfectivo } from '../shared/color';
 import { disableAnimations, forceLightTheme, goto } from './helpers';
 
@@ -35,6 +36,10 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  * el padding y el alto de fila son los de Aura (primeng.dev/table). Lo que `variant="list"`
  * sigue imponiendo es COMPORTAMIENTO: reparto fijo, casilla de 40, sin banda de caption,
  * cursor en la fila que abre. Eso no se ha movido y aquí sigue fijado igual.
+ *
+ * ⚠️ 2026-10-19 (DD-213): el RELLENO deja de ser el de Aura 3 (8 × 14) y pasa al del Kit y del
+ * DS de desarrollo (10,5 × 14; sm 5,25 × 7). Se lee del export con `kitPx`, no de un número
+ * escrito: si el preset vuelve a Aura, o una capa lo pisa, la celda mide 8 y esto se pone rojo.
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -71,35 +76,39 @@ test.beforeEach(async ({ page }) => {
  *   41.5 → 44  2026-09-14, DD-91: los controles leen el interlineado de la rampa (18 en sm, atado
  *              en Figma) y el kebab sube a 27. 27 + 8×2 + 1 = 44, también en labels: el kebab
  *              vuelve a ser lo más alto de su fila. Con avatar sigue en 54.
+ *   44 → 49  2026-10-19, DD-213: la celda pasa de 8 a 10,5 de relleno (el del Kit y el del DS de
+ *              desarrollo). 27 + 10,5×2 + 1 = 49; con foto, 32 + 21 + 1 = 54. Una fila de solo texto
+ *              mide 20 + 21 + 1 = 42, como la cabecera.
  */
 const PAGINAS = [
-  { ruta: 'admin/labels', nombre: 'labels', altoFila: 44 },
-  { ruta: 'admin/plantillas', nombre: 'plantillas', altoFila: 44 },
+  { ruta: 'admin/labels', nombre: 'labels', altoFila: 49 },
+  { ruta: 'admin/plantillas', nombre: 'plantillas', altoFila: 49 },
   /* 44 hasta el 2026-09-14 (la celda de nombre gana el avatar de sus hermanas) y 54 hasta el 2026-10-13: el avatar se
    * apoyaba en la línea base del texto y dejaba 5 px muertos debajo. Sin ellos, 32 + 8×2 + 1, lo mismo que su esqueleto
-   * de carga (`esqueleto-carga.spec.ts`). */
-  { ruta: 'admin/usuarios', nombre: 'usuarios', altoFila: 49 },
-  { ruta: 'admin/agentes', nombre: 'agentes', altoFila: 49 },
-  // 54 hasta el 2026-09-23: los grupos dejaron de llevar avatar (cara = persona) y manda el kebab, 27 + 8×2 + 1.
-  { ruta: 'admin/grupos', nombre: 'grupos', altoFila: 44 },
+   * de carga (`esqueleto-carga.spec.ts`). 49 → 54 con DD-213: 32 + 10,5×2 + 1. */
+  { ruta: 'admin/usuarios', nombre: 'usuarios', altoFila: 54 },
+  { ruta: 'admin/agentes', nombre: 'agentes', altoFila: 54 },
+  // 54 hasta el 2026-09-23: los grupos dejaron de llevar avatar (cara = persona) y manda el kebab, 27 + 8×2 + 1;
+  // 27 + 10,5×2 + 1 desde DD-213.
+  { ruta: 'admin/grupos', nombre: 'grupos', altoFila: 49 },
   // El trío de memory, migrado el 2026-07-19. Entraron aquí en el MISMO
   // commit que la migración, y eso no es formalismo: sin esta línea el spec
   // pasaba en verde sin visitar la página, y el "108/108" que traían los
   // informes de migración no probaba nada sobre lo migrado.
-  { ruta: 'conversaciones/reglas', nombre: 'reglas', altoFila: 44 },
-  { ruta: 'conversaciones/categorias', nombre: 'categorias', altoFila: 44 },
-  { ruta: 'conversaciones/entidades', nombre: 'entidades', altoFila: 44 },
+  { ruta: 'conversaciones/reglas', nombre: 'reglas', altoFila: 49 },
+  { ruta: 'conversaciones/categorias', nombre: 'categorias', altoFila: 49 },
+  { ruta: 'conversaciones/entidades', nombre: 'entidades', altoFila: 49 },
   /* Una de las NUEVE páginas de repositorios, que comparten `repo-list-page`.
    * No estaba ninguna: `audit:datatables` lo destapó al no encontrar su ruta.
    * Con una basta —las nueve son el mismo componente— pero sin ninguna, la
    * tabla más reutilizada de la app era la única sin vigilar. */
-  { ruta: 'admin/agendas', nombre: 'agendas', altoFila: 44 },
+  { ruta: 'admin/agendas', nombre: 'agendas', altoFila: 49 },
   /* Los contactos de una agenda (DD-163): la tabla de una sección del editor, en su propio componente.
    * `audit:datatables` la vigila por las rutas de su feature, así que su ruta tiene que estar aquí. */
-  { ruta: 'admin/agendas/editar/1', nombre: 'contactos de una agenda', altoFila: 44 },
+  { ruta: 'admin/agendas/editar/1', nombre: 'contactos de una agenda', altoFila: 49 },
   // Horarios y Variables: el mismo reparto de `repo-list-page` que agendas, sin su propio editor.
-  { ruta: 'admin/horarios', nombre: 'horarios', altoFila: 44 },
-  { ruta: 'admin/variables', nombre: 'variables', altoFila: 44 },
+  { ruta: 'admin/horarios', nombre: 'horarios', altoFila: 49 },
+  { ruta: 'admin/variables', nombre: 'variables', altoFila: 49 },
 ] as const;
 
 /** Las tablas cuya fila ABRE algo tienen que anunciarlo con el cursor. */
@@ -129,10 +138,14 @@ const ABREN_MODAL = new Set([
   'admin/agendas/editar/10',
 ]);
 
-/** El contrato. Medido sobre la tabla original antes de migrarla (B4), y vuelto a medir
- * el 2026-09-13 con Aura como base: padding y cabecera son ya los de Aura. */
+/** Relleno de una pieza de la tabla tal como lo da `getComputedStyle(el).padding`: alto y ancho,
+ * cada uno de su fila de `scripts/sizing-map.mjs` (DD-213). */
+const relleno = (pieza: string) => `${kitPx(`datatable.${pieza}.paddingY`)} ${kitPx(`datatable.${pieza}.paddingX`)}`;
+
+/** El contrato. Medido sobre la tabla original antes de migrarla (B4), vuelto a medir
+ * el 2026-09-13 con Aura como base, y el 2026-10-19 con el relleno del Kit (DD-213). */
 const GRAMATICA = {
-  paddingCelda: '8px', // Aura `datatable.body.cell.padding` (0.5rem)
+  paddingCelda: relleno('bodyCell'), // 10.5px 14px; Aura 3 pedía 8px 14px
   /* La celda ES un text style desde 2026-09-12. Se fija aquí porque era
    * justo lo que NADIE miraba: el `<td>` no declaraba tipografía y rendía a
    * 16/24 —el tamaño por defecto del navegador—, y cada página lo tapaba por
@@ -149,7 +162,7 @@ const GRAMATICA = {
     // El color del texto (`{text.color}` de Aura → nuestro slate-900 desde el export del
     // 2026-10-17, DD-188). Fue slate-700 y, hasta el 2026-09-13, slate-600 secundario.
     color: 'rgb(24, 29, 38)',
-    padding: '8px', // Aura `datatable.header.cell.padding` (0.5rem)
+    padding: relleno('headerCell'), // 10.5px 14px
   },
   anchoCasilla: 40,
   tableLayout: 'fixed',
@@ -181,7 +194,7 @@ for (const { ruta, nombre, altoFila } of PAGINAS) {
       const banda = host.querySelector('.p-datatable-header');
       return {
         altoFila: Math.round(tr.getBoundingClientRect().height),
-        paddingCelda: cs(td, 'padding-top'),
+        paddingCelda: cs(td, 'padding'),
         celda: {
           fontSize: cs(td, 'font-size'),
           lineHeight: cs(td, 'line-height'),
@@ -191,7 +204,7 @@ for (const { ruta, nombre, altoFila } of PAGINAS) {
           fontSize: cs(th, 'font-size'),
           fontWeight: cs(th, 'font-weight'),
           color: cs(th, 'color'),
-          padding: cs(th, 'padding-top'),
+          padding: cs(th, 'padding'),
         },
         anchoCasilla: thCheck
           ? Math.round(thCheck.getBoundingClientRect().width)
@@ -214,8 +227,9 @@ for (const { ruta, nombre, altoFila } of PAGINAS) {
     // sub-píxel de `getBoundingClientRect`, sensible a cómo carga la fuente en
     // el runner. La banda que este test defiende es 54 vs 63 —nueve píxeles—,
     // así que uno de holgura no le quita poder y sí le quita un rojo falso.
-    expect(Math.abs(medido.altoFila - altoFila)).toBeLessThanOrEqual(1);
+    // El relleno, ANTES que el alto: es la causa, y así un rojo dice «8px 14px», no «5 de más».
     expect(medido.paddingCelda).toBe(GRAMATICA.paddingCelda);
+    expect(Math.abs(medido.altoFila - altoFila)).toBeLessThanOrEqual(1);
     // La celda mide EL TD, no lo que haya dentro: una `.sc-text-*` pegada en el
     // contenido no puede tapar que el suelo de la celda vuelva a 16px.
     expect(medido.celda).toEqual(GRAMATICA.celda);
@@ -259,10 +273,11 @@ const PAGINAS_EN_FORMULARIO = [
     // columna por canal, Salientes y Habilitado; ya no se rellena con un desplegable de añadir), y con ella
     // la densidad compacta (`sm`) de su gemela de abajo: 2px de relleno en celda y cabecera. Mide menos que
     // ella porque el nombre de un grupo va en una línea y el de un agente lleva su email debajo. 31 → 27 con
-    // DD-204: sale la columna Nivel, y con ella su campo numérico, que era lo más alto de la fila.
-    altoFila: 27,
-    paddingCelda: '2px',
-    paddingCabecera: '2px',
+    // DD-204: sale la columna Nivel, y con ella su campo numérico, que era lo más alto de la fila. 27 → 33 con DD-213:
+    // el relleno `sm` pasa de 2 × 6 (Aura 3) a 5,25 × 7 (el Kit); medido 33,2.
+    altoFila: 33,
+    paddingCelda: relleno('bodyCell.sm'),
+    paddingCabecera: relleno('headerCell.sm'),
   },
   {
     ruta: 'admin/grupos/editar/1',
@@ -284,10 +299,11 @@ const PAGINAS_EN_FORMULARIO = [
      * de arriba deja de serlo — este ya no lleva avatar de 24, solo casillas. Con el
      * relleno `sm` también baja el `padding-top` de la celda y de la cabecera, de
      * los 8px de la gramática a 2px: la tipografía (tamaño, peso, color) sigue
-     * la misma. */
-    altoFila: 43,
-    paddingCelda: '2px',
-    paddingCabecera: '2px',
+     * la misma. 43 → 50 con DD-213: el relleno `sm` del Kit, 5,25 × 7, en vez del
+     * 2 × 6 de Aura 3 (medido 49,5). */
+    altoFila: 50,
+    paddingCelda: relleno('bodyCell.sm'),
+    paddingCabecera: relleno('headerCell.sm'),
   },
 ] as const;
 
@@ -325,7 +341,7 @@ for (const caso of PAGINAS_EN_FORMULARIO) {
       const td = tr.querySelector(':scope > :not(.sc-datatable__check)')!;
       return {
         altoFila: Math.round(tr.getBoundingClientRect().height),
-        paddingCelda: cs(td, 'padding-top'),
+        paddingCelda: cs(td, 'padding'),
         celda: {
           fontSize: cs(td, 'font-size'),
           lineHeight: cs(td, 'line-height'),
@@ -335,15 +351,15 @@ for (const caso of PAGINAS_EN_FORMULARIO) {
           fontSize: cs(th, 'font-size'),
           fontWeight: cs(th, 'font-weight'),
           color: cs(th, 'color'),
-          padding: cs(th, 'padding-top'),
+          padding: cs(th, 'padding'),
         },
       };
     });
 
-    expect(Math.abs(medido.altoFila - caso.altoFila)).toBeLessThanOrEqual(1);
     expect(medido.paddingCelda).toBe(
       'paddingCelda' in caso ? caso.paddingCelda : GRAMATICA.paddingCelda,
     );
+    expect(Math.abs(medido.altoFila - caso.altoFila)).toBeLessThanOrEqual(1);
     expect(medido.celda).toEqual(GRAMATICA.celda);
     expect(medido.cabecera).toEqual({
       ...GRAMATICA.cabecera,
