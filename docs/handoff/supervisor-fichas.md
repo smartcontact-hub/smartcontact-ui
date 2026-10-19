@@ -50,20 +50,24 @@ trampas propias): `git show b23f6b5f:docs/handoff/supervisor-fichas.md`. El de f
 El de la revisión de las fichas a 1440 (2026-10-14, DD-204): `git show 62244684:docs/handoff/supervisor-fichas.md`;
 su trampa del suelo de la tarjeta sube a «Trampas del frente».
 
-## ✅ 2026-10-18 · Grupos y agentes en Figma para desarrollo: listado, altas, ediciones y su hand-off
+## ✅ 2026-10-18 y 19 · Grupos y agentes en Figma para desarrollo: listado, altas, ediciones y su hand-off
 
 > **Sello:** sin código. Fichero del Supervisor (`Hjyy41SYKqcRuIzCGggfYH`); en el repo, solo docs (rama
-> `arebury/figma-fichas-handoff` sobre `main` `62244684`).
+> `arebury/figma-fichas-orden` sobre `main` `33dd2c90`).
 
-- **Dónde está**: página «Grupos», sección `2934:580` (el listado `2985:4006` y sus estados de selección, menú y sin
-  resultados a su derecha; el alta y la edición de grupo); página «Agentes», sección `2970:4752` (alta y edición de
-  agente); página «Hand-off: Grupos y agentes» (`2997:47`): qué cambia (DD-211), lo que depende de lo contratado
-  (Call Blending, CusCare, WebRTC), cómo leer las maquetas y las reglas comunes.
-- **Cómo está hecho**: instancias y variables de «Smart-Contact Design System», medidas de sc-supervisor.pages.dev a
-  1440 (de 0 a 1 px por pantalla) y las specs en anotaciones de Dev Mode con sus cuatro categorías. Tablas en
-  `size="small"`: el listado, cabecera 25 y fila 32.
-- **Lo que el Kit no tiene** (`figma-pendiente` §53) va en la maqueta ajustado a la app, con su anotación; la librería
-  no se toca. El estado «Solo lectura» (PIN y script de Web Chat) va anotado, sin dibujar (§50).
+- **Dónde está** (2026-10-19): cada página abre con un índice que enlaza sus secciones, todas a 1920. «Grupos»: índice
+  `3124:47747`, «1. Listado de grupos» `3118:16995` (la tabla y sus estados; se especifica aquí, una vez), «2. Alta de
+  grupo» `3010:6411`, «3. Edición de grupo» `3055:11053`. «Agentes»: índice `3124:47856`, «1. Alta de agente»
+  `3070:26714`, «2. Edición de agente» `3110:31067`. «Fuera del DS» (`3034:114`): lo que la app pinta y el DS no cubre.
+  «Hand-off: Grupos y agentes» (`2997:47`): qué cambia (DD-211), lo contratado, cómo leer y reglas comunes.
+- **Lo que se fue**: las secciones a 1440 (`2934:580`, `2970:4752`), tras pasar sus notas propias a los flujos de 1920.
+  Las pantallas sueltas a 1440, archivadas en Playground (`3124:39080`); «Contact Center - General», en su página.
+- **Cómo está hecho**: instancias y variables del DS, medidas de sc-supervisor.pages.dev a 1920, specs en anotaciones de
+  Dev Mode (cada texto una vez por sección). Si la app tapa un nativo de PrimeNG con plantilla propia (`.sc-toast`), en
+  Figma va el nativo y la diferencia, a «Fuera del DS». Maestros arreglados el 2026-10-19 (`.Subsection`, Header,
+  nav-item, toast, agent-summary): «What's new» del DS. Lo que el Kit no tiene: `figma-pendiente` §53; «Solo lectura»,
+  anotado sin dibujar (§50).
+- **Pendiente**: marcar «Ready for dev» (a mano: la API no puede); cómo ordenar «❖ DataTable» del DS (`6738:49721`).
 - **Trampa**: el fichero de la copia del DS con la tabla en slots (`C5soC7CxcuKSIFPEDCd3gz`, sección `16862:6447`) se
   quedó con un placeholder del buscador anterior a `main`; lo que manda es el listado del Supervisor.
 
