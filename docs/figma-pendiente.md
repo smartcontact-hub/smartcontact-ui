@@ -1474,20 +1474,21 @@ small, al revés: la app irá a la del Kit, 5,25 × 7, §54) y las maquetas deja
 **Estado:** por decidir en revisión de diseño · **Dónde:** página «Fuera del DS» del Supervisor (`3034:114`, marco
 `3156:195`) · **Evidencia:** el Kit, sc-supervisor.pages.dev, ui.smart-contact.com y el código del prototipo.
 
-Cada ficha se va si se acepta su propuesta; con todas, la página se vacía. El 2026-10-19 quedan nueve en la página.
+Cada ficha se va si se acepta su propuesta; con todas, la página se vacía. El 2026-10-19 quedan cuatro: aviso, campos
+numéricos, subsección plegada y lo no dibujado (atajo «/» y solo lectura).
 
 | # | Ficha | Propuesta | Kit | Prototipo |
 |---|---|---|---|---|
-| 1 | Alto de fila | Decidido el 2026-10-19: el relleno de los devs (10,5 × 14), que es el del Kit. Cambia el prototipo; en Figma, la tabla a Default | no | sí |
-| 2 | Barra de arriba | El maestro `Header` con `button` md (DD-188) | sí | no |
+| 1 | Alto de fila | Hecho el 2026-10-19: tablas de Grupos y Agentes en tamaño normal, relleno atado (10,5 × 14, el de los devs); la ficha salió. Cambia el prototipo (8 × 14) | sí, hecho | sí |
+| 2 | Barra de arriba | Hecho el 2026-10-19: el Header del DS lleva `button` md (DD-188), barra de 58; la ficha salió | sí, hecho | no |
 | 3 | Toast | El prototipo con `p-toast` sin plantilla; el «Deshacer» del inicio (DD-196), aparte | no | sí |
-| 4 | Botón de foto | El fondo del dibujo a `highlight/background` | no | no |
+| 4 | Botón de foto | Hecho el 2026-10-19: el fondo, atado a `highlight/background`; la ficha salió | no | no |
 | 5 | Campos numéricos | Variante sin botones, con sufijo, en `inputnumber` | sí | no |
-| 6 | Título de la página | Quitar la ficha: el marco ya usa estilos y variables del Kit | no | no |
+| 6 | Título de la página | Hecho el 2026-10-19: la ficha salió (el marco ya usa estilos y variables del Kit) | no | no |
 | 7 | Diálogo de eliminar | Hecho el 2026-10-19: eliminar es el confirmdialog del DS en grupos y agentes; la ficha salió | no | no |
-| 8 | Resumen con «Falta» | «Mostrar estado» y su texto en `group-summary` y `agent-summary` | sí | no |
+| 8 | Resumen con «Falta» | Hecho el 2026-10-19: «Mostrar estado» en la variante Edición de `group-summary` y `agent-summary`; la ficha salió | sí, hecho | no |
 | 9 | Subsección plegada | Estado «Plegada» en `.Subsection` (DD-157 descartó Accordion); en el prototipo, `<h3>` con el botón dentro y `aria-controls` | sí | sí |
-| 10 | Atajo «/» | Quitar el «/» visible; `aria-keyshortcuts="/"` y el panel «?» | no | sí |
+| 10 | Atajo «/» | Decidido el 2026-10-19: el «/» se ve, como en el prototipo. Falta dibujarlo con una pieza propia del DS, marcada como propia | sí | no |
 | 11 | Solo lectura | El estado en los cuatro campos del Kit (§50, DD-211 §10) | sí | no |
 
 **Lo que se daba por cierto y no lo era:** la variable del azul existe (§53, corregido); la «×» del diálogo está en el

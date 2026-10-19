@@ -57,23 +57,23 @@ y Repositorios (2026-10-15, DD-210, #426, sin trampas propias): `git show 840fe5
 ## ✅ 2026-10-19 · Mapa de componentes de Grupos, una sola tabla en el DS y «Fuera del DS» con alternativas
 
 > **Sello:** sin código. Figma del Supervisor (`Hjyy41SYKqcRuIzCGggfYH`) y del DS (`khNq9dJKNi13pNllrqm6dx`); en el
-> repo, solo docs (rama `areses/component-map-groups-ab0007`, HEAD `5b3e5304`, al día con `main` `71e84dfa`).
+> repo, solo docs (rama `areses/component-map-groups-ab0007`, HEAD `83c080c1`, al día con `main`).
 
 - **Mapa de componentes** («Grupos», `3175:11365`, en el índice): listado y ficha con cajas encima; verde, DS de
-  desarrollo (`sc-*`); azul, PrimeNG (`p-*`); naranja, propio; gris discontinuo, layout.
-- **Tabla del listado**: Nombre crece (927 a 1920) y el ⋮ mide 56, la tabla «virgen»; el prototipo guarda su tope de
-  384 a propósito (los anchos se configuran). Reescrita la fila 5 de «Cómo se comporta».
-- **Una sola DataTable en el DS** («❖ DataTable», `15526:14461`): `datatable`, `datatable-row` y `datatable-body-cell`
-  son las piezas con slots (antes «-base»); de ellas cuelga el Supervisor entero (12.038 instancias, ninguna de la
-  otra). Relleno, el de los devs (ui.smart-contact.com: 10,5 × 14; Small 5,25 × 7; Large 14 × 17,5), que ya tenían
-  las variables; textos, Body/body-regular y Body/body-semibold: fila de texto de 42, como allí. Cada celda trae
-  `datatable-content`: su Type se cambia bajando con Enter (Figma no expone piezas dentro de un slot); las celdas ya
-  rellenadas no cambian (probado en copia). Ejemplos claro y oscuro rehechos; bajo el componente, «Cómo se usa». La
-  versión «(sin slots)», con las mismas variables, en «Archivo: DataTable (2026-10-19)».
-- **`datatable-content`** gana Icon Button, Channels, Link y Empty; nace `channel-icon`. «Fuera del DS»: §54.
-- **Pendiente**: publicar el DS y «Update all» en el Supervisor (a mano). El prototipo (8 × 14), en otra sesión.
-- **Trampas**: un marco de documentación a HUG estira las variantes FILL de dentro y cambia el maestro. En otro fichero,
-  busca instancias por la clave del maestro, no por nombre. «El Aura» son dos: prototipo 8 × 14, devs 10,5 × 14.
+  desarrollo (`sc-*`); azul, PrimeNG (`p-*`); naranja, propio; gris discontinuo, layout. Sus tablas siguen en Small.
+- **Una sola DataTable en el DS** («❖ DataTable», `15526:14461`): las piezas con slots (antes «-base»), de las que
+  cuelga el Supervisor entero. Relleno, el de los devs (ui.smart-contact.com: 10,5 × 14; Small 5,25 × 7), que ya
+  tenían las variables; textos, Body/body-regular y Body/body-semibold: fila de texto de 42. Cada celda trae
+  `datatable-content` (Type se cambia bajando con Enter: Figma no expone piezas en un slot); las celdas ya rellenadas
+  no cambian. Ejemplos rehechos; «Cómo se usa» bajo el componente; la versión «(sin slots)», en el archivo.
+- **Tablas de Grupos y Agentes**: 1.943 piezas a tamaño normal (el prototipo no usa `size="small"`) con el relleno
+  atado al maestro; llevaban 2 a mano. Fila de 42, 49 con ⋮, 54 con avatar. Guía: «Tablas en tamaño normal».
+- **«Fuera del DS»** (§54): salen alto de fila, botón de foto (`highlight/background`), título, barra (Header del DS
+  con botón md, 58) y resumen («Mostrar estado» en `group-summary` y `agent-summary`). Quedan 4.
+- **Pendiente**: publicar el DS y «Update all» (Header y resúmenes). El prototipo (8 × 14), en otra sesión.
+- **Trampas**: un marco de documentación a HUG estira las variantes FILL y cambia el maestro. En otro fichero, busca
+  por la clave del maestro. «El Aura» son dos: prototipo 8 × 14, devs 10,5 × 14. Cambiar de variante la pieza de fuera
+  rehace las de dentro (ve de dentro afuera) y a un resumen le borra los datos: una propiedad no.
 
 ## ✅ 2026-10-19 · Grupos: «Agentes» sin fijar y «—» con 0 agentes; el tooltip del Kit; las tres congeladas, al día con `main`
 
@@ -246,10 +246,10 @@ y Repositorios (2026-10-15, DD-210, #426, sin trampas propias): `git show 840fe5
   revisión del 2026-10-15 (DD-206).
 - **Decisión de diseño:** llevar o no al DS oficial lo que la copia arregló (el borde de 1 de los botones de texto, el
   tooltip con máximo y la celda de selección small; `figma-pendiente` §53). No bloquea las maquetas.
-- **Decisión de diseño:** las fichas de «Fuera del DS», cada una con sus alternativas y una recomendación
-  (`figma-pendiente` §54); con todas, la página se vacía. (A a E de la tabla y el alto de fila, decididos el 2026-10-19.)
-- **Publicar el DS** (DataTable con los textos atados, `datatable-content`, `channel-icon`) y «Update all» en el
-  Supervisor: la API no puede. Al publicar, decidir si la tabla «(sin slots)» se oculta de la librería (`_` delante).
+- **Decisión de diseño:** las 4 fichas que quedan en «Fuera del DS» (aviso, campos numéricos, subsección plegada y lo
+  no dibujado: atajo «/» y solo lectura), con sus alternativas en `figma-pendiente` §54.
+- **Publicar el DS** (Header con botón md, «Mostrar estado» en los resúmenes) y «Update all» en el Supervisor: la API
+  no puede. Al publicar, decidir si la tabla «(sin slots)» se oculta de la librería (`_` delante).
 - **Rafa:** revisar usuarios contra el Supervisor real. Y en el portátil: poner el 4405 al día con `main` y borrar el
   worktree y la rama `codex/supervisor-f-listado` (`aff63656`, una copia de F), la local y la del remoto; desde la
   nube no se puede.
