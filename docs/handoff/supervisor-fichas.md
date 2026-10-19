@@ -51,7 +51,23 @@ El de la revisión de las fichas a 1440 (2026-10-14, DD-204): `git show 62244684
 su trampa del suelo de la tarjeta sube a «Trampas del frente». El de la ficha de grupo tras la revisión del 2026-10-15
 (DD-206, #416): `git show a3c0f25a:docs/handoff/supervisor-fichas.md`; sus dos trampas suben a «Trampas del frente».
 El de la ficha de agente con salientes en un desplegable (2026-10-15, DD-209, #425, sin trampas propias): `git show
-6edc21e9:docs/handoff/supervisor-fichas.md`.
+6edc21e9:docs/handoff/supervisor-fichas.md`. El de la revisión de las tablas y Repositorios (2026-10-15, DD-210, #426, sin
+trampas propias): `git show 91c438c2:docs/handoff/supervisor-fichas.md`.
+
+## ✅ 2026-10-19 · Grupos y Agentes, como en Figma: sin edición masiva, y borrar con la confirmación simple (DD-215)
+
+> **Sello:** rama `areses/prototipo-como-figma` sobre `main` `91c438c2`, un PR. Tras fundir, las congeladas 4058, 4062 y
+> 4064 avanzan a ese commit (`docs/PROTOTIPOS.md`).
+
+- **Listados de Grupos y Agentes**: sin casillas, ni barra de lote, ni «Editar» o «Eliminar» en bloque; lo de cada fila
+  va por su menú (Editar, Duplicar, Eliminar). «Acciones» solo exporta. Usuarios, Repositorios y el resto conservan el
+  lote.
+- **Borrar** un grupo o un agente, desde el listado o la ficha: `sc-confirmdialog` por `injectConfirmarBorrado`
+  (`features/admin/services/confirmar-borrado.ts`), con el texto de Figma. Usuarios sigue tecleando el nombre (DD-145
+  §4). El menú dice «Eliminar» sin «…» (la regla de `admin-row-menu`); en Figma, el paso 02 del listado aún lleva los
+  puntos.
+- **Pruebas**: `listado-grupos` (sin casillas; borrar pregunta, cancela y borra) y `fichas-nombre-fijo` (grupo y agente
+  con la confirmación, usuario tecleando); las del resultado del lote (DD-196) pasan a Usuarios. En local, 24 en verde.
 
 ## ✅ 2026-10-19 · Grupos: «Agentes» sin fijar y «—» con 0 agentes; el tooltip del Kit; las tres congeladas, al día con `main`
 
@@ -95,7 +111,7 @@ El de la ficha de agente con salientes en un desplegable (2026-10-15, DD-209, #4
   Cada índice abre con «Cómo usar estas maquetas». Nativo de PrimeNG tapado por la app (`.sc-toast`): en Figma, el
   nativo, y la diferencia, a «Fuera del DS». Maestros arreglados: «What's new» del DS. Kit: `figma-pendiente` §53 y §50.
 - **Pendiente**: marcar «Ready for dev» (a mano: la API no puede); cómo ordenar «❖ DataTable» del DS (`6738:49721`).
-  El prototipo sigue con la edición masiva y pide el nombre al eliminar: Figma va por delante.
+  El prototipo ya va como Figma (DD-215, tramo de arriba).
 - **Trampa**: el fichero de la copia del DS con la tabla en slots (`C5soC7CxcuKSIFPEDCd3gz`, sección `16862:6447`) se
   quedó con un placeholder del buscador anterior a `main`; lo que manda es el listado del Supervisor.
 
@@ -145,27 +161,6 @@ El de la ficha de agente con salientes en un desplegable (2026-10-15, DD-209, #4
   `ss`, el pid lo da `lsof -nP -iTCP:4405 -sTCP:LISTEN`). Un cambio del DS no llega a las apps sin `npm run
   build:components` y reiniciar su `ng serve` (leen `dist/`). Los `*.pages.dev` no se alcanzan desde la nube: para ver
   una prueba en rojo, se quita el arreglo en local.
-
-## ✅ 2026-10-15 · Revisión de producto de las tablas y Repositorios (DD-210)
-
-> **Sello:** PR 3 de 3, fundido en `main` como #426, HEAD `d4f22f0e`, con el PR 2 (#425) ya dentro.
-
-- **Textos**: «+ Nueva X» en la barra y en el vacío de cada tabla (repositorios con su `createTitleKey`), «Buscar
-  {entidades}…» en todas, también dentro de las fichas, y «Acciones» con «Importar» y «Exportar» a secas; la plantilla
-  CSV sale del menú (`sc-list-page` pierde `templateDownloadable`).
-- **DS**: `sc-group-popover` gana `display="adaptive"` (ninguno «—», uno su nombre, varios la cifra) y `sc-multiselect`,
-  `chipOverflow="more"` («+N más»); los dos con su ejemplo en sc-docs y la nota 49 de Figma.
-- **Comunes**: `sc-import-dialog` (las tres copias fuera; la ayuda, solo en Tipificaciones, porque Agendas la quitó esa
-  mañana) y `sc-column-toggle` con `column-prefs.ts` (el globo de Columnas sale de `sc-list-page`, con buscador pasadas
-  12 columnas). Anchos de partida medidos en `sc-list-page` (`anchosDePartida`): solo columnas con ancho, esperando a
-  que la lista virtual pinte; se guardan en `<clave>:medidos` con su idioma para que el esqueleto de la segunda
-  apertura ya los lleve (el CI lo cazó en `esqueleto-carga`); «Restablecer» vuelve a medir.
-- **Repositorios**: «+ Añadir subcategoría» por categoría; grupos de una plantilla con «+N más» y apagados sin su canal;
-  editores en gris; agentes de agenda sin «Código»; un contacto sin obligatorios (también al importar) y la tabla de
-  contactos con sus 34 columnas a elegir. «El menú de arriba desaparece» no se reproduce (§14).
-- **Pruebas**: `tablas-revision-1015.spec.ts` nueva (5); ajustadas las de textos, `listado-acciones-fijas` a 1024 y la
-  carrera de `agenda-agentes`. En local, a 1440: 250 de listas y repositorios, 6 de componente y la línea de estilos
-  (solo altas nuevas) en verde.
 
 ## SIGUIENTE — sin preguntar
 

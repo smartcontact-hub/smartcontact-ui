@@ -155,6 +155,34 @@
 
 ---
 
+## DD-215 · 2026-10-19 — Grupos y Agentes, como en Figma: sin edición masiva, y borrar es la confirmación simple del DS
+
+**Contexto** · El 2026-10-19 se rehízo en Figma para desarrollo el listado de grupos (fichero del Supervisor, página
+Grupos, «1. Listado de grupos» `3118:16995`): sin casillas, el menú de fila como camino principal y eliminar con el
+confirmdialog del DS. En Agentes, igual: el listado sin casillas en sus tres pantallas, y borrar desde la ficha con el
+confirmdialog (E3, `3208:29670`). El prototipo seguía con la edición masiva y con la puerta tecleada de DD-145 §4. Se
+alinea con Figma, y las congeladas de Grupos, Agentes y Repositorios (SISMAC-4058, 4062 y 4064) con `main`.
+
+**Decisión** ·
+1. **Sin casillas ni edición masiva en Grupos y Agentes**: fuera la columna de casillas, la barra de lote, «Editar» en
+   bloque con su vista previa y «Eliminar» en bloque. Lo de cada grupo o agente va por su menú de fila (Editar,
+   Duplicar, Eliminar), con «⋮» o con clic derecho. «Acciones» se queda: solo exporta. La edición masiva pasa a otra
+   fase.
+2. **Borrar un grupo o un agente es la confirmación simple del DS** (`sc-confirmdialog` por `ScConfirmService`):
+   «¿Eliminar grupo?» y «Vas a eliminar el grupo «…». Esta acción no se puede deshacer.»
+   (`common.delete_dialog.title_single` y `body_single`), igual desde el listado que desde la ficha. Enmienda DD-145 §4
+   para grupos y agentes; Usuarios sigue pidiendo teclear el nombre.
+3. **El menú dice «Eliminar», sin puntos suspensivos**: el repo los reserva para la puerta tecleada
+   (`admin-row-menu.spec.ts`). Figma pinta «Eliminar…» en el paso 02 del listado; se le pide quitarlos.
+
+**Queda** · Usuarios, Repositorios, Tipificaciones, Etiquetas, Plantillas y Conversaciones conservan la selección y el
+lote, con `sc-bulk-action-bar`, `sc-bulk-edit-menu` y `sc-impact-preview-dialog`: Figma aún no los cubre. Las pruebas del
+resultado del lote en su barra (DD-196) pasan de Grupos a Usuarios.
+
+**Descartado** · Esconder el lote tras una bandera para la fase siguiente: lo quitado vive en git (`git show
+71e84dfa:projects/supervisor/src/app/features/admin/groups/pages/groups-list-page.component.ts`), y una bandera deja
+código que no corre y que ninguna prueba mira.
+
 ## DD-213 · 2026-10-19 — Abrir una ficha desde su listado entra por la primera sección, y la cifra lleva a la de trabajo
 
 **Contexto** · Desde DD-122 §8, el clic en la fila y «Editar» abrían la ficha de agente en Grupos asignados
@@ -3230,6 +3258,8 @@ antes, los ocho.
 
 > **§1-§3 retirados por DD-170** (2026-10-05): el nombre va en la columna del índice, que ya se queda fija al bajar,
 > y la copia (`sc-nombre-fijo`) sobra. §4 sigue: borrar pide escribir el nombre, con su prueba.
+> **§4, enmendado por DD-215** (2026-10-19): en grupos y agentes, borrar es la confirmación simple del DS; en
+> usuarios sigue pidiendo escribir el nombre.
 
 **Contexto** · La segunda revisión con el equipo (2026-10-01) pidió el nombre del grupo fijo arriba al bajar. Con el
 título en la columna del contenido (DD-144), al bajar se iba con la sección: en Distribución y colas del grupo 11, la
