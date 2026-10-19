@@ -80,8 +80,10 @@ test('«Exportar» cuenta la selección o la búsqueda, y se apaga si no hay fil
   await page.getByPlaceholder('Buscar tipificaciones…').fill('zzzz');
   await acciones.click();
   const sinFilas = page.getByRole('menuitem', { name: /Exportar/ });
-  await expect(sinFilas.locator('a')).toHaveAttribute('title', 'No hay registros para exportar');
   await expect(sinFilas).toHaveAttribute('aria-disabled', 'true');
+  // El porqué, en el tooltip del Kit al pasar por encima, no en el `title` del navegador (DD-212).
+  await sinFilas.locator('a').hover();
+  await expect(page.locator('.p-tooltip')).toHaveText('No hay registros para exportar');
 });
 
 test('importar: la vista previa dice qué entra, cada error con su línea y las que ya existen', async ({ page }) => {

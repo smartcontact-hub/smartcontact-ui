@@ -45,12 +45,12 @@
 </sc-list-page>
 
 <ng-template #nameTpl let-t>
-  <span class="table__td-name sc-text-body-semibold" [title]="t.name">{{ t.name }}</span>
+  <span class="table__td-name sc-text-body-semibold" [pTooltip]="t.name" showOnEllipsis tooltipPosition="top">{{ t.name }}</span>
 </ng-template>
 
 <ng-template #descriptionTpl let-t>
   @if (t.description) {
-    <span class="table__cell table__cell--truncate sc-text-body-regular" [title]="t.description">{{ t.description }}</span>
+    <span class="table__cell table__cell--truncate sc-text-body-regular" [pTooltip]="t.description" showOnEllipsis tooltipPosition="top">{{ t.description }}</span>
   } @else {
     <span class="table__cell sc-text-body-regular"><sc-celda-vacia /></span>
   }

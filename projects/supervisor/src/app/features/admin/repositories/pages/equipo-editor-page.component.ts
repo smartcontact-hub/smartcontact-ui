@@ -25,6 +25,7 @@ import type { Agent } from '@features/admin/agents/data/agents-data';
 
 import { EquiposStore } from '../state/equipos.store';
 import { ResultadoAccionService } from '@core/services';
+import { TooltipModule } from 'primeng/tooltip';
 
 interface Borrador {
   readonly name: string;
@@ -44,6 +45,7 @@ const VACIO: Borrador = { name: '', description: '', agentIds: new Set() };
 @Component({
   selector: 'sc-equipo-editor-page',
   imports: [
+    TooltipModule,
     ButtonComponent,
     CheckboxComponent,
     DatatableComponent,
@@ -168,8 +170,8 @@ const VACIO: Borrador = { name: '', description: '', agentIds: new Set() };
       <span class="assign__name">
         <sc-presence-avatar [name]="row.name" [size]="24" />
         <span class="assign__identity">
-          <span class="assign__name-label sc-text-body-semibold" [title]="row.name">{{ row.name }}</span>
-          @if (row.email) { <span class="assign__email sc-text-caption-regular" [title]="row.email">{{ row.email }}</span> }
+          <span class="assign__name-label sc-text-body-semibold" [pTooltip]="row.name" showOnEllipsis tooltipPosition="top">{{ row.name }}</span>
+          @if (row.email) { <span class="assign__email sc-text-caption-regular" [pTooltip]="row.email" showOnEllipsis tooltipPosition="top">{{ row.email }}</span> }
         </span>
       </span>
     </ng-template>

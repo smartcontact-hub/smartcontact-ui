@@ -72,7 +72,7 @@
   @if (guardado() !== null) {
     @let texto = guardado() ? ('repositories.tipificaciones.preview.saved' | translate: { path: guardado() }) : ('repositories.tipificaciones.preview.saved_comment' | translate);
     <sc-icon name="check_circle" size="sm" [weight]="600" aria-hidden="true" />
-    <span [title]="texto">{{ texto }}</span>
+    <span [pTooltip]="texto" showOnEllipsis tooltipPosition="top">{{ texto }}</span>
   } @else {
     <span>{{ 'repositories.tipificaciones.preview.try' | translate }}</span>
   }

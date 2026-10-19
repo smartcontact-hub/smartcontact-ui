@@ -4,6 +4,7 @@ import { OverlayBadgeModule } from 'primeng/overlaybadge';
 
 import { PRESENCE_LABEL_KEYS, PRESENCE_TAGS, type PresenceStatus } from '@features/admin/agents/data/agents-data';
 import { IllustratedAvatarComponent } from '../illustrated-avatar/illustrated-avatar.component';
+import { TooltipModule } from 'primeng/tooltip';
 
 /**
  * El avatar de una persona con su estado como burbuja: el `p-overlay-badge` de primeng.dev/avatar («Badge»), sin valor
@@ -19,9 +20,9 @@ import { IllustratedAvatarComponent } from '../illustrated-avatar/illustrated-av
 @Component({
   selector: 'sc-presence-avatar',
   standalone: true,
-  imports: [OverlayBadgeModule, IllustratedAvatarComponent, TranslateModule],
+  imports: [TooltipModule, OverlayBadgeModule, IllustratedAvatarComponent, TranslateModule],
   template: `
-    <p-overlay-badge badgeSize="small" [style]="dotStyle()" class="presence-avatar" [attr.title]="label() ? (label()! | translate) : null">
+    <p-overlay-badge badgeSize="small" [style]="dotStyle()" class="presence-avatar" [pTooltip]="label() ? (label()! | translate) : ''" tooltipPosition="top">
       <sc-illustrated-avatar [name]="name()" [photo]="photo()" [size]="size()" [pool]="pool()" />
     </p-overlay-badge>
     @if (label(); as text) {

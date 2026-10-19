@@ -7,6 +7,7 @@ import type { ListBoxPassThrough } from 'primeng/types/listbox';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 
 import type { TipificacionOpcion } from '../../state/tipificaciones.core.mjs';
+import { TooltipModule } from 'primeng/tooltip';
 
 /** Lo que cabe en el comentario del agente: el `maxlength` del campo de su ventana de tipificar (réplica del agente). */
 const LARGO_DEL_COMENTARIO = 255;
@@ -23,7 +24,7 @@ const LARGO_DEL_COMENTARIO = 255;
  */
 @Component({
   selector: 'sc-tipificacion-vista',
-  imports: [FormsModule, IconComponent, ListboxModule, PopoverModule, TranslateModule],
+  imports: [TooltipModule, FormsModule, IconComponent, ListboxModule, PopoverModule, TranslateModule],
   templateUrl: './tipificacion-vista.component.html',
   styleUrl: './tipificacion-vista.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

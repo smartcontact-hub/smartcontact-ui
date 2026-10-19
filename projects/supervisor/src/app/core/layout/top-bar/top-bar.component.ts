@@ -15,6 +15,7 @@ import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScBreadcrumbComponent, ScKeyboardShortcutsService } from '@smartcontact-hub/components';
 
 import { IllustratedAvatarComponent } from '@shared/components';
+import { TooltipModule } from 'primeng/tooltip';
 
 /** Dónde lleva «Ayuda» del menú del avatar (2026-10-14). */
 const AYUDA_URL = 'https://supervisor.smart-contact.com/#/login';
@@ -31,6 +32,7 @@ const AYUDA_URL = 'https://supervisor.smart-contact.com/#/login';
 @Component({
   selector: 'sc-top-bar',
   imports: [
+    TooltipModule,
     IconComponent,
     IllustratedAvatarComponent,
     MenuModule,

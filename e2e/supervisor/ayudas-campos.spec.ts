@@ -48,7 +48,7 @@ test('prioridad se nombra por su etiqueta y dice que solo cuenta en las entrante
   const prioridad = page.getByRole('combobox', { name: 'Prioridad' });
   await expect(prioridad).toHaveCount(1);
   // Hasta DD-141 decía, con el manual de Voice, que contaba también en las salientes: la revisión de producto lo corrige.
-  await expect(prioridad).toHaveAccessibleDescription(/Solo para las llamadas entrantes\.$/);
+  await expect(prioridad).toHaveAccessibleDescription(/Solo para las conversaciones entrantes\.$/);
   await expect(prioridad).not.toHaveAccessibleDescription(/salientes/);
 });
 
