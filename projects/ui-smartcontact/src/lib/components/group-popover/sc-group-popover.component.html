@@ -17,6 +17,7 @@
     #trigger
     type="button"
     class="group-popover__trigger"
+    [class.group-popover__trigger--empty]="count() === 0"
     [attr.aria-label]="countAriaLabel() ?? ('sc.groupPopover.count' | translate: { count: count() })"
     [attr.aria-describedby]="count() > 0 ? namesId : null"
     (mouseenter)="onTriggerEnter($event)"
@@ -26,7 +27,13 @@
     (keydown)="onKeydown($event)"
     (click)="onClick()"
   >
-    {{ 'sc.groupPopover.countShort' | translate: { count: count() } }}
+    <!-- Ninguno: «—», como toda celda sin dato (DD-197). Sigue siendo el botón: en Grupos abre la asignación, y un
+         grupo vacío es justo al que hay que asignar. El lector oye su nombre («0 agentes · Asignar…»), no la raya. -->
+    @if (count() === 0) {
+      <span aria-hidden="true">—</span>
+    } @else {
+      {{ 'sc.groupPopover.countShort' | translate: { count: count() } }}
+    }
   </button>
 
   <!-- Los nombres, para el lector: los dice después de la cifra al enfocarla. Un texto `hidden` vale como descripción. -->

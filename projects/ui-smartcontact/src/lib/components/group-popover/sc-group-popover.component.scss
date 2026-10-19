@@ -68,6 +68,12 @@
   }
 }
 
+/* Ninguno: la raya en el gris suave de `__empty`, sin subrayado (una raya subrayada se lee como dos). Se pulsa igual. */
+.group-popover__trigger--empty {
+  color: var(--sc-text-subtle);
+  text-decoration-line: none;
+}
+
 /*
  * Panel body. The outer chrome (bg, border, radius, shadow, padding) is
  * provided by PrimeNG `<p-popover>` consuming `overlay.popover` tokens

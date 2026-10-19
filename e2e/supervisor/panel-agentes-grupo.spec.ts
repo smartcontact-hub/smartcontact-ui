@@ -60,6 +60,26 @@ test('guardar dice cuántos agentes cambian, y la cifra de la fila se pone al d�
   await expect(cifraDeAgentes(page, 'ACD Demo C2CB')).toHaveText(String(antes - 1));
 });
 
+test('sin agentes, la celda es «—» y sigue abriendo su asignación', async ({ page }) => {
+  // La raya de toda celda sin dato (DD-197), pero el mismo botón (DD-159): un grupo vacío es justo al que hay que asignar.
+  await goto(page, 'admin/grupos');
+  await abrirPanel(page, 'Grupo de prueba 2');
+  const asignadas = panel(page).locator('tbody').getByRole('checkbox', { name: /^Asignado —/, checked: true });
+  const total = await asignadas.count();
+  expect(total, 'el grupo arranca con agentes').toBeGreaterThan(0);
+  for (let quedan = total; quedan > 0; quedan--) {
+    await asignadas.first().click();
+    await expect(asignadas).toHaveCount(quedan - 1);
+  }
+  await panel(page).getByRole('button', { name: `Guardar (${total})` }).click();
+  await expect(panel(page)).toHaveCount(0);
+
+  await expect(cifraDeAgentes(page, 'Grupo de prueba 2')).toHaveText('—');
+  await expect(cifraDeAgentes(page, 'Grupo de prueba 2')).toHaveAccessibleName('0 agentes. Asignar agentes de Grupo de prueba 2');
+  await abrirPanel(page, 'Grupo de prueba 2');
+  await expect(page.getByText('Agentes: Grupo de prueba 2')).toBeVisible();
+});
+
 test('cerrar con cambios pregunta antes, con Cancelar y con Escape, y descartar no guarda', async ({ page }) => {
   await goto(page, 'admin/grupos');
   const antes = (await cifraDeAgentes(page, 'ACD Demo C2CB').innerText()).trim();

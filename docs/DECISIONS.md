@@ -77,7 +77,7 @@
 > | Elegir y ordenar columnas en un solo control nativo: el Listbox (casilla y arrastre) en el globo del icono; las cabeceras ya no se arrastran | DD-162 |
 > | La cifra principal del resumen, con el degradado del botón principal y el anillo en el color de su texto: una por ficha | DD-161 |
 > | Una tabla dentro de una sección llega al pie de la pantalla: tope medido desde donde empieza (`scLlegaAlPie`), con suelo | DD-160 |
-> | En el listado de Grupos, la cifra de agentes abre su asignación y sale la columna «Asignar»; en Agentes, la de grupos ya llevaba a su sección | DD-159 |
+> | En el listado de Grupos, la cifra de agentes abre su asignación y sale la columna «Asignar»; en Agentes, la de grupos ya llevaba a su sección · «Agentes» no va fija en «Columnas», y con 0 es «—» que abre el panel (2026-10-19) | DD-159 |
 > | El alta: ~~✓ solo en secciones con algo obligatorio~~ (✓ en toda sección que se deja completa desde DD-211 §6), el teléfono saliente como segunda puerta del grupo y «Atrás / Siguiente» como el Stepper vertical | DD-158 |
 > | Distribución y colas con el árbol del DS (canal = subsección, parte = slot), Chat en el orden de Teléfono y los mensajes de la cola plegados | DD-157 |
 > | El estado del agente en su columna de la tabla de agentes del grupo; cada columna medida, y el panel las suma | DD-156 |
@@ -2629,8 +2629,11 @@ ficha: ya lo hacía, porque abrir una fila de Agentes lleva a esa sección (DD-1
 1. **En Grupos, la cifra de agentes abre el panel rápido de ese grupo**, y la columna «Asignar agentes» desaparece.
    Al pasar por encima o con el foco, la cifra sigue enseñando quiénes son; al pulsarla, el globo se cierra y se abre
    el panel. Su nombre accesible dice las dos cosas: «12 agentes · Asignar agentes de ACD demo cuscare». La columna
-   «Agentes» pasa a fija en el selector, como lo era «Asignar»: es la tarea más frecuente del listado. Pulsarla no
-   abre la ficha (`stopRowClick`). Enmienda DD-121 §10 y DD-153 («Asignar» fija a la derecha).
+   «Agentes» pasa a fija en el selector, como lo era «Asignar»: es la tarea más frecuente del listado *(enmendado el
+   2026-10-19: deja de ser fija; se oculta y se mueve en «Columnas» como las demás, y solo Nombre va con candado. Con 0
+   agentes, la cifra es «—», la raya de toda celda sin dato (DD-197), y sigue abriendo el panel: `sc-group-popover` en
+   `count` pinta «—» con ninguno y conserva el botón y su nombre accesible)*.
+   Pulsarla no abre la ficha (`stopRowClick`). Enmienda DD-121 §10 y DD-153 («Asignar» fija a la derecha).
 2. **En Agentes no cambia nada**: la prueba nueva fija que la cifra de grupos lleva a «Grupos asignados».
 3. **DS: `sc-group-popover` gana `activated`**, la salida al pulsar la cifra (clic, Intro o Espacio). Sin nadie que
    la escuche, pulsar solo cierra el globo.

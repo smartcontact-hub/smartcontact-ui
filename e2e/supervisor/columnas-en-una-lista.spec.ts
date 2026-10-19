@@ -80,6 +80,17 @@ test('desmarcar una columna la oculta, y volver a marcarla la deja donde estaba'
   await expect.poll(() => cabeceras(page)).toEqual(antes);
 });
 
+test('en Grupos solo Nombre va fija: «Agentes» se desmarca y sale de la tabla, como las demás', async ({ page }) => {
+  // Desde DD-159 «Agentes» iba fija; deja de serlo el 2026-10-19 (su cifra sigue abriendo la asignación).
+  await goto(page, 'admin/grupos');
+  await boton(page).click();
+  await expect(casilla(page, 'Nombre')).toBeDisabled();
+  await expect(casilla(page, 'Agentes')).toBeEnabled();
+  await expect(filas(page).filter({ hasText: 'Agentes' }), 'se mueve, sin candado').not.toHaveClass(/column-toggle__row--locked/);
+  await casilla(page, 'Agentes').click();
+  await expect.poll(() => cabeceras(page)).not.toContain('Agentes');
+});
+
 test('arrastrar una fila mueve la columna en la tabla, y se queda al volver', async ({ page }) => {
   await goto(page, 'admin/agentes');
   const antes = await cabeceras(page);
