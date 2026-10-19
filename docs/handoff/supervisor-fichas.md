@@ -81,6 +81,9 @@ El de la ficha de agente con salientes en un desplegable (2026-10-15, DD-209, #4
   fila, 03 diálogo "Duplicar grupo", 04 la copia en edición con el toast `Grupo "{nombre}" creado`, 05 "¿Eliminar
   grupo?", 06 eliminado, 07 búsqueda sin resultados. Fuera la edición masiva (casillas, barra y editar en bloque), a otra
   fase; "Acciones" se queda, solo exporta. En «Cómo se comporta», las filas 10 y 11 son "Duplicar" y "Eliminar".
+- **Agentes, igual** (2026-10-19): el listado, sin columna de casillas ni `selectionMode`, en sus tres pantallas (Paso 01
+  de Alta `3070:26732`, Paso 01 de Edición `3111:13984` y E4 `3111:31167`). Las casillas de "Asignado" de la tabla de
+  grupos de la ficha se quedan: son la asignación, no una selección.
 - **Eliminar sin escribir el nombre** (DD-145 lo pedía): confirmdialog del DS (`common.delete_dialog.title_single` y
   `body_single`) en grupos (listado y ficha, sección 3, E5) y agentes (ficha, E3). Sale la ficha "Diálogo de eliminar"
   de «Fuera del DS» y el maestro de `sc-delete-entity-dialog` de `figma-pendiente` §53.
