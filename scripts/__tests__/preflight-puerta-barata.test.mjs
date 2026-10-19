@@ -89,6 +89,40 @@ test('sin memoria local (CI u otra máquina) la puerta se abre en vez de fallar'
 });
 
 /*
+ * LOS HAND-OFFS, EN LA MISMA PUERTA (2026-10-19): un tramo `## ✅` de más tumbó una cadena en `test:unit` a los
+ * ocho minutos. Se prueba sobre un repo de mentira con un `docs/handoff/` fabricado, y sin memoria, para que
+ * solo hable el hand-off.
+ */
+function repoConHandoff(tramos) {
+  const raiz = mkdtempSync(join(tmpdir(), 'sc-puerta-handoff-'));
+  mkdirSync(join(raiz, 'docs', 'handoff'), { recursive: true });
+  const cuerpo = Array.from({ length: tramos }, (_, i) => `## ✅ tramo ${i + 1}\n\n- hecho\n`).join('\n');
+  writeFileSync(join(raiz, 'docs', 'handoff', 'frente.md'), `# Frente — hand-off\n\n${cuerpo}`);
+  return raiz;
+}
+
+test('la puerta barata caza un hand-off con más tramos que el tope ANTES de arrancar la cadena', () => {
+  const raiz = repoConHandoff(7);
+  const sinMemoria = join(raiz, 'no-hay-memoria');
+  try {
+    const problemas = conMemoria(sinMemoria, () => puertaBarata(raiz));
+    assert.equal(problemas.length, 1, problemas.join('\n'));
+    assert.match(problemas[0], /docs\/handoff\/frente\.md tiene 7 tramos/);
+  } finally {
+    rmSync(raiz, { recursive: true, force: true });
+  }
+});
+
+test('con el hand-off en forma, la puerta se abre', () => {
+  const raiz = repoConHandoff(6);
+  try {
+    assert.deepEqual(conMemoria(join(raiz, 'no-hay-memoria'), () => puertaBarata(raiz)), []);
+  } finally {
+    rmSync(raiz, { recursive: true, force: true });
+  }
+});
+
+/*
  * EL AVISO DE MÁQUINA SATURADA (2026-09-29).
  *
  * Medido el 2026-09-28/29 en el Mac del mantenedor: carga de 205 a 330 durante horas, por procesos de
