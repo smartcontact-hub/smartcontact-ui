@@ -56,7 +56,7 @@ trampas propias): `git show 91c438c2:docs/handoff/supervisor-fichas.md`.
 
 ## ✅ 2026-10-19 · Grupos y Agentes, como en Figma: sin edición masiva, y borrar con la confirmación simple (DD-215)
 
-> **Sello:** rama `areses/prototipo-como-figma` sobre `main` `91c438c2`, un PR. Tras fundir, las congeladas 4058, 4062 y
+> **Sello:** rama `areses/prototipo-como-figma` sobre `main` HEAD `91c438c2`, un PR. Tras fundir, las congeladas 4058, 4062 y
 > 4064 avanzan a ese commit (`docs/PROTOTIPOS.md`).
 
 - **Listados de Grupos y Agentes**: sin casillas, ni barra de lote, ni «Editar» o «Eliminar» en bloque; lo de cada fila
