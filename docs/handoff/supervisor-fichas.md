@@ -64,21 +64,6 @@ su trampa del suelo de la tarjeta sube a «Trampas del frente». El de la ficha 
 - **Congeladas** 4058, 4062 y 4064: Rafa eligió llevarlas a todo lo de `main` (no solo este cambio). Rama y etiqueta
   avanzan al commit de `main` tras fundir; la fila de `docs/PROTOTIPOS.md` dice de qué commit venía. Cómo, en ese doc.
 
-## ✅ 2026-10-19 · El relleno de la tabla, el del Kit y el del DS de desarrollo (DD-213)
-
-> **Sello:** rama `areses/goofy-gauss-b54b6f` sobre `main` `6edc21e9`, un PR.
-
-- **Qué**: cabecera, celdas y pie de `sc-datatable`, en Default, sm y lg, leen `--sc-cmp-datatable-*` del export del
-  Kit: 10,5 × 14, sm 5,25 × 7, lg 14 × 17,5. Antes, el Aura 3 sin escalar: 8 × 14, 2 × 6 y 12 × 18. El texto no cambia
-  (body-2). Es la ficha 1 de `figma-pendiente` §54 (llega con #457), hecha en el prototipo.
-- **Medido** a 1440: cabecera y fila de texto de 37 a 42, como ui.smart-contact.com; fila con ⋮ de 44 a 49, con foto
-  de 49 a 54; las compactas, la de la ficha de grupo de 43 a 49,5 y la de la ficha de agente de 27 a 33.
-- **Pruebas**: `list-table-grammar` lee el relleno con `kitPx` y lo mira antes que el alto; contra el despliegue de
-  `main` falla con «8px 14px». En local, en verde sus 31 y las 59 que miden filas (esqueleto, paneles de agentes, panel
-  de mando, acciones fijas, revisión de tablas). La línea base de estilos de sc-docs solo mueve las bandas de cabecera.
-- **Pendiente**: cuando #457 funda, marcar la ficha 1 de §54 como hecha en el prototipo. Lo que el Kit dibuja distinto
-  de Aura en la tabla y no entró (el hueco de la celda, 7 frente a 8; el filtro): `node tools/aura-diff.mjs datatable`.
-
 ## ✅ 2026-10-18 y 19 · Grupos y agentes en Figma para desarrollo: listado, altas, ediciones y su hand-off
 
 > **Sello:** sin código. Fichero del Supervisor (`Hjyy41SYKqcRuIzCGggfYH`); en el repo, solo docs (ramas
@@ -100,18 +85,16 @@ su trampa del suelo de la tarjeta sube a «Trampas del frente». El de la ficha 
 - **Trampa**: el fichero de la copia del DS con la tabla en slots (`C5soC7CxcuKSIFPEDCd3gz`, sección `16862:6447`) se
   quedó con un placeholder del buscador anterior a `main`; lo que manda es el listado del Supervisor.
 
-## ✅ 2026-10-17 · Los campos y los canales de General, en las mismas columnas a cualquier ancho (DD-170 §6)
+## ✅ 2026-10-19 · El relleno de la tabla, el del Kit y el del DS de desarrollo (DD-213)
 
-> **Sello:** rama `arebury/fix-supervisor-select-alignment` sobre `main` `8d0d82c1`, un PR.
+> **Sello:** rama `areses/goofy-gauss-b54b6f` sobre `main` `6edc21e9`, un PR. Sale el tramo del 2026-10-17 (DD-170 §6)
+> por el tope de 6: `git show 6edc21e9:docs/handoff/supervisor-fichas.md`; su trampa sube a «Trampas del frente».
 
-- **Ficha de grupo**: `sc-group-identity-fields` en fila es un `.grid.grid--3` (fuera su `@container` de 720, que en la
-  ficha caía entre 1344 y 1404, de 1024 a 1134 y por debajo de 900); en el diálogo de duplicar, `apilada`.
-- **`_forms.scss`**: un solo paso a una columna por debajo de 720 para `.grid--2`, `.grid--3` y `.checkbox-grid--3`
-  (los canales del agente seguían en tres), y `.field--span-2` sin pista vacía en una columna (email 24,5 de más).
-- **Pruebas**: `columnasACadaAncho` (helpers) barre de 1024 a 1914 cada 10 y 700; la usan la de los canales del grupo
-  (antes solo 1440 y 1920, fuera del hueco) y una nueva del agente. Rojas contra `main`.
-- **Trampa**: dos rejillas que comparten columnas se pliegan con la MISMA regla (pieza contra ventana discrepan en algún
-  tramo, y dos anchos no lo ven). Barrido de 23 vistas de formulario, de 600 a 1920: 8 en producción, 0 con el cambio.
+- **Qué**: `sc-datatable` lee el relleno del Kit (10,5 × 14; sm 5,25 × 7; lg 14 × 17,5), no el de Aura 3 sin escalar
+  (8 × 14). A 1440: cabecera y fila de texto de 37 a 42, como ui.smart-contact.com; la fila con ⋮, de 44 a 49.
+- **Pruebas**: `list-table-grammar` lee el relleno con `kitPx` (contra `main`, rojo con «8px 14px»); 31 + 59 en verde.
+- **Pendiente**: marcar hecha la ficha 1 de `figma-pendiente` §54 cuando funda #457. Lo que el Kit dibuja distinto de
+  Aura en la tabla y no entró (hueco de celda, filtro): `node tools/aura-diff.mjs datatable`.
 
 ## ✅ 2026-10-16 · Revisión de producto: agendas en árbol, la ficha de agente, toasts y un solo Guardar en Contact Center (DD-211)
 
@@ -410,3 +393,5 @@ su trampa del suelo de la tarjeta sube a «Trampas del frente». El de la ficha 
   hasta que llega la nueva: una espera a algo que tienen las dos pasa en la vieja. Una página por prueba.
 - ⚠️ El lienzo de sc-docs es una fila flex: un componente que pide el 100% de su contenedor, suelto, mide 0; va en una
   `.col`. Y al medir, un host con `display: contents` (`sc-divider`) mide 0 siempre: mide su primer hijo.
+- ⚠️ Dos rejillas que comparten columnas se pliegan con la MISMA regla (pieza contra ventana discrepan en algún
+  tramo, y dos anchos no lo ven). Barrido de 23 vistas de formulario, de 600 a 1920: 8 en producción, 0 con el cambio.
