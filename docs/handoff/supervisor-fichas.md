@@ -48,8 +48,8 @@ e3a6c4b1:docs/handoff/supervisor-fichas.md`. El de lo que falta se dice cuando y
 trampas propias): `git show b23f6b5f:docs/handoff/supervisor-fichas.md`. El de fuera las notas de decisión (2026-10-13, DD-187
 §9, sin trampas propias), con los punteros a DD-183 y DD-184: `git show 8d0d82c1:docs/handoff/supervisor-fichas.md`.
 El de la revisión de las fichas a 1440 (2026-10-14, DD-204): `git show 62244684:docs/handoff/supervisor-fichas.md`;
-su trampa del suelo de la tarjeta sube a «Trampas del frente». El de la ficha de grupo del 2026-10-15 (DD-206, #416):
-`git show a3c0f25a:docs/handoff/supervisor-fichas.md`; sus dos trampas suben a «Trampas del frente». El de la ficha de
+su trampa del suelo de la tarjeta sube a «Trampas del frente». El de la ficha de grupo tras la revisión del 2026-10-15
+(DD-206, #416): `git show a3c0f25a:docs/handoff/supervisor-fichas.md`; sus dos trampas suben a «Trampas del frente». El de la ficha de
 agente del mismo día (DD-209, #425, sin trampas propias), en el mismo `a3c0f25a`.
 
 ## ✅ 2026-10-19 · Mapa de componentes de Grupos, la tabla del DS en un solo sitio y «Fuera del DS» con alternativas
@@ -74,6 +74,19 @@ agente del mismo día (DD-209, #425, sin trampas propias), en el mismo `a3c0f25a
   rehacer los ejemplos de DataTable con las piezas nuevas cuando se decidan A, B y C.
 - **Trampa**: pasar a HUG el ancho de un marco de documentación estira las variantes en FILL de los conjuntos que lleva
   dentro (cinco piezas de la tabla, de 1032 a 3332): cambia el maestro. Recoloca el conjunto ancho; no ensanches el marco.
+
+## ✅ 2026-10-19 · Grupos: «Agentes» sin fijar y «—» con 0 agentes; las tres congeladas, al día con `main`
+
+> **Sello:** rama `areses/grupos-agentes-column-unfixed-68c58a` sobre `main` `a3c0f25a`, un PR.
+
+- **Listado de grupos**: «Agentes» ya no va con candado en «Columnas» (se oculta y se mueve); solo Nombre. Enmienda DD-159.
+- **DS, `sc-group-popover`** en `count`: con ninguno pinta «—» en gris suave, sin subrayado, y sigue siendo el botón con su
+  nombre accesible («0 agentes. Asignar agentes de …»): en Grupos abre el panel. También alcanza a Servicios con 0.
+- **Agentes sin grupos**: ya salía «—» (`display="adaptive"`, DD-210), medido en `main` y en la congelada del 16/10.
+- **Pruebas**: `panel-agentes-grupo` (vacía un grupo, ve «—» y abre el panel) y `columnas-en-una-lista` (Agentes se
+  desmarca). Las dos, rojas sin el arreglo («0» y la casilla deshabilitada).
+- **Congeladas** 4058, 4062 y 4064: Rafa eligió llevarlas a todo lo de `main` (no solo este cambio). Rama y etiqueta
+  avanzan al commit de `main` tras fundir; la fila de `docs/PROTOTIPOS.md` dice de qué commit venía. Cómo, en ese doc.
 
 ## ✅ 2026-10-18 y 19 · Grupos y agentes en Figma para desarrollo: listado, altas, ediciones y su hand-off
 
@@ -250,9 +263,9 @@ agente del mismo día (DD-209, #425, sin trampas propias), en el mismo `a3c0f25a
   nube no se puede.
 
 **Trampas del frente:**
-- **`p-select` no acepta que le cambies el valor dentro de su propio `onChange`**: para devolverlo hace falta
-  `setTimeout(() => select.value.set(2))` (DD-206). Un `ng serve` que pilla `dist/` a medio construir se queda en
-  error aunque el build acabe: reinícialo (en sc-docs, `vite-error-overlay` tapaba la página y la prueba fallaba).
+- **`p-select` no acepta que le cambies el valor dentro de su propio `onChange`**: para devolverlo (Ring All a 2) hace
+  falta `setTimeout(() => select.value.set(2))`. Y un `ng serve` que pilla `dist/` a medio construir se queda en error
+  aunque el build acabe: reinícialo.
 - **`--table-card-tope: none` anula también el suelo** (`min(…, none)` no vale y cae en `auto`): quien ponga el tope
   en `none` debe poner `--table-card-suelo` (DD-204).
 - Los iconos añaden su glifo a `textContent`; el lector no lo oye. `toHaveText` debe distinguirlo.

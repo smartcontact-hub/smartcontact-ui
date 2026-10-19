@@ -36,6 +36,12 @@ La tabla queda como cambio sin guardar: entra en el siguiente PR.
 no da conflictos ni hay que mantenerla. Si algún día estorba, se borra y la etiqueta sigue ahí,
 que es el registro que de verdad importa.
 
+**Salvo que se pida actualizarla** (pasó el 2026-10-19 con 4058, 4062 y 4064, para que el ticket no
+cambie de enlace): con el cambio ya en `main`, la rama AVANZA a ese commit de `main` (el congelado
+anterior es su antepasado, así que no se reescribe nada) y la etiqueta se mueve con ella. La fila
+cambia la fecha y dice de qué commit venía. El hook de pre-push lo deja pasar sin la cadena, porque
+el commit ya está en `main`.
+
 `npm run proto:check` corre en `verify` y no deja que esta tabla mienta: cada fila necesita su
 etiqueta, y cada etiqueta `proto/*` su fila.
 
@@ -54,7 +60,7 @@ etiqueta, y cada etiqueta `proto/*` su fila.
 | Ticket | Fecha | App | Etiqueta | URL congelada | Qué cubre |
 | --- | --- | --- | --- | --- | --- |
 <!-- proto:freeze inserta aquí, más reciente primero -->
-| SISMAC-4058 | 2026-10-16 | supervisor | `proto/SISMAC-4058` | [proto-sismac-4058.sc-supervisor.pages.dev](https://proto-sismac-4058.sc-supervisor.pages.dev) | Grupos: alta y edición tras la revisión de producto del 2026-10-15 (DD-206). El mismo build trae agentes, tablas y Repositorios |
-| SISMAC-4062 | 2026-10-16 | supervisor | `proto/SISMAC-4062` | [proto-sismac-4062.sc-supervisor.pages.dev](https://proto-sismac-4062.sc-supervisor.pages.dev) | Agentes: alta y edición tras la revisión de producto del 2026-10-15 (DD-209). El mismo build trae grupos, tablas y Repositorios |
-| SISMAC-4064 | 2026-10-16 | supervisor | `proto/SISMAC-4064` | [proto-sismac-4064.sc-supervisor.pages.dev](https://proto-sismac-4064.sc-supervisor.pages.dev) | Repositorios y las tablas comunes tras la revisión de producto del 2026-10-15 (DD-210). El mismo build trae grupos y agentes |
+| SISMAC-4058 | 2026-10-19 | supervisor | `proto/SISMAC-4058` | [proto-sismac-4058.sc-supervisor.pages.dev](https://proto-sismac-4058.sc-supervisor.pages.dev) | Grupos: alta y edición tras la revisión de producto del 2026-10-15 (DD-206). El mismo build trae agentes, tablas y Repositorios. Actualizada el 2026-10-19 (antes `61c45d7f`, del 2026-10-16) con lo fundido hasta entonces: la revisión del 2026-10-16 (DD-211) y, en Grupos, «Agentes» sin fijar y «—» con 0 agentes |
+| SISMAC-4062 | 2026-10-19 | supervisor | `proto/SISMAC-4062` | [proto-sismac-4062.sc-supervisor.pages.dev](https://proto-sismac-4062.sc-supervisor.pages.dev) | Agentes: alta y edición tras la revisión de producto del 2026-10-15 (DD-209). El mismo build trae grupos, tablas y Repositorios. Actualizada el 2026-10-19 (antes `61c45d7f`, del 2026-10-16) con lo fundido hasta entonces: la revisión del 2026-10-16 (DD-211) y, en Grupos, «Agentes» sin fijar y «—» con 0 agentes |
+| SISMAC-4064 | 2026-10-19 | supervisor | `proto/SISMAC-4064` | [proto-sismac-4064.sc-supervisor.pages.dev](https://proto-sismac-4064.sc-supervisor.pages.dev) | Repositorios y las tablas comunes tras la revisión de producto del 2026-10-15 (DD-210). El mismo build trae grupos y agentes. Actualizada el 2026-10-19 (antes `61c45d7f`, del 2026-10-16) con lo fundido hasta entonces: la revisión del 2026-10-16 (DD-211) y, en Grupos, «Agentes» sin fijar y «—» con 0 agentes |
 

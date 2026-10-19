@@ -12,7 +12,8 @@ export interface GroupRef {
 }
 
 /**
- * Qué pinta la celda. `count` (por defecto): siempre la cifra, que enseña los nombres al pasar. `adaptive`: según
+ * Qué pinta la celda. `count` (por defecto): la cifra, que enseña los nombres al pasar, y «—» si no hay ninguno (sigue
+ * siendo el botón, con su nombre accesible). `adaptive`: según
  * cuántos haya (revisión de producto del 2026-10-15): ninguno, «—» en gris suave y «Sin grupos» para el lector; uno,
  * su nombre, con «…» y su globo si no cabe; dos o más, la cifra con su desplegable.
  */
