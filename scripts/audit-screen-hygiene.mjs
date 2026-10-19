@@ -58,10 +58,10 @@
  *    nombra al nativo. Un `radiogroup` tampoco: alrededor de radios nativos es lo correcto. Mira el Supervisor,
  *    cuscare-ds y la librería del DS (plantillas y `template:` en línea); no las réplicas (DD-35) ni sc-docs.
  *
- * 9. `title` NATIVO (DD-212), como TRINQUETE. Lo que sale al pasar el ratón va en el tooltip del Kit, el `pTooltip` de
- *    PrimeNG, no en el globo del navegador: `showOnEllipsis` si solo repite un texto cortado y `tooltipEvent="both"` si
- *    va en algo que se enfoca. La entrada `title` de un componente nuestro (`sc-dialog`) no cuenta. Mira el Supervisor y
- *    la librería del DS; lo que queda es de Monitor y Conversaciones.
+ * 9. `title` NATIVO (DD-212), sin trinquete: ninguno (desde el 2026-10-19, con Monitor y Conversaciones). Lo que sale al
+ *    pasar el ratón va en el tooltip del Kit, el `pTooltip` de PrimeNG, no en el globo del navegador: `showOnEllipsis` si
+ *    solo repite un texto cortado y `tooltipEvent="both"` si va en algo que se enfoca. La entrada `title` de un componente
+ *    nuestro (`sc-dialog`) no cuenta. Mira el Supervisor y la librería del DS.
  *
  * QUÉ HACER SI SE PONE ROJO:
  *   · «nuevo incumplimiento» → arréglalo (usa `<sc-icon>` en vez del emoji; añade
@@ -332,26 +332,6 @@ export function titlesNativos(texto, esHtml) {
 }
 
 /**
- * TRINQUETE de `title` nativos (fichero → nº), regla 9. Solo mengua. Administración, lo compartido y el DS ya no tienen
- * ninguno (2026-10-19): su texto va en el `pTooltip` de PrimeNG, el tooltip del Kit. Lo que queda es de Monitor y
- * Conversaciones, que no entraron en ese barrido.
- */
-export const TITLE_NATIVO_PENDIENTES = {
-  'projects/supervisor/src/app/features/dashboard/components/agents-table-widget/agents-table-widget.component.html': 1,
-  'projects/supervisor/src/app/features/dashboard/components/detail-drawer/detail-drawer.component.html': 2,
-  'projects/supervisor/src/app/features/dashboard/components/monitor-tabs/monitor-tabs.component.html': 1,
-  'projects/supervisor/src/app/features/dashboard/components/ranked-list-widget/ranked-list-widget.component.html': 1,
-  'projects/supervisor/src/app/features/dashboard/components/widget-card/widget-card.component.html': 3,
-  'projects/supervisor/src/app/features/memory/components/conversation-player-modal/conversation-player-modal.component.html': 1,
-  'projects/supervisor/src/app/features/memory/components/conversation-table/conversation-table.component.html': 1,
-  'projects/supervisor/src/app/features/memory/components/mock-sample-switcher/mock-sample-switcher.component.html': 1,
-  'projects/supervisor/src/app/features/memory/components/multi-recording-player/multi-recording-player.component.html': 1,
-  'projects/supervisor/src/app/features/memory/pages/categories/categories-page.component.html': 1,
-  'projects/supervisor/src/app/features/memory/pages/entities/entities-page.component.html': 1,
-  'projects/supervisor/src/app/features/memory/pages/rules/rules-page.component.html': 1,
-};
-
-/**
  * TRINQUETE de piezas a mano (fichero → nº de elementos). Solo mengua. Cada entrada dice por qué sigue: el número del
  * candidato en la sección 7 del catálogo, que la arregla, o lo que la deja como está.
  */
@@ -421,8 +401,7 @@ if (process.argv[1] && process.argv[1].endsWith('audit-screen-hygiene.mjs')) {
   const dePrimeras = [];
   const roles = {};
   const piezasDe = {};
-  const titles = {};
-  const titlesDe = {};
+  const titles = [];
   let desplegables = 0;
   for (const f of ficheros) {
     const src = readFileSync(f, 'utf8');
@@ -447,11 +426,7 @@ if (process.argv[1] && process.argv[1].endsWith('audit-screen-hygiene.mjs')) {
       }
     }
     if (/^projects\/(?:supervisor|ui-smartcontact\/src)\//.test(f) && !f.endsWith('.spec.ts')) {
-      const t = titlesNativos(src, f.endsWith('.html'));
-      if (t.length) {
-        titles[f] = t.length;
-        titlesDe[f] = t;
-      }
+      for (const linea of titlesNativos(src, f.endsWith('.html'))) titles.push(`${f}:${linea}`);
     }
     if (f.startsWith('projects/supervisor/') && f.endsWith('.html')) {
       for (const linea of guionesSueltos(src)) guiones.push(`${f}:${linea}`);
@@ -482,15 +457,10 @@ if (process.argv[1] && process.argv[1].endsWith('audit-screen-hygiene.mjs')) {
           `      → ${NATIVO_DEL_ROL[rol]}; su documentación entera con \`node tools/primeng-doc.mjs <x>\`.`,
         ]),
       ),
-    ...chequearTrinquete(
-      titles,
-      TITLE_NATIVO_PENDIENTES,
-      '`title` nativo(s)',
-      'pon el texto en `pTooltip` (el tooltip del Kit), con `showOnEllipsis` si solo repite un texto cortado y `tooltipEvent="both"` si va en algo que se enfoca.',
-    ),
-    ...Object.entries(titles)
-      .filter(([f, n]) => n > (TITLE_NATIVO_PENDIENTES[f] ?? 0))
-      .flatMap(([f]) => titlesDe[f].map((linea) => [`${f}:${linea}: \`title\` nativo: el navegador lo enseña con su globo, no con el del Kit.`, '      → `pTooltip`.'])),
+    ...titles.map((donde) => [
+      `${donde}: \`title\` nativo (DD-212): el navegador lo enseña con su globo, no con el del Kit.`,
+      '      → `pTooltip`, con `showOnEllipsis` si solo repite un texto cortado y `tooltipEvent="both"` si va en algo que se enfoca.',
+    ]),
     ...sinNombre.map((donde) => [
       `${donde}: desplegable sin nombre (DD-133). PrimeNG lo nombraría con la opción elegida.`,
       '      → `ariaLabelledBy` con el id del rótulo que tiene a la vista o, sin rótulo, `ariaLabel`. Un `<label for>` solo nombra un sc-multiselect.',
@@ -515,7 +485,7 @@ if (process.argv[1] && process.argv[1].endsWith('audit-screen-hygiene.mjs')) {
     `audit:screen-hygiene — ${ficheros.length} plantilla(s): ${totEmoji} emoji astral en ` +
       `${Object.keys(emojis).length} fichero(s), ${totImg} img/iframe sin dims en ${Object.keys(imgs).length} ` +
       `(trinquetes: emoji ${Object.keys(EMOJI_PENDIENTES).length}, img ${Object.keys(IMG_PENDIENTES).length}), ` +
-      `${sinNombre.length} de ${desplegables} desplegables sin nombre, ${guiones.length} guion(es) suelto(s), ${encima.length} ayuda(s) encima, ${dePrimeras.length} aviso(s) de primeras, ` +
+      `${sinNombre.length} de ${desplegables} desplegables sin nombre, ${guiones.length} guion(es) suelto(s), ${encima.length} ayuda(s) encima, ${dePrimeras.length} aviso(s) de primeras, ${titles.length} \`title\` nativo(s), ` +
       `${Object.values(roles).reduce((a, b) => a + b, 0)} pieza(s) a mano en ${Object.keys(roles).length} fichero(s), ` +
       `${Object.values(toasts).reduce((a, b) => a + b, 0)} toast(s) del sistema en ${Object.keys(toasts).length} fichero(s)\n`,
   );
@@ -524,7 +494,7 @@ if (process.argv[1] && process.argv[1].endsWith('audit-screen-hygiene.mjs')) {
     log(
       '✓ audit:screen-hygiene OK — sin emojis nuevos en la interfaz, ninguna imagen nueva sin reservar su hueco, ' +
         'cada desplegable con nombre, ningún toast nuevo fuera de los del sistema, ningún «—» suelto, ninguna ayuda encima de su control, ' +
-        'ningún obligatorio que acuse de primeras, ninguna pieza nueva hecha a mano que imite a un nativo y ningún `title` nativo nuevo.',
+        'ningún obligatorio que acuse de primeras, ninguna pieza nueva hecha a mano que imite a un nativo y ningún `title` nativo.',
     );
     process.exit(0);
   }

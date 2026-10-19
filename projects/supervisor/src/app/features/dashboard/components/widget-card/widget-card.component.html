@@ -9,9 +9,15 @@
       cdkDragHandle
     >
       <div class="widget__heading">
-        <h2 class="widget__title sc-text-body-semibold" [id]="titleId" [attr.title]="title()">{{ title() }}</h2>
+        <h2 class="widget__title sc-text-body-semibold" [id]="titleId" [pTooltip]="title()" showOnEllipsis tooltipPosition="top">{{ title() }}</h2>
         @if (entities().length) {
-          <span class="widget__entities sc-text-caption-regular" [attr.title]="allEntities()">
+          <!-- Con «y N más», el tooltip nombra a los que no se ven, siempre; si salen todos, solo si se cortan. -->
+          <span
+            class="widget__entities sc-text-caption-regular"
+            [pTooltip]="allEntities()"
+            [showOnEllipsis]="!moreEntities()"
+            tooltipPosition="top"
+          >
             @if (moreEntities()) {
               {{ 'dashboard.widget.entities_more' | translate: { names: firstEntities(), count: moreEntities() } }}
             } @else {
@@ -22,8 +28,8 @@
       </div>
       @if (alert(); as a) {
         <!-- La etiqueta del DS. Dos: la frase y la cifra sola. En una tarjeta estrecha se ve la cifra
-             y la frase queda para el lector de pantalla y al pasar el ratón (sc-tag lleva un solo texto). -->
-        <span class="widget__alert" role="status" [attr.title]="a.reasonKey | translate: a.params" animate.enter="widget__alert--in">
+             y la frase queda para el lector de pantalla y en el tooltip de la cifra (sc-tag lleva un solo texto). -->
+        <span class="widget__alert" role="status" animate.enter="widget__alert--in">
           <sc-tag
             class="widget__alert-long"
             rounded
@@ -35,6 +41,8 @@
             class="widget__alert-short"
             rounded
             aria-hidden="true"
+            [pTooltip]="a.reasonKey | translate: a.params"
+            tooltipPosition="top"
             [severity]="a.level === 'danger' ? 'danger' : 'warn'"
             [icon]="a.level === 'danger' ? 'error' : 'warning'"
             [value]="a.shortKey | translate: a.params"

@@ -1,6 +1,7 @@
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ChangeDetectionStrategy, Component, computed, HostListener, inject, signal } from '@angular/core';
 import { MenuModule } from 'primeng/menu';
+import { TooltipModule } from 'primeng/tooltip';
 import type { MenuItem } from 'primeng/api';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
@@ -27,7 +28,7 @@ import { ConversationsStore } from '../../state/conversations.store';
  */
 @Component({
   selector: 'sc-memory-mock-sample-switcher',
-  imports: [IconComponent, MenuModule, TranslateModule],
+  imports: [IconComponent, MenuModule, TooltipModule, TranslateModule],
   templateUrl: './mock-sample-switcher.component.html',
   styleUrl: './mock-sample-switcher.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

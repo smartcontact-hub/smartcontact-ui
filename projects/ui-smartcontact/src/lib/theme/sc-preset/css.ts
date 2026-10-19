@@ -347,8 +347,8 @@ sc-datatable.sc-datatable--overflow-left .sc-datatable__frozen-left-edge {
  * mide 21.5 de alto con el texto en una sola línea; Aura no dice nada y, en una caja
  * más estrecha que el texto, la etiqueta se partía en dos líneas y crecía. Medido en
  * Conversaciones a 1280: 31 de 68 etiquetas a dos líneas en celdas de 133px. Si no
- * cabe, recorta con puntos suspensivos; `sc-tag` repone el valor en `title` al pasar
- * el ratón solo si está recortado, y el texto entero sigue en el DOM para un lector.
+ * cabe, recorta con puntos suspensivos; `sc-tag` enseña el valor en el tooltip del Kit
+ * al pasar el ratón solo si está recortado, y el texto entero sigue en el DOM para un lector.
  * `clip` y no `hidden`: no convierte la etiqueta en contenedor de scroll, que le
  * cambiaría la línea base y la movería de su sitio en una fila de texto.
  */

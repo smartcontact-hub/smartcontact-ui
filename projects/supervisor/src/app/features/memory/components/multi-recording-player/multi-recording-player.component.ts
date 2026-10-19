@@ -4,6 +4,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, input, output } f
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { SliderModule } from 'primeng/slider';
+import { TooltipModule } from 'primeng/tooltip';
 
 
 import type { Recording } from '../../data/conversation.types';
@@ -34,7 +35,7 @@ import { formatTime, parseDurationSeconds } from '@shared/utils/audio';
  */
 @Component({
   selector: 'sc-memory-multi-recording-player',
-  imports: [ButtonComponent, FormsModule, IconComponent, SliderModule, TranslateModule],
+  imports: [ButtonComponent, FormsModule, IconComponent, SliderModule, TooltipModule, TranslateModule],
   templateUrl: './multi-recording-player.component.html',
   styleUrl: './multi-recording-player.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

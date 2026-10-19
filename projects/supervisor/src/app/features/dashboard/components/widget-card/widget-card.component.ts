@@ -2,6 +2,7 @@ import { booleanAttribute, ChangeDetectionStrategy, Component, computed, inject,
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CdkDragHandle } from '@angular/cdk/drag-drop';
 import { TieredMenuModule } from 'primeng/tieredmenu';
+import { TooltipModule } from 'primeng/tooltip';
 import type { MenuItem } from 'primeng/api';
 import { ScButtonComponent as ButtonComponent, ScPanelComponent as PanelComponent, type ScPanelSeverity } from '@smartcontact-hub/components';
 import { ScChipComponent as ChipComponent, ScTagComponent as TagComponent } from '@smartcontact-hub/components';
@@ -38,7 +39,7 @@ let widgetMenuIdCounter = 0;
  */
 @Component({
   selector: 'sc-dashboard-widget-card',
-  imports: [TranslateModule, TieredMenuModule, CdkDragHandle, ButtonComponent, ChipComponent, PanelComponent, TagComponent],
+  imports: [TooltipModule, TranslateModule, TieredMenuModule, CdkDragHandle, ButtonComponent, ChipComponent, PanelComponent, TagComponent],
   templateUrl: './widget-card.component.html',
   styleUrl: './widget-card.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

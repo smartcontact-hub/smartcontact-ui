@@ -1,9 +1,17 @@
 @if (variant() === 'label') {
     <span class="sc-tag__label" [style]="labelVars()">
-        <span class="sc-tag__text">{{ tagValue() }}</span>
+        <span class="sc-tag__text" [pTooltip]="tagValue() ?? ''" showOnEllipsis tooltipPosition="top">{{ tagValue() }}</span>
     </span>
 } @else {
-    <p-tag [value]="tagValue()" [severity]="tagSeverity()" [icon]="tagIcon()" [rounded]="rounded()" [pt]="tagPt()">
+    <p-tag
+        [value]="tagValue()"
+        [severity]="tagSeverity()"
+        [icon]="tagIcon()"
+        [rounded]="rounded()"
+        [pt]="tagPt()"
+        [pTooltip]="valorRecortado()"
+        tooltipPosition="top"
+    >
         <ng-content></ng-content>
     </p-tag>
 }

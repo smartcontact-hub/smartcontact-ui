@@ -11,6 +11,7 @@ import {
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { SliderModule } from 'primeng/slider';
+import { TooltipModule } from 'primeng/tooltip';
 import { SC_ICONS, ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScSearchComponent as SearchComponent } from '@smartcontact-hub/components';
 import { ScButtonComponent as ButtonComponent, ScTabsComponent as TabsComponent } from '@smartcontact-hub/components';
@@ -61,6 +62,7 @@ import { ResultadoAccionService } from '@core/services';
 @Component({
   selector: 'sc-memory-conversation-player-modal',
   imports: [
+    TooltipModule,
     TabsComponent,
     SearchComponent,
     ButtonComponent,
@@ -181,12 +183,13 @@ export class ConversationPlayerModalComponent {
     return !c.hasTranscription || c.hasAnalysis === true || this.requestingAnalysis();
   });
 
-  protected readonly analyzeTitleKey = computed(() => {
+  /** Por qué «Análisis» está apagado, para su tooltip. Encendido no lleva: repetiría el rótulo. */
+  protected readonly analyzeDisabledReason = computed<string | null>(() => {
     const c = this.conversation();
-    if (!c) return 'memory.player.actions.analyze';
+    if (!c) return null;
     if (!c.hasTranscription) return 'memory.player.actions.analyze_no_transcript';
     if (c.hasAnalysis) return 'memory.player.actions.analyze_done';
-    return 'memory.player.actions.analyze';
+    return null;
   });
 
   protected readonly summary = computed<string | null>(() => {

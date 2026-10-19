@@ -81,7 +81,7 @@
 </ng-template>
 
 <ng-template #scopeTpl let-rule>
-  <span class="rules-cell rules-cell--scope sc-text-body-regular" [attr.title]="scopeSummary(rule)">
+  <span class="rules-cell rules-cell--scope sc-text-body-regular" [pTooltip]="scopeSummary(rule)" showOnEllipsis tooltipPosition="top">
     {{ scopeSummary(rule) }}
   </span>
 </ng-template>
@@ -94,7 +94,8 @@
         severity="secondary"
         [icon]="transcriptionIcon"
         role="img"
-        [attr.title]="'memory.rules.chip.transcription' | translate"
+        [pTooltip]="'memory.rules.chip.transcription' | translate"
+        tooltipPosition="top"
         [attr.aria-label]="'memory.rules.chip.transcription' | translate"
       />
     }
@@ -103,7 +104,8 @@
         severity="secondary"
         [icon]="sparklesIcon"
         role="img"
-        [attr.title]="'memory.rules.chip.classification' | translate"
+        [pTooltip]="'memory.rules.chip.classification' | translate"
+        tooltipPosition="top"
         [attr.aria-label]="'memory.rules.chip.classification' | translate"
       />
     }

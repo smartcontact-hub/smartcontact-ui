@@ -60,7 +60,7 @@ El de la ficha de agente con salientes en un desplegable (2026-10-15, DD-209, #4
 - **Grupos** (DD-159): «Agentes» sin candado en «Columnas»; con 0, `sc-group-popover` en `count` pinta «—» y sigue
   siendo el botón que abre el panel (también Servicios con 0). Agentes sin grupos ya salía «—» (DD-210).
 - **Tooltip del Kit (DD-212)**: 39 `title` nativos pasan a `pTooltip`, los textos cortados con `showOnEllipsis`;
-  `audit:screen-hygiene` regla 9, con Monitor y Conversaciones en su trinquete. Queda `sc-tag` (recorta dentro del `p-tag`).
+  `audit:screen-hygiene` regla 9. Monitor, Conversaciones y `sc-tag`, el mismo día en otro PR: la regla 9, sin trinquete.
 - **Prioridad**: «Solo para las conversaciones entrantes.». **Duplicar sin Call Blending**, sin el teléfono saliente:
   anotado en `figma-pendiente` §50. Pruebas: `panel-agentes-grupo`, `columnas-en-una-lista`, `tooltips-del-kit`; rojas sin.
 - **Trampas**: `sc-docs-a11y` medía la ficha anterior con el nombre de la siguiente (ya espera). En el panel de navegador

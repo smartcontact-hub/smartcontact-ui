@@ -95,7 +95,7 @@
 | `sc-sticky-form-header` | CUSTOM | deprecated | — | 4 inputs | sc-button | ✓ | 2 |
 | `sc-subsection` | CUSTOM | experimental (sin maestro en el Kit) | — | 6 inputs | — | ✓ | 18 |
 | `sc-tabs` | STANDARD | ready | primeng/tabs | 1 inputs | — | ✓ | 2 |
-| `sc-tag` | EXTENDED | ready | primeng/tag | 8 inputs | — | ✓ | 33 |
+| `sc-tag` | EXTENDED | ready | primeng/tag, primeng/tooltip | 8 inputs | — | ✓ | 33 |
 | `sc-textarea` | EXTENDED | ready | primeng/textarea | 18 inputs | sc-button sc-field-msg | ✓ | 8 |
 | `sc-toast` | EXTENDED | ready | primeng/toast | 6 inputs | — | ✓ | — |
 | `sc-toggleswitch` | EXTENDED | ready | primeng/toggleswitch | 8 inputs | — | ✓ | 43 |

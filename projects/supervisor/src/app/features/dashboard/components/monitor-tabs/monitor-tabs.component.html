@@ -15,7 +15,8 @@
         <p-tab
           cdkDrag
           [value]="m.id"
-          [attr.title]="'dashboard.tabs.hint' | translate"
+          [pTooltip]="'dashboard.tabs.hint' | translate"
+          tooltipPosition="top"
           (dblclick)="m.id === activeId() && openRename($event)"
           (keydown)="onTabKeydown($event, m.id)"
         >

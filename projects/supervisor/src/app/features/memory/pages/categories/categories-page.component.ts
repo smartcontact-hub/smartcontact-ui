@@ -12,6 +12,7 @@ import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 import { ScTagComponent as TagComponent } from '@smartcontact-hub/components';
 import type { MenuItem } from 'primeng/api';
+import { TooltipModule } from 'primeng/tooltip';
 
 import {
   type ScColumnCellContext,
@@ -42,6 +43,7 @@ import { RulesStore } from '../../state/rules.store';
 @Component({
   selector: 'sc-memory-categories-page',
   imports: [
+    TooltipModule,
     TagComponent,
     ButtonComponent,
     CategoryFormModalComponent,
