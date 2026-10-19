@@ -491,8 +491,8 @@ export const SIZING = [
   { label: 'treetable.footerCell.paddingX', group: 'CC', exp: 'treetable.footer.cell.padding.x', read: { path: 'components.treetable.footerCell.padding', index: 1 } },
   { label: 'treetable.footer.paddingY', group: 'CC', exp: 'treetable.footer.padding.y', read: { path: 'components.treetable.footer.padding', index: 0 } },
   { label: 'treetable.footer.paddingX', group: 'CC', exp: 'treetable.footer.padding.x', read: { path: 'components.treetable.footer.padding', index: 1 } },
-  // ── datatable (aura/component/common) — DD-213: el relleno de la tabla sigue al Kit y al DS de desarrollo ──
-  //    Hasta DD-213 la tabla era Aura 3 pura (8 × 14; sm 2 × 6; lg 12 × 18). El Kit y el DS de desarrollo pintan
+  // ── datatable (aura/component/common) — DD-214: el relleno de la tabla sigue al Kit y al DS de desarrollo ──
+  //    Hasta DD-214 la tabla era Aura 3 pura (8 × 14; sm 2 × 6; lg 12 × 18). El Kit y el DS de desarrollo pintan
   //    10,5 × 14 (sm 5,25 × 7; lg 14 × 17,5), atados a la escala, y la fila de texto mide 42 en los dos.
   { label: 'datatable.header.paddingY', group: 'CC', exp: 'datatable.header.padding.y', read: { path: 'components.datatable.header.padding', index: 0 } },
   { label: 'datatable.header.paddingX', group: 'CC', exp: 'datatable.header.padding.x', read: { path: 'components.datatable.header.padding', index: 1 } },

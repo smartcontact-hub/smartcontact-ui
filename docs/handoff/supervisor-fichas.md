@@ -99,7 +99,7 @@ El de la ficha de agente con salientes en un desplegable (2026-10-15, DD-209, #4
 - **Trampa**: el fichero de la copia del DS con la tabla en slots (`C5soC7CxcuKSIFPEDCd3gz`, sección `16862:6447`) se
   quedó con un placeholder del buscador anterior a `main`; lo que manda es el listado del Supervisor.
 
-## ✅ 2026-10-19 · El relleno de la tabla, el del Kit y el del DS de desarrollo (DD-213)
+## ✅ 2026-10-19 · El relleno de la tabla, el del Kit y el del DS de desarrollo (DD-214)
 
 > **Sello:** rama `areses/goofy-gauss-b54b6f` sobre `main` `6edc21e9`, un PR. Sale el tramo del 2026-10-17 (DD-170 §6)
 > por el tope de 6: `git show 6edc21e9:docs/handoff/supervisor-fichas.md`; su trampa sube a «Trampas del frente».

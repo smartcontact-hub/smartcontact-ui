@@ -37,7 +37,7 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  * sigue imponiendo es COMPORTAMIENTO: reparto fijo, casilla de 40, sin banda de caption,
  * cursor en la fila que abre. Eso no se ha movido y aquí sigue fijado igual.
  *
- * ⚠️ 2026-10-19 (DD-213): el RELLENO deja de ser el de Aura 3 (8 × 14) y pasa al del Kit y del
+ * ⚠️ 2026-10-19 (DD-214): el RELLENO deja de ser el de Aura 3 (8 × 14) y pasa al del Kit y del
  * DS de desarrollo (10,5 × 14; sm 5,25 × 7). Se lee del export con `kitPx`, no de un número
  * escrito: si el preset vuelve a Aura, o una capa lo pisa, la celda mide 8 y esto se pone rojo.
  */
@@ -76,7 +76,7 @@ test.beforeEach(async ({ page }) => {
  *   41.5 → 44  2026-09-14, DD-91: los controles leen el interlineado de la rampa (18 en sm, atado
  *              en Figma) y el kebab sube a 27. 27 + 8×2 + 1 = 44, también en labels: el kebab
  *              vuelve a ser lo más alto de su fila. Con avatar sigue en 54.
- *   44 → 49  2026-10-19, DD-213: la celda pasa de 8 a 10,5 de relleno (el del Kit y el del DS de
+ *   44 → 49  2026-10-19, DD-214: la celda pasa de 8 a 10,5 de relleno (el del Kit y el del DS de
  *              desarrollo). 27 + 10,5×2 + 1 = 49; con foto, 32 + 21 + 1 = 54. Una fila de solo texto
  *              mide 20 + 21 + 1 = 42, como la cabecera.
  */
@@ -85,11 +85,11 @@ const PAGINAS = [
   { ruta: 'admin/plantillas', nombre: 'plantillas', altoFila: 49 },
   /* 44 hasta el 2026-09-14 (la celda de nombre gana el avatar de sus hermanas) y 54 hasta el 2026-10-13: el avatar se
    * apoyaba en la línea base del texto y dejaba 5 px muertos debajo. Sin ellos, 32 + 8×2 + 1, lo mismo que su esqueleto
-   * de carga (`esqueleto-carga.spec.ts`). 49 → 54 con DD-213: 32 + 10,5×2 + 1. */
+   * de carga (`esqueleto-carga.spec.ts`). 49 → 54 con DD-214: 32 + 10,5×2 + 1. */
   { ruta: 'admin/usuarios', nombre: 'usuarios', altoFila: 54 },
   { ruta: 'admin/agentes', nombre: 'agentes', altoFila: 54 },
   // 54 hasta el 2026-09-23: los grupos dejaron de llevar avatar (cara = persona) y manda el kebab, 27 + 8×2 + 1;
-  // 27 + 10,5×2 + 1 desde DD-213.
+  // 27 + 10,5×2 + 1 desde DD-214.
   { ruta: 'admin/grupos', nombre: 'grupos', altoFila: 49 },
   // El trío de memory, migrado el 2026-07-19. Entraron aquí en el MISMO
   // commit que la migración, y eso no es formalismo: sin esta línea el spec
@@ -139,11 +139,11 @@ const ABREN_MODAL = new Set([
 ]);
 
 /** Relleno de una pieza de la tabla tal como lo da `getComputedStyle(el).padding`: alto y ancho,
- * cada uno de su fila de `scripts/sizing-map.mjs` (DD-213). */
+ * cada uno de su fila de `scripts/sizing-map.mjs` (DD-214). */
 const relleno = (pieza: string) => `${kitPx(`datatable.${pieza}.paddingY`)} ${kitPx(`datatable.${pieza}.paddingX`)}`;
 
 /** El contrato. Medido sobre la tabla original antes de migrarla (B4), vuelto a medir
- * el 2026-09-13 con Aura como base, y el 2026-10-19 con el relleno del Kit (DD-213). */
+ * el 2026-09-13 con Aura como base, y el 2026-10-19 con el relleno del Kit (DD-214). */
 const GRAMATICA = {
   paddingCelda: relleno('bodyCell'), // 10.5px 14px; Aura 3 pedía 8px 14px
   /* La celda ES un text style desde 2026-09-12. Se fija aquí porque era
@@ -273,7 +273,7 @@ const PAGINAS_EN_FORMULARIO = [
     // columna por canal, Salientes y Habilitado; ya no se rellena con un desplegable de añadir), y con ella
     // la densidad compacta (`sm`) de su gemela de abajo: 2px de relleno en celda y cabecera. Mide menos que
     // ella porque el nombre de un grupo va en una línea y el de un agente lleva su email debajo. 31 → 27 con
-    // DD-204: sale la columna Nivel, y con ella su campo numérico, que era lo más alto de la fila. 27 → 33 con DD-213:
+    // DD-204: sale la columna Nivel, y con ella su campo numérico, que era lo más alto de la fila. 27 → 33 con DD-214:
     // el relleno `sm` pasa de 2 × 6 (Aura 3) a 5,25 × 7 (el Kit); medido 33,2.
     altoFila: 33,
     paddingCelda: relleno('bodyCell.sm'),
@@ -299,7 +299,7 @@ const PAGINAS_EN_FORMULARIO = [
      * de arriba deja de serlo — este ya no lleva avatar de 24, solo casillas. Con el
      * relleno `sm` también baja el `padding-top` de la celda y de la cabecera, de
      * los 8px de la gramática a 2px: la tipografía (tamaño, peso, color) sigue
-     * la misma. 43 → 50 con DD-213: el relleno `sm` del Kit, 5,25 × 7, en vez del
+     * la misma. 43 → 50 con DD-214: el relleno `sm` del Kit, 5,25 × 7, en vez del
      * 2 × 6 de Aura 3 (medido 49,5). */
     altoFila: 50,
     paddingCelda: relleno('bodyCell.sm'),

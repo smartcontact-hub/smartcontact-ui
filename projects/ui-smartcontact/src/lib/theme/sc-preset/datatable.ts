@@ -3,7 +3,7 @@ import type { DataTableDesignTokens } from '@primeuix/themes/types/datatable';
 /*
  * La tabla es Aura (DD-97 y el comentario de `index.ts`) salvo el RELLENO y UNA clave oscura.
  *
- * El relleno (DD-213): cabecera, celdas y pie, en Default, sm y lg, leen los `--sc-cmp-datatable-*`
+ * El relleno (DD-214): cabecera, celdas y pie, en Default, sm y lg, leen los `--sc-cmp-datatable-*`
  * que el generador saca del Kit (`scripts/sizing-map.mjs`), atados a la escala: 10,5 × 14, sm
  * 5,25 × 7 y lg 14 × 17,5. Es lo que pintan el Kit y el DS de desarrollo; Aura 3 pide 8 × 14,
  * 2 × 6 y 12 × 18. Con el texto body-2 de `css.ts` (14/20), la fila de texto mide 42.
