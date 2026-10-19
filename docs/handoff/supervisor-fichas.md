@@ -64,6 +64,21 @@ su trampa del suelo de la tarjeta sube a «Trampas del frente». El de la ficha 
 - **Congeladas** 4058, 4062 y 4064: Rafa eligió llevarlas a todo lo de `main` (no solo este cambio). Rama y etiqueta
   avanzan al commit de `main` tras fundir; la fila de `docs/PROTOTIPOS.md` dice de qué commit venía. Cómo, en ese doc.
 
+## ✅ 2026-10-19 · El relleno de la tabla, el del Kit y el del DS de desarrollo (DD-213)
+
+> **Sello:** rama `areses/goofy-gauss-b54b6f` sobre `main` `6edc21e9`, un PR.
+
+- **Qué**: cabecera, celdas y pie de `sc-datatable`, en Default, sm y lg, leen `--sc-cmp-datatable-*` del export del
+  Kit: 10,5 × 14, sm 5,25 × 7, lg 14 × 17,5. Antes, el Aura 3 sin escalar: 8 × 14, 2 × 6 y 12 × 18. El texto no cambia
+  (body-2). Es la ficha 1 de `figma-pendiente` §54 (llega con #457), hecha en el prototipo.
+- **Medido** a 1440: cabecera y fila de texto de 37 a 42, como ui.smart-contact.com; fila con ⋮ de 44 a 49, con foto
+  de 49 a 54; las compactas, la de la ficha de grupo de 43 a 49,5 y la de la ficha de agente de 27 a 33.
+- **Pruebas**: `list-table-grammar` lee el relleno con `kitPx` y lo mira antes que el alto; contra el despliegue de
+  `main` falla con «8px 14px». En local, en verde sus 31 y las 59 que miden filas (esqueleto, paneles de agentes, panel
+  de mando, acciones fijas, revisión de tablas). La línea base de estilos de sc-docs solo mueve las bandas de cabecera.
+- **Pendiente**: cuando #457 funda, marcar la ficha 1 de §54 como hecha en el prototipo. Lo que el Kit dibuja distinto
+  de Aura en la tabla y no entró (el hueco de la celda, 7 frente a 8; el filtro): `node tools/aura-diff.mjs datatable`.
+
 ## ✅ 2026-10-18 y 19 · Grupos y agentes en Figma para desarrollo: listado, altas, ediciones y su hand-off
 
 > **Sello:** sin código. Fichero del Supervisor (`Hjyy41SYKqcRuIzCGggfYH`); en el repo, solo docs (ramas
