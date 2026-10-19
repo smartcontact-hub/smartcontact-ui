@@ -53,14 +53,14 @@ su trampa del suelo de la tarjeta sube a «Trampas del frente».
 ## ✅ 2026-10-18 y 19 · Grupos y agentes en Figma para desarrollo: listado, altas, ediciones y su hand-off
 
 > **Sello:** sin código. Fichero del Supervisor (`Hjyy41SYKqcRuIzCGggfYH`); en el repo, solo docs (ramas
-> `arebury/figma-fichas-orden` sobre `main` `33dd2c90` y `arebury/figma-fichas-numeros` sobre `bdd362dc`).
+> `arebury/figma-fichas-orden` sobre `main` `33dd2c90` y `arebury/figma-fichas-numeros` sobre `3f225663`).
 
 - **Dónde está** (2026-10-19): cada página abre con un índice que enlaza sus secciones, a 1920. «Grupos»: índice
   `3124:47747`, «1. Listado de grupos» `3118:16995` (la tabla y sus estados, una vez), «2. Alta de grupo» `3010:6411`,
   «3. Edición de grupo» `3055:11053`. «Agentes»: índice `3124:47856`, «1. Alta de agente» `3070:26714`, «2. Edición de
-  agente» `3110:31067`. «Fuera del DS» (`3034:114`): lo que la app pinta y el DS no cubre. «Hand-off: Grupos y agentes»
-  (`2997:47`): qué cambia (DD-211), lo contratado, cómo leer y reglas comunes; a su lado, «Mapa de componentes»
-  (`3149:191`): los 22 de ui.smart-contact.com (14 PrimeNG tal cual, 5 extendidos, 3 propios) y lo que no tiene allí.
+  agente» `3110:31067`. «Fuera del DS» (`3034:114`): diez fichas, dibujo frente a app, de lo que se construye distinto.
+  «Hand-off: Grupos y agentes» (`2997:47`): qué cambia (DD-211), lo contratado, cómo leer y reglas comunes; a su lado,
+  «Mapa de componentes» (`3149:191`): los 22 de ui.smart-contact.com (14 tal cual, 5 extendidos, 3 propios) y lo que falta.
 - **Lo que se fue**: las secciones a 1440 (`2934:580`, `2970:4752`); las pantallas sueltas, a Playground (`3124:39080`).
 - **Cómo está hecho**: instancias y variables del DS, medidas de sc-supervisor.pages.dev a 1920. Cada pantalla, una nota
   (Dev Mode) con las filas que leer; bajo cada flujo, la hoja «Cómo se comporta» numera cada pieza una vez sin repetir
