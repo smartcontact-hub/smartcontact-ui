@@ -101,7 +101,7 @@ export const USAGE_SCREENS: readonly UsageScreen[] = [
     id: 'admin-agentes',
     route: 'admin/agentes',
     label: 'Agentes · listado',
-    states: [{ name: 'seleccion', action: selectFirstRow }], // → sc-bulk-edit-menu / sc-group-popover
+    // Sin estado «seleccion»: el listado ya no tiene casillas ni lote (DD-215).
   },
   {
     id: 'admin-labels',

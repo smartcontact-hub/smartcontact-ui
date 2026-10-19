@@ -66,9 +66,9 @@ for (const oscuro of [false, true]) {
     const celda = menu.locator('xpath=ancestor::td');
     await expect(celda).toHaveCSS('position', 'sticky');
     await expect(celda).not.toHaveCSS('box-shadow', 'none');
-    for (const estado of ['normal', 'hover', 'seleccionada']) {
+    // Sin «seleccionada»: Grupos ya no tiene casillas (DD-215).
+    for (const estado of ['normal', 'hover']) {
       if (estado === 'hover') await fila.hover();
-      if (estado === 'seleccionada') await fila.locator('p-table-checkbox').click();
       const fondos = await celda.evaluate(el => {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d')!;
