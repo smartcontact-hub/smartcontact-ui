@@ -42,7 +42,14 @@ test('accesibilidad: ninguna story de sc-docs suma un fallo de axe que no estuvi
   let revisadas = 0;
 
   for (const { path: pagina } of SC_DEMO_COMPONENT_PAGES) {
+    // Cambiar de ficha solo cambia el `#`: el documento es el mismo y los lienzos de la ficha ANTERIOR siguen ahí un
+    // momento. Sin esperar a que se vayan, el `waitFor` de abajo los encontraba y axe medía la ficha anterior con el
+    // nombre de la nueva (CI del 2026-10-19: los cuatro fallos de ProgressBar, apuntados a ProgressSpinner).
+    await page.evaluate(() =>
+      document.querySelectorAll('section.sb-host__story').forEach((s) => s.setAttribute('data-a11y-anterior', '')),
+    );
     await page.goto(`/#/components/${pagina}`);
+    await page.locator('[data-a11y-anterior]').first().waitFor({ state: 'detached', timeout: 30_000 });
     // Una story con su lienzo: las stories llegan juntas (`stories()` es un computed de todas las plantillas). No se
     // espera a la tabla de API: una ficha sin propiedades (confirmdialog) no la pinta.
     await page.locator('section.sb-host__story[id^="historia-"] .sb-canvas__stage').first().waitFor({ timeout: 30_000 });
