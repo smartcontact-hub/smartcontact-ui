@@ -37,8 +37,8 @@ test('usuarios · el kebab abre el menú compartido y un solo clic aplica', asyn
 
   // Un solo clic: si el modelo se recreara por ciclo de CD, aquí harían falta dos.
   await items.filter({ hasText: /editar/i }).click();
-  // «Editar» abre la ficha en su sección de trabajo (DD-122).
-  await expect(page).toHaveURL(/\/admin\/usuarios\/editar\/\d+\?seccion=acceso$/);
+  // «Editar» abre la ficha por su primera sección, sin `?seccion=` (DD-213).
+  await expect(page).toHaveURL(/\/admin\/usuarios\/editar\/\d+$/);
 });
 
 test('usuarios · el click derecho abre el MISMO menú que el kebab', async ({ page }) => {

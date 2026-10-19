@@ -444,8 +444,8 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
   /**
    * EL ÍNDICE DE LA FICHA (DD-122): cuatro secciones, como la ficha de grupo (revisión de agentes del 2026-10-09):
    * quién es y por dónde atiende (General), qué puede hacer (Configuración), qué se le asigna (Recursos) y dónde atiende
-   * (Grupos). Hasta ese día eran cinco: Identidad, Grupos, Permisos, Recursos y Avanzado. El listado sigue enlazando
-   * directo a Grupos (`?seccion=grupos`), que es donde se trabaja.
+   * (Grupos). Hasta ese día eran cinco: Identidad, Grupos, Permisos, Recursos y Avanzado. Desde el listado se entra
+   * por General; a Grupos (`?seccion=grupos`) lleva la cifra de grupos (DD-213).
    */
   protected readonly navSections = computed<readonly FormNavSection[]>(() =>
     [

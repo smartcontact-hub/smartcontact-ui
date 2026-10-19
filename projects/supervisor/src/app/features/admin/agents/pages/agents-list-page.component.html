@@ -151,8 +151,16 @@
   }
 </ng-template>
 
+<!-- Con varios grupos, la cifra lleva a «Grupos asignados» de la ficha (DD-159). La fila entra por General (DD-213),
+     así que el clic de la cifra no sube hasta ella. Con uno o ninguno no hay cifra: la celda es texto y abre la fila. -->
 <ng-template #groupsTpl let-agent>
-  <sc-group-popover display="adaptive" [groups]="groupsForAgent(agent.id)" />
+  @let groups = groupsForAgent(agent.id);
+  <sc-group-popover
+    display="adaptive"
+    [groups]="groups"
+    (activated)="openGroups(agent)"
+    (click)="groups.length > 1 ? $event.stopPropagation() : null"
+  />
 </ng-template>
 
 <!-- Los equipos, por su nombre: se buscan con el buscador de la lista. -->

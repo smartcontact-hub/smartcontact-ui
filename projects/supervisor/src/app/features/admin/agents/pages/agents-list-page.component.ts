@@ -359,9 +359,14 @@ export class AgentsListPageComponent {
     void this.router.navigateByUrl('/admin/agentes/crear');
   }
 
-  /** Abrir la ficha lleva a su sección de trabajo (`?seccion=grupos`): la ficha, sin parámetro, abre por
-   *  General, la primera de su índice (DD-122). */
+  /** Abrir la ficha, con la fila o con «Editar», entra por General, la primera de su índice (DD-213). Hasta
+   *  entonces entraba por Grupos asignados (DD-122). */
   protected onRowOpen(agent: Agent): void {
+    void this.router.navigate(['/admin/agentes/editar', agent.id]);
+  }
+
+  /** La cifra de grupos lleva a donde se cambian, «Grupos asignados» de su ficha (DD-159, DD-213). */
+  protected openGroups(agent: Agent): void {
     void this.router.navigate(['/admin/agentes/editar', agent.id], { queryParams: { seccion: 'grupos' } });
   }
 
