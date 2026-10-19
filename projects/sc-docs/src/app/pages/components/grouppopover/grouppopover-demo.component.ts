@@ -60,7 +60,7 @@ export class GroupPopoverDemoComponent {
     tag: 'sc-group-popover',
     title: 'GroupPopover',
     description:
-      'Celda inline con conteo de grupos; lista flotante en hover/focus con TODOS los nombres (pasada media pantalla, hace scroll dentro). Los datos van en `[groups]`; `countAriaLabel` cambia lo que la cifra dice al lector cuando no cuenta grupos («12 agentes»), y `activated` avisa al pulsarla. Con `display="adaptive"`, la cifra solo sale con varios: ninguno es «—» y uno es su nombre. Pasa el ratón por encima o enfoca la celda.',
+      'Celda inline con conteo de grupos; lista flotante en hover/focus con TODOS los nombres (pasada media pantalla, hace scroll dentro). Los datos van en `[groups]`; `countAriaLabel` cambia lo que la cifra dice al lector cuando no cuenta grupos («12 agentes»), y `activated` avisa al pulsarla. Sin ninguno, la cifra es «—» y sigue siendo el botón. Con `display="adaptive"`, la cifra solo sale con varios: ninguno es «—» y uno es su nombre. Pasa el ratón por encima o enfoca la celda.',
     argTypes: [],
     defaultArgs: {},
   };

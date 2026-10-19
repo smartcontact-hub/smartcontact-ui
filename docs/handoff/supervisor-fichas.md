@@ -48,7 +48,21 @@ e3a6c4b1:docs/handoff/supervisor-fichas.md`. El de lo que falta se dice cuando y
 trampas propias): `git show b23f6b5f:docs/handoff/supervisor-fichas.md`. El de fuera las notas de decisión (2026-10-13, DD-187
 §9, sin trampas propias), con los punteros a DD-183 y DD-184: `git show 8d0d82c1:docs/handoff/supervisor-fichas.md`.
 El de la revisión de las fichas a 1440 (2026-10-14, DD-204): `git show 62244684:docs/handoff/supervisor-fichas.md`;
-su trampa del suelo de la tarjeta sube a «Trampas del frente».
+su trampa del suelo de la tarjeta sube a «Trampas del frente». El de la ficha de grupo tras la revisión del 2026-10-15
+(DD-206, #416): `git show a3c0f25a:docs/handoff/supervisor-fichas.md`; sus dos trampas suben a «Trampas del frente».
+
+## ✅ 2026-10-19 · Grupos: «Agentes» sin fijar y «—» con 0 agentes; las tres congeladas, al día con `main`
+
+> **Sello:** rama `areses/grupos-agentes-column-unfixed-68c58a` sobre `main` `a3c0f25a`, un PR.
+
+- **Listado de grupos**: «Agentes» ya no va con candado en «Columnas» (se oculta y se mueve); solo Nombre. Enmienda DD-159.
+- **DS, `sc-group-popover`** en `count`: con ninguno pinta «—» en gris suave, sin subrayado, y sigue siendo el botón con su
+  nombre accesible («0 agentes. Asignar agentes de …»): en Grupos abre el panel. También alcanza a Servicios con 0.
+- **Agentes sin grupos**: ya salía «—» (`display="adaptive"`, DD-210), medido en `main` y en la congelada del 16/10.
+- **Pruebas**: `panel-agentes-grupo` (vacía un grupo, ve «—» y abre el panel) y `columnas-en-una-lista` (Agentes se
+  desmarca). Las dos, rojas sin el arreglo («0» y la casilla deshabilitada).
+- **Congeladas** 4058, 4062 y 4064: Rafa eligió llevarlas a todo lo de `main` (no solo este cambio). Rama y etiqueta
+  avanzan al commit de `main` tras fundir; la fila de `docs/PROTOTIPOS.md` dice de qué commit venía. Cómo, en ese doc.
 
 ## ✅ 2026-10-18 y 19 · Grupos y agentes en Figma para desarrollo: listado, altas, ediciones y su hand-off
 
@@ -156,25 +170,6 @@ su trampa del suelo de la tarjeta sube a «Trampas del frente».
 - **Pruebas**: `agente-grupos-asignados.spec.ts` reescrita (desplegable, flecha, apagado) y `ficha-agente-resumen-iconos`
   nueva (3 iconos, el REC sin color propio y la misma tarjeta, de baldosas del color de la destacada, en las tres fichas). En local, a 1440, las de agentes y resúmenes, en verde.
 
-## ✅ 2026-10-15 · Revisión de producto de la ficha de grupo: resumen, Ring All, tipificación, audios, Email y rejilla (DD-206)
-
-> **Sello:** PR 1 de 3, fundido en `main` como #416, HEAD `08f4b2ef`.
-
-- **Resumen**: Teléfono y Email son enlaces a su bloque, como Chat; fuera el selector rápido de estrategia.
-- **Ring All**: `RING_ALL_ALLOWED_MAX = 2`; elegir 3 o más vuelve a 2 y lo dice. **Tipificar conversaciones** siempre,
-  con la descripción de la tipificación y «Ver detalle»; el árbol sin «N niveles, N opciones».
-- **Audios**: el «Advanced» de primeng.dev con `auto`, sin «Subir» ni «Cancelar» (DS: `saved`, `savedRemoved`,
-  `removeLabel`; `uploadLabel` y `cancelLabel` para el ejemplo entero), en música, identificador, «Eres el siguiente» y el audio saliente (`conAudioSaliente`). .wav y .mp3.
-- **Email**: las seis estrategias de Teléfono (Niveles con «Dentro de cada nivel» y la columna «Nivel Email»), tiempo
-  de ringing y su cola. Desbordar sigue en «Reglas comunes».
-- **Rejilla** (DD-206 §10 y §11): Tipificar bajo su interruptor; «Tamaño de cola» a dos columnas (`--sc-option-cards-gap`);
-  «Llamadas salientes» en Teléfono; «Web Chat» y «WhatsApp» como partes de Chat; Recursos en dos filas; cada audio en
-  su fila; toda ayuda a 7 de su control (DS incluido); `sc-textarea` en columna; títulos a 18 · 16 · 14 (§12 a §15).
-- **Pruebas**: en local, a 1440, las de grupo, las 2 de `sc-fileupload` y la de Niveles en Email (enrojece sin él).
-- **Trampas**: `p-select` no acepta que le cambies el valor dentro de su propio `onChange`: para devolverlo a 2 hace falta
-  `setTimeout(() => select.value.set(2))`. Y un `ng serve` que pilla `dist/` a medio construir se queda en error aunque
-  el build acabe: reinícialo (el de sc-docs tapaba la página con `vite-error-overlay` y la prueba fallaba en el clic).
-
 ## SIGUIENTE — sin preguntar
 
 -2b. **Componente tabla (otra sesión):** el «evolutivo» de la tabla con los devs (BI y voz). Propuesta de producto:
@@ -258,6 +253,9 @@ su trampa del suelo de la tarjeta sube a «Trampas del frente».
   nube no se puede.
 
 **Trampas del frente:**
+- **`p-select` no acepta que le cambies el valor dentro de su propio `onChange`**: para devolverlo (Ring All a 2) hace
+  falta `setTimeout(() => select.value.set(2))`. Y un `ng serve` que pilla `dist/` a medio construir se queda en error
+  aunque el build acabe: reinícialo.
 - **`--table-card-tope: none` anula también el suelo** (`min(…, none)` no vale y cae en `auto`): quien ponga el tope
   en `none` debe poner `--table-card-suelo` (DD-204).
 - Los iconos añaden su glifo a `textContent`; el lector no lo oye. `toHaveText` debe distinguirlo.

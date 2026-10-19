@@ -166,8 +166,8 @@ export class GroupsListPageComponent {
       { key: 'strategy', label: this.translate.instant('groups.table.strategy_phone') },
       { key: 'chatStrategy', label: this.translate.instant('groups.table.strategy_chat'), defaultVisible: false },
       { key: 'services', label: this.translate.instant('groups.table.services') },
-      // Su cifra abre el panel rápido de agentes (DD-159): fija, porque es la tarea más frecuente de la lista.
-      { key: 'agents', label: this.translate.instant('groups.table.agents'), locked: true },
+      // Su cifra abre el panel rápido de agentes (DD-159). No va fija: se oculta y se mueve como las demás (2026-10-19).
+      { key: 'agents', label: this.translate.instant('groups.table.agents') },
     ];
   });
 
