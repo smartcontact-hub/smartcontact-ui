@@ -1448,9 +1448,14 @@ medido contra sc-supervisor.pages.dev a 1440.
   solo indeterminado; sin `kbd` (el atajo «/» del buscador) ni `sc-empty-state`.
 - **Variables:** sin `icon/secondary` (`--sc-icon-secondary`; se usa `slate/600`) ni familia `azure`; la sombra de la
   barra de lote es `popover/shadow` (0,10 negro) y la de la app, `rgb(15, 23, 42)` al 8 y al 6 %.
-- **Iconos que faltan en Smart-Contact Icons:** `check_circle`, `library_books`, `alt_route`, `filter_list`,
-  `content_copy`, `search_off`, `manage_accounts`, `photo_camera`, `dialpad`, `radio_button_checked`, `call_made`,
-  `badge` y `language`. En el dibujo va el más cercano y la anotación dice el real.
+- **Iconos:** hecho. Los trece que faltaban están en Smart-Contact Icons desde el 2026-10-18, y las maquetas ya los
+  llevan (los cuatro últimos sustitutos, `search`, `file_copy` y dos `tune`, cambiados el 2026-10-19).
+- **Sale de «Fuera del DS»** (2026-10-19; la página ya solo enseña lo que desarrollo construye distinto): el Header sin
+  botón md (la app mide 58 con botones de 32,5, DD-188); sin maestro de `sc-delete-entity-dialog` (iría en Custom, junto
+  al Custom modal); el Custom modal con mínimo 480 frente a los 440 de `sc-dialog`, y el confirmdialog de 350 frente a
+  334,6; el resumen sin Edición con la línea de Falta; `.Subsection` sin estado plegado; sin variable para el azul claro
+  del botón de foto (`--sc-bg-subtle`, blue-50); las sombras del resumen (`--sc-shadow-xs`, `--sc-shadow-card`) sin
+  estilos de efecto. El Nav-menu ya trae el rótulo del índice (`titleKey`), oculto por defecto.
 - **La copia del DS** (`C5soC7CxcuKSIFPEDCd3gz`) tiene arreglados los botones de texto con su borde, el tooltip con
   máximo de 157,5 y la celda de selección small. Llevarlos al oficial es una decisión de diseño pendiente.
 
