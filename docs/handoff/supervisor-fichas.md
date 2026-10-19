@@ -50,6 +50,8 @@ trampas propias): `git show b23f6b5f:docs/handoff/supervisor-fichas.md`. El de f
 El de la revisión de las fichas a 1440 (2026-10-14, DD-204): `git show 62244684:docs/handoff/supervisor-fichas.md`;
 su trampa del suelo de la tarjeta sube a «Trampas del frente». El de la ficha de grupo tras la revisión del 2026-10-15
 (DD-206, #416): `git show a3c0f25a:docs/handoff/supervisor-fichas.md`; sus dos trampas suben a «Trampas del frente».
+El de la ficha de agente con salientes en un desplegable (2026-10-15, DD-209, #425, sin trampas propias): `git show
+6edc21e9:docs/handoff/supervisor-fichas.md`.
 
 ## ✅ 2026-10-19 · Grupos: «Agentes» sin fijar y «—» con 0 agentes; las tres congeladas, al día con `main`
 
@@ -70,11 +72,18 @@ su trampa del suelo de la tarjeta sube a «Trampas del frente». El de la ficha 
 > `arebury/figma-fichas-orden` sobre `main` `33dd2c90` y `arebury/figma-fichas-numeros` sobre `3f225663`).
 
 - **Dónde está** (2026-10-19): cada página abre con un índice que enlaza sus secciones, a 1920. «Grupos»: índice
-  `3124:47747`, «1. Listado de grupos» `3118:16995` (la tabla y sus estados, una vez), «2. Alta de grupo» `3010:6411`,
-  «3. Edición de grupo» `3055:11053`. «Agentes»: índice `3124:47856`, «1. Alta de agente» `3070:26714`, «2. Edición de
-  agente» `3110:31067`. «Fuera del DS» (`3034:114`): diez fichas, dibujo frente a app, de lo que se construye distinto.
-  «Hand-off: Grupos y agentes» (`2997:47`): qué cambia (DD-211), lo contratado, cómo leer y reglas comunes; a su lado,
-  «Mapa de componentes» (`3149:191`): los 22 de ui.smart-contact.com (14 tal cual, 5 extendidos, 3 propios) y lo que falta.
+  `3124:47747`, «1. Listado de grupos» `3118:16995`, «2. Alta de grupo» `3010:6411`, «3. Edición de grupo» `3055:11053`.
+  «Agentes»: índice `3124:47856`, «1. Alta de agente» `3070:26714`, «2. Edición de agente» `3110:31067`. «Fuera del DS»
+  (`3034:114`): nueve fichas, dibujo frente a app, de lo que se construye distinto. «Hand-off: Grupos y agentes»
+  (`2997:47`): qué cambia (DD-211), lo contratado, cómo leer y reglas comunes; a su lado, «Mapa de componentes»
+  (`3149:191`): los 22 de ui.smart-contact.com (14 tal cual, 5 extendidos, 3 propios) y lo que falta.
+- **Listado de grupos, rehecho** (2026-10-19): 7 pasos con flechas en vez de 4 estados: 01 sin casillas, 02 menú de
+  fila, 03 diálogo "Duplicar grupo", 04 la copia en edición con el toast `Grupo "{nombre}" creado`, 05 "¿Eliminar
+  grupo?", 06 eliminado, 07 búsqueda sin resultados. Fuera la edición masiva (casillas, barra y editar en bloque), a otra
+  fase; "Acciones" se queda, solo exporta. En «Cómo se comporta», las filas 10 y 11 son "Duplicar" y "Eliminar".
+- **Eliminar sin escribir el nombre** (DD-145 lo pedía): confirmdialog del DS (`common.delete_dialog.title_single` y
+  `body_single`) en grupos (listado y ficha, sección 3, E5) y agentes (ficha, E3). Sale la ficha "Diálogo de eliminar"
+  de «Fuera del DS» y el maestro de `sc-delete-entity-dialog` de `figma-pendiente` §53.
 - **Lo que se fue**: las secciones a 1440 (`2934:580`, `2970:4752`); las pantallas sueltas, a Playground (`3124:39080`).
 - **Cómo está hecho**: instancias y variables del DS, medidas de sc-supervisor.pages.dev a 1920. Cada pantalla, una nota
   (Dev Mode) con las filas que leer; bajo cada flujo, la hoja «Cómo se comporta» numera cada pieza una vez sin repetir
@@ -82,6 +91,7 @@ su trampa del suelo de la tarjeta sube a «Trampas del frente». El de la ficha 
   Cada índice abre con «Cómo usar estas maquetas». Nativo de PrimeNG tapado por la app (`.sc-toast`): en Figma, el
   nativo, y la diferencia, a «Fuera del DS». Maestros arreglados: «What's new» del DS. Kit: `figma-pendiente` §53 y §50.
 - **Pendiente**: marcar «Ready for dev» (a mano: la API no puede); cómo ordenar «❖ DataTable» del DS (`6738:49721`).
+  El prototipo sigue con la edición masiva y pide el nombre al eliminar: Figma va por delante.
 - **Trampa**: el fichero de la copia del DS con la tabla en slots (`C5soC7CxcuKSIFPEDCd3gz`, sección `16862:6447`) se
   quedó con un placeholder del buscador anterior a `main`; lo que manda es el listado del Supervisor.
 
@@ -152,23 +162,6 @@ su trampa del suelo de la tarjeta sube a «Trampas del frente». El de la ficha 
 - **Pruebas**: `tablas-revision-1015.spec.ts` nueva (5); ajustadas las de textos, `listado-acciones-fijas` a 1024 y la
   carrera de `agenda-agentes`. En local, a 1440: 250 de listas y repositorios, 6 de componente y la línea de estilos
   (solo altas nuevas) en verde.
-
-## ✅ 2026-10-15 · Revisión de producto de la ficha de agente: salientes en un desplegable y los iconos de la lista (DD-209)
-
-> **Sello:** PR 2 de 3, fundido en `main` como #425, HEAD `c24c921c`, con el PR 1 (#416) ya dentro.
-
-- **Salientes**: fuera la columna de radios de `group-assignment-table`. Debajo de la tabla, a 28, el desplegable «Grupo
-  para llamadas salientes» con los asignados que tienen Teléfono marcado; sin ninguno, apagado con «Asigna un grupo con
-  teléfono»; sin Teléfono en sus canales, no sale. En la tabla, `call_made` junto al nombre del elegido, con su globo.
-  La regla de antes sigue: el primero con Teléfono por defecto, obligatorio si atiende teléfono. Corrige DD-204 §8.
-- **Resumen y cabecera**: «Canales» (antes «Atiende por») con `sc-channel-icon` por canal; la extensión con `language` o
-  `smartphone` y su nombre para el lector, sin la palabra; Grabación con su REC por `scFactIcon`, relleno si graba y de
-  contorno si no, sin color propio; y en la lista, el REC deja el rojo por el gris de los glifos (§4: nada de arcoíris).
-  `EXTENSION_ICONS` pasa a `agents-data.ts`, compartido con la lista.
-- **Tarjeta de datos** (§6): la plana del grupo en las tres fichas (sale de `group-summary.scss` a `_resumen.scss`) y sus
-  baldosas en el degradado de la destacada: `tone="brand"`, nuevo en `sc-icon-tile` y `sc-fact-row` (DS, con su knob).
-- **Pruebas**: `agente-grupos-asignados.spec.ts` reescrita (desplegable, flecha, apagado) y `ficha-agente-resumen-iconos`
-  nueva (3 iconos, el REC sin color propio y la misma tarjeta, de baldosas del color de la destacada, en las tres fichas). En local, a 1440, las de agentes y resúmenes, en verde.
 
 ## SIGUIENTE — sin preguntar
 
