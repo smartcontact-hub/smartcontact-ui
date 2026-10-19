@@ -69,7 +69,9 @@ agente del mismo día (DD-209, #425, sin trampas propias), en el mismo `a3c0f25a
   instancias revisadas, ninguna de la otra). Decidido A a E (nota «Decidido» bajo el componente): el relleno, el de
   Aura como lo pinta el DS de los devs (ui.smart-contact.com: Default 10,5 × 14, Small 5,25 × 7, Large 14 × 17,5),
   que es el que ya tenían las variables; los textos, Body/body-regular y Body/body-semibold: la fila de texto mide 42,
-  como la de los devs. Ejemplos en claro y oscuro rehechos con ella. La versión sin slots, «(sin slots)», con las mismas variables y
+  como la de los devs. Ejemplos en claro y oscuro rehechos con ella. Cada celda trae un `datatable-content`
+  (Type=Text): su Type se cambia seleccionando el contenido, porque Figma no expone piezas dentro de un slot. Las
+  celdas ya rellenadas, como las del Supervisor, no cambian (probado en una copia). La versión sin slots, «(sin slots)», con las mismas variables y
   estilos, en la página «Archivo: DataTable (2026-10-19)». Versiones guardadas antes de cada paso (tres, del 19).
 - **`datatable-content`** gana Icon Button, Channels, Link y Empty, y nace `channel-icon` (variante Canal). Dos
   tarjetas nuevas en «What's new». **Fuera del DS**: las once fichas con alternativas, en `figma-pendiente` §54.
