@@ -6,7 +6,7 @@ Contra **PrimeNG 22.1.0**, la versión INSTALADA — no la documentación de la 
 que puede ir por delante.
 
 **51 componentes** del DS se usan en el Supervisor, y entre todos esconden
-**509 props** que PrimeNG sí documenta.
+**571 props** que PrimeNG sí documenta.
 
 La regla es DD-113: *el nativo tal cual, adaptado con tokens*. Esconder una prop puede ser una
 decisión buena —los wrappers EXTENDED lo hacen a propósito— pero hasta ahora esa decisión no se
@@ -47,6 +47,10 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **35 props nativas no expuestas**: `acceptAriaLabel`, `acceptButtonStyleClass`, `acceptIcon`, `acceptLabel`, `acceptVisible`, `appendTo`, `autoZIndex`, `baseZIndex`, `blockScroll`, `breakpoints`, `closable`, `closeAriaLabel`, `closeOnEscape`, `defaultFocus`, `dismissableMask`, `draggable`, `focusTrap`, `header`, `icon`, `key`, `maskMotionOptions`, `maskStyleClass`, `message`, `modal`, `motionOptions`, `position`, `rejectAriaLabel`, `rejectButtonStyleClass`, `rejectIcon`, `rejectLabel`, `rejectVisible`, `rtl`, `style`, `styleClass`, `visible`
 
+### `sc-column-selector` · 1 usos · primeng/popover, primeng/tooltip
+
+**31 props nativas no expuestas**: `appendTo`, `ariaCloseLabel`, `ariaLabel`, `ariaLabelledBy`, `autoHide`, `autoZIndex`, `baseZIndex`, `content`, `dismissable`, `escape`, `fitContent`, `focusOnShow`, `hideDelay`, `hideOnEscape`, `life`, `motionOptions`, `pTooltipPT`, `pTooltipUnstyled`, `positionLeft`, `positionStyle`, `positionTop`, `showDelay`, `showOnEllipsis`, `style`, `styleClass`, `tooltipDisabled`, `tooltipEvent`, `tooltipOptions`, `tooltipPosition`, `tooltipStyleClass`, `tooltipZIndex`
+
 ### `sc-group-popover` · 7 usos · primeng/popover, primeng/tooltip
 
 **31 props nativas no expuestas**: `appendTo`, `ariaCloseLabel`, `ariaLabel`, `ariaLabelledBy`, `autoHide`, `autoZIndex`, `baseZIndex`, `content`, `dismissable`, `escape`, `fitContent`, `focusOnShow`, `hideDelay`, `hideOnEscape`, `life`, `motionOptions`, `pTooltipPT`, `pTooltipUnstyled`, `positionLeft`, `positionStyle`, `positionTop`, `showDelay`, `showOnEllipsis`, `style`, `styleClass`, `tooltipDisabled`, `tooltipEvent`, `tooltipOptions`, `tooltipPosition`, `tooltipStyleClass`, `tooltipZIndex`
@@ -63,9 +67,13 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **22 props nativas no expuestas**: `cancelButtonProps`, `cancelIcon`, `cancelStyleClass`, `chooseButtonProps`, `chooseIcon`, `chooseStyleClass`, `customUpload`, `filesInput`, `headers`, `invalidFileLimitMessageDetail`, `invalidFileLimitMessageSummary`, `method`, `previewWidth`, `removeStyleClass`, `showCancelButton`, `showUploadButton`, `style`, `styleClass`, `uploadButtonProps`, `uploadIcon`, `uploadStyleClass`, `withCredentials`
 
-### `sc-column-selector` · 1 usos · primeng/popover
+### `sc-delete-entity-dialog` · 12 usos · primeng/tooltip
 
-**11 props nativas no expuestas**: `appendTo`, `ariaCloseLabel`, `ariaLabel`, `ariaLabelledBy`, `autoZIndex`, `baseZIndex`, `dismissable`, `focusOnShow`, `motionOptions`, `style`, `styleClass`
+**21 props nativas no expuestas**: `appendTo`, `autoHide`, `content`, `escape`, `fitContent`, `hideDelay`, `hideOnEscape`, `life`, `pTooltipPT`, `pTooltipUnstyled`, `positionLeft`, `positionStyle`, `positionTop`, `showDelay`, `showOnEllipsis`, `tooltipDisabled`, `tooltipEvent`, `tooltipOptions`, `tooltipPosition`, `tooltipStyleClass`, `tooltipZIndex`
+
+### `sc-photo-upload` · 2 usos · primeng/tooltip
+
+**21 props nativas no expuestas**: `appendTo`, `autoHide`, `content`, `escape`, `fitContent`, `hideDelay`, `hideOnEscape`, `life`, `pTooltipPT`, `pTooltipUnstyled`, `positionLeft`, `positionStyle`, `positionTop`, `showDelay`, `showOnEllipsis`, `tooltipDisabled`, `tooltipEvent`, `tooltipOptions`, `tooltipPosition`, `tooltipStyleClass`, `tooltipZIndex`
 
 ### `sc-drawer` · 3 usos · primeng/drawer
 
@@ -155,10 +163,6 @@ Expone todo lo que PrimeNG documenta.
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-delete-entity-dialog` · 12 usos · —
-
-Expone todo lo que PrimeNG documenta.
-
 ### `sc-divider` · 22 usos · primeng/divider
 
 Expone todo lo que PrimeNG documenta.
@@ -196,10 +200,6 @@ Expone todo lo que PrimeNG documenta.
 Expone todo lo que PrimeNG documenta.
 
 ### `sc-permission-matrix` · 2 usos · —
-
-Expone todo lo que PrimeNG documenta.
-
-### `sc-photo-upload` · 2 usos · —
 
 Expone todo lo que PrimeNG documenta.
 

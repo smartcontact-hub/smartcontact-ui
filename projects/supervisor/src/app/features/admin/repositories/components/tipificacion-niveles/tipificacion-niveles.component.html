@@ -92,7 +92,7 @@
 @if (estado(); as e) {
   <p class="niveles__estado sc-text-caption-semibold" role="status">
     <sc-icon name="error" size="inherit" [weight]="600" aria-hidden="true" />
-    <span class="niveles__estado-texto" [attr.title]="e">{{ e }}</span>
+    <span class="niveles__estado-texto" [pTooltip]="e" showOnEllipsis tooltipPosition="top">{{ e }}</span>
   </p>
 }
 

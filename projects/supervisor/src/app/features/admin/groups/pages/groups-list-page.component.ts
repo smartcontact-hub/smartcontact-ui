@@ -50,6 +50,7 @@ import { GroupBulkField, GroupsStore } from '../state/groups.store';
 import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links.store';
 import { GroupDuplicateDialogComponent } from '../components/group-duplicate-dialog/group-duplicate-dialog.component';
 import { GroupAgentsPanelComponent } from '../components/group-agents-panel/group-agents-panel.component';
+import { TooltipModule } from 'primeng/tooltip';
 
 interface PendingBulkEdit {
   readonly field: GroupBulkField;
@@ -69,6 +70,7 @@ const COLUMN_PREF_KEY = 'sc-groups-columns-v4';
 @Component({
   selector: 'sc-groups-list-page',
   imports: [
+    TooltipModule,
     CeldaVaciaComponent,
     BulkEditMenuComponent,
     ButtonComponent,

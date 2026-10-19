@@ -51,6 +51,7 @@ import { EquiposStore } from '@features/admin/repositories/state/equipos.store';
 import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links.store';
 import { Channel } from '@features/admin/services/group-agent-links.types';
 import { permittedFamilies } from '@features/admin/services/group-channels.core.mjs';
+import { TooltipModule } from 'primeng/tooltip';
 
 interface PendingBulkEdit {
   readonly field: AgentBulkField;
@@ -69,6 +70,7 @@ const COLUMN_PREF_KEY = 'sc-agents-columns-v5';
 @Component({
   selector: 'sc-agents-list-page',
   imports: [
+    TooltipModule,
     CeldaVaciaComponent,
     BulkEditMenuComponent,
     ButtonComponent,

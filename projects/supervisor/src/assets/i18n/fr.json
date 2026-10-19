@@ -1982,7 +1982,7 @@
         "name": "Nom",
         "phone": "Téléphone sortant",
         "priority": "Priorité",
-        "priority_hint": "Seulement pour les appels entrants.",
+        "priority_hint": "Seulement pour les conversations entrantes.",
         "phone_strategy": "Stratégie (téléphone)",
         "chat_strategy": "Stratégie (chat)",
         "phone_hint": "Le numéro que voit le client quand on l’appelle.",

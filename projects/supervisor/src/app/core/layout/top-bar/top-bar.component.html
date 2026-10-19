@@ -5,7 +5,9 @@
       class="top-bar__home"
       (click)="goToDashboard()"
       [attr.aria-label]="'topbar.go_to_dashboard' | translate"
-      [attr.title]="'topbar.go_to_dashboard' | translate"
+      [pTooltip]="'topbar.go_to_dashboard' | translate"
+      tooltipEvent="both"
+      tooltipPosition="bottom"
     >
       <sc-icon name="space_dashboard" size="inherit" />
     </button>

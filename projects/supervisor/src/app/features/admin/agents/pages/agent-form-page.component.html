@@ -25,7 +25,7 @@
     [disabled]="!canSave()"
     [loading]="saving()"
     [label]="(mode() === 'edit' ? 'common.save' : 'agents.form.create_submit') | translate"
-    [attr.title]="saveDisabledReason() ? (saveDisabledReason()! | translate) : null"
+    [pTooltip]="saveDisabledReason() ? (saveDisabledReason()! | translate) : ''" tooltipPosition="top"
     (clicked)="save()"
   />
 </ng-template>
@@ -45,7 +45,7 @@
         <div class="headline__who">
           @if (mode() === 'edit') {
             <!-- El nombre se edita en su sitio (`sc-name-inplace`, el Inplace nativo): el mismo campo que Identidad. -->
-            <h1 class="headline__name headline__name--editable sc-text-title-semibold" [title]="form().name">
+            <h1 class="headline__name headline__name--editable sc-text-title-semibold" [pTooltip]="form().name" showOnEllipsis tooltipPosition="top">
               <sc-name-inplace
                 [name]="form().name"
                 [label]="'agents.form.fields.name' | translate"
@@ -53,7 +53,7 @@
               />
             </h1>
           } @else {
-            <h1 class="headline__name sc-text-title-semibold" [title]="form().name">
+            <h1 class="headline__name sc-text-title-semibold" [pTooltip]="form().name" showOnEllipsis tooltipPosition="top">
               {{ form().name || ((mode() === 'duplicate' ? 'agents.form.duplicate_title' : 'agents.form.create_title') | translate) }}
             </h1>
           }
@@ -162,7 +162,7 @@
                     <!-- Cada canal con su icono y su nombre para el lector, como la columna Canales de la lista. -->
                     <span class="sc-channel-row">
                       @for (c of s.canales; track c) {
-                        <span class="sc-channel-row__item" role="img" [attr.data-channel]="c" [attr.aria-label]="familyLabelKeys[c] | translate" [attr.title]="familyLabelKeys[c] | translate">
+                        <span class="sc-channel-row__item" role="img" [attr.data-channel]="c" [attr.aria-label]="familyLabelKeys[c] | translate" [pTooltip]="familyLabelKeys[c] | translate" tooltipPosition="top">
                           <sc-channel-icon [channel]="c" />
                         </span>
                       }
@@ -189,7 +189,7 @@
     @if (etiqueta) {
       <span>{{ etiqueta }}</span>
     }
-    <span class="ext__kind" role="img" [attr.aria-label]="tipoNombre" [attr.title]="tipoNombre">
+    <span class="ext__kind" role="img" [attr.aria-label]="tipoNombre" [pTooltip]="tipoNombre" tooltipPosition="top">
       <sc-icon [name]="extensionIcon(tipo)" size="sm" aria-hidden="true" />
     </span>
     {{ numero }}

@@ -77,7 +77,7 @@
         (cancelled)="onRenameCancel(group.id)"
       />
     } @else {
-      <span class="table__td-name-text" [title]="group.name">{{ group.name }}</span>
+      <span class="table__td-name-text" [pTooltip]="group.name" showOnEllipsis tooltipPosition="top">{{ group.name }}</span>
     }
   </span>
 </ng-template>
@@ -100,7 +100,7 @@
         role="img"
         [attr.data-channel]="channel"
         [attr.aria-label]="channelLabelKey(channel) | translate"
-        [title]="channelLabelKey(channel) | translate"
+        [pTooltip]="channelLabelKey(channel) | translate" tooltipPosition="top"
       >
         <sc-channel-icon [channel]="channel" />
       </span>

@@ -2,7 +2,9 @@
   type="button"
   class="trigger"
   [attr.aria-label]="buttonLabel()"
-  [title]="buttonLabel()"
+  [pTooltip]="buttonLabel()"
+  tooltipEvent="both"
+  tooltipPosition="top"
   (click)="popover.toggle($event)"
 >
   <sc-icon [name]="columnsIcon" size="inherit" />
