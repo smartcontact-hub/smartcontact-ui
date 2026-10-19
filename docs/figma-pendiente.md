@@ -1453,14 +1453,46 @@ medido contra sc-supervisor.pages.dev a 1440.
 - **Sale de «Fuera del DS»** (2026-10-19; la página ya solo enseña lo que desarrollo construye distinto): el Header sin
   botón md (la app mide 58 con botones de 32,5, DD-188); sin maestro de `sc-delete-entity-dialog` (iría en Custom, junto
   al Custom modal); el Custom modal con mínimo 480 frente a los 440 de `sc-dialog`, y el confirmdialog de 350 frente a
-  334,6; el resumen sin Edición con la línea de Falta; `.Subsection` sin estado plegado; sin variable para el azul claro
-  del botón de foto (`--sc-bg-subtle`, blue-50); las sombras del resumen (`--sc-shadow-xs`, `--sc-shadow-card`) sin
+  334,6 (a 440, la «×» del maestro queda recortada: empieza en 428, medido el 2026-10-19); el resumen sin Edición con
+  la línea de Falta; `.Subsection` sin estado plegado; el azul claro del botón de foto SÍ tiene variable,
+  `highlight/background` (`blue/50` en claro, como `--sc-bg-subtle`; medido el 2026-10-19), y el dibujo no la usa; las sombras del resumen (`--sc-shadow-xs`, `--sc-shadow-card`) sin
   estilos de efecto. El Nav-menu ya trae el rótulo del índice (`titleKey`), oculto por defecto.
 - **La copia del DS** (`C5soC7CxcuKSIFPEDCd3gz`) tiene arreglados los botones de texto con su borde, el tooltip con
   máximo de 157,5 y la celda de selección small. Llevarlos al oficial es una decisión de diseño pendiente.
 
 **Cómo sabes que está hecho:** cada maestro mide lo que la app (botón de texto small 28 × 27, celda small 2 × 6, fila de
 menú 27) y las maquetas dejan de necesitar el ajuste a mano.
+
+---
+
+## 54 · «Fuera del DS»: alternativas por ficha, para decidir (medido el 2026-10-19)
+
+**Estado:** por decidir en revisión de diseño · **Dónde:** página «Fuera del DS» del Supervisor (`3034:114`, marco
+`3156:195`) · **Evidencia:** el Kit, sc-supervisor.pages.dev, ui.smart-contact.com y el código del prototipo.
+
+Cada ficha se va si se acepta su propuesta; con las once, la página se vacía.
+
+| # | Ficha | Propuesta | Kit | Prototipo |
+|---|---|---|---|---|
+| 1 | Alto de fila | El prototipo al relleno del Kit (10,5 × 14, el del DS de desarrollo); en Figma, la tabla a Default | no | sí |
+| 2 | Barra de arriba | El maestro `Header` con `button` md (DD-188) | sí | no |
+| 3 | Toast | El prototipo con `p-toast` sin plantilla; el «Deshacer» del inicio (DD-196), aparte | no | sí |
+| 4 | Botón de foto | El fondo del dibujo a `highlight/background` | no | no |
+| 5 | Campos numéricos | Variante sin botones, con sufijo, en `inputnumber` | sí | no |
+| 6 | Título de la página | Quitar la ficha: el marco ya usa estilos y variables del Kit | no | no |
+| 7 | Diálogo de eliminar | Todo a 480, el mínimo del Custom modal y de `sc-custom-modal`: la «×» vuelve a verse | no | sí |
+| 8 | Resumen con «Falta» | «Mostrar estado» y su texto en `group-summary` y `agent-summary` | sí | no |
+| 9 | Subsección plegada | Estado «Plegada» en `.Subsection` (DD-157 descartó Accordion); en el prototipo, `<h3>` con el botón dentro y `aria-controls` | sí | sí |
+| 10 | Atajo «/» | Quitar el «/» visible; `aria-keyshortcuts="/"` y el panel «?» | no | sí |
+| 11 | Solo lectura | El estado en los cuatro campos del Kit (§50, DD-211 §10) | sí | no |
+
+**Lo que se daba por cierto y no lo era:** la variable del azul existe (§53, corregido); la «×» del diálogo está en el
+dibujo y la recorta el ancho de 440; el campo numérico del prototipo es `<input type="number">` (DD-195), no
+`p-inputnumber`; en la tabla, el que se aparta es el prototipo (8 × 14 de Aura: `sc-preset/datatable.ts` no fija el
+relleno), no el Kit. **Sin medir:** el ancho real del toast del prototipo, el alto del `Header` con botón md y la fila con
+`size="small"` real.
+
+**Cómo sabes que está hecho:** la página «Fuera del DS» solo enseña lo que no existe en ningún sitio, o queda vacía.
 
 ---
 

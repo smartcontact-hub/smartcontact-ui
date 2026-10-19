@@ -48,7 +48,32 @@ e3a6c4b1:docs/handoff/supervisor-fichas.md`. El de lo que falta se dice cuando y
 trampas propias): `git show b23f6b5f:docs/handoff/supervisor-fichas.md`. El de fuera las notas de decisión (2026-10-13, DD-187
 §9, sin trampas propias), con los punteros a DD-183 y DD-184: `git show 8d0d82c1:docs/handoff/supervisor-fichas.md`.
 El de la revisión de las fichas a 1440 (2026-10-14, DD-204): `git show 62244684:docs/handoff/supervisor-fichas.md`;
-su trampa del suelo de la tarjeta sube a «Trampas del frente».
+su trampa del suelo de la tarjeta sube a «Trampas del frente». El de la ficha de grupo del 2026-10-15 (DD-206, #416):
+`git show a3c0f25a:docs/handoff/supervisor-fichas.md`; sus dos trampas suben a «Trampas del frente». El de la ficha de
+agente del mismo día (DD-209, #425, sin trampas propias), en el mismo `a3c0f25a`.
+
+## ✅ 2026-10-19 · Mapa de componentes de Grupos, la tabla del DS en un solo sitio y «Fuera del DS» con alternativas
+
+> **Sello:** sin código. Figma del Supervisor (`Hjyy41SYKqcRuIzCGggfYH`) y del DS (`khNq9dJKNi13pNllrqm6dx`); en el
+> repo, solo docs (rama `areses/component-map-groups-ab0007` sobre `main` `a3c0f25a`).
+
+- **Mapa de componentes** (página «Grupos», sección «4. Mapa de componentes» `3175:11365`, enlazada desde el índice):
+  copias bloqueadas del listado y de las cuatro secciones de la ficha, con una capa bloqueada de cajas. Verde, está en
+  el DS de desarrollo (`sc-*`); azul, PrimeNG sin página en él (`p-*`); naranja, propio; gris discontinuo, layout.
+- **Tabla del listado**: en las 7 tablas de grupos, Nombre crece (927 a 1920) y el ⋮ mide 56, la tabla «virgen». El
+  prototipo mantiene su tope de 384 (revisión del 2026-10-09), a propósito: los anchos se configuran. Reescrita la
+  fila 5 de «Cómo se comporta» del listado y movidos los números 7 y 8 de la guía.
+- **DataTable del DS en un solo sitio** («❖ DataTable», sección «Componente» `15526:14461`): las piezas con slots se
+  llaman ya `datatable`, `datatable-row` y `datatable-body-cell` (antes «-base»); las antiguas, «(antigua, no usar)»,
+  en el marco «No usar»; lo pendiente (A a E), bajo el componente. Comparativa, propuesta y borrador, en la página
+  «Archivo: DataTable (2026-10-19)». Versión guardada antes: «Antes de fundir DataTable (2026-10-19)». Medido: colores y
+  rellenos atados a `datatable/*` y `checkbox/*`; solo los bordes de 1 van sueltos, como en las antiguas y en PrimeNG.
+- **`datatable-content`** gana Icon Button, Channels, Link y Empty, y nace `channel-icon` (variante Canal). Dos
+  tarjetas nuevas en «What's new». **Fuera del DS**: las once fichas con alternativas, en `figma-pendiente` §54.
+- **Pendiente**: publicar el DS y «Update all» en el Supervisor (a mano; hasta entonces ve los nombres «-base»), y
+  rehacer los ejemplos de DataTable con las piezas nuevas cuando se decidan A, B y C.
+- **Trampa**: pasar a HUG el ancho de un marco de documentación estira las variantes en FILL de los conjuntos que lleva
+  dentro (cinco piezas de la tabla, de 1032 a 3332): cambia el maestro. Recoloca el conjunto ancho; no ensanches el marco.
 
 ## ✅ 2026-10-18 y 19 · Grupos y agentes en Figma para desarrollo: listado, altas, ediciones y su hand-off
 
@@ -139,42 +164,6 @@ su trampa del suelo de la tarjeta sube a «Trampas del frente».
   carrera de `agenda-agentes`. En local, a 1440: 250 de listas y repositorios, 6 de componente y la línea de estilos
   (solo altas nuevas) en verde.
 
-## ✅ 2026-10-15 · Revisión de producto de la ficha de agente: salientes en un desplegable y los iconos de la lista (DD-209)
-
-> **Sello:** PR 2 de 3, fundido en `main` como #425, HEAD `c24c921c`, con el PR 1 (#416) ya dentro.
-
-- **Salientes**: fuera la columna de radios de `group-assignment-table`. Debajo de la tabla, a 28, el desplegable «Grupo
-  para llamadas salientes» con los asignados que tienen Teléfono marcado; sin ninguno, apagado con «Asigna un grupo con
-  teléfono»; sin Teléfono en sus canales, no sale. En la tabla, `call_made` junto al nombre del elegido, con su globo.
-  La regla de antes sigue: el primero con Teléfono por defecto, obligatorio si atiende teléfono. Corrige DD-204 §8.
-- **Resumen y cabecera**: «Canales» (antes «Atiende por») con `sc-channel-icon` por canal; la extensión con `language` o
-  `smartphone` y su nombre para el lector, sin la palabra; Grabación con su REC por `scFactIcon`, relleno si graba y de
-  contorno si no, sin color propio; y en la lista, el REC deja el rojo por el gris de los glifos (§4: nada de arcoíris).
-  `EXTENSION_ICONS` pasa a `agents-data.ts`, compartido con la lista.
-- **Tarjeta de datos** (§6): la plana del grupo en las tres fichas (sale de `group-summary.scss` a `_resumen.scss`) y sus
-  baldosas en el degradado de la destacada: `tone="brand"`, nuevo en `sc-icon-tile` y `sc-fact-row` (DS, con su knob).
-- **Pruebas**: `agente-grupos-asignados.spec.ts` reescrita (desplegable, flecha, apagado) y `ficha-agente-resumen-iconos`
-  nueva (3 iconos, el REC sin color propio y la misma tarjeta, de baldosas del color de la destacada, en las tres fichas). En local, a 1440, las de agentes y resúmenes, en verde.
-
-## ✅ 2026-10-15 · Revisión de producto de la ficha de grupo: resumen, Ring All, tipificación, audios, Email y rejilla (DD-206)
-
-> **Sello:** PR 1 de 3, fundido en `main` como #416, HEAD `08f4b2ef`.
-
-- **Resumen**: Teléfono y Email son enlaces a su bloque, como Chat; fuera el selector rápido de estrategia.
-- **Ring All**: `RING_ALL_ALLOWED_MAX = 2`; elegir 3 o más vuelve a 2 y lo dice. **Tipificar conversaciones** siempre,
-  con la descripción de la tipificación y «Ver detalle»; el árbol sin «N niveles, N opciones».
-- **Audios**: el «Advanced» de primeng.dev con `auto`, sin «Subir» ni «Cancelar» (DS: `saved`, `savedRemoved`,
-  `removeLabel`; `uploadLabel` y `cancelLabel` para el ejemplo entero), en música, identificador, «Eres el siguiente» y el audio saliente (`conAudioSaliente`). .wav y .mp3.
-- **Email**: las seis estrategias de Teléfono (Niveles con «Dentro de cada nivel» y la columna «Nivel Email»), tiempo
-  de ringing y su cola. Desbordar sigue en «Reglas comunes».
-- **Rejilla** (DD-206 §10 y §11): Tipificar bajo su interruptor; «Tamaño de cola» a dos columnas (`--sc-option-cards-gap`);
-  «Llamadas salientes» en Teléfono; «Web Chat» y «WhatsApp» como partes de Chat; Recursos en dos filas; cada audio en
-  su fila; toda ayuda a 7 de su control (DS incluido); `sc-textarea` en columna; títulos a 18 · 16 · 14 (§12 a §15).
-- **Pruebas**: en local, a 1440, las de grupo, las 2 de `sc-fileupload` y la de Niveles en Email (enrojece sin él).
-- **Trampas**: `p-select` no acepta que le cambies el valor dentro de su propio `onChange`: para devolverlo a 2 hace falta
-  `setTimeout(() => select.value.set(2))`. Y un `ng serve` que pilla `dist/` a medio construir se queda en error aunque
-  el build acabe: reinícialo (el de sc-docs tapaba la página con `vite-error-overlay` y la prueba fallaba en el clic).
-
 ## SIGUIENTE — sin preguntar
 
 -2b. **Componente tabla (otra sesión):** el «evolutivo» de la tabla con los devs (BI y voz). Propuesta de producto:
@@ -253,11 +242,17 @@ su trampa del suelo de la tarjeta sube a «Trampas del frente».
   revisión del 2026-10-15 (DD-206).
 - **Decisión de diseño:** llevar o no al DS oficial lo que la copia arregló (el borde de 1 de los botones de texto, el
   tooltip con máximo y la celda de selección small; `figma-pendiente` §53). No bloquea las maquetas.
+- **Decisión de diseño:** las once fichas de «Fuera del DS», cada una con sus alternativas y una recomendación
+  (`figma-pendiente` §54); con las once, la página se vacía. Y A a E de la tabla, bajo el componente en el DS.
+- **Publicar el DS** (DataTable, `datatable-content`, `channel-icon`) y «Update all» en el Supervisor: la API no puede.
 - **Rafa:** revisar usuarios contra el Supervisor real. Y en el portátil: poner el 4405 al día con `main` y borrar el
   worktree y la rama `codex/supervisor-f-listado` (`aff63656`, una copia de F), la local y la del remoto; desde la
   nube no se puede.
 
 **Trampas del frente:**
+- **`p-select` no acepta que le cambies el valor dentro de su propio `onChange`**: para devolverlo hace falta
+  `setTimeout(() => select.value.set(2))` (DD-206). Un `ng serve` que pilla `dist/` a medio construir se queda en
+  error aunque el build acabe: reinícialo (en sc-docs, `vite-error-overlay` tapaba la página y la prueba fallaba).
 - **`--table-card-tope: none` anula también el suelo** (`min(…, none)` no vale y cae en `auto`): quien ponga el tope
   en `none` debe poner `--table-card-suelo` (DD-204).
 - Los iconos añaden su glifo a `textContent`; el lector no lo oye. `toHaveText` debe distinguirlo.
