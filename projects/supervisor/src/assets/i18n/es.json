@@ -1985,7 +1985,7 @@
         "name": "Nombre",
         "phone": "Teléfono saliente",
         "priority": "Prioridad",
-        "priority_hint": "Solo para las llamadas entrantes.",
+        "priority_hint": "Solo para las conversaciones entrantes.",
         "phone_strategy": "Estrategia (teléfono)",
         "chat_strategy": "Estrategia (chat)",
         "phone_hint": "El número que ve el cliente cuando le llaman.",

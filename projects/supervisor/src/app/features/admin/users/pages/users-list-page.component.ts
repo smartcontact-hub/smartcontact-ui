@@ -36,6 +36,7 @@ import {
 } from '@smartcontact-hub/components';
 import { USER_TYPE_LABEL_KEYS, USER_TYPES, User, UserType } from '../data/users-data';
 import { UsersStore, type UserBulkField } from '../state/users.store';
+import { TooltipModule } from 'primeng/tooltip';
 
 const COLUMN_PREF_KEY = 'sc-users-columns-v1';
 
@@ -49,6 +50,7 @@ interface PendingBulkEdit {
 @Component({
   selector: 'sc-users-list-page',
   imports: [
+    TooltipModule,
     CeldaVaciaComponent,
     BulkEditMenuComponent,
     ButtonComponent,

@@ -76,7 +76,7 @@
   <span class="assign__name">
     <span class="assign__identity">
       <span class="assign__title">
-        <span class="assign__name-label sc-text-body-semibold" [title]="row.group.name">{{ row.group.name }}</span>
+        <span class="assign__name-label sc-text-body-semibold" [pTooltip]="row.group.name" showOnEllipsis tooltipPosition="top">{{ row.group.name }}</span>
         <!-- El de sus salientes, con la flecha de «llamada que sale» junto al nombre, como el resumen. -->
         @if (isOutbound(row)) {
           @let saliente = 'agents.form.assigned.outbound_label' | translate;

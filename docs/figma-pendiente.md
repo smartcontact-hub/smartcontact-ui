@@ -1344,7 +1344,8 @@ menú, y la iconografía de transcripciones tiene sus tres insignias.
 **Estado:** **hecho el 2026-10-18** en el fichero del Supervisor para las fichas de grupo y agente y el listado de
 grupos: las anotaciones de lo contratado, la ficha de agente (el PIN, anotado; la matriz con Agentes y Grupos), el globo
 de la edición en bloque (anotado), el ✓ de las altas, el toast y lo de la ficha de grupo. **Queda:** el árbol de agendas
-y Contact Center (no entraron en ese pase) y el estado «Solo lectura», que pide variantes nuevas en el Kit.
+y Contact Center (no entraron en ese pase), el estado «Solo lectura», que pide variantes nuevas en el Kit, y la
+anotación de Call Blending en el diálogo «Duplicar grupo» (2026-10-19, abajo).
 
 - **Agenda › «Grupos y agentes»**: el árbol (TreeTable) con la flecha, la casilla tri-estado y el nombre en la primera
   columna, y el email en la segunda; el grupo en `body-semibold`, plegado; «Sin grupo» el último. Encima, el buscador,
@@ -1355,7 +1356,8 @@ y Contact Center (no entraron en ese pase) y el estado «Solo lectura», que pid
 - **Anotaciones de lo contratado** (el prototipo lo enseña todo; en producción se oculta):
   - **Call Blending**: «Llamadas salientes» del grupo (teléfono y audio saliente), «Grupo para llamadas salientes» del
     agente, «Solo salientes» en la tipificación del grupo, la fila del teléfono saliente en los resúmenes y su columna
-    en el listado.
+    en el listado. **Y el desplegable «Teléfono saliente» del diálogo «Duplicar grupo»** (añadido el 2026-10-19): sin
+    Call Blending no sale; el diálogo se queda con el nombre y la prioridad.
   - **CusCare**: el campo «Tipo de agente» y su fila del resumen.
   - **WebRTC**: sin él, «Navegador» deshabilitado en «Dónde suena» y la ayuda «Solo teléfono…».
 - **Estado «Solo lectura» de los campos** (InputText, InputNumber, Textarea y Select del Kit, que hoy no lo tienen): sin

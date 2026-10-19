@@ -30,6 +30,7 @@ import {
   columnsRem,
 } from '../agent-channel-table/agent-channel-table.component';
 import { ResultadoAccionService } from '@core/services';
+import { TooltipModule } from 'primeng/tooltip';
 
 /**
  * El ancho del panel sale de lo que lleva dentro (DD-131), en rem. Hasta el 2026-09-28 era un `52rem` fijo, el
@@ -60,6 +61,7 @@ const PANEL_MIN_REM = 28;
 @Component({
   selector: 'sc-group-agents-panel',
   imports: [
+    TooltipModule,
     AgentChannelTableComponent,
     ButtonComponent,
     DialogComponent,

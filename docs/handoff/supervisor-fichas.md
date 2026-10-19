@@ -51,18 +51,19 @@ El de la revisión de las fichas a 1440 (2026-10-14, DD-204): `git show 62244684
 su trampa del suelo de la tarjeta sube a «Trampas del frente». El de la ficha de grupo tras la revisión del 2026-10-15
 (DD-206, #416): `git show a3c0f25a:docs/handoff/supervisor-fichas.md`; sus dos trampas suben a «Trampas del frente».
 
-## ✅ 2026-10-19 · Grupos: «Agentes» sin fijar y «—» con 0 agentes; las tres congeladas, al día con `main`
+## ✅ 2026-10-19 · Grupos: «Agentes» sin fijar y «—» con 0 agentes; el tooltip del Kit; las tres congeladas, al día con `main`
 
-> **Sello:** rama `areses/grupos-agentes-column-unfixed-68c58a` sobre `main` `a3c0f25a`, un PR.
+> **Sello:** #456 (fundido en `6edc21e9`) y la rama `areses/tooltips-y-duplicar` sobre él, otro PR.
 
-- **Listado de grupos**: «Agentes» ya no va con candado en «Columnas» (se oculta y se mueve); solo Nombre. Enmienda DD-159.
-- **DS, `sc-group-popover`** en `count`: con ninguno pinta «—» en gris suave, sin subrayado, y sigue siendo el botón con su
-  nombre accesible («0 agentes. Asignar agentes de …»): en Grupos abre el panel. También alcanza a Servicios con 0.
-- **Agentes sin grupos**: ya salía «—» (`display="adaptive"`, DD-210), medido en `main` y en la congelada del 16/10.
-- **Pruebas**: `panel-agentes-grupo` (vacía un grupo, ve «—» y abre el panel) y `columnas-en-una-lista` (Agentes se
-  desmarca). Las dos, rojas sin el arreglo («0» y la casilla deshabilitada).
-- **Congeladas** 4058, 4062 y 4064: Rafa eligió llevarlas a todo lo de `main` (no solo este cambio). Rama y etiqueta
-  avanzan al commit de `main` tras fundir; la fila de `docs/PROTOTIPOS.md` dice de qué commit venía. Cómo, en ese doc.
+- **Grupos** (DD-159): «Agentes» sin candado en «Columnas»; con 0, `sc-group-popover` en `count` pinta «—» y sigue
+  siendo el botón que abre el panel (también Servicios con 0). Agentes sin grupos ya salía «—» (DD-210).
+- **Tooltip del Kit (DD-212)**: 39 `title` nativos pasan a `pTooltip`, los textos cortados con `showOnEllipsis`;
+  `audit:screen-hygiene` regla 9, con Monitor y Conversaciones en su trinquete. Queda `sc-tag` (recorta dentro del `p-tag`).
+- **Prioridad**: «Solo para las conversaciones entrantes.». **Duplicar sin Call Blending**, sin el teléfono saliente:
+  anotado en `figma-pendiente` §50. Pruebas: `panel-agentes-grupo`, `columnas-en-una-lista`, `tooltips-del-kit`; rojas sin.
+- **Trampas**: `sc-docs-a11y` medía la ficha anterior con el nombre de la siguiente (ya espera). En el panel de navegador
+  oculto el router se queda en blanco: mide con Playwright. Un ratón en (2, 2) abre el sidebar y tapa Nombre.
+- **Congeladas** 4058, 4062 y 4064, a todo lo de `main`: rama y etiqueta avanzan al commit fundido (`docs/PROTOTIPOS.md`).
 
 ## ✅ 2026-10-18 y 19 · Grupos y agentes en Figma para desarrollo: listado, altas, ediciones y su hand-off
 

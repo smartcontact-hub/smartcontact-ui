@@ -91,8 +91,8 @@
   <span class="assign__name">
     <sc-presence-avatar [name]="row.agent.name" [size]="24" [presence]="row.agent.presenceStatus" />
     <span class="assign__identity">
-      <span class="assign__name-label sc-text-body-semibold" [title]="row.agent.name">{{ row.agent.name }}</span>
-      @if (row.agent.email) { <span class="assign__email sc-text-caption-regular" [title]="row.agent.email">{{ row.agent.email }}</span> }
+      <span class="assign__name-label sc-text-body-semibold" [pTooltip]="row.agent.name" showOnEllipsis tooltipPosition="top">{{ row.agent.name }}</span>
+      @if (row.agent.email) { <span class="assign__email sc-text-caption-regular" [pTooltip]="row.agent.email" showOnEllipsis tooltipPosition="top">{{ row.agent.email }}</span> }
       @if (!compatible(row.agent)) { <span class="sc-text-caption-regular">{{ 'groups.form.assigned.incompatible' | translate }}</span> }
     </span>
     @if (row.link && row.link.channels.length === 0) {

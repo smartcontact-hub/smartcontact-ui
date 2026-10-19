@@ -47,6 +47,7 @@ import { injectLangChange } from '@core/utils/lang-change';
 
 import { type ColumnPrefs, normalizePrefs } from '../column-toggle/column-prefs';
 import { ColumnToggleComponent } from '../column-toggle/column-toggle.component';
+import { TooltipModule } from 'primeng/tooltip';
 
 /** Id de columna reservado para la del menú de fila; ninguna pantalla puede usarlo. */
 const ACTIONS_FIELD = '__actions';
@@ -98,6 +99,7 @@ let listRowMenuIdCounter = 0;
 @Component({
   selector: 'sc-list-page',
   imports: [
+    TooltipModule,
     ColumnToggleComponent,
     LlegaAlPieDirective,
     MenuModule,

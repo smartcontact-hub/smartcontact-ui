@@ -1,0 +1,83 @@
+import { expect, test, type Page } from '@playwright/test';
+
+import { disableAnimations, forceLightTheme, goto } from './helpers';
+
+/**
+ * LO QUE SE LEE AL PASAR EL RATÓN VA EN EL TOOLTIP DEL KIT (DD-212), el `pTooltip` de PrimeNG, y no en el `title` del
+ * navegador, que lo enseña con su globo del sistema. Lo que fija:
+ *   1. ninguna tabla de Grupos ni de Agentes lleva un `title` nativo;
+ *   2. un icono con significado (el canal, la grabación, el tipo de extensión) enseña su nombre en el tooltip;
+ *   3. un texto cortado lo enseña entero, y uno que cabe no lleva tooltip (`showOnEllipsis`);
+ *   4. «Guardar» apagado dice por qué en el tooltip;
+ *   5. en «Duplicar grupo», la ayuda de Prioridad dice que solo cuenta en las conversaciones entrantes.
+ */
+
+test.use({ storageState: { cookies: [], origins: [] } });
+test.beforeEach(async ({ page }) => {
+  await forceLightTheme(page);
+  await disableAnimations(page);
+});
+
+const tooltip = (page: Page) => page.locator('.p-tooltip');
+/** Al pie de la ventana, en medio: la esquina de arriba a la izquierda es el sidebar, que se abre al pasar y tapa Nombre. */
+const salir = async (page: Page) => {
+  const { width, height } = page.viewportSize()!;
+  await page.mouse.move(width / 2, height - 4);
+};
+
+test('Grupos y Agentes: sin `title` nativo, y los iconos dicen su nombre en el tooltip del Kit', async ({ page }) => {
+  await goto(page, 'admin/grupos');
+  await expect(page.locator('sc-datatable tbody tr').first()).toBeVisible();
+  await expect(page.locator('main [title]')).toHaveCount(0);
+  await page.locator('.sc-channel-row__item[data-channel="phone"]').first().hover();
+  await expect(tooltip(page)).toHaveText('Teléfono');
+  await salir(page);
+
+  await goto(page, 'admin/agentes');
+  await expect(page.locator('sc-datatable tbody tr').first()).toBeVisible();
+  await expect(page.locator('main [title]')).toHaveCount(0);
+  await page.locator('.recording').first().hover();
+  await expect(tooltip(page)).toHaveText('Grabación habilitada');
+  await salir(page);
+  await expect(tooltip(page)).toHaveCount(0);
+  await page.locator('.ext__kind').first().hover();
+  await expect(tooltip(page)).toHaveCount(1);
+});
+
+test('un nombre que cabe no lleva tooltip; cortado, lo enseña entero', async ({ page }) => {
+  await goto(page, 'admin/grupos');
+  const nombre = page.locator('.table__td-name-text').first();
+  await expect(nombre).toBeVisible();
+  const entero = (await nombre.textContent())!.trim();
+  await nombre.hover();
+  // Sin «…» no hay nada que enseñar: el tooltip repetiría lo que ya se lee.
+  await page.waitForTimeout(300);
+  await expect(tooltip(page)).toHaveCount(0);
+  await salir(page);
+
+  // Se estrecha la celda hasta que el nombre se corta: `showOnEllipsis` mide al pasar el ratón.
+  await nombre.evaluate((el) => {
+    el.style.maxWidth = '3rem';
+  });
+  expect(await nombre.evaluate((el: HTMLElement) => el.scrollWidth > el.offsetWidth), 'el nombre sale cortado').toBe(true);
+  await nombre.hover();
+  await expect(tooltip(page)).toHaveText(entero);
+});
+
+test('«Guardar» apagado dice por qué en el tooltip', async ({ page }) => {
+  await goto(page, 'admin/grupos/editar/2');
+  const guardar = page.getByRole('button', { name: 'Guardar', exact: true });
+  await expect(guardar).toBeDisabled();
+  await page.locator('sc-button', { has: guardar }).hover();
+  await expect(tooltip(page)).toHaveText('No hay cambios que guardar');
+});
+
+test('Duplicar grupo: la ayuda de Prioridad dice que solo cuenta en las conversaciones entrantes', async ({ page }) => {
+  await goto(page, 'admin/grupos');
+  await page.locator('tbody tr', { hasText: 'Reclamaciones' }).locator('.rules-kebab-btn').click();
+  await page.getByRole('menuitem', { name: 'Duplicar' }).click();
+  const dialogo = page.getByRole('dialog', { name: 'Duplicar grupo' });
+  await expect(dialogo.getByRole('combobox', { name: 'Prioridad' })).toHaveAccessibleDescription(
+    /Solo para las conversaciones entrantes\.$/,
+  );
+});

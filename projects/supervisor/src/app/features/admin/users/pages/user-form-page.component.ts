@@ -45,6 +45,7 @@ import {
 } from '../data/users-data';
 import { applyPackage, driftFromPackage } from '../data/user-packages.core.mjs';
 import { UsersStore } from '../state/users.store';
+import { TooltipModule } from 'primeng/tooltip';
 
 interface FormState {
   name: string;
@@ -77,6 +78,7 @@ const USER_SECTION_OF_FIELD: Readonly<Record<keyof FormState, string>> = {
 @Component({
   selector: 'sc-user-form-page',
   imports: [
+    TooltipModule,
     FactRowComponent,
     NgTemplateOutlet,
     CheckboxComponent,

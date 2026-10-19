@@ -11,6 +11,7 @@ import {
   ayudasEncima,
   acusaDePrimeras,
   rolesAMano,
+  titlesNativos,
   NATIVO_DEL_ROL,
   TOAST_DEL_SISTEMA,
 } from '../audit-screen-hygiene.mjs';
@@ -221,4 +222,19 @@ test('rolesAMano: en un `.ts` mira solo el `template:` en línea, con su línea 
 
 test('NATIVO_DEL_ROL: cada rol apunta a una familia de la sección 6 del catálogo', () => {
   for (const [rol, nativo] of Object.entries(NATIVO_DEL_ROL)) assert.match(nativo, /\(6\.\d+\)$/, rol);
+});
+
+// titlesNativos (regla 9): el `title` de HTML lo enseña el navegador con su globo; el texto va en `pTooltip`.
+test('titlesNativos: [title], [attr.title] y title="…" en una etiqueta de HTML o de PrimeNG, con su línea', () => {
+  const html = '<span [title]="a">a</span>\n<i class="x"\n   [attr.title]="b"></i>\n<p-overlay-badge title="c" />';
+  assert.deepEqual(titlesNativos(html, true), [1, 3, 4]);
+});
+
+test('titlesNativos: la entrada `title` de un componente nuestro no es un tooltip', () => {
+  assert.deepEqual(titlesNativos('<sc-dialog [title]="t" /><app-x title="y" />', true), []);
+});
+
+test('titlesNativos: ni un comentario ni `pTooltip` cuentan; en un .ts, solo su `template:`', () => {
+  assert.deepEqual(titlesNativos('<!-- <span title="x"> --><span [pTooltip]="x" tooltipPosition="top"></span>', true), []);
+  assert.deepEqual(titlesNativos("// <span title=\"x\">\nconst a = 1;\n@Component({ template: `<b [title]=\"n\"></b>` })", false), [3]);
 });

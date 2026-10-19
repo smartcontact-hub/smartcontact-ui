@@ -28,7 +28,7 @@
     [disabled]="!canSave()"
     [loading]="saving()"
     [label]="(mode() === 'edit' ? 'common.save' : 'users.form.create_submit') | translate"
-    [attr.title]="saveDisabledReason() ? (saveDisabledReason()! | translate) : null"
+    [pTooltip]="saveDisabledReason() ? (saveDisabledReason()! | translate) : ''" tooltipPosition="top"
     (clicked)="save()"
   />
 </ng-template>
@@ -46,10 +46,10 @@
            «Nuevo usuario» hasta que se escribe el nombre, y al crear la ficha no salta (DD-130). -->
       <div class="headline">
         <div class="headline__who">
-          <h1 class="headline__name sc-text-title-semibold" [title]="form().name">
+          <h1 class="headline__name sc-text-title-semibold" [pTooltip]="form().name" showOnEllipsis tooltipPosition="top">
             {{ form().name || ((mode() === 'duplicate' ? 'users.form.duplicate_title' : 'users.form.create_title') | translate) }}
           </h1>
-          <span class="headline__meta sc-text-caption-regular" [title]="form().email">
+          <span class="headline__meta sc-text-caption-regular" [pTooltip]="form().email" showOnEllipsis tooltipPosition="top">
             {{ form().email || ('users.form.fields.email_empty' | translate) }}
           </span>
         </div>

@@ -14,6 +14,7 @@ import { SC_ICON_SIZE_3XL, SC_ICON_SIZE_LG, ScIconComponent } from '@smartcontac
 
 import { AvatarIllustrationPool, buildIllustrationSrc } from '../../core/avatar-illustration';
 import { SC_PHOTO_UPLOAD_TRANSLATIONS } from './i18n/sc-photo-upload.translations';
+import { TooltipModule } from 'primeng/tooltip';
 
 const MAX_BYTES = 800 * 1024;
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif'];
@@ -34,7 +35,7 @@ let photoUploadIdCounter = 0;
 @Component({
   selector: 'sc-photo-upload',
   standalone: true,
-  imports: [ScIconComponent, TranslateModule],
+  imports: [TooltipModule, ScIconComponent, TranslateModule],
   templateUrl: './sc-photo-upload.component.html',
   styleUrl: './sc-photo-upload.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

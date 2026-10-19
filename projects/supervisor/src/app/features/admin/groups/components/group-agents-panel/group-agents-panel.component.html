@@ -33,7 +33,7 @@
           variant="primary"
           [disabled]="changes() === 0"
           [label]="changes() > 0 ? ('groups.agents_panel.save_count' | translate: { count: changes() }) : ('common.save' | translate)"
-          [attr.title]="changes() === 0 ? ('common.no_changes' | translate) : null"
+          [pTooltip]="changes() === 0 ? ('common.no_changes' | translate) : ''" tooltipPosition="top"
           (clicked)="save()"
         />
       </div>

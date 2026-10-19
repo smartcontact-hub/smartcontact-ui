@@ -48,10 +48,12 @@ import {
 } from '../state/templates.core.mjs';
 import { TemplatesStore } from '../state/templates.store';
 import { ResultadoAccionService } from '@core/services';
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   selector: 'sc-templates-page',
   imports: [
+    TooltipModule,
     TabsComponent,
     ButtonComponent,
     DeleteEntityDialogComponent,

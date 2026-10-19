@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Lo que se lee al pasar el ratón va en el tooltip del Kit (`pTooltip`), no en el `title` del navegador: con `showOnEllipsis` si repite un texto cortado · la ayuda de Prioridad dice «conversaciones» · en «Duplicar grupo», sin Call Blending no sale el teléfono saliente (anotado para Figma) · `audit:screen-hygiene` (9) | DD-212 |
 > | Revisión de producto del 2026-10-16: a quién se asigna una agenda, en un árbol Grupo → Agentes (`p-treetable`), por persona, con grupos enteros dinámicos y «Sin grupo» · la ficha de agente: el PIN lo asigna el sistema y solo se ve al editar, «Navegador» deshabilitado sin WebRTC (`optionDisabled`), Agentes y Grupos en el Destino de las llamadas, fuera «Automático con preview» y «Actualizar teléfono en login», sin Teléfono no se ve lo de las llamadas · el globo de confirmación cerrado sin responder es «no» · la ficha de grupo: el audio saliente con los mensajes de la cola, la estrategia en una línea en el resumen, cada canal con su nivel al lado · el resultado de una acción, en un toast (sustituye DD-191 y DD-196) · ✓ en toda sección que se deja completa (enmienda DD-158) · Contact Center con un solo Guardar · SelectButton entero en sc-docs · un campo de solo lectura no parece editable (sin borde, sobre el fondo suave) | DD-211 |
 > | Revisión de las tablas y Repositorios (2026-10-15): «+ Nueva X» y «Buscar {entidades}…» · la celda de grupos según cuántos (`display="adaptive"` de `sc-group-popover`) · cada columna compacta a su contenido al abrir, y «Restablecer» vuelve ahí · «Acciones» con «Importar» y «Exportar», y la plantilla en el diálogo · un solo `sc-import-dialog` · «+ Añadir subcategoría» por categoría · los grupos de una plantilla con «+N más» y apagados sin su canal · un contacto sin obligatorios, y sus columnas a elegir (`sc-column-toggle`) | DD-210 |
 > | Revisión de la ficha de agente (2026-10-15): el grupo de sus salientes, en un desplegable bajo la tabla y con su flecha junto al nombre, no un radio por fila · el resumen y la cabecera con los iconos de la lista: «Canales» con el de cada canal, la extensión con el de dónde suena, Grabación con su REC relleno o de contorno · sin color nuevo: el REC deja el rojo, en la ficha y en la lista · la tarjeta de datos, la misma en las tres fichas (plana, blanca y con borde) y con sus baldosas en el degradado de la cifra destacada (`tone="brand"` de `sc-icon-tile` y `sc-fact-row`) | DD-209 |
@@ -152,6 +153,30 @@
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
 
 ---
+
+## DD-212 · 2026-10-19 — El tooltip del Kit en vez del `title` del navegador, la ayuda de Prioridad y el teléfono saliente de Duplicar con Call Blending
+
+**Contexto** · Revisión de las tablas de grupos y agentes del 2026-10-19. Al pasar el ratón por una columna (los canales,
+la grabación, un nombre cortado) salía el globo del sistema del navegador, no el Tooltip del Kit de Figma ni el de
+primeng.dev. Medido: 39 `title` nativos en Administración, lo compartido, la barra superior y el DS. En «Duplicar grupo», la ayuda de
+Prioridad decía «llamadas», y la prioridad cuenta en las conversaciones entrantes de cualquier canal (DD-141).
+
+**Decisión** ·
+1. **Lo que se lee al pasar el ratón va en `pTooltip`**, el tooltip del Kit: un icono con significado (canal, grabación,
+   tipo de extensión, presencia), siempre; un texto cortado (nombre, email, descripción), con `showOnEllipsis`, que solo
+   lo enseña si se ve «…»; el porqué de un botón apagado («Guardar» sin cambios o sin lo obligatorio), siempre. En algo
+   que se enfoca (la foto, copiar el nombre al borrar, «Columnas», el inicio de la barra), `tooltipEvent="both"`.
+2. **La regla 9 de `audit:screen-hygiene`** lo vigila: un `title` nativo nuevo en el Supervisor o en el DS pone el gate
+   en rojo. Monitor y Conversaciones quedan en su trinquete (12 ficheros), que solo baja.
+3. **Prioridad**: «Solo para las conversaciones entrantes.» (en los cuatro idiomas), en la ficha y en Duplicar, que
+   comparten la pieza.
+4. **Duplicar grupo**: sin Call Blending contratado no sale el desplegable «Teléfono saliente». El prototipo lo enseña
+   todo (DD-211); va como anotación de lo contratado en `figma-pendiente` §50.
+
+**Queda** · `sc-tag` recorta dentro del `p-tag` de PrimeNG y devuelve el texto entero en `title`; en las tablas entregadas
+las etiquetas caben enteras (DD-210), así que no se ve. Pasarlo a `pTooltip` pide rehacer cómo mide el recorte.
+
+**Descartado** · Una directiva propia que mida el recorte: `showOnEllipsis` ya lo hace en PrimeNG 22.
 
 ## DD-211 · 2026-10-16 — Revisión de producto de agendas, fichas, Contact Center y toasts: a quién se asigna una agenda en un árbol por persona, el PIN del sistema, el resultado en un toast y un solo Guardar en Contact Center
 

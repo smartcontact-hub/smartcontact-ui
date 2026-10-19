@@ -1729,7 +1729,7 @@
     {
       "selector": "sc-column-selector",
       "name": "column-selector",
-      "primengBase": "primeng/popover",
+      "primengBase": "primeng/popover, primeng/tooltip",
       "estado": "experimental",
       "faltas": [
         "kit"
@@ -1793,13 +1793,33 @@
         "ariaCloseLabel",
         "ariaLabel",
         "ariaLabelledBy",
+        "autoHide",
         "autoZIndex",
         "baseZIndex",
+        "content",
         "dismissable",
+        "escape",
+        "fitContent",
         "focusOnShow",
+        "hideDelay",
+        "hideOnEscape",
+        "life",
         "motionOptions",
+        "pTooltipPT",
+        "pTooltipUnstyled",
+        "positionLeft",
+        "positionStyle",
+        "positionTop",
+        "showDelay",
+        "showOnEllipsis",
         "style",
-        "styleClass"
+        "styleClass",
+        "tooltipDisabled",
+        "tooltipEvent",
+        "tooltipOptions",
+        "tooltipPosition",
+        "tooltipStyleClass",
+        "tooltipZIndex"
       ]
     },
     {
@@ -3379,7 +3399,7 @@
     {
       "selector": "sc-delete-entity-dialog",
       "name": "delete-entity-dialog",
-      "primengBase": "—",
+      "primengBase": "primeng/tooltip",
       "estado": "experimental",
       "faltas": [
         "kit"
@@ -3478,7 +3498,29 @@
           "nativo": null
         }
       ],
-      "ocultas": []
+      "ocultas": [
+        "appendTo",
+        "autoHide",
+        "content",
+        "escape",
+        "fitContent",
+        "hideDelay",
+        "hideOnEscape",
+        "life",
+        "pTooltipPT",
+        "pTooltipUnstyled",
+        "positionLeft",
+        "positionStyle",
+        "positionTop",
+        "showDelay",
+        "showOnEllipsis",
+        "tooltipDisabled",
+        "tooltipEvent",
+        "tooltipOptions",
+        "tooltipPosition",
+        "tooltipStyleClass",
+        "tooltipZIndex"
+      ]
     },
     {
       "selector": "sc-dialog",
@@ -7332,7 +7374,7 @@
     {
       "selector": "sc-photo-upload",
       "name": "photo-upload",
-      "primengBase": "—",
+      "primengBase": "primeng/tooltip",
       "estado": "experimental",
       "faltas": [
         "kit"
@@ -7411,7 +7453,29 @@
           "nativo": null
         }
       ],
-      "ocultas": []
+      "ocultas": [
+        "appendTo",
+        "autoHide",
+        "content",
+        "escape",
+        "fitContent",
+        "hideDelay",
+        "hideOnEscape",
+        "life",
+        "pTooltipPT",
+        "pTooltipUnstyled",
+        "positionLeft",
+        "positionStyle",
+        "positionTop",
+        "showDelay",
+        "showOnEllipsis",
+        "tooltipDisabled",
+        "tooltipEvent",
+        "tooltipOptions",
+        "tooltipPosition",
+        "tooltipStyleClass",
+        "tooltipZIndex"
+      ]
     },
     {
       "selector": "sc-progressbar",

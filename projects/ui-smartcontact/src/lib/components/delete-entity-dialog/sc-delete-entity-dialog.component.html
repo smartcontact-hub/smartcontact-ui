@@ -20,7 +20,7 @@
       type="button"
       class="delete-entity__copy-name"
       (click)="onCopy()"
-      [title]="'sc.deleteEntityDialog.clickToCopy' | translate"
+      [pTooltip]="'sc.deleteEntityDialog.clickToCopy' | translate" tooltipEvent="both" tooltipPosition="top"
     >
       <span>{{ confirmTarget() }}</span>
       @if (copied()) {

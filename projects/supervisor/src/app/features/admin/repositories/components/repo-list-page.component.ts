@@ -38,6 +38,7 @@ import { injectLangChange } from '@core/utils/lang-change';
 import { copyName } from '@shared/utils/copy-name';
 import { hoy } from '@shared/utils/today';
 import { ResultadoAccionService } from '@core/services';
+import { TooltipModule } from 'primeng/tooltip';
 
 /**
  * Generic CRUD page used by all 9 repository instances. Driven by a
@@ -50,6 +51,7 @@ import { ResultadoAccionService } from '@core/services';
 @Component({
   selector: 'sc-repo-list-page',
   imports: [
+    TooltipModule,
     EmptyStateComponent,
     ButtonComponent,
     GroupPopoverComponent,
@@ -244,8 +246,9 @@ export class RepoListPageComponent<T extends RepoEntity> {
 
   /** El texto entero al pasar el ratón, solo en las columnas que recortan: con un dato más largo que lo medido, la
    *  celda corta con «…» (DD-124). */
-  protected cellTitle(item: T, key: string): string | null {
-    return this.isKind(key, 'truncate') ? this.getCellValue(item, key) : null;
+  /** El texto entero de una celda que se corta, para su tooltip (`showOnEllipsis`); vacío, sin tooltip. */
+  protected cellTitle(item: T, key: string): string {
+    return this.isKind(key, 'truncate') ? this.getCellValue(item, key) : '';
   }
 
   protected getStatusEntry(
