@@ -1436,9 +1436,11 @@ medido contra sc-supervisor.pages.dev a 1440.
 - **Botones:** `button-small` de texto sin el borde transparente de 1 de PrimeNG (25 de alto en vez de 27; las filas
   del listado se van a 30). En `button`, el icono de dentro no está atado a «Left Icon» ni a «Icon»: sale el ✓ del
   maestro y hay que cambiarlo a mano.
-- **Tablas:** las celdas Small del Kit van a 5,25 × 7 (`datatable/body|header/cell/sm/padding`) y las de PrimeNG small a
-  2 × 6; `datatable-header-cell` con el texto en alto automático (22 en vez de 25) y su variante Selected pinta
-  `highlight` (en PrimeNG 22 la ordenada se queda blanca); `datatable-selection-cell` Small, con la casilla pequeña.
+- **Tablas:** el texto, hecho el 2026-10-19: Body/body-regular y Body/body-semibold (interlineado 20), fila de 42. El
+  relleno del Kit (10,5 × 14; Small 5,25 × 7) es el del DS de los devs, medido en ui.smart-contact.com: el que se
+  aparta es el prototipo (8 × 14; small 2 × 6), ficha 1 de §54. Queda: la variante Selected de
+  `datatable-header-cell` pinta `highlight` (en PrimeNG 22 la ordenada se queda blanca); `datatable-selection-cell`
+  Small, con la casilla pequeña.
 - **Menú:** `menu` lleva sus filas fijas, sin slot; `menu-item` mide 21 (texto de 14 de alto) frente a 27, y no tiene
   variante de peligro.
 - **Formularios:** la casilla sin `indeterminate`; InputNumber sin la variante sin botones ni con sufijo; sin el estado
@@ -1474,7 +1476,7 @@ Cada ficha se va si se acepta su propuesta; con las once, la página se vacía.
 
 | # | Ficha | Propuesta | Kit | Prototipo |
 |---|---|---|---|---|
-| 1 | Alto de fila | El prototipo al relleno del Kit (10,5 × 14, el del DS de desarrollo); en Figma, la tabla a Default | no | sí |
+| 1 | Alto de fila | Decidido el 2026-10-19: el relleno de los devs (10,5 × 14), que es el del Kit. Cambia el prototipo; en Figma, la tabla a Default | no | sí |
 | 2 | Barra de arriba | El maestro `Header` con `button` md (DD-188) | sí | no |
 | 3 | Toast | El prototipo con `p-toast` sin plantilla; el «Deshacer» del inicio (DD-196), aparte | no | sí |
 | 4 | Botón de foto | El fondo del dibujo a `highlight/background` | no | no |
@@ -1488,8 +1490,8 @@ Cada ficha se va si se acepta su propuesta; con las once, la página se vacía.
 
 **Lo que se daba por cierto y no lo era:** la variable del azul existe (§53, corregido); la «×» del diálogo está en el
 dibujo y la recorta el ancho de 440; el campo numérico del prototipo es `<input type="number">` (DD-195), no
-`p-inputnumber`; en la tabla, el que se aparta es el prototipo (8 × 14 de Aura: `sc-preset/datatable.ts` no fija el
-relleno), no el Kit. **Sin medir:** el ancho real del toast del prototipo, el alto del `Header` con botón md y la fila con
+`p-inputnumber`; en la tabla, el que se aparta es el prototipo (8 × 14, el Aura de PrimeNG 22 sin escalar), no el Kit:
+el DS de los devs pinta 10,5 × 14, como el Kit (medido en ui.smart-contact.com el 2026-10-19). **Sin medir:** el ancho real del toast del prototipo, el alto del `Header` con botón md y la fila con
 `size="small"` real.
 
 **Cómo sabes que está hecho:** la página «Fuera del DS» solo enseña lo que no existe en ningún sitio, o queda vacía.
