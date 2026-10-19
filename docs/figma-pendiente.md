@@ -1429,7 +1429,8 @@ sin repunte: al equipo externo le bastaría una línea en `extend.ts`, `accent: 
 ## 53 · Lo que el Kit no tiene para las fichas de grupo y agente y el listado de grupos (medido el 2026-10-18)
 
 **Estado:** sin hacer; en las maquetas del Supervisor va ajustado a la app y anotado, sin tocar la librería · **Dónde:**
-fichero del DS, y el del Supervisor (secciones `2934:580` y `2970:4752`, hand-off `2997:47`) · **Evidencia:** cada caso,
+fichero del DS, y el del Supervisor (páginas «Grupos» y «Agentes», cada una con su índice; «Fuera del DS» `3034:114`;
+hand-off `2997:47`) · **Evidencia:** cada caso,
 medido contra sc-supervisor.pages.dev a 1440.
 
 - **Botones:** `button-small` de texto sin el borde transparente de 1 de PrimeNG (25 de alto en vez de 27; las filas
