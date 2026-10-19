@@ -11,8 +11,8 @@ import { disableAnimations, forceLightTheme, goto, irASeccion, pickSelectOption 
  *   1. El nombre es el único `h1` de la página, y es el mismo que el del campo de nombre de la primera sección.
  *   2. UN índice lateral gobierna el contenido: una sección a la vista, en su caja; sin pestañas.
  *   3. Un solo orden por ficha en los dos modos, el de sus dependencias, con el mismo índice al crear y al editar
- *      (DD-143). La ficha abre en la primera (Identidad; en el agente, General desde DD-187) y el listado la abre
- *      en su sección de trabajo (`?seccion=`).
+ *      (DD-143). La ficha abre en la primera (Identidad; en el agente, General desde DD-187), también desde el
+ *      listado (DD-213; hasta entonces el listado la abría en su sección de trabajo, `?seccion=`).
  *   4. Las tres fichas comparten molde: la cabecera en la misma vertical, el índice de Contact
  *      Center (196, fijo) y el contenido de 812 a 1440 con el resumen a la derecha.
  *   5. (Quitado el 2026-10-09, DD-187: el aviso de «abierta en otra pestaña» ya no existe.)
@@ -40,7 +40,6 @@ const FICHAS = [
     lista: 'admin/usuarios',
     prefijo: 'user-section-',
     orden: ['Identidad', 'Acceso', 'Servicios asignados'],
-    trabajo: { rotulo: 'Acceso', seccion: 'acceso' },
     campoNombre: '#user-name',
     alta: 'Nuevo usuario',
     // Dos anillos y una fila.
@@ -56,7 +55,6 @@ const FICHAS = [
     // Avanzado.
     // «Grupos asignados» desde DD-204: el nombre dice qué hay dentro, como «Servicios asignados» del usuario.
     orden: ['General', 'Configuración', 'Recursos', 'Grupos asignados'],
-    trabajo: { rotulo: 'Grupos asignados', seccion: 'grupos' },
     campoNombre: '#agent-name',
     alta: 'Nuevo agente',
     // Su anillo (habilitado en grupos) y seis filas: Atiende por, Extensión, Grabación, Salientes, Recursos y Tipo de
@@ -102,13 +100,13 @@ for (const f of FICHAS) {
     await expect(page.locator('.headline__actions')).toHaveCount(0);
   });
 
-  test(`${f.nombre} · el listado abre la ficha en su sección de trabajo`, async ({ page }) => {
+  test(`${f.nombre} · el listado abre la ficha por la primera sección`, async ({ page }) => {
     await goto(page, f.lista);
-    // «Editar» del menú de la fila: abre donde abre el clic en la fila (`onRowOpen`).
+    // «Editar» del menú de la fila: abre donde abre el clic en la fila (`onRowOpen`), la primera sección (DD-213).
     await page.locator('tbody tr').first().locator('.rules-kebab-btn').click();
     await page.locator('.p-menu-overlay .p-menu-item-link', { hasText: /editar/i }).click();
-    await expect(page).toHaveURL(new RegExp(`/${f.lista}/editar/\\d+\\?seccion=${f.trabajo.seccion}$`));
-    await expect(actual(page)).toHaveText(f.trabajo.rotulo);
+    await expect(page).toHaveURL(new RegExp(`/${f.lista}/editar/\\d+$`));
+    await expect(actual(page)).toHaveText(f.orden[0]);
   });
 
   test(`${f.nombre} · el resumen de la derecha dice sus datos`, async ({ page }) => {

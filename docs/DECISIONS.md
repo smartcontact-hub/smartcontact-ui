@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Abrir una ficha desde su listado, con la fila o con «Editar», entra por la primera sección (General en grupo y agente, Identidad en usuario) · la tarea frecuente se queda en el control que la nombra: en Agentes, la cifra de grupos lleva a «Grupos asignados» con su propia acción · al crear, nada cambia (enmienda DD-122 §8) | DD-213 |
 > | Lo que se lee al pasar el ratón va en el tooltip del Kit (`pTooltip`), no en el `title` del navegador: con `showOnEllipsis` si repite un texto cortado · la ayuda de Prioridad dice «conversaciones» · en «Duplicar grupo», sin Call Blending no sale el teléfono saliente (anotado para Figma) · `audit:screen-hygiene` (9) | DD-212 |
 > | Revisión de producto del 2026-10-16: a quién se asigna una agenda, en un árbol Grupo → Agentes (`p-treetable`), por persona, con grupos enteros dinámicos y «Sin grupo» · la ficha de agente: el PIN lo asigna el sistema y solo se ve al editar, «Navegador» deshabilitado sin WebRTC (`optionDisabled`), Agentes y Grupos en el Destino de las llamadas, fuera «Automático con preview» y «Actualizar teléfono en login», sin Teléfono no se ve lo de las llamadas · el globo de confirmación cerrado sin responder es «no» · la ficha de grupo: el audio saliente con los mensajes de la cola, la estrategia en una línea en el resumen, cada canal con su nivel al lado · el resultado de una acción, en un toast (sustituye DD-191 y DD-196) · ✓ en toda sección que se deja completa (enmienda DD-158) · Contact Center con un solo Guardar · SelectButton entero en sc-docs · un campo de solo lectura no parece editable (sin borde, sobre el fondo suave) | DD-211 |
 > | Revisión de las tablas y Repositorios (2026-10-15): «+ Nueva X» y «Buscar {entidades}…» · la celda de grupos según cuántos (`display="adaptive"` de `sc-group-popover`) · cada columna compacta a su contenido al abrir, y «Restablecer» vuelve ahí · «Acciones» con «Importar» y «Exportar», y la plantilla en el diálogo · un solo `sc-import-dialog` · «+ Añadir subcategoría» por categoría · los grupos de una plantilla con «+N más» y apagados sin su canal · un contacto sin obligatorios, y sus columnas a elegir (`sc-column-toggle`) | DD-210 |
@@ -153,6 +154,38 @@
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
 
 ---
+
+## DD-213 · 2026-10-19 — Abrir una ficha desde su listado entra por la primera sección, y la cifra lleva a la de trabajo
+
+**Contexto** · Desde DD-122 §8, el clic en la fila y «Editar» abrían la ficha de agente en Grupos asignados
+(`?seccion=grupos`) y la de usuario en Acceso (`?seccion=acceso`), por ser donde más se trabaja. La de grupo abría por
+General. El mismo gesto llevaba a sitios distintos según el listado, y «Editar» no avisa de que salta a mitad del
+índice. Revisión de diseño del 2026-10-19.
+
+**Decisión** ·
+1. **La fila y «Editar» abren por la primera sección del índice** en las tres fichas: General en grupo y agente,
+   Identidad en usuario. La dirección va sin `?seccion=`.
+2. **La tarea frecuente se queda en el control que la nombra.** En Agentes, la cifra de grupos sigue llevando a
+   «Grupos asignados» (DD-159), ahora con su propia acción (`openGroups`): antes llegaba ahí porque su clic subía hasta
+   la fila. Con uno o ningún grupo no hay cifra, y la celda abre la fila como el resto. En Grupos, la cifra de agentes
+   sigue abriendo el panel rápido.
+3. **Usuarios no tiene cifra hacia Acceso**: se llega por el índice, a un clic.
+4. **Al crear, nada cambia**: la edición abre en la sección donde estabas (DD-143).
+
+**Razón** · Medido en sc-supervisor.pages.dev el 2026-10-19: Grupos abría por General y Agentes por Grupos asignados,
+con la fila y con «Editar»; la cifra «12 grupos» llevaba a Grupos asignados solo porque su clic llegaba a la fila.
+General dice quién es (foto, nombre, extensión) antes que una tabla de grupos, y el atajo a la tarea frecuente ya
+existía en la cifra.
+
+**Descartadas** ·
+- Mantener la sección de trabajo: ahorra un clic a quien asigna, pero el atajo ya está en la cifra y el resto aterriza
+  donde no pidió.
+- Recordar la última sección abierta por persona: menos predecible, y otra regla que explicar.
+- `stopRowClick` en la columna de grupos: con un solo grupo la celda es texto y quedaría muerta al pulsarla.
+
+**Consecuencias** · `agents-list-page` y `users-list-page` abren sin `?seccion=`; la cifra de grupos para el clic solo
+cuando es botón. Las e2e de «Editar» (usuarios, y agente y usuario en `ficha-usuario-agente`) esperan la primera
+sección, y `listados-a-su-sitio` fija la cifra y la fila. En Figma, la edición de agente abre por General.
 
 ## DD-212 · 2026-10-19 — El tooltip del Kit en vez del `title` del navegador, la ayuda de Prioridad y el teléfono saliente de Duplicar con Call Blending
 
@@ -4873,7 +4906,8 @@ Las dos primeras medían igual al píxel; se comportaban distinto.
    - agente: Identidad · Grupos asignados · Permisos · Recursos · Avanzado;
    - usuario: Identidad · Acceso · Servicios asignados.
    Abren en la primera. Los listados enlazan a la sección de trabajo (`?seccion=grupos`, `?seccion=acceso`), así
-   que el clic de siempre sigue llegando ahí. Las tarjetas del resumen pasan a `styles/_resumen.scss`, una para
+   que el clic de siempre sigue llegando ahí (desde DD-213, la fila y «Editar» abren por la primera, y a Grupos
+   asignados lleva la cifra de grupos). Las tarjetas del resumen pasan a `styles/_resumen.scss`, una para
    las tres fichas. El aviso de «abierta en otra pestaña» se pinta en las tres; en agente y usuario el candado
    ya se cogía y no se decía.
 9. **Un punto de referencia por índice**: el carril es un `div` y el `nav` se nombra con su rótulo visible
