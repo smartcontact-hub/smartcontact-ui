@@ -10,11 +10,13 @@
         ? (ariaLabel() ?? ('sc.photoUpload.changePhoto' | translate))
         : ('sc.photoUpload.select' | translate)
     "
-    [title]="
+    [pTooltip]="
       photo()
         ? (ariaLabel() ?? ('sc.photoUpload.changePhoto' | translate))
         : ('sc.photoUpload.select' | translate)
     "
+    tooltipEvent="both"
+    tooltipPosition="top"
     [attr.aria-describedby]="hintId"
   >
     @if (photo(); as src) {

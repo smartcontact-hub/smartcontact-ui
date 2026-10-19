@@ -1982,7 +1982,7 @@
         "name": "Name",
         "phone": "Outbound phone",
         "priority": "Priority",
-        "priority_hint": "Only for incoming calls.",
+        "priority_hint": "Only for incoming conversations.",
         "phone_strategy": "Strategy (phone)",
         "chat_strategy": "Strategy (chat)",
         "phone_hint": "The number customers see when called.",

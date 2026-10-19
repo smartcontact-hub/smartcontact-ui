@@ -28,7 +28,7 @@
     [disabled]="!canSave()"
     [loading]="saving()"
     [label]="(mode() === 'create' ? 'groups.form.create_submit' : 'common.save') | translate"
-    [attr.title]="saveDisabledReason() ? (saveDisabledReason()! | translate) : null"
+    [pTooltip]="saveDisabledReason() ? (saveDisabledReason()! | translate) : ''" tooltipPosition="top"
     (clicked)="save()"
   />
 </ng-template>
@@ -53,7 +53,7 @@
              rol que ya usan las nueve listas para su `h1`. -->
         <div class="headline__who">
           @if (mode() === 'edit') {
-            <h1 class="headline__name headline__name--editable sc-text-title-semibold" [title]="form().name">
+            <h1 class="headline__name headline__name--editable sc-text-title-semibold" [pTooltip]="form().name" showOnEllipsis tooltipPosition="top">
               <sc-name-inplace
                 [name]="form().name"
                 [label]="'groups.form.fields.name' | translate"
@@ -63,11 +63,11 @@
             </h1>
           } @else {
             <!-- En el alta el nombre se escribe en General; el título lo sigue según se escribe. -->
-            <h1 class="headline__name sc-text-title-semibold" [title]="form().name">{{ form().name || ('groups.form.create_title' | translate) }}</h1>
+            <h1 class="headline__name sc-text-title-semibold" [pTooltip]="form().name" showOnEllipsis tooltipPosition="top">{{ form().name || ('groups.form.create_title' | translate) }}</h1>
           }
           <!-- Los datos del grupo, CON su nombre: «Media» a secas no decía de qué. El teléfono, solo si
                el grupo ofrece teléfono: a un grupo de chat no se le pide. -->
-          <span class="headline__meta sc-text-caption-regular" [title]="identitySummary()">{{ identitySummary() }}</span>
+          <span class="headline__meta sc-text-caption-regular" [pTooltip]="identitySummary()" showOnEllipsis tooltipPosition="top">{{ identitySummary() }}</span>
         </div>
       </div>
 

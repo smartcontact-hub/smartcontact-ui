@@ -34,7 +34,7 @@
 ## Clasificación (auto-generada)
 
 <!-- @audit:components — TABLA GENERADA por `node scripts/component-audit.mjs --write`. NO editar a mano. -->
-**61 componentes** · 24 custom · 9 standard · 28 extended · 51 usados en Supervisor · estado (DD-190): 33 ready, 27 experimental, 1 deprecated.
+**61 componentes** · 22 custom · 10 standard · 29 extended · 51 usados en Supervisor · estado (DD-190): 33 ready, 27 experimental, 1 deprecated.
 
 | Componente | Tipo | Estado | PrimeNG base | API propia | Anidados | Demo | Usos en Supervisor |
 |---|---|---|---|---|---|---|---|
@@ -50,12 +50,12 @@
 | `sc-checkbox` | CUSTOM | ready | — | 6 inputs | — | ✓ | 39 |
 | `sc-chip` | EXTENDED | ready | primeng/chip | 9 inputs | — | ✓ | 5 |
 | `sc-color-dot-picker` | CUSTOM | experimental (sin maestro en el Kit) | — | 1 inputs | sc-selectbutton | ✓ | 3 |
-| `sc-column-selector` | STANDARD | experimental (sin maestro en el Kit) | primeng/popover | 1 inputs | — | ✓ | 1 |
+| `sc-column-selector` | STANDARD | experimental (sin maestro en el Kit) | primeng/popover, primeng/tooltip | 1 inputs | — | ✓ | 1 |
 | `sc-command-palette` | CUSTOM | experimental (sin maestro en el Kit) | — | 0 inputs | — | ✓ | 4 |
 | `sc-confirmdialog` | STANDARD | ready | primeng/confirmdialog, primeng/confirmpopup | 0 inputs | — | ✓ | 1 |
 | `sc-datatable` | EXTENDED | ready | primeng/table | 63 inputs | sc-skeleton sc-button | ✓ | 16 |
 | `sc-datepicker` | EXTENDED | ready | primeng/datepicker | 24 inputs | sc-field-label sc-button sc-field-msg | ✓ | 1 |
-| `sc-delete-entity-dialog` | CUSTOM | experimental (sin maestro en el Kit) | — | 2 inputs | sc-dialog sc-message sc-button | ✓ | 12 |
+| `sc-delete-entity-dialog` | STANDARD | experimental (sin maestro en el Kit) | primeng/tooltip | 2 inputs | sc-dialog sc-message sc-button | ✓ | 12 |
 | `sc-dialog` | EXTENDED | ready | primeng/dialog | 14 inputs | — | ✓ | 19 |
 | `sc-divider` | STANDARD | ready | primeng/divider | 3 inputs | — | ✓ | 22 |
 | `sc-drawer` | EXTENDED | ready | primeng/drawer | 11 inputs | — | ✓ | 3 |
@@ -82,7 +82,7 @@
 | `sc-panel` | EXTENDED | ready | primeng/panel | 6 inputs | — | ✓ | 1 |
 | `sc-password` | EXTENDED | ready | primeng/config, primeng/inputpassword | 19 inputs | sc-field-label sc-field-msg | ✓ | 2 |
 | `sc-permission-matrix` | CUSTOM | experimental (sin maestro en el Kit ni demo) | — | 5 inputs | sc-checkbox | — | 2 |
-| `sc-photo-upload` | CUSTOM | experimental (sin maestro en el Kit) | — | 6 inputs | — | ✓ | 2 |
+| `sc-photo-upload` | EXTENDED | experimental (sin maestro en el Kit) | primeng/tooltip | 6 inputs | — | ✓ | 2 |
 | `sc-progressbar` | EXTENDED | ready | primeng/progressbar | 6 inputs | — | ✓ | — |
 | `sc-progressspinner` | EXTENDED | ready | primeng/progressspinner | 4 inputs | — | ✓ | — |
 | `sc-radiobutton` | EXTENDED | ready | primeng/radiobutton | 7 inputs | — | ✓ | 3 |

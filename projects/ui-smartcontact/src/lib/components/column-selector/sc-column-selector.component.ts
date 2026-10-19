@@ -12,6 +12,7 @@ import { PopoverModule } from 'primeng/popover';
 
 
 import { SC_ICONS, ScIconComponent } from '@smartcontact-hub/icons';
+import { TooltipModule } from 'primeng/tooltip';
 
 export interface ColumnDef {
   /** Stable key persisted in localStorage. */
@@ -54,7 +55,7 @@ type OrderedVisible = readonly string[];
  */
 @Component({
   selector: 'sc-column-selector',
-  imports: [CdkDrag, CdkDropList, ScIconComponent, PopoverModule],
+  imports: [TooltipModule, CdkDrag, CdkDropList, ScIconComponent, PopoverModule],
   templateUrl: './sc-column-selector.component.html',
   styleUrl: './sc-column-selector.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

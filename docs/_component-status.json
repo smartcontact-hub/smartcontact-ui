@@ -1,6 +1,6 @@
 {
   "generated": "component-audit.mjs",
-  "summary": "61 componentes · 24 custom · 9 standard · 28 extended · 51 usados en Supervisor · estado (DD-190): 33 ready, 27 experimental, 1 deprecated.",
+  "summary": "61 componentes · 22 custom · 10 standard · 29 extended · 51 usados en Supervisor · estado (DD-190): 33 ready, 27 experimental, 1 deprecated.",
   "components": [
     {
       "name": "avatar",
@@ -364,7 +364,7 @@
       "selector": "sc-column-selector",
       "provenance": "WRAPPER",
       "kind": "STANDARD",
-      "primengBase": "primeng/popover",
+      "primengBase": "primeng/popover, primeng/tooltip",
       "cva": false,
       "inputs": 1,
       "api": [
@@ -589,9 +589,9 @@
     {
       "name": "delete-entity-dialog",
       "selector": "sc-delete-entity-dialog",
-      "provenance": "CUSTOM",
-      "kind": "CUSTOM",
-      "primengBase": "—",
+      "provenance": "WRAPPER",
+      "kind": "STANDARD",
+      "primengBase": "primeng/tooltip",
       "cva": false,
       "inputs": 2,
       "api": [
@@ -1478,9 +1478,9 @@
     {
       "name": "photo-upload",
       "selector": "sc-photo-upload",
-      "provenance": "CUSTOM",
-      "kind": "CUSTOM",
-      "primengBase": "—",
+      "provenance": "WRAPPER",
+      "kind": "EXTENDED",
+      "primengBase": "primeng/tooltip",
       "cva": false,
       "inputs": 6,
       "api": [

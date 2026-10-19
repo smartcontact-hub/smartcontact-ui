@@ -60,6 +60,13 @@
   /* Radio concéntrico con el panel: el del panel menos el relleno de su lista (DD-192). */
   border-radius: calc(var(--sc-radius-200) - var(--sc-spacing-0-25));
   cursor: pointer;
+  /* PrimeNG le quita el ratón a todo `.p-disabled`, y sin él el porqué de una fila apagada («No hay registros para
+   * exportar») no sale en su tooltip (DD-212). Pulsarla no hace nada: el menú ignora un elemento apagado. */
+  pointer-events: auto;
+}
+
+.data-menu__item--apagado {
+  cursor: default;
 }
 
 .data-menu__icon {

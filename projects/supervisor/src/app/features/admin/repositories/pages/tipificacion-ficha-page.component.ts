@@ -31,6 +31,7 @@ import {
   TipificacionesStore,
 } from '../state/tipificaciones.store';
 import { TipificacionUsoService } from '../state/tipificacion-uso.service';
+import { TooltipModule } from 'primeng/tooltip';
 
 type Borrador = Omit<Tipificacion, 'id'>;
 /** Una tipificación nueva: con el primer nivel listo para escribir sus opciones. */
@@ -70,6 +71,7 @@ const SECCION_DEL_CAMPO: Readonly<Record<keyof Borrador, string>> = {
 @Component({
   selector: 'sc-tipificacion-ficha-page',
   imports: [
+    TooltipModule,
     AltaPieComponent,
     ButtonComponent,
     DeleteEntityDialogComponent,

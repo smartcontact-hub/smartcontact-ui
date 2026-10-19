@@ -74,7 +74,7 @@
         (cancelled)="onRenameCancel(agent.id)"
       />
     } @else {
-      <span class="cell-name__text" [title]="agent.name">{{ agent.name }}</span>
+      <span class="cell-name__text" [pTooltip]="agent.name" showOnEllipsis tooltipPosition="top">{{ agent.name }}</span>
     }
   </span>
 </ng-template>
@@ -83,7 +83,7 @@
 <ng-template #extensionTpl let-agent>
   <span class="cell ext sc-text-body-regular">
     @let kind = 'agents.ext_kind.' + agent.extensionType | translate;
-    <span class="ext__kind" role="img" [attr.aria-label]="kind" [attr.title]="kind">
+    <span class="ext__kind" role="img" [attr.aria-label]="kind" [pTooltip]="kind" tooltipPosition="top">
       <sc-icon [name]="extensionIcon(agent.extensionType)" size="sm" aria-hidden="true" />
     </span>
     {{ agent.extension }}
@@ -92,7 +92,7 @@
 
 <ng-template #emailTpl let-agent>
   @if (agent.email) {
-    <span class="cell sc-text-body-regular" [title]="agent.email">{{ agent.email }}</span>
+    <span class="cell sc-text-body-regular" [pTooltip]="agent.email" showOnEllipsis tooltipPosition="top">{{ agent.email }}</span>
   } @else {
     <span class="cell cell--empty sc-text-body-regular"><sc-celda-vacia /></span>
   }
@@ -155,7 +155,7 @@
 <ng-template #recordingTpl let-agent>
   @if (agent.permissions.recording) {
     @let recording = 'agents.permission.recording' | translate;
-    <span class="recording" role="img" [attr.aria-label]="recording" [attr.title]="recording">
+    <span class="recording" role="img" [attr.aria-label]="recording" [pTooltip]="recording" tooltipPosition="top">
       <sc-icon [name]="recordingIcon" size="sm" filled aria-hidden="true" />
     </span>
   }
@@ -169,7 +169,7 @@
 <ng-template #teamsTpl let-agent>
   @let nombres = teamsOf(agent);
   @if (nombres) {
-    <span class="cell cell--truncate sc-text-body-regular" [title]="nombres">{{ nombres }}</span>
+    <span class="cell cell--truncate sc-text-body-regular" [pTooltip]="nombres" showOnEllipsis tooltipPosition="top">{{ nombres }}</span>
   } @else {
     <span class="cell cell--empty sc-text-body-regular"><sc-celda-vacia /></span>
   }

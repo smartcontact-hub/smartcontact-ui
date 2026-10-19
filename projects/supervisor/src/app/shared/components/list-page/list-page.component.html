@@ -48,7 +48,7 @@
             >
               <!-- «Template» de primeng.dev/menu: una fila a medida (`item`) con su icono y su título. -->
               <ng-template #item let-item>
-                <a class="p-menu-item-link data-menu__item" tabindex="-1" [attr.title]="item.title">
+                <a class="p-menu-item-link data-menu__item" [class.data-menu__item--apagado]="item.disabled" tabindex="-1" [pTooltip]="item.title" tooltipPosition="top">
                   <span class="data-menu__icon" [class]="item.icon" aria-hidden="true"></span>
                   <span class="data-menu__title sc-text-body-semibold">{{ item.label }}</span>
                 </a>
