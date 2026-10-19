@@ -11,6 +11,8 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  *      encima sigue diciendo quiénes son;
  *   2. Agentes: la cifra de grupos lleva a la sección «Grupos» de la ficha de ese agente, no a General. Se llamaba
  *      «Grupos asignados», y la primera, Identidad, hasta DD-187 (la ficha de agente con las secciones de la de grupo).
+ *      Desde DD-213 la fila entra por General, así que la cifra tiene su propia acción: antes llegaba a Grupos porque
+ *      su clic subía hasta la fila.
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -44,10 +46,17 @@ test('Grupos: la cifra de agentes abre su asignación, y ya no hay columna «Asi
   await expect(page, 'abre el panel, no la ficha').toHaveURL(/\/admin\/grupos$/);
 });
 
-test('Agentes: la cifra de grupos lleva a «Grupos asignados» de su ficha', async ({ page }) => {
+test('Agentes: la cifra de grupos lleva a «Grupos asignados» de su ficha, y la fila a General', async ({ page }) => {
+  const actual = page.locator('sc-form-section-nav .form-nav__item[aria-current="page"] .form-nav__label');
   await goto(page, 'admin/agentes');
   const fila = page.locator('sc-datatable tbody tr', { hasText: 'Tom Hanks' });
   await fila.getByRole('button', { name: /\d+ grupos/ }).click();
   await expect(page).toHaveURL(/\/admin\/agentes\/editar\/\d+\?seccion=grupos$/);
-  await expect(page.locator('sc-form-section-nav .form-nav__item[aria-current="page"] .form-nav__label')).toHaveText('Grupos asignados');
+  await expect(actual).toHaveText('Grupos asignados');
+
+  // La misma fila, pulsada en su nombre, entra por la primera sección (DD-213).
+  await goto(page, 'admin/agentes');
+  await page.locator('sc-datatable tbody tr', { hasText: 'Tom Hanks' }).getByText('Tom Hanks', { exact: true }).click();
+  await expect(page).toHaveURL(/\/admin\/agentes\/editar\/\d+$/);
+  await expect(actual).toHaveText('General');
 });
