@@ -62,11 +62,11 @@ su trampa del suelo de la tarjeta sube a «Trampas del frente».
   «Hand-off: Grupos y agentes» (`2997:47`): qué cambia (DD-211), lo contratado, cómo leer y reglas comunes.
 - **Lo que se fue**: las secciones a 1440 (`2934:580`, `2970:4752`), tras pasar sus notas propias a los flujos de 1920.
   Las pantallas sueltas a 1440, archivadas en Playground (`3124:39080`); «Contact Center - General», en su página.
-- **Cómo está hecho**: instancias y variables del DS, medidas de sc-supervisor.pages.dev a 1920, specs en anotaciones de
-  Dev Mode (cada texto una vez por sección). Si la app tapa un nativo de PrimeNG con plantilla propia (`.sc-toast`), en
-  Figma va el nativo y la diferencia, a «Fuera del DS». Maestros arreglados el 2026-10-19 (`.Subsection`, Header,
-  nav-item, toast, agent-summary): «What's new» del DS. Lo que el Kit no tiene: `figma-pendiente` §53; «Solo lectura»,
-  anotado sin dibujar (§50).
+- **Cómo está hecho**: instancias y variables del DS, medidas de sc-supervisor.pages.dev a 1920. Una nota por pantalla
+  en Dev Mode y, bajo cada flujo, la hoja «Cómo se comporta» (cada pieza una vez; lo que Dev Mode ya enseña no se repite).
+  Si la app tapa un nativo de PrimeNG con plantilla propia (`.sc-toast`), en Figma va el nativo y la diferencia, a
+  «Fuera del DS», con lo que el dibujo no hace igual. Maestros arreglados el 2026-10-19: «What's new» del DS. Lo que el
+  Kit no tiene: `figma-pendiente` §53; «Solo lectura», descrito en la hoja, sin dibujar (§50).
 - **Pendiente**: marcar «Ready for dev» (a mano: la API no puede); cómo ordenar «❖ DataTable» del DS (`6738:49721`).
 - **Trampa**: el fichero de la copia del DS con la tabla en slots (`C5soC7CxcuKSIFPEDCd3gz`, sección `16862:6447`) se
   quedó con un placeholder del buscador anterior a `main`; lo que manda es el listado del Supervisor.
