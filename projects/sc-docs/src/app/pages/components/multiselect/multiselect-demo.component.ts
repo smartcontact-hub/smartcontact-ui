@@ -126,7 +126,11 @@ export class MultiSelectDemoComponent {
   readonly groups = ['Soporte', 'Ventas', 'Postventa', 'Calidad'];
   readonly todos = [...this.groups];
   readonly agendas = ['Ventas Nacional', 'Soporte Premium', 'Cobros', 'Postventa Norte', 'Postventa Sur', 'Calidad', 'Retención', 'Bajas'];
-  readonly agendasLargas = ['Clientes preferentes de la campaña de renovación de seguros del hogar, otoño', 'Cobros', 'Bajas'];
+  readonly agendasLargas = [
+    'Clientes preferentes de la campaña de renovación de seguros del hogar y del automóvil, Comunidad de Madrid, otoño',
+    'Cobros',
+    'Bajas',
+  ];
   readonly value = signal<unknown[]>([]);
 
   protected readonly meta: StoryMeta = {
