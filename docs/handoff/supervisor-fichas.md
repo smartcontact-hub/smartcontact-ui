@@ -57,7 +57,7 @@ y Repositorios (2026-10-15, DD-210, #426, sin trampas propias): `git show 840fe5
 ## ✅ 2026-10-19 · Mapa de componentes de Grupos, una sola tabla en el DS y «Fuera del DS» con alternativas
 
 > **Sello:** sin código. Figma del Supervisor (`Hjyy41SYKqcRuIzCGggfYH`) y del DS (`khNq9dJKNi13pNllrqm6dx`); en el
-> repo, solo docs (rama `areses/component-map-groups-ab0007`, HEAD `24ced9b5`, al día con `main`).
+> repo, solo docs (rama `areses/component-map-groups-ab0007`, HEAD `a63b604a`, fundida en `main` como #457 el 2026-10-20).
 
 - **Mapa de componentes** («Grupos», `3175:11365`, en el índice): listado y ficha con cajas encima; verde, DS de
   desarrollo (`sc-*`); azul, PrimeNG (`p-*`); naranja, propio; gris discontinuo, layout. Sus tablas siguen en Small.
