@@ -98,7 +98,7 @@
    Después: `npm run ci:verdict`. Si tocaste el lock, `guard:lockfile` (`npm ci --dry-run` a
    secas es ciego a la plataforma). "Este rojo no es mío" se mide: `git stash` y ese test.
    ⚙️ El hook de push exige `.preflight-ok` sobre ESTE árbol y deniega un `echo $?` colgado de un
-   gate; el de Stop exige leer el CI; `ci-preflight-parity` y `playwright-reuse-guard`, el resto.
+   gate; el de Stop, leer el CI; `ci-preflight-parity`, `playwright-reuse-guard` y `audit-e2e-citas`.
    Evidencia: ≥8 reincidencias con la regla escrita; por eso dejó de ser prosa. `git log -S'(s35)'`.
 
 6. **Tu test NUEVO se pone rojo, o pasa a la primera → sospecha del test antes que del código.**
