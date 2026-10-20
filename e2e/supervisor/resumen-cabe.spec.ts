@@ -30,17 +30,17 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
 const IDIOMAS = ['es', 'en', 'fr', 'pt'] as const;
 
 /** Las fichas que más enseñan, y cuántos textos y cifras con anillo pinta cada una (lo que la red tiene que medir). El
- * agente (DD-187): el rótulo de la cifra y las doce piezas de sus seis filas; en el alta, además, lo que falta y la nota
- * «Sin grupos» en vez del anillo; al duplicar, lo que falta. */
+ * agente (DD-187): el rótulo de la cifra y las doce piezas de sus seis filas; en el alta, además, la nota «Sin grupos»
+ * en vez del anillo. Lo que falta («Falta: …») ya no va en el resumen (DD-216): un texto menos en cada alta. */
 const FICHAS = [
   { ruta: 'admin/agentes/editar/7', textos: 13, cifras: 1 },
   { ruta: 'admin/agentes/editar/12', textos: 13, cifras: 1 },
-  { ruta: 'admin/agentes/crear', textos: 15, cifras: 0 },
-  { ruta: 'admin/agentes/crear?seedFromId=7', textos: 14, cifras: 1 },
+  { ruta: 'admin/agentes/crear', textos: 14, cifras: 0 },
+  { ruta: 'admin/agentes/crear?seedFromId=7', textos: 13, cifras: 1 },
   { ruta: 'admin/usuarios/editar/1', textos: 4, cifras: 2 },
   { ruta: 'admin/usuarios/editar/3', textos: 4, cifras: 2 },
-  { ruta: 'admin/usuarios/crear', textos: 5, cifras: 2 },
-  { ruta: 'admin/usuarios/crear?seedFromId=3', textos: 5, cifras: 2 },
+  { ruta: 'admin/usuarios/crear', textos: 4, cifras: 2 },
+  { ruta: 'admin/usuarios/crear?seedFromId=3', textos: 4, cifras: 2 },
 ] as const;
 
 /**
@@ -76,7 +76,7 @@ const loQueNoCabe = (page: Page) =>
     if (columna.scrollWidth > columna.clientWidth) fallos.push(`la columna desborda ${columna.scrollWidth - columna.clientWidth} en ancho`);
     if (columna.scrollHeight > columna.clientHeight) fallos.push(`hay que desplazarse ${columna.scrollHeight - columna.clientHeight} dentro de la columna`);
 
-    const textos = [...columna.querySelectorAll('.resumen__label, .resumen__value, .resumen__status, .resumen__note, .sc-fact-row__key, .sc-fact-row__value')].filter(
+    const textos = [...columna.querySelectorAll('.resumen__label, .resumen__value, .resumen__note, .sc-fact-row__key, .sc-fact-row__value')].filter(
       (el) => !fuera(el) && el.getClientRects().length > 0,
     );
     for (const el of textos) {

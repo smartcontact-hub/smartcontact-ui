@@ -4,8 +4,8 @@
 
 /* LO COMÚN DEL RESUMEN —la columna, la tarjeta, su rótulo, la cifra, el valor, el widget con su anillo y la
  * fila de la franja ancha— vive en `src/styles/_resumen.scss`: lo usan también las fichas de agente y usuario
- * (DD-122, DD-126), y lo que le falta a un alta (`sc-summary-status`, DD-136). Aquí quedan las piezas que solo
- * tiene el de grupo: los canales con su barra, el aviso de canal sin agentes y los pares de datos. */
+ * (DD-122, DD-126). Aquí quedan las piezas que solo tiene el de grupo: los canales con su barra y los pares de
+ * datos. */
 
 .resumen__channels {
   display: flex;
@@ -38,30 +38,12 @@
   grid-column: 1 / -1;
 }
 
-/* Las filas por canal van dentro de la cifra destacada (DD-161): sobre el degradado, el texto, el icono del canal y el
- * aviso, con su icono, toman el color de la tarjeta. El ámbar no llega a 3:1 sobre el degradado (en oscuro, 1,37:1 sobre
- * el celeste, medido por `theme-contrast`): el aviso sigue siendo icono y palabra (AGENTS «UX de pantalla» 6). */
+/* Las filas por canal van dentro de la cifra destacada (DD-161): sobre el degradado, el texto y el icono del canal
+ * toman el color de la tarjeta. */
 .resumen__kpi--destacada {
   .resumen__channel-name,
-  .resumen__warn,
-  .resumen__warn sc-icon,
   sc-channel-icon {
     color: inherit;
-  }
-}
-
-/* El aviso va sobre el tinte de marca (DD-126), y ahí el ámbar como TEXTO se queda en 4,31:1 a 12 px, bajo AA
- * (medido por `theme-contrast` en claro). El ámbar lo lleva el icono, al que le bastan 3:1, y el texto va en
- * primario: el aviso sigue siendo icono, color y palabra (AGENTS «UX de pantalla» 6). */
-.resumen__warn {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--sc-spacing-0-25);
-  margin: 0;
-  color: var(--sc-text-primary);
-
-  sc-icon {
-    color: var(--sc-icon-warning);
   }
 }
 
@@ -131,187 +113,4 @@
   .resumen__pair {
     display: contents;
   }
-
-  /* En la franja, el valor de `sc-fact-row` ya empieza en su columna (su propia consulta de contenedor). Teléfono y
-   * Recursos, cada uno un solo botón (no clave + valor por separado), no entran en la subrejilla: quedan a su aire
-   * en su propia fila, y en la franja ancha (≥ 600 px) hay sitio de sobra para que no desentone. */
-  .resumen__routing-row {
-    grid-column: 1 / -1;
-  }
-}
-
-.resumen__routing-row {
-  display: flex;
-  align-items: center;
-}
-
-/* Cada fila de Recursos, la excepción a «cada fila es un enlace» (revisión de diseño, 2026-10-11, sobre crítica de
- * better-ui): antes tenía el enlace a la sección Y un botón de más pegados, a un dedo de distancia y con dos
- * destinos distintos. Ahora la fila ENTERA es un solo botón: la clave, el valor y el chevron. Ir a la sección se
- * queda en «Ver recursos», al pie del panel. (Teléfono tuvo el mismo botón hasta la revisión del 2026-10-15.) */
-.resumen__pair-button {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: var(--sc-spacing-0-625);
-  width: 100%;
-  padding: 0;
-  text-align: start;
-  border-radius: var(--sc-radius-sm);
-  /* En reposo, un tinte del mismo gris que el panel abierto pero más flojo (`color-mix`, no un token nuevo): sin
-   * esto, Teléfono y Recursos leían como las filas planas de alrededor hasta pasar el ratón — el único aviso de
-   * que son botón era un chevron de 16px (better-layout «keep controls distinct from content», 2026-10-12). Al
-   * abrir sube a la mezcla entera (`--active`, abajo): reposo < abierto < `:hover`, una escala, no un empate. */
-  background: color-mix(in srgb, var(--sc-bg-secondary-subtle) 55%, transparent);
-  transition: background 0.18s ease, scale 0.1s ease;
-
-  /* El mismo token que usa el resto del Kit para este gesto (`sc-form-section-nav`, `sc-select`, `sc-search`…):
-   * no `--sc-bg-secondary-subtle`, pensado para un fondo estático, no para un hover (barrido de consistencia,
-   * 2026-10-11). */
-  &:hover {
-    background: var(--sc-bg-hover);
-  }
-
-  /* `--sc-icon-primary`, no `--sc-icon-secondary`: ese token es idéntico a `--sc-icon-subtle` (el reposo del
-   * chevron) en los dos temas — el cambio no se veía (medido 2026-10-12). */
-  &:hover .resumen__pair-chevron {
-    color: var(--sc-icon-primary);
-  }
-
-  &:focus-visible {
-    outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
-    outline-offset: var(--sc-focus-ring-offset);
-  }
-
-  /* 0,96: ni más (se ve exagerado) ni menos (no se nota) — better-ui «scale on press». */
-  &:active {
-    scale: 0.96;
-  }
-}
-
-/* Mientras el panel está abierto, el mismo tinte del `:hover` se queda fijo: la fila y el panel de abajo
- * (`.resumen__quick`, mismo color) se leen como una sola pieza por ley de similitud, no como dos controles
- * sin relación (decisión de producto, 2026-10-11). */
-.resumen__pair-button--active {
-  background: var(--sc-bg-secondary-subtle);
-
-  .resumen__pair-chevron {
-    color: var(--sc-icon-primary);
-  }
-}
-
-.resumen__pair-label {
-  display: flex;
-  align-items: center;
-  /* 7, el de `sc-fact-row` entre su baldosa y su clave: las claves de los botones y las de los enlaces empiezan en la
-   * misma vertical. */
-  gap: var(--sc-spacing-0-5);
-  /* `--sc-text-primary`, no `--sc-text-secondary`: con el fondo sutil permanente encima
-   * (`.resumen__pair-button`), el secundario bajaba de 4,52:1 a 4,37:1 — por debajo de AA
-   * (medido por `theme-contrast`). */
-  color: var(--sc-text-primary);
-  min-width: 0;
-
-  sc-icon-tile {
-    flex: 0 0 auto;
-  }
-}
-
-.resumen__pair-value {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--sc-spacing-0-25);
-  margin-inline-start: auto;
-  color: var(--sc-text-heading);
-  text-align: end;
-}
-
-/* Las dos flechas, una encima de otra en la misma celda: el cambio de sentido es un cruce de opacidad (150 ms), no
- * un salto seco (better-ui «contextual icon animations»). */
-.resumen__pair-chevron {
-  position: relative;
-  display: inline-grid;
-  place-items: center;
-  flex: 0 0 auto;
-  inline-size: 16px;
-  block-size: 16px;
-  color: var(--sc-icon-subtle);
-  transition: color 0.18s ease;
-
-  sc-icon {
-    grid-area: 1 / 1;
-    transition: opacity 0.15s cubic-bezier(0.2, 0, 0, 1);
-  }
-
-  &--hidden {
-    opacity: 0;
-  }
-}
-
-/* La entrada del panel, sutil: no es de alta frecuencia (se abre de vez en cuando), así que se beneficia de un
- * poco de movimiento; la salida se queda instantánea, sin `@angular/animations` de por medio. */
-@keyframes resumen-quick-appear {
-  from {
-    opacity: 0;
-    translate: 0 -4px;
-  }
-  to {
-    opacity: 1;
-    translate: 0 0;
-  }
-}
-
-.resumen__quick {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sc-spacing-0-375);
-  padding: var(--sc-spacing-0-625);
-  background: var(--sc-bg-secondary-subtle);
-  border-radius: var(--sc-radius-md);
-  animation: resumen-quick-appear 0.18s cubic-bezier(0.2, 0, 0, 1);
-}
-
-/* El pie de cada panel rápido: «Configurar colas» en Distribución, «Ver recursos» en Salida. Lleva a la sección entera
- * (DD-146), para cuando ninguna fila del panel basta. */
-.resumen__quick-link {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--sc-spacing-0-375);
-  width: 100%;
-  padding-top: var(--sc-spacing-1-25);
-  color: var(--sc-text-link);
-  text-decoration: none;
-
-  &:hover {
-    text-decoration: underline;
-  }
-
-  &:focus-visible {
-    outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
-    outline-offset: var(--sc-focus-ring-offset);
-  }
-}
-
-/* Cada recurso de verdad del grupo (DD-164: agendas y plantillas, nunca inventados), en el panel de Salida. */
-.resumen__quick-resource {
-  padding: var(--sc-spacing-0-875) 0;
-  border-top: 1px solid var(--sc-border-subtle);
-
-  strong {
-    display: block;
-    color: var(--sc-text-heading);
-  }
-
-  small {
-    display: block;
-    color: var(--sc-text-secondary);
-    margin-top: var(--sc-spacing-0-25);
-  }
-}
-
-.resumen__quick-empty {
-  color: var(--sc-text-subtle);
-  margin: 0;
 }

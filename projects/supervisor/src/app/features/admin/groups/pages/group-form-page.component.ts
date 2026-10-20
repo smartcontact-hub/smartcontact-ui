@@ -1,4 +1,4 @@
-import { afterNextRender, ChangeDetectionStrategy, Component, computed, HostListener, inject, Injector, input, OnInit, signal, type TemplateRef, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, HostListener, inject, Injector, input, OnInit, signal, type TemplateRef, viewChild } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink, type UrlTree } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TooltipModule } from 'primeng/tooltip';
@@ -10,9 +10,17 @@ import { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { ResultadoAccionService, SectionLinksService } from '@core/services';
 import { injectLangChange } from '@core/utils/lang-change';
-import { AltaPieComponent, ChannelIconComponent, NameInplaceComponent, ResourceOptionComponent } from '@shared/components';
+import { AltaPieComponent, ChannelIconComponent, NameInplaceComponent } from '@shared/components';
 import { changedKeys, createFormDirtyState } from '@shared/utils/form-dirty-state';
-import { llegarAAncla, llegarASeccion, ocasionDeAvisar, seccionesDeAlta } from '@shared/utils/alta-secciones';
+import {
+  avisosDelIndice,
+  firmaDe,
+  llegarAAncla,
+  llegarASeccion,
+  ocasionDeAvisar,
+  seccionesDeAlta,
+  type AvisoDeFicha,
+} from '@shared/utils/alta-secciones';
 import {
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
   type FormNavSection,
@@ -78,10 +86,6 @@ import { GroupDefaultsStore } from '../state/group-defaults.store';
 import { HorariosStore } from '@features/admin/repositories/state/horarios.store';
 import { TipificacionesStore } from '@features/admin/repositories/state/tipificaciones.store';
 import { AgendasStore } from '@features/admin/repositories/state/agendas.store';
-import {
-  RecursoDialogComponent,
-  type RecursoAbierto,
-} from '@features/admin/repositories/components/recurso-dialog/recurso-dialog.component';
 import { TemplatesStore } from '@features/admin/templates/state/templates.store';
 import type { TemplateType } from '@features/admin/templates/data/templates-data';
 import { LabelsStore } from '@features/admin/labels/state/labels.store';
@@ -96,6 +100,7 @@ import type { GroupAgentLink } from '@features/admin/services/group-agent-links.
 import {
   channelRemovalImpact,
   clampLinksToChannels,
+  diffLinks,
   hasChatFamily,
   removedFamilies,
   toggleChatFamily,
@@ -185,6 +190,9 @@ const RESUMEN_SECCIONES: Readonly<Record<GroupSummarySeccion, string>> = {
 /** Los campos de los números de Salida, en Distribución y colas: el teléfono saliente y el de WhatsApp. */
 const RESUMEN_NUMEROS = { phone: 'group-phone', whatsapp: 'group-chat-whatsapp' } as const;
 
+/** Los campos de cada tipo de recurso, en Recursos (DD-216): a ellos lleva su fila del resumen. */
+const RESUMEN_RECURSOS = { agendas: 'group-agendas', chat: 'group-templates-chat', email: 'group-templates-email' } as const;
+
 /** Los canales con cola propia, y el campo de la ficha que la guarda. */
 type QueueChannel = 'phone' | 'chat' | 'email';
 const QUEUE_FIELD = { phone: 'phoneQueue', chat: 'chatQueue', email: 'emailQueue' } as const satisfies Record<QueueChannel, keyof FormState>;
@@ -219,13 +227,11 @@ type AudioKey = 'holdMusicFile' | 'queueIdFile' | 'nextInLineFile' | 'outboundAu
     TextareaComponent,
     ToggleSwitchComponent,
     DialogComponent,
-    RecursoDialogComponent,
     LabelFormPanelComponent,
     InputTagsComponent,
     TooltipModule,
     TipificacionArbolComponent,
     AltaPieComponent,
-    ResourceOptionComponent,
     SelectComponent,
     TranslateModule,
   ],
@@ -305,8 +311,8 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
 
   /**
    * EL ALTA, CON EL ÍNDICE DE LA EDICIÓN (DD-143): las mismas cuatro secciones, con ✓ en las que se dejan completas y
-   * «Atrás / Siguiente» al pie. General es la puerta (DD-121): sin nombre y sin canales no se sale de ella (`goTo`).
-   * La sección abierta no toca la dirección.
+   * «Atrás / Siguiente» al pie. Se navega libre (DD-216: fuera la puerta de General de DD-121 y la de Distribución de
+   * DD-158). La sección abierta no toca la dirección.
    */
   protected readonly alta = seccionesDeAlta({
     secciones: this.navSections,
@@ -314,6 +320,9 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
     // (su teléfono saliente, si tiene Teléfono), con lo suyo.
     completa: (id) =>
       id === 'group-section-general' ? this.generalValid() : id !== 'group-section-distribution' || (!this.phoneMissing() && !this.queueInvalid()),
+    // Lo que General decide de las demás: sus bloques de canal, sus plantillas y sus columnas. Si cambian los canales
+    // desde que se dejó una sección, su ✓ se va (DD-216).
+    firma: (id) => (id === 'group-section-general' ? '' : firmaDe(this.form().channels)),
   });
 
   /**
@@ -324,23 +333,14 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
   readonly seccion = input<string | undefined>();
 
   /**
-   * La sección a la vista, la de la dirección. Sin `?seccion=`, General: abre en General en los dos
-   * modos, es la que decide lo demás. En el ALTA General es la puerta: sin nombre ni canales se queda
-   * en General aunque la dirección pida otra (el enlace de otra pestaña, o un `crear?seccion=` escrito).
+   * La sección a la vista: en el alta, la abierta (DD-143); al editar, la de la dirección. Sin `?seccion=`, General:
+   * abre en General en los dos modos, es la que decide lo demás.
    */
-  protected readonly activeSection = computed<string>(() => {
-    // En el alta, la sección abierta (DD-143); al editar, la dirección.
-    const id =
-      this.mode() === 'create'
-        ? this.alta.abierta()
-        : (GroupFormPageComponent.SECTION_SLUGS[this.seccion() ?? ''] ?? 'group-section-general');
-    // Mientras se crea no: en cuanto el grupo existe, su nombre ya está cogido (por él mismo) y la ficha
-    // pintaría General un instante antes de irse a la edición.
-    if (this.mode() === 'create' && !this.saving() && id !== 'group-section-general' && !this.generalValid()) {
-      return 'group-section-general';
-    }
-    return id;
-  });
+  protected readonly activeSection = computed<string>(() =>
+    this.mode() === 'create'
+      ? this.alta.abierta()
+      : (GroupFormPageComponent.SECTION_SLUGS[this.seccion() ?? ''] ?? 'group-section-general'),
+  );
 
   /** Se pinta la sección elegida en el índice, y solo esa. */
   protected showSection(id: string): boolean {
@@ -350,51 +350,40 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
   /** Alta o edición: la MISMA ficha (DD-121). El alta no tiene id hasta que se crea. */
   protected readonly mode = computed<'create' | 'edit'>(() => (this.editingId() === null ? 'create' : 'edit'));
 
-  /** General completa: nombre, que no se repita, y al menos un canal (con Chat, al menos uno de sus dos). */
+  /**
+   * General completa: nombre, que no se repita, y la tipificación si se tipifica. Los canales no son obligatorios
+   * (DD-216): hay clientes con grupos sin canal, para agrupar a sus agentes.
+   */
   protected readonly generalValid = computed(() => {
     const f = this.form();
-    return f.name.trim().length > 0 && !this.nameTaken() && f.channels.size > 0 && !this.typificationMissing();
+    return f.name.trim().length > 0 && !this.nameTaken() && !this.typificationMissing();
   });
 
   /** «Clasificar llamadas» encendido sin tipificación elegida: falta la tipificación. */
   protected readonly typificationMissing = computed(() => this.form().wrapUp.classify && this.form().wrapUp.typificationId === null);
 
-  /** Que falte se dice en su campo cuando ya hubo ocasión de elegirla (DD-199): encender «Tipificar» no acusa. */
-  protected readonly typificationError = computed(() => this.typificationMissing() && this.acusaGeneral('typification'));
+  /** Que falte se dice en su campo al pulsar Crear o Guardar (DD-216): encender «Tipificar» no acusa. */
+  protected readonly typificationError = computed(() => this.typificationMissing() && this.ocasion.acusa('typification'));
 
   /** Lo obligatorio que falta ahora, por clave: de aquí sale cuándo se puede decir (`ocasion`). */
   private readonly faltas = computed<readonly string[]>(() => {
     const f = this.form();
     return [
       ...(f.name.trim() ? [] : ['name']),
-      ...(f.channels.size > 0 ? [] : ['channels']),
       ...(this.typificationMissing() ? ['typification'] : []),
       ...(this.phoneMissing() ? ['phone'] : []),
     ];
   });
 
   /**
-   * Cuándo se dice lo que falta (DD-199): desde que se deja su sección sin ello, en el alta y al editar, o desde que se
-   * abre si lo guardado ya venía sin ello (DD-142). Antes, lo dicen el resumen y el motivo junto al botón, sin rojo.
+   * Cuándo se dice lo que falta (DD-216): al pulsar Crear o Guardar, lo que faltaba entonces, hasta que se arregla; o
+   * desde que se abre, si lo guardado ya venía sin ello (DD-142). Mientras se rellena, nada en rojo.
    */
   private readonly ocasion = ocasionDeAvisar({
-    alta: this.alta,
     editando: () => this.mode() === 'edit',
-    abierta: () => this.activeSection(),
     cambios: () => this.dirtyState.dirty(),
     faltas: () => this.faltas(),
   });
-
-  /** En el alta, General no se deja sin lo suyo (es la puerta, DD-121): ahí la ocasión es el intento de salir. */
-  private acusaGeneral(falta: string): boolean {
-    return this.attemptedGeneral() || this.ocasion.acusa('group-section-general', falta);
-  }
-
-  /**
-   * Se ha intentado salir de General (o crear) sin completarla: desde entonces lo que falta se dice en su
-   * campo. Antes, no: un campo vacío en un alta recién abierta todavía no es un error (R6, ver abajo).
-   */
-  protected readonly attemptedGeneral = signal(false);
 
   /**
    * Con Teléfono, el teléfono saliente es obligatorio, como el nombre (DD-142): es el número que ven los clientes
@@ -402,37 +391,59 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
    */
   protected readonly phoneMissing = computed(() => this.hasPhone() && this.form().phone.trim().length === 0);
 
-  /** En el alta se ha intentado pasar de Distribución y colas sin él (es la segunda puerta, DD-158). */
-  private readonly attemptedDistribution = signal(false);
-
-  /** El aviso bajo el teléfono saliente, cuando ya hubo ocasión de elegirlo (DD-199). */
+  /** El aviso bajo el teléfono saliente, al pulsar Crear o Guardar sin él (DD-216). */
   protected readonly phoneError = computed<string | null>(() =>
-    this.phoneMissing() && (this.attemptedDistribution() || this.ocasion.acusa('group-section-distribution', 'phone'))
-      ? 'groups.errors.phone_required'
-      : null,
+    this.phoneMissing() && this.ocasion.acusa('phone') ? 'groups.errors.phone_required' : null,
   );
 
+  /** La primera cola con un tamaño que no vale, para llevar a su campo. */
+  private readonly colaMal = computed<QueueChannel | null>(() => {
+    const f = this.form();
+    if (this.hasPhone() && !validQueueSize(f.phoneQueue)) return 'phone';
+    if (this.hasChatFamily() && !validQueueSize(f.chatQueue)) return 'chat';
+    if (this.hasEmail() && !validQueueSize(f.emailQueue)) return 'email';
+    return null;
+  });
+
   /**
-   * El punto rojo del índice: la sección tiene un aviso a la vista. General (el nombre, repetido o vacío, los canales y
-   * la tipificación) y Distribución y colas (el teléfono saliente y la cola). Lo que falta, cuando ya hubo ocasión
-   * (DD-199); antes, el resumen ya dice qué falta sin acusar.
+   * Los avisos a la vista, en el orden de la ficha: lo que falta, cuando ya se intentó crear o guardar (DD-216), y lo
+   * que está mal escrito, en vivo (un nombre repetido, una cola imposible). De aquí salen el punto del índice, lo que
+   * dice cada sección en él y adónde lleva pulsar Crear o Guardar.
    */
-  protected readonly sectionsWithErrors = computed<ReadonlySet<string>>(() => {
-    const out = new Set<string>();
-    if (this.nameError() || this.channelsError() || this.typificationError()) out.add('group-section-general');
-    if (this.phoneError() || this.queueInvalid()) out.add('group-section-distribution');
+  private readonly avisos = computed<readonly AvisoDeFicha[]>(() => {
+    this.lang();
+    const t = (key: string) => this.translate.instant(key);
+    const out: AvisoDeFicha[] = [];
+    const nombre = this.nameError();
+    if (nombre) out.push({ seccion: 'group-section-general', texto: t(nombre), ancla: 'group-name' });
+    if (this.typificationError()) {
+      out.push({ seccion: 'group-section-general', texto: t('groups.errors.typification_required'), ancla: 'group-typification' });
+    }
+    const telefono = this.phoneError();
+    if (telefono) out.push({ seccion: 'group-section-distribution', texto: t(telefono), ancla: 'group-phone' });
+    const cola = this.colaMal();
+    if (cola) {
+      out.push({ seccion: 'group-section-distribution', texto: t('groups.form.advanced.queue_invalid'), ancla: `group-${cola}-queue-size` });
+    }
     return out;
   });
+
+  /** El punto rojo del índice: la sección tiene un aviso a la vista. */
+  protected readonly sectionsWithErrors = computed<ReadonlySet<string>>(() => new Set(this.avisos().map((a) => a.seccion)));
+
+  /** Lo que dice cada sección con aviso en el índice, en texto (DD-216). */
+  protected readonly sectionErrorHints = computed(() => avisosDelIndice(this.avisos()));
 
   /**
    * Las secciones con cambios sin guardar: su marca en el índice (DD-122). La ficha tiene un solo
    * «Guardar», y el índice dice dónde está lo que se va a guardar. Solo al editar: en el alta todo está
-   * por guardar. Un cambio puede cruzar secciones —quitar un canal en General recorta los canales de
-   * los agentes— y entonces se marcan las dos.
+   * por guardar. Un cambio puede cruzar secciones —quitar un canal en General recorta, al guardar, los
+   * canales de los agentes— y entonces se marcan las dos.
    */
   protected readonly sectionsWithChanges = computed<ReadonlySet<string>>(() => {
     if (this.mode() !== 'edit') return new Set();
     const out = new Set<string>();
+    if (diffLinks(this.initialLinks(), this.linksVistos()).total > 0) out.add('group-section-agents');
     for (const key of this.dirtyState.changedKeys()) {
       if (key !== 'advanced') {
         out.add(SECTION_OF_FIELD[key as keyof FormState]);
@@ -445,41 +456,21 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
     return out;
   });
 
-  /** El aviso bajo el nombre: repetido, en vivo (es contenido); vacío, cuando ya hubo ocasión (DD-199). */
+  /** El aviso bajo el nombre: repetido, en vivo (es contenido); vacío, al pulsar Crear o Guardar (DD-216). */
   protected readonly nameError = computed<string | null>(() => {
     if (this.nameTaken()) return 'groups.errors.name_taken';
-    if (this.form().name.trim().length === 0 && this.acusaGeneral('name')) return 'groups.errors.name_required';
+    if (this.form().name.trim().length === 0 && this.ocasion.acusa('name')) return 'groups.errors.name_required';
     return null;
   });
 
-  protected readonly channelsError = computed(() => this.form().channels.size === 0 && this.acusaGeneral('channels'));
-
   /**
-   * Ir a otra sección. Al editar, libre. En el ALTA, General es la puerta: sin nombre y sin canales las
-   * demás no tienen de qué hablar (qué bloques de canal, qué recursos, qué columnas de agentes), así que
-   * se queda en General y dice qué falta en cada campo.
+   * Ir a otra sección, libre en los dos modos (DD-216). En el alta, la sección se abre sin tocar la dirección: Atrás
+   * sale del alta (DD-122, DD-143).
    *
    * Dice si llegó: al editar, cuando acaba la navegación; en el alta, en el acto (el resumen espera a ese momento
    * para llevar a un sitio dentro de la sección).
    */
   protected goTo(id: string): Promise<boolean> {
-    if (this.mode() === 'create' && id !== 'group-section-general' && !this.generalValid()) {
-      this.stayInGeneral();
-      return Promise.resolve(false);
-    }
-    // La segunda puerta del alta (DD-158): con Teléfono y sin teléfono saliente no se pasa de Distribución y colas,
-    // como no se pasa de General sin nombre. Se puede volver a General, que es donde se quita Teléfono.
-    if (
-      this.mode() === 'create' &&
-      id !== 'group-section-general' &&
-      id !== 'group-section-distribution' &&
-      this.phoneMissing()
-    ) {
-      this.stayInDistribution();
-      return Promise.resolve(false);
-    }
-    // Al editar, salir de Distribución sin el teléfono saliente se deja; desde ahí su campo dice que falta (`ocasion`).
-    // En el alta, la sección se abre sin tocar la dirección: Atrás sale del alta (DD-122, DD-143).
     if (this.mode() === 'create') {
       this.alta.abrir(id);
       return Promise.resolve(true);
@@ -487,10 +478,19 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
     return this.sectionLinks.go(this.sectionUrl(id));
   }
 
-  /**
-   * «Siguiente» y «Atrás» del alta: la sección de al lado, arriba y con el foco en su título. Sin General completa,
-   * «Siguiente» se queda en ella y dice lo que falta, con el foco en el campo.
-   */
+  /** Lleva a un campo de la ficha: a su sección, y en ella al campo, arriba y con el foco. */
+  private irACampo(seccion: string, ancla: string | null): void {
+    const llegar = () => (ancla ? llegarAAncla(ancla, this.injector) : llegarASeccion(seccion, this.injector));
+    if (this.activeSection() === seccion) {
+      llegar();
+      return;
+    }
+    void this.goTo(seccion).then((llego) => {
+      if (llego && this.activeSection() === seccion) llegar();
+    });
+  }
+
+  /** «Siguiente» y «Atrás» del alta: la sección de al lado, arriba y con el foco en su título. */
   protected siguiente(): void {
     this.irAlLado(this.alta.siguiente());
   }
@@ -511,80 +511,15 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
     return this.sectionLinks.section(this.route, slug === 'general' ? null : slug);
   }
 
-  /**
-   * El alta no sale de General: cada campo dice lo que le falta y el foco va al primero, como hacía el
-   * diálogo de alta. Sin eso, con teclado, «Siguiente» no hace nada visible desde donde estás.
-   */
-  /** Distribución y colas, abierta, con lo que falta dicho bajo el campo y el foco en él. */
-  private stayInDistribution(): void {
-    this.attemptedDistribution.set(true);
-    this.alta.abrir('group-section-distribution');
-    llegarAAncla('group-phone', this.injector);
-  }
-
-  private stayInGeneral(): void {
-    this.attemptedGeneral.set(true);
-    // General, abierta: es donde se dice lo que falta.
-    this.alta.abrir('group-section-general');
-    const nameMissing = this.form().name.trim().length === 0 || this.nameTaken();
-    const target = nameMissing
-      ? 'group-name'
-      : this.form().channels.size === 0
-        ? 'group-channels-phone'
-        : this.typificationMissing()
-          ? 'group-typification'
-          : 'group-channels-phone';
-    afterNextRender(() => document.getElementById(target)?.focus(), { injector: this.injector });
-  }
-
   protected readonly editingId = signal<number | null>(null);
   protected readonly initial = signal<Group | null>(null);
   protected readonly form = signal<FormState>(this.emptyForm());
   /*
-   * R6 · una sola política de error.
-   *
-   * Antes había un `validate()` que rellenaba un mapa `errors` — y era código
-   * MUERTO: `save()` ya salía antes si `!canSave()`, y `canSave()` comprobaba
-   * el mismo predicado, así que el mapa nunca llegaba a tener nada. Resultado:
-   * estas pantallas no enseñaban ni un mensaje de campo, nunca. Solo un botón
-   * gris sin explicar por qué (el antipatrón nº1 de Nielsen).
-   *
-   * Regla: el error se revela por CONTENIDO equivocado, en vivo. Un campo
-   * vacío calla — todavía no es un error, es un campo sin rellenar, y acusar a
-   * un formulario recién abierto es ruido. Lo que falta por rellenar se
-   * comunica por la otra vía: el motivo del botón deshabilitado.
-   * Mismo modelo que `category-form-modal`.
-   *
-   * Este formulario NO tiene ningún computed de error de campo, y es correcto:
-   * las dos reglas que había (nombre, y al menos un canal) son "obligatorio",
-   * no contenido equivocado. No hay nada que señalar en rojo — un nombre vacío
-   * o cero canales no están MAL escritos, están sin rellenar, y eso lo dice el
-   * motivo del botón. El día que un campo gane una regla de formato (p.ej. el
-   * teléfono), ese campo sí llevará su computed aquí.
+   * R6 · una sola política de error (DD-216). Un error de CONTENIDO (un nombre repetido, una cola imposible) se dice en
+   * vivo, en su campo. Lo que FALTA no es un error mientras se rellena: se dice al pulsar Crear o Guardar, en su campo y
+   * en el índice, con su texto (`avisos`). Crear está siempre activo y Guardar, en cuanto hay cambios: un botón gris
+   * con su motivo al lado obligaba a leer la barra para saber qué faltaba y dónde (2026-10-20).
    */
-
-  /** Por qué NO se puede guardar, en palabras. Alimenta el `title` y el
-   *  `aria-describedby` del botón: un control deshabilitado sin motivo obliga
-   *  al usuario a adivinar cuál de los campos le falta. El orden replica el de
-   *  `canSave()` — se nombra el primer requisito que falla. */
-  protected readonly saveDisabledReason = computed<string | null>(() => {
-    if (this.canSave()) return null;
-    const f = this.form();
-    if (f.name.trim().length === 0) return 'groups.errors.name_required';
-    if (this.nameTaken()) return 'groups.errors.name_taken';
-    if (f.channels.size === 0) return 'groups.errors.channels_required';
-    if (this.phoneMissing()) return 'groups.errors.phone_required';
-    if (this.queueInvalid()) return 'groups.form.advanced.queue_invalid';
-    if (this.typificationMissing()) return 'groups.errors.typification_required';
-    if (this.mode() === 'edit' && !this.dirtyState.dirty()) return 'common.no_changes';
-    return null;
-  });
-  /** El motivo que se ENSEÑA junto al botón: solo lo que falta rellenar. «No hay
-   *  cambios» se queda en el `title` del botón apagado, que ya lo dice. */
-  protected readonly saveBlockedReason = computed(() => {
-    const reason = this.saveDisabledReason();
-    return reason === 'common.no_changes' ? null : reason;
-  });
   protected readonly saving = signal(false);
   protected readonly deleteVisible = signal(false);
 
@@ -628,11 +563,14 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
     this.setChat('attendanceScheduleIds', { ...this.form().chat.attendanceScheduleIds, [channel]: value });
   }
 
-  protected readonly canSave = computed(() => {
-    if (!this.generalValid() || this.phoneMissing() || this.queueInvalid()) return false;
-    // Al editar exige cambio neto (Guardar se apaga otra vez si deshaces); en el alta basta con General.
-    return this.mode() === 'create' || this.dirtyState.dirty();
-  });
+  /**
+   * El botón se puede pulsar: en el alta, siempre; al editar, con cambios (se apaga otra vez si deshaces). Lo que falte
+   * lo dice al pulsarlo (`save`).
+   */
+  protected readonly canSave = computed(() => this.mode() === 'create' || this.dirtyState.dirty());
+
+  /** Hay algo que no deja crear ni guardar: lo que falta o lo que está mal escrito. */
+  private readonly pendiente = computed(() => this.faltas().length > 0 || this.nameTaken() || this.queueInvalid());
 
   /* Chat es la MADRE de Web Chat y WhatsApp (visión de producto de grupos, 2026-09-25): comparten
    * estrategia y bloque en Distribución. Las claves no cambian: `chat` es Web Chat. */
@@ -873,8 +811,8 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
     const idParam = this.route.snapshot.paramMap.get('id');
     if (!idParam) {
       // ALTA: la ficha vacía, con los valores por defecto de Grupos y Teléfono marcado (`emptyForm`). Abre en
-      // General aunque la dirección pida otra sección: General es la puerta del alta (`goTo`). Se quita el
-      // parámetro: en el alta la sección abierta no vive en la dirección (DD-143).
+      // General aunque la dirección pida otra sección, y se quita el parámetro: en el alta la sección abierta no vive
+      // en la dirección (DD-143).
       this.dirtyState.markPristine();
       if (this.route.snapshot.queryParamMap.has('seccion')) {
         void this.sectionLinks.go(this.sectionUrl('group-section-general'), { replace: true });
@@ -959,7 +897,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
   protected onKeydown(event: KeyboardEvent): void {
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's') {
       event.preventDefault();
-      if (this.canSave() && !this.saving()) this.save();
+      this.save();
     }
   }
 
@@ -985,15 +923,6 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
 
   protected onEmailSubStrategyChange(value: unknown): void {
     if (typeof value === 'string') this.updateField('emailSubStrategy', value);
-  }
-
-  /** Crear o editar una agenda o una plantilla sin salir de la ficha (DD-187): la ventana que abren el «+» de su campo y
-   *  el «Editar» de sus filas. La recién creada se AÑADE a lo ya elegido, no lo sustituye. */
-  protected readonly recursoAbierto = signal<RecursoAbierto | null>(null);
-
-  protected alCrearRecurso(r: RecursoAbierto, id: number): void {
-    if (r.tipo === 'agenda') this.onIdsChange('scheduleIds', [...this.form().scheduleIds, id]);
-    else this.form.update((f) => ({ ...f, templateIds: new Set([...f.templateIds, id]) }));
   }
 
   /** Etiquetas (apagado por DD-142): su ventana propia, como antes. */
@@ -1153,21 +1082,25 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
     this.updateField('ringAllAgents', value);
   }
 
+  /**
+   * Marcar o quitar un canal no toca a los agentes (DD-216): la tabla y el resumen recortan sus canales a los del grupo
+   * solo para verlos (`linksVistos`), y se guardan recortados. Hasta el 2026-10-20 se recortaban aquí, y quitar y volver
+   * a poner Teléfono en Online Support dejaba a sus 13 agentes sin él.
+   */
   protected toggleChannel(channel: GroupChannel): void {
-    this.form.update((f) => {
-      const next = toggleGroupChannel(f.channels, channel);
-      // Los canales de cada agente se recortan a los que ofrece ahora el grupo.
-      return { ...f, channels: next, links: clampLinksToChannels(f.links, next, link => this.agentsStore.getAgent(link.agentId)?.allowedChannels) };
-    });
+    this.form.update((f) => ({ ...f, channels: toggleGroupChannel(f.channels, channel) }));
   }
 
   /** La casilla madre: enciende o apaga los dos subcanales de una vez (patrón B12 del laboratorio). */
   protected toggleChatFamily(): void {
-    this.form.update((f) => {
-      const next = toggleChatFamily(f.channels) as Set<GroupChannel>;
-      return { ...f, channels: next, links: clampLinksToChannels(f.links, next, link => this.agentsStore.getAgent(link.agentId)?.allowedChannels) };
-    });
+    this.form.update((f) => ({ ...f, channels: toggleChatFamily(f.channels) as Set<GroupChannel> }));
   }
+
+  /** Los agentes con los canales que el grupo ofrece ahora y cada uno tiene: lo que se ve y lo que se guarda. */
+  protected readonly linksVistos = computed(() => {
+    const f = this.form();
+    return clampLinksToChannels(f.links, f.channels, (link) => this.agentsStore.getAgent(link.agentId)?.allowedChannels);
+  });
 
   protected hasChannel(channel: GroupChannel): boolean {
     return this.form().channels.has(channel);
@@ -1212,7 +1145,9 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
       ? `group-channel-${destino.canal}-title`
       : destino.salida
         ? RESUMEN_NUMEROS[destino.salida]
-        : null;
+        : destino.recurso
+          ? RESUMEN_RECURSOS[destino.recurso]
+          : null;
     const llegar = () => (ancla ? llegarAAncla(ancla, this.injector) : llegarASeccion(id, this.injector));
     if (this.activeSection() === id) {
       llegar();
@@ -1223,34 +1158,19 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
     });
   }
 
-  /** Lo que le llega de Repositorios en su sección Recursos: agendas, plantillas de sus canales y etiquetas. La
-   *  tipificación ya no: vive en General. */
-  /** Los recursos del grupo por tipo, con su nombre y su dato, para Recursos del resumen: Agendas siempre, y las
-   *  plantillas de los canales que atiende, como los campos de la sección (revisión del 2026-10-14). Sin «Editar»: es
-   *  solo vista previa, y «Ver recursos» lleva a la sección. */
+  /** Los recursos del grupo por tipo, con cuántos tiene, para Recursos del resumen: Agendas siempre, y las plantillas de
+   *  los canales que atiende, como los campos de la sección (revisión del 2026-10-14). Cada fila lleva a su campo. */
   protected readonly summaryResources = computed<readonly GroupSummaryResources[]>(() => {
-    this.lang();
     const f = this.form();
     return [
-      { key: 'agendas', labelKey: 'agents.form.advanced.agendas.title', rows: this.resourceRows.agendas(f.scheduleIds, false) },
+      { key: 'agendas', labelKey: 'agents.form.advanced.agendas.title', count: this.resourceRows.agendas(f.scheduleIds, false).length },
       ...(this.hasChatFamily()
-        ? [{ key: 'chat' as const, labelKey: 'resources.templates_chat', rows: this.resourceRows.templates(f.templateIds, 'chat', false) }]
+        ? [{ key: 'chat' as const, labelKey: 'resources.templates_chat', count: this.resourceRows.templates(f.templateIds, 'chat', false).length }]
         : []),
       ...(this.hasEmail()
-        ? [{ key: 'email' as const, labelKey: 'resources.templates_email', rows: this.resourceRows.templates(f.templateIds, 'email', false) }]
+        ? [{ key: 'email' as const, labelKey: 'resources.templates_email', count: this.resourceRows.templates(f.templateIds, 'email', false).length }]
         : []),
     ];
-  });
-
-  /** Lo que falta para poder crear, en el orden de la ficha. Un nombre repetido no falta: se dice en su campo. */
-  protected readonly summaryMissing = computed<readonly string[]>(() => {
-    const f = this.form();
-    const missing: string[] = [];
-    if (f.name.trim().length === 0) missing.push('common.summary_missing_name');
-    if (f.channels.size === 0) missing.push('groups.form.summary.missing_channels');
-    if (this.typificationMissing()) missing.push('groups.form.summary.missing_typification');
-    if (this.phoneMissing()) missing.push('groups.form.summary.missing_phone');
-    return missing;
   });
 
   protected onLinksChange(links: readonly GroupAgentLink[]): void {
@@ -1291,11 +1211,14 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
   });
 
   protected save(): void {
-    if (this.mode() === 'create' && !this.generalValid()) {
-      this.stayInGeneral();
+    if (!this.canSave() || this.saving()) return;
+    // Con algo pendiente no crea ni guarda: desde ahora se dice lo que falta, y se llega al primer campo (DD-216).
+    if (this.pendiente()) {
+      this.ocasion.intentar();
+      const primero = this.avisos()[0];
+      if (primero) this.irACampo(primero.seccion, primero.ancla);
       return;
     }
-    if (!this.canSave() || this.saving()) return;
 
     // If the user removed any channel the group used to own, surface the
     // cascade impact before persisting. The dialog's "Continuar" handler
@@ -1308,7 +1231,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
         const { affected } = channelRemovalImpact(this.initialLinks(), removed);
         if (affected > 0) {
           // Los que salen, con LA MISMA regla que los saca al guardar: la cifra dice lo que va a pasar.
-          const orphaned = this.form().links.length - this.withoutOrphans(this.form().links).length;
+          const orphaned = this.linksVistos().length - this.withoutOrphans(this.linksVistos()).length;
           this.cascadeConfirm.set({ removed, affected, orphaned });
           return;
         }
@@ -1320,7 +1243,8 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
       const f = this.form();
       const payload = {
         name: f.name.trim(),
-        phone: f.phone.trim(),
+        // Sin Teléfono no se guarda un saliente que no se ve (DD-216); mientras se edita, quitar y poner Teléfono lo conserva.
+        phone: f.channels.has('phone') ? f.phone.trim() : '',
         priority: f.priority,
         schedules: [...f.scheduleIds],
         templates: [...f.templateIds],
@@ -1352,14 +1276,17 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
       // Como Contact Center y la ficha de agente (decisión de producto, 2026-09-16): guardar se queda en la ficha, con su aviso.
       const editingId = this.editingId()!;
       this.groupsStore.updateGroup(editingId, { ...payload });
-      this.linksStore.replaceLinksForGroup(editingId, this.normalizeLinks(this.withoutOrphans(f.links), editingId));
+      this.linksStore.replaceLinksForGroup(editingId, this.normalizeLinks(this.withoutOrphans(this.linksVistos()), editingId));
       const refreshed = this.groupsStore.getGroup(editingId);
       if (refreshed) this.initial.set(refreshed);
       this.resultado.contar(this.translate.instant('groups.toasts.updated', { name: payload.name }));
       // Lo guardado pasa a ser la referencia para avisar si luego se quita un canal con agentes.
       this.initialChannels.set(new Set(f.channels));
       this.initialLinks.set(this.linksStore.linksForGroup(editingId));
+      // Lo guardado pasa a ser la ficha: también sus enlaces, ya recortados a los canales del grupo.
+      this.form.update((g) => ({ ...g, links: this.initialLinks() }));
       this.saving.set(false);
+      this.ocasion.olvidar();
       this.dirtyState.markPristine();
     }, 400);
   }
@@ -1370,10 +1297,9 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
    * pestañas. La ficha se marca limpia antes, para que el guardián de salida no pregunte.
    */
   private createGroup(payload: Omit<Group, 'id' | 'code'>): void {
-    const f = this.form();
     const slug = this.sectionSlug(this.activeSection());
     const created = this.groupsStore.addGroup(payload);
-    this.linksStore.replaceLinksForGroup(created.id, this.normalizeLinks(this.withoutOrphans(f.links), created.id));
+    this.linksStore.replaceLinksForGroup(created.id, this.normalizeLinks(this.withoutOrphans(this.linksVistos()), created.id));
     const creado = this.translate.instant('groups.toasts.created', { name: created.name });
     this.dirtyState.markPristine();
     // `saving` sigue encendido hasta que se va (ver `activeSection`).
@@ -1391,6 +1317,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
    *  «Deshacer» de Contact Center: vuelve atrás, no navega. */
   protected discard(): void {
     this.form.set(this.dirtyState.pristineValue());
+    this.ocasion.olvidar();
   }
 
   protected cancelCascade(): void {
@@ -1469,12 +1396,13 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
   }
 
   /**
-   * Un agente asignado tiene al menos un canal (DD-121): quien se queda sin ninguno porque se quitaron
-   * canales del grupo SALE del grupo al guardar, y la confirmación de cascada lo ha dicho con su cifra.
-   * Las filas que YA se cargaron sin canales (datos de antes, o la ficha del agente, que deja
-   * quitarlos todos) se quedan como estaban: la tabla las marca «Sin canales».
+   * En un grupo con canales, un agente asignado tiene al menos uno (DD-121): quien se queda sin ninguno porque se
+   * quitaron canales del grupo SALE del grupo al guardar, y la confirmación de cascada lo ha dicho con su cifra. En un
+   * grupo sin canales (DD-216) se pertenece sin canal: nadie sale. Las filas que YA se cargaron sin canales (datos de
+   * antes, o un grupo que no tenía canales) se quedan como estaban.
    */
   private withoutOrphans(links: readonly GroupAgentLink[]): readonly GroupAgentLink[] {
+    if (this.form().channels.size === 0) return links;
     const loadedEmpty = new Set(this.initialLinks().filter((l) => l.channels.length === 0).map((l) => l.agentId));
     return links.filter((l) => l.channels.length > 0 || loadedEmpty.has(l.agentId));
   }

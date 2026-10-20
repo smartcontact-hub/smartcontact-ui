@@ -205,10 +205,10 @@
           "have": "In the supervisor, the scLlegaAlPie directive measures the remaining height; tabla-al-pie tests it: 2 px more of table and the page scrolls."
         },
         "blame": {
-          "title": "What is missing is said once there was a chance",
-          "apply": "An empty required field is something still to fill in, not an error: it is flagged in red once the person had a chance to fill it in, by leaving its section without it or because the saved record already lacked it. Until then, the summary and the reason next to the button say what is missing, without red. A content error (a repeated name, a mistyped email) shows live.",
-          "avoid": "A field that appears when an option is switched on and is born red, with its message and a dot in the index, before anything could be chosen: it looks as if the person made a mistake without having done anything.",
-          "have": "In the supervisor, ocasionDeAvisar decides when each form flags; rule 7 of audit:screen-hygiene and sin-acusar-de-primeras guard it."
+          "title": "What is missing is said on pressing Create or Save",
+          "apply": "An empty required field is something still to fill in, not an error: nothing turns red while filling in. «Create» is always enabled and, when pressed with something pending, it does not create: each field says it, the index marks its section with the text of what is missing, and focus goes to the first one. A saved record that already lacked something says so on opening. A content error (a repeated name, a mistyped email) shows live. The index ✓ belongs to a section left as it is.",
+          "avoid": "A red dot that appears in a section nobody is looking at, without saying what is missing, or a ✓ on a section another one changed: it reads as caused by the last thing done. Nor a grey button with its reason next to it, or yellow warnings about things that block nothing.",
+          "have": "In the supervisor, ocasionDeAvisar decides when each form flags and sectionErrorHints of sc-form-section-nav puts the text in the index; rule 7 of audit:screen-hygiene, indice-errores and sin-acusar-de-primeras guard it."
         }
       }
     },

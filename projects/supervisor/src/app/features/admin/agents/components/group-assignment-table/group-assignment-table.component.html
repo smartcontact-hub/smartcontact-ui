@@ -7,9 +7,6 @@
       (valueChange)="filter.set($any($event))" [allowEmpty]="false" ariaLabelledBy="agent-assignment-filter" />
     <sc-search class="assign__search" [placeholder]="'agents.form.assigned.filter_placeholder' | translate"
       [clearAriaLabel]="'labels.clear_search' | translate" [value]="query()" (valueChange)="query.set($event)" />
-    @if (sinCanal() > 0) {
-      <sc-tag severity="warn" icon="warning" [value]="'agents.form.assigned.no_channels_warn' | translate: { count: sinCanal() }" />
-    }
   </div>
   <span class="visually-hidden" aria-live="polite">{{ announcement() }}</span>
   <!-- Mide lo que todas sus filas, con el pie de la pantalla de tope: al filtrar o buscar no encoge (no baila), y con
@@ -87,9 +84,6 @@
       </span>
       @if (!compatible(row.group)) { <span class="assign__note sc-text-caption-regular">{{ 'groups.form.assigned.incompatible' | translate }}</span> }
     </span>
-    @if (row.link && row.link.channels.length === 0) {
-      <sc-tag severity="warn" icon="warning" [value]="'groups.form.summary.no_channels' | translate" />
-    }
   </span>
 </ng-template>
 

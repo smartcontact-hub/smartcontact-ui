@@ -35,7 +35,14 @@ for (const surface of ['ficha', 'defaults'] as const) {
     await expect(size).toHaveAttribute('max', '10');
     await size.fill('2.5'); await size.press('Tab');
     await expect(size).toHaveAttribute('aria-invalid', 'true');
-    await expect(page.getByRole('button', { name: 'Guardar', exact: true })).toBeDisabled();
+    if (surface === 'ficha') {
+      // En la ficha, «Guardar» sigue activo (DD-216): al pulsarlo no guarda y lleva al campo.
+      await page.getByRole('button', { name: 'Guardar', exact: true }).click();
+      await expect(size).toBeFocused();
+      expect((await stored(page, surface))?.phoneQueue?.queueSize, 'no se guardó').not.toBe(2.5);
+    } else {
+      await expect(page.getByRole('button', { name: 'Guardar', exact: true })).toBeDisabled();
+    }
     await size.fill('11'); await size.press('Tab');
     await expect(size).toHaveValue('10');
     await modo('Fija');
@@ -140,7 +147,9 @@ test('una cola Variable antigua fuera de rango se conserva al abrir y exige corr
   await expect(size).toHaveValue('25');
   await expect(size).toHaveAttribute('aria-invalid', 'true');
   await pickSelectOption(page, page.locator('#group-phone-transfer'), '20 s');
-  await expect(page.getByRole('button', { name: 'Guardar', exact: true })).toBeDisabled();
+  // «Guardar», activo con el cambio (DD-216): al pulsarlo no guarda y lleva a la cola.
+  await page.getByRole('button', { name: 'Guardar', exact: true }).click();
+  await expect(size).toBeFocused();
   expect(await stored(page, 'ficha')).toMatchObject({ phoneQueue: { queueSize: 25, transferSec: 10 } });
   await size.fill('10'); await size.press('Tab');
   await page.getByRole('button', { name: 'Guardar', exact: true }).click();

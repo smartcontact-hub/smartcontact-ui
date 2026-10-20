@@ -1,6 +1,6 @@
 {
   "generated": "component-audit.mjs",
-  "summary": "61 componentes · 22 custom · 10 standard · 29 extended · 51 usados en Supervisor · estado (DD-190): 33 ready, 27 experimental, 1 deprecated.",
+  "summary": "61 componentes · 22 custom · 10 standard · 29 extended · 50 usados en Supervisor · estado (DD-190): 33 ready, 27 experimental, 1 deprecated.",
   "components": [
     {
       "name": "avatar",
@@ -244,7 +244,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 179,
+      "usedInSupervisor": 174,
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "sobreObsoleto": [
         {
@@ -650,7 +650,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 19,
+      "usedInSupervisor": 18,
       "cuando": "Para una tarea corta que interrumpe sin sacarte de la pantalla. Si es larga o hay que consultar lo de detrás, `sc-drawer`.",
       "sobreObsoleto": []
     },
@@ -900,12 +900,13 @@
       "kind": "CUSTOM",
       "primengBase": "—",
       "cva": false,
-      "inputs": 7,
+      "inputs": 8,
       "api": [
         "activeChange",
         "activeId",
         "flush",
         "labelKey",
+        "sectionErrorHints",
         "sectionsDone",
         "sectionsWithChanges",
         "sectionsWithErrors",
@@ -1001,7 +1002,7 @@
         "kit"
       ],
       "retirado": null,
-      "usedInSupervisor": 2,
+      "usedInSupervisor": 0,
       "cuando": "Para dar a una fila de datos o a un título su icono con peso propio (un resumen). Un icono suelto junto a un texto es `sc-icon`; una persona, `sc-avatar`.",
       "sobreObsoleto": []
     },
@@ -1898,7 +1899,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 33,
+      "usedInSupervisor": 29,
       "cuando": "Para clasificar o marcar un estado EN la fila. Si es un contador pegado a algo, `sc-badge`; si el usuario lo puede quitar, `sc-chip`.",
       "sobreObsoleto": []
     },

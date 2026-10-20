@@ -1014,7 +1014,6 @@
     "summary": "Résumé",
     "summary_missing": "Manquant : {{items}}",
     "summary_missing_name": "nom",
-    "summary_ready": "Prêt à créer",
     "summary_of": "{{value}} sur {{total}}",
     "actions": "Actions",
     "select_row": "Sélectionner {{name}}",
@@ -1567,15 +1566,14 @@
       "delete_option_body_one": "L'option en dessous est aussi supprimée.",
       "errors": {
         "option_taken": "« {{name}} » existe déjà à ce niveau",
-        "name_taken": "Une typification porte déjà ce nom"
+        "name_taken": "Une typification porte déjà ce nom",
+        "name_required": "Le nom est obligatoire",
+        "options_required": "Ajoutez au moins une option",
+        "names_required": "Donnez un nom différent à chaque option"
       },
       "section": {
         "general": "Général",
         "categorization": "Catégories"
-      },
-      "missing": {
-        "options": "au moins une option",
-        "names": "un nom différent pour chaque option"
       },
       "categorization_hint": "Ce que l'agent choisit, sur trois niveaux au plus. Chaque branche va aussi loin que nécessaire",
       "rename_field": "Nouveau nom de l'option",
@@ -1822,14 +1820,12 @@
         "apply_body_other": "Cela change {{count}} cases dans Accès. Si vous les gardez, le type change quand même et Accès reste tel quel.",
         "apply": "Appliquer le modèle",
         "keep": "Garder les cases"
-      },
-      "summary": {
-        "missing_email": "e-mail"
       }
     },
     "errors": {
       "name_required": "Le nom est obligatoire",
-      "email_invalid": "Entrez un email valide"
+      "email_invalid": "Entrez un email valide",
+      "email_required": "Saisissez l'e-mail"
     },
     "toasts": {
       "created": "Utilisateur \"{{name}}\" créé",
@@ -1875,10 +1871,6 @@
   "groups": {
     "page_title": "Groupes",
     "create_button": "Nouveau groupe",
-    "create_dialog": {
-      "duplicate_subtitle": "Copie les agents, les canaux et les réglages de «{{source}}». Pas le téléphone sortant.",
-      "copy_name": "{{name}} (copie)"
-    },
     "search_placeholder": "Rechercher des groupes…",
     "no_results_query": "Aucun groupe ne correspond à « {{query}} ».",
     "entity_singular": "groupe",
@@ -1953,7 +1945,6 @@
         "warn_no_channels": "Activé, mais sans canal assigné",
         "add_placeholder": "Ajouter des agents…",
         "add_aria": "Ajouter un agent au groupe",
-        "no_channels_warn": "{{count}} sans canal : retirés à l'enregistrement",
         "bulk_unassign": "Retirer du groupe",
         "col_level": "Niveau {{channel}}",
         "level_aria": "Niveau de {{name}} — {{channel}}",
@@ -2113,25 +2104,17 @@
       "summary": {
         "none": "Aucune",
         "paused": "Désactivé",
-        "no_channels": "Aucun canal",
         "priority": "Priorité : {{value}}",
         "title": "Résumé",
         "agents_active": "Agents activés",
         "paused_count": "{{count}} désactivés",
-        "no_agents": "Aucun agent",
         "routing": "Distribution",
         "no_number": "Aucun numéro",
-        "resources": "Ressources",
-        "resources_quick": "Voir les ressources du groupe",
-        "resources_empty": "Aucune ressource assignée",
-        "resources_see": "Voir les ressources",
-        "missing_channels": "canaux",
-        "missing_phone": "téléphone sortant",
-        "missing_typification": "typification"
+        "resources": "Ressources"
       },
       "channels": {
         "title": "Canaux",
-        "hint": "Au moins un. Ce que vous cochez ici détermine ce que vous configurez dans Distribution et files d'attente."
+        "hint": "Ce que vous cochez ici détermine ce que vous configurez dans Distribution et files d'attente."
       },
       "distribution": {
         "common_title": "Règles communes",
@@ -2144,7 +2127,8 @@
         "jump_aria": "Canaux de cette section",
         "outbound": "Appels sortants",
         "webchat_hint": "Ses messages, ses horaires et les sites où il s’intègre. Un message vide n’est pas envoyé.",
-        "whatsapp_hint": "Son numéro et, avec lui, ses messages et ses horaires. Un message vide n’est pas envoyé."
+        "whatsapp_hint": "Son numéro et, avec lui, ses messages et ses horaires. Un message vide n’est pas envoyé.",
+        "no_channels": "Ce groupe n'a pas de canal : il ne distribue pas de conversations. Les canaux se cochent dans Général."
       },
       "chat": {
         "close_on_inactivity": "Expiration de la session",
@@ -2186,7 +2170,6 @@
     },
     "errors": {
       "name_required": "Le nom est obligatoire",
-      "channels_required": "Sélectionnez au moins un canal",
       "name_taken": "Un groupe porte déjà ce nom",
       "phone_required": "Le téléphone sortant est obligatoire",
       "typification_required": "Choisissez une typification"
@@ -2399,8 +2382,7 @@
         "not_allowed_hint": "{{channel}} ne fait pas partie de ses canaux (Général)",
         "bulk_add": "Attribuer à l'agent",
         "bulk_remove": "Retirer à l'agent",
-        "bulk_body": "{{action}} : {{count}} groupes.",
-        "no_channels_warn": "{{count}} sans canal : retirés à l'enregistrement"
+        "bulk_body": "{{action}} : {{count}} groupes."
       },
       "allowed": {
         "title": "Canaux autorisés",
@@ -2437,13 +2419,7 @@
       "summary": {
         "no_groups": "Sans groupes",
         "groups_active": "Activé dans les groupes",
-        "missing_extension": "extension",
-        "missing_phone": "téléphone portable",
         "outbound": "Sortants",
-        "missing_email": "e-mail",
-        "missing_channel": "un canal",
-        "missing_group": "un groupe",
-        "missing_outbound": "un groupe pour les appels sortants",
         "channels": "Canaux",
         "no_channels": "Aucun canal",
         "none": "Aucune"

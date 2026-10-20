@@ -710,20 +710,27 @@ export const FACTORY_GROUP_DEFAULTS: GroupDefaults = {
   },
 };
 
-/** Lo que pide el diálogo de duplicar: lo que identifica al duplicado. Un grupo NUEVO nace en su propia ficha,
- *  en modo alta, con los valores de Contact Center › Grupos (DD-121, DD-135). */
-export interface GroupIdentityDraft {
-  readonly name: string;
-  readonly phone: string;
-  readonly priority: GroupPriority;
+/**
+ * Duplicado (revisión de producto del 2026-10-20, DD-216): TODO lo del original, canales, ajustes y teléfono saliente
+ * incluidos, salvo lo que el funcional dice que no se copia: los servicios, los dominios del script de chat (el script
+ * cambia con el grupo) y el número de WhatsApp, que se elige otra vez. Sin diálogo: se crea en el acto con
+ * `nombreDeCopia` y se abre su edición.
+ */
+export function duplicateGroupDraft(source: Group, name: string): Omit<Group, 'id' | 'code'> {
+  const { id: _id, code: _code, services: _services, ...rest } = source;
+  const advanced = rest.advanced ? { ...rest.advanced, allowedDomains: [], whatsappNumber: '' } : rest.advanced;
+  return { ...rest, name, advanced };
 }
 
 /**
- * Duplicado: TODO lo del original, canales incluidos, con los datos que se hayan puesto en el diálogo.
- * El diálogo propone el nombre «… (copia)» y deja vacío el teléfono asociado: identifica al grupo, y dos
- * grupos no deben sacar el mismo número a la calle.
+ * El nombre de una copia, como el de un archivo descargado dos veces: «Online Support (1)», y si ya existe, «(2)».
+ * Duplicar «Online Support (1)» da «Online Support (2)»: el número se cuenta sobre el nombre de base, no se apila
+ * (revisión de producto del 2026-10-20: «(copia) (copia)» era lo que se quería evitar).
  */
-export function duplicateGroupDraft(source: Group, identity: GroupIdentityDraft): Omit<Group, 'id' | 'code'> {
-  const { id: _id, code: _code, services: _services, ...rest } = source;
-  return { ...rest, ...identity };
+export function nombreDeCopia(name: string, existentes: readonly string[]): string {
+  const base = name.trim().replace(/\s\(\d+\)$/, '');
+  const usados = new Set(existentes.map((n) => n.trim().toLocaleLowerCase('es')));
+  let n = 1;
+  while (usados.has(`${base} (${n})`.toLocaleLowerCase('es'))) n++;
+  return `${base} (${n})`;
 }

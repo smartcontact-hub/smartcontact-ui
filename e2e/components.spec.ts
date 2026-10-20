@@ -1201,11 +1201,14 @@ test.describe('sc-form-section-nav', () => {
     expect(await styleOf(flushLabel, ['font-size'])).toEqual({ 'font-size': '14px' });
 
     // En un alta (DD-143): ✓ en las secciones que se dejaron completas, que el enlace dice; la que se
-    // dejó sin lo obligatorio lleva el punto rojo, que gana al ✓.
+    // dejó sin lo obligatorio lleva el punto rojo, que gana al ✓, y tras pulsar «Crear», el texto de lo que falta
+    // debajo, que el enlace también dice (DD-216).
     const alta = page.getByTestId('sc-formnav-alta');
     await expect(alta.locator('.form-nav__done')).toHaveCount(2);
     await expect(alta.locator('.form-nav__item').first()).toHaveAccessibleName(/General.*(completa|complete)/);
     await expect(alta.locator('.form-nav__item--has-error .form-nav__done')).toHaveCount(0);
+    await expect(alta.locator('.form-nav__item--has-error .form-nav__hint')).toHaveText('Elige un horario');
+    await expect(alta.locator('.form-nav__item--has-error')).toHaveAccessibleName(/Horario.*Elige un horario/);
 
     await screenshotBaseline(page, 'formsectionnav');
   });

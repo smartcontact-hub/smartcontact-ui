@@ -38,6 +38,7 @@ const SECCIONES: readonly FormNavSection[] = [
     [activeId]="activa()"
     [titleKey]="titulo()"
     [sectionsWithErrors]="errores()"
+    [sectionErrorHints]="motivos()"
     [sectionsWithChanges]="cambios()"
     [sectionsDone]="hechas()"
     [flush]="plana()"
@@ -49,6 +50,7 @@ class Host {
   readonly activa = signal<string | null>('general');
   readonly titulo = signal<string | null>(null);
   readonly errores = signal<ReadonlySet<string>>(new Set());
+  readonly motivos = signal<Readonly<Record<string, string>>>({});
   readonly cambios = signal<ReadonlySet<string>>(new Set());
   readonly hechas = signal<ReadonlySet<string>>(new Set());
   readonly plana = signal(true);
@@ -193,6 +195,35 @@ describe('sc-form-section-nav · lo que está sin guardar y lo que falta se ven 
     const puntos = [...filas[0]!.querySelectorAll('.form-nav__dot')];
     expect(puntos.map((p) => p.classList.contains('form-nav__dot--changes'))).toEqual([false]);
     expect(filas[0]!.querySelectorAll('.form-nav__sr').length).toBe(2);
+  });
+});
+
+describe('sc-form-section-nav · lo que falta, en texto bajo la etiqueta (DD-216)', () => {
+  beforeEach(() => {
+    TestBed.configureTestingModule({ imports: [Host], providers: [provideTranslateService()] });
+  });
+
+  it('la sección con aviso dice su motivo, que entra en el nombre del enlace y sustituye al texto genérico', () => {
+    const { filas } = montar((h) => {
+      h.errores.set(new Set(['distribucion']));
+      h.motivos.set({ distribucion: 'El teléfono saliente es obligatorio' });
+    });
+    expect(filas[1]!.querySelector('.form-nav__hint')?.textContent?.trim()).toBe('El teléfono saliente es obligatorio');
+    expect(filas[1]!.classList.contains('form-nav__item--has-hint')).toBe(true);
+    expect(filas[1]!.querySelector('.form-nav__sr')).toBeNull();
+    expect(filas[1]!.querySelector('.form-nav__dot')).not.toBeNull();
+  });
+
+  it('un motivo sin aviso no se pinta: manda `sectionsWithErrors`', () => {
+    const { filas } = montar((h) => h.motivos.set({ general: 'El nombre es obligatorio' }));
+    expect(filas[0]!.querySelector('.form-nav__hint')).toBeNull();
+    expect(filas[0]!.classList.contains('form-nav__item--has-hint')).toBe(false);
+  });
+
+  it('un aviso sin motivo sigue con el punto y su texto oculto', () => {
+    const { filas } = montar((h) => h.errores.set(new Set(['general'])));
+    expect(filas[0]!.querySelector('.form-nav__hint')).toBeNull();
+    expect(filas[0]!.querySelector('.form-nav__sr')?.textContent?.trim()).toBe('sc.formSectionNav.sectionHasErrors');
   });
 });
 

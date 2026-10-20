@@ -600,10 +600,6 @@
       "usedInSupervisor": 1
     },
     {
-      "selector": "sc-icon-tile",
-      "usedInSupervisor": 2
-    },
-    {
       "selector": "sc-inline-rename-cell",
       "usedInSupervisor": 4
     },

@@ -6,7 +6,8 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
 /**
  * CREAR DESDE LA FICHA ES UN DIÁLOGO, NO UNA CAJA DENTRO DE OTRA.
  *
- * En Recursos de la ficha de grupo, cada «+» (agenda, plantillas y etiqueta) crea sin salir de la ficha:
+ * En Recursos de la ficha de agente, cada «+» (agenda y plantillas) crea sin salir de la ficha (la de grupo los tuvo
+ * hasta DD-216, que deja allí solo los desplegables, en chips, y «Gestionar en Repositorios»):
  * abre un `sc-dialog` con el formulario de su pantalla dentro. Medido el 2026-10-01: el formulario seguía pintando
  * su propia tarjeta (320 px con borde, sombra y radio) dentro del diálogo de 440, con su título repetido
  * («Nuevo/a tipificación» dos veces) y su propio `role="dialog"`. La ficha le pasaba `flush`, pero el formulario no
@@ -36,9 +37,9 @@ test.beforeEach(async ({ page }) => {
   await disableAnimations(page);
 });
 
-/** Los «+» de Recursos, por su nombre: «Nueva agenda», «Nueva plantilla» (chat y email). */
+/** Los «+» de Recursos del agente, por su nombre: «Nueva agenda», «Nueva plantilla». */
 const masDeRecursos = (page: Page) =>
-  page.locator('#group-section-resources').getByRole('button', { name: /^Nueva (agenda|plantilla|etiqueta)$/ });
+  page.locator('#agent-section-resources').getByRole('button', { name: /^Nueva (agenda|plantilla)$/ });
 
 /** Caja y ancho del formulario dentro del diálogo, contra el hueco del cuerpo de `sc-dialog`. */
 const cajaDelFormulario = (dialogo: Locator) =>
@@ -54,13 +55,12 @@ const cajaDelFormulario = (dialogo: Locator) =>
     };
   });
 
-test('grupo 11 · cada «+» de Recursos abre su diálogo con el nombre de su botón, y el formulario va a sangre', async ({ page }) => {
-  await goto(page, 'admin/grupos/editar/11?seccion=recursos');
+test('agente 1 · cada «+» de Recursos abre su diálogo con el nombre de su botón, y el formulario va a sangre', async ({ page }) => {
+  await goto(page, 'admin/agentes/editar/1?seccion=recursos');
   const botones = masDeRecursos(page);
+  // Agenda y plantillas de chat: si faltan, la prueba no recorre lo que dice.
+  await expect(botones).toHaveCount(2);
   const n = await botones.count();
-  // Agenda y plantillas de chat y de email (la etiqueta salió con DD-142; la tipificación, a General con DD-187): si faltan, la
-  // prueba no recorre lo que dice.
-  expect(n, 'los «+» de Recursos').toBeGreaterThanOrEqual(3);
 
   for (let i = 0; i < n; i++) {
     const boton = botones.nth(i);
@@ -86,12 +86,12 @@ test('grupo 11 · cada «+» de Recursos abre su diálogo con el nombre de su bo
   }
 });
 
-test('grupo 11 · cada «+» de Recursos es el solo icono del Kit, secundario y relleno, a la talla de su desplegable', async ({ page }) => {
+test('agente 1 · cada «+» de Recursos es el solo icono del Kit, secundario y relleno, a la talla de su desplegable', async ({ page }) => {
   // DD-187, que enmienda DD-167: el «+» rima con su campo. Junto a un desplegable mediano, el botón mediano de solo
   // icono, tan alto como él, a su derecha con el hueco de la casa (7).
-  await goto(page, 'admin/grupos/editar/11?seccion=recursos');
+  await goto(page, 'admin/agentes/editar/1?seccion=recursos');
   const botones = masDeRecursos(page);
-  await expect(botones).toHaveCount(3);
+  await expect(botones).toHaveCount(2);
   const ancho = parseFloat(kitPx('button.root.iconOnlyWidth'));
 
   for (const boton of await botones.all()) {

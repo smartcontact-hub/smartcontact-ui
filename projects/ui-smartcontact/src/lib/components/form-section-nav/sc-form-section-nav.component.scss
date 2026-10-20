@@ -226,6 +226,39 @@
  * de hermano le quitaba 25 px a una caja de texto de 99; hoy, en el carril de 196, al rótulo le quedan 140 con el
  * hueco puesto, y el más largo de las fichas, «Distribución y colas», mide 130.
  */
+/*
+ * Lo que falta, bajo la etiqueta (`sectionErrorHints`, DD-216): en la columna del rótulo, alineado con él, en rojo y a
+ * tamaño de ayuda. La fila pasa a rejilla solo cuando lo lleva: icono, rótulo y marca en la primera línea, como
+ * siempre, y el texto debajo del rótulo. Envuelve como él: nunca se corta.
+ */
+.form-nav__item--has-hint {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  row-gap: 0;
+
+  .form-nav__icon {
+    grid-area: 1 / 1;
+  }
+
+  .form-nav__label {
+    grid-area: 1 / 2;
+  }
+
+  .form-nav__marker {
+    grid-area: 1 / 3;
+  }
+}
+
+.form-nav__hint {
+  grid-area: 2 / 2;
+  font-family: var(--sc-font-family-primary);
+  font-size: var(--sc-font-size-caption);
+  line-height: var(--sc-line-height-caption);
+  font-weight: var(--sc-font-weight-regular);
+  color: var(--sc-text-danger);
+  overflow-wrap: anywhere;
+}
+
 /* El hueco de la marca, siempre (vacío si no hay): el ancho del ✓, que es la más ancha, y la marca pegada a su
  * borde derecho. Así un rótulo no salta de línea cuando aparece el punto. */
 .form-nav__marker {

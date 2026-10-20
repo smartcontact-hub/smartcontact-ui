@@ -24,7 +24,6 @@ import {
   ScSelectButtonComponent as SelectButtonComponent,
   ScSelectComponent as SelectComponent,
   ScButtonComponent as ButtonComponent,
-  ScTagComponent as TagComponent,
   ScToggleSwitchComponent as ToggleSwitchComponent,
 } from '@smartcontact-hub/components';
 import {
@@ -102,7 +101,6 @@ const REM = { assigned: 3.5, group: 12, channel: { phone: 7, chat: 4.5, email: 4
     CeldaVaciaComponent,
     ButtonComponent,
     CheckboxComponent,
-    TagComponent,
     DatatableComponent,
     EmptyStateComponent,
     IconComponent,
@@ -188,9 +186,6 @@ export class GroupAssignmentTableComponent {
    *  la tabla del grupo, que enlaza a la ficha del agente (DD-150). */
   readonly irA = output<'canales'>();
 
-  /** Cuántos grupos asignados se han quedado sin canal: lo dice la barra, como en la tabla del grupo. */
-  protected readonly sinCanal = computed(() => this.visibleRows().filter((r) => r.link && r.link.channels.length === 0).length);
-
   protected readonly query = signal('');
   /** Al editar, los asignados; en el alta, todos (no tiene ninguno). */
   protected readonly filter = linkedSignal(() => (this.agentId() === 0 ? 'all' : 'assigned'));
@@ -225,8 +220,9 @@ export class GroupAssignmentTableComponent {
     });
   });
 
+  /** Se puede asignar si le deja algún canal; un grupo sin canales (DD-216), siempre: ahí se pertenece sin canal. */
   protected compatible(group: AgentGroupAssignmentRef): boolean {
-    return permittedFamilies(group.channels, this.allowedChannels()).length > 0;
+    return group.channels.length === 0 || permittedFamilies(group.channels, this.allowedChannels()).length > 0;
   }
 
   /** ¿Ofrece este grupo la familia? Un `string` porque llega del `field` de la columna. */

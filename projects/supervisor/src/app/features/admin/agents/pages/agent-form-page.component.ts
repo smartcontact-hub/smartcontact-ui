@@ -27,9 +27,16 @@ import {
   NameInplaceComponent,
   ResourceOptionComponent,
   SummaryKpiComponent,
-  SummaryStatusComponent,
 } from '@shared/components';
-import { llegarAAncla, llegarASeccion, ocasionDeAvisar, seccionesDeAlta } from '@shared/utils/alta-secciones';
+import {
+  avisosDelIndice,
+  firmaDe,
+  llegarAAncla,
+  llegarASeccion,
+  ocasionDeAvisar,
+  seccionesDeAlta,
+  type AvisoDeFicha,
+} from '@shared/utils/alta-secciones';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 import {
   ScCheckboxComponent as CheckboxComponent,
@@ -194,7 +201,6 @@ function sameValues<T>(a: readonly T[], b: readonly T[]): boolean {
     IconComponent,
     NameInplaceComponent,
     SummaryKpiComponent,
-    SummaryStatusComponent,
     AltaPieComponent,
     ResourceOptionComponent,
     CheckboxComponent,
@@ -479,11 +485,14 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
   /**
    * EL ALTA, CON EL ÍNDICE DE LA EDICIÓN (DD-143), también al duplicar: las mismas secciones, en cualquier orden
    * (DD-130: aquí no hay puerta), con ✓ en las que se dejan completas y «Atrás / Siguiente» al pie. General y Grupos
-   * tienen algo obligatorio (`faltas`); Configuración y Recursos, no, y llevan ✓ al dejarlas (DD-211 §6).
+   * tienen algo obligatorio (`faltas`); Configuración y Recursos, no, y llevan ✓ al dejarlas (DD-211 §6). Los canales de
+   * General deciden lo que se ve en las demás (lo de las llamadas, lo del chat, las columnas de sus grupos): si cambian
+   * desde que se dejó una, su ✓ se va (DD-216).
    */
   protected readonly alta = seccionesDeAlta({
     secciones: this.navSections,
     completa: (id) => !this.faltas().some((f) => f.seccion === id) && (id !== 'agent-section-general' || !this.formatoMal()),
+    firma: (id) => (id === 'agent-section-general' ? '' : firmaDe(this.form().allowedChannels)),
   });
 
   /** La sección a la vista: en el alta y al duplicar, la abierta; al editar, la de la dirección (General sin parámetro). */
@@ -527,30 +536,33 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
   /**
    * LO OBLIGATORIO, en el orden de la ficha (la revisión de agentes de producto, 2026-10-09): nombre, email, extensión, el
    * móvil si suena en el teléfono y al menos un canal, en General; al menos un grupo, un canal en cada uno y, si atiende
-   * teléfono, el grupo de sus salientes, en Grupos. De aquí salen el resumen («Falta: …»), el punto del índice y el
-   * motivo junto a «Guardar»: una sola lista, así no pueden decir cosas distintas.
+   * teléfono, el grupo de sus salientes, en Grupos. Cada uno con el campo al que se llega al pulsar «Crear agente» o
+   * «Guardar» sin él (`ancla`, DD-216). De aquí salen el punto del índice, lo que dice en él y el aviso de cada campo:
+   * una sola lista, así no pueden decir cosas distintas.
    */
-  private readonly faltas = computed<readonly { seccion: string; resumen: string; motivo: string }[]>(() => {
+  private readonly faltas = computed<readonly { seccion: string; motivo: string; ancla: string | null }[]>(() => {
     const f = this.form();
     const g = 'agent-section-general';
     const gr = 'agent-section-groups';
-    const out: { seccion: string; resumen: string; motivo: string }[] = [];
-    if (!f.name.trim()) out.push({ seccion: g, resumen: 'common.summary_missing_name', motivo: 'agents.errors.name_required' });
-    if (!f.email.trim()) out.push({ seccion: g, resumen: 'agents.form.summary.missing_email', motivo: 'agents.errors.email_required' });
-    if (!f.extension) out.push({ seccion: g, resumen: 'agents.form.summary.missing_extension', motivo: 'agents.errors.extension_required' });
+    const out: { seccion: string; motivo: string; ancla: string | null }[] = [];
+    if (!f.name.trim()) out.push({ seccion: g, motivo: 'agents.errors.name_required', ancla: 'agent-name' });
+    if (!f.email.trim()) out.push({ seccion: g, motivo: 'agents.errors.email_required', ancla: 'agent-email' });
+    if (!f.extension) out.push({ seccion: g, motivo: 'agents.errors.extension_required', ancla: 'agent-ext' });
     if (this.phoneRequired() && !f.phone.trim()) {
-      out.push({ seccion: g, resumen: 'agents.form.summary.missing_phone', motivo: 'agents.errors.phone_required' });
+      out.push({ seccion: g, motivo: 'agents.errors.phone_required', ancla: 'agent-phone' });
     }
     if (f.allowedChannels.length === 0) {
-      out.push({ seccion: g, resumen: 'agents.form.summary.missing_channel', motivo: 'agents.errors.channels_required' });
+      out.push({ seccion: g, motivo: 'agents.errors.channels_required', ancla: 'agent-channels-title' });
     }
-    // Los grupos que valen son los que tienen algún canal: el que se queda sin ninguno sale al guardar (`save`).
-    const conCanal = this.linksVistos().filter((l) => l.channels.length > 0);
-    if (conCanal.length === 0) {
-      out.push({ seccion: gr, resumen: 'agents.form.summary.missing_group', motivo: 'agents.errors.group_required' });
+    // Los grupos que valen son los que le dejan algún canal, y los que no tienen ninguno (DD-216: ahí se pertenece sin
+    // canal). El que se queda sin canales porque se le quitaron sale al guardar (`save`).
+    const sinCanales = new Set(this.availableGroups().filter((grupo) => grupo.channels.length === 0).map((grupo) => grupo.id));
+    const valen = this.linksVistos().filter((l) => l.channels.length > 0 || sinCanales.has(l.groupId));
+    if (valen.length === 0) {
+      out.push({ seccion: gr, motivo: 'agents.errors.group_required', ancla: null });
     }
-    if (conCanal.length > 0 && f.allowedChannels.includes('phone') && this.outboundGroupId() === null) {
-      out.push({ seccion: gr, resumen: 'agents.form.summary.missing_outbound', motivo: 'agents.errors.outbound_required' });
+    if (valen.length > 0 && f.allowedChannels.includes('phone') && this.outboundGroupId() === null) {
+      out.push({ seccion: gr, motivo: 'agents.errors.outbound_required', ancla: 'agent-outbound' });
     }
     return out;
   });
@@ -566,38 +578,52 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
   });
 
   /**
-   * Cuándo se dice lo que falta (DD-199): desde que se deja su sección sin ello, en el alta y al editar, o desde que se
-   * abre si lo guardado ya venía sin ello (DD-142). Duplicar es un alta: lo que llega vacío a propósito no acusa. Antes,
-   * lo dicen el resumen (DD-136) y el motivo junto al botón, sin rojo. Un email o un PIN mal escritos, en su campo y en
-   * vivo; al índice llegan con la misma ocasión que lo que falta.
+   * Cuándo se dice lo que falta (DD-216): al pulsar «Crear agente» o «Guardar», lo que faltaba entonces, hasta que se
+   * arregla; o desde que se abre, si lo guardado ya venía sin ello (DD-142). Duplicar es un alta: lo que llega vacío a
+   * propósito no acusa. Un email o un teléfono mal escritos, en su campo y en vivo.
    */
   private readonly ocasion = ocasionDeAvisar({
-    alta: this.alta,
     editando: () => this.mode() === 'edit',
-    abierta: () => this.activeSection(),
     cambios: () => this.dirtyState.dirty(),
-    faltas: () => [...this.faltas().map((f) => f.motivo), ...(this.formatoMal() ? ['formato'] : [])],
+    faltas: () => this.faltas().map((f) => f.motivo),
   });
 
-  /** Sin canales, el aviso bajo las casillas, cuando ya hubo ocasión de marcarlos (DD-199). */
-  protected readonly channelsError = computed(
-    () =>
-      this.form().allowedChannels.length === 0 &&
-      this.ocasion.acusa('agent-section-general', 'agents.errors.channels_required'),
-  );
+  /** Lo que falta y ya se dice, por su motivo: el aviso de cada campo sale de aquí. */
+  private readonly faltasDichas = computed(() => new Set(this.faltas().map((f) => f.motivo).filter((m) => this.ocasion.acusa(m))));
+
+  /** El aviso bajo un campo obligatorio vacío, al pulsar sin él (DD-216); `undefined` si no hay nada que decir. */
+  protected falta(motivo: string): string | undefined {
+    return this.faltasDichas().has(motivo) ? this.translate.instant(motivo) : undefined;
+  }
+
+  /** Sin canales, el aviso bajo las casillas, al pulsar sin ellos (DD-216). */
+  protected readonly channelsError = computed(() => this.faltasDichas().has('agents.errors.channels_required'));
 
   /** ¿Tiene teléfono móvil? «Gestión de dispositivos» (elegir navegador o teléfono en el puesto) lo necesita. */
   protected readonly hasPhone = computed(() => !!this.form().phone.trim());
 
   /**
-   * Lo que falta, en el índice, cuando ya hubo ocasión (DD-199). En un alta recién abierta, al duplicar y tras un cambio
-   * al editar no acusa: lo dice el resumen (DD-136); desde que se deja la sección sin lo suyo, sí (DD-143).
+   * Los avisos a la vista, en el orden de la ficha: lo que falta, cuando ya se intentó crear o guardar (DD-216), y lo
+   * mal escrito (email, teléfono), en vivo. De aquí salen el punto del índice, lo que dice en él y adónde lleva pulsar.
    */
-  protected readonly sectionsWithErrors = computed<ReadonlySet<string>>(() => {
-    const out = new Set(this.faltas().filter((f) => this.ocasion.acusa(f.seccion, f.motivo)).map((f) => f.seccion));
-    if (this.formatoMal() && this.ocasion.acusa('agent-section-general', 'formato')) out.add('agent-section-general');
+  private readonly avisos = computed<readonly AvisoDeFicha[]>(() => {
+    this.currentLang();
+    const g = 'agent-section-general';
+    const out: AvisoDeFicha[] = this.faltas()
+      .filter((f) => this.faltasDichas().has(f.motivo))
+      .map((f) => ({ seccion: f.seccion, texto: this.translate.instant(f.motivo), ancla: f.ancla }));
+    const email = this.emailError();
+    if (email) out.unshift({ seccion: g, texto: this.translate.instant(email), ancla: 'agent-email' });
+    const movil = this.phoneError();
+    if (movil) out.unshift({ seccion: g, texto: this.translate.instant(movil), ancla: 'agent-phone' });
     return out;
   });
+
+  /** El punto rojo del índice: la sección tiene un aviso a la vista. */
+  protected readonly sectionsWithErrors = computed<ReadonlySet<string>>(() => new Set(this.avisos().map((a) => a.seccion)));
+
+  /** Lo que dice cada sección con aviso en el índice, en texto (DD-216). */
+  protected readonly sectionErrorHints = computed(() => avisosDelIndice(this.avisos()));
 
   /** Las secciones con cambios sin guardar (DD-122), al editar. Todos los permisos viven ya en Configuración. */
   protected readonly sectionsWithChanges = computed<ReadonlySet<string>>(() => {
@@ -727,6 +753,11 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
   }
 
   /** Lo que se pulsa en el resumen lleva a su sección y, dentro de ella, a su campo (DD-146), como en la ficha de grupo. */
+  /** Lleva a un campo de la ficha (o al título de su sección): lo que pulsar «Crear agente» con algo pendiente hace. */
+  private irACampo(seccion: string, ancla: string | null): void {
+    this.irDesdeResumen({ seccion, ancla });
+  }
+
   protected irDesdeResumen(destino: DestinoDelResumen): void {
     const llegar = () =>
       destino.ancla ? llegarAAncla(destino.ancla, this.injector) : llegarASeccion(destino.seccion, this.injector);
@@ -848,24 +879,10 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
   protected readonly initial = signal<Agent | null>(null);
   protected readonly form = signal<FormState>(this.emptyForm());
   /*
-   * R6 · una sola política de error.
-   *
-   * Antes había un `validate()` que rellenaba un mapa `errors` — y era código
-   * MUERTO: `save()` ya salía antes si `!canSave()`, y `canSave()` comprobaba
-   * el mismo predicado, así que el mapa nunca llegaba a tener nada. Resultado:
-   * estas pantallas no enseñaban ni un mensaje de campo, nunca. Solo un botón
-   * gris sin explicar por qué (el antipatrón nº1 de Nielsen).
-   *
-   * Regla: el error se revela por CONTENIDO equivocado, en vivo. Un campo
-   * vacío calla — todavía no es un error, es un campo sin rellenar, y acusar a
-   * un formulario recién abierto es ruido. Lo que falta por rellenar se
-   * comunica por la otra vía: el motivo del botón deshabilitado.
-   * Mismo modelo que `category-form-modal`.
-   *
-   * En esta pantalla solo email y PIN tienen regla de CONTENIDO (los dos son
-   * opcionales: si los escribes, con formato válido). Nombre y extensión son
-   * solo obligatorios — no hay contenido equivocado que señalar, así que no
-   * llevan computed: su ausencia la cuenta el motivo del botón.
+   * R6 · una sola política de error (DD-216). Un error de CONTENIDO (un email o un teléfono mal escritos) se dice en
+   * vivo, en su campo. Lo que FALTA no es un error mientras se rellena: se dice al pulsar «Crear agente» o «Guardar», en
+   * su campo (también nombre, email y extensión, que hasta el 2026-10-20 solo lo decían el índice y el botón) y en el
+   * índice, con su texto.
    */
   protected readonly emailError = computed<string | null>(() => {
     const email = this.form().email.trim();
@@ -883,36 +900,6 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
     return telefonoValido(phone) ? null : 'agents.errors.phone_invalid';
   });
 
-  /** Por qué NO se puede guardar, en palabras. Alimenta el `title` y el
-   *  `aria-describedby` del botón: un control deshabilitado sin motivo obliga
-   *  al usuario a adivinar cuál de los campos le falta.
-   *
-   *  El orden reproduce el de `canSave()` — y no por comodidad: delante van
-   *  los obligatorios vacíos (nombre, extensión), que NO tienen otro canal
-   *  porque sus campos callan por diseño; detrás los de formato, que además
-   *  ya se están viendo en rojo sobre el propio input.
-   *
-   *  Los predicados se copian de `canSave()` en vez de delegar en los
-   *  computed de arriba: esos devuelven `null` con el campo en blancos, y un
-   *  email de solo espacios dejaría el botón gris otra vez sin motivo. */
-  protected readonly saveDisabledReason = computed<string | null>(() => {
-    if (this.canSave()) return null;
-    const falta = this.faltas()[0];
-    if (falta) return falta.motivo;
-    if (this.emailError()) return this.emailError();
-    if (this.phoneError()) return this.phoneError();
-    if (this.mode() === 'edit' && !this.dirtyState.dirty()) return 'common.no_changes';
-    return null;
-  });
-  /** Lo que falta para poder crear, en el orden de la ficha, para el resumen (DD-136). Los errores de formato (email,
-   *  teléfono) no faltan: se dicen en su campo. */
-  protected readonly summaryMissing = computed<readonly string[]>(() => this.faltas().map((f) => f.resumen));
-  /** El motivo que se ENSEÑA junto al botón: solo lo que falta rellenar. «No hay
-   *  cambios» se queda en el `title` del botón apagado, que ya lo dice. */
-  protected readonly saveBlockedReason = computed(() => {
-    const reason = this.saveDisabledReason();
-    return reason === 'common.no_changes' ? null : reason;
-  });
   protected readonly saving = signal(false);
   protected readonly deleteVisible = signal(false);
 
@@ -938,12 +925,11 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
   );
 
 
-  protected readonly canSave = computed(() => {
-    if (this.faltas().length > 0 || this.formatoMal()) return false;
-    // En EDITAR exige cambio neto; en crear/duplicar basta con que sea válido.
-    if (this.mode() === 'edit' && !this.dirtyState.dirty()) return false;
-    return true;
-  });
+  /**
+   * El botón se puede pulsar: al crear y al duplicar, siempre; al editar, con cambios (se apaga otra vez si deshaces).
+   * Lo que falte lo dice al pulsarlo (`save`, DD-216).
+   */
+  protected readonly canSave = computed(() => this.mode() !== 'edit' || this.dirtyState.dirty());
 
   protected readonly deleteItems = computed(() => {
     const a = this.initial();
@@ -1059,7 +1045,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
   protected onKeydown(event: KeyboardEvent): void {
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's') {
       event.preventDefault();
-      if (this.canSave() && !this.saving()) this.save();
+      void this.save();
     }
   }
 
@@ -1214,12 +1200,20 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
    */
   protected async save(): Promise<void> {
     if (!this.canSave() || this.saving()) return;
+    // Con algo pendiente no crea ni guarda: desde ahora se dice lo que falta, y se llega al primer campo (DD-216).
+    if (this.faltas().length > 0 || this.formatoMal()) {
+      this.ocasion.intentar();
+      const primero = this.avisos()[0];
+      if (primero) this.irACampo(primero.seccion, primero.ancla);
+      return;
+    }
     const allowed = new Set(this.form().allowedChannels);
     const affected = this.form().links.filter(link => link.channels.some(channel => !allowed.has(channel)));
     if (affected.length) {
       const nombres = new Map(this.availableGroups().map(group => [group.id, group.name]));
       const quitados = canonicalizeChannels(affected.flatMap(link => link.channels.filter(channel => !allowed.has(channel))));
-      const salen = this.linksVistos().filter(link => link.channels.length === 0);
+      const sinCanales = new Set(this.availableGroups().filter(group => group.channels.length === 0).map(group => group.id));
+      const salen = this.linksVistos().filter(link => link.channels.length === 0 && !sinCanales.has(link.groupId));
       const etiquetas: Readonly<Record<string, string>> = FAMILY_LABEL_KEYS;
       const accepted = await this.confirmHost.request({
         title: this.translate.instant('groups.form.cascade.title'),
@@ -1285,6 +1279,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
         return;
       }
       this.saving.set(false);
+      this.ocasion.olvidar();
       this.dirtyState.markPristine();
     }, 400);
   }
@@ -1313,7 +1308,10 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
       .finally(() => this.saving.set(false));
   }
 
-  /** Cada enlace con su agente y sus canales recortados; el que se queda sin ninguno, fuera (ver `save`). */
+  /**
+   * Cada enlace con su agente y sus canales recortados; el que se queda sin ninguno, fuera (ver `save`), salvo en un
+   * grupo sin canales, donde se pertenece sin canal (DD-216).
+   */
   private normalizeLinks(
     links: readonly GroupAgentLink[],
     agentId: number
@@ -1324,13 +1322,14 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
         const clamped = clampLinksToChannels([link], groups.get(link.groupId) ?? [], () => this.form().allowedChannels)[0];
         return clamped.agentId === agentId ? clamped : { ...clamped, agentId };
       })
-      .filter(link => link.channels.length > 0);
+      .filter(link => link.channels.length > 0 || (groups.get(link.groupId) ?? []).length === 0);
   }
 
   /** Vuelve al último estado guardado (o al formulario vacío, en un alta). Es el
    *  «Deshacer» de Contact Center: vuelve atrás, no navega. */
   protected discard(): void {
     this.form.set(this.dirtyState.pristineValue());
+    this.ocasion.olvidar();
   }
 
   protected requestDelete(): void {

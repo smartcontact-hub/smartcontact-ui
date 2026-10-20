@@ -41,14 +41,12 @@ import {
   chatStrategyOf,
   compareChannels,
   duplicateGroupDraft,
-  type GroupIdentityDraft,
+  nombreDeCopia,
   phoneStrategyOf,
   priorityRank,
-  OUTBOUND_NUMBERS,
 } from '../data/groups-data';
 import { GroupBulkField, GroupsStore } from '../state/groups.store';
 import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links.store';
-import { GroupDuplicateDialogComponent } from '../components/group-duplicate-dialog/group-duplicate-dialog.component';
 import { GroupAgentsPanelComponent } from '../components/group-agents-panel/group-agents-panel.component';
 import { TooltipModule } from 'primeng/tooltip';
 
@@ -79,7 +77,6 @@ const COLUMN_PREF_KEY = 'sc-groups-columns-v4';
     DeleteEntityDialogComponent,
     EmptyStateComponent,
     GroupPopoverComponent,
-    GroupDuplicateDialogComponent,
     GroupAgentsPanelComponent,
     IconComponent,
     ImpactPreviewDialogComponent,
@@ -455,41 +452,24 @@ export class GroupsListPageComponent {
     this.agentsPanelGroup.set(null);
   }
 
-  /** El diálogo de duplicar: `duplicateSource` es el original (el alta es la ficha, DD-121 §11). */
-  protected readonly duplicateOpen = signal(false);
-  protected readonly duplicateSource = signal<Group | null>(null);
-  protected readonly groupNames = computed(() => this.groups().map((g) => g.name));
-  /** Los números que ya usan los grupos: el desplegable del teléfono asociado, igual que en la ficha. */
-  /** Los números asignados a la cuenta: el duplicado elige uno de ellos (DD-142). */
-  protected readonly outboundNumbers = OUTBOUND_NUMBERS;
-  protected readonly suggestedCopyName = computed(() => {
-    this.lang();
-    const source = this.duplicateSource();
-    return source ? this.translate.instant('groups.create_dialog.copy_name', { name: source.name }) : '';
-  });
-
   /** El alta es la propia ficha en modo alta (DD-121 §11). */
   protected onCreateClick(): void {
     void this.router.navigateByUrl('/admin/grupos/crear');
   }
 
-  protected onDuplicateCancel(): void {
-    this.duplicateOpen.set(false);
-  }
-
   /**
-   * Crea el duplicado y abre su ficha: se lleva todo lo del original, agentes incluidos, con el nombre y
-   * el teléfono que se hayan puesto en el diálogo.
+   * Duplicar, sin diálogo (revisión de producto del 2026-10-20, DD-216): crea la copia en el acto, con «(1)» detrás del
+   * nombre (`nombreDeCopia`) y todo lo del original, agentes incluidos, salvo lo que el funcional no copia
+   * (`duplicateGroupDraft`), y abre su edición en General, con su toast. Hasta ese día un diálogo pedía nombre,
+   * teléfono saliente y prioridad, y proponía «… (copia)».
    */
-  protected onDuplicateConfirm(submission: GroupIdentityDraft): void {
-    const source = this.duplicateSource();
-    if (!source) return;
-    const created = this.groupsStore.addGroup(duplicateGroupDraft(source, submission));
+  protected onRowDuplicate(group: Group): void {
+    const nombre = nombreDeCopia(group.name, this.groups().map((g) => g.name));
+    const created = this.groupsStore.addGroup(duplicateGroupDraft(group, nombre));
     this.linksStore.replaceLinksForGroup(
       created.id,
-      this.linksStore.linksForGroup(source.id).map((l) => ({ ...l, groupId: created.id })),
+      this.linksStore.linksForGroup(group.id).map((l) => ({ ...l, groupId: created.id })),
     );
-    this.duplicateOpen.set(false);
     const creado = this.translate.instant('groups.toasts.created', { name: created.name });
     // El toast, ya en la ficha a la que se llega (DD-211 §5).
     void this.router.navigateByUrl(`/admin/grupos/editar/${created.id}`).then(() => this.resultado.contar(creado));
@@ -534,12 +514,6 @@ export class GroupsListPageComponent {
 
   protected onRowEdit(group: Group): void {
     void this.router.navigateByUrl(`/admin/grupos/editar/${group.id}`);
-  }
-
-  /** Duplicar: el diálogo corto con el nombre propuesto; el resto se copia del original. */
-  protected onRowDuplicate(group: Group): void {
-    this.duplicateSource.set(group);
-    this.duplicateOpen.set(true);
   }
 
   protected onRowDelete(group: Group): void {

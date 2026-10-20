@@ -1499,6 +1499,33 @@ el DS de los devs pinta 10,5 × 14, como el Kit (medido en ui.smart-contact.com 
 
 **Cómo sabes que está hecho:** la página «Fuera del DS» solo enseña lo que no existe en ningún sitio, o queda vacía.
 
+## 55 · Lo que falta se dice al pulsar Crear, grupos sin canales, duplicar sin diálogo y Recursos en chips (2026-10-20, DD-216)
+
+**Estado:** pendiente; el prototipo ya lo hace (DD-216) · **Dónde:** fichas de grupo y agente y listado de grupos del
+fichero del Supervisor (`Hjyy41SYKqcRuIzCGggfYH`, §53), y en el DS, `form-section-nav` y `multiselect` · **Mídelo
+antes:** qué variantes de `group-summary` y `agent-summary` llevan hoy «Mostrar estado» (§54, fila 8).
+
+- **El índice de las altas**: nada en rojo mientras se rellena. Un estado nuevo en la fila del índice: el punto rojo
+  con el texto de lo que falta debajo de la etiqueta, en `caption` y `text/danger` (como `sectionErrorHints` del DS),
+  para la maqueta de «al pulsar Crear con algo pendiente». El ✓, como hasta ahora. Anota: «Crear» siempre activo; al
+  pulsarlo con algo pendiente, cada campo lo dice y se llega al primero.
+- **Fuera «Falta: …» y «Listo para crear»** de los resúmenes: «Mostrar estado» de `group-summary` y `agent-summary` (§54,
+  fila 8) pasa a apagado o sale, y fuera el motivo junto al botón en la barra de las altas.
+- **Fuera los avisos amarillos** de las fichas: «Sin canales» y «N sin canal: salen al guardar» en las tablas de
+  agentes y de grupos; en el resumen del grupo, «Sin agentes» pasa a su cifra (0) y «Sin número», a texto sin icono.
+- **Grupo sin canales**: General sin «Al menos uno.»; Distribución y colas con una línea que lo dice; Agentes asignados
+  solo con Asignado y Habilitado.
+- **Duplicar grupo**: fuera el diálogo (y con él la anotación de Call Blending de §50). «Duplicar» abre la edición de
+  la copia, «Online Support (1)», en General, con su toast; sin servicios, dominios del script de chat ni número de
+  WhatsApp.
+- **Recursos del grupo**: Agendas y Plantillas en chips (`MultiSelect` en modo chip, «+N más» desde la cuarta), cada una
+  en su fila a todo el ancho, sin el «+» al lado ni el lápiz en las opciones. La «×» del chip, en `text/danger` al pasar. En el resumen, las filas de
+  Recursos sin desplegar: son enlaces a su campo.
+- **Tipificación del grupo**: sin la descripción bajo el desplegable; se queda «Ver detalle».
+
+**Cómo sabes que está hecho:** las maquetas de alta de grupo y agente no enseñan «Falta» ni amarillos, el diálogo
+«Duplicar grupo» no está, y Recursos del grupo enseña chips.
+
 ---
 
 ## Lo de estas semanas que NO va a Figma, y por qué

@@ -36,8 +36,9 @@
   </div>
 </ng-template>
 
-<!-- En un alta (DD-143): la sección que se deja completa lleva ✓ («General», «Voz y saludo»); la que se
-     deja sin lo obligatorio, el punto rojo («Horario»); la abierta («Avanzado»), ninguna marca. -->
+<!-- En un alta, tras pulsar «Crear» con algo pendiente (DD-143, DD-216): las secciones que se dejaron completas llevan
+     ✓ («General», «Voz y saludo»); la que no, el punto rojo con el texto de lo que falta debajo («Horario»,
+     `sectionErrorHints`); la abierta («Avanzado»), ninguna marca. Mientras se rellena, el punto no sale. -->
 <ng-template #alta>
   <div class="col" style="max-width: 260px">
     <sc-form-section-nav
@@ -45,6 +46,7 @@
       [activeId]="altaActive()"
       [flush]="true"
       [sectionsWithErrors]="altaErrors"
+      [sectionErrorHints]="altaHints"
       [sectionsDone]="done"
       (activeChange)="onAltaActive($event)"
       data-testid="sc-formnav-alta"

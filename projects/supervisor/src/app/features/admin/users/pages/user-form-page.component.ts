@@ -28,8 +28,15 @@ import {
   ScToggleSwitchComponent as ToggleSwitchComponent,
 } from '@smartcontact-hub/components';
 import { AVAILABLE_GROUPS_REF } from '@shared/data/groups-ref';
-import { AltaPieComponent, SummaryKpiComponent, SummaryStatusComponent } from '@shared/components';
-import { llegarASeccion, ocasionDeAvisar, seccionesDeAlta } from '@shared/utils/alta-secciones';
+import { AltaPieComponent, SummaryKpiComponent } from '@shared/components';
+import {
+  avisosDelIndice,
+  llegarAAncla,
+  llegarASeccion,
+  ocasionDeAvisar,
+  seccionesDeAlta,
+  type AvisoDeFicha,
+} from '@shared/utils/alta-secciones';
 import {
   accessFor,
   AVAILABLE_SERVICES,
@@ -94,7 +101,6 @@ const USER_SECTION_OF_FIELD: Readonly<Record<keyof FormState, string>> = {
     SectionCardComponent,
     SelectComponent,
     SummaryKpiComponent,
-    SummaryStatusComponent,
     AltaPieComponent,
     ToggleSwitchComponent,
     TranslateModule,
@@ -149,19 +155,8 @@ export class UserFormPageComponent implements DirtyAware, OnInit {
   protected readonly initial = signal<User | null>(null);
   protected readonly form = signal<FormState>(this.emptyForm());
   /*
-   * R6 · una sola política de error.
-   *
-   * Antes había un `validate()` que rellenaba un mapa `errors` — y era código
-   * MUERTO: `save()` ya salía antes si `!canSave()`, y `canSave()` comprobaba
-   * el mismo predicado, así que el mapa nunca llegaba a tener nada. Resultado:
-   * estas pantallas no enseñaban ni un mensaje de campo, nunca. Solo un botón
-   * gris sin explicar por qué (el antipatrón nº1 de Nielsen).
-   *
-   * Regla: el error se revela por CONTENIDO equivocado, en vivo. Un campo
-   * vacío calla — todavía no es un error, es un campo sin rellenar, y acusar a
-   * un formulario recién abierto es ruido. Lo que falta por rellenar se
-   * comunica por la otra vía: el motivo del botón deshabilitado.
-   * Mismo modelo que `category-form-modal`.
+   * R6 · una sola política de error (DD-216). Un email mal escrito se dice en vivo, en su campo. Lo que FALTA (el
+   * nombre, el email) se dice al pulsar «Crear usuario» o «Guardar», en su campo y en el índice, con su texto.
    */
   protected readonly emailError = computed<string | null>(() => {
     const email = this.form().email.trim();
@@ -169,32 +164,6 @@ export class UserFormPageComponent implements DirtyAware, OnInit {
     return EMAIL_RE.test(email) ? null : 'users.errors.email_invalid';
   });
 
-  /** Por qué NO se puede guardar, en palabras. Alimenta el `title` y el
-   *  `aria-describedby` del botón: un control deshabilitado sin motivo obliga
-   *  al usuario a adivinar cuál de los campos le falta. */
-  protected readonly saveDisabledReason = computed<string | null>(() => {
-    if (this.canSave()) return null;
-    const f = this.form();
-    if (f.name.trim().length === 0) return 'users.errors.name_required';
-    if (!EMAIL_RE.test(f.email.trim())) return 'users.errors.email_invalid';
-    if (this.mode() === 'edit' && !this.dirtyState.dirty()) return 'common.no_changes';
-    return null;
-  });
-  /** Lo que falta para poder crear, en el orden de Identidad, para el resumen (DD-136). Un email mal escrito no
-   *  falta: se dice en su campo. */
-  protected readonly summaryMissing = computed<readonly string[]>(() => {
-    const f = this.form();
-    const missing: string[] = [];
-    if (f.name.trim().length === 0) missing.push('common.summary_missing_name');
-    if (f.email.trim().length === 0) missing.push('users.form.summary.missing_email');
-    return missing;
-  });
-  /** El motivo que se ENSEÑA junto al botón: solo lo que falta rellenar. «No hay
-   *  cambios» se queda en el `title` del botón apagado, que ya lo dice. */
-  protected readonly saveBlockedReason = computed(() => {
-    const reason = this.saveDisabledReason();
-    return reason === 'common.no_changes' ? null : reason;
-  });
   protected readonly saving = signal(false);
   protected readonly deleteVisible = signal(false);
 
@@ -292,35 +261,48 @@ export class UserFormPageComponent implements DirtyAware, OnInit {
     llegarASeccion(id, this.injector);
   }
 
-  /** Identidad, sin el nombre o sin un email válido: lo que hace falta para poder guardar. */
-  private readonly faltaIdentidad = computed(() => {
+  /** Lo que falta en Identidad, por su aviso: el nombre y el email. */
+  private readonly faltas = computed<readonly string[]>(() => {
     const f = this.form();
-    return !f.name.trim() || !EMAIL_RE.test(f.email.trim());
+    return [
+      ...(f.name.trim() ? [] : ['users.errors.name_required']),
+      ...(f.email.trim() ? [] : ['users.errors.email_required']),
+    ];
   });
 
   /**
-   * Cuándo se dice lo que falta (DD-199): desde que se deja Identidad sin ello, en el alta y al editar, o desde que se
-   * abre si lo guardado ya venía sin ello. Duplicar es un alta: llega sin nombre ni email a propósito y no acusa.
+   * Cuándo se dice lo que falta (DD-216): al pulsar «Crear usuario» o «Guardar», lo que faltaba entonces, hasta que se
+   * arregla; o desde que se abre, si lo guardado ya venía sin ello. Duplicar es un alta: llega sin nombre ni email a
+   * propósito y no acusa.
    */
   private readonly ocasion = ocasionDeAvisar({
-    alta: this.alta,
     editando: () => this.mode() === 'edit',
-    abierta: () => this.activeSection(),
     cambios: () => this.dirtyState.dirty(),
-    faltas: () => (this.faltaIdentidad() ? ['user-section-identity'] : []),
+    faltas: () => this.faltas(),
   });
 
-  /**
-   * Lo que falta para poder guardar, en el índice, cuando ya hubo ocasión (DD-199). Antes lo dice el resumen (DD-136);
-   * desde que se deja Identidad sin ello, el punto, como la ✓ de la que se deja completa (DD-143).
-   */
-  protected readonly sectionsWithErrors = computed<ReadonlySet<string>>(() =>
-    new Set(
-      this.faltaIdentidad() && this.ocasion.acusa('user-section-identity', 'user-section-identity')
-        ? ['user-section-identity']
-        : [],
-    ),
-  );
+  /** El aviso bajo un campo obligatorio vacío, al pulsar sin él (DD-216); `undefined` si no hay nada que decir. */
+  protected falta(motivo: string): string | undefined {
+    return this.faltas().includes(motivo) && this.ocasion.acusa(motivo) ? this.translate.instant(motivo) : undefined;
+  }
+
+  /** Los avisos a la vista, en el orden de la ficha: lo que falta, al pulsar, y el email mal escrito, en vivo. */
+  private readonly avisos = computed<readonly AvisoDeFicha[]>(() => {
+    this.lang();
+    const i = 'user-section-identity';
+    const out: AvisoDeFicha[] = [];
+    const nombre = this.falta('users.errors.name_required');
+    if (nombre) out.push({ seccion: i, texto: nombre, ancla: 'user-name' });
+    const email = this.emailError() ? this.translate.instant(this.emailError()!) : this.falta('users.errors.email_required');
+    if (email) out.push({ seccion: i, texto: email, ancla: 'user-email' });
+    return out;
+  });
+
+  /** El punto rojo del índice: la sección tiene un aviso a la vista. */
+  protected readonly sectionsWithErrors = computed<ReadonlySet<string>>(() => new Set(this.avisos().map((a) => a.seccion)));
+
+  /** Lo que dice cada sección con aviso en el índice, en texto (DD-216). */
+  protected readonly sectionErrorHints = computed(() => avisosDelIndice(this.avisos()));
 
   /** Las secciones con cambios sin guardar (DD-122), al editar. */
   protected readonly sectionsWithChanges = computed<ReadonlySet<string>>(() => {
@@ -376,13 +358,11 @@ export class UserFormPageComponent implements DirtyAware, OnInit {
     this.mode() === 'edit' ? 'edit' : 'create',
   );
 
-  protected readonly canSave = computed(() => {
-    const f = this.form();
-    if (f.name.trim().length === 0 || !EMAIL_RE.test(f.email.trim())) return false;
-    // En EDITAR exige cambio neto; en crear/duplicar basta con que sea válido.
-    if (this.mode() === 'edit' && !this.dirtyState.dirty()) return false;
-    return true;
-  });
+  /**
+   * El botón se puede pulsar: al crear y al duplicar, siempre; al editar, con cambios. Lo que falte lo dice al pulsarlo
+   * (`save`, DD-216).
+   */
+  protected readonly canSave = computed(() => this.mode() !== 'edit' || this.dirtyState.dirty());
 
   protected readonly deleteItems = computed(() => {
     const u = this.initial();
@@ -469,7 +449,7 @@ export class UserFormPageComponent implements DirtyAware, OnInit {
   protected onKeydown(event: KeyboardEvent): void {
     if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's') {
       event.preventDefault();
-      if (this.canSave() && !this.saving()) this.save();
+      this.save();
     }
   }
 
@@ -578,6 +558,13 @@ export class UserFormPageComponent implements DirtyAware, OnInit {
 
   protected save(): void {
     if (!this.canSave() || this.saving()) return;
+    // Con algo pendiente no crea ni guarda: desde ahora se dice lo que falta, y se llega al primer campo (DD-216).
+    if (this.faltas().length > 0 || this.emailError()) {
+      this.ocasion.intentar();
+      const primero = this.avisos()[0];
+      if (primero) this.irACampo(primero.seccion, primero.ancla);
+      return;
+    }
 
     this.saving.set(true);
     setTimeout(() => {
@@ -604,6 +591,7 @@ export class UserFormPageComponent implements DirtyAware, OnInit {
         if (refreshed) this.initial.set(refreshed);
         this.resultado.contar(this.translate.instant('users.toasts.updated', { name: payload.name }));
         this.saving.set(false);
+        this.ocasion.olvidar();
         this.dirtyState.markPristine();
         return;
       }
@@ -627,6 +615,14 @@ export class UserFormPageComponent implements DirtyAware, OnInit {
    *  «Deshacer» de Contact Center: vuelve atrás, no navega. */
   protected discard(): void {
     this.form.set(this.dirtyState.pristineValue());
+    this.ocasion.olvidar();
+  }
+
+  /** Lleva a un campo de la ficha: a su sección, y en ella al campo, arriba y con el foco. */
+  private irACampo(seccion: string, ancla: string | null): void {
+    const llegar = () => (ancla ? llegarAAncla(ancla, this.injector) : llegarASeccion(seccion, this.injector));
+    if (this.activeSection() !== seccion) this.goTo(seccion);
+    llegar();
   }
 
   protected requestDelete(): void {

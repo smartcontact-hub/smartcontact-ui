@@ -53,7 +53,7 @@
       "attended": "Atendidas",
       "rejected": "Rejeitadas",
       "transferred": "Transferidas",
-      "avg_time": "T. médio",
+      "avg_time": "T.\u00a0médio",
       "totals": "Totais"
     },
     "group_panel": {
@@ -225,7 +225,7 @@
       "col_conversation": "Conversa",
       "col_time": "Tempo",
       "col_agent": "Agente",
-      "col_in_state": "Neste estado"
+      "col_in_state": "Neste\u00a0estado"
     },
     "assistant": {
       "title_new": "Criar widget",
@@ -1014,7 +1014,6 @@
     "summary": "Resumo",
     "summary_missing": "Em falta: {{items}}",
     "summary_missing_name": "nome",
-    "summary_ready": "Pronto para criar",
     "summary_of": "{{value}} de {{total}}",
     "actions": "Ações",
     "select_row": "Selecionar {{name}}",
@@ -1567,15 +1566,14 @@
       "delete_option_body_one": "A opção abaixo também é eliminada.",
       "errors": {
         "option_taken": "Já existe «{{name}}» neste nível",
-        "name_taken": "Já existe uma tipificação com este nome"
+        "name_taken": "Já existe uma tipificação com este nome",
+        "name_required": "O nome é obrigatório",
+        "options_required": "Adicione pelo menos uma opção",
+        "names_required": "Dê a cada opção um nome diferente"
       },
       "section": {
         "general": "Geral",
         "categorization": "Categorias"
-      },
-      "missing": {
-        "options": "pelo menos uma opção",
-        "names": "um nome diferente em cada opção"
       },
       "categorization_hint": "O que o agente escolhe, em até três níveis. Cada ramo vai até onde for preciso",
       "rename_field": "Novo nome da opção",
@@ -1822,14 +1820,12 @@
         "apply_body_other": "Altera {{count}} caixas em Acesso. Se as mantiver, o tipo muda na mesma e Acesso fica como está.",
         "apply": "Aplicar o modelo",
         "keep": "Manter as caixas"
-      },
-      "summary": {
-        "missing_email": "email"
       }
     },
     "errors": {
       "name_required": "O nome é obrigatório",
-      "email_invalid": "Insira um email válido"
+      "email_invalid": "Insira um email válido",
+      "email_required": "Escreva o email"
     },
     "toasts": {
       "created": "Usuário \"{{name}}\" criado",
@@ -1875,10 +1871,6 @@
   "groups": {
     "page_title": "Grupos",
     "create_button": "Novo grupo",
-    "create_dialog": {
-      "duplicate_subtitle": "Copia os agentes, os canais e as definições de «{{source}}». O telefone de saída, não.",
-      "copy_name": "{{name}} (cópia)"
-    },
     "search_placeholder": "Buscar grupos…",
     "no_results_query": "Nenhum grupo corresponde a “{{query}}”.",
     "entity_singular": "grupo",
@@ -1953,7 +1945,6 @@
         "warn_no_channels": "Habilitado, mas sem canais atribuídos",
         "add_placeholder": "Adicionar agentes…",
         "add_aria": "Adicionar agente ao grupo",
-        "no_channels_warn": "{{count}} sem canal: saem ao guardar",
         "bulk_unassign": "Remover do grupo",
         "col_level": "Nível {{channel}}",
         "level_aria": "Nível de {{name}} — {{channel}}",
@@ -2113,25 +2104,17 @@
       "summary": {
         "none": "Nenhum",
         "paused": "Desabilitado",
-        "no_channels": "Sem canais",
         "priority": "Prioridade: {{value}}",
         "title": "Resumo",
         "agents_active": "Agentes habilitados",
         "paused_count": "{{count}} desabilitados",
-        "no_agents": "Sem agentes",
         "routing": "Distribuição",
         "no_number": "Sem número",
-        "resources": "Recursos",
-        "resources_quick": "Ver os recursos do grupo",
-        "resources_empty": "Sem recursos atribuídos",
-        "resources_see": "Ver recursos",
-        "missing_channels": "canais",
-        "missing_phone": "telefone de saída",
-        "missing_typification": "tipificação"
+        "resources": "Recursos"
       },
       "channels": {
         "title": "Canais",
-        "hint": "Pelo menos um. O que marcar aqui decide o que configura em Distribuição e filas."
+        "hint": "O que marcar aqui decide o que configura em Distribuição e filas."
       },
       "distribution": {
         "common_title": "Regras comuns",
@@ -2144,7 +2127,8 @@
         "jump_aria": "Canais desta seção",
         "outbound": "Chamadas de saída",
         "webchat_hint": "As suas mensagens, o seu horário e os sites onde é inserido. Uma mensagem vazia não é enviada.",
-        "whatsapp_hint": "O seu número e, com ele, as suas mensagens e o seu horário. Uma mensagem vazia não é enviada."
+        "whatsapp_hint": "O seu número e, com ele, as suas mensagens e o seu horário. Uma mensagem vazia não é enviada.",
+        "no_channels": "Este grupo não tem canais: não distribui conversas. Os canais marcam-se em Geral."
       },
       "chat": {
         "close_on_inactivity": "Expirar a sessão",
@@ -2186,7 +2170,6 @@
     },
     "errors": {
       "name_required": "O nome é obrigatório",
-      "channels_required": "Selecione pelo menos um canal",
       "name_taken": "Já existe um grupo com este nome",
       "phone_required": "O telefone de saída é obrigatório",
       "typification_required": "Escolha uma tipificação"
@@ -2399,8 +2382,7 @@
         "not_allowed_hint": "{{channel}} não está entre os seus canais (Geral)",
         "bulk_add": "Atribuir ao agente",
         "bulk_remove": "Retirar ao agente",
-        "bulk_body": "{{action}}: {{count}} grupos.",
-        "no_channels_warn": "{{count}} sem canal: saem ao guardar"
+        "bulk_body": "{{action}}: {{count}} grupos."
       },
       "allowed": {
         "title": "Canais permitidos",
@@ -2437,13 +2419,7 @@
       "summary": {
         "no_groups": "Sem grupos",
         "groups_active": "Habilitado em grupos",
-        "missing_extension": "ramal",
-        "missing_phone": "telemóvel",
         "outbound": "Saídas",
-        "missing_email": "email",
-        "missing_channel": "um canal",
-        "missing_group": "um grupo",
-        "missing_outbound": "um grupo para as saídas",
         "channels": "Canais",
         "no_channels": "Sem canais",
         "none": "Nenhum"

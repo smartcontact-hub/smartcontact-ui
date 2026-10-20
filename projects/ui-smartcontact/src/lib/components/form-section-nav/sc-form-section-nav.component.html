@@ -17,6 +17,7 @@
           class="form-nav__item"
           [class.form-nav__item--active]="activeId() === section.id"
           [class.form-nav__item--has-error]="hasError(section.id)"
+          [class.form-nav__item--has-hint]="errorHint(section.id) !== null"
           [class.form-nav__item--has-changes]="hasChanges(section.id)"
           [attr.aria-current]="activeId() === section.id ? 'page' : null"
           [attr.href]="section.href ?? '#'"
@@ -49,10 +50,15 @@
               />
             }
           </span>
+          <!-- Lo que falta, en texto bajo la etiqueta (DD-216): se ve y se oye, y entonces dice más que el texto
+               genérico del punto, que sobra. -->
+          @if (errorHint(section.id); as hint) {
+            <span class="form-nav__hint">{{ hint }}</span>
+          }
           <!-- Lo que el punto dice, como texto del enlace, que es de lo que sale su nombre. Hasta el
                2026-09-27 era un `aria-label` en el `span` del punto: Chrome lo leía (medido), pero
                ARIA 1.2 lo prohíbe en un elemento sin rol. Se oyen las dos marcas. -->
-          @if (hasError(section.id)) {
+          @if (hasError(section.id) && errorHint(section.id) === null) {
             <span class="form-nav__sr">{{ 'sc.formSectionNav.sectionHasErrors' | translate }}</span>
           }
           @if (hasChanges(section.id)) {

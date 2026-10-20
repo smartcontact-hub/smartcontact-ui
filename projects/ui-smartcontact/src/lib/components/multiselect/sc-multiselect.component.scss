@@ -176,3 +176,16 @@
 .sc-multiselect__dropdown-icon {
   display: block;
 }
+
+/* Con `display="chip"`, la «×» de cada chip pasa al rojo de lo destructivo al ponerle el ratón encima o llegar con el
+ * teclado (revisión de producto del 2026-10-20, DD-216): quitar lo elegido es un borrado, y se ve antes de pulsar. En
+ * reposo, el gris de su token (`--sc-cmp-chip-remove-icon-color`). Las dos «×» que pinta PrimeNG: la suya
+ * (`p-multiselect-chip-icon`) y la de `p-chip` (`p-chip-remove-icon`), que es la que pinta «+N más». El tema de Chip no
+ * trae color al pasar para su «×» (solo `removeIcon.color`), así que va por clase; sin transición, como el nativo. */
+.sc-multiselect__control {
+  .p-chip-remove-icon:hover,
+  .p-chip-remove-icon:focus-visible,
+  .p-multiselect-chip-icon:hover {
+    color: var(--sc-text-danger);
+  }
+}

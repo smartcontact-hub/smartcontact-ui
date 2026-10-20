@@ -88,6 +88,14 @@ export class ScFormSectionNavComponent implements OnInit {
   readonly sectionsWithErrors = input<ReadonlySet<string>>(new Set());
 
   /**
+   * Lo que falta en cada sección con aviso, en texto y ya traducido, por id: va bajo la etiqueta, en rojo, y entra en
+   * el nombre del enlace (DD-216). Sin él, solo el punto. Medido el 2026-10-20: dos puntos sin texto (General y
+   * Distribución y colas) hacían creer que el segundo lo había causado lo que se tocó en el primero. Solo cuenta para
+   * una sección que también está en `sectionsWithErrors`.
+   */
+  readonly sectionErrorHints = input<Readonly<Record<string, string>>>({});
+
+  /**
    * Las secciones con cambios sin guardar: un punto en el color de marca, distinto del rojo de lo
    * que falta, como el «modificado» de un editor. En la ficha hay un solo «Guardar» para todas las
    * secciones (DD-122): el índice dice dónde está lo que se va a guardar. Si una sección tiene las
@@ -127,6 +135,11 @@ export class ScFormSectionNavComponent implements OnInit {
 
   protected hasError(id: string): boolean {
     return this.sectionsWithErrors().has(id);
+  }
+
+  /** El texto de lo que falta en la sección, si tiene aviso y la página lo da. */
+  protected errorHint(id: string): string | null {
+    return this.hasError(id) ? (this.sectionErrorHints()[id] ?? null) : null;
   }
 
   ngOnInit(): void {

@@ -4,12 +4,10 @@
      lista; para salir ya están la miga y el menú, y el guardián de cambios avisa si dejas
      algo sin guardar. -->
 <ng-template #topbarActions>
-  <!-- El motivo va VISIBLE, y solo cuando FALTA algo (ver `saveBlockedReason`). Si no falta nada y hay
-       cambios, lo dice en palabras: un solo «Guardar» para toda la ficha, y el índice marca dónde están
-       (DD-122). `role="status"`: se anuncia una vez, al aparecer. -->
-  @if (saveBlockedReason(); as reason) {
-    <span class="form-save-reason sc-text-caption-regular">{{ reason | translate }}</span>
-  } @else if (mode() === 'edit' && formDirty()) {
+  <!-- Con cambios, lo dice en palabras: un solo «Guardar» para toda la ficha, y el índice marca dónde están (DD-122).
+       `role="status"`: se anuncia una vez, al aparecer. Sin motivo de por qué no se puede guardar (DD-216): lo que falta
+       lo dice cada campo al pulsar. -->
+  @if (mode() === 'edit' && formDirty()) {
     <span class="form-save-reason sc-text-caption-regular" role="status">{{ 'common.unsaved_changes' | translate }}</span>
   }
   @if (formDirty()) {
@@ -24,8 +22,8 @@
     variant="primary"
     [disabled]="!canSave()"
     [loading]="saving()"
+    [pTooltip]="canSave() ? '' : ('common.no_changes' | translate)" tooltipPosition="top"
     [label]="(mode() === 'edit' ? 'common.save' : 'agents.form.create_submit') | translate"
-    [pTooltip]="saveDisabledReason() ? (saveDisabledReason()! | translate) : ''" tooltipPosition="top"
     (clicked)="save()"
   />
 </ng-template>
@@ -80,6 +78,7 @@
         [activeId]="activeSection()"
         [labelKey]="'common.form_index_aria'"
         [sectionsWithErrors]="sectionsWithErrors()"
+        [sectionErrorHints]="sectionErrorHints()"
         [sectionsWithChanges]="sectionsWithChanges()"
         [sectionsDone]="alta.hechas()"
         [flush]="true"
@@ -128,11 +127,7 @@
       <section class="resumen" aria-labelledby="agent-summary-title">
         <!-- El nombre de la región, sin rótulo a la vista (DD-144): el resumen arranca a la altura del índice. -->
         <h2 id="agent-summary-title" class="resumen__title visually-hidden">{{ 'common.summary' | translate }}</h2>
-        <!-- Lo que le falta al alta, hasta «Listo para crear» (DD-136). En el alta y al duplicar está siempre, y
-             cambia en su sitio; al editar, solo si falta algo. -->
-        @if (mode() !== 'edit' || summaryMissing().length > 0) {
-          <sc-summary-status [missing]="summaryMissing()" [ready]="mode() !== 'edit' && canSave()" />
-        }
+        <!-- Sin «Falta: …» ni «Listo para crear» (DD-216): lo que falta lo dice cada campo al pulsar «Crear agente». -->
         <!-- Las tarjetas son hermanas: 14 entre ellas (AGENTS «UX de pantalla» 9). -->
         <div class="resumen__cards">
           <!-- Cada dato lleva a su sitio, como el resumen del grupo (DD-146): la cifra, a Grupos; cada fila, a su campo. -->
@@ -237,13 +232,13 @@
           [ariaLabel]="'common.photo.change' | translate"
           (photoChange)="onPhotoChange($event)"
         />
-        <!-- El nombre no tiene regla de contenido: o está o no está, y que falte lo dice el motivo del botón. -->
+        <!-- El nombre no tiene regla de contenido: o está o no está, y que falte lo dice al pulsar «Crear agente» (DD-216). -->
         <div class="field form-identity__name">
           <label class="field__label sc-text-caption-semibold" for="agent-name">
             {{ 'agents.form.fields.name' | translate }}
             <span class="field__required" aria-hidden="true">*</span>
           </label>
-          <sc-inputtext inputId="agent-name" [required]="true" [value]="form().name" (valueChange)="onNameRename($event)" />
+          <sc-inputtext inputId="agent-name" [required]="true" [value]="form().name" [error]="falta('agents.errors.name_required')" (valueChange)="onNameRename($event)" />
         </div>
       </div>
 
@@ -260,7 +255,7 @@
             autocomplete="email"
             [required]="true"
             [value]="form().email"
-            [error]="emailError() ? (emailError()! | translate) : undefined"
+            [error]="emailError() ? (emailError()! | translate) : falta('agents.errors.email_required')"
             (valueChange)="updateField('email', $event)"
           />
         </div>
@@ -281,7 +276,7 @@
             autocomplete="tel"
             [required]="phoneRequired()"
             [helperText]="phoneRequired() ? ('agents.form.fields.phone_required_hint' | translate) : undefined"
-            [error]="phoneError() ? (phoneError()! | translate) : undefined"
+            [error]="phoneError() ? (phoneError()! | translate) : falta('agents.errors.phone_required')"
             [value]="form().phone"
             (valueChange)="updateField('phone', $event)"
           />
@@ -309,6 +304,7 @@
             [required]="true"
             [options]="availableExtensions"
             [placeholder]="'agents.form.fields.extension_placeholder' | translate"
+            [error]="falta('agents.errors.extension_required')"
             [value]="form().extension"
             (valueChange)="onExtensionValueChange($event)"
           />

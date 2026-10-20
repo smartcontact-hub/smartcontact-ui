@@ -98,7 +98,7 @@ test.describe('con los datos de siempre', () => {
     await expect(agentes).not.toContainText('Sin agentes');
   });
 
-  test('una familia sin agentes conserva el aviso con su icono', async ({ page }) => {
+  test('una familia sin agentes dice 0, sin aviso amarillo (DD-216)', async ({ page }) => {
     await page.addInitScript(() => {
       localStorage.setItem('sc-group-agent-links-v', '1');
       localStorage.setItem('sc-group-agent-links', JSON.stringify([
@@ -107,26 +107,15 @@ test.describe('con los datos de siempre', () => {
     });
     await goto(page, 'admin/grupos/editar/11');
     const agentes = widgets(page).first();
-    await expect(agentes).toContainText('Sin agentes');
-    // La tarjeta de agentes es la cifra destacada (DD-161): sobre su degradado el ámbar no llega a 3:1, así que el
-    // aviso, icono y palabra, va en el color de la tarjeta. Sigue siendo un aviso por su icono y su texto.
-    const aviso = agentes.locator('.resumen__warn').first();
-    await expect(aviso.locator('sc-icon'), 'el aviso conserva su icono').toHaveCount(1);
-    const [icono, texto] = await aviso.evaluate((e) => [
-      getComputedStyle(e.querySelector('sc-icon')!).color,
-      getComputedStyle(e).color,
-    ]);
-    expect(icono, 'sobre el degradado, el icono va en el color de la tarjeta').toBe(texto);
+    await expect(agentes.locator('.resumen__channel', { hasText: 'Chat' }).locator('.resumen__digits')).toHaveText('0');
+    await expect(agentes).not.toContainText('Sin agentes');
+    await expect(resumen(page).locator('sc-icon[name="warning"]')).toHaveCount(0);
   });
 
-  test('sobre el tinte, el ámbar del aviso lo lleva el icono', async ({ page }) => {
-    // En el alta, Distribución dice que al teléfono le falta su número, en una tarjeta que no es la destacada. Ahí el ámbar
-    // como texto no llega a AA (DD-126): lo lleva el icono, y el aviso no pierde su color.
+  test('en el alta, el teléfono saliente sin elegir dice «Sin número», sin aviso amarillo (DD-216)', async ({ page }) => {
     await goto(page, 'admin/grupos/crear');
-    const aviso = resumen(page).locator('.resumen__warn', { hasText: 'Sin número' }).first();
-    await expect(aviso).toBeVisible();
-    const icono = await aviso.locator('sc-icon').evaluate((e) => getComputedStyle(e).color);
-    expect(icono, 'el ámbar del aviso lo lleva el icono').toBe(await colorDeToken(page, '--sc-icon-warning'));
+    await expect(resumen(page)).toContainText('Sin número');
+    await expect(resumen(page).locator('sc-icon[name="warning"]')).toHaveCount(0);
   });
 
   test('alta de agente · sin grupos no hay anillo, y lo dice', async ({ page }) => {

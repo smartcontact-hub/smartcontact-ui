@@ -241,13 +241,16 @@ no a la librería. Dos de estas reglas ya son infraestructura del sistema (aquí
    **En estrecho, el nombre se queda** (DD-193): la columna que nombra la fila va fija a la izquierda y la tabla
    desplaza de lado; su mínimo sale de las columnas y no baja de 15rem para el nombre. Prueba cada lista a 1024.
    Esa columna es la cabecera de su fila (`rowHeader` en `ScColumnDef`, DD-194): una tabla nueva con nombre la marca.
-11. **Lo que falta se dice cuando ya hubo ocasión** (DD-199). Un obligatorio vacío no es un error, es algo por
-   rellenar: ni borde rojo, ni aviso bajo el campo, ni punto en el índice hasta que la persona ha tenido ocasión de
-   rellenarlo, que es dejar su sección sin ello (en el alta y al editar) o que lo guardado ya viniera sin ello. Un
-   campo que aparece al encender una opción nace callado, y duplicar es un alta. Mientras tanto lo dicen el resumen
-   («Falta: …») y el motivo junto al botón, sin rojo. Un error de contenido (repetido, mal escrito) va en vivo. En una
-   ficha lo decide `ocasionDeAvisar` (`shared/utils/alta-secciones.ts`); lo vigilan `audit:screen-hygiene` (regla 7)
-   y `sin-acusar-de-primeras.spec.ts`.
+11. **Lo que falta se dice al pulsar Crear o Guardar** (DD-216, que sustituye la ocasión de DD-199). Un obligatorio
+   vacío no es un error, es algo por rellenar: ni borde rojo, ni aviso bajo el campo, ni punto en el índice mientras se
+   rellena. «Crear …» está siempre activo, y «Guardar», con cambios, sin motivo al lado. Al pulsarlo con algo
+   pendiente no crea: cada campo lo dice, el índice marca su sección con el texto de lo que falta, y se llega al
+   primero, con el foco. Lo guardado que ya venía sin algo se dice al abrir; un campo que aparece después nace callado;
+   un error de contenido (repetido, mal escrito) va en vivo. El ✓ del índice es de la sección que se dejó tal como
+   está: si otra le cambia el contenido, se va sin rojo. Sin puertas entre secciones, sin «Falta: …» ni «Listo para
+   crear», y sin avisos amarillos de lo que no bloquea nada. En una ficha lo decide `ocasionDeAvisar`
+   (`shared/utils/alta-secciones.ts`); lo vigilan `audit:screen-hygiene` (regla 7), `indice-errores.spec.ts` y
+   `sin-acusar-de-primeras.spec.ts`.
 
 **Antes de enseñar una pantalla, revísala tú** (DD-123): `npm run revision -- <ruta>` la abre a 1440,
 recorre sus pestañas, guarda las capturas en `.cache/revision/` y mide la agrupación. Mira las capturas

@@ -1,6 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 
-import { disableAnimations, forceLightTheme, goto, pickSelectOption } from './helpers';
+import { disableAnimations, forceLightTheme, goto } from './helpers';
 
 /**
  * EL RESUMEN DE LA FICHA DE GRUPO LLEVA A SU SECCIÓN (DD-146).
@@ -13,12 +13,11 @@ import { disableAnimations, forceLightTheme, goto, pickSelectOption } from './he
  *      la ficha).
  *   2. Cada fila de Distribución lleva a su sitio: la de un canal, a su bloque; la de un número (el teléfono saliente,
  *      el de WhatsApp, campos de Distribución y colas), a su campo; con el foco ahí y a la vista, sin nada encima (desde
- *      DD-170 el nombre vive en la columna del índice). Teléfono y cada tipo de recurso son la excepción: un botón que
- *      abre un panel rápido en vez de navegar, con «Configurar colas» / «Ver recursos» al pie para ir a la sección
- *      entera (revisión de diseño, 2026-10-11).
+ *      DD-170 el nombre vive en la columna del índice). Y cada fila de Recursos, a su campo (DD-216: hasta entonces
+ *      abría un panel rápido con lo asignado).
  *   3. Las filas se nombran por el campo real al que llevan («Teléfono saliente», no «Teléfono»: DD-146), y dos
  *      «Teléfono» no se confunden.
- *   4. En el alta, el resumen abre la sección sin tocar la dirección (DD-143), y General sigue siendo la puerta.
+ *   4. En el alta, el resumen abre la sección sin tocar la dirección (DD-143), sin puertas (DD-216).
  *   5. El enlace se lee sobre su fondo (AA) y se subraya al pasar, como la miga (DD-103).
  *   6. Cada enlace se pulsa en al menos 24 × 24 (WCAG 2.5.8), también en una pantalla de 1366 × 660: pinta 18 de alto.
  */
@@ -63,16 +62,13 @@ test('el rótulo de cada tarjeta es un enlace a su sección, y llega arriba con 
     await expect(page.getByRole('heading', { level: 2, name: d.titulo, exact: true }), `${d.rotulo} → su título`).toBeFocused();
     expect(await page.evaluate(() => document.querySelector('main#main-content')!.scrollTop), 'llega arriba').toBe(0);
   }
-  // Cada tipo de recurso es un botón que abre su panel rápido, no un enlace directo (revisión de diseño, 2026-10-11):
-  // «Ver recursos», al pie del panel, también lleva a la sección.
+  // Cada tipo de recurso es un enlace a su campo en Recursos (DD-216), con el foco en él.
   await goto(page, 'admin/grupos/editar/11');
-  await resumen(page).getByRole('group', { name: 'Recursos' }).getByRole('button', { name: /^Agendas/ }).click();
-  const verRecursos = resumen(page).getByRole('link', { name: 'Ver recursos', exact: true });
-  await expect(verRecursos, 'Ver recursos').toHaveAttribute('href', /\/admin\/grupos\/editar\/11\?seccion=recursos$/);
-  await verRecursos.click();
+  const agendas = resumen(page).getByRole('group', { name: 'Recursos' }).getByRole('link', { name: /^Agendas/ });
+  await expect(agendas, 'Agendas').toHaveAttribute('href', /\/admin\/grupos\/editar\/11\?seccion=recursos$/);
+  await agendas.click();
   await expect(page).toHaveURL(/\?seccion=recursos$/);
-  await expect(page.getByRole('heading', { level: 2, name: 'Recursos', exact: true }), 'Recursos → su título').toBeFocused();
-  expect(await page.evaluate(() => document.querySelector('main#main-content')!.scrollTop), 'llega arriba').toBe(0);
+  await expect(page.locator('#group-agendas'), 'Agendas → su campo').toBeFocused();
 });
 
 test('la fila de Chat en Distribución lleva al bloque de su canal, a la vista y sin nada encima', async ({ page }) => {
@@ -127,23 +123,17 @@ test('cada número de Distribución lleva a su campo: el teléfono saliente y el
   }
 });
 
-test('en el alta, el resumen abre la sección sin tocar la dirección, y General sigue siendo la puerta', async ({ page }) => {
+test('en el alta, el resumen abre la sección sin tocar la dirección, también sin nombre (DD-216: sin puertas)', async ({ page }) => {
   await goto(page, 'admin/grupos/crear');
-  // Agendas es un botón que abre su panel rápido (revisión de diseño, 2026-10-11); ir a la sección es «Ver
-  // recursos», al pie del panel — se abre una vez y se queda abierto para las dos pruebas.
-  await resumen(page).getByRole('button', { name: /^Agendas/ }).click();
-  const verRecursos = resumen(page).getByRole('link', { name: 'Ver recursos', exact: true });
-  // Sin nombre, General no deja pasar: se queda en ella y lo dice.
-  await verRecursos.click();
-  await expect(page).toHaveURL(/\/admin\/grupos\/crear$/);
-  await expect(page.getByRole('heading', { level: 2, name: 'General', exact: true })).toBeVisible();
-  // Con nombre, abre Recursos, arriba y con el foco en su título, y la dirección sigue sin sección.
-  await page.getByLabel('Nombre').fill('Grupo del resumen');
-  // Sin teléfono saliente no se pasa de Distribución y colas (DD-158).
-  await page.locator('sc-form-section-nav').getByText('Distribución y colas', { exact: true }).click();
-  await pickSelectOption(page, page.locator('sc-select').filter({ has: page.locator('#group-phone') }), /./);
-  await verRecursos.click();
+  // Sin nombre y sin teléfono saliente, el título de Recursos abre Recursos, arriba y con el foco en su título, y la
+  // dirección sigue sin sección.
+  await resumen(page).getByRole('link', { name: 'Recursos', exact: true }).click();
   await expect(page.getByRole('heading', { level: 2, name: 'Recursos', exact: true })).toBeFocused();
+  await expect(page).toHaveURL(/\/admin\/grupos\/crear$/);
+  // Y la fila de Agendas, a su campo.
+  await page.locator('sc-form-section-nav').getByText('General', { exact: true }).click();
+  await resumen(page).getByRole('link', { name: /^Agendas/ }).click();
+  await expect(page.locator('#group-agendas')).toBeFocused();
   await expect(page).toHaveURL(/\/admin\/grupos\/crear$/);
 });
 
@@ -179,14 +169,15 @@ test('cada enlace del resumen se pulsa en al menos 24 × 24, también a 1366 × 
   await page.setViewportSize({ width: 1366, height: 660 });
   await goto(page, 'admin/grupos/editar/11');
   const enlaces = resumen(page).locator('.resumen__enlace, a.sc-fact-row__link');
-  // Agentes habilitados, Distribución y Recursos (título), Teléfono, Chat, Email, Teléfono saliente y Número WhatsApp:
-  // 8 (Teléfono es enlace desde la revisión del 2026-10-15; Email tiene estrategia propia). Cada tipo de recurso es un
-  // botón, no un enlace (revisión de diseño, 2026-10-11) — no entra aquí; «Ver recursos» tiene su prueba en el alta.
-  await expect(enlaces).toHaveCount(8);
+  // Agentes habilitados, Distribución y Recursos (título), Teléfono, Chat, Email, Teléfono saliente y Número WhatsApp,
+  // y las tres de Recursos (agendas y plantillas de chat y de email), enlaces desde DD-216: 11.
+  await expect(enlaces).toHaveCount(11);
   // Las cuatro esquinas de un cuadrado de 24 centrado en el enlace caen en él: así se pulsa aunque pinte 18 de alto. Es
   // la prueba del navegador (`elementFromPoint`), no la caja que se pinta.
+  // A 660 de alto la columna del resumen se desplaza por dentro: cada enlace se mide a la vista, como lo pulsaría alguien.
   const fuera = await enlaces.evaluateAll((els) =>
     els.flatMap((el) => {
+      el.scrollIntoView({ block: 'nearest' });
       const r = el.getBoundingClientRect();
       const [cx, cy] = [r.x + r.width / 2, r.y + r.height / 2];
       const esquinas = [[-11.5, -11.5], [11.5, -11.5], [-11.5, 11.5], [11.5, 11.5]];

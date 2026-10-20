@@ -17,7 +17,14 @@ import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { ResultadoAccionService, SectionLinksService } from '@core/services';
 import { injectLangChange } from '@core/utils/lang-change';
 import { AltaPieComponent } from '@shared/components';
-import { llegarASeccion, ocasionDeAvisar, seccionesDeAlta } from '@shared/utils/alta-secciones';
+import {
+  avisosDelIndice,
+  llegarAAncla,
+  llegarASeccion,
+  ocasionDeAvisar,
+  seccionesDeAlta,
+  type AvisoDeFicha,
+} from '@shared/utils/alta-secciones';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 import { GroupsStore } from '@features/admin/groups/state/groups.store';
 import { resolveGroup } from '@features/admin/groups/data/groups-data';
@@ -202,47 +209,64 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit {
     () => this.groupsStore.groups().filter((g) => resolveGroup(g).wrapUp.typificationId === this.editingId()).length,
   );
 
-  /* ── Lo que falta: en la barra y en el índice ─────────────────────────── */
+  /* ── Lo que falta: en su campo y en el índice, al pulsar (DD-216) ──────── */
 
-  protected readonly falta = computed<readonly string[]>(() => {
+  /** Lo que falta, por su aviso, en el orden de la ficha. */
+  private readonly faltas = computed<readonly string[]>(() => {
     const f = this.form();
-    const falta: string[] = [];
-    if (!f.name.trim()) falta.push('common.summary_missing_name');
-    if (f.options.length === 0) falta.push('repositories.tipificaciones.missing.options');
-    if (this.nombresMal()) falta.push('repositories.tipificaciones.missing.names');
-    return falta;
+    return [
+      ...(f.name.trim() ? [] : ['repositories.tipificaciones.errors.name_required']),
+      ...(f.options.length > 0 ? [] : ['repositories.tipificaciones.errors.options_required']),
+      ...(this.nombresMal() ? ['repositories.tipificaciones.errors.names_required'] : []),
+    ];
   });
 
-  protected readonly blockedReason = computed<string | null>(() => {
-    this.lang();
-    const falta = this.falta();
-    if (falta.length > 0) {
-      return this.translate.instant('common.summary_missing', { items: falta.map((k) => this.translate.instant(k)).join(', ') });
-    }
-    return this.nameTaken() ? this.translate.instant('repositories.tipificaciones.errors.name_taken') : null;
-  });
-
-  protected readonly canSave = computed(() => !this.blockedReason() && (this.mode() === 'create' || this.formDirty()));
+  /** El botón se puede pulsar: al crear, siempre; al editar, con cambios. Lo que falte lo dice al pulsarlo (`save`). */
+  protected readonly canSave = computed(() => this.mode() === 'create' || this.formDirty());
 
   /**
-   * Cuándo se dice lo que falta (DD-199): desde que se deja su sección sin ello, en el alta y al editar, o desde que se
-   * abre si lo guardado ya venía sin ello. Antes, lo dice el motivo junto al botón.
+   * Cuándo se dice lo que falta (DD-216): al pulsar Crear o Guardar, lo que faltaba entonces, hasta que se arregla; o
+   * desde que se abre, si lo guardado ya venía sin ello. Mientras se rellena, nada en rojo.
    */
   private readonly ocasion = ocasionDeAvisar({
-    alta: this.alta,
     editando: () => this.mode() === 'edit',
-    abierta: () => this.activeSection(),
     cambios: () => this.dirtyState.dirty(),
-    faltas: () => [...(this.generalCompleta() ? [] : [GENERAL]), ...(this.categoriasCompletas() ? [] : [CATEGORIAS])],
+    faltas: () => this.faltas(),
   });
 
-  /** Lo que falta, en el índice, cuando ya hubo ocasión (DD-199): en el alta, desde que se deja la sección (DD-143). */
-  protected readonly sectionsWithErrors = computed<ReadonlySet<string>>(() => {
-    const errores = new Set<string>();
-    if (!this.generalCompleta() && this.ocasion.acusa(GENERAL, GENERAL)) errores.add(GENERAL);
-    if (!this.categoriasCompletas() && this.ocasion.acusa(CATEGORIAS, CATEGORIAS)) errores.add(CATEGORIAS);
-    return errores;
+  /** El aviso bajo el nombre: repetido, en vivo (es contenido); vacío, al pulsar sin él. */
+  protected readonly nameError = computed<string | undefined>(() => {
+    this.lang();
+    if (this.nameTaken()) return this.translate.instant('repositories.tipificaciones.errors.name_taken');
+    const falta = 'repositories.tipificaciones.errors.name_required';
+    return this.faltas().includes(falta) && this.ocasion.acusa(falta) ? this.translate.instant(falta) : undefined;
   });
+
+  /** Los avisos a la vista, en el orden de la ficha: de aquí salen el punto del índice, lo que dice y adónde lleva. */
+  private readonly avisos = computed<readonly AvisoDeFicha[]>(() => {
+    this.lang();
+    const out: AvisoDeFicha[] = [];
+    const nombre = this.nameError();
+    if (nombre) out.push({ seccion: GENERAL, texto: nombre, ancla: 'tip-name' });
+    for (const falta of this.faltas()) {
+      if (falta.endsWith('name_required') || !this.ocasion.acusa(falta)) continue;
+      out.push({ seccion: CATEGORIAS, texto: this.translate.instant(falta), ancla: null });
+    }
+    return out;
+  });
+
+  /** El punto rojo del índice: la sección tiene un aviso a la vista. */
+  protected readonly sectionsWithErrors = computed<ReadonlySet<string>>(() => new Set(this.avisos().map((a) => a.seccion)));
+
+  /** Lo que dice cada sección con aviso en el índice, en texto (DD-216). */
+  protected readonly sectionErrorHints = computed(() => avisosDelIndice(this.avisos()));
+
+  /** Lleva a un campo de la ficha (o al título de su sección): a su sección, y en ella al sitio, con el foco. */
+  private irACampo(seccion: string, ancla: string | null): void {
+    if (this.activeSection() !== seccion) this.goTo(seccion);
+    if (ancla) llegarAAncla(ancla, this.injector);
+    else llegarASeccion(seccion, this.injector);
+  }
 
   protected readonly sectionsWithChanges = computed<ReadonlySet<string>>(() => {
     if (this.mode() !== 'edit') return new Set<string>();
@@ -295,6 +319,13 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit {
 
   protected save(): void {
     if (!this.canSave()) return;
+    // Con algo pendiente no crea ni guarda: desde ahora se dice lo que falta, y se llega al primer sitio (DD-216).
+    if (this.faltas().length > 0 || this.nameTaken()) {
+      this.ocasion.intentar();
+      const primero = this.avisos()[0];
+      if (primero) this.irACampo(primero.seccion, primero.ancla);
+      return;
+    }
     const f = this.form();
     const borrador: Borrador = { ...f, name: f.name.trim(), description: f.description.trim() };
     if (this.mode() === 'create') {
@@ -313,12 +344,14 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit {
     }
     this.store.updateItem(this.editingId()!, borrador);
     this.form.set(borrador);
+    this.ocasion.olvidar();
     this.dirtyState.markPristine();
     this.resultado.contar(this.texto('repositories.toasts.updated', borrador.name));
   }
 
   protected discard(): void {
     this.form.set(this.dirtyState.pristineValue());
+    this.ocasion.olvidar();
   }
 
   protected readonly deleteItems = computed(() => {

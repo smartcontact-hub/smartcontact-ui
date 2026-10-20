@@ -53,7 +53,7 @@
       "attended": "Attended",
       "rejected": "Rejected",
       "transferred": "Transferred",
-      "avg_time": "Avg. time",
+      "avg_time": "Avg.\u00a0time",
       "totals": "Totals"
     },
     "group_panel": {
@@ -225,7 +225,7 @@
       "col_conversation": "Conversation",
       "col_time": "Time",
       "col_agent": "Agent",
-      "col_in_state": "In this state"
+      "col_in_state": "In\u00a0this\u00a0state"
     },
     "assistant": {
       "title_new": "Create widget",
@@ -1014,7 +1014,6 @@
     "summary": "Summary",
     "summary_missing": "Missing: {{items}}",
     "summary_missing_name": "name",
-    "summary_ready": "Ready to create",
     "summary_of": "{{value}} of {{total}}",
     "actions": "Actions",
     "select_row": "Select {{name}}",
@@ -1567,15 +1566,14 @@
       "delete_option_body_one": "The option below it is deleted too.",
       "errors": {
         "option_taken": "“{{name}}” is already at this level",
-        "name_taken": "There is already a typification with this name"
+        "name_taken": "There is already a typification with this name",
+        "name_required": "Name is required",
+        "options_required": "Add at least one option",
+        "names_required": "Give each option a different name"
       },
       "section": {
         "general": "General",
         "categorization": "Categories"
-      },
-      "missing": {
-        "options": "at least one option",
-        "names": "a different name for each option"
       },
       "categorization_hint": "What the agent chooses, in up to three levels. Each branch goes as deep as it needs",
       "rename_field": "New name for the option",
@@ -1822,14 +1820,12 @@
         "apply_body_other": "It changes {{count}} boxes in Access. If you keep them, the type changes anyway and Access stays as it is.",
         "apply": "Apply the template",
         "keep": "Keep the boxes"
-      },
-      "summary": {
-        "missing_email": "email"
       }
     },
     "errors": {
       "name_required": "Name is required",
-      "email_invalid": "Enter a valid email"
+      "email_invalid": "Enter a valid email",
+      "email_required": "Enter the email"
     },
     "toasts": {
       "created": "User \"{{name}}\" created",
@@ -1875,10 +1871,6 @@
   "groups": {
     "page_title": "Groups",
     "create_button": "New group",
-    "create_dialog": {
-      "duplicate_subtitle": "Copies the agents, channels and settings of «{{source}}». Not the outbound phone.",
-      "copy_name": "{{name}} (copy)"
-    },
     "search_placeholder": "Search groups…",
     "no_results_query": "No groups match “{{query}}”.",
     "entity_singular": "group",
@@ -1953,7 +1945,6 @@
         "warn_no_channels": "Enabled, but has no channels assigned",
         "add_placeholder": "Add agents…",
         "add_aria": "Add agent to the group",
-        "no_channels_warn": "{{count}} without a channel: removed when saving",
         "bulk_unassign": "Remove from group",
         "col_level": "Level {{channel}}",
         "level_aria": "Level for {{name}} — {{channel}}",
@@ -2113,25 +2104,17 @@
       "summary": {
         "none": "None",
         "paused": "Disabled",
-        "no_channels": "No channels",
         "priority": "Priority: {{value}}",
         "title": "Summary",
         "agents_active": "Enabled agents",
         "paused_count": "{{count}} disabled",
-        "no_agents": "No agents",
         "routing": "Distribution",
         "no_number": "No number",
-        "resources": "Resources",
-        "resources_quick": "View the group's resources",
-        "resources_empty": "No resources assigned",
-        "resources_see": "View resources",
-        "missing_channels": "channels",
-        "missing_phone": "outbound phone",
-        "missing_typification": "typification"
+        "resources": "Resources"
       },
       "channels": {
         "title": "Channels",
-        "hint": "At least one. What you tick here decides what you set up in Distribution and queues."
+        "hint": "What you tick here decides what you set up in Distribution and queues."
       },
       "distribution": {
         "common_title": "Common rules",
@@ -2144,7 +2127,8 @@
         "jump_aria": "Channels in this section",
         "outbound": "Outbound calls",
         "webchat_hint": "Its messages, its hours and the websites it runs on. An empty message is not sent.",
-        "whatsapp_hint": "Its number and, with it, its messages and hours. An empty message is not sent."
+        "whatsapp_hint": "Its number and, with it, its messages and hours. An empty message is not sent.",
+        "no_channels": "This group has no channels, so it doesn't route conversations. Channels are ticked in General."
       },
       "chat": {
         "close_on_inactivity": "Expire session",
@@ -2186,7 +2170,6 @@
     },
     "errors": {
       "name_required": "Name is required",
-      "channels_required": "Select at least one channel",
       "name_taken": "A group with this name already exists",
       "phone_required": "The outbound phone is required",
       "typification_required": "Choose a typification"
@@ -2399,8 +2382,7 @@
         "not_allowed_hint": "{{channel}} is not among their channels (General)",
         "bulk_add": "Assign to the agent",
         "bulk_remove": "Remove from the agent",
-        "bulk_body": "{{action}}: {{count}} groups.",
-        "no_channels_warn": "{{count}} without a channel: removed when saving"
+        "bulk_body": "{{action}}: {{count}} groups."
       },
       "allowed": {
         "title": "Allowed channels",
@@ -2437,13 +2419,7 @@
       "summary": {
         "no_groups": "No groups",
         "groups_active": "Enabled in groups",
-        "missing_extension": "extension",
-        "missing_phone": "mobile phone",
         "outbound": "Outbound",
-        "missing_email": "email",
-        "missing_channel": "a channel",
-        "missing_group": "a group",
-        "missing_outbound": "a group for outbound calls",
         "channels": "Channels",
         "no_channels": "No channels",
         "none": "None"

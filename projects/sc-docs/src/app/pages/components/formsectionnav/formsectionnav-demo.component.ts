@@ -36,12 +36,14 @@ const LINKS_SNIPPET = `<sc-form-section-nav
 />`;
 
 /* En un alta (DD-143): la página marca con ✓ las secciones que se dejaron completas; la abierta no lo
- * lleva. Lo que falta y los cambios sin guardar ganan al ✓. */
+ * lleva. Lo que falta y los cambios sin guardar ganan al ✓. Tras pulsar «Crear» con algo pendiente, la página da el
+ * texto de lo que falta en cada sección (DD-216), que sale debajo de su etiqueta. */
 const ALTA_SNIPPET = `<sc-form-section-nav
   [sections]="sections"
   [activeId]="active()"
   [flush]="true"
   [sectionsWithErrors]="errors"
+  [sectionErrorHints]="{ horario: 'Elige un horario' }"
   [sectionsDone]="done"
   (activeChange)="onActive($event)"
 />`;
@@ -107,10 +109,11 @@ export class FormSectionNavDemoComponent {
   readonly errors = new Set(['horario']);
   readonly changes = new Set(['voz']);
 
-  /* El alta (DD-143): General y «Voz y saludo» se dejaron completas; Horario, sin lo obligatorio. Avanzado
-   * está abierta: aún no lleva marca. */
+  /* El alta (DD-143), tras pulsar «Crear» (DD-216): General y «Voz y saludo» se dejaron completas; a Horario le falta
+   * lo obligatorio, y lo dice debajo. Avanzado está abierta: aún no lleva marca. */
   readonly altaActive = signal('avanzado');
   readonly altaErrors = new Set(['horario']);
+  readonly altaHints: Readonly<Record<string, string>> = { horario: 'Elige un horario' };
   readonly done = new Set(['general', 'voz']);
 
   onAltaActive(id: string): void {
@@ -140,7 +143,7 @@ export class FormSectionNavDemoComponent {
     tag: 'sc-form-section-nav',
     title: 'FormSectionNav',
     description:
-      'El índice de secciones de la app (DD-122): cada fila es un ENLACE a su sitio (`href` de cada sección, una ruta o la misma página con `?seccion=`) y la actual lleva aria-current="page". Controlado: el padre posee activeId; un clic principal sin teclas emite activeChange y la página navega, y Cmd/Ctrl/clic central lo hace el navegador (otra pestaña), como routerLink. Punto rojo en las secciones con required vacíos (sectionsWithErrors) y punto de marca en las que tienen cambios sin guardar (sectionsWithChanges); en un alta, ✓ en las que se dejaron completas (sectionsDone, DD-143). Se ve una marca y se oyen todas. Rótulo visible opcional encima (titleKey), que nombra el índice. Variante flush (el carril de fichas y Contact Center) opt-in. El label ENVUELVE: una etiqueta que no cabe en el rail parte de línea y la fila crece, nunca se recorta con elipsis (DD-52).',
+      'El índice de secciones de la app (DD-122): cada fila es un ENLACE a su sitio (`href` de cada sección, una ruta o la misma página con `?seccion=`) y la actual lleva aria-current="page". Controlado: el padre posee activeId; un clic principal sin teclas emite activeChange y la página navega, y Cmd/Ctrl/clic central lo hace el navegador (otra pestaña), como routerLink. Punto rojo en las secciones con required vacíos (sectionsWithErrors), con el texto de lo que falta debajo de la etiqueta si la página lo da (sectionErrorHints, DD-216), y punto de marca en las que tienen cambios sin guardar (sectionsWithChanges); en un alta, ✓ en las que se dejaron completas (sectionsDone, DD-143). Se ve una marca y se oyen todas. Rótulo visible opcional encima (titleKey), que nombra el índice. Variante flush (el carril de fichas y Contact Center) opt-in. El label ENVUELVE: una etiqueta que no cabe en el rail parte de línea y la fila crece, nunca se recorta con elipsis (DD-52).',
     argTypes: [
       { name: 'flush', control: { kind: 'boolean' } },
       { name: 'titleKey', control: { kind: 'text' }, description: 'Rótulo visible encima de las filas; nombra el índice (aria-labelledby).' },
@@ -166,7 +169,7 @@ export class FormSectionNavDemoComponent {
       { name: 'Default', template: de, snippet: DEFAULT_SNIPPET },
       { name: 'Flush (panel embebido)', template: fl, snippet: FLUSH_SNIPPET },
       { name: 'Enlaces, rótulo y cambios sin guardar', template: li, snippet: LINKS_SNIPPET },
-      { name: 'En un alta: ✓ en las secciones que se dejan completas', template: al, snippet: ALTA_SNIPPET },
+      { name: 'En un alta: ✓ en las que se dejan completas, y lo que falta al pulsar «Crear»', template: al, snippet: ALTA_SNIPPET },
       { name: 'Rótulos largos (envuelven, no se recortan)', template: lo, snippet: LONG_SNIPPET },
     ];
   });

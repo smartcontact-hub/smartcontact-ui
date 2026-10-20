@@ -1,34 +1,36 @@
 /**
- * LAS SECCIONES DE UN ALTA (DD-143): el alta tiene el índice de la edición (DD-122), y aquí vive lo que el alta le
- * añade: qué sección está abierta, cuáles se dejaron completas (su ✓ en el índice) y cuáles van antes y después, para
- * «Atrás» y «Siguiente». Las secciones son las del índice (`navSections`), así que no pueden discrepar.
+ * LAS SECCIONES DE UNA FICHA Y SU ÍNDICE (DD-143, DD-216): el alta tiene el índice de la edición (DD-122), y aquí vive
+ * lo que el alta le añade: qué sección está abierta, cuáles llevan ✓ y cuáles van antes y después, para «Atrás» y
+ * «Siguiente». Las secciones son las del índice (`navSections`), así que no pueden discrepar. Se navega libre: ninguna
+ * sección retiene a nadie (DD-216 retira las puertas de DD-121 y DD-158).
  *
  * La sección abierta vive aquí y no en la dirección: cambiar de sección en el alta no toca la URL ni el historial, y
  * Atrás del navegador sale del alta (DD-122 §4). Al crear, la ficha abre su edición en la sección abierta.
  *
- * Una sección lleva ✓ cuando se abrió, se dejó y está completa: la abierta no, aunque esté bien, porque aún se está
- * rellenando. También la que no tiene nada obligatorio, que está completa con solo pasar por ella (DD-211 §6, que
- * corrige DD-158): el índice dice por dónde se ha pasado ya, no solo lo obligatorio. Si se dejó sin lo obligatorio, la
- * ficha la marca con el punto rojo (`dejadas`), como Distribución y colas sin teléfono saliente (DD-142); antes de
- * abrirla, ninguna marca. Lo que no deja salir de una sección (la puerta de General en el grupo, DD-121) lo aplica cada
- * ficha antes de `abrir`.
+ * Una sección lleva ✓ cuando se dejó tal como está ahora y está completa (DD-216): la abierta no, aunque esté bien,
+ * porque aún se está rellenando. También la que no tiene nada obligatorio, completa con solo pasar por ella (DD-211
+ * §6). «Tal como está» es su FIRMA: lo que otra sección decide de ella (en el grupo, los canales de General); si
+ * cambia desde que se dejó, el ✓ se va sin ponerse en rojo. Las reglas, puras, en `alta-secciones.core.mjs`.
  *
  *   protected readonly alta = seccionesDeAlta({
  *     secciones: this.navSections,
  *     completa: (id) => id !== GENERAL || this.generalValid(),
+ *     firma: (id) => (id === GENERAL ? '' : firmaDe(this.form().channels)),
  *   });
  */
 import { afterNextRender, computed, effect, signal, type Injector, type Signal } from '@angular/core';
 import type { FormNavSection } from '@smartcontact-hub/components';
 
+import { dejarSeccion, seccionesHechas, seDice } from './alta-secciones.core.mjs';
+
+export { firmaDe } from './alta-secciones.core.mjs';
+
 export interface SeccionesAlta {
   /** La sección abierta. */
   readonly abierta: Signal<string>;
-  /** Las que se dejaron completas: el ✓ del índice (`sectionsDone`). */
+  /** Las que se dejaron tal como están y completas: el ✓ del índice (`sectionsDone`). */
   readonly hechas: Signal<ReadonlySet<string>>;
-  /** Las que se abrieron y se dejaron, completas o no: desde ahí, lo que les falte se dice en el índice. */
-  readonly dejadas: Signal<ReadonlySet<string>>;
-  /** Abre la sección `id` y da por dejada la que estaba abierta. La puerta la aplica la ficha antes. */
+  /** Abre la sección `id` y da por dejada la que estaba abierta, con su firma de ese momento. */
   abrir(id: string): void;
   /** La sección anterior y la siguiente a la abierta, para «Atrás» y «Siguiente»; `null` en los extremos. */
   anterior(): string | null;
@@ -39,10 +41,13 @@ export function seccionesDeAlta(opts: {
   readonly secciones: Signal<readonly FormNavSection[]>;
   /** Lo de la sección está completo; una sección sin nada obligatorio lo está siempre. */
   readonly completa: (id: string) => boolean;
+  /** Lo que otras secciones deciden de esta. Sin ella, ninguna depende de otra. */
+  readonly firma?: (id: string) => string;
 }): SeccionesAlta {
   const primera = (): string => opts.secciones()[0]?.id ?? '';
+  const firma = opts.firma ?? (() => '');
   const abiertaManual = signal<string | null>(null);
-  const dejadas = signal<ReadonlySet<string>>(new Set());
+  const dejadas = signal<ReadonlyMap<string, string>>(new Map());
 
   const abierta = computed(() => abiertaManual() ?? primera());
   const ids = computed(() => opts.secciones().map((s) => s.id));
@@ -55,14 +60,13 @@ export function seccionesDeAlta(opts: {
 
   return {
     abierta,
-    hechas: computed(
-      () => new Set(ids().filter((id) => id !== abierta() && dejadas().has(id) && opts.completa(id))),
+    hechas: computed(() =>
+      seccionesHechas({ ids: ids(), abierta: abierta(), dejadas: dejadas(), firma, completa: opts.completa }),
     ),
-    dejadas: dejadas.asReadonly(),
     abrir(id: string): void {
       const antes = abierta();
       if (id === antes) return;
-      dejadas.update((d) => new Set(d).add(antes));
+      dejadas.update((d) => dejarSeccion(d, antes, firma(antes)));
       abiertaManual.set(id);
     },
     anterior: () => vecina(-1),
@@ -71,54 +75,65 @@ export function seccionesDeAlta(opts: {
 }
 
 export interface OcasionDeAvisar {
-  /** ¿Se puede decir ya, bajo su campo y con el punto del índice, que falta `falta`, de la sección `seccion`? */
-  acusa(seccion: string, falta: string): boolean;
+  /** ¿Se puede decir ya, bajo su campo y en el índice, que falta `falta`? */
+  acusa(falta: string): boolean;
+  /** Se pulsó Crear o Guardar: desde ahora se dice lo que falta en este momento, hasta que se arregle. */
+  intentar(): void;
+  /** Vuelta a lo guardado (Deshacer) o guardado: lo pendiente vuelve a callar hasta el siguiente intento. */
+  olvidar(): void;
 }
 
 /**
- * CUÁNDO SE DICE QUE FALTA ALGO (DD-199): cuando la persona ya tuvo ocasión de rellenarlo. Un obligatorio vacío no es
- * un error, es algo por rellenar, y pintarlo en rojo antes de tiempo culpa a quien aún no ha podido hacer nada: el
- * desplegable que aparece al encender «Tipificar llamadas» nacía en rojo, con su aviso y el punto en el índice.
+ * CUÁNDO SE DICE QUE FALTA ALGO (DD-216, que sustituye la «ocasión» de DD-199): al pulsar Crear o Guardar. Un
+ * obligatorio vacío no es un error, es algo por rellenar, y decirlo en rojo mientras se rellena pone señales donde la
+ * persona no mira: el 2026-10-20 un punto rojo en Distribución y colas (el teléfono saliente) salía al volver a
+ * General, y al borrar el nombre parecía causado por él.
  *
- * Hay ocasión cuando se deja la sección sin ello (con «Siguiente», el índice o el resumen), en el alta y al editar, o
- * cuando lo guardado ya venía sin ello: entonces falta de verdad y se dice al abrir (DD-142). Duplicar es un alta: lo
- * que se vacía a propósito (el nombre, la extensión) tampoco acusa. Mientras tanto lo dicen el resumen («Falta: …») y
- * el motivo junto al botón, sin rojo. Un error de CONTENIDO (repetido, mal escrito) no espera ocasión: va en vivo.
+ * Al pulsar se apunta lo que falta en ese momento, y eso se dice (campo, índice con su texto) hasta que se arregla.
+ * Lo que falte después (un campo que aparece al marcar algo) nace callado hasta el siguiente intento. Lo guardado que
+ * ya venía sin algo se dice desde que se abre la ficha (DD-142): falta de verdad, y no lo ha causado quien la abre.
+ * Duplicar un agente es un alta. Un error de CONTENIDO (repetido, mal escrito) no espera: va en vivo, y no pasa por
+ * aquí.
  *
  * `faltas` son las claves de lo que falta AHORA. Lo guardado es lo que había la última vez que la ficha no tenía cambios
  * (al abrirla, al guardar o al deshacer), así que no hace falta copiarlo en cada sitio que la marca como guardada.
  */
 export function ocasionDeAvisar(opts: {
-  readonly alta: SeccionesAlta;
   /** Se edita algo guardado: ni un alta ni un duplicado. */
   readonly editando: () => boolean;
-  /** La sección a la vista. */
-  readonly abierta: () => string;
   /** La ficha tiene cambios sin guardar. */
   readonly cambios: () => boolean;
   readonly faltas: () => Iterable<string>;
 }): OcasionDeAvisar {
-  // Se apuntan en el acto, con `effect`, y no al leerse: entre dos lecturas se puede pasar por varias secciones.
+  // Se apunta en el acto, con `effect`, y no al leerse: entre dos lecturas la ficha puede haber cambiado.
   const faltabaGuardado = signal<ReadonlySet<string>>(new Set());
   effect(() => {
     if (!opts.cambios()) faltabaGuardado.set(new Set(opts.faltas()));
   });
-  // Al editar, la sección vive en la dirección: la que deja de estar a la vista se ha dejado.
-  const dejadasAlEditar = signal<ReadonlySet<string>>(new Set());
-  let antes: string | null = null;
-  effect(() => {
-    const ahora = opts.abierta();
-    const dejada = antes;
-    if (dejada !== null && dejada !== ahora) dejadasAlEditar.update((d) => new Set(d).add(dejada));
-    antes = ahora;
-  });
+  const intento = signal<ReadonlySet<string> | null>(null);
+  const ninguna: ReadonlySet<string> = new Set();
   return {
-    acusa(seccion: string, falta: string): boolean {
-      if (!opts.editando()) return opts.alta.dejadas().has(seccion);
-      return dejadasAlEditar().has(seccion) || faltabaGuardado().has(falta);
-    },
+    acusa: (falta: string) => seDice(falta, intento(), opts.editando() ? faltabaGuardado() : ninguna),
+    intentar: () => intento.set(new Set(opts.faltas())),
+    olvidar: () => intento.set(null),
   };
 }
+
+/** Un aviso a la vista: de qué sección es, lo que dice (ya traducido) y el campo al que se llega (`null`: al título de
+ *  la sección, cuando lo que falta no es un campo, como asignar un grupo). */
+export interface AvisoDeFicha {
+  readonly seccion: string;
+  readonly texto: string;
+  readonly ancla: string | null;
+}
+
+/** Lo que dice el índice de cada sección con avisos: el primero, en el orden de la ficha (DD-216). */
+export function avisosDelIndice(avisos: readonly AvisoDeFicha[]): Readonly<Record<string, string>> {
+  const out: Record<string, string> = {};
+  for (const a of avisos) out[a.seccion] ??= a.texto;
+  return out;
+}
+
 
 /**
  * Tras «Siguiente» o «Atrás», la llegada a la sección `id`: la zona de contenido vuelve arriba, como al llegar a una

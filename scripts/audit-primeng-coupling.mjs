@@ -103,7 +103,9 @@ const sh = (cmd) => {
 // llegarle: `.p-tieredmenu-item-link`, `-icon` y `-content`, las mismas tres piezas que ya cubría en `p-menu`.
 // DD-206: `ds` 12 → 13 por `.p-fileupload-file-thumbnail`: PrimeNG pinta una miniatura rota para un archivo que no
 // es imagen (los audios de Grupos); no hay token ni `pt` que la quite solo en ese caso (customs-catalog §8).
-const TOPE = { app: 6, ds: 13, preset: 72 };
+// DD-216: `ds` 13 → 15 por `.p-chip-remove-icon` y `.p-multiselect-chip-icon`: la «×» de un chip de `sc-multiselect`
+// pasa al rojo de lo destructivo al pasar o enfocarla, y el tema de Chip solo trae `removeIcon.color`, sin el de al pasar.
+const TOPE = { app: 6, ds: 15, preset: 72 };
 
 /* Cuenta las clases `.p-*` que aparecen en SELECTORES, no en comentarios. Un
  * comentario que menciona `.p-datatable-*` para explicar POR QUÉ dependemos de

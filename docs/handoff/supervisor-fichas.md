@@ -53,6 +53,26 @@ su trampa del suelo de la tarjeta sube a «Trampas del frente». El de la ficha 
 El de la ficha de agente con salientes en un desplegable (2026-10-15, DD-209, #425, sin trampas propias): `git show
 6edc21e9:docs/handoff/supervisor-fichas.md`. El de la revisión de producto de las tablas
 y Repositorios (2026-10-15, DD-210, #426, sin trampas propias): `git show 840fe501:docs/handoff/supervisor-fichas.md`.
+El de la revisión de producto del 2026-10-16 (DD-211): `git show bacaf233:docs/handoff/supervisor-fichas.md`; sus
+trampas suben a «Trampas del frente».
+
+## ✅ 2026-10-20 · Lo que falta se dice al pulsar Crear, grupos sin canales, duplicar sin diálogo y Recursos en chips (DD-216)
+
+> **Sello:** rama `areses/error-handling-groups-index-4805b9` sobre `main` `bacaf233`, un PR.
+
+- **Índice**: «Crear» siempre activo; al pulsarlo con algo pendiente, cada campo lo dice, el índice pone el texto bajo
+  su sección (`sectionErrorHints`, DS) y se llega al primero. El ✓ con firma: se va si otra sección le cambia los
+  canales. Sin puertas. Reglas puras en `alta-secciones.core.mjs`, con su test. En grupo, agente, usuario y tipificación.
+- **Fuera**: `sc-summary-status` («Falta / Listo para crear»), el motivo junto al botón (queda el tooltip «No hay cambios
+  que guardar»), los amarillos de las fichas y `group-duplicate-dialog`.
+- **Grupo**: canales opcionales (sin canales se pertenece sin canal); quitar y poner un canal ya no recorta los enlaces
+  (`linksVistos`); duplicar en el acto como «X (1)» (`nombreDeCopia`); Recursos en chips sin «+» ni lápiz, la «×» en
+  rojo al pasar (`sc-multiselect`, DS); el resumen de Recursos lleva a su campo; la tipificación sin descripción.
+- **Pruebas**: `indice-errores` (7) y `revision-producto-1020` (4), rojas contra el código anterior; reescritas a la regla
+  nueva las de índice, alta, teléfono saliente, resumen y duplicar; fuera `altas-meta`.
+- **Pendiente**: Figma, `figma-pendiente` §55. Fuera de este PR, para preguntar: los editores de Repositorios (agenda,
+  equipo, cuenta, trigger) y el de plantillas siguen con «Falta: …» junto al botón; la ficha de agente sigue con «+» y
+  lápiz en Recursos; el toast de renombrar en los listados usa la clave de duplicar.
 
 ## ✅ 2026-10-19 · Mapa de componentes de Grupos, una sola tabla en el DS y «Fuera del DS» con alternativas
 
@@ -131,40 +151,6 @@ y Repositorios (2026-10-15, DD-210, #426, sin trampas propias): `git show 840fe5
 - **Pruebas**: `list-table-grammar` lee el relleno con `kitPx` (contra `main`, rojo con «8px 14px»); 31 + 59 en verde.
 - **Pendiente**: marcar hecha la ficha 1 de `figma-pendiente` §54 cuando funda #457. Lo que el Kit dibuja distinto de
   Aura en la tabla y no entró (hueco de celda, filtro): `node tools/aura-diff.mjs datatable`.
-
-## ✅ 2026-10-16 · Revisión de producto: agendas en árbol, la ficha de agente, toasts y un solo Guardar en Contact Center (DD-211)
-
-> **Sello:** rama `arebury/revision-producto-1016` sobre `main` `b23f6b5f`, un PR.
-
-- **Agendas**: «Grupos y agentes» es un árbol (`sc-agenda-assignment-tree`, `p-treetable` nativo, casillas `sc-checkbox`)
-  por persona, con grupos enteros dinámicos (en `Group.schedules`) y «Sin grupo». Las reglas, puras y probadas, en
-  `agenda-asignacion.core.mjs` (`scripts/__tests__/agenda-asignacion.test.mjs`). El listado, «Grupos y agentes», sacado
-  con las mismas funciones que el árbol (`estructuraDe`, `deLoGuardado`, `paraGuardar`): dice lo mismo que el editor,
-  también el grupo que sale entero al leer porque sus agentes ya la tenían todos. Fuera `sc-agenda-agents-table`.
-- **Agente**: PIN del sistema (`nextPin` en `agents.store.ts`) y de solo lectura al editar; `CLIENTE_CON_WEBRTC` con
-  «Navegador» deshabilitado; Agentes y Grupos en el Destino, y lo guardado sin ellos se lee como de fábrica
-  (`agenteAlDia`, el `normalize` de `AgentsStore`); fuera «Automático con preview» y «Actualizar teléfono en login»;
-  `attendsPhone` oculta lo de las llamadas.
-- **DS**: `ScConfirmService.popupClosed`: el globo cerrado sin responder resuelve «no». **Solo lectura** en `sc-inputtext`,
-  `sc-inputnumber`, `sc-textarea` y `sc-select` (§10): sin borde, sobre `--sc-bg-default`, anillo de foco con el
-  teclado; el select sin flecha (clase propia por `pt.dropdown`), el textarea sin asa; en sc-docs, en sus estados.
-- **Grupo**: audio saliente en «Mensajes en cola»; la estrategia del resumen en una línea; canal y nivel juntos.
-- **Toasts**: `ResultadoAccionService.contar` (fuera `visto`, `enLaBarra` y `limpiar`, y la zona de la barra);
-  `TOAST_DEL_SISTEMA` con el servicio; AGENTS.md §7 reescrita.
-- **Altas**: ✓ en toda sección que se deja completa (`seccionesDeAlta` sin `obligatoria`).
-- **Contact Center**: `ContactCenterBorradorService` en el armazón, con el guardián en la ruta de Contact Center.
-- **sc-docs**: SelectButton con Múltiple, Inválido, Deshabilitado y A todo el ancho. `tools/primeng-doc.mjs` no corre en
-  la nube sin acceso a la API de GitHub de primefaces/primeng: se leyó la doc con un clon parcial de
-  `apps/showcase/doc/selectbutton`.
-- **Figma**: nota 50 de `figma-pendiente.md` (lo que depende de Call Blending, CusCare y WebRTC, anotado y no apagado).
-- **Trampas**: `p-treetable-checkbox` refresca su casilla con `selectionSource$` y no al cambiar `[selectionKeys]`: un
-  mapa nuevo desde fuera no repinta las casillas; por eso el árbol pinta las suyas. Un toast que entra en la pila de
-  capas de PrimeNG (`autoZIndex`) le quita el Esc a un `p-dialog` abierto. Y en la nube, el `ng serve` de :4405 no
-  siempre ve un cambio de código (medido: un arreglo de Contact Center no llegó hasta reiniciarlo): reinícialo, por su
-  pid, antes de fiarte de un e2e (un `pkill -f` con el patrón en la línea de órdenes se mata a sí mismo, exit 144; sin
-  `ss`, el pid lo da `lsof -nP -iTCP:4405 -sTCP:LISTEN`). Un cambio del DS no llega a las apps sin `npm run
-  build:components` y reiniciar su `ng serve` (leen `dist/`). Los `*.pages.dev` no se alcanzan desde la nube: para ver
-  una prueba en rojo, se quita el arreglo en local.
 
 ## SIGUIENTE — sin preguntar
 
@@ -253,6 +239,15 @@ y Repositorios (2026-10-15, DD-210, #426, sin trampas propias): `git show 840fe5
   nube no se puede.
 
 **Trampas del frente:**
+- **`p-treetable-checkbox` refresca su casilla con `selectionSource$`**, no al cambiar `[selectionKeys]`: un mapa nuevo
+  desde fuera no repinta las casillas (por eso el árbol de agendas pinta las suyas). Un toast en la pila de capas de
+  PrimeNG (`autoZIndex`) le quita el Esc a un `p-dialog` abierto (DD-211).
+- **En la nube, el `ng serve` de :4405 no siempre ve un cambio de código**: reinícialo por su pid antes de fiarte de un
+  e2e (`lsof -nP -iTCP:4405 -sTCP:LISTEN`; un `pkill -f` con el patrón en la línea se mata a sí mismo). Los
+  `*.pages.dev` no se alcanzan desde la nube: para ver una prueba en rojo, quita el arreglo en local (DD-211).
+- **El rojo de una ficha se decide en un sitio** (DD-216): `ocasionDeAvisar` apunta lo que faltaba al pulsar
+  (`intentar`) y lo calla al guardar o deshacer (`olvidar`). Un aviso nuevo pasa por `ocasion.acusa(falta)` y entra en
+  `avisos` con su sección, su texto y su ancla, o el índice no lo dice y el salto no llega.
 - **`p-select` no acepta que le cambies el valor dentro de su propio `onChange`**: para devolverlo (Ring All a 2) hace
   falta `setTimeout(() => select.value.set(2))`. Y un `ng serve` que pilla `dist/` a medio construir se queda en error
   aunque el build acabe: reinícialo.

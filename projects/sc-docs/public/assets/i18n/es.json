@@ -205,10 +205,10 @@
           "have": "En el supervisor, la directiva scLlegaAlPie mide el alto que queda; lo prueba tabla-al-pie: con 2 px más de tabla, la página desplaza."
         },
         "blame": {
-          "title": "Lo que falta se dice cuando ya hubo ocasión",
-          "apply": "Un obligatorio vacío es algo por rellenar, no un error: se dice en su campo, en rojo, cuando la persona ya tuvo ocasión de rellenarlo, al dejar su sección sin ello o si lo guardado ya venía sin ello. Antes, el resumen y el motivo junto al botón dicen qué falta, sin rojo. Un error de contenido (un nombre repetido, un email mal escrito) va en vivo.",
-          "avoid": "El campo que aparece al encender una opción y nace en rojo, con su aviso y un punto en el índice, antes de poder elegir nada: parece que la persona se ha equivocado sin haber hecho nada.",
-          "have": "En el supervisor, ocasionDeAvisar decide cuándo acusa cada ficha; lo vigilan la regla 7 de audit:screen-hygiene y sin-acusar-de-primeras."
+          "title": "Lo que falta se dice al pulsar Crear o Guardar",
+          "apply": "Un obligatorio vacío es algo por rellenar, no un error: mientras se rellena, nada en rojo. «Crear» está siempre activo y, al pulsarlo con algo pendiente, no crea: cada campo lo dice, el índice marca su sección con el texto de lo que falta y se llega al primero, con el foco. Lo guardado que ya venía sin algo se dice al abrir. Un error de contenido (un nombre repetido, un email mal escrito) va en vivo. El ✓ del índice es de la sección que se dejó tal como está.",
+          "avoid": "Un punto rojo que aparece en una sección que no se está mirando, sin decir qué falta, o un ✓ en una sección que otra ha cambiado: se lee como causado por lo último que se hizo. Tampoco un botón gris con su motivo al lado, ni avisos amarillos de lo que no bloquea nada.",
+          "have": "En el supervisor, ocasionDeAvisar decide cuándo acusa cada ficha y sectionErrorHints de sc-form-section-nav pone el texto en el índice; lo vigilan la regla 7 de audit:screen-hygiene, indice-errores y sin-acusar-de-primeras."
         }
       }
     },

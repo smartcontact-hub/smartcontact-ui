@@ -158,20 +158,6 @@
   (confirm)="confirmDelete($event)"
 />
 
-<!-- Duplicar, en corto: nombre, teléfono saliente y prioridad del duplicado (la pieza de General). Todo lo
-     demás viene del original. Se pinta cuando hay algo que duplicar: sin original no hay título que dar. -->
-@if (duplicateSource(); as origen) {
-  <sc-group-duplicate-dialog
-    [visible]="duplicateOpen()"
-    [source]="origen"
-    [suggestedName]="suggestedCopyName()"
-    [existingNames]="groupNames()"
-    [phoneOptions]="outboundNumbers"
-    (cancelled)="onDuplicateCancel()"
-    (confirm)="onDuplicateConfirm($event)"
-  />
-}
-
 <sc-impact-preview-dialog
   [visible]="!!pendingBulkEdit()"
   [mode]="'bulkEdit'"

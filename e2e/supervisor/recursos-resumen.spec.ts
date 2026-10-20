@@ -14,6 +14,9 @@ import { disableAnimations, forceLightTheme, goto, irASeccion } from './helpers'
  *   3. se ofrecen todas las agendas: ya no son activas ni inactivas;
  *   4. lo borrado en Repositorios no se cuenta ni se guarda, y la ficha no abre con cambios por ello;
  *   5. en un alta también se edita: no se sale de la ficha, así que no hay alta vacía a la que volver.
+ *
+ * Desde DD-216 la ficha de grupo no lleva lápiz ni «+»: lo elegido va en chips y se edita en Repositorios. El lápiz se
+ * queda en la ficha de agente, y es donde se mide (1, 2 y 5); 3 y 4 siguen en la de grupo.
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -33,10 +36,13 @@ const abrir = async (page: Page, id: string): Promise<void> => {
 /** La opción de un recurso en el desplegable abierto. */
 const opcion = (page: Page, nombre: string) => page.locator('.p-multiselect-overlay .p-multiselect-option', { hasText: nombre });
 
-/** Los nombres de las opciones de un `sc-multiselect`, por el id de su campo (sin el lápiz). Lo deja cerrado. */
+/** Los nombres de las opciones de un `sc-multiselect`, por el id de su campo: su nombre accesible, con lápiz o sin él.
+ *  Lo deja cerrado. */
 const opciones = async (page: Page, id: string): Promise<string[]> => {
   await abrir(page, id);
-  const textos = (await page.locator('.p-multiselect-overlay .p-multiselect-option .resource-option__name').allInnerTexts()).map((t) => t.trim());
+  const textos = await page
+    .locator('.p-multiselect-overlay .p-multiselect-option')
+    .evaluateAll((es) => es.map((e) => (e.getAttribute('aria-label') ?? '').trim()));
   await page.keyboard.press('Escape');
   return textos;
 };
@@ -55,12 +61,12 @@ const lapiz = async (page: Page, nombre: string) => {
   return boton;
 };
 
-test('grupo · sin lista bajo el campo; el lápiz de una agenda abre su ventana sin salir ni marcar la opción', async ({ page }) => {
-  await goto(page, 'admin/grupos/editar/11?seccion=recursos');
+test('agente · sin lista bajo el campo; el lápiz de una agenda abre su ventana sin salir ni marcar la opción', async ({ page }) => {
+  await goto(page, 'admin/agentes/editar/3?seccion=recursos');
   await expect(page.getByRole('list', { name: 'Agendas', exact: true })).toHaveCount(0);
-  await expect(etiqueta(page, 'group-agendas')).toHaveText('3 agendas');
+  await expect(etiqueta(page, 'agent-agendas')).toHaveText('2 agendas');
 
-  await abrir(page, 'group-agendas');
+  await abrir(page, 'agent-agendas');
   // Sin pasar por ella, el lápiz no se ve: «Editar» no compite con lo que se elige.
   await expect(opcion(page, 'Cobros').getByRole('button', { name: 'Editar Cobros', exact: true })).toHaveCSS('opacity', '0');
   const editar = await lapiz(page, 'Ventas Nacional');
@@ -68,24 +74,24 @@ test('grupo · sin lista bajo el campo; el lápiz de una agenda abre su ventana 
   await editar.click();
   const ventana = page.getByRole('dialog', { name: 'Editar agenda' });
   await expect(ventana.locator('#repo-field-name')).toHaveValue('Ventas Nacional');
-  await expect(page).toHaveURL(/\/admin\/grupos\/editar\/11\?seccion=recursos$/);
+  await expect(page).toHaveURL(/\/admin\/agentes\/editar\/3\?seccion=recursos$/);
   // El clic se quedó en el lápiz: la lista se cerró y lo marcado sigue igual.
   await expect(page.locator('.p-multiselect-overlay')).toHaveCount(0);
-  await expect(etiqueta(page, 'group-agendas')).toHaveText('3 agendas');
+  await expect(etiqueta(page, 'agent-agendas')).toHaveText('2 agendas');
 
   await ventana.locator('#repo-field-name').fill('Ventas Nacional Norte');
   await ventana.getByRole('button', { name: 'Guardar', exact: true }).click();
   await expect(ventana).toBeHidden();
-  expect(await opciones(page, 'group-agendas')).toContain('Ventas Nacional Norte');
+  expect(await opciones(page, 'agent-agendas')).toContain('Ventas Nacional Norte');
 });
 
-test('grupo · una plantilla abre su ventana con su texto, sin salir de la ficha', async ({ page }) => {
-  await goto(page, 'admin/grupos/editar/11?seccion=recursos');
-  await abrir(page, 'group-templates-chat');
+test('agente · una plantilla abre su ventana con su texto, sin salir de la ficha', async ({ page }) => {
+  await goto(page, 'admin/agentes/editar/1?seccion=recursos');
+  await abrir(page, 'agent-templates-chat');
   await (await lapiz(page, 'Saludo inicial')).click();
   const ventana = page.getByRole('dialog', { name: 'Editar plantilla' });
   await expect(ventana.locator('sc-template-form-panel input').first()).toHaveValue('Saludo inicial');
-  await expect(page).toHaveURL(/\/admin\/grupos\/editar\/11\?seccion=recursos$/);
+  await expect(page).toHaveURL(/\/admin\/agentes\/editar\/1\?seccion=recursos$/);
 });
 
 test('se ofrecen todas las agendas, tengan o no la puesta el grupo', async ({ page }) => {
@@ -109,7 +115,8 @@ test('lo borrado en Repositorios no se cuenta ni se guarda, y la ficha no abre c
     );
   });
   await goto(page, 'admin/grupos/editar/11?seccion=recursos');
-  await expect(etiqueta(page, 'group-agendas')).toHaveText('2 agendas');
+  // Lo elegido, en chips (DD-216): dos, sin la borrada.
+  await expect(page.locator('sc-multiselect:has(#group-agendas) .p-multiselect-chip')).toHaveCount(2);
   await expect(page.locator('sc-top-bar').getByRole('button', { name: 'Deshacer' })).toHaveCount(0);
 
   await marcar(page, 'group-agendas', 'Soporte Premium');

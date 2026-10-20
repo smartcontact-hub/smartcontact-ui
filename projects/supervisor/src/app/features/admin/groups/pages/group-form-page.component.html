@@ -6,12 +6,10 @@
      lista; para salir ya están la miga y el menú, y el guardián de cambios avisa si dejas
      algo sin guardar. -->
 <ng-template #topbarActions>
-  <!-- El motivo va VISIBLE, y solo cuando FALTA algo (ver `saveBlockedReason`). Si no falta nada y hay
-       cambios, lo dice en palabras: un solo «Guardar» para toda la ficha, y el índice marca dónde están
-       (DD-122). `role="status"`: se anuncia una vez, al aparecer. -->
-  @if (saveBlockedReason(); as reason) {
-    <span class="form-save-reason sc-text-caption-regular">{{ reason | translate }}</span>
-  } @else if (mode() === 'edit' && formDirty()) {
+  <!-- Con cambios, lo dice en palabras: un solo «Guardar» para toda la ficha, y el índice marca dónde están (DD-122).
+       `role="status"`: se anuncia una vez, al aparecer. Sin motivo de por qué no se puede guardar (DD-216): lo que falta
+       lo dice cada campo al pulsar. -->
+  @if (mode() === 'edit' && formDirty()) {
     <span class="form-save-reason sc-text-caption-regular" role="status">{{ 'common.unsaved_changes' | translate }}</span>
   }
   @if (formDirty()) {
@@ -22,13 +20,14 @@
       (clicked)="discard()"
     />
   }
-  <!-- En el alta, «Crear grupo»: se enciende en cuanto General está completa (DD-121). -->
+  <!-- En el alta, «Crear grupo», siempre activo; al editar, «Guardar», con cambios, y apagado lo dice en su tooltip
+       (DD-212). Si falta algo, al pulsar se dice en su campo y en el índice, y se llega al primero (DD-216). -->
   <sc-button
     variant="primary"
     [disabled]="!canSave()"
     [loading]="saving()"
+    [pTooltip]="canSave() ? '' : ('common.no_changes' | translate)" tooltipPosition="top"
     [label]="(mode() === 'create' ? 'groups.form.create_submit' : 'common.save') | translate"
-    [pTooltip]="saveDisabledReason() ? (saveDisabledReason()! | translate) : ''" tooltipPosition="top"
     (clicked)="save()"
   />
 </ng-template>
@@ -76,6 +75,7 @@
         [activeId]="activeSection()"
         [labelKey]="'common.form_index_aria'"
         [sectionsWithErrors]="sectionsWithErrors()"
+        [sectionErrorHints]="sectionErrorHints()"
         [sectionsWithChanges]="sectionsWithChanges()"
         [sectionsDone]="alta.hechas()"
         [flush]="true"
@@ -104,8 +104,7 @@
       @if (showSection('group-section-agents')) {
         <ng-container *ngTemplateOutlet="seccionAgentes" />
       }
-      <!-- En el alta, «Atrás» y «Siguiente» al pie (DD-143). General es la puerta (DD-121), y «Crear grupo» sigue
-           arriba. -->
+      <!-- En el alta, «Atrás» y «Siguiente» al pie (DD-143), sin puertas (DD-216), y «Crear grupo» sigue arriba. -->
       @if (mode() === 'create') {
         <sc-alta-pie
           [conAnterior]="alta.anterior() !== null"
@@ -123,13 +122,10 @@
     <div class="ficha-summary">
       <sc-group-summary
         [channels]="formGroupChannels()"
-        [links]="form().links"
+        [links]="linksVistos()"
         [routing]="summaryRouting()"
         [outbound]="summaryOutbound()"
         [resources]="summaryResources()"
-        [missing]="summaryMissing()"
-        [creating]="mode() === 'create'"
-        [ready]="mode() === 'create' && canSave()"
         [hrefs]="summaryHrefs()"
         (ir)="irDesdeResumen($event)"
       />
@@ -173,12 +169,6 @@
   </sc-dialog>
 }
 
-<!-- Crear o editar una agenda o una plantilla sin salir de la ficha: la misma ventana para el «+» del campo y para el
-     «Editar» de cada fila (DD-187). -->
-@if (recursoAbierto(); as r) {
-  <app-recurso-dialog [recurso]="r" (creado)="alCrearRecurso(r, $event)" (cerrar)="recursoAbierto.set(null)" />
-}
-
 @if (creatingLabel()) {
   <sc-dialog
     [visible]="true"
@@ -218,8 +208,7 @@
       />
     </sc-subsection>
 
-    <!-- Que falte marcar un canal no es contenido equivocado: lo dicen el punto del índice, el resumen y el
-         motivo junto a Guardar. -->
+    <!-- Los canales no son obligatorios (DD-216): un grupo sin canal agrupa agentes sin repartir conversaciones. -->
     <sc-subsection titleKey="groups.form.channels.title" hintKey="groups.form.channels.hint">
       <!-- En las tres columnas de Nombre y Prioridad (DD-170). -->
       <div class="checkbox-grid checkbox-grid--3">
@@ -238,9 +227,6 @@
           <sc-checkbox class="checkbox-row" [state]="hasEmail() ? 'all' : 'none'" (cycle)="toggleChannel('email')">{{ channelKeys.email | translate }}</sc-checkbox>
         </div>
       </div>
-      @if (channelsError()) {
-        <p class="field__error sc-text-caption-regular" role="alert">{{ 'groups.errors.channels_required' | translate }}</p>
-      }
     </sc-subsection>
 
     <!-- LA POSTCONVERSACIÓN DEL GRUPO (revisión de tipificaciones del 2026-10-09, la propuesta de producto): si el agente
@@ -290,14 +276,12 @@
                 [value]="form().wrapUp.typificationId"
                 (valueChange)="onTypificationChange($event)"
               />
-              <!-- Qué es, bajo su campo (DD-198): su descripción y «Ver detalle», que abre su árbol entero con «Editar en
-                   Repositorios». Sustituye al botón de las tres rayas de sc-agent, que se leía como «más acciones»
-                   (revisión del 2026-10-15; `menu` es de la navegación, DD-200). -->
+              <!-- «Ver detalle», bajo su campo (DD-198), abre su árbol entero con «Editar en Repositorios». Sustituye al botón
+                   de las tres rayas de sc-agent, que se leía como «más acciones» (revisión del 2026-10-15; `menu` es de
+                   la navegación, DD-200). Sin su descripción desde la revisión del 2026-10-20 (DD-216): cambiaba con
+                   cada tipificación y alargaba el campo sin decidir nada. -->
               @if (typification(); as t) {
                 <div class="wrapup__detail">
-                  @if (t.description) {
-                    <p class="wrapup__description sc-text-caption-regular">{{ t.description }}</p>
-                  }
                   <sc-button
                     appearance="text"
                     size="sm"
@@ -308,7 +292,7 @@
                   />
                 </div>
               }
-              <!-- Lo que falta, bajo su campo: al editar, o en el alta desde que se intenta salir (DD-199). -->
+              <!-- Lo que falta, bajo su campo, al pulsar Crear o Guardar sin ella (DD-216). -->
               @if (typificationError()) {
                 <p class="field__error sc-text-caption-regular" role="alert">{{ 'groups.errors.typification_required' | translate }}</p>
               }
@@ -371,6 +355,10 @@
         </div>
       </div>
       <!-- Sin «Desbordar sesión» desde DD-141: era de Chat, y lo cubre «Caducar sesión». -->
+      <!-- Sin canales (DD-216), la sección no tiene bloques: lo dice, y dónde se marcan. -->
+      @if (form().channels.size === 0) {
+        <p class="field__help sc-text-caption-regular">{{ 'groups.form.distribution.no_channels' | translate }}</p>
+      }
     </sc-subsection>
 
     @if (hasPhone()) {
@@ -666,63 +654,48 @@
   >
     <sc-subsection titleKey="sidebar.repositories">
       <div class="bloque">
-      <!-- Las agendas en su fila y las plantillas juntas en la de debajo: en la misma rejilla, «Plantillas de chat» iba
-           al lado de las agendas y «Plantillas de email» bajaba sola. -->
-      <div class="grid grid--2">
+      <!-- Cada campo en su fila, a todo el ancho: lo elegido va en chips que se quitan con su «×» (la del DS, en rojo al
+           pasar), y a media columna el tercero se cortaba y no se veía el «+N más» (medido a 1440 en el grupo 11). Sin
+           «+» al lado ni lápiz en las opciones: se crean y se editan en Repositorios (revisión del 2026-10-20, DD-216, que
+           retira el «+» de DD-167 y el lápiz de la revisión del 2026-10-14). -->
+      <div class="grid">
         <div class="field">
           <label class="field__label sc-text-caption-semibold" for="group-agendas">
             {{ 'agents.form.advanced.agendas.title' | translate }}
           </label>
-          <div class="control-add">
-            <sc-multiselect
-              #agendasSelect
-              inputId="group-agendas"
-              optionLabel="label"
-              optionValue="value"
-              [filter]="true"
-              [maxSelectedLabels]="0"
-              [selectedItemsLabel]="(scheduleValue().length === 1 ? 'resources.agendas_count_one' : 'resources.agendas_count') | translate"
-              [placeholder]="'resources.none' | translate"
-              [options]="scheduleOptions()"
-              [value]="scheduleValue()"
-              (valueChange)="onIdsChange('scheduleIds', $event)"
-            >
-              <!-- «Editar» en la propia opción, al pasar (revisión del 2026-10-14): sin lista de debajo. -->
-              <ng-template #item let-option>
-                <sc-resource-option [name]="option.label" (editar)="agendasSelect.hide(); recursoAbierto.set({ tipo: 'agenda', id: option.value })" />
-              </ng-template>
-            </sc-multiselect>
-            <sc-button icon="add" variant="secondary" [ariaLabel]="'groups.form.fields.agenda_new' | translate" [pTooltip]="'groups.form.fields.agenda_new' | translate" tooltipPosition="top" (clicked)="recursoAbierto.set({ tipo: 'agenda', id: null })" />
-          </div>
+          <sc-multiselect
+            inputId="group-agendas"
+            optionLabel="label"
+            optionValue="value"
+            [filter]="true"
+            display="chip"
+            chipOverflow="more"
+            [maxSelectedLabels]="3"
+            [placeholder]="'resources.none' | translate"
+            [options]="scheduleOptions()"
+            [value]="scheduleValue()"
+            (valueChange)="onIdsChange('scheduleIds', $event)"
+          />
         </div>
-      </div>
 
-      <div class="grid grid--2">
         @if (hasChatFamily()) {
           <div class="field">
             <label class="field__label sc-text-caption-semibold" for="group-templates-chat">
               {{ 'resources.templates_chat' | translate }}
             </label>
-            <div class="control-add">
-              <sc-multiselect
-                #chatTemplatesSelect
-                inputId="group-templates-chat"
-                optionLabel="label"
-                optionValue="value"
-                [filter]="true"
-                [maxSelectedLabels]="0"
-                [selectedItemsLabel]="(chatTemplateValue().length === 1 ? 'resources.templates_count_one' : 'resources.templates_count') | translate"
-                [placeholder]="'resources.none' | translate"
-                [options]="chatTemplateOptions()"
-                [value]="chatTemplateValue()"
-                (valueChange)="onTemplatesChange('chat', $event)"
-              >
-                <ng-template #item let-option>
-                  <sc-resource-option [name]="option.label" (editar)="chatTemplatesSelect.hide(); recursoAbierto.set({ tipo: 'chat', id: option.value })" />
-                </ng-template>
-              </sc-multiselect>
-              <sc-button icon="add" variant="secondary" [ariaLabel]="'groups.form.fields.template_new' | translate" [pTooltip]="'groups.form.fields.template_new' | translate" tooltipPosition="top" (clicked)="recursoAbierto.set({ tipo: 'chat', id: null })" />
-            </div>
+            <sc-multiselect
+              inputId="group-templates-chat"
+              optionLabel="label"
+              optionValue="value"
+              [filter]="true"
+              display="chip"
+              chipOverflow="more"
+              [maxSelectedLabels]="3"
+              [placeholder]="'resources.none' | translate"
+              [options]="chatTemplateOptions()"
+              [value]="chatTemplateValue()"
+              (valueChange)="onTemplatesChange('chat', $event)"
+            />
           </div>
         }
 
@@ -731,26 +704,19 @@
             <label class="field__label sc-text-caption-semibold" for="group-templates-email">
               {{ 'resources.templates_email' | translate }}
             </label>
-            <div class="control-add">
-              <sc-multiselect
-                #emailTemplatesSelect
-                inputId="group-templates-email"
-                optionLabel="label"
-                optionValue="value"
-                [filter]="true"
-                [maxSelectedLabels]="0"
-                [selectedItemsLabel]="(emailTemplateValue().length === 1 ? 'resources.templates_count_one' : 'resources.templates_count') | translate"
-                [placeholder]="'resources.none' | translate"
-                [options]="emailTemplateOptions()"
-                [value]="emailTemplateValue()"
-                (valueChange)="onTemplatesChange('email', $event)"
-              >
-                <ng-template #item let-option>
-                  <sc-resource-option [name]="option.label" (editar)="emailTemplatesSelect.hide(); recursoAbierto.set({ tipo: 'email', id: option.value })" />
-                </ng-template>
-              </sc-multiselect>
-              <sc-button icon="add" variant="secondary" [ariaLabel]="'groups.form.fields.template_new' | translate" [pTooltip]="'groups.form.fields.template_new' | translate" tooltipPosition="top" (clicked)="recursoAbierto.set({ tipo: 'email', id: null })" />
-            </div>
+            <sc-multiselect
+              inputId="group-templates-email"
+              optionLabel="label"
+              optionValue="value"
+              [filter]="true"
+              display="chip"
+              chipOverflow="more"
+              [maxSelectedLabels]="3"
+              [placeholder]="'resources.none' | translate"
+              [options]="emailTemplateOptions()"
+              [value]="emailTemplateValue()"
+              (valueChange)="onTemplatesChange('email', $event)"
+            />
           </div>
         }
 

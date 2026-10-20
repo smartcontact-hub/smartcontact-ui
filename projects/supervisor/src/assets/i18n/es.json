@@ -53,7 +53,7 @@
       "attended": "Atendidas",
       "rejected": "Rechazadas",
       "transferred": "Transferidas",
-      "avg_time": "T. medio",
+      "avg_time": "T.\u00a0medio",
       "totals": "Totales"
     },
     "group_panel": {
@@ -225,7 +225,7 @@
       "col_conversation": "Conversación",
       "col_time": "Tiempo",
       "col_agent": "Agente",
-      "col_in_state": "En este estado"
+      "col_in_state": "En\u00a0este\u00a0estado"
     },
     "assistant": {
       "title_new": "Crear widget",
@@ -1014,7 +1014,6 @@
     "summary": "Resumen",
     "summary_missing": "Falta: {{items}}",
     "summary_missing_name": "nombre",
-    "summary_ready": "Listo para crear",
     "summary_of": "{{value}} de {{total}}",
     "actions": "Acciones",
     "select_row": "Seleccionar {{name}}",
@@ -1567,15 +1566,14 @@
       "delete_option_body_one": "Se elimina también la opción que tiene debajo.",
       "errors": {
         "option_taken": "Ya hay «{{name}}» en este nivel",
-        "name_taken": "Ya hay una tipificación con este nombre"
+        "name_taken": "Ya hay una tipificación con este nombre",
+        "name_required": "El nombre es obligatorio",
+        "options_required": "Añade al menos una opción",
+        "names_required": "Dale a cada opción un nombre distinto"
       },
       "section": {
         "general": "General",
         "categorization": "Categorías"
-      },
-      "missing": {
-        "options": "al menos una opción",
-        "names": "un nombre distinto en cada opción"
       },
       "categorization_hint": "Lo que elige el agente, en hasta tres niveles. Cada rama llega hasta donde haga falta",
       "rename_field": "Nuevo nombre de la opción",
@@ -1822,14 +1820,12 @@
         "apply_body_other": "Cambia {{count}} casillas de Acceso. Si las mantienes, el tipo cambia igual y Acceso sigue como está.",
         "apply": "Aplicar la plantilla",
         "keep": "Mantener las casillas"
-      },
-      "summary": {
-        "missing_email": "email"
       }
     },
     "errors": {
       "name_required": "El nombre es obligatorio",
-      "email_invalid": "Introduce un email válido"
+      "email_invalid": "Introduce un email válido",
+      "email_required": "Escribe el email"
     },
     "toasts": {
       "created": "Usuario \"{{name}}\" creado",
@@ -1875,10 +1871,6 @@
   "groups": {
     "page_title": "Grupos",
     "create_button": "Nuevo grupo",
-    "create_dialog": {
-      "duplicate_subtitle": "Se copian los agentes, los canales y los ajustes de «{{source}}». El teléfono saliente, no.",
-      "copy_name": "{{name}} (copia)"
-    },
     "search_placeholder": "Buscar grupos…",
     "no_results_query": "No hay grupos que coincidan con «{{query}}».",
     "entity_singular": "grupo",
@@ -1956,7 +1948,6 @@
         "warn_no_channels": "Habilitado, pero sin canales asignados",
         "add_placeholder": "Añadir agentes…",
         "add_aria": "Añadir agente al grupo",
-        "no_channels_warn": "{{count}} sin canal: salen al guardar",
         "bulk_unassign": "Quitar del grupo",
         "col_level": "Nivel {{channel}}",
         "level_aria": "Nivel de {{name}} — {{channel}}",
@@ -2113,25 +2104,17 @@
       "summary": {
         "none": "Ninguno",
         "paused": "Deshabilitado",
-        "no_channels": "Sin canales",
         "priority": "Prioridad: {{value}}",
         "title": "Resumen",
         "agents_active": "Agentes habilitados",
         "paused_count": "{{count}} deshabilitados",
-        "no_agents": "Sin agentes",
         "routing": "Distribución",
         "no_number": "Sin número",
-        "resources": "Recursos",
-        "resources_quick": "Ver recursos del grupo",
-        "resources_empty": "Sin recursos asignados",
-        "resources_see": "Ver recursos",
-        "missing_channels": "canales",
-        "missing_phone": "teléfono saliente",
-        "missing_typification": "tipificación"
+        "resources": "Recursos"
       },
       "channels": {
         "title": "Canales",
-        "hint": "Al menos uno. Lo que marques aquí decide qué configuras en Distribución y colas."
+        "hint": "Lo que marques aquí decide qué configuras en Distribución y colas."
       },
       "distribution": {
         "common_title": "Reglas comunes",
@@ -2144,7 +2127,8 @@
         "jump_aria": "Canales de esta sección",
         "outbound": "Llamadas salientes",
         "webchat_hint": "Sus mensajes, su horario y las webs donde se inserta. Un mensaje vacío no se envía.",
-        "whatsapp_hint": "Su número y, con él, sus mensajes y su horario. Un mensaje vacío no se envía."
+        "whatsapp_hint": "Su número y, con él, sus mensajes y su horario. Un mensaje vacío no se envía.",
+        "no_channels": "Este grupo no tiene canales: no reparte conversaciones. Los canales se marcan en General."
       },
       "chat": {
         "close_on_inactivity": "Caducar sesión",
@@ -2186,7 +2170,6 @@
     },
     "errors": {
       "name_required": "El nombre es obligatorio",
-      "channels_required": "Selecciona al menos un canal",
       "name_taken": "Ya hay un grupo con este nombre",
       "phone_required": "El teléfono saliente es obligatorio",
       "typification_required": "Elige una tipificación"
@@ -2402,8 +2385,7 @@
         "not_allowed_hint": "{{channel}} no está entre sus canales (General)",
         "bulk_add": "Asignar al agente",
         "bulk_remove": "Quitar al agente",
-        "bulk_body": "{{action}}: {{count}} grupos.",
-        "no_channels_warn": "{{count}} sin canal: salen al guardar"
+        "bulk_body": "{{action}}: {{count}} grupos."
       },
       "allowed": {
         "title": "Canales permitidos",
@@ -2437,13 +2419,7 @@
       "summary": {
         "no_groups": "Sin grupos",
         "groups_active": "Habilitado en grupos",
-        "missing_extension": "extensión",
-        "missing_phone": "teléfono móvil",
         "outbound": "Salientes",
-        "missing_email": "email",
-        "missing_channel": "un canal",
-        "missing_group": "un grupo",
-        "missing_outbound": "un grupo para las salientes",
         "channels": "Canales",
         "no_channels": "Sin canales",
         "none": "Ninguno"
