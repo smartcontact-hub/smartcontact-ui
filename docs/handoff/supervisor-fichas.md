@@ -98,8 +98,8 @@ sube a «Trampas del frente».
 
 - **Grupos** (DD-159): «Agentes» sin candado en «Columnas»; con 0, `sc-group-popover` en `count` pinta «—» y sigue
   siendo el botón que abre el panel (también Servicios con 0). Agentes sin grupos ya salía «—» (DD-210).
-- **Tooltip del Kit (DD-212)**: 39 `title` nativos pasan a `pTooltip`, los textos cortados con `showOnEllipsis`;
-  `audit:screen-hygiene` regla 9, con Monitor y Conversaciones en su trinquete. Queda `sc-tag` (recorta dentro del `p-tag`).
+- **Tooltip del Kit (DD-212)**: 39 `title` nativos a `pTooltip` (lo cortado, con `showOnEllipsis`); Monitor, Conversaciones
+  y `sc-tag` en #462, regla 9 sin trinquete, y ficha en sc-docs con su API nativa (`NATIVOS_ADOPTADOS`).
 - **Prioridad**: «Solo para las conversaciones entrantes.». **Duplicar sin Call Blending**, sin el teléfono saliente:
   anotado en `figma-pendiente` §50. Pruebas: `panel-agentes-grupo`, `columnas-en-una-lista`, `tooltips-del-kit`; rojas sin.
 - **Trampas**: `sc-docs-a11y` medía la ficha anterior con el nombre de la siguiente (ya espera). En el panel de navegador

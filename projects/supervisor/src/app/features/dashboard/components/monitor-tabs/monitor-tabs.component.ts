@@ -4,6 +4,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MenuModule } from 'primeng/menu';
 import { Popover, PopoverModule } from 'primeng/popover';
 import { TabsModule } from 'primeng/tabs';
+import { TooltipModule } from 'primeng/tooltip';
 import type { MenuItem } from 'primeng/api';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 import { ScInlineRenameCellComponent as InlineRenameCellComponent } from '@smartcontact-hub/components';
@@ -34,6 +35,7 @@ let monitorTabsMenuIdCounter = 0;
     MenuModule,
     PopoverModule,
     TabsModule,
+    TooltipModule,
     CdkDropList,
     CdkDrag,
     ButtonComponent,

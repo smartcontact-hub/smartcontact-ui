@@ -21,7 +21,7 @@
 import { readFileSync, writeFileSync, readdirSync, existsSync, statSync, mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { rewriteRegion } from './marker-rewrite.mjs';
-import { PROVENANCE_OVERRIDE, DEMO_EXEMPT, PRIMENG_UTIL, NESTED_IGNORE, CUANDO, MODULO_A_TEMA, CUBIERTO_POR_NUESTRO, KIT_MAESTROS, KIT_ALIAS } from './component-audit-map.mjs';
+import { PROVENANCE_OVERRIDE, DEMO_EXEMPT, PRIMENG_UTIL, NESTED_IGNORE, CUANDO, MODULO_A_TEMA, CUBIERTO_POR_NUESTRO, KIT_MAESTROS, KIT_ALIAS, NATIVOS_ADOPTADOS } from './component-audit-map.mjs';
 import { apiConHerencia } from '../tools/primeng-doc.mjs';
 
 const root = resolve(import.meta.dirname, '..');
@@ -372,6 +372,73 @@ export function estadoDe({ kit, hasDemo, retirado }) {
   if (retirado) return { estado: 'deprecated', faltas: [] };
   const faltas = [...(kit ? [] : ['kit']), ...(hasDemo ? [] : ['demo'])];
   return { estado: faltas.length ? 'experimental' : 'ready', faltas };
+}
+
+/** El primer argumento de un genérico, respetando los anidados: `boolean, unknown` → `boolean`. */
+function primerGenerico(lista) {
+  let nivel = 0;
+  for (let i = 0; i < lista.length; i += 1) {
+    if (lista[i] === '<') nivel += 1;
+    else if (lista[i] === '>') nivel -= 1;
+    else if (lista[i] === ',' && nivel === 0) return lista.slice(0, i).trim();
+  }
+  return lista.trim();
+}
+
+/**
+ * Las ENTRADAS de una clase de PrimeNG tal como se escriben: su nombre público (`content` se escribe `pTooltip`), si es
+ * obligatoria y su tipo, leídos de su declaración en el `.d.ts` instalado. `apiConHerencia` da la documentación de cada
+ * prop, pero con el nombre del campo, y una entrada con alias se escribe con el alias.
+ */
+export function entradasDeclaradas(dts, clase) {
+  const out = new Map();
+  const linea = dts.split('\n').find((l) => new RegExp(`\u0275\u0275(?:Directive|Component)Declaration<${clase}\\b`).test(l)) ?? '';
+  const inicio = dts.indexOf(`declare class ${clase} `);
+  const fin = dts.indexOf('declare class ', inicio + 1);
+  const cuerpo = inicio < 0 ? '' : dts.slice(inicio, fin < 0 ? undefined : fin);
+  for (const [, campo, alias, requerido] of linea.matchAll(/"(\w+)": \{ "alias": "([^"]+)"; "required": (true|false)/g)) {
+    const senal = cuerpo.match(new RegExp(`\\n\\s*(?:readonly\\s+)?${campo}:\\s*[\\w.]*Input(?:Signal|SignalWithTransform)<(.+)>;`));
+    const tipo = senal ? primerGenerico(senal[1]).replace(/\s*\|\s*undefined$/, '') : '';
+    out.set(campo, { alias, requerido: requerido === 'true', tipo });
+  }
+  return out;
+}
+
+/**
+ * Un NATIVO de PrimeNG que el DS adopta tal cual, sin un `sc-*` que lo envuelva (`NATIVOS_ADOPTADOS`). Sin componente
+ * nuestro no había contrato que leer, y su página de sc-docs se habría quedado en «Cargando la API…». Su API es la de la
+ * versión INSTALADA, toda nativa y con el nombre con que se escribe cada entrada, la que da nombre a la directiva
+ * primero; su estado sale del Kit y de su página, como el de cualquier otro (DD-190).
+ * PURA respecto a `leerTipos` y `pagesText` → testeable sin `node_modules`.
+ */
+export function analyzeNativo({ name, selector, modulo, pagesText, leerTipos }) {
+  const dts = leerTipos(modulo);
+  const clase = dts == null ? null : apiConHerencia(modulo, leerTipos).find((c) => c.selector.split(',').map((x) => x.trim()).includes(`[${selector}]`));
+  const entradas = clase ? entradasDeclaradas(dts, clase.nombre) : new Map();
+  const contrato = (clase?.props ?? [])
+    .map((p) => {
+      const e = entradas.get(p.prop);
+      return {
+        nombre: e?.alias ?? p.prop,
+        clase: p.modelo ? 'model' : 'input',
+        tipo: e?.tipo ?? '',
+        porDefecto: null,
+        requerido: e?.requerido ?? false,
+        descripcion: null,
+        origen: 'nativo',
+        nativo: { descripcion: p.descripcion || null, porDefecto: p.porDefecto || null, obsoleta: p.obsoleta || null, heredadaDe: p.heredadaDe ?? null },
+      };
+    })
+    .sort((a, b) => Number(b.nombre === selector) - Number(a.nombre === selector));
+  const hasDemo = new RegExp(`path:\\s*['"]${name}['"]`).test(pagesText);
+  const { estado, faltas } = estadoDe({ kit: tieneMaestroEnKit(name), hasDemo, retirado: null });
+  return { selector, name, primengBase: `primeng/${modulo}`, estado, faltas, retirado: null, cuando: CUANDO[selector] ?? null, contrato, ocultas: [] };
+}
+
+/** Los nativos adoptados, con la API instalada y el registro de páginas de sc-docs. */
+export function auditNativos(leerTipos = leerTiposInstalados) {
+  const pagesText = existsSync(PAGES) ? readFileSync(PAGES, 'utf8') : '';
+  return Object.entries(NATIVOS_ADOPTADOS).map(([name, n]) => analyzeNativo({ name, ...n, pagesText, leerTipos }));
 }
 
 /** Los módulos `primeng/<x>` que envuelve un componente, sin las utilidades. */
@@ -737,6 +804,9 @@ export function huerfanas(previo, rows) {
 if (import.meta.url === `file://${process.argv[1]}`) {
   const cmd = process.argv[2] || (process.argv.includes('--write') ? '--write' : process.argv.includes('--emit') ? '--emit' : 'check');
   const rows = audit();
+  /* Los nativos adoptados van SOLO al contrato que lee sc-docs: no son componentes del DS, así que no entran en la
+   * pokédex, ni en la tabla de inventory.md, ni en el informe del Supervisor. */
+  const adoptados = auditNativos();
 
   const catalogo = await catalogoAura();
   /* Qué módulos de PrimeNG envolvemos de verdad, derivado de los imports de cada wrapper. */
@@ -744,8 +814,8 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     rows.flatMap((r) => [...r.primengBase.matchAll(/primeng\/([a-z0-9-]+)/g)].map((m) => MODULO_A_TEMA[m[1]] ?? m[1])),
   );
   /* Un componente sin su línea de CUANDO entra mudo, y mudo no se puede elegir. */
-  const sinCuando = rows.filter((r) => !r.cuando).map((r) => r.selector);
-  const cuandoHuerfano = Object.keys(CUANDO).filter((s) => !rows.some((r) => r.selector === s));
+  const sinCuando = [...rows, ...adoptados].filter((r) => !r.cuando).map((r) => r.selector);
+  const cuandoHuerfano = Object.keys(CUANDO).filter((s) => ![...rows, ...adoptados].some((r) => r.selector === s));
 
   /* DOS artefactos de UNA pasada, y por qué separados: la pokédex la lee un humano en el diff
    * de cada PR (y el CHECK E de `docs:coherence` cuenta sus filas), mientras que el contrato son
@@ -773,7 +843,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
         primeng: versionPrimeng,
         catalogoPrimeng: catalogo.map((c) => ({ componente: c, envuelto: envueltos.has(c) })),
         nota: 'Contrato de los componentes del DS, cruzado con la API de la versión de PrimeNG instalada. NO editar a mano.',
-        components: rows.map((r) => ({ selector: r.selector, name: r.name, primengBase: r.primengBase, estado: r.estado, faltas: r.faltas, retirado: r.retirado, cuando: r.cuando, contrato: r.contrato, ocultas: r.ocultas })),
+        components: [...rows, ...adoptados].map((r) => ({ selector: r.selector, name: r.name, primengBase: r.primengBase, estado: r.estado, faltas: r.faltas, retirado: r.retirado, cuando: r.cuando, contrato: r.contrato, ocultas: r.ocultas })),
       },
       null,
       2,

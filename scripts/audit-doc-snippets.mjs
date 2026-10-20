@@ -66,11 +66,12 @@ const sh = (cmd) => {
 
 /**
  * Atributos que no son API del componente y por tanto no se comprueban: HTML de toda la vida,
- * ARIA, data-*, y la sintaxis estructural de Angular. Acotado a propósito: cuanto más ancho, menos
- * dice el gate.
+ * ARIA, data-*, la sintaxis estructural de Angular y las entradas del `pTooltip` de PrimeNG, una
+ * directiva que va sobre cualquier elemento, también sobre un `sc-*` (el tooltip del Kit, DD-212).
+ * Acotado a propósito: cuanto más ancho, menos dice el gate.
  */
 export const ATRIBUTO_GENERICO =
-  /^(class|style|id|type|title|role|href|src|alt|width|height|name|value|placeholder|for|colspan|rowspan|hidden|tabindex|aria-[\w-]+|data-[\w-]+|ng[A-Z]\w*|\*\w+|#\w+)$/;
+  /^(class|style|id|type|title|role|href|src|alt|width|height|name|value|placeholder|for|colspan|rowspan|hidden|tabindex|aria-[\w-]+|data-[\w-]+|ng[A-Z]\w*|\*\w+|#\w+|pTooltip|tooltip[A-Z]\w*|showOnEllipsis)$/;
 
 /** Lee la API pública de los componentes del DS: selector → props que acepta. */
 export function apiDeComponentes(ficheros, leer = (f) => readFileSync(f, 'utf8')) {

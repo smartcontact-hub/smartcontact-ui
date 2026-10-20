@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { MeterGroupModule } from 'primeng/metergroup';
+import { TooltipModule } from 'primeng/tooltip';
 
 import type { RankedItem } from '../../data/dashboard.types';
 import { AnimateOnChangeDirective } from '@core/directives';
@@ -11,7 +12,7 @@ import { AnimateOnChangeDirective } from '@core/directives';
  */
 @Component({
   selector: 'sc-dashboard-ranked-list',
-  imports: [TranslateModule, MeterGroupModule, AnimateOnChangeDirective],
+  imports: [TooltipModule, TranslateModule, MeterGroupModule, AnimateOnChangeDirective],
   templateUrl: './ranked-list-widget.component.html',
   styleUrl: './ranked-list-widget.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

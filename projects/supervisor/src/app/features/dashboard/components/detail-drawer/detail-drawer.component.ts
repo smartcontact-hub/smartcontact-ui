@@ -20,6 +20,7 @@ import {
 } from '@smartcontact-hub/components';
 import type { ScColumnCellContext, ScColumnDef } from '@smartcontact-hub/components';
 import { SC_ICON_SIZE_DEFAULT, ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
+import { TooltipModule } from 'primeng/tooltip';
 
 import { injectLangChange } from '@core/utils/lang-change';
 
@@ -50,7 +51,7 @@ const CHANNEL_ICON: Readonly<Record<DetailChannel, string>> = { calls: 'call', c
  */
 @Component({
   selector: 'sc-dashboard-detail-drawer',
-  imports: [TranslateModule, BadgeComponent, DatatableComponent, DrawerComponent, IconComponent],
+  imports: [TooltipModule, TranslateModule, BadgeComponent, DatatableComponent, DrawerComponent, IconComponent],
   templateUrl: './detail-drawer.component.html',
   styleUrl: './detail-drawer.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

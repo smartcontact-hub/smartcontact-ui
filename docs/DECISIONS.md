@@ -266,15 +266,23 @@ Prioridad decía «llamadas», y la prioridad cuenta en las conversaciones entra
    tipo de extensión, presencia), siempre; un texto cortado (nombre, email, descripción), con `showOnEllipsis`, que solo
    lo enseña si se ve «…»; el porqué de un botón apagado («Guardar» sin cambios o sin lo obligatorio), siempre. En algo
    que se enfoca (la foto, copiar el nombre al borrar, «Columnas», el inicio de la barra), `tooltipEvent="both"`.
-2. **La regla 9 de `audit:screen-hygiene`** lo vigila: un `title` nativo nuevo en el Supervisor o en el DS pone el gate
-   en rojo. Monitor y Conversaciones quedan en su trinquete (12 ficheros), que solo baja.
+2. **La regla 9 de `audit:screen-hygiene`** lo vigila: un `title` nativo en el Supervisor o en el DS pone el gate en
+   rojo. Monitor y Conversaciones (12 ficheros, que esperaron en un trinquete) pasaron el mismo día con la misma regla,
+   y el trinquete ya no existe.
 3. **Prioridad**: «Solo para las conversaciones entrantes.» (en los cuatro idiomas), en la ficha y en Duplicar, que
    comparten la pieza.
 4. **Duplicar grupo**: sin Call Blending contratado no sale el desplegable «Teléfono saliente». El prototipo lo enseña
    todo (DD-211); va como anotación de lo contratado en `figma-pendiente` §50.
 
-**Queda** · `sc-tag` recorta dentro del `p-tag` de PrimeNG y devuelve el texto entero en `title`; en las tablas entregadas
-las etiquetas caben enteras (DD-210), así que no se ve. Pasarlo a `pTooltip` pide rehacer cómo mide el recorte.
+**`sc-tag`** (el mismo día) · Recorta dentro del `p-tag` de PrimeNG, en su `.p-tag-label`, y `showOnEllipsis` mide el
+elemento que lleva el tooltip: la pastilla entera, que no se desborda. Así que mide el recorte al entrar el puntero
+(`pointerenter`, que llega antes que el `mouseenter` con el que el tooltip decide) y pasa el valor entero al `pTooltip`
+de la pastilla solo si está recortada. En la variante `label`, que pinta su propio texto, `showOnEllipsis` sobre él.
+
+**sc-docs** (2026-10-20) · El tooltip tiene su ficha en Componentes → Overlays, con los cuatro casos (un icono, un
+texto cortado, un botón apagado y con teclado). Como no hay `sc-tooltip`, `audit:components` genera el contrato de los
+nativos que el DS adopta tal cual (`NATIVOS_ADOPTADOS`): su API es la de la versión de PrimeNG instalada y su estado,
+«Listo», sale del maestro del Kit y de la ficha, como el de cualquier otro (DD-190).
 
 **Descartado** · Una directiva propia que mida el recorte: `showOnEllipsis` ya lo hace en PrimeNG 22.
 

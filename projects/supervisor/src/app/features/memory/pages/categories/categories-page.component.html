@@ -53,7 +53,7 @@
 </ng-template>
 
 <ng-template #descTpl let-cat>
-  <span class="categories-table__td-desc sc-text-body-regular" [attr.title]="cat.description">{{ cat.description }}</span>
+  <span class="categories-table__td-desc sc-text-body-regular" [pTooltip]="cat.description" showOnEllipsis tooltipPosition="top">{{ cat.description }}</span>
 </ng-template>
 
 <ng-template #usedInTpl let-cat>

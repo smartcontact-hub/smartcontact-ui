@@ -68,7 +68,7 @@
           }
           <!-- «documento con análisis» (librería Smart-Contact Icons, «Custom»): no está en Material,
                así que va en SVG proyectado, con la geometría 24/18 de la librería. -->
-          <sc-button variant="secondary" appearance="text" size="sm" [label]="'memory.player.actions.analyze' | translate" [attr.title]="analyzeTitleKey() | translate" [disabled]="analyzeDisabled()" data-testid="player-analyze-btn" (clicked)="onRequestAnalysis()">
+          <sc-button variant="secondary" appearance="text" size="sm" [label]="'memory.player.actions.analyze' | translate" [pTooltip]="analyzeDisabledReason() ? (analyzeDisabledReason()! | translate) : ''" tooltipPosition="top" [disabled]="analyzeDisabled()" data-testid="player-analyze-btn" (clicked)="onRequestAnalysis()">
             <ng-template #scButtonIcon>
               <svg class="player-tabs__glyph" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true">
                 <path d="M2.3333 14.7778Q1.6917 14.7778 1.2347 14.3208Q0.7778 13.8639 0.7778 13.2222V0.7778Q0.7778 0.1361 1.2347 -0.3208Q1.6917 -0.7778 2.3333 -0.7778H7.9139Q8.225 -0.7778 8.5069 -0.6611Q8.7889 -0.5444 9.0028 -0.3306L12.775 3.4417Q12.9889 3.6556 13.1056 3.9375Q13.2222 4.2194 13.2222 4.5306V13.2222Q13.2222 13.8639 12.7653 14.3208Q12.3083 14.7778 11.6667 14.7778ZM7.7778 3.8889V0.7778H2.3333V13.2222H11.6667V4.6667H8.5556Q8.225 4.6667 8.0014 4.4431Q7.7778 4.2194 7.7778 3.8889Z" />
@@ -244,7 +244,8 @@
                   </span>
                   <span
                     class="player-section__aside sc-text-caption-regular"
-                    [attr.title]="'memory.player.analysis.ai_generated_hint' | translate"
+                    [pTooltip]="'memory.player.analysis.ai_generated_hint' | translate"
+                    tooltipPosition="top"
                   >
                     <sc-icon [name]="sparklesIcon" size="inherit" />
                     {{ 'memory.player.analysis.ai_generated' | translate }}

@@ -1,0 +1,34 @@
+<app-story-host [meta]="meta" [stories]="stories()" />
+
+<ng-template #icono>
+  <sc-tag severity="secondary" icon="description" role="img" aria-label="Transcribe" pTooltip="Transcribe" tooltipPosition="top" />
+</ng-template>
+
+<!-- Dos nombres en la misma caja: el primero cabe y no lleva tooltip; el segundo se corta y lo enseña entero. -->
+<ng-template #cortado>
+  <div class="tt-columna">
+    <span class="tt-nombre sc-text-body-regular" pTooltip="Atención al cliente" showOnEllipsis tooltipPosition="top">Atención al cliente</span>
+    <span
+      class="tt-nombre sc-text-body-regular"
+      pTooltip="Reclamaciones de facturación y cobros indebidos"
+      showOnEllipsis
+      tooltipPosition="top"
+    >
+      Reclamaciones de facturación y cobros indebidos
+    </span>
+  </div>
+</ng-template>
+
+<ng-template #apagado>
+  <sc-button label="Guardar" [disabled]="true" pTooltip="No hay cambios que guardar" tooltipPosition="top" />
+</ng-template>
+
+<ng-template #teclado>
+  <sc-button
+    label="Datos de demo"
+    variant="secondary"
+    pTooltip="Cambia el conjunto de datos del prototipo"
+    tooltipPosition="top"
+    tooltipEvent="both"
+  />
+</ng-template>

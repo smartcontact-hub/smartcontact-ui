@@ -1,0 +1,16 @@
+/* Los dos nombres del ejemplo de texto cortado, uno debajo del otro: dentro de una pieza, 7. */
+.tt-columna {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
+}
+
+/* La caja de una celda estrecha: el primer nombre cabe y el segundo no. `showOnEllipsis` mide este elemento, que es el
+ * que recorta. */
+.tt-nombre {
+  display: block;
+  max-width: 12rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

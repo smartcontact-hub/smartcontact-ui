@@ -14,6 +14,7 @@ import { ScDividerComponent as DividerComponent } from '@smartcontact-hub/compon
 import { ScTagComponent as TagComponent } from '@smartcontact-hub/components';
 import { ScEmptyStateComponent as EmptyStateComponent } from '@smartcontact-hub/components';
 import { MenuModule } from 'primeng/menu';
+import { TooltipModule } from 'primeng/tooltip';
 import type { MenuItem } from 'primeng/api';
 
 import {
@@ -54,6 +55,7 @@ import { CeldaVaciaComponent } from '@shared/components';
     EntityFormModalComponent,
     IconComponent,
     MenuModule,
+    TooltipModule,
     TranslateModule,
   ],
   templateUrl: './entities-page.component.html',

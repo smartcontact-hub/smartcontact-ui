@@ -1879,7 +1879,7 @@
       "selector": "sc-tag",
       "provenance": "WRAPPER",
       "kind": "EXTENDED",
-      "primengBase": "primeng/tag",
+      "primengBase": "primeng/tag, primeng/tooltip",
       "cva": false,
       "inputs": 8,
       "api": [

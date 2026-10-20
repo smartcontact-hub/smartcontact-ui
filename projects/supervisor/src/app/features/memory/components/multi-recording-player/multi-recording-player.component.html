@@ -53,13 +53,12 @@
         [attr.aria-checked]="isActive"
         [attr.aria-label]="ariaLabel(rec, idx)"
         [attr.tabindex]="isActive ? 0 : -1"
-        [attr.title]="labelText(rec, idx)"
         [style.flexGrow]="fractions()[idx]"
         [style.flexBasis.px]="0"
         (click)="onSelectRecording(rec.id)"
         (keydown)="onLabelKeydown($event, idx)"
       >
-        <span class="multi-rec__label-name">{{ labelText(rec, idx) }}</span>
+        <span class="multi-rec__label-name" [pTooltip]="labelText(rec, idx)" showOnEllipsis tooltipPosition="top">{{ labelText(rec, idx) }}</span>
         <span class="multi-rec__label-meta tabular-nums">
           {{ rec.duration }}
           @if (rec.hasTranscription) {
