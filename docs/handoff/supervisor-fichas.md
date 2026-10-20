@@ -146,8 +146,8 @@ sube a «Trampas del frente».
 - **Qué**: `sc-datatable` lee el relleno del Kit (10,5 × 14; sm 5,25 × 7; lg 14 × 17,5), no el de Aura 3 sin escalar
   (8 × 14). A 1440: cabecera y fila de texto de 37 a 42, como ui.smart-contact.com; la fila con ⋮, de 44 a 49.
 - **Pruebas**: `list-table-grammar` lee el relleno con `kitPx` (contra `main`, rojo con «8px 14px»); 31 + 59 en verde.
-- **Hecho** el 2026-10-20: la ficha 1 de `figma-pendiente` §54, marcada en el prototipo. Pendiente, lo que el Kit dibuja
-  distinto de Aura en la tabla y no entró (hueco de celda, filtro): `node tools/aura-diff.mjs datatable`.
+- **Hecho** el 2026-10-20: la ficha 1 de `figma-pendiente` §54, marcada en el prototipo. Y, con DD-216, los tres huecos
+  que el Kit dibuja distinto de Aura (celda de cabecera, filtro en línea, popover del filtro): 7, como los devs.
 
 ## SIGUIENTE — sin preguntar
 
