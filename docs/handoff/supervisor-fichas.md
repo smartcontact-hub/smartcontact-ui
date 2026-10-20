@@ -57,7 +57,7 @@ y Repositorios (2026-10-15, DD-210, #426, sin trampas propias): `git show 840fe5
 ## ✅ 2026-10-19 · Mapa de componentes de Grupos, una sola tabla en el DS y «Fuera del DS» con alternativas
 
 > **Sello:** sin código. Figma del Supervisor (`Hjyy41SYKqcRuIzCGggfYH`) y del DS (`khNq9dJKNi13pNllrqm6dx`); en el
-> repo, solo docs (rama `areses/component-map-groups-ab0007`, HEAD `24ced9b5`, al día con `main`).
+> repo, solo docs (rama `areses/component-map-groups-ab0007`, HEAD `a63b604a`, fundida en `main` como #457 el 2026-10-20).
 
 - **Mapa de componentes** («Grupos», `3175:11365`, en el índice): listado y ficha con cajas encima; verde, DS de
   desarrollo (`sc-*`); azul, PrimeNG (`p-*`); naranja, propio; gris discontinuo, layout. Sus tablas siguen en Small.
@@ -123,14 +123,14 @@ y Repositorios (2026-10-15, DD-210, #426, sin trampas propias): `git show 840fe5
 
 ## ✅ 2026-10-19 · El relleno de la tabla, el del Kit y el del DS de desarrollo (DD-214)
 
-> **Sello:** rama `areses/goofy-gauss-b54b6f` sobre `main` `6edc21e9`, un PR. Sale el tramo del 2026-10-17 (DD-170 §6)
+> **Sello:** fundido en `main` como #461 (`56ebd85d`), el 2026-10-20. Sale el tramo del 2026-10-17 (DD-170 §6)
 > por el tope de 6: `git show 6edc21e9:docs/handoff/supervisor-fichas.md`; su trampa sube a «Trampas del frente».
 
 - **Qué**: `sc-datatable` lee el relleno del Kit (10,5 × 14; sm 5,25 × 7; lg 14 × 17,5), no el de Aura 3 sin escalar
   (8 × 14). A 1440: cabecera y fila de texto de 37 a 42, como ui.smart-contact.com; la fila con ⋮, de 44 a 49.
 - **Pruebas**: `list-table-grammar` lee el relleno con `kitPx` (contra `main`, rojo con «8px 14px»); 31 + 59 en verde.
-- **Pendiente**: marcar hecha la ficha 1 de `figma-pendiente` §54 cuando funda #457. Lo que el Kit dibuja distinto de
-  Aura en la tabla y no entró (hueco de celda, filtro): `node tools/aura-diff.mjs datatable`.
+- **Hecho** el 2026-10-20: la ficha 1 de `figma-pendiente` §54, marcada en el prototipo. Pendiente, lo que el Kit dibuja
+  distinto de Aura en la tabla y no entró (hueco de celda, filtro): `node tools/aura-diff.mjs datatable`.
 
 ## ✅ 2026-10-16 · Revisión de producto: agendas en árbol, la ficha de agente, toasts y un solo Guardar en Contact Center (DD-211)
 
