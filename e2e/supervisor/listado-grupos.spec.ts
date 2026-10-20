@@ -10,8 +10,8 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  *   1. Una columna por estrategia, la de Teléfono y la de Chat (opcional: con las dos a la vez no caben a 1440
  *      sin recortar), y «—» en la de un canal que el grupo no tiene (antes enseñaba una estrategia de teléfono
  *      que no aplicaba).
- *   2. Cambiar en bloque la estrategia de Chat escribe la de CHAT (antes, la de teléfono), y solo en los
- *      grupos elegidos que tienen Chat.
+ *   2. Sin casillas ni edición en lote (DD-215, como en Figma): lo de cada grupo va por su menú de fila, y
+ *      «Eliminar» es la confirmación simple del DS, sin teclear el nombre.
  *   3. Prioridad ordena por rango, de Baja a Máxima (antes, alfabético: Alta < Baja < Máxima < Media).
  *   4. Nada se recorta a 1440 (DD-102: una lista no recorta): ni una cabecera ni una etiqueta. Con la columna
  *      de chat encendida, la tabla se desplaza de lado en vez de cortar. Tampoco las estrategias más largas de
@@ -109,28 +109,30 @@ test('cada familia de canales enseña su estrategia en su columna, y «—» don
   await expect(await celda(page, 'Solo chat E2E', 'Estrategia de chat')).toHaveText('Balanceada');
 });
 
-test('cambiar en bloque la estrategia de chat escribe la de chat, y solo en los grupos con Chat', async ({ page }) => {
+test('sin casillas ni lote: «Eliminar» del menú de fila pregunta una vez, sin teclear el nombre', async ({ page }) => {
   await goto(page, 'admin/grupos');
-  await mostrarColumna(page, 'Estrategia de chat');
-  await fila(page, 'Reclamaciones').locator('p-table-checkbox').click();
-  await fila(page, 'Telemarketing').locator('p-table-checkbox').click();
+  await expect(fila(page, 'Reclamaciones')).toBeVisible();
+  const tabla = page.getByTestId('groups-table');
+  await expect(tabla.locator('p-table-checkbox, p-table-header-checkbox'), 'sin casillas').toHaveCount(0);
+  await expect(page.locator('sc-bulk-action-bar'), 'sin barra de lote').toHaveCount(0);
 
-  const lote = page.locator('sc-bulk-edit-menu');
-  await lote.locator('sc-select').first().click();
-  await page.getByRole('option', { name: 'Estrategia de chat', exact: true }).click();
-  await lote.locator('sc-select').last().click();
-  await page.getByRole('option', { name: 'Menos conversaciones atendidas', exact: true }).click();
-  await lote.getByRole('button', { name: 'Aplicar' }).click();
+  const abrirMenu = () => fila(page, 'Reclamaciones').locator('.rules-kebab-btn').click();
+  const eliminar = page.locator('.p-menu-overlay .p-menu-item-link').filter({ hasText: /eliminar/i });
+  const pregunta = page.getByRole('alertdialog', { name: '¿Eliminar grupo?' });
 
-  // La vista previa solo trae al que tiene Chat: a Telemarketing (solo Teléfono) no le aplica.
-  const vista = page.getByRole('dialog', { name: 'Aplicar cambio a 1 grupo(s)' });
-  await expect(vista).toContainText('Reclamaciones');
-  await expect(vista).not.toContainText('Telemarketing');
-  await vista.getByRole('button', { name: 'Aplicar' }).click();
+  await abrirMenu();
+  await expect(eliminar, 'sin puntos suspensivos: no lleva a la puerta tecleada').toHaveText(/^\s*Eliminar\s*$/);
+  await eliminar.click();
+  await expect(pregunta).toContainText('Vas a eliminar el grupo «Reclamaciones». Esta acción no se puede deshacer.');
+  await expect(pregunta.getByRole('textbox'), 'no pide escribir el nombre').toHaveCount(0);
+  await pregunta.getByRole('button', { name: 'Cancelar' }).click();
+  await expect(fila(page, 'Reclamaciones'), 'cancelar no borra').toBeVisible();
 
-  await expect(await celda(page, 'Reclamaciones', 'Estrategia de chat')).toHaveText('Menos conversaciones atendidas');
-  await expect(await celda(page, 'Reclamaciones', 'Estrategia de teléfono')).toHaveText('Balanceada');
-  await expect(await celda(page, 'Telemarketing', 'Estrategia de chat')).toHaveText(NO_APLICA);
+  await abrirMenu();
+  await eliminar.click();
+  await pregunta.getByRole('button', { name: 'Eliminar' }).click();
+  await expect(fila(page, 'Reclamaciones')).toHaveCount(0);
+  await expect(page.locator('.p-toast-message')).toContainText('Reclamaciones');
 });
 
 test('Prioridad ordena de Baja a Máxima, no por orden alfabético', async ({ page }) => {

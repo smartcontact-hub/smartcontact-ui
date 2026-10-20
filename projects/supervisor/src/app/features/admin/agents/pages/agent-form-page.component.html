@@ -196,16 +196,6 @@
   </span>
 </ng-template>
 
-<sc-delete-entity-dialog
-  [visible]="deleteVisible()"
-  mode="single"
-  [items]="deleteItems()"
-  [entitySingular]="'agents.entity_singular' | translate"
-  [entityPlural]="'agents.entity_plural' | translate"
-  (cancelled)="cancelDelete()"
-  (confirm)="confirmDelete()"
-/>
-
 <!-- Crear o editar una agenda, una plantilla de chat o un equipo sin salir de la ficha: la misma ventana para el
      «+» del campo y para el «Editar» de cada fila, como en la ficha de grupo (DD-187). -->
 @if (recursoAbierto(); as r) {

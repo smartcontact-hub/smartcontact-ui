@@ -10,7 +10,8 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  * Equipos (11rem) nadie lo subió. Primer resuelve la tabla estrecha desplazando de lado con la celda que nombra la fila
  * a la vista; aquí, con lo nativo de PrimeNG (`pFrozenColumn`):
  *   1. el mínimo de la tabla sale de sus columnas, y la que crece no baja de 15rem (240 px);
- *   2. la casilla y el nombre se quedan fijos al desplazar la tabla de lado hasta el final;
+ *   2. la casilla (si la lista la tiene: Grupos y Agentes ya no, DD-215) y el nombre se quedan fijos al desplazar la
+ *      tabla de lado hasta el final;
  *   3. a 1440 no hay nada que desplazar.
  */
 
@@ -37,7 +38,7 @@ for (const ancho of [900, 1024]) {
         const caja = candidatas.find((c) => c.scrollWidth - c.clientWidth > 1) ?? candidatas[0]!;
         const ths = [...caja.querySelectorAll('thead th')];
         const nombre = ths.find((th) => !th.classList.contains('sc-datatable__check') && th.textContent?.trim())!;
-        const check = caja.querySelector('thead th.sc-datatable__check')!;
+        const check = caja.querySelector('thead th.sc-datatable__check');
         const ancho = nombre.getBoundingClientRect().width;
         const oculto = caja.scrollWidth - caja.clientWidth;
         caja.scrollLeft = caja.scrollWidth;
@@ -47,14 +48,15 @@ for (const ancho of [900, 1024]) {
           ancho,
           oculto,
           desplazado: caja.scrollLeft,
-          checkX: Math.round(check.getBoundingClientRect().left - borde),
+          checkX: check ? Math.round(check.getBoundingClientRect().left - borde) : null,
           nombreX: Math.round(nombre.getBoundingClientRect().left - borde),
         };
       });
       expect(m.ancho, 'el ancho de Nombre').toBeGreaterThanOrEqual(240);
       expect(m.oculto, 'a este ancho la tabla desplaza de lado').toBeGreaterThan(0);
       expect(m.desplazado, 'y se ha desplazado').toBeGreaterThan(0);
-      expect([m.checkX, m.nombreX], 'casilla y nombre, en su sitio tras desplazar').toEqual([0, 40]);
+      // Con casilla, ella a 0 y el nombre a 40; sin ella, el nombre a 0.
+      expect([m.checkX, m.nombreX], 'casilla y nombre, en su sitio tras desplazar').toEqual(m.checkX === null ? [null, 0] : [0, 40]);
     });
   }
 }
