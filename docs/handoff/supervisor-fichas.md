@@ -87,7 +87,9 @@ sube a «Trampas del frente».
   atado al maestro; llevaban 2 a mano. Fila de 42, 49 con ⋮, 54 con avatar. Guía: «Tablas en tamaño normal».
 - **«Fuera del DS»** (§54): salen alto de fila, botón de foto (`highlight/background`), título, barra (Header del DS
   con botón md, 58) y resumen («Mostrar estado» en `group-summary` y `agent-summary`). Quedan 4.
-- **Pendiente**: «Update all» en el Supervisor (DS ya publicado). El prototipo ya pinta 10,5 × 14 (DD-214, #461).
+- **Hecho** el 2026-10-20: «Update all» en el Supervisor. Medido: los 37 resúmenes (21 `group-summary`, 16
+  `agent-summary`) tienen «Mostrar estado» y las 98 cabeceras usan `button` md con «Show button». El prototipo ya pinta
+  10,5 × 14 (DD-214, #461).
 - **Trampas**: un marco de documentación a HUG estira las variantes FILL y cambia el maestro. En otro fichero, busca
   por la clave del maestro. «El Aura» son dos: el de PrimeNG 22 sin escalar (8 × 14) y el de los devs (10,5 × 14). Cambiar de variante la pieza de fuera
   rehace las de dentro (ve de dentro afuera) y a un resumen le borra los datos: una propiedad no.
@@ -229,8 +231,8 @@ sube a «Trampas del frente».
   tooltip con máximo y la celda de selección small; `figma-pendiente` §53). No bloquea las maquetas.
 - **Decisión de diseño:** las 4 fichas que quedan en «Fuera del DS» (aviso, campos numéricos, subsección plegada y lo
   no dibujado: atajo «/» y solo lectura), con sus alternativas en `figma-pendiente` §54.
-- **«Update all» en el Supervisor** (el DS ya está publicado: Header md y «Mostrar estado»): la API no puede. En la
-  próxima publicación, decidir si la tabla «(sin slots)» se oculta de la librería (`_` delante).
+- **Próxima publicación del DS:** decidir si la tabla «(sin slots)» se oculta de la librería (`_` delante). El
+  «Update all» en el Supervisor ya está aplicado (2026-10-20).
 - **Rafa:** revisar usuarios contra el Supervisor real. Y en el portátil: poner el 4405 al día con `main` y borrar el
   worktree y la rama `codex/supervisor-f-listado` (`aff63656`, una copia de F), la local y la del remoto; desde la
   nube no se puede.
