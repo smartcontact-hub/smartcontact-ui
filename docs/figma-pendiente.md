@@ -1440,7 +1440,7 @@ medido contra sc-supervisor.pages.dev a 1440.
   maestro y hay que cambiarlo a mano.
 - **Tablas:** el texto, hecho el 2026-10-19: Body/body-regular y Body/body-semibold (interlineado 20), fila de 42. El
   relleno del Kit (10,5 × 14; Small 5,25 × 7) es el del DS de los devs, medido en ui.smart-contact.com: el que se
-  aparta es el prototipo (8 × 14; small 2 × 6), ficha 1 de §54. Queda: la variante Selected de
+  apartaba era el prototipo (8 × 14), que pasó a 10,5 × 14 el 2026-10-19 (DD-214). Queda: la variante Selected de
   `datatable-header-cell` pinta `highlight` (en PrimeNG 22 la ordenada se queda blanca); `datatable-selection-cell`
   Small, con la casilla pequeña.
 - **Menú:** `menu` lleva sus filas fijas, sin slot; `menu-item` mide 21 (texto de 14 de alto) frente a 27, y no tiene
@@ -1479,7 +1479,7 @@ numéricos, subsección plegada y lo no dibujado (atajo «/» y solo lectura).
 
 | # | Ficha | Propuesta | Kit | Prototipo |
 |---|---|---|---|---|
-| 1 | Alto de fila | Hecho el 2026-10-19: tablas de Grupos y Agentes en tamaño normal, relleno atado (10,5 × 14, el de los devs); la ficha salió. Cambia el prototipo (8 × 14) | sí, hecho | sí |
+| 1 | Alto de fila | Hecho el 2026-10-19: tablas de Grupos y Agentes en tamaño normal, relleno atado (10,5 × 14, el de los devs); la ficha salió. El prototipo, también (DD-214, #461) | sí, hecho | sí, hecho |
 | 2 | Barra de arriba | Hecho el 2026-10-19: el Header del DS lleva `button` md (DD-188), barra de 58; la ficha salió | sí, hecho | no |
 | 3 | Toast | El prototipo con `p-toast` sin plantilla; el «Deshacer» del inicio (DD-196), aparte | no | sí |
 | 4 | Botón de foto | Hecho el 2026-10-19: el fondo, atado a `highlight/background`; la ficha salió | no | no |
@@ -1493,7 +1493,7 @@ numéricos, subsección plegada y lo no dibujado (atajo «/» y solo lectura).
 
 **Lo que se daba por cierto y no lo era:** la variable del azul existe (§53, corregido); la «×» del diálogo está en el
 dibujo y la recorta el ancho de 440; el campo numérico del prototipo es `<input type="number">` (DD-195), no
-`p-inputnumber`; en la tabla, el que se aparta es el prototipo (8 × 14, el Aura de PrimeNG 22 sin escalar), no el Kit:
+`p-inputnumber`; en la tabla, el que se apartaba era el prototipo (8 × 14, el Aura de PrimeNG 22 sin escalar; DD-214):
 el DS de los devs pinta 10,5 × 14, como el Kit (medido en ui.smart-contact.com el 2026-10-19). **Sin medir:** el ancho real del toast del prototipo, el alto del `Header` con botón md y la fila con
 `size="small"` real.
 
