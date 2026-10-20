@@ -53,7 +53,7 @@
  *     por debajo del incidente.
  */
 import { execFileSync } from "node:child_process";
-import { existsSync, realpathSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, realpathSync } from "node:fs";
 import os from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -62,17 +62,31 @@ import { cliente as clienteDeGithub, ddsAnadidas } from "./github.mjs";
 
 export { ddsAnadidas };
 import { localizarMemoria, leerMemoria, revisarMemoria } from "./memory-shape.mjs";
+import { revisarHandoff } from "./handoff-shape.mjs";
 
 /**
  * Los problemas que se pueden ver SIN construir nada. Devuelve la lista (vacía = puerta abierta).
  *
  * `localizarMemoria` puede no encontrar nada (CI, otra máquina): ahí no hay nada que mirar y la
  * puerta se abre — igual que hace el CHECK N, que se omite en vez de fallar.
+ *
+ * Los hand-offs, con el mismo `revisarHandoff` del CHECK P (2026-10-19): un tramo `## ✅` de más
+ * tumbó una cadena en `test:unit`, a los ocho minutos, por una comprobación de milisegundos.
  */
 export function puertaBarata(cwd = process.cwd()) {
+  const problemas = handoffsFueraDeForma(cwd);
   const dir = localizarMemoria(cwd);
-  if (!dir || !existsSync(dir)) return [];
-  return revisarMemoria(leerMemoria(dir)).map((p) => `memoria (${dir}) — ${p}`);
+  if (!dir || !existsSync(dir)) return problemas;
+  return [...problemas, ...revisarMemoria(leerMemoria(dir)).map((p) => `memoria (${dir}) — ${p}`)];
+}
+
+/** Cada `docs/handoff/*.md` de `cwd` fuera de los topes de `handoff-shape.mjs`. Sin la carpeta, nada. */
+function handoffsFueraDeForma(cwd) {
+  const dir = join(cwd, "docs", "handoff");
+  if (!existsSync(dir)) return [];
+  return readdirSync(dir)
+    .filter((f) => f.endsWith(".md"))
+    .flatMap((f) => revisarHandoff(readFileSync(join(dir, f), "utf8"), `docs/handoff/${f}`));
 }
 
 // ── Los ficheros generados, al día ───────────────────────────────────────────────────────────────

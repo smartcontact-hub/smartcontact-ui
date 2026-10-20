@@ -583,6 +583,36 @@
   --sc-cmp-treetable-footer-cell-padding-x: 0.875rem; /* 14px */
   --sc-cmp-treetable-footer-padding-y: 0.65625rem; /* 10.5px */
   --sc-cmp-treetable-footer-padding-x: 0.875rem; /* 14px */
+  --sc-cmp-datatable-header-padding-y: 0.65625rem; /* 10.5px */
+  --sc-cmp-datatable-header-padding-x: 0.875rem; /* 14px */
+  --sc-cmp-datatable-header-sm-padding-y: 0.328125rem; /* 5.25px */
+  --sc-cmp-datatable-header-sm-padding-x: 0.4375rem; /* 7px */
+  --sc-cmp-datatable-header-lg-padding-y: 0.875rem; /* 14px */
+  --sc-cmp-datatable-header-lg-padding-x: 1.09375rem; /* 17.5px */
+  --sc-cmp-datatable-header-cell-padding-y: 0.65625rem; /* 10.5px */
+  --sc-cmp-datatable-header-cell-padding-x: 0.875rem; /* 14px */
+  --sc-cmp-datatable-header-cell-sm-padding-y: 0.328125rem; /* 5.25px */
+  --sc-cmp-datatable-header-cell-sm-padding-x: 0.4375rem; /* 7px */
+  --sc-cmp-datatable-header-cell-lg-padding-y: 0.875rem; /* 14px */
+  --sc-cmp-datatable-header-cell-lg-padding-x: 1.09375rem; /* 17.5px */
+  --sc-cmp-datatable-body-cell-padding-y: 0.65625rem; /* 10.5px */
+  --sc-cmp-datatable-body-cell-padding-x: 0.875rem; /* 14px */
+  --sc-cmp-datatable-body-cell-sm-padding-y: 0.328125rem; /* 5.25px */
+  --sc-cmp-datatable-body-cell-sm-padding-x: 0.4375rem; /* 7px */
+  --sc-cmp-datatable-body-cell-lg-padding-y: 0.875rem; /* 14px */
+  --sc-cmp-datatable-body-cell-lg-padding-x: 1.09375rem; /* 17.5px */
+  --sc-cmp-datatable-footer-cell-padding-y: 0.65625rem; /* 10.5px */
+  --sc-cmp-datatable-footer-cell-padding-x: 0.875rem; /* 14px */
+  --sc-cmp-datatable-footer-cell-sm-padding-y: 0.328125rem; /* 5.25px */
+  --sc-cmp-datatable-footer-cell-sm-padding-x: 0.4375rem; /* 7px */
+  --sc-cmp-datatable-footer-cell-lg-padding-y: 0.875rem; /* 14px */
+  --sc-cmp-datatable-footer-cell-lg-padding-x: 1.09375rem; /* 17.5px */
+  --sc-cmp-datatable-footer-padding-y: 0.65625rem; /* 10.5px */
+  --sc-cmp-datatable-footer-padding-x: 0.875rem; /* 14px */
+  --sc-cmp-datatable-footer-sm-padding-y: 0.328125rem; /* 5.25px */
+  --sc-cmp-datatable-footer-sm-padding-x: 0.4375rem; /* 7px */
+  --sc-cmp-datatable-footer-lg-padding-y: 0.875rem; /* 14px */
+  --sc-cmp-datatable-footer-lg-padding-x: 1.09375rem; /* 17.5px */
   /* @sc-gen:cmp-sizing:end */
 
   /* @sc-gen:cmp-color-light — bloque GENERADO desde kit-export-dtcg.json por
