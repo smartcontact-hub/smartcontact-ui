@@ -19,7 +19,8 @@ test.beforeEach(async ({ page }) => {
 test('el resumen del alta de agente escribe lo que falta en vez de «—»', async ({ page }) => {
   await goto(page, 'admin/agentes/crear');
   const datos = page.locator('.resumen__pairs');
-  await expect(datos).toContainText('Sin canales');
+  // Canales: sin grupos donde atienda, no hay canal por el que atender (DD-217; antes, «Sin canales»).
+  await expect(datos).toContainText('Sin grupos habilitados');
   await expect(datos).toContainText('Sin extensión');
   await expect(datos).toContainText('Ninguno');
   await expect(datos).not.toContainText('—');

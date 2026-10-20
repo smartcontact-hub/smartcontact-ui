@@ -75,8 +75,15 @@ const ETIQUETAS: ReadonlyArray<{
     rol: 'Body/body-regular',
   },
   { ruta: 'admin/usuarios/crear', nombre: 'admin · alta de usuario', estilo: CAPTION_SEMIBOLD, rol: 'Caption/caption-semibold' },
-  // El alta de grupo es su ficha, con el índice (DD-143): se mide la etiqueta de General, la sección que abre.
-  { ruta: 'admin/grupos/crear', nombre: 'admin · alta de grupo', estilo: CAPTION_SEMIBOLD, rol: 'Caption/caption-semibold' },
+  /* El alta de grupo es su ficha, con el índice (DD-143): se mide la etiqueta de General, la sección que abre. Desde
+   * DD-217 §16 sus rótulos son los de los campos del DS (`[label]`), ya ninguno escrito a mano. */
+  {
+    ruta: 'admin/grupos/crear',
+    nombre: 'admin · alta de grupo',
+    selector: '.sc-field__label',
+    estilo: CAPTION_SEMIBOLD,
+    rol: 'Caption/caption-semibold',
+  },
 ];
 
 for (const { ruta, nombre, selector, estilo, rol } of ETIQUETAS) {
