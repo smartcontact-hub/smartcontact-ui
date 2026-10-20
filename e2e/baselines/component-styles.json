@@ -2585,9 +2585,9 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-datatable > p-table.p-component > div.p-datatable-header": {
-      "padding-top": "8px",
+      "padding-top": "10.5px",
       "padding-right": "14px",
-      "padding-bottom": "8px",
+      "padding-bottom": "10.5px",
       "padding-left": "14px",
       "gap": "normal",
       "min-height": "0px",
@@ -2729,9 +2729,9 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-datatable-cell-edit > p-table.p-component > div.p-datatable-header": {
-      "padding-top": "8px",
+      "padding-top": "10.5px",
       "padding-right": "14px",
-      "padding-bottom": "8px",
+      "padding-bottom": "10.5px",
       "padding-left": "14px",
       "gap": "normal",
       "min-height": "0px",
@@ -2761,9 +2761,9 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-datatable-data-tools > p-table.p-component > div.p-datatable-header": {
-      "padding-top": "8px",
+      "padding-top": "10.5px",
       "padding-right": "14px",
-      "padding-bottom": "8px",
+      "padding-bottom": "10.5px",
       "padding-left": "14px",
       "gap": "normal",
       "min-height": "0px",
@@ -2985,9 +2985,9 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-datatable-expansion > p-table.p-component > div.p-datatable-header": {
-      "padding-top": "8px",
+      "padding-top": "10.5px",
       "padding-right": "14px",
-      "padding-bottom": "8px",
+      "padding-bottom": "10.5px",
       "padding-left": "14px",
       "gap": "normal",
       "min-height": "0px",
@@ -3017,9 +3017,9 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-datatable-filters > p-table.p-component > div.p-datatable-header": {
-      "padding-top": "8px",
+      "padding-top": "10.5px",
       "padding-right": "14px",
-      "padding-bottom": "8px",
+      "padding-bottom": "10.5px",
       "padding-left": "14px",
       "gap": "normal",
       "min-height": "0px",
@@ -3049,9 +3049,9 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-datatable-frozen > p-table.p-component > div.p-datatable-header": {
-      "padding-top": "8px",
+      "padding-top": "10.5px",
       "padding-right": "14px",
-      "padding-bottom": "8px",
+      "padding-bottom": "10.5px",
       "padding-left": "14px",
       "gap": "normal",
       "min-height": "0px",
@@ -3081,9 +3081,9 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-datatable-gestures > p-table.p-component > div.p-datatable-header": {
-      "padding-top": "8px",
+      "padding-top": "10.5px",
       "padding-right": "14px",
-      "padding-bottom": "8px",
+      "padding-bottom": "10.5px",
       "padding-left": "14px",
       "gap": "normal",
       "min-height": "0px",
@@ -3113,9 +3113,9 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-datatable-lazy > p-table.p-component > div.p-datatable-header": {
-      "padding-top": "8px",
+      "padding-top": "10.5px",
       "padding-right": "14px",
-      "padding-bottom": "8px",
+      "padding-bottom": "10.5px",
       "padding-left": "14px",
       "gap": "normal",
       "min-height": "0px",
@@ -3241,9 +3241,9 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-datatable-list > p-table.p-component > div.p-datatable-header": {
-      "padding-top": "8px",
+      "padding-top": "10.5px",
       "padding-right": "14px",
-      "padding-bottom": "8px",
+      "padding-bottom": "10.5px",
       "padding-left": "14px",
       "gap": "normal",
       "min-height": "0px",
@@ -3273,9 +3273,9 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-datatable-multisort > p-table.p-component > div.p-datatable-header": {
-      "padding-top": "8px",
+      "padding-top": "10.5px",
       "padding-right": "14px",
-      "padding-bottom": "8px",
+      "padding-bottom": "10.5px",
       "padding-left": "14px",
       "gap": "normal",
       "min-height": "0px",
@@ -3305,9 +3305,9 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-datatable-row-edit > p-table.p-component > div.p-datatable-header": {
-      "padding-top": "8px",
+      "padding-top": "10.5px",
       "padding-right": "14px",
-      "padding-bottom": "8px",
+      "padding-bottom": "10.5px",
       "padding-left": "14px",
       "gap": "normal",
       "min-height": "0px",
@@ -3337,9 +3337,9 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-datatable-row-groups > p-table.p-component > div.p-datatable-header": {
-      "padding-top": "8px",
+      "padding-top": "10.5px",
       "padding-right": "14px",
-      "padding-bottom": "8px",
+      "padding-bottom": "10.5px",
       "padding-left": "14px",
       "gap": "normal",
       "min-height": "0px",
@@ -3369,9 +3369,9 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-datatable-row-order > p-table.p-component > div.p-datatable-header": {
-      "padding-top": "8px",
+      "padding-top": "10.5px",
       "padding-right": "14px",
-      "padding-bottom": "8px",
+      "padding-bottom": "10.5px",
       "padding-left": "14px",
       "gap": "normal",
       "min-height": "0px",
@@ -10991,9 +10991,9 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sk-tabla > p-table.p-component > div.p-datatable-header": {
-      "padding-top": "8px",
+      "padding-top": "10.5px",
       "padding-right": "14px",
-      "padding-bottom": "8px",
+      "padding-bottom": "10.5px",
       "padding-left": "14px",
       "gap": "normal",
       "min-height": "0px",

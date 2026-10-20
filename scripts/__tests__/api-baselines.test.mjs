@@ -151,6 +151,32 @@ test('rojo: la pieza cambió DESPUÉS del robot (o está sin commitear) → sigu
   assert.deepEqual(p, [{ slug: 'select', porque: ['el componente'] }]);
 });
 
+// Fallo 4, del #461 (2026-10-19): el robot regeneró `datatable-linux.png`, después la página cambió un texto («DD-213»
+// pasó a «DD-214») y el aviso calló porque el PNG ya estaba en el diff de la rama. e2e-smoke cayó por 45 píxeles.
+const PAGINA = (pieza) => [`projects/sc-docs/src/app/pages/components/${pieza}/${pieza}-demo.component.ts`];
+const PNG = (pieza) => `e2e/components.spec.ts-snapshots/${pieza}-linux.png`;
+
+test('rojo, el caso del #461: la página cambió DESPUÉS del robot, con su PNG ya en el diff → sigue pendiente', () => {
+  const commits = [
+    { subject: 'Merge remote-tracking branch', files: PAGINA('select') },
+    { subject: ROBOT, files: [PNG('select')] },
+    { subject: 'feat: select', files: PAGINA('select') },
+  ];
+  const comprobadas = comprobadasPorRobot(commits, ['select']);
+  assert.deepEqual([...comprobadas], []);
+  const cambiados = [...PAGINA('select'), PNG('select')];
+  const p = capturasPendientes({ apiAntes: api(), apiAhora: api(), cambiados, capturas: CAPTURAS, comprobadas });
+  assert.deepEqual(p, [{ slug: 'select', porque: ['su página'] }]);
+});
+
+test('verde: un commit que trae el PNG después del último cambio de la página la comprueba, aunque no sea del robot', () => {
+  const commits = [
+    { subject: 'chore: captura traída a mano del robot', files: [PNG('select')] },
+    { subject: 'feat: select', files: PAGINA('select') },
+  ];
+  assert.deepEqual([...comprobadasPorRobot(commits, ['select'])], ['select']);
+});
+
 // Fallo 3, del #431 (2026-10-16): un ejemplo nuevo en la página de sc-docs de `sc-multiselect` añadió una instancia y un
 // ancla. Cayeron las dos líneas base en e2e-smoke y costó un CI de más. La de estilos no miraba la página y la de
 // estructura no la miraba nadie; el aviso de estilos que sí salía quedó cinco líneas por encima del final, sin leer.
