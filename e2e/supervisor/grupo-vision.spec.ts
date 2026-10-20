@@ -184,7 +184,7 @@ test('cada canal guarda su cola: tocar la de Chat no mueve la de Teléfono', asy
   await page.getByRole('button', { name: 'Guardar' }).click();
   /* Se espera al AVISO, no al botón: `save()` escribe a los 400ms y el botón ya sale apagado mientras
    * carga, así que esperar al botón recargaba antes de guardar (me dio un rojo falso). */
-  await expect(page.getByText('Grupo "Nodo AED 1" actualizado')).toBeVisible();
+  await expect(page.getByText('Grupo «Nodo AED 1» actualizado')).toBeVisible();
 
   await page.reload();
   await irA(page, 'Distribución y colas');

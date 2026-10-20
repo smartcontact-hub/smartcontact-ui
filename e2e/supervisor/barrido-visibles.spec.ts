@@ -22,7 +22,7 @@ test('tabla de agentes del grupo: la casilla de «todos» pregunta en un globo j
   const todos = table.getByRole('columnheader', { name: 'Asignado', exact: true }).getByRole('checkbox');
   await todos.click();
 
-  const globo = page.getByRole('alertdialog', { name: 'Confirmar cambios colectivos' });
+  const globo = page.getByRole('alertdialog', { name: /^¿Asignar \d+ agentes al grupo\?$/ });
   await expect(globo).toHaveClass(/p-confirmpopup/);
   await page.keyboard.press('Escape');
   await expect(globo).toHaveCount(0);

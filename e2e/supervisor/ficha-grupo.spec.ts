@@ -90,14 +90,14 @@ test('crear es la misma ficha: abre en General con Teléfono, dice lo que falta 
   await expect(page.locator('.headline__meta')).toContainText('prioridad: baja');
 });
 
-test('duplicar crea la copia sin diálogo y se lleva los agentes del original (DD-217)', async ({ page }) => {
+test('duplicar abre el alta con la copia, sin diálogo, y se lleva los agentes del original (SISMAC-4056)', async ({ page }) => {
   await goto(page, 'admin/grupos');
   const fila = page.locator('tbody tr', { hasText: 'Reclamaciones' });
   await fila.locator('.rules-kebab-btn').click();
   await page.getByRole('menuitem', { name: 'Duplicar' }).click();
 
   await expect(page.getByRole('dialog')).toHaveCount(0);
-  await expect(page).toHaveURL(/admin\/grupos\/editar\/\d+$/);
+  await expect(page).toHaveURL(/admin\/grupos\/crear\?seedFromId=12$/);
   await expect(page.locator('.headline__name')).toHaveText('Reclamaciones (1)');
   await indice(page).getByText('Agentes asignados', { exact: true }).click();
   await expect(page.locator('.assign tbody tr').first()).toBeVisible();

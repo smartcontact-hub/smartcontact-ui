@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Grupos como sus páginas de COA (SISMAC-4056 y 4058): la cifra de agentes lleva a la ficha · duplicar es un alta · con varios marcados, el clic derecho solo elimina · Servicios y Agentes de mayor a menor al primer clic (`defaultSortOrder`) · la miga dice el nombre · «Agentes asignados» sin estado ni filtro, ordenable por nombre (`headerTemplate`), el nivel en desplegable y Habilitado bloqueado con «Activación por grupo» · confirmar dice qué, a cuántos y con su verbo (enmienda DD-121, DD-151, DD-159 §1, DD-185 §7 y §8, DD-187 §4, DD-204 §6, DD-215 §1 y §2 y DD-217 §8) | DD-218 |
 > | Lo que falta se dice al pulsar Crear o Guardar, en su campo y en el índice con su texto (`sectionErrorHints`), y se llega al primero · Crear siempre activo, sin motivo junto al botón ni «Falta / Listo para crear» · el ✓, de la sección que se dejó tal como está (su firma) · sin puertas · los grupos pueden no tener canales · quitar y poner un canal no le quita nada a nadie · fuera los avisos amarillos · duplicar un grupo no pregunta: «(1)» · Recursos en chips que llenan su fila, sin «+» ni lápiz y con lo que contienen al pasar, en las dos fichas · los editores de Repositorios, igual · la ayuda acaba en punto y el subtítulo no (enmienda DD-121, DD-136, DD-143 §2, §3 y §5, DD-158, DD-167, DD-199 §1 y §3, DD-187, DD-204, DD-206, DD-209 §4, DD-211 §6 y DD-212 §1) | DD-217 |
 > | Abrir una ficha desde su listado, con la fila o con «Editar», entra por la primera sección (General en grupo y agente, Identidad en usuario) · la tarea frecuente se queda en el control que la nombra: en Agentes, la cifra de grupos lleva a «Grupos asignados» con su propia acción · al crear, nada cambia (enmienda DD-122 §8) | DD-213 |
 > | Lo que se lee al pasar el ratón va en el tooltip del Kit (`pTooltip`), no en el `title` del navegador: con `showOnEllipsis` si repite un texto cortado · la ayuda de Prioridad dice «conversaciones» · en «Duplicar grupo», sin Call Blending no sale el teléfono saliente (anotado para Figma) · `audit:screen-hygiene` (9) | DD-212 |
@@ -156,7 +157,102 @@
 
 ---
 
+## DD-218 · 2026-10-20 — Grupos como sus páginas de COA: la cifra de agentes a la ficha, duplicar a un alta, eliminar varios, «Agentes asignados» sin estado y ordenable, y confirmar con su verbo
+
+**Contexto** · Desarrollo construye Grupos con dos páginas de COA: «SOLUCIÓN SISMAC-4056 Sección Grupos» (el listado) y
+«SOLUCIÓN SISMAC-4058 Creación/Edición Grupos» (alta y edición). Leídas enteras el 2026-10-20 y comparadas con `main`
+(`8c9297a7`, ya con DD-217), las diferencias eran de tres tipos: COA anterior a DD-217 (manda el prototipo y se completa
+COA), COA pide algo que el prototipo no hace (manda COA), y frases que se podían leer de dos maneras. Además, la tabla
+«Agentes asignados» tenía que ordenarse ya por nombre, y el filtro de estado y equipos quedaba para más adelante.
+
+**Decisión** ·
+1. **La cifra de agentes del listado lleva a «Agentes asignados» de su ficha** (`/admin/grupos/editar/:id?seccion=agentes`),
+   como la cifra de grupos de un agente lleva a «Grupos asignados» (DD-213). Fuera el panel rápido del listado; se
+   queda en el Monitor (DD-168). Su nombre accesible no cambia («12 agentes. Asignar agentes de Ventas»): lleva a
+   donde se asignan. Enmienda DD-159 §1 y el «panel rápido de agentes desde el listado» de DD-121.
+2. **Duplicar un grupo abre «Nuevo grupo» relleno** (`/admin/grupos/crear?seedFromId=:id`) con «Ventas (1)», y el grupo
+   existe al pulsar «Crear grupo», con su toast «Grupo «Ventas (1)» creado». Lo que se copia y lo que no, como DD-217
+   §8 (no se copian los servicios, los dominios del script de chat ni el número de WhatsApp; sí los agentes, el
+   teléfono saliente y la postconversación). Como en el agente, la copia es el punto de partida: «Deshacer» vuelve a
+   ella y salir sin tocar nada no pregunta. Sustituye el «en el acto» de DD-217 §8.
+3. **Con dos o más grupos marcados, el clic derecho sobre uno de ellos ofrece solo «Eliminar»**: «¿Eliminar 3 grupos?»,
+   borra los grupos y sus asignaciones, y «3 grupos eliminados». El clic derecho sobre una fila sin marcar, o el «⋮» de
+   cualquiera, abre el menú de esa fila. `sc-list-page` gana `selectionMenu` (el menú de la selección); solo Grupos lo
+   usa. La edición masiva sigue para otra fase (DD-215). Corrige DD-215 §1, que aún decía «sin casillas»: volvieron
+   para elegir y exportar.
+4. **El listado, sin la columna ID** (ni en la tabla, ni en «Columnas», ni en la búsqueda; sigue en el Excel). **Servicios
+   y Agentes ordenan de mayor a menor al primer clic**: se busca el grupo que más tiene. Lo hace el DS, por columna:
+   `ScColumnDef.defaultSortOrder: -1`. p-table calcula el sentido con el `defaultSortOrder` de toda la tabla antes de
+   avisar, así que `sc-datatable` lo da la vuelta y ordena otra vez: la flecha y las filas dicen lo mismo, también
+   viniendo de otra columna ya en descendente.
+5. **La ficha**:
+   - **La miga de la edición acaba en el nombre guardado** («Administración › Grupos › Ventas»), no en «Editar grupo»;
+     lo que se teclea no la cambia hasta guardar. Igual en la ficha de agente. Al crear, «Nuevo grupo». Lo pone
+     `BreadcrumbService.nombrar`, que solo vale para la ruta que lo pide.
+   - **Sin tipificaciones, «Tipificar conversaciones» sale apagado y deshabilitado**, con «No hay tipificaciones: se crean
+     en Repositorios.», y el grupo se guarda sin tipificación.
+   - **El catálogo de tiempos, el de COA**: fuera 1,5 min. Un valor guardado fuera del catálogo se sigue enseñando, en
+     su sitio entre los demás.
+   - **«Mensaje de día no laborable»**.
+   - **«Gestionar en Repositorios» con cambios sin guardar pregunta**: «¿Guardar los cambios?», «Para ir a Repositorios,
+     guarda antes el grupo.», «Guardar» y «Seguir editando». «Guardar» sigue la regla de DD-217 (si falta algo, no sale
+     y cada campo lo dice) y después va a Repositorios, sin que salte además «¿Descartar cambios?». Sin cambios va
+     directo, y con Ctrl o Cmd abre en otra pestaña sin preguntar.
+6. **«Agentes asignados»** (la tabla del grupo, en la ficha y en el panel del Monitor):
+   - **Sin filtro de estado y equipos, y sin el punto de estado en el avatar**: el agente es su foto, su nombre y su
+     email. Queda para otra fase. Enmienda DD-185 §7 y §8, y DD-187 §4 en lo de filtrar por equipos.
+   - **«Agente» ordena por nombre** (A-Z, Z-A) con la flecha de toda tabla, y «Grupo» en la gemela de la ficha de
+     agente. El DS gana `ScColumnDef.headerTemplate`: la casilla de «todos» vive en su celda de cabecera, junto a la
+     flecha, y las dos tablas dejan su `#header` propio. Las filas no saltan al marcar.
+   - **El nivel, un desplegable del 1 al 10** en su columna «Nivel Teléfono» (Chat, Email), junto a su canal, como lo
+     pedía DD-148 (desde #380 era un número con − y +).
+   - **Con «Activación por grupo», Habilitado se ve pero no se toca**: ese agente se habilita él mismo desde su puesto.
+     Su interruptor lleva un tooltip que lo dice, y la casilla de «todos» lo salta. En las dos tablas. Revierte DD-204
+     §6.
+   - **Cambiar una columna entera con dos o más pregunta qué y a cuántos, y el botón repite el verbo**: «¿Quitar Chat a 5
+     agentes?» con «Quitar», «¿Habilitar 5 agentes?» con «Habilitar». Antes, «Confirmar cambios colectivos» con
+     «Confirmar» (DD-151).
+7. **Eliminar y los avisos, en grupos y agentes**: el título pregunta con el nombre («¿Eliminar el grupo «Ventas»?»,
+   «¿Eliminar el agente «Tom Hanks»?»; con varios, «¿Eliminar 3 grupos?»), el cuerpo solo añade «Esta acción no se
+   puede deshacer.» y los botones son «Cancelar» y «Eliminar», en rojo. Enmienda DD-215 §2. Los avisos que quedaban con
+   comillas rectas pasan a «», como el resto de la app. La regla, en AGENTS.md §«UX de pantalla».
+
+**Razón** · COA es lo que lee desarrollo: con dos fuentes que dicen cosas distintas, cada diferencia es una pregunta o
+una pantalla que se rehace. Donde COA era anterior a una decisión con fecha (DD-217), manda la decisión y COA se
+completa; donde no, manda COA. La cifra que lleva a la ficha es la regla que ya seguía Agentes. Una confirmación que
+nombra lo que cambia y cuyo botón repite el verbo se entiende sin leer el cuerpo, como piden las guías de Atlassian,
+Polaris y Primer: «Confirmar» no dice qué pasa al pulsarlo. Medido en este build: las 30 pruebas e2e tocadas, en verde (195 casos). Las 14 nuevas o reescritas, en rojo con el
+código de antes: 11 contra la congelada `proto-sismac-4058`, cada una en lo que mide, y las otras 3 (eliminar varios,
+Repositorios en el grupo y duplicar), aquí con su arreglo quitado, porque la congelada es anterior a lo que preparan. En
+el DS, la de `defaultSortOrder`, en rojo sin el arreglo.
+
+**Descartadas** ·
+- **El panel rápido desde el listado, además de la ficha** → dos sitios para la misma tarea en la misma pantalla, y
+  COA lleva a la ficha.
+- **Duplicar en el acto** (DD-217 §8) → crea un grupo que quizá no se quería y que luego hay que borrar; COA pide el
+  alta rellena, como el agente.
+- **«Editar» con varios marcados** → es la edición masiva, que queda para otra fase.
+- **Dar la vuelta al orden en `sc-list-page`** → p-table ya ha calculado el sentido al avisar: viniendo de otra columna
+  en descendente, la flecha decía lo contrario que las filas. Va en el DS, por columna.
+- **El número con − y + para el nivel** (#380, «un stepper pesa menos que una lista de diez») → COA lo pide desplegable,
+  y en una columna estrecha el desplegable enseña el valor sin dos botones a cada lado.
+- **Un título común con `{{entity}}` para eliminar** → el artículo cambia con la entidad en cada idioma («le agent» en
+  francés): un título por entidad.
+
+**Consecuencias** · Pruebas al día: el panel se abre desde el Monitor (`panel-agentes-grupo.spec.ts`, `cajon-foco`,
+`ficha-grupo-estado`); las de la tabla, en la ficha; las de duplicar, eliminar, orden, tiempos y textos, con la regla
+nueva. Pruebas nuevas: eliminar varios (`listado-grupos`), «Agente» ordena (`ficha-grupo-revision-equipo`), la miga
+(`breadcrumb-current`), sin tipificaciones y «Gestionar en Repositorios» (`ficha-recursos-dialogos`), Habilitado
+bloqueado (`agente-grupos-asignados`) y, en el DS, `defaultSortOrder` y `headerTemplate`. Fuera
+`presencia-administrativo.spec.ts`: medía el punto de estado en la tabla del grupo. Queda para Figma (`figma-pendiente`
+§56) y para COA, aparte. Tras fundir, avanzar las congeladas (`docs/PROTOTIPOS.md`).
+
+---
+
 ## DD-217 · 2026-10-20 — Lo que falta se dice al pulsar Crear o Guardar, el ✓ dice lo que viste, los grupos pueden no tener canales, duplicar no pregunta y el punto final va al unísono
+
+> **§8 enmendado por DD-218** (2026-10-20): duplicar un grupo abre «Nuevo grupo» con la copia, y el grupo existe al
+> pulsar «Crear grupo» (como SISMAC-4056); lo que se copia y lo que no, igual.
 
 **Contexto** · Revisión de producto del 2026-10-20 de las fichas de grupo y agente, y una prueba de uso del mismo día
 medida en sc-supervisor.pages.dev. Dos recorridos confundían el índice:
@@ -321,6 +417,10 @@ su caja y los otros dos en la variable que leería su regla. Con el preset de `m
 ---
 
 ## DD-215 · 2026-10-19 — Grupos y Agentes, como en Figma: sin edición masiva, y borrar es la confirmación simple del DS
+
+> **§1 y §2 enmendados por DD-218** (2026-10-20): las casillas volvieron para elegir y exportar (#470), y con dos o más
+> marcados el clic derecho ofrece solo «Eliminar»; el diálogo pregunta con el nombre, «¿Eliminar el grupo «Ventas»?», y
+> el cuerpo solo dice «Esta acción no se puede deshacer.».
 
 **Contexto** · El 2026-10-19 se rehízo en Figma para desarrollo el listado de grupos (fichero del Supervisor, página
 Grupos, «1. Listado de grupos» `3118:16995`): sin casillas, el menú de fila como camino principal y eliminar con el
@@ -910,6 +1010,9 @@ a «Hecho» y TieredMenu a la sección 3. Las fases 2 y 3 no tienen fecha: cada 
 ---
 
 ## DD-204 · 2026-10-14 — Revisión de las fichas de grupo y de agente: los nombres de sus secciones, el resumen en una línea, Recursos con «Editar» en la opción, tarjetas de radio y tablas que miden sus filas
+
+> **§6 revertido por DD-218** (2026-10-20): con «Activación por grupo», Habilitado se ve pero no se toca, y la casilla
+> de «todos» lo salta (SISMAC-4058).
 
 **Contexto** · Revisión de producto del 2026-10-14, a 1440 (un MacBook Air), sobre las fichas de grupo y de agente y el
 listado de agentes. Lo que se vio: «Desconectado» pesaba lo mismo que un estado atendible; la tarjeta de datos del
@@ -1636,6 +1739,9 @@ y el esqueleto de página comunes con la escalera en la cabecera, y las etiqueta
 
 ## DD-187 · 2026-10-09 — Revisión de agentes y tipificaciones: la ficha de agente como la de grupo, y la tipificación como árbol
 
+> **§4 enmendado por DD-218** (2026-10-20): la tabla de agentes del grupo ya no filtra por equipos ni por estado
+> (queda para otra fase).
+
 **Contexto** · El primer design review de agentes y tipificaciones (2026-10-09), el pptx de producto con lo que pide la
 ficha de agente, la propuesta dibujada de producto para la tipificación en el grupo y el chat del equipo. La ficha de
 agente tenía cinco secciones con otra gramática que la de grupo; la tipificación llevaba su dirección, su comentario y sus
@@ -1767,6 +1873,9 @@ del DS. Pendiente: el nodo de los dos componentes en Figma (`figma-pendiente`).
 ---
 
 ## DD-185 · 2026-10-07 — Segunda vuelta de la revisión de grupos: copy de Voice, subir archivo, el estado en el avatar y el repositorio de Email
+
+> **§7 y §8 retirados por DD-218** (2026-10-20): «Agentes asignados» va sin el punto de estado en el avatar y sin el
+> filtro de estado (queda para otra fase).
 
 **Contexto** · Con DD-184 fundida, el equipo corrigió lo que se había entendido al revés y pidió más: el rótulo largo de
 los tiempos era la ayuda, no el nombre; el aviso de Ring All parecía de todo el bloque; «Elegir .wav» y su texto de
@@ -2939,6 +3048,9 @@ filtro); que la página desplace y la tabla mida todas sus filas (se pierde la c
 
 ## DD-159 · 2026-10-04 — La cifra de un listado lleva a donde se cambia: en Grupos, los agentes abren su asignación
 
+> **§1 enmendado por DD-218** (2026-10-20): la cifra de agentes lleva a «Agentes asignados» de la ficha, como la de
+> grupos de un agente; el panel rápido se queda en el Monitor.
+
 **Contexto.** La revisión de producto del 2026-10-04, sobre los listados de Grupos y Agentes: en Grupos, la cifra de
 agentes (que al pasar enseña quiénes son) y el botón «Asignar», fijo a la derecha (DD-121 §10, DD-153), eran dos
 columnas para lo mismo. En Agentes se pedía que la cifra de grupos llevara a la sección «Grupos asignados» de su
@@ -3289,6 +3401,9 @@ La evidencia ejecutada y el estado de publicación se registran en el hand-off d
 ---
 
 ## DD-151 · 2026-10-02 — Asignar agentes desde la lista completa (E4)
+
+> **Enmendada por DD-218** (2026-10-20): la confirmación de columna entera pregunta qué y a cuántos, y su botón
+> repite el verbo («¿Quitar Chat a 5 agentes?» con «Quitar»), en vez de «Confirmar cambios colectivos».
 
 > **Enmendada por DD-176** (2026-10-05): sin paginación (la tabla desplaza por dentro y, con más de 100 filas, pinta
 > solo las que se ven) y sin las casillas de «todos» de cada canal en la cabecera; la de Asignado sigue, sobre todo el

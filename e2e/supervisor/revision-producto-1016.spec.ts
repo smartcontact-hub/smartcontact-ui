@@ -31,7 +31,7 @@ test('§3 · el globo de la edición en bloque, cerrado con un clic fuera, desbl
   const cabecera = tabla.getByRole('columnheader', { name: 'Habilitado', exact: true }).getByRole('checkbox');
   const filas = tabla.locator('tbody').getByRole('checkbox');
   await cabecera.click();
-  const globo = page.getByRole('alertdialog', { name: 'Confirmar cambios colectivos' });
+  const globo = page.getByRole('alertdialog', { name: /^¿(Des)?[Hh]abilitar al agente en \d+ grupos\?$/ });
   await expect(globo).toBeVisible();
   await expect(filas.first(), 'mientras pregunta, las filas esperan').toBeDisabled();
 
@@ -156,7 +156,7 @@ test('§5 · guardar lo dice un toast, y nada junto a los botones de la barra', 
   await goto(page, 'admin/agentes/editar/1?seccion=configuracion');
   await page.getByRole('checkbox', { name: 'Fijos — Llamadas', exact: true }).click();
   await page.locator('sc-top-bar').getByRole('button', { name: 'Guardar', exact: true }).click();
-  await expect(toast(page)).toContainText('Agente "Tom Hanks" actualizado');
+  await expect(toast(page)).toContainText('Agente «Tom Hanks» actualizado');
   await expect(page.locator('.top-bar__resultado')).toHaveCount(0);
 });
 

@@ -167,7 +167,11 @@
       <!-- El texto va en su propio elemento: al pulsar, `pReorderableColumn` busca el tirador de ancho DENTRO
            de lo pulsado, y con el texto suelto lo pulsado era el `th`, que lo contiene, así que nunca arrastraba
            (medido: solo llegaba `mousedown`, sin `dragstart`). -->
-      <span class="sc-datatable__header-label">{{ col.header }}</span><p-sort-icon [field]="col.field" />
+      @if (col.headerTemplate) {
+      <ng-container *ngTemplateOutlet="col.headerTemplate; context: { $implicit: col }" />
+      } @else {
+      <span class="sc-datatable__header-label">{{ col.header }}</span>
+      }<p-sort-icon [field]="col.field" />
       @if (col.filter && filterDisplay() === 'menu') {
       <ng-container *ngTemplateOutlet="colFilter; context: { $implicit: col, display: 'menu' }" />
       }
@@ -190,7 +194,11 @@
       [style.text-align]="col.align ?? null"
       [attr.aria-label]="col.headerAriaLabel ?? null"
     >
+      @if (col.headerTemplate) {
+      <ng-container *ngTemplateOutlet="col.headerTemplate; context: { $implicit: col }" />
+      } @else {
       <span class="sc-datatable__header-label">{{ col.header }}</span>
+      }
       @if (col.filter && filterDisplay() === 'menu') {
       <ng-container *ngTemplateOutlet="colFilter; context: { $implicit: col, display: 'menu' }" />
       }

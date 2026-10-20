@@ -67,7 +67,7 @@ test('sin ningún grupo con teléfono, el desplegable de salientes sale apagado 
   const tabla = page.locator('sc-group-assignment-table');
   // Quita todos sus grupos con la casilla de «todos» de Asignado, que pregunta antes.
   await tabla.getByRole('checkbox', { name: 'Cambiar Asignado en los resultados filtrados' }).click();
-  await page.getByRole('button', { name: 'Confirmar', exact: true }).click();
+  await page.getByRole('alertdialog', { name: /^¿Quitar el agente de \d+ grupos\?$/ }).getByRole('button', { name: 'Quitar', exact: true }).click();
   await expect(tabla.getByRole('checkbox', { name: /^Asignado — / , checked: true })).toHaveCount(0);
   const desplegable = tabla.getByRole('combobox', { name: 'Grupo para llamadas salientes' });
   await expect(desplegable).toBeDisabled();
@@ -75,21 +75,30 @@ test('sin ningún grupo con teléfono, el desplegable de salientes sale apagado 
   await expect(tabla.getByRole('img', { name: 'Grupo para llamadas salientes' })).toHaveCount(0);
 });
 
-test('con «Activación por grupo», Habilitado lo cambia el supervisor: sin candado, en las dos tablas', async ({ page }) => {
-  // Morgan Freeman (7) tiene «Activación por grupo» en la semilla.
+test('con «Activación por grupo», Habilitado se ve pero no se toca, y la casilla de «todos» lo salta, en las dos tablas', async ({ page }) => {
+  // Como SISMAC-4058 (2026-10-20, revierte DD-204 §6): ese agente se habilita él mismo desde su puesto. Morgan Freeman
+  // (7) tiene el permiso en la semilla; Tom Hanks (1), no.
   await goto(page, 'admin/agentes/editar/7?seccion=grupos');
   const tabla = page.locator('sc-group-assignment-table');
-  const interruptor = tabla.getByRole('switch').first();
-  await expect(interruptor).toBeEnabled();
-  await expect(tabla.locator('tbody').getByRole('button', { name: /Activación por grupo|Configuración/ })).toHaveCount(0);
-  const antes = await interruptor.isChecked();
-  await interruptor.click();
-  await expect(interruptor).toBeChecked({ checked: !antes });
+  const interruptor = tabla.locator('tbody').getByRole('switch').first();
+  await expect(interruptor).toBeDisabled();
+  // El de Habilitado: `.assign__locked` envuelve también el candado del último canal.
+  await tabla.locator('tbody .assign__locked:has([role="switch"])').first().hover();
+  await expect(page.locator('.p-tooltip')).toContainText('Activación por grupo');
+  await expect(tabla.getByRole('columnheader', { name: 'Habilitado', exact: true }).getByRole('checkbox')).toBeDisabled();
 
   await goto(page, 'admin/grupos/editar/1?seccion=agentes');
-  const fila = page.locator('sc-agent-channel-table tbody tr', { hasText: 'Morgan Freeman' });
-  await expect(fila.getByRole('switch')).toBeEnabled();
-  await expect(fila.getByRole('link', { name: /Configuración de/ })).toHaveCount(0);
+  const filas = page.locator('sc-agent-channel-table tbody tr');
+  await expect(filas.filter({ hasText: 'Morgan Freeman' }).getByRole('switch')).toBeDisabled();
+  const tom = filas.filter({ hasText: 'Tom Hanks' }).getByRole('switch');
+  await expect(tom).toBeEnabled();
+  // La de «todos» cambia a los demás y deja a Morgan como estaba.
+  const morganAntes = await filas.filter({ hasText: 'Morgan Freeman' }).getByRole('switch').isChecked();
+  const todos = page.locator('sc-agent-channel-table').getByRole('columnheader', { name: 'Habilitado', exact: true }).getByRole('checkbox');
+  await todos.click();
+  // Doce agentes más en el grupo: siempre pregunta.
+  await page.getByRole('alertdialog', { name: /^¿(Des)?[Hh]abilitar \d+ agentes\?$/ }).getByRole('button', { name: /^(Des)?[Hh]abilitar$/ }).click();
+  await expect(filas.filter({ hasText: 'Morgan Freeman' }).getByRole('switch')).toBeChecked({ checked: morganAntes });
 });
 
 test('un agente desconectado no cambia de estado desde la ficha', async ({ page }) => {

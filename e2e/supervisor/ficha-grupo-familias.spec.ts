@@ -64,15 +64,9 @@ test('la tabla de agentes del grupo lleva una columna por familia: Teléfono · 
   await expect(tabla.getByRole('columnheader', { name: 'Email', exact: true })).toHaveCount(1);
 });
 
-test('el panel rápido y la ficha del agente, con las mismas columnas', async ({ page }) => {
-  await goto(page, 'admin/grupos');
-  await page.getByRole('button', { name: 'Asignar agentes de Reclamaciones' }).click();
-  await columnas(page.locator('.agents-panel'));
-  // Teléfono y Chat: las columnas de la tabla compacta y el marco (DD-181: cada columna, su casilla de «todos» y su
-  // rótulo; con DD-176, 47,375; con DD-156, 48). Habilitado, sin el candado de «Activación por grupo», 2,75rem menos
-  // (DD-204; antes, 688).
-  await expect.poll(() => page.locator('.p-drawer').evaluate((e) => e.getBoundingClientRect().width)).toBe(644); // sin la columna de Estado (DD-185); antes, 828
-
+// El panel rápido usa la misma tabla que la ficha del grupo; desde el 2026-10-20 solo se abre desde el Monitor, cuyos
+// grupos son de Teléfono (su ancho lo mide `panel-agentes-grupo.spec.ts`).
+test('la ficha del agente, con las mismas columnas', async ({ page }) => {
   await goto(page, 'admin/agentes/editar/3?seccion=grupos');
   const tabla = page.locator('.assign');
   await columnas(tabla);
@@ -88,7 +82,7 @@ test('lo guardado con WhatsApp se abre con Chat marcado, y se guarda con Chat', 
   await expect(page.getByRole('checkbox', { name: /^Tom Hanks — Chat: único canal/ })).toBeChecked();
   await page.getByRole('checkbox', { name: 'Tom Hanks — Teléfono', exact: true }).click();
   await page.getByRole('button', { name: 'Guardar', exact: true }).click();
-  await expect(page.getByText('Grupo "Reclamaciones" actualizado')).toBeVisible();
+  await expect(page.getByText('Grupo «Reclamaciones» actualizado')).toBeVisible();
 
   const guardado = (await enlacesGuardados(page)).find((l) => l.agentId === 1 && l.groupId === 12);
   expect(guardado?.channels).toEqual(['phone', 'chat']);
@@ -101,7 +95,7 @@ test('quitar WhatsApp con Web Chat puesto no pregunta: nadie pierde nada', async
   await canal(page, 'WhatsApp').click();
   await page.getByRole('button', { name: 'Guardar', exact: true }).click();
 
-  await expect(page.getByText('Grupo "Online Support" actualizado')).toBeVisible();
+  await expect(page.getByText('Grupo «Online Support» actualizado')).toBeVisible();
   await expect(page.getByRole('dialog', { name: 'Vas a quitar canales' })).toHaveCount(0);
 });
 
@@ -114,7 +108,7 @@ test('quitar Chat entero pregunta, y lo nombra como familia', async ({ page }) =
   await expect(dialogo).toContainText(/agentes de este grupo pierden Chat[,.]/);
   await expect(dialogo).not.toContainText('Web Chat');
   await dialogo.getByRole('button', { name: 'Sí, quitar' }).click();
-  await expect(page.getByText('Grupo "Online Support" actualizado')).toBeVisible();
+  await expect(page.getByText('Grupo «Online Support» actualizado')).toBeVisible();
   const guardados = (await enlacesGuardados(page)).filter((l) => l.groupId === 11);
   expect(guardados.length).toBeGreaterThan(0);
   expect(guardados.every((l) => l.channels.length > 0 && !l.channels.includes('chat') && !l.channels.includes('whatsapp'))).toBe(true);
@@ -133,24 +127,20 @@ test('el resumen lleva una barra por familia, y el listado de agentes dice «Cha
 });
 
 
-test('solo WhatsApp conserva Chat al guardar y el panel conserva su columna para explicar compatibilidad', async ({ page }) => {
+test('solo WhatsApp conserva Chat al guardar y la tabla conserva su columna para explicar compatibilidad', async ({ page }) => {
   await sembrarEnlaces(page, [{ agentId: 1, groupId: 11, channels: ['whatsapp'], active: true }]);
   await goto(page, 'admin/grupos/editar/11');
   for (const nombre of ['Teléfono', 'Web Chat', 'Email']) await canal(page, nombre).click();
   await irA(page, 'Agentes asignados');
   await expect(page.getByRole('checkbox', { name: /^Tom Hanks — Chat: único canal/ })).toBeChecked();
   await page.getByRole('button', { name: 'Guardar', exact: true }).click();
-  await expect(page.getByText('Grupo "Online Support" actualizado')).toBeVisible();
+  await expect(page.getByText('Grupo «Online Support» actualizado')).toBeVisible();
   expect((await enlacesGuardados(page))[0].channels).toEqual(['chat']);
 
-  await goto(page, 'admin/grupos');
-  await page.getByRole('button', { name: 'Asignar agentes de Online Support' }).click();
-  const panel = page.locator('.agents-panel');
-  await expect(panel.locator('tbody tr')).toHaveCount(1);
-  await expect(panel.getByRole('columnheader', { name: 'Chat', exact: true })).toHaveCount(1);
-  // Solo Chat: 44,75rem (DD-181, Chat y Habilitado con su casilla de «todos»; con DD-176, 41,875; con DD-156, 43).
-  // Habilitado sin el candado, 2,75rem menos (DD-204; antes, 576).
-  await expect.poll(() => page.locator('.p-drawer').evaluate((e) => e.getBoundingClientRect().width)).toBe(532); // sin la columna de Estado (DD-185); antes, 716
+  await goto(page, 'admin/grupos/editar/11?seccion=agentes');
+  const tabla = page.locator('sc-agent-channel-table');
+  await expect(tabla.locator('tbody tr')).toHaveCount(1);
+  await expect(tabla.getByRole('columnheader', { name: 'Chat', exact: true })).toHaveCount(1);
 
   await goto(page, 'admin/agentes/editar/1?seccion=grupos');
   // La casilla de la fila: desde DD-187 la columna Chat lleva también su casilla de «todos» en la cabecera.

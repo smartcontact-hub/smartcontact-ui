@@ -3,6 +3,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AutoFocusModule } from 'primeng/autofocus';
 import { InplaceModule } from 'primeng/inplace';
 import { InputTextModule } from 'primeng/inputtext';
+import { TooltipModule } from 'primeng/tooltip';
 import { ScButtonComponent } from '@smartcontact-hub/components';
 
 /**
@@ -22,14 +23,18 @@ import { ScButtonComponent } from '@smartcontact-hub/components';
  *
  * Mientras se edita, el título conserva el alto que tenía: el nombre puede ocupar dos líneas (DD-170) y el campo es
  * de una, así que sin eso lo de debajo (la línea de datos, el índice) subía 24 px al pulsarlo.
+ *
+ * El nombre entero va en el tooltip del texto que se corta, no en el del `h1`: el `h1` desborda siempre 6 px por el
+ * relleno del display que sobresale, así que su `showOnEllipsis` lo sacaba con nombres enteros y encima del campo
+ * al editar (medido a 1440, 2026-10-20). El texto solo existe en reposo y solo desborda si la segunda línea se corta.
  */
 @Component({
   selector: 'sc-name-inplace',
-  imports: [AutoFocusModule, InplaceModule, InputTextModule, ScButtonComponent, TranslateModule],
+  imports: [AutoFocusModule, InplaceModule, InputTextModule, ScButtonComponent, TooltipModule, TranslateModule],
   template: `
     <p-inplace class="name-inplace" (onActivate)="remember()" (onDeactivate)="altoEnReposo.set(null)">
       <ng-template #display>
-        <span class="name-inplace__text">{{ name() }}</span>
+        <span class="name-inplace__text" [pTooltip]="name()" showOnEllipsis tooltipPosition="top">{{ name() }}</span>
       </ng-template>
       <ng-template #content let-closeCallback="closeCallback">
         <span class="name-inplace__edit" (focusout)="onFocusOut(closeCallback, $event)">
@@ -96,18 +101,24 @@ import { ScButtonComponent } from '@smartcontact-hub/components';
       text-wrap: balance;
     }
 
-    /* Editando, lo mismo: el campo ocupa el sitio del título sin empujar nada. */
+    /* Editando, lo mismo: el campo ocupa el sitio del título sin empujar nada. Por la derecha sobresale el relleno de
+       la ✕ (31,5 = su icono de 14 + 2 × el relleno del botón): con un nombre largo su glifo llega al borde de la
+       columna, y el campo gana ese hueco, el que pide «Online Support». */
     .name-inplace__edit {
       display: flex;
       align-items: center;
       gap: var(--sc-spacing-0-5);
       margin-block: calc(-1 * (var(--sc-cmp-form-field-padding-y) + 1px));
+      margin-inline-end: calc(-1 * var(--sc-cmp-button-padding-x));
     }
 
+    /* El campo empieza en la vertical del título, como las filas del índice de debajo, y mide lo que pide el nombre:
+       antes sobresalía 9,75 por la izquierda de la columna y medía siempre 167. Con un mínimo para escribir uno
+       corto, y el tope de la columna: uno más largo se desplaza dentro del campo. */
     .name-inplace__input {
-      flex: 1 1 auto;
-      min-width: 0;
-      margin-inline-start: calc(-1 * (var(--sc-cmp-form-field-padding-x) + 1px));
+      flex: 0 1 auto;
+      field-sizing: content;
+      min-inline-size: var(--sc-spacing-5);
     }
 
     .name-inplace__error {

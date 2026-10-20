@@ -127,7 +127,8 @@ for (const f of LARGAS) {
       expect(visto.muda, 'y no una copia muda').toBe(false);
     }
     await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
-    await expect(page.getByText(reposo.nombre.texto, { exact: true }), 'el nombre, escrito una sola vez').toHaveCount(1);
+    // En el contenido: la miga de la barra de arriba también lo dice desde SISMAC-4058, y es navegación.
+    await expect(page.locator('main').getByText(reposo.nombre.texto, { exact: true }), 'el nombre, escrito una sola vez').toHaveCount(1);
     await expect(page.locator('sc-nombre-fijo'), 'sin copia').toHaveCount(0);
   });
 }
@@ -163,8 +164,8 @@ test('un salto de canal deja el título del canal arriba y a la vista, sin nada 
 });
 
 const BORRAR = [
-  { ruta: 'admin/grupos/editar/11', listado: '/admin/grupos', pregunta: '¿Eliminar grupo?', entidad: 'grupo' },
-  { ruta: 'admin/agentes/editar/1', listado: '/admin/agentes', pregunta: '¿Eliminar agente?', entidad: 'agente' },
+  { ruta: 'admin/grupos/editar/11', listado: '/admin/grupos', entidad: 'grupo' },
+  { ruta: 'admin/agentes/editar/1', listado: '/admin/agentes', entidad: 'agente' },
 ] as const;
 
 for (const b of BORRAR) {
@@ -172,8 +173,9 @@ for (const b of BORRAR) {
     await goto(page, b.ruta);
     const nombre = (await cabecera(page)).nombre.texto;
     await page.locator('.page__rail').getByRole('button', { name: 'Eliminar' }).click();
-    const pregunta = page.getByRole('alertdialog', { name: b.pregunta });
-    await expect(pregunta).toContainText(`Vas a eliminar el ${b.entidad} «${nombre}». Esta acción no se puede deshacer.`);
+    // El título pregunta con el nombre; el cuerpo solo añade lo que no se sabe (2026-10-20).
+    const pregunta = page.getByRole('alertdialog', { name: `¿Eliminar el ${b.entidad} «${nombre}»?` });
+    await expect(pregunta).toContainText('Esta acción no se puede deshacer.');
     await expect(pregunta.getByRole('textbox'), 'no pide escribir el nombre').toHaveCount(0);
     await pregunta.getByRole('button', { name: 'Eliminar' }).click();
     await expect(page).toHaveURL(new RegExp(`${b.listado}$`));

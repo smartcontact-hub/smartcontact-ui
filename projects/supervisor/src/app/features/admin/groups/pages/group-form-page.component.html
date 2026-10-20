@@ -49,10 +49,11 @@
       <div class="headline">
         <!-- El nombre es el TÍTULO DE LA PÁGINA y se edita en su sitio (`sc-name-inplace`, el Inplace
              nativo), con el mismo aviso de nombre repetido que el campo de General. `h3-semibold` es el
-             rol que ya usan las nueve listas para su `h1`. -->
+             rol que ya usan las nueve listas para su `h1`. Su tooltip
+             lo lleva el texto que se corta, dentro del Inplace: en el `h1` salía también editando. -->
         <div class="headline__who">
           @if (mode() === 'edit') {
-            <h1 class="headline__name headline__name--editable sc-text-title-semibold" [pTooltip]="form().name" showOnEllipsis tooltipPosition="top">
+            <h1 class="headline__name headline__name--editable sc-text-title-semibold">
               <sc-name-inplace
                 [name]="form().name"
                 [label]="'groups.form.fields.name' | translate"
@@ -235,20 +236,27 @@
           </div>
         </div>
 
-        <div class="switch-field">
+        <!-- Sin tipificaciones en Repositorios no hay qué elegir: apagado, sin poder encenderlo, y dice por qué
+             (SISMAC-4058). -->
+        <div class="switch-field" [class.switch-field--top]="sinTipificaciones()">
           <sc-toggleswitch inputId="group-wrapup-classify"
-            [checked]="form().wrapUp.classify"
+            [checked]="form().wrapUp.classify && !sinTipificaciones()"
+            [disabled]="sinTipificaciones()"
+            [ariaDescribedBy]="sinTipificaciones() ? 'group-wrapup-classify-hint' : null"
             (checkedChange)="setWrapUp('classify', $event)"
           />
           <div class="switch-field__copy">
             <label class="switch-field__label sc-text-body-regular" for="group-wrapup-classify">{{ 'groups.form.wrapup.classify' | translate }}</label>
+            @if (sinTipificaciones()) {
+              <p id="group-wrapup-classify-hint" class="switch-field__hint sc-text-caption-regular">{{ 'groups.form.wrapup.classify_empty' | translate }}</p>
+            }
           </div>
         </div>
 
         <!-- Lo que pide tipificar, colgado de su interruptor y alineado con su texto: un solo borde para los dos
              interruptores y otro para lo que abren (revisión del 2026-10-15, antes en la fila del interruptor). Dos
              campos con su rótulo, en las columnas de la ficha: con cuál y en qué conversaciones. -->
-        @if (form().wrapUp.classify) {
+        @if (form().wrapUp.classify && !sinTipificaciones()) {
           <div class="wrapup__nested grid grid--2">
             <div class="field">
               <sc-select
@@ -718,8 +726,9 @@
         }
       </div>
 
-      <!-- Dónde se crean y se editan, como en la ficha de agente y en el Figma de la migración. -->
-      <a class="repo-link sc-text-caption-semibold" routerLink="/admin/repositorios">{{ 'resources.manage_link' | translate }}</a>
+      <!-- Dónde se crean y se editan, como en la ficha de agente y en el Figma de la migración. Sale de la ficha: con
+           cambios, pide guardar antes (SISMAC-4058). Con Cmd+clic o el botón central se abre en otra pestaña sin preguntar. -->
+      <a class="repo-link sc-text-caption-semibold" [href]="repositoriosHref" (click)="irARepositorios($event)">{{ 'resources.manage_link' | translate }}</a>
       </div>
     </sc-subsection>
 
@@ -780,7 +789,7 @@
 </ng-template>
 
 <!-- El horario de un subcanal de Chat y, solo con uno elegido, los dos mensajes que dependen de él: sin horario no hay
-     «fuera de horario» ni día no valorable. -->
+     «fuera de horario» ni día no laborable. -->
 <ng-template #chatSchedule let-sub="sub">
   <div class="grid">
     <!-- En su columna, como los demás desplegables de la sección: a todo el ancho era el único. -->

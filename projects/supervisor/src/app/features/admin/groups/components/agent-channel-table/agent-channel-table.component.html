@@ -15,44 +15,12 @@
     <!-- Compacta (`sm`, la densidad nativa de PrimeNG) y sin páginas (DD-176): todas las filas del filtro, y lo que no
          cabe lo desplaza la tabla por dentro con la cabecera fija, hasta el pie de la pantalla (DD-160). Con más de 100,
          pinta solo las que se ven (`virtualScroll`, DD-95). -->
+    <!-- La cabecera es la del DS (`headerTemplate` en las columnas con casilla de «todos»), y «Agente» se ordena por
+         nombre con su flecha, como cualquier tabla (SISMAC-4058). El orden lo pone esta tabla (`externalSort`): por el
+         nombre con las reglas del español. -->
     <sc-datatable variant="list" size="sm" scrollable scrollHeight="flex" virtualScroll [fill]="compact()"
-      [value]="visibleRows()" [columns]="columns()" [tableMinWidth]="tableMinWidth()" dataKey="agent.id">
-      <ng-template #header>
-        <tr>
-          @for (col of columns(); track col.field) {
-            <th #celda scope="col" [style.text-align]="col.align" [style.width]="col.width" [attr.aria-label]="col.header">
-              <!-- Como la matriz de permisos de Contact Center › Agentes: la cabecera, centrada sobre las casillas de su
-                   columna, con la casilla de «todos» DESPUÉS del rótulo (Asignado, sin rótulo: solo la casilla). Marcar o
-                   desmarcar una columna entera sin ir fila a fila (DD-180; enmienda: DD-185). -->
-              @if (hasHeaderCheckbox(col.field)) {
-                <sc-checkbox [state]="headerState(col.field)" [disabled]="headerDisabled(col.field)" labelPosition="start"
-                  [ariaLabel]="'groups.form.assigned.column_all' | translate: { column: col.header }"
-                  (cycle)="toggleHeader(col.field, celda)">
-                  @if (col.field !== 'assigned') { <span class="sc-text-body-semibold">{{ col.header }}</span> }
-                </sc-checkbox>
-              } @else if (col.field === 'agent') {
-                <!-- El estado ya no tiene columna (va en la burbuja del avatar, DD-185): se filtra desde la cabecera del agente,
-                     con un menú de estados que se marcan de varios en varios. -->
-                <span class="assign__agent-head">
-                  <span>{{ col.header }}</span>
-                  <sc-button
-                    variant="secondary"
-                    appearance="text"
-                    size="sm"
-                    icon="filter_list"
-                    [ariaLabel]="'groups.form.assigned.filter_status' | translate"
-                    [attr.aria-expanded]="statusPopover.overlayVisible()"
-                    (clicked)="statusPopover.toggle($event)"
-                  />
-                  @if (presenceChosen() > 0) {
-                    <sc-tag severity="info" [value]="(presenceChosen() === 1 ? 'groups.form.assigned.filter_status_count_one' : 'groups.form.assigned.filter_status_count') | translate: { count: presenceChosen() }" />
-                  }
-                </span>
-              } @else { {{ col.header }} }
-            </th>
-          }
-        </tr>
-      </ng-template>
+      [value]="visibleRows()" [columns]="columns()" [tableMinWidth]="tableMinWidth()" dataKey="agent.id"
+      externalSort [sortField]="orden() ? 'agent' : undefined" [sortOrder]="orden() ?? 1" (sortChange)="onSortChange($event)">
       <div scTableEmpty>
         <sc-empty-state icon="search_off" titleKey="labels.no_results.title" bodyKey="groups.form.assigned.no_results" />
       </div>
@@ -60,33 +28,25 @@
   </div>
 </div>
 
-<p-popover #statusPopover [attr.aria-label]="'groups.form.assigned.filter_status' | translate">
-  <div class="assign__filters">
-    <div class="assign__status-filter" role="group" [attr.aria-label]="'groups.form.assigned.filter_by_state' | translate">
-      <span class="assign__filter-title sc-text-caption-semibold" aria-hidden="true">{{ 'groups.form.assigned.filter_by_state' | translate }}</span>
-      @for (option of presenceOptions; track option.value) {
-        <sc-checkbox [state]="presenceChecked(option.members) ? 'all' : 'none'" (cycle)="togglePresence(option.members)">{{ option.labelKey | translate }}</sc-checkbox>
-      }
-    </div>
-    <!-- Los equipos: marcas para filtrar (Repositorios › Equipos). -->
-    @if (teamOptions().length > 0) {
-      <div class="assign__status-filter" role="group" [attr.aria-label]="'repositories.equipos.title' | translate">
-        <span class="assign__filter-title sc-text-caption-semibold" aria-hidden="true">{{ 'repositories.equipos.title' | translate }}</span>
-        @for (g of teamOptions(); track g.id) {
-          <sc-checkbox [state]="teamFilter().has(g.id) ? 'all' : 'none'" (cycle)="toggleTeam(g.id)">{{ g.name }}</sc-checkbox>
-        }
-      </div>
-    }
-    @if (presenceChosen() > 0) {
-      <sc-button size="sm" variant="secondary" appearance="text" [label]="'groups.form.assigned.filter_status_clear' | translate" (clicked)="clearFilters()" />
-    }
-  </div>
-</p-popover>
+<!-- La cabecera de Asignado, cada canal y Habilitado: como la matriz de permisos de Contact Center › Agentes, centrada
+     sobre las casillas de su columna, con la casilla de «todos» DESPUÉS del rótulo (Asignado, sin rótulo: solo la
+     casilla). Marcar o desmarcar una columna entera sin ir fila a fila (DD-180; enmienda: DD-185). El globo de la
+     confirmación sale pegado a la casilla (`ancla`). -->
+<ng-template #headerCheckTpl let-col>
+  <span #ancla class="assign__head-check">
+    <sc-checkbox [state]="headerState(col.field)" [disabled]="headerDisabled(col.field)" labelPosition="start"
+      [ariaLabel]="'groups.form.assigned.column_all' | translate: { column: col.header }"
+      (cycle)="toggleHeader(col.field, ancla)">
+      @if (col.field !== 'assigned') { <span class="sc-text-body-semibold">{{ col.header }}</span> }
+    </sc-checkbox>
+  </span>
+</ng-template>
 
 <!-- Celdas del editor. Fuera del `<sc-datatable>` para que `viewChild` las resuelva. -->
+<!-- Su foto, su nombre y su email. Sin el punto de su estado ni el filtro por estado o equipo, por ahora (SISMAC-4058). -->
 <ng-template #agentTpl let-row>
   <span class="assign__name">
-    <sc-presence-avatar [name]="row.agent.name" [size]="24" [presence]="row.agent.presenceStatus" />
+    <sc-presence-avatar [name]="row.agent.name" [photo]="row.agent.photo" [size]="24" />
     <span class="assign__identity">
       <span class="assign__name-label sc-text-body-semibold" [pTooltip]="row.agent.name" showOnEllipsis tooltipPosition="top">{{ row.agent.name }}</span>
       @if (row.agent.email) { <span class="assign__email sc-text-caption-regular" [pTooltip]="row.agent.email" showOnEllipsis tooltipPosition="top">{{ row.agent.email }}</span> }
@@ -129,16 +89,16 @@
   }
 </ng-template>
 
-<!-- Nivel: entero 1-10, no una categoría — un stepper pesa menos que una lista de 10 opciones (auditoría UX, 2026-10). -->
+<!-- Nivel: un desplegable del 1 al 10 en la columna de su canal (SISMAC-4058; antes, un número con − y +). -->
 <ng-template #levelTpl let-row let-col="col">
-  <label [attr.for]="'group-' + col.field + '-' + row.agent.id" class="visually-hidden">{{ 'groups.form.assigned.level_aria' | translate: { name: row.agent.name, channel: (familyLabelKeys[levelFamily(col.field)] | translate) } }}</label>
-  <sc-inputnumber
-    class="assign__level-input"
+  <sc-select
+    class="assign__level-select"
     size="sm"
     [inputId]="'group-' + col.field + '-' + row.agent.id"
-    [min]="1"
-    [max]="10"
-    [step]="1"
+    [ariaLabel]="'groups.form.assigned.level_aria' | translate: { name: row.agent.name, channel: (familyLabelKeys[levelFamily(col.field)] | translate) }"
+    [options]="levelOptions"
+    optionLabel="label"
+    optionValue="value"
     [disabled]="!row.link || pending() || !allowed(row.agent, levelFamily(col.field))"
     [value]="row.link?.levels?.[levelFamily(col.field)] ?? 1"
     (valueChange)="setLevel(row.agent.id, col.field, $event)"
@@ -154,10 +114,20 @@
   />
 </ng-template>
 
-<!-- Habilitado lo cambia el supervisor también con «Activación por grupo», que deja al agente hacerlo y no se lo quita a
-     la ficha (revisión del 2026-10-14, que corrige el candado de DD-187 §2). -->
+<!-- Habilitado lo cambia el supervisor, salvo a quien tiene «Activación por grupo»: ese agente se habilita desde su
+     puesto, y aquí su interruptor se ve pero no se toca, con el porqué al pasar (SISMAC-4058; revierte la revisión del
+     2026-10-14, que se lo dejaba al supervisor). -->
 <ng-template #activeTpl let-row>
-  @if (!row.link) {
+  @if (row.link && row.agent.selfActivate) {
+    <span class="assign__locked" [pTooltip]="'groups.form.assigned.self_activate_hint' | translate: { name: row.agent.name }" tooltipPosition="top">
+      <sc-toggleswitch
+        [checked]="row.link.active"
+        [disabled]="true"
+        [size]="compact() ? 'sm' : 'md'"
+        [ariaLabel]="'groups.form.assigned.self_activate_hint' | translate: { name: row.agent.name }"
+      />
+    </span>
+  } @else if (!row.link) {
     <!-- Sin asignar: el interruptor apagado dice por qué, como en la tabla de grupos del agente (barrido de consistencia). -->
     <sc-toggleswitch
       [checked]="false"

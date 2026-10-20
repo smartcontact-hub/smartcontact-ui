@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, HostListener, inject, Injector, input, OnInit, signal, type TemplateRef, viewChild } from '@angular/core';
-import { NgTemplateOutlet } from '@angular/common';
-import { ActivatedRoute, Router, RouterLink, type UrlTree } from '@angular/router';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, HostListener, inject, Injector, input, OnInit, signal, type TemplateRef, viewChild } from '@angular/core';
+import { LocationStrategy, NgTemplateOutlet } from '@angular/common';
+import { ActivatedRoute, Router, type UrlTree } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map, startWith } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -18,7 +18,7 @@ import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 
 import { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
-import { ResultadoAccionService, SectionLinksService } from '@core/services';
+import { BreadcrumbService, ResultadoAccionService, SectionLinksService } from '@core/services';
 import { ScConfirmService } from '@smartcontact-hub/components';
 import { EMAIL_RE } from '@core/utils/validators';
 import {
@@ -209,7 +209,6 @@ function sameValues<T>(a: readonly T[], b: readonly T[]): boolean {
     MessageComponent,
     PermissionMatrixComponent,
     PhotoUploadComponent,
-    RouterLink,
     MultiSelectComponent,
     OptionCardsComponent,
     SectionCardComponent,
@@ -227,7 +226,7 @@ function sameValues<T>(a: readonly T[], b: readonly T[]): boolean {
 export class AgentFormPageComponent implements DirtyAware, OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
-  private readonly confirmarBorrado = injectConfirmarBorrado('agents.entity_singular');
+  private readonly confirmarBorrado = injectConfirmarBorrado('agents.delete_dialog.title');
   private readonly sectionLinks = inject(SectionLinksService);
   private readonly injector = inject(Injector);
   private readonly agentsStore = inject(AgentsStore);
@@ -261,6 +260,16 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
    * cuerpo, acciones → barra de arriba. */
   private readonly topbarActions =
     viewChild<TemplateRef<unknown>>('topbarActions');
+
+  /**
+   * La miga de la edición dice el nombre del agente, el guardado, como la ficha de grupo («Administración › Agentes ›
+   * Tom Hanks», SISMAC-4058). Al crear o duplicar, la de la ruta.
+   */
+  private readonly breadcrumbs = inject(BreadcrumbService);
+  private readonly migaConNombre = effect(() =>
+    this.breadcrumbs.nombrar(this.route, this.mode() === 'edit' ? (this.initial()?.name ?? null) : null),
+  );
+  private readonly sinMiga = inject(DestroyRef).onDestroy(() => this.breadcrumbs.nombrar(this.route, null));
 
   constructor() {
     useTopbarActions(this.topbarActions);
@@ -1181,6 +1190,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
     if (!this.canSave() || this.saving()) return;
     // Con algo pendiente no crea ni guarda: desde ahora se dice lo que falta, y se llega al primer campo (DD-217).
     if (this.faltas().length > 0 || this.formatoMal()) {
+      this.destinoTrasGuardar = null;
       this.ocasion.intentar();
       const primero = this.avisos()[0];
       if (primero) this.irACampo(primero.seccion, primero.ancla);
@@ -1205,7 +1215,10 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
         rejectLabel: this.translate.instant('common.cancel'),
         acceptTone: 'danger',
       });
-      if (!accepted) return;
+      if (!accepted) {
+        this.destinoTrasGuardar = null;
+        return;
+      }
     }
 
     this.saving.set(true);
@@ -1260,7 +1273,41 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
       this.saving.set(false);
       this.ocasion.olvidar();
       this.dirtyState.markPristine();
+      this.irAlDestino();
     }, 400);
+  }
+
+  /* ── «Gestionar en Repositorios»: sale de la ficha, así que con cambios pide guardar antes, como la de grupo ──── */
+
+  /** La dirección del enlace, para abrirlo en otra pestaña con Cmd+clic o el botón central, que no pregunta nada. */
+  protected readonly repositoriosHref = inject(LocationStrategy).prepareExternalUrl('/admin/repositorios');
+  /** Adónde ir cuando acabe de guardar; `null`, quedarse en la ficha. */
+  private destinoTrasGuardar: string | null = null;
+
+  protected async irARepositorios(event: MouseEvent): Promise<void> {
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    if (!this.formDirty()) {
+      void this.router.navigateByUrl('/admin/repositorios');
+      return;
+    }
+    const guardar = await this.confirmHost.request({
+      title: this.translate.instant('agents.form.repositories_leave.title'),
+      body: this.translate.instant('agents.form.repositories_leave.body'),
+      acceptLabel: this.translate.instant('common.save'),
+      rejectLabel: this.translate.instant('common.discard_keep'),
+      icon: 'info',
+    });
+    if (!guardar) return;
+    this.destinoTrasGuardar = '/admin/repositorios';
+    void this.save();
+  }
+
+  /** Tras guardar, al destino que se pidió (Repositorios), si lo hay. */
+  private irAlDestino(): void {
+    const destino = this.destinoTrasGuardar;
+    this.destinoTrasGuardar = null;
+    if (destino) void this.router.navigateByUrl(destino);
   }
 
   /**
@@ -1277,11 +1324,15 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
     this.linksStore.replaceLinksForAgent(created.id, this.normalizeLinks(f.links, created.id));
     const creado = this.translate.instant('agents.toasts.created', { name: created.name });
     this.dirtyState.markPristine();
+    const destino = this.destinoTrasGuardar;
+    this.destinoTrasGuardar = null;
     void this.router
       .navigate(['/admin/agentes/editar', created.id], {
         replaceUrl: true,
         queryParams: slug && slug !== 'general' ? { seccion: slug } : {},
       })
+      // Si se guardó para ir a Repositorios, allí: Atrás vuelve al agente ya creado.
+      .then(() => (destino ? this.router.navigateByUrl(destino) : true))
       // El toast, ya en la ficha a la que se llega (DD-211 §5).
       .then(() => this.resultado.contar(creado))
       .finally(() => this.saving.set(false));

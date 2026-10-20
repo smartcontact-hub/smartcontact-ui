@@ -161,7 +161,7 @@
           "title": "Copy without filler",
           "apply": "A title that explains itself stands alone. A description only if it adds something non-obvious.",
           "avoid": "A decorative one- or two-sentence subtitle under every heading.",
-          "have": "A rule, not a component: less text, more signal. If removing it loses nothing, remove it. And end punctuation in unison: help text under a field ends with a period; a subtitle under a heading has none, and neither does anything that names (titles, buttons, tooltips, errors)."
+          "have": "A rule, not a component: less text, more signal. If removing it loses nothing, remove it. And end punctuation in unison: help text under a field ends with a period; a subtitle under a heading has none, and neither does anything that names (titles, buttons, tooltips, errors). A confirmation asks what and to whom or how many (“Delete the group “Sales”?”), and its button repeats the verb (“Delete”), never “Confirm”."
         },
         "icons": {
           "title": "Consistent iconography",

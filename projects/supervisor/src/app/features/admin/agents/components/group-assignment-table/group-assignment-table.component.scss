@@ -74,6 +74,12 @@
     display: inline-flex;
   }
 
+  /* La casilla de «todos» de la cabecera, en su línea, como el rótulo de las demás. */
+  &__head-check {
+    display: inline-flex;
+    vertical-align: middle;
+  }
+
   &__permission {
     display: inline-flex;
     align-items: center;

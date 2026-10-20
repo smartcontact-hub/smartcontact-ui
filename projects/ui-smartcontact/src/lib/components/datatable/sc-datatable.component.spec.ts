@@ -509,6 +509,42 @@ describe('sc-datatable · orden', () => {
     fixture.destroy();
   });
 
+  it('una columna con defaultSortOrder -1 ordena de mayor a menor al primer clic, también viniendo de otra en descendente', async () => {
+    /* «Servicios» y «Agentes» de Grupos (SISMAC-4056): se busca el que más tiene. p-table calcula el sentido con el
+     * `defaultSortOrder` de TODA la tabla antes de avisar, así que darle la vuelta fuera dejaba la flecha mintiendo. */
+    const cols: readonly ScColumnDef<Fila>[] = [
+      { field: 'id', header: 'ID', sortable: true },
+      { field: 'nombre', header: 'Nombre', sortable: true, defaultSortOrder: -1 },
+    ];
+    const fixture = await montarOrdenable([{ id: 2, nombre: 'B' }, { id: 1, nombre: 'A' }, { id: 3, nombre: 'C' }], { columns: cols });
+    const emitidos: unknown[] = [];
+    fixture.componentInstance.sortChange.subscribe((e) => emitidos.push(e));
+    const root = fixture.nativeElement as HTMLElement;
+    const pulsar = async (campo: string) => {
+      root.querySelector<HTMLElement>(`thead th[data-field="${campo}"]`)!.click();
+      fixture.detectChanges();
+      await fixture.whenStable();
+    };
+    const nombre = root.querySelector<HTMLElement>('thead th[data-field="nombre"]')!;
+
+    await pulsar('nombre');
+    expect(nombresPintados(root)).toEqual(['C', 'B', 'A']);
+    expect(nombre.getAttribute('aria-sort')).toBe('descending');
+    await pulsar('nombre');
+    expect(nombresPintados(root)).toEqual(['A', 'B', 'C']);
+    expect(nombre.getAttribute('aria-sort')).toBe('ascending');
+
+    // ID, a descendente con dos clics; y Nombre, otra vez su primer clic: de mayor a menor.
+    await pulsar('id');
+    await pulsar('id');
+    await pulsar('nombre');
+    expect(nombresPintados(root)).toEqual(['C', 'B', 'A']);
+    expect(nombre.getAttribute('aria-sort')).toBe('descending');
+    expect(emitidos.at(-1)).toEqual({ field: 'nombre', order: -1 });
+    expect(emitidos.filter((e) => (e as { field?: string }).field === 'nombre').map((e) => (e as { order: number }).order)).toEqual([-1, 1, -1]);
+    fixture.destroy();
+  });
+
   it('sin removableSort, el tercer clic vuelve a ascendente, como p-table', async () => {
     const fixture = await montarOrdenable([{ id: 2, nombre: 'B' }, { id: 1, nombre: 'A' }]);
     const cabecera = (fixture.nativeElement as HTMLElement).querySelector<HTMLElement>('thead th[data-field="nombre"]')!;
@@ -519,6 +555,48 @@ describe('sc-datatable · orden', () => {
     }
     expect(nombresPintados(fixture.nativeElement)).toEqual(['A', 'B']);
     expect(cabecera.getAttribute('aria-sort')).toBe('ascending');
+    fixture.destroy();
+  });
+});
+
+/** Una cabecera con algo más que su texto: la casilla de «todos» de una tabla de asignación (SISMAC-4058). */
+@Component({
+  standalone: true,
+  imports: [ScDatatableComponent],
+  template: `
+    <ng-template #cabecera let-col>
+      <span class="propia">PROPIA:{{ col.header }}</span>
+    </ng-template>
+    <sc-datatable [value]="filas" [columns]="columnas()" dataKey="id" />
+  `,
+})
+class ConCabeceraPropia {
+  readonly filas: readonly Fila[] = [{ id: 1, nombre: 'Inés' }];
+  private readonly cabecera = viewChild.required<TemplateRef<unknown>>('cabecera');
+  readonly columnas = computed<readonly ScColumnDef<Fila>[]>(() => [
+    { field: 'id', header: 'ID', headerTemplate: this.cabecera() as never, headerAriaLabel: 'Identificador' },
+    { field: 'nombre', header: 'Nombre', sortable: true, headerTemplate: this.cabecera() as never },
+  ]);
+}
+
+describe('sc-datatable · headerTemplate', () => {
+  beforeEach(() => vi.stubGlobal('ResizeObserver', class { observe() {} disconnect() {} }));
+  afterEach(() => vi.unstubAllGlobals());
+
+  it('pinta la plantilla de la columna en su celda de cabecera, con la columna de contexto, y conserva la flecha de ordenar', async () => {
+    TestBed.configureTestingModule({ imports: [ConCabeceraPropia] });
+    const fixture = TestBed.createComponent(ConCabeceraPropia);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    const root = fixture.nativeElement as HTMLElement;
+    const id = root.querySelector<HTMLElement>('thead th[data-field="id"]')!;
+    const nombre = root.querySelector<HTMLElement>('thead th[data-field="nombre"]')!;
+    expect(id.querySelector('.propia')?.textContent).toBe('PROPIA:ID');
+    expect(id.querySelector('.sc-datatable__header-label'), 'en lugar del texto, no además').toBeNull();
+    expect(id.getAttribute('aria-label')).toBe('Identificador');
+    expect(nombre.querySelector('.propia')?.textContent).toBe('PROPIA:Nombre');
+    expect(nombre.querySelector('p-sort-icon, p-sorticon, [data-pc-name="sorticon"]'), 'la flecha de ordenar sigue').not.toBeNull();
     fixture.destroy();
   });
 });

@@ -244,7 +244,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 167,
+      "usedInSupervisor": 165,
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "sobreObsoleto": [
         {
@@ -299,7 +299,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 39,
+      "usedInSupervisor": 37,
       "cuando": "Para un sí/no independiente, o para la casilla de un grupo elegido A MEDIAS (tiene tercer estado). Para activar algo al instante, `sc-toggleswitch`.",
       "sobreObsoleto": []
     },
@@ -1127,7 +1127,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 21,
+      "usedInSupervisor": 20,
       "cuando": "Para una cantidad acotada, con mínimo, máximo y paso. Si el número es un identificador (un teléfono, un código), es texto: `sc-inputtext`.",
       "sobreObsoleto": []
     },
@@ -1705,7 +1705,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 68,
+      "usedInSupervisor": 69,
       "cuando": "Para elegir UNA de muchas. Si son pocas y caben a la vista, `sc-radiobutton` o `sc-selectbutton` ahorran un clic.",
       "sobreObsoleto": []
     },
@@ -1902,7 +1902,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 29,
+      "usedInSupervisor": 28,
       "cuando": "Para clasificar o marcar un estado EN la fila. Si es un contador pegado a algo, `sc-badge`; si el usuario lo puede quitar, `sc-chip`.",
       "sobreObsoleto": []
     },
@@ -2006,7 +2006,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 44,
+      "usedInSupervisor": 46,
       "cuando": "Para encender o apagar algo CON EFECTO INMEDIATO. Si el cambio se guarda al enviar el formulario, `sc-checkbox`.",
       "sobreObsoleto": []
     }

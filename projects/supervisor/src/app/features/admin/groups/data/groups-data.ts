@@ -322,17 +322,18 @@ export interface ChannelQueue {
 }
 
 /**
- * Catálogo de D3; los valores guardados fuera de él siguen siendo legibles, sin migrarlos. La inactividad de chat ya no
- * tiene catálogo: sus minutos se escriben, en la ficha y en Contact Center (DD-184 §3).
+ * Catálogo de D3, el de SISMAC-4058: 5 a 30 s de cinco en cinco, y 1, 2, 3, 4, 5, 10, 15 y 30 min (el 1,5 min se fue el
+ * 2026-10-20). Los valores guardados fuera de él siguen siendo legibles, sin migrarlos, en su sitio de la lista. La
+ * inactividad de chat ya no tiene catálogo: sus minutos se escriben, en la ficha y en Contact Center (DD-184 §3).
  */
-export const GROUP_TIME_SECONDS = [5, 10, 15, 20, 25, 30, 60, 90, 120, 180, 240, 300, 600, 900, 1800] as const;
+export const GROUP_TIME_SECONDS = [5, 10, 15, 20, 25, 30, 60, 120, 180, 240, 300, 600, 900, 1800] as const;
 
 /** Los números de WhatsApp de la cuenta, de los que se elige el del grupo. */
 export const WHATSAPP_NUMBERS: readonly string[] = ['+34 900 100 200', '+34 900 100 201'];
 
 export function groupDurationOptions(current: number, locale: string): readonly { label: string; value: number }[] {
   const catalog: readonly number[] = GROUP_TIME_SECONDS;
-  const values = catalog.includes(current) ? catalog : [...catalog, current];
+  const values = catalog.includes(current) ? catalog : [...catalog, current].sort((a, b) => a - b);
   const format = new Intl.NumberFormat(locale, { maximumFractionDigits: 10 });
   return values.map(value => ({ value, label: value >= 60 && value % 30 === 0
     ? `${format.format(value / 60)} min` : `${format.format(value)} s` }));
@@ -353,7 +354,7 @@ export interface ChatQueueMessages {
   readonly final: string;
   /** Al escribir fuera del horario de atención. */
   readonly outOfSchedule: string;
-  /** El día no valorable: el que el horario no cubre. */
+  /** El día no laborable: el que el horario no cubre. */
   readonly nonWorkingDay: string;
 }
 

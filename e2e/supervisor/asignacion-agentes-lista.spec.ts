@@ -28,11 +28,12 @@ async function seed(page: Page) {
   });
 }
 
-for (const surface of ['ficha', 'panel'] as const) {
-  test(`${surface}: filtro de asignación, búsqueda por email y filas estables al asignar`, async ({ page }) => {
+// La tabla es la misma en la ficha y en el panel del Monitor; desde el 2026-10-20 el panel ya no se abre desde el listado
+// de grupos (SISMAC-4056), y se mide en la ficha.
+{
+  test('filtro de asignación, búsqueda por email y filas estables al asignar', async ({ page }) => {
     await seed(page);
-    await goto(page, surface === 'ficha' ? 'admin/grupos/editar/11?seccion=agentes' : 'admin/grupos');
-    if (surface === 'panel') await page.getByRole('button', { name: 'Asignar agentes de Grupo mixto' }).click();
+    await goto(page, 'admin/grupos/editar/11?seccion=agentes');
     const table = page.locator('sc-agent-channel-table');
     await expect(table.getByRole('button', { name: 'Asignados', exact: true })).toHaveAttribute('aria-pressed', 'true');
     await expect(table.locator('tbody tr')).toHaveCount(3);
@@ -67,12 +68,13 @@ test('la cabecera confirma dos cambios, permite cancelar y solo modifica los age
   await table.getByRole('searchbox').fill('Chat');
   const all = table.getByRole('columnheader', { name: 'Asignado', exact: true }).getByRole('checkbox');
   await all.click();
-  const dialog = page.getByRole('alertdialog', { name: 'Confirmar cambios colectivos' });
-  await expect(dialog).toContainText('2');
+  // La pregunta dice qué y a cuántos, y el botón repite el verbo (2026-10-20).
+  const dialog = page.getByRole('alertdialog', { name: '¿Asignar 2 agentes al grupo?' });
+  await expect(dialog).toBeVisible();
   await dialog.getByRole('button', { name: 'Cancelar', exact: true }).click();
   await expect(table.locator('tbody').getByRole('checkbox', { name: /^Asignado —/ }).first()).not.toBeChecked();
   await all.click();
-  await dialog.getByRole('button', { name: 'Confirmar', exact: true }).click();
+  await dialog.getByRole('button', { name: 'Asignar', exact: true }).click();
   for (const checkbox of await table.locator('tbody').getByRole('checkbox', { name: /^Asignado —/ }).all()) await expect(checkbox).toBeChecked();
   await page.getByRole('button', { name: /^Guardar(?: \(\d+\))?$/ }).click();
   await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('sc-group-agent-links')!).map((link: { agentId: number }) => link.agentId).sort())).toEqual([1, 2, 3, 5, 6]);
@@ -87,13 +89,13 @@ test('cada columna lleva su casilla de todos: un canal nunca se lleva el último
   const table = page.locator('sc-agent-channel-table');
   const cabecera = (nombre: string) => table.getByRole('columnheader', { name: nombre, exact: true }).getByRole('checkbox');
   for (const nombre of ['Asignado', 'Teléfono', 'Chat', 'Habilitado']) await expect(cabecera(nombre), nombre).toHaveCount(1);
-  const dialog = page.getByRole('alertdialog', { name: 'Confirmar cambios colectivos' });
+  // El globo junto a la casilla (`p-confirmpopup`): el `alertdialog` del diálogo del DS está siempre montado, vacío.
+  const globo = page.locator('.p-confirmpopup');
 
   // Chat: Ana y Elena lo tienen, y Bruno no puede. Desmarcarla les quita Chat a las dos.
   await expect(cabecera('Chat')).toBeChecked();
   await cabecera('Chat').click();
-  await expect(dialog).toContainText('Quitar Chat: 2 agentes.');
-  await dialog.getByRole('button', { name: 'Confirmar', exact: true }).click();
+  await page.getByRole('alertdialog', { name: '¿Quitar Chat a 2 agentes?' }).getByRole('button', { name: 'Quitar', exact: true }).click();
   for (const nombre of ['Ana Mixta', 'Elena Mixta']) await expect(table.getByRole('checkbox', { name: `${nombre} — Chat`, exact: true })).not.toBeChecked();
 
   // Teléfono: ahora es el último canal de las tres filas, y no se puede quitar desde la cabecera.
@@ -101,11 +103,10 @@ test('cada columna lleva su casilla de todos: un canal nunca se lleva el último
 
   // Habilitado: Ana estaba deshabilitada, así que marca la que falta (un cambio, sin preguntar) y luego quita las tres.
   await cabecera('Habilitado').click();
-  await expect(dialog).toHaveCount(0);
+  await expect(globo).toHaveCount(0);
   await expect(cabecera('Habilitado')).toBeChecked();
   await cabecera('Habilitado').click();
-  await expect(dialog).toContainText('Deshabilitar: 3 agentes.');
-  await dialog.getByRole('button', { name: 'Confirmar', exact: true }).click();
+  await page.getByRole('alertdialog', { name: '¿Deshabilitar 3 agentes?' }).getByRole('button', { name: 'Deshabilitar', exact: true }).click();
   await expect(cabecera('Habilitado')).not.toBeChecked();
 
   await page.getByRole('button', { name: /^Guardar(?: \(\d+\))?$/ }).click();
@@ -123,12 +124,12 @@ test('una acción sobre un solo agente no pregunta; desasignar mantiene la fila 
   await table.getByRole('columnheader', { name: 'Asignado', exact: true }).getByRole('checkbox').click();
   await expect(table.getByRole('checkbox', { name: 'Asignado — Ana Mixta', exact: true })).not.toBeChecked();
   await expect(table.locator('tbody tr')).toHaveCount(1);
-  await expect(page.getByRole('alertdialog', { name: 'Confirmar cambios colectivos' })).toHaveCount(0);
+  await expect(page.locator('.p-confirmpopup')).toHaveCount(0);
   await table.getByRole('searchbox').fill('persona1');
   await expect(table.locator('tbody')).toContainText('No hay agentes');
 });
 
-test('la cabecera actúa sobre todo el filtro y excluye agentes incompatibles; el panel confirma y guarda', async ({ page }) => {
+test('la cabecera actúa sobre todo el filtro y excluye agentes incompatibles; confirma y guarda', async ({ page }) => {
   await seed(page);
   await page.addInitScript(() => {
     const agents = JSON.parse(localStorage.getItem('sc-agents')!);
@@ -136,18 +137,16 @@ test('la cabecera actúa sobre todo el filtro y excluye agentes incompatibles; e
     for (let id = 7; id <= 31; id++) agents.push({ ...agents[2], id, name: `Chat adicional ${id}`, email: `extra${id}@equipo.test` });
     localStorage.setItem('sc-agents', JSON.stringify(agents));
   });
-  await goto(page, 'admin/grupos');
-  await page.getByRole('button', { name: 'Asignar agentes de Grupo mixto' }).click();
+  await goto(page, 'admin/grupos/editar/11?seccion=agentes');
   const table = page.locator('sc-agent-channel-table');
   await table.getByRole('button', { name: 'Sin asignar', exact: true }).click();
   // Sin páginas (DD-176): los 28 sin asignar, todos en la tabla.
   await expect(table.locator('tbody tr')).toHaveCount(28);
   await expect(table.locator('.p-paginator')).toHaveCount(0);
   await table.getByRole('columnheader', { name: 'Asignado', exact: true }).getByRole('checkbox').click();
-  const dialog = page.getByRole('alertdialog', { name: 'Confirmar cambios colectivos' });
-  await expect(dialog).toContainText('27 agentes');
-  await dialog.getByRole('button', { name: 'Confirmar', exact: true }).click();
-  await page.getByRole('button', { name: 'Guardar (27)', exact: true }).click();
+  const dialog = page.getByRole('alertdialog', { name: '¿Asignar 27 agentes al grupo?' });
+  await dialog.getByRole('button', { name: 'Asignar', exact: true }).click();
+  await page.getByRole('button', { name: 'Guardar', exact: true }).click();
   await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('sc-group-agent-links')!).length)).toBe(30);
   expect(await page.evaluate(() => JSON.parse(localStorage.getItem('sc-group-agent-links')!).some((link: { agentId: number }) => link.agentId === 4))).toBe(false);
 });
@@ -177,12 +176,11 @@ test('quitar dos asignados desde cabecera confirma y conserva los ocultos; cance
   await table.getByRole('searchbox').fill('Mixta');
   const header = table.getByRole('columnheader', { name: 'Asignado', exact: true }).getByRole('checkbox');
   await header.click();
-  const dialog = page.getByRole('alertdialog', { name: 'Confirmar cambios colectivos' });
-  await expect(dialog).toContainText('Quitar del grupo: 2 agentes');
+  const dialog = page.getByRole('alertdialog', { name: '¿Quitar 2 agentes del grupo?' });
   await dialog.getByRole('button', { name: 'Cancelar', exact: true }).click();
   await expect(header).toBeChecked();
   await header.click();
-  await dialog.getByRole('button', { name: 'Confirmar', exact: true }).click();
+  await dialog.getByRole('button', { name: 'Quitar', exact: true }).click();
   await expect(table.locator('tbody tr')).toHaveCount(2);
   await page.getByRole('button', { name: 'Guardar', exact: true }).click();
   await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('sc-group-agent-links')!).map((link: { agentId: number }) => link.agentId))).toEqual([2]);

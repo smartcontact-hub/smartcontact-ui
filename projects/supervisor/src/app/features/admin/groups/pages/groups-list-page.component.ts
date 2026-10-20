@@ -9,7 +9,6 @@ import { ResultadoAccionService, XlsxExportService } from '@core/services';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { injectLangChange } from '@core/utils/lang-change';
 import { CeldaVaciaComponent, ChannelIconComponent, ListPageComponent } from '@shared/components';
-import { nombreDeCopia } from '@shared/utils/copy-name';
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
 import {
   type ScColumnCellContext,
@@ -28,14 +27,12 @@ import {
   PRIORITY_LABEL_KEYS,
   chatStrategyOf,
   compareChannels,
-  duplicateGroupDraft,
   phoneStrategyOf,
   priorityRank,
 } from '../data/groups-data';
 import { GroupsStore } from '../state/groups.store';
 import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links.store';
-import { GroupAgentsPanelComponent } from '../components/group-agents-panel/group-agents-panel.component';
-import { injectConfirmarBorrado } from '@features/admin/services/confirmar-borrado';
+import { injectConfirmarBorrado, injectConfirmarBorradoVarios } from '@features/admin/services/confirmar-borrado';
 import { TooltipModule } from 'primeng/tooltip';
 
 /* v2 — bumped when ColumnSelector schema changed (set → ordered array)
@@ -44,6 +41,8 @@ import { TooltipModule } from 'primeng/tooltip';
 /* v4 (2026-09-24): el ID pasa detrás del nombre. Una lista guardada lo seguiría poniendo el primero.
  * La columna «Estrategia de chat» (2026-09-26) no pide versión: es opcional, y el selector solo añade a lo
  * guardado las columnas nuevas que salen por defecto. */
+/* La columna ID se fue el 2026-10-20 (SISMAC-4056 no la lista; sigue en el Excel) sin subir versión: una lista guardada
+ * que la nombre la pierde al leerse (`normalizePrefs` descarta lo que no conoce). */
 const COLUMN_PREF_KEY = 'sc-groups-columns-v4';
 
 @Component({
@@ -56,7 +55,6 @@ const COLUMN_PREF_KEY = 'sc-groups-columns-v4';
     TagComponent,
     EmptyStateComponent,
     GroupPopoverComponent,
-    GroupAgentsPanelComponent,
     IconComponent,
     ListPageComponent,
     TranslateModule,
@@ -74,7 +72,8 @@ export class GroupsListPageComponent {
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
   private readonly router = inject(Router);
-  private readonly confirmarBorrado = injectConfirmarBorrado('groups.entity_singular');
+  private readonly confirmarBorrado = injectConfirmarBorrado('groups.delete_dialog.title');
+  private readonly confirmarBorradoVarios = injectConfirmarBorradoVarios('groups.delete_dialog.title_bulk');
 
   /** CTA proyectado a la TopBar (modelo "todo arriba" S59): la banda de
    * page-header desaparece; identidad → breadcrumb, acción → barra. */
@@ -122,8 +121,6 @@ export class GroupsListPageComponent {
     this.lang(); // cabeceras al día al cambiar de idioma (ver `injectLangChange`)
     return [
       { key: 'name', label: this.translate.instant('groups.table.name'), locked: true },
-      // Detrás del nombre y opcional, como en Agentes.
-      { key: 'code', label: this.translate.instant('groups.table.code'), defaultVisible: false },
       { key: 'phone', label: this.translate.instant('groups.table.phone') },
       { key: 'channels', label: this.translate.instant('groups.table.channels') },
       { key: 'priority', label: this.translate.instant('groups.table.priority') },
@@ -132,7 +129,7 @@ export class GroupsListPageComponent {
       { key: 'strategy', label: this.translate.instant('groups.table.strategy_phone') },
       { key: 'chatStrategy', label: this.translate.instant('groups.table.strategy_chat'), defaultVisible: false },
       { key: 'services', label: this.translate.instant('groups.table.services') },
-      // Su cifra abre el panel rápido de agentes (DD-159). No va fija: se oculta y se mueve como las demás (2026-10-19).
+      // Su cifra lleva a «Agentes asignados» (SISMAC-4056). No va fija: se oculta y se mueve como las demás (2026-10-19).
       { key: 'agents', label: this.translate.instant('groups.table.agents') },
     ];
   });
@@ -141,12 +138,11 @@ export class GroupsListPageComponent {
    * Qué filas casan con la búsqueda (la consulta llega ya en minúsculas): cualquier campo de texto de la tabla, con
    * la prioridad en el idioma de la pantalla (2026-09-24). Los canales son iconos, y los servicios y agentes
    * solo salen al pasar el ratón: casaría una fila sin que se viera por qué. Por lo mismo, el teléfono y cada
-   * estrategia cuentan solo si el grupo tiene ese canal: si no, su celda dice «—».
+   * estrategia cuentan solo si el grupo tiene ese canal: si no, su celda dice «—»; y el ID, que no está en la tabla.
    */
   protected readonly matchesSearch = (g: Group, q: string): boolean =>
     [
       g.name,
-      g.code,
       this.hasPhone(g) ? g.phone : null,
       phoneStrategyOf(g),
       chatStrategyOf(g),
@@ -159,8 +155,6 @@ export class GroupsListPageComponent {
     switch (field) {
       case 'name':
         return a.name.localeCompare(b.name, 'es');
-      case 'code':
-        return a.code.localeCompare(b.code);
       case 'priority':
         return priorityRank(a.priority) - priorityRank(b.priority);
       case 'agents':
@@ -191,7 +185,6 @@ export class GroupsListPageComponent {
    * quedaría con `cellTemplate: undefined` para siempre — la tabla pintaría
    * `row[field]` en crudo. Al ser computed, se recalcula en cuanto resuelven.
    */
-  private readonly codeTpl = viewChild<TemplateRef<ScColumnCellContext<Group>>>('codeTpl');
   private readonly nameTpl = viewChild<TemplateRef<ScColumnCellContext<Group>>>('nameTpl');
   private readonly phoneTpl = viewChild<TemplateRef<ScColumnCellContext<Group>>>('phoneTpl');
   private readonly channelsTpl = viewChild<TemplateRef<ScColumnCellContext<Group>>>('channelsTpl');
@@ -210,14 +203,6 @@ export class GroupsListPageComponent {
         header: this.translate.instant('groups.table.name'),
         sortable: true,
         cellTemplate: this.nameTpl(),
-      },
-      {
-        field: 'code',
-        header: this.translate.instant('groups.table.code'),
-        sortable: true,
-        cellTemplate: this.codeTpl(),
-        /* Sin ancho se repartía el sobrante con el nombre y salía desproporcionada (medido a 1440, 2026-09-24). */
-        width: '6rem',
       },
       {
         field: 'phone',
@@ -270,6 +255,8 @@ export class GroupsListPageComponent {
         field: 'services',
         header: this.translate.instant('groups.table.services'),
         sortable: true,
+        // Las cifras, de mayor a menor al primer clic (SISMAC-4056): lo que se busca es el grupo con más.
+        defaultSortOrder: -1,
         cellTemplate: this.servicesTpl(),
         /* La cabecera con su flecha: «Servicios», 111 px (medido a 1440, 2026-10-06). */
         width: '7.25rem',
@@ -278,10 +265,11 @@ export class GroupsListPageComponent {
         field: 'agents',
         header: this.translate.instant('groups.table.agents'),
         sortable: true,
+        defaultSortOrder: -1,
         /* 7rem: con 96 px la cabecera y su flecha de orden partían en dos líneas. El mismo desplegable que «Grupos» en
-         * la lista de agentes: al pasar, quiénes son. Y al pulsar, el panel rápido para asignarlos (DD-159): la cifra
-         * y la acción eran dos columnas para lo mismo. Asignar es lo que más se hace con un grupo una vez creado
-         * (visión de producto de grupos, 2026-09-25). `stopRowClick`: pulsarla no abre la ficha. */
+         * la lista de agentes: al pasar, quiénes son. Y al pulsar, «Agentes asignados» de su ficha (SISMAC-4056): la
+         * fila entra por General (DD-213), así que el clic de la cifra no sube hasta ella (`stopRowClick`). Hasta el
+         * 2026-10-20 abría un panel rápido (DD-159), que sigue en el Monitor. */
         cellTemplate: this.agentsTpl(),
         width: '7rem',
         stopRowClick: true,
@@ -328,15 +316,9 @@ export class GroupsListPageComponent {
     }
   }
 
-  /** El grupo cuyo panel rápido de agentes está abierto. */
-  protected readonly agentsPanelGroup = signal<Group | null>(null);
-
-  protected openAgentsPanel(group: Group): void {
-    this.agentsPanelGroup.set(group);
-  }
-
-  protected closeAgentsPanel(): void {
-    this.agentsPanelGroup.set(null);
+  /** La cifra de agentes lleva a donde se asignan, «Agentes asignados» de su ficha (SISMAC-4056). */
+  protected openAgents(group: Group): void {
+    void this.router.navigate(['/admin/grupos/editar', group.id], { queryParams: { seccion: 'agentes' } });
   }
 
   /** El alta es la propia ficha en modo alta (DD-121 §11). */
@@ -345,21 +327,13 @@ export class GroupsListPageComponent {
   }
 
   /**
-   * Duplicar, sin diálogo (revisión de producto del 2026-10-20, DD-217): crea la copia en el acto, con «(1)» detrás del
-   * nombre (`nombreDeCopia`) y todo lo del original, agentes incluidos, salvo lo que el funcional no copia
-   * (`duplicateGroupDraft`), y abre su edición en General, con su toast. Hasta ese día un diálogo pedía nombre,
-   * teléfono saliente y prioridad, y proponía «… (copia)».
+   * Duplicar abre el ALTA rellena con la copia, como duplicar un agente (SISMAC-4056): «X (1)» y todo lo del original,
+   * agentes incluidos, salvo lo que el funcional no copia (`duplicateGroupDraft`). El grupo no existe hasta pulsar
+   * «Crear grupo»: cerrar sin tocar nada no deja una copia en la lista. Del 2026-10-20 (DD-217) a hoy se creaba en el
+   * acto, y antes un diálogo pedía nombre, teléfono saliente y prioridad.
    */
   protected onRowDuplicate(group: Group): void {
-    const nombre = nombreDeCopia(group.name, this.groups().map((g) => g.name));
-    const created = this.groupsStore.addGroup(duplicateGroupDraft(group, nombre));
-    this.linksStore.replaceLinksForGroup(
-      created.id,
-      this.linksStore.linksForGroup(group.id).map((l) => ({ ...l, groupId: created.id })),
-    );
-    const creado = this.translate.instant('groups.toasts.created', { name: created.name });
-    // El toast, ya en la ficha a la que se llega (DD-211 §5).
-    void this.router.navigateByUrl(`/admin/grupos/editar/${created.id}`).then(() => this.resultado.contar(creado));
+    void this.router.navigate(['/admin/grupos/crear'], { queryParams: { seedFromId: group.id } });
   }
 
   protected onRowOpen(group: Group): void {
@@ -402,6 +376,30 @@ export class GroupsListPageComponent {
     this.groupsStore.deleteGroup(group.id);
     this.linksStore.removeGroup(group.id);
     this.resultado.contar(this.translate.instant('groups.toasts.deleted_single', { name: group.name }));
+  }
+
+  /**
+   * Con varios marcados, el clic derecho sobre uno de ellos ofrece solo «Eliminar» (SISMAC-4056): editar varios a la vez
+   * queda para otra fase (DD-215).
+   */
+  protected readonly selectionMenu = (groups: readonly Group[]): MenuItem[] => [
+    {
+      label: this.translate.instant('common.delete'),
+      icon: 'sc-icon-font sc-icon-font--delete',
+      styleClass: 'sc-menu-item--danger',
+      command: () => void this.onBulkDelete(groups),
+    },
+  ];
+
+  /** Eliminar los marcados: la misma confirmación, con su cifra; fuera los grupos, sus enlaces y la selección. */
+  protected async onBulkDelete(groups: readonly Group[]): Promise<void> {
+    if (!(await this.confirmarBorradoVarios(groups.length))) return;
+    for (const group of groups) {
+      this.groupsStore.deleteGroup(group.id);
+      this.linksStore.removeGroup(group.id);
+    }
+    this.selectedIds.set(new Set());
+    this.resultado.contar(this.translate.instant('groups.toasts.deleted_bulk', { count: groups.length }));
   }
 
 

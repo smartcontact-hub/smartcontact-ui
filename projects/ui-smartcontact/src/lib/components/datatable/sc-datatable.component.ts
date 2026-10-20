@@ -1240,6 +1240,8 @@ export class ScDatatableComponent<T = unknown> {
    */
   private cabeceraPulsada: string | null = null;
   private ultimoOrdenPulsado: { readonly field: string; readonly order: number } | null = null;
+  /** La columna del último orden que salió (`sortChange`): pulsar otra es su primer clic (`defaultSortOrder`). */
+  private campoOrdenado: string | null = null;
 
   private apuntarCabecera = (event: Event): void => {
     if (event instanceof KeyboardEvent && event.key !== 'Enter' && event.key !== ' ') return;
@@ -1256,16 +1258,27 @@ export class ScDatatableComponent<T = unknown> {
       return;
     }
     const order = event.order ?? 1;
-    if (this.removableSort() && event.field && this.cabeceraPulsada === event.field) {
+    const pulsada = !!event.field && this.cabeceraPulsada === event.field;
+    // El primer clic de una columna que empieza de mayor a menor: p-table lo calcula con el `defaultSortOrder` de toda la
+    // tabla ANTES de avisar, así que se le da la vuelta aquí y ordena otra vez (vuelve a entrar con -1 y sale una vez).
+    const primero = this.columns().find((c) => c.field === event.field)?.defaultSortOrder ?? 1;
+    if (pulsada && primero === -1 && order === 1 && event.field !== this.campoOrdenado) {
+      const t = this.table();
+      t.sortOrder = -1;
+      t.sortSingle();
+      return;
+    }
+    if (this.removableSort() && pulsada && event.field) {
       const antes = this.ultimoOrdenPulsado;
-      // PrimeNG alterna 1 → -1 → 1: el tercero, de vuelta a ascendente desde descendente, es el que quita el orden.
-      if (antes?.field === event.field && antes.order === -1 && order === 1) {
+      // PrimeNG alterna el sentido: el tercer clic, de vuelta al primero desde el contrario, es el que quita el orden.
+      if (antes?.field === event.field && antes.order === -primero && order === primero) {
         this.ultimoOrdenPulsado = null;
         this.quitarOrden();
         return;
       }
       this.ultimoOrdenPulsado = { field: event.field, order };
     }
+    this.campoOrdenado = event.field ?? null;
     this.sortChange.emit({ field: event.field, order });
   }
 
@@ -1275,6 +1288,7 @@ export class ScDatatableComponent<T = unknown> {
     t.sortField = null;
     t.sortOrder = 1;
     t.tableService.onSort(null);
+    this.campoOrdenado = null;
     this.sortReset.update((n) => n + 1);
     this.sortChange.emit({ field: undefined, order: 0 });
   }

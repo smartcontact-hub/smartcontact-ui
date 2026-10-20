@@ -42,8 +42,9 @@
       <div class="headline">
         <div class="headline__who">
           @if (mode() === 'edit') {
-            <!-- El nombre se edita en su sitio (`sc-name-inplace`, el Inplace nativo): el mismo campo que Identidad. -->
-            <h1 class="headline__name headline__name--editable sc-text-title-semibold" [pTooltip]="form().name" showOnEllipsis tooltipPosition="top">
+            <!-- El nombre se edita en su sitio (`sc-name-inplace`, el Inplace nativo): el mismo campo que Identidad. Su tooltip lo
+                 lleva el texto que se corta, dentro del Inplace: en el `h1` salía también editando. -->
+            <h1 class="headline__name headline__name--editable sc-text-title-semibold">
               <sc-name-inplace
                 [name]="form().name"
                 [label]="'agents.form.fields.name' | translate"
@@ -635,7 +636,9 @@
       </div>
 
       <!-- Dónde se crean y se editan. -->
-      <a class="repo-link sc-text-caption-semibold" routerLink="/admin/repositorios">{{ 'resources.manage_link' | translate }}</a>
+      <!-- Sale de la ficha: con cambios, pide guardar antes, como la de grupo (SISMAC-4058). Con Cmd+clic o el botón
+           central se abre en otra pestaña sin preguntar. -->
+      <a class="repo-link sc-text-caption-semibold" [href]="repositoriosHref" (click)="irARepositorios($event)">{{ 'resources.manage_link' | translate }}</a>
       </div>
     </sc-subsection>
   </sc-section-card>
@@ -661,6 +664,7 @@
         [availableGroups]="availableGroups()"
         [agentId]="editingId() ?? 0"
         [allowedChannels]="form().allowedChannels"
+        [selfActivate]="form().permissions.selfActivate"
         [outboundGroupId]="outboundGroupId()"
         (linksChange)="onLinksChange($event)"
         (outboundGroupChange)="updateField('defaultOutboundGroupId', $event)"

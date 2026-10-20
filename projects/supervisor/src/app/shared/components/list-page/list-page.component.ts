@@ -84,7 +84,8 @@ let listRowMenuIdCounter = 0;
  *   - si busca (`searchPlaceholder` + `searchFn`, y `[(query)]` si necesita lo tecleado), si elige columnas
  *     (`columnChoices` + `columnStorageKey`) y si exporta (`exportable` → `(exportRequest)` con las filas en
  *     el orden visible);
- *   - el menú de cada fila (`rowMenu`, con «⋮» o solo con clic derecho: `rowMenuColumn`), qué pasa al abrir una
+ *   - el menú de cada fila (`rowMenu`, con «⋮» o solo con clic derecho: `rowMenuColumn`) y, si actúa sobre varias, el de
+ *     la selección (`selectionMenu`, con el clic derecho sobre una marcada), qué pasa al abrir una
  *     (`rowOpenable` → `(rowOpen)`), sus clases propias (`rowClass`) y las de su tabla (`tableClass`);
  *   - la selección (`selectable`, `[(selectedIds)]`, `bulkEntity`, y lo que dicen sus casillas: `selectRowKey`,
  *     `selectAllKey`) y sus acciones en lote (`[scListBulkActions]`);
@@ -175,6 +176,12 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
   /** Con `false`, el menú de fila se abre solo con clic derecho, sin la columna «⋮» (Conversaciones: cada acción tiene
    *  otra puerta visible). */
   readonly rowMenuColumn = input(true, { transform: booleanAttribute });
+  /**
+   * El menú de la SELECCIÓN: con dos filas marcadas o más, el clic derecho sobre una de ellas abre este en vez del de la
+   * fila, con las filas marcadas. Sobre una fila sin marcar, y con «⋮», el de la fila. Sin él, el clic derecho es
+   * siempre de la fila. Grupos lo usa para eliminar varios a la vez (SISMAC-4056).
+   */
+  readonly selectionMenu = input<((rows: readonly T[]) => MenuItem[]) | undefined>(undefined);
 
   /** Si la fila se abre con clic y con Enter (puede depender de la fila: p. ej. mientras se renombra). */
   readonly rowOpenable = input<boolean | ((row: T) => boolean), boolean | '' | ((row: T) => boolean)>(false, {
@@ -616,6 +623,8 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
 
   /* ── Menú de fila: UNO para toda la tabla, el mismo con «⋮» y con clic derecho ─────────────── */
   private readonly menuTarget = signal<T | null>(null);
+  /** Las filas del menú de la selección, mientras el menú abierto es ese (`selectionMenu`). */
+  private readonly menuSelection = signal<readonly T[] | null>(null);
   protected readonly rowMenuOpen = signal(false);
   protected readonly rowMenuId = `sc-list-row-menu-${++listRowMenuIdCounter}`;
   /** Si el menú de fila es el de esta fila (uno solo para toda la tabla). */
@@ -626,6 +635,9 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
   /** Estable: solo cambia al apuntar a otra fila (recrearlo en cada ciclo perdía el primer clic) o de idioma. */
   protected readonly menuItems = computed<MenuItem[]>(() => {
     this.lang();
+    const seleccion = this.menuSelection();
+    const deSeleccion = this.selectionMenu();
+    if (seleccion && deSeleccion) return deSeleccion(seleccion);
     const row = this.menuTarget();
     const build = this.rowMenu();
     return row && build ? build(row) : [];
@@ -633,13 +645,17 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
 
   protected openRowMenu(row: T, menu: { toggle: (event: Event) => void }, event: Event): void {
     event.stopPropagation();
+    this.menuSelection.set(null);
     this.menuTarget.set(row);
     menu.toggle(event);
   }
 
   protected onRowContextMenu(event: ScDatatableRowEvent<T>, menu: { toggle: (event: Event) => void }): void {
-    if (!this.rowMenu()) return;
-    this.menuTarget.set(event.row);
+    if (!this.rowMenu() && !this.selectionMenu()) return;
+    const marcadas = this.selectedRows();
+    const deLaSeleccion = !!this.selectionMenu() && marcadas.length >= 2 && marcadas.includes(event.row);
+    this.menuSelection.set(deLaSeleccion ? marcadas : null);
+    this.menuTarget.set(deLaSeleccion ? null : event.row);
     if (this.menuItems().length) menu.toggle(event.originalEvent);
   }
 

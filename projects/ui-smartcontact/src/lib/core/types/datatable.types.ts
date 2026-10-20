@@ -1,6 +1,11 @@
 import type { TemplateRef } from '@angular/core';
 
 /** Contexto de la plantilla de celda custom de una columna. */
+/** El contexto de `headerTemplate`: la columna que se pinta. */
+export interface ScColumnHeaderContext<T = unknown> {
+  readonly $implicit: ScColumnDef<T>;
+}
+
 export interface ScColumnCellContext<T = unknown> {
   /** La fila de datos. */
   readonly $implicit: T;
@@ -36,7 +41,7 @@ export interface ScColumnDef<T = unknown> {
   readonly field: string;
   /** Cabecera ya traducida por el consumidor. */
   readonly header: string;
-  /** Nombre accesible de la cabecera cuando `header` va vacío.
+  /** Nombre accesible de la cabecera cuando `header` va vacío, o cuando lleva un control (`headerTemplate`).
    *
    * Las columnas de acciones (kebab, menú) se pintan con `header: ''` a
    * propósito: visualmente no deben decir nada. Pero un `<th>` vacío es una
@@ -47,6 +52,18 @@ export interface ScColumnDef<T = unknown> {
   readonly headerAriaLabel?: string;
   /** Activa la UI de orden por esta columna (orden client-side de p-table). */
   readonly sortable?: boolean;
+  /**
+   * El sentido del PRIMER clic en esta columna: `-1`, de mayor a menor (una cifra: lo que se busca es la fila con más).
+   * Es el `defaultSortOrder` de p-table, que solo existe para la tabla entera. Por defecto, de menor a mayor. Solo con
+   * `sortMode` `single`.
+   */
+  readonly defaultSortOrder?: 1 | -1;
+  /**
+   * Contenido propio de la cabecera (un control: la casilla de «todos» de una columna), dentro del `th` del DS, que
+   * conserva el orden, el ancho, el fijado y su `data-field`. Contexto `{ $implicit: col }`. Sin él, `header`. Con un
+   * control dentro, pon el nombre de la columna en `headerAriaLabel`.
+   */
+  readonly headerTemplate?: TemplateRef<ScColumnHeaderContext<T>>;
   /** Ancho CSS de la columna (p.ej. `'12rem'`, `'20%'`). */
   readonly width?: string;
   /** Alineación del texto de la celda y la cabecera. */

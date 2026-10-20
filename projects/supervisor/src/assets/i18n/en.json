@@ -997,10 +997,7 @@
     "groups_count_short": "{{count}}",
     "groups_more": "+{{count}} more",
     "delete_dialog": {
-      "title_single": "Delete {{entity}}?",
-      "title_bulk": "Delete {{count}} {{entity}}?",
-      "body_single": "You are about to delete {{entity}} «{{name}}». This action cannot be undone.",
-      "body_bulk": "This action cannot be undone. The following {{entity}} will be deleted:",
+      "body": "This action cannot be undone.",
       "type_to_confirm": "Type the name to confirm:",
       "empty_pruned": "You have discarded all items. Restore the list or cancel.",
       "reset": "Restore list"
@@ -1871,6 +1868,10 @@
     "search_placeholder": "Search groups…",
     "no_results_query": "No groups match “{{query}}”.",
     "entity_singular": "group",
+    "delete_dialog": {
+      "title": "Delete group \"{{name}}\"?",
+      "title_bulk": "Delete {{count}} groups?"
+    },
     "table": {
       "code": "ID",
       "name": "Name",
@@ -1922,10 +1923,6 @@
         "agents_hint": "Who handles it and through which channels"
       },
       "assigned": {
-        "filter_status": "Filter by status or team",
-        "filter_status_count": "{{count}} filters",
-        "filter_status_count_one": "1 filter",
-        "filter_status_clear": "Clear filters",
         "query_placeholder": "Search agents…",
         "empty_title": "No assigned agents",
         "empty": "Pick them in \"Add agents\", top right.",
@@ -1934,6 +1931,7 @@
         "col_active": "Enabled",
         "active_aria": "Enabled in this group: {{name}}",
         "not_assigned_hint": "{{name}} is not assigned: it turns on once assigned",
+        "self_activate_hint": "{{name}} enables themselves from their workstation: they have \"Group activation\"",
         "incompatible": "No compatible channels",
         "not_allowed": "{{name}} — {{channel}}: not among the agent's channels",
         "not_allowed_hint": "{{channel}} is not among this agent's channels: they are set in their profile",
@@ -1943,7 +1941,6 @@
         "warn_no_channels": "Enabled, but has no channels assigned",
         "add_placeholder": "Add agents…",
         "add_aria": "Add agent to the group",
-        "bulk_unassign": "Remove from group",
         "col_level": "Level {{channel}}",
         "level_aria": "Level for {{name}} — {{channel}}",
         "paused": "Disabled",
@@ -1955,17 +1952,22 @@
         "filter_unassigned": "Unassigned",
         "filter_label": "Filter by assignment",
         "column_all": "Change {{column}} in filtered results",
-        "bulk_title": "Confirm bulk changes",
-        "bulk_body": "{{action}}: {{count}} agents.",
-        "bulk_add": "Assign to group",
-        "bulk_remove": "Remove from group",
-        "bulk_channel_add": "Enable {{channel}}",
-        "bulk_channel_remove": "Remove {{channel}}",
-        "bulk_enable": "Enable",
-        "bulk_disable": "Disable",
         "bulk_done": "Updated {{count}} agents.",
-        "bulk_confirm": "Confirm",
-        "filter_by_state": "Status"
+        "bulk_ask": {
+          "add": "Assign {{count}} agents to the group?",
+          "remove": "Remove {{count}} agents from the group?",
+          "enable": "Enable {{count}} agents?",
+          "disable": "Disable {{count}} agents?",
+          "channel_add": "Activate {{channel}} for {{count}} agents?",
+          "channel_remove": "Remove {{channel}} from {{count}} agents?"
+        },
+        "bulk_verb": {
+          "assign": "Assign",
+          "remove": "Remove",
+          "enable": "Enable",
+          "disable": "Disable",
+          "activate": "Activate"
+        }
       },
       "fields": {
         "name": "Name",
@@ -2135,7 +2137,7 @@
         "message_final_placeholder": "E.g.: Thanks for writing to us. See you soon!",
         "message_schedule": "Schedule message",
         "message_schedule_placeholder": "E.g.: We are currently closed. We answer Monday to Friday.",
-        "message_non_working_day": "Non-rateable day message",
+        "message_non_working_day": "Non-working day message",
         "message_non_working_day_placeholder": "E.g.: We are closed today. We will write back on the next working day."
       },
       "resources": {
@@ -2148,6 +2150,7 @@
         "hint": "What it asks the agent at the end of each conversation",
         "comments": "Allow comments",
         "classify": "Typify conversations",
+        "classify_empty": "There are no typifications: create them in Repositories.",
         "typification": "Typification",
         "typification_placeholder": "Select a typification",
         "view": "View details of “{{name}}”",
@@ -2158,6 +2161,10 @@
           "inbound": "Inbound only",
           "outbound": "Outbound only"
         }
+      },
+      "repositories_leave": {
+        "title": "Save the changes?",
+        "body": "To go to Repositories, save the group first."
       }
     },
     "errors": {
@@ -2206,6 +2213,9 @@
     "search_placeholder": "Search agents…",
     "no_results_query": "No agents match “{{query}}”.",
     "entity_singular": "agent",
+    "delete_dialog": {
+      "title": "Delete agent \"{{name}}\"?"
+    },
     "table": {
       "code": "ID",
       "name": "Name",
@@ -2370,10 +2380,17 @@
         "outbound_label": "Group for outbound calls",
         "outbound_empty": "Assign a group with phone.",
         "not_assigned_hint": "Not assigned to {{name}}: it turns on once assigned",
-        "not_allowed_hint": "{{channel}} is not among their channels: they are set in General",
-        "bulk_add": "Assign to the agent",
-        "bulk_remove": "Remove from the agent",
-        "bulk_body": "{{action}}: {{count}} groups."
+        "self_activate_hint": "Enables themselves from their workstation: they have \"Group activation\"",
+        "bulk_ask": {
+          "add": "Assign the agent to {{count}} groups?",
+          "remove": "Remove the agent from {{count}} groups?",
+          "enable": "Enable the agent in {{count}} groups?",
+          "disable": "Disable the agent in {{count}} groups?",
+          "channel_add": "Activate {{channel}} in {{count}} groups?",
+          "channel_remove": "Remove {{channel}} in {{count}} groups?"
+        },
+        "bulk_done": "Updated {{count}} groups.",
+        "not_allowed_hint": "{{channel}} is not among their channels: they are set in General"
       },
       "allowed": {
         "title": "Allowed channels",
@@ -2416,7 +2433,11 @@
         "no_enabled_groups": "No enabled groups",
         "none": "None"
       },
-      "create_submit": "Create agent"
+      "create_submit": "Create agent",
+      "repositories_leave": {
+        "title": "Save the changes?",
+        "body": "To go to Repositories, save the agent first."
+      }
     },
     "toasts": {
       "created": "Agent \"{{name}}\" created",

@@ -8,7 +8,8 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  * La revisión de producto del 2026-10-04: en Grupos, la cifra de agentes y el botón «Asignar» eran dos columnas para
  * lo mismo; y en Agentes, la cifra de grupos solo enseñaba sus nombres. Lo que fija:
  *   1. Grupos: la cifra de agentes abre la asignación de ESE grupo, y la columna «Asignar» desaparece. Al pasar por
- *      encima sigue diciendo quiénes son;
+ *      encima sigue diciendo quiénes son. Desde el 2026-10-20 (SISMAC-4056), como la de grupos de un agente: lleva a
+ *      «Agentes asignados» de su ficha (antes, el panel rápido, que sigue en el Monitor);
  *   2. Agentes: la cifra de grupos lleva a la sección «Grupos» de la ficha de ese agente, no a General. Se llamaba
  *      «Grupos asignados», y la primera, Identidad, hasta DD-187 (la ficha de agente con las secciones de la de grupo).
  *      Desde DD-213 la fila entra por General, así que la cifra tiene su propia acción: antes llegaba a Grupos porque
@@ -21,7 +22,7 @@ test.beforeEach(async ({ page }) => {
   await disableAnimations(page);
 });
 
-test('Grupos: la cifra de agentes abre su asignación, y ya no hay columna «Asignar»', async ({ page }) => {
+test('Grupos: la cifra de agentes lleva a «Agentes asignados» de su ficha, y ya no hay columna «Asignar»', async ({ page }) => {
   await goto(page, 'admin/grupos');
   // Por su nombre accesible: la cabecera de «Asignar» no lleva texto, solo `aria-label`.
   const cabeceras = await page
@@ -42,8 +43,10 @@ test('Grupos: la cifra de agentes abre su asignación, y ya no hay columna «Asi
   });
   expect(Math.min(...zona), 'el lado menor de la zona que se pulsa').toBeGreaterThanOrEqual(24);
   await cifra.click();
-  await expect(page.locator('sc-group-agents-panel sc-agent-channel-table tbody tr').first()).toBeVisible();
-  await expect(page, 'abre el panel, no la ficha').toHaveURL(/\/admin\/grupos$/);
+  await expect(page).toHaveURL(/\/admin\/grupos\/editar\/\d+\?seccion=agentes$/);
+  await expect(page.locator('sc-form-section-nav .form-nav__item[aria-current="page"] .form-nav__label')).toHaveText('Agentes asignados');
+  await expect(page.locator('sc-agent-channel-table tbody tr').first()).toBeVisible();
+  await expect(page.locator('sc-group-agents-panel'), 'la ficha, no el panel').toHaveCount(0);
 });
 
 test('Agentes: la cifra de grupos lleva a «Grupos asignados» de su ficha, y la fila a General', async ({ page }) => {

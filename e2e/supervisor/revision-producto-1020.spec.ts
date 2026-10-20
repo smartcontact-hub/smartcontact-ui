@@ -3,7 +3,8 @@ import { expect, test, type Page } from '@playwright/test';
 import { disableAnimations, forceLightTheme, goto, irASeccion, openKebabAction, pickSelectOption } from './helpers';
 
 /**
- * REVISIÓN DE PRODUCTO DEL 2026-10-20 EN LAS FICHAS DE GRUPO Y AGENTE (DD-217): duplicar sin modal y con «(1)», Recursos
+ * REVISIÓN DE PRODUCTO DEL 2026-10-20 EN LAS FICHAS DE GRUPO Y AGENTE (DD-217): duplicar sin modal y con «(1)» (el grupo,
+ * desde la misma tarde, al alta rellena, SISMAC-4056), Recursos
  * en chips sin «+» ni lápiz (a media columna, tantos como quepan; al pasar por una opción, su tooltip dice lo que
  * contiene), el resumen de Recursos que lleva a su campo y la tipificación sin su descripción.
  */
@@ -17,7 +18,9 @@ test.beforeEach(async ({ page }) => {
 
 const actual = (page: Page) => page.locator('sc-form-section-nav .form-nav__item[aria-current="page"]');
 
-test('duplicar un grupo lo crea en el acto y lleva a su edición, en General, como «Online Support (1)»', async ({ page }) => {
+// Desde el 2026-10-20 como SISMAC-4056: duplicar abre «Nuevo grupo» relleno con la copia, y el grupo existe al pulsar
+// «Crear grupo» (antes, DD-217 §1, se creaba en el acto). Como duplicar agente: salir sin tocar no pregunta.
+test('duplicar un grupo abre el alta rellena como «Online Support (1)», y existe al pulsar «Crear grupo»', async ({ page }) => {
   // Online Support, con un número de WhatsApp y un dominio para el script: lo que la copia no se lleva.
   await goto(page, 'admin/grupos/editar/11?seccion=distribucion');
   await pickSelectOption(page, page.locator('sc-select').filter({ has: page.locator('#group-chat-whatsapp') }), /^\+?\d/);
@@ -25,18 +28,21 @@ test('duplicar un grupo lo crea en el acto y lleva a su edición, en General, co
   await page.keyboard.press('Enter');
   await expect(page.locator('sc-inputtags .p-chip')).toHaveCount(1);
   await page.locator('sc-top-bar').getByRole('button', { name: 'Guardar' }).click();
-  await expect(page.locator('sc-top-bar').getByRole('button', { name: 'Guardar' })).toBeDisabled();
+  // El toast, y no el botón apagado: se apaga también mientras guarda (400 ms), antes de escribir nada.
+  await expect(page.locator('.p-toast-message').filter({ hasText: 'Grupo «Online Support» actualizado' })).toBeVisible();
+  const grupos = () => page.evaluate(() => (JSON.parse(localStorage.getItem('sc-groups')!) as { name: string }[]).map((g) => g.name));
+  const antes = await grupos();
 
   await goto(page, 'admin/grupos');
   await openKebabAction(page, 'Online Support', 'Duplicar');
 
   await expect(page.getByRole('dialog')).toHaveCount(0);
-  await expect(page).toHaveURL(/\/admin\/grupos\/editar\/\d+$/);
+  await expect(page).toHaveURL(/\/admin\/grupos\/crear\?seedFromId=11$/);
   await expect(page.locator('h1')).toContainText('Online Support (1)');
+  await expect(page.locator('#group-name')).toHaveValue('Online Support (1)');
+  expect(await grupos(), 'todavía no existe').toEqual(antes);
   // Bajo el nombre, el número con su rótulo, como «Extensión 122» en el agente.
   await expect(page.locator('.headline__meta')).toHaveText('Teléfono saliente 918371548, prioridad: máxima');
-  await expect(actual(page)).toContainText('General');
-  await expect(page.locator('.p-toast-message').filter({ hasText: 'Grupo "Online Support (1)" creado' })).toBeVisible();
 
   // Lo que el funcional no copia: los dominios del script de chat y el número de WhatsApp. Lo demás, sí: el teléfono
   // saliente y los canales.
@@ -48,10 +54,39 @@ test('duplicar un grupo lo crea en el acto y lleva a su edición, en General, co
   await irASeccion(page, 'General');
   await expect(page.locator('sc-select:has(#group-typification)')).toContainText('Atención al cliente');
 
+  await page.getByRole('button', { name: 'Crear grupo' }).click();
+  await expect(page).toHaveURL(/\/admin\/grupos\/editar\/\d+$/);
+  await expect(page.locator('.p-toast-message').filter({ hasText: 'Grupo «Online Support (1)» creado' })).toBeVisible();
+  // Con los agentes del original.
+  const enlaces = await page.evaluate(() => {
+    const links = JSON.parse(localStorage.getItem('sc-group-agent-links')!) as { groupId: number }[];
+    const copia = (JSON.parse(localStorage.getItem('sc-groups')!) as { id: number; name: string }[]).find((g) => g.name === 'Online Support (1)')!;
+    return { original: links.filter((l) => l.groupId === 11).length, copia: links.filter((l) => l.groupId === copia.id).length };
+  });
+  expect(enlaces.copia).toBe(enlaces.original);
+  expect(enlaces.copia).toBeGreaterThan(0);
+
   // Otra vez el original: el siguiente número libre.
   await goto(page, 'admin/grupos');
   await openKebabAction(page, 'Online Support', 'Duplicar');
-  await expect(page.locator('h1')).toContainText('Online Support (2)');
+  await expect(page.locator('#group-name')).toHaveValue('Online Support (2)');
+});
+
+test('la copia sin tocar se deja sin preguntar, y «Deshacer» vuelve a la copia, no a un alta vacía', async ({ page }) => {
+  await goto(page, 'admin/grupos');
+  await openKebabAction(page, 'Online Support', 'Duplicar');
+  await expect(page.locator('#group-name')).toHaveValue('Online Support (1)');
+  const deshacer = page.locator('sc-top-bar').getByRole('button', { name: 'Deshacer' });
+  await expect(deshacer, 'sin cambios, no hay nada que deshacer').toHaveCount(0);
+
+  await page.locator('#group-name').fill('Otro nombre');
+  await deshacer.click();
+  await expect(page.locator('#group-name')).toHaveValue('Online Support (1)');
+
+  await page.locator('sc-top-bar').getByRole('link', { name: 'Grupos', exact: true }).click();
+  await expect(page).toHaveURL(/\/admin\/grupos$/);
+  await expect(page.getByText('¿Descartar cambios?')).toHaveCount(0);
+  await expect(page.locator('tbody tr', { hasText: 'Online Support (1)' }), 'no se creó').toHaveCount(0);
 });
 
 /** Chips a la vista, el «+N» y cuántas hay elegidas (las marcadas en su lista), y los que la flecha corta. */

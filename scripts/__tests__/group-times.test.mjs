@@ -11,7 +11,9 @@ new Function('module', 'exports', js)(mod, mod.exports);
 const { groupDurationOptions, validQueueSize, resolveGroup } = mod.exports;
 
 test('los tiempos fijos guardan segundos y las etiquetas respetan el idioma', () => {
-  assert.deepEqual(groupDurationOptions(10, 'es').map(x => x.value), [5, 10, 15, 20, 25, 30, 60, 90, 120, 180, 240, 300, 600, 900, 1800]);
+  assert.deepEqual(groupDurationOptions(10, 'es').map(x => x.value), [5, 10, 15, 20, 25, 30, 60, 120, 180, 240, 300, 600, 900, 1800]);
+  // Lo guardado fuera del catálogo (90 s, del catálogo de antes) se lee, en su sitio: entre 1 y 2 min.
+  assert.deepEqual(groupDurationOptions(90, 'es').map(x => x.value).slice(6, 9), [60, 90, 120]);
   assert.equal(groupDurationOptions(90, 'es').find(x => x.value === 90).label, '1,5 min');
   assert.equal(groupDurationOptions(90, 'en').find(x => x.value === 90).label, '1.5 min');
 });

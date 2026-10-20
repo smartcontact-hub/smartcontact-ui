@@ -26,11 +26,12 @@ async function seed(page: Page, restricted = false) {
   }, { restricted });
 }
 
-for (const surface of ['ficha', 'panel'] as const) {
-  test(`${surface}: solo Chat bloquea Teléfono, enlaza a sus canales y no permite añadir a quien solo tiene Email`, async ({ page }) => {
+// La tabla es la misma en la ficha y en el panel del Monitor; desde el 2026-10-20 el panel ya no se abre desde el listado
+// de grupos (SISMAC-4056), y se mide en la ficha.
+{
+  test('solo Chat bloquea Teléfono, enlaza a sus canales y no permite añadir a quien solo tiene Email', async ({ page }) => {
     await seed(page, true);
-    await goto(page, surface === 'ficha' ? 'admin/grupos/editar/11?seccion=agentes' : 'admin/grupos');
-    if (surface === 'panel') await page.getByRole('button', { name: 'Asignar agentes de Grupo mixto' }).click();
+    await goto(page, 'admin/grupos/editar/11?seccion=agentes');
     const table = page.locator('sc-agent-channel-table');
     const row = table.locator('tbody tr', { hasText: 'Agente Chat' });
     const blocked = row.getByRole('checkbox', { name: /Agente Chat.*Teléfono.*no está entre los canales/i });

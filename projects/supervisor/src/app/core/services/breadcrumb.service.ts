@@ -1,6 +1,6 @@
 import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ActivatedRouteSnapshot, NavigationEnd, Router } from '@angular/router';
+import { ActivatedRoute, ActivatedRouteSnapshot, NavigationEnd, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 
@@ -44,9 +44,12 @@ interface RouteData {
  * a `link` was set on it.
  *
  * `set()` / `clear()` remain as escape hatches for pages that need to
- * inject runtime context (e.g. an entity name) the route table can't
- * know about. Calling `set()` overrides the auto-derived trail until
- * the next navigation.
+ * inject runtime context the route table can't know about. Calling `set()`
+ * overrides the auto-derived trail until the next navigation.
+ *
+ * `nombrar()` pone el nombre de lo que se edita en el último tramo («Administración › Grupos › Ventas», SISMAC-4058):
+ * vale mientras la ruta a la vista sea la de la ficha que lo pone, también al cambiar de sección (`?seccion=`), que es
+ * otra navegación y borraría un `set()`.
  */
 @Injectable({ providedIn: 'root' })
 export class BreadcrumbService {
@@ -60,12 +63,23 @@ export class BreadcrumbService {
   /** Re-derived on every NavigationEnd (and on language change). */
   private readonly autoTrail = signal<readonly BreadcrumbItem[]>([]);
 
-  readonly trail = computed<readonly BreadcrumbItem[]>(
-    () => this.manualTrail() ?? this.autoTrail(),
-  );
+  /** La ruta de la página a la vista (la hoja del árbol), para saber si el nombre puesto es suyo. */
+  private readonly hoja = signal<ActivatedRoute | null>(null);
+  /** El nombre de lo que se edita, con la ruta de la ficha que lo puso (`nombrar`). */
+  private readonly nombrado = signal<{ readonly ruta: ActivatedRoute; readonly nombre: string } | null>(null);
+
+  readonly trail = computed<readonly BreadcrumbItem[]>(() => {
+    const manual = this.manualTrail();
+    if (manual) return manual;
+    const auto = this.autoTrail();
+    const nombrado = this.nombrado();
+    if (!nombrado || nombrado.ruta !== this.hoja() || auto.length === 0) return auto;
+    return [...auto.slice(0, -1), { label: nombrado.nombre }];
+  });
 
   constructor() {
     this.autoTrail.set(this.computeTrail());
+    this.hoja.set(this.leafRoute());
 
     this.router.events
       .pipe(
@@ -75,6 +89,7 @@ export class BreadcrumbService {
       .subscribe(() => {
         this.manualTrail.set(null);
         this.autoTrail.set(this.computeTrail());
+        this.hoja.set(this.leafRoute());
       });
 
     this.translate.onLangChange.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
@@ -90,6 +105,21 @@ export class BreadcrumbService {
   /** Drop the manual override; the auto-derived trail takes over. */
   clear(): void {
     this.manualTrail.set(null);
+  }
+
+  /**
+   * El último tramo dice `nombre` mientras `ruta` (la de la ficha) sea la página a la vista. Con `null`, lo quita, solo
+   * si lo había puesto esa misma ruta: una ficha que se destruye no borra el de la siguiente.
+   */
+  nombrar(ruta: ActivatedRoute, nombre: string | null): void {
+    if (nombre) this.nombrado.set({ ruta, nombre });
+    else if (this.nombrado()?.ruta === ruta) this.nombrado.set(null);
+  }
+
+  private leafRoute(): ActivatedRoute {
+    let route = this.router.routerState.root;
+    while (route.firstChild) route = route.firstChild;
+    return route;
   }
 
   private computeTrail(): readonly BreadcrumbItem[] {

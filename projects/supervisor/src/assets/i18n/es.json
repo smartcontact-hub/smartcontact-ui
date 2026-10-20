@@ -558,7 +558,7 @@
       },
       "only-failed": {
         "label": "Solo fallidas",
-        "description": "Conversaciones con transcripción fallida. Demuestra el estado terminal rojo + filtro \"Solo fallidas\" + acción \"Marcar como leídas\"."
+        "description": "Conversaciones con transcripción fallida. Demuestra el estado terminal rojo + filtro «Solo fallidas» + acción «Marcar como leídas»."
       },
       "gdpr-expired": {
         "label": "Custodia GDPR vencida",
@@ -570,7 +570,7 @@
       },
       "no-recording": {
         "label": "Llamadas sin grabación",
-        "description": "Llamadas que entraron pero no quedaron grabadas — estado \"Sin grabación\" en el reproductor."
+        "description": "Llamadas que entraron pero no quedaron grabadas — estado «Sin grabación» en el reproductor."
       }
     },
     "rules": {
@@ -997,10 +997,7 @@
     "groups_count_short": "{{count}}",
     "groups_more": "+{{count}} más",
     "delete_dialog": {
-      "title_single": "¿Eliminar {{entity}}?",
-      "title_bulk": "¿Eliminar {{count}} {{entity}}?",
-      "body_single": "Vas a eliminar el {{entity}} «{{name}}». Esta acción no se puede deshacer.",
-      "body_bulk": "Esta acción no se puede deshacer. Se eliminarán los siguientes {{entity}}:",
+      "body": "Esta acción no se puede deshacer.",
       "type_to_confirm": "Escribe el nombre para confirmar:",
       "empty_pruned": "Has descartado todos los elementos. Restaura la lista o cancela.",
       "reset": "Restaurar lista"
@@ -1119,14 +1116,14 @@
     "delete": {
       "title_single": "Eliminar label",
       "title_bulk": "Eliminar {{count}} labels",
-      "body_single": "¿Eliminar la label \"{{name}}\"?",
+      "body_single": "¿Eliminar la label «{{name}}»?",
       "body_bulk": "¿Eliminar estas labels?",
       "affected_agents": "Afectará a {{count}} agentes."
     },
     "toasts": {
-      "created": "Label \"{{name}}\" creada",
-      "updated": "Label \"{{name}}\" actualizada",
-      "deleted_single": "Label \"{{name}}\" eliminada",
+      "created": "Label «{{name}}» creada",
+      "updated": "Label «{{name}}» actualizada",
+      "deleted_single": "Label «{{name}}» eliminada",
       "deleted_bulk": "{{count}} labels eliminadas"
     },
     "export": {
@@ -1231,9 +1228,9 @@
       "bulk_footer": "Los agentes y grupos que las tengan asignadas perderán la referencia."
     },
     "toasts": {
-      "created": "Plantilla \"{{name}}\" creada",
-      "updated": "Plantilla \"{{name}}\" actualizada",
-      "deleted_single": "Plantilla \"{{name}}\" eliminada",
+      "created": "Plantilla «{{name}}» creada",
+      "updated": "Plantilla «{{name}}» actualizada",
+      "deleted_single": "Plantilla «{{name}}» eliminada",
       "deleted_bulk": "{{count}} plantillas eliminadas"
     },
     "search_placeholder": "Buscar plantillas…"
@@ -1313,16 +1310,16 @@
     "errors": {
       "name_required": "El nombre es obligatorio",
       "duplicate_name": "Ya existe un/a {{entity}} con este nombre",
-      "field_required": "\"{{field}}\" es obligatorio"
+      "field_required": "«{{field}}» es obligatorio"
     },
     "form": {
       "create_title": "Nuevo/a {{entity}}",
       "edit_title": "Editar {{entity}}"
     },
     "toasts": {
-      "created": "{{entity}} \"{{name}}\" creado/a",
-      "updated": "{{entity}} \"{{name}}\" actualizado/a",
-      "deleted_single": "{{entity}} \"{{name}}\" eliminado/a",
+      "created": "{{entity}} «{{name}}» creado/a",
+      "updated": "{{entity}} «{{name}}» actualizado/a",
+      "deleted_single": "{{entity}} «{{name}}» eliminado/a",
       "deleted_bulk": "{{count}} {{entity}} eliminados/as"
     },
     "no_results": {
@@ -1825,11 +1822,11 @@
       "email_required": "Escribe el email"
     },
     "toasts": {
-      "created": "Usuario \"{{name}}\" creado",
-      "updated": "Usuario \"{{name}}\" actualizado",
-      "deleted_single": "Usuario \"{{name}}\" eliminado",
+      "created": "Usuario «{{name}}» creado",
+      "updated": "Usuario «{{name}}» actualizado",
+      "deleted_single": "Usuario «{{name}}» eliminado",
       "deleted_bulk": "{{count}} usuarios eliminados",
-      "duplicated": "Usuario \"{{name}}\" duplicado como borrador"
+      "duplicated": "Usuario «{{name}}» duplicado como borrador"
     },
     "empty": {
       "title": "Aún no hay usuarios",
@@ -1871,6 +1868,10 @@
     "search_placeholder": "Buscar grupos…",
     "no_results_query": "No hay grupos que coincidan con «{{query}}».",
     "entity_singular": "grupo",
+    "delete_dialog": {
+      "title": "¿Eliminar el grupo «{{name}}»?",
+      "title_bulk": "¿Eliminar {{count}} grupos?"
+    },
     "table": {
       "code": "ID",
       "name": "Nombre",
@@ -1925,10 +1926,6 @@
         "agents_hint": "Quién atiende y por qué canales"
       },
       "assigned": {
-        "filter_status": "Filtrar por estado o equipo",
-        "filter_status_count": "{{count}} filtros",
-        "filter_status_count_one": "1 filtro",
-        "filter_status_clear": "Quitar filtros",
         "query_placeholder": "Buscar agentes…",
         "empty_title": "Sin agentes asignados",
         "empty": "Elígelos en «Añadir agentes», arriba a la derecha.",
@@ -1937,6 +1934,7 @@
         "col_active": "Habilitado",
         "active_aria": "Habilitado en este grupo: {{name}}",
         "not_assigned_hint": "{{name}} no está asignado: se habilita al asignarlo",
+        "self_activate_hint": "{{name}} se habilita desde su puesto: tiene «Activación por grupo»",
         "incompatible": "Sin canales compatibles",
         "not_allowed": "{{name}} — {{channel}}: no está entre los canales del agente",
         "not_allowed_hint": "{{channel}} no está entre los canales de este agente: se marcan en su ficha",
@@ -1946,7 +1944,6 @@
         "warn_no_channels": "Habilitado, pero sin canales asignados",
         "add_placeholder": "Añadir agentes…",
         "add_aria": "Añadir agente al grupo",
-        "bulk_unassign": "Quitar del grupo",
         "col_level": "Nivel {{channel}}",
         "level_aria": "Nivel de {{name}} — {{channel}}",
         "paused": "Deshabilitado",
@@ -1958,17 +1955,22 @@
         "filter_unassigned": "Sin asignar",
         "filter_label": "Filtrar por asignación",
         "column_all": "Cambiar {{column}} en los resultados filtrados",
-        "bulk_title": "Confirmar cambios colectivos",
-        "bulk_body": "{{action}}: {{count}} agentes.",
-        "bulk_add": "Asignar al grupo",
-        "bulk_remove": "Quitar del grupo",
-        "bulk_channel_add": "Activar {{channel}}",
-        "bulk_channel_remove": "Quitar {{channel}}",
-        "bulk_enable": "Habilitar",
-        "bulk_disable": "Deshabilitar",
         "bulk_done": "Se han actualizado {{count}} agentes.",
-        "bulk_confirm": "Confirmar",
-        "filter_by_state": "Estado"
+        "bulk_ask": {
+          "add": "¿Asignar {{count}} agentes al grupo?",
+          "remove": "¿Quitar {{count}} agentes del grupo?",
+          "enable": "¿Habilitar {{count}} agentes?",
+          "disable": "¿Deshabilitar {{count}} agentes?",
+          "channel_add": "¿Activar {{channel}} a {{count}} agentes?",
+          "channel_remove": "¿Quitar {{channel}} a {{count}} agentes?"
+        },
+        "bulk_verb": {
+          "assign": "Asignar",
+          "remove": "Quitar",
+          "enable": "Habilitar",
+          "disable": "Deshabilitar",
+          "activate": "Activar"
+        }
       },
       "fields": {
         "name": "Nombre",
@@ -2135,7 +2137,7 @@
         "message_final_placeholder": "Ej.: Gracias por escribirnos. ¡Hasta pronto!",
         "message_schedule": "Mensaje de horario",
         "message_schedule_placeholder": "Ej.: Ahora estamos fuera de horario. Te atendemos de lunes a viernes.",
-        "message_non_working_day": "Mensaje de día no valorable",
+        "message_non_working_day": "Mensaje de día no laborable",
         "message_non_working_day_placeholder": "Ej.: Hoy no atendemos. Te escribimos el próximo día hábil."
       },
       "resources": {
@@ -2148,6 +2150,7 @@
         "hint": "Lo que pide al agente al acabar cada conversación",
         "comments": "Permitir comentarios",
         "classify": "Tipificar conversaciones",
+        "classify_empty": "No hay tipificaciones: se crean en Repositorios.",
         "typification": "Tipificación",
         "typification_placeholder": "Selecciona una tipificación",
         "view": "Ver detalle de «{{name}}»",
@@ -2158,6 +2161,10 @@
           "inbound": "Solo entrantes",
           "outbound": "Solo salientes"
         }
+      },
+      "repositories_leave": {
+        "title": "¿Guardar los cambios?",
+        "body": "Para ir a Repositorios, guarda antes el grupo."
       }
     },
     "errors": {
@@ -2167,11 +2174,11 @@
       "typification_required": "La tipificación es obligatoria"
     },
     "toasts": {
-      "created": "Grupo \"{{name}}\" creado",
-      "updated": "Grupo \"{{name}}\" actualizado",
-      "deleted_single": "Grupo \"{{name}}\" eliminado",
+      "created": "Grupo «{{name}}» creado",
+      "updated": "Grupo «{{name}}» actualizado",
+      "deleted_single": "Grupo «{{name}}» eliminado",
       "deleted_bulk": "{{count}} grupos eliminados",
-      "duplicated": "Grupo \"{{name}}\" duplicado como borrador"
+      "duplicated": "Grupo «{{name}}» duplicado como borrador"
     },
     "empty": {
       "title": "Aún no hay grupos",
@@ -2196,7 +2203,7 @@
       "assigned": "Asignados: {{count}}",
       "unsaved": "Sin guardar: {{count}}",
       "save_count": "Guardar ({{count}})",
-      "saved": "Agentes de \"{{name}}\" actualizados"
+      "saved": "Agentes de «{{name}}» actualizados"
     },
     "bulk_edit_none": "{{field}}: ningún grupo elegido tiene ese canal"
   },
@@ -2206,6 +2213,9 @@
     "search_placeholder": "Buscar agentes…",
     "no_results_query": "No hay agentes que coincidan con «{{query}}».",
     "entity_singular": "agente",
+    "delete_dialog": {
+      "title": "¿Eliminar el agente «{{name}}»?"
+    },
     "table": {
       "code": "ID",
       "name": "Nombre",
@@ -2373,10 +2383,17 @@
         "outbound_label": "Grupo para llamadas salientes",
         "outbound_empty": "Asigna un grupo con teléfono.",
         "not_assigned_hint": "No asignado a {{name}}: se habilita al asignarlo",
-        "not_allowed_hint": "{{channel}} no está entre sus canales: se marcan en General",
-        "bulk_add": "Asignar al agente",
-        "bulk_remove": "Quitar al agente",
-        "bulk_body": "{{action}}: {{count}} grupos."
+        "self_activate_hint": "Se habilita desde su puesto: tiene «Activación por grupo»",
+        "bulk_ask": {
+          "add": "¿Asignar el agente a {{count}} grupos?",
+          "remove": "¿Quitar el agente de {{count}} grupos?",
+          "enable": "¿Habilitar al agente en {{count}} grupos?",
+          "disable": "¿Deshabilitar al agente en {{count}} grupos?",
+          "channel_add": "¿Activar {{channel}} en {{count}} grupos?",
+          "channel_remove": "¿Quitar {{channel}} en {{count}} grupos?"
+        },
+        "bulk_done": "Se han actualizado {{count}} grupos.",
+        "not_allowed_hint": "{{channel}} no está entre sus canales: se marcan en General"
       },
       "allowed": {
         "title": "Canales permitidos",
@@ -2416,14 +2433,18 @@
         "no_enabled_groups": "Sin grupos habilitados",
         "none": "Ninguno"
       },
-      "create_submit": "Crear agente"
+      "create_submit": "Crear agente",
+      "repositories_leave": {
+        "title": "¿Guardar los cambios?",
+        "body": "Para ir a Repositorios, guarda antes el agente."
+      }
     },
     "toasts": {
-      "created": "Agente \"{{name}}\" creado",
-      "updated": "Agente \"{{name}}\" actualizado",
-      "deleted_single": "Agente \"{{name}}\" eliminado",
+      "created": "Agente «{{name}}» creado",
+      "updated": "Agente «{{name}}» actualizado",
+      "deleted_single": "Agente «{{name}}» eliminado",
       "deleted_bulk": "{{count}} agentes eliminados",
-      "duplicated": "Agente \"{{name}}\" duplicado como borrador"
+      "duplicated": "Agente «{{name}}» duplicado como borrador"
     },
     "errors": {
       "name_required": "El nombre es obligatorio",
@@ -2474,7 +2495,7 @@
       },
       "info": "Selecciona los prefijos de los países a los que se permite marcar como numeración especial. Todos los prefijos están desactivados por defecto.",
       "search_placeholder": "Buscar país, prefijo o código ISO...",
-      "no_results": "No se encontraron países para \"{{query}}\"",
+      "no_results": "No se encontraron países para «{{query}}»",
       "selected_chips": "Prefijos habilitados",
       "discard": "Descartar",
       "save": "Guardar cambios",
@@ -2617,7 +2638,7 @@
         "hint_collapsed": "(acción administrativa avanzada)",
         "warning_title": "Acción irreversible",
         "warning_body": "Regenerar las contraseñas invalida inmediatamente las credenciales actuales de los agentes seleccionados. Cada agente deberá usar la contraseña temporal proporcionada en el archivo de descarga para volver a acceder y establecer una nueva contraseña.",
-        "use_case": "Utiliza esta herramienta para recuperar acceso de agentes que han olvidado su contraseña, o ante un incidente de seguridad (ciberataque) que requiera la invalidación masiva de credenciales. Puedes seleccionar agentes individuales o usar \"Seleccionar todos\" para un reset global.",
+        "use_case": "Utiliza esta herramienta para recuperar acceso de agentes que han olvidado su contraseña, o ante un incidente de seguridad (ciberataque) que requiera la invalidación masiva de credenciales. Puedes seleccionar agentes individuales o usar «Seleccionar todos» para un reset global.",
         "search_placeholder": "Buscar agente por nombre, código, extensión o email...",
         "selected_count": "{{count}} seleccionados",
         "active_count": "{{count}} agentes activos",
