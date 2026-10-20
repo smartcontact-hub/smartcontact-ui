@@ -16,8 +16,9 @@
  *   C. Referencias muertas: AGENTS.md no cita skills inexistentes; ningún doc cita uno de los 6
  *      docs de construcción borrados el 2026-08-13 sin nombrar el tag `archive/docs-history`.
  *   D. (solo con historia completa) Cada hand-off de `docs/handoff/` LLEVA sello `HEAD `<sha>`` y ese commit
- *      EXISTE en git → un hand-off no puede mentir sobre su propio estado ni quedarse sin fechar.
- *      NO exige sello==HEAD (eso lagearía a propósito mid-sesión); solo que el SHA sea real.
+ *      EXISTE en git y SOBREVIVE al squash del PR (está en `origin/main` o en un tag `archive/*`,
+ *      `scripts/handoff-seal.mjs`) → un hand-off no puede mentir sobre su propio estado ni quedarse sin fechar.
+ *      NO exige sello==HEAD (eso lagearía a propósito mid-sesión); solo que el SHA sea real y no se pierda.
  *      Se salta si el CLON ES SHALLOW (no hay historia con la que comprobarlo). Antes se
  *      saltaba «si es CI», que era el proxy y no la causa: en un contenedor cloud sin la
  *      variable `CI` cantó 7 sellos buenos como fantasmas.
@@ -68,6 +69,7 @@ import { compararPatrones } from './patrones-parity.mjs';
 import { revisarLearnings } from './learnings-shape.mjs';
 import { revisarHandoff } from './handoff-shape.mjs';
 import { localizarMemoria, leerMemoria, revisarMemoria } from './memory-shape.mjs';
+import { BASE, faltaBase, revisarSello } from './handoff-seal.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const rel = (p) => p.replace(`${root}/`, '');
@@ -581,6 +583,10 @@ if (!clonShallow) {
   if (handoffs.length === 0)
     fail('docs/handoff/ no contiene ningún hand-off; cada frente abierto necesita el suyo (ver NEXT-SESSION.md).');
 
+  // Y desde el 2026-10-20 el commit también tiene que SOBREVIVIR a la fusión (`handoff-seal.mjs`):
+  // el de #464 existía en el checkout del PR y desapareció de main con el squash.
+  const sinBase = faltaBase({ cwd: root });
+  if (sinBase) fail(`CHECK D — ${sinBase}`);
   const conIndice = [...handoffs, ...files.filter((f) => rel(f.path) === 'NEXT-SESSION.md')];
   for (const h of conIndice) {
     const esHandoff = rel(h.path).startsWith('docs/handoff/');
@@ -592,11 +598,13 @@ if (!clonShallow) {
         const sha = m[1];
         if (seen.has(sha)) continue;
         seen.add(sha);
-        try {
-          execFileSync('git', ['cat-file', '-e', sha], { cwd: root, stdio: 'ignore' });
-        } catch {
+        const estado = revisarSello(sha, { cwd: root });
+        if (estado === 'fantasma')
           fail(`${rel(h.path)}:${i + 1} — el sello \`HEAD ${sha}\` no existe en git (¿fabricado/tecleado mal?). Un hand-off no puede apuntar a un commit fantasma.`);
-        }
+        if (estado === 'solo-en-rama' && !sinBase)
+          fail(
+            `${rel(h.path)}:${i + 1} — el sello \`HEAD ${sha}\` solo vive en una rama: no está en \`${BASE}\` ni en un tag \`archive/*\`, así que el squash del PR lo borra y el CI de main se pone rojo. Arreglo: sella con un commit que ya esté en main, \`git merge-base HEAD ${BASE}\` (si acabas de traerlo de main, \`git fetch origin main\` y repite).`,
+          );
       }
     });
     if (esHandoff && !sellado)

@@ -4839,7 +4839,7 @@
           "tipo": "Readonly<Record<string, string>>",
           "porDefecto": "{}",
           "requerido": false,
-          "descripcion": "Lo que falta en cada sección con aviso, en texto y ya traducido, por id: va bajo la etiqueta, en rojo, y entra en el nombre del enlace (DD-216). Sin él, solo el punto. Medido el 2026-10-20: dos puntos sin texto (General y Distribución y colas) hacían creer que el segundo lo había causado lo que se tocó en el primero. Solo cuenta para una sección que también está en `sectionsWithErrors`.",
+          "descripcion": "Lo que falta en cada sección con aviso, en texto y ya traducido, por id: va bajo la etiqueta, en rojo, y entra en el nombre del enlace (DD-217). Sin él, solo el punto. Medido el 2026-10-20: dos puntos sin texto (General y Distribución y colas) hacían creer que el segundo lo había causado lo que se tocó en el primero. Solo cuenta para una sección que también está en `sectionsWithErrors`.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -9168,7 +9168,7 @@
     {
       "selector": "sc-tag",
       "name": "tag",
-      "primengBase": "primeng/tag",
+      "primengBase": "primeng/tag, primeng/tooltip",
       "estado": "ready",
       "faltas": [],
       "retirado": null,
@@ -9275,7 +9275,29 @@
           "nativo": null
         }
       ],
-      "ocultas": []
+      "ocultas": [
+        "appendTo",
+        "autoHide",
+        "content",
+        "escape",
+        "fitContent",
+        "hideDelay",
+        "hideOnEscape",
+        "life",
+        "pTooltipPT",
+        "pTooltipUnstyled",
+        "positionLeft",
+        "positionStyle",
+        "positionTop",
+        "showDelay",
+        "showOnEllipsis",
+        "tooltipDisabled",
+        "tooltipEvent",
+        "tooltipOptions",
+        "tooltipPosition",
+        "tooltipStyleClass",
+        "tooltipZIndex"
+      ]
     },
     {
       "selector": "sc-textarea",
@@ -9781,6 +9803,333 @@
         "tabindex",
         "trueValue"
       ]
+    },
+    {
+      "selector": "pTooltip",
+      "name": "tooltip",
+      "primengBase": "primeng/tooltip",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
+      "cuando": "Para lo que se lee al pasar el ratón: un icono con significado, un texto cortado (con `showOnEllipsis`) o por qué un botón está apagado. Nunca un `title`, que el navegador enseña con su globo; el de un botón de solo icono ya lo pone `sc-button`.",
+      "contrato": [
+        {
+          "nombre": "pTooltip",
+          "clase": "input",
+          "tipo": "string | TemplateRef<HTMLElement>",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": null,
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Content of the tooltip.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "tooltipPosition",
+          "clase": "input",
+          "tipo": "TooltipPosition",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": null,
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Position of the tooltip.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "tooltipEvent",
+          "clase": "input",
+          "tipo": "TooltipEvent",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": null,
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Event to show the tooltip.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "positionStyle",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": null,
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Type of CSS position.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "tooltipStyleClass",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": null,
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Style class of the tooltip.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "tooltipZIndex",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": null,
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Whether the z-index should be managed automatically to always go on top or have a fixed value.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "escape",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": null,
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "By default the tooltip contents are rendered as text. Set to false to support html tags in the content.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "showDelay",
+          "clase": "input",
+          "tipo": "number",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": null,
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Delay to show the tooltip in milliseconds.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "hideDelay",
+          "clase": "input",
+          "tipo": "number",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": null,
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Delay to hide the tooltip in milliseconds.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "life",
+          "clase": "input",
+          "tipo": "number",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": null,
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Time to wait in milliseconds to hide the tooltip even it is active.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "positionTop",
+          "clase": "input",
+          "tipo": "number",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": null,
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Specifies the additional vertical offset of the tooltip from its default position.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "positionLeft",
+          "clase": "input",
+          "tipo": "number",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": null,
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Specifies the additional horizontal offset of the tooltip from its default position.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "autoHide",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": null,
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Whether to hide tooltip when hovering over tooltip content.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "fitContent",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": null,
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Automatically adjusts the element position when there is not enough space on the selected position.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "hideOnEscape",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": null,
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Whether to hide tooltip on escape key press.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "showOnEllipsis",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": null,
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Whether to show the tooltip only when the target text overflows (e.g., ellipsis is active).",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "tooltipDisabled",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": null,
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "When present, it specifies that the component should be disabled.",
+            "porDefecto": "false",
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "tooltipOptions",
+          "clase": "input",
+          "tipo": "TooltipOptions",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": null,
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Specifies the tooltip configuration options for the component.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "appendTo",
+          "clase": "input",
+          "tipo": "AppendTo",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": null,
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Target element to attach the overlay, valid values are \"body\" or a local ng-template variable of another element (note: use binding with brackets for template variables, e.g. [appendTo]=\"mydiv\" for a div element having #mydiv as variable name).",
+            "porDefecto": "'self'",
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "pTooltipPT",
+          "clase": "input",
+          "tipo": "TooltipPassThrough",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": null,
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Used to pass attributes to DOM elements inside the Tooltip component.",
+            "porDefecto": "undefined",
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "pTooltipUnstyled",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": null,
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Indicates whether the component should be rendered without styles.",
+            "porDefecto": "undefined",
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        }
+      ],
+      "ocultas": []
     }
   ]
 }

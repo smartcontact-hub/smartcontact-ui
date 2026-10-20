@@ -1465,7 +1465,7 @@ medido contra sc-supervisor.pages.dev a 1440.
   máximo de 157,5 y la celda de selección small. Llevarlos al oficial es una decisión de diseño pendiente.
 
 **Cómo sabes que está hecho:** cada maestro mide lo que la app (botón de texto small 28 × 27, fila de menú 27; la celda
-small, al revés: la app irá a la del Kit, 5,25 × 7, §54) y las maquetas dejan de necesitar el ajuste a mano.
+small, al revés: la app ya va a la del Kit, 5,25 × 7, DD-214) y las maquetas dejan de necesitar el ajuste a mano.
 
 ---
 
@@ -1499,9 +1499,9 @@ el DS de los devs pinta 10,5 × 14, como el Kit (medido en ui.smart-contact.com 
 
 **Cómo sabes que está hecho:** la página «Fuera del DS» solo enseña lo que no existe en ningún sitio, o queda vacía.
 
-## 55 · Lo que falta se dice al pulsar Crear, grupos sin canales, duplicar sin diálogo y Recursos en chips (2026-10-20, DD-216)
+## 55 · Lo que falta se dice al pulsar Crear, grupos sin canales, duplicar sin diálogo y Recursos en chips (2026-10-20, DD-217)
 
-**Estado:** pendiente; el prototipo ya lo hace (DD-216) · **Dónde:** fichas de grupo y agente y listado de grupos del
+**Estado:** pendiente; el prototipo ya lo hace (DD-217) · **Dónde:** fichas de grupo y agente y listado de grupos del
 fichero del Supervisor (`Hjyy41SYKqcRuIzCGggfYH`, §53), y en el DS, `form-section-nav` y `multiselect` · **Mídelo
 antes:** qué variantes de `group-summary` y `agent-summary` llevan hoy «Mostrar estado» (§54, fila 8).
 

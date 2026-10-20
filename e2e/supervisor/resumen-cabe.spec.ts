@@ -31,7 +31,7 @@ const IDIOMAS = ['es', 'en', 'fr', 'pt'] as const;
 
 /** Las fichas que más enseñan, y cuántos textos y cifras con anillo pinta cada una (lo que la red tiene que medir). El
  * agente (DD-187): el rótulo de la cifra y las doce piezas de sus seis filas; en el alta, además, la nota «Sin grupos»
- * en vez del anillo. Lo que falta («Falta: …») ya no va en el resumen (DD-216): un texto menos en cada alta. */
+ * en vez del anillo. Lo que falta («Falta: …») ya no va en el resumen (DD-217): un texto menos en cada alta. */
 const FICHAS = [
   { ruta: 'admin/agentes/editar/7', textos: 13, cifras: 1 },
   { ruta: 'admin/agentes/editar/12', textos: 13, cifras: 1 },

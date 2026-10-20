@@ -116,7 +116,7 @@ test('el grupo elige una tipificación, ve su árbol sin salir y, si tipifica, n
   await goto(page, 'admin/grupos/editar/11?seccion=general');
   await expect(page.locator('sc-select:has(#group-typification)')).toContainText('Atención al cliente');
   // Bajo el desplegable, «Ver detalle» (revisión del 2026-10-15; antes, el icono de tres rayas), sin su descripción desde
-  // la revisión del 2026-10-20 (DD-216).
+  // la revisión del 2026-10-20 (DD-217).
   await expect(page.locator('.wrapup__description')).toHaveCount(0);
   await page.getByRole('button', { name: 'Ver detalle de «Atención al cliente»' }).click();
   const arbol = page.getByRole('dialog', { name: 'Atención al cliente' });
@@ -128,7 +128,7 @@ test('el grupo elige una tipificación, ve su árbol sin salir y, si tipifica, n
   await page.keyboard.press('Escape');
 
   // Un grupo que no tipifica: al encenderlo, pide cuál y no guarda sin ella. Lo pide sin acusar: el aviso en rojo, al
-  // pulsar «Guardar» (DD-216, `sin-acusar-de-primeras.spec.ts`).
+  // pulsar «Guardar» (DD-217, `sin-acusar-de-primeras.spec.ts`).
   await goto(page, 'admin/grupos/editar/1?seccion=general');
   await page.getByRole('switch', { name: /^Tipificar/ }).click();
   await expect(page.locator('#group-typification')).toBeVisible();

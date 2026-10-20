@@ -76,7 +76,7 @@ interface ChannelRow {
  * decir nada no se pinta. Cada grupo se llama como su sección de la ficha, y cada fila como su campo (revisión del
  * 2026-10-14: «Salida» no existía en la ficha).
  *   · Agentes habilitados: cuántos atienden de los asignados (los demás, deshabilitados), y cuántos cada canal. Un
- *     canal sin nadie que lo atienda dice 0, sin aviso amarillo (DD-216: un aviso que no bloquea nada sobraba).
+ *     canal sin nadie que lo atienda dice 0, sin aviso amarillo (DD-217: un aviso que no bloquea nada sobraba).
  *   · Distribución: la estrategia de cada familia de canales, y el teléfono saliente y el número de WhatsApp, que en
  *     la ficha son campos de Distribución y colas.
  *   · Recursos: lo que le llega desde Repositorios, por tipo (agendas y plantillas de los canales que atiende).
@@ -86,7 +86,7 @@ interface ChannelRow {
  * dirección de la sección, y la ficha resuelve el clic en su sitio (en el alta, sin tocar la dirección).
  *
  * Cada tipo de recurso abrió un panel rápido con lo asignado desde el 2026-10-11; salió en la revisión del 2026-10-20
- * (DD-216): pulsar la fila lleva a su campo, donde lo elegido ya se ve en chips.
+ * (DD-217): pulsar la fila lleva a su campo, donde lo elegido ya se ve en chips.
  *
  * El rótulo dice «Distribución», no «Reparto» (nombre antiguo del 2026-10-11, corregido el mismo día): la
  * sección a la que lleva se llama «Distribución y colas» y su propia cabecera dentro dice «Distribución»; dos

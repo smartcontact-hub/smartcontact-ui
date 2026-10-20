@@ -524,6 +524,11 @@ export const SIZING = [
   { label: 'datatable.footer.sm.paddingX', group: 'CC', exp: 'datatable.footer.sm.padding.x', read: { path: 'components.datatable.footer.sm.padding', index: 1 } },
   { label: 'datatable.footer.lg.paddingY', group: 'CC', exp: 'datatable.footer.lg.padding.y', read: { path: 'components.datatable.footer.lg.padding', index: 0 } },
   { label: 'datatable.footer.lg.paddingX', group: 'CC', exp: 'datatable.footer.lg.padding.x', read: { path: 'components.datatable.footer.lg.padding', index: 1 } },
+  //    DD-216: los tres huecos, igual. Aura 3 pide 0.5rem (8); el Kit los ata a `scale/0-5` (7) y el DS de
+  //    desarrollo pinta 0.4375rem en los tres.
+  { label: 'datatable.headerCell.gap', group: 'CC', exp: 'datatable.header.cell.gap', read: { path: 'components.datatable.headerCell.gap' } },
+  { label: 'datatable.filter.inlineGap', group: 'CC', exp: 'datatable.filter.inline.gap', read: { path: 'components.datatable.filter.inlineGap' } },
+  { label: 'datatable.filter.overlayPopover.gap', group: 'CC', exp: 'datatable.filter.overlay.popover.gap', read: { path: 'components.datatable.filter.overlayPopover.gap' } },
 ];
 
 /**

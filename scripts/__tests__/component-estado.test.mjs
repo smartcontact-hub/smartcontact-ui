@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { estadoDe, motivoRetirado, tieneMaestroEnKit } from '../component-audit.mjs';
+import { analyzeNativo, estadoDe, motivoRetirado, tieneMaestroEnKit } from '../component-audit.mjs';
 
 // El estado de un componente en sc-docs (DD-190): «ready» con maestro en el Kit y página de demo, «experimental» si le
 // falta alguna, «deprecated» si la CLASE lleva `@deprecated`. Cada prueba fija un caso que ya se dio en el repo.
@@ -33,4 +33,48 @@ test('solo cuenta el @deprecated de la clase, no el de un alias de tipo del mism
   const alias =
     "/** @deprecated Usa `ScFieldSize`. */\nexport type Viejo = 'sm';\n\n/** El componente. */\n@Component({ selector: 'sc-y' })\nexport class Y {}";
   assert.equal(motivoRetirado(alias), null);
+});
+
+// Un nativo adoptado tal cual (el tooltip del Kit es el `pTooltip` de PrimeNG, DD-212) no tiene fichero nuestro del que
+// sacar el contrato: sale del `.d.ts` instalado. El de aquí es un recorte del de PrimeNG 22.1, con su alias.
+const DTS_TOOLTIP = `declare class Tooltip extends BaseComponent {
+    /**
+     * Position of the tooltip.
+     * @group Props
+     */
+    tooltipPosition: _angular_core.InputSignal<TooltipPosition | undefined>;
+    /**
+     * Shows the tooltip only when the content overflows.
+     * @group Props
+     */
+    showOnEllipsis: _angular_core.InputSignalWithTransform<boolean, unknown>;
+    /**
+     * Content of the tooltip.
+     * @group Props
+     */
+    content: _angular_core.InputSignal<string | TemplateRef<HTMLElement> | undefined>;
+    static ɵdir: _angular_core.ɵɵDirectiveDeclaration<Tooltip, "[pTooltip]", never, { "tooltipPosition": { "alias": "tooltipPosition"; "required": false; "isSignal": true; }; "showOnEllipsis": { "alias": "showOnEllipsis"; "required": false; "isSignal": true; }; "content": { "alias": "pTooltip"; "required": false; "isSignal": true; }; }, {}, never, never, true, never>;
+}
+`;
+const leerTooltip = (mod) => (mod === 'tooltip' ? DTS_TOOLTIP : null);
+
+test('un nativo adoptado: su contrato es la API instalada, con el nombre con que se escribe y el suyo primero', () => {
+  const r = analyzeNativo({ name: 'tooltip', selector: 'pTooltip', modulo: 'tooltip', pagesText: "path: 'tooltip'", leerTipos: leerTooltip });
+  assert.deepEqual(
+    r.contrato.map((m) => [m.nombre, m.tipo, m.origen]),
+    [
+      ['pTooltip', 'string | TemplateRef<HTMLElement>', 'nativo'],
+      ['tooltipPosition', 'TooltipPosition', 'nativo'],
+      ['showOnEllipsis', 'boolean', 'nativo'],
+    ],
+  );
+  assert.equal(r.contrato[0].nativo.descripcion, 'Content of the tooltip.');
+  assert.deepEqual([r.estado, r.faltas], ['ready', []], 'el Kit tiene su maestro y tiene página');
+});
+
+test('un nativo adoptado sin página es experimental, y sin `.d.ts` no se inventa contrato', () => {
+  const sinPagina = analyzeNativo({ name: 'tooltip', selector: 'pTooltip', modulo: 'tooltip', pagesText: '', leerTipos: leerTooltip });
+  assert.deepEqual([sinPagina.estado, sinPagina.faltas], ['experimental', ['demo']]);
+  const sinTipos = analyzeNativo({ name: 'tooltip', selector: 'pTooltip', modulo: 'tooltip', pagesText: '', leerTipos: () => null });
+  assert.deepEqual(sinTipos.contrato, []);
 });

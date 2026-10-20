@@ -8,10 +8,12 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  *   1. ninguna tabla de Grupos ni de Agentes lleva un `title` nativo;
  *   2. un icono con significado (el canal, la grabación, el tipo de extensión) enseña su nombre en el tooltip;
  *   3. un texto cortado lo enseña entero, y uno que cabe no lleva tooltip (`showOnEllipsis`);
- *   4. «Guardar» apagado dice por qué en el tooltip (sin cambios: desde DD-216 es el único porqué, lo que falta se dice al
+ *   4. «Guardar» apagado dice por qué en el tooltip (sin cambios: desde DD-217 es el único porqué, lo que falta se dice al
  *      pulsar);
  *   5. en la ficha de grupo, la ayuda de Prioridad dice que solo cuenta en las conversaciones entrantes («Duplicar grupo»,
- *      que la compartía, ya no es un diálogo: DD-216).
+ *      que la compartía, ya no es un diálogo: DD-217);
+ *   6. Monitor y Conversaciones, igual: sin `title` nativo, y sus iconos (la presencia, lo que hace una regla) dicen su
+ *      nombre en el tooltip. Lo cortado de sus tablas lo miden `dashboard` y `conversations-table-scroll`.
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -79,4 +81,26 @@ test('ficha de grupo: la ayuda de Prioridad dice que solo cuenta en las conversa
   await expect(page.locator('#group-section-general').getByRole('combobox', { name: 'Prioridad' })).toHaveAccessibleDescription(
     /Solo para las conversaciones entrantes\.$/,
   );
+});
+
+test('Monitor y Conversaciones: sin `title` nativo, y los iconos dicen su nombre en el tooltip del Kit', async ({ page }) => {
+  await goto(page, 'dashboard');
+  const punto = page.locator('sc-dashboard-agents-table tbody sc-badge').first();
+  await expect(punto).toBeVisible();
+  await expect(page.locator('main [title]')).toHaveCount(0);
+  await punto.hover();
+  await expect(tooltip(page)).toHaveText((await punto.getAttribute('aria-label'))!);
+  await salir(page);
+
+  await goto(page, 'conversaciones/reglas');
+  const chip = page.locator('.rules-actions-chips sc-tag[role="img"]').first();
+  await expect(chip).toBeVisible();
+  await expect(page.locator('main [title]')).toHaveCount(0);
+  await chip.hover();
+  await expect(tooltip(page)).toHaveText((await chip.getAttribute('aria-label'))!);
+  await salir(page);
+
+  await goto(page, 'conversaciones');
+  await expect(page.locator('[data-testid="conversations-table"] tbody tr').first()).toBeVisible();
+  await expect(page.locator('main [title]')).toHaveCount(0);
 });

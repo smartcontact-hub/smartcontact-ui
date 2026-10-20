@@ -3,7 +3,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { disableAnimations, elegirTelefonoSaliente, forceLightTheme, goto, irASeccion } from './helpers';
 
 /**
- * LO QUE FALTA SE DICE AL PULSAR CREAR O GUARDAR, Y EL ✓ DICE LO QUE VISTE (DD-216).
+ * LO QUE FALTA SE DICE AL PULSAR CREAR O GUARDAR, Y EL ✓ DICE LO QUE VISTE (DD-217).
  *
  * Revisión de producto del 2026-10-20, con dos recorridos de un compañero medidos en sc-supervisor.pages.dev:
  *   1. nombre → Distribución y colas → vuelta a General: Distribución ganaba un punto rojo (el teléfono saliente) sin

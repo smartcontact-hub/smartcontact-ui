@@ -15,7 +15,7 @@ import { disableAnimations, forceLightTheme, goto, irASeccion } from './helpers'
  *   4. lo borrado en Repositorios no se cuenta ni se guarda, y la ficha no abre con cambios por ello;
  *   5. en un alta también se edita: no se sale de la ficha, así que no hay alta vacía a la que volver.
  *
- * Desde DD-216 la ficha de grupo no lleva lápiz ni «+»: lo elegido va en chips y se edita en Repositorios. El lápiz se
+ * Desde DD-217 la ficha de grupo no lleva lápiz ni «+»: lo elegido va en chips y se edita en Repositorios. El lápiz se
  * queda en la ficha de agente, y es donde se mide (1, 2 y 5); 3 y 4 siguen en la de grupo.
  */
 
@@ -115,7 +115,7 @@ test('lo borrado en Repositorios no se cuenta ni se guarda, y la ficha no abre c
     );
   });
   await goto(page, 'admin/grupos/editar/11?seccion=recursos');
-  // Lo elegido, en chips (DD-216): dos, sin la borrada.
+  // Lo elegido, en chips (DD-217): dos, sin la borrada.
   await expect(page.locator('sc-multiselect:has(#group-agendas) .p-multiselect-chip')).toHaveCount(2);
   await expect(page.locator('sc-top-bar').getByRole('button', { name: 'Deshacer' })).toHaveCount(0);
 

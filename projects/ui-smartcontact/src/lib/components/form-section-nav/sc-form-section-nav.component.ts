@@ -89,7 +89,7 @@ export class ScFormSectionNavComponent implements OnInit {
 
   /**
    * Lo que falta en cada sección con aviso, en texto y ya traducido, por id: va bajo la etiqueta, en rojo, y entra en
-   * el nombre del enlace (DD-216). Sin él, solo el punto. Medido el 2026-10-20: dos puntos sin texto (General y
+   * el nombre del enlace (DD-217). Sin él, solo el punto. Medido el 2026-10-20: dos puntos sin texto (General y
    * Distribución y colas) hacían creer que el segundo lo había causado lo que se tocó en el primero. Solo cuenta para
    * una sección que también está en `sectionsWithErrors`.
    */

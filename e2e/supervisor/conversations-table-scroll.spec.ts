@@ -187,8 +187,10 @@ test.describe('a 1280, donde no caben las diez columnas', () => {
     const recortada = tags.nth(indice);
     const valor = (await recortada.locator('.p-tag-label').textContent())?.trim();
 
+    // En el tooltip del Kit, no en el `title` del navegador (DD-212).
     await recortada.hover();
-    await expect(recortada.locator('.p-tag')).toHaveAttribute('title', valor!);
+    await expect(page.locator('.p-tooltip')).toHaveText(valor!);
+    await expect(recortada.locator('[title]')).toHaveCount(0);
 
     // Y una que cabe no lleva tooltip: repetiría lo que ya se lee.
     const entera = await tags.evaluateAll((els) =>
@@ -196,32 +198,51 @@ test.describe('a 1280, donde no caben las diez columnas', () => {
     );
     expect(entera).toBeGreaterThanOrEqual(0);
     await tags.nth(entera).hover();
-    await expect(tags.nth(entera).locator('.p-tag')).not.toHaveAttribute('title', /.*/);
+    await expect(page.locator('.p-tooltip')).toHaveCount(0);
+    // Le da al tooltip el tiempo de salir, por si saliera.
+    await page.waitForTimeout(300);
+    await expect(page.locator('.p-tooltip')).toHaveCount(0);
   });
 });
 
 test('con textos largos (`?datos=tortura`), el texto libre no pasa de dos líneas y lleva el entero', async ({ page }) => {
   /* Medido el 2026-09-27 con los orígenes estirados (DD-124): «Oscar Fernández Fernández-Villaverde de la
    * Concepción» bajaba a cuatro líneas y la tabla triplicaba su alto. Hasta dos líneas es lo que decidió el reparto
-   * de anchos (2026-09-13); a partir de ahí, «…» y el texto entero en el `title`. */
+   * de anchos (2026-09-13); a partir de ahí, «…» y el texto entero en el tooltip del Kit (DD-212). */
   await goto(page, 'conversaciones?datos=tortura');
   await expect(page.locator(`${TABLE} tbody tr`).first()).toBeVisible();
 
-  const origenes = await page.locator(TABLE).evaluate((table) => {
+  const { col, origenes } = await page.locator(TABLE).evaluate((table) => {
     const col = [...table.querySelectorAll('thead th')].findIndex((th) => th.textContent?.trim() === 'Origen');
-    return [...table.querySelectorAll('tbody tr')].map((tr) => {
+    const origenes = [...table.querySelectorAll('tbody tr')].map((tr, fila) => {
       const el = tr.children[col]!.querySelector('span') as HTMLElement;
       return {
         texto: el.textContent?.trim() ?? '',
         lineas: Math.round(el.getBoundingClientRect().height / parseFloat(getComputedStyle(el).lineHeight)),
-        entero: el.getAttribute('title'),
         recortado: el.scrollHeight > el.clientHeight + 1,
+        fila,
       };
     });
+    return { col, origenes };
   });
   expect(origenes.filter((o) => o.lineas > 2).map((o) => o.texto), 'ninguno pasa de dos líneas').toEqual([]);
-  expect(origenes.filter((o) => o.entero !== o.texto).map((o) => o.texto), 'y todos llevan el entero en el title').toEqual([]);
   // Control: con tortura TIENE que haber orígenes recortados; si no hay ninguno, no se mira el caso.
   expect(origenes.some((o) => o.recortado)).toBe(true);
+  // Cada recortado enseña el entero al pasar el ratón.
+  const { width, height } = page.viewportSize()!;
+  for (const o of origenes.filter((x) => x.recortado)) {
+    const celda = page.locator(`${TABLE} tbody tr`).nth(o.fila).locator(`:scope > :nth-child(${col + 1}) span`).first();
+    /* El tooltip de PrimeNG se cierra con cualquier scroll de la tabla, y un hover que obliga a desplazarla lo abre y lo
+     * cierra en el acto: el scroll llega un frame después (medido: 7 de 26 sin tooltip). El ratón sale primero de la
+     * tabla, se desplaza, se dejan pasar dos frames y entonces entra; si aun así un scroll tardío lo cierra, se vuelve a
+     * pasar. Uno que no sale nunca sigue en rojo. */
+    await expect(async () => {
+      await page.mouse.move(width / 2, height - 4);
+      await celda.evaluate((el) => el.scrollIntoView({ block: 'center' }));
+      await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))));
+      await celda.hover();
+      await expect(page.locator('.p-tooltip')).toHaveText(o.texto, { timeout: 1_500 });
+    }, `«${o.texto}», recortado, sale entero en el tooltip`).toPass({ timeout: 10_000 });
+  }
 });
 

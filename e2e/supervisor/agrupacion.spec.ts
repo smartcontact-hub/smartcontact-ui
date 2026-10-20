@@ -21,7 +21,7 @@ import { goto, pickSelectOption } from './helpers';
  *
  * DÓNDE: cada ruta del Supervisor con cada pestaña o sección de su índice (también en las altas), el acceso, los diálogos
  * de alta que abre la acción «Nuevo…/Crear/Añadir» de cada lista. Una pantalla o un diálogo nuevos entran solos si
- * cuelgan de esas rutas o de esa acción. «Duplicar» un grupo abría un diálogo hasta DD-216; ahora lleva a la ficha de la
+ * cuelgan de esas rutas o de esa acción. «Duplicar» un grupo abría un diálogo hasta DD-217; ahora lleva a la ficha de la
  * copia, que se mide con las demás fichas.
  *
  * QUÉ NO VE: la agrupación de lo que no es un campo, una opción o un botón (tarjetas, títulos con su

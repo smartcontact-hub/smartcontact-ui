@@ -1202,7 +1202,7 @@ test.describe('sc-form-section-nav', () => {
 
     // En un alta (DD-143): ✓ en las secciones que se dejaron completas, que el enlace dice; la que se
     // dejó sin lo obligatorio lleva el punto rojo, que gana al ✓, y tras pulsar «Crear», el texto de lo que falta
-    // debajo, que el enlace también dice (DD-216).
+    // debajo, que el enlace también dice (DD-217).
     const alta = page.getByTestId('sc-formnav-alta');
     await expect(alta.locator('.form-nav__done')).toHaveCount(2);
     await expect(alta.locator('.form-nav__item').first()).toHaveAccessibleName(/General.*(completa|complete)/);
@@ -1803,6 +1803,39 @@ test.describe('sc-datatable', () => {
     await expect(dt.locator('.dt-caption')).toHaveText('Agentes (0)');
 
     await screenshotBaseline(page, 'datatable');
+  });
+
+  /* DD-216: los tres huecos de la tabla, los del Kit (`scale/0-5`), no los 8 de Aura 3. Solo el del filtro en
+   * línea tiene caja en esta página. El de la celda de cabecera no la tiene en ninguna: PrimeNG para Angular
+   * declara `.p-datatable-column-header-content` y ninguna plantilla la pinta (el título y la flecha los separa
+   * `p-sort-icon` en el SCSS del wrapper). El del popover solo existe con `filterDisplay="menu"`. De esos dos
+   * se mide lo que leería su regla: la variable de PrimeNG, puesta en una caja de prueba. */
+  test('huecos del Kit: celda de cabecera, filtro en línea y popover del filtro (DD-216)', async ({ page }) => {
+    await gotoPage(page, 'datatable');
+    const filtros = page.getByTestId('sc-datatable-filters');
+    await filtros.scrollIntoViewIfNeeded();
+    await expect(filtros.locator('.p-datatable-inline-filter').first()).toHaveCSS(
+      'gap',
+      kitPx('datatable.filter.inlineGap'),
+    );
+    const huecos = await page.evaluate(() => {
+      const lee = (variable: string) => {
+        const caja = document.createElement('div');
+        caja.style.cssText = `display: flex; gap: var(${variable});`;
+        document.body.append(caja);
+        const gap = getComputedStyle(caja).gap;
+        caja.remove();
+        return gap;
+      };
+      return {
+        cabecera: lee('--p-datatable-header-cell-gap'),
+        popover: lee('--p-datatable-filter-overlay-popover-gap'),
+      };
+    });
+    expect(huecos).toEqual({
+      cabecera: kitPx('datatable.headerCell.gap'),
+      popover: kitPx('datatable.filter.overlayPopover.gap'),
+    });
   });
 
   test('lazy server-driven: paginación + filtro global vía (lazyLoad)', async ({ page }) => {

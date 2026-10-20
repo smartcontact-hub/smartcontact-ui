@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Locator, type Page } from '@playwright/test';
 
 import { disableAnimations, forceLightTheme, goto } from './helpers';
 
@@ -17,6 +17,38 @@ test.beforeEach(async ({ page }) => {
   await forceLightTheme(page);
   await disableAnimations(page);
 });
+
+/**
+ * Cada texto cortado con «…» enseña el entero en el tooltip del Kit al pasar el ratón (DD-212), no en el `title` del
+ * navegador. Devuelve cuántos había cortados: si no hay ninguno, la comprobación no ha mirado nada.
+ */
+/**
+ * Pasa el ratón por un texto y espera su tooltip. El tooltip de PrimeNG se cierra con cualquier scroll de lo que lo
+ * contiene, y un hover que obliga a desplazar lo abre y lo cierra en el acto: el scroll llega un frame después (medido
+ * en el CI y en local, 7 de 26 recortados de Conversaciones sin tooltip). Así que el ratón sale primero de lo que se
+ * desplaza, se desplaza, se dejan pasar dos frames y entonces entra; y si aun así un scroll tardío lo cierra, se vuelve a
+ * pasar. Uno que no sale nunca sigue en rojo.
+ */
+async function pasarConTooltip(page: Page, texto: Locator, entero: string): Promise<void> {
+  const { width, height } = page.viewportSize()!;
+  await expect(async () => {
+    await page.mouse.move(width / 2, height - 4);
+    await texto.evaluate((el) => el.scrollIntoView({ block: 'center' }));
+    await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))));
+    await texto.hover();
+    await expect(page.locator('.p-tooltip')).toHaveText(entero, { timeout: 1_500 });
+  }, `«${entero}», cortado, sale entero en el tooltip`).toPass({ timeout: 10_000 });
+}
+
+async function cortadosConTooltip(page: Page, textos: Locator): Promise<number> {
+  const cortados = await textos.evaluateAll((els) => els.flatMap((el, i) => (el.scrollWidth > el.clientWidth ? [i] : [])));
+  for (const i of cortados) {
+    const texto = textos.nth(i);
+    const entero = (await texto.textContent())?.trim() ?? '';
+    await pasarConTooltip(page, texto, entero);
+  }
+  return cortados.length;
+}
 
 /** Cajas del asistente que no deben moverse mientras se configura un widget. */
 const geometria = (page: Page) =>
@@ -147,8 +179,11 @@ test('en el primer monitor, la tabla, el anillo y su detalle cuentan los mismos 
   await goto(page, 'dashboard');
   const tabla = page.locator('sc-dashboard-widget-card').filter({ has: page.locator('sc-dashboard-agents-table') });
   await expect(tabla.locator('tbody tr').first()).toBeVisible();
-  const { nombrados, filas } = await tabla.evaluate((card) => ({
-    nombrados: (card.querySelector('.widget__entities')?.getAttribute('title') ?? '').split(', ').filter(Boolean),
+  // Con «y N más», el tooltip de la cabecera nombra a todos (DD-212).
+  await tabla.locator('.widget__entities').hover();
+  await expect(page.locator('.p-tooltip'), 'la cabecera nombra a quién vigila en el tooltip').toBeVisible();
+  const nombrados = ((await page.locator('.p-tooltip').textContent()) ?? '').split(', ').filter(Boolean);
+  const { filas } = await tabla.evaluate((card) => ({
     filas: [...card.querySelectorAll('tbody tr')].map((tr) => ({
       nombre: tr.querySelector('.agents-table__agent')?.textContent?.trim() ?? '',
       estado: tr.querySelector('sc-badge')?.getAttribute('aria-label') ?? '',
@@ -200,7 +235,7 @@ test('con textos largos (`?datos=tortura`), la tabla cabe en su tarjeta, los tí
   /* Medido el 2026-09-27 con los nombres estirados (DD-124): el nombre de agente empujaba las cifras 183 px fuera de
    * la tarjeta, sin «Transferidas» ni «T. medio»; «Tabla de agentes» se recortaba antes que la lista de a quién
    * vigila; y en el detalle del anillo cada nombre bajaba a tres líneas. Una tabla recorta el nombre con «…» y
-   * lleva el entero en el `title`; las cifras y sus cabeceras, en una línea. */
+   * enseña el entero en el tooltip del Kit (DD-212); las cifras y sus cabeceras, en una línea. */
   await goto(page, 'dashboard?datos=tortura');
   const tabla = page.locator('sc-dashboard-widget-card').filter({ has: page.locator('sc-dashboard-agents-table') });
   await expect(tabla.locator('tbody tr').first()).toBeVisible();
@@ -217,9 +252,6 @@ test('con textos largos (`?datos=tortura`), la tabla cabe en su tarjeta, los tí
       fuera: scroller.scrollWidth - scroller.clientWidth,
       // Una etiqueta en línea partida en dos devuelve dos rectángulos.
       cabecerasPartidas: [...card.querySelectorAll('thead .sc-datatable__header-label')].filter((l) => l.getClientRects().length > 1).map((l) => l.textContent?.trim()),
-      nombresSinEntero: [...card.querySelectorAll('tbody tr .agents-table__agent')]
-        .map((c) => c.textContent?.trim() ?? '')
-        .filter((nombre, i) => ![...card.querySelectorAll('tbody tr')][i].querySelector(`[title="${CSS.escape(nombre)}"]`)),
       titulosRecortados: [...document.querySelectorAll('.widget__title')]
         .filter((t) => anchoDelTexto(t) > t.getBoundingClientRect().width + 0.01)
         .map((t) => t.textContent?.trim()),
@@ -227,7 +259,7 @@ test('con textos largos (`?datos=tortura`), la tabla cabe en su tarjeta, los tí
   });
   expect(medida.fuera, 'la tabla no se sale de su tarjeta').toBe(0);
   expect(medida.cabecerasPartidas, 'las cabeceras, en una línea').toEqual([]);
-  expect(medida.nombresSinEntero, 'cada nombre lleva el entero en el title').toEqual([]);
+  expect(await cortadosConTooltip(page, tabla.locator('tbody tr .agents-table__name')), 'los nombres de tortura no caben: si nada recorta, la prueba no prueba').toBeGreaterThan(0);
   expect(medida.titulosRecortados, 'el título cede después que la lista de a quién vigila').toEqual([]);
 
   await page.locator('.kpi--ring .kpi__open').first().click();
@@ -238,12 +270,11 @@ test('con textos largos (`?datos=tortura`), la tabla cabe en su tarjeta, los tí
     nombres: [...d.querySelectorAll('.detail__who .sc-text-body-semibold')].map((n) => ({
       texto: n.textContent?.trim() ?? '',
       lineas: Math.round(n.getBoundingClientRect().height / parseFloat(getComputedStyle(n).lineHeight)),
-      entero: n.getAttribute('title'),
     })),
   }));
   expect(filas.cabecerasPartidas, 'la cabecera del detalle, en una línea').toEqual([]);
   expect(filas.nombres.filter((n) => n.lineas > 1).map((n) => n.texto), 'cada nombre en una línea').toEqual([]);
-  expect(filas.nombres.filter((n) => n.entero !== n.texto).map((n) => n.texto), 'y con el entero en el title').toEqual([]);
+  await cortadosConTooltip(page, detalle.locator('.detail__who .sc-text-body-semibold'));
 });
 
 
@@ -253,7 +284,7 @@ for (const datos of ['demo', 'tortura'] as const) {
      * conversación («Cliente #56705 · Atención al cliente») no cedía ancho, así que la tabla medía 300 px en una caja
      * de 287,5 y el tiempo salía cortado («9:1»). La prueba de tortura de arriba abre el detalle del anillo, cuya
      * segunda línea es un estado corto, y no lo veía. Con los datos de siempre no se recorta nada; con tortura, las
-     * dos líneas recortan con «…» y llevan el entero en el `title` (DD-124). */
+     * dos líneas recortan con «…» y enseñan el entero en el tooltip del Kit (DD-124, DD-212). */
     await goto(page, `dashboard?datos=${datos}`);
     const tarjeta = page
       .locator('sc-dashboard-widget-card')
@@ -274,13 +305,12 @@ for (const datos of ['demo', 'tortura'] as const) {
           .filter((t) => t.getBoundingClientRect().right > borde + 0.5)
           .map((t) => t.textContent?.trim()),
         recortadas: lineas.filter((l) => l.scrollWidth > l.clientWidth).map((l) => l.textContent?.trim()),
-        sinEntero: lineas.filter((l) => l.getAttribute('title') !== l.textContent?.trim()).map((l) => l.textContent?.trim()),
       };
     });
     expect(medida.fuera, 'la tabla no se sale del panel').toBe(0);
     expect(medida.tiemposCortados, 'ningún tiempo cortado por el borde').toEqual([]);
-    expect(medida.sinEntero, 'cada línea lleva el entero en el title').toEqual([]);
     if (datos === 'demo') expect(medida.recortadas, 'con los datos de siempre no se recorta nada').toEqual([]);
     else expect(medida.recortadas.length, 'los textos de tortura no caben: si nada recorta, la prueba no prueba').toBeGreaterThan(0);
+    await cortadosConTooltip(page, detalle.locator('.detail__name, .detail__sub'));
   });
 }

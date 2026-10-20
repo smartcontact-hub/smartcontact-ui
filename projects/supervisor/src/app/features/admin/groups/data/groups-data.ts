@@ -711,7 +711,7 @@ export const FACTORY_GROUP_DEFAULTS: GroupDefaults = {
 };
 
 /**
- * Duplicado (revisión de producto del 2026-10-20, DD-216): TODO lo del original, canales, ajustes y teléfono saliente
+ * Duplicado (revisión de producto del 2026-10-20, DD-217): TODO lo del original, canales, ajustes y teléfono saliente
  * incluidos, salvo lo que el funcional dice que no se copia: los servicios, los dominios del script de chat (el script
  * cambia con el grupo) y el número de WhatsApp, que se elige otra vez. Sin diálogo: se crea en el acto con
  * `nombreDeCopia` y se abre su edición.

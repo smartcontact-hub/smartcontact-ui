@@ -8,8 +8,8 @@
   </sc-button>
 </ng-template>
 
-<!-- La lista (título, barra, tabla, selección, menú de fila) la monta `sc-list-page` (DD-97). Aquí solo lo
-     que es de Agentes: columnas y celdas, el menú de estados, acciones y diálogos. -->
+<!-- La lista (título, barra, tabla, menú de fila) la monta `sc-list-page` (DD-97). Aquí solo lo que es de
+     Agentes: columnas y celdas, el menú de estados, acciones y diálogos. Sin casillas ni edición masiva (DD-215). -->
 <sc-list-page
   [heading]="'sidebar.agents' | translate"
   [rows]="agents()"
@@ -24,9 +24,6 @@
   exportable
   [rowMenu]="rowMenu"
   [rowOpenable]="isOpenable"
-  selectable
-  [bulkEntity]="bulkEntity()"
-  [(selectedIds)]="selectedIds"
   tableTestId="agents-table"
   (rowOpen)="onRowOpen($event)"
   (exportRequest)="onExport($event)"
@@ -39,13 +36,6 @@
     ctaKey="agents.create_button"
     (cta)="onCreateClick()"
   />
-
-  <ng-container ngProjectAs="[scListBulkActions]">
-    <sc-bulk-edit-menu [fields]="bulkEditFields()" [buttonLabel]="'common.edit' | translate" (commit)="onBulkEditCommit($event)" />
-    <sc-button type="button" size="sm" variant="danger" (clicked)="requestDeleteSelection()">
-      <span>{{ 'common.delete' | translate }}</span>
-    </sc-button>
-  </ng-container>
 </sc-list-page>
 
 <!-- Celdas de la tabla. Viven FUERA de la lista para que los
@@ -182,23 +172,3 @@
     <span class="cell cell--empty sc-text-body-regular"><sc-celda-vacia /></span>
   }
 </ng-template>
-
-<sc-delete-entity-dialog
-  [visible]="!!deleteTarget()"
-  [mode]="(deleteTarget()?.length ?? 0) === 1 ? 'single' : 'bulk'"
-  [items]="deleteItems()"
-  [entitySingular]="'agents.entity_singular' | translate"
-  [entityPlural]="'agents.entity_plural' | translate"
-  (cancelled)="cancelDelete()"
-  (confirm)="confirmDelete($event)"
-/>
-
-<sc-impact-preview-dialog
-  [visible]="!!pendingBulkEdit()"
-  [mode]="'bulkEdit'"
-  [title]="'agents.bulk_edit_title' | translate: { count: selectedIds().size }"
-  [items]="impactItems()"
-  [badge]="impactBadge()"
-  (cancelled)="onBulkPreviewCancel()"
-  (confirm)="onBulkPreviewConfirm($event)"
-/>

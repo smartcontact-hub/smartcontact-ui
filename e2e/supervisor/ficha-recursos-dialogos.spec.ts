@@ -7,7 +7,7 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  * CREAR DESDE LA FICHA ES UN DIÁLOGO, NO UNA CAJA DENTRO DE OTRA.
  *
  * En Recursos de la ficha de agente, cada «+» (agenda y plantillas) crea sin salir de la ficha (la de grupo los tuvo
- * hasta DD-216, que deja allí solo los desplegables, en chips, y «Gestionar en Repositorios»):
+ * hasta DD-217, que deja allí solo los desplegables, en chips, y «Gestionar en Repositorios»):
  * abre un `sc-dialog` con el formulario de su pantalla dentro. Medido el 2026-10-01: el formulario seguía pintando
  * su propia tarjeta (320 px con borde, sombra y radio) dentro del diálogo de 440, con su título repetido
  * («Nuevo/a tipificación» dos veces) y su propio `role="dialog"`. La ficha le pasaba `flush`, pero el formulario no

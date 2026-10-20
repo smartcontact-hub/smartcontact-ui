@@ -98,7 +98,7 @@ test.describe('con los datos de siempre', () => {
     await expect(agentes).not.toContainText('Sin agentes');
   });
 
-  test('una familia sin agentes dice 0, sin aviso amarillo (DD-216)', async ({ page }) => {
+  test('una familia sin agentes dice 0, sin aviso amarillo (DD-217)', async ({ page }) => {
     await page.addInitScript(() => {
       localStorage.setItem('sc-group-agent-links-v', '1');
       localStorage.setItem('sc-group-agent-links', JSON.stringify([
@@ -112,7 +112,7 @@ test.describe('con los datos de siempre', () => {
     await expect(resumen(page).locator('sc-icon[name="warning"]')).toHaveCount(0);
   });
 
-  test('en el alta, el teléfono saliente sin elegir dice «Sin número», sin aviso amarillo (DD-216)', async ({ page }) => {
+  test('en el alta, el teléfono saliente sin elegir dice «Sin número», sin aviso amarillo (DD-217)', async ({ page }) => {
     await goto(page, 'admin/grupos/crear');
     await expect(resumen(page)).toContainText('Sin número');
     await expect(resumen(page).locator('sc-icon[name="warning"]')).toHaveCount(0);

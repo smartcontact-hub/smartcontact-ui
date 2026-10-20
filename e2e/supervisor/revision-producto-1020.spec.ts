@@ -3,7 +3,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { disableAnimations, forceLightTheme, goto, irASeccion, openKebabAction, pickSelectOption } from './helpers';
 
 /**
- * REVISIÓN DE PRODUCTO DEL 2026-10-20 EN LA FICHA DE GRUPO (DD-216): duplicar sin modal y con «(1)», Recursos en chips
+ * REVISIÓN DE PRODUCTO DEL 2026-10-20 EN LA FICHA DE GRUPO (DD-217): duplicar sin modal y con «(1)», Recursos en chips
  * sin «+» ni lápiz, el resumen de Recursos que lleva a su campo y la tipificación sin su descripción.
  */
 

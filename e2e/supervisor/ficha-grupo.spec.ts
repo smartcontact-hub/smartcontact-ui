@@ -4,7 +4,7 @@ import { columnasACadaAncho, disableAnimations, elegirTelefonoSaliente, forceLig
 
 /**
  * LA FICHA DE GRUPO — índice lateral con cuatro secciones y el resumen a la derecha; el alta es la misma
- * ficha en modo alta, y duplicar lleva a la ficha de la copia (DD-216; hasta entonces, un diálogo corto).
+ * ficha en modo alta, y duplicar lleva a la ficha de la copia (DD-217; hasta entonces, un diálogo corto).
  *
  * Nace el 2026-09-23 como red de la forma «una página + pestañas»; el 2026-09-26 la ficha pasa al
  * índice lateral que pide la visión de producto de grupos (2026-09-25, DD-121) y esta red pasa con
@@ -19,7 +19,7 @@ import { columnasACadaAncho, disableAnimations, elegirTelefonoSaliente, forceLig
  *   4. Los grupos no llevan cara (2026-09-23): ni foto en la ficha ni avatar en las listas.
  *   5. (Quitado el 2026-10-09, DD-187: el aviso de «abierta en otra pestaña» ya no existe.)
  *   6. El alta es la MISMA ficha, con el mismo índice (DD-143): abre en General, «Siguiente» guía por las secciones,
- *      sin puertas (DD-216), y crear deja en la edición, en la sección abierta.
+ *      sin puertas (DD-217), y crear deja en la edición, en la sección abierta.
  */
 
 test.beforeEach(async ({ page }) => {
@@ -60,7 +60,7 @@ test('crear es la misma ficha: abre en General con Teléfono, dice lo que falta 
   await expect(telefono.locator('input[type=checkbox]')).toHaveAttribute('aria-checked', 'true');
   await expect(general).not.toContainText('El nombre es obligatorio');
 
-  // «Crear grupo», arriba, siempre activo (DD-216): sin nombre no crea, lo dice en su campo y lleva el foco a él.
+  // «Crear grupo», arriba, siempre activo (DD-217): sin nombre no crea, lo dice en su campo y lleva el foco a él.
   const crear = page.getByRole('button', { name: 'Crear grupo' });
   await expect(crear).toBeEnabled();
   await crear.click();
@@ -72,7 +72,7 @@ test('crear es la misma ficha: abre en General con Teléfono, dice lo que falta 
   await page.locator('#group-name').fill('campaigns');
   await expect(general).toContainText('Ya hay un grupo con este nombre');
 
-  // Sin canales no falta nada en General: son opcionales (DD-216).
+  // Sin canales no falta nada en General: son opcionales (DD-217).
   await page.locator('#group-name').fill(`E2E Alta ${Date.now()}`);
   await telefono.click();
   await expect(general).not.toContainText('Selecciona al menos un canal');
@@ -90,7 +90,7 @@ test('crear es la misma ficha: abre en General con Teléfono, dice lo que falta 
   await expect(page.locator('.headline__meta')).toContainText('prioridad: baja');
 });
 
-test('duplicar crea la copia sin diálogo y se lleva los agentes del original (DD-216)', async ({ page }) => {
+test('duplicar crea la copia sin diálogo y se lleva los agentes del original (DD-217)', async ({ page }) => {
   await goto(page, 'admin/grupos');
   const fila = page.locator('tbody tr', { hasText: 'Reclamaciones' });
   await fila.locator('.rules-kebab-btn').click();

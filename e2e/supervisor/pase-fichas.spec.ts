@@ -14,7 +14,7 @@ import { disableAnimations, forceLightTheme, goto, irASeccion } from './helpers'
  *   · un usuario nuevo nace con lo mínimo: desde DD-132, la plantilla de Supervisor Offline (la supervisión, nada
  *     sensible); con DD-130 nacía sin ninguna casilla;
  *   · Distribución y colas lleva saltos a cada canal;
- *   · el icono de un aviso pesa lo que su texto (sin prueba desde DD-216: el resumen ya no lleva avisos);
+ *   · el icono de un aviso pesa lo que su texto (sin prueba desde DD-217: el resumen ya no lleva avisos);
  *   · en el listado de grupos, el botón de cada fila dice «Asignar».
  */
 
@@ -59,7 +59,7 @@ test.describe('la franja, por debajo de 1340', () => {
         )
       );
     // Teléfono, Chat, Email y los dos números, todos en Distribución (DD-204): Teléfono es un enlace como Chat desde
-    // DD-206 §1. Y las tres de Recursos (agendas y plantillas de chat y de email), que desde DD-216 son `scFactRow`
+    // DD-206 §1. Y las tres de Recursos (agendas y plantillas de chat y de email), que desde DD-217 son `scFactRow`
     // como las de Distribución, en la misma vertical. Sobre una lista vacía, «todos alineados» se cumpliría.
     expect(xs).toHaveLength(8);
     expect(new Set(xs).size, `x de cada valor: ${xs.join(', ')}`).toBe(1);

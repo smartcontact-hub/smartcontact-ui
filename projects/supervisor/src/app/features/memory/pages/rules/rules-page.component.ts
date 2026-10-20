@@ -13,6 +13,7 @@ import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 import { ScTagComponent as TagComponent } from '@smartcontact-hub/components';
 import { MenuModule } from 'primeng/menu';
+import { TooltipModule } from 'primeng/tooltip';
 import type { MenuItem } from 'primeng/api';
 
 import { ScEmptyStateComponent as EmptyStateComponent } from '@smartcontact-hub/components';
@@ -47,6 +48,7 @@ import { RulesStore } from '../../state/rules.store';
     MenuModule,
     MessageComponent,
     RouterLink,
+    TooltipModule,
     TranslateModule,
   ],
   templateUrl: './rules-page.component.html',

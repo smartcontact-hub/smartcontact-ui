@@ -10,12 +10,12 @@ import { disableAnimations, elegirTelefonoSaliente, forceLightTheme, goto } from
  * asignados a la cuenta, los que tienen call blending. Hasta hoy se podía dejar vacío y se podía escribir cualquiera.
  *
  * Lo que fija:
- *   1. En el alta, «Crear grupo» sin él no crea: lo dice su campo y el índice, y lleva a él (DD-216); con uno elegido,
+ *   1. En el alta, «Crear grupo» sin él no crea: lo dice su campo y el índice, y lleva a él (DD-217); con uno elegido,
  *      se crea.
  *   2. Al editar un grupo con Teléfono y sin número (el duplicado de antes lo vaciaba), su campo lo dice y su sección
  *      lleva el punto del índice con su texto, desde que se abre.
  *   3. Se elige de una lista cerrada: no hay campo donde escribir, y su ayuda ya no dice «escríbelo».
- *   4. Duplicar se lo lleva: la copia sale con el del original, sin diálogo (DD-216).
+ *   4. Duplicar se lo lleva: la copia sale con el del original, sin diálogo (DD-217).
  *
  * Storage limpio por test → cada almacén vuelve a su semilla.
  */
@@ -65,7 +65,7 @@ test('editar · un grupo con Teléfono y sin número lo dice en su campo y en el
   const seccion = page.locator('sc-form-section-nav .form-nav__item', { hasText: 'Distribución y colas' });
   await expect(seccion).toHaveClass(/form-nav__item--has-error/);
   await expect(seccion).toContainText(OBLIGATORIO);
-  // Sin cambios no hay nada que guardar; sin motivo junto al botón (DD-216).
+  // Sin cambios no hay nada que guardar; sin motivo junto al botón (DD-217).
   await expect(boton(page, 'Guardar')).toBeDisabled();
   await expect(page.locator('.form-save-reason')).toHaveCount(0);
 
@@ -91,7 +91,7 @@ test('el teléfono saliente se elige de los números asignados: no hay campo don
   expect((await opciones.allInnerTexts()).map((t) => t.trim()).sort()).toEqual(['917945449', '918371548']);
 });
 
-test('duplicar se lleva el teléfono saliente: la copia sale con el del original, sin diálogo (DD-216)', async ({ page }) => {
+test('duplicar se lleva el teléfono saliente: la copia sale con el del original, sin diálogo (DD-217)', async ({ page }) => {
   await goto(page, 'admin/grupos');
   // Reclamaciones tiene Teléfono, con el 918371548.
   await page.locator('tbody tr', { hasText: 'Reclamaciones' }).locator('.rules-kebab-btn').click();

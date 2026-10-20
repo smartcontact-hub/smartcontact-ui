@@ -8,17 +8,17 @@ import { disableAnimations, forceLightTheme, goto, irASeccion, pickSelectOption 
  *
  * El alta tiene la maqueta de la edición: el índice a la izquierda, una sección a la vista y el resumen a la derecha.
  * La sección que se deja completa lleva ✓ en el índice, y al pie de cada una van «Atrás» y «Siguiente». Sin puertas
- * desde DD-216: General dejó de serlo en el grupo, y lo que falta se dice al pulsar «Crear» (`indice-errores`).
+ * desde DD-217: General dejó de serlo en el grupo, y lo que falta se dice al pulsar «Crear» (`indice-errores`).
  *
  * Lo que fija:
  *   1. El alta tiene el índice de la edición, con sus secciones en orden y la primera a la vista, y ningún Stepper.
  *   2. Grupo: «Siguiente» y «Atrás» cambian de sección, también sin nombre, sin decir nada en rojo, y llevan el foco a
- *      su título (DD-216).
+ *      su título (DD-217).
  *   3. «Siguiente» sube al principio de la sección nueva: sin eso, desde el pie de una sección larga se llega a media
  *      altura de la siguiente.
  *   4. La sección que se deja completa lleva ✓ en el índice, y su enlace lo dice; el ✓ se ve (3:1). La abierta no
  *      lo lleva aunque esté bien. La que se deja sin lo obligatorio no lleva nada: ni ✓ ni rojo hasta pulsar «Crear»
- *      (DD-216). Qué secciones pueden llevar ✓: `altas-obligatorio`.
+ *      (DD-217). Qué secciones pueden llevar ✓: `altas-obligatorio`.
  *   5. Cambiar de sección en el alta no toca la dirección ni el historial: Atrás del navegador sale del alta. La
  *      primera sección no lleva «Atrás», y la última no lleva «Siguiente».
  *   6. Agente y usuario: las secciones, en cualquier orden (el agente, las cuatro de la ficha de grupo desde DD-187).
@@ -65,7 +65,7 @@ test('grupo · sin puertas: «Siguiente» y «Atrás» cambian de sección tambi
   page,
 }) => {
   await goto(page, 'admin/grupos/crear');
-  // Sin nombre se sale de General, y nada en rojo: lo que falta se dice al pulsar «Crear grupo» (DD-216).
+  // Sin nombre se sale de General, y nada en rojo: lo que falta se dice al pulsar «Crear grupo» (DD-217).
   await siguiente(page).click();
   await expect(actual(page)).toContainText('Distribución y colas');
   await expect(titulo(page, 'Distribución y colas')).toBeFocused();
@@ -108,7 +108,7 @@ test('grupo · la sección que se deja completa lleva ✓ en el índice, su enla
   await expect(check).toBeVisible();
   expect((await check.evaluate(colorEfectivo)).ratio, 'el ✓ sobre su fondo').toBeGreaterThanOrEqual(3);
   // La abierta no lleva ✓ aunque esté bien: aún no se ha dejado. Y Distribución, sin teléfono saliente, no está
-  // completa (DD-142): al dejarla, ni ✓ ni rojo (DD-216).
+  // completa (DD-142): al dejarla, ni ✓ ni rojo (DD-217).
   await expect(fila(page, 'Distribución y colas')).not.toHaveAccessibleName(/completa/);
   await siguiente(page).click();
   await expect(actual(page)).toContainText('Recursos');
@@ -120,7 +120,7 @@ test('grupo · la sección que se deja completa lleva ✓ en el índice, su enla
 test('agente · General que se deja sin lo obligatorio no lleva nada hasta pulsar «Crear»; al completarla, ✓', async ({ page }) => {
   await goto(page, 'admin/agentes/crear');
   await siguiente(page).click();
-  // Ni rojo ni ✓: lo que falta se dice al pulsar «Crear agente» (DD-216, `indice-errores`).
+  // Ni rojo ni ✓: lo que falta se dice al pulsar «Crear agente» (DD-217, `indice-errores`).
   await expect(fila(page, 'General')).not.toHaveAccessibleName(/obligatori|completa/);
   await expect(fila(page, 'General').locator('.form-nav__dot')).toHaveCount(0);
 

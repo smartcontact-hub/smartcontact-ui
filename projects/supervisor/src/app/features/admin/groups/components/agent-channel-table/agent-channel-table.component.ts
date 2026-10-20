@@ -321,8 +321,8 @@ export class AgentChannelTableComponent {
     });
   });
   /**
-   * Se puede asignar si atiende algún canal del grupo. En un grupo sin canales (DD-216) se pertenece sin canal: todos.
-   * Sin los avisos amarillos de «Sin canales» (DD-216): en un grupo con canales, el último no se quita aquí
+   * Se puede asignar si atiende algún canal del grupo. En un grupo sin canales (DD-217) se pertenece sin canal: todos.
+   * Sin los avisos amarillos de «Sin canales» (DD-217): en un grupo con canales, el último no se quita aquí
    * (`isLastChannel`), y quien se queda sin ninguno porque el grupo los quitó sale al guardar, con su confirmación.
    */
   protected compatible(agent: AgentChannelTableAgent): boolean {

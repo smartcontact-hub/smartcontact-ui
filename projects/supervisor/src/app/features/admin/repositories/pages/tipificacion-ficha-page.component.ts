@@ -209,7 +209,7 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit {
     () => this.groupsStore.groups().filter((g) => resolveGroup(g).wrapUp.typificationId === this.editingId()).length,
   );
 
-  /* ── Lo que falta: en su campo y en el índice, al pulsar (DD-216) ──────── */
+  /* ── Lo que falta: en su campo y en el índice, al pulsar (DD-217) ──────── */
 
   /** Lo que falta, por su aviso, en el orden de la ficha. */
   private readonly faltas = computed<readonly string[]>(() => {
@@ -225,7 +225,7 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit {
   protected readonly canSave = computed(() => this.mode() === 'create' || this.formDirty());
 
   /**
-   * Cuándo se dice lo que falta (DD-216): al pulsar Crear o Guardar, lo que faltaba entonces, hasta que se arregla; o
+   * Cuándo se dice lo que falta (DD-217): al pulsar Crear o Guardar, lo que faltaba entonces, hasta que se arregla; o
    * desde que se abre, si lo guardado ya venía sin ello. Mientras se rellena, nada en rojo.
    */
   private readonly ocasion = ocasionDeAvisar({
@@ -258,7 +258,7 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit {
   /** El punto rojo del índice: la sección tiene un aviso a la vista. */
   protected readonly sectionsWithErrors = computed<ReadonlySet<string>>(() => new Set(this.avisos().map((a) => a.seccion)));
 
-  /** Lo que dice cada sección con aviso en el índice, en texto (DD-216). */
+  /** Lo que dice cada sección con aviso en el índice, en texto (DD-217). */
   protected readonly sectionErrorHints = computed(() => avisosDelIndice(this.avisos()));
 
   /** Lleva a un campo de la ficha (o al título de su sección): a su sección, y en ella al sitio, con el foco. */
@@ -319,7 +319,7 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit {
 
   protected save(): void {
     if (!this.canSave()) return;
-    // Con algo pendiente no crea ni guarda: desde ahora se dice lo que falta, y se llega al primer sitio (DD-216).
+    // Con algo pendiente no crea ni guarda: desde ahora se dice lo que falta, y se llega al primer sitio (DD-217).
     if (this.faltas().length > 0 || this.nameTaken()) {
       this.ocasion.intentar();
       const primero = this.avisos()[0];

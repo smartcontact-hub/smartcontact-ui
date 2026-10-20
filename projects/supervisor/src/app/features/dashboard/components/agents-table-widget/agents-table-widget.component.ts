@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, input, TemplateRe
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ScBadgeComponent as BadgeComponent, ScDatatableComponent as DatatableComponent } from '@smartcontact-hub/components';
 import type { ScColumnCellContext, ScColumnDef } from '@smartcontact-hub/components';
+import { TooltipModule } from 'primeng/tooltip';
 
 import { injectLangChange } from '@core/utils/lang-change';
 
@@ -14,7 +15,7 @@ import { formatDuration } from '../../data/format-duration';
  */
 @Component({
   selector: 'sc-dashboard-agents-table',
-  imports: [TranslateModule, BadgeComponent, DatatableComponent],
+  imports: [TooltipModule, TranslateModule, BadgeComponent, DatatableComponent],
   templateUrl: './agents-table-widget.component.html',
   styleUrl: './agents-table-widget.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

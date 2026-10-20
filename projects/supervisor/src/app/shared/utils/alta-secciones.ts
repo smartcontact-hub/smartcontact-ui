@@ -1,13 +1,13 @@
 /**
- * LAS SECCIONES DE UNA FICHA Y SU ÍNDICE (DD-143, DD-216): el alta tiene el índice de la edición (DD-122), y aquí vive
+ * LAS SECCIONES DE UNA FICHA Y SU ÍNDICE (DD-143, DD-217): el alta tiene el índice de la edición (DD-122), y aquí vive
  * lo que el alta le añade: qué sección está abierta, cuáles llevan ✓ y cuáles van antes y después, para «Atrás» y
  * «Siguiente». Las secciones son las del índice (`navSections`), así que no pueden discrepar. Se navega libre: ninguna
- * sección retiene a nadie (DD-216 retira las puertas de DD-121 y DD-158).
+ * sección retiene a nadie (DD-217 retira las puertas de DD-121 y DD-158).
  *
  * La sección abierta vive aquí y no en la dirección: cambiar de sección en el alta no toca la URL ni el historial, y
  * Atrás del navegador sale del alta (DD-122 §4). Al crear, la ficha abre su edición en la sección abierta.
  *
- * Una sección lleva ✓ cuando se dejó tal como está ahora y está completa (DD-216): la abierta no, aunque esté bien,
+ * Una sección lleva ✓ cuando se dejó tal como está ahora y está completa (DD-217): la abierta no, aunque esté bien,
  * porque aún se está rellenando. También la que no tiene nada obligatorio, completa con solo pasar por ella (DD-211
  * §6). «Tal como está» es su FIRMA: lo que otra sección decide de ella (en el grupo, los canales de General); si
  * cambia desde que se dejó, el ✓ se va sin ponerse en rojo. Las reglas, puras, en `alta-secciones.core.mjs`.
@@ -84,7 +84,7 @@ export interface OcasionDeAvisar {
 }
 
 /**
- * CUÁNDO SE DICE QUE FALTA ALGO (DD-216, que sustituye la «ocasión» de DD-199): al pulsar Crear o Guardar. Un
+ * CUÁNDO SE DICE QUE FALTA ALGO (DD-217, que sustituye la «ocasión» de DD-199): al pulsar Crear o Guardar. Un
  * obligatorio vacío no es un error, es algo por rellenar, y decirlo en rojo mientras se rellena pone señales donde la
  * persona no mira: el 2026-10-20 un punto rojo en Distribución y colas (el teléfono saliente) salía al volver a
  * General, y al borrar el nombre parecía causado por él.
@@ -127,7 +127,7 @@ export interface AvisoDeFicha {
   readonly ancla: string | null;
 }
 
-/** Lo que dice el índice de cada sección con avisos: el primero, en el orden de la ficha (DD-216). */
+/** Lo que dice el índice de cada sección con avisos: el primero, en el orden de la ficha (DD-217). */
 export function avisosDelIndice(avisos: readonly AvisoDeFicha[]): Readonly<Record<string, string>> {
   const out: Record<string, string> = {};
   for (const a of avisos) out[a.seccion] ??= a.texto;

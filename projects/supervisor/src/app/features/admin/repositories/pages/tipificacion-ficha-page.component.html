@@ -1,5 +1,5 @@
 <!-- Guardar y Deshacer suben a la barra, como en las fichas. Lo que falta lo dicen su campo y el índice al pulsar
-     (DD-216). -->
+     (DD-217). -->
 <ng-template #topbarActions>
   @if (mode() === 'edit' && formDirty()) {
     <span class="form-save-reason sc-text-caption-regular" role="status">{{ 'common.unsaved_changes' | translate }}</span>
@@ -96,7 +96,7 @@
             {{ 'repositories.columns.name' | translate }}
             <span class="field__required" aria-hidden="true">*</span>
           </label>
-          <!-- Un nombre repetido, en vivo; vacío, al pulsar Crear o Guardar (DD-216). -->
+          <!-- Un nombre repetido, en vivo; vacío, al pulsar Crear o Guardar (DD-217). -->
           <sc-inputtext
             inputId="tip-name"
             [required]="true"

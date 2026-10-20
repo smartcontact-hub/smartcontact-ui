@@ -155,7 +155,7 @@ export class UserFormPageComponent implements DirtyAware, OnInit {
   protected readonly initial = signal<User | null>(null);
   protected readonly form = signal<FormState>(this.emptyForm());
   /*
-   * R6 · una sola política de error (DD-216). Un email mal escrito se dice en vivo, en su campo. Lo que FALTA (el
+   * R6 · una sola política de error (DD-217). Un email mal escrito se dice en vivo, en su campo. Lo que FALTA (el
    * nombre, el email) se dice al pulsar «Crear usuario» o «Guardar», en su campo y en el índice, con su texto.
    */
   protected readonly emailError = computed<string | null>(() => {
@@ -271,7 +271,7 @@ export class UserFormPageComponent implements DirtyAware, OnInit {
   });
 
   /**
-   * Cuándo se dice lo que falta (DD-216): al pulsar «Crear usuario» o «Guardar», lo que faltaba entonces, hasta que se
+   * Cuándo se dice lo que falta (DD-217): al pulsar «Crear usuario» o «Guardar», lo que faltaba entonces, hasta que se
    * arregla; o desde que se abre, si lo guardado ya venía sin ello. Duplicar es un alta: llega sin nombre ni email a
    * propósito y no acusa.
    */
@@ -281,7 +281,7 @@ export class UserFormPageComponent implements DirtyAware, OnInit {
     faltas: () => this.faltas(),
   });
 
-  /** El aviso bajo un campo obligatorio vacío, al pulsar sin él (DD-216); `undefined` si no hay nada que decir. */
+  /** El aviso bajo un campo obligatorio vacío, al pulsar sin él (DD-217); `undefined` si no hay nada que decir. */
   protected falta(motivo: string): string | undefined {
     return this.faltas().includes(motivo) && this.ocasion.acusa(motivo) ? this.translate.instant(motivo) : undefined;
   }
@@ -301,7 +301,7 @@ export class UserFormPageComponent implements DirtyAware, OnInit {
   /** El punto rojo del índice: la sección tiene un aviso a la vista. */
   protected readonly sectionsWithErrors = computed<ReadonlySet<string>>(() => new Set(this.avisos().map((a) => a.seccion)));
 
-  /** Lo que dice cada sección con aviso en el índice, en texto (DD-216). */
+  /** Lo que dice cada sección con aviso en el índice, en texto (DD-217). */
   protected readonly sectionErrorHints = computed(() => avisosDelIndice(this.avisos()));
 
   /** Las secciones con cambios sin guardar (DD-122), al editar. */
@@ -360,7 +360,7 @@ export class UserFormPageComponent implements DirtyAware, OnInit {
 
   /**
    * El botón se puede pulsar: al crear y al duplicar, siempre; al editar, con cambios. Lo que falte lo dice al pulsarlo
-   * (`save`, DD-216).
+   * (`save`, DD-217).
    */
   protected readonly canSave = computed(() => this.mode() !== 'edit' || this.dirtyState.dirty());
 
@@ -558,7 +558,7 @@ export class UserFormPageComponent implements DirtyAware, OnInit {
 
   protected save(): void {
     if (!this.canSave() || this.saving()) return;
-    // Con algo pendiente no crea ni guarda: desde ahora se dice lo que falta, y se llega al primer campo (DD-216).
+    // Con algo pendiente no crea ni guarda: desde ahora se dice lo que falta, y se llega al primer campo (DD-217).
     if (this.faltas().length > 0 || this.emailError()) {
       this.ocasion.intentar();
       const primero = this.avisos()[0];

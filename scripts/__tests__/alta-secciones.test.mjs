@@ -1,6 +1,6 @@
 /**
  * Tests de las reglas del índice de una ficha
- * (`projects/supervisor/src/app/shared/utils/alta-secciones.core.mjs`, DD-216). Puro, node:test, dentro del gate
+ * (`projects/supervisor/src/app/shared/utils/alta-secciones.core.mjs`, DD-217). Puro, node:test, dentro del gate
  * (`test:unit`).
  *
  * Contratos clave: el ✓ es de la sección que se dejó TAL COMO ESTÁ (su firma) y completa; lo que falta se dice si

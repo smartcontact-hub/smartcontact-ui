@@ -7,7 +7,7 @@
      algo sin guardar. -->
 <ng-template #topbarActions>
   <!-- Con cambios, lo dice en palabras: un solo «Guardar» para toda la ficha, y el índice marca dónde están (DD-122).
-       `role="status"`: se anuncia una vez, al aparecer. Sin motivo de por qué no se puede guardar (DD-216): lo que falta
+       `role="status"`: se anuncia una vez, al aparecer. Sin motivo de por qué no se puede guardar (DD-217): lo que falta
        lo dice cada campo al pulsar. -->
   @if (mode() === 'edit' && formDirty()) {
     <span class="form-save-reason sc-text-caption-regular" role="status">{{ 'common.unsaved_changes' | translate }}</span>
@@ -21,7 +21,7 @@
     />
   }
   <!-- En el alta, «Crear grupo», siempre activo; al editar, «Guardar», con cambios, y apagado lo dice en su tooltip
-       (DD-212). Si falta algo, al pulsar se dice en su campo y en el índice, y se llega al primero (DD-216). -->
+       (DD-212). Si falta algo, al pulsar se dice en su campo y en el índice, y se llega al primero (DD-217). -->
   <sc-button
     variant="primary"
     [disabled]="!canSave()"
@@ -104,7 +104,7 @@
       @if (showSection('group-section-agents')) {
         <ng-container *ngTemplateOutlet="seccionAgentes" />
       }
-      <!-- En el alta, «Atrás» y «Siguiente» al pie (DD-143), sin puertas (DD-216), y «Crear grupo» sigue arriba. -->
+      <!-- En el alta, «Atrás» y «Siguiente» al pie (DD-143), sin puertas (DD-217), y «Crear grupo» sigue arriba. -->
       @if (mode() === 'create') {
         <sc-alta-pie
           [conAnterior]="alta.anterior() !== null"
@@ -132,16 +132,6 @@
     </div>
   </div>
 </div>
-
-<sc-delete-entity-dialog
-  [visible]="deleteVisible()"
-  mode="single"
-  [items]="deleteItems()"
-  [entitySingular]="'groups.entity_singular' | translate"
-  [entityPlural]="'groups.entity_plural' | translate"
-  (cancelled)="cancelDelete()"
-  (confirm)="confirmDelete()"
-/>
 
 @if (cascadeConfirm(); as c) {
   <sc-dialog
@@ -208,7 +198,7 @@
       />
     </sc-subsection>
 
-    <!-- Los canales no son obligatorios (DD-216): un grupo sin canal agrupa agentes sin repartir conversaciones. -->
+    <!-- Los canales no son obligatorios (DD-217): un grupo sin canal agrupa agentes sin repartir conversaciones. -->
     <sc-subsection titleKey="groups.form.channels.title" hintKey="groups.form.channels.hint">
       <!-- En las tres columnas de Nombre y Prioridad (DD-170). -->
       <div class="checkbox-grid checkbox-grid--3">
@@ -278,7 +268,7 @@
               />
               <!-- «Ver detalle», bajo su campo (DD-198), abre su árbol entero con «Editar en Repositorios». Sustituye al botón
                    de las tres rayas de sc-agent, que se leía como «más acciones» (revisión del 2026-10-15; `menu` es de
-                   la navegación, DD-200). Sin su descripción desde la revisión del 2026-10-20 (DD-216): cambiaba con
+                   la navegación, DD-200). Sin su descripción desde la revisión del 2026-10-20 (DD-217): cambiaba con
                    cada tipificación y alargaba el campo sin decidir nada. -->
               @if (typification(); as t) {
                 <div class="wrapup__detail">
@@ -292,7 +282,7 @@
                   />
                 </div>
               }
-              <!-- Lo que falta, bajo su campo, al pulsar Crear o Guardar sin ella (DD-216). -->
+              <!-- Lo que falta, bajo su campo, al pulsar Crear o Guardar sin ella (DD-217). -->
               @if (typificationError()) {
                 <p class="field__error sc-text-caption-regular" role="alert">{{ 'groups.errors.typification_required' | translate }}</p>
               }
@@ -355,7 +345,7 @@
         </div>
       </div>
       <!-- Sin «Desbordar sesión» desde DD-141: era de Chat, y lo cubre «Caducar sesión». -->
-      <!-- Sin canales (DD-216), la sección no tiene bloques: lo dice, y dónde se marcan. -->
+      <!-- Sin canales (DD-217), la sección no tiene bloques: lo dice, y dónde se marcan. -->
       @if (form().channels.size === 0) {
         <p class="field__help sc-text-caption-regular">{{ 'groups.form.distribution.no_channels' | translate }}</p>
       }
@@ -656,7 +646,7 @@
       <div class="bloque">
       <!-- Cada campo en su fila, a todo el ancho: lo elegido va en chips que se quitan con su «×» (la del DS, en rojo al
            pasar), y a media columna el tercero se cortaba y no se veía el «+N más» (medido a 1440 en el grupo 11). Sin
-           «+» al lado ni lápiz en las opciones: se crean y se editan en Repositorios (revisión del 2026-10-20, DD-216, que
+           «+» al lado ni lápiz en las opciones: se crean y se editan en Repositorios (revisión del 2026-10-20, DD-217, que
            retira el «+» de DD-167 y el lápiz de la revisión del 2026-10-14). -->
       <div class="grid">
         <div class="field">

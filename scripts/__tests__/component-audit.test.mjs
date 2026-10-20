@@ -16,7 +16,7 @@ import {
   usaSelector,
   usadosEnNativo,
 } from '../component-audit.mjs';
-import { CUANDO } from '../component-audit-map.mjs';
+import { CUANDO, NATIVOS_ADOPTADOS } from '../component-audit-map.mjs';
 
 // analyzeComponent: deriva la clasificación del texto del componente. PURA → fixtures directos.
 
@@ -333,10 +333,11 @@ test('usadosEnNativo: distingue el usado sin wrapper del que nadie ha traído', 
   assert.ok(!n.has('picklist'), 'ni se cuela por parecido');
 });
 
-test('CUANDO cubre los 56 componentes, uno a uno, y no sobra ninguna línea', () => {
+test('CUANDO cubre los 56 componentes y los nativos adoptados, uno a uno, y no sobra ninguna línea', () => {
   /* El gate del generador lo exige; esto lo fija aquí además para que se vea al leer el test.
-   * Una línea huérfana miente igual que una que falta: nombra un componente que ya no existe. */
-  const sels = new Set(audit().map((r) => r.selector));
+   * Una línea huérfana miente igual que una que falta: nombra un componente que ya no existe. Un nativo adoptado tal
+   * cual (el `pTooltip`, DD-212) también tiene ficha, y su ficha también dice cuándo se usa. */
+  const sels = new Set([...audit().map((r) => r.selector), ...Object.values(NATIVOS_ADOPTADOS).map((n) => n.selector)]);
   const claves = new Set(Object.keys(CUANDO));
   assert.deepEqual([...sels].filter((s) => !claves.has(s)), [], 'componentes sin su línea de CUANDO');
   assert.deepEqual([...claves].filter((s) => !sels.has(s)), [], 'líneas de CUANDO sin componente');

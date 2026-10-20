@@ -220,7 +220,7 @@ export class GroupAssignmentTableComponent {
     });
   });
 
-  /** Se puede asignar si le deja algún canal; un grupo sin canales (DD-216), siempre: ahí se pertenece sin canal. */
+  /** Se puede asignar si le deja algún canal; un grupo sin canales (DD-217), siempre: ahí se pertenece sin canal. */
   protected compatible(group: AgentGroupAssignmentRef): boolean {
     return group.channels.length === 0 || permittedFamilies(group.channels, this.allowedChannels()).length > 0;
   }

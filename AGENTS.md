@@ -241,7 +241,7 @@ no a la librería. Dos de estas reglas ya son infraestructura del sistema (aquí
    **En estrecho, el nombre se queda** (DD-193): la columna que nombra la fila va fija a la izquierda y la tabla
    desplaza de lado; su mínimo sale de las columnas y no baja de 15rem para el nombre. Prueba cada lista a 1024.
    Esa columna es la cabecera de su fila (`rowHeader` en `ScColumnDef`, DD-194): una tabla nueva con nombre la marca.
-11. **Lo que falta se dice al pulsar Crear o Guardar** (DD-216, que sustituye la ocasión de DD-199). Un obligatorio
+11. **Lo que falta se dice al pulsar Crear o Guardar** (DD-217, que sustituye la ocasión de DD-199). Un obligatorio
    vacío no es un error, es algo por rellenar: ni borde rojo, ni aviso bajo el campo, ni punto en el índice mientras se
    rellena. «Crear …» está siempre activo, y «Guardar», con cambios, sin motivo al lado. Al pulsarlo con algo
    pendiente no crea: cada campo lo dice, el índice marca su sección con el texto de lo que falta, y se llega al

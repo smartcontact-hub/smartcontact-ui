@@ -1,5 +1,6 @@
-import { booleanAttribute, ChangeDetectionStrategy, Component, computed, ElementRef, inject, input } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, ElementRef, inject, input, signal } from '@angular/core';
 import { TagModule } from 'primeng/tag';
+import { TooltipModule } from 'primeng/tooltip';
 
 import { resolveScComponentIconClass } from '../../core/icons/sc-component-icon-resolver';
 import { ScSeverity } from '../../core/types/theme-component.types';
@@ -10,16 +11,17 @@ type PrimeTagSeverity = 'secondary' | 'success' | 'info' | 'warn' | 'danger' | '
 @Component({
     selector: 'sc-tag',
     standalone: true,
-    imports: [TagModule],
+    imports: [TagModule, TooltipModule],
     templateUrl: './sc-tag.component.html',
     styleUrl: './sc-tag.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
     host: {
-        '(mouseenter)': 'syncTruncatedTitle()'
+        '(pointerenter)': 'medirRecorte()'
     }
 })
 export class ScTagComponent {
     private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+    private readonly cdr = inject(ChangeDetectorRef);
 
     readonly value = input<string | null>(null);
 
@@ -99,25 +101,27 @@ export class ScTagComponent {
         resolveScComponentIconClass(this.icon())
     );
 
+    /** El valor entero para el tooltip si la pastilla está recortada; vacío (sin tooltip) si cabe. */
+    protected readonly valorRecortado = signal('');
+
     /**
      * Una etiqueta no se parte: si no cabe, el tema la recorta con puntos
-     * suspensivos (`tagOneLineCss`). Al pasar el ratón, el valor entero vuelve en
-     * `title`, pero SOLO si está recortada: en las que caben sería un tooltip que
-     * repite lo que ya se lee. Se mide al entrar el ratón y no antes porque el
-     * recorte depende del ancho de la columna, que cambia con la ventana. Va en la
-     * pastilla y no en el host, para no pisar un `title` que ponga el consumidor.
+     * suspensivos (`tagOneLineCss`). Al pasar el ratón, el valor entero sale en
+     * el tooltip del Kit (`pTooltip`, DD-212), pero SOLO si está recortada: en las
+     * que caben repetiría lo que ya se lee. En la variante `label` lo hace
+     * `showOnEllipsis` sobre `.sc-tag__text`, que es quien recorta. En la de
+     * `p-tag` recorta `.p-tag-label`, dentro de PrimeNG, y `showOnEllipsis` mide
+     * el elemento que lleva el tooltip (la pastilla entera, que no se desborda):
+     * por eso se mide aquí. Va en `pointerenter`, que llega antes que el
+     * `mouseenter` con el que el tooltip decide si sale, y se aplica en el acto
+     * (`detectChanges`) para que lo encuentre ya puesto. Se mide al entrar y no
+     * antes porque el recorte depende del ancho de la columna, que cambia con la
+     * ventana.
      */
-    protected syncTruncatedTitle(): void {
-        const pill = this.host.nativeElement.querySelector<HTMLElement>('.p-tag, .sc-tag__label');
-        const text = pill?.querySelector<HTMLElement>('.p-tag-label, .sc-tag__text');
-        if (!pill || !text) {
-            return;
-        }
-
-        if (text.scrollWidth > text.clientWidth) {
-            pill.setAttribute('title', this.value() ?? '');
-        } else {
-            pill.removeAttribute('title');
-        }
+    protected medirRecorte(): void {
+        const texto = this.host.nativeElement.querySelector<HTMLElement>('.p-tag-label');
+        const recortada = !!texto && texto.scrollWidth > texto.clientWidth;
+        this.valorRecortado.set(recortada ? (this.value() ?? '') : '');
+        this.cdr.detectChanges();
     }
 }

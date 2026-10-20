@@ -48,7 +48,7 @@ test('grupo · nombre repetido avisa, y Escape lo devuelve', async ({ page }) =>
   await titulo(page).click();
   await campo(page).fill('ACD outbound');
   await expect(page.locator('.name-inplace__error')).toHaveText('Ya hay un grupo con este nombre');
-  // «Guardar» se enciende con el cambio, y al pulsarlo no guardaría: lo dice el campo (DD-216).
+  // «Guardar» se enciende con el cambio, y al pulsarlo no guardaría: lo dice el campo (DD-217).
   await expect(guardar(page)).toBeEnabled();
 
   await page.keyboard.press('Escape');

@@ -2,7 +2,7 @@
   <!-- El nombre de la región, sin rótulo a la vista (DD-144): el resumen arranca a la altura del índice. -->
   <h2 id="group-summary-title" class="resumen__title visually-hidden">{{ 'groups.form.summary.title' | translate }}</h2>
 
-  <!-- Sin «Falta: …» ni «Listo para crear» (DD-216, que retira el estado de DD-136): lo que falta lo dice cada campo al
+  <!-- Sin «Falta: …» ni «Listo para crear» (DD-217, que retira el estado de DD-136): lo que falta lo dice cada campo al
        pulsar Crear o Guardar, y el resultado, el toast. -->
   <!-- Las tarjetas son hermanas: 14 entre ellas (AGENTS «UX de pantalla» 9). -->
   <div class="resumen__cards">
@@ -27,7 +27,7 @@
                 <sc-channel-icon [channel]="row.channel" [size]="12" />
                 {{ familyKeys[row.channel] | translate }}
               </span>
-              <!-- Con 0, su cifra y la barra vacía, sin aviso amarillo (DD-216): es un dato, no un error. -->
+              <!-- Con 0, su cifra y la barra vacía, sin aviso amarillo (DD-217): es un dato, no un error. -->
               <span class="resumen__digits sc-text-caption-semibold" [scAnimateOnChange]="row.count" animateClass="animate-sc-bump">{{ row.count }}</span>
               <p-metergroup class="resumen__meter" aria-hidden="true" [value]="row.meter" [dt]="meterDt">
                 <ng-template #label />
@@ -67,7 +67,7 @@
             @for (o of outbound(); track o.channel) {
               <div scFactRow size="sm" tone="brand" class="resumen__pair" [label]="outboundKeys[o.channel] | translate" [href]="hrefs().distribucion" (open)="pulsar($event, { seccion: 'distribucion', salida: o.channel })">
                 <sc-channel-icon scFactIcon [channel]="o.channel" [size]="14" />
-                <!-- Sin número, dicho sin aviso amarillo (DD-216). -->
+                <!-- Sin número, dicho sin aviso amarillo (DD-217). -->
                 {{ o.number || ('groups.form.summary.no_number' | translate) }}
               </div>
             }
@@ -77,7 +77,7 @@
 
       <!-- Recursos, su propio grupo: una fila por lo que el grupo puede tener (agendas, y plantillas de los canales que
            atiende), con cuántos tiene, que lleva a su campo en Recursos, como las de Distribución (revisión del
-           2026-10-20, DD-216: sin el panel que se desplegaba). -->
+           2026-10-20, DD-217: sin el panel que se desplegaba). -->
       <div class="resumen__fact" role="group" aria-labelledby="group-summary-resources">
         <p id="group-summary-resources" class="resumen__label resumen__title-row sc-text-caption-regular">
           <a class="resumen__enlace" [href]="hrefs().recursos" (click)="pulsar($event, { seccion: 'recursos' })">

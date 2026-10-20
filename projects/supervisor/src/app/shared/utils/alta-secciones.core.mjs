@@ -1,6 +1,6 @@
 // @ts-check
 /**
- * LAS DOS REGLAS DEL ÍNDICE DE UNA FICHA, puras y sin Angular (DD-216): cuándo lleva ✓ una sección y cuándo se dice
+ * LAS DOS REGLAS DEL ÍNDICE DE UNA FICHA, puras y sin Angular (DD-217): cuándo lleva ✓ una sección y cuándo se dice
  * que falta algo. Las usan las fichas de grupo, agente, usuario y tipificación por `alta-secciones.ts`, y las prueba
  * `scripts/__tests__/alta-secciones.test.mjs` dentro de `verify`.
  *

@@ -5,7 +5,7 @@
      algo sin guardar. -->
 <ng-template #topbarActions>
   <!-- Con cambios, lo dice en palabras: un solo «Guardar» para toda la ficha, y el índice marca dónde están (DD-122).
-       `role="status"`: se anuncia una vez, al aparecer. Sin motivo de por qué no se puede guardar (DD-216): lo que falta
+       `role="status"`: se anuncia una vez, al aparecer. Sin motivo de por qué no se puede guardar (DD-217): lo que falta
        lo dice cada campo al pulsar. -->
   @if (mode() === 'edit' && formDirty()) {
     <span class="form-save-reason sc-text-caption-regular" role="status">{{ 'common.unsaved_changes' | translate }}</span>
@@ -127,7 +127,7 @@
       <section class="resumen" aria-labelledby="agent-summary-title">
         <!-- El nombre de la región, sin rótulo a la vista (DD-144): el resumen arranca a la altura del índice. -->
         <h2 id="agent-summary-title" class="resumen__title visually-hidden">{{ 'common.summary' | translate }}</h2>
-        <!-- Sin «Falta: …» ni «Listo para crear» (DD-216): lo que falta lo dice cada campo al pulsar «Crear agente». -->
+        <!-- Sin «Falta: …» ni «Listo para crear» (DD-217): lo que falta lo dice cada campo al pulsar «Crear agente». -->
         <!-- Las tarjetas son hermanas: 14 entre ellas (AGENTS «UX de pantalla» 9). -->
         <div class="resumen__cards">
           <!-- Cada dato lleva a su sitio, como el resumen del grupo (DD-146): la cifra, a Grupos; cada fila, a su campo. -->
@@ -191,16 +191,6 @@
   </span>
 </ng-template>
 
-<sc-delete-entity-dialog
-  [visible]="deleteVisible()"
-  mode="single"
-  [items]="deleteItems()"
-  [entitySingular]="'agents.entity_singular' | translate"
-  [entityPlural]="'agents.entity_plural' | translate"
-  (cancelled)="cancelDelete()"
-  (confirm)="confirmDelete()"
-/>
-
 <!-- Crear o editar una agenda, una plantilla de chat o un equipo sin salir de la ficha: la misma ventana para el
      «+» del campo y para el «Editar» de cada fila, como en la ficha de grupo (DD-187). -->
 @if (recursoAbierto(); as r) {
@@ -232,7 +222,7 @@
           [ariaLabel]="'common.photo.change' | translate"
           (photoChange)="onPhotoChange($event)"
         />
-        <!-- El nombre no tiene regla de contenido: o está o no está, y que falte lo dice al pulsar «Crear agente» (DD-216). -->
+        <!-- El nombre no tiene regla de contenido: o está o no está, y que falte lo dice al pulsar «Crear agente» (DD-217). -->
         <div class="field form-identity__name">
           <label class="field__label sc-text-caption-semibold" for="agent-name">
             {{ 'agents.form.fields.name' | translate }}

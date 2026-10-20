@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, type TemplateRef, untracked, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal, type TemplateRef, viewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { type MenuItem } from 'primeng/api';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
-import { ScButtonComponent as ButtonComponent, ScMessageComponent } from '@smartcontact-hub/components';
+import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { ResultadoAccionService, XlsxExportService } from '@core/services';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
@@ -11,32 +11,20 @@ import { injectLangChange } from '@core/utils/lang-change';
 import { CeldaVaciaComponent, ChannelIconComponent, ListPageComponent } from '@shared/components';
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
 import {
-  useBulkEntityI18n,
-  BulkEditCommit,
-  BulkEditFieldOption,
-  type BulkEditMatch,
-  ScBulkEditMenuComponent as BulkEditMenuComponent,
   type ScColumnCellContext,
   ColumnDef,
   type ScColumnDef,
-  ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
   ScEmptyStateComponent as EmptyStateComponent,
-  ImpactBadge,
-  ImpactItem,
-  ScImpactPreviewDialogComponent as ImpactPreviewDialogComponent,
   ScInlineRenameCellComponent as InlineRenameCellComponent,
   ScTagComponent as TagComponent,
   ScGroupPopoverComponent as GroupPopoverComponent,
 } from '@smartcontact-hub/components';
 import {
   CHANNEL_LABEL_KEYS,
-  CHAT_STRATEGIES,
   GROUP_CHANNELS,
-  GROUP_PRIORITIES,
   Group,
   GroupChannel,
   GroupPriority,
-  PHONE_STRATEGIES,
   PRIORITY_LABEL_KEYS,
   chatStrategyOf,
   compareChannels,
@@ -45,17 +33,11 @@ import {
   phoneStrategyOf,
   priorityRank,
 } from '../data/groups-data';
-import { GroupBulkField, GroupsStore } from '../state/groups.store';
+import { GroupsStore } from '../state/groups.store';
 import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links.store';
 import { GroupAgentsPanelComponent } from '../components/group-agents-panel/group-agents-panel.component';
+import { injectConfirmarBorrado } from '@features/admin/services/confirmar-borrado';
 import { TooltipModule } from 'primeng/tooltip';
-
-interface PendingBulkEdit {
-  readonly field: GroupBulkField;
-  readonly fieldLabel: string;
-  readonly value: unknown;
-  readonly valueLabel: string;
-}
 
 /* v2 — bumped when ColumnSelector schema changed (set → ordered array)
  * and when `code` started shipping hidden by default. */
@@ -70,20 +52,16 @@ const COLUMN_PREF_KEY = 'sc-groups-columns-v4';
   imports: [
     TooltipModule,
     CeldaVaciaComponent,
-    BulkEditMenuComponent,
     ButtonComponent,
     ChannelIconComponent,
     TagComponent,
-    DeleteEntityDialogComponent,
     EmptyStateComponent,
     GroupPopoverComponent,
     GroupAgentsPanelComponent,
     IconComponent,
-    ImpactPreviewDialogComponent,
     InlineRenameCellComponent,
     ListPageComponent,
     TranslateModule,
-    ScMessageComponent,
   ],
   templateUrl: './groups-list-page.component.html',
   styleUrl: './groups-list-page.component.scss',
@@ -98,11 +76,11 @@ export class GroupsListPageComponent {
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
   private readonly router = inject(Router);
+  private readonly confirmarBorrado = injectConfirmarBorrado('groups.entity_singular');
 
   /** CTA proyectado a la TopBar (modelo "todo arriba" S59): la banda de
    * page-header desaparece; identidad → breadcrumb, acción → barra. */
   private readonly topbarActions = viewChild<TemplateRef<unknown>>('topbarActions');
-  private readonly lista = viewChild.required<ListPageComponent<Group>>(ListPageComponent);
 
   constructor() {
     useTopbarActions(this.topbarActions);
@@ -138,17 +116,7 @@ export class GroupsListPageComponent {
   protected readonly channelKeys = CHANNEL_LABEL_KEYS;
   protected readonly groups = this.groupsStore.groups;
 
-  /** Selección: la lista la marca; de ella cuelgan la edición en lote, el borrado y el diálogo de impacto. */
-  protected readonly selectedIds = signal<ReadonlySet<Group['id']>>(new Set());
-  /** Por qué una edición masiva no se aplicó, junto a su menú (DD-191). Se va al cambiar la selección. */
-  protected readonly bulkAviso = signal<string | null>(null);
-  private readonly limpiaBulkAviso = effect(() => {
-    this.selectedIds();
-    untracked(() => this.bulkAviso.set(null));
-  });
-  protected readonly deleteTarget = signal<readonly Group[] | null>(null);
   protected readonly renamingId = signal<number | null>(null);
-  protected readonly pendingBulkEdit = signal<PendingBulkEdit | null>(null);
   protected readonly columnPrefKey = COLUMN_PREF_KEY;
 
   protected readonly columnDefs = computed<readonly ColumnDef[]>(() => {
@@ -160,7 +128,7 @@ export class GroupsListPageComponent {
       { key: 'phone', label: this.translate.instant('groups.table.phone') },
       { key: 'channels', label: this.translate.instant('groups.table.channels') },
       { key: 'priority', label: this.translate.instant('groups.table.priority') },
-      // Una columna por familia de canales, como la ficha: cada una se ordena, se edita en bloque y se exporta sola.
+      // Una columna por familia de canales, como la ficha: cada una se ordena y se exporta sola.
       // La de chat, opcional: con las dos a la vez la tabla no cabe a 1440 sin recortar (medido el 2026-09-26).
       { key: 'strategy', label: this.translate.instant('groups.table.strategy_phone') },
       { key: 'chatStrategy', label: this.translate.instant('groups.table.strategy_chat'), defaultVisible: false },
@@ -169,51 +137,6 @@ export class GroupsListPageComponent {
       { key: 'agents', label: this.translate.instant('groups.table.agents') },
     ];
   });
-
-  protected readonly bulkEditFields = computed<readonly BulkEditFieldOption[]>(() => {
-    this.lang(); // textos al día al cambiar de idioma (ver `injectLangChange`)
-    return [
-      {
-        key: 'priority',
-        label: this.translate.instant('groups.table.priority'),
-        values: GROUP_PRIORITIES.map((p) => ({
-          value: p,
-          label: this.translate.instant(this.priorityKeys[p]),
-        })),
-      },
-      {
-        key: 'strategy',
-        label: this.translate.instant('groups.table.strategy_phone'),
-        // Skills no se puede elegir todavía (SISMAC-1975): tampoco en bloque.
-        values: PHONE_STRATEGIES.map((s) => ({ value: s, label: s })),
-      },
-      {
-        // Hasta el 2026-09-26 las de chat iban en la lista de «Estrategia» y se escribían en la de TELÉFONO.
-        key: 'chatStrategy',
-        label: this.translate.instant('groups.table.strategy_chat'),
-        values: CHAT_STRATEGIES.map((s) => ({ value: s, label: s })),
-      },
-    ];
-  });
-
-  /** El valor de un campo del lote en un grupo; `null` si el grupo no tiene ese canal (y el cambio no le aplica). */
-  private bulkValueOf(group: Group, field: GroupBulkField): string | null {
-    switch (field) {
-      case 'priority':
-        return group.priority;
-      case 'strategy':
-        return phoneStrategyOf(group);
-      case 'chatStrategy':
-        return chatStrategyOf(group);
-      default:
-        return null;
-    }
-  }
-
-  /** A qué grupos de la selección se les puede aplicar el lote: una estrategia, solo a los que tienen su canal. */
-  private appliesTo(group: Group, field: GroupBulkField): boolean {
-    return field === 'priority' || this.bulkValueOf(group, field) !== null;
-  }
 
   /**
    * Qué filas casan con la búsqueda (la consulta llega ya en minúsculas): cualquier campo de texto de la tabla, con
@@ -370,35 +293,6 @@ export class GroupsListPageComponent {
   /** Mientras se renombra una fila, abrirla no hace nada (y no enseña el cursor de mano). */
   protected readonly isOpenable = (group: Group): boolean => this.renamingId() !== group.id;
 
-  protected readonly deleteItems = computed(() =>
-    (this.deleteTarget() ?? []).map((g) => ({ id: g.id, name: g.name })),
-  );
-
-  protected readonly bulkEntity = useBulkEntityI18n({
-    singular: 'common.bulk.entity.group_singular',
-    plural: 'common.bulk.entity.group_plural',
-  });
-
-  /** Los grupos a los que llega el lote: los elegidos, y de ellos, los que tienen el canal de esa estrategia. */
-  protected readonly impactItems = computed<readonly ImpactItem[]>(() => {
-    this.lang();
-    const ids = this.selectedIds();
-    const field = this.pendingBulkEdit()?.field;
-    return this.groups()
-      .filter((g) => ids.has(g.id) && (!field || this.appliesTo(g, field)))
-      .map((g) => ({
-        id: g.id,
-        name: g.name,
-        hint: `(${this.translate.instant('groups.table.agents_count', { count: this.assignedCountForGroup(g.id) })})`,
-      }));
-  });
-
-  protected readonly impactBadge = computed<ImpactBadge | null>(() => {
-    const op = this.pendingBulkEdit();
-    if (!op) return null;
-    return { fieldLabel: op.fieldLabel, newValueLabel: op.valueLabel };
-  });
-
   /* El contexto de un `<ng-template>` de celda es `any`, así que indexar
    * `Record<GroupChannel, string>` desde la plantilla —como hacía el `@for`,
    * donde la fila venía tipada— ya no compila en AOT. Se resuelve aquí, que
@@ -437,10 +331,6 @@ export class GroupsListPageComponent {
     }
   }
 
-  protected clearSelection(): void {
-    this.selectedIds.set(new Set());
-  }
-
   /** El grupo cuyo panel rápido de agentes está abierto. */
   protected readonly agentsPanelGroup = signal<Group | null>(null);
 
@@ -458,7 +348,7 @@ export class GroupsListPageComponent {
   }
 
   /**
-   * Duplicar, sin diálogo (revisión de producto del 2026-10-20, DD-216): crea la copia en el acto, con «(1)» detrás del
+   * Duplicar, sin diálogo (revisión de producto del 2026-10-20, DD-217): crea la copia en el acto, con «(1)» detrás del
    * nombre (`nombreDeCopia`) y todo lo del original, agentes incluidos, salvo lo que el funcional no copia
    * (`duplicateGroupDraft`), y abre su edición en General, con su toast. Hasta ese día un diálogo pedía nombre,
    * teléfono saliente y prioridad, y proponía «… (copia)».
@@ -492,19 +382,12 @@ export class GroupsListPageComponent {
       {
         label: this.translate.instant('common.duplicate'),
         icon: 'sc-icon-font sc-icon-font--content_copy',
-        // Con una selección múltiple viva, duplicar UNA fila es ambiguo: el
-        // gesto que el usuario tiene en la cabeza es el masivo. Control
-        // deliberado que ya existía en las dos listas con bulk-edit (esta y
-        // agentes); el cambio de motor de menú no es motivo para retirarlo.
-        visible: this.selectedIds().size <= 1,
         command: () => this.onRowDuplicate(group),
       },
       { separator: true },
       {
-        // Puntos suspensivos porque lleva a la puerta tecleada, no a un
-        // borrado inmediato (C4 del plan): convención de menús de escritorio
-        // — "…" significa "esto abre algo antes de hacerlo".
-        label: this.translate.instant('common.delete_gate'),
+        // Sin puntos suspensivos: lleva a una confirmación simple, no a la puerta tecleada (DD-215).
+        label: this.translate.instant('common.delete'),
         icon: 'sc-icon-font sc-icon-font--delete',
         styleClass: 'sc-menu-item--danger',
         command: () => this.onRowDelete(group),
@@ -516,8 +399,12 @@ export class GroupsListPageComponent {
     void this.router.navigateByUrl(`/admin/grupos/editar/${group.id}`);
   }
 
-  protected onRowDelete(group: Group): void {
-    this.deleteTarget.set([group]);
+  /** Borrar: la confirmación simple del DS (DD-215); al aceptar, fuera el grupo y sus enlaces, y el toast. */
+  protected async onRowDelete(group: Group): Promise<void> {
+    if (!(await this.confirmarBorrado(group.name))) return;
+    this.groupsStore.deleteGroup(group.id);
+    this.linksStore.removeGroup(group.id);
+    this.resultado.contar(this.translate.instant('groups.toasts.deleted_single', { name: group.name }));
   }
 
   protected onRenameCommit(id: number, value: string): void {
@@ -529,92 +416,6 @@ export class GroupsListPageComponent {
 
   protected onRenameCancel(_id: number): void {
     this.renamingId.set(null);
-  }
-
-  protected requestDeleteSelection(): void {
-    const ids = this.selectedIds();
-    const targets = this.groups().filter((g) => ids.has(g.id));
-    if (targets.length > 0) this.deleteTarget.set(targets);
-  }
-
-  /** «de Baja»: la selección pasa a ser todos los grupos que están en Baja. */
-  protected onBulkMatch(match: BulkEditMatch): void {
-    const field = match.fieldKey as GroupBulkField;
-    const ids = this.groups()
-      .filter((g) => this.bulkValueOf(g, field) === match.value)
-      .map((g) => g.id);
-    this.selectedIds.set(new Set(ids));
-  }
-
-  protected onBulkEditCommit(commit: BulkEditCommit): void {
-    const field = commit.fieldKey as GroupBulkField;
-    const ids = this.selectedIds();
-    // Ninguno de los elegidos tiene el canal de esa estrategia: se dice, y no se abre una vista previa vacía.
-    if (!this.groups().some((g) => ids.has(g.id) && this.appliesTo(g, field))) {
-      this.bulkAviso.set(this.translate.instant('groups.bulk_edit_none', { field: commit.fieldLabel }));
-      return;
-    }
-    this.pendingBulkEdit.set({
-      field: commit.fieldKey as GroupBulkField,
-      fieldLabel: commit.fieldLabel,
-      value: commit.value,
-      valueLabel: commit.valueLabel,
-    });
-  }
-
-  protected onBulkPreviewConfirm(remainingIds: readonly number[]): void {
-    const op = this.pendingBulkEdit();
-    if (!op) return;
-    const idSet = new Set(remainingIds);
-    const snapshot = this.groups()
-      .filter((g) => idSet.has(g.id))
-      .map((g) => ({ ...g }));
-
-    this.groupsStore.bulkUpdate(remainingIds, op.field, op.value);
-    this.pendingBulkEdit.set(null);
-    this.clearSelection();
-
-    // El resultado, con su «Deshacer», lo cuenta la barra de lote donde se aplicó (DD-196).
-    this.lista().contarLote(remainingIds.length, () => {
-      for (const prev of snapshot) {
-        this.groupsStore.updateGroup(prev.id, prev);
-      }
-    });
-  }
-
-  protected onBulkPreviewCancel(): void {
-    this.pendingBulkEdit.set(null);
-  }
-
-  protected confirmDelete(remainingIds: readonly number[] | null): void {
-    const target = this.deleteTarget();
-    if (!target) return;
-
-    let toasted: Group[];
-    if (remainingIds === null) {
-      toasted = [...target];
-    } else {
-      const idSet = new Set(remainingIds);
-      toasted = target.filter((g) => idSet.has(g.id));
-    }
-    const ids = toasted.map((g) => g.id);
-
-    if (ids.length === 1) {
-      this.groupsStore.deleteGroup(ids[0]!);
-      this.linksStore.removeGroup(ids[0]!);
-      this.resultado.contar(this.translate.instant('groups.toasts.deleted_single', { name: toasted[0]!.name, }));
-    } else {
-      this.groupsStore.deleteGroups(ids);
-      for (const id of ids) this.linksStore.removeGroup(id);
-      this.resultado.contar(this.translate.instant('groups.toasts.deleted_bulk', { count: ids.length }));
-    }
-
-    this.deleteTarget.set(null);
-    this.clearSelection();
-  }
-
-  protected cancelDelete(): void {
-    this.deleteTarget.set(null);
   }
 
   protected onExport(visibleRows: readonly Group[]): void {

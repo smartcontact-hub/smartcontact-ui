@@ -3,7 +3,7 @@ import { expect, test, type Locator, type Page } from '@playwright/test';
 import { disableAnimations, forceLightTheme, goto, irASeccion, pickSelectOption } from './helpers';
 
 /**
- * EN EL ALTA, ✓ EN TODA SECCIÓN QUE SE DEJA COMPLETA (DD-158, DD-211 §6), Y SIN PUERTAS (DD-216).
+ * EN EL ALTA, ✓ EN TODA SECCIÓN QUE SE DEJA COMPLETA (DD-158, DD-211 §6), Y SIN PUERTAS (DD-217).
  *
  * La revisión de producto del 2026-10-04 pidió tres cosas del alta:
  *   1. el ✓ solo donde había algo obligatorio (DD-158). La revisión del 2026-10-16 lo cambia (DD-211 §6): lo lleva toda
@@ -12,7 +12,7 @@ import { disableAnimations, forceLightTheme, goto, irASeccion, pickSelectOption 
  *      que tienen algo obligatorio, solo completas: General y, con Teléfono, Distribución y colas; en el agente,
  *      General y Grupos;
  *   2. con Teléfono, no se salía de Distribución y colas sin teléfono saliente, como no se salía de General sin nombre.
- *      DD-216 quita las dos puertas: se sale, sin ✓ ni rojo, y lo que falta se dice al pulsar «Crear grupo»
+ *      DD-217 quita las dos puertas: se sale, sin ✓ ni rojo, y lo que falta se dice al pulsar «Crear grupo»
  *      (`indice-errores`);
  *   3. «Atrás» y «Siguiente», como en el Stepper vertical de primeng.dev con los botones del DS: juntos a la
  *      izquierda, «Atrás» secundario y «Siguiente» el principal, rellenos y sin icono.
@@ -38,7 +38,7 @@ async function grupoConNombre(page: Page): Promise<void> {
   await expect(actual(page)).toContainText('Distribución y colas');
 }
 
-test('grupo · sin teléfono saliente se sale de Distribución y colas, sin ✓ ni rojo (DD-216)', async ({ page }) => {
+test('grupo · sin teléfono saliente se sale de Distribución y colas, sin ✓ ni rojo (DD-217)', async ({ page }) => {
   await grupoConNombre(page);
 
   // Con «Siguiente» y con el índice: sin puerta, y nada lo dice hasta pulsar «Crear grupo».

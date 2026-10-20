@@ -3,14 +3,14 @@ import { expect, test, type Page } from '@playwright/test';
 import { disableAnimations, forceLightTheme, goto, irASeccion } from './helpers';
 
 /**
- * LO QUE FALTA SE DICE AL PULSAR CREAR O GUARDAR (DD-216, que sustituye la ocasión de DD-199).
+ * LO QUE FALTA SE DICE AL PULSAR CREAR O GUARDAR (DD-217, que sustituye la ocasión de DD-199).
  *
  * Al encender «Tipificar llamadas» en un grupo guardado, el desplegable que aparece nacía en rojo: borde, texto y aviso
  * debajo, y el punto rojo en General, antes de poder elegir nada. Un obligatorio vacío no es un error, es algo por
  * rellenar: parecía que la persona se había equivocado sin haber hecho nada. Lo mismo al duplicar un agente (llega sin
  * nombre ni extensión a propósito) y al quitar los canales de uno guardado.
  *
- * DD-199 lo decía al dejar la sección; DD-216, al pulsar «Crear» o «Guardar», que están activos (el de guardar, con
+ * DD-199 lo decía al dejar la sección; DD-217, al pulsar «Crear» o «Guardar», que están activos (el de guardar, con
  * cambios). Lo guardado que ya venía sin algo se dice al abrir: `telefono-saliente.spec.ts`.
  */
 

@@ -42,6 +42,7 @@
       "select": "Single-choice dropdown, with search and option grouping.",
       "multiselect": "Pick several values from a list, with search and chips for what's chosen.",
       "selectbutton": "Segmented buttons to filter the same list or pick a value from a short group.",
+      "tooltip": "What you read on hover: an icon’s name, cut-off text or why a button is disabled.",
       "checkbox": "Boolean checkbox, or multi-select within a list of options.",
       "radiobutton": "Single choice within a group of mutually exclusive options.",
       "toggleswitch": "On/off switch for settings that apply instantly.",

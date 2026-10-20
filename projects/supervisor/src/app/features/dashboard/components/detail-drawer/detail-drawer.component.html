@@ -36,13 +36,13 @@
     }
     <span class="detail__main">
       @let quien = r.agent ?? r.name ?? ('dashboard.detail.customer' | translate: { id: r.customer });
-      <span class="detail__name sc-text-body-semibold" [title]="quien">{{ quien }}</span>
+      <span class="detail__name sc-text-body-semibold" [pTooltip]="quien" showOnEllipsis tooltipPosition="top">{{ quien }}</span>
       @let detalle = r.presence
         ? ('dashboard.presence.' + r.presence | translate)
         : r.agent
           ? ('dashboard.detail.customer' | translate: { id: r.customer }) + ', ' + r.queue
           : r.queue;
-      <span class="detail__sub sc-text-caption-regular" [title]="detalle">{{ detalle }}</span>
+      <span class="detail__sub sc-text-caption-regular" [pTooltip]="detalle" showOnEllipsis tooltipPosition="top">{{ detalle }}</span>
     </span>
   </span>
 </ng-template>

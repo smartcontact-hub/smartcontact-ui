@@ -40,7 +40,6 @@ import {
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 import {
   ScCheckboxComponent as CheckboxComponent,
-  ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
   ScFormSectionNavComponent as FormSectionNavComponent,
   type FormNavSection,
   ScMessageComponent as MessageComponent,
@@ -61,6 +60,7 @@ import {
 import { LabelsStore } from '@features/admin/labels/state/labels.store';
 import { GroupsStore } from '@features/admin/groups/state/groups.store';
 import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links.store';
+import { injectConfirmarBorrado } from '@features/admin/services/confirmar-borrado';
 import { canonicalizeChannels, GroupAgentLink, type Channel } from '@features/admin/services/group-agent-links.types';
 import { clampLinksToChannels } from '@features/admin/services/group-channels.core.mjs';
 import { idsVivos } from '@features/admin/services/recursos.core.mjs';
@@ -204,7 +204,6 @@ function sameValues<T>(a: readonly T[], b: readonly T[]): boolean {
     AltaPieComponent,
     ResourceOptionComponent,
     CheckboxComponent,
-    DeleteEntityDialogComponent,
     RecursoDialogComponent,
     TooltipModule,
     FormSectionNavComponent,
@@ -231,6 +230,7 @@ function sameValues<T>(a: readonly T[], b: readonly T[]): boolean {
 export class AgentFormPageComponent implements DirtyAware, OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly confirmarBorrado = injectConfirmarBorrado('agents.entity_singular');
   private readonly sectionLinks = inject(SectionLinksService);
   private readonly injector = inject(Injector);
   private readonly agentsStore = inject(AgentsStore);
@@ -487,7 +487,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
    * (DD-130: aquí no hay puerta), con ✓ en las que se dejan completas y «Atrás / Siguiente» al pie. General y Grupos
    * tienen algo obligatorio (`faltas`); Configuración y Recursos, no, y llevan ✓ al dejarlas (DD-211 §6). Los canales de
    * General deciden lo que se ve en las demás (lo de las llamadas, lo del chat, las columnas de sus grupos): si cambian
-   * desde que se dejó una, su ✓ se va (DD-216).
+   * desde que se dejó una, su ✓ se va (DD-217).
    */
   protected readonly alta = seccionesDeAlta({
     secciones: this.navSections,
@@ -537,7 +537,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
    * LO OBLIGATORIO, en el orden de la ficha (la revisión de agentes de producto, 2026-10-09): nombre, email, extensión, el
    * móvil si suena en el teléfono y al menos un canal, en General; al menos un grupo, un canal en cada uno y, si atiende
    * teléfono, el grupo de sus salientes, en Grupos. Cada uno con el campo al que se llega al pulsar «Crear agente» o
-   * «Guardar» sin él (`ancla`, DD-216). De aquí salen el punto del índice, lo que dice en él y el aviso de cada campo:
+   * «Guardar» sin él (`ancla`, DD-217). De aquí salen el punto del índice, lo que dice en él y el aviso de cada campo:
    * una sola lista, así no pueden decir cosas distintas.
    */
   private readonly faltas = computed<readonly { seccion: string; motivo: string; ancla: string | null }[]>(() => {
@@ -554,7 +554,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
     if (f.allowedChannels.length === 0) {
       out.push({ seccion: g, motivo: 'agents.errors.channels_required', ancla: 'agent-channels-title' });
     }
-    // Los grupos que valen son los que le dejan algún canal, y los que no tienen ninguno (DD-216: ahí se pertenece sin
+    // Los grupos que valen son los que le dejan algún canal, y los que no tienen ninguno (DD-217: ahí se pertenece sin
     // canal). El que se queda sin canales porque se le quitaron sale al guardar (`save`).
     const sinCanales = new Set(this.availableGroups().filter((grupo) => grupo.channels.length === 0).map((grupo) => grupo.id));
     const valen = this.linksVistos().filter((l) => l.channels.length > 0 || sinCanales.has(l.groupId));
@@ -578,7 +578,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
   });
 
   /**
-   * Cuándo se dice lo que falta (DD-216): al pulsar «Crear agente» o «Guardar», lo que faltaba entonces, hasta que se
+   * Cuándo se dice lo que falta (DD-217): al pulsar «Crear agente» o «Guardar», lo que faltaba entonces, hasta que se
    * arregla; o desde que se abre, si lo guardado ya venía sin ello (DD-142). Duplicar es un alta: lo que llega vacío a
    * propósito no acusa. Un email o un teléfono mal escritos, en su campo y en vivo.
    */
@@ -591,19 +591,19 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
   /** Lo que falta y ya se dice, por su motivo: el aviso de cada campo sale de aquí. */
   private readonly faltasDichas = computed(() => new Set(this.faltas().map((f) => f.motivo).filter((m) => this.ocasion.acusa(m))));
 
-  /** El aviso bajo un campo obligatorio vacío, al pulsar sin él (DD-216); `undefined` si no hay nada que decir. */
+  /** El aviso bajo un campo obligatorio vacío, al pulsar sin él (DD-217); `undefined` si no hay nada que decir. */
   protected falta(motivo: string): string | undefined {
     return this.faltasDichas().has(motivo) ? this.translate.instant(motivo) : undefined;
   }
 
-  /** Sin canales, el aviso bajo las casillas, al pulsar sin ellos (DD-216). */
+  /** Sin canales, el aviso bajo las casillas, al pulsar sin ellos (DD-217). */
   protected readonly channelsError = computed(() => this.faltasDichas().has('agents.errors.channels_required'));
 
   /** ¿Tiene teléfono móvil? «Gestión de dispositivos» (elegir navegador o teléfono en el puesto) lo necesita. */
   protected readonly hasPhone = computed(() => !!this.form().phone.trim());
 
   /**
-   * Los avisos a la vista, en el orden de la ficha: lo que falta, cuando ya se intentó crear o guardar (DD-216), y lo
+   * Los avisos a la vista, en el orden de la ficha: lo que falta, cuando ya se intentó crear o guardar (DD-217), y lo
    * mal escrito (email, teléfono), en vivo. De aquí salen el punto del índice, lo que dice en él y adónde lleva pulsar.
    */
   private readonly avisos = computed<readonly AvisoDeFicha[]>(() => {
@@ -622,7 +622,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
   /** El punto rojo del índice: la sección tiene un aviso a la vista. */
   protected readonly sectionsWithErrors = computed<ReadonlySet<string>>(() => new Set(this.avisos().map((a) => a.seccion)));
 
-  /** Lo que dice cada sección con aviso en el índice, en texto (DD-216). */
+  /** Lo que dice cada sección con aviso en el índice, en texto (DD-217). */
   protected readonly sectionErrorHints = computed(() => avisosDelIndice(this.avisos()));
 
   /** Las secciones con cambios sin guardar (DD-122), al editar. Todos los permisos viven ya en Configuración. */
@@ -879,7 +879,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
   protected readonly initial = signal<Agent | null>(null);
   protected readonly form = signal<FormState>(this.emptyForm());
   /*
-   * R6 · una sola política de error (DD-216). Un error de CONTENIDO (un email o un teléfono mal escritos) se dice en
+   * R6 · una sola política de error (DD-217). Un error de CONTENIDO (un email o un teléfono mal escritos) se dice en
    * vivo, en su campo. Lo que FALTA no es un error mientras se rellena: se dice al pulsar «Crear agente» o «Guardar», en
    * su campo (también nombre, email y extensión, que hasta el 2026-10-20 solo lo decían el índice y el botón) y en el
    * índice, con su texto.
@@ -901,7 +901,6 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
   });
 
   protected readonly saving = signal(false);
-  protected readonly deleteVisible = signal(false);
 
   /** Dirty-state por CAMBIO NETO (snapshot vs pristine): Guardar se reactiva
    *  solo si hay algo distinto que guardar y vuelve a apagarse si deshaces.
@@ -927,14 +926,9 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
 
   /**
    * El botón se puede pulsar: al crear y al duplicar, siempre; al editar, con cambios (se apaga otra vez si deshaces).
-   * Lo que falte lo dice al pulsarlo (`save`, DD-216).
+   * Lo que falte lo dice al pulsarlo (`save`, DD-217).
    */
   protected readonly canSave = computed(() => this.mode() !== 'edit' || this.dirtyState.dirty());
-
-  protected readonly deleteItems = computed(() => {
-    const a = this.initial();
-    return a ? [{ id: a.id, name: a.name }] : [];
-  });
 
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
@@ -1200,7 +1194,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
    */
   protected async save(): Promise<void> {
     if (!this.canSave() || this.saving()) return;
-    // Con algo pendiente no crea ni guarda: desde ahora se dice lo que falta, y se llega al primer campo (DD-216).
+    // Con algo pendiente no crea ni guarda: desde ahora se dice lo que falta, y se llega al primer campo (DD-217).
     if (this.faltas().length > 0 || this.formatoMal()) {
       this.ocasion.intentar();
       const primero = this.avisos()[0];
@@ -1310,7 +1304,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
 
   /**
    * Cada enlace con su agente y sus canales recortados; el que se queda sin ninguno, fuera (ver `save`), salvo en un
-   * grupo sin canales, donde se pertenece sin canal (DD-216).
+   * grupo sin canales, donde se pertenece sin canal (DD-217).
    */
   private normalizeLinks(
     links: readonly GroupAgentLink[],
@@ -1332,21 +1326,14 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
     this.ocasion.olvidar();
   }
 
-  protected requestDelete(): void {
-    if (this.editingId()) this.deleteVisible.set(true);
-  }
-
-  protected cancelDelete(): void {
-    this.deleteVisible.set(false);
-  }
-
-  protected confirmDelete(): void {
+  /** Borrar la ficha: la confirmación simple del DS (DD-215), con el nombre guardado; al aceptar, vuelve al listado. */
+  protected async requestDelete(): Promise<void> {
     const id = this.editingId();
     if (!id) return;
     const agent = this.initial();
+    if (!(await this.confirmarBorrado(agent?.name ?? ''))) return;
     this.agentsStore.deleteAgent(id);
     this.linksStore.removeAgent(id);
-    this.deleteVisible.set(false);
     this.dirtyState.markPristine();
     this.resultado.contar(this.translate.instant('agents.toasts.deleted_single', { name: agent?.name ?? '' }));
     void this.router.navigateByUrl('/admin/agentes');

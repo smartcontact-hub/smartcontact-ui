@@ -66,6 +66,7 @@ const CATEGORY: Record<string, ComponentCategory> = {
   grouppopover: 'Overlays',
   impactpreviewdialog: 'Overlays',
   keyboardshortcuts: 'Overlays',
+  tooltip: 'Overlays',
   // Feedback
   emptystate: 'Feedback',
   message: 'Feedback',

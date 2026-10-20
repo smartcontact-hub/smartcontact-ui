@@ -9,6 +9,7 @@ import { join } from 'node:path';
 import {
   actosBash,
   comandosBash,
+  delTurno,
   estadoDelArbol,
   fallosDelParte,
   fallosDeSeguridad,
@@ -18,6 +19,7 @@ import {
   necesitaVeredicto,
   pantallasSinRevisar,
   ultimoMensaje,
+  verdeSinLeer,
 } from '../hooks/stop-guard.mjs';
 import { enrutar, pendientes, registrar, rutaRegistro } from '../hooks/correction-capture.mjs';
 
@@ -122,6 +124,9 @@ const PARTE_OK = [
   '- Seguro cerrar: sí, todo subido y el PR verde; si quieres seguir mañana, lo recoge el hand-off.',
 ].join('\n');
 
+// Los partes de ejemplo dicen «CI verde»: el turno que los escribe lo ha leído (`verdeSinLeer`).
+const LEE_CI = ev('npm run ci:verdict');
+
 const LIMPIO = { seguro: true, motivos: [] };
 const SUCIO = { seguro: false, motivos: ['2 fichero(s) sin commitear (AGENTS.md, CLAUDE.md)'] };
 
@@ -220,7 +225,7 @@ test('Stop: con reflect y correcciones sin ruta bloquea; enrutada, deja cerrar; 
     writeFileSync(transcript, [ev('git status'), evUsuario('hola')].join('\n'));
     assert.equal(correrHook(entrada, dir), null, 'sin reflect no bloquea: mitad de tarea no es cierre');
 
-    writeFileSync(transcript, [ev('git status'), evSkill('reflect'), evTexto(PARTE_OK)].join('\n'));
+    writeFileSync(transcript, [ev('git status'), evSkill('reflect'), LEE_CI, evTexto(PARTE_OK)].join('\n'));
     const bloqueo = correrHook(entrada, dir);
     assert.equal(bloqueo?.decision, 'block', 'ROJO: reflexionó y la corrección se quedó sin destino');
     assert.match(bloqueo.reason, /1 corrección\(es\) de esta sesión sin enrutar/);
@@ -236,7 +241,7 @@ test('Stop: con reflect y correcciones sin ruta bloquea; enrutada, deja cerrar; 
     assert.equal(sinParte?.decision, 'block', 'ROJO: cerró con el trámite y sin contarle al usuario qué cambia');
     assert.match(sinParte.reason, /- En qué te ayuda:/);
     assert.match(sinParte.reason, /- Seguro cerrar:/);
-    writeFileSync(transcript, [ev('git status'), evSkill('reflect'), evTexto(PARTE_OK)].join('\n'));
+    writeFileSync(transcript, [ev('git status'), evSkill('reflect'), LEE_CI, evTexto(PARTE_OK)].join('\n'));
 
     assert.equal(correrHook({ ...entrada, session_id: 'S2' }, dir)?.decision, 'block', 'la otra sesión sigue debiendo la suya');
     assert.equal(correrHook({ ...entrada, stop_hook_active: true }, dir), null, 'stop_hook_active: bloquea UNA vez, no en bucle');
@@ -257,6 +262,46 @@ test('Stop: el veredicto del CI manda sobre el enrutado (LEARNINGS #7 primero)',
   } finally {
     delete process.env.SC_CLAUDE_PROJECT_DIR;
   }
+});
+
+// ── Un «verde» sin leer el CI · añadido el 2026-10-20 ───────────────────────────────────────────────
+// ROJO que motivó la pieza: «CI leído: verde, fundido» de un PR tras leer solo `gh pr view --json
+// state,mergedAt`, con el CI de main rojo en el commit fundido. Sin push, `necesitaVeredicto` no miraba.
+
+const rastro = (linea) => PARTE_OK.replace(/- Rastro: .*/, `- Rastro: ${linea}`);
+const turno = (...cmds) => [ev('npm run ci:verdict'), evUsuario('¿cómo quedó el #464?'), ...cmds.map(ev)].join('\n');
+
+test('ROJO: el Rastro dice verde y en este turno no se leyó el CI (aunque se leyera en el anterior)', () => {
+  const jsonl = turno('gh pr view 464 --json state,mergedAt');
+  assert.equal(verdeSinLeer(rastro('PR #464 · CI leído: verde, fundido · docs/handoff/x.md'), actosBash(delTurno(jsonl))), true);
+  assert.equal(verdeSinLeer(rastro('PR #464 · checks pass'), actosBash(delTurno(jsonl))), true);
+});
+
+test('VERDE: el Rastro dice verde y en este turno se leyó el CI', () => {
+  const jsonl = turno('gh pr view 464 --json state,mergedAt', 'gh pr checks 464');
+  assert.equal(verdeSinLeer(rastro('PR #464 · CI leído: verde, fundido · docs/handoff/x.md'), actosBash(delTurno(jsonl))), false);
+  const resultado = JSON.stringify({ type: 'user', message: { content: [{ type: 'tool_result', tool_use_id: 'x', content: 'ok' }] } });
+  const conResultado = [ev('git log'), evUsuario('¿y el CI?'), ev('gh pr checks 464'), resultado, ev('git status')].join('\n');
+  assert.equal(verdeSinLeer(rastro('CI verde'), actosBash(delTurno(conResultado))), false, 'el resultado de una herramienta no abre turno');
+});
+
+test('no aplica: sin push, no aplica, rojo o en curso no bloquean aunque digan verde', () => {
+  const sinLeer = actosBash(delTurno(turno('git status')));
+  for (const linea of ['sin push · preflight verde', 'CI: no aplica, verde en local', 'CI rojo (falla verde-e2e)', 'CI en curso, verde el preflight', 'PR #9 · docs/handoff/x.md'])
+    assert.equal(verdeSinLeer(rastro(linea), sinLeer), false, linea);
+});
+
+test('Stop: un cierre que dice verde sin leer el CI bloquea con LEARNINGS #7, sin hacer falta reflect', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'sc-stop-'));
+  const transcript = join(dir, 'sesion.jsonl');
+  writeFileSync(transcript, [turno('gh pr view 464 --json state,mergedAt'), evTexto(PARTE_OK)].join('\n'));
+  const r = correrHook({ transcript_path: transcript, session_id: 'S-verde', cwd: dir }, dir);
+  assert.equal(r?.decision, 'block');
+  assert.match(r.reason, /LEARNINGS #7/);
+  assert.match(r.reason, /npm run ci:verdict/);
+  assert.match(r.reason, /gh run list --branch main --workflow ci\.yml/);
+  writeFileSync(transcript, [turno('gh pr checks 464'), evTexto(PARTE_OK)].join('\n'));
+  assert.equal(correrHook({ transcript_path: transcript, session_id: 'S-verde', cwd: dir }, dir), null);
 });
 
 // ── El canal MCP · añadido el 2026-09-19 ────────────────────────────────────────────────────
@@ -398,12 +443,12 @@ test('Stop: tras reflect, el parte en inglés bloquea; el de castellano con su c
   const dir = mkdtempSync(join(tmpdir(), 'sc-stop-'));
   const transcript = join(dir, 'sesion.jsonl');
   const entrada = { transcript_path: transcript, session_id: 'S-idioma', cwd: dir };
-  writeFileSync(transcript, [evSkill('reflect'), evTexto(PARTE_EN_INGLES)].join('\n'));
+  writeFileSync(transcript, [evSkill('reflect'), LEE_CI, evTexto(PARTE_EN_INGLES)].join('\n'));
   const r = correrHook(entrada, dir);
   assert.equal(r?.decision, 'block', 'ROJO: el cierre iba a llegarle al usuario en inglés');
   assert.match(r.reason, /va en inglés/);
   assert.match(r.reason, /- Qué cambia: <una frase/, 'y lleva la plantilla para rehacerlo');
-  writeFileSync(transcript, [evSkill('reflect'), evTexto(PARTE_CON_CODIGO)].join('\n'));
+  writeFileSync(transcript, [evSkill('reflect'), LEE_CI, evTexto(PARTE_CON_CODIGO)].join('\n'));
   assert.equal(correrHook(entrada, dir), null, 'VERDE: en castellano deja cerrar');
 });
 
@@ -521,7 +566,7 @@ test('Stop: tras fundir por squash, «Seguro cerrar: sí» deja cerrar; con un c
   git(sesion, 'fetch', '-q', '--prune', 'origin');
   const transcript = join(raiz, 'sesion.jsonl');
   const entrada = { transcript_path: transcript, session_id: 'S-squash', cwd: sesion };
-  writeFileSync(transcript, [evSkill('reflect'), evTexto(PARTE_OK)].join('\n'));
+  writeFileSync(transcript, [evSkill('reflect'), LEE_CI, evTexto(PARTE_OK)].join('\n'));
   assert.equal(correrHook(entrada, raiz), null, 'todo está en main: el «sí» es verdad y el cierre pasa');
 
   commit(sesion, 'd.txt', 'después de fundir\n', 'trabajo nuevo');
