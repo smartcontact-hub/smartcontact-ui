@@ -28,7 +28,8 @@ test('foto rechazada: el porqué sale bajo la foto, en su línea, y no se va sol
 
 test('borrar: copiar el nombre lo dice el ✓, y el lector lo oye, sin toast (15)', async ({ page, context }) => {
   await context.grantPermissions(['clipboard-read', 'clipboard-write']);
-  await goto(page, 'admin/agentes/editar/1');
+  // En la ficha de usuario: la de agente y la de grupo borran con la confirmación simple, sin nombre que copiar (DD-215).
+  await goto(page, 'admin/usuarios/editar/1');
   await page.locator('main').getByRole('button', { name: /^Eliminar/ }).first().click();
   await page.locator('.delete-entity__copy-name').click();
   await expect(page.locator('.delete-entity__copy-check')).toBeVisible();
