@@ -208,7 +208,7 @@ desplegable, la tipificación sin su descripción y duplicar con «(1)» en vez 
    vaciaba sin preguntar) y salir sin tocar nada no pregunta.
 9. **Recursos, igual en el grupo y en el agente**: Agendas, Equipos y Plantillas en chips, a media columna, con tantos
    chips como caben y «+N más» por el resto (`chipOverflow="fit"` de `sc-multiselect`, DS: mide y no corta ninguno;
-   un nombre más largo que el campo se acorta con «…» y se lee entero al pasar). Sin «+» al lado ni lápiz en las
+   lo elegido no ensancha el campo, y un nombre más largo que él se acorta con «…» y se lee entero al pasar). Sin «+» al lado ni lápiz en las
    opciones, y sin la ventana de crear o editar (retira el «+» de DD-167, el lápiz de DD-204 y la ventana de DD-187):
    se crean y se editan en Repositorios, con «Gestionar en Repositorios». Cada opción dice lo que contiene (§15,
    `sc-resource-option`). La «×» del chip pasa al rojo de lo destructivo al pasar o enfocarla. El resumen ya no

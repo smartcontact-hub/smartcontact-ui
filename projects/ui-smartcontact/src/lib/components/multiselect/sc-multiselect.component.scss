@@ -195,6 +195,14 @@
   visibility: hidden;
 }
 
+/* Con `more` o `fit`, lo elegido no ensancha el campo: mide lo que su sitio, y las etiquetas caben o se cuentan en «+N
+ * más» (revisión de producto del 2026-10-20, DD-217: no agrandar el campo para que quepan más chips). Sin esto, en un
+ * contenedor que se mide por su contenido, un nombre larguísimo estiraba el campo y su columna hasta salirse de la
+ * tarjeta (la demo de sc-docs, en su captura de Linux). */
+.sc-multiselect--chip-overflow .sc-multiselect__control {
+  contain: inline-size;
+}
+
 /* Con `more` o `fit`, un nombre más largo que el campo se acorta con «…» y la «×» y «+N más» siguen a la vista: un chip
  * puede ser larguísimo (revisión de producto del 2026-10-20, DD-217). Midiendo, ninguno encoge: se mide su ancho. */
 .sc-multiselect__chip-item {

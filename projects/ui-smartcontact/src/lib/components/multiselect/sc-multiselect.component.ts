@@ -56,8 +56,8 @@ export type ScMultiSelectDisplay = 'chip' | 'comma';
  * Con `display="chip"`, qué pasa al pasar de `maxSelectedLabels`. `count` (el de PrimeNG): las etiquetas se cambian por
  * «N seleccionados». `more`: se quedan las primeras y otra dice cuántas faltan («+2 más»). `fit`: como `more`, pero sin
  * tope fijo: se quedan las que caben en el ancho del campo, y la última dice cuántas faltan (revisión de producto del
- * 2026-10-20, DD-217: con tres fijas sobraba medio campo). Con `more` y `fit`, un nombre más largo que el campo se acorta
- * con «…» y se lee entero al pasar; su «×» y «+N más» quedan a la vista.
+ * 2026-10-20, DD-217: con tres fijas sobraba medio campo). Con `more` y `fit`, lo elegido no ensancha el campo, y un
+ * nombre más largo que él se acorta con «…» y se lee entero al pasar; su «×» y «+N más» quedan a la vista.
  */
 export type ScMultiSelectChipOverflow = 'count' | 'more' | 'fit';
 
@@ -102,6 +102,7 @@ export type ScMultiSelectChipOverflow = 'count' | 'more' | 'fit';
     '[class.sc-multiselect--disabled]': 'disabled()',
     '[class.sc-multiselect--filled]': 'filled()',
     '[class.sc-multiselect--ifta]': 'iftaLabel()',
+    '[class.sc-multiselect--chip-overflow]': 'moreChips()',
   },
 })
 export class ScMultiSelectComponent {
