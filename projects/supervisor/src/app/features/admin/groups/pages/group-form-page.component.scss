@@ -130,8 +130,17 @@
   padding-inline-start: calc(var(--sc-cmp-toggleswitch-width) + var(--sc-spacing-1-143));
 }
 
-/* Bajo la tipificación elegida, «Ver detalle». */
+/* Bajo la tipificación elegida, «Ver detalle». Su texto, en la vertical del campo y de su etiqueta: el relleno del botón
+ * de texto y su borde transparente sobresalen por la izquierda. Sin eso empezaba 8 px a la derecha (419,5 contra
+ * 411,5, medido a 1440, 2026-10-20). */
 .wrapup__detail {
   display: flex;
   align-items: baseline;
+
+  /* Desplazado, no con margen: el borde transparente de 1px del botón no tiene variable (el gate de literales cuenta los
+   * márgenes), y el hueco que deja a la izquierda no le importa a nadie. */
+  sc-button {
+    position: relative;
+    inset-inline-start: calc(-1 * (var(--sc-cmp-button-sm-padding-x) + 1px));
+  }
 }

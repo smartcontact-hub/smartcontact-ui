@@ -86,6 +86,10 @@
   display: inline-flex;
   align-items: center;
   gap: var(--sc-spacing-0-25);
+  /* Ocupa lo que una línea de texto, como el rótulo de las demás cabeceras: el botón del filtro (27 de alto) y la etiqueta
+   * del estado elegido (21,75) se centran y sobresalen dentro del relleno de la celda, sin estirarla. Con ellos enteros,
+   * la cabecera medía 38,5 y la de la tabla gemela del agente, 32,7 (medido a 1440, 2026-10-20). */
+  block-size: 1lh;
 }
 
 .assign__status-filter {

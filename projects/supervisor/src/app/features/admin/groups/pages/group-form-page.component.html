@@ -49,10 +49,11 @@
       <div class="headline">
         <!-- El nombre es el TÍTULO DE LA PÁGINA y se edita en su sitio (`sc-name-inplace`, el Inplace
              nativo), con el mismo aviso de nombre repetido que el campo de General. `h3-semibold` es el
-             rol que ya usan las nueve listas para su `h1`. -->
+             rol que ya usan las nueve listas para su `h1`. Su tooltip
+             lo lleva el texto que se corta, dentro del Inplace: en el `h1` salía también editando. -->
         <div class="headline__who">
           @if (mode() === 'edit') {
-            <h1 class="headline__name headline__name--editable sc-text-title-semibold" [pTooltip]="form().name" showOnEllipsis tooltipPosition="top">
+            <h1 class="headline__name headline__name--editable sc-text-title-semibold">
               <sc-name-inplace
                 [name]="form().name"
                 [label]="'groups.form.fields.name' | translate"

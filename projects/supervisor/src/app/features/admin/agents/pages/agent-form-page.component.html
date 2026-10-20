@@ -42,8 +42,9 @@
       <div class="headline">
         <div class="headline__who">
           @if (mode() === 'edit') {
-            <!-- El nombre se edita en su sitio (`sc-name-inplace`, el Inplace nativo): el mismo campo que Identidad. -->
-            <h1 class="headline__name headline__name--editable sc-text-title-semibold" [pTooltip]="form().name" showOnEllipsis tooltipPosition="top">
+            <!-- El nombre se edita en su sitio (`sc-name-inplace`, el Inplace nativo): el mismo campo que Identidad. Su tooltip lo
+                 lleva el texto que se corta, dentro del Inplace: en el `h1` salía también editando. -->
+            <h1 class="headline__name headline__name--editable sc-text-title-semibold">
               <sc-name-inplace
                 [name]="form().name"
                 [label]="'agents.form.fields.name' | translate"
