@@ -3522,6 +3522,51 @@ var treetable_default = {
 
 // projects/ui-smartcontact/src/lib/theme/sc-preset/datatable.ts
 var datatable_default = {
+  header: {
+    padding: "var(--sc-cmp-datatable-header-padding-y) var(--sc-cmp-datatable-header-padding-x)",
+    sm: {
+      padding: "var(--sc-cmp-datatable-header-sm-padding-y) var(--sc-cmp-datatable-header-sm-padding-x)"
+    },
+    lg: {
+      padding: "var(--sc-cmp-datatable-header-lg-padding-y) var(--sc-cmp-datatable-header-lg-padding-x)"
+    }
+  },
+  headerCell: {
+    padding: "var(--sc-cmp-datatable-header-cell-padding-y) var(--sc-cmp-datatable-header-cell-padding-x)",
+    sm: {
+      padding: "var(--sc-cmp-datatable-header-cell-sm-padding-y) var(--sc-cmp-datatable-header-cell-sm-padding-x)"
+    },
+    lg: {
+      padding: "var(--sc-cmp-datatable-header-cell-lg-padding-y) var(--sc-cmp-datatable-header-cell-lg-padding-x)"
+    }
+  },
+  bodyCell: {
+    padding: "var(--sc-cmp-datatable-body-cell-padding-y) var(--sc-cmp-datatable-body-cell-padding-x)",
+    sm: {
+      padding: "var(--sc-cmp-datatable-body-cell-sm-padding-y) var(--sc-cmp-datatable-body-cell-sm-padding-x)"
+    },
+    lg: {
+      padding: "var(--sc-cmp-datatable-body-cell-lg-padding-y) var(--sc-cmp-datatable-body-cell-lg-padding-x)"
+    }
+  },
+  footerCell: {
+    padding: "var(--sc-cmp-datatable-footer-cell-padding-y) var(--sc-cmp-datatable-footer-cell-padding-x)",
+    sm: {
+      padding: "var(--sc-cmp-datatable-footer-cell-sm-padding-y) var(--sc-cmp-datatable-footer-cell-sm-padding-x)"
+    },
+    lg: {
+      padding: "var(--sc-cmp-datatable-footer-cell-lg-padding-y) var(--sc-cmp-datatable-footer-cell-lg-padding-x)"
+    }
+  },
+  footer: {
+    padding: "var(--sc-cmp-datatable-footer-padding-y) var(--sc-cmp-datatable-footer-padding-x)",
+    sm: {
+      padding: "var(--sc-cmp-datatable-footer-sm-padding-y) var(--sc-cmp-datatable-footer-sm-padding-x)"
+    },
+    lg: {
+      padding: "var(--sc-cmp-datatable-footer-lg-padding-y) var(--sc-cmp-datatable-footer-lg-padding-x)"
+    }
+  },
   colorScheme: {
     dark: {
       bodyCell: {

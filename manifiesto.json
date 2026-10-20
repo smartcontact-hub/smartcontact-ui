@@ -1,8 +1,8 @@
 {
-  "commit": "ef407460",
+  "commit": "56ebd85d",
   "primeng": "22.1.0",
   "themes": "3.0.0",
-  "generado": "2026-10-18T12:17:52.243Z",
+  "generado": "2026-10-20T11:30:46.268Z",
   "estilosTexto": [
     "display-regular",
     "display-semibold",
@@ -24,13 +24,49 @@
     "raizPx": 16,
     "diferencia": {
       "anterior": true,
-      "ficheros": [],
-      "variables": [],
+      "ficheros": [
+        "sc-preset.mjs",
+        "smartcontact-tokens.css"
+      ],
+      "variables": [
+        "claro|--sc-cmp-datatable-body-cell-lg-padding-x",
+        "claro|--sc-cmp-datatable-body-cell-lg-padding-y",
+        "claro|--sc-cmp-datatable-body-cell-padding-x",
+        "claro|--sc-cmp-datatable-body-cell-padding-y",
+        "claro|--sc-cmp-datatable-body-cell-sm-padding-x",
+        "claro|--sc-cmp-datatable-body-cell-sm-padding-y",
+        "claro|--sc-cmp-datatable-footer-cell-lg-padding-x",
+        "claro|--sc-cmp-datatable-footer-cell-lg-padding-y",
+        "claro|--sc-cmp-datatable-footer-cell-padding-x",
+        "claro|--sc-cmp-datatable-footer-cell-padding-y",
+        "claro|--sc-cmp-datatable-footer-cell-sm-padding-x",
+        "claro|--sc-cmp-datatable-footer-cell-sm-padding-y",
+        "claro|--sc-cmp-datatable-footer-lg-padding-x",
+        "claro|--sc-cmp-datatable-footer-lg-padding-y",
+        "claro|--sc-cmp-datatable-footer-padding-x",
+        "claro|--sc-cmp-datatable-footer-padding-y",
+        "claro|--sc-cmp-datatable-footer-sm-padding-x",
+        "claro|--sc-cmp-datatable-footer-sm-padding-y",
+        "claro|--sc-cmp-datatable-header-cell-lg-padding-x",
+        "claro|--sc-cmp-datatable-header-cell-lg-padding-y",
+        "claro|--sc-cmp-datatable-header-cell-padding-x",
+        "claro|--sc-cmp-datatable-header-cell-padding-y",
+        "claro|--sc-cmp-datatable-header-cell-sm-padding-x",
+        "claro|--sc-cmp-datatable-header-cell-sm-padding-y",
+        "claro|--sc-cmp-datatable-header-lg-padding-x",
+        "claro|--sc-cmp-datatable-header-lg-padding-y",
+        "claro|--sc-cmp-datatable-header-padding-x",
+        "claro|--sc-cmp-datatable-header-padding-y",
+        "claro|--sc-cmp-datatable-header-sm-padding-x",
+        "claro|--sc-cmp-datatable-header-sm-padding-y"
+      ],
       "retirados": [],
       "semanticaComun": false,
       "reglasCss": false,
-      "componentes": [],
-      "guia": true
+      "componentes": [
+        "datatable"
+      ],
+      "guia": false
     },
     "contratoPlugin": {
       "promete": 68,
@@ -41,5 +77,5 @@
     },
     "cambia": true
   },
-  "version": "0.20261018.1217"
+  "version": "0.20261020.1130"
 }
