@@ -137,16 +137,6 @@
   </div>
 </div>
 
-<sc-delete-entity-dialog
-  [visible]="deleteVisible()"
-  mode="single"
-  [items]="deleteItems()"
-  [entitySingular]="'groups.entity_singular' | translate"
-  [entityPlural]="'groups.entity_plural' | translate"
-  (cancelled)="cancelDelete()"
-  (confirm)="confirmDelete()"
-/>
-
 @if (cascadeConfirm(); as c) {
   <sc-dialog
     [visible]="true"

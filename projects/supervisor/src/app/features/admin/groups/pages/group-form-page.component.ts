@@ -14,7 +14,6 @@ import { AltaPieComponent, ChannelIconComponent, NameInplaceComponent, ResourceO
 import { changedKeys, createFormDirtyState } from '@shared/utils/form-dirty-state';
 import { llegarAAncla, llegarASeccion, ocasionDeAvisar, seccionesDeAlta } from '@shared/utils/alta-secciones';
 import {
-  ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
   type FormNavSection,
   ScInputTextComponent as InputTextComponent,
   ScMultiSelectComponent as MultiSelectComponent,
@@ -90,6 +89,7 @@ import { GroupsStore } from '../state/groups.store';
 
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
 import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links.store';
+import { injectConfirmarBorrado } from '@features/admin/services/confirmar-borrado';
 import { idsVivos } from '@features/admin/services/recursos.core.mjs';
 import { ResourceRowsService } from '@features/admin/services/resource-rows.service';
 import type { GroupAgentLink } from '@features/admin/services/group-agent-links.types';
@@ -209,7 +209,6 @@ type AudioKey = 'holdMusicFile' | 'queueIdFile' | 'nextInLineFile' | 'outboundAu
     SlotComponent,
     MessageComponent,
     ButtonComponent,
-    DeleteEntityDialogComponent,
     InputTextComponent,
     MultiSelectComponent,
     OptionCardsComponent,
@@ -237,6 +236,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
   private readonly injector = inject(Injector);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly confirmarBorrado = injectConfirmarBorrado('groups.entity_singular');
   private readonly document = inject(DOCUMENT);
   private readonly groupsStore = inject(GroupsStore);
   private readonly agentsStore = inject(AgentsStore);
@@ -586,7 +586,6 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
     return reason === 'common.no_changes' ? null : reason;
   });
   protected readonly saving = signal(false);
-  protected readonly deleteVisible = signal(false);
 
   /** Channels the group owned when the form was loaded — used to detect
    *  cascade impact when the user removes a channel before saving. */
@@ -863,11 +862,6 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
   protected readonly formGroupChannels = computed<readonly GroupChannel[]>(() =>
     GROUP_CHANNELS.filter((c) => this.form().channels.has(c)),
   );
-
-  protected readonly deleteItems = computed(() => {
-    const g = this.initial();
-    return g ? [{ id: g.id, name: g.name }] : [];
-  });
 
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
@@ -1416,21 +1410,14 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
     return this.translate.instant(FAMILY_LABEL_KEYS[c]);
   }
 
-  protected requestDelete(): void {
-    if (this.editingId()) this.deleteVisible.set(true);
-  }
-
-  protected cancelDelete(): void {
-    this.deleteVisible.set(false);
-  }
-
-  protected confirmDelete(): void {
+  /** Borrar la ficha: la confirmación simple del DS (DD-215), con el nombre guardado; al aceptar, vuelve al listado. */
+  protected async requestDelete(): Promise<void> {
     const id = this.editingId();
     if (!id) return;
     const group = this.initial();
+    if (!(await this.confirmarBorrado(group?.name ?? ''))) return;
     this.groupsStore.deleteGroup(id);
     this.linksStore.removeGroup(id);
-    this.deleteVisible.set(false);
     this.dirtyState.markPristine();
     this.resultado.contar(this.translate.instant('groups.toasts.deleted_single', { name: group?.name ?? '' }));
     void this.router.navigateByUrl('/admin/grupos');

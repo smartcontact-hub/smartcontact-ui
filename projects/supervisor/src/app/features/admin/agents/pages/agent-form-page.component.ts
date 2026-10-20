@@ -33,7 +33,6 @@ import { llegarAAncla, llegarASeccion, ocasionDeAvisar, seccionesDeAlta } from '
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 import {
   ScCheckboxComponent as CheckboxComponent,
-  ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
   ScFormSectionNavComponent as FormSectionNavComponent,
   type FormNavSection,
   ScMessageComponent as MessageComponent,
@@ -54,6 +53,7 @@ import {
 import { LabelsStore } from '@features/admin/labels/state/labels.store';
 import { GroupsStore } from '@features/admin/groups/state/groups.store';
 import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links.store';
+import { injectConfirmarBorrado } from '@features/admin/services/confirmar-borrado';
 import { canonicalizeChannels, GroupAgentLink, type Channel } from '@features/admin/services/group-agent-links.types';
 import { clampLinksToChannels } from '@features/admin/services/group-channels.core.mjs';
 import { idsVivos } from '@features/admin/services/recursos.core.mjs';
@@ -198,7 +198,6 @@ function sameValues<T>(a: readonly T[], b: readonly T[]): boolean {
     AltaPieComponent,
     ResourceOptionComponent,
     CheckboxComponent,
-    DeleteEntityDialogComponent,
     RecursoDialogComponent,
     TooltipModule,
     FormSectionNavComponent,
@@ -225,6 +224,7 @@ function sameValues<T>(a: readonly T[], b: readonly T[]): boolean {
 export class AgentFormPageComponent implements DirtyAware, OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly confirmarBorrado = injectConfirmarBorrado('agents.entity_singular');
   private readonly sectionLinks = inject(SectionLinksService);
   private readonly injector = inject(Injector);
   private readonly agentsStore = inject(AgentsStore);
@@ -914,7 +914,6 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
     return reason === 'common.no_changes' ? null : reason;
   });
   protected readonly saving = signal(false);
-  protected readonly deleteVisible = signal(false);
 
   /** Dirty-state por CAMBIO NETO (snapshot vs pristine): Guardar se reactiva
    *  solo si hay algo distinto que guardar y vuelve a apagarse si deshaces.
@@ -943,11 +942,6 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
     // En EDITAR exige cambio neto; en crear/duplicar basta con que sea válido.
     if (this.mode() === 'edit' && !this.dirtyState.dirty()) return false;
     return true;
-  });
-
-  protected readonly deleteItems = computed(() => {
-    const a = this.initial();
-    return a ? [{ id: a.id, name: a.name }] : [];
   });
 
   ngOnInit(): void {
@@ -1333,21 +1327,14 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
     this.form.set(this.dirtyState.pristineValue());
   }
 
-  protected requestDelete(): void {
-    if (this.editingId()) this.deleteVisible.set(true);
-  }
-
-  protected cancelDelete(): void {
-    this.deleteVisible.set(false);
-  }
-
-  protected confirmDelete(): void {
+  /** Borrar la ficha: la confirmación simple del DS (DD-215), con el nombre guardado; al aceptar, vuelve al listado. */
+  protected async requestDelete(): Promise<void> {
     const id = this.editingId();
     if (!id) return;
     const agent = this.initial();
+    if (!(await this.confirmarBorrado(agent?.name ?? ''))) return;
     this.agentsStore.deleteAgent(id);
     this.linksStore.removeAgent(id);
-    this.deleteVisible.set(false);
     this.dirtyState.markPristine();
     this.resultado.contar(this.translate.instant('agents.toasts.deleted_single', { name: agent?.name ?? '' }));
     void this.router.navigateByUrl('/admin/agentes');

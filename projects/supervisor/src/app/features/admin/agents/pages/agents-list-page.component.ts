@@ -18,25 +18,16 @@ import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { injectLangChange } from '@core/utils/lang-change';
 import { CeldaVaciaComponent, ChannelIconComponent, type LabelColor, ListPageComponent, PresenceAvatarComponent } from '@shared/components';
 import {
-  useBulkEntityI18n,
-  BulkEditCommit,
-  BulkEditFieldOption,
-  ScBulkEditMenuComponent as BulkEditMenuComponent,
   type ScColumnCellContext,
   type ScColumnDef,
   ColumnDef,
-  ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
   ScEmptyStateComponent as EmptyStateComponent,
   ScGroupPopoverComponent as GroupPopoverComponent,
-  ImpactBadge,
-  ImpactItem,
-  ScImpactPreviewDialogComponent as ImpactPreviewDialogComponent,
   ScInlineRenameCellComponent as InlineRenameCellComponent,
   ScTagComponent as TagComponent,
 } from '@smartcontact-hub/components';
 import {
   AGENT_TYPE_LABEL_KEYS,
-  AGENT_TYPES,
   Agent,
   EXTENSION_ICONS,
   ExtensionType,
@@ -44,21 +35,15 @@ import {
   PRESENCE_TAGS,
   PresenceStatus,
 } from '../data/agents-data';
-import { AgentBulkField, AgentsStore } from '../state/agents.store';
+import { AgentsStore } from '../state/agents.store';
 import { CHANNEL_FAMILIES, FAMILY_LABEL_KEYS, compareChannels } from '@features/admin/groups/data/groups-data';
 import { GroupsStore } from '@features/admin/groups/state/groups.store';
 import { EquiposStore } from '@features/admin/repositories/state/equipos.store';
 import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links.store';
+import { injectConfirmarBorrado } from '@features/admin/services/confirmar-borrado';
 import { Channel } from '@features/admin/services/group-agent-links.types';
 import { permittedFamilies } from '@features/admin/services/group-channels.core.mjs';
 import { TooltipModule } from 'primeng/tooltip';
-
-interface PendingBulkEdit {
-  readonly field: AgentBulkField;
-  readonly fieldLabel: string;
-  readonly value: unknown;
-  readonly valueLabel: string;
-}
 
 /* v2 — schema bumped from a Set<string> to an ordered string[] when the
  * ColumnSelector gained drag-to-reorder + per-column defaultVisible.
@@ -72,16 +57,13 @@ const COLUMN_PREF_KEY = 'sc-agents-columns-v5';
   imports: [
     TooltipModule,
     CeldaVaciaComponent,
-    BulkEditMenuComponent,
     ButtonComponent,
     TagComponent,
-    DeleteEntityDialogComponent,
     EmptyStateComponent,
     IconComponent,
     ChannelIconComponent,
     PresenceAvatarComponent,
     GroupPopoverComponent,
-    ImpactPreviewDialogComponent,
     InlineRenameCellComponent,
     ListPageComponent,
     TranslateModule,
@@ -100,11 +82,11 @@ export class AgentsListPageComponent {
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
   private readonly router = inject(Router);
+  private readonly confirmarBorrado = injectConfirmarBorrado('agents.entity_singular');
 
   /** CTA "Nuevo agente" proyectado a la TopBar (modelo "todo arriba" S59):
    * la banda de page-header desaparece; identidad → breadcrumb, acción → barra. */
   private readonly topbarActions = viewChild<TemplateRef<unknown>>('topbarActions');
-  private readonly lista = viewChild.required<ListPageComponent<Agent>>(ListPageComponent);
 
   constructor() {
     useTopbarActions(this.topbarActions);
@@ -154,11 +136,7 @@ export class AgentsListPageComponent {
   protected readonly presenceKeys = PRESENCE_LABEL_KEYS;
   protected readonly agents = this.agentsStore.agents;
 
-  /** Selección: la lista la marca; de ella cuelgan la edición en lote, el borrado y el diálogo de impacto. */
-  protected readonly selectedIds = signal<ReadonlySet<Agent['id']>>(new Set());
-  protected readonly deleteTarget = signal<readonly Agent[] | null>(null);
   protected readonly renamingId = signal<number | null>(null);
-  protected readonly pendingBulkEdit = signal<PendingBulkEdit | null>(null);
   protected readonly columnPrefKey = COLUMN_PREF_KEY;
   protected readonly columnDefs = computed<readonly ColumnDef[]>(() => {
     this.lang(); // cabeceras al día al cambiar de idioma (ver `injectLangChange`)
@@ -317,29 +295,6 @@ export class AgentsListPageComponent {
     ];
   });
 
-  /* Sin «Activación» (ya no existe) ni «Estado» (no se cambia desde la lista). */
-  protected readonly bulkEditFields = computed<readonly BulkEditFieldOption[]>(() => {
-    this.lang(); // textos al día al cambiar de idioma (ver `injectLangChange`)
-    return [
-      {
-        key: 'agentType',
-        label: this.translate.instant('agents.table.type'),
-        values: AGENT_TYPES.map((t) => ({
-          value: t,
-          label: this.translate.instant(this.typeKeys[t]),
-        })),
-      },
-      {
-        key: 'recording',
-        label: this.translate.instant('agents.permission.recording'),
-        values: [
-          { value: 'true', label: this.translate.instant('common.yes') },
-          { value: 'false', label: this.translate.instant('common.no') },
-        ],
-      },
-    ];
-  });
-
   /**
    * Qué filas casan con la búsqueda (la consulta llega ya en minúsculas): cualquier campo de texto de la tabla, se
    * vea o no su columna, con los rótulos en el idioma de la pantalla (2026-09-24). Los iconos (canales, tipo de
@@ -390,29 +345,6 @@ export class AgentsListPageComponent {
   /** Mientras se renombra una fila, abrirla no hace nada (y no enseña el cursor de mano). */
   protected readonly isOpenable = (agent: Agent): boolean => this.renamingId() !== agent.id;
 
-  protected readonly deleteItems = computed(() =>
-    (this.deleteTarget() ?? []).map((a) => ({ id: a.id, name: a.name })),
-  );
-
-  protected readonly bulkEntity = useBulkEntityI18n({
-    singular: 'common.bulk.entity.agent_singular',
-    plural: 'common.bulk.entity.agent_plural',
-  });
-
-  protected readonly impactItems = computed<readonly ImpactItem[]>(() => {
-    this.lang(); // la pista «(sin extensión)» al día al cambiar de idioma (ver `injectLangChange`)
-    const ids = this.selectedIds();
-    return this.agents()
-      .filter((a) => ids.has(a.id))
-      .map((a) => ({ id: a.id, name: a.name, hint: a.extension ? `(ext. ${a.extension})` : `(${this.translate.instant('agents.form.fields.extension_empty').toLowerCase()})` }));
-  });
-
-  protected readonly impactBadge = computed<ImpactBadge | null>(() => {
-    const op = this.pendingBulkEdit();
-    if (!op) return null;
-    return { fieldLabel: op.fieldLabel, newValueLabel: op.valueLabel };
-  });
-
   /**
    * Clave i18n del tipo de agente. Es un método y no un indexado en plantilla
    * porque el contexto de `<ng-template let-agent>` es `any`, y `typeKeys[any]`
@@ -421,10 +353,6 @@ export class AgentsListPageComponent {
    */
   protected typeLabelKey(agent: Agent): string {
     return this.typeKeys[agent.agentType];
-  }
-
-  protected clearSelection(): void {
-    this.selectedIds.set(new Set());
   }
 
   protected onCreateClick(): void {
@@ -453,20 +381,14 @@ export class AgentsListPageComponent {
         command: () => this.onRowEdit(agent),
       },
       {
-        // Duplicar una fila suelta no tiene sentido con una selección
-        // múltiple activa — se ocultaba ya en el panel HTML y en el menú
-        // contextual anteriores, y esa regla sobrevive al cambio de motor.
         label: this.translate.instant('common.duplicate'),
         icon: 'sc-icon-font sc-icon-font--content_copy',
-        visible: this.selectedIds().size <= 1,
         command: () => this.onRowDuplicate(agent),
       },
       { separator: true },
       {
-        // Puntos suspensivos porque lleva a la puerta tecleada, no a un
-        // borrado inmediato (C4 del plan): convención de menús de escritorio
-        // — "…" significa "esto abre algo antes de hacerlo".
-        label: this.translate.instant('common.delete_gate'),
+        // Sin puntos suspensivos: lleva a una confirmación simple, no a la puerta tecleada (DD-215).
+        label: this.translate.instant('common.delete'),
         icon: 'sc-icon-font sc-icon-font--delete',
         styleClass: 'sc-menu-item--danger',
         command: () => this.onRowDelete(agent),
@@ -489,8 +411,12 @@ export class AgentsListPageComponent {
     });
   }
 
-  protected onRowDelete(agent: Agent): void {
-    this.deleteTarget.set([agent]);
+  /** Borrar: la confirmación simple del DS (DD-215); al aceptar, fuera el agente y sus enlaces, y el toast. */
+  protected async onRowDelete(agent: Agent): Promise<void> {
+    if (!(await this.confirmarBorrado(agent.name))) return;
+    this.agentsStore.deleteAgent(agent.id);
+    this.linksStore.removeAgent(agent.id);
+    this.resultado.contar(this.translate.instant('agents.toasts.deleted_single', { name: agent.name }));
   }
 
   protected onRenameCommit(id: number, value: string): void {
@@ -522,79 +448,6 @@ export class AgentsListPageComponent {
 
   protected extensionIcon(type: ExtensionType): string {
     return EXTENSION_ICONS[type];
-  }
-
-  protected requestDeleteSelection(): void {
-    const ids = this.selectedIds();
-    const targets = this.agents().filter((a) => ids.has(a.id));
-    if (targets.length > 0) this.deleteTarget.set(targets);
-  }
-
-  protected onBulkEditCommit(commit: BulkEditCommit): void {
-    const field = commit.fieldKey as AgentBulkField;
-    const value: unknown = field === 'recording' ? commit.value === 'true' : commit.value;
-    this.pendingBulkEdit.set({
-      field,
-      fieldLabel: commit.fieldLabel,
-      value,
-      valueLabel: commit.valueLabel,
-    });
-  }
-
-  protected onBulkPreviewConfirm(remainingIds: readonly number[]): void {
-    const op = this.pendingBulkEdit();
-    if (!op) return;
-    const idSet = new Set(remainingIds);
-    // Snapshot the affected agents before the bulk so undo can restore them.
-    const snapshot = this.agents()
-      .filter((a) => idSet.has(a.id))
-      .map((a) => ({ ...a }));
-
-    this.agentsStore.bulkUpdate(remainingIds, op.field, op.value);
-    this.pendingBulkEdit.set(null);
-    this.clearSelection();
-
-    // El resultado, con su «Deshacer», lo cuenta la barra de lote donde se aplicó (DD-196).
-    this.lista().contarLote(remainingIds.length, () => {
-      for (const prev of snapshot) {
-        this.agentsStore.updateAgent(prev.id, prev);
-      }
-    });
-  }
-
-  protected onBulkPreviewCancel(): void {
-    this.pendingBulkEdit.set(null);
-  }
-
-  protected confirmDelete(remainingIds: readonly number[] | null): void {
-    const target = this.deleteTarget();
-    if (!target) return;
-
-    let toasted: Agent[];
-    if (remainingIds === null) {
-      toasted = [...target];
-    } else {
-      const idSet = new Set(remainingIds);
-      toasted = target.filter((a) => idSet.has(a.id));
-    }
-    const ids = toasted.map((a) => a.id);
-
-    if (ids.length === 1) {
-      this.agentsStore.deleteAgent(ids[0]!);
-      this.linksStore.removeAgent(ids[0]!);
-      this.resultado.contar(this.translate.instant('agents.toasts.deleted_single', { name: toasted[0]!.name, }));
-    } else {
-      this.agentsStore.deleteAgents(ids);
-      for (const id of ids) this.linksStore.removeAgent(id);
-      this.resultado.contar(this.translate.instant('agents.toasts.deleted_bulk', { count: ids.length }));
-    }
-
-    this.deleteTarget.set(null);
-    this.clearSelection();
-  }
-
-  protected cancelDelete(): void {
-    this.deleteTarget.set(null);
   }
 
   /** Exporta TODOS los campos de la tabla, se vean o no: el fichero es para trabajar con él, no una foto. */

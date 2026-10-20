@@ -159,7 +159,7 @@
         "kit"
       ],
       "retirado": null,
-      "usedInSupervisor": 3,
+      "usedInSupervisor": 1,
       "cuando": "Para cambiar UN campo en muchos elementos a la vez, desde la barra de selección.",
       "sobreObsoleto": []
     },
@@ -244,7 +244,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 179,
+      "usedInSupervisor": 177,
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "sobreObsoleto": [
         {
@@ -612,7 +612,7 @@
         "kit"
       ],
       "retirado": null,
-      "usedInSupervisor": 12,
+      "usedInSupervisor": 8,
       "cuando": "Para confirmar un borrado ENSEÑANDO qué se borra, en singular o en bloque.",
       "sobreObsoleto": []
     },
@@ -1031,7 +1031,7 @@
         "kit"
       ],
       "retirado": null,
-      "usedInSupervisor": 3,
+      "usedInSupervisor": 1,
       "cuando": "Para enseñar a QUÉ va a afectar un cambio masivo ANTES de aplicarlo.",
       "sobreObsoleto": []
     },
@@ -1267,7 +1267,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 8,
+      "usedInSupervisor": 7,
       "cuando": "Para un aviso EN LA PÁGINA, junto a lo que explica. Si es el resultado de una acción y puede desaparecer, `sc-toast`.",
       "sobreObsoleto": []
     },
