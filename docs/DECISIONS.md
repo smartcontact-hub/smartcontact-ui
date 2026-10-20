@@ -212,6 +212,11 @@ elemento que lleva el tooltip: la pastilla entera, que no se desborda. Así que 
 (`pointerenter`, que llega antes que el `mouseenter` con el que el tooltip decide) y pasa el valor entero al `pTooltip`
 de la pastilla solo si está recortada. En la variante `label`, que pinta su propio texto, `showOnEllipsis` sobre él.
 
+**sc-docs** (2026-10-20) · El tooltip tiene su ficha en Componentes → Overlays, con los cuatro casos (un icono, un
+texto cortado, un botón apagado y con teclado). Como no hay `sc-tooltip`, `audit:components` genera el contrato de los
+nativos que el DS adopta tal cual (`NATIVOS_ADOPTADOS`): su API es la de la versión de PrimeNG instalada y su estado,
+«Listo», sale del maestro del Kit y de la ficha, como el de cualquier otro (DD-190).
+
 **Descartado** · Una directiva propia que mida el recorte: `showOnEllipsis` ya lo hace en PrimeNG 22.
 
 ## DD-211 · 2026-10-16 — Revisión de producto de agendas, fichas, Contact Center y toasts: a quién se asigna una agenda en un árbol por persona, el PIN del sistema, el resultado en un toast y un solo Guardar en Contact Center

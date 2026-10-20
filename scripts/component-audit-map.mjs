@@ -106,6 +106,7 @@ export const CUANDO = {
   'sc-textarea': 'Para texto que puede ocupar varias líneas: una descripción, una nota, el motivo de algo. Si siempre cabe en una, `sc-inputtext`.',
   'sc-toast': 'Para el resultado de una acción, que se va solo. Si el aviso pertenece a la página y debe quedarse, `sc-message`.',
   'sc-toggleswitch': 'Para encender o apagar algo CON EFECTO INMEDIATO. Si el cambio se guarda al enviar el formulario, `sc-checkbox`.',
+  pTooltip: 'Para lo que se lee al pasar el ratón: un icono con significado, un texto cortado (con `showOnEllipsis`) o por qué un botón está apagado. Nunca un `title`, que el navegador enseña con su globo; el de un botón de solo icono ya lo pone `sc-button`.',
 };
 
 /**
@@ -165,4 +166,15 @@ export const KIT_ALIAS = {
   divider: 'Divide',
   'section-card': 'Section',
   avatargroup: 'Avatar',
+};
+
+/**
+ * Nativos de PrimeNG que el DS adopta TAL CUAL, sin un `sc-*` que los envuelva (DD-113). Su página de sc-docs se
+ * registra como la de cualquier componente, pero su contrato sale de la API instalada, no de un fichero nuestro.
+ * Clave = la ruta de su página (y su nombre en el Kit); `selector`, la entrada con la que se escribe; `modulo`, el de
+ * `primeng/<modulo>`.
+ */
+export const NATIVOS_ADOPTADOS = {
+  // El tooltip del Kit es el `pTooltip` de PrimeNG (DD-212); una directiva propia que mida el recorte se descartó.
+  tooltip: { selector: 'pTooltip', modulo: 'tooltip' },
 };

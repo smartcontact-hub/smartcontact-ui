@@ -99,6 +99,13 @@ test('EXCLUYE atributos que no son API del componente', () => {
   }
 });
 
+test('EXCLUYE las entradas del pTooltip: es una directiva y va sobre un sc-* (DD-212)', () => {
+  for (const a of ['pTooltip', 'tooltipPosition', 'tooltipEvent', 'showOnEllipsis']) {
+    assert.ok(ATRIBUTO_GENERICO.test(a), `${a} debería estar excluido`);
+  }
+  assert.equal(ATRIBUTO_GENERICO.test('tooltip'), false, 'una entrada que se llame «tooltip» a secas sí es del componente');
+});
+
 test('NO excluye un nombre de propiedad cualquiera', () => {
   for (const a of ['label', 'variant', 'selection']) {
     assert.equal(ATRIBUTO_GENERICO.test(a), false, `${a} no debería estar excluido`);

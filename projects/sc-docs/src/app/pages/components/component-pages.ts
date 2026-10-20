@@ -327,4 +327,9 @@ export const SC_DEMO_COMPONENT_PAGES = [
     label: 'Slot',
     load: () => import('./slot/slot-demo.component').then((m) => m.SlotDemoComponent),
   },
+  {
+    path: 'tooltip',
+    label: 'Tooltip',
+    load: () => import('./tooltip/tooltip-demo.component').then((m) => m.TooltipDemoComponent),
+  },
 ] satisfies ScDemoComponentPage[];
