@@ -1439,8 +1439,8 @@ medido contra sc-supervisor.pages.dev a 1440.
   del listado se van a 30). En `button`, el icono de dentro no está atado a «Left Icon» ni a «Icon»: sale el ✓ del
   maestro y hay que cambiarlo a mano.
 - **Tablas:** el texto, hecho el 2026-10-19: Body/body-regular y Body/body-semibold (interlineado 20), fila de 42. El
-  relleno del Kit (10,5 × 14; Small 5,25 × 7) es el del DS de los devs, medido en ui.smart-contact.com: el que se
-  aparta es el prototipo (8 × 14; small 2 × 6), ficha 1 de §54. Queda: la variante Selected de
+  relleno del Kit (10,5 × 14; Small 5,25 × 7) es el del DS de los devs, medido en ui.smart-contact.com, y desde DD-214
+  (2026-10-20) también el del prototipo, que pintaba 8 × 14 (ficha 1 de §54). Queda: la variante Selected de
   `datatable-header-cell` pinta `highlight` (en PrimeNG 22 la ordenada se queda blanca); `datatable-selection-cell`
   Small, con la casilla pequeña.
 - **Menú:** `menu` lleva sus filas fijas, sin slot; `menu-item` mide 21 (texto de 14 de alto) frente a 27, y no tiene
@@ -1465,7 +1465,7 @@ medido contra sc-supervisor.pages.dev a 1440.
   máximo de 157,5 y la celda de selección small. Llevarlos al oficial es una decisión de diseño pendiente.
 
 **Cómo sabes que está hecho:** cada maestro mide lo que la app (botón de texto small 28 × 27, fila de menú 27; la celda
-small, al revés: la app irá a la del Kit, 5,25 × 7, §54) y las maquetas dejan de necesitar el ajuste a mano.
+small, al revés: la app ya va a la del Kit, 5,25 × 7, DD-214) y las maquetas dejan de necesitar el ajuste a mano.
 
 ---
 
@@ -1479,7 +1479,7 @@ numéricos, subsección plegada y lo no dibujado (atajo «/» y solo lectura).
 
 | # | Ficha | Propuesta | Kit | Prototipo |
 |---|---|---|---|---|
-| 1 | Alto de fila | Hecho el 2026-10-19: tablas de Grupos y Agentes en tamaño normal, relleno atado (10,5 × 14, el de los devs); la ficha salió. Cambia el prototipo (8 × 14) | sí, hecho | sí |
+| 1 | Alto de fila | Hecho el 2026-10-19: tablas de Grupos y Agentes en tamaño normal, relleno atado (10,5 × 14, el de los devs); la ficha salió. El prototipo, de 8 × 14 a 10,5 × 14 el 2026-10-20 (DD-214, #461) | sí, hecho | sí, hecho |
 | 2 | Barra de arriba | Hecho el 2026-10-19: el Header del DS lleva `button` md (DD-188), barra de 58; la ficha salió | sí, hecho | no |
 | 3 | Toast | El prototipo con `p-toast` sin plantilla; el «Deshacer» del inicio (DD-196), aparte | no | sí |
 | 4 | Botón de foto | Hecho el 2026-10-19: el fondo, atado a `highlight/background`; la ficha salió | no | no |
