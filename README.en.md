@@ -84,7 +84,7 @@ npm run export:all     # npm tarballs into dist/archives/
 <!--sc:sec=verify-->
 
 ```bash
-npm run verify         # the 48 chained static checks (~40s)
+npm run verify         # the 49 chained static checks (~40s)
 npm run e2e            # browser smoke test (Playwright)
 npm run preflight      # gates + AOT builds (~8 min), before pushing; screenshots are compared in CI
 ```
@@ -100,7 +100,7 @@ three e2e nets and the other workflows.
 | Screens | `audit:theme-scale` · `audit:border-surfaces` · `audit:screen-hygiene` · `audit:icons` · `audit:interpunct` · `audit:page-anatomy` · `audit:screen-vocabulary` · `audit:text-styles` · `audit:css-literals` · `audit:titulo-contenido` · `audit:query-order` · `audit:base-href` | Screens measure by token, with one shared vocabulary, no layout shifts and no `@media` or `@container` rule that source order leaves without effect |
 | Components | `audit:components` · `audit:api-era` · `audit:datatables` · `audit:datatable-slots` · `audit:primeng-coupling` · `audit:primeng-catalog` · `audit:doc-snippets` · `test:components` | The public API, the coupling to PrimeNG, the table of its catalog and what the docs show all match the code |
 | Content and docs | `i18n:check` · `novedades:check` · `usage:check` · `variables:check` · `audit:seed-pii` · `audit:personal-names` · `docs:guard` · `docs:coherence` · `docs:readme-parity` | Genuinely multilingual, zero real contact data in demos, no personal names in the code, and no doc that lies |
-| Repo | `proto:check` · `explorations:check` · `audit:commit-attribution` · `guard:backticks` · `test:unit` · `typecheck` · `lint` · `build` | Frozen versions stay findable, no commit carries the tool's signature, types stay clean and the libs keep building |
+| Repo | `proto:check` · `explorations:check` · `audit:commit-attribution` · `audit:e2e-citas` · `guard:backticks` · `test:unit` · `typecheck` · `lint` · `build` | Frozen versions stay findable, no commit carries the tool's signature, no e2e quotes what the change removed, types stay clean and the libs keep building |
 
 The same gate runs in CI ([.github/workflows/ci.yml](.github/workflows/ci.yml)), which is
 **nine steps**: `verify` on its own neither builds the apps nor runs the e2e suites.
