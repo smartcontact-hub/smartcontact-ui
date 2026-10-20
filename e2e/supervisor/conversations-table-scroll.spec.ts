@@ -229,9 +229,20 @@ test('con textos largos (`?datos=tortura`), el texto libre no pasa de dos línea
   // Control: con tortura TIENE que haber orígenes recortados; si no hay ninguno, no se mira el caso.
   expect(origenes.some((o) => o.recortado)).toBe(true);
   // Cada recortado enseña el entero al pasar el ratón.
+  const { width, height } = page.viewportSize()!;
   for (const o of origenes.filter((x) => x.recortado)) {
-    await page.locator(`${TABLE} tbody tr`).nth(o.fila).locator(`:scope > :nth-child(${col + 1}) span`).first().hover();
-    await expect(page.locator('.p-tooltip'), `«${o.texto}», recortado, sale entero en el tooltip`).toHaveText(o.texto);
+    const celda = page.locator(`${TABLE} tbody tr`).nth(o.fila).locator(`:scope > :nth-child(${col + 1}) span`).first();
+    /* El tooltip de PrimeNG se cierra con cualquier scroll de la tabla, y un hover que obliga a desplazarla lo abre y lo
+     * cierra en el acto: el scroll llega un frame después (medido: 7 de 26 sin tooltip). El ratón sale primero de la
+     * tabla, se desplaza, se dejan pasar dos frames y entonces entra; si aun así un scroll tardío lo cierra, se vuelve a
+     * pasar. Uno que no sale nunca sigue en rojo. */
+    await expect(async () => {
+      await page.mouse.move(width / 2, height - 4);
+      await celda.evaluate((el) => el.scrollIntoView({ block: 'center' }));
+      await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))));
+      await celda.hover();
+      await expect(page.locator('.p-tooltip')).toHaveText(o.texto, { timeout: 1_500 });
+    }, `«${o.texto}», recortado, sale entero en el tooltip`).toPass({ timeout: 10_000 });
   }
 });
 

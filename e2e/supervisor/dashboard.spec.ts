@@ -22,13 +22,30 @@ test.beforeEach(async ({ page }) => {
  * Cada texto cortado con «…» enseña el entero en el tooltip del Kit al pasar el ratón (DD-212), no en el `title` del
  * navegador. Devuelve cuántos había cortados: si no hay ninguno, la comprobación no ha mirado nada.
  */
+/**
+ * Pasa el ratón por un texto y espera su tooltip. El tooltip de PrimeNG se cierra con cualquier scroll de lo que lo
+ * contiene, y un hover que obliga a desplazar lo abre y lo cierra en el acto: el scroll llega un frame después (medido
+ * en el CI y en local, 7 de 26 recortados de Conversaciones sin tooltip). Así que el ratón sale primero de lo que se
+ * desplaza, se desplaza, se dejan pasar dos frames y entonces entra; y si aun así un scroll tardío lo cierra, se vuelve a
+ * pasar. Uno que no sale nunca sigue en rojo.
+ */
+async function pasarConTooltip(page: Page, texto: Locator, entero: string): Promise<void> {
+  const { width, height } = page.viewportSize()!;
+  await expect(async () => {
+    await page.mouse.move(width / 2, height - 4);
+    await texto.evaluate((el) => el.scrollIntoView({ block: 'center' }));
+    await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))));
+    await texto.hover();
+    await expect(page.locator('.p-tooltip')).toHaveText(entero, { timeout: 1_500 });
+  }, `«${entero}», cortado, sale entero en el tooltip`).toPass({ timeout: 10_000 });
+}
+
 async function cortadosConTooltip(page: Page, textos: Locator): Promise<number> {
   const cortados = await textos.evaluateAll((els) => els.flatMap((el, i) => (el.scrollWidth > el.clientWidth ? [i] : [])));
   for (const i of cortados) {
     const texto = textos.nth(i);
     const entero = (await texto.textContent())?.trim() ?? '';
-    await texto.hover();
-    await expect(page.locator('.p-tooltip'), `«${entero}», cortado, sale entero en el tooltip`).toHaveText(entero);
+    await pasarConTooltip(page, texto, entero);
   }
   return cortados.length;
 }
