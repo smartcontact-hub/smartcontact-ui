@@ -81,8 +81,9 @@ e88a52f7:docs/handoff/supervisor-fichas.md`; sus trampas suben a «Trampas del f
 > **Sello:** rama `areses/prototipo-como-figma` sobre `main` HEAD `91c438c2`, un PR. Tras fundir, las congeladas 4058, 4062 y
 > 4064 avanzan a ese commit (`docs/PROTOTIPOS.md`).
 
-- **Listados de Grupos y Agentes**: sin casillas, ni barra de lote, ni «Editar» o «Eliminar» en bloque; lo de cada fila
-  va por su menú (Editar, Duplicar, Eliminar). «Acciones» solo exporta. Usuarios, Repositorios y el resto conservan el
+- **Listados de Grupos y Agentes**: con casillas (para elegir y exportar lo marcado), pero sin barra de lote, ni
+  drawer, ni «Editar» o «Eliminar» en bloque (fase posterior para los devs); lo de cada fila va por su menú (Editar,
+  Duplicar, Eliminar). «Acciones» solo exporta. Rafa pidió volver a las casillas el 2026-10-20: Figma aún las muestra sin ellas. Usuarios, Repositorios y el resto conservan el
   lote.
 - **Borrar** un grupo o un agente, desde el listado o la ficha: `sc-confirmdialog` por `injectConfirmarBorrado`
   (`features/admin/services/confirmar-borrado.ts`), con el texto de Figma. Usuarios sigue tecleando el nombre (DD-145

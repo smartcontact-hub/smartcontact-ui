@@ -109,11 +109,11 @@ test('cada familia de canales enseña su estrategia en su columna, y «—» don
   await expect(await celda(page, 'Solo chat E2E', 'Estrategia de chat')).toHaveText('Balanceada');
 });
 
-test('sin casillas ni lote: «Eliminar» del menú de fila pregunta una vez, sin teclear el nombre', async ({ page }) => {
+test('casillas sin barra de lote: «Eliminar» del menú de fila pregunta una vez, sin teclear el nombre', async ({ page }) => {
   await goto(page, 'admin/grupos');
   await expect(fila(page, 'Reclamaciones')).toBeVisible();
   const tabla = page.getByTestId('groups-table');
-  await expect(tabla.locator('p-table-checkbox, p-table-header-checkbox'), 'sin casillas').toHaveCount(0);
+  await expect(tabla.locator('p-table-header-checkbox'), 'con casilla de cabecera').toHaveCount(1);
   await expect(page.locator('sc-bulk-action-bar'), 'sin barra de lote').toHaveCount(0);
 
   const abrirMenu = () => fila(page, 'Reclamaciones').locator('.rules-kebab-btn').click();

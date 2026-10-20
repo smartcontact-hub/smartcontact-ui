@@ -136,6 +136,8 @@ export class AgentsListPageComponent {
   protected readonly presenceKeys = PRESENCE_LABEL_KEYS;
   protected readonly agents = this.agentsStore.agents;
 
+  /** Filas marcadas: la lista las pinta y exportar las usa; sin barra de lote (DD-215). */
+  protected readonly selectedIds = signal<ReadonlySet<number>>(new Set());
   protected readonly renamingId = signal<number | null>(null);
   protected readonly columnPrefKey = COLUMN_PREF_KEY;
   protected readonly columnDefs = computed<readonly ColumnDef[]>(() => {
