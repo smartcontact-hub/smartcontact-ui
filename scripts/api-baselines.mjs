@@ -48,16 +48,16 @@ const piezaDe = (ruta) => {
 };
 
 /**
- * Las piezas cuya captura ya COMPROBÓ el robot: hay un commit suyo posterior al último cambio de la pieza. Si el robot
- * la regeneró y salió idéntica, no deja PNG en el diff, y sin esto el aviso seguía diciéndola «sin regenerar» (#342,
- * `bulkeditmenu` y `select`). `commits`: los de la rama, el más NUEVO primero, `{ subject, files }`; el árbol de trabajo
- * sin commitear va delante como un commit más.
+ * Las piezas cuya captura ya COMPROBÓ el robot: hay un commit suyo, o uno que trae su PNG, posterior al último cambio
+ * de la pieza. Si el robot la regeneró y salió idéntica, no deja PNG en el diff, y sin esto el aviso seguía diciéndola
+ * «sin regenerar» (#342, `bulkeditmenu` y `select`). `commits`: los de la rama, el más NUEVO primero, `{ subject, files }`;
+ * el árbol de trabajo sin commitear va delante como un commit más.
  */
 export function comprobadasPorRobot(commits, slugs) {
   const comprobadas = new Set();
   for (const slug of slugs) {
     for (const c of commits) {
-      if (c.subject.startsWith(ROBOT)) {
+      if (c.subject.startsWith(ROBOT) || c.files.includes(`${CAPTURAS}/${slug}-linux.png`)) {
         comprobadas.add(slug);
         break;
       }
@@ -129,8 +129,11 @@ export function tablaPintada(c) {
 /**
  * Las capturas que este cambio mueve y que no ha regenerado, con el porqué de cada una.
  * `cambiados`: rutas que difieren de la base. `apiAntes` y `apiAhora`: el `_component-api.json` en la base y ahora.
+ * `comprobadas` (de `comprobadasPorRobot`, que sabe el ORDEN) manda cuando llega: un PNG en el diff no basta si la
+ * página cambió después del robot (#461, 2026-10-19: «DD-213» pasó a «DD-214» en la página de DataTable tras la
+ * captura, el aviso calló porque el PNG ya estaba en el diff, y e2e-smoke cayó). Sin `comprobadas`, el PNG en el diff.
  */
-export function capturasPendientes({ apiAntes, apiAhora, cambiados, capturas, comprobadas = new Set() }) {
+export function capturasPendientes({ apiAntes, apiAhora, cambiados, capturas, comprobadas = null }) {
   const motivos = new Map();
   const anota = (slug, motivo) => {
     if (!capturas.has(slug)) return;
@@ -150,8 +153,9 @@ export function capturasPendientes({ apiAntes, apiAhora, cambiados, capturas, co
   }
 
   const regeneradas = new Set(cambiados.filter((r) => r.startsWith(`${CAPTURAS}/`)).map((r) => r.slice(CAPTURAS.length + 1)));
+  const alDia = comprobadas ? (slug) => comprobadas.has(slug) : (slug) => regeneradas.has(`${slug}-linux.png`);
   return [...motivos]
-    .filter(([slug]) => !regeneradas.has(`${slug}-linux.png`) && !comprobadas.has(slug))
+    .filter(([slug]) => !alDia(slug))
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([slug, porque]) => ({ slug, porque }));
 }
@@ -211,7 +215,9 @@ function main() {
     const capturas = capturasDeSpec(existsSync(SPEC) ? readFileSync(SPEC, 'utf8') : '');
     const rama = git(['rev-parse', '--abbrev-ref', 'HEAD']);
     // Los commits de la rama, el más nuevo primero; lo que aún no está commiteado va delante, como el más nuevo.
-    const log = git(['log', '--format=%x00%s', '--name-only', `${base}..HEAD`]);
+    // `--diff-merges=first-parent`: sin él, un commit de fusión no lista ficheros, y lo que se arregló al fundir (#461,
+    // la DD renumerada en la página) pasaba por delante del robot sin contar.
+    const log = git(['log', '--format=%x00%s', '--name-only', '--diff-merges=first-parent', `${base}..HEAD`]);
     const commits = log
       .split('\0')
       .filter(Boolean)

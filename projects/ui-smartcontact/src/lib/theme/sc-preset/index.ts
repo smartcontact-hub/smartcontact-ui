@@ -96,9 +96,10 @@ import { normalizeDesignRem } from "./rem-scale";
  * componente a componente y nada se tira a ciegas: donde lo nuestro está afinado con el
  * Kit, se queda lo nuestro; donde Aura es mejor, se aparta lo nuestro y manda Aura.
  *
- * Primer componente donde manda Aura: la TABLA. Por eso su `datatable.ts` ya no redefine
- * rellenos, colores ni iconos (solo le queda UNA clave oscura, ver su cabecera), y de nuestra
- * piel de listado solo quedan sus comportamientos (`css.ts`, `listBehaviorCss`).
+ * Primer componente donde manda Aura: la TABLA. Por eso su `datatable.ts` no redefine colores
+ * ni iconos (le queda UNA clave oscura, ver su cabecera), y de nuestra piel de listado solo
+ * quedan sus comportamientos (`css.ts`, `listBehaviorCss`). El relleno volvió a ser nuestro con
+ * DD-214: el del Kit, que es el del DS de desarrollo.
  */
 const preset = definePreset(Aura, normalizeDesignRem({
     ...base,
