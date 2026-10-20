@@ -826,7 +826,7 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/fileupload",
       "cva": false,
-      "inputs": 21,
+      "inputs": 22,
       "api": [
         "accept",
         "auto",
@@ -840,6 +840,7 @@
         "fileLimit",
         "fileRemoved",
         "filesSelected",
+        "helperText",
         "invalidFileSizeMessageDetail",
         "invalidFileSizeMessageSummary",
         "invalidFileTypeMessageDetail",
@@ -855,7 +856,9 @@
         "uploaded",
         "url"
       ],
-      "nested": [],
+      "nested": [
+        "sc-field-msg"
+      ],
       "hasDemo": true,
       "kit": true,
       "estado": "ready",

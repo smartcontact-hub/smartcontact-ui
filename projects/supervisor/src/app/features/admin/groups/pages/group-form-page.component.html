@@ -411,7 +411,7 @@
             <ng-container *ngTemplateOutlet="queueFields; context: { channel: 'phone', queue: form().phoneQueue }" />
             <div class="field">
               <span class="field__label sc-text-caption-semibold" id="group-hold-music-label">{{ 'groups.form.announcements.hold_music' | translate }}</span>
-              <div class="upload-field" role="group" aria-labelledby="group-hold-music-label" aria-describedby="group-hold-music-help">
+              <div class="upload-field" role="group" aria-labelledby="group-hold-music-label">
                 <ng-container *ngTemplateOutlet="filePicker; context: { key: 'holdMusicFile', id: 'group-hold-music' }" />
               </div>
             </div>
@@ -432,7 +432,7 @@
               @if (conAudioSaliente) {
                 <div class="field">
                   <span class="field__label sc-text-caption-semibold" id="group-outbound-audio-label">{{ 'groups.form.announcements.outbound_audio' | translate }}</span>
-                  <div class="upload-field" role="group" aria-labelledby="group-outbound-audio-label" aria-describedby="group-outbound-audio-help">
+                  <div class="upload-field" role="group" aria-labelledby="group-outbound-audio-label">
                     <!-- Su ayuda dice para qué llamadas es: aquí ya no la tiene al lado del teléfono saliente. -->
                     <ng-container *ngTemplateOutlet="filePicker; context: { key: 'outboundAudioFile', id: 'group-outbound-audio', help: 'groups.form.announcements.outbound_audio_info' }" />
                   </div>
@@ -838,7 +838,7 @@
 <!-- Elegir un audio: el «Advanced» de primeng.dev (revisión del 2026-10-15, que deshace el «basic» del 2026-10-09)
      con `auto`, su modo nativo sin «Subir» ni «Cancelar»: la ficha ya tiene «Guardar», y con un solo archivo la ✕ de
      su fila es la que lo quita. «Elegir» con su texto de PrimeNG, la zona de soltar y, lo elegido, en la lista de
-     subidos. Un solo archivo: elegir otro lo sustituye. Debajo, los formatos (DD-198). -->
+     subidos. Un solo archivo: elegir otro lo sustituye. Debajo, los formatos (DD-198), en la ayuda del DS. -->
 <ng-template #filePicker let-key="key" let-id="id" let-help="help">
   <sc-fileupload
     [id]="id + '-upload'"
@@ -848,15 +848,10 @@
     [removeLabel]="'groups.form.announcements.remove_file' | translate"
     [invalidFileTypeMessageSummary]="'groups.form.announcements.invalid_type' | translate"
     [invalidFileTypeMessageDetail]="'groups.form.announcements.invalid_type_detail' | translate"
+    [helperText]="(help ? (help | translate) + ' ' : '') + ('groups.form.announcements.audio_formats' | translate)"
     (uploaded)="onAudioFile($any(key), $event)"
     (savedRemoved)="setAnnouncement($any(key), null)"
   />
-  <p class="field__help sc-text-caption-regular" [id]="id + '-help'">
-    @if (help) {
-      {{ help | translate }}
-    }
-    {{ 'groups.form.announcements.audio_formats' | translate }}
-  </p>
 </ng-template>
 
 <!-- Un mensaje de la cola de Teléfono que puede no decir nada, leerse con la voz sintética o ser un .wav propio

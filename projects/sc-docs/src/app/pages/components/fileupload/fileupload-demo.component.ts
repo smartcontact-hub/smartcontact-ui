@@ -16,11 +16,11 @@ const SAVED_SNIPPET = `<sc-fileupload
   chooseLabel="Elegir"
   dropLabel="o suelta aquí el archivo."
   removeLabel="Quitar archivo"
+  helperText="Admite archivos .wav y .mp3."
   [saved]="guardado()"
   (uploaded)="guardar($event)"
   (savedRemoved)="guardado.set([])"
-/>
-<p>Admite archivos .wav y .mp3.</p>`;
+/>`;
 
 const LIST_SNIPPET = `<sc-fileupload
   [multiple]="true"

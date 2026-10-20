@@ -72,8 +72,8 @@ e88a52f7:docs/handoff/supervisor-fichas.md`; sus trampas suben a «Trampas del f
 - **Segunda vuelta**: Recursos a media columna, chips que caben (`fit`, el largo con «…»), tooltip con lo que contiene
   en las tres listas (§15); editores sin «Falta»; punto final (`i18n:check` I); barrido (§13); rótulos por `[label]`,
   también en `sc-textarea`, e interruptores con `<label for>` (§16); fuera `recurso-dialog` y `template-form-panel`.
-- **Pendiente**: Figma (§55); un PR con lo que queda a nativo (`p-checkbox`, `p-inputnumber`, `sc-avatar`, ayuda de
-  `sc-fileupload`); del barrido, el nombre en cabecera, las cabeceras de asignación y «Ver detalle».
+- **Pendiente**: Figma (§55); del barrido, el nombre en cabecera, las cabeceras de asignación y «Ver detalle». Lo
+  «a nativo» que quedaba (§16): `helperText` de `sc-fileupload`, hecho; el resto ya lo había decidido el DS.
 
 ## ✅ 2026-10-19 · Grupos y Agentes, como en Figma: sin edición masiva, y borrar con la confirmación simple (DD-215)
 
