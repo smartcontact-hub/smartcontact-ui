@@ -1465,7 +1465,7 @@ medido contra sc-supervisor.pages.dev a 1440.
   máximo de 157,5 y la celda de selección small. Llevarlos al oficial es una decisión de diseño pendiente.
 
 **Cómo sabes que está hecho:** cada maestro mide lo que la app (botón de texto small 28 × 27, fila de menú 27; la celda
-small, al revés: la app irá a la del Kit, 5,25 × 7, §54) y las maquetas dejan de necesitar el ajuste a mano.
+small, al revés: la app ya va a la del Kit, 5,25 × 7, DD-214) y las maquetas dejan de necesitar el ajuste a mano.
 
 ---
 
