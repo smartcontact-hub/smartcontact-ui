@@ -155,6 +155,45 @@
 
 ---
 
+## DD-214 · 2026-10-19 — El relleno de la tabla sigue al Kit y al DS de desarrollo, no a Aura 3: 10,5 × 14 y la fila de texto en 42
+
+**Contexto** · DD-97 dejó la tabla en Aura pura: `datatable.ts` no fijaba el relleno y pintaba el de `@primeuix/themes`
+3.0.0, 8 × 14 (sm 2 × 6, lg 12 × 18). El Kit dibuja 10,5 × 14 (sm 5,25 × 7, lg 14 × 17,5) con sus 30 variables
+`datatable/…/padding` atadas a `scale/0-75`, `scale/1`, `scale/0-375`, `scale/0-5` y `scale/1-25`, y es lo que pinta el
+DS de desarrollo: en ui.smart-contact.com, a 1440, `--p-datatable-body-cell-padding` vale `0.65625rem 0.875rem`, sm
+`0.328125rem 0.4375rem` y lg `0.875rem 1.09375rem`, y la cabecera y la fila de texto miden 42 (medido el 2026-10-19;
+es el Aura de 2024, `0.75rem 1rem`, en la base 14 de diseño). En la página «❖ DataTable» del DS de Figma
+(`khNq9dJKNi13pNllrqm6dx`) quedó decidido el mismo día seguir esa línea, con nuestros estilos de texto, para que
+desarrollo no cambie nada. El único que se apartaba era el prototipo (`figma-pendiente` §54, ficha 1).
+
+**Decisión** · (1) La cabecera y el pie de la tabla, y las celdas de cabecera, cuerpo y pie, en Default, sm y lg, leen
+30 `--sc-cmp-datatable-*` que el generador saca del export del Kit (filas nuevas en `scripts/sizing-map.mjs`, zona
+`@sc-gen:cmp-sizing` de `04-component.css`). (2) El texto no cambia: body-2 (14/20) de `css.ts`. Con él, la fila de
+solo texto mide 20 + 10,5 × 2 + 1 de raya = 42, la misma que la del DS de desarrollo con su 16/20. (3) El resto de la
+tabla sigue siendo Aura (DD-97): colores, iconos y la separación dentro de la celda.
+
+**Razón** · Medido a 1440 en claro, en local, antes y después. sc-docs (`#/components/datatable`, 14 tablas): celda y
+cabecera de `8px 14px` a `10.5px 14px`; cabecera y fila de texto de 37 a 42; fila con botón de 44 a 49. Supervisor:
+en Grupos, la fila con el ⋮ de 44 a 49 y la cabecera de 37 a 42; las compactas (`size="sm"`) de `2px 6px` a
+`5.25px 7px`, la de la ficha de grupo de 43 a 49,5 y la de la ficha de agente de 27 a 33. Las variables quedan
+texto a texto como las del DS de desarrollo. `tools/aura-diff.mjs datatable`: cambian las 15 claves de relleno y
+ninguna otra, todas con el motivo «PrimeOne ya lo dibuja así; su código Aura no». `tokens:parity`: 451 de 451.
+
+**Descartadas** ·
+- **`fromDesignRem(0.75)` y `fromDesignRem(1)` escritos en el preset** → el mismo valor, pero sin atar a la variable
+  del Kit: un cambio en Figma no llegaría al código, y DD-97 (3) ya sacó de los temas las medidas escritas a mano.
+- **Llevar el Kit a 8 × 14 y dejar el prototipo en Aura 3** → desarrollo tendría que cambiar sus tablas, que es lo que
+  la decisión de Figma evita.
+- **Pasar los rem de Aura por la base 14 (`normalizeDesignRem`)** → 0.5rem saldría a 7: ni Aura ni el Kit.
+
+**Consecuencias** · Cada fila del Supervisor crece 5 (6,5 en las compactas) y las tablas largas enseñan una o dos
+filas menos por pantalla. `list-table-grammar.spec.ts` lee el relleno del export (`kitPx`), alto y ancho, y no un
+número escrito: con 8 × 14 se pone rojo. Capturas de sc-docs y del Supervisor: las regenera el CI. Lo demás que el Kit
+dibuja distinto de Aura en la tabla (el hueco de la celda, 7 frente a 8; el filtro) no entra: lo lista `aura-diff`.
+DD-97 anotada; `figma-pendiente` §54, ficha 1, hecha en el prototipo.
+
+---
+
 ## DD-213 · 2026-10-19 — Abrir una ficha desde su listado entra por la primera sección, y la cifra lleva a la de trabajo
 
 **Contexto** · Desde DD-122 §8, el clic en la fila y «Editar» abrían la ficha de agente en Grupos asignados
@@ -6116,6 +6155,9 @@ paso inexistente, el test del mapa cae.
 **Consecuencias** · Con cada export, parity dice qué pendientes ya están alineados en Figma para quitar su
 fila; en las tres variables separadas, además, cambian sus `exp` a `…y`/`…x`. Baselines de estilos,
 estructura y capturas de sc-docs regeneradas en el mismo cambio. DD-87 punto 5 y DD-50 anotadas.
+
+> **Corregida en parte por DD-214** (2026-10-19): la tabla deja de ser Aura pura en el relleno. Cabecera, celdas y pie
+> leen el del Kit (10,5 × 14; sm 5,25 × 7; lg 14 × 17,5), que es el del DS de desarrollo.
 
 ---
 
