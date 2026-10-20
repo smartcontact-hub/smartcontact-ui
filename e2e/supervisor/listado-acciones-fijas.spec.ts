@@ -21,25 +21,26 @@ test('Columnas es un botón solo con icono y conteo accesible, conserva selecci�
   await forceLightTheme(page);
   await disableAnimations(page);
   await goto(page, 'admin/grupos');
-  // Nueve: «Asignar agentes» salió del listado y su acción va en la cifra de agentes (DD-159).
+  // Ocho: «Asignar agentes» salió del listado y su acción va en la cifra de agentes (DD-159), e «ID» también, aunque
+  // sigue en el Excel (SISMAC-4056, DD-218). La que sale oculta de primeras es «Estrategia de chat».
   const control = selector(page).getByRole('button');
-  await expect(control).toHaveAccessibleName('Columnas, 7 de 9');
+  await expect(control).toHaveAccessibleName('Columnas, 7 de 8');
   await expect(selector(page).locator('.sc-icon-font--view_column')).toHaveCount(1);
   await expect(control.locator('.p-button-label')).toHaveCount(0);
   await control.press('Enter');
   const lista = page.getByRole('dialog', { name: 'Columnas' });
-  await lista.getByRole('checkbox', { name: 'ID', exact: true }).click();
-  await expect(control).toHaveAccessibleName('Columnas, 8 de 9');
+  await lista.getByRole('checkbox', { name: 'Estrategia de chat', exact: true }).click();
+  await expect(control).toHaveAccessibleName('Columnas, 8 de 8');
   await page.keyboard.press('Escape');
   await expect(lista).toHaveCount(0);
   await page.reload();
-  await expect(selector(page).getByRole('button')).toHaveAccessibleName('Columnas, 8 de 9');
-  await expect(page.locator('thead th[data-field="code"]')).toBeVisible();
+  await expect(selector(page).getByRole('button')).toHaveAccessibleName('Columnas, 8 de 8');
+  await expect(page.locator('thead th[data-field="chatStrategy"]')).toBeVisible();
 });
 
 for (const oscuro of [false, true]) {
   // Desde DD-159 la única acción fija es el «⋮»: «Asignar» salió del listado (su acción va en la cifra de agentes).
-  test(`El menú fijo con ID, ancho arrastrado y fondos opacos · ${oscuro ? 'oscuro' : 'claro'}`, async ({ page }) => {
+  test(`El menú fijo con Estrategia de chat, ancho arrastrado y fondos opacos · ${oscuro ? 'oscuro' : 'claro'}`, async ({ page }) => {
     await (oscuro ? forceDarkTheme : forceLightTheme)(page);
     await disableAnimations(page);
     // A 1024 la tabla se desborda y el «⋮» va fijo con su sombra. A 1366 ya no: desde la revisión de producto del
@@ -47,9 +48,11 @@ for (const oscuro of [false, true]) {
     await page.setViewportSize({ width: 1024, height: 768 });
     await goto(page, 'admin/grupos');
     await selector(page).getByRole('button').click();
-    await page.getByRole('dialog', { name: 'Columnas' }).getByRole('checkbox', { name: 'ID', exact: true }).click();
+    // Con la columna que sale oculta de primeras, la tabla desborda (desde DD-218, sin «ID» en la tabla); se arrastra
+    // «Teléfono», que tiene sitio a su derecha para crecer.
+    await page.getByRole('dialog', { name: 'Columnas' }).getByRole('checkbox', { name: 'Estrategia de chat', exact: true }).click();
     await page.keyboard.press('Escape');
-    const cabecera = page.locator('th[data-field="code"]');
+    const cabecera = page.locator('th[data-field="phone"]');
     const tirador = await cabecera.locator('.p-datatable-column-resizer').boundingBox();
     expect(tirador).not.toBeNull();
     // Arranca en lo que mide su contenido (revisión de producto del 2026-10-15): se compara con lo de antes de arrastrar.
