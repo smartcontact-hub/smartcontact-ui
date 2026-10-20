@@ -119,6 +119,8 @@ export class GroupsListPageComponent {
   protected readonly channelKeys = CHANNEL_LABEL_KEYS;
   protected readonly groups = this.groupsStore.groups;
 
+  /** Filas marcadas: la lista las pinta y exportar las usa; sin barra de lote (DD-215). */
+  protected readonly selectedIds = signal<ReadonlySet<number>>(new Set());
   protected readonly renamingId = signal<number | null>(null);
   protected readonly columnPrefKey = COLUMN_PREF_KEY;
 
