@@ -8,6 +8,7 @@
  *      `gh run list|view|watch`, `gh pr checks`), bloquea con el comando exacto. Cuenta el push que
  *      CORRIÓ (su resultado no vino con error, o enseña el ref subido), con `git push` en posición de comando (no dentro de
  *      comillas ni del cuerpo de un heredoc) y en un árbol de ESTE repo: el de otro no tiene su CI.
+ *      Y sin push también: un «Rastro:» que dice verde sin leer el CI en ESE turno bloquea (`verdeSinLeer`).
  *   2. si en la sesión se invocó la skill `reflect` y quedan correcciones de ESTA sesión sin
  *      enrutar, bloquea con la lista y el `--enrutar` exacto. Reflexionar es decidir dónde va cada
  *      lección; sin la ruta escrita, «lo apunto en LEARNINGS» vuelve a valer como cierre y la
@@ -216,6 +217,50 @@ export function necesitaVeredicto(actos) {
   if (ultimoPush < 0) return false;
   return !lista.slice(ultimoPush + 1).some((a) => esLecturaCI(a.cmd));
 }
+
+// ── Un «verde» sin leer el CI ────────────────────────────────────────────────────────────
+
+/**
+ * El tramo del transcript desde el último mensaje que ESCRIBIÓ el usuario: lo que se hizo en este turno.
+ * Un `tool_result` también llega como `type: 'user'`, pero es la respuesta de una herramienta, no un turno.
+ */
+export function delTurno(jsonl) {
+  const lineas = jsonl.split('\n');
+  for (let i = lineas.length - 1; i >= 0; i--) {
+    if (!lineas[i].includes('"user"')) continue;
+    let ev;
+    try {
+      ev = JSON.parse(lineas[i]);
+    } catch {
+      continue;
+    }
+    if (ev?.type !== 'user') continue;
+    const c = ev?.message?.content;
+    const escrito = typeof c === 'string' || (Array.isArray(c) && c.some((b) => b?.type === 'text'));
+    if (escrito) return lineas.slice(i + 1).join('\n');
+  }
+  return jsonl;
+}
+
+const RASTRO = /rastro\s*\**\s*:\s*\**\s*(.*)$/im; // el mismo que la línea «Rastro» de `PARTE`
+const DICE_VERDE = /\b(verdes?|green|pass(?:ed|es)?)\b|✅/i;
+// Lo que la deja fuera: no hubo CI que leer, o lo que dice no es un verde.
+const NO_ES_VERDE = /sin\s+push|no\s+aplica|\b(rojos?|red|fail(?:ed|s)?|falla|fall[oó]|en\s+curso|in\s+progress|pendiente|pending)\b|❌/i;
+
+/**
+ * true si la línea «Rastro:» del cierre dice que el CI está verde y en ESTE turno no se leyó el CI
+ * (2026-10-20: «CI leído: verde, fundido» para un PR tras leer solo `gh pr view --json state,mergedAt`,
+ * con el CI de main rojo en el commit fundido). `necesitaVeredicto` solo lo pedía tras un push; un verde
+ * afirmado sin pushear pasaba. Lo leído en un turno anterior no vale: el verde se da sobre lo leído ahora.
+ */
+export function verdeSinLeer(mensaje, actosDelTurno) {
+  const rastro = RASTRO.exec(String(mensaje))?.[1] ?? '';
+  if (!DICE_VERDE.test(rastro) || NO_ES_VERDE.test(rastro)) return false;
+  return !actosDelTurno.map(comoActo).some((a) => esLecturaCI(a.cmd));
+}
+
+export const MOTIVO_VERDE_SIN_LEER =
+  'LEARNINGS #7 — el «Rastro:» dice que el CI está verde y en este turno no lo has leído. Léelo antes de afirmarlo: `npm run ci:verdict` (o, para lo que ya está fundido en main, `gh run list --branch main --workflow ci.yml`), y cuenta lo LEÍDO. Si no hubo CI que leer, dilo («sin push», «no aplica»).';
 
 /**
  * true si la skill `reflect` se invocó en la sesión: por herramienta (`Skill`) o porque el usuario
@@ -549,6 +594,8 @@ function main() {
       return bloquear(
         'LEARNINGS #7 — has pusheado y no has leído el veredicto del CI. Corre `npm run ci:verdict` (espera si está en curso; si está rojo, su pista dice dónde leer el fallo; si sale con 6 —"no tiene PR abierto"— no hay CI que esperar, ese aviso YA es la lectura: el `pull_request` que lo dispara llega al abrir el PR; si sale con 7 —"sin máquina"— no es un fallo del código: `npm run ci:verdict -- --relanzar` lo relanza una vez). Funciona igual en la nube: lee GitHub por `gh api`. Si aun así no puedes, léelo con las herramientas MCP de GitHub (`actions_list` de los runs de la rama, y los jobs si algo sale rojo). En los dos casos, cuéntale al usuario el resultado LEÍDO, no el exit del wrapper.',
       );
+
+    if (verdeSinLeer(ultimoMensaje(jsonl), actosBash(delTurno(jsonl)))) return bloquear(MOTIVO_VERDE_SIN_LEER);
 
     const sinRevisar = pantallasSinRevisar(jsonl);
     if (sinRevisar.length) return bloquear(motivoSinRevision(sinRevisar));
