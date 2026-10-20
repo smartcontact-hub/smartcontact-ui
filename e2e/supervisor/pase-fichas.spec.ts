@@ -1,6 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 
-import { disableAnimations, elegirTelefonoSaliente, forceLightTheme, goto, irASeccion } from './helpers';
+import { disableAnimations, forceLightTheme, goto, irASeccion } from './helpers';
 
 /**
  * EL PASE DE DISEÑO DE LAS FICHAS (DD-130).
@@ -14,7 +14,7 @@ import { disableAnimations, elegirTelefonoSaliente, forceLightTheme, goto, irASe
  *   · un usuario nuevo nace con lo mínimo: desde DD-132, la plantilla de Supervisor Offline (la supervisión, nada
  *     sensible); con DD-130 nacía sin ninguna casilla;
  *   · Distribución y colas lleva saltos a cada canal;
- *   · el icono de un aviso pesa lo que su texto;
+ *   · el icono de un aviso pesa lo que su texto (sin prueba desde DD-217: el resumen ya no lleva avisos);
  *   · en el listado de grupos, el botón de cada fila dice «Asignar».
  */
 
@@ -59,10 +59,9 @@ test.describe('la franja, por debajo de 1340', () => {
         )
       );
     // Teléfono, Chat, Email y los dos números, todos en Distribución (DD-204): Teléfono es un enlace como Chat desde
-    // DD-206 §1, y cada tipo de recurso, un botón que no es un `scFactRow` y queda fuera de la subrejilla a propósito
-    // (revisión de diseño, 2026-10-11: «quedan a su aire en su propia fila»). Sobre una lista vacía, «todos alineados»
-    // se cumpliría.
-    expect(xs).toHaveLength(5);
+    // DD-206 §1. Y las tres de Recursos (agendas y plantillas de chat y de email), que desde DD-217 son `scFactRow`
+    // como las de Distribución, en la misma vertical. Sobre una lista vacía, «todos alineados» se cumpliría.
+    expect(xs).toHaveLength(8);
     expect(new Set(xs).size, `x de cada valor: ${xs.join(', ')}`).toBe(1);
   });
 });
@@ -150,29 +149,6 @@ test('grupo 1 · con un solo canal no hay saltos', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/1?seccion=distribucion');
   await expect(page.locator('#group-section-distribution')).toBeVisible();
   await expect(page.getByRole('navigation', { name: 'Canales de esta sección' })).toHaveCount(0);
-});
-
-test('el icono de un aviso pesa lo que su texto semibold', async ({ page }) => {
-  // DD-147: el seed ya atiende las tres familias; se deja Chat sin agente para medir su aviso.
-  await page.addInitScript(() => {
-    localStorage.setItem('sc-group-agent-links-v', '1');
-    localStorage.setItem('sc-group-agent-links', JSON.stringify([
-      { agentId: 1, groupId: 11, channels: ['phone', 'email'], active: true },
-    ]));
-  });
-  await goto(page, 'admin/grupos/editar/11');
-  const avisos = page.locator('.ficha-summary .resumen__warn sc-icon .sc-icon');
-  await expect(avisos).toHaveCount(2);
-  for (const icono of await avisos.all()) await expect(icono).toHaveClass(/sc-icon--weight-600/);
-  // «Falta» y «Listo para crear» (DD-136), los dos en semibold con su icono a 600.
-  await goto(page, 'admin/grupos/crear');
-  const estado = page.locator('.resumen__status sc-icon .sc-icon');
-  await expect(estado).toHaveClass(/sc-icon--weight-600/);
-  await page.locator('#group-name').fill(`E2E Peso ${Date.now()}`);
-  // Con Teléfono, «Listo» espera también al teléfono saliente (DD-142).
-  await elegirTelefonoSaliente(page);
-  await expect(page.locator('.resumen__status--ready')).toBeVisible();
-  await expect(estado).toHaveClass(/sc-icon--weight-600/);
 });
 
 // DD-159: «Asignar» salió de la fila; la cifra de agentes es la que abre la asignación, y su nombre lo dice.

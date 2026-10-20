@@ -1,11 +1,10 @@
-import { ChangeDetectionStrategy, Component, computed, HostListener, inject, signal, type OnInit, type TemplateRef, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, HostListener, inject, Injector, type OnInit, signal, type TemplateRef, viewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   ScButtonComponent as ButtonComponent,
   ScDialogComponent as DialogComponent,
   ScInputTextComponent as InputTextComponent,
-  ScMessageComponent as MessageComponent,
   ScSectionCardComponent as SectionCardComponent,
 } from '@smartcontact-hub/components';
 
@@ -49,6 +48,7 @@ import { GroupsStore } from '@features/admin/groups/state/groups.store';
 import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links.store';
 import { AgendasStore, type AgendaContact } from '../state/agendas.store';
 import { ResultadoAccionService } from '@core/services';
+import { llegarAAncla, ocasionDeAvisar } from '@shared/utils/alta-secciones';
 
 interface AgendaDraft {
   readonly name: string;
@@ -78,7 +78,6 @@ const VACIA: AgendaDraft = { name: '', description: '', contacts: [], customLabe
     DialogComponent,
     ImportDialogComponent,
     InputTextComponent,
-    MessageComponent,
     RepoFormPanelComponent,
     SectionCardComponent,
     TranslateModule,
@@ -99,6 +98,7 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
   private readonly language = inject(LanguageService);
   private readonly lang = injectLangChange();
 
+  private readonly injector = inject(Injector);
   private readonly topbarActions = viewChild<TemplateRef<unknown>>('topbarActions');
 
   constructor() {
@@ -133,16 +133,24 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
     return !!name && this.store.items().some((a) => a.id !== this.agendaId && a.name.trim().toLowerCase() === name);
   });
 
-  /** Por qué no se puede guardar, dicho en la barra como en las fichas: falta el nombre, o ya lo tiene otra agenda. */
-  protected readonly blockedReason = computed<string | null>(() => {
+  /*
+   * Lo que falta se dice al pulsar «Crear …» o «Guardar» (DD-217, como en las fichas): el botón no se apaga por ello ni
+   * lleva motivo al lado; al pulsar sin nombre, lo dice su campo y le da el foco. Un nombre repetido se dice en vivo.
+   */
+  private readonly faltas = computed<readonly string[]>(() => (this.form().name.trim() ? [] : ['repositories.errors.name_required']));
+  private readonly ocasion = ocasionDeAvisar({
+    editando: () => this.mode() === 'edit',
+    cambios: () => this.formDirty(),
+    faltas: this.faltas,
+  });
+  protected readonly nameError = computed<string | undefined>(() => {
     this.lang();
-    if (!this.form().name.trim()) {
-      return this.translate.instant('common.summary_missing', { items: this.translate.instant('common.summary_missing_name') });
-    }
-    return this.nameTaken() ? this.translate.instant('repositories.agendas.errors.name_taken') : null;
+    if (this.nameTaken()) return this.translate.instant('repositories.agendas.errors.name_taken');
+    const falta = this.faltas()[0];
+    return falta && this.ocasion.acusa(falta) ? this.translate.instant(falta) : undefined;
   });
 
-  protected readonly canSave = computed(() => !this.blockedReason() && (this.mode() === 'create' || this.formDirty()));
+  protected readonly canSave = computed(() => this.mode() === 'create' || this.formDirty());
 
   ngOnInit(): void {
     const raw = this.route.snapshot.paramMap.get('id');
@@ -178,6 +186,12 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
 
   protected save(): void {
     if (!this.canSave()) return;
+    if (this.faltas().length > 0 || this.nameTaken()) {
+      this.ocasion.intentar();
+      llegarAAncla('agenda-name', this.injector);
+      return;
+    }
+    this.ocasion.olvidar();
     const f = this.form();
     const draft = { ...f, name: f.name.trim(), description: f.description.trim() };
     // Lo de la agenda y a quién se asigna se guardan en sitios distintos: los grupos y los agentes llevan sus agendas.
@@ -223,6 +237,7 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
 
   protected discard(): void {
     this.form.set(this.dirtyState.pristineValue());
+    this.ocasion.olvidar();
   }
 
   /* ── Contactos ────────────────────────────────────────────────────────── */

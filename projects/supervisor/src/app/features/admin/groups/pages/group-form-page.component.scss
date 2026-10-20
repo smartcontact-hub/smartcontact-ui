@@ -130,15 +130,8 @@
   padding-inline-start: calc(var(--sc-cmp-toggleswitch-width) + var(--sc-spacing-1-143));
 }
 
-/* Bajo la tipificación elegida, qué es y «Ver detalle», en una línea si cabe. */
+/* Bajo la tipificación elegida, «Ver detalle». */
 .wrapup__detail {
   display: flex;
   align-items: baseline;
-  flex-wrap: wrap;
-  column-gap: var(--sc-spacing-0-5);
-}
-
-.wrapup__description {
-  margin: 0;
-  color: var(--sc-text-secondary);
 }

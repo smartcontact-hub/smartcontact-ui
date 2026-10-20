@@ -55,6 +55,25 @@ El de la ficha de agente con salientes en un desplegable (2026-10-15, DD-209, #4
 y Repositorios (2026-10-15, DD-210, #426, sin trampas propias): `git show 840fe501:docs/handoff/supervisor-fichas.md`.
 El de la revisión de producto del 2026-10-16 (DD-211): `git show bacaf233:docs/handoff/supervisor-fichas.md`; su trampa
 sube a «Trampas del frente».
+El de «Agentes» sin fijar y el tooltip del Kit (2026-10-19, DD-212, #456 y #462): `git show
+e88a52f7:docs/handoff/supervisor-fichas.md`; sus trampas suben a «Trampas del frente».
+
+## ✅ 2026-10-20 · Lo que falta se dice al pulsar Crear, grupos sin canales, duplicar sin diálogo, Recursos en chips y el punto final (DD-217)
+
+> **Sello:** rama `areses/error-handling-groups-index-4805b9` sobre `main` `2b9f99b8`, un PR.
+
+- **Índice**: «Crear» siempre activo; al pulsarlo con algo pendiente, cada campo lo dice, el índice pone el texto bajo
+  su sección (`sectionErrorHints`, DS) y se llega al primero. El ✓ con firma: se va si otra sección le cambia los
+  canales. Sin puertas. Reglas puras en `alta-secciones.core.mjs`, con su test. En grupo, agente, usuario y tipificación.
+- **Fuera**: `sc-summary-status`, el motivo junto al botón, los amarillos de las fichas y `group-duplicate-dialog`.
+- **Grupo**: canales opcionales (sin canales se pertenece sin canal); quitar y poner un canal ya no recorta los enlaces
+  (`linksVistos`); duplicar en el acto como «X (1)» (`nombreDeCopia`); Recursos en chips sin «+» ni lápiz, la «×» en
+  rojo al pasar (`sc-multiselect`, DS); el resumen de Recursos lleva a su campo; la tipificación sin descripción.
+- **Segunda vuelta**: Recursos a media columna, chips que caben (`fit`, el largo con «…»), tooltip con lo que contiene
+  en las tres listas (§15); editores sin «Falta»; punto final (`i18n:check` I); barrido (§13); rótulos por `[label]`,
+  también en `sc-textarea`, e interruptores con `<label for>` (§16); fuera `recurso-dialog` y `template-form-panel`.
+- **Pendiente**: Figma (§55); un PR con lo que queda a nativo (`p-checkbox`, `p-inputnumber`, `sc-avatar`, ayuda de
+  `sc-fileupload`); del barrido, el nombre en cabecera, las cabeceras de asignación y «Ver detalle».
 
 ## ✅ 2026-10-19 · Grupos y Agentes, como en Figma: sin edición masiva, y borrar con la confirmación simple (DD-215)
 
@@ -94,20 +113,6 @@ sube a «Trampas del frente».
 - **Trampas**: un marco de documentación a HUG estira las variantes FILL y cambia el maestro. En otro fichero, busca
   por la clave del maestro. «El Aura» son dos: el de PrimeNG 22 sin escalar (8 × 14) y el de los devs (10,5 × 14). Cambiar de variante la pieza de fuera
   rehace las de dentro (ve de dentro afuera) y a un resumen le borra los datos: una propiedad no.
-
-## ✅ 2026-10-19 · Grupos: «Agentes» sin fijar y «—» con 0 agentes; el tooltip del Kit; las tres congeladas, al día con `main`
-
-> **Sello:** #456 (fundido en `6edc21e9`) y la rama `areses/tooltips-y-duplicar` sobre él, otro PR.
-
-- **Grupos** (DD-159): «Agentes» sin candado en «Columnas»; con 0, `sc-group-popover` en `count` pinta «—» y sigue
-  siendo el botón que abre el panel (también Servicios con 0). Agentes sin grupos ya salía «—» (DD-210).
-- **Tooltip del Kit (DD-212)**: 39 `title` nativos a `pTooltip` (lo cortado, con `showOnEllipsis`); Monitor, Conversaciones
-  y `sc-tag` en #462, regla 9 sin trinquete, y ficha en sc-docs con su API nativa (`NATIVOS_ADOPTADOS`).
-- **Prioridad**: «Solo para las conversaciones entrantes.». **Duplicar sin Call Blending**, sin el teléfono saliente:
-  anotado en `figma-pendiente` §50. Pruebas: `panel-agentes-grupo`, `columnas-en-una-lista`, `tooltips-del-kit`; rojas sin.
-- **Trampas**: `sc-docs-a11y` medía la ficha anterior con el nombre de la siguiente (ya espera). En el panel de navegador
-  oculto el router se queda en blanco: mide con Playwright. Un ratón en (2, 2) abre el sidebar y tapa Nombre.
-- **Congeladas** 4058, 4062 y 4064, a todo lo de `main`: rama y etiqueta avanzan al commit fundido (`docs/PROTOTIPOS.md`).
 
 ## ✅ 2026-10-18 y 19 · Grupos y agentes en Figma para desarrollo: listado, altas, ediciones y su hand-off
 
@@ -243,6 +248,11 @@ sube a «Trampas del frente».
   repinta las casillas (por eso el árbol de agendas pinta las suyas). Un toast en la pila de capas de PrimeNG
   (`autoZIndex`) le quita el Esc a un `p-dialog` abierto. En la nube, reinicia el `ng serve` de :4405 por su pid antes
   de fiarte de un e2e (`lsof -nP -iTCP:4405 -sTCP:LISTEN`; un `pkill -f` con el patrón en la orden se mata a sí mismo).
+- **En el panel del navegador oculto el router se queda en blanco**: mide con Playwright. Un ratón en (2, 2) abre el
+  sidebar y tapa Nombre. `sc-docs-a11y` medía la ficha anterior con el nombre de la siguiente (ya espera) (DD-212).
+- **El rojo de una ficha se decide en un sitio** (DD-217): `ocasionDeAvisar` apunta lo que faltaba al pulsar
+  (`intentar`) y lo calla al guardar o deshacer (`olvidar`). Un aviso nuevo pasa por `ocasion.acusa(falta)` y entra en
+  `avisos` con su sección, su texto y su ancla, o el índice no lo dice y el salto no llega.
 - **`p-select` no acepta que le cambies el valor dentro de su propio `onChange`**: para devolverlo (Ring All a 2) hace
   falta `setTimeout(() => select.value.set(2))`. Y un `ng serve` que pilla `dist/` a medio construir se queda en error
   aunque el build acabe: reinícialo.

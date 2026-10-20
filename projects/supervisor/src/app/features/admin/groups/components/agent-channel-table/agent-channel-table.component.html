@@ -5,9 +5,6 @@
       (valueChange)="filter.set($any($event))" [allowEmpty]="false" ariaLabelledBy="group-assignment-filter" />
     <sc-search class="assign__search" [placeholder]="'groups.form.assigned.query_placeholder' | translate"
       [clearAriaLabel]="'labels.clear_search' | translate" [value]="query()" (valueChange)="query.set($event)" />
-    @if (zeroChannelCount() > 0) {
-      <sc-tag severity="warn" icon="warning" [value]="'groups.form.assigned.no_channels_warn' | translate: { count: zeroChannelCount() }" />
-    }
   </div>
   <span class="visually-hidden" aria-live="polite">{{ announcement() }}</span>
   <!-- En la ficha mide lo que todas sus filas, con el pie de la pantalla de tope: al filtrar o buscar no encoge (no baila),
@@ -95,9 +92,6 @@
       @if (row.agent.email) { <span class="assign__email sc-text-caption-regular" [pTooltip]="row.agent.email" showOnEllipsis tooltipPosition="top">{{ row.agent.email }}</span> }
       @if (!compatible(row.agent)) { <span class="sc-text-caption-regular">{{ 'groups.form.assigned.incompatible' | translate }}</span> }
     </span>
-    @if (row.link && row.link.channels.length === 0) {
-      <sc-tag severity="warn" icon="warning" [value]="'groups.form.summary.no_channels' | translate" />
-    }
   </span>
 </ng-template>
 
@@ -163,11 +157,23 @@
 <!-- Habilitado lo cambia el supervisor también con «Activación por grupo», que deja al agente hacerlo y no se lo quita a
      la ficha (revisión del 2026-10-14, que corrige el candado de DD-187 §2). -->
 <ng-template #activeTpl let-row>
-  <sc-toggleswitch
-    [checked]="row.link?.active ?? false"
-    [disabled]="!row.link || pending()"
-    [size]="compact() ? 'sm' : 'md'"
-    [ariaLabel]="'groups.form.assigned.active_aria' | translate: { name: row.agent.name }"
-    (checkedChange)="toggleActive(row.agent.id, $event)"
-  />
+  @if (!row.link) {
+    <!-- Sin asignar: el interruptor apagado dice por qué, como en la tabla de grupos del agente (barrido de consistencia). -->
+    <sc-toggleswitch
+      [checked]="false"
+      [disabled]="true"
+      [size]="compact() ? 'sm' : 'md'"
+      [ariaLabel]="'groups.form.assigned.not_assigned_hint' | translate: { name: row.agent.name }"
+      [pTooltip]="'groups.form.assigned.not_assigned_hint' | translate: { name: row.agent.name }"
+      tooltipPosition="top"
+    />
+  } @else {
+    <sc-toggleswitch
+      [checked]="row.link.active"
+      [disabled]="pending()"
+      [size]="compact() ? 'sm' : 'md'"
+      [ariaLabel]="'groups.form.assigned.active_aria' | translate: { name: row.agent.name }"
+      (checkedChange)="toggleActive(row.agent.id, $event)"
+    />
+  }
 </ng-template>

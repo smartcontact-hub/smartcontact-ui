@@ -1,10 +1,7 @@
 <div class="identity-fields grid" [class.grid--3]="!apilada()" [class.identity-fields--apilada]="apilada()">
   <div class="field">
-    <label class="field__label sc-text-caption-semibold" [for]="idPrefix() + '-name'">
-      {{ 'groups.form.fields.name' | translate }}
-      <span class="field__required" aria-hidden="true">*</span>
-    </label>
     <sc-inputtext
+      [label]="'groups.form.fields.name' | translate"
       [inputId]="idPrefix() + '-name'"
       autocomplete="off"
       [required]="true"
@@ -18,13 +15,9 @@
   @if (hasPhone()) {
     <div class="field">
       <!-- Obligatorio con Teléfono y de los números asignados, como en la ficha (DD-142). -->
-      <label [id]="idPrefix() + '-phone-label'" class="field__label sc-text-caption-semibold" [for]="idPrefix() + '-phone'">
-        {{ 'groups.form.fields.phone' | translate }}
-        <span class="field__required" aria-hidden="true">*</span>
-      </label>
       <sc-select
+        [label]="'groups.form.fields.phone' | translate"
         [inputId]="idPrefix() + '-phone'"
-        [ariaLabelledBy]="idPrefix() + '-phone-label'"
         required
         [options]="phoneOptions()"
         [value]="phone() || null"
@@ -39,12 +32,9 @@
   <div class="field">
     <!-- `for` no nombra un `span[role=combobox]`: sin `ariaLabelledBy`, el lector leía el valor («Baja») como nombre del
          campo. La ayuda sale del manual de usuario de Voice (DD-133). -->
-    <label [id]="idPrefix() + '-priority-label'" class="field__label sc-text-caption-semibold" [for]="idPrefix() + '-priority'">
-      {{ 'groups.form.fields.priority' | translate }}
-    </label>
     <sc-select
+      [label]="'groups.form.fields.priority' | translate"
       [inputId]="idPrefix() + '-priority'"
-      [ariaLabelledBy]="idPrefix() + '-priority-label'"
       [options]="priorities"
       [value]="priority()"
       [helperText]="'groups.form.fields.priority_hint' | translate"

@@ -3,7 +3,7 @@ import { expect, test, type Locator, type Page } from '@playwright/test';
 import { disableAnimations, forceLightTheme, goto, irASeccion, pickSelectOption } from './helpers';
 
 /**
- * EN EL ALTA, ✓ EN TODA SECCIÓN QUE SE DEJA COMPLETA, Y EL TELÉFONO SALIENTE ES PUERTA (DD-158, DD-211 §6).
+ * EN EL ALTA, ✓ EN TODA SECCIÓN QUE SE DEJA COMPLETA (DD-158, DD-211 §6), Y SIN PUERTAS (DD-217).
  *
  * La revisión de producto del 2026-10-04 pidió tres cosas del alta:
  *   1. el ✓ solo donde había algo obligatorio (DD-158). La revisión del 2026-10-16 lo cambia (DD-211 §6): lo lleva toda
@@ -11,9 +11,9 @@ import { disableAnimations, forceLightTheme, goto, irASeccion, pickSelectOption 
  *      grupo, Configuración y Recursos del agente, Acceso del usuario): el índice dice por dónde se ha pasado ya. Las
  *      que tienen algo obligatorio, solo completas: General y, con Teléfono, Distribución y colas; en el agente,
  *      General y Grupos;
- *   2. con Teléfono, no se sale de Distribución y colas sin teléfono saliente, como no se sale de General sin nombre:
- *      son los dos controles del alta. Se puede volver a General, donde se quita Teléfono; y saltar desde el índice a
- *      Recursos o a Agentes lleva a Distribución, a decir lo que falta;
+ *   2. con Teléfono, no se salía de Distribución y colas sin teléfono saliente, como no se salía de General sin nombre.
+ *      DD-217 quita las dos puertas: se sale, sin ✓ ni rojo, y lo que falta se dice al pulsar «Crear grupo»
+ *      (`indice-errores`);
  *   3. «Atrás» y «Siguiente», como en el Stepper vertical de primeng.dev con los botones del DS: juntos a la
  *      izquierda, «Atrás» secundario y «Siguiente» el principal, rellenos y sin icono.
  */
@@ -38,27 +38,22 @@ async function grupoConNombre(page: Page): Promise<void> {
   await expect(actual(page)).toContainText('Distribución y colas');
 }
 
-test('grupo · sin teléfono saliente no se sale de Distribución y colas; a General, sí', async ({ page }) => {
+test('grupo · sin teléfono saliente se sale de Distribución y colas, sin ✓ ni rojo (DD-217)', async ({ page }) => {
   await grupoConNombre(page);
 
-  // Ni con «Siguiente» ni con el índice: lo dice el campo.
-  await siguiente(page).click();
-  await expect(actual(page)).toContainText('Distribución y colas');
-  await expect(page.locator('#group-channel-phone')).toContainText('El teléfono saliente es obligatorio');
-  await fila(page, 'Agentes').click();
-  await expect(actual(page)).toContainText('Distribución y colas');
-  await fila(page, 'Recursos').click();
-  await expect(actual(page)).toContainText('Distribución y colas');
-
-  // A General sí: es donde se quita Teléfono. Y desde General, saltar más allá lleva a Distribución.
-  await atras(page).click();
-  await expect(actual(page)).toContainText('General');
-  await fila(page, 'Agentes').click();
-  await expect(actual(page)).toContainText('Distribución y colas');
-
-  await pickSelectOption(page, page.locator('sc-select').filter({ has: page.locator('#group-phone') }), /./);
+  // Con «Siguiente» y con el índice: sin puerta, y nada lo dice hasta pulsar «Crear grupo».
   await siguiente(page).click();
   await expect(actual(page)).toContainText('Recursos');
+  await expect(fila(page, 'Distribución y colas')).not.toHaveAccessibleName(/completa|obligatori/);
+  await expect(page.locator('sc-form-section-nav .form-nav__item--has-error')).toHaveCount(0);
+  await fila(page, 'Agentes').click();
+  await expect(actual(page)).toContainText('Agentes');
+
+  // Con el número, al volver a dejarla, ✓.
+  await irASeccion(page, 'Distribución y colas');
+  await pickSelectOption(page, page.locator('sc-select').filter({ has: page.locator('#group-phone') }), /./);
+  await siguiente(page).click();
+  await expect(fila(page, 'Distribución y colas')).toHaveAccessibleName(completa);
 });
 
 test('grupo · ✓ en toda sección que se deja completa: General y Distribución, y también Recursos y Agentes (DD-211 §6)', async ({ page }) => {

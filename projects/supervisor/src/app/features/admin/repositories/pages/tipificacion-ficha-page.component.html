@@ -1,8 +1,7 @@
-<!-- Guardar y Deshacer suben a la barra, como en las fichas: lo que falta, dicho al lado y solo cuando falta algo. -->
+<!-- Guardar y Deshacer suben a la barra, como en las fichas. Lo que falta lo dicen su campo y el índice al pulsar
+     (DD-217). -->
 <ng-template #topbarActions>
-  @if (blockedReason(); as reason) {
-    <span class="form-save-reason sc-text-caption-regular">{{ reason }}</span>
-  } @else if (mode() === 'edit' && formDirty()) {
+  @if (mode() === 'edit' && formDirty()) {
     <span class="form-save-reason sc-text-caption-regular" role="status">{{ 'common.unsaved_changes' | translate }}</span>
   }
   @if (formDirty()) {
@@ -33,6 +32,7 @@
         [activeId]="activeSection()"
         [labelKey]="'common.form_index_aria'"
         [sectionsWithErrors]="sectionsWithErrors()"
+        [sectionErrorHints]="sectionErrorHints()"
         [sectionsWithChanges]="sectionsWithChanges()"
         [sectionsDone]="alta.hechas()"
         [flush]="true"
@@ -96,13 +96,13 @@
             {{ 'repositories.columns.name' | translate }}
             <span class="field__required" aria-hidden="true">*</span>
           </label>
-          <!-- Un nombre repetido marca el campo y lo dice la barra: sin línea de error que empuje lo de debajo. -->
+          <!-- Un nombre repetido, en vivo; vacío, al pulsar Crear o Guardar (DD-217). -->
           <sc-inputtext
             inputId="tip-name"
             [required]="true"
             [placeholder]="'repositories.tipificaciones.name_placeholder' | translate"
             [value]="form().name"
-            [invalid]="nameTaken()"
+            [error]="nameError()"
             (valueChange)="update('name', $event)"
           />
         </div>

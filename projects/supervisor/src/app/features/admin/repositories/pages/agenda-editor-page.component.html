@@ -1,9 +1,7 @@
-<!-- Guardar y Deshacer suben a la barra de arriba, como en las fichas: el motivo, visible y solo cuando falta algo;
-     «Deshacer», solo si hay algo que deshacer. -->
+<!-- Guardar y Deshacer suben a la barra de arriba, como en las fichas: sin motivo al lado (lo que falta lo dice su campo
+     al pulsar, DD-217); «Deshacer», solo si hay algo que deshacer. -->
 <ng-template #topbarActions>
-  @if (blockedReason(); as reason) {
-    <span class="form-save-reason sc-text-caption-regular">{{ reason }}</span>
-  } @else if (mode() === 'edit' && formDirty()) {
+  @if (mode() === 'edit' && formDirty()) {
     <span class="form-save-reason sc-text-caption-regular" role="status">{{ 'common.unsaved_changes' | translate }}</span>
   }
   @if (formDirty()) {
@@ -34,7 +32,7 @@
               [label]="'repositories.columns.name' | translate"
               [placeholder]="'repositories.agendas.name_placeholder' | translate"
               [value]="form().name"
-              [error]="nameTaken() ? ('repositories.agendas.errors.name_taken' | translate) : undefined"
+              [error]="nameError()"
               (valueChange)="update('name', $event)"
             />
           </div>

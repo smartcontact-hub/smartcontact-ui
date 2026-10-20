@@ -710,20 +710,16 @@ export const FACTORY_GROUP_DEFAULTS: GroupDefaults = {
   },
 };
 
-/** Lo que pide el diálogo de duplicar: lo que identifica al duplicado. Un grupo NUEVO nace en su propia ficha,
- *  en modo alta, con los valores de Contact Center › Grupos (DD-121, DD-135). */
-export interface GroupIdentityDraft {
-  readonly name: string;
-  readonly phone: string;
-  readonly priority: GroupPriority;
-}
-
 /**
- * Duplicado: TODO lo del original, canales incluidos, con los datos que se hayan puesto en el diálogo.
- * El diálogo propone el nombre «… (copia)» y deja vacío el teléfono asociado: identifica al grupo, y dos
- * grupos no deben sacar el mismo número a la calle.
+ * Duplicado (revisión de producto del 2026-10-20, DD-217): TODO lo del original, canales, ajustes y teléfono saliente
+ * incluidos, salvo lo que el funcional dice que no se copia: los servicios, los dominios del script de chat (el script
+ * cambia con el grupo) y el número de WhatsApp, que se elige otra vez. Sin diálogo: se crea en el acto con
+ * `nombreDeCopia` y se abre su edición.
  */
-export function duplicateGroupDraft(source: Group, identity: GroupIdentityDraft): Omit<Group, 'id' | 'code'> {
+export function duplicateGroupDraft(source: Group, name: string): Omit<Group, 'id' | 'code'> {
   const { id: _id, code: _code, services: _services, ...rest } = source;
-  return { ...rest, ...identity };
+  const advanced = rest.advanced ? { ...rest.advanced, allowedDomains: [], whatsappNumber: '' } : rest.advanced;
+  // La postconversación de los grupos de la demo vive aparte, por id (`SEED_WRAP_UP`): la copia, con otro id, la
+  // perdía. Se copia la que se ve.
+  return { ...rest, name, advanced, wrapUp: resolveGroup(source).wrapUp };
 }

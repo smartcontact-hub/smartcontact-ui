@@ -8,6 +8,8 @@ import {
   flat,
   localesClavados,
   vars,
+  papelesDeTexto,
+  fueraDePunto,
 } from '../i18n-check.mjs';
 
 // Las seis funciones son PURAS sobre el texto → fixtures directos, sin tocar el disco.
@@ -133,4 +135,26 @@ test('H · verde si lee el idioma dentro, y un computed sin instant no cuenta', 
   const sinTraducir = `readonly total = computed(() => this.rows().length);`;
   assert.deepEqual(computedsSinIdioma(lee), []);
   assert.deepEqual(computedsSinIdioma(sinTraducir), []);
+});
+
+test('I · papeles: la ayuda bajo el campo y el subtítulo bajo el título, cada uno en su sitio', () => {
+  const html = `
+    <sc-subsection titleKey="g.title" hintKey="g.sub"></sc-subsection>
+    <p class="sub-section__hint sc-text-caption-regular">{{ 'g.sub_mano' | translate }}</p>
+    <sc-inputnumber [helperText]="x ? ('g.ayuda' | translate) : undefined" />
+    <p class="field__help sc-text-caption-regular">{{ 'g.help' | translate }}</p>
+    <p class="switch-field__hint">{{ 'g.casilla' | translate }}</p>
+    <ng-container *ngTemplateOutlet="tpl; context: { label: 'g.rotulo', help: 'g.compartida' }" />`;
+  const { subtitulos, ayudas } = papelesDeTexto(html);
+  assert.deepEqual([...subtitulos].sort(), ['g.sub', 'g.sub_mano']);
+  assert.deepEqual([...ayudas].sort(), ['g.ayuda', 'g.casilla', 'g.compartida', 'g.help']);
+});
+
+test('I · punto final: la ayuda lo lleva; el subtítulo, una frase y sin él', () => {
+  assert.equal(fueraDePunto('Tiempo que espera el agente entre una conversación y otra', 'ayuda'), 'ayuda sin punto final');
+  assert.equal(fueraDePunto('El número que ve el cliente cuando le llaman.', 'ayuda'), null);
+  assert.equal(fueraDePunto('Valen para todos los canales del grupo.', 'subtitulo'), 'subtítulo con punto final');
+  assert.equal(fueraDePunto('Al menos uno. Por los que puede atender', 'subtitulo'), 'subtítulo de dos frases');
+  assert.equal(fueraDePunto('Nombre, prioridad, canales y postconversación', 'subtitulo'), null);
+  assert.equal(fueraDePunto('Sus mensajes y su horario; un mensaje vacío no se envía', 'subtitulo'), null);
 });

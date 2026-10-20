@@ -320,10 +320,13 @@ export class AgentChannelTableComponent {
       return { agent, link: link ? clampLinksToChannels([link], this.groupChannels(), () => agent.allowedChannels)[0] : null };
     });
   });
-  protected readonly zeroChannelCount = computed(() => this.links().filter(link => link.channels.length === 0).length);
-
+  /**
+   * Se puede asignar si atiende algún canal del grupo. En un grupo sin canales (DD-217) se pertenece sin canal: todos.
+   * Sin los avisos amarillos de «Sin canales» (DD-217): en un grupo con canales, el último no se quita aquí
+   * (`isLastChannel`), y quien se queda sin ninguno porque el grupo los quitó sale al guardar, con su confirmación.
+   */
   protected compatible(agent: AgentChannelTableAgent): boolean {
-    return permittedFamilies(this.groupChannels(), agent.allowedChannels).length > 0;
+    return this.groupChannels().length === 0 || permittedFamilies(this.groupChannels(), agent.allowedChannels).length > 0;
   }
 
   /** Las columnas con casilla de «todos» en la cabecera: Asignado, cada canal y Habilitado (DD-180). */

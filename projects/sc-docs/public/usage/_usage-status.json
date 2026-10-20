@@ -600,12 +600,8 @@
       "usedInSupervisor": 1
     },
     {
-      "selector": "sc-icon-tile",
-      "usedInSupervisor": 2
-    },
-    {
       "selector": "sc-inline-rename-cell",
-      "usedInSupervisor": 4
+      "usedInSupervisor": 2
     },
     {
       "selector": "sc-inputtags",
@@ -637,7 +633,7 @@
     },
     {
       "selector": "sc-subsection",
-      "usedInSupervisor": 18
+      "usedInSupervisor": 19
     },
     {
       "selector": "sc-tabs",
@@ -645,7 +641,7 @@
     },
     {
       "selector": "sc-textarea",
-      "usedInSupervisor": 8
+      "usedInSupervisor": 7
     }
   ]
 }

@@ -20,8 +20,9 @@ import { goto, pickSelectOption } from './helpers';
  *        de su borde a lo primero y lo último que tiene, no llega a 7 (DD-125).
  *
  * DÓNDE: cada ruta del Supervisor con cada pestaña o sección de su índice (también en las altas), el acceso, los diálogos
- * de alta que abre la acción «Nuevo…/Crear/Añadir» de cada lista, y «Duplicar» de un grupo. Una
- * pantalla o un diálogo nuevos entran solos si cuelgan de esas rutas o de esa acción.
+ * de alta que abre la acción «Nuevo…/Crear/Añadir» de cada lista. Una pantalla o un diálogo nuevos entran solos si
+ * cuelgan de esas rutas o de esa acción. «Duplicar» un grupo abría un diálogo hasta DD-217; ahora lleva a la ficha de la
+ * copia, que se mide con las demás fichas.
  *
  * QUÉ NO VE: la agrupación de lo que no es un campo, una opción o un botón (tarjetas, títulos con su
  * texto, celdas de tabla). Esos huecos siguen siendo juicio: la revisión previa a enseñar una
@@ -238,14 +239,3 @@ for (const ruta of ALTAS) {
     cuadrar(await medirVista(page, `${ruta} · alta`));
   });
 }
-
-test('agrupación · duplicar un grupo', async ({ page }) => {
-  await goto(page, 'admin/grupos');
-  await page.waitForLoadState('networkidle');
-  await page.locator('tbody tr').first().locator('button').last().click();
-  const duplicar = page.locator('.p-menu-item, [role="menuitem"]').filter({ hasText: /duplicar/i }).first();
-  await expect(duplicar).toBeVisible();
-  await duplicar.click();
-  await expect(page.locator('[role="dialog"]:visible, .p-dialog:visible').first()).toBeVisible();
-  cuadrar(await medirVista(page, 'admin/grupos · duplicar'));
-});

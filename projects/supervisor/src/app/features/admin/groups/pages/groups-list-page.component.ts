@@ -9,13 +9,13 @@ import { ResultadoAccionService, XlsxExportService } from '@core/services';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { injectLangChange } from '@core/utils/lang-change';
 import { CeldaVaciaComponent, ChannelIconComponent, ListPageComponent } from '@shared/components';
+import { nombreDeCopia } from '@shared/utils/copy-name';
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
 import {
   type ScColumnCellContext,
   ColumnDef,
   type ScColumnDef,
   ScEmptyStateComponent as EmptyStateComponent,
-  ScInlineRenameCellComponent as InlineRenameCellComponent,
   ScTagComponent as TagComponent,
   ScGroupPopoverComponent as GroupPopoverComponent,
 } from '@smartcontact-hub/components';
@@ -29,14 +29,11 @@ import {
   chatStrategyOf,
   compareChannels,
   duplicateGroupDraft,
-  type GroupIdentityDraft,
   phoneStrategyOf,
   priorityRank,
-  OUTBOUND_NUMBERS,
 } from '../data/groups-data';
 import { GroupsStore } from '../state/groups.store';
 import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links.store';
-import { GroupDuplicateDialogComponent } from '../components/group-duplicate-dialog/group-duplicate-dialog.component';
 import { GroupAgentsPanelComponent } from '../components/group-agents-panel/group-agents-panel.component';
 import { injectConfirmarBorrado } from '@features/admin/services/confirmar-borrado';
 import { TooltipModule } from 'primeng/tooltip';
@@ -59,10 +56,8 @@ const COLUMN_PREF_KEY = 'sc-groups-columns-v4';
     TagComponent,
     EmptyStateComponent,
     GroupPopoverComponent,
-    GroupDuplicateDialogComponent,
     GroupAgentsPanelComponent,
     IconComponent,
-    InlineRenameCellComponent,
     ListPageComponent,
     TranslateModule,
   ],
@@ -121,7 +116,6 @@ export class GroupsListPageComponent {
 
   /** Filas marcadas: la lista las pinta y exportar las usa; sin barra de lote (DD-215). */
   protected readonly selectedIds = signal<ReadonlySet<number>>(new Set());
-  protected readonly renamingId = signal<number | null>(null);
   protected readonly columnPrefKey = COLUMN_PREF_KEY;
 
   protected readonly columnDefs = computed<readonly ColumnDef[]>(() => {
@@ -188,7 +182,7 @@ export class GroupsListPageComponent {
 
   /* ── La tabla, ahora `sc-datatable` (B4) ──────────────────────────────
    * Todas las celdas son composiciones propias de la página (avatar + nombre
-   * o `sc-inline-rename-cell`, chips de canal, `sc-label` de prioridad,
+   * nombre, chips de canal, `sc-label` de prioridad,
    * kebab), así que van por `cellTemplate`: el DS no conoce el tipo `Group`
    * ni tiene por qué.
    *
@@ -295,8 +289,6 @@ export class GroupsListPageComponent {
     ];
   });
 
-  /** Mientras se renombra una fila, abrirla no hace nada (y no enseña el cursor de mano). */
-  protected readonly isOpenable = (group: Group): boolean => this.renamingId() !== group.id;
 
   /* El contexto de un `<ng-template>` de celda es `any`, así que indexar
    * `Record<GroupChannel, string>` desde la plantilla —como hacía el `@for`,
@@ -347,41 +339,24 @@ export class GroupsListPageComponent {
     this.agentsPanelGroup.set(null);
   }
 
-  /** El diálogo de duplicar: `duplicateSource` es el original (el alta es la ficha, DD-121 §11). */
-  protected readonly duplicateOpen = signal(false);
-  protected readonly duplicateSource = signal<Group | null>(null);
-  protected readonly groupNames = computed(() => this.groups().map((g) => g.name));
-  /** Los números que ya usan los grupos: el desplegable del teléfono asociado, igual que en la ficha. */
-  /** Los números asignados a la cuenta: el duplicado elige uno de ellos (DD-142). */
-  protected readonly outboundNumbers = OUTBOUND_NUMBERS;
-  protected readonly suggestedCopyName = computed(() => {
-    this.lang();
-    const source = this.duplicateSource();
-    return source ? this.translate.instant('groups.create_dialog.copy_name', { name: source.name }) : '';
-  });
-
   /** El alta es la propia ficha en modo alta (DD-121 §11). */
   protected onCreateClick(): void {
     void this.router.navigateByUrl('/admin/grupos/crear');
   }
 
-  protected onDuplicateCancel(): void {
-    this.duplicateOpen.set(false);
-  }
-
   /**
-   * Crea el duplicado y abre su ficha: se lleva todo lo del original, agentes incluidos, con el nombre y
-   * el teléfono que se hayan puesto en el diálogo.
+   * Duplicar, sin diálogo (revisión de producto del 2026-10-20, DD-217): crea la copia en el acto, con «(1)» detrás del
+   * nombre (`nombreDeCopia`) y todo lo del original, agentes incluidos, salvo lo que el funcional no copia
+   * (`duplicateGroupDraft`), y abre su edición en General, con su toast. Hasta ese día un diálogo pedía nombre,
+   * teléfono saliente y prioridad, y proponía «… (copia)».
    */
-  protected onDuplicateConfirm(submission: GroupIdentityDraft): void {
-    const source = this.duplicateSource();
-    if (!source) return;
-    const created = this.groupsStore.addGroup(duplicateGroupDraft(source, submission));
+  protected onRowDuplicate(group: Group): void {
+    const nombre = nombreDeCopia(group.name, this.groups().map((g) => g.name));
+    const created = this.groupsStore.addGroup(duplicateGroupDraft(group, nombre));
     this.linksStore.replaceLinksForGroup(
       created.id,
-      this.linksStore.linksForGroup(source.id).map((l) => ({ ...l, groupId: created.id })),
+      this.linksStore.linksForGroup(group.id).map((l) => ({ ...l, groupId: created.id })),
     );
-    this.duplicateOpen.set(false);
     const creado = this.translate.instant('groups.toasts.created', { name: created.name });
     // El toast, ya en la ficha a la que se llega (DD-211 §5).
     void this.router.navigateByUrl(`/admin/grupos/editar/${created.id}`).then(() => this.resultado.contar(creado));
@@ -421,12 +396,6 @@ export class GroupsListPageComponent {
     void this.router.navigateByUrl(`/admin/grupos/editar/${group.id}`);
   }
 
-  /** Duplicar: el diálogo corto con el nombre propuesto; el resto se copia del original. */
-  protected onRowDuplicate(group: Group): void {
-    this.duplicateSource.set(group);
-    this.duplicateOpen.set(true);
-  }
-
   /** Borrar: la confirmación simple del DS (DD-215); al aceptar, fuera el grupo y sus enlaces, y el toast. */
   protected async onRowDelete(group: Group): Promise<void> {
     if (!(await this.confirmarBorrado(group.name))) return;
@@ -435,16 +404,7 @@ export class GroupsListPageComponent {
     this.resultado.contar(this.translate.instant('groups.toasts.deleted_single', { name: group.name }));
   }
 
-  protected onRenameCommit(id: number, value: string): void {
-    this.groupsStore.updateGroup(id, { name: value });
-    this.renamingId.set(null);
-    // El resultado, en un toast (DD-211 §5).
-    this.resultado.contar(this.translate.instant('groups.toasts.duplicated', { name: value }));
-  }
 
-  protected onRenameCancel(_id: number): void {
-    this.renamingId.set(null);
-  }
 
   protected onExport(visibleRows: readonly Group[]): void {
     const headers = [

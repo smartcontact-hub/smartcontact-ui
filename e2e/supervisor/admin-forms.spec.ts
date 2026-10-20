@@ -39,17 +39,23 @@ test('usuarios · crear un usuario lo deja en su ficha y lo añade al listado', 
   await expect(page.locator('tbody tr', { hasText: name })).toHaveCount(1);
 });
 
-test('usuarios · el botón de guardar exige los campos obligatorios', async ({ page }) => {
+test('usuarios · «Crear usuario» no crea sin lo obligatorio: lo dice cada campo al pulsarlo (DD-217)', async ({ page }) => {
   await goto(page, 'admin/usuarios/crear');
+  const crear = page.getByRole('button', { name: 'Crear usuario' });
+  const general = page.locator('#user-section-identity');
 
-  // Formulario vacío: «Crear usuario» no debe estar disponible.
-  await expect(page.getByRole('button', { name: 'Crear usuario' })).toBeDisabled();
+  // Siempre activo, y nada en rojo antes de pulsarlo.
+  await expect(crear).toBeEnabled();
+  await expect(general).not.toContainText('El nombre es obligatorio');
 
-  await page.locator('#user-name').fill('Solo nombre');
+  // Un email mal escrito se dice en vivo (validación real, no solo «hay texto»).
   await page.locator('#user-email').fill('sin-arroba');
+  await expect(general).toContainText('Introduce un email válido');
 
-  // Email inválido → sigue bloqueado (validación real, no solo "hay texto").
-  await expect(page.getByRole('button', { name: 'Crear usuario' })).toBeDisabled();
+  await crear.click();
+  await expect(page).toHaveURL(/admin\/usuarios\/crear/);
+  await expect(general).toContainText('El nombre es obligatorio');
+  await expect(page.locator('#user-name')).toBeFocused();
 });
 
 /*

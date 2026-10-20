@@ -45,11 +45,12 @@
  *    quedan a la misma altura. Se marca un `.field__help` escrito justo antes de un control suelto del DS. La única
  *    excepción, una lista que crece, no lleva un control suelto detrás (su ayuda va bajo el título del grupo).
  *
- * 7. UN OBLIGATORIO QUE ACUSA DE PRIMERAS (DD-199), sin trinquete: ninguno. Lo que falta se dice cuando la persona ya
- *    tuvo ocasión de rellenarlo, y eso lo decide `ocasionDeAvisar` (`shared/utils/alta-secciones.ts`). Se marca la
- *    ficha que lo decide por su cuenta: un aviso que se enciende por el MODO (`mode() === 'edit' || …`, que en la
- *    edición acusaba nada más encender «Tipificar llamadas») o que lee `.dejadas()` del alta sin pasar por ella. Solo
- *    `.ts` del Supervisor; `canSave` y el resumen también miran el modo, pero no acusan, y no se marcan.
+ * 7. UN OBLIGATORIO QUE ACUSA DE PRIMERAS (DD-199, DD-217), sin trinquete: ninguno. Lo que falta se dice al pulsar
+ *    Crear o Guardar (o al abrir, si lo guardado ya venía sin ello), y eso lo decide `ocasionDeAvisar`
+ *    (`shared/utils/alta-secciones.ts`). Se marca la ficha que lo decide por su cuenta: un aviso que se enciende por el
+ *    MODO (`mode() === 'edit' || …`, que en la edición acusaba nada más encender «Tipificar llamadas») o que lee las
+ *    secciones dejadas (`.dejadas()`, la ocasión de DD-199, que DD-217 retira). Solo `.ts` del Supervisor; `canSave`
+ *    también mira el modo, pero no acusa, y no se marca.
  *
  * 8. PIEZAS HECHAS A MANO QUE IMITAN A UN NATIVO (sección 6 de `docs/AUDIT-PRIMENG-CATALOGO.md`). Un `role="slider"`,
  *    `role="menuitem"` o `role="radio"` puesto a mano promete el teclado del nativo (flechas, Inicio y Fin, el foco
@@ -226,7 +227,7 @@ const MODO_O = /mode\(\)\s*[!=]==\s*'(?:edit|create|duplicate)'\s*\|\||\|\|\s*(?
 /** Lo que delata un aviso: quién acusa, el error, el intento de salir, las secciones dejadas. */
 const AVISO = /\bacusa|[eE]rrors?\b|Error\(|attempted|dejadas/;
 
-/** Líneas de un `.ts` que deciden por su cuenta cuándo se dice que falta algo, sin `ocasionDeAvisar` (DD-199). */
+/** Líneas de un `.ts` que deciden por su cuenta cuándo se dice que falta algo, sin `ocasionDeAvisar` (DD-199, DD-217). */
 export function acusaDePrimeras(texto) {
   const lineas = [];
   sinComentariosEnSuSitio(texto, false)
@@ -343,7 +344,6 @@ export const ROLES_A_MANO = {
   // foco, cierran con Escape y, desde el 2026-10-15, devuelven el foco a quien los abrió (`focoDeVueltaAlCerrar`).
   'projects/supervisor/src/app/features/admin/labels/components/label-form-panel/label-form-panel.component.html': 1,
   'projects/supervisor/src/app/features/admin/repositories/components/repo-form-panel.component.html': 1,
-  'projects/supervisor/src/app/features/admin/templates/components/template-form-panel/template-form-panel.component.html': 1,
   // Se queda: frente a CommandMenu se decidió mantenerla (sección 2 del catálogo, revisado el 2026-10-12).
   'projects/ui-smartcontact/src/lib/components/command-palette/sc-command-palette.component.html': 1,
   // Se queda hasta rehacer el port: solo lo usa la demo de sc-docs y su cabecera explica por qué no se adopta.
@@ -474,8 +474,8 @@ if (process.argv[1] && process.argv[1].endsWith('audit-screen-hygiene.mjs')) {
       '      → pásala al `helperText` del control, que la pinta debajo y la anuncia; si es una lista que crece, bajo su título.',
     ]),
     ...dePrimeras.map((donde) => [
-      `${donde}: decide por su cuenta cuándo acusa lo que falta (DD-199). Por el modo, acusa antes de que se pueda rellenar.`,
-      '      → `this.ocasion.acusa(seccion, falta)` con `ocasionDeAvisar` (shared/utils/alta-secciones.ts): al dejar la sección, o si lo guardado ya venía sin ello.',
+      `${donde}: decide por su cuenta cuándo acusa lo que falta (DD-217). Por el modo, acusa antes de que se pueda rellenar.`,
+      '      → `this.ocasion.acusa(falta)` con `ocasionDeAvisar` (shared/utils/alta-secciones.ts): al pulsar Crear o Guardar (`intentar`), o si lo guardado ya venía sin ello.',
     ]),
   ];
 

@@ -64,8 +64,10 @@ test('un nombre repetido entre hermanas se dice bajo el árbol y no deja guardar
 
   await primerNivel(page).nth(2).fill('consulta');
   await expect(page.locator('.niveles__estado')).toHaveText(/Hay opciones con el mismo nombre en una misma lista/);
-  await expect(barra(page)).toContainText('Falta: un nombre distinto en cada opción');
-  await expect(barra(page).getByRole('button', { name: 'Guardar' })).toBeDisabled();
+  // Sin «Falta: …» en la barra; «Guardar», activo con el cambio, al pulsarlo no guarda y el índice lo dice (DD-217).
+  await expect(barra(page)).not.toContainText('Falta');
+  await barra(page).getByRole('button', { name: 'Guardar' }).click();
+  await expect(page.locator('sc-form-section-nav .form-nav__item--has-error')).toContainText('Dale a cada opción un nombre distinto');
 
   await primerNivel(page).nth(2).fill('Gestión');
   await expect(page.locator('.niveles__estado')).toHaveCount(0);
@@ -99,7 +101,10 @@ test('eliminarla dice qué grupos la usan, y esos grupos dejan de tipificar', as
 
 test('un alta de punta a punta: nombre, opciones y Crear, y sale en el listado', async ({ page }) => {
   await goto(page, 'admin/tipificaciones/crear');
-  await expect(barra(page)).toContainText('Falta: nombre, al menos una opción');
+  // «Crear tipificación», siempre activo: vacía, al pulsarlo no crea y lleva al nombre (DD-217).
+  await barra(page).getByRole('button', { name: 'Crear tipificación' }).click();
+  await expect(page).toHaveURL(/\/admin\/tipificaciones\/crear/);
+  await expect(page.locator('#tip-name')).toBeFocused();
   await page.locator('#tip-name').fill('Seguimiento de pedido');
   await page.locator('sc-form-section-nav').getByText('Categorías').click();
   await page.getByRole('button', { name: 'Añadir categoría' }).click();

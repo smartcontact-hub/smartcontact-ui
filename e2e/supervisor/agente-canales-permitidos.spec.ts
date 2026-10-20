@@ -93,7 +93,8 @@ test('tabla, resúmenes y listado solo cuentan las familias permitidas, aunque e
   await seed(page, true);
   await goto(page, 'admin/grupos/editar/11?seccion=agentes');
   const summary = page.getByRole('region', { name: 'Resumen', exact: true });
-  await expect(summary.locator('.resumen__channel', { hasText: 'Teléfono' })).toContainText('Sin agentes');
+  // Un canal sin nadie que lo atienda dice 0, sin aviso amarillo (DD-217).
+  await expect(summary.locator('.resumen__channel', { hasText: 'Teléfono' }).locator('.resumen__digits')).toHaveText('0');
   await expect(summary.locator('.resumen__channel', { hasText: 'Chat' }).locator('.resumen__digits')).toHaveText('1');
   await goto(page, 'admin/agentes/editar/1?seccion=grupos');
   const row = page.locator('sc-group-assignment-table tbody tr', { hasText: 'Grupo mixto' });

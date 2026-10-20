@@ -59,3 +59,9 @@
   display: inline-flex;
   color: var(--sc-icon-subtle);
 }
+
+/* «Asigna al menos un grupo», encima de la tabla de Grupos asignados: separado de sus filtros por el hueco de dentro de
+ * un grupo (7), como un rótulo de su control. */
+.groups-error {
+  margin-block: 0 var(--sc-spacing-0-5);
+}

@@ -1,34 +1,40 @@
-<textarea
-    pTextarea
-    [pSize]="$any(textareaSize())"
-    [value]="value()"
-    [placeholder]="placeholder()"
-    [rows]="rows()"
-    [cols]="cols() || null"
-    [id]="inputId() || ''"
-    [name]="name() || ''"
-    [attr.aria-describedby]="describedBy()"
-    [disabled]="disabled()"
-    [readOnly]="readonly()"
-    [invalid]="invalid()"
-    [fluid]="fluid()"
-    [autoResize]="autoResize()"
-    [variant]="variant()"
-    (input)="onInput($event)"
-    (onResize)="resized.emit($event)">
-</textarea>
-@if (copyable()) {
-<sc-button
-    class="sc-textarea__copy"
-    size="sm"
-    variant="secondary"
-    appearance="text"
-    [icon]="copiado() ? 'check' : 'content_copy'"
-    [ariaLabel]="rotuloCopiar()"
-    (clicked)="copiar()" />
-<!-- El cambio de icono no se oye: el lector oye «Copiado» por aquí. -->
-<span class="sc-textarea__sr" aria-live="polite">{{ copiado() ? rotuloCopiar() : '' }}</span>
+@if (label()) {
+<sc-field-label block="sc-textarea" [text]="label()!" [required]="required()" [for]="resolvedId()" />
 }
+<!-- El control y su botón de copiar, en su caja: el botón se coloca sobre el campo, no sobre el rótulo. -->
+<div class="sc-textarea__field">
+    <textarea
+        pTextarea
+        [pSize]="$any(textareaSize())"
+        [value]="value()"
+        [placeholder]="placeholder()"
+        [rows]="rows()"
+        [cols]="cols() || null"
+        [id]="resolvedId()"
+        [name]="name() || ''"
+        [attr.aria-describedby]="describedBy()"
+        [attr.aria-required]="required() ? true : null"
+        [disabled]="disabled()"
+        [readOnly]="readonly()"
+        [invalid]="invalid()"
+        [fluid]="fluid()"
+        [autoResize]="autoResize()"
+        [variant]="variant()"
+        (input)="onInput($event)"
+        (onResize)="resized.emit($event)"></textarea>
+    @if (copyable()) {
+    <sc-button
+        class="sc-textarea__copy"
+        size="sm"
+        variant="secondary"
+        appearance="text"
+        [icon]="copiado() ? 'check' : 'content_copy'"
+        [ariaLabel]="rotuloCopiar()"
+        (clicked)="copiar()" />
+    <!-- El cambio de icono no se oye: el lector oye «Copiado» por aquí. -->
+    <span class="sc-textarea__sr" aria-live="polite">{{ copiado() ? rotuloCopiar() : '' }}</span>
+    }
+</div>
 @if (footerText()) {
 <!-- Caja propia: el estilo de este componente va encapsulado y no alcanza el texto que pinta `sc-field-msg`. -->
 <div class="sc-textarea__ayuda"><sc-field-msg block="sc-textarea" [text]="footerText()" [msgId]="msgId()" /></div>

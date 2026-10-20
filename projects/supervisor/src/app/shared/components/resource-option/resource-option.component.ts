@@ -1,7 +1,5 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { TooltipModule } from 'primeng/tooltip';
-import { ScIconComponent } from '@smartcontact-hub/icons';
 
 /** Un recurso asignado, ya resuelto para pintarlo: lo prepara `ResourceRowsService`. */
 export interface ResourceRow {
@@ -9,47 +7,32 @@ export interface ResourceRow {
   readonly name: string;
   /** Lo que dice qué es: «1250 contactos · Activa», el principio del texto de una plantilla… */
   readonly detail: string;
-  /** Adónde lleva «Editar» en el hub de Repositorios. En las fichas, «Editar» abre la ventana sin salir (`editar`); sin
-   *  él, la fila no lo enseña. */
+  /** Adónde lleva «Editar» en el hub de Repositorios; sin él, la fila no lo enseña. */
   readonly edit: { readonly link: string; readonly queryParams?: Readonly<Record<string, string | number>> } | null;
 }
 
 /**
- * UNA OPCIÓN DE UN DESPLEGABLE DE RECURSOS, CON SU «EDITAR» (revisión del 2026-10-14, que retira las filas de DD-164
- * bajo el campo): el nombre, y un lápiz que solo sale al pasar por la opción, con su tooltip. Va en la plantilla
- * `#item` de `sc-multiselect` (Agendas, Plantillas, Equipos) en las fichas de grupo y de agente; el lápiz abre la
- * misma ventana que el «+» del campo, sin salir de la ficha (DD-187): quien la usa escucha `editar` y cierra la lista.
+ * UNA OPCIÓN DE UN DESPLEGABLE DE RECURSOS (revisión de producto del 2026-10-20, DD-217 §15): el nombre entero y, al
+ * pasar, lo que contiene, en el tooltip de PrimeNG pegado a la opción. Lo mismo en las tres listas, con lo que dice
+ * qué es cada recurso: cuántos contactos tiene una agenda (nunca quiénes: puede tener mil), el texto de una plantilla,
+ * la descripción de un equipo. Siempre hay tooltip («Sin contactos», «Sin descripción»), para que pasar por una opción
+ * haga siempre lo mismo. El nombre no se corta: si no cabe, baja de línea, porque es lo que se elige; lo que se corta
+ * con «…» es el chip del campo, que se lee entero al pasar. Va en la plantilla `#item` de `sc-multiselect` (Agendas,
+ * Plantillas, Equipos) en las fichas de grupo y de agente; lo prepara `ResourceRowsService.opciones*`.
  *
- * El lápiz no entra en el orden del tabulador: dentro de una opción de una lista, el teclado se mueve con las flechas y
- * un botón más no tendría cómo alcanzarse. Editar sigue a mano con teclado en Repositorios («Gestionar en Repositorios»,
- * bajo los campos). El clic se queda en el lápiz: no marca ni desmarca la opción.
+ * Hasta DD-217 la opción llevaba un lápiz que abría el recurso en una ventana; se crean y se editan en Repositorios
+ * («Gestionar en Repositorios», bajo los campos).
  */
 @Component({
   selector: 'sc-resource-option',
-  imports: [ScIconComponent, TooltipModule, TranslateModule],
-  template: `
-    <span class="resource-option__name">{{ name() }}</span>
-    <button
-      type="button"
-      class="resource-option__edit"
-      tabindex="-1"
-      aria-haspopup="dialog"
-      [attr.aria-label]="'common.edit_named' | translate: { name: name() }"
-      [pTooltip]="'common.edit_named' | translate: { name: name() }"
-      tooltipPosition="top"
-      tooltipEvent="both"
-      (mousedown)="$event.stopPropagation()"
-      (click)="$event.stopPropagation(); editar.emit()"
-    >
-      <sc-icon name="edit" [size]="16" aria-hidden="true" />
-    </button>
-  `,
+  imports: [TooltipModule],
+  template: `<span class="resource-option__name sc-text-body-regular" [pTooltip]="contenido()" tooltipPosition="right">{{ name() }}</span>`,
   styleUrl: './resource-option.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ResourceOptionComponent {
   /** El nombre del recurso, el texto de la opción. */
   readonly name = input.required<string>();
-  /** Se pulsó el lápiz. */
-  readonly editar = output<void>();
+  /** Lo que contiene, en el tooltip: «3 contactos», el texto de una plantilla, la descripción de un equipo. */
+  readonly contenido = input.required<string>();
 }

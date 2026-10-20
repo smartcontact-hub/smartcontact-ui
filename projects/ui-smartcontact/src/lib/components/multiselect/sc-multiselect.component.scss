@@ -17,7 +17,7 @@
 .sc-multiselect {
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: var(--sc-spacing-0-5);
   min-width: 0;
 }
 
@@ -175,4 +175,53 @@
  * base: quedaba 2,5 por encima del centro (medido el 2026-10-09). En bloque, el `span` mide lo que el icono. */
 .sc-multiselect__dropdown-icon {
   display: block;
+}
+
+/* Con `display="chip"`, la «×» de cada chip pasa al rojo de lo destructivo al ponerle el ratón encima o llegar con el
+ * teclado (revisión de producto del 2026-10-20, DD-217): quitar lo elegido es un borrado, y se ve antes de pulsar. En
+ * reposo, el gris de su token (`--sc-cmp-chip-remove-icon-color`). Las dos «×» que pinta PrimeNG: la suya
+ * (`p-multiselect-chip-icon`) y la de `p-chip` (`p-chip-remove-icon`), que es la que pinta «+N más». El tema de Chip no
+ * trae color al pasar para su «×» (solo `removeIcon.color`), así que va por clase; sin transición, como el nativo. */
+.sc-multiselect__control {
+  .p-chip-remove-icon:hover,
+  .p-chip-remove-icon:focus-visible,
+  .p-multiselect-chip-icon:hover {
+    color: var(--sc-text-danger);
+  }
+}
+
+/* `fit`, midiendo: la de «+N más» ocupa su sitio para medirla, sin verse (DD-217). */
+.sc-multiselect__more-item--midiendo {
+  visibility: hidden;
+}
+
+/* Con `more` o `fit`, lo elegido no ensancha el campo: mide lo que su sitio, y las etiquetas caben o se cuentan en «+N
+ * más» (revisión de producto del 2026-10-20, DD-217: no agrandar el campo para que quepan más chips). Sin esto, en un
+ * contenedor que se mide por su contenido, un nombre larguísimo estiraba el campo y su columna hasta salirse de la
+ * tarjeta (la demo de sc-docs, en su captura de Linux). */
+.sc-multiselect--chip-overflow .sc-multiselect__control {
+  contain: inline-size;
+}
+
+/* Con `more` o `fit`, un nombre más largo que el campo se acorta con «…» y la «×» y «+N más» siguen a la vista: un chip
+ * puede ser larguísimo (revisión de producto del 2026-10-20, DD-217). Midiendo, ninguno encoge: se mide su ancho. */
+.sc-multiselect__chip-item {
+  min-width: 0;
+}
+
+.sc-multiselect__chip {
+  max-width: 100%;
+}
+
+.sc-multiselect__chip-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sc-multiselect__more-item,
+.sc-multiselect__chip-item .p-chip-remove-icon,
+.p-multiselect-label:has(.sc-multiselect__more-item--midiendo) .sc-multiselect__chip-item {
+  flex-shrink: 0;
 }

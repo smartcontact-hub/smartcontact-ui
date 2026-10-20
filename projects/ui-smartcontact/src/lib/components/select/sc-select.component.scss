@@ -13,13 +13,13 @@
  *  - drop shadow #1212170D, offset (0,1), radius 2
  *  - label slate-700 14px / 21lh
  *  - helper slate-700 12px / 21lh
- *  - gap 7px between label / input / helper
+ *  - gap 7 (`--sc-spacing-0-5`) between label / input / helper
  */
 
 .sc-select {
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: var(--sc-spacing-0-5);
   min-width: 0;
 }
 

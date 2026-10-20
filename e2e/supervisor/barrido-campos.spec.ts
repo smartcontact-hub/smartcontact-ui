@@ -34,8 +34,9 @@ test('ficha de agente: un teléfono que no lo es se dice en su campo', async ({ 
   await telefono.fill('abc');
   await telefono.blur();
   await expect(telefono).toHaveAttribute('aria-invalid', 'true');
-  // En su campo, y también junto a «Guardar», que se apaga: no se puede guardar «abc» como el móvil de la extensión.
-  await expect(page.locator('#agent-phone-msg')).toHaveText('El teléfono no es válido: usa cifras, con un + delante si lleva prefijo.');
+  // En su campo, sin punto final como todo error de campo (DD-217 §12): no se puede guardar «abc» como el móvil de la
+  // extensión.
+  await expect(page.locator('#agent-phone-msg')).toHaveText('El teléfono no es válido: usa cifras, con un + delante si lleva prefijo');
 
   await telefono.fill('+34 600 100 200');
   await telefono.blur();

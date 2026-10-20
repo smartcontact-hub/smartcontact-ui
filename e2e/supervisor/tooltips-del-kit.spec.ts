@@ -8,8 +8,10 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  *   1. ninguna tabla de Grupos ni de Agentes lleva un `title` nativo;
  *   2. un icono con significado (el canal, la grabación, el tipo de extensión) enseña su nombre en el tooltip;
  *   3. un texto cortado lo enseña entero, y uno que cabe no lleva tooltip (`showOnEllipsis`);
- *   4. «Guardar» apagado dice por qué en el tooltip;
- *   5. en «Duplicar grupo», la ayuda de Prioridad dice que solo cuenta en las conversaciones entrantes;
+ *   4. «Guardar» apagado dice por qué en el tooltip (sin cambios: desde DD-217 es el único porqué, lo que falta se dice al
+ *      pulsar);
+ *   5. en la ficha de grupo, la ayuda de Prioridad dice que solo cuenta en las conversaciones entrantes («Duplicar grupo»,
+ *      que la compartía, ya no es un diálogo: DD-217);
  *   6. Monitor y Conversaciones, igual: sin `title` nativo, y sus iconos (la presencia, lo que hace una regla) dicen su
  *      nombre en el tooltip. Lo cortado de sus tablas lo miden `dashboard` y `conversations-table-scroll`.
  */
@@ -74,12 +76,9 @@ test('«Guardar» apagado dice por qué en el tooltip', async ({ page }) => {
   await expect(tooltip(page)).toHaveText('No hay cambios que guardar');
 });
 
-test('Duplicar grupo: la ayuda de Prioridad dice que solo cuenta en las conversaciones entrantes', async ({ page }) => {
-  await goto(page, 'admin/grupos');
-  await page.locator('tbody tr', { hasText: 'Reclamaciones' }).locator('.rules-kebab-btn').click();
-  await page.getByRole('menuitem', { name: 'Duplicar' }).click();
-  const dialogo = page.getByRole('dialog', { name: 'Duplicar grupo' });
-  await expect(dialogo.getByRole('combobox', { name: 'Prioridad' })).toHaveAccessibleDescription(
+test('ficha de grupo: la ayuda de Prioridad dice que solo cuenta en las conversaciones entrantes', async ({ page }) => {
+  await goto(page, 'admin/grupos/editar/12');
+  await expect(page.locator('#group-section-general').getByRole('combobox', { name: 'Prioridad' })).toHaveAccessibleDescription(
     /Solo para las conversaciones entrantes\.$/,
   );
 });

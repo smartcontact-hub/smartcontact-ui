@@ -53,7 +53,7 @@
       "attended": "Atendidas",
       "rejected": "Rejeitadas",
       "transferred": "Transferidas",
-      "avg_time": "T. médio",
+      "avg_time": "T.\u00a0médio",
       "totals": "Totais"
     },
     "group_panel": {
@@ -225,7 +225,7 @@
       "col_conversation": "Conversa",
       "col_time": "Tempo",
       "col_agent": "Agente",
-      "col_in_state": "Neste estado"
+      "col_in_state": "Neste\u00a0estado"
     },
     "assistant": {
       "title_new": "Criar widget",
@@ -1012,9 +1012,6 @@
     "no_changes": "Não há alterações para guardar",
     "unsaved_changes": "Alterações não salvas",
     "summary": "Resumo",
-    "summary_missing": "Em falta: {{items}}",
-    "summary_missing_name": "nome",
-    "summary_ready": "Pronto para criar",
     "summary_of": "{{value}} de {{total}}",
     "actions": "Ações",
     "select_row": "Selecionar {{name}}",
@@ -1202,15 +1199,12 @@
     },
     "form": {
       "create_title": "Novo modelo",
-      "edit_title": "Editar modelo",
       "title": "Título",
       "title_placeholder": "Título do modelo",
       "channel": "Canal",
       "body": "Conteúdo",
       "body_placeholder": "Escreva o conteúdo do modelo...",
       "variables_hint": "Variáveis: {agente}, {cliente}, {ref}, {data}",
-      "summary_missing_title": "título",
-      "summary_missing_body": "conteúdo",
       "create_submit": "Criar modelo",
       "create_breadcrumb": "Novo modelo",
       "edit_breadcrumb": "Editar modelo",
@@ -1395,6 +1389,7 @@
       "contacts": "Contatos",
       "contacts_count": "{{count}} contatos",
       "contacts_count_one": "1 contato",
+      "no_contacts": "Sem contatos",
       "contact": "contato",
       "phone": "Telefone",
       "no_name": "Sem nome",
@@ -1567,17 +1562,16 @@
       "delete_option_body_one": "A opção abaixo também é eliminada.",
       "errors": {
         "option_taken": "Já existe «{{name}}» neste nível",
-        "name_taken": "Já existe uma tipificação com este nome"
+        "name_taken": "Já existe uma tipificação com este nome",
+        "name_required": "O nome é obrigatório",
+        "options_required": "Adicione pelo menos uma opção",
+        "names_required": "Dê a cada opção um nome diferente"
       },
       "section": {
         "general": "Geral",
         "categorization": "Categorias"
       },
-      "missing": {
-        "options": "pelo menos uma opção",
-        "names": "um nome diferente em cada opção"
-      },
-      "categorization_hint": "O que o agente escolhe, em até três níveis. Cada ramo vai até onde for preciso",
+      "categorization_hint": "O que o agente escolhe, em até três níveis; cada ramo vai até onde for preciso",
       "rename_field": "Novo nome da opção",
       "add_first": "Adicionar opção…",
       "add_under": "Adicionar em «{{name}}»…",
@@ -1720,7 +1714,8 @@
       "create_submit": "Criar equipe",
       "edit_breadcrumb": "Editar equipe",
       "name_taken": "Já existe uma equipe com este nome",
-      "assigned_count": "{{count}} na equipe"
+      "assigned_count": "{{count}} na equipe",
+      "no_description": "Sem descrição"
     }
   },
   "users": {
@@ -1801,7 +1796,7 @@
         "type_hint": "Marca em Acesso as caixas do seu modelo.",
         "status": "Estado",
         "active": "Ativo",
-        "active_hint": "Pode iniciar sessão e operar",
+        "active_hint": "Pode iniciar sessão e operar.",
         "email_empty": "Sem email"
       },
       "danger_zone_description": "Eliminar este usuário revoga seu acesso ao painel e apaga suas permissões. A ação não pode ser desfeita.",
@@ -1822,14 +1817,12 @@
         "apply_body_other": "Altera {{count}} caixas em Acesso. Se as mantiver, o tipo muda na mesma e Acesso fica como está.",
         "apply": "Aplicar o modelo",
         "keep": "Manter as caixas"
-      },
-      "summary": {
-        "missing_email": "email"
       }
     },
     "errors": {
       "name_required": "O nome é obrigatório",
-      "email_invalid": "Insira um email válido"
+      "email_invalid": "Insira um email válido",
+      "email_required": "Escreva o email"
     },
     "toasts": {
       "created": "Usuário \"{{name}}\" criado",
@@ -1875,10 +1868,6 @@
   "groups": {
     "page_title": "Grupos",
     "create_button": "Novo grupo",
-    "create_dialog": {
-      "duplicate_subtitle": "Copia os agentes, os canais e as definições de «{{source}}». O telefone de saída, não.",
-      "copy_name": "{{name}} (cópia)"
-    },
     "search_placeholder": "Buscar grupos…",
     "no_results_query": "Nenhum grupo corresponde a “{{query}}”.",
     "entity_singular": "grupo",
@@ -1944,16 +1933,16 @@
         "col_agent": "Agente",
         "col_active": "Habilitado",
         "active_aria": "Habilitado neste grupo: {{name}}",
+        "not_assigned_hint": "{{name}} não está atribuído: liga-se ao atribuir",
         "incompatible": "Sem canais compatíveis",
         "not_allowed": "{{name}} — {{channel}}: não está entre os canais do agente",
-        "not_allowed_hint": "{{channel}} não está entre os canais deste agente. Reveja-os na ficha.",
+        "not_allowed_hint": "{{channel}} não está entre os canais deste agente: marcam-se na sua ficha",
         "permissions_link": "Rever os canais de {{name}} para {{channel}}",
         "toggle_all_channel": "Ativar/desativar {{channel}} em todos os visíveis",
         "remove_aria": "Remover {{name}} do grupo",
         "warn_no_channels": "Habilitado, mas sem canais atribuídos",
         "add_placeholder": "Adicionar agentes…",
         "add_aria": "Adicionar agente ao grupo",
-        "no_channels_warn": "{{count}} sem canal: saem ao guardar",
         "bulk_unassign": "Remover do grupo",
         "col_level": "Nível {{channel}}",
         "level_aria": "Nível de {{name}} — {{channel}}",
@@ -1986,19 +1975,13 @@
         "phone_strategy": "Estratégia (telefone)",
         "chat_strategy": "Estratégia (chat)",
         "phone_hint": "O número que o cliente vê quando lhe ligam.",
-        "phone_placeholder": "Escolha um número",
+        "phone_placeholder": "Selecione um número",
         "strategy": "Estratégia",
         "ring_all": "Nº de agentes simultâneos",
         "ring_all_summary": "{{count}} ao mesmo tempo",
         "sub_strategy": "Dentro de cada nível",
         "typification": "Tipificações",
-        "agenda_new": "Nova agenda",
-        "template_new": "Novo modelo",
-        "label_new": "Nova etiqueta",
-        "agenda_edit": "Editar agenda",
-        "template_edit": "Editar modelo",
-        "team_new": "Nova equipe",
-        "team_edit": "Editar equipe"
+        "label_new": "Nova etiqueta"
       },
       "strategy_help": {
         "balanced": "Distribui por igual entre os agentes.",
@@ -2081,7 +2064,7 @@
         "max_queue_wait_hint": "Sem atendimento neste tempo, passa ao destino seguinte do VUI Designer; se não houver, termina.",
         "transfer": "Tempo de toque",
         "service_level": "Tempo da % de serviço",
-        "service_level_hint": "Tempo para medir a percentagem de serviço",
+        "service_level_hint": "Tempo para medir a percentagem de serviço.",
         "wrap_up": "Tempo entre chamadas",
         "overflow": "Transbordar conversas se não houver agentes ligados",
         "overflow_hint": "Os contactos passam para o destino seguinte, que não se escolhe aqui.",
@@ -2107,44 +2090,37 @@
         "queue_variable_error": "Introduza um inteiro entre 1 e 10.",
         "queue_integer_error": "Introduza um inteiro maior que zero.",
         "queue_invalid": "Verifique o tamanho das filas.",
-        "transfer_hint": "Tempo de toque de uma conversa a um agente",
-        "wrap_up_hint": "Tempo que o agente espera entre uma conversa e outra"
+        "transfer_hint": "Tempo de toque de uma conversa a um agente.",
+        "wrap_up_hint": "Tempo que o agente espera entre uma conversa e outra."
       },
       "summary": {
         "none": "Nenhum",
         "paused": "Desabilitado",
-        "no_channels": "Sem canais",
         "priority": "Prioridade: {{value}}",
         "title": "Resumo",
         "agents_active": "Agentes habilitados",
         "paused_count": "{{count}} desabilitados",
-        "no_agents": "Sem agentes",
         "routing": "Distribuição",
         "no_number": "Sem número",
-        "resources": "Recursos",
-        "resources_quick": "Ver os recursos do grupo",
-        "resources_empty": "Sem recursos atribuídos",
-        "resources_see": "Ver recursos",
-        "missing_channels": "canais",
-        "missing_phone": "telefone de saída",
-        "missing_typification": "tipificação"
+        "resources": "Recursos"
       },
       "channels": {
         "title": "Canais",
-        "hint": "Pelo menos um. O que marcar aqui decide o que configura em Distribuição e filas."
+        "hint": "O que marcar aqui decide o que configura em Distribuição e filas"
       },
       "distribution": {
         "common_title": "Regras comuns",
-        "common_hint": "Aplicam-se a todos os canais do grupo.",
+        "common_hint": "Aplicam-se a todos os canais do grupo",
         "routing": "Distribuição",
         "queue": "Fila",
         "queue_messages": "Mensagens na fila",
-        "queue_messages_hint": "O que o cliente ouve ao entrar, ao esperar e antes de ser atendido. Raramente se muda.",
+        "queue_messages_hint": "O que o cliente ouve ao entrar, ao esperar e antes de ser atendido; raramente se muda",
         "jump_label": "Ir para",
         "jump_aria": "Canais desta seção",
         "outbound": "Chamadas de saída",
-        "webchat_hint": "As suas mensagens, o seu horário e os sites onde é inserido. Uma mensagem vazia não é enviada.",
-        "whatsapp_hint": "O seu número e, com ele, as suas mensagens e o seu horário. Uma mensagem vazia não é enviada."
+        "webchat_hint": "As suas mensagens, o seu horário e os sites onde é inserido; uma mensagem vazia não é enviada",
+        "whatsapp_hint": "O seu número e, com ele, as suas mensagens e o seu horário; uma mensagem vazia não é enviada",
+        "no_channels": "Este grupo não tem canais: não distribui conversas. Os canais marcam-se em Geral."
       },
       "chat": {
         "close_on_inactivity": "Expirar a sessão",
@@ -2164,7 +2140,7 @@
       },
       "resources": {
         "client_card": "Ficha de cliente",
-        "client_card_hint": "A que o agente vê ao receber um contacto deste grupo."
+        "client_card_hint": "A que o agente vê ao receber um contacto deste grupo"
       },
       "create_submit": "Criar grupo",
       "wrapup": {
@@ -2173,7 +2149,7 @@
         "comments": "Permitir comentários",
         "classify": "Tipificar conversas",
         "typification": "Tipificação",
-        "typification_placeholder": "Escolha uma tipificação",
+        "typification_placeholder": "Selecione uma tipificação",
         "view": "Ver detalhe de «{{name}}»",
         "view_detail": "Ver detalhe",
         "scope_label": "Que conversas se tipificam",
@@ -2186,10 +2162,9 @@
     },
     "errors": {
       "name_required": "O nome é obrigatório",
-      "channels_required": "Selecione pelo menos um canal",
       "name_taken": "Já existe um grupo com este nome",
       "phone_required": "O telefone de saída é obrigatório",
-      "typification_required": "Escolha uma tipificação"
+      "typification_required": "A tipificação é obrigatória"
     },
     "toasts": {
       "created": "Grupo \"{{name}}\" criado",
@@ -2215,8 +2190,6 @@
       "strategy_phone": "Estratégia de telefone",
       "strategy_chat": "Estratégia de chat"
     },
-    "rename_placeholder": "Nome do grupo",
-    "rename_aria": "Renomear {{name}}",
     "bulk_edit_title": "Aplicar alteração a {{count}} grupo(s)",
     "agents_panel": {
       "title": "Agentes: {{name}}",
@@ -2243,6 +2216,7 @@
       "type": "Tipo",
       "presence": "Estado",
       "recording": "Gravação",
+      "recording_off": "Sem gravação",
       "groups": "Grupos"
     },
     "type": {
@@ -2299,7 +2273,7 @@
         "general_hint": "Quem é, a extensão e os canais",
         "extension": "Ramal",
         "extension_hint": "O número e onde toca",
-        "channels_hint": "Pelo menos um. Os que pode atender nos seus grupos",
+        "channels_hint": "Os que pode atender nos seus grupos; pelo menos um",
         "config": "Configuração",
         "config_hint": "Gravação, permissões e definições",
         "calls": "Chamadas",
@@ -2322,15 +2296,15 @@
           "pickup_call": "Atendimento de chamadas",
           "pickup_chat": "Atendimento de chats",
           "max_chats": "Chats simultâneos",
-          "max_chats_inactive": "Chats simultâneos: ative o canal Chat em Geral",
+          "max_chats_inactive": "Chats simultâneos: ative o canal Chat em Geral.",
           "random_order": "Ordem aleatória",
-          "random_order_hint": "Visualizar agentes em ordem aleatória dentro do grupo"
+          "random_order_hint": "Visualizar agentes em ordem aleatória dentro do grupo."
         },
         "integracion": {
           "title": "Integração",
           "url_iframe": "URL iframe",
           "dispositivos_externos": "Dispositivos externos",
-          "dispositivos_externos_hint": "Permite ao agente conectar-se de dispositivos fora da rede corporativa",
+          "dispositivos_externos_hint": "Permite ao agente conectar-se de dispositivos fora da rede corporativa.",
           "url_iframe_placeholder": "https://exemplo.com/painel"
         },
         "regional": {
@@ -2394,13 +2368,12 @@
         "channel_not_offered": "Este grupo não oferece o canal",
         "filter_label": "Filtrar por atribuição",
         "outbound_label": "Grupo para chamadas de saída",
-        "outbound_empty": "Atribua um grupo com telefone",
+        "outbound_empty": "Atribua um grupo com telefone.",
         "not_assigned_hint": "Não atribuído a {{name}}: liga-se ao atribuir",
-        "not_allowed_hint": "{{channel}} não está entre os seus canais (Geral)",
+        "not_allowed_hint": "{{channel}} não está entre os seus canais: marcam-se em Geral",
         "bulk_add": "Atribuir ao agente",
         "bulk_remove": "Retirar ao agente",
-        "bulk_body": "{{action}}: {{count}} grupos.",
-        "no_channels_warn": "{{count}} sem canal: saem ao guardar"
+        "bulk_body": "{{action}}: {{count}} grupos."
       },
       "allowed": {
         "title": "Canais permitidos",
@@ -2409,9 +2382,9 @@
       },
       "permissions": {
         "manage_devices": "Gestão de dispositivos",
-        "manage_devices_hint": "O agente pode administrar seus dispositivos atribuídos",
+        "manage_devices_hint": "O agente pode administrar seus dispositivos atribuídos.",
         "self_activate": "Ativação por grupo",
-        "self_activate_hint": "O agente pode ativar-se ou desativar-se em cada grupo",
+        "self_activate_hint": "O agente pode ativar-se ou desativar-se em cada grupo.",
         "calls_section": "Chamadas",
         "destino": "Destino",
         "col_llamada": "Chamadas",
@@ -2437,15 +2410,10 @@
       "summary": {
         "no_groups": "Sem grupos",
         "groups_active": "Habilitado em grupos",
-        "missing_extension": "ramal",
-        "missing_phone": "telemóvel",
         "outbound": "Saídas",
-        "missing_email": "email",
-        "missing_channel": "um canal",
-        "missing_group": "um grupo",
-        "missing_outbound": "um grupo para as saídas",
         "channels": "Canais",
         "no_channels": "Sem canais",
+        "no_enabled_groups": "Sem grupos habilitados",
         "none": "Nenhum"
       },
       "create_submit": "Criar agente"
@@ -2459,14 +2427,14 @@
     },
     "errors": {
       "name_required": "O nome é obrigatório",
-      "extension_required": "Selecione um ramal",
-      "channels_required": "Selecione pelo menos um canal",
-      "email_invalid": "Insira um email válido",
-      "phone_invalid": "O telefone não é válido: use dígitos, com um + na frente se tiver prefixo.",
-      "phone_required": "Escreva o telemóvel: a extensão toca nele",
-      "email_required": "Escreva o email",
-      "group_required": "Atribua pelo menos um grupo",
-      "outbound_required": "Atribua um grupo com Telefone para as chamadas de saída"
+      "extension_required": "O ramal é obrigatório",
+      "channels_required": "É preciso pelo menos um canal",
+      "email_invalid": "O email não é válido",
+      "phone_invalid": "O telefone não é válido: use dígitos, com um + na frente se tiver prefixo",
+      "phone_required": "O telefone celular é obrigatório: o ramal toca nele",
+      "email_required": "O email é obrigatório",
+      "group_required": "É preciso pelo menos um grupo",
+      "outbound_required": "O grupo das chamadas de saída é obrigatório: um com Telefone"
     },
     "empty": {
       "title": "Ainda sem agentes",
@@ -2486,8 +2454,6 @@
       "groups": "Grupos",
       "sheet": "Agentes"
     },
-    "rename_placeholder": "Nome do agente",
-    "rename_aria": "Renomear {{name}}",
     "bulk_edit_title": "Aplicar alteração a {{count}} agente(s)"
   },
   "config": {
@@ -2593,7 +2559,7 @@
             "evento_inicio": "Início",
             "evento_fin": "Fim",
             "evento_resultado": "Resultado",
-            "hint": "Avisamos o teu sistema quando acontece algo numa conversa. Apenas endereços HTTPS.",
+            "hint": "Avisamos o teu sistema quando acontece algo numa conversa; apenas endereços HTTPS",
             "url_error": "Sem espaços.",
             "col_conversacion": "Conversa",
             "col_url": "Endereço web"
@@ -2602,12 +2568,12 @@
         },
         "agentes": {
           "heading": "Agentes",
-          "hint": "Cada agente novo começa com estes valores. Depois mudam-se na ficha do agente.",
+          "hint": "Cada agente novo começa com estes valores; depois mudam-se na ficha do agente",
           "edit_crumb": "Editar agente"
         },
         "grupos": {
           "heading": "Grupos",
-          "hint": "Cada grupo novo começa com estes valores. Depois mudam-se na ficha do grupo.",
+          "hint": "Cada grupo novo começa com estes valores; depois mudam-se na ficha do grupo",
           "strategy_hint": "Níveis, Ring All, Skills e Agente exclusivo escolhem-se na ficha de cada grupo, onde se configuram.",
           "edit_crumb": "Editar grupo"
         }
@@ -2628,9 +2594,9 @@
       "policies": {
         "title": "Políticas de senhas",
         "min_length": "Comprimento mínimo",
-        "min_length_hint": "Número mínimo de caracteres requeridos",
+        "min_length_hint": "Número mínimo de caracteres requeridos.",
         "expiration": "Expiração de senhas",
-        "expiration_hint": "Tempo após o qual as senhas expiram",
+        "expiration_hint": "Tempo após o qual as senhas expiram.",
         "expiration_options": {
           "never": "Sem expiração",
           "days_30": "30 dias",
@@ -2644,7 +2610,7 @@
           "chars_16": "16 caracteres"
         },
         "special_chars": "Caracteres especiais obrigatórios",
-        "special_chars_hint": "Requer pelo menos um caractere não alfanumérico"
+        "special_chars_hint": "Requer pelo menos um caractere não alfanumérico."
       },
       "regen": {
         "title": "Regeneração de senhas",

@@ -10,11 +10,12 @@ import { disableAnimations, elegirTelefonoSaliente, forceLightTheme, goto } from
  * asignados a la cuenta, los que tienen call blending. Hasta hoy se podía dejar vacío y se podía escribir cualquiera.
  *
  * Lo que fija:
- *   1. En el alta, falta en el resumen, «Crear grupo» se apaga y la barra dice por qué; con uno elegido, se crea.
- *   2. Al editar un grupo con Teléfono y sin número (el duplicado de antes lo vaciaba), su campo lo dice, su sección
- *      lleva el punto del índice y «Guardar» espera.
+ *   1. En el alta, «Crear grupo» sin él no crea: lo dice su campo y el índice, y lleva a él (DD-217); con uno elegido,
+ *      se crea.
+ *   2. Al editar un grupo con Teléfono y sin número (el duplicado de antes lo vaciaba), su campo lo dice y su sección
+ *      lleva el punto del índice con su texto, desde que se abre.
  *   3. Se elige de una lista cerrada: no hay campo donde escribir, y su ayuda ya no dice «escríbelo».
- *   4. Duplicar lo pide también: sin él, el diálogo no duplica, lo dice en el campo y lleva el foco allí.
+ *   4. Duplicar se lo lleva: la copia sale con el del original, sin diálogo (DD-217).
  *
  * Storage limpio por test → cada almacén vuelve a su semilla.
  */
@@ -27,34 +28,29 @@ test.beforeEach(async ({ page }) => {
 });
 
 const OBLIGATORIO = 'El teléfono saliente es obligatorio';
-/** El estado del resumen; delante va el nombre del glifo de su icono, que el lector no oye. */
-const estado = (page: Page) => page.locator('.ficha-summary').getByRole('status');
-const dice = (texto: string): RegExp => new RegExp(`(?:^|\\s)${texto}\\s*$`);
 const boton = (page: Page, nombre: string) => page.getByRole('button', { name: nombre, exact: true });
 /** El campo entero (desplegable, ayuda y error), por su desplegable. */
 const campoTelefono = (page: Page, id = 'group-phone') => page.locator(`sc-select:has(#${id})`);
 
-test('alta · con Teléfono falta el teléfono saliente: lo dice el resumen, «Crear grupo» espera y la barra dice por qué', async ({
-  page,
-}) => {
+test('alta · con Teléfono, «Crear grupo» sin teléfono saliente no crea: lo dice su campo y lleva a él', async ({ page }) => {
   await goto(page, 'admin/grupos/crear');
-  // Teléfono ya viene marcado.
-  await expect(estado(page)).toHaveText(dice('Falta: nombre, teléfono saliente'));
-
   const nombre = `E2E Saliente ${Date.now()}`;
   await page.locator('#group-name').fill(nombre);
-  await expect(estado(page)).toHaveText(dice('Falta: teléfono saliente'));
-  await expect(boton(page, 'Crear grupo')).toBeDisabled();
-  await expect(page.locator('.form-save-reason')).toHaveText(OBLIGATORIO);
+  // Teléfono ya viene marcado, y su campo está en Distribución y colas: nada lo dice hasta pulsar.
+  await expect(page.locator('sc-form-section-nav .form-nav__item--has-error')).toHaveCount(0);
+  await boton(page, 'Crear grupo').click();
+  await expect(page).toHaveURL(/admin\/grupos\/crear/);
+  await expect(campoTelefono(page)).toContainText(OBLIGATORIO);
+  await expect(page.locator('#group-phone')).toBeFocused();
 
   await elegirTelefonoSaliente(page, '918371548');
-  await expect(estado(page)).toHaveText(dice('Listo para crear'));
+  await expect(campoTelefono(page)).not.toContainText(OBLIGATORIO);
   await boton(page, 'Crear grupo').click();
   await expect(page).toHaveURL(/admin\/grupos\/editar\/\d+/);
   await expect(page.locator('.headline__meta')).toContainText('918371548');
 });
 
-test('editar · un grupo con Teléfono y sin número lo dice en su campo, marca su sección y no deja guardar', async ({ page }) => {
+test('editar · un grupo con Teléfono y sin número lo dice en su campo y en el índice desde que se abre', async ({ page }) => {
   await page.addInitScript(() => {
     localStorage.setItem('sc-groups-v', '4');
     localStorage.setItem(
@@ -66,11 +62,12 @@ test('editar · un grupo con Teléfono y sin número lo dice en su campo, marca 
   });
   await goto(page, 'admin/grupos/editar/1?seccion=distribucion');
   await expect(campoTelefono(page)).toContainText(OBLIGATORIO);
-  await expect(page.locator('sc-form-section-nav .form-nav__item', { hasText: 'Distribución y colas' })).toHaveClass(
-    /form-nav__item--has-error/,
-  );
+  const seccion = page.locator('sc-form-section-nav .form-nav__item', { hasText: 'Distribución y colas' });
+  await expect(seccion).toHaveClass(/form-nav__item--has-error/);
+  await expect(seccion).toContainText(OBLIGATORIO);
+  // Sin cambios no hay nada que guardar; sin motivo junto al botón (DD-217).
   await expect(boton(page, 'Guardar')).toBeDisabled();
-  await expect(page.locator('.form-save-reason')).toHaveText(OBLIGATORIO);
+  await expect(page.locator('.form-save-reason')).toHaveCount(0);
 
   await elegirTelefonoSaliente(page, '917945449');
   await expect(campoTelefono(page)).not.toContainText(OBLIGATORIO);
@@ -94,22 +91,13 @@ test('el teléfono saliente se elige de los números asignados: no hay campo don
   expect((await opciones.allInnerTexts()).map((t) => t.trim()).sort()).toEqual(['917945449', '918371548']);
 });
 
-test('duplicar pide el teléfono saliente: sin él no duplica, lo dice en su campo y lleva el foco allí', async ({ page }) => {
+test('duplicar se lleva el teléfono saliente: la copia sale con el del original, sin diálogo (DD-217)', async ({ page }) => {
   await goto(page, 'admin/grupos');
-  // Reclamaciones tiene Teléfono: su copia lo necesita, y el diálogo no se lleva el del original.
+  // Reclamaciones tiene Teléfono, con el 918371548.
   await page.locator('tbody tr', { hasText: 'Reclamaciones' }).locator('.rules-kebab-btn').click();
   await page.getByRole('menuitem', { name: 'Duplicar' }).click();
-  const dialogo = page.getByRole('dialog', { name: 'Duplicar grupo' });
-  await expect(page.locator('#group-duplicate-name')).toHaveValue('Reclamaciones (copia)');
-
-  await dialogo.getByRole('button', { name: 'Duplicar', exact: true }).click();
-  await expect(campoTelefono(page, 'group-duplicate-phone')).toContainText(OBLIGATORIO);
-  await expect(page.locator('#group-duplicate-phone')).toBeFocused();
-  await expect(dialogo).toBeVisible();
-
-  await elegirTelefonoSaliente(page, '918371548', 'group-duplicate-phone');
-  await dialogo.getByRole('button', { name: 'Duplicar', exact: true }).click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
   await expect(page).toHaveURL(/admin\/grupos\/editar\/\d+$/);
-  await expect(page.locator('.headline__name')).toHaveText('Reclamaciones (copia)');
+  await expect(page.locator('.headline__name')).toHaveText('Reclamaciones (1)');
   await expect(page.locator('.headline__meta')).toContainText('918371548');
 });

@@ -4,13 +4,8 @@
      lista; para salir ya están la miga y el menú, y el guardián de cambios avisa si dejas
      algo sin guardar. -->
 <ng-template #topbarActions>
-  <!-- El motivo va VISIBLE, no en un aria oculto: 'sc-button' reenvía 'ariaLabel' al
-       <button> real pero no 'aria-describedby'. Solo cuando FALTA algo: «No hay cambios
-       que guardar» con el botón apagado era decir dos veces lo mismo (Contact Center no
-       lo dice). -->
-  @if (saveBlockedReason(); as reason) {
-    <span class="form-save-reason sc-text-caption-regular">{{ reason | translate }}</span>
-  } @else if (mode() === 'edit' && formDirty()) {
+  <!-- Sin motivo de por qué no se puede guardar (DD-217): lo que falta lo dice cada campo al pulsar. -->
+  @if (mode() === 'edit' && formDirty()) {
     <!-- Un solo «Guardar» para toda la ficha: lo que hay por guardar se dice en palabras, y el índice marca
          dónde está (DD-122). `role="status"`: se anuncia una vez, al aparecer. -->
     <span class="form-save-reason sc-text-caption-regular" role="status">{{ 'common.unsaved_changes' | translate }}</span>
@@ -27,8 +22,8 @@
     variant="primary"
     [disabled]="!canSave()"
     [loading]="saving()"
+    [pTooltip]="canSave() ? '' : ('common.no_changes' | translate)" tooltipPosition="top"
     [label]="(mode() === 'edit' ? 'common.save' : 'users.form.create_submit') | translate"
-    [pTooltip]="saveDisabledReason() ? (saveDisabledReason()! | translate) : ''" tooltipPosition="top"
     (clicked)="save()"
   />
 </ng-template>
@@ -61,6 +56,7 @@
         [activeId]="activeSection()"
         [labelKey]="'common.form_index_aria'"
         [sectionsWithErrors]="sectionsWithErrors()"
+        [sectionErrorHints]="sectionErrorHints()"
         [sectionsWithChanges]="sectionsWithChanges()"
         [sectionsDone]="alta.hechas()"
         [flush]="true"
@@ -108,11 +104,7 @@
       <section class="resumen" aria-labelledby="user-summary-title">
         <!-- El nombre de la región, sin rótulo a la vista (DD-144): el resumen arranca a la altura del índice. -->
         <h2 id="user-summary-title" class="resumen__title visually-hidden">{{ 'common.summary' | translate }}</h2>
-        <!-- Lo que le falta al alta, hasta «Listo para crear» (DD-136). En el alta y al duplicar está siempre, y
-             cambia en su sitio; al editar, solo si falta algo. -->
-        @if (mode() !== 'edit' || summaryMissing().length > 0) {
-          <sc-summary-status [missing]="summaryMissing()" [ready]="mode() !== 'edit' && canSave()" />
-        }
+        <!-- Sin «Falta: …» ni «Listo para crear» (DD-217): lo que falta lo dice cada campo al pulsar «Crear usuario». -->
         <!-- Las tarjetas son hermanas: 14 entre ellas (AGENTS «UX de pantalla» 9). -->
         <div class="resumen__cards">
           <sc-summary-kpi
@@ -203,6 +195,7 @@
           <sc-inputtext
             inputId="user-name"
             [required]="true"
+            [error]="falta('users.errors.name_required')"
             [value]="form().name"
             (valueChange)="onNameRename($event)"
           />
@@ -222,7 +215,7 @@
             [required]="true"
             [value]="form().email"
             (valueChange)="onTextValue('email', $event)"
-            [error]="emailError() ? (emailError()! | translate) : undefined"
+            [error]="emailError() ? (emailError()! | translate) : falta('users.errors.email_required')"
           />
         </div>
 

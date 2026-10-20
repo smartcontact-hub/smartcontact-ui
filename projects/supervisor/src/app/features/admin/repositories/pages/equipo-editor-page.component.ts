@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, HostListener, inject, linkedSignal, signal, type OnInit, type TemplateRef, untracked, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, HostListener, inject, Injector, linkedSignal, type OnInit, signal, type TemplateRef, untracked, viewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -8,7 +8,6 @@ import {
   type ScColumnDef,
   ScDatatableComponent as DatatableComponent,
   ScInputTextComponent as InputTextComponent,
-  ScMessageComponent as MessageComponent,
   ScSearchComponent as SearchComponent,
   ScSectionCardComponent as SectionCardComponent,
   ScSelectButtonComponent as SelectButtonComponent,
@@ -26,6 +25,7 @@ import type { Agent } from '@features/admin/agents/data/agents-data';
 import { EquiposStore } from '../state/equipos.store';
 import { ResultadoAccionService } from '@core/services';
 import { TooltipModule } from 'primeng/tooltip';
+import { llegarAAncla, ocasionDeAvisar } from '@shared/utils/alta-secciones';
 
 interface Borrador {
   readonly name: string;
@@ -51,7 +51,6 @@ const VACIO: Borrador = { name: '', description: '', agentIds: new Set() };
     DatatableComponent,
     InputTextComponent,
     LlegaAlPieDirective,
-    MessageComponent,
     PresenceAvatarComponent,
     SearchComponent,
     SectionCardComponent,
@@ -60,9 +59,7 @@ const VACIO: Borrador = { name: '', description: '', agentIds: new Set() };
   ],
   template: `
     <ng-template #topbarActions>
-      @if (blockedReason(); as reason) {
-        <span class="form-save-reason sc-text-caption-regular">{{ reason }}</span>
-      } @else if (mode() === 'edit' && formDirty()) {
+      @if (mode() === 'edit' && formDirty()) {
         <span class="form-save-reason sc-text-caption-regular" role="status">{{ 'common.unsaved_changes' | translate }}</span>
       }
       @if (formDirty()) {
@@ -98,7 +95,7 @@ const VACIO: Borrador = { name: '', description: '', agentIds: new Set() };
                     [required]="true"
                     [placeholder]="'repositories.equipos.name_placeholder' | translate"
                     [value]="form().name"
-                    [error]="nameTaken() ? ('repositories.equipos.name_taken' | translate) : undefined"
+                    [error]="nameError()"
                     (valueChange)="update('name', $event)"
                   />
                 </div>
@@ -247,6 +244,7 @@ export class EquipoEditorPageComponent implements DirtyAware, OnInit {
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
 
+  private readonly injector = inject(Injector);
   private readonly topbarActions = viewChild<TemplateRef<unknown>>('topbarActions');
   private readonly assignedTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('assignedTpl');
   private readonly agentTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('agentTpl');
@@ -340,15 +338,24 @@ export class EquipoEditorPageComponent implements DirtyAware, OnInit {
     return !!name && this.store.items().some((g) => g.id !== this.grupoId && g.name.trim().toLowerCase() === name);
   });
 
-  protected readonly blockedReason = computed<string | null>(() => {
+  /*
+   * Lo que falta se dice al pulsar «Crear …» o «Guardar» (DD-217, como en las fichas): el botón no se apaga por ello ni
+   * lleva motivo al lado; al pulsar sin nombre, lo dice su campo y le da el foco. Un nombre repetido se dice en vivo.
+   */
+  private readonly faltas = computed<readonly string[]>(() => (this.form().name.trim() ? [] : ['repositories.errors.name_required']));
+  private readonly ocasion = ocasionDeAvisar({
+    editando: () => this.mode() === 'edit',
+    cambios: () => this.formDirty(),
+    faltas: this.faltas,
+  });
+  protected readonly nameError = computed<string | undefined>(() => {
     this.lang();
-    if (!this.form().name.trim()) {
-      return this.translate.instant('common.summary_missing', { items: this.translate.instant('common.summary_missing_name') });
-    }
-    return this.nameTaken() ? this.translate.instant('repositories.equipos.name_taken') : null;
+    if (this.nameTaken()) return this.translate.instant('repositories.equipos.name_taken');
+    const falta = this.faltas()[0];
+    return falta && this.ocasion.acusa(falta) ? this.translate.instant(falta) : undefined;
   });
 
-  protected readonly canSave = computed(() => !this.blockedReason() && (this.mode() === 'create' || this.formDirty()));
+  protected readonly canSave = computed(() => this.mode() === 'create' || this.formDirty());
 
   ngOnInit(): void {
     const raw = this.route.snapshot.paramMap.get('id');
@@ -380,10 +387,17 @@ export class EquipoEditorPageComponent implements DirtyAware, OnInit {
 
   protected discard(): void {
     this.form.set(this.dirtyState.pristineValue());
+    this.ocasion.olvidar();
   }
 
   protected save(): void {
     if (!this.canSave()) return;
+    if (this.faltas().length > 0 || this.nameTaken()) {
+      this.ocasion.intentar();
+      llegarAAncla('grupo-agentes-name', this.injector);
+      return;
+    }
+    this.ocasion.olvidar();
     const f = this.form();
     const datos = { name: f.name.trim(), description: f.description.trim() };
     const id = this.grupoId ?? this.store.addItem(datos).id;

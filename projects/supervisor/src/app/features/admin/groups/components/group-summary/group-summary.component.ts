@@ -1,16 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { MeterGroupModule } from 'primeng/metergroup';
 import { TooltipModule } from 'primeng/tooltip';
 import type { MeterItem } from 'primeng/types/metergroup';
-import {
-  ScFactRowComponent as FactRowComponent,
-  ScIconTileComponent as IconTileComponent,
-} from '@smartcontact-hub/components';
-import { ScIconComponent } from '@smartcontact-hub/icons';
+import { ScFactRowComponent as FactRowComponent } from '@smartcontact-hub/components';
 
 import { AnimateOnChangeDirective } from '@core/directives';
-import { ChannelIconComponent, SummaryKpiComponent, SummaryStatusComponent, type ResourceRow } from '@shared/components';
+import { ChannelIconComponent, SummaryKpiComponent } from '@shared/components';
 import type { GroupAgentLink } from '@features/admin/services/group-agent-links.types';
 import { familiesOf } from '@features/admin/services/group-channels.core.mjs';
 
@@ -34,13 +30,13 @@ export interface GroupSummaryOutbound {
   readonly number: string;
 }
 
-/** Lo asignado de un tipo de recurso, para su fila de Recursos y su panel rápido: agendas, o plantillas de un canal. */
+/** Lo asignado de un tipo de recurso, para su fila de Recursos: agendas, o plantillas de un canal. */
 export interface GroupSummaryResources {
   readonly key: 'agendas' | 'chat' | 'email';
   /** El nombre de su campo en Recursos («Agendas», «Plantillas de chat»). */
   readonly labelKey: string;
-  /** Los recursos de verdad, ya resueltos (DD-164): su nombre y su dato. */
-  readonly rows: readonly ResourceRow[];
+  /** Cuántos tiene, de los que siguen en Repositorios (DD-164). */
+  readonly count: number;
 }
 
 /** Las secciones de la ficha a las que lleva el resumen (DD-146). */
@@ -54,6 +50,8 @@ export interface GroupSummaryDestino {
   readonly seccion: GroupSummarySeccion;
   readonly canal?: ChannelFamily;
   readonly salida?: 'phone' | 'whatsapp';
+  /** Dentro de Recursos, el campo de un tipo de recurso. */
+  readonly recurso?: GroupSummaryResources['key'];
 }
 
 interface ChannelRow {
@@ -77,22 +75,18 @@ interface ChannelRow {
  * Cada cifra contesta una pregunta de verdad, y ninguna es decorativa: una tarjeta que no puede
  * decir nada no se pinta. Cada grupo se llama como su sección de la ficha, y cada fila como su campo (revisión del
  * 2026-10-14: «Salida» no existía en la ficha).
- *   · Agentes habilitados: cuántos atienden de los asignados (los demás, deshabilitados), y cuántos cada canal.
- *     Un canal activo sin nadie que lo atienda sale en aviso, con icono y texto (el color solo no
- *     basta, WCAG 1.4.1).
+ *   · Agentes habilitados: cuántos atienden de los asignados (los demás, deshabilitados), y cuántos cada canal. Un
+ *     canal sin nadie que lo atienda dice 0, sin aviso amarillo (DD-217: un aviso que no bloquea nada sobraba).
  *   · Distribución: la estrategia de cada familia de canales, y el teléfono saliente y el número de WhatsApp, que en
  *     la ficha son campos de Distribución y colas.
  *   · Recursos: lo que le llega desde Repositorios, por tipo (agendas y plantillas de los canales que atiende).
  *
  * Y lleva a donde se arregla lo que dice (DD-146): el rótulo de cada tarjeta, a su sección; cada fila de
- * Distribución, al bloque de su canal o a su número. Son enlaces de verdad, con la dirección de
- * la sección, y la ficha resuelve el clic en su sitio (en el alta, sin tocar la dirección y con General de puerta).
+ * Distribución, al bloque de su canal o a su número; cada fila de Recursos, a su campo. Son enlaces de verdad, con la
+ * dirección de la sección, y la ficha resuelve el clic en su sitio (en el alta, sin tocar la dirección).
  *
- * Cada tipo de recurso, además, abre un panel rápido (revisión de diseño, 2026-10-11, sobre el prototipo del
- * encargo): uno abierto a la vez, como el original. Lleva los recursos de verdad del grupo (DD-164: agendas y
- * plantillas, con su nombre y su dato) — nunca los «Línea principal» / «Guion de atención» fijos del prototipo: ese
- * grupo puede no tener ni uno ni el otro, y esto no inventa contenido. Teléfono tuvo el suyo, con las tres
- * estrategias que no piden nada más; salió en la revisión del 2026-10-15: la estrategia se cambia en su campo.
+ * Cada tipo de recurso abrió un panel rápido con lo asignado desde el 2026-10-11; salió en la revisión del 2026-10-20
+ * (DD-217): pulsar la fila lleva a su campo, donde lo elegido ya se ve en chips.
  *
  * El rótulo dice «Distribución», no «Reparto» (nombre antiguo del 2026-10-11, corregido el mismo día): la
  * sección a la que lleva se llama «Distribución y colas» y su propia cabecera dentro dice «Distribución»; dos
@@ -103,13 +97,10 @@ interface ChannelRow {
   imports: [
     TranslateModule,
     MeterGroupModule,
-    ScIconComponent,
     FactRowComponent,
-    IconTileComponent,
     ChannelIconComponent,
     AnimateOnChangeDirective,
     SummaryKpiComponent,
-    SummaryStatusComponent,
     TooltipModule,
   ],
   templateUrl: './group-summary.component.html',
@@ -122,14 +113,8 @@ export class GroupSummaryComponent {
   readonly links = input.required<readonly GroupAgentLink[]>();
   readonly routing = input<readonly GroupSummaryRouting[]>([]);
   readonly outbound = input<readonly GroupSummaryOutbound[]>([]);
-  /** Los recursos del grupo por tipo, para Recursos: una fila por tipo con su cifra y su panel rápido. */
+  /** Los recursos del grupo por tipo, para Recursos: una fila por tipo con su cifra. */
   readonly resources = input<readonly GroupSummaryResources[]>([]);
-  /** Claves de lo que falta para poder crear (nombre, canales). Vacío = nada. */
-  readonly missing = input<readonly string[]>([]);
-  /** Es un alta: el estado está siempre, y dice «Listo para crear» cuando `ready`. */
-  readonly creating = input(false);
-  /** El botón «Crear grupo» está encendido. */
-  readonly ready = input(false);
   /** La dirección de cada sección a la que lleva el resumen, como la escribe el índice. */
   readonly hrefs = input.required<Readonly<Record<GroupSummarySeccion, string>>>();
   /** Se pulsó algo del resumen, sin teclas: la ficha va a su sitio. */
@@ -140,8 +125,6 @@ export class GroupSummaryComponent {
   /** El nombre de cada número es el del campo real al que lleva («Teléfono saliente», «Número WhatsApp»), no el
    *  genérico del canal: el mismo criterio que igualó «Reparto» con «Distribución». */
   protected readonly outboundKeys = OUTBOUND_LABEL_KEYS;
-  /** Qué panel rápido está abierto: uno a la vez, como el prototipo del encargo. */
-  protected readonly expandedQuick = signal<GroupSummaryResources['key'] | null>(null);
   /** La barra de cada canal va en la cifra destacada (DD-161): su pista, translúcida en el color claro de la tarjeta. */
   protected readonly meterDt = { meters: { background: 'color-mix(in srgb, var(--sc-text-inverse) 25%, transparent)' } };
 
@@ -167,10 +150,6 @@ export class GroupSummaryComponent {
 
   protected familyKey(family: GroupSummaryRouting['family']): string {
     return FAMILY_LABEL_KEYS[family];
-  }
-
-  protected toggleQuick(panel: GroupSummaryResources['key']): void {
-    this.expandedQuick.update((actual) => (actual === panel ? null : panel));
   }
 
   /** Un clic sin teclas va al sitio en la ficha; con Cmd, Ctrl, Mayús o el botón central, el navegador abre la dirección. */

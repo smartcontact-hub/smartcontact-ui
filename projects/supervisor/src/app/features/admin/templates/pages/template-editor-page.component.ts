@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, HostListener, inject, signal, type OnInit, type TemplateRef, viewChild } from '@angular/core';
+import { afterNextRender, ChangeDetectionStrategy, Component, computed, HostListener, inject, Injector, signal, type OnInit, type TemplateRef, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -16,6 +16,7 @@ import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { ResultadoAccionService } from '@core/services';
 import { injectLangChange } from '@core/utils/lang-change';
 import { GroupsStore } from '@features/admin/groups/state/groups.store';
+import { llegarAAncla, ocasionDeAvisar } from '@shared/utils/alta-secciones';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 
 import { TEMPLATE_TYPES, type TemplateType } from '../data/templates-data';
@@ -70,6 +71,7 @@ export class TemplateEditorPageComponent implements DirtyAware, OnInit {
   private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
+  private readonly injector = inject(Injector);
 
   private readonly topbarActions = viewChild<TemplateRef<unknown>>('topbarActions');
 
@@ -120,19 +122,34 @@ export class TemplateEditorPageComponent implements DirtyAware, OnInit {
     return !!title && this.store.templates().some((t) => t.id !== this.templateId && t.title.trim().toLowerCase() === title);
   });
 
-  /** Por qué no se puede guardar, dicho en la barra como en las fichas: falta el título o el contenido, o el título ya está. */
-  protected readonly blockedReason = computed<string | null>(() => {
-    this.lang();
+  /*
+   * Lo que falta se dice al pulsar «Crear plantilla» o «Guardar» (DD-217, como en las fichas): el botón no se apaga por
+   * ello ni lleva motivo al lado; al pulsar, lo dice cada campo y el primero recibe el foco. El título repetido, en vivo.
+   */
+  private readonly faltas = computed<readonly string[]>(() => {
     const f = this.form();
-    const faltan = [
-      ...(f.title.trim() ? [] : [this.translate.instant('templates.form.summary_missing_title')]),
-      ...(contenidoVacio(f.html) ? [this.translate.instant('templates.form.summary_missing_body')] : []),
+    return [
+      ...(f.title.trim() ? [] : ['templates.errors.title_required']),
+      ...(contenidoVacio(f.html) ? ['templates.errors.body_required'] : []),
     ];
-    if (faltan.length > 0) return this.translate.instant('common.summary_missing', { items: faltan.join(', ') });
-    return this.titleTaken() ? this.translate.instant('templates.errors.duplicate_title') : null;
+  });
+  private readonly ocasion = ocasionDeAvisar({
+    editando: () => this.mode() === 'edit',
+    cambios: () => this.formDirty(),
+    faltas: this.faltas,
+  });
+  protected readonly titleError = computed<string | undefined>(() => {
+    this.lang();
+    if (this.titleTaken()) return this.translate.instant('templates.errors.duplicate_title');
+    const falta = 'templates.errors.title_required';
+    return this.faltas().includes(falta) && this.ocasion.acusa(falta) ? this.translate.instant(falta) : undefined;
+  });
+  protected readonly bodyError = computed(() => {
+    const falta = 'templates.errors.body_required';
+    return this.faltas().includes(falta) && this.ocasion.acusa(falta) ? falta : null;
   });
 
-  protected readonly canSave = computed(() => !this.blockedReason() && (this.mode() === 'create' || this.formDirty()));
+  protected readonly canSave = computed(() => this.mode() === 'create' || this.formDirty());
 
   ngOnInit(): void {
     const raw = this.route.snapshot.paramMap.get('id');
@@ -178,6 +195,13 @@ export class TemplateEditorPageComponent implements DirtyAware, OnInit {
 
   protected save(): void {
     if (!this.canSave()) return;
+    if (this.faltas().length > 0 || this.titleTaken()) {
+      this.ocasion.intentar();
+      if (this.titleError()) llegarAAncla('template-title', this.injector);
+      else this.enfocarContenido();
+      return;
+    }
+    this.ocasion.olvidar();
     const f = this.form();
     const title = f.title.trim();
     const body = contenidoParaGuardar(f.html, f.type);
@@ -212,6 +236,19 @@ export class TemplateEditorPageComponent implements DirtyAware, OnInit {
 
   protected discard(): void {
     this.form.set(this.dirtyState.pristineValue());
+    this.ocasion.olvidar();
+  }
+
+  /** El contenido no es un campo con `id`: el foco va a la caja de escritura del editor, como haría el ratón. */
+  private enfocarContenido(): void {
+    afterNextRender(
+      () => {
+        const caja = document.querySelector<HTMLElement>('.template-editor .ql-editor');
+        caja?.closest('sc-section-card')?.scrollIntoView({ block: 'start' });
+        caja?.focus({ preventScroll: true });
+      },
+      { injector: this.injector },
+    );
   }
 
   @HostListener('window:beforeunload', ['$event'])

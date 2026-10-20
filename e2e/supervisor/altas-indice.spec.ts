@@ -7,18 +7,18 @@ import { disableAnimations, forceLightTheme, goto, irASeccion, pickSelectOption 
  * LAS ALTAS VUELVEN AL ÍNDICE, CON ✓ Y «SIGUIENTE» (DD-143, que revierte los pasos de DD-138).
  *
  * El alta tiene la maqueta de la edición: el índice a la izquierda, una sección a la vista y el resumen a la derecha.
- * La sección que se deja completa lleva ✓ en el índice, y al pie de cada una van «Atrás» y «Siguiente». General sigue
- * siendo la puerta del grupo (DD-121).
+ * La sección que se deja completa lleva ✓ en el índice, y al pie de cada una van «Atrás» y «Siguiente». Sin puertas
+ * desde DD-217: General dejó de serlo en el grupo, y lo que falta se dice al pulsar «Crear» (`indice-errores`).
  *
  * Lo que fija:
  *   1. El alta tiene el índice de la edición, con sus secciones en orden y la primera a la vista, y ningún Stepper.
- *   2. Grupo: sin nombre, ni el índice ni «Siguiente» sacan de General; dicen qué falta y llevan el foco al campo. Con
- *      él, «Siguiente» y «Atrás» cambian de sección y llevan el foco a su título.
+ *   2. Grupo: «Siguiente» y «Atrás» cambian de sección, también sin nombre, sin decir nada en rojo, y llevan el foco a
+ *      su título (DD-217).
  *   3. «Siguiente» sube al principio de la sección nueva: sin eso, desde el pie de una sección larga se llega a media
  *      altura de la siguiente.
  *   4. La sección que se deja completa lleva ✓ en el índice, y su enlace lo dice; el ✓ se ve (3:1). La abierta no
- *      lo lleva aunque esté bien. La que se deja sin lo obligatorio lleva el punto rojo (DD-142); antes de abrirla,
- *      ninguna marca. Qué secciones pueden llevar ✓, y la puerta del teléfono saliente: `altas-obligatorio` (DD-158).
+ *      lo lleva aunque esté bien. La que se deja sin lo obligatorio no lleva nada: ni ✓ ni rojo hasta pulsar «Crear»
+ *      (DD-217). Qué secciones pueden llevar ✓: `altas-obligatorio`.
  *   5. Cambiar de sección en el alta no toca la dirección ni el historial: Atrás del navegador sale del alta. La
  *      primera sección no lleva «Atrás», y la última no lleva «Siguiente».
  *   6. Agente y usuario: las secciones, en cualquier orden (el agente, las cuatro de la ficha de grupo desde DD-187).
@@ -61,22 +61,16 @@ test('grupo · el alta tiene el índice de la edición, con General a la vista, 
   await expect(page.locator('p-stepper')).toHaveCount(0);
 });
 
-test('grupo · sin nombre no se sale de General; con él, «Siguiente» y «Atrás» cambian de sección y llevan el foco a su título', async ({
+test('grupo · sin puertas: «Siguiente» y «Atrás» cambian de sección también sin nombre, y llevan el foco a su título', async ({
   page,
 }) => {
   await goto(page, 'admin/grupos/crear');
-  // Ni con «Siguiente» ni con el índice: lo dice el campo y el foco va a él.
-  await siguiente(page).click();
-  await expect(page.locator('#group-name-msg')).toHaveText('El nombre es obligatorio');
-  await expect(page.locator('#group-name')).toBeFocused();
-  await fila(page, 'Agentes').click();
-  await expect(actual(page)).toContainText('General');
-  await expect(page.locator('#group-name')).toBeFocused();
-
-  await page.locator('#group-name').fill(`E2E Índice ${Date.now()}`);
+  // Sin nombre se sale de General, y nada en rojo: lo que falta se dice al pulsar «Crear grupo» (DD-217).
   await siguiente(page).click();
   await expect(actual(page)).toContainText('Distribución y colas');
   await expect(titulo(page, 'Distribución y colas')).toBeFocused();
+  await expect(page.locator('#group-name-msg')).toHaveCount(0);
+  await expect(page.locator('sc-form-section-nav .form-nav__item--has-error')).toHaveCount(0);
 
   await atras(page).click();
   await expect(actual(page)).toContainText('General');
@@ -114,21 +108,21 @@ test('grupo · la sección que se deja completa lleva ✓ en el índice, su enla
   await expect(check).toBeVisible();
   expect((await check.evaluate(colorEfectivo)).ratio, 'el ✓ sobre su fondo').toBeGreaterThanOrEqual(3);
   // La abierta no lleva ✓ aunque esté bien: aún no se ha dejado. Y Distribución, sin teléfono saliente, no está
-  // completa (DD-142) ni se deja (DD-158): «Siguiente» se queda en ella, sin ✓.
+  // completa (DD-142): al dejarla, ni ✓ ni rojo (DD-217).
   await expect(fila(page, 'Distribución y colas')).not.toHaveAccessibleName(/completa/);
   await siguiente(page).click();
-  await expect(actual(page)).toContainText('Distribución y colas');
+  await expect(actual(page)).toContainText('Recursos');
   await expect(fila(page, 'Distribución y colas')).not.toHaveAccessibleName(/completa/);
   await expect(fila(page, 'Distribución y colas').locator('.form-nav__done')).toHaveCount(0);
+  await expect(fila(page, 'Distribución y colas').locator('.form-nav__dot')).toHaveCount(0);
 });
 
-test('agente · General que se deja sin lo obligatorio lleva el punto rojo; al completarla, ✓', async ({ page }) => {
+test('agente · General que se deja sin lo obligatorio no lleva nada hasta pulsar «Crear»; al completarla, ✓', async ({ page }) => {
   await goto(page, 'admin/agentes/crear');
-  // Recién abierta no acusa: lo dice el resumen (DD-136).
-  await expect(fila(page, 'General')).not.toHaveAccessibleName(/obligatorios/);
   await siguiente(page).click();
-  await expect(fila(page, 'General')).toHaveAccessibleName(/General.*campos obligatorios sin rellenar/);
-  await expect(fila(page, 'General').locator('.form-nav__dot')).toBeVisible();
+  // Ni rojo ni ✓: lo que falta se dice al pulsar «Crear agente» (DD-217, `indice-errores`).
+  await expect(fila(page, 'General')).not.toHaveAccessibleName(/obligatori|completa/);
+  await expect(fila(page, 'General').locator('.form-nav__dot')).toHaveCount(0);
 
   await irASeccion(page, 'General');
   await rellenarGeneral(page);
@@ -148,8 +142,6 @@ test('grupo · cambiar de sección no toca la dirección ni el historial; la pri
 
   await page.locator('#group-name').fill(`E2E Índice ${Date.now()}`);
   await siguiente(page).click();
-  // Sin teléfono saliente no se pasa de Distribución (DD-158).
-  await pickSelectOption(page, page.locator('sc-select').filter({ has: page.locator('#group-phone') }), /./);
   await fila(page, 'Agentes').click();
   await expect(actual(page)).toContainText('Agentes');
 
