@@ -57,7 +57,7 @@ y Repositorios (2026-10-15, DD-210, #426, sin trampas propias): `git show 840fe5
 ## ✅ 2026-10-19 · Mapa de componentes de Grupos, una sola tabla en el DS y «Fuera del DS» con alternativas
 
 > **Sello:** sin código. Figma del Supervisor (`Hjyy41SYKqcRuIzCGggfYH`) y del DS (`khNq9dJKNi13pNllrqm6dx`); en el
-> repo, solo docs (rama `areses/component-map-groups-ab0007`, HEAD `83c080c1`, al día con `main`).
+> repo, solo docs (rama `areses/component-map-groups-ab0007`, HEAD `24ced9b5`, al día con `main`).
 
 - **Mapa de componentes** («Grupos», `3175:11365`, en el índice): listado y ficha con cajas encima; verde, DS de
   desarrollo (`sc-*`); azul, PrimeNG (`p-*`); naranja, propio; gris discontinuo, layout. Sus tablas siguen en Small.
@@ -70,9 +70,9 @@ y Repositorios (2026-10-15, DD-210, #426, sin trampas propias): `git show 840fe5
   atado al maestro; llevaban 2 a mano. Fila de 42, 49 con ⋮, 54 con avatar. Guía: «Tablas en tamaño normal».
 - **«Fuera del DS»** (§54): salen alto de fila, botón de foto (`highlight/background`), título, barra (Header del DS
   con botón md, 58) y resumen («Mostrar estado» en `group-summary` y `agent-summary`). Quedan 4.
-- **Pendiente**: publicar el DS y «Update all» (Header y resúmenes). El prototipo (8 × 14), en otra sesión.
+- **Pendiente**: «Update all» en el Supervisor (DS ya publicado). El prototipo ya pinta 10,5 × 14 (DD-214, #461).
 - **Trampas**: un marco de documentación a HUG estira las variantes FILL y cambia el maestro. En otro fichero, busca
-  por la clave del maestro. «El Aura» son dos: prototipo 8 × 14, devs 10,5 × 14. Cambiar de variante la pieza de fuera
+  por la clave del maestro. «El Aura» son dos: el de PrimeNG 22 sin escalar (8 × 14) y el de los devs (10,5 × 14). Cambiar de variante la pieza de fuera
   rehace las de dentro (ve de dentro afuera) y a un resumen le borra los datos: una propiedad no.
 
 ## ✅ 2026-10-19 · Grupos: «Agentes» sin fijar y «—» con 0 agentes; el tooltip del Kit; las tres congeladas, al día con `main`
@@ -246,8 +246,8 @@ y Repositorios (2026-10-15, DD-210, #426, sin trampas propias): `git show 840fe5
   tooltip con máximo y la celda de selección small; `figma-pendiente` §53). No bloquea las maquetas.
 - **Decisión de diseño:** las 4 fichas que quedan en «Fuera del DS» (aviso, campos numéricos, subsección plegada y lo
   no dibujado: atajo «/» y solo lectura), con sus alternativas en `figma-pendiente` §54.
-- **Publicar el DS** (Header con botón md, «Mostrar estado» en los resúmenes) y «Update all» en el Supervisor: la API
-  no puede. Al publicar, decidir si la tabla «(sin slots)» se oculta de la librería (`_` delante).
+- **«Update all» en el Supervisor** (el DS ya está publicado: Header md y «Mostrar estado»): la API no puede. En la
+  próxima publicación, decidir si la tabla «(sin slots)» se oculta de la librería (`_` delante).
 - **Rafa:** revisar usuarios contra el Supervisor real. Y en el portátil: poner el 4405 al día con `main` y borrar el
   worktree y la rama `codex/supervisor-f-listado` (`aff63656`, una copia de F), la local y la del remoto; desde la
   nube no se puede.
