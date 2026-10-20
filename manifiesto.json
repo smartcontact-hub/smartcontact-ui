@@ -1,8 +1,8 @@
 {
-  "commit": "56ebd85d",
+  "commit": "7ffeed44",
   "primeng": "22.1.0",
   "themes": "3.0.0",
-  "generado": "2026-10-20T11:30:46.268Z",
+  "generado": "2026-10-20T13:34:52.713Z",
   "estilosTexto": [
     "display-regular",
     "display-semibold",
@@ -29,36 +29,9 @@
         "smartcontact-tokens.css"
       ],
       "variables": [
-        "claro|--sc-cmp-datatable-body-cell-lg-padding-x",
-        "claro|--sc-cmp-datatable-body-cell-lg-padding-y",
-        "claro|--sc-cmp-datatable-body-cell-padding-x",
-        "claro|--sc-cmp-datatable-body-cell-padding-y",
-        "claro|--sc-cmp-datatable-body-cell-sm-padding-x",
-        "claro|--sc-cmp-datatable-body-cell-sm-padding-y",
-        "claro|--sc-cmp-datatable-footer-cell-lg-padding-x",
-        "claro|--sc-cmp-datatable-footer-cell-lg-padding-y",
-        "claro|--sc-cmp-datatable-footer-cell-padding-x",
-        "claro|--sc-cmp-datatable-footer-cell-padding-y",
-        "claro|--sc-cmp-datatable-footer-cell-sm-padding-x",
-        "claro|--sc-cmp-datatable-footer-cell-sm-padding-y",
-        "claro|--sc-cmp-datatable-footer-lg-padding-x",
-        "claro|--sc-cmp-datatable-footer-lg-padding-y",
-        "claro|--sc-cmp-datatable-footer-padding-x",
-        "claro|--sc-cmp-datatable-footer-padding-y",
-        "claro|--sc-cmp-datatable-footer-sm-padding-x",
-        "claro|--sc-cmp-datatable-footer-sm-padding-y",
-        "claro|--sc-cmp-datatable-header-cell-lg-padding-x",
-        "claro|--sc-cmp-datatable-header-cell-lg-padding-y",
-        "claro|--sc-cmp-datatable-header-cell-padding-x",
-        "claro|--sc-cmp-datatable-header-cell-padding-y",
-        "claro|--sc-cmp-datatable-header-cell-sm-padding-x",
-        "claro|--sc-cmp-datatable-header-cell-sm-padding-y",
-        "claro|--sc-cmp-datatable-header-lg-padding-x",
-        "claro|--sc-cmp-datatable-header-lg-padding-y",
-        "claro|--sc-cmp-datatable-header-padding-x",
-        "claro|--sc-cmp-datatable-header-padding-y",
-        "claro|--sc-cmp-datatable-header-sm-padding-x",
-        "claro|--sc-cmp-datatable-header-sm-padding-y"
+        "claro|--sc-cmp-datatable-filter-inline-gap",
+        "claro|--sc-cmp-datatable-filter-overlay-popover-gap",
+        "claro|--sc-cmp-datatable-header-cell-gap"
       ],
       "retirados": [],
       "semanticaComun": false,
@@ -77,5 +50,5 @@
     },
     "cambia": true
   },
-  "version": "0.20261020.1130"
+  "version": "0.20261020.1334"
 }

@@ -3532,6 +3532,7 @@ var datatable_default = {
     }
   },
   headerCell: {
+    gap: "var(--sc-cmp-datatable-header-cell-gap)",
     padding: "var(--sc-cmp-datatable-header-cell-padding-y) var(--sc-cmp-datatable-header-cell-padding-x)",
     sm: {
       padding: "var(--sc-cmp-datatable-header-cell-sm-padding-y) var(--sc-cmp-datatable-header-cell-sm-padding-x)"
@@ -3565,6 +3566,12 @@ var datatable_default = {
     },
     lg: {
       padding: "var(--sc-cmp-datatable-footer-lg-padding-y) var(--sc-cmp-datatable-footer-lg-padding-x)"
+    }
+  },
+  filter: {
+    inlineGap: "var(--sc-cmp-datatable-filter-inline-gap)",
+    overlayPopover: {
+      gap: "var(--sc-cmp-datatable-filter-overlay-popover-gap)"
     }
   },
   colorScheme: {
