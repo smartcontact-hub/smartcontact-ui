@@ -34,12 +34,12 @@
       chooseLabel="Elegir"
       dropLabel="o suelta aquí el archivo."
       removeLabel="Quitar archivo"
+      helperText="Admite archivos .wav y .mp3."
       [saved]="guardado()"
       (uploaded)="guardar($event)"
       (savedRemoved)="guardado.set([])"
       data-testid="sc-fileupload-saved"
     />
-    <span>Admite archivos .wav y .mp3.</span>
   </div>
 </ng-template>
 

@@ -13,6 +13,9 @@ import { FileUpload, FileUploadModule } from 'primeng/fileupload';
 
 import { ScIconComponent } from '@smartcontact-hub/icons';
 
+import { createScFieldState } from '../field/sc-field';
+import { ScFieldMsgComponent } from '../field/sc-field-msg.component';
+
 /**
  * Subir archivos: elegir con el botón o soltarlos en la zona, con su lista, su validación de tipo y tamaño y su
  * progreso. Wrapper Extended sobre `<p-fileupload>` de primeng.dev, en su modo **advanced** (el de
@@ -61,7 +64,7 @@ export interface ScSavedFile {
 @Component({
   selector: 'sc-fileupload',
   standalone: true,
-  imports: [FileUploadModule, ScIconComponent],
+  imports: [FileUploadModule, ScFieldMsgComponent, ScIconComponent],
   templateUrl: './sc-fileupload.component.html',
   styleUrl: './sc-fileupload.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -104,6 +107,11 @@ export class ScFileUploadComponent {
   readonly dropLabel = input<string>();
   /** Nombre de la ✕ de cada archivo, traducido: la de PrimeNG es un botón de solo icono sin nombre. */
   readonly removeLabel = input<string>();
+  /**
+   * La ayuda, debajo, como la de los demás campos del DS (qué formatos, para qué es): el botón de elegir la anuncia
+   * con su nombre (`aria-describedby`, por el passthrough). Hasta DD-217 §16 cada pantalla la escribía a mano.
+   */
+  readonly helperText = input<string>();
   /** Avisos de archivo rechazado, con los mismos `{0}` que PrimeNG (nombre del archivo, tamaño o tipos admitidos). */
   readonly invalidFileSizeMessageSummary = input('{0}: Invalid file size, ');
   readonly invalidFileSizeMessageDetail = input('maximum upload size is {0}.');
@@ -128,10 +136,17 @@ export class ScFileUploadComponent {
    * `aria-label="true"` al envoltorio del icono propio (`#chooseicon`) y, sin `aria-hidden`, el botón se llamaba «true
    * Elegir»; su icono de serie lleva los dos atributos y se llama «Choose» (medido en primeng.dev, 2026-10-15).
    */
+  private readonly field = createScFieldState('sc-fileupload', {
+    inputId: computed(() => undefined),
+    helperText: this.helperText,
+  });
+  protected readonly msgId = this.field.msgId;
+
   protected readonly pt = computed(() => {
     const label = this.removeLabel();
+    const ayuda = this.helperText() ? { root: { 'aria-describedby': this.msgId() } } : {};
     return {
-      pcChooseButton: { icon: { 'aria-hidden': 'true' } },
+      pcChooseButton: { ...ayuda, icon: { 'aria-hidden': 'true' } },
       ...(label ? { pcFileRemoveButton: { root: { 'aria-label': label } } } : {}),
     };
   });

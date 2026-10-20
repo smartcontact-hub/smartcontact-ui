@@ -36,3 +36,6 @@
     </ng-template>
   }
 </p-fileupload>
+@if (helperText(); as ayuda) {
+  <sc-field-msg block="sc-fileupload" [text]="ayuda" [msgId]="msgId()" />
+}

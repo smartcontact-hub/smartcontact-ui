@@ -4563,6 +4563,16 @@
           "nativo": null
         },
         {
+          "nombre": "helperText",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "La ayuda, debajo, como la de los demás campos del DS (qué formatos, para qué es): el botón de elegir la anuncia con su nombre (`aria-describedby`, por el passthrough). Hasta DD-217 §16 cada pantalla la escribía a mano.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
           "nombre": "invalidFileSizeMessageSummary",
           "clase": "input",
           "tipo": "string",

@@ -253,8 +253,12 @@ desplegable, la tipificación sin su descripción y duplicar con «(1)» en vez 
     `inputId` del `p-toggleswitch`, el patrón de la doc de PrimeNG (pulsar el texto lo cambia). El hueco del rótulo a
     su caja, 7 en los cinco (`--sc-spacing-0-5`; `sc-inputtext`, `sc-inputnumber` y `sc-inputtags` daban 5,5).
     `sc-textarea` gana `label` y `required`, con el botón de copiar en la caja del campo y no sobre el rótulo: así
-    ningún rótulo de campo de las dos fichas va escrito a mano. La ayuda de `sc-fileupload` sigue a mano: darle
-    `helperText` exige atar su descripción por dentro de PrimeNG, y va con el resto de piezas a nativo.
+    ningún rótulo de campo de las dos fichas va escrito a mano. `sc-fileupload` gana `helperText`, que el botón de
+    elegir anuncia (`aria-describedby` por su passthrough): los formatos de los audios de Grupos ya no son un párrafo
+    a mano. Lo que la auditoría marcó además como «a nativo» ya lo había decidido el DS, con su motivo escrito, y se
+    queda: `sc-checkbox` sobre el `<input>` nativo (el ciclo de tres estados, que `p-checkbox` no modela),
+    `sc-inputnumber` con el estilo de `pInputText` (todos sus usos son contadores enteros) y `sc-presence-avatar`
+    con el `p-overlay-badge` nativo y su única desviación escrita (DD-185).
 
 **Razón** · Un aviso que aparece donde la persona no mira, sin decir qué, se lee como causado por lo último que hizo.
 Callar mientras se rellena y decirlo todo, en su sitio y con texto, al pulsar, es lo que hacen los formularios largos
