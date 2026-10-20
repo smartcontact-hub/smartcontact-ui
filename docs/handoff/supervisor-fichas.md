@@ -87,7 +87,9 @@ sube a «Trampas del frente».
   atado al maestro; llevaban 2 a mano. Fila de 42, 49 con ⋮, 54 con avatar. Guía: «Tablas en tamaño normal».
 - **«Fuera del DS»** (§54): salen alto de fila, botón de foto (`highlight/background`), título, barra (Header del DS
   con botón md, 58) y resumen («Mostrar estado» en `group-summary` y `agent-summary`). Quedan 4.
-- **Pendiente**: «Update all» en el Supervisor (DS ya publicado). El prototipo ya pinta 10,5 × 14 (DD-214, #461).
+- **Hecho** el 2026-10-20: «Update all» en el Supervisor. Medido: los 37 resúmenes (21 `group-summary`, 16
+  `agent-summary`) tienen «Mostrar estado» y las 98 cabeceras usan `button` md con «Show button». El prototipo ya pinta
+  10,5 × 14 (DD-214, #461).
 - **Trampas**: un marco de documentación a HUG estira las variantes FILL y cambia el maestro. En otro fichero, busca
   por la clave del maestro. «El Aura» son dos: el de PrimeNG 22 sin escalar (8 × 14) y el de los devs (10,5 × 14). Cambiar de variante la pieza de fuera
   rehace las de dentro (ve de dentro afuera) y a un resumen le borra los datos: una propiedad no.
@@ -146,8 +148,8 @@ sube a «Trampas del frente».
 - **Qué**: `sc-datatable` lee el relleno del Kit (10,5 × 14; sm 5,25 × 7; lg 14 × 17,5), no el de Aura 3 sin escalar
   (8 × 14). A 1440: cabecera y fila de texto de 37 a 42, como ui.smart-contact.com; la fila con ⋮, de 44 a 49.
 - **Pruebas**: `list-table-grammar` lee el relleno con `kitPx` (contra `main`, rojo con «8px 14px»); 31 + 59 en verde.
-- **Hecho** el 2026-10-20: la ficha 1 de `figma-pendiente` §54, marcada en el prototipo. Pendiente, lo que el Kit dibuja
-  distinto de Aura en la tabla y no entró (hueco de celda, filtro): `node tools/aura-diff.mjs datatable`.
+- **Hecho** el 2026-10-20: la ficha 1 de `figma-pendiente` §54, marcada en el prototipo. Y, con DD-216, los tres huecos
+  que el Kit dibuja distinto de Aura (celda de cabecera, filtro en línea, popover del filtro): 7, como los devs.
 
 ## SIGUIENTE — sin preguntar
 
@@ -229,8 +231,8 @@ sube a «Trampas del frente».
   tooltip con máximo y la celda de selección small; `figma-pendiente` §53). No bloquea las maquetas.
 - **Decisión de diseño:** las 4 fichas que quedan en «Fuera del DS» (aviso, campos numéricos, subsección plegada y lo
   no dibujado: atajo «/» y solo lectura), con sus alternativas en `figma-pendiente` §54.
-- **«Update all» en el Supervisor** (el DS ya está publicado: Header md y «Mostrar estado»): la API no puede. En la
-  próxima publicación, decidir si la tabla «(sin slots)» se oculta de la librería (`_` delante).
+- **Próxima publicación del DS:** decidir si la tabla «(sin slots)» se oculta de la librería (`_` delante). El
+  «Update all» en el Supervisor ya está aplicado (2026-10-20).
 - **Rafa:** revisar usuarios contra el Supervisor real. Y en el portátil: poner el 4405 al día con `main` y borrar el
   worktree y la rama `codex/supervisor-f-listado` (`aff63656`, una copia de F), la local y la del remoto; desde la
   nube no se puede.

@@ -613,6 +613,9 @@
   --sc-cmp-datatable-footer-sm-padding-x: 0.4375rem; /* 7px */
   --sc-cmp-datatable-footer-lg-padding-y: 0.875rem; /* 14px */
   --sc-cmp-datatable-footer-lg-padding-x: 1.09375rem; /* 17.5px */
+  --sc-cmp-datatable-header-cell-gap: 0.4375rem; /* 7px */
+  --sc-cmp-datatable-filter-inline-gap: 0.4375rem; /* 7px */
+  --sc-cmp-datatable-filter-overlay-popover-gap: 0.4375rem; /* 7px */
   /* @sc-gen:cmp-sizing:end */
 
   /* @sc-gen:cmp-color-light — bloque GENERADO desde kit-export-dtcg.json por

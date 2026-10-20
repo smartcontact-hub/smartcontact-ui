@@ -155,6 +155,42 @@
 
 ---
 
+## DD-216 · 2026-10-20 — Los tres huecos de la tabla siguen al Kit y al DS de desarrollo: 7, no los 8 de Aura 3
+
+**Contexto** · DD-214 llevó el relleno de la tabla al Kit y dejó fuera lo demás que el Kit dibuja distinto de Aura.
+Quedaban tres huecos: el de la celda de cabecera (`datatable/header/cell/gap`), el del filtro en línea
+(`datatable/filter/inline/gap`) y el del popover del filtro (`datatable/filter/overlay/popover/gap`). El Kit los ata a
+`scale/0-5`, 7; Aura 3 pide `0.5rem`, 8. En ui.smart-contact.com, a 1440, los tres valen `0.4375rem` y el filtro en
+línea mide 7 (medido el 2026-10-20). El único que se apartaba era el prototipo.
+
+**Decisión** · Los tres leen `--sc-cmp-datatable-header-cell-gap`, `--sc-cmp-datatable-filter-inline-gap` y
+`--sc-cmp-datatable-filter-overlay-popover-gap`, que el generador saca del export del Kit (tres filas nuevas en
+`scripts/sizing-map.mjs`). En Figma no se crea nada: las variables ya existían. El resto de la tabla sigue siendo Aura
+(DD-97).
+
+**Razón** · 8 no está en la escala de la casa, que va de 3,5 en 3,5: es el resto de la base 16 de Aura. Con 7, el Kit,
+el DS de desarrollo y el prototipo pintan lo mismo y desarrollo no cambia nada, la regla de DD-214. Medido en sc-docs
+(`#/components/datatable`), en local, a 1440: las tres variables de `0.5rem` a `0.4375rem` y el filtro en línea de 8
+a 7.
+
+**Lo que se ve** · Solo el hueco del filtro en línea tiene caja hoy (la tabla con `filterDisplay="row"`). El de la
+cabecera no la tiene en ninguna tabla: PrimeNG para Angular declara `.p-datatable-column-header-content` y ninguna
+plantilla la pinta; entre el título y la flecha de ordenar ya había 7, del margen de `p-sort-icon` en el SCSS del
+wrapper (`--sc-spacing-0-5`). El del popover solo aparece con `filterDisplay="menu"`, que en el Supervisor solo usan
+los laboratorios.
+
+**Descartadas** ·
+- **Dejar los 8 de Aura** → el prototipo seguiría siendo el único que se aparta del Kit y de desarrollo, con un valor
+  fuera de la escala.
+- **Quitar el margen de `p-sort-icon` y separar el título y la flecha con el hueco de cabecera** → el contenedor que lo
+  lee no existe en PrimeNG para Angular: habría que envolverlos en el wrapper, un cambio de estructura por 0 px.
+
+**Consecuencias** · `components.spec.ts` (sc-datatable) lee los tres del export con `kitPx`: el del filtro en línea en
+su caja y los otros dos en la variable que leería su regla. Con el preset de `main`, rojo con «Expected 7px, Received
+8px». La captura de la tabla en sc-docs cambia en la fila de filtros: la regenera el CI. DD-214 anotada.
+
+---
+
 ## DD-215 · 2026-10-19 — Grupos y Agentes, como en Figma: sin edición masiva, y borrar es la confirmación simple del DS
 
 **Contexto** · El 2026-10-19 se rehízo en Figma para desarrollo el listado de grupos (fichero del Supervisor, página
@@ -182,6 +218,8 @@ resultado del lote en su barra (DD-196) pasan de Grupos a Usuarios.
 **Descartado** · Esconder el lote tras una bandera para la fase siguiente: lo quitado vive en git (`git show
 71e84dfa:projects/supervisor/src/app/features/admin/groups/pages/groups-list-page.component.ts`), y una bandera deja
 código que no corre y que ninguna prueba mira.
+
+---
 
 ## DD-214 · 2026-10-19 — El relleno de la tabla sigue al Kit y al DS de desarrollo, no a Aura 3: 10,5 × 14 y la fila de texto en 42
 
@@ -219,6 +257,9 @@ filas menos por pantalla. `list-table-grammar.spec.ts` lee el relleno del export
 número escrito: con 8 × 14 se pone rojo. Capturas de sc-docs y del Supervisor: las regenera el CI. Lo demás que el Kit
 dibuja distinto de Aura en la tabla (el hueco de la celda, 7 frente a 8; el filtro) no entra: lo lista `aura-diff`.
 DD-97 anotada; `figma-pendiente` §54, ficha 1, hecha en el prototipo.
+
+> **Ampliada por DD-216** (2026-10-20): los tres huecos que aquí quedaban fuera (celda de cabecera, filtro en línea
+> y popover del filtro) también siguen al Kit y al DS de desarrollo, 7.
 
 ---
 

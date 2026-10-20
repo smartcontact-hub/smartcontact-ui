@@ -1802,6 +1802,39 @@ test.describe('sc-datatable', () => {
     await screenshotBaseline(page, 'datatable');
   });
 
+  /* DD-216: los tres huecos de la tabla, los del Kit (`scale/0-5`), no los 8 de Aura 3. Solo el del filtro en
+   * línea tiene caja en esta página. El de la celda de cabecera no la tiene en ninguna: PrimeNG para Angular
+   * declara `.p-datatable-column-header-content` y ninguna plantilla la pinta (el título y la flecha los separa
+   * `p-sort-icon` en el SCSS del wrapper). El del popover solo existe con `filterDisplay="menu"`. De esos dos
+   * se mide lo que leería su regla: la variable de PrimeNG, puesta en una caja de prueba. */
+  test('huecos del Kit: celda de cabecera, filtro en línea y popover del filtro (DD-216)', async ({ page }) => {
+    await gotoPage(page, 'datatable');
+    const filtros = page.getByTestId('sc-datatable-filters');
+    await filtros.scrollIntoViewIfNeeded();
+    await expect(filtros.locator('.p-datatable-inline-filter').first()).toHaveCSS(
+      'gap',
+      kitPx('datatable.filter.inlineGap'),
+    );
+    const huecos = await page.evaluate(() => {
+      const lee = (variable: string) => {
+        const caja = document.createElement('div');
+        caja.style.cssText = `display: flex; gap: var(${variable});`;
+        document.body.append(caja);
+        const gap = getComputedStyle(caja).gap;
+        caja.remove();
+        return gap;
+      };
+      return {
+        cabecera: lee('--p-datatable-header-cell-gap'),
+        popover: lee('--p-datatable-filter-overlay-popover-gap'),
+      };
+    });
+    expect(huecos).toEqual({
+      cabecera: kitPx('datatable.headerCell.gap'),
+      popover: kitPx('datatable.filter.overlayPopover.gap'),
+    });
+  });
+
   test('lazy server-driven: paginación + filtro global vía (lazyLoad)', async ({ page }) => {
     await gotoPage(page, 'datatable');
     const lz = page.getByTestId('sc-datatable-lazy');

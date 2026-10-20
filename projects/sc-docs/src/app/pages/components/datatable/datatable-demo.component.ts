@@ -103,8 +103,8 @@ protected readonly rowClassFn: ScRowStyleClassFn<Agent> = (agent) =>
 const LIST_SNIPPET = `<!-- La tabla-lista: la de las tablas de administración del Supervisor.
 
      El ASPECTO es el de Aura (primeng.dev/table) con el relleno de celda del Kit,
-     10,5 × 14 (DD-214): fuera de eso, el tema no le pinta nada propio a la
-     tabla. \`variant="list"\` solo añade
+     10,5 × 14 (DD-214), y sus huecos de 7 (DD-216): fuera de eso, el tema no le
+     pinta nada propio a la tabla. \`variant="list"\` solo añade
      COMPORTAMIENTO que Aura no trae: reparto de columnas fijo (ordenar no mueve
      anchos), hover solo en filas que hacen algo, fila seleccionada marcada y la
      banda de caption oculta cuando va vacía.
@@ -353,7 +353,7 @@ export class DatatableDemoComponent {
     tag: 'sc-datatable',
     title: 'Datatable',
     description:
-      'Tabla de datos sobre `p-table`. El wrapper aporta la API data-driven (column-defs + `cellTemplate` por columna) y los slots `[scTableCaption]` / `[scTableEmpty]`. Orden y paginación client-side; modo `[lazy]` para server-driven. `header` va ya traducido por el consumidor. El aspecto es el de Aura (primeng.dev/table) con el relleno de celda del Kit, 10,5 × 14 (DD-214): si una receta de `p-table` existe allí, se usa esa. `variant="list"` añade el comportamiento de tabla-lista, que publica el TEMA (viaja con el preset, no con la app).',
+      'Tabla de datos sobre `p-table`. El wrapper aporta la API data-driven (column-defs + `cellTemplate` por columna) y los slots `[scTableCaption]` / `[scTableEmpty]`. Orden y paginación client-side; modo `[lazy]` para server-driven. `header` va ya traducido por el consumidor. El aspecto es el de Aura (primeng.dev/table) con el relleno de celda del Kit, 10,5 × 14 (DD-214), y sus huecos de 7 (DD-216): si una receta de `p-table` existe allí, se usa esa. `variant="list"` añade el comportamiento de tabla-lista, que publica el TEMA (viaja con el preset, no con la app).',
     argTypes: [
       { name: 'paginator', label: 'Paginación', control: { kind: 'boolean' } },
       { name: 'rows', label: 'Filas por página', control: { kind: 'number', min: 1, max: 20, step: 1 } },
