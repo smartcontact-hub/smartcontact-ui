@@ -66,8 +66,8 @@ sube a «Trampas del frente».
   lote.
 - **Borrar** un grupo o un agente, desde el listado o la ficha: `sc-confirmdialog` por `injectConfirmarBorrado`
   (`features/admin/services/confirmar-borrado.ts`), con el texto de Figma. Usuarios sigue tecleando el nombre (DD-145
-  §4). El menú dice «Eliminar» sin «…» (la regla de `admin-row-menu`); en Figma, el paso 02 del listado aún lleva los
-  puntos.
+  §4). El menú dice «Eliminar» sin «…» (la regla de `admin-row-menu`), y Figma también desde el 2026-10-20 (paso 02,
+  `3118:33342`; también sus tarjetas, la nota del paso 05 y la fila 9 de la hoja).
 - **Pruebas**: `listado-grupos` (sin casillas; borrar pregunta, cancela y borra) y `fichas-nombre-fijo` (grupo y agente
   con la confirmación, usuario tecleando); las del resultado del lote (DD-196) pasan a Usuarios. En local, 24 en verde.
 
