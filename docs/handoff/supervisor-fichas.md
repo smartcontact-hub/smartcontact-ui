@@ -51,7 +51,29 @@ El de la revisión de las fichas a 1440 (2026-10-14, DD-204): `git show 62244684
 su trampa del suelo de la tarjeta sube a «Trampas del frente». El de la ficha de grupo tras la revisión del 2026-10-15
 (DD-206, #416): `git show a3c0f25a:docs/handoff/supervisor-fichas.md`; sus dos trampas suben a «Trampas del frente».
 El de la ficha de agente con salientes en un desplegable (2026-10-15, DD-209, #425, sin trampas propias): `git show
-6edc21e9:docs/handoff/supervisor-fichas.md`.
+6edc21e9:docs/handoff/supervisor-fichas.md`. El de la revisión de producto de las tablas
+y Repositorios (2026-10-15, DD-210, #426, sin trampas propias): `git show 840fe501:docs/handoff/supervisor-fichas.md`.
+
+## ✅ 2026-10-19 · Mapa de componentes de Grupos, una sola tabla en el DS y «Fuera del DS» con alternativas
+
+> **Sello:** sin código. Figma del Supervisor (`Hjyy41SYKqcRuIzCGggfYH`) y del DS (`khNq9dJKNi13pNllrqm6dx`); en el
+> repo, solo docs (rama `areses/component-map-groups-ab0007`, HEAD `83c080c1`, al día con `main`).
+
+- **Mapa de componentes** («Grupos», `3175:11365`, en el índice): listado y ficha con cajas encima; verde, DS de
+  desarrollo (`sc-*`); azul, PrimeNG (`p-*`); naranja, propio; gris discontinuo, layout. Sus tablas siguen en Small.
+- **Una sola DataTable en el DS** («❖ DataTable», `15526:14461`): las piezas con slots (antes «-base»), de las que
+  cuelga el Supervisor entero. Relleno, el de los devs (ui.smart-contact.com: 10,5 × 14; Small 5,25 × 7), que ya
+  tenían las variables; textos, Body/body-regular y Body/body-semibold: fila de texto de 42. Cada celda trae
+  `datatable-content` (Type se cambia bajando con Enter: Figma no expone piezas en un slot); las celdas ya rellenadas
+  no cambian. Ejemplos rehechos; «Cómo se usa» bajo el componente; la versión «(sin slots)», en el archivo.
+- **Tablas de Grupos y Agentes**: 1.943 piezas a tamaño normal (el prototipo no usa `size="small"`) con el relleno
+  atado al maestro; llevaban 2 a mano. Fila de 42, 49 con ⋮, 54 con avatar. Guía: «Tablas en tamaño normal».
+- **«Fuera del DS»** (§54): salen alto de fila, botón de foto (`highlight/background`), título, barra (Header del DS
+  con botón md, 58) y resumen («Mostrar estado» en `group-summary` y `agent-summary`). Quedan 4.
+- **Pendiente**: publicar el DS y «Update all» (Header y resúmenes). El prototipo (8 × 14), en otra sesión.
+- **Trampas**: un marco de documentación a HUG estira las variantes FILL y cambia el maestro. En otro fichero, busca
+  por la clave del maestro. «El Aura» son dos: prototipo 8 × 14, devs 10,5 × 14. Cambiar de variante la pieza de fuera
+  rehace las de dentro (ve de dentro afuera) y a un resumen le borra los datos: una propiedad no.
 
 ## ✅ 2026-10-19 · Grupos: «Agentes» sin fijar y «—» con 0 agentes; el tooltip del Kit; las tres congeladas, al día con `main`
 
@@ -94,8 +116,8 @@ El de la ficha de agente con salientes en un desplegable (2026-10-15, DD-209, #4
   lo que enseña Dev Mode, y su número va en un círculo morado sobre la pantalla (marco «Guía» bloqueado; no es de la app).
   Cada índice abre con «Cómo usar estas maquetas». Nativo de PrimeNG tapado por la app (`.sc-toast`): en Figma, el
   nativo, y la diferencia, a «Fuera del DS». Maestros arreglados: «What's new» del DS. Kit: `figma-pendiente` §53 y §50.
-- **Pendiente**: marcar «Ready for dev» (a mano: la API no puede); cómo ordenar «❖ DataTable» del DS (`6738:49721`).
-  El prototipo sigue con la edición masiva y pide el nombre al eliminar: Figma va por delante.
+- **Pendiente**: marcar «Ready for dev» (a mano: la API no puede). «❖ DataTable» del DS, ordenada el 2026-10-19
+  (arriba). El prototipo sigue con la edición masiva y pide el nombre al eliminar: Figma va por delante.
 - **Trampa**: el fichero de la copia del DS con la tabla en slots (`C5soC7CxcuKSIFPEDCd3gz`, sección `16862:6447`) se
   quedó con un placeholder del buscador anterior a `main`; lo que manda es el listado del Supervisor.
 
@@ -143,27 +165,6 @@ El de la ficha de agente con salientes en un desplegable (2026-10-15, DD-209, #4
   `ss`, el pid lo da `lsof -nP -iTCP:4405 -sTCP:LISTEN`). Un cambio del DS no llega a las apps sin `npm run
   build:components` y reiniciar su `ng serve` (leen `dist/`). Los `*.pages.dev` no se alcanzan desde la nube: para ver
   una prueba en rojo, se quita el arreglo en local.
-
-## ✅ 2026-10-15 · Revisión de producto de las tablas y Repositorios (DD-210)
-
-> **Sello:** PR 3 de 3, fundido en `main` como #426, HEAD `d4f22f0e`, con el PR 2 (#425) ya dentro.
-
-- **Textos**: «+ Nueva X» en la barra y en el vacío de cada tabla (repositorios con su `createTitleKey`), «Buscar
-  {entidades}…» en todas, también dentro de las fichas, y «Acciones» con «Importar» y «Exportar» a secas; la plantilla
-  CSV sale del menú (`sc-list-page` pierde `templateDownloadable`).
-- **DS**: `sc-group-popover` gana `display="adaptive"` (ninguno «—», uno su nombre, varios la cifra) y `sc-multiselect`,
-  `chipOverflow="more"` («+N más»); los dos con su ejemplo en sc-docs y la nota 49 de Figma.
-- **Comunes**: `sc-import-dialog` (las tres copias fuera; la ayuda, solo en Tipificaciones, porque Agendas la quitó esa
-  mañana) y `sc-column-toggle` con `column-prefs.ts` (el globo de Columnas sale de `sc-list-page`, con buscador pasadas
-  12 columnas). Anchos de partida medidos en `sc-list-page` (`anchosDePartida`): solo columnas con ancho, esperando a
-  que la lista virtual pinte; se guardan en `<clave>:medidos` con su idioma para que el esqueleto de la segunda
-  apertura ya los lleve (el CI lo cazó en `esqueleto-carga`); «Restablecer» vuelve a medir.
-- **Repositorios**: «+ Añadir subcategoría» por categoría; grupos de una plantilla con «+N más» y apagados sin su canal;
-  editores en gris; agentes de agenda sin «Código»; un contacto sin obligatorios (también al importar) y la tabla de
-  contactos con sus 34 columnas a elegir. «El menú de arriba desaparece» no se reproduce (§14).
-- **Pruebas**: `tablas-revision-1015.spec.ts` nueva (5); ajustadas las de textos, `listado-acciones-fijas` a 1024 y la
-  carrera de `agenda-agentes`. En local, a 1440: 250 de listas y repositorios, 6 de componente y la línea de estilos
-  (solo altas nuevas) en verde.
 
 ## SIGUIENTE — sin preguntar
 
@@ -243,6 +244,10 @@ El de la ficha de agente con salientes en un desplegable (2026-10-15, DD-209, #4
   revisión del 2026-10-15 (DD-206).
 - **Decisión de diseño:** llevar o no al DS oficial lo que la copia arregló (el borde de 1 de los botones de texto, el
   tooltip con máximo y la celda de selección small; `figma-pendiente` §53). No bloquea las maquetas.
+- **Decisión de diseño:** las 4 fichas que quedan en «Fuera del DS» (aviso, campos numéricos, subsección plegada y lo
+  no dibujado: atajo «/» y solo lectura), con sus alternativas en `figma-pendiente` §54.
+- **Publicar el DS** (Header con botón md, «Mostrar estado» en los resúmenes) y «Update all» en el Supervisor: la API
+  no puede. Al publicar, decidir si la tabla «(sin slots)» se oculta de la librería (`_` delante).
 - **Rafa:** revisar usuarios contra el Supervisor real. Y en el portátil: poner el 4405 al día con `main` y borrar el
   worktree y la rama `codex/supervisor-f-listado` (`aff63656`, una copia de F), la local y la del remoto; desde la
   nube no se puede.
