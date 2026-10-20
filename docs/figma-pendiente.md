@@ -1438,9 +1438,11 @@ medido contra sc-supervisor.pages.dev a 1440.
 - **Botones:** `button-small` de texto sin el borde transparente de 1 de PrimeNG (25 de alto en vez de 27; las filas
   del listado se van a 30). En `button`, el icono de dentro no está atado a «Left Icon» ni a «Icon»: sale el ✓ del
   maestro y hay que cambiarlo a mano.
-- **Tablas:** las celdas Small del Kit van a 5,25 × 7 (`datatable/body|header/cell/sm/padding`) y las de PrimeNG small a
-  2 × 6; `datatable-header-cell` con el texto en alto automático (22 en vez de 25) y su variante Selected pinta
-  `highlight` (en PrimeNG 22 la ordenada se queda blanca); `datatable-selection-cell` Small, con la casilla pequeña.
+- **Tablas:** el texto, hecho el 2026-10-19: Body/body-regular y Body/body-semibold (interlineado 20), fila de 42. El
+  relleno del Kit (10,5 × 14; Small 5,25 × 7) es el del DS de los devs, medido en ui.smart-contact.com: el que se
+  apartaba era el prototipo (8 × 14), que pasó a 10,5 × 14 el 2026-10-19 (DD-214). Queda: la variante Selected de
+  `datatable-header-cell` pinta `highlight` (en PrimeNG 22 la ordenada se queda blanca); `datatable-selection-cell`
+  Small, con la casilla pequeña.
 - **Menú:** `menu` lleva sus filas fijas, sin slot; `menu-item` mide 21 (texto de 14 de alto) frente a 27, y no tiene
   variante de peligro.
 - **Formularios:** la casilla sin `indeterminate`; InputNumber sin la variante sin botones ni con sufijo; sin el estado
@@ -1454,15 +1456,48 @@ medido contra sc-supervisor.pages.dev a 1440.
   llevan (los cuatro últimos sustitutos, `search`, `file_copy` y dos `tune`, cambiados el 2026-10-19).
 - **Sale de «Fuera del DS»** (2026-10-19; la página ya solo enseña lo que desarrollo construye distinto): el Header sin
   botón md (la app mide 58 con botones de 32,5, DD-188); el Custom modal con mínimo 480 frente a los 440 de `sc-dialog`,
-  y el confirmdialog de 350 frente a 334,6; el resumen sin Edición con la línea de Falta; `.Subsection` sin estado
-  plegado; sin variable para el azul claro del botón de foto (`--sc-bg-subtle`, blue-50); las sombras del resumen
-  (`--sc-shadow-xs`, `--sc-shadow-card`) sin estilos de efecto. El Nav-menu ya trae el rótulo del índice (`titleKey`),
-  oculto por defecto.
+  y el confirmdialog de 350 frente a 334,6 (a 440, la «×» del maestro queda recortada: empieza en 428, medido el
+  2026-10-19); el resumen sin Edición con la línea de Falta; `.Subsection` sin estado plegado; el azul claro del botón
+  de foto SÍ tiene variable, `highlight/background` (`blue/50` en claro, como `--sc-bg-subtle`; medido el 2026-10-19),
+  y el dibujo no la usa; las sombras del resumen (`--sc-shadow-xs`, `--sc-shadow-card`) sin estilos de efecto. El
+  Nav-menu ya trae el rótulo del índice (`titleKey`), oculto por defecto.
 - **La copia del DS** (`C5soC7CxcuKSIFPEDCd3gz`) tiene arreglados los botones de texto con su borde, el tooltip con
   máximo de 157,5 y la celda de selección small. Llevarlos al oficial es una decisión de diseño pendiente.
 
-**Cómo sabes que está hecho:** cada maestro mide lo que la app (botón de texto small 28 × 27, celda small 2 × 6, fila de
-menú 27) y las maquetas dejan de necesitar el ajuste a mano.
+**Cómo sabes que está hecho:** cada maestro mide lo que la app (botón de texto small 28 × 27, fila de menú 27; la celda
+small, al revés: la app irá a la del Kit, 5,25 × 7, §54) y las maquetas dejan de necesitar el ajuste a mano.
+
+---
+
+## 54 · «Fuera del DS»: alternativas por ficha, para decidir (medido el 2026-10-19)
+
+**Estado:** por decidir en revisión de diseño · **Dónde:** página «Fuera del DS» del Supervisor (`3034:114`, marco
+`3156:195`) · **Evidencia:** el Kit, sc-supervisor.pages.dev, ui.smart-contact.com y el código del prototipo.
+
+Cada ficha se va si se acepta su propuesta; con todas, la página se vacía. El 2026-10-19 quedan cuatro: aviso, campos
+numéricos, subsección plegada y lo no dibujado (atajo «/» y solo lectura).
+
+| # | Ficha | Propuesta | Kit | Prototipo |
+|---|---|---|---|---|
+| 1 | Alto de fila | Hecho el 2026-10-19: tablas de Grupos y Agentes en tamaño normal, relleno atado (10,5 × 14, el de los devs); la ficha salió. El prototipo, también (DD-214, #461) | sí, hecho | sí, hecho |
+| 2 | Barra de arriba | Hecho el 2026-10-19: el Header del DS lleva `button` md (DD-188), barra de 58; la ficha salió | sí, hecho | no |
+| 3 | Toast | El prototipo con `p-toast` sin plantilla; el «Deshacer» del inicio (DD-196), aparte | no | sí |
+| 4 | Botón de foto | Hecho el 2026-10-19: el fondo, atado a `highlight/background`; la ficha salió | no | no |
+| 5 | Campos numéricos | Variante sin botones, con sufijo, en `inputnumber` | sí | no |
+| 6 | Título de la página | Hecho el 2026-10-19: la ficha salió (el marco ya usa estilos y variables del Kit) | no | no |
+| 7 | Diálogo de eliminar | Hecho el 2026-10-19: eliminar es el confirmdialog del DS en grupos y agentes; la ficha salió | no | no |
+| 8 | Resumen con «Falta» | Hecho el 2026-10-19: «Mostrar estado» en la variante Edición de `group-summary` y `agent-summary`; la ficha salió | sí, hecho | no |
+| 9 | Subsección plegada | Estado «Plegada» en `.Subsection` (DD-157 descartó Accordion); en el prototipo, `<h3>` con el botón dentro y `aria-controls` | sí | sí |
+| 10 | Atajo «/» | Decidido el 2026-10-19: el «/» se ve, como en el prototipo. Falta dibujarlo con una pieza propia del DS, marcada como propia | sí | no |
+| 11 | Solo lectura | El estado en los cuatro campos del Kit (§50, DD-211 §10) | sí | no |
+
+**Lo que se daba por cierto y no lo era:** la variable del azul existe (§53, corregido); la «×» del diálogo está en el
+dibujo y la recorta el ancho de 440; el campo numérico del prototipo es `<input type="number">` (DD-195), no
+`p-inputnumber`; en la tabla, el que se apartaba era el prototipo (8 × 14, el Aura de PrimeNG 22 sin escalar; DD-214):
+el DS de los devs pinta 10,5 × 14, como el Kit (medido en ui.smart-contact.com el 2026-10-19). **Sin medir:** el ancho real del toast del prototipo, el alto del `Header` con botón md y la fila con
+`size="small"` real.
+
+**Cómo sabes que está hecho:** la página «Fuera del DS» solo enseña lo que no existe en ningún sitio, o queda vacía.
 
 ---
 

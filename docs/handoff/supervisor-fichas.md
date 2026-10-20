@@ -51,8 +51,10 @@ El de la revisión de las fichas a 1440 (2026-10-14, DD-204): `git show 62244684
 su trampa del suelo de la tarjeta sube a «Trampas del frente». El de la ficha de grupo tras la revisión del 2026-10-15
 (DD-206, #416): `git show a3c0f25a:docs/handoff/supervisor-fichas.md`; sus dos trampas suben a «Trampas del frente».
 El de la ficha de agente con salientes en un desplegable (2026-10-15, DD-209, #425, sin trampas propias): `git show
-6edc21e9:docs/handoff/supervisor-fichas.md`. El de la revisión de las tablas y Repositorios (2026-10-15, DD-210, #426, sin
-trampas propias): `git show 91c438c2:docs/handoff/supervisor-fichas.md`.
+6edc21e9:docs/handoff/supervisor-fichas.md`. El de la revisión de producto de las tablas
+y Repositorios (2026-10-15, DD-210, #426, sin trampas propias): `git show 840fe501:docs/handoff/supervisor-fichas.md`.
+El de la revisión de producto del 2026-10-16 (DD-211): `git show bacaf233:docs/handoff/supervisor-fichas.md`; su trampa
+sube a «Trampas del frente».
 
 ## ✅ 2026-10-19 · Grupos y Agentes, como en Figma: sin edición masiva, y borrar con la confirmación simple (DD-215)
 
@@ -68,6 +70,27 @@ trampas propias): `git show 91c438c2:docs/handoff/supervisor-fichas.md`.
   puntos.
 - **Pruebas**: `listado-grupos` (sin casillas; borrar pregunta, cancela y borra) y `fichas-nombre-fijo` (grupo y agente
   con la confirmación, usuario tecleando); las del resultado del lote (DD-196) pasan a Usuarios. En local, 24 en verde.
+
+## ✅ 2026-10-19 · Mapa de componentes de Grupos, una sola tabla en el DS y «Fuera del DS» con alternativas
+
+> **Sello:** sin código. Figma del Supervisor (`Hjyy41SYKqcRuIzCGggfYH`) y del DS (`khNq9dJKNi13pNllrqm6dx`); en el
+> repo, solo docs (rama `areses/component-map-groups-ab0007`, HEAD `24ced9b5`, al día con `main`).
+
+- **Mapa de componentes** («Grupos», `3175:11365`, en el índice): listado y ficha con cajas encima; verde, DS de
+  desarrollo (`sc-*`); azul, PrimeNG (`p-*`); naranja, propio; gris discontinuo, layout. Sus tablas siguen en Small.
+- **Una sola DataTable en el DS** («❖ DataTable», `15526:14461`): las piezas con slots (antes «-base»), de las que
+  cuelga el Supervisor entero. Relleno, el de los devs (ui.smart-contact.com: 10,5 × 14; Small 5,25 × 7), que ya
+  tenían las variables; textos, Body/body-regular y Body/body-semibold: fila de texto de 42. Cada celda trae
+  `datatable-content` (Type se cambia bajando con Enter: Figma no expone piezas en un slot); las celdas ya rellenadas
+  no cambian. Ejemplos rehechos; «Cómo se usa» bajo el componente; la versión «(sin slots)», en el archivo.
+- **Tablas de Grupos y Agentes**: 1.943 piezas a tamaño normal (el prototipo no usa `size="small"`) con el relleno
+  atado al maestro; llevaban 2 a mano. Fila de 42, 49 con ⋮, 54 con avatar. Guía: «Tablas en tamaño normal».
+- **«Fuera del DS»** (§54): salen alto de fila, botón de foto (`highlight/background`), título, barra (Header del DS
+  con botón md, 58) y resumen («Mostrar estado» en `group-summary` y `agent-summary`). Quedan 4.
+- **Pendiente**: «Update all» en el Supervisor (DS ya publicado). El prototipo ya pinta 10,5 × 14 (DD-214, #461).
+- **Trampas**: un marco de documentación a HUG estira las variantes FILL y cambia el maestro. En otro fichero, busca
+  por la clave del maestro. «El Aura» son dos: el de PrimeNG 22 sin escalar (8 × 14) y el de los devs (10,5 × 14). Cambiar de variante la pieza de fuera
+  rehace las de dentro (ve de dentro afuera) y a un resumen le borra los datos: una propiedad no.
 
 ## ✅ 2026-10-19 · Grupos: «Agentes» sin fijar y «—» con 0 agentes; el tooltip del Kit; las tres congeladas, al día con `main`
 
@@ -110,8 +133,8 @@ trampas propias): `git show 91c438c2:docs/handoff/supervisor-fichas.md`.
   lo que enseña Dev Mode, y su número va en un círculo morado sobre la pantalla (marco «Guía» bloqueado; no es de la app).
   Cada índice abre con «Cómo usar estas maquetas». Nativo de PrimeNG tapado por la app (`.sc-toast`): en Figma, el
   nativo, y la diferencia, a «Fuera del DS». Maestros arreglados: «What's new» del DS. Kit: `figma-pendiente` §53 y §50.
-- **Pendiente**: marcar «Ready for dev» (a mano: la API no puede); cómo ordenar «❖ DataTable» del DS (`6738:49721`).
-  El prototipo ya va como Figma (DD-215, tramo de arriba).
+- **Pendiente**: marcar «Ready for dev» (a mano: la API no puede). «❖ DataTable» del DS, ordenada el 2026-10-19
+  (arriba). El prototipo ya va como Figma (DD-215, tramo de arriba).
 - **Trampa**: el fichero de la copia del DS con la tabla en slots (`C5soC7CxcuKSIFPEDCd3gz`, sección `16862:6447`) se
   quedó con un placeholder del buscador anterior a `main`; lo que manda es el listado del Supervisor.
 
@@ -125,40 +148,6 @@ trampas propias): `git show 91c438c2:docs/handoff/supervisor-fichas.md`.
 - **Pruebas**: `list-table-grammar` lee el relleno con `kitPx` (contra `main`, rojo con «8px 14px»); 31 + 59 en verde.
 - **Pendiente**: marcar hecha la ficha 1 de `figma-pendiente` §54 cuando funda #457. Lo que el Kit dibuja distinto de
   Aura en la tabla y no entró (hueco de celda, filtro): `node tools/aura-diff.mjs datatable`.
-
-## ✅ 2026-10-16 · Revisión de producto: agendas en árbol, la ficha de agente, toasts y un solo Guardar en Contact Center (DD-211)
-
-> **Sello:** rama `arebury/revision-producto-1016` sobre `main` `b23f6b5f`, un PR.
-
-- **Agendas**: «Grupos y agentes» es un árbol (`sc-agenda-assignment-tree`, `p-treetable` nativo, casillas `sc-checkbox`)
-  por persona, con grupos enteros dinámicos (en `Group.schedules`) y «Sin grupo». Las reglas, puras y probadas, en
-  `agenda-asignacion.core.mjs` (`scripts/__tests__/agenda-asignacion.test.mjs`). El listado, «Grupos y agentes», sacado
-  con las mismas funciones que el árbol (`estructuraDe`, `deLoGuardado`, `paraGuardar`): dice lo mismo que el editor,
-  también el grupo que sale entero al leer porque sus agentes ya la tenían todos. Fuera `sc-agenda-agents-table`.
-- **Agente**: PIN del sistema (`nextPin` en `agents.store.ts`) y de solo lectura al editar; `CLIENTE_CON_WEBRTC` con
-  «Navegador» deshabilitado; Agentes y Grupos en el Destino, y lo guardado sin ellos se lee como de fábrica
-  (`agenteAlDia`, el `normalize` de `AgentsStore`); fuera «Automático con preview» y «Actualizar teléfono en login»;
-  `attendsPhone` oculta lo de las llamadas.
-- **DS**: `ScConfirmService.popupClosed`: el globo cerrado sin responder resuelve «no». **Solo lectura** en `sc-inputtext`,
-  `sc-inputnumber`, `sc-textarea` y `sc-select` (§10): sin borde, sobre `--sc-bg-default`, anillo de foco con el
-  teclado; el select sin flecha (clase propia por `pt.dropdown`), el textarea sin asa; en sc-docs, en sus estados.
-- **Grupo**: audio saliente en «Mensajes en cola»; la estrategia del resumen en una línea; canal y nivel juntos.
-- **Toasts**: `ResultadoAccionService.contar` (fuera `visto`, `enLaBarra` y `limpiar`, y la zona de la barra);
-  `TOAST_DEL_SISTEMA` con el servicio; AGENTS.md §7 reescrita.
-- **Altas**: ✓ en toda sección que se deja completa (`seccionesDeAlta` sin `obligatoria`).
-- **Contact Center**: `ContactCenterBorradorService` en el armazón, con el guardián en la ruta de Contact Center.
-- **sc-docs**: SelectButton con Múltiple, Inválido, Deshabilitado y A todo el ancho. `tools/primeng-doc.mjs` no corre en
-  la nube sin acceso a la API de GitHub de primefaces/primeng: se leyó la doc con un clon parcial de
-  `apps/showcase/doc/selectbutton`.
-- **Figma**: nota 50 de `figma-pendiente.md` (lo que depende de Call Blending, CusCare y WebRTC, anotado y no apagado).
-- **Trampas**: `p-treetable-checkbox` refresca su casilla con `selectionSource$` y no al cambiar `[selectionKeys]`: un
-  mapa nuevo desde fuera no repinta las casillas; por eso el árbol pinta las suyas. Un toast que entra en la pila de
-  capas de PrimeNG (`autoZIndex`) le quita el Esc a un `p-dialog` abierto. Y en la nube, el `ng serve` de :4405 no
-  siempre ve un cambio de código (medido: un arreglo de Contact Center no llegó hasta reiniciarlo): reinícialo, por su
-  pid, antes de fiarte de un e2e (un `pkill -f` con el patrón en la línea de órdenes se mata a sí mismo, exit 144; sin
-  `ss`, el pid lo da `lsof -nP -iTCP:4405 -sTCP:LISTEN`). Un cambio del DS no llega a las apps sin `npm run
-  build:components` y reiniciar su `ng serve` (leen `dist/`). Los `*.pages.dev` no se alcanzan desde la nube: para ver
-  una prueba en rojo, se quita el arreglo en local.
 
 ## SIGUIENTE — sin preguntar
 
@@ -238,11 +227,19 @@ trampas propias): `git show 91c438c2:docs/handoff/supervisor-fichas.md`.
   revisión del 2026-10-15 (DD-206).
 - **Decisión de diseño:** llevar o no al DS oficial lo que la copia arregló (el borde de 1 de los botones de texto, el
   tooltip con máximo y la celda de selección small; `figma-pendiente` §53). No bloquea las maquetas.
+- **Decisión de diseño:** las 4 fichas que quedan en «Fuera del DS» (aviso, campos numéricos, subsección plegada y lo
+  no dibujado: atajo «/» y solo lectura), con sus alternativas en `figma-pendiente` §54.
+- **«Update all» en el Supervisor** (el DS ya está publicado: Header md y «Mostrar estado»): la API no puede. En la
+  próxima publicación, decidir si la tabla «(sin slots)» se oculta de la librería (`_` delante).
 - **Rafa:** revisar usuarios contra el Supervisor real. Y en el portátil: poner el 4405 al día con `main` y borrar el
   worktree y la rama `codex/supervisor-f-listado` (`aff63656`, una copia de F), la local y la del remoto; desde la
   nube no se puede.
 
 **Trampas del frente:**
+- **`p-treetable-checkbox` repinta con `selectionSource$`, no al cambiar `[selectionKeys]`**: un mapa nuevo desde fuera no
+  repinta las casillas (por eso el árbol de agendas pinta las suyas). Un toast en la pila de capas de PrimeNG
+  (`autoZIndex`) le quita el Esc a un `p-dialog` abierto. En la nube, reinicia el `ng serve` de :4405 por su pid antes
+  de fiarte de un e2e (`lsof -nP -iTCP:4405 -sTCP:LISTEN`; un `pkill -f` con el patrón en la orden se mata a sí mismo).
 - **`p-select` no acepta que le cambies el valor dentro de su propio `onChange`**: para devolverlo (Ring All a 2) hace
   falta `setTimeout(() => select.value.set(2))`. Y un `ng serve` que pilla `dist/` a medio construir se queda en error
   aunque el build acabe: reinícialo.
