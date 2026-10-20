@@ -81,9 +81,8 @@ y Repositorios (2026-10-15, DD-210, #426, sin trampas propias): `git show 840fe5
 
 - **Grupos** (DD-159): «Agentes» sin candado en «Columnas»; con 0, `sc-group-popover` en `count` pinta «—» y sigue
   siendo el botón que abre el panel (también Servicios con 0). Agentes sin grupos ya salía «—» (DD-210).
-- **Tooltip del Kit (DD-212)**: 39 `title` nativos pasan a `pTooltip`, los textos cortados con `showOnEllipsis`;
-  `audit:screen-hygiene` regla 9. Monitor, Conversaciones y `sc-tag`, el mismo día en otro PR: la regla 9, sin trinquete.
-  Y su ficha en sc-docs (Overlays), con su API nativa y «Listo» (`NATIVOS_ADOPTADOS` de `audit:components`).
+- **Tooltip del Kit (DD-212)**: 39 `title` nativos a `pTooltip` (lo cortado, con `showOnEllipsis`); Monitor, Conversaciones
+  y `sc-tag` en #462, regla 9 sin trinquete, y ficha en sc-docs con su API nativa (`NATIVOS_ADOPTADOS`).
 - **Prioridad**: «Solo para las conversaciones entrantes.». **Duplicar sin Call Blending**, sin el teléfono saliente:
   anotado en `figma-pendiente` §50. Pruebas: `panel-agentes-grupo`, `columnas-en-una-lista`, `tooltips-del-kit`; rojas sin.
 - **Trampas**: `sc-docs-a11y` medía la ficha anterior con el nombre de la siguiente (ya espera). En el panel de navegador
