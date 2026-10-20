@@ -22,7 +22,8 @@ test.beforeEach(async ({ page }) => {
 });
 
 const conPunto = (page: Page) => page.locator('sc-form-section-nav .form-nav__item--has-error');
-const avisos = (page: Page, seccion: string) => page.locator(`#${seccion} .field__error`);
+/** Lo que dice cada campo que falta: el error de un campo del DS (`[error]`) o el que va bajo un grupo de casillas. */
+const avisos = (page: Page, seccion: string) => page.locator(`#${seccion} :is(.field__error, .sc-field__msg--error)`);
 
 test('grupo · encender «Tipificar» no acusa, tampoco al dejar General; al pulsar «Guardar», sí', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/1?seccion=general');
@@ -44,8 +45,8 @@ test('grupo · encender «Tipificar» no acusa, tampoco al dejar General; al pul
   // Al pulsar «Guardar», no guarda: lleva a General, al desplegable, y lo dice en el campo y en el índice.
   await guardar.click();
   await expect(conPunto(page)).toContainText('General');
-  await expect(conPunto(page)).toContainText('Elige una tipificación');
-  await expect(avisos(page, 'group-section-general')).toHaveText(['Elige una tipificación']);
+  await expect(conPunto(page)).toContainText('La tipificación es obligatoria');
+  await expect(avisos(page, 'group-section-general')).toHaveText(['La tipificación es obligatoria']);
   await expect(desplegable).toHaveAttribute('aria-invalid', 'true');
 });
 
@@ -59,7 +60,8 @@ test('agente · duplicar no acusa al abrir ni al dejar General; al pulsar «Crea
 
   await page.locator('sc-top-bar').getByRole('button', { name: 'Crear agente' }).click();
   await expect(conPunto(page)).toContainText('General');
-  await expect(page.locator('#agent-name')).toBeFocused();
+  // El nombre ya viene, como el de la copia de un grupo («… (1)», DD-217): lo primero que falta es el email.
+  await expect(page.locator('#agent-email')).toBeFocused();
 });
 
 test('agente · editar: quitar los canales no acusa, tampoco al dejar General; al pulsar «Guardar», sí', async ({ page }) => {
@@ -76,6 +78,6 @@ test('agente · editar: quitar los canales no acusa, tampoco al dejar General; a
   await expect(conPunto(page)).toHaveCount(0);
 
   await page.locator('sc-top-bar').getByRole('button', { name: 'Guardar' }).click();
-  await expect(conPunto(page).filter({ hasText: 'General' })).toContainText('Selecciona al menos un canal');
-  await expect(avisos(page, 'agent-section-general')).toHaveText(['Selecciona al menos un canal']);
+  await expect(conPunto(page).filter({ hasText: 'General' })).toContainText('Hace falta al menos un canal');
+  await expect(avisos(page, 'agent-section-general')).toHaveText(['Hace falta al menos un canal']);
 });

@@ -58,23 +58,22 @@ sube a «Trampas del frente».
 El de «Agentes» sin fijar y el tooltip del Kit (2026-10-19, DD-212, #456 y #462): `git show
 e88a52f7:docs/handoff/supervisor-fichas.md`; sus trampas suben a «Trampas del frente».
 
-## ✅ 2026-10-20 · Lo que falta se dice al pulsar Crear, grupos sin canales, duplicar sin diálogo y Recursos en chips (DD-217)
+## ✅ 2026-10-20 · Lo que falta se dice al pulsar Crear, grupos sin canales, duplicar sin diálogo, Recursos en chips y el punto final (DD-217)
 
-> **Sello:** rama `areses/error-handling-groups-index-4805b9` sobre `main` `e88a52f7`, un PR.
+> **Sello:** rama `areses/error-handling-groups-index-4805b9` sobre `main` `2b9f99b8`, un PR.
 
 - **Índice**: «Crear» siempre activo; al pulsarlo con algo pendiente, cada campo lo dice, el índice pone el texto bajo
   su sección (`sectionErrorHints`, DS) y se llega al primero. El ✓ con firma: se va si otra sección le cambia los
   canales. Sin puertas. Reglas puras en `alta-secciones.core.mjs`, con su test. En grupo, agente, usuario y tipificación.
-- **Fuera**: `sc-summary-status` («Falta / Listo para crear»), el motivo junto al botón (queda el tooltip «No hay cambios
-  que guardar»), los amarillos de las fichas y `group-duplicate-dialog`.
+- **Fuera**: `sc-summary-status`, el motivo junto al botón, los amarillos de las fichas y `group-duplicate-dialog`.
 - **Grupo**: canales opcionales (sin canales se pertenece sin canal); quitar y poner un canal ya no recorta los enlaces
   (`linksVistos`); duplicar en el acto como «X (1)» (`nombreDeCopia`); Recursos en chips sin «+» ni lápiz, la «×» en
   rojo al pasar (`sc-multiselect`, DS); el resumen de Recursos lleva a su campo; la tipificación sin descripción.
-- **Pruebas**: `indice-errores` (7) y `revision-producto-1020` (4), rojas contra el código anterior; reescritas a la regla
-  nueva las de índice, alta, teléfono saliente, resumen y duplicar; fuera `altas-meta`.
-- **Pendiente**: Figma, `figma-pendiente` §55. Fuera de este PR, para preguntar: los editores de Repositorios (agenda,
-  equipo, cuenta, trigger) y el de plantillas siguen con «Falta: …» junto al botón; la ficha de agente sigue con «+» y
-  lápiz en Recursos; el toast de renombrar en los listados usa la clave de duplicar.
+- **Segunda vuelta**: Recursos a media columna, chips que caben (`fit`, el largo con «…»), tooltip con lo que contiene
+  en las tres listas (§15); editores sin «Falta»; punto final (`i18n:check` I); barrido (§13); rótulos por `[label]`,
+  también en `sc-textarea`, e interruptores con `<label for>` (§16); fuera `recurso-dialog` y `template-form-panel`.
+- **Pendiente**: Figma (§55); un PR con lo que queda a nativo (`p-checkbox`, `p-inputnumber`, `sc-avatar`, ayuda de
+  `sc-fileupload`); del barrido, el nombre en cabecera, las cabeceras de asignación y «Ver detalle».
 
 ## ✅ 2026-10-19 · Grupos y Agentes, como en Figma: sin edición masiva, y borrar con la confirmación simple (DD-215)
 

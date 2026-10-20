@@ -24,7 +24,7 @@
   noResultsKey="groups.no_results_query"
   exportable
   [rowMenu]="rowMenu"
-  [rowOpenable]="isOpenable"
+  rowOpenable
   selectable
   [(selectedIds)]="selectedIds"
   tableTestId="groups-table"
@@ -57,17 +57,7 @@
        porque van en la misma lista; aquí todas las filas son grupos, y un dibujo sacado del nombre no
        dice nada que no diga el nombre. Así queda una regla: cara = persona. -->
   <span class="table__td-name sc-text-body-semibold">
-    @if (renamingId() === group.id) {
-      <sc-inline-rename-cell
-        [initialValue]="group.name"
-        [placeholder]="'groups.rename_placeholder' | translate"
-        [ariaLabel]="'groups.rename_aria' | translate: { name: group.name }"
-        (commit)="onRenameCommit(group.id, $event)"
-        (cancelled)="onRenameCancel(group.id)"
-      />
-    } @else {
-      <span class="table__td-name-text" [pTooltip]="group.name" showOnEllipsis tooltipPosition="top">{{ group.name }}</span>
-    }
+    <span class="table__td-name-text" [pTooltip]="group.name" showOnEllipsis tooltipPosition="top">{{ group.name }}</span>
   </span>
 </ng-template>
 
@@ -93,6 +83,9 @@
       >
         <sc-channel-icon [channel]="channel" />
       </span>
+    } @empty {
+      <!-- Un grupo sin canales (DD-217), con el guion de las celdas vacías, como en la lista de agentes. -->
+      <span class="table__cell sc-text-body-regular"><sc-celda-vacia /></span>
     }
   </span>
 </ng-template>

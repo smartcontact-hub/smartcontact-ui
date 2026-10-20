@@ -1012,8 +1012,6 @@
     "no_changes": "No changes to save",
     "unsaved_changes": "Unsaved changes",
     "summary": "Summary",
-    "summary_missing": "Missing: {{items}}",
-    "summary_missing_name": "name",
     "summary_of": "{{value}} of {{total}}",
     "actions": "Actions",
     "select_row": "Select {{name}}",
@@ -1201,15 +1199,12 @@
     },
     "form": {
       "create_title": "New template",
-      "edit_title": "Edit template",
       "title": "Title",
       "title_placeholder": "Template title",
       "channel": "Channel",
       "body": "Content",
       "body_placeholder": "Write the template content...",
       "variables_hint": "Variables: {agent}, {customer}, {ref}, {date}",
-      "summary_missing_title": "title",
-      "summary_missing_body": "content",
       "create_submit": "Create template",
       "create_breadcrumb": "New template",
       "edit_breadcrumb": "Edit template",
@@ -1394,6 +1389,7 @@
       "contacts": "Contacts",
       "contacts_count": "{{count}} contacts",
       "contacts_count_one": "1 contact",
+      "no_contacts": "No contacts",
       "contact": "contact",
       "phone": "Phone",
       "no_name": "Unnamed",
@@ -1575,7 +1571,7 @@
         "general": "General",
         "categorization": "Categories"
       },
-      "categorization_hint": "What the agent chooses, in up to three levels. Each branch goes as deep as it needs",
+      "categorization_hint": "What the agent chooses, in up to three levels; each branch goes as deep as it needs",
       "rename_field": "New name for the option",
       "add_first": "Add option…",
       "add_under": "Add under “{{name}}”…",
@@ -1718,7 +1714,8 @@
       "create_submit": "Create team",
       "edit_breadcrumb": "Edit team",
       "name_taken": "There is already a team with this name",
-      "assigned_count": "{{count}} in the team"
+      "assigned_count": "{{count}} in the team",
+      "no_description": "No description"
     }
   },
   "users": {
@@ -1799,7 +1796,7 @@
         "type_hint": "Ticks its template’s boxes in Access.",
         "status": "Status",
         "active": "Active",
-        "active_hint": "Can sign in and operate",
+        "active_hint": "Can sign in and operate.",
         "email_empty": "No email"
       },
       "danger_zone_description": "Deleting this user revokes panel access and deletes their permissions. The action cannot be undone.",
@@ -1936,9 +1933,10 @@
         "col_agent": "Agent",
         "col_active": "Enabled",
         "active_aria": "Enabled in this group: {{name}}",
+        "not_assigned_hint": "{{name}} is not assigned: it turns on once assigned",
         "incompatible": "No compatible channels",
         "not_allowed": "{{name}} — {{channel}}: not among the agent's channels",
-        "not_allowed_hint": "{{channel}} is not among this agent's channels. Review them in their profile.",
+        "not_allowed_hint": "{{channel}} is not among this agent's channels: they are set in their profile",
         "permissions_link": "Review {{name}}'s channels for {{channel}}",
         "toggle_all_channel": "Toggle {{channel}} on all visible",
         "remove_aria": "Remove {{name}} from group",
@@ -1977,19 +1975,13 @@
         "phone_strategy": "Strategy (phone)",
         "chat_strategy": "Strategy (chat)",
         "phone_hint": "The number customers see when called.",
-        "phone_placeholder": "Choose a number",
+        "phone_placeholder": "Select a number",
         "strategy": "Strategy",
         "ring_all": "Simultaneous agents",
         "ring_all_summary": "{{count}} at once",
         "sub_strategy": "Within each level",
         "typification": "Typifications",
-        "agenda_new": "New address book",
-        "template_new": "New template",
-        "label_new": "New label",
-        "agenda_edit": "Edit address book",
-        "template_edit": "Edit template",
-        "team_new": "New team",
-        "team_edit": "Edit team"
+        "label_new": "New label"
       },
       "strategy_help": {
         "balanced": "Spreads evenly across the agents.",
@@ -2072,7 +2064,7 @@
         "max_queue_wait_hint": "If unanswered in this time, it moves to the next destination in VUI Designer; if none, it ends.",
         "transfer": "Ringing time",
         "service_level": "Service level time",
-        "service_level_hint": "Time used to measure the service level percentage",
+        "service_level_hint": "Time used to measure the service level percentage.",
         "wrap_up": "Time between calls",
         "overflow": "Overflow conversations if no agents are connected",
         "overflow_hint": "Contacts move on to the next destination, which is not chosen here.",
@@ -2098,8 +2090,8 @@
         "queue_variable_error": "Enter a whole number from 1 to 10.",
         "queue_integer_error": "Enter a whole number greater than zero.",
         "queue_invalid": "Check the queue sizes.",
-        "transfer_hint": "Ringing time of a conversation to an agent",
-        "wrap_up_hint": "Time the agent waits between one conversation and the next"
+        "transfer_hint": "Ringing time of a conversation to an agent.",
+        "wrap_up_hint": "Time the agent waits between one conversation and the next."
       },
       "summary": {
         "none": "None",
@@ -2114,20 +2106,20 @@
       },
       "channels": {
         "title": "Channels",
-        "hint": "What you tick here decides what you set up in Distribution and queues."
+        "hint": "What you tick here decides what you set up in Distribution and queues"
       },
       "distribution": {
         "common_title": "Common rules",
-        "common_hint": "They apply to every channel in the group.",
+        "common_hint": "They apply to every channel in the group",
         "routing": "Distribution",
         "queue": "Queue",
         "queue_messages": "Queue messages",
-        "queue_messages_hint": "What the caller hears on entering, while waiting and before being answered. Rarely changed.",
+        "queue_messages_hint": "What the caller hears on entering, while waiting and before being answered; rarely changed",
         "jump_label": "Go to",
         "jump_aria": "Channels in this section",
         "outbound": "Outbound calls",
-        "webchat_hint": "Its messages, its hours and the websites it runs on. An empty message is not sent.",
-        "whatsapp_hint": "Its number and, with it, its messages and hours. An empty message is not sent.",
+        "webchat_hint": "Its messages, its hours and the websites it runs on; an empty message is not sent",
+        "whatsapp_hint": "Its number and, with it, its messages and hours; an empty message is not sent",
         "no_channels": "This group has no channels, so it doesn't route conversations. Channels are ticked in General."
       },
       "chat": {
@@ -2148,7 +2140,7 @@
       },
       "resources": {
         "client_card": "Contact card",
-        "client_card_hint": "What the agent sees on receiving a contact from this group."
+        "client_card_hint": "What the agent sees on receiving a contact from this group"
       },
       "create_submit": "Create group",
       "wrapup": {
@@ -2157,7 +2149,7 @@
         "comments": "Allow comments",
         "classify": "Typify conversations",
         "typification": "Typification",
-        "typification_placeholder": "Choose a typification",
+        "typification_placeholder": "Select a typification",
         "view": "View details of “{{name}}”",
         "view_detail": "View details",
         "scope_label": "Which conversations are typified",
@@ -2172,7 +2164,7 @@
       "name_required": "Name is required",
       "name_taken": "A group with this name already exists",
       "phone_required": "The outbound phone is required",
-      "typification_required": "Choose a typification"
+      "typification_required": "Typification is required"
     },
     "toasts": {
       "created": "Group \"{{name}}\" created",
@@ -2198,8 +2190,6 @@
       "strategy_phone": "Phone strategy",
       "strategy_chat": "Chat strategy"
     },
-    "rename_placeholder": "Group name",
-    "rename_aria": "Rename {{name}}",
     "bulk_edit_title": "Apply change to {{count}} group(s)",
     "agents_panel": {
       "title": "Agents: {{name}}",
@@ -2226,6 +2216,7 @@
       "type": "Type",
       "presence": "Status",
       "recording": "Recording",
+      "recording_off": "Not recorded",
       "groups": "Groups"
     },
     "type": {
@@ -2282,7 +2273,7 @@
         "general_hint": "Who they are, their extension and channels",
         "extension": "Extension",
         "extension_hint": "Its number and where it rings",
-        "channels_hint": "At least one. Those they can handle in their groups",
+        "channels_hint": "Those they can handle in their groups; at least one",
         "config": "Configuration",
         "config_hint": "Recording, permissions and settings",
         "calls": "Calls",
@@ -2305,15 +2296,15 @@
           "pickup_call": "Call pickup",
           "pickup_chat": "Chat pickup",
           "max_chats": "Concurrent chats",
-          "max_chats_inactive": "Concurrent chats: turn on the Chat channel in General",
+          "max_chats_inactive": "Concurrent chats: turn on the Chat channel in General.",
           "random_order": "Random order",
-          "random_order_hint": "Show agents in random order within the group"
+          "random_order_hint": "Show agents in random order within the group."
         },
         "integracion": {
           "title": "Integration",
           "url_iframe": "Iframe URL",
           "dispositivos_externos": "External devices",
-          "dispositivos_externos_hint": "Allows the agent to connect from devices outside the corporate network",
+          "dispositivos_externos_hint": "Allows the agent to connect from devices outside the corporate network.",
           "url_iframe_placeholder": "https://example.com/panel"
         },
         "regional": {
@@ -2377,9 +2368,9 @@
         "channel_not_offered": "This group does not offer the channel",
         "filter_label": "Filter by assignment",
         "outbound_label": "Group for outbound calls",
-        "outbound_empty": "Assign a group with phone",
+        "outbound_empty": "Assign a group with phone.",
         "not_assigned_hint": "Not assigned to {{name}}: it turns on once assigned",
-        "not_allowed_hint": "{{channel}} is not among their channels (General)",
+        "not_allowed_hint": "{{channel}} is not among their channels: they are set in General",
         "bulk_add": "Assign to the agent",
         "bulk_remove": "Remove from the agent",
         "bulk_body": "{{action}}: {{count}} groups."
@@ -2391,9 +2382,9 @@
       },
       "permissions": {
         "manage_devices": "Device management",
-        "manage_devices_hint": "Agent can manage their assigned devices",
+        "manage_devices_hint": "Agent can manage their assigned devices.",
         "self_activate": "Group activation",
-        "self_activate_hint": "Agent can activate or deactivate themselves in each group",
+        "self_activate_hint": "Agent can activate or deactivate themselves in each group.",
         "calls_section": "Calls",
         "destino": "Destination",
         "col_llamada": "Calls",
@@ -2422,6 +2413,7 @@
         "outbound": "Outbound",
         "channels": "Channels",
         "no_channels": "No channels",
+        "no_enabled_groups": "No enabled groups",
         "none": "None"
       },
       "create_submit": "Create agent"
@@ -2435,14 +2427,14 @@
     },
     "errors": {
       "name_required": "Name is required",
-      "extension_required": "Select an extension",
-      "channels_required": "Select at least one channel",
-      "email_invalid": "Enter a valid email",
-      "phone_invalid": "This phone number is not valid: use digits, with a + in front if it has a prefix.",
-      "phone_required": "Enter the mobile phone: the extension rings on it",
-      "email_required": "Enter the email",
-      "group_required": "Assign at least one group",
-      "outbound_required": "Assign a group with Phone for their outbound calls"
+      "extension_required": "Extension is required",
+      "channels_required": "At least one channel is required",
+      "email_invalid": "This email is not valid",
+      "phone_invalid": "This phone number is not valid: use digits, with a + in front if it has a prefix",
+      "phone_required": "Mobile phone is required: the extension rings on it",
+      "email_required": "Email is required",
+      "group_required": "At least one group is required",
+      "outbound_required": "The group for outbound calls is required: one with Phone"
     },
     "empty": {
       "title": "No agents yet",
@@ -2462,8 +2454,6 @@
       "groups": "Groups",
       "sheet": "Agents"
     },
-    "rename_placeholder": "Agent name",
-    "rename_aria": "Rename {{name}}",
     "bulk_edit_title": "Apply change to {{count}} agent(s)"
   },
   "config": {
@@ -2569,7 +2559,7 @@
             "evento_inicio": "Start",
             "evento_fin": "End",
             "evento_resultado": "Outcome",
-            "hint": "We notify your system when something happens in a conversation. HTTPS addresses only.",
+            "hint": "We notify your system when something happens in a conversation; HTTPS addresses only",
             "url_error": "No spaces.",
             "col_conversacion": "Conversation",
             "col_url": "Web address"
@@ -2578,12 +2568,12 @@
         },
         "agentes": {
           "heading": "Agents",
-          "hint": "Every new agent starts with these. You can change them later in the agent.",
+          "hint": "Every new agent starts with these; you can change them later in the agent",
           "edit_crumb": "Edit agent"
         },
         "grupos": {
           "heading": "Groups",
-          "hint": "Every new group starts with these. You can change them later in the group.",
+          "hint": "Every new group starts with these; you can change them later in the group",
           "strategy_hint": "Levels, Ring All, Skills and Exclusive agent are chosen in each group, where they are set up.",
           "edit_crumb": "Edit group"
         }
@@ -2604,9 +2594,9 @@
       "policies": {
         "title": "Password policies",
         "min_length": "Minimum length",
-        "min_length_hint": "Minimum number of characters required",
+        "min_length_hint": "Minimum number of characters required.",
         "expiration": "Password expiration",
-        "expiration_hint": "Time after which passwords expire",
+        "expiration_hint": "Time after which passwords expire.",
         "expiration_options": {
           "never": "Never expires",
           "days_30": "30 days",
@@ -2620,7 +2610,7 @@
           "chars_16": "16 characters"
         },
         "special_chars": "Mandatory special characters",
-        "special_chars_hint": "Requires at least one non-alphanumeric character"
+        "special_chars_hint": "Requires at least one non-alphanumeric character."
       },
       "regen": {
         "title": "Password regeneration",

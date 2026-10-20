@@ -1,14 +1,21 @@
 import {
+  afterNextRender,
   booleanAttribute,
   ChangeDetectionStrategy,
   Component,
   computed,
   contentChild,
+  DestroyRef,
+  effect,
+  ElementRef,
   inject,
+  Injector,
   input,
   model,
   output,
+  signal,
   TemplateRef,
+  untracked,
   viewChild,
   ViewEncapsulation,
 } from '@angular/core';
@@ -19,6 +26,7 @@ import { FormsModule } from '@angular/forms';
 import { ChipModule } from 'primeng/chip';
 import { TimesCircleIcon } from 'primeng/icons/timescircle';
 import { MultiSelect, MultiSelectModule } from 'primeng/multiselect';
+import { Tooltip } from 'primeng/tooltip';
 import type { MultiSelectPassThroughOptions } from 'primeng/types/multiselect';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { SC_SELECT_TRANSLATIONS } from '../select/i18n/sc-select.translations';
@@ -46,9 +54,12 @@ export type ScMultiSelectSize = ScFieldSize;
 export type ScMultiSelectDisplay = 'chip' | 'comma';
 /**
  * Con `display="chip"`, qué pasa al pasar de `maxSelectedLabels`. `count` (el de PrimeNG): las etiquetas se cambian por
- * «N seleccionados». `more`: se quedan las primeras y otra dice cuántas faltan («+2 más»).
+ * «N seleccionados». `more`: se quedan las primeras y otra dice cuántas faltan («+2 más»). `fit`: como `more`, pero sin
+ * tope fijo: se quedan las que caben en el ancho del campo, y la última dice cuántas faltan (revisión de producto del
+ * 2026-10-20, DD-217: con tres fijas sobraba medio campo). Con `more` y `fit`, un nombre más largo que el campo se acorta
+ * con «…» y se lee entero al pasar; su «×» y «+N más» quedan a la vista.
  */
-export type ScMultiSelectChipOverflow = 'count' | 'more';
+export type ScMultiSelectChipOverflow = 'count' | 'more' | 'fit';
 
 /**
  * Smart Contact multi-select. Wraps PrimeNG `<p-multiselect>` with the
@@ -75,6 +86,7 @@ export type ScMultiSelectChipOverflow = 'count' | 'more';
     ScFieldMsgComponent,
     ScIconComponent,
     TimesCircleIcon,
+    Tooltip,
     TranslateModule,
   ],
   templateUrl: './sc-multiselect.component.html',
@@ -119,6 +131,70 @@ export class ScMultiSelectComponent {
     for (const [language, dict] of Object.entries(SC_SELECT_TRANSLATIONS)) {
       translate.setTranslation(language, dict, true);
     }
+
+    // `fit`: se vuelve a medir al cambiar lo elegido y al cambiar el ancho del campo.
+    effect(() => {
+      if (!this.fitChips()) return;
+      this.value();
+      untracked(() => this.medir());
+    });
+    afterNextRender(() => {
+      if (typeof ResizeObserver === 'undefined') return;
+      let ancho = 0;
+      const observador = new ResizeObserver(([entrada]) => {
+        const nuevo = Math.round(entrada.contentRect.width);
+        if (!this.fitChips() || nuevo === ancho) return;
+        ancho = nuevo;
+        this.medir();
+      });
+      observador.observe(this.host.nativeElement);
+      this.destroyRef.onDestroy(() => observador.disconnect());
+    });
+  }
+
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+  private readonly injector = inject(Injector);
+  private readonly destroyRef = inject(DestroyRef);
+
+  /**
+   * En `fit`, cuántas etiquetas caben; `null` mientras se miden. Para medir se pintan todas y, detrás, la de «+N más»
+   * oculta (la caja del campo recorta lo que no cabe, así que no se ve nada de más); en el siguiente render se cuenta
+   * hasta dónde llegan sin pisar la de «+N más», y se pintan solo esas.
+   */
+  protected readonly fitCount = signal<number | null>(null);
+
+  private medir(): void {
+    this.fitCount.set(null);
+    afterNextRender(
+      () => {
+        const raiz = this.host.nativeElement;
+        const etiqueta = raiz.querySelector<HTMLElement>('.p-multiselect-label');
+        const caja = raiz.querySelector<HTMLElement>('.p-multiselect-label-container');
+        if (!etiqueta || !caja) return;
+        const chips = [...etiqueta.querySelectorAll<HTMLElement>('.p-multiselect-chip-item:not(.sc-multiselect__more-item)')];
+        const mas = etiqueta.querySelector<HTMLElement>('.sc-multiselect__more-item');
+        const estilo = getComputedStyle(etiqueta);
+        const hueco = parseFloat(estilo.columnGap) || 0;
+        const tope = caja.getBoundingClientRect().right - (parseFloat(estilo.paddingRight) || 0);
+        const derecha = (el: HTMLElement) => el.getBoundingClientRect().right;
+        if (chips.length === 0 || derecha(chips[chips.length - 1]) <= tope + 0.5) {
+          this.fitCount.set(chips.length);
+          return;
+        }
+        const reserva = (mas?.getBoundingClientRect().width ?? 0) + hueco;
+        let caben = 0;
+        while (caben < chips.length && derecha(chips[caben]) + reserva <= tope + 0.5) caben++;
+        // Al menos una: «+N más» sola no dice qué hay elegido.
+        this.fitCount.set(Math.max(1, caben));
+      },
+      { injector: this.injector },
+    );
+  }
+
+  /** Cuántas etiquetas se pintan con `more` o `fit`, de `total` elegidas. */
+  protected visibleChips(total: number): number {
+    if (this.fitChips()) return this.fitCount() ?? total;
+    return this.maxSelectedLabels();
   }
 
   // ─── Chrome (mirrors sc-select) ─────────────────────────────────────
@@ -268,7 +344,9 @@ export class ScMultiSelectComponent {
 
   /** Etiquetas con «+N más»: las corta la plantilla `#selecteditems`, y a PrimeNG no se le pasa tope (si no, cambiaría
    *  las etiquetas por «N seleccionados» y el campo dejaría de medir como un campo con etiquetas). */
-  protected readonly moreChips = computed(() => this.display() === 'chip' && this.chipOverflow() === 'more');
+  protected readonly moreChips = computed(() => this.display() === 'chip' && this.chipOverflow() !== 'count');
+  /** `fit`: las que caben en el ancho, medidas (`fitCount`). */
+  protected readonly fitChips = computed(() => this.display() === 'chip' && this.chipOverflow() === 'fit');
   protected readonly controlMaxSelectedLabels = computed(() => (this.moreChips() ? null : this.maxSelectedLabels()));
 
   /** El texto y el valor de una opción elegida, para pintar su etiqueta y quitarla. */

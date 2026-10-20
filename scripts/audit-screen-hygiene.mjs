@@ -344,7 +344,6 @@ export const ROLES_A_MANO = {
   // foco, cierran con Escape y, desde el 2026-10-15, devuelven el foco a quien los abrió (`focoDeVueltaAlCerrar`).
   'projects/supervisor/src/app/features/admin/labels/components/label-form-panel/label-form-panel.component.html': 1,
   'projects/supervisor/src/app/features/admin/repositories/components/repo-form-panel.component.html': 1,
-  'projects/supervisor/src/app/features/admin/templates/components/template-form-panel/template-form-panel.component.html': 1,
   // Se queda: frente a CommandMenu se decidió mantenerla (sección 2 del catálogo, revisado el 2026-10-12).
   'projects/ui-smartcontact/src/lib/components/command-palette/sc-command-palette.component.html': 1,
   // Se queda hasta rehacer el port: solo lo usa la demo de sc-docs y su cabecera explica por qué no se adopta.

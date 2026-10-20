@@ -53,26 +53,33 @@
       <!-- Las primeras etiquetas, que se quitan con su «×» como las de PrimeNG (mismas clases), y otra con cuántas faltan.
            La «×» va en plantilla, como hace MultiSelect con la suya: así el botón es el `span` que pone Chip y el glifo,
            oculto al lector, ya no se enfoca (el `svg` por defecto de Chip lleva `aria-hidden` y `tabindex` a la vez). -->
-      <ng-template #selecteditems let-selected let-removeChip="removeChip">
-        @for (option of selected.slice(0, maxSelectedLabels()); track $index) {
-          <div class="p-multiselect-chip-item">
-            <p-chip
-              class="p-multiselect-chip"
-              [label]="chipLabel(option)"
-              [removable]="!disabled()"
-              (onRemove)="removeChip(chipValue(option), $event)"
-            >
+      <ng-template #selecteditems let-elegidas let-removeChip="removeChip">
+        <!-- Sin nada elegido, MultiSelect pasa `null` (el modelo tal cual), no una lista vacía. -->
+        @let selected = elegidas ?? [];
+        @for (option of selected.slice(0, visibleChips(selected.length)); track $index) {
+          <div class="p-multiselect-chip-item sc-multiselect__chip-item">
+            <p-chip class="p-multiselect-chip sc-multiselect__chip" [removable]="!disabled()" (onRemove)="removeChip(chipValue(option), $event)">
+              <!-- El nombre va en el hueco de contenido de Chip, no en `label`, para que el tooltip vea su «…»: un nombre
+                   más largo que el campo se acorta y se lee entero al pasar (`showOnEllipsis`, el nativo). -->
+              <span class="p-chip-label sc-multiselect__chip-label" [pTooltip]="chipLabel(option)" [showOnEllipsis]="true" tooltipPosition="top">{{
+                chipLabel(option)
+              }}</span>
               <ng-template #removeicon>
                 <svg data-p-icon="times-circle"></svg>
               </ng-template>
             </p-chip>
           </div>
         }
-        @if (selected.length > maxSelectedLabels()) {
-          <div class="p-multiselect-chip-item">
+        @if (fitChips() && fitCount() === null) {
+          <!-- Midiendo (`fit`): la de «+N más» con todas, oculta, para saber cuánto sitio reservarle. -->
+          <div class="p-multiselect-chip-item sc-multiselect__more-item sc-multiselect__more-item--midiendo" aria-hidden="true">
+            <p-chip class="p-multiselect-chip sc-multiselect__more" [label]="'sc.select.more' | translate: { count: selected.length }" />
+          </div>
+        } @else if (selected.length > visibleChips(selected.length)) {
+          <div class="p-multiselect-chip-item sc-multiselect__more-item">
             <p-chip
               class="p-multiselect-chip sc-multiselect__more"
-              [label]="'sc.select.more' | translate: { count: selected.length - maxSelectedLabels() }"
+              [label]="'sc.select.more' | translate: { count: selected.length - visibleChips(selected.length) }"
             />
           </div>
         }

@@ -15,8 +15,33 @@
   display: flex;
 }
 
-:host(.sc-textarea--copyable) {
+.sc-textarea__field {
   position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+/* El rótulo, el de los demás campos del DS (DD-217 §16): Caption semibold en `secondary`, a 7 de su caja, y la marca de
+ * obligatorio en rojo. Lo pinta `sc-field-label`, fuera de la encapsulación de este componente: de ahí `::ng-deep`, y
+ * solo para sus dos piezas. */
+:host ::ng-deep .sc-textarea__label {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--sc-spacing-0-125);
+  margin-bottom: var(--sc-spacing-0-5);
+  font-size: var(--sc-font-size-caption);
+  line-height: var(--sc-line-height-caption);
+  font-weight: var(--sc-font-weight-semibold);
+  color: var(--sc-text-secondary);
+}
+
+:host ::ng-deep .sc-textarea__required {
+  color: var(--sc-text-danger);
+  font-weight: var(--sc-font-weight-medium);
+}
+
+:host(.sc-textarea--disabled) ::ng-deep .sc-textarea__label {
+  color: var(--sc-text-disabled);
 }
 
 :host(.sc-textarea--copyable) textarea {

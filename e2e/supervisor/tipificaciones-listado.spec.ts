@@ -133,5 +133,5 @@ test('el grupo elige una tipificación, ve su árbol sin salir y, si tipifica, n
   await page.getByRole('switch', { name: /^Tipificar/ }).click();
   await expect(page.locator('#group-typification')).toBeVisible();
   await page.locator('sc-top-bar').getByRole('button', { name: 'Guardar' }).click();
-  await expect(page.locator('#group-section-general')).toContainText('Elige una tipificación');
+  await expect(page.locator('#group-section-general')).toContainText('La tipificación es obligatoria');
 });

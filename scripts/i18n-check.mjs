@@ -26,6 +26,8 @@
  *   G. Formato de fecha/número clavado a un idioma (`toLocale*('es-ES')`). El idioma activo lo
  *      sirve `LanguageService.locale()`.
  *   H. `computed()` con `translate.instant()` que no lee el idioma: se congela en el de carga.
+ *   I. El punto final, al unísono (DD-217): la ayuda bajo un campo acaba en punto; el subtítulo bajo un título es una
+ *      sola frase sin él. Medido el 2026-10-20: en Distribución, unas ayudas lo llevaban y otras no.
  *
  * Lo que a propósito NO se comprueba, porque se midió y era ruido:
  *   · "traducción idéntica al español" → los 15 casos de en y los 15 de fr eran marca o tecnicismos
@@ -202,6 +204,48 @@ export function divergencias(ref, target, locale, excepciones = EXCEPCIONES_DIVE
   return [...porFrase].filter(([, m]) => m.size > 1);
 }
 
+/**
+ * I. EL PUNTO FINAL, AL UNÍSONO (DD-217), como lo piden las guías de contenido de Atlassian, Polaris o Primer:
+ *   · AYUDA, lo que explica bajo un campo, una casilla o una opción (`[helperText]`, `.field__help`, `…__hint`,
+ *     `help: '…'` de una plantilla compartida): frase con punto final, siempre, aunque sea corta.
+ *   · SUBTÍTULO, lo que acompaña al título de una sección, subsección o bloque (`hintKey`, o `.sub-section__hint` en
+ *     las páginas que lo escriben a mano): una sola frase y sin punto final; si pide dos, la segunda se une con «;» o
+ *     baja a la ayuda de un campo.
+ *   · Lo que NOMBRA (títulos, rótulos, botones, chips, tooltips, toasts, errores bajo el campo) va sin punto; no se mide
+ *     porque no se mezclaba.
+ * Medido el 2026-10-20: 25 textos fuera de regla, la mayoría en las fichas de grupo y agente («Tiempo que espera el
+ * agente…» sin punto junto a «El número que ve el cliente cuando le llaman.»).
+ */
+export function papelesDeTexto(src) {
+  const subtitulos = new Set();
+  const ayudas = new Set();
+  const claves = (txt, set) => {
+    for (const k of txt.matchAll(/'([\w-]+(?:\.[\w-]+)+)'/g)) set.add(k[1]);
+  };
+  for (const m of src.matchAll(/\bhintKey="([\w-]+(?:\.[\w-]+)+)"/g)) subtitulos.add(m[1]);
+  for (const m of src.matchAll(/\[hintKey\]="([^"]*)"/g)) claves(m[1], subtitulos);
+  for (const m of src.matchAll(/\[helperText\]="([^"]*)"/g)) claves(m[1], ayudas);
+  for (const m of src.matchAll(/class="([^"]*(?:__help|__hint)\b[^"]*)"[^>]*>([\s\S]*?)<\//g))
+    claves(m[2], /section__hint\b/.test(m[1]) ? subtitulos : ayudas);
+  for (const m of src.matchAll(/\bhelp: '([\w-]+(?:\.[\w-]+)+)'/g)) ayudas.add(m[1]);
+  return { subtitulos, ayudas };
+}
+
+/** Por qué un texto incumple su papel, o `null`. */
+export function fueraDePunto(texto, papel) {
+  const t = String(texto).trim();
+  const conPunto = /[.!?…:]$/.test(t);
+  if (papel === 'ayuda') return conPunto ? null : 'ayuda sin punto final';
+  if (conPunto) return 'subtítulo con punto final';
+  return /[.!?]\s/.test(t) ? 'subtítulo de dos frases' : null;
+}
+
+/** Textos que hacen el papel pero no son frases; su motivo es la decisión. */
+const EXCEPCIONES_PUNTO = [
+  { clave: 'common.optional', motivo: 'la marca «(opcional)» junto al rótulo: nombra, no explica' },
+  { clave: 'templates.form.variables_hint', motivo: 'la lista de variables que se copian: un punto tras «{fecha}» se confundiría con ella' },
+];
+
 // ── runner ────────────────────────────────────────────────────────────────
 // Solo al invocarlo directamente: el test importa las funciones puras de arriba y no quiere
 // que el gate entero se ejecute (ni que llame a `process.exit`) al hacer el import.
@@ -317,6 +361,30 @@ if (process.argv[1] && process.argv[1].endsWith('i18n-check.mjs')) {
         congelados,
       );
     else console.log(`  ✓ computed: todos los que traducen leen el idioma`);
+
+    // ── I. el punto final, al unísono ───────────────────────────────────────
+    const papeles = new Map();
+    for (const f of [...htmls, ...tss]) {
+      const { subtitulos, ayudas } = papelesDeTexto(readFileSync(f, 'utf8'));
+      for (const k of subtitulos) papeles.set(k, papeles.get(k) === 'ayuda' ? 'los dos' : 'subtítulo');
+      for (const k of ayudas) papeles.set(k, papeles.get(k) === 'subtítulo' ? 'los dos' : 'ayuda');
+    }
+    const sinPunto = [];
+    for (const [k, papel] of papeles) {
+      if (EXCEPCIONES_PUNTO.some((e) => e.clave === k)) continue;
+      if (papel === 'los dos') {
+        sinPunto.push(`${k}: hace de subtítulo y de ayuda; una clave para cada papel`);
+        continue;
+      }
+      for (const locale of [app.reference, ...app.targets]) {
+        const t = locale === app.reference ? ref : locales[locale];
+        const motivo = k in t ? fueraDePunto(t[k], papel === 'ayuda' ? 'ayuda' : 'subtitulo') : null;
+        if (motivo) sinPunto.push(`${locale} ${k}: ${motivo}  «${String(t[k]).slice(0, 60)}»`);
+      }
+    }
+    if (sinPunto.length)
+      fail(`${sinPunto.length} texto(s) con el punto final fuera de regla (ayuda: con punto; subtítulo: sin él)`, sinPunto);
+    else console.log(`  ✓ punto final: ${papeles.size} ayudas y subtítulos, al unísono`);
   }
 
   console.log(`\n${SEP}`);

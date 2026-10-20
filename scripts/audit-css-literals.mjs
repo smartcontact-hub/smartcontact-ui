@@ -46,10 +46,13 @@ const log = (s = '') => process.stdout.write(s + '\n');
  *
  * Supervisor 45 → 42 y 38 → 36 el 2026-10-16: el valor de una condición de Reglas pasa a `sc-multiselect` (candidato 6
  * del barrido de PrimeNG) y sale la hoja del desplegable hecho a mano.
+ *
+ * DS 38 → 34 el 2026-10-20 (DD-217 §16): el hueco del rótulo a su caja pasa a token en `sc-inputtext`, `sc-inputnumber`,
+ * `sc-inputtags` y `sc-select` (7 en los cinco campos).
  */
 export const ZONAS = [
   { nombre: 'DS · tipografía', dirs: ['projects/ui-smartcontact/src/lib/components'], tipo: 'tipografia', max: 13 },
-  { nombre: 'DS · espaciado', dirs: ['projects/ui-smartcontact/src/lib/components'], tipo: 'espaciado', max: 38 },
+  { nombre: 'DS · espaciado', dirs: ['projects/ui-smartcontact/src/lib/components'], tipo: 'espaciado', max: 34 },
   {
     nombre: 'Supervisor · tipografía',
     dirs: ['projects/supervisor/src/app', 'projects/supervisor/src/styles'],

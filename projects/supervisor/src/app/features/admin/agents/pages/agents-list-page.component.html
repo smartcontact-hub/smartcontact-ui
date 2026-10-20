@@ -23,7 +23,7 @@
   noResultsKey="agents.no_results_query"
   exportable
   [rowMenu]="rowMenu"
-  [rowOpenable]="isOpenable"
+  rowOpenable
   selectable
   [(selectedIds)]="selectedIds"
   tableTestId="agents-table"
@@ -57,17 +57,7 @@
     <!-- Sin la burbuja del estado: aquí se configura, no se supervisa (revisión del 2026-10-09). El estado sigue en su
          columna, en «Columnas». -->
     <sc-presence-avatar [name]="agent.name" [photo]="agent.photo" [size]="32" />
-    @if (renamingId() === agent.id) {
-      <sc-inline-rename-cell
-        [initialValue]="agent.name"
-        [placeholder]="'agents.rename_placeholder' | translate"
-        [ariaLabel]="'agents.rename_aria' | translate: { name: agent.name }"
-        (commit)="onRenameCommit(agent.id, $event)"
-        (cancelled)="onRenameCancel(agent.id)"
-      />
-    } @else {
-      <span class="cell-name__text" [pTooltip]="agent.name" showOnEllipsis tooltipPosition="top">{{ agent.name }}</span>
-    }
+    <span class="cell-name__text" [pTooltip]="agent.name" showOnEllipsis tooltipPosition="top">{{ agent.name }}</span>
   </span>
 </ng-template>
 
@@ -109,6 +99,7 @@
         role="img"
         [attr.data-channel]="channel"
         [attr.aria-label]="channelLabelKey(channel) | translate"
+        [pTooltip]="channelLabelKey(channel) | translate" tooltipPosition="top"
       >
         <sc-channel-icon [channel]="channel" />
       </span>
@@ -141,15 +132,18 @@
   }
 </ng-template>
 
-<!-- El REC donde se graba y nada donde no: la columna solo contesta sí o no, y así se barre de un vistazo. En el gris
-     de los demás glifos, sin rojo (DD-209 §4). `radio_button_checked` relleno, el botón de grabar de siempre; el
-     dashboard dejó de usarlo para «opción elegida». -->
+<!-- El REC donde se graba y el «—» de las celdas vacías donde no, que el lector oye «Sin grabación»: en blanco parecía
+     que no había cargado (revisión de producto del 2026-10-20, que enmienda DD-209 §4). En el gris de los demás glifos,
+     sin rojo. `radio_button_checked` relleno, el botón de grabar de siempre; el dashboard dejó de usarlo para «opción
+     elegida». -->
 <ng-template #recordingTpl let-agent>
   @if (agent.permissions.recording) {
     @let recording = 'agents.permission.recording' | translate;
     <span class="recording" role="img" [attr.aria-label]="recording" [pTooltip]="recording" tooltipPosition="top">
       <sc-icon [name]="recordingIcon" size="sm" filled aria-hidden="true" />
     </span>
+  } @else {
+    <span class="cell cell--empty sc-text-body-regular"><sc-celda-vacia [texto]="'agents.table.recording_off' | translate" /></span>
   }
 </ng-template>
 

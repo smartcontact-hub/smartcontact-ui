@@ -17,7 +17,7 @@
 .sc-multiselect {
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: var(--sc-spacing-0-5);
   min-width: 0;
 }
 
@@ -188,4 +188,32 @@
   .p-multiselect-chip-icon:hover {
     color: var(--sc-text-danger);
   }
+}
+
+/* `fit`, midiendo: la de «+N más» ocupa su sitio para medirla, sin verse (DD-217). */
+.sc-multiselect__more-item--midiendo {
+  visibility: hidden;
+}
+
+/* Con `more` o `fit`, un nombre más largo que el campo se acorta con «…» y la «×» y «+N más» siguen a la vista: un chip
+ * puede ser larguísimo (revisión de producto del 2026-10-20, DD-217). Midiendo, ninguno encoge: se mide su ancho. */
+.sc-multiselect__chip-item {
+  min-width: 0;
+}
+
+.sc-multiselect__chip {
+  max-width: 100%;
+}
+
+.sc-multiselect__chip-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sc-multiselect__more-item,
+.sc-multiselect__chip-item .p-chip-remove-icon,
+.p-multiselect-label:has(.sc-multiselect__more-item--midiendo) .sc-multiselect__chip-item {
+  flex-shrink: 0;
 }

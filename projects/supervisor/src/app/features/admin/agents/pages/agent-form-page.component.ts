@@ -37,6 +37,7 @@ import {
   seccionesDeAlta,
   type AvisoDeFicha,
 } from '@shared/utils/alta-secciones';
+import { nombreDeCopia } from '@shared/utils/copy-name';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 import {
   ScCheckboxComponent as CheckboxComponent,
@@ -70,13 +71,10 @@ import {
   Template,
   TemplateType,
 } from '@features/admin/templates/data/templates-data';
-import { AgendasStore, type Agenda } from '@features/admin/repositories/state/agendas.store';
+import { AgendasStore } from '@features/admin/repositories/state/agendas.store';
 import { telefonoValido } from '@features/admin/repositories/state/agenda-contacts.core.mjs';
-import {
-  RecursoDialogComponent,
-  type RecursoAbierto,
-} from '@features/admin/repositories/components/recurso-dialog/recurso-dialog.component';
 import { EquiposStore } from '@features/admin/repositories/state/equipos.store';
+import { ResourceRowsService } from '@features/admin/services/resource-rows.service';
 import {
   AGENT_TYPES,
   AGENT_TYPE_LABEL_KEYS,
@@ -204,7 +202,6 @@ function sameValues<T>(a: readonly T[], b: readonly T[]): boolean {
     AltaPieComponent,
     ResourceOptionComponent,
     CheckboxComponent,
-    RecursoDialogComponent,
     TooltipModule,
     FormSectionNavComponent,
     GroupAssignmentTableComponent,
@@ -256,6 +253,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
   private readonly templatesStore = inject(TemplatesStore);
   private readonly agendasStore = inject(AgendasStore);
   private readonly equipos = inject(EquiposStore);
+  private readonly resourceRows = inject(ResourceRowsService);
   private readonly confirmHost = inject(ScConfirmService);
 
   /** Guardar/Cancelar proyectados a la TopBar (modelo "todo arriba" S59):
@@ -362,10 +360,8 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
     this.form.update((f) => ({ ...f, languages: [...(langs as string[])] }));
   }
 
-  /** Sus equipos (Repositorios › Equipos). */
-  protected readonly teamOptions = computed(() =>
-    this.equipos.items().map((g) => ({ label: g.name, value: g.id })),
-  );
+  /** Sus equipos (Repositorios › Equipos), con lo que reúne cada uno para el tooltip de su opción (DD-217). */
+  protected readonly teamOptions = computed(() => this.resourceRows.opcionesDeEquipos());
   protected readonly teamValue = computed(() => [...this.form().teamIds]);
 
   protected onTeamsChange(ids: unknown[]): void {
@@ -392,10 +388,9 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
    * ruido para tan poca información. El formulario sigue guardando un `Set` de ids por repositorio; aquí solo
    * se traduce a lo que habla `sc-multiselect` (una lista de ids) y de vuelta. */
 
-  /** Las agendas de `Repositorios > Agendas`, todas: una agenda ya no es activa ni inactiva. */
-  protected readonly scheduleOptions = computed(() =>
-    this.agendasStore.items().map((a: Agenda) => ({ label: a.name, value: a.id })),
-  );
+  /** Las agendas de `Repositorios > Agendas`, todas (una agenda ya no es activa ni inactiva), con lo que contiene cada
+   *  una para el tooltip de su opción (DD-217). */
+  protected readonly scheduleOptions = computed(() => this.resourceRows.opcionesDeAgendas());
   protected readonly scheduleValue = computed(() => [...this.form().scheduleIds]);
 
   protected onSchedulesChange(ids: unknown[]): void {
@@ -408,12 +403,8 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
   private templatesOf(type: TemplateType): readonly Template[] {
     return this.availableTemplates().filter((t) => t.type === type);
   }
-  protected readonly chatTemplateOptions = computed(() =>
-    this.templatesOf('chat').map((t) => ({ label: t.title, value: t.id })),
-  );
-  protected readonly emailTemplateOptions = computed(() =>
-    this.templatesOf('email').map((t) => ({ label: t.title, value: t.id })),
-  );
+  protected readonly chatTemplateOptions = computed(() => this.resourceRows.opcionesDePlantillas('chat'));
+  protected readonly emailTemplateOptions = computed(() => this.resourceRows.opcionesDePlantillas('email'));
   /* Como `computed` y no como método: el desplegable recibe la MISMA lista mientras no cambie.
    * Un método devolvía un array nuevo en cada ciclo, el desplegable lo tomaba por un cambio y
    * la página se quedaba colgada (medido el 2026-09-14 al abrir Repositorios). */
@@ -423,17 +414,6 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
   }
   protected readonly chatTemplateValue = computed(() => this.idsOfType('chat'));
   protected readonly emailTemplateValue = computed(() => this.idsOfType('email'));
-
-  /** Crear o editar una agenda, una plantilla de chat o un equipo sin salir de la ficha (DD-187): la ventana
-   *  que abren el «+» de su campo y el lápiz de cada opción, como en Recursos del grupo. El recién creado se AÑADE a lo
-   *  elegido. */
-  protected readonly recursoAbierto = signal<RecursoAbierto | null>(null);
-
-  protected alCrearRecurso(r: RecursoAbierto, id: number): void {
-    if (r.tipo === 'agenda') this.form.update((f) => ({ ...f, scheduleIds: new Set([...f.scheduleIds, id]) }));
-    else if (r.tipo === 'equipo') this.form.update((f) => ({ ...f, teamIds: new Set([...f.teamIds, id]) }));
-    else this.form.update((f) => ({ ...f, templateIds: new Set([...f.templateIds, id]) }));
-  }
 
   /** Sustituye las de UN tipo sin tocar las del otro. */
   protected onTemplatesChange(type: TemplateType, ids: unknown[]): void {
@@ -559,7 +539,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
     const sinCanales = new Set(this.availableGroups().filter((grupo) => grupo.channels.length === 0).map((grupo) => grupo.id));
     const valen = this.linksVistos().filter((l) => l.channels.length > 0 || sinCanales.has(l.groupId));
     if (valen.length === 0) {
-      out.push({ seccion: gr, motivo: 'agents.errors.group_required', ancla: null });
+      out.push({ seccion: gr, motivo: 'agents.errors.group_required', ancla: 'agent-groups-error' });
     }
     if (valen.length > 0 && f.allowedChannels.includes('phone') && this.outboundGroupId() === null) {
       out.push({ seccion: gr, motivo: 'agents.errors.outbound_required', ancla: 'agent-outbound' });
@@ -598,6 +578,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
 
   /** Sin canales, el aviso bajo las casillas, al pulsar sin ellos (DD-217). */
   protected readonly channelsError = computed(() => this.faltasDichas().has('agents.errors.channels_required'));
+  protected readonly groupsError = computed(() => this.faltasDichas().has('agents.errors.group_required'));
 
   /** ¿Tiene teléfono móvil? «Gestión de dispositivos» (elegir navegador o teléfono en el puesto) lo necesita. */
   protected readonly hasPhone = computed(() => !!this.form().phone.trim());
@@ -660,7 +641,11 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
       // el icono de cada uno, como la columna de la lista (revisión de producto del 2026-10-15; antes, «Atiende por»).
       {
         icono: 'forum',
-        valor: canales.length ? canales.map((c) => t(etiquetas[c])).join(', ') : t('agents.form.summary.no_channels'),
+        // Sin grupos habilitados lo dice así: «Sin canales» contradecía las casillas de General, que sí los tienen
+        // (barrido de consistencia del 2026-10-20).
+        valor: canales.length
+          ? canales.map((c) => t(etiquetas[c])).join(', ')
+          : t(f.links.some((l) => l.active) ? 'agents.form.summary.no_channels' : 'agents.form.summary.no_enabled_groups'),
         etiqueta: 'agents.form.summary.channels',
         seccion: 'agent-section-groups',
         ancla: null,
@@ -974,11 +959,10 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
       void this.sectionLinks.go(this.sectionLinks.section(this.route, null), { replace: true });
     }
 
-    // Modo "Duplicar": detecta ?seedFromId en query params y precarga el
-    // form desde el source EXCEPTO los identificadores únicos (nombre,
-    // extensión, email, PIN). El usuario debe rellenar esos 4 antes de
-    // guardar: lo dice el resumen («Falta: …»), y el punto rojo del índice
-    // solo cuando deja General sin ellos (DD-199).
+    // Modo "Duplicar": detecta ?seedFromId en query params y precarga el form desde el source. El nombre, como al
+    // duplicar un grupo: «Tom Hanks (1)», el siguiente número libre (DD-217). Lo que identifica a una persona y no
+    // puede repetirse (extensión, email, PIN) se vacía: lo pide cada campo al pulsar «Crear agente». Por eso el
+    // agente no se crea en el acto, como el grupo: sin esos tres no es un agente válido.
     const seedFromId = this.route.snapshot.queryParamMap.get('seedFromId');
     if (seedFromId) {
       const source = this.agentsStore.getAgent(Number(seedFromId));
@@ -988,8 +972,8 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
       }
       this.duplicatingFromName.set(source.name);
       this.form.set({
-        // Unique identifiers — vaciados, el usuario los rellena.
-        name: '',
+        // El nombre, como el de la copia de un grupo; extensión, email y PIN, vacíos: no pueden repetirse.
+        name: nombreDeCopia(source.name, this.agentsStore.agents().map((a) => a.name)),
         extension: '',
         email: '',
         pin: '',
@@ -1012,9 +996,10 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
         languages: source.languages ? [...source.languages] : [],
         ...this.recursosVivos(source),
       });
-      // El duplicado nace "sucio" por construcción (datos sin guardar): el
-      // snapshot ya difiere del pristine vacío, así que el guard de salida
-      // avisa solo. No hace falta marcarlo a mano.
+      // La copia es el punto de partida, como el formulario vacío de un alta: «Deshacer» vuelve a ella y no la vacía,
+      // y salir sin tocar nada no pregunta (barrido de consistencia del 2026-10-20: Deshacer dejaba la copia en
+      // blanco sin confirmar, con 12 grupos asignados).
+      this.dirtyState.markPristine();
     }
   }
 
@@ -1319,7 +1304,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
       .filter(link => link.channels.length > 0 || (groups.get(link.groupId) ?? []).length === 0);
   }
 
-  /** Vuelve al último estado guardado (o al formulario vacío, en un alta). Es el
+  /** Vuelve al último estado guardado (al formulario vacío en un alta; a la copia, al duplicar). Es el
    *  «Deshacer» de Contact Center: vuelve atrás, no navega. */
   protected discard(): void {
     this.form.set(this.dirtyState.pristineValue());

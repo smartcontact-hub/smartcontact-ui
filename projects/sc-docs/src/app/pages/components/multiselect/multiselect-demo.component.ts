@@ -18,6 +18,10 @@ const ESTADOS_SNIPPET = `<!-- El valor va en dos sentidos y es un ARRAY: "[(valu
 <sc-multiselect label="Con chips" [options]="groups" display="chip" />
 <!-- chipOverflow="more": pasado el tope, las primeras etiquetas y «+N más», en vez de «N seleccionados». -->
 <sc-multiselect label="Con chips y «+N más»" [options]="groups" display="chip" chipOverflow="more" [maxSelectedLabels]="2" [value]="todos" />
+<!-- chipOverflow="fit": tantas etiquetas como caben en su ancho, sin cortar ninguna, y «+N más» por el resto. -->
+<sc-multiselect label="Chips hasta llenar su ancho" [options]="agendas" display="chip" chipOverflow="fit" [value]="agendas" />
+<!-- Un nombre más largo que el campo se acorta con «…» y se lee entero al pasar; su «×» y «+N más», a la vista. -->
+<sc-multiselect label="Un nombre más largo que el campo" [options]="agendasLargas" display="chip" chipOverflow="fit" [value]="agendasLargas" />
 <sc-multiselect label="Con filtro" [options]="groups" [filter]="true" filterPlaceholder="Buscar grupo" />
 <sc-multiselect label="Con error" [options]="groups" error="Selecciona al menos uno" />`;
 
@@ -121,6 +125,8 @@ export class MultiSelectDemoComponent {
 
   readonly groups = ['Soporte', 'Ventas', 'Postventa', 'Calidad'];
   readonly todos = [...this.groups];
+  readonly agendas = ['Ventas Nacional', 'Soporte Premium', 'Cobros', 'Postventa Norte', 'Postventa Sur', 'Calidad', 'Retención', 'Bajas'];
+  readonly agendasLargas = ['Clientes preferentes de la campaña de renovación de seguros del hogar, otoño', 'Cobros', 'Bajas'];
   readonly value = signal<unknown[]>([]);
 
   protected readonly meta: StoryMeta = {

@@ -8,7 +8,6 @@ import {
   ScFormSectionNavComponent as FormSectionNavComponent,
   type FormNavSection,
   ScInputTextComponent as InputTextComponent,
-  ScMessageComponent as MessageComponent,
   ScSectionCardComponent as SectionCardComponent,
 } from '@smartcontact-hub/components';
 
@@ -84,7 +83,6 @@ const SECCION_DEL_CAMPO: Readonly<Record<keyof Borrador, string>> = {
     DeleteEntityDialogComponent,
     FormSectionNavComponent,
     InputTextComponent,
-    MessageComponent,
     NgTemplateOutlet,
     SectionCardComponent,
     TipificacionNivelesComponent,

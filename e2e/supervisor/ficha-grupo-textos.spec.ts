@@ -211,7 +211,8 @@ test('el tamaño de cola dice qué cuenta cada modo: Fija, el total; Variable, p
   await expect(modos.locator('label', { hasText: 'Fija' })).toContainText('Conversaciones en espera en total.');
   await expect(modos.locator('label', { hasText: 'Variable' })).toContainText('Conversaciones en cola por cada agente conectado.');
   await expect(modos.getByRole('radio', { name: /Fija/ })).toBeChecked();
-  const ayuda = telefono.locator('.field', { has: page.locator('#group-phone-queue-size') }).locator('.field__help');
+  // La ayuda del campo, la del DS (`helperText`, DD-217 §16): la lee su `aria-describedby`.
+  const ayuda = telefono.locator('sc-inputnumber', { has: page.locator('#group-phone-queue-size') }).locator('sc-field-msg');
   await expect(ayuda).toHaveText('Hasta 50 conversaciones en espera en total. ');
 
   await modos.locator('label', { hasText: 'Variable' }).click();

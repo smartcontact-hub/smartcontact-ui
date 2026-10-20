@@ -1,7 +1,5 @@
 <ng-template #topbarActions>
-  @if (blockedReason(); as reason) {
-    <span class="form-save-reason sc-text-caption-regular">{{ reason }}</span>
-  } @else if (mode() === 'edit' && formDirty()) {
+  @if (mode() === 'edit' && formDirty()) {
     <span class="form-save-reason sc-text-caption-regular" role="status">{{ 'common.unsaved_changes' | translate }}</span>
   }
   @if (formDirty()) {
@@ -23,7 +21,7 @@
       <section class="sub-section">
       <div class="grid grid--2">
         <div class="field">
-          <sc-inputtext inputId="trigger-name" fluid required [label]="'repositories.columns.name' | translate" [value]="form().name" [error]="nameTaken() ? ('repositories.emails.trigger.name_taken' | translate) : undefined" (valueChange)="update('name', $event)" />
+          <sc-inputtext inputId="trigger-name" fluid required [label]="'repositories.columns.name' | translate" [value]="form().name" [error]="nameError()" (valueChange)="update('name', $event)" />
         </div>
         <div class="field">
           <sc-inputtext inputId="trigger-label" fluid [label]="'repositories.emails.trigger.label' | translate" [value]="form().label" (valueChange)="update('label', $event)" />

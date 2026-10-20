@@ -244,7 +244,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 172,
+      "usedInSupervisor": 167,
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "sobreObsoleto": [
         {
@@ -650,7 +650,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 18,
+      "usedInSupervisor": 17,
       "cuando": "Para una tarea corta que interrumpe sin sacarte de la pantalla. Si es larga o hay que consultar lo de detrás, `sc-drawer`.",
       "sobreObsoleto": []
     },
@@ -1058,7 +1058,7 @@
         "kit"
       ],
       "retirado": null,
-      "usedInSupervisor": 4,
+      "usedInSupervisor": 2,
       "cuando": "Para renombrar en el sitio, sin abrir un formulario.",
       "sobreObsoleto": []
     },
@@ -1216,7 +1216,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 47,
+      "usedInSupervisor": 46,
       "cuando": "Para texto de una línea. Si puede ocupar varias, `sc-textarea`.",
       "sobreObsoleto": []
     },
@@ -1277,7 +1277,7 @@
       "selector": "sc-multiselect",
       "provenance": "WRAPPER",
       "kind": "EXTENDED",
-      "primengBase": "primeng/chip, primeng/multiselect",
+      "primengBase": "primeng/chip, primeng/multiselect, primeng/tooltip",
       "cva": false,
       "inputs": 38,
       "api": [
@@ -1740,7 +1740,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 26,
+      "usedInSupervisor": 25,
       "cuando": "Para elegir una opción de 2-4 que se explican solas, todas visibles. Si cambia de COLECCIÓN en vez de filtrar, son pestañas (DD-113).",
       "sobreObsoleto": []
     },
@@ -1849,7 +1849,7 @@
         "kit"
       ],
       "retirado": null,
-      "usedInSupervisor": 18,
+      "usedInSupervisor": 19,
       "cuando": "Para un nivel más dentro de una sección, plegable si lo secundario estorba.",
       "sobreObsoleto": []
     },
@@ -1910,7 +1910,7 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/textarea",
       "cva": false,
-      "inputs": 18,
+      "inputs": 20,
       "api": [
         "ariaDescribedBy",
         "autoResize",
@@ -1924,9 +1924,11 @@
         "helperText",
         "inputId",
         "invalid",
+        "label",
         "name",
         "placeholder",
         "readonly",
+        "required",
         "resized",
         "rows",
         "size",
@@ -1935,6 +1937,7 @@
         "variant"
       ],
       "nested": [
+        "sc-field-label",
         "sc-button",
         "sc-field-msg"
       ],
@@ -1943,7 +1946,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 8,
+      "usedInSupervisor": 7,
       "cuando": "Para texto que puede ocupar varias líneas: una descripción, una nota, el motivo de algo. Si siempre cabe en una, `sc-inputtext`.",
       "sobreObsoleto": []
     },
@@ -2000,7 +2003,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 43,
+      "usedInSupervisor": 44,
       "cuando": "Para encender o apagar algo CON EFECTO INMEDIATO. Si el cambio se guarda al enviar el formulario, `sc-checkbox`.",
       "sobreObsoleto": []
     }

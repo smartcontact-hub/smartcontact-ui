@@ -1,33 +1,18 @@
-import { expect, test, type Locator, type Page } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
-import { kitPx } from '../kit-metrics';
 import { disableAnimations, forceLightTheme, goto } from './helpers';
 
 /**
- * CREAR DESDE LA FICHA ES UN DIÁLOGO, NO UNA CAJA DENTRO DE OTRA.
+ * CREAR UN RECURSO ES EN REPOSITORIOS, NO DESDE LA FICHA (DD-217).
  *
- * En Recursos de la ficha de agente, cada «+» (agenda y plantillas) crea sin salir de la ficha (la de grupo los tuvo
- * hasta DD-217, que deja allí solo los desplegables, en chips, y «Gestionar en Repositorios»):
- * abre un `sc-dialog` con el formulario de su pantalla dentro. Medido el 2026-10-01: el formulario seguía pintando
- * su propia tarjeta (320 px con borde, sombra y radio) dentro del diálogo de 440, con su título repetido
- * («Nuevo/a tipificación» dos veces) y su propio `role="dialog"`. La ficha le pasaba `flush`, pero el formulario no
- * tenía esa entrada y el atributo no hacía nada. Y el diálogo decía «Nuevo/a tipificación» bajo un botón que dice
- * «Nueva tipificación» (la etiqueta, «Nueva label» bajo «Nueva etiqueta»).
- *
- * `sc-dialog` traía además dos `role="dialog"` anidados, el `p-dialog` sin nombre y su `section`. Desde DD-140 es uno,
- * el de PrimeNG, con su título de nombre: con un «+» abierto, la página tiene UN diálogo, y el formulario no añade otro.
- *
- * Lo que fija:
- *   1. Cada «+» abre su diálogo, que se llama como su botón; dentro, el formulario no abre otro, va a sangre (sin
- *      borde ni sombra) y a todo el ancho, y el título sale una vez.
- *   2. La tipificación no tiene «+» (DD-173): es un árbol con su ficha, y no cabe en un diálogo. Desde DD-187 se elige
- *      en General › Postconversación. Se crea en Repositorios, y su alta lleva su título con género: «Nueva
- *      tipificación», no «Nuevo/a». Y cada «+» rima con su desplegable: mediano, relleno y de su mismo alto.
- *   3. (Fundido en el 2.)
- *   4. Recursos ya no enseña Etiquetas (DD-142), y el grupo conserva las suyas al guardar: el campo se queda hecho y
+ * Hasta la revisión de producto del 2026-10-20, cada «+» de Recursos (agenda y plantillas) abría un `sc-dialog` con el
+ * formulario de Repositorios dentro, primero en las dos fichas y luego solo en la de agente. Desde DD-217 ninguna lo
+ * tiene: Recursos son desplegables en chips y «Gestionar en Repositorios». Lo que fija:
+ *   1. Ni la ficha de agente ni la de grupo tienen un «+» en Recursos, ni su diálogo.
+ *   2. La tipificación no tiene «+» (DD-173): es un árbol con su ficha. Desde DD-187 se elige en General ›
+ *      Postconversación; se crea en Repositorios, y su alta lleva su título con género: «Nueva tipificación».
+ *   3. Recursos ya no enseña Etiquetas (DD-142), y el grupo conserva las suyas al guardar: el campo se queda hecho y
  *      apagado, por si vuelve.
- *   5. Cada «+» es el botón de solo icono de primeng.dev, redondo y con borde, en gris, a la derecha de su desplegable
- *      y a su alto (DD-167).
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -37,78 +22,21 @@ test.beforeEach(async ({ page }) => {
   await disableAnimations(page);
 });
 
-/** Los «+» de Recursos del agente, por su nombre: «Nueva agenda», «Nueva plantilla». */
-const masDeRecursos = (page: Page) =>
-  page.locator('#agent-section-resources').getByRole('button', { name: /^Nueva (agenda|plantilla)$/ });
+/** Los «+» de Recursos, por su nombre: «Nueva agenda», «Nueva plantilla». */
+const masDeRecursos = (page: Page, seccion: string) =>
+  page.locator(seccion).getByRole('button', { name: /^Nueva (agenda|plantilla)$/ });
 
-/** Caja y ancho del formulario dentro del diálogo, contra el hueco del cuerpo de `sc-dialog`. */
-const cajaDelFormulario = (dialogo: Locator) =>
-  dialogo.locator('.panel').evaluate((el) => {
-    const cs = getComputedStyle(el);
-    const contenido = el.closest('.sc-dialog__body') as HTMLElement;
-    const cc = getComputedStyle(contenido);
-    const hueco = contenido.getBoundingClientRect().width - parseFloat(cc.paddingLeft) - parseFloat(cc.paddingRight);
-    return {
-      sombra: cs.boxShadow,
-      borde: cs.borderTopWidth,
-      sobraDeAncho: Math.round(hueco - el.getBoundingClientRect().width),
-    };
-  });
-
-test('agente 1 · cada «+» de Recursos abre su diálogo con el nombre de su botón, y el formulario va a sangre', async ({ page }) => {
-  await goto(page, 'admin/agentes/editar/1?seccion=recursos');
-  const botones = masDeRecursos(page);
-  // Agenda y plantillas de chat: si faltan, la prueba no recorre lo que dice.
-  await expect(botones).toHaveCount(2);
-  const n = await botones.count();
-
-  for (let i = 0; i < n; i++) {
-    const boton = botones.nth(i);
-    const nombre = (await boton.getAttribute('aria-label'))!;
-    await boton.click();
-
-    const dialogo = page.getByRole('dialog', { name: nombre, exact: true });
-    await expect(dialogo, `${nombre}: el diálogo se llama como su botón`).toHaveCount(1);
-    await expect(page.getByRole('dialog'), `${nombre}: un solo diálogo en la página`).toHaveCount(1);
-    await expect(
-      page.locator(':is(sc-repo-form-panel, sc-template-form-panel, sc-label-form-panel) [role="dialog"]'),
-      `${nombre}: el formulario no abre un diálogo propio`,
-    ).toHaveCount(0);
-    await expect(dialogo.getByText(nombre, { exact: true }), `${nombre}: el título, una vez`).toHaveCount(1);
-
-    const caja = await cajaDelFormulario(dialogo);
-    expect(caja.sombra, `${nombre}: sin sombra propia`).toBe('none');
-    expect(caja.borde, `${nombre}: sin borde propio`).toBe('0px');
-    expect(caja.sobraDeAncho, `${nombre}: a todo el ancho del diálogo`).toBeLessThanOrEqual(1);
-
-    await dialogo.getByRole('button', { name: 'Cancelar', exact: true }).click();
-    await expect(page.locator('section.sc-dialog')).toHaveCount(0);
-  }
-});
-
-test('agente 1 · cada «+» de Recursos es el solo icono del Kit, secundario y relleno, a la talla de su desplegable', async ({ page }) => {
-  // DD-187, que enmienda DD-167: el «+» rima con su campo. Junto a un desplegable mediano, el botón mediano de solo
-  // icono, tan alto como él, a su derecha con el hueco de la casa (7).
-  await goto(page, 'admin/agentes/editar/1?seccion=recursos');
-  const botones = masDeRecursos(page);
-  await expect(botones).toHaveCount(2);
-  const ancho = parseFloat(kitPx('button.root.iconOnlyWidth'));
-
-  for (const boton of await botones.all()) {
-    const nombre = (await boton.getAttribute('aria-label'))!;
-    const clases = await boton.evaluate((el) => [...el.classList]);
-    expect(['p-button-icon-only', 'p-button-secondary'].filter((c) => !clases.includes(c)), `${nombre}: solo icono y en gris`).toEqual([]);
-    expect(['p-button-rounded', 'p-button-outlined', 'p-button-sm'].filter((c) => clases.includes(c)), `${nombre}: relleno y mediano`).toEqual([]);
-
-    const g = await boton.evaluate((el) => {
-      const b = el.getBoundingClientRect();
-      const c = el.closest('.field')!.querySelector('.p-select, .p-multiselect')!.getBoundingClientRect();
-      return { ancho: b.width, alto: b.height, altoCampo: c.height, hueco: b.left - c.right, centros: b.top + b.height / 2 - (c.top + c.height / 2) };
-    });
-    expect(g.ancho, `${nombre}: el ancho del solo icono del Kit`).toBeCloseTo(ancho, 1);
-    expect(g.alto, `${nombre}: tan alto como su desplegable`).toBeCloseTo(g.altoCampo, 1);
-    expect(g.hueco, `${nombre}: a la derecha del desplegable, con 7 de hueco`).toBeCloseTo(7, 0);
-    expect(Math.abs(g.centros), `${nombre}: a la altura del desplegable`).toBeLessThanOrEqual(1);
+test('agente 1 y grupo 11 · Recursos sin «+» ni su diálogo: se crea en Repositorios', async ({ page }) => {
+  for (const [ruta, seccion, campo] of [
+    ['admin/agentes/editar/1?seccion=recursos', '#agent-section-resources', '#agent-agendas'],
+    ['admin/grupos/editar/11?seccion=recursos', '#group-section-resources', '#group-agendas'],
+  ] as const) {
+    await goto(page, ruta);
+    // El campo a la vista: así el cero de abajo no es de una sección sin pintar.
+    await expect(page.locator(`sc-multiselect:has(${campo})`)).toBeVisible();
+    await expect(masDeRecursos(page, seccion)).toHaveCount(0);
+    await expect(page.getByRole('dialog')).toHaveCount(0);
+    await expect(page.locator(seccion).getByRole('link', { name: 'Gestionar en Repositorios' })).toBeVisible();
   }
 });
 

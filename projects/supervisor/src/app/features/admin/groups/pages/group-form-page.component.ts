@@ -10,7 +10,7 @@ import { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { ResultadoAccionService, SectionLinksService } from '@core/services';
 import { injectLangChange } from '@core/utils/lang-change';
-import { AltaPieComponent, ChannelIconComponent, NameInplaceComponent } from '@shared/components';
+import { AltaPieComponent, ChannelIconComponent, NameInplaceComponent, ResourceOptionComponent } from '@shared/components';
 import { changedKeys, createFormDirtyState } from '@shared/utils/form-dirty-state';
 import {
   avisosDelIndice,
@@ -219,6 +219,7 @@ type AudioKey = 'holdMusicFile' | 'queueIdFile' | 'nextInLineFile' | 'outboundAu
     ButtonComponent,
     InputTextComponent,
     MultiSelectComponent,
+    ResourceOptionComponent,
     OptionCardsComponent,
     InputNumberComponent,
     SelectButtonComponent,
@@ -305,7 +306,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
       { id: 'group-section-distribution', labelKey: 'groups.form.section.distribution', icon: 'alt_route' },
       // Lo que se le asigna desde Repositorios, como «Recursos» en la ficha de agente.
       { id: 'group-section-resources', labelKey: 'groups.form.section.resources', icon: 'library_books' },
-      { id: 'group-section-agents', labelKey: 'groups.form.section.agents', icon: 'group' },
+      { id: 'group-section-agents', labelKey: 'groups.form.section.agents', icon: 'headphones' },
     ].map((s) => ({ ...s, href: this.sectionLinks.href(this.sectionUrl(s.id)) })),
   );
 
@@ -682,18 +683,17 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
     if ((WRAP_UP_SCOPES as readonly unknown[]).includes(value)) this.setWrapUp('scope', value as WrapUpScope);
   }
 
-  /** Las agendas de `Repositorios > Agendas`, todas: una agenda ya no es activa ni inactiva. */
-  protected readonly scheduleOptions = computed(() =>
-    this.agendasStore.items().map((a) => ({ label: a.name, value: a.id })),
-  );
+  /** Las agendas de `Repositorios > Agendas`, todas (una agenda ya no es activa ni inactiva), con lo que contiene cada
+   *  una para el tooltip de su opción (DD-217). */
+  protected readonly scheduleOptions = computed(() => this.resourceRows.opcionesDeAgendas());
   protected readonly scheduleValue = computed(() => [...this.form().scheduleIds]);
   protected readonly labelOptions = computed(() => this.labelsStore.labels().map((l) => ({ label: l.name, value: l.id })));
   protected readonly labelValue = computed(() => [...this.form().labelIds]);
   private templatesOf(type: TemplateType) {
     return this.templatesStore.templates().filter((t) => t.type === type);
   }
-  protected readonly chatTemplateOptions = computed(() => this.templatesOf('chat').map((t) => ({ label: t.title, value: t.id })));
-  protected readonly emailTemplateOptions = computed(() => this.templatesOf('email').map((t) => ({ label: t.title, value: t.id })));
+  protected readonly chatTemplateOptions = computed(() => this.resourceRows.opcionesDePlantillas('chat'));
+  protected readonly emailTemplateOptions = computed(() => this.resourceRows.opcionesDePlantillas('email'));
   protected readonly chatTemplateValue = computed(() => this.templatesOf('chat').filter((t) => this.form().templateIds.has(t.id)).map((t) => t.id));
   protected readonly emailTemplateValue = computed(() => this.templatesOf('email').filter((t) => this.form().templateIds.has(t.id)).map((t) => t.id));
   protected readonly hasEmail = computed(() => this.form().channels.has('email'));
@@ -1201,7 +1201,10 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
     const priority = this.translate.instant('groups.form.summary.priority', {
       value: this.translate.instant(this.priorityKeys[f.priority]),
     });
-    return this.hasPhone() && f.phone ? `${f.phone}, ${priority.toLocaleLowerCase()}` : priority;
+    // El número con su rótulo, como «Extensión 122» bajo el nombre del agente: a secas no decía qué era (barrido de
+    // consistencia del 2026-10-20).
+    const telefono = `${this.translate.instant('groups.form.fields.phone')} ${f.phone}`;
+    return this.hasPhone() && f.phone ? `${telefono}, ${priority.toLocaleLowerCase()}` : priority;
   });
 
   protected save(): void {

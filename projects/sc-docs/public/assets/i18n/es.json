@@ -161,7 +161,7 @@
           "title": "Copy sin relleno",
           "apply": "Un título que se explica solo va solo. Descripción únicamente si aporta algo no obvio.",
           "avoid": "Un subtítulo decorativo de una o dos frases bajo cada cabecera.",
-          "have": "Regla, no componente: menos texto, más señal. Si al quitarlo no se pierde nada, quítalo."
+          "have": "Regla, no componente: menos texto, más señal. Si al quitarlo no se pierde nada, quítalo. Y el punto final, al unísono: la ayuda bajo un campo acaba en punto; el subtítulo bajo un título va sin él, y lo que nombra (títulos, botones, tooltips, errores), también."
         },
         "icons": {
           "title": "Iconografía consistente",

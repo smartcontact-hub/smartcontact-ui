@@ -23,7 +23,6 @@ import {
   ColumnDef,
   ScEmptyStateComponent as EmptyStateComponent,
   ScGroupPopoverComponent as GroupPopoverComponent,
-  ScInlineRenameCellComponent as InlineRenameCellComponent,
   ScTagComponent as TagComponent,
 } from '@smartcontact-hub/components';
 import {
@@ -64,7 +63,6 @@ const COLUMN_PREF_KEY = 'sc-agents-columns-v5';
     ChannelIconComponent,
     PresenceAvatarComponent,
     GroupPopoverComponent,
-    InlineRenameCellComponent,
     ListPageComponent,
     TranslateModule,
   ],
@@ -138,7 +136,6 @@ export class AgentsListPageComponent {
 
   /** Filas marcadas: la lista las pinta y exportar las usa; sin barra de lote (DD-215). */
   protected readonly selectedIds = signal<ReadonlySet<number>>(new Set());
-  protected readonly renamingId = signal<number | null>(null);
   protected readonly columnPrefKey = COLUMN_PREF_KEY;
   protected readonly columnDefs = computed<readonly ColumnDef[]>(() => {
     this.lang(); // cabeceras al día al cambiar de idioma (ver `injectLangChange`)
@@ -344,8 +341,6 @@ export class AgentsListPageComponent {
     }
   };
 
-  /** Mientras se renombra una fila, abrirla no hace nada (y no enseña el cursor de mano). */
-  protected readonly isOpenable = (agent: Agent): boolean => this.renamingId() !== agent.id;
 
   /**
    * Clave i18n del tipo de agente. Es un método y no un indexado en plantilla
@@ -421,18 +416,7 @@ export class AgentsListPageComponent {
     this.resultado.contar(this.translate.instant('agents.toasts.deleted_single', { name: agent.name }));
   }
 
-  protected onRenameCommit(id: number, value: string): void {
-    this.agentsStore.updateAgent(id, { name: value });
-    this.renamingId.set(null);
-    // El resultado, en un toast (DD-211 §5).
-    this.resultado.contar(this.translate.instant('agents.toasts.duplicated', { name: value }));
-  }
 
-  /** Cancel the inline rename — also drops the just-created draft so the user
-   * doesn't end up with a stray "Copia de …" they didn't want. */
-  protected onRenameCancel(_id: number): void {
-    this.renamingId.set(null);
-  }
 
   protected presenceLabelKey(presence: PresenceStatus): string {
     return this.presenceKeys[presence];

@@ -57,14 +57,25 @@ test('crear una de WhatsApp: la negrita se guarda con su marca, y los grupos, en
   expect(nueva).toMatchObject({ type: 'whatsapp', body: '*Hola* mundo' });
 });
 
-test('crear de email: HTML saneado, y no se guarda sin título ni contenido', async ({ page }) => {
+test('crear de email: HTML saneado; sin título ni contenido, lo dice cada campo al pulsar (DD-217)', async ({ page }) => {
   await goto(page, 'admin/plantillas/crear?tipo=email');
-  await expect(guardar(page)).toBeDisabled();
-  await page.getByLabel('Título').fill('Con enlace');
-  await expect(guardar(page)).toBeDisabled();
-  await editor(page).click();
-  await page.keyboard.type('Texto <b>no es negrita</b>');
+  // «Crear plantilla», siempre activo y sin «Falta: …» al lado: callado hasta que se pulsa.
   await expect(guardar(page)).toBeEnabled();
+  await expect(page.locator('.form-save-reason')).toHaveCount(0);
+  await expect(page.getByText('El título es obligatorio')).toHaveCount(0);
+  await guardar(page).click();
+  await expect(page).toHaveURL(/\/admin\/plantillas\/crear/);
+  await expect(page.getByText('El título es obligatorio')).toBeVisible();
+  await expect(page.getByText('El contenido es obligatorio')).toBeVisible();
+  await expect(page.locator('#template-title')).toBeFocused();
+
+  // El rojo se va en vivo al arreglarlo; el siguiente intento lleva al contenido, que es lo que queda.
+  await page.getByLabel('Título').fill('Con enlace');
+  await expect(page.getByText('El título es obligatorio')).toHaveCount(0);
+  await guardar(page).click();
+  await expect(editor(page)).toBeFocused();
+  await page.keyboard.type('Texto <b>no es negrita</b>');
+  await expect(page.getByText('El contenido es obligatorio')).toHaveCount(0);
   await guardar(page).click();
   await expect(page).toHaveURL(/\/admin\/plantillas\/editar\/\d+$/);
   const t = (await guardadas(page)).find((x) => x.title === 'Con enlace');
@@ -72,13 +83,17 @@ test('crear de email: HTML saneado, y no se guarda sin título ni contenido', as
   expect(t?.body).toBe('<p>Texto &lt;b&gt;no es negrita&lt;/b&gt;</p>');
 });
 
-test('un título repetido no se guarda', async ({ page }) => {
+test('un título repetido no se guarda: lo dice su campo en vivo', async ({ page }) => {
   await goto(page, 'admin/plantillas/crear');
+  const antes = (await guardadas(page)).length;
   await page.getByLabel('Título').fill('saludo inicial');
   await editor(page).click();
   await page.keyboard.type('x');
-  await expect(guardar(page)).toBeDisabled();
   await expect(page.getByText('Ya existe una plantilla con este título').first()).toBeVisible();
+  await guardar(page).click();
+  await expect(page).toHaveURL(/\/admin\/plantillas\/crear/);
+  await expect(page.locator('#template-title')).toBeFocused();
+  expect((await guardadas(page)).length).toBe(antes);
 });
 
 test('grupos: asignar uno desde la plantilla lo deja en la tabla', async ({ page }) => {

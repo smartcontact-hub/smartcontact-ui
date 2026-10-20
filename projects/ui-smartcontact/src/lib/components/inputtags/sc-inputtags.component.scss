@@ -20,6 +20,9 @@
   line-height: var(--sc-line-height-caption);
   font-weight: var(--sc-font-weight-semibold);
   color: var(--sc-text-secondary);
+  /* A 7 de su caja, como `sc-select` y `sc-multiselect`: el `gap` del host pone 3,5 y esto el resto. Con 2 px quedaba a
+   * 5,5, y cada campo del DS dejaba un hueco distinto (barrido de las fichas, DD-217). */
+  margin-bottom: var(--sc-spacing-0-25);
 }
 
 .sc-inputtags__required {

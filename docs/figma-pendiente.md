@@ -1518,13 +1518,21 @@ antes:** qué variantes de `group-summary` y `agent-summary` llevan hoy «Mostra
 - **Duplicar grupo**: fuera el diálogo (y con él la anotación de Call Blending de §50). «Duplicar» abre la edición de
   la copia, «Online Support (1)», en General, con su toast; sin servicios, dominios del script de chat ni número de
   WhatsApp.
-- **Recursos del grupo**: Agendas y Plantillas en chips (`MultiSelect` en modo chip, «+N más» desde la cuarta), cada una
-  en su fila a todo el ancho, sin el «+» al lado ni el lápiz en las opciones. La «×» del chip, en `text/danger` al pasar. En el resumen, las filas de
-  Recursos sin desplegar: son enlaces a su campo.
+- **Recursos, en el grupo y en el agente**: Agendas, Equipos y Plantillas en chips (`MultiSelect` en modo chip), a media
+  columna y con tantos chips como caben; «+N más», por el resto, y un nombre que no cabe, con «…». Sin el «+» al lado
+  ni el lápiz en las opciones, y fuera las ventanas de crear o editar un recurso. En el desplegable, del ancho del
+  campo: el nombre entero (baja de línea si no cabe) y, al pasar, un tooltip pegado a la opción con lo que contiene
+  («3 contactos», el texto de la plantilla, la descripción del equipo). La «×» del chip, en `text/danger` al pasar. En
+  el resumen, las filas de Recursos sin desplegar: son enlaces a su campo.
 - **Tipificación del grupo**: sin la descripción bajo el desplegable; se queda «Ver detalle».
+- **Editores de Repositorios y de plantillas**: fuera «Falta: …» junto al botón; «Crear …» siempre activo.
+- **El punto final**: las ayudas bajo un campo acaban en punto; los subtítulos bajo un título, sin él (DD-217 §12).
+  Repasa las ayudas de Distribución y colas, Avanzado y Permisos del agente, que se mezclaban.
+- **Del barrido**: «Agentes asignados» con el icono de Agentes (`headphones`); el candado de canal dice «X no está entre
+  sus canales: se marcan en …» en las dos tablas; un grupo sin canales enseña en Distribución solo su nota.
 
 **Cómo sabes que está hecho:** las maquetas de alta de grupo y agente no enseñan «Falta» ni amarillos, el diálogo
-«Duplicar grupo» no está, y Recursos del grupo enseña chips.
+«Duplicar grupo» no está, Recursos de las dos fichas enseña chips sin «+», y ninguna ayuda se queda sin su punto.
 
 ---
 

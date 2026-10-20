@@ -42,7 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
-> | Lo que falta se dice al pulsar Crear o Guardar, en su campo y en el índice con su texto (`sectionErrorHints`), y se llega al primero · Crear siempre activo, sin motivo junto al botón ni «Falta / Listo para crear» · el ✓, de la sección que se dejó tal como está (su firma) · sin puertas · los grupos pueden no tener canales · quitar y poner un canal no le quita nada a nadie · fuera los avisos amarillos · duplicar un grupo no pregunta: «(1)» · Recursos en chips, sin «+» ni lápiz (enmienda DD-121, DD-136, DD-143 §2, §3 y §5, DD-158, DD-167, DD-199 §1 y §3, DD-206, DD-211 §6 y DD-212 §1) | DD-217 |
+> | Lo que falta se dice al pulsar Crear o Guardar, en su campo y en el índice con su texto (`sectionErrorHints`), y se llega al primero · Crear siempre activo, sin motivo junto al botón ni «Falta / Listo para crear» · el ✓, de la sección que se dejó tal como está (su firma) · sin puertas · los grupos pueden no tener canales · quitar y poner un canal no le quita nada a nadie · fuera los avisos amarillos · duplicar un grupo no pregunta: «(1)» · Recursos en chips que llenan su fila, sin «+» ni lápiz y con lo que contienen al pasar, en las dos fichas · los editores de Repositorios, igual · la ayuda acaba en punto y el subtítulo no (enmienda DD-121, DD-136, DD-143 §2, §3 y §5, DD-158, DD-167, DD-199 §1 y §3, DD-187, DD-204, DD-206, DD-209 §4, DD-211 §6 y DD-212 §1) | DD-217 |
 > | Abrir una ficha desde su listado, con la fila o con «Editar», entra por la primera sección (General en grupo y agente, Identidad en usuario) · la tarea frecuente se queda en el control que la nombra: en Agentes, la cifra de grupos lleva a «Grupos asignados» con su propia acción · al crear, nada cambia (enmienda DD-122 §8) | DD-213 |
 > | Lo que se lee al pasar el ratón va en el tooltip del Kit (`pTooltip`), no en el `title` del navegador: con `showOnEllipsis` si repite un texto cortado · la ayuda de Prioridad dice «conversaciones» · en «Duplicar grupo», sin Call Blending no sale el teléfono saliente (anotado para Figma) · `audit:screen-hygiene` (9) | DD-212 |
 > | Revisión de producto del 2026-10-16: a quién se asigna una agenda, en un árbol Grupo → Agentes (`p-treetable`), por persona, con grupos enteros dinámicos y «Sin grupo» · la ficha de agente: el PIN lo asigna el sistema y solo se ve al editar, «Navegador» deshabilitado sin WebRTC (`optionDisabled`), Agentes y Grupos en el Destino de las llamadas, fuera «Automático con preview» y «Actualizar teléfono en login», sin Teléfono no se ve lo de las llamadas · el globo de confirmación cerrado sin responder es «no» · la ficha de grupo: el audio saliente con los mensajes de la cola, la estrategia en una línea en el resumen, cada canal con su nivel al lado · el resultado de una acción, en un toast (sustituye DD-191 y DD-196) · ✓ en toda sección que se deja completa (enmienda DD-158) · Contact Center con un solo Guardar · SelectButton entero en sc-docs · un campo de solo lectura no parece editable (sin borde, sobre el fondo suave) | DD-211 |
@@ -156,7 +156,7 @@
 
 ---
 
-## DD-217 · 2026-10-20 — Lo que falta se dice al pulsar Crear o Guardar, el ✓ dice lo que viste, los grupos pueden no tener canales y duplicar no pregunta
+## DD-217 · 2026-10-20 — Lo que falta se dice al pulsar Crear o Guardar, el ✓ dice lo que viste, los grupos pueden no tener canales, duplicar no pregunta y el punto final va al unísono
 
 **Contexto** · Revisión de producto del 2026-10-20 de las fichas de grupo y agente, y una prueba de uso del mismo día
 medida en sc-supervisor.pages.dev. Dos recorridos confundían el índice:
@@ -202,13 +202,59 @@ desplegable, la tipificación sin su descripción y duplicar con «(1)» en vez 
    «Sin agentes» y «Sin número» del resumen del grupo, que pasan a su cifra o su texto sin icono ni color de aviso.
 8. **Duplicar un grupo no pregunta**: crea la copia en el acto, con «Online Support (1)» (el siguiente número libre;
    duplicar «X (1)» da «X (2)»), y abre su edición en General con su toast. Se copia todo, agentes y teléfono saliente
-   incluidos, salvo los servicios, los dominios del script de chat y el número de WhatsApp. Fuera
-   `group-duplicate-dialog`. El agente sigue duplicando a un alta: su extensión, su email y su PIN no se copian.
-9. **Recursos del grupo**: Agendas y Plantillas en chips (`display="chip"`, «+N más» desde la cuarta), cada una en su
-   fila a todo el ancho, sin «+» al lado ni lápiz en las opciones (retira el «+» de DD-167 en esta ficha); la «×» del
-   chip pasa al rojo de lo destructivo al pasar o enfocarla (`sc-multiselect`, DS). El resumen ya no despliega lo
-   asignado: cada fila lleva a su campo.
+   incluidos (también la postconversación, que en la demo vive aparte por id), salvo los servicios, los dominios del
+   script de chat y el número de WhatsApp. Fuera `group-duplicate-dialog`. El agente sigue duplicando a un alta: su
+   extensión, su email y su PIN no se copian, y la copia es su punto de partida: «Deshacer» vuelve a ella (antes la
+   vaciaba sin preguntar) y salir sin tocar nada no pregunta.
+9. **Recursos, igual en el grupo y en el agente**: Agendas, Equipos y Plantillas en chips, a media columna, con tantos
+   chips como caben y «+N más» por el resto (`chipOverflow="fit"` de `sc-multiselect`, DS: mide y no corta ninguno;
+   un nombre más largo que el campo se acorta con «…» y se lee entero al pasar). Sin «+» al lado ni lápiz en las
+   opciones, y sin la ventana de crear o editar (retira el «+» de DD-167, el lápiz de DD-204 y la ventana de DD-187):
+   se crean y se editan en Repositorios, con «Gestionar en Repositorios». Cada opción dice lo que contiene (§15,
+   `sc-resource-option`). La «×» del chip pasa al rojo de lo destructivo al pasar o enfocarla. El resumen ya no
+   despliega lo asignado: cada fila lleva a su campo.
 10. **La tipificación elegida, sin su descripción** (enmienda DD-206): se queda «Ver detalle».
+11. **Los editores de Repositorios y el de plantillas, con la misma regla que las fichas**: agenda, equipo, cuenta y
+    trigger de email y plantilla. Sin «Falta: …» junto al botón; «Crear …» siempre activo, y al pulsar sin nombre (o
+    sin título o contenido, en la plantilla) lo dice su campo y le da el foco.
+12. **El punto final, al unísono** (como piden las guías de contenido de Atlassian, Polaris o Primer): la ayuda bajo un
+    campo, una casilla o una opción acaba en punto, siempre; el subtítulo bajo un título es una sola frase, sin punto
+    (si pedía dos, la segunda se une con «;»); lo que nombra (títulos, rótulos, botones, chips, tooltips, toasts,
+    errores bajo el campo) va sin punto. Lo vigila `i18n:check` (check I), en los cuatro idiomas.
+13. **Barrido de consistencia entre las dos fichas** (mismo día): «Agentes asignados» con el icono de Agentes
+    (`headphones`, DD-200), no el de Grupos; el grupo sin canales con «—» en la columna Canales del listado; los
+    iconos de canal del listado de agentes con su globo, como los de grupos; el interruptor «Habilitado» de una fila
+    sin asignar dice por qué en las dos tablas; el candado de canal dice lo mismo en las dos («X no está entre sus
+    canales: se marcan en …»); «Asigna al menos un grupo» lo dice también Grupos asignados, encima de la tabla y con
+    el foco; un grupo sin canales enseña en Distribución solo su nota, no unas reglas que no aplican; el resumen del
+    alta de agente dice «Sin grupos habilitados» en vez de «Sin canales» (que contradecía sus casillas); la columna
+    Grabación del listado de agentes lleva el «—» de las celdas vacías donde no graba (enmienda DD-209 §4, que la
+    dejaba en blanco). Fuera el renombrar en línea de los listados de grupos y agentes, que nada abría desde que se
+    migró.
+14. **Los errores de las dos fichas dicen el problema, no mandan**: «El email es obligatorio», «La extensión es
+    obligatoria», «Hace falta al menos un grupo» (antes «Escribe el email», «Selecciona una extensión»…); y para elegir,
+    siempre «Selecciona» (antes también «Elige»). Bajo el nombre del grupo, el número con su rótulo («Teléfono saliente
+    918371548, prioridad: máxima»), como «Extensión 122» en el agente. Duplicar un agente nombra la copia como la de un
+    grupo, «Tom Hanks (1)» (`nombreDeCopia`, ahora en `shared/utils/copy-name.ts`); no se crea en el acto porque su
+    extensión, su email y su PIN no pueden repetirse.
+15. **Lo que contiene cada recurso, al pasar, igual en las tres listas**: la opción enseña su nombre entero (si no cabe,
+    baja de línea: es lo que se elige) y, al pasar, el tooltip de PrimeNG pegado a ella dice lo que contiene: cuántos
+    contactos tiene una agenda (nunca quiénes: una agenda puede tener mil), el texto de una plantilla o la descripción
+    de un equipo, cortado a 160 letras. Siempre hay tooltip («Sin contactos», «Sin descripción»): pasar por una opción
+    hace siempre lo mismo. En el campo, el chip que no cabe se acorta con «…» y se lee entero al pasar, como cualquier
+    texto cortado de la app (`showOnEllipsis`). El desplegable mide lo que el campo, a media columna: nada lo ensancha
+    (`contain: inline-size` en la opción). Se probó la cifra de la agenda a la vista, que se compara sin pasar el
+    ratón, y se descartó: dos comportamientos en tres listas iguales, y la maqueta de producto ya la ponía en el
+    tooltip. Estresado con 200 opciones, un texto de 9000 letras y una agenda de 1250 contactos: el panel no pasa del
+    campo y abre en menos de un segundo.
+16. **Rótulos e interruptores, los del DS**: en las fichas de grupo y agente, 40 rótulos escritos a mano pasan a la
+    entrada `[label]` (con `required`) de `sc-select`, `sc-multiselect`, `sc-inputtext`, `sc-inputnumber` y
+    `sc-inputtags`, que ya ponen su `aria-labelledby`; y los 14 textos de interruptor pasan a `<label for>` con el
+    `inputId` del `p-toggleswitch`, el patrón de la doc de PrimeNG (pulsar el texto lo cambia). El hueco del rótulo a
+    su caja, 7 en los cinco (`--sc-spacing-0-5`; `sc-inputtext`, `sc-inputnumber` y `sc-inputtags` daban 5,5).
+    `sc-textarea` gana `label` y `required`, con el botón de copiar en la caja del campo y no sobre el rótulo: así
+    ningún rótulo de campo de las dos fichas va escrito a mano. La ayuda de `sc-fileupload` sigue a mano: darle
+    `helperText` exige atar su descripción por dentro de PrimeNG, y va con el resto de piezas a nativo.
 
 **Razón** · Un aviso que aparece donde la persona no mira, sin decir qué, se lee como causado por lo último que hizo.
 Callar mientras se rellena y decirlo todo, en su sitio y con texto, al pulsar, es lo que hacen los formularios largos
@@ -228,9 +274,9 @@ cambio.
 **Consecuencias** · `audit:screen-hygiene` regla 7 sigue: ninguna ficha decide por su cuenta cuándo acusa. AGENTS.md
 §«UX de pantalla», principio 11, y su copia en sc-docs, reescritos. Pruebas reescritas a la regla nueva: las del índice,
 el alta, el teléfono saliente y el resumen. Queda para Figma (`figma-pendiente` §55): el índice con su texto, sin
-«Falta» ni «Listo», sin amarillos, Recursos en chips, duplicar sin diálogo y grupo sin canales. Los editores de
-Repositorios (agenda, equipo, cuenta, trigger) y el de plantillas siguen diciendo «Falta: …» junto al botón: no
-comparten la pieza, y quedan anotados en el hand-off.
+«Falta» ni «Listo», sin amarillos, Recursos en chips (también los del agente, y con su globo), duplicar sin diálogo,
+grupo sin canales y los textos con su punto. Fuera `recurso-dialog` y `template-form-panel`, que solo usaban los «+» y
+los lápices de Recursos.
 
 ---
 

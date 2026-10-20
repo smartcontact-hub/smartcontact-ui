@@ -719,18 +719,7 @@ export const FACTORY_GROUP_DEFAULTS: GroupDefaults = {
 export function duplicateGroupDraft(source: Group, name: string): Omit<Group, 'id' | 'code'> {
   const { id: _id, code: _code, services: _services, ...rest } = source;
   const advanced = rest.advanced ? { ...rest.advanced, allowedDomains: [], whatsappNumber: '' } : rest.advanced;
-  return { ...rest, name, advanced };
-}
-
-/**
- * El nombre de una copia, como el de un archivo descargado dos veces: «Online Support (1)», y si ya existe, «(2)».
- * Duplicar «Online Support (1)» da «Online Support (2)»: el número se cuenta sobre el nombre de base, no se apila
- * (revisión de producto del 2026-10-20: «(copia) (copia)» era lo que se quería evitar).
- */
-export function nombreDeCopia(name: string, existentes: readonly string[]): string {
-  const base = name.trim().replace(/\s\(\d+\)$/, '');
-  const usados = new Set(existentes.map((n) => n.trim().toLocaleLowerCase('es')));
-  let n = 1;
-  while (usados.has(`${base} (${n})`.toLocaleLowerCase('es'))) n++;
-  return `${base} (${n})`;
+  // La postconversación de los grupos de la demo vive aparte, por id (`SEED_WRAP_UP`): la copia, con otro id, la
+  // perdía. Se copia la que se ve.
+  return { ...rest, name, advanced, wrapUp: resolveGroup(source).wrapUp };
 }

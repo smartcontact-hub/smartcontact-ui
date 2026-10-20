@@ -137,12 +137,33 @@ test('agente · nada en rojo al dejar General vacía; al pulsar «Crear agente»
   await expect(actual(page)).toContainText('General');
   await expect(page.locator('#agent-name')).toBeFocused();
   await expect(fila(page, 'General')).toContainText('El nombre es obligatorio');
-  await expect(fila(page, 'Grupos asignados')).toContainText('Asigna al menos un grupo');
+  await expect(fila(page, 'Grupos asignados')).toContainText('Hace falta al menos un grupo');
   // Cada campo dice lo suyo, también el nombre, el email y la extensión.
   const general = page.locator('#agent-section-general');
   await expect(general).toContainText('El nombre es obligatorio');
-  await expect(general).toContainText('Escribe el email');
-  await expect(general).toContainText('Selecciona una extensión');
+  await expect(general).toContainText('El email es obligatorio');
+  await expect(general).toContainText('La extensión es obligatoria');
+});
+
+test('agente · lo único que falta son los grupos: lo dice Grupos asignados, encima de la tabla y con el foco', async ({ page }) => {
+  // Una copia trae nombre de nada: se rellenan los cuatro únicos y se le quitan los grupos.
+  await goto(page, 'admin/agentes/crear');
+  await page.locator('#agent-name').fill('E2E Sin grupos');
+  await page.locator('#agent-email').fill(`e2e.sin.grupos.${Date.now()}@ejemplo.com`);
+  await page.locator('sc-select:has(#agent-ext) .p-select').click();
+  await page.locator('.p-select-overlay .p-select-option').first().click();
+  await barra(page).getByRole('button', { name: 'Crear agente' }).click();
+  await expect(page).toHaveURL(/\/admin\/agentes\/crear/);
+  await expect(actual(page)).toContainText('Grupos asignados');
+  const aviso = page.locator('#agent-groups-error');
+  await expect(aviso).toHaveText('Hace falta al menos un grupo');
+  await expect(aviso).toBeFocused();
+  // Encima de la tabla: debajo de una larga no se vería.
+  const [arribaAviso, arribaTabla] = await Promise.all([
+    aviso.evaluate((el) => el.getBoundingClientRect().top),
+    page.locator('sc-group-assignment-table').evaluate((el) => el.getBoundingClientRect().top),
+  ]);
+  expect(arribaAviso).toBeLessThan(arribaTabla);
 });
 
 test('el resumen no dice «Falta» ni «Listo para crear», y no hay avisos amarillos en las fichas', async ({ page }) => {

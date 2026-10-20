@@ -14,7 +14,6 @@ import {
   ScButtonComponent as ButtonComponent,
   ScDialogComponent as DialogComponent,
   ScDrawerComponent as DrawerComponent,
-  ScMessageComponent as MessageComponent,
 } from '@smartcontact-hub/components';
 
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
@@ -66,7 +65,6 @@ const PANEL_MIN_REM = 28;
     ButtonComponent,
     DialogComponent,
     DrawerComponent,
-    MessageComponent,
     TranslateModule,
   ],
   templateUrl: './group-agents-panel.component.html',

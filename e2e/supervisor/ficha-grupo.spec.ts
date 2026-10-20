@@ -75,7 +75,7 @@ test('crear es la misma ficha: abre en General con Teléfono, dice lo que falta 
   // Sin canales no falta nada en General: son opcionales (DD-217).
   await page.locator('#group-name').fill(`E2E Alta ${Date.now()}`);
   await telefono.click();
-  await expect(general).not.toContainText('Selecciona al menos un canal');
+  await expect(general).not.toContainText('Hace falta al menos un canal');
   await telefono.click();
 
   // «Siguiente» lleva a la sección siguiente, y crear deja en su edición EN esa sección. Con Teléfono, su número es

@@ -9,13 +9,13 @@ import { ResultadoAccionService, XlsxExportService } from '@core/services';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { injectLangChange } from '@core/utils/lang-change';
 import { CeldaVaciaComponent, ChannelIconComponent, ListPageComponent } from '@shared/components';
+import { nombreDeCopia } from '@shared/utils/copy-name';
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
 import {
   type ScColumnCellContext,
   ColumnDef,
   type ScColumnDef,
   ScEmptyStateComponent as EmptyStateComponent,
-  ScInlineRenameCellComponent as InlineRenameCellComponent,
   ScTagComponent as TagComponent,
   ScGroupPopoverComponent as GroupPopoverComponent,
 } from '@smartcontact-hub/components';
@@ -29,7 +29,6 @@ import {
   chatStrategyOf,
   compareChannels,
   duplicateGroupDraft,
-  nombreDeCopia,
   phoneStrategyOf,
   priorityRank,
 } from '../data/groups-data';
@@ -59,7 +58,6 @@ const COLUMN_PREF_KEY = 'sc-groups-columns-v4';
     GroupPopoverComponent,
     GroupAgentsPanelComponent,
     IconComponent,
-    InlineRenameCellComponent,
     ListPageComponent,
     TranslateModule,
   ],
@@ -118,7 +116,6 @@ export class GroupsListPageComponent {
 
   /** Filas marcadas: la lista las pinta y exportar las usa; sin barra de lote (DD-215). */
   protected readonly selectedIds = signal<ReadonlySet<number>>(new Set());
-  protected readonly renamingId = signal<number | null>(null);
   protected readonly columnPrefKey = COLUMN_PREF_KEY;
 
   protected readonly columnDefs = computed<readonly ColumnDef[]>(() => {
@@ -185,7 +182,7 @@ export class GroupsListPageComponent {
 
   /* ── La tabla, ahora `sc-datatable` (B4) ──────────────────────────────
    * Todas las celdas son composiciones propias de la página (avatar + nombre
-   * o `sc-inline-rename-cell`, chips de canal, `sc-label` de prioridad,
+   * nombre, chips de canal, `sc-label` de prioridad,
    * kebab), así que van por `cellTemplate`: el DS no conoce el tipo `Group`
    * ni tiene por qué.
    *
@@ -292,8 +289,6 @@ export class GroupsListPageComponent {
     ];
   });
 
-  /** Mientras se renombra una fila, abrirla no hace nada (y no enseña el cursor de mano). */
-  protected readonly isOpenable = (group: Group): boolean => this.renamingId() !== group.id;
 
   /* El contexto de un `<ng-template>` de celda es `any`, así que indexar
    * `Record<GroupChannel, string>` desde la plantilla —como hacía el `@for`,
@@ -409,16 +404,7 @@ export class GroupsListPageComponent {
     this.resultado.contar(this.translate.instant('groups.toasts.deleted_single', { name: group.name }));
   }
 
-  protected onRenameCommit(id: number, value: string): void {
-    this.groupsStore.updateGroup(id, { name: value });
-    this.renamingId.set(null);
-    // El resultado, en un toast (DD-211 §5).
-    this.resultado.contar(this.translate.instant('groups.toasts.duplicated', { name: value }));
-  }
 
-  protected onRenameCancel(_id: number): void {
-    this.renamingId.set(null);
-  }
 
   protected onExport(visibleRows: readonly Group[]): void {
     const headers = [

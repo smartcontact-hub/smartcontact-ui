@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, computed, HostListener, inject, Inj
 import { NgTemplateOutlet } from '@angular/common';
 import { ActivatedRoute, Router, type UrlTree } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScCheckboxComponent as CheckboxComponent,
   ScFactRowComponent as FactRowComponent,
 } from '@smartcontact-hub/components';
@@ -21,7 +20,6 @@ import {
   ScFormSectionNavComponent as FormSectionNavComponent,
   type FormNavSection,
   ScInputTextComponent as InputTextComponent,
-  ScMessageComponent as MessageComponent,
   ScPhotoUploadComponent as PhotoUploadComponent,
   ScSectionCardComponent as SectionCardComponent,
   ScSelectComponent as SelectComponent,
@@ -94,9 +92,7 @@ const USER_SECTION_OF_FIELD: Readonly<Record<keyof FormState, string>> = {
     DialogComponent,
     DividerComponent,
     FormSectionNavComponent,
-    IconComponent,
     InputTextComponent,
-    MessageComponent,
     PhotoUploadComponent,
     SectionCardComponent,
     SelectComponent,
@@ -134,7 +130,6 @@ export class UserFormPageComponent implements DirtyAware, OnInit {
    * indexar sin TS7053. Seguro: las keys vienen siempre de `userTypes`
    * (UserType union). Mismo patrón que agent-form-page. */
   protected readonly typeLabelKeys: Readonly<Record<string, string>> = USER_TYPE_LABEL_KEYS;
-  protected readonly mailIcon = 'mail';
   protected readonly trashIcon = 'delete';
   /** Las secciones con sus hijas colgando, para pintarlas en la misma celda. */
   protected readonly sectionTree = SECTION_DEFS.filter((d) => !d.parent).map((def) => ({

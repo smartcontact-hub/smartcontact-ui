@@ -16,6 +16,7 @@ import { TextareaModule } from 'primeng/textarea';
 import { ScComponentSize, ScInputVariant } from '../../core/types/theme-component.types';
 import { ScButtonComponent } from '../button/sc-button.component';
 import { createScFieldState, joinDescribedBy } from '../field/sc-field';
+import { ScFieldLabelComponent } from '../field/sc-field-label.component';
 import { ScFieldMsgComponent } from '../field/sc-field-msg.component';
 import { SC_TEXTAREA_TRANSLATIONS } from './i18n/sc-textarea.translations';
 
@@ -24,7 +25,7 @@ type PrimeTextareaSize = 'small' | 'large' | undefined;
 @Component({
     selector: 'sc-textarea',
     standalone: true,
-    imports: [TextareaModule, ScButtonComponent, ScFieldMsgComponent, TranslateModule],
+    imports: [TextareaModule, ScButtonComponent, ScFieldLabelComponent, ScFieldMsgComponent, TranslateModule],
     templateUrl: './sc-textarea.component.html',
     styleUrl: './sc-textarea.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -32,6 +33,7 @@ type PrimeTextareaSize = 'small' | 'large' | undefined;
         '[class.sc-textarea--copyable]': 'copyable()',
         '[class.sc-textarea--fluid]': 'fluid()',
         '[class.sc-textarea--readonly]': 'readonly() && !disabled()',
+        '[class.sc-textarea--disabled]': 'disabled()',
         // Con ayuda o con copiar, el campo se apila (control y debajo su ayuda) y pierde el hueco de línea de debajo.
         '[class.sc-textarea--stack]': 'copyable() || !!footerText()',
     },
@@ -49,6 +51,15 @@ export class ScTextareaComponent {
      * (retirado por DD-44, 2026-08-30) — nadie en el DS implementa CVA hoy.
      */
     readonly value = model('');
+
+    /**
+     * Etiqueta del campo, encima, la de los demás campos del DS (`sc-field-label`, atada al control por `for`). Hasta
+     * DD-217 §16 no la había, y cada pantalla la escribía a mano.
+     */
+    readonly label = input<string>();
+
+    /** Pinta la marca de obligatorio junto a `label` y pone `aria-required`. No valida por sí solo. */
+    readonly required = input(false, { transform: booleanAttribute });
 
     /** Texto dentro del campo mientras está vacío. No sustituye a `label`: desaparece al escribir. */
     readonly placeholder = input('');
@@ -130,6 +141,7 @@ export class ScTextareaComponent {
         inputId: computed(() => this.inputId() ?? undefined),
         helperText: this.helperText,
     });
+    protected readonly resolvedId = this.field.resolvedId;
     protected readonly msgId = this.field.msgId;
     protected readonly footerText = this.field.footerText;
     /** Primero su ayuda y después lo de fuera (`ariaDescribedBy`). */
