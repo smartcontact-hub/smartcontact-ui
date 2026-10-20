@@ -80,7 +80,7 @@ export class AgentsListPageComponent {
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
   private readonly router = inject(Router);
-  private readonly confirmarBorrado = injectConfirmarBorrado('agents.entity_singular');
+  private readonly confirmarBorrado = injectConfirmarBorrado('agents.delete_dialog.title');
 
   /** CTA "Nuevo agente" proyectado a la TopBar (modelo "todo arriba" S59):
    * la banda de page-header desaparece; identidad → breadcrumb, acción → barra. */

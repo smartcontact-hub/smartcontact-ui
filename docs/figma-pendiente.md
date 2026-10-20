@@ -1536,6 +1536,42 @@ antes:** qué variantes de `group-summary` y `agent-summary` llevan hoy «Mostra
 
 ---
 
+## 56 · Grupos como sus páginas de COA: cifra a la ficha, duplicar a un alta, eliminar varios y «Agentes asignados» sin estado (2026-10-20, DD-218)
+
+**Estado:** pendiente; el prototipo ya lo hace (DD-218) · **Dónde:** página Grupos del fichero del Supervisor
+(`Hjyy41SYKqcRuIzCGggfYH`): listado `3118:16995`, alta `3010:6411`, edición `3055:11053`; y la ficha de agente
+(«Grupos asignados», eliminar) · **Mídelo antes:** si §55 ya está hecho (duplicar sin diálogo): este lo cambia otra vez.
+
+- **Listado**: sin la columna ID; la cifra de «Agentes» lleva a la edición en «Agentes asignados» (fuera la maqueta del
+  panel rápido abierto desde el listado; el panel sigue en el Monitor). Con dos o más marcados, el clic derecho sobre
+  uno de ellos: un menú con solo «Eliminar» (rojo), y su diálogo «¿Eliminar 3 grupos?». Anota: Servicios y Agentes
+  ordenan de mayor a menor al primer clic.
+- **Duplicar**: el paso 04 pasa a ser «Nuevo grupo» con la copia, «Online Support (1)», sin crear; el toast «Grupo
+  «Online Support (1)» creado» sale al pulsar «Crear grupo». Sin servicios, dominios del script de chat ni número de
+  WhatsApp.
+- **Eliminar, en grupos y agentes**: título «¿Eliminar el grupo «Ventas»?» («¿Eliminar el agente «Tom Hanks»?»), texto
+  «Esta acción no se puede deshacer.», «Cancelar» y «Eliminar» en rojo.
+- **La miga de la edición**: «Administración › Grupos › Online Support» (y «Agentes › Tom Hanks»), no «Editar grupo».
+- **General**: sin tipificaciones, «Tipificar conversaciones» apagado y deshabilitado, con «No hay tipificaciones: se
+  crean en Repositorios.».
+- **Distribución y colas**: «Mensaje de día no laborable»; los tiempos sin 1,5 min.
+- **Recursos**: el diálogo de «Gestionar en Repositorios» con cambios: «¿Guardar los cambios?», «Para ir a Repositorios,
+  guarda antes el grupo.», «Guardar» y «Seguir editando». Igual en la ficha de agente («… el agente.»).
+- **«Agentes asignados»**: fuera el botón de filtro de la cabecera de «Agente», su menú de estados y equipos y el punto
+  de estado del avatar; «Agente» con la flecha de ordenar; el nivel, un desplegable pequeño (1–10) en «Nivel {canal}»;
+  la fila de un agente con «Activación por grupo», con su interruptor deshabilitado y el tooltip «Tom Hanks se habilita
+  desde su puesto: tiene «Activación por grupo»». La confirmación de columna entera: «¿Quitar Chat a 5 agentes?» con
+  «Quitar» (antes, «Confirmar cambios colectivos» con «Confirmar»). En «Grupos asignados» del agente, lo mismo con
+  «Grupo».
+- **Lo contratado**, como nota (§50): «Teléfono saliente» solo con Call Blending; Chat, WhatsApp y Email solo si
+  backoffice los tiene; la columna «Estrategia de chat» del listado, solo con Chat.
+
+**Cómo sabes que está hecho:** ninguna maqueta de Grupos enseña la columna ID, el punto de estado ni el filtro de
+«Agente»; duplicar acaba en un alta; y los diálogos de eliminar y de columna entera dicen el nombre o la cifra con su
+verbo en el botón.
+
+---
+
 ## Lo de estas semanas que NO va a Figma, y por qué
 
 - **El juego de datos** (Demo · Editorial · Tortura, en Configuración → Sistema → Datos; DD-124): es una herramienta de

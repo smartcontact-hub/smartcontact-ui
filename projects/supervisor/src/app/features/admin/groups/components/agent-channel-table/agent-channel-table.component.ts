@@ -17,25 +17,21 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   ScConfirmService,
   ScEmptyStateComponent as EmptyStateComponent,
-  ScInputNumberComponent as InputNumberComponent,
   ScSelectButtonComponent as SelectButtonComponent,
+  ScSelectComponent as SelectComponent,
   ScSearchComponent as SearchComponent,
-  ScButtonComponent as ButtonComponent,
-  ScTagComponent as TagComponent,
   ScToggleSwitchComponent as ToggleSwitchComponent,
 } from '@smartcontact-hub/components';
 import {
   ScDatatableComponent as DatatableComponent,
   type ScColumnCellContext,
   type ScColumnDef,
+  type ScColumnHeaderContext,
+  type ScDatatableSortEvent,
 } from '@smartcontact-hub/components';
 
-import { PRESENCE_LABEL_KEYS, type PresenceStatus } from '@features/admin/agents/data/agents-data';
-
-import { PopoverModule } from 'primeng/popover';
 import { TooltipModule } from 'primeng/tooltip';
 import { LlegaAlPieDirective } from '@core/directives';
-import { EquiposStore } from '@features/admin/repositories/state/equipos.store';
 
 import { PresenceAvatarComponent, ScLinkButtonComponent } from '@shared/components';
 import { ScCheckboxComponent as CheckboxComponent } from '@smartcontact-hub/components';
@@ -58,10 +54,9 @@ export interface AgentChannelTableAgent {
   readonly name: string;
   readonly photo?: string;
   readonly email?: string;
-  readonly presenceStatus?: PresenceStatus;
   readonly allowedChannels?: readonly Channel[];
-  /** Sus equipos (Repositorios › Equipos): se filtra por ellos. */
-  readonly teams?: readonly number[];
+  /** «Activación por grupo»: se habilita él mismo desde su puesto, y su Habilitado no se toca aquí (SISMAC-4058). */
+  readonly selfActivate?: boolean;
 }
 
 interface VisibleRow {
@@ -79,7 +74,6 @@ interface VisibleRow {
  *   · Cada canal, casilla, hueco y su rótulo: «Téléphone» (72), «Chat» (32) y «Email» (37): 112, 72 y 76.
  *   · Habilitado: casilla, hueco y «Habilitado» (69): 108. Llevaba 9,5 rem por el candado de «Activación por grupo» al
  *     lado del interruptor; sin él (revisión del 2026-10-14), lo medido.
- *   · Estado: su etiqueta más larga, «Post-conversation», 123 px.
  *   · Agente: avatar (24), hueco y nombre y email en dos líneas. En la ficha es un MÍNIMO: la columna crece con el
  *     sitio que haya, y un email más largo que su sitio se corta con «…» y el `title` (DD-124). Con 11,625 cabe el
  *     nombre más largo de la semilla («Denzel Washington», 131), y a 1440 la tabla cabe en su caja (735) con uno o dos
@@ -113,16 +107,13 @@ export function columnsRem(
   imports: [
     LlegaAlPieDirective,
     SelectButtonComponent,
-    ButtonComponent,
+    SelectComponent,
     CheckboxComponent,
     DatatableComponent,
     EmptyStateComponent,
-    InputNumberComponent,
-    PopoverModule,
     PresenceAvatarComponent,
     SearchComponent,
     ScLinkButtonComponent,
-    TagComponent,
     ToggleSwitchComponent,
     TooltipModule,
     TranslateModule,
@@ -157,15 +148,25 @@ export class AgentChannelTableComponent {
     viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('activeTpl');
   private readonly assignedTpl =
     viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('assignedTpl');
+  /** La cabecera de las columnas con casilla de «todos», dentro del `th` del DS. */
+  private readonly headerCheckTpl =
+    viewChild<TemplateRef<ScColumnHeaderContext<VisibleRow>>>('headerCheckTpl');
 
   protected readonly columns = computed<readonly ScColumnDef<VisibleRow>[]>(
     () => {
       this.currentLang();
       const rem = COLUMN_REM[this.compact() ? 'compact' : 'regular'];
+      const check = this.headerCheckTpl();
+      /* Cada cabecera se llama como su rótulo (`headerAriaLabel`): las que llevan la casilla de «todos» dentro, también. */
+      const assigned = this.translate.instant('groups.form.assigned.assignment');
+      const agent = this.translate.instant('groups.form.assigned.col_agent');
+      const active = this.translate.instant('groups.form.assigned.col_active');
       return [
         {
           field: 'assigned',
-          header: this.translate.instant('groups.form.assigned.assignment'),
+          header: assigned,
+          headerAriaLabel: assigned,
+          headerTemplate: check,
           width: `${rem.assigned}rem`,
           align: 'center' as const,
           cellTemplate: this.assignedTpl(),
@@ -173,37 +174,49 @@ export class AgentChannelTableComponent {
         },
         {
           field: 'agent',
-          header: this.translate.instant('groups.form.assigned.col_agent'),
+          header: agent,
+          headerAriaLabel: agent,
+          // Por nombre, A→Z y Z→A (SISMAC-4058): el orden lo pone `visibleRows`.
+          sortable: true,
           rowHeader: true,
           cellTemplate: this.agentTpl(),
         },
-        /* El estado de la persona va en la burbuja de su avatar (DD-185), no en una columna: el email gana el sitio. */
+        /* Sin el estado de la persona (SISMAC-4058; antes, en la burbuja de su avatar, DD-185): el email gana el sitio. */
         /* Cada canal y, con la estrategia Niveles, su nivel justo detrás: Teléfono, Nivel Teléfono, Chat, Nivel Chat…
            (DD-211 §4). El nivel va en la fila de cada agente: donde ya se decide quién atiende qué. */
-        ...this.families().flatMap((ch): ScColumnDef<VisibleRow>[] => [
-          {
-            field: ch,
-            header: this.translate.instant(FAMILY_LABEL_KEYS[ch]),
-            width: `${rem.channel[ch]}rem`,
-            align: 'center' as const,
-            cellTemplate: this.channelTpl(),
-            stopRowClick: true,
-          },
-          ...(this.levelFamilies().includes(ch)
-            ? [
-                {
-                  field: `level-${ch}`,
-                  header: this.translate.instant('groups.form.assigned.col_level', { channel: this.translate.instant(FAMILY_LABEL_KEYS[ch]) }),
-                  width: `${rem.level}rem`,
-                  cellTemplate: this.levelTpl(),
-                  stopRowClick: true,
-                },
-              ]
-            : []),
-        ]),
+        ...this.families().flatMap((ch): ScColumnDef<VisibleRow>[] => {
+          const canal = this.translate.instant(FAMILY_LABEL_KEYS[ch]);
+          const nivel = this.translate.instant('groups.form.assigned.col_level', { channel: canal });
+          return [
+            {
+              field: ch,
+              header: canal,
+              headerAriaLabel: canal,
+              headerTemplate: check,
+              width: `${rem.channel[ch]}rem`,
+              align: 'center' as const,
+              cellTemplate: this.channelTpl(),
+              stopRowClick: true,
+            },
+            ...(this.levelFamilies().includes(ch)
+              ? [
+                  {
+                    field: `level-${ch}`,
+                    header: nivel,
+                    headerAriaLabel: nivel,
+                    width: `${rem.level}rem`,
+                    cellTemplate: this.levelTpl(),
+                    stopRowClick: true,
+                  },
+                ]
+              : []),
+          ];
+        }),
         {
           field: 'active',
-          header: this.translate.instant('groups.form.assigned.col_active'),
+          header: active,
+          headerAriaLabel: active,
+          headerTemplate: check,
           width: `${rem.enabled}rem`,
           align: 'center' as const,
           cellTemplate: this.activeTpl(),
@@ -240,82 +253,34 @@ export class AgentChannelTableComponent {
   protected readonly announcement = signal('');
   protected readonly pending = signal(false);
   private readonly agentById = computed(() => new Map(this.availableAgents().map(agent => [agent.id, agent])));
-  /** Los estados que se dejan ver: ninguno marcado, todos. Se marcan en el menú de la cabecera del agente. */
-  protected readonly emptyPresence: ReadonlySet<PresenceStatus> = new Set();
-  protected readonly presenceFilter = signal<ReadonlySet<PresenceStatus>>(this.emptyPresence);
-  /**
-   * Las opciones del menú: cinco, no ocho. Los cuatro motivos de no atender (No disponible, Baño, Comida y Formación, los
-   * cuatro en rojo) van juntos en «No disponible», para que el menú no haga ruido (DD-185).
-   */
-  protected readonly presenceOptions: readonly { readonly value: string; readonly labelKey: string; readonly members: readonly PresenceStatus[] }[] = [
-    { value: 'disponible', labelKey: PRESENCE_LABEL_KEYS.disponible, members: ['disponible'] },
-    { value: 'no_disponible', labelKey: PRESENCE_LABEL_KEYS.no_disponible, members: ['no_disponible', 'bano', 'comida', 'formacion'] },
-    { value: 'post_conversando', labelKey: PRESENCE_LABEL_KEYS.post_conversando, members: ['post_conversando'] },
-    { value: 'administrativo', labelKey: PRESENCE_LABEL_KEYS.administrativo, members: ['administrativo'] },
-    { value: 'desconectado', labelKey: PRESENCE_LABEL_KEYS.desconectado, members: ['desconectado'] },
-  ];
-  /** Cuántas opciones del menú están marcadas: lo que dice la marca de la cabecera (estados y equipos). */
-  protected readonly presenceChosen = computed(
-    () =>
-      this.presenceOptions.filter((o) => o.members.every((m) => this.presenceFilter().has(m))).length +
-      this.teamFilter().size,
-  );
-
-  /**
-   * LOS EQUIPOS, PARA FILTRAR (revisión del 2026-10-09): para lo que sirven en Voice. Aquí, para asignar de una
-   * vez a los que comparten uno: «Sin asignar» + «Inglés» y la casilla de «todos» de Asignado. Un agente pasa si está en
-   * alguno de los marcados.
-   */
-  private readonly equiposStore = inject(EquiposStore);
-  protected readonly teamOptions = computed(() => this.equiposStore.items().map((g) => ({ id: g.id, name: g.name })));
-  protected readonly teamFilter = signal<ReadonlySet<number>>(new Set());
-
-  protected toggleTeam(id: number): void {
-    this.teamFilter.update((actual) => {
-      const next = new Set(actual);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  }
-
-  protected clearFilters(): void {
-    this.presenceFilter.set(this.emptyPresence);
-    this.teamFilter.set(new Set());
-  }
-
-  protected presenceChecked(members: readonly PresenceStatus[]): boolean {
-    return members.every((m) => this.presenceFilter().has(m));
-  }
-
-  protected togglePresence(members: readonly PresenceStatus[]): void {
-    this.presenceFilter.update((current) => {
-      const next = new Set(current);
-      const on = members.every((m) => next.has(m));
-      for (const m of members) {
-        if (on) next.delete(m);
-        else next.add(m);
-      }
-      return next;
-    });
-  }
 
   private readonly filteredAgents = computed(() => {
     const filter = this.filter();
-    const presence = this.presenceFilter();
-    const grupos = this.teamFilter();
     const query = this.query().trim().toLowerCase();
     const agents = this.availableAgents();
     const assigned = new Set(untracked(this.links).map(link => link.agentId));
     return agents.filter(agent =>
       (filter === 'all' || (filter === 'assigned') === assigned.has(agent.id)) &&
-      (!query || `${agent.name} ${agent.email ?? ''}`.toLowerCase().includes(query)) &&
-      (presence.size === 0 || (!!agent.presenceStatus && presence.has(agent.presenceStatus))) &&
-      (grupos.size === 0 || (agent.teams ?? []).some((id) => grupos.has(id))));
+      (!query || `${agent.name} ${agent.email ?? ''}`.toLowerCase().includes(query)));
   });
+
+  /** El orden por nombre: `1`, A→Z; `-1`, Z→A; `null`, el de la lista de agentes. */
+  protected readonly orden = signal<1 | -1 | null>(null);
+
+  /* Solo si CAMBIA: la tabla vuelve a avisar del orden cada vez que recibe filas nuevas (lo mismo en `sc-list-page`). */
+  protected onSortChange(event: ScDatatableSortEvent): void {
+    const orden = event.field === 'agent' && (event.order === 1 || event.order === -1) ? event.order : null;
+    if (orden !== this.orden()) this.orden.set(orden);
+  }
+
+  /* Ordenar no hace bailar al marcar: el orden depende solo del nombre, y el filtro conserva sus filas (`untracked`). */
   protected readonly visibleRows = computed<readonly VisibleRow[]>(() => {
     const links = new Map(this.links().map(link => [link.agentId, link]));
-    return this.filteredAgents().map(agent => {
+    const orden = this.orden();
+    const agents = orden
+      ? [...this.filteredAgents()].sort((a, b) => a.name.localeCompare(b.name, 'es') * orden)
+      : this.filteredAgents();
+    return agents.map(agent => {
       const link = links.get(agent.id);
       return { agent, link: link ? clampLinksToChannels([link], this.groupChannels(), () => agent.allowedChannels)[0] : null };
     });
@@ -336,12 +301,13 @@ export class AgentChannelTableComponent {
 
   /**
    * Las filas a la vista que la casilla de «todos» de una columna cuenta: en Asignado, las que se pueden asignar (o ya
-   * lo están); en un canal, las asignadas que tienen permiso para él; en Habilitado, las asignadas.
+   * lo están); en un canal, las asignadas que tienen permiso para él; en Habilitado, las asignadas que no se habilitan
+   * solas («Activación por grupo»).
    */
   private headerRows(field: string): readonly VisibleRow[] {
     return this.visibleRows().filter((row) =>
       field === 'assigned' ? !!row.link || this.compatible(row.agent)
-        : field === 'active' ? !!row.link
+        : field === 'active' ? !!row.link && !row.agent.selfActivate
           : !!row.link && this.allowed(row.agent, field));
   }
 
@@ -373,12 +339,20 @@ export class AgentChannelTableComponent {
     });
   }
 
-  private bulkAction(field: string, remove: boolean): string {
-    if (field === 'assigned') return this.translate.instant(`groups.form.assigned.${remove ? 'bulk_remove' : 'bulk_add'}`);
-    if (field === 'active') return this.translate.instant(`groups.form.assigned.${remove ? 'bulk_disable' : 'bulk_enable'}`);
-    return this.translate.instant(`groups.form.assigned.${remove ? 'bulk_channel_remove' : 'bulk_channel_add'}`, {
-      channel: this.translate.instant(FAMILY_LABEL_KEYS[field as ChannelFamily]),
-    });
+  /**
+   * La pregunta y su botón: la pregunta dice qué pasa y a cuántos, y el botón repite el verbo («¿Quitar 5 agentes del
+   * grupo?» · «Quitar»), como al eliminar (SISMAC-4058). El globo solo pinta el cuerpo: la pregunta va en los dos.
+   */
+  private bulkCopy(field: string, remove: boolean, count: number): { readonly ask: string; readonly verb: string } {
+    const t = (key: string, params?: Record<string, unknown>) => this.translate.instant(`groups.form.assigned.${key}`, params);
+    if (field === 'assigned')
+      return remove ? { ask: t('bulk_ask.remove', { count }), verb: t('bulk_verb.remove') } : { ask: t('bulk_ask.add', { count }), verb: t('bulk_verb.assign') };
+    if (field === 'active')
+      return remove ? { ask: t('bulk_ask.disable', { count }), verb: t('bulk_verb.disable') } : { ask: t('bulk_ask.enable', { count }), verb: t('bulk_verb.enable') };
+    const channel = this.translate.instant(FAMILY_LABEL_KEYS[field as ChannelFamily]);
+    return remove
+      ? { ask: t('bulk_ask.channel_remove', { count, channel }), verb: t('bulk_verb.remove') }
+      : { ask: t('bulk_ask.channel_add', { count, channel }), verb: t('bulk_verb.activate') };
   }
 
   /** Cambia la columna entera en las filas a la vista; con dos o más, confirma antes (DD-151). */
@@ -389,11 +363,12 @@ export class AgentChannelTableComponent {
     const remove = this.headerState(field) === 'all';
     this.pending.set(true);
     try {
+      const copy = this.bulkCopy(field, remove, rows.length);
       if (rows.length >= 2 && !await this.confirm.request({
-        title: this.translate.instant('groups.form.assigned.bulk_title'),
+        title: copy.ask,
         target: celda?.querySelector('input') ?? celda,
-        body: this.translate.instant('groups.form.assigned.bulk_body', { action: this.bulkAction(field, remove), count: rows.length }),
-        acceptLabel: this.translate.instant('groups.form.assigned.bulk_confirm'),
+        body: copy.ask,
+        acceptLabel: copy.verb,
         rejectLabel: this.translate.instant('common.cancel'),
       })) return;
       const ids = new Set(rows.map((row) => row.agent.id));
@@ -454,6 +429,8 @@ export class AgentChannelTableComponent {
   }
 
   protected readonly familyLabelKeys = FAMILY_LABEL_KEYS;
+  /** Del 1 al 10, en el desplegable de cada «Nivel {canal}». */
+  protected readonly levelOptions = LEVEL_OPTIONS.map((value) => ({ label: String(value), value }));
 
   protected setLevel(agentId: number, field: string, value: unknown): void {
     if (typeof value !== 'number' || !LEVEL_OPTIONS.includes(value)) return;

@@ -112,7 +112,7 @@ test('quitar un canal del grupo dice cuántos lo pierden y cuántos salen, y al 
   const dialogo = page.getByRole('dialog', { name: 'Vas a quitar canales' });
   await expect(dialogo).toContainText(/(\d+) agentes de este grupo pierden Teléfono, y \1 se quedan sin ningún canal y salen del grupo/);
   await dialogo.getByRole('button', { name: 'Sí, quitar' }).click();
-  await expect(page.getByText('Grupo "ACD Demo C2CB" actualizado')).toBeVisible();
+  await expect(page.getByText('Grupo «ACD Demo C2CB» actualizado')).toBeVisible();
 
   await page.reload();
   await irA(page, 'Agentes asignados');
@@ -130,8 +130,8 @@ test('la lista de agentes no pinta un canal que ninguno de sus grupos ofrece', a
   await expect(fila.locator('.sc-channel-row__item[data-channel="email"]')).toHaveCount(0);
 });
 
-/* El listado anuncia la misma familia que se edita en el panel, aunque el grupo ofrezca WhatsApp. */
-test('la lista de agentes anuncia Chat al asignarlo desde el panel', async ({ page }) => {
+/* El listado anuncia la misma familia que se edita en «Agentes asignados», aunque el grupo ofrezca WhatsApp. */
+test('la lista de agentes anuncia Chat al asignarlo desde la ficha del grupo', async ({ page }) => {
   await page.addInitScript(() => {
     if (localStorage.getItem('sc-group-agent-links')) return;
     localStorage.setItem('sc-group-agent-links-v', '1');
@@ -139,12 +139,10 @@ test('la lista de agentes anuncia Chat al asignarlo desde el panel', async ({ pa
       { agentId: 1, groupId: 12, channels: ['phone'], active: true },
     ]));
   });
-  await goto(page, 'admin/grupos');
-  await page.getByRole('button', { name: 'Asignar agentes de Reclamaciones' }).click();
-  const panel = page.locator('.agents-panel');
-  await panel.getByRole('checkbox', { name: 'Tom Hanks — Chat', exact: true }).click();
-  await panel.getByRole('button', { name: 'Guardar (1)' }).click();
-  await expect(panel).toHaveCount(0);
+  await goto(page, 'admin/grupos/editar/12?seccion=agentes');
+  await page.locator('sc-agent-channel-table').getByRole('checkbox', { name: 'Tom Hanks — Chat', exact: true }).click();
+  await page.locator('sc-top-bar').getByRole('button', { name: 'Guardar', exact: true }).click();
+  await expect(page.locator('.p-toast-message')).toContainText('Grupo «Reclamaciones» actualizado');
 
   await goto(page, 'admin/agentes');
   const fila = page.locator('tbody tr', { hasText: 'Tom Hanks' });

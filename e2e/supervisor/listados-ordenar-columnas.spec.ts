@@ -69,11 +69,21 @@ test('Grupos ordena por todas sus columnas', async ({ page }) => {
     { campo: 'services', ordena: true },
     { campo: 'agents', ordena: true },
   ]);
-  for (const campo of ['channels', 'services']) {
-    await ordenarDescendente(page, campo);
+  await ordenarDescendente(page, 'channels');
+  const canales = await valores(page, 'channels');
+  expect(new Set(canales).size, 'channels: la semilla trae valores distintos').toBeGreaterThan(1);
+  expect(descendente(canales), `channels: ${canales.join(', ')}`).toBe(true);
+  // Servicios y Agentes, de mayor a menor al primer clic (SISMAC-4056): se busca el que más tiene. Vienen de Canales ya
+  // en descendente, el caso en que la flecha mentía si el orden se daba la vuelta fuera del DS.
+  for (const campo of ['services', 'agents']) {
+    const th = page.locator(`sc-datatable thead th[data-field="${campo}"]`);
+    await th.click();
+    await expect(th).toHaveAttribute('aria-sort', 'descending');
     const xs = await valores(page, campo);
     expect(new Set(xs).size, `${campo}: la semilla trae valores distintos`).toBeGreaterThan(1);
     expect(descendente(xs), `${campo}: ${xs.join(', ')}`).toBe(true);
+    await th.click();
+    await expect(th).toHaveAttribute('aria-sort', 'ascending');
   }
 });
 

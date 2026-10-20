@@ -1,17 +1,18 @@
-import { ChangeDetectionStrategy, Component, computed, HostListener, inject, Injector, input, OnInit, signal, type TemplateRef, viewChild } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink, type UrlTree } from '@angular/router';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, HostListener, inject, Injector, input, OnInit, signal, type TemplateRef, viewChild } from '@angular/core';
+import { ActivatedRoute, Router, type UrlTree } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TooltipModule } from 'primeng/tooltip';
 import { TipificacionArbolComponent } from '@features/admin/repositories/components/tipificacion-arbol/tipificacion-arbol.component';
 import { ScCheckboxComponent as CheckboxComponent } from '@smartcontact-hub/components';
-import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
+import { ScButtonComponent as ButtonComponent, ScConfirmService } from '@smartcontact-hub/components';
 
 import { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
-import { ResultadoAccionService, SectionLinksService } from '@core/services';
+import { BreadcrumbService, ResultadoAccionService, SectionLinksService } from '@core/services';
 import { injectLangChange } from '@core/utils/lang-change';
 import { AltaPieComponent, ChannelIconComponent, NameInplaceComponent, ResourceOptionComponent } from '@shared/components';
 import { changedKeys, createFormDirtyState } from '@shared/utils/form-dirty-state';
+import { nombreDeCopia } from '@shared/utils/copy-name';
 import {
   avisosDelIndice,
   firmaDe,
@@ -44,6 +45,7 @@ import {
 import {
   CHANNEL_LABEL_KEYS,
   CHAT_STRATEGIES,
+  duplicateGroupDraft,
   CHAT_SUB_STRATEGIES,
   GROUP_CHANNELS,
   Group,
@@ -106,7 +108,7 @@ import {
   toggleChatFamily,
   toggleGroupChannel,
 } from '@features/admin/services/group-channels.core.mjs';
-import { DOCUMENT, NgTemplateOutlet } from '@angular/common';
+import { DOCUMENT, LocationStrategy, NgTemplateOutlet } from '@angular/common';
 
 import {
   AgentChannelTableAgent,
@@ -203,7 +205,6 @@ type AudioKey = 'holdMusicFile' | 'queueIdFile' | 'nextInLineFile' | 'outboundAu
 @Component({
   selector: 'sc-group-form-page',
   imports: [
-    RouterLink,
     NgTemplateOutlet,
     ChannelIconComponent,
     NameInplaceComponent,
@@ -243,7 +244,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
   private readonly injector = inject(Injector);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
-  private readonly confirmarBorrado = injectConfirmarBorrado('groups.entity_singular');
+  private readonly confirmarBorrado = injectConfirmarBorrado('groups.delete_dialog.title');
   private readonly document = inject(DOCUMENT);
   private readonly groupsStore = inject(GroupsStore);
   private readonly agentsStore = inject(AgentsStore);
@@ -259,6 +260,17 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
   private readonly resourceRows = inject(ResourceRowsService);
   private readonly labelsStore = inject(LabelsStore);
   private readonly defaultsStore = inject(GroupDefaultsStore);
+  private readonly confirm = inject(ScConfirmService);
+  private readonly breadcrumbs = inject(BreadcrumbService);
+
+  /**
+   * La miga de la edición dice el nombre del grupo, el guardado («Administración › Grupos › Ventas», SISMAC-4058): el
+   * que se teclea aún no es el del grupo. Al crear, «Nuevo grupo», de la ruta.
+   */
+  private readonly migaConNombre = effect(() =>
+    this.breadcrumbs.nombrar(this.route, this.mode() === 'edit' ? (this.initial()?.name ?? null) : null),
+  );
+  private readonly sinMiga = inject(DestroyRef).onDestroy(() => this.breadcrumbs.nombrar(this.route, null));
 
   /** Guardar y Deshacer proyectados a la TopBar (modelo "todo arriba" S59). */
   private readonly topbarActions = viewChild<TemplateRef<unknown>>('topbarActions');
@@ -361,7 +373,11 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
   });
 
   /** «Clasificar llamadas» encendido sin tipificación elegida: falta la tipificación. */
-  protected readonly typificationMissing = computed(() => this.form().wrapUp.classify && this.form().wrapUp.typificationId === null);
+  protected readonly typificationMissing = computed(
+    () => this.form().wrapUp.classify && !this.sinTipificaciones() && this.form().wrapUp.typificationId === null,
+  );
+  /** Sin tipificaciones en Repositorios, «Tipificar conversaciones» está apagado y no se enciende (SISMAC-4058). */
+  protected readonly sinTipificaciones = computed(() => this.tipificacionesStore.items().length === 0);
 
   /** Que falte se dice en su campo al pulsar Crear o Guardar (DD-217): encender «Tipificar» no acusa. */
   protected readonly typificationError = computed(() => this.typificationMissing() && this.ocasion.acusa('typification'));
@@ -790,9 +806,8 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
       name: a.name,
       photo: a.photo,
       email: a.email,
-      presenceStatus: a.presenceStatus,
       allowedChannels: a.allowedChannels,
-      teams: a.teams,
+      selfActivate: a.permissions.selfActivate,
     })),
   );
 
@@ -806,11 +821,27 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
     if (!idParam) {
       // ALTA: la ficha vacía, con los valores por defecto de Grupos y Teléfono marcado (`emptyForm`). Abre en
       // General aunque la dirección pida otra sección, y se quita el parámetro: en el alta la sección abierta no vive
-      // en la dirección (DD-143).
-      this.dirtyState.markPristine();
+      // en la dirección (DD-143). El duplicado conserva su `seedFromId`.
       if (this.route.snapshot.queryParamMap.has('seccion')) {
         void this.sectionLinks.go(this.sectionUrl('group-section-general'), { replace: true });
       }
+      // DUPLICAR es un alta rellena (SISMAC-4056), como la de un agente: «Online Support (1)» y todo lo del original,
+      // agentes incluidos, salvo lo que no se copia (`duplicateGroupDraft`). El grupo no existe hasta «Crear grupo»; la
+      // copia es el punto de partida: «Deshacer» vuelve a ella y salir sin tocar nada no pregunta.
+      const seedFromId = this.route.snapshot.queryParamMap.get('seedFromId');
+      if (seedFromId) {
+        const source = this.groupsStore.getGroup(Number(seedFromId));
+        if (!source) {
+          void this.router.navigateByUrl('/admin/grupos', { replaceUrl: true });
+          return;
+        }
+        const nombre = nombreDeCopia(source.name, this.groupsStore.groups().map((g) => g.name));
+        const copia: Group = { ...duplicateGroupDraft(source, nombre), id: 0, code: '' };
+        const links = this.linksDe(source).map((l) => ({ ...l, groupId: 0 }));
+        this.cargar(copia, links);
+        return;
+      }
+      this.dirtyState.markPristine();
       return;
     }
     const group = this.groupsStore.getGroup(Number(idParam));
@@ -820,11 +851,19 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
     }
     this.editingId.set(group.id);
     this.initial.set(group);
-    /* Cada agente, con los canales que el grupo OFRECE: un enlace puede traer uno que el grupo ya no tiene
-     * (datos de antes: en el seed, un Web Chat en un grupo solo de Teléfono). Sin recortarlo al leer, ese
-     * canal fantasma revivía en cuanto el grupo volvía a ofrecerlo, y la confirmación de quitar canales
-     * contaba mal a quién saca del grupo. */
-    const seedLinks = clampLinksToChannels(this.linksStore.linksForGroup(group.id), group.channels, link => this.agentsStore.getAgent(link.agentId)?.allowedChannels);
+    this.cargar(group, this.linksDe(group));
+  }
+
+  /* Cada agente, con los canales que el grupo OFRECE: un enlace puede traer uno que el grupo ya no tiene
+   * (datos de antes: en el seed, un Web Chat en un grupo solo de Teléfono). Sin recortarlo al leer, ese
+   * canal fantasma revivía en cuanto el grupo volvía a ofrecerlo, y la confirmación de quitar canales
+   * contaba mal a quién saca del grupo. */
+  private linksDe(group: Group): readonly GroupAgentLink[] {
+    return clampLinksToChannels(this.linksStore.linksForGroup(group.id), group.channels, link => this.agentsStore.getAgent(link.agentId)?.allowedChannels);
+  }
+
+  /** La ficha de un grupo (el que se edita o la copia de un duplicado), marcada como su punto de partida. */
+  private cargar(group: Group, seedLinks: readonly GroupAgentLink[]): void {
     // La única vía de lectura: lo que el grupo no guardó sale de su juego de antes o de fábrica.
     const g = resolveGroup(group);
     this.form.set({
@@ -1211,6 +1250,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
     if (!this.canSave() || this.saving()) return;
     // Con algo pendiente no crea ni guarda: desde ahora se dice lo que falta, y se llega al primer campo (DD-217).
     if (this.pendiente()) {
+      this.destinoTrasGuardar = null;
       this.ocasion.intentar();
       const primero = this.avisos()[0];
       if (primero) this.irACampo(primero.seccion, primero.ancla);
@@ -1261,8 +1301,8 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
         chatSubStrategy: f.chatSubStrategy,
         emailStrategy: f.channels.has('email') ? f.emailStrategy : undefined,
         emailSubStrategy: this.isEmailNiveles() ? f.emailSubStrategy : undefined,
-        // Sin clasificar, no guarda una tipificación que no usa.
-        wrapUp: f.wrapUp.classify ? f.wrapUp : { ...f.wrapUp, typificationId: null },
+        // Sin clasificar (o sin tipificaciones que elegir), no guarda una tipificación que no usa.
+        wrapUp: f.wrapUp.classify && !this.sinTipificaciones() ? f.wrapUp : { ...f.wrapUp, classify: false, typificationId: null },
       };
 
       if (this.mode() === 'create') {
@@ -1285,6 +1325,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
       this.saving.set(false);
       this.ocasion.olvidar();
       this.dirtyState.markPristine();
+      this.irAlDestino();
     }, 400);
   }
 
@@ -1299,15 +1340,52 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
     this.linksStore.replaceLinksForGroup(created.id, this.normalizeLinks(this.withoutOrphans(this.linksVistos()), created.id));
     const creado = this.translate.instant('groups.toasts.created', { name: created.name });
     this.dirtyState.markPristine();
+    const destino = this.destinoTrasGuardar;
+    this.destinoTrasGuardar = null;
     // `saving` sigue encendido hasta que se va (ver `activeSection`).
     void this.router
       .navigate(['/admin/grupos/editar', created.id], {
         replaceUrl: true,
         queryParams: slug && slug !== 'general' ? { seccion: slug } : {},
       })
+      // Si se guardó para ir a Repositorios, allí: Atrás vuelve al grupo ya creado.
+      .then(() => (destino ? this.router.navigateByUrl(destino) : true))
       // El toast, ya en la ficha a la que se llega (DD-211 §5).
       .then(() => this.resultado.contar(creado))
       .finally(() => this.saving.set(false));
+  }
+
+  /* ── «Gestionar en Repositorios»: sale de la ficha, así que con cambios pide guardar antes (SISMAC-4058) ─────── */
+
+  /** La dirección del enlace, para abrirlo en otra pestaña con Cmd+clic o el botón central, que no pregunta nada. */
+  protected readonly repositoriosHref = inject(LocationStrategy).prepareExternalUrl('/admin/repositorios');
+  /** Adónde ir cuando acabe de guardar; `null`, quedarse en la ficha. */
+  private destinoTrasGuardar: string | null = null;
+
+  protected async irARepositorios(event: MouseEvent): Promise<void> {
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    if (!this.formDirty()) {
+      void this.router.navigateByUrl('/admin/repositorios');
+      return;
+    }
+    const guardar = await this.confirm.request({
+      title: this.translate.instant('groups.form.repositories_leave.title'),
+      body: this.translate.instant('groups.form.repositories_leave.body'),
+      acceptLabel: this.translate.instant('common.save'),
+      rejectLabel: this.translate.instant('common.discard_keep'),
+      icon: 'info',
+    });
+    if (!guardar) return;
+    this.destinoTrasGuardar = '/admin/repositorios';
+    this.save();
+  }
+
+  /** Tras guardar (no al crear, que ya navega), al destino pendiente, si lo hay. */
+  private irAlDestino(): void {
+    const destino = this.destinoTrasGuardar;
+    this.destinoTrasGuardar = null;
+    if (destino) void this.router.navigateByUrl(destino);
   }
 
   /** Vuelve al último estado guardado (o al formulario vacío, en un alta). Es el
@@ -1319,6 +1397,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
 
   protected cancelCascade(): void {
     this.cascadeConfirm.set(null);
+    this.destinoTrasGuardar = null;
   }
 
   /** La frase del aviso, con su número: «1 agente pierde», no «1 agentes pierden». */

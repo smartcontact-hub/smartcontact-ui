@@ -213,6 +213,14 @@
     data-testid="sc-datatable-multisort" />
 </ng-template>
 
+<ng-template #statusHead let-col>
+  <span>{{ col.header }} <span class="sc-text-caption-regular">({{ activos() }} activos)</span></span>
+</ng-template>
+
+<ng-template #sortFirst>
+  <sc-datatable [value]="agents()" [columns]="sortFirstColumns()" dataKey="id" data-testid="sc-datatable-sort-first" />
+</ng-template>
+
 <ng-template #nameEditor let-agent>
   <sc-inputtext size="sm" fluid [value]="agent.name" (valueChange)="agent.name = $event" ariaLabel="Nombre" />
 </ng-template>

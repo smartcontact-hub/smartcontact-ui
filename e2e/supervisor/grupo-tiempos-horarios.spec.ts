@@ -11,15 +11,16 @@ for (const surface of ['ficha', 'defaults'] as const) {
     const transfer = page.locator(`#${prefix}-phone-transfer`);
     await expect(transfer).toHaveAttribute('role', 'combobox');
     await transfer.click();
-    await expect(page.getByRole('option')).toHaveText(['5 s', '10 s', '15 s', '20 s', '25 s', '30 s', '1 min', '1,5 min', '2 min', '3 min', '4 min', '5 min', '10 min', '15 min', '30 min']);
-    await page.getByRole('option', { name: '1,5 min', exact: true }).click();
+    // El catálogo de SISMAC-4058, sin 1,5 min (2026-10-20).
+    await expect(page.getByRole('option')).toHaveText(['5 s', '10 s', '15 s', '20 s', '25 s', '30 s', '1 min', '2 min', '3 min', '4 min', '5 min', '10 min', '15 min', '30 min']);
+    await page.getByRole('option', { name: '2 min', exact: true }).click();
     const inactivity = surface === 'ficha' ? page.getByRole('switch', { name: 'Caducar sesión', exact: true }) : page.locator('#grupos-chat-inactivity-on');
     if (!await inactivity.isChecked()) await inactivity.click();
     // Los minutos se escriben, como en Voice, en la ficha y en Contact Center (DD-184 §3): 45 no estaba en el catálogo.
     await page.locator(`#${prefix}-chat-inactivity`).fill('45');
     await page.locator(`#${prefix}-chat-inactivity`).press('Tab');
     await page.getByRole('button', { name: 'Guardar', exact: true }).click();
-    await expect.poll(() => stored(page, surface)).toMatchObject({ phoneQueue: { transferSec: 90 }, chat: { inactivityMinutes: 45 } });
+    await expect.poll(() => stored(page, surface)).toMatchObject({ phoneQueue: { transferSec: 120 }, chat: { inactivityMinutes: 45 } });
   });
 
   test(`${surface}: cola Variable nace en 2, admite enteros hasta 10 y Fija no tiene tope`, async ({ page }) => {

@@ -9,13 +9,14 @@
 </ng-template>
 
 <!-- La lista (título, barra, tabla, menú de fila) la monta `sc-list-page` (DD-97). Aquí solo lo que es de
-     Grupos: columnas y celdas, acciones y diálogos. Con casillas para elegir y exportar, sin edición masiva (DD-215): lo de cada grupo se
-     hace desde su menú de fila. -->
+     Grupos: columnas y celdas, acciones y diálogos. Con casillas para elegir y exportar, y para eliminar varios con el
+     clic derecho sobre una marcada (`selectionMenu`, SISMAC-4056); sin edición masiva (DD-215): lo de cada grupo se hace
+     desde su menú de fila. -->
 <sc-list-page
   [heading]="'sidebar.groups' | translate"
   [rows]="groups()"
   [columns]="columns()"
-  tableMinWidth="98.75rem"
+  tableMinWidth="92.75rem"
   [columnChoices]="columnDefs()"
   [columnStorageKey]="columnPrefKey"
   [searchPlaceholder]="'groups.search_placeholder' | translate"
@@ -24,6 +25,7 @@
   noResultsKey="groups.no_results_query"
   exportable
   [rowMenu]="rowMenu"
+  [selectionMenu]="selectionMenu"
   rowOpenable
   selectable
   [(selectedIds)]="selectedIds"
@@ -48,10 +50,6 @@
      Todas envuelven su contenido en un `<span>` con clase propia: el `<td>`
      lo pinta ahora el DS, así que una regla encapsulada de esta página que
      apuntara a `.table__td-*` ya no lo alcanzaría. -->
-<ng-template #codeTpl let-group>
-  <span class="table__cell sc-text-body-regular">{{ group.code }}</span>
-</ng-template>
-
 <ng-template #nameTpl let-group>
   <!-- Sin avatar (DD-119). En WhatsApp o Teams la foto distingue un grupo de una persona
        porque van en la misma lista; aquí todas las filas son grupos, y un dibujo sacado del nombre no
@@ -117,15 +115,14 @@
   <sc-group-popover [groups]="services" [countAriaLabel]="(services.length === 1 ? 'groups.table.services_count_one' : 'groups.table.services_count') | translate: { count: services.length }" />
 </ng-template>
 
-<!-- El número enseña sus agentes al pasar, igual que «Grupos» en la lista de agentes, y al pulsarlo abre el panel
-     rápido para asignarlos (DD-159). Su nombre dice las dos cosas: cuántos y qué hace. -->
+<!-- El número enseña sus agentes al pasar, igual que «Grupos» en la lista de agentes, y al pulsarlo lleva a donde se
+     asignan, «Agentes asignados» de su ficha, como la cifra de grupos de un agente (SISMAC-4056, DD-213). Su nombre
+     dice las dos cosas: cuántos y qué hace. -->
 <ng-template #agentsTpl let-group>
   @let agents = agentsForGroup(group.id);
   <sc-group-popover
     [groups]="agents"
     [countAriaLabel]="'groups.table.agents_assign_aria' | translate: { count: agents.length, name: group.name }"
-    (activated)="openAgentsPanel(group)"
+    (activated)="openAgents(group)"
   />
 </ng-template>
-
-<sc-group-agents-panel [group]="agentsPanelGroup()" (closed)="closeAgentsPanel()" />

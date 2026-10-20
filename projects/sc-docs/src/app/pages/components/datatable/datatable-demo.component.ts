@@ -7,6 +7,7 @@ import {
   ScButtonComponent,
   ScColumnCellContext,
   ScColumnDef,
+  ScColumnHeaderContext,
   ScDatatableComponent,
   ScDatatableRowEvent,
   ScInputNumberComponent,
@@ -168,6 +169,16 @@ export class DatatableDemoComponent {
     { field: 'status', order: 1 },
     { field: 'name', order: 1 },
   ];
+  protected readonly sortFirstTpl = viewChild<TemplateRef<StoryContext>>('sortFirst');
+  private readonly statusHead = viewChild<TemplateRef<ScColumnHeaderContext<Agent>>>('statusHead');
+  protected readonly activos = computed(() => this.agents().filter((agent) => agent.status === 'active').length);
+  /** Una cifra ordena de mayor a menor al primer clic (`defaultSortOrder`), y una cabecera lleva algo más que su texto
+   *  (`headerTemplate`): «Servicios», «Agentes» y la casilla de «todos» de las tablas de asignación del Supervisor. */
+  protected readonly sortFirstColumns = computed<readonly ScColumnDef<Agent>[]>(() => [
+    { field: 'name', header: 'Nombre', sortable: true },
+    { field: 'extension', header: 'Extensión', sortable: true, defaultSortOrder: -1, width: '10rem', align: 'center' },
+    { field: 'status', header: 'Estado', width: '12rem', headerTemplate: this.statusHead() },
+  ]);
   protected readonly cellEditTpl = viewChild<TemplateRef<StoryContext>>('cellEdit');
   protected readonly rowEditTpl = viewChild<TemplateRef<StoryContext>>('rowEdit');
   private readonly nameEditor = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('nameEditor');
@@ -473,6 +484,7 @@ export class DatatableDemoComponent {
     // pintar la story MVP con la columna de estado sin su cellTemplate.
     const fr = this.frozenTpl();
     const ms = this.multiSortTpl();
+    const sf = this.sortFirstTpl();
     const fi = this.filtersTpl();
     const ce = this.cellEditTpl();
     const re = this.rowEditTpl();
@@ -480,7 +492,7 @@ export class DatatableDemoComponent {
     const rg = this.rowGroupsTpl();
     const ro = this.rowOrderTpl();
     const dtl = this.dataToolsTpl();
-    if (!pg || !controls || !mvp || !lz || !gs || !ls || !st || !fr || !ms || !fi || !ce || !re || !ex || !rg || !ro || !dtl) return [];
+    if (!pg || !controls || !mvp || !lz || !gs || !ls || !st || !fr || !ms || !sf || !fi || !ce || !re || !ex || !rg || !ro || !dtl) return [];
     return [
       { name: 'Playground', playground: true, template: pg, controlsTemplate: controls },
       { name: 'Columnas, selección múltiple y paginador', template: mvp, snippet: MVP_SNIPPET },
@@ -492,6 +504,10 @@ export class DatatableDemoComponent {
       { name: 'Orden por varias columnas', template: ms, snippet: `<!-- sortMode="multiple": Cmd/Ctrl+clic añade una columna detrás de las que ya ordenan. -->
 <!-- multiSortMeta: el orden de entrada, por prioridad: [{ field: 'status', order: 1 }, { field: 'name', order: 1 }]. -->
 <sc-datatable [value]="agents()" [columns]="multiSortColumns" sortMode="multiple" [multiSortMeta]="presortMeta" removableSort dataKey="id" />` },
+      { name: 'Primer clic de mayor a menor y cabecera propia', template: sf, snippet: `<!-- ScColumnDef.defaultSortOrder: -1, el primer clic ordena de mayor a menor (una cifra: se busca la fila con más). -->
+<!-- ScColumnDef.headerTemplate: lo que va dentro del th, con la flecha y el ancho del DS; contexto { $implicit: col }. -->
+<!-- Con un control dentro (la casilla de «todos»), el nombre de la columna en headerAriaLabel. -->
+<sc-datatable [value]="agents()" [columns]="sortFirstColumns()" dataKey="id" />` },
       { name: 'Filtros por columna y cabecera agrupada', template: fi, snippet: `<!-- ScColumnDef.filter: { matchMode, placeholder, filterOn, showMenu, template… }, los inputs de p-column-filter. -->
 <!-- filterDisplay="row" los pone en una fila bajo la cabecera; "menu", en un botón junto al título con reglas Y/O. -->
 <!-- ScColumnDef.group: las columnas seguidas con el mismo group comparten una celda encima. dt.clear() lo quita todo. -->

@@ -13,6 +13,8 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  *      Postconversación; se crea en Repositorios, y su alta lleva su título con género: «Nueva tipificación».
  *   3. Recursos ya no enseña Etiquetas (DD-142), y el grupo conserva las suyas al guardar: el campo se queda hecho y
  *      apagado, por si vuelve.
+ *   4. «Gestionar en Repositorios» sale de la ficha: sin cambios, va directo; con cambios, pregunta si guardar antes
+ *      (SISMAC-4058, 2026-10-20), y sin que salte además el aviso de descartar.
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -52,6 +54,26 @@ test('grupo 11 · la tipificación se elige en General y no tiene «+»: se crea
   await expect(page.locator('main')).not.toContainText('Nuevo/a');
 });
 
+test('grupo 11 · sin tipificaciones, «Tipificar conversaciones» sale apagado y deshabilitado, y dice dónde se crean', async ({ page }) => {
+  // SISMAC-4058: sin ninguna, no hay nada que pedir al agente, y el grupo se guarda sin ella.
+  await page.addInitScript(() => {
+    localStorage.setItem('sc-tipificaciones-v', '2');
+    localStorage.setItem('sc-tipificaciones', '[]');
+  });
+  await goto(page, 'admin/grupos/editar/11?seccion=general');
+  const tipificar = page.getByRole('switch', { name: 'Tipificar conversaciones' });
+  await expect(tipificar).toBeDisabled();
+  await expect(tipificar).not.toBeChecked();
+  await expect(tipificar).toHaveAccessibleDescription('No hay tipificaciones: se crean en Repositorios.');
+  await expect(page.locator('sc-select:has(#group-typification)')).toHaveCount(0);
+
+  await page.locator('#group-wrapup-comments').click();
+  await page.locator('sc-top-bar').getByRole('button', { name: 'Guardar', exact: true }).click();
+  await expect(page.locator('.p-toast-message')).toContainText('Grupo «Online Support» actualizado');
+  const guardado = await page.evaluate(() => (JSON.parse(localStorage.getItem('sc-groups')!) as { id: number; wrapUp?: { classify: boolean; typificationId: number | null } }[]).find((g) => g.id === 11)?.wrapUp);
+  expect(guardado).toMatchObject({ classify: false, typificationId: null });
+});
+
 test('grupo 11 · Recursos no enseña Etiquetas, y el grupo conserva las suyas al guardar', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/11?seccion=recursos');
   const recursos = page.locator('#group-section-resources');
@@ -69,9 +91,53 @@ test('grupo 11 · Recursos no enseña Etiquetas, y el grupo conserva las suyas a
   await page.locator('.p-multiselect-overlay .p-multiselect-option').filter({ hasText: 'Ventas Nacional' }).click();
   await page.keyboard.press('Escape');
   await page.getByRole('button', { name: 'Guardar', exact: true }).click();
-  await expect(page.getByText('Grupo "Online Support" actualizado')).toBeVisible();
+  await expect(page.getByText('Grupo «Online Support» actualizado')).toBeVisible();
   const etiquetas = await page.evaluate(
     () => (JSON.parse(localStorage.getItem('sc-groups') ?? '[]') as { id: number; labels?: number[] }[]).find((g) => g.id === 11)?.labels,
   );
   expect(etiquetas).toEqual([3, 6]);
+});
+
+test('grupo 11 · «Gestionar en Repositorios» va directo sin cambios; con cambios, pide guardar antes y guarda', async ({ page }) => {
+  const enlace = page.locator('#group-section-resources').getByRole('link', { name: 'Gestionar en Repositorios' });
+  await goto(page, 'admin/grupos/editar/11?seccion=recursos');
+  await enlace.click();
+  await expect(page).toHaveURL(/\/admin\/repositorios$/);
+  await expect(page.getByRole('alertdialog', { name: '¿Guardar los cambios?' })).toHaveCount(0);
+
+  await goto(page, 'admin/grupos/editar/11?seccion=general');
+  const comentarios = page.locator('#group-wrapup-comments');
+  const antes = await comentarios.isChecked();
+  await comentarios.click();
+  await page.locator('sc-form-section-nav .form-nav__item', { hasText: 'Recursos' }).click();
+  await enlace.click();
+  const pregunta = page.getByRole('alertdialog', { name: '¿Guardar los cambios?' });
+  await expect(pregunta).toContainText('Para ir a Repositorios, guarda antes el grupo.');
+  await pregunta.getByRole('button', { name: 'Seguir editando' }).click();
+  await expect(pregunta).toHaveCount(0);
+  await expect(page).toHaveURL(/\/admin\/grupos\/editar\/11\?seccion=recursos$/);
+
+  await enlace.click();
+  await pregunta.getByRole('button', { name: 'Guardar', exact: true }).click();
+  await expect(page).toHaveURL(/\/admin\/repositorios$/);
+  await expect(page.getByRole('dialog', { name: '¿Descartar cambios?' }), 'guardado, no hay nada que descartar').toHaveCount(0);
+  await expect(page.locator('.p-toast-message')).toContainText('Grupo «Online Support» actualizado');
+  const guardado = await page.evaluate(() => (JSON.parse(localStorage.getItem('sc-groups')!) as { id: number; wrapUp?: { comments?: boolean } }[]).find((g) => g.id === 11)?.wrapUp?.comments);
+  expect(guardado).toBe(!antes);
+});
+
+test('agente 1 · «Gestionar en Repositorios» con cambios pide guardar antes, igual que en el grupo', async ({ page }) => {
+  const enlace = page.locator('#agent-section-resources').getByRole('link', { name: 'Gestionar en Repositorios' });
+  await goto(page, 'admin/agentes/editar/1?seccion=general');
+  await page.locator('#agent-phone').fill('600111222');
+  await page.locator('sc-form-section-nav .form-nav__item', { hasText: 'Recursos' }).click();
+  await enlace.click();
+  const pregunta = page.getByRole('alertdialog', { name: '¿Guardar los cambios?' });
+  await expect(pregunta).toContainText('Para ir a Repositorios, guarda antes el agente.');
+  await pregunta.getByRole('button', { name: 'Guardar', exact: true }).click();
+  await expect(page).toHaveURL(/\/admin\/repositorios$/);
+  await expect(page.getByRole('dialog', { name: '¿Descartar cambios?' })).toHaveCount(0);
+  await expect(page.locator('.p-toast-message')).toContainText('actualizado');
+  const telefono = await page.evaluate(() => (JSON.parse(localStorage.getItem('sc-agents')!) as { id: number; phone?: string }[]).find((a) => a.id === 1)?.phone);
+  expect(telefono).toBe('600111222');
 });

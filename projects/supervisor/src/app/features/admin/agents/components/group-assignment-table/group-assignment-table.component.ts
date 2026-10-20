@@ -30,6 +30,8 @@ import {
   ScDatatableComponent as DatatableComponent,
   type ScColumnCellContext,
   type ScColumnDef,
+  type ScColumnHeaderContext,
+  type ScDatatableSortEvent,
 } from '@smartcontact-hub/components';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { LlegaAlPieDirective } from '@core/directives';
@@ -88,9 +90,9 @@ const REM = { assigned: 3.5, group: 12, channel: { phone: 7, chat: 4.5, email: 4
  * desplegable bajo la tabla, y en la tabla, la flecha `call_made` junto al nombre del elegido (DD-209 §1, que corrige el
  * radio por fila de DD-204 §8): es una sola elección, no una por fila.
  *
- * «Activación por grupo» (Configuración) deja al agente habilitarse él mismo en cada grupo, pero no le quita Habilitado
- * al supervisor: se cambia aquí igual (revisión del 2026-10-14, que corrige el candado de DD-187 §2). Lo mismo en la
- * tabla del grupo.
+ * «Activación por grupo» (Configuración) deja al agente habilitarse él mismo en cada grupo, desde su puesto: aquí su
+ * Habilitado se ve pero no se toca, y la casilla de «todos» no lo cuenta (SISMAC-4058, que vuelve al candado de DD-187 §2
+ * que la revisión del 2026-10-14 había quitado). Lo mismo en la tabla del grupo.
  *
  * No persiste nada: el formulario tiene el `links` canónico y lo guarda en `GroupAgentLinksStore`.
  */
@@ -132,13 +134,22 @@ export class GroupAssignmentTableComponent {
   private readonly groupTpl = viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('groupTpl');
   private readonly channelTpl = viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('channelTpl');
   private readonly activeTpl = viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('activeTpl');
+  /** La cabecera de las columnas con casilla de «todos», dentro del `th` del DS. */
+  private readonly headerCheckTpl = viewChild<TemplateRef<ScColumnHeaderContext<VisibleRow>>>('headerCheckTpl');
 
   protected readonly columns = computed<readonly ScColumnDef<VisibleRow>[]>(() => {
     this.currentLang();
+    const check = this.headerCheckTpl();
+    /* Cada cabecera se llama como su rótulo (`headerAriaLabel`): las que llevan la casilla de «todos» dentro, también. */
+    const assigned = this.translate.instant('groups.form.assigned.assignment');
+    const group = this.translate.instant('agents.form.assigned.col_group');
+    const active = this.translate.instant('agents.form.assigned.col_active');
     return [
       {
         field: 'assigned',
-        header: this.translate.instant('groups.form.assigned.assignment'),
+        header: assigned,
+        headerAriaLabel: assigned,
+        headerTemplate: check,
         width: `${REM.assigned}rem`,
         align: 'center' as const,
         cellTemplate: this.assignedTpl(),
@@ -146,21 +157,31 @@ export class GroupAssignmentTableComponent {
       },
       {
         field: 'group',
-        header: this.translate.instant('agents.form.assigned.col_group'),
+        header: group,
+        headerAriaLabel: group,
+        // Por nombre, A→Z y Z→A, como «Agente» en la tabla del grupo (SISMAC-4058).
+        sortable: true,
         rowHeader: true,
         cellTemplate: this.groupTpl(),
       },
-      ...CHANNEL_FAMILIES.map((ch) => ({
-        field: ch,
-        header: this.translate.instant(FAMILY_LABEL_KEYS[ch]),
-        width: `${REM.channel[ch]}rem`,
-        align: 'center' as const,
-        cellTemplate: this.channelTpl(),
-        stopRowClick: true,
-      })),
+      ...CHANNEL_FAMILIES.map((ch) => {
+        const canal = this.translate.instant(FAMILY_LABEL_KEYS[ch]);
+        return {
+          field: ch,
+          header: canal,
+          headerAriaLabel: canal,
+          headerTemplate: check,
+          width: `${REM.channel[ch]}rem`,
+          align: 'center' as const,
+          cellTemplate: this.channelTpl(),
+          stopRowClick: true,
+        };
+      }),
       {
         field: 'active',
-        header: this.translate.instant('agents.form.assigned.col_active'),
+        header: active,
+        headerAriaLabel: active,
+        headerTemplate: check,
         width: `${REM.enabled}rem`,
         align: 'center' as const,
         cellTemplate: this.activeTpl(),
@@ -178,6 +199,8 @@ export class GroupAssignmentTableComponent {
   readonly availableGroups = input.required<readonly AgentGroupAssignmentRef[]>();
   readonly agentId = input.required<number>();
   readonly allowedChannels = input<readonly Channel[]>(CHANNEL_FAMILIES);
+  /** «Activación por grupo»: se habilita él mismo desde su puesto, y su Habilitado no se toca aquí (SISMAC-4058). */
+  readonly selfActivate = input(false);
   /** El grupo de sus llamadas salientes. */
   readonly outboundGroupId = input<number | null>(null);
   readonly linksChange = output<readonly GroupAgentLink[]>();
@@ -212,9 +235,22 @@ export class GroupAssignmentTableComponent {
     );
   });
 
+  /** El orden por nombre: `1`, A→Z; `-1`, Z→A; `null`, el de la lista de grupos. */
+  protected readonly orden = signal<1 | -1 | null>(null);
+
+  /* Solo si CAMBIA: la tabla vuelve a avisar del orden cada vez que recibe filas nuevas. */
+  protected onSortChange(event: ScDatatableSortEvent): void {
+    const orden = event.field === 'group' && (event.order === 1 || event.order === -1) ? event.order : null;
+    if (orden !== this.orden()) this.orden.set(orden);
+  }
+
   protected readonly visibleRows = computed<readonly VisibleRow[]>(() => {
     const links = new Map(this.links().map((l) => [l.groupId, l]));
-    return this.filteredGroups().map((group) => {
+    const orden = this.orden();
+    const groups = orden
+      ? [...this.filteredGroups()].sort((a, b) => a.name.localeCompare(b.name, 'es') * orden)
+      : this.filteredGroups();
+    return groups.map((group) => {
       const link = links.get(group.id);
       return { group, link: link ? clampLinksToChannels([link], group.channels, () => this.allowedChannels())[0] : null };
     });
@@ -274,7 +310,7 @@ export class GroupAssignmentTableComponent {
       field === 'assigned'
         ? !!row.link || this.compatible(row.group)
         : field === 'active'
-          ? !!row.link
+          ? !!row.link && !this.selfActivate()
           : !!row.link && this.offers(row.group, field) && this.allowed(field),
     );
   }
@@ -306,12 +342,14 @@ export class GroupAssignmentTableComponent {
     });
   }
 
-  private bulkAction(field: string, remove: boolean): string {
-    if (field === 'assigned') return this.translate.instant(`agents.form.assigned.${remove ? 'bulk_remove' : 'bulk_add'}`);
-    if (field === 'active') return this.translate.instant(`groups.form.assigned.${remove ? 'bulk_disable' : 'bulk_enable'}`);
-    return this.translate.instant(`groups.form.assigned.${remove ? 'bulk_channel_remove' : 'bulk_channel_add'}`, {
-      channel: this.translate.instant(FAMILY_LABEL_KEYS[field as ChannelFamily]),
-    });
+  /** La pregunta y su botón, como en la tabla del grupo: «¿Quitar el agente de 3 grupos?» · «Quitar» (SISMAC-4058). */
+  private bulkCopy(field: string, remove: boolean, count: number): { readonly ask: string; readonly verb: string } {
+    const ask = (key: string, params?: Record<string, unknown>) => this.translate.instant(`agents.form.assigned.bulk_ask.${key}`, { count, ...params });
+    const verb = (key: string) => this.translate.instant(`groups.form.assigned.bulk_verb.${key}`);
+    if (field === 'assigned') return remove ? { ask: ask('remove'), verb: verb('remove') } : { ask: ask('add'), verb: verb('assign') };
+    if (field === 'active') return remove ? { ask: ask('disable'), verb: verb('disable') } : { ask: ask('enable'), verb: verb('enable') };
+    const channel = this.translate.instant(FAMILY_LABEL_KEYS[field as ChannelFamily]);
+    return remove ? { ask: ask('channel_remove', { channel }), verb: verb('remove') } : { ask: ask('channel_add', { channel }), verb: verb('activate') };
   }
 
   /** Cambia la columna entera en las filas a la vista; con dos o más, confirma antes (DD-151). */
@@ -322,13 +360,14 @@ export class GroupAssignmentTableComponent {
     const remove = this.headerState(field) === 'all';
     this.pending.set(true);
     try {
+      const copy = this.bulkCopy(field, remove, rows.length);
       if (
         rows.length >= 2 &&
         !(await this.confirm.request({
-          title: this.translate.instant('groups.form.assigned.bulk_title'),
-        target: celda?.querySelector('input') ?? celda,
-          body: this.translate.instant('agents.form.assigned.bulk_body', { action: this.bulkAction(field, remove), count: rows.length }),
-          acceptLabel: this.translate.instant('groups.form.assigned.bulk_confirm'),
+          title: copy.ask,
+          target: celda?.querySelector('input') ?? celda,
+          body: copy.ask,
+          acceptLabel: copy.verb,
           rejectLabel: this.translate.instant('common.cancel'),
         }))
       )
@@ -356,7 +395,7 @@ export class GroupAssignmentTableComponent {
           ),
         );
       }
-      this.announcement.set(this.translate.instant('groups.form.assigned.bulk_done', { count: rows.length }));
+      this.announcement.set(this.translate.instant('agents.form.assigned.bulk_done', { count: rows.length }));
     } finally {
       this.pending.set(false);
     }

@@ -57,6 +57,28 @@ El de la revisión de producto del 2026-10-16 (DD-211): `git show bacaf233:docs/
 sube a «Trampas del frente».
 El de «Agentes» sin fijar y el tooltip del Kit (2026-10-19, DD-212, #456 y #462): `git show
 e88a52f7:docs/handoff/supervisor-fichas.md`; sus trampas suben a «Trampas del frente».
+El de Grupos y agentes en Figma para desarrollo (2026-10-18 y 19: los ids de cada página y de «Fuera del DS», «Hand-off»
+y «Mapa de componentes») y el del relleno de la tabla (2026-10-19, DD-214): `git show
+8c9297a7:docs/handoff/supervisor-fichas.md`; la trampa del primero sube a «Trampas del frente».
+
+## ✅ 2026-10-20 · Grupos como sus páginas de COA: cifra a la ficha, duplicar a un alta, eliminar varios y «Agentes asignados» sin estado (DD-218)
+
+> **Sello:** rama `areses/prototype-coa-groups-alignment-eaa42d` sobre `main` `02df3933`, un PR.
+
+- **Listado**: la cifra de agentes lleva a `?seccion=agentes` de la ficha (el panel rápido solo queda en el Monitor);
+  duplicar abre `/admin/grupos/crear?seedFromId=:id`; con dos o más marcados, el clic derecho sobre uno solo ofrece
+  «Eliminar» (`selectionMenu` de `sc-list-page`); sin columna ID; Servicios y Agentes de mayor a menor al primer clic
+  (`ScColumnDef.defaultSortOrder`, DS).
+- **Ficha**: la miga acaba en el nombre guardado (`BreadcrumbService.nombrar`, también en la de agente); sin
+  tipificaciones, «Tipificar conversaciones» apagado con su ayuda; fuera 1,5 min; «Mensaje de día no laborable»;
+  «Gestionar en Repositorios» con cambios pregunta si guardar (también en la de agente).
+- **«Agentes asignados»**: fuera el filtro de estado y equipos y el punto del avatar; «Agente» (y «Grupo» en la gemela)
+  ordena por nombre con la flecha del DS (`ScColumnDef.headerTemplate` para la casilla de «todos»); nivel en
+  `sc-select` 1–10; Habilitado bloqueado con «Activación por grupo»; la confirmación de columna dice qué y a cuántos.
+- **Textos**: eliminar con el nombre en el título (`injectConfirmarBorrado(titleKey)`, un título por entidad) y los
+  avisos con «».
+- **Pendiente**: Figma (§56) y las correcciones de COA (fuera del repo). Tras fundir, avanzar `proto/SISMAC-4058`, 4062
+  y 4064 (`docs/PROTOTIPOS.md`).
 
 ## ✅ 2026-10-20 · Lo que falta se dice al pulsar Crear, grupos sin canales, duplicar sin diálogo, Recursos en chips y el punto final (DD-217)
 
@@ -67,7 +89,7 @@ e88a52f7:docs/handoff/supervisor-fichas.md`; sus trampas suben a «Trampas del f
   canales. Sin puertas. Reglas puras en `alta-secciones.core.mjs`, con su test. En grupo, agente, usuario y tipificación.
 - **Fuera**: `sc-summary-status`, el motivo junto al botón, los amarillos de las fichas y `group-duplicate-dialog`.
 - **Grupo**: canales opcionales (sin canales se pertenece sin canal); quitar y poner un canal ya no recorta los enlaces
-  (`linksVistos`); duplicar en el acto como «X (1)» (`nombreDeCopia`); Recursos en chips sin «+» ni lápiz, la «×» en
+  (`linksVistos`); duplicar como «X (1)» (`nombreDeCopia`; en el acto, y al alta rellena desde DD-218); Recursos en chips sin «+» ni lápiz, la «×» en
   rojo al pasar (`sc-multiselect`, DS); el resumen de Recursos lleva a su campo; la tipificación sin descripción.
 - **Segunda vuelta**: Recursos a media columna, chips que caben (`fit`, el largo con «…»), tooltip con lo que contiene
   en las tres listas (§15); editores sin «Falta»; punto final (`i18n:check` I); barrido (§13); rótulos por `[label]`,
@@ -114,49 +136,6 @@ e88a52f7:docs/handoff/supervisor-fichas.md`; sus trampas suben a «Trampas del f
 - **Trampas**: un marco de documentación a HUG estira las variantes FILL y cambia el maestro. En otro fichero, busca
   por la clave del maestro. «El Aura» son dos: el de PrimeNG 22 sin escalar (8 × 14) y el de los devs (10,5 × 14). Cambiar de variante la pieza de fuera
   rehace las de dentro (ve de dentro afuera) y a un resumen le borra los datos: una propiedad no.
-
-## ✅ 2026-10-18 y 19 · Grupos y agentes en Figma para desarrollo: listado, altas, ediciones y su hand-off
-
-> **Sello:** sin código. Fichero del Supervisor (`Hjyy41SYKqcRuIzCGggfYH`); en el repo, solo docs (ramas
-> `arebury/figma-fichas-orden` sobre `main` `33dd2c90` y `arebury/figma-fichas-numeros` sobre `3f225663`).
-
-- **Dónde está** (2026-10-19): cada página abre con un índice que enlaza sus secciones, a 1920. «Grupos»: índice
-  `3124:47747`, «1. Listado de grupos» `3118:16995`, «2. Alta de grupo» `3010:6411`, «3. Edición de grupo» `3055:11053`.
-  «Agentes»: índice `3124:47856`, «1. Alta de agente» `3070:26714`, «2. Edición de agente» `3110:31067`. «Fuera del DS»
-  (`3034:114`): nueve fichas, dibujo frente a app, de lo que se construye distinto. «Hand-off: Grupos y agentes»
-  (`2997:47`): qué cambia (DD-211), lo contratado, cómo leer y reglas comunes; a su lado, «Mapa de componentes»
-  (`3149:191`): los 22 de ui.smart-contact.com (14 tal cual, 5 extendidos, 3 propios) y lo que falta.
-- **Listado de grupos, rehecho** (2026-10-19): 7 pasos con flechas en vez de 4 estados: 01 sin casillas, 02 menú de
-  fila, 03 diálogo "Duplicar grupo", 04 la copia en edición con el toast `Grupo "{nombre}" creado`, 05 "¿Eliminar
-  grupo?", 06 eliminado, 07 búsqueda sin resultados. Fuera la edición masiva (casillas, barra y editar en bloque), a otra
-  fase; "Acciones" se queda, solo exporta. En «Cómo se comporta», las filas 10 y 11 son "Duplicar" y "Eliminar".
-- **Agentes, igual** (2026-10-19): el listado, sin columna de casillas ni `selectionMode`, en sus tres pantallas (Paso 01
-  de Alta `3070:26732`, Paso 01 de Edición `3111:13984` y E4 `3111:31167`). Las casillas de "Asignado" de la tabla de
-  grupos de la ficha se quedan: son la asignación, no una selección.
-- **Eliminar sin escribir el nombre** (DD-145 lo pedía): confirmdialog del DS (`common.delete_dialog.title_single` y
-  `body_single`) en grupos (listado y ficha, sección 3, E5) y agentes (ficha, E3). Sale la ficha "Diálogo de eliminar"
-  de «Fuera del DS» y el maestro de `sc-delete-entity-dialog` de `figma-pendiente` §53.
-- **Lo que se fue**: las secciones a 1440 (`2934:580`, `2970:4752`); las pantallas sueltas, a Playground (`3124:39080`).
-- **Cómo está hecho**: instancias y variables del DS, medidas de sc-supervisor.pages.dev a 1920. Cada pantalla, una nota
-  (Dev Mode) con las filas que leer; bajo cada flujo, la hoja «Cómo se comporta» numera cada pieza una vez sin repetir
-  lo que enseña Dev Mode, y su número va en un círculo morado sobre la pantalla (marco «Guía» bloqueado; no es de la app).
-  Cada índice abre con «Cómo usar estas maquetas». Nativo de PrimeNG tapado por la app (`.sc-toast`): en Figma, el
-  nativo, y la diferencia, a «Fuera del DS». Maestros arreglados: «What's new» del DS. Kit: `figma-pendiente` §53 y §50.
-- **Pendiente**: marcar «Ready for dev» (a mano: la API no puede). «❖ DataTable» del DS, ordenada el 2026-10-19
-  (arriba). El prototipo ya va como Figma (DD-215, tramo de arriba).
-- **Trampa**: el fichero de la copia del DS con la tabla en slots (`C5soC7CxcuKSIFPEDCd3gz`, sección `16862:6447`) se
-  quedó con un placeholder del buscador anterior a `main`; lo que manda es el listado del Supervisor.
-
-## ✅ 2026-10-19 · El relleno de la tabla, el del Kit y el del DS de desarrollo (DD-214)
-
-> **Sello:** fundido en `main` como #461 (`56ebd85d`), el 2026-10-20. Sale el tramo del 2026-10-17 (DD-170 §6)
-> por el tope de 6: `git show 6edc21e9:docs/handoff/supervisor-fichas.md`; su trampa sube a «Trampas del frente».
-
-- **Qué**: `sc-datatable` lee el relleno del Kit (10,5 × 14; sm 5,25 × 7; lg 14 × 17,5), no el de Aura 3 sin escalar
-  (8 × 14). A 1440: cabecera y fila de texto de 37 a 42, como ui.smart-contact.com; la fila con ⋮, de 44 a 49.
-- **Pruebas**: `list-table-grammar` lee el relleno con `kitPx` (contra `main`, rojo con «8px 14px»); 31 + 59 en verde.
-- **Hecho** el 2026-10-20: la ficha 1 de `figma-pendiente` §54, marcada en el prototipo. Y, con DD-216, los tres huecos
-  que el Kit dibuja distinto de Aura (celda de cabecera, filtro en línea, popover del filtro): 7, como los devs.
 
 ## SIGUIENTE — sin preguntar
 
@@ -245,6 +224,8 @@ e88a52f7:docs/handoff/supervisor-fichas.md`; sus trampas suben a «Trampas del f
   nube no se puede.
 
 **Trampas del frente:**
+- **La copia del DS con la tabla en slots** (`C5soC7CxcuKSIFPEDCd3gz`, sección `16862:6447`) se quedó con un
+  placeholder del buscador anterior a `main`; lo que manda es el listado del Supervisor (`3118:16995`).
 - **`p-treetable-checkbox` repinta con `selectionSource$`, no al cambiar `[selectionKeys]`**: un mapa nuevo desde fuera no
   repinta las casillas (por eso el árbol de agendas pinta las suyas). Un toast en la pila de capas de PrimeNG
   (`autoZIndex`) le quita el Esc a un `p-dialog` abierto. En la nube, reinicia el `ng serve` de :4405 por su pid antes

@@ -103,7 +103,7 @@ test('grupo · sin canales se crea: los canales no son obligatorios', async ({ p
 
   await barra(page).getByRole('button', { name: 'Crear grupo' }).click();
   await expect(page).toHaveURL(/\/admin\/grupos\/editar\/\d+/);
-  await expect(page.locator('.p-toast-message').filter({ hasText: `Grupo "${nombre}" creado` })).toBeVisible();
+  await expect(page.locator('.p-toast-message').filter({ hasText: `Grupo «${nombre}» creado` })).toBeVisible();
   // Sin canales, Agentes asignados solo pide asignar y habilitar.
   await irASeccion(page, 'Agentes asignados');
   const cabecera = page.locator('sc-agent-channel-table thead');

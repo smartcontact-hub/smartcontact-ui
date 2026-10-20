@@ -98,7 +98,7 @@ test('un nombre que no cabe en sus dos líneas enseña el entero en el tooltip',
   await expect(tooltip(page)).toHaveText(enorme);
 });
 
-test('las cabeceras de las dos tablas de asignación miden lo mismo, con el filtro de «Agente» en la del grupo', async ({ page }) => {
+test('las cabeceras de las dos tablas de asignación miden lo mismo, con la flecha de ordenar en la primera columna', async ({ page }) => {
   const alto = async (ruta: string) => {
     await goto(page, ruta);
     const fila = page.locator('.assign sc-datatable thead tr').first();
@@ -106,19 +106,19 @@ test('las cabeceras de las dos tablas de asignación miden lo mismo, con el filt
     await fuentes(page);
     return fila.evaluate((tr) => tr.getBoundingClientRect().height);
   };
+  // Desde SISMAC-4058 (2026-10-20) «Agente» y «Grupo» ordenan por nombre, con la misma flecha: sin el filtro de estado.
   const grupo = await alto('admin/grupos/editar/11?seccion=agentes');
-  await expect(page.getByRole('button', { name: 'Filtrar por estado' })).toBeVisible();
+  await expect(page.locator('.assign thead th[data-field="agent"] p-sort-icon, .assign thead th[data-field="agent"] .p-sortable-column-icon').first()).toBeVisible();
   const agente = await alto('admin/agentes/editar/1?seccion=grupos');
+  await expect(page.locator('.assign thead th[data-field="group"] p-sort-icon, .assign thead th[data-field="group"] .p-sortable-column-icon').first()).toBeVisible();
   expect(Math.abs(grupo - agente), `grupo ${grupo} frente a agente ${agente}`).toBeLessThan(0.5);
 
-  // Con un estado elegido sale su etiqueta (21,75 contra los 20 de la línea): la cabecera tampoco crece.
+  // Ordenada, la cabecera tampoco crece.
   await goto(page, 'admin/grupos/editar/11?seccion=agentes');
-  await page.getByRole('button', { name: 'Filtrar por estado' }).click();
-  await page.locator('.p-popover sc-checkbox').first().click();
-  await page.keyboard.press('Escape');
-  await expect(page.locator('.assign__agent-head sc-tag')).toBeVisible();
-  const conFiltro = await page.locator('.assign sc-datatable thead tr').first().evaluate((tr) => tr.getBoundingClientRect().height);
-  expect(Math.abs(conFiltro - agente), `con filtro ${conFiltro} frente a agente ${agente}`).toBeLessThan(0.5);
+  await page.locator('.assign thead th[data-field="agent"]').click();
+  await expect(page.locator('.assign thead th[data-field="agent"]')).toHaveAttribute('aria-sort', 'ascending');
+  const ordenada = await page.locator('.assign sc-datatable thead tr').first().evaluate((tr) => tr.getBoundingClientRect().height);
+  expect(Math.abs(ordenada - agente), `ordenada ${ordenada} frente a agente ${agente}`).toBeLessThan(0.5);
 });
 
 test('«Ver detalle», bajo la tipificación: su texto empieza en la vertical del campo', async ({ page }) => {

@@ -5,8 +5,9 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
 /**
  * EL CAJÓN MODAL SE LLEVA EL FOCO Y SE ANUNCIA COMO DIÁLOGO (`sc-drawer`, 2026-10-05).
  *
- * Medido en el panel de agentes, desde el listado de grupos y desde el Monitor: al abrirse, el foco se quedaba en el
- * botón que lo abría, FUERA del panel, y PrimeNG lo pinta como `complementary`. Escape no cerraba sin tabular antes
+ * Medido en el panel de agentes del Monitor (desde el 2026-10-20 el único sitio que lo abre: la cifra del listado de
+ * grupos lleva a la ficha, SISMAC-4056): al abrirse, el foco se quedaba en el botón que lo abría, FUERA del panel, y
+ * PrimeNG lo pinta como `complementary`. Escape no cerraba sin tabular antes
  * (su tecla la escucha el contenido del panel) y el lector seguía en la página de atrás. La vuelta del foco al cerrar
  * la hacía el panel a mano (DD-168); la vigilan `panel-agentes-grupo.spec.ts` y `panel-agentes-monitor.spec.ts`, y
  * aquí se comprueba también tras Escape.
@@ -34,14 +35,6 @@ const comprobar = async (page: Page, quienAbre: Locator, grupo: string): Promise
   await expect(panel(page)).toHaveCount(0);
   await expect(quienAbre).toBeFocused();
 };
-
-test('desde el listado de grupos', async ({ page }) => {
-  await goto(page, 'admin/grupos');
-  const cifra = page.getByRole('button', { name: 'Asignar agentes de Reclamaciones' });
-  await cifra.click();
-  await expect(panel(page)).toBeVisible();
-  await comprobar(page, cifra, 'Reclamaciones');
-});
 
 test('desde el Monitor', async ({ page }) => {
   await goto(page, 'dashboard');

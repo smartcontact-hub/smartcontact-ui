@@ -26,3 +26,27 @@ test('miga · solo el último tramo es la página actual', async ({ page }) => {
   expect(marcados.at(-1)).toBe('page');
   expect(marcados.slice(0, -1).every((v) => v === null), `un padre se anuncia como actual: ${marcados}`).toBe(true);
 });
+
+/* SISMAC-4058 (2026-10-20): en la edición de un grupo, y de su gemela la de agente, el último tramo es el nombre GUARDADO
+ * («Administración › Grupos › Online Support»), no «Editar grupo»; mientras se teclea no cambia, y al guardar sí. En el
+ * alta, el de la ruta. */
+test('miga · la edición de un grupo o un agente acaba en su nombre guardado, y el alta en «Nuevo»', async ({ page }) => {
+  const ultimo = page.locator('sc-top-bar sc-breadcrumb .p-breadcrumb-list > li').last();
+  await goto(page, 'admin/agentes/editar/1');
+  await expect(ultimo).toHaveText('Tom Hanks');
+  await goto(page, 'admin/grupos/crear');
+  await expect(ultimo).toHaveText('Nuevo grupo');
+  await goto(page, 'admin/grupos/editar/11');
+  await expect(ultimo).toHaveText('Online Support');
+
+  await page.locator('.headline__name .p-inplace-display').click();
+  await page.locator('.name-inplace__input').fill('Soporte en línea');
+  await page.locator('.name-inplace__input').press('Enter');
+  await expect(ultimo, 'lo tecleado aún no es el nombre del grupo').toHaveText('Online Support');
+  await page.locator('sc-top-bar').getByRole('button', { name: 'Guardar', exact: true }).click();
+  await expect(ultimo).toHaveText('Soporte en línea');
+
+  // Y al salir, la de la página a la que se llega.
+  await page.locator('sc-top-bar sc-breadcrumb').getByRole('link', { name: 'Grupos', exact: true }).click();
+  await expect(ultimo).toHaveText('Grupos');
+});

@@ -17,24 +17,30 @@ async function seed(page: Page, phone = true, chat = true) {
     ]));
   }, { phone, chat });
 }
-const level = (page: Page, family: string) => page.getByRole('spinbutton', { name: `Nivel de Tom Hanks — ${family}`, exact: true });
+/** El nivel es un desplegable del 1 al 10 en la columna de su canal (SISMAC-4058, 2026-10-20; antes, un número con − y +). */
+const level = (page: Page, family: string) => page.getByRole('combobox', { name: `Nivel de Tom Hanks — ${family}`, exact: true });
+const elegirNivel = async (page: Page, family: string, valor: string) => {
+  await level(page, family).click();
+  await page.locator('.p-select-overlay').getByRole('option', { name: valor, exact: true }).click();
+  await expect(level(page, family)).toHaveText(valor);
+};
 
-for (const panel of [false, true]) {
+// La tabla es la misma en la ficha y en el panel del Monitor; desde el 2026-10-20 el panel ya no se abre desde el listado
+// de grupos (SISMAC-4056), y se mide en la ficha.
+{
   for (const families of [['Teléfono'], ['Chat'], ['Teléfono', 'Chat']]) {
-    test(`${panel ? 'panel' : 'ficha'} guarda niveles independientes: ${families.join(' y ')}`, async ({ page }) => {
+    test(`la ficha guarda niveles independientes: ${families.join(' y ')}`, async ({ page }) => {
       await seed(page, families.includes('Teléfono'), families.includes('Chat'));
-      await goto(page, panel ? 'admin/grupos' : 'admin/grupos/editar/11?seccion=agentes');
-      if (panel) await page.getByRole('button', { name: 'Asignar agentes de Niveles independientes' }).click();
+      await goto(page, 'admin/grupos/editar/11?seccion=agentes');
       const table = page.locator('sc-agent-channel-table');
       for (const family of ['Teléfono', 'Chat']) {
         await expect(table.getByRole('columnheader', { name: `Nivel ${family}`, exact: true })).toHaveCount(families.includes(family) ? 1 : 0);
       }
       for (const family of families) {
-        await expect(level(page, family)).toHaveValue(family === 'Teléfono' ? '5' : '10');
-        await level(page, family).fill(family === 'Teléfono' ? '10' : '1');
-        if (panel) await expect(page.getByRole('button', { name: 'Guardar (1)', exact: true })).toBeEnabled();
+        await expect(level(page, family)).toHaveText(family === 'Teléfono' ? '5' : '10');
+        await elegirNivel(page, family, family === 'Teléfono' ? '10' : '1');
       }
-      await page.getByRole('button', { name: panel ? 'Guardar (1)' : 'Guardar', exact: true }).click();
+      await page.getByRole('button', { name: 'Guardar', exact: true }).click();
       await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('sc-group-agent-links')!)[0]?.level)).toBeUndefined();
       const saved = await page.evaluate(() => ({ version: localStorage.getItem('sc-group-agent-links-v'), links: JSON.parse(localStorage.getItem('sc-group-agent-links')!) }));
       expect(saved.version).toBe('1');
@@ -80,8 +86,8 @@ test('Email reparte por Niveles como Teléfono: su «Dentro de cada nivel» y su
   const table = page.locator('sc-agent-channel-table');
   await expect(table.getByRole('columnheader', { name: 'Nivel Email', exact: true })).toHaveCount(1);
   await expect(table.getByRole('columnheader', { name: 'Nivel Teléfono', exact: true })).toHaveCount(0);
-  await expect(level(page, 'Email')).toHaveValue('3');
-  await level(page, 'Email').fill('7');
+  await expect(level(page, 'Email')).toHaveText('3');
+  await elegirNivel(page, 'Email', '7');
   await page.getByRole('button', { name: 'Guardar', exact: true }).click();
   await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('sc-group-agent-links')!)[0].levels.email)).toBe(7);
 });
@@ -94,11 +100,7 @@ for (const theme of ['light', 'dark']) {
       await page.setViewportSize({ width, height: 900 });
       await goto(page, 'admin/grupos/editar/11?seccion=agentes');
       const table = page.locator('sc-agent-channel-table');
-      for (const panel of [false, true]) {
-        if (panel) {
-          await goto(page, 'admin/grupos');
-          await page.getByRole('button', { name: 'Asignar agentes de Niveles independientes' }).click();
-        }
+      for (const panel of [false] as const) {
         await page.evaluate(() => document.fonts.ready);
         for (const family of ['Teléfono', 'Chat']) await expect(level(page, family)).toBeVisible();
         const geometry = await table.evaluate((el) => {

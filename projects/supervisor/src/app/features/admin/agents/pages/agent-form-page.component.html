@@ -636,7 +636,9 @@
       </div>
 
       <!-- Dónde se crean y se editan. -->
-      <a class="repo-link sc-text-caption-semibold" routerLink="/admin/repositorios">{{ 'resources.manage_link' | translate }}</a>
+      <!-- Sale de la ficha: con cambios, pide guardar antes, como la de grupo (SISMAC-4058). Con Cmd+clic o el botón
+           central se abre en otra pestaña sin preguntar. -->
+      <a class="repo-link sc-text-caption-semibold" [href]="repositoriosHref" (click)="irARepositorios($event)">{{ 'resources.manage_link' | translate }}</a>
       </div>
     </sc-subsection>
   </sc-section-card>
@@ -662,6 +664,7 @@
         [availableGroups]="availableGroups()"
         [agentId]="editingId() ?? 0"
         [allowedChannels]="form().allowedChannels"
+        [selfActivate]="form().permissions.selfActivate"
         [outboundGroupId]="outboundGroupId()"
         (linksChange)="onLinksChange($event)"
         (outboundGroupChange)="updateField('defaultOutboundGroupId', $event)"

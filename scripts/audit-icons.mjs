@@ -401,7 +401,6 @@ function objetoQueEnvuelve(fuente, i) {
  * worktrees sin guardar y el PR #380 tocan estas pantallas). Se arreglan cuando aterricen. Solo mengua.
  */
 export const PENDIENTES = {
-    'projects/supervisor/src/app/features/admin/groups/components/agent-channel-table/agent-channel-table.component.html': 1,
     'projects/supervisor/src/app/features/admin/groups/pages/group-form-page.component.html': 2,
 };
 

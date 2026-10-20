@@ -167,7 +167,7 @@ test('«Desbordar sesión» sale de la ficha y de Contact Center, y lo que tení
   const espera = page.locator('#group-phone-max-wait');
   await pickSelectOption(page, espera, '30 s');
   await page.getByRole('button', GUARDAR).click();
-  await expect(page.getByText('Grupo "E2E Sesión desbordada" actualizado')).toBeVisible();
+  await expect(page.getByText('Grupo «E2E Sesión desbordada» actualizado')).toBeVisible();
   const enElGrupo = await page.evaluate(() => JSON.parse(localStorage.getItem('sc-groups') ?? '[]')[0]?.advanced?.overflowSession);
   expect(enElGrupo, 'el grupo lo conserva').toBe(true);
 

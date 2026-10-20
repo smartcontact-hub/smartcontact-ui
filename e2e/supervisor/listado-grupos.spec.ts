@@ -10,8 +10,9 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  *   1. Una columna por estrategia, la de Teléfono y la de Chat (opcional: con las dos a la vez no caben a 1440
  *      sin recortar), y «—» en la de un canal que el grupo no tiene (antes enseñaba una estrategia de teléfono
  *      que no aplicaba).
- *   2. Sin casillas ni edición en lote (DD-215, como en Figma): lo de cada grupo va por su menú de fila, y
- *      «Eliminar» es la confirmación simple del DS, sin teclear el nombre.
+ *   2. Casillas para elegir y exportar, sin edición en lote (DD-215): lo de cada grupo va por su menú de fila, y
+ *      «Eliminar» es la confirmación simple del DS, sin teclear el nombre. Con dos o más marcados, el clic derecho
+ *      sobre uno de ellos ofrece solo «Eliminar» para todos (SISMAC-4056, 2026-10-20).
  *   3. Prioridad ordena por rango, de Baja a Máxima (antes, alfabético: Alta < Baja < Máxima < Media).
  *   4. Nada se recorta a 1440 (DD-102: una lista no recorta): ni una cabecera ni una etiqueta. Con la columna
  *      de chat encendida, la tabla se desplaza de lado en vez de cortar. Tampoco las estrategias más largas de
@@ -118,12 +119,13 @@ test('casillas sin barra de lote: «Eliminar» del menú de fila pregunta una ve
 
   const abrirMenu = () => fila(page, 'Reclamaciones').locator('.rules-kebab-btn').click();
   const eliminar = page.locator('.p-menu-overlay .p-menu-item-link').filter({ hasText: /eliminar/i });
-  const pregunta = page.getByRole('alertdialog', { name: '¿Eliminar grupo?' });
+  // El título pregunta con el nombre y el cuerpo solo añade lo que no se sabe (2026-10-20).
+  const pregunta = page.getByRole('alertdialog', { name: '¿Eliminar el grupo «Reclamaciones»?' });
 
   await abrirMenu();
   await expect(eliminar, 'sin puntos suspensivos: no lleva a la puerta tecleada').toHaveText(/^\s*Eliminar\s*$/);
   await eliminar.click();
-  await expect(pregunta).toContainText('Vas a eliminar el grupo «Reclamaciones». Esta acción no se puede deshacer.');
+  await expect(pregunta).toContainText('Esta acción no se puede deshacer.');
   await expect(pregunta.getByRole('textbox'), 'no pide escribir el nombre').toHaveCount(0);
   await pregunta.getByRole('button', { name: 'Cancelar' }).click();
   await expect(fila(page, 'Reclamaciones'), 'cancelar no borra').toBeVisible();
@@ -132,7 +134,43 @@ test('casillas sin barra de lote: «Eliminar» del menú de fila pregunta una ve
   await eliminar.click();
   await pregunta.getByRole('button', { name: 'Eliminar' }).click();
   await expect(fila(page, 'Reclamaciones')).toHaveCount(0);
-  await expect(page.locator('.p-toast-message')).toContainText('Reclamaciones');
+  await expect(page.locator('.p-toast-message')).toContainText('Grupo «Reclamaciones» eliminado');
+});
+
+test('con dos marcados, el clic derecho sobre uno ofrece solo «Eliminar» y borra los dos; fuera de ellos, el menú de su fila', async ({ page }) => {
+  await goto(page, 'admin/grupos');
+  const opciones = page.locator('.p-menu-overlay .p-menu-item-link');
+  for (const grupo of ['Reclamaciones', 'Online Support']) await fila(page, grupo).locator('p-table-checkbox').click();
+
+  // Una fila sin marcar, y el «⋮» de una marcada: el menú de esa fila.
+  await fila(page, 'ACD Demo C2CB').locator('td').nth(1).click({ button: 'right' });
+  await expect(opciones.first()).toBeVisible();
+  await expect(opciones).toHaveText([/Editar/, /Duplicar/, /Eliminar/]);
+  await page.keyboard.press('Escape');
+  await expect(opciones).toHaveCount(0);
+  await fila(page, 'Reclamaciones').locator('.rules-kebab-btn').click();
+  await expect(opciones).toHaveText([/Editar/, /Duplicar/, /Eliminar/]);
+  await page.keyboard.press('Escape');
+  await expect(opciones).toHaveCount(0);
+
+  // Clic derecho sobre una marcada: lo de todas, y solo borrar (sin edición en lote, DD-215).
+  await fila(page, 'Reclamaciones').locator('td').nth(1).click({ button: 'right' });
+  await expect(opciones).toHaveText([/^\s*Eliminar\s*$/]);
+  await opciones.click();
+  const pregunta = page.getByRole('alertdialog', { name: '¿Eliminar 2 grupos?' });
+  await expect(pregunta).toContainText('Esta acción no se puede deshacer.');
+  await pregunta.getByRole('button', { name: 'Eliminar' }).click();
+
+  await expect(fila(page, 'Reclamaciones')).toHaveCount(0);
+  await expect(fila(page, 'Online Support')).toHaveCount(0);
+  await expect(fila(page, 'ACD Demo C2CB')).toHaveCount(1);
+  await expect(page.locator('.p-toast-message')).toContainText('2 grupos eliminados');
+  // Y sus agentes, desasignados: no quedan enlaces a un grupo que ya no existe.
+  const huerfanos = await page.evaluate(() => {
+    const ids = new Set((JSON.parse(localStorage.getItem('sc-groups')!) as { id: number }[]).map((g) => g.id));
+    return (JSON.parse(localStorage.getItem('sc-group-agent-links') ?? '[]') as { groupId: number }[]).filter((l) => !ids.has(l.groupId)).length;
+  });
+  expect(huerfanos).toBe(0);
 });
 
 test('Prioridad ordena de Baja a Máxima, no por orden alfabético', async ({ page }) => {

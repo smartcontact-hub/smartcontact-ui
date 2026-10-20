@@ -163,7 +163,7 @@ test('cambiar el estado en la ficha de un agente lo cambia en el Dashboard', asy
   await page.getByRole('button', { name: 'Guardar' }).click();
   /* Se espera al aviso, no al botón: mientras guarda, el botón ya está apagado (cargando) y el guardado llega 400 ms
    * después. Medido el 2026-10-01: navegar en ese hueco perdía el cambio, y el listado seguía en «Comida». */
-  await expect(page.getByText(`Agente "${objetivo.nombre}" actualizado`), 'guardado').toBeVisible();
+  await expect(page.getByText(`Agente «${objetivo.nombre}» actualizado`), 'guardado').toBeVisible();
   // El cambio llegó a Administración: si no, que el Dashboard no lo enseñe no probaría nada.
   await goto(page, 'admin/agentes');
   expect(await estadoEnElListado(page, objetivo.nombre), 'el listado ya lo enseña disponible').toBe('Disponible');

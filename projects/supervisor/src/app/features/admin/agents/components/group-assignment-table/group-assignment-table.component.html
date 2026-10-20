@@ -12,24 +12,11 @@
   <!-- Mide lo que todas sus filas, con el pie de la pantalla de tope: al filtrar o buscar no encoge (no baila), y con
        pocos grupos no se estira hasta el fondo con un hueco en blanco (`[filasReservadas]` de `scLlegaAlPie`). -->
   <div class="table-card table-card--al-pie" scLlegaAlPie [filasReservadas]="availableGroups().length">
+    <!-- La cabecera es la del DS, como en la tabla del grupo: la casilla de «todos» en su `headerTemplate`, y «Grupo» se
+         ordena por nombre con su flecha (SISMAC-4058). -->
     <sc-datatable variant="list" size="sm" scrollable scrollHeight="flex" virtualScroll
-      [value]="visibleRows()" [columns]="columns()" [tableMinWidth]="tableMinWidth" dataKey="group.id">
-      <ng-template #header>
-        <tr>
-          @for (col of columns(); track col.field) {
-            <th #celda scope="col" [style.text-align]="col.align" [style.width]="col.width" [attr.aria-label]="col.header">
-              @if (hasHeaderCheckbox(col.field)) {
-                <!-- La casilla de «todos» después del rótulo, como en la tabla del grupo (DD-185). -->
-                <sc-checkbox [state]="headerState(col.field)" [disabled]="headerDisabled(col.field)" labelPosition="start"
-                  [ariaLabel]="'groups.form.assigned.column_all' | translate: { column: col.header }"
-                  (cycle)="toggleHeader(col.field, celda)">
-                  @if (col.field !== 'assigned') { <span class="sc-text-body-semibold">{{ col.header }}</span> }
-                </sc-checkbox>
-              } @else { {{ col.header }} }
-            </th>
-          }
-        </tr>
-      </ng-template>
+      [value]="visibleRows()" [columns]="columns()" [tableMinWidth]="tableMinWidth" dataKey="group.id"
+      externalSort [sortField]="orden() ? 'group' : undefined" [sortOrder]="orden() ?? 1" (sortChange)="onSortChange($event)">
       <div scTableEmpty>
         <sc-empty-state icon="search_off" titleKey="labels.no_results.title" bodyKey="agents.form.assigned.no_results" />
       </div>
@@ -57,6 +44,17 @@
     </div>
   }
 </div>
+
+<!-- La casilla de «todos» después del rótulo, como en la tabla del grupo (DD-185); el globo, pegado a ella (`ancla`). -->
+<ng-template #headerCheckTpl let-col>
+  <span #ancla class="assign__head-check">
+    <sc-checkbox [state]="headerState(col.field)" [disabled]="headerDisabled(col.field)" labelPosition="start"
+      [ariaLabel]="'groups.form.assigned.column_all' | translate: { column: col.header }"
+      (cycle)="toggleHeader(col.field, ancla)">
+      @if (col.field !== 'assigned') { <span class="sc-text-body-semibold">{{ col.header }}</span> }
+    </sc-checkbox>
+  </span>
+</ng-template>
 
 <!-- Celdas. Fuera del `<sc-datatable>` para que `viewChild` las resuelva. -->
 <ng-template #assignedTpl let-row>
@@ -113,10 +111,19 @@
   }
 </ng-template>
 
-<!-- Habilitado. Lo cambia el supervisor también con «Activación por grupo» (que deja al agente hacerlo, no se lo quita
-     a la ficha). -->
+<!-- Habilitado. Con «Activación por grupo» el agente se habilita desde su puesto: aquí se ve, pero no se toca, con el
+     porqué al pasar (SISMAC-4058), como en la tabla del grupo. -->
 <ng-template #activeTpl let-row>
-  @if (!row.link) {
+  @if (row.link && selfActivate()) {
+    <span class="assign__locked" [pTooltip]="'agents.form.assigned.self_activate_hint' | translate" tooltipPosition="top">
+      <sc-toggleswitch
+        size="sm"
+        [checked]="row.link.active"
+        [disabled]="true"
+        [ariaLabel]="'agents.form.assigned.self_activate_hint' | translate"
+      />
+    </span>
+  } @else if (!row.link) {
     <!-- Sin asignar: el interruptor apagado dice por qué, no solo que no se puede tocar. -->
     <sc-toggleswitch
       size="sm"

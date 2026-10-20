@@ -129,7 +129,7 @@ test('guardar avisa como en el listado, cierra el panel y devuelve el foco a «A
   await panel(page).locator('tbody tr').first().getByRole('checkbox', { name: /^Asignado —/ }).click();
   await panel(page).getByRole('button', { name: 'Guardar (1)' }).click();
 
-  await expect(page.getByText('Agentes de "Exclusivo" actualizados')).toBeVisible();
+  await expect(page.getByText('Agentes de «Exclusivo» actualizados')).toBeVisible();
   await expect(panel(page)).toHaveCount(0);
   await expect(agentes).toBeFocused();
 });
@@ -183,7 +183,7 @@ test('un grupo renombrado en Administración sale con su nombre nuevo', async ({
   await page.keyboard.press('Enter');
   await page.getByRole('button', { name: 'Guardar' }).click();
   // El aviso sale cuando el almacén ya lo tiene: salir antes puede perder el nombre nuevo.
-  await expect(page.getByText('Grupo "Exclusivo VIP" actualizado')).toBeVisible();
+  await expect(page.getByText('Grupo «Exclusivo VIP» actualizado')).toBeVisible();
 
   await irAColasYAgentes(page);
   const agentes = tarjetaGrupos(page).getByRole('button', { name: 'Asignar agentes', exact: true });

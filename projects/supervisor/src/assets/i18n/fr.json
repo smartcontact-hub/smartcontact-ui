@@ -997,10 +997,7 @@
     "groups_count_short": "{{count}}",
     "groups_more": "+{{count}} de plus",
     "delete_dialog": {
-      "title_single": "Supprimer {{entity}} ?",
-      "title_bulk": "Supprimer {{count}} {{entity}} ?",
-      "body_single": "Vous allez supprimer le {{entity}} «{{name}}». Cette action ne peut pas être annulée.",
-      "body_bulk": "Cette action ne peut pas être annulée. Les {{entity}} suivants seront supprimés :",
+      "body": "Cette action ne peut pas être annulée.",
       "type_to_confirm": "Tapez le nom pour confirmer :",
       "empty_pruned": "Vous avez écarté tous les éléments. Restaurez la liste ou annulez.",
       "reset": "Restaurer la liste"
@@ -1871,6 +1868,10 @@
     "search_placeholder": "Rechercher des groupes…",
     "no_results_query": "Aucun groupe ne correspond à « {{query}} ».",
     "entity_singular": "groupe",
+    "delete_dialog": {
+      "title": "Supprimer le groupe «{{name}}» ?",
+      "title_bulk": "Supprimer {{count}} groupes ?"
+    },
     "table": {
       "code": "ID",
       "name": "Nom",
@@ -1922,10 +1923,6 @@
         "agents_hint": "Qui traite et par quels canaux"
       },
       "assigned": {
-        "filter_status": "Filtrer par état ou équipe",
-        "filter_status_count": "{{count}} filtres",
-        "filter_status_count_one": "1 filtre",
-        "filter_status_clear": "Effacer les filtres",
         "query_placeholder": "Rechercher des agents…",
         "empty_title": "Aucun agent assigné",
         "empty": "Choisissez-les dans « Ajouter des agents », en haut à droite.",
@@ -1934,6 +1931,7 @@
         "col_active": "Activé",
         "active_aria": "Activé dans ce groupe : {{name}}",
         "not_assigned_hint": "{{name}} n'est pas assigné\u00a0: s'active une fois assigné",
+        "self_activate_hint": "{{name}} s'active depuis son poste : il a «Activation par groupe»",
         "incompatible": "Aucun canal compatible",
         "not_allowed": "{{name}} — {{channel}} : ne fait pas partie des canaux de l'agent",
         "not_allowed_hint": "{{channel}} ne fait pas partie des canaux de cet agent\u00a0: ils se cochent dans sa fiche",
@@ -1943,7 +1941,6 @@
         "warn_no_channels": "Activé, mais sans canal assigné",
         "add_placeholder": "Ajouter des agents…",
         "add_aria": "Ajouter un agent au groupe",
-        "bulk_unassign": "Retirer du groupe",
         "col_level": "Niveau {{channel}}",
         "level_aria": "Niveau de {{name}} — {{channel}}",
         "paused": "Désactivé",
@@ -1955,17 +1952,22 @@
         "filter_unassigned": "Non affectés",
         "filter_label": "Filtrer par affectation",
         "column_all": "Modifier {{column}} dans les résultats filtrés",
-        "bulk_title": "Confirmer les modifications collectives",
-        "bulk_body": "{{action}} : {{count}} agents.",
-        "bulk_add": "Affecter au groupe",
-        "bulk_remove": "Retirer du groupe",
-        "bulk_channel_add": "Activer {{channel}}",
-        "bulk_channel_remove": "Retirer {{channel}}",
-        "bulk_enable": "Activer",
-        "bulk_disable": "Désactiver",
         "bulk_done": "{{count}} agents mis à jour.",
-        "bulk_confirm": "Confirmer",
-        "filter_by_state": "État"
+        "bulk_ask": {
+          "add": "Affecter {{count}} agents au groupe ?",
+          "remove": "Retirer {{count}} agents du groupe ?",
+          "enable": "Activer {{count}} agents ?",
+          "disable": "Désactiver {{count}} agents ?",
+          "channel_add": "Activer {{channel}} pour {{count}} agents ?",
+          "channel_remove": "Retirer {{channel}} à {{count}} agents ?"
+        },
+        "bulk_verb": {
+          "assign": "Affecter",
+          "remove": "Retirer",
+          "enable": "Activer",
+          "disable": "Désactiver",
+          "activate": "Activer"
+        }
       },
       "fields": {
         "name": "Nom",
@@ -2135,7 +2137,7 @@
         "message_final_placeholder": "Ex. : Merci de nous avoir écrit. À bientôt !",
         "message_schedule": "Message d’horaire",
         "message_schedule_placeholder": "Ex. : Nous sommes fermés. Nous répondons du lundi au vendredi.",
-        "message_non_working_day": "Message de jour non évaluable",
+        "message_non_working_day": "Message de jour non ouvré",
         "message_non_working_day_placeholder": "Ex. : Nous ne répondons pas aujourd’hui. Nous vous écrirons le prochain jour ouvré."
       },
       "resources": {
@@ -2148,6 +2150,7 @@
         "hint": "Ce qu'il demande à l'agent à la fin de chaque conversation",
         "comments": "Autoriser les commentaires",
         "classify": "Typifier les conversations",
+        "classify_empty": "Il n'y a aucune typification : créez-les dans Référentiels.",
         "typification": "Typification",
         "typification_placeholder": "Sélectionnez une typification",
         "view": "Voir le détail de « {{name}} »",
@@ -2158,6 +2161,10 @@
           "inbound": "Entrantes uniquement",
           "outbound": "Sortantes uniquement"
         }
+      },
+      "repositories_leave": {
+        "title": "Sauvegarder les modifications ?",
+        "body": "Pour aller à Référentiels, sauvegardez d'abord le groupe."
       }
     },
     "errors": {
@@ -2206,6 +2213,9 @@
     "search_placeholder": "Rechercher des agents…",
     "no_results_query": "Aucun agent ne correspond à « {{query}} ».",
     "entity_singular": "agent",
+    "delete_dialog": {
+      "title": "Supprimer l'agent «{{name}}» ?"
+    },
     "table": {
       "code": "ID",
       "name": "Nom",
@@ -2370,10 +2380,17 @@
         "outbound_label": "Groupe pour les appels sortants",
         "outbound_empty": "Attribuez un groupe avec téléphone.",
         "not_assigned_hint": "Pas assigné à {{name}} : s'active une fois assigné",
-        "not_allowed_hint": "{{channel}} ne fait pas partie de ses canaux\u00a0: ils se cochent dans Général",
-        "bulk_add": "Attribuer à l'agent",
-        "bulk_remove": "Retirer à l'agent",
-        "bulk_body": "{{action}} : {{count}} groupes."
+        "self_activate_hint": "S'active depuis son poste : il a «Activation par groupe»",
+        "bulk_ask": {
+          "add": "Affecter l'agent à {{count}} groupes ?",
+          "remove": "Retirer l'agent de {{count}} groupes ?",
+          "enable": "Activer l'agent dans {{count}} groupes ?",
+          "disable": "Désactiver l'agent dans {{count}} groupes ?",
+          "channel_add": "Activer {{channel}} dans {{count}} groupes ?",
+          "channel_remove": "Retirer {{channel}} dans {{count}} groupes ?"
+        },
+        "bulk_done": "{{count}} groupes mis à jour.",
+        "not_allowed_hint": "{{channel}} ne fait pas partie de ses canaux\u00a0: ils se cochent dans Général"
       },
       "allowed": {
         "title": "Canaux autorisés",
@@ -2416,7 +2433,11 @@
         "no_enabled_groups": "Aucun groupe activé",
         "none": "Aucune"
       },
-      "create_submit": "Créer l'agent"
+      "create_submit": "Créer l'agent",
+      "repositories_leave": {
+        "title": "Sauvegarder les modifications ?",
+        "body": "Pour aller à Référentiels, sauvegardez d'abord l'agent."
+      }
     },
     "toasts": {
       "created": "Agent \"{{name}}\" créé",

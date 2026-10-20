@@ -26,27 +26,22 @@ async function expectRuleMembers(page: Page, count: number) {
   await expect(page.locator('.vpick__opt', { hasText: 'Soporte Online' })).toContainText(`${count} agentes habilitados`);
 }
 
-for (const surface of ['ficha', 'panel'] as const) {
-  test(`${surface}: habilitar cambia solo el enlace y conserva presencia, canales y niveles`, async ({ page }) => {
+// La tabla es la misma en la ficha y en el panel del Monitor; desde el 2026-10-20 el panel ya no se abre desde el listado
+// de grupos (SISMAC-4056), y se mide en la ficha. Sin estado de la persona en la tabla (SISMAC-4058).
+{
+  test('habilitar cambia solo el enlace y conserva canales y niveles', async ({ page }) => {
     await seed(page);
     await expectRuleMembers(page, 2);
-    await goto(page, surface === 'ficha' ? 'admin/grupos/editar/11?seccion=agentes' : 'admin/grupos');
-    if (surface === 'panel') await page.getByRole('button', { name: 'Asignar agentes de Habilitación por grupo' }).click();
+    await goto(page, 'admin/grupos/editar/11?seccion=agentes');
     const table = page.locator('sc-agent-channel-table');
     const tom = table.locator('tbody tr', { hasText: 'Tom Hanks' });
-    const denzel = table.locator('tbody tr', { hasText: 'Denzel Washington' });
     await expect(table.getByRole('columnheader', { name: 'Habilitado', exact: true })).toBeVisible();
-    await expect(tom.locator('sc-presence-avatar .visually-hidden')).toHaveText('Disponible');
-    await expect(denzel.locator('sc-presence-avatar .visually-hidden')).toHaveText('Comida');
     const enabled = tom.getByRole('switch', { name: 'Habilitado en este grupo: Tom Hanks' });
     await expect(enabled).not.toBeChecked();
-    if (surface === 'ficha') {
-      await expect(page.locator('sc-group-summary')).toContainText('Agentes habilitados');
-      await expect(page.locator('sc-group-summary')).toContainText('1 deshabilitados');
-    }
+    await expect(page.locator('sc-group-summary')).toContainText('Agentes habilitados');
+    await expect(page.locator('sc-group-summary')).toContainText('1 deshabilitados');
     await enabled.click();
-    await expect(tom.locator('sc-presence-avatar .visually-hidden')).toHaveText('Disponible');
-    await page.getByRole('button', { name: surface === 'ficha' ? 'Guardar' : 'Guardar (1)', exact: true }).click();
+    await page.getByRole('button', { name: 'Guardar', exact: true }).click();
     await expect.poll(() => page.evaluate(() => JSON.parse(localStorage.getItem('sc-group-agent-links')!).find((l: { agentId: number; groupId: number }) => l.agentId === 1 && l.groupId === 11)?.active)).toBe(true);
     const links = await page.evaluate(() => JSON.parse(localStorage.getItem('sc-group-agent-links')!));
     expect(links.find((l: { agentId: number; groupId: number }) => l.agentId === 1 && l.groupId === 11)).toEqual({ agentId: 1, groupId: 11, channels: ['phone', 'chat'], active: true, levels: { phone: 1, chat: 10 } });
@@ -60,13 +55,12 @@ for (const surface of ['ficha', 'panel'] as const) {
 }
 
 for (const theme of ['light', 'dark'] as const) for (const width of [1024, 1440]) {
-  test(`${theme} ${width}: presencia y Habilitado caben con ambos niveles`, async ({ page }) => {
+  test(`${theme} ${width}: el agente y Habilitado caben con ambos niveles`, async ({ page }) => {
     await seed(page);
     await page.setViewportSize({ width, height: 900 });
     if (theme === 'dark') await page.addInitScript(() => localStorage.setItem('sc-theme', 'dark'));
-    for (const surface of ['ficha', 'panel'] as const) {
-      await goto(page, surface === 'ficha' ? 'admin/grupos/editar/11?seccion=agentes' : 'admin/grupos');
-      if (surface === 'panel') await page.getByRole('button', { name: 'Asignar agentes de Habilitación por grupo' }).click();
+    for (const surface of ['ficha'] as const) {
+      await goto(page, 'admin/grupos/editar/11?seccion=agentes');
       const table = page.locator('sc-agent-channel-table');
       await expect(table.getByRole('columnheader', { name: 'Habilitado', exact: true })).toBeVisible();
       await expect(table.getByRole('columnheader', { name: 'Nivel Teléfono', exact: true })).toBeVisible();
@@ -75,8 +69,8 @@ for (const theme of ['light', 'dark'] as const) for (const width of [1024, 1440]
       const metrics = await table.locator('tbody tr').first().evaluate(row => ({ name: row.querySelector('.assign__name-label')!.getBoundingClientRect().width, tag: row.querySelector('sc-presence-avatar')!.getBoundingClientRect().width, cell: row.querySelector('.assign__name')!.closest('td, th')!.getBoundingClientRect().width }));
       expect(metrics.name).toBeGreaterThan(50);
       const clipped = await table.locator('.assign__name-label').evaluateAll(names => names.filter(name => name.scrollWidth > name.clientWidth + 1).map(name => name.textContent));
-      expect(clipped, 'la presencia no recorta estos nombres de la semilla').toEqual([]);
-      expect(metrics.tag, 'el avatar con su burbuja').toBeGreaterThan(20);
+      expect(clipped, 'el avatar no recorta estos nombres de la semilla').toEqual([]);
+      expect(metrics.tag, 'el avatar').toBeGreaterThan(20);
       // El mínimo de Agente en la ficha, 11,625rem: lo que pide el nombre más largo de la semilla (DD-181).
       expect(metrics.cell).toBeGreaterThanOrEqual(186);
       await page.screenshot({ path: `/tmp/e2-${theme}-${width}-${surface}.png`, fullPage: true });
@@ -84,7 +78,6 @@ for (const theme of ['light', 'dark'] as const) for (const width of [1024, 1440]
       await control.focus();
       await expect(control).toBeInViewport();
       await page.screenshot({ path: `/tmp/e2-${theme}-${width}-${surface}-habilitado.png`, fullPage: true });
-      if (surface === 'panel') await page.getByRole('button', { name: 'Cancelar', exact: true }).click();
     }
   });
 }

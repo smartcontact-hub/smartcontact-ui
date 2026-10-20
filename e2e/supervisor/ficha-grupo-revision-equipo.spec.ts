@@ -66,7 +66,7 @@ test('WhatsApp: sin número no hay mensajes ni horario; Web Chat: los mensajes d
   await expect(chat.getByText('Mensaje de horario', { exact: true })).toHaveCount(0);
   await pickSelectOption(page, page.locator('#group-chat-schedule'), 'Turno Mañana');
   await expect(chat.getByText('Mensaje de horario', { exact: true })).toBeVisible();
-  await expect(chat.getByText('Mensaje de día no valorable', { exact: true })).toBeVisible();
+  await expect(chat.getByText('Mensaje de día no laborable', { exact: true })).toBeVisible();
   await expect(chat.getByText('Mensaje durante la espera')).toHaveCount(0);
 });
 
@@ -103,26 +103,34 @@ test('subir audios: solo «Elegir», sin «Subir» ni «Cancelar», varios peri�
   await expect(telefono.getByText('Admite archivos .wav y .mp3.').first()).toBeVisible();
 });
 
-test('el estado se filtra desde la cabecera del agente, con los no disponibles juntos, y no hay columna «Estado»', async ({ page }) => {
+// SISMAC-4058, 2026-10-20: el filtro de estado y equipo queda para otra fase, y «Agente» ordena por nombre con la flecha
+// de todas las tablas (la casilla de «todos» va dentro de su cabecera, `ScColumnDef.headerTemplate`).
+test('«Agente» ordena por nombre, A-Z y Z-A, sin filtro de estado o equipo ni columna «Estado»', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/11?seccion=agentes');
   const tabla = page.locator('sc-agent-channel-table');
   await expect(tabla.getByRole('columnheader', { name: 'Estado' })).toHaveCount(0);
-  const antes = await tabla.locator('tbody tr').count();
-  await tabla.getByRole('button', { name: 'Filtrar por estado o equipo', exact: true }).click();
-  // Desde DD-187 §4 el menú lleva dos grupos de casillas, Estado y Equipos. En Estado, cinco opciones, no ocho: Baño,
-  // Comida y Formación van dentro de «No disponible» (DD-185).
-  const filtros = page.locator('.assign__filters');
-  await expect(filtros.getByRole('group', { name: 'Equipos', exact: true })).toBeVisible();
-  const menu = filtros.getByRole('group', { name: 'Estado', exact: true });
-  await expect(menu.getByRole('checkbox')).toHaveCount(5);
-  await expect(menu.getByRole('checkbox', { name: 'Comida' })).toHaveCount(0);
-  await menu.getByRole('checkbox', { name: 'No disponible' }).click();
-  await expect(tabla.locator('tbody tr'), 'con un estado marcado, solo los agentes en él').not.toHaveCount(antes);
-  const estados = await tabla.locator('tbody tr sc-presence-avatar .visually-hidden').allTextContents();
-  expect(estados.length, 'quedan agentes').toBeGreaterThan(0);
-  for (const estado of estados) expect(['No disponible', 'Baño', 'Comida', 'Formación']).toContain(estado.trim());
-  // La cuenta suma estados y equipos: «1 filtro» (DD-187).
-  await expect(tabla.getByText('1 filtro', { exact: true })).toBeVisible();
+  await expect(tabla.getByRole('button', { name: /^Filtrar por estado/ })).toHaveCount(0);
+  await expect(tabla.locator('.assign__filters')).toHaveCount(0);
+
+  const nombres = () => tabla.locator('tbody tr .assign__name-label').allInnerTexts();
+  const enOrden = (xs: string[]) => [...xs].sort((a, b) => a.localeCompare(b, 'es'));
+  const deSalida = await nombres();
+  expect(deSalida.length, 'el grupo trae agentes').toBeGreaterThan(2);
+  expect(deSalida, 'sin ordenar, el orden de la semilla').not.toEqual(enOrden(deSalida));
+
+  const cabecera = tabla.locator('thead th[data-field="agent"]');
+  await cabecera.click();
+  await expect(cabecera).toHaveAttribute('aria-sort', 'ascending');
+  await expect.poll(nombres).toEqual(enOrden(deSalida));
+  await cabecera.click();
+  await expect(cabecera).toHaveAttribute('aria-sort', 'descending');
+  await expect.poll(nombres).toEqual(enOrden(deSalida).reverse());
+
+  // Ordenado, marcar no recoloca la fila: el orden es por nombre, no por estado de la casilla.
+  const primera = tabla.locator('tbody tr').first();
+  const nombre = await primera.locator('.assign__name-label').innerText();
+  await primera.getByRole('switch').click();
+  await expect(tabla.locator('tbody tr').first().locator('.assign__name-label')).toHaveText(nombre);
 });
 
 test('dominios del Web Chat con el InputTags nativo: minúsculas, uno por etiqueta y su ✕ en español (DD-195)', async ({ page }) => {

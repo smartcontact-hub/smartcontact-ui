@@ -3,7 +3,11 @@ import { expect, test, type Page } from '@playwright/test';
 import { disableAnimations, forceLightTheme, goto } from './helpers';
 
 /** La tabla compartida usa Asignado y confirma cambios colectivos (DD-151).
- * El panel conserva el borrador, el cierre con aviso y los permisos de canal. */
+ * El panel conserva el borrador, el cierre con aviso y los permisos de canal.
+ *
+ * El panel se abre desde el Monitor: desde el 2026-10-20 la cifra de agentes del listado de grupos lleva a «Agentes
+ * asignados» de la ficha (SISMAC-4056), y el panel se queda donde no hay ficha a mano. Los grupos del widget «Grupos» de
+ * «Colas y agentes» son de Teléfono. */
 
 test.use({ storageState: { cookies: [], origins: [] } });
 
@@ -12,41 +16,35 @@ test.beforeEach(async ({ page }) => {
   await disableAnimations(page);
 });
 
+const tarjetaGrupos = (page: Page) =>
+  page.locator('sc-dashboard-widget-card').filter({ has: page.locator('sc-dashboard-group-panel') });
+
+/** «Colas y agentes» (el segundo monitor de fábrica), «Agentes» y el grupo en su menú. */
 const abrirPanel = async (page: Page, grupo: string): Promise<void> => {
-  await page.getByRole('button', { name: `Asignar agentes de ${grupo}` }).click();
+  await goto(page, 'dashboard');
+  await page.getByRole('tab').nth(1).click();
+  // El monitor elegido, antes de abrir nada: el de «Monitor» también tiene un widget «Grupos».
+  await expect(page.getByRole('tab').nth(1)).toHaveAttribute('aria-selected', 'true');
+  await tarjetaGrupos(page).getByRole('button', { name: 'Asignar agentes', exact: true }).click();
+  await page.getByRole('menu').getByRole('menuitem', { name: grupo }).click();
   await expect(page.locator('.agents-panel')).toBeVisible();
 };
 const panel = (page: Page) => page.locator('.agents-panel');
-// La cifra es el botón del globo, que desde DD-159 también abre el panel: se lee su texto, no el del globo entero
-// (al pulsarlo, la lista de nombres se cierra, pero con las animaciones quitadas de golpe queda a medio cerrar).
 const cifraDeAgentes = (page: Page, grupo: string) =>
   page.locator('tbody tr', { hasText: grupo }).locator('sc-group-popover .group-popover__trigger').last();
 
-test('«Agentes» abre el panel de esa fila sin abrir la ficha, y comparte la asignación desde la cabecera', async ({ page }) => {
-  await goto(page, 'admin/grupos');
-  await abrirPanel(page, 'Reclamaciones');
+test('el panel comparte la asignación desde la cabecera, y Guardar empieza apagado', async ({ page }) => {
+  await abrirPanel(page, 'ACD Demo C2CB');
 
-  await expect(page.getByText('Agentes: Reclamaciones')).toBeVisible();
-  await expect(page).toHaveURL(/admin\/grupos$/);
+  await expect(page.getByText('Agentes: ACD Demo C2CB')).toBeVisible();
+  await expect(page).toHaveURL(/\/dashboard$/);
   // La cabecera cambia asignaciones, no selecciona filas para una barra aparte.
-  await expect(panel(page).getByRole('columnheader', { name: 'Chat', exact: true })).toHaveCount(1);
+  await expect(panel(page).getByRole('columnheader', { name: 'Teléfono', exact: true })).toHaveCount(1);
   await expect(panel(page).getByRole('columnheader', { name: 'Asignado', exact: true }).getByRole('checkbox')).toBeVisible();
   await expect(panel(page).getByRole('button', { name: 'Guardar' })).toBeDisabled();
 });
 
-test('cerrar el panel devuelve el foco a la cifra que lo abrió', async ({ page }) => {
-  // Ni `p-drawer` ni `sc-drawer` lo devuelven: el foco caía en <body> y el teclado empezaba de cero (DD-168).
-  await goto(page, 'admin/grupos');
-  const cifra = page.getByRole('button', { name: 'Asignar agentes de Reclamaciones' });
-  await cifra.click();
-  await expect(panel(page)).toBeVisible();
-
-  await panel(page).getByRole('button', { name: 'Cancelar' }).click();
-  await expect(panel(page)).toHaveCount(0);
-  await expect(cifra).toBeFocused();
-});
-
-test('guardar dice cuántos agentes cambian, y la cifra de la fila se pone al día', async ({ page }) => {
+test('guardar dice cuántos agentes cambian, y la cifra del listado se pone al día', async ({ page }) => {
   await goto(page, 'admin/grupos');
   const antes = Number((await cifraDeAgentes(page, 'ACD Demo C2CB').innerText()).trim());
   await abrirPanel(page, 'ACD Demo C2CB');
@@ -55,35 +53,16 @@ test('guardar dice cuántos agentes cambian, y la cifra de la fila se pone al d�
   await expect(panel(page).getByText('Sin guardar: 1')).toBeVisible();
   await panel(page).getByRole('button', { name: 'Guardar (1)' }).click();
 
-  await expect(page.getByText('Agentes de "ACD Demo C2CB" actualizados')).toBeVisible();
+  await expect(page.getByText('Agentes de «ACD Demo C2CB» actualizados')).toBeVisible();
   await expect(panel(page)).toHaveCount(0);
+  await goto(page, 'admin/grupos');
   await expect(cifraDeAgentes(page, 'ACD Demo C2CB')).toHaveText(String(antes - 1));
 });
 
-test('sin agentes, la celda es «—» y sigue abriendo su asignación', async ({ page }) => {
-  // La raya de toda celda sin dato (DD-197), pero el mismo botón (DD-159): un grupo vacío es justo al que hay que asignar.
-  await goto(page, 'admin/grupos');
-  await abrirPanel(page, 'Grupo de prueba 2');
-  const asignadas = panel(page).locator('tbody').getByRole('checkbox', { name: /^Asignado —/, checked: true });
-  const total = await asignadas.count();
-  expect(total, 'el grupo arranca con agentes').toBeGreaterThan(0);
-  for (let quedan = total; quedan > 0; quedan--) {
-    await asignadas.first().click();
-    await expect(asignadas).toHaveCount(quedan - 1);
-  }
-  await panel(page).getByRole('button', { name: `Guardar (${total})` }).click();
-  await expect(panel(page)).toHaveCount(0);
-
-  await expect(cifraDeAgentes(page, 'Grupo de prueba 2')).toHaveText('—');
-  await expect(cifraDeAgentes(page, 'Grupo de prueba 2')).toHaveAccessibleName('0 agentes. Asignar agentes de Grupo de prueba 2');
-  await abrirPanel(page, 'Grupo de prueba 2');
-  await expect(page.getByText('Agentes: Grupo de prueba 2')).toBeVisible();
-});
-
 test('cerrar con cambios pregunta antes, con Cancelar y con Escape, y descartar no guarda', async ({ page }) => {
-  await goto(page, 'admin/grupos');
-  const antes = (await cifraDeAgentes(page, 'ACD Demo C2CB').innerText()).trim();
   await abrirPanel(page, 'ACD Demo C2CB');
+  const marcados = panel(page).locator('tbody').getByRole('checkbox', { name: /^Asignado —/, checked: true });
+  const antes = await marcados.count();
   await panel(page).locator('tbody tr').first().getByRole('checkbox', { name: /^Asignado —/ }).click();
 
   const aviso = page.getByRole('dialog', { name: '¿Descartar cambios?' });
@@ -99,16 +78,15 @@ test('cerrar con cambios pregunta antes, con Cancelar y con Escape, y descartar 
   await aviso.getByRole('button', { name: 'Descartar' }).click();
 
   await expect(panel(page)).toHaveCount(0);
-  await expect(cifraDeAgentes(page, 'ACD Demo C2CB')).toHaveText(antes);
+  await tarjetaGrupos(page).getByRole('button', { name: 'Asignar agentes', exact: true }).click();
+  await page.getByRole('menu').getByRole('menuitem', { name: 'ACD Demo C2CB' }).click();
+  await expect(marcados).toHaveCount(antes);
 });
 
 /** El cajón que envuelve el panel: su caja es la que el usuario ve. */
 const cajon = (page: Page) => page.locator('.p-drawer', { has: panel(page) });
 
-/**
- * Ancho del cajón, alto de la primera fila y su aire, en dos tramos: del final de su identidad (nombre y email) a su
- * estado, y de la columna del estado a su primera casilla. Desde DD-156 el estado va en su columna, entre las dos.
- */
+/** Ancho del cajón y alto de la primera fila. */
 const medidas = (page: Page) =>
   cajon(page).evaluate((drawer) => {
     const fila = drawer.querySelector('tbody tr');
@@ -119,34 +97,19 @@ const medidas = (page: Page) =>
   });
 
 test('un grupo de un solo canal muestra compatibilidad y asignación, sin páginas, en el panel de altura completa', async ({ page }) => {
-  await goto(page, 'admin/grupos');
   await abrirPanel(page, 'ACD Demo C2CB');
   await expect(panel(page).getByRole('columnheader', { name: 'Teléfono', exact: true })).toHaveCount(1);
   // Sin páginas (DD-176): los 13 asignados, todos.
   await expect(panel(page).locator('.p-paginator')).toHaveCount(0);
   await expect(panel(page).locator('tbody tr')).toHaveCount(13);
   expect((await cajon(page).boundingBox())!.y).toBe(0);
-  expect((await medidas(page)).ancho).toBeLessThanOrEqual(48 * 16);
-});
-
-test('con dos canales, el panel se ajusta a sus columnas: nombre cerca de sus casillas, filas compactas, sin repetir los canales', async ({ page }) => {
-  await goto(page, 'admin/grupos');
-  await abrirPanel(page, 'ACD demo cuscare');
-
-  await expect(panel(page).getByRole('columnheader', { name: 'Teléfono' })).toHaveCount(1);
-  await expect(panel(page).getByRole('columnheader', { name: 'Email' })).toHaveCount(1);
-  // La línea «Canales: …» bajo el título repetía las cabeceras.
-  await expect(panel(page).locator('.agents-panel__channels')).toHaveCount(0);
-
   const { ancho, altoFila } = await medidas(page);
-  // Sin la columna de Estado (su burbuja va en el avatar, DD-185): agente, canales y Habilitado, 46rem (antes, 52).
-  expect(ancho, 'agente, canales y Habilitado, cada columna medida (DD-156)').toBeLessThanOrEqual(46 * 16);
+  expect(ancho).toBeLessThanOrEqual(48 * 16);
   expect(altoFila, 'nombre y email en dos líneas').toBeLessThanOrEqual(58);
 });
 
 test('el último canal se lee marcado y fijo: la casilla desactivada queda al 60 % de Figma, no al 36 %', async ({ page }) => {
-  await goto(page, 'admin/grupos');
-  await abrirPanel(page, 'ACD demo cuscare');
+  await abrirPanel(page, 'ACD Demo C2CB');
 
   const candado = panel(page).locator('tbody .assign__locked sc-checkbox').first();
   await expect(candado).toBeVisible();
@@ -160,9 +123,8 @@ test('el último canal se lee marcado y fijo: la casilla desactivada queda al 60
 });
 
 test('el último canal explica que desmarcar Asignado quita del grupo', async ({ page }) => {
-  await goto(page, 'admin/grupos');
-  await abrirPanel(page, 'ACD demo cuscare');
-  await panel(page).locator('.assign__locked').first().hover();
+  await abrirPanel(page, 'ACD Demo C2CB');
+  await panel(page).locator('.assign__locked sc-checkbox').first().hover();
   await expect(page.locator('.p-tooltip')).toContainText('desmarca Asignado');
   await expect(panel(page).getByRole('button', { name: /^Quitar a / })).toHaveCount(0);
 });
@@ -176,7 +138,6 @@ test('una fila que llega sin canal devuelve la columna en un grupo de uno, y mar
       JSON.stringify([{ agentId: 1, groupId: 1, channels: [], active: true }]),
     );
   });
-  await goto(page, 'admin/grupos');
   await abrirPanel(page, 'ACD Demo C2CB');
 
   await expect(panel(page).getByRole('columnheader', { name: 'Teléfono' })).toHaveCount(1);

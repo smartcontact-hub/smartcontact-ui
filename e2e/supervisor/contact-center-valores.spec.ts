@@ -73,7 +73,7 @@ test('lo que se guarda en Contact Center › Grupos es con lo que nace un grupo 
   await goto(page, 'config/aed/grupos');
   await pickSelectOption(page, page.locator('#grupos-chat-strategy'), 'Menos conversaciones atendidas');
   const esperaChat = page.locator('#grupos-chat-max-wait');
-  await pickSelectOption(page, esperaChat, '1,5 min');
+  await pickSelectOption(page, esperaChat, '2 min');
   await page.locator('#grupos-chat-inactivity-on').click();
   await page.getByRole('button', { name: 'Guardar' }).click();
   // Un solo Guardar y un solo toast para las tres secciones (DD-211 §7).
@@ -89,7 +89,7 @@ test('lo que se guarda en Contact Center › Grupos es con lo que nace un grupo 
   await expect(page.locator('#group-phone-transfer')).toHaveText('10 s');
   await expect(page.locator('#group-phone-max-wait')).toHaveText('15 s');
   await expect(page.locator('#group-chat-strategy')).toHaveText('Menos conversaciones atendidas');
-  await expect(page.locator('#group-chat-max-wait')).toHaveText('1,5 min');
+  await expect(page.locator('#group-chat-max-wait')).toHaveText('2 min');
   await expect(page.locator('#group-chat-inactivity')).toBeVisible();
 });
 

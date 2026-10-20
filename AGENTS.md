@@ -186,6 +186,10 @@ no a la librería. Dos de estas reglas ya son infraestructura del sistema (aquí
    un campo, una casilla o una opción acaba en punto, siempre; el subtítulo bajo un título es una frase
    sin punto (si pide dos, la segunda va con «;» o baja a la ayuda de un campo); lo que nombra (títulos,
    rótulos, botones, chips, tooltips, toasts, errores bajo el campo), sin punto. Lo vigila `i18n:check`.
+   **Una confirmación pregunta qué y a quién o a cuántos, y su botón repite el verbo** (DD-218): «¿Eliminar el grupo
+   «Ventas»?» con «Eliminar», «¿Quitar Chat a 5 agentes?» con «Quitar»; el cuerpo solo añade lo que no se sabe («Esta
+   acción no se puede deshacer.»), y nunca «Confirmar» ni «Aceptar», que no dicen qué pasa. Un aviso, una línea con el
+   nombre entre «»: «Grupo «Ventas» creado», sin «correctamente».
 4. **Iconografía consistente.** Una sola librería, siempre vía `<sc-icon>` (Material Symbols).
    Nunca emojis en la interfaz ni un segundo juego de iconos. **Un icono que acompaña a un texto
    sigue a su estilo** (DD-130 §6, DD-189): su tamaño es el del texto (`size="inherit"` con el

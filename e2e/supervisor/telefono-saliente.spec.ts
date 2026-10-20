@@ -91,13 +91,13 @@ test('el teléfono saliente se elige de los números asignados: no hay campo don
   expect((await opciones.allInnerTexts()).map((t) => t.trim()).sort()).toEqual(['917945449', '918371548']);
 });
 
-test('duplicar se lleva el teléfono saliente: la copia sale con el del original, sin diálogo (DD-217)', async ({ page }) => {
+test('duplicar se lleva el teléfono saliente: el alta de la copia sale con el del original, sin diálogo (SISMAC-4056)', async ({ page }) => {
   await goto(page, 'admin/grupos');
   // Reclamaciones tiene Teléfono, con el 918371548.
   await page.locator('tbody tr', { hasText: 'Reclamaciones' }).locator('.rules-kebab-btn').click();
   await page.getByRole('menuitem', { name: 'Duplicar' }).click();
   await expect(page.getByRole('dialog')).toHaveCount(0);
-  await expect(page).toHaveURL(/admin\/grupos\/editar\/\d+$/);
+  await expect(page).toHaveURL(/admin\/grupos\/crear\?seedFromId=12$/);
   await expect(page.locator('.headline__name')).toHaveText('Reclamaciones (1)');
   await expect(page.locator('.headline__meta')).toContainText('918371548');
 });
