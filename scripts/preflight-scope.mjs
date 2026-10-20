@@ -23,6 +23,7 @@ import { medirRebase } from "./preflight-rebase.mjs";
 import { avisarCarga, avisarDds, avisarLedgers, ddsDeRama, generadosAlDia, puertaBarata } from "./preflight-puerta-barata.mjs";
 import { enParalelo } from "./en-paralelo.mjs";
 import { APPS, planDe } from "./preflight-alcance.mjs";
+import { analizar as analizarCitas, describir as describirCita } from "./audit-e2e-citas.mjs";
 
 /**
  * Al final, en los dos carriles: las capturas de sc-docs que este cambio mueve y siguen sin regenerar
@@ -73,6 +74,24 @@ function cambios() {
 
 const ficheros = cambios();
 
+/**
+ * Las e2e que citan algo que esta rama retiró (`audit-e2e-citas.mjs`), con la frase que las nombra. Un árbol sobre el que
+ * no se puede medir (sin `origin/main`) avisa y no bloquea: `verify` lo vuelve a mirar y ahí sí falla.
+ */
+function citasRetiradas() {
+  try {
+    const r = analizarCitas();
+    if (r.error) {
+      console.log(`⚠️ audit:e2e-citas no pudo medir: ${r.error}`);
+      return [];
+    }
+    return r.citas.map((c) => `e2e que cita lo que el cambio retiró: ${describirCita(c)}`);
+  } catch (e) {
+    console.log(`⚠️ audit:e2e-citas no pudo medir: ${e.message}`);
+    return [];
+  }
+}
+
 function ramaActual() {
   try {
     return execSync("git rev-parse --abbrev-ref HEAD", { encoding: "utf8" }).trim();
@@ -97,7 +116,8 @@ if (appsTocadas.length) {
 }
 
 /* La PUERTA BARATA va antes de cualquier cadena: lo que se puede comprobar en milisegundos no
- * se descubre en el minuto cuatro. Ver `preflight-puerta-barata.mjs`. */
+ * se descubre en el minuto cuatro. Ver `preflight-puerta-barata.mjs`. Con ella, las e2e que citan lo que la rama
+ * retiró (`audit-e2e-citas.mjs`): las e2e solo las corre el CI, y cada vuelta por una cita rancia son ~40 min. */
 if (process.argv.includes("--run")) {
   // Primero el aviso de máquina saturada, y sin bloquear: la carga alta no es un fallo de la cadena (una
   // pasada verde bajo carga sigue valiendo), pero quien la lanza tiene que saberlo ya y no horas después.
@@ -107,15 +127,22 @@ if (process.argv.includes("--run")) {
   avisarLedgers({ mios: ficheros, rama: ramaActual() });
   // Y si el número de DD de esta rama ya lo usa otro PR abierto (DD-175): avisa y propone el siguiente libre.
   avisarDds({ ...ddsDeRama(), rama: ramaActual() });
-  const problemas = [...puertaBarata(process.cwd()), ...generadosAlDia()];
+  const citas = citasRetiradas();
+  const problemas = [...puertaBarata(process.cwd()), ...generadosAlDia(), ...citas];
   if (problemas.length) {
     console.log("\n✘ La cadena NO arranca: hay algo que se comprueba en 2 s y falla.\n");
     for (const q of problemas) console.log(`    · ${q}`);
-    console.log(
-      "\n  Esto lo mide `docs:coherence` (CHECK N) en el minuto cuatro de la cadena; aquí sale ya." +
-        "\n  ⚠️ La memoria es COMPARTIDA entre sesiones: si la engordó otra, mira su fecha antes de" +
-        "\n     recortarla, y si lleva rato parada, recórtala tú — su ficha bloquea TU preflight.\n",
-    );
+    console.log("\n  Esto lo miden los gates de `verify` (`docs:coherence`, `audit:e2e-citas`…) en el minuto cuatro de la cadena; aquí sale ya.");
+    if (problemas.some((q) => q.startsWith("memoria"))) {
+      console.log(
+        "  ⚠️ La memoria es COMPARTIDA entre sesiones: si la engordó otra, mira su fecha antes de" +
+          "\n     recortarla, y si lleva rato parada, recórtala tú — su ficha bloquea TU preflight.",
+      );
+    }
+    if (citas.length) {
+      console.log("  Las e2e solo las corre el CI (40 min por vuelta): cada cita se arregla en la spec, o con `// sc:cita-ok` si sigue siendo cierta.");
+    }
+    console.log("");
     process.exit(1);
   }
 }
