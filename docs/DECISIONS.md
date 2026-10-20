@@ -173,7 +173,7 @@ alinea con Figma, y las congeladas de Grupos, Agentes y Repositorios (SISMAC-405
    (`common.delete_dialog.title_single` y `body_single`), igual desde el listado que desde la ficha. Enmienda DD-145 §4
    para grupos y agentes; Usuarios sigue pidiendo teclear el nombre.
 3. **El menú dice «Eliminar», sin puntos suspensivos**: el repo los reserva para la puerta tecleada
-   (`admin-row-menu.spec.ts`). Figma pinta «Eliminar…» en el paso 02 del listado; se le pide quitarlos.
+   (`admin-row-menu.spec.ts`). Figma pintaba «Eliminar…» en el paso 02 del listado; los quitó el 2026-10-20.
 
 **Queda** · Usuarios, Repositorios, Tipificaciones, Etiquetas, Plantillas y Conversaciones conservan la selección y el
 lote, con `sc-bulk-action-bar`, `sc-bulk-edit-menu` y `sc-impact-preview-dialog`: Figma aún no los cubre. Las pruebas del
