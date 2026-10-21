@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Con el índice en la caja, el carril mide 235, el de la caja en Figma: ningún rótulo de las fichas salta de línea · sin la caja, 196 (enmienda DD-220) | DD-221 |
 > | El índice de secciones, en la caja gris de Contact Center en las seis pantallas que lo llevan (Contact Center, fichas de grupo, agente y usuario, tipificación y constructor de reglas), como en Figma: un solo interruptor de la app (`SC_FORM_SECTION_NAV_CAJA`), y volver al índice plano es borrar su línea | DD-220 |
 > | Lo que falta, como SISMAC-4058: «Crear» y «Guardar» apagados mientras falte algo, con «Falta: …» o «Listo para crear» arriba del resumen (cada cosa a su campo) y el motivo en el tooltip · el aviso bajo el campo en gris desde el principio y en rojo al dejarlo vacío · el índice no se pone rojo por lo tocado · en grupo, agente, usuario y tipificación (enmienda DD-217 §1 y §4; vuelve DD-136) | DD-219 |
 > | Grupos como sus páginas de COA (SISMAC-4056 y 4058): la cifra de agentes lleva a la ficha · duplicar es un alta · con varios marcados, el clic derecho solo elimina · Servicios y Agentes de mayor a menor al primer clic (`defaultSortOrder`) · la miga dice el nombre · «Agentes asignados» sin estado ni filtro, ordenable por nombre (`headerTemplate`), el nivel en desplegable y Habilitado bloqueado con «Activación por grupo» · confirmar dice qué, a cuántos y con su verbo (enmienda DD-121, DD-151, DD-159 §1, DD-185 §7 y §8, DD-187 §4, DD-204 §6, DD-215 §1 y §2 y DD-217 §8) | DD-218 |
@@ -159,7 +160,45 @@
 
 ---
 
+## DD-221 · 2026-10-21 — Con el índice en la caja, el carril mide 235, como en Figma
+
+**Contexto** · DD-220 metió el índice en la caja gris y dejó el carril en 196, sabiendo que dos rótulos bajarían a dos
+líneas. En la revisión se vio como un defecto: «Distribución y colas» y «Agentes asignados» con salto de línea, en el
+prototipo y en las maquetas de Grupos y Agentes, que también llevaban el carril de 196.
+
+**Decisión** ·
+1. **Con la caja, el carril mide 235** (`.page__rail:has(.form-nav--caja)` y la columna del índice de `.ficha-rail`, de
+   1024 en adelante): Contact Center, las fichas de grupo, agente y usuario y la de tipificación. **Sin la caja, 196**:
+   volver al índice plano (borrar la línea de `app.config.ts`, DD-220) devuelve también el ancho.
+2. **El rótulo sigue envolviendo** (DD-52): con 235 caben todos los de hoy en una línea, y el salto queda de red para
+   las traducciones largas.
+3. **Figma**: los 54 índices de las fichas de Grupos y Agentes, de 196 a 235 con mínimo de 235, como Contact Center
+   (`2286:5368`) y el ejemplo del DS (❖ Navmenu). En el Mapa de componentes, cada caja vuelve sobre su pieza.
+4. **La fila blanca de la caja, con el radio de la fila** (`--sc-radius-400`, 12; en Figma, `border/radius/xl` en cada
+   `nav-item` sin marcar): en ángulo recto, el fondo redondeado del hover dejaba ver las esquinas blancas detrás. En
+   código y en Figma (Contact Center, Grupos, Agentes y ❖ Navmenu), y en Figma toda fila sin marcar lleva el blanco.
+
+**Razón** · Medido el 2026-10-21 en `sc-supervisor.pages.dev` a 1440, con la caja: al rótulo le quedan 108, y piden 133
+«Servicios asignados», 130 «Distribución y colas», 126 «Agentes asignados» y 120 «Grupos asignados». En 235 le quedan
+147. 235 es lo que dibuja Figma para esa caja: 203 del Nav-menu y 16 por lado. La fila blanca medía 203 × 37,5 con radio 0, y
+su fondo de hover, el mismo rectángulo con radio 12.
+
+**Descartadas** ·
+- *Dejar 196 y que la fila crezca* (DD-220): el índice deja de leerse de un vistazo justo en las secciones más usadas.
+- *Un carril que mide su rótulo más largo, entre un mínimo y un máximo*: cada ficha mediría distinto (grupo 218,
+  agente 208, usuario 221, Contact Center 196) y el contenido saltaría de sitio al pasar de una a otra; el nombre de
+  la ficha, en la misma columna, también lo empujaría.
+- *224, en la escala de 14*: no es lo que dibuja Figma; la caja de Contact Center mide 235.
+- *Acortar los rótulos*: pasa al texto una restricción del componente y se rompe al traducir (DD-52).
+
+**Consecuencias** · El contenido cede 39: a 1440, 773 en las fichas (la tabla de agentes con sus cuatro canales pide
+unos 740) y 881 en Contact Center; por debajo de 1340, 881. Las pruebas de `ficha-grupo`, `ficha-usuario-agente`,
+`fichas-tres-columnas` y `page-anatomy` miden 235.
+
 ## DD-220 · 2026-10-21 — El índice de secciones, en la caja gris de Contact Center, con un interruptor para volver al plano
+
+> **Su descartada «Ensanchar el carril a 235» se adopta en DD-221** (2026-10-21): con la caja, el carril mide 235, y la
+> fila blanca lleva el radio de la fila.
 
 **Contexto** · En Figma, el índice de Contact Center (Supervisor `2286:5368`) es la caja `Section` del DS con su título y
 el Nav-menu dentro, y el ejemplo de `sc-form-section-nav` del DS (❖ Navmenu) es ese mismo. El prototipo, en cambio,
