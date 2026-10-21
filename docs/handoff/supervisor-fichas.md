@@ -62,6 +62,16 @@ y «Mapa de componentes») y el del relleno de la tabla (2026-10-19, DD-214): `g
 8c9297a7:docs/handoff/supervisor-fichas.md`; la trampa del primero sube a «Trampas del frente».
 El del mapa de componentes de Grupos y la tabla única del DS (2026-10-19, #457): `git show
 34f18f37:docs/handoff/supervisor-fichas.md`; sus trampas suben a «Trampas del frente».
+El de Grupos y Agentes como en Figma, sin edición masiva (2026-10-19, DD-215, sin trampas propias): `git show
+archive/handoff-fichas-2026-10-21:docs/handoff/supervisor-fichas.md`.
+
+## ✅ 2026-10-21 · Marcar una casilla de Grupos o Agentes ya no acorta la tabla (fallo de DD-215)
+
+> **Sello:** rama `areses/pensive-bohr-53312b` sobre `main` HEAD `c2908643`, un PR. Sin DD nueva.
+
+- `sc-list-page` reservaba el sitio de la barra de lote (`.table-card--seleccion`, 77 px) con solo haber algo marcado; Grupos y
+  Agentes eligen para exportar y no montan barra, así que el borde de la tabla subía 77 px y quedaba un hueco. Ahora la clase
+  sigue a `barraVisible` (`selectable` + `bulkEntity` + marcado o resultado de lote). Prueba: `listado-alto-al-marcar`.
 
 ## ✅ 2026-10-21 · El índice, en la caja gris de Contact Center, con un interruptor para volver al plano (DD-220)
 
@@ -71,15 +81,15 @@ El del mapa de componentes de Grupos y la tabla única del DS (2026-10-19, #457)
 - **Prototipo**: `SC_FORM_SECTION_NAV_CAJA` en `sc-form-section-nav`, encendido en `projects/supervisor/src/app/app.config.ts`.
   Las seis pantallas con índice lo llevan en la caja de `2286:5368`. **Para volver al índice plano, se borra esa línea**
   (se volverá a él más adelante: el plano no se pierde).
+- **Con la caja, carril de 235 (DD-221)**; sin ella, 196. Sin saltos de línea; filas blancas con radio 12 (píldora).
 - **Figma**: el ejemplo del DS (❖ Navmenu) y las fichas de Grupos y Agentes, con la caja; Contact Center ya la tenía.
 - **Pruebas**: tres en `sc-form-section-nav.component.spec.ts`; la de la caja enrojece si se quita la clase.
 - **«Eliminar»**: a 28 de la caja (sin la regla de `_page.scss` quedaban 19,25; lo cazó el e2e de `fichas-tres-columnas`).
-- **Figma contra el prototipo** (versión «Revisión final con el prototipo»): botón de la barra a 33; tablas de
-  asignación en Small (cada celda llevaba atado el relleno normal); 13 resúmenes de grupo a la versión publicada;
-  Hand-off hasta DD-220, con enlaces a las congeladas; 12 textos de hojas. Sin dibujar, «Nivel {canal}». Contact
-  Center en Figma dice «Descartar cambios»; el prototipo, «Deshacer».
+- **Figma contra el prototipo** (versión «Revisión final con el prototipo»): barra a 33, asignación en Small, 13
+  resúmenes publicados, hand-off hasta DD-220. Contact Center en Figma dice «Descartar cambios»; el prototipo, «Deshacer».
 - **Después, en Figma**: un hand-off por página (`3371:61554`, `3371:61797`), con sus cards de Jira; edición de grupo,
-  paso 05; `.Subsection` plegable (§54); los flujos que faltaban, toasts, empty states y hojas para desarrollo (§58).
+  paso 05; `.Subsection` plegable (§54); los flujos que faltaban, toasts, empty states y hojas para desarrollo (§58);
+  cada hoja, a la izquierda de su flujo, con enlaces de ida y vuelta, y el índice de las fichas a 235 (DD-221).
 
 ## ✅ 2026-10-21 · Lo que falta, como SISMAC-4058: el botón apagado, «Falta: …» en el resumen y el aviso en gris (DD-219)
 
@@ -134,22 +144,6 @@ El del mapa de componentes de Grupos y la tabla única del DS (2026-10-19, #457)
 - **Figma (§55)**: hecho el 2026-10-21. Del barrido, el nombre en cabecera, las cabeceras de asignación y «Ver detalle», hechos
   (`fichas-alineacion`, 7). Lo «a nativo» que quedaba (§16): `helperText` de `sc-fileupload`, hecho; el resto ya lo
   había decidido el DS.
-
-## ✅ 2026-10-19 · Grupos y Agentes, como en Figma: sin edición masiva, y borrar con la confirmación simple (DD-215)
-
-> **Sello:** rama `areses/prototipo-como-figma` sobre `main` HEAD `91c438c2`, un PR. Tras fundir, las congeladas 4058, 4062 y
-> 4064 avanzan a ese commit (`docs/PROTOTIPOS.md`).
-
-- **Listados de Grupos y Agentes**: con casillas (para elegir y exportar lo marcado), pero sin barra de lote, ni
-  drawer, ni «Editar» o «Eliminar» en bloque (fase posterior para los devs); lo de cada fila va por su menú (Editar,
-  Duplicar, Eliminar). «Acciones» solo exporta. Rafa pidió volver a las casillas el 2026-10-20: Figma aún las muestra sin ellas. Usuarios, Repositorios y el resto conservan el
-  lote.
-- **Borrar** un grupo o un agente, desde el listado o la ficha: `sc-confirmdialog` por `injectConfirmarBorrado`
-  (`features/admin/services/confirmar-borrado.ts`), con el texto de Figma. Usuarios sigue tecleando el nombre (DD-145
-  §4). El menú dice «Eliminar» sin «…» (la regla de `admin-row-menu`), y Figma también desde el 2026-10-20 (paso 02,
-  `3118:33342`; también sus tarjetas, la nota del paso 05 y la fila 9 de la hoja).
-- **Pruebas**: `listado-grupos` (sin casillas; borrar pregunta, cancela y borra) y `fichas-nombre-fijo` (grupo y agente
-  con la confirmación, usuario tecleando); las del resultado del lote (DD-196) pasan a Usuarios. En local, 24 en verde.
 
 ## SIGUIENTE — sin preguntar
 

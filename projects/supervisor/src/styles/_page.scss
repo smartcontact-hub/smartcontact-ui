@@ -161,6 +161,17 @@
   }
 }
 
+/* Con el índice en la caja gris (DD-220), el carril mide 235: el de la caja en Figma (Contact Center `2286:5368` y el
+ * ejemplo del DS, ❖ Navmenu, con mínimo 235). En 196, los 16 de la caja por lado le dejaban 108 al rótulo, y
+ * «Servicios asignados» (133), «Distribución y colas» (130), «Agentes asignados» (126) y «Grupos asignados» (120)
+ * bajaban a dos líneas (DD-221). Sin la caja, 196, como arriba. */
+@media (min-width: 1024px) {
+  .page__rail:has(.form-nav--caja) {
+    flex-basis: 235px;
+    width: 235px;
+  }
+}
+
 /* La columna de contenido de `--rail`: se come el resto. Sin `gap` a propósito:
  * en Contact Center su primer hijo es un `<router-outlet>` vacío, y un hueco de
  * flex se cuenta también junto a un hijo que no mide nada. */
@@ -281,6 +292,20 @@
   }
 }
 
+/* Con la caja, la columna del índice mide 235, como `.page__rail` (DD-221); el contenido cede esos 39 (a 1440, de 812 a
+ * 773: la tabla de agentes con sus cuatro canales pide unos 740). */
+@media (min-width: 1024px) {
+  .page__inner--rail.ficha-rail:has(.form-nav--caja) {
+    grid-template-columns: 235px minmax(0, 1fr) 240px;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1339px) {
+  .page__inner--rail.ficha-rail--summary:has(.form-nav--caja) {
+    grid-template-columns: 235px minmax(0, 1fr);
+  }
+}
+
 /* LA CABECERA de las fichas (grupo, usuario, agente), arriba de la columna del índice (DD-170): el nombre
  * como único `h1` y una línea de datos. Vive aquí y no en cada pantalla porque la usan las tres, y la
  * encapsulación de Angular es por componente. Hasta el índice, el hueco del carril (14). */
@@ -295,7 +320,7 @@
   min-width: 0;
 }
 
-/* En 196 caben unos 22 caracteres del título: más largo, el nombre baja a una segunda línea, como las
+/* En 196 caben unos 22 caracteres del título (en 235, con la caja, unos 26): más largo, el nombre baja a una segunda línea, como las
  * filas del índice que tiene debajo (DD-52), y no se corta. Uno que no cabe en dos se corta al final de la
  * segunda, con el nombre entero en el `title`: sin tope, un nombre de prueba bajaba el índice media
  * pantalla. `anywhere` parte la palabra sola más ancha que la columna; `balance` reparte las dos líneas. */
@@ -418,8 +443,9 @@ h1.page__heading {
  *      (`flex: 0 1 auto`): con 3 filas, la versión que llenaba el alto dejaba una tarjeta vacía.
  *   2. Un alto mínimo (`scale/25`) para pantallas bajas y zoom: sin él, al 200 % la tabla se
  *      quedaba en 191 px. Si no cabe ni eso, hace scroll la página.
- *   3. Con filas marcadas aparece la barra de selección flotante: la tarjeta acorta su borde de
- *      abajo lo que mide la barra (`.table-card--seleccion`) sin mover ninguna fila.
+ *   3. Con filas marcadas y una barra de selección flotante a la vista (`sc-list-page` con `bulkEntity`), la tarjeta
+ *      acorta su borde de abajo lo que mide la barra (`.table-card--seleccion`) sin mover ninguna fila. Sin barra
+ *      (Grupos y Agentes: casillas para exportar, DD-215) la clase no se pone, y marcar no toca el alto de la tabla.
  *
  * Una página con esta clase no puede reservar la barra de selección con `padding-bottom` en su
  * `.page` ni poner `overflow` en su `.table-card`: las dos cosas rompen la cadena de altos.
