@@ -1,8 +1,10 @@
 // url=https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=156-5882
+// source=projects/ui-smartcontact/src/lib/components/select/sc-select.component.ts
+// component=ScSelectComponent
 
 import figma from "figma"
 
-const filter = figma.selectedInstance.getBoolean("Show Filter")
+const filter = figma.selectedInstance.getBoolean("Show Filter", { true: "filter", false: "" })
 const __props: Record<string, unknown> = {}
 if (filter && filter.type !== "ERROR") {
   __props["filter"] = filter
@@ -10,8 +12,5 @@ if (filter && filter.type !== "ERROR") {
 
 export default {
   id: "select",
-  example: figma.code`<sc-select [options]="options" placeholder="Select" ${_fcc_renderHtmlAttribute(
-    "filter",
-    filter,
-  )}></sc-select>`,
+  example: figma.code`<sc-select [options]="options" placeholder="Select" ${filter}></sc-select>`,
 }

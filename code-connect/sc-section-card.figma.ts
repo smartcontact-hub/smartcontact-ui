@@ -1,4 +1,6 @@
 // url=https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=12610-23284
+// source=projects/ui-smartcontact/src/lib/components/section-card/sc-section-card.component.ts
+// component=ScSectionCardComponent
 
 import figma from "figma"
 
