@@ -56,7 +56,8 @@ export function firmaVista(dejadas, id, actual) {
  *  · `hecha`: dejada y completa (o abierta y completa, si ya se dejó).
  *  · `error`: dejada con algo obligatorio sin rellenar.
  *  · `actual`: abierta por primera vez, o con algo nuevo que no se ha visto.
- *  · `pendiente`: no se ha visto, o ha llegado algo nuevo desde que se dejó (un canal añadido; quitar uno no cuenta).
+ *  · `pendiente`: nunca se ha abierto.
+ *  · `nuevo`: se abrió, y desde que se dejó ha llegado algo que no se ha visto (un canal añadido; quitar uno no cuenta).
  * @param {{
  *   ids: readonly string[],
  *   abierta: string,
@@ -64,7 +65,7 @@ export function firmaVista(dejadas, id, actual) {
  *   firma: (id: string) => string,
  *   completa: (id: string) => boolean,
  * }} o
- * @returns {Map<string, 'pendiente' | 'actual' | 'hecha' | 'error'>}
+ * @returns {Map<string, 'pendiente' | 'nuevo' | 'actual' | 'hecha' | 'error'>}
  */
 export function estadosDeSecciones({ ids, abierta, dejadas, firma, completa }) {
   return new Map(
@@ -74,7 +75,7 @@ export function estadosDeSecciones({ ids, abierta, dejadas, firma, completa }) {
         if (!vista) return [id, 'actual'];
         return [id, completa(id) ? 'hecha' : 'error'];
       }
-      if (!vista) return [id, 'pendiente'];
+      if (!vista) return [id, dejadas.has(id) ? 'nuevo' : 'pendiente'];
       return [id, completa(id) ? 'hecha' : 'error'];
     }),
   );

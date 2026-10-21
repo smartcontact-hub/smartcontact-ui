@@ -54,7 +54,7 @@ class Host {
   readonly motivos = signal<Readonly<Record<string, string>>>({});
   readonly cambios = signal<ReadonlySet<string>>(new Set());
   readonly hechas = signal<ReadonlySet<string>>(new Set());
-  readonly estados = signal<ReadonlyMap<string, 'pendiente' | 'actual' | 'hecha' | 'error'> | null>(null);
+  readonly estados = signal<ReadonlyMap<string, 'pendiente' | 'nuevo' | 'actual' | 'hecha' | 'error'> | null>(null);
   readonly plana = signal(true);
   readonly elegidas: string[] = [];
 }
@@ -342,7 +342,7 @@ describe('sc-form-section-nav · el marcador de paso está siempre y la fila no 
     TestBed.configureTestingModule({ imports: [Host], providers: [provideTranslateService()] });
   });
 
-  const estados = (e: Record<string, 'pendiente' | 'actual' | 'hecha' | 'error'>) => new Map(Object.entries(e));
+  const estados = (e: Record<string, 'pendiente' | 'nuevo' | 'actual' | 'hecha' | 'error'>) => new Map(Object.entries(e));
 
   it('con estados, TODAS las filas llevan su marcador, y cada una el suyo', () => {
     const { raiz } = montar((h) =>
@@ -365,8 +365,18 @@ describe('sc-form-section-nav · el marcador de paso está siempre y la fila no 
     });
     const lineas = [...raiz.querySelectorAll<HTMLElement>('.form-nav__hint--paso')];
     expect(lineas.map((l) => l.textContent?.trim())).toEqual(['Nombre, tipificación', 'sc.formSectionNav.status.actual', 'sc.formSectionNav.status.pendiente']);
-    expect(lineas[0]?.classList.contains('form-nav__hint--estado')).toBe(false);
-    expect(lineas[1]?.classList.contains('form-nav__hint--estado')).toBe(true);
+    // El color del texto es el del estado: rojo la que se dejó mal, gris la que no se ha dejado.
+    expect(lineas[0]?.classList.contains('form-nav__hint--error')).toBe(true);
+    expect(lineas[1]?.classList.contains('form-nav__hint--neutro')).toBe(true);
+  });
+
+  it('una sección vista con algo nuevo dice «Hay algo nuevo»; una hecha sin nada obligatorio, «Revisada», y una hecha con obligatorios, «Listo»', () => {
+    const { raiz } = montar((h) => {
+      h.secciones.set([{ id: 'a', labelKey: 'A' }, { id: 'b', labelKey: 'B', optional: true }, { id: 'c', labelKey: 'C' }]);
+      h.estados.set(estados({ a: 'hecha', b: 'hecha', c: 'nuevo' }));
+    });
+    const lineas = [...raiz.querySelectorAll<HTMLElement>('.form-nav__hint--paso')].map((l) => l.textContent?.trim());
+    expect(lineas).toEqual(['sc.formSectionNav.status.hecha', 'sc.formSectionNav.status.revisada', 'sc.formSectionNav.status.nuevo']);
   });
 
   it('sin estados, el índice se pinta como siempre: sin marcador de paso ni segunda línea', () => {

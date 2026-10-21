@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, effect, input, signal, untracked, ViewEncapsulation } from '@angular/core';
 
-/** Dónde está una sección en un recorrido: sin ver, a la vista, resuelta bien o resuelta con algo por hacer. */
-export type ScStepMarkerState = 'pendiente' | 'actual' | 'hecha' | 'error';
+/** Dónde está una sección en un recorrido: sin ver, vista pero con algo nuevo, a la vista, resuelta bien o resuelta con algo por hacer. */
+export type ScStepMarkerState = 'pendiente' | 'nuevo' | 'actual' | 'hecha' | 'error';
 
 /**
  * El marcador de paso del índice de una ficha en alta: siempre está, y cambia de estado EN SU SITIO, así que nada
@@ -9,6 +9,7 @@ export type ScStepMarkerState = 'pendiente' | 'actual' | 'hecha' | 'error';
  * que un paso necesita: el ✓ y el «!».
  *
  *  · `pendiente`: anillo gris con punto gris. No se ha visto.
+ *  · `nuevo`: anillo y punto en el color de marca. Se vio, pero ha llegado algo desde entonces (un canal añadido).
  *  · `actual`: relleno de marca, punto blanco y halo. Es la sección a la vista.
  *  · `hecha`: círculo verde con ✓. El ✓ se dibuja con trazo y un halo verde se abre y se va, una vez.
  *  · `error`: círculo rojo con «!». Con el color no basta (daltonismo): lleva signo. Sin movimiento más que el relleno.
@@ -38,6 +39,7 @@ export type ScStepMarkerState = 'pendiente' | 'actual' | 'hecha' | 'error';
   host: {
     class: 'sc-step-marker',
     '[class.sc-step-marker--pendiente]': "state() === 'pendiente'",
+    '[class.sc-step-marker--nuevo]': "state() === 'nuevo'",
     '[class.sc-step-marker--actual]': "state() === 'actual'",
     '[class.sc-step-marker--hecha]': "state() === 'hecha'",
     '[class.sc-step-marker--error]': "state() === 'error'",

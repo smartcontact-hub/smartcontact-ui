@@ -1,4 +1,4 @@
-import { booleanAttribute, ChangeDetectionStrategy, Component, inject, InjectionToken, input, type OnInit, output } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, effect, inject, InjectionToken, input, type OnInit, output, signal, untracked } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { ScIconComponent, type ScIconWeight } from '@smartcontact-hub/icons';
@@ -20,6 +20,8 @@ export interface FormNavSection {
    * apunta a `#` y solo avisa a la página (compatibilidad; el DS no conoce el router).
    */
   readonly href?: string;
+  /** La sección no tiene nada obligatorio: vista y sin nada que cumplir, el índice dice «Revisada» y no «Listo». Solo con `sectionStates`. */
+  readonly optional?: boolean;
 }
 
 /**
@@ -163,6 +165,21 @@ export class ScFormSectionNavComponent implements OnInit {
     for (const [language, dict] of Object.entries(SC_FORM_SECTION_NAV_TRANSLATIONS)) {
       translate.setTranslation(language, dict, true);
     }
+    // Un cambio en lo que falta de una fila que no se está mirando (marcar WhatsApp en General cambia Distribución) se
+    // ve de reojo con un destello breve. El primer pintado no destella.
+    effect(() => {
+      const faltas = this.sectionErrorHints();
+      const hay = this.sectionStates() !== null;
+      untracked(() => {
+        const antes = this.faltasPrevias;
+        this.faltasPrevias = faltas;
+        if (!hay || antes === null) return;
+        const cambiadas = Object.keys(faltas).filter((id) => faltas[id] !== antes[id]);
+        if (cambiadas.length === 0) return;
+        this.destello.update((d) => new Set([...d, ...cambiadas]));
+        setTimeout(() => this.destello.update((d) => new Set([...d].filter((id) => !cambiadas.includes(id)))), 1200);
+      });
+    });
   }
 
   protected hasError(id: string): boolean {
@@ -188,16 +205,32 @@ export class ScFormSectionNavComponent implements OnInit {
     return this.stepState(id) !== null ? this.variante() === 'completa' : this.errorHint(id) !== null;
   }
 
-  protected stepLine(section: FormNavSection): { key: string | null; text: string | null; danger: boolean } | null {
+  protected stepLine(section: FormNavSection): { key: string | null; text: string | null; tono: 'neutro' | 'aviso' | 'nuevo' | 'hecha' | 'error' } | null {
     const paso = this.stepState(section.id);
     if (paso === null) return null;
-    if (paso === 'error') {
-      const hint = this.errorHint(section.id);
-      return hint ? { key: null, text: hint, danger: true } : { key: 'sc.formSectionNav.status.error', text: null, danger: true };
+    // Lo que falta, en vivo: sin color de alarma mientras no se ha dejado la sección (aviso), en rojo cuando se dejó así.
+    const falta = this.sectionErrorHints()[section.id];
+    if (falta && paso !== 'hecha') return { key: null, text: falta, tono: paso === 'error' ? 'error' : 'aviso' };
+    switch (paso) {
+      case 'error':
+        return { key: 'sc.formSectionNav.status.error', text: null, tono: 'error' };
+      case 'nuevo':
+        return { key: 'sc.formSectionNav.status.nuevo', text: null, tono: 'nuevo' };
+      case 'hecha':
+        // Sin guardar pesa más que «Listo»: es lo que el usuario tiene que hacer después.
+        if (this.hasChanges(section.id)) return { key: 'sc.formSectionNav.status.cambios', text: null, tono: 'nuevo' };
+        return { key: section.optional ? 'sc.formSectionNav.status.revisada' : 'sc.formSectionNav.status.hecha', text: null, tono: 'hecha' };
+      case 'actual':
+        return { key: 'sc.formSectionNav.status.actual', text: null, tono: 'neutro' };
+      default:
+        return { key: 'sc.formSectionNav.status.pendiente', text: null, tono: 'neutro' };
     }
-    if (paso === 'pendiente') return { key: 'sc.formSectionNav.status.pendiente', text: null, danger: false };
-    return { key: paso === 'actual' ? 'sc.formSectionNav.status.actual' : 'sc.formSectionNav.status.hecha', text: null, danger: false };
   }
+
+  /** Las filas cuyo texto de «lo que falta» ha cambiado hace un momento: destellan, para verlas de reojo. */
+  protected readonly destello = signal<ReadonlySet<string>>(new Set());
+
+  private faltasPrevias: Readonly<Record<string, string>> | null = null;
 
   /** El estado de paso de la fila, si la página lo manda. */
   protected stepState(id: string): ScStepMarkerState | null {

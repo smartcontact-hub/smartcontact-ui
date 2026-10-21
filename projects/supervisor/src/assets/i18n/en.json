@@ -2114,6 +2114,7 @@
         "resources": "Resources",
         "missing_phone": "outbound phone",
         "missing_whatsapp": "WhatsApp number",
+        "missing_whatsapp_short": "WhatsApp",
         "missing_typification": "typification"
       },
       "channels": {

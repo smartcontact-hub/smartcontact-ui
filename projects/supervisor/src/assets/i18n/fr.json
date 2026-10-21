@@ -2114,6 +2114,7 @@
         "resources": "Ressources",
         "missing_phone": "téléphone sortant",
         "missing_whatsapp": "numéro WhatsApp",
+        "missing_whatsapp_short": "WhatsApp",
         "missing_typification": "typification"
       },
       "channels": {

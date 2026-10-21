@@ -20,5 +20,5 @@ export function estadosDeSecciones(o: {
   readonly dejadas: ReadonlyMap<string, string>;
   readonly firma: (id: string) => string;
   readonly completa: (id: string) => boolean;
-}): Map<string, 'pendiente' | 'actual' | 'hecha' | 'error'>;
+}): Map<string, 'pendiente' | 'nuevo' | 'actual' | 'hecha' | 'error'>;
 export function firmaVista(dejadas: ReadonlyMap<string, string>, id: string, actual: string): boolean;

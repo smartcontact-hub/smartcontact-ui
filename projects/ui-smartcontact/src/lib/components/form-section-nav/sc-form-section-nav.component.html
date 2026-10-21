@@ -58,7 +58,11 @@
                genérico del punto, que sobra. -->
           @if (conLinea(section.id)) {
             @if (stepLine(section); as linea) {
-              <span class="form-nav__hint form-nav__hint--paso" [class.form-nav__hint--estado]="!linea.danger" [attr.title]="linea.text">{{ linea.key ? (linea.key | translate) : linea.text }}</span>
+              @if (linea.text) {
+                <!-- Sin «Falta:» a la vista, el lector de pantalla oiría una lista sin contexto: el color y el «!» no le llegan. -->
+                <span class="form-nav__sr">{{ 'sc.formSectionNav.missingPrefix' | translate }}</span>
+              }
+              <span [class]="'form-nav__hint form-nav__hint--paso form-nav__hint--' + linea.tono" [class.form-nav__hint--destello]="destello().has(section.id)" [attr.title]="linea.text">{{ linea.key ? (linea.key | translate) : linea.text }}</span>
             } @else if (errorHint(section.id); as hint) {
               <span class="form-nav__hint">{{ hint }}</span>
             }

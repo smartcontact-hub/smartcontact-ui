@@ -320,15 +320,19 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
    * ficha de cliente, a Recursos. Agente y usuario siguen con pestañas: la divergencia es a
    * propósito y está escrita en DD-121.
    */
-  protected readonly navSections = computed<readonly FormNavSection[]>(() =>
-    [
+  protected readonly navSections = computed<readonly FormNavSection[]>(() => {
+    // «Revisada» y no «Listo» donde no hay nada que cumplir: Recursos y Agentes, y Distribución sin ningún canal. Solo en el
+    // alta: al editar nada se «revisa», todo está guardado.
+    const alta = this.mode() === 'create';
+    const sinCanales = this.form().channels.size === 0;
+    return [
       { id: 'group-section-general', labelKey: 'groups.form.section.general', icon: 'tune' },
-      { id: 'group-section-distribution', labelKey: 'groups.form.section.distribution', icon: 'alt_route' },
+      { id: 'group-section-distribution', labelKey: 'groups.form.section.distribution', icon: 'alt_route', optional: alta && sinCanales },
       // Lo que se le asigna desde Repositorios, como «Recursos» en la ficha de agente.
-      { id: 'group-section-resources', labelKey: 'groups.form.section.resources', icon: 'library_books' },
-      { id: 'group-section-agents', labelKey: 'groups.form.section.agents', icon: 'headphones' },
-    ].map((s) => ({ ...s, href: this.sectionLinks.href(this.sectionUrl(s.id)) })),
-  );
+      { id: 'group-section-resources', labelKey: 'groups.form.section.resources', icon: 'library_books', optional: alta },
+      { id: 'group-section-agents', labelKey: 'groups.form.section.agents', icon: 'headphones', optional: alta },
+    ].map((s) => ({ ...s, href: this.sectionLinks.href(this.sectionUrl(s.id)) }));
+  });
 
   /**
    * EL ALTA, CON EL ÍNDICE DE LA EDICIÓN (DD-143): las mismas cuatro secciones, con ✓ en las que se dejan completas y
@@ -517,22 +521,38 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
       : new Set(this.avisos().map((a) => a.seccion)),
   );
 
-  /** Lo que dice cada sección con aviso en el índice, en texto (DD-217). En el alta, TODO lo que le falta a la sección. */
-  protected readonly sectionErrorHints = computed(() =>
-    this.mode() === 'create' ? this.faltasPorSeccion() : avisosDelIndice(this.avisos()),
-  );
+  /**
+   * Lo que dice cada sección en el índice, en texto: TODO lo que le falta. En el alta, de todas (en gris hasta que se
+   * deja la sección); al editar, solo de las que tienen un aviso a la vista (DD-219).
+   */
+  protected readonly sectionErrorHints = computed<Readonly<Record<string, string>>>(() => {
+    const todas = this.faltasPorSeccion();
+    if (this.mode() === 'create') return todas;
+    const conAviso = this.sectionsWithErrors();
+    return Object.fromEntries(Object.entries(todas).filter(([id]) => conAviso.has(id)));
+  });
 
   /**
-   * Lo que falta en cada sección, entero y en una línea para el índice del alta: «Nombre, tipificación». Los nombres
-   * cortos son los del resumen de la derecha («Falta: …»), así el índice y el resumen dicen lo mismo con las mismas
-   * palabras. Un nombre repetido o una cola imposible, que no son «falta», entran con su aviso.
+   * El marcador de cada sección: en el alta, el recorrido (pendiente, nuevo, actual, hecha, error); al editar, todo está
+   * guardado, así que solo «hecha» o «error» (la que tiene un aviso a la vista).
+   */
+  protected readonly sectionStates = computed<ReadonlyMap<string, 'pendiente' | 'nuevo' | 'actual' | 'hecha' | 'error'>>(() => {
+    if (this.mode() === 'create') return this.alta.estados();
+    const conAviso = this.sectionsWithErrors();
+    return new Map(this.navSections().map((s) => [s.id, conAviso.has(s.id) ? ('error' as const) : ('hecha' as const)]));
+  });
+
+  /**
+   * Lo que falta en cada sección, entero y en una línea para el índice del alta: «Nombre, tipificación», sin «Falta:» (el
+   * rojo y el marcador ya lo dicen). Es el feedback del alta: vive en el índice, que es donde se mira al tocar canales y secciones, y ya no sobre el resumen. Un nombre repetido o una cola imposible, que no son «falta», entran con su aviso.
    */
   private readonly faltasPorSeccion = computed<Readonly<Record<string, string>>>(() => {
     this.lang();
     const t = (key: string) => this.translate.instant(key);
     const por: Record<string, string[]> = {};
     for (const o of this.obligatorios()) {
-      if (o.falta) (por[o.seccion] ??= []).push(t(o.etiqueta));
+      // En el índice, el nombre más corto: «WhatsApp», no «número de WhatsApp» (la fila mide ~160 px de texto).
+      if (o.falta) (por[o.seccion] ??= []).push(t(o.clave === 'whatsapp' ? 'groups.form.summary.missing_whatsapp_short' : o.etiqueta));
     }
     if (this.nameTaken()) (por['group-section-general'] ??= []).push(t('groups.errors.name_taken'));
     if (this.colaMal()) (por['group-section-distribution'] ??= []).push(t('groups.form.advanced.queue_invalid'));
@@ -589,6 +609,17 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
       return Promise.resolve(true);
     }
     return this.sectionLinks.go(this.sectionUrl(id));
+  }
+
+  /**
+   * Pulsar una fila del índice. Si era una sección que se dejó en rojo, se llega a lo primero que falta en ella, con el
+   * foco en el campo: el rojo del índice se resuelve donde se arregla, sin buscar (en el alta; al editar, la dirección).
+   */
+  protected alIndice(id: string): void {
+    const eraRoja = this.mode() === 'create' && this.alta.estados().get(id) === 'error';
+    const primero = eraRoja ? this.obligatorios().find((o) => o.falta && o.seccion === id) : undefined;
+    void this.goTo(id);
+    if (primero?.ancla && this.activeSection() === id) llegarAAncla(primero.ancla, this.injector);
   }
 
   /** Lleva a un campo de la ficha: a su sección, y en ella al campo, arriba y con el foco. */

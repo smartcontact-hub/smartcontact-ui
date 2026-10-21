@@ -106,10 +106,10 @@ test('firmaDe: la misma con otro orden o con repetidos', () => {
   assert.equal(firmaDe([]), '');
 });
 
-test('estadosDeSecciones: actual la abierta, hecha o error la dejada, pendiente la no vista o con otra firma', () => {
+test('estadosDeSecciones: actual la abierta, hecha o error la dejada, nuevo la vista con algo nuevo, pendiente la nunca abierta', () => {
   const dejadas = new Map([['general', ''], ['distribucion', 'phone'], ['recursos', '']]);
   const estados = estadosDeSecciones({
-    ids,
+    ids: [...ids, 'extra'],
     abierta: 'agentes',
     dejadas,
     firma: (id) => (id === 'recursos' ? 'otra' : id === 'distribucion' ? 'phone' : ''),
@@ -118,8 +118,9 @@ test('estadosDeSecciones: actual la abierta, hecha o error la dejada, pendiente 
   assert.deepEqual(Object.fromEntries(estados), {
     general: 'error',
     distribucion: 'hecha',
-    recursos: 'pendiente',
+    recursos: 'nuevo',
     agentes: 'actual',
+    extra: 'pendiente',
   });
 });
 

@@ -61,6 +61,18 @@
   transform: scale(0.6);
 }
 
+/* Vista, con algo nuevo desde entonces: el mismo anillo, en el color de marca, para distinguirlo de la que nunca se abrió. */
+.sc-step-marker--nuevo {
+  .sc-step-marker__disco {
+    stroke: var(--sc-bg-primary);
+    stroke-width: 2;
+    fill: color-mix(in srgb, var(--sc-bg-primary) 14%, transparent);
+  }
+  .sc-step-marker__punto {
+    fill: var(--sc-bg-primary);
+  }
+}
+
 /* A la vista: el radio marcado, con su halo. */
 .sc-step-marker--actual {
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--sc-bg-primary) 22%, transparent);

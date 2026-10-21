@@ -31,7 +31,7 @@ export interface SeccionesAlta {
   /** Las que se dejaron tal como están y completas: el ✓ del índice (`sectionsDone`). */
   readonly hechas: Signal<ReadonlySet<string>>;
   /** El estado de cada sección para el marcador de paso del índice (`sectionStates`): pendiente, actual, hecha o error. */
-  readonly estados: Signal<ReadonlyMap<string, 'pendiente' | 'actual' | 'hecha' | 'error'>>;
+  readonly estados: Signal<ReadonlyMap<string, 'pendiente' | 'nuevo' | 'actual' | 'hecha' | 'error'>>;
   /** Abre la sección `id` y da por dejada la que estaba abierta, con su firma de ese momento. */
   abrir(id: string): void;
   /** La sección anterior y la siguiente a la abierta, para «Atrás» y «Siguiente»; `null` en los extremos. */

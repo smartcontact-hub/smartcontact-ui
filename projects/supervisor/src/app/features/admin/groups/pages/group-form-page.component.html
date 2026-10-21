@@ -79,10 +79,10 @@
         [sectionErrorHints]="sectionErrorHints()"
         [sectionsWithChanges]="sectionsWithChanges()"
         [sectionsDone]="alta.hechas()"
-        [sectionStates]="mode() === 'create' ? alta.estados() : null"
+        [sectionStates]="sectionStates()"
         [variante]="variante"
         [flush]="true"
-        (activeChange)="goTo($event)"
+        (activeChange)="alIndice($event)"
       />
       <!-- «Eliminar», bajo el índice (DD-144): una acción sobre la ficha entera, a 28 de la última fila del índice.
            Solo al editar. -->
