@@ -198,7 +198,11 @@ volverá a él más adelante.
 **Consecuencias** · Mientras la línea esté puesta, el aspecto del índice plano de DD-122 (sin caja) no se ve en el
 Supervisor; su código sigue igual. Para volver: borrar la línea de `app.config.ts` y, en Figma, devolver las fichas al
 índice sin caja (versión del fichero «Fichas con el índice de Contact Center (2026-10-21)» y la anterior). El DS de
-Figma hay que publicarlo para que la caja de las fichas salga con el Nav-menu corregido.
+Figma hay que publicarlo para que la caja de las fichas salga con el Nav-menu corregido. Con la caja, el borde del
+grupo es la caja: «Eliminar» va a 28 de ella (`.page__rail:has(.form-nav--caja)` en `_page.scss`; sin eso quedaban
+19,25), y lo mide `fichas-tres-columnas.spec.ts` desde la caja o, sin ella, desde la última fila. En Figma, lo mismo, y
+los rótulos del índice en una columna de 108 con el hueco de la marca reservado (DD-176), como en el código: por eso
+«Distribución y colas», «Agentes asignados» y «Grupos asignados» van en dos líneas en los dos lados.
 
 ## DD-218 · 2026-10-20 — Grupos como sus páginas de COA: la cifra de agentes a la ficha, duplicar a un alta, eliminar varios, «Agentes asignados» sin estado y ordenable, y confirmar con su verbo
 

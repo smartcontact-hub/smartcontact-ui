@@ -73,6 +73,11 @@ y «Mapa de componentes») y el del relleno de la tabla (2026-10-19, DD-214): `g
 - **Pruebas**: tres en `sc-form-section-nav.component.spec.ts` (sin la línea, plano; con ella, caja; el índice por
   defecto no gana otra caja). La de la caja se pone en rojo si se quita la clase.
 - **Visto**: con el carril de 196, «Distribución y colas» y «Agentes asignados» van en dos líneas dentro de la caja.
+- **«Eliminar»**: a 28 de la caja (sin la regla de `_page.scss` quedaban 19,25; lo cazó el e2e de `fichas-tres-columnas`).
+- **Figma contra el prototipo** (versión «Revisión final con el prototipo»): botón de la barra a 33; tablas de
+  asignación en Small (cada celda llevaba atado el relleno normal); 13 resúmenes de grupo a la versión publicada;
+  Hand-off hasta DD-219, con enlaces a las congeladas; 12 textos de hojas. Sin dibujar, «Nivel {canal}». Contact
+  Center en Figma dice «Descartar cambios»; el prototipo, «Deshacer».
 
 ## ✅ 2026-10-20 · Grupos como sus páginas de COA: cifra a la ficha, duplicar a un alta, eliminar varios y «Agentes asignados» sin estado (DD-218)
 
