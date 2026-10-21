@@ -1,4 +1,6 @@
 // url=https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=148-6321
+// source=projects/ui-smartcontact/src/lib/components/checkbox/sc-checkbox.component.ts
+// component=ScCheckboxComponent
 
 import figma from "figma"
 

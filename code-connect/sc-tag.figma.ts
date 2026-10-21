@@ -1,4 +1,6 @@
 // url=https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=373-13337
+// source=projects/ui-smartcontact/src/lib/components/tag/sc-tag.component.ts
+// component=ScTagComponent
 
 import figma from "figma"
 

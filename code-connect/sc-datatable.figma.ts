@@ -1,4 +1,6 @@
 // url=https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=15374-66885
+// source=projects/ui-smartcontact/src/lib/components/datatable/sc-datatable.component.ts
+// component=ScDatatableComponent
 
 import figma from "figma"
 

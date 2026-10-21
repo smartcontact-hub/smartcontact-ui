@@ -1,4 +1,6 @@
 // url=https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=260-11899
+// source=projects/ui-smartcontact/src/lib/components/toggleswitch/sc-toggleswitch.component.ts
+// component=ScToggleSwitchComponent
 
 import figma from "figma"
 

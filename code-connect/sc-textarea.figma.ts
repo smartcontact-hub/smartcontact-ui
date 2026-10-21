@@ -1,4 +1,6 @@
 // url=https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=6209-7402
+// source=projects/ui-smartcontact/src/lib/components/textarea/sc-textarea.component.ts
+// component=ScTextareaComponent
 
 import figma from "figma"
 

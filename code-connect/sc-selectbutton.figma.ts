@@ -1,4 +1,6 @@
 // url=https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=191-6703
+// source=projects/ui-smartcontact/src/lib/components/selectbutton/sc-selectbutton.component.ts
+// component=ScSelectButtonComponent
 
 import figma from "figma"
 

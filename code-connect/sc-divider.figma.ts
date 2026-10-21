@@ -1,4 +1,6 @@
 // url=https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=302-11810
+// source=projects/ui-smartcontact/src/lib/components/divider/sc-divider.component.ts
+// component=ScDividerComponent
 
 import figma from "figma"
 

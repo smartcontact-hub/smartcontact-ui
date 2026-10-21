@@ -1,10 +1,12 @@
 // url=https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=238-10355
+// source=projects/ui-smartcontact/src/lib/components/card/sc-card.component.ts
+// component=ScCardComponent
 
 import figma from "figma"
 
 const header = figma.selectedInstance.getString("Header")
 const subheader = figma.selectedInstance.getString("Subheader")
-const icon = figma.selectedInstance.getBoolean("Show Icon", { true: 'icon="auto_awesome"', false: "" })
+const icon = figma.selectedInstance.getBoolean("Show icon", { true: 'icon="auto_awesome"', false: "" })
 const content = figma.properties.children(["*"])
 const __props: Record<string, unknown> = {}
 if (header && header.type !== "ERROR") {
