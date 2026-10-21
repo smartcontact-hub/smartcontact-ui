@@ -62,6 +62,16 @@ y «Mapa de componentes») y el del relleno de la tabla (2026-10-19, DD-214): `g
 8c9297a7:docs/handoff/supervisor-fichas.md`; la trampa del primero sube a «Trampas del frente».
 El del mapa de componentes de Grupos y la tabla única del DS (2026-10-19, #457): `git show
 34f18f37:docs/handoff/supervisor-fichas.md`; sus trampas suben a «Trampas del frente».
+El de Grupos y Agentes como en Figma, sin edición masiva (2026-10-19, DD-215, sin trampas propias): `git show
+archive/handoff-fichas-2026-10-21:docs/handoff/supervisor-fichas.md`.
+
+## ✅ 2026-10-21 · Marcar una casilla de Grupos o Agentes ya no acorta la tabla (fallo de DD-215)
+
+> **Sello:** rama `areses/pensive-bohr-53312b` sobre `main` HEAD `c2908643`, un PR. Sin DD nueva.
+
+- `sc-list-page` reservaba el sitio de la barra de lote (`.table-card--seleccion`, 77 px) con solo haber algo marcado; Grupos y
+  Agentes eligen para exportar y no montan barra, así que el borde de la tabla subía 77 px y quedaba un hueco. Ahora la clase
+  sigue a `barraVisible` (`selectable` + `bulkEntity` + marcado o resultado de lote). Prueba: `listado-alto-al-marcar`.
 
 ## ✅ 2026-10-21 · El índice, en la caja gris de Contact Center, con un interruptor para volver al plano (DD-220)
 
@@ -134,22 +144,6 @@ El del mapa de componentes de Grupos y la tabla única del DS (2026-10-19, #457)
 - **Figma (§55)**: hecho el 2026-10-21. Del barrido, el nombre en cabecera, las cabeceras de asignación y «Ver detalle», hechos
   (`fichas-alineacion`, 7). Lo «a nativo» que quedaba (§16): `helperText` de `sc-fileupload`, hecho; el resto ya lo
   había decidido el DS.
-
-## ✅ 2026-10-19 · Grupos y Agentes, como en Figma: sin edición masiva, y borrar con la confirmación simple (DD-215)
-
-> **Sello:** rama `areses/prototipo-como-figma` sobre `main` HEAD `91c438c2`, un PR. Tras fundir, las congeladas 4058, 4062 y
-> 4064 avanzan a ese commit (`docs/PROTOTIPOS.md`).
-
-- **Listados de Grupos y Agentes**: con casillas (para elegir y exportar lo marcado), pero sin barra de lote, ni
-  drawer, ni «Editar» o «Eliminar» en bloque (fase posterior para los devs); lo de cada fila va por su menú (Editar,
-  Duplicar, Eliminar). «Acciones» solo exporta. Rafa pidió volver a las casillas el 2026-10-20: Figma aún las muestra sin ellas. Usuarios, Repositorios y el resto conservan el
-  lote.
-- **Borrar** un grupo o un agente, desde el listado o la ficha: `sc-confirmdialog` por `injectConfirmarBorrado`
-  (`features/admin/services/confirmar-borrado.ts`), con el texto de Figma. Usuarios sigue tecleando el nombre (DD-145
-  §4). El menú dice «Eliminar» sin «…» (la regla de `admin-row-menu`), y Figma también desde el 2026-10-20 (paso 02,
-  `3118:33342`; también sus tarjetas, la nota del paso 05 y la fila 9 de la hoja).
-- **Pruebas**: `listado-grupos` (sin casillas; borrar pregunta, cancela y borra) y `fichas-nombre-fijo` (grupo y agente
-  con la confirmación, usuario tecleando); las del resultado del lote (DD-196) pasan a Usuarios. En local, 24 en verde.
 
 ## SIGUIENTE — sin preguntar
 

@@ -74,7 +74,7 @@
     @if (isEmpty() && !cargando()) {
       <ng-content select="[scListEmpty]" />
     } @else {
-      <div #tarjeta class="table-card" scLlegaAlPie [class.table-card--seleccion]="selectedIds().size > 0 || !!resultadoLote()">
+      <div #tarjeta class="table-card" scLlegaAlPie [class.table-card--seleccion]="barraVisible()">
         <!-- Ancho ajustable solo en las listas que eligen columnas (el orden, en el globo de columnas, DD-162): la tabla ajustable nativa
              recorta cada celda (`overflow: hidden`), y en Etiquetas eso dejaba fuera de sitio el panel que se
              ancla dentro de la celda (medido: `admin-datatable-pilot`, el panel 70px por encima de su fila). -->

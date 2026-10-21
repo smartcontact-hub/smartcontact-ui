@@ -439,8 +439,9 @@ h1.page__heading {
  *      (`flex: 0 1 auto`): con 3 filas, la versión que llenaba el alto dejaba una tarjeta vacía.
  *   2. Un alto mínimo (`scale/25`) para pantallas bajas y zoom: sin él, al 200 % la tabla se
  *      quedaba en 191 px. Si no cabe ni eso, hace scroll la página.
- *   3. Con filas marcadas aparece la barra de selección flotante: la tarjeta acorta su borde de
- *      abajo lo que mide la barra (`.table-card--seleccion`) sin mover ninguna fila.
+ *   3. Con filas marcadas y una barra de selección flotante a la vista (`sc-list-page` con `bulkEntity`), la tarjeta
+ *      acorta su borde de abajo lo que mide la barra (`.table-card--seleccion`) sin mover ninguna fila. Sin barra
+ *      (Grupos y Agentes: casillas para exportar, DD-215) la clase no se pone, y marcar no toca el alto de la tabla.
  *
  * Una página con esta clase no puede reservar la barra de selección con `padding-bottom` en su
  * `.page` ni poner `overflow` en su `.table-card`: las dos cosas rompen la cadena de altos.
