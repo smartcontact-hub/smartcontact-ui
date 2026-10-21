@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | El índice de secciones, en la caja gris de Contact Center en las seis pantallas que lo llevan (Contact Center, fichas de grupo, agente y usuario, tipificación y constructor de reglas), como en Figma: un solo interruptor de la app (`SC_FORM_SECTION_NAV_CAJA`), y volver al índice plano es borrar su línea | DD-219 |
 > | Grupos como sus páginas de COA (SISMAC-4056 y 4058): la cifra de agentes lleva a la ficha · duplicar es un alta · con varios marcados, el clic derecho solo elimina · Servicios y Agentes de mayor a menor al primer clic (`defaultSortOrder`) · la miga dice el nombre · «Agentes asignados» sin estado ni filtro, ordenable por nombre (`headerTemplate`), el nivel en desplegable y Habilitado bloqueado con «Activación por grupo» · confirmar dice qué, a cuántos y con su verbo (enmienda DD-121, DD-151, DD-159 §1, DD-185 §7 y §8, DD-187 §4, DD-204 §6, DD-215 §1 y §2 y DD-217 §8) | DD-218 |
 > | Lo que falta se dice al pulsar Crear o Guardar, en su campo y en el índice con su texto (`sectionErrorHints`), y se llega al primero · Crear siempre activo, sin motivo junto al botón ni «Falta / Listo para crear» · el ✓, de la sección que se dejó tal como está (su firma) · sin puertas · los grupos pueden no tener canales · quitar y poner un canal no le quita nada a nadie · fuera los avisos amarillos · duplicar un grupo no pregunta: «(1)» · Recursos en chips que llenan su fila, sin «+» ni lápiz y con lo que contienen al pasar, en las dos fichas · los editores de Repositorios, igual · la ayuda acaba en punto y el subtítulo no (enmienda DD-121, DD-136, DD-143 §2, §3 y §5, DD-158, DD-167, DD-199 §1 y §3, DD-187, DD-204, DD-206, DD-209 §4, DD-211 §6 y DD-212 §1) | DD-217 |
 > | Abrir una ficha desde su listado, con la fila o con «Editar», entra por la primera sección (General en grupo y agente, Identidad en usuario) · la tarea frecuente se queda en el control que la nombra: en Agentes, la cifra de grupos lleva a «Grupos asignados» con su propia acción · al crear, nada cambia (enmienda DD-122 §8) | DD-213 |
@@ -156,6 +157,48 @@
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
 
 ---
+
+## DD-219 · 2026-10-21 — El índice de secciones, en la caja gris de Contact Center, con un interruptor para volver al plano
+
+**Contexto** · En Figma, el índice de Contact Center (Supervisor `2286:5368`) es la caja `Section` del DS con su título y
+el Nav-menu dentro, y el ejemplo de `sc-form-section-nav` del DS (❖ Navmenu) es ese mismo. El prototipo, en cambio,
+pintaba en las seis pantallas el índice plano (DD-122, el de `393:12565`). Los devs construyen sobre Figma y abren los
+prototipos congelados de sus tickets (SISMAC-4058, 4062 y 4064): con dos índices distintos no sabían cuál construir.
+Se vuelve, de momento, a la caja en Contact Center y en las fichas, en el prototipo y en Figma, sin perder el plano: se
+volverá a él más adelante.
+
+**Decisión** ·
+1. **`sc-form-section-nav` gana `SC_FORM_SECTION_NAV_CAJA`** (`InjectionToken<boolean>`, `false` por defecto). Con él, el
+   índice plano (`flush`) va dentro de la caja gris, con las medidas de `sc-section-card` en `subtle`, que es ese
+   `Section`: `gray/50`, radio `xl`, 17.5 arriba y abajo, 16 a los lados y 14 del título a las filas. El Nav-menu guarda
+   sus 8.75 arriba y abajo y sus 3.5 entre filas. Las filas sin marcar van en blanco y en ángulo recto, como las pinta
+   el Nav-menu de esa maqueta; la marcada, con su fondo redondeado sobre el gris. El rótulo (`titleKey`) se lee como el
+   título de la caja (`Heading/h3-semibold`, 18/24), sin dejar de ser texto: el `<nav>` se sigue llamando como él.
+2. **El Supervisor lo enciende en `app.config.ts`**, una línea: Contact Center, las fichas de grupo, agente y usuario,
+   la de tipificación y el constructor de reglas. **Para volver al índice plano, se borra esa línea.**
+3. **Figma**: las fichas de Grupos y Agentes llevan la misma caja, sin título (el nombre y los datos, encima, como en el
+   prototipo). Contact Center y el ejemplo del DS ya la llevaban.
+4. **Las congeladas 4058, 4062 y 4064 avanzan** al commit de `main` que trae esto (`docs/PROTOTIPOS.md`).
+
+**Razón** · Medido el 2026-10-21 en Contact Center con la línea puesta: caja de 196 × 210, relleno 17.5/16, título
+18/24/600 en `--sc-text-heading`, 14 hasta las filas, filas de 37.5, las sin marcar en blanco y la marcada en
+`slate-100` con radio 12. Es `2286:5368` salvo el ancho: 235 en Figma, 196 el carril del prototipo. La prueba de
+`sc-form-section-nav` que exige la caja se pone en rojo si se quita la clase.
+
+**Descartadas** ·
+- *Una entrada `[caja]` en cada índice*: seis sitios que cambiar, que pueden quedarse a medias al ir y al volver. El
+  interruptor de la app los cambia y los devuelve a la vez.
+- *Envolver el índice en `sc-section-card` en cada pantalla*: el rótulo pasaría a ser el encabezado de la tarjeta y el
+  `<nav>` se quedaría sin nombre (`aria-labelledby`), y otra vez seis sitios.
+- *Cambiar solo las congeladas y dejar `main` con el índice plano*: una rama `proto/*` solo avanza a commits de `main`
+  (`docs/PROTOTIPOS.md`); fuera de `main` habría que reescribirla al volver.
+- *Ensanchar el carril a 235, como en Figma*: cambia el molde de las seis pantallas (`.page__rail`, 196). Con 196,
+  «Distribución y colas» y «Agentes asignados» van en dos líneas: la fila crece antes que cortar el nombre (DD-52).
+
+**Consecuencias** · Mientras la línea esté puesta, el aspecto del índice plano de DD-122 (sin caja) no se ve en el
+Supervisor; su código sigue igual. Para volver: borrar la línea de `app.config.ts` y, en Figma, devolver las fichas al
+índice sin caja (versión del fichero «Fichas con el índice de Contact Center (2026-10-21)» y la anterior). El DS de
+Figma hay que publicarlo para que la caja de las fichas salga con el Nav-menu corregido.
 
 ## DD-218 · 2026-10-20 — Grupos como sus páginas de COA: la cifra de agentes a la ficha, duplicar a un alta, eliminar varios, «Agentes asignados» sin estado y ordenable, y confirmar con su verbo
 

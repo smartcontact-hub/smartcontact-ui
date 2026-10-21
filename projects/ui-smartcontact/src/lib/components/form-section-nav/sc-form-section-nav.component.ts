@@ -1,4 +1,4 @@
-import { booleanAttribute, ChangeDetectionStrategy, Component, inject, input, type OnInit, output } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, inject, InjectionToken, input, type OnInit, output } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { ScIconComponent, type ScIconWeight } from '@smartcontact-hub/icons';
@@ -20,6 +20,20 @@ export interface FormNavSection {
    */
   readonly href?: string;
 }
+
+/**
+ * El índice plano (`flush`) dentro de la caja gris, en toda la app que lo pida (DD-219): el índice de Contact Center
+ * de Figma (Supervisor `2286:5368`), un `Section` del DS con su título y el Nav-menu dentro. Las filas sin marcar van
+ * en blanco sobre el gris, como en esa maqueta, y el rótulo (`titleKey`) se lee como el título de la caja.
+ *
+ * Es UN interruptor y no una entrada de cada índice para que las seis pantallas cambien a la vez y vuelvan a la vez:
+ * la app lo enciende con `{ provide: SC_FORM_SECTION_NAV_CAJA, useValue: true }` y, al quitar esa línea, todo vuelve al
+ * índice plano. Sin `flush` no hace nada: el índice por defecto ya es un panel.
+ */
+export const SC_FORM_SECTION_NAV_CAJA = new InjectionToken<boolean>('SC_FORM_SECTION_NAV_CAJA', {
+  providedIn: 'root',
+  factory: () => false,
+});
 
 let siguienteId = 0;
 
@@ -121,6 +135,9 @@ export class ScFormSectionNavComponent implements OnInit {
 
   /** El id del rótulo, para nombrar el `<nav>` con él. */
   protected readonly titleId = `sc-form-nav-title-${siguienteId++}`;
+
+  /** El índice plano en la caja gris (DD-219), si la app lo pide. */
+  protected readonly caja = inject(SC_FORM_SECTION_NAV_CAJA);
 
   /** Las que ya estaban hechas al pintar el índice: su ✓ aparece quieto. */
   private hechasAlPintar: ReadonlySet<string> = new Set();

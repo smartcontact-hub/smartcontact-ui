@@ -1,6 +1,7 @@
 <nav
   class="form-nav"
   [class.form-nav--flush]="flush()"
+  [class.form-nav--caja]="flush() && caja"
   [attr.aria-label]="titleKey() ? null : (labelKey() | translate)"
   [attr.aria-labelledby]="titleKey() ? titleId : null"
 >

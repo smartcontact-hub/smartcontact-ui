@@ -13,6 +13,7 @@ import { MessageService } from 'primeng/api';
 import {
   provideScConfirm,
   provideSmartContactUi,
+  SC_FORM_SECTION_NAV_CAJA,
 } from '@smartcontact-hub/components';
 import { provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -85,6 +86,9 @@ export const appConfig: ApplicationConfig = {
     }),
     MessageService,
     ...provideScConfirm(),
+    // El índice de secciones en la caja gris de Contact Center, como en Figma (DD-219): Contact Center, las fichas de
+    // grupo, agente y usuario, la de tipificación y el constructor de reglas. Para volver al índice plano, borra la línea.
+    { provide: SC_FORM_SECTION_NAV_CAJA, useValue: true },
     // ngx-translate v17: `provideTranslateService` + `provideTranslateHttpLoader`
     // (el constructor de TranslateHttpLoader ya no toma args; la config va por
     // el provider funcional). Carga `/assets/i18n/<lang>.json`, idioma `es`.

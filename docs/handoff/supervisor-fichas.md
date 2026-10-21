@@ -61,6 +61,19 @@ El de Grupos y agentes en Figma para desarrollo (2026-10-18 y 19: los ids de cad
 y «Mapa de componentes») y el del relleno de la tabla (2026-10-19, DD-214): `git show
 8c9297a7:docs/handoff/supervisor-fichas.md`; la trampa del primero sube a «Trampas del frente».
 
+## ✅ 2026-10-21 · El índice, en la caja gris de Contact Center, con un interruptor para volver al plano (DD-219)
+
+> **Sello:** rama `areses/jovial-bohr-d10d27` sobre `main` `4fe744e5`, el PR de §55 y §56. Tras fundir, las congeladas
+> 4058, 4062 y 4064 avanzan a ese commit (`docs/PROTOTIPOS.md`).
+
+- **Prototipo**: `SC_FORM_SECTION_NAV_CAJA` en `sc-form-section-nav`, encendido en `projects/supervisor/src/app/app.config.ts`.
+  Las seis pantallas con índice lo llevan en la caja de `2286:5368`. **Para volver al índice plano, se borra esa línea**
+  (se volverá a él más adelante: el plano no se pierde).
+- **Figma**: el ejemplo del DS (❖ Navmenu) y las fichas de Grupos y Agentes, con la caja; Contact Center ya la tenía.
+- **Pruebas**: tres en `sc-form-section-nav.component.spec.ts` (sin la línea, plano; con ella, caja; el índice por
+  defecto no gana otra caja). La de la caja se pone en rojo si se quita la clase.
+- **Visto**: con el carril de 196, «Distribución y colas» y «Agentes asignados» van en dos líneas dentro de la caja.
+
 ## ✅ 2026-10-20 · Grupos como sus páginas de COA: cifra a la ficha, duplicar a un alta, eliminar varios y «Agentes asignados» sin estado (DD-218)
 
 > **Sello:** rama `areses/prototype-coa-groups-alignment-eaa42d` sobre `main` `02df3933`, un PR.
