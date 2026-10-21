@@ -22,7 +22,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideTranslateService } from '@ngx-translate/core';
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { FormNavSection, ScFormSectionNavComponent } from './sc-form-section-nav.component';
+import { FormNavSection, SC_FORM_SECTION_NAV_CAJA, ScFormSectionNavComponent } from './sc-form-section-nav.component';
 
 const SECCIONES: readonly FormNavSection[] = [
   { id: 'general', labelKey: 'General', icon: 'tune', href: '/ficha/1' },
@@ -303,5 +303,34 @@ describe('sc-form-section-nav · el icono de cada fila pesa lo que su rótulo (D
       h.hechas.set(new Set(['general', 'distribucion']));
     });
     expect(delCheck(porDefecto.filas)).toEqual([500, 500, null]);
+  });
+});
+
+describe('sc-form-section-nav · la caja gris de Contact Center la enciende la app, de una vez (DD-220)', () => {
+  const conCaja = (encendida: boolean | null) => {
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      imports: [Host],
+      providers: [provideTranslateService(), ...(encendida === null ? [] : [{ provide: SC_FORM_SECTION_NAV_CAJA, useValue: encendida }])],
+    });
+  };
+  const nav = (raiz: HTMLElement) => raiz.querySelector('nav.form-nav')!;
+
+  it('sin la línea de la app, el índice plano sigue plano', () => {
+    conCaja(null);
+    const { raiz } = montar();
+    expect(nav(raiz).classList.contains('form-nav--caja')).toBe(false);
+  });
+
+  it('con la línea, el índice plano va en la caja', () => {
+    conCaja(true);
+    const { raiz } = montar();
+    expect(nav(raiz).classList.contains('form-nav--caja')).toBe(true);
+  });
+
+  it('el índice por defecto ya es un panel: la línea no le pone otra caja', () => {
+    conCaja(true);
+    const { raiz } = montar((h) => h.plana.set(false));
+    expect(nav(raiz).classList.contains('form-nav--caja')).toBe(false);
   });
 });

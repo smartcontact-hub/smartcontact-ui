@@ -16,7 +16,8 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  *   2. Del nombre al índice, el hueco de la columna (14).
  *   3. La columna del contenido es la que crece: índice 196 y resumen 240 en cualquier ancho.
  *   4. El resumen no enseña su rótulo, y la región conserva su nombre («Resumen»).
- *   5. «Eliminar» va bajo el índice al editar, a 28 de su última fila (el aire entre grupos); en el alta no hay.
+ *   5. «Eliminar» va bajo el índice al editar, a 28 de su borde (el aire entre grupos): la caja gris si la app la
+ *      enciende (DD-220), si no, su última fila. En el alta no hay.
  *   6. Por debajo de 1340: el nombre sigue encima del índice, y el resumen pasa a una franja encima del contenido, en
  *      su columna.
  *   7. Un nombre que no cabe en 196 salta a una segunda línea, sin cortarse; uno que no cabe en dos, se corta en la
@@ -109,13 +110,14 @@ test('«Eliminar» va bajo el índice al editar, y en el alta no hay', async ({ 
     }
     await expect(eliminar, ruta).toBeVisible();
     await fuentes(page);
+    // El borde del índice: la caja gris si la app la enciende (DD-220); si no, su última fila.
     const aire = await page.evaluate(() => {
       const filas = document.querySelectorAll('.page__rail .form-nav__item');
-      const ultima = filas[filas.length - 1]!.getBoundingClientRect();
+      const borde = (document.querySelector('.page__rail .form-nav--caja') ?? filas[filas.length - 1]!).getBoundingClientRect();
       const boton = document.querySelector('.page__rail .ficha-eliminar .p-button')!.getBoundingClientRect();
-      return Math.round(boton.top - ultima.bottom);
+      return Math.round(boton.top - borde.bottom);
     });
-    expect(aire, `${ruta}: de la última fila del índice a «Eliminar»`).toBe(28);
+    expect(aire, `${ruta}: del borde del índice a «Eliminar»`).toBe(28);
   }
 });
 

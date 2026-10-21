@@ -1499,82 +1499,12 @@ el DS de los devs pinta 10,5 × 14, como el Kit (medido en ui.smart-contact.com 
 
 **Cómo sabes que está hecho:** la página «Fuera del DS» solo enseña lo que no existe en ningún sitio, o queda vacía.
 
-## 55 · Lo que falta se dice al pulsar Crear, grupos sin canales, duplicar sin diálogo y Recursos en chips (2026-10-20, DD-217)
-
-**Estado:** pendiente; el prototipo ya lo hace (DD-217) · **Dónde:** fichas de grupo y agente y listado de grupos del
-fichero del Supervisor (`Hjyy41SYKqcRuIzCGggfYH`, §53), y en el DS, `form-section-nav` y `multiselect` · **Mídelo
-antes:** qué variantes de `group-summary` y `agent-summary` llevan hoy «Mostrar estado» (§54, fila 8).
-
-- **El índice de las altas**: nada en rojo mientras se rellena. Un estado nuevo en la fila del índice: el punto rojo
-  con el texto de lo que falta debajo de la etiqueta, en `caption` y `text/danger` (como `sectionErrorHints` del DS),
-  para la maqueta de «al pulsar Crear con algo pendiente». El ✓, como hasta ahora. Anota: «Crear» siempre activo; al
-  pulsarlo con algo pendiente, cada campo lo dice y se llega al primero.
-- **Fuera «Falta: …» y «Listo para crear»** de los resúmenes: «Mostrar estado» de `group-summary` y `agent-summary` (§54,
-  fila 8) pasa a apagado o sale, y fuera el motivo junto al botón en la barra de las altas.
-- **Fuera los avisos amarillos** de las fichas: «Sin canales» y «N sin canal: salen al guardar» en las tablas de
-  agentes y de grupos; en el resumen del grupo, «Sin agentes» pasa a su cifra (0) y «Sin número», a texto sin icono.
-- **Grupo sin canales**: General sin «Al menos uno.»; Distribución y colas con una línea que lo dice; Agentes asignados
-  solo con Asignado y Habilitado.
-- **Duplicar grupo**: fuera el diálogo (y con él la anotación de Call Blending de §50). «Duplicar» abre la edición de
-  la copia, «Online Support (1)», en General, con su toast; sin servicios, dominios del script de chat ni número de
-  WhatsApp.
-- **Recursos, en el grupo y en el agente**: Agendas, Equipos y Plantillas en chips (`MultiSelect` en modo chip), a media
-  columna y con tantos chips como caben; «+N más», por el resto, y un nombre que no cabe, con «…». Sin el «+» al lado
-  ni el lápiz en las opciones, y fuera las ventanas de crear o editar un recurso. En el desplegable, del ancho del
-  campo: el nombre entero (baja de línea si no cabe) y, al pasar, un tooltip pegado a la opción con lo que contiene
-  («3 contactos», el texto de la plantilla, la descripción del equipo). La «×» del chip, en `text/danger` al pasar. En
-  el resumen, las filas de Recursos sin desplegar: son enlaces a su campo.
-- **Tipificación del grupo**: sin la descripción bajo el desplegable; se queda «Ver detalle».
-- **Editores de Repositorios y de plantillas**: fuera «Falta: …» junto al botón; «Crear …» siempre activo.
-- **El punto final**: las ayudas bajo un campo acaban en punto; los subtítulos bajo un título, sin él (DD-217 §12).
-  Repasa las ayudas de Distribución y colas, Avanzado y Permisos del agente, que se mezclaban.
-- **Del barrido**: «Agentes asignados» con el icono de Agentes (`headphones`); el candado de canal dice «X no está entre
-  sus canales: se marcan en …» en las dos tablas; un grupo sin canales enseña en Distribución solo su nota.
-
-**Cómo sabes que está hecho:** las maquetas de alta de grupo y agente no enseñan «Falta» ni amarillos, el diálogo
-«Duplicar grupo» no está, Recursos de las dos fichas enseña chips sin «+», y ninguna ayuda se queda sin su punto.
-
----
-
-## 56 · Grupos como sus páginas de COA: cifra a la ficha, duplicar a un alta, eliminar varios y «Agentes asignados» sin estado (2026-10-20, DD-218)
-
-**Estado:** pendiente; el prototipo ya lo hace (DD-218) · **Dónde:** página Grupos del fichero del Supervisor
-(`Hjyy41SYKqcRuIzCGggfYH`): listado `3118:16995`, alta `3010:6411`, edición `3055:11053`; y la ficha de agente
-(«Grupos asignados», eliminar) · **Mídelo antes:** si §55 ya está hecho (duplicar sin diálogo): este lo cambia otra vez.
-
-- **Listado**: sin la columna ID; la cifra de «Agentes» lleva a la edición en «Agentes asignados» (fuera la maqueta del
-  panel rápido abierto desde el listado; el panel sigue en el Monitor). Con dos o más marcados, el clic derecho sobre
-  uno de ellos: un menú con solo «Eliminar» (rojo), y su diálogo «¿Eliminar 3 grupos?». Anota: Servicios y Agentes
-  ordenan de mayor a menor al primer clic.
-- **Duplicar**: el paso 04 pasa a ser «Nuevo grupo» con la copia, «Online Support (1)», sin crear; el toast «Grupo
-  «Online Support (1)» creado» sale al pulsar «Crear grupo». Sin servicios, dominios del script de chat ni número de
-  WhatsApp.
-- **Eliminar, en grupos y agentes**: título «¿Eliminar el grupo «Ventas»?» («¿Eliminar el agente «Tom Hanks»?»), texto
-  «Esta acción no se puede deshacer.», «Cancelar» y «Eliminar» en rojo.
-- **La miga de la edición**: «Administración › Grupos › Online Support» (y «Agentes › Tom Hanks»), no «Editar grupo».
-- **General**: sin tipificaciones, «Tipificar conversaciones» apagado y deshabilitado, con «No hay tipificaciones: se
-  crean en Repositorios.».
-- **Distribución y colas**: «Mensaje de día no laborable»; los tiempos sin 1,5 min.
-- **Recursos**: el diálogo de «Gestionar en Repositorios» con cambios: «¿Guardar los cambios?», «Para ir a Repositorios,
-  guarda antes el grupo.», «Guardar» y «Seguir editando». Igual en la ficha de agente («… el agente.»).
-- **«Agentes asignados»**: fuera el botón de filtro de la cabecera de «Agente», su menú de estados y equipos y el punto
-  de estado del avatar; «Agente» con la flecha de ordenar; el nivel, un desplegable pequeño (1–10) en «Nivel {canal}»;
-  la fila de un agente con «Activación por grupo», con su interruptor deshabilitado y el tooltip «Tom Hanks se habilita
-  desde su puesto: tiene «Activación por grupo»». La confirmación de columna entera: «¿Quitar Chat a 5 agentes?» con
-  «Quitar» (antes, «Confirmar cambios colectivos» con «Confirmar»). En «Grupos asignados» del agente, lo mismo con
-  «Grupo».
-- **Lo contratado**, como nota (§50): «Teléfono saliente» solo con Call Blending; Chat, WhatsApp y Email solo si
-  backoffice los tiene; la columna «Estrategia de chat» del listado, solo con Chat.
-
-**Cómo sabes que está hecho:** ninguna maqueta de Grupos enseña la columna ID, el punto de estado ni el filtro de
-«Agente»; duplicar acaba en un alta; y los diálogos de eliminar y de columna entera dicen el nombre o la cifra con su
-verbo en el botón.
-
 ---
 
 ## 57 · Lo que falta, como SISMAC-4058: el botón apagado, «Falta: …» en el resumen y el aviso en gris (2026-10-21, DD-219)
 
-**Estado:** pendiente; el prototipo ya lo hace (DD-219) · **Dónde:** fichas de grupo (alta `3010:6411`, edición
+**Estado:** a medias: hecho en Figma el 2026-10-21 salvo la línea sobre el resumen en las pantallas, que espera a
+publicar la librería (abajo, «Hecho» y «Queda») · **Dónde:** fichas de grupo (alta `3010:6411`, edición
 `3055:11053`), agente y usuario del fichero del Supervisor (`Hjyy41SYKqcRuIzCGggfYH`), y en el DS `group-summary` y
 `agent-summary` · **Mídelo antes:** §55 quitó de `group-summary` y `agent-summary` la línea de «Falta» y «Listo»; esta
 la devuelve, con otro color.
@@ -1594,8 +1524,27 @@ la devuelve, con otro color.
   vacío (salir con texto no cuenta, ni abrir la lista de un desplegable para elegir); cada cosa de «Falta» lleva a su
   campo.
 
-**Cómo sabes que está hecho:** el alta vacía de grupo, agente y usuario enseña el botón apagado y «Falta: …» arriba del
-resumen, y ningún campo sale en rojo sin haberlo tocado.
+**Hecho el 2026-10-21** (versiones «Lo que falta, antes de pulsar (grupos y agentes)» en el Supervisor y
+«summary-status y estado en los resúmenes» en el DS):
+- **DS, sin publicar**: `summary-status` nuevo (set `15660:394`: Falta `15660:376`, Listo `15660:381`), en el marco
+  «Summary status» `15660:386`; `group-summary` `15486:255` y `agent-summary` `15510:72604` lo llevan arriba en cada
+  variante, con «Mostrar estado» (encendida por defecto).
+- **Botones apagados**: «Crear grupo» `3010:6414`, `3015:7857`, `3016:8144`, `3019:9587`, `3019:19157` y en el Mapa
+  `3180:12448`, `3180:12620`; «Crear agente» `3070:26737`, `:26755`, `:26773`, `:26793`, `:26813`, `:26855`,
+  `:26872`; «Guardar» de las E2 de edición `3057:25523` (grupo) y `3111:29669` (agente).
+- **Avisos en gris**: grupo `3357:30608` y el teléfono saliente en 04 y en el Mapa; agente `3357:56507`, `3357:56509`,
+  `3357:56511` y, encima de la tabla de grupos, `3357:56513`. En rojo solo en E1 (campo dejado vacío) y E2 (Ctrl+S
+  con algo pendiente, o el campo vaciado al editar).
+- **Textos**: notas, portadas y las hojas «Cómo se comporta» (alta `3033:18497` y `3070:26889`, edición `3064:15154` y
+  `3110:31269`); Hand-off: «Lo que falta, antes de pulsar» `3344:52220`, Reglas comunes › Guardar `2999:93` y la
+  entrada `2998:51`. El tooltip va descrito, no dibujado.
+
+**Queda**: publicar la librería; en el Supervisor, aceptar la actualización, poner en cada alta el texto de «Falta: …»
+de esa pantalla y, al editar, «Mostrar estado» apagado salvo en las E2.
+
+**Cómo sabes que está hecho:** el alta vacía de grupo y de agente enseña el botón apagado y «Falta: …» arriba del
+resumen, y ningún campo sale en rojo sin haberlo tocado. La ficha de usuario no tiene maqueta (abajo, «Lo de estas
+semanas que NO va a Figma»).
 
 ---
 
@@ -1633,6 +1582,30 @@ resumen, y ningún campo sale en rojo sin haberlo tocado.
 - ~~**Las descripciones de los text styles están corridas un peldaño**~~ → **YA NO, verificado el 2026-09-12**: las
   doce tienen su descripción correcta, con sus medidas. Alguien lo arregló entre medias y la bandeja se quedó rancia.
   Es el motivo de que este fichero exija verificar antes de actuar.
+- ~~**§55 · Lo que falta se dice al pulsar Crear, grupos sin canales, duplicar sin diálogo y Recursos en chips
+  (DD-217)**~~ → **HECHO el 2026-10-21** en el fichero del Supervisor, contra el build de `main` servido en
+  `sc-supervisor.pages.dev` (`98e6ddce`; los despliegues `proto-sismac-4058` y `-4062` seguían en `e1801cc7`).
+  Altas de grupo y agente: «Crear» siempre activo; E1 y E2 rehechos como «Crear pulsado con lo pendiente», con el punto
+  rojo y su texto debajo en el índice y el error en cada campo; en el agente, «Siguiente» avanza sin marcar nada.
+  Resúmenes sin «Falta» ni «Listo», «Sin agentes» a 0 y «Sin número» sin icono: `nav-item`, `group-summary`,
+  `agent-summary` y `multiselect` pasados a la versión publicada de la librería (210 instancias en Grupos y Agentes; el
+  resto de componentes, sin tocar). Recursos: Agendas, Equipos y Plantillas sin «+», a media columna, con chips al
+  editar; título con `library_books`. «Agentes asignados» con `headphones`. Edición de grupo: E2, guardar sin nombre;
+  E3, sin canales se guarda. Edición de agente: E2, guardar sin email. Hojas «Cómo se comporta» de las cuatro fichas,
+  mapa de componentes, Hand-off e índices reescritos. Versión del fichero: «§55 y §56: Grupos y Agentes al día con el
+  prototipo (2026-10-21)». 30 capturas, fuera del repo.
+- ~~**§56 · Grupos como sus páginas de COA (DD-218)**~~ → **HECHO el 2026-10-21**. Listado sin columna ID; la cifra de
+  Agentes lleva a la ficha; con varios marcados, menú con solo «Eliminar» y «¿Eliminar 3 grupos?» (pasos 08 y 09);
+  duplicar abre «Nuevo grupo» con la copia y el toast sale al crear (pasos 03 y 04); eliminar dice el nombre, con
+  «Eliminar» en rojo, en grupos y agentes. Las siete tablas de «Agentes asignados» y «Grupos asignados»: flecha de
+  ordenar en «Agente» y «Grupo», sin filtro ni punto de estado. Estados nuevos: E3 del alta de grupo, la confirmación de
+  columna entera (`confirmpopup` del DS, «¿Deshabilitar 2 agentes?» con «Deshabilitar»); E4, un agente con «Activación
+  por grupo» y su tooltip; E7 de la edición, «Gestionar en Repositorios» con cambios («¿Guardar los cambios?»). Toasts
+  con «». Listados de agentes con su columna de casillas. Lo contratado, como nota en las hojas. **Sin maqueta, solo en
+  la hoja:** el desplegable «Nivel {canal}» (con la estrategia Niveles) y «Tipificar conversaciones» deshabilitado
+  cuando no hay tipificaciones. **Visto de paso, sin tocar:** las tablas de asignados de Figma van en tamaño normal
+  (14 de relleno) y el build en `small` (7), por eso en Figma «Habilitado», «Chat» y «Email» van más anchos que en
+  código; y los botones de la cabecera van en `sm` (27) frente a `md` (33) en el build.
 
 ---
 

@@ -93,6 +93,40 @@
         font-weight: var(--sc-font-weight-semibold);
       }
     }
+
+    /* La caja (DD-220, `SC_FORM_SECTION_NAV_CAJA`): el índice de Contact Center de Figma (Supervisor `2286:5368`), un
+     * `Section` del DS con el Nav-menu dentro. La caja mide lo que `sc-section-card` en `subtle`, que es ese `Section`:
+     * gris `gray/50`, radio `xl`, 17.5 arriba y abajo (`scale/1-25`), 16 a los lados (`scale/1-143`) y 14 del título al
+     * Nav-menu (`scale/1`). El Nav-menu guarda sus 8.75 arriba y abajo (`scale/0-625`) y sus 3.5 entre filas.
+     *
+     * Las filas sin marcar van en BLANCO (`content/background`) y en ángulo recto, que es como las pinta el Nav-menu de
+     * esa maqueta; la marcada no lleva el blanco y enseña su fondo redondeado sobre el gris. */
+    &.form-nav--caja {
+      gap: var(--sc-spacing-1);
+      padding: var(--sc-spacing-1-25) var(--sc-spacing-1-143);
+      background: var(--sc-bg-secondary-subtle);
+      border-radius: var(--sc-radius-400);
+
+      /* El título de la caja: `Heading/h3-semibold` (18/24) en `semantic/text/heading`, el del `Section`. */
+      .form-nav__title {
+        padding: 0;
+        font-size: var(--sc-font-size-h3);
+        line-height: var(--sc-line-height-h3);
+        color: var(--sc-text-heading);
+      }
+
+      .form-nav__list {
+        padding-block: var(--sc-spacing-0-625);
+      }
+
+      .form-nav__list > li {
+        background: var(--sc-bg-surface);
+      }
+
+      .form-nav__list > li:has(.form-nav__item--active) {
+        background: transparent;
+      }
+    }
   }
 }
 

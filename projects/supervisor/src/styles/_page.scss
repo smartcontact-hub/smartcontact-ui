@@ -203,10 +203,16 @@
 
 /* «Eliminar», bajo el índice (DD-144): es una acción sobre la ficha entera. De la última fila del índice al
  * botón, 28, el aire entre grupos (el índice navega y esto borra): el hueco del carril (14) y el relleno de
- * abajo del índice (8,75) ponen 22,75, y esto los completa. Su icono cae en la vertical de los del índice
- * (medido a 0,75). */
+ * abajo del índice (8,75) ponen 22,75, y esto los completa. Con el índice plano, su icono cae en la vertical de los
+ * del índice (medido a 0,75); en la caja, los del índice entran 16 más. */
 .ficha-rail .ficha-eliminar {
   margin-block-start: var(--sc-spacing-0-375);
+}
+
+/* Con el índice en la caja gris (DD-220), el borde del grupo es la caja: de ella al botón, los mismos 28, el hueco
+ * del carril (14) y esto (14). Sin esto quedaban 19,25. El botón sigue al borde del carril, como en Figma. */
+.ficha-rail .page__rail:has(.form-nav--caja) .ficha-eliminar {
+  margin-block-start: var(--sc-spacing-1);
 }
 
 /* EL RESUMEN DE LA FICHA, a la derecha (DD-121 §3, 2026-09-27; en las tres fichas desde DD-122). En la de
