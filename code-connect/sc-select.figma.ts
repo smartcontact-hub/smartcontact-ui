@@ -2,7 +2,7 @@
 
 import figma from "figma"
 
-const filter = figma.selectedInstance.getBoolean("Show Filter")
+const filter = figma.selectedInstance.getBoolean("Show Filter", { true: "filter", false: "" })
 const __props: Record<string, unknown> = {}
 if (filter && filter.type !== "ERROR") {
   __props["filter"] = filter
@@ -10,8 +10,5 @@ if (filter && filter.type !== "ERROR") {
 
 export default {
   id: "select",
-  example: figma.code`<sc-select [options]="options" placeholder="Select" ${_fcc_renderHtmlAttribute(
-    "filter",
-    filter,
-  )}></sc-select>`,
+  example: figma.code`<sc-select [options]="options" placeholder="Select" ${filter}></sc-select>`,
 }

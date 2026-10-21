@@ -2,18 +2,18 @@
 
 import figma from "figma"
 
-const layout = figma.selectedInstance.getEnum("Direction", { Horizontal: "horizontal", Vertical: "vertical" })
-const type = figma.selectedInstance.getEnum("Type", { Solid: "solid", Dashed: "dashed" })
+const layout = figma.selectedInstance.getEnum("Direction", { Horizontal: 'layout="horizontal"', Vertical: 'layout="vertical"' })
+const type = figma.selectedInstance.getEnum("Type", { Solid: 'type="solid"', Dashed: 'type="dashed"' })
 const align = figma.selectedInstance.getEnum("Align", {
   "N/A": "",
-  Left: "left",
-  Center: "center",
-  Right: "right",
-  Top: "top",
-  Bottom: "bottom",
+  Left: 'align="left"',
+  Center: 'align="center"',
+  Right: 'align="right"',
+  Top: 'align="top"',
+  Bottom: 'align="bottom"',
 })
 
 export default {
   id: "divider",
-  example: figma.code`<sc-divider ${_fcc_renderHtmlAttribute("layout", layout)} ${_fcc_renderHtmlAttribute("type", type)} ${_fcc_renderHtmlAttribute("align", align)}></sc-divider>`,
+  example: figma.code`<sc-divider ${layout} ${type} ${align}></sc-divider>`,
 }

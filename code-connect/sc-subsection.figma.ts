@@ -3,13 +3,13 @@
 import figma from "figma"
 
 const hint = figma.selectedInstance.getString("Pista")
-const collapsible = figma.selectedInstance.getBoolean("Plegable")
+const collapsible = figma.selectedInstance.getBoolean("Plegable", { true: "collapsible", false: "" })
 
 // titleKey y hintKey son CLAVES de traducción. Los Slot 1..5 de Figma son el contenido proyectado.
 export default {
   id: "subsection",
   example: figma.code`<!-- en Figma: pista "${hint}" -->
-<sc-subsection titleKey="subseccion.titulo" hintKey="subseccion.pista" ${_fcc_renderHtmlAttribute("collapsible", collapsible)}>
+<sc-subsection titleKey="subseccion.titulo" hintKey="subseccion.pista" ${collapsible}>
   …
 </sc-subsection>`,
 }

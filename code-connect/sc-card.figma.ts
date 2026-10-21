@@ -4,10 +4,7 @@ import figma from "figma"
 
 const header = figma.selectedInstance.getString("Header")
 const subheader = figma.selectedInstance.getString("Subheader")
-const icon = figma.selectedInstance.getBoolean("Show Icon", {
-  true: "auto_awesome",
-  false: undefined,
-})
+const icon = figma.selectedInstance.getBoolean("Show Icon", { true: 'icon="auto_awesome"', false: "" })
 const content = figma.properties.children(["*"])
 const __props: Record<string, unknown> = {}
 if (header && header.type !== "ERROR") {
@@ -25,13 +22,5 @@ if (content && content.type !== "ERROR") {
 
 export default {
   id: "card",
-  example: figma.code`<sc-card ${_fcc_renderHtmlAttribute(
-    "header",
-    header,
-  )} ${_fcc_renderHtmlAttribute(
-    "subheader",
-    subheader,
-  )} ${_fcc_renderHtmlAttribute("icon", icon)}>${_fcc_renderHtmlValue(
-    content,
-  )}</sc-card>`,
+  example: figma.code`<sc-card header="${header}" subheader="${subheader}" ${icon}>${content}</sc-card>`,
 }

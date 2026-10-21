@@ -3,11 +3,8 @@
 import figma from "figma"
 
 const label = figma.selectedInstance.getString("Text")
-const removable = figma.selectedInstance.getBoolean("Removable")
-const icon = figma.selectedInstance.getBoolean("Show Icon", {
-  true: "star",
-  false: undefined,
-})
+const removable = figma.selectedInstance.getBoolean("Removable", { true: "removable", false: "" })
+const icon = figma.selectedInstance.getBoolean("Show Icon", { true: 'icon="star"', false: "" })
 const __props: Record<string, unknown> = {}
 if (label && label.type !== "ERROR") {
   __props["label"] = label
@@ -21,11 +18,5 @@ if (icon && icon.type !== "ERROR") {
 
 export default {
   id: "chip",
-  example: figma.code`<sc-chip ${_fcc_renderHtmlAttribute(
-    "label",
-    label,
-  )} ${_fcc_renderHtmlAttribute("icon", icon)} ${_fcc_renderHtmlAttribute(
-    "removable",
-    removable,
-  )}></sc-chip>`,
+  example: figma.code`<sc-chip label="${label}" ${icon} ${removable}></sc-chip>`,
 }

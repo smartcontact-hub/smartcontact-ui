@@ -22,6 +22,12 @@ instancias), no el de la página archivada (`374:16034`). `sc-empty-state`, `sc-
 Cuando Figma tiene tres booleanos y el código un solo valor (en `button`, Outlined/Text/Link frente a
 `appearance`), el snippet lleva un comentario con el valor en vez de adivinar.
 
+**Plantillas sin helpers.** El visor de Figma NO define `_fcc_renderHtmlAttribute` (ni `_fcc_renderHtmlValue`): un
+mapping que los use publica bien pero en Dev Mode muestra «Error with Code Connect … is not defined». Las plantillas
+de `code-connect/` interpolan directamente: los booleanos y enums se mapean al fragmento de atributo completo
+(`{ true: "disabled", false: "" }`, `Small: 'size="sm"'`) y se escriben como `${disabled}`; los textos, como
+`label="${label}"`.
+
 ## Requisitos para publicar (operador)
 
 1. Plan Figma **Organization o Enterprise** con asiento Design/Dev Mode.

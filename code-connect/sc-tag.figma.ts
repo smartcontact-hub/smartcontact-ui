@@ -3,10 +3,7 @@
 import figma from "figma"
 
 const value = figma.selectedInstance.getString("Text")
-const icon = figma.selectedInstance.getBoolean("Show Icon", {
-  true: "star",
-  false: undefined,
-})
+const icon = figma.selectedInstance.getBoolean("Show Icon", { true: 'icon="star"', false: "" })
 const __props: Record<string, unknown> = {}
 if (value && value.type !== "ERROR") {
   __props["value"] = value
@@ -17,8 +14,5 @@ if (icon && icon.type !== "ERROR") {
 
 export default {
   id: "tag",
-  example: figma.code`<sc-tag ${_fcc_renderHtmlAttribute(
-    "value",
-    value,
-  )} ${_fcc_renderHtmlAttribute("icon", icon)}></sc-tag>`,
+  example: figma.code`<sc-tag value="${value}" ${icon}></sc-tag>`,
 }
