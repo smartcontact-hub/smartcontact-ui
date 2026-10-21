@@ -683,6 +683,16 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
   protected readonly resultadoLote = signal<{ readonly texto: string; readonly deshacerId: string | null } | null>(null);
 
   /**
+   * ¿HAY BARRA DE LOTE A LA VISTA? Solo entonces la tarjeta le deja su sitio (`.table-card--seleccion`). Una lista con
+   * casillas pero sin `bulkEntity` (Grupos y Agentes, DD-215: eligen para exportar, sin edición en lote) no monta barra,
+   * y reservarle el sitio acortaba la tabla 77 px al marcar una fila y dejaba un hueco en blanco bajo ella (medido a
+   * 1840×700–900). La misma condición que `@if` de la barra en la plantilla.
+   */
+  protected readonly barraVisible = computed(
+    () => this.selectable() && !!this.bulkEntity() && (this.selectedIds().size > 0 || !!this.resultadoLote()),
+  );
+
+  /**
    * La página aplicó un cambio en lote a `cuantos` filas: lo dice un toast, como toda acción (DD-211 §5), y la barra se
    * queda donde estaba y lo cuenta con «Deshacer» hasta que se cierra, se vuelve a seleccionar o se sale de la página:
    * el toast se va solo y el deshacer tiene que seguir a mano (DD-196). `deshacer` devuelve las filas a como estaban.
