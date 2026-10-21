@@ -1432,7 +1432,7 @@ sin repunte: al equipo externo le bastaría una línea en `extend.ts`, `accent: 
 
 **Estado:** sin hacer; en las maquetas del Supervisor va ajustado a la app y anotado, sin tocar la librería · **Dónde:**
 fichero del DS, y el del Supervisor (páginas «Grupos» y «Agentes», cada una con su índice; «Fuera del DS» `3034:114`;
-hand-off `2997:47`) · **Evidencia:** cada caso,
+el hand-off de cada una, a la derecha de su índice: `3371:61554` y `3371:61797`) · **Evidencia:** cada caso,
 medido contra sc-supervisor.pages.dev a 1440.
 
 - **Botones:** `button-small` de texto sin el borde transparente de 1 de PrimeNG (25 de alto en vez de 27; las filas
@@ -1487,7 +1487,7 @@ numéricos, subsección plegada y lo no dibujado (atajo «/» y solo lectura).
 | 6 | Título de la página | Hecho el 2026-10-19: la ficha salió (el marco ya usa estilos y variables del Kit) | no | no |
 | 7 | Diálogo de eliminar | Hecho el 2026-10-19: eliminar es el confirmdialog del DS en grupos y agentes; la ficha salió | no | no |
 | 8 | Resumen con «Falta» | Hecho el 2026-10-19: «Mostrar estado» en la variante Edición de `group-summary` y `agent-summary`; la ficha salió | sí, hecho | no |
-| 9 | Subsección plegada | Estado «Plegada» en `.Subsection` (DD-157 descartó Accordion); en el prototipo, `<h3>` con el botón dentro y `aria-controls` | sí | sí |
+| 9 | Subsección plegada | En `.Subsection`, hecho el 2026-10-21: «Plegable» (flecha `chevron_right` a la derecha) y «Flecha» (DD-157 descartó Accordion). Falta: publicarlo y usarlo en «Avanzado» del agente; y el mismo estado, con pista, en las partes (`sc-slot collapsible`, «Mensajes en cola»). En el prototipo, `<h3>` con el botón dentro y `aria-controls` | a medias | sí |
 | 10 | Atajo «/» | Decidido el 2026-10-19: el «/» se ve, como en el prototipo. Falta dibujarlo con una pieza propia del DS, marcada como propia | sí | no |
 | 11 | Solo lectura | El estado en los cuatro campos del Kit (§50, DD-211 §10) | sí | no |
 
@@ -1498,53 +1498,6 @@ el DS de los devs pinta 10,5 × 14, como el Kit (medido en ui.smart-contact.com 
 `size="small"` real.
 
 **Cómo sabes que está hecho:** la página «Fuera del DS» solo enseña lo que no existe en ningún sitio, o queda vacía.
-
----
-
-## 57 · Lo que falta, como SISMAC-4058: el botón apagado, «Falta: …» en el resumen y el aviso en gris (2026-10-21, DD-219)
-
-**Estado:** a medias: hecho en Figma el 2026-10-21 salvo la línea sobre el resumen en las pantallas, que espera a
-publicar la librería (abajo, «Hecho» y «Queda») · **Dónde:** fichas de grupo (alta `3010:6411`, edición
-`3055:11053`), agente y usuario del fichero del Supervisor (`Hjyy41SYKqcRuIzCGggfYH`), y en el DS `group-summary` y
-`agent-summary` · **Mídelo antes:** §55 quitó de `group-summary` y `agent-summary` la línea de «Falta» y «Listo»; esta
-la devuelve, con otro color.
-
-- **El botón**: en el alta vacía, «Crear grupo» («Crear agente», «Crear usuario») deshabilitado, con el tooltip «Falta:
-  nombre, teléfono saliente». Se enciende al tener lo obligatorio. Al editar, «Guardar» deshabilitado sin cambios y
-  también con algo obligatorio vacío.
-- **Arriba del resumen**: «Falta: nombre, teléfono saliente» en `text/secondary`, con el icono `info`, y cada cosa
-  subrayada (lleva a su campo); con todo relleno, «Listo para crear» en `text/success` con `check_circle`. Al editar,
-  solo si falta algo.
-- **Bajo cada obligatorio vacío**, su aviso como ayuda, en gris y con punto, como toda ayuda: «El nombre es
-  obligatorio.». El estado de error (rojo, sin punto, como todo error) queda para «se dejó vacío». El teléfono saliente: «El teléfono saliente es obligatorio. El número que ve el cliente
-  cuando le llaman.»
-- **El índice**: sin punto rojo mientras se rellena; el `nav-item` con su texto de error (§55) solo para lo guardado que
-  ya venía incompleto.
-- **Notas «Cómo se comporta»**: el botón se enciende al tener lo obligatorio; el aviso pasa a rojo al salir del campo
-  vacío (salir con texto no cuenta, ni abrir la lista de un desplegable para elegir); cada cosa de «Falta» lleva a su
-  campo.
-
-**Hecho el 2026-10-21** (versiones «Lo que falta, antes de pulsar (grupos y agentes)» en el Supervisor y
-«summary-status y estado en los resúmenes» en el DS):
-- **DS, sin publicar**: `summary-status` nuevo (set `15660:394`: Falta `15660:376`, Listo `15660:381`), en el marco
-  «Summary status» `15660:386`; `group-summary` `15486:255` y `agent-summary` `15510:72604` lo llevan arriba en cada
-  variante, con «Mostrar estado» (encendida por defecto).
-- **Botones apagados**: «Crear grupo» `3010:6414`, `3015:7857`, `3016:8144`, `3019:9587`, `3019:19157` y en el Mapa
-  `3180:12448`, `3180:12620`; «Crear agente» `3070:26737`, `:26755`, `:26773`, `:26793`, `:26813`, `:26855`,
-  `:26872`; «Guardar» de las E2 de edición `3057:25523` (grupo) y `3111:29669` (agente).
-- **Avisos en gris**: grupo `3357:30608` y el teléfono saliente en 04 y en el Mapa; agente `3357:56507`, `3357:56509`,
-  `3357:56511` y, encima de la tabla de grupos, `3357:56513`. En rojo solo en E1 (campo dejado vacío) y E2 (Ctrl+S
-  con algo pendiente, o el campo vaciado al editar).
-- **Textos**: notas, portadas y las hojas «Cómo se comporta» (alta `3033:18497` y `3070:26889`, edición `3064:15154` y
-  `3110:31269`); Hand-off: «Lo que falta, antes de pulsar» `3344:52220`, Reglas comunes › Guardar `2999:93` y la
-  entrada `2998:51`. El tooltip va descrito, no dibujado.
-
-**Queda**: publicar la librería; en el Supervisor, aceptar la actualización, poner en cada alta el texto de «Falta: …»
-de esa pantalla y, al editar, «Mostrar estado» apagado salvo en las E2.
-
-**Cómo sabes que está hecho:** el alta vacía de grupo y de agente enseña el botón apagado y «Falta: …» arriba del
-resumen, y ningún campo sale en rojo sin haberlo tocado. La ficha de usuario no tiene maqueta (abajo, «Lo de estas
-semanas que NO va a Figma»).
 
 ---
 
@@ -1606,6 +1559,15 @@ semanas que NO va a Figma»).
   cuando no hay tipificaciones. **Visto de paso, sin tocar:** las tablas de asignados de Figma van en tamaño normal
   (14 de relleno) y el build en `small` (7), por eso en Figma «Habilitado», «Chat» y «Email» van más anchos que en
   código; y los botones de la cabecera van en `sm` (27) frente a `md` (33) en el build.
+- ~~**§57 · Lo que falta, como SISMAC-4058 (DD-219)**~~ → **HECHO el 2026-10-21**. En la librería, `summary-status`
+  (Falta / Listo) arriba de `group-summary` y `agent-summary`, con «Mostrar estado». En el Supervisor, los 41 resúmenes
+  de Grupos y Agentes en esa versión: cada alta con su «Falta: …» (grupo: «nombre, teléfono saliente» vacía y
+  «teléfono saliente» después; agente: «nombre, email, extensión, un grupo» y luego «un grupo») o «Listo para crear»; al
+  editar, la línea apagada salvo en las E2 («Falta: nombre», «Falta: email»). «Crear» y «Guardar» apagados; bajo cada
+  obligatorio vacío, su aviso en gris con punto; en rojo y sin foco solo al dejar el campo vacío (E1, E2 de edición) y,
+  tras Ctrl+S, con el foco en el primer pendiente (E2 del alta). Notas, hojas y hand-off con la regla; el tooltip, descrito.
+  Versiones del fichero: «Lo que falta, antes de pulsar», «Lo que falta: el rojo sin foco al salir del campo» y
+  «Resúmenes con la línea Falta / Listo (librería publicada)». La ficha de usuario no tiene maqueta.
 
 ---
 
