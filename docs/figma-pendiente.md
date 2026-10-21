@@ -1503,7 +1503,8 @@ el DS de los devs pinta 10,5 × 14, como el Kit (medido en ui.smart-contact.com 
 
 ## 57 · Lo que falta, como SISMAC-4058: el botón apagado, «Falta: …» en el resumen y el aviso en gris (2026-10-21, DD-219)
 
-**Estado:** pendiente; el prototipo ya lo hace (DD-219) · **Dónde:** fichas de grupo (alta `3010:6411`, edición
+**Estado:** a medias: hecho en Figma el 2026-10-21 salvo la línea sobre el resumen en las pantallas, que espera a
+publicar la librería (abajo, «Hecho» y «Queda») · **Dónde:** fichas de grupo (alta `3010:6411`, edición
 `3055:11053`), agente y usuario del fichero del Supervisor (`Hjyy41SYKqcRuIzCGggfYH`), y en el DS `group-summary` y
 `agent-summary` · **Mídelo antes:** §55 quitó de `group-summary` y `agent-summary` la línea de «Falta» y «Listo»; esta
 la devuelve, con otro color.
@@ -1523,8 +1524,27 @@ la devuelve, con otro color.
   vacío (salir con texto no cuenta, ni abrir la lista de un desplegable para elegir); cada cosa de «Falta» lleva a su
   campo.
 
-**Cómo sabes que está hecho:** el alta vacía de grupo, agente y usuario enseña el botón apagado y «Falta: …» arriba del
-resumen, y ningún campo sale en rojo sin haberlo tocado.
+**Hecho el 2026-10-21** (versiones «Lo que falta, antes de pulsar (grupos y agentes)» en el Supervisor y
+«summary-status y estado en los resúmenes» en el DS):
+- **DS, sin publicar**: `summary-status` nuevo (set `15660:394`: Falta `15660:376`, Listo `15660:381`), en el marco
+  «Summary status» `15660:386`; `group-summary` `15486:255` y `agent-summary` `15510:72604` lo llevan arriba en cada
+  variante, con «Mostrar estado» (encendida por defecto).
+- **Botones apagados**: «Crear grupo» `3010:6414`, `3015:7857`, `3016:8144`, `3019:9587`, `3019:19157` y en el Mapa
+  `3180:12448`, `3180:12620`; «Crear agente» `3070:26737`, `:26755`, `:26773`, `:26793`, `:26813`, `:26855`,
+  `:26872`; «Guardar» de las E2 de edición `3057:25523` (grupo) y `3111:29669` (agente).
+- **Avisos en gris**: grupo `3357:30608` y el teléfono saliente en 04 y en el Mapa; agente `3357:56507`, `3357:56509`,
+  `3357:56511` y, encima de la tabla de grupos, `3357:56513`. En rojo solo en E1 (campo dejado vacío) y E2 (Ctrl+S
+  con algo pendiente, o el campo vaciado al editar).
+- **Textos**: notas, portadas y las hojas «Cómo se comporta» (alta `3033:18497` y `3070:26889`, edición `3064:15154` y
+  `3110:31269`); Hand-off: «Lo que falta, antes de pulsar» `3344:52220`, Reglas comunes › Guardar `2999:93` y la
+  entrada `2998:51`. El tooltip va descrito, no dibujado.
+
+**Queda**: publicar la librería; en el Supervisor, aceptar la actualización, poner en cada alta el texto de «Falta: …»
+de esa pantalla y, al editar, «Mostrar estado» apagado salvo en las E2.
+
+**Cómo sabes que está hecho:** el alta vacía de grupo y de agente enseña el botón apagado y «Falta: …» arriba del
+resumen, y ningún campo sale en rojo sin haberlo tocado. La ficha de usuario no tiene maqueta (abajo, «Lo de estas
+semanas que NO va a Figma»).
 
 ---
 
