@@ -71,15 +71,15 @@ El del mapa de componentes de Grupos y la tabla única del DS (2026-10-19, #457)
 - **Prototipo**: `SC_FORM_SECTION_NAV_CAJA` en `sc-form-section-nav`, encendido en `projects/supervisor/src/app/app.config.ts`.
   Las seis pantallas con índice lo llevan en la caja de `2286:5368`. **Para volver al índice plano, se borra esa línea**
   (se volverá a él más adelante: el plano no se pierde).
+- **Con la caja, carril de 235 (DD-221)**; sin ella, 196. Ningún rótulo salta de línea; contenido de 773 a 1440.
 - **Figma**: el ejemplo del DS (❖ Navmenu) y las fichas de Grupos y Agentes, con la caja; Contact Center ya la tenía.
 - **Pruebas**: tres en `sc-form-section-nav.component.spec.ts`; la de la caja enrojece si se quita la clase.
 - **«Eliminar»**: a 28 de la caja (sin la regla de `_page.scss` quedaban 19,25; lo cazó el e2e de `fichas-tres-columnas`).
-- **Figma contra el prototipo** (versión «Revisión final con el prototipo»): botón de la barra a 33; tablas de
-  asignación en Small (cada celda llevaba atado el relleno normal); 13 resúmenes de grupo a la versión publicada;
-  Hand-off hasta DD-220, con enlaces a las congeladas; 12 textos de hojas. Sin dibujar, «Nivel {canal}». Contact
-  Center en Figma dice «Descartar cambios»; el prototipo, «Deshacer».
+- **Figma contra el prototipo** (versión «Revisión final con el prototipo»): barra a 33, asignación en Small, 13
+  resúmenes publicados, hand-off hasta DD-220. Contact Center en Figma dice «Descartar cambios»; el prototipo, «Deshacer».
 - **Después, en Figma**: un hand-off por página (`3371:61554`, `3371:61797`), con sus cards de Jira; edición de grupo,
-  paso 05; `.Subsection` plegable (§54); los flujos que faltaban, toasts, empty states y hojas para desarrollo (§58).
+  paso 05; `.Subsection` plegable (§54); los flujos que faltaban, toasts, empty states y hojas para desarrollo (§58);
+  cada hoja, a la izquierda de su flujo, con enlaces de ida y vuelta, y el índice de las fichas a 235 (DD-221).
 
 ## ✅ 2026-10-21 · Lo que falta, como SISMAC-4058: el botón apagado, «Falta: …» en el resumen y el aviso en gris (DD-219)
 

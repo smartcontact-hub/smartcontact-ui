@@ -258,7 +258,8 @@
  * Va en su propio hueco al final de la fila (`.form-nav__marker`, DD-176): el rótulo llena la fila y lo empuja, así
  * que con varias marcas caen en la misma vertical. De 2026-09-06 a DD-176 fluía detrás de la última palabra, porque
  * de hermano le quitaba 25 px a una caja de texto de 99; hoy, en el carril de 196, al rótulo le quedan 140 con el
- * hueco puesto, y el más largo de las fichas, «Distribución y colas», mide 130.
+ * hueco puesto, y el más largo de las fichas, «Servicios asignados», mide 133. En la caja (DD-220) el carril pasa a 235
+ * y le quedan 147 (DD-221).
  */
 /*
  * Lo que falta, bajo la etiqueta (`sectionErrorHints`, DD-217): en la columna del rótulo, alineado con él, en rojo y a

@@ -31,9 +31,9 @@ test.beforeEach(async ({ page }) => {
  * lo que impide que vuelvan a separarse.
  */
 /* Las tres FICHAS (agente, grupo y usuario) no están aquí: llevan su resumen en una columna a la
- * derecha (`.ficha-rail--summary`), así que su tope es 1600 y su contenido 812 a 1440, no 1200 y 920.
+ * derecha (`.ficha-rail--summary`), así que su tope es 1600 y su contenido 773 a 1440, no 1200 y 881.
  * Su índice, que es lo que comparten con Contact Center, lo miden `ficha-grupo.spec.ts` (las mismas
- * cifras de aquí: 196, `sticky`, `top` 28) y `ficha-usuario-agente.spec.ts`, que exige que las tres
+ * cifras de aquí: 235, `sticky`, `top` 28) y `ficha-usuario-agente.spec.ts`, que exige que las tres
  * midan igual (DD-121, DD-122). */
 const FORMULARIOS = [
   { ruta: 'config/aed/agentes', nombre: 'contact center · agentes' },
@@ -84,15 +84,15 @@ for (const { ruta, nombre } of FORMULARIOS) {
     expect(m.inner.padding).toBe('28px');
     expect(m.inner.gap).toBe('28px');
 
-    // El rail: 196 reales, y SE QUEDA fijo con el mismo `top` que el relleno de arriba.
+    // El rail: 235 reales en la caja (DD-221), y SE QUEDA fijo con el mismo `top` que el relleno de arriba.
     expect(m.rail.position).toBe('sticky');
     expect(m.rail.top).toBe('28px');
-    expect(m.rail.ancho).toBe(196);
+    expect(m.rail.ancho).toBe(235);
 
-    // La columna de contenido se come el resto: 1200 − 2×28 − 196 − 28 = 920 a 1440,
-    // el ancho del `Block` 393:12587.
+    // La columna de contenido se come el resto: 1200 − 2×28 − 235 − 28 = 881 a 1440, lo que deja el `content` de
+    // Contact Center en Figma (2286, carril de 235).
     expect(m.main.minWidth).toBe('0px');
-    expect(m.main.ancho).toBe(920);
+    expect(m.main.ancho).toBe(881);
   });
 
   test(`${nombre} · por debajo de 1024 el índice sube encima del contenido`, async ({ page }) => {

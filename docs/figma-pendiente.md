@@ -1517,11 +1517,18 @@ el DS de los devs pinta 10,5 × 14, como el Kit (medido en ui.smart-contact.com 
   búsqueda sin resultados y sin agentes.
 - Las seis hojas «Cómo se comporta», en el idioma de desarrollo (componente, ruta, propiedad), sin cómo se midió; cada
   nombre de icono enlaza a la tarjeta «Iconos» de su hand-off. Índices, portadas y hand-off, al día.
+- Cada hoja, a la izquierda de su flujo (versión «Hojas a la izquierda, enlaces de ida y vuelta e índice a 235»). El
+  título de cada fila lleva a su pantalla; de vuelta, la nota de Dev Mode de cada pantalla («filas 6, 9 y 10», con su enlace) y
+  cada número morado llevan a la hoja, y «(E2)» de la hoja, a su paso. Las notas de las pantallas clonadas, reescritas.
+- El índice de las fichas, de 196 a 235 con mínimo de 235 (DD-221), en las 54 pantallas; en el Mapa, cada caja en su
+  pieza. V2, calcado del diálogo real (medido en local): cabecera 81, árbol 573,5 con su scroll (`60vh`) y el pie
+  con «Editar en Repositorios», 720 a 1080.
 
 **Lo que la librería no tiene** (en las maquetas, separado de su maestro y anotado):
 - `group-summary`: sus variantes solo pintan Teléfono. Con Chat (V1) y con Web Chat y WhatsApp (V5), separado.
-- Custom modal: el ancho máximo (800) y el alto del contenido (480) no se cambian en la instancia; el diálogo de la
-  tipificación mide `min(56rem, 92vw)` y no recorta. V2, separado.
+- Custom modal: **hecho en la librería, sin publicar** (versión «Custom modal: los topes de sc-dialog»): sin ancho máximo
+  y con 720 de alto para el diálogo entero, como `max-height: min(85vh, 720px)` de `sc-dialog`; el contenido encoge sin
+  tope propio. Tras publicar, V2 vuelve a ser instancia.
 - Icono `key` (`keyIcon` de la ficha de agente): no está en Smart-Contact Icons; «Expirar contraseña» va sin icono.
 - `.Subsection` plegable: hecho y sin publicar (§54, fila 9).
 

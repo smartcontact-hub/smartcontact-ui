@@ -14,13 +14,13 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  * Lo que fija, en las tres fichas, al crear y al editar:
  *   1. A 1440, el nombre va arriba de la columna del índice, y la tarjeta y el resumen arrancan a su altura.
  *   2. Del nombre al índice, el hueco de la columna (14).
- *   3. La columna del contenido es la que crece: índice 196 y resumen 240 en cualquier ancho.
+ *   3. La columna del contenido es la que crece: índice 235 (en la caja, DD-221) y resumen 240 en cualquier ancho.
  *   4. El resumen no enseña su rótulo, y la región conserva su nombre («Resumen»).
  *   5. «Eliminar» va bajo el índice al editar, a 28 de su borde (el aire entre grupos): la caja gris si la app la
  *      enciende (DD-220), si no, su última fila. En el alta no hay.
  *   6. Por debajo de 1340: el nombre sigue encima del índice, y el resumen pasa a una franja encima del contenido, en
  *      su columna.
- *   7. Un nombre que no cabe en 196 salta a una segunda línea, sin cortarse; uno que no cabe en dos, se corta en la
+ *   7. Un nombre que no cabe en 235 salta a una segunda línea, sin cortarse; uno que no cabe en dos, se corta en la
  *      segunda. Al pulsarlo para editarlo (el campo es de una línea), lo de debajo no se mueve.
  */
 
@@ -76,16 +76,16 @@ for (const f of FICHAS) {
   });
 }
 
-test('la columna del contenido es la que crece: índice 196 y resumen 240 en cualquier ancho', async ({ page }) => {
+test('la columna del contenido es la que crece: índice 235 y resumen 240 en cualquier ancho', async ({ page }) => {
   // 1920: la página llega a su tope (1600), y el contenido se queda con todo lo que sobra.
   for (const [ancho, contenido] of [
-    [1440, 812],
-    [1920, 1052],
+    [1440, 773],
+    [1920, 1013],
   ] as const) {
     await page.setViewportSize({ width: ancho, height: 900 });
     await goto(page, 'admin/grupos/editar/11');
     const m = await cajas(page);
-    expect(m.indice!.ancho, `${ancho}: el índice`).toBe(196);
+    expect(m.indice!.ancho, `${ancho}: el índice`).toBe(235);
     expect(m.resumen!.ancho, `${ancho}: el resumen`).toBe(240);
     expect(m.contenido!.ancho, `${ancho}: el contenido`).toBe(contenido);
   }
@@ -151,11 +151,11 @@ const nombrar = async (page: Page, nombre: string) => {
 };
 
 for (const ruta of ['admin/grupos/crear', 'admin/grupos/editar/11']) {
-  test(`${ruta} · un nombre que no cabe en 196 salta a la segunda línea; uno que no cabe en dos, se corta en ella`, async ({
+  test(`${ruta} · un nombre que no cabe en 235 salta a la segunda línea; uno que no cabe en dos, se corta en ella`, async ({
     page,
   }) => {
     await goto(page, ruta);
-    // 270 px a la letra del título: no cabe en una línea de 196, y sí en dos.
+    // 270 px a la letra del título: no cabe en una línea de 235, y sí en dos.
     const largo = await nombrar(page, 'Atención al cliente Madrid Norte');
     expect(largo, 'en dos líneas, entero').toEqual({ lineas: 2, cortado: false });
     const enorme = await nombrar(page, 'Atención al cliente de la delegación de Madrid Norte y Castilla-La Mancha');
