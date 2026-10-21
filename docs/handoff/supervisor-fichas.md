@@ -72,13 +72,14 @@ El del mapa de componentes de Grupos y la tabla única del DS (2026-10-19, #457)
   Las seis pantallas con índice lo llevan en la caja de `2286:5368`. **Para volver al índice plano, se borra esa línea**
   (se volverá a él más adelante: el plano no se pierde).
 - **Figma**: el ejemplo del DS (❖ Navmenu) y las fichas de Grupos y Agentes, con la caja; Contact Center ya la tenía.
-- **Pruebas**: tres en `sc-form-section-nav.component.spec.ts` (sin la línea, plano; con ella, caja; el índice por
-  defecto no gana otra caja). La de la caja se pone en rojo si se quita la clase.
+- **Pruebas**: tres en `sc-form-section-nav.component.spec.ts`; la de la caja enrojece si se quita la clase.
 - **«Eliminar»**: a 28 de la caja (sin la regla de `_page.scss` quedaban 19,25; lo cazó el e2e de `fichas-tres-columnas`).
 - **Figma contra el prototipo** (versión «Revisión final con el prototipo»): botón de la barra a 33; tablas de
   asignación en Small (cada celda llevaba atado el relleno normal); 13 resúmenes de grupo a la versión publicada;
   Hand-off hasta DD-220, con enlaces a las congeladas; 12 textos de hojas. Sin dibujar, «Nivel {canal}». Contact
   Center en Figma dice «Descartar cambios»; el prototipo, «Deshacer».
+- **Después, en Figma**: un hand-off por página (`3371:61554`, `3371:61797`), con sus cards de Jira; edición de grupo,
+  paso 05; `.Subsection` plegable (§54); los flujos que faltaban, toasts, empty states y hojas para desarrollo (§58).
 
 ## ✅ 2026-10-21 · Lo que falta, como SISMAC-4058: el botón apagado, «Falta: …» en el resumen y el aviso en gris (DD-219)
 
@@ -95,8 +96,7 @@ El del mapa de componentes de Grupos y la tabla única del DS (2026-10-19, #457)
 - **Pruebas**: las de DD-217 que pulsaban «Crear» con algo pendiente, reescritas (18 casos en 10 ficheros), y una nueva
   para el tooltip de lo que falta; lo gris se mira en positivo, porque un «no hay rojo» pasa antes de pintar (la
   contraprueba lo enseñó).
-- **Pendiente**: Figma (§57, encargado a la sesión de Figma de #476) y pegar en COA el borrador 4058 al día (fuera del
-  repo).
+- **Pendiente**: pegar en COA el borrador 4058 al día (fuera del repo). Figma (§57), hecho el 2026-10-21.
 
 ## ✅ 2026-10-20 · Grupos como sus páginas de COA: cifra a la ficha, duplicar a un alta, eliminar varios y «Agentes asignados» sin estado (DD-218)
 
