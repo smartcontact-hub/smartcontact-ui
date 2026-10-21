@@ -296,19 +296,6 @@
   overflow-wrap: anywhere;
 }
 
-/* La segunda línea de una fila con marcador: una sola línea, siempre (la fila no cambia de altura con el estado). Lo largo
- * se corta con puntos suspensivos; el `title` lo dice entero. En gris cuando es un estado, en rojo cuando es lo que falta. */
-.form-nav__hint--paso {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  min-width: 0;
-}
-
-.form-nav__hint--estado {
-  color: var(--sc-text-secondary);
-}
-
 /* El hueco de la marca, siempre (vacío si no hay): el ancho del ✓, que es la más ancha, y la marca pegada a su
  * borde derecho. Así un rótulo no salta de línea cuando aparece el punto. */
 .form-nav__marker {

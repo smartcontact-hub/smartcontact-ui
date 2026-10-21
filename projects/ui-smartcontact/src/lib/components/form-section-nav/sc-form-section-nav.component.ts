@@ -20,8 +20,6 @@ export interface FormNavSection {
    * apunta a `#` y solo avisa a la página (compatibilidad; el DS no conoce el router).
    */
   readonly href?: string;
-  /** La sección no tiene nada obligatorio: sin ver, el índice dice «Opcional» en vez de «Por revisar». Solo con `sectionStates`. */
-  readonly optional?: boolean;
 }
 
 /**
@@ -136,8 +134,8 @@ export class ScFormSectionNavComponent implements OnInit {
   /**
    * El recorrido de un alta, con el marcador de paso (`sc-step-marker`) en TODAS las filas: pendiente sin ver, actual la
    * abierta, hecha o error la que se dejó. Con él, el marcador sustituye a los puntos y al ✓ sueltos (las filas cambian
-   * de estado en su sitio, sin aparecer de un hueco vacío); lo que falta se sigue diciendo en texto bajo la etiqueta
-   * si la página lo da. Opt-in: sin él, el índice se pinta como siempre (edición, Contact Center, constructor de reglas).
+   * de estado en su sitio, sin aparecer de un hueco vacío) y la fila no lleva línea debajo; lo que falta (`sectionErrorHints`)
+   * va en el `title` y se oye. Opt-in: sin él, el índice se pinta como siempre (edición, Contact Center, constructor de reglas).
    */
   readonly sectionStates = input<ReadonlyMap<string, ScStepMarkerState> | null>(null);
 
@@ -172,22 +170,6 @@ export class ScFormSectionNavComponent implements OnInit {
 
   ngOnInit(): void {
     this.hechasAlPintar = new Set(this.sectionsDone());
-  }
-
-  /**
-   * La segunda línea de una fila con marcador, SIEMPRE presente (la altura de la fila no cambia con el estado): lo que
-   * falta, en rojo y en una línea (la página lo da en `sectionErrorHints`), o el estado en gris: por revisar (u opcional),
-   * en curso, listo. Lo largo se corta con puntos suspensivos y se lee entero en el `title`.
-   */
-  protected stepLine(section: FormNavSection): { key: string | null; text: string | null; danger: boolean } | null {
-    const paso = this.stepState(section.id);
-    if (paso === null) return null;
-    if (paso === 'error') {
-      const hint = this.errorHint(section.id);
-      return hint ? { key: null, text: hint, danger: true } : { key: 'sc.formSectionNav.status.error', text: null, danger: true };
-    }
-    if (paso === 'pendiente') return { key: section.optional ? 'sc.formSectionNav.status.optional' : 'sc.formSectionNav.status.pendiente', text: null, danger: false };
-    return { key: paso === 'actual' ? 'sc.formSectionNav.status.actual' : 'sc.formSectionNav.status.hecha', text: null, danger: false };
   }
 
   /** El estado de paso de la fila, si la página lo manda. */

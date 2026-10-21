@@ -325,8 +325,8 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
       { id: 'group-section-general', labelKey: 'groups.form.section.general', icon: 'tune' },
       { id: 'group-section-distribution', labelKey: 'groups.form.section.distribution', icon: 'alt_route' },
       // Lo que se le asigna desde Repositorios, como «Recursos» en la ficha de agente.
-      { id: 'group-section-resources', labelKey: 'groups.form.section.resources', icon: 'library_books', optional: true },
-      { id: 'group-section-agents', labelKey: 'groups.form.section.agents', icon: 'headphones', optional: true },
+      { id: 'group-section-resources', labelKey: 'groups.form.section.resources', icon: 'library_books' },
+      { id: 'group-section-agents', labelKey: 'groups.form.section.agents', icon: 'headphones' },
     ].map((s) => ({ ...s, href: this.sectionLinks.href(this.sectionUrl(s.id)) })),
   );
 
@@ -566,6 +566,11 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
    */
   protected goTo(id: string): Promise<boolean> {
     if (this.mode() === 'create') {
+      // Dejar una sección con algo obligatorio vacío es dejarla en rojo: al volver, sus campos lo dicen en rojo, no en gris.
+      const dejada = this.alta.abierta();
+      if (id !== dejada) {
+        for (const o of this.obligatorios()) if (o.falta && o.seccion === dejada) this.ocasion.tocar(o.clave);
+      }
       this.alta.abrir(id);
       return Promise.resolve(true);
     }

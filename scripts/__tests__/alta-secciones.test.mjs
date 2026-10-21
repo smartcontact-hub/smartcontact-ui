@@ -122,3 +122,20 @@ test('estadosDeSecciones: actual la abierta, hecha o error la dejada, pendiente 
     agentes: 'actual',
   });
 });
+
+test('estadosDeSecciones: la verde sigue verde al abrirla, y la roja pasa a verde en vivo al rellenar lo que faltaba', () => {
+  const dejadas = new Map([['general', ''], ['distribucion', '']]);
+  const resultados = new Map([['general', true], ['distribucion', false]]);
+  const con = (abierta, ok) =>
+    Object.fromEntries(
+      estadosDeSecciones({ ids, abierta, dejadas, resultados, firma: () => '', completa: (id) => (id === 'distribucion' ? ok : true) }),
+    );
+  // Abrir la verde no la pone en «actual».
+  assert.equal(con('general', false).general, 'hecha');
+  // La roja abierta sigue roja mientras falte, y pasa a verde al rellenar.
+  assert.equal(con('distribucion', false).distribucion, 'error');
+  assert.equal(con('distribucion', true).distribucion, 'hecha');
+  // Una verde que se rompe con la sección abierta no se pone roja hasta que se deja.
+  const rota = estadosDeSecciones({ ids, abierta: 'general', dejadas, resultados, firma: () => '', completa: () => false });
+  assert.equal(rota.get('general'), 'hecha');
+});

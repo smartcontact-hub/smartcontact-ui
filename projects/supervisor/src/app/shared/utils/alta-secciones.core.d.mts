@@ -18,6 +18,7 @@ export function estadosDeSecciones(o: {
   readonly ids: readonly string[];
   readonly abierta: string;
   readonly dejadas: ReadonlyMap<string, string>;
+  readonly resultados?: ReadonlyMap<string, boolean>;
   readonly firma: (id: string) => string;
   readonly completa: (id: string) => boolean;
 }): Map<string, 'pendiente' | 'actual' | 'hecha' | 'error'>;

@@ -49,24 +49,34 @@ export function firmaVista(dejadas, id, actual) {
 }
 
 /**
- * El estado de cada sección en el índice de un alta, el del marcador de paso: `actual` la abierta; `hecha` la que se
- * dejó y completa; `error` la que se dejó con algo obligatorio sin rellenar; `pendiente` la que no se ha visto o a la
- * que ha llegado algo nuevo desde que se dejó (un canal añadido; quitar uno no cuenta). El resultado, hecha
- * o error, se decide AL SALIR: mientras se escribe, el botón y el «Falta: …» ya dicen lo que falta (DD-219).
+ * El estado de cada sección en el índice de un alta, el del marcador de paso. Una sección que se ha dejado conserva su
+ * resultado aunque se abra otra vez: la verde sigue verde y la roja sigue roja, y la roja se pone verde EN VIVO cuando
+ * se rellena lo que faltaba. La verde que se rompe con la sección abierta no se pone roja hasta que se deja (el rojo
+ * mientras se escribe es regañar: el botón y el «Falta: …» ya dicen lo que falta, DD-219).
+ *  · `hecha`: dejada y completa (o abierta y completa, si ya se dejó).
+ *  · `error`: dejada con algo obligatorio sin rellenar.
+ *  · `actual`: abierta por primera vez, o con algo nuevo que no se ha visto.
+ *  · `pendiente`: no se ha visto, o ha llegado algo nuevo desde que se dejó (un canal añadido; quitar uno no cuenta).
  * @param {{
  *   ids: readonly string[],
  *   abierta: string,
  *   dejadas: ReadonlyMap<string, string>,
+ *   resultados?: ReadonlyMap<string, boolean>,
  *   firma: (id: string) => string,
  *   completa: (id: string) => boolean,
  * }} o
  * @returns {Map<string, 'pendiente' | 'actual' | 'hecha' | 'error'>}
  */
-export function estadosDeSecciones({ ids, abierta, dejadas, firma, completa }) {
+export function estadosDeSecciones({ ids, abierta, dejadas, resultados = new Map(), firma, completa }) {
   return new Map(
     ids.map((id) => {
-      if (id === abierta) return [id, 'actual'];
-      if (!firmaVista(dejadas, id, firma(id))) return [id, 'pendiente'];
+      const vista = firmaVista(dejadas, id, firma(id));
+      if (id === abierta) {
+        if (!vista) return [id, 'actual'];
+        if (completa(id)) return [id, 'hecha'];
+        return [id, resultados.get(id) === false ? 'error' : 'hecha'];
+      }
+      if (!vista) return [id, 'pendiente'];
       return [id, completa(id) ? 'hecha' : 'error'];
     }),
   );
