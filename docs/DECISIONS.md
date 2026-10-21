@@ -174,10 +174,14 @@ prototipo y en las maquetas de Grupos y Agentes, que también llevaban el carril
    las traducciones largas.
 3. **Figma**: los 54 índices de las fichas de Grupos y Agentes, de 196 a 235 con mínimo de 235, como Contact Center
    (`2286:5368`) y el ejemplo del DS (❖ Navmenu). En el Mapa de componentes, cada caja vuelve sobre su pieza.
+4. **La fila blanca de la caja, con el radio de la fila** (`--sc-radius-400`, 12; en Figma, `border/radius/xl` en cada
+   `nav-item` sin marcar): en ángulo recto, el fondo redondeado del hover dejaba ver las esquinas blancas detrás. En
+   código y en Figma (Contact Center, Grupos, Agentes y ❖ Navmenu), y en Figma toda fila sin marcar lleva el blanco.
 
 **Razón** · Medido el 2026-10-21 en `sc-supervisor.pages.dev` a 1440, con la caja: al rótulo le quedan 108, y piden 133
 «Servicios asignados», 130 «Distribución y colas», 126 «Agentes asignados» y 120 «Grupos asignados». En 235 le quedan
-147. 235 es lo que dibuja Figma para esa caja: 203 del Nav-menu y 16 por lado.
+147. 235 es lo que dibuja Figma para esa caja: 203 del Nav-menu y 16 por lado. La fila blanca medía 203 × 37,5 con radio 0, y
+su fondo de hover, el mismo rectángulo con radio 12.
 
 **Descartadas** ·
 - *Dejar 196 y que la fila crezca* (DD-220): el índice deja de leerse de un vistazo justo en las secciones más usadas.
@@ -193,7 +197,8 @@ unos 740) y 881 en Contact Center; por debajo de 1340, 881. Las pruebas de `fich
 
 ## DD-220 · 2026-10-21 — El índice de secciones, en la caja gris de Contact Center, con un interruptor para volver al plano
 
-> **Su descartada «Ensanchar el carril a 235» se adopta en DD-221** (2026-10-21): con la caja, el carril mide 235.
+> **Su descartada «Ensanchar el carril a 235» se adopta en DD-221** (2026-10-21): con la caja, el carril mide 235, y la
+> fila blanca lleva el radio de la fila.
 
 **Contexto** · En Figma, el índice de Contact Center (Supervisor `2286:5368`) es la caja `Section` del DS con su título y
 el Nav-menu dentro, y el ejemplo de `sc-form-section-nav` del DS (❖ Navmenu) es ese mismo. El prototipo, en cambio,

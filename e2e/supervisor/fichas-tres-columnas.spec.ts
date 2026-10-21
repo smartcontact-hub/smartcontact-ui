@@ -121,6 +121,31 @@ test('«Eliminar» va bajo el índice al editar, y en el alta no hay', async ({ 
   }
 });
 
+test('en la caja, la fila blanca lleva el radio de la fila: el fondo del hover no deja esquinas blancas (DD-221)', async ({
+  page,
+}) => {
+  await goto(page, 'admin/grupos/editar/11');
+  await expect(page.locator('.page__rail .form-nav__item').first()).toBeVisible();
+  const filas = await page.evaluate(() =>
+    [...document.querySelectorAll('.page__rail .form-nav--caja .form-nav__list > li')].map((li) => {
+      const fila = li.querySelector('.form-nav__item')!;
+      return {
+        texto: fila.textContent?.trim(),
+        marcada: fila.classList.contains('form-nav__item--active'),
+        radio: getComputedStyle(li).borderTopLeftRadius,
+        radioDeLaFila: getComputedStyle(fila).borderTopLeftRadius,
+      };
+    }),
+  );
+  test.skip(filas.length === 0, 'la app no enciende la caja (DD-220)');
+  const sinMarcar = filas.filter((f) => !f.marcada);
+  expect(sinMarcar.length, 'filas sin marcar').toBeGreaterThan(0);
+  for (const f of sinMarcar) {
+    expect(f.radioDeLaFila, `${f.texto}: la fila redondea`).not.toBe('0px');
+    expect(f.radio, `${f.texto}: el blanco, con el radio de la fila`).toBe(f.radioDeLaFila);
+  }
+});
+
 test('por debajo de 1340: el nombre sigue encima del índice, y el resumen va en una franja encima del contenido', async ({
   page,
 }) => {

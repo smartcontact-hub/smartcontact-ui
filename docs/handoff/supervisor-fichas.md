@@ -71,7 +71,7 @@ El del mapa de componentes de Grupos y la tabla única del DS (2026-10-19, #457)
 - **Prototipo**: `SC_FORM_SECTION_NAV_CAJA` en `sc-form-section-nav`, encendido en `projects/supervisor/src/app/app.config.ts`.
   Las seis pantallas con índice lo llevan en la caja de `2286:5368`. **Para volver al índice plano, se borra esa línea**
   (se volverá a él más adelante: el plano no se pierde).
-- **Con la caja, carril de 235 (DD-221)**; sin ella, 196. Ningún rótulo salta de línea; contenido de 773 a 1440.
+- **Con la caja, carril de 235 (DD-221)**; sin ella, 196. Sin saltos de línea; filas blancas con radio 12 (píldora).
 - **Figma**: el ejemplo del DS (❖ Navmenu) y las fichas de Grupos y Agentes, con la caja; Contact Center ya la tenía.
 - **Pruebas**: tres en `sc-form-section-nav.component.spec.ts`; la de la caja enrojece si se quita la clase.
 - **«Eliminar»**: a 28 de la caja (sin la regla de `_page.scss` quedaban 19,25; lo cazó el e2e de `fichas-tres-columnas`).

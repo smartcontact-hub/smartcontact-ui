@@ -1521,7 +1521,7 @@ el DS de los devs pinta 10,5 × 14, como el Kit (medido en ui.smart-contact.com 
   título de cada fila lleva a su pantalla; de vuelta, la nota de Dev Mode de cada pantalla («filas 6, 9 y 10», con su enlace) y
   cada número morado llevan a la hoja, y «(E2)» de la hoja, a su paso. Las notas de las pantallas clonadas, reescritas.
 - El índice de las fichas, de 196 a 235 con mínimo de 235 (DD-221), en las 54 pantallas; en el Mapa, cada caja en su
-  pieza. V2, calcado del diálogo real (medido en local): cabecera 81, árbol 573,5 con su scroll (`60vh`) y el pie
+  pieza. En la caja, cada fila blanca con el radio de la fila (`border/radius/xl`), también en Contact Center y ❖ Navmenu. V2, calcado del diálogo real (medido en local): cabecera 81, árbol 573,5 con su scroll (`60vh`) y el pie
   con «Editar en Repositorios», 720 a 1080.
 
 **Lo que la librería no tiene** (en las maquetas, separado de su maestro y anotado):
