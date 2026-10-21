@@ -77,7 +77,7 @@ y «Mapa de componentes») y el del relleno de la tabla (2026-10-19, DD-214): `g
   `sc-select` 1–10; Habilitado bloqueado con «Activación por grupo»; la confirmación de columna dice qué y a cuántos.
 - **Textos**: eliminar con el nombre en el título (`injectConfirmarBorrado(titleKey)`, un título por entidad) y los
   avisos con «».
-- **Pendiente**: Figma (§56) y las correcciones de COA (fuera del repo). Tras fundir, avanzar `proto/SISMAC-4058`, 4062
+- **Pendiente**: las correcciones de COA (fuera del repo). Figma (§56), hecho el 2026-10-21. Tras fundir, avanzar `proto/SISMAC-4058`, 4062
   y 4064 (`docs/PROTOTIPOS.md`).
 
 ## ✅ 2026-10-20 · Lo que falta se dice al pulsar Crear, grupos sin canales, duplicar sin diálogo, Recursos en chips y el punto final (DD-217)
@@ -94,7 +94,7 @@ y «Mapa de componentes») y el del relleno de la tabla (2026-10-19, DD-214): `g
 - **Segunda vuelta**: Recursos a media columna, chips que caben (`fit`, el largo con «…»), tooltip con lo que contiene
   en las tres listas (§15); editores sin «Falta»; punto final (`i18n:check` I); barrido (§13); rótulos por `[label]`,
   también en `sc-textarea`, e interruptores con `<label for>` (§16); fuera `recurso-dialog` y `template-form-panel`.
-- **Pendiente**: Figma (§55). Del barrido, el nombre en cabecera, las cabeceras de asignación y «Ver detalle», hechos
+- **Figma (§55)**: hecho el 2026-10-21. Del barrido, el nombre en cabecera, las cabeceras de asignación y «Ver detalle», hechos
   (`fichas-alineacion`, 7). Lo «a nativo» que quedaba (§16): `helperText` de `sc-fileupload`, hecho; el resto ya lo
   había decidido el DS.
 
