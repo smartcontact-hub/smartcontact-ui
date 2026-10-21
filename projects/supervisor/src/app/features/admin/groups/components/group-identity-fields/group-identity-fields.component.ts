@@ -43,10 +43,14 @@ export class GroupIdentityFieldsComponent {
   readonly phoneOptions = input<readonly string[]>([]);
   /** Clave del aviso bajo el nombre, ya decidido por quien la usa (vacío, repetido…). */
   readonly nameError = input<string | null>(null);
+  /** El aviso del nombre vacío que aún va en gris, como ayuda (DD-219): ya traducido. */
+  readonly nameHint = input<string | undefined>(undefined);
   /** Clave del aviso bajo el teléfono saliente, ya decidido por quien la usa (falta, con Teléfono). */
   readonly phoneError = input<string | null>(null);
 
   readonly nameChange = output<string>();
+  /** Se dejó el nombre: si sigue vacío, quien la usa lo dice ya en rojo (DD-219). */
+  readonly nameLeave = output<FocusEvent>();
   readonly phoneChange = output<string>();
   readonly priorityChange = output<GroupPriority>();
   /** Enter en el NOMBRE (no en los desplegables, donde Enter elige una opción): el diálogo lo usa para duplicar. */

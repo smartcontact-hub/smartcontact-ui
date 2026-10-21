@@ -206,10 +206,10 @@
           "have": "In the supervisor, the scLlegaAlPie directive measures the remaining height; tabla-al-pie tests it: 2 px more of table and the page scrolls."
         },
         "blame": {
-          "title": "What is missing is said on pressing Create or Save",
-          "apply": "An empty required field is something still to fill in, not an error: nothing turns red while filling in. «Create» is always enabled and, when pressed with something pending, it does not create: each field says it, the index marks its section with the text of what is missing, and focus goes to the first one. A saved record that already lacked something says so on opening. A content error (a repeated name, a mistyped email) shows live. The index ✓ belongs to a section left as it is.",
-          "avoid": "A red dot that appears in a section nobody is looking at, without saying what is missing, or a ✓ on a section another one changed: it reads as caused by the last thing done. Nor a grey button with its reason next to it, or yellow warnings about things that block nothing.",
-          "have": "In the supervisor, ocasionDeAvisar decides when each form flags and sectionErrorHints of sc-form-section-nav puts the text in the index; rule 7 of audit:screen-hygiene, indice-errores and sin-acusar-de-primeras guard it."
+          "title": "What is missing, in grey and in the summary; in red on leaving it empty",
+          "apply": "An empty required field is something still to fill in, not an error: its message shows under the field from the start, in grey, as help, and turns red on leaving the field empty. «Create» and «Save» stay disabled while something is missing, and above the summary «Missing: name, outbound phone» says all of it, each item leading to its field; «Ready to create» once nothing is missing. A saved record that already lacked something says so on opening. A content error (a repeated name, a mistyped email) shows live. The index ✓ belongs to a section left as it is.",
+          "avoid": "Red before the field is touched, or a red dot in a section nobody is looking at: it reads as caused by the last thing done. Nor a grey button that does not say what blocks it, or yellow warnings about things that block nothing.",
+          "have": "In the supervisor, ocasionDeAvisar decides when each message turns red, ayudaDeObligatorio puts the grey one and sc-summary-status says what is missing; rule 7 of audit:screen-hygiene, indice-errores and sin-acusar-de-primeras guard it."
         }
       }
     },

@@ -18,6 +18,8 @@ import { injectLangChange } from '@core/utils/lang-change';
 import { AltaPieComponent } from '@shared/components';
 import {
   avisosDelIndice,
+  ayudaDeObligatorio,
+  dejoElCampo,
   llegarAAncla,
   llegarASeccion,
   ocasionDeAvisar,
@@ -207,7 +209,7 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit {
     () => this.groupsStore.groups().filter((g) => resolveGroup(g).wrapUp.typificationId === this.editingId()).length,
   );
 
-  /* ── Lo que falta: en su campo y en el índice, al pulsar (DD-217) ──────── */
+  /* ── Lo que falta: en gris en su sitio, en rojo al dejarlo, y el botón apagado (DD-219) ──────── */
 
   /** Lo que falta, por su aviso, en el orden de la ficha. */
   private readonly faltas = computed<readonly string[]>(() => {
@@ -219,12 +221,27 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit {
     ];
   });
 
-  /** El botón se puede pulsar: al crear, siempre; al editar, con cambios. Lo que falte lo dice al pulsarlo (`save`). */
-  protected readonly canSave = computed(() => this.mode() === 'create' || this.formDirty());
+  /** Hay algo que no deja crear ni guardar: lo que falta o el nombre repetido. */
+  private readonly pendiente = computed(() => this.faltas().length > 0 || this.nameTaken());
 
   /**
-   * Cuándo se dice lo que falta (DD-217): al pulsar Crear o Guardar, lo que faltaba entonces, hasta que se arregla; o
-   * desde que se abre, si lo guardado ya venía sin ello. Mientras se rellena, nada en rojo.
+   * El botón se puede pulsar sin nada pendiente: al crear, en cuanto están el nombre y una opción; al editar, además, con
+   * cambios. Como las demás fichas (DD-219).
+   */
+  protected readonly canSave = computed(() => !this.pendiente() && (this.mode() === 'create' || this.formDirty()));
+
+  /** Por qué está apagado el botón, para su tooltip: lo primero que falta o está mal, o, sin cambios, «No hay cambios». */
+  protected readonly motivoApagado = computed(() => {
+    this.lang();
+    if (this.canSave()) return '';
+    if (this.nameTaken()) return this.translate.instant('repositories.tipificaciones.errors.name_taken');
+    const primera = this.faltas()[0];
+    return this.translate.instant(primera ?? 'common.no_changes');
+  });
+
+  /**
+   * Cuándo se dice en rojo lo que falta (DD-219): al dejar el nombre vacío, o desde que se abre si lo guardado ya venía
+   * sin ello. Antes, en gris en su sitio.
    */
   private readonly ocasion = ocasionDeAvisar({
     editando: () => this.mode() === 'edit',
@@ -232,7 +249,7 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit {
     faltas: () => this.faltas(),
   });
 
-  /** El aviso bajo el nombre: repetido, en vivo (es contenido); vacío, al pulsar sin él. */
+  /** El aviso rojo bajo el nombre: repetido, en vivo (es contenido); vacío, al dejarlo así. */
   protected readonly nameError = computed<string | undefined>(() => {
     this.lang();
     if (this.nameTaken()) return this.translate.instant('repositories.tipificaciones.errors.name_taken');
@@ -240,15 +257,43 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit {
     return this.faltas().includes(falta) && this.ocasion.acusa(falta) ? this.translate.instant(falta) : undefined;
   });
 
-  /** Los avisos a la vista, en el orden de la ficha: de aquí salen el punto del índice, lo que dice y adónde lleva. */
+  /** El aviso gris bajo el nombre vacío, mientras aún no se dice en rojo (DD-219). */
+  protected readonly nameHint = computed<string | undefined>(() => {
+    this.lang();
+    const falta = 'repositories.tipificaciones.errors.name_required';
+    return this.faltas().includes(falta) && !this.ocasion.acusa(falta) ? ayudaDeObligatorio(this.translate.instant(falta)) : undefined;
+  });
+
+  /** Se dejó el nombre: si sigue vacío, desde ahora en rojo. */
+  protected dejarNombre(event: FocusEvent): void {
+    const falta = 'repositories.tipificaciones.errors.name_required';
+    if (dejoElCampo(event) && this.faltas().includes(falta)) this.ocasion.tocar(falta);
+  }
+
+  /** Lo que le falta al árbol, encima de él: en gris mientras se rellena, en rojo si ya se dice (DD-219). */
+  protected readonly avisoCategorias = computed<{ readonly texto: string; readonly rojo: boolean } | null>(() => {
+    this.lang();
+    const falta = this.faltas().find((f) => !f.endsWith('name_required'));
+    if (!falta) return null;
+    const rojo = this.ocasion.acusa(falta);
+    const texto = this.translate.instant(falta);
+    return { texto: rojo ? texto : ayudaDeObligatorio(texto)!, rojo };
+  });
+
+  /**
+   * Los avisos del índice, en el orden de la ficha (DD-219): el nombre repetido, en vivo, y lo que falta si lo guardado
+   * ya venía sin ello o se pulsó con ello pendiente. De aquí salen el punto del índice, lo que dice y adónde lleva.
+   */
   private readonly avisos = computed<readonly AvisoDeFicha[]>(() => {
     this.lang();
     const out: AvisoDeFicha[] = [];
-    const nombre = this.nameError();
-    if (nombre) out.push({ seccion: GENERAL, texto: nombre, ancla: 'tip-name' });
+    if (this.nameTaken()) {
+      out.push({ seccion: GENERAL, texto: this.translate.instant('repositories.tipificaciones.errors.name_taken'), ancla: 'tip-name' });
+    }
     for (const falta of this.faltas()) {
-      if (falta.endsWith('name_required') || !this.ocasion.acusa(falta)) continue;
-      out.push({ seccion: CATEGORIAS, texto: this.translate.instant(falta), ancla: null });
+      if (!this.ocasion.acusaEnIndice(falta)) continue;
+      if (falta.endsWith('name_required')) out.push({ seccion: GENERAL, texto: this.translate.instant(falta), ancla: 'tip-name' });
+      else out.push({ seccion: CATEGORIAS, texto: this.translate.instant(falta), ancla: null });
     }
     return out;
   });
@@ -316,9 +361,10 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit {
   }
 
   protected save(): void {
-    if (!this.canSave()) return;
-    // Con algo pendiente no crea ni guarda: desde ahora se dice lo que falta, y se llega al primer sitio (DD-217).
-    if (this.faltas().length > 0 || this.nameTaken()) {
+    if (this.mode() === 'edit' && !this.formDirty()) return;
+    // El botón está apagado con algo pendiente (DD-219), pero se llega aquí también con Ctrl+S: no crea ni guarda, dice
+    // lo que falta en rojo y lleva al primer sitio.
+    if (this.pendiente()) {
       this.ocasion.intentar();
       const primero = this.avisos()[0];
       if (primero) this.irACampo(primero.seccion, primero.ancla);

@@ -248,16 +248,16 @@ no a la librería. Dos de estas reglas ya son infraestructura del sistema (aquí
    **En estrecho, el nombre se queda** (DD-193): la columna que nombra la fila va fija a la izquierda y la tabla
    desplaza de lado; su mínimo sale de las columnas y no baja de 15rem para el nombre. Prueba cada lista a 1024.
    Esa columna es la cabecera de su fila (`rowHeader` en `ScColumnDef`, DD-194): una tabla nueva con nombre la marca.
-11. **Lo que falta se dice al pulsar Crear o Guardar** (DD-217, que sustituye la ocasión de DD-199). Un obligatorio
-   vacío no es un error, es algo por rellenar: ni borde rojo, ni aviso bajo el campo, ni punto en el índice mientras se
-   rellena. «Crear …» está siempre activo, y «Guardar», con cambios, sin motivo al lado. Al pulsarlo con algo
-   pendiente no crea: cada campo lo dice, el índice marca su sección con el texto de lo que falta, y se llega al
-   primero, con el foco. Lo guardado que ya venía sin algo se dice al abrir; un campo que aparece después nace callado;
-   un error de contenido (repetido, mal escrito) va en vivo. El ✓ del índice es de la sección que se dejó tal como
-   está: si otra le cambia el contenido, se va sin rojo. Sin puertas entre secciones, sin «Falta: …» ni «Listo para
-   crear», y sin avisos amarillos de lo que no bloquea nada. En una ficha lo decide `ocasionDeAvisar`
-   (`shared/utils/alta-secciones.ts`); lo vigilan `audit:screen-hygiene` (regla 7), `indice-errores.spec.ts` y
-   `sin-acusar-de-primeras.spec.ts`.
+11. **Lo que falta, en gris y en el resumen; en rojo al dejarlo vacío** (DD-219, que enmienda DD-217 §1 y §4). Un
+   obligatorio vacío no es un error, es algo por rellenar: su aviso sale bajo el campo desde el principio, en gris, como
+   ayuda («El nombre es obligatorio»), y pasa a rojo cuando se deja el campo vacío. «Crear …» y «Guardar» están
+   apagados mientras falte algo; arriba del resumen, «Falta: nombre, teléfono saliente», con cada cosa llevando a su
+   campo, y «Listo para crear» cuando ya no falta nada. El tooltip del botón apagado dice lo mismo. El índice no se
+   pone en rojo por lo que se toca: solo por lo guardado que ya venía sin algo, que se dice al abrir, y por un error de
+   contenido (repetido, mal escrito), que va en vivo. El ✓ del índice es de la sección que se dejó tal como está: si
+   otra le cambia el contenido, se va sin rojo. Sin puertas entre secciones y sin avisos amarillos de lo que no bloquea
+   nada. En una ficha lo decide `ocasionDeAvisar` (`shared/utils/alta-secciones.ts`); lo vigilan
+   `audit:screen-hygiene` (regla 7), `indice-errores.spec.ts` y `sin-acusar-de-primeras.spec.ts`.
 
 **Antes de enseñar una pantalla, revísala tú** (DD-123): `npm run revision -- <ruta>` la abre a 1440,
 recorre sus pestañas, guarda las capturas en `.cache/revision/` y mide la agrupación. Mira las capturas
@@ -329,7 +329,7 @@ no la otra. Cada fila apunta a la decisión o al gate que la sostiene; no hay fi
 | El estado de una persona en una tabla | Su propia columna, «Estado», con la `sc-tag` del listado de agentes y el ancho de su etiqueta más larga en los cuatro idiomas | La etiqueta pegada al nombre: no se alinea de una fila a otra y le quita sitio al email | DD-156 |
 | Separar dos bloques con una línea | `sc-divider` | `<hr>`, un `div` de 1 px o un `border-top` entre hermanos | DD-113 |
 | El alta de una ficha con secciones | El índice de la edición (`sc-form-section-nav`) con `sectionsDone` de `seccionesDeAlta()`: ✓ en la sección vista y completa, que se va sin rojo si otra le cambia el contenido; al pie, `sc-alta-pie` («Atrás» / «Siguiente»), que lleva al principio de la sección nueva con `llegarASeccion` | Un Stepper o un asistente (DD-138, revertida); la sección del alta en la dirección; puertas entre secciones; el punto rojo al dejar una sección | DD-143, DD-217 |
-| Decir lo que le falta a un alta o a una edición | Al pulsar «Crear …» o «Guardar», siempre activos: cada campo lo dice en rojo, el índice da el motivo (`sectionErrorHints` de `avisosDelIndice()`) y el foco va al primero (`ocasionDeAvisar`, `llegarAAncla`); el rojo se va en vivo al arreglarlo | «Falta: …» o «Listo para crear» junto al botón o arriba del resumen; el botón apagado por lo que falta; un porcentaje o una barra de progreso | DD-136, DD-217 |
+| Decir lo que le falta a un alta o a una edición | El aviso bajo el campo en gris desde el principio (`ayudaDeObligatorio`) y en rojo al dejarlo vacío (`ocasionDeAvisar().tocar`, `dejoElCampo`); «Crear …» y «Guardar» apagados mientras falte algo, con su motivo en el tooltip; «Falta: …» o «Listo para crear» arriba del resumen (`sc-summary-status`), cada cosa a su campo (`llegarAAncla`) | El rojo antes de tocar el campo; el punto rojo del índice por lo que se toca; «Crear …» siempre activo con lo que falta dicho al pulsar; un porcentaje o una barra de progreso | DD-136, DD-217, DD-219 |
 | Con qué nace un grupo o un agente nuevo | Contact Center › Grupos o › Agentes, que guardan en `GroupDefaultsStore` o `AgentDefaultsStore`, y el alta los lee | Valores fijos en el alta, una página de valores junto al listado o una réplica de maqueta que no guarda | DD-135 |
 | Editar tiempos y capacidad de cola de un grupo | Catálogos compartidos de `groups-data.ts` en ficha y Contact Center; conservar el valor anterior fuera del catálogo | Redondear datos al abrir, resembrar o recrear el control de número y unidad superado | DD-152 |
 | Cambiar el nombre o la forma de un valor que ya se guarda (una estrategia, un canal) | `normalize` en la configuración del almacén (`createVersionedStorage`): lo pone al día al leerlo, y lo siguiente que se guarde ya va al día | Subir `currentVersion`, que borra lo guardado y re-siembra; traducir el nombre al pintarlo en cada pantalla | DD-141 |

@@ -9,7 +9,8 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  * 1. Pulsar el título abre el campo con el nombre y el foco, y la cabecera no se mueve (el relleno nativo del
  *    Inplace se compensa: sin eso, lo que va debajo bajaba 12,5px; en la de grupo, el índice; en las de
  *    agente y usuario, la tira de pestañas).
- * 2. Un nombre de otro grupo avisa como en General; Escape devuelve el de antes y la ficha queda sin cambios.
+ * 2. Un nombre de otro grupo avisa como en General y no deja guardar; Escape devuelve el de antes y la ficha queda sin
+ *    cambios.
  * 3. Enter deja el nombre nuevo en el título, en General (es el mismo campo) y con Guardar encendido.
  * 4. Pulsar fuera cierra el campo con lo escrito, como Enter: antes se quedaba abierto, y Escape ya no lo cerraba
  *    porque el foco había salido (medido el 2026-10-05).
@@ -48,8 +49,8 @@ test('grupo · nombre repetido avisa, y Escape lo devuelve', async ({ page }) =>
   await titulo(page).click();
   await campo(page).fill('ACD outbound');
   await expect(page.locator('.name-inplace__error')).toHaveText('Ya hay un grupo con este nombre');
-  // «Guardar» se enciende con el cambio, y al pulsarlo no guardaría: lo dice el campo (DD-217).
-  await expect(guardar(page)).toBeEnabled();
+  // Hay un cambio, pero no se podría guardar: «Guardar» sigue apagado y lo dice el campo (DD-219).
+  await expect(guardar(page)).toBeDisabled();
 
   await page.keyboard.press('Escape');
   await expect(campo(page)).toHaveCount(0);

@@ -80,6 +80,14 @@ test('seDice: lo guardado que ya venía sin algo se dice sin intentar (DD-142)',
   assert.equal(seDice('name', null, new Set(['phone'])), false);
 });
 
+test('seDice: el campo tocado y dejado se dice en rojo; los demás, no (DD-219)', () => {
+  const tocados = new Set(['name']);
+  assert.equal(seDice('name', null, new Set(), tocados), true);
+  assert.equal(seDice('phone', null, new Set(), tocados), false);
+  // Sin `tocados`, como lo pide el índice, tocar no cuenta.
+  assert.equal(seDice('name', null, new Set()), false);
+});
+
 test('firmaDe: la misma con otro orden o con repetidos', () => {
   assert.equal(firmaDe(['phone', 'chat']), firmaDe(['chat', 'phone', 'chat']));
   assert.notEqual(firmaDe(['phone']), firmaDe(['phone', 'email']));

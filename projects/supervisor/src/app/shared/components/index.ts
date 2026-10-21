@@ -53,6 +53,7 @@ export { NameInplaceComponent } from './name-inplace/name-inplace.component';
 
 // El widget del resumen de las fichas: una cifra con su anillo (DD-126).
 export { SummaryKpiComponent } from './summary-kpi/summary-kpi.component';
+export { SummaryStatusComponent, type FaltaDelResumen } from './summary-status/summary-status.component';
 
 // El pie de cada sección en un alta: «Atrás» y «Siguiente» (DD-143).
 export { AltaPieComponent } from './alta-pie/alta-pie.component';

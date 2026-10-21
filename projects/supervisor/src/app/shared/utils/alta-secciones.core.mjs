@@ -9,9 +9,11 @@
  * que hay ahora no lo has visto. Medido el 2026-10-20: quitar Teléfono dejaba Distribución y colas con su ✓ aunque ya
  * no había nada de lo que se rellenó, y quitar todos los canales la dejaba con ✓ junto al rojo de General.
  *
- * Lo que falta se dice al pulsar Crear o Guardar, no antes: entonces se apunta lo que faltaba (el INTENTO), y eso, y
- * solo eso, se dice hasta que se arregla. Lo que aparece después (marcar un canal que pide un campo) nace callado
- * hasta el siguiente intento. Lo guardado que ya venía sin algo se dice desde que se abre la ficha (DD-142, DD-199).
+ * Lo que falta (DD-219, que enmienda DD-217): «Crear» y «Guardar» siguen apagados mientras falte algo, y el resumen
+ * dice qué. Bajo el campo, el aviso sale desde el principio en gris, como ayuda, y pasa a rojo cuando se TOCA el campo
+ * y se deja vacío; el índice no se pone en rojo por eso, porque se dice donde se mira. Lo guardado que ya venía sin
+ * algo se dice desde que se abre la ficha (DD-142, DD-199). El INTENTO (pulsar con algo pendiente) sigue apuntando lo
+ * que faltaba entonces, por si se llega a pulsar sin el botón, como con Intro en un campo.
  */
 
 /**
@@ -41,15 +43,17 @@ export function dejarSeccion(dejadas, id, firma) {
 }
 
 /**
- * ¿Se dice ya que falta `falta`? Si faltaba al pulsar Crear o Guardar (`intento`, `null` si aún no se pulsó), o si lo
- * guardado ya venía sin ello (`guardado`, vacío en un alta).
+ * ¿Se dice ya en rojo que falta `falta`? Si faltaba al pulsar Crear o Guardar (`intento`, `null` si aún no se pulsó),
+ * si lo guardado ya venía sin ello (`guardado`, vacío en un alta) o si se tocó su campo y se dejó (`tocados`; el índice
+ * no los pasa: lo que se toca se dice bajo el campo, donde se está mirando).
  * @param {string} falta
  * @param {ReadonlySet<string> | null} intento
  * @param {ReadonlySet<string>} guardado
+ * @param {ReadonlySet<string>} [tocados]
  * @returns {boolean}
  */
-export function seDice(falta, intento, guardado) {
-  return (intento?.has(falta) ?? false) || guardado.has(falta);
+export function seDice(falta, intento, guardado, tocados) {
+  return (intento?.has(falta) ?? false) || guardado.has(falta) || (tocados?.has(falta) ?? false);
 }
 
 /**

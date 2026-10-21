@@ -37,8 +37,10 @@
           [value]="outboundGroupId()"
           [disabled]="outboundOptions().length === 0"
           [placeholder]="outboundOptions().length === 0 ? ('agents.form.summary.none' | translate) : ''"
-          [helperText]="outboundOptions().length === 0 ? ('agents.form.assigned.outbound_empty' | translate) : undefined"
+          [helperText]="outboundOptions().length === 0 ? ('agents.form.assigned.outbound_empty' | translate) : outboundHint()"
+          [error]="outboundOptions().length === 0 ? undefined : outboundError()"
           (valueChange)="setOutbound($any($event))"
+          (focusout)="outboundLeave.emit($event)"
         />
       </div>
     </div>

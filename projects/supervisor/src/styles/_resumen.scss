@@ -28,6 +28,37 @@
   color: var(--sc-text-secondary);
 }
 
+/* Lo que le falta a una ficha, y «Listo para crear» cuando ya no falta nada (`sc-summary-status`, DD-136, DD-219).
+ * Una línea que no aparece ni desaparece: reserva su alto aunque esté vacía, así el resumen no salta al pasar de
+ * «Falta» a vacío (un error de formato, que se dice en su campo) y de vacío a «Listo». «Falta», en el gris del texto
+ * secundario: algo por rellenar no es un aviso (DD-219); «Listo», en el verde de éxito. El color no va solo: cada uno
+ * lleva su icono y su texto. Cada cosa que falta es un enlace a su campo, subrayado para que se vea que se pulsa. */
+.resumen__status {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sc-spacing-0-375);
+  min-block-size: var(--sc-line-height-caption);
+  margin: 0;
+  color: var(--sc-text-secondary);
+
+  sc-icon {
+    flex: none;
+    margin-block-start: var(--sc-spacing-0-125);
+  }
+}
+
+.resumen__status--ready {
+  color: var(--sc-text-success);
+}
+
+.resumen__status-item {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  text-decoration: underline;
+}
+
 .resumen__cards {
   display: flex;
   flex-direction: column;

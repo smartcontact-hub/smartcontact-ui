@@ -4,7 +4,7 @@
      lista; para salir ya están la miga y el menú, y el guardián de cambios avisa si dejas
      algo sin guardar. -->
 <ng-template #topbarActions>
-  <!-- Sin motivo de por qué no se puede guardar (DD-217): lo que falta lo dice cada campo al pulsar. -->
+  <!-- Apagado mientras falte algo: su tooltip y «Falta: …» del resumen dicen qué (DD-219). -->
   @if (mode() === 'edit' && formDirty()) {
     <!-- Un solo «Guardar» para toda la ficha: lo que hay por guardar se dice en palabras, y el índice marca
          dónde está (DD-122). `role="status"`: se anuncia una vez, al aparecer. -->
@@ -22,7 +22,7 @@
     variant="primary"
     [disabled]="!canSave()"
     [loading]="saving()"
-    [pTooltip]="canSave() ? '' : ('common.no_changes' | translate)" tooltipPosition="top"
+    [pTooltip]="motivoApagado()" tooltipPosition="top"
     [label]="(mode() === 'edit' ? 'common.save' : 'users.form.create_submit') | translate"
     (clicked)="save()"
   />
@@ -104,7 +104,11 @@
       <section class="resumen" aria-labelledby="user-summary-title">
         <!-- El nombre de la región, sin rótulo a la vista (DD-144): el resumen arranca a la altura del índice. -->
         <h2 id="user-summary-title" class="resumen__title visually-hidden">{{ 'common.summary' | translate }}</h2>
-        <!-- Sin «Falta: …» ni «Listo para crear» (DD-217): lo que falta lo dice cada campo al pulsar «Crear usuario». -->
+        <!-- «Falta: …» o «Listo para crear» (DD-136, que vuelve con DD-219): explica por qué «Crear usuario» está apagado,
+             y cada cosa lleva a su campo. Al editar, solo si falta algo. -->
+        @if (mode() !== 'edit' || summaryMissing().length > 0) {
+          <sc-summary-status [missing]="summaryMissing()" [ready]="summaryReady()" (ir)="irAFalta($event)" />
+        }
         <!-- Las tarjetas son hermanas: 14 entre ellas (AGENTS «UX de pantalla» 9). -->
         <div class="resumen__cards">
           <sc-summary-kpi
@@ -195,9 +199,11 @@
           <sc-inputtext
             inputId="user-name"
             [required]="true"
+            [helperText]="ayuda('users.errors.name_required')"
             [error]="falta('users.errors.name_required')"
             [value]="form().name"
             (valueChange)="onNameRename($event)"
+            (focusout)="dejar($event, 'users.errors.name_required')"
           />
         </div>
       </div>
@@ -215,7 +221,9 @@
             [required]="true"
             [value]="form().email"
             (valueChange)="onTextValue('email', $event)"
+            [helperText]="ayuda('users.errors.email_required')"
             [error]="emailError() ? (emailError()! | translate) : falta('users.errors.email_required')"
+            (focusout)="dejar($event, 'users.errors.email_required')"
           />
         </div>
 

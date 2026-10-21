@@ -26,9 +26,11 @@ import {
   ScToggleSwitchComponent as ToggleSwitchComponent,
 } from '@smartcontact-hub/components';
 import { AVAILABLE_GROUPS_REF } from '@shared/data/groups-ref';
-import { AltaPieComponent, SummaryKpiComponent } from '@shared/components';
+import { AltaPieComponent, SummaryKpiComponent, SummaryStatusComponent, type FaltaDelResumen } from '@shared/components';
 import {
   avisosDelIndice,
+  ayudaDeObligatorio,
+  dejoElCampo,
   llegarAAncla,
   llegarASeccion,
   ocasionDeAvisar,
@@ -97,6 +99,7 @@ const USER_SECTION_OF_FIELD: Readonly<Record<keyof FormState, string>> = {
     SectionCardComponent,
     SelectComponent,
     SummaryKpiComponent,
+    SummaryStatusComponent,
     AltaPieComponent,
     ToggleSwitchComponent,
     TranslateModule,
@@ -266,9 +269,9 @@ export class UserFormPageComponent implements DirtyAware, OnInit {
   });
 
   /**
-   * Cuándo se dice lo que falta (DD-217): al pulsar «Crear usuario» o «Guardar», lo que faltaba entonces, hasta que se
-   * arregla; o desde que se abre, si lo guardado ya venía sin ello. Duplicar es un alta: llega sin nombre ni email a
-   * propósito y no acusa.
+   * Cuándo se dice en rojo lo que falta (DD-219): al dejar su campo vacío, o desde que se abre si lo guardado ya venía
+   * sin ello. Antes, en gris bajo el campo (`ayuda`). Duplicar es un alta: llega sin nombre ni email a propósito, y en
+   * gris.
    */
   private readonly ocasion = ocasionDeAvisar({
     editando: () => this.mode() === 'edit',
@@ -276,19 +279,54 @@ export class UserFormPageComponent implements DirtyAware, OnInit {
     faltas: () => this.faltas(),
   });
 
-  /** El aviso bajo un campo obligatorio vacío, al pulsar sin él (DD-217); `undefined` si no hay nada que decir. */
+  /** El aviso rojo bajo un campo obligatorio vacío (DD-219); `undefined` si no hay nada que decir en rojo. */
   protected falta(motivo: string): string | undefined {
     return this.faltas().includes(motivo) && this.ocasion.acusa(motivo) ? this.translate.instant(motivo) : undefined;
   }
 
-  /** Los avisos a la vista, en el orden de la ficha: lo que falta, al pulsar, y el email mal escrito, en vivo. */
+  /** El aviso gris de un obligatorio que falta y aún no se dice en rojo, con la ayuda propia del campo detrás. */
+  protected ayuda(motivo: string, ayudaKey?: string): string | undefined {
+    this.lang();
+    const gris = this.faltas().includes(motivo) && !this.ocasion.acusa(motivo) ? this.translate.instant(motivo) : null;
+    return ayudaDeObligatorio(gris, ayudaKey ? this.translate.instant(ayudaKey) : undefined);
+  }
+
+  /** Se dejó el campo de un obligatorio: si sigue vacío, desde ahora en rojo. */
+  protected dejar(event: FocusEvent, motivo: string): void {
+    if (dejoElCampo(event) && this.faltas().includes(motivo)) this.ocasion.tocar(motivo);
+  }
+
+  /** «Falta: …» del resumen, con cada cosa llevando a su campo (DD-219). */
+  protected readonly summaryMissing = computed<readonly FaltaDelResumen[]>(() => {
+    this.lang();
+    const i = 'user-section-identity';
+    const etiquetas: Readonly<Record<string, { etiqueta: string; ancla: string }>> = {
+      'users.errors.name_required': { etiqueta: 'common.summary_missing_name', ancla: 'user-name' },
+      'users.errors.email_required': { etiqueta: 'users.form.summary.missing_email', ancla: 'user-email' },
+    };
+    return this.faltas().map((m) => ({ etiqueta: this.translate.instant(etiquetas[m].etiqueta), seccion: i, ancla: etiquetas[m].ancla }));
+  });
+
+  /** «Listo para crear»: al crear o duplicar, con «Crear usuario» encendido. */
+  protected readonly summaryReady = computed(() => this.mode() !== 'edit' && this.canSave());
+
+  /** Una cosa de «Falta: …»: a su campo. */
+  protected irAFalta(item: FaltaDelResumen): void {
+    this.irACampo(item.seccion, item.ancla);
+  }
+
+  /**
+   * Los avisos del índice, en el orden de la ficha (DD-219): lo que falta, si lo guardado ya venía sin ello o se pulsó
+   * con ello pendiente (lo tocado se dice bajo su campo), y el email mal escrito, en vivo.
+   */
   private readonly avisos = computed<readonly AvisoDeFicha[]>(() => {
     this.lang();
     const i = 'user-section-identity';
     const out: AvisoDeFicha[] = [];
-    const nombre = this.falta('users.errors.name_required');
+    const enIndice = (m: string) => (this.faltas().includes(m) && this.ocasion.acusaEnIndice(m) ? this.translate.instant(m) : undefined);
+    const nombre = enIndice('users.errors.name_required');
     if (nombre) out.push({ seccion: i, texto: nombre, ancla: 'user-name' });
-    const email = this.emailError() ? this.translate.instant(this.emailError()!) : this.falta('users.errors.email_required');
+    const email = this.emailError() ? this.translate.instant(this.emailError()!) : enIndice('users.errors.email_required');
     if (email) out.push({ seccion: i, texto: email, ancla: 'user-email' });
     return out;
   });
@@ -353,11 +391,26 @@ export class UserFormPageComponent implements DirtyAware, OnInit {
     this.mode() === 'edit' ? 'edit' : 'create',
   );
 
+  /** Hay algo que no deja crear ni guardar: lo que falta o el email mal escrito. */
+  private readonly pendiente = computed(() => this.faltas().length > 0 || !!this.emailError());
+
   /**
-   * El botón se puede pulsar: al crear y al duplicar, siempre; al editar, con cambios. Lo que falte lo dice al pulsarlo
-   * (`save`, DD-217).
+   * El botón se puede pulsar sin nada pendiente: al crear y al duplicar, en cuanto están el nombre y el email; al
+   * editar, además, con cambios. Como el grupo y el agente (DD-219).
    */
-  protected readonly canSave = computed(() => this.mode() !== 'edit' || this.dirtyState.dirty());
+  protected readonly canSave = computed(() => !this.pendiente() && (this.mode() !== 'edit' || this.dirtyState.dirty()));
+
+  /** Por qué está apagado el botón, para su tooltip: lo que falta, el email mal escrito o, sin cambios, «No hay cambios». */
+  protected readonly motivoApagado = computed(() => {
+    this.lang();
+    if (this.canSave()) return '';
+    const falta = this.summaryMissing();
+    if (falta.length > 0) {
+      return this.translate.instant('common.summary_missing', { items: falta.map((f) => f.etiqueta).join(', ') });
+    }
+    const mal = this.avisos()[0];
+    return mal ? mal.texto : this.translate.instant('common.no_changes');
+  });
 
   protected readonly deleteItems = computed(() => {
     const u = this.initial();
@@ -552,9 +605,10 @@ export class UserFormPageComponent implements DirtyAware, OnInit {
   }
 
   protected save(): void {
-    if (!this.canSave() || this.saving()) return;
-    // Con algo pendiente no crea ni guarda: desde ahora se dice lo que falta, y se llega al primer campo (DD-217).
-    if (this.faltas().length > 0 || this.emailError()) {
+    if (this.saving() || (this.mode() === 'edit' && !this.dirtyState.dirty())) return;
+    // El botón está apagado con algo pendiente (DD-219), pero se llega aquí también con Ctrl+S: no crea ni guarda, dice
+    // lo que falta en rojo y lleva al primer campo.
+    if (this.pendiente()) {
       this.ocasion.intentar();
       const primero = this.avisos()[0];
       if (primero) this.irACampo(primero.seccion, primero.ancla);

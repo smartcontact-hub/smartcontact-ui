@@ -1572,6 +1572,33 @@ verbo en el botón.
 
 ---
 
+## 57 · Lo que falta, como SISMAC-4058: el botón apagado, «Falta: …» en el resumen y el aviso en gris (2026-10-21, DD-219)
+
+**Estado:** pendiente; el prototipo ya lo hace (DD-219) · **Dónde:** fichas de grupo (alta `3010:6411`, edición
+`3055:11053`), agente y usuario del fichero del Supervisor (`Hjyy41SYKqcRuIzCGggfYH`), y en el DS `group-summary` y
+`agent-summary` · **Mídelo antes:** §55 quitó de `group-summary` y `agent-summary` la línea de «Falta» y «Listo»; esta
+la devuelve, con otro color.
+
+- **El botón**: en el alta vacía, «Crear grupo» («Crear agente», «Crear usuario») deshabilitado, con el tooltip «Falta:
+  nombre, teléfono saliente». Se enciende al tener lo obligatorio. Al editar, «Guardar» deshabilitado sin cambios y
+  también con algo obligatorio vacío.
+- **Arriba del resumen**: «Falta: nombre, teléfono saliente» en `text/secondary`, con el icono `info`, y cada cosa
+  subrayada (lleva a su campo); con todo relleno, «Listo para crear» en `text/success` con `check_circle`. Al editar,
+  solo si falta algo.
+- **Bajo cada obligatorio vacío**, su aviso como ayuda, en gris y con punto, como toda ayuda: «El nombre es
+  obligatorio.». El estado de error (rojo, sin punto, como todo error) queda para «se dejó vacío». El teléfono saliente: «El teléfono saliente es obligatorio. El número que ve el cliente
+  cuando le llaman.»
+- **El índice**: sin punto rojo mientras se rellena; el `nav-item` con su texto de error (§55) solo para lo guardado que
+  ya venía incompleto.
+- **Notas «Cómo se comporta»**: el botón se enciende al tener lo obligatorio; el aviso pasa a rojo al salir del campo
+  vacío (salir con texto no cuenta, ni abrir la lista de un desplegable para elegir); cada cosa de «Falta» lleva a su
+  campo.
+
+**Cómo sabes que está hecho:** el alta vacía de grupo, agente y usuario enseña el botón apagado y «Falta: …» arriba del
+resumen, y ningún campo sale en rojo sin haberlo tocado.
+
+---
+
 ## Lo de estas semanas que NO va a Figma, y por qué
 
 - **El juego de datos** (Demo · Editorial · Tortura, en Configuración → Sistema → Datos; DD-124): es una herramienta de
