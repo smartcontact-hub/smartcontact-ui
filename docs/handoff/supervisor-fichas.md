@@ -78,8 +78,8 @@ El del mapa de componentes de Grupos y la tabla única del DS (2026-10-19, #457)
   asignación en Small (cada celda llevaba atado el relleno normal); 13 resúmenes de grupo a la versión publicada;
   Hand-off hasta DD-220, con enlaces a las congeladas; 12 textos de hojas. Sin dibujar, «Nivel {canal}». Contact
   Center en Figma dice «Descartar cambios»; el prototipo, «Deshacer».
-- **Después, en Figma**: un hand-off por página, junto a su índice (`3371:61554`, `3371:61797`), con sus cards de
-  Jira en primario; la combinada, fuera. Edición de grupo: paso 05 (Agentes asignados). `.Subsection` plegable (§54).
+- **Después, en Figma**: un hand-off por página (`3371:61554`, `3371:61797`), con sus cards de Jira; edición de grupo,
+  paso 05; `.Subsection` plegable (§54); los flujos que faltaban, toasts, empty states y hojas para desarrollo (§58).
 
 ## ✅ 2026-10-21 · Lo que falta, como SISMAC-4058: el botón apagado, «Falta: …» en el resumen y el aviso en gris (DD-219)
 

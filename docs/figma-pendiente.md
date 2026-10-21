@@ -1501,6 +1501,35 @@ el DS de los devs pinta 10,5 × 14, como el Kit (medido en ui.smart-contact.com 
 
 ---
 
+## 58 · Los flujos que faltaban en Grupos y Agentes, y lo que la librería no tiene para ellos (2026-10-21)
+
+**Estado:** dibujado en el Supervisor; en la librería, sin hacer · **Dónde:** el Supervisor, páginas «Grupos» y
+«Agentes»; la librería y Smart-Contact Icons · **Evidencia:** el código de esta rama y una captura por pantalla.
+
+**Hecho en el Supervisor** (versión «Grupos y agentes: flujos nuevos, toasts y empty states»):
+- Alta de grupo, fila «Otras configuraciones» (`3396:20051`): Chat y Tipificar conversaciones (V1), el detalle de la
+  tipificación (V2), Niveles (V3), Ring All (V4), Web Chat y WhatsApp (V5), Nivel Teléfono (V6) y la tabla de agentes
+  sin resultados (V7). «Nivel {canal}» y «Tipificar conversaciones», que §56 dejó solo en la hoja, ya tienen maqueta.
+- Listado de grupos: varios eliminados, con el toast «3 grupos eliminados» (paso 10), y la tabla sin grupos (paso 11).
+- Edición de agente: el filtro de grupos sin resultados (paso 06) y la fila «Expirar contraseña» (`3403:47822`, X1 a
+  X3). La tabla de grupos asignados enseñaba 3 filas en cuatro pantallas (alto fijo de 131): ahora mide sus filas.
+- Agentes, sección nueva «3. Listado de agentes» (`3405:12408`): tabla, menú de fila, duplicar, eliminar con su toast,
+  búsqueda sin resultados y sin agentes.
+- Las seis hojas «Cómo se comporta», en el idioma de desarrollo (componente, ruta, propiedad), sin cómo se midió; cada
+  nombre de icono enlaza a la tarjeta «Iconos» de su hand-off. Índices, portadas y hand-off, al día.
+
+**Lo que la librería no tiene** (en las maquetas, separado de su maestro y anotado):
+- `group-summary`: sus variantes solo pintan Teléfono. Con Chat (V1) y con Web Chat y WhatsApp (V5), separado.
+- Custom modal: el ancho máximo (800) y el alto del contenido (480) no se cambian en la instancia; el diálogo de la
+  tipificación mide `min(56rem, 92vw)` y no recorta. V2, separado.
+- Icono `key` (`keyIcon` de la ficha de agente): no está en Smart-Contact Icons; «Expirar contraseña» va sin icono.
+- `.Subsection` plegable: hecho y sin publicar (§54, fila 9).
+
+**Cómo sabes que está hecho:** V1, V2 y V5 vuelven a ser instancias de su maestro sin perder nada, y el botón de X1 a
+X3 lleva `key`.
+
+---
+
 ## Lo de estas semanas que NO va a Figma, y por qué
 
 - **El juego de datos** (Demo · Editorial · Tortura, en Configuración → Sistema → Datos; DD-124): es una herramienta de
