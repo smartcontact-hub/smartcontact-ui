@@ -257,11 +257,11 @@ color; hasta entonces el par se queda, con su motivo escrito en el spec.
 
 ## 1 · Publicar la librería
 
-**Estado:** pendiente · **Dónde:** Figma, panel *Assets* → icono de librerías → *Publicar* · **Esfuerzo:** un minuto
+**Estado:** publicada el 2026-10-21, con las tandas de abajo; queda una nueva, la cabecera del Custom modal (§58) ·
+**Dónde:** Figma, panel *Assets* → icono de librerías → *Publicar* · **Esfuerzo:** un minuto
 
-Los ficheros que usan la librería no ven sus cambios hasta que se publica, y publicar es un paso de persona. Hay al
-menos tres tandas hechas en el fichero del DS sin publicar, salvo que se haya publicado después (el repo no puede
-saberlo):
+Los ficheros que usan la librería no ven sus cambios hasta que se publica, y publicar es un paso de persona. Estas
+tandas esperaban hasta la publicación del 2026-10-21:
 
 - la del 2026-09-13: el título de `Section` a `h3` y el borrado de `app/typography/xl|xxl` (DD-75);
 - la del 2026-09-14: el interlineado atado en los maestros de botón y campo (DD-91);
@@ -1503,7 +1503,8 @@ el DS de los devs pinta 10,5 × 14, como el Kit (medido en ui.smart-contact.com 
 
 ## 58 · Los flujos que faltaban en Grupos y Agentes, y lo que la librería no tiene para ellos (2026-10-21)
 
-**Estado:** dibujado en el Supervisor; en la librería, sin hacer · **Dónde:** el Supervisor, páginas «Grupos» y
+**Estado:** dibujado en el Supervisor; en la librería, Custom modal y `.Subsection` plegable publicados, el resto sin
+hacer · **Dónde:** el Supervisor, páginas «Grupos» y
 «Agentes»; la librería y Smart-Contact Icons · **Evidencia:** el código de esta rama y una captura por pantalla.
 
 **Hecho en el Supervisor** (versión «Grupos y agentes: flujos nuevos, toasts y empty states»):
@@ -1521,19 +1522,24 @@ el DS de los devs pinta 10,5 × 14, como el Kit (medido en ui.smart-contact.com 
   título de cada fila lleva a su pantalla; de vuelta, la nota de Dev Mode de cada pantalla («filas 6, 9 y 10», con su enlace) y
   cada número morado llevan a la hoja, y «(E2)» de la hoja, a su paso. Las notas de las pantallas clonadas, reescritas.
 - El índice de las fichas, de 196 a 235 con mínimo de 235 (DD-221), en las 54 pantallas; en el Mapa, cada caja en su
-  pieza. En la caja, cada fila blanca con el radio de la fila (`border/radius/xl`), también en Contact Center y ❖ Navmenu. V2, calcado del diálogo real (medido en local): cabecera 81, árbol 573,5 con su scroll (`60vh`) y el pie
-  con «Editar en Repositorios», 720 a 1080.
+  pieza. En la caja, cada fila blanca con el radio de la fila (`border/radius/xl`), también en Contact Center y
+  ❖ Navmenu.
+- V2 (`3475:23798`), instancia del Custom modal publicado, 896 × 720 a 1080 como el diálogo real, con el árbol en el
+  slot (versión «Hojas a la izquierda, enlaces de ida y vuelta, índice a 235 en píldora y V2 con el Custom modal»).
+  «Editar en Repositorios» va al final del slot con su nota: en código está en `modal-actions`, pero el pie del Custom
+  modal solo admite botones.
 
 **Lo que la librería no tiene** (en las maquetas, separado de su maestro y anotado):
 - `group-summary`: sus variantes solo pintan Teléfono. Con Chat (V1) y con Web Chat y WhatsApp (V5), separado.
-- Custom modal: **hecho en la librería, sin publicar** (versión «Custom modal: los topes de sc-dialog»): sin ancho máximo
-  y con 720 de alto para el diálogo entero, como `max-height: min(85vh, 720px)` de `sc-dialog`; el contenido encoge sin
-  tope propio. Tras publicar, V2 vuelve a ser instancia.
+- Custom modal: **publicado** (versión «Custom modal: los topes de sc-dialog»): sin ancho máximo y con 720 de alto
+  para el diálogo entero, como `max-height: min(85vh, 720px)` de `sc-dialog`; el contenido encoge sin tope propio.
+  **Sin publicar:** la cabecera en FILL (versión «Custom modal: la cabecera llena el ancho»). Sin ella, en un diálogo
+  ancho la X se queda a media cabecera; V2 ya lo lleva puesto en la instancia.
 - Icono `key` (`keyIcon` de la ficha de agente): no está en Smart-Contact Icons; «Expirar contraseña» va sin icono.
-- `.Subsection` plegable: hecho y sin publicar (§54, fila 9).
+- `.Subsection` plegable: publicado (§54, fila 9).
 
-**Cómo sabes que está hecho:** V1, V2 y V5 vuelven a ser instancias de su maestro sin perder nada, y el botón de X1 a
-X3 lleva `key`.
+**Cómo sabes que está hecho:** V1, V2 y V5 vuelven a ser instancias de su maestro sin perder nada (V2 ya lo es), y el
+botón de X1 a X3 lleva `key`.
 
 ---
 
