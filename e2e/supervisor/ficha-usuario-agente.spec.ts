@@ -14,7 +14,7 @@ import { disableAnimations, forceLightTheme, goto, irASeccion, pickSelectOption 
  *      (DD-143). La ficha abre en la primera (Identidad; en el agente, General desde DD-187), también desde el
  *      listado (DD-213; hasta entonces el listado la abría en su sección de trabajo, `?seccion=`).
  *   4. Las tres fichas comparten molde: la cabecera en la misma vertical, el índice de Contact
- *      Center (196, fijo) y el contenido de 812 a 1440 con el resumen a la derecha.
+ *      Center (235 en la caja, fijo) y el contenido de 773 a 1440 con el resumen a la derecha.
  *   5. (Quitado el 2026-10-09, DD-187: el aviso de «abierta en otra pestaña» ya no existe.)
  *   6. El alta de agente deja en su EDICIÓN de verdad: el router en `editar/N`, y el índice con él.
  * Y «Valores por defecto» va sin caja: su título es el `h1` visible de la página (DD-33).
@@ -190,8 +190,9 @@ test('las tres fichas comparten molde: título, índice, contenido y resumen en 
     medidas[nombre] = await molde(page);
   }
   const { grupo, usuario, agente } = medidas;
-  // La de grupo, con las cifras del índice de Contact Center (DD-121): 196 y fijo; contenido de 812 a 1440.
-  expect(grupo, JSON.stringify(medidas)).toMatchObject({ indice: { ancho: 196 }, fijo: 'sticky', contenido: 812, resumen: 240 });
+  // La de grupo, con las cifras del índice de Contact Center (DD-121): 235 en la caja (DD-221) y fijo; contenido de 773 a
+  // 1440.
+  expect(grupo, JSON.stringify(medidas)).toMatchObject({ indice: { ancho: 235 }, fijo: 'sticky', contenido: 773, resumen: 240 });
   expect(usuario, JSON.stringify(medidas)).toEqual(grupo);
   expect(agente, JSON.stringify(medidas)).toEqual(grupo);
 });
