@@ -2,8 +2,12 @@
   <!-- El nombre de la región, sin rótulo a la vista (DD-144): el resumen arranca a la altura del índice. -->
   <h2 id="group-summary-title" class="resumen__title visually-hidden">{{ 'groups.form.summary.title' | translate }}</h2>
 
-  <!-- Sin «Falta: …» ni «Listo para crear» (DD-217, que retira el estado de DD-136): lo que falta lo dice cada campo al
-       pulsar Crear o Guardar, y el resultado, el toast. -->
+  <!-- «Falta: …» o «Listo para crear», encima de las tarjetas (DD-136, que vuelve con DD-219): es lo que explica por qué
+       «Crear grupo» está apagado, y cada cosa lleva a su campo. Al editar, solo si falta algo (un nombre borrado). -->
+  @if (creating() || missing().length > 0) {
+    <sc-summary-status [missing]="missing()" [ready]="ready()" (ir)="irAFalta.emit($event)" />
+  }
+
   <!-- Las tarjetas son hermanas: 14 entre ellas (AGENTS «UX de pantalla» 9). -->
   <div class="resumen__cards">
     <!-- Agentes: los que atienden sobre los asignados, con su anillo (DD-126); debajo, quién atiende cada canal. -->

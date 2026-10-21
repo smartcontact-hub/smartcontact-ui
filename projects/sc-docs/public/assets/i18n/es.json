@@ -206,10 +206,10 @@
           "have": "En el supervisor, la directiva scLlegaAlPie mide el alto que queda; lo prueba tabla-al-pie: con 2 px más de tabla, la página desplaza."
         },
         "blame": {
-          "title": "Lo que falta se dice al pulsar Crear o Guardar",
-          "apply": "Un obligatorio vacío es algo por rellenar, no un error: mientras se rellena, nada en rojo. «Crear» está siempre activo y, al pulsarlo con algo pendiente, no crea: cada campo lo dice, el índice marca su sección con el texto de lo que falta y se llega al primero, con el foco. Lo guardado que ya venía sin algo se dice al abrir. Un error de contenido (un nombre repetido, un email mal escrito) va en vivo. El ✓ del índice es de la sección que se dejó tal como está.",
-          "avoid": "Un punto rojo que aparece en una sección que no se está mirando, sin decir qué falta, o un ✓ en una sección que otra ha cambiado: se lee como causado por lo último que se hizo. Tampoco un botón gris con su motivo al lado, ni avisos amarillos de lo que no bloquea nada.",
-          "have": "En el supervisor, ocasionDeAvisar decide cuándo acusa cada ficha y sectionErrorHints de sc-form-section-nav pone el texto en el índice; lo vigilan la regla 7 de audit:screen-hygiene, indice-errores y sin-acusar-de-primeras."
+          "title": "Lo que falta, en gris y en el resumen; en rojo al dejarlo vacío",
+          "apply": "Un obligatorio vacío es algo por rellenar, no un error: su aviso sale bajo el campo desde el principio, en gris, como ayuda, y pasa a rojo al dejar el campo vacío. «Crear» y «Guardar» están apagados mientras falte algo, y arriba del resumen «Falta: nombre, teléfono saliente» lo dice entero, con cada cosa llevando a su campo; «Listo para crear» cuando ya no falta nada. Lo guardado que ya venía sin algo se dice al abrir. Un error de contenido (un nombre repetido, un email mal escrito) va en vivo. El ✓ del índice es de la sección que se dejó tal como está.",
+          "avoid": "Un rojo antes de tocar el campo, o un punto rojo en una sección que no se está mirando: se lee como causado por lo último que se hizo. Tampoco un botón gris sin decir qué lo bloquea, ni avisos amarillos de lo que no bloquea nada.",
+          "have": "En el supervisor, ocasionDeAvisar decide cuándo va en rojo cada aviso, ayudaDeObligatorio pone el gris y sc-summary-status dice lo que falta; lo vigilan la regla 7 de audit:screen-hygiene, indice-errores y sin-acusar-de-primeras."
         }
       }
     },

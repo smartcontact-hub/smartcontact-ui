@@ -20,13 +20,13 @@
       (clicked)="discard()"
     />
   }
-  <!-- En el alta, «Crear grupo», siempre activo; al editar, «Guardar», con cambios, y apagado lo dice en su tooltip
-       (DD-212). Si falta algo, al pulsar se dice en su campo y en el índice, y se llega al primero (DD-217). -->
+  <!-- En el alta, «Crear grupo»; al editar, «Guardar», con cambios. Apagado mientras falte algo, y su tooltip dice qué,
+       como «Falta: …» del resumen (DD-219); sin cambios, «No hay cambios que guardar» (DD-212). -->
   <sc-button
     variant="primary"
     [disabled]="!canSave()"
     [loading]="saving()"
-    [pTooltip]="canSave() ? '' : ('common.no_changes' | translate)" tooltipPosition="top"
+    [pTooltip]="motivoApagado()" tooltipPosition="top"
     [label]="(mode() === 'create' ? 'groups.form.create_submit' : 'common.save') | translate"
     (clicked)="save()"
   />
@@ -128,7 +128,11 @@
         [outbound]="summaryOutbound()"
         [resources]="summaryResources()"
         [hrefs]="summaryHrefs()"
+        [missing]="summaryMissing()"
+        [ready]="summaryReady()"
+        [creating]="mode() === 'create'"
         (ir)="irDesdeResumen($event)"
+        (irAFalta)="irAFalta($event)"
       />
     </div>
   </div>
@@ -194,7 +198,9 @@
         [priority]="form().priority"
         [hasPhone]="false"
         [nameError]="nameError()"
+        [nameHint]="ayudaDe('name')"
         (nameChange)="onNameChange($event)"
+        (nameLeave)="dejar($event, 'name')"
         (priorityChange)="onPriorityValueChange($event)"
       />
     </sc-subsection>
@@ -268,9 +274,11 @@
                 [filter]="true"
                 [options]="typificationOptions()"
                 [placeholder]="'groups.form.wrapup.typification_placeholder' | translate"
+                [helperText]="ayudaDe('typification')"
                 [error]="typificationError() ? ('groups.errors.typification_required' | translate) : undefined"
                 [value]="form().wrapUp.typificationId"
                 (valueChange)="onTypificationChange($event)"
+                (focusout)="dejar($event, 'typification')"
               />
               <!-- «Ver detalle», bajo su campo (DD-198), abre su árbol entero con «Editar en Repositorios». Sustituye al botón
                    de las tres rayas de sc-agent, que se leía como «más acciones» (revisión del 2026-10-15; `menu` es de
@@ -404,9 +412,10 @@
                 [options]="phoneOptions()"
                 [value]="form().phone || null"
                 [placeholder]="'groups.form.fields.phone_placeholder' | translate"
-                [helperText]="'groups.form.fields.phone_hint' | translate"
+                [helperText]="ayudaDe('phone', 'groups.form.fields.phone_hint')"
                 [error]="phoneError() ? (phoneError()! | translate) : undefined"
                 (valueChange)="onPhoneValueChange($event)"
+                (focusout)="dejar($event, 'phone')"
               />
             </div>
           </div>

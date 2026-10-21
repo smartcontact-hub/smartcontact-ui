@@ -127,11 +127,11 @@ test('el grupo elige una tipificación, ve su árbol sin salir y, si tipifica, n
   );
   await page.keyboard.press('Escape');
 
-  // Un grupo que no tipifica: al encenderlo, pide cuál y no guarda sin ella. Lo pide sin acusar: el aviso en rojo, al
-  // pulsar «Guardar» (DD-217, `sin-acusar-de-primeras.spec.ts`).
+  // Un grupo que no tipifica: al encenderlo, pide cuál y no guarda sin ella. Lo pide sin acusar, en gris, con «Guardar»
+  // apagado (DD-219, `sin-acusar-de-primeras.spec.ts`).
   await goto(page, 'admin/grupos/editar/1?seccion=general');
   await page.getByRole('switch', { name: /^Tipificar/ }).click();
   await expect(page.locator('#group-typification')).toBeVisible();
-  await page.locator('sc-top-bar').getByRole('button', { name: 'Guardar' }).click();
   await expect(page.locator('#group-section-general')).toContainText('La tipificación es obligatoria');
+  await expect(page.locator('sc-top-bar').getByRole('button', { name: 'Guardar' })).toBeDisabled();
 });

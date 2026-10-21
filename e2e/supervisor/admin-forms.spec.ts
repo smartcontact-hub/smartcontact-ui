@@ -39,23 +39,38 @@ test('usuarios · crear un usuario lo deja en su ficha y lo añade al listado', 
   await expect(page.locator('tbody tr', { hasText: name })).toHaveCount(1);
 });
 
-test('usuarios · «Crear usuario» no crea sin lo obligatorio: lo dice cada campo al pulsarlo (DD-217)', async ({ page }) => {
+test('usuarios · «Crear usuario» apagado sin lo obligatorio: lo dice en gris, en «Falta: …» y, al dejar el campo vacío, en rojo (DD-219)', async ({
+  page,
+}) => {
   await goto(page, 'admin/usuarios/crear');
   const crear = page.getByRole('button', { name: 'Crear usuario' });
   const general = page.locator('#user-section-identity');
+  const gris = general.locator('.sc-field__msg:not(.sc-field__msg--error)');
+  const rojo = general.locator('.sc-field__msg--error');
+  const estado = page.locator('.resumen__status');
 
-  // Siempre activo, y nada en rojo antes de pulsarlo.
-  await expect(crear).toBeEnabled();
-  await expect(general).not.toContainText('El nombre es obligatorio');
+  await expect(crear).toBeDisabled();
+  await expect(estado).toContainText('Falta: nombre, email');
+  await expect(gris.filter({ hasText: 'El nombre es obligatorio' })).toHaveCount(1);
+  await expect(rojo).toHaveCount(0);
 
-  // Un email mal escrito se dice en vivo (validación real, no solo «hay texto»).
+  // Un email mal escrito se dice en vivo (validación real, no solo «hay texto»), y el botón sigue apagado.
   await page.locator('#user-email').fill('sin-arroba');
-  await expect(general).toContainText('Introduce un email válido');
+  await expect(rojo).toHaveText(['Introduce un email válido']);
+  await expect(estado).toContainText('Falta: nombre');
+  await expect(crear).toBeDisabled();
 
-  await crear.click();
-  await expect(page).toHaveURL(/admin\/usuarios\/crear/);
-  await expect(general).toContainText('El nombre es obligatorio');
-  await expect(page.locator('#user-name')).toBeFocused();
+  // Dejar el nombre vacío lo pone en rojo.
+  await page.locator('#user-name').focus();
+  await page.locator('#user-name').press('Tab');
+  await expect(rojo.filter({ hasText: 'El nombre es obligatorio' })).toHaveCount(1);
+
+  // Con todo, «Listo para crear» y el botón encendido.
+  await page.locator('#user-name').fill('E2E Usuario');
+  await page.locator('#user-email').fill('e2e.usuario@smartcontact.test');
+  await expect(estado).toContainText('Listo para crear');
+  await expect(rojo).toHaveCount(0);
+  await expect(crear).toBeEnabled();
 });
 
 /*

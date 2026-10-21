@@ -60,11 +60,13 @@ e88a52f7:docs/handoff/supervisor-fichas.md`; sus trampas suben a «Trampas del f
 El de Grupos y agentes en Figma para desarrollo (2026-10-18 y 19: los ids de cada página y de «Fuera del DS», «Hand-off»
 y «Mapa de componentes») y el del relleno de la tabla (2026-10-19, DD-214): `git show
 8c9297a7:docs/handoff/supervisor-fichas.md`; la trampa del primero sube a «Trampas del frente».
+El del mapa de componentes de Grupos y la tabla única del DS (2026-10-19, #457): `git show
+34f18f37:docs/handoff/supervisor-fichas.md`; sus trampas suben a «Trampas del frente».
 
-## ✅ 2026-10-21 · El índice, en la caja gris de Contact Center, con un interruptor para volver al plano (DD-219)
+## ✅ 2026-10-21 · El índice, en la caja gris de Contact Center, con un interruptor para volver al plano (DD-220)
 
-> **Sello:** rama `areses/jovial-bohr-d10d27` sobre `main` `4fe744e5`, el PR de §55 y §56. Tras fundir, las congeladas
-> 4058, 4062 y 4064 avanzan a ese commit (`docs/PROTOTIPOS.md`).
+> **Sello:** rama `areses/jovial-bohr-d10d27` sobre `main` `34f18f37` (ya con DD-219), el PR de §55 y §56. Tras
+> fundir, las congeladas 4058, 4062 y 4064 avanzan a ese commit (`docs/PROTOTIPOS.md`).
 
 - **Prototipo**: `SC_FORM_SECTION_NAV_CAJA` en `sc-form-section-nav`, encendido en `projects/supervisor/src/app/app.config.ts`.
   Las seis pantallas con índice lo llevan en la caja de `2286:5368`. **Para volver al índice plano, se borra esa línea**
@@ -72,12 +74,29 @@ y «Mapa de componentes») y el del relleno de la tabla (2026-10-19, DD-214): `g
 - **Figma**: el ejemplo del DS (❖ Navmenu) y las fichas de Grupos y Agentes, con la caja; Contact Center ya la tenía.
 - **Pruebas**: tres en `sc-form-section-nav.component.spec.ts` (sin la línea, plano; con ella, caja; el índice por
   defecto no gana otra caja). La de la caja se pone en rojo si se quita la clase.
-- **Visto**: con el carril de 196, «Distribución y colas» y «Agentes asignados» van en dos líneas dentro de la caja.
 - **«Eliminar»**: a 28 de la caja (sin la regla de `_page.scss` quedaban 19,25; lo cazó el e2e de `fichas-tres-columnas`).
 - **Figma contra el prototipo** (versión «Revisión final con el prototipo»): botón de la barra a 33; tablas de
   asignación en Small (cada celda llevaba atado el relleno normal); 13 resúmenes de grupo a la versión publicada;
-  Hand-off hasta DD-219, con enlaces a las congeladas; 12 textos de hojas. Sin dibujar, «Nivel {canal}». Contact
+  Hand-off hasta DD-220, con enlaces a las congeladas; 12 textos de hojas. Sin dibujar, «Nivel {canal}». Contact
   Center en Figma dice «Descartar cambios»; el prototipo, «Deshacer».
+
+## ✅ 2026-10-21 · Lo que falta, como SISMAC-4058: el botón apagado, «Falta: …» en el resumen y el aviso en gris (DD-219)
+
+> **Sello:** rama `areses/crear-gris-con-lo-que-falta` sobre `main` `4fe744e5`, un PR.
+
+- **Las cuatro fichas** (grupo, agente, usuario, tipificación): «Crear …» y «Guardar» apagados mientras falte algo, con
+  el motivo en el tooltip (`motivoApagado`); «Falta: …» o «Listo para crear» arriba del resumen, cada cosa a su campo
+  (`sc-summary-status` vuelve, con `FaltaDelResumen`).
+- **El aviso**: en gris bajo el campo desde el principio (`ayudaDeObligatorio`), en rojo al dejarlo vacío
+  (`ocasionDeAvisar().tocar`, solo si falta al salir); fuera de los campos del DS, `.field__help`. `dejoElCampo` no
+  cuenta abrir un desplegable, tampoco con su flecha y el campo ya enfocado (el foco pasa un instante por `main`; se ve
+  en `:active`, medido). El índice solo se pone rojo por lo guardado incompleto, un intento (Ctrl+S, el «Guardar» del
+  aviso de Repositorios) o un error de contenido (`acusaEnIndice`).
+- **Pruebas**: las de DD-217 que pulsaban «Crear» con algo pendiente, reescritas (18 casos en 10 ficheros), y una nueva
+  para el tooltip de lo que falta; lo gris se mira en positivo, porque un «no hay rojo» pasa antes de pintar (la
+  contraprueba lo enseñó).
+- **Pendiente**: Figma (§57, encargado a la sesión de Figma de #476) y pegar en COA el borrador 4058 al día (fuera del
+  repo).
 
 ## ✅ 2026-10-20 · Grupos como sus páginas de COA: cifra a la ficha, duplicar a un alta, eliminar varios y «Agentes asignados» sin estado (DD-218)
 
@@ -131,29 +150,6 @@ y «Mapa de componentes») y el del relleno de la tabla (2026-10-19, DD-214): `g
   `3118:33342`; también sus tarjetas, la nota del paso 05 y la fila 9 de la hoja).
 - **Pruebas**: `listado-grupos` (sin casillas; borrar pregunta, cancela y borra) y `fichas-nombre-fijo` (grupo y agente
   con la confirmación, usuario tecleando); las del resultado del lote (DD-196) pasan a Usuarios. En local, 24 en verde.
-
-## ✅ 2026-10-19 · Mapa de componentes de Grupos, una sola tabla en el DS y «Fuera del DS» con alternativas
-
-> **Sello:** sin código. Figma del Supervisor (`Hjyy41SYKqcRuIzCGggfYH`) y del DS (`khNq9dJKNi13pNllrqm6dx`); en el
-> repo, solo docs (rama `areses/component-map-groups-ab0007`, HEAD `a63b604a`, fundida en `main` como #457 el 2026-10-20).
-
-- **Mapa de componentes** («Grupos», `3175:11365`, en el índice): listado y ficha con cajas encima; verde, DS de
-  desarrollo (`sc-*`); azul, PrimeNG (`p-*`); naranja, propio; gris discontinuo, layout. Sus tablas siguen en Small.
-- **Una sola DataTable en el DS** («❖ DataTable», `15526:14461`): las piezas con slots (antes «-base»), de las que
-  cuelga el Supervisor entero. Relleno, el de los devs (ui.smart-contact.com: 10,5 × 14; Small 5,25 × 7), que ya
-  tenían las variables; textos, Body/body-regular y Body/body-semibold: fila de texto de 42. Cada celda trae
-  `datatable-content` (Type se cambia bajando con Enter: Figma no expone piezas en un slot); las celdas ya rellenadas
-  no cambian. Ejemplos rehechos; «Cómo se usa» bajo el componente; la versión «(sin slots)», en el archivo.
-- **Tablas de Grupos y Agentes**: 1.943 piezas a tamaño normal (el prototipo no usa `size="small"`) con el relleno
-  atado al maestro; llevaban 2 a mano. Fila de 42, 49 con ⋮, 54 con avatar. Guía: «Tablas en tamaño normal».
-- **«Fuera del DS»** (§54): salen alto de fila, botón de foto (`highlight/background`), título, barra (Header del DS
-  con botón md, 58) y resumen («Mostrar estado» en `group-summary` y `agent-summary`). Quedan 4.
-- **Hecho** el 2026-10-20: «Update all» en el Supervisor. Medido: los 37 resúmenes (21 `group-summary`, 16
-  `agent-summary`) tienen «Mostrar estado» y las 98 cabeceras usan `button` md con «Show button». El prototipo ya pinta
-  10,5 × 14 (DD-214, #461).
-- **Trampas**: un marco de documentación a HUG estira las variantes FILL y cambia el maestro. En otro fichero, busca
-  por la clave del maestro. «El Aura» son dos: el de PrimeNG 22 sin escalar (8 × 14) y el de los devs (10,5 × 14). Cambiar de variante la pieza de fuera
-  rehace las de dentro (ve de dentro afuera) y a un resumen le borra los datos: una propiedad no.
 
 ## SIGUIENTE — sin preguntar
 
@@ -244,6 +240,10 @@ y «Mapa de componentes») y el del relleno de la tabla (2026-10-19, DD-214): `g
 **Trampas del frente:**
 - **La copia del DS con la tabla en slots** (`C5soC7CxcuKSIFPEDCd3gz`, sección `16862:6447`) se quedó con un
   placeholder del buscador anterior a `main`; lo que manda es el listado del Supervisor (`3118:16995`).
+- **Maestros de Figma con slots:** un marco de documentación a HUG estira las variantes FILL y cambia el maestro; en
+  otro fichero, se busca por la clave del maestro. Cambiar de variante la pieza de fuera rehace las de dentro (ve de
+  dentro afuera) y a un resumen le borra los datos; una propiedad no. «El Aura» son dos: el de PrimeNG 22 sin escalar
+  (8 × 14) y el de los devs (10,5 × 14).
 - **`p-treetable-checkbox` repinta con `selectionSource$`, no al cambiar `[selectionKeys]`**: un mapa nuevo desde fuera no
   repinta las casillas (por eso el árbol de agendas pinta las suyas). Un toast en la pila de capas de PrimeNG
   (`autoZIndex`) le quita el Esc a un `p-dialog` abierto. En la nube, reinicia el `ng serve` de :4405 por su pid antes

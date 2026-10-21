@@ -3,7 +3,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { disableAnimations, elegirTelefonoSaliente, forceLightTheme, goto, irASeccion } from './helpers';
 
 /**
- * LO QUE FALTA SE DICE AL PULSAR CREAR O GUARDAR, Y EL ✓ DICE LO QUE VISTE (DD-217).
+ * LO QUE FALTA, EN GRIS Y EN EL RESUMEN; EN ROJO AL DEJARLO VACÍO (DD-219), Y EL ✓ DICE LO QUE VISTE (DD-217).
  *
  * Revisión de producto del 2026-10-20, con dos recorridos de un compañero medidos en sc-supervisor.pages.dev:
  *   1. nombre → Distribución y colas → vuelta a General: Distribución ganaba un punto rojo (el teléfono saliente) sin
@@ -12,8 +12,9 @@ import { disableAnimations, elegirTelefonoSaliente, forceLightTheme, goto, irASe
  *   2. Teléfono y su saliente → vuelta a General y fuera los canales: Distribución y colas seguía con ✓ aunque ya no
  *      quedaba nada de lo que se rellenó, junto al rojo de General.
  *
- * Ahora nada acusa mientras se rellena: «Crear» está siempre activo y, al pulsarlo con algo pendiente, cada sección dice
- * lo suyo en el índice, en texto, y se llega al primer campo. El ✓ se va si otra sección le cambia el contenido.
+ * Con DD-219, como pide la página de COA del alta: «Crear …» apagado mientras falte algo, y «Falta: …» arriba del
+ * resumen, con cada cosa llevando a su campo. El aviso de cada campo sale en gris desde el principio y pasa a rojo al
+ * dejarlo vacío; el índice no se pone en rojo por lo que se toca. El ✓ se va si otra sección le cambia el contenido.
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -28,49 +29,68 @@ const conPunto = (page: Page) => page.locator('sc-form-section-nav .form-nav__it
 const actual = (page: Page) => page.locator('sc-form-section-nav .form-nav__item[aria-current="page"]');
 const siguiente = (page: Page) => page.getByRole('button', { name: 'Siguiente', exact: true });
 const barra = (page: Page) => page.locator('sc-top-bar');
+const estado = (page: Page) => page.locator('.resumen__status');
 const completa = /Esta sección está completa/;
+/** El aviso en gris: la ayuda de un campo del DS o la que va bajo un grupo de casillas. */
+const gris = (page: Page, seccion: string, texto: string) =>
+  page.locator(`#${seccion} :is(.field__help, .sc-field__msg:not(.sc-field__msg--error))`).filter({ hasText: texto });
+/** El aviso en rojo: el error de un campo del DS o el que va bajo un grupo de casillas. */
+const rojo = (page: Page, seccion: string) => page.locator(`#${seccion} :is(.field__error, .sc-field__msg--error)`);
 
-test('grupo · el recorrido del compañero: nada en rojo hasta pulsar «Crear grupo», y entonces cada sección dice lo suyo', async ({
+test('grupo · el recorrido del compañero: «Crear grupo» apagado con lo que falta, el aviso en gris y en rojo al dejar el nombre vacío, y el índice sin rojo', async ({
   page,
 }) => {
   await goto(page, 'admin/grupos/crear');
-  // «Crear grupo», activo desde el principio, y sin motivo al lado.
-  await expect(barra(page).getByRole('button', { name: 'Crear grupo' })).toBeEnabled();
-  await expect(page.locator('.form-save-reason')).toHaveCount(0);
+  const crear = barra(page).getByRole('button', { name: 'Crear grupo' });
+  await expect(crear).toBeDisabled();
+  await expect(estado(page)).toContainText('Falta: nombre, teléfono saliente');
+  // El nombre lo dice en gris desde el principio: es algo por rellenar, no un error.
+  await expect(gris(page, 'group-section-general', 'El nombre es obligatorio')).toHaveCount(1);
+  await expect(rojo(page, 'group-section-general')).toHaveCount(0);
 
   await page.locator('#group-name').fill('Soporte');
+  await expect(estado(page)).toContainText('Falta: teléfono saliente');
   await siguiente(page).click();
   await expect(actual(page)).toContainText('Distribución y colas');
   await irASeccion(page, 'General');
-  await page.locator('#group-name').fill('');
-  // Dejar Distribución sin el teléfono saliente y vaciar el nombre no acusa: aún no se ha intentado crear.
+  // Dejar Distribución sin el teléfono saliente no pone su sección en rojo: lo dice el resumen.
   await expect(conPunto(page)).toHaveCount(0);
-  await expect(page.locator('#group-section-general .field__error')).toHaveCount(0);
 
-  await barra(page).getByRole('button', { name: 'Crear grupo' }).click();
-  // No crea: se queda en el alta, en General, con el foco en el nombre, y el índice dice qué falta en cada sitio.
-  await expect(page).toHaveURL(/\/admin\/grupos\/crear/);
-  await expect(actual(page)).toContainText('General');
-  await expect(page.locator('#group-name')).toBeFocused();
-  await expect(fila(page, 'General')).toContainText('El nombre es obligatorio');
-  await expect(fila(page, 'Distribución y colas')).toContainText('El teléfono saliente es obligatorio');
+  // Vaciar el nombre no lo pone en rojo mientras se escribe, aunque ya se dejó una vez (relleno); al dejarlo vacío, sí.
+  // El índice sigue sin rojo. Lo gris se mira en positivo: un «no hay rojo» se cumpliría antes de pintar.
+  await page.locator('#group-name').fill('');
+  await expect(gris(page, 'group-section-general', 'El nombre es obligatorio')).toHaveCount(1);
+  await expect(rojo(page, 'group-section-general')).toHaveCount(0);
+  await page.locator('#group-name').press('Tab');
+  await expect(rojo(page, 'group-section-general')).toHaveText(['El nombre es obligatorio']);
+  await expect(conPunto(page)).toHaveCount(0);
+  await expect(crear).toBeDisabled();
 
-  // El rojo se va en vivo al arreglarlo, y el de la otra sección se queda: es suyo.
+  // El rojo se va en vivo al rellenarlo.
   await page.locator('#group-name').fill(`E2E Índice ${Date.now()}`);
+  await expect(rojo(page, 'group-section-general')).toHaveCount(0);
   await expect(fila(page, 'General')).not.toContainText('obligatorio');
-  await expect(conPunto(page)).toHaveCount(1);
-  await expect(conPunto(page)).toContainText('Distribución y colas');
 });
 
-test('grupo · al pulsar «Crear grupo» con solo el teléfono saliente pendiente, lleva a Distribución y colas y a su campo', async ({
+test('grupo · «teléfono saliente» del resumen lleva a Distribución y colas y a su campo; abrir su lista no lo pone en rojo', async ({
   page,
 }) => {
   await goto(page, 'admin/grupos/crear');
   await page.locator('#group-name').fill(`E2E Índice ${Date.now()}`);
-  await barra(page).getByRole('button', { name: 'Crear grupo' }).click();
+  await estado(page).getByRole('button', { name: 'teléfono saliente' }).click();
   await expect(actual(page)).toContainText('Distribución y colas');
   await expect(page.locator('#group-phone')).toBeFocused();
-  await expect(page.locator('#group-channel-phone')).toContainText('El teléfono saliente es obligatorio');
+  await expect(gris(page, 'group-channel-phone', 'El teléfono saliente es obligatorio')).toHaveCount(1);
+
+  // Abrir la lista para elegir no es dejar el campo vacío.
+  await page.locator('sc-select:has(#group-phone) .p-select-dropdown').click();
+  await expect(page.locator('.p-select-overlay')).toBeVisible();
+  await expect(rojo(page, 'group-channel-phone')).toHaveCount(0);
+  await page.locator('.p-select-overlay .p-select-option', { hasText: '917945449' }).first().click();
+
+  await expect(estado(page)).toContainText('Listo para crear');
+  await expect(barra(page).getByRole('button', { name: 'Crear grupo' })).toBeEnabled();
+  await expect(conPunto(page)).toHaveCount(0);
 });
 
 test('grupo · el ✓ se va si otra sección le cambia el contenido: quitar Teléfono deja Distribución sin ✓ ni rojo', async ({
@@ -124,40 +144,42 @@ test('grupo · Online Support: quitar Teléfono y volver a ponerlo no le quita e
   await expect(barra(page).getByRole('button', { name: 'Guardar' })).toBeDisabled();
 });
 
-test('agente · nada en rojo al dejar General vacía; al pulsar «Crear agente», General y Grupos dicen lo suyo', async ({ page }) => {
+test('agente · «Crear agente» apagado con lo que falta; General lo dice en gris, y dejarla no pone el índice en rojo', async ({
+  page,
+}) => {
   await goto(page, 'admin/agentes/crear');
-  await expect(barra(page).getByRole('button', { name: 'Crear agente' })).toBeEnabled();
+  await expect(barra(page).getByRole('button', { name: 'Crear agente' })).toBeDisabled();
+  await expect(estado(page)).toContainText('Falta: nombre, email, extensión, un grupo');
+  for (const aviso of ['El nombre es obligatorio', 'El email es obligatorio', 'La extensión es obligatoria']) {
+    await expect(gris(page, 'agent-section-general', aviso)).toHaveCount(1);
+  }
+  await expect(rojo(page, 'agent-section-general')).toHaveCount(0);
+
   await siguiente(page).click();
   await irASeccion(page, 'Grupos asignados');
+  await expect(gris(page, 'agent-section-groups', 'Hace falta al menos un grupo')).toHaveCount(1);
   await irASeccion(page, 'General');
   await expect(conPunto(page)).toHaveCount(0);
-
-  await barra(page).getByRole('button', { name: 'Crear agente' }).click();
-  await expect(page).toHaveURL(/\/admin\/agentes\/crear/);
-  await expect(actual(page)).toContainText('General');
-  await expect(page.locator('#agent-name')).toBeFocused();
-  await expect(fila(page, 'General')).toContainText('El nombre es obligatorio');
-  await expect(fila(page, 'Grupos asignados')).toContainText('Hace falta al menos un grupo');
-  // Cada campo dice lo suyo, también el nombre, el email y la extensión.
-  const general = page.locator('#agent-section-general');
-  await expect(general).toContainText('El nombre es obligatorio');
-  await expect(general).toContainText('El email es obligatorio');
-  await expect(general).toContainText('La extensión es obligatoria');
+  await expect(rojo(page, 'agent-section-general')).toHaveCount(0);
 });
 
-test('agente · lo único que falta son los grupos: lo dice Grupos asignados, encima de la tabla y con el foco', async ({ page }) => {
-  // Una copia trae nombre de nada: se rellenan los cuatro únicos y se le quitan los grupos.
+test('agente · lo único que falta son los grupos: el resumen lleva a Grupos asignados, y su aviso va encima de la tabla', async ({
+  page,
+}) => {
   await goto(page, 'admin/agentes/crear');
   await page.locator('#agent-name').fill('E2E Sin grupos');
   await page.locator('#agent-email').fill(`e2e.sin.grupos.${Date.now()}@ejemplo.com`);
   await page.locator('sc-select:has(#agent-ext) .p-select').click();
   await page.locator('.p-select-overlay .p-select-option').first().click();
-  await barra(page).getByRole('button', { name: 'Crear agente' }).click();
-  await expect(page).toHaveURL(/\/admin\/agentes\/crear/);
+  await expect(estado(page)).toContainText('Falta: un grupo');
+  await expect(barra(page).getByRole('button', { name: 'Crear agente' })).toBeDisabled();
+
+  await estado(page).getByRole('button', { name: 'un grupo' }).click();
   await expect(actual(page)).toContainText('Grupos asignados');
   const aviso = page.locator('#agent-groups-error');
-  await expect(aviso).toHaveText('Hace falta al menos un grupo');
-  await expect(aviso).toBeFocused();
+  // En gris es una ayuda, con su punto; en rojo, un error, sin él (DD-219).
+  await expect(aviso).toHaveText('Hace falta al menos un grupo.');
+  await expect(aviso).toHaveClass(/field__help/);
   // Encima de la tabla: debajo de una larga no se vería.
   const [arribaAviso, arribaTabla] = await Promise.all([
     aviso.evaluate((el) => el.getBoundingClientRect().top),
@@ -166,20 +188,25 @@ test('agente · lo único que falta son los grupos: lo dice Grupos asignados, en
   expect(arribaAviso).toBeLessThan(arribaTabla);
 });
 
-test('el resumen no dice «Falta» ni «Listo para crear», y no hay avisos amarillos en las fichas', async ({ page }) => {
+test('el resumen dice lo que falta y «Listo para crear», sin avisos amarillos en las fichas', async ({ page }) => {
   const avisos = page.locator('.ficha-summary sc-icon[name="warning"], .ficha-summary .resumen__warn');
   await goto(page, 'admin/grupos/crear');
-  await expect(page.locator('.ficha-summary')).not.toContainText('Falta');
+  await expect(estado(page)).toContainText('Falta: nombre, teléfono saliente');
+  await expect(estado(page)).not.toHaveClass(/resumen__status--ready/);
   await page.locator('#group-name').fill('Soporte');
-  await expect(page.locator('.ficha-summary')).not.toContainText('Listo para crear');
+  await expect(estado(page)).toContainText('Falta: teléfono saliente');
   // El teléfono saliente sin elegir y un canal sin agentes se dicen sin aviso amarillo.
   await expect(page.locator('.ficha-summary')).toContainText('Sin número');
   await expect(avisos).toHaveCount(0);
+  await elegirTelefonoSaliente(page);
+  await expect(estado(page)).toContainText('Listo para crear');
+  await expect(estado(page)).toHaveClass(/resumen__status--ready/);
 
-  // Online Support: el WhatsApp sin número, igual.
+  // Online Support, guardado y completo: el WhatsApp sin número no es un aviso, y al editar no se dice «Listo».
   await goto(page, 'admin/grupos/editar/11');
   await expect(avisos).toHaveCount(0);
+  await expect(page.locator('.ficha-summary')).not.toContainText('Listo para crear');
   await goto(page, 'admin/agentes/crear');
-  await expect(page.locator('.ficha-summary')).not.toContainText('Falta');
+  await expect(estado(page)).toContainText('Falta:');
   await expect(avisos).toHaveCount(0);
 });

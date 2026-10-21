@@ -5,8 +5,8 @@
      algo sin guardar. -->
 <ng-template #topbarActions>
   <!-- Con cambios, lo dice en palabras: un solo «Guardar» para toda la ficha, y el índice marca dónde están (DD-122).
-       `role="status"`: se anuncia una vez, al aparecer. Sin motivo de por qué no se puede guardar (DD-217): lo que falta
-       lo dice cada campo al pulsar. -->
+       `role="status"`: se anuncia una vez, al aparecer. Apagado mientras falte algo: su tooltip y «Falta: …» del resumen
+       dicen qué (DD-219). -->
   @if (mode() === 'edit' && formDirty()) {
     <span class="form-save-reason sc-text-caption-regular" role="status">{{ 'common.unsaved_changes' | translate }}</span>
   }
@@ -22,7 +22,7 @@
     variant="primary"
     [disabled]="!canSave()"
     [loading]="saving()"
-    [pTooltip]="canSave() ? '' : ('common.no_changes' | translate)" tooltipPosition="top"
+    [pTooltip]="motivoApagado()" tooltipPosition="top"
     [label]="(mode() === 'edit' ? 'common.save' : 'agents.form.create_submit') | translate"
     (clicked)="save()"
   />
@@ -128,7 +128,11 @@
       <section class="resumen" aria-labelledby="agent-summary-title">
         <!-- El nombre de la región, sin rótulo a la vista (DD-144): el resumen arranca a la altura del índice. -->
         <h2 id="agent-summary-title" class="resumen__title visually-hidden">{{ 'common.summary' | translate }}</h2>
-        <!-- Sin «Falta: …» ni «Listo para crear» (DD-217): lo que falta lo dice cada campo al pulsar «Crear agente». -->
+        <!-- «Falta: …» o «Listo para crear» (DD-136, que vuelve con DD-219): explica por qué «Crear agente» está apagado, y
+             cada cosa lleva a su campo. Al editar, solo si falta algo. -->
+        @if (mode() !== 'edit' || summaryMissing().length > 0) {
+          <sc-summary-status [missing]="summaryMissing()" [ready]="summaryReady()" (ir)="irAFalta($event)" />
+        }
         <!-- Las tarjetas son hermanas: 14 entre ellas (AGENTS «UX de pantalla» 9). -->
         <div class="resumen__cards">
           <!-- Cada dato lleva a su sitio, como el resumen del grupo (DD-146): la cifra, a Grupos; cada fila, a su campo. -->
@@ -217,9 +221,9 @@
           [ariaLabel]="'common.photo.change' | translate"
           (photoChange)="onPhotoChange($event)"
         />
-        <!-- El nombre no tiene regla de contenido: o está o no está, y que falte lo dice al pulsar «Crear agente» (DD-217). -->
+        <!-- El nombre no tiene regla de contenido: o está o no está. Vacío, su aviso en gris; en rojo al dejarlo así (DD-219). -->
         <div class="field form-identity__name">
-          <sc-inputtext [label]="'agents.form.fields.name' | translate" inputId="agent-name" [required]="true" [value]="form().name" [error]="falta('agents.errors.name_required')" (valueChange)="onNameRename($event)" />
+          <sc-inputtext [label]="'agents.form.fields.name' | translate" inputId="agent-name" [required]="true" [value]="form().name" [helperText]="ayuda('agents.errors.name_required')" [error]="falta('agents.errors.name_required')" (valueChange)="onNameRename($event)" (focusout)="dejar($event, 'agents.errors.name_required')" />
         </div>
       </div>
 
@@ -233,8 +237,10 @@
             autocomplete="email"
             [required]="true"
             [value]="form().email"
+            [helperText]="ayuda('agents.errors.email_required')"
             [error]="emailError() ? (emailError()! | translate) : falta('agents.errors.email_required')"
             (valueChange)="updateField('email', $event)"
+            (focusout)="dejar($event, 'agents.errors.email_required')"
           />
         </div>
 
@@ -246,10 +252,11 @@
             type="tel"
             autocomplete="tel"
             [required]="phoneRequired()"
-            [helperText]="phoneRequired() ? ('agents.form.fields.phone_required_hint' | translate) : undefined"
+            [helperText]="ayuda('agents.errors.phone_required') ?? (phoneRequired() ? ('agents.form.fields.phone_required_hint' | translate) : undefined)"
             [error]="phoneError() ? (phoneError()! | translate) : falta('agents.errors.phone_required')"
             [value]="form().phone"
             (valueChange)="updateField('phone', $event)"
+            (focusout)="dejar($event, 'agents.errors.phone_required')"
           />
         </div>
       </div>
@@ -271,9 +278,11 @@
             [required]="true"
             [options]="availableExtensions"
             [placeholder]="'agents.form.fields.extension_placeholder' | translate"
+            [helperText]="ayuda('agents.errors.extension_required')"
             [error]="falta('agents.errors.extension_required')"
             [value]="form().extension"
             (valueChange)="onExtensionValueChange($event)"
+            (focusout)="dejar($event, 'agents.errors.extension_required')"
           />
         </div>
 
@@ -353,8 +362,11 @@
           <sc-checkbox [state]="form().allowedChannels.includes(family) ? 'all' : 'none'" (cycle)="setAllowedChannel(family, $event)">{{ allowedFamilyLabels[family] | translate }}</sc-checkbox>
         }
       </div>
+      <!-- Sin canales: en gris mientras se rellena, en rojo si lo guardado ya venía así o se pulsó sin ellos (DD-219). -->
       @if (channelsError()) {
         <p class="field__error sc-text-caption-regular" role="alert">{{ 'agents.errors.channels_required' | translate }}</p>
+      } @else if (channelsHint()) {
+        <p class="field__help sc-text-caption-regular">{{ ayuda('agents.errors.channels_required') }}</p>
       }
     </sc-subsection>
   </sc-section-card>
@@ -658,6 +670,8 @@
     <sc-subsection>
       @if (groupsError()) {
         <p id="agent-groups-error" class="field__error groups-error sc-text-caption-regular" role="alert" tabindex="-1">{{ 'agents.errors.group_required' | translate }}</p>
+      } @else if (groupsHint()) {
+        <p id="agent-groups-error" class="field__help groups-error sc-text-caption-regular" tabindex="-1">{{ ayuda('agents.errors.group_required') }}</p>
       }
       <sc-group-assignment-table
         [links]="form().links"
@@ -666,8 +680,11 @@
         [allowedChannels]="form().allowedChannels"
         [selfActivate]="form().permissions.selfActivate"
         [outboundGroupId]="outboundGroupId()"
+        [outboundHint]="ayuda('agents.errors.outbound_required')"
+        [outboundError]="falta('agents.errors.outbound_required')"
         (linksChange)="onLinksChange($event)"
         (outboundGroupChange)="updateField('defaultOutboundGroupId', $event)"
+        (outboundLeave)="dejar($event, 'agents.errors.outbound_required')"
         (irA)="irDesdeResumen({ seccion: 'agent-section-general', ancla: 'agent-channels-title' })"
       />
     </sc-subsection>

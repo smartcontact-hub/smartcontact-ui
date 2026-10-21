@@ -8,8 +8,8 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  *   1. ninguna tabla de Grupos ni de Agentes lleva un `title` nativo;
  *   2. un icono con significado (el canal, la grabación, el tipo de extensión) enseña su nombre en el tooltip;
  *   3. un texto cortado lo enseña entero, y uno que cabe no lleva tooltip (`showOnEllipsis`);
- *   4. «Guardar» apagado dice por qué en el tooltip (sin cambios: desde DD-217 es el único porqué, lo que falta se dice al
- *      pulsar);
+ *   4. «Guardar» y «Crear …» apagados dicen por qué en el tooltip: lo que falta («Falta: nombre, teléfono saliente»,
+ *      DD-219) o, sin cambios, «No hay cambios que guardar»;
  *   5. en la ficha de grupo, la ayuda de Prioridad dice que solo cuenta en las conversaciones entrantes («Duplicar grupo»,
  *      que la compartía, ya no es un diálogo: DD-217);
  *   6. Monitor y Conversaciones, igual: sin `title` nativo, y sus iconos (la presencia, lo que hace una regla) dicen su
@@ -74,6 +74,14 @@ test('«Guardar» apagado dice por qué en el tooltip', async ({ page }) => {
   await expect(guardar).toBeDisabled();
   await page.locator('sc-button', { has: guardar }).hover();
   await expect(tooltip(page)).toHaveText('No hay cambios que guardar');
+});
+
+test('«Crear grupo» apagado dice en el tooltip lo que falta', async ({ page }) => {
+  await goto(page, 'admin/grupos/crear');
+  const crear = page.getByRole('button', { name: 'Crear grupo', exact: true });
+  await expect(crear).toBeDisabled();
+  await page.locator('sc-top-bar sc-button', { has: crear }).hover();
+  await expect(tooltip(page)).toHaveText('Falta: nombre, teléfono saliente');
 });
 
 test('ficha de grupo: la ayuda de Prioridad dice que solo cuenta en las conversaciones entrantes', async ({ page }) => {

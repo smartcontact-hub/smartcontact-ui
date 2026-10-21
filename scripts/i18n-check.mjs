@@ -228,6 +228,9 @@ export function papelesDeTexto(src) {
   for (const m of src.matchAll(/class="([^"]*(?:__help|__hint)\b[^"]*)"[^>]*>([\s\S]*?)<\//g))
     claves(m[2], /section__hint\b/.test(m[1]) ? subtitulos : ayudas);
   for (const m of src.matchAll(/\bhelp: '([\w-]+(?:\.[\w-]+)+)'/g)) ayudas.add(m[1]);
+  // El aviso de un obligatorio (`*.errors.*`) sale en gris como ayuda y en rojo como error (DD-219): se escribe sin
+  // punto, como error, y en gris se lo pone `ayudaDeObligatorio` al pintarlo.
+  for (const k of ayudas) if (/\.errors\./.test(k)) ayudas.delete(k);
   return { subtitulos, ayudas };
 }
 

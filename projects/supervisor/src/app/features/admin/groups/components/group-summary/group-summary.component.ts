@@ -6,7 +6,12 @@ import type { MeterItem } from 'primeng/types/metergroup';
 import { ScFactRowComponent as FactRowComponent } from '@smartcontact-hub/components';
 
 import { AnimateOnChangeDirective } from '@core/directives';
-import { ChannelIconComponent, SummaryKpiComponent } from '@shared/components';
+import {
+  ChannelIconComponent,
+  SummaryKpiComponent,
+  SummaryStatusComponent,
+  type FaltaDelResumen,
+} from '@shared/components';
 import type { GroupAgentLink } from '@features/admin/services/group-agent-links.types';
 import { familiesOf } from '@features/admin/services/group-channels.core.mjs';
 
@@ -101,6 +106,7 @@ interface ChannelRow {
     ChannelIconComponent,
     AnimateOnChangeDirective,
     SummaryKpiComponent,
+    SummaryStatusComponent,
     TooltipModule,
   ],
   templateUrl: './group-summary.component.html',
@@ -119,6 +125,14 @@ export class GroupSummaryComponent {
   readonly hrefs = input.required<Readonly<Record<GroupSummarySeccion, string>>>();
   /** Se pulsó algo del resumen, sin teclas: la ficha va a su sitio. */
   readonly ir = output<GroupSummaryDestino>();
+  /** Lo que falta para crear o guardar, para «Falta: …» (DD-219). */
+  readonly missing = input<readonly FaltaDelResumen[]>([]);
+  /** «Crear grupo» está encendido: «Listo para crear». */
+  readonly ready = input(false);
+  /** Es un alta: la línea se ve siempre; al editar, solo si falta algo (un nombre borrado). */
+  readonly creating = input(false);
+  /** Se pulsó una cosa de «Falta: …»: la ficha lleva a su campo. */
+  readonly irAFalta = output<FaltaDelResumen>();
 
   protected readonly channelKeys = CHANNEL_LABEL_KEYS;
   protected readonly familyKeys = FAMILY_LABEL_KEYS;

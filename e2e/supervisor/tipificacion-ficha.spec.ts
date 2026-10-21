@@ -64,9 +64,10 @@ test('un nombre repetido entre hermanas se dice bajo el árbol y no deja guardar
 
   await primerNivel(page).nth(2).fill('consulta');
   await expect(page.locator('.niveles__estado')).toHaveText(/Hay opciones con el mismo nombre en una misma lista/);
-  // Sin «Falta: …» en la barra; «Guardar», activo con el cambio, al pulsarlo no guarda y el índice lo dice (DD-217).
+  // Sin «Falta: …» en la barra; «Guardar» apagado mientras se repita (DD-219), y con Ctrl+S el índice lo dice.
   await expect(barra(page)).not.toContainText('Falta');
-  await barra(page).getByRole('button', { name: 'Guardar' }).click();
+  await expect(barra(page).getByRole('button', { name: 'Guardar' })).toBeDisabled();
+  await page.keyboard.press('ControlOrMeta+s');
   await expect(page.locator('sc-form-section-nav .form-nav__item--has-error')).toContainText('Dale a cada opción un nombre distinto');
 
   await primerNivel(page).nth(2).fill('Gestión');
@@ -101,11 +102,14 @@ test('eliminarla dice qué grupos la usan, y esos grupos dejan de tipificar', as
 
 test('un alta de punta a punta: nombre, opciones y Crear, y sale en el listado', async ({ page }) => {
   await goto(page, 'admin/tipificaciones/crear');
-  // «Crear tipificación», siempre activo: vacía, al pulsarlo no crea y lleva al nombre (DD-217).
-  await barra(page).getByRole('button', { name: 'Crear tipificación' }).click();
-  await expect(page).toHaveURL(/\/admin\/tipificaciones\/crear/);
-  await expect(page.locator('#tip-name')).toBeFocused();
+  // «Crear tipificación», apagado mientras falten el nombre o una opción (DD-219); el nombre lo dice en gris.
+  const crear = barra(page).getByRole('button', { name: 'Crear tipificación' });
+  await expect(crear).toBeDisabled();
+  await expect(page.locator('sc-inputtext:has(#tip-name) .sc-field__msg:not(.sc-field__msg--error)')).toHaveText(
+    'El nombre es obligatorio.',
+  );
   await page.locator('#tip-name').fill('Seguimiento de pedido');
+  await expect(crear).toBeDisabled();
   await page.locator('sc-form-section-nav').getByText('Categorías').click();
   await page.getByRole('button', { name: 'Añadir categoría' }).click();
   // Enter abre la siguiente justo detrás, con el foco: se escribe en cuanto lo tiene, y Enter va cuando el nombre ya
@@ -125,7 +129,8 @@ test('un alta de punta a punta: nombre, opciones y Crear, y sale en el listado',
     'Retrasado',
   ]);
 
-  await barra(page).getByRole('button', { name: 'Crear tipificación' }).click();
+  await expect(crear).toBeEnabled();
+  await crear.click();
   await expect(page).toHaveURL(/\/admin\/tipificaciones\/editar\/\d+/);
   await goto(page, 'admin/tipificaciones');
   await expect(

@@ -1009,6 +1009,10 @@
     "no_changes": "Não há alterações para guardar",
     "unsaved_changes": "Alterações não salvas",
     "summary": "Resumo",
+    "summary_missing": "Em falta: {{items}}",
+    "summary_missing_label": "Em falta:",
+    "summary_missing_name": "nome",
+    "summary_ready": "Pronto para criar",
     "summary_of": "{{value}} de {{total}}",
     "actions": "Ações",
     "select_row": "Selecionar {{name}}",
@@ -1814,6 +1818,9 @@
         "apply_body_other": "Altera {{count}} caixas em Acesso. Se as mantiver, o tipo muda na mesma e Acesso fica como está.",
         "apply": "Aplicar o modelo",
         "keep": "Manter as caixas"
+      },
+      "summary": {
+        "missing_email": "email"
       }
     },
     "errors": {
@@ -2104,7 +2111,9 @@
         "paused_count": "{{count}} desabilitados",
         "routing": "Distribuição",
         "no_number": "Sem número",
-        "resources": "Recursos"
+        "resources": "Recursos",
+        "missing_phone": "telefone de saída",
+        "missing_typification": "tipificação"
       },
       "channels": {
         "title": "Canais",
@@ -2427,7 +2436,13 @@
       "summary": {
         "no_groups": "Sem grupos",
         "groups_active": "Habilitado em grupos",
+        "missing_extension": "ramal",
+        "missing_phone": "telemóvel",
         "outbound": "Saídas",
+        "missing_email": "email",
+        "missing_channel": "um canal",
+        "missing_group": "um grupo",
+        "missing_outbound": "um grupo para as saídas",
         "channels": "Canais",
         "no_channels": "Sem canais",
         "no_enabled_groups": "Sem grupos habilitados",
