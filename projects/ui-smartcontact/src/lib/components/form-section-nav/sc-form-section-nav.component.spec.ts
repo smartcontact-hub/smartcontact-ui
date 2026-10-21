@@ -41,6 +41,7 @@ const SECCIONES: readonly FormNavSection[] = [
     [sectionErrorHints]="motivos()"
     [sectionsWithChanges]="cambios()"
     [sectionsDone]="hechas()"
+    [sectionStates]="estados()"
     [flush]="plana()"
     (activeChange)="elegidas.push($event)"
   />`,
@@ -53,6 +54,7 @@ class Host {
   readonly motivos = signal<Readonly<Record<string, string>>>({});
   readonly cambios = signal<ReadonlySet<string>>(new Set());
   readonly hechas = signal<ReadonlySet<string>>(new Set());
+  readonly estados = signal<ReadonlyMap<string, 'pendiente' | 'actual' | 'hecha' | 'error'> | null>(null);
   readonly plana = signal(true);
   readonly elegidas: string[] = [];
 }
@@ -332,5 +334,52 @@ describe('sc-form-section-nav · la caja gris de Contact Center la enciende la a
     conCaja(true);
     const { raiz } = montar((h) => h.plana.set(false));
     expect(nav(raiz).classList.contains('form-nav--caja')).toBe(false);
+  });
+});
+
+describe('sc-form-section-nav · el marcador de paso está siempre y la fila no cambia de altura con el estado', () => {
+  beforeEach(() => {
+    TestBed.configureTestingModule({ imports: [Host], providers: [provideTranslateService()] });
+  });
+
+  const estados = (e: Record<string, 'pendiente' | 'actual' | 'hecha' | 'error'>) => new Map(Object.entries(e));
+
+  it('con estados, TODAS las filas llevan su marcador, y cada una el suyo', () => {
+    const { raiz } = montar((h) =>
+      h.estados.set(estados({ general: 'hecha', distribucion: 'actual', agentes: 'pendiente' })),
+    );
+    const marcadores = [...raiz.querySelectorAll('sc-step-marker')];
+    expect(marcadores.length).toBe(3);
+    expect(marcadores.map((m) => ['hecha', 'actual', 'pendiente'].find((e) => m.classList.contains(`sc-step-marker--${e}`)))).toEqual([
+      'hecha',
+      'actual',
+      'pendiente',
+    ]);
+  });
+
+  it('cada fila lleva una segunda línea siempre: el estado en gris, o lo que falta en rojo', () => {
+    const { raiz } = montar((h) => {
+      h.estados.set(estados({ general: 'error', distribucion: 'actual', agentes: 'pendiente' }));
+      h.errores.set(new Set(['general']));
+      h.motivos.set({ general: 'Nombre, tipificación' });
+    });
+    const lineas = [...raiz.querySelectorAll<HTMLElement>('.form-nav__hint--paso')];
+    expect(lineas.map((l) => l.textContent?.trim())).toEqual(['Nombre, tipificación', 'sc.formSectionNav.status.actual', 'sc.formSectionNav.status.pendiente']);
+    expect(lineas[0]?.classList.contains('form-nav__hint--estado')).toBe(false);
+    expect(lineas[1]?.classList.contains('form-nav__hint--estado')).toBe(true);
+  });
+
+  it('una sección opcional sin ver dice «Opcional», no «Por revisar»', () => {
+    const { raiz } = montar((h) => {
+      h.secciones.set([{ id: 'a', labelKey: 'A', optional: true }]);
+      h.estados.set(estados({ a: 'pendiente' }));
+    });
+    expect(raiz.querySelector('.form-nav__hint--paso')?.textContent?.trim()).toBe('sc.formSectionNav.status.optional');
+  });
+
+  it('sin estados, el índice se pinta como siempre: sin marcador de paso ni segunda línea', () => {
+    const { raiz } = montar();
+    expect(raiz.querySelectorAll('sc-step-marker').length).toBe(0);
+    expect(raiz.querySelectorAll('.form-nav__hint--paso').length).toBe(0);
   });
 });

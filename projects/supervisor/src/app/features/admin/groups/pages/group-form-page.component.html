@@ -79,6 +79,7 @@
         [sectionErrorHints]="sectionErrorHints()"
         [sectionsWithChanges]="sectionsWithChanges()"
         [sectionsDone]="alta.hechas()"
+        [sectionStates]="mode() === 'create' ? alta.estados() : null"
         [flush]="true"
         (activeChange)="goTo($event)"
       />

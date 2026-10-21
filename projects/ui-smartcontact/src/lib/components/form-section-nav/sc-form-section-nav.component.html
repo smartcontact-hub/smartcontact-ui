@@ -18,7 +18,7 @@
           class="form-nav__item"
           [class.form-nav__item--active]="activeId() === section.id"
           [class.form-nav__item--has-error]="hasError(section.id)"
-          [class.form-nav__item--has-hint]="errorHint(section.id) !== null"
+          [class.form-nav__item--has-hint]="errorHint(section.id) !== null || stepState(section.id) !== null"
           [class.form-nav__item--has-changes]="hasChanges(section.id)"
           [attr.aria-current]="activeId() === section.id ? 'page' : null"
           [attr.href]="section.href ?? '#'"
@@ -36,7 +36,9 @@
                que no deja guardar, y los dos ganan al ✓ de la sección hecha (DD-143). -->
           <span class="form-nav__label">{{ section.labelKey | translate }}</span>
           <span class="form-nav__marker" aria-hidden="true">
-            @if (hasError(section.id)) {
+            @if (stepState(section.id); as paso) {
+              <sc-step-marker [state]="paso" />
+            } @else if (hasError(section.id)) {
               <span class="form-nav__dot"></span>
             } @else if (hasChanges(section.id)) {
               <span class="form-nav__dot form-nav__dot--changes"></span>
@@ -53,19 +55,21 @@
           </span>
           <!-- Lo que falta, en texto bajo la etiqueta (DD-217): se ve y se oye, y entonces dice más que el texto
                genérico del punto, que sobra. -->
-          @if (errorHint(section.id); as hint) {
+          @if (stepLine(section); as linea) {
+            <span class="form-nav__hint form-nav__hint--paso" [class.form-nav__hint--estado]="!linea.danger" [attr.title]="linea.text">{{ linea.key ? (linea.key | translate) : linea.text }}</span>
+          } @else if (errorHint(section.id); as hint) {
             <span class="form-nav__hint">{{ hint }}</span>
           }
           <!-- Lo que el punto dice, como texto del enlace, que es de lo que sale su nombre. Hasta el
                2026-09-27 era un `aria-label` en el `span` del punto: Chrome lo leía (medido), pero
                ARIA 1.2 lo prohíbe en un elemento sin rol. Se oyen las dos marcas. -->
-          @if (hasError(section.id) && errorHint(section.id) === null) {
+          @if (stepState(section.id) === null && hasError(section.id) && errorHint(section.id) === null) {
             <span class="form-nav__sr">{{ 'sc.formSectionNav.sectionHasErrors' | translate }}</span>
           }
-          @if (hasChanges(section.id)) {
+          @if (stepState(section.id) === null && hasChanges(section.id)) {
             <span class="form-nav__sr">{{ 'sc.formSectionNav.sectionHasChanges' | translate }}</span>
           }
-          @if (isDone(section.id)) {
+          @if (stepState(section.id) === null && isDone(section.id)) {
             <span class="form-nav__sr">{{ 'sc.formSectionNav.sectionDone' | translate }}</span>
           }
         </a>

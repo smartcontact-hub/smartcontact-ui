@@ -1,0 +1,140 @@
+/*
+ * El marcador de paso (`sc-step-marker`). 14 px, el hueco de la marca del índice. Todo cambia con transición sobre el
+ * mismo SVG, así que un cambio de estado se ve en su sitio y no hay nada que aparezca de la nada. El primer pintado
+ * no anima: una transición necesita un estado anterior.
+ */
+.sc-step-marker {
+  display: inline-flex;
+  flex: none;
+  width: 14px;
+  height: 14px;
+  border-radius: var(--sc-radius-full);
+  box-shadow: 0 0 0 0 transparent;
+  transition: box-shadow var(--sc-transition-base) var(--sc-easing-default);
+
+  svg {
+    display: block;
+    overflow: visible;
+  }
+}
+
+.sc-step-marker__disco,
+.sc-step-marker__punto,
+.sc-step-marker__check,
+.sc-step-marker__aviso {
+  transition:
+    fill var(--sc-transition-base) var(--sc-easing-default),
+    stroke var(--sc-transition-base) var(--sc-easing-default),
+    opacity var(--sc-transition-base) var(--sc-easing-default),
+    transform var(--sc-transition-slow) var(--sc-easing-emphasized),
+    stroke-dashoffset var(--sc-transition-slow) var(--sc-easing-emphasized);
+  transform-origin: 7px 7px;
+}
+
+.sc-step-marker__disco {
+  fill: transparent;
+  stroke: var(--sc-border-strong);
+  stroke-width: 1.5;
+}
+
+.sc-step-marker__punto {
+  fill: var(--sc-border-strong);
+}
+
+.sc-step-marker__check,
+.sc-step-marker__aviso {
+  fill: none;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0;
+}
+
+.sc-step-marker__check {
+  stroke: var(--sc-text-on-success);
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+.sc-step-marker__aviso {
+  stroke: var(--sc-text-on-error);
+  transform: scale(0.6);
+}
+
+/* A la vista: el radio marcado, con su halo. */
+.sc-step-marker--actual {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--sc-bg-primary) 22%, transparent);
+
+  .sc-step-marker__disco {
+    fill: var(--sc-bg-primary);
+    stroke: var(--sc-bg-primary);
+  }
+  .sc-step-marker__punto {
+    fill: var(--sc-text-on-primary);
+  }
+}
+
+.sc-step-marker--hecha {
+  .sc-step-marker__disco {
+    fill: var(--sc-bg-success);
+    stroke: var(--sc-bg-success);
+  }
+  .sc-step-marker__punto {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+  .sc-step-marker__check {
+    opacity: 1;
+    stroke-dashoffset: 0;
+    transition-delay: 0s, 0s, 60ms, 0s, 80ms;
+  }
+}
+
+.sc-step-marker--error {
+  .sc-step-marker__disco {
+    fill: var(--sc-bg-danger);
+    stroke: var(--sc-bg-danger);
+  }
+  .sc-step-marker__punto {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+  .sc-step-marker__aviso {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* El éxito: un halo verde que se abre y se va, una sola vez. */
+.sc-step-marker--pulsa {
+  animation: sc-step-marker-halo 560ms var(--sc-easing-emphasized);
+}
+
+@keyframes sc-step-marker-halo {
+  from {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--sc-bg-success) 40%, transparent);
+  }
+  35% {
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--sc-bg-success) 40%, transparent);
+  }
+  to {
+    box-shadow: 0 0 0 7px transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sc-step-marker,
+  .sc-step-marker__disco,
+  .sc-step-marker__punto,
+  .sc-step-marker__check,
+  .sc-step-marker__aviso {
+    transition: fill 100ms linear, stroke 100ms linear, opacity 100ms linear, box-shadow 100ms linear;
+    transition-delay: 0s;
+  }
+  .sc-step-marker__check {
+    stroke-dashoffset: 0;
+  }
+  .sc-step-marker--pulsa {
+    animation: none;
+  }
+}

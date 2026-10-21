@@ -181,7 +181,7 @@
  * no se va nunca. El orden del DOM es el de lectura: nombre, índice, contenido y resumen. */
 .page__inner--rail.ficha-rail {
   display: grid;
-  grid-template-columns: 196px minmax(0, 1fr) 240px;
+  grid-template-columns: 232px minmax(0, 1fr) 240px;
   grid-template-areas: 'rail main summary';
   column-gap: var(--sc-spacing-2);
   /* Entre la franja del resumen y el contenido, por debajo de 1340. */
@@ -191,6 +191,10 @@
 
 .ficha-rail > .page__rail {
   grid-area: rail;
+  /* 232 y no 196: en la caja gris las filas miden 200 (Figma, 203) y «Distribución y colas» cabe en una línea. A 196 las
+   * filas medían 164 y le quedaban 108 de 130: saltaba de línea (medido el 2026-10-21). */
+  flex-basis: 232px;
+  width: 232px;
 }
 
 .ficha-rail > .page__main {
@@ -252,7 +256,7 @@
 @media (max-width: 1339px) {
   .page__inner--rail.ficha-rail--summary {
     max-width: 1200px;
-    grid-template-columns: 196px minmax(0, 1fr);
+    grid-template-columns: 232px minmax(0, 1fr);
     grid-template-areas:
       'rail summary'
       'rail main';

@@ -3,6 +3,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { ScIconComponent, type ScIconWeight } from '@smartcontact-hub/icons';
 
+import { ScStepMarkerComponent, type ScStepMarkerState } from '../step-marker/sc-step-marker.component';
 import { SC_FORM_SECTION_NAV_TRANSLATIONS } from './i18n/sc-form-section-nav.translations';
 
 export interface FormNavSection {
@@ -19,6 +20,8 @@ export interface FormNavSection {
    * apunta a `#` y solo avisa a la página (compatibilidad; el DS no conoce el router).
    */
   readonly href?: string;
+  /** La sección no tiene nada obligatorio: sin ver, el índice dice «Opcional» en vez de «Por revisar». Solo con `sectionStates`. */
+  readonly optional?: boolean;
 }
 
 /**
@@ -58,7 +61,7 @@ let siguienteId = 0;
 @Component({
   selector: 'sc-form-section-nav',
   standalone: true,
-  imports: [ScIconComponent, TranslateModule],
+  imports: [ScIconComponent, ScStepMarkerComponent, TranslateModule],
   templateUrl: './sc-form-section-nav.component.html',
   styleUrl: './sc-form-section-nav.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -130,6 +133,14 @@ export class ScFormSectionNavComponent implements OnInit {
    */
   readonly sectionsDone = input<ReadonlySet<string>>(new Set());
 
+  /**
+   * El recorrido de un alta, con el marcador de paso (`sc-step-marker`) en TODAS las filas: pendiente sin ver, actual la
+   * abierta, hecha o error la que se dejó. Con él, el marcador sustituye a los puntos y al ✓ sueltos (las filas cambian
+   * de estado en su sitio, sin aparecer de un hueco vacío); lo que falta se sigue diciendo en texto bajo la etiqueta
+   * si la página lo da. Opt-in: sin él, el índice se pinta como siempre (edición, Contact Center, constructor de reglas).
+   */
+  readonly sectionStates = input<ReadonlyMap<string, ScStepMarkerState> | null>(null);
+
   /** El usuario ha pulsado otra sección del índice (clic principal, sin teclas). */
   readonly activeChange = output<string>();
 
@@ -161,6 +172,27 @@ export class ScFormSectionNavComponent implements OnInit {
 
   ngOnInit(): void {
     this.hechasAlPintar = new Set(this.sectionsDone());
+  }
+
+  /**
+   * La segunda línea de una fila con marcador, SIEMPRE presente (la altura de la fila no cambia con el estado): lo que
+   * falta, en rojo y en una línea (la página lo da en `sectionErrorHints`), o el estado en gris: por revisar (u opcional),
+   * en curso, listo. Lo largo se corta con puntos suspensivos y se lee entero en el `title`.
+   */
+  protected stepLine(section: FormNavSection): { key: string | null; text: string | null; danger: boolean } | null {
+    const paso = this.stepState(section.id);
+    if (paso === null) return null;
+    if (paso === 'error') {
+      const hint = this.errorHint(section.id);
+      return hint ? { key: null, text: hint, danger: true } : { key: 'sc.formSectionNav.status.error', text: null, danger: true };
+    }
+    if (paso === 'pendiente') return { key: section.optional ? 'sc.formSectionNav.status.optional' : 'sc.formSectionNav.status.pendiente', text: null, danger: false };
+    return { key: paso === 'actual' ? 'sc.formSectionNav.status.actual' : 'sc.formSectionNav.status.hecha', text: null, danger: false };
+  }
+
+  /** El estado de paso de la fila, si la página lo manda. */
+  protected stepState(id: string): ScStepMarkerState | null {
+    return this.sectionStates()?.get(id) ?? null;
   }
 
   protected hasChanges(id: string): boolean {

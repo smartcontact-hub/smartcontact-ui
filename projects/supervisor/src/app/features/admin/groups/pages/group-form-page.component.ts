@@ -325,8 +325,8 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
       { id: 'group-section-general', labelKey: 'groups.form.section.general', icon: 'tune' },
       { id: 'group-section-distribution', labelKey: 'groups.form.section.distribution', icon: 'alt_route' },
       // Lo que se le asigna desde Repositorios, como «Recursos» en la ficha de agente.
-      { id: 'group-section-resources', labelKey: 'groups.form.section.resources', icon: 'library_books' },
-      { id: 'group-section-agents', labelKey: 'groups.form.section.agents', icon: 'headphones' },
+      { id: 'group-section-resources', labelKey: 'groups.form.section.resources', icon: 'library_books', optional: true },
+      { id: 'group-section-agents', labelKey: 'groups.form.section.agents', icon: 'headphones', optional: true },
     ].map((s) => ({ ...s, href: this.sectionLinks.href(this.sectionUrl(s.id)) })),
   );
 
@@ -498,11 +498,36 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
     return out;
   });
 
-  /** El punto rojo del índice: la sección tiene un aviso a la vista. */
-  protected readonly sectionsWithErrors = computed<ReadonlySet<string>>(() => new Set(this.avisos().map((a) => a.seccion)));
+  /** El punto rojo del índice: la sección tiene un aviso a la vista. En el alta, la que se dejó con algo por hacer. */
+  protected readonly sectionsWithErrors = computed<ReadonlySet<string>>(() =>
+    this.mode() === 'create'
+      ? new Set([...this.alta.estados()].filter(([, estado]) => estado === 'error').map(([id]) => id))
+      : new Set(this.avisos().map((a) => a.seccion)),
+  );
 
-  /** Lo que dice cada sección con aviso en el índice, en texto (DD-217). */
-  protected readonly sectionErrorHints = computed(() => avisosDelIndice(this.avisos()));
+  /** Lo que dice cada sección con aviso en el índice, en texto (DD-217). En el alta, TODO lo que le falta a la sección. */
+  protected readonly sectionErrorHints = computed(() =>
+    this.mode() === 'create' ? this.faltasPorSeccion() : avisosDelIndice(this.avisos()),
+  );
+
+  /**
+   * Lo que falta en cada sección, entero y en una línea para el índice del alta: «Nombre, tipificación». Los nombres
+   * cortos son los del resumen de la derecha («Falta: …»), así el índice y el resumen dicen lo mismo con las mismas
+   * palabras. Un nombre repetido o una cola imposible, que no son «falta», entran con su aviso.
+   */
+  private readonly faltasPorSeccion = computed<Readonly<Record<string, string>>>(() => {
+    this.lang();
+    const t = (key: string) => this.translate.instant(key);
+    const por: Record<string, string[]> = {};
+    for (const o of this.obligatorios()) {
+      if (o.falta) (por[o.seccion] ??= []).push(t(o.etiqueta));
+    }
+    if (this.nameTaken()) (por['group-section-general'] ??= []).push(t('groups.errors.name_taken'));
+    if (this.colaMal()) (por['group-section-distribution'] ??= []).push(t('groups.form.advanced.queue_invalid'));
+    const out: Record<string, string> = {};
+    for (const [id, items] of Object.entries(por)) out[id] = items.join(', ').replace(/^./, (c) => c.toUpperCase());
+    return out;
+  });
 
   /**
    * Las secciones con cambios sin guardar: su marca en el índice (DD-122). La ficha tiene un solo
@@ -1461,6 +1486,8 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
   protected discard(): void {
     this.form.set(this.dirtyState.pristineValue());
     this.ocasion.olvidar();
+    // En un alta, volver al vacío es volver a empezar: lo dejado antes ya no es lo que hay.
+    if (this.mode() === 'create') this.alta.reiniciar();
   }
 
   protected cancelCascade(): void {

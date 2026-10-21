@@ -37,9 +37,16 @@
   display: flex;
   align-items: flex-start;
   gap: var(--sc-spacing-0-375);
-  min-block-size: var(--sc-line-height-caption);
+  /* DOS líneas reservadas en la columna estrecha: «Falta: nombre, tipificación, teléfono saliente» ocupa dos, y con una
+   * sola reservada las tarjetas de debajo bajaban 18 px al marcar «Tipificar» y subían al rellenarlo (medido el
+   * 2026-10-21). En la franja ancha (< 1340) cabe en una. */
+  min-block-size: 2lh;
   margin: 0;
   color: var(--sc-text-secondary);
+
+  @media (max-width: 1339px) {
+    min-block-size: var(--sc-line-height-caption);
+  }
 
   sc-icon {
     flex: none;

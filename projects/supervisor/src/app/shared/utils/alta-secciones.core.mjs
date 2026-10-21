@@ -28,7 +28,48 @@
  * @returns {Set<string>}
  */
 export function seccionesHechas({ ids, abierta, dejadas, firma, completa }) {
-  return new Set(ids.filter((id) => id !== abierta && dejadas.get(id) === firma(id) && completa(id)));
+  return new Set(ids.filter((id) => id !== abierta && firmaVista(dejadas, id, firma(id)) && completa(id)));
+}
+
+/**
+ * ¿Lo que hay ahora en la sección ya lo viste al dejarla? La firma es un juego de opciones (los canales de General):
+ * si lo de ahora cabe en lo que viste, sí. Si APARECE algo nuevo (un canal añadido trae bloques, plantillas y columnas
+ * que no has visto), no. Quitar un canal no trae nada que revisar: la sección sigue como la dejaste, sin el bloque que
+ * ya no está. Una sección que nunca se dejó no se ha visto.
+ * @param {ReadonlyMap<string, string>} dejadas
+ * @param {string} id
+ * @param {string} actual
+ * @returns {boolean}
+ */
+export function firmaVista(dejadas, id, actual) {
+  const vista = dejadas.get(id);
+  if (vista === undefined) return false;
+  const vistos = new Set(vista.split(',').filter(Boolean));
+  return actual.split(',').filter(Boolean).every((x) => vistos.has(x));
+}
+
+/**
+ * El estado de cada sección en el índice de un alta, el del marcador de paso: `actual` la abierta; `hecha` la que se
+ * dejó y completa; `error` la que se dejó con algo obligatorio sin rellenar; `pendiente` la que no se ha visto o a la
+ * que ha llegado algo nuevo desde que se dejó (un canal añadido; quitar uno no cuenta). El resultado, hecha
+ * o error, se decide AL SALIR: mientras se escribe, el botón y el «Falta: …» ya dicen lo que falta (DD-219).
+ * @param {{
+ *   ids: readonly string[],
+ *   abierta: string,
+ *   dejadas: ReadonlyMap<string, string>,
+ *   firma: (id: string) => string,
+ *   completa: (id: string) => boolean,
+ * }} o
+ * @returns {Map<string, 'pendiente' | 'actual' | 'hecha' | 'error'>}
+ */
+export function estadosDeSecciones({ ids, abierta, dejadas, firma, completa }) {
+  return new Map(
+    ids.map((id) => {
+      if (id === abierta) return [id, 'actual'];
+      if (!firmaVista(dejadas, id, firma(id))) return [id, 'pendiente'];
+      return [id, completa(id) ? 'hecha' : 'error'];
+    }),
+  );
 }
 
 /**
