@@ -7,10 +7,11 @@ el puente formal Figma ↔ código; hoy ese puente en este repo es solo convenci
 
 ## Estado: publicado (2026-10-21)
 
-33 componentes mapeados en [`code-connect/`](../code-connect/), todos del archivo de la librería
+41 componentes mapeados en [`code-connect/`](../code-connect/), todos del archivo de la librería
 (`Smart-Contact-Design-System`): los 24 anteriores más `group-summary`, `summary-status`, `channel-icon`,
 `fileupload`, `drawer`, `fact-row`, `icon-tile`, y los masters aparte del botón grande y pequeño (`button-large`,
-`button-small`). Las maquetas del Supervisor usan instancias de esa librería, así
+`button-small`), y los de uso suelto en las apps: `badge`, `avatar`, `radiobutton`, `password`, `panel`,
+`inputgroup`, `datepicker` y `confirmdialog`. Las maquetas del Supervisor usan instancias de esa librería, así
 que los mapeos les valen.
 
 Cada plantilla lleva en la cabecera `// source=` (ruta del componente en el repo) y `// component=` (su clase), que
