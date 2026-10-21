@@ -22,7 +22,7 @@ export interface FormNavSection {
 }
 
 /**
- * El índice plano (`flush`) dentro de la caja gris, en toda la app que lo pida (DD-219): el índice de Contact Center
+ * El índice plano (`flush`) dentro de la caja gris, en toda la app que lo pida (DD-220): el índice de Contact Center
  * de Figma (Supervisor `2286:5368`), un `Section` del DS con su título y el Nav-menu dentro. Las filas sin marcar van
  * en blanco sobre el gris, como en esa maqueta, y el rótulo (`titleKey`) se lee como el título de la caja.
  *
@@ -136,7 +136,7 @@ export class ScFormSectionNavComponent implements OnInit {
   /** El id del rótulo, para nombrar el `<nav>` con él. */
   protected readonly titleId = `sc-form-nav-title-${siguienteId++}`;
 
-  /** El índice plano en la caja gris (DD-219), si la app lo pide. */
+  /** El índice plano en la caja gris (DD-220), si la app lo pide. */
   protected readonly caja = inject(SC_FORM_SECTION_NAV_CAJA);
 
   /** Las que ya estaban hechas al pintar el índice: su ✓ aparece quieto. */

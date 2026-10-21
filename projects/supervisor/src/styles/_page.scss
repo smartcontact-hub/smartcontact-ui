@@ -209,7 +209,7 @@
   margin-block-start: var(--sc-spacing-0-375);
 }
 
-/* Con el índice en la caja gris (DD-219), el borde del grupo es la caja: de ella al botón, los mismos 28, el hueco
+/* Con el índice en la caja gris (DD-220), el borde del grupo es la caja: de ella al botón, los mismos 28, el hueco
  * del carril (14) y esto (14). Sin esto quedaban 19,25. El botón sigue al borde del carril, como en Figma. */
 .ficha-rail .page__rail:has(.form-nav--caja) .ficha-eliminar {
   margin-block-start: var(--sc-spacing-1);
