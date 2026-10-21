@@ -134,10 +134,16 @@ export class ScFormSectionNavComponent implements OnInit {
   /**
    * El recorrido de un alta, con el marcador de paso (`sc-step-marker`) en TODAS las filas: pendiente sin ver, actual la
    * abierta, hecha o error la que se dejó. Con él, el marcador sustituye a los puntos y al ✓ sueltos (las filas cambian
-   * de estado en su sitio, sin aparecer de un hueco vacío) y la fila no lleva línea debajo; lo que falta (`sectionErrorHints`)
-   * va en el `title` y se oye. Opt-in: sin él, el índice se pinta como siempre (edición, Contact Center, constructor de reglas).
+   * de estado en su sitio, sin aparecer de un hueco vacío); lo que falta se sigue diciendo en texto bajo la etiqueta
+   * si la página lo da. Opt-in: sin él, el índice se pinta como siempre (edición, Contact Center, constructor de reglas).
    */
   readonly sectionStates = input<ReadonlyMap<string, ScStepMarkerState> | null>(null);
+
+  /**
+   * `completa`: segunda línea bajo cada fila (estado en gris, o lo que falta en rojo) y marcador con trazo y halo.
+   * `simple`: sin línea (lo que falta va en el `title` y se oye) y marcador con un fundido. Solo con `sectionStates`.
+   */
+  readonly variante = input<'completa' | 'simple'>('completa');
 
   /** El usuario ha pulsado otra sección del índice (clic principal, sin teclas). */
   readonly activeChange = output<string>();
@@ -170,6 +176,27 @@ export class ScFormSectionNavComponent implements OnInit {
 
   ngOnInit(): void {
     this.hechasAlPintar = new Set(this.sectionsDone());
+  }
+
+  /**
+   * La segunda línea de una fila con marcador, SIEMPRE presente (la altura de la fila no cambia con el estado): lo que
+   * falta, en rojo y en una línea (la página lo da en `sectionErrorHints`), o el estado en gris: sin revisar,
+   * en curso, listo. Lo largo se corta con puntos suspensivos y se lee entero en el `title`.
+   */
+  /** ¿La fila lleva línea debajo? Con marcador, solo en la variante completa; sin él, si tiene aviso. */
+  protected conLinea(id: string): boolean {
+    return this.stepState(id) !== null ? this.variante() === 'completa' : this.errorHint(id) !== null;
+  }
+
+  protected stepLine(section: FormNavSection): { key: string | null; text: string | null; danger: boolean } | null {
+    const paso = this.stepState(section.id);
+    if (paso === null) return null;
+    if (paso === 'error') {
+      const hint = this.errorHint(section.id);
+      return hint ? { key: null, text: hint, danger: true } : { key: 'sc.formSectionNav.status.error', text: null, danger: true };
+    }
+    if (paso === 'pendiente') return { key: 'sc.formSectionNav.status.pendiente', text: null, danger: false };
+    return { key: paso === 'actual' ? 'sc.formSectionNav.status.actual' : 'sc.formSectionNav.status.hecha', text: null, danger: false };
   }
 
   /** El estado de paso de la fila, si la página lo manda. */

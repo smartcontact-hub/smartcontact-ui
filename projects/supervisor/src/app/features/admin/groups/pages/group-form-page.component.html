@@ -80,6 +80,7 @@
         [sectionsWithChanges]="sectionsWithChanges()"
         [sectionsDone]="alta.hechas()"
         [sectionStates]="mode() === 'create' ? alta.estados() : null"
+        [variante]="variante"
         [flush]="true"
         (activeChange)="goTo($event)"
       />
@@ -591,7 +592,20 @@
             <div class="grid">
               <div class="grid grid--2">
                 <div class="field">
-                  <sc-select [label]="'groups.form.advanced.whatsapp_number' | translate" inputId="group-chat-whatsapp" optionLabel="label" optionValue="value" [options]="whatsappOptions()" [value]="form().advanced.whatsappNumber" (valueChange)="setWhatsappNumber($event)" />
+                  <sc-select
+                    [label]="'groups.form.advanced.whatsapp_number' | translate"
+                    inputId="group-chat-whatsapp"
+                    required
+                    optionLabel="label"
+                    optionValue="value"
+                    [options]="whatsappOptions()"
+                    [value]="form().advanced.whatsappNumber || null"
+                    [placeholder]="'groups.form.fields.phone_placeholder' | translate"
+                    [helperText]="ayudaDe('whatsapp')"
+                    [error]="whatsappError() ? (whatsappError()! | translate) : undefined"
+                    (valueChange)="setWhatsappNumber($event)"
+                    (focusout)="dejar($event, 'whatsapp')"
+                  />
                 </div>
               </div>
               <!-- Sin número, WhatsApp no tiene a quién escribir ni de dónde: lo que sigue no se pinta. -->

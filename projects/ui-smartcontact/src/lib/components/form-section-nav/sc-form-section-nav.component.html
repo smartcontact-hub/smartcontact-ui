@@ -18,10 +18,10 @@
           class="form-nav__item"
           [class.form-nav__item--active]="activeId() === section.id"
           [class.form-nav__item--has-error]="hasError(section.id)"
-          [class.form-nav__item--has-hint]="stepState(section.id) === null && errorHint(section.id) !== null"
+          [class.form-nav__item--has-hint]="conLinea(section.id)"
           [class.form-nav__item--has-changes]="hasChanges(section.id)"
           [attr.aria-current]="activeId() === section.id ? 'page' : null"
-          [attr.title]="stepState(section.id) === 'error' ? errorHint(section.id) : null"
+          [attr.title]="stepState(section.id) === 'error' && variante() === 'simple' ? errorHint(section.id) : null"
           [attr.href]="section.href ?? '#'"
           (click)="onJump($event, section)"
         >
@@ -38,7 +38,7 @@
           <span class="form-nav__label">{{ section.labelKey | translate }}</span>
           <span class="form-nav__marker" aria-hidden="true">
             @if (stepState(section.id); as paso) {
-              <sc-step-marker [state]="paso" />
+              <sc-step-marker [state]="paso" [fundido]="variante() === 'simple'" />
             } @else if (hasError(section.id)) {
               <span class="form-nav__dot"></span>
             } @else if (hasChanges(section.id)) {
@@ -56,12 +56,14 @@
           </span>
           <!-- Lo que falta, en texto bajo la etiqueta (DD-217): se ve y se oye, y entonces dice más que el texto
                genérico del punto, que sobra. -->
-          <!-- Con marcador de paso no hay línea debajo: la fila no cambia de altura. Lo que falta se lee al pasar el ratón
-               (`title`) y se oye como texto del enlace; la lista entera está en el resumen de la página. -->
-          @if (stepState(section.id) === 'error' && errorHint(section.id); as hint) {
+          @if (conLinea(section.id)) {
+            @if (stepLine(section); as linea) {
+              <span class="form-nav__hint form-nav__hint--paso" [class.form-nav__hint--estado]="!linea.danger" [attr.title]="linea.text">{{ linea.key ? (linea.key | translate) : linea.text }}</span>
+            } @else if (errorHint(section.id); as hint) {
+              <span class="form-nav__hint">{{ hint }}</span>
+            }
+          } @else if (stepState(section.id) === 'error' && errorHint(section.id); as hint) {
             <span class="form-nav__sr">{{ hint }}</span>
-          } @else if (stepState(section.id) === null && errorHint(section.id); as hint) {
-            <span class="form-nav__hint">{{ hint }}</span>
           }
           <!-- Lo que el punto dice, como texto del enlace, que es de lo que sale su nombre. Hasta el
                2026-09-27 era un `aria-label` en el `span` del punto: Chrome lo leía (medido), pero

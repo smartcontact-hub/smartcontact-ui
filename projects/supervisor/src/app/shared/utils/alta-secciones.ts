@@ -52,8 +52,6 @@ export function seccionesDeAlta(opts: {
   const firma = opts.firma ?? (() => '');
   const abiertaManual = signal<string | null>(null);
   const dejadas = signal<ReadonlyMap<string, string>>(new Map());
-  /** Si la sección estaba completa al dejarla: la roja sigue roja al abrirla de nuevo, y la verde sigue verde. */
-  const resultados = signal<ReadonlyMap<string, boolean>>(new Map());
 
   const abierta = computed(() => abiertaManual() ?? primera());
   const ids = computed(() => opts.secciones().map((s) => s.id));
@@ -70,18 +68,16 @@ export function seccionesDeAlta(opts: {
       seccionesHechas({ ids: ids(), abierta: abierta(), dejadas: dejadas(), firma, completa: opts.completa }),
     ),
     estados: computed(() =>
-      estadosDeSecciones({ ids: ids(), abierta: abierta(), dejadas: dejadas(), resultados: resultados(), firma, completa: opts.completa }),
+      estadosDeSecciones({ ids: ids(), abierta: abierta(), dejadas: dejadas(), firma, completa: opts.completa }),
     ),
     abrir(id: string): void {
       const antes = abierta();
       if (id === antes) return;
       dejadas.update((d) => dejarSeccion(d, antes, firma(antes)));
-      resultados.update((r) => new Map(r).set(antes, opts.completa(antes)));
       abiertaManual.set(id);
     },
     reiniciar(): void {
       dejadas.set(new Map());
-      resultados.set(new Map());
     },
     anterior: () => vecina(-1),
     siguiente: () => vecina(1),

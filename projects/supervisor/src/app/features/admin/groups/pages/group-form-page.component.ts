@@ -335,12 +335,16 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
    * «Atrás / Siguiente» al pie. Se navega libre (DD-217: fuera la puerta de General de DD-121 y la de Distribución de
    * DD-158). La sección abierta no toca la dirección.
    */
+  /** Demo de dos variantes del índice del alta (`?variante=simple`): sin línea debajo y con un fundido. */
+  protected readonly variante: 'completa' | 'simple' =
+    new URLSearchParams(globalThis.location?.search ?? '').get('variante') === 'simple' ? 'simple' : 'completa';
+
   protected readonly alta = seccionesDeAlta({
     secciones: this.navSections,
     // ✓ en toda sección que se deja completa (DD-211 §6): Recursos y Agentes, con solo pasar; General y Distribución
     // (su teléfono saliente, si tiene Teléfono), con lo suyo.
     completa: (id) =>
-      id === 'group-section-general' ? this.generalValid() : id !== 'group-section-distribution' || (!this.phoneMissing() && !this.queueInvalid()),
+      id === 'group-section-general' ? this.generalValid() : id !== 'group-section-distribution' || (!this.phoneMissing() && !this.whatsappMissing() && !this.queueInvalid()),
     // Lo que General decide de las demás: sus bloques de canal, sus plantillas y sus columnas. Si cambian los canales
     // desde que se dejó una sección, su ✓ se va (DD-217).
     firma: (id) => (id === 'group-section-general' ? '' : firmaDe(this.form().channels)),
@@ -402,6 +406,8 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
         aviso: 'groups.errors.typification_required', etiqueta: 'groups.form.summary.missing_typification' },
       { clave: 'phone', falta: this.phoneMissing(), seccion: 'group-section-distribution', ancla: 'group-phone',
         aviso: 'groups.errors.phone_required', etiqueta: 'groups.form.summary.missing_phone' },
+      { clave: 'whatsapp', falta: this.whatsappMissing(), seccion: 'group-section-distribution', ancla: 'group-chat-whatsapp',
+        aviso: 'groups.errors.whatsapp_required', etiqueta: 'groups.form.summary.missing_whatsapp' },
     ] as const;
   });
 
@@ -448,6 +454,12 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
 
   /** El aviso rojo bajo el teléfono saliente (DD-219). */
   protected readonly phoneError = computed<string | null>(() => this.errorDe('phone'));
+
+  /** Con WhatsApp, su número es obligatorio, como el teléfono saliente con Teléfono: sin él no tiene de dónde escribir. */
+  protected readonly whatsappMissing = computed(() => this.hasWhatsApp() && this.form().advanced.whatsappNumber.trim().length === 0);
+
+  /** El aviso rojo bajo el número de WhatsApp. */
+  protected readonly whatsappError = computed<string | null>(() => this.errorDe('whatsapp'));
 
   /** «Falta: …» del resumen, con cada cosa llevando a su campo (DD-219). Un nombre repetido no falta: va en su campo. */
   protected readonly summaryMissing = computed<readonly FaltaDelResumen[]>(() => {
@@ -569,7 +581,9 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
       // Dejar una sección con algo obligatorio vacío es dejarla en rojo: al volver, sus campos lo dicen en rojo, no en gris.
       const dejada = this.alta.abierta();
       if (id !== dejada) {
-        for (const o of this.obligatorios()) if (o.falta && o.seccion === dejada) this.ocasion.tocar(o.clave);
+        // Con algo vacío, TODOS los obligatorios de la sección pasan a decirlo en rojo, también los que se enciendan luego.
+        const propios = this.obligatorios().filter((o) => o.seccion === dejada);
+        if (propios.some((o) => o.falta)) for (const o of propios) this.ocasion.tocar(o.clave);
       }
       this.alta.abrir(id);
       return Promise.resolve(true);

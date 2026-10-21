@@ -50,9 +50,9 @@ export function firmaVista(dejadas, id, actual) {
 
 /**
  * El estado de cada sección en el índice de un alta, el del marcador de paso. Una sección que se ha dejado conserva su
- * resultado aunque se abra otra vez: la verde sigue verde y la roja sigue roja, y la roja se pone verde EN VIVO cuando
- * se rellena lo que faltaba. La verde que se rompe con la sección abierta no se pone roja hasta que se deja (el rojo
- * mientras se escribe es regañar: el botón y el «Falta: …» ya dicen lo que falta, DD-219).
+ * resultado aunque se abra otra vez, y ese resultado es EN VIVO: la verde sigue verde, la roja se pone verde al rellenar lo
+ * que faltaba, y la verde a la que se le vacía un obligatorio vuelve a rojo (el campo ya está en rojo: el marcador no
+ * puede decir otra cosa). La primera visita no regaña: es `actual` hasta que se deja.
  *  · `hecha`: dejada y completa (o abierta y completa, si ya se dejó).
  *  · `error`: dejada con algo obligatorio sin rellenar.
  *  · `actual`: abierta por primera vez, o con algo nuevo que no se ha visto.
@@ -61,20 +61,18 @@ export function firmaVista(dejadas, id, actual) {
  *   ids: readonly string[],
  *   abierta: string,
  *   dejadas: ReadonlyMap<string, string>,
- *   resultados?: ReadonlyMap<string, boolean>,
  *   firma: (id: string) => string,
  *   completa: (id: string) => boolean,
  * }} o
  * @returns {Map<string, 'pendiente' | 'actual' | 'hecha' | 'error'>}
  */
-export function estadosDeSecciones({ ids, abierta, dejadas, resultados = new Map(), firma, completa }) {
+export function estadosDeSecciones({ ids, abierta, dejadas, firma, completa }) {
   return new Map(
     ids.map((id) => {
       const vista = firmaVista(dejadas, id, firma(id));
       if (id === abierta) {
         if (!vista) return [id, 'actual'];
-        if (completa(id)) return [id, 'hecha'];
-        return [id, resultados.get(id) === false ? 'error' : 'hecha'];
+        return [id, completa(id) ? 'hecha' : 'error'];
       }
       if (!vista) return [id, 'pendiente'];
       return [id, completa(id) ? 'hecha' : 'error'];

@@ -357,20 +357,21 @@ describe('sc-form-section-nav · el marcador de paso está siempre y la fila no 
     ]);
   });
 
-  it('sin línea debajo: lo que falta va en el title de la fila y se oye, y la fila no cambia de altura', () => {
-    const { raiz, filas } = montar((h) => {
+  it('cada fila lleva una segunda línea siempre: el estado en gris, o lo que falta en rojo', () => {
+    const { raiz } = montar((h) => {
       h.estados.set(estados({ general: 'error', distribucion: 'actual', agentes: 'pendiente' }));
       h.errores.set(new Set(['general']));
       h.motivos.set({ general: 'Nombre, tipificación' });
     });
-    expect(raiz.querySelectorAll('.form-nav__hint').length).toBe(0);
-    expect(filas[0]?.getAttribute('title')).toBe('Nombre, tipificación');
-    expect(filas[0]?.textContent).toContain('Nombre, tipificación');
-    expect(filas[1]?.getAttribute('title')).toBeNull();
+    const lineas = [...raiz.querySelectorAll<HTMLElement>('.form-nav__hint--paso')];
+    expect(lineas.map((l) => l.textContent?.trim())).toEqual(['Nombre, tipificación', 'sc.formSectionNav.status.actual', 'sc.formSectionNav.status.pendiente']);
+    expect(lineas[0]?.classList.contains('form-nav__hint--estado')).toBe(false);
+    expect(lineas[1]?.classList.contains('form-nav__hint--estado')).toBe(true);
   });
 
   it('sin estados, el índice se pinta como siempre: sin marcador de paso ni segunda línea', () => {
     const { raiz } = montar();
     expect(raiz.querySelectorAll('sc-step-marker').length).toBe(0);
+    expect(raiz.querySelectorAll('.form-nav__hint--paso').length).toBe(0);
   });
 });

@@ -123,19 +123,17 @@ test('estadosDeSecciones: actual la abierta, hecha o error la dejada, pendiente 
   });
 });
 
-test('estadosDeSecciones: la verde sigue verde al abrirla, y la roja pasa a verde en vivo al rellenar lo que faltaba', () => {
+test('estadosDeSecciones: el resultado es en vivo, también con la sección abierta', () => {
   const dejadas = new Map([['general', ''], ['distribucion', '']]);
-  const resultados = new Map([['general', true], ['distribucion', false]]);
-  const con = (abierta, ok) =>
-    Object.fromEntries(
-      estadosDeSecciones({ ids, abierta, dejadas, resultados, firma: () => '', completa: (id) => (id === 'distribucion' ? ok : true) }),
-    );
+  const con = (abierta, completas) =>
+    Object.fromEntries(estadosDeSecciones({ ids, abierta, dejadas, firma: () => '', completa: (id) => completas.includes(id) }));
   // Abrir la verde no la pone en «actual».
-  assert.equal(con('general', false).general, 'hecha');
+  assert.equal(con('general', ['general']).general, 'hecha');
   // La roja abierta sigue roja mientras falte, y pasa a verde al rellenar.
-  assert.equal(con('distribucion', false).distribucion, 'error');
-  assert.equal(con('distribucion', true).distribucion, 'hecha');
-  // Una verde que se rompe con la sección abierta no se pone roja hasta que se deja.
-  const rota = estadosDeSecciones({ ids, abierta: 'general', dejadas, resultados, firma: () => '', completa: () => false });
-  assert.equal(rota.get('general'), 'hecha');
+  assert.equal(con('distribucion', []).distribucion, 'error');
+  assert.equal(con('distribucion', ['distribucion']).distribucion, 'hecha');
+  // La verde a la que se le vacía un obligatorio con la sección abierta vuelve a rojo.
+  assert.equal(con('general', []).general, 'error');
+  // La primera visita no regaña.
+  assert.equal(estadosDeSecciones({ ids, abierta: 'agentes', dejadas, firma: () => '', completa: () => false }).get('agentes'), 'actual');
 });

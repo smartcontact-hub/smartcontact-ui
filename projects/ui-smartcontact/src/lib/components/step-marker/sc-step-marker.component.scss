@@ -122,6 +122,24 @@
   }
 }
 
+/* Variante simple: un fundido de color y nada más (sin trazo, sin escala, sin halo). */
+.sc-step-marker--fundido {
+  .sc-step-marker__disco,
+  .sc-step-marker__punto,
+  .sc-step-marker__check,
+  .sc-step-marker__aviso {
+    transition:
+      fill var(--sc-transition-base) var(--sc-easing-default),
+      stroke var(--sc-transition-base) var(--sc-easing-default),
+      opacity var(--sc-transition-base) var(--sc-easing-default);
+    transition-delay: 0s;
+    transform: none;
+  }
+  .sc-step-marker__check {
+    stroke-dashoffset: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .sc-step-marker,
   .sc-step-marker__disco,

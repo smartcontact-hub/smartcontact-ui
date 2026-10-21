@@ -41,12 +41,15 @@ export type ScStepMarkerState = 'pendiente' | 'actual' | 'hecha' | 'error';
     '[class.sc-step-marker--actual]': "state() === 'actual'",
     '[class.sc-step-marker--hecha]': "state() === 'hecha'",
     '[class.sc-step-marker--error]': "state() === 'error'",
-    '[class.sc-step-marker--pulsa]': 'pulsa()',
+    '[class.sc-step-marker--pulsa]': 'pulsa() && !fundido()',
+    '[class.sc-step-marker--fundido]': 'fundido()',
     'aria-hidden': 'true',
   },
 })
 export class ScStepMarkerComponent {
   readonly state = input<ScStepMarkerState>('pendiente');
+  /** Solo un fundido de color: sin trazo que se dibuja, sin halo de éxito y sin escala. */
+  readonly fundido = input(false);
 
   /** El halo de éxito: solo la primera vez que llega a `hecha` con el marcador ya pintado. Volver a una sección hecha y
    *  salir otra vez no se celebra de nuevo: el ✓ se dibuja, sin halo. */
