@@ -203,8 +203,13 @@ export class GroupAssignmentTableComponent {
   readonly selfActivate = input(false);
   /** El grupo de sus llamadas salientes. */
   readonly outboundGroupId = input<number | null>(null);
+  /** Su aviso de obligatorio, ya traducido y decidido por la ficha: en gris (`outboundHint`) o en rojo (DD-219). */
+  readonly outboundHint = input<string | undefined>(undefined);
+  readonly outboundError = input<string | undefined>(undefined);
   readonly linksChange = output<readonly GroupAgentLink[]>();
   readonly outboundGroupChange = output<number | null>();
+  /** Se dejó el desplegable de las salientes: si sigue vacío, la ficha lo dice en rojo (DD-219). */
+  readonly outboundLeave = output<FocusEvent>();
   /** El candado de un canal que el agente no tiene lleva a donde se cambia: sus canales (General). Como el candado de
    *  la tabla del grupo, que enlaza a la ficha del agente (DD-150). */
   readonly irA = output<'canales'>();

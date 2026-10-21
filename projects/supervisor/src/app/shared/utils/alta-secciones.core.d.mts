@@ -7,5 +7,10 @@ export function seccionesHechas(o: {
   readonly completa: (id: string) => boolean;
 }): Set<string>;
 export function dejarSeccion(dejadas: ReadonlyMap<string, string>, id: string, firma: string): Map<string, string>;
-export function seDice(falta: string, intento: ReadonlySet<string> | null, guardado: ReadonlySet<string>): boolean;
+export function seDice(
+  falta: string,
+  intento: ReadonlySet<string> | null,
+  guardado: ReadonlySet<string>,
+  tocados?: ReadonlySet<string>,
+): boolean;
 export function firmaDe(valores: Iterable<string>): string;

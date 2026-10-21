@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Lo que falta, como SISMAC-4058: «Crear» y «Guardar» apagados mientras falte algo, con «Falta: …» o «Listo para crear» arriba del resumen (cada cosa a su campo) y el motivo en el tooltip · el aviso bajo el campo en gris desde el principio y en rojo al dejarlo vacío · el índice no se pone rojo por lo tocado · en grupo, agente, usuario y tipificación (enmienda DD-217 §1 y §4; vuelve DD-136) | DD-219 |
 > | Grupos como sus páginas de COA (SISMAC-4056 y 4058): la cifra de agentes lleva a la ficha · duplicar es un alta · con varios marcados, el clic derecho solo elimina · Servicios y Agentes de mayor a menor al primer clic (`defaultSortOrder`) · la miga dice el nombre · «Agentes asignados» sin estado ni filtro, ordenable por nombre (`headerTemplate`), el nivel en desplegable y Habilitado bloqueado con «Activación por grupo» · confirmar dice qué, a cuántos y con su verbo (enmienda DD-121, DD-151, DD-159 §1, DD-185 §7 y §8, DD-187 §4, DD-204 §6, DD-215 §1 y §2 y DD-217 §8) | DD-218 |
 > | Lo que falta se dice al pulsar Crear o Guardar, en su campo y en el índice con su texto (`sectionErrorHints`), y se llega al primero · Crear siempre activo, sin motivo junto al botón ni «Falta / Listo para crear» · el ✓, de la sección que se dejó tal como está (su firma) · sin puertas · los grupos pueden no tener canales · quitar y poner un canal no le quita nada a nadie · fuera los avisos amarillos · duplicar un grupo no pregunta: «(1)» · Recursos en chips que llenan su fila, sin «+» ni lápiz y con lo que contienen al pasar, en las dos fichas · los editores de Repositorios, igual · la ayuda acaba en punto y el subtítulo no (enmienda DD-121, DD-136, DD-143 §2, §3 y §5, DD-158, DD-167, DD-199 §1 y §3, DD-187, DD-204, DD-206, DD-209 §4, DD-211 §6 y DD-212 §1) | DD-217 |
 > | Abrir una ficha desde su listado, con la fila o con «Editar», entra por la primera sección (General en grupo y agente, Identidad en usuario) · la tarea frecuente se queda en el control que la nombra: en Agentes, la cifra de grupos lleva a «Grupos asignados» con su propia acción · al crear, nada cambia (enmienda DD-122 §8) | DD-213 |
@@ -157,6 +158,66 @@
 
 ---
 
+## DD-219 · 2026-10-21 — Lo que falta, como SISMAC-4058: el botón apagado, «Falta: …» en el resumen y el aviso en gris hasta dejar el campo vacío
+
+**Contexto** · DD-217 dejó «Crear …» siempre activo y lo que falta dicho al pulsar. La página de COA que lee desarrollo
+(«SOLUCIÓN SISMAC-4058 Creación/Edición Grupos», 2026-10-19) pide lo contrario: el botón deshabilitado hasta tener lo
+obligatorio, el mensaje «El nombre es obligatorio» desde el principio y, arriba del resumen, lo que falta o «Listo para
+crear». Producto se queda con el modelo de COA (2026-10-21), con un ajuste: que el aviso no salga en rojo antes de que
+nadie toque el campo. El índice libre y los canales opcionales de DD-217 se quedan: los pidió la revisión del
+2026-10-20.
+
+**Decisión** ·
+1. **«Crear …» y «Guardar» apagados mientras falte algo** (enmienda DD-217 §1). Lo que falta, o algo mal escrito (un
+   nombre repetido, una cola imposible, un email mal escrito), apaga el botón; al editar, además, sin cambios. Su
+   tooltip dice por qué: «Falta: nombre, teléfono saliente», lo mal escrito o «No hay cambios que guardar» (DD-212).
+   Ctrl+S y el «Guardar» del aviso de Repositorios siguen llegando a `save`: con algo pendiente no crean, lo dicen en
+   rojo y llevan al primer campo, como antes.
+2. **«Falta: …» o «Listo para crear», arriba del resumen** (vuelve DD-136, que DD-217 §4 había retirado). Cada cosa
+   que falta es un enlace a su campo (`sc-summary-status`, con `FaltaDelResumen`). En gris, no en ámbar: algo por
+   rellenar no es un aviso. Al editar, solo si falta algo. La tipificación no tiene resumen: su botón lo dice en el
+   tooltip, y lo que le falta al árbol, encima de él.
+3. **El aviso bajo el campo, en gris desde el principio y en rojo al dejarlo vacío.** «El nombre es obligatorio» sale
+   como ayuda, en el gris de las ayudas del DS (`ayudaDeObligatorio`, que pone detrás la ayuda propia del campo si la
+   tiene). Al dejar el campo vacío pasa a rojo y se queda en vivo hasta que se rellena (`ocasionDeAvisar().tocar`).
+   Dejarlo relleno no cuenta: si después se vacía, sigue en gris hasta dejarlo así. Abrir la lista de un desplegable
+   para elegir no es dejarlo, tampoco pulsando su flecha con el campo ya enfocado, que manda el foco un instante a
+   `main` (`dejoElCampo`, que lo ve en `:active`). En gris acaba en punto, como toda ayuda, y en rojo va sin él, como
+   todo error (el punto final de DD-217): el texto se escribe sin punto y se lo pone `ayudaDeObligatorio`, así que
+   `i18n:check` no cuenta como ayuda una clave `*.errors.*`. Lo que no es un campo del DS (los
+   canales y los grupos del agente, el árbol de la tipificación) lleva su aviso en `.field__help`.
+4. **El índice no se pone en rojo por lo que se toca** (se queda DD-217 en eso): solo por lo guardado que ya venía sin
+   algo (DD-142), por un intento con algo pendiente y por un error de contenido. Lo que se toca se dice bajo su campo,
+   donde se está mirando.
+5. **En las cuatro fichas**: grupo, agente, usuario y tipificación. Comparten `ocasionDeAvisar`, así que ninguna se
+   comporta distinto. En el agente, el grupo de las salientes gana su aviso bajo el desplegable, que no tenía.
+
+**Razón** · COA es lo que construye desarrollo, y una sola fuente evita preguntas y pantallas rehechas (DD-218). El
+botón apagado garantiza que no se falla al pulsar, y «Falta: …» es lo que lo hace entendible: sin esa línea, un botón
+gris obliga a buscar por cinco secciones qué lo bloquea. El aviso en rojo antes de tocar nada se lee como un error de
+quien acaba de abrir la ficha, y el 2026-10-20 el rojo en secciones que no se miraban confundía (DD-217): por eso el
+gris hasta dejar el campo, y el índice sin rojo por lo tocado. Medido en este build: las cuatro fichas, apagadas al
+abrir con su «Falta: …»; el nombre del grupo, gris (`rgb(79, 86, 99)`) y rojo (`rgb(220, 38, 38)`) al dejarlo vacío,
+sin punto en el índice; abrir la lista del teléfono saliente lo deja en gris; elegir el número da «Listo para crear» y
+enciende «Crear grupo».
+
+**Descartadas** ·
+- **El aviso en rojo desde el principio, tal cual COA** → tres señales para lo mismo (el botón, la lista y el rojo), y
+  un rojo antes de escribir se lee como un error de quien abre la ficha.
+- **Las puertas del índice de COA** (sin nombre no se pasa a Distribución) → las retiró la revisión del 2026-10-20
+  (DD-217 §3), y «Falta: …» ya dice qué queda.
+- **«Selecciona al menos un canal»** → los canales son opcionales desde DD-217 §5.
+- **Un botón apagado que reciba el foco** (para que el lector lea su motivo) → el DS no lo tiene y `p-button` solo
+  apaga del todo; el `role="status"` de «Falta: …» se anuncia al cambiar, y el tooltip lo dice al pasar. Queda para el
+  DS si hace falta.
+
+**Consecuencias** · `AGENTS.md` §«UX de pantalla», principio 11, y su copia en sc-docs › Patrones, reescritos; la fila
+de «Decir lo que le falta a un alta» del catálogo de patrones, también. Las pruebas de DD-217 que decían «Crear siempre
+activo» se reescriben a la regla nueva. COA 4058: su bloque de «Mensajes y botones de acción» se queda casi como estaba,
+con el ajuste del gris (el borrador para pegar, al día). Figma: `docs/figma-pendiente.md` §57.
+
+---
+
 ## DD-218 · 2026-10-20 — Grupos como sus páginas de COA: la cifra de agentes a la ficha, duplicar a un alta, eliminar varios, «Agentes asignados» sin estado y ordenable, y confirmar con su verbo
 
 **Contexto** · Desarrollo construye Grupos con dos páginas de COA: «SOLUCIÓN SISMAC-4056 Sección Grupos» (el listado) y
@@ -251,6 +312,10 @@ bloqueado (`agente-grupos-asignados`) y, en el DS, `defaultSortOrder` y `headerT
 
 ## DD-217 · 2026-10-20 — Lo que falta se dice al pulsar Crear o Guardar, el ✓ dice lo que viste, los grupos pueden no tener canales, duplicar no pregunta y el punto final va al unísono
 
+> **§1 y §4 enmendados por DD-219** (2026-10-21): «Crear …» y «Guardar» se apagan mientras falte algo, vuelve «Falta: …»
+> o «Listo para crear» arriba del resumen, y el aviso bajo el campo sale en gris desde el principio y en rojo al dejarlo
+> vacío (como SISMAC-4058). El índice sigue sin rojo por lo que se toca.
+>
 > **§8 enmendado por DD-218** (2026-10-20): duplicar un grupo abre «Nuevo grupo» con la copia, y el grupo existe al
 > pulsar «Crear grupo» (como SISMAC-4056); lo que se copia y lo que no, igual.
 
@@ -4280,6 +4345,9 @@ contra el código:
 
 ## DD-136 · 2026-09-29 — Las altas dicen lo que falta, hasta «Listo para crear»
 
+> **Vuelve con DD-219** (2026-10-21): «Falta: …» y «Listo para crear» otra vez arriba del resumen, ahora con cada cosa
+> llevando a su campo y en gris en vez de ámbar, y el botón apagado mientras falte algo (como SISMAC-4058).
+>
 > **Sustituida por DD-217 §4** (2026-10-20): fuera «Falta: …» y «Listo para crear» (`sc-summary-status`); lo que falta
 > lo dicen los campos y el índice al pulsar Crear, y el resultado, el toast.
 

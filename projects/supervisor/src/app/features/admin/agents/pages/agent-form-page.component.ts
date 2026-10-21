@@ -27,9 +27,13 @@ import {
   NameInplaceComponent,
   ResourceOptionComponent,
   SummaryKpiComponent,
+  SummaryStatusComponent,
+  type FaltaDelResumen,
 } from '@shared/components';
 import {
   avisosDelIndice,
+  ayudaDeObligatorio,
+  dejoElCampo,
   firmaDe,
   llegarAAncla,
   llegarASeccion,
@@ -182,6 +186,14 @@ interface FilaDelResumen extends DestinoDelResumen {
   readonly graba?: boolean;
 }
 
+/** Algo obligatorio que falta: su sección, su aviso, el sitio al que se llega y cómo se nombra en «Falta: …» (DD-219). */
+interface FaltaDelAgente {
+  readonly seccion: string;
+  readonly motivo: string;
+  readonly ancla: string | null;
+  readonly etiqueta: string;
+}
+
 /** ¿Son la misma selección, sin importar el orden? */
 function sameValues<T>(a: readonly T[], b: readonly T[]): boolean {
   if (a.length !== b.length) return false;
@@ -199,6 +211,7 @@ function sameValues<T>(a: readonly T[], b: readonly T[]): boolean {
     IconComponent,
     NameInplaceComponent,
     SummaryKpiComponent,
+    SummaryStatusComponent,
     AltaPieComponent,
     ResourceOptionComponent,
     CheckboxComponent,
@@ -525,33 +538,38 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
   /**
    * LO OBLIGATORIO, en el orden de la ficha (la revisión de agentes de producto, 2026-10-09): nombre, email, extensión, el
    * móvil si suena en el teléfono y al menos un canal, en General; al menos un grupo, un canal en cada uno y, si atiende
-   * teléfono, el grupo de sus salientes, en Grupos. Cada uno con el campo al que se llega al pulsar «Crear agente» o
-   * «Guardar» sin él (`ancla`, DD-217). De aquí salen el punto del índice, lo que dice en él y el aviso de cada campo:
-   * una sola lista, así no pueden decir cosas distintas.
+   * teléfono, el grupo de sus salientes, en Grupos. Cada uno con el campo al que se llega (`ancla`) y cómo se nombra en
+   * «Falta: …» del resumen (`etiqueta`). De aquí salen el botón apagado, el aviso gris o rojo de cada campo, el índice y
+   * el resumen: una sola lista, así no pueden decir cosas distintas (DD-219).
    */
-  private readonly faltas = computed<readonly { seccion: string; motivo: string; ancla: string | null }[]>(() => {
+  private readonly faltas = computed<readonly FaltaDelAgente[]>(() => {
     const f = this.form();
     const g = 'agent-section-general';
     const gr = 'agent-section-groups';
-    const out: { seccion: string; motivo: string; ancla: string | null }[] = [];
-    if (!f.name.trim()) out.push({ seccion: g, motivo: 'agents.errors.name_required', ancla: 'agent-name' });
-    if (!f.email.trim()) out.push({ seccion: g, motivo: 'agents.errors.email_required', ancla: 'agent-email' });
-    if (!f.extension) out.push({ seccion: g, motivo: 'agents.errors.extension_required', ancla: 'agent-ext' });
+    const s = 'agents.form.summary.';
+    const out: FaltaDelAgente[] = [];
+    if (!f.name.trim()) {
+      out.push({ seccion: g, motivo: 'agents.errors.name_required', ancla: 'agent-name', etiqueta: 'common.summary_missing_name' });
+    }
+    if (!f.email.trim()) out.push({ seccion: g, motivo: 'agents.errors.email_required', ancla: 'agent-email', etiqueta: s + 'missing_email' });
+    if (!f.extension) {
+      out.push({ seccion: g, motivo: 'agents.errors.extension_required', ancla: 'agent-ext', etiqueta: s + 'missing_extension' });
+    }
     if (this.phoneRequired() && !f.phone.trim()) {
-      out.push({ seccion: g, motivo: 'agents.errors.phone_required', ancla: 'agent-phone' });
+      out.push({ seccion: g, motivo: 'agents.errors.phone_required', ancla: 'agent-phone', etiqueta: s + 'missing_phone' });
     }
     if (f.allowedChannels.length === 0) {
-      out.push({ seccion: g, motivo: 'agents.errors.channels_required', ancla: 'agent-channels-title' });
+      out.push({ seccion: g, motivo: 'agents.errors.channels_required', ancla: 'agent-channels-title', etiqueta: s + 'missing_channel' });
     }
     // Los grupos que valen son los que le dejan algún canal, y los que no tienen ninguno (DD-217: ahí se pertenece sin
     // canal). El que se queda sin canales porque se le quitaron sale al guardar (`save`).
     const sinCanales = new Set(this.availableGroups().filter((grupo) => grupo.channels.length === 0).map((grupo) => grupo.id));
     const valen = this.linksVistos().filter((l) => l.channels.length > 0 || sinCanales.has(l.groupId));
     if (valen.length === 0) {
-      out.push({ seccion: gr, motivo: 'agents.errors.group_required', ancla: 'agent-groups-error' });
+      out.push({ seccion: gr, motivo: 'agents.errors.group_required', ancla: 'agent-groups-error', etiqueta: s + 'missing_group' });
     }
     if (valen.length > 0 && f.allowedChannels.includes('phone') && this.outboundGroupId() === null) {
-      out.push({ seccion: gr, motivo: 'agents.errors.outbound_required', ancla: 'agent-outbound' });
+      out.push({ seccion: gr, motivo: 'agents.errors.outbound_required', ancla: 'agent-outbound', etiqueta: s + 'missing_outbound' });
     }
     return out;
   });
@@ -567,9 +585,9 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
   });
 
   /**
-   * Cuándo se dice lo que falta (DD-217): al pulsar «Crear agente» o «Guardar», lo que faltaba entonces, hasta que se
-   * arregla; o desde que se abre, si lo guardado ya venía sin ello (DD-142). Duplicar es un alta: lo que llega vacío a
-   * propósito no acusa. Un email o un teléfono mal escritos, en su campo y en vivo.
+   * Cuándo se dice en rojo lo que falta (DD-219): al dejar su campo vacío, o desde que se abre si lo guardado ya venía
+   * sin ello (DD-142). Antes, en gris bajo el campo (`ayuda`). Duplicar es un alta: lo que llega vacío a propósito va
+   * en gris. Un email o un teléfono mal escritos, en su campo y en vivo.
    */
   private readonly ocasion = ocasionDeAvisar({
     editando: () => this.mode() === 'edit',
@@ -577,30 +595,62 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
     faltas: () => this.faltas().map((f) => f.motivo),
   });
 
-  /** Lo que falta y ya se dice, por su motivo: el aviso de cada campo sale de aquí. */
+  /** Lo que falta y ya se dice en rojo, por su motivo: el aviso de cada campo sale de aquí. */
   private readonly faltasDichas = computed(() => new Set(this.faltas().map((f) => f.motivo).filter((m) => this.ocasion.acusa(m))));
 
-  /** El aviso bajo un campo obligatorio vacío, al pulsar sin él (DD-217); `undefined` si no hay nada que decir. */
+  /** Lo que falta y aún va en gris (DD-219). */
+  private readonly faltasCalladas = computed(() => new Set(this.faltas().map((f) => f.motivo).filter((m) => !this.ocasion.acusa(m))));
+
+  /** El aviso rojo bajo un campo obligatorio vacío (DD-219); `undefined` si no hay nada que decir en rojo. */
   protected falta(motivo: string): string | undefined {
     return this.faltasDichas().has(motivo) ? this.translate.instant(motivo) : undefined;
   }
 
-  /** Sin canales, el aviso bajo las casillas, al pulsar sin ellos (DD-217). */
+  /** La ayuda del campo: el aviso gris de su obligatorio vacío, y detrás la ayuda propia del campo, si la tiene. */
+  protected ayuda(motivo: string, ayudaKey?: string | null): string | undefined {
+    this.currentLang();
+    const gris = this.faltasCalladas().has(motivo) ? this.translate.instant(motivo) : null;
+    return ayudaDeObligatorio(gris, ayudaKey ? this.translate.instant(ayudaKey) : undefined);
+  }
+
+  /** Se dejó el campo de un obligatorio: si sigue vacío, desde ahora en rojo. No al abrir su lista para elegir. */
+  protected dejar(event: FocusEvent, motivo: string): void {
+    if (dejoElCampo(event) && this.faltas().some((f) => f.motivo === motivo)) this.ocasion.tocar(motivo);
+  }
+
+  /** Sin canales, el aviso bajo las casillas: rojo si ya se dice, gris si aún no (DD-219). */
   protected readonly channelsError = computed(() => this.faltasDichas().has('agents.errors.channels_required'));
+  protected readonly channelsHint = computed(() => this.faltasCalladas().has('agents.errors.channels_required'));
   protected readonly groupsError = computed(() => this.faltasDichas().has('agents.errors.group_required'));
+  protected readonly groupsHint = computed(() => this.faltasCalladas().has('agents.errors.group_required'));
+
+  /** «Falta: …» del resumen, con cada cosa llevando a su campo (DD-219). */
+  protected readonly summaryMissing = computed<readonly FaltaDelResumen[]>(() => {
+    this.currentLang();
+    return this.faltas().map((f) => ({ etiqueta: this.translate.instant(f.etiqueta), seccion: f.seccion, ancla: f.ancla }));
+  });
+
+  /** «Listo para crear»: al crear o duplicar, con «Crear agente» encendido. */
+  protected readonly summaryReady = computed(() => this.mode() !== 'edit' && this.canSave());
+
+  /** Una cosa de «Falta: …»: a su campo. */
+  protected irAFalta(item: FaltaDelResumen): void {
+    this.irACampo(item.seccion, item.ancla);
+  }
 
   /** ¿Tiene teléfono móvil? «Gestión de dispositivos» (elegir navegador o teléfono en el puesto) lo necesita. */
   protected readonly hasPhone = computed(() => !!this.form().phone.trim());
 
   /**
-   * Los avisos a la vista, en el orden de la ficha: lo que falta, cuando ya se intentó crear o guardar (DD-217), y lo
-   * mal escrito (email, teléfono), en vivo. De aquí salen el punto del índice, lo que dice en él y adónde lleva pulsar.
+   * Los avisos del índice, en el orden de la ficha (DD-219): lo que falta, solo si lo guardado ya venía sin ello o se
+   * pulsó con ello pendiente (lo que se toca se dice bajo su campo, donde se mira), y lo mal escrito (email, teléfono),
+   * en vivo. De aquí salen el punto del índice, lo que dice en él y adónde lleva pulsar con algo pendiente.
    */
   private readonly avisos = computed<readonly AvisoDeFicha[]>(() => {
     this.currentLang();
     const g = 'agent-section-general';
     const out: AvisoDeFicha[] = this.faltas()
-      .filter((f) => this.faltasDichas().has(f.motivo))
+      .filter((f) => this.ocasion.acusaEnIndice(f.motivo))
       .map((f) => ({ seccion: f.seccion, texto: this.translate.instant(f.motivo), ancla: f.ancla }));
     const email = this.emailError();
     if (email) out.unshift({ seccion: g, texto: this.translate.instant(email), ancla: 'agent-email' });
@@ -918,11 +968,29 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
   );
 
 
+  /** Hay algo que no deja crear ni guardar: lo que falta o lo mal escrito. */
+  private readonly pendiente = computed(() => this.faltas().length > 0 || this.formatoMal());
+
   /**
-   * El botón se puede pulsar: al crear y al duplicar, siempre; al editar, con cambios (se apaga otra vez si deshaces).
-   * Lo que falte lo dice al pulsarlo (`save`, DD-217).
+   * El botón se puede pulsar sin nada pendiente: al crear y al duplicar, en cuanto está lo obligatorio; al editar,
+   * además, con cambios (se apaga otra vez si deshaces). Como pide SISMAC-4058 para el grupo (DD-219).
    */
-  protected readonly canSave = computed(() => this.mode() !== 'edit' || this.dirtyState.dirty());
+  protected readonly canSave = computed(() => !this.pendiente() && (this.mode() !== 'edit' || this.dirtyState.dirty()));
+
+  /**
+   * Por qué está apagado el botón, para su tooltip: lo que falta («Falta: nombre, email»), lo primero mal escrito o, al
+   * editar sin cambios, «No hay cambios que guardar» (DD-212). Vacío si se puede pulsar.
+   */
+  protected readonly motivoApagado = computed(() => {
+    this.currentLang();
+    if (this.canSave()) return '';
+    const falta = this.summaryMissing();
+    if (falta.length > 0) {
+      return this.translate.instant('common.summary_missing', { items: falta.map((f) => f.etiqueta).join(', ') });
+    }
+    const mal = this.avisos()[0];
+    return mal ? mal.texto : this.translate.instant('common.no_changes');
+  });
 
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
@@ -1187,9 +1255,10 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
    * conservaba la asignación vacía (DD-150) y la del grupo la quitaba (DD-147): la misma acción daba dos resultados.
    */
   protected async save(): Promise<void> {
-    if (!this.canSave() || this.saving()) return;
-    // Con algo pendiente no crea ni guarda: desde ahora se dice lo que falta, y se llega al primer campo (DD-217).
-    if (this.faltas().length > 0 || this.formatoMal()) {
+    if (this.saving() || (this.mode() === 'edit' && !this.dirtyState.dirty())) return;
+    // El botón está apagado con algo pendiente (DD-219), pero se llega aquí también por otro camino (Guardar del aviso de
+    // Repositorios, Ctrl+S): no crea ni guarda, dice lo que falta en rojo y lleva al primer campo.
+    if (this.pendiente()) {
       this.destinoTrasGuardar = null;
       this.ocasion.intentar();
       const primero = this.avisos()[0];

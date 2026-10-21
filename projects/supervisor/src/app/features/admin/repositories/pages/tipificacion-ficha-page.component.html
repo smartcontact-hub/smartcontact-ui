@@ -1,5 +1,4 @@
-<!-- Guardar y Deshacer suben a la barra, como en las fichas. Lo que falta lo dicen su campo y el índice al pulsar
-     (DD-217). -->
+<!-- Guardar y Deshacer suben a la barra, como en las fichas. Apagado mientras falte algo, y su tooltip dice qué (DD-219). -->
 <ng-template #topbarActions>
   @if (mode() === 'edit' && formDirty()) {
     <span class="form-save-reason sc-text-caption-regular" role="status">{{ 'common.unsaved_changes' | translate }}</span>
@@ -10,6 +9,7 @@
   <sc-button
     variant="primary"
     [disabled]="!canSave()"
+    [pTooltip]="motivoApagado()" tooltipPosition="top"
     [label]="(mode() === 'create' ? 'repositories.tipificaciones.create_submit' : 'common.save') | translate"
     (clicked)="save()"
   />
@@ -96,14 +96,16 @@
             {{ 'repositories.columns.name' | translate }}
             <span class="field__required" aria-hidden="true">*</span>
           </label>
-          <!-- Un nombre repetido, en vivo; vacío, al pulsar Crear o Guardar (DD-217). -->
+          <!-- Un nombre repetido, en vivo; vacío, en gris y en rojo al dejarlo así (DD-219). -->
           <sc-inputtext
             inputId="tip-name"
             [required]="true"
             [placeholder]="'repositories.tipificaciones.name_placeholder' | translate"
             [value]="form().name"
+            [helperText]="nameHint()"
             [error]="nameError()"
             (valueChange)="update('name', $event)"
+            (focusout)="dejarNombre($event)"
           />
         </div>
         <div class="field">
@@ -144,6 +146,11 @@
       (clicked)="niveles.anadirCategoria()"
     />
     <section class="sub-section">
+      <!-- Lo que le falta al árbol (una opción, nombres distintos): en gris mientras se rellena, en rojo si lo guardado ya
+           venía así (DD-219). -->
+      @if (avisoCategorias(); as a) {
+        <p class="sc-text-caption-regular" [class.field__error]="a.rojo" [class.field__help]="!a.rojo" [attr.role]="a.rojo ? 'alert' : null">{{ a.texto }}</p>
+      }
       <sc-tipificacion-niveles
         #niveles
         [options]="form().options"

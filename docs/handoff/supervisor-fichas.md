@@ -61,6 +61,24 @@ El de Grupos y agentes en Figma para desarrollo (2026-10-18 y 19: los ids de cad
 y «Mapa de componentes») y el del relleno de la tabla (2026-10-19, DD-214): `git show
 8c9297a7:docs/handoff/supervisor-fichas.md`; la trampa del primero sube a «Trampas del frente».
 
+## ✅ 2026-10-21 · Lo que falta, como SISMAC-4058: el botón apagado, «Falta: …» en el resumen y el aviso en gris (DD-219)
+
+> **Sello:** rama `areses/crear-gris-con-lo-que-falta` sobre `main` `4fe744e5`, un PR.
+
+- **Las cuatro fichas** (grupo, agente, usuario, tipificación): «Crear …» y «Guardar» apagados mientras falte algo, con
+  el motivo en el tooltip (`motivoApagado`); «Falta: …» o «Listo para crear» arriba del resumen, cada cosa a su campo
+  (`sc-summary-status` vuelve, con `FaltaDelResumen`).
+- **El aviso**: en gris bajo el campo desde el principio (`ayudaDeObligatorio`), en rojo al dejarlo vacío
+  (`ocasionDeAvisar().tocar`, solo si falta al salir); fuera de los campos del DS, `.field__help`. `dejoElCampo` no
+  cuenta abrir un desplegable, tampoco con su flecha y el campo ya enfocado (el foco pasa un instante por `main`; se ve
+  en `:active`, medido). El índice solo se pone rojo por lo guardado incompleto, un intento (Ctrl+S, el «Guardar» del
+  aviso de Repositorios) o un error de contenido (`acusaEnIndice`).
+- **Pruebas**: las de DD-217 que pulsaban «Crear» con algo pendiente, reescritas (18 casos en 10 ficheros), y una nueva
+  para el tooltip de lo que falta; lo gris se mira en positivo, porque un «no hay rojo» pasa antes de pintar (la
+  contraprueba lo enseñó).
+- **Pendiente**: Figma (§57, encargado a la sesión de Figma de #476) y pegar en COA el borrador 4058 al día (fuera del
+  repo).
+
 ## ✅ 2026-10-20 · Grupos como sus páginas de COA: cifra a la ficha, duplicar a un alta, eliminar varios y «Agentes asignados» sin estado (DD-218)
 
 > **Sello:** rama `areses/prototype-coa-groups-alignment-eaa42d` sobre `main` `02df3933`, un PR.

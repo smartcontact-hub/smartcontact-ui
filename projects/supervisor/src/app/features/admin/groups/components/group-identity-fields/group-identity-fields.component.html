@@ -6,8 +6,10 @@
       autocomplete="off"
       [required]="true"
       [value]="name()"
+      [helperText]="nameHint()"
       [error]="nameError() ? (nameError()! | translate) : undefined"
       (valueChange)="nameChange.emit($event ?? '')"
+      (focusout)="nameLeave.emit($event)"
       (keydown.enter)="enter.emit()"
     />
   </div>

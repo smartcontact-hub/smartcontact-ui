@@ -150,6 +150,15 @@ test('I · papeles: la ayuda bajo el campo y el subtítulo bajo el título, cada
   assert.deepEqual([...ayudas].sort(), ['g.ayuda', 'g.casilla', 'g.compartida', 'g.help']);
 });
 
+test('I · papeles: el aviso de un obligatorio (`*.errors.*`) no es una ayuda, aunque salga en gris (DD-219)', () => {
+  // El mismo texto es error en rojo (sin punto) y ayuda en gris: el punto se lo pone `ayudaDeObligatorio` al pintarlo.
+  const html = `
+    <sc-inputtext [helperText]="ayuda('a.errors.name_required')" [error]="falta('a.errors.name_required')" />
+    <sc-select [helperText]="ayuda('a.errors.phone_required') ?? ('a.form.phone_hint' | translate)" />`;
+  const { ayudas } = papelesDeTexto(html);
+  assert.deepEqual([...ayudas], ['a.form.phone_hint']);
+});
+
 test('I · punto final: la ayuda lo lleva; el subtítulo, una frase y sin él', () => {
   assert.equal(fueraDePunto('Tiempo que espera el agente entre una conversación y otra', 'ayuda'), 'ayuda sin punto final');
   assert.equal(fueraDePunto('El número que ve el cliente cuando le llaman.', 'ayuda'), null);

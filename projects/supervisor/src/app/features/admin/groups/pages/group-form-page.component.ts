@@ -10,11 +10,19 @@ import { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { BreadcrumbService, ResultadoAccionService, SectionLinksService } from '@core/services';
 import { injectLangChange } from '@core/utils/lang-change';
-import { AltaPieComponent, ChannelIconComponent, NameInplaceComponent, ResourceOptionComponent } from '@shared/components';
+import {
+  AltaPieComponent,
+  ChannelIconComponent,
+  NameInplaceComponent,
+  ResourceOptionComponent,
+  type FaltaDelResumen,
+} from '@shared/components';
 import { changedKeys, createFormDirtyState } from '@shared/utils/form-dirty-state';
 import { nombreDeCopia } from '@shared/utils/copy-name';
 import {
   avisosDelIndice,
+  ayudaDeObligatorio,
+  dejoElCampo,
   firmaDe,
   llegarAAncla,
   llegarASeccion,
@@ -379,22 +387,30 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
   /** Sin tipificaciones en Repositorios, «Tipificar conversaciones» está apagado y no se enciende (SISMAC-4058). */
   protected readonly sinTipificaciones = computed(() => this.tipificacionesStore.items().length === 0);
 
-  /** Que falte se dice en su campo al pulsar Crear o Guardar (DD-217): encender «Tipificar» no acusa. */
-  protected readonly typificationError = computed(() => this.typificationMissing() && this.ocasion.acusa('typification'));
-
-  /** Lo obligatorio que falta ahora, por clave: de aquí sale cuándo se puede decir (`ocasion`). */
-  private readonly faltas = computed<readonly string[]>(() => {
+  /**
+   * LO OBLIGATORIO, en el orden de la ficha: el nombre; la tipificación, con «Tipificar conversaciones» encendido; y el
+   * teléfono saliente, con Teléfono. Cada uno con su sección, el campo al que se llega, su aviso y cómo se nombra en
+   * «Falta: …» del resumen. De aquí salen el botón apagado, el aviso gris o rojo de cada campo, el índice y el resumen:
+   * una sola lista, así no pueden decir cosas distintas (DD-219).
+   */
+  private readonly obligatorios = computed(() => {
     const f = this.form();
     return [
-      ...(f.name.trim() ? [] : ['name']),
-      ...(this.typificationMissing() ? ['typification'] : []),
-      ...(this.phoneMissing() ? ['phone'] : []),
-    ];
+      { clave: 'name', falta: !f.name.trim(), seccion: 'group-section-general', ancla: 'group-name',
+        aviso: 'groups.errors.name_required', etiqueta: 'common.summary_missing_name' },
+      { clave: 'typification', falta: this.typificationMissing(), seccion: 'group-section-general', ancla: 'group-typification',
+        aviso: 'groups.errors.typification_required', etiqueta: 'groups.form.summary.missing_typification' },
+      { clave: 'phone', falta: this.phoneMissing(), seccion: 'group-section-distribution', ancla: 'group-phone',
+        aviso: 'groups.errors.phone_required', etiqueta: 'groups.form.summary.missing_phone' },
+    ] as const;
   });
 
+  /** Lo obligatorio que falta ahora, por clave: de aquí sale cuándo se dice en rojo (`ocasion`). */
+  private readonly faltas = computed<readonly string[]>(() => this.obligatorios().filter((o) => o.falta).map((o) => o.clave));
+
   /**
-   * Cuándo se dice lo que falta (DD-217): al pulsar Crear o Guardar, lo que faltaba entonces, hasta que se arregla; o
-   * desde que se abre, si lo guardado ya venía sin ello (DD-142). Mientras se rellena, nada en rojo.
+   * Cuándo se dice en rojo lo que falta (DD-219): al dejar su campo vacío, o desde que se abre si lo guardado ya venía
+   * sin ello (DD-142). Antes, en gris bajo el campo (`ayudaDe`).
    */
   private readonly ocasion = ocasionDeAvisar({
     editando: () => this.mode() === 'edit',
@@ -402,16 +418,52 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
     faltas: () => this.faltas(),
   });
 
+  /** La clave del aviso rojo de un obligatorio: falta y ya se dice (DD-219). */
+  private errorDe(clave: string): string | null {
+    const o = this.obligatorios().find((x) => x.clave === clave);
+    return o?.falta && this.ocasion.acusa(clave) ? o.aviso : null;
+  }
+
+  /** El aviso gris de un obligatorio que falta y aún no se dice en rojo, con la ayuda propia del campo detrás. */
+  protected ayudaDe(clave: string, ayuda?: string): string | undefined {
+    this.lang();
+    const o = this.obligatorios().find((x) => x.clave === clave);
+    const gris = o?.falta && !this.ocasion.acusa(clave) ? this.translate.instant(o.aviso) : null;
+    return ayudaDeObligatorio(gris, ayuda ? this.translate.instant(ayuda) : undefined);
+  }
+
+  /** Se dejó el campo de un obligatorio: si sigue vacío, desde ahora en rojo. No al abrir su lista para elegir. */
+  protected dejar(event: FocusEvent, clave: string): void {
+    if (dejoElCampo(event) && this.faltas().includes(clave)) this.ocasion.tocar(clave);
+  }
+
+  /** El aviso rojo de la tipificación: encendida sin elegir y ya dicha (DD-219). */
+  protected readonly typificationError = computed(() => this.errorDe('typification') !== null);
+
   /**
    * Con Teléfono, el teléfono saliente es obligatorio, como el nombre (DD-142): es el número que ven los clientes
    * cuando llama un agente del grupo. Sin Teléfono no se pide.
    */
   protected readonly phoneMissing = computed(() => this.hasPhone() && this.form().phone.trim().length === 0);
 
-  /** El aviso bajo el teléfono saliente, al pulsar Crear o Guardar sin él (DD-217). */
-  protected readonly phoneError = computed<string | null>(() =>
-    this.phoneMissing() && this.ocasion.acusa('phone') ? 'groups.errors.phone_required' : null,
-  );
+  /** El aviso rojo bajo el teléfono saliente (DD-219). */
+  protected readonly phoneError = computed<string | null>(() => this.errorDe('phone'));
+
+  /** «Falta: …» del resumen, con cada cosa llevando a su campo (DD-219). Un nombre repetido no falta: va en su campo. */
+  protected readonly summaryMissing = computed<readonly FaltaDelResumen[]>(() => {
+    this.lang();
+    return this.obligatorios()
+      .filter((o) => o.falta)
+      .map((o) => ({ etiqueta: this.translate.instant(o.etiqueta), seccion: o.seccion, ancla: o.ancla }));
+  });
+
+  /** «Listo para crear»: en el alta, con «Crear grupo» encendido. */
+  protected readonly summaryReady = computed(() => this.mode() === 'create' && this.canSave());
+
+  /** Una cosa de «Falta: …»: a su campo. */
+  protected irAFalta(item: FaltaDelResumen): void {
+    this.irACampo(item.seccion, item.ancla);
+  }
 
   /** La primera cola con un tamaño que no vale, para llevar a su campo. */
   private readonly colaMal = computed<QueueChannel | null>(() => {
@@ -423,21 +475,22 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
   });
 
   /**
-   * Los avisos a la vista, en el orden de la ficha: lo que falta, cuando ya se intentó crear o guardar (DD-217), y lo
-   * que está mal escrito, en vivo (un nombre repetido, una cola imposible). De aquí salen el punto del índice, lo que
-   * dice cada sección en él y adónde lleva pulsar Crear o Guardar.
+   * Los avisos del índice, en el orden de la ficha (DD-219): lo que falta, solo si lo guardado ya venía sin ello o se
+   * pulsó con ello pendiente (lo que se toca se dice bajo su campo, donde se mira), y lo que está mal escrito, en vivo
+   * (un nombre repetido, una cola imposible). De aquí salen el punto del índice, lo que dice cada sección en él y
+   * adónde lleva pulsar con algo pendiente.
    */
   private readonly avisos = computed<readonly AvisoDeFicha[]>(() => {
     this.lang();
     const t = (key: string) => this.translate.instant(key);
     const out: AvisoDeFicha[] = [];
-    const nombre = this.nameError();
-    if (nombre) out.push({ seccion: 'group-section-general', texto: t(nombre), ancla: 'group-name' });
-    if (this.typificationError()) {
-      out.push({ seccion: 'group-section-general', texto: t('groups.errors.typification_required'), ancla: 'group-typification' });
+    for (const o of this.obligatorios()) {
+      if (o.clave === 'name' && this.nameTaken()) {
+        out.push({ seccion: o.seccion, texto: t('groups.errors.name_taken'), ancla: o.ancla });
+      } else if (o.falta && this.ocasion.acusaEnIndice(o.clave)) {
+        out.push({ seccion: o.seccion, texto: t(o.aviso), ancla: o.ancla });
+      }
     }
-    const telefono = this.phoneError();
-    if (telefono) out.push({ seccion: 'group-section-distribution', texto: t(telefono), ancla: 'group-phone' });
     const cola = this.colaMal();
     if (cola) {
       out.push({ seccion: 'group-section-distribution', texto: t('groups.form.advanced.queue_invalid'), ancla: `group-${cola}-queue-size` });
@@ -473,11 +526,10 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
     return out;
   });
 
-  /** El aviso bajo el nombre: repetido, en vivo (es contenido); vacío, al pulsar Crear o Guardar (DD-217). */
+  /** El aviso rojo bajo el nombre: repetido, en vivo (es contenido); vacío, al dejarlo así (DD-219). */
   protected readonly nameError = computed<string | null>(() => {
     if (this.nameTaken()) return 'groups.errors.name_taken';
-    if (this.form().name.trim().length === 0 && this.ocasion.acusa('name')) return 'groups.errors.name_required';
-    return null;
+    return this.errorDe('name');
   });
 
   /**
@@ -532,10 +584,10 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
   protected readonly initial = signal<Group | null>(null);
   protected readonly form = signal<FormState>(this.emptyForm());
   /*
-   * R6 · una sola política de error (DD-217). Un error de CONTENIDO (un nombre repetido, una cola imposible) se dice en
-   * vivo, en su campo. Lo que FALTA no es un error mientras se rellena: se dice al pulsar Crear o Guardar, en su campo y
-   * en el índice, con su texto (`avisos`). Crear está siempre activo y Guardar, en cuanto hay cambios: un botón gris
-   * con su motivo al lado obligaba a leer la barra para saber qué faltaba y dónde (2026-10-20).
+   * R6 · una sola política de error (DD-219). Un error de CONTENIDO (un nombre repetido, una cola imposible) se dice en
+   * vivo, en su campo. Lo que FALTA no es un error mientras se rellena: va en gris bajo su campo desde el principio y en
+   * rojo al dejarlo vacío, y «Falta: …» del resumen lo dice entero, con cada cosa llevando a su campo. «Crear» y
+   * «Guardar» se apagan mientras falte algo, y su tooltip dice qué (`motivoApagado`).
    */
   protected readonly saving = signal(false);
 
@@ -580,13 +632,28 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
   }
 
   /**
-   * El botón se puede pulsar: en el alta, siempre; al editar, con cambios (se apaga otra vez si deshaces). Lo que falte
-   * lo dice al pulsarlo (`save`).
+   * El botón se puede pulsar sin nada pendiente: en el alta, en cuanto está lo obligatorio; al editar, además, con
+   * cambios (se apaga otra vez si deshaces). Como pide SISMAC-4058 (DD-219).
    */
-  protected readonly canSave = computed(() => this.mode() === 'create' || this.dirtyState.dirty());
+  protected readonly canSave = computed(() => !this.pendiente() && (this.mode() === 'create' || this.dirtyState.dirty()));
 
   /** Hay algo que no deja crear ni guardar: lo que falta o lo que está mal escrito. */
   private readonly pendiente = computed(() => this.faltas().length > 0 || this.nameTaken() || this.queueInvalid());
+
+  /**
+   * Por qué está apagado el botón, para su tooltip: lo que falta («Falta: nombre, teléfono saliente»), lo primero mal
+   * escrito o, al editar sin cambios, «No hay cambios que guardar» (DD-212). Vacío si se puede pulsar.
+   */
+  protected readonly motivoApagado = computed(() => {
+    this.lang();
+    if (this.canSave()) return '';
+    const falta = this.summaryMissing();
+    if (falta.length > 0) {
+      return this.translate.instant('common.summary_missing', { items: falta.map((f) => f.etiqueta).join(', ') });
+    }
+    const mal = this.avisos()[0];
+    return mal ? mal.texto : this.translate.instant('common.no_changes');
+  });
 
   /* Chat es la MADRE de Web Chat y WhatsApp (visión de producto de grupos, 2026-09-25): comparten
    * estrategia y bloque en Distribución. Las claves no cambian: `chat` es Web Chat. */
@@ -1247,8 +1314,9 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
   });
 
   protected save(): void {
-    if (!this.canSave() || this.saving()) return;
-    // Con algo pendiente no crea ni guarda: desde ahora se dice lo que falta, y se llega al primer campo (DD-217).
+    if (this.saving() || (this.mode() === 'edit' && !this.dirtyState.dirty())) return;
+    // El botón está apagado con algo pendiente (DD-219), pero se llega aquí también por otro camino (Guardar del aviso de
+    // Repositorios, Intro): no crea ni guarda, dice lo que falta en rojo y lleva al primer campo.
     if (this.pendiente()) {
       this.destinoTrasGuardar = null;
       this.ocasion.intentar();

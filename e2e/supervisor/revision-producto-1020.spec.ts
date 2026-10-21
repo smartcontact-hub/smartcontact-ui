@@ -243,7 +243,9 @@ test('duplicar un agente: «Tom Hanks (1)», como un grupo; la copia es el punto
   const barra = page.locator('sc-top-bar');
   // El nombre de la copia dice de quién es, como al duplicar un grupo.
   await expect(page.locator('h1')).toContainText('Tom Hanks (1)');
-  await expect(barra.getByRole('button', { name: 'Crear agente' })).toBeEnabled();
+  // El email y la extensión no se copian (son únicos): «Crear agente» apagado, y el resumen dice qué falta (DD-219).
+  await expect(barra.getByRole('button', { name: 'Crear agente' })).toBeDisabled();
+  await expect(page.locator('.resumen__status')).toContainText('Falta: email, extensión');
   await expect(barra.getByRole('button', { name: 'Deshacer' })).toHaveCount(0);
   // Con un cambio, «Deshacer» vuelve a la copia, no al formulario vacío: los grupos siguen.
   const grupos = await page.locator('.ficha-summary').textContent();

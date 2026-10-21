@@ -19,7 +19,8 @@ import { columnasACadaAncho, disableAnimations, elegirTelefonoSaliente, forceLig
  *   4. Los grupos no llevan cara (2026-09-23): ni foto en la ficha ni avatar en las listas.
  *   5. (Quitado el 2026-10-09, DD-187: el aviso de «abierta en otra pestaña» ya no existe.)
  *   6. El alta es la MISMA ficha, con el mismo índice (DD-143): abre en General, «Siguiente» guía por las secciones,
- *      sin puertas (DD-217), y crear deja en la edición, en la sección abierta.
+ *      sin puertas (DD-217), «Crear grupo» apagado hasta tener lo obligatorio (DD-219), y crear deja en la edición,
+ *      en la sección abierta.
  */
 
 test.beforeEach(async ({ page }) => {
@@ -47,7 +48,7 @@ test('el índice lateral gobierna la ficha, y abre por General', async ({ page }
   await expect(page.locator('#group-section-general')).toHaveCount(0);
 });
 
-test('crear es la misma ficha: abre en General con Teléfono, dice lo que falta al pulsar «Crear grupo» y crea desde donde está', async ({
+test('crear es la misma ficha: abre en General con Teléfono, «Crear grupo» apagado hasta tener lo obligatorio, y crea desde donde está', async ({
   page,
 }) => {
   // Aunque la dirección pida otra sección: en el alta, la abierta no vive en la dirección.
@@ -55,34 +56,35 @@ test('crear es la misma ficha: abre en General con Teléfono, dice lo que falta 
   const general = page.locator('#group-section-general');
   await expect(indice(page).locator('.form-nav__item[aria-current="page"] .form-nav__label')).toHaveText('General');
   await expect(page.locator('h1')).toHaveText('Nuevo grupo');
-  // Nace con Teléfono marcado, y nada acusa al abrir.
+  // Nace con Teléfono marcado, y lo que falta se dice en gris, no en rojo (DD-219).
   const telefono = general.locator('sc-checkbox').filter({ hasText: /^\s*Teléfono\s*$/ });
   await expect(telefono.locator('input[type=checkbox]')).toHaveAttribute('aria-checked', 'true');
-  await expect(general).not.toContainText('El nombre es obligatorio');
+  await expect(general.locator('.sc-field__msg:not(.sc-field__msg--error)').filter({ hasText: 'El nombre es obligatorio' })).toHaveCount(1);
+  await expect(general.locator('.sc-field__msg--error')).toHaveCount(0);
 
-  // «Crear grupo», arriba, siempre activo (DD-217): sin nombre no crea, lo dice en su campo y lleva el foco a él.
+  // «Crear grupo», arriba, apagado mientras falte algo (DD-219).
   const crear = page.getByRole('button', { name: 'Crear grupo' });
-  await expect(crear).toBeEnabled();
-  await crear.click();
-  await expect(page).toHaveURL(/admin\/grupos\/crear/);
-  await expect(general).toContainText('El nombre es obligatorio');
-  await expect(page.locator('#group-name')).toBeFocused();
+  await expect(crear).toBeDisabled();
 
-  // Un nombre que ya existe se dice en vivo.
+  // Un nombre que ya existe se dice en vivo, y tampoco deja crear.
   await page.locator('#group-name').fill('campaigns');
   await expect(general).toContainText('Ya hay un grupo con este nombre');
+  await expect(crear).toBeDisabled();
 
-  // Sin canales no falta nada en General: son opcionales (DD-217).
+  // Sin canales no falta nada en General: son opcionales (DD-217), y sin Teléfono tampoco hace falta su número.
   await page.locator('#group-name').fill(`E2E Alta ${Date.now()}`);
   await telefono.click();
   await expect(general).not.toContainText('Hace falta al menos un canal');
+  await expect(crear).toBeEnabled();
   await telefono.click();
+  await expect(crear).toBeDisabled();
 
   // «Siguiente» lleva a la sección siguiente, y crear deja en su edición EN esa sección. Con Teléfono, su número es
   // obligatorio (DD-142), y se elige allí.
   await page.getByRole('button', { name: 'Siguiente' }).click();
   await expect(page.locator('#group-section-distribution')).toBeVisible();
   await elegirTelefonoSaliente(page);
+  await expect(crear).toBeEnabled();
   await crear.click();
   await expect(page).toHaveURL(/admin\/grupos\/editar\/\d+\?seccion=distribucion$/);
   await expect(page.locator('#group-section-distribution')).toBeVisible();

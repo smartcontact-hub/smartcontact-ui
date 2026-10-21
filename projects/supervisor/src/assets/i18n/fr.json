@@ -1009,6 +1009,10 @@
     "no_changes": "Aucune modification à enregistrer",
     "unsaved_changes": "Modifications non enregistrées",
     "summary": "Résumé",
+    "summary_missing": "Manquant : {{items}}",
+    "summary_missing_label": "Manquant :",
+    "summary_missing_name": "nom",
+    "summary_ready": "Prêt à créer",
     "summary_of": "{{value}} sur {{total}}",
     "actions": "Actions",
     "select_row": "Sélectionner {{name}}",
@@ -1814,6 +1818,9 @@
         "apply_body_other": "Cela change {{count}} cases dans Accès. Si vous les gardez, le type change quand même et Accès reste tel quel.",
         "apply": "Appliquer le modèle",
         "keep": "Garder les cases"
+      },
+      "summary": {
+        "missing_email": "e-mail"
       }
     },
     "errors": {
@@ -2104,7 +2111,9 @@
         "paused_count": "{{count}} désactivés",
         "routing": "Distribution",
         "no_number": "Aucun numéro",
-        "resources": "Ressources"
+        "resources": "Ressources",
+        "missing_phone": "téléphone sortant",
+        "missing_typification": "typification"
       },
       "channels": {
         "title": "Canaux",
@@ -2427,7 +2436,13 @@
       "summary": {
         "no_groups": "Sans groupes",
         "groups_active": "Activé dans les groupes",
+        "missing_extension": "extension",
+        "missing_phone": "téléphone portable",
         "outbound": "Sortants",
+        "missing_email": "e-mail",
+        "missing_channel": "un canal",
+        "missing_group": "un groupe",
+        "missing_outbound": "un groupe pour les appels sortants",
         "channels": "Canaux",
         "no_channels": "Aucun canal",
         "no_enabled_groups": "Aucun groupe activé",

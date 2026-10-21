@@ -75,25 +75,29 @@ export function seccionesDeAlta(opts: {
 }
 
 export interface OcasionDeAvisar {
-  /** ¿Se puede decir ya, bajo su campo y en el índice, que falta `falta`? */
+  /** ¿Se dice ya en rojo, bajo su campo, que falta `falta`? Si no, y falta, su aviso va en gris (`ayudaDeObligatorio`). */
   acusa(falta: string): boolean;
-  /** Se pulsó Crear o Guardar: desde ahora se dice lo que falta en este momento, hasta que se arregle. */
+  /** ¿Lo dice ya el índice? Como `acusa`, sin lo tocado: eso se dice bajo el campo, donde se está mirando. */
+  acusaEnIndice(falta: string): boolean;
+  /** Se dejó el campo de `falta`: si sigue vacío, desde ahora se dice en rojo, también si se vacía otra vez. */
+  tocar(falta: string): void;
+  /** Se pulsó Crear o Guardar con algo pendiente: desde ahora se dice lo que falta en este momento, hasta que se arregle. */
   intentar(): void;
-  /** Vuelta a lo guardado (Deshacer) o guardado: lo pendiente vuelve a callar hasta el siguiente intento. */
+  /** Vuelta a lo guardado (Deshacer) o guardado: lo pendiente vuelve a callar en gris. */
   olvidar(): void;
 }
 
 /**
- * CUÁNDO SE DICE QUE FALTA ALGO (DD-217, que sustituye la «ocasión» de DD-199): al pulsar Crear o Guardar. Un
- * obligatorio vacío no es un error, es algo por rellenar, y decirlo en rojo mientras se rellena pone señales donde la
- * persona no mira: el 2026-10-20 un punto rojo en Distribución y colas (el teléfono saliente) salía al volver a
- * General, y al borrar el nombre parecía causado por él.
+ * CUÁNDO SE DICE EN ROJO QUE FALTA ALGO (DD-219, que enmienda DD-217 §1). «Crear» y «Guardar» se apagan mientras falte
+ * algo y el resumen dice qué («Falta: nombre, teléfono saliente»), como la especificación de COA. Bajo cada campo
+ * obligatorio vacío, su aviso sale desde el principio, pero en gris: es algo por rellenar, no un error de quien acaba
+ * de abrir la ficha. Pasa a rojo al dejar el campo vacío (`tocar`), y entonces se queda en vivo hasta que se rellena.
  *
- * Al pulsar se apunta lo que falta en ese momento, y eso se dice (campo, índice con su texto) hasta que se arregla.
- * Lo que falte después (un campo que aparece al marcar algo) nace callado hasta el siguiente intento. Lo guardado que
- * ya venía sin algo se dice desde que se abre la ficha (DD-142): falta de verdad, y no lo ha causado quien la abre.
- * Duplicar un agente es un alta. Un error de CONTENIDO (repetido, mal escrito) no espera: va en vivo, y no pasa por
- * aquí.
+ * El índice no se pone en rojo por lo tocado: el 2026-10-20 un punto rojo en Distribución y colas salía al volver a
+ * General, y al borrar el nombre parecía causado por él (DD-217). Lo guardado que ya venía sin algo se dice desde que
+ * se abre (DD-142): falta de verdad, y no lo ha causado quien la abre. Pulsar con algo pendiente (Intro en un campo)
+ * apunta lo que faltaba, como antes. Duplicar un agente es un alta. Un error de CONTENIDO (repetido, mal escrito) no
+ * espera: va en vivo, y no pasa por aquí.
  *
  * `faltas` son las claves de lo que falta AHORA. Lo guardado es lo que había la última vez que la ficha no tenía cambios
  * (al abrirla, al guardar o al deshacer), así que no hace falta copiarlo en cada sitio que la marca como guardada.
@@ -111,12 +115,46 @@ export function ocasionDeAvisar(opts: {
     if (!opts.cambios()) faltabaGuardado.set(new Set(opts.faltas()));
   });
   const intento = signal<ReadonlySet<string> | null>(null);
+  const tocados = signal<ReadonlySet<string>>(new Set());
   const ninguna: ReadonlySet<string> = new Set();
+  const guardado = () => (opts.editando() ? faltabaGuardado() : ninguna);
   return {
-    acusa: (falta: string) => seDice(falta, intento(), opts.editando() ? faltabaGuardado() : ninguna),
+    acusa: (falta: string) => seDice(falta, intento(), guardado(), tocados()),
+    acusaEnIndice: (falta: string) => seDice(falta, intento(), guardado()),
+    tocar: (falta: string) => {
+      if (!tocados().has(falta)) tocados.update((t) => new Set(t).add(falta));
+    },
     intentar: () => intento.set(new Set(opts.faltas())),
-    olvidar: () => intento.set(null),
+    olvidar: () => {
+      intento.set(null);
+      tocados.set(new Set());
+    },
   };
+}
+
+/**
+ * La ayuda gris de un obligatorio que aún no se dice en rojo (DD-219): su aviso («El nombre es obligatorio») y, detrás,
+ * la ayuda propia del campo, si la tiene. Sin aviso, la ayuda sola. El aviso se escribe sin punto, porque en rojo es un
+ * error; en gris es una ayuda, y acaba en punto como las demás (DD-217).
+ */
+export function ayudaDeObligatorio(aviso: string | null | undefined, ayuda?: string): string | undefined {
+  if (!aviso) return ayuda || undefined;
+  const frase = /[.!?…:]$/.test(aviso.trim()) ? aviso : `${aviso}.`;
+  return ayuda ? `${frase} ${ayuda}` : frase;
+}
+
+/**
+ * ¿Se dejó de verdad el campo? Un desplegable de PrimeNG pinta su lista en otro sitio del documento (`appendTo`), y
+ * abrirla para elegir mueve el foco ahí: eso no es dejar el campo vacío, es estar eligiendo (DD-219). Pulsar su flecha
+ * con el campo ya enfocado manda el foco un instante a `main` y la lista lo devuelve; mientras, el campo está `:active`.
+ */
+export function dejoElCampo(event: FocusEvent): boolean {
+  const campo = event.currentTarget;
+  if (campo instanceof Element && campo.matches(':active')) return false;
+  const destino = event.relatedTarget;
+  if (!(destino instanceof Element)) return true;
+  if (campo instanceof Element && campo.contains(destino)) return false;
+  return !destino.closest('.p-overlay, .p-select-overlay, .p-multiselect-overlay, [role="listbox"]');
 }
 
 /** Un aviso a la vista: de qué sección es, lo que dice (ya traducido) y el campo al que se llega (`null`: al título de

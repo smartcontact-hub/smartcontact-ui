@@ -10,8 +10,8 @@ import { disableAnimations, elegirTelefonoSaliente, forceLightTheme, goto } from
  * asignados a la cuenta, los que tienen call blending. Hasta hoy se podía dejar vacío y se podía escribir cualquiera.
  *
  * Lo que fija:
- *   1. En el alta, «Crear grupo» sin él no crea: lo dice su campo y el índice, y lleva a él (DD-217); con uno elegido,
- *      se crea.
+ *   1. En el alta, sin él «Crear grupo» está apagado y el resumen dice «Falta: teléfono saliente», que lleva a su campo,
+ *      donde se dice en gris (DD-219); con uno elegido, se crea.
  *   2. Al editar un grupo con Teléfono y sin número (el duplicado de antes lo vaciaba), su campo lo dice y su sección
  *      lleva el punto del índice con su texto, desde que se abre.
  *   3. Se elige de una lista cerrada: no hay campo donde escribir, y su ayuda ya no dice «escríbelo».
@@ -32,16 +32,20 @@ const boton = (page: Page, nombre: string) => page.getByRole('button', { name: n
 /** El campo entero (desplegable, ayuda y error), por su desplegable. */
 const campoTelefono = (page: Page, id = 'group-phone') => page.locator(`sc-select:has(#${id})`);
 
-test('alta · con Teléfono, «Crear grupo» sin teléfono saliente no crea: lo dice su campo y lleva a él', async ({ page }) => {
+test('alta · con Teléfono y sin teléfono saliente, «Crear grupo» apagado: «Falta: teléfono saliente» lleva a su campo', async ({
+  page,
+}) => {
   await goto(page, 'admin/grupos/crear');
   const nombre = `E2E Saliente ${Date.now()}`;
   await page.locator('#group-name').fill(nombre);
-  // Teléfono ya viene marcado, y su campo está en Distribución y colas: nada lo dice hasta pulsar.
+  // Teléfono ya viene marcado, y su campo está en Distribución y colas: lo dice el resumen, no el índice en rojo.
+  const estado = page.locator('.resumen__status');
+  await expect(estado).toContainText('Falta: teléfono saliente');
   await expect(page.locator('sc-form-section-nav .form-nav__item--has-error')).toHaveCount(0);
-  await boton(page, 'Crear grupo').click();
-  await expect(page).toHaveURL(/admin\/grupos\/crear/);
-  await expect(campoTelefono(page)).toContainText(OBLIGATORIO);
+  await expect(boton(page, 'Crear grupo')).toBeDisabled();
+  await estado.getByRole('button', { name: 'teléfono saliente' }).click();
   await expect(page.locator('#group-phone')).toBeFocused();
+  await expect(campoTelefono(page).locator('.sc-field__msg:not(.sc-field__msg--error)')).toContainText(OBLIGATORIO);
 
   await elegirTelefonoSaliente(page, '918371548');
   await expect(campoTelefono(page)).not.toContainText(OBLIGATORIO);

@@ -277,7 +277,8 @@
     max-inline-size: 100%;
   }
 
-  &__error {
+  &__error,
+  &__help {
     display: block;
     /* Reserve space so toggling validation doesn't shift layout (DD#16). */
     min-height: 1lh;
@@ -286,6 +287,12 @@
     /* El de caption (18), como las ayudas: 1.25 daba 15, fuera de la rampa (barrido de tipografía, 2026-10-09). */
     line-height: var(--sc-line-height-caption);
     color: var(--sc-text-danger);
+  }
+
+  /* El aviso de un obligatorio que aún va en gris (DD-219), bajo un control que no es un campo del DS (unas casillas,
+   * una tabla): la misma línea que `__error`, en el gris de los rótulos, y pasa a `__error` al dejarlo vacío. */
+  &__help {
+    color: var(--sc-text-secondary);
   }
 }
 
