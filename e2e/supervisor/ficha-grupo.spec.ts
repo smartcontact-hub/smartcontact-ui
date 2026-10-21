@@ -147,16 +147,16 @@ test('el índice es el de Contact Center, y las tres columnas arrancan a la mism
   expect(m.clases).toContain('ficha-rail--summary');
   expect(m.clases).not.toContain('ficha-tabs');
   expect(m.padding).toBe('28px');
-  // El índice, el de Contact Center: 196 y fijo con el mismo `top` que el relleno de arriba.
-  expect(m.rail.ancho).toBe(196);
+  // El índice, el de Contact Center: en la caja, 235 (DD-221), y fijo con el mismo `top` que el relleno de arriba.
+  expect(m.rail.ancho).toBe(235);
   expect(m.rail.pos).toBe('sticky');
   expect(m.rail.top).toBe('28px');
   // El resumen, a la derecha: 240, con el hueco de siempre (28) entre las tres columnas. A 1440 el
-  // contenido mide 812, sitio de sobra para la tabla de agentes con sus cuatro canales.
+  // contenido mide 773, sitio de sobra para la tabla de agentes con sus cuatro canales.
   expect(m.resumen.ancho).toBe(240);
   expect(Math.round(m.main.x - m.rail.derecha)).toBe(28);
   expect(Math.round(m.resumen.x - m.main.derecha)).toBe(28);
-  expect(m.main.ancho).toBe(812);
+  expect(m.main.ancho).toBe(773);
   // Desde DD-170 el nombre va arriba de la columna del índice, y la sección y el resumen arrancan a su altura. De
   // DD-144 a DD-170 iba en la columna del contenido, encima de la sección, que arrancaba 56 px más abajo.
   expect(m.h1.arriba).toBe(m.rail.arriba);
@@ -192,7 +192,7 @@ test('en un portátil, al bajar hasta el final de la sección más larga, el ín
   expect(m.resumen.bottom).toBeLessThanOrEqual(m.alto + 10);
 });
 
-test('por debajo de 1340 el resumen pasa a una franja encima del contenido, en su columna, que vuelve a medir 920', async ({ page }) => {
+test('por debajo de 1340 el resumen pasa a una franja encima del contenido, en su columna, que vuelve a medir 881', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 720 });
   await goto(page, 'admin/grupos/editar/11');
 
@@ -203,7 +203,7 @@ test('por debajo de 1340 el resumen pasa a una franja encima del contenido, en s
   expect(m.resumen.bottom).toBeLessThanOrEqual(m.main.top);
   // En la columna del contenido (DD-170): la del índice la ocupan el nombre y el índice, de arriba abajo.
   expect(Math.round(m.resumen.left)).toBe(Math.round(m.main.left));
-  expect(Math.round(m.main.width)).toBe(920);
+  expect(Math.round(m.main.width)).toBe(881);
 });
 
 test('en General, los canales caen en las tres columnas de los campos de encima, en cualquier ancho', async ({ page }) => {
