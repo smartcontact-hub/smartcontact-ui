@@ -7,14 +7,17 @@ el puente formal Figma ↔ código; hoy ese puente en este repo es solo convenci
 
 ## Estado: publicado (2026-10-21)
 
-18 componentes mapeados en [`code-connect/`](../code-connect/), todos del archivo de la librería
-(`Smart-Contact-Design-System`): `button`, `inputtext`, `toggleswitch`, `checkbox`, `divider`, `Section`
-(`sc-section-card`), `.Subsection`, `card`, `chip`, `tag`, `select`, `multiselect`, `breadcrumb`, `toast` y los
-cuatro del sidebar. Las maquetas del Supervisor usan instancias de esa librería, así que los mapeos les valen.
+24 componentes mapeados en [`code-connect/`](../code-connect/), todos del archivo de la librería
+(`Smart-Contact-Design-System`): `button`, `inputtext`, `textarea`, `inputnumber`, `selectbutton`, `toggleswitch`,
+`checkbox`, `divider`, `Section` (`sc-section-card`), `.Subsection`, `message`, `dialog`, `datatable`, `card`,
+`chip`, `tag`, `select`, `multiselect`, `breadcrumb`, `toast` y los cuatro del sidebar. Las maquetas del
+Supervisor usan instancias de esa librería, así que los mapeos les valen.
 
-Sin mapear aún: los masters con uso en el Supervisor (`selectbutton`, `datatable`, `inputnumber`, `dialog`,
-`message`, `textarea`…). `datatable` y `breadcrumb` tienen DOS masters en la librería: decide cuál manda antes de
-mapear. `sc-empty-state`, `sc-celda-vacia`, `sc-list-page` y `sc-search` no tienen master en Figma.
+Mapeables y aún sin mapear: los de Resumen del Supervisor (`group-summary`, `summary-status`, `channel-icon`,
+`fact-row`, `icon-tile`), `fileupload` y `drawer`. `datatable` mapea el master vivo (`15374:66885`, 18
+instancias), no el de la página archivada (`374:16034`). `sc-empty-state`, `sc-celda-vacia`, `sc-list-page`,
+`sc-search`, `sc-group-popover`, `sc-form-section-nav`, `sc-option-cards`, `sc-slot`, `sc-resource-option`,
+`sc-summary-kpi`, `sc-alta-pie`, `sc-name-inplace` y `sc-inputtags` no tienen master en Figma.
 
 Cuando Figma tiene tres booleanos y el código un solo valor (en `button`, Outlined/Text/Link frente a
 `appearance`), el snippet lleva un comentario con el valor en vez de adivinar.
