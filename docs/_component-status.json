@@ -1823,7 +1823,7 @@
       ],
       "retirado": null,
       "usedInSupervisor": 0,
-      "cuando": null,
+      "cuando": "Para decir dónde está cada sección de un recorrido (sin ver, completa, con algo por hacer) en el índice de un alta. Un estado suelto de un campo es su mensaje (`sc-field-msg`); una marca de cambios sin guardar, el punto del índice.",
       "sobreObsoleto": []
     },
     {

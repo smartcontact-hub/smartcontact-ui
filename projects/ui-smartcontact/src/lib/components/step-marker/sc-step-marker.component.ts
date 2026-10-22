@@ -48,6 +48,7 @@ export type ScStepMarkerState = 'pendiente' | 'nuevo' | 'actual' | 'hecha' | 'er
   },
 })
 export class ScStepMarkerComponent {
+  /** El estado del paso: `pendiente`, `nuevo`, `actual`, `hecha` o `error`. */
   readonly state = input<ScStepMarkerState>('pendiente');
 
   /** El halo de éxito: solo la primera vez que llega a `hecha` con el marcador ya pintado. Volver a una sección hecha y
