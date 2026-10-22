@@ -87,8 +87,7 @@ DD-219, sin trampas propias): `git show fdf913d4:docs/handoff/supervisor-fichas.
   (`vacio`); índice del alta con marcadores (`sectionStates`, `faltasPorSeccion`, `OBLIGATORIOS_DE`) y sin «Falta: …»
   sobre el resumen; «Deshacer» llama a `alta.reiniciar()`; salientes solo con `CLIENTE_CON_CALL_BLENDING`; singular del
   aviso de quitar canales (`removeBodyKey`).
-- **Pruebas**: `agentes-como-coa-4060-4062.spec.ts` nueva; al día las del alta de agente que fijaban el ✓ suelto y
-  «Falta: …» sobre el resumen.
+- **Pruebas**: `agentes-como-coa-4060-4062.spec.ts` nueva; al día las que fijaban el ✓ suelto y «Falta: …».
 - **Pendiente de producto**: el tono de Administrativo y Post-conversando; el Kit no los trae como etiqueta.
 
 ## ✅ 2026-10-22 · Repaso de Grupos entre COA, Figma y prototipo; «Editar en Repositorios» pregunta guardar (DD-224)
