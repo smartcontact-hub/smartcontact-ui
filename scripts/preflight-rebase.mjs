@@ -92,7 +92,11 @@ export function medirRebase(cwd = process.cwd()) {
   let esAncestro = false;
   if (hayRemoto) {
     try {
-      git(cwd, ['fetch', '--quiet', 'origin', 'main']);
+      // Con `main`, las etiquetas `archive/*`: el sello de un hand-off que vive en una rama archivada a propósito solo
+      // existe en ellas (`handoff-seal.mjs`), y un `git fetch` corriente no trae etiquetas de una historia que no está
+      // en ninguna rama. Sin ellas, `docs:coherence` cantaba dos sellos buenos como fantasmas y paraba la cadena; así
+      // se subió el #494 saltándola, y con ella el aviso de su captura (medido el 2026-10-22 en un clon sin etiquetas).
+      git(cwd, ['fetch', '--quiet', 'origin', 'main', '+refs/tags/archive/*:refs/tags/archive/*']);
       fetchOk = true;
     } catch {
       fetchOk = false;

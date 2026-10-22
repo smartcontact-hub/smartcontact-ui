@@ -18,9 +18,10 @@ import { PREFLIGHT, carpetasPorSegmento, evaluar, escrituras } from '../hooks/ba
 // `listarPreflights: () => []`: sin él, un build en un test lee los procesos vivos de la máquina. Y
 // `usaPreflight: () => true` en `verde` y `rojo`: las carpetas de mentira (`/repo`, `/wt`) no están en
 // el disco, y sin él ningún push de un test se juzgaría como de este repo. Cómo reconoce el hook un
-// árbol de este repo se prueba aparte, en el disco.
-const verde = { preflight: () => ({ ok: true, motivo: 'ok' }), sinIndexar: () => [], distRancio: () => null, listarPreflights: () => [], usaPreflight: () => true };
-const rojo = { preflight: () => ({ ok: false, motivo: 'no hay marca' }), sinIndexar: () => [], distRancio: () => null, listarPreflights: () => [], usaPreflight: () => true };
+// árbol de este repo se prueba aparte, en el disco. Y `capturas` sin pendientes: sin él, un `gh pr create` de un test mide
+// las capturas de sc-docs del árbol REAL, y basta con tocar un componente para que el test salga rojo.
+const verde = { preflight: () => ({ ok: true, motivo: 'ok' }), sinIndexar: () => [], distRancio: () => null, listarPreflights: () => [], usaPreflight: () => true, capturas: () => ({ rama: 'x', pendientes: [] }) };
+const rojo = { preflight: () => ({ ok: false, motivo: 'no hay marca' }), sinIndexar: () => [], distRancio: () => null, listarPreflights: () => [], usaPreflight: () => true, capturas: () => ({ rama: 'x', pendientes: [] }) };
 /** Árbol con fuentes nuevas todavía fuera del índice. */
 const sinAdd = {
   distRancio: () => null,
@@ -546,6 +547,26 @@ test('portada pública: un nombre o atribución en un PR o commit → deny; resu
   allow('gh pr view 167 --json body | grep -c "Para Rafa, en llano"');
   allow('git log --grep "claude.ai/code/session_" --oneline');
   allow('git commit -m "docs: la portada ya no lleva Generated with Claude Code" # sc:ok');
+});
+
+test('captura de sc-docs sin regenerar al abrir el PR → deny con el comando del robot; al día, otro repo o sc:ok → allow', () => {
+  // El caso del #494: el icono de `sc-section-card` cambió, `sectioncard-linux.png` no, y el PR se abrió igual.
+  const pendiente = {
+    ...verde,
+    capturas: () => ({ rama: 'claude/update-section-styles-4f90d3', pendientes: [{ slug: 'sectioncard', porque: ['el componente'] }] }),
+  };
+  deny('gh pr create --title "x" --body-file c.md', pendiente, /sectioncard-linux\.png/);
+  deny('gh pr create --title "x" --body-file c.md', pendiente, /visual-baselines\.yml --ref main -f rama=claude\/update-section-styles-4f90d3/);
+  deny('git push -u origin HEAD && gh pr create --fill', pendiente, /Capturas de sc-docs sin regenerar/);
+  allow('gh pr create --title "x" --body-file c.md', verde);
+  allow('gh pr create --title "x" --body-file c.md # sc:ok', pendiente);
+  // Subir no es abrir: el push hace falta para que el robot tome la captura.
+  allow('git push -u origin HEAD', pendiente);
+  // Ni editar ni mirar un PR abren nada.
+  allow('gh pr edit 494 --body-file c.md', pendiente);
+  allow('gh pr view 494', pendiente);
+  // En un árbol que no es de este repo no hay capturas de sc-docs que pedir.
+  allow('gh pr create --fill', { ...pendiente, usaPreflight: () => false });
 });
 
 test('prosa y heredocs no son comandos: los dos falsos positivos reales del primer día', () => {
