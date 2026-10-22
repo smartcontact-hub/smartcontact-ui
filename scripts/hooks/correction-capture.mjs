@@ -196,14 +196,20 @@ export function rutaRegistro(cwd) {
  */
 export const idDe = (e) => e.id || `t${String(Date.parse(e.ts)).slice(-5)}`;
 
-/** Apunta la corrección y devuelve cuántas lleva esta sesión (0 si no hay dónde apuntar). */
+/**
+ * Apunta la corrección y devuelve cuántas lleva esta sesión (0 si no hay dónde apuntar).
+ * Se apunta el texto del USUARIO, no el mensaje entero: con recordatorios delante, los 300
+ * caracteres eran el recordatorio, y `--listar` enseñaba un aviso de la app donde había un mensaje
+ * real con texto pegado (2026-10-22: así se contó como aviso uno que no lo era).
+ */
 export function registrar({ prompt, session_id, cwd }) {
   const ruta = rutaRegistro(cwd);
   if (!ruta) return 0;
   mkdirSync(join(ruta, '..'), { recursive: true });
+  const propio = textoDelUsuario(prompt).trim().slice(0, 300);
   appendFileSync(
     ruta,
-    JSON.stringify({ ts: new Date().toISOString(), id: randomBytes(3).toString('hex'), session_id, cwd, prompt: prompt.slice(0, 300) }) + '\n',
+    JSON.stringify({ ts: new Date().toISOString(), id: randomBytes(3).toString('hex'), session_id, cwd, prompt: propio }) + '\n',
   );
   return correcciones(leer(ruta)).filter((e) => e.session_id === session_id).length;
 }

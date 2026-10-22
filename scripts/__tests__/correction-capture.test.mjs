@@ -278,6 +278,19 @@ test('registrar apunta en la carpeta del proyecto y cuenta por sesión; leer fil
   }
 });
 
+test('registrar apunta lo que escribió el usuario, sin los recordatorios de delante ni lo pegado', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'sc-corr-'));
+  process.env.SC_CLAUDE_PROJECT_DIR = dir;
+  try {
+    // Con el mensaje entero, los 300 caracteres eran el recordatorio y la corrección no se veía.
+    const prompt = AVISOS_DE_HIJA[3].replace(FIN_DE_TURNO, '\nno, eso no es lo que pedí ') + pegado('9a1c', 'el log del push');
+    registrar({ prompt, session_id: 'A', cwd: dir });
+    assert.equal(leer(rutaRegistro(dir))[0].prompt, 'no, eso no es lo que pedí');
+  } finally {
+    delete process.env.SC_CLAUDE_PROJECT_DIR;
+  }
+});
+
 // ── Cierre: «cerramos» dispara /reflect solo ─────────────────────────────────────────────
 // Rojo = las frases con las que el usuario cierra de verdad. Verde = mensajes que solo MENCIONAN la
 // palabra: un falso positivo aquí arranca un /reflect a mitad de tarea (LEARNINGS #2).
