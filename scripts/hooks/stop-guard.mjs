@@ -244,8 +244,9 @@ export function delTurno(jsonl) {
 
 const RASTRO = /rastro\s*\**\s*:\s*\**\s*(.*)$/im; // el mismo que la línea «Rastro» de `PARTE`
 const DICE_VERDE = /\b(verdes?|green|pass(?:ed|es)?)\b|✅/i;
-// Lo que la deja fuera: no hubo CI que leer, o lo que dice no es un verde.
-const NO_ES_VERDE = /sin\s+push|no\s+aplica|\b(rojos?|red|fail(?:ed|s)?|falla|fall[oó]|en\s+curso|in\s+progress|pendiente|pending)\b|❌/i;
+// Lo que la deja fuera: no hubo CI que leer, o lo que dice no es un verde (también «en cola» y «sin veredicto»:
+// confiesan que el CI no está leído, y el cierre que lo dice no afirma lo que el hook vigila).
+const NO_ES_VERDE = /sin\s+push|no\s+aplica|sin\s+veredicto|\b(rojos?|red|fail(?:ed|s)?|falla|fall[oó]|en\s+curso|en\s+cola|in\s+progress|queued|pendiente|pending)\b|❌/i;
 
 /**
  * true si la línea «Rastro:» del cierre dice que el CI está verde y en ESTE turno no se leyó el CI
