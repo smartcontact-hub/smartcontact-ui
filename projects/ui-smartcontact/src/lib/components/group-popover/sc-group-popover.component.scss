@@ -1,4 +1,4 @@
-/* Con un solo grupo, la celda es su nombre: ocupa la columna y, si no cabe, se corta con «…» (lleva su globo). */
+/* Con un solo grupo, la celda es su nombre: ocupa la columna y, si no cabe, se corta con «…» (lleva su tooltip). */
 :host(.group-popover--single) {
   display: block;
   min-inline-size: 0;
@@ -72,45 +72,4 @@
 .group-popover__trigger--empty {
   color: var(--sc-text-subtle);
   text-decoration-line: none;
-}
-
-/*
- * Panel body. The outer chrome (bg, border, radius, shadow, padding) is
- * provided by PrimeNG `<p-popover>` consuming `overlay.popover` tokens
- * from sc-preset.ts (Figma `❖ Popover` 1:1). We only own the inner list
- * + overflow line, since those are SC-specific (group-name truncation,
- * "+N más" tail).
- *
- * These selectors live OUTSIDE `:host` because the popover panel is
- * rendered into <body> via `appendTo="body"` and escapes Angular view
- * encapsulation. The wrapper applies `styleClass="group-popover__panel"`
- * to keep the inner DOM addressable.
- *
- * Todos los nombres, sin cola «+N más»: pasada la mitad de la pantalla, la
- * lista hace scroll dentro del globo. La mitad y no la pantalla entera
- * porque el globo se abre por debajo o por encima de la celda, y el lado
- * con más sitio siempre tiene al menos media pantalla.
- */
-.group-popover__list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  /* Caption, 12/18: por su rol, para que siga al estilo si se mueve (barrido tipográfico del 2026-10-09). */
-  font-size: var(--sc-font-size-caption);
-  line-height: var(--sc-line-height-caption);
-  color: var(--sc-text-primary);
-  min-width: 200px;
-  max-width: 280px;
-  max-height: 50vh;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-}
-
-.group-popover__item {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }

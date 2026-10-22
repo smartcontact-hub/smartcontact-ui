@@ -3,7 +3,7 @@
   <span class="group-popover__empty" aria-hidden="true">—</span>
   <span class="group-popover__hidden">{{ emptyAriaLabel() ?? ('sc.groupPopover.none' | translate) }}</span>
 } @else if (single(); as group) {
-  <!-- Uno: su nombre, sin desplegable. Si no cabe, «…» y el nombre entero en su globo. -->
+  <!-- Uno: su nombre, sin tooltip de lista. Si no cabe, «…» y el nombre entero en su tooltip. -->
   <span
     #singleName
     class="group-popover__name"
@@ -13,19 +13,19 @@
     >{{ group.name }}</span
   >
 } @else {
+  <!-- Varios: la cifra, y al pasar o al enfocar, un tooltip con los nombres, uno por línea (el tooltip del DS, no un
+       globo propio). Con más de `MAX_NAMES`, los primeros y «y N más»: un tooltip no se desplaza. -->
   <button
-    #trigger
     type="button"
     class="group-popover__trigger"
     [class.group-popover__trigger--empty]="count() === 0"
     [attr.aria-label]="countAriaLabel() ?? ('sc.groupPopover.count' | translate: { count: count() })"
     [attr.aria-describedby]="count() > 0 ? namesId : null"
-    (mouseenter)="onTriggerEnter($event)"
-    (mouseleave)="onPointerLeave()"
-    (focus)="onTriggerFocus($event)"
-    (blur)="onPointerLeave()"
-    (keydown)="onKeydown($event)"
-    (click)="onClick()"
+    [pTooltip]="tooltipText()"
+    [tooltipDisabled]="count() === 0"
+    tooltipEvent="both"
+    tooltipPosition="top"
+    (click)="activated.emit()"
   >
     <!-- Ninguno: «—», como toda celda sin dato (DD-197). Sigue siendo el botón: en Grupos abre la asignación, y un
          grupo vacío es justo al que hay que asignar. El lector oye su nombre («0 agentes · Asignar…»), no la raya. -->
@@ -39,17 +39,3 @@
   <!-- Los nombres, para el lector: los dice después de la cifra al enfocarla. Un texto `hidden` vale como descripción. -->
   <span [id]="namesId" hidden>{{ names() }}</span>
 }
-
-<!-- El globo es solo para la vista: Popover se anuncia como diálogo modal y el foco nunca entra (se abre al pasar
-     o al enfocar la cifra), así que para el lector sobra; los nombres ya los lleva la descripción. -->
-<p-popover #pop styleClass="group-popover__panel" appendTo="body" [pt]="popoverPt">
-  @if (count() > 0) {
-    <div class="group-popover__body" (mouseenter)="onPanelEnter()" (mouseleave)="onPointerLeave()">
-      <ul class="group-popover__list">
-        @for (group of groups(); track group.id) {
-          <li class="group-popover__item">{{ group.name }}</li>
-        }
-      </ul>
-    </div>
-  }
-</p-popover>

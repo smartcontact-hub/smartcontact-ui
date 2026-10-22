@@ -5025,7 +5025,7 @@
     {
       "selector": "sc-group-popover",
       "name": "group-popover",
-      "primengBase": "primeng/popover, primeng/tooltip",
+      "primengBase": "primeng/tooltip",
       "estado": "experimental",
       "faltas": [
         "kit"
@@ -5039,7 +5039,7 @@
           "tipo": "readonly GroupRef[]",
           "porDefecto": null,
           "requerido": true,
-          "descripcion": "Los grupos que se listan en el globo.",
+          "descripcion": "Los grupos que se listan en el tooltip.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -5059,7 +5059,7 @@
           "tipo": "ScGroupPopoverDisplay",
           "porDefecto": "'count'",
           "requerido": false,
-          "descripcion": "Qué pinta la celda (`ScGroupPopoverDisplay`). Con `adaptive`, ninguno es «—» y uno es su nombre: la cifra con su desplegable solo cuando hay varios que enseñar.",
+          "descripcion": "Qué pinta la celda (`ScGroupPopoverDisplay`). Con `adaptive`, ninguno es «—» y uno es su nombre: la cifra con su tooltip solo cuando hay varios que enseñar.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -5079,28 +5079,20 @@
           "tipo": "void",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": "Se pulsó la cifra (clic, Intro o Espacio): lo que se hace con esa relación, si quien la pinta lo quiere (abrir la asignación de un grupo). Al pasar por encima o con el foco, la cifra sigue enseñando los nombres; al pulsarla, el globo se cierra. Sin nadie que la escuche, pulsar solo cierra el globo.",
+          "descripcion": "Se pulsó la cifra (clic, Intro o Espacio): lo que se hace con esa relación, si quien la pinta lo quiere (abrir la asignación de un grupo). Al pasar por encima o con el foco, la cifra sigue enseñando los nombres. Sin nadie que la escuche, pulsar no hace nada.",
           "origen": "nuestro",
           "nativo": null
         }
       ],
       "ocultas": [
         "appendTo",
-        "ariaCloseLabel",
-        "ariaLabel",
-        "ariaLabelledBy",
         "autoHide",
-        "autoZIndex",
-        "baseZIndex",
         "content",
-        "dismissable",
         "escape",
         "fitContent",
-        "focusOnShow",
         "hideDelay",
         "hideOnEscape",
         "life",
-        "motionOptions",
         "pTooltipPT",
         "pTooltipUnstyled",
         "positionLeft",
@@ -5108,8 +5100,6 @@
         "positionTop",
         "showDelay",
         "showOnEllipsis",
-        "style",
-        "styleClass",
         "tooltipDisabled",
         "tooltipEvent",
         "tooltipOptions",
