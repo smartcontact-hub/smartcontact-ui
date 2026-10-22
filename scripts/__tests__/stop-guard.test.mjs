@@ -285,9 +285,10 @@ test('VERDE: el Rastro dice verde y en este turno se leyó el CI', () => {
   assert.equal(verdeSinLeer(rastro('CI verde'), actosBash(delTurno(conResultado))), false, 'el resultado de una herramienta no abre turno');
 });
 
-test('no aplica: sin push, no aplica, rojo o en curso no bloquean aunque digan verde', () => {
+test('no aplica: sin push, no aplica, rojo, en curso o en cola no bloquean aunque digan verde', () => {
   const sinLeer = actosBash(delTurno(turno('git status')));
-  for (const linea of ['sin push · preflight verde', 'CI: no aplica, verde en local', 'CI rojo (falla verde-e2e)', 'CI en curso, verde el preflight', 'PR #9 · docs/handoff/x.md'])
+  // «en cola» y «sin veredicto» dicen que NO hay CI leído: un cierre que lo confiesa no afirma un verde (2026-10-22).
+  for (const linea of ['sin push · preflight verde', 'CI: no aplica, verde en local', 'CI rojo (falla verde-e2e)', 'CI en curso, verde el preflight', 'PR #9 · docs/handoff/x.md', 'prueba local en verde · CI de main: 5 ejecuciones en cola', 'preflight verde · checks queued', 'prueba local verde · CI sin veredicto leído'])
     assert.equal(verdeSinLeer(rastro(linea), sinLeer), false, linea);
 });
 
