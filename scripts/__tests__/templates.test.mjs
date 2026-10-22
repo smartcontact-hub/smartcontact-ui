@@ -42,6 +42,9 @@ test('sanearHtml: solo las etiquetas del editor, sin atributos; ni scripts, ni i
   assert.equal(sanearHtml('Texto de antes'), 'Texto de antes');
   // Los `&nbsp;` del editor vuelven a ser espacios, para que el mensaje parta las líneas por sus palabras.
   assert.equal(sanearHtml('<p>Hola&nbsp;mundo&nbsp;a&nbsp;todos</p>'), '<p>Hola mundo a todos</p>');
+  assert.equal(sanearHtml('<svg><script>alert(1)</script></svg>'), '');
+  assert.equal(sanearHtml('<img src=x onerror=alert(1)>'), '');
+  assert.equal(sanearHtml('<p>Hola <a href=javascript:alert(1)>x</a></p>'), '<p>Hola <a>x</a></p>');
 });
 
 test('WhatsApp: del HTML a sus marcas y de vuelta', () => {
@@ -61,6 +64,8 @@ test('WhatsApp: del HTML a sus marcas y de vuelta', () => {
 test('el contenido para el editor y para guardar, según el canal', () => {
   assert.equal(contenidoParaEditor('Hola, soy {agente}.', 'chat'), '<p>Hola, soy {agente}.</p>');
   assert.equal(contenidoParaEditor('<p>Hola</p>', 'email'), '<p>Hola</p>');
+  // Lo que ya estaba guardado y llega sucio no vuelve al editor con su carga.
+  assert.equal(contenidoParaEditor('<script>alert(1)</script><p onclick="alert(1)">OK</p>', 'chat'), '<p>OK</p>');
   assert.equal(contenidoParaEditor('Hola *Ana*', 'whatsapp'), '<p>Hola <strong>Ana</strong></p>');
   assert.equal(contenidoParaGuardar('<p>Hola <b>Ana</b></p>', 'whatsapp'), 'Hola *Ana*');
   assert.equal(contenidoParaGuardar('<p>Hola <b>Ana</b><script>x</script></p>', 'chat'), '<p>Hola <strong>Ana</strong></p>');
