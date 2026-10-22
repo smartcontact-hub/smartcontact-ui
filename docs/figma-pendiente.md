@@ -1585,7 +1585,8 @@ encendido por defecto.
 - **El monitor del Dashboard** (DD-127): el fichero no tiene maqueta del Dashboard; sus piezas son las de la ficha 9.
   Si se maqueta, las reglas de tabla de abajo.
 - **Las reglas de tabla del código**, para cuando se maqueten tablas:
-  - las cifras miden su dato y el nombre se queda el resto, recortando con «…» (el texto entero va en el `title`);
+  - las cifras miden su dato y el nombre crece hasta 384 (24rem), recortando con «…» (el texto entero va en el
+    `title`); en una tabla más ancha, el sobrante va a la columna del «⋮» (DD-187 §7, §59);
   - las cabeceras de varias palabras no se parten;
   - el texto libre de Conversaciones, hasta dos líneas y «…»;
   - la fila de totales lleva raya arriba.
@@ -1645,6 +1646,14 @@ encendido por defecto.
   tras Ctrl+S, con el foco en el primer pendiente (E2 del alta). Notas, hojas y hand-off con la regla; el tooltip, descrito.
   Versiones del fichero: «Lo que falta, antes de pulsar», «Lo que falta: el rojo sin foco al salir del campo» y
   «Resúmenes con la línea Falta / Listo (librería publicada)». La ficha de usuario no tiene maqueta.
+- ~~**§59 · El nombre del listado de grupos tiene tope (DD-187 §7)**~~ → **HECHO el 2026-10-22**. La fila 5 de «Cómo se
+  comporta: listado de grupos» (`3131:11194`) decía «Nombre: ancho flexible, mín. 240» y «Acciones: 56», la regla de
+  antes de DD-187 §7; ahora, «mín. 240, máx. 384» y Acciones con el sobrante, el ⋮ pegado al borde derecho. En las nueve
+  tablas del flujo (`3118:16995`) y en la copia del Mapa (`3178:11368`), Nombre fijo a 384 y Acciones en FILL (595, como
+  la app a 1920: Nombre 384 y el ⋮ con 599). Con ellas se movieron los números 7 y 8 de la guía del paso 01, el menú de
+  la selección del paso 08 y los recuadros de Canales a Agentes del Mapa. El listado de Agentes (`3405:12408`) ya medía
+  así y su hoja no lo contradice. Versión del fichero: «Listado de grupos: Nombre a 384 y el sobrante en Acciones
+  (DD-187 §7)».
 
 ---
 
