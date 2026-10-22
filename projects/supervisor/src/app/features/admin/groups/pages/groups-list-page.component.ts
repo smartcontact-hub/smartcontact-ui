@@ -209,9 +209,10 @@ export class GroupsListPageComponent {
         header: this.translate.instant('groups.table.phone'),
         sortable: true,
         cellTemplate: this.phoneTpl(),
-        /* Anchos MEDIDOS del dato más largo de cada columna corta (2026-09-14); el nombre se come el
-         * resto y la tabla lleva `tableMinWidth`: por debajo se desplaza en vez de cortar. Desde que se ordena
-         * (2026-10-06), lo que manda es la cabecera con su flecha: «Téléphone», 118 px, y unos 4 de margen. */
+        /* Anchos MEDIDOS del dato más largo de cada columna corta (2026-09-14). El nombre crece hasta 24rem y, en una
+         * tabla más ancha, el sobrante va a la columna del «⋮» (DD-187 §7, en `sc-list-page`); por debajo, la tabla
+         * lleva `tableMinWidth` y se desplaza en vez de cortar. Desde que se ordena (2026-10-06), lo que manda es la
+         * cabecera con su flecha: «Téléphone», 118 px, y unos 4 de margen. */
         width: '7.625rem',
       },
       {
