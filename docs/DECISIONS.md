@@ -160,6 +160,49 @@
 
 ---
 
+## DD-223 · 2026-10-22 — La ficha de grupo, como su página de COA publicada: «En qué conversaciones» también con comentarios, el canal que se activa llega a los agentes, y nadie sale del grupo sin avisar
+
+**Contexto** · Producto publicó el 2026-10-22 la versión 17 de «SOLUCIÓN SISMAC-4058 Creación/Edición Grupos». Medida
+frase a frase contra la congelada `proto-sismac-4058` (bfa680d9), salen tres cosas que el prototipo no hace como dice
+COA: (1) COA pone las pestañas Todas / Solo entrantes / Solo salientes al encender «Permitir comentarios» y dice que
+valen para comentarios y tipificación; el prototipo las enseñaba solo con «Tipificar conversaciones», como «En qué
+conversaciones se tipifica» (DD-211 §10). (2) COA: «Si no tiene canales se podrá asignar agentes aunque no tengan
+canales. En el momento de activar un canal se checkea el canal por agente». El prototipo no lo marcaba, y al crear,
+ese agente salía del grupo en silencio (medido: el resumen decía 1/1 antes de «Crear grupo» y 0 después).
+(3) Un grupo recién creado abre en Agentes asignados, pestaña Asignados, vacía, y decía «Sin resultados. No hay agentes
+que coincidan con el filtro.» sin haber filtro.
+
+**Decisión** ·
+1. **«En qué conversaciones», con cualquiera de los dos interruptores** de Postconversación, y vale para los dos (enmienda
+   DD-211 §10). Con «Tipificar conversaciones», junto a su tipificación, como antes; con solo comentarios, solo él. Se
+   guarda el mismo `wrapUp.scope`.
+2. **Activar un canal se lo marca al agente que no atiende ninguno de los del grupo**, si lo tiene permitido
+   (`fillEmptyLinks`). Suma, no sustituye: lo que tenía y el grupo dejó de ofrecer vuelve si se vuelve a marcar
+   (DD-217). Quitar un canal no da nada a nadie: eso sigue siendo la cascada.
+3. **Nadie sale del grupo sin avisar.** Quien se queda sin canales en un grupo con canales sale al guardar (DD-121), y
+   si no lo ha dicho ya la cascada de quitar canales, lo pregunta antes, también al crear: «¿Sacar del grupo a 1
+   agente?», «Se queda sin ninguno de los canales del grupo.», «Cancelar» y «Sacar» (rojo), con la cifra y el verbo
+   (DD-218).
+4. **La tabla vacía dice por qué**: sin búsqueda, Asignados dice «Sin agentes asignados» y «Asígnalos desde la pestaña
+   «Todos».»; Sin asignar, «Todos los agentes están asignados». Con búsqueda sigue «No hay agentes que coincidan con el
+   filtro.». Igual en el panel rápido del Monitor, que usa la misma tabla.
+
+**Razón** · COA es lo que construye desarrollo, y la versión 17 es lo más nuevo de producto: lo que pide y ninguna
+decisión posterior contradice, manda (DD-218). En el 2, el prototipo además perdía datos sin decirlo, que es peor que
+cualquiera de las dos lecturas. El aviso del 3 es el de la cascada, con la regla de textos de DD-218.
+
+**Descartadas** ·
+- *Dar al agente TODOS los canales que tiene permitidos al activar uno*: también los que se le quitaron a mano; el
+  canal que se activa es lo que pide COA.
+- *Rellenar en cada cambio de canales, también al quitar*: un agente que pierde Teléfono ganaría Chat sin pedirlo, y la
+  cascada dejaría de avisar de quien se queda sin canales.
+- *Bloquear «Crear grupo» con un agente sin canales*: el agente no puede tener el canal (no lo tiene permitido), así que
+  no habría forma de crear sin ir a otra pantalla; preguntar y sacarlo es lo que ya hace la edición.
+
+**Consecuencias** · Prueba nueva `grupos-como-coa-4058.spec.ts` y `fillEmptyLinks` en `group-channels.test.mjs`. COA
+4058: «Las pestañas…» de Postconversación se queda como la escribió producto. Figma: `docs/figma-pendiente.md` §61. La
+congelada 4058 avanza con esto cuando se funda (`docs/PROTOTIPOS.md`).
+
 ## DD-222 · 2026-10-22 — El índice del alta lleva un marcador de paso en cada fila: sin ver, completa o con algo por hacer, y un número de WhatsApp obligatorio
 
 **Contexto** · Hasta DD-143 el índice de un alta ponía un ✓ en la sección que se dejaba completa, y nada más. Medido el

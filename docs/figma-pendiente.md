@@ -1541,6 +1541,26 @@ hacer · **Dónde:** el Supervisor, páginas «Grupos» y
 **Cómo sabes que está hecho:** V1, V2 y V5 vuelven a ser instancias de su maestro sin perder nada (V2 ya lo es), y el
 botón de X1 a X3 lleva `key`.
 
+## 61 · La ficha de grupo, como su página de COA publicada (DD-223, 2026-10-22)
+
+**Estado:** sin hacer · **Dónde:** el Supervisor, página «Grupos» (`41:2847`): alta, «Otras configuraciones» y edición ·
+**Evidencia:** `grupos-como-coa-4058.spec.ts` y la congelada 4058 cuando avance.
+
+- **Postconversación**: «En qué conversaciones» (antes «… se tipifica») sale también con solo «Permitir comentarios»
+  encendido, sin el campo de la tipificación. Una pantalla nueva en «Otras configuraciones» con ese estado, y V1 con el
+  rótulo nuevo. En su hoja: vale para comentarios y tipificación.
+- **Agentes asignados de un grupo sin canales**: al marcar un canal en General, la tabla trae ese canal marcado a cada
+  agente que lo tiene permitido; quien no, con «Sin canales compatibles». Y el aviso al crear o guardar: «¿Sacar del
+  grupo a 1 agente?», «Se queda sin ninguno de los canales del grupo.», «Cancelar» y «Sacar» (rojo), con el Dynamic
+  Dialog como el de quitar canales.
+- **Tabla vacía**: Asignados sin agentes y sin búsqueda, «Sin agentes asignados» con «Asígnalos desde la pestaña
+  «Todos».» (es lo que ve un grupo recién creado). V7 (con búsqueda) se queda.
+- **Hand-off de la edición**: anotar que también se entra desde la rueda de la monitorización de cada grupo, solo para
+  administradores, como en la plataforma actual (lo pide la página de COA; el prototipo no tiene esa pantalla).
+
+**Cómo sabes que está hecho:** las tres pantallas nuevas en sus filas, con su número morado en la hoja, y la nota de
+la rueda en el hand-off de la edición.
+
 ---
 
 ## Lo de estas semanas que NO va a Figma, y por qué

@@ -116,7 +116,7 @@ test('quitar un canal del grupo dice cuántos lo pierden y cuántos salen, y al 
 
   await page.reload();
   await irA(page, 'Agentes asignados');
-  await expect(page.locator('sc-agent-channel-table tbody')).toContainText('No hay agentes');
+  await expect(page.locator('sc-agent-channel-table tbody')).toContainText('Sin agentes asignados');
 });
 
 /* La lista de agentes dice por dónde atiende cada uno con la MISMA regla que la ficha del grupo: los canales de un
