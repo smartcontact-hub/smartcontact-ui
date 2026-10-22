@@ -13,13 +13,13 @@ import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../
 const OVERFLOW_SNIPPET = `<sc-group-popover [groups]="few" />
 <sc-group-popover [groups]="many" />`;
 
-const SEGUN_SNIPPET = `<!-- display="adaptive": ninguno es «—» (y «Sin grupos» para el lector), uno es su nombre (con «…» y su globo si no
-     cabe) y, con varios, la cifra con su desplegable. -->
+const SEGUN_SNIPPET = `<!-- display="adaptive": ninguno es «—» (y «Sin grupos» para el lector), uno es su nombre (con «…» y su tooltip si no
+     cabe) y, con varios, la cifra con su tooltip. -->
 <sc-group-popover display="adaptive" [groups]="none" />
 <sc-group-popover display="adaptive" [groups]="one" />
 <sc-group-popover display="adaptive" [groups]="few" />`;
 
-const ACTIVAR_SNIPPET = `<!-- Pulsar la cifra (clic, Intro o Espacio) emite "activated" y cierra el globo: la lista de grupos abre ahí
+const ACTIVAR_SNIPPET = `<!-- Pulsar la cifra (clic, Intro o Espacio) emite "activated": la lista de grupos abre ahí
      la asignación de ese grupo. Al pasar por encima o con el foco, sigue enseñando los nombres. -->
 <sc-group-popover [groups]="grupos" (activated)="abrirAsignacion()" />`;
 
@@ -60,7 +60,7 @@ export class GroupPopoverDemoComponent {
     tag: 'sc-group-popover',
     title: 'GroupPopover',
     description:
-      'Celda inline con conteo de grupos; lista flotante en hover/focus con TODOS los nombres (pasada media pantalla, hace scroll dentro). Los datos van en `[groups]`; `countAriaLabel` cambia lo que la cifra dice al lector cuando no cuenta grupos («12 agentes»), y `activated` avisa al pulsarla. Sin ninguno, la cifra es «—» y sigue siendo el botón. Con `display="adaptive"`, la cifra solo sale con varios: ninguno es «—» y uno es su nombre. Pasa el ratón por encima o enfoca la celda.',
+      'Celda inline con conteo de grupos; tooltip en hover/focus con los nombres, uno por línea (pasados quince, «y N más»: un tooltip no se desplaza; el lector oye todos). Los datos van en `[groups]`; `countAriaLabel` cambia lo que la cifra dice al lector cuando no cuenta grupos («12 agentes»), y `activated` avisa al pulsarla. Sin ninguno, la cifra es «—» y sigue siendo el botón. Con `display="adaptive"`, la cifra solo sale con varios: ninguno es «—» y uno es su nombre. Pasa el ratón por encima o enfoca la celda.',
     argTypes: [],
     defaultArgs: {},
   };

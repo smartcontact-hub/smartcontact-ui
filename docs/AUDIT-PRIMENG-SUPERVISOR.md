@@ -6,7 +6,7 @@ Contra **PrimeNG 22.1.0**, la versión INSTALADA — no la documentación de la 
 que puede ir por delante.
 
 **50 componentes** del DS se usan en el Supervisor, y entre todos esconden
-**610 props** que PrimeNG sí documenta.
+**600 props** que PrimeNG sí documenta.
 
 La regla es DD-113: *el nativo tal cual, adaptado con tokens*. Esconder una prop puede ser una
 decisión buena —los wrappers EXTENDED lo hacen a propósito— pero hasta ahora esa decisión no se
@@ -51,10 +51,6 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **31 props nativas no expuestas**: `appendTo`, `ariaCloseLabel`, `ariaLabel`, `ariaLabelledBy`, `autoHide`, `autoZIndex`, `baseZIndex`, `content`, `dismissable`, `escape`, `fitContent`, `focusOnShow`, `hideDelay`, `hideOnEscape`, `life`, `motionOptions`, `pTooltipPT`, `pTooltipUnstyled`, `positionLeft`, `positionStyle`, `positionTop`, `showDelay`, `showOnEllipsis`, `style`, `styleClass`, `tooltipDisabled`, `tooltipEvent`, `tooltipOptions`, `tooltipPosition`, `tooltipStyleClass`, `tooltipZIndex`
 
-### `sc-group-popover` · 7 usos · primeng/popover, primeng/tooltip
-
-**31 props nativas no expuestas**: `appendTo`, `ariaCloseLabel`, `ariaLabel`, `ariaLabelledBy`, `autoHide`, `autoZIndex`, `baseZIndex`, `content`, `dismissable`, `escape`, `fitContent`, `focusOnShow`, `hideDelay`, `hideOnEscape`, `life`, `motionOptions`, `pTooltipPT`, `pTooltipUnstyled`, `positionLeft`, `positionStyle`, `positionTop`, `showDelay`, `showOnEllipsis`, `style`, `styleClass`, `tooltipDisabled`, `tooltipEvent`, `tooltipOptions`, `tooltipPosition`, `tooltipStyleClass`, `tooltipZIndex`
-
 ### `sc-inputtags` · 2 usos · primeng/inputtags
 
 **31 props nativas no expuestas**: `addOnTab`, `appendTo`, `autoOptionFocus`, `completeOnFocus`, `delay`, `focusOnHover`, `group`, `inputSize`, `inputStyle`, `inputStyleClass`, `maxlength`, `min`, `minQueryLength`, `minlength`, `motionOptions`, `name`, `optionDisabled`, `optionGroupChildren`, `optionGroupLabel`, `optionLabel`, `optionValue`, `overlayOptions`, `panelStyle`, `panelStyleClass`, `pattern`, `scrollHeight`, `step`, `suggestions`, `tabindex`, `typeahead`, `variant`
@@ -68,6 +64,10 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 **22 props nativas no expuestas**: `cancelButtonProps`, `cancelIcon`, `cancelStyleClass`, `chooseButtonProps`, `chooseIcon`, `chooseStyleClass`, `customUpload`, `filesInput`, `headers`, `invalidFileLimitMessageDetail`, `invalidFileLimitMessageSummary`, `method`, `previewWidth`, `removeStyleClass`, `showCancelButton`, `showUploadButton`, `style`, `styleClass`, `uploadButtonProps`, `uploadIcon`, `uploadStyleClass`, `withCredentials`
 
 ### `sc-delete-entity-dialog` · 8 usos · primeng/tooltip
+
+**21 props nativas no expuestas**: `appendTo`, `autoHide`, `content`, `escape`, `fitContent`, `hideDelay`, `hideOnEscape`, `life`, `pTooltipPT`, `pTooltipUnstyled`, `positionLeft`, `positionStyle`, `positionTop`, `showDelay`, `showOnEllipsis`, `tooltipDisabled`, `tooltipEvent`, `tooltipOptions`, `tooltipPosition`, `tooltipStyleClass`, `tooltipZIndex`
+
+### `sc-group-popover` · 7 usos · primeng/tooltip
 
 **21 props nativas no expuestas**: `appendTo`, `autoHide`, `content`, `escape`, `fitContent`, `hideDelay`, `hideOnEscape`, `life`, `pTooltipPT`, `pTooltipUnstyled`, `positionLeft`, `positionStyle`, `positionTop`, `showDelay`, `showOnEllipsis`, `tooltipDisabled`, `tooltipEvent`, `tooltipOptions`, `tooltipPosition`, `tooltipStyleClass`, `tooltipZIndex`
 

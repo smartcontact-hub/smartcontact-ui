@@ -67,7 +67,7 @@
 | `sc-form-danger-zone` | CUSTOM | experimental (sin maestro en el Kit) | — | 3 inputs | sc-button | ✓ | — |
 | `sc-form-section-nav` | CUSTOM | experimental (sin maestro en el Kit) | — | 8 inputs | — | ✓ | 6 |
 | `sc-gauge` | CUSTOM | experimental (sin maestro en el Kit) | — | 9 inputs | — | ✓ | 1 |
-| `sc-group-popover` | STANDARD | experimental (sin maestro en el Kit) | primeng/popover, primeng/tooltip | 3 inputs | — | ✓ | 7 |
+| `sc-group-popover` | STANDARD | experimental (sin maestro en el Kit) | primeng/tooltip | 3 inputs | — | ✓ | 7 |
 | `sc-icon-tile` | CUSTOM | experimental (sin maestro en el Kit) | — | 3 inputs | — | ✓ | — |
 | `sc-impact-preview-dialog` | CUSTOM | experimental (sin maestro en el Kit) | — | 3 inputs | sc-dialog sc-button | ✓ | 1 |
 | `sc-inline-rename-cell` | CUSTOM | experimental (sin maestro en el Kit) | — | 2 inputs | — | ✓ | 2 |
