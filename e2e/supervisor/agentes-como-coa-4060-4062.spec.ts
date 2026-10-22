@@ -6,7 +6,8 @@ import { disableAnimations, forceLightTheme, goto, irASeccion, pickSelectOption 
  * EL LISTADO Y LA FICHA DE AGENTES, COMO SUS PÁGINAS DE COA (SISMAC-4060 y SISMAC-4062, borradores del 2026-10-23;
  * DD-225). Lo que el prototipo no hacía como dicen:
  *   1. Con dos o más marcados, el clic derecho sobre uno ofrece solo «Eliminar»: «¿Eliminar 2 agentes?» y su toast.
- *   2. Teléfono y Estado salen de primeras; Estado se ordena, de más a menos disponible, con «Conversación» (azul).
+ *   2. Teléfono y Estado salen de primeras; Estado se ordena, de más a menos disponible, con «Conversación», y su color
+ *      va por familia: rojo lo que no recibe (Administrativo incluido, que deja el marrón), azul lo de la conversación.
  *   3. «Grupos» ordena de mayor a menor al primer clic.
  *   4. El Excel lleva la columna Canales.
  *   5. Duplicar deja vacíos la foto y el móvil, y la copia nace «Desconectado», como todo agente nuevo.
@@ -98,14 +99,24 @@ async function escribirLosAlmacenes(page: Page): Promise<void> {
   await expect(page.locator('.p-toast-message')).toContainText('Agente «Mario Pérez E2E» actualizado');
 }
 
-test('listado · Teléfono y Estado de primeras; Estado ordena de Disponible a Desconectado, con «Conversación» en azul', async ({ page }) => {
+test('listado · Teléfono y Estado de primeras; Estado ordena de Disponible a Desconectado, y su color va por familia', async ({ page }) => {
   await sembrarEstados(page);
   await goto(page, 'admin/agentes');
   await expect(cabecera(page, 'Teléfono')).toHaveCount(1);
   await expect(cabecera(page, 'Estado')).toHaveCount(1);
 
-  // «Conversación», en una etiqueta azul, como Post-conversando hasta que el Kit traiga su tono (DD-225).
+  // Por familia, sin tokens nuevos (DD-225): Administrativo en el rojo de No disponible; Conversación en el azul de
+  // Post-conversando.
   await expect(fila(page, 'Agente A').locator('sc-tag')).toHaveText('Conversación');
+  // El fondo que pinta cada etiqueta, el que gana en pantalla.
+  const fondo = (agente: string) =>
+    fila(page, agente).locator('sc-tag .sc-tag__label').evaluate((el) => getComputedStyle(el).backgroundColor);
+  const [administrativo, noDisponible, conversacion, postConversando] = await Promise.all(
+    ['Agente G', 'Agente H', 'Agente A', 'Agente E'].map(fondo),
+  );
+  expect(administrativo, 'Administrativo, en el rojo de No disponible').toBe(noDisponible);
+  expect(conversacion, 'Conversación, en el azul de Post-conversando').toBe(postConversando);
+  expect(conversacion).not.toBe(administrativo);
 
   await cabecera(page, 'Estado').click();
   await expect(cabecera(page, 'Estado')).toHaveAttribute('aria-sort', 'ascending');

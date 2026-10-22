@@ -119,8 +119,8 @@ const MAX_RECIENTES = 3;
  * Todo cabe sin desplazar a 1440 × 800: las categorías de dos van una al lado de la otra. El panel va acoplado bajo la
  * barra de la app; si por el ancho taparía tarjetas, lleva velo, como un modal.
  *
- * Cada categoría lleva un tono de etiqueta del DS (azul, morado, teal y naranja; no los de estado, rojo, verde y ámbar,
- * ni el marrón de «Administrativo», DD-176): en su título, en el icono y la cifra de cada destino, en el borde de la
+ * Cada categoría lleva un tono de etiqueta del DS (azul, morado, teal y naranja; no los de estado, rojo, verde y ámbar):
+ * en su título, en el icono y la cifra de cada destino, en el borde de la
  * tarjeta al pasar y al marcarla, y en el panel.
  *
  * De la maqueta NO se queda lo que inventaba datos: la variación de la semana y la última edición (no hay ese dato) y

@@ -35,11 +35,12 @@ export const PRESENCE_LABEL_KEYS: Readonly<Record<PresenceStatus, string>> = {
 export type PresenceTag = { readonly labelColor: LabelColor } | { readonly severity: 'warn' | 'secondary' };
 
 /**
- * La etiqueta de cada estado, la MISMA que en Contact Center › Servicio, donde se configuran:
- * Disponible verde; No disponible rojo, y en rojo también sus motivos (Baño, Comida, Formación), porque son maneras de
- * no estar disponible; Administrativo, la etiqueta nativa de aviso (`warn`), que en oscuro sigue amarilla (el ámbar
- * salía marrón). Los dos que allí no salen, porque no se eligen: Post-conversando en azul y Desconectado en gris
- * (`secondary`: su punto en el avatar; en el listado va como texto, sin etiqueta, para no pesar como un estado atendible).
+ * La etiqueta de cada estado, por FAMILIA (SISMAC-4060, DD-225): Disponible verde; en rojo, lo que no recibe
+ * conversaciones (No disponible, sus motivos Baño, Comida y Formación, y Administrativo); en azul, lo de la conversación
+ * (Conversación y Post-conversando). Desconectado, sin etiqueta: gris (`secondary`) en el punto del avatar, y en el
+ * listado como texto, para no pesar como un estado atendible. Rojo y azul «oscuros» para Administrativo y
+ * Post-conversando no se distinguirían a tamaño de etiqueta, y el Kit los agrupa igual (`custom/semantic/presence`).
+ * Hasta DD-225, Administrativo iba en marrón (DD-176).
  */
 export const PRESENCE_TAGS: Readonly<Record<PresenceStatus, PresenceTag>> = {
   disponible: { labelColor: 'green' },
@@ -47,10 +48,8 @@ export const PRESENCE_TAGS: Readonly<Record<PresenceStatus, PresenceTag>> = {
   bano: { labelColor: 'red' },
   comida: { labelColor: 'red' },
   formacion: { labelColor: 'red' },
-  /* Marrón (DD-176), no el amarillo de aviso: un estado del agente, no una alerta. */
-  administrativo: { labelColor: 'brown' },
+  administrativo: { labelColor: 'red' },
   post_conversando: { labelColor: 'blue' },
-  /* El agente atendiendo, en azul (SISMAC-4060, DD-225). */
   conversacion: { labelColor: 'blue' },
   desconectado: { severity: 'secondary' },
 };

@@ -80,15 +80,15 @@ DD-219, sin trampas propias): `git show fdf913d4:docs/handoff/supervisor-fichas.
 - **Listado**: borrar varios con el clic derecho (`selectionMenu`, `onBulkDelete`); Teléfono y Estado de inicio
   (`sc-agents-columns-v6`); Estado ordena por `PRESENCE_SORT_RANK`; «Grupos» de mayor a menor (`defaultSortOrder`);
   Canales en el Excel.
-- **Estado nuevo «Conversación»**, en azul («En pausa» en el Dashboard), en el agente 17 de la semilla; sin subir la
-  versión del almacén, una lista guardada no lo trae. A 1440 la tabla desplaza de lado (226 px), como pide la 4060.
+- **Estado nuevo «Conversación»** («En pausa» en el Dashboard), en el agente 17 de la semilla; sin subir la versión del
+  almacén, una lista guardada no lo trae. Color por familia: Administrativo, rojo. A 1440 desplaza de lado (226 px).
 - **Ficha**: duplicar no copia foto, móvil ni estado, y todo agente nace «Desconectado»; solo extensiones libres
   (`extensionOptions`); email repetido en vivo (`agents.errors.email_taken`); tabla de grupos vacía con su motivo
   (`vacio`); índice del alta con marcadores (`sectionStates`, `faltasPorSeccion`, `OBLIGATORIOS_DE`) y sin «Falta: …»
   sobre el resumen; «Deshacer» llama a `alta.reiniciar()`; salientes solo con `CLIENTE_CON_CALL_BLENDING`; singular del
   aviso de quitar canales (`removeBodyKey`).
 - **Pruebas**: `agentes-como-coa-4060-4062.spec.ts` nueva; al día las que fijaban el ✓ suelto y «Falta: …».
-- **Pendiente de producto**: el tono de Administrativo y Post-conversando; el Kit no los trae como etiqueta.
+- **Fuera**: Contact Center › Servicio pinta Administrativo con `warn`, no en rojo como la columna Estado.
 
 ## ✅ 2026-10-22 · Repaso de Grupos entre COA, Figma y prototipo; «Editar en Repositorios» pregunta guardar (DD-224)
 

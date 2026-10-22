@@ -160,7 +160,7 @@
 
 ---
 
-## DD-225 · 2026-10-23 — Agentes como sus borradores de COA: borrar varios, Teléfono y Estado de inicio, Estado ordenable con «Conversación», el índice del alta con marcadores y lo que no se copia al duplicar
+## DD-225 · 2026-10-23 — Agentes como sus borradores de COA: borrar varios, Teléfono y Estado de inicio, Estado ordenable y por familias de color, el índice del alta con marcadores y lo que no se copia al duplicar
 
 **Contexto** · Los borradores de «SOLUCIÓN SISMAC-4060 Sección Agentes» y «SOLUCIÓN SISMAC-4062 Creación/Edición
 Agentes» (2026-10-23) se escribieron frase a frase contra el prototipo y Figma. Producto decidió doce puntos en los que
@@ -181,10 +181,11 @@ resumen; el Excel no llevaba los canales, y el aviso de quitar canales decía «
    Agentes.
 3. **Estado se ordena, de más a menos disponible** (`PRESENCE_SORT_RANK`): Disponible, No disponible, los personalizados
    (entre ellos, por su nombre), Administrativo, Post-conversando, Conversación y Desconectado. Enmienda DD-180, que la
-   dejaba como la única sin orden. **Estado nuevo «Conversación»**, el agente atendiendo, en la etiqueta azul; en el
-   Dashboard cuenta «En pausa», como Post-conversando (DD-139). La semilla lo pone en el agente 17, que no es de la demo
-   del Dashboard. Los tonos de Administrativo (rojo oscuro) y Post-conversando (azul oscuro) que pide
-   COA no existen como etiqueta en el Kit: siguen marrón (DD-176) y azul hasta decidirlo (ver Consecuencias).
+   dejaba como la única sin orden. **Estado nuevo «Conversación»**, el agente atendiendo; en el Dashboard cuenta «En
+   pausa», como Post-conversando (DD-139). La semilla lo pone en el agente 17, que no es de la demo del Dashboard. **El
+   color va por familia, sin tokens nuevos**: Disponible verde; rojo para No disponible, los personalizados y
+   **Administrativo, que deja el marrón** (enmienda DD-176); azul para Post-conversando y Conversación; Desconectado,
+   en texto gris.
 4. **«Grupos» ordena de mayor a menor al primer clic** (`defaultSortOrder: -1`), como «Agentes» en Grupos.
 5. **Duplicar deja vacíos la foto y el móvil**, que son de otra persona (sin móvil, «Gestión de dispositivos» se
    apaga), **y no copia el estado**: la copia nace «Desconectado», como **todo agente nuevo**, que hasta hoy nacía
@@ -220,7 +221,12 @@ ficha que se comporta como su gemela se aprende una vez.
 - *Subir la versión del almacén de agentes* para que «Conversación» salga también en un navegador con la lista
   guardada: tira lo creado en la demo y las tres pruebas que siembran la versión 3. La vía que no borra: sale en la
   lista de fábrica y al borrar los datos del sitio.
-- *Dos etiquetas nuevas, rojo oscuro y azul oscuro, con primitivos del Kit*: es inventar tokens; se decide aparte.
+- *Dos etiquetas nuevas, rojo oscuro y azul oscuro* (red-100/red-900 y azure-100/azure-900), como pedía el borrador:
+  medidas en OKLCH, se separan 1-2° de tono y 0,035-0,039 de luz de fondo del rojo y el azul que ya hay, y a tamaño de
+  etiqueta no se distinguen. El Kit agrupa igual (`custom/semantic/presence`: administrative red.600 junto a
+  unavailable red.400, wrapup cyan.600 junto a talking cyan.400). Y serían dos tokens nuevos.
+- *Dejar Administrativo en marrón* (DD-176): es una familia de un solo estado, y Administrativo es una manera de no
+  recibir conversaciones, como No disponible.
 - *Estrechar Email, Grupos y Equipos para que la tabla quepa a 1440*: cortarían su contenido, y las columnas miden lo
   que traen (DD-210 §4).
 - *Esconder el grupo de salientes en la demo*: el prototipo enseña todo lo contratable (DD-211 §9); la bandera deja el
@@ -228,9 +234,8 @@ ficha que se comporta como su gemela se aprende una vez.
 - *Dejar al editar el aviso entero bajo la sección*: Grupos y COA dicen la etiqueta corta, la misma que en el alta.
 
 **Consecuencias** · Prueba nueva `agentes-como-coa-4060-4062.spec.ts`, y al día las del alta de agente que fijaban el ✓
-suelto y «Falta: …» sobre el resumen. Pendiente de decidir: el tono de Administrativo y Post-conversando (el Kit solo trae
-`presence/administrative` red.600, `presence/wrapup` cyan.600 y `presence/talking` cyan.400, colores sueltos y no
-etiquetas). Figma, en su propia sesión. La congelada `proto-sismac-4062` avanza con esto cuando se funda
+suelto y «Falta: …» sobre el resumen. Contact Center › Servicio sigue pintando Administrativo con la etiqueta de aviso
+(`warn`): no es la columna Estado y queda fuera. Figma, en su propia sesión. La congelada `proto-sismac-4062` avanza con esto cuando se funda
 (`docs/PROTOTIPOS.md`).
 
 ---
