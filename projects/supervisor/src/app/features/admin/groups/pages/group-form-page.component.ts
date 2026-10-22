@@ -611,17 +611,6 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
     return this.sectionLinks.go(this.sectionUrl(id));
   }
 
-  /**
-   * Pulsar una fila del índice. Si era una sección que se dejó en rojo, se llega a lo primero que falta en ella, con el
-   * foco en el campo: el rojo del índice se resuelve donde se arregla, sin buscar (en el alta; al editar, la dirección).
-   */
-  protected alIndice(id: string): void {
-    const eraRoja = this.mode() === 'create' && this.alta.estados().get(id) === 'error';
-    const primero = eraRoja ? this.obligatorios().find((o) => o.falta && o.seccion === id) : undefined;
-    void this.goTo(id);
-    if (primero?.ancla && this.activeSection() === id) llegarAAncla(primero.ancla, this.injector);
-  }
-
   /** Lleva a un campo de la ficha: a su sección, y en ella al campo, arriba y con el foco. */
   private irACampo(seccion: string, ancla: string | null): void {
     const llegar = () => (ancla ? llegarAAncla(ancla, this.injector) : llegarASeccion(seccion, this.injector));
