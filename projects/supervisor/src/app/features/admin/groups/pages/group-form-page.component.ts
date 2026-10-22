@@ -339,10 +339,6 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
    * «Atrás / Siguiente» al pie. Se navega libre (DD-217: fuera la puerta de General de DD-121 y la de Distribución de
    * DD-158). La sección abierta no toca la dirección.
    */
-  /** Demo de dos variantes del índice del alta (`?variante=simple`): sin línea debajo y con un fundido. */
-  protected readonly variante: 'completa' | 'simple' =
-    new URLSearchParams(globalThis.location?.search ?? '').get('variante') === 'simple' ? 'simple' : 'completa';
-
   protected readonly alta = seccionesDeAlta({
     secciones: this.navSections,
     // ✓ en toda sección que se deja completa (DD-211 §6): Recursos y Agentes, con solo pasar; General y Distribución

@@ -48,6 +48,19 @@ const ALTA_SNIPPET = `<sc-form-section-nav
   (activeChange)="onActive($event)"
 />`;
 
+/* El recorrido de un alta (DD-222): un marcador de paso en TODAS las filas, que cambia de estado en su sitio, y una línea
+ * debajo con lo que falta (rojo, la sección que se dejó así) o el estado en una etiqueta corta. La página manda el estado
+ * de cada sección en `sectionStates` y lo que falta en `sectionErrorHints`. */
+const PASOS_SNIPPET = `<sc-form-section-nav
+  [sections]="sections"
+  [activeId]="active()"
+  [flush]="true"
+  [sectionStates]="states"
+  [sectionErrorHints]="pasosHints"
+  [sectionsWithErrors]="errors"
+  (activeChange)="onActive($event)"
+/>`;
+
 /* Los rótulos van escritos: son lo que enseña la story (DD-52). */
 const LONG_SNIPPET = `<!-- Rótulos que no caben en el rail: envuelven a otra línea, sin elipsis. -->
 <sc-form-section-nav
@@ -85,6 +98,7 @@ export class FormSectionNavDemoComponent {
   protected readonly longTpl = viewChild<TemplateRef<StoryContext>>('long');
   protected readonly linksTpl = viewChild<TemplateRef<StoryContext>>('links');
   protected readonly altaTpl = viewChild<TemplateRef<StoryContext>>('alta');
+  protected readonly pasosTpl = viewChild<TemplateRef<StoryContext>>('pasos');
 
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
@@ -115,6 +129,21 @@ export class FormSectionNavDemoComponent {
   readonly altaErrors = new Set(['horario']);
   readonly altaHints: Readonly<Record<string, string>> = { horario: 'Elige un horario' };
   readonly done = new Set(['general', 'voz']);
+
+  /* El recorrido (DD-222): General se dejó completa, «Voz y saludo» con cambios por ver, Horario con algo por hacer y
+   * Avanzado aún sin abrir. */
+  readonly pasosActive = signal('voz');
+  readonly states: ReadonlyMap<string, 'pendiente' | 'nuevo' | 'actual' | 'hecha' | 'error'> = new Map([
+    ['general', 'hecha'],
+    ['voz', 'actual'],
+    ['horario', 'error'],
+    ['avanzado', 'pendiente'],
+  ]);
+  readonly pasosHints: Readonly<Record<string, string>> = { horario: 'Horario, aviso' };
+
+  onPasosActive(id: string): void {
+    this.pasosActive.set(id);
+  }
 
   onAltaActive(id: string): void {
     this.altaActive.set(id);
@@ -163,13 +192,15 @@ export class FormSectionNavDemoComponent {
     const lo = this.longTpl();
     const li = this.linksTpl();
     const al = this.altaTpl();
-    if (!pg || !de || !fl || !lo || !li || !al) return [];
+    const pa = this.pasosTpl();
+    if (!pg || !de || !fl || !lo || !li || !al || !pa) return [];
     return [
       { name: 'Playground', playground: true, template: pg },
       { name: 'Default', template: de, snippet: DEFAULT_SNIPPET },
       { name: 'Flush (panel embebido)', template: fl, snippet: FLUSH_SNIPPET },
       { name: 'Enlaces, rótulo y cambios sin guardar', template: li, snippet: LINKS_SNIPPET },
       { name: 'En un alta: ✓ en las que se dejan completas, y lo que falta al pulsar «Crear»', template: al, snippet: ALTA_SNIPPET },
+      { name: 'El recorrido de un alta: marcador de paso y su línea (DD-222)', template: pa, snippet: PASOS_SNIPPET },
       { name: 'Rótulos largos (envuelven, no se recortan)', template: lo, snippet: LONG_SNIPPET },
     ];
   });

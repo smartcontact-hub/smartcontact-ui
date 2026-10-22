@@ -141,11 +141,6 @@ export class ScFormSectionNavComponent implements OnInit {
    */
   readonly sectionStates = input<ReadonlyMap<string, ScStepMarkerState> | null>(null);
 
-  /**
-   * `completa`: segunda línea bajo cada fila (estado en gris, o lo que falta en rojo) y marcador con trazo y halo.
-   * `simple`: sin línea (lo que falta va en el `title` y se oye) y marcador con un fundido. Solo con `sectionStates`.
-   */
-  readonly variante = input<'completa' | 'simple'>('completa');
 
   /** El usuario ha pulsado otra sección del índice (clic principal, sin teclas). */
   readonly activeChange = output<string>();
@@ -200,11 +195,6 @@ export class ScFormSectionNavComponent implements OnInit {
    * falta, en rojo y en una línea (la página lo da en `sectionErrorHints`), o el estado en gris: sin revisar,
    * en curso, listo. Lo largo se corta con puntos suspensivos y se lee entero en el `title`.
    */
-  /** ¿La fila lleva línea debajo? Con marcador, solo en la variante completa; sin él, si tiene aviso. */
-  protected conLinea(id: string): boolean {
-    return this.stepState(id) !== null ? this.variante() === 'completa' : this.errorHint(id) !== null;
-  }
-
   protected stepLine(section: FormNavSection): { key: string | null; text: string | null; tono: 'neutro' | 'aviso' | 'nuevo' | 'hecha' | 'error' } | null {
     const paso = this.stepState(section.id);
     if (paso === null) return null;

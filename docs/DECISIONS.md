@@ -160,6 +160,54 @@
 
 ---
 
+## DD-222 · 2026-10-22 — El índice del alta lleva un marcador de paso en cada fila: sin ver, completa o con algo por hacer, y un número de WhatsApp obligatorio
+
+**Contexto** · Hasta DD-143 el índice de un alta ponía un ✓ en la sección que se dejaba completa, y nada más. Medido el
+2026-10-21 en el alta de grupo: el ✓ salía en la fila que se DEJABA, no en la que se pulsaba; Recursos y Agentes lo ganaban
+solo por pasar (no tienen nada obligatorio) y General y Distribución no; y el ✓ aparecía de un hueco vacío, así que parecía
+aleatorio. Además, con Tipificar encendido el índice decía solo el primero de lo que faltaba («Nombre»), y una sección
+dejada en rojo se volvía gris al volver a ella.
+
+**Decisión** ·
+1. **Un marcador de paso (`sc-step-marker`) en TODAS las filas del alta**, siempre presente y con el mismo tamaño (14 px), que
+   cambia de estado EN SU SITIO con un fundido: aro gris (nunca abierta), aro y punto de marca con relleno tintado (abierta
+   antes, con algo nuevo desde entonces), círculo de marca con punto (a la vista), círculo verde con ✓ (obligatorios
+   cumplidos) y círculo rojo con «!» (falta algo). El rojo lleva signo: el color no va solo.
+2. **El resultado es EN VIVO desde que se deja la sección por primera vez.** La verde sigue verde al abrirla; la roja sigue
+   roja y pasa a verde al rellenar lo que faltaba; la verde a la que se le vacía un obligatorio vuelve a rojo. La primera
+   visita no regaña: una sección a la vista que nunca se dejó es «a la vista», no roja (DD-219).
+3. **Una línea de texto bajo la etiqueta en cada fila**, siempre (la fila mide 61 px en todos los estados, sin saltos): lo
+   que falta en la sección («Teléfono saliente, WhatsApp», sin «Falta:», que el rojo y el «!» ya dicen), o su estado en
+   una etiqueta corta y homogénea: Sin revisar, Con novedades, En curso, Completa, Revisada (sin nada obligatorio), Sin
+   guardar (en edición) y Faltan datos. El color del texto es el del marcador. Se corta con puntos suspensivos y el `title`
+   lo dice entero; el lector de pantalla oye «Falta:» delante de la lista.
+4. **«Hay algo nuevo» conserva el recorrido**: quitar un canal no devuelve nada a «Sin revisar»; añadir uno marca «Con
+   novedades» las secciones que ya se vieron y a las que llega algo (bloques de canal, plantillas y columnas).
+5. **El feedback del alta vive en el índice**, que es donde se mira al tocar canales y secciones: sobre el resumen ya no hay
+   «Falta: …» ni «Listo para crear» en el alta (al editar se queda, solo si falta algo). «Crear grupo» apagado sigue con su
+   tooltip.
+6. **Los obligatorios de una sección dejada en rojo se dicen en rojo al volver**, todos, también los que se enciendan luego
+   (la tipificación al activar Tipificar). Pulsar la fila roja NO lleva al campo: ya se ve de entrada.
+7. **Con WhatsApp, su número es obligatorio**, como el teléfono saliente con Teléfono (DD-142): sin él no tiene de dónde
+   escribir. «Revisada» y no «Completa» donde no hay nada que cumplir (Recursos, Agentes, y Distribución sin ningún canal).
+8. **La edición lleva el mismo índice**: todo «Completa» salvo lo que tenga un aviso a la vista (rojo) o cambios («Sin guardar»).
+
+**Razón** · Con el marcador siempre presente no hay nada que aparezca de la nada, que era lo que daba la sensación de azar. La
+línea debajo evita los saltos de diseño (medido: filas de 61 px en diez acciones seguidas) y da el feedback donde se está
+mirando. El resultado en vivo hace que arreglar algo se vea en el acto, en la fila que se está tocando.
+
+**Descartadas** ·
+- *Resolver el ✓ solo al salir* (DD-143): el efecto sale lejos del cursor y parece azar.
+- *Una variante simple de tres estados sin línea* (rama `areses/indice-checks-version-simple`): más limpia, pero el feedback
+  queda en un tooltip y en el resumen, lejos de donde se toca el índice. Se descartó por la revisión de producto.
+- *Un rojo que salte al campo al pulsar la fila*: el campo ya se ve de entrada al abrir la sección.
+- *Evolucionar el radiobutton*: es un control de formulario; con el ✓ y el «!» perdería su significado.
+- *Reiniciar a «Sin revisar» al quitar un canal* (DD-217): borra el recorrido sin que haya nada nuevo que ver.
+
+**Consecuencias** · Medido el 2026-10-22 en el alta y la edición de grupo, a 1440. Nuevo `sc-step-marker` en el DS y entrada
+`sectionStates` en `sc-form-section-nav`; el resto de índices (Contact Center, constructor de reglas, agente, usuario,
+tipificación) no lo llevan aún. En Figma: `step-marker` con sus estados y las filas de `nav-item` con su marca.
+
 ## DD-221 · 2026-10-21 — Con el índice en la caja, el carril mide 235, como en Figma
 
 **Contexto** · DD-220 metió el índice en la caja gris y dejó el carril en 196, sabiendo que dos rótulos bajarían a dos

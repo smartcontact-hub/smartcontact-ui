@@ -4874,6 +4874,16 @@
           "nativo": null
         },
         {
+          "nombre": "sectionStates",
+          "clase": "input",
+          "tipo": "ReadonlyMap<string, ScStepMarkerState> | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "El recorrido de un alta, con el marcador de paso (`sc-step-marker`) en TODAS las filas: pendiente sin ver, actual la abierta, hecha o error la que se dejó. Con él, el marcador sustituye a los puntos y al ✓ sueltos (las filas cambian de estado en su sitio, sin aparecer de un hueco vacío); lo que falta se sigue diciendo en texto bajo la etiqueta si la página lo da. Opt-in: sin él, el índice se pinta como siempre (edición, Contact Center, constructor de reglas).",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
           "nombre": "activeChange",
           "clase": "output",
           "tipo": "string",
@@ -8946,6 +8956,31 @@
           "porDefecto": "false",
           "requerido": false,
           "descripcion": "Empieza plegado. Solo tiene efecto con `collapsible`.",
+          "origen": "nuestro",
+          "nativo": null
+        }
+      ],
+      "ocultas": []
+    },
+    {
+      "selector": "sc-step-marker",
+      "name": "step-marker",
+      "primengBase": "—",
+      "estado": "experimental",
+      "faltas": [
+        "kit",
+        "demo"
+      ],
+      "retirado": null,
+      "cuando": null,
+      "contrato": [
+        {
+          "nombre": "state",
+          "clase": "input",
+          "tipo": "ScStepMarkerState",
+          "porDefecto": "'pendiente'",
+          "requerido": false,
+          "descripcion": null,
           "origen": "nuestro",
           "nativo": null
         }
