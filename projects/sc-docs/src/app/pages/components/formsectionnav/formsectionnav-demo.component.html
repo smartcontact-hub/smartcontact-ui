@@ -54,6 +54,26 @@
   </div>
 </ng-template>
 
+<!-- El recorrido de un alta (DD-222): un marcador de paso en cada fila (sin ver, a la vista, completa, con algo nuevo, con
+     algo por hacer) y su línea debajo. Las filas miden lo mismo en todos los estados. Cómo se mueve: el marcador cambia de
+     estado en su sitio (200 ms; el ✓ se dibuja en 300), un halo verde se abre una vez al completarse (560 ms), el texto
+     cambia de color en 300 ms y la línea de una fila que no se mira se ilumina 1200 ms al cambiar. Sin movimiento con
+     `prefers-reduced-motion`. -->
+<ng-template #pasos>
+  <div class="col" style="max-width: 260px">
+    <sc-form-section-nav
+      [sections]="sections"
+      [activeId]="pasosActive()"
+      [flush]="true"
+      [sectionStates]="states"
+      [sectionErrorHints]="pasosHints"
+      [sectionsWithErrors]="errors"
+      (activeChange)="onPasosActive($event)"
+      data-testid="sc-formnav-pasos"
+    />
+  </div>
+</ng-template>
+
 <ng-template #default>
   <div class="col" style="max-width: 260px">
     <sc-form-section-nav

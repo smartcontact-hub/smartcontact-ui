@@ -638,6 +638,8 @@ export const GROUPS_SEED: readonly Group[] = [
     templates: [1, 2, 3, 4, 5, 11],
     services: ['Soporte técnico', 'Soporte web'],
     schedules: [1, 2, 3],
+    // Con WhatsApp el número es obligatorio (DD-222): los grupos de ejemplo ya lo llevan.
+    advanced: { ...DEFAULT_ADVANCED, whatsappNumber: WHATSAPP_NUMBERS[0] ?? '' },
   },
   {
     id: 12,
@@ -653,6 +655,8 @@ export const GROUPS_SEED: readonly Group[] = [
     templates: [7, 8, 10],
     services: ['Reclamaciones', 'Atención general'],
     schedules: [1, 2],
+    // Con WhatsApp el número es obligatorio (DD-222): los grupos de ejemplo ya lo llevan.
+    advanced: { ...DEFAULT_ADVANCED, whatsappNumber: WHATSAPP_NUMBERS[0] ?? '' },
   },
   {
     id: 13,
@@ -664,6 +668,8 @@ export const GROUPS_SEED: readonly Group[] = [
     strategy: 'Más tiempo inactivo',
     chatStrategy: 'Menos conversaciones atendidas',
     services: ['Soporte taller', 'Averías'],
+    // Con WhatsApp el número es obligatorio (DD-222): los grupos de ejemplo ya lo llevan.
+    advanced: { ...DEFAULT_ADVANCED, whatsappNumber: WHATSAPP_NUMBERS[0] ?? '' },
   },
   {
     id: 14,

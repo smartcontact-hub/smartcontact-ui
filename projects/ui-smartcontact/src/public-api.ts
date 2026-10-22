@@ -51,6 +51,7 @@ export * from './lib/components/fileupload/sc-fileupload.component';
 export * from './lib/components/inputtags/sc-inputtags.component';
 export * from './lib/components/tabs/sc-tabs.component';
 export * from './lib/components/icon-tile/sc-icon-tile.component';
+export * from './lib/components/step-marker/sc-step-marker.component';
 export * from './lib/components/fact-row/sc-fact-row.component';
 export * from './lib/components/selectbutton/sc-selectbutton.component';
 export * from './lib/components/toggleswitch/sc-toggleswitch.component';

@@ -2113,6 +2113,8 @@
         "no_number": "No number",
         "resources": "Resources",
         "missing_phone": "outbound phone",
+        "missing_whatsapp": "WhatsApp number",
+        "missing_whatsapp_short": "WhatsApp",
         "missing_typification": "typification"
       },
       "channels": {
@@ -2180,6 +2182,7 @@
       "name_required": "Name is required",
       "name_taken": "A group with this name already exists",
       "phone_required": "The outbound phone is required",
+      "whatsapp_required": "The WhatsApp number is required",
       "typification_required": "Typification is required"
     },
     "toasts": {

@@ -173,6 +173,18 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
+## ✅ 2026-10-22 · El índice del alta lleva un marcador de paso (`sc-step-marker`, DD-222)
+
+**Sello:** rama `areses/indice-checks-aleatorios-e7aa39`, sobre HEAD `12bd0f44` de `main`.
+
+**Lo que cambia.** Cada fila del índice de secciones lleva un marcador con cinco estados (sin revisar · con novedades · en curso · completa · con faltas) y una segunda línea con su texto. El resultado es vivo una vez que sales de la sección, así que el tick ya no aparece en la fila que dejas ni con el nombre vacío. Pinchar una fila en rojo no redirige. El número de WhatsApp pasa a ser obligatorio. El alta ya no pinta el estado sobre el resumen. El modelo vive en `alta-secciones.core.mjs` (`estadosDeSecciones`) y la historia de sc-docs es «El recorrido de un alta».
+
+**Cómo se mueve (DD-222 §9).** Todo con `prefers-reduced-motion` apagado y sin animar la primera pintura. El marcador cambia de estado en su sitio: relleno y trazo en 200 ms, punto que se encoge y ✓ que se dibuja en 300 ms (el ✓ entra 80 ms tarde, con el relleno ya verde), «!» que crece de 0,6 a 1. Al completarse con el marcador ya pintado, un halo verde de 0 a 7 px en 560 ms, una vez por marcador. El texto de la línea difumina su color en 300 ms. Si cambia la línea de una fila que no se mira, se ilumina 1200 ms con un fondo de marca al 22 %. Con menos movimiento: un fundido de 100 ms. Al editar no hay marcadores: punto rojo y, bajo la sección, lo que falta; y sobre el resumen ya no hay línea de estado en el grupo ni en la edición de agente y usuario.
+
+**Figma.** El DS tiene el conjunto `step-marker` (15724:271) y `nav-item` (12555:23029) con 21 variantes. Falta que Rafa publique la librería; después hay que cambiar los 33 índices de la página Grupos del archivo del Supervisor (variante nueva por `importComponentByKeyAsync` + `swapComponent`) y tocar las notas «Cómo se comporta».
+
+**Pendiente.** Replicar el marcador en las fichas de agente, usuario y tipificación; revisar el copy fr y pt.
+
 ## ✅ 2026-10-14 · PrimeNG por familias: catálogo de 109, barrido de usos y página en sc-docs
 
 **Sello:** rama `arebury/primeng-component-usage`, sobre HEAD `6ddbec7d` (#400). Sale por el tope el tramo del 2026-10-13
@@ -191,20 +203,6 @@ selección, filtros, edición que suma al equipo, menú contextual, carga perezo
 
 - ⚠️ **Cinco trampas de PrimeNG 22, junto a su arreglo** en `treetable-lab-page.component.ts`: `selection` frente a
   `selectionKeys`, `dataKey` en `node.data`, `totalRecords` vacío, `customSort` por nivel y el paginador que no recorta.
-
-## ✅ 2026-10-14 · `sc-datatable` cubre primeng.dev/table, y se prueba entero en `/lab/tabla`
-
-**Sello:** rama `arebury/tabla-primeng-completa`, fundida en `a30b5138` (#393 a #396). Sale por el tope el tramo del
-2026-10-06 (DD-175): `git show 5d9ae4df:docs/handoff/design-system.md`.
-
-**Lo que cambia.** La tabla del DS hace los ejemplos de primeng.dev/table: selección, orden por varias, filtros, cabecera
-agrupada, edición por celda y por fila, detalle de fila, filas agrupadas, reordenar y fijar filas, exportar CSV, recordar
-el estado y el texto del paginador. Cada uno se toca en `/lab/tabla`, un grupo de controles por tema; el catálogo de BI ya
-no tiene nada «sin hacer» en el front.
-
-- ⚠️ **`stateKey` tapa dos fallos de PrimeNG 22** (`reponerEstado` y `onStateSave` de `sc-datatable.component.ts`): sus
-  entradas pisan lo repuesto en el mismo arranque, y un filtro en fila vacío rompía la tabla al volver. Al subir PrimeNG,
-  quita los dos y mira si la prueba «stateKey: al volver…» sigue verde.
 
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 
@@ -282,6 +280,8 @@ Fichero: **"Smart-Contact Design System"** (`khNq9dJKNi13pNllrqm6dx`) — 111 p�
 variables, 30 comentarios activos.
 
 ## ⚠️ Trampas de este frente
+
+- ⚠️ **`stateKey` tapa dos fallos de PrimeNG 22** (`reponerEstado` y `onStateSave` de `sc-datatable.component.ts`): sus entradas pisan lo repuesto en el mismo arranque, y un filtro en fila vacío rompía la tabla al volver. Al subir PrimeNG, quita los dos y mira si la prueba «stateKey: al volver…» sigue verde. (Tramo archivado: `git show archive/handoff-design-system-2026-10-22:docs/handoff/design-system.md`.)
 
 - 🪤 **Al quitar un import de PrimeNG, el trinquete de descripciones pide JSDoc** para lo que heredaba la suya: la de la pieza hermana sirve donde coincide (DD-172).
 - 🪤 **Una rutina no acepta un «sí» escrito en su encargo** para actuar con la identidad del usuario: la confirmación va en esa sesión (DD-134).

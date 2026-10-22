@@ -44,11 +44,11 @@ test('grupo · encender «Tipificar» no acusa, tampoco al dejar General: gris y
   await expect(desplegable).not.toHaveAttribute('aria-invalid', 'true');
   await expect(avisos(page, 'group-section-general')).toHaveCount(0);
   await expect(conPunto(page)).toHaveCount(0);
-  // Hay un cambio, pero falta la tipificación: «Guardar» apagado, y el resumen dice qué falta.
+  // Hay un cambio, pero falta la tipificación: «Guardar» apagado. Sin línea de estado sobre el resumen (DD-222).
   await expect(page.locator('.form-save-reason')).toHaveText('Cambios sin guardar');
   const guardar = page.locator('sc-top-bar').getByRole('button', { name: 'Guardar' });
   await expect(guardar).toBeDisabled();
-  await expect(estado(page)).toContainText('Falta: tipificación');
+  await expect(estado(page)).toHaveCount(0);
 
   await irASeccion(page, 'Distribución y colas');
   await expect(conPunto(page)).toHaveCount(0);
@@ -56,7 +56,7 @@ test('grupo · encender «Tipificar» no acusa, tampoco al dejar General: gris y
   // Ctrl+S no guarda: lleva a General, al desplegable, y lo dice en rojo en el campo y en el índice.
   await guardarConTeclado(page);
   await expect(conPunto(page)).toContainText('General');
-  await expect(conPunto(page)).toContainText('La tipificación es obligatoria');
+  await expect(conPunto(page)).toContainText('Tipificación');
   await expect(avisos(page, 'group-section-general')).toHaveText(['La tipificación es obligatoria']);
   await expect(desplegable).toHaveAttribute('aria-invalid', 'true');
 });
@@ -91,7 +91,7 @@ test('agente · editar: quitar los canales no acusa, tampoco al dejar General: g
   await expect(avisos(page, 'agent-section-general')).toHaveCount(0);
   await expect(conPunto(page)).toHaveCount(0);
   await expect(page.locator('sc-top-bar').getByRole('button', { name: 'Guardar' })).toBeDisabled();
-  await expect(estado(page)).toContainText('Falta: un canal');
+  await expect(estado(page)).toHaveCount(0);
 
   await irASeccion(page, 'Configuración');
   await expect(conPunto(page)).toHaveCount(0);

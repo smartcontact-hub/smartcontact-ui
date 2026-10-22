@@ -53,6 +53,16 @@ test('Ring All: «Nº agentes simultáneos»; 3 o más vuelve a 2 con «Opción 
 });
 
 test('WhatsApp: sin número no hay mensajes ni horario; Web Chat: los mensajes de horario piden un horario', async ({ page }) => {
+  // Los grupos de ejemplo ya llevan su número (DD-222): uno sin él, para ver qué pasa antes de elegirlo.
+  await page.addInitScript(() => {
+    localStorage.setItem('sc-groups-v', '4');
+    localStorage.setItem(
+      'sc-groups',
+      JSON.stringify([
+        { id: 11, code: '20011', name: 'Online Support', phone: '918371548', priority: 'Máxima', channels: ['phone', 'chat', 'whatsapp'], strategy: 'Balanceada', chatStrategy: 'Menos conversaciones atendidas' },
+      ]),
+    );
+  });
   await goto(page, 'admin/grupos/editar/11?seccion=distribucion');
   const chat = page.locator('#group-channel-chat');
   const mensajesWhatsApp = chat.locator('[id^="group-chat-msg-whatsapp-"]');
