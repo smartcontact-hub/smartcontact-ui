@@ -72,15 +72,16 @@ trampas propias): `git show fa98b4bf:docs/handoff/supervisor-fichas.md`.
 ## ✅ 2026-10-22 · Repaso de Grupos entre COA, Figma y prototipo; «Editar en Repositorios» pregunta guardar (DD-224)
 
 > **Sello:** rama `areses/repaso-grupos-coa-figma` sobre `main` `fa98b4bf`, un PR (#507, fundido como `88d2e3e7`). La
-> congelada 4058 avanzó a ese commit el mismo día. COA: la 4056 se publicó en la v12 con todo el repaso; la 4058 tiene
-> sus cambios en borrador, a falta de la tabla de contenidos, las anclas y publicar.
+> congelada 4058 avanzó a ese commit el mismo día. COA, publicado el mismo día con todo el repaso: la 4056 en la v13 y
+> la 4058 en la v19, con su tabla de contenidos, las anclas «Indice», «Mensajes» y «Resumen», y la fila 0.2 en el
+> control de versiones.
 
 - **Repaso**: COA 4058 (v17) y 4056 (v11) frase a frase contra la congelada 4058 (ya con DD-223) y contra el texto de
   las hojas de Figma de Grupos. Prototipo y Figma cuadraban salvo cinco retoques de texto, hechos con DD-224 (`figma-pendiente` §62); las
-  correcciones de COA, para pegar, viven fuera del repo (`~/Documents/Claude/2026-10 Grupos COA/`).
+  correcciones de COA, ya publicadas, y el prompt que las aplicó viven fuera del repo (`~/Documents/Claude/2026-10 Grupos COA/`).
 - **«Editar en Repositorios»** del detalle de la tipificación, con cambios, pregunta «¿Guardar los cambios?» como
   «Gestionar en Repositorios»: `sc-tipificacion-arbol` emite `editar` y la ficha decide (`salirARepositorios`).
-- **«Solo salientes» con Call Blending**: ya lo decía DD-211 §9; falta en COA, no en el prototipo.
+- **«Solo salientes» con Call Blending**: ya lo decía DD-211 §9; desde la v19, también la 4058 de COA.
 
 ## ✅ 2026-10-22 · La ficha de grupo, como la versión 17 de su página de COA (DD-223)
 
