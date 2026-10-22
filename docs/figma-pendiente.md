@@ -1543,28 +1543,6 @@ botón de X1 a X3 lleva `key`.
 
 ---
 
-## 59 · La fila 5 de la hoja del listado de grupos: el nombre tiene tope (medido el 2026-10-22)
-
-**Estado:** sin hacer · **Dónde:** fichero del Supervisor, página «Grupos», la hoja «Cómo se comporta» del listado (a
-la izquierda de su flujo; la maqueta es `3118:17001`), fila 5 · **Evidencia:** sc-supervisor.pages.dev con el
-almacenamiento limpio.
-
-La fila dice «Nombre: ancho flexible, mín. 240; Acciones: 56, fija a la derecha», que es la regla de antes de DD-187 §7.
-El código hace otra cosa, a propósito: el nombre crece hasta 24rem (384) y, si la tabla es más ancha, el sobrante va a
-la columna del «⋮», que sigue fija a la derecha con el botón pegado al borde. Sin tope, a 1920 el nombre medía 737 y
-había un salto hasta Teléfono. Por debajo, el nombre no baja de 240 y la tabla se desplaza de lado (DD-193). Medido:
-Grupos a 1920, Nombre 384 y la columna del «⋮» 599; a 1440, 384 y 119. Agentes a 1920, 384 y 381; a 1440, 241 y 56.
-
-- **Texto nuevo de la fila 5:** «Nombre: ancho flexible, mín. 240, máx. 384. Acciones: fija a la derecha; mide 56 y,
-  si la tabla es más ancha que sus columnas, se queda con el sobrante, con el botón pegado al borde derecho.»
-- **La maqueta `3118:17001`:** si su Nombre pasa de 384, se ajusta igual (el hueco, entre la última columna y el «⋮»).
-- **La hoja del listado de Agentes** (sección `3405:12408`): si tiene la misma fila, el mismo cambio.
-
-**Cómo sabes que está hecho:** la fila 5 dice «máx. 384» y que el sobrante va a Acciones, y en la maqueta Nombre no
-pasa de 384.
-
----
-
 ## Lo de estas semanas que NO va a Figma, y por qué
 
 - **El juego de datos** (Demo · Editorial · Tortura, en Configuración → Sistema → Datos; DD-124): es una herramienta de
@@ -1573,7 +1551,7 @@ pasa de 384.
   Si se maqueta, las reglas de tabla de abajo.
 - **Las reglas de tabla del código**, para cuando se maqueten tablas:
   - las cifras miden su dato y el nombre crece hasta 384 (24rem), recortando con «…» (el texto entero va en el
-    `title`); en una tabla más ancha, el sobrante va a la columna del «⋮» (DD-187 §7, ficha 59);
+    `title`); en una tabla más ancha, el sobrante va a la columna del «⋮» (DD-187 §7, §59);
   - las cabeceras de varias palabras no se parten;
   - el texto libre de Conversaciones, hasta dos líneas y «…»;
   - la fila de totales lleva raya arriba.
@@ -1633,6 +1611,14 @@ pasa de 384.
   tras Ctrl+S, con el foco en el primer pendiente (E2 del alta). Notas, hojas y hand-off con la regla; el tooltip, descrito.
   Versiones del fichero: «Lo que falta, antes de pulsar», «Lo que falta: el rojo sin foco al salir del campo» y
   «Resúmenes con la línea Falta / Listo (librería publicada)». La ficha de usuario no tiene maqueta.
+- ~~**§59 · El nombre del listado de grupos tiene tope (DD-187 §7)**~~ → **HECHO el 2026-10-22**. La fila 5 de «Cómo se
+  comporta: listado de grupos» (`3131:11194`) decía «Nombre: ancho flexible, mín. 240» y «Acciones: 56», la regla de
+  antes de DD-187 §7; ahora, «mín. 240, máx. 384» y Acciones con el sobrante, el ⋮ pegado al borde derecho. En las nueve
+  tablas del flujo (`3118:16995`) y en la copia del Mapa (`3178:11368`), Nombre fijo a 384 y Acciones en FILL (595, como
+  la app a 1920: Nombre 384 y el ⋮ con 599). Con ellas se movieron los números 7 y 8 de la guía del paso 01, el menú de
+  la selección del paso 08 y los recuadros de Canales a Agentes del Mapa. El listado de Agentes (`3405:12408`) ya medía
+  así y su hoja no lo contradice. Versión del fichero: «Listado de grupos: Nombre a 384 y el sobrante en Acciones
+  (DD-187 §7)».
 
 ---
 
