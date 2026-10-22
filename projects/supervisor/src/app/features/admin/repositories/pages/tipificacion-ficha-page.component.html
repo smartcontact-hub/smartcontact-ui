@@ -148,11 +148,6 @@
     />
     <sc-subsection>
       <div class="bloque">
-      <!-- Lo que le falta al árbol (una opción, nombres distintos): en gris mientras se rellena, en rojo si lo guardado ya
-           venía así (DD-219). -->
-      @if (avisoCategorias(); as a) {
-        <p class="sc-text-caption-regular" [class.field__error]="a.rojo" [class.field__help]="!a.rojo" [attr.role]="a.rojo ? 'alert' : null">{{ a.texto }}</p>
-      }
       <sc-tipificacion-niveles
         #niveles
         [options]="form().options"

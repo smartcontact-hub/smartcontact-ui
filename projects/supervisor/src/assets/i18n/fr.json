@@ -1572,7 +1572,7 @@
         "general": "Général",
         "categorization": "Catégories"
       },
-      "categorization_hint": "Ce que l'agent choisit, sur trois niveaux au plus ; chaque branche va aussi loin que nécessaire",
+      "categorization_hint": "Ce que l'agent choisit, jusqu'à trois niveaux",
       "rename_field": "Nouveau nom de l'option",
       "add_first": "Ajouter une option…",
       "add_under": "Ajouter dans « {{name}} »…",
