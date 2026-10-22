@@ -66,6 +66,11 @@ const NOMBRE_MINIMO = '15rem';
  */
 const ANCHO_MINIMO = 3.5;
 const ANCHO_TOPE = 20;
+/**
+ * La versión de lo medido que se guarda: lo guardado con otra se vuelve a medir. 2 (2026-10-22): se mide con las fuentes
+ * cargadas; lo de antes pudo medirse sin la de iconos y salir más ancho (Agentes, a 1440, se desplazaba 12 px de lado).
+ */
+const VERSION_MEDIDOS = 2;
 
 let listRowMenuIdCounter = 0;
 
@@ -336,8 +341,8 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
     try {
       const guardado: unknown = JSON.parse(localStorage.getItem(clave) ?? 'null');
       if (!guardado || typeof guardado !== 'object') return;
-      const { idioma, anchos } = guardado as { idioma?: unknown; anchos?: unknown };
-      if (idioma !== untracked(this.lang) || !anchos || typeof anchos !== 'object') return;
+      const { version, idioma, anchos } = guardado as { version?: unknown; idioma?: unknown; anchos?: unknown };
+      if (version !== VERSION_MEDIDOS || idioma !== untracked(this.lang) || !anchos || typeof anchos !== 'object') return;
       const validos = Object.entries(anchos).filter(([, v]) => typeof v === 'string' && /^\d+(\.\d+)?rem$/.test(v));
       this.idiomaMedido = idioma;
       this.anchosDePartida.set(Object.fromEntries(validos));
@@ -351,7 +356,8 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
     if (!clave) return;
     try {
       const anchos = this.anchosDePartida();
-      if (Object.keys(anchos).length) localStorage.setItem(clave, JSON.stringify({ idioma: this.idiomaMedido, anchos }));
+      if (Object.keys(anchos).length)
+        localStorage.setItem(clave, JSON.stringify({ version: VERSION_MEDIDOS, idioma: this.idiomaMedido, anchos }));
       else localStorage.removeItem(clave);
     } catch {
       /* Sin almacenamiento: lo medido vale mientras dure la página. */
@@ -381,7 +387,14 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
    */
   private medirColumnas(fields: readonly string[], intentos = 30): void {
     const tabla = this.tarjeta()?.nativeElement.querySelector('table');
-    if (!tabla) return;
+    if (!tabla?.isConnected) return;
+    /* Con las fuentes cargadas. Sin la de iconos (3,9 MB, la última en llegar), `sc-icon` ocupa lo que el nombre del glifo
+     * en letras: `font-display: block` lo esconde, pero ocupa. Medido así en el despliegue (2026-10-22), Agentes guardaba
+     * Extensión a 128 px en vez de 116 y Grabación a 155 en vez de 119, y a 1440 se desplazaba 12 px de lado. */
+    if (this.document.fonts?.status === 'loading') {
+      void this.document.fonts.ready.then(() => this.medirColumnas(fields, intentos));
+      return;
+    }
     /* La lista virtual pinta sus filas un fotograma después de recibirlas: medida antes, una columna medía lo de las dos
      * primeras filas (Email de Agentes cortaba la tercera). Se espera a tener a la vista las que caben, o todas. */
     const pintadas = tabla.querySelectorAll('tbody > tr:not(.p-datatable-emptymessage)').length;

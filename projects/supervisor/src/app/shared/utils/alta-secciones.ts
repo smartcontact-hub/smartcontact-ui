@@ -21,7 +21,7 @@
 import { afterNextRender, computed, effect, signal, type Injector, type Signal } from '@angular/core';
 import type { FormNavSection } from '@smartcontact-hub/components';
 
-import { dejarSeccion, seccionesHechas, seDice } from './alta-secciones.core.mjs';
+import { dejarSeccion, estadosDeSecciones, seccionesHechas, seDice } from './alta-secciones.core.mjs';
 
 export { firmaDe } from './alta-secciones.core.mjs';
 
@@ -30,9 +30,13 @@ export interface SeccionesAlta {
   readonly abierta: Signal<string>;
   /** Las que se dejaron tal como están y completas: el ✓ del índice (`sectionsDone`). */
   readonly hechas: Signal<ReadonlySet<string>>;
+  /** El estado de cada sección para el marcador de paso del índice (`sectionStates`): pendiente, actual, hecha o error. */
+  readonly estados: Signal<ReadonlyMap<string, 'pendiente' | 'nuevo' | 'actual' | 'hecha' | 'error'>>;
   /** Abre la sección `id` y da por dejada la que estaba abierta, con su firma de ese momento. */
   abrir(id: string): void;
   /** La sección anterior y la siguiente a la abierta, para «Atrás» y «Siguiente»; `null` en los extremos. */
+  /** Vuelta al formulario vacío («Deshacer» en un alta): lo dejado deja de contar, y la sección abierta se queda abierta. */
+  reiniciar(): void;
   anterior(): string | null;
   siguiente(): string | null;
 }
@@ -63,11 +67,17 @@ export function seccionesDeAlta(opts: {
     hechas: computed(() =>
       seccionesHechas({ ids: ids(), abierta: abierta(), dejadas: dejadas(), firma, completa: opts.completa }),
     ),
+    estados: computed(() =>
+      estadosDeSecciones({ ids: ids(), abierta: abierta(), dejadas: dejadas(), firma, completa: opts.completa }),
+    ),
     abrir(id: string): void {
       const antes = abierta();
       if (id === antes) return;
       dejadas.update((d) => dejarSeccion(d, antes, firma(antes)));
       abiertaManual.set(id);
+    },
+    reiniciar(): void {
+      dejadas.set(new Map());
     },
     anterior: () => vecina(-1),
     siguiente: () => vecina(1),

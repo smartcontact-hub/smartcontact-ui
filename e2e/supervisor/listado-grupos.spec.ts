@@ -1,6 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 
-import { disableAnimations, forceLightTheme, goto } from './helpers';
+import { disableAnimations, forceLightTheme, goto, irASeccion, pickSelectOption } from './helpers';
 
 /**
  * EL LISTADO DE GRUPOS HABLA COMO SU FICHA (visión de producto de grupos, 2026-09-25; DD-121): cada
@@ -99,6 +99,9 @@ test('cada familia de canales enseña su estrategia en su columna, y «—» don
   const general = page.locator('#group-section-general');
   await general.locator('sc-checkbox').filter({ hasText: /^\s*Teléfono\s*$/ }).click();
   await general.locator('sc-checkbox').filter({ hasText: /^\s*Chat\s*$/ }).click();
+  // Con Chat, el número de WhatsApp es obligatorio (DD-222).
+  await irASeccion(page, 'Distribución y colas');
+  await pickSelectOption(page, page.locator('sc-select').filter({ has: page.locator('#group-chat-whatsapp') }), /^\+?\d/);
   await page.getByRole('button', { name: 'Crear grupo' }).click();
   await expect(page).toHaveURL(/admin\/grupos\/editar\/\d+/);
 

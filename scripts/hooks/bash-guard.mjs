@@ -23,6 +23,7 @@ import { fileURLToPath } from 'node:url';
 import { execSync } from 'node:child_process';
 
 import { NOMBRE_RE } from '../audit-personal-names.mjs';
+import { medir as medirCapturas } from '../api-baselines.mjs';
 import { estadoPreflight } from '../preflight-mark.mjs';
 
 export const BYPASS = /#\s*sc:ok\b/;
@@ -507,6 +508,15 @@ export function carpetasPorSegmento(cmd, cwd) {
 export function usaPreflight(dir) {
   if (!fsSync.existsSync(dir)) return true;
   return fsSync.existsSync(resolve(raizDelArbol(dir), 'scripts', 'preflight-mark.mjs'));
+}
+
+/** Las capturas de sc-docs que el árbol `dir` mueve y no ha regenerado (`api-baselines.mjs`); sin medida, ninguna. */
+function capturasDelArbol(dir) {
+  try {
+    return medirCapturas(dir);
+  } catch {
+    return { rama: '', pendientes: [] };
+  }
 }
 
 /** Una rama remota que no es la principal: casi siempre, la de otra sesión. */
@@ -1043,6 +1053,29 @@ function evaluarBase(cmd, ctx = {}) {
           `Portada pública (AGENTS.md §Pull requests y commits) — este texto lleva ${hallado[1]}, y el repo es público. ` +
           'El resumen llano de arriba va sin destinatario (`**En resumen:**`), sin nombrar a nadie y sin atribución de la herramienta. ' +
           'Quítalo y repite. Si citas la regla a propósito (un commit que habla de ella), añade `# sc:ok`.',
+      };
+  }
+
+  // Abrir el PR con una captura de sc-docs sin regenerar: el robot va ANTES (#494, 2026-10-22).
+  //
+  // `api-baselines` ya lo avisaba, pero al FINAL del preflight, y un aviso al final no se ve si la cadena muere antes.
+  // En el #494 un rojo ajeno al cambio paró el preflight, se subió con `# sc:ok`, el PR se abrió con
+  // `sectioncard-linux.png` vieja y e2e-smoke cayó por 517 píxeles que se sabían antes de subir. El push no es el
+  // momento (hay que subir para que el robot pueda tomar la captura); abrir el PR, sí: un commit del robot sobre un PR
+  // ya abierto deja su CI sin jobs. Solo las capturas: las líneas base de estilos y estructura se regeneran en local y
+  // su commit sí dispara el CI. Si no puede medir, deja pasar: es un recordatorio, no la cadena.
+  for (const dir of enCarpetas((s) => empiezaPor(s, /^gh\s+pr\s+create\b/))) {
+    if (!(ctx.usaPreflight || usaPreflight)(dir)) continue;
+    const { rama, pendientes } = (ctx.capturas || capturasDelArbol)(dir);
+    if (pendientes.length)
+      return {
+        decision: 'deny',
+        reason:
+          `Capturas de sc-docs sin regenerar (${pendientes.map((p) => `${p.slug}-linux.png`).join(', ')}): e2e-smoke las ` +
+          'compara y caería. Antes de abrir el PR: (1) lanza el robot, ' +
+          `\`gh workflow run visual-baselines.yml --ref main -f rama=${rama} -f motivo="<por qué cambia>"\`; ` +
+          '(2) cuando acabe, `git pull` para traer su commit y mira cada PNG; (3) abre el PR. Un commit del robot sobre un ' +
+          'PR ya abierto deja su CI sin jobs. Si el robot ya pasó y no cambió ninguna captura, añade `# sc:ok`.',
       };
   }
 

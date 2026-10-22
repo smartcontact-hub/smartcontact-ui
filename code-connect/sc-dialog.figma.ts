@@ -1,4 +1,6 @@
 // url=https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=243-9556
+// source=projects/ui-smartcontact/src/lib/components/dialog/sc-dialog.component.ts
+// component=ScDialogComponent
 
 import figma from "figma"
 

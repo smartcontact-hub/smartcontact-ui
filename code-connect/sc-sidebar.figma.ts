@@ -1,4 +1,6 @@
 // url=https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=15380-91410
+// source=projects/supervisor/src/app/core/layout/sidebar/sidebar.component.ts
+// component=SidebarComponent
 
 import figma from "figma"
 

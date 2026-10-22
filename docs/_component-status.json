@@ -1,6 +1,6 @@
 {
   "generated": "component-audit.mjs",
-  "summary": "61 componentes · 22 custom · 10 standard · 29 extended · 50 usados en Supervisor · estado (DD-190): 33 ready, 27 experimental, 1 deprecated.",
+  "summary": "62 componentes · 22 custom · 10 standard · 30 extended · 50 usados en Supervisor · estado (DD-190): 33 ready, 28 experimental, 1 deprecated.",
   "components": [
     {
       "name": "avatar",
@@ -899,23 +899,26 @@
     {
       "name": "form-section-nav",
       "selector": "sc-form-section-nav",
-      "provenance": "CUSTOM",
-      "kind": "CUSTOM",
-      "primengBase": "—",
+      "provenance": "WRAPPER",
+      "kind": "EXTENDED",
+      "primengBase": "primeng/tooltip",
       "cva": false,
-      "inputs": 8,
+      "inputs": 9,
       "api": [
         "activeChange",
         "activeId",
         "flush",
         "labelKey",
         "sectionErrorHints",
+        "sectionStates",
         "sectionsDone",
         "sectionsWithChanges",
         "sectionsWithErrors",
         "titleKey"
       ],
-      "nested": [],
+      "nested": [
+        "sc-step-marker"
+      ],
       "hasDemo": true,
       "kit": false,
       "estado": "experimental",
@@ -1797,6 +1800,30 @@
       "retirado": null,
       "usedInSupervisor": 12,
       "cuando": "Para una ranura con título dentro de una composición.",
+      "sobreObsoleto": []
+    },
+    {
+      "name": "step-marker",
+      "selector": "sc-step-marker",
+      "provenance": "CUSTOM",
+      "kind": "CUSTOM",
+      "primengBase": "—",
+      "cva": false,
+      "inputs": 1,
+      "api": [
+        "state"
+      ],
+      "nested": [],
+      "hasDemo": false,
+      "kit": false,
+      "estado": "experimental",
+      "faltas": [
+        "kit",
+        "demo"
+      ],
+      "retirado": null,
+      "usedInSupervisor": 0,
+      "cuando": "Para decir dónde está cada sección de un recorrido (sin ver, completa, con algo por hacer) en el índice de un alta. Un estado suelto de un campo es su mensaje (`sc-field-msg`); una marca de cambios sin guardar, el punto del índice.",
       "sobreObsoleto": []
     },
     {

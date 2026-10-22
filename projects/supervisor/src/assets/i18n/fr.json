@@ -2115,6 +2115,8 @@
         "no_number": "Aucun numéro",
         "resources": "Ressources",
         "missing_phone": "téléphone sortant",
+        "missing_whatsapp": "numéro WhatsApp",
+        "missing_whatsapp_short": "WhatsApp",
         "missing_typification": "typification"
       },
       "channels": {
@@ -2182,6 +2184,7 @@
       "name_required": "Le nom est obligatoire",
       "name_taken": "Un groupe porte déjà ce nom",
       "phone_required": "Le téléphone sortant est obligatoire",
+      "whatsapp_required": "Le numéro WhatsApp est obligatoire",
       "typification_required": "La typification est obligatoire"
     },
     "toasts": {

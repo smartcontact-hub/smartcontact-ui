@@ -14,3 +14,11 @@ export function seDice(
   tocados?: ReadonlySet<string>,
 ): boolean;
 export function firmaDe(valores: Iterable<string>): string;
+export function estadosDeSecciones(o: {
+  readonly ids: readonly string[];
+  readonly abierta: string;
+  readonly dejadas: ReadonlyMap<string, string>;
+  readonly firma: (id: string) => string;
+  readonly completa: (id: string) => boolean;
+}): Map<string, 'pendiente' | 'nuevo' | 'actual' | 'hecha' | 'error'>;
+export function firmaVista(dejadas: ReadonlyMap<string, string>, id: string, actual: string): boolean;

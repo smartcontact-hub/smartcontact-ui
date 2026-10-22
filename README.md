@@ -9,7 +9,7 @@
 
 **Español** · [English](README.en.md)
 
-El design system de Smart Contact: **61 componentes `sc-*`** sobre Angular y PrimeNG, con un
+El design system de Smart Contact: **62 componentes `sc-*`** sobre Angular y PrimeNG, con un
 tema donde **cada valor es trazable al Kit de Figma y verificable por máquina**.
 
 > 📖 **[Documentación viva: sc-doc.pages.dev](https://sc-doc.pages.dev)** · catálogo de
@@ -83,7 +83,7 @@ npm run export:all     # tarballs npm en dist/archives/
 <!--sc:sec=verify-->
 
 ```bash
-npm run verify         # los 49 checks estáticos encadenados (~40s)
+npm run verify         # los 50 checks estáticos encadenados (~40s)
 npm run e2e            # smoke en navegador (Playwright)
 npm run preflight      # gates + builds AOT (~8 min), antes de pushear; las capturas las compara el CI
 ```
@@ -99,7 +99,7 @@ y los otros workflows.
 | Pantalla | `audit:theme-scale` · `audit:border-surfaces` · `audit:screen-hygiene` · `audit:icons` · `audit:interpunct` · `audit:page-anatomy` · `audit:screen-vocabulary` · `audit:text-styles` · `audit:css-literals` · `audit:titulo-contenido` · `audit:query-order` · `audit:base-href` | Las pantallas miden por token, con un solo vocabulario, sin saltos de layout y sin un `@media` o `@container` que el orden deja sin efecto |
 | Componentes | `audit:components` · `audit:api-era` · `audit:datatables` · `audit:datatable-slots` · `audit:primeng-coupling` · `audit:primeng-catalog` · `audit:doc-snippets` · `test:components` | La API pública, el acoplamiento a PrimeNG, la tabla de su catálogo y lo que la doc enseña cuadran con el código |
 | Contenido y docs | `i18n:check` · `novedades:check` · `usage:check` · `variables:check` · `audit:seed-pii` · `audit:personal-names` · `docs:guard` · `docs:coherence` · `docs:readme-parity` | Multiidioma de verdad, cero datos de contacto reales en demos, ningún nombre de persona en el código, y ninguna doc que mienta |
-| Repo | `proto:check` · `explorations:check` · `audit:commit-attribution` · `audit:e2e-citas` · `guard:backticks` · `test:unit` · `typecheck` · `lint` · `build` | Versiones congeladas localizables, ningún commit con la firma de la herramienta, ninguna e2e que cite lo que el cambio retiró, tipos limpios y las libs construyendo |
+| Repo | `proto:check` · `explorations:check` · `audit:commit-attribution` · `audit:e2e-citas` · `audit:code-connect` · `guard:backticks` · `test:unit` · `typecheck` · `lint` · `build` | Versiones congeladas localizables, ningún commit con la firma de la herramienta, ninguna e2e que cite lo que el cambio retiró, cada mapeo de Code Connect apuntando a un componente que existe, tipos limpios y las libs construyendo |
 
 El mismo gate corre en CI ([.github/workflows/ci.yml](.github/workflows/ci.yml)), que son
 **nueve pasos**: `verify` por sí solo no construye las apps ni corre los e2e.

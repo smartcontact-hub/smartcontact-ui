@@ -296,6 +296,62 @@
   overflow-wrap: anywhere;
 }
 
+/* La segunda línea de una fila con marcador: una sola línea, siempre (la fila no cambia de altura con el estado). Lo largo
+ * se corta con puntos suspensivos; el `title` lo dice entero. En gris cuando es un estado, en rojo cuando es lo que falta. */
+.form-nav__hint--paso {
+  /* Ocupa también el hueco del marcador: la línea de debajo no tiene nada a su derecha, y «Teléfono saliente, WhatsApp» cabe. */
+  grid-column: 2 / 4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+/* El color del texto de la fila es el del marcador, como un radio en rojo con su texto en rojo: se escanea por color y el
+ * texto lo dice igual (el color no va solo). Gris: sin ver o en curso; marca: algo nuevo; verde: hecha; rojo: lo que falta
+ * de una sección que se dejó así. «Aviso» es lo que falta en una sección que aún no se ha dejado: texto normal, sin alarma. */
+.form-nav__hint--neutro {
+  color: var(--sc-text-secondary);
+}
+
+.form-nav__hint--aviso,
+.form-nav__hint--nuevo {
+  color: var(--sc-text-primary);
+}
+
+/* El verde de éxito sobre el gris de la fila abierta mide 4,35:1; con un 15% del texto principal llega a AA en los dos
+ * temas (oscurece en el claro y aclara en el oscuro). */
+.form-nav__hint--hecha {
+  color: color-mix(in srgb, var(--sc-text-success) 85%, var(--sc-text-primary));
+}
+
+.form-nav__hint--error {
+  color: var(--sc-text-danger);
+}
+
+/* Los cambios de color se difuminan (el rojo al gris al quitar lo que faltaba, el gris al verde al completarla). */
+.form-nav__hint--paso {
+  transition: color var(--sc-transition-slow) var(--sc-easing-default);
+}
+
+/* Destello de una fila cuyo «falta» ha cambiado: un fondo de marca que se va, para verla de reojo. */
+.form-nav__hint--destello {
+  animation: form-nav-hint-destello 1200ms var(--sc-easing-default);
+  border-radius: var(--sc-radius-100);
+}
+
+@keyframes form-nav-hint-destello {
+  from {
+    background: color-mix(in srgb, var(--sc-bg-primary) 22%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .form-nav__hint--destello {
+    animation: none;
+  }
+}
+
 /* El hueco de la marca, siempre (vacío si no hay): el ancho del ✓, que es la más ancha, y la marca pegada a su
  * borde derecho. Así un rótulo no salta de línea cuando aparece el punto. */
 .form-nav__marker {

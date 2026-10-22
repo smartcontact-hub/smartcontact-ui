@@ -7,20 +7,40 @@ el puente formal Figma ↔ código; hoy ese puente en este repo es solo convenci
 
 ## Estado: publicado (2026-10-21)
 
-24 componentes mapeados en [`code-connect/`](../code-connect/), todos del archivo de la librería
-(`Smart-Contact-Design-System`): `button`, `inputtext`, `textarea`, `inputnumber`, `selectbutton`, `toggleswitch`,
-`checkbox`, `divider`, `Section` (`sc-section-card`), `.Subsection`, `message`, `dialog`, `datatable`, `card`,
-`chip`, `tag`, `select`, `multiselect`, `breadcrumb`, `toast` y los cuatro del sidebar. Las maquetas del
-Supervisor usan instancias de esa librería, así que los mapeos les valen.
+46 componentes mapeados en [`code-connect/`](../code-connect/), todos del archivo de la librería
+(`Smart-Contact-Design-System`): los 24 anteriores más `group-summary`, `summary-status`, `channel-icon`,
+`fileupload`, `drawer`, `fact-row`, `icon-tile`, y los masters aparte del botón grande y pequeño (`button-large`,
+`button-small`), y los de uso suelto en las apps: `badge`, `avatar`, `radiobutton`, `password`, `panel`,
+`inputgroup`, `datepicker`, `confirmdialog`, `tabs`, `skeleton`, y tres masters que diseño confirmó como los de su componente (2026-10-22):
+`KPI Metric Card` (página Testing, `13864:202`) como `sc-summary-kpi`, `inplace` (`340:12980`, el genérico de PrimeNG)
+como `sc-name-inplace` y `popover` (`605:37190`, el genérico) como `sc-group-popover`. Las maquetas del Supervisor usan instancias de esa librería, así
+que los mapeos les valen.
 
-Mapeables y aún sin mapear: los de Resumen del Supervisor (`group-summary`, `summary-status`, `channel-icon`,
-`fact-row`, `icon-tile`), `fileupload` y `drawer`. `datatable` mapea el master vivo (`15374:66885`, 18
-instancias), no el de la página archivada (`374:16034`). `sc-empty-state`, `sc-celda-vacia`, `sc-list-page`,
-`sc-search`, `sc-group-popover`, `sc-form-section-nav`, `sc-option-cards`, `sc-slot`, `sc-resource-option`,
-`sc-summary-kpi`, `sc-alta-pie`, `sc-name-inplace` y `sc-inputtags` no tienen master en Figma.
+Cada plantilla lleva en la cabecera `// source=` (ruta del componente en el repo) y `// component=` (su clase), que
+Figma enseña junto al snippet. Si mueves o renombras un componente, actualiza esas dos líneas.
+
+Sin master en la librería (buscado por nombre en las 113 páginas del archivo, también entre los componentes sin
+publicar, el 2026-10-22): `sc-empty-state`, `sc-celda-vacia`, `sc-list-page`, `sc-search`, `sc-form-section-nav`,
+`sc-option-cards`, `sc-slot`, `sc-resource-option`, `sc-alta-pie`, `sc-link-button` y `sc-inputtags`: primero hay que
+crear el master.
+
+Sin mapear a propósito: `agent-summary` (`15510:72604`), que en código es una composición de `sc-summary-kpi` y
+`sc-fact-row`, no un componente. `datatable` mapea el master vivo (`15374:66885`, 18 instancias), no el de la página archivada (`374:16034`).
+
+**Mantenimiento.** Un mapping es un fichero fijo que se publica a mano: editar el componente no lo actualiza, y
+renombrar una propiedad o una variante en Figma lo rompe en silencio. `npm run audit:code-connect` (en `verify`)
+vigila lo que se puede medir sin token: que cada `source` exista, que cada `component` sea una clase suya, que no
+haya helpers que Figma no define ni nodos o `id` repetidos. Las propiedades contra el master de Figma piden token:
+`figma connect publish --dry-run` en el CI, o `list_file_components_for_code_connect` del MCP de Figma a mano.
 
 Cuando Figma tiene tres booleanos y el código un solo valor (en `button`, Outlined/Text/Link frente a
 `appearance`), el snippet lleva un comentario con el valor en vez de adivinar.
+
+**Plantillas sin helpers.** El visor de Figma NO define `_fcc_renderHtmlAttribute` (ni `_fcc_renderHtmlValue`): un
+mapping que los use publica bien pero en Dev Mode muestra «Error with Code Connect … is not defined». Las plantillas
+de `code-connect/` interpolan directamente: los booleanos y enums se mapean al fragmento de atributo completo
+(`{ true: "disabled", false: "" }`, `Small: 'size="sm"'`) y se escriben como `${disabled}`; los textos, como
+`label="${label}"`.
 
 ## Requisitos para publicar (operador)
 

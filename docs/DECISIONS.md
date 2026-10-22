@@ -160,6 +160,67 @@
 
 ---
 
+## DD-222 · 2026-10-22 — El índice del alta lleva un marcador de paso en cada fila: sin ver, completa o con algo por hacer, y un número de WhatsApp obligatorio
+
+**Contexto** · Hasta DD-143 el índice de un alta ponía un ✓ en la sección que se dejaba completa, y nada más. Medido el
+2026-10-21 en el alta de grupo: el ✓ salía en la fila que se DEJABA, no en la que se pulsaba; Recursos y Agentes lo ganaban
+solo por pasar (no tienen nada obligatorio) y General y Distribución no; y el ✓ aparecía de un hueco vacío, así que parecía
+aleatorio. Además, con Tipificar encendido el índice decía solo el primero de lo que faltaba («Nombre»), y una sección
+dejada en rojo se volvía gris al volver a ella.
+
+**Decisión** ·
+1. **Un marcador de paso (`sc-step-marker`) en TODAS las filas del alta**, siempre presente y con el mismo tamaño (14 px), que
+   cambia de estado EN SU SITIO con un fundido: aro gris (nunca abierta), aro y punto de marca con relleno tintado (abierta
+   antes, con algo nuevo desde entonces), círculo de marca con punto (a la vista), círculo verde con ✓ (obligatorios
+   cumplidos) y círculo rojo con «!» (falta algo). El rojo lleva signo: el color no va solo.
+2. **El resultado es EN VIVO desde que se deja la sección por primera vez.** La verde sigue verde al abrirla; la roja sigue
+   roja y pasa a verde al rellenar lo que faltaba; la verde a la que se le vacía un obligatorio vuelve a rojo. La primera
+   visita no regaña: una sección a la vista que nunca se dejó es «a la vista», no roja (DD-219).
+3. **Una línea de texto bajo la etiqueta en cada fila**, siempre (la fila mide 61 px en todos los estados, sin saltos): lo
+   que falta en la sección («Teléfono saliente, WhatsApp», sin «Falta:», que el rojo y el «!» ya dicen), o su estado en
+   una etiqueta corta y homogénea: Sin revisar, Con novedades, En curso, Completa, Revisada (sin nada obligatorio), Sin
+   guardar (en edición) y Faltan datos. El color del texto es el del marcador. Se corta con puntos suspensivos y el `title`
+   lo dice entero; el lector de pantalla oye «Falta:» delante de la lista.
+4. **«Hay algo nuevo» conserva el recorrido**: quitar un canal no devuelve nada a «Sin revisar»; añadir uno marca «Con
+   novedades» las secciones que ya se vieron y a las que llega algo (bloques de canal, plantillas y columnas).
+5. **El feedback vive en el índice**, que es donde se mira al tocar canales y secciones: sobre el resumen ya no hay
+   «Falta: …» ni «Listo para crear» en el grupo (alta ni edición) ni en la edición de agente y usuario. Las altas de agente
+   y usuario la conservan hasta que lleven el marcador. «Crear grupo» apagado sigue con su tooltip.
+6. **Los obligatorios de una sección dejada en rojo se dicen en rojo al volver**, todos, también los que se enciendan luego
+   (la tipificación al activar Tipificar). Pulsar la fila roja NO lleva al campo: ya se ve de entrada.
+7. **Con WhatsApp, su número es obligatorio**, como el teléfono saliente con Teléfono (DD-142): sin él no tiene de dónde
+   escribir. «Revisada» y no «Completa» donde no hay nada que cumplir (Recursos, Agentes, y Distribución sin ningún canal).
+8. **La edición NO lleva marcadores de paso**: todo está guardado, así que el índice va como siempre, con el punto rojo (y
+   el azul de cambios) y, bajo la sección en rojo, lo que falta («Tipificación»). Sin ✓, sin aros, sin estados.
+9. **El movimiento del índice** (todo se apaga con `prefers-reduced-motion`, y el primer pintado no anima):
+   - *Marcador* (`sc-step-marker`): cada cambio de estado es una transición sobre el mismo SVG. Relleno, trazo y opacidad,
+     200 ms (`--sc-transition-base`, `--sc-easing-default`); el punto se encoge y el ✓ se dibuja con trazo, 300 ms
+     (`--sc-transition-slow`, `--sc-easing-emphasized`), con el ✓ retrasado 80 ms para que entre cuando el relleno ya es verde.
+     El «!» entra creciendo de 0,6 a 1.
+   - *Halo de éxito*: al pasar a «Completa» con el marcador ya pintado, un halo verde se abre de 0 a 7 px y se va en 560 ms.
+     UNA vez por marcador: si una sección completa se vacía y se rellena de nuevo, no repite. El de «a la vista» es un halo fijo de
+     3 px al 22 % de marca, sin animar.
+   - *Texto de la línea*: el color se difumina en 300 ms al cambiar de gris a verde, de rojo a gris, etc.
+   - *Destello*: cuando cambia la línea de una fila que NO se está mirando (marcar WhatsApp en General cambia Distribución),
+     esa línea lleva un fondo de marca al 22 % que se va en 1200 ms, para verla de reojo. No hay destello en la primera pintura.
+   - Con menos movimiento: sin halo, sin destello y sin dibujo del ✓; solo un fundido de 100 ms.
+
+**Razón** · Con el marcador siempre presente no hay nada que aparezca de la nada, que era lo que daba la sensación de azar. La
+línea debajo evita los saltos de diseño (medido: filas de 61 px en diez acciones seguidas) y da el feedback donde se está
+mirando. El resultado en vivo hace que arreglar algo se vea en el acto, en la fila que se está tocando.
+
+**Descartadas** ·
+- *Resolver el ✓ solo al salir* (DD-143): el efecto sale lejos del cursor y parece azar.
+- *Una variante simple de tres estados sin línea* (rama `areses/indice-checks-version-simple`): más limpia, pero el feedback
+  queda en un tooltip y en el resumen, lejos de donde se toca el índice. Se descartó por la revisión de producto.
+- *Un rojo que salte al campo al pulsar la fila*: el campo ya se ve de entrada al abrir la sección.
+- *Evolucionar el radiobutton*: es un control de formulario; con el ✓ y el «!» perdería su significado.
+- *Reiniciar a «Sin revisar» al quitar un canal* (DD-217): borra el recorrido sin que haya nada nuevo que ver.
+
+**Consecuencias** · Medido el 2026-10-22 en el alta y la edición de grupo, a 1440. Nuevo `sc-step-marker` en el DS y entrada
+`sectionStates` en `sc-form-section-nav`; el resto de índices (Contact Center, constructor de reglas, agente, usuario,
+tipificación) no lo llevan aún. En Figma: `step-marker` con sus estados y las filas de `nav-item` con su marca.
+
 ## DD-221 · 2026-10-21 — Con el índice en la caja, el carril mide 235, como en Figma
 
 **Contexto** · DD-220 metió el índice en la caja gris y dejó el carril en 196, sabiendo que dos rótulos bajarían a dos

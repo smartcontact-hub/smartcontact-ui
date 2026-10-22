@@ -60,7 +60,7 @@ test('los tiempos guardados fuera del catálogo permanecen al editar otro campo,
     if (sessionStorage.getItem('d3-seeded')) return;
     sessionStorage.setItem('d3-seeded', '1');
     localStorage.setItem('sc-groups-v', '4');
-    localStorage.setItem('sc-groups', JSON.stringify([{ id: 11, code: '20011', name: 'Tiempos anteriores', phone: '917945449', priority: 'Baja', channels: ['phone', 'chat', 'whatsapp'], strategy: 'Balanceada', schedules: [2], advanced: { transferSec: 11, maxQueueWaitSec: 99, serviceLevelSec: 33, wrapUpSec: 0 }, chat: { closeOnInactivity: true, inactivityMinutes: 17 } }]));
+    localStorage.setItem('sc-groups', JSON.stringify([{ id: 11, code: '20011', name: 'Tiempos anteriores', phone: '917945449', priority: 'Baja', channels: ['phone', 'chat', 'whatsapp'], strategy: 'Balanceada', schedules: [2], advanced: { whatsappNumber: '+34 900 100 200', transferSec: 11, maxQueueWaitSec: 99, serviceLevelSec: 33, wrapUpSec: 0 }, chat: { closeOnInactivity: true, inactivityMinutes: 17 } }]));
     localStorage.setItem('sc-group-agent-links-v', '1');
     localStorage.setItem('sc-group-agent-links', JSON.stringify([{ agentId: 1, groupId: 11, channels: ['phone', 'chat'], active: false, levels: { phone: 10, chat: 1 } }]));
   });
