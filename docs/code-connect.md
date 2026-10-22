@@ -7,20 +7,26 @@ el puente formal Figma ↔ código; hoy ese puente en este repo es solo convenci
 
 ## Estado: publicado (2026-10-21)
 
-41 componentes mapeados en [`code-connect/`](../code-connect/), todos del archivo de la librería
+43 componentes mapeados en [`code-connect/`](../code-connect/), todos del archivo de la librería
 (`Smart-Contact-Design-System`): los 24 anteriores más `group-summary`, `summary-status`, `channel-icon`,
 `fileupload`, `drawer`, `fact-row`, `icon-tile`, y los masters aparte del botón grande y pequeño (`button-large`,
 `button-small`), y los de uso suelto en las apps: `badge`, `avatar`, `radiobutton`, `password`, `panel`,
-`inputgroup`, `datepicker` y `confirmdialog`. Las maquetas del Supervisor usan instancias de esa librería, así
+`inputgroup`, `datepicker`, `confirmdialog`, `tabs` y `skeleton`. Las maquetas del Supervisor usan instancias de esa librería, así
 que los mapeos les valen.
 
 Cada plantilla lleva en la cabecera `// source=` (ruta del componente en el repo) y `// component=` (su clase), que
 Figma enseña junto al snippet. Si mueves o renombras un componente, actualiza esas dos líneas.
 
-Sin master en Figma, y por tanto sin mapear: `sc-empty-state`, `sc-celda-vacia`, `sc-list-page`, `sc-search`,
-`sc-group-popover`, `sc-form-section-nav`, `sc-option-cards`, `sc-slot`, `sc-resource-option`, `sc-summary-kpi`,
-`sc-alta-pie`, `sc-name-inplace`, `sc-link-button` y `sc-inputtags`: primero hay que crear el master. `datatable`
-mapea el master vivo (`15374:66885`, 18 instancias), no el de la página archivada (`374:16034`).
+Sin master en la librería (buscado por nombre en las 113 páginas del archivo, también entre los componentes sin
+publicar, el 2026-10-22): `sc-empty-state`, `sc-celda-vacia`, `sc-list-page`, `sc-search`, `sc-form-section-nav`,
+`sc-option-cards`, `sc-slot`, `sc-resource-option`, `sc-alta-pie`, `sc-link-button` y `sc-inputtags`: primero hay que
+crear el master.
+
+Con un master parecido pero sin asociación segura, a decidir por diseño antes de mapear: `KPI Metric Card` (página
+Testing, `13864:202`) frente a `sc-summary-kpi`; `inplace` (`340:12980`, el genérico de PrimeNG) frente a
+`sc-name-inplace`; `popover` (`605:37190`, el genérico) frente a `sc-group-popover`; y `agent-summary`
+(`15510:72604`), que en código es una composición de `sc-summary-kpi` y `sc-fact-row`, no un componente.
+`datatable` mapea el master vivo (`15374:66885`, 18 instancias), no el de la página archivada (`374:16034`).
 
 **Mantenimiento.** Un mapping es un fichero fijo que se publica a mano: editar el componente no lo actualiza, y
 renombrar una propiedad o una variante en Figma lo rompe en silencio. `npm run audit:code-connect` (en `verify`)
