@@ -160,6 +160,81 @@
 
 ---
 
+## DD-225 · 2026-10-23 — Agentes como sus borradores de COA: borrar varios, Teléfono y Estado de inicio, Estado ordenable con «Conversación», el índice del alta con marcadores y lo que no se copia al duplicar
+
+**Contexto** · Los borradores de «SOLUCIÓN SISMAC-4060 Sección Agentes» y «SOLUCIÓN SISMAC-4062 Creación/Edición
+Agentes» (2026-10-23) se escribieron frase a frase contra el prototipo y Figma. Producto decidió doce puntos en los que
+COA manda y el prototipo cambia, con la regla de Grupos (DD-218, DD-223): COA es más nueva que la DD. Medido contra la
+congelada `proto-sismac-4062` y `main`: el listado no borraba varios, escondía Teléfono y Estado, Estado no se ordenaba
+(DD-180) y «Grupos» ordenaba de menor a mayor; duplicar copiaba la foto, el móvil y el estado; un alta nacía
+«Disponible»; la extensión ofrecía las de otros agentes (y no la propia de uno fuera de la lista); un email repetido se
+guardaba; la tabla de grupos vacía decía siempre «Sin resultados»; el alta llevaba el ✓ suelto y «Falta: …» sobre el
+resumen; el Excel no llevaba los canales, y el aviso de quitar canales decía «en 1 grupos».
+
+**Decisión** ·
+1. **Borrar varios, como en Grupos** (DD-218): con dos o más marcados, el clic derecho sobre uno ofrece solo «Eliminar»,
+   «¿Eliminar 3 agentes?», «Esta acción no se puede deshacer.» y el toast «3 agentes eliminados»; fuera los agentes, sus
+   enlaces y la selección. La edición masiva sigue para otra fase (DD-215).
+2. **Teléfono y Estado salen de inicio**; solo ID y Tipo van escondidos. Las columnas guardadas pasan a
+   `sc-agents-columns-v6`: una lista guardada los seguiría escondiendo. Con ellas, **a 1440 la tabla desplaza de lado**
+   (medido: 226 px más que su caja de 1302), con Nombre y «⋮» fijos, como dice la 4060; enmienda DD-193 §3 para
+   Agentes.
+3. **Estado se ordena, de más a menos disponible** (`PRESENCE_SORT_RANK`): Disponible, No disponible, los personalizados
+   (entre ellos, por su nombre), Administrativo, Post-conversando, Conversación y Desconectado. Enmienda DD-180, que la
+   dejaba como la única sin orden. **Estado nuevo «Conversación»**, el agente atendiendo, en la etiqueta azul; en el
+   Dashboard cuenta «En pausa», como Post-conversando (DD-139). La semilla lo pone en el agente 17, que no es de la demo
+   del Dashboard. Los tonos de Administrativo (rojo oscuro) y Post-conversando (azul oscuro) que pide
+   COA no existen como etiqueta en el Kit: siguen marrón (DD-176) y azul hasta decidirlo (ver Consecuencias).
+4. **«Grupos» ordena de mayor a menor al primer clic** (`defaultSortOrder: -1`), como «Agentes» en Grupos.
+5. **Duplicar deja vacíos la foto y el móvil**, que son de otra persona (sin móvil, «Gestión de dispositivos» se
+   apaga), **y no copia el estado**: la copia nace «Desconectado», como **todo agente nuevo**, que hasta hoy nacía
+   «Disponible». El grupo de salientes se copia solo con Call Blending (§9).
+6. **Solo extensiones libres**, las de la lista que no tiene otro agente; al editar, también la suya, aunque no esté en
+   la lista. **Un email de otro agente se dice en vivo**, «Ya hay un agente con este email», como lo mal escrito: en su
+   campo y en la línea de General, y no deja crear ni guardar.
+7. **La tabla de grupos vacía dice por qué**, como la de agentes del grupo (DD-223 §4): en Asignados sin búsqueda, «Sin
+   grupos asignados» y «Asígnalos desde la pestaña «Todos».»; en Sin asignar, «Todos los grupos están asignados»; con
+   búsqueda, «Sin resultados» y «Ningún grupo coincide con el filtro.».
+8. **El índice del alta, el del grupo** (DD-222 §1 a §6), también al duplicar: el marcador y la línea en cada fila (Sin
+   revisar, En curso, Con novedades, Completa, y «Revisada» en Configuración y Recursos, que no tienen nada obligatorio),
+   lo que falta con la etiqueta corta («Nombre, email, extensión», «Un grupo», «Un grupo para las salientes») y, detrás,
+   lo mal escrito. Dejar una sección con algo vacío la pone en rojo, y desde entonces todo lo obligatorio suyo se dice en
+   rojo, también lo que aparezca luego (el móvil al pasar la extensión a «Teléfono»). Sobre el resumen ya no sale
+   «Falta: …» ni «Listo para crear», como anunciaba DD-222 §5; el tooltip de «Crear agente» sigue diciendo qué falta.
+   **«Deshacer» deja el índice como al empezar** (`alta.reiniciar()`): la sección abierta sigue abierta y las demás
+   vuelven a «Sin revisar». **Al editar**, sin marcadores, y bajo la sección con punto rojo, la misma etiqueta corta
+   («Un grupo»), no el aviso entero del primero («Hace falta al menos un grupo»).
+9. **El grupo para llamadas salientes, solo con Call Blending** (`CLIENTE_CON_CALL_BLENDING`, encendida en la demo, como
+   CusCare y WebRTC, DD-211 §9): el desplegable, su obligatorio con Teléfono, la fila «Salientes» del resumen y la copia
+   al duplicar. El prototipo lo sigue enseñando.
+10. **El Excel lleva la columna Canales**, detrás de Teléfono y por su nombre («Teléfono, Chat»): la 4060 pide la
+    información de todas las columnas de la tabla.
+11. **El aviso de quitar canales concuerda en número**: «Deja de atender Chat en 1 grupo.», y con quien sale, «que se
+    queda» o «que se quedan» según cuántos grupos pierde.
+
+**Razón** · COA es lo que construye desarrollo, y estos borradores son lo más nuevo de producto. En casi todo, además,
+Grupos ya hacía lo que COA pide (borrar varios, el orden de las cifras, la tabla vacía, el índice con marcadores): una
+ficha que se comporta como su gemela se aprende una vez.
+
+**Descartadas** ·
+- *Subir la versión del almacén de agentes* para que «Conversación» salga también en un navegador con la lista
+  guardada: tira lo creado en la demo y las tres pruebas que siembran la versión 3. La vía que no borra: sale en la
+  lista de fábrica y al borrar los datos del sitio.
+- *Dos etiquetas nuevas, rojo oscuro y azul oscuro, con primitivos del Kit*: es inventar tokens; se decide aparte.
+- *Estrechar Email, Grupos y Equipos para que la tabla quepa a 1440*: cortarían su contenido, y las columnas miden lo
+  que traen (DD-210 §4).
+- *Esconder el grupo de salientes en la demo*: el prototipo enseña todo lo contratable (DD-211 §9); la bandera deja el
+  código diciendo lo mismo que COA.
+- *Dejar al editar el aviso entero bajo la sección*: Grupos y COA dicen la etiqueta corta, la misma que en el alta.
+
+**Consecuencias** · Prueba nueva `agentes-como-coa-4060-4062.spec.ts`, y al día las del alta de agente que fijaban el ✓
+suelto y «Falta: …» sobre el resumen. Pendiente de decidir: el tono de Administrativo y Post-conversando (el Kit solo trae
+`presence/administrative` red.600, `presence/wrapup` cyan.600 y `presence/talking` cyan.400, colores sueltos y no
+etiquetas). Figma, en su propia sesión. La congelada `proto-sismac-4062` avanza con esto cuando se funda
+(`docs/PROTOTIPOS.md`).
+
+---
+
 ## DD-224 · 2026-10-22 — «Editar en Repositorios» de la tipificación pregunta lo mismo que «Gestionar en Repositorios»: guardar antes
 
 **Contexto** · Repaso de Grupos entre COA (4058 versión 17, 4056 versión 11), Figma y el prototipo. La ficha de grupo

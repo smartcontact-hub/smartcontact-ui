@@ -140,26 +140,33 @@ test('grupo · Online Support: quitar Teléfono y volver a ponerlo no le quita e
   await expect(barra(page).getByRole('button', { name: 'Guardar' })).toBeDisabled();
 });
 
-test('agente · «Crear agente» apagado con lo que falta; General lo dice en gris, y dejarla no pone el índice en rojo', async ({
+test('agente · «Crear agente» apagado con lo que falta; General lo dice en gris, y dejarla la pone en rojo, como el grupo', async ({
   page,
 }) => {
   await goto(page, 'admin/agentes/crear');
   await expect(barra(page).getByRole('button', { name: 'Crear agente' })).toBeDisabled();
-  await expect(estado(page)).toContainText('Falta: nombre, email, extensión, un grupo');
+  // Lo que falta, en el índice y no sobre el resumen (DD-222, DD-225).
+  await expect(estado(page)).toHaveCount(0);
+  await expect(fila(page, 'General')).toContainText('Nombre, email, extensión');
+  await expect(fila(page, 'Grupos asignados')).toContainText('Un grupo');
   for (const aviso of ['El nombre es obligatorio', 'El email es obligatorio', 'La extensión es obligatoria']) {
     await expect(gris(page, 'agent-section-general', aviso)).toHaveCount(1);
   }
   await expect(rojo(page, 'agent-section-general')).toHaveCount(0);
+  await expect(conPunto(page)).toHaveCount(0);
 
+  // Dejar General así la pone en rojo; Grupos asignados, aún sin dejar, lo dice en gris.
   await siguiente(page).click();
+  await expect(conPunto(page)).toHaveCount(1);
+  await expect(fila(page, 'General')).toHaveClass(/form-nav__item--has-error/);
   await irASeccion(page, 'Grupos asignados');
   await expect(gris(page, 'agent-section-groups', 'Hace falta al menos un grupo')).toHaveCount(1);
+  // Al volver, sus campos lo dicen en rojo (DD-222 §6).
   await irASeccion(page, 'General');
-  await expect(conPunto(page)).toHaveCount(0);
-  await expect(rojo(page, 'agent-section-general')).toHaveCount(0);
+  await expect(rojo(page, 'agent-section-general')).toHaveCount(3);
 });
 
-test('agente · lo único que falta son los grupos: el resumen lleva a Grupos asignados, y su aviso va encima de la tabla', async ({
+test('agente · lo único que falta son los grupos: el índice lo dice en Grupos asignados, y su aviso va encima de la tabla', async ({
   page,
 }) => {
   await goto(page, 'admin/agentes/crear');
@@ -167,10 +174,11 @@ test('agente · lo único que falta son los grupos: el resumen lleva a Grupos as
   await page.locator('#agent-email').fill(`e2e.sin.grupos.${Date.now()}@ejemplo.com`);
   await page.locator('sc-select:has(#agent-ext) .p-select').click();
   await page.locator('.p-select-overlay .p-select-option').first().click();
-  await expect(estado(page)).toContainText('Falta: un grupo');
+  await expect(fila(page, 'General')).toContainText('En curso');
+  await expect(fila(page, 'Grupos asignados')).toContainText('Un grupo');
   await expect(barra(page).getByRole('button', { name: 'Crear agente' })).toBeDisabled();
 
-  await estado(page).getByRole('button', { name: 'un grupo' }).click();
+  await irASeccion(page, 'Grupos asignados');
   await expect(actual(page)).toContainText('Grupos asignados');
   const aviso = page.locator('#agent-groups-error');
   // En gris es una ayuda, con su punto; en rojo, un error, sin él (DD-219).
@@ -197,7 +205,8 @@ test('el resumen: en el alta no lleva estado y en la edición no dice «Listo»,
   await goto(page, 'admin/grupos/editar/11');
   await expect(avisos).toHaveCount(0);
   await expect(page.locator('.ficha-summary')).not.toContainText('Listo para crear');
+  // El alta de agente, tampoco desde que lleva los marcadores del grupo (DD-225).
   await goto(page, 'admin/agentes/crear');
-  await expect(estado(page)).toContainText('Falta:');
+  await expect(estado(page)).toHaveCount(0);
   await expect(avisos).toHaveCount(0);
 });

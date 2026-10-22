@@ -4,8 +4,9 @@ import { juegoDeDatos } from '@core/services/juego-de-datos';
 
 /**
  * «Desconectado» es no tener la sesión abierta: sustituye a la columna «Activación», que no existía en el producto
- * (definición de producto, 2026-09-16). Postconversando y Administrativo los pone la conversación o el propio
- * agente. En la lista el estado se VE y no se cambia: ninguno se edita desde ahí.
+ * (definición de producto, 2026-09-16). Conversación, Postconversando y Administrativo los pone la conversación o el
+ * propio agente. En la lista el estado se VE y no se cambia: ninguno se edita desde ahí. «Conversación», el agente
+ * atendiendo, es de SISMAC-4060 (DD-225).
  */
 export type PresenceStatus =
   | 'disponible'
@@ -14,6 +15,7 @@ export type PresenceStatus =
   | 'comida'
   | 'formacion'
   | 'post_conversando'
+  | 'conversacion'
   | 'administrativo'
   | 'desconectado';
 
@@ -24,6 +26,7 @@ export const PRESENCE_LABEL_KEYS: Readonly<Record<PresenceStatus, string>> = {
   comida: 'agents.presence.lunch',
   formacion: 'agents.presence.training',
   post_conversando: 'agents.presence.wrap_up',
+  conversacion: 'agents.presence.talking',
   administrativo: 'agents.presence.administrative',
   desconectado: 'agents.presence.offline',
 };
@@ -47,7 +50,26 @@ export const PRESENCE_TAGS: Readonly<Record<PresenceStatus, PresenceTag>> = {
   /* Marrón (DD-176), no el amarillo de aviso: un estado del agente, no una alerta. */
   administrativo: { labelColor: 'brown' },
   post_conversando: { labelColor: 'blue' },
+  /* El agente atendiendo, en azul (SISMAC-4060, DD-225). */
+  conversacion: { labelColor: 'blue' },
   desconectado: { severity: 'secondary' },
+};
+
+/**
+ * El orden de la columna Estado, de más a menos disponible (SISMAC-4060, DD-225): Disponible, No disponible, los
+ * personalizados, Administrativo, Post-conversando, Conversación y Desconectado. Los personalizados (Baño, Comida,
+ * Formación) comparten puesto: entre ellos, por su nombre en el idioma de la pantalla, que lo resuelve la lista.
+ */
+export const PRESENCE_SORT_RANK: Readonly<Record<PresenceStatus, number>> = {
+  disponible: 0,
+  no_disponible: 1,
+  bano: 2,
+  comida: 2,
+  formacion: 2,
+  administrativo: 3,
+  post_conversando: 4,
+  conversacion: 5,
+  desconectado: 6,
 };
 
 /**
@@ -85,6 +107,13 @@ export const CLIENTE_CON_CUSCARE = true;
  * (DD-211 §2). El cliente de la demo los tiene.
  */
 export const CLIENTE_CON_WEBRTC = true;
+
+/**
+ * Si el cliente tiene Call Blending. Solo entonces el agente tiene «Grupo para llamadas salientes», obligatorio con
+ * Teléfono, y lo copia al duplicarse (SISMAC-4062, DD-211 §9). El cliente de la demo lo tiene: el prototipo enseña todo
+ * lo contratable.
+ */
+export const CLIENTE_CON_CALL_BLENDING = true;
 
 /** Dónde suena: `phone`, en su teléfono móvil; `webrtc`, en el navegador, con Smart Contact Agent. */
 export type ExtensionType = 'phone' | 'webrtc';
@@ -546,7 +575,8 @@ const BASE_AGENTS: readonly Agent[] = [
     extensionType: 'webrtc',
     agentType: 'normal',
     status: 'active',
-    presenceStatus: 'disponible',
+    // Atendiendo, para que la lista enseñe «Conversación» (SISMAC-4060, DD-225). No es de la demo del Dashboard.
+    presenceStatus: 'conversacion',
     pin: '318',
     permissions: { ...DP, recording: true },
     pickupType: 'auto',

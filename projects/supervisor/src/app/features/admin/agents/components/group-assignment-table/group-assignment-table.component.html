@@ -18,14 +18,15 @@
       [value]="visibleRows()" [columns]="columns()" [tableMinWidth]="tableMinWidth" dataKey="group.id"
       externalSort [sortField]="orden() ? 'group' : undefined" [sortOrder]="orden() ?? 1" (sortChange)="onSortChange($event)">
       <div scTableEmpty>
-        <sc-empty-state icon="search_off" titleKey="labels.no_results.title" bodyKey="agents.form.assigned.no_results" />
+        @let v = vacio();
+        <sc-empty-state [icon]="v.icon" [titleKey]="v.title" [bodyKey]="v.body" />
       </div>
     </sc-datatable>
   </div>
   <!-- El grupo de sus llamadas salientes: una sola elección, de los asignados con Teléfono marcado. Un desplegable bajo
        la tabla y no un radio por fila (DD-209 §1, corrige DD-204 §8). Sin ninguno, apagado y
-       con su motivo. Solo si atiende teléfono. -->
-  @if (allowed('phone')) {
+       con su motivo. Solo si atiende teléfono y el cliente tiene Call Blending (DD-211 §9). -->
+  @if (allowed('phone') && conSalientes()) {
     <div class="grid grid--2 assign__outbound">
       <div class="field">
         <sc-select

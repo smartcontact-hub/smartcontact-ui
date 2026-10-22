@@ -5,7 +5,7 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
 /**
  * ORDENAR POR CUALQUIER COLUMNA, Y LA BARRA A UNA ALTURA (DD-180).
  *
- * En Grupos se ordena por todas las columnas, y en Agentes por todas menos Estado, que cambia sola. Hasta el
+ * En Grupos y en Agentes se ordena por todas las columnas; Estado, en Agentes, desde DD-225 (SISMAC-4060). Hasta el
  * 2026-10-06 no se ordenaban Teléfono, Canales ni Servicios en Grupos, ni Canales ni Grupos en Agentes. Lo que fija:
  *   1. qué cabeceras ordenan, en las columnas que salen de partida;
  *   2. las columnas nuevas ordenan de verdad: Canales por cuántos tiene la fila, Servicios y Grupos por su cifra;
@@ -51,8 +51,10 @@ const valores = (page: Page, campo: string) =>
 const ordenarDescendente = async (page: Page, campo: string) => {
   const th = page.locator(`sc-datatable thead th[data-field="${campo}"]`);
   await th.click();
-  await expect(th).toHaveAttribute('aria-sort', 'ascending');
-  await th.click();
+  // Las cifras ordenan de mayor a menor al primer clic (`defaultSortOrder`: Agentes y Servicios en Grupos, DD-218; Grupos
+  // en Agentes, DD-225); las demás, al segundo.
+  await expect(th).toHaveAttribute('aria-sort', /^(ascending|descending)$/);
+  if ((await th.getAttribute('aria-sort')) === 'ascending') await th.click();
   await expect(th).toHaveAttribute('aria-sort', 'descending');
 };
 
@@ -87,10 +89,11 @@ test('Grupos ordena por todas sus columnas', async ({ page }) => {
   }
 });
 
-test('Agentes ordena por todas menos Estado', async ({ page }) => {
+test('Agentes ordena por todas, también Estado', async ({ page }) => {
   await goto(page, '/admin/agentes');
   const todas = await cabeceras(page);
-  // «Estado» ya no sale de inicio (su burbuja va en el avatar, DD-185): todas las que salen ordenan.
+  // Teléfono y Estado salen de inicio y ordenan, como las demás (DD-225).
+  expect(todas.map((c) => c.campo)).toEqual(expect.arrayContaining(['phone', 'presence']));
   expect(todas.filter((c) => !c.ordena).map((c) => c.campo)).toEqual([]);
   for (const campo of ['channels', 'groups']) {
     await ordenarDescendente(page, campo);

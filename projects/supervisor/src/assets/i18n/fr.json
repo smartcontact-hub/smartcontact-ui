@@ -2235,7 +2235,8 @@
     "no_results_query": "Aucun agent ne correspond à « {{query}} ».",
     "entity_singular": "agent",
     "delete_dialog": {
-      "title": "Supprimer l'agent «{{name}}» ?"
+      "title": "Supprimer l'agent «{{name}}» ?",
+      "title_bulk": "Supprimer {{count}} agents ?"
     },
     "table": {
       "code": "ID",
@@ -2272,7 +2273,8 @@
       "training": "Formation",
       "wrap_up": "Post-conversation",
       "administrative": "Administratif",
-      "offline": "Déconnecté"
+      "offline": "Déconnecté",
+      "talking": "Conversation"
     },
     "status": {
       "active": "Compte actif",
@@ -2387,7 +2389,7 @@
         "picker_placeholder": "Rechercher ou ajouter un groupe…",
         "picker_aria": "Ajouter un groupe à l'agent",
         "empty_title": "Aucun groupe assigné",
-        "empty": "Utilisez « Ajouter un groupe » pour assigner le premier groupe à cet agent.",
+        "empty": "Assignez-les depuis l’onglet « Tous ».",
         "col_group": "Groupe",
         "col_channels_here": "Canaux dans ce groupe",
         "col_active": "Activé",
@@ -2411,12 +2413,16 @@
           "channel_remove": "Retirer {{channel}} dans {{count}} groupes ?"
         },
         "bulk_done": "{{count}} groupes mis à jour.",
-        "not_allowed_hint": "{{channel}} ne fait pas partie de ses canaux\u00a0: ils se cochent dans Général"
+        "not_allowed_hint": "{{channel}} ne fait pas partie de ses canaux\u00a0: ils se cochent dans Général",
+        "all_assigned": "Tous les groupes sont assignés"
       },
       "allowed": {
         "title": "Canaux autorisés",
         "remove_body": "Il ne traite plus {{channels}} dans {{count}} groupes. Continuer ?",
-        "remove_body_orphaned": "Il ne traite plus {{channels}} dans {{count}} groupes, et quitte {{groups}}, qui n'ont plus aucun canal. Continuer ?"
+        "remove_body_orphaned": "Il ne traite plus {{channels}} dans {{count}} groupes, et quitte {{groups}}, qui n'ont plus aucun canal. Continuer ?",
+        "remove_body_one": "Il ne traite plus {{channels}} dans 1 groupe. Continuer ?",
+        "remove_body_orphaned_one": "Il ne traite plus {{channels}} dans 1 groupe, et quitte {{groups}}, qui n'a plus aucun canal. Continuer ?",
+        "remove_body_orphaned_single": "Il ne traite plus {{channels}} dans {{count}} groupes, et quitte {{groups}}, qui n'a plus aucun canal. Continuer ?"
       },
       "permissions": {
         "manage_devices": "Gestion d'appareils",
@@ -2482,7 +2488,8 @@
       "phone_required": "Le téléphone mobile est obligatoire\u00a0: l'extension y sonne",
       "email_required": "L'email est obligatoire",
       "group_required": "Au moins un groupe est obligatoire",
-      "outbound_required": "Le groupe des appels sortants est obligatoire\u00a0: un groupe avec Téléphone"
+      "outbound_required": "Le groupe des appels sortants est obligatoire\u00a0: un groupe avec Téléphone",
+      "email_taken": "Un agent utilise déjà cet email"
     },
     "empty": {
       "title": "Pas encore d'agents",
@@ -2500,7 +2507,8 @@
       "status": "État",
       "recording": "Enregistrement",
       "groups": "Groupes",
-      "sheet": "Agents"
+      "sheet": "Agents",
+      "channels": "Canaux"
     },
     "bulk_edit_title": "Appliquer la modification à {{count}} agent(s)"
   },
