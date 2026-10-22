@@ -1,5 +1,6 @@
 import { booleanAttribute, ChangeDetectionStrategy, Component, effect, inject, InjectionToken, input, type OnInit, output, signal, untracked } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TooltipModule } from 'primeng/tooltip';
 
 import { ScIconComponent, type ScIconWeight } from '@smartcontact-hub/icons';
 
@@ -61,7 +62,7 @@ let siguienteId = 0;
 @Component({
   selector: 'sc-form-section-nav',
   standalone: true,
-  imports: [ScIconComponent, ScStepMarkerComponent, TranslateModule],
+  imports: [ScIconComponent, ScStepMarkerComponent, TooltipModule, TranslateModule],
   templateUrl: './sc-form-section-nav.component.html',
   styleUrl: './sc-form-section-nav.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
