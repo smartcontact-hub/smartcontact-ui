@@ -1,5 +1,3 @@
-import { readFile } from 'node:fs/promises';
-
 import { expect, test, type Page } from '@playwright/test';
 
 import { disableAnimations, forceLightTheme, goto, irASeccion, pickSelectOption } from './helpers';
@@ -158,7 +156,7 @@ test('listado · el Excel lleva todas las columnas, con Canales detrás del tel�
   const fichero = await (await descarga).path();
   const { default: ExcelJS } = await import('exceljs');
   const libro = new ExcelJS.Workbook();
-  await libro.xlsx.load(await readFile(fichero));
+  await libro.xlsx.readFile(fichero);
   const hoja = libro.getWorksheet('Agentes')!;
   const cabeceras = (hoja.getRow(1).values as unknown[]).slice(1);
   expect(cabeceras).toEqual(['ID', 'Nombre', 'Extensión', 'Tipo de extensión', 'Email', 'Teléfono', 'Canales', 'Tipo', 'Estado', 'Grabación', 'Grupos', 'Equipos']);
@@ -173,7 +171,7 @@ test('duplicar · la foto y el móvil salen vacíos, y la copia nace «Desconect
   // Un original con foto y móvil, que suena en su teléfono.
   await escribirLosAlmacenes(page);
   await page.evaluate(() => {
-    const agentes = JSON.parse(localStorage.getItem('sc-agents')!) as Record<string, unknown>[];
+    const agentes = JSON.parse(localStorage.getItem('sc-agents')!) as ({ id: number } & Record<string, unknown>)[];
     const tom = agentes.find((a) => a.id === 1)!;
     Object.assign(tom, { phone: '612345678', extensionType: 'phone', photo: 'data:image/gif;base64,R0lGODlhAQABAAAAACw=' });
     localStorage.setItem('sc-agents', JSON.stringify(agentes));
