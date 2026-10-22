@@ -25,10 +25,12 @@
  * ancla, las dos líneas base cayeron en e2e-smoke y costó un CI de más. La de estilos sí se avisó, cinco líneas por
  * encima del final del preflight, y no se leyó; la de estructura no la avisaba nada.
  *
- * Uso: node scripts/api-baselines.mjs (lo llama `preflight-scope` al final; nunca sale en rojo).
+ * Uso: node scripts/api-baselines.mjs (lo llama `preflight-scope` al salir, también si la cadena muere; nunca sale en rojo).
+ *      import { medir } from './api-baselines.mjs' (`bash-guard` deniega `gh pr create` mientras quede una captura).
  */
 import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 export const API = 'projects/sc-docs/public/components/_component-api.json';
@@ -197,46 +199,57 @@ export function aviso(pendientes, rama, estilos = [], estructura = []) {
   return [...partes, `⚠️ Líneas base pendientes antes del PR: ${resumen.join('; ')}. El detalle, arriba.`].join('\n');
 }
 
-const git = (args) => execFileSync('git', args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], maxBuffer: 64 * 1024 * 1024 }).trim();
+/**
+ * Lo pendiente en el árbol `dir`, sin imprimir nada: `{ rama, pendientes, estilos, estructura }`. Lo usan el aviso de
+ * abajo y `bash-guard`, que deniega abrir el PR mientras quede una captura (el robot tiene que pasar ANTES). Lanza si
+ * no puede medir (sin `origin/main`, fuera de un repo); quien llama decide qué hacer con eso.
+ */
+export function medir(dir = process.cwd()) {
+  const git = (args) =>
+    execFileSync('git', ['-C', dir, ...args], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], maxBuffer: 64 * 1024 * 1024 }).trim();
+  const ruta = (fichero) => join(dir, fichero);
+  const base = git(['merge-base', 'HEAD', 'origin/main']);
+  // Contra el árbol de trabajo, no contra HEAD: el preflight mide lo que va a subir, commiteado o no.
+  const cambiados = git(['diff', '--name-only', base]).split('\n').filter(Boolean);
+  const leer = (texto) => (texto ? JSON.parse(texto) : null);
+  let apiAntes = null;
+  try {
+    apiAntes = leer(git(['show', `${base}:${API}`]));
+  } catch {
+    /* la base no tenía el fichero: todo lo de ahora es nuevo */
+  }
+  const apiAhora = existsSync(ruta(API)) ? leer(readFileSync(ruta(API), 'utf8')) : null;
+  const capturas = capturasDeSpec(existsSync(ruta(SPEC)) ? readFileSync(ruta(SPEC), 'utf8') : '');
+  const rama = git(['rev-parse', '--abbrev-ref', 'HEAD']);
+  // Los commits de la rama, el más nuevo primero; lo que aún no está commiteado va delante, como el más nuevo.
+  // `--diff-merges=first-parent`: sin él, un commit de fusión no lista ficheros, y lo que se arregló al fundir (#461,
+  // la DD renumerada en la página) pasaba por delante del robot sin contar.
+  const log = git(['log', '--format=%x00%s', '--name-only', '--diff-merges=first-parent', `${base}..HEAD`]);
+  const commits = log
+    .split('\0')
+    .filter(Boolean)
+    .map((b) => {
+      const [subject, ...files] = b.split('\n');
+      return { subject, files: files.filter(Boolean) };
+    });
+  const sucio = git(['diff', '--name-only', 'HEAD']).split('\n').filter(Boolean);
+  if (sucio.length) commits.unshift({ subject: '(árbol de trabajo)', files: sucio });
+  const comprobadas = comprobadasPorRobot(commits, capturas);
+  const claves = (fichero) => Object.keys(existsSync(ruta(fichero)) ? JSON.parse(readFileSync(ruta(fichero), 'utf8')) : {});
+  const estilos = new Set(claves(ESTILOS));
+  const estructura = new Set(claves(ESTRUCTURA).map((tag) => slugDe(tag.replace(/^sc-/, ''))));
+  return {
+    rama,
+    pendientes: capturasPendientes({ apiAntes, apiAhora, cambiados, capturas, comprobadas }),
+    estilos: estilosPendientes({ cambiados, estilos }),
+    estructura: estructuraPendiente({ cambiados, estructura }),
+  };
+}
 
 function main() {
   try {
-    const base = git(['merge-base', 'HEAD', 'origin/main']);
-    // Contra el árbol de trabajo, no contra HEAD: el preflight mide lo que va a subir, commiteado o no.
-    const cambiados = git(['diff', '--name-only', base]).split('\n').filter(Boolean);
-    const leer = (texto) => (texto ? JSON.parse(texto) : null);
-    let apiAntes = null;
-    try {
-      apiAntes = leer(git(['show', `${base}:${API}`]));
-    } catch {
-      /* la base no tenía el fichero: todo lo de ahora es nuevo */
-    }
-    const apiAhora = existsSync(API) ? leer(readFileSync(API, 'utf8')) : null;
-    const capturas = capturasDeSpec(existsSync(SPEC) ? readFileSync(SPEC, 'utf8') : '');
-    const rama = git(['rev-parse', '--abbrev-ref', 'HEAD']);
-    // Los commits de la rama, el más nuevo primero; lo que aún no está commiteado va delante, como el más nuevo.
-    // `--diff-merges=first-parent`: sin él, un commit de fusión no lista ficheros, y lo que se arregló al fundir (#461,
-    // la DD renumerada en la página) pasaba por delante del robot sin contar.
-    const log = git(['log', '--format=%x00%s', '--name-only', '--diff-merges=first-parent', `${base}..HEAD`]);
-    const commits = log
-      .split('\0')
-      .filter(Boolean)
-      .map((b) => {
-        const [subject, ...files] = b.split('\n');
-        return { subject, files: files.filter(Boolean) };
-      });
-    const sucio = git(['diff', '--name-only', 'HEAD']).split('\n').filter(Boolean);
-    if (sucio.length) commits.unshift({ subject: '(árbol de trabajo)', files: sucio });
-    const comprobadas = comprobadasPorRobot(commits, capturas);
-    const claves = (fichero) => Object.keys(existsSync(fichero) ? JSON.parse(readFileSync(fichero, 'utf8')) : {});
-    const estilos = new Set(claves(ESTILOS));
-    const estructura = new Set(claves(ESTRUCTURA).map((tag) => slugDe(tag.replace(/^sc-/, ''))));
-    const texto = aviso(
-      capturasPendientes({ apiAntes, apiAhora, cambiados, capturas, comprobadas }),
-      rama,
-      estilosPendientes({ cambiados, estilos }),
-      estructuraPendiente({ cambiados, estructura }),
-    );
+    const { rama, pendientes, estilos, estructura } = medir();
+    const texto = aviso(pendientes, rama, estilos, estructura);
     if (texto) console.log(texto);
   } catch (e) {
     // Es un aviso: si no puede medir, lo dice y deja seguir.

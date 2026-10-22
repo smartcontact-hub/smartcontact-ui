@@ -79,6 +79,27 @@ test('ROJO: main avanza en el remoto después de crear la rama → medirRebase l
   }
 });
 
+test('ROJO, el caso del #494: una rama archivada después del clon → medirRebase trae su etiqueta `archive/*`', () => {
+  // Un `git fetch` corriente no trae etiquetas de una historia que no está en ninguna rama, y sin ellas
+  // `docs:coherence` canta como fantasmas los sellos de los hand-offs que viven en una rama archivada.
+  const { raiz, mio, otro } = escenario();
+  try {
+    git(otro, 'checkout', '-q', '-b', 'prototipo');
+    writeFileSync(join(otro, 'p.txt'), 'proto\n');
+    git(otro, 'add', '-A');
+    git(otro, 'commit', '-q', '-m', 'prototipo que no se funde');
+    const sello = git(otro, 'rev-parse', 'HEAD');
+    git(otro, 'tag', 'archive/rama/prototipo');
+    git(otro, 'push', '-q', 'origin', 'refs/tags/archive/rama/prototipo');
+    git(mio, 'fetch', '-q', 'origin');
+    assert.throws(() => git(mio, 'cat-file', '-e', `${sello}^{commit}`), 'un fetch corriente no trae el commit archivado');
+    assert.equal(medirRebase(mio).ok, true);
+    assert.equal(git(mio, 'rev-parse', 'refs/tags/archive/rama/prototipo'), sello);
+  } finally {
+    rmSync(raiz, { recursive: true, force: true });
+  }
+});
+
 test('VERDE: tras rebasar sobre origin/main vuelve a estar ok', () => {
   const { raiz, mio, otro } = escenario();
   try {
