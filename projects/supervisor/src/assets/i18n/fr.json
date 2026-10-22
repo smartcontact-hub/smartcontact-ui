@@ -1716,6 +1716,8 @@
       "edit_breadcrumb": "Modifier l'équipe",
       "name_taken": "Il existe déjà une équipe avec ce nom",
       "assigned_count": "{{count}} dans l'équipe",
+      "agents_aria": "{{count}} agents",
+      "agents_aria_one": "1 agent",
       "no_description": "Sans description"
     }
   },
