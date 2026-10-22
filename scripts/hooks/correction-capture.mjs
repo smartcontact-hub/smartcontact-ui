@@ -132,18 +132,25 @@ const SOBRE_DE_AGENTE =
 // enlazadas, el aviso de worktree) y su texto detrás: por eso no basta con «empieza por
 // `<system-reminder>`». Se quitan, y lo que queda es lo que escribió el usuario.
 const RECORDATORIOS = /^(?:\s*<system-reminder\b[^>]*>[\s\S]*?<\/system-reminder>)*\s*/i;
-export const textoDelUsuario = (texto) => String(texto).replace(RECORDATORIOS, '');
+const sinRecordatorios = (texto) => String(texto).replace(RECORDATORIOS, '');
+// Lo PEGADO tampoco lo escribió el usuario: la app lo envuelve en `<pasted_content id="…">`, con el
+// mismo id al cerrar. Era la respuesta de otra sesión («como te dije»), una nota de revisión («lo que
+// está mal») o la transcripción de una reunión: en los transcripts (2026-10-22), 4 mensajes contaban
+// como corrección solo por lo pegado, 3 de ellos entre los 9 apuntados en 72 h. Lo que el usuario
+// escribe alrededor se sigue mirando.
+const PEGADO = /<pasted_content\b([^>]*)>[\s\S]*?<\/pasted_content\1>/gi;
+export const textoDelUsuario = (texto) => sinRecordatorios(texto).replace(PEGADO, ' ');
 
 export const esDeOtroAgente = (texto) => {
   if (typeof texto !== 'string') return false;
-  const resto = textoDelUsuario(texto);
+  const resto = sinRecordatorios(texto);
   // Solo recordatorios, sin texto detrás: lo puso la app, no el usuario.
   if (!resto) return /<\/system-reminder>/i.test(texto);
   return SOBRE_DE_AGENTE.test(resto);
 };
 
 // Los patrones se prueban contra el texto del usuario: los recordatorios citan a otros (lo que contó
-// una hija, el estado de las sesiones) y no son suyos aunque el mensaje sí lo sea.
+// una hija, el estado de las sesiones) y lo pegado es de otros, aunque el mensaje sí sea suyo.
 export const esCorreccion = (texto) =>
   typeof texto === 'string' && !esDeOtroAgente(texto) && PATRONES.some((p) => p.test(textoDelUsuario(texto)));
 

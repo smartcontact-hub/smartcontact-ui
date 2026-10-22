@@ -219,6 +219,35 @@ test('verde: lo que cita un recordatorio no es del usuario aunque el mensaje sí
   assert.equal(esCorreccion(AVISOS_DE_HIJA[0].replace(FIN_DE_TURNO, '\nvale, sigue con el preflight')), false);
 });
 
+// Reales, del registro (075d89, fb5f28 y uno del 2026-09-21), recortados («…»): lo que casaba iba
+// DENTRO de lo pegado, que la app envuelve con el mismo id al abrir y al cerrar. Era la respuesta de
+// otra sesión de Claude, una nota con lo que faltaba y la transcripción de una reunión.
+const pegado = (id, cuerpo) => `<pasted_content id="${id}">\n${cuerpo}\n</pasted_content id="${id}">`;
+const CON_PEGADO = [
+  'me dice \n\n' +
+    pegado('78e0', 'Lo he vuelto a intentar y sigo sin poder editar. … En la página 4056 sigue todo como te dije: las 10 frases están y cada una aparece una sola vez.') +
+    '\n',
+  hija({ ...FIGMA, pr: 476, mide: 1339, dijo: 'Paro aquí. Hecho: los 41 resúmenes d…' }) +
+    ENLAZADAS +
+    '\nentonces con las nuevas actualizaciones, estabamos asi en la sesión de claude en extension, para ver si sigue siendo igual o no "\n\n' +
+    pegado('78e0', 'Sigo sin poder editar yo, así que abaj… Faltan dos arreglos, que obligan a publicar otra vez:\nCanales: se ha perdido un espacio') +
+    '\n\n"',
+  'Sobre lo que mi maqueta no resuelve, sigue /better-ui para responder. … aunque te la voy dando "\n\n' +
+    pegado('5322', 'Speaker 0:\n\nY yo lo de anuncios lo quitaba ya, o sea, anuncios no tiene sentido. ¿El qué? Concepto.'),
+];
+
+test('verde: lo que casa DENTRO de un texto pegado no es una corrección del usuario', () => {
+  for (const f of CON_PEGADO) assert.equal(esCorreccion(f), false, `no debía detectar: ${f.slice(0, 60)}…`);
+});
+
+test('rojo: lo pegado sin su envoltorio sigue disparando, y lo que el usuario escribe alrededor cuenta', () => {
+  for (const f of CON_PEGADO) assert.ok(esCorreccion(f.replace(/<\/?pasted_content[^>]*>/g, '')), 'el filtro se ha llevado por delante el patrón');
+  assert.ok(esCorreccion(`${pegado('9a1c', 'el resumen de la otra sesión')}\nno, eso no es lo que pedí`));
+  assert.ok(esCorreccion(`otra vez sin preflight. ${pegado('9a1c', 'el log del push')}`));
+  // Un cierre de otro id no cierra el pegado: el texto de dentro no se pierde por un cierre falso.
+  assert.ok(esCorreccion('<pasted_content id="aa">\nno, eso no es\n</pasted_content id="bb">'));
+});
+
 test('rojo: el cierre detrás de recordatorios sigue arrancando /reflect', () => {
   // Literal del 2026-10-22: la nota de enlazadas delante y el cierre detrás.
   assert.ok(esCierre(ENLAZADAS + '\npues cerramos esta sesion'));
