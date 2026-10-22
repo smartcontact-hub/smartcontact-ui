@@ -19,6 +19,12 @@ export function clampLinksToChannels<L extends { readonly channels: readonly str
   groupChannels: Iterable<string>,
   allowedChannelsFor?: (link: L) => readonly string[] | undefined,
 ): L[];
+export function fillEmptyLinks<L extends { readonly channels: readonly string[] }>(
+  links: readonly L[],
+  groupChannels: Iterable<string>,
+  added: Iterable<string>,
+  allowedChannelsFor?: (link: L) => readonly string[] | undefined,
+): L[];
 export function isLastChannel(link: { readonly channels: readonly string[] }, channel: string): boolean;
 export function toggleLinkChannel<L extends { readonly channels: readonly string[] }>(
   link: L,

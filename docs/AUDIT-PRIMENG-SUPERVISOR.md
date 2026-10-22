@@ -35,7 +35,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **55 props nativas no expuestas**: `appendTo`, `ariaLabel`, `ariaLabelledBy`, `autoZIndex`, `autofocus`, `baseZIndex`, `clearButtonStyleClass`, `dataType`, `defaultDate`, `disabledDates`, `disabledDays`, `firstDayOfWeek`, `fluid`, `focusTrap`, `hideOnDateTimeSelect`, `hourFormat`, `icon`, `iconAriaLabel`, `iconDisplay`, `inputSize`, `inputStyle`, `inputStyleClass`, `keepInvalid`, `max`, `maxDateCount`, `maxlength`, `min`, `minlength`, `motionOptions`, `multipleSeparator`, `numberOfMonths`, `panelStyle`, `panelStyleClass`, `pattern`, `rangeSeparator`, `readonlyInput`, `responsiveOptions`, `selectOtherMonths`, `shortYearCutoff`, `showOnFocus`, `showOtherMonths`, `showSeconds`, `showTime`, `showWeek`, `startWeekFromFirstDayOfYear`, `step`, `stepHour`, `stepMinute`, `stepSecond`, `tabindex`, `timeOnly`, `timeSeparator`, `todayButtonStyleClass`, `touchUI`, `variant`
 
-### `sc-button` · 165 usos · primeng/button, primeng/tooltip
+### `sc-button` · 167 usos · primeng/button, primeng/tooltip
 
 **43 props nativas no expuestas**: `appendTo`, `autoHide`, `autofocus`, `badge`, `badgeSeverity`, `buttonProps`, `content`, `escape`, `fitContent`, `fluid`, `hideDelay`, `hideOnEscape`, `hostName`, `iconPos`, `life`, `link`, `loadingIcon`, `outlined`, `pButton`, `pButtonIconPT`, `pButtonLabelPT`, `pButtonLabelUnstyled`, `pButtonPT`, `pButtonUnstyled`, `pTooltipPT`, `pTooltipUnstyled`, `plain`, `positionLeft`, `positionStyle`, `positionTop`, `severity`, `showDelay`, `showOnEllipsis`, `style`, `styleClass`, `tabindex`, `text`, `tooltipDisabled`, `tooltipEvent`, `tooltipOptions`, `tooltipPosition`, `tooltipStyleClass`, `tooltipZIndex`
 
@@ -59,7 +59,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **31 props nativas no expuestas**: `addOnTab`, `appendTo`, `autoOptionFocus`, `completeOnFocus`, `delay`, `focusOnHover`, `group`, `inputSize`, `inputStyle`, `inputStyleClass`, `maxlength`, `min`, `minQueryLength`, `minlength`, `motionOptions`, `name`, `optionDisabled`, `optionGroupChildren`, `optionGroupLabel`, `optionLabel`, `optionValue`, `overlayOptions`, `panelStyle`, `panelStyleClass`, `pattern`, `scrollHeight`, `step`, `suggestions`, `tabindex`, `typeahead`, `variant`
 
-### `sc-dialog` · 17 usos · primeng/dialog
+### `sc-dialog` · 18 usos · primeng/dialog
 
 **29 props nativas no expuestas**: `appendTo`, `autoZIndex`, `baseZIndex`, `blockScroll`, `breakpoints`, `closeButtonProps`, `closeIcon`, `closeOnEscape`, `closeTabindex`, `contentStyle`, `contentStyleClass`, `focusOnShow`, `focusTrap`, `header`, `keepInViewport`, `maskMotionOptions`, `maskStyle`, `maskStyleClass`, `maximizable`, `maximizeButtonProps`, `maximizeIcon`, `minX`, `minY`, `minimizeIcon`, `motionOptions`, `rtl`, `showHeader`, `style`, `styleClass`
 

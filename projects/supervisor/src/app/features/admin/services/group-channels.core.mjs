@@ -157,6 +157,31 @@ export function clampLinksToChannels(links, groupChannels, allowedChannelsFor = 
 }
 
 /**
+ * Al activar un canal del grupo, el agente asignado que no atiende ninguno de los que ofrece gana el que se activa, si
+ * lo tiene permitido (SISMAC-4058, DD-223): es el caso de un grupo sin canales con agentes, al que se le pone uno. Quien
+ * ya atiende alguno no cambia, y quien no lo tiene permitido sigue sin canales (sale al guardar, con su aviso). Quitar
+ * un canal no da nada a nadie: esa es la cascada de `removedFamilies`. Devuelve el MISMO objeto cuando no cambia nada,
+ * como `clampLinksToChannels`.
+ * @template {{ channels: readonly string[] }} L
+ * @param {readonly L[]} links
+ * @param {Iterable<string>} groupChannels lo que ofrece el grupo con el canal ya activado
+ * @param {Iterable<string>} added las familias que se acaban de activar (`removedFamilies(después, antes)`)
+ * @param {(link: L) => readonly string[] | undefined} [allowedChannelsFor]
+ * @returns {L[]}
+ */
+export function fillEmptyLinks(links, groupChannels, added, allowedChannelsFor = () => undefined) {
+  const nuevas = new Set(added);
+  const offered = [...groupChannels];
+  return links.map((l) => {
+    const permitted = permittedFamilies(offered, allowedChannelsFor(l));
+    if (l.channels.some((c) => permitted.includes(familyOf(c)))) return l;
+    const gana = permitted.filter((f) => nuevas.has(f));
+    // Suma, no sustituye: lo que tenía y el grupo ya no ofrece vuelve si se vuelve a marcar (DD-217).
+    return gana.length === 0 ? l : { ...l, channels: canonicalizeChannels([...l.channels, ...gana]) };
+  });
+}
+
+/**
  * ¿Es este el único canal del enlace?
  * @param {{ channels: readonly string[] }} link
  * @param {string} channel

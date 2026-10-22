@@ -22,7 +22,8 @@
       [value]="visibleRows()" [columns]="columns()" [tableMinWidth]="tableMinWidth()" dataKey="agent.id"
       externalSort [sortField]="orden() ? 'agent' : undefined" [sortOrder]="orden() ?? 1" (sortChange)="onSortChange($event)">
       <div scTableEmpty>
-        <sc-empty-state icon="search_off" titleKey="labels.no_results.title" bodyKey="groups.form.assigned.no_results" />
+        @let v = vacio();
+        <sc-empty-state [icon]="v.icon" [titleKey]="v.title" [bodyKey]="v.body" />
       </div>
     </sc-datatable>
   </div>

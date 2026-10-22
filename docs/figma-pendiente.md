@@ -1629,6 +1629,15 @@ botón de X1 a X3 lleva `key`.
   (`3654:76460`, I1 a I8). Agentes y Tipificaciones, con su ✓ (medido). Queda fuera: `group-summary`, de otra librería,
   con «Mostrar estado» encendido por defecto. Versiones: «Grupos: índice del alta con marcas de paso (DD-222) e
   «Interacción del índice»» y «nav-item: Paso hecho con rótulo e icono atados».
+- ~~**§61 · La ficha de grupo, como su página de COA publicada (DD-223)**~~ → **HECHO el 2026-10-22** en la página
+  Grupos (`41:2847`). Tres pantallas nuevas: V8 (`3678:25449`), solo «Permitir comentarios» con «En qué
+  conversaciones», en «Otras configuraciones»; E5 (`3681:25364`), un agente sin canales del grupo con «Sin canales
+  compatibles» y el candado, y el Custom modal «¿Sacar del grupo a 1 agente?» con «Cancelar» y «Sacar» en rojo; V9
+  (`3682:26036`), el grupo recién creado en «Asignados» con «Sin agentes asignados» y «Asígnalos desde la pestaña
+  «Todos».» (V7, con búsqueda, sin tocar). V1 y V2 con el rótulo «En qué conversaciones». Hojas del alta (filas 7, 8,
+  12, 14 y 16) y de la edición (fila 1: la entrada desde la rueda de la monitorización, solo administradores, sin
+  maqueta; fila 7: el aviso al guardar), Hand-off con la rueda y el marcado automático, portadas e índice de Grupos.
+  Versión del fichero: «Grupos: §61 DD-223».
 
 ---
 

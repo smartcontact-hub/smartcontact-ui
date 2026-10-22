@@ -1932,7 +1932,7 @@
       "assigned": {
         "query_placeholder": "Rechercher des agents…",
         "empty_title": "Aucun agent assigné",
-        "empty": "Choisissez-les dans « Ajouter des agents », en haut à droite.",
+        "empty": "Assignez-les depuis l’onglet « Tous ».",
         "no_results": "Aucun agent ne correspond au filtre.",
         "col_agent": "Agent",
         "col_active": "Activé",
@@ -2015,6 +2015,13 @@
         "body_one": "1 agent de ce groupe perd {{channels}}. Continuer ?",
         "body_orphaned_one": "1 agent de ce groupe perd {{channels}}, n'a plus aucun canal et quitte le groupe. Continuer ?",
         "body_orphaned_single": "{{count}} agents de ce groupe perdent {{channels}}, et 1 n'a plus aucun canal et quitte le groupe. Continuer ?"
+      },
+      "orphans": {
+        "title": "Retirer {{count}} agents du groupe ?",
+        "title_one": "Retirer 1 agent du groupe ?",
+        "body": "Ils n’ont plus aucun des canaux du groupe.",
+        "body_one": "Il n’a plus aucun des canaux du groupe.",
+        "confirm": "Retirer"
       },
       "danger_zone_description": "Supprimer ce groupe le retire des règles et routes qui le référencent. L'action ne peut pas être annulée.",
       "duplicate_title": "Dupliquer le groupe",
@@ -2166,7 +2173,7 @@
         "typification_placeholder": "Sélectionnez une typification",
         "view": "Voir le détail de « {{name}} »",
         "view_detail": "Voir le détail",
-        "scope_label": "Quelles conversations sont typifiées",
+        "scope_label": "Quelles conversations",
         "scope": {
           "all": "Toutes",
           "inbound": "Entrantes uniquement",

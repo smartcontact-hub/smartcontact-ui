@@ -110,6 +110,7 @@ import {
   channelRemovalImpact,
   clampLinksToChannels,
   diffLinks,
+  fillEmptyLinks,
   hasChatFamily,
   removedFamilies,
   toggleChatFamily,
@@ -389,6 +390,15 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
   );
   /** Sin tipificaciones en Repositorios, «Tipificar conversaciones» está apagado y no se enciende (SISMAC-4058). */
   protected readonly sinTipificaciones = computed(() => this.tipificacionesStore.items().length === 0);
+
+  /** Se tipifica de verdad: encendido y con tipificaciones que elegir. */
+  protected readonly tipifica = computed(() => this.form().wrapUp.classify && !this.sinTipificaciones());
+
+  /**
+   * Hay algo que pedir al acabar: comentarios o tipificación. Con cualquiera de los dos sale «En qué conversaciones», que
+   * vale para los dos (SISMAC-4058, DD-223).
+   */
+  protected readonly conPostconversacion = computed(() => this.form().wrapUp.comments || this.tipifica());
 
   /**
    * LO OBLIGATORIO, en el orden de la ficha: el nombre; la tipificación, con «Tipificar conversaciones» encendido; y el
@@ -1232,17 +1242,28 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
   }
 
   /**
-   * Marcar o quitar un canal no toca a los agentes (DD-217): la tabla y el resumen recortan sus canales a los del grupo
-   * solo para verlos (`linksVistos`), y se guardan recortados. Hasta el 2026-10-20 se recortaban aquí, y quitar y volver
-   * a poner Teléfono en Online Support dejaba a sus 13 agentes sin él.
+   * Quitar un canal no toca a los agentes (DD-217): la tabla y el resumen recortan sus canales a los del grupo solo para
+   * verlos (`linksVistos`), y se guardan recortados. Hasta el 2026-10-20 se recortaban aquí, y quitar y volver a poner
+   * Teléfono en Online Support dejaba a sus 13 agentes sin él. Activar uno se lo da a quien no atiende ninguno y lo tiene
+   * permitido, como pide SISMAC-4058 para un grupo sin canales con agentes (DD-223, `fillEmptyLinks`).
    */
   protected toggleChannel(channel: GroupChannel): void {
-    this.form.update((f) => ({ ...f, channels: toggleGroupChannel(f.channels, channel) }));
+    this.cambiarCanales(toggleGroupChannel(this.form().channels, channel));
   }
 
   /** La casilla madre: enciende o apaga los dos subcanales de una vez (patrón B12 del laboratorio). */
   protected toggleChatFamily(): void {
-    this.form.update((f) => ({ ...f, channels: toggleChatFamily(f.channels) as Set<GroupChannel> }));
+    this.cambiarCanales(toggleChatFamily(this.form().channels) as Set<GroupChannel>);
+  }
+
+  private cambiarCanales(channels: Set<GroupChannel>): void {
+    this.form.update((f) => {
+      const activadas = removedFamilies(channels, f.channels);
+      const links = activadas.length === 0
+        ? f.links
+        : fillEmptyLinks(f.links, channels, activadas, (link) => this.agentsStore.getAgent(link.agentId)?.allowedChannels);
+      return { ...f, channels, links };
+    });
   }
 
   /** Los agentes con los canales que el grupo ofrece ahora y cada uno tiene: lo que se ve y lo que se guarda. */
@@ -1392,6 +1413,17 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
       }
     }
 
+    // Quien se queda sin canales en un grupo con canales sale al guardar (DD-121). Si es por quitar canales al editar, lo
+    // ha dicho la cascada; si no (al crear, o un agente que no tiene permitido el canal que se activó), lo dice este aviso
+    // antes de sacarlo, y no en silencio (DD-223).
+    if (!this.cascadeConfirm() && this.sacarConfirm() === null) {
+      const fuera = this.linksVistos().length - this.withoutOrphans(this.linksVistos()).length;
+      if (fuera > 0) {
+        this.sacarConfirm.set(fuera);
+        return;
+      }
+    }
+
     this.saving.set(true);
     setTimeout(() => {
       const f = this.form();
@@ -1531,6 +1563,20 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
     // Re-enter save() — the guard sees `cascadeConfirm` is set and skips the check.
     this.save();
     this.cascadeConfirm.set(null);
+  }
+
+  /** Los agentes que se quedan sin canales y salen al guardar, a la espera del sí (DD-223). */
+  protected readonly sacarConfirm = signal<number | null>(null);
+
+  protected cancelSacar(): void {
+    this.sacarConfirm.set(null);
+    this.destinoTrasGuardar = null;
+  }
+
+  protected confirmSacar(): void {
+    // Como la cascada: `save()` ve el aviso puesto y no vuelve a preguntar.
+    this.save();
+    this.sacarConfirm.set(null);
   }
 
   /** El nombre de una familia, para el aviso de cascada: «Chat», no «Web Chat, WhatsApp». */

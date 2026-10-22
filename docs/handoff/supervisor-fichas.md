@@ -64,6 +64,24 @@ El del mapa de componentes de Grupos y la tabla única del DS (2026-10-19, #457)
 34f18f37:docs/handoff/supervisor-fichas.md`; sus trampas suben a «Trampas del frente».
 El de Grupos y Agentes como en Figma, sin edición masiva (2026-10-19, DD-215, sin trampas propias): `git show
 archive/handoff-fichas-2026-10-21:docs/handoff/supervisor-fichas.md`.
+El de lo que falta al pulsar Crear, grupos sin canales y Recursos en chips (2026-10-20, DD-217, sin trampas propias):
+`git show b703321f:docs/handoff/supervisor-fichas.md`.
+
+## ✅ 2026-10-22 · La ficha de grupo, como la versión 17 de su página de COA (DD-223)
+
+> **Sello:** rama `areses/grupos-como-coa-4058` sobre `main` `b703321f` (ya con DD-222), un PR. Tras fundir, la
+> congelada 4058 avanza a ese commit (`docs/PROTOTIPOS.md`), con el OK de producto.
+
+- **Revisión de COA 4058 v17**, frase a frase contra la congelada: el borrador para pegar vive fuera del repo
+  (`~/Documents/Claude/2026-10 Grupos COA/`). Salieron tres diferencias y un texto de la tabla, que arregla este PR.
+- **«En qué conversaciones»** con comentarios o con tipificación (`conPostconversacion`, `tipifica`).
+- **Activar un canal llega a los agentes sin ninguno** (`fillEmptyLinks`, prueba unitaria en `group-channels.test.mjs`);
+  quien no lo tiene permitido sale al guardar, con el aviso «¿Sacar del grupo a 1 agente?» (`sacarConfirm`). Antes, al
+  crear, salía en silencio.
+- **Tabla vacía con su motivo** (`vacio` en `agent-channel-table`): «Sin agentes asignados» en Asignados sin búsqueda.
+- **Sin hacer, a la espera de producto**: «Editar en Repositorios» del modal de la tipificación ofrece descartar con
+  cambios, y «Gestionar en Repositorios», guardar. Y la rueda del MiniAdmin (entrar a la edición desde la monitorización
+  de cada grupo, solo administradores): el prototipo no tiene esa pantalla; va como nota en Figma (§61).
 
 ## ✅ 2026-10-21 · Marcar una casilla de Grupos o Agentes ya no acorta la tabla (fallo de DD-215)
 
@@ -126,24 +144,6 @@ archive/handoff-fichas-2026-10-21:docs/handoff/supervisor-fichas.md`.
   avisos con «».
 - **Pendiente**: las correcciones de COA (fuera del repo). Figma (§56), hecho el 2026-10-21. Tras fundir, avanzar `proto/SISMAC-4058`, 4062
   y 4064 (`docs/PROTOTIPOS.md`).
-
-## ✅ 2026-10-20 · Lo que falta se dice al pulsar Crear, grupos sin canales, duplicar sin diálogo, Recursos en chips y el punto final (DD-217)
-
-> **Sello:** rama `areses/error-handling-groups-index-4805b9` sobre `main` `2b9f99b8`, un PR.
-
-- **Índice**: «Crear» siempre activo; al pulsarlo con algo pendiente, cada campo lo dice, el índice pone el texto bajo
-  su sección (`sectionErrorHints`, DS) y se llega al primero. El ✓ con firma: se va si otra sección le cambia los
-  canales. Sin puertas. Reglas puras en `alta-secciones.core.mjs`, con su test. En grupo, agente, usuario y tipificación.
-- **Fuera**: `sc-summary-status`, el motivo junto al botón, los amarillos de las fichas y `group-duplicate-dialog`.
-- **Grupo**: canales opcionales (sin canales se pertenece sin canal); quitar y poner un canal ya no recorta los enlaces
-  (`linksVistos`); duplicar como «X (1)» (`nombreDeCopia`; en el acto, y al alta rellena desde DD-218); Recursos en chips sin «+» ni lápiz, la «×» en
-  rojo al pasar (`sc-multiselect`, DS); el resumen de Recursos lleva a su campo; la tipificación sin descripción.
-- **Segunda vuelta**: Recursos a media columna, chips que caben (`fit`, el largo con «…»), tooltip con lo que contiene
-  en las tres listas (§15); editores sin «Falta»; punto final (`i18n:check` I); barrido (§13); rótulos por `[label]`,
-  también en `sc-textarea`, e interruptores con `<label for>` (§16); fuera `recurso-dialog` y `template-form-panel`.
-- **Figma (§55)**: hecho el 2026-10-21. Del barrido, el nombre en cabecera, las cabeceras de asignación y «Ver detalle», hechos
-  (`fichas-alineacion`, 7). Lo «a nativo» que quedaba (§16): `helperText` de `sc-fileupload`, hecho; el resto ya lo
-  había decidido el DS.
 
 ## SIGUIENTE — sin preguntar
 
