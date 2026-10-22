@@ -245,7 +245,7 @@ export class AgentChannelTableComponent {
   readonly linksChange = output<readonly GroupAgentLink[]>();
 
   protected readonly query = signal('');
-  protected readonly filter = linkedSignal(() => this.groupId() === 0 ? 'all' : 'assigned');
+  protected readonly filter = linkedSignal<'all' | 'assigned' | 'unassigned'>(() => this.groupId() === 0 ? 'all' : 'assigned');
   protected readonly filterOptions = computed(() => {
     this.currentLang();
     return ['all', 'assigned', 'unassigned'].map(value => ({ value, label: this.translate.instant(`groups.form.assigned.filter_${value}`) }));
@@ -262,6 +262,20 @@ export class AgentChannelTableComponent {
     return agents.filter(agent =>
       (filter === 'all' || (filter === 'assigned') === assigned.has(agent.id)) &&
       (!query || `${agent.name} ${agent.email ?? ''}`.toLowerCase().includes(query)));
+  });
+
+  /**
+   * Lo que dice la tabla vacía. Sin búsqueda, por qué está vacía su pestaña: un grupo recién creado abre en Asignados, y
+   * «No hay agentes que coincidan con el filtro» se leía como un fallo (SISMAC-4058, DD-223). Con búsqueda, que nada
+   * coincide.
+   */
+  protected readonly vacio = computed(() => {
+    const sinBusqueda = !this.query().trim();
+    if (sinBusqueda && this.filter() === 'assigned') {
+      return { icon: 'headphones', title: 'groups.form.assigned.empty_title', body: 'groups.form.assigned.empty' };
+    }
+    if (sinBusqueda && this.filter() === 'unassigned') return { icon: 'headphones', title: 'groups.form.all_assigned', body: '' };
+    return { icon: 'search_off', title: 'labels.no_results.title', body: 'groups.form.assigned.no_results' };
   });
 
   /** El orden por nombre: `1`, A→Z; `-1`, Z→A; `null`, el de la lista de agentes. */

@@ -119,11 +119,40 @@ export const ultimaFrase = (texto) => frases(texto).at(-1) ?? '';
 // (`<task-notification>`) y el arranque de una tarea programada (`<scheduled-task>`). El veredicto
 // del CI dice «está en CONFLICTO… Rebasa primero» y casaba como si el usuario te corrigiera: 3 de las 6
 // apuntadas en 48 h el 2026-09-14, más una tarea programada.
-const SOBRE_DE_AGENTE = /^\s*<(?:cross-session-message|task-notification|scheduled-task)\b/i;
-export const esDeOtroAgente = (texto) => typeof texto === 'string' && SOBRE_DE_AGENTE.test(texto);
+// Y los avisos de la APP: que una sesión hija terminó un turno (`<side-sessions-event>`) o que el
+// monitor de un PR vio algo (`<ci-monitor-event>`). Llegan con uno o varios `<system-reminder>`
+// DELANTE, y el primero cita lo que contó la hija («trae otra vez main», «deja de desplazarse»):
+// el sobre no está al principio del texto, sino detrás de los recordatorios. 4 de las apuntadas
+// entre el 2026-10-20 y el 22. En los transcripts (2.415 mensajes distintos, medido el 2026-10-22)
+// llegaban así 71 avisos de sesión hija, 25 del monitor y 11 mensajes de otra sesión; del monitor,
+// otros 123 sin recordatorio.
+const SOBRE_DE_AGENTE =
+  /^<(?:cross-session-message|task-notification|scheduled-task|side-sessions-event|ci-monitor-event)\b/i;
+// Un mensaje REAL del usuario también llega con recordatorios delante (la nota de sesiones
+// enlazadas, el aviso de worktree) y su texto detrás: por eso no basta con «empieza por
+// `<system-reminder>`». Se quitan, y lo que queda es lo que escribió el usuario.
+const RECORDATORIOS = /^(?:\s*<system-reminder\b[^>]*>[\s\S]*?<\/system-reminder>)*\s*/i;
+const sinRecordatorios = (texto) => String(texto).replace(RECORDATORIOS, '');
+// Lo PEGADO tampoco lo escribió el usuario: la app lo envuelve en `<pasted_content id="…">`, con el
+// mismo id al cerrar. Era la respuesta de otra sesión («como te dije»), una nota de revisión («lo que
+// está mal») o la transcripción de una reunión: en los transcripts (2026-10-22), 4 mensajes contaban
+// como corrección solo por lo pegado, 3 de ellos entre los 9 apuntados en 72 h. Lo que el usuario
+// escribe alrededor se sigue mirando.
+const PEGADO = /<pasted_content\b([^>]*)>[\s\S]*?<\/pasted_content\1>/gi;
+export const textoDelUsuario = (texto) => sinRecordatorios(texto).replace(PEGADO, ' ');
 
+export const esDeOtroAgente = (texto) => {
+  if (typeof texto !== 'string') return false;
+  const resto = sinRecordatorios(texto);
+  // Solo recordatorios, sin texto detrás: lo puso la app, no el usuario.
+  if (!resto) return /<\/system-reminder>/i.test(texto);
+  return SOBRE_DE_AGENTE.test(resto);
+};
+
+// Los patrones se prueban contra el texto del usuario: los recordatorios citan a otros (lo que contó
+// una hija, el estado de las sesiones) y lo pegado es de otros, aunque el mensaje sí sea suyo.
 export const esCorreccion = (texto) =>
-  typeof texto === 'string' && !esDeOtroAgente(texto) && PATRONES.some((p) => p.test(texto));
+  typeof texto === 'string' && !esDeOtroAgente(texto) && PATRONES.some((p) => p.test(textoDelUsuario(texto)));
 
 // El sobre también filtra el CIERRE, y desde que se prueban los trozos no es opcional: los patrones
 // de CIERRES siguen anclados en `^`, pero se prueban además contra cada frase del mensaje, que no lo
@@ -133,11 +162,15 @@ export const esCorreccion = (texto) =>
 // una transcripción de reunión) trae los cierres de otros. En tres semanas de transcripts
 // (2026-10-16), los cierres reales que solo caza un trozo del medio miden ≤473 caracteres, y los
 // falsos, ≥2.202. Pasado el tope se vuelve a lo de antes: el mensaje entero y su última frase.
+// El tope mide el texto del USUARIO: el aviso de una hija y la nota de sesiones enlazadas pasan
+// solos de 1.000 caracteres, y con ellos delante «vale cierra todo y entonces cerramos. Sigue tu
+// criterio.» perdía el trozo del medio.
 const TOPE_TROZOS = 1000;
 export const esCierre = (texto) => {
   if (typeof texto !== 'string' || esDeOtroAgente(texto)) return false;
-  const trozos = texto.length <= TOPE_TROZOS ? frases(texto) : [ultimaFrase(texto)];
-  return [texto, ...trozos].some((f) => CIERRES.some((p) => p.test(f)));
+  const propio = textoDelUsuario(texto);
+  const trozos = propio.length <= TOPE_TROZOS ? frases(propio) : [ultimaFrase(propio)];
+  return [propio, ...trozos].some((f) => CIERRES.some((p) => p.test(f)));
 };
 
 /** Raíz del repo (este fichero vive en `scripts/hooks/`). */
@@ -163,14 +196,20 @@ export function rutaRegistro(cwd) {
  */
 export const idDe = (e) => e.id || `t${String(Date.parse(e.ts)).slice(-5)}`;
 
-/** Apunta la corrección y devuelve cuántas lleva esta sesión (0 si no hay dónde apuntar). */
+/**
+ * Apunta la corrección y devuelve cuántas lleva esta sesión (0 si no hay dónde apuntar).
+ * Se apunta el texto del USUARIO, no el mensaje entero: con recordatorios delante, los 300
+ * caracteres eran el recordatorio, y `--listar` enseñaba un aviso de la app donde había un mensaje
+ * real con texto pegado (2026-10-22: así se contó como aviso uno que no lo era).
+ */
 export function registrar({ prompt, session_id, cwd }) {
   const ruta = rutaRegistro(cwd);
   if (!ruta) return 0;
   mkdirSync(join(ruta, '..'), { recursive: true });
+  const propio = textoDelUsuario(prompt).trim().slice(0, 300);
   appendFileSync(
     ruta,
-    JSON.stringify({ ts: new Date().toISOString(), id: randomBytes(3).toString('hex'), session_id, cwd, prompt: prompt.slice(0, 300) }) + '\n',
+    JSON.stringify({ ts: new Date().toISOString(), id: randomBytes(3).toString('hex'), session_id, cwd, prompt: propio }) + '\n',
   );
   return correcciones(leer(ruta)).filter((e) => e.session_id === session_id).length;
 }

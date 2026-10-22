@@ -1932,7 +1932,7 @@
       "assigned": {
         "query_placeholder": "Search agents…",
         "empty_title": "No assigned agents",
-        "empty": "Pick them in \"Add agents\", top right.",
+        "empty": "Assign them from the \"All\" tab.",
         "no_results": "No agents match the filter.",
         "col_agent": "Agent",
         "col_active": "Enabled",
@@ -2015,6 +2015,13 @@
         "body_one": "1 agent in this group loses {{channels}}. Continue?",
         "body_orphaned_one": "1 agent in this group loses {{channels}}, is left with no channel and leaves the group. Continue?",
         "body_orphaned_single": "{{count}} agents in this group lose {{channels}}, and 1 is left with no channel and leaves the group. Continue?"
+      },
+      "orphans": {
+        "title": "Remove {{count}} agents from the group?",
+        "title_one": "Remove 1 agent from the group?",
+        "body": "They are left with none of the group’s channels.",
+        "body_one": "They are left with none of the group’s channels.",
+        "confirm": "Remove"
       },
       "danger_zone_description": "Deleting this group removes it from the rules and routes that reference it. The action cannot be undone.",
       "duplicate_title": "Duplicate group",
@@ -2166,7 +2173,7 @@
         "typification_placeholder": "Select a typification",
         "view": "View details of “{{name}}”",
         "view_detail": "View details",
-        "scope_label": "Which conversations are typified",
+        "scope_label": "Which conversations",
         "scope": {
           "all": "All",
           "inbound": "Inbound only",

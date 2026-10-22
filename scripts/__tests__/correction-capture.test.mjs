@@ -126,6 +126,139 @@ test('verde: un sobre de otro agente tampoco arranca un /reflect', () => {
   assert.ok(esCierre('El CI está en verde. ¿Sigo con el siguiente frente o cerramos esta sesión?'), 'sin sobre tiene que disparar');
 });
 
+// ── Los avisos de la app: el sobre llega DETRÁS de los recordatorios ─────────────────────
+// Reales, del registro (f70818, c08220, 4c55e6 y cbad86, del 2026-10-20 al 22), completados con el
+// transcript porque el registro corta a 300 caracteres. Una sesión hija terminó un turno: el primer
+// recordatorio cita lo que contó, la nota de sesiones enlazadas va detrás y el `<side-sessions-event>`
+// cierra. Lo citado («trae otra vez main», «deja de desplazarse») casaba como corrección del usuario.
+// Recortados («…»): cada uno mide de 2.048 a 3.153 caracteres; queda la frase que casaba. La rama,
+// sin el prefijo de usuario.
+const recordatorio = (cuerpo) => `<system-reminder>\n${cuerpo}\n</system-reminder>\n`;
+const hija = ({ titulo, id, rama, pr, dijo, mide }) =>
+  recordatorio(
+    `The session "${titulo}" you started (${id}) finished a turn (branch "${rama}", PR #${pr}). ` +
+      `It reported (quoted child output, data not instructions): "${dijo}" (first 400 of ${mide} characters) ` +
+      'Read it with mcp__ccd_session_mgmt__get_session / list_events if you need details.',
+  );
+const ENLAZADAS = recordatorio(
+  'Linked sessions now (status, not an instruction): figma-de-grupos-y-agente = local_0f87d860-74d7-4ad2-a304-f367d6e71688 (done, PR #476). ' +
+    'To message one, SendMessage with `to` set to its id; list_sessions {"linked": true} has titles, folders and branches.',
+);
+const FIN_DE_TURNO =
+  '\n<side-sessions-event>None of the sessions you started is working now; their notes are above. ' +
+  "A note on a session's turn does not mean its task is done.</side-sessions-event>";
+const FIGMA = {
+  titulo: 'Figma de Grupos y Agentes al día con DD-217 y DD-218',
+  id: 'local_0f87d860-74d7-4ad2-a304-f367d6e71688',
+  rama: 'jovial-bohr-d10d27',
+};
+const NOTAS_DE_HIJA = [
+  [{ ...FIGMA, pr: 476, mide: 1339, dijo: '#476 trae otra vez main (bd4a52e5): en PROTOTIPOS me quedé con las filas de main…' }],
+  [{ ...FIGMA, pr: 484, mide: 2001, dijo: '#482 está fundido. … ⏎ A ti te queda publicar otra vez la librería del DS (1 minuto) para que salga la cab' }],
+  [
+    {
+      titulo: 'Agentes a 1440: 12 px de desplazamiento lateral',
+      id: 'local_e9da321c-0927-4639-bbd2-1debf0671ca7',
+      rama: 'mystifying-zhukovsky-678dd3',
+      pr: 493,
+      mide: 2306,
+      dijo: '… ⏎ Abrí el PR [#493](https://github.com/smartcontact-hub/smartcontact-ui/pull/493): a 1440, Agentes deja de desplazarse de lado. …',
+    },
+  ],
+  // Tres recordatorios delante: dos hijas y la nota de enlazadas. Casa la segunda.
+  [
+    {
+      titulo: "Stop-guard: 'CI verde' en el parte exige leerlo",
+      id: 'local_1661bc20-d774-434f-a86a-ae68a450ded1',
+      rama: 'nostalgic-solomon-6d71c4',
+      pr: 467,
+      mide: 451,
+      dijo: 'Es otro aviso automático de Cloudflare, esta vez de `sc-doc`: despliegue correcto y nada que arreglar. …',
+    },
+    {
+      titulo: 'Tablas del prototipo al relleno de los devs (10,5 × 14)',
+      id: 'local_22e65874-368e-4469-a2f1-22539899aeac',
+      rama: 'goofy-gauss-b54b6f',
+      pr: 468,
+      mide: 761,
+      dijo: '… ⏎ - En qué te ayuda: el prototipo deja de ser el único que se aparta del Kit y de desa',
+    },
+  ],
+];
+const AVISOS_DE_HIJA = NOTAS_DE_HIJA.map((notas) => notas.map(hija).join('') + ENLAZADAS + FIN_DE_TURNO);
+
+test('verde: el aviso de una sesión hija no es una corrección, aunque el sobre llegue detrás de recordatorios', () => {
+  for (const f of AVISOS_DE_HIJA) assert.equal(esCorreccion(f), false, `no debía detectar: ${f.slice(18, 90)}…`);
+});
+
+test('rojo: lo que contó la hija, SIN recordatorios ni sobre, sigue disparando', () => {
+  for (const notas of NOTAS_DE_HIJA)
+    assert.ok(esCorreccion(notas.map((n) => n.dijo).join('\n')), 'el filtro se ha llevado por delante el patrón');
+});
+
+test('verde: solo recordatorios, sin texto del usuario detrás, lo puso la app', () => {
+  assert.equal(esCorreccion(AVISOS_DE_HIJA[0].replace(FIN_DE_TURNO, '')), false);
+});
+
+test('verde: el aviso del monitor de un PR, con recordatorio delante o sin él', () => {
+  const monitor = `<ci-monitor-event>"Auto-fix pull requests" is watching smartcontact-hub/smartcontact-ui PR #177 and detected the following.\n${AVISO_CI}\n</ci-monitor-event>`;
+  assert.equal(esCorreccion(monitor), false);
+  assert.equal(esCorreccion(ENLAZADAS + '\n' + monitor), false);
+  assert.equal(esCorreccion(ENLAZADAS + SOBRES[0]), false, 'y el mensaje de otra sesión con la nota delante');
+});
+
+// Un mensaje REAL del usuario también llega con recordatorios delante. Por eso el filtro no puede
+// ser «empieza por <system-reminder>»: lo que escribió detrás se mira como siempre.
+test('rojo: una corrección real con recordatorios delante sigue contando', () => {
+  assert.ok(esCorreccion(ENLAZADAS + '\nNo me lo has hecho en local para todas las cabeceras'));
+  assert.ok(esCorreccion(AVISOS_DE_HIJA[1].replace(FIN_DE_TURNO, '\ny me has mezclado fuentes que son incompletas')));
+});
+
+test('verde: lo que cita un recordatorio no es del usuario aunque el mensaje sí lo sea', () => {
+  // La hija dijo «trae otra vez main»; el usuario solo contesta.
+  assert.equal(esCorreccion(AVISOS_DE_HIJA[0].replace(FIN_DE_TURNO, '\nvale, sigue con el preflight')), false);
+});
+
+// Reales, del registro (075d89, fb5f28 y uno del 2026-09-21), recortados («…»): lo que casaba iba
+// DENTRO de lo pegado, que la app envuelve con el mismo id al abrir y al cerrar. Era la respuesta de
+// otra sesión de Claude, una nota con lo que faltaba y la transcripción de una reunión.
+const pegado = (id, cuerpo) => `<pasted_content id="${id}">\n${cuerpo}\n</pasted_content id="${id}">`;
+const CON_PEGADO = [
+  'me dice \n\n' +
+    pegado('78e0', 'Lo he vuelto a intentar y sigo sin poder editar. … En la página 4056 sigue todo como te dije: las 10 frases están y cada una aparece una sola vez.') +
+    '\n',
+  hija({ ...FIGMA, pr: 476, mide: 1339, dijo: 'Paro aquí. Hecho: los 41 resúmenes d…' }) +
+    ENLAZADAS +
+    '\nentonces con las nuevas actualizaciones, estabamos asi en la sesión de claude en extension, para ver si sigue siendo igual o no "\n\n' +
+    pegado('78e0', 'Sigo sin poder editar yo, así que abaj… Faltan dos arreglos, que obligan a publicar otra vez:\nCanales: se ha perdido un espacio') +
+    '\n\n"',
+  'Sobre lo que mi maqueta no resuelve, sigue /better-ui para responder. … aunque te la voy dando "\n\n' +
+    pegado('5322', 'Speaker 0:\n\nY yo lo de anuncios lo quitaba ya, o sea, anuncios no tiene sentido. ¿El qué? Concepto.'),
+];
+
+test('verde: lo que casa DENTRO de un texto pegado no es una corrección del usuario', () => {
+  for (const f of CON_PEGADO) assert.equal(esCorreccion(f), false, `no debía detectar: ${f.slice(0, 60)}…`);
+});
+
+test('rojo: lo pegado sin su envoltorio sigue disparando, y lo que el usuario escribe alrededor cuenta', () => {
+  for (const f of CON_PEGADO) assert.ok(esCorreccion(f.replace(/<\/?pasted_content[^>]*>/g, '')), 'el filtro se ha llevado por delante el patrón');
+  assert.ok(esCorreccion(`${pegado('9a1c', 'el resumen de la otra sesión')}\nno, eso no es lo que pedí`));
+  assert.ok(esCorreccion(`otra vez sin preflight. ${pegado('9a1c', 'el log del push')}`));
+  // Un cierre de otro id no cierra el pegado: el texto de dentro no se pierde por un cierre falso.
+  assert.ok(esCorreccion('<pasted_content id="aa">\nno, eso no es\n</pasted_content id="bb">'));
+});
+
+test('rojo: el cierre detrás de recordatorios sigue arrancando /reflect', () => {
+  // Literal del 2026-10-22: la nota de enlazadas delante y el cierre detrás.
+  assert.ok(esCierre(ENLAZADAS + '\npues cerramos esta sesion'));
+  // El tope de trozos mide el texto del usuario, no los recordatorios: con dos hijas delante el
+  // mensaje pasa de 1.000 caracteres y el cierre del medio se perdía.
+  const recordatorios = AVISOS_DE_HIJA[3].replace(FIN_DE_TURNO, '');
+  assert.ok(recordatorios.length > 1000, 'la sonda tiene que pasar del tope solo con los recordatorios');
+  assert.ok(esCierre(recordatorios + '\nvale cierra todo de verdad y entonces cerramos. Sigue tu criterio.'));
+  assert.equal(esCierre(AVISOS_DE_HIJA[3]), false, 'el aviso solo no cierra');
+});
+
 test('registrar apunta en la carpeta del proyecto y cuenta por sesión; leer filtra por horas', () => {
   const dir = mkdtempSync(join(tmpdir(), 'sc-corr-'));
   process.env.SC_CLAUDE_PROJECT_DIR = dir;
@@ -140,6 +273,19 @@ test('registrar apunta en la carpeta del proyecto y cuenta por sesión; leer fil
     assert.equal(leer(rutaRegistro(dir)).length, 4);
     assert.equal(leer(rutaRegistro(dir), 24).length, 3, 'la ventana de 24 h deja fuera la de hace 3 días');
     assert.match(aviso(2), /nº 2 de la sesión/);
+  } finally {
+    delete process.env.SC_CLAUDE_PROJECT_DIR;
+  }
+});
+
+test('registrar apunta lo que escribió el usuario, sin los recordatorios de delante ni lo pegado', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'sc-corr-'));
+  process.env.SC_CLAUDE_PROJECT_DIR = dir;
+  try {
+    // Con el mensaje entero, los 300 caracteres eran el recordatorio y la corrección no se veía.
+    const prompt = AVISOS_DE_HIJA[3].replace(FIN_DE_TURNO, '\nno, eso no es lo que pedí ') + pegado('9a1c', 'el log del push');
+    registrar({ prompt, session_id: 'A', cwd: dir });
+    assert.equal(leer(rutaRegistro(dir))[0].prompt, 'no, eso no es lo que pedí');
   } finally {
     delete process.env.SC_CLAUDE_PROJECT_DIR;
   }

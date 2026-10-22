@@ -1935,7 +1935,7 @@
       "assigned": {
         "query_placeholder": "Buscar agentes…",
         "empty_title": "Sin agentes asignados",
-        "empty": "Elígelos en «Añadir agentes», arriba a la derecha.",
+        "empty": "Asígnalos desde la pestaña «Todos».",
         "no_results": "No hay agentes que coincidan con el filtro.",
         "col_agent": "Agente",
         "col_active": "Habilitado",
@@ -2018,6 +2018,13 @@
         "body_one": "1 agente de este grupo pierde {{channels}}. ¿Continuar?",
         "body_orphaned_one": "1 agente de este grupo pierde {{channels}}, se queda sin ningún canal y sale del grupo. ¿Continuar?",
         "body_orphaned_single": "{{count}} agentes de este grupo pierden {{channels}}, y 1 se queda sin ningún canal y sale del grupo. ¿Continuar?"
+      },
+      "orphans": {
+        "title": "¿Sacar del grupo a {{count}} agentes?",
+        "title_one": "¿Sacar del grupo a 1 agente?",
+        "body": "Se quedan sin ninguno de los canales del grupo.",
+        "body_one": "Se queda sin ninguno de los canales del grupo.",
+        "confirm": "Sacar"
       },
       "danger_zone_description": "Eliminar este grupo lo retira de las reglas y rutas que lo referencian. La acción no se puede deshacer.",
       "announcements": {
@@ -2166,7 +2173,7 @@
         "typification_placeholder": "Selecciona una tipificación",
         "view": "Ver detalle de «{{name}}»",
         "view_detail": "Ver detalle",
-        "scope_label": "En qué conversaciones se tipifica",
+        "scope_label": "En qué conversaciones",
         "scope": {
           "all": "Todas",
           "inbound": "Solo entrantes",
