@@ -93,13 +93,13 @@
 7. **Vas a `git push` → `preflight` (o `:scope --run`) UNA vez sobre el árbol FINAL, y el
    veredicto es el del CI leído.** "Final" = commiteado y sin nada más que escribir, ni un `.md`.
    `verify` NO es ese gate: se salta los builds AOT ("es solo un token, una ruta, un md" no es
-   "verify basta"). Los e2e NO van en preflight (DD-60): los corre el CI, obligatorio y en
-   paralelo; si tocaste e2e o algo visual, corre a mano SOLO las pruebas del bloque (DD-154).
-   Después: `npm run ci:verdict`. Si tocaste el lock, `guard:lockfile` (`npm ci --dry-run` a
-   secas es ciego a la plataforma). "Este rojo no es mío" se mide: `git stash` y ese test.
+   "verify basta"). Los e2e NO van en preflight (DD-60): los corre el CI; si cambiaste lo que una
+   ficha obliga, dice o pinta, `grep -l` esos textos en `e2e/` y corre SOLO esos specs (DD-154);
+   tras fundir `main`, lee las líneas `-` de `git diff origin/main -- <fichero>`. Después
+   `npm run ci:verdict`. Lock: `guard:lockfile`. "Este rojo no es mío" se mide: `git stash`.
    ⚙️ El hook de push exige `.preflight-ok` sobre ESTE árbol y deniega un `echo $?` colgado de un
    gate; el de Stop, leer el CI; `ci-preflight-parity`, `playwright-reuse-guard` y `audit-e2e-citas`.
-   Evidencia: ≥8 reincidencias con la regla escrita; por eso dejó de ser prosa. `git log -S'(s35)'`.
+   Evidencia: ≥8 reincidencias con la regla escrita; por eso dejó de ser prosa; DD-222, 4 rondas rojas más. `git log -S'(s35)'`.
 
 6. **Tu test NUEVO se pone rojo, o pasa a la primera → sospecha del test antes que del código.**
    ¿Mide la magnitud correcta? ¿El selector casa solo con lo que crees? ¿La aserción REINTENTA

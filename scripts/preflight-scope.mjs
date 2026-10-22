@@ -26,8 +26,10 @@ import { APPS, planDe } from "./preflight-alcance.mjs";
 import { analizar as analizarCitas, describir as describirCita } from "./audit-e2e-citas.mjs";
 
 /**
- * Al final, en los dos carriles: las capturas de sc-docs que este cambio mueve y siguen sin regenerar
- * (`api-baselines.mjs`). Es un aviso, nunca un rojo: la captura solo sale del workflow, después del push.
+ * Al final, en los dos carriles Y TAMBIÉN SI LA CADENA MUERE: las capturas de sc-docs que este cambio mueve y siguen
+ * sin regenerar (`api-baselines.mjs`). Es un aviso, nunca un rojo: la captura solo sale del workflow, después del push.
+ * Va colgado de `exit` desde el #494 (2026-10-22): se llamaba tras la cadena, un rojo ajeno al cambio la paró antes,
+ * se subió saltándola y el aviso no llegó a salir nunca.
  */
 function avisoDeCapturas() {
   try {
@@ -106,6 +108,9 @@ if (ficheros.length === 0) {
   process.exit(0);
 }
 
+// `exit` llega también tras un `process.exit(1)` o un gate que lanza: el aviso sale pase lo que pase en la cadena.
+process.on("exit", avisoDeCapturas);
+
 const { compartidos, relevantes, appsTocadas, completo } = planDe(ficheros);
 
 console.log(
@@ -159,7 +164,6 @@ if (completo) {
   if (process.argv.includes("--run")) {
     execFileSync("npm", ["run", "preflight"], { stdio: "inherit" });
   }
-  avisoDeCapturas();
   process.exit(0);
 }
 
@@ -200,4 +204,3 @@ if (process.argv.includes("--run")) {
   // QUÉ carril pasó; lo que se saltó quedó impreso arriba.
   execSync("node scripts/preflight-mark.mjs preflight:scope", { stdio: "inherit" });
 }
-avisoDeCapturas();
