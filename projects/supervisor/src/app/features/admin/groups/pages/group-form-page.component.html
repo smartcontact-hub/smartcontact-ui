@@ -129,11 +129,7 @@
         [outbound]="summaryOutbound()"
         [resources]="summaryResources()"
         [hrefs]="summaryHrefs()"
-        [missing]="summaryMissing()"
-        [ready]="summaryReady()"
-        [creating]="mode() === 'create'"
         (ir)="irDesdeResumen($event)"
-        (irAFalta)="irAFalta($event)"
       />
     </div>
   </div>

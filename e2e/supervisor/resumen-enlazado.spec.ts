@@ -170,26 +170,18 @@ test('cada enlace del resumen se pulsa en al menos 24 × 24, también a 1366 × 
   await goto(page, 'admin/grupos/editar/11');
   const enlaces = resumen(page).locator('.resumen__enlace, a.sc-fact-row__link');
   // Agentes habilitados, Distribución y Recursos (título), Teléfono, Chat, Email, Teléfono saliente y Número WhatsApp,
-  // y las tres de Recursos (agendas y plantillas de chat y de email), enlaces desde DD-217: 11. Y, al editar Online
-  // Support, que no tiene número de WhatsApp, el «número de WhatsApp» de lo que falta (DD-222): 12.
-  await expect(enlaces).toHaveCount(12);
+  // y las tres de Recursos (agendas y plantillas de chat y de email), enlaces desde DD-217: 11.
+  await expect(enlaces).toHaveCount(11);
   // Las cuatro esquinas de un cuadrado de 24 centrado en el enlace caen en él: así se pulsa aunque pinte 18 de alto. Es
   // la prueba del navegador (`elementFromPoint`), no la caja que se pinta.
   // A 660 de alto la columna del resumen se desplaza por dentro: cada enlace se mide a la vista, como lo pulsaría alguien.
   const fuera = await enlaces.evaluateAll((els) =>
     els.flatMap((el) => {
-      el.scrollIntoView({ block: 'center' });
-      // Lo que sobresale del recuadro que se desplaza no se puede pulsar con nada: la línea de lo que falta va pegada a su
-      // borde de arriba, y su zona de 24 asoma 3 por encima de él.
-      let caja: Element | null = el.parentElement;
-      while (caja && !/(auto|scroll)/.test(getComputedStyle(caja).overflowY)) caja = caja.parentElement;
-      const marco = caja?.getBoundingClientRect();
+      el.scrollIntoView({ block: 'nearest' });
       const r = el.getBoundingClientRect();
       const [cx, cy] = [r.x + r.width / 2, r.y + r.height / 2];
       const esquinas = [[-11.5, -11.5], [11.5, -11.5], [-11.5, 11.5], [11.5, 11.5]];
-      const fallan = esquinas
-        .filter(([, dy]) => !marco || cy + dy! >= marco.top)
-        .filter(([dx, dy]) => document.elementFromPoint(cx + dx, cy + dy)?.closest('.resumen__enlace, a.sc-fact-row__link') !== el);
+      const fallan = esquinas.filter(([dx, dy]) => document.elementFromPoint(cx + dx, cy + dy)?.closest('.resumen__enlace, a.sc-fact-row__link') !== el);
       const nombre = (el.textContent ?? '').replace(/\s+/g, ' ').trim();
       return fallan.length ? [`${nombre}: ${fallan.length} de 4 esquinas fuera (${r.width.toFixed(1)} × ${r.height.toFixed(1)})`] : [];
     }),

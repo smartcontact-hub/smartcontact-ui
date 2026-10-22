@@ -193,7 +193,7 @@ test('el resumen: en el alta no lleva estado y en la edición no dice «Listo»,
   await expect(page.locator('.ficha-summary')).toContainText('Sin número');
   await expect(avisos).toHaveCount(0);
 
-  // Online Support, guardado y completo: el WhatsApp sin número no es un aviso, y al editar no se dice «Listo».
+  // Online Support, guardado y completo: un WhatsApp sin cuenta no es un aviso, y al editar no se dice «Listo».
   await goto(page, 'admin/grupos/editar/11');
   await expect(avisos).toHaveCount(0);
   await expect(page.locator('.ficha-summary')).not.toContainText('Listo para crear');

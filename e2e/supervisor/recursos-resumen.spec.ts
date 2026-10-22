@@ -1,6 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 
-import { disableAnimations, forceLightTheme, goto, irASeccion, pickSelectOption } from './helpers';
+import { disableAnimations, forceLightTheme, goto, irASeccion } from './helpers';
 
 /**
  * RECURSOS DE LAS FICHAS: LO ELEGIDO EN CHIPS, Y SE EDITA EN REPOSITORIOS (DD-217, que retira el lápiz de DD-204 y la
@@ -93,9 +93,6 @@ test('lo borrado en Repositorios no se cuenta ni se guarda, y la ficha no abre c
   await expect(page.locator('sc-top-bar').getByRole('button', { name: 'Deshacer' })).toHaveCount(0);
 
   await marcar(page, 'group-agendas', 'Soporte Premium');
-  // Online Support tiene Chat y ninguna cuenta de WhatsApp: sin ella «Guardar» está apagado (DD-222).
-  await irASeccion(page, 'Distribución y colas');
-  await pickSelectOption(page, page.locator('sc-select').filter({ has: page.locator('#group-chat-whatsapp') }), /^\+?\d/);
   await page.locator('sc-top-bar').getByRole('button', { name: 'Guardar' }).click();
   await expect
     .poll(() =>

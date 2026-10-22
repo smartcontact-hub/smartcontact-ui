@@ -139,6 +139,11 @@ export class ScFormSectionNavComponent implements OnInit {
    * abierta, hecha o error la que se dejó. Con él, el marcador sustituye a los puntos y al ✓ sueltos (las filas cambian
    * de estado en su sitio, sin aparecer de un hueco vacío); lo que falta se sigue diciendo en texto bajo la etiqueta
    * si la página lo da. Opt-in: sin él, el índice se pinta como siempre (edición, Contact Center, constructor de reglas).
+   *
+   * Movimiento (todo se apaga con `prefers-reduced-motion`; la primera pintura no anima): el marcador cambia de estado en
+   * su sitio, con el ✓ dibujándose y un halo verde de 560 ms, una vez, al completarse; el color del texto de la línea se
+   * difumina en 300 ms; y si cambia la línea de una fila que NO se está mirando (marcar WhatsApp en General cambia
+   * Distribución), esa línea se ilumina 1200 ms con un fondo de marca para verla de reojo. Los tiempos, en `sc-step-marker`.
    */
   readonly sectionStates = input<ReadonlyMap<string, ScStepMarkerState> | null>(null);
 

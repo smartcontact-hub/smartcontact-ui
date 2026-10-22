@@ -99,8 +99,9 @@
      * gris `gray/50`, radio `xl`, 17.5 arriba y abajo (`scale/1-25`), 16 a los lados (`scale/1-143`) y 14 del título al
      * Nav-menu (`scale/1`). El Nav-menu guarda sus 8.75 arriba y abajo (`scale/0-625`) y sus 3.5 entre filas.
      *
-     * Las filas sin marcar van en BLANCO (`content/background`) y en ángulo recto, que es como las pinta el Nav-menu de
-     * esa maqueta; la marcada no lleva el blanco y enseña su fondo redondeado sobre el gris. */
+     * Las filas sin marcar van en BLANCO (`content/background`), con el radio de la fila (12): en ángulo recto, el fondo
+     * redondeado del hover dejaba ver las esquinas blancas detrás (DD-221). La marcada no lleva el blanco y enseña su
+     * fondo redondeado sobre el gris. */
     &.form-nav--caja {
       gap: var(--sc-spacing-1);
       padding: var(--sc-spacing-1-25) var(--sc-spacing-1-143);
@@ -121,6 +122,7 @@
 
       .form-nav__list > li {
         background: var(--sc-bg-surface);
+        border-radius: var(--sc-radius-400);
       }
 
       .form-nav__list > li:has(.form-nav__item--active) {
@@ -258,7 +260,8 @@
  * Va en su propio hueco al final de la fila (`.form-nav__marker`, DD-176): el rótulo llena la fila y lo empuja, así
  * que con varias marcas caen en la misma vertical. De 2026-09-06 a DD-176 fluía detrás de la última palabra, porque
  * de hermano le quitaba 25 px a una caja de texto de 99; hoy, en el carril de 196, al rótulo le quedan 140 con el
- * hueco puesto, y el más largo de las fichas, «Distribución y colas», mide 130.
+ * hueco puesto, y el más largo de las fichas, «Servicios asignados», mide 133. En la caja (DD-220) el carril pasa a 235
+ * y le quedan 147 (DD-221).
  */
 /*
  * Lo que falta, bajo la etiqueta (`sectionErrorHints`, DD-217): en la columna del rótulo, alineado con él, en rojo y a

@@ -105,8 +105,8 @@
         <!-- El nombre de la región, sin rótulo a la vista (DD-144): el resumen arranca a la altura del índice. -->
         <h2 id="user-summary-title" class="resumen__title visually-hidden">{{ 'common.summary' | translate }}</h2>
         <!-- «Falta: …» o «Listo para crear» (DD-136, que vuelve con DD-219): explica por qué «Crear usuario» está apagado,
-             y cada cosa lleva a su campo. Al editar, solo si falta algo. -->
-        @if (mode() !== 'edit' || summaryMissing().length > 0) {
+             y cada cosa lleva a su campo. Solo en el alta: al editar, el índice dice lo que falta. -->
+        @if (mode() !== 'edit') {
           <sc-summary-status [missing]="summaryMissing()" [ready]="summaryReady()" (ir)="irAFalta($event)" />
         }
         <!-- Las tarjetas son hermanas: 14 entre ellas (AGENTS «UX de pantalla» 9). -->

@@ -38,14 +38,16 @@ async function grupoConNombre(page: Page): Promise<void> {
   await expect(actual(page)).toContainText('Distribución y colas');
 }
 
-test('grupo · sin teléfono saliente se sale de Distribución y colas, sin ✓ ni rojo (DD-217)', async ({ page }) => {
+test('grupo · sin teléfono saliente se sale de Distribución y colas, en rojo con lo que falta (DD-217, DD-222)', async ({ page }) => {
   await grupoConNombre(page);
 
-  // Con «Siguiente» y con el índice: sin puerta, y nada lo dice hasta pulsar «Crear grupo».
+  // Con «Siguiente» y con el índice: sin puerta. Al dejarla sin el teléfono saliente, el índice la marca en rojo con lo
+  // que le falta (DD-222).
   await siguiente(page).click();
   await expect(actual(page)).toContainText('Recursos');
-  await expect(fila(page, 'Distribución y colas')).not.toHaveAccessibleName(/completa|obligatori/);
-  await expect(page.locator('sc-form-section-nav .form-nav__item--has-error')).toHaveCount(0);
+  await expect(fila(page, 'Distribución y colas')).not.toHaveAccessibleName(/Completa/);
+  await expect(fila(page, 'Distribución y colas')).toHaveClass(/form-nav__item--has-error/);
+  await expect(fila(page, 'Distribución y colas')).toContainText('Teléfono saliente');
   await fila(page, 'Agentes').click();
   await expect(actual(page)).toContainText('Agentes');
 
@@ -53,7 +55,7 @@ test('grupo · sin teléfono saliente se sale de Distribución y colas, sin ✓ 
   await irASeccion(page, 'Distribución y colas');
   await pickSelectOption(page, page.locator('sc-select').filter({ has: page.locator('#group-phone') }), /./);
   await siguiente(page).click();
-  await expect(fila(page, 'Distribución y colas')).toHaveAccessibleName(completa);
+  await expect(fila(page, 'Distribución y colas')).toHaveAccessibleName(/Completa/);
 });
 
 test('grupo · ✓ en toda sección que se deja completa: General y Distribución, y también Recursos y Agentes (DD-211 §6)', async ({ page }) => {
@@ -66,14 +68,14 @@ test('grupo · ✓ en toda sección que se deja completa: General y Distribució
   await atras(page).click();
   await expect(actual(page)).toContainText('Recursos');
 
-  await expect(fila(page, 'General')).toHaveAccessibleName(completa);
-  await expect(fila(page, 'Distribución y colas')).toHaveAccessibleName(completa);
-  // Agentes se dejó, y sin nada obligatorio está completa con solo pasar: lleva ✓ (DD-211 §6, corrige DD-158).
-  await expect(fila(page, 'Agentes')).toHaveAccessibleName(completa);
-  await expect(fila(page, 'Agentes').locator('.form-nav__done')).toHaveCount(1);
+  await expect(fila(page, 'General')).toHaveAccessibleName(/Completa/);
+  await expect(fila(page, 'Distribución y colas')).toHaveAccessibleName(/Completa/);
+  // Agentes se dejó, y sin nada obligatorio está «Revisada» con solo pasar, con su marcador verde (DD-211 §6, DD-222).
+  await expect(fila(page, 'Agentes')).toHaveAccessibleName(/Revisada/);
+  await expect(fila(page, 'Agentes').locator('sc-step-marker.sc-step-marker--hecha')).toHaveCount(1);
   await siguiente(page).click();
-  await expect(fila(page, 'Recursos')).toHaveAccessibleName(completa);
-  await expect(fila(page, 'Recursos').locator('.form-nav__done')).toHaveCount(1);
+  await expect(fila(page, 'Recursos')).toHaveAccessibleName(/Revisada/);
+  await expect(fila(page, 'Recursos').locator('sc-step-marker.sc-step-marker--hecha')).toHaveCount(1);
 });
 
 test('agente · ✓ en toda sección que se deja completa: General y Grupos, y también Configuración y Recursos (DD-211 §6)', async ({

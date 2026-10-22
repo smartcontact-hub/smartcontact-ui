@@ -14,8 +14,11 @@ export type ScStepMarkerState = 'pendiente' | 'nuevo' | 'actual' | 'hecha' | 'er
  *  · `hecha`: círculo verde con ✓. El ✓ se dibuja con trazo y un halo verde se abre y se va, una vez.
  *  · `error`: círculo rojo con «!». Con el color no basta (daltonismo): lleva signo. Sin movimiento más que el relleno.
  *
- * El cambio se anima solo si ocurre con el marcador a la vista: el que se pinta ya en su estado se queda quieto. Con
- * menos movimiento, un fundido y nada más. Es decorativo (`aria-hidden`): lo que dice lo dice el texto de la fila.
+ * Movimiento: relleno, trazo y opacidad cambian en 200 ms; el punto se encoge y el ✓ se dibuja con trazo en 300 ms
+ * (el ✓ entra 80 ms después, con el relleno ya verde); el «!» crece de 0,6 a 1. Al pasar a `hecha` con el marcador ya
+ * pintado, un halo verde se abre hasta 7 px y se va en 560 ms, UNA vez por marcador. El cambio se anima solo si ocurre
+ * con el marcador a la vista: el que se pinta ya en su estado se queda quieto. Con `prefers-reduced-motion`, un
+ * fundido de 100 ms y nada más. Es decorativo (`aria-hidden`): lo que dice lo dice el texto de la fila.
  *
  * Uso:
  * ```html

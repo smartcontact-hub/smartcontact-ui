@@ -468,14 +468,6 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
       .map((o) => ({ etiqueta: this.translate.instant(o.etiqueta), seccion: o.seccion, ancla: o.ancla }));
   });
 
-  /** «Listo para crear»: en el alta, con «Crear grupo» encendido. */
-  protected readonly summaryReady = computed(() => this.mode() === 'create' && this.canSave());
-
-  /** Una cosa de «Falta: …»: a su campo. */
-  protected irAFalta(item: FaltaDelResumen): void {
-    this.irACampo(item.seccion, item.ancla);
-  }
-
   /** La primera cola con un tamaño que no vale, para llevar a su campo. */
   private readonly colaMal = computed<QueueChannel | null>(() => {
     const f = this.form();
@@ -528,14 +520,12 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
   });
 
   /**
-   * El marcador de cada sección: en el alta, el recorrido (pendiente, nuevo, actual, hecha, error); al editar, todo está
-   * guardado, así que solo «hecha» o «error» (la que tiene un aviso a la vista).
+   * El marcador de cada sección, solo en el alta (el recorrido: pendiente, nuevo, actual, hecha, error). Al editar todo
+   * está guardado: el índice va como siempre, sin marcadores, con el punto rojo y lo que falta bajo la sección.
    */
-  protected readonly sectionStates = computed<ReadonlyMap<string, 'pendiente' | 'nuevo' | 'actual' | 'hecha' | 'error'>>(() => {
-    if (this.mode() === 'create') return this.alta.estados();
-    const conAviso = this.sectionsWithErrors();
-    return new Map(this.navSections().map((s) => [s.id, conAviso.has(s.id) ? ('error' as const) : ('hecha' as const)]));
-  });
+  protected readonly sectionStates = computed<ReadonlyMap<string, 'pendiente' | 'nuevo' | 'actual' | 'hecha' | 'error'> | null>(() =>
+    this.mode() === 'create' ? this.alta.estados() : null,
+  );
 
   /**
    * Lo que falta en cada sección, entero y en una línea para el índice del alta: «Nombre, tipificación», sin «Falta:» (el

@@ -183,14 +183,27 @@ dejada en rojo se volvía gris al volver a ella.
    lo dice entero; el lector de pantalla oye «Falta:» delante de la lista.
 4. **«Hay algo nuevo» conserva el recorrido**: quitar un canal no devuelve nada a «Sin revisar»; añadir uno marca «Con
    novedades» las secciones que ya se vieron y a las que llega algo (bloques de canal, plantillas y columnas).
-5. **El feedback del alta vive en el índice**, que es donde se mira al tocar canales y secciones: sobre el resumen ya no hay
-   «Falta: …» ni «Listo para crear» en el alta (al editar se queda, solo si falta algo). «Crear grupo» apagado sigue con su
-   tooltip.
+5. **El feedback vive en el índice**, que es donde se mira al tocar canales y secciones: sobre el resumen ya no hay
+   «Falta: …» ni «Listo para crear» en el grupo (alta ni edición) ni en la edición de agente y usuario. Las altas de agente
+   y usuario la conservan hasta que lleven el marcador. «Crear grupo» apagado sigue con su tooltip.
 6. **Los obligatorios de una sección dejada en rojo se dicen en rojo al volver**, todos, también los que se enciendan luego
    (la tipificación al activar Tipificar). Pulsar la fila roja NO lleva al campo: ya se ve de entrada.
 7. **Con WhatsApp, su número es obligatorio**, como el teléfono saliente con Teléfono (DD-142): sin él no tiene de dónde
    escribir. «Revisada» y no «Completa» donde no hay nada que cumplir (Recursos, Agentes, y Distribución sin ningún canal).
-8. **La edición lleva el mismo índice**: todo «Completa» salvo lo que tenga un aviso a la vista (rojo) o cambios («Sin guardar»).
+8. **La edición NO lleva marcadores de paso**: todo está guardado, así que el índice va como siempre, con el punto rojo (y
+   el azul de cambios) y, bajo la sección en rojo, lo que falta («Tipificación»). Sin ✓, sin aros, sin estados.
+9. **El movimiento del índice** (todo se apaga con `prefers-reduced-motion`, y el primer pintado no anima):
+   - *Marcador* (`sc-step-marker`): cada cambio de estado es una transición sobre el mismo SVG. Relleno, trazo y opacidad,
+     200 ms (`--sc-transition-base`, `--sc-easing-default`); el punto se encoge y el ✓ se dibuja con trazo, 300 ms
+     (`--sc-transition-slow`, `--sc-easing-emphasized`), con el ✓ retrasado 80 ms para que entre cuando el relleno ya es verde.
+     El «!» entra creciendo de 0,6 a 1.
+   - *Halo de éxito*: al pasar a «Completa» con el marcador ya pintado, un halo verde se abre de 0 a 7 px y se va en 560 ms.
+     UNA vez por marcador: si una sección completa se vacía y se rellena de nuevo, no repite. El de «a la vista» es un halo fijo de
+     3 px al 22 % de marca, sin animar.
+   - *Texto de la línea*: el color se difumina en 300 ms al cambiar de gris a verde, de rojo a gris, etc.
+   - *Destello*: cuando cambia la línea de una fila que NO se está mirando (marcar WhatsApp en General cambia Distribución),
+     esa línea lleva un fondo de marca al 22 % que se va en 1200 ms, para verla de reojo. No hay destello en la primera pintura.
+   - Con menos movimiento: sin halo, sin destello y sin dibujo del ✓; solo un fundido de 100 ms.
 
 **Razón** · Con el marcador siempre presente no hay nada que aparezca de la nada, que era lo que daba la sensación de azar. La
 línea debajo evita los saltos de diseño (medido: filas de 61 px en diez acciones seguidas) y da el feedback donde se está
