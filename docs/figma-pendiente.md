@@ -1541,6 +1541,41 @@ hacer · **Dónde:** el Supervisor, páginas «Grupos» y
 **Cómo sabes que está hecho:** V1, V2 y V5 vuelven a ser instancias de su maestro sin perder nada (V2 ya lo es), y el
 botón de X1 a X3 lleva `key`.
 
+## 60 · El índice del alta de grupo con su marcador de paso, en Grupos y en la librería (2026-10-22, DD-222)
+
+**Estado:** dibujado y publicado; falta una publicación de `nav-item` (Paso hecho con sus propiedades) · **Dónde:** el Supervisor, página «Grupos»; la librería,
+❖ Navmenu · **Evidencia:** el prototipo medido el 2026-10-22 (alta y edición), y el SCSS de `sc-form-section-nav` y
+`sc-step-marker` para medidas y tiempos.
+
+**Hecho en la librería** (`nav-item`, `12555:23029`):
+- Las marcas de paso, con su nombre: Paso pendiente, Paso actual, Paso nuevo, Paso hecho y Paso con error, con su
+  marcador y una línea que pasa también bajo él, en una línea y con «…» si no cabe (`grid-column: 2 / 4`). La sesión
+  de DD-222 las había puesto en «Hecha» y «Con error», que usan Agentes, Tipificaciones y la edición: Hecha vuelve a
+  ser el ✓ sin línea, y Con error, el punto rojo con «Mostrar texto de error». Rótulo e icono, atados en todas
+  (clonar una variante pierde ese enlace: Paso hecho salió publicado sin él y se ató después).
+- ❖ Navmenu, ficha «Cómo se comporta: índice de una ficha» (`15742:347`): una fila por marca con su ejemplo, lo que
+  falta, la edición, botón y resumen, movimiento (200, 300, 560 y 1200 ms) y accesibilidad.
+- Versiones: «Índice: Con error vuelve al punto, nueva marca Error y ficha «Cómo se comporta»», «nav-item: la línea
+  del paso pasa bajo el marcador, en una línea», «nav-item: Hecha vuelve al ✓ y las marcas de paso se llaman «Paso …»»
+  y «nav-item: Paso hecho con rótulo e icono atados».
+
+**Hecho en el Supervisor** (versiones «Grupos: textos al día con DD-222 y sin estado sobre el resumen» y «Grupos:
+índice del alta con marcas de paso (DD-222) e «Interacción del índice»»):
+- El índice de las 17 pantallas del alta, la copia del listado y las cuatro del Mapa, con la marca «Paso …» y la línea
+  del prototipo en cada paso. La edición, sin marcadores. Agentes y Tipificaciones, de vuelta al ✓ (medido).
+- Sin «Falta: …» ni «Listo para crear» sobre el resumen en las 22 pantallas de grupo.
+- Hojas de alta (filas 4, 9, 11, 15, 16 y 17) y de edición (3, 4 y 5), tarjetas, Hand-off y mapa de componentes: el
+  marcador de paso, el número de WhatsApp obligatorio y el resumen sin estado.
+- Fila nueva del alta, «Interacción del índice» (`3654:76460`): ocho estampas del índice, de I1 a I8, del alta y de la
+  edición. La enlazan la fila 4 de la hoja y el índice de Grupos.
+
+**Lo que queda:** publicar `nav-item` con Paso hecho atado. Hasta entonces, en Grupos esas 34 filas llevan el rótulo y
+el icono escritos a mano, con los mismos valores. `group-summary`, de otra librería, mantiene «Mostrar estado»
+encendido por defecto.
+
+**Cómo sabes que está hecho:** en el DS, una instancia de Paso hecho enseña el rótulo que se le pone; en V5,
+«Teléfono saliente, WhatsApp» cabe en una línea y la fila mide 61.
+
 ## 61 · La ficha de grupo, como su página de COA publicada (DD-223, 2026-10-22)
 
 **Estado:** sin hacer · **Dónde:** el Supervisor, página «Grupos» (`41:2847`): alta, «Otras configuraciones» y edición ·
@@ -1570,7 +1605,8 @@ la rueda en el hand-off de la edición.
 - **El monitor del Dashboard** (DD-127): el fichero no tiene maqueta del Dashboard; sus piezas son las de la ficha 9.
   Si se maqueta, las reglas de tabla de abajo.
 - **Las reglas de tabla del código**, para cuando se maqueten tablas:
-  - las cifras miden su dato y el nombre se queda el resto, recortando con «…» (el texto entero va en el `title`);
+  - las cifras miden su dato y el nombre crece hasta 384 (24rem), recortando con «…» (el texto entero va en el
+    `title`); en una tabla más ancha, el sobrante va a la columna del «⋮» (DD-187 §7, §59);
   - las cabeceras de varias palabras no se parten;
   - el texto libre de Conversaciones, hasta dos líneas y «…»;
   - la fila de totales lleva raya arriba.
@@ -1630,6 +1666,14 @@ la rueda en el hand-off de la edición.
   tras Ctrl+S, con el foco en el primer pendiente (E2 del alta). Notas, hojas y hand-off con la regla; el tooltip, descrito.
   Versiones del fichero: «Lo que falta, antes de pulsar», «Lo que falta: el rojo sin foco al salir del campo» y
   «Resúmenes con la línea Falta / Listo (librería publicada)». La ficha de usuario no tiene maqueta.
+- ~~**§59 · El nombre del listado de grupos tiene tope (DD-187 §7)**~~ → **HECHO el 2026-10-22**. La fila 5 de «Cómo se
+  comporta: listado de grupos» (`3131:11194`) decía «Nombre: ancho flexible, mín. 240» y «Acciones: 56», la regla de
+  antes de DD-187 §7; ahora, «mín. 240, máx. 384» y Acciones con el sobrante, el ⋮ pegado al borde derecho. En las nueve
+  tablas del flujo (`3118:16995`) y en la copia del Mapa (`3178:11368`), Nombre fijo a 384 y Acciones en FILL (595, como
+  la app a 1920: Nombre 384 y el ⋮ con 599). Con ellas se movieron los números 7 y 8 de la guía del paso 01, el menú de
+  la selección del paso 08 y los recuadros de Canales a Agentes del Mapa. El listado de Agentes (`3405:12408`) ya medía
+  así y su hoja no lo contradice. Versión del fichero: «Listado de grupos: Nombre a 384 y el sobrante en Acciones
+  (DD-187 §7)».
 
 ---
 
