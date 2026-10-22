@@ -135,7 +135,8 @@ jobs:
           # Playwright baja su propio chromium y `--with-deps` solo saca librerías del
           # sistema de los repos de Ubuntu— así que se quita y dejamos de depender de un
           # mirror ajeno para arrancar los tests.
-          sudo rm -f /etc/apt/sources.list.d/google-chrome.list
+          # Ídem el repo de Microsoft: el 2026-10-22 su InRelease dio 403 y mató el job antes de bajar nada.
+          sudo rm -f /etc/apt/sources.list.d/google-chrome.list /etc/apt/sources.list.d/microsoft-prod.*
           npx playwright install --with-deps chromium
           npm run e2e
 
@@ -190,7 +191,8 @@ jobs:
           # Playwright baja su propio chromium y `--with-deps` solo saca librerías del
           # sistema de los repos de Ubuntu— así que se quita y dejamos de depender de un
           # mirror ajeno para arrancar los tests.
-          sudo rm -f /etc/apt/sources.list.d/google-chrome.list
+          # Ídem el repo de Microsoft: el 2026-10-22 su InRelease dio 403 y mató el job antes de bajar nada.
+          sudo rm -f /etc/apt/sources.list.d/google-chrome.list /etc/apt/sources.list.d/microsoft-prod.*
           npx playwright install --with-deps chromium
           npm run e2e:supervisor
 
@@ -243,7 +245,8 @@ jobs:
           # Playwright baja su propio chromium y `--with-deps` solo saca librerías del
           # sistema de los repos de Ubuntu— así que se quita y dejamos de depender de un
           # mirror ajeno para arrancar los tests.
-          sudo rm -f /etc/apt/sources.list.d/google-chrome.list
+          # Ídem el repo de Microsoft: el 2026-10-22 su InRelease dio 403 y mató el job antes de bajar nada.
+          sudo rm -f /etc/apt/sources.list.d/google-chrome.list /etc/apt/sources.list.d/microsoft-prod.*
           npx playwright install --with-deps chromium
           npm run e2e:cuscare
       # Sin `name:` A PROPÓSITO: los pasos con nombre de este fichero son los GATES, y su
