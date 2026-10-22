@@ -272,16 +272,6 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit {
     if (dejoElCampo(event) && this.faltas().includes(falta)) this.ocasion.tocar(falta);
   }
 
-  /** Lo que le falta al árbol, encima de él: en gris mientras se rellena, en rojo si ya se dice (DD-219). */
-  protected readonly avisoCategorias = computed<{ readonly texto: string; readonly rojo: boolean } | null>(() => {
-    this.lang();
-    const falta = this.faltas().find((f) => !f.endsWith('name_required'));
-    if (!falta) return null;
-    const rojo = this.ocasion.acusa(falta);
-    const texto = this.translate.instant(falta);
-    return { texto: rojo ? texto : ayudaDeObligatorio(texto)!, rojo };
-  });
-
   /**
    * Los avisos del índice, en el orden de la ficha (DD-219): el nombre repetido, en vivo, y lo que falta si lo guardado
    * ya venía sin ello o se pulsó con ello pendiente. De aquí salen el punto del índice, lo que dice y adónde lleva.

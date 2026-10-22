@@ -1572,7 +1572,7 @@
         "general": "General",
         "categorization": "Categories"
       },
-      "categorization_hint": "What the agent chooses, in up to three levels; each branch goes as deep as it needs",
+      "categorization_hint": "What the agent picks, up to three levels",
       "rename_field": "New name for the option",
       "add_first": "Add option…",
       "add_under": "Add under “{{name}}”…",
