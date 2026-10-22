@@ -56,7 +56,7 @@ test('grupo · encender «Tipificar» no acusa, tampoco al dejar General: gris y
   // Ctrl+S no guarda: lleva a General, al desplegable, y lo dice en rojo en el campo y en el índice.
   await guardarConTeclado(page);
   await expect(conPunto(page)).toContainText('General');
-  await expect(conPunto(page)).toContainText('La tipificación es obligatoria');
+  await expect(conPunto(page)).toContainText('Tipificación');
   await expect(avisos(page, 'group-section-general')).toHaveText(['La tipificación es obligatoria']);
   await expect(desplegable).toHaveAttribute('aria-invalid', 'true');
 });

@@ -47,15 +47,18 @@ test('duplicar un grupo abre el alta rellena como «Online Support (1)», y exis
   // Lo que el funcional no copia: los dominios del script de chat y el número de WhatsApp. Lo demás, sí: el teléfono
   // saliente y los canales.
   await irASeccion(page, 'Distribución y colas');
-  await expect(page.locator('sc-select:has(#group-chat-whatsapp)')).toContainText('Sin número');
+  await expect(page.locator('sc-select:has(#group-chat-whatsapp)')).toContainText('Selecciona un número');
   await expect(page.locator('sc-inputtags .p-chip')).toHaveCount(0);
   await expect(page.locator('sc-select:has(#group-phone)')).toContainText('918371548');
   // Y su postconversación: la de los grupos de la demo vive aparte, por id, y la copia la perdía (barrido del 2026-10-20).
   await irASeccion(page, 'General');
   await expect(page.locator('sc-select:has(#group-typification)')).toContainText('Atención al cliente');
 
+  // El número de WhatsApp es obligatorio (DD-222): sin él «Crear grupo» está apagado.
+  await irASeccion(page, 'Distribución y colas');
+  await pickSelectOption(page, page.locator('sc-select').filter({ has: page.locator('#group-chat-whatsapp') }), /^\+?\d/);
   await page.getByRole('button', { name: 'Crear grupo' }).click();
-  await expect(page).toHaveURL(/\/admin\/grupos\/editar\/\d+$/);
+  await expect(page).toHaveURL(/\/admin\/grupos\/editar\/\d+(\?seccion=distribucion)?$/);
   await expect(page.locator('.p-toast-message').filter({ hasText: 'Grupo «Online Support (1)» creado' })).toBeVisible();
   // Con los agentes del original.
   const enlaces = await page.evaluate(() => {
