@@ -160,6 +160,40 @@
 
 ---
 
+## DD-224 · 2026-10-22 — «Editar en Repositorios» de la tipificación pregunta lo mismo que «Gestionar en Repositorios»: guardar antes
+
+**Contexto** · Repaso de Grupos entre COA (4058 versión 17, 4056 versión 11), Figma y el prototipo. La ficha de grupo
+tiene dos enlaces que salen a Repositorios: «Gestionar en Repositorios», en Recursos, y «Editar en Repositorios», en
+el detalle de la tipificación («Ver detalle»). Con cambios sin guardar, el primero pregunta «¿Guardar los cambios?»
+(SISMAC-4058, 2026-10-20); el segundo dejaba saltar el aviso de salida, «¿Descartar cambios?». Mismo gesto, misma
+salida, dos preguntas opuestas.
+
+**Decisión** ·
+1. **«Editar en Repositorios», con cambios, pregunta guardar antes**, con el mismo diálogo: «¿Guardar los cambios?»,
+   «Para ir a Repositorios, guarda antes el grupo.», «Guardar» y «Seguir editando». El detalle se cierra antes de
+   preguntar. «Guardar» guarda (o crea, en el alta, con su regla: si falta algo, no sale) y abre la ficha de la
+   tipificación en Categorías; «Seguir editando» se queda. Sin cambios, va directo. En la ficha del grupo no se edita
+   nada de la tipificación: solo cambia la pregunta al salir.
+2. **«Solo salientes» depende de Call Blending**, como ya decía DD-211 §9: el prototipo lo enseña siempre y Figma lo
+   anota. Desde DD-223 el selector es «En qué conversaciones», compartido por comentarios y tipificación, y la regla
+   sigue igual. Lo que faltaba era decirlo en COA.
+
+**Razón** · Quien va a editar la tipificación desde la ficha quiere volver a un grupo con sus cambios, no perderlos;
+el primer botón del aviso de salida es descartar, y desde aquí lo normal es lo contrario. Una sola pregunta para los
+dos enlaces se aprende una vez. La regla de lo contratado ya estaba decidida y escrita en Figma: no se reabre.
+
+**Descartadas** ·
+- *Dejar «¿Descartar cambios?»*: pierde lo hecho por ir a mirar una tipificación, y contradice al enlace hermano.
+- *Abrir la tipificación en otra pestaña*: deja dos fichas abiertas sobre los mismos datos, y en la otra pestaña no se
+  ve lo que se guardó aquí. Cmd+clic sigue abriéndola en otra pestaña sin preguntar, por su dirección.
+- *Esconder «Solo salientes» en el prototipo sin Call Blending*: el prototipo enseña todo lo contratable (DD-211 §9).
+
+**Consecuencias** · `sc-tipificacion-arbol` ya no navega: emite `editar` con la dirección y la ficha decide, como
+«Gestionar en Repositorios». Prueba nueva en `ficha-recursos-dialogos.spec.ts`. COA 4058: la frase de «Editar en
+Repositorios» y la de «Solo salientes». Figma: `docs/figma-pendiente.md` §62, con los retoques del repaso (hecho el mismo día).
+
+---
+
 ## DD-223 · 2026-10-22 — La ficha de grupo, como su página de COA publicada: «En qué conversaciones» también con comentarios, el canal que se activa llega a los agentes, y nadie sale del grupo sin avisar
 
 **Contexto** · Producto publicó el 2026-10-22 la versión 17 de «SOLUCIÓN SISMAC-4058 Creación/Edición Grupos». Medida
