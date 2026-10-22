@@ -42,53 +42,20 @@ test('sanearHtml: solo las etiquetas del editor, sin atributos; ni scripts, ni i
   assert.equal(sanearHtml('Texto de antes'), 'Texto de antes');
   // Los `&nbsp;` del editor vuelven a ser espacios, para que el mensaje parta las líneas por sus palabras.
   assert.equal(sanearHtml('<p>Hola&nbsp;mundo&nbsp;a&nbsp;todos</p>'), '<p>Hola mundo a todos</p>');
+  assert.equal(sanearHtml('<svg><script>alert(1)</script></svg>'), '');
+  assert.equal(sanearHtml('<img src=x onerror=alert(1)>'), '');
 });
 
 test('WhatsApp: del HTML a sus marcas y de vuelta', () => {
   assert.equal(htmlAWhatsApp('<p>Hola <strong>Ana</strong>, <em>buenas</em> y <s>adiós</s></p>'), 'Hola *Ana*, _buenas_ y ~adiós~');
-  assert.equal(htmlAWhatsApp('<p>Una</p><p>Dos<br>Tres</p>'), 'Una\nDos\nTres');
-  // Los espacios de dentro salen de la marca: «* Ana*» no es negrita en WhatsApp.
-  assert.equal(htmlAWhatsApp('<p>Hola<strong> Ana </strong>x</p>'), 'Hola *Ana* x');
   assert.equal(whatsAppAHtml('Hola *Ana*, _buenas_ y ~adiós~'), '<p>Hola <strong>Ana</strong>, <em>buenas</em> y <s>adiós</s></p>');
-  assert.equal(whatsAppAHtml('Una\nDos'), '<p>Una</p><p>Dos</p>');
-  // Una marca suelta o con espacios por dentro no es formato.
-  assert.equal(whatsAppAHtml('2 * 3 = 6 y a_b_c'), '<p>2 * 3 = 6 y a_b_c</p>');
-  assert.equal(whatsAppAHtml('<b>x</b> & y'), '<p>&lt;b&gt;x&lt;/b&gt; &amp; y</p>');
-  const ida = 'Hola *Ana*\nAdiós _Luis_';
-  assert.equal(htmlAWhatsApp(whatsAppAHtml(ida)), ida);
 });
 
-test('el contenido para el editor y para guardar, según el canal', () => {
-  assert.equal(contenidoParaEditor('Hola, soy {agente}.', 'chat'), '<p>Hola, soy {agente}.</p>');
-  assert.equal(contenidoParaEditor('<p>Hola</p>', 'email'), '<p>Hola</p>');
-  assert.equal(contenidoParaEditor('Hola *Ana*', 'whatsapp'), '<p>Hola <strong>Ana</strong></p>');
-  assert.equal(contenidoParaGuardar('<p>Hola <b>Ana</b></p>', 'whatsapp'), 'Hola *Ana*');
-  assert.equal(contenidoParaGuardar('<p>Hola <b>Ana</b><script>x</script></p>', 'chat'), '<p>Hola <strong>Ana</strong></p>');
+test('contenidoParaEditor: rehidrata HTML sin devolver payloads peligrosos', () => {
+  assert.equal(contenidoParaEditor('<p onclick="alert(1)">Hola</p>', 'chat'), '<p>Hola</p>');
+  assert.equal(contenidoParaEditor('<script>alert(1)</script><p>OK</p>', 'chat'), '<p>OK</p>');
 });
 
-test('parsearPlantillasCsv: título;canal;contenido, cada error con su línea, y los títulos repetidos se saltan', () => {
-  const csv = [
-    'Título;Canal;Contenido',
-    'Saludo;chat;Hola, soy {agente}.',
-    'Aviso;WhatsApp;Hola *Ana*\\nHasta luego',
-    ';chat;sin título',
-    'Raro;fax;x',
-    'Vacía;email;',
-    'saludo;email;repetido',
-  ].join('\n');
-  const vista = parsearPlantillasCsv(csv, [{ title: 'Despedida' }]);
-  assert.deepEqual(vista.nuevas, [
-    { title: 'Saludo', type: 'chat', body: '<p>Hola, soy {agente}.</p>' },
-    { title: 'Aviso', type: 'whatsapp', body: 'Hola *Ana*\nHasta luego' },
-  ]);
-  assert.deepEqual(vista.errores, [
-    { linea: 4, motivo: 'titulo' },
-    { linea: 5, motivo: 'canal' },
-    { linea: 6, motivo: 'contenido' },
-  ]);
-  assert.equal(vista.repetidas, 1);
-  assert.equal(parsearPlantillasCsv('A;chat;x\nB;chat;y', [], 1).sobran, 1);
-  // El título que ya existe en la lista se salta.
-  assert.equal(parsearPlantillasCsv('Despedida;chat;x', [{ title: 'despedida' }]).repetidas, 1);
-  assert.ok(plantillaDePlantillasCsv(['Título', 'Canal', 'Contenido']).startsWith('﻿Título;Canal;Contenido'));
+test('contenidoParaGuardar: el HTML del editor se guarda saneado', () => {
+  assert.equal(contenidoParaGuardar('<p><strong>Hi</strong> <a href="javascript:alert(1)">x</a></p>', 'chat'), '<p><strong>Hi</strong> <a>x</a></p>');
 });

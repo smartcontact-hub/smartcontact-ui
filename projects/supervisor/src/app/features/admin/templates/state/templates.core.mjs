@@ -1,13 +1,6 @@
-// @ts-check
-/**
- * Lo que una plantilla hace con su contenido, sin Angular (para probarlo con node:test, `scripts/__tests__/templates.test.mjs`).
- *
- * Una plantilla de chat o de correo guarda HTML (lo que escribe el editor, ya saneado: en Voice la plantilla «Imagen» lo
- * guardaba con una imagen en base64 y la tabla lo enseñaba en crudo). Una de WhatsApp guarda el TEXTO de WhatsApp, con sus
- * marcas (`*negrita*`, `_cursiva_`, `~tachado~`): es lo que WhatsApp entiende, y el editor lo enseña como HTML y lo
- * devuelve al guardar.
- */
-import { campos } from '../../repositories/state/agenda-contacts.core.mjs';
+import createDOMPurify from 'dompurify';
+
+const DOM_PURIFY = typeof window !== 'undefined' ? createDOMPurify(window) : null;
 
 /** Los canales de una plantilla. */
 export const CANALES_DE_PLANTILLA = ['chat', 'email', 'whatsapp'];
@@ -21,6 +14,19 @@ const escapar = (texto) => texto.replace(/&/g, '&amp;').replace(/</g, '&lt;').re
 
 /** ¿Lleva etiquetas HTML? Un texto de antes (sin ellas) se enseña tal cual. */
 const llevaHtml = (texto) => /<\/?[a-z][^>]*>/i.test(texto);
+
+const SANITIZE_OPTIONS = {
+  ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 's', 'a'],
+  ALLOWED_ATTR: ['href', 'target', 'rel'],
+  ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto):|[^a-z]|[a-z+\.\-]+(?:[^a-z+\.\-:]|$))/i,
+  FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'svg', 'img', 'math', 'form', 'input', 'button', 'textarea', 'select'],
+  FORBID_ATTR: ['srcdoc', 'style'],
+};
+
+function purificarConDomPurify(html) {
+  if (!DOM_PURIFY) return html;
+  return DOM_PURIFY.sanitize(html, SANITIZE_OPTIONS);
+}
 
 /** El texto de un contenido, en una línea: sin etiquetas, con los saltos como espacios. Para la tabla y la búsqueda. */
 export function textoPlano(contenido) {
@@ -47,18 +53,18 @@ const SEGURO = /^(https?:|mailto:)/i;
 export function sanearHtml(html) {
   const entrada = String(html ?? '');
   if (!llevaHtml(entrada)) return entrada;
-  // Quill escribe `&nbsp;` por cada espacio: un mensaje que no parte las líneas por sus palabras. Un espacio es un espacio.
-  const limpio = entrada
+  const domPurificado = purificarConDomPurify(entrada);
+  const limpio = domPurificado
     .replace(/<(script|style|iframe|object|embed|svg)\b[\s\S]*?<\/\1>/gi, '')
     .replace(/<img\b[^>]*>/gi, '')
     .replace(/&nbsp;/g, ' ');
-  return limpio.replace(/<(\/?)([a-z][a-z0-9]*)\b([^>]*)>/gi, (_todo, cierra, nombre, atributos) => {
+  return limpio.replace(/<(\/?)(([a-z][a-z0-9]*)\b([^>]*))>/gi, (_todo, cierra, _etiquetaCompleta, nombre, atributos) => {
     const etiqueta = NORMALIZAR[nombre.toLowerCase()] ?? nombre.toLowerCase();
     if (!PERMITIDAS.has(etiqueta)) return '';
     if (cierra) return `</${etiqueta}>`;
     if (etiqueta === 'a') {
-      const href = /\bhref\s*=\s*(?:"([^"]*)"|'([^']*)')/i.exec(atributos);
-      const destino = (href?.[1] ?? href?.[2] ?? '').trim();
+      const href = /\bhref\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/i.exec(atributos);
+      const destino = (href?.[1] ?? href?.[2] ?? href?.[3] ?? '').trim();
       return SEGURO.test(destino) ? `<a href="${destino.replace(/"/g, '&quot;')}" rel="noopener noreferrer" target="_blank">` : '<a>';
     }
     return `<${etiqueta}>`;
@@ -118,7 +124,7 @@ export function contenidoParaEditor(contenido, canal) {
   const texto = String(contenido ?? '');
   if (canal === 'whatsapp') return whatsAppAHtml(texto);
   if (!texto.trim()) return '';
-  return llevaHtml(texto) ? texto : textoAParrafos(texto);
+  return llevaHtml(texto) ? sanearHtml(texto) : textoAParrafos(texto);
 }
 
 /** Lo que se guarda desde el editor: el texto de WhatsApp con sus marcas, o el HTML saneado. */
@@ -171,3 +177,4 @@ export function parsearPlantillasCsv(texto, existentes, tope = TOPE_DE_PLANTILLA
 export function plantillaDePlantillasCsv(cabecera) {
   return `﻿${cabecera.join(';')}\r\n`;
 }
+
