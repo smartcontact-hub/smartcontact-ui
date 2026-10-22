@@ -316,8 +316,10 @@
   color: var(--sc-text-primary);
 }
 
+/* El verde de éxito sobre el gris de la fila abierta mide 4,35:1; con un 15% del texto principal llega a AA en los dos
+ * temas (oscurece en el claro y aclara en el oscuro). */
 .form-nav__hint--hecha {
-  color: var(--sc-text-success);
+  color: color-mix(in srgb, var(--sc-text-success) 85%, var(--sc-text-primary));
 }
 
 .form-nav__hint--error {
