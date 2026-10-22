@@ -145,7 +145,8 @@ jobs:
         run: |
           # El repo APT de Chrome del runner a veces viene desincronizado y tumba el
           # `apt-get update` de `--with-deps` antes de bajar nada (ci.yml, 2026-09-09).
-          sudo rm -f /etc/apt/sources.list.d/google-chrome.list
+          # Ídem el repo de Microsoft: el 2026-10-22 su InRelease dio 403 y mató el job antes de bajar nada.
+          sudo rm -f /etc/apt/sources.list.d/google-chrome.list /etc/apt/sources.list.d/microsoft-prod.*
           npx playwright install --with-deps chromium
           npm run e2e 2>&1 | tee "$RUNNER_TEMP/e2e.log"
 

@@ -62,7 +62,8 @@ jobs:
       - name: Tomar las capturas en Linux
         run: |
           # El repo APT de Chrome que trae el runner puede venir desincronizado y tumbar `--with-deps` (ver `ci.yml`).
-          sudo rm -f /etc/apt/sources.list.d/google-chrome.list
+          # Ídem el repo de Microsoft: el 2026-10-22 su InRelease dio 403 y mató el job antes de bajar nada.
+          sudo rm -f /etc/apt/sources.list.d/google-chrome.list /etc/apt/sources.list.d/microsoft-prod.*
           npx playwright install --with-deps chromium
           npm run docs:capturas
 

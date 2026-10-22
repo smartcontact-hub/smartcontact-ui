@@ -86,7 +86,8 @@ jobs:
           # El runner trae preconfigurado el repo APT de Chrome y `--with-deps` lee su índice; si
           # viene desincronizado, el paso muere antes de bajar nada. De ese repo no se instala
           # nada, así que se quita. El porqué largo está en `ci.yml`, misma línea.
-          sudo rm -f /etc/apt/sources.list.d/google-chrome.list
+          # Ídem el repo de Microsoft: el 2026-10-22 su InRelease dio 403 y mató el job antes de bajar nada.
+          sudo rm -f /etc/apt/sources.list.d/google-chrome.list /etc/apt/sources.list.d/microsoft-prod.*
           npx playwright install --with-deps chromium
           # `--update-snapshots` REESCRIBE las de esta plataforma. Sin él no habría nada que
           # generar: al no existir su `-linux.png`, Playwright falla con «A snapshot doesn't exist».
