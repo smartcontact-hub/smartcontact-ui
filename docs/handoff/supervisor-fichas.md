@@ -74,7 +74,8 @@ trampas propias): `git show fa98b4bf:docs/handoff/supervisor-fichas.md`.
 > **Sello:** rama `areses/repaso-grupos-coa-figma` sobre `main` `fa98b4bf`, un PR (#507, fundido como `88d2e3e7`). La
 > congelada 4058 avanzó a ese commit el mismo día. COA, publicado el mismo día con todo el repaso: la 4056 en la v13 y
 > la 4058 en la v19, con su tabla de contenidos, las anclas «Indice», «Mensajes» y «Resumen», y la fila 0.2 en el
-> control de versiones.
+> control de versiones. El 2026-10-23, la 4058 sumó capturas (v20, 19 imágenes, fila 0.3) y las dos retocaron el texto
+> de esas filas: hoy, **4056 v14 y 4058 v21**.
 
 - **Repaso**: COA 4058 (v17) y 4056 (v11) frase a frase contra la congelada 4058 (ya con DD-223) y contra el texto de
   las hojas de Figma de Grupos. Prototipo y Figma cuadraban salvo cinco retoques de texto, hechos con DD-224 (`figma-pendiente` §62); las
@@ -82,6 +83,10 @@ trampas propias): `git show fa98b4bf:docs/handoff/supervisor-fichas.md`.
 - **«Editar en Repositorios»** del detalle de la tipificación, con cambios, pregunta «¿Guardar los cambios?» como
   «Gestionar en Repositorios»: `sc-tipificacion-arbol` emite `editar` y la ficha decide (`salirARepositorios`).
 - **«Solo salientes» con Call Blending**: ya lo decía DD-211 §9; desde la v19, también la 4058 de COA.
+- **Capturas de la 4058** (2026-10-23): 14 nuevas, bajo las reglas que no tenían imagen, en
+  `~/Documents/Claude/2026-10 Grupos COA/Capturas 4058/`; fuera las dos repetidas, y la de «Sin canales», cambiada por
+  una de la congelada (G14). La extensión no lee archivos del Mac: se suben a los adjuntos de la página y las coloca
+  desde ahí.
 
 ## ✅ 2026-10-22 · La ficha de grupo, como la versión 17 de su página de COA (DD-223)
 
