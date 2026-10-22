@@ -69,7 +69,7 @@ import { compararPatrones } from './patrones-parity.mjs';
 import { revisarLearnings } from './learnings-shape.mjs';
 import { revisarHandoff } from './handoff-shape.mjs';
 import { localizarMemoria, leerMemoria, revisarMemoria } from './memory-shape.mjs';
-import { BASE, faltaBase, revisarSello } from './handoff-seal.mjs';
+import { BASE, TAGS_PERMANENTES, faltaBase, revisarSello } from './handoff-seal.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const rel = (p) => p.replace(`${root}/`, '');
@@ -599,11 +599,14 @@ if (!clonShallow) {
         if (seen.has(sha)) continue;
         seen.add(sha);
         const estado = revisarSello(sha, { cwd: root });
+        // Antes de culpar al sello, la copia: un `git fetch` corriente no trae las etiquetas `archive/*`, y sin ellas
+        // los dos hand-offs que sellan en una rama archivada salían como fantasmas siendo buenos (#494, 2026-10-22).
+        const sinEtiquetas = ` Si el sello es de una rama archivada, a tu copia le faltan sus etiquetas: \`git fetch origin '+${TAGS_PERMANENTES}*:${TAGS_PERMANENTES}*'\` y repite.`;
         if (estado === 'fantasma')
-          fail(`${rel(h.path)}:${i + 1} — el sello \`HEAD ${sha}\` no existe en git (¿fabricado/tecleado mal?). Un hand-off no puede apuntar a un commit fantasma.`);
+          fail(`${rel(h.path)}:${i + 1} — el sello \`HEAD ${sha}\` no existe en git (¿fabricado/tecleado mal?). Un hand-off no puede apuntar a un commit fantasma.${sinEtiquetas}`);
         if (estado === 'solo-en-rama' && !sinBase)
           fail(
-            `${rel(h.path)}:${i + 1} — el sello \`HEAD ${sha}\` solo vive en una rama: no está en \`${BASE}\` ni en un tag \`archive/*\`, así que el squash del PR lo borra y el CI de main se pone rojo. Arreglo: sella con un commit que ya esté en main, \`git merge-base HEAD ${BASE}\` (si acabas de traerlo de main, \`git fetch origin main\` y repite).`,
+            `${rel(h.path)}:${i + 1} — el sello \`HEAD ${sha}\` solo vive en una rama: no está en \`${BASE}\` ni en un tag \`archive/*\`, así que el squash del PR lo borra y el CI de main se pone rojo. Arreglo: sella con un commit que ya esté en main, \`git merge-base HEAD ${BASE}\` (si acabas de traerlo de main, \`git fetch origin main\` y repite).${sinEtiquetas}`,
           );
       }
     });
