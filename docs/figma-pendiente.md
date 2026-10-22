@@ -1541,26 +1541,6 @@ hacer · **Dónde:** el Supervisor, páginas «Grupos» y
 **Cómo sabes que está hecho:** V1, V2 y V5 vuelven a ser instancias de su maestro sin perder nada (V2 ya lo es), y el
 botón de X1 a X3 lleva `key`.
 
-## 61 · La ficha de grupo, como su página de COA publicada (DD-223, 2026-10-22)
-
-**Estado:** sin hacer · **Dónde:** el Supervisor, página «Grupos» (`41:2847`): alta, «Otras configuraciones» y edición ·
-**Evidencia:** `grupos-como-coa-4058.spec.ts` y la congelada 4058 cuando avance.
-
-- **Postconversación**: «En qué conversaciones» (antes «… se tipifica») sale también con solo «Permitir comentarios»
-  encendido, sin el campo de la tipificación. Una pantalla nueva en «Otras configuraciones» con ese estado, y V1 con el
-  rótulo nuevo. En su hoja: vale para comentarios y tipificación.
-- **Agentes asignados de un grupo sin canales**: al marcar un canal en General, la tabla trae ese canal marcado a cada
-  agente que lo tiene permitido; quien no, con «Sin canales compatibles». Y el aviso al crear o guardar: «¿Sacar del
-  grupo a 1 agente?», «Se queda sin ninguno de los canales del grupo.», «Cancelar» y «Sacar» (rojo), con el Dynamic
-  Dialog como el de quitar canales.
-- **Tabla vacía**: Asignados sin agentes y sin búsqueda, «Sin agentes asignados» con «Asígnalos desde la pestaña
-  «Todos».» (es lo que ve un grupo recién creado). V7 (con búsqueda) se queda.
-- **Hand-off de la edición**: anotar que también se entra desde la rueda de la monitorización de cada grupo, solo para
-  administradores, como en la plataforma actual (lo pide la página de COA; el prototipo no tiene esa pantalla).
-
-**Cómo sabes que está hecho:** las tres pantallas nuevas en sus filas, con su número morado en la hoja, y la nota de
-la rueda en el hand-off de la edición.
-
 ---
 
 ## Lo de estas semanas que NO va a Figma, y por qué
@@ -1649,6 +1629,15 @@ la rueda en el hand-off de la edición.
   (`3654:76460`, I1 a I8). Agentes y Tipificaciones, con su ✓ (medido). Queda fuera: `group-summary`, de otra librería,
   con «Mostrar estado» encendido por defecto. Versiones: «Grupos: índice del alta con marcas de paso (DD-222) e
   «Interacción del índice»» y «nav-item: Paso hecho con rótulo e icono atados».
+- ~~**§61 · La ficha de grupo, como su página de COA publicada (DD-223)**~~ → **HECHO el 2026-10-22** en la página
+  Grupos (`41:2847`). Tres pantallas nuevas: V8 (`3678:25449`), solo «Permitir comentarios» con «En qué
+  conversaciones», en «Otras configuraciones»; E5 (`3681:25364`), un agente sin canales del grupo con «Sin canales
+  compatibles» y el candado, y el Custom modal «¿Sacar del grupo a 1 agente?» con «Cancelar» y «Sacar» en rojo; V9
+  (`3682:26036`), el grupo recién creado en «Asignados» con «Sin agentes asignados» y «Asígnalos desde la pestaña
+  «Todos».» (V7, con búsqueda, sin tocar). V1 y V2 con el rótulo «En qué conversaciones». Hojas del alta (filas 7, 8,
+  12, 14 y 16) y de la edición (fila 1: la entrada desde la rueda de la monitorización, solo administradores, sin
+  maqueta; fila 7: el aviso al guardar), Hand-off con la rueda y el marcado automático, portadas e índice de Grupos.
+  Versión del fichero: «Grupos: §61 DD-223».
 
 ---
 
