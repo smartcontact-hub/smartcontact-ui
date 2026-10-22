@@ -34,7 +34,7 @@
 ## Clasificación (auto-generada)
 
 <!-- @audit:components — TABLA GENERADA por `node scripts/component-audit.mjs --write`. NO editar a mano. -->
-**62 componentes** · 23 custom · 10 standard · 29 extended · 50 usados en Supervisor · estado (DD-190): 33 ready, 28 experimental, 1 deprecated.
+**62 componentes** · 22 custom · 10 standard · 30 extended · 50 usados en Supervisor · estado (DD-190): 33 ready, 28 experimental, 1 deprecated.
 
 | Componente | Tipo | Estado | PrimeNG base | API propia | Anidados | Demo | Usos en Supervisor |
 |---|---|---|---|---|---|---|---|
@@ -65,7 +65,7 @@
 | `sc-field-msg` | CUSTOM | experimental (sin maestro en el Kit ni demo) | — | 2 inputs | — | — | — |
 | `sc-fileupload` | EXTENDED | ready | primeng/fileupload | 22 inputs | sc-field-msg | ✓ | 2 |
 | `sc-form-danger-zone` | CUSTOM | experimental (sin maestro en el Kit) | — | 3 inputs | sc-button | ✓ | — |
-| `sc-form-section-nav` | CUSTOM | experimental (sin maestro en el Kit) | — | 9 inputs | sc-step-marker | ✓ | 6 |
+| `sc-form-section-nav` | EXTENDED | experimental (sin maestro en el Kit) | primeng/tooltip | 9 inputs | sc-step-marker | ✓ | 6 |
 | `sc-gauge` | CUSTOM | experimental (sin maestro en el Kit) | — | 9 inputs | — | ✓ | 1 |
 | `sc-group-popover` | STANDARD | experimental (sin maestro en el Kit) | primeng/popover, primeng/tooltip | 3 inputs | — | ✓ | 7 |
 | `sc-icon-tile` | CUSTOM | experimental (sin maestro en el Kit) | — | 3 inputs | — | ✓ | — |

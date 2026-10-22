@@ -1,6 +1,6 @@
 {
   "generated": "component-audit.mjs",
-  "summary": "62 componentes · 23 custom · 10 standard · 29 extended · 50 usados en Supervisor · estado (DD-190): 33 ready, 28 experimental, 1 deprecated.",
+  "summary": "62 componentes · 22 custom · 10 standard · 30 extended · 50 usados en Supervisor · estado (DD-190): 33 ready, 28 experimental, 1 deprecated.",
   "components": [
     {
       "name": "avatar",
@@ -899,9 +899,9 @@
     {
       "name": "form-section-nav",
       "selector": "sc-form-section-nav",
-      "provenance": "CUSTOM",
-      "kind": "CUSTOM",
-      "primengBase": "—",
+      "provenance": "WRAPPER",
+      "kind": "EXTENDED",
+      "primengBase": "primeng/tooltip",
       "cva": false,
       "inputs": 9,
       "api": [

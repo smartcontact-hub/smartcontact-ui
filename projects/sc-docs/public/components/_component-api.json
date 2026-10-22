@@ -4775,7 +4775,7 @@
     {
       "selector": "sc-form-section-nav",
       "name": "form-section-nav",
-      "primengBase": "—",
+      "primengBase": "primeng/tooltip",
       "estado": "experimental",
       "faltas": [
         "kit"
@@ -4894,7 +4894,29 @@
           "nativo": null
         }
       ],
-      "ocultas": []
+      "ocultas": [
+        "appendTo",
+        "autoHide",
+        "content",
+        "escape",
+        "fitContent",
+        "hideDelay",
+        "hideOnEscape",
+        "life",
+        "pTooltipPT",
+        "pTooltipUnstyled",
+        "positionLeft",
+        "positionStyle",
+        "positionTop",
+        "showDelay",
+        "showOnEllipsis",
+        "tooltipDisabled",
+        "tooltipEvent",
+        "tooltipOptions",
+        "tooltipPosition",
+        "tooltipStyleClass",
+        "tooltipZIndex"
+      ]
     },
     {
       "selector": "sc-gauge",
