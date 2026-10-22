@@ -195,8 +195,9 @@ export class AgentsListPageComponent {
 
   protected readonly columns = computed<readonly ScColumnDef<Agent>[]>(() => {
     this.lang(); // cabeceras al día al cambiar de idioma (ver `injectLangChange`)
-    /* Anchos MEDIDOS del dato más largo de cada columna corta en los cuatro idiomas: el nombre se come el
-     * resto y la tabla lleva `tableMinWidth`, así que por debajo se desplaza en vez de cortar. Todas llevan
+    /* Anchos MEDIDOS del dato más largo de cada columna corta en los cuatro idiomas. El nombre crece hasta 24rem y, en
+     * una tabla más ancha, el sobrante va a la columna del «⋮» (DD-187 §7, en `sc-list-page`); la tabla lleva
+     * `tableMinWidth`, así que por debajo se desplaza en vez de cortar. Todas llevan
      * ancho en rem, también las opcionales: `sc-list-page` descuenta las ocultas del ancho mínimo. */
     return [
       {
