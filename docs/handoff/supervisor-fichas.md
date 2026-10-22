@@ -68,6 +68,28 @@ El de lo que falta al pulsar Crear, grupos sin canales y Recursos en chips (2026
 `git show b703321f:docs/handoff/supervisor-fichas.md`.
 El de Grupos como sus páginas de COA: cifra a la ficha, duplicar a un alta y eliminar varios (2026-10-20, DD-218, sin
 trampas propias): `git show fa98b4bf:docs/handoff/supervisor-fichas.md`.
+El de lo que falta como SISMAC-4058: el botón apagado, «Falta: …» en el resumen y el aviso en gris (2026-10-21,
+DD-219, sin trampas propias): `git show fdf913d4:docs/handoff/supervisor-fichas.md`.
+
+## ✅ 2026-10-23 · Agentes como sus borradores de COA, 4060 y 4062 (DD-225)
+
+> **Sello:** rama `areses/distracted-mclaren-9c96d2` sobre `main` `a0820c6b`. Los borradores, las decisiones y lo que
+> falta en Figma viven fuera del repo (`~/Documents/Claude/2026-10 Agentes COA/`, su LÉEME). Tras fundir, la congelada
+> 4062 avanza a ese commit (`docs/PROTOTIPOS.md`), con el OK de producto.
+
+- **Listado**: borrar varios con el clic derecho (`selectionMenu`, `onBulkDelete`); Teléfono y Estado de inicio
+  (`sc-agents-columns-v6`); Estado ordena por `PRESENCE_SORT_RANK`; «Grupos» de mayor a menor (`defaultSortOrder`);
+  Canales en el Excel.
+- **Estado nuevo «Conversación»**, en azul («En pausa» en el Dashboard), en el agente 17 de la semilla; sin subir la
+  versión del almacén, una lista guardada no lo trae. A 1440 la tabla desplaza de lado (226 px), como pide la 4060.
+- **Ficha**: duplicar no copia foto, móvil ni estado, y todo agente nace «Desconectado»; solo extensiones libres
+  (`extensionOptions`); email repetido en vivo (`agents.errors.email_taken`); tabla de grupos vacía con su motivo
+  (`vacio`); índice del alta con marcadores (`sectionStates`, `faltasPorSeccion`, `OBLIGATORIOS_DE`) y sin «Falta: …»
+  sobre el resumen; «Deshacer» llama a `alta.reiniciar()`; salientes solo con `CLIENTE_CON_CALL_BLENDING`; singular del
+  aviso de quitar canales (`removeBodyKey`).
+- **Pruebas**: `agentes-como-coa-4060-4062.spec.ts` nueva; al día las del alta de agente que fijaban el ✓ suelto y
+  «Falta: …» sobre el resumen.
+- **Pendiente de producto**: el tono de Administrativo y Post-conversando; el Kit no los trae como etiqueta.
 
 ## ✅ 2026-10-22 · Repaso de Grupos entre COA, Figma y prototipo; «Editar en Repositorios» pregunta guardar (DD-224)
 
@@ -129,23 +151,6 @@ trampas propias): `git show fa98b4bf:docs/handoff/supervisor-fichas.md`.
 - **Después, en Figma**: un hand-off por página (`3371:61554`, `3371:61797`), con sus cards de Jira; edición de grupo,
   paso 05; `.Subsection` plegable (§54); los flujos que faltaban, toasts, empty states y hojas para desarrollo (§58);
   cada hoja, a la izquierda de su flujo, con enlaces de ida y vuelta, y el índice de las fichas a 235 (DD-221).
-
-## ✅ 2026-10-21 · Lo que falta, como SISMAC-4058: el botón apagado, «Falta: …» en el resumen y el aviso en gris (DD-219)
-
-> **Sello:** rama `areses/crear-gris-con-lo-que-falta` sobre `main` `4fe744e5`, un PR.
-
-- **Las cuatro fichas** (grupo, agente, usuario, tipificación): «Crear …» y «Guardar» apagados mientras falte algo, con
-  el motivo en el tooltip (`motivoApagado`); «Falta: …» o «Listo para crear» arriba del resumen, cada cosa a su campo
-  (`sc-summary-status` vuelve, con `FaltaDelResumen`).
-- **El aviso**: en gris bajo el campo desde el principio (`ayudaDeObligatorio`), en rojo al dejarlo vacío
-  (`ocasionDeAvisar().tocar`, solo si falta al salir); fuera de los campos del DS, `.field__help`. `dejoElCampo` no
-  cuenta abrir un desplegable, tampoco con su flecha y el campo ya enfocado (el foco pasa un instante por `main`; se ve
-  en `:active`, medido). El índice solo se pone rojo por lo guardado incompleto, un intento (Ctrl+S, el «Guardar» del
-  aviso de Repositorios) o un error de contenido (`acusaEnIndice`).
-- **Pruebas**: las de DD-217 que pulsaban «Crear» con algo pendiente, reescritas (18 casos en 10 ficheros), y una nueva
-  para el tooltip de lo que falta; lo gris se mira en positivo, porque un «no hay rojo» pasa antes de pintar (la
-  contraprueba lo enseñó).
-- **Pendiente**: pegar en COA el borrador 4058 al día (fuera del repo). Figma (§57), hecho el 2026-10-21.
 
 ## SIGUIENTE — sin preguntar
 
