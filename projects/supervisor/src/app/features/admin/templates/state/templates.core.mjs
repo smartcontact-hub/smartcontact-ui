@@ -1,6 +1,14 @@
+// @ts-check
+/**
+ * Lo que una plantilla hace con su contenido, sin Angular (para probarlo con node:test, `scripts/__tests__/templates.test.mjs`).
+ *
+ * Una plantilla de chat o de correo guarda HTML (lo que escribe el editor, ya saneado: en Voice la plantilla «Imagen» lo
+ * guardaba con una imagen en base64 y la tabla lo enseñaba en crudo). Una de WhatsApp guarda el TEXTO de WhatsApp, con sus
+ * marcas (`*negrita*`, `_cursiva_`, `~tachado~`): es lo que WhatsApp entiende, y el editor lo enseña como HTML y lo
+ * devuelve al guardar.
+ */
 import createDOMPurify from 'dompurify';
-
-const DOM_PURIFY = typeof window !== 'undefined' ? createDOMPurify(window) : null;
+import { campos } from '../../repositories/state/agenda-contacts.core.mjs';
 
 /** Los canales de una plantilla. */
 export const CANALES_DE_PLANTILLA = ['chat', 'email', 'whatsapp'];
@@ -14,19 +22,6 @@ const escapar = (texto) => texto.replace(/&/g, '&amp;').replace(/</g, '&lt;').re
 
 /** ¿Lleva etiquetas HTML? Un texto de antes (sin ellas) se enseña tal cual. */
 const llevaHtml = (texto) => /<\/?[a-z][^>]*>/i.test(texto);
-
-const SANITIZE_OPTIONS = {
-  ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 's', 'a'],
-  ALLOWED_ATTR: ['href', 'target', 'rel'],
-  ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto):|[^a-z]|[a-z+\.\-]+(?:[^a-z+\.\-:]|$))/i,
-  FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed', 'svg', 'img', 'math', 'form', 'input', 'button', 'textarea', 'select'],
-  FORBID_ATTR: ['srcdoc', 'style'],
-};
-
-function purificarConDomPurify(html) {
-  if (!DOM_PURIFY) return html;
-  return DOM_PURIFY.sanitize(html, SANITIZE_OPTIONS);
-}
 
 /** El texto de un contenido, en una línea: sin etiquetas, con los saltos como espacios. Para la tabla y la búsqueda. */
 export function textoPlano(contenido) {
@@ -45,26 +40,32 @@ const PERMITIDAS = new Set(['p', 'br', 'strong', 'em', 'u', 's', 'a']);
 const NORMALIZAR = { b: 'strong', i: 'em', strike: 's', del: 's' };
 const SEGURO = /^(https?:|mailto:)/i;
 
+/** DOMPurify necesita un DOM: en el navegador lo hay; en `node:test` no, y ahí manda solo el saneado de abajo. */
+const DOM_PURIFY = typeof window === 'undefined' ? null : createDOMPurify(window);
+const OPCIONES_DOM_PURIFY = { ALLOWED_TAGS: [...PERMITIDAS, 'b', 'i', 'strike', 'del'], ALLOWED_ATTR: ['href'] };
+
 /**
  * El HTML que se guarda: solo las etiquetas del editor (párrafos, negrita, cursiva, subrayado, tachado, enlace), sin
  * atributos —salvo el `href` de un enlace http(s) o mailto—, y sin scripts, estilos, imágenes ni marcos. Lo que el editor
  * no ofrece, no se guarda: se queda su texto.
  */
 export function sanearHtml(html) {
-  const entrada = String(html ?? '');
-  if (!llevaHtml(entrada)) return entrada;
-  const domPurificado = purificarConDomPurify(entrada);
-  const limpio = domPurificado
+  const original = String(html ?? '');
+  if (!llevaHtml(original)) return original;
+  // Primero DOMPurify (el navegador interpreta el HTML como lo hará al enseñarlo); después la lista cerrada de abajo.
+  const entrada = DOM_PURIFY ? DOM_PURIFY.sanitize(original, OPCIONES_DOM_PURIFY) : original;
+  // Quill escribe `&nbsp;` por cada espacio: un mensaje que no parte las líneas por sus palabras. Un espacio es un espacio.
+  const limpio = entrada
     .replace(/<(script|style|iframe|object|embed|svg)\b[\s\S]*?<\/\1>/gi, '')
     .replace(/<img\b[^>]*>/gi, '')
     .replace(/&nbsp;/g, ' ');
-  return limpio.replace(/<(\/?)(([a-z][a-z0-9]*)\b([^>]*))>/gi, (_todo, cierra, _etiquetaCompleta, nombre, atributos) => {
+  return limpio.replace(/<(\/?)([a-z][a-z0-9]*)\b([^>]*)>/gi, (_todo, cierra, nombre, atributos) => {
     const etiqueta = NORMALIZAR[nombre.toLowerCase()] ?? nombre.toLowerCase();
     if (!PERMITIDAS.has(etiqueta)) return '';
     if (cierra) return `</${etiqueta}>`;
     if (etiqueta === 'a') {
-      const href = /\bhref\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/i.exec(atributos);
-      const destino = (href?.[1] ?? href?.[2] ?? href?.[3] ?? '').trim();
+      const href = /\bhref\s*=\s*(?:"([^"]*)"|'([^']*)')/i.exec(atributos);
+      const destino = (href?.[1] ?? href?.[2] ?? '').trim();
       return SEGURO.test(destino) ? `<a href="${destino.replace(/"/g, '&quot;')}" rel="noopener noreferrer" target="_blank">` : '<a>';
     }
     return `<${etiqueta}>`;
@@ -177,4 +178,3 @@ export function parsearPlantillasCsv(texto, existentes, tope = TOPE_DE_PLANTILLA
 export function plantillaDePlantillasCsv(cabecera) {
   return `﻿${cabecera.join(';')}\r\n`;
 }
-
