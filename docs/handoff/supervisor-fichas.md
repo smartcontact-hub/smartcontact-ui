@@ -71,7 +71,9 @@ trampas propias): `git show fa98b4bf:docs/handoff/supervisor-fichas.md`.
 
 ## ✅ 2026-10-22 · Repaso de Grupos entre COA, Figma y prototipo; «Editar en Repositorios» pregunta guardar (DD-224)
 
-> **Sello:** rama `areses/repaso-grupos-coa-figma` sobre `main` `fa98b4bf`, un PR.
+> **Sello:** rama `areses/repaso-grupos-coa-figma` sobre `main` `fa98b4bf`, un PR (#507, fundido como `88d2e3e7`). La
+> congelada 4058 avanzó a ese commit el mismo día. COA: la 4056 se publicó en la v12 con todo el repaso; la 4058 tiene
+> sus cambios en borrador, a falta de la tabla de contenidos, las anclas y publicar.
 
 - **Repaso**: COA 4058 (v17) y 4056 (v11) frase a frase contra la congelada 4058 (ya con DD-223) y contra el texto de
   las hojas de Figma de Grupos. Prototipo y Figma cuadraban salvo cinco retoques de texto, hechos con DD-224 (`figma-pendiente` §62); las
