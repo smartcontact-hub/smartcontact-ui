@@ -336,7 +336,12 @@
 </ng-template>
 
 @if (typification(); as t) {
-  <sc-tipificacion-arbol [tipificacion]="t" [visible]="viendoTipificacion()" (cerrar)="viendoTipificacion.set(false)" />
+  <sc-tipificacion-arbol
+    [tipificacion]="t"
+    [visible]="viendoTipificacion()"
+    (cerrar)="viendoTipificacion.set(false)"
+    (editar)="editarTipificacion($event)"
+  />
 }
 
 <ng-template #seccionDistribucion>

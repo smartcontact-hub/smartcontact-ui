@@ -66,6 +66,19 @@ El de Grupos y Agentes como en Figma, sin edición masiva (2026-10-19, DD-215, s
 archive/handoff-fichas-2026-10-21:docs/handoff/supervisor-fichas.md`.
 El de lo que falta al pulsar Crear, grupos sin canales y Recursos en chips (2026-10-20, DD-217, sin trampas propias):
 `git show b703321f:docs/handoff/supervisor-fichas.md`.
+El de Grupos como sus páginas de COA: cifra a la ficha, duplicar a un alta y eliminar varios (2026-10-20, DD-218, sin
+trampas propias): `git show fa98b4bf:docs/handoff/supervisor-fichas.md`.
+
+## ✅ 2026-10-22 · Repaso de Grupos entre COA, Figma y prototipo; «Editar en Repositorios» pregunta guardar (DD-224)
+
+> **Sello:** rama `areses/repaso-grupos-coa-figma` sobre `main` `fa98b4bf`, un PR.
+
+- **Repaso**: COA 4058 (v17) y 4056 (v11) frase a frase contra la congelada 4058 (ya con DD-223) y contra el texto de
+  las hojas de Figma de Grupos. Prototipo y Figma cuadraban salvo cinco retoques de texto, hechos con DD-224 (`figma-pendiente` §62); las
+  correcciones de COA, para pegar, viven fuera del repo (`~/Documents/Claude/2026-10 Grupos COA/`).
+- **«Editar en Repositorios»** del detalle de la tipificación, con cambios, pregunta «¿Guardar los cambios?» como
+  «Gestionar en Repositorios»: `sc-tipificacion-arbol` emite `editar` y la ficha decide (`salirARepositorios`).
+- **«Solo salientes» con Call Blending**: ya lo decía DD-211 §9; falta en COA, no en el prototipo.
 
 ## ✅ 2026-10-22 · La ficha de grupo, como la versión 17 de su página de COA (DD-223)
 
@@ -79,8 +92,8 @@ El de lo que falta al pulsar Crear, grupos sin canales y Recursos en chips (2026
   quien no lo tiene permitido sale al guardar, con el aviso «¿Sacar del grupo a 1 agente?» (`sacarConfirm`). Antes, al
   crear, salía en silencio.
 - **Tabla vacía con su motivo** (`vacio` en `agent-channel-table`): «Sin agentes asignados» en Asignados sin búsqueda.
-- **Sin hacer, a la espera de producto**: «Editar en Repositorios» del modal de la tipificación ofrece descartar con
-  cambios, y «Gestionar en Repositorios», guardar. Y la rueda del MiniAdmin (entrar a la edición desde la monitorización
+- **Sin hacer entonces**: «Editar en Repositorios» del modal de la tipificación ofrecía descartar con cambios, y
+  «Gestionar en Repositorios», guardar (resuelto en DD-224). Y la rueda del MiniAdmin (entrar a la edición desde la monitorización
   de cada grupo, solo administradores): el prototipo no tiene esa pantalla; va como nota en Figma (§61).
 
 ## ✅ 2026-10-21 · Marcar una casilla de Grupos o Agentes ya no acorta la tabla (fallo de DD-215)
@@ -125,25 +138,6 @@ El de lo que falta al pulsar Crear, grupos sin canales y Recursos en chips (2026
   para el tooltip de lo que falta; lo gris se mira en positivo, porque un «no hay rojo» pasa antes de pintar (la
   contraprueba lo enseñó).
 - **Pendiente**: pegar en COA el borrador 4058 al día (fuera del repo). Figma (§57), hecho el 2026-10-21.
-
-## ✅ 2026-10-20 · Grupos como sus páginas de COA: cifra a la ficha, duplicar a un alta, eliminar varios y «Agentes asignados» sin estado (DD-218)
-
-> **Sello:** rama `areses/prototype-coa-groups-alignment-eaa42d` sobre `main` `02df3933`, un PR.
-
-- **Listado**: la cifra de agentes lleva a `?seccion=agentes` de la ficha (el panel rápido solo queda en el Monitor);
-  duplicar abre `/admin/grupos/crear?seedFromId=:id`; con dos o más marcados, el clic derecho sobre uno solo ofrece
-  «Eliminar» (`selectionMenu` de `sc-list-page`); sin columna ID; Servicios y Agentes de mayor a menor al primer clic
-  (`ScColumnDef.defaultSortOrder`, DS).
-- **Ficha**: la miga acaba en el nombre guardado (`BreadcrumbService.nombrar`, también en la de agente); sin
-  tipificaciones, «Tipificar conversaciones» apagado con su ayuda; fuera 1,5 min; «Mensaje de día no laborable»;
-  «Gestionar en Repositorios» con cambios pregunta si guardar (también en la de agente).
-- **«Agentes asignados»**: fuera el filtro de estado y equipos y el punto del avatar; «Agente» (y «Grupo» en la gemela)
-  ordena por nombre con la flecha del DS (`ScColumnDef.headerTemplate` para la casilla de «todos»); nivel en
-  `sc-select` 1–10; Habilitado bloqueado con «Activación por grupo»; la confirmación de columna dice qué y a cuántos.
-- **Textos**: eliminar con el nombre en el título (`injectConfirmarBorrado(titleKey)`, un título por entidad) y los
-  avisos con «».
-- **Pendiente**: las correcciones de COA (fuera del repo). Figma (§56), hecho el 2026-10-21. Tras fundir, avanzar `proto/SISMAC-4058`, 4062
-  y 4064 (`docs/PROTOTIPOS.md`).
 
 ## SIGUIENTE — sin preguntar
 

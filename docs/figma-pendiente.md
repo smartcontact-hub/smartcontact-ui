@@ -1638,6 +1638,16 @@ botón de X1 a X3 lleva `key`.
   12, 14 y 16) y de la edición (fila 1: la entrada desde la rueda de la monitorización, solo administradores, sin
   maqueta; fila 7: el aviso al guardar), Hand-off con la rueda y el marcado automático, portadas e índice de Grupos.
   Versión del fichero: «Grupos: §61 DD-223».
+- ~~**§62 · Grupos: lo que no cuadraba en el repaso entre COA, Figma y prototipo (DD-224)**~~ → **HECHO el
+  2026-10-22** en la página Grupos (`41:2847`), tras leer entero el texto de sus hojas contra la congelada 4058. Alta
+  (`3033:18497`), fila 7: «Editar en Repositorios», con cambios, cierra el detalle y pregunta lo mismo que «Gestionar en
+  Repositorios», y «En qué conversaciones» lleva «Solo salientes» solo con Call Blending; fila 17 y hand-off
+  («Lo que falta, antes de pulsar»): el rojo también al dejar la sección sin el campo, y lo que aparece después en ella,
+  ya en rojo. Edición (`3064:15154`), fila 7: la misma pregunta para «Editar en Repositorios». Tarjeta de «Otras
+  configuraciones 2». Listado (`3131:11194`), fila 8: el tooltip de Agentes con 15 nombres como mucho y «y N más»;
+  fila 12: lo apagado es «Exportar», no el botón «Acciones». Notas de Dev Mode de «Si algo falla 5» y «Otras
+  configuraciones 8» y «9» con punto final, y la capa de la fila 14 del alta, «Fila: 14. Agente». Versión del fichero:
+  «Grupos: repaso COA, Figma y prototipo (DD-224, §62) (2026-10-22)».
 
 ---
 
