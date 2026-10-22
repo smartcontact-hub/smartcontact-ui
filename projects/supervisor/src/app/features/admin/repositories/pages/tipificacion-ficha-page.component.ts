@@ -9,6 +9,7 @@ import {
   type FormNavSection,
   ScInputTextComponent as InputTextComponent,
   ScSectionCardComponent as SectionCardComponent,
+  ScSubsectionComponent as SubsectionComponent,
 } from '@smartcontact-hub/components';
 
 import type { DirtyAware } from '@core/guards';
@@ -87,6 +88,7 @@ const SECCION_DEL_CAMPO: Readonly<Record<keyof Borrador, string>> = {
     InputTextComponent,
     NgTemplateOutlet,
     SectionCardComponent,
+    SubsectionComponent,
     TipificacionNivelesComponent,
     TipificacionVistaComponent,
     TranslateModule,

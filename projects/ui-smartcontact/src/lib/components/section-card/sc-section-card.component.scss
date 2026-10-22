@@ -80,7 +80,8 @@
     flex: 0 0 auto;
     /* `sc-icon size="inherit"` pinta a 1em de esto. */
     font-size: var(--section-card-icon-size);
-    color: var(--sc-icon-subtle);
+    /* El del título (`text/color`, #181D26 en claro): el icono y el texto de la cabecera van del mismo color. */
+    color: var(--sc-text-heading);
     align-self: center;
   }
 

@@ -94,7 +94,7 @@
 | `sc-slot` | CUSTOM | experimental (sin maestro en el Kit) | — | 4 inputs | — | ✓ | 12 |
 | `sc-step-marker` | CUSTOM | experimental (sin maestro en el Kit ni demo) | — | 1 inputs | — | — | — |
 | `sc-sticky-form-header` | CUSTOM | deprecated | — | 4 inputs | sc-button | ✓ | 2 |
-| `sc-subsection` | CUSTOM | experimental (sin maestro en el Kit) | — | 6 inputs | — | ✓ | 19 |
+| `sc-subsection` | CUSTOM | experimental (sin maestro en el Kit) | — | 6 inputs | — | ✓ | 21 |
 | `sc-tabs` | STANDARD | ready | primeng/tabs | 1 inputs | — | ✓ | 2 |
 | `sc-tag` | EXTENDED | ready | primeng/tag, primeng/tooltip | 8 inputs | — | ✓ | 28 |
 | `sc-textarea` | EXTENDED | ready | primeng/textarea | 20 inputs | sc-field-label sc-button sc-field-msg | ✓ | 7 |
