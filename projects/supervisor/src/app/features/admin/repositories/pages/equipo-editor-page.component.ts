@@ -11,6 +11,7 @@ import {
   ScSearchComponent as SearchComponent,
   ScSectionCardComponent as SectionCardComponent,
   ScSelectButtonComponent as SelectButtonComponent,
+  ScSubsectionComponent as SubsectionComponent,
 } from '@smartcontact-hub/components';
 
 import type { DirtyAware } from '@core/guards';
@@ -54,6 +55,7 @@ const VACIO: Borrador = { name: '', description: '', agentIds: new Set() };
     PresenceAvatarComponent,
     SearchComponent,
     SectionCardComponent,
+    SubsectionComponent,
     SelectButtonComponent,
     TranslateModule,
   ],
@@ -81,8 +83,8 @@ const VACIO: Borrador = { name: '', description: '', agentIds: new Set() };
 
 
         <div class="editor">
-          <sc-section-card titleKey="repositories.agendas.section_general" surface="card" icon="group_work">
-            <section class="sub-section">
+          <sc-section-card titleKey="repositories.agendas.section_general" icon="group_work">
+            <sc-subsection>
               <div class="grid grid--2">
                 <!-- La etiqueta de las fichas (12/600, DD-122 §4), no la del componente. -->
                 <div class="field">
@@ -115,11 +117,11 @@ const VACIO: Borrador = { name: '', description: '', agentIds: new Set() };
                   />
                 </div>
               </div>
-            </section>
+            </sc-subsection>
           </sc-section-card>
 
-          <sc-section-card titleKey="repositories.equipos.agents" surface="card" icon="headphones">
-            <section class="sub-section">
+          <sc-section-card titleKey="repositories.equipos.agents" icon="headphones">
+            <sc-subsection>
               <div class="assign">
                 <div class="assign__bar">
                   <span id="grupo-agentes-filter" class="visually-hidden">{{ 'groups.form.assigned.filter_label' | translate }}</span>
@@ -151,7 +153,7 @@ const VACIO: Borrador = { name: '', description: '', agentIds: new Set() };
                   </sc-datatable>
                 </div>
               </div>
-            </section>
+            </sc-subsection>
           </sc-section-card>
         </div>
       </div>
