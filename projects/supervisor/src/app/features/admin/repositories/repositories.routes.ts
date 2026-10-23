@@ -93,9 +93,16 @@ export const REPOSITORIES_ROUTES: Routes = [
   },
   {
     /* La tipificación tiene su ficha (DD-173): General, Categorización y Grupos, como las
-     * fichas de grupo y de agente. El listado sigue en Repositorios. */
+     * fichas de grupo y de agente. El listado sigue en Repositorios. Sus migas abren con el nivel de Administración
+     * (sin enlace, como en el hub): Administración → Repositorios → Tipificaciones. */
     path: 'tipificaciones',
-    data: repoInstance('repositories.tipificaciones.title'),
+    data: {
+      breadcrumb: [
+        { labelKey: 'sidebar.administration', link: false as const },
+        { labelKey: 'sidebar.repositories', link: '/admin/repositorios' as const },
+        { labelKey: 'repositories.tipificaciones.title' },
+      ],
+    },
     children: [
       {
         path: '',

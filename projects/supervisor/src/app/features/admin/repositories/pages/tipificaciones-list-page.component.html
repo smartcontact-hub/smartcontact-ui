@@ -56,23 +56,9 @@
   }
 </ng-template>
 
-<!-- Cuántos niveles pide, y al pasar o al enfocar, qué hay en cada uno: el primero por sus nombres, los demás
-     contados. Enfocable para que el teclado llegue a lo mismo que el ratón. -->
+<!-- Cuántos niveles pide, y nada más: sin detalle al pasar. -->
 <ng-template #levelsTpl let-t>
-  @let detalle = levelsDetail(t);
-  @if (detalle) {
-    <span
-      class="table__cell table__cell--levels sc-text-body-regular"
-      tabindex="0"
-      role="note"
-      [pTooltip]="detalle"
-      tooltipEvent="both"
-      tooltipPosition="top"
-      [attr.aria-label]="levelsLabel(t) + '. ' + detalle"
-    >{{ levelsLabel(t) }}</span>
-  } @else {
-    <span class="table__cell table__cell--muted sc-text-body-regular">{{ levelsLabel(t) }}</span>
-  }
+  <span class="table__cell sc-text-body-regular" [class.table__cell--muted]="sinNiveles(t)">{{ levelsLabel(t) }}</span>
 </ng-template>
 
 <ng-template #groupsTpl let-t>

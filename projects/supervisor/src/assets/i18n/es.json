@@ -1517,9 +1517,6 @@
       },
       "levels_count": "{{count}} niveles",
       "levels_count_one": "1 nivel",
-      "levels_first": "Nivel 1: {{names}}",
-      "levels_other": "Nivel {{level}}: {{count}} opciones",
-      "levels_other_one": "Nivel {{level}}: 1 opción",
       "groups_aria": "{{count}} grupos",
       "groups_aria_one": "1 grupo",
       "import_columns": {
