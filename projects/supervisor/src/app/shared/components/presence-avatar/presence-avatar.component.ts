@@ -50,12 +50,16 @@ export class PresenceAvatarComponent {
     return p ? PRESENCE_LABEL_KEYS[p] : null;
   });
 
-  /** El color del punto, el del punto de su etiqueta (`--sc-label-<color>-dot`); «Desconectado», el gris. */
+  /**
+   * El color del punto, el del punto de su etiqueta (`--sc-label-<color>-dot`); el de una etiqueta Info
+   * (Post-conversando), el del badge Info nativo, que es lo que es el punto; «Desconectado», el gris.
+   */
   private readonly dotColor = computed(() => {
     const p = this.presence();
     if (!p) return null;
     const tag = PRESENCE_TAGS[p];
-    return `var(--sc-label-${'labelColor' in tag ? tag.labelColor : 'gray'}-dot)`;
+    if ('labelColor' in tag) return `var(--sc-label-${tag.labelColor}-dot)`;
+    return tag.severity === 'info' ? 'var(--sc-cmp-badge-info-background)' : 'var(--sc-label-gray-dot)';
   });
 
   /**

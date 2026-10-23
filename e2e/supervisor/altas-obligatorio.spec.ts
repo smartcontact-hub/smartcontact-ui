@@ -95,14 +95,15 @@ test('agente · ✓ en toda sección que se deja completa: General y Grupos, y t
   await atras(page).click();
   await expect(actual(page)).toContainText('Recursos');
 
-  await expect(fila(page, 'General')).toHaveAccessibleName(completa);
-  await expect(fila(page, 'Grupos')).toHaveAccessibleName(completa);
-  // Configuración se dejó, y sin nada obligatorio está completa con solo pasar: lleva ✓ (DD-211 §6).
-  await expect(fila(page, 'Configuración')).toHaveAccessibleName(completa);
-  await expect(fila(page, 'Configuración').locator('.form-nav__done')).toHaveCount(1);
+  // Con los marcadores del grupo desde DD-225 (DD-222): «Completa» donde hay algo que cumplir, y «Revisada» con solo
+  // pasar donde no hay nada, con su marcador verde (DD-211 §6).
+  await expect(fila(page, 'General')).toHaveAccessibleName(/Completa/);
+  await expect(fila(page, 'Grupos')).toHaveAccessibleName(/Completa/);
+  await expect(fila(page, 'Configuración')).toHaveAccessibleName(/Revisada/);
+  await expect(fila(page, 'Configuración').locator('sc-step-marker.sc-step-marker--hecha')).toHaveCount(1);
   await siguiente(page).click();
-  await expect(fila(page, 'Recursos')).toHaveAccessibleName(completa);
-  await expect(fila(page, 'Recursos').locator('.form-nav__done')).toHaveCount(1);
+  await expect(fila(page, 'Recursos')).toHaveAccessibleName(/Revisada/);
+  await expect(fila(page, 'Recursos').locator('sc-step-marker.sc-step-marker--hecha')).toHaveCount(1);
 });
 
 test('el pie: «Atrás» y «Siguiente» juntos a la izquierda, «Siguiente» el principal, rellenos y sin icono', async ({ page }) => {

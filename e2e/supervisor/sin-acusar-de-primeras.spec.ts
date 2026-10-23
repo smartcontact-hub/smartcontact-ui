@@ -12,8 +12,9 @@ import { disableAnimations, forceLightTheme, goto, irASeccion } from './helpers'
  * email ni extensión a propósito) y al quitar los canales de uno guardado.
  *
  * DD-199 lo decía al dejar la sección; DD-217, al pulsar «Crear» o «Guardar»; DD-219 lo dice en gris bajo el campo y en
- * «Falta: …» del resumen, con el botón apagado, y en rojo si se intenta guardar igual (Ctrl+S). Lo guardado que ya venía
- * sin algo se dice al abrir: `telefono-saliente.spec.ts`.
+ * «Falta: …» del resumen, con el botón apagado, y en rojo si se intenta guardar igual (Ctrl+S). En un alta, también al
+ * dejar la sección así (DD-222; en el agente, DD-225). Lo guardado que ya venía sin algo se dice al abrir:
+ * `telefono-saliente.spec.ts`.
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -61,21 +62,23 @@ test('grupo · encender «Tipificar» no acusa, tampoco al dejar General: gris y
   await expect(desplegable).toHaveAttribute('aria-invalid', 'true');
 });
 
-test('agente · duplicar no acusa al abrir ni al dejar General; «Falta: …» lleva al primer campo', async ({ page }) => {
+test('agente · duplicar no acusa al abrir; al dejar General sin lo que falta, en rojo, como cualquier alta', async ({ page }) => {
   await goto(page, 'admin/agentes/crear?seedFromId=7');
-  // El nombre ya viene, como el de la copia de un grupo («… (1)», DD-217): faltan el email y la extensión.
-  await expect(estado(page)).toContainText('Falta: email, extensión');
+  // El nombre ya viene, como el de la copia de un grupo («… (1)», DD-217): faltan el email y la extensión, y lo dice el
+  // índice, no el resumen (DD-225).
+  const general = page.locator('sc-form-section-nav .form-nav__item').filter({ hasText: 'General' });
+  await expect(general).toContainText('Email, extensión');
+  await expect(estado(page)).toHaveCount(0);
   await expect(gris(page, 'agent-section-general', 'El email es obligatorio')).toHaveCount(1);
   await expect(avisos(page, 'agent-section-general')).toHaveCount(0);
   await expect(conPunto(page)).toHaveCount(0);
   await expect(page.locator('sc-top-bar').getByRole('button', { name: 'Crear agente' })).toBeDisabled();
 
+  // Dejarla así es dejarla en rojo, como en el alta de grupo (DD-222 §6): al volver, sus campos lo dicen.
   await page.getByRole('button', { name: 'Siguiente', exact: true }).click();
-  await expect(conPunto(page)).toHaveCount(0);
-
-  await estado(page).getByRole('button', { name: 'email' }).click();
-  await expect(page.locator('#agent-email')).toBeFocused();
-  await expect(conPunto(page)).toHaveCount(0);
+  await expect(conPunto(page)).toHaveCount(1);
+  await irASeccion(page, 'General');
+  await expect(avisos(page, 'agent-section-general')).toHaveText(['El email es obligatorio', 'La extensión es obligatoria']);
 });
 
 test('agente · editar: quitar los canales no acusa, tampoco al dejar General: gris y «Guardar» apagado; con Ctrl+S, en rojo', async ({
@@ -97,6 +100,7 @@ test('agente · editar: quitar los canales no acusa, tampoco al dejar General: g
   await expect(conPunto(page)).toHaveCount(0);
 
   await guardarConTeclado(page);
-  await expect(conPunto(page).filter({ hasText: 'General' })).toContainText('Hace falta al menos un canal');
+  // En el índice, la etiqueta corta, como en el grupo (DD-225); bajo las casillas, el aviso entero.
+  await expect(conPunto(page).filter({ hasText: 'General' })).toContainText('Un canal');
   await expect(avisos(page, 'agent-section-general')).toHaveText(['Hace falta al menos un canal']);
 });

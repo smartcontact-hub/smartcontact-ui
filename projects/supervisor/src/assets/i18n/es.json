@@ -2235,7 +2235,8 @@
     "no_results_query": "No hay agentes que coincidan con «{{query}}».",
     "entity_singular": "agente",
     "delete_dialog": {
-      "title": "¿Eliminar el agente «{{name}}»?"
+      "title": "¿Eliminar el agente «{{name}}»?",
+      "title_bulk": "¿Eliminar {{count}} agentes?"
     },
     "table": {
       "code": "ID",
@@ -2272,7 +2273,8 @@
       "training": "Formación",
       "wrap_up": "Post-conversando",
       "administrative": "Administrativo",
-      "offline": "Desconectado"
+      "offline": "Desconectado",
+      "talking": "Conversación"
     },
     "status": {
       "active": "Cuenta activa",
@@ -2390,7 +2392,7 @@
         "picker_placeholder": "Buscar o añadir grupo…",
         "picker_aria": "Añadir grupo al agente",
         "empty_title": "Sin grupos asignados",
-        "empty": "Usa «Añadir grupo» para asignar el primer grupo a este agente.",
+        "empty": "Asígnalos desde la pestaña «Todos».",
         "col_group": "Grupo",
         "col_channels_here": "Canales en este grupo",
         "col_active": "Habilitado",
@@ -2414,12 +2416,16 @@
           "channel_remove": "¿Quitar {{channel}} en {{count}} grupos?"
         },
         "bulk_done": "Se han actualizado {{count}} grupos.",
-        "not_allowed_hint": "{{channel}} no está entre sus canales: se marcan en General"
+        "not_allowed_hint": "{{channel}} no está entre sus canales: se marcan en General",
+        "all_assigned": "Todos los grupos están asignados"
       },
       "allowed": {
         "title": "Canales permitidos",
         "remove_body": "Deja de atender {{channels}} en {{count}} grupos. ¿Continuar?",
-        "remove_body_orphaned": "Deja de atender {{channels}} en {{count}} grupos, y sale de {{groups}}, que se quedan sin ningún canal. ¿Continuar?"
+        "remove_body_orphaned": "Deja de atender {{channels}} en {{count}} grupos, y sale de {{groups}}, que se quedan sin ningún canal. ¿Continuar?",
+        "remove_body_one": "Deja de atender {{channels}} en 1 grupo. ¿Continuar?",
+        "remove_body_orphaned_one": "Deja de atender {{channels}} en 1 grupo, y sale de {{groups}}, que se queda sin ningún canal. ¿Continuar?",
+        "remove_body_orphaned_single": "Deja de atender {{channels}} en {{count}} grupos, y sale de {{groups}}, que se queda sin ningún canal. ¿Continuar?"
       },
       "permissions": {
         "manage_devices": "Gestión de dispositivos",
@@ -2482,7 +2488,8 @@
       "phone_required": "El teléfono móvil es obligatorio: la extensión suena en él",
       "email_required": "El email es obligatorio",
       "group_required": "Hace falta al menos un grupo",
-      "outbound_required": "El grupo de las llamadas salientes es obligatorio: uno con Teléfono"
+      "outbound_required": "El grupo de las llamadas salientes es obligatorio: uno con Teléfono",
+      "email_taken": "Ya hay un agente con este email"
     },
     "empty": {
       "title": "Aún no hay agentes",
@@ -2500,7 +2507,8 @@
       "status": "Estado",
       "recording": "Grabación",
       "groups": "Grupos",
-      "sheet": "Agentes"
+      "sheet": "Agentes",
+      "channels": "Canales"
     },
     "bulk_edit_title": "Aplicar cambio a {{count}} agente(s)"
   },

@@ -12,9 +12,9 @@ import { DEMO_AGENTS, DEMO_ENTITIES } from './demo-entities';
  * es en el Dashboard.
  *
  * «En pausa» es todo lo conectado que no está disponible, para que disponibles y en pausa sumen los conectados de los
- * anillos y del panel de grupos. Por eso entran Administrativo y Post-conversando, aunque no sean una pausa elegida: el
- * monitor del Supervisor cuenta aparte a quien está en una conversación o acaba de salir de ella («en conversación»),
- * un estado que este Dashboard no tiene. Si lo tiene algún día, Post-conversando pasa ahí.
+ * anillos y del panel de grupos. Por eso entran Administrativo, Post-conversando y Conversación, aunque no sean una pausa
+ * elegida: el monitor del Supervisor cuenta aparte a quien está en una conversación o acaba de salir de ella («en
+ * conversación»), un estado que este Dashboard no tiene. Si lo tiene algún día, Conversación y Post-conversando pasan ahí.
  */
 export const PRESENCIA_EN_DASHBOARD: Readonly<Record<PresenceStatus, AgentPresence>> = {
   disponible: 'available',
@@ -24,6 +24,7 @@ export const PRESENCIA_EN_DASHBOARD: Readonly<Record<PresenceStatus, AgentPresen
   formacion: 'paused',
   administrativo: 'paused',
   post_conversando: 'paused',
+  conversacion: 'paused',
   desconectado: 'offline',
 };
 
