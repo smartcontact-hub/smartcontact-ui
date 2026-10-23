@@ -125,7 +125,7 @@
     @if (presence === 'desconectado') {
       <span class="cell sc-text-caption-regular">{{ presenceLabelKey(presence) | translate }}</span>
     } @else if (presenceLabelColor(presence); as color) {
-      <sc-tag variant="label" [labelColor]="color" [value]="presenceLabelKey(presence) | translate" />
+      <sc-tag variant="label" [labelColor]="color" [bordered]="presenceBordered(presence)" [value]="presenceLabelKey(presence) | translate" />
     } @else {
       <sc-tag [severity]="presenceSeverity(presence)" [value]="presenceLabelKey(presence) | translate" />
     }

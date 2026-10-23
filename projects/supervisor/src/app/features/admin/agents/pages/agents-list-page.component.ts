@@ -467,7 +467,12 @@ export class AgentsListPageComponent {
     return 'labelColor' in tag ? tag.labelColor : null;
   }
 
-  protected presenceSeverity(presence: PresenceStatus): 'info' | 'secondary' {
+  protected presenceBordered(presence: PresenceStatus): boolean {
+    const tag = PRESENCE_TAGS[presence];
+    return !('bordered' in tag) || tag.bordered !== false;
+  }
+
+  protected presenceSeverity(presence: PresenceStatus): 'secondary' {
     const tag = PRESENCE_TAGS[presence];
     return 'severity' in tag ? tag.severity : 'secondary';
   }
