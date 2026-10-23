@@ -236,6 +236,30 @@ test('rojo: el informe SIN sobre sigue disparando, y el preámbulo solo no tapa 
   assert.ok(esCorreccion(`${PREAMBULO}te dije que esto no es un sobre`), 'el preámbulo sin la etiqueta detrás no es un sobre');
 });
 
+// Real, del registro (c2edd4 y b70bfc, 2026-10): el primer mensaje de una sesión que abrió otra sesión.
+// Llega como texto de usuario, con o sin recordatorios delante, y el hook recibe lo mismo que guarda el
+// transcript. El cuerpo se recorta; la frase que casaba («te dije») es la del encargo.
+const ENCARGO = [
+  'Background (from the session that started this one):',
+  'El detector apunta cada mensaje que suena a corrección. Como te dije, un falso positivo es trabajo de cierre en balde.',
+  '',
+  'Task:',
+  'En `scripts/hooks/correction-capture.mjs`, reconoce el encargo de la sesión madre.',
+].join('\n');
+
+test('verde: el encargo de la sesión madre no es una corrección del usuario, con recordatorios o sin ellos', () => {
+  const aviso = '<system-reminder>\nYou are operating in a git worktree.\n</system-reminder>\n\n';
+  for (const f of [ENCARGO, aviso + ENCARGO, ENLAZADAS + '\n' + ENCARGO])
+    assert.equal(esCorreccion(f), false, `no debía detectar: ${f.slice(0, 60)}…`);
+  assert.equal(esCierre(ENCARGO + '\n¿Algo más o cerramos esta sesión?'), false);
+});
+
+test('rojo: citar el encabezado en un mensaje propio, o el cuerpo sin él, sigue contando', () => {
+  assert.ok(esCorreccion('te dije que el encargo llega como «Background (from the session that started this one):»'));
+  assert.ok(esCorreccion(ENLAZADAS + '\nte dije que no: ' + ENCARGO));
+  assert.ok(esCorreccion(ENCARGO.split('\n').slice(1).join('\n')), 'el cuerpo sin el encabezado es texto del usuario');
+});
+
 // Un mensaje REAL del usuario también llega con recordatorios delante. Por eso el filtro no puede
 // ser «empieza por <system-reminder>»: lo que escribió detrás se mira como siempre.
 test('rojo: una corrección real con recordatorios delante sigue contando', () => {
