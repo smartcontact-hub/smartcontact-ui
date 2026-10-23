@@ -4,7 +4,7 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { aviso, deriva, fetchSiToca } from '../hooks/main-drift-guard.mjs';
+import { aviso, atrasoDeHooks, avisoAtraso, deriva, fetchSiToca } from '../hooks/main-drift-guard.mjs';
 import { alArrancar } from '../hooks/compact-card.mjs';
 
 // Sin las `GIT_*` heredadas: dentro de un hook de git (el pre-push corre `verify`), GIT_DIR apunta al
@@ -89,4 +89,31 @@ test('en un worktree enlazado, las marcas van al .git de verdad y no dentro de l
   alArrancar(wt, 'sesion-x');
   assert.equal(existsSync(join(comun, 'sc-hooks', 'main-drift-fetch')), true, 'la marca del fetch va al git común');
   assert.equal(existsSync(join(wt, comun)), false, 'nada de un árbol con la ruta absoluta dentro del worktree');
+});
+
+test('ROJO: el árbol del proyecto va por detrás en scripts/hooks → avisa con el commit que falta', () => {
+  const { yo, otra } = escenario();
+  git(yo, 'checkout', '-q', 'main');
+  execFileSync('mkdir', ['-p', join(otra, 'scripts/hooks')]);
+  writeFileSync(join(otra, 'scripts/hooks/x.mjs'), 'arreglo\n');
+  git(otra, 'add', '.');
+  git(otra, 'commit', '-qm', 'arreglo del detector (#500)');
+  git(otra, 'push', '-q', 'origin', 'HEAD:main');
+  const antes = git(yo, 'rev-parse', 'HEAD');
+  git(yo, 'fetch', '-q', 'origin', 'main');
+  const faltan = atrasoDeHooks(yo);
+  assert.equal(faltan.length, 1);
+  const t = avisoAtraso(faltan, yo);
+  assert.match(t, /#500/);
+  assert.match(t, /Pon ese árbol en main/);
+  assert.equal(git(yo, 'rev-parse', 'HEAD'), antes, 'avisa, no mueve el árbol');
+});
+
+test('VERDE: main se mueve fuera de los hooks, o el árbol está al día → silencio', () => {
+  const { yo, otra } = escenario();
+  fundeEnMain(otra, 'lista.html', 'otra cosa');
+  git(yo, 'fetch', '-q', 'origin', 'main');
+  assert.deepEqual(atrasoDeHooks(yo), []);
+  assert.equal(avisoAtraso([], yo), '');
+  assert.deepEqual(atrasoDeHooks(undefined), []);
 });
