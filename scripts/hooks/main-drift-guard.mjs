@@ -63,6 +63,25 @@ export function deriva(cwd) {
   return { ficheros, commits };
 }
 
+/** Lo que los hooks leen del árbol de `$CLAUDE_PROJECT_DIR`: si ese árbol va por detrás, los arreglos no llegan. */
+const DE_LOS_HOOKS = ['scripts/hooks/', '.claude/settings.json'];
+
+/**
+ * Commits de origin/main que faltan en el HEAD de `proyecto` (el `$CLAUDE_PROJECT_DIR` desde el que se
+ * lanzan los hooks) y tocan los hooks. En escritorio ese árbol es el principal, no el worktree de la
+ * sesión: si se queda en un commit viejo, ningún arreglo de `scripts/hooks/` llega y nadie lo ve
+ * (2026-10-23: HEAD separada días atrás, el arreglo #500 no llegaba). Solo avisa: no mueve el árbol.
+ */
+export function atrasoDeHooks(proyecto) {
+  if (!proyecto) return [];
+  return git(proyecto, ['log', '--oneline', 'HEAD..origin/main', '--', ...DE_LOS_HOOKS]).split('\n').filter(Boolean);
+}
+
+export function avisoAtraso(commits, proyecto) {
+  if (commits.length === 0) return '';
+  return `⚠️ sc: los hooks se lanzan desde ${proyecto}, que va ${commits.length} commit(s) por detrás de origin/main en scripts/hooks o settings (faltan: ${commits.slice(0, 5).map((c) => c.slice(0, 70)).join(' · ')}${commits.length > 5 ? ' …' : ''}). Pon ese árbol en main (no se mueve solo).`;
+}
+
 export function aviso({ ficheros, commits }) {
   if (ficheros.length === 0) return '';
   const lista = ficheros.slice(0, 6).map((f) => `  · ${f}`).join('\n') + (ficheros.length > 6 ? `\n  · (+${ficheros.length - 6})` : '');
@@ -85,6 +104,13 @@ async function main() {
     fetchSiToca(cwd);
     const texto = aviso(deriva(cwd));
     if (texto) process.stdout.write(texto + '\n');
+    const proyecto = process.env.CLAUDE_PROJECT_DIR;
+    try {
+      const atraso = avisoAtraso(atrasoDeHooks(proyecto), proyecto);
+      if (atraso) process.stdout.write(atraso + '\n');
+    } catch {
+      /* árbol del proyecto sin origin/main: callar */
+    }
   } catch (e) {
     process.stderr.write(`main-drift-guard: ${e.message}\n`);
   }

@@ -89,6 +89,22 @@ function handoffsFueraDeForma(cwd) {
     .flatMap((f) => revisarHandoff(readFileSync(join(dir, f), "utf8"), `docs/handoff/${f}`));
 }
 
+// ── Las dependencias, instaladas ─────────────────────────────────────────────────────────────────
+
+/**
+ * Un worktree recién hecho no trae `node_modules`, y `component-audit` lee la API de `node_modules/primeng`: sin ella
+ * sale «no está al día → --write» con cientos de miembros «sin descripción», y ese arreglo escribiría generados a partir
+ * de nada (medido el 2026-10-23, PR #515). `npx` deja una `.cache` en la carpeta vacía, así que se mira el paquete y no
+ * la carpeta. Si falta, `preflight-scope` no mide los generados: su veredicto no valdría.
+ */
+export function dependenciasInstaladas(cwd = process.cwd()) {
+  if (existsSync(join(cwd, "node_modules", "primeng", "package.json"))) return [];
+  return [
+    "sin dependencias: falta node_modules/primeng/package.json (worktree sin `node_modules`) → " +
+      "ln -s /Users/rafareses/dev/smartcontact-ui/node_modules node_modules",
+  ];
+}
+
 // ── Los ficheros generados, al día ───────────────────────────────────────────────────────────────
 
 /**
