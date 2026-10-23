@@ -81,7 +81,7 @@ DD-219, sin trampas propias): `git show fdf913d4:docs/handoff/supervisor-fichas.
   (`sc-agents-columns-v6`); Estado ordena por `PRESENCE_SORT_RANK`; «Grupos» de mayor a menor (`defaultSortOrder`);
   Canales en el Excel.
 - **Estado «Conversación»** (Dashboard: «En pausa»), agente 17; una lista guardada no lo trae (versión sin subir). Color
-  por familia: Administrativo marrón; Post-conversando, `tag` Info como en Figma. A 1440 desplaza de lado (226 px).
+  por familia: Administrativo marrón; Post-conversando, azul sin borde (DD-226). A 1440 desplaza de lado (226 px).
 - **Ficha**: duplicar no copia foto, móvil ni estado, y todo agente nace «Desconectado»; solo extensiones libres
   (`extensionOptions`); email repetido en vivo (`agents.errors.email_taken`); tabla de grupos vacía con su motivo
   (`vacio`); índice del alta con marcadores (`sectionStates`, `faltasPorSeccion`, `OBLIGATORIOS_DE`) y sin «Falta: …»

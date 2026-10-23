@@ -8,7 +8,7 @@ import { disableAnimations, forceLightTheme, goto, irASeccion, pickSelectOption 
  *   1. Con dos o más marcados, el clic derecho sobre uno ofrece solo «Eliminar»: «¿Eliminar 2 agentes?» y su toast.
  *   2. Teléfono y Estado salen de primeras; Estado se ordena, de más a menos disponible, con «Conversación», y su color
  *      va por familia: rojo No disponible y sus motivos, Administrativo en su marrón, azul lo de la conversación, con
- *      Post-conversando en el `tag` Info.
+ *      Post-conversando en el mismo azul sin borde (DD-226).
  *   3. «Grupos» ordena de mayor a menor al primer clic.
  *   4. El Excel lleva la columna Canales.
  *   5. Duplicar deja vacíos la foto y el móvil, y la copia nace «Desconectado», como todo agente nuevo.
@@ -107,11 +107,12 @@ test('listado · Teléfono y Estado de primeras; Estado ordena de Disponible a D
   await expect(cabecera(page, 'Estado')).toHaveCount(1);
 
   // Por familia, sin tokens nuevos (DD-225): Administrativo en su marrón, no en el rojo de No disponible; Conversación
-  // en azul, y Post-conversando en el `tag` Info que le da Figma, del mismo azul pero lleno.
+  // en azul, y Post-conversando en el mismo azul sin borde, con la hechura de las demás (DD-226).
   await expect(fila(page, 'Agente A').locator('sc-tag')).toHaveText('Conversación');
   // El fondo que pinta cada etiqueta, el que gana en pantalla.
-  const fondo = (agente: string) =>
-    fila(page, agente).locator('sc-tag .sc-tag__label, sc-tag .p-tag').evaluate((el) => getComputedStyle(el).backgroundColor);
+  const etiqueta = (agente: string) => fila(page, agente).locator('sc-tag .sc-tag__label');
+  const fondo = (agente: string) => etiqueta(agente).evaluate((el) => getComputedStyle(el).backgroundColor);
+  const borde = (agente: string) => etiqueta(agente).evaluate((el) => getComputedStyle(el).borderTopColor);
   // El fondo de un token, resuelto por el navegador.
   const fondoDe = (token: string) =>
     page.evaluate((t) => {
@@ -127,7 +128,12 @@ test('listado · Teléfono y Estado de primeras; Estado ordena de Disponible a D
   expect(administrativo, 'Administrativo, en su marrón').toBe(await fondoDe('--sc-label-brown-bg'));
   expect(noDisponible, 'No disponible, en rojo').toBe(await fondoDe('--sc-label-red-bg'));
   expect(conversacion, 'Conversación, en el azul de etiqueta').toBe(await fondoDe('--sc-label-blue-bg'));
-  expect(postConversando, 'Post-conversando, en el tag Info').toBe(await fondoDe('--sc-cmp-tag-info-background'));
+  expect(postConversando, 'Post-conversando, en el mismo azul de etiqueta').toBe(conversacion);
+  expect(await borde('Agente A'), 'Conversación, con su borde azul').not.toBe('rgba(0, 0, 0, 0)');
+  expect(await borde('Agente E'), 'Post-conversando, sin borde').toBe('rgba(0, 0, 0, 0)');
+  // La misma pieza: el alto de las dos es el de las demás etiquetas.
+  const alto = (agente: string) => etiqueta(agente).evaluate((el) => el.getBoundingClientRect().height);
+  expect(await alto('Agente E'), 'Post-conversando, del alto de las demás').toBe(await alto('Agente A'));
   expect(conversacion).not.toBe(administrativo);
 
   await cabecera(page, 'Estado').click();

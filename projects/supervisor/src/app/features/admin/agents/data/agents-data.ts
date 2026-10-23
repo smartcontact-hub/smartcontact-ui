@@ -31,17 +31,21 @@ export const PRESENCE_LABEL_KEYS: Readonly<Record<PresenceStatus, string>> = {
   desconectado: 'agents.presence.offline',
 };
 
-/** Cómo se pinta la etiqueta de un estado: un color de etiqueta, o una severidad nativa de `p-tag`. */
-export type PresenceTag = { readonly labelColor: LabelColor } | { readonly severity: 'info' | 'secondary' };
+/** Cómo se pinta la etiqueta de un estado: un color de etiqueta (con borde, salvo `bordered: false`), o una severidad
+ * nativa de `p-tag`. */
+export type PresenceTag =
+  | { readonly labelColor: LabelColor; readonly bordered?: false }
+  | { readonly severity: 'secondary' };
 
 /**
  * La etiqueta de cada estado, por FAMILIA (SISMAC-4060, DD-225): Disponible verde; en rojo, No disponible y sus motivos
  * (Baño, Comida y Formación); Administrativo, en su marrón (DD-176), que no es una etiqueta roja; en azul, lo de la
- * conversación. Dentro del azul, Post-conversando lleva el `tag` Info, la severidad que le da Figma (Supervisor ›
- * Agentes): el mismo tono que Conversación, con el fondo lleno y sin borde, y se distingue sin salir de su familia. Su
- * color propio en el DS (`semantic/presence/wrapup`, cyan/700), de fondo, saltaría sobre las demás etiquetas, todas
- * pastel; y el teal se confunde con el verde de Disponible. Desconectado, sin etiqueta: gris (`secondary`) en el punto
- * del avatar, y en el listado como texto, para no pesar como un estado atendible.
+ * conversación. Dentro del azul, Post-conversando lleva la etiqueta azul sin borde: la misma pieza, alto y peso que
+ * las demás, y se distingue de Conversación por el borde. El `tag` Info que le da Figma no tiene la hechura de la
+ * etiqueta (21,5 px de alto frente a 25,5, y en negrita); su color propio en el DS (`semantic/presence/wrapup`,
+ * cyan/700), de fondo, saltaría sobre las demás, todas pastel; y el teal se confunde con el verde de Disponible.
+ * Desconectado, sin etiqueta: gris (`secondary`) en el punto del avatar, y en el listado como texto, para no pesar como
+ * un estado atendible.
  */
 export const PRESENCE_TAGS: Readonly<Record<PresenceStatus, PresenceTag>> = {
   disponible: { labelColor: 'green' },
@@ -50,7 +54,7 @@ export const PRESENCE_TAGS: Readonly<Record<PresenceStatus, PresenceTag>> = {
   comida: { labelColor: 'red' },
   formacion: { labelColor: 'red' },
   administrativo: { labelColor: 'brown' },
-  post_conversando: { severity: 'info' },
+  post_conversando: { labelColor: 'blue', bordered: false },
   conversacion: { labelColor: 'blue' },
   desconectado: { severity: 'secondary' },
 };

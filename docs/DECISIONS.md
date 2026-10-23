@@ -160,6 +160,32 @@
 
 ---
 
+## DD-226 · 2026-10-23 — Post-conversando, en la etiqueta azul sin borde: la misma pieza que las demás de la columna Estado
+
+**Contexto** · DD-225 §3 pintó Post-conversando con el `tag` Info, la severidad que le da Figma, para separarlo de
+Conversación. Medido en el listado, el `tag` del Kit no tiene la hechura de la etiqueta que llevan los demás estados:
+21,5 px de alto frente a 25,5, peso 700 frente a 600 y sin borde. Producto pidió consistencia con el resto.
+
+**Decisión** · Post-conversando lleva la etiqueta azul de Conversación con `bordered: false` (`PRESENCE_TAGS`): la misma
+pieza, alto (25,5), peso (600), radio y relleno que las demás, porque el borde queda transparente. Lo que la separa de
+Conversación es el borde azul que lleva esta. El punto del avatar, el azul de etiqueta, como Conversación. Enmienda
+DD-225 §3.
+
+**Razón** · Es la única opción que cumple a la vez lo que se pidió: la forma de las demás etiquetas, sin tokens nuevos
+y dentro de la familia azul.
+
+**Descartadas** ·
+- *Seguir con el `tag` Info*: la única pastilla de la columna con otro alto y otro peso.
+- *Una entrada nueva en la paleta de etiquetas con los colores de Info* (sky-100 de fondo, sky-700 de texto): la forma
+  de las demás y el color de Figma, pero son tokens nuevos y un color más que se podría elegir en Etiquetas.
+- *Otra etiqueta de la paleta*: el teal se confunde con el verde de Disponible (DD-225); el morado es el color de la IA;
+  ámbar y naranja quedan junto al marrón de Administrativo; el gris es Desconectado.
+
+**Consecuencias** · `agentes-como-coa-4060-4062.spec.ts` mira el fondo azul de etiqueta y el borde: el de Conversación,
+pintado; el de Post-conversando, transparente. En Figma (Supervisor › Agentes), Post-conversando deja el Info: sky/50 de
+fondo, sin borde, y texto sky/600, como Conversación sin su borde (DD-225, lo más cercano del DS a la etiqueta azul). La
+congelada 4062 sirve aún el `tag` Info hasta que avance a este commit.
+
 ## DD-225 · 2026-10-23 — Agentes como sus borradores de COA: borrar varios, Teléfono y Estado de inicio, Estado ordenable y por familias de color, el índice del alta con marcadores y lo que no se copia al duplicar
 
 **Contexto** · Los borradores de «SOLUCIÓN SISMAC-4060 Sección Agentes» y «SOLUCIÓN SISMAC-4062 Creación/Edición
@@ -185,10 +211,10 @@ resumen; el Excel no llevaba los canales, y el aviso de quitar canales decía «
    pausa», como Post-conversando (DD-139). La semilla lo pone en el agente 17, que no es de la demo del Dashboard. **El
    color va por familia, sin tokens nuevos**: Disponible verde; rojo para No disponible y los personalizados;
    **Administrativo, en su marrón** (DD-176): no va con etiqueta roja; azul para lo de la conversación, con
-   **Post-conversando en el `tag` Info**, la severidad que le da Figma (Supervisor › Agentes): el tono de Conversación,
-   lleno y sin borde, que se distingue sin salir de la familia (fondo a ΔE OKLab 0,056, texto a 0,104); Desconectado,
-   en texto gris. El punto del avatar, del badge Info nativo. El `tag` del Kit no tiene la hechura de la etiqueta:
-   21,5 px de alto frente a 25,5, peso 700 frente a 600 y sin borde.
+   **Post-conversando en el `tag` Info** (enmendado por DD-226: etiqueta azul sin borde), la severidad que le da Figma
+   (Supervisor › Agentes): el tono de Conversación, lleno y sin borde, que se distingue sin salir de la familia (fondo a
+   ΔE OKLab 0,056, texto a 0,104); Desconectado, en texto gris. El punto del avatar, del badge Info nativo. El `tag` del
+   Kit no tiene la hechura de la etiqueta: 21,5 px de alto frente a 25,5, peso 700 frente a 600 y sin borde.
 4. **«Grupos» ordena de mayor a menor al primer clic** (`defaultSortOrder: -1`), como «Agentes» en Grupos.
 5. **Duplicar deja vacíos la foto y el móvil**, que son de otra persona (sin móvil, «Gestión de dispositivos» se
    apaga), **y no copia el estado**: la copia nace «Desconectado», como **todo agente nuevo**, que hasta hoy nacía
