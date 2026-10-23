@@ -15,6 +15,7 @@ import {
   clampLinksToChannels,
   diffLinks,
   familyOf,
+  fillEmptyLinks,
   hasChatFamily,
   isLastChannel,
   newLinkFor,
@@ -56,6 +57,23 @@ test('clampLinksToChannels: recorta a lo que ofrece el grupo y no clona lo que n
   assert.equal(out[0], intact);
   assert.deepEqual(out[1].channels, ['phone']);
   assert.equal(out[1].agentId, 2);
+});
+
+test('fillEmptyLinks: al activar un canal, el agente sin ninguno lo gana si lo tiene permitido (DD-223)', () => {
+  const vacio = { agentId: 1, channels: [] };
+  const soloChat = { agentId: 2, channels: [] };
+  const conEmail = { agentId: 3, channels: ['email'] };
+  const permitidos = { 1: undefined, 2: ['chat'], 3: undefined };
+  const out = fillEmptyLinks([vacio, soloChat, conEmail], ['phone', 'email'], ['phone'], (l) => permitidos[l.agentId]);
+  assert.deepEqual(out[0].channels, ['phone']);
+  // Sin Teléfono permitido sigue sin canales: sale al guardar, con su aviso.
+  assert.equal(out[1], soloChat);
+  // Quien ya atiende alguno no gana el nuevo.
+  assert.equal(out[2], conEmail);
+  // Quitar un canal no activa ninguno: nadie gana nada.
+  assert.equal(fillEmptyLinks([vacio], ['email'], [])[0], vacio);
+  // Con WhatsApp, el agente gana la familia Chat.
+  assert.deepEqual(fillEmptyLinks([vacio], ['whatsapp'], ['chat'])[0].channels, ['chat']);
 });
 
 test('toggleLinkChannel: añade en orden canónico y quita', () => {

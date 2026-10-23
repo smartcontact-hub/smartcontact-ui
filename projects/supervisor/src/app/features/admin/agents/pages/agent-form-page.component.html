@@ -5,8 +5,8 @@
      algo sin guardar. -->
 <ng-template #topbarActions>
   <!-- Con cambios, lo dice en palabras: un solo «Guardar» para toda la ficha, y el índice marca dónde están (DD-122).
-       `role="status"`: se anuncia una vez, al aparecer. Apagado mientras falte algo: su tooltip y «Falta: …» del resumen
-       dicen qué (DD-219). -->
+       `role="status"`: se anuncia una vez, al aparecer. Apagado mientras falte algo: su tooltip y el índice dicen qué
+       (DD-219, DD-222). -->
   @if (mode() === 'edit' && formDirty()) {
     <span class="form-save-reason sc-text-caption-regular" role="status">{{ 'common.unsaved_changes' | translate }}</span>
   }
@@ -35,7 +35,7 @@
   <div class="page__inner page__inner--rail ficha-rail ficha-rail--summary">
     <!-- La columna de la izquierda, fija al bajar, como en la ficha de grupo (DD-170): el nombre encima del índice, y
          «Eliminar» debajo. Cada fila del índice es un enlace a su sección (`?seccion=`, DD-122). El mismo al crear, al
-         duplicar y al editar (DD-143): en el alta, la sección que se deja completa lleva ✓. -->
+         duplicar y al editar (DD-143): en el alta, cada fila lleva su marcador de paso y su línea, como el grupo (DD-222). -->
     <div class="page__rail">
       <!-- La cabecera, en los tres modos, como la ficha de grupo: su <h1> es el único del documento. En el alta dice
            «Nuevo agente» hasta que se escribe el nombre, y al crear la ficha no salta (DD-130). -->
@@ -82,6 +82,7 @@
         [sectionErrorHints]="sectionErrorHints()"
         [sectionsWithChanges]="sectionsWithChanges()"
         [sectionsDone]="alta.hechas()"
+        [sectionStates]="sectionStates()"
         [flush]="true"
         (activeChange)="goTo($event)"
       />
@@ -128,11 +129,8 @@
       <section class="resumen" aria-labelledby="agent-summary-title">
         <!-- El nombre de la región, sin rótulo a la vista (DD-144): el resumen arranca a la altura del índice. -->
         <h2 id="agent-summary-title" class="resumen__title visually-hidden">{{ 'common.summary' | translate }}</h2>
-        <!-- «Falta: …» o «Listo para crear» (DD-136, que vuelve con DD-219): explica por qué «Crear agente» está apagado, y
-             cada cosa lleva a su campo. Al editar, solo si falta algo. -->
-        @if (mode() !== 'edit' || summaryMissing().length > 0) {
-          <sc-summary-status [missing]="summaryMissing()" [ready]="summaryReady()" (ir)="irAFalta($event)" />
-        }
+        <!-- Encima del resumen no sale nada: lo que falta lo dicen el índice y el tooltip de «Crear agente» (DD-222,
+             SISMAC-4062). Hasta DD-225 el alta llevaba aquí «Falta: …» o «Listo para crear». -->
         <!-- Las tarjetas son hermanas: 14 entre ellas (AGENTS «UX de pantalla» 9). -->
         <div class="resumen__cards">
           <!-- Cada dato lleva a su sitio, como el resumen del grupo (DD-146): la cifra, a Grupos; cada fila, a su campo. -->
@@ -276,7 +274,7 @@
             [filter]="true"
             filterBy="number"
             [required]="true"
-            [options]="availableExtensions"
+            [options]="extensionOptions()"
             [placeholder]="'agents.form.fields.extension_placeholder' | translate"
             [helperText]="ayuda('agents.errors.extension_required')"
             [error]="falta('agents.errors.extension_required')"
@@ -680,6 +678,7 @@
         [allowedChannels]="form().allowedChannels"
         [selfActivate]="form().permissions.selfActivate"
         [outboundGroupId]="outboundGroupId()"
+        [conSalientes]="conCallBlending"
         [outboundHint]="ayuda('agents.errors.outbound_required')"
         [outboundError]="falta('agents.errors.outbound_required')"
         (linksChange)="onLinksChange($event)"

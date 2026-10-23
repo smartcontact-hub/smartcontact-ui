@@ -31,6 +31,7 @@ import {
   EXTENSION_ICONS,
   ExtensionType,
   PRESENCE_LABEL_KEYS,
+  PRESENCE_SORT_RANK,
   PRESENCE_TAGS,
   PresenceStatus,
 } from '../data/agents-data';
@@ -39,7 +40,7 @@ import { CHANNEL_FAMILIES, FAMILY_LABEL_KEYS, compareChannels } from '@features/
 import { GroupsStore } from '@features/admin/groups/state/groups.store';
 import { EquiposStore } from '@features/admin/repositories/state/equipos.store';
 import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links.store';
-import { injectConfirmarBorrado } from '@features/admin/services/confirmar-borrado';
+import { injectConfirmarBorrado, injectConfirmarBorradoVarios } from '@features/admin/services/confirmar-borrado';
 import { Channel } from '@features/admin/services/group-agent-links.types';
 import { permittedFamilies } from '@features/admin/services/group-channels.core.mjs';
 import { TooltipModule } from 'primeng/tooltip';
@@ -49,7 +50,9 @@ import { TooltipModule } from 'primeng/tooltip';
  * Older `_v1` caches no longer parse and are silently ignored. */
 /* v5 (2026-09-24): columnas nuevas (Email, Teléfono, Grabación), fuera Activación, y el ID detrás del nombre.
  * Una lista guardada no las conoce. Salta la v4, que usó la rama `comparar/fichas` en el mismo origen local. */
-const COLUMN_PREF_KEY = 'sc-agents-columns-v5';
+/* v6 (2026-10-23): Teléfono y Estado salen de inicio (SISMAC-4060, DD-225). Una lista guardada los seguiría escondiendo:
+ * el selector solo añade a lo guardado las columnas que no conoce. */
+const COLUMN_PREF_KEY = 'sc-agents-columns-v6';
 
 @Component({
   selector: 'sc-agents-list-page',
@@ -81,6 +84,7 @@ export class AgentsListPageComponent {
   private readonly lang = injectLangChange();
   private readonly router = inject(Router);
   private readonly confirmarBorrado = injectConfirmarBorrado('agents.delete_dialog.title');
+  private readonly confirmarBorradoVarios = injectConfirmarBorradoVarios('agents.delete_dialog.title_bulk');
 
   /** CTA "Nuevo agente" proyectado a la TopBar (modelo "todo arriba" S59):
    * la banda de page-header desaparece; identidad → breadcrumb, acción → barra. */
@@ -134,22 +138,22 @@ export class AgentsListPageComponent {
   protected readonly presenceKeys = PRESENCE_LABEL_KEYS;
   protected readonly agents = this.agentsStore.agents;
 
-  /** Filas marcadas: la lista las pinta y exportar las usa; sin barra de lote (DD-215). */
+  /** Filas marcadas: la lista las pinta, exportar las usa y el clic derecho las elimina; sin barra de lote (DD-215). */
   protected readonly selectedIds = signal<ReadonlySet<number>>(new Set());
   protected readonly columnPrefKey = COLUMN_PREF_KEY;
   protected readonly columnDefs = computed<readonly ColumnDef[]>(() => {
     this.lang(); // cabeceras al día al cambiar de idioma (ver `injectLangChange`)
-    /* Lo que sale de inicio es lo que usa todo el mundo. Opcionales: el ID, que solo usa
-     * posventa en sus incidencias; el teléfono, que no todos tienen; y el tipo, que solo existe en CusCare. */
+    /* Lo que sale de inicio es lo que usa todo el mundo, con el teléfono y el estado (SISMAC-4060, DD-225). Opcionales: el
+     * ID, que solo usa posventa en sus incidencias, y el tipo, que solo existe en CusCare. */
     return [
       { key: 'name', label: this.translate.instant('agents.table.name'), locked: true },
       { key: 'code', label: this.translate.instant('agents.table.code'), defaultVisible: false },
       { key: 'extension', label: this.translate.instant('agents.table.extension') },
       { key: 'email', label: this.translate.instant('agents.table.email') },
-      { key: 'phone', label: this.translate.instant('agents.table.phone'), defaultVisible: false },
+      { key: 'phone', label: this.translate.instant('agents.table.phone') },
       { key: 'channels', label: this.translate.instant('agents.table.channels') },
       { key: 'type', label: this.translate.instant('agents.table.type'), defaultVisible: false },
-      { key: 'presence', label: this.translate.instant('agents.table.presence'), defaultVisible: false },
+      { key: 'presence', label: this.translate.instant('agents.table.presence') },
       { key: 'recording', label: this.translate.instant('agents.table.recording') },
       { key: 'groups', label: this.translate.instant('agents.table.groups') },
       // Las marcas para filtrar (revisión de agentes del 2026-10-09): en Voice, la columna con la que filtran.
@@ -178,7 +182,7 @@ export class AgentsListPageComponent {
    *
    * El `field` de cada columna es EL MISMO `key` que usa el `columnDefs` del
    * `sc-column-selector`: es lo que casa `[visibleColumns]` con el selector
-   * (y lo que hay persistido en `sc-agents-columns-v5`).
+   * (y lo que hay persistido en `sc-agents-columns-v6`).
    */
   private readonly codeTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('codeTpl');
   private readonly nameTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('nameTpl');
@@ -195,8 +199,9 @@ export class AgentsListPageComponent {
 
   protected readonly columns = computed<readonly ScColumnDef<Agent>[]>(() => {
     this.lang(); // cabeceras al día al cambiar de idioma (ver `injectLangChange`)
-    /* Anchos MEDIDOS del dato más largo de cada columna corta en los cuatro idiomas: el nombre se come el
-     * resto y la tabla lleva `tableMinWidth`, así que por debajo se desplaza en vez de cortar. Todas llevan
+    /* Anchos MEDIDOS del dato más largo de cada columna corta en los cuatro idiomas. El nombre crece hasta 24rem y, en
+     * una tabla más ancha, el sobrante va a la columna del «⋮» (DD-187 §7, en `sc-list-page`); la tabla lleva
+     * `tableMinWidth`, así que por debajo se desplaza en vez de cortar. Todas llevan
      * ancho en rem, también las opcionales: `sc-list-page` descuenta las ocultas del ancho mínimo. */
     return [
       {
@@ -262,6 +267,8 @@ export class AgentsListPageComponent {
         field: 'presence',
         skeleton: 'tag',
         header: this.translate.instant('agents.table.presence'),
+        // De más a menos disponible (`PRESENCE_SORT_RANK`, SISMAC-4060). Hasta DD-225 era la única que no se ordenaba (DD-180).
+        sortable: true,
         cellTemplate: this.presenceTpl(),
         /* «Post-conversando» (122) + punto (7) + hueco (7) = 136 px de dato; con 10rem quedaban 132 (2026-09-24). */
         width: '10.25rem',
@@ -279,6 +286,8 @@ export class AgentsListPageComponent {
         field: 'groups',
         header: this.translate.instant('agents.table.groups'),
         sortable: true,
+        // La cifra, de mayor a menor al primer clic, como «Agentes» en la lista de grupos (SISMAC-4060, DD-225).
+        defaultSortOrder: -1,
         cellTemplate: this.groupsTpl(),
         /* La cabecera con su flecha: «Groupes», 105 px (medido a 1440, 2026-10-06). */
         width: '6.875rem',
@@ -332,6 +341,8 @@ export class AgentsListPageComponent {
         return Number(a.permissions.recording) - Number(b.permissions.recording);
       case 'channels':
         return compareChannels(this.channelsForAgent(a.id), this.channelsForAgent(b.id), CHANNEL_FAMILIES);
+      case 'presence':
+        return this.comparePresence(a.presenceStatus, b.presenceStatus);
       case 'groups':
         return this.groupsForAgent(a.id).length - this.groupsForAgent(b.id).length;
       case 'teams':
@@ -341,6 +352,13 @@ export class AgentsListPageComponent {
     }
   };
 
+
+  /** El estado, por su puesto (`PRESENCE_SORT_RANK`); los personalizados, entre ellos por su nombre. Sin estado, al final. */
+  private comparePresence(a: PresenceStatus | undefined, b: PresenceStatus | undefined): number {
+    const rank = (p: PresenceStatus | undefined) => (p ? PRESENCE_SORT_RANK[p] : Number.MAX_SAFE_INTEGER);
+    const name = (p: PresenceStatus | undefined) => (p ? this.translate.instant(this.presenceKeys[p]) : '');
+    return rank(a) - rank(b) || name(a).localeCompare(name(b), this.translate.currentLang);
+  }
 
   /**
    * Clave i18n del tipo de agente. Es un método y no un indexado en plantilla
@@ -416,6 +434,28 @@ export class AgentsListPageComponent {
     this.resultado.contar(this.translate.instant('agents.toasts.deleted_single', { name: agent.name }));
   }
 
+  /**
+   * Con varios marcados, el clic derecho sobre uno de ellos ofrece solo «Eliminar», como en la lista de grupos
+   * (SISMAC-4060, DD-225): editar varios a la vez queda para otra fase (DD-215).
+   */
+  protected readonly selectionMenu = (agents: readonly Agent[]): MenuItem[] => [
+    {
+      label: this.translate.instant('common.delete'),
+      icon: 'sc-icon-font sc-icon-font--delete',
+      styleClass: 'sc-menu-item--danger',
+      command: () => void this.onBulkDelete(agents),
+    },
+  ];
+
+  /** Eliminar los marcados: la misma confirmación, con su cifra; fuera los agentes, sus enlaces y la selección. */
+  protected async onBulkDelete(agents: readonly Agent[]): Promise<void> {
+    if (!(await this.confirmarBorradoVarios(agents.length))) return;
+    this.agentsStore.deleteAgents(agents.map((a) => a.id));
+    for (const agent of agents) this.linksStore.removeAgent(agent.id);
+    this.selectedIds.set(new Set());
+    this.resultado.contar(this.translate.instant('agents.toasts.deleted_bulk', { count: agents.length }));
+  }
+
 
 
   protected presenceLabelKey(presence: PresenceStatus): string {
@@ -427,7 +467,12 @@ export class AgentsListPageComponent {
     return 'labelColor' in tag ? tag.labelColor : null;
   }
 
-  protected presenceSeverity(presence: PresenceStatus): 'warn' | 'secondary' {
+  protected presenceBordered(presence: PresenceStatus): boolean {
+    const tag = PRESENCE_TAGS[presence];
+    return !('bordered' in tag) || tag.bordered !== false;
+  }
+
+  protected presenceSeverity(presence: PresenceStatus): 'secondary' {
     const tag = PRESENCE_TAGS[presence];
     return 'severity' in tag ? tag.severity : 'secondary';
   }
@@ -436,7 +481,8 @@ export class AgentsListPageComponent {
     return EXTENSION_ICONS[type];
   }
 
-  /** Exporta TODOS los campos de la tabla, se vean o no: el fichero es para trabajar con él, no una foto. */
+  /** Exporta TODOS los campos de la tabla, se vean o no: el fichero es para trabajar con él, no una foto. Con los canales,
+   *  por su nombre, como pide SISMAC-4060 (DD-225). */
   protected onExport(visibleRows: readonly Agent[]): void {
     const t = (key: string): string => this.translate.instant(key);
     const headers = [
@@ -446,6 +492,7 @@ export class AgentsListPageComponent {
       t('agents.export.extension_type'),
       t('agents.export.email'),
       t('agents.export.phone'),
+      t('agents.export.channels'),
       t('agents.export.type'),
       t('agents.export.status'),
       t('agents.export.recording'),
@@ -459,6 +506,9 @@ export class AgentsListPageComponent {
       t(`agents.ext_kind.${a.extensionType}`),
       a.email ?? '',
       a.phone ?? '',
+      this.channelsForAgent(a.id)
+        .map((c) => t(FAMILY_LABEL_KEYS[c]))
+        .join(', '),
       t(this.typeKeys[a.agentType]),
       a.presenceStatus ? t(this.presenceKeys[a.presenceStatus]) : '',
       t(a.permissions.recording ? 'common.yes' : 'common.no'),

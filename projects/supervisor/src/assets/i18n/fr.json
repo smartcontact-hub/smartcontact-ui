@@ -1572,7 +1572,7 @@
         "general": "Général",
         "categorization": "Catégories"
       },
-      "categorization_hint": "Ce que l'agent choisit, sur trois niveaux au plus ; chaque branche va aussi loin que nécessaire",
+      "categorization_hint": "Ce que l'agent choisit, jusqu'à trois niveaux",
       "rename_field": "Nouveau nom de l'option",
       "add_first": "Ajouter une option…",
       "add_under": "Ajouter dans « {{name}} »…",
@@ -1939,7 +1939,7 @@
       "assigned": {
         "query_placeholder": "Rechercher des agents…",
         "empty_title": "Aucun agent assigné",
-        "empty": "Choisissez-les dans « Ajouter des agents », en haut à droite.",
+        "empty": "Assignez-les depuis l’onglet « Tous ».",
         "no_results": "Aucun agent ne correspond au filtre.",
         "col_agent": "Agent",
         "col_active": "Activé",
@@ -2022,6 +2022,13 @@
         "body_one": "1 agent de ce groupe perd {{channels}}. Continuer ?",
         "body_orphaned_one": "1 agent de ce groupe perd {{channels}}, n'a plus aucun canal et quitte le groupe. Continuer ?",
         "body_orphaned_single": "{{count}} agents de ce groupe perdent {{channels}}, et 1 n'a plus aucun canal et quitte le groupe. Continuer ?"
+      },
+      "orphans": {
+        "title": "Retirer {{count}} agents du groupe ?",
+        "title_one": "Retirer 1 agent du groupe ?",
+        "body": "Ils n’ont plus aucun des canaux du groupe.",
+        "body_one": "Il n’a plus aucun des canaux du groupe.",
+        "confirm": "Retirer"
       },
       "danger_zone_description": "Supprimer ce groupe le retire des règles et routes qui le référencent. L'action ne peut pas être annulée.",
       "duplicate_title": "Dupliquer le groupe",
@@ -2120,6 +2127,8 @@
         "no_number": "Aucun numéro",
         "resources": "Ressources",
         "missing_phone": "téléphone sortant",
+        "missing_whatsapp": "numéro WhatsApp",
+        "missing_whatsapp_short": "WhatsApp",
         "missing_typification": "typification"
       },
       "channels": {
@@ -2171,7 +2180,7 @@
         "typification_placeholder": "Sélectionnez une typification",
         "view": "Voir le détail de « {{name}} »",
         "view_detail": "Voir le détail",
-        "scope_label": "Quelles conversations sont typifiées",
+        "scope_label": "Quelles conversations",
         "scope": {
           "all": "Toutes",
           "inbound": "Entrantes uniquement",
@@ -2187,6 +2196,7 @@
       "name_required": "Le nom est obligatoire",
       "name_taken": "Un groupe porte déjà ce nom",
       "phone_required": "Le téléphone sortant est obligatoire",
+      "whatsapp_required": "Le numéro WhatsApp est obligatoire",
       "typification_required": "La typification est obligatoire"
     },
     "toasts": {
@@ -2230,7 +2240,8 @@
     "no_results_query": "Aucun agent ne correspond à « {{query}} ».",
     "entity_singular": "agent",
     "delete_dialog": {
-      "title": "Supprimer l'agent «{{name}}» ?"
+      "title": "Supprimer l'agent «{{name}}» ?",
+      "title_bulk": "Supprimer {{count}} agents ?"
     },
     "table": {
       "code": "ID",
@@ -2267,7 +2278,8 @@
       "training": "Formation",
       "wrap_up": "Post-conversation",
       "administrative": "Administratif",
-      "offline": "Déconnecté"
+      "offline": "Déconnecté",
+      "talking": "Conversation"
     },
     "status": {
       "active": "Compte actif",
@@ -2382,7 +2394,7 @@
         "picker_placeholder": "Rechercher ou ajouter un groupe…",
         "picker_aria": "Ajouter un groupe à l'agent",
         "empty_title": "Aucun groupe assigné",
-        "empty": "Utilisez « Ajouter un groupe » pour assigner le premier groupe à cet agent.",
+        "empty": "Assignez-les depuis l’onglet « Tous ».",
         "col_group": "Groupe",
         "col_channels_here": "Canaux dans ce groupe",
         "col_active": "Activé",
@@ -2406,12 +2418,16 @@
           "channel_remove": "Retirer {{channel}} dans {{count}} groupes ?"
         },
         "bulk_done": "{{count}} groupes mis à jour.",
-        "not_allowed_hint": "{{channel}} ne fait pas partie de ses canaux\u00a0: ils se cochent dans Général"
+        "not_allowed_hint": "{{channel}} ne fait pas partie de ses canaux\u00a0: ils se cochent dans Général",
+        "all_assigned": "Tous les groupes sont assignés"
       },
       "allowed": {
         "title": "Canaux autorisés",
         "remove_body": "Il ne traite plus {{channels}} dans {{count}} groupes. Continuer ?",
-        "remove_body_orphaned": "Il ne traite plus {{channels}} dans {{count}} groupes, et quitte {{groups}}, qui n'ont plus aucun canal. Continuer ?"
+        "remove_body_orphaned": "Il ne traite plus {{channels}} dans {{count}} groupes, et quitte {{groups}}, qui n'ont plus aucun canal. Continuer ?",
+        "remove_body_one": "Il ne traite plus {{channels}} dans 1 groupe. Continuer ?",
+        "remove_body_orphaned_one": "Il ne traite plus {{channels}} dans 1 groupe, et quitte {{groups}}, qui n'a plus aucun canal. Continuer ?",
+        "remove_body_orphaned_single": "Il ne traite plus {{channels}} dans {{count}} groupes, et quitte {{groups}}, qui n'a plus aucun canal. Continuer ?"
       },
       "permissions": {
         "manage_devices": "Gestion d'appareils",
@@ -2477,7 +2493,8 @@
       "phone_required": "Le téléphone mobile est obligatoire\u00a0: l'extension y sonne",
       "email_required": "L'email est obligatoire",
       "group_required": "Au moins un groupe est obligatoire",
-      "outbound_required": "Le groupe des appels sortants est obligatoire\u00a0: un groupe avec Téléphone"
+      "outbound_required": "Le groupe des appels sortants est obligatoire\u00a0: un groupe avec Téléphone",
+      "email_taken": "Un agent utilise déjà cet email"
     },
     "empty": {
       "title": "Pas encore d'agents",
@@ -2495,7 +2512,8 @@
       "status": "État",
       "recording": "Enregistrement",
       "groups": "Groupes",
-      "sheet": "Agents"
+      "sheet": "Agents",
+      "channels": "Canaux"
     },
     "bulk_edit_title": "Appliquer la modification à {{count}} agent(s)"
   },

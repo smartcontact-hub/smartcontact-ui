@@ -11,7 +11,9 @@ import test from 'node:test';
 
 import {
   dejarSeccion,
+  estadosDeSecciones,
   firmaDe,
+  firmaVista,
   seccionesHechas,
   seDice,
 } from '../../projects/supervisor/src/app/shared/utils/alta-secciones.core.mjs';
@@ -30,7 +32,7 @@ test('seccionesHechas: ✓ en la dejada y completa, no en la abierta ni en la qu
   assert.deepEqual([...hechas], ['general']);
 });
 
-test('seccionesHechas ROJO: el caso del 2026-10-20, quitar Teléfono le quita el ✓ a Distribución y colas', () => {
+test('seccionesHechas: añadir un canal quita el ✓ (hay algo nuevo que no viste); quitarlo, no', () => {
   const dejadas = new Map([['distribucion', firmaDe(['phone'])]]);
   const con = (canales) =>
     seccionesHechas({
@@ -41,9 +43,19 @@ test('seccionesHechas ROJO: el caso del 2026-10-20, quitar Teléfono le quita el
       completa: () => true,
     });
   assert.deepEqual([...con(['phone'])], ['distribucion']);
-  assert.deepEqual([...con([])], []);
-  // Volver a marcarlo devuelve lo que se vio: la firma es la misma.
-  assert.deepEqual([...con(['phone'])], ['distribucion']);
+  // Añadir Chat trae un bloque que no viste: se va el ✓.
+  assert.deepEqual([...con(['phone', 'chat'])], []);
+  // Quitar Teléfono no trae nada nuevo: la sección sigue como la dejaste.
+  assert.deepEqual([...con([])], ['distribucion']);
+});
+
+test('firmaVista: lo de ahora cabe en lo visto; lo nunca visto no', () => {
+  const dejadas = new Map([['a', 'chat,phone']]);
+  assert.equal(firmaVista(dejadas, 'a', 'phone'), true);
+  assert.equal(firmaVista(dejadas, 'a', 'chat,phone'), true);
+  assert.equal(firmaVista(dejadas, 'a', ''), true);
+  assert.equal(firmaVista(dejadas, 'a', 'email,phone'), false);
+  assert.equal(firmaVista(dejadas, 'b', ''), false);
 });
 
 test('seccionesHechas: una sección dejada pero incompleta no lleva ✓', () => {
@@ -92,4 +104,37 @@ test('firmaDe: la misma con otro orden o con repetidos', () => {
   assert.equal(firmaDe(['phone', 'chat']), firmaDe(['chat', 'phone', 'chat']));
   assert.notEqual(firmaDe(['phone']), firmaDe(['phone', 'email']));
   assert.equal(firmaDe([]), '');
+});
+
+test('estadosDeSecciones: actual la abierta, hecha o error la dejada, nuevo la vista con algo nuevo, pendiente la nunca abierta', () => {
+  const dejadas = new Map([['general', ''], ['distribucion', 'phone'], ['recursos', '']]);
+  const estados = estadosDeSecciones({
+    ids: [...ids, 'extra'],
+    abierta: 'agentes',
+    dejadas,
+    firma: (id) => (id === 'recursos' ? 'otra' : id === 'distribucion' ? 'phone' : ''),
+    completa: (id) => id !== 'general',
+  });
+  assert.deepEqual(Object.fromEntries(estados), {
+    general: 'error',
+    distribucion: 'hecha',
+    recursos: 'nuevo',
+    agentes: 'actual',
+    extra: 'pendiente',
+  });
+});
+
+test('estadosDeSecciones: el resultado es en vivo, también con la sección abierta', () => {
+  const dejadas = new Map([['general', ''], ['distribucion', '']]);
+  const con = (abierta, completas) =>
+    Object.fromEntries(estadosDeSecciones({ ids, abierta, dejadas, firma: () => '', completa: (id) => completas.includes(id) }));
+  // Abrir la verde no la pone en «actual».
+  assert.equal(con('general', ['general']).general, 'hecha');
+  // La roja abierta sigue roja mientras falte, y pasa a verde al rellenar.
+  assert.equal(con('distribucion', []).distribucion, 'error');
+  assert.equal(con('distribucion', ['distribucion']).distribucion, 'hecha');
+  // La verde a la que se le vacía un obligatorio con la sección abierta vuelve a rojo.
+  assert.equal(con('general', []).general, 'error');
+  // La primera visita no regaña.
+  assert.equal(estadosDeSecciones({ ids, abierta: 'agentes', dejadas, firma: () => '', completa: () => false }).get('agentes'), 'actual');
 });

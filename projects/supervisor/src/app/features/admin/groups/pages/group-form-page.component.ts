@@ -20,7 +20,6 @@ import {
 import { changedKeys, createFormDirtyState } from '@shared/utils/form-dirty-state';
 import { nombreDeCopia } from '@shared/utils/copy-name';
 import {
-  avisosDelIndice,
   ayudaDeObligatorio,
   dejoElCampo,
   firmaDe,
@@ -111,6 +110,7 @@ import {
   channelRemovalImpact,
   clampLinksToChannels,
   diffLinks,
+  fillEmptyLinks,
   hasChatFamily,
   removedFamilies,
   toggleChatFamily,
@@ -320,15 +320,19 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
    * ficha de cliente, a Recursos. Agente y usuario siguen con pestañas: la divergencia es a
    * propósito y está escrita en DD-121.
    */
-  protected readonly navSections = computed<readonly FormNavSection[]>(() =>
-    [
+  protected readonly navSections = computed<readonly FormNavSection[]>(() => {
+    // «Revisada» y no «Listo» donde no hay nada que cumplir: Recursos y Agentes, y Distribución sin ningún canal. Solo en el
+    // alta: al editar nada se «revisa», todo está guardado.
+    const alta = this.mode() === 'create';
+    const sinCanales = this.form().channels.size === 0;
+    return [
       { id: 'group-section-general', labelKey: 'groups.form.section.general', icon: 'tune' },
-      { id: 'group-section-distribution', labelKey: 'groups.form.section.distribution', icon: 'alt_route' },
+      { id: 'group-section-distribution', labelKey: 'groups.form.section.distribution', icon: 'alt_route', optional: alta && sinCanales },
       // Lo que se le asigna desde Repositorios, como «Recursos» en la ficha de agente.
-      { id: 'group-section-resources', labelKey: 'groups.form.section.resources', icon: 'library_books' },
-      { id: 'group-section-agents', labelKey: 'groups.form.section.agents', icon: 'headphones' },
-    ].map((s) => ({ ...s, href: this.sectionLinks.href(this.sectionUrl(s.id)) })),
-  );
+      { id: 'group-section-resources', labelKey: 'groups.form.section.resources', icon: 'library_books', optional: alta },
+      { id: 'group-section-agents', labelKey: 'groups.form.section.agents', icon: 'headphones', optional: alta },
+    ].map((s) => ({ ...s, href: this.sectionLinks.href(this.sectionUrl(s.id)) }));
+  });
 
   /**
    * EL ALTA, CON EL ÍNDICE DE LA EDICIÓN (DD-143): las mismas cuatro secciones, con ✓ en las que se dejan completas y
@@ -340,7 +344,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
     // ✓ en toda sección que se deja completa (DD-211 §6): Recursos y Agentes, con solo pasar; General y Distribución
     // (su teléfono saliente, si tiene Teléfono), con lo suyo.
     completa: (id) =>
-      id === 'group-section-general' ? this.generalValid() : id !== 'group-section-distribution' || (!this.phoneMissing() && !this.queueInvalid()),
+      id === 'group-section-general' ? this.generalValid() : id !== 'group-section-distribution' || (!this.phoneMissing() && !this.whatsappMissing() && !this.queueInvalid()),
     // Lo que General decide de las demás: sus bloques de canal, sus plantillas y sus columnas. Si cambian los canales
     // desde que se dejó una sección, su ✓ se va (DD-217).
     firma: (id) => (id === 'group-section-general' ? '' : firmaDe(this.form().channels)),
@@ -387,6 +391,15 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
   /** Sin tipificaciones en Repositorios, «Tipificar conversaciones» está apagado y no se enciende (SISMAC-4058). */
   protected readonly sinTipificaciones = computed(() => this.tipificacionesStore.items().length === 0);
 
+  /** Se tipifica de verdad: encendido y con tipificaciones que elegir. */
+  protected readonly tipifica = computed(() => this.form().wrapUp.classify && !this.sinTipificaciones());
+
+  /**
+   * Hay algo que pedir al acabar: comentarios o tipificación. Con cualquiera de los dos sale «En qué conversaciones», que
+   * vale para los dos (SISMAC-4058, DD-223).
+   */
+  protected readonly conPostconversacion = computed(() => this.form().wrapUp.comments || this.tipifica());
+
   /**
    * LO OBLIGATORIO, en el orden de la ficha: el nombre; la tipificación, con «Tipificar conversaciones» encendido; y el
    * teléfono saliente, con Teléfono. Cada uno con su sección, el campo al que se llega, su aviso y cómo se nombra en
@@ -402,6 +415,8 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
         aviso: 'groups.errors.typification_required', etiqueta: 'groups.form.summary.missing_typification' },
       { clave: 'phone', falta: this.phoneMissing(), seccion: 'group-section-distribution', ancla: 'group-phone',
         aviso: 'groups.errors.phone_required', etiqueta: 'groups.form.summary.missing_phone' },
+      { clave: 'whatsapp', falta: this.whatsappMissing(), seccion: 'group-section-distribution', ancla: 'group-chat-whatsapp',
+        aviso: 'groups.errors.whatsapp_required', etiqueta: 'groups.form.summary.missing_whatsapp' },
     ] as const;
   });
 
@@ -449,6 +464,12 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
   /** El aviso rojo bajo el teléfono saliente (DD-219). */
   protected readonly phoneError = computed<string | null>(() => this.errorDe('phone'));
 
+  /** Con WhatsApp, su número es obligatorio, como el teléfono saliente con Teléfono: sin él no tiene de dónde escribir. */
+  protected readonly whatsappMissing = computed(() => this.hasWhatsApp() && this.form().advanced.whatsappNumber.trim().length === 0);
+
+  /** El aviso rojo bajo el número de WhatsApp. */
+  protected readonly whatsappError = computed<string | null>(() => this.errorDe('whatsapp'));
+
   /** «Falta: …» del resumen, con cada cosa llevando a su campo (DD-219). Un nombre repetido no falta: va en su campo. */
   protected readonly summaryMissing = computed<readonly FaltaDelResumen[]>(() => {
     this.lang();
@@ -456,14 +477,6 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
       .filter((o) => o.falta)
       .map((o) => ({ etiqueta: this.translate.instant(o.etiqueta), seccion: o.seccion, ancla: o.ancla }));
   });
-
-  /** «Listo para crear»: en el alta, con «Crear grupo» encendido. */
-  protected readonly summaryReady = computed(() => this.mode() === 'create' && this.canSave());
-
-  /** Una cosa de «Falta: …»: a su campo. */
-  protected irAFalta(item: FaltaDelResumen): void {
-    this.irACampo(item.seccion, item.ancla);
-  }
 
   /** La primera cola con un tamaño que no vale, para llevar a su campo. */
   private readonly colaMal = computed<QueueChannel | null>(() => {
@@ -498,11 +511,50 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
     return out;
   });
 
-  /** El punto rojo del índice: la sección tiene un aviso a la vista. */
-  protected readonly sectionsWithErrors = computed<ReadonlySet<string>>(() => new Set(this.avisos().map((a) => a.seccion)));
+  /** El punto rojo del índice: la sección tiene un aviso a la vista. En el alta, la que se dejó con algo por hacer. */
+  protected readonly sectionsWithErrors = computed<ReadonlySet<string>>(() =>
+    this.mode() === 'create'
+      ? new Set([...this.alta.estados()].filter(([, estado]) => estado === 'error').map(([id]) => id))
+      : new Set(this.avisos().map((a) => a.seccion)),
+  );
 
-  /** Lo que dice cada sección con aviso en el índice, en texto (DD-217). */
-  protected readonly sectionErrorHints = computed(() => avisosDelIndice(this.avisos()));
+  /**
+   * Lo que dice cada sección en el índice, en texto: TODO lo que le falta. En el alta, de todas (en gris hasta que se
+   * deja la sección); al editar, solo de las que tienen un aviso a la vista (DD-219).
+   */
+  protected readonly sectionErrorHints = computed<Readonly<Record<string, string>>>(() => {
+    const todas = this.faltasPorSeccion();
+    if (this.mode() === 'create') return todas;
+    const conAviso = this.sectionsWithErrors();
+    return Object.fromEntries(Object.entries(todas).filter(([id]) => conAviso.has(id)));
+  });
+
+  /**
+   * El marcador de cada sección, solo en el alta (el recorrido: pendiente, nuevo, actual, hecha, error). Al editar todo
+   * está guardado: el índice va como siempre, sin marcadores, con el punto rojo y lo que falta bajo la sección.
+   */
+  protected readonly sectionStates = computed<ReadonlyMap<string, 'pendiente' | 'nuevo' | 'actual' | 'hecha' | 'error'> | null>(() =>
+    this.mode() === 'create' ? this.alta.estados() : null,
+  );
+
+  /**
+   * Lo que falta en cada sección, entero y en una línea para el índice del alta: «Nombre, tipificación», sin «Falta:» (el
+   * rojo y el marcador ya lo dicen). Es el feedback del alta: vive en el índice, que es donde se mira al tocar canales y secciones, y ya no sobre el resumen. Un nombre repetido o una cola imposible, que no son «falta», entran con su aviso.
+   */
+  private readonly faltasPorSeccion = computed<Readonly<Record<string, string>>>(() => {
+    this.lang();
+    const t = (key: string) => this.translate.instant(key);
+    const por: Record<string, string[]> = {};
+    for (const o of this.obligatorios()) {
+      // En el índice, el nombre más corto: «WhatsApp», no «número de WhatsApp» (la fila mide ~160 px de texto).
+      if (o.falta) (por[o.seccion] ??= []).push(t(o.clave === 'whatsapp' ? 'groups.form.summary.missing_whatsapp_short' : o.etiqueta));
+    }
+    if (this.nameTaken()) (por['group-section-general'] ??= []).push(t('groups.errors.name_taken'));
+    if (this.colaMal()) (por['group-section-distribution'] ??= []).push(t('groups.form.advanced.queue_invalid'));
+    const out: Record<string, string> = {};
+    for (const [id, items] of Object.entries(por)) out[id] = items.join(', ').replace(/^./, (c) => c.toUpperCase());
+    return out;
+  });
 
   /**
    * Las secciones con cambios sin guardar: su marca en el índice (DD-122). La ficha tiene un solo
@@ -541,6 +593,13 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
    */
   protected goTo(id: string): Promise<boolean> {
     if (this.mode() === 'create') {
+      // Dejar una sección con algo obligatorio vacío es dejarla en rojo: al volver, sus campos lo dicen en rojo, no en gris.
+      const dejada = this.alta.abierta();
+      if (id !== dejada) {
+        // Con algo vacío, TODOS los obligatorios de la sección pasan a decirlo en rojo, también los que se enciendan luego.
+        const propios = this.obligatorios().filter((o) => o.seccion === dejada);
+        if (propios.some((o) => o.falta)) for (const o of propios) this.ocasion.tocar(o.clave);
+      }
       this.alta.abrir(id);
       return Promise.resolve(true);
     }
@@ -1183,17 +1242,28 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
   }
 
   /**
-   * Marcar o quitar un canal no toca a los agentes (DD-217): la tabla y el resumen recortan sus canales a los del grupo
-   * solo para verlos (`linksVistos`), y se guardan recortados. Hasta el 2026-10-20 se recortaban aquí, y quitar y volver
-   * a poner Teléfono en Online Support dejaba a sus 13 agentes sin él.
+   * Quitar un canal no toca a los agentes (DD-217): la tabla y el resumen recortan sus canales a los del grupo solo para
+   * verlos (`linksVistos`), y se guardan recortados. Hasta el 2026-10-20 se recortaban aquí, y quitar y volver a poner
+   * Teléfono en Online Support dejaba a sus 13 agentes sin él. Activar uno se lo da a quien no atiende ninguno y lo tiene
+   * permitido, como pide SISMAC-4058 para un grupo sin canales con agentes (DD-223, `fillEmptyLinks`).
    */
   protected toggleChannel(channel: GroupChannel): void {
-    this.form.update((f) => ({ ...f, channels: toggleGroupChannel(f.channels, channel) }));
+    this.cambiarCanales(toggleGroupChannel(this.form().channels, channel));
   }
 
   /** La casilla madre: enciende o apaga los dos subcanales de una vez (patrón B12 del laboratorio). */
   protected toggleChatFamily(): void {
-    this.form.update((f) => ({ ...f, channels: toggleChatFamily(f.channels) as Set<GroupChannel> }));
+    this.cambiarCanales(toggleChatFamily(this.form().channels) as Set<GroupChannel>);
+  }
+
+  private cambiarCanales(channels: Set<GroupChannel>): void {
+    this.form.update((f) => {
+      const activadas = removedFamilies(channels, f.channels);
+      const links = activadas.length === 0
+        ? f.links
+        : fillEmptyLinks(f.links, channels, activadas, (link) => this.agentsStore.getAgent(link.agentId)?.allowedChannels);
+      return { ...f, channels, links };
+    });
   }
 
   /** Los agentes con los canales que el grupo ofrece ahora y cada uno tiene: lo que se ve y lo que se guarda. */
@@ -1343,6 +1413,17 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
       }
     }
 
+    // Quien se queda sin canales en un grupo con canales sale al guardar (DD-121). Si es por quitar canales al editar, lo
+    // ha dicho la cascada; si no (al crear, o un agente que no tiene permitido el canal que se activó), lo dice este aviso
+    // antes de sacarlo, y no en silencio (DD-223).
+    if (!this.cascadeConfirm() && this.sacarConfirm() === null) {
+      const fuera = this.linksVistos().length - this.withoutOrphans(this.linksVistos()).length;
+      if (fuera > 0) {
+        this.sacarConfirm.set(fuera);
+        return;
+      }
+    }
+
     this.saving.set(true);
     setTimeout(() => {
       const f = this.form();
@@ -1430,11 +1511,24 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
   /** Adónde ir cuando acabe de guardar; `null`, quedarse en la ficha. */
   private destinoTrasGuardar: string | null = null;
 
-  protected async irARepositorios(event: MouseEvent): Promise<void> {
+  protected irARepositorios(event: MouseEvent): void {
     if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     event.preventDefault();
+    void this.salirARepositorios('/admin/repositorios');
+  }
+
+  /**
+   * «Editar en Repositorios», en el detalle de la tipificación: también sale de la ficha, así que pregunta lo mismo que
+   * «Gestionar en Repositorios», guardar antes, y no «¿Descartar cambios?» (DD-224).
+   */
+  protected editarTipificacion(destino: string): void {
+    this.viendoTipificacion.set(false);
+    void this.salirARepositorios(destino);
+  }
+
+  private async salirARepositorios(destino: string): Promise<void> {
     if (!this.formDirty()) {
-      void this.router.navigateByUrl('/admin/repositorios');
+      void this.router.navigateByUrl(destino);
       return;
     }
     const guardar = await this.confirm.request({
@@ -1445,7 +1539,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
       icon: 'info',
     });
     if (!guardar) return;
-    this.destinoTrasGuardar = '/admin/repositorios';
+    this.destinoTrasGuardar = destino;
     this.save();
   }
 
@@ -1461,6 +1555,8 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
   protected discard(): void {
     this.form.set(this.dirtyState.pristineValue());
     this.ocasion.olvidar();
+    // En un alta, volver al vacío es volver a empezar: lo dejado antes ya no es lo que hay.
+    if (this.mode() === 'create') this.alta.reiniciar();
   }
 
   protected cancelCascade(): void {
@@ -1480,6 +1576,20 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
     // Re-enter save() — the guard sees `cascadeConfirm` is set and skips the check.
     this.save();
     this.cascadeConfirm.set(null);
+  }
+
+  /** Los agentes que se quedan sin canales y salen al guardar, a la espera del sí (DD-223). */
+  protected readonly sacarConfirm = signal<number | null>(null);
+
+  protected cancelSacar(): void {
+    this.sacarConfirm.set(null);
+    this.destinoTrasGuardar = null;
+  }
+
+  protected confirmSacar(): void {
+    // Como la cascada: `save()` ve el aviso puesto y no vuelve a preguntar.
+    this.save();
+    this.sacarConfirm.set(null);
   }
 
   /** El nombre de una familia, para el aviso de cascada: «Chat», no «Web Chat, WhatsApp». */

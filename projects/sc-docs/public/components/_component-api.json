@@ -4775,7 +4775,7 @@
     {
       "selector": "sc-form-section-nav",
       "name": "form-section-nav",
-      "primengBase": "—",
+      "primengBase": "primeng/tooltip",
       "estado": "experimental",
       "faltas": [
         "kit"
@@ -4874,6 +4874,16 @@
           "nativo": null
         },
         {
+          "nombre": "sectionStates",
+          "clase": "input",
+          "tipo": "ReadonlyMap<string, ScStepMarkerState> | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "El recorrido de un alta, con el marcador de paso (`sc-step-marker`) en TODAS las filas: pendiente sin ver, actual la abierta, hecha o error la que se dejó. Con él, el marcador sustituye a los puntos y al ✓ sueltos (las filas cambian de estado en su sitio, sin aparecer de un hueco vacío); lo que falta se sigue diciendo en texto bajo la etiqueta si la página lo da. Opt-in: sin él, el índice se pinta como siempre (edición, Contact Center, constructor de reglas). Movimiento (todo se apaga con `prefers-reduced-motion`; la primera pintura no anima): el marcador cambia de estado en su sitio, con el ✓ dibujándose y un halo verde de 560 ms, una vez, al completarse; el color del texto de la línea se difumina en 300 ms; y si cambia la línea de una fila que NO se está mirando (marcar WhatsApp en General cambia Distribución), esa línea se ilumina 1200 ms con un fondo de marca para verla de reojo. Los tiempos, en `sc-step-marker`.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
           "nombre": "activeChange",
           "clase": "output",
           "tipo": "string",
@@ -4884,7 +4894,29 @@
           "nativo": null
         }
       ],
-      "ocultas": []
+      "ocultas": [
+        "appendTo",
+        "autoHide",
+        "content",
+        "escape",
+        "fitContent",
+        "hideDelay",
+        "hideOnEscape",
+        "life",
+        "pTooltipPT",
+        "pTooltipUnstyled",
+        "positionLeft",
+        "positionStyle",
+        "positionTop",
+        "showDelay",
+        "showOnEllipsis",
+        "tooltipDisabled",
+        "tooltipEvent",
+        "tooltipOptions",
+        "tooltipPosition",
+        "tooltipStyleClass",
+        "tooltipZIndex"
+      ]
     },
     {
       "selector": "sc-gauge",
@@ -4993,7 +5025,7 @@
     {
       "selector": "sc-group-popover",
       "name": "group-popover",
-      "primengBase": "primeng/popover, primeng/tooltip",
+      "primengBase": "primeng/tooltip",
       "estado": "experimental",
       "faltas": [
         "kit"
@@ -5007,7 +5039,7 @@
           "tipo": "readonly GroupRef[]",
           "porDefecto": null,
           "requerido": true,
-          "descripcion": "Los grupos que se listan en el globo.",
+          "descripcion": "Los grupos que se listan en el tooltip.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -5027,7 +5059,7 @@
           "tipo": "ScGroupPopoverDisplay",
           "porDefecto": "'count'",
           "requerido": false,
-          "descripcion": "Qué pinta la celda (`ScGroupPopoverDisplay`). Con `adaptive`, ninguno es «—» y uno es su nombre: la cifra con su desplegable solo cuando hay varios que enseñar.",
+          "descripcion": "Qué pinta la celda (`ScGroupPopoverDisplay`). Con `adaptive`, ninguno es «—» y uno es su nombre: la cifra con su tooltip solo cuando hay varios que enseñar.",
           "origen": "nuestro",
           "nativo": null
         },
@@ -5047,28 +5079,20 @@
           "tipo": "void",
           "porDefecto": null,
           "requerido": false,
-          "descripcion": "Se pulsó la cifra (clic, Intro o Espacio): lo que se hace con esa relación, si quien la pinta lo quiere (abrir la asignación de un grupo). Al pasar por encima o con el foco, la cifra sigue enseñando los nombres; al pulsarla, el globo se cierra. Sin nadie que la escuche, pulsar solo cierra el globo.",
+          "descripcion": "Se pulsó la cifra (clic, Intro o Espacio): lo que se hace con esa relación, si quien la pinta lo quiere (abrir la asignación de un grupo). Al pasar por encima o con el foco, la cifra sigue enseñando los nombres. Sin nadie que la escuche, pulsar no hace nada.",
           "origen": "nuestro",
           "nativo": null
         }
       ],
       "ocultas": [
         "appendTo",
-        "ariaCloseLabel",
-        "ariaLabel",
-        "ariaLabelledBy",
         "autoHide",
-        "autoZIndex",
-        "baseZIndex",
         "content",
-        "dismissable",
         "escape",
         "fitContent",
-        "focusOnShow",
         "hideDelay",
         "hideOnEscape",
         "life",
-        "motionOptions",
         "pTooltipPT",
         "pTooltipUnstyled",
         "positionLeft",
@@ -5076,8 +5100,6 @@
         "positionTop",
         "showDelay",
         "showOnEllipsis",
-        "style",
-        "styleClass",
         "tooltipDisabled",
         "tooltipEvent",
         "tooltipOptions",
@@ -8946,6 +8968,31 @@
           "porDefecto": "false",
           "requerido": false,
           "descripcion": "Empieza plegado. Solo tiene efecto con `collapsible`.",
+          "origen": "nuestro",
+          "nativo": null
+        }
+      ],
+      "ocultas": []
+    },
+    {
+      "selector": "sc-step-marker",
+      "name": "step-marker",
+      "primengBase": "—",
+      "estado": "experimental",
+      "faltas": [
+        "kit",
+        "demo"
+      ],
+      "retirado": null,
+      "cuando": "Para decir dónde está cada sección de un recorrido (sin ver, completa, con algo por hacer) en el índice de un alta. Un estado suelto de un campo es su mensaje (`sc-field-msg`); una marca de cambios sin guardar, el punto del índice.",
+      "contrato": [
+        {
+          "nombre": "state",
+          "clase": "input",
+          "tipo": "ScStepMarkerState",
+          "porDefecto": "'pendiente'",
+          "requerido": false,
+          "descripcion": "El estado del paso: `pendiente`, `nuevo`, `actual`, `hecha` o `error`.",
           "origen": "nuestro",
           "nativo": null
         }

@@ -1,6 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
 
-import { colorEfectivo } from '../shared/color';
 import { disableAnimations, forceLightTheme, goto, irASeccion, pickSelectOption } from './helpers';
 
 /**
@@ -16,9 +15,9 @@ import { disableAnimations, forceLightTheme, goto, irASeccion, pickSelectOption 
  *      su título (DD-217).
  *   3. «Siguiente» sube al principio de la sección nueva: sin eso, desde el pie de una sección larga se llega a media
  *      altura de la siguiente.
- *   4. La sección que se deja completa lleva ✓ en el índice, y su enlace lo dice; el ✓ se ve (3:1). La abierta no
- *      lo lleva aunque esté bien. La que se deja sin lo obligatorio no lleva nada: ni ✓ ni rojo hasta pulsar «Crear»
- *      (DD-217). Qué secciones pueden llevar ✓: `altas-obligatorio`.
+ *   4. La sección que se deja completa lleva su marcador verde, y su enlace lo dice; la abierta no, aunque esté bien. La
+ *      que se deja sin lo obligatorio, el rojo con lo que falta (DD-222; en el agente, DD-225). Qué secciones pueden
+ *      llevar «Completa»: `altas-obligatorio`.
  *   5. Cambiar de sección en el alta no toca la dirección ni el historial: Atrás del navegador sale del alta. La
  *      primera sección no lleva «Atrás», y la última no lleva «Siguiente».
  *   6. Agente y usuario: las secciones, en cualquier orden (el agente, las cuatro de la ficha de grupo desde DD-187).
@@ -65,12 +64,14 @@ test('grupo · sin puertas: «Siguiente» y «Atrás» cambian de sección tambi
   page,
 }) => {
   await goto(page, 'admin/grupos/crear');
-  // Sin nombre se sale de General, y nada en rojo: lo que falta se dice al pulsar «Crear grupo» (DD-217).
+  // Sin nombre se sale de General: el campo no acusa (DD-217) y el índice marca General en rojo con lo que falta
+  // (DD-222); Distribución, que no se ha visto, sigue sin revisar.
   await siguiente(page).click();
   await expect(actual(page)).toContainText('Distribución y colas');
   await expect(titulo(page, 'Distribución y colas')).toBeFocused();
   await expect(page.locator('#group-name-msg')).toHaveCount(0);
-  await expect(page.locator('sc-form-section-nav .form-nav__item--has-error')).toHaveCount(0);
+  await expect(page.locator('sc-form-section-nav .form-nav__item--has-error')).toHaveCount(1);
+  await expect(fila(page, 'General')).toHaveClass(/form-nav__item--has-error/);
 
   await atras(page).click();
   await expect(actual(page)).toContainText('General');
@@ -100,35 +101,33 @@ test('grupo · la sección que se deja completa lleva ✓ en el índice, su enla
   await goto(page, 'admin/grupos/crear');
   await page.locator('#group-name').fill(`E2E Índice ${Date.now()}`);
   // Aún no se ha dejado: sin ✓.
-  await expect(fila(page, 'General')).not.toHaveAccessibleName(/completa/);
+  await expect(fila(page, 'General')).not.toHaveAccessibleName(/Completa/);
 
   await siguiente(page).click();
-  await expect(fila(page, 'General')).toHaveAccessibleName(/General.*Esta sección está completa/);
-  const check = fila(page, 'General').locator('.form-nav__done');
-  await expect(check).toBeVisible();
-  expect((await check.evaluate(colorEfectivo)).ratio, 'el ✓ sobre su fondo').toBeGreaterThanOrEqual(3);
-  // La abierta no lleva ✓ aunque esté bien: aún no se ha dejado. Y Distribución, sin teléfono saliente, no está
-  // completa (DD-142): al dejarla, ni ✓ ni rojo (DD-217).
-  await expect(fila(page, 'Distribución y colas')).not.toHaveAccessibleName(/completa/);
+  await expect(fila(page, 'General')).toHaveAccessibleName(/General.*Completa/);
+  await expect(fila(page, 'General').locator('sc-step-marker.sc-step-marker--hecha')).toBeVisible();
+  // La abierta no lleva «Completa» aunque esté bien: aún no se ha dejado. Y Distribución, sin teléfono saliente, no está
+  // completa (DD-142, DD-222): al dejarla, rojo con lo que falta.
+  await expect(fila(page, 'Distribución y colas')).not.toHaveAccessibleName(/Completa/);
   await siguiente(page).click();
   await expect(actual(page)).toContainText('Recursos');
-  await expect(fila(page, 'Distribución y colas')).not.toHaveAccessibleName(/completa/);
-  await expect(fila(page, 'Distribución y colas').locator('.form-nav__done')).toHaveCount(0);
-  await expect(fila(page, 'Distribución y colas').locator('.form-nav__dot')).toHaveCount(0);
+  await expect(fila(page, 'Distribución y colas')).not.toHaveAccessibleName(/Completa/);
+  await expect(fila(page, 'Distribución y colas').locator('sc-step-marker.sc-step-marker--error')).toBeVisible();
 });
 
-test('agente · General que se deja sin lo obligatorio no lleva nada hasta pulsar «Crear»; al completarla, ✓', async ({ page }) => {
+test('agente · General que se deja sin lo obligatorio se pone en rojo con lo que falta; al completarla, «Completa»', async ({ page }) => {
   await goto(page, 'admin/agentes/crear');
   await siguiente(page).click();
-  // Ni rojo ni ✓: lo que falta se dice al pulsar «Crear agente» (DD-217, `indice-errores`).
-  await expect(fila(page, 'General')).not.toHaveAccessibleName(/obligatori|completa/);
-  await expect(fila(page, 'General').locator('.form-nav__dot')).toHaveCount(0);
+  // Como en el grupo (DD-222, DD-225): el marcador rojo y, en su línea, lo que falta.
+  await expect(fila(page, 'General')).toHaveClass(/form-nav__item--has-error/);
+  await expect(fila(page, 'General').locator('sc-step-marker.sc-step-marker--error')).toBeVisible();
+  await expect(fila(page, 'General')).toContainText('Nombre, email, extensión');
 
   await irASeccion(page, 'General');
   await rellenarGeneral(page);
   await siguiente(page).click();
-  await expect(fila(page, 'General')).toHaveAccessibleName(/General.*Esta sección está completa/);
-  await expect(fila(page, 'General').locator('.form-nav__dot')).toHaveCount(0);
+  await expect(fila(page, 'General')).toHaveAccessibleName(/General.*Completa/);
+  await expect(fila(page, 'General').locator('sc-step-marker.sc-step-marker--hecha')).toBeVisible();
 });
 
 test('grupo · cambiar de sección no toca la dirección ni el historial; la primera no lleva «Atrás», la última no lleva «Siguiente»', async ({

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 
-import type { GroupRef } from '@smartcontact-hub/components';
+import { type GroupRef } from '@smartcontact-hub/components';
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
 import { RepoListPageComponent } from '../components/repo-list-page.component';
 import { RepoColumnDef, RepoFieldDef, RepoPageConfig } from '../components/repo-types';
@@ -34,7 +34,16 @@ export class EquiposPageComponent {
   protected readonly store = inject(EquiposStore);
   private readonly agents = inject(AgentsStore);
 
-  /** Cuántos agentes lleva cada uno: lo único que dice de él, aparte de su nombre. */
+  /** Los agentes de un equipo, para el tooltip de su cifra. */
+  private agentesDe(equipo: Equipo): readonly GroupRef[] {
+    return this.agents
+      .agents()
+      .filter((a) => a.teams?.includes(equipo.id))
+      .map((a) => ({ id: a.id, name: a.name, active: true }));
+  }
+
+  /** Cuántos agentes lleva cada uno: lo único que dice de él, aparte de su nombre. Con varios, la cifra enseña sus
+   *  nombres en un tooltip, como las demás listas con una relación (Tipificaciones, Agentes, Grupos). */
   private readonly columns: readonly RepoColumnDef<Equipo>[] = [
     { key: 'name', labelKey: 'repositories.columns.name', kind: 'text', accessor: (i) => i.name, emphasis: true },
     {
@@ -50,22 +59,14 @@ export class EquiposPageComponent {
       key: 'agents',
       labelKey: 'repositories.equipos.agents',
       kind: 'groups',
-      accessor: (i) => String(this.agentsOf(i).length),
-      groups: (i) => this.agentsOf(i),
+      accessor: (i) => String(this.agentesDe(i).length),
+      groups: (i) => this.agentesDe(i),
       groupsDisplay: 'count',
       emptyAsZero: true,
       groupsAriaKey: 'repositories.equipos.agents_aria',
       width: '112px',
     },
   ];
-
-  /** Los agentes del equipo, para el globo de la cifra: la relación vista desde el equipo. */
-  private agentsOf(equipo: Equipo): readonly GroupRef[] {
-    return this.agents
-      .agents()
-      .filter((a) => a.teams?.includes(equipo.id))
-      .map((a) => ({ id: a.id, name: a.name, active: true }));
-  }
 
   protected readonly config: RepoPageConfig<Equipo> = {
     toastsKey: 'repositories.equipos.toasts',

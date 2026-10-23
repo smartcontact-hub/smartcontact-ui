@@ -896,17 +896,19 @@ test.describe('sc-multiselect', () => {
 });
 
 test.describe('sc-grouppopover', () => {
-  test('conteo, popover en hover y TODOS los nombres, sin cola «+N más»', async ({ page }) => {
+  test('conteo y tooltip en hover con TODOS los nombres (hasta quince), sin cola «+N más»', async ({ page }) => {
     await gotoPage(page, 'grouppopover');
     const trigger = page.getByTestId('sc-grouppopover-many').locator('button, [role="button"], .sc-group-popover__trigger').first();
     await trigger.hover();
-    const overlay = page.locator('.p-popover');
-    await expect(overlay).toBeVisible();
-    await expect(overlay.getByText('Soporte')).toBeVisible();
-    // Los siete, también los dos que antes se escondían tras la cola «+2 más».
-    await expect(overlay.locator('.group-popover__item')).toHaveCount(7);
-    await expect(overlay.getByText('Incidencias')).toBeVisible();
-    await expect(overlay.getByText(/más$/)).toHaveCount(0);
+    // Es el tooltip del DS, no un popover: el diseño lo resuelve así en todos los listados.
+    const tooltip = page.locator('.p-tooltip');
+    await expect(tooltip).toBeVisible();
+    await expect(page.locator('.p-popover')).toHaveCount(0);
+    // Los siete, uno por línea.
+    for (const nombre of ['Soporte', 'Ventas', 'Postventa', 'Calidad', 'Retención', 'Backoffice', 'Incidencias']) {
+      await expect(tooltip).toContainText(nombre);
+    }
+    await expect(tooltip.getByText(/más$/)).toHaveCount(0);
     await screenshotBaseline(page, 'grouppopover');
   });
 

@@ -13,6 +13,7 @@ import {
   avisarCarga,
   avisoActual,
   avisoDeCarga,
+  dependenciasInstaladas,
   generadosAlDia,
   leerProcesos,
   numCpus,
@@ -488,6 +489,10 @@ function repoConCambioCompartido(cadena) {
   git(trabajo, 'config', 'user.email', 'x@y.z');
   git(trabajo, 'config', 'user.name', 'x');
   writeFileSync(join(trabajo, 'LEEME.md'), 'base');
+  // Con dependencias (ignoradas por git): sin ellas la puerta para por «sin dependencias», que es otro caso.
+  writeFileSync(join(trabajo, '.gitignore'), 'node_modules\n');
+  mkdirSync(join(trabajo, 'node_modules', 'primeng'), { recursive: true });
+  writeFileSync(join(trabajo, 'node_modules', 'primeng', 'package.json'), '{}');
   git(trabajo, 'add', '-A');
   git(trabajo, 'commit', '-q', '-m', 'base');
   git(trabajo, 'remote', 'add', 'origin', '../origin.git');
@@ -582,3 +587,40 @@ test('generadosAlDia: todo al día, la puerta no dice nada', () => {
   assert.deepEqual(generadosAlDia({ correr: () => true }), []);
 });
 
+
+/* ── Un worktree sin dependencias ──────────────────────────────────────────── */
+
+// Medido el 2026-10-23 (PR #515): en un worktree sin `node_modules`, `component-audit` no leía la API de PrimeNG y salía
+// «no está al día → --write» con 126 miembros «sin descripción». El arreglo propuesto habría escrito generados a partir
+// de nada. La causa era el árbol, no los generados: la puerta lo dice antes y con su arreglo.
+
+function arbolConPrimeng(con) {
+  const raiz = mkdtempSync(join(tmpdir(), 'sc-deps-'));
+  mkdirSync(join(raiz, 'node_modules', '.cache'), { recursive: true }); // lo único que crea `npx` en un árbol vacío
+  if (con) {
+    mkdirSync(join(raiz, 'node_modules', 'primeng'), { recursive: true });
+    writeFileSync(join(raiz, 'node_modules', 'primeng', 'package.json'), '{"version":"0.0.0"}');
+  }
+  return raiz;
+}
+
+test('dependenciasInstaladas: sin node_modules/primeng/package.json avisa y nombra el symlink', () => {
+  const raiz = arbolConPrimeng(false);
+  try {
+    const problemas = dependenciasInstaladas(raiz);
+    assert.equal(problemas.length, 1);
+    assert.match(problemas[0], /sin dependencias/);
+    assert.match(problemas[0], /ln -s \/Users\/rafareses\/dev\/smartcontact-ui\/node_modules node_modules/);
+  } finally {
+    rmSync(raiz, { recursive: true, force: true });
+  }
+});
+
+test('dependenciasInstaladas: con primeng instalado (o enlazado) no dice nada', () => {
+  const raiz = arbolConPrimeng(true);
+  try {
+    assert.deepEqual(dependenciasInstaladas(raiz), []);
+  } finally {
+    rmSync(raiz, { recursive: true, force: true });
+  }
+});

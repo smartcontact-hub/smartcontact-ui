@@ -20,14 +20,16 @@
  */
 import { execSync, execFileSync } from "node:child_process";
 import { medirRebase } from "./preflight-rebase.mjs";
-import { avisarCarga, avisarDds, avisarLedgers, ddsDeRama, generadosAlDia, puertaBarata } from "./preflight-puerta-barata.mjs";
+import { avisarCarga, avisarDds, avisarLedgers, ddsDeRama, dependenciasInstaladas, generadosAlDia, puertaBarata } from "./preflight-puerta-barata.mjs";
 import { enParalelo } from "./en-paralelo.mjs";
 import { APPS, planDe } from "./preflight-alcance.mjs";
 import { analizar as analizarCitas, describir as describirCita } from "./audit-e2e-citas.mjs";
 
 /**
- * Al final, en los dos carriles: las capturas de sc-docs que este cambio mueve y siguen sin regenerar
- * (`api-baselines.mjs`). Es un aviso, nunca un rojo: la captura solo sale del workflow, después del push.
+ * Al final, en los dos carriles Y TAMBIÉN SI LA CADENA MUERE: las capturas de sc-docs que este cambio mueve y siguen
+ * sin regenerar (`api-baselines.mjs`). Es un aviso, nunca un rojo: la captura solo sale del workflow, después del push.
+ * Va colgado de `exit` desde el #494 (2026-10-22): se llamaba tras la cadena, un rojo ajeno al cambio la paró antes,
+ * se subió saltándola y el aviso no llegó a salir nunca.
  */
 function avisoDeCapturas() {
   try {
@@ -106,6 +108,9 @@ if (ficheros.length === 0) {
   process.exit(0);
 }
 
+// `exit` llega también tras un `process.exit(1)` o un gate que lanza: el aviso sale pase lo que pase en la cadena.
+process.on("exit", avisoDeCapturas);
+
 const { compartidos, relevantes, appsTocadas, completo } = planDe(ficheros);
 
 console.log(
@@ -128,7 +133,9 @@ if (process.argv.includes("--run")) {
   // Y si el número de DD de esta rama ya lo usa otro PR abierto (DD-175): avisa y propone el siguiente libre.
   avisarDds({ ...ddsDeRama(), rama: ramaActual() });
   const citas = citasRetiradas();
-  const problemas = [...puertaBarata(process.cwd()), ...generadosAlDia(), ...citas];
+  // Sin dependencias los generados se miden contra nada: se dice la causa y no se proponen sus `--write`.
+  const sinDeps = dependenciasInstaladas();
+  const problemas = [...puertaBarata(process.cwd()), ...sinDeps, ...(sinDeps.length ? [] : generadosAlDia()), ...citas];
   if (problemas.length) {
     console.log("\n✘ La cadena NO arranca: hay algo que se comprueba en 2 s y falla.\n");
     for (const q of problemas) console.log(`    · ${q}`);
@@ -159,7 +166,6 @@ if (completo) {
   if (process.argv.includes("--run")) {
     execFileSync("npm", ["run", "preflight"], { stdio: "inherit" });
   }
-  avisoDeCapturas();
   process.exit(0);
 }
 
@@ -200,4 +206,3 @@ if (process.argv.includes("--run")) {
   // QUÉ carril pasó; lo que se saltó quedó impreso arriba.
   execSync("node scripts/preflight-mark.mjs preflight:scope", { stdio: "inherit" });
 }
-avisoDeCapturas();

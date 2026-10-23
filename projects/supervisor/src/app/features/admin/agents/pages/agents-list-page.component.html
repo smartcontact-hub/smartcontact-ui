@@ -9,7 +9,8 @@
 </ng-template>
 
 <!-- La lista (título, barra, tabla, menú de fila) la monta `sc-list-page` (DD-97). Aquí solo lo que es de
-     Agentes: columnas y celdas, el menú de estados, acciones y diálogos. Con casillas para elegir y exportar, sin edición masiva (DD-215). -->
+     Agentes: columnas y celdas, el menú de estados, acciones y diálogos. Con casillas para elegir, exportar y eliminar con el
+     clic derecho sobre una marcada (`selectionMenu`, SISMAC-4060, DD-225); sin edición masiva (DD-215). -->
 <sc-list-page
   [heading]="'sidebar.agents' | translate"
   [rows]="agents()"
@@ -23,6 +24,7 @@
   noResultsKey="agents.no_results_query"
   exportable
   [rowMenu]="rowMenu"
+  [selectionMenu]="selectionMenu"
   rowOpenable
   selectable
   [(selectedIds)]="selectedIds"
@@ -123,7 +125,7 @@
     @if (presence === 'desconectado') {
       <span class="cell sc-text-caption-regular">{{ presenceLabelKey(presence) | translate }}</span>
     } @else if (presenceLabelColor(presence); as color) {
-      <sc-tag variant="label" [labelColor]="color" [value]="presenceLabelKey(presence) | translate" />
+      <sc-tag variant="label" [labelColor]="color" [bordered]="presenceBordered(presence)" [value]="presenceLabelKey(presence) | translate" />
     } @else {
       <sc-tag [severity]="presenceSeverity(presence)" [value]="presenceLabelKey(presence) | translate" />
     }

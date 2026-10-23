@@ -12,7 +12,7 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  *   1. el mínimo de la tabla sale de sus columnas, y la que crece no baja de 15rem (240 px);
  *   2. la casilla (si la lista la tiene: Grupos y Agentes ya no, DD-215) y el nombre se quedan fijos al desplazar la
  *      tabla de lado hasta el final;
- *   3. a 1440 no hay nada que desplazar.
+ *   3. a 1440 no hay nada que desplazar, tampoco con lo que la lista mide al abrir (salvo Agentes, DD-225).
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -61,18 +61,38 @@ for (const ancho of [900, 1024]) {
   }
 }
 
-test('a 1440, ninguna de las tres desplaza de lado', async ({ page }) => {
-  await page.setViewportSize({ width: 1440, height: 900 });
-  for (const ruta of LISTAS) {
+/*
+ * A 1440, TAMBIÉN SI LAS FUENTES LLEGAN TARDE. La lista mide sus columnas al abrir y lo guarda (DD-210 §4). Medido el
+ * 2026-10-22 en el despliegue: Agentes desplazaba 12 px de lado, porque medía antes de que llegara la fuente de iconos y
+ * `sc-icon` ocupaba lo que el nombre del glifo en letras (`font-display: block` lo esconde, pero ocupa): Extensión 128
+ * en vez de 116 y Grabación 155 en vez de 119. Con `ng serve` la fuente llega antes que las filas y esta prueba no lo
+ * veía; aquí llega tarde a propósito, cada lista en su página, y se lee cuando lo medido ya está guardado. Solo la de
+ * iconos: pesa 3,9 MB y la de texto 23 KB, así que es la que llega tarde de verdad; con las dos retrasadas, el texto de
+ * reserva sale más estrecho que Inter y tapaba el fallo.
+ */
+/* Agentes desplaza de lado también a 1440 desde DD-225: SISMAC-4060 pide Teléfono y Estado de inicio, y la tabla, con
+ * scroll horizontal y Nombre y «⋮» fijos, que es lo que miden las pruebas de 900 y 1024 (medido: 226 px más que su caja
+ * de 1302). */
+for (const ruta of LISTAS.filter((r) => r !== 'admin/agentes')) {
+  test(`${ruta} a 1440: no desplaza de lado, aunque la fuente de iconos llegue tarde`, async ({ page }) => {
+    await page.route(/material-symbols[^/]*\.woff2/, async (r) => {
+      await new Promise((listo) => setTimeout(listo, 1500));
+      await r.continue();
+    });
+    await page.setViewportSize({ width: 1440, height: 900 });
     await goto(page, ruta);
     await page.locator('.table-card tbody tr').first().waitFor();
-    const oculto = await page.evaluate(() =>
-      Math.max(
+    await page.waitForFunction(
+      () => document.fonts.status === 'loaded' && Object.keys(localStorage).some((k) => k.endsWith(':medidos')),
+    );
+    const oculto = await page.evaluate(async () => {
+      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+      return Math.max(
         ...[...document.querySelectorAll<HTMLElement>('.table-card .p-virtualscroller, .table-card .p-datatable-table-container')].map(
           (c) => c.scrollWidth - c.clientWidth,
         ),
-      ),
-    );
+      );
+    });
     expect(oculto, ruta).toBeLessThanOrEqual(1);
-  }
-});
+  });
+}

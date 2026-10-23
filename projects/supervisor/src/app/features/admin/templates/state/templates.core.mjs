@@ -7,6 +7,7 @@
  * marcas (`*negrita*`, `_cursiva_`, `~tachado~`): es lo que WhatsApp entiende, y el editor lo enseña como HTML y lo
  * devuelve al guardar.
  */
+import createDOMPurify from 'dompurify';
 import { campos } from '../../repositories/state/agenda-contacts.core.mjs';
 
 /** Los canales de una plantilla. */
@@ -39,14 +40,20 @@ const PERMITIDAS = new Set(['p', 'br', 'strong', 'em', 'u', 's', 'a']);
 const NORMALIZAR = { b: 'strong', i: 'em', strike: 's', del: 's' };
 const SEGURO = /^(https?:|mailto:)/i;
 
+/** DOMPurify necesita un DOM: en el navegador lo hay; en `node:test` no, y ahí manda solo el saneado de abajo. */
+const DOM_PURIFY = typeof window === 'undefined' ? null : createDOMPurify(window);
+const OPCIONES_DOM_PURIFY = { ALLOWED_TAGS: [...PERMITIDAS, 'b', 'i', 'strike', 'del'], ALLOWED_ATTR: ['href'] };
+
 /**
  * El HTML que se guarda: solo las etiquetas del editor (párrafos, negrita, cursiva, subrayado, tachado, enlace), sin
  * atributos —salvo el `href` de un enlace http(s) o mailto—, y sin scripts, estilos, imágenes ni marcos. Lo que el editor
  * no ofrece, no se guarda: se queda su texto.
  */
 export function sanearHtml(html) {
-  const entrada = String(html ?? '');
-  if (!llevaHtml(entrada)) return entrada;
+  const original = String(html ?? '');
+  if (!llevaHtml(original)) return original;
+  // Primero DOMPurify (el navegador interpreta el HTML como lo hará al enseñarlo); después la lista cerrada de abajo.
+  const entrada = DOM_PURIFY ? DOM_PURIFY.sanitize(original, OPCIONES_DOM_PURIFY) : original;
   // Quill escribe `&nbsp;` por cada espacio: un mensaje que no parte las líneas por sus palabras. Un espacio es un espacio.
   const limpio = entrada
     .replace(/<(script|style|iframe|object|embed|svg)\b[\s\S]*?<\/\1>/gi, '')
@@ -118,7 +125,7 @@ export function contenidoParaEditor(contenido, canal) {
   const texto = String(contenido ?? '');
   if (canal === 'whatsapp') return whatsAppAHtml(texto);
   if (!texto.trim()) return '';
-  return llevaHtml(texto) ? texto : textoAParrafos(texto);
+  return llevaHtml(texto) ? sanearHtml(texto) : textoAParrafos(texto);
 }
 
 /** Lo que se guarda desde el editor: el texto de WhatsApp con sus marcas, o el HTML saneado. */

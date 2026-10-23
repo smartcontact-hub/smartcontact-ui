@@ -1572,7 +1572,7 @@
         "general": "General",
         "categorization": "Categories"
       },
-      "categorization_hint": "What the agent chooses, in up to three levels; each branch goes as deep as it needs",
+      "categorization_hint": "What the agent picks, up to three levels",
       "rename_field": "New name for the option",
       "add_first": "Add option…",
       "add_under": "Add under “{{name}}”…",
@@ -1939,7 +1939,7 @@
       "assigned": {
         "query_placeholder": "Search agents…",
         "empty_title": "No assigned agents",
-        "empty": "Pick them in \"Add agents\", top right.",
+        "empty": "Assign them from the \"All\" tab.",
         "no_results": "No agents match the filter.",
         "col_agent": "Agent",
         "col_active": "Enabled",
@@ -2022,6 +2022,13 @@
         "body_one": "1 agent in this group loses {{channels}}. Continue?",
         "body_orphaned_one": "1 agent in this group loses {{channels}}, is left with no channel and leaves the group. Continue?",
         "body_orphaned_single": "{{count}} agents in this group lose {{channels}}, and 1 is left with no channel and leaves the group. Continue?"
+      },
+      "orphans": {
+        "title": "Remove {{count}} agents from the group?",
+        "title_one": "Remove 1 agent from the group?",
+        "body": "They are left with none of the group’s channels.",
+        "body_one": "They are left with none of the group’s channels.",
+        "confirm": "Remove"
       },
       "danger_zone_description": "Deleting this group removes it from the rules and routes that reference it. The action cannot be undone.",
       "duplicate_title": "Duplicate group",
@@ -2120,6 +2127,8 @@
         "no_number": "No number",
         "resources": "Resources",
         "missing_phone": "outbound phone",
+        "missing_whatsapp": "WhatsApp number",
+        "missing_whatsapp_short": "WhatsApp",
         "missing_typification": "typification"
       },
       "channels": {
@@ -2171,7 +2180,7 @@
         "typification_placeholder": "Select a typification",
         "view": "View details of “{{name}}”",
         "view_detail": "View details",
-        "scope_label": "Which conversations are typified",
+        "scope_label": "Which conversations",
         "scope": {
           "all": "All",
           "inbound": "Inbound only",
@@ -2187,6 +2196,7 @@
       "name_required": "Name is required",
       "name_taken": "A group with this name already exists",
       "phone_required": "The outbound phone is required",
+      "whatsapp_required": "The WhatsApp number is required",
       "typification_required": "Typification is required"
     },
     "toasts": {
@@ -2230,7 +2240,8 @@
     "no_results_query": "No agents match “{{query}}”.",
     "entity_singular": "agent",
     "delete_dialog": {
-      "title": "Delete agent \"{{name}}\"?"
+      "title": "Delete agent \"{{name}}\"?",
+      "title_bulk": "Delete {{count}} agents?"
     },
     "table": {
       "code": "ID",
@@ -2267,7 +2278,8 @@
       "training": "Training",
       "wrap_up": "Post-conversation",
       "administrative": "Administrative",
-      "offline": "Disconnected"
+      "offline": "Disconnected",
+      "talking": "Conversation"
     },
     "status": {
       "active": "Account active",
@@ -2382,7 +2394,7 @@
         "picker_placeholder": "Search or add group…",
         "picker_aria": "Add group to agent",
         "empty_title": "No assigned groups",
-        "empty": "Use \"Add group\" to assign the first group to this agent.",
+        "empty": "Assign them from the \"All\" tab.",
         "col_group": "Group",
         "col_channels_here": "Channels in this group",
         "col_active": "Enabled",
@@ -2406,12 +2418,16 @@
           "channel_remove": "Remove {{channel}} in {{count}} groups?"
         },
         "bulk_done": "Updated {{count}} groups.",
-        "not_allowed_hint": "{{channel}} is not among their channels: they are set in General"
+        "not_allowed_hint": "{{channel}} is not among their channels: they are set in General",
+        "all_assigned": "All groups are assigned"
       },
       "allowed": {
         "title": "Allowed channels",
         "remove_body": "They stop handling {{channels}} in {{count}} groups. Continue?",
-        "remove_body_orphaned": "They stop handling {{channels}} in {{count}} groups, and leave {{groups}}, which are left with no channel. Continue?"
+        "remove_body_orphaned": "They stop handling {{channels}} in {{count}} groups, and leave {{groups}}, which are left with no channel. Continue?",
+        "remove_body_one": "They stop handling {{channels}} in 1 group. Continue?",
+        "remove_body_orphaned_one": "They stop handling {{channels}} in 1 group, and leave {{groups}}, which is left with no channel. Continue?",
+        "remove_body_orphaned_single": "They stop handling {{channels}} in {{count}} groups, and leave {{groups}}, which is left with no channel. Continue?"
       },
       "permissions": {
         "manage_devices": "Device management",
@@ -2477,7 +2493,8 @@
       "phone_required": "Mobile phone is required: the extension rings on it",
       "email_required": "Email is required",
       "group_required": "At least one group is required",
-      "outbound_required": "The group for outbound calls is required: one with Phone"
+      "outbound_required": "The group for outbound calls is required: one with Phone",
+      "email_taken": "An agent with this email already exists"
     },
     "empty": {
       "title": "No agents yet",
@@ -2495,7 +2512,8 @@
       "status": "Status",
       "recording": "Recording",
       "groups": "Groups",
-      "sheet": "Agents"
+      "sheet": "Agents",
+      "channels": "Channels"
     },
     "bulk_edit_title": "Apply change to {{count}} agent(s)"
   },

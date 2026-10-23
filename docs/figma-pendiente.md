@@ -257,11 +257,11 @@ color; hasta entonces el par se queda, con su motivo escrito en el spec.
 
 ## 1 · Publicar la librería
 
-**Estado:** pendiente · **Dónde:** Figma, panel *Assets* → icono de librerías → *Publicar* · **Esfuerzo:** un minuto
+**Estado:** publicada el 2026-10-21, con las tandas de abajo; queda una nueva, la cabecera del Custom modal (§58) ·
+**Dónde:** Figma, panel *Assets* → icono de librerías → *Publicar* · **Esfuerzo:** un minuto
 
-Los ficheros que usan la librería no ven sus cambios hasta que se publica, y publicar es un paso de persona. Hay al
-menos tres tandas hechas en el fichero del DS sin publicar, salvo que se haya publicado después (el repo no puede
-saberlo):
+Los ficheros que usan la librería no ven sus cambios hasta que se publica, y publicar es un paso de persona. Estas
+tandas esperaban hasta la publicación del 2026-10-21:
 
 - la del 2026-09-13: el título de `Section` a `h3` y el borrado de `app/typography/xl|xxl` (DD-75);
 - la del 2026-09-14: el interlineado atado en los maestros de botón y campo (DD-91);
@@ -1432,7 +1432,7 @@ sin repunte: al equipo externo le bastaría una línea en `extend.ts`, `accent: 
 
 **Estado:** sin hacer; en las maquetas del Supervisor va ajustado a la app y anotado, sin tocar la librería · **Dónde:**
 fichero del DS, y el del Supervisor (páginas «Grupos» y «Agentes», cada una con su índice; «Fuera del DS» `3034:114`;
-hand-off `2997:47`) · **Evidencia:** cada caso,
+el hand-off de cada una, a la derecha de su índice: `3371:61554` y `3371:61797`) · **Evidencia:** cada caso,
 medido contra sc-supervisor.pages.dev a 1440.
 
 - **Botones:** `button-small` de texto sin el borde transparente de 1 de PrimeNG (25 de alto en vez de 27; las filas
@@ -1487,7 +1487,7 @@ numéricos, subsección plegada y lo no dibujado (atajo «/» y solo lectura).
 | 6 | Título de la página | Hecho el 2026-10-19: la ficha salió (el marco ya usa estilos y variables del Kit) | no | no |
 | 7 | Diálogo de eliminar | Hecho el 2026-10-19: eliminar es el confirmdialog del DS en grupos y agentes; la ficha salió | no | no |
 | 8 | Resumen con «Falta» | Hecho el 2026-10-19: «Mostrar estado» en la variante Edición de `group-summary` y `agent-summary`; la ficha salió | sí, hecho | no |
-| 9 | Subsección plegada | Estado «Plegada» en `.Subsection` (DD-157 descartó Accordion); en el prototipo, `<h3>` con el botón dentro y `aria-controls` | sí | sí |
+| 9 | Subsección plegada | En `.Subsection`, hecho el 2026-10-21: «Plegable» (flecha `chevron_right` a la derecha) y «Flecha» (DD-157 descartó Accordion). Falta: publicarlo y usarlo en «Avanzado» del agente; y el mismo estado, con pista, en las partes (`sc-slot collapsible`, «Mensajes en cola»). En el prototipo, `<h3>` con el botón dentro y `aria-controls` | a medias | sí |
 | 10 | Atajo «/» | Decidido el 2026-10-19: el «/» se ve, como en el prototipo. Falta dibujarlo con una pieza propia del DS, marcada como propia | sí | no |
 | 11 | Solo lectura | El estado en los cuatro campos del Kit (§50, DD-211 §10) | sí | no |
 
@@ -1501,50 +1501,45 @@ el DS de los devs pinta 10,5 × 14, como el Kit (medido en ui.smart-contact.com 
 
 ---
 
-## 57 · Lo que falta, como SISMAC-4058: el botón apagado, «Falta: …» en el resumen y el aviso en gris (2026-10-21, DD-219)
+## 58 · Los flujos que faltaban en Grupos y Agentes, y lo que la librería no tiene para ellos (2026-10-21)
 
-**Estado:** a medias: hecho en Figma el 2026-10-21 salvo la línea sobre el resumen en las pantallas, que espera a
-publicar la librería (abajo, «Hecho» y «Queda») · **Dónde:** fichas de grupo (alta `3010:6411`, edición
-`3055:11053`), agente y usuario del fichero del Supervisor (`Hjyy41SYKqcRuIzCGggfYH`), y en el DS `group-summary` y
-`agent-summary` · **Mídelo antes:** §55 quitó de `group-summary` y `agent-summary` la línea de «Falta» y «Listo»; esta
-la devuelve, con otro color.
+**Estado:** dibujado en el Supervisor; en la librería, Custom modal y `.Subsection` plegable publicados, el resto sin
+hacer · **Dónde:** el Supervisor, páginas «Grupos» y
+«Agentes»; la librería y Smart-Contact Icons · **Evidencia:** el código de esta rama y una captura por pantalla.
 
-- **El botón**: en el alta vacía, «Crear grupo» («Crear agente», «Crear usuario») deshabilitado, con el tooltip «Falta:
-  nombre, teléfono saliente». Se enciende al tener lo obligatorio. Al editar, «Guardar» deshabilitado sin cambios y
-  también con algo obligatorio vacío.
-- **Arriba del resumen**: «Falta: nombre, teléfono saliente» en `text/secondary`, con el icono `info`, y cada cosa
-  subrayada (lleva a su campo); con todo relleno, «Listo para crear» en `text/success` con `check_circle`. Al editar,
-  solo si falta algo.
-- **Bajo cada obligatorio vacío**, su aviso como ayuda, en gris y con punto, como toda ayuda: «El nombre es
-  obligatorio.». El estado de error (rojo, sin punto, como todo error) queda para «se dejó vacío». El teléfono saliente: «El teléfono saliente es obligatorio. El número que ve el cliente
-  cuando le llaman.»
-- **El índice**: sin punto rojo mientras se rellena; el `nav-item` con su texto de error (§55) solo para lo guardado que
-  ya venía incompleto.
-- **Notas «Cómo se comporta»**: el botón se enciende al tener lo obligatorio; el aviso pasa a rojo al salir del campo
-  vacío (salir con texto no cuenta, ni abrir la lista de un desplegable para elegir); cada cosa de «Falta» lleva a su
-  campo.
+**Hecho en el Supervisor** (versión «Grupos y agentes: flujos nuevos, toasts y empty states»):
+- Alta de grupo, fila «Otras configuraciones» (`3396:20051`): Chat y Tipificar conversaciones (V1), el detalle de la
+  tipificación (V2), Niveles (V3), Ring All (V4), Web Chat y WhatsApp (V5), Nivel Teléfono (V6) y la tabla de agentes
+  sin resultados (V7). «Nivel {canal}» y «Tipificar conversaciones», que §56 dejó solo en la hoja, ya tienen maqueta.
+- Listado de grupos: varios eliminados, con el toast «3 grupos eliminados» (paso 10), y la tabla sin grupos (paso 11).
+- Edición de agente: el filtro de grupos sin resultados (paso 06) y la fila «Expirar contraseña» (`3403:47822`, X1 a
+  X3). La tabla de grupos asignados enseñaba 3 filas en cuatro pantallas (alto fijo de 131): ahora mide sus filas.
+- Agentes, sección nueva «3. Listado de agentes» (`3405:12408`): tabla, menú de fila, duplicar, eliminar con su toast,
+  búsqueda sin resultados y sin agentes.
+- Las seis hojas «Cómo se comporta», en el idioma de desarrollo (componente, ruta, propiedad), sin cómo se midió; cada
+  nombre de icono enlaza a la tarjeta «Iconos» de su hand-off. Índices, portadas y hand-off, al día.
+- Cada hoja, a la izquierda de su flujo (versión «Hojas a la izquierda, enlaces de ida y vuelta e índice a 235»). El
+  título de cada fila lleva a su pantalla; de vuelta, la nota de Dev Mode de cada pantalla («filas 6, 9 y 10», con su enlace) y
+  cada número morado llevan a la hoja, y «(E2)» de la hoja, a su paso. Las notas de las pantallas clonadas, reescritas.
+- El índice de las fichas, de 196 a 235 con mínimo de 235 (DD-221), en las 54 pantallas; en el Mapa, cada caja en su
+  pieza. En la caja, cada fila blanca con el radio de la fila (`border/radius/xl`), también en Contact Center y
+  ❖ Navmenu.
+- V2 (`3475:23798`), instancia del Custom modal publicado, 896 × 720 a 1080 como el diálogo real, con el árbol en el
+  slot (versión «Hojas a la izquierda, enlaces de ida y vuelta, índice a 235 en píldora y V2 con el Custom modal»).
+  «Editar en Repositorios» va al final del slot con su nota: en código está en `modal-actions`, pero el pie del Custom
+  modal solo admite botones.
 
-**Hecho el 2026-10-21** (versiones «Lo que falta, antes de pulsar (grupos y agentes)» en el Supervisor y
-«summary-status y estado en los resúmenes» en el DS):
-- **DS, sin publicar**: `summary-status` nuevo (set `15660:394`: Falta `15660:376`, Listo `15660:381`), en el marco
-  «Summary status» `15660:386`; `group-summary` `15486:255` y `agent-summary` `15510:72604` lo llevan arriba en cada
-  variante, con «Mostrar estado» (encendida por defecto).
-- **Botones apagados**: «Crear grupo» `3010:6414`, `3015:7857`, `3016:8144`, `3019:9587`, `3019:19157` y en el Mapa
-  `3180:12448`, `3180:12620`; «Crear agente» `3070:26737`, `:26755`, `:26773`, `:26793`, `:26813`, `:26855`,
-  `:26872`; «Guardar» de las E2 de edición `3057:25523` (grupo) y `3111:29669` (agente).
-- **Avisos en gris**: grupo `3357:30608` y el teléfono saliente en 04 y en el Mapa; agente `3357:56507`, `3357:56509`,
-  `3357:56511` y, encima de la tabla de grupos, `3357:56513`. En rojo solo en E1 (campo dejado vacío) y E2 (Ctrl+S
-  con algo pendiente, o el campo vaciado al editar).
-- **Textos**: notas, portadas y las hojas «Cómo se comporta» (alta `3033:18497` y `3070:26889`, edición `3064:15154` y
-  `3110:31269`); Hand-off: «Lo que falta, antes de pulsar» `3344:52220`, Reglas comunes › Guardar `2999:93` y la
-  entrada `2998:51`. El tooltip va descrito, no dibujado.
+**Lo que la librería no tiene** (en las maquetas, separado de su maestro y anotado):
+- `group-summary`: sus variantes solo pintan Teléfono. Con Chat (V1) y con Web Chat y WhatsApp (V5), separado.
+- Custom modal: **publicado** (versión «Custom modal: los topes de sc-dialog»): sin ancho máximo y con 720 de alto
+  para el diálogo entero, como `max-height: min(85vh, 720px)` de `sc-dialog`; el contenido encoge sin tope propio.
+  **Sin publicar:** la cabecera en FILL (versión «Custom modal: la cabecera llena el ancho»). Sin ella, en un diálogo
+  ancho la X se queda a media cabecera; V2 ya lo lleva puesto en la instancia.
+- Icono `key` (`keyIcon` de la ficha de agente): no está en Smart-Contact Icons; «Expirar contraseña» va sin icono.
+- `.Subsection` plegable: publicado (§54, fila 9).
 
-**Queda**: publicar la librería; en el Supervisor, aceptar la actualización, poner en cada alta el texto de «Falta: …»
-de esa pantalla y, al editar, «Mostrar estado» apagado salvo en las E2.
-
-**Cómo sabes que está hecho:** el alta vacía de grupo y de agente enseña el botón apagado y «Falta: …» arriba del
-resumen, y ningún campo sale en rojo sin haberlo tocado. La ficha de usuario no tiene maqueta (abajo, «Lo de estas
-semanas que NO va a Figma»).
+**Cómo sabes que está hecho:** V1, V2 y V5 vuelven a ser instancias de su maestro sin perder nada (V2 ya lo es), y el
+botón de X1 a X3 lleva `key`.
 
 ---
 
@@ -1555,7 +1550,8 @@ semanas que NO va a Figma»).
 - **El monitor del Dashboard** (DD-127): el fichero no tiene maqueta del Dashboard; sus piezas son las de la ficha 9.
   Si se maqueta, las reglas de tabla de abajo.
 - **Las reglas de tabla del código**, para cuando se maqueten tablas:
-  - las cifras miden su dato y el nombre se queda el resto, recortando con «…» (el texto entero va en el `title`);
+  - las cifras miden su dato y el nombre crece hasta 384 (24rem), recortando con «…» (el texto entero va en el
+    `title`); en una tabla más ancha, el sobrante va a la columna del «⋮» (DD-187 §7, §59);
   - las cabeceras de varias palabras no se parten;
   - el texto libre de Conversaciones, hasta dos líneas y «…»;
   - la fila de totales lleva raya arriba.
@@ -1606,6 +1602,52 @@ semanas que NO va a Figma»).
   cuando no hay tipificaciones. **Visto de paso, sin tocar:** las tablas de asignados de Figma van en tamaño normal
   (14 de relleno) y el build en `small` (7), por eso en Figma «Habilitado», «Chat» y «Email» van más anchos que en
   código; y los botones de la cabecera van en `sm` (27) frente a `md` (33) en el build.
+- ~~**§57 · Lo que falta, como SISMAC-4058 (DD-219)**~~ → **HECHO el 2026-10-21**. En la librería, `summary-status`
+  (Falta / Listo) arriba de `group-summary` y `agent-summary`, con «Mostrar estado». En el Supervisor, los 41 resúmenes
+  de Grupos y Agentes en esa versión: cada alta con su «Falta: …» (grupo: «nombre, teléfono saliente» vacía y
+  «teléfono saliente» después; agente: «nombre, email, extensión, un grupo» y luego «un grupo») o «Listo para crear»; al
+  editar, la línea apagada salvo en las E2 («Falta: nombre», «Falta: email»). «Crear» y «Guardar» apagados; bajo cada
+  obligatorio vacío, su aviso en gris con punto; en rojo y sin foco solo al dejar el campo vacío (E1, E2 de edición) y,
+  tras Ctrl+S, con el foco en el primer pendiente (E2 del alta). Notas, hojas y hand-off con la regla; el tooltip, descrito.
+  Versiones del fichero: «Lo que falta, antes de pulsar», «Lo que falta: el rojo sin foco al salir del campo» y
+  «Resúmenes con la línea Falta / Listo (librería publicada)». La ficha de usuario no tiene maqueta.
+- ~~**§59 · El nombre del listado de grupos tiene tope (DD-187 §7)**~~ → **HECHO el 2026-10-22**. La fila 5 de «Cómo se
+  comporta: listado de grupos» (`3131:11194`) decía «Nombre: ancho flexible, mín. 240» y «Acciones: 56», la regla de
+  antes de DD-187 §7; ahora, «mín. 240, máx. 384» y Acciones con el sobrante, el ⋮ pegado al borde derecho. En las nueve
+  tablas del flujo (`3118:16995`) y en la copia del Mapa (`3178:11368`), Nombre fijo a 384 y Acciones en FILL (595, como
+  la app a 1920: Nombre 384 y el ⋮ con 599). Con ellas se movieron los números 7 y 8 de la guía del paso 01, el menú de
+  la selección del paso 08 y los recuadros de Canales a Agentes del Mapa. El listado de Agentes (`3405:12408`) ya medía
+  así y su hoja no lo contradice. Versión del fichero: «Listado de grupos: Nombre a 384 y el sobrante en Acciones
+  (DD-187 §7)».
+- ~~**§60 · El índice del alta de grupo con su marcador de paso (DD-222)**~~ → **HECHO el 2026-10-22**. En la librería,
+  `nav-item` con las marcas del alta con pasos (Paso pendiente, actual, nuevo, hecho y con error: marcador y una línea
+  que pasa también bajo él, en una línea y con «…»), Hecha de vuelta al ✓ de las altas sin pasos y Con error al punto
+  de la edición; rótulo e icono atados en las 27 variantes (clonar una variante pierde ese enlace). En ❖ Navmenu, la
+  ficha «Cómo se comporta: índice de una ficha» (`15742:347`). En Grupos, el índice de las 17 pantallas del alta, la
+  copia del listado y las cuatro del Mapa como el prototipo en cada paso; el resumen sin «Falta» ni «Listo para crear»;
+  hojas, tarjetas, Hand-off y mapa al día, con el número de WhatsApp obligatorio; y la fila «Interacción del índice»
+  (`3654:76460`, I1 a I8). Agentes y Tipificaciones, con su ✓ (medido). Queda fuera: `group-summary`, de otra librería,
+  con «Mostrar estado» encendido por defecto. Versiones: «Grupos: índice del alta con marcas de paso (DD-222) e
+  «Interacción del índice»» y «nav-item: Paso hecho con rótulo e icono atados».
+- ~~**§61 · La ficha de grupo, como su página de COA publicada (DD-223)**~~ → **HECHO el 2026-10-22** en la página
+  Grupos (`41:2847`). Tres pantallas nuevas: V8 (`3678:25449`), solo «Permitir comentarios» con «En qué
+  conversaciones», en «Otras configuraciones»; E5 (`3681:25364`), un agente sin canales del grupo con «Sin canales
+  compatibles» y el candado, y el Custom modal «¿Sacar del grupo a 1 agente?» con «Cancelar» y «Sacar» en rojo; V9
+  (`3682:26036`), el grupo recién creado en «Asignados» con «Sin agentes asignados» y «Asígnalos desde la pestaña
+  «Todos».» (V7, con búsqueda, sin tocar). V1 y V2 con el rótulo «En qué conversaciones». Hojas del alta (filas 7, 8,
+  12, 14 y 16) y de la edición (fila 1: la entrada desde la rueda de la monitorización, solo administradores, sin
+  maqueta; fila 7: el aviso al guardar), Hand-off con la rueda y el marcado automático, portadas e índice de Grupos.
+  Versión del fichero: «Grupos: §61 DD-223».
+- ~~**§62 · Grupos: lo que no cuadraba en el repaso entre COA, Figma y prototipo (DD-224)**~~ → **HECHO el
+  2026-10-22** en la página Grupos (`41:2847`), tras leer entero el texto de sus hojas contra la congelada 4058. Alta
+  (`3033:18497`), fila 7: «Editar en Repositorios», con cambios, cierra el detalle y pregunta lo mismo que «Gestionar en
+  Repositorios», y «En qué conversaciones» lleva «Solo salientes» solo con Call Blending; fila 17 y hand-off
+  («Lo que falta, antes de pulsar»): el rojo también al dejar la sección sin el campo, y lo que aparece después en ella,
+  ya en rojo. Edición (`3064:15154`), fila 7: la misma pregunta para «Editar en Repositorios». Tarjeta de «Otras
+  configuraciones 2». Listado (`3131:11194`), fila 8: el tooltip de Agentes con 15 nombres como mucho y «y N más»;
+  fila 12: lo apagado es «Exportar», no el botón «Acciones». Notas de Dev Mode de «Si algo falla 5» y «Otras
+  configuraciones 8» y «9» con punto final, y la capa de la fila 14 del alta, «Fila: 14. Agente». Versión del fichero:
+  «Grupos: repaso COA, Figma y prototipo (DD-224, §62) (2026-10-22)».
 
 ---
 

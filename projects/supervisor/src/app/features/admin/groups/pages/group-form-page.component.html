@@ -79,6 +79,7 @@
         [sectionErrorHints]="sectionErrorHints()"
         [sectionsWithChanges]="sectionsWithChanges()"
         [sectionsDone]="alta.hechas()"
+        [sectionStates]="sectionStates()"
         [flush]="true"
         (activeChange)="goTo($event)"
       />
@@ -128,11 +129,7 @@
         [outbound]="summaryOutbound()"
         [resources]="summaryResources()"
         [hrefs]="summaryHrefs()"
-        [missing]="summaryMissing()"
-        [ready]="summaryReady()"
-        [creating]="mode() === 'create'"
         (ir)="irDesdeResumen($event)"
-        (irAFalta)="irAFalta($event)"
       />
     </div>
   </div>
@@ -159,6 +156,25 @@
       </sc-button>
       <sc-button type="button" size="sm" variant="danger" (clicked)="confirmCascade()">
         <span>{{ 'groups.form.cascade.confirm' | translate }}</span>
+      </sc-button>
+    </div>
+  </sc-dialog>
+}
+
+<!-- Antes de sacar del grupo a quien se queda sin canales, también al crear: con el verbo y la cifra (DD-223). -->
+@if (sacarConfirm(); as n) {
+  <sc-dialog
+    [visible]="true"
+    [title]="(n === 1 ? 'groups.form.orphans.title_one' : 'groups.form.orphans.title') | translate: { count: n }"
+    [subtitle]="(n === 1 ? 'groups.form.orphans.body_one' : 'groups.form.orphans.body') | translate"
+    (cancelled)="cancelSacar()"
+  >
+    <div modal-actions>
+      <sc-button type="button" size="sm" variant="secondary" appearance="outlined" (clicked)="cancelSacar()">
+        <span>{{ 'common.cancel' | translate }}</span>
+      </sc-button>
+      <sc-button type="button" size="sm" variant="danger" (clicked)="confirmSacar()">
+        <span>{{ 'groups.form.orphans.confirm' | translate }}</span>
       </sc-button>
     </div>
   </sc-dialog>
@@ -259,44 +275,47 @@
           </div>
         </div>
 
-        <!-- Lo que pide tipificar, colgado de su interruptor y alineado con su texto: un solo borde para los dos
-             interruptores y otro para lo que abren (revisión del 2026-10-15, antes en la fila del interruptor). Dos
-             campos con su rótulo, en las columnas de la ficha: con cuál y en qué conversaciones. -->
-        @if (form().wrapUp.classify && !sinTipificaciones()) {
+        <!-- Lo que abren los interruptores, alineado con su texto: un solo borde para los dos interruptores y otro para lo
+             que abren (revisión del 2026-10-15, antes en la fila del interruptor). Dos campos con su rótulo, en las
+             columnas de la ficha: con qué tipificación, si se tipifica, y en qué conversaciones, que vale para los
+             comentarios y para la tipificación y sale con cualquiera de los dos encendido (SISMAC-4058, DD-223). -->
+        @if (conPostconversacion()) {
           <div class="wrapup__nested grid grid--2">
-            <div class="field">
-              <sc-select
-                [label]="'groups.form.wrapup.typification' | translate"
-                required
-                inputId="group-typification"
-                optionLabel="label"
-                optionValue="value"
-                [filter]="true"
-                [options]="typificationOptions()"
-                [placeholder]="'groups.form.wrapup.typification_placeholder' | translate"
-                [helperText]="ayudaDe('typification')"
-                [error]="typificationError() ? ('groups.errors.typification_required' | translate) : undefined"
-                [value]="form().wrapUp.typificationId"
-                (valueChange)="onTypificationChange($event)"
-                (focusout)="dejar($event, 'typification')"
-              />
-              <!-- «Ver detalle», bajo su campo (DD-198), abre su árbol entero con «Editar en Repositorios». Sustituye al botón
-                   de las tres rayas de sc-agent, que se leía como «más acciones» (revisión del 2026-10-15; `menu` es de
-                   la navegación, DD-200). Sin su descripción desde la revisión del 2026-10-20 (DD-217): cambiaba con
-                   cada tipificación y alargaba el campo sin decidir nada. -->
-              @if (typification(); as t) {
-                <div class="wrapup__detail">
-                  <sc-button
-                    appearance="text"
-                    size="sm"
-                    [label]="'groups.form.wrapup.view_detail' | translate"
-                    [ariaLabel]="'groups.form.wrapup.view' | translate: { name: t.name }"
-                    aria-haspopup="dialog"
-                    (clicked)="viendoTipificacion.set(true)"
-                  />
-                </div>
-              }
-            </div>
+            @if (tipifica()) {
+              <div class="field">
+                <sc-select
+                  [label]="'groups.form.wrapup.typification' | translate"
+                  required
+                  inputId="group-typification"
+                  optionLabel="label"
+                  optionValue="value"
+                  [filter]="true"
+                  [options]="typificationOptions()"
+                  [placeholder]="'groups.form.wrapup.typification_placeholder' | translate"
+                  [helperText]="ayudaDe('typification')"
+                  [error]="typificationError() ? ('groups.errors.typification_required' | translate) : undefined"
+                  [value]="form().wrapUp.typificationId"
+                  (valueChange)="onTypificationChange($event)"
+                  (focusout)="dejar($event, 'typification')"
+                />
+                <!-- «Ver detalle», bajo su campo (DD-198), abre su árbol entero con «Editar en Repositorios». Sustituye al botón
+                     de las tres rayas de sc-agent, que se leía como «más acciones» (revisión del 2026-10-15; `menu` es de
+                     la navegación, DD-200). Sin su descripción desde la revisión del 2026-10-20 (DD-217): cambiaba con
+                     cada tipificación y alargaba el campo sin decidir nada. -->
+                @if (typification(); as t) {
+                  <div class="wrapup__detail">
+                    <sc-button
+                      appearance="text"
+                      size="sm"
+                      [label]="'groups.form.wrapup.view_detail' | translate"
+                      [ariaLabel]="'groups.form.wrapup.view' | translate: { name: t.name }"
+                      aria-haspopup="dialog"
+                      (clicked)="viendoTipificacion.set(true)"
+                    />
+                  </div>
+                }
+              </div>
+            }
             <div class="field">
               <span id="group-wrapup-scope-label" class="field__label sc-text-caption-semibold">{{ 'groups.form.wrapup.scope_label' | translate }}</span>
               <sc-selectbutton
@@ -317,7 +336,12 @@
 </ng-template>
 
 @if (typification(); as t) {
-  <sc-tipificacion-arbol [tipificacion]="t" [visible]="viendoTipificacion()" (cerrar)="viendoTipificacion.set(false)" />
+  <sc-tipificacion-arbol
+    [tipificacion]="t"
+    [visible]="viendoTipificacion()"
+    (cerrar)="viendoTipificacion.set(false)"
+    (editar)="editarTipificacion($event)"
+  />
 }
 
 <ng-template #seccionDistribucion>
@@ -590,7 +614,20 @@
             <div class="grid">
               <div class="grid grid--2">
                 <div class="field">
-                  <sc-select [label]="'groups.form.advanced.whatsapp_number' | translate" inputId="group-chat-whatsapp" optionLabel="label" optionValue="value" [options]="whatsappOptions()" [value]="form().advanced.whatsappNumber" (valueChange)="setWhatsappNumber($event)" />
+                  <sc-select
+                    [label]="'groups.form.advanced.whatsapp_number' | translate"
+                    inputId="group-chat-whatsapp"
+                    required
+                    optionLabel="label"
+                    optionValue="value"
+                    [options]="whatsappOptions()"
+                    [value]="form().advanced.whatsappNumber || null"
+                    [placeholder]="'groups.form.fields.phone_placeholder' | translate"
+                    [helperText]="ayudaDe('whatsapp')"
+                    [error]="whatsappError() ? (whatsappError()! | translate) : undefined"
+                    (valueChange)="setWhatsappNumber($event)"
+                    (focusout)="dejar($event, 'whatsapp')"
+                  />
                 </div>
               </div>
               <!-- Sin número, WhatsApp no tiene a quién escribir ni de dónde: lo que sigue no se pinta. -->

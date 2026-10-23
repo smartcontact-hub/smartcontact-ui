@@ -9,7 +9,7 @@ del trabajo con agentes están en [AGENTS.md](AGENTS.md): léelas antes de tocar
 - **La guía que se impone sola** vive en `.claude/settings.json` → `scripts/hooks/`. El hook de
   Bash deniega, con la regla como motivo, los cinco comandos de LEARNINGS #7 #11 #12 (push sin
   preflight sobre ESTE árbol, `echo $?` colgado, volcar credenciales, `git diff main...rama`,
-  `for f in $VAR`), y un PR o commit con atribución de la herramienta o rotulado para Rafa (el
+  `for f in $VAR`), abrir un PR con una captura de sc-docs sin regenerar, y un PR o commit con atribución de la herramienta o rotulado para Rafa (el
   repo es público; AGENTS.md §Pull requests y commits). El de Stop exige leer el CI tras un push (`npm run ci:verdict`), que cada
   corrección lleve ruta si reflexionaste, que una pantalla del Supervisor tocada pase antes por
   `npm run revision`, y que el mensaje de cierre lleve el parte en llano (qué
@@ -49,7 +49,7 @@ Resumen operativo:
 - **Voz del código**: comentarios, commits y PRs sin nombres de personas ni citas de conversación;
   la procedencia es la DD, el ticket o el nodo de Figma (AGENTS.md §«Voz del código»; lo vigilan
   `audit:personal-names` y `bash-guard`).
-- **Antes de dar nada por bueno**: `npm run verify` (49 gates encadenados) y, si
+- **Antes de dar nada por bueno**: `npm run verify` (50 gates encadenados) y, si
   tocaste algo visual, SOLO las pruebas de lo que tocaste: la batería entera la corre el CI (DD-154). **Antes de pushear no basta `verify`**: el CI
   son 9 pasos, enumerados en `.github/workflows/ci.yml`; `npm run preflight:scope -- --run` corre
   la parte rápida (gates + builds, ~8 min) y deja la marca que el hook de push exige (el `--` es

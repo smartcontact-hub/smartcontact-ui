@@ -14,7 +14,8 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  *   3. Recursos ya no enseña Etiquetas (DD-142), y el grupo conserva las suyas al guardar: el campo se queda hecho y
  *      apagado, por si vuelve.
  *   4. «Gestionar en Repositorios» sale de la ficha: sin cambios, va directo; con cambios, pregunta si guardar antes
- *      (SISMAC-4058, 2026-10-20), y sin que salte además el aviso de descartar.
+ *      (SISMAC-4058, 2026-10-20), y sin que salte además el aviso de descartar. «Editar en Repositorios», en el detalle
+ *      de la tipificación, igual (DD-224).
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -121,6 +122,43 @@ test('grupo 11 · «Gestionar en Repositorios» va directo sin cambios; con camb
   await pregunta.getByRole('button', { name: 'Guardar', exact: true }).click();
   await expect(page).toHaveURL(/\/admin\/repositorios$/);
   await expect(page.getByRole('dialog', { name: '¿Descartar cambios?' }), 'guardado, no hay nada que descartar').toHaveCount(0);
+  await expect(page.locator('.p-toast-message')).toContainText('Grupo «Online Support» actualizado');
+  const guardado = await page.evaluate(() => (JSON.parse(localStorage.getItem('sc-groups')!) as { id: number; wrapUp?: { comments?: boolean } }[]).find((g) => g.id === 11)?.wrapUp?.comments);
+  expect(guardado).toBe(!antes);
+});
+
+test('grupo 11 · «Editar en Repositorios» de la tipificación pregunta lo mismo que «Gestionar en Repositorios» (DD-224)', async ({ page }) => {
+  const verDetalle = page.getByRole('button', { name: 'Ver detalle de «Atención al cliente»' });
+  const arbol = page.getByRole('dialog', { name: 'Atención al cliente' });
+  const editar = arbol.getByRole('link', { name: 'Editar en Repositorios' });
+  const pregunta = page.getByRole('alertdialog', { name: '¿Guardar los cambios?' });
+  const descartar = page.getByRole('dialog', { name: '¿Descartar cambios?' });
+
+  // Sin cambios, directo a su ficha.
+  await goto(page, 'admin/grupos/editar/11?seccion=general');
+  await verDetalle.click();
+  await editar.click();
+  await expect(page).toHaveURL(/\/admin\/tipificaciones\/editar\/1\?seccion=categorias$/);
+  await expect(pregunta).toHaveCount(0);
+
+  // Con cambios, guardar antes; no «¿Descartar cambios?».
+  await goto(page, 'admin/grupos/editar/11?seccion=general');
+  const comentarios = page.locator('#group-wrapup-comments');
+  const antes = await comentarios.isChecked();
+  await comentarios.click();
+  await verDetalle.click();
+  await editar.click();
+  await expect(pregunta).toContainText('Para ir a Repositorios, guarda antes el grupo.');
+  await expect(descartar).toHaveCount(0);
+  await expect(arbol, 'el detalle se cierra antes de preguntar').toBeHidden();
+  await pregunta.getByRole('button', { name: 'Seguir editando' }).click();
+  await expect(page).toHaveURL(/\/admin\/grupos\/editar\/11\?seccion=general$/);
+
+  await verDetalle.click();
+  await editar.click();
+  await pregunta.getByRole('button', { name: 'Guardar', exact: true }).click();
+  await expect(page).toHaveURL(/\/admin\/tipificaciones\/editar\/1\?seccion=categorias$/);
+  await expect(descartar, 'guardado, no hay nada que descartar').toHaveCount(0);
   await expect(page.locator('.p-toast-message')).toContainText('Grupo «Online Support» actualizado');
   const guardado = await page.evaluate(() => (JSON.parse(localStorage.getItem('sc-groups')!) as { id: number; wrapUp?: { comments?: boolean } }[]).find((g) => g.id === 11)?.wrapUp?.comments);
   expect(guardado).toBe(!antes);

@@ -52,7 +52,7 @@ const log = (s = '') => process.stdout.write(s + '\n');
  */
 export const ZONAS = [
   { nombre: 'DS · tipografía', dirs: ['projects/ui-smartcontact/src/lib/components'], tipo: 'tipografia', max: 13 },
-  { nombre: 'DS · espaciado', dirs: ['projects/ui-smartcontact/src/lib/components'], tipo: 'espaciado', max: 34 },
+  { nombre: 'DS · espaciado', dirs: ['projects/ui-smartcontact/src/lib/components'], tipo: 'espaciado', max: 33 },
   {
     nombre: 'Supervisor · tipografía',
     dirs: ['projects/supervisor/src/app', 'projects/supervisor/src/styles'],

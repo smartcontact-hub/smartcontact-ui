@@ -21,21 +21,20 @@
         @if (levels() > 0) {
           <div class="tel__niveles">
             @for (n of niveles(); track n.nivel) {
-              <!-- Cada nivel es el botón-píldora del agente: blanco el que se puede elegir, apagado hasta elegir el de
-                   arriba. Abre su lista en un globo (el Listbox de primeng.dev dentro del Popover), como en sc-agent. -->
-              <button
-                type="button"
-                class="tel__nivel sc-text-caption-regular"
-                [id]="'tip-vista-' + n.nivel"
+              <!-- Cada nivel es un sc-select del DS: sus opciones son las hijas de lo elegido arriba, y apagado hasta
+                   elegir el de arriba. -->
+              <sc-select
+                class="tel__nivel"
+                [class.tel__nivel--apagado]="n.apagado"
+                [options]="n.opciones"
+                optionLabel="label"
+                optionValue="id"
+                [value]="n.elegida?.id ?? null"
+                (valueChange)="elegir(n.nivel, $event)"
                 [disabled]="n.apagado"
-                aria-haspopup="listbox"
-                [attr.aria-expanded]="abierto() === n.nivel"
-                [attr.aria-label]="('repositories.tipificaciones.preview.level' | translate: { level: n.nivel + 1 }) + (n.elegida ? ': ' + n.elegida.label : '')"
-                (click)="abrir(n.nivel, globo, $event)"
-              >
-                <span class="tel__nivel-texto">{{ n.elegida?.label ?? ('repositories.tipificaciones.preview.level' | translate: { level: n.nivel + 1 }) }}</span>
-                <sc-icon name="keyboard_arrow_down" size="sm" aria-hidden="true" />
-              </button>
+                [placeholder]="'repositories.tipificaciones.preview.level' | translate: { level: n.nivel + 1 }"
+                [ariaLabel]="'repositories.tipificaciones.preview.level' | translate: { level: n.nivel + 1 }"
+              />
             }
           </div>
         }
@@ -53,7 +52,16 @@
           <p class="tel__nada sc-text-caption-regular">{{ 'repositories.tipificaciones.preview.nothing' | translate }}</p>
         }
 
-        <button type="button" class="tel__guardar sc-text-caption-regular" [disabled]="!completo()" (click)="guardar()">{{ 'common.save' | translate }}</button>
+        <sc-button
+          class="tel__guardar"
+          [class.tel__guardar--apagado]="!completo()"
+          variant="secondary"
+          appearance="outlined"
+          [fullWidth]="true"
+          [label]="'common.save' | translate"
+          [disabled]="!completo()"
+          (clicked)="guardar()"
+        />
       </div>
     </div>
   </div>
@@ -77,18 +85,3 @@
     <span>{{ 'repositories.tipificaciones.preview.try' | translate }}</span>
   }
 </p>
-
-<!-- El globo de los niveles, fuera de la columna del panel: dentro, su hueco vacío sumaba un hueco más. -->
-<p-popover #globo [dt]="globoDt" (onHide)="abierto.set(null)">
-  <p-listbox
-    [options]="opcionesAbiertas()"
-    optionLabel="label"
-    optionValue="id"
-    [dt]="lista"
-    [pt]="listaPt"
-    scrollHeight="var(--sc-spacing-12-5)"
-    [ariaLabel]="abierto() !== null ? ('repositories.tipificaciones.preview.level' | translate: { level: abierto()! + 1 }) : ''"
-    [ngModel]="elegidaAbierta()"
-    (ngModelChange)="elegirAbierta($event, globo)"
-  />
-</p-popover>

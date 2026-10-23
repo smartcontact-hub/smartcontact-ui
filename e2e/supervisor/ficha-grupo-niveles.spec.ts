@@ -8,7 +8,7 @@ async function seed(page: Page, phone = true, chat = true) {
   await page.addInitScript(({ phone, chat }) => {
     if (localStorage.getItem('sc-groups')) return;
     localStorage.setItem('sc-groups-v', '4');
-    localStorage.setItem('sc-groups', JSON.stringify([{ id: 11, code: '20011', name: 'Niveles independientes', phone: '917945449', priority: 'Baja', channels: ['phone', 'chat', 'whatsapp'], strategy: phone ? 'Niveles' : 'Balanceada', chatStrategy: chat ? 'Niveles' : 'Balanceada', chatSubStrategy: 'Menos chats activos' }]));
+    localStorage.setItem('sc-groups', JSON.stringify([{ id: 11, code: '20011', name: 'Niveles independientes', phone: '917945449', priority: 'Baja', channels: ['phone', 'chat', 'whatsapp'], advanced: { whatsappNumber: '+34 900 100 200' }, strategy: phone ? 'Niveles' : 'Balanceada', chatStrategy: chat ? 'Niveles' : 'Balanceada', chatSubStrategy: 'Menos chats activos' }]));
     localStorage.setItem('sc-group-agent-links-v', '1');
     localStorage.setItem('sc-group-agent-links', JSON.stringify([
       { agentId: 1, groupId: 11, channels: ['phone', 'whatsapp'], active: true, level: 5, levels: { chat: 10 } },

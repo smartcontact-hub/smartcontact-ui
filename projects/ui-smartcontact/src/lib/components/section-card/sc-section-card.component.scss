@@ -80,7 +80,8 @@
     flex: 0 0 auto;
     /* `sc-icon size="inherit"` pinta a 1em de esto. */
     font-size: var(--section-card-icon-size);
-    color: var(--sc-icon-subtle);
+    /* El del título (`text/color`, #181D26 en claro): el icono y el texto de la cabecera van del mismo color. */
+    color: var(--sc-text-heading);
     align-self: center;
   }
 
@@ -104,6 +105,9 @@
    * Hasta que pase a `Subtitle`, el código va por delante: anotado en `docs/figma-pendiente.md`. */
   &__title {
     margin: 0;
+    /* La cabecera es UNA línea: el título no se parte ni se encoge (el icono, centrado con la fila, no baja). */
+    flex: 0 0 auto;
+    white-space: nowrap;
     font-family: var(--sc-font-family-h3);
     font-size: var(--sc-font-size-h3);
     line-height: var(--sc-line-height-h3);
@@ -124,13 +128,22 @@
     gap: var(--sc-spacing-0-5);
     margin-inline-start: auto;
     align-self: center;
+    /* El botón no se parte en dos líneas: la aclaración cede antes que él. */
+    flex: 0 0 auto;
+    white-space: nowrap;
 
     &:empty {
       display: none;
     }
   }
 
+  /* Una sola línea: si no cabe, se recorta con puntos suspensivos en vez de saltar y estirar la cabecera. */
   &__hint {
+    flex: 0 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     font-family: var(--sc-font-family-caption);
     font-size: var(--sc-font-size-caption);
     line-height: var(--sc-line-height-caption);

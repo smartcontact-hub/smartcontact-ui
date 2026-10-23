@@ -28,7 +28,57 @@
  * @returns {Set<string>}
  */
 export function seccionesHechas({ ids, abierta, dejadas, firma, completa }) {
-  return new Set(ids.filter((id) => id !== abierta && dejadas.get(id) === firma(id) && completa(id)));
+  return new Set(ids.filter((id) => id !== abierta && firmaVista(dejadas, id, firma(id)) && completa(id)));
+}
+
+/**
+ * ¿Lo que hay ahora en la sección ya lo viste al dejarla? La firma es un juego de opciones (los canales de General):
+ * si lo de ahora cabe en lo que viste, sí. Si APARECE algo nuevo (un canal añadido trae bloques, plantillas y columnas
+ * que no has visto), no. Quitar un canal no trae nada que revisar: la sección sigue como la dejaste, sin el bloque que
+ * ya no está. Una sección que nunca se dejó no se ha visto.
+ * @param {ReadonlyMap<string, string>} dejadas
+ * @param {string} id
+ * @param {string} actual
+ * @returns {boolean}
+ */
+export function firmaVista(dejadas, id, actual) {
+  const vista = dejadas.get(id);
+  if (vista === undefined) return false;
+  const vistos = new Set(vista.split(',').filter(Boolean));
+  return actual.split(',').filter(Boolean).every((x) => vistos.has(x));
+}
+
+/**
+ * El estado de cada sección en el índice de un alta, el del marcador de paso. Una sección que se ha dejado conserva su
+ * resultado aunque se abra otra vez, y ese resultado es EN VIVO: la verde sigue verde, la roja se pone verde al rellenar lo
+ * que faltaba, y la verde a la que se le vacía un obligatorio vuelve a rojo (el campo ya está en rojo: el marcador no
+ * puede decir otra cosa). La primera visita no regaña: es `actual` hasta que se deja.
+ *  · `hecha`: dejada y completa (o abierta y completa, si ya se dejó).
+ *  · `error`: dejada con algo obligatorio sin rellenar.
+ *  · `actual`: abierta por primera vez, o con algo nuevo que no se ha visto.
+ *  · `pendiente`: nunca se ha abierto.
+ *  · `nuevo`: se abrió, y desde que se dejó ha llegado algo que no se ha visto (un canal añadido; quitar uno no cuenta).
+ * @param {{
+ *   ids: readonly string[],
+ *   abierta: string,
+ *   dejadas: ReadonlyMap<string, string>,
+ *   firma: (id: string) => string,
+ *   completa: (id: string) => boolean,
+ * }} o
+ * @returns {Map<string, 'pendiente' | 'nuevo' | 'actual' | 'hecha' | 'error'>}
+ */
+export function estadosDeSecciones({ ids, abierta, dejadas, firma, completa }) {
+  return new Map(
+    ids.map((id) => {
+      const vista = firmaVista(dejadas, id, firma(id));
+      if (id === abierta) {
+        if (!vista) return [id, 'actual'];
+        return [id, completa(id) ? 'hecha' : 'error'];
+      }
+      if (!vista) return [id, dejadas.has(id) ? 'nuevo' : 'pendiente'];
+      return [id, completa(id) ? 'hecha' : 'error'];
+    }),
+  );
 }
 
 /**

@@ -1,6 +1,6 @@
 {
   "generated": "component-audit.mjs",
-  "summary": "61 componentes · 22 custom · 10 standard · 29 extended · 50 usados en Supervisor · estado (DD-190): 33 ready, 27 experimental, 1 deprecated.",
+  "summary": "62 componentes · 22 custom · 10 standard · 30 extended · 50 usados en Supervisor · estado (DD-190): 33 ready, 28 experimental, 1 deprecated.",
   "components": [
     {
       "name": "avatar",
@@ -244,7 +244,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 165,
+      "usedInSupervisor": 168,
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "sobreObsoleto": [
         {
@@ -650,7 +650,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 17,
+      "usedInSupervisor": 18,
       "cuando": "Para una tarea corta que interrumpe sin sacarte de la pantalla. Si es larga o hay que consultar lo de detrás, `sc-drawer`.",
       "sobreObsoleto": []
     },
@@ -899,23 +899,26 @@
     {
       "name": "form-section-nav",
       "selector": "sc-form-section-nav",
-      "provenance": "CUSTOM",
-      "kind": "CUSTOM",
-      "primengBase": "—",
+      "provenance": "WRAPPER",
+      "kind": "EXTENDED",
+      "primengBase": "primeng/tooltip",
       "cva": false,
-      "inputs": 8,
+      "inputs": 9,
       "api": [
         "activeChange",
         "activeId",
         "flush",
         "labelKey",
         "sectionErrorHints",
+        "sectionStates",
         "sectionsDone",
         "sectionsWithChanges",
         "sectionsWithErrors",
         "titleKey"
       ],
-      "nested": [],
+      "nested": [
+        "sc-step-marker"
+      ],
       "hasDemo": true,
       "kit": false,
       "estado": "experimental",
@@ -963,7 +966,7 @@
       "selector": "sc-group-popover",
       "provenance": "WRAPPER",
       "kind": "STANDARD",
-      "primengBase": "primeng/popover, primeng/tooltip",
+      "primengBase": "primeng/tooltip",
       "cva": false,
       "inputs": 3,
       "api": [
@@ -1705,7 +1708,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 69,
+      "usedInSupervisor": 70,
       "cuando": "Para elegir UNA de muchas. Si son pocas y caben a la vista, `sc-radiobutton` o `sc-selectbutton` ahorran un clic.",
       "sobreObsoleto": []
     },
@@ -1800,6 +1803,30 @@
       "sobreObsoleto": []
     },
     {
+      "name": "step-marker",
+      "selector": "sc-step-marker",
+      "provenance": "CUSTOM",
+      "kind": "CUSTOM",
+      "primengBase": "—",
+      "cva": false,
+      "inputs": 1,
+      "api": [
+        "state"
+      ],
+      "nested": [],
+      "hasDemo": false,
+      "kit": false,
+      "estado": "experimental",
+      "faltas": [
+        "kit",
+        "demo"
+      ],
+      "retirado": null,
+      "usedInSupervisor": 0,
+      "cuando": "Para decir dónde está cada sección de un recorrido (sin ver, completa, con algo por hacer) en el índice de un alta. Un estado suelto de un campo es su mensaje (`sc-field-msg`); una marca de cambios sin guardar, el punto del índice.",
+      "sobreObsoleto": []
+    },
+    {
       "name": "sticky-form-header",
       "selector": "sc-sticky-form-header",
       "provenance": "CUSTOM",
@@ -1852,7 +1879,7 @@
         "kit"
       ],
       "retirado": null,
-      "usedInSupervisor": 19,
+      "usedInSupervisor": 21,
       "cuando": "Para un nivel más dentro de una sección, plegable si lo secundario estorba.",
       "sobreObsoleto": []
     },

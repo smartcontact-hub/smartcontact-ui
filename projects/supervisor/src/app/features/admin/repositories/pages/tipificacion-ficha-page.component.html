@@ -89,7 +89,8 @@
 <!-- LAS SECCIONES, cada una en su plantilla: un solo cuerpo para el alta y la edición. -->
 <ng-template #seccionGeneral>
   <sc-section-card anchorId="tip-section-general" surface="subtle" icon="tune" titleKey="repositories.tipificaciones.section.general">
-    <section class="sub-section">
+    <sc-subsection>
+      <div class="bloque">
       <div class="grid grid--2">
         <div class="field">
           <label class="field__label sc-text-caption-semibold" for="tip-name">
@@ -121,8 +122,8 @@
           />
         </div>
       </div>
-    </section>
-
+      </div>
+    </sc-subsection>
   </sc-section-card>
 </ng-template>
 
@@ -145,17 +146,14 @@
       [label]="'repositories.tipificaciones.add_category' | translate"
       (clicked)="niveles.anadirCategoria()"
     />
-    <section class="sub-section">
-      <!-- Lo que le falta al árbol (una opción, nombres distintos): en gris mientras se rellena, en rojo si lo guardado ya
-           venía así (DD-219). -->
-      @if (avisoCategorias(); as a) {
-        <p class="sc-text-caption-regular" [class.field__error]="a.rojo" [class.field__help]="!a.rojo" [attr.role]="a.rojo ? 'alert' : null">{{ a.texto }}</p>
-      }
+    <sc-subsection>
+      <div class="bloque">
       <sc-tipificacion-niveles
         #niveles
         [options]="form().options"
         (optionsChange)="onOptions($event)"
       />
-    </section>
+      </div>
+    </sc-subsection>
   </sc-section-card>
 </ng-template>
