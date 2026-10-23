@@ -97,12 +97,24 @@
     [class.sc-text-body-regular]="!isEmphasis(col.field)"
   >
     @if (groupsFor(item, col.field); as grupos) {
-      <!-- «Grupos»: la MISMA celda que Tipificaciones y Agentes: «—» sin ninguno, el nombre si es uno, y con varios la cifra y, al pasar, cuáles. -->
-      <sc-group-popover display="adaptive" [groups]="grupos" [countAriaLabel]="groupsAria(grupos.length, col.field)" />
+      <!-- «Grupos»: la MISMA celda que Tipificaciones y Agentes: «—» sin ninguno, el nombre si es uno, y con varios la cifra y, al pasar, cuáles.
+           Con `groupsDisplay: 'count'` (Equipos, SISMAC-4453) siempre la cifra, 0 incluido, y al pulsarla se abre la fila. -->
+      @if (grupos.length === 0 && emptyAsZero(col.field)) {
+        0
+      } @else {
+        <sc-group-popover
+          [display]="groupsDisplay(col.field)"
+          [groups]="grupos"
+          [countAriaLabel]="groupsAria(grupos.length, col.field)"
+          (activated)="onRowOpen(item)"
+        />
+      }
     } @else if (getStatusEntry(item, col.field); as status) {
       <!-- Estado con el `tag` del DS y su severidad (DD-76): Figma dibuja así el estado
            de Agentes. El tono lo declara cada instancia en su `statusMap`. -->
       <sc-tag [severity]="status.tone" [value]="status.labelKey | translate" />
+    } @else if (showDash(item, col.field)) {
+      <sc-celda-vacia />
     } @else {
       {{ getCellValue(item, col.field) }}
     }

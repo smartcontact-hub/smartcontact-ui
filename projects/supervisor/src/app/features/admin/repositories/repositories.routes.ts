@@ -65,7 +65,14 @@ export const REPOSITORIES_ROUTES: Routes = [
   {
     /* Como el «grupo de agentes» de Voice, el equipo tiene su editor: su nombre y sus agentes (revisión del 2026-10-09). */
     path: 'equipos',
-    data: repoInstance('repositories.equipos.title'),
+    /* La miga completa del COA de SISMAC-4453: Administración › Repositorios › Equipos (› Nuevo equipo / › el nombre). */
+    data: {
+      breadcrumb: [
+        { labelKey: 'sidebar.administration', link: false as const },
+        { labelKey: 'sidebar.repositories', link: '/admin/repositorios' as const },
+        { labelKey: 'repositories.equipos.title' },
+      ],
+    },
     children: [
       { path: '', loadComponent: () => import('./instances/equipos').then((m) => m.EquiposPageComponent) },
       {

@@ -28,6 +28,12 @@ export interface RepoColumnDef<T extends RepoEntity> {
   /** Para `kind === 'groups'`: lo que oye el lector en la cifra, si no son solo grupos («N grupos y agentes»). Lleva
    *  `{{count}}` y su forma para uno en `<clave>_one`. */
   readonly groupsAriaKey?: string;
+  /** Para `kind === 'groups'`: `count` (la cifra siempre, con su globo de nombres) o `adaptive` (por defecto: «—» sin ninguno, el nombre si es uno). */
+  readonly groupsDisplay?: 'count' | 'adaptive';
+  /** Para `kind === 'groups'` con `count`: sin ninguno se escribe 0 (el COA de Equipos), no «—». */
+  readonly emptyAsZero?: boolean;
+  /** Una celda sin dato dice «—» (`sc-celda-vacia`, DD-197) en vez de quedarse en blanco. */
+  readonly emptyDash?: boolean;
 }
 
 export interface RepoStatusEntry {
@@ -85,6 +91,8 @@ export interface RepoPageConfig<T extends RepoEntity> {
   readonly columnChoices?: boolean;
   /** El campo (AAAA-MM-DD) que se pone a hoy al duplicar o guardar desde el panel de la lista. */
   readonly modifiedField?: string;
+  /** Las claves de sus avisos propios (`created`, `updated`, `deleted`), si no valen los genéricos («{{entity}} «{{name}}» creado/a»). */
+  readonly toastsKey?: string;
 }
 
 /** Minimal store contract every repo instance must satisfy. */

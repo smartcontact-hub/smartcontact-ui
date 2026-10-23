@@ -22,7 +22,7 @@ import { ClickOutsideDirective } from '@core/directives/click-outside.directive'
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { LanguageService } from '@core/services/language.service';
 import { XlsxExportService } from '@core/services/xlsx-export.service';
-import { ListPageComponent } from '@shared/components';
+import { CeldaVaciaComponent, ListPageComponent } from '@shared/components';
 import {
   type ColumnDef,
   type GroupRef,
@@ -54,6 +54,7 @@ import { TooltipModule } from 'primeng/tooltip';
     TooltipModule,
     EmptyStateComponent,
     ButtonComponent,
+    CeldaVaciaComponent,
     GroupPopoverComponent,
     ClickOutsideDirective,
     DeleteEntityDialogComponent,
@@ -224,6 +225,22 @@ export class RepoListPageComponent<T extends RepoEntity> {
     return column?.kind === 'groups' && column.groups ? column.groups(item) : null;
   }
 
+  /** Cómo pinta la celda de «grupos»: la cifra siempre (`count`) o, por defecto, adaptada a cuántos haya. */
+  protected groupsDisplay(key: string): 'count' | 'adaptive' {
+    return this.config().columns.find((c) => c.key === key)?.groupsDisplay ?? 'adaptive';
+  }
+
+  /** ¿Sin ninguno se escribe 0? (Equipos: el COA pide la cifra, no «—».) */
+  protected emptyAsZero(key: string): boolean {
+    return !!this.config().columns.find((c) => c.key === key)?.emptyAsZero;
+  }
+
+  /** ¿La celda no tiene dato y su columna pide el guion? */
+  protected showDash(item: T, key: string): boolean {
+    const column = this.config().columns.find((c) => c.key === key);
+    return !!column?.emptyDash && column.accessor(item).trim() === '';
+  }
+
   protected groupsAria(count: number, key: string): string {
     this.lang();
     const base = this.config().columns.find((c) => c.key === key)?.groupsAriaKey ?? 'repositories.groups_aria';
@@ -273,7 +290,7 @@ export class RepoListPageComponent<T extends RepoEntity> {
   protected onCreateSubmit(submission: RepoFormSubmission): void {
     const created = this.store().addItem({ ...submission, ...this.modificada() } as unknown as Omit<T, 'id'>);
     this.creating.set(false);
-    this.toastSuccess('repositories.toasts.created', {
+    this.toastSuccess(this.toastKey('created', 'repositories.toasts.created'), {
       entity: this.entitySingular(),
       name: created.name,
     });
@@ -283,7 +300,7 @@ export class RepoListPageComponent<T extends RepoEntity> {
     this.store().updateItem(id, { ...submission, ...this.modificada() } as unknown as Partial<T>);
     this.editingId.set(null);
     const name = submission['name'] ?? '';
-    this.toastSuccess('repositories.toasts.updated', {
+    this.toastSuccess(this.toastKey('updated', 'repositories.toasts.updated'), {
       entity: this.entitySingular(),
       name,
     });
@@ -316,7 +333,7 @@ export class RepoListPageComponent<T extends RepoEntity> {
 
     if (ids.length === 1) {
       this.store().deleteItem(ids[0]!);
-      this.toastSuccess('repositories.toasts.deleted_single', {
+      this.toastSuccess(this.toastKey('deleted', 'repositories.toasts.deleted_single'), {
         entity: this.entitySingular(),
         name: toasted[0]!.name,
       });
@@ -416,6 +433,12 @@ export class RepoListPageComponent<T extends RepoEntity> {
       sheetName: this.translate.instant(cfg.sheetNameKey),
       filePrefix: cfg.filePrefix,
     });
+  }
+
+  /** El aviso propio de la instancia, si lo declara (`toastsKey`); si no, el genérico. */
+  private toastKey(corto: 'created' | 'updated' | 'deleted', generico: string): string {
+    const base = this.config().toastsKey;
+    return base ? `${base}.${corto}` : generico;
   }
 
   private toastSuccess(key: string, params: Record<string, string | number>): void {

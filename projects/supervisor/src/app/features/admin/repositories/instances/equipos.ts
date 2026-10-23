@@ -52,19 +52,24 @@ export class EquiposPageComponent {
       kind: 'truncate',
       accessor: (i) => i.description,
       width: '320px',
+      emptyDash: true,
     },
     {
+      // Como en el COA de SISMAC-4453: la cifra siempre (0 incluido), con los nombres al pasar, y al pulsarla se abre el equipo.
       key: 'agents',
       labelKey: 'repositories.equipos.agents',
       kind: 'groups',
       accessor: (i) => String(this.agentesDe(i).length),
       groups: (i) => this.agentesDe(i),
+      groupsDisplay: 'count',
+      emptyAsZero: true,
       groupsAriaKey: 'repositories.equipos.agents_aria',
       width: '112px',
     },
   ];
 
   protected readonly config: RepoPageConfig<Equipo> = {
+    toastsKey: 'repositories.equipos.toasts',
     titleKey: 'repositories.equipos.title',
     entitySingularKey: 'repositories.equipos.singular',
     createTitleKey: 'repositories.equipos.create_title',
