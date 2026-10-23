@@ -126,8 +126,13 @@ export const ultimaFrase = (texto) => frases(texto).at(-1) ?? '';
 // entre el 2026-10-20 y el 22. En los transcripts (2.415 mensajes distintos, medido el 2026-10-22)
 // llegaban así 71 avisos de sesión hija, 25 del monitor y 11 mensajes de otra sesión; del monitor,
 // otros 123 sin recordatorio.
+// Y el informe final de un SUBAGENTE (`<agent-message>`, «[Subagent hand-back]…»): la revisión que
+// encarga la sesión vuelve con «Qué está mal» en cada hallazgo. Al hook le llega desde la etiqueta; en
+// el transcript, con el preámbulo «Another Claude session sent a message:» delante, que también llevan
+// los mensajes de otra sesión. Medido el 2026-10-23 en los transcripts (2.784 mensajes distintos):
+// sin la etiqueta ni el preámbulo contaban como corrección 1 informe de subagente y 4 mensajes de otra sesión.
 const SOBRE_DE_AGENTE =
-  /^<(?:cross-session-message|task-notification|scheduled-task|side-sessions-event|ci-monitor-event)\b/i;
+  /^(?:Another Claude session sent a message:\s*)?<(?:cross-session-message|task-notification|scheduled-task|side-sessions-event|ci-monitor-event|agent-message)\b/i;
 // Un mensaje REAL del usuario también llega con recordatorios delante (la nota de sesiones
 // enlazadas, el aviso de worktree) y su texto detrás: por eso no basta con «empieza por
 // `<system-reminder>`». Se quitan, y lo que queda es lo que escribió el usuario.

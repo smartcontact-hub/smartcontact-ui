@@ -1511,11 +1511,24 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
   /** Adónde ir cuando acabe de guardar; `null`, quedarse en la ficha. */
   private destinoTrasGuardar: string | null = null;
 
-  protected async irARepositorios(event: MouseEvent): Promise<void> {
+  protected irARepositorios(event: MouseEvent): void {
     if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     event.preventDefault();
+    void this.salirARepositorios('/admin/repositorios');
+  }
+
+  /**
+   * «Editar en Repositorios», en el detalle de la tipificación: también sale de la ficha, así que pregunta lo mismo que
+   * «Gestionar en Repositorios», guardar antes, y no «¿Descartar cambios?» (DD-224).
+   */
+  protected editarTipificacion(destino: string): void {
+    this.viendoTipificacion.set(false);
+    void this.salirARepositorios(destino);
+  }
+
+  private async salirARepositorios(destino: string): Promise<void> {
     if (!this.formDirty()) {
-      void this.router.navigateByUrl('/admin/repositorios');
+      void this.router.navigateByUrl(destino);
       return;
     }
     const guardar = await this.confirm.request({
@@ -1526,7 +1539,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
       icon: 'info',
     });
     if (!guardar) return;
-    this.destinoTrasGuardar = '/admin/repositorios';
+    this.destinoTrasGuardar = destino;
     this.save();
   }
 

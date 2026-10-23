@@ -4,8 +4,9 @@ import { juegoDeDatos } from '@core/services/juego-de-datos';
 
 /**
  * «Desconectado» es no tener la sesión abierta: sustituye a la columna «Activación», que no existía en el producto
- * (definición de producto, 2026-09-16). Postconversando y Administrativo los pone la conversación o el propio
- * agente. En la lista el estado se VE y no se cambia: ninguno se edita desde ahí.
+ * (definición de producto, 2026-09-16). Conversación, Postconversando y Administrativo los pone la conversación o el
+ * propio agente. En la lista el estado se VE y no se cambia: ninguno se edita desde ahí. «Conversación», el agente
+ * atendiendo, es de SISMAC-4060 (DD-225).
  */
 export type PresenceStatus =
   | 'disponible'
@@ -14,6 +15,7 @@ export type PresenceStatus =
   | 'comida'
   | 'formacion'
   | 'post_conversando'
+  | 'conversacion'
   | 'administrativo'
   | 'desconectado';
 
@@ -24,19 +26,26 @@ export const PRESENCE_LABEL_KEYS: Readonly<Record<PresenceStatus, string>> = {
   comida: 'agents.presence.lunch',
   formacion: 'agents.presence.training',
   post_conversando: 'agents.presence.wrap_up',
+  conversacion: 'agents.presence.talking',
   administrativo: 'agents.presence.administrative',
   desconectado: 'agents.presence.offline',
 };
 
-/** Cómo se pinta la etiqueta de un estado: un color de etiqueta, o una severidad nativa de `p-tag`. */
-export type PresenceTag = { readonly labelColor: LabelColor } | { readonly severity: 'warn' | 'secondary' };
+/** Cómo se pinta la etiqueta de un estado: un color de etiqueta (con borde, salvo `bordered: false`), o una severidad
+ * nativa de `p-tag`. */
+export type PresenceTag =
+  | { readonly labelColor: LabelColor; readonly bordered?: false }
+  | { readonly severity: 'secondary' };
 
 /**
- * La etiqueta de cada estado, la MISMA que en Contact Center › Servicio, donde se configuran:
- * Disponible verde; No disponible rojo, y en rojo también sus motivos (Baño, Comida, Formación), porque son maneras de
- * no estar disponible; Administrativo, la etiqueta nativa de aviso (`warn`), que en oscuro sigue amarilla (el ámbar
- * salía marrón). Los dos que allí no salen, porque no se eligen: Post-conversando en azul y Desconectado en gris
- * (`secondary`: su punto en el avatar; en el listado va como texto, sin etiqueta, para no pesar como un estado atendible).
+ * La etiqueta de cada estado, por FAMILIA (SISMAC-4060, DD-225): Disponible verde; en rojo, No disponible y sus motivos
+ * (Baño, Comida y Formación); Administrativo, en su marrón (DD-176), que no es una etiqueta roja; en azul, lo de la
+ * conversación. Dentro del azul, Post-conversando lleva la etiqueta azul sin borde: la misma pieza, alto y peso que
+ * las demás, y se distingue de Conversación por el borde. El `tag` Info que le da Figma no tiene la hechura de la
+ * etiqueta (21,5 px de alto frente a 25,5, y en negrita); su color propio en el DS (`semantic/presence/wrapup`,
+ * cyan/700), de fondo, saltaría sobre las demás, todas pastel; y el teal se confunde con el verde de Disponible.
+ * Desconectado, sin etiqueta: gris (`secondary`) en el punto del avatar, y en el listado como texto, para no pesar como
+ * un estado atendible.
  */
 export const PRESENCE_TAGS: Readonly<Record<PresenceStatus, PresenceTag>> = {
   disponible: { labelColor: 'green' },
@@ -44,10 +53,27 @@ export const PRESENCE_TAGS: Readonly<Record<PresenceStatus, PresenceTag>> = {
   bano: { labelColor: 'red' },
   comida: { labelColor: 'red' },
   formacion: { labelColor: 'red' },
-  /* Marrón (DD-176), no el amarillo de aviso: un estado del agente, no una alerta. */
   administrativo: { labelColor: 'brown' },
-  post_conversando: { labelColor: 'blue' },
+  post_conversando: { labelColor: 'blue', bordered: false },
+  conversacion: { labelColor: 'blue' },
   desconectado: { severity: 'secondary' },
+};
+
+/**
+ * El orden de la columna Estado, de más a menos disponible (SISMAC-4060, DD-225): Disponible, No disponible, los
+ * personalizados, Administrativo, Post-conversando, Conversación y Desconectado. Los personalizados (Baño, Comida,
+ * Formación) comparten puesto: entre ellos, por su nombre en el idioma de la pantalla, que lo resuelve la lista.
+ */
+export const PRESENCE_SORT_RANK: Readonly<Record<PresenceStatus, number>> = {
+  disponible: 0,
+  no_disponible: 1,
+  bano: 2,
+  comida: 2,
+  formacion: 2,
+  administrativo: 3,
+  post_conversando: 4,
+  conversacion: 5,
+  desconectado: 6,
 };
 
 /**
@@ -85,6 +111,13 @@ export const CLIENTE_CON_CUSCARE = true;
  * (DD-211 §2). El cliente de la demo los tiene.
  */
 export const CLIENTE_CON_WEBRTC = true;
+
+/**
+ * Si el cliente tiene Call Blending. Solo entonces el agente tiene «Grupo para llamadas salientes», obligatorio con
+ * Teléfono, y lo copia al duplicarse (SISMAC-4062, DD-211 §9). El cliente de la demo lo tiene: el prototipo enseña todo
+ * lo contratable.
+ */
+export const CLIENTE_CON_CALL_BLENDING = true;
 
 /** Dónde suena: `phone`, en su teléfono móvil; `webrtc`, en el navegador, con Smart Contact Agent. */
 export type ExtensionType = 'phone' | 'webrtc';
@@ -546,7 +579,8 @@ const BASE_AGENTS: readonly Agent[] = [
     extensionType: 'webrtc',
     agentType: 'normal',
     status: 'active',
-    presenceStatus: 'disponible',
+    // Atendiendo, para que la lista enseñe «Conversación» (SISMAC-4060, DD-225). No es de la demo del Dashboard.
+    presenceStatus: 'conversacion',
     pin: '318',
     permissions: { ...DP, recording: true },
     pickupType: 'auto',

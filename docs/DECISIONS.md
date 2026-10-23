@@ -160,6 +160,157 @@
 
 ---
 
+## DD-226 · 2026-10-23 — Post-conversando, en la etiqueta azul sin borde: la misma pieza que las demás de la columna Estado
+
+**Contexto** · DD-225 §3 pintó Post-conversando con el `tag` Info, la severidad que le da Figma, para separarlo de
+Conversación. Medido en el listado, el `tag` del Kit no tiene la hechura de la etiqueta que llevan los demás estados:
+21,5 px de alto frente a 25,5, peso 700 frente a 600 y sin borde. Producto pidió consistencia con el resto.
+
+**Decisión** · Post-conversando lleva la etiqueta azul de Conversación con `bordered: false` (`PRESENCE_TAGS`): la misma
+pieza, alto (25,5), peso (600), radio y relleno que las demás, porque el borde queda transparente. Lo que la separa de
+Conversación es el borde azul que lleva esta. El punto del avatar, el azul de etiqueta, como Conversación. Enmienda
+DD-225 §3.
+
+**Razón** · Es la única opción que cumple a la vez lo que se pidió: la forma de las demás etiquetas, sin tokens nuevos
+y dentro de la familia azul.
+
+**Descartadas** ·
+- *Seguir con el `tag` Info*: la única pastilla de la columna con otro alto y otro peso.
+- *Una entrada nueva en la paleta de etiquetas con los colores de Info* (sky-100 de fondo, sky-700 de texto): la forma
+  de las demás y el color de Figma, pero son tokens nuevos y un color más que se podría elegir en Etiquetas.
+- *Otra etiqueta de la paleta*: el teal se confunde con el verde de Disponible (DD-225); el morado es el color de la IA;
+  ámbar y naranja quedan junto al marrón de Administrativo; el gris es Desconectado.
+
+**Consecuencias** · `agentes-como-coa-4060-4062.spec.ts` mira el fondo azul de etiqueta y el borde: el de Conversación,
+pintado; el de Post-conversando, transparente. En Figma (Supervisor › Agentes), Post-conversando deja el Info: sky/50 de
+fondo, sin borde, y texto sky/600, como Conversación sin su borde (DD-225, lo más cercano del DS a la etiqueta azul). La
+congelada 4062 sirve aún el `tag` Info hasta que avance a este commit.
+
+## DD-225 · 2026-10-23 — Agentes como sus borradores de COA: borrar varios, Teléfono y Estado de inicio, Estado ordenable y por familias de color, el índice del alta con marcadores y lo que no se copia al duplicar
+
+**Contexto** · Los borradores de «SOLUCIÓN SISMAC-4060 Sección Agentes» y «SOLUCIÓN SISMAC-4062 Creación/Edición
+Agentes» (2026-10-23) se escribieron frase a frase contra el prototipo y Figma. Producto decidió doce puntos en los que
+COA manda y el prototipo cambia, con la regla de Grupos (DD-218, DD-223): COA es más nueva que la DD. Medido contra la
+congelada `proto-sismac-4062` y `main`: el listado no borraba varios, escondía Teléfono y Estado, Estado no se ordenaba
+(DD-180) y «Grupos» ordenaba de menor a mayor; duplicar copiaba la foto, el móvil y el estado; un alta nacía
+«Disponible»; la extensión ofrecía las de otros agentes (y no la propia de uno fuera de la lista); un email repetido se
+guardaba; la tabla de grupos vacía decía siempre «Sin resultados»; el alta llevaba el ✓ suelto y «Falta: …» sobre el
+resumen; el Excel no llevaba los canales, y el aviso de quitar canales decía «en 1 grupos».
+
+**Decisión** ·
+1. **Borrar varios, como en Grupos** (DD-218): con dos o más marcados, el clic derecho sobre uno ofrece solo «Eliminar»,
+   «¿Eliminar 3 agentes?», «Esta acción no se puede deshacer.» y el toast «3 agentes eliminados»; fuera los agentes, sus
+   enlaces y la selección. La edición masiva sigue para otra fase (DD-215).
+2. **Teléfono y Estado salen de inicio**; solo ID y Tipo van escondidos. Las columnas guardadas pasan a
+   `sc-agents-columns-v6`: una lista guardada los seguiría escondiendo. Con ellas, **a 1440 la tabla desplaza de lado**
+   (medido: 226 px más que su caja de 1302), con Nombre y «⋮» fijos, como dice la 4060; enmienda DD-193 §3 para
+   Agentes.
+3. **Estado se ordena, de más a menos disponible** (`PRESENCE_SORT_RANK`): Disponible, No disponible, los personalizados
+   (entre ellos, por su nombre), Administrativo, Post-conversando, Conversación y Desconectado. Enmienda DD-180, que la
+   dejaba como la única sin orden. **Estado nuevo «Conversación»**, el agente atendiendo; en el Dashboard cuenta «En
+   pausa», como Post-conversando (DD-139). La semilla lo pone en el agente 17, que no es de la demo del Dashboard. **El
+   color va por familia, sin tokens nuevos**: Disponible verde; rojo para No disponible y los personalizados;
+   **Administrativo, en su marrón** (DD-176): no va con etiqueta roja; azul para lo de la conversación, con
+   **Post-conversando en el `tag` Info** (enmendado por DD-226: etiqueta azul sin borde), la severidad que le da Figma
+   (Supervisor › Agentes): el tono de Conversación, lleno y sin borde, que se distingue sin salir de la familia (fondo a
+   ΔE OKLab 0,056, texto a 0,104); Desconectado, en texto gris. El punto del avatar, del badge Info nativo. El `tag` del
+   Kit no tiene la hechura de la etiqueta: 21,5 px de alto frente a 25,5, peso 700 frente a 600 y sin borde.
+4. **«Grupos» ordena de mayor a menor al primer clic** (`defaultSortOrder: -1`), como «Agentes» en Grupos.
+5. **Duplicar deja vacíos la foto y el móvil**, que son de otra persona (sin móvil, «Gestión de dispositivos» se
+   apaga), **y no copia el estado**: la copia nace «Desconectado», como **todo agente nuevo**, que hasta hoy nacía
+   «Disponible». El grupo de salientes se copia solo con Call Blending (§9).
+6. **Solo extensiones libres**, las de la lista que no tiene otro agente; al editar, también la suya, aunque no esté en
+   la lista. **Un email de otro agente se dice en vivo**, «Ya hay un agente con este email», como lo mal escrito: en su
+   campo y en la línea de General, y no deja crear ni guardar.
+7. **La tabla de grupos vacía dice por qué**, como la de agentes del grupo (DD-223 §4): en Asignados sin búsqueda, «Sin
+   grupos asignados» y «Asígnalos desde la pestaña «Todos».»; en Sin asignar, «Todos los grupos están asignados»; con
+   búsqueda, «Sin resultados» y «Ningún grupo coincide con el filtro.».
+8. **El índice del alta, el del grupo** (DD-222 §1 a §6), también al duplicar: el marcador y la línea en cada fila (Sin
+   revisar, En curso, Con novedades, Completa, y «Revisada» en Configuración y Recursos, que no tienen nada obligatorio),
+   lo que falta con la etiqueta corta («Nombre, email, extensión», «Un grupo», «Un grupo para las salientes») y, detrás,
+   lo mal escrito. Dejar una sección con algo vacío la pone en rojo, y desde entonces todo lo obligatorio suyo se dice en
+   rojo, también lo que aparezca luego (el móvil al pasar la extensión a «Teléfono»). Sobre el resumen ya no sale
+   «Falta: …» ni «Listo para crear», como anunciaba DD-222 §5; el tooltip de «Crear agente» sigue diciendo qué falta.
+   **«Deshacer» deja el índice como al empezar** (`alta.reiniciar()`): la sección abierta sigue abierta y las demás
+   vuelven a «Sin revisar». **Al editar**, sin marcadores, y bajo la sección con punto rojo, la misma etiqueta corta
+   («Un grupo»), no el aviso entero del primero («Hace falta al menos un grupo»).
+9. **El grupo para llamadas salientes, solo con Call Blending** (`CLIENTE_CON_CALL_BLENDING`, encendida en la demo, como
+   CusCare y WebRTC, DD-211 §9): el desplegable, su obligatorio con Teléfono, la fila «Salientes» del resumen y la copia
+   al duplicar. El prototipo lo sigue enseñando.
+10. **El Excel lleva la columna Canales**, detrás de Teléfono y por su nombre («Teléfono, Chat»): la 4060 pide la
+    información de todas las columnas de la tabla.
+11. **El aviso de quitar canales concuerda en número**: «Deja de atender Chat en 1 grupo.», y con quien sale, «que se
+    queda» o «que se quedan» según cuántos grupos pierde.
+
+**Razón** · COA es lo que construye desarrollo, y estos borradores son lo más nuevo de producto. En casi todo, además,
+Grupos ya hacía lo que COA pide (borrar varios, el orden de las cifras, la tabla vacía, el índice con marcadores): una
+ficha que se comporta como su gemela se aprende una vez.
+
+**Descartadas** ·
+- *Subir la versión del almacén de agentes* para que «Conversación» salga también en un navegador con la lista
+  guardada: tira lo creado en la demo y las tres pruebas que siembran la versión 3. La vía que no borra: sale en la
+  lista de fábrica y al borrar los datos del sitio.
+- *Dos etiquetas nuevas, rojo oscuro y azul oscuro* (red-100/red-900 y azure-100/azure-900), como pedía el borrador:
+  medidas en OKLCH, se separan 1-2° de tono y 0,035-0,039 de luz de fondo del rojo y el azul que ya hay, y a tamaño de
+  etiqueta no se distinguen. El Kit agrupa igual (`custom/semantic/presence`: administrative red.600 junto a
+  unavailable red.400, wrapup cyan.600 junto a talking cyan.400). Y serían dos tokens nuevos.
+- *Administrativo en el rojo de No disponible*, como manera de no recibir conversaciones: se probó y producto lo
+  devolvió al marrón; no debe ir con etiqueta roja, y el resto de la familia, sí. Figma, P1 y el prompt maestro ya lo
+  dicen así.
+- *Post-conversando en el azul de etiqueta de Conversación*: idénticos, el color no los separaba.
+- *Post-conversando en su color del DS* (`semantic/presence/wrapup`, cyan/700): de fondo da 5,64:1 contra el blanco de
+  la tabla, cuando las demás etiquetas, pastel, dan de 1,04 a 1,09; saltaría sobre todas.
+- *Post-conversando en la etiqueta teal* (el tono que lleva en Contact Center › Servicio): contra el verde de Disponible
+  queda a ΔE OKLab 0,009 de fondo y 0,039 de texto, y un agente ocupado se leería como disponible.
+- *Estrechar Email, Grupos y Equipos para que la tabla quepa a 1440*: cortarían su contenido, y las columnas miden lo
+  que traen (DD-210 §4).
+- *Esconder el grupo de salientes en la demo*: el prototipo enseña todo lo contratable (DD-211 §9); la bandera deja el
+  código diciendo lo mismo que COA.
+- *Dejar al editar el aviso entero bajo la sección*: Grupos y COA dicen la etiqueta corta, la misma que en el alta.
+
+**Consecuencias** · Prueba nueva `agentes-como-coa-4060-4062.spec.ts`, y al día las del alta de agente que fijaban el ✓
+suelto y «Falta: …» sobre el resumen. Contact Center › Servicio sigue pintando Administrativo con la etiqueta de aviso
+(`warn`): no es la columna Estado y queda fuera. En Figma (Supervisor › Agentes), Post-conversando ya era Info y
+Conversación, también: pasa a sky/50 de fondo, borde sky/200 y texto sky/600, lo más cercano del DS a la etiqueta azul
+del código (ΔE 0,005, 0,045 y 0,010), porque Figma no tiene `azure`. El resto de Figma, en su propia sesión. La congelada `proto-sismac-4062` avanza con esto cuando se funda
+(`docs/PROTOTIPOS.md`).
+
+---
+
+## DD-224 · 2026-10-22 — «Editar en Repositorios» de la tipificación pregunta lo mismo que «Gestionar en Repositorios»: guardar antes
+
+**Contexto** · Repaso de Grupos entre COA (4058 versión 17, 4056 versión 11), Figma y el prototipo. La ficha de grupo
+tiene dos enlaces que salen a Repositorios: «Gestionar en Repositorios», en Recursos, y «Editar en Repositorios», en
+el detalle de la tipificación («Ver detalle»). Con cambios sin guardar, el primero pregunta «¿Guardar los cambios?»
+(SISMAC-4058, 2026-10-20); el segundo dejaba saltar el aviso de salida, «¿Descartar cambios?». Mismo gesto, misma
+salida, dos preguntas opuestas.
+
+**Decisión** ·
+1. **«Editar en Repositorios», con cambios, pregunta guardar antes**, con el mismo diálogo: «¿Guardar los cambios?»,
+   «Para ir a Repositorios, guarda antes el grupo.», «Guardar» y «Seguir editando». El detalle se cierra antes de
+   preguntar. «Guardar» guarda (o crea, en el alta, con su regla: si falta algo, no sale) y abre la ficha de la
+   tipificación en Categorías; «Seguir editando» se queda. Sin cambios, va directo. En la ficha del grupo no se edita
+   nada de la tipificación: solo cambia la pregunta al salir.
+2. **«Solo salientes» depende de Call Blending**, como ya decía DD-211 §9: el prototipo lo enseña siempre y Figma lo
+   anota. Desde DD-223 el selector es «En qué conversaciones», compartido por comentarios y tipificación, y la regla
+   sigue igual. Lo que faltaba era decirlo en COA.
+
+**Razón** · Quien va a editar la tipificación desde la ficha quiere volver a un grupo con sus cambios, no perderlos;
+el primer botón del aviso de salida es descartar, y desde aquí lo normal es lo contrario. Una sola pregunta para los
+dos enlaces se aprende una vez. La regla de lo contratado ya estaba decidida y escrita en Figma: no se reabre.
+
+**Descartadas** ·
+- *Dejar «¿Descartar cambios?»*: pierde lo hecho por ir a mirar una tipificación, y contradice al enlace hermano.
+- *Abrir la tipificación en otra pestaña*: deja dos fichas abiertas sobre los mismos datos, y en la otra pestaña no se
+  ve lo que se guardó aquí. Cmd+clic sigue abriéndola en otra pestaña sin preguntar, por su dirección.
+- *Esconder «Solo salientes» en el prototipo sin Call Blending*: el prototipo enseña todo lo contratable (DD-211 §9).
+
+**Consecuencias** · `sc-tipificacion-arbol` ya no navega: emite `editar` con la dirección y la ficha decide, como
+«Gestionar en Repositorios». Prueba nueva en `ficha-recursos-dialogos.spec.ts`. COA 4058: la frase de «Editar en
+Repositorios» y la de «Solo salientes». Figma: `docs/figma-pendiente.md` §62, con los retoques del repaso (hecho el mismo día).
+
+---
+
 ## DD-223 · 2026-10-22 — La ficha de grupo, como su página de COA publicada: «En qué conversaciones» también con comentarios, el canal que se activa llega a los agentes, y nadie sale del grupo sin avisar
 
 **Contexto** · Producto publicó el 2026-10-22 la versión 17 de «SOLUCIÓN SISMAC-4058 Creación/Edición Grupos». Medida

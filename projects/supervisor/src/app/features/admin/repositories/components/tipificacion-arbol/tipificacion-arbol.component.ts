@@ -1,6 +1,5 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
-import { NgTemplateOutlet } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
+import { LocationStrategy, NgTemplateOutlet } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { ScDialogComponent as DialogComponent } from '@smartcontact-hub/components';
 
@@ -16,7 +15,7 @@ import type { Tipificacion } from '../../state/tipificaciones.core.mjs';
  */
 @Component({
   selector: 'sc-tipificacion-arbol',
-  imports: [DialogComponent, NgTemplateOutlet, RouterLink, TranslateModule],
+  imports: [DialogComponent, NgTemplateOutlet, TranslateModule],
   template: `
     @let t = tipificacion();
     <sc-dialog
@@ -42,7 +41,7 @@ import type { Tipificacion } from '../../state/tipificaciones.core.mjs';
       </div>
 
       <div modal-actions class="mapa__pie">
-        <a class="mapa__editar sc-text-caption-semibold" [routerLink]="['/admin/tipificaciones/editar', t.id]" [queryParams]="{ seccion: 'categorias' }">
+        <a class="mapa__editar sc-text-caption-semibold" [href]="editarHref()" (click)="onEditar($event)">
           {{ 'repositories.tipificaciones.map_edit' | translate }}
         </a>
       </div>
@@ -121,5 +120,20 @@ export class TipificacionArbolComponent {
   readonly tipificacion = input.required<Tipificacion>();
   readonly visible = input(false);
   readonly cerrar = output<void>();
+  /**
+   * «Editar en Repositorios», con la dirección de su ficha. No navega él: sale de la ficha que lo abrió, y esa decide
+   * si antes pregunta, como su «Gestionar en Repositorios» (DD-224). Cmd+clic o el botón central lo abren en otra
+   * pestaña sin preguntar, por su `href`.
+   */
+  readonly editar = output<string>();
   protected readonly columnas = computed(() => Array.from({ length: this.tipificacion().levels }, (_, i) => i));
+  private readonly locationStrategy = inject(LocationStrategy);
+  private readonly editarUrl = computed(() => `/admin/tipificaciones/editar/${this.tipificacion().id}?seccion=categorias`);
+  protected readonly editarHref = computed(() => this.locationStrategy.prepareExternalUrl(this.editarUrl()));
+
+  protected onEditar(event: MouseEvent): void {
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    this.editar.emit(this.editarUrl());
+  }
 }

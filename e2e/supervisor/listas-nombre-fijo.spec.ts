@@ -12,7 +12,7 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  *   1. el mínimo de la tabla sale de sus columnas, y la que crece no baja de 15rem (240 px);
  *   2. la casilla (si la lista la tiene: Grupos y Agentes ya no, DD-215) y el nombre se quedan fijos al desplazar la
  *      tabla de lado hasta el final;
- *   3. a 1440 no hay nada que desplazar, tampoco con lo que la lista mide al abrir.
+ *   3. a 1440 no hay nada que desplazar, tampoco con lo que la lista mide al abrir (salvo Agentes, DD-225).
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -70,7 +70,10 @@ for (const ancho of [900, 1024]) {
  * iconos: pesa 3,9 MB y la de texto 23 KB, así que es la que llega tarde de verdad; con las dos retrasadas, el texto de
  * reserva sale más estrecho que Inter y tapaba el fallo.
  */
-for (const ruta of LISTAS) {
+/* Agentes desplaza de lado también a 1440 desde DD-225: SISMAC-4060 pide Teléfono y Estado de inicio, y la tabla, con
+ * scroll horizontal y Nombre y «⋮» fijos, que es lo que miden las pruebas de 900 y 1024 (medido: 226 px más que su caja
+ * de 1302). */
+for (const ruta of LISTAS.filter((r) => r !== 'admin/agentes')) {
   test(`${ruta} a 1440: no desplaza de lado, aunque la fuente de iconos llegue tarde`, async ({ page }) => {
     await page.route(/material-symbols[^/]*\.woff2/, async (r) => {
       await new Promise((listo) => setTimeout(listo, 1500));

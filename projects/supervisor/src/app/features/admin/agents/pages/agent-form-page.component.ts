@@ -27,11 +27,9 @@ import {
   NameInplaceComponent,
   ResourceOptionComponent,
   SummaryKpiComponent,
-  SummaryStatusComponent,
   type FaltaDelResumen,
 } from '@shared/components';
 import {
-  avisosDelIndice,
   ayudaDeObligatorio,
   dejoElCampo,
   firmaDe,
@@ -87,6 +85,7 @@ import {
   AgentType,
   AVAILABLE_EXTENSIONS,
   AVAILABLE_LANGUAGES,
+  CLIENTE_CON_CALL_BLENDING,
   CLIENTE_CON_CUSCARE,
   CLIENTE_CON_WEBRTC,
   DESTINO_KEYS,
@@ -94,6 +93,7 @@ import {
   DestinoKey,
   EXTENSION_ICONS,
   EXTENSION_TYPES,
+  ExtensionOption,
   ExtensionType,
   PERMISSION_MATRIX_KEYS,
   PICKUP_TYPES,
@@ -211,7 +211,6 @@ function sameValues<T>(a: readonly T[], b: readonly T[]): boolean {
     IconComponent,
     NameInplaceComponent,
     SummaryKpiComponent,
-    SummaryStatusComponent,
     AltaPieComponent,
     ResourceOptionComponent,
     CheckboxComponent,
@@ -338,6 +337,9 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
   /** El tipo de agente solo existe en un cliente con CusCare. */
   protected readonly conCusCare = CLIENTE_CON_CUSCARE;
 
+  /** El grupo para llamadas salientes solo existe en un cliente con Call Blending (SISMAC-4062, DD-211 §9). */
+  protected readonly conCallBlending = CLIENTE_CON_CALL_BLENDING;
+
   /** Choices for the "Chats simultáneos" select inside Comportamiento. */
   protected readonly maxChatsOptions: readonly number[] = [
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
@@ -355,7 +357,20 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
    * cualquier string. Seguro: las keys vienen de presenceStates. */
   protected readonly presenceKeys: Readonly<Record<string, string>> =
     PRESENCE_LABEL_KEYS;
-  protected readonly availableExtensions = AVAILABLE_EXTENSIONS;
+  /**
+   * Las extensiones que se pueden elegir: las libres y, al editar, también la suya, la guardada (SISMAC-4062, DD-225).
+   * Hasta entonces salían todas, también las de otros agentes, y la de un agente fuera de la lista no salía.
+   */
+  protected readonly extensionOptions = computed<readonly ExtensionOption[]>(() => {
+    const yo = this.editingId();
+    const usadas = new Set(this.agentsStore.agents().filter((a) => a.id !== yo).map((a) => a.extension));
+    const libres = AVAILABLE_EXTENSIONS.filter((e) => !usadas.has(e.number));
+    const propia = this.initial();
+    if (!propia?.extension || libres.some((e) => e.number === propia.extension)) return libres;
+    return [...libres, { number: propia.extension, type: propia.extensionType }].sort((a, b) =>
+      a.number.localeCompare(b.number, undefined, { numeric: true }),
+    );
+  });
   protected readonly availableLanguages = AVAILABLE_LANGUAGES;
   protected readonly availableLabels = this.labelsStore.labels;
 
@@ -455,16 +470,19 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
    * (Grupos). Hasta ese día eran cinco: Identidad, Grupos, Permisos, Recursos y Avanzado. Desde el listado se entra
    * por General; a Grupos (`?seccion=grupos`) lleva la cifra de grupos (DD-213).
    */
-  protected readonly navSections = computed<readonly FormNavSection[]>(() =>
-    [
+  protected readonly navSections = computed<readonly FormNavSection[]>(() => {
+    // «Revisada» y no «Completa» donde no hay nada que cumplir, como en el grupo (DD-222): Configuración y Recursos. Solo
+    // en el alta y al duplicar: al editar todo está guardado.
+    const alta = this.mode() !== 'edit';
+    return [
       { id: 'agent-section-general', labelKey: 'agents.form.section.general', icon: 'tune' },
-      { id: 'agent-section-config', labelKey: 'agents.form.section.config', icon: 'verified_user' },
+      { id: 'agent-section-config', labelKey: 'agents.form.section.config', icon: 'verified_user', optional: alta },
       // Ni el nombre ni el icono son los del menú (carpeta): con los mismos, quien buscaba la sección acababa en la
       // página Repositorios (DD-105).
-      { id: 'agent-section-resources', labelKey: 'agents.form.section.resources', icon: 'library_books' },
+      { id: 'agent-section-resources', labelKey: 'agents.form.section.resources', icon: 'library_books', optional: alta },
       { id: 'agent-section-groups', labelKey: 'agents.form.section.groups', icon: 'group' },
-    ].map((sec) => ({ ...sec, href: this.sectionLinks.href(this.sectionUrl(sec.id)) })),
-  );
+    ].map((sec) => ({ ...sec, href: this.sectionLinks.href(this.sectionUrl(sec.id)) }));
+  });
 
   /** Cada sección en la dirección (`?seccion=grupos`). General, la primera, va sin parámetro. */
   private static readonly SECTION_SLUGS: Readonly<Record<string, string>> = {
@@ -510,9 +528,28 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
     return this.sectionLinks.section(this.route, id === 'agent-section-general' ? null : slug);
   }
 
+  /**
+   * Todo lo obligatorio de cada sección, falte ahora o no: al dejar una sección con algo vacío, todo lo suyo pasa a decirse
+   * en rojo, también lo que aparezca después (el móvil al pasar la extensión a «Teléfono»), como en el grupo (DD-222 §6).
+   */
+  private static readonly OBLIGATORIOS_DE: Readonly<Record<string, readonly string[]>> = {
+    'agent-section-general': [
+      'agents.errors.name_required',
+      'agents.errors.email_required',
+      'agents.errors.extension_required',
+      'agents.errors.phone_required',
+      'agents.errors.channels_required',
+    ],
+    'agent-section-groups': ['agents.errors.group_required', 'agents.errors.outbound_required'],
+  };
+
   /** Ir a otra sección. En el alta y al duplicar, la sección se abre sin tocar la dirección: Atrás sale (DD-122, DD-143). */
   protected goTo(id: string): Promise<boolean> {
     if (this.mode() !== 'edit') {
+      const dejada = this.alta.abierta();
+      if (id !== dejada && this.faltas().some((f) => f.seccion === dejada)) {
+        for (const motivo of AgentFormPageComponent.OBLIGATORIOS_DE[dejada] ?? []) this.ocasion.tocar(motivo);
+      }
       this.alta.abrir(id);
       return Promise.resolve(true);
     }
@@ -538,9 +575,9 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
   /**
    * LO OBLIGATORIO, en el orden de la ficha (la revisión de agentes de producto, 2026-10-09): nombre, email, extensión, el
    * móvil si suena en el teléfono y al menos un canal, en General; al menos un grupo, un canal en cada uno y, si atiende
-   * teléfono, el grupo de sus salientes, en Grupos. Cada uno con el campo al que se llega (`ancla`) y cómo se nombra en
-   * «Falta: …» del resumen (`etiqueta`). De aquí salen el botón apagado, el aviso gris o rojo de cada campo, el índice y
-   * el resumen: una sola lista, así no pueden decir cosas distintas (DD-219).
+   * teléfono y el cliente tiene Call Blending, el grupo de sus salientes, en Grupos (SISMAC-4062). Cada uno con el campo
+   * al que se llega (`ancla`) y cómo se nombra en «Falta: …» del botón y en el índice (`etiqueta`). De aquí salen el botón
+   * apagado, el aviso gris o rojo de cada campo y el índice: una sola lista, así no pueden decir cosas distintas (DD-219).
    */
   private readonly faltas = computed<readonly FaltaDelAgente[]>(() => {
     const f = this.form();
@@ -568,13 +605,13 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
     if (valen.length === 0) {
       out.push({ seccion: gr, motivo: 'agents.errors.group_required', ancla: 'agent-groups-error', etiqueta: s + 'missing_group' });
     }
-    if (valen.length > 0 && f.allowedChannels.includes('phone') && this.outboundGroupId() === null) {
+    if (valen.length > 0 && this.conCallBlending && f.allowedChannels.includes('phone') && this.outboundGroupId() === null) {
       out.push({ seccion: gr, motivo: 'agents.errors.outbound_required', ancla: 'agent-outbound', etiqueta: s + 'missing_outbound' });
     }
     return out;
   });
 
-  /** Un email o un teléfono mal escritos: no faltan, se dicen en su campo, pero no dejan guardar. */
+  /** Un email o un teléfono mal escritos, o un email de otro agente: no faltan, se dicen en su campo, pero no dejan guardar. */
   private readonly formatoMal = computed(() => !!this.emailError() || !!this.phoneError());
 
   /** Los enlaces como los ve la tabla: con los canales que el grupo ofrece y el agente tiene. */
@@ -624,19 +661,11 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
   protected readonly groupsError = computed(() => this.faltasDichas().has('agents.errors.group_required'));
   protected readonly groupsHint = computed(() => this.faltasCalladas().has('agents.errors.group_required'));
 
-  /** «Falta: …» del resumen, con cada cosa llevando a su campo (DD-219). */
+  /** Lo que falta, para el tooltip de «Crear agente» o «Guardar» apagado («Falta: email, extensión», DD-219). */
   protected readonly summaryMissing = computed<readonly FaltaDelResumen[]>(() => {
     this.currentLang();
     return this.faltas().map((f) => ({ etiqueta: this.translate.instant(f.etiqueta), seccion: f.seccion, ancla: f.ancla }));
   });
-
-  /** «Listo para crear»: al crear o duplicar, con «Crear agente» encendido. */
-  protected readonly summaryReady = computed(() => this.mode() !== 'edit' && this.canSave());
-
-  /** Una cosa de «Falta: …»: a su campo. */
-  protected irAFalta(item: FaltaDelResumen): void {
-    this.irACampo(item.seccion, item.ancla);
-  }
 
   /** ¿Tiene teléfono móvil? «Gestión de dispositivos» (elegir navegador o teléfono en el puesto) lo necesita. */
   protected readonly hasPhone = computed(() => !!this.form().phone.trim());
@@ -659,11 +688,48 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
     return out;
   });
 
-  /** El punto rojo del índice: la sección tiene un aviso a la vista. */
-  protected readonly sectionsWithErrors = computed<ReadonlySet<string>>(() => new Set(this.avisos().map((a) => a.seccion)));
+  /** El punto rojo del índice: la sección tiene un aviso a la vista. En el alta, la que se dejó con algo por hacer (DD-222). */
+  protected readonly sectionsWithErrors = computed<ReadonlySet<string>>(() =>
+    this.mode() !== 'edit'
+      ? new Set([...this.alta.estados()].filter(([, estado]) => estado === 'error').map(([id]) => id))
+      : new Set(this.avisos().map((a) => a.seccion)),
+  );
 
-  /** Lo que dice cada sección con aviso en el índice, en texto (DD-217). */
-  protected readonly sectionErrorHints = computed(() => avisosDelIndice(this.avisos()));
+  /**
+   * Lo que dice cada sección en el índice, en texto: TODO lo que le falta, con la etiqueta corta («Un grupo»), como en el
+   * grupo (DD-222). En el alta, de todas (en gris hasta que se deja la sección); al editar, solo de las que tienen un aviso
+   * a la vista. Hasta DD-225, al editar decía el aviso entero del primero («Hace falta al menos un grupo»).
+   */
+  protected readonly sectionErrorHints = computed<Readonly<Record<string, string>>>(() => {
+    const todas = this.faltasPorSeccion();
+    if (this.mode() !== 'edit') return todas;
+    const conAviso = this.sectionsWithErrors();
+    return Object.fromEntries(Object.entries(todas).filter(([id]) => conAviso.has(id)));
+  });
+
+  /**
+   * El marcador de cada sección, en el alta y al duplicar (DD-222, SISMAC-4062): sin revisar, en curso, con novedades,
+   * completa (o revisada) y en rojo. Al editar no hay marcadores: el punto rojo y lo que falta bajo la sección.
+   */
+  protected readonly sectionStates = computed(() => (this.mode() !== 'edit' ? this.alta.estados() : null));
+
+  /**
+   * Lo que falta en cada sección, en una línea para el índice: «Nombre, email, extensión», «Un grupo», sin «Falta:» (el
+   * rojo y el marcador ya lo dicen). Lo mal escrito de General («El email no es válido», «Ya hay un agente con este
+   * email») entra detrás, con su aviso.
+   */
+  private readonly faltasPorSeccion = computed<Readonly<Record<string, string>>>(() => {
+    this.currentLang();
+    const t = (key: string) => this.translate.instant(key);
+    const por: Record<string, string[]> = {};
+    for (const f of this.faltas()) (por[f.seccion] ??= []).push(t(f.etiqueta));
+    for (const mal of [this.emailError(), this.phoneError()]) {
+      if (mal) (por['agent-section-general'] ??= []).push(t(mal).replace(/^./, (c: string) => c.toLowerCase()));
+    }
+    const out: Record<string, string> = {};
+    for (const [id, items] of Object.entries(por)) out[id] = items.join(', ').replace(/^./, (c) => c.toUpperCase());
+    return out;
+  });
 
   /** Las secciones con cambios sin guardar (DD-122), al editar. Todos los permisos viven ya en Configuración. */
   protected readonly sectionsWithChanges = computed<ReadonlySet<string>>(() => {
@@ -720,25 +786,26 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
         extension: f.extension ? { numero: f.extension, tipo: f.extensionType } : undefined,
       },
     ];
-    // La grabación y las salientes son de las llamadas: sin Teléfono no se dicen (DD-211 §2).
+    // La grabación y las salientes son de las llamadas: sin Teléfono no se dicen (DD-211 §2). Las salientes, además, solo
+    // con Call Blending (DD-211 §9).
     if (this.attendsPhone()) {
-      filas.push(
-        {
-          icono: 'radio_button_checked',
-          valor: t(f.permissions.recording ? 'common.yes' : 'common.no'),
-          etiqueta: 'agents.form.section.recording',
-          seccion: 'agent-section-config',
-          ancla: 'agent-recording',
-          graba: f.permissions.recording,
-        },
-        {
+      filas.push({
+        icono: 'radio_button_checked',
+        valor: t(f.permissions.recording ? 'common.yes' : 'common.no'),
+        etiqueta: 'agents.form.section.recording',
+        seccion: 'agent-section-config',
+        ancla: 'agent-recording',
+        graba: f.permissions.recording,
+      });
+      if (this.conCallBlending) {
+        filas.push({
           icono: 'call_made',
           valor: (saliente !== null ? grupos.get(saliente)?.name : null) ?? t('agents.form.summary.none'),
           etiqueta: 'agents.form.summary.outbound',
           seccion: 'agent-section-groups',
           ancla: null,
-        },
-      );
+        });
+      }
     }
     // Lo que le llega de Repositorios, como en el resumen del grupo.
     filas.push({
@@ -775,9 +842,10 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
   /**
    * El grupo de sus salientes: el elegido si sigue valiendo (asignado y con Teléfono marcado) y, si no, el primero de sus
    * grupos con Teléfono. Es obligatorio (revisión de agentes), así que siempre hay uno en cuanto se puede: el desplegable
-   * bajo la tabla lo enseña elegido. Sin ningún grupo con Teléfono, falta (`faltas`).
+   * bajo la tabla lo enseña elegido. Sin ningún grupo con Teléfono, falta (`faltas`). Sin Call Blending no hay (DD-211 §9).
    */
   protected readonly outboundGroupId = computed<number | null>(() => {
+    if (!this.conCallBlending) return null;
     const elegibles = this.linksVistos().filter((l) => l.channels.includes('phone'));
     const id = this.form().defaultOutboundGroupId;
     if (id !== null && elegibles.some((l) => l.groupId === id)) return id;
@@ -931,7 +999,13 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
   protected readonly emailError = computed<string | null>(() => {
     const email = this.form().email.trim();
     if (email.length === 0) return null;
-    return EMAIL_RE.test(email) ? null : 'agents.errors.email_invalid';
+    if (!EMAIL_RE.test(email)) return 'agents.errors.email_invalid';
+    // No puede repetirse: el de otro agente se dice en vivo, como lo mal escrito (SISMAC-4062, DD-225).
+    const yo = this.editingId();
+    const propio = email.toLowerCase();
+    return this.agentsStore.agents().some((a) => a.id !== yo && a.email?.trim().toLowerCase() === propio)
+      ? 'agents.errors.email_taken'
+      : null;
   });
 
   /**
@@ -1039,7 +1113,8 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
     // Modo "Duplicar": detecta ?seedFromId en query params y precarga el form desde el source. El nombre, como al
     // duplicar un grupo: «Tom Hanks (1)», el siguiente número libre (DD-217). Lo que identifica a una persona y no
     // puede repetirse (extensión, email, PIN) se vacía: lo pide cada campo al pulsar «Crear agente». Por eso el
-    // agente no se crea en el acto, como el grupo: sin esos tres no es un agente válido.
+    // agente no se crea en el acto, como el grupo: sin esos tres no es un agente válido. La foto y el móvil, que son
+    // de otra persona, también, y el estado no se copia: nace «Desconectado», como todo agente nuevo (SISMAC-4060, DD-225).
     const seedFromId = this.route.snapshot.queryParamMap.get('seedFromId');
     if (seedFromId) {
       const source = this.agentsStore.getAgent(Number(seedFromId));
@@ -1049,27 +1124,29 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
       }
       this.duplicatingFromName.set(source.name);
       this.form.set({
-        // El nombre, como el de la copia de un grupo; extensión, email y PIN, vacíos: no pueden repetirse.
+        // El nombre, como el de la copia de un grupo; extensión, email y PIN, vacíos: no pueden repetirse. La foto y el
+        // móvil, vacíos: son de otra persona.
         name: nombreDeCopia(source.name, this.agentsStore.agents().map((a) => a.name)),
         extension: '',
         email: '',
         pin: '',
+        photo: null,
+        phone: '',
+        presenceStatus: 'desconectado',
         // Resto del payload copiado tal cual.
         extensionType: this.tipoExtension(source.extensionType),
         agentType: source.agentType,
         status: source.status,
-        presenceStatus: source.presenceStatus ?? 'disponible',
-        phone: source.phone ?? '',
         // Lo guardado con «Automático con preview», que ya no existe, se lee como automático (DD-211 §2).
         pickupType: source.pickupType === 'manual' ? 'manual' : 'auto',
         randomOrder: source.randomOrder ?? false,
         maxChats: source.maxChats ?? 4,
         iframeUrl: source.iframeUrl ?? '',
         links: this.linksStore.linksForAgent(source.id),
-        defaultOutboundGroupId: source.defaultOutboundGroupId ?? null,
+        // El grupo de sus salientes, solo con Call Blending (SISMAC-4060).
+        defaultOutboundGroupId: this.conCallBlending ? (source.defaultOutboundGroupId ?? null) : null,
         permissions: { ...source.permissions },
         allowedChannels: source.allowedChannels ?? CHANNEL_FAMILIES,
-        photo: source.photo ?? null,
         languages: source.languages ? [...source.languages] : [],
         ...this.recursosVivos(source),
       });
@@ -1275,7 +1352,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
       const etiquetas: Readonly<Record<string, string>> = FAMILY_LABEL_KEYS;
       const accepted = await this.confirmHost.request({
         title: this.translate.instant('groups.form.cascade.title'),
-        body: this.translate.instant(salen.length ? 'agents.form.allowed.remove_body_orphaned' : 'agents.form.allowed.remove_body', {
+        body: this.translate.instant(this.removeBodyKey(affected.length, salen.length), {
           channels: quitados.map(c => this.translate.instant(etiquetas[c])).join(', '),
           count: affected.length,
           groups: salen.map(link => nombres.get(link.groupId) ?? String(link.groupId)).join(', '),
@@ -1344,6 +1421,14 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
       this.dirtyState.markPristine();
       this.irAlDestino();
     }, 400);
+  }
+
+  /** La frase del aviso de quitar canales, con su número: «en 1 grupo», no «en 1 grupos» (SISMAC-4062, DD-225). */
+  private removeBodyKey(grupos: number, salen: number): string {
+    const base = 'agents.form.allowed.remove_body';
+    if (salen === 0) return grupos === 1 ? `${base}_one` : base;
+    if (grupos === 1) return `${base}_orphaned_one`;
+    return salen === 1 ? `${base}_orphaned_single` : `${base}_orphaned`;
   }
 
   /* ── «Gestionar en Repositorios»: sale de la ficha, así que con cambios pide guardar antes, como la de grupo ──── */
@@ -1425,10 +1510,12 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
   }
 
   /** Vuelve al último estado guardado (al formulario vacío en un alta; a la copia, al duplicar). Es el
-   *  «Deshacer» de Contact Center: vuelve atrás, no navega. */
+   *  «Deshacer» de Contact Center: vuelve atrás, no navega. En el alta deja también el índice como al empezar: la sección
+   *  abierta sigue abierta y las demás vuelven a «Sin revisar», como en el grupo (SISMAC-4062, DD-225). */
   protected discard(): void {
     this.form.set(this.dirtyState.pristineValue());
     this.ocasion.olvidar();
+    if (this.mode() !== 'edit') this.alta.reiniciar();
   }
 
   /** Borrar la ficha: la confirmación simple del DS (DD-215), con el nombre guardado; al aceptar, vuelve al listado. */
@@ -1444,7 +1531,8 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
     void this.router.navigateByUrl('/admin/agentes');
   }
 
-  /** El alta nace con lo que fija Contact Center › Agentes (DD-135): permisos y URL del iframe. */
+  /** El alta nace con lo que fija Contact Center › Agentes (DD-135): permisos y URL del iframe. Y «Desconectado», hasta
+   *  que el agente entra (SISMAC-4062, DD-225); hasta entonces nacía «Disponible». */
   private emptyForm(): FormState {
     const defaults = this.agentDefaults.defaults();
     return {
@@ -1453,7 +1541,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
       extensionType: this.tipoExtension('webrtc'),
       agentType: 'normal',
       status: 'active',
-      presenceStatus: 'disponible',
+      presenceStatus: 'desconectado',
       phone: '',
       email: '',
       pin: '',

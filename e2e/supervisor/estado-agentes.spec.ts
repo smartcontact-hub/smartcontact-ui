@@ -33,6 +33,7 @@ const EN_EL_DASHBOARD: Readonly<Record<string, string>> = {
   Formación: 'En pausa',
   Administrativo: 'En pausa',
   'Post-conversando': 'En pausa',
+  Conversación: 'En pausa',
   Desconectado: 'Desconectado',
 };
 
@@ -53,8 +54,8 @@ const filasDelDashboard = async (page: Page): Promise<Fila[]> => {
   );
 };
 
-/** El listado dice el estado en su columna «Estado», escondida de inicio (DD-185); el avatar ya no lleva burbuja en
- *  Administración (DD-187 §8). Se enciende una vez desde «Columnas» y se queda guardada. */
+/** El listado dice el estado en su columna «Estado», a la vista de inicio desde DD-225 (antes escondida, DD-185); el
+ *  avatar ya no lleva burbuja en Administración (DD-187 §8). Si alguien la escondió, se enciende desde «Columnas». */
 const conColumnaDeEstado = async (page: Page): Promise<void> => {
   await page.getByRole('button', { name: /^Columnas/ }).click();
   const estado = page.getByRole('dialog').getByRole('checkbox', { name: 'Estado', exact: true });

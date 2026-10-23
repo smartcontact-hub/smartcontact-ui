@@ -203,6 +203,8 @@ export class GroupAssignmentTableComponent {
   readonly selfActivate = input(false);
   /** El grupo de sus llamadas salientes. */
   readonly outboundGroupId = input<number | null>(null);
+  /** El cliente tiene Call Blending: solo entonces sale el desplegable de las salientes (DD-211 §9, SISMAC-4062). */
+  readonly conSalientes = input(true);
   /** Su aviso de obligatorio, ya traducido y decidido por la ficha: en gris (`outboundHint`) o en rojo (DD-219). */
   readonly outboundHint = input<string | undefined>(undefined);
   readonly outboundError = input<string | undefined>(undefined);
@@ -216,7 +218,7 @@ export class GroupAssignmentTableComponent {
 
   protected readonly query = signal('');
   /** Al editar, los asignados; en el alta, todos (no tiene ninguno). */
-  protected readonly filter = linkedSignal(() => (this.agentId() === 0 ? 'all' : 'assigned'));
+  protected readonly filter = linkedSignal<'all' | 'assigned' | 'unassigned'>(() => (this.agentId() === 0 ? 'all' : 'assigned'));
   protected readonly filterOptions = computed(() => {
     this.currentLang();
     return ['all', 'assigned', 'unassigned'].map((value) => ({
@@ -238,6 +240,20 @@ export class GroupAssignmentTableComponent {
         (filter === 'all' || (filter === 'assigned') === assigned.has(g.id)) &&
         (!query || g.name.toLowerCase().includes(query)),
     );
+  });
+
+  /**
+   * Lo que dice la tabla vacía, como la de agentes del grupo (DD-223): sin búsqueda, por qué está vacía su pestaña (un
+   * agente recién creado abre en Asignados sin ninguno, o ya no queda ninguno sin asignar); con búsqueda, que nada
+   * coincide (SISMAC-4062, DD-225). Hasta entonces decía siempre «Sin resultados».
+   */
+  protected readonly vacio = computed(() => {
+    const sinBusqueda = !this.query().trim();
+    if (sinBusqueda && this.filter() === 'assigned') {
+      return { icon: 'group', title: 'agents.form.assigned.empty_title', body: 'agents.form.assigned.empty' };
+    }
+    if (sinBusqueda && this.filter() === 'unassigned') return { icon: 'group', title: 'agents.form.assigned.all_assigned', body: '' };
+    return { icon: 'search_off', title: 'labels.no_results.title', body: 'agents.form.assigned.no_results' };
   });
 
   /** El orden por nombre: `1`, A→Z; `-1`, Z→A; `null`, el de la lista de grupos. */

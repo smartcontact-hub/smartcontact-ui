@@ -160,12 +160,13 @@ test('§5 · guardar lo dice un toast, y nada junto a los botones de la barra', 
   await expect(page.locator('.top-bar__resultado')).toHaveCount(0);
 });
 
-test('§6 · en el alta, la sección sin obligatorios que se deja lleva ✓', async ({ page }) => {
+test('§6 · en el alta, la sección sin obligatorios que se deja lleva su marca verde: «Revisada»', async ({ page }) => {
   await goto(page, 'admin/agentes/crear');
   await fila(page, 'Configuración').click();
   await fila(page, 'Recursos').click();
-  await expect(fila(page, 'Configuración')).toHaveAccessibleName(/Configuración.*Esta sección está completa/);
-  await expect(fila(page, 'Configuración').locator('.form-nav__done')).toBeVisible();
+  // Con los marcadores del grupo desde DD-225 (DD-222): el ✓ suelto pasa a ser el marcador verde y su línea.
+  await expect(fila(page, 'Configuración')).toHaveAccessibleName(/Configuración.*Revisada/);
+  await expect(fila(page, 'Configuración').locator('sc-step-marker.sc-step-marker--hecha')).toBeVisible();
 });
 
 test('§7 · Contact Center: cambiar de sección no pregunta ni pierde nada, y un solo Guardar guarda las tres', async ({ page }) => {
