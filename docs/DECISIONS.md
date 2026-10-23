@@ -184,8 +184,11 @@ resumen; el Excel no llevaba los canales, y el aviso de quitar canales decía «
    dejaba como la única sin orden. **Estado nuevo «Conversación»**, el agente atendiendo; en el Dashboard cuenta «En
    pausa», como Post-conversando (DD-139). La semilla lo pone en el agente 17, que no es de la demo del Dashboard. **El
    color va por familia, sin tokens nuevos**: Disponible verde; rojo para No disponible, los personalizados y
-   **Administrativo, que deja el marrón** (enmienda DD-176); azul para Post-conversando y Conversación; Desconectado,
-   en texto gris.
+   **Administrativo, que deja el marrón** (enmienda DD-176); azul para lo de la conversación, con **Post-conversando en
+   el `tag` Info**, la severidad que le da Figma (Supervisor › Agentes): el tono de Conversación, lleno y sin borde, que
+   se distingue sin salir de la familia (fondo a ΔE OKLab 0,056, texto a 0,104); Desconectado, en texto gris. El punto
+   del avatar, del badge Info nativo. El `tag` del Kit no tiene la hechura de la etiqueta: 21,5 px de alto frente a
+   25,5, peso 700 frente a 600 y sin borde.
 4. **«Grupos» ordena de mayor a menor al primer clic** (`defaultSortOrder: -1`), como «Agentes» en Grupos.
 5. **Duplicar deja vacíos la foto y el móvil**, que son de otra persona (sin móvil, «Gestión de dispositivos» se
    apaga), **y no copia el estado**: la copia nace «Desconectado», como **todo agente nuevo**, que hasta hoy nacía
@@ -227,6 +230,11 @@ ficha que se comporta como su gemela se aprende una vez.
   unavailable red.400, wrapup cyan.600 junto a talking cyan.400). Y serían dos tokens nuevos.
 - *Dejar Administrativo en marrón* (DD-176): es una familia de un solo estado, y Administrativo es una manera de no
   recibir conversaciones, como No disponible.
+- *Post-conversando en el azul de etiqueta de Conversación*: idénticos, el color no los separaba.
+- *Post-conversando en su color del DS* (`semantic/presence/wrapup`, cyan/700): de fondo da 5,64:1 contra el blanco de
+  la tabla, cuando las demás etiquetas, pastel, dan de 1,04 a 1,09; saltaría sobre todas.
+- *Post-conversando en la etiqueta teal* (el tono que lleva en Contact Center › Servicio): contra el verde de Disponible
+  queda a ΔE OKLab 0,009 de fondo y 0,039 de texto, y un agente ocupado se leería como disponible.
 - *Estrechar Email, Grupos y Equipos para que la tabla quepa a 1440*: cortarían su contenido, y las columnas miden lo
   que traen (DD-210 §4).
 - *Esconder el grupo de salientes en la demo*: el prototipo enseña todo lo contratable (DD-211 §9); la bandera deja el
@@ -235,7 +243,9 @@ ficha que se comporta como su gemela se aprende una vez.
 
 **Consecuencias** · Prueba nueva `agentes-como-coa-4060-4062.spec.ts`, y al día las del alta de agente que fijaban el ✓
 suelto y «Falta: …» sobre el resumen. Contact Center › Servicio sigue pintando Administrativo con la etiqueta de aviso
-(`warn`): no es la columna Estado y queda fuera. Figma, en su propia sesión. La congelada `proto-sismac-4062` avanza con esto cuando se funda
+(`warn`): no es la columna Estado y queda fuera. En Figma (Supervisor › Agentes), Post-conversando ya era Info y
+Conversación, también: pasa a sky/50 de fondo, borde sky/200 y texto sky/600, lo más cercano del DS a la etiqueta azul
+del código (ΔE 0,005, 0,045 y 0,010), porque Figma no tiene `azure`. El resto de Figma, en su propia sesión. La congelada `proto-sismac-4062` avanza con esto cuando se funda
 (`docs/PROTOTIPOS.md`).
 
 ---

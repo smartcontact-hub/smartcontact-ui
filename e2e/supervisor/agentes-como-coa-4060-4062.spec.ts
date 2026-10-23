@@ -7,7 +7,8 @@ import { disableAnimations, forceLightTheme, goto, irASeccion, pickSelectOption 
  * DD-225). Lo que el prototipo no hacía como dicen:
  *   1. Con dos o más marcados, el clic derecho sobre uno ofrece solo «Eliminar»: «¿Eliminar 2 agentes?» y su toast.
  *   2. Teléfono y Estado salen de primeras; Estado se ordena, de más a menos disponible, con «Conversación», y su color
- *      va por familia: rojo lo que no recibe (Administrativo incluido, que deja el marrón), azul lo de la conversación.
+ *      va por familia: rojo lo que no recibe (Administrativo incluido, que deja el marrón), azul lo de la conversación,
+ *      con Post-conversando en el `tag` Info.
  *   3. «Grupos» ordena de mayor a menor al primer clic.
  *   4. El Excel lleva la columna Canales.
  *   5. Duplicar deja vacíos la foto y el móvil, y la copia nace «Desconectado», como todo agente nuevo.
@@ -105,17 +106,27 @@ test('listado · Teléfono y Estado de primeras; Estado ordena de Disponible a D
   await expect(cabecera(page, 'Teléfono')).toHaveCount(1);
   await expect(cabecera(page, 'Estado')).toHaveCount(1);
 
-  // Por familia, sin tokens nuevos (DD-225): Administrativo en el rojo de No disponible; Conversación en el azul de
-  // Post-conversando.
+  // Por familia, sin tokens nuevos (DD-225): Administrativo en el rojo de No disponible; Conversación en azul, y
+  // Post-conversando en el `tag` Info que le da Figma, del mismo azul pero lleno.
   await expect(fila(page, 'Agente A').locator('sc-tag')).toHaveText('Conversación');
   // El fondo que pinta cada etiqueta, el que gana en pantalla.
   const fondo = (agente: string) =>
-    fila(page, agente).locator('sc-tag .sc-tag__label').evaluate((el) => getComputedStyle(el).backgroundColor);
+    fila(page, agente).locator('sc-tag .sc-tag__label, sc-tag .p-tag').evaluate((el) => getComputedStyle(el).backgroundColor);
+  // El fondo de un token, resuelto por el navegador.
+  const fondoDe = (token: string) =>
+    page.evaluate((t) => {
+      const muestra = document.body.appendChild(document.createElement('span'));
+      muestra.style.background = `var(${t})`;
+      const pintado = getComputedStyle(muestra).backgroundColor;
+      muestra.remove();
+      return pintado;
+    }, token);
   const [administrativo, noDisponible, conversacion, postConversando] = await Promise.all(
     ['Agente G', 'Agente H', 'Agente A', 'Agente E'].map(fondo),
   );
   expect(administrativo, 'Administrativo, en el rojo de No disponible').toBe(noDisponible);
-  expect(conversacion, 'Conversación, en el azul de Post-conversando').toBe(postConversando);
+  expect(conversacion, 'Conversación, en el azul de etiqueta').toBe(await fondoDe('--sc-label-blue-bg'));
+  expect(postConversando, 'Post-conversando, en el tag Info').toBe(await fondoDe('--sc-cmp-tag-info-background'));
   expect(conversacion).not.toBe(administrativo);
 
   await cabecera(page, 'Estado').click();
