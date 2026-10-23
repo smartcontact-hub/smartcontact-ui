@@ -35,14 +35,13 @@ export const PRESENCE_LABEL_KEYS: Readonly<Record<PresenceStatus, string>> = {
 export type PresenceTag = { readonly labelColor: LabelColor } | { readonly severity: 'info' | 'secondary' };
 
 /**
- * La etiqueta de cada estado, por FAMILIA (SISMAC-4060, DD-225): Disponible verde; en rojo, lo que no recibe
- * conversaciones (No disponible, sus motivos Baño, Comida y Formación, y Administrativo); en azul, lo de la
+ * La etiqueta de cada estado, por FAMILIA (SISMAC-4060, DD-225): Disponible verde; en rojo, No disponible y sus motivos
+ * (Baño, Comida y Formación); Administrativo, en su marrón (DD-176), que no es una etiqueta roja; en azul, lo de la
  * conversación. Dentro del azul, Post-conversando lleva el `tag` Info, la severidad que le da Figma (Supervisor ›
  * Agentes): el mismo tono que Conversación, con el fondo lleno y sin borde, y se distingue sin salir de su familia. Su
  * color propio en el DS (`semantic/presence/wrapup`, cyan/700), de fondo, saltaría sobre las demás etiquetas, todas
  * pastel; y el teal se confunde con el verde de Disponible. Desconectado, sin etiqueta: gris (`secondary`) en el punto
- * del avatar, y en el listado como texto, para no pesar como un estado atendible. Un rojo «oscuro» para Administrativo
- * no se distinguiría a tamaño de etiqueta. Hasta DD-225, Administrativo iba en marrón (DD-176).
+ * del avatar, y en el listado como texto, para no pesar como un estado atendible.
  */
 export const PRESENCE_TAGS: Readonly<Record<PresenceStatus, PresenceTag>> = {
   disponible: { labelColor: 'green' },
@@ -50,7 +49,7 @@ export const PRESENCE_TAGS: Readonly<Record<PresenceStatus, PresenceTag>> = {
   bano: { labelColor: 'red' },
   comida: { labelColor: 'red' },
   formacion: { labelColor: 'red' },
-  administrativo: { labelColor: 'red' },
+  administrativo: { labelColor: 'brown' },
   post_conversando: { severity: 'info' },
   conversacion: { labelColor: 'blue' },
   desconectado: { severity: 'secondary' },

@@ -183,12 +183,12 @@ resumen; el Excel no llevaba los canales, y el aviso de quitar canales decía «
    (entre ellos, por su nombre), Administrativo, Post-conversando, Conversación y Desconectado. Enmienda DD-180, que la
    dejaba como la única sin orden. **Estado nuevo «Conversación»**, el agente atendiendo; en el Dashboard cuenta «En
    pausa», como Post-conversando (DD-139). La semilla lo pone en el agente 17, que no es de la demo del Dashboard. **El
-   color va por familia, sin tokens nuevos**: Disponible verde; rojo para No disponible, los personalizados y
-   **Administrativo, que deja el marrón** (enmienda DD-176); azul para lo de la conversación, con **Post-conversando en
-   el `tag` Info**, la severidad que le da Figma (Supervisor › Agentes): el tono de Conversación, lleno y sin borde, que
-   se distingue sin salir de la familia (fondo a ΔE OKLab 0,056, texto a 0,104); Desconectado, en texto gris. El punto
-   del avatar, del badge Info nativo. El `tag` del Kit no tiene la hechura de la etiqueta: 21,5 px de alto frente a
-   25,5, peso 700 frente a 600 y sin borde.
+   color va por familia, sin tokens nuevos**: Disponible verde; rojo para No disponible y los personalizados;
+   **Administrativo, en su marrón** (DD-176): no va con etiqueta roja; azul para lo de la conversación, con
+   **Post-conversando en el `tag` Info**, la severidad que le da Figma (Supervisor › Agentes): el tono de Conversación,
+   lleno y sin borde, que se distingue sin salir de la familia (fondo a ΔE OKLab 0,056, texto a 0,104); Desconectado,
+   en texto gris. El punto del avatar, del badge Info nativo. El `tag` del Kit no tiene la hechura de la etiqueta:
+   21,5 px de alto frente a 25,5, peso 700 frente a 600 y sin borde.
 4. **«Grupos» ordena de mayor a menor al primer clic** (`defaultSortOrder: -1`), como «Agentes» en Grupos.
 5. **Duplicar deja vacíos la foto y el móvil**, que son de otra persona (sin móvil, «Gestión de dispositivos» se
    apaga), **y no copia el estado**: la copia nace «Desconectado», como **todo agente nuevo**, que hasta hoy nacía
@@ -228,8 +228,9 @@ ficha que se comporta como su gemela se aprende una vez.
   medidas en OKLCH, se separan 1-2° de tono y 0,035-0,039 de luz de fondo del rojo y el azul que ya hay, y a tamaño de
   etiqueta no se distinguen. El Kit agrupa igual (`custom/semantic/presence`: administrative red.600 junto a
   unavailable red.400, wrapup cyan.600 junto a talking cyan.400). Y serían dos tokens nuevos.
-- *Dejar Administrativo en marrón* (DD-176): es una familia de un solo estado, y Administrativo es una manera de no
-  recibir conversaciones, como No disponible.
+- *Administrativo en el rojo de No disponible*, como manera de no recibir conversaciones: se probó y producto lo
+  devolvió al marrón; no debe ir con etiqueta roja, y el resto de la familia, sí. Figma, P1 y el prompt maestro ya lo
+  dicen así.
 - *Post-conversando en el azul de etiqueta de Conversación*: idénticos, el color no los separaba.
 - *Post-conversando en su color del DS* (`semantic/presence/wrapup`, cyan/700): de fondo da 5,64:1 contra el blanco de
   la tabla, cuando las demás etiquetas, pastel, dan de 1,04 a 1,09; saltaría sobre todas.

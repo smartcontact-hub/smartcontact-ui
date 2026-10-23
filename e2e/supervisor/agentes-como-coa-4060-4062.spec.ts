@@ -7,8 +7,8 @@ import { disableAnimations, forceLightTheme, goto, irASeccion, pickSelectOption 
  * DD-225). Lo que el prototipo no hacía como dicen:
  *   1. Con dos o más marcados, el clic derecho sobre uno ofrece solo «Eliminar»: «¿Eliminar 2 agentes?» y su toast.
  *   2. Teléfono y Estado salen de primeras; Estado se ordena, de más a menos disponible, con «Conversación», y su color
- *      va por familia: rojo lo que no recibe (Administrativo incluido, que deja el marrón), azul lo de la conversación,
- *      con Post-conversando en el `tag` Info.
+ *      va por familia: rojo No disponible y sus motivos, Administrativo en su marrón, azul lo de la conversación, con
+ *      Post-conversando en el `tag` Info.
  *   3. «Grupos» ordena de mayor a menor al primer clic.
  *   4. El Excel lleva la columna Canales.
  *   5. Duplicar deja vacíos la foto y el móvil, y la copia nace «Desconectado», como todo agente nuevo.
@@ -106,8 +106,8 @@ test('listado · Teléfono y Estado de primeras; Estado ordena de Disponible a D
   await expect(cabecera(page, 'Teléfono')).toHaveCount(1);
   await expect(cabecera(page, 'Estado')).toHaveCount(1);
 
-  // Por familia, sin tokens nuevos (DD-225): Administrativo en el rojo de No disponible; Conversación en azul, y
-  // Post-conversando en el `tag` Info que le da Figma, del mismo azul pero lleno.
+  // Por familia, sin tokens nuevos (DD-225): Administrativo en su marrón, no en el rojo de No disponible; Conversación
+  // en azul, y Post-conversando en el `tag` Info que le da Figma, del mismo azul pero lleno.
   await expect(fila(page, 'Agente A').locator('sc-tag')).toHaveText('Conversación');
   // El fondo que pinta cada etiqueta, el que gana en pantalla.
   const fondo = (agente: string) =>
@@ -124,7 +124,8 @@ test('listado · Teléfono y Estado de primeras; Estado ordena de Disponible a D
   const [administrativo, noDisponible, conversacion, postConversando] = await Promise.all(
     ['Agente G', 'Agente H', 'Agente A', 'Agente E'].map(fondo),
   );
-  expect(administrativo, 'Administrativo, en el rojo de No disponible').toBe(noDisponible);
+  expect(administrativo, 'Administrativo, en su marrón').toBe(await fondoDe('--sc-label-brown-bg'));
+  expect(noDisponible, 'No disponible, en rojo').toBe(await fondoDe('--sc-label-red-bg'));
   expect(conversacion, 'Conversación, en el azul de etiqueta').toBe(await fondoDe('--sc-label-blue-bg'));
   expect(postConversando, 'Post-conversando, en el tag Info').toBe(await fondoDe('--sc-cmp-tag-info-background'));
   expect(conversacion).not.toBe(administrativo);

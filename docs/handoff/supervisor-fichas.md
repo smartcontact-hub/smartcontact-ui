@@ -81,14 +81,14 @@ DD-219, sin trampas propias): `git show fdf913d4:docs/handoff/supervisor-fichas.
   (`sc-agents-columns-v6`); Estado ordena por `PRESENCE_SORT_RANK`; «Grupos» de mayor a menor (`defaultSortOrder`);
   Canales en el Excel.
 - **Estado «Conversación»** (Dashboard: «En pausa»), agente 17; una lista guardada no lo trae (versión sin subir). Color
-  por familia: Administrativo rojo; Post-conversando, `tag` Info como en Figma. A 1440 desplaza de lado (226 px).
+  por familia: Administrativo marrón; Post-conversando, `tag` Info como en Figma. A 1440 desplaza de lado (226 px).
 - **Ficha**: duplicar no copia foto, móvil ni estado, y todo agente nace «Desconectado»; solo extensiones libres
   (`extensionOptions`); email repetido en vivo (`agents.errors.email_taken`); tabla de grupos vacía con su motivo
   (`vacio`); índice del alta con marcadores (`sectionStates`, `faltasPorSeccion`, `OBLIGATORIOS_DE`) y sin «Falta: …»
   sobre el resumen; «Deshacer» llama a `alta.reiniciar()`; salientes solo con `CLIENTE_CON_CALL_BLENDING`; singular del
   aviso de quitar canales (`removeBodyKey`).
 - **Pruebas**: `agentes-como-coa-4060-4062.spec.ts` nueva; al día las que fijaban el ✓ suelto y «Falta: …».
-- **Fuera**: Contact Center › Servicio pinta Administrativo con `warn`, no en rojo como la columna Estado.
+- **Fuera**: Contact Center › Servicio pinta Administrativo con `warn`, no en marrón como la columna Estado.
 
 ## ✅ 2026-10-22 · Repaso de Grupos entre COA, Figma y prototipo; «Editar en Repositorios» pregunta guardar (DD-224)
 
