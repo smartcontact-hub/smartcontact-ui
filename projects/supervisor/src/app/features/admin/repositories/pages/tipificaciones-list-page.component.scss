@@ -19,13 +19,6 @@
   &--muted {
     color: var(--sc-text-subtle);
   }
-
-  /* Lleva su detalle al pasar o al enfocar: el subrayado punteado dice que hay más. */
-  &--levels {
-    text-decoration: underline dotted;
-    text-underline-offset: 0.2em;
-    cursor: help;
-  }
 }
 
 .table__td-name {

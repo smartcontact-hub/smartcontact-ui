@@ -38,7 +38,6 @@ import {
   filasParaDescargar,
   type ImportacionDeTipificaciones,
   nivelesDe,
-  opcionesPorNivel,
   parsearTipificacionesCsv,
   plantillaCsv,
   TOPE_DE_IMPORTACION,
@@ -130,23 +129,9 @@ export class TipificacionesListPageComponent {
     return this.translate.instant(`repositories.tipificaciones.levels_count${n === 1 ? '_one' : ''}`, { count: n });
   }
 
-  /** Lo que hay en cada nivel, al pasar o al enfocar: las opciones del primero por su nombre, y cuántas en los demás. */
-  protected levelsDetail(t: Tipificacion): string | null {
-    this.lang();
-    const n = nivelesDe(t);
-    if (n === 0) return null;
-    const cuenta = opcionesPorNivel(t.options, n);
-    const cifra = new Intl.NumberFormat(this.language.locale());
-    return cuenta
-      .map((total, i) =>
-        i === 0
-          ? this.translate.instant('repositories.tipificaciones.levels_first', { names: t.options.map((o) => o.label).join(', ') })
-          : this.translate.instant(`repositories.tipificaciones.levels_other${total === 1 ? '_one' : ''}`, {
-              level: i + 1,
-              count: cifra.format(total),
-            }),
-      )
-      .join(', ');
+  /** Sin ningún nivel (solo comentario): se ve en gris. */
+  protected sinNiveles(t: Tipificacion): boolean {
+    return nivelesDe(t) === 0;
   }
 
   protected readonly columnDefs = computed<readonly ColumnDef[]>(() => {
