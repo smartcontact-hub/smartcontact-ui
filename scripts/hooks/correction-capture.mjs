@@ -131,8 +131,15 @@ export const ultimaFrase = (texto) => frases(texto).at(-1) ?? '';
 // el transcript, con el preámbulo «Another Claude session sent a message:» delante, que también llevan
 // los mensajes de otra sesión. Medido el 2026-10-23 en los transcripts (2.784 mensajes distintos):
 // sin la etiqueta ni el preámbulo contaban como corrección 1 informe de subagente y 4 mensajes de otra sesión.
-const SOBRE_DE_AGENTE =
-  /^(?:Another Claude session sent a message:\s*)?<(?:cross-session-message|task-notification|scheduled-task|side-sessions-event|ci-monitor-event|agent-message)\b/i;
+// Y el primer mensaje de una sesión que abrió OTRA sesión: llega como texto de usuario, con el
+// encabezado «Background (from the session that started this one):» donde empieza el texto, y su
+// encargo cita «te dije». Al hook le llega igual que al transcript. Medido el 2026-10-23 en los
+// transcripts (2.791 mensajes distintos, 19 encargos): 3 contaban como corrección; ya no, y no entra
+// ningún otro ni cambia `esCierre`.
+const SOBRE_DE_AGENTE = new RegExp(
+  String.raw`^(?:Another Claude session sent a message:\s*)?(?:<(?:cross-session-message|task-notification|scheduled-task|side-sessions-event|ci-monitor-event|agent-message)\b|Background \(from the session that started this one\):\n)`,
+  'i',
+);
 // Un mensaje REAL del usuario también llega con recordatorios delante (la nota de sesiones
 // enlazadas, el aviso de worktree) y su texto detrás: por eso no basta con «empieza por
 // `<system-reminder>`». Se quitan, y lo que queda es lo que escribió el usuario.
