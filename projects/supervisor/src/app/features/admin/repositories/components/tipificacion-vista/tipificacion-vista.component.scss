@@ -140,48 +140,19 @@
   gap: var(--sc-spacing-0-5);
 }
 
-/* La píldora del agente: blanca con texto oscuro la que se puede elegir; apagada, transparente con borde y texto gris. */
+/* Los niveles: el `sc-select` del DS con sus colores. Apagados (hasta elegir el de arriba), transparentes con borde y texto
+ * grises, como en Figma: la pieza no tiene estado apagado propio, y sus variables se recolorean aquí. */
 .tel__nivel {
-  display: flex;
-  align-items: center;
-  gap: var(--sc-spacing-0-5);
+  display: block;
   width: 100%;
-  height: var(--sc-spacing-2);
-  padding: 0 var(--sc-spacing-0-75);
-  border: 1px solid var(--sc-agent-window-pill-bg);
-  border-radius: var(--sc-spacing-0-75);
-  background-color: var(--sc-agent-window-pill-bg);
-  color: var(--sc-agent-window-pill-fg);
-  font-family: inherit;
-  text-align: start;
-  cursor: pointer;
 
-  &:hover:not(:disabled),
-  &[aria-expanded='true'] {
-    border-color: var(--sc-agent-window-pill-hover-bg);
-    background-color: var(--sc-agent-window-pill-hover-bg);
-    color: var(--sc-agent-window-fg);
+  &--apagado {
+    --p-select-disabled-background: transparent;
+    --p-select-border-color: var(--sc-agent-window-disabled);
+    --p-select-disabled-color: var(--sc-agent-window-disabled);
+    --p-select-placeholder-color: var(--sc-agent-window-disabled);
+    --p-select-dropdown-color: var(--sc-agent-window-disabled);
   }
-
-  &:disabled {
-    border-color: var(--sc-agent-window-disabled);
-    background-color: transparent;
-    color: var(--sc-agent-window-disabled);
-    cursor: default;
-  }
-
-  &:focus-visible {
-    outline: var(--sc-focus-ring-width) solid var(--sc-agent-window-fg);
-    outline-offset: var(--sc-focus-ring-offset);
-  }
-}
-
-.tel__nivel-texto {
-  flex: 1 1 auto;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 /* El comentario: el área oscura del agente, alta, con su borde casi negro. */
@@ -208,33 +179,19 @@
   }
 }
 
-/* Guardar: transparente con borde blanco; apagado, en el gris del agente. */
+/* Guardar: el `sc-button` secundario con borde del DS, con borde y texto blancos (el texto, en blanco, no sale del botón:
+ * queda anotado). Apagado, en el gris del agente. */
 .tel__guardar {
-  height: var(--sc-spacing-2-75);
+  display: block;
   margin-block-start: auto;
-  border: 1px solid var(--sc-agent-window-fg);
-  border-radius: var(--sc-radius-xl);
-  background-color: transparent;
-  color: var(--sc-agent-window-fg);
-  font-family: inherit;
-  cursor: pointer;
-  transition-property: background-color, color;
-  transition-duration: 150ms;
+  --p-button-outlined-secondary-color: var(--sc-agent-window-fg);
+  --p-button-outlined-secondary-border-color: var(--sc-agent-window-fg);
+  --p-button-outlined-secondary-hover-background: color-mix(in srgb, var(--sc-agent-window-fg) 12%, transparent);
+  --p-button-outlined-secondary-active-background: color-mix(in srgb, var(--sc-agent-window-fg) 20%, transparent);
 
-  &:hover:not(:disabled) {
-    background-color: var(--sc-agent-window-fg);
-    color: var(--sc-agent-window-pill-fg);
-  }
-
-  &:disabled {
-    border-color: var(--sc-agent-window-disabled);
-    color: var(--sc-agent-window-disabled);
-    cursor: default;
-  }
-
-  &:focus-visible {
-    outline: var(--sc-focus-ring-width) solid var(--sc-agent-window-fg);
-    outline-offset: var(--sc-focus-ring-offset);
+  &--apagado {
+    --p-button-outlined-secondary-color: var(--sc-agent-window-disabled);
+    --p-button-outlined-secondary-border-color: var(--sc-agent-window-disabled);
   }
 }
 

@@ -7,13 +7,14 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  *
  * La revisión del 2026-10-05: a la derecha de la ficha, donde las fichas llevan su resumen, la sección de Tipificación
  * del teléfono del agente, con lo que se va definiendo y para probarla. Lo que fija:
- *   1. sus piezas son las del teléfono: la franja «Tipificación», un botón-píldora por nivel (el primero encendido, los
+ *   1. sus piezas son las del teléfono: la franja «Tipificación», un `sc-select` del DS por nivel (el primero encendido, los
  *      demás apagados hasta elegir el de arriba), Guardar y la barra de cuatro pestañas; sin ajustes. Sin comentario:
  *      desde DD-187 lo pide cada grupo, no la tipificación;
  *   2. se prueba: elegir los tres niveles enciende Guardar, y Guardar dice cómo quedaría la conversación;
- *   3. sigue a la ficha: una píldora por nivel de su árbol;
+ *   3. sigue a la ficha: un desplegable por nivel de su árbol;
  *   4. la barra de pestañas va redondeada en sus cuatro esquinas, y su sombra (con spread) no la corta su columna;
- *   5. sus colores son los tokens de la ventana del agente, iguales en los dos temas.
+ *   5. el panel y la barra de pestañas llevan los tokens de la ventana del agente, iguales en los dos temas (el modo oscuro
+ *      de los selects y de Guardar, que son piezas del DS, queda pendiente).
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -23,21 +24,21 @@ test.beforeEach(async ({ page }) => {
 });
 
 const telefono = (page: Page) => page.locator('sc-tipificacion-vista .tel');
-const pildora = (page: Page, i: number) => page.locator(`#tip-vista-${i}`);
+const nivel = (page: Page, i: number) => telefono(page).locator('.tel__nivel').nth(i);
 
 const elegir = async (page: Page, i: number, opcion: string): Promise<void> => {
-  await pildora(page, i).click();
-  await page.locator('.p-popover').getByRole('option', { name: opcion, exact: true }).click();
-  await expect(pildora(page, i)).toContainText(opcion);
+  await nivel(page, i).locator('.p-select').click();
+  await page.locator('.p-select-overlay').getByRole('option', { name: opcion, exact: true }).click();
+  await expect(nivel(page, i)).toContainText(opcion);
 };
 
 test('sus piezas son las del teléfono del agente, sin ajustes', async ({ page }) => {
   await goto(page, 'admin/tipificaciones/editar/1');
   await expect(page.locator('sc-tipificacion-vista').getByRole('heading', { level: 2 })).toHaveText('Lo que ve el agente al colgar');
   await expect(telefono(page).locator('.tel__cabeza')).toHaveText('Tipificación');
-  await expect(pildora(page, 0)).toBeEnabled();
-  await expect(pildora(page, 1)).toBeDisabled();
-  await expect(pildora(page, 2)).toBeDisabled();
+  await expect(nivel(page, 0)).not.toHaveClass(/sc-select--disabled/);
+  await expect(nivel(page, 1)).toHaveClass(/sc-select--disabled/);
+  await expect(nivel(page, 2)).toHaveClass(/sc-select--disabled/);
   await expect(telefono(page).getByRole('textbox')).toHaveCount(0);
   await expect(telefono(page).getByRole('button', { name: 'Guardar' })).toBeDisabled();
   await expect(telefono(page).locator('.tel__pestanas sc-icon')).toHaveCount(4);
@@ -47,7 +48,7 @@ test('sus piezas son las del teléfono del agente, sin ajustes', async ({ page }
 test('se prueba: los tres niveles encienden Guardar, y Guardar dice cómo quedaría', async ({ page }) => {
   await goto(page, 'admin/tipificaciones/editar/1');
   await elegir(page, 0, 'Consulta');
-  await expect(pildora(page, 1)).toBeEnabled();
+  await expect(nivel(page, 1)).not.toHaveClass(/sc-select--disabled/);
   await elegir(page, 1, 'Facturación');
   await elegir(page, 2, 'Importe');
   const guardar = telefono(page).getByRole('button', { name: 'Guardar' });
@@ -56,9 +57,9 @@ test('se prueba: los tres niveles encienden Guardar, y Guardar dice cómo quedar
   await expect(page.locator('.vista__resultado')).toHaveText(/Quedaría como Consulta › Facturación › Importe/);
 });
 
-test('sigue a la ficha: una píldora por nivel de su árbol', async ({ page }) => {
+test('sigue a la ficha: un desplegable por nivel de su árbol', async ({ page }) => {
   await goto(page, 'admin/tipificaciones/editar/4');
-  // «Encuesta de calidad» tiene un nivel: una píldora y Guardar.
+  // «Encuesta de calidad» tiene un nivel: un desplegable y Guardar.
   await expect(telefono(page).locator('.tel__nivel')).toHaveCount(1);
   await goto(page, 'admin/tipificaciones/editar/1');
   await expect(telefono(page).locator('.tel__nivel')).toHaveCount(3);
@@ -95,7 +96,7 @@ test('sus colores son los de la ventana del agente, iguales en los dos temas', a
   const colores = () =>
     page.evaluate(() => {
       const fondo = (s: string) => getComputedStyle(document.querySelector(s)!).backgroundColor;
-      return { panel: fondo('.tel__seccion'), barra: fondo('.tel__pestanas'), guardar: fondo('.tel__guardar') };
+      return { panel: fondo('.tel__seccion'), barra: fondo('.tel__pestanas') };
     });
   const claro = await colores();
   expect(claro.panel).not.toBe(claro.barra);
