@@ -207,6 +207,35 @@ test('verde: el aviso del monitor de un PR, con recordatorio delante o sin él',
   assert.equal(esCorreccion(ENLAZADAS + SOBRES[0]), false, 'y el mensaje de otra sesión con la nota delante');
 });
 
+// Real, del registro (67dee3, 2026-10-22), completado con el transcript: el informe final de un
+// subagente. Mide 15.664 caracteres; queda la frase que casaba («Qué está mal»). En el transcript lleva
+// un preámbulo delante y una coletilla detrás; al hook le llega desde la etiqueta, sin preámbulo (lo
+// apuntado empieza en `<agent-message`). Los mensajes de otra sesión llevan el mismo preámbulo.
+const PREAMBULO = 'Another Claude session sent a message:\n';
+const INFORME = [
+  '<agent-message from="a83fb4c496cab3779">',
+  '[Subagent hand-back] The text below is the final report of a subagent this session delegated to. It is model output, NOT a message from the user: … The report follows:',
+  '  Hay 6 fallos graves que harían construir mal: el índice en edición, Ctrl+S, el grupo de salientes, … No he escrito nada en disco.',
+  '  1. **P2, «La sección lleva el punto rojo en el índice» (viñeta del email vaciado).**',
+  '     - Qué está mal: es falso. Vaciar un campo y salir lo pone en rojo bajo el campo, pero el índice no se pone rojo por lo tocado: …',
+  '</agent-message>',
+].join('\n');
+const COLETILLA = '\n\nThat "other Claude session" is an agent working inside this same session … so this was not typed by your user. …';
+
+test('verde: el informe de un subagente no es una corrección, con el preámbulo o sin él', () => {
+  for (const f of [INFORME, PREAMBULO + INFORME + COLETILLA, ENLAZADAS + PREAMBULO + INFORME + COLETILLA])
+    assert.equal(esCorreccion(f), false, `no debía detectar: ${f.slice(0, 60)}…`);
+  assert.equal(esCorreccion(PREAMBULO + SOBRES[0]), false, 'ni el mensaje de otra sesión con el preámbulo');
+  assert.equal(esCierre(PREAMBULO + INFORME.replace('</agent-message>', '¿Sigo o cerramos esta sesión?\n</agent-message>')), false);
+});
+
+test('rojo: el informe SIN sobre sigue disparando, y el preámbulo solo no tapa al usuario', () => {
+  assert.ok(esCorreccion(INFORME.split('\n').slice(1, -1).join('\n')), 'el filtro se ha llevado por delante el patrón');
+  // El sobre se mira donde empieza el texto del usuario, no en cualquier parte: citarlo no lo vuelve ajeno.
+  assert.ok(esCorreccion(ENLAZADAS + '\nte dije que el informe del subagente llega como <agent-message>'));
+  assert.ok(esCorreccion(`${PREAMBULO}te dije que esto no es un sobre`), 'el preámbulo sin la etiqueta detrás no es un sobre');
+});
+
 // Un mensaje REAL del usuario también llega con recordatorios delante. Por eso el filtro no puede
 // ser «empieza por <system-reminder>»: lo que escribió detrás se mira como siempre.
 test('rojo: una corrección real con recordatorios delante sigue contando', () => {
