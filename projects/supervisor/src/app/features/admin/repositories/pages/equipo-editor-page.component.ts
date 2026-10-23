@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, HostListener, inject, Injector, linkedSignal, type OnInit, signal, type TemplateRef, untracked, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, HostListener, inject, Injector, linkedSignal, type OnInit, signal, type TemplateRef, untracked, viewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
@@ -23,9 +23,9 @@ import { AgentsStore } from '@features/admin/agents/state/agents.store';
 import type { Agent } from '@features/admin/agents/data/agents-data';
 
 import { EquiposStore } from '../state/equipos.store';
-import { ResultadoAccionService } from '@core/services';
+import { BreadcrumbService, ResultadoAccionService } from '@core/services';
 import { TooltipModule } from 'primeng/tooltip';
-import { llegarAAncla, ocasionDeAvisar } from '@shared/utils/alta-secciones';
+import { dejoElCampo, llegarAAncla, ocasionDeAvisar } from '@shared/utils/alta-secciones';
 
 interface Borrador {
   readonly name: string;
@@ -69,6 +69,7 @@ const VACIO: Borrador = { name: '', description: '', agentIds: new Set() };
         size="sm"
         variant="primary"
         [disabled]="!canSave()"
+        [pTooltip]="motivoApagado()" tooltipPosition="bottom"
         [label]="(mode() === 'create' ? 'repositories.equipos.create_submit' : 'common.save') | translate"
         (clicked)="save()"
       />
@@ -97,6 +98,7 @@ const VACIO: Borrador = { name: '', description: '', agentIds: new Set() };
                     [value]="form().name"
                     [error]="nameError()"
                     (valueChange)="update('name', $event)"
+                    (focusout)="dejarElNombre($event)"
                   />
                 </div>
                 <div class="field">
@@ -339,8 +341,9 @@ export class EquipoEditorPageComponent implements DirtyAware, OnInit {
   });
 
   /*
-   * Lo que falta se dice al pulsar «Crear …» o «Guardar» (DD-217, como en las fichas): el botón no se apaga por ello ni
-   * lleva motivo al lado; al pulsar sin nombre, lo dice su campo y le da el foco. Un nombre repetido se dice en vivo.
+   * Como la ficha de grupo (DD-219) y lo que pide el COA de SISMAC-4453: «Crear equipo» y «Guardar» se apagan mientras
+   * falte el nombre o esté repetido, y su tooltip dice por qué. Un nombre repetido se dice en vivo; el obligatorio, en
+   * rojo al dejar el campo vacío (y se queda en vivo hasta que se rellena). Sin aviso gris previo: el COA no lo pide.
    */
   private readonly faltas = computed<readonly string[]>(() => (this.form().name.trim() ? [] : ['repositories.errors.name_required']));
   private readonly ocasion = ocasionDeAvisar({
@@ -355,7 +358,34 @@ export class EquipoEditorPageComponent implements DirtyAware, OnInit {
     return falta && this.ocasion.acusa(falta) ? this.translate.instant(falta) : undefined;
   });
 
-  protected readonly canSave = computed(() => this.mode() === 'create' || this.formDirty());
+  /** Se dejó el campo del nombre: si sigue vacío, desde ahora en rojo. No al abrir una lista para elegir. */
+  protected dejarElNombre(event: FocusEvent): void {
+    if (dejoElCampo(event) && this.faltas().length > 0) this.ocasion.tocar(this.faltas()[0]!);
+  }
+
+  /** Se puede pulsar con el nombre bien puesto: en el alta, ya; al editar, además, con cambios (vuelve a apagarse si deshaces). */
+  protected readonly canSave = computed(
+    () => this.faltas().length === 0 && !this.nameTaken() && (this.mode() === 'create' || this.formDirty()),
+  );
+
+  /** Por qué está apagado el botón, para su tooltip: «Falta: nombre», el nombre repetido o «No hay cambios que guardar». */
+  protected readonly motivoApagado = computed(() => {
+    this.lang();
+    if (this.canSave()) return '';
+    if (this.faltas().length > 0) {
+      return this.translate.instant('common.summary_missing', { items: this.translate.instant('common.summary_missing_name') });
+    }
+    if (this.nameTaken()) return this.translate.instant('repositories.equipos.name_taken');
+    return this.translate.instant('common.no_changes');
+  });
+
+  /** La miga de la edición dice el nombre del equipo guardado, como en Grupos y Agentes («Administración › Repositorios › Equipos › Francés»). */
+  private readonly breadcrumbs = inject(BreadcrumbService);
+  private readonly nombreGuardado = signal<string | null>(null);
+  private readonly migaConNombre = effect(() =>
+    this.breadcrumbs.nombrar(this.route, this.mode() === 'edit' ? this.nombreGuardado() : null),
+  );
+  private readonly sinMiga = inject(DestroyRef).onDestroy(() => this.breadcrumbs.nombrar(this.route, null));
 
   ngOnInit(): void {
     const raw = this.route.snapshot.paramMap.get('id');
@@ -370,6 +400,7 @@ export class EquipoEditorPageComponent implements DirtyAware, OnInit {
     }
     this.grupoId = grupo.id;
     this.mode.set('edit');
+    this.nombreGuardado.set(grupo.name);
     const ids = new Set(this.agentsStore.agents().filter((a) => a.teams?.includes(grupo.id)).map((a) => a.id));
     this.form.set({ name: grupo.name, description: grupo.description, agentIds: ids });
     this.dirtyState.markPristine();
@@ -404,8 +435,8 @@ export class EquipoEditorPageComponent implements DirtyAware, OnInit {
     if (this.grupoId !== null) this.store.updateItem(id, datos);
     this.agentsStore.setTeamMembers(id, f.agentIds);
     this.dirtyState.markPristine();
-    const texto = this.translate.instant(this.grupoId === null ? 'repositories.toasts.created' : 'repositories.toasts.updated', {
-      entity: this.translate.instant('repositories.equipos.singular'),
+    if (this.grupoId !== null) this.nombreGuardado.set(datos.name);
+    const texto = this.translate.instant(this.grupoId === null ? 'repositories.equipos.toasts.created' : 'repositories.equipos.toasts.updated', {
       name: datos.name,
     });
     // El toast, ya en la ficha a la que se llega (DD-211 §5).

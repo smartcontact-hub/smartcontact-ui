@@ -1716,7 +1716,14 @@
       "edit_breadcrumb": "Edit team",
       "name_taken": "There is already a team with this name",
       "assigned_count": "{{count}} in the team",
-      "no_description": "No description"
+      "no_description": "No description",
+      "agents_aria": "{{count}} agents",
+      "agents_aria_one": "1 agent",
+      "toasts": {
+        "created": "Team \"{{name}}\" created",
+        "updated": "Team \"{{name}}\" updated",
+        "deleted": "Team \"{{name}}\" deleted"
+      }
     }
   },
   "users": {

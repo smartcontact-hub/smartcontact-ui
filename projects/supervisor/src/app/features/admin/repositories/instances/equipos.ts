@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 
+import type { GroupRef } from '@smartcontact-hub/components';
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
 import { RepoListPageComponent } from '../components/repo-list-page.component';
 import { RepoColumnDef, RepoFieldDef, RepoPageConfig } from '../components/repo-types';
@@ -42,17 +43,32 @@ export class EquiposPageComponent {
       kind: 'truncate',
       accessor: (i) => i.description,
       width: '320px',
+      emptyDash: true,
     },
     {
+      // Como en el COA de SISMAC-4453: la cifra siempre (0 incluido), con los nombres al pasar, y al pulsarla se abre el equipo.
       key: 'agents',
       labelKey: 'repositories.equipos.agents',
-      kind: 'count',
-      accessor: (i) => String(this.agents.agents().filter((a) => a.teams?.includes(i.id)).length),
+      kind: 'groups',
+      accessor: (i) => String(this.agentsOf(i).length),
+      groups: (i) => this.agentsOf(i),
+      groupsDisplay: 'count',
+      emptyAsZero: true,
+      groupsAriaKey: 'repositories.equipos.agents_aria',
       width: '112px',
     },
   ];
 
+  /** Los agentes del equipo, para el globo de la cifra: la relación vista desde el equipo. */
+  private agentsOf(equipo: Equipo): readonly GroupRef[] {
+    return this.agents
+      .agents()
+      .filter((a) => a.teams?.includes(equipo.id))
+      .map((a) => ({ id: a.id, name: a.name, active: true }));
+  }
+
   protected readonly config: RepoPageConfig<Equipo> = {
+    toastsKey: 'repositories.equipos.toasts',
     titleKey: 'repositories.equipos.title',
     entitySingularKey: 'repositories.equipos.singular',
     createTitleKey: 'repositories.equipos.create_title',
