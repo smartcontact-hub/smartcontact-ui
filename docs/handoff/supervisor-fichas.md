@@ -73,9 +73,9 @@ DD-219, sin trampas propias): `git show fdf913d4:docs/handoff/supervisor-fichas.
 
 ## ✅ 2026-10-23 · Agentes como sus borradores de COA, 4060 y 4062 (DD-225)
 
-> **Sello:** rama `areses/distracted-mclaren-9c96d2` sobre `main` `a0820c6b`. Los borradores, las decisiones y lo que
-> falta en Figma viven fuera del repo (`~/Documents/Claude/2026-10 Agentes COA/`, su LÉEME). Tras fundir, la congelada
-> 4062 avanza a ese commit (`docs/PROTOTIPOS.md`), con el OK de producto.
+> **Sello:** rama `areses/distracted-mclaren-9c96d2` sobre `main` `a0820c6b`, un PR (#511, fundido como `8f2056b7`).
+> La congelada 4062 avanzó a ese commit el mismo día. Los borradores, las decisiones y lo que falta en Figma viven
+> fuera del repo (`~/Documents/Claude/2026-10 Agentes COA/`, su LÉEME).
 
 - **Listado**: borrar varios con el clic derecho (`selectionMenu`, `onBulkDelete`); Teléfono y Estado de inicio
   (`sc-agents-columns-v6`); Estado ordena por `PRESENCE_SORT_RANK`; «Grupos» de mayor a menor (`defaultSortOrder`);
