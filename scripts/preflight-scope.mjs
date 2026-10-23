@@ -20,7 +20,7 @@
  */
 import { execSync, execFileSync } from "node:child_process";
 import { medirRebase } from "./preflight-rebase.mjs";
-import { avisarCarga, avisarDds, avisarLedgers, ddsDeRama, generadosAlDia, puertaBarata } from "./preflight-puerta-barata.mjs";
+import { avisarCarga, avisarDds, avisarLedgers, ddsDeRama, dependenciasInstaladas, generadosAlDia, puertaBarata } from "./preflight-puerta-barata.mjs";
 import { enParalelo } from "./en-paralelo.mjs";
 import { APPS, planDe } from "./preflight-alcance.mjs";
 import { analizar as analizarCitas, describir as describirCita } from "./audit-e2e-citas.mjs";
@@ -133,7 +133,9 @@ if (process.argv.includes("--run")) {
   // Y si el número de DD de esta rama ya lo usa otro PR abierto (DD-175): avisa y propone el siguiente libre.
   avisarDds({ ...ddsDeRama(), rama: ramaActual() });
   const citas = citasRetiradas();
-  const problemas = [...puertaBarata(process.cwd()), ...generadosAlDia(), ...citas];
+  // Sin dependencias los generados se miden contra nada: se dice la causa y no se proponen sus `--write`.
+  const sinDeps = dependenciasInstaladas();
+  const problemas = [...puertaBarata(process.cwd()), ...sinDeps, ...(sinDeps.length ? [] : generadosAlDia()), ...citas];
   if (problemas.length) {
     console.log("\n✘ La cadena NO arranca: hay algo que se comprueba en 2 s y falla.\n");
     for (const q of problemas) console.log(`    · ${q}`);
