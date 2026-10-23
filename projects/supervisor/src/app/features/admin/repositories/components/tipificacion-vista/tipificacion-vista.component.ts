@@ -1,10 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, effect, input, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { ListboxModule } from 'primeng/listbox';
-import { PopoverModule } from 'primeng/popover';
-import type { ListBoxPassThrough } from 'primeng/types/listbox';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
+import { ScButtonComponent, ScSelectComponent } from '@smartcontact-hub/components';
 
 import type { TipificacionOpcion } from '../../state/tipificaciones.core.mjs';
 import { TooltipModule } from 'primeng/tooltip';
@@ -18,13 +15,17 @@ const LARGO_DEL_COMENTARIO = 255;
  * el comentario si lo pide, y Guardar, que se enciende cuando está todo. Se puede probar: así se entiende qué es un
  * nivel y qué cambia al pedir comentario sin leer una ayuda. No guarda nada.
  *
+ * Los niveles son `sc-select` y Guardar es `sc-button` del DS, tal cual salen de Figma («Fuera del DS»): solo se recolorean
+ * el estado apagado de los niveles y Guardar, que en la ventana del agente es de borde y texto blancos. El modo oscuro
+ * de estas piezas queda pendiente.
+ *
  * Su forma es la de la réplica (`agent/…/typification.component.ts` y el Comunicador que la contiene): misma
  * estructura, mismos radios y mismas piezas. Sus colores, los de la familia `--sc-agent-window-*` (05-extensions),
  * oscura en los dos temas como el teléfono de verdad.
  */
 @Component({
   selector: 'sc-tipificacion-vista',
-  imports: [TooltipModule, FormsModule, IconComponent, ListboxModule, PopoverModule, TranslateModule],
+  imports: [TooltipModule, IconComponent, ScButtonComponent, ScSelectComponent, TranslateModule],
   templateUrl: './tipificacion-vista.component.html',
   styleUrl: './tipificacion-vista.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -36,61 +37,6 @@ export class TipificacionVistaComponent {
   readonly comments = input.required<boolean>();
 
   protected readonly largo = LARGO_DEL_COMENTARIO;
-
-  /** La lista de un nivel, en el globo: oscura como el panel del agente (sus tokens, `dt`). */
-  protected readonly lista = {
-    root: {
-      background: 'transparent',
-      borderColor: 'transparent',
-      color: 'var(--sc-agent-window-fg)',
-      shadow: 'none',
-    },
-    option: {
-      color: 'var(--sc-agent-window-fg)',
-      focusBackground: 'var(--sc-agent-window-bg)',
-      focusColor: 'var(--sc-agent-window-fg)',
-      selectedBackground: 'var(--sc-agent-window-header-bg)',
-      selectedColor: 'var(--sc-agent-window-fg)',
-      selectedFocusBackground: 'var(--sc-agent-window-header-bg)',
-      selectedFocusColor: 'var(--sc-agent-window-fg)',
-    },
-  };
-
-  /** El globo, oscuro como el comentario del agente, con su borde casi negro: sin él quedaba un marco blanco. */
-  protected readonly globoDt = {
-    root: {
-      background: 'var(--sc-agent-window-field-bg)',
-      borderColor: 'var(--sc-agent-window-field-border)',
-      color: 'var(--sc-agent-window-fg)',
-    },
-  };
-
-  /** Al abrir el globo, el foco entra en la lista (como el globo de columnas, DD-162). */
-  protected readonly listaPt: ListBoxPassThrough = { list: { autofocus: true } };
-
-  /** El nivel con el globo abierto; `null` si ninguno. */
-  protected readonly abierto = signal<number | null>(null);
-
-  protected readonly opcionesAbiertas = computed(() => {
-    const n = this.abierto();
-    return n === null ? [] : (this.niveles()[n]?.opciones ?? []);
-  });
-
-  protected readonly elegidaAbierta = computed(() => {
-    const n = this.abierto();
-    return n === null ? null : (this.niveles()[n]?.elegida?.id ?? null);
-  });
-
-  protected abrir(nivel: number, globo: { toggle: (e: Event) => void }, event: Event): void {
-    this.abierto.set(nivel);
-    globo.toggle(event);
-  }
-
-  protected elegirAbierta(id: unknown, globo: { hide: () => void }): void {
-    const n = this.abierto();
-    if (n !== null && typeof id === 'string') this.elegir(n, id);
-    globo.hide();
-  }
 
   /** Lo elegido en cada desplegable, por id. */
   private readonly elegidas = signal<readonly (string | null)[]>([]);
