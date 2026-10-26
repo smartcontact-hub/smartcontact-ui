@@ -20,7 +20,6 @@
   importable
   [rowMenu]="rowMenu"
   [selectionMenu]="selectionMenu"
-  kebabRowOnly
   rowOpenable
   selectable
   [(selectedIds)]="selectedIds"
@@ -65,7 +64,7 @@
   />
 </ng-template>
 
-<!-- Eliminar desde «⋮» o desde la ficha: solo esa, aunque haya más marcadas. Varias a la vez, con el clic derecho sobre una marcada (`selectionMenu`). -->
+<!-- Eliminar una sola (fila sin marcar o ficha): este diálogo. Varias, con el «⋮» o el clic derecho sobre una marcada (`selectionMenu`, DD-227). -->
 <sc-delete-entity-dialog
   [visible]="!!deleteTarget()"
   mode="single"

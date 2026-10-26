@@ -213,7 +213,7 @@ export class TipificacionesListPageComponent {
     this.toast(this.translate.instant('common.duplicated_toast', { name: copia.name }));
   }
 
-  /** Con varias marcadas, el clic derecho sobre una de ellas ofrece solo «Eliminar»: editar varias a la vez no existe. */
+  /** Con varias marcadas, el «⋮» y el clic derecho sobre una de ellas ofrecen solo «Eliminar (N)»: editar varias a la vez no existe. */
   protected readonly selectionMenu = (tipificaciones: readonly Tipificacion[]): MenuItem[] => [
     {
       label: this.translate.instant('common.delete_count', { count: tipificaciones.length }),
@@ -229,7 +229,7 @@ export class TipificacionesListPageComponent {
     this.borrar(tipificaciones);
   }
 
-  /** El diálogo de una sola, desde «⋮»: solo esa, aunque haya más marcadas, que se quedan marcadas. */
+  /** El diálogo de una sola (fila sin marcar o ficha): las demás marcadas se quedan marcadas. */
   protected confirmDelete(): void {
     const target = this.deleteTarget();
     if (!target) return;
