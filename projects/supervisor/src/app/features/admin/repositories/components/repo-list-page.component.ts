@@ -345,7 +345,7 @@ export class RepoListPageComponent<T extends RepoEntity> {
     this.deleteTarget.set(null);
   }
 
-  /** Con varios marcados, el clic derecho sobre uno de ellos ofrece solo «Eliminar (N)». */
+  /** Con varios marcados, el «⋮» y el clic derecho sobre uno de ellos ofrecen solo «Eliminar (N)». */
   protected readonly selectionMenu = (rows: readonly T[]): MenuItem[] => [
     {
       label: this.translate.instant('common.delete_count', { count: rows.length }),
@@ -405,7 +405,7 @@ export class RepoListPageComponent<T extends RepoEntity> {
     this.toastSuccess('common.duplicated_toast', { name: copia.name });
   }
 
-  /** El «⋮» elimina solo su fila, aunque haya varias marcadas. */
+  /** Eliminar una fila (sin marcar, o sola): con varias marcadas, el «⋮» y el clic derecho abren el menú de la selección. */
   protected onRowDelete(item: T): void {
     const simple = this.config().simpleDelete;
     if (!simple) {

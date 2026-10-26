@@ -95,8 +95,8 @@ export interface RepoPageConfig<T extends RepoEntity> {
   readonly toastsKey?: string;
   /**
    * Borrado con la confirmación simple del DS, como Grupos y Agentes (DD-215), en vez de la puerta del diálogo de
-   * borrar: sin barra en lote, y «Eliminar» de varios solo con el clic derecho sobre una fila marcada
-   * (`title_bulk`, con `{{count}}`). El «⋮» de una fila elimina solo esa (`title`, con `{{name}}`).
+   * borrar: sin barra en lote, y «Eliminar» de varios con el «⋮» o el clic derecho sobre una fila marcada
+   * (`title_bulk`, con `{{count}}`). Una fila sin marcar elimina solo esa (`title`, con `{{name}}`).
    */
   readonly simpleDelete?: { readonly titleKey: string; readonly titleBulkKey: string };
 }
