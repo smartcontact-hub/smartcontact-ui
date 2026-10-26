@@ -162,6 +162,23 @@
 
 ---
 
+## DD-231 · 2026-10-26 — Equipos borra como Grupos y Agentes, y el «⋮» sin excepciones en `sc-list-page`
+
+**Contexto** · DD-227 dejó el «⋮» y el clic derecho de una fila marcada con el mismo menú de la selección. Dos PR traían una
+excepción cada una (`kebabRowOnly` en Tipificaciones, `selectionMenuFromRow` en Equipos); se quitó de las dos y la opción de
+Tipificaciones quedó en `list-page` sin ningún uso. Equipos, además, seguía borrando con el diálogo de teclear el nombre, no
+con la confirmación simple de Grupos, Agentes y Tipificaciones (varias).
+
+**Decisión** · Fuera `kebabRowOnly` de `sc-list-page`: el «⋮» sigue a la selección siempre, sin opción para apagarlo. Equipos
+usa la confirmación simple del DS (`simpleDelete`, DD-215): «¿Eliminar el equipo «X»?» y «¿Eliminar 3 equipos?», con el
+botón «Eliminar» sin puntos suspensivos y sin barra de lote.
+
+**Razón** · La misma expectativa en todas las listas (DD-227): una opción que apaga el comportamiento invita a reabrir la
+excepción pantalla a pantalla.
+
+**Fuera** · Usuarios, Plantillas, Etiquetas, Repositorios y Tipificaciones (una sola) siguen con el diálogo de teclear el nombre;
+cambiarlo es una decisión de producto aparte.
+
 ## DD-230 · 2026-10-26 — Agendas y Plantillas como sus COA: se asignan solo a agentes, en una tabla con sus grupos; Plantillas sin pestañas
 
 **Contexto** · Revisión con producto del 2026-10-26 de «SOLUCIÓN SISMAC-4440 Agendas» y «SOLUCIÓN SISMAC-4438 Plantillas»
