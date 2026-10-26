@@ -1517,8 +1517,7 @@
         "name": "Nom",
         "description": "Description",
         "levels": "Niveaux",
-        "groups": "Groupes",
-        "id": "ID"
+        "groups": "Groupes"
       },
       "levels_count": "{{count}} niveaux",
       "levels_count_one": "1 niveau",
@@ -1614,11 +1613,12 @@
       "used_in": "dans {{count}} groupes",
       "used_in_one": "dans 1 groupe",
       "add_category": "Ajouter une catégorie",
-      "in_use_one": "Utilisée par le groupe {{groups}}. Si vous la supprimez, ce groupe cesse de typifier jusqu'à ce que vous en choisissiez une autre.",
-      "in_use": "Utilisée par {{count}} groupes\u00a0: {{groups}}. Si vous la supprimez, ils cessent de typifier jusqu'à ce que vous en choisissiez une autre.",
-      "in_use_bulk_one": "Utilisées par le groupe {{groups}}. Si vous les supprimez, ce groupe cesse de typifier jusqu'à ce que vous en choisissiez une autre.",
-      "in_use_bulk": "Utilisées par {{count}} groupes\u00a0: {{groups}}. Si vous les supprimez, ils cessent de typifier jusqu'à ce que vous en choisissiez une autre.",
-      "and_more": "{{count}} de plus",
+      "in_use_one": "Utilisée par 1 groupe.",
+      "in_use": "Utilisée par {{count}} groupes.",
+      "delete_dialog": {
+        "title_bulk": "Supprimer {{count}} typifications ?"
+      },
+      "deleted_bulk": "{{count}} typifications supprimées",
       "add_subcategory": "Ajouter une sous-catégorie"
     },
     "variables": {

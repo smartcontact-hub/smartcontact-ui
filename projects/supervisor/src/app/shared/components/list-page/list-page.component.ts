@@ -187,6 +187,9 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
    * siempre de la fila. Grupos lo usa para eliminar varios a la vez (SISMAC-4056).
    */
   readonly selectionMenu = input<((rows: readonly T[]) => MenuItem[]) | undefined>(undefined);
+  /** Con `true`, el «⋮» abre siempre el menú de SU fila, aunque esté entre varias marcadas: solo el clic derecho abre el
+   *  de la selección (Tipificaciones: eliminar desde «⋮» borra solo esa). */
+  readonly kebabRowOnly = input(false, { transform: booleanAttribute });
 
   /** Si la fila se abre con clic y con Enter (puede depender de la fila: p. ej. mientras se renombra). */
   readonly rowOpenable = input<boolean | ((row: T) => boolean), boolean | '' | ((row: T) => boolean)>(false, {
@@ -660,7 +663,7 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
     event.stopPropagation();
     // Como el clic derecho: con la fila entre varias marcadas, el menú es el de la selección (si la lista lo tiene).
     const marcadas = this.selectedRows();
-    const deLaSeleccion = !!this.selectionMenu() && marcadas.length >= 2 && marcadas.includes(row);
+    const deLaSeleccion = !this.kebabRowOnly() && !!this.selectionMenu() && marcadas.length >= 2 && marcadas.includes(row);
     this.menuSelection.set(deLaSeleccion ? marcadas : null);
     this.menuTarget.set(row);
     menu.toggle(event);
