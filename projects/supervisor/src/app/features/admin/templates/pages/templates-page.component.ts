@@ -21,7 +21,6 @@ import { injectLangChange } from '@core/utils/lang-change';
 import { LanguageService } from '@core/services/language.service';
 import { XlsxExportService } from '@core/services/xlsx-export.service';
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
-import { copyName } from '@shared/utils/copy-name';
 
 import { CeldaVaciaComponent, ImportDialogComponent, ListPageComponent } from '@shared/components';
 import {
@@ -234,11 +233,9 @@ export class TemplatesPageComponent {
     void this.router.navigateByUrl(`/admin/plantillas/editar/${tpl.id}`);
   }
 
-  /** La copia, en el mismo canal y con un título que no se repite (el título es único). Se queda en la lista. */
+  /** Duplicar es un alta (DD-234, como un grupo o un agente): abre «Nueva plantilla» con la copia, «X (1)»; no existe hasta «Crear». */
   protected duplicar(tpl: Template): void {
-    const title = copyName(tpl.title, this.templates().map((t) => t.title), this.translate.instant('common.copy_suffix'));
-    const copia = this.templatesStore.addTemplate({ title, type: tpl.type, body: tpl.body });
-    this.toastSuccess('common.duplicated_toast', { name: copia.title });
+    void this.router.navigate(['/admin/plantillas/crear'], { queryParams: { seedFromId: tpl.id } });
   }
 
   protected clearSelection(): void {

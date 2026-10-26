@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Duplicar una agenda o una plantilla es un alta, como un grupo o un agente (enmienda DD-230): abre «Nueva agenda/plantilla» con la copia y su nombre «X (1)» (`seedFromId`, `nombreDeCopia`), que no existe hasta «Crear» · no copia a qué agentes se asigna | DD-234 |
 > | Agendas y Plantillas como sus COA (SISMAC-4440 y 4438): se asignan SOLO a agentes, en una tabla plana de agentes con su columna «Grupos» (`sc-agent-assignment-table`), sin árbol ni grupos dinámicos (enmienda DD-211 §1) · el listado de Agendas con Descripción, Contactos y Agentes (cifra, sin globo) ordenables · Plantillas sin pestañas, con columna Canal · contactos con casillas y borrado múltiple (completa DD-227 en una tabla anidada) | DD-230 |
 > | El «+» de `sc-button` (`icon="add"`) es siempre redondo: círculo sin rótulo, píldora con él (enmienda DD-167 y DD-187) | DD-229 |
 > | Con el índice en la caja, el carril mide 235, el de la caja en Figma: ningún rótulo de las fichas salta de línea · sin la caja, 196 (enmienda DD-220) | DD-221 |
@@ -162,6 +163,32 @@
 
 ---
 
+## DD-234 · 2026-10-26 — Duplicar una agenda o una plantilla es un alta, como duplicar un grupo o un agente
+
+**Contexto** · DD-230 dejó «Duplicar» en Agendas y Plantillas como estaba: la copia se creaba en el acto, con «X (copia)», y
+se quedaba en la lista. Grupos y Agentes ya duplican de otra manera (DD-218, DD-225): abren «Nuevo grupo» o «Nuevo agente»
+con la copia, «X (1)», y no existe hasta pulsar «Crear». Agendas y Plantillas eran el único sitio con el flujo antiguo.
+
+**Decisión** · Duplicar abre «Nueva agenda» o «Nueva plantilla» (`/crear?seedFromId=:id`) con los datos de la original y el
+siguiente nombre libre «X (1)» (`nombreDeCopia`: duplicar «X (1)» da «X (2)»). La agenda copia descripción, contactos y
+etiquetas de los campos personalizados; la plantilla, canal y contenido. **No se copia a qué agentes se asigna**: lo dicen
+los agentes, no la agenda ni la plantilla (en un grupo sí se copian sus agentes porque son parte de él). El elemento no
+existe hasta «Crear agenda» / «Crear plantilla»; la copia es el punto de partida, así que «Deshacer» vuelve a ella y salir
+sin tocar nada no pregunta ni deja nada. `RepoListPage.onRowDuplicate` navega al alta cuando la lista lo pide con
+`duplicateAsCreate` (DD-232; Agendas lo activa, además de Equipos) y conserva la copia en el acto, con «(copia)», solo
+para una lista sin él (hoy ninguna). Enmienda DD-232, que dejaba Agendas copiando en la lista.
+
+**Razón** · Un solo gesto de duplicar en todo el producto, y sin crear en el acto algo que quizá no se quería y luego hay
+que borrar. Medido: `duplicable` solo lo usaba Agendas, y Plantillas tenía su propia copia en el acto.
+
+**Descartadas** ·
+- *Copiar también las asignaciones a agentes*: la copia nacería asignada a quienes no la han pedido.
+- *Dejar la copia en el acto y solo cambiar el COA*: dos formas de duplicar en el mismo menú «Editar · Duplicar · Eliminar».
+
+**Consecuencias** · `copyName` y «Copia creada: …» se quedan solo para una lista sin editor propio. Pruebas:
+`agendas-listado.spec.ts` y `plantillas-editor.spec.ts` reescritas (URL de alta, nombre «(1)», no existe hasta crear,
+sin diálogo al salir, «(2)» al duplicar la copia).
+
 ## DD-233 · 2026-10-26 — Para esta entrega, todo borra con la confirmación simple, sin teclear el nombre
 
 **Contexto** · Grupos, Agentes, Equipos y Tipificaciones (varias) ya preguntaban con la confirmación simple del DS (DD-215,
@@ -228,6 +255,7 @@ excepción pantalla a pantalla.
 
 **Fuera** · Usuarios, Plantillas, Etiquetas, Repositorios y Tipificaciones (una sola) siguen con el diálogo de teclear el nombre;
 cambiarlo es una decisión de producto aparte.
+
 
 ## DD-230 · 2026-10-26 — Agendas y Plantillas como sus COA: se asignan solo a agentes, en una tabla con sus grupos; Plantillas sin pestañas
 

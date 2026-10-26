@@ -14,6 +14,7 @@ import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { LanguageService } from '@core/services/language.service';
 import { injectLangChange } from '@core/utils/lang-change';
 import { ImportDialogComponent } from '@shared/components';
+import { nombreDeCopia } from '@shared/utils/copy-name';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 
 import { AgentAssignmentTableComponent } from '../components/agent-assignment-table/agent-assignment-table.component';
@@ -125,6 +126,7 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
   ngOnInit(): void {
     const raw = this.route.snapshot.paramMap.get('id');
     if (raw === null) {
+      this.seedFromDuplicate();
       this.dirtyState.markPristine();
       return;
     }
@@ -145,6 +147,28 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
     this.dirtyState.markPristine();
   }
 
+
+  /**
+   * Duplicar es un alta (DD-234, como un grupo o un agente): `?seedFromId` abre «Nueva agenda» con los datos de la
+   * original y su nombre «X (1)». No copia a qué agentes se asigna (lo dicen ellos). La agenda no existe hasta «Crear»,
+   * y la copia es el punto de partida: «Deshacer» vuelve a ella y salir sin tocar nada no pregunta.
+   */
+  private seedFromDuplicate(): void {
+    const seed = this.route.snapshot.queryParamMap.get('seedFromId');
+    if (!seed) return;
+    const origen = this.store.items().find((a) => a.id === Number(seed));
+    if (!origen) {
+      void this.router.navigateByUrl('/admin/agendas', { replaceUrl: true });
+      return;
+    }
+    this.form.set({
+      name: nombreDeCopia(origen.name, this.store.items().map((a) => a.name)),
+      description: origen.description,
+      contacts: origen.contacts,
+      customLabels: SIN_ETIQUETAS.map((_, i) => origen.customLabels?.[i] ?? ''),
+      agentIds: [],
+    });
+  }
 
   protected update<K extends keyof AgendaDraft>(key: K, value: AgendaDraft[K]): void {
     this.form.update((f) => ({ ...f, [key]: value }));

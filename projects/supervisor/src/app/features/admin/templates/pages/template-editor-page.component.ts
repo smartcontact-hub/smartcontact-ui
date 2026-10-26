@@ -17,6 +17,7 @@ import { injectLangChange } from '@core/utils/lang-change';
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
 import { AgentAssignmentTableComponent } from '@features/admin/repositories/components/agent-assignment-table/agent-assignment-table.component';
 import { llegarAAncla, ocasionDeAvisar } from '@shared/utils/alta-secciones';
+import { nombreDeCopia } from '@shared/utils/copy-name';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 
 import { TEMPLATE_TYPES, type TemplateType } from '../data/templates-data';
@@ -142,6 +143,7 @@ export class TemplateEditorPageComponent implements DirtyAware, OnInit {
       const tipo = this.route.snapshot.queryParamMap.get('tipo');
       const type = TEMPLATE_TYPES.find((t) => t === tipo) ?? 'chat';
       this.form.set({ title: '', type, html: '', agentIds: [] });
+      if (!this.seedFromDuplicate()) return;
       this.dirtyState.markPristine();
       return;
     }
@@ -163,6 +165,29 @@ export class TemplateEditorPageComponent implements DirtyAware, OnInit {
         .sort((a, b) => a - b),
     });
     this.dirtyState.markPristine();
+  }
+
+  /**
+   * Duplicar es un alta (DD-234, como un grupo o un agente): `?seedFromId` abre «Nueva plantilla» con el canal y el
+   * contenido de la original y su nombre «X (1)». No copia a qué agentes se asigna (lo dicen ellos). La plantilla no
+   * existe hasta «Crear», y la copia es el punto de partida: «Deshacer» vuelve a ella y salir sin tocar nada no pregunta.
+   * Devuelve `false` si la original ya no existe (y vuelve a la lista).
+   */
+  private seedFromDuplicate(): boolean {
+    const seed = this.route.snapshot.queryParamMap.get('seedFromId');
+    if (!seed) return true;
+    const origen = this.store.templates().find((t) => t.id === Number(seed));
+    if (!origen) {
+      void this.router.navigateByUrl('/admin/plantillas', { replaceUrl: true });
+      return false;
+    }
+    this.form.set({
+      title: nombreDeCopia(origen.title, this.store.templates().map((t) => t.title)),
+      type: origen.type,
+      html: contenidoParaEditor(origen.body, origen.type),
+      agentIds: [],
+    });
+    return true;
   }
 
   protected update<K extends keyof TemplateDraft>(key: K, value: TemplateDraft[K]): void {
