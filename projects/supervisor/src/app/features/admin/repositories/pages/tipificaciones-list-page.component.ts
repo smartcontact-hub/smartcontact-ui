@@ -18,7 +18,6 @@ import {
   type GroupRef,
   type ScColumnCellContext,
   type ScColumnDef,
-  ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
   ScEmptyStateComponent as EmptyStateComponent,
   ScGroupPopoverComponent as GroupPopoverComponent,
 } from '@smartcontact-hub/components';
@@ -43,6 +42,7 @@ import {
 } from '../state/tipificaciones.core.mjs';
 import { type Tipificacion, TipificacionesStore } from '../state/tipificaciones.store';
 import { TipificacionUsoService } from '../state/tipificacion-uso.service';
+import { injectBorradoSimple } from '@features/admin/services/confirmar-borrado';
 
 /* v1 (2026-10-05): las columnas de la revisión de producto. v2 (2026-10-09): sin Dirección ni Comentarios, que pasan
  * al grupo (revisión de tipificaciones). v3: sin la columna ID. */
@@ -58,7 +58,6 @@ const COLUMN_PREF_KEY = 'sc-tipificaciones-columns-v3';
   imports: [
     CeldaVaciaComponent,
     ButtonComponent,
-    DeleteEntityDialogComponent,
     EmptyStateComponent,
     GroupPopoverComponent,
     IconComponent,
@@ -97,12 +96,20 @@ export class TipificacionesListPageComponent {
 
   protected readonly selectedIds = signal<ReadonlySet<Tipificacion['id']>>(new Set());
   protected readonly deleteTarget = signal<readonly Tipificacion[] | null>(null);
-  protected readonly deleteItems = computed(() => (this.deleteTarget() ?? []).map((t) => ({ id: t.id, name: t.name })));
   /** Qué grupos las usan, en el diálogo de eliminar: dejarán de tipificar. */
   protected readonly avisoDeUso = computed(() => {
     this.lang();
     const target = this.deleteTarget();
     return target?.length === 1 ? this.uso.aviso(target[0]!.id) : null;
+  });
+  private readonly borradoSimple = injectBorradoSimple<Tipificacion>({
+    target: this.deleteTarget,
+    titleKey: 'repositories.tipificaciones.delete_dialog.title',
+    titleBulkKey: 'repositories.tipificaciones.delete_dialog.title_bulk',
+    params: (t) => ({ name: t[0]!.name, count: t.length }),
+    detail: () => this.avisoDeUso(),
+    accept: () => this.confirmDelete(),
+    cancel: () => this.deleteTarget.set(null),
   });
 
   private readonly groupsById = computed(() => new Map(this.groupsStore.groups().map((g) => [g.id, g])));
@@ -197,7 +204,7 @@ export class TipificacionesListPageComponent {
     },
     { separator: true },
     {
-      label: this.translate.instant('common.delete_gate'),
+      label: this.translate.instant('common.delete'),
       icon: 'sc-icon-font sc-icon-font--delete',
       styleClass: 'sc-menu-item--danger',
       command: () => this.deleteTarget.set([t]),

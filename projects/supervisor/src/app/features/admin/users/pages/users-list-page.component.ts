@@ -25,7 +25,6 @@ import {
   ColumnDef,
   type ScColumnCellContext,
   type ScColumnDef,
-  ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
   ScEmptyStateComponent as EmptyStateComponent,
   ImpactBadge,
   ImpactItem,
@@ -36,6 +35,7 @@ import {
 import { USER_TYPE_LABEL_KEYS, USER_TYPES, User, UserType } from '../data/users-data';
 import { UsersStore, type UserBulkField } from '../state/users.store';
 import { TooltipModule } from 'primeng/tooltip';
+import { injectBorradoSimple } from '@features/admin/services/confirmar-borrado';
 
 const COLUMN_PREF_KEY = 'sc-users-columns-v1';
 
@@ -52,7 +52,6 @@ interface PendingBulkEdit {
     TooltipModule,
     CeldaVaciaComponent,
     ButtonComponent,
-    DeleteEntityDialogComponent,
     EmptyStateComponent,
     IconComponent,
     ImpactPreviewDialogComponent,
@@ -107,6 +106,14 @@ export class UsersListPageComponent {
   /** Selección: la lista la marca; de ella cuelgan la edición en lote, el borrado y el diálogo de impacto. */
   protected readonly selectedIds = signal<ReadonlySet<User['id']>>(new Set());
   protected readonly deleteTarget = signal<readonly User[] | null>(null);
+  private readonly borradoSimple = injectBorradoSimple<User>({
+    target: this.deleteTarget,
+    titleKey: 'users.delete_dialog.title',
+    titleBulkKey: 'users.delete_dialog.title_bulk',
+    params: (u) => ({ name: u[0]!.name, count: u.length }),
+    accept: () => this.confirmDelete(null),
+    cancel: () => this.cancelDelete(),
+  });
   protected readonly renamingId = signal<number | null>(null);
   protected readonly columnPrefKey = COLUMN_PREF_KEY;
 
@@ -127,10 +134,6 @@ export class UsersListPageComponent {
     u.email.toLowerCase().includes(q) ||
     u.identifier.toLowerCase().includes(q) ||
     (this.translatedTypeLabels.get(u.type) ?? '').toLowerCase().includes(q);
-
-  protected readonly deleteItems = computed(() =>
-    (this.deleteTarget() ?? []).map((u) => ({ id: u.id, name: u.name })),
-  );
 
   protected readonly bulkEntity = useBulkEntityI18n({
     singular: 'common.bulk.entity.user_singular',
@@ -329,7 +332,7 @@ export class UsersListPageComponent {
         // Puntos suspensivos porque lleva a la puerta tecleada, no a un
         // borrado inmediato (C4 del plan): convención de menús de escritorio
         // — "…" significa "esto abre algo antes de hacerlo".
-        label: this.translate.instant('common.delete_gate'),
+        label: this.translate.instant('common.delete'),
         icon: 'sc-icon-font sc-icon-font--delete',
         styleClass: 'sc-menu-item--danger',
         command: () => this.onRowDelete(user),

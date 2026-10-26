@@ -29,7 +29,6 @@ import {
   type ColumnDef,
   type ScColumnCellContext,
   type ScColumnDef,
-  ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
   ScEmptyStateComponent as EmptyStateComponent,
 } from '@smartcontact-hub/components';
 import { decodificarCsv } from '../../repositories/state/agenda-contacts.core.mjs';
@@ -44,6 +43,7 @@ import {
 import { TemplatesStore } from '../state/templates.store';
 import { ResultadoAccionService } from '@core/services';
 import { TooltipModule } from 'primeng/tooltip';
+import { injectBorradoSimple } from '@features/admin/services/confirmar-borrado';
 
 @Component({
   selector: 'sc-templates-page',
@@ -51,7 +51,6 @@ import { TooltipModule } from 'primeng/tooltip';
     TooltipModule,
     ButtonComponent,
     CeldaVaciaComponent,
-    DeleteEntityDialogComponent,
     EmptyStateComponent,
     IconComponent,
     ImportDialogComponent,
@@ -97,6 +96,15 @@ export class TemplatesPageComponent {
   /** Selección: la lista la marca; de ella cuelgan la barra en lote y el borrado. */
   protected readonly selectedIds = signal<ReadonlySet<Template['id']>>(new Set());
   protected readonly deleteTarget = signal<readonly Template[] | null>(null);
+  private readonly borradoSimple = injectBorradoSimple<Template>({
+    target: this.deleteTarget,
+    titleKey: 'templates.delete_dialog.title',
+    titleBulkKey: 'templates.delete_dialog.title_bulk',
+    params: (t) => ({ name: t[0]!.title, count: t.length }),
+    detail: (t) => this.translate.instant(t.length === 1 ? 'templates.delete.single_detail' : 'templates.delete.bulk_footer'),
+    accept: () => this.confirmDelete(null),
+    cancel: () => this.cancelDelete(),
+  });
 
   /** Todas, por nombre (COA SISMAC-4438): sin pestañas por canal, el canal es una columna. */
   protected readonly rows = computed(() => [...this.templates()].sort((a, b) => a.title.localeCompare(b.title)));
@@ -210,10 +218,6 @@ export class TemplatesPageComponent {
     ];
   });
 
-  protected readonly deleteItems = computed(() =>
-    (this.deleteTarget() ?? []).map((t) => ({ id: t.id, name: t.title })),
-  );
-
   protected readonly bulkEntity = useBulkEntityI18n({
     singular: 'common.bulk.entity.template_singular',
     plural: 'common.bulk.entity.template_plural',
@@ -308,7 +312,7 @@ export class TemplatesPageComponent {
         // Puntos suspensivos porque lleva a la puerta tecleada, no a un
         // borrado inmediato (C4 del plan): convención de menús de escritorio
         // — "…" significa "esto abre algo antes de hacerlo".
-        label: this.translate.instant('common.delete_gate'),
+        label: this.translate.instant('common.delete'),
         icon: 'sc-icon-font sc-icon-font--delete',
         styleClass: 'sc-menu-item--danger',
         command: () => this.onRowDelete(tpl),

@@ -159,16 +159,6 @@
   </sc-dialog>
 }
 
-<sc-delete-entity-dialog
-  [visible]="deleteVisible()"
-  mode="single"
-  [items]="deleteItems()"
-  [entitySingular]="'users.entity_singular' | translate"
-  [entityPlural]="'users.entity_plural' | translate"
-  (cancelled)="cancelDelete()"
-  (confirm)="confirmDelete()"
-/>
-
 <!-- LAS SECCIONES, cada una en su plantilla, que se pinta de una en una junto al índice al crear y al editar
      (DD-143). Un solo cuerpo para los dos, así no pueden decir cosas distintas. -->
 <ng-template #seccionIdentidad>

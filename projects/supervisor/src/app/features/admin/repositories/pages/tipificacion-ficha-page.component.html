@@ -75,17 +75,6 @@
   </div>
 </div>
 
-<sc-delete-entity-dialog
-  [visible]="deleteVisible()"
-  mode="single"
-  [items]="deleteItems()"
-  [entitySingular]="'repositories.tipificaciones.singular' | translate"
-  [entityPlural]="'repositories.tipificaciones.plural' | translate"
-  [singleDetailMessage]="avisoDeUso()"
-  (cancelled)="deleteVisible.set(false)"
-  (confirm)="confirmDelete()"
-/>
-
 <!-- LAS SECCIONES, cada una en su plantilla: un solo cuerpo para el alta y la edición. -->
 <ng-template #seccionGeneral>
   <sc-section-card anchorId="tip-section-general" surface="subtle" icon="tune" titleKey="repositories.tipificaciones.section.general">
