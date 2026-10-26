@@ -4,8 +4,8 @@ import type { MenuDesignTokens } from '@primeuix/themes/types/menu';
     item: {
         gap: "{navigation.item.gap}",
         icon: {
-            color: "{navigation.item.icon.color}",
-            focusColor: "{navigation.item.icon.focus.color}"
+            color: "{navigation.item.color}",
+            focusColor: "{navigation.item.focus.color}"
         },
         color: "{navigation.item.color}",
         padding: "{navigation.item.padding}",

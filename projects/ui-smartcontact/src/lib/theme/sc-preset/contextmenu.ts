@@ -4,9 +4,9 @@ import type { ContextMenuDesignTokens } from '@primeuix/themes/types/contextmenu
     item: {
         gap: "{navigation.item.gap}",
         icon: {
-            color: "{navigation.item.icon.color}",
-            focusColor: "{navigation.item.icon.focus.color}",
-            activeColor: "{navigation.item.icon.active.color}"
+            color: "{navigation.item.color}",
+            focusColor: "{navigation.item.focus.color}",
+            activeColor: "{navigation.item.active.color}"
         },
         color: "{navigation.item.color}",
         padding: "var(--sc-cmp-contextmenu-item-padding-y) var(--sc-cmp-contextmenu-item-padding-x)",
