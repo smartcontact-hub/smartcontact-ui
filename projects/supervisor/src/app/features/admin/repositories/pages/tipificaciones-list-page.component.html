@@ -65,17 +65,6 @@
 </ng-template>
 
 <!-- Eliminar una sola (fila sin marcar o ficha): este diálogo. Varias, con el «⋮» o el clic derecho sobre una marcada (`selectionMenu`, DD-227). -->
-<sc-delete-entity-dialog
-  [visible]="!!deleteTarget()"
-  mode="single"
-  [items]="deleteItems()"
-  [entitySingular]="'repositories.tipificaciones.singular' | translate"
-  [entityPlural]="'repositories.tipificaciones.plural' | translate"
-  [singleDetailMessage]="avisoDeUso()"
-  (cancelled)="deleteTarget.set(null)"
-  (confirm)="confirmDelete()"
-/>
-
 <!-- Importar de un CSV, como las agendas (DD-166): la plantilla, el archivo y, antes de crear nada, qué entra y qué no. -->
 @if (importOpen()) {
   <sc-import-dialog

@@ -1152,6 +1152,10 @@
     "search_placeholder": "Rechercher des étiquettes…"
   },
   "templates": {
+    "delete_dialog": {
+      "title": "Supprimer le modèle « {{name}} » ?",
+      "title_bulk": "Supprimer {{count}} modèles ?"
+    },
     "import": {
       "title": "Importer des modèles",
       "template_file": "modele-modeles",
@@ -1243,6 +1247,10 @@
     "search_placeholder": "Rechercher des modèles…"
   },
   "repositories": {
+    "delete_dialog": {
+      "title": "Supprimer « {{name}} » ?",
+      "title_bulk": "Supprimer {{count}} {{entity}} ?"
+    },
     "groups_aria": "{{count}} groupes",
     "groups_aria_one": "1 groupe",
     "emails": {
@@ -1607,6 +1615,7 @@
       "in_use_one": "Utilisée par 1 groupe.",
       "in_use": "Utilisée par {{count}} groupes.",
       "delete_dialog": {
+        "title": "Supprimer la typification « {{name}} » ?",
         "title_bulk": "Supprimer {{count}} typifications ?"
       },
       "deleted_bulk": "{{count}} typifications supprimées",
@@ -1735,6 +1744,10 @@
     }
   },
   "users": {
+    "delete_dialog": {
+      "title": "Supprimer l'utilisateur « {{name}} » ?",
+      "title_bulk": "Supprimer {{count}} utilisateurs ?"
+    },
     "page_title": "Utilisateurs",
     "create_button": "Nouvel utilisateur",
     "search_placeholder": "Rechercher des utilisateurs…",

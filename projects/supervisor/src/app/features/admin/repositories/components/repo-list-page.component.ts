@@ -29,8 +29,6 @@ import {
   ScGroupPopoverComponent as GroupPopoverComponent,
   type ScColumnCellContext,
   type ScColumnDef,
-  ScConfirmService,
-  ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
   ScTagComponent as TagComponent,
 } from '@smartcontact-hub/components';
 import { RepoFormPanelComponent, RepoFormSubmission } from './repo-form-panel.component';
@@ -40,6 +38,7 @@ import { copyName } from '@shared/utils/copy-name';
 import { hoy } from '@shared/utils/today';
 import { ResultadoAccionService } from '@core/services';
 import { TooltipModule } from 'primeng/tooltip';
+import { injectBorradoSimple } from '@features/admin/services/confirmar-borrado';
 
 /**
  * Generic CRUD page used by all 9 repository instances. Driven by a
@@ -58,7 +57,6 @@ import { TooltipModule } from 'primeng/tooltip';
     CeldaVaciaComponent,
     GroupPopoverComponent,
     ClickOutsideDirective,
-    DeleteEntityDialogComponent,
     IconComponent,
     ListPageComponent,
     RepoFormPanelComponent,
@@ -72,7 +70,6 @@ import { TooltipModule } from 'primeng/tooltip';
 export class RepoListPageComponent<T extends RepoEntity> {
   private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
-  private readonly confirm = inject(ScConfirmService);
   private readonly lang = injectLangChange();
   private readonly xlsx = inject(XlsxExportService);
   private readonly router = inject(Router);
@@ -100,6 +97,14 @@ export class RepoListPageComponent<T extends RepoEntity> {
   /** Selección: la lista la marca; de ella cuelgan la barra en lote y el borrado. */
   protected readonly selectedIds = signal<ReadonlySet<T['id']>>(new Set());
   protected readonly deleteTarget = signal<readonly T[] | null>(null);
+  private readonly borradoSimple = injectBorradoSimple<T>({
+    target: this.deleteTarget,
+    titleKey: () => this.config().simpleDelete?.titleKey ?? 'repositories.delete_dialog.title',
+    titleBulkKey: () => this.config().simpleDelete?.titleBulkKey ?? 'repositories.delete_dialog.title_bulk',
+    params: (items) => ({ name: items[0]!.name, count: items.length, entity: this.entityPlural() }),
+    accept: () => this.confirmDelete(null),
+    cancel: () => this.cancelDelete(),
+  });
 
   protected readonly items = computed(() => this.store().items());
 
@@ -114,10 +119,6 @@ export class RepoListPageComponent<T extends RepoEntity> {
   protected readonly sorted = computed(() => [...this.items()].sort((a, b) => a.name.localeCompare(b.name)));
 
   protected readonly existingNames = computed(() => this.items().map((item) => item.name));
-
-  protected readonly deleteItems = computed(() =>
-    (this.deleteTarget() ?? []).map((item) => ({ id: item.id, name: item.name })),
-  );
 
   /** Reactividad al cambio de idioma para resolver `entitySingularKey` y
    *  `entityPluralKey` del config (S51 sweep AED i18n). Patrón S49 reactive
@@ -363,7 +364,7 @@ export class RepoListPageComponent<T extends RepoEntity> {
       label: this.translate.instant('common.delete_count', { count: rows.length }),
       icon: 'sc-icon-font sc-icon-font--delete',
       styleClass: 'sc-menu-item--danger',
-      command: () => (this.config().simpleDelete ? void this.onBulkDelete(rows) : this.deleteTarget.set(rows)),
+      command: () => this.deleteTarget.set(rows),
     },
   ];
 
@@ -388,11 +389,8 @@ export class RepoListPageComponent<T extends RepoEntity> {
         : []),
       { separator: true },
       {
-        // Puntos suspensivos porque lleva a la puerta tecleada
-        // (<sc-delete-entity-dialog>), no a un borrado inmediato (C4 del
-        // plan): convención de menús de escritorio — "…" significa "esto
-        // abre algo antes de hacerlo". Con confirmación simple, sin ellos (DD-215).
-        label: this.translate.instant(this.config().simpleDelete ? 'common.delete' : 'common.delete_gate'),
+        // Sin puntos suspensivos: lleva a la confirmación simple, sin teclear el nombre (DD-215, DD-233).
+        label: this.translate.instant('common.delete'),
         icon: 'sc-icon-font sc-icon-font--delete',
         styleClass: 'sc-menu-item--danger',
         command: () => this.onRowDelete(item),
@@ -424,39 +422,7 @@ export class RepoListPageComponent<T extends RepoEntity> {
 
   /** Eliminar una fila (sin marcar, o sola): con varias marcadas, el «⋮» y el clic derecho abren el menú de la selección. */
   protected onRowDelete(item: T): void {
-    const simple = this.config().simpleDelete;
-    if (!simple) {
-      this.deleteTarget.set([item]);
-      return;
-    }
-    void this.confirmarBorrado(simple.titleKey, { name: item.name }).then((ok) => {
-      if (!ok) return;
-      this.store().deleteItem(item.id);
-      this.selectedIds.update((ids) => new Set([...ids].filter((id) => id !== item.id)));
-      this.toastSuccess(this.toastKey('deleted', 'repositories.toasts.deleted_single'), {
-        entity: this.entitySingular(),
-        name: item.name,
-      });
-    });
-  }
-
-  private async onBulkDelete(items: readonly T[]): Promise<void> {
-    const simple = this.config().simpleDelete;
-    if (!simple || !(await this.confirmarBorrado(simple.titleBulkKey, { count: items.length }))) return;
-    this.store().deleteItems(items.map((i) => i.id));
-    this.clearSelection();
-    this.toastSuccess('repositories.toasts.deleted_bulk', { count: items.length, entity: this.entityPlural() });
-  }
-
-  /** La confirmación simple del DS: el título pregunta, el cuerpo avisa y el botón repite el verbo. */
-  private confirmarBorrado(titleKey: string, params: Record<string, string | number>): Promise<boolean> {
-    return this.confirm.request({
-      title: this.translate.instant(titleKey, params),
-      body: this.translate.instant('common.delete_dialog.body'),
-      acceptLabel: this.translate.instant('common.delete'),
-      rejectLabel: this.translate.instant('common.cancel'),
-      acceptTone: 'danger',
-    });
+    this.deleteTarget.set([item]);
   }
 
   protected closeCreatePanel(): void {

@@ -162,6 +162,29 @@
 
 ---
 
+## DD-233 · 2026-10-26 — Para esta entrega, todo borra con la confirmación simple, sin teclear el nombre
+
+**Contexto** · Grupos, Agentes, Equipos y Tipificaciones (varias) ya preguntaban con la confirmación simple del DS (DD-215,
+DD-231). Usuarios, Plantillas, Repositorios (todas las instancias) y Tipificaciones (una sola, en lista y ficha) seguían con
+`sc-delete-entity-dialog`, que pide escribir el nombre. Decisión de producto del 2026-10-26: se alinean todas, porque esta
+entrega es para que los desarrolladores implementen más rápido y un solo patrón se implementa una sola vez.
+
+**Decisión** · Todas esas pantallas usan `injectBorradoSimple` (`confirmar-borrado.ts`): al ponerse lo que se va a borrar,
+pregunta («¿Eliminar el usuario «Ana»?» o «¿Eliminar 3 usuarios?»), añade el aviso propio si lo hay («La usan 3 grupos.», «Los
+agentes y grupos que la tengan asignada perderán la referencia.») y el cuerpo «Esta acción no se puede deshacer.». «Eliminar» del
+menú ya no lleva puntos suspensivos. Los repositorios usan un título genérico («¿Eliminar «X»?»); Equipos conserva el suyo.
+
+**Razón** · Un patrón, una implementación, y la misma expectativa en todas las listas (DD-227).
+
+**Aparcado, no descartado** · Teclear el nombre (con su «copiar el nombre») protege más contra un borrado accidental y se querrá
+retomar más adelante, cuando haya deshacer o papelera. El diálogo `sc-delete-entity-dialog` sigue en el DS; solo lo usa ya
+`Emails` de Repositorios. Su e2e de copiar el nombre queda con `test.skip` hasta entonces.
+
+**Descartadas** ·
+- *Dejar el nombre tecleado solo en las fichas*: dos patrones en la misma entidad (lista y ficha).
+- *Un título con la entidad dentro («¿Eliminar {entity} «X»?»)*: el artículo cambia con el género en cada idioma; por eso cada
+  entidad lleva su título y los repositorios, uno sin entidad.
+
 ## DD-232 · 2026-10-26 — Duplicar tipificaciones y equipos abre un alta rellena, como Grupos y Agentes
 
 **Contexto** · Duplicar en Grupos (DD-218) y Agentes (DD-225) abre «Nuevo grupo» / «Nuevo agente» con la copia, y la entidad

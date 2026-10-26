@@ -135,12 +135,3 @@
   }
 </ng-template>
 
-<sc-delete-entity-dialog
-  [visible]="!!deleteTarget()"
-  [mode]="(deleteTarget()?.length ?? 0) === 1 ? 'single' : 'bulk'"
-  [items]="deleteItems()"
-  [entitySingular]="entitySingular()"
-  [entityPlural]="entityPlural()"
-  (cancelled)="cancelDelete()"
-  (confirm)="confirmDelete($event)"
-/>

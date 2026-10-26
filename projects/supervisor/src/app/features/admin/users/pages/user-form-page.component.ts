@@ -14,7 +14,6 @@ import { injectLangChange } from '@core/utils/lang-change';
 import { EMAIL_RE } from '@core/utils/validators';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 import {
-  ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
   ScDialogComponent as DialogComponent,
   ScDividerComponent as DividerComponent,
   ScFormSectionNavComponent as FormSectionNavComponent,
@@ -53,6 +52,7 @@ import {
 import { applyPackage, driftFromPackage } from '../data/user-packages.core.mjs';
 import { UsersStore } from '../state/users.store';
 import { TooltipModule } from 'primeng/tooltip';
+import { injectBorradoSimple } from '@features/admin/services/confirmar-borrado';
 
 interface FormState {
   name: string;
@@ -90,7 +90,6 @@ const USER_SECTION_OF_FIELD: Readonly<Record<keyof FormState, string>> = {
     NgTemplateOutlet,
     CheckboxComponent,
     ButtonComponent,
-    DeleteEntityDialogComponent,
     DialogComponent,
     DividerComponent,
     FormSectionNavComponent,
@@ -415,6 +414,15 @@ export class UserFormPageComponent implements DirtyAware, OnInit {
   protected readonly deleteItems = computed(() => {
     const u = this.initial();
     return u ? [{ id: u.id, name: u.name }] : [];
+  });
+
+  private readonly borradoSimple = injectBorradoSimple<{ readonly id: number; readonly name: string }>({
+    target: computed(() => (this.deleteVisible() ? this.deleteItems() : null)),
+    titleKey: 'users.delete_dialog.title',
+    titleBulkKey: 'users.delete_dialog.title_bulk',
+    params: (u) => ({ name: u[0]!.name, count: u.length }),
+    accept: () => this.confirmDelete(),
+    cancel: () => this.cancelDelete(),
   });
 
   protected readonly assignedGroupNames = computed(() =>
