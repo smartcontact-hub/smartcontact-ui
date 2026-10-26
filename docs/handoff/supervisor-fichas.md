@@ -78,7 +78,7 @@ El de marcar una casilla de Grupos o Agentes sin acortar la tabla (2026-10-21, f
 El de la ficha de grupo como la versión 17 de su página de COA (2026-10-22, DD-223, sin trampas propias): `git show
 5374bb7a:docs/handoff/supervisor-fichas.md`.
 
-## ✅ 2026-10-26 · Duplicar tipificaciones y equipos abre un alta rellena (DD-231)
+## ✅ 2026-10-26 · Duplicar tipificaciones y equipos abre un alta rellena (DD-232)
 > **Sello:** rama `claude/duplicate-typifications-teams-920106` sobre `main` `aaa8e0fd`.
 - **Código**: `?seedFromId` en `tipificacion-ficha-page` y `equipo-editor-page`; Equipos usa `duplicateAsCreate` (nuevo en
   `RepoPageConfig`). Prueba: `duplicar-tipificaciones-equipos.spec.ts`.

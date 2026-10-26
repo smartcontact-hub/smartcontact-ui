@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 import { disableAnimations, forceLightTheme, goto, openKebabAction } from './helpers';
 
 /**
- * DUPLICAR TIPIFICACIONES Y EQUIPOS, COMO GRUPOS Y AGENTES (DD-231). Duplicar no crea nada en el acto: abre el alta
+ * DUPLICAR TIPIFICACIONES Y EQUIPOS, COMO GRUPOS Y AGENTES (DD-232). Duplicar no crea nada en el acto: abre el alta
  * («Nueva tipificación», «Nuevo equipo») rellena con «X (1)» y todo lo del original; la copia existe al pulsar «Crear».
  */
 

@@ -86,5 +86,9 @@ export class EquiposPageComponent {
     // Duplicar abre «Nuevo equipo» relleno, con sus agentes, como Grupos y Agentes: el equipo no existe hasta «Crear equipo».
     duplicable: true,
     duplicateAsCreate: true,
+    simpleDelete: {
+      titleKey: 'repositories.equipos.delete_dialog.title',
+      titleBulkKey: 'repositories.equipos.delete_dialog.title_bulk',
+    },
   };
 }

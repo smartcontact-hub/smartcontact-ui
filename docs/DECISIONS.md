@@ -162,7 +162,7 @@
 
 ---
 
-## DD-231 · 2026-10-26 — Duplicar tipificaciones y equipos abre un alta rellena, como Grupos y Agentes
+## DD-232 · 2026-10-26 — Duplicar tipificaciones y equipos abre un alta rellena, como Grupos y Agentes
 
 **Contexto** · Duplicar en Grupos (DD-218) y Agentes (DD-225) abre «Nuevo grupo» / «Nuevo agente» con la copia, y la entidad
 no existe hasta pulsar «Crear». Tipificaciones creaba la copia en la lista en el acto, con «(copia)», sin abrirla; Equipos
@@ -188,6 +188,24 @@ cuando producto lo pida.
 crear») y 13 («… recién creada»), el menú de Equipos con «Duplicar», y portadas, pasos del menú, hojas «Cómo se comporta»,
 índices y hand-off al día. E2E: `duplicar-tipificaciones-equipos.spec.ts`. `common.copy_suffix` sigue en uso (Agendas y
 demás listas).
+
+## DD-231 · 2026-10-26 — Equipos borra como Grupos y Agentes, y el «⋮» sin excepciones en `sc-list-page`
+
+**Contexto** · DD-227 dejó el «⋮» y el clic derecho de una fila marcada con el mismo menú de la selección. Dos PR traían una
+excepción cada una (`kebabRowOnly` en Tipificaciones, `selectionMenuFromRow` en Equipos); se quitó de las dos y la opción de
+Tipificaciones quedó en `list-page` sin ningún uso. Equipos, además, seguía borrando con el diálogo de teclear el nombre, no
+con la confirmación simple de Grupos, Agentes y Tipificaciones (varias).
+
+**Decisión** · Fuera `kebabRowOnly` de `sc-list-page`: el «⋮» sigue a la selección siempre, sin opción para apagarlo. Equipos
+usa la confirmación simple del DS (`simpleDelete`, DD-215): «¿Eliminar el equipo «X»?» y «¿Eliminar 3 equipos?», con el
+botón «Eliminar» sin puntos suspensivos y sin barra de lote.
+
+**Razón** · La misma expectativa en todas las listas (DD-227): una opción que apaga el comportamiento invita a reabrir la
+excepción pantalla a pantalla.
+
+**Fuera** · Usuarios, Plantillas, Etiquetas, Repositorios y Tipificaciones (una sola) siguen con el diálogo de teclear el nombre;
+cambiarlo es una decisión de producto aparte.
+
 ## DD-230 · 2026-10-26 — Agendas y Plantillas como sus COA: se asignan solo a agentes, en una tabla con sus grupos; Plantillas sin pestañas
 
 **Contexto** · Revisión con producto del 2026-10-26 de «SOLUCIÓN SISMAC-4440 Agendas» y «SOLUCIÓN SISMAC-4438 Plantillas»
