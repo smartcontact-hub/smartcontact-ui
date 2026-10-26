@@ -22,7 +22,6 @@ import {
   useBulkEntityI18n,
   BulkEditCommit,
   BulkEditFieldOption,
-  ScBulkEditMenuComponent as BulkEditMenuComponent,
   ColumnDef,
   type ScColumnCellContext,
   type ScColumnDef,
@@ -52,7 +51,6 @@ interface PendingBulkEdit {
   imports: [
     TooltipModule,
     CeldaVaciaComponent,
-    BulkEditMenuComponent,
     ButtonComponent,
     DeleteEntityDialogComponent,
     EmptyStateComponent,

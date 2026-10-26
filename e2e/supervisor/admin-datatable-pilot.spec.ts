@@ -49,18 +49,18 @@ test('la tabla la pinta sc-datatable y conserva sus columnas', async ({ page }) 
   }
 });
 
-test('la casilla selecciona y saca la barra de acciones masivas', async ({ page }) => {
+test('la casilla selecciona y no monta barra de lote: borrar varios va por el clic derecho', async ({ page }) => {
   const table = page.locator(TABLE);
-  const bulkBar = page.locator('sc-bulk-action-bar');
+  const marcadas = table.locator('.p-datatable-tbody p-table-checkbox .p-checkbox-checked');
 
-  await expect(bulkBar).toBeHidden();
+  await expect(marcadas).toHaveCount(0);
 
   await table.locator('.p-datatable-tbody > tr').first().locator('p-table-checkbox').click();
-  await expect(bulkBar).toBeVisible();
-  await expect(bulkBar).toContainText('1');
+  await expect(marcadas).toHaveCount(1);
 
   await table.locator('.p-datatable-tbody > tr').nth(1).locator('p-table-checkbox').click();
-  await expect(bulkBar).toContainText('2');
+  await expect(marcadas).toHaveCount(2);
+  await expect(page.locator('sc-bulk-action-bar')).toHaveCount(0);
 });
 
 test('la casilla de cabecera marca todo lo FILTRADO, no todo', async ({ page }) => {
@@ -73,7 +73,7 @@ test('la casilla de cabecera marca todo lo FILTRADO, no todo', async ({ page }) 
   await expect(rows).toHaveCount(2);
 
   await table.locator('.p-datatable-thead p-table-header-checkbox').click();
-  await expect(page.locator('sc-bulk-action-bar')).toContainText('2');
+  await expect(table.locator('.p-datatable-tbody p-table-checkbox .p-checkbox-checked')).toHaveCount(2);
   expect(total).toBeGreaterThan(2);
 });
 
@@ -156,13 +156,13 @@ test.describe('plantillas', () => {
     const rows = table.locator('.p-datatable-tbody > tr');
 
     await rows.first().locator('p-table-checkbox').click();
-    await expect(page.locator('sc-bulk-action-bar')).toContainText('1');
+    await expect(table.locator('.p-datatable-tbody p-table-checkbox .p-checkbox-checked')).toHaveCount(1);
 
     // Cambiar de pestaña limpia la selección: lo seleccionado ya no está
     // en pantalla, y una barra masiva que actúa sobre filas invisibles es
     // exactamente el tipo de sorpresa que no debe poder ocurrir.
     await page.getByRole('tab', { name: /email/i }).click();
-    await expect(page.locator('sc-bulk-action-bar')).toBeHidden();
+    await expect(table.locator('.p-datatable-tbody p-table-checkbox .p-checkbox-checked')).toHaveCount(0);
   });
 
   test('el kebab y el click derecho abren el mismo menú', async ({ page }) => {

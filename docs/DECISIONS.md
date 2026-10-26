@@ -167,11 +167,13 @@ tablas de borrado no: unas tenían la barra de lote (Usuarios, Etiquetas, Planti
 de Memory (Categorías, Reglas) ni casillas.
 
 **Decisión** · Todas las tablas de `sc-list-page` que borran filas pasan por el mismo gesto: marcar y clic derecho sobre
-una marcada abre un menú con solo «Eliminar» (`selectionMenu`). Las cinco con barra de lote lo conectan a su diálogo de
-siempre (`deleteTarget`), así que la barra y el menú son dos puertas a la misma confirmación. Categorías y Reglas ganan
+una marcada abre un menú con solo «Eliminar» (`selectionMenu`). Las cinco que tenían barra de lote (Usuarios,
+Etiquetas, Plantillas, Repositorios, Tipificaciones) la pierden, porque la edición masiva no se entregó, y el menú abre su
+diálogo de siempre (`deleteTarget`); su código queda aparcado, como en DD-215. Conversaciones conserva su barra (transcribir,
+descargar). Categorías y Reglas ganan
 casillas (`selectable`, sin barra de lote) y la confirmación simple con su cifra («¿Eliminar 3 reglas?»).
 
-**Razón** · Un gesto, una confirmación y un toast iguales en todo el producto; lo que ya borraba varios no cambia.
+**Razón** · Un gesto, una confirmación y un toast iguales en todo el producto, y sin una barra que prometa una edición en lote que no existe.
 
 **Fuera** · Entidades (`sc-datatable` suelto, sin `sc-list-page`) y las tablas anidadas en fichas (contactos de agenda,
 niveles de tipificación, Emails): se tocan si producto lo pide.
