@@ -216,7 +216,7 @@ export class TipificacionesListPageComponent {
   /** Con varias marcadas, el clic derecho sobre una de ellas ofrece solo «Eliminar»: editar varias a la vez no existe. */
   protected readonly selectionMenu = (tipificaciones: readonly Tipificacion[]): MenuItem[] => [
     {
-      label: this.translate.instant('common.delete'),
+      label: this.translate.instant('common.delete_count', { count: tipificaciones.length }),
       icon: 'sc-icon-font sc-icon-font--delete',
       styleClass: 'sc-menu-item--danger',
       command: () => void this.onBulkDelete(tipificaciones),

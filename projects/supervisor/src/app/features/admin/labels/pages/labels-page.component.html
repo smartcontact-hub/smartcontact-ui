@@ -36,8 +36,8 @@
   [(query)]="searchQuery"
   exportable
   [rowMenu]="rowMenu"
+  [selectionMenu]="selectionMenu"
   selectable
-  [bulkEntity]="bulkEntity()"
   [(selectedIds)]="selectedIds"
   noResultsKey="labels.no_results.text"
   tableTestId="labels-table"
@@ -52,11 +52,6 @@
     (cta)="creating.set(true)"
   />
 
-  <ng-container ngProjectAs="[scListBulkActions]">
-    <sc-button type="button" size="sm" variant="danger" (clicked)="requestDeleteSelection()">
-      <span>{{ 'common.delete' | translate }}</span>
-    </sc-button>
-  </ng-container>
 </sc-list-page>
 
 <!-- Celdas de la tabla. Viven FUERA de la lista para que los

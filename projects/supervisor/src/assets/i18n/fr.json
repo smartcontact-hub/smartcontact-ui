@@ -603,6 +603,8 @@
         "activate": "Activer",
         "deactivate": "Désactiver"
       },
+      "delete_title_bulk": "Supprimer {{count}} règles ?",
+      "deleted_bulk_toast": "{{count}} règles supprimées",
       "delete_title": "Supprimer la règle",
       "delete_body": "Vous allez supprimer «{{name}}». Cette action ne peut pas être annulée.",
       "deleted_toast": "Règle «{{name}}» supprimée",
@@ -833,6 +835,8 @@
         "activate": "Activer",
         "deactivate": "Désactiver"
       },
+      "delete_title_bulk": "Supprimer {{count}} catégories ?",
+      "deleted_bulk_toast": "{{count}} catégories supprimées",
       "delete_title": "Supprimer la catégorie",
       "delete_body": "Vous allez supprimer la catégorie «{{name}}». Les règles qui la référencent perdront cette étiquette.",
       "deleted_toast": "Catégorie «{{name}}» supprimée",
@@ -946,6 +950,7 @@
       "seconds": "sec"
     },
     "delete": "Supprimer",
+    "delete_count": "Supprimer ({{count}})",
     "duplicate": "Dupliquer",
     "copy_suffix": "copie",
     "duplicated_toast": "Copie créée : « {{name}} »",

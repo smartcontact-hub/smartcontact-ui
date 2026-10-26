@@ -20,6 +20,7 @@
   [searchFn]="matchesSearch"
   [(query)]="searchQuery"
   [rowMenu]="rowMenu"
+  [selectionMenu]="selectionMenu"
   rowOpenable
   (rowOpen)="onRowOpen($event)"
   exportable
@@ -27,7 +28,6 @@
   (exportRequest)="onExport($event)"
   (importRequest)="abrirImportar()"
   selectable
-  [bulkEntity]="bulkEntity()"
   [rowLabel]="rowLabel"
   [(selectedIds)]="selectedIds"
   [noResultsKey]="searchQuery() ? 'templates.no_results.text_with_query' : 'templates.no_results.text'"
@@ -52,11 +52,6 @@
     (cta)="onCreateClick()"
   />
 
-  <ng-container ngProjectAs="[scListBulkActions]">
-    <sc-button type="button" size="sm" variant="danger" (clicked)="requestDeleteSelection()">
-      <span>{{ 'common.delete' | translate }}</span>
-    </sc-button>
-  </ng-container>
 </sc-list-page>
 
 <!-- Celdas de la tabla. Fuera de la lista para que los `viewChild`

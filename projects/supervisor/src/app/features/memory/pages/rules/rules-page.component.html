@@ -39,6 +39,9 @@
   [empty]="isEmpty()"
   [columns]="columns()"
   [rowMenu]="rowMenu"
+  [selectionMenu]="selectionMenu"
+  selectable
+  [(selectedIds)]="selectedIds"
   rowOpenable
   tableTestId="rules-table"
   (rowOpen)="openRule($event)"

@@ -22,7 +22,8 @@ test.use({ storageState: { cookies: [], origins: [] } });
 
 const TABLA = '[data-testid="users-table"]';
 const FILAS = `${TABLA} .p-datatable-tbody > tr`;
-const BARRA = 'sc-bulk-action-bar .bulk-bar';
+/** Sin barra de lote (como Grupos y Agentes): lo marcado se cuenta por sus casillas. */
+const MARCADAS = `${FILAS} p-table-checkbox .p-checkbox-checked`;
 
 test.beforeEach(async ({ page }) => {
   await forceLightTheme(page);
@@ -37,7 +38,6 @@ test('Mayús en la casilla pinta el tramo entero, no solo sus dos puntas', async
   const filas = page.locator(FILAS);
   await filas.nth(1).locator('p-table-checkbox').click();
   await filas.nth(4).locator('p-table-checkbox').click({ modifiers: ['Shift'] });
-  await expect(page.locator(BARRA)).toContainText('4');
   // Fuera de las filas: el color de pasar el ratón no se confunde con el de seleccionada.
   await page.mouse.move(720, 8);
 
@@ -52,7 +52,7 @@ test('Espacio en la fila enfocada la selecciona, sin abrirla', async ({ page }) 
   await page.locator(FILAS).first().focus();
   await page.keyboard.press(' ');
 
-  await expect(page.locator(BARRA)).toContainText('1');
+  await expect(page.locator(MARCADAS)).toHaveCount(1);
   expect(page.url()).toBe(url);
 });
 

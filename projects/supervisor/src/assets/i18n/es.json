@@ -603,6 +603,8 @@
         "activate": "Activar",
         "deactivate": "Desactivar"
       },
+      "delete_title_bulk": "¿Eliminar {{count}} reglas?",
+      "deleted_bulk_toast": "{{count}} reglas eliminadas",
       "delete_title": "Eliminar regla",
       "delete_body": "Vas a eliminar «{{name}}». Esta acción no se puede deshacer.",
       "deleted_toast": "Regla «{{name}}» eliminada",
@@ -833,6 +835,8 @@
         "activate": "Activar",
         "deactivate": "Desactivar"
       },
+      "delete_title_bulk": "¿Eliminar {{count}} categorías?",
+      "deleted_bulk_toast": "{{count}} categorías eliminadas",
       "delete_title": "Eliminar categoría",
       "delete_body": "Vas a eliminar la categoría «{{name}}». Las reglas que la referencian quedarán sin esta etiqueta.",
       "deleted_toast": "Categoría «{{name}}» eliminada",
@@ -949,6 +953,7 @@
       "seconds": "seg"
     },
     "delete": "Eliminar",
+    "delete_count": "Eliminar ({{count}})",
     "edit": "Editar",
     "edit_named": "Editar {{name}}",
     "loading": "Cargando…",
