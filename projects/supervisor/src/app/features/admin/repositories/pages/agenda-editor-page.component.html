@@ -83,18 +83,19 @@
           (importar)="abrirImportar()"
           (edit)="contactDialog.set({ contact: $event })"
           (remove)="removeContact($event)"
+          (removeMany)="removeContacts($event)"
         />
       </section>
     </sc-section-card>
 
-    <!-- A quién se asigna, la última sección: el árbol Grupos → Agentes (DD-211 §1). En Voice era un muro de casillas. -->
-    <sc-section-card titleKey="repositories.agendas.section_agents" surface="subtle" icon="group">
+    <!-- A quién se asigna, la última sección: una tabla de agentes con sus grupos (COA SISMAC-4440). Solo a agentes. -->
+    <sc-section-card titleKey="repositories.agendas.section_agents" surface="subtle" icon="headphones">
       <section class="sub-section">
-        <sc-agenda-assignment-tree
-          [grupos]="gruposParaAgenda()"
+        <sc-agent-assignment-table
           [agents]="agentsStore.agents()"
-          [asignacion]="form().asignacion"
-          (asignacionChange)="update('asignacion', $event)"
+          [assigned]="form().agentIds"
+          rowAriaKey="repositories.agendas.agents_row_aria"
+          (assignedChange)="update('agentIds', $event)"
         />
       </section>
     </sc-section-card>

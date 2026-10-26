@@ -299,7 +299,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 37,
+      "usedInSupervisor": 36,
       "cuando": "Para un sí/no independiente, o para la casilla de un grupo elegido A MEDIAS (tiene tercer estado). Para activar algo al instante, `sc-toggleswitch`.",
       "sobreObsoleto": []
     },
@@ -530,7 +530,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 16,
+      "usedInSupervisor": 18,
       "cuando": "Para datos tabulares con columnas comparables. Si cada fila es en realidad un formulario, NO es una tabla.",
       "sobreObsoleto": []
     },
@@ -983,7 +983,7 @@
         "kit"
       ],
       "retirado": null,
-      "usedInSupervisor": 7,
+      "usedInSupervisor": 6,
       "cuando": "Para asomar los grupos de algo sin salir de la fila.",
       "sobreObsoleto": []
     },
@@ -1338,7 +1338,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 17,
+      "usedInSupervisor": 16,
       "cuando": "Para elegir VARIAS de una lista larga. Si son pocas y caben, casillas sueltas se leen mejor.",
       "sobreObsoleto": [
         {
@@ -1901,7 +1901,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 2,
+      "usedInSupervisor": 1,
       "cuando": "Para vistas hermanas de una misma cosa que cambian lo de debajo (Chat y Email, Transcripción y Análisis). Para elegir el valor de un campo, `sc-selectbutton`.",
       "sobreObsoleto": []
     },

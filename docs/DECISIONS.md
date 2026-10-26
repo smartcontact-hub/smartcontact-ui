@@ -42,7 +42,8 @@
 >
 > | Tema | DD |
 > |---|---|
-> | Con el índice en la caja, el carril mide 235, el de la caja en Figma: ningún rótulo de las fichas salta de línea · sin la caja, 196 (enmienda DD-220) | DD-221 |
+> | Agendas y Plantillas como sus COA (SISMAC-4440 y 4438): se asignan SOLO a agentes, en una tabla plana de agentes con su columna «Grupos» (`sc-agent-assignment-table`), sin árbol ni grupos dinámicos (enmienda DD-211 §1) · el listado de Agendas con Descripción, Contactos y Agentes (cifra, sin globo) ordenables · Plantillas sin pestañas, con columna Canal · contactos con casillas y borrado múltiple (completa DD-227 en una tabla anidada) | DD-229 |
+| Con el índice en la caja, el carril mide 235, el de la caja en Figma: ningún rótulo de las fichas salta de línea · sin la caja, 196 (enmienda DD-220) | DD-221 |
 > | El índice de secciones, en la caja gris de Contact Center en las seis pantallas que lo llevan (Contact Center, fichas de grupo, agente y usuario, tipificación y constructor de reglas), como en Figma: un solo interruptor de la app (`SC_FORM_SECTION_NAV_CAJA`), y volver al índice plano es borrar su línea | DD-220 |
 > | Lo que falta, como SISMAC-4058: «Crear» y «Guardar» apagados mientras falte algo, con «Falta: …» o «Listo para crear» arriba del resumen (cada cosa a su campo) y el motivo en el tooltip · el aviso bajo el campo en gris desde el principio y en rojo al dejarlo vacío · el índice no se pone rojo por lo tocado · en grupo, agente, usuario y tipificación (enmienda DD-217 §1 y §4; vuelve DD-136) | DD-219 |
 > | Grupos como sus páginas de COA (SISMAC-4056 y 4058): la cifra de agentes lleva a la ficha · duplicar es un alta · con varios marcados, el clic derecho solo elimina · Servicios y Agentes de mayor a menor al primer clic (`defaultSortOrder`) · la miga dice el nombre · «Agentes asignados» sin estado ni filtro, ordenable por nombre (`headerTemplate`), el nivel en desplegable y Habilitado bloqueado con «Activación por grupo» · confirmar dice qué, a cuántos y con su verbo (enmienda DD-121, DD-151, DD-159 §1, DD-185 §7 y §8, DD-187 §4, DD-204 §6, DD-215 §1 y §2 y DD-217 §8) | DD-218 |
@@ -159,6 +160,53 @@
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
 
 ---
+
+## DD-229 · 2026-10-26 — Agendas y Plantillas como sus COA: se asignan solo a agentes, en una tabla con sus grupos; Plantillas sin pestañas
+
+**Contexto** · Revisión con producto del 2026-10-26 de «SOLUCIÓN SISMAC-4440 Agendas» y «SOLUCIÓN SISMAC-4438 Plantillas»
+(v0.1, 2026-10-22). Una agenda se asignaba con un árbol Grupo → Agentes con grupos enteros dinámicos (DD-211 §1) y una
+plantilla, con un multiselect de grupos que se guardaban en el grupo (`Group.templates`). Los COA piden asignar SOLO a
+agentes; en la reunión se acordó la tabla de agentes de las fichas, con una columna «Grupos» para buscar por grupo y marcar
+de golpe a los que salen.
+
+**Decisión** ·
+1. **Asignar solo a agentes, en una tabla plana** (`sc-agent-assignment-table`, común a los dos editores): casilla, nombre
+   con avatar, email y grupos del agente (truncados, con tooltip), buscador «Buscar agentes…» (por cualquier columna),
+   «Todos / Asignados (N)» y la casilla de la cabecera, que marca los que se ven. Marcar un agente no marca a su grupo ni a
+   los demás de él; los grupos son información. Lo asignado que el filtro esconde se conserva. Se guarda en
+   `Agent.schedules` y `Agent.templates`; `Group.schedules` y `Group.templates` no se tocan desde estos editores.
+2. **Listado de Agendas**: Nombre, Descripción, Contactos, Agentes y Modificada, todas ordenables (`sortable` y `sortFn` en
+   `RepoColumnDef` / `RepoListPage`); una descripción vacía y las cifras en 0 dicen «—». «Agentes» es la cifra de agentes
+   con la agenda asignada, sin globo con nombres.
+3. **Plantillas sin pestañas**: una sola lista con Nombre, Canal, Contenido, Agentes y Modificada (la fecha, como en
+   Agendas: «9 oct 2026»), todas ordenables. «Título» pasa a «Nombre». Exportar suma «Agentes asignados» y la fecha. Se
+   quita la ayuda de variables del editor (`{agente}`, `{cliente}`…) hasta que existan las variables y su método de
+   llamada.
+4. **Contactos de una agenda con casillas** y borrado múltiple como DD-227: con dos o más marcados, el clic derecho (o el
+   «⋮») sobre uno ofrece solo «Eliminar (N)»; «¿Eliminar 3 contactos?», «Esta acción no se puede deshacer.» (la
+   confirmación simple, como Reglas: los contactos se borran del formulario y «Deshacer» los devuelve hasta guardar) y
+   el aviso «3 contactos eliminados».
+
+**Razón** · COA es más nueva que la DD (misma regla que DD-218 y DD-223). La tabla plana con grupos hace en una pantalla lo
+que el árbol hacía con grupos dinámicos, sin reglas de «parcial» ni de promoción a grupo entero.
+
+**Descartadas** ·
+- *Mantener el árbol y añadir la tabla*: dos formas de asignar la misma cosa, y los COA dicen que no se asigna a grupos.
+- *Quitar Agendas y Plantillas de «Recursos» de la ficha de grupo*: producto no lo trató; se queda como estaba y se anota
+  como pendiente.
+- *Quitar «Duplicar» de los dos listados* (los COA solo dan Editar y Eliminar): se deja, por consistencia con el resto
+  de listas; se suma al COA.
+- *«Crear» deshabilitado de primeras y «Deshacer cambios»* (como dicen los COA): se mantiene DD-217 (siempre activo, cada
+  campo avisa al pulsar) y el «Deshacer» común.
+- *Nombre de contacto opcional entre las columnas*: el COA y la reunión lo dejan fijo.
+
+**Consecuencias** · Fuera `sc-agenda-assignment-tree`, `agenda-asignacion.core.mjs` y su prueba. `i18n`: nuevas
+`repositories.agent_assignment.*`, `repositories.agendas.{col_agents,contacts_delete_title*,contacts_deleted_bulk*,select_*_aria}`,
+`templates.table.{agents,agents_assigned}`, `templates.form.{section_agents,agents_row_aria}`; fuera las del árbol y las
+de grupos y variables de la plantilla. Las columnas guardadas de Plantillas pasan a `sc-templates-columns-v3`. Una
+agenda o plantilla que un grupo tenía asignado entero ya no cuenta en «Agentes» (solo cuentan los agentes con ella). Pruebas:
+`agenda-agentes.spec.ts` reescrita; ajustadas `plantillas-editor`, `agendas-listado`, `admin-datatable-pilot`,
+`cabecera-escalera`, `tablas-revision-1015` y `tabla-al-pie`.
 
 ## DD-227 · 2026-10-26 — Eliminar varios, en todas las tablas: el clic derecho sobre una fila marcada ofrece «Eliminar» con su cifra
 

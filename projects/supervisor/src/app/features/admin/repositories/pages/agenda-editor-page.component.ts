@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   ScButtonComponent as ButtonComponent,
+  ScConfirmService,
   ScDialogComponent as DialogComponent,
   ScInputTextComponent as InputTextComponent,
   ScSectionCardComponent as SectionCardComponent,
@@ -15,10 +16,7 @@ import { injectLangChange } from '@core/utils/lang-change';
 import { ImportDialogComponent } from '@shared/components';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 
-import {
-  AgendaAssignmentTreeComponent,
-  type GrupoParaAgenda,
-} from '../components/agenda-assignment-tree/agenda-assignment-tree.component';
+import { AgentAssignmentTableComponent } from '../components/agent-assignment-table/agent-assignment-table.component';
 import { AgendaContactsTableComponent } from '../components/agenda-contacts-table/agenda-contacts-table.component';
 import { RepoFormPanelComponent, type RepoFormSubmission } from '../components/repo-form-panel.component';
 import type { RepoFieldDef } from '../components/repo-types';
@@ -34,18 +32,8 @@ import {
   telefonoValido,
   TOPE_DE_CONTACTOS,
 } from '../state/agenda-contacts.core.mjs';
-import {
-  deLoGuardado,
-  estructuraDe,
-  gruposConMiembros,
-  paraGuardar,
-  type Asignacion,
-  type Estructura,
-} from '../state/agenda-asignacion.core.mjs';
 import { hoy } from '@shared/utils/today';
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
-import { GroupsStore } from '@features/admin/groups/state/groups.store';
-import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links.store';
 import { AgendasStore, type AgendaContact } from '../state/agendas.store';
 import { ResultadoAccionService } from '@core/services';
 import { llegarAAncla, ocasionDeAvisar } from '@shared/utils/alta-secciones';
@@ -56,13 +44,12 @@ interface AgendaDraft {
   readonly contacts: readonly AgendaContact[];
   /** Las etiquetas de los cinco campos personalizados: una por campo, vacía = la de siempre. */
   readonly customLabels: readonly string[];
-  /** A quién se asigna (DD-211 §1): los grupos enteros, que lo dicen en sus `schedules`, y las personas que la tienen,
-   *  también por un grupo entero; las sueltas lo dicen en sus `schedules`. No es algo de la agenda. */
-  readonly asignacion: Asignacion;
+  /** A qué agentes se asigna (COA SISMAC-4440): solo a agentes, que lo dicen en sus `schedules`. No es algo de la agenda. */
+  readonly agentIds: readonly number[];
 }
 
 const SIN_ETIQUETAS: readonly string[] = ['', '', '', '', ''];
-const VACIA: AgendaDraft = { name: '', description: '', contacts: [], customLabels: SIN_ETIQUETAS, asignacion: { grupos: [], agentes: [] } };
+const VACIA: AgendaDraft = { name: '', description: '', contacts: [], customLabels: SIN_ETIQUETAS, agentIds: [] };
 
 /**
  * El editor de una agenda (DD-163): su nombre, su estado y sus contactos. Va en su propia ruta, como las fichas, para que
@@ -72,8 +59,8 @@ const VACIA: AgendaDraft = { name: '', description: '', contacts: [], customLabe
 @Component({
   selector: 'sc-agenda-editor-page',
   imports: [
-    AgendaAssignmentTreeComponent,
     AgendaContactsTableComponent,
+    AgentAssignmentTableComponent,
     ButtonComponent,
     DialogComponent,
     ImportDialogComponent,
@@ -91,8 +78,6 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
   private readonly router = inject(Router);
   private readonly store = inject(AgendasStore);
   protected readonly agentsStore = inject(AgentsStore);
-  private readonly groupsStore = inject(GroupsStore);
-  private readonly linksStore = inject(GroupAgentLinksStore);
   private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
   private readonly language = inject(LanguageService);
@@ -104,21 +89,6 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
   constructor() {
     useTopbarActions(this.topbarActions);
   }
-
-  /** Los grupos con sus agentes, para el árbol «Grupos y agentes»: quién está en cada grupo lo dicen los vínculos. */
-  protected readonly gruposParaAgenda = computed<readonly GrupoParaAgenda[]>(() =>
-    gruposConMiembros(
-      this.groupsStore.groups().map((g) => ({ id: g.id, name: g.name })),
-      this.linksStore.links(),
-    ),
-  );
-
-  private readonly estructura = computed<Estructura>(() =>
-    estructuraDe(
-      this.gruposParaAgenda(),
-      this.agentsStore.agents().map((a) => a.id),
-    ),
-  );
 
   protected readonly mode = signal<'create' | 'edit'>('create');
   private agendaId: number | null = null;
@@ -170,11 +140,7 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
       description: agenda.description,
       contacts: agenda.contacts,
       customLabels: SIN_ETIQUETAS.map((_, i) => agenda.customLabels?.[i] ?? ''),
-      asignacion: deLoGuardado(
-        this.groupsStore.groups().filter((g) => g.schedules?.includes(agenda.id)).map((g) => g.id),
-        this.agentsStore.agents().filter((a) => a.schedules?.includes(agenda.id)).map((a) => a.id),
-        this.estructura(),
-      ),
+      agentIds: this.agentsStore.agents().filter((a) => a.schedules?.includes(agenda.id)).map((a) => a.id),
     });
     this.dirtyState.markPristine();
   }
@@ -194,11 +160,11 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
     this.ocasion.olvidar();
     const f = this.form();
     const draft = { ...f, name: f.name.trim(), description: f.description.trim() };
-    // Lo de la agenda y a quién se asigna se guardan en sitios distintos: los grupos y los agentes llevan sus agendas.
-    const { asignacion, ...datos } = draft;
+    // Lo de la agenda y a quién se asigna se guardan en sitios distintos: los agentes llevan sus agendas.
+    const { agentIds, ...datos } = draft;
     if (this.mode() === 'create') {
       const created = this.store.addItem({ ...datos, updatedAt: hoy() });
-      this.asignar(created.id, asignacion);
+      this.asignar(created.id, agentIds);
       this.dirtyState.markPristine();
       const creado = this.texto('repositories.toasts.created', created.name);
       // El toast, ya en la ficha a la que se llega (DD-211 §5).
@@ -206,32 +172,20 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
       return;
     }
     this.store.updateItem(this.agendaId!, { ...datos, updatedAt: hoy() });
-    this.asignar(this.agendaId!, asignacion);
+    this.asignar(this.agendaId!, agentIds);
     this.form.set(draft);
     this.dirtyState.markPristine();
     this.resultado.contar(this.texto('repositories.toasts.updated', draft.name));
   }
 
-  /**
-   * Pone o quita esta agenda de las `schedules` de cada grupo y de cada agente que cambió: solo toca a los que cambian.
-   * Los grupos enteros la llevan ellos (dinámicos: quien entre después también la tendrá); los agentes, solo los que no
-   * la tienen ya por un grupo entero (DD-211 §1).
-   */
-  private asignar(agendaId: number, asignacion: Asignacion): void {
-    const { grupos, agentesSueltos } = paraGuardar(asignacion, this.estructura());
-    const enGrupo = new Set(grupos);
-    for (const grupo of this.groupsStore.groups()) {
-      const tiene = grupo.schedules?.includes(agendaId) ?? false;
-      if (tiene === enGrupo.has(grupo.id)) continue;
-      const resto = (grupo.schedules ?? []).filter((id) => id !== agendaId);
-      this.groupsStore.updateGroup(grupo.id, { schedules: enGrupo.has(grupo.id) ? [...resto, agendaId] : resto });
-    }
-    const sueltos = new Set(agentesSueltos);
+  /** Pone o quita esta agenda de las `schedules` de cada agente que cambió: solo toca a los que cambian. */
+  private asignar(agendaId: number, ids: readonly number[]): void {
+    const deben = new Set(ids);
     for (const agente of this.agentsStore.agents()) {
       const tiene = agente.schedules?.includes(agendaId) ?? false;
-      if (tiene === sueltos.has(agente.id)) continue;
+      if (tiene === deben.has(agente.id)) continue;
       const resto = (agente.schedules ?? []).filter((id) => id !== agendaId);
-      this.agentsStore.updateAgent(agente.id, { schedules: sueltos.has(agente.id) ? [...resto, agendaId] : resto });
+      this.agentsStore.updateAgent(agente.id, { schedules: deben.has(agente.id) ? [...resto, agendaId] : resto });
     }
   }
 
@@ -327,6 +281,26 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
 
   protected removeContact(contact: AgendaContact): void {
     this.form.update((f) => ({ ...f, contacts: f.contacts.filter((c) => c.id !== contact.id) }));
+  }
+
+  /* ── Eliminar varios (DD-227): el clic derecho sobre un contacto marcado entre dos o más ──────────────────────── */
+
+  private readonly confirm = inject(ScConfirmService);
+
+  /** «¿Eliminar 3 contactos?», «Esta acción no se puede deshacer.»: la confirmación simple con su cifra, como Reglas. */
+  protected async removeContacts(contacts: readonly AgendaContact[]): Promise<void> {
+    const n = contacts.length;
+    const accepted = await this.confirm.request({
+      title: this.translate.instant(`repositories.agendas.contacts_delete_title${n === 1 ? '_one' : ''}`, { count: n }),
+      body: this.translate.instant('common.delete_dialog.body'),
+      acceptLabel: this.translate.instant('common.delete'),
+      rejectLabel: this.translate.instant('common.cancel'),
+      acceptTone: 'danger',
+    });
+    if (!accepted) return;
+    const ids = new Set(contacts.map((c) => c.id));
+    this.form.update((f) => ({ ...f, contacts: f.contacts.filter((c) => !ids.has(c.id)) }));
+    this.resultado.contar(this.translate.instant(`repositories.agendas.contacts_deleted_bulk${n === 1 ? '_one' : ''}`, { count: n }));
   }
 
   /* ── Importar desde un CSV (DD-166) ────────────────────────────────────── */

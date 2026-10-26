@@ -1193,43 +1193,41 @@
       "text": "Create your first message template to speed up service"
     },
     "table": {
-      "title": "Title",
+      "title": "Name",
       "type": "Channel",
       "body": "Content",
-      "updated": "Updated",
-      "groups": "Groups"
+      "updated": "Modified",
+      "agents": "Agents",
+      "agents_assigned": "Assigned agents"
     },
     "no_results": {
-      "text": "No {{tab}} templates in this filter.",
-      "text_with_query": "No {{tab}} templates match “{{query}}”."
+      "text": "There are no templates.",
+      "text_with_query": "No templates match “{{query}}”."
     },
     "form": {
       "create_title": "New template",
-      "title": "Title",
-      "title_placeholder": "Template title",
+      "title": "Name",
+      "title_placeholder": "Template name",
       "channel": "Channel",
       "body": "Content",
       "body_placeholder": "Write the template content...",
-      "variables_hint": "Variables: {agent}, {customer}, {ref}, {date}",
       "create_submit": "Create template",
       "create_breadcrumb": "New template",
       "edit_breadcrumb": "Edit template",
       "section_general": "General",
       "section_content": "Content",
-      "section_groups": "Groups",
-      "groups": "Groups that use it",
-      "groups_placeholder": "No group",
       "whatsapp_hint": "WhatsApp only supports bold, italic and strikethrough.",
       "format_bold": "Bold",
       "format_italic": "Italic",
       "format_underline": "Underline",
       "format_strike": "Strikethrough",
       "format_link": "Link",
-      "group_without_channel": "Doesn't handle {{channel}}"
+      "section_agents": "Agents",
+      "agents_row_aria": "Assign the template to {{name}}"
     },
     "errors": {
-      "title_required": "Title is required",
-      "duplicate_title": "A template with this title already exists",
+      "title_required": "Name is required",
+      "duplicate_title": "A template with this name already exists",
       "body_required": "Content is required"
     },
     "delete": {
@@ -1406,22 +1404,8 @@
       "contacts_no_results": "No contact matches “{{query}}”.",
       "import": "Import",
       "import_title": "Import contacts",
-      "section_agents": "Groups and agents",
-      "agents_filter_all": "All",
-      "agents_filter_assigned": "Assigned ({{count}})",
-      "agents_filter_aria": "Show agents",
+      "section_agents": "Agents",
       "agents_row_aria": "Assign the agenda to {{name}}",
-      "agents_email": "Email",
-      "agents_no_results": "No agent matches “{{query}}”.",
-      "agents_none_assigned": "No agents are assigned yet.",
-      "agents_empty": "There are no agents yet",
-      "assigned_aria_one": "1 group or agent",
-      "assigned_aria": "{{count}} groups and agents",
-      "group_row_aria": "Assign the directory to the whole group {{name}}",
-      "assign_help": "A checked agent is checked in all their groups. A whole group also gives the directory to whoever joins it later.",
-      "assign_search": "Search groups or agents…",
-      "assign_summary": "{{count}} of {{total}} agents and {{groups}} whole groups",
-      "col_groups_agents": "Groups and agents",
       "no_group": "No group",
       "import_template_file": "address-book-template",
       "fields": {
@@ -1487,7 +1471,14 @@
         "phone_invalid": "This phone number is not valid: use digits, with a + in front if it has a prefix.",
         "phone_taken": "That phone number is already in this address book.",
         "contact_empty": "Fill in at least one detail of the contact."
-      }
+      },
+      "col_agents": "Agents",
+      "select_contact_aria": "Select contact {{name}}",
+      "select_all_contacts_aria": "Select all contacts",
+      "contacts_deleted_bulk": "{{count}} contacts deleted",
+      "contacts_deleted_bulk_one": "1 contact deleted",
+      "contacts_delete_title": "Delete {{count}} contacts?",
+      "contacts_delete_title_one": "Delete 1 contact?"
     },
     "horarios": {
       "title": "Schedules",
@@ -1726,6 +1717,17 @@
         "updated": "Team \"{{name}}\" updated",
         "deleted": "Team \"{{name}}\" deleted"
       }
+    },
+    "agent_assignment": {
+      "search": "Search agents…",
+      "filter_all": "All",
+      "filter_assigned": "Assigned ({{count}})",
+      "filter_aria": "Show agents",
+      "email": "Email",
+      "no_results": "No agent matches “{{query}}”.",
+      "none_assigned": "No agents are assigned yet.",
+      "empty": "There are no agents yet",
+      "select_all_aria": "Select all the agents shown"
     }
   },
   "users": {

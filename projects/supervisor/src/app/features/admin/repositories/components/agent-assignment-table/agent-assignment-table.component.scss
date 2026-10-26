@@ -1,0 +1,39 @@
+/* Como la tabla de contactos: la barra (buscador y filtro) y, debajo, la tabla. */
+:host {
+  display: block;
+}
+
+.asignacion {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1);
+}
+
+.asignacion__bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sc-spacing-0-5);
+}
+
+.asignacion__search {
+  flex: 1 1 var(--sc-spacing-18);
+}
+
+/* Avatar y nombre en una línea; el nombre se recorta con su tooltip. */
+.asignacion__nombre {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  min-width: 0;
+  max-width: 100%;
+}
+
+.asignacion__nombre-texto,
+.asignacion__texto {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

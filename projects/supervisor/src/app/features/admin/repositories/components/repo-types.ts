@@ -34,6 +34,9 @@ export interface RepoColumnDef<T extends RepoEntity> {
   readonly emptyAsZero?: boolean;
   /** Una celda sin dato dice «—» (`sc-celda-vacia`, DD-197) en vez de quedarse en blanco. */
   readonly emptyDash?: boolean;
+  /** La cabecera ordena de menor a mayor y al revés: las cifras, por su valor; las fechas, por día; el texto, por su letra. */
+  readonly sortable?: boolean;
+
 }
 
 export interface RepoStatusEntry {

@@ -83,45 +83,21 @@
         @if (bodyError(); as error) {
           <p class="field__error sc-text-caption-regular" role="alert">{{ error | translate }}</p>
         }
-        <p class="template-editor__hint sc-text-caption-regular">
-          {{ (form().type === 'whatsapp' ? 'templates.form.whatsapp_hint' : 'templates.form.variables_hint') | translate }}
-          @if (form().type === 'whatsapp') {
-            {{ 'templates.form.variables_hint' | translate }}
-          }
-        </p>
+        @if (form().type === 'whatsapp') {
+          <p class="template-editor__hint sc-text-caption-regular">{{ 'templates.form.whatsapp_hint' | translate }}</p>
+        }
       </section>
     </sc-section-card>
 
-    <sc-section-card titleKey="templates.form.section_groups" surface="subtle" icon="group">
+    <!-- A quién se asigna, la última sección: una tabla de agentes con sus grupos (COA SISMAC-4438). Solo a agentes. -->
+    <sc-section-card titleKey="templates.form.section_agents" surface="subtle" icon="headphones">
       <section class="sub-section">
-        <div class="field field--full">
-          <!-- Hasta tres etiquetas y «+N más»; los grupos que no atienden el canal de la plantilla, apagados y con su
-               porqué (revisión de producto del 2026-10-15). -->
-          <sc-multiselect
-            inputId="template-groups"
-            optionLabel="label"
-            optionValue="value"
-            optionDisabled="disabled"
-            [filter]="true"
-            display="chip"
-            chipOverflow="more"
-            [maxSelectedLabels]="3"
-            [label]="'templates.form.groups' | translate"
-            [placeholder]="'templates.form.groups_placeholder' | translate"
-            [options]="groupOptions()"
-            [value]="groupValue()"
-            (valueChange)="onGroups($event)"
-          >
-            <ng-template #item let-option>
-              <span class="grupo-opcion">
-                <span class="grupo-opcion__nombre">{{ option.label }}</span>
-                @if (option.reason) {
-                  <span class="grupo-opcion__motivo sc-text-caption-regular">{{ option.reason }}</span>
-                }
-              </span>
-            </ng-template>
-          </sc-multiselect>
-        </div>
+        <sc-agent-assignment-table
+          [agents]="agentsStore.agents()"
+          [assigned]="form().agentIds"
+          rowAriaKey="templates.form.agents_row_aria"
+          (assignedChange)="update('agentIds', $event)"
+        />
       </section>
     </sc-section-card>
   </div>

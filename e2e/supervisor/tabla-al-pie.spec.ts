@@ -62,14 +62,14 @@ for (const [ancho, alto] of [
   });
 }
 
-/* Los contactos de una agenda (DD-163) ya NO llegan al pie: le sigue la sección «Grupos y agentes» (DD-211 §1), y llegar
+/* Los contactos de una agenda (DD-163) ya NO llegan al pie: le sigue la sección «Agentes» (DD-211 §1), y llegar
  * al pie la dejaba en cuatro filas con scroll por dentro (medido con el editor ya con «Agentes»). La tarjeta mide lo que
  * sus filas, y la página es la que desplaza. */
 for (const [ancho, alto] of [
   [1440, 900],
   [1512, 945],
 ] as const) {
-  test(`a ${ancho}×${alto}, la tabla de contactos mide lo que sus filas: sin scroll por dentro y con «Grupos y agentes» debajo`, async ({
+  test(`a ${ancho}×${alto}, la tabla de contactos mide lo que sus filas: sin scroll por dentro y con «Agentes» debajo`, async ({
     page,
   }) => {
     await page.setViewportSize({ width: ancho, height: alto });
@@ -80,10 +80,10 @@ for (const [ancho, alto] of [
     await expect(caja.locator('tbody tr')).toHaveCount(50);
     await page.evaluate(() => document.fonts.ready);
     expect(await caja.locator('.p-datatable-table-container').evaluate((c) => c.scrollHeight > c.clientHeight + 1), 'scroll por dentro').toBe(false);
-    // La sección «Grupos y agentes» queda debajo de la tabla, no encima.
+    // La sección «Agentes» queda debajo de la tabla, no encima.
     const orden = await page.evaluate(() => {
       const y = (s: string) => document.querySelector(s)!.getBoundingClientRect().top;
-      return y('sc-agenda-assignment-tree') > y('sc-agenda-contacts-table');
+      return y('sc-agent-assignment-table') > y('sc-agenda-contacts-table');
     });
     expect(orden).toBe(true);
   });
