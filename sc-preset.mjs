@@ -499,8 +499,8 @@ var menu_default = {
   item: {
     gap: "{navigation.item.gap}",
     icon: {
-      color: "{navigation.item.icon.color}",
-      focusColor: "{navigation.item.icon.focus.color}"
+      color: "{navigation.item.color}",
+      focusColor: "{navigation.item.focus.color}"
     },
     color: "{navigation.item.color}",
     padding: "{navigation.item.padding}",
@@ -2093,9 +2093,9 @@ var menubar_default = {
   item: {
     gap: "{navigation.item.gap}",
     icon: {
-      color: "{navigation.item.icon.color}",
-      focusColor: "{navigation.item.icon.focus.color}",
-      activeColor: "{navigation.item.icon.active.color}"
+      color: "{navigation.item.color}",
+      focusColor: "{navigation.item.focus.color}",
+      activeColor: "{navigation.item.active.color}"
     },
     color: "{navigation.item.color}",
     padding: "{navigation.item.padding}",
@@ -2925,9 +2925,9 @@ var megamenu_default = {
   item: {
     gap: "{navigation.item.gap}",
     icon: {
-      color: "{navigation.item.icon.color}",
-      focusColor: "{navigation.item.icon.focus.color}",
-      activeColor: "{navigation.item.icon.active.color}"
+      color: "{navigation.item.color}",
+      focusColor: "{navigation.item.focus.color}",
+      activeColor: "{navigation.item.active.color}"
     },
     color: "{navigation.item.color}",
     padding: "{navigation.item.padding}",
@@ -3346,8 +3346,8 @@ var panelmenu_default = {
   item: {
     gap: "var(--sc-cmp-panelmenu-item-gap)",
     icon: {
-      color: "{navigation.item.icon.color}",
-      focusColor: "{navigation.item.icon.focus.color}"
+      color: "{navigation.item.color}",
+      focusColor: "{navigation.item.focus.color}"
     },
     color: "{navigation.item.color}",
     padding: "{navigation.item.padding}",
@@ -3908,9 +3908,9 @@ var tieredmenu_default = {
   item: {
     gap: "{navigation.item.gap}",
     icon: {
-      color: "{navigation.item.icon.color}",
-      focusColor: "{navigation.item.icon.focus.color}",
-      activeColor: "{navigation.item.icon.active.color}"
+      color: "{navigation.item.color}",
+      focusColor: "{navigation.item.focus.color}",
+      activeColor: "{navigation.item.active.color}"
     },
     color: "{navigation.item.color}",
     padding: "{navigation.item.padding}",
@@ -4015,9 +4015,9 @@ var contextmenu_default = {
   item: {
     gap: "{navigation.item.gap}",
     icon: {
-      color: "{navigation.item.icon.color}",
-      focusColor: "{navigation.item.icon.focus.color}",
-      activeColor: "{navigation.item.icon.active.color}"
+      color: "{navigation.item.color}",
+      focusColor: "{navigation.item.focus.color}",
+      activeColor: "{navigation.item.active.color}"
     },
     color: "{navigation.item.color}",
     padding: "var(--sc-cmp-contextmenu-item-padding-y) var(--sc-cmp-contextmenu-item-padding-x)",
@@ -5172,10 +5172,17 @@ var dangerMenuItemCss = () => `
     background: var(--sc-bg-danger-subtle);
 }
 
-.sc-menu-item--danger .p-menu-item-content:hover .p-menu-item-link,
-.sc-menu-item--danger .p-menu-item-content:hover .p-menu-item-icon,
-.sc-menu-item--danger .p-tieredmenu-item-content:hover .p-tieredmenu-item-link,
-.sc-menu-item--danger .p-tieredmenu-item-content:hover .p-tieredmenu-item-icon {
+/* El icono sigue al texto tambi\xE9n con el rat\xF3n encima y con el foco: el tema de PrimeNG pinta el icono al pasar el rat\xF3n
+ * con \`.p-menu-item:not(.p-disabled) > .p-menu-item-content:hover .p-menu-item-icon\` (seis clases), y la regla de
+ * arriba, con cuatro, perd\xEDa y dejaba un icono gris junto a un texto rojo. Se repite su cadena entera para ganarle. */
+.p-menu-item.sc-menu-item--danger:not(.p-disabled) > .p-menu-item-content:hover .p-menu-item-link,
+.p-menu-item.sc-menu-item--danger:not(.p-disabled) > .p-menu-item-content:hover .p-menu-item-icon,
+.p-menu-item.sc-menu-item--danger.p-focus > .p-menu-item-content .p-menu-item-link,
+.p-menu-item.sc-menu-item--danger.p-focus > .p-menu-item-content .p-menu-item-icon,
+.p-tieredmenu-item.sc-menu-item--danger:not(.p-disabled) > .p-tieredmenu-item-content:hover .p-tieredmenu-item-link,
+.p-tieredmenu-item.sc-menu-item--danger:not(.p-disabled) > .p-tieredmenu-item-content:hover .p-tieredmenu-item-icon,
+.p-tieredmenu-item.sc-menu-item--danger.p-focus > .p-tieredmenu-item-content .p-tieredmenu-item-link,
+.p-tieredmenu-item.sc-menu-item--danger.p-focus > .p-tieredmenu-item-content .p-tieredmenu-item-icon {
     color: var(--sc-text-danger);
 }
 `;
