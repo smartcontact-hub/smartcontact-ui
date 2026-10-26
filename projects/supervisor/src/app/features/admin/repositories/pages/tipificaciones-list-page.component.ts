@@ -21,13 +21,13 @@ import {
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
   ScEmptyStateComponent as EmptyStateComponent,
   ScGroupPopoverComponent as GroupPopoverComponent,
-  useBulkEntityI18n,
 } from '@smartcontact-hub/components';
 
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { ResultadoAccionService, XlsxExportService } from '@core/services';
 import { LanguageService } from '@core/services/language.service';
 import { injectLangChange } from '@core/utils/lang-change';
+import { injectConfirmarBorradoVarios } from '@features/admin/services/confirmar-borrado';
 import { CeldaVaciaComponent, ImportDialogComponent, ListPageComponent } from '@shared/components';
 import { GroupsStore } from '@features/admin/groups/state/groups.store';
 import { resolveGroup } from '@features/admin/groups/data/groups-data';
@@ -45,14 +45,13 @@ import { type Tipificacion, TipificacionesStore } from '../state/tipificaciones.
 import { TipificacionUsoService } from '../state/tipificacion-uso.service';
 
 /* v1 (2026-10-05): las columnas de la revisión de producto. v2 (2026-10-09): sin Dirección ni Comentarios, que pasan
- * al grupo (revisión de tipificaciones). */
-const COLUMN_PREF_KEY = 'sc-tipificaciones-columns-v2';
+ * al grupo (revisión de tipificaciones). v3: sin la columna ID. */
+const COLUMN_PREF_KEY = 'sc-tipificaciones-columns-v3';
 
 /**
  * El listado de Tipificaciones (DD-173): nombre, descripción, dirección, comentarios,
- * niveles, grupos e ID, todas ordenables. Crear y abrir una fila llevan a su ficha (General, Categorización y Grupos);
+ * niveles y grupos, todas ordenables. Crear y abrir una fila llevan a su ficha (General, Categorización y Grupos);
  * importar y descargar van detrás de un solo icono, con las columnas de la plantilla, una fila por camino del árbol.
- * El ID es una columna opcional, como el de Agentes y Grupos.
  */
 @Component({
   selector: 'sc-tipificaciones-list-page',
@@ -80,6 +79,7 @@ export class TipificacionesListPageComponent {
   private readonly xlsx = inject(XlsxExportService);
   private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
+  private readonly confirmarBorradoVarios = injectConfirmarBorradoVarios('repositories.tipificaciones.delete_dialog.title_bulk');
   private readonly language = inject(LanguageService);
   private readonly lang = injectLangChange();
 
@@ -101,14 +101,8 @@ export class TipificacionesListPageComponent {
   /** Qué grupos las usan, en el diálogo de eliminar: dejarán de tipificar. */
   protected readonly avisoDeUso = computed(() => {
     this.lang();
-    const target = this.deleteTarget() ?? [];
-    return target.length === 0 ? null : this.uso.aviso(new Set(target.map((t) => t.id)), target.length > 1);
-  });
-  protected readonly bulkEntity = useBulkEntityI18n({
-    singular: 'repositories.tipificaciones.singular',
-    plural: 'repositories.tipificaciones.plural',
-    selectedOne: 'common.bulk.selected_one_f',
-    selectedOther: 'common.bulk.selected_other_f',
+    const target = this.deleteTarget();
+    return target?.length === 1 ? this.uso.aviso(target[0]!.id) : null;
   });
 
   private readonly groupsById = computed(() => new Map(this.groupsStore.groups().map((g) => [g.id, g])));
@@ -141,7 +135,6 @@ export class TipificacionesListPageComponent {
       { key: 'description', label: t('description') },
       { key: 'levels', label: t('levels') },
       { key: 'groups', label: t('groups') },
-      { key: 'id', label: t('id'), defaultVisible: false },
     ];
   });
 
@@ -149,7 +142,6 @@ export class TipificacionesListPageComponent {
   private readonly descriptionTpl = viewChild<TemplateRef<ScColumnCellContext<Tipificacion>>>('descriptionTpl');
   private readonly levelsTpl = viewChild<TemplateRef<ScColumnCellContext<Tipificacion>>>('levelsTpl');
   private readonly groupsTpl = viewChild<TemplateRef<ScColumnCellContext<Tipificacion>>>('groupsTpl');
-  private readonly idTpl = viewChild<TemplateRef<ScColumnCellContext<Tipificacion>>>('idTpl');
 
   /** Todas ordenables (revisión de producto). Los anchos, del dato más largo de cada columna corta en los cuatro
    *  idiomas; el nombre y la descripción se reparten el resto. */
@@ -161,7 +153,6 @@ export class TipificacionesListPageComponent {
       { field: 'description', header: t('description'), sortable: true, cellTemplate: this.descriptionTpl() },
       { field: 'levels', header: t('levels'), sortable: true, cellTemplate: this.levelsTpl(), width: '9.5rem' },
       { field: 'groups', header: t('groups'), sortable: true, cellTemplate: this.groupsTpl(), width: '6.5rem' },
-      { field: 'id', header: t('id'), sortable: true, cellTemplate: this.idTpl(), width: '4.5rem' },
     ];
   });
 
@@ -176,8 +167,6 @@ export class TipificacionesListPageComponent {
         return nivelesDe(a) - nivelesDe(b);
       case 'groups':
         return this.groupsOf(a).length - this.groupsOf(b).length;
-      case 'id':
-        return a.id - b.id;
       default:
         return 0;
     }
@@ -194,16 +183,6 @@ export class TipificacionesListPageComponent {
   protected onRowOpen(t: Tipificacion): void {
     void this.router.navigateByUrl(`/admin/tipificaciones/editar/${t.id}`);
   }
-
-  /** Con varios marcados, el clic derecho sobre uno de ellos ofrece solo «Eliminar»: lo mismo que el botón de la barra. */
-  protected readonly selectionMenu = (rows: readonly Tipificacion[]): MenuItem[] => [
-    {
-      label: this.translate.instant('common.delete_count', { count: rows.length }),
-      icon: 'sc-icon-font sc-icon-font--delete',
-      styleClass: 'sc-menu-item--danger',
-      command: () => this.deleteTarget.set(rows),
-    },
-  ];
 
   protected readonly rowMenu = (t: Tipificacion): MenuItem[] => [
     {
@@ -234,30 +213,41 @@ export class TipificacionesListPageComponent {
     void this.router.navigate(['/admin/tipificaciones/crear'], { queryParams: { seedFromId: t.id } });
   }
 
-  protected requestDeleteSelection(): void {
-    const ids = this.selectedIds();
-    const targets = this.store.items().filter((t) => ids.has(t.id));
-    if (targets.length > 0) this.deleteTarget.set(targets);
+  /** Con varias marcadas, el «⋮» y el clic derecho sobre una de ellas ofrecen solo «Eliminar (N)»: editar varias a la vez no existe. */
+  protected readonly selectionMenu = (tipificaciones: readonly Tipificacion[]): MenuItem[] => [
+    {
+      label: this.translate.instant('common.delete_count', { count: tipificaciones.length }),
+      icon: 'sc-icon-font sc-icon-font--delete',
+      styleClass: 'sc-menu-item--danger',
+      command: () => void this.onBulkDelete(tipificaciones),
+    },
+  ];
+
+  /** Eliminar las marcadas: la confirmación simple, con su cifra; los grupos que las usaban dejan de tipificar. */
+  protected async onBulkDelete(tipificaciones: readonly Tipificacion[]): Promise<void> {
+    if (!(await this.confirmarBorradoVarios(tipificaciones.length))) return;
+    this.borrar(tipificaciones);
   }
 
-  protected confirmDelete(remainingIds: readonly number[] | null): void {
+  /** El diálogo de una sola (fila sin marcar o ficha): las demás marcadas se quedan marcadas. */
+  protected confirmDelete(): void {
     const target = this.deleteTarget();
     if (!target) return;
-    const keep = remainingIds === null ? null : new Set(remainingIds);
-    const borradas = keep ? target.filter((t) => keep.has(t.id)) : [...target];
-    this.uso.soltar(new Set(borradas.map((t) => t.id)));
-    this.store.deleteItems(borradas.map((t) => t.id));
+    this.borrar(target);
+    this.deleteTarget.set(null);
+  }
+
+  private borrar(borradas: readonly Tipificacion[]): void {
+    const ids = borradas.map((t) => t.id);
+    this.uso.soltar(new Set(ids));
+    this.store.deleteItems(ids);
+    this.selectedIds.update((marcadas) => new Set([...marcadas].filter((id) => !ids.includes(id))));
     const entity = this.translate.instant('repositories.tipificaciones.singular');
     this.toast(
       borradas.length === 1
         ? this.translate.instant('repositories.toasts.deleted_single', { entity, name: borradas[0]!.name })
-        : this.translate.instant('repositories.toasts.deleted_bulk', {
-            count: borradas.length,
-            entity: this.translate.instant('repositories.tipificaciones.plural'),
-          }),
+        : this.translate.instant('repositories.tipificaciones.deleted_bulk', { count: borradas.length }),
     );
-    this.deleteTarget.set(null);
-    this.selectedIds.set(new Set());
   }
 
   /* ── Descargar e importar ─────────────────────────────────────────────── */

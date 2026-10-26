@@ -74,7 +74,7 @@ DD-219, sin trampas propias): `git show fdf913d4:docs/handoff/supervisor-fichas.
 El del índice en la caja gris de Contact Center, con su interruptor para volver al plano (2026-10-21, DD-220 y DD-221, sin
 trampas propias): `git show archive/handoff-fichas-2026-10-26:docs/handoff/supervisor-fichas.md`.
 
-## ✅ 2026-10-26 · Duplicar tipificaciones y equipos abre un alta rellena (DD-229)
+## ✅ 2026-10-26 · Duplicar tipificaciones y equipos abre un alta rellena (DD-230)
 > **Sello:** rama `claude/duplicate-typifications-teams-920106` sobre `main` `aaa8e0fd`.
 - **Código**: `?seedFromId` en `tipificacion-ficha-page` y `equipo-editor-page`; Equipos usa `duplicateAsCreate` (nuevo en
   `RepoPageConfig`). Prueba: `duplicar-tipificaciones-equipos.spec.ts`.
