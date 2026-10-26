@@ -119,7 +119,7 @@ test('el editor no ofrece variables: la ayuda de `{agente}`, `{cliente}`… se f
   await expect(page.getByText('Variables:')).toHaveCount(0);
 });
 
-test('duplicar abre «Nueva plantilla» con la copia («X (1)») sin crearla; «Acciones» trae importar y exportar (DD-233)', async ({ page }) => {
+test('duplicar abre «Nueva plantilla» con la copia («X (1)») sin crearla; «Acciones» trae importar y exportar (DD-234)', async ({ page }) => {
   await goto(page, 'admin/plantillas');
   const fila = page.locator('[data-testid="templates-table"] .p-datatable-tbody > tr', { hasText: 'Saludo inicial' });
   await fila.getByLabel('Más acciones').click();

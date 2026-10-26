@@ -42,7 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
-> | Duplicar una agenda o una plantilla es un alta, como un grupo o un agente (enmienda DD-230): abre «Nueva agenda/plantilla» con la copia y su nombre «X (1)» (`seedFromId`, `nombreDeCopia`), que no existe hasta «Crear» · no copia a qué agentes se asigna | DD-233 |
+> | Duplicar una agenda o una plantilla es un alta, como un grupo o un agente (enmienda DD-230): abre «Nueva agenda/plantilla» con la copia y su nombre «X (1)» (`seedFromId`, `nombreDeCopia`), que no existe hasta «Crear» · no copia a qué agentes se asigna | DD-234 |
 > | Agendas y Plantillas como sus COA (SISMAC-4440 y 4438): se asignan SOLO a agentes, en una tabla plana de agentes con su columna «Grupos» (`sc-agent-assignment-table`), sin árbol ni grupos dinámicos (enmienda DD-211 §1) · el listado de Agendas con Descripción, Contactos y Agentes (cifra, sin globo) ordenables · Plantillas sin pestañas, con columna Canal · contactos con casillas y borrado múltiple (completa DD-227 en una tabla anidada) | DD-230 |
 > | El «+» de `sc-button` (`icon="add"`) es siempre redondo: círculo sin rótulo, píldora con él (enmienda DD-167 y DD-187) | DD-229 |
 > | Con el índice en la caja, el carril mide 235, el de la caja en Figma: ningún rótulo de las fichas salta de línea · sin la caja, 196 (enmienda DD-220) | DD-221 |
@@ -163,7 +163,7 @@
 
 ---
 
-## DD-233 · 2026-10-26 — Duplicar una agenda o una plantilla es un alta, como duplicar un grupo o un agente
+## DD-234 · 2026-10-26 — Duplicar una agenda o una plantilla es un alta, como duplicar un grupo o un agente
 
 **Contexto** · DD-230 dejó «Duplicar» en Agendas y Plantillas como estaba: la copia se creaba en el acto, con «X (copia)», y
 se quedaba en la lista. Grupos y Agentes ya duplican de otra manera (DD-218, DD-225): abren «Nuevo grupo» o «Nuevo agente»
@@ -188,6 +188,29 @@ que borrar. Medido: `duplicable` solo lo usaba Agendas, y Plantillas tenía su p
 **Consecuencias** · `copyName` y «Copia creada: …» se quedan solo para una lista sin editor propio. Pruebas:
 `agendas-listado.spec.ts` y `plantillas-editor.spec.ts` reescritas (URL de alta, nombre «(1)», no existe hasta crear,
 sin diálogo al salir, «(2)» al duplicar la copia).
+
+## DD-233 · 2026-10-26 — Para esta entrega, todo borra con la confirmación simple, sin teclear el nombre
+
+**Contexto** · Grupos, Agentes, Equipos y Tipificaciones (varias) ya preguntaban con la confirmación simple del DS (DD-215,
+DD-231). Usuarios, Plantillas, Repositorios (todas las instancias) y Tipificaciones (una sola, en lista y ficha) seguían con
+`sc-delete-entity-dialog`, que pide escribir el nombre. Decisión de producto del 2026-10-26: se alinean todas, porque esta
+entrega es para que los desarrolladores implementen más rápido y un solo patrón se implementa una sola vez.
+
+**Decisión** · Todas esas pantallas usan `injectBorradoSimple` (`confirmar-borrado.ts`): al ponerse lo que se va a borrar,
+pregunta («¿Eliminar el usuario «Ana»?» o «¿Eliminar 3 usuarios?»), añade el aviso propio si lo hay («La usan 3 grupos.», «Los
+agentes y grupos que la tengan asignada perderán la referencia.») y el cuerpo «Esta acción no se puede deshacer.». «Eliminar» del
+menú ya no lleva puntos suspensivos. Los repositorios usan un título genérico («¿Eliminar «X»?»); Equipos conserva el suyo.
+
+**Razón** · Un patrón, una implementación, y la misma expectativa en todas las listas (DD-227).
+
+**Aparcado, no descartado** · Teclear el nombre (con su «copiar el nombre») protege más contra un borrado accidental y se querrá
+retomar más adelante, cuando haya deshacer o papelera. El diálogo `sc-delete-entity-dialog` sigue en el DS; solo lo usa ya
+`Emails` de Repositorios. Su e2e de copiar el nombre queda con `test.skip` hasta entonces.
+
+**Descartadas** ·
+- *Dejar el nombre tecleado solo en las fichas*: dos patrones en la misma entidad (lista y ficha).
+- *Un título con la entidad dentro («¿Eliminar {entity} «X»?»)*: el artículo cambia con el género en cada idioma; por eso cada
+  entidad lleva su título y los repositorios, uno sin entidad.
 
 ## DD-232 · 2026-10-26 — Duplicar tipificaciones y equipos abre un alta rellena, como Grupos y Agentes
 

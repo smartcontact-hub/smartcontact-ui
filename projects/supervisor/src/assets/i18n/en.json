@@ -1152,6 +1152,10 @@
     "search_placeholder": "Search labels…"
   },
   "templates": {
+    "delete_dialog": {
+      "title": "Delete template \"{{name}}\"?",
+      "title_bulk": "Delete {{count}} templates?"
+    },
     "import": {
       "title": "Import templates",
       "template_file": "templates-template",
@@ -1243,6 +1247,10 @@
     "search_placeholder": "Search templates…"
   },
   "repositories": {
+    "delete_dialog": {
+      "title": "Delete “{{name}}”?",
+      "title_bulk": "Delete {{count}} {{entity}}?"
+    },
     "groups_aria": "{{count}} groups",
     "groups_aria_one": "1 group",
     "emails": {
@@ -1607,6 +1615,7 @@
       "in_use_one": "Used by 1 group.",
       "in_use": "Used by {{count}} groups.",
       "delete_dialog": {
+        "title": "Delete typification \"{{name}}\"?",
         "title_bulk": "Delete {{count}} typifications?"
       },
       "deleted_bulk": "{{count}} typifications deleted",
@@ -1735,6 +1744,10 @@
     }
   },
   "users": {
+    "delete_dialog": {
+      "title": "Delete user \"{{name}}\"?",
+      "title_bulk": "Delete {{count}} users?"
+    },
     "page_title": "Users",
     "create_button": "New user",
     "search_placeholder": "Search users…",

@@ -71,18 +71,6 @@
   <span class="table__updated-text sc-text-caption-regular">{{ fecha(tpl) }}</span>
 </ng-template>
 
-<sc-delete-entity-dialog
-  [visible]="!!deleteTarget()"
-  [mode]="(deleteTarget()?.length ?? 0) === 1 ? 'single' : 'bulk'"
-  [items]="deleteItems()"
-  [entitySingular]="'templates.entity.singular' | translate"
-  [entityPlural]="'templates.entity.plural' | translate"
-  [singleDetailMessage]="'templates.delete.single_detail' | translate"
-  [bulkFooterMessage]="'templates.delete.bulk_footer' | translate"
-  (cancelled)="cancelDelete()"
-  (confirm)="confirmDelete($event)"
-/>
-
 <!-- Importar plantillas de un CSV: la plantilla, el archivo y, antes de crear nada, qué entra y qué no. -->
 @if (importOpen()) {
   <sc-import-dialog

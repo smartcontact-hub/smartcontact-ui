@@ -88,10 +88,10 @@ test('el teléfono de la vista previa no cambia de tamaño al elegir', async ({ 
 test('eliminarla dice cuántos grupos la usan, y esos grupos dejan de tipificar', async ({ page }) => {
   await goto(page, 'admin/tipificaciones/editar/1');
   await page.locator('.page__rail').getByRole('button', { name: 'Eliminar' }).click();
-  const dialogo = page.getByRole('dialog');
-  await expect(dialogo).toContainText('La usan 4 grupos.');
-  await dialogo.getByRole('textbox').fill('Atención al cliente');
-  await dialogo.getByRole('button', { name: 'Eliminar' }).click();
+  const pregunta = page.getByRole('alertdialog', { name: '¿Eliminar la tipificación «Atención al cliente»?' });
+  await expect(pregunta).toContainText('La usan 4 grupos.');
+  await expect(pregunta.getByRole('textbox'), 'no pide escribir el nombre').toHaveCount(0);
+  await pregunta.getByRole('button', { name: 'Eliminar' }).click();
   await expect(page).toHaveURL(/\/admin\/tipificaciones$/);
 
   await goto(page, 'admin/grupos/editar/2?seccion=general');

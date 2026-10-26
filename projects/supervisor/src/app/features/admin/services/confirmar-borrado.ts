@@ -1,4 +1,4 @@
-import { inject } from '@angular/core';
+import { effect, inject, type Signal, untracked } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { ScConfirmService } from '@smartcontact-hub/components';
 
@@ -35,4 +35,47 @@ export function injectConfirmarBorradoVarios(titleKey: string): (count: number) 
       rejectLabel: translate.instant('common.cancel'),
       acceptTone: 'danger',
     });
+}
+
+/**
+ * La confirmación simple para quien guarda lo que va a borrar en una señal (`deleteTarget`): al ponerse, pregunta («¿Eliminar el
+ * usuario «Ana»?» o «¿Eliminar 3 usuarios?») y llama a `accept` o a `cancel`. Sin teclear el nombre: se alinea con Grupos y
+ * Agentes para esta entrega (DD-233). `detail` añade lo que pasa además («La usan 3 grupos.»). Se llama en el contexto de
+ * inyección, en un campo de la clase.
+ */
+export function injectBorradoSimple<T>(opts: {
+  readonly target: Signal<readonly T[] | null>;
+  readonly titleKey: string | (() => string);
+  readonly titleBulkKey: string | (() => string);
+  readonly params: (items: readonly T[]) => Record<string, string | number>;
+  readonly detail?: (items: readonly T[]) => string | null | undefined;
+  readonly accept: () => void;
+  readonly cancel: () => void;
+}): void {
+  const confirm = inject(ScConfirmService);
+  const translate = inject(TranslateService);
+  const clave = (k: string | (() => string)): string => (typeof k === 'string' ? k : k());
+  let preguntando = false;
+  effect(() => {
+    const items = opts.target();
+    if (!items || items.length === 0 || preguntando) return;
+    preguntando = true;
+    untracked(() => {
+      const extra = opts.detail?.(items);
+      const body = [extra, translate.instant('common.delete_dialog.body')].filter(Boolean).join(' ');
+      void confirm
+        .request({
+          title: translate.instant(clave(items.length === 1 ? opts.titleKey : opts.titleBulkKey), opts.params(items)),
+          body,
+          acceptLabel: translate.instant('common.delete'),
+          rejectLabel: translate.instant('common.cancel'),
+          acceptTone: 'danger',
+        })
+        .then((ok) => {
+          preguntando = false;
+          if (ok) opts.accept();
+          else opts.cancel();
+        });
+    });
+  });
 }

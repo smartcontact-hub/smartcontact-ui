@@ -93,7 +93,7 @@ El de la ficha de grupo como la versión 17 de su página de COA (2026-10-22, DD
   `Agent.templates`; `Group.*` no se toca. Fuera `agenda-asignacion.core.mjs`.
 - **Listados**: Agendas con Descripción y Agentes (cifra, «—» en 0), todo ordenable (`sortable` + `sortFn` en `RepoListPage`);
   Plantillas sin pestañas, con columna Canal. Contactos con casillas y borrado múltiple (confirmación simple, como Reglas).
-- **Para el COA**: «Duplicar» es un alta («X (1)», DD-233), las pestañas pasan a columna Canal y Crear va siempre activo (DD-217). **Trampa**: en el e2e, Nombre es un `th` (`rowHeader`): el `td` de «Agentes» es el 3, no el 4. **Pendiente de producto**: la
+- **Para el COA**: «Duplicar» es un alta («X (1)», DD-234), las pestañas pasan a columna Canal y Crear va siempre activo (DD-217). **Trampa**: en el e2e, Nombre es un `th` (`rowHeader`): el `td` de «Agentes» es el 3, no el 4. **Pendiente de producto**: la
   ficha de grupo sigue asignando Agendas y Plantillas al grupo (Recursos).
 
 ## ✅ 2026-10-26 · Eliminar varios en todas las tablas, sin barra de lote, y las congeladas al día (DD-227)

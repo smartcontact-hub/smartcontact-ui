@@ -4,7 +4,6 @@ import { ActivatedRoute, Router, type UrlTree } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   ScButtonComponent as ButtonComponent,
-  ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
   ScFormSectionNavComponent as FormSectionNavComponent,
   type FormNavSection,
   ScInputTextComponent as InputTextComponent,
@@ -42,6 +41,7 @@ import {
 } from '../state/tipificaciones.store';
 import { TipificacionUsoService } from '../state/tipificacion-uso.service';
 import { TooltipModule } from 'primeng/tooltip';
+import { injectBorradoSimple } from '@features/admin/services/confirmar-borrado';
 
 type Borrador = Omit<Tipificacion, 'id'>;
 /** Una tipificación nueva: con el primer nivel listo para escribir sus opciones. */
@@ -84,7 +84,6 @@ const SECCION_DEL_CAMPO: Readonly<Record<keyof Borrador, string>> = {
     TooltipModule,
     AltaPieComponent,
     ButtonComponent,
-    DeleteEntityDialogComponent,
     FormSectionNavComponent,
     InputTextComponent,
     NgTemplateOutlet,
@@ -414,6 +413,16 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit {
     this.lang();
     const id = this.editingId();
     return id === null ? null : this.uso.aviso(id);
+  });
+
+  private readonly borradoSimple = injectBorradoSimple<{ readonly id: number; readonly name: string }>({
+    target: computed(() => (this.deleteVisible() ? this.deleteItems() : null)),
+    titleKey: 'repositories.tipificaciones.delete_dialog.title',
+    titleBulkKey: 'repositories.tipificaciones.delete_dialog.title_bulk',
+    params: (t) => ({ name: t[0]!.name, count: t.length }),
+    detail: () => this.avisoDeUso(),
+    accept: () => this.confirmDelete(),
+    cancel: () => this.deleteVisible.set(false),
   });
 
   protected confirmDelete(): void {

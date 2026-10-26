@@ -86,16 +86,6 @@
   />
 </ng-template>
 
-<sc-delete-entity-dialog
-  [visible]="!!deleteTarget()"
-  [mode]="(deleteTarget()?.length ?? 0) === 1 ? 'single' : 'bulk'"
-  [items]="deleteItems()"
-  [entitySingular]="'users.entity_singular' | translate"
-  [entityPlural]="'users.entity_plural' | translate"
-  (cancelled)="cancelDelete()"
-  (confirm)="confirmDelete($event)"
-/>
-
 <!-- Antes de aplicar, se enseña A QUIÉN afecta y qué se le va a poner. En un
      cambio masivo la pregunta del usuario no es "¿seguro?" sino "¿seguro sobre
      ESTOS?", y la lista contesta eso. Mismo diálogo que agentes y grupos. -->

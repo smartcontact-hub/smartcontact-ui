@@ -70,17 +70,12 @@ test('usuarios · el click derecho abre el MISMO menú que el kebab', async ({ p
   await expect(page.locator('main#main-content p-menu:not(.page__tools > p-menu)')).toHaveCount(1);
 });
 
-test('el borrado avisa con puntos suspensivos solo si lleva a la puerta tecleada', async ({
-  page,
-}) => {
-  // Usuarios borra con `sc-delete-entity-dialog` (hay que teclear el nombre).
-  await goto(page, 'admin/usuarios');
-  await page.locator('tbody tr').first().locator('.rules-kebab-btn').click();
-  await expect(page.locator(MENU_ITEM).filter({ hasText: /eliminar/i })).toHaveText(/…$/);
-  await page.keyboard.press('Escape');
-
-  // Categorías borra con una confirmación simple: sin puntos suspensivos.
-  await goto(page, 'conversaciones/categorias');
-  await page.locator('tbody tr').first().locator('.rules-kebab-btn').click();
-  await expect(page.locator(MENU_ITEM).filter({ hasText: /eliminar/i })).not.toHaveText(/…$/);
+test('el borrado no lleva puntos suspensivos: todas las listas confirman sin teclear el nombre', async ({ page }) => {
+  // Usuarios y Categorías confirman con la pregunta simple del DS (DD-215, DD-233): ninguna lleva a una puerta tecleada.
+  for (const ruta of ['admin/usuarios', 'conversaciones/categorias']) {
+    await goto(page, ruta);
+    await page.locator('tbody tr').first().locator('.rules-kebab-btn').click();
+    await expect(page.locator(MENU_ITEM).filter({ hasText: /eliminar/i })).not.toHaveText(/…$/);
+    await page.keyboard.press('Escape');
+  }
 });

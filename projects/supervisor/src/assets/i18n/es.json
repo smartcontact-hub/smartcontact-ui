@@ -1152,6 +1152,10 @@
     "search_placeholder": "Buscar labels…"
   },
   "templates": {
+    "delete_dialog": {
+      "title": "¿Eliminar la plantilla «{{name}}»?",
+      "title_bulk": "¿Eliminar {{count}} plantillas?"
+    },
     "import": {
       "title": "Importar plantillas",
       "template_file": "plantilla-plantillas",
@@ -1243,6 +1247,10 @@
     "search_placeholder": "Buscar plantillas…"
   },
   "repositories": {
+    "delete_dialog": {
+      "title": "¿Eliminar «{{name}}»?",
+      "title_bulk": "¿Eliminar {{count}} {{entity}}?"
+    },
     "groups_aria": "{{count}} grupos",
     "groups_aria_one": "1 grupo",
     "emails": {
@@ -1607,6 +1615,7 @@
       "in_use_one": "La usa 1 grupo.",
       "in_use": "La usan {{count}} grupos.",
       "delete_dialog": {
+        "title": "¿Eliminar la tipificación «{{name}}»?",
         "title_bulk": "¿Eliminar {{count}} tipificaciones?"
       },
       "deleted_bulk": "{{count}} tipificaciones eliminadas",
@@ -1735,6 +1744,10 @@
     }
   },
   "users": {
+    "delete_dialog": {
+      "title": "¿Eliminar el usuario «{{name}}»?",
+      "title_bulk": "¿Eliminar {{count}} usuarios?"
+    },
     "page_title": "Usuarios",
     "create_button": "Nuevo usuario",
     "search_placeholder": "Buscar usuarios…",

@@ -26,7 +26,9 @@ test('foto rechazada: el porqué sale bajo la foto, en su línea, y no se va sol
   await expect(linea).toHaveText('Tipo de archivo no válido. Usa JPG, PNG o GIF.');
 });
 
-test('borrar: copiar el nombre lo dice el ✓, y el lector lo oye, sin toast (15)', async ({ page, context }) => {
+// APARCADA (DD-233): las fichas de usuario y de tipificación ya borran sin teclear el nombre, así que no hay «copiar el nombre».
+// Vuelve con el diálogo de teclear el nombre, cuando se retome.
+test.skip('borrar: copiar el nombre lo dice el ✓, y el lector lo oye, sin toast (15)', async ({ page, context }) => {
   await context.grantPermissions(['clipboard-read', 'clipboard-write']);
   // En la ficha de usuario: la de agente y la de grupo borran con la confirmación simple, sin nombre que copiar (DD-215).
   await goto(page, 'admin/usuarios/editar/1');

@@ -14,7 +14,7 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  *   2. Por debajo de 1340, igual: el nombre sigue encima del índice al bajar, y la franja del resumen no queda tapada.
  *   3. Un salto de canal («Ir a») deja el título del canal arriba y a la vista: nada fijo lo tapa.
  *   4. Borrar un grupo o un agente es la confirmación simple del DS, con su nombre y sin teclearlo (DD-215, como en
- *      Figma); el usuario sigue pidiendo escribirlo (`sc-delete-entity-dialog` en modo `single`).
+ *      Figma); y Usuarios, igual (DD-233: para esta entrega, todas las fichas borran sin teclear el nombre).
  *
  * Cambió con DD-187: la ficha de agente mide en Configuración con «Avanzado» abierto. Su sección Grupos, la de antes,
  * ya no da para bajar: su tabla llega al pie y se desplaza dentro (DD-187 §7).
@@ -166,6 +166,7 @@ test('un salto de canal deja el título del canal arriba y a la vista, sin nada 
 const BORRAR = [
   { ruta: 'admin/grupos/editar/11', listado: '/admin/grupos', entidad: 'grupo' },
   { ruta: 'admin/agentes/editar/1', listado: '/admin/agentes', entidad: 'agente' },
+  { ruta: 'admin/usuarios/editar/1', listado: '/admin/usuarios', entidad: 'usuario' },
 ] as const;
 
 for (const b of BORRAR) {
@@ -181,20 +182,3 @@ for (const b of BORRAR) {
     await expect(page).toHaveURL(new RegExp(`${b.listado}$`));
   });
 }
-
-test('admin/usuarios/editar/1 · borrar pide escribir el nombre: «Eliminar» espera al nombre exacto', async ({ page }) => {
-  await goto(page, 'admin/usuarios/editar/1');
-  const nombre = (await cabecera(page)).nombre.texto;
-  await page.locator('.page__rail').getByRole('button', { name: 'Eliminar' }).click();
-  const dialogo = page.getByRole('dialog');
-  await expect(dialogo.getByText('Escribe el nombre para confirmar:')).toBeVisible();
-  const confirmar = dialogo.getByTestId('delete-confirm-btn').getByRole('button');
-  const campo = dialogo.getByRole('textbox');
-  await expect(confirmar).toBeDisabled();
-  await campo.fill(nombre.slice(0, -1));
-  await expect(confirmar, 'un nombre a medias no basta').toBeDisabled();
-  await campo.fill(nombre);
-  await expect(confirmar).toBeEnabled();
-  await confirmar.click();
-  await expect(page).toHaveURL(/\/admin\/usuarios$/);
-});
