@@ -1745,7 +1745,7 @@
   },
   "users": {
     "delete_dialog": {
-      "title": "¿Eliminar al usuario «{{name}}»?",
+      "title": "¿Eliminar el usuario «{{name}}»?",
       "title_bulk": "¿Eliminar {{count}} usuarios?"
     },
     "page_title": "Usuarios",
