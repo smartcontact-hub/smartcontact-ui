@@ -1618,6 +1618,7 @@
       "delete_dialog": {
         "title_bulk": "¿Eliminar {{count}} tipificaciones?"
       },
+      "deleted_bulk": "{{count}} tipificaciones eliminadas",
       "add_subcategory": "Añadir subcategoría"
     },
     "variables": {

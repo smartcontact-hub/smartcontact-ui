@@ -246,10 +246,7 @@ export class TipificacionesListPageComponent {
     this.toast(
       borradas.length === 1
         ? this.translate.instant('repositories.toasts.deleted_single', { entity, name: borradas[0]!.name })
-        : this.translate.instant('repositories.toasts.deleted_bulk', {
-            count: borradas.length,
-            entity: this.translate.instant('repositories.tipificaciones.plural'),
-          }),
+        : this.translate.instant('repositories.tipificaciones.deleted_bulk', { count: borradas.length }),
     );
   }
 
