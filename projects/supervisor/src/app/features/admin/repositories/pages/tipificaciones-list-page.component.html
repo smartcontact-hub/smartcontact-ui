@@ -19,9 +19,9 @@
   exportable
   importable
   [rowMenu]="rowMenu"
+  [selectionMenu]="selectionMenu"
   rowOpenable
   selectable
-  [bulkEntity]="bulkEntity()"
   [(selectedIds)]="selectedIds"
   tableTestId="tipificaciones-table"
   (rowOpen)="onRowOpen($event)"
@@ -37,11 +37,6 @@
     (cta)="onCreateClick()"
   />
 
-  <ng-container ngProjectAs="[scListBulkActions]">
-    <sc-button type="button" size="sm" variant="danger" (clicked)="requestDeleteSelection()">
-      <span>{{ 'common.delete' | translate }}</span>
-    </sc-button>
-  </ng-container>
 </sc-list-page>
 
 <ng-template #nameTpl let-t>

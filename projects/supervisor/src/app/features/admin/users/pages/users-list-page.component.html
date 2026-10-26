@@ -22,9 +22,9 @@
   noResultsKey="users.no_results_query"
   exportable
   [rowMenu]="rowMenu"
+  [selectionMenu]="selectionMenu"
   [rowOpenable]="isOpenable"
   selectable
-  [bulkEntity]="bulkEntity()"
   [(selectedIds)]="selectedIds"
   tableTestId="users-table"
   (rowOpen)="onRowOpen($event)"
@@ -39,12 +39,6 @@
     (cta)="onCreateClick()"
   />
 
-  <ng-container ngProjectAs="[scListBulkActions]">
-    <sc-bulk-edit-menu [fields]="bulkEditFields()" [buttonLabel]="'Editar'" (commit)="onBulkEditCommit($event)" />
-    <sc-button type="button" size="sm" variant="danger" (clicked)="requestDeleteSelection()">
-      <span>{{ 'common.delete' | translate }}</span>
-    </sc-button>
-  </ng-container>
 </sc-list-page>
 
 <!-- Celdas de la tabla. Viven FUERA de la lista para que los `viewChild` las resuelvan; `columns()` las

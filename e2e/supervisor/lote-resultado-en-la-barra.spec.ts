@@ -9,7 +9,7 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  * «Deshacer». Desde DD-196 la barra de lote se queda donde estaba y lo cuenta («Cambio aplicado a 2 usuarios») con
  * «Deshacer» pegado al texto, sin irse sola, hasta que se cierra o se vuelve a marcar una fila. Desde DD-211 §5, además,
  * lo dice el toast de toda acción, sin botón: el toast se va solo y el deshacer sigue en la barra. Deshacer (o Ctrl+Z)
- * devuelve las filas y deja «Cambio revertido». Grupos ya no edita en lote (DD-215): las pruebas viven en Usuarios.
+ * devuelve las filas y deja «Cambio revertido». Grupos ya no edita en lote (DD-215), y desde DD-227 tampoco Usuarios: la edición masiva no se entregó y su barra se quitó. Las pruebas quedan APARCADAS (`test.skip`) hasta que vuelva.
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -41,7 +41,7 @@ const aplicarInactivo = async (page: Page) => {
   await page.getByRole('dialog', { name: /Aplicar cambio/ }).getByRole('button', { name: 'Aplicar' }).click();
 };
 
-test('Usuarios · el cambio en lote lo dice un toast y la barra, que se queda con «Deshacer»', async ({ page }) => {
+test.skip('Usuarios · el cambio en lote lo dice un toast y la barra, que se queda con «Deshacer»', async ({ page }) => {
   await page.clock.install();
   await goto(page, 'admin/usuarios');
   await expect(await estado(page, 'Laura Martínez')).toHaveText('Activo');
@@ -75,7 +75,7 @@ test('Usuarios · el cambio en lote lo dice un toast y la barra, que se queda co
   await expect(barra).toHaveCount(0);
 });
 
-test('Usuarios · Ctrl+Z deshace el lote, y volver a marcar una fila devuelve la barra a la selección', async ({ page }) => {
+test.skip('Usuarios · Ctrl+Z deshace el lote, y volver a marcar una fila devuelve la barra a la selección', async ({ page }) => {
   await goto(page, 'admin/usuarios');
   await aplicarInactivo(page);
   const barra = page.locator('sc-bulk-action-bar .bulk-bar');
@@ -92,7 +92,7 @@ test('Usuarios · Ctrl+Z deshace el lote, y volver a marcar una fila devuelve la
   await expect(barra.getByRole('button', { name: 'Eliminar' })).toBeVisible();
 });
 
-test('Usuarios · el resultado dice qué se cambió y a cuántos, en su idioma', async ({ page }) => {
+test.skip('Usuarios · el resultado dice qué se cambió y a cuántos, en su idioma', async ({ page }) => {
   await goto(page, 'admin/usuarios');
   const filas = page.locator('tbody tr');
   await filas.nth(0).locator('p-table-checkbox').click();

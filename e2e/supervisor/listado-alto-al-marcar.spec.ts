@@ -82,9 +82,9 @@ for (const [nombre, ruta] of [
   });
 }
 
-test('Control, Usuarios: con barra de lote, marcar sí sube el borde lo que la barra reserva', async ({ page }) => {
-  // Usuarios tiene menos filas que Grupos: a 800 de alto caben, y sin faltar sitio la barra no mueve nada.
-  await abrir(page, 'admin/usuarios', 520);
+test('Control, Conversaciones: con barra de lote, marcar sí sube el borde lo que la barra reserva', async ({ page }) => {
+  // Conversaciones es la lista que aún monta barra de lote (transcribir, descargar): a este alto las filas no caben.
+  await abrir(page, 'conversaciones', 520);
   const sinMarcar = await bordeDeAbajo(page);
 
   await casilla(page, 2).click();

@@ -196,6 +196,16 @@ export class TipificacionesListPageComponent {
     void this.router.navigateByUrl(`/admin/tipificaciones/editar/${t.id}`);
   }
 
+  /** Con varios marcados, el clic derecho sobre uno de ellos ofrece solo «Eliminar»: lo mismo que el botón de la barra. */
+  protected readonly selectionMenu = (rows: readonly Tipificacion[]): MenuItem[] => [
+    {
+      label: this.translate.instant('common.delete_count', { count: rows.length }),
+      icon: 'sc-icon-font sc-icon-font--delete',
+      styleClass: 'sc-menu-item--danger',
+      command: () => this.deleteTarget.set(rows),
+    },
+  ];
+
   protected readonly rowMenu = (t: Tipificacion): MenuItem[] => [
     {
       label: this.translate.instant('common.edit'),

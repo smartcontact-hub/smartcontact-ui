@@ -165,7 +165,7 @@ test('listado · con dos marcados, el clic derecho sobre uno ofrece solo «Elimi
   await expect(opciones).toHaveCount(0);
 
   await fila(page, 'Agente A').locator('td').nth(1).click({ button: 'right' });
-  await expect(opciones).toHaveText([/^\s*Eliminar\s*$/]);
+  await expect(opciones).toHaveText([/^\s*Eliminar \(2\)\s*$/]);
   await opciones.click();
   const pregunta = page.getByRole('alertdialog', { name: '¿Eliminar 2 agentes?' });
   await expect(pregunta).toContainText('Esta acción no se puede deshacer.');

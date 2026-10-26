@@ -440,7 +440,7 @@ export class AgentsListPageComponent {
    */
   protected readonly selectionMenu = (agents: readonly Agent[]): MenuItem[] => [
     {
-      label: this.translate.instant('common.delete'),
+      label: this.translate.instant('common.delete_count', { count: agents.length }),
       icon: 'sc-icon-font sc-icon-font--delete',
       styleClass: 'sc-menu-item--danger',
       command: () => void this.onBulkDelete(agents),

@@ -385,7 +385,7 @@ export class GroupsListPageComponent {
    */
   protected readonly selectionMenu = (groups: readonly Group[]): MenuItem[] => [
     {
-      label: this.translate.instant('common.delete'),
+      label: this.translate.instant('common.delete_count', { count: groups.length }),
       icon: 'sc-icon-font sc-icon-font--delete',
       styleClass: 'sc-menu-item--danger',
       command: () => void this.onBulkDelete(groups),
