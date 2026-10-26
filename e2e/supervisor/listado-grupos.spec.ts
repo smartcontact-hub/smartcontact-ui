@@ -145,20 +145,24 @@ test('con dos marcados, el clic derecho sobre uno ofrece solo «Eliminar» y bor
   const opciones = page.locator('.p-menu-overlay .p-menu-item-link');
   for (const grupo of ['Reclamaciones', 'Online Support']) await fila(page, grupo).locator('p-table-checkbox').click();
 
-  // Una fila sin marcar, y el «⋮» de una marcada: el menú de esa fila.
+  // Una fila sin marcar, con clic derecho y con «⋮»: el menú de esa fila.
   await fila(page, 'ACD Demo C2CB').locator('td').nth(1).click({ button: 'right' });
   await expect(opciones.first()).toBeVisible();
   await expect(opciones).toHaveText([/Editar/, /Duplicar/, /Eliminar/]);
   await page.keyboard.press('Escape');
   await expect(opciones).toHaveCount(0);
-  await fila(page, 'Reclamaciones').locator('.rules-kebab-btn').click();
+  await fila(page, 'ACD Demo C2CB').locator('.rules-kebab-btn').click();
   await expect(opciones).toHaveText([/Editar/, /Duplicar/, /Eliminar/]);
   await page.keyboard.press('Escape');
   await expect(opciones).toHaveCount(0);
 
-  // Clic derecho sobre una marcada: lo de todas, y solo borrar (sin edición en lote, DD-215).
+  // El «⋮» de una marcada, como el clic derecho: lo de todas, con su cifra y solo borrar (sin edición en lote, DD-215).
+  await fila(page, 'Reclamaciones').locator('.rules-kebab-btn').click();
+  await expect(opciones).toHaveText([/^\s*Eliminar \(2\)\s*$/]);
+  await page.keyboard.press('Escape');
+  await expect(opciones).toHaveCount(0);
   await fila(page, 'Reclamaciones').locator('td').nth(1).click({ button: 'right' });
-  await expect(opciones).toHaveText([/^\s*Eliminar\s*$/]);
+  await expect(opciones).toHaveText([/^\s*Eliminar \(2\)\s*$/]);
   await opciones.click();
   const pregunta = page.getByRole('alertdialog', { name: '¿Eliminar 2 grupos?' });
   await expect(pregunta).toContainText('Esta acción no se puede deshacer.');

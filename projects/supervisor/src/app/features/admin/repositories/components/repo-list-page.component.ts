@@ -151,18 +151,6 @@ export class RepoListPageComponent<T extends RepoEntity> {
     return this.translate.instant(this.config().entityPluralKey);
   });
 
-  /** Con borrado simple no hay barra en lote: eliminar varios es el clic derecho sobre una fila marcada. */
-  protected readonly bulkEntity = computed(() => {
-    this.lang(); // textos al día al cambiar de idioma (ver `injectLangChange`)
-    if (this.config().simpleDelete) return undefined;
-    return {
-      singular: this.entitySingular(),
-      plural: this.entityPlural(),
-      suffixSingular: this.translate.instant('common.bulk.selected_one'),
-      suffixPlural: this.translate.instant('common.bulk.selected_other'),
-    };
-  });
-
   /* ── La tabla, ahora `sc-datatable` (B4) ──────────────────────────────
    * Caso especial: las columnas salen de `config()`, así que NO se puede
    * declarar un `<ng-template>` por columna. Hay UNA plantilla genérica y el
@@ -357,6 +345,16 @@ export class RepoListPageComponent<T extends RepoEntity> {
     this.deleteTarget.set(null);
   }
 
+  /** Con varios marcados, el clic derecho sobre uno de ellos ofrece solo «Eliminar (N)». */
+  protected readonly selectionMenu = (rows: readonly T[]): MenuItem[] => [
+    {
+      label: this.translate.instant('common.delete_count', { count: rows.length }),
+      icon: 'sc-icon-font sc-icon-font--delete',
+      styleClass: 'sc-menu-item--danger',
+      command: () => (this.config().simpleDelete ? void this.onBulkDelete(rows) : this.deleteTarget.set(rows)),
+    },
+  ];
+
   /** Menú de cada fila: el mismo con «⋮» y con clic derecho (lo abre la lista). */
   protected readonly rowMenu = (item: T): MenuItem[] => this.buildMenuItems(item);
 
@@ -424,16 +422,6 @@ export class RepoListPageComponent<T extends RepoEntity> {
       });
     });
   }
-
-  /** Con varias marcadas, el clic derecho sobre una de ellas ofrece solo «Eliminar», con su cifra. */
-  protected readonly selectionMenu = (items: readonly T[]): MenuItem[] => [
-    {
-      label: this.translate.instant('common.delete'),
-      icon: 'sc-icon-font sc-icon-font--delete',
-      styleClass: 'sc-menu-item--danger',
-      command: () => void this.onBulkDelete(items),
-    },
-  ];
 
   private async onBulkDelete(items: readonly T[]): Promise<void> {
     const simple = this.config().simpleDelete;

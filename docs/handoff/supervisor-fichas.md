@@ -71,6 +71,18 @@ trampas propias): `git show fa98b4bf:docs/handoff/supervisor-fichas.md`.
 El de lo que falta como SISMAC-4058: el botón apagado, «Falta: …» en el resumen y el aviso en gris (2026-10-21,
 DD-219, sin trampas propias): `git show fdf913d4:docs/handoff/supervisor-fichas.md`.
 
+El del índice en la caja gris de Contact Center, con su interruptor para volver al plano (2026-10-21, DD-220 y DD-221, sin
+trampas propias): `git show archive/handoff-fichas-2026-10-26:docs/handoff/supervisor-fichas.md`.
+
+## ✅ 2026-10-26 · Eliminar varios en todas las tablas, sin barra de lote, y las congeladas al día (DD-227)
+
+> **Sello:** rama `areses/multiple-delete-ux-discussion-6ecde6` sobre `main` `9a90d5bd`.
+
+- **Tablas**: clic derecho sobre una marcada → «Eliminar» (`selectionMenu`) en Usuarios, Etiquetas, Plantillas,
+  Repositorios, Tipificaciones, Categorías y Reglas. Fuera la barra de lote de esas cinco (la edición masiva no se entregó);
+  su código (`bulkEntity`, `requestDeleteSelection`, edición de Usuarios) queda aparcado. Conversaciones conserva la suya.
+- **«⋮»**: con la fila entre varias marcadas abre el menú de la selección, «Eliminar (N)» (`common.delete_count`), como el clic derecho.
+
 ## ✅ 2026-10-23 · Agentes como sus borradores de COA, 4060 y 4062 (DD-225)
 
 > **Sello:** rama `areses/distracted-mclaren-9c96d2` sobre `main` `a0820c6b`, un PR (#511, fundido como `8f2056b7`).
@@ -132,24 +144,6 @@ DD-219, sin trampas propias): `git show fdf913d4:docs/handoff/supervisor-fichas.
 - `sc-list-page` reservaba el sitio de la barra de lote (`.table-card--seleccion`, 77 px) con solo haber algo marcado; Grupos y
   Agentes eligen para exportar y no montan barra, así que el borde de la tabla subía 77 px y quedaba un hueco. Ahora la clase
   sigue a `barraVisible` (`selectable` + `bulkEntity` + marcado o resultado de lote). Prueba: `listado-alto-al-marcar`.
-
-## ✅ 2026-10-21 · El índice, en la caja gris de Contact Center, con un interruptor para volver al plano (DD-220)
-
-> **Sello:** rama `areses/jovial-bohr-d10d27` sobre `main` `34f18f37` (ya con DD-219), el PR de §55 y §56. Tras
-> fundir, las congeladas 4058, 4062 y 4064 avanzan a ese commit (`docs/PROTOTIPOS.md`).
-
-- **Prototipo**: `SC_FORM_SECTION_NAV_CAJA` en `sc-form-section-nav`, encendido en `projects/supervisor/src/app/app.config.ts`.
-  Las seis pantallas con índice lo llevan en la caja de `2286:5368`. **Para volver al índice plano, se borra esa línea**
-  (se volverá a él más adelante: el plano no se pierde).
-- **Con la caja, carril de 235 (DD-221)**; sin ella, 196. Sin saltos de línea; filas blancas con radio 12 (píldora).
-- **Figma**: el ejemplo del DS (❖ Navmenu) y las fichas de Grupos y Agentes, con la caja; Contact Center ya la tenía.
-- **Pruebas**: tres en `sc-form-section-nav.component.spec.ts`; la de la caja enrojece si se quita la clase.
-- **«Eliminar»**: a 28 de la caja (sin la regla de `_page.scss` quedaban 19,25; lo cazó el e2e de `fichas-tres-columnas`).
-- **Figma contra el prototipo** (versión «Revisión final con el prototipo»): barra a 33, asignación en Small, 13
-  resúmenes publicados, hand-off hasta DD-220. Contact Center en Figma dice «Descartar cambios»; el prototipo, «Deshacer».
-- **Después, en Figma**: un hand-off por página (`3371:61554`, `3371:61797`), con sus cards de Jira; edición de grupo,
-  paso 05; `.Subsection` plegable (§54); los flujos que faltaban, toasts, empty states y hojas para desarrollo (§58);
-  cada hoja, a la izquierda de su flujo, con enlaces de ida y vuelta, y el índice de las fichas a 235 (DD-221).
 
 ## SIGUIENTE — sin preguntar
 

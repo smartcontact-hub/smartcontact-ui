@@ -42,11 +42,11 @@
   [(query)]="searchQuery"
   exportable
   [rowMenu]="rowMenu"
-  [selectionMenu]="config().simpleDelete ? selectionMenu : undefined"
+  [selectionMenu]="selectionMenu"
+  [selectionMenuFromRow]="!config().simpleDelete"
   [rowOpenable]="abreFila()"
   (rowOpen)="onRowOpen($event)"
   selectable
-  [bulkEntity]="bulkEntity()"
   [(selectedIds)]="selectedIds"
   tableTestId="repo-table"
   (exportRequest)="onExport($event)"
@@ -75,11 +75,6 @@
     }
   </div>
 
-  <ng-container ngProjectAs="[scListBulkActions]">
-    <sc-button type="button" size="sm" variant="danger" (clicked)="requestDeleteSelection()">
-      <span>{{ 'common.delete' | translate }}</span>
-    </sc-button>
-  </ng-container>
 </sc-list-page>
 
 <!-- UNA sola plantilla de celda para TODAS las columnas: `let-col="col"` dice
