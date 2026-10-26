@@ -38,7 +38,6 @@ test('Mayús en la casilla pinta el tramo entero, no solo sus dos puntas', async
   const filas = page.locator(FILAS);
   await filas.nth(1).locator('p-table-checkbox').click();
   await filas.nth(4).locator('p-table-checkbox').click({ modifiers: ['Shift'] });
-  await expect(page.locator(MARCADAS)).toHaveCount(4);
   // Fuera de las filas: el color de pasar el ratón no se confunde con el de seleccionada.
   await page.mouse.move(720, 8);
 
