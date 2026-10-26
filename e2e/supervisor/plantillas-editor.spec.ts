@@ -119,13 +119,31 @@ test('el editor no ofrece variables: la ayuda de `{agente}`, `{cliente}`… se f
   await expect(page.getByText('Variables:')).toHaveCount(0);
 });
 
-test('duplicar crea la copia con su nombre; «Acciones» trae importar y exportar', async ({ page }) => {
+test('duplicar abre «Nueva plantilla» con la copia («X (1)») sin crearla; «Acciones» trae importar y exportar (DD-231)', async ({ page }) => {
   await goto(page, 'admin/plantillas');
   const fila = page.locator('[data-testid="templates-table"] .p-datatable-tbody > tr', { hasText: 'Saludo inicial' });
   await fila.getByLabel('Más acciones').click();
   await page.getByRole('menuitem', { name: 'Duplicar' }).click();
-  await expect(page.locator('[data-testid="templates-table"] .p-datatable-tbody > tr', { hasText: 'Saludo inicial (copia)' })).toBeVisible();
+  await expect(page).toHaveURL(/\/admin\/plantillas\/crear\?seedFromId=\d+$/);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Saludo inicial (1)');
+  await expect(page.locator('#template-title')).toHaveValue('Saludo inicial (1)');
+  await expect(editor(page)).toContainText('soy {agente}');
+  // Todavía no existe; salir sin tocar nada no pregunta.
+  expect((await guardadas(page)).map((t) => t.title)).not.toContain('Saludo inicial (1)');
+  await page.getByRole('link', { name: 'Plantillas', exact: true }).first().click();
+  await expect(page).toHaveURL(/\/admin\/plantillas$/);
+  await expect(page.getByRole('alertdialog', { name: '¿Descartar cambios?' })).toHaveCount(0);
 
+  // «Crear plantilla» la crea, con el mismo canal y contenido.
+  await fila.getByLabel('Más acciones').click();
+  await page.getByRole('menuitem', { name: 'Duplicar' }).click();
+  await guardar(page).click();
+  await expect(page).toHaveURL(/\/admin\/plantillas\/editar\/\d+$/);
+  const copia = (await guardadas(page)).find((t) => t.title === 'Saludo inicial (1)');
+  expect(copia).toMatchObject({ type: 'chat' });
+  expect(copia?.body).toContain('soy {agente}');
+
+  await goto(page, 'admin/plantillas');
   await page.getByRole('button', { name: 'Acciones', exact: true }).click();
   await expect(page.getByRole('menuitem')).toHaveText(['Importar', 'Exportar']);
 });

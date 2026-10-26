@@ -26,10 +26,27 @@ test('Agendas: sin Estado, con Descripción, Agentes y Modificada', async ({ pag
   await expect(fila(page, 'Ventas Nacional').locator('sc-group-popover')).toHaveCount(0);
 });
 
-test('Agendas: «Duplicar» crea la copia con su nombre, sin salir de la lista', async ({ page }) => {
+test('Agendas: «Duplicar» abre «Nueva agenda» con la copia («X (1)»), que no existe hasta pulsar «Crear» (DD-231)', async ({ page }) => {
   await goto(page, 'admin/agendas');
   await fila(page, 'Soporte Premium').getByLabel('Más acciones').click();
   await page.getByRole('menuitem', { name: 'Duplicar' }).click();
-  await expect(fila(page, 'Soporte Premium (copia)')).toBeVisible();
+  await expect(page).toHaveURL(/\/admin\/agendas\/crear\?seedFromId=\d+$/);
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Soporte Premium (1)');
+  await expect(page.locator('#agenda-name')).toHaveValue('Soporte Premium (1)');
+  // Con los contactos del original, y todavía sin crear.
+  await expect(page.locator('sc-agenda-contacts-table .p-datatable-tbody > tr')).not.toHaveCount(0);
+  const guardadas = () => page.evaluate(() => (JSON.parse(localStorage.getItem('sc-agendas-repo') ?? '[]') as { name: string }[]).map((a) => a.name));
+  expect(await guardadas()).not.toContain('Soporte Premium (1)');
+  // Salir sin tocar nada no pregunta.
+  await page.getByRole('link', { name: 'Agendas', exact: true }).first().click();
   await expect(page).toHaveURL(/\/admin\/agendas$/);
+  await expect(page.getByRole('alertdialog', { name: '¿Descartar cambios?' })).toHaveCount(0);
+  expect(await guardadas()).not.toContain('Soporte Premium (1)');
+
+  // Crear la copia: existe, y duplicar la copia da «(2)», no «(1) (1)».
+  await fila(page, 'Soporte Premium').getByLabel('Más acciones').click();
+  await page.getByRole('menuitem', { name: 'Duplicar' }).click();
+  await page.locator('sc-top-bar').getByRole('button', { name: 'Crear agenda' }).click();
+  await expect(page).toHaveURL(/\/admin\/agendas\/editar\/\d+$/);
+  expect(await guardadas()).toContain('Soporte Premium (1)');
 });
