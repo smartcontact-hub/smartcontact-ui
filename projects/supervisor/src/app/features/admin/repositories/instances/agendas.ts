@@ -106,6 +106,8 @@ export class AgendasPageComponent {
     sheetNameKey: 'repositories.agendas.title',
     editRoute: '/admin/agendas',
     duplicable: true,
+    // Duplicar abre «Nueva agenda» rellena, como Grupos y Agentes: la agenda no existe hasta «Crear».
+    duplicateAsCreate: true,
     columnChoices: true,
     modifiedField: 'updatedAt',
   };

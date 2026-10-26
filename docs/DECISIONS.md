@@ -42,7 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
-> | Duplicar una agenda o una plantilla es un alta, como un grupo o un agente (enmienda DD-230): abre «Nueva agenda/plantilla» con la copia y su nombre «X (1)» (`seedFromId`, `nombreDeCopia`), que no existe hasta «Crear» · no copia a qué agentes se asigna | DD-232 |
+> | Duplicar una agenda o una plantilla es un alta, como un grupo o un agente (enmienda DD-230): abre «Nueva agenda/plantilla» con la copia y su nombre «X (1)» (`seedFromId`, `nombreDeCopia`), que no existe hasta «Crear» · no copia a qué agentes se asigna | DD-233 |
 > | Agendas y Plantillas como sus COA (SISMAC-4440 y 4438): se asignan SOLO a agentes, en una tabla plana de agentes con su columna «Grupos» (`sc-agent-assignment-table`), sin árbol ni grupos dinámicos (enmienda DD-211 §1) · el listado de Agendas con Descripción, Contactos y Agentes (cifra, sin globo) ordenables · Plantillas sin pestañas, con columna Canal · contactos con casillas y borrado múltiple (completa DD-227 en una tabla anidada) | DD-230 |
 > | El «+» de `sc-button` (`icon="add"`) es siempre redondo: círculo sin rótulo, píldora con él (enmienda DD-167 y DD-187) | DD-229 |
 > | Con el índice en la caja, el carril mide 235, el de la caja en Figma: ningún rótulo de las fichas salta de línea · sin la caja, 196 (enmienda DD-220) | DD-221 |
@@ -163,7 +163,7 @@
 
 ---
 
-## DD-232 · 2026-10-26 — Duplicar una agenda o una plantilla es un alta, como duplicar un grupo o un agente
+## DD-233 · 2026-10-26 — Duplicar una agenda o una plantilla es un alta, como duplicar un grupo o un agente
 
 **Contexto** · DD-230 dejó «Duplicar» en Agendas y Plantillas como estaba: la copia se creaba en el acto, con «X (copia)», y
 se quedaba en la lista. Grupos y Agentes ya duplican de otra manera (DD-218, DD-225): abren «Nuevo grupo» o «Nuevo agente»
@@ -174,8 +174,9 @@ siguiente nombre libre «X (1)» (`nombreDeCopia`: duplicar «X (1)» da «X (2)
 etiquetas de los campos personalizados; la plantilla, canal y contenido. **No se copia a qué agentes se asigna**: lo dicen
 los agentes, no la agenda ni la plantilla (en un grupo sí se copian sus agentes porque son parte de él). El elemento no
 existe hasta «Crear agenda» / «Crear plantilla»; la copia es el punto de partida, así que «Deshacer» vuelve a ella y salir
-sin tocar nada no pregunta ni deja nada. `RepoListPage.onRowDuplicate` navega al alta cuando la lista tiene editor propio
-(`editRoute`) y conserva la copia en el acto, con «(copia)», solo para una lista sin él (hoy ninguna).
+sin tocar nada no pregunta ni deja nada. `RepoListPage.onRowDuplicate` navega al alta cuando la lista lo pide con
+`duplicateAsCreate` (DD-232; Agendas lo activa, además de Equipos) y conserva la copia en el acto, con «(copia)», solo
+para una lista sin él (hoy ninguna). Enmienda DD-232, que dejaba Agendas copiando en la lista.
 
 **Razón** · Un solo gesto de duplicar en todo el producto, y sin crear en el acto algo que quizá no se quería y luego hay
 que borrar. Medido: `duplicable` solo lo usaba Agendas, y Plantillas tenía su propia copia en el acto.
@@ -187,6 +188,33 @@ que borrar. Medido: `duplicable` solo lo usaba Agendas, y Plantillas tenía su p
 **Consecuencias** · `copyName` y «Copia creada: …» se quedan solo para una lista sin editor propio. Pruebas:
 `agendas-listado.spec.ts` y `plantillas-editor.spec.ts` reescritas (URL de alta, nombre «(1)», no existe hasta crear,
 sin diálogo al salir, «(2)» al duplicar la copia).
+
+## DD-232 · 2026-10-26 — Duplicar tipificaciones y equipos abre un alta rellena, como Grupos y Agentes
+
+**Contexto** · Duplicar en Grupos (DD-218) y Agentes (DD-225) abre «Nuevo grupo» / «Nuevo agente» con la copia, y la entidad
+no existe hasta pulsar «Crear». Tipificaciones creaba la copia en la lista en el acto, con «(copia)», sin abrirla; Equipos
+no ofrecía Duplicar (el menú de fila de Figma decía «Sin "Duplicar"»).
+
+**Decisión** · «Duplicar» en el menú de fila de ambas listas navega al alta con `?seedFromId=:id`
+(`/admin/tipificaciones/crear`, `/admin/equipos/crear`). La ficha precarga la copia, como la de grupo: el nombre, «X (1)»
+(`nombreDeCopia`: el siguiente número libre; duplicar «X (1)» da «X (2)»); y todo lo demás tal cual: en la tipificación,
+descripción y árbol de categorías (copia profunda); en el equipo, descripción y agentes marcados. La copia es el punto de
+partida: «Deshacer» vuelve a ella y salir sin tocar nada no pregunta ni deja nada en la lista. Es un alta normal: el nombre
+no puede repetirse y cada rama necesita nombre. Un `seedFromId` que no existe vuelve a la lista. En `sc-repo-list-page`
+nace `duplicateAsCreate` (con `editRoute`): Equipos lo usa; Agendas y las demás listas sin editor propio siguen copiando
+en la lista.
+
+**Razón** · Un solo gesto de duplicar en el producto; la copia no deja basura si no se quería, y el usuario edita lo que
+quiera antes de crearla.
+
+**Descartadas** · Dejar Tipificaciones como estaba (copia en el acto): es lo que DD-217 §8 descartó para grupos, porque
+crea una copia que luego hay que borrar. Poner `duplicateAsCreate` en Agendas: su editor no lee `seedFromId`; queda para
+cuando producto lo pida.
+
+**Consecuencias** · Figma, páginas «Tipificaciones» y «Equipos»: listado con los pasos 12 («Nueva … con la copia, sin
+crear») y 13 («… recién creada»), el menú de Equipos con «Duplicar», y portadas, pasos del menú, hojas «Cómo se comporta»,
+índices y hand-off al día. E2E: `duplicar-tipificaciones-equipos.spec.ts`. `common.copy_suffix` sigue en uso (Agendas y
+demás listas).
 
 ## DD-231 · 2026-10-26 — Equipos borra como Grupos y Agentes, y el «⋮» sin excepciones en `sc-list-page`
 

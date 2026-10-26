@@ -26,7 +26,7 @@ test('Agendas: sin Estado, con Descripción, Agentes y Modificada', async ({ pag
   await expect(fila(page, 'Ventas Nacional').locator('sc-group-popover')).toHaveCount(0);
 });
 
-test('Agendas: «Duplicar» abre «Nueva agenda» con la copia («X (1)»), que no existe hasta pulsar «Crear» (DD-232)', async ({ page }) => {
+test('Agendas: «Duplicar» abre «Nueva agenda» con la copia («X (1)»), que no existe hasta pulsar «Crear» (DD-233)', async ({ page }) => {
   await goto(page, 'admin/agendas');
   await fila(page, 'Soporte Premium').getByLabel('Más acciones').click();
   await page.getByRole('menuitem', { name: 'Duplicar' }).click();

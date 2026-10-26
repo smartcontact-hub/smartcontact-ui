@@ -409,15 +409,11 @@ export class RepoListPageComponent<T extends RepoEntity> {
     this.creating.set(false);
   }
 
-  /**
-   * Duplicar. Con editor propio (`editRoute`) es un ALTA: abre «Nueva …» rellena con la copia y su nombre «X (1)», como
-   * duplicar un grupo o un agente (DD-218, DD-225): no existe hasta pulsar «Crear», y salir sin tocar nada no deja nada.
-   * Sin editor propio, la copia se crea en el acto con su nombre «X (copia)» y se queda en la lista.
-   */
+  /** La copia: los mismos datos y un nombre que no se repite. Con `duplicateAsCreate` abre el alta rellena; si no, se queda en la lista, sin abrirla. */
   protected onRowDuplicate(item: T): void {
     const base = this.config().editRoute;
-    if (base) {
-      void this.router.navigate([base, 'crear'], { queryParams: { seedFromId: item.id } });
+    if (base && this.config().duplicateAsCreate) {
+      void this.router.navigate([`${base}/crear`], { queryParams: { seedFromId: item.id } });
       return;
     }
     const { id: _id, ...resto } = item;

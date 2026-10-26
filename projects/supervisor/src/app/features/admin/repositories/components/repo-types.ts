@@ -90,6 +90,11 @@ export interface RepoPageConfig<T extends RepoEntity> {
   readonly editRoute?: string;
   /** Suma «Duplicar» al menú de la fila: la copia nace con un nombre que no se repite. */
   readonly duplicable?: boolean;
+  /**
+   * Con editor propio, Duplicar abre su ALTA rellena con la copia (`<editRoute>/crear?seedFromId=:id`), como Grupos y
+   * Agentes: la copia no existe hasta «Crear». Sin él, la copia se crea en la lista en el acto.
+   */
+  readonly duplicateAsCreate?: boolean;
   /** Suma el botón «Columnas» (elegir y ordenar): la primera columna va fija. Se guarda por `filePrefix`. */
   readonly columnChoices?: boolean;
   /** El campo (AAAA-MM-DD) que se pone a hoy al duplicar o guardar desde el panel de la lista. */

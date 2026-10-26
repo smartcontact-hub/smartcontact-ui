@@ -229,7 +229,7 @@ export class TemplatesPageComponent {
     void this.router.navigateByUrl(`/admin/plantillas/editar/${tpl.id}`);
   }
 
-  /** Duplicar es un alta (DD-232, como un grupo o un agente): abre «Nueva plantilla» con la copia, «X (1)»; no existe hasta «Crear». */
+  /** Duplicar es un alta (DD-233, como un grupo o un agente): abre «Nueva plantilla» con la copia, «X (1)»; no existe hasta «Crear». */
   protected duplicar(tpl: Template): void {
     void this.router.navigate(['/admin/plantillas/crear'], { queryParams: { seedFromId: tpl.id } });
   }

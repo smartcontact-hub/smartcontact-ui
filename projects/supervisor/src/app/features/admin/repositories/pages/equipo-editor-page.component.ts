@@ -20,6 +20,7 @@ import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { injectLangChange } from '@core/utils/lang-change';
 import { PresenceAvatarComponent } from '@shared/components';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
+import { nombreDeCopia } from '@shared/utils/copy-name';
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
 import type { Agent } from '@features/admin/agents/data/agents-data';
 
@@ -392,6 +393,23 @@ export class EquipoEditorPageComponent implements DirtyAware, OnInit {
   ngOnInit(): void {
     const raw = this.route.snapshot.paramMap.get('id');
     if (raw === null) {
+      // DUPLICAR es un alta rellena, como en Grupos y Agentes: «Francés (1)» con la descripción y los agentes del
+      // original. El equipo no existe hasta «Crear equipo»; la copia es el punto de partida («Deshacer» vuelve a ella y
+      // salir sin tocar nada no pregunta).
+      const seedFromId = this.route.snapshot.queryParamMap.get('seedFromId');
+      if (seedFromId) {
+        const origen = this.store.items().find((g) => g.id === Number(seedFromId));
+        if (!origen) {
+          void this.router.navigateByUrl('/admin/equipos', { replaceUrl: true });
+          return;
+        }
+        const ids = new Set(this.agentsStore.agents().filter((a) => a.teams?.includes(origen.id)).map((a) => a.id));
+        this.form.set({
+          name: nombreDeCopia(origen.name, this.store.items().map((g) => g.name)),
+          description: origen.description,
+          agentIds: ids,
+        });
+      }
       this.dirtyState.markPristine();
       return;
     }
