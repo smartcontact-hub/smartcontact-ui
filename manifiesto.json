@@ -1,8 +1,8 @@
 {
-  "commit": "aaa8e0fd",
+  "commit": "8e0db0d6",
   "primeng": "22.1.0",
   "themes": "3.0.2",
-  "generado": "2026-10-26T12:31:12.801Z",
+  "generado": "2026-10-26T14:44:50.349Z",
   "estilosTexto": [
     "display-regular",
     "display-semibold",
@@ -30,14 +30,9 @@
       "variables": [],
       "retirados": [],
       "semanticaComun": false,
-      "reglasCss": true,
+      "reglasCss": false,
       "componentes": [
-        "contextmenu",
-        "megamenu",
-        "menu",
-        "menubar",
-        "panelmenu",
-        "tieredmenu"
+        "toast"
       ],
       "guia": false
     },
@@ -50,5 +45,5 @@
     },
     "cambia": true
   },
-  "version": "0.20261026.1231"
+  "version": "0.20261026.1444"
 }

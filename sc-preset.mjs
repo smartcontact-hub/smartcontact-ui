@@ -823,7 +823,9 @@ var panel_default = {
 // projects/ui-smartcontact/src/lib/theme/sc-preset/toast.ts
 var toast_default = {
   icon: {
-    size: "var(--sc-cmp-toast-icon-size)"
+    size: "var(--sc-cmp-toast-icon-size)",
+    /* El icono se centra en la línea del título, no en el bloque de texto (hueco `icon-slot` 14×20 del master). */
+    margin: "calc((var(--sc-line-height-200) - var(--sc-cmp-toast-icon-size)) / 2) 0 0"
   },
   info: {
     shadow: "var(--sc-cmp-toast-info-shadow)",
