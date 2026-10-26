@@ -1512,8 +1512,7 @@
         "name": "Nome",
         "description": "Descrição",
         "levels": "Níveis",
-        "groups": "Grupos",
-        "id": "ID"
+        "groups": "Grupos"
       },
       "levels_count": "{{count}} níveis",
       "levels_count_one": "1 nível",
@@ -1609,11 +1608,11 @@
       "used_in": "em {{count}} grupos",
       "used_in_one": "em 1 grupo",
       "add_category": "Adicionar categoria",
-      "in_use_one": "Usada pelo grupo {{groups}}. Ao eliminá-la, esse grupo deixa de tipificar até você escolher outra.",
-      "in_use": "Usada por {{count}} grupos: {{groups}}. Ao eliminá-la, deixam de tipificar até você escolher outra.",
-      "in_use_bulk_one": "Usadas pelo grupo {{groups}}. Ao eliminá-las, esse grupo deixa de tipificar até você escolher outra.",
-      "in_use_bulk": "Usadas por {{count}} grupos: {{groups}}. Ao eliminá-las, deixam de tipificar até você escolher outra.",
-      "and_more": "mais {{count}}",
+      "in_use_one": "Usada por 1 grupo.",
+      "in_use": "Usada por {{count}} grupos.",
+      "delete_dialog": {
+        "title_bulk": "Eliminar {{count}} tipificações?"
+      },
       "add_subcategory": "Adicionar subcategoria"
     },
     "variables": {

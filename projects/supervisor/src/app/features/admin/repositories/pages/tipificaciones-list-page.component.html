@@ -21,7 +21,7 @@
   [rowMenu]="rowMenu"
   rowOpenable
   selectable
-  [bulkEntity]="bulkEntity()"
+  [selectionMenu]="selectionMenu"
   [(selectedIds)]="selectedIds"
   tableTestId="tipificaciones-table"
   (rowOpen)="onRowOpen($event)"
@@ -36,12 +36,6 @@
     ctaKey="repositories.tipificaciones.create_title"
     (cta)="onCreateClick()"
   />
-
-  <ng-container ngProjectAs="[scListBulkActions]">
-    <sc-button type="button" size="sm" variant="danger" (clicked)="requestDeleteSelection()">
-      <span>{{ 'common.delete' | translate }}</span>
-    </sc-button>
-  </ng-container>
 </sc-list-page>
 
 <ng-template #nameTpl let-t>
@@ -70,20 +64,16 @@
   />
 </ng-template>
 
-<ng-template #idTpl let-t>
-  <span class="table__cell sc-text-body-regular">{{ t.id }}</span>
-</ng-template>
-
+<!-- Eliminar desde «⋮» o desde la ficha: solo esa, aunque haya más marcadas. Varias a la vez, con el clic derecho sobre una marcada (`selectionMenu`). -->
 <sc-delete-entity-dialog
   [visible]="!!deleteTarget()"
-  [mode]="(deleteTarget()?.length ?? 0) === 1 ? 'single' : 'bulk'"
+  mode="single"
   [items]="deleteItems()"
   [entitySingular]="'repositories.tipificaciones.singular' | translate"
   [entityPlural]="'repositories.tipificaciones.plural' | translate"
   [singleDetailMessage]="avisoDeUso()"
-  [bulkFooterMessage]="avisoDeUso()"
   (cancelled)="deleteTarget.set(null)"
-  (confirm)="confirmDelete($event)"
+  (confirm)="confirmDelete()"
 />
 
 <!-- Importar de un CSV, como las agendas (DD-166): la plantilla, el archivo y, antes de crear nada, qué entra y qué no. -->

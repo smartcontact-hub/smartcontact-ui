@@ -399,7 +399,7 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit {
   protected readonly avisoDeUso = computed(() => {
     this.lang();
     const id = this.editingId();
-    return id === null ? null : this.uso.aviso(new Set([id]));
+    return id === null ? null : this.uso.aviso(id);
   });
 
   protected confirmDelete(): void {

@@ -1512,8 +1512,7 @@
         "name": "Name",
         "description": "Description",
         "levels": "Levels",
-        "groups": "Groups",
-        "id": "ID"
+        "groups": "Groups"
       },
       "levels_count": "{{count}} levels",
       "levels_count_one": "1 level",
@@ -1609,11 +1608,11 @@
       "used_in": "in {{count}} groups",
       "used_in_one": "in 1 group",
       "add_category": "Add category",
-      "in_use_one": "Used by the group {{groups}}. If you delete it, that group stops classifying until you choose another one.",
-      "in_use": "Used by {{count}} groups: {{groups}}. If you delete it, they stop classifying until you choose another one.",
-      "in_use_bulk_one": "Used by the group {{groups}}. If you delete them, that group stops classifying until you choose another one.",
-      "in_use_bulk": "Used by {{count}} groups: {{groups}}. If you delete them, they stop classifying until you choose another one.",
-      "and_more": "{{count}} more",
+      "in_use_one": "Used by 1 group.",
+      "in_use": "Used by {{count}} groups.",
+      "delete_dialog": {
+        "title_bulk": "Delete {{count}} typifications?"
+      },
       "add_subcategory": "Add subcategory"
     },
     "variables": {
