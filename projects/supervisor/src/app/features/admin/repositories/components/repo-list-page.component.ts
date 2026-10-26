@@ -176,11 +176,20 @@ export class RepoListPageComponent<T extends RepoEntity> {
       width: c.width,
       /* La columna del nombre es la cabecera de su fila también con ancho propio (Intenciones, Reglas IA…), DD-194. */
       rowHeader: c.emphasis,
+      sortable: c.sortable,
       // El estado se pinta con su etiqueta: mientras carga, su píldora.
       skeleton: c.kind === 'status' ? 'tag' : undefined,
       cellTemplate: cell,
     }));
   });
+
+  /** El orden de una cabecera: la cifra por su valor, la fecha (AAAA-MM-DD) por su texto y lo demás por su letra. */
+  protected readonly sortFn = (a: T, b: T, field: string): number => {
+    const column = this.config().columns.find((c) => c.key === field);
+    if (!column) return 0;
+    const [x, y] = [column.accessor(a), column.accessor(b)];
+    return column.kind === 'count' ? Number(x) - Number(y) : x.localeCompare(y, this.language.locale(), { numeric: true });
+  };
 
   /** Las columnas que se pueden elegir y ordenar (solo si la pantalla lo pide): la primera, fija. */
   protected readonly columnDefs = computed<readonly ColumnDef[] | undefined>(() => {
@@ -235,10 +244,13 @@ export class RepoListPageComponent<T extends RepoEntity> {
     return !!this.config().columns.find((c) => c.key === key)?.emptyAsZero;
   }
 
-  /** ¿La celda no tiene dato y su columna pide el guion? */
+  /** ¿La celda no tiene dato y su columna pide el guion? En una cifra (`count`), el 0 lo es. */
   protected showDash(item: T, key: string): boolean {
     const column = this.config().columns.find((c) => c.key === key);
-    return !!column?.emptyDash && column.accessor(item).trim() === '';
+    if (!column?.emptyDash) return false;
+    const valor = column.accessor(item).trim();
+    // Una cifra en 0 también es «sin dato» (Agendas: sin contactos, sin agentes).
+    return valor === '' || (column.kind === 'count' && Number(valor) === 0);
   }
 
   protected groupsAria(count: number, key: string): string {

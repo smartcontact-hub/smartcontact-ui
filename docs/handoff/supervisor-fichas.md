@@ -74,6 +74,20 @@ DD-219, sin trampas propias): `git show fdf913d4:docs/handoff/supervisor-fichas.
 El del índice en la caja gris de Contact Center, con su interruptor para volver al plano (2026-10-21, DD-220 y DD-221, sin
 trampas propias): `git show archive/handoff-fichas-2026-10-26:docs/handoff/supervisor-fichas.md`.
 
+El de marcar una casilla de Grupos o Agentes sin acortar la tabla (2026-10-21, fallo de DD-215, sin trampas propias): `git show 5a04de14:docs/handoff/supervisor-fichas.md`.
+
+## ✅ 2026-10-26 · Agendas y Plantillas como sus COA: solo a agentes, en una tabla con sus grupos (DD-230)
+
+> **Sello:** rama `areses/plantillas-agendas-feedback-b6bf8f` sobre `main` HEAD `5a04de14`.
+
+- **`sc-agent-assignment-table`** (nuevo) sustituye al árbol de agendas y al multiselect de plantillas: casilla, nombre,
+  email y grupos; la cabecera marca los visibles y lo oculto por el filtro se conserva. Guarda en `Agent.schedules` /
+  `Agent.templates`; `Group.*` no se toca. Fuera `agenda-asignacion.core.mjs`.
+- **Listados**: Agendas con Descripción y Agentes (cifra, «—» en 0), todo ordenable (`sortable` + `sortFn` en `RepoListPage`);
+  Plantillas sin pestañas, con columna Canal. Contactos con casillas y borrado múltiple (confirmación simple, como Reglas).
+- **Para Rafa, en el COA**: sumar «Duplicar», las pestañas como columna Canal, y Crear siempre activo (DD-217). **Trampa**: en el e2e, Nombre es un `th` (`rowHeader`): el `td` de «Agentes» es el 3, no el 4. **Pendiente de producto**: la
+  ficha de grupo sigue asignando Agendas y Plantillas al grupo (Recursos).
+
 ## ✅ 2026-10-26 · Eliminar varios en todas las tablas, sin barra de lote, y las congeladas al día (DD-227)
 
 > **Sello:** rama `areses/multiple-delete-ux-discussion-6ecde6` sobre `main` `9a90d5bd`.
@@ -136,14 +150,6 @@ trampas propias): `git show archive/handoff-fichas-2026-10-26:docs/handoff/super
 - **Sin hacer entonces**: «Editar en Repositorios» del modal de la tipificación ofrecía descartar con cambios, y
   «Gestionar en Repositorios», guardar (resuelto en DD-224). Y la rueda del MiniAdmin (entrar a la edición desde la monitorización
   de cada grupo, solo administradores): el prototipo no tiene esa pantalla; va como nota en Figma (§61).
-
-## ✅ 2026-10-21 · Marcar una casilla de Grupos o Agentes ya no acorta la tabla (fallo de DD-215)
-
-> **Sello:** rama `areses/pensive-bohr-53312b` sobre `main` HEAD `c2908643`, un PR. Sin DD nueva.
-
-- `sc-list-page` reservaba el sitio de la barra de lote (`.table-card--seleccion`, 77 px) con solo haber algo marcado; Grupos y
-  Agentes eligen para exportar y no montan barra, así que el borde de la tabla subía 77 px y quedaba un hueco. Ahora la clase
-  sigue a `barraVisible` (`selectable` + `bulkEntity` + marcado o resultado de lote). Prueba: `listado-alto-al-marcar`.
 
 ## SIGUIENTE — sin preguntar
 

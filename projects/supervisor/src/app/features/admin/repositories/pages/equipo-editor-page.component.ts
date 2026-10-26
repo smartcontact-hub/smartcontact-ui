@@ -83,7 +83,7 @@ const VACIO: Borrador = { name: '', description: '', agentIds: new Set() };
 
 
         <div class="editor">
-          <sc-section-card titleKey="repositories.agendas.section_general" icon="group_work">
+          <sc-section-card titleKey="repositories.agendas.section_general" icon="tune">
             <sc-subsection>
               <div class="grid grid--2">
                 <!-- La etiqueta de las fichas (12/600, DD-122 §4), no la del componente. -->

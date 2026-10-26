@@ -1,0 +1,75 @@
+<div class="asignacion">
+  <div class="asignacion__bar">
+    <sc-search
+      class="asignacion__search"
+      [placeholder]="'repositories.agent_assignment.search' | translate"
+      [clearAriaLabel]="'labels.clear_search' | translate"
+      [value]="query()"
+      (valueChange)="query.set($event)"
+    />
+    <sc-selectbutton
+      [options]="filterOptions()"
+      optionValue="value"
+      [allowEmpty]="false"
+      [value]="filter()"
+      (valueChange)="filter.set($any($event))"
+      [ariaLabel]="'repositories.agent_assignment.filter_aria' | translate"
+    />
+  </div>
+
+  <div class="table-card">
+    <sc-datatable
+      variant="list"
+      scrollable
+      scrollHeight="var(--sc-spacing-25)"
+      dataKey="id"
+      [value]="visibles()"
+      [columns]="columns()"
+      selectionMode="multiple"
+      [selection]="seleccion()"
+      (selectionChange)="onSelection($any($event))"
+      [rowSelectionAriaLabel]="rowAria"
+      [selectAllAriaLabel]="selectAllAria()"
+    >
+      <div scTableEmpty>
+        @if (query() || filter() === 'assigned') {
+          <sc-empty-state
+            icon="search_off"
+            titleKey="labels.no_results.title"
+            [bodyKey]="filter() === 'assigned' && !query() ? 'repositories.agent_assignment.none_assigned' : 'repositories.agent_assignment.no_results'"
+            [params]="{ query: query() }"
+            ctaKey="labels.clear_search"
+            ctaIcon="close"
+            (cta)="query.set(''); filter.set('all')"
+          />
+        } @else {
+          <sc-empty-state icon="headphones" titleKey="repositories.agent_assignment.empty" />
+        }
+      </div>
+    </sc-datatable>
+  </div>
+</div>
+
+<!-- Celdas propias. Fuera del `<sc-datatable>` para que `viewChild` las resuelva. -->
+<ng-template #nameTpl let-row>
+  <span class="asignacion__nombre">
+    <sc-presence-avatar [name]="row.name" [photo]="row.photo" [size]="24" />
+    <span class="asignacion__nombre-texto sc-text-body-semibold" [pTooltip]="row.name" showOnEllipsis tooltipPosition="top">{{ row.name }}</span>
+  </span>
+</ng-template>
+
+<ng-template #emailTpl let-row>
+  @if (row.email) {
+    <span class="asignacion__texto" [pTooltip]="row.email" showOnEllipsis tooltipPosition="top">{{ row.email }}</span>
+  } @else {
+    <sc-celda-vacia />
+  }
+</ng-template>
+
+<ng-template #groupsTpl let-row>
+  @if (row.grupos.length) {
+    <span class="asignacion__texto" [pTooltip]="gruposTexto(row)" showOnEllipsis tooltipPosition="top">{{ gruposTexto(row) }}</span>
+  } @else {
+    <sc-celda-vacia />
+  }
+</ng-template>

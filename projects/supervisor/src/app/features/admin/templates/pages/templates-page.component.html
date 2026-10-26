@@ -11,13 +11,14 @@
      Plantillas: las pestañas, columnas y celdas, acciones y diálogos. La fila abre su editor, en su propia página. -->
 <sc-list-page
   [heading]="'templates.breadcrumb' | translate"
-  [rows]="tabRows()"
+  [rows]="rows()"
   [empty]="templates().length === 0"
   [columns]="columns()"
   [columnChoices]="columnDefs()"
   [columnStorageKey]="columnPrefKey"
   [searchPlaceholder]="'templates.search_placeholder' | translate"
   [searchFn]="matchesSearch"
+  [sortFn]="sortFn"
   [(query)]="searchQuery"
   [rowMenu]="rowMenu"
   [selectionMenu]="selectionMenu"
@@ -31,18 +32,8 @@
   [rowLabel]="rowLabel"
   [(selectedIds)]="selectedIds"
   [noResultsKey]="searchQuery() ? 'templates.no_results.text_with_query' : 'templates.no_results.text'"
-  [noResultsParams]="{ tab: ('templates.type.' + activeTab()) | translate }"
   tableTestId="templates-table"
 >
-  <sc-tabs
-    scListBeforeToolbar
-    class="tabs"
-    [ariaLabel]="'templates.form.channel' | translate"
-    [tabs]="tabs()"
-    [value]="activeTab()"
-    (valueChange)="onTabChange($event)"
-  />
-
   <sc-empty-state
     scListEmpty
     [icon]="fileStackIcon"
@@ -60,17 +51,24 @@
   <span class="table__title-text sc-text-body-semibold">{{ tpl.title }}</span>
 </ng-template>
 
+<ng-template #typeTpl let-tpl>
+  <span class="sc-text-body-regular">{{ canal(tpl) }}</span>
+</ng-template>
+
 <ng-template #bodyTpl let-tpl>
   <span class="table__body-text sc-text-body-regular" [pTooltip]="plainBody(tpl)" showOnEllipsis tooltipPosition="top">{{ plainBody(tpl) }}</span>
 </ng-template>
 
-<ng-template #groupsTpl let-tpl>
-  @let grupos = groupsOf(tpl);
-  <sc-group-popover display="adaptive" [groups]="grupos" [countAriaLabel]="groupsAria(grupos.length)" />
+<ng-template #agentsTpl let-tpl>
+  @if (agentCount(tpl); as n) {
+    <span class="sc-text-body-regular">{{ n }}</span>
+  } @else {
+    <sc-celda-vacia />
+  }
 </ng-template>
 
 <ng-template #updatedTpl let-tpl>
-  <span class="table__updated-text sc-text-caption-regular">{{ tpl.updatedAt }}</span>
+  <span class="table__updated-text sc-text-caption-regular">{{ fecha(tpl) }}</span>
 </ng-template>
 
 <sc-delete-entity-dialog
