@@ -182,18 +182,20 @@ test.describe('sc-button', () => {
     await expect(botones).toHaveCount(40);
     expect(await botones.evaluateAll((bs) => bs.filter((b) => !b.getAttribute('aria-label')).length), 'sin nombre').toBe(0);
 
-    // El «+» de añadir (DD-187, que corrige DD-167): el secundario relleno del Kit, a la talla de su campo. Rima con él:
+    // El «+» de añadir (DD-187, DD-229): el secundario relleno del Kit y redondo, a la talla de su campo. Rima con él:
     // mediano junto a un select mediano y pequeño junto a uno pequeño, los dos del mismo alto que su campo.
     for (const [id, talla, ancho] of [['sc-btn-crear', 'md', 'button.root.iconOnlyWidth'], ['sc-btn-crear-sm', 'sm', 'button.root.sm.iconOnlyWidth']] as const) {
       const mas = page.getByTestId(id).getByRole('button', { name: 'Nueva agenda' });
       const clases = await mas.evaluate((el) => [...el.classList]);
       expect(clases.includes('p-button-icon-only') && clases.includes('p-button-secondary'), `${talla}: solo icono y en gris`).toBe(true);
       expect(clases.includes('p-button-sm'), `${talla}: su talla`).toBe(talla === 'sm');
-      expect(['p-button-rounded', 'p-button-outlined'].filter((c) => clases.includes(c)), 'ni redondo ni con borde').toEqual([]);
+      expect(clases.includes('p-button-rounded'), 'el «+» es redondo (DD-229)').toBe(true);
+      expect(clases.includes('p-button-outlined'), 'sin borde').toBe(false);
       const caja = (await mas.boundingBox())!;
       expect(caja.width, `${talla}: el ancho del solo icono del Kit`).toBeCloseTo(parseFloat(kitPx(ancho)), 1);
       const campo = (await page.getByTestId(id).locator('xpath=..').locator('.p-select').boundingBox())!;
-      expect(caja.height, `${talla}: tan alto como su campo`).toBeCloseTo(campo.height, 1);
+      // Redondo, PrimeNG iguala el alto al ancho del Kit: un círculo de 31,5 junto a un campo de 32,5 (DD-167, DD-229).
+      expect(Math.abs(caja.height - campo.height), `${talla}: a menos de 1,5 px de su campo`).toBeLessThanOrEqual(1.5);
     }
   });
 });
