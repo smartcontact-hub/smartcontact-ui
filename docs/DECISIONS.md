@@ -42,8 +42,9 @@
 >
 > | Tema | DD |
 > |---|---|
-> | Agendas y Plantillas como sus COA (SISMAC-4440 y 4438): se asignan SOLO a agentes, en una tabla plana de agentes con su columna «Grupos» (`sc-agent-assignment-table`), sin árbol ni grupos dinámicos (enmienda DD-211 §1) · el listado de Agendas con Descripción, Contactos y Agentes (cifra, sin globo) ordenables · Plantillas sin pestañas, con columna Canal · contactos con casillas y borrado múltiple (completa DD-227 en una tabla anidada) | DD-229 |
-| Con el índice en la caja, el carril mide 235, el de la caja en Figma: ningún rótulo de las fichas salta de línea · sin la caja, 196 (enmienda DD-220) | DD-221 |
+> | Agendas y Plantillas como sus COA (SISMAC-4440 y 4438): se asignan SOLO a agentes, en una tabla plana de agentes con su columna «Grupos» (`sc-agent-assignment-table`), sin árbol ni grupos dinámicos (enmienda DD-211 §1) · el listado de Agendas con Descripción, Contactos y Agentes (cifra, sin globo) ordenables · Plantillas sin pestañas, con columna Canal · contactos con casillas y borrado múltiple (completa DD-227 en una tabla anidada) | DD-230 |
+> | El «+» de `sc-button` (`icon="add"`) es siempre redondo: círculo sin rótulo, píldora con él (enmienda DD-167 y DD-187) | DD-229 |
+> | Con el índice en la caja, el carril mide 235, el de la caja en Figma: ningún rótulo de las fichas salta de línea · sin la caja, 196 (enmienda DD-220) | DD-221 |
 > | El índice de secciones, en la caja gris de Contact Center en las seis pantallas que lo llevan (Contact Center, fichas de grupo, agente y usuario, tipificación y constructor de reglas), como en Figma: un solo interruptor de la app (`SC_FORM_SECTION_NAV_CAJA`), y volver al índice plano es borrar su línea | DD-220 |
 > | Lo que falta, como SISMAC-4058: «Crear» y «Guardar» apagados mientras falte algo, con «Falta: …» o «Listo para crear» arriba del resumen (cada cosa a su campo) y el motivo en el tooltip · el aviso bajo el campo en gris desde el principio y en rojo al dejarlo vacío · el índice no se pone rojo por lo tocado · en grupo, agente, usuario y tipificación (enmienda DD-217 §1 y §4; vuelve DD-136) | DD-219 |
 > | Grupos como sus páginas de COA (SISMAC-4056 y 4058): la cifra de agentes lleva a la ficha · duplicar es un alta · con varios marcados, el clic derecho solo elimina · Servicios y Agentes de mayor a menor al primer clic (`defaultSortOrder`) · la miga dice el nombre · «Agentes asignados» sin estado ni filtro, ordenable por nombre (`headerTemplate`), el nivel en desplegable y Habilitado bloqueado con «Activación por grupo» · confirmar dice qué, a cuántos y con su verbo (enmienda DD-121, DD-151, DD-159 §1, DD-185 §7 y §8, DD-187 §4, DD-204 §6, DD-215 §1 y §2 y DD-217 §8) | DD-218 |
@@ -161,7 +162,7 @@
 
 ---
 
-## DD-229 · 2026-10-26 — Agendas y Plantillas como sus COA: se asignan solo a agentes, en una tabla con sus grupos; Plantillas sin pestañas
+## DD-230 · 2026-10-26 — Agendas y Plantillas como sus COA: se asignan solo a agentes, en una tabla con sus grupos; Plantillas sin pestañas
 
 **Contexto** · Revisión con producto del 2026-10-26 de «SOLUCIÓN SISMAC-4440 Agendas» y «SOLUCIÓN SISMAC-4438 Plantillas»
 (v0.1, 2026-10-22). Una agenda se asignaba con un árbol Grupo → Agentes con grupos enteros dinámicos (DD-211 §1) y una
@@ -207,6 +208,20 @@ de grupos y variables de la plantilla. Las columnas guardadas de Plantillas pasa
 agenda o plantilla que un grupo tenía asignado entero ya no cuenta en «Agentes» (solo cuentan los agentes con ella). Pruebas:
 `agenda-agentes.spec.ts` reescrita; ajustadas `plantillas-editor`, `agendas-listado`, `admin-datatable-pilot`,
 `cabecera-escalera`, `tablas-revision-1015` y `tabla-al-pie`.
+
+## DD-229 · 2026-10-26 — El «+» de `sc-button` es siempre redondo: círculo sin rótulo, píldora con él
+
+**Contexto** · En el prototipo los botones con «+» (`icon="add"`) salían con la esquina del botón normal; solo los que
+alguien marcaba con `rounded` eran redondos. DD-167 pedía el «+» redondo; DD-187 lo dejó con la forma del botón entero del Kit.
+
+**Decisión** · `sc-button` con `icon="add"` es redondo siempre (`isRounded`): círculo si es de solo icono, píldora si lleva
+rótulo («Nueva cuenta de correo», «Añadir contacto»…). Sin propiedad nueva: el icono manda. Revisión de producto del 2026-10-26.
+
+**Razón** · Un «+» que cambia de forma según la pantalla se lee como dos componentes. Medido en Repositorios › Email:
+`border-radius` 28 px en los dos botones «Nueva …».
+
+**Consecuencias** · Cambia la forma de todos los «+» de las apps con `sc-button`; el de solo icono es un círculo de 31,5 junto a un campo de 32,5 (1 px menos, como ya medía DD-167); los de PrimeNG nativo no se tocan.
+Precisa DD-167 y DD-187 §«+».
 
 ## DD-228 · 2026-10-26 — En los menús, el icono lleva siempre el color de su texto, también con el ratón encima
 

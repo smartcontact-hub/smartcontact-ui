@@ -76,7 +76,7 @@ trampas propias): `git show archive/handoff-fichas-2026-10-26:docs/handoff/super
 
 El de marcar una casilla de Grupos o Agentes sin acortar la tabla (2026-10-21, fallo de DD-215, sin trampas propias): `git show 5a04de14:docs/handoff/supervisor-fichas.md`.
 
-## ✅ 2026-10-26 · Agendas y Plantillas como sus COA: solo a agentes, en una tabla con sus grupos (DD-229)
+## ✅ 2026-10-26 · Agendas y Plantillas como sus COA: solo a agentes, en una tabla con sus grupos (DD-230)
 
 > **Sello:** rama `areses/plantillas-agendas-feedback-b6bf8f` sobre `main` HEAD `5a04de14`.
 
