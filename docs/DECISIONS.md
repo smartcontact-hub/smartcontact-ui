@@ -160,6 +160,24 @@
 
 ---
 
+## DD-227 · 2026-10-26 — Eliminar varios, en todas las tablas: el clic derecho sobre una fila marcada ofrece «Eliminar» con su cifra
+
+**Contexto** · Grupos (DD-218) y Agentes (DD-225) borran varios con el clic derecho sobre una fila marcada. Las demás
+tablas de borrado no: unas tenían la barra de lote (Usuarios, Etiquetas, Plantillas, Repositorios, Tipificaciones) y las
+de Memory (Categorías, Reglas) ni casillas.
+
+**Decisión** · Todas las tablas de `sc-list-page` que borran filas pasan por el mismo gesto: marcar y clic derecho sobre
+una marcada abre un menú con solo «Eliminar» (`selectionMenu`). Las cinco con barra de lote lo conectan a su diálogo de
+siempre (`deleteTarget`), así que la barra y el menú son dos puertas a la misma confirmación. Categorías y Reglas ganan
+casillas (`selectable`, sin barra de lote) y la confirmación simple con su cifra («¿Eliminar 3 reglas?»).
+
+**Razón** · Un gesto, una confirmación y un toast iguales en todo el producto; lo que ya borraba varios no cambia.
+
+**Fuera** · Entidades (`sc-datatable` suelto, sin `sc-list-page`) y las tablas anidadas en fichas (contactos de agenda,
+niveles de tipificación, Emails): se tocan si producto lo pide.
+
+**Consecuencias** · `i18n`: `memory.{rules,categories}.delete_title_bulk` y `deleted_bulk_toast` en los cuatro idiomas.
+
 ## DD-226 · 2026-10-23 — Post-conversando, en la etiqueta azul sin borde: la misma pieza que las demás de la columna Estado
 
 **Contexto** · DD-225 §3 pintó Post-conversando con el `tag` Info, la severidad que le da Figma, para separarlo de

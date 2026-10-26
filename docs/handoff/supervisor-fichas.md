@@ -71,6 +71,15 @@ trampas propias): `git show fa98b4bf:docs/handoff/supervisor-fichas.md`.
 El de lo que falta como SISMAC-4058: el botón apagado, «Falta: …» en el resumen y el aviso en gris (2026-10-21,
 DD-219, sin trampas propias): `git show fdf913d4:docs/handoff/supervisor-fichas.md`.
 
+## ✅ 2026-10-26 · Eliminar varios en todas las tablas y las congeladas al día (DD-227)
+
+> **Sello:** rama `areses/multiple-delete-ux-discussion-6ecde6` sobre `main` `9a90d5bd`.
+
+- **Tablas**: `selectionMenu` con «Eliminar» en Usuarios, Etiquetas, Plantillas, Repositorios y Tipificaciones (a su
+  `deleteTarget`); Categorías y Reglas con casillas y `confirmDeleteMany`. Fuera: Entidades y las tablas anidadas.
+- **Abierto**: el «⋮» de una fila marcada borra solo esa fila y el clic derecho borra la selección; se propuso que el «⋮»
+  siga la misma regla (si la fila está marcada, el menú es el de la selección).
+
 ## ✅ 2026-10-23 · Agentes como sus borradores de COA, 4060 y 4062 (DD-225)
 
 > **Sello:** rama `areses/distracted-mclaren-9c96d2` sobre `main` `a0820c6b`, un PR (#511, fundido como `8f2056b7`).

@@ -141,6 +141,19 @@ export class RulesPageComponent {
   });
 
   /** Menú de cada fila: el mismo con «⋮» y con clic derecho (lo abre la lista). */
+  /** Filas marcadas: la lista las pinta; sin barra de lote, borrar varios va por el clic derecho sobre una marcada. */
+  protected readonly selectedIds = signal<ReadonlySet<number>>(new Set());
+
+  /** Con varios marcados, el clic derecho sobre uno de ellos ofrece solo «Eliminar» (la misma regla que Grupos y Agentes). */
+  protected readonly selectionMenu = (rows: readonly Rule[]): MenuItem[] => [
+    {
+      label: this.translate.instant('common.delete'),
+      icon: 'sc-icon-font sc-icon-font--delete',
+      styleClass: 'sc-menu-item--danger',
+      command: () => void this.confirmDeleteMany(rows),
+    },
+  ];
+
   protected readonly rowMenu = (rule: Rule): MenuItem[] => this.buildMenuItems(rule);
 
   protected readonly settingsIcon = 'tune';
@@ -267,5 +280,19 @@ export class RulesPageComponent {
     if (!accepted) return;
     this.rulesStore.deleteRule(rule.id);
     this.resultado.contar(this.translate.instant('memory.rules.deleted_toast', { name: rule.name }));
+  }
+
+  private async confirmDeleteMany(rows: readonly Rule[]): Promise<void> {
+    const accepted = await this.confirm.request({
+      title: this.translate.instant('memory.rules.delete_title_bulk', { count: rows.length }),
+      body: this.translate.instant('common.delete_dialog.body'),
+      acceptLabel: this.translate.instant('common.delete'),
+      rejectLabel: this.translate.instant('common.cancel'),
+      acceptTone: 'danger',
+    });
+    if (!accepted) return;
+    for (const row of rows) this.rulesStore.deleteRule(row.id);
+    this.selectedIds.set(new Set());
+    this.resultado.contar(this.translate.instant('memory.rules.deleted_bulk_toast', { count: rows.length }));
   }
 }

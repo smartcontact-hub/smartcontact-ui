@@ -155,6 +155,19 @@ export class CategoriesPageComponent {
     cat.isActive ? undefined : 'categories-row--inactive';
 
   /** Menú de cada fila: el mismo con «⋮» y con clic derecho (lo abre la lista). */
+  /** Filas marcadas: la lista las pinta; sin barra de lote, borrar varios va por el clic derecho sobre una marcada. */
+  protected readonly selectedIds = signal<ReadonlySet<string>>(new Set());
+
+  /** Con varios marcados, el clic derecho sobre uno de ellos ofrece solo «Eliminar» (la misma regla que Grupos y Agentes). */
+  protected readonly selectionMenu = (rows: readonly Category[]): MenuItem[] => [
+    {
+      label: this.translate.instant('common.delete'),
+      icon: 'sc-icon-font sc-icon-font--delete',
+      styleClass: 'sc-menu-item--danger',
+      command: () => void this.confirmDeleteMany(rows),
+    },
+  ];
+
   protected readonly rowMenu = (cat: Category): MenuItem[] => this.buildMenuItems(cat);
 
   protected buildMenuItems(cat: Category): MenuItem[] {
@@ -237,5 +250,19 @@ export class CategoriesPageComponent {
     if (!accepted) return;
     this.categoriesStore.deleteCategory(cat.id);
     this.resultado.contar(this.translate.instant('memory.categories.deleted_toast', { name: cat.name }));
+  }
+
+  private async confirmDeleteMany(rows: readonly Category[]): Promise<void> {
+    const accepted = await this.confirm.request({
+      title: this.translate.instant('memory.categories.delete_title_bulk', { count: rows.length }),
+      body: this.translate.instant('common.delete_dialog.body'),
+      acceptLabel: this.translate.instant('common.delete'),
+      rejectLabel: this.translate.instant('common.cancel'),
+      acceptTone: 'danger',
+    });
+    if (!accepted) return;
+    for (const row of rows) this.categoriesStore.deleteCategory(row.id);
+    this.selectedIds.set(new Set());
+    this.resultado.contar(this.translate.instant('memory.categories.deleted_bulk_toast', { count: rows.length }));
   }
 }

@@ -302,6 +302,16 @@ export class UsersListPageComponent {
   }
 
   /** Menú de cada fila: el mismo con «⋮» y con clic derecho (lo abre la lista). */
+  /** Con varios marcados, el clic derecho sobre uno de ellos ofrece solo «Eliminar»: lo mismo que el botón de la barra. */
+  protected readonly selectionMenu = (rows: readonly User[]): MenuItem[] => [
+    {
+      label: this.translate.instant('common.delete_gate'),
+      icon: 'sc-icon-font sc-icon-font--delete',
+      styleClass: 'sc-menu-item--danger',
+      command: () => this.deleteTarget.set(rows),
+    },
+  ];
+
   protected readonly rowMenu = (user: User): MenuItem[] => this.buildMenuItems(user);
 
   private buildMenuItems(user: User): MenuItem[] {

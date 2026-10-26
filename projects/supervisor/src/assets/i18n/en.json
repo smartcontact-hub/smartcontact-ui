@@ -603,6 +603,8 @@
         "activate": "Activate",
         "deactivate": "Deactivate"
       },
+      "delete_title_bulk": "Delete {{count}} rules?",
+      "deleted_bulk_toast": "{{count}} rules deleted",
       "delete_title": "Delete rule",
       "delete_body": "You are about to delete «{{name}}». This action cannot be undone.",
       "deleted_toast": "Rule «{{name}}» deleted",
@@ -833,6 +835,8 @@
         "activate": "Activate",
         "deactivate": "Deactivate"
       },
+      "delete_title_bulk": "Delete {{count}} categories?",
+      "deleted_bulk_toast": "{{count}} categories deleted",
       "delete_title": "Delete category",
       "delete_body": "You are about to delete category «{{name}}». Rules referencing it will lose this tag.",
       "deleted_toast": "Category «{{name}}» deleted",
