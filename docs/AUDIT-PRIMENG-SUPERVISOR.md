@@ -5,7 +5,7 @@
 Contra **PrimeNG 22.1.0**, la versión INSTALADA — no la documentación de la web,
 que puede ir por delante.
 
-**50 componentes** del DS se usan en el Supervisor, y entre todos esconden
+**49 componentes** del DS se usan en el Supervisor, y entre todos esconden
 **621 props** que PrimeNG sí documenta.
 
 La regla es DD-113: *el nativo tal cual, adaptado con tokens*. Esconder una prop puede ser una
@@ -35,7 +35,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **55 props nativas no expuestas**: `appendTo`, `ariaLabel`, `ariaLabelledBy`, `autoZIndex`, `autofocus`, `baseZIndex`, `clearButtonStyleClass`, `dataType`, `defaultDate`, `disabledDates`, `disabledDays`, `firstDayOfWeek`, `fluid`, `focusTrap`, `hideOnDateTimeSelect`, `hourFormat`, `icon`, `iconAriaLabel`, `iconDisplay`, `inputSize`, `inputStyle`, `inputStyleClass`, `keepInvalid`, `max`, `maxDateCount`, `maxlength`, `min`, `minlength`, `motionOptions`, `multipleSeparator`, `numberOfMonths`, `panelStyle`, `panelStyleClass`, `pattern`, `rangeSeparator`, `readonlyInput`, `responsiveOptions`, `selectOtherMonths`, `shortYearCutoff`, `showOnFocus`, `showOtherMonths`, `showSeconds`, `showTime`, `showWeek`, `startWeekFromFirstDayOfYear`, `step`, `stepHour`, `stepMinute`, `stepSecond`, `tabindex`, `timeOnly`, `timeSeparator`, `todayButtonStyleClass`, `touchUI`, `variant`
 
-### `sc-button` · 168 usos · primeng/button, primeng/tooltip
+### `sc-button` · 163 usos · primeng/button, primeng/tooltip
 
 **43 props nativas no expuestas**: `appendTo`, `autoHide`, `autofocus`, `badge`, `badgeSeverity`, `buttonProps`, `content`, `escape`, `fitContent`, `fluid`, `hideDelay`, `hideOnEscape`, `hostName`, `iconPos`, `life`, `link`, `loadingIcon`, `outlined`, `pButton`, `pButtonIconPT`, `pButtonLabelPT`, `pButtonLabelUnstyled`, `pButtonPT`, `pButtonUnstyled`, `pTooltipPT`, `pTooltipUnstyled`, `plain`, `positionLeft`, `positionStyle`, `positionTop`, `severity`, `showDelay`, `showOnEllipsis`, `style`, `styleClass`, `tabindex`, `text`, `tooltipDisabled`, `tooltipEvent`, `tooltipOptions`, `tooltipPosition`, `tooltipStyleClass`, `tooltipZIndex`
 
@@ -152,10 +152,6 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 **1 props nativas no expuestas**: `mask`
 
 ### `sc-bulk-action-bar` · 2 usos · —
-
-Expone todo lo que PrimeNG documenta.
-
-### `sc-bulk-edit-menu` · 1 usos · —
 
 Expone todo lo que PrimeNG documenta.
 
