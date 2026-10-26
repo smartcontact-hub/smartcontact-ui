@@ -161,7 +161,7 @@ export class CategoriesPageComponent {
   /** Con varios marcados, el clic derecho sobre uno de ellos ofrece solo «Eliminar» (la misma regla que Grupos y Agentes). */
   protected readonly selectionMenu = (rows: readonly Category[]): MenuItem[] => [
     {
-      label: this.translate.instant('common.delete'),
+      label: this.translate.instant('common.delete_count', { count: rows.length }),
       icon: 'sc-icon-font sc-icon-font--delete',
       styleClass: 'sc-menu-item--danger',
       command: () => void this.confirmDeleteMany(rows),

@@ -81,7 +81,7 @@ trampas propias): `git show archive/handoff-fichas-2026-10-26:docs/handoff/super
 - **Tablas**: clic derecho sobre una marcada → «Eliminar» (`selectionMenu`) en Usuarios, Etiquetas, Plantillas,
   Repositorios, Tipificaciones, Categorías y Reglas. Fuera la barra de lote de esas cinco (la edición masiva no se entregó);
   su código (`bulkEntity`, `requestDeleteSelection`, edición de Usuarios) queda aparcado. Conversaciones conserva la suya.
-- **Abierto**: el «⋮» de una fila marcada borra solo esa fila; se propuso que siga la regla del clic derecho.
+- **«⋮»**: con la fila entre varias marcadas abre el menú de la selección, «Eliminar (N)» (`common.delete_count`), como el clic derecho.
 
 ## ✅ 2026-10-23 · Agentes como sus borradores de COA, 4060 y 4062 (DD-225)
 

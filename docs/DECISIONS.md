@@ -173,6 +173,9 @@ diálogo de siempre (`deleteTarget`); su código queda aparcado, como en DD-215.
 descargar). Categorías y Reglas ganan
 casillas (`selectable`, sin barra de lote) y la confirmación simple con su cifra («¿Eliminar 3 reglas?»).
 
+El «⋮» sigue la misma regla: con la fila entre varias marcadas, su menú es el de la selección («Eliminar (3)»); con una
+fila sin marcar, el de esa fila. La cifra va en el propio botón, no solo en el diálogo.
+
 **Razón** · Un gesto, una confirmación y un toast iguales en todo el producto, y sin una barra que prometa una edición en lote que no existe.
 
 **Fuera** · Entidades (`sc-datatable` suelto, sin `sc-list-page`) y las tablas anidadas en fichas (contactos de agenda,

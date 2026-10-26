@@ -950,6 +950,7 @@
       "seconds": "sec"
     },
     "delete": "Delete",
+    "delete_count": "Delete ({{count}})",
     "duplicate": "Duplicate",
     "copy_suffix": "copy",
     "duplicated_toast": "Copy created: “{{name}}”",

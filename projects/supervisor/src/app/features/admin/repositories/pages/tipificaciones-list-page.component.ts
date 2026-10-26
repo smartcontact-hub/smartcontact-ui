@@ -199,7 +199,7 @@ export class TipificacionesListPageComponent {
   /** Con varios marcados, el clic derecho sobre uno de ellos ofrece solo «Eliminar»: lo mismo que el botón de la barra. */
   protected readonly selectionMenu = (rows: readonly Tipificacion[]): MenuItem[] => [
     {
-      label: this.translate.instant('common.delete_gate'),
+      label: this.translate.instant('common.delete_count', { count: rows.length }),
       icon: 'sc-icon-font sc-icon-font--delete',
       styleClass: 'sc-menu-item--danger',
       command: () => this.deleteTarget.set(rows),

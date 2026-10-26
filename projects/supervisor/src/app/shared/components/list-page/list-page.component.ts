@@ -658,7 +658,10 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
 
   protected openRowMenu(row: T, menu: { toggle: (event: Event) => void }, event: Event): void {
     event.stopPropagation();
-    this.menuSelection.set(null);
+    // Como el clic derecho: con la fila entre varias marcadas, el menú es el de la selección (si la lista lo tiene).
+    const marcadas = this.selectedRows();
+    const deLaSeleccion = !!this.selectionMenu() && marcadas.length >= 2 && marcadas.includes(row);
+    this.menuSelection.set(deLaSeleccion ? marcadas : null);
     this.menuTarget.set(row);
     menu.toggle(event);
   }
