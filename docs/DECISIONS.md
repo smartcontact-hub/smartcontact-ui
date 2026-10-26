@@ -208,6 +208,23 @@ agenda o plantilla que un grupo tenía asignado entero ya no cuenta en «Agentes
 `agenda-agentes.spec.ts` reescrita; ajustadas `plantillas-editor`, `agendas-listado`, `admin-datatable-pilot`,
 `cabecera-escalera`, `tablas-revision-1015` y `tabla-al-pie`.
 
+## DD-228 · 2026-10-26 — En los menús, el icono lleva siempre el color de su texto, también con el ratón encima
+
+**Contexto** · En el menú de una fila, «Eliminar» en rojo con el ratón encima mostraba su icono en gris (`#4f5663`, medido en la
+congelada 4058). Dos causas: la regla de `sc-menu-item--danger` (cuatro clases) perdía contra la del tema de PrimeNG para el
+icono con el ratón encima (seis), y en los demás ítems el icono usaba un gris propio (`--sc-icon-subtle`, `#6f7784`) junto a
+un texto más oscuro, en reposo y con el ratón encima.
+
+**Decisión** · El icono de un ítem de menú toma el color de su texto en todos los estados. `menu`, `tieredmenu`, `contextmenu`,
+`menubar`, `megamenu` y `panelmenu` apuntan sus tokens de icono a los de texto del ítem (`navigation.item.color`, `.focus.color`,
+`.active.color`); la regla de peligro repite la cadena entera del tema para ganarle. El breadcrumb, que comparte
+`navigation.item.icon.*`, no cambia.
+
+**Razón** · Un icono de otro tono que su texto es un matiz que nadie eligió; si el texto cambia a rojo, azul o más oscuro, el
+icono va con él.
+
+**Fuera** · Las flechas de submenú (`submenu.icon.*`) siguen en gris: son la pista de «se abre más», no el icono del ítem.
+
 ## DD-227 · 2026-10-26 — Eliminar varios, en todas las tablas: el clic derecho sobre una fila marcada ofrece «Eliminar» con su cifra
 
 **Contexto** · Grupos (DD-218) y Agentes (DD-225) borran varios con el clic derecho sobre una fila marcada. Las demás

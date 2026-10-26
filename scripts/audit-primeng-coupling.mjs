@@ -105,7 +105,10 @@ const sh = (cmd) => {
 // es imagen (los audios de Grupos); no hay token ni `pt` que la quite solo en ese caso (customs-catalog §8).
 // DD-217: `ds` 13 → 15 por `.p-chip-remove-icon` y `.p-multiselect-chip-icon`: la «×» de un chip de `sc-multiselect`
 // pasa al rojo de lo destructivo al pasar o enfocarla, y el tema de Chip solo trae `removeIcon.color`, sin el de al pasar.
-const TOPE = { app: 6, ds: 15, preset: 72 };
+// DD-228: `preset` 72 → 76 por `.p-menu-item`, `.p-tieredmenu-item`, `.p-disabled` y `.p-focus`: el icono del «Eliminar» se
+// quedaba gris con el ratón encima porque la regla del tema para ese estado (seis clases) ganaba a la de `sc-menu-item--danger`
+// (cuatro); no hay token que cubra «peligro» en un ítem de menú, así que se repite su cadena entera.
+const TOPE = { app: 6, ds: 15, preset: 76 };
 
 /* Cuenta las clases `.p-*` que aparecen en SELECTORES, no en comentarios. Un
  * comentario que menciona `.p-datatable-*` para explicar POR QUÉ dependemos de

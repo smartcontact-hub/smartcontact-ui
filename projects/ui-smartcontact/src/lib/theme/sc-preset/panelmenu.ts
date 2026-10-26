@@ -4,8 +4,8 @@ import type { PanelMenuDesignTokens } from '@primeuix/themes/types/panelmenu';
     item: {
         gap: "var(--sc-cmp-panelmenu-item-gap)",
         icon: {
-            color: "{navigation.item.icon.color}",
-            focusColor: "{navigation.item.icon.focus.color}"
+            color: "{navigation.item.color}",
+            focusColor: "{navigation.item.focus.color}"
         },
         color: "{navigation.item.color}",
         padding: "{navigation.item.padding}",
