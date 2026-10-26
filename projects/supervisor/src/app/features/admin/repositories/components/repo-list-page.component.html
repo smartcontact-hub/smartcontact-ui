@@ -42,6 +42,7 @@
   [(query)]="searchQuery"
   exportable
   [rowMenu]="rowMenu"
+  [selectionMenu]="config().simpleDelete ? selectionMenu : undefined"
   [rowOpenable]="abreFila()"
   (rowOpen)="onRowOpen($event)"
   selectable

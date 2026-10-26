@@ -1716,10 +1716,15 @@
       "no_description": "No description",
       "agents_aria": "{{count}} agents",
       "agents_aria_one": "1 agent",
+      "delete_dialog": {
+        "title": "Delete team \"{{name}}\"?",
+        "title_bulk": "Delete {{count}} teams?"
+      },
       "toasts": {
         "created": "Team \"{{name}}\" created",
         "updated": "Team \"{{name}}\" updated",
-        "deleted": "Team \"{{name}}\" deleted"
+        "deleted": "Team \"{{name}}\" deleted",
+        "deleted_bulk": "{{count}} teams deleted"
       }
     }
   },

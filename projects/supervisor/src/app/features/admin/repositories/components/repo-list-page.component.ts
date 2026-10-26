@@ -29,6 +29,7 @@ import {
   ScGroupPopoverComponent as GroupPopoverComponent,
   type ScColumnCellContext,
   type ScColumnDef,
+  ScConfirmService,
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
   ScTagComponent as TagComponent,
 } from '@smartcontact-hub/components';
@@ -71,6 +72,7 @@ import { TooltipModule } from 'primeng/tooltip';
 export class RepoListPageComponent<T extends RepoEntity> {
   private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
+  private readonly confirm = inject(ScConfirmService);
   private readonly lang = injectLangChange();
   private readonly xlsx = inject(XlsxExportService);
   private readonly router = inject(Router);
@@ -149,8 +151,10 @@ export class RepoListPageComponent<T extends RepoEntity> {
     return this.translate.instant(this.config().entityPluralKey);
   });
 
+  /** Con borrado simple no hay barra en lote: eliminar varios es el clic derecho sobre una fila marcada. */
   protected readonly bulkEntity = computed(() => {
     this.lang(); // textos al día al cambiar de idioma (ver `injectLangChange`)
+    if (this.config().simpleDelete) return undefined;
     return {
       singular: this.entitySingular(),
       plural: this.entityPlural(),
@@ -377,8 +381,8 @@ export class RepoListPageComponent<T extends RepoEntity> {
         // Puntos suspensivos porque lleva a la puerta tecleada
         // (<sc-delete-entity-dialog>), no a un borrado inmediato (C4 del
         // plan): convención de menús de escritorio — "…" significa "esto
-        // abre algo antes de hacerlo".
-        label: this.translate.instant('common.delete_gate'),
+        // abre algo antes de hacerlo". Con confirmación simple, sin ellos (DD-215).
+        label: this.translate.instant(this.config().simpleDelete ? 'common.delete' : 'common.delete_gate'),
         icon: 'sc-icon-font sc-icon-font--delete',
         styleClass: 'sc-menu-item--danger',
         command: () => this.onRowDelete(item),
@@ -403,8 +407,51 @@ export class RepoListPageComponent<T extends RepoEntity> {
     this.toastSuccess('common.duplicated_toast', { name: copia.name });
   }
 
+  /** El «⋮» elimina solo su fila, aunque haya varias marcadas. */
   protected onRowDelete(item: T): void {
-    this.deleteTarget.set([item]);
+    const simple = this.config().simpleDelete;
+    if (!simple) {
+      this.deleteTarget.set([item]);
+      return;
+    }
+    void this.confirmarBorrado(simple.titleKey, { name: item.name }).then((ok) => {
+      if (!ok) return;
+      this.store().deleteItem(item.id);
+      this.selectedIds.update((ids) => new Set([...ids].filter((id) => id !== item.id)));
+      this.toastSuccess(this.toastKey('deleted', 'repositories.toasts.deleted_single'), {
+        entity: this.entitySingular(),
+        name: item.name,
+      });
+    });
+  }
+
+  /** Con varias marcadas, el clic derecho sobre una de ellas ofrece solo «Eliminar», con su cifra. */
+  protected readonly selectionMenu = (items: readonly T[]): MenuItem[] => [
+    {
+      label: this.translate.instant('common.delete'),
+      icon: 'sc-icon-font sc-icon-font--delete',
+      styleClass: 'sc-menu-item--danger',
+      command: () => void this.onBulkDelete(items),
+    },
+  ];
+
+  private async onBulkDelete(items: readonly T[]): Promise<void> {
+    const simple = this.config().simpleDelete;
+    if (!simple || !(await this.confirmarBorrado(simple.titleBulkKey, { count: items.length }))) return;
+    this.store().deleteItems(items.map((i) => i.id));
+    this.clearSelection();
+    this.toastSuccess('repositories.toasts.deleted_bulk', { count: items.length, entity: this.entityPlural() });
+  }
+
+  /** La confirmación simple del DS: el título pregunta, el cuerpo avisa y el botón repite el verbo. */
+  private confirmarBorrado(titleKey: string, params: Record<string, string | number>): Promise<boolean> {
+    return this.confirm.request({
+      title: this.translate.instant(titleKey, params),
+      body: this.translate.instant('common.delete_dialog.body'),
+      acceptLabel: this.translate.instant('common.delete'),
+      rejectLabel: this.translate.instant('common.cancel'),
+      acceptTone: 'danger',
+    });
   }
 
   protected closeCreatePanel(): void {

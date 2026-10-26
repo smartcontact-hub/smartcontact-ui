@@ -1716,10 +1716,15 @@
       "no_description": "Sin descripción",
       "agents_aria": "{{count}} agentes",
       "agents_aria_one": "1 agente",
+      "delete_dialog": {
+        "title": "¿Eliminar el equipo «{{name}}»?",
+        "title_bulk": "¿Eliminar {{count}} equipos?"
+      },
       "toasts": {
         "created": "Equipo «{{name}}» creado",
         "updated": "Equipo «{{name}}» actualizado",
-        "deleted": "Equipo «{{name}}» eliminado"
+        "deleted": "Equipo «{{name}}» eliminado",
+        "deleted_bulk": "{{count}} equipos eliminados"
       }
     }
   },
