@@ -1,6 +1,8 @@
 import { inject, Injectable, Provider } from '@angular/core';
 import { MessageService } from 'primeng/api';
 
+import { resolveScComponentIconClass } from '../../core/icons/sc-component-icon-resolver';
+
 export type ScToastSeverity = 'success' | 'info' | 'warn' | 'error' | 'secondary' | 'contrast';
 
 export type ScToastMessage = {
@@ -20,14 +22,31 @@ export type ScToastMessage = {
     closeIcon?: string;
 };
 
+// PrimeNG pinta sus propios SVG (Check, InfoCircle...) si el mensaje no trae icono, y a `secondary` y `contrast` no les
+// pone ninguno. Cada severidad lleva aquí su glifo de Smart Contact Icons, el mismo que el master de Figma.
+const SC_TOAST_SEVERITY_ICON: Record<ScToastSeverity, string> = {
+    success: 'check',
+    info: 'info',
+    warn: 'warning',
+    error: 'cancel',
+    secondary: 'content_copy',
+    contrast: 'auto_awesome'
+};
+
+const SC_TOAST_CLOSE_ICON = 'close';
+
 @Injectable()
 export class ScToastService {
     private readonly messageService = inject(MessageService);
 
     show(message: ScToastMessage): void {
+        const severity = message.severity ?? 'info';
+
         this.messageService.add({
             ...message,
-            severity: message.severity ?? 'info'
+            severity,
+            icon: message.icon ?? resolveScComponentIconClass(SC_TOAST_SEVERITY_ICON[severity]),
+            closeIcon: message.closeIcon ?? resolveScComponentIconClass(SC_TOAST_CLOSE_ICON)
         });
     }
 
