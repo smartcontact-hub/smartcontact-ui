@@ -42,7 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
-> | Duplicar una agenda o una plantilla es un alta, como un grupo o un agente (enmienda DD-230): abre «Nueva agenda/plantilla» con la copia y su nombre «X (1)» (`seedFromId`, `nombreDeCopia`), que no existe hasta «Crear» · no copia a qué agentes se asigna | DD-231 |
+> | Duplicar una agenda o una plantilla es un alta, como un grupo o un agente (enmienda DD-230): abre «Nueva agenda/plantilla» con la copia y su nombre «X (1)» (`seedFromId`, `nombreDeCopia`), que no existe hasta «Crear» · no copia a qué agentes se asigna | DD-232 |
 > | Agendas y Plantillas como sus COA (SISMAC-4440 y 4438): se asignan SOLO a agentes, en una tabla plana de agentes con su columna «Grupos» (`sc-agent-assignment-table`), sin árbol ni grupos dinámicos (enmienda DD-211 §1) · el listado de Agendas con Descripción, Contactos y Agentes (cifra, sin globo) ordenables · Plantillas sin pestañas, con columna Canal · contactos con casillas y borrado múltiple (completa DD-227 en una tabla anidada) | DD-230 |
 > | El «+» de `sc-button` (`icon="add"`) es siempre redondo: círculo sin rótulo, píldora con él (enmienda DD-167 y DD-187) | DD-229 |
 > | Con el índice en la caja, el carril mide 235, el de la caja en Figma: ningún rótulo de las fichas salta de línea · sin la caja, 196 (enmienda DD-220) | DD-221 |
@@ -163,7 +163,7 @@
 
 ---
 
-## DD-231 · 2026-10-26 — Duplicar una agenda o una plantilla es un alta, como duplicar un grupo o un agente
+## DD-232 · 2026-10-26 — Duplicar una agenda o una plantilla es un alta, como duplicar un grupo o un agente
 
 **Contexto** · DD-230 dejó «Duplicar» en Agendas y Plantillas como estaba: la copia se creaba en el acto, con «X (copia)», y
 se quedaba en la lista. Grupos y Agentes ya duplican de otra manera (DD-218, DD-225): abren «Nuevo grupo» o «Nuevo agente»
@@ -187,6 +187,24 @@ que borrar. Medido: `duplicable` solo lo usaba Agendas, y Plantillas tenía su p
 **Consecuencias** · `copyName` y «Copia creada: …» se quedan solo para una lista sin editor propio. Pruebas:
 `agendas-listado.spec.ts` y `plantillas-editor.spec.ts` reescritas (URL de alta, nombre «(1)», no existe hasta crear,
 sin diálogo al salir, «(2)» al duplicar la copia).
+
+## DD-231 · 2026-10-26 — Equipos borra como Grupos y Agentes, y el «⋮» sin excepciones en `sc-list-page`
+
+**Contexto** · DD-227 dejó el «⋮» y el clic derecho de una fila marcada con el mismo menú de la selección. Dos PR traían una
+excepción cada una (`kebabRowOnly` en Tipificaciones, `selectionMenuFromRow` en Equipos); se quitó de las dos y la opción de
+Tipificaciones quedó en `list-page` sin ningún uso. Equipos, además, seguía borrando con el diálogo de teclear el nombre, no
+con la confirmación simple de Grupos, Agentes y Tipificaciones (varias).
+
+**Decisión** · Fuera `kebabRowOnly` de `sc-list-page`: el «⋮» sigue a la selección siempre, sin opción para apagarlo. Equipos
+usa la confirmación simple del DS (`simpleDelete`, DD-215): «¿Eliminar el equipo «X»?» y «¿Eliminar 3 equipos?», con el
+botón «Eliminar» sin puntos suspensivos y sin barra de lote.
+
+**Razón** · La misma expectativa en todas las listas (DD-227): una opción que apaga el comportamiento invita a reabrir la
+excepción pantalla a pantalla.
+
+**Fuera** · Usuarios, Plantillas, Etiquetas, Repositorios y Tipificaciones (una sola) siguen con el diálogo de teclear el nombre;
+cambiarlo es una decisión de producto aparte.
+
 
 ## DD-230 · 2026-10-26 — Agendas y Plantillas como sus COA: se asignan solo a agentes, en una tabla con sus grupos; Plantillas sin pestañas
 

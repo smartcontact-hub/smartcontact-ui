@@ -29,6 +29,7 @@ import {
   ScGroupPopoverComponent as GroupPopoverComponent,
   type ScColumnCellContext,
   type ScColumnDef,
+  ScConfirmService,
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
   ScTagComponent as TagComponent,
 } from '@smartcontact-hub/components';
@@ -71,6 +72,7 @@ import { TooltipModule } from 'primeng/tooltip';
 export class RepoListPageComponent<T extends RepoEntity> {
   private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
+  private readonly confirm = inject(ScConfirmService);
   private readonly lang = injectLangChange();
   private readonly xlsx = inject(XlsxExportService);
   private readonly router = inject(Router);
@@ -147,16 +149,6 @@ export class RepoListPageComponent<T extends RepoEntity> {
   protected readonly entityPlural = computed(() => {
     this.currentLang();
     return this.translate.instant(this.config().entityPluralKey);
-  });
-
-  protected readonly bulkEntity = computed(() => {
-    this.lang(); // textos al día al cambiar de idioma (ver `injectLangChange`)
-    return {
-      singular: this.entitySingular(),
-      plural: this.entityPlural(),
-      suffixSingular: this.translate.instant('common.bulk.selected_one'),
-      suffixPlural: this.translate.instant('common.bulk.selected_other'),
-    };
   });
 
   /* ── La tabla, ahora `sc-datatable` (B4) ──────────────────────────────
@@ -365,17 +357,17 @@ export class RepoListPageComponent<T extends RepoEntity> {
     this.deleteTarget.set(null);
   }
 
-  /** Menú de cada fila: el mismo con «⋮» y con clic derecho (lo abre la lista). */
-  /** Con varios marcados, el clic derecho sobre uno de ellos ofrece solo «Eliminar»: lo mismo que el botón de la barra. */
+  /** Con varios marcados, el «⋮» y el clic derecho sobre uno de ellos ofrecen solo «Eliminar (N)». */
   protected readonly selectionMenu = (rows: readonly T[]): MenuItem[] => [
     {
       label: this.translate.instant('common.delete_count', { count: rows.length }),
       icon: 'sc-icon-font sc-icon-font--delete',
       styleClass: 'sc-menu-item--danger',
-      command: () => this.deleteTarget.set(rows),
+      command: () => (this.config().simpleDelete ? void this.onBulkDelete(rows) : this.deleteTarget.set(rows)),
     },
   ];
 
+  /** Menú de cada fila: el mismo con «⋮» y con clic derecho (lo abre la lista). */
   protected readonly rowMenu = (item: T): MenuItem[] => this.buildMenuItems(item);
 
   private buildMenuItems(item: T): MenuItem[] {
@@ -399,8 +391,8 @@ export class RepoListPageComponent<T extends RepoEntity> {
         // Puntos suspensivos porque lleva a la puerta tecleada
         // (<sc-delete-entity-dialog>), no a un borrado inmediato (C4 del
         // plan): convención de menús de escritorio — "…" significa "esto
-        // abre algo antes de hacerlo".
-        label: this.translate.instant('common.delete_gate'),
+        // abre algo antes de hacerlo". Con confirmación simple, sin ellos (DD-215).
+        label: this.translate.instant(this.config().simpleDelete ? 'common.delete' : 'common.delete_gate'),
         icon: 'sc-icon-font sc-icon-font--delete',
         styleClass: 'sc-menu-item--danger',
         command: () => this.onRowDelete(item),
@@ -434,8 +426,41 @@ export class RepoListPageComponent<T extends RepoEntity> {
     this.toastSuccess('common.duplicated_toast', { name: copia.name });
   }
 
+  /** Eliminar una fila (sin marcar, o sola): con varias marcadas, el «⋮» y el clic derecho abren el menú de la selección. */
   protected onRowDelete(item: T): void {
-    this.deleteTarget.set([item]);
+    const simple = this.config().simpleDelete;
+    if (!simple) {
+      this.deleteTarget.set([item]);
+      return;
+    }
+    void this.confirmarBorrado(simple.titleKey, { name: item.name }).then((ok) => {
+      if (!ok) return;
+      this.store().deleteItem(item.id);
+      this.selectedIds.update((ids) => new Set([...ids].filter((id) => id !== item.id)));
+      this.toastSuccess(this.toastKey('deleted', 'repositories.toasts.deleted_single'), {
+        entity: this.entitySingular(),
+        name: item.name,
+      });
+    });
+  }
+
+  private async onBulkDelete(items: readonly T[]): Promise<void> {
+    const simple = this.config().simpleDelete;
+    if (!simple || !(await this.confirmarBorrado(simple.titleBulkKey, { count: items.length }))) return;
+    this.store().deleteItems(items.map((i) => i.id));
+    this.clearSelection();
+    this.toastSuccess('repositories.toasts.deleted_bulk', { count: items.length, entity: this.entityPlural() });
+  }
+
+  /** La confirmación simple del DS: el título pregunta, el cuerpo avisa y el botón repite el verbo. */
+  private confirmarBorrado(titleKey: string, params: Record<string, string | number>): Promise<boolean> {
+    return this.confirm.request({
+      title: this.translate.instant(titleKey, params),
+      body: this.translate.instant('common.delete_dialog.body'),
+      acceptLabel: this.translate.instant('common.delete'),
+      rejectLabel: this.translate.instant('common.cancel'),
+      acceptTone: 'danger',
+    });
   }
 
   protected closeCreatePanel(): void {

@@ -149,7 +149,7 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
 
 
   /**
-   * Duplicar es un alta (DD-231, como un grupo o un agente): `?seedFromId` abre «Nueva agenda» con los datos de la
+   * Duplicar es un alta (DD-232, como un grupo o un agente): `?seedFromId` abre «Nueva agenda» con los datos de la
    * original y su nombre «X (1)». No copia a qué agentes se asigna (lo dicen ellos). La agenda no existe hasta «Crear»,
    * y la copia es el punto de partida: «Deshacer» vuelve a ella y salir sin tocar nada no pregunta.
    */

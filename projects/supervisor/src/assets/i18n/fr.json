@@ -1700,6 +1700,10 @@
     },
     "equipos": {
       "title": "Équipes",
+      "delete_dialog": {
+        "title": "Supprimer l'équipe « {{name}} » ?",
+        "title_bulk": "Supprimer {{count}} équipes ?"
+      },
       "singular": "équipe",
       "plural": "équipes",
       "create_title": "Nouvelle équipe",

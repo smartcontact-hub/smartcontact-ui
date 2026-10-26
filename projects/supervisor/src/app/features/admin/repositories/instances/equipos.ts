@@ -83,5 +83,9 @@ export class EquiposPageComponent {
     sheetNameKey: 'repositories.equipos.title',
     // Su editor, con sus agentes: la fila lo abre, y «Crear» va a su alta (como Voice).
     editRoute: '/admin/equipos',
+    simpleDelete: {
+      titleKey: 'repositories.equipos.delete_dialog.title',
+      titleBulkKey: 'repositories.equipos.delete_dialog.title_bulk',
+    },
   };
 }

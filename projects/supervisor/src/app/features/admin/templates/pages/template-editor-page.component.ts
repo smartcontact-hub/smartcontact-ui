@@ -168,7 +168,7 @@ export class TemplateEditorPageComponent implements DirtyAware, OnInit {
   }
 
   /**
-   * Duplicar es un alta (DD-231, como un grupo o un agente): `?seedFromId` abre «Nueva plantilla» con el canal y el
+   * Duplicar es un alta (DD-232, como un grupo o un agente): `?seedFromId` abre «Nueva plantilla» con el canal y el
    * contenido de la original y su nombre «X (1)». No copia a qué agentes se asigna (lo dicen ellos). La plantilla no
    * existe hasta «Crear», y la copia es el punto de partida: «Deshacer» vuelve a ella y salir sin tocar nada no pregunta.
    * Devuelve `false` si la original ya no existe (y vuelve a la lista).
