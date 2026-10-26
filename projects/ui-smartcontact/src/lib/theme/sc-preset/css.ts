@@ -565,10 +565,17 @@ const dangerMenuItemCss = () => `
     background: var(--sc-bg-danger-subtle);
 }
 
-.sc-menu-item--danger .p-menu-item-content:hover .p-menu-item-link,
-.sc-menu-item--danger .p-menu-item-content:hover .p-menu-item-icon,
-.sc-menu-item--danger .p-tieredmenu-item-content:hover .p-tieredmenu-item-link,
-.sc-menu-item--danger .p-tieredmenu-item-content:hover .p-tieredmenu-item-icon {
+/* El icono sigue al texto también con el ratón encima y con el foco: el tema de PrimeNG pinta el icono al pasar el ratón
+ * con \`.p-menu-item:not(.p-disabled) > .p-menu-item-content:hover .p-menu-item-icon\` (seis clases), y la regla de
+ * arriba, con cuatro, perdía y dejaba un icono gris junto a un texto rojo. Se repite su cadena entera para ganarle. */
+.p-menu-item.sc-menu-item--danger:not(.p-disabled) > .p-menu-item-content:hover .p-menu-item-link,
+.p-menu-item.sc-menu-item--danger:not(.p-disabled) > .p-menu-item-content:hover .p-menu-item-icon,
+.p-menu-item.sc-menu-item--danger.p-focus > .p-menu-item-content .p-menu-item-link,
+.p-menu-item.sc-menu-item--danger.p-focus > .p-menu-item-content .p-menu-item-icon,
+.p-tieredmenu-item.sc-menu-item--danger:not(.p-disabled) > .p-tieredmenu-item-content:hover .p-tieredmenu-item-link,
+.p-tieredmenu-item.sc-menu-item--danger:not(.p-disabled) > .p-tieredmenu-item-content:hover .p-tieredmenu-item-icon,
+.p-tieredmenu-item.sc-menu-item--danger.p-focus > .p-tieredmenu-item-content .p-tieredmenu-item-link,
+.p-tieredmenu-item.sc-menu-item--danger.p-focus > .p-tieredmenu-item-content .p-tieredmenu-item-icon {
     color: var(--sc-text-danger);
 }
 `;

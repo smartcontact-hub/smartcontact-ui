@@ -4,9 +4,9 @@ import type { MegaMenuDesignTokens } from '@primeuix/themes/types/megamenu';
     item: {
         gap: "{navigation.item.gap}",
         icon: {
-            color: "{navigation.item.icon.color}",
-            focusColor: "{navigation.item.icon.focus.color}",
-            activeColor: "{navigation.item.icon.active.color}"
+            color: "{navigation.item.color}",
+            focusColor: "{navigation.item.focus.color}",
+            activeColor: "{navigation.item.active.color}"
         },
         color: "{navigation.item.color}",
         padding: "{navigation.item.padding}",
