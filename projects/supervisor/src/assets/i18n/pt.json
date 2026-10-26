@@ -1193,43 +1193,41 @@
       "text": "Crie seu primeiro modelo de mensagem para agilizar o atendimento"
     },
     "table": {
-      "title": "Título",
+      "title": "Nome",
       "type": "Canal",
       "body": "Conteúdo",
-      "updated": "Atualizado",
-      "groups": "Grupos"
+      "updated": "Modificada",
+      "agents": "Agentes",
+      "agents_assigned": "Agentes atribuídos"
     },
     "no_results": {
-      "text": "Nenhum modelo de {{tab}} neste filtro.",
-      "text_with_query": "Nenhum modelo de {{tab}} corresponde a “{{query}}”."
+      "text": "Não há modelos.",
+      "text_with_query": "Nenhum modelo corresponde a «{{query}}»."
     },
     "form": {
       "create_title": "Novo modelo",
-      "title": "Título",
-      "title_placeholder": "Título do modelo",
+      "title": "Nome",
+      "title_placeholder": "Nome do modelo",
       "channel": "Canal",
       "body": "Conteúdo",
       "body_placeholder": "Escreva o conteúdo do modelo...",
-      "variables_hint": "Variáveis: {agente}, {cliente}, {ref}, {data}",
       "create_submit": "Criar modelo",
       "create_breadcrumb": "Novo modelo",
       "edit_breadcrumb": "Editar modelo",
       "section_general": "Geral",
       "section_content": "Conteúdo",
-      "section_groups": "Grupos",
-      "groups": "Grupos que a usam",
-      "groups_placeholder": "Nenhum grupo",
       "whatsapp_hint": "O WhatsApp só admite negrito, itálico e rasurado.",
       "format_bold": "Negrito",
       "format_italic": "Itálico",
       "format_underline": "Sublinhado",
       "format_strike": "Rasurado",
       "format_link": "Ligação",
-      "group_without_channel": "Não atende {{channel}}"
+      "section_agents": "Agentes",
+      "agents_row_aria": "Atribuir o modelo a {{name}}"
     },
     "errors": {
-      "title_required": "O título é obrigatório",
-      "duplicate_title": "Já existe um modelo com este título",
+      "title_required": "O nome é obrigatório",
+      "duplicate_title": "Já existe um modelo com este nome",
       "body_required": "O conteúdo é obrigatório"
     },
     "delete": {
@@ -1406,22 +1404,8 @@
       "contacts_no_results": "Nenhum contato corresponde a “{{query}}”.",
       "import": "Importar",
       "import_title": "Importar contatos",
-      "section_agents": "Grupos e agentes",
-      "agents_filter_all": "Todos",
-      "agents_filter_assigned": "Atribuídos ({{count}})",
-      "agents_filter_aria": "Mostrar agentes",
+      "section_agents": "Agentes",
       "agents_row_aria": "Atribuir a agenda a {{name}}",
-      "agents_email": "Email",
-      "agents_no_results": "Nenhum agente corresponde a «{{query}}».",
-      "agents_none_assigned": "Ainda não há agentes atribuídos.",
-      "agents_empty": "Ainda não há agentes",
-      "assigned_aria_one": "1 grupo ou agente",
-      "assigned_aria": "{{count}} grupos e agentes",
-      "group_row_aria": "Atribuir a agenda a todo o grupo {{name}}",
-      "assign_help": "Um agente marcado fica marcado em todos os seus grupos. Um grupo inteiro dá a agenda também a quem entrar nele depois.",
-      "assign_search": "Pesquisar grupos ou agentes…",
-      "assign_summary": "{{count}} de {{total}} agentes e {{groups}} grupos inteiros",
-      "col_groups_agents": "Grupos e agentes",
       "no_group": "Sem grupo",
       "import_template_file": "modelo-agenda",
       "fields": {
@@ -1487,7 +1471,14 @@
         "phone_invalid": "O telefone não é válido: use dígitos, com um + na frente se tiver prefixo.",
         "phone_taken": "Esse telefone já está nesta agenda.",
         "contact_empty": "Preencha pelo menos um dado do contato."
-      }
+      },
+      "col_agents": "Agentes",
+      "select_contact_aria": "Selecionar o contato {{name}}",
+      "select_all_contacts_aria": "Selecionar todos os contatos",
+      "contacts_deleted_bulk": "{{count}} contatos eliminados",
+      "contacts_deleted_bulk_one": "1 contato eliminado",
+      "contacts_delete_title": "Eliminar {{count}} contatos?",
+      "contacts_delete_title_one": "Eliminar 1 contato?"
     },
     "horarios": {
       "title": "Horários",
@@ -1726,6 +1717,17 @@
         "updated": "Equipe «{{name}}» atualizada",
         "deleted": "Equipe «{{name}}» excluída"
       }
+    },
+    "agent_assignment": {
+      "search": "Pesquisar agentes…",
+      "filter_all": "Todos",
+      "filter_assigned": "Atribuídos ({{count}})",
+      "filter_aria": "Mostrar agentes",
+      "email": "Email",
+      "no_results": "Nenhum agente corresponde a «{{query}}».",
+      "none_assigned": "Ainda não há agentes atribuídos.",
+      "empty": "Ainda não há agentes",
+      "select_all_aria": "Selecionar todos os agentes mostrados"
     }
   },
   "users": {

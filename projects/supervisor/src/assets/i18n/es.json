@@ -1193,43 +1193,41 @@
       "text": "Crea tu primera plantilla de mensaje para agilizar la atención"
     },
     "table": {
-      "title": "Título",
+      "title": "Nombre",
       "type": "Canal",
       "body": "Contenido",
-      "updated": "Actualizada",
-      "groups": "Grupos"
+      "updated": "Modificada",
+      "agents": "Agentes",
+      "agents_assigned": "Agentes asignados"
     },
     "no_results": {
-      "text": "No hay plantillas de {{tab}} en este filtro.",
-      "text_with_query": "No hay plantillas de {{tab}} que coincidan con «{{query}}»."
+      "text": "No hay plantillas.",
+      "text_with_query": "No hay plantillas que coincidan con «{{query}}»."
     },
     "form": {
       "create_title": "Nueva plantilla",
-      "title": "Título",
-      "title_placeholder": "Título de la plantilla",
+      "title": "Nombre",
+      "title_placeholder": "Nombre de la plantilla",
       "channel": "Canal",
       "body": "Contenido",
       "body_placeholder": "Escribe el contenido de la plantilla...",
-      "variables_hint": "Variables: {agente}, {cliente}, {ref}, {fecha}",
       "create_submit": "Crear plantilla",
       "create_breadcrumb": "Nueva plantilla",
       "edit_breadcrumb": "Editar plantilla",
       "section_general": "General",
       "section_content": "Contenido",
-      "section_groups": "Grupos",
-      "groups": "Grupos que la usan",
-      "groups_placeholder": "Ningún grupo",
       "whatsapp_hint": "WhatsApp solo admite negrita, cursiva y tachado.",
       "format_bold": "Negrita",
       "format_italic": "Cursiva",
       "format_underline": "Subrayado",
       "format_strike": "Tachado",
       "format_link": "Enlace",
-      "group_without_channel": "No atiende {{channel}}"
+      "section_agents": "Agentes",
+      "agents_row_aria": "Asignar la plantilla a {{name}}"
     },
     "errors": {
-      "title_required": "El título es obligatorio",
-      "duplicate_title": "Ya existe una plantilla con este título",
+      "title_required": "El nombre es obligatorio",
+      "duplicate_title": "Ya existe una plantilla con este nombre",
       "body_required": "El contenido es obligatorio"
     },
     "delete": {
@@ -1406,22 +1404,8 @@
       "contacts_no_results": "Ningún contacto coincide con «{{query}}».",
       "import": "Importar",
       "import_title": "Importar contactos",
-      "section_agents": "Grupos y agentes",
-      "agents_filter_all": "Todos",
-      "agents_filter_assigned": "Asignados ({{count}})",
-      "agents_filter_aria": "Mostrar agentes",
+      "section_agents": "Agentes",
       "agents_row_aria": "Asignar la agenda a {{name}}",
-      "agents_email": "Email",
-      "agents_no_results": "Ningún agente coincide con «{{query}}».",
-      "agents_none_assigned": "Aún no hay agentes asignados.",
-      "agents_empty": "No hay agentes todavía",
-      "assigned_aria_one": "1 grupo o agente",
-      "assigned_aria": "{{count}} grupos y agentes",
-      "group_row_aria": "Asignar la agenda a todo el grupo {{name}}",
-      "assign_help": "Un agente marcado lo está en todos sus grupos. Un grupo entero le da la agenda también a quien entre después en él.",
-      "assign_search": "Buscar grupos o agentes…",
-      "assign_summary": "{{count}} de {{total}} agentes y {{groups}} grupos enteros",
-      "col_groups_agents": "Grupos y agentes",
       "no_group": "Sin grupo",
       "import_template_file": "plantilla-agenda",
       "fields": {
@@ -1487,7 +1471,14 @@
         "phone_invalid": "El teléfono no es válido: usa cifras, con un + delante si lleva prefijo.",
         "phone_taken": "Ese teléfono ya está en esta agenda.",
         "contact_empty": "Escribe al menos un dato del contacto."
-      }
+      },
+      "col_agents": "Agentes",
+      "select_contact_aria": "Marcar el contacto {{name}}",
+      "select_all_contacts_aria": "Marcar todos los contactos",
+      "contacts_deleted_bulk": "{{count}} contactos eliminados",
+      "contacts_deleted_bulk_one": "1 contacto eliminado",
+      "contacts_delete_title": "¿Eliminar {{count}} contactos?",
+      "contacts_delete_title_one": "¿Eliminar 1 contacto?"
     },
     "horarios": {
       "title": "Horarios",
@@ -1726,6 +1717,17 @@
         "updated": "Equipo «{{name}}» actualizado",
         "deleted": "Equipo «{{name}}» eliminado"
       }
+    },
+    "agent_assignment": {
+      "search": "Buscar agentes…",
+      "filter_all": "Todos",
+      "filter_assigned": "Asignados ({{count}})",
+      "filter_aria": "Mostrar agentes",
+      "email": "Email",
+      "no_results": "Ningún agente coincide con «{{query}}».",
+      "none_assigned": "Aún no hay agentes asignados.",
+      "empty": "No hay agentes todavía",
+      "select_all_aria": "Marcar todos los agentes que se ven"
     }
   },
   "users": {

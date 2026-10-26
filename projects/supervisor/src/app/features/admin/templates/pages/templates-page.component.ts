@@ -14,31 +14,26 @@ import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { type MenuItem } from 'primeng/api';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
-import {
-  ScButtonComponent as ButtonComponent,
-  ScGroupPopoverComponent as GroupPopoverComponent,
-  ScTabsComponent as TabsComponent,
-} from '@smartcontact-hub/components';
+import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { injectLangChange } from '@core/utils/lang-change';
 import { LanguageService } from '@core/services/language.service';
 import { XlsxExportService } from '@core/services/xlsx-export.service';
-import { GroupsStore } from '@features/admin/groups/state/groups.store';
+import { AgentsStore } from '@features/admin/agents/state/agents.store';
 import { copyName } from '@shared/utils/copy-name';
 
-import { ImportDialogComponent, ListPageComponent } from '@shared/components';
+import { CeldaVaciaComponent, ImportDialogComponent, ListPageComponent } from '@shared/components';
 import {
   useBulkEntityI18n,
   type ColumnDef,
-  type GroupRef,
   type ScColumnCellContext,
   type ScColumnDef,
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
   ScEmptyStateComponent as EmptyStateComponent,
 } from '@smartcontact-hub/components';
 import { decodificarCsv } from '../../repositories/state/agenda-contacts.core.mjs';
-import { Template, TEMPLATE_TYPES, TemplateType } from '../data/templates-data';
+import { Template } from '../data/templates-data';
 import {
   type ImportacionDePlantillas,
   parsearPlantillasCsv,
@@ -54,11 +49,10 @@ import { TooltipModule } from 'primeng/tooltip';
   selector: 'sc-templates-page',
   imports: [
     TooltipModule,
-    TabsComponent,
     ButtonComponent,
+    CeldaVaciaComponent,
     DeleteEntityDialogComponent,
     EmptyStateComponent,
-    GroupPopoverComponent,
     IconComponent,
     ImportDialogComponent,
     ListPageComponent,
@@ -70,7 +64,7 @@ import { TooltipModule } from 'primeng/tooltip';
 })
 export class TemplatesPageComponent {
   private readonly templatesStore = inject(TemplatesStore);
-  private readonly groupsStore = inject(GroupsStore);
+  private readonly agentsStore = inject(AgentsStore);
   private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
   private readonly xlsx = inject(XlsxExportService);
@@ -99,28 +93,19 @@ export class TemplatesPageComponent {
 
   protected readonly templates = this.templatesStore.templates;
 
-  protected readonly activeTab = signal<TemplateType>('chat');
   protected readonly searchQuery = signal('');
   /** Selección: la lista la marca; de ella cuelgan la barra en lote y el borrado. */
   protected readonly selectedIds = signal<ReadonlySet<Template['id']>>(new Set());
   protected readonly deleteTarget = signal<readonly Template[] | null>(null);
 
-  protected readonly tabs = computed(() => {
-    this.lang();
-    return TEMPLATE_TYPES.map((t) => ({ value: t, label: this.translate.instant(`templates.type.${t}`) }));
-  });
+  /** Todas, por nombre (COA SISMAC-4438): sin pestañas por canal, el canal es una columna. */
+  protected readonly rows = computed(() => [...this.templates()].sort((a, b) => a.title.localeCompare(b.title)));
 
-  /** Las de la pestaña activa, por título: esta lista no tiene cabeceras para ordenar. */
-  protected readonly tabRows = computed(() => {
-    const tab = this.activeTab();
-    return this.templates()
-      .filter((t) => t.type === tab)
-      .sort((a, b) => a.title.localeCompare(b.title));
-  });
-
-  /** Qué filas casan con la búsqueda (la consulta llega ya en minúsculas): el título y el texto del contenido. */
+  /** Qué filas casan con la búsqueda (la consulta llega ya en minúsculas): en cualquier columna, salvo la fecha. */
   protected readonly matchesSearch = (t: Template, q: string): boolean =>
-    t.title.toLowerCase().includes(q) || textoPlano(t.body).toLowerCase().includes(q);
+    t.title.toLowerCase().includes(q) ||
+    this.translate.instant(`templates.type.${t.type}`).toLowerCase().includes(q) ||
+    textoPlano(t.body).toLowerCase().includes(q);
 
   /** Nombre de la fila para lectores de pantalla: una plantilla se llama por su título. */
   protected readonly rowLabel = (t: Template): string => t.title;
@@ -130,35 +115,66 @@ export class TemplatesPageComponent {
     return textoPlano(t.body);
   }
 
-  /** Los grupos que la tienen puesta (lo dice cada grupo, en su ficha), para el MISMO desplegable que Tipificaciones. */
-  protected groupsOf(t: Template): readonly GroupRef[] {
-    return this.groupsStore
-      .groups()
-      .filter((g) => g.templates?.includes(t.id))
-      .map((g) => ({ id: g.id, name: g.name, active: true }));
+  /** Cuántos agentes la tienen asignada (lo dice cada agente en sus `templates`): los grupos no se cuentan. */
+  private readonly agentesPorPlantilla = computed(() => {
+    const cuenta = new Map<number, number>();
+    for (const a of this.agentsStore.agents()) for (const id of a.templates ?? []) cuenta.set(id, (cuenta.get(id) ?? 0) + 1);
+    return cuenta;
+  });
+
+  protected agentCount(t: Template): number {
+    return this.agentesPorPlantilla().get(t.id) ?? 0;
   }
 
-  protected groupsAria(count: number): string {
-    this.lang();
-    return this.translate.instant(`repositories.groups_aria${count === 1 ? '_one' : ''}`, { count });
+  /** La fecha, en el formato de las agendas: «9 oct 2026». */
+  private readonly formatoFecha = computed(
+    () => new Intl.DateTimeFormat(this.language.locale(), { day: 'numeric', month: 'short', year: 'numeric' }),
+  );
+
+  protected fecha(t: Template): string {
+    return this.formatoFecha().format(new Date(`${t.updatedAt}T00:00:00`));
   }
+
+  protected canal(t: Template): string {
+    this.lang();
+    return this.translate.instant(`templates.type.${t.type}`);
+  }
+
+  /** El orden de una cabecera: el nombre y el canal por su letra, el contenido por su texto, los agentes por su cifra y la
+   *  fecha por su día. */
+  protected readonly sortFn = (a: Template, b: Template, field: string): number => {
+    switch (field) {
+      case 'type':
+        return this.canal(a).localeCompare(this.canal(b));
+      case 'body':
+        return textoPlano(a.body).localeCompare(textoPlano(b.body));
+      case 'agents':
+        return this.agentCount(a) - this.agentCount(b);
+      case 'updatedAt':
+        return a.updatedAt.localeCompare(b.updatedAt);
+      default:
+        return a.title.localeCompare(b.title);
+    }
+  };
 
   /* ── La tabla, `sc-datatable` — misma receta que labels ─────────────────
    * `columns` es un `computed()` que lee los `viewChild`: los `TemplateRef`
    * resuelven tarde y una lista fija se quedaría sin `cellTemplate`. */
   private readonly titleTpl = viewChild<TemplateRef<ScColumnCellContext<Template>>>('titleTpl');
+  private readonly typeTpl = viewChild<TemplateRef<ScColumnCellContext<Template>>>('typeTpl');
   private readonly bodyTpl = viewChild<TemplateRef<ScColumnCellContext<Template>>>('bodyTpl');
-  private readonly groupsTpl = viewChild<TemplateRef<ScColumnCellContext<Template>>>('groupsTpl');
+  private readonly agentsTpl = viewChild<TemplateRef<ScColumnCellContext<Template>>>('agentsTpl');
   private readonly updatedTpl = viewChild<TemplateRef<ScColumnCellContext<Template>>>('updatedTpl');
 
-  protected readonly columnPrefKey = 'sc-templates-columns-v2';
+  protected readonly columnPrefKey = 'sc-templates-columns-v3';
 
   protected readonly columnDefs = computed<readonly ColumnDef[]>(() => {
     this.lang();
     return [
       { key: 'title', label: this.translate.instant('templates.table.title'), locked: true },
+      { key: 'type', label: this.translate.instant('templates.table.type') },
       { key: 'body', label: this.translate.instant('templates.table.body') },
-      { key: 'groups', label: this.translate.instant('templates.table.groups') },
+      { key: 'agents', label: this.translate.instant('templates.table.agents') },
       { key: 'updatedAt', label: this.translate.instant('templates.table.updated') },
     ];
   });
@@ -169,14 +185,17 @@ export class TemplatesPageComponent {
       {
         field: 'title',
         header: this.translate.instant('templates.table.title'),
+        sortable: true,
         cellTemplate: this.titleTpl(),
       },
+      { field: 'type', header: this.translate.instant('templates.table.type'), width: '8rem', sortable: true, cellTemplate: this.typeTpl() },
       {
         field: 'body',
         header: this.translate.instant('templates.table.body'),
+        sortable: true,
         cellTemplate: this.bodyTpl(),
       },
-      { field: 'groups', header: this.translate.instant('templates.table.groups'), width: '6.5rem', cellTemplate: this.groupsTpl() },
+      { field: 'agents', header: this.translate.instant('templates.table.agents'), width: '112px', sortable: true, cellTemplate: this.agentsTpl() },
       /* `updatedAt` sí lleva cellTemplate aunque sea texto plano: su tipografía
        * (12px, gris tenue) vive en el SCSS de ESTA página, y el `<td>` lo pinta
        * ahora el DS — una regla encapsulada aquí no lo alcanzaría. El `<span>`
@@ -184,7 +203,8 @@ export class TemplatesPageComponent {
       {
         field: 'updatedAt',
         header: this.translate.instant('templates.table.updated'),
-        width: '112px',
+        width: '9.5rem',
+        sortable: true,
         cellTemplate: this.updatedTpl(),
       },
     ];
@@ -201,21 +221,9 @@ export class TemplatesPageComponent {
     selectedOther: 'common.bulk.entity.template_selected_other',
   });
 
-  /** `p-tabs` avisa con el `value` de la pestaña (`string | number | undefined`). */
-  protected onTabChange(value: string | number | undefined): void {
-    const tipo = TEMPLATE_TYPES.find((t) => t === value);
-    if (tipo) this.switchTab(tipo);
-  }
-
-  protected switchTab(tab: TemplateType): void {
-    this.activeTab.set(tab);
-    this.searchQuery.set('');
-    this.selectedIds.set(new Set());
-  }
-
-  /** «Nueva plantilla» y el vacío llevan al editor, con el canal de la pestaña abierta. */
+  /** «Nueva plantilla» y el vacío llevan al editor (el canal nace en Chat). */
   protected onCreateClick(): void {
-    void this.router.navigate(['/admin/plantillas/crear'], { queryParams: { tipo: this.activeTab() } });
+    void this.router.navigate(['/admin/plantillas/crear']);
   }
 
   protected onRowOpen(tpl: Template): void {
@@ -314,12 +322,13 @@ export class TemplatesPageComponent {
 
   /* ── Descargar e importar ─────────────────────────────────────────────── */
 
-  /** Descarga lo que se ve, o lo marcado: título, canal y contenido en texto plano (sin las etiquetas del HTML). */
+  /** Descarga lo que se ve, o lo marcado (COA SISMAC-4438): nombre, canal, contenido en texto plano (sin las etiquetas del
+   *  HTML), agentes asignados y modificada. */
   protected onExport(visibleRows: readonly Template[]): void {
     const t = (k: string) => this.translate.instant(k);
     this.xlsx.export({
-      headers: this.cabecera(),
-      rows: visibleRows.map((r) => [r.title, t(`templates.type.${r.type}`), textoPlano(r.body)]),
+      headers: this.cabeceraExportada(),
+      rows: visibleRows.map((r) => [r.title, t(`templates.type.${r.type}`), textoPlano(r.body), this.agentCount(r), this.fecha(r)]),
       sheetName: t('templates.breadcrumb'),
       filePrefix: 'plantillas',
     });
@@ -329,6 +338,12 @@ export class TemplatesPageComponent {
   private cabecera(): string[] {
     const t = (k: string) => this.translate.instant(k);
     return [t('templates.table.title'), t('templates.table.type'), t('templates.table.body')];
+  }
+
+  /** La cabecera de lo descargado: la de la plantilla de importar más los agentes asignados y la fecha. */
+  private cabeceraExportada(): string[] {
+    const t = (k: string) => this.translate.instant(k);
+    return [...this.cabecera(), t('templates.table.agents_assigned'), t('templates.table.updated')];
   }
 
   private static readonly ERRORES_A_LA_VISTA = 20;

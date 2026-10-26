@@ -52,6 +52,12 @@
       [tableMinWidth]="tableMinWidth()"
       [paginator]="visibles().length > 0"
       rowsFocusable
+      selectionMode="multiple"
+      [selection]="selectedRows()"
+      (selectionChange)="onSelectionChange($any($event))"
+      [rowSelectionAriaLabel]="rowAria"
+      [selectAllAriaLabel]="selectAllAria()"
+      (rowContextMenu)="onRowContextMenu($event, menuRef)"
       [rowStyleClass]="rowClass"
       (rowClick)="onRowClick($event)"
       (rowKeydown)="onRowKeydown($event)"

@@ -140,8 +140,8 @@ test.describe('plantillas', () => {
     await expect(table).toBeVisible();
     await expect(page.locator('table.table')).toHaveCount(0);
 
-    // Casilla + Título + Contenido + Grupos + Actualizada + acciones.
-    await expect(table.locator('.p-datatable-thead th')).toHaveCount(6);
+    // Casilla + Nombre + Canal + Contenido + Agentes + Modificada + acciones.
+    await expect(table.locator('.p-datatable-thead th')).toHaveCount(7);
 
     /* El cuerpo se recorta a una línea. Es lo que impide que una plantilla
      * larga rompa el alto de la fila, y depende de que el `<span>` proyectado
@@ -149,20 +149,6 @@ test.describe('plantillas', () => {
     const bodyText = table.locator('.table__body-text').first();
     await expect(bodyText).toHaveCSS('white-space', 'nowrap');
     await expect(bodyText).toHaveCSS('overflow', 'hidden');
-  });
-
-  test('la pestaña filtra y la selección no se arrastra entre pestañas', async ({ page }) => {
-    const table = page.locator(TPL_TABLE);
-    const rows = table.locator('.p-datatable-tbody > tr');
-
-    await rows.first().locator('p-table-checkbox').click();
-    await expect(table.locator('.p-datatable-tbody p-table-checkbox .p-checkbox-checked')).toHaveCount(1);
-
-    // Cambiar de pestaña limpia la selección: lo seleccionado ya no está
-    // en pantalla, y una barra masiva que actúa sobre filas invisibles es
-    // exactamente el tipo de sorpresa que no debe poder ocurrir.
-    await page.getByRole('tab', { name: /email/i }).click();
-    await expect(table.locator('.p-datatable-tbody p-table-checkbox .p-checkbox-checked')).toHaveCount(0);
   });
 
   test('el kebab y el click derecho abren el mismo menú', async ({ page }) => {

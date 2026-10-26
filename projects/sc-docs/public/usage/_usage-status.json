@@ -637,7 +637,7 @@
     },
     {
       "selector": "sc-tabs",
-      "usedInSupervisor": 2
+      "usedInSupervisor": 1
     },
     {
       "selector": "sc-textarea",

@@ -47,13 +47,13 @@
 | `sc-bulk-transcription-modal` | CUSTOM | experimental (sin maestro en el Kit) | — | 16 inputs | sc-icon-tile sc-button sc-toggleswitch | ✓ | — |
 | `sc-button` | EXTENDED | ready | primeng/button, primeng/tooltip | 20 inputs | — | ✓ | 163 |
 | `sc-card` | STANDARD | ready | primeng/card | 3 inputs | — | ✓ | — |
-| `sc-checkbox` | CUSTOM | ready | — | 6 inputs | — | ✓ | 37 |
+| `sc-checkbox` | CUSTOM | ready | — | 6 inputs | — | ✓ | 36 |
 | `sc-chip` | EXTENDED | ready | primeng/chip | 9 inputs | — | ✓ | 5 |
 | `sc-color-dot-picker` | CUSTOM | experimental (sin maestro en el Kit) | — | 1 inputs | sc-selectbutton | ✓ | 3 |
 | `sc-column-selector` | STANDARD | experimental (sin maestro en el Kit) | primeng/popover, primeng/tooltip | 1 inputs | — | ✓ | 1 |
 | `sc-command-palette` | CUSTOM | experimental (sin maestro en el Kit) | — | 0 inputs | — | ✓ | 4 |
 | `sc-confirmdialog` | STANDARD | ready | primeng/confirmdialog, primeng/confirmpopup | 0 inputs | — | ✓ | 1 |
-| `sc-datatable` | EXTENDED | ready | primeng/table | 63 inputs | sc-skeleton sc-button | ✓ | 16 |
+| `sc-datatable` | EXTENDED | ready | primeng/table | 63 inputs | sc-skeleton sc-button | ✓ | 18 |
 | `sc-datepicker` | EXTENDED | ready | primeng/datepicker | 24 inputs | sc-field-label sc-button sc-field-msg | ✓ | 1 |
 | `sc-delete-entity-dialog` | STANDARD | experimental (sin maestro en el Kit) | primeng/tooltip | 2 inputs | sc-dialog sc-message sc-button | ✓ | 8 |
 | `sc-dialog` | EXTENDED | ready | primeng/dialog | 14 inputs | — | ✓ | 18 |
@@ -67,7 +67,7 @@
 | `sc-form-danger-zone` | CUSTOM | experimental (sin maestro en el Kit) | — | 3 inputs | sc-button | ✓ | — |
 | `sc-form-section-nav` | EXTENDED | experimental (sin maestro en el Kit) | primeng/tooltip | 9 inputs | sc-step-marker | ✓ | 6 |
 | `sc-gauge` | CUSTOM | experimental (sin maestro en el Kit) | — | 9 inputs | — | ✓ | 1 |
-| `sc-group-popover` | STANDARD | experimental (sin maestro en el Kit) | primeng/tooltip | 3 inputs | — | ✓ | 7 |
+| `sc-group-popover` | STANDARD | experimental (sin maestro en el Kit) | primeng/tooltip | 3 inputs | — | ✓ | 6 |
 | `sc-icon-tile` | CUSTOM | experimental (sin maestro en el Kit) | — | 3 inputs | — | ✓ | — |
 | `sc-impact-preview-dialog` | CUSTOM | experimental (sin maestro en el Kit) | — | 3 inputs | sc-dialog sc-button | ✓ | 1 |
 | `sc-inline-rename-cell` | CUSTOM | experimental (sin maestro en el Kit) | — | 2 inputs | — | ✓ | 2 |
@@ -77,7 +77,7 @@
 | `sc-inputtext` | EXTENDED | ready | primeng/inputtext | 20 inputs | sc-field-label sc-field-msg | ✓ | 46 |
 | `sc-keyboard-shortcuts` | CUSTOM | experimental (sin maestro en el Kit) | — | 1 inputs | sc-dialog | ✓ | 2 |
 | `sc-message` | EXTENDED | ready | primeng/message | 6 inputs | — | ✓ | 7 |
-| `sc-multiselect` | EXTENDED | ready | primeng/chip, primeng/multiselect, primeng/tooltip | 38 inputs | sc-field-label sc-field-msg | ✓ | 17 |
+| `sc-multiselect` | EXTENDED | ready | primeng/chip, primeng/multiselect, primeng/tooltip | 38 inputs | sc-field-label sc-field-msg | ✓ | 16 |
 | `sc-option-cards` | EXTENDED | experimental (sin maestro en el Kit ni demo) | primeng/radiobutton | 5 inputs | — | — | 3 |
 | `sc-panel` | EXTENDED | ready | primeng/panel | 6 inputs | — | ✓ | 1 |
 | `sc-password` | EXTENDED | ready | primeng/config, primeng/inputpassword | 19 inputs | sc-field-label sc-field-msg | ✓ | 2 |
@@ -95,7 +95,7 @@
 | `sc-step-marker` | CUSTOM | experimental (sin maestro en el Kit ni demo) | — | 1 inputs | — | — | — |
 | `sc-sticky-form-header` | CUSTOM | deprecated | — | 4 inputs | sc-button | ✓ | 2 |
 | `sc-subsection` | CUSTOM | experimental (sin maestro en el Kit) | — | 6 inputs | — | ✓ | 23 |
-| `sc-tabs` | STANDARD | ready | primeng/tabs | 1 inputs | — | ✓ | 2 |
+| `sc-tabs` | STANDARD | ready | primeng/tabs | 1 inputs | — | ✓ | 1 |
 | `sc-tag` | EXTENDED | ready | primeng/tag, primeng/tooltip | 8 inputs | — | ✓ | 28 |
 | `sc-textarea` | EXTENDED | ready | primeng/textarea | 20 inputs | sc-field-label sc-button sc-field-msg | ✓ | 7 |
 | `sc-toast` | EXTENDED | ready | primeng/toast | 6 inputs | — | ✓ | — |

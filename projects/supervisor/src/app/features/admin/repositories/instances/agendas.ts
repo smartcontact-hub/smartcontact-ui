@@ -1,27 +1,32 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 
-import { type GroupRef } from '@smartcontact-hub/components';
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
-import { GroupsStore } from '@features/admin/groups/state/groups.store';
-import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links.store';
 
 import { RepoListPageComponent } from '../components/repo-list-page.component';
 import { RepoColumnDef, RepoFieldDef, RepoPageConfig } from '../components/repo-types';
-import { deLoGuardado, estructuraDe, gruposConMiembros, paraGuardar } from '../state/agenda-asignacion.core.mjs';
 import { type Agenda, AgendasStore } from '../state/agendas.store';
 
-/** Las columnas: nombre, cuántos contactos, a quién se asigna y cuándo se tocó por última vez. Sin Estado (activa o
- *  inactiva no aportaba: para una nueva se duplica una) ni fecha de creación (una agenda cambia con el tiempo, y lo que
- *  ayuda es saber cuándo se modificó). */
-const columnas = (asignadosDe: (agenda: Agenda) => readonly GroupRef[]): readonly RepoColumnDef<Agenda>[] => [
+/** Las columnas del COA SISMAC-4440: nombre, descripción, cuántos contactos, a cuántos agentes se asigna y cuándo se tocó
+ *  por última vez. Todas ordenan. Una cifra en 0 y una descripción vacía dicen «—». Sin Estado (activa o inactiva no
+ *  aportaba: para una nueva se duplica una) ni fecha de creación (una agenda cambia con el tiempo, y lo que ayuda es
+ *  saber cuándo se modificó). */
+const columnas = (agentesDe: (agenda: Agenda) => number): readonly RepoColumnDef<Agenda>[] => [
   {
     key: 'name',
     labelKey: 'repositories.columns.name',
     kind: 'text',
     accessor: (i) => i.name,
-    // Sin ancho: es la columna que crece. Lo era `numbers`, un texto largo; una cifra no lo necesita, y sin ninguna
-    // columna libre el sobrante se reparte también en la de selección, que deja de medir 40.
+    // Sin ancho: es la columna que crece.
     emphasis: true,
+    sortable: true,
+  },
+  {
+    key: 'description',
+    labelKey: 'repositories.columns.description',
+    kind: 'truncate',
+    accessor: (i) => i.description.trim(),
+    emptyDash: true,
+    sortable: true,
   },
   {
     // Cuántos contactos tiene (DD-163); los contactos, en su editor.
@@ -30,17 +35,18 @@ const columnas = (asignadosDe: (agenda: Agenda) => readonly GroupRef[]): readonl
     kind: 'count',
     width: '112px',
     accessor: (i) => String(i.contacts.length),
+    emptyDash: true,
+    sortable: true,
   },
   {
-    // A quién se asigna (DD-211 §1): los grupos enteros y, detrás, los agentes que la tienen sueltos, con el mismo
-    // desplegable que Tipificaciones: «—» sin ninguno, el nombre si es uno, y con varios la cifra y, al pasar, cuáles.
-    key: 'groups',
-    labelKey: 'repositories.agendas.col_groups_agents',
-    kind: 'groups',
-    width: '9rem',
-    accessor: (i) => String(asignadosDe(i).length),
-    groups: asignadosDe,
-    groupsAriaKey: 'repositories.agendas.assigned_aria',
+    // A cuántos agentes se asigna (COA SISMAC-4440): solo a agentes, sin globo con sus nombres.
+    key: 'agents',
+    labelKey: 'repositories.agendas.col_agents',
+    kind: 'count',
+    width: '112px',
+    accessor: (i) => String(agentesDe(i)),
+    emptyDash: true,
+    sortable: true,
   },
   {
     key: 'updatedAt',
@@ -48,6 +54,7 @@ const columnas = (asignadosDe: (agenda: Agenda) => readonly GroupRef[]): readonl
     kind: 'date',
     width: '9.5rem',
     accessor: (i) => i.updatedAt,
+    sortable: true,
   },
 ];
 
@@ -76,35 +83,14 @@ export const AGENDA_FIELDS: readonly RepoFieldDef[] = [
 })
 export class AgendasPageComponent {
   protected readonly store = inject(AgendasStore);
-  private readonly groupsStore = inject(GroupsStore);
   private readonly agentsStore = inject(AgentsStore);
-  private readonly linksStore = inject(GroupAgentLinksStore);
 
-  private readonly estructura = computed(() =>
-    estructuraDe(
-      gruposConMiembros(this.groupsStore.groups(), this.linksStore.links()),
-      this.agentsStore.agents().map((a) => a.id),
-    ),
-  );
-
-  /** Los grupos enteros y los agentes que la tienen sueltos, sin los que ya la tienen por uno de esos grupos: lo mismo
-   *  que enseña el árbol del editor y que guardaría, con la misma regla (un grupo cuyos agentes la tienen todos sale
-   *  entero, DD-211 §1). */
-  private readonly asignadosDe = (agenda: Agenda): readonly GroupRef[] => {
-    const estructura = this.estructura();
-    const guardada = deLoGuardado(
-      this.groupsStore.groups().filter((g) => g.schedules?.includes(agenda.id)).map((g) => g.id),
-      this.agentsStore.agents().filter((a) => a.schedules?.includes(agenda.id)).map((a) => a.id),
-      estructura,
-    );
-    const { grupos, agentesSueltos } = paraGuardar(guardada, estructura);
-    const enteros = new Set(grupos);
-    const sueltos = new Set(agentesSueltos);
-    return [
-      ...this.groupsStore.groups().filter((g) => enteros.has(g.id)).map((g) => ({ id: g.id, name: g.name, active: true })),
-      ...this.agentsStore.agents().filter((a) => sueltos.has(a.id)).map((a) => ({ id: a.id, name: a.name, active: true })),
-    ];
-  };
+  /** Cuántos agentes la tienen asignada: solo cuentan los agentes (los grupos no se cuentan, COA SISMAC-4440). */
+  private readonly agentesPorAgenda = computed(() => {
+    const cuenta = new Map<number, number>();
+    for (const a of this.agentsStore.agents()) for (const id of a.schedules ?? []) cuenta.set(id, (cuenta.get(id) ?? 0) + 1);
+    return cuenta;
+  });
 
   protected readonly config: RepoPageConfig<Agenda> = {
     titleKey: 'repositories.agendas.title',
@@ -113,7 +99,7 @@ export class AgendasPageComponent {
     entityPluralKey: 'repositories.agendas.plural',
     icon: 'call',
     breadcrumbExtraKey: 'repositories.agendas.title',
-    columns: columnas(this.asignadosDe),
+    columns: columnas((agenda) => this.agentesPorAgenda().get(agenda.id) ?? 0),
     fields: AGENDA_FIELDS,
     searchKeys: ['name', 'description'],
     filePrefix: 'agendas',

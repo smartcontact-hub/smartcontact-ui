@@ -39,6 +39,7 @@
   [columnStorageKey]="columnPrefKey()"
   [searchPlaceholder]="'repositories.search_placeholder' | translate: { entity: entityPlural() }"
   [searchFn]="matchesSearch"
+  [sortFn]="sortFn"
   [(query)]="searchQuery"
   exportable
   [rowMenu]="rowMenu"

@@ -3,11 +3,12 @@ import { expect, test, type Page } from '@playwright/test';
 import { goto } from './helpers';
 
 /**
- * PLANTILLAS: SU EDITOR EN PÁGINA, EL CANAL DE WHATSAPP, LOS GRUPOS Y LOS DATOS. Revisión de producto:
+ * PLANTILLAS: SU EDITOR EN PÁGINA, EL CANAL DE WHATSAPP, LOS AGENTES Y LOS DATOS. Revisión de producto:
  *   1. crear y editar una plantilla va en su propia página (en el panel de la lista, la caja del contenido era
- *      demasiado pequeña): título, canal, el editor de primeng.dev/editor y los grupos que la usan;
+ *      demasiado pequeña): nombre, canal, el editor de primeng.dev/editor y los agentes a los que se asigna (COA
+ *      SISMAC-4438: solo a agentes, en una tabla con la columna «Grupos»);
  *   2. hay plantillas de WhatsApp, que guardan su texto con sus marcas (`*negrita*`);
- *   3. la tabla enseña el contenido en texto plano, sin etiquetas, y los grupos con su desplegable;
+ *   3. la lista no lleva pestañas: el canal es una columna; el contenido, en texto plano, sin etiquetas, y los agentes, su cifra;
  *   4. «Duplicar» y el menú «Acciones» (importar, exportar, descargar plantilla) como en el resto de listas.
  */
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -17,16 +18,20 @@ const guardadas = (page: Page) =>
 const guardar = (page: Page) => page.locator('sc-top-bar').getByRole('button', { name: /^(Guardar|Crear plantilla)$/ });
 const editor = (page: Page) => page.locator('.ql-editor');
 
-test('la lista: tres pestañas, contenido en texto plano, grupos con su desplegable, y la fila abre el editor', async ({ page }) => {
+test('la lista: sin pestañas, con su columna Canal, contenido en texto plano, agentes en cifra, y la fila abre el editor', async ({ page }) => {
   await goto(page, 'admin/plantillas');
-  await expect(page.getByRole('tab')).toHaveText(['Chat', 'Email', 'WhatsApp']);
-  const cuerpo = page.locator('[data-testid="templates-table"] .table__body-text').first();
+  await expect(page.getByRole('tab')).toHaveCount(0);
+  const tabla = page.locator('[data-testid="templates-table"]');
+  await expect(tabla.locator('thead th[data-field]')).toHaveText(['Nombre', 'Canal', 'Contenido', 'Agentes', 'Modificada', '']);
+  const cuerpo = tabla.locator('.table__body-text').first();
   await expect(cuerpo).not.toContainText('<');
-  await expect(page.locator('[data-testid="templates-table"] sc-group-popover').first()).toBeVisible();
+  // Chat, Email y WhatsApp, todas en la misma lista.
+  const canales = await tabla.locator('tbody tr td:nth-child(3)').allTextContents();
+  expect(new Set(canales.map((c) => c.trim()))).toEqual(new Set(['Chat', 'Email', 'WhatsApp']));
+  // La fecha, como en Agendas: «9 oct 2026».
+  await expect(tabla.locator('tbody tr').first().locator('.table__updated-text')).toHaveText(/^\d{1,2} \p{L}{3,4}\.? \d{4}$/u);
 
-  await page.getByRole('tab', { name: 'WhatsApp' }).click();
-  await expect(page.locator('[data-testid="templates-table"] .p-datatable-tbody > tr')).toHaveCount(2);
-  await page.locator('[data-testid="templates-table"] .p-datatable-tbody > tr', { hasText: 'Confirmación de cita' }).locator('td').nth(1).click();
+  await tabla.locator('.p-datatable-tbody > tr', { hasText: 'Confirmación de cita' }).locator('td').nth(1).click();
   await expect(page).toHaveURL(/\/admin\/plantillas\/editar\/13$/);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Confirmación de cita');
   // El contenido de WhatsApp se enseña con su formato: la marca `*…*` es negrita en el editor.
@@ -35,17 +40,14 @@ test('la lista: tres pestañas, contenido en texto plano, grupos con su desplega
   await expect(page.locator('sc-top-bar').getByRole('button', { name: 'Guardar' })).toBeDisabled();
 });
 
-test('crear una de WhatsApp: la negrita se guarda con su marca, y los grupos, en el grupo', async ({ page }) => {
-  await goto(page, 'admin/plantillas');
-  await page.getByRole('tab', { name: 'WhatsApp' }).click();
-  await page.locator('sc-top-bar').getByRole('button', { name: 'Nueva plantilla' }).click();
-  await expect(page).toHaveURL(/\/admin\/plantillas\/crear\?tipo=whatsapp$/);
+test('crear una de WhatsApp: la negrita se guarda con su marca', async ({ page }) => {
+  await goto(page, 'admin/plantillas/crear?tipo=whatsapp');
   await expect(page.getByRole('button', { name: 'WhatsApp', exact: true })).toHaveAttribute('aria-pressed', 'true');
   // WhatsApp solo ofrece negrita, cursiva y tachado.
   await expect(page.locator('.ql-underline')).toHaveCount(0);
   await expect(page.locator('.ql-link')).toHaveCount(0);
 
-  await page.getByLabel('Título').fill('Bienvenida nueva');
+  await page.locator('#template-title').fill('Bienvenida nueva');
   await editor(page).click();
   await page.locator('.ql-bold').click();
   await page.keyboard.type('Hola');
@@ -57,21 +59,21 @@ test('crear una de WhatsApp: la negrita se guarda con su marca, y los grupos, en
   expect(nueva).toMatchObject({ type: 'whatsapp', body: '*Hola* mundo' });
 });
 
-test('crear de email: HTML saneado; sin título ni contenido, lo dice cada campo al pulsar (DD-217)', async ({ page }) => {
+test('crear de email: HTML saneado; sin nombre ni contenido, lo dice cada campo al pulsar (DD-217)', async ({ page }) => {
   await goto(page, 'admin/plantillas/crear?tipo=email');
   // «Crear plantilla», siempre activo y sin «Falta: …» al lado: callado hasta que se pulsa.
   await expect(guardar(page)).toBeEnabled();
   await expect(page.locator('.form-save-reason')).toHaveCount(0);
-  await expect(page.getByText('El título es obligatorio')).toHaveCount(0);
+  await expect(page.getByText('El nombre es obligatorio')).toHaveCount(0);
   await guardar(page).click();
   await expect(page).toHaveURL(/\/admin\/plantillas\/crear/);
-  await expect(page.getByText('El título es obligatorio')).toBeVisible();
+  await expect(page.getByText('El nombre es obligatorio')).toBeVisible();
   await expect(page.getByText('El contenido es obligatorio')).toBeVisible();
   await expect(page.locator('#template-title')).toBeFocused();
 
   // El rojo se va en vivo al arreglarlo; el siguiente intento lleva al contenido, que es lo que queda.
-  await page.getByLabel('Título').fill('Con enlace');
-  await expect(page.getByText('El título es obligatorio')).toHaveCount(0);
+  await page.locator('#template-title').fill('Con enlace');
+  await expect(page.getByText('El nombre es obligatorio')).toHaveCount(0);
   await guardar(page).click();
   await expect(editor(page)).toBeFocused();
   await page.keyboard.type('Texto <b>no es negrita</b>');
@@ -83,30 +85,38 @@ test('crear de email: HTML saneado; sin título ni contenido, lo dice cada campo
   expect(t?.body).toBe('<p>Texto &lt;b&gt;no es negrita&lt;/b&gt;</p>');
 });
 
-test('un título repetido no se guarda: lo dice su campo en vivo', async ({ page }) => {
+test('un nombre repetido no se guarda: lo dice su campo en vivo', async ({ page }) => {
   await goto(page, 'admin/plantillas/crear');
   const antes = (await guardadas(page)).length;
-  await page.getByLabel('Título').fill('saludo inicial');
+  await page.locator('#template-title').fill('saludo inicial');
   await editor(page).click();
   await page.keyboard.type('x');
-  await expect(page.getByText('Ya existe una plantilla con este título').first()).toBeVisible();
+  await expect(page.getByText('Ya existe una plantilla con este nombre').first()).toBeVisible();
   await guardar(page).click();
   await expect(page).toHaveURL(/\/admin\/plantillas\/crear/);
   await expect(page.locator('#template-title')).toBeFocused();
   expect((await guardadas(page)).length).toBe(antes);
 });
 
-test('grupos: asignar uno desde la plantilla lo deja en la tabla', async ({ page }) => {
+test('agentes: asignar uno desde la plantilla lo deja en el agente, sin tocar a su grupo', async ({ page }) => {
   await goto(page, 'admin/plantillas/editar/2');
-  await page.locator('sc-multiselect:has(#template-groups) .p-multiselect').click();
-  // El primero que atiende el canal de la plantilla: los demás salen apagados (revisión de producto del 2026-10-15).
-  await page.locator('.p-multiselect-overlay .p-multiselect-option:not([data-p-disabled="true"])').first().click();
-  await page.keyboard.press('Escape');
+  const tabla = page.locator('sc-agent-assignment-table');
+  await expect(tabla.locator('thead th[data-field]')).toHaveText(['Nombre', 'Email', 'Grupos']);
+  const grupos = (await page.evaluate(() => JSON.parse(localStorage.getItem('sc-groups') ?? '[]') as { id: number; templates?: number[] }[])).map((g) => [g.id, g.templates ?? []]);
+  const antes = await page.evaluate(() => (JSON.parse(localStorage.getItem('sc-agents') ?? '[]') as { templates?: number[] }[]).filter((a) => a.templates?.includes(2)).length);
+  const sinMarcar = tabla.getByRole('checkbox', { name: /^Asignar la plantilla a / }).and(page.locator(':not(:checked)'));
+  await sinMarcar.first().click();
   await expect(page.locator('sc-top-bar').getByRole('button', { name: 'Guardar' })).toBeEnabled();
   await page.locator('sc-top-bar').getByRole('button', { name: 'Guardar' }).click();
   await expect
-    .poll(async () => page.evaluate(() => (JSON.parse(localStorage.getItem('sc-groups') ?? '[]') as { templates?: number[] }[]).filter((g) => g.templates?.includes(2)).length))
-    .toBeGreaterThan(0);
+    .poll(async () => page.evaluate(() => (JSON.parse(localStorage.getItem('sc-agents') ?? '[]') as { templates?: number[] }[]).filter((a) => a.templates?.includes(2)).length))
+    .toBe(antes + 1);
+  expect((await page.evaluate(() => JSON.parse(localStorage.getItem('sc-groups') ?? '[]') as { id: number; templates?: number[] }[])).map((g) => [g.id, g.templates ?? []])).toEqual(grupos);
+});
+
+test('el editor no ofrece variables: la ayuda de `{agente}`, `{cliente}`… se fue hasta que existan', async ({ page }) => {
+  await goto(page, 'admin/plantillas/editar/1');
+  await expect(page.getByText('Variables:')).toHaveCount(0);
 });
 
 test('duplicar crea la copia con su nombre; «Acciones» trae importar y exportar', async ({ page }) => {
@@ -120,18 +130,17 @@ test('duplicar crea la copia con su nombre; «Acciones» trae importar y exporta
   await expect(page.getByRole('menuitem')).toHaveText(['Importar', 'Exportar']);
 });
 
-test('importar: la vista previa dice qué entra y qué no, y lo importado aparece en su pestaña', async ({ page }) => {
+test('importar: la vista previa dice qué entra y qué no, y lo importado aparece en la lista', async ({ page }) => {
   await goto(page, 'admin/plantillas');
   await page.getByRole('button', { name: 'Acciones', exact: true }).click();
   await page.getByRole('menuitem', { name: 'Importar', exact: true }).click();
   const d = page.getByRole('dialog', { name: 'Importar plantillas' });
-  const csv = ['Título;Canal;Contenido', 'Recordatorio;WhatsApp;Hola *{cliente}*\\nHasta pronto', ';chat;sin título', 'Saludo inicial;chat;repetida'].join('\n');
+  const csv = ['Nombre;Canal;Contenido', 'Recordatorio;WhatsApp;Hola *{cliente}*\\nHasta pronto', ';chat;sin título', 'Saludo inicial;chat;repetida'].join('\n');
   await d.locator('input[type="file"]').setInputFiles({ name: 'plantillas.csv', mimeType: 'text/csv', buffer: Buffer.from(csv, 'utf8') });
   await expect(d).toContainText('Se creará 1 plantilla');
   await expect(d).toContainText('Línea 3: falta el título');
   await expect(d).toContainText('1 ya existía');
   await d.getByRole('button', { name: 'Crear 1 plantilla' }).click();
   await expect(d).toBeHidden();
-  await page.getByRole('tab', { name: 'WhatsApp' }).click();
   await expect(page.locator('[data-testid="templates-table"] .p-datatable-tbody > tr', { hasText: 'Recordatorio' })).toBeVisible();
 });

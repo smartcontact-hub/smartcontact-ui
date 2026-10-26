@@ -95,31 +95,11 @@ test('al abrir, cada columna mide su contenido; lo arrastrado se recuerda y «Re
   await expect.poll(() => email.evaluate((th) => Math.round(th.getBoundingClientRect().width))).toBe(medido);
 });
 
-test('plantillas: hasta tres grupos y «+N más», y los que no atienden su canal, apagados con su porqué', async ({ page }) => {
-  await goto(page, 'admin/plantillas/editar/2');
-  await page.locator('sc-multiselect:has(#template-groups) .p-multiselect').click();
-  const opciones = page.locator('.p-multiselect-overlay .p-multiselect-option');
-  // Una plantilla de chat: un grupo solo de teléfono sale apagado y dice por qué.
-  const apagada = opciones.filter({ hasText: 'ACD Demo C2CB' });
-  await expect(apagada).toHaveAttribute('data-p-disabled', 'true');
-  await expect(apagada).toContainText('No atiende Chat');
-  const activas = page.locator('.p-multiselect-overlay .p-multiselect-option:not([data-p-disabled="true"])');
-  for (let i = 0; i < 4; i++) {
-    const opcion = activas.nth(i);
-    if ((await opcion.getAttribute('aria-selected')) !== 'true') await opcion.click();
-  }
-  await page.keyboard.press('Escape');
-  const campo = page.locator('sc-multiselect:has(#template-groups)');
-  const etiquetas = campo.locator('.p-multiselect-chip-item');
-  await expect(etiquetas).toHaveCount(4);
-  await expect(etiquetas.nth(3)).toHaveText(/^\+\d+ más$/);
-});
-
-test('agendas: el árbol de grupos y agentes sin «Código», y los contactos con sus columnas a elegir, con buscador', async ({ page }) => {
+test('agendas: la tabla de agentes sin «Código», y los contactos con sus columnas a elegir, con buscador', async ({ page }) => {
   await goto(page, 'admin/agendas/editar/1');
-  // Desde DD-211 §1, el árbol «Grupos y agentes»: nombre y email, sin «Código».
-  const agentes = page.locator('sc-agenda-assignment-tree');
-  await expect(agentes.getByRole('columnheader')).toHaveText(['Grupos y agentes', 'Email']);
+  // COA SISMAC-4440: la tabla de agentes con nombre, email y sus grupos, sin «Código».
+  const agentes = page.locator('sc-agent-assignment-table');
+  await expect(agentes.locator('thead th[data-field]')).toHaveText(['Nombre', 'Email', 'Grupos']);
 
   const contactos = page.locator('sc-agenda-contacts-table');
   const cabeceras = contactos.locator('thead th[data-field]');

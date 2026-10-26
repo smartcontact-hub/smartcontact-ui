@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Agendas y Plantillas como sus COA (SISMAC-4440 y 4438): se asignan SOLO a agentes, en una tabla plana de agentes con su columna «Grupos» (`sc-agent-assignment-table`), sin árbol ni grupos dinámicos (enmienda DD-211 §1) · el listado de Agendas con Descripción, Contactos y Agentes (cifra, sin globo) ordenables · Plantillas sin pestañas, con columna Canal · contactos con casillas y borrado múltiple (completa DD-227 en una tabla anidada) | DD-230 |
 > | El «+» de `sc-button` (`icon="add"`) es siempre redondo: círculo sin rótulo, píldora con él (enmienda DD-167 y DD-187) | DD-229 |
 > | Con el índice en la caja, el carril mide 235, el de la caja en Figma: ningún rótulo de las fichas salta de línea · sin la caja, 196 (enmienda DD-220) | DD-221 |
 > | El índice de secciones, en la caja gris de Contact Center en las seis pantallas que lo llevan (Contact Center, fichas de grupo, agente y usuario, tipificación y constructor de reglas), como en Figma: un solo interruptor de la app (`SC_FORM_SECTION_NAV_CAJA`), y volver al índice plano es borrar su línea | DD-220 |
@@ -161,7 +162,7 @@
 
 ---
 
-## DD-230 · 2026-10-26 — Duplicar tipificaciones y equipos abre un alta rellena, como Grupos y Agentes
+## DD-231 · 2026-10-26 — Duplicar tipificaciones y equipos abre un alta rellena, como Grupos y Agentes
 
 **Contexto** · Duplicar en Grupos (DD-218) y Agentes (DD-225) abre «Nuevo grupo» / «Nuevo agente» con la copia, y la entidad
 no existe hasta pulsar «Crear». Tipificaciones creaba la copia en la lista en el acto, con «(copia)», sin abrirla; Equipos
@@ -187,6 +188,52 @@ cuando producto lo pida.
 crear») y 13 («… recién creada»), el menú de Equipos con «Duplicar», y portadas, pasos del menú, hojas «Cómo se comporta»,
 índices y hand-off al día. E2E: `duplicar-tipificaciones-equipos.spec.ts`. `common.copy_suffix` sigue en uso (Agendas y
 demás listas).
+## DD-230 · 2026-10-26 — Agendas y Plantillas como sus COA: se asignan solo a agentes, en una tabla con sus grupos; Plantillas sin pestañas
+
+**Contexto** · Revisión con producto del 2026-10-26 de «SOLUCIÓN SISMAC-4440 Agendas» y «SOLUCIÓN SISMAC-4438 Plantillas»
+(v0.1, 2026-10-22). Una agenda se asignaba con un árbol Grupo → Agentes con grupos enteros dinámicos (DD-211 §1) y una
+plantilla, con un multiselect de grupos que se guardaban en el grupo (`Group.templates`). Los COA piden asignar SOLO a
+agentes; en la reunión se acordó la tabla de agentes de las fichas, con una columna «Grupos» para buscar por grupo y marcar
+de golpe a los que salen.
+
+**Decisión** ·
+1. **Asignar solo a agentes, en una tabla plana** (`sc-agent-assignment-table`, común a los dos editores): casilla, nombre
+   con avatar, email y grupos del agente (truncados, con tooltip), buscador «Buscar agentes…» (por cualquier columna),
+   «Todos / Asignados (N)» y la casilla de la cabecera, que marca los que se ven. Marcar un agente no marca a su grupo ni a
+   los demás de él; los grupos son información. Lo asignado que el filtro esconde se conserva. Se guarda en
+   `Agent.schedules` y `Agent.templates`; `Group.schedules` y `Group.templates` no se tocan desde estos editores.
+2. **Listado de Agendas**: Nombre, Descripción, Contactos, Agentes y Modificada, todas ordenables (`sortable` y `sortFn` en
+   `RepoColumnDef` / `RepoListPage`); una descripción vacía y las cifras en 0 dicen «—». «Agentes» es la cifra de agentes
+   con la agenda asignada, sin globo con nombres.
+3. **Plantillas sin pestañas**: una sola lista con Nombre, Canal, Contenido, Agentes y Modificada (la fecha, como en
+   Agendas: «9 oct 2026»), todas ordenables. «Título» pasa a «Nombre». Exportar suma «Agentes asignados» y la fecha. Se
+   quita la ayuda de variables del editor (`{agente}`, `{cliente}`…) hasta que existan las variables y su método de
+   llamada.
+4. **Contactos de una agenda con casillas** y borrado múltiple como DD-227: con dos o más marcados, el clic derecho (o el
+   «⋮») sobre uno ofrece solo «Eliminar (N)»; «¿Eliminar 3 contactos?», «Esta acción no se puede deshacer.» (la
+   confirmación simple, como Reglas: los contactos se borran del formulario y «Deshacer» los devuelve hasta guardar) y
+   el aviso «3 contactos eliminados».
+
+**Razón** · COA es más nueva que la DD (misma regla que DD-218 y DD-223). La tabla plana con grupos hace en una pantalla lo
+que el árbol hacía con grupos dinámicos, sin reglas de «parcial» ni de promoción a grupo entero.
+
+**Descartadas** ·
+- *Mantener el árbol y añadir la tabla*: dos formas de asignar la misma cosa, y los COA dicen que no se asigna a grupos.
+- *Quitar Agendas y Plantillas de «Recursos» de la ficha de grupo*: producto no lo trató; se queda como estaba y se anota
+  como pendiente.
+- *Quitar «Duplicar» de los dos listados* (los COA solo dan Editar y Eliminar): se deja, por consistencia con el resto
+  de listas; se suma al COA.
+- *«Crear» deshabilitado de primeras y «Deshacer cambios»* (como dicen los COA): se mantiene DD-217 (siempre activo, cada
+  campo avisa al pulsar) y el «Deshacer» común.
+- *Nombre de contacto opcional entre las columnas*: el COA y la reunión lo dejan fijo.
+
+**Consecuencias** · Fuera `sc-agenda-assignment-tree`, `agenda-asignacion.core.mjs` y su prueba. `i18n`: nuevas
+`repositories.agent_assignment.*`, `repositories.agendas.{col_agents,contacts_delete_title*,contacts_deleted_bulk*,select_*_aria}`,
+`templates.table.{agents,agents_assigned}`, `templates.form.{section_agents,agents_row_aria}`; fuera las del árbol y las
+de grupos y variables de la plantilla. Las columnas guardadas de Plantillas pasan a `sc-templates-columns-v3`. Una
+agenda o plantilla que un grupo tenía asignado entero ya no cuenta en «Agentes» (solo cuentan los agentes con ella). Pruebas:
+`agenda-agentes.spec.ts` reescrita; ajustadas `plantillas-editor`, `agendas-listado`, `admin-datatable-pilot`,
+`cabecera-escalera`, `tablas-revision-1015` y `tabla-al-pie`.
 
 ## DD-229 · 2026-10-26 — El «+» de `sc-button` es siempre redondo: círculo sin rótulo, píldora con él
 
@@ -201,6 +248,7 @@ rótulo («Nueva cuenta de correo», «Añadir contacto»…). Sin propiedad nue
 
 **Consecuencias** · Cambia la forma de todos los «+» de las apps con `sc-button`; el de solo icono es un círculo de 31,5 junto a un campo de 32,5 (1 px menos, como ya medía DD-167); los de PrimeNG nativo no se tocan.
 Precisa DD-167 y DD-187 §«+».
+
 ## DD-228 · 2026-10-26 — En los menús, el icono lleva siempre el color de su texto, también con el ratón encima
 
 **Contexto** · En el menú de una fila, «Eliminar» en rojo con el ratón encima mostraba su icono en gris (`#4f5663`, medido en la

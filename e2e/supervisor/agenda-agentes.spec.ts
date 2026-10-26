@@ -3,34 +3,28 @@ import { expect, test, type Page } from '@playwright/test';
 import { goto } from './helpers';
 
 /**
- * AGENDAS: A QUIÉN SE ASIGNA, EL EDITOR DE UN CONTACTO Y LO QUE NO SALE AL CREAR. Revisiones de producto:
- *   1. la última sección es «Grupos y agentes» (DD-211 §1): un árbol Grupo → Agentes, con buscador y el filtro
- *      «Todos / Asignados». La selección es por persona (un agente marcado lo está en todos sus grupos), marcar un
- *      grupo lo deja entero y dinámico (se guarda en el grupo), y desmarcar a uno de sus agentes lo deja parcial. Los
- *      agentes sin grupo van en «Sin grupo», al final, y se guardan sueltos, en el agente;
+ * AGENDAS: A QUÉ AGENTES SE ASIGNA, EL EDITOR DE UN CONTACTO Y LO QUE NO SALE AL CREAR. COA SISMAC-4440 y la reunión del
+ * 2026-10-26 (sustituye el árbol Grupo → Agentes de DD-211 §1):
+ *   1. la última sección es «Agentes»: una tabla plana con casilla, nombre, email y los grupos del agente, el buscador y
+ *      «Todos / Asignados (N)». Se asigna SOLO a agentes: marcar uno no marca a su grupo ni a los demás de él, y los grupos
+ *      se muestran como información (para buscar por grupo y marcar de golpe los que salen, con la casilla de la cabecera);
  *   2. las etiquetas de los campos personalizados no salen al crear, solo al editar;
- *   3. pulsar la fila de un contacto abre su editor, como en las listas, y la agenda de ejemplo lo permite probar;
+ *   3. pulsar la fila de un contacto abre su editor, como en las listas; con casillas, marcar varios y borrarlos con el clic
+ *      derecho (DD-227), con su confirmación y su aviso;
  *   4. el diálogo de importar no lleva texto explicativo.
  */
 test.use({ storageState: { cookies: [], origins: [] } });
 
-const arbol = (page: Page) => page.locator('sc-agenda-assignment-tree');
-const filaDe = (page: Page, texto: string) => arbol(page).locator('tbody tr', { hasText: texto });
-/** Despliega un grupo (o «Sin grupo») con su flecha. */
-const abrir = async (page: Page, grupo: string) => {
-  await filaDe(page, grupo).first().locator('p-treetable-toggler button').click();
-};
-const casillaGrupo = (page: Page, grupo: string) => arbol(page).getByRole('checkbox', { name: `Asignar la agenda a todo el grupo ${grupo}`, exact: true });
-/** Las casillas de una persona: una por cada grupo desplegado donde está. */
-const casillasDe = (page: Page, agente: string) => arbol(page).getByRole('checkbox', { name: `Asignar la agenda a ${agente}`, exact: true });
+const tabla = (page: Page) => page.locator('sc-agent-assignment-table');
+const casillas = (page: Page) => tabla(page).getByRole('checkbox', { name: /^Asignar la agenda a / });
 const guardarArriba = (page: Page) => page.locator('sc-top-bar').getByRole('button', { name: /^(Guardar|Crear)/ });
 const leer = <T,>(page: Page, clave: string) => page.evaluate((k) => JSON.parse(localStorage.getItem(k) ?? '[]'), clave) as Promise<T>;
 
-test('crear: sin etiquetas de personalizados, con la sección «Grupos y agentes» la última', async ({ page }) => {
+test('crear: sin etiquetas de personalizados, con la sección «Agentes» la última', async ({ page }) => {
   await goto(page, 'admin/agendas/crear');
   await expect(page.getByText('Etiquetas de los campos personalizados')).toHaveCount(0);
   const titulos = await page.locator('sc-section-card').evaluateAll((els) => els.map((e) => e.querySelector('h2, h3')?.textContent?.trim() ?? ''));
-  expect(titulos.at(-1)).toBe('Grupos y agentes');
+  expect(titulos.at(-1)).toBe('Agentes');
   expect(titulos.at(-2)).toBe('Contactos');
 });
 
@@ -39,86 +33,93 @@ test('editar: las etiquetas de personalizados sí salen', async ({ page }) => {
   await expect(page.getByText('Etiquetas de los campos personalizados')).toBeVisible();
 });
 
-test('árbol: un agente marcado lo está en todos sus grupos; un grupo entero, y parcial al quitarle a uno', async ({ page }) => {
+test('agentes: tabla plana con nombre, email y grupos; marcar un agente no marca a su grupo', async ({ page }) => {
   await goto(page, 'admin/agendas/crear');
-  await page.getByLabel('Nombre').first().fill('Agenda del árbol');
-  await expect(arbol(page)).toBeVisible();
-  // Scarlett Johansson está en «Grupo de prueba 2» y en «ACD Demo C2CB», entre otros.
-  await abrir(page, 'ACD Demo C2CB');
-  await abrir(page, 'Grupo de prueba 2');
-  await expect(casillasDe(page, 'Scarlett Johansson')).toHaveCount(2);
-  await casillasDe(page, 'Scarlett Johansson').last().click();
-  for (const casilla of await casillasDe(page, 'Scarlett Johansson').all()) await expect(casilla).toBeChecked();
-  await expect(casillaGrupo(page, 'Grupo de prueba 2')).toBeChecked({ indeterminate: true });
-
-  // Parcial, la casilla del grupo lo desmarca entero, como toda casilla de «todos» del DS (`sc-checkbox`); la segunda
-  // vez lo marca entero: sus cuatro agentes, también donde estén en otros grupos.
-  await casillaGrupo(page, 'Grupo de prueba 2').click();
-  await expect(casillaGrupo(page, 'Grupo de prueba 2')).not.toBeChecked();
-  for (const casilla of await casillasDe(page, 'Scarlett Johansson').all()) await expect(casilla).not.toBeChecked();
-  await casillaGrupo(page, 'Grupo de prueba 2').click();
-  await expect(casillaGrupo(page, 'Grupo de prueba 2')).toBeChecked();
-  for (const casilla of await casillasDe(page, 'Morgan Freeman').all()) await expect(casilla).toBeChecked();
-  await expect(arbol(page).getByRole('status')).toHaveText(/^4 de \d+ agentes y 1 grupos enteros$/);
-
-  // Quitar a Morgan Freeman desde OTRO grupo deja «Grupo de prueba 2» parcial: ya no es dinámico.
-  await casillasDe(page, 'Morgan Freeman').first().click();
-  await expect(casillaGrupo(page, 'Grupo de prueba 2')).toBeChecked({ indeterminate: true });
-  await expect(arbol(page).getByRole('status')).toHaveText(/^3 de \d+ agentes y 0 grupos enteros$/);
-
-  // Volver a marcarlo uno a uno deja el grupo entero otra vez.
-  await casillasDe(page, 'Morgan Freeman').last().click();
-  await expect(casillaGrupo(page, 'Grupo de prueba 2')).toBeChecked();
-
-  // Guardar: el grupo entero lo lleva el grupo; sus agentes no la llevan además sueltos.
-  await guardarArriba(page).click();
-  await expect(page).toHaveURL(/agendas\/editar\/\d+$/);
-  const id = Number(/editar\/(\d+)/.exec(page.url())![1]);
-  const grupos = await leer<{ id: number; name: string; schedules?: number[] }[]>(page, 'sc-groups');
-  expect(grupos.filter((g) => g.schedules?.includes(id)).map((g) => g.name)).toEqual(['Grupo de prueba 2']);
-  const agentes = await leer<{ schedules?: number[] }[]>(page, 'sc-agents');
-  expect(agentes.filter((a) => a.schedules?.includes(id))).toHaveLength(0);
+  await page.locator('#agenda-name').fill('Agenda de agentes');
+  await expect(tabla(page).locator('thead th[data-field]')).toHaveText(['Nombre', 'Email', 'Grupos']);
+  await expect(tabla(page).getByRole('button', { name: /^Asignados \(0\)$/ })).toBeVisible();
+  // Scarlett Johansson está en varios grupos, y los otros agentes de esos grupos no se marcan con ella.
+  await tabla(page).getByPlaceholder('Buscar agentes…').fill('Scarlett');
+  await expect(casillas(page)).toHaveCount(1);
+  await expect(tabla(page).locator('tbody tr').first()).toContainText('ACD Demo C2CB');
+  await casillas(page).first().click();
+  await expect(tabla(page).getByRole('button', { name: /^Asignados \(1\)$/ })).toBeVisible();
+  await tabla(page).getByPlaceholder('Buscar agentes…').fill('');
+  await expect(tabla(page).getByRole('button', { name: /^Asignados \(1\)$/ })).toBeVisible();
+  // Solo ella está marcada: «Asignados» enseña una única fila.
+  await tabla(page).getByRole('button', { name: /^Asignados/ }).click();
+  await expect(casillas(page)).toHaveCount(1);
+  await expect(casillas(page).first()).toBeChecked();
 });
 
-test('árbol: buscar y «Sin grupo»; el agente sin grupo se guarda suelto, en el agente', async ({ page }) => {
+test('agentes: buscar por grupo y marcar todos los que salen con la casilla de la cabecera; se guarda en cada agente', async ({ page }) => {
   await goto(page, 'admin/agendas/editar/4');
-  // Nicole Kidman (id 21) es uno de los agentes de ejemplo que no está en ningún grupo, y no tiene la agenda 4.
-  await arbol(page).getByPlaceholder('Buscar grupos o agentes…').fill('Nicole Kidman');
-  await expect(filaDe(page, 'Sin grupo')).toBeVisible();
-  const casilla = casillasDe(page, 'Nicole Kidman').first();
-  await expect(casilla).not.toBeChecked();
-  await casilla.click();
-  await expect(casilla).toBeChecked();
-
-  // «Asignados» enseña solo lo marcado, y la persona sigue ahí.
-  await arbol(page).getByRole('button', { name: /^Asignados/ }).click();
-  await expect(casillasDe(page, 'Nicole Kidman').first()).toBeChecked();
-
+  const antes = (await leer<{ id: number; schedules?: number[] }[]>(page, 'sc-agents')).filter((a) => a.schedules?.includes(4)).length;
+  const gruposAntes = (await leer<{ id: number; schedules?: number[] }[]>(page, 'sc-groups')).map((g) => [g.id, g.schedules ?? []]);
+  await tabla(page).getByPlaceholder('Buscar agentes…').fill('Campaigns');
+  const filas = await tabla(page).locator('tbody tr').count();
+  expect(filas).toBeGreaterThan(1);
+  await tabla(page).getByRole('checkbox', { name: 'Marcar todos los agentes que se ven' }).click();
+  for (const casilla of await casillas(page).all()) await expect(casilla).toBeChecked();
+  // Lo que el filtro esconde se conserva: el contador sube, no se sustituye por lo visible.
+  await tabla(page).getByPlaceholder('Buscar agentes…').fill('');
+  await expect(tabla(page).getByRole('button', { name: /^Asignados \(\d+\)$/ })).toBeVisible();
   await guardarArriba(page).click();
   await expect
-    .poll(async () => (await leer<{ id: number; schedules?: number[] }[]>(page, 'sc-agents')).find((a) => a.id === 21)?.schedules?.includes(4))
-    .toBe(true);
-  const enAgenda = await page.evaluate(() => JSON.parse(localStorage.getItem('sc-agendas-repo') ?? '[]').find((a: { id: number }) => a.id === 4));
-  expect(enAgenda).not.toHaveProperty('agentIds');
+    .poll(async () => (await leer<{ schedules?: number[] }[]>(page, 'sc-agents')).filter((a) => a.schedules?.includes(4)).length)
+    .toBeGreaterThanOrEqual(Math.max(antes, filas));
+  // Solo agentes: los grupos no se tocan.
+  expect((await leer<{ id: number; schedules?: number[] }[]>(page, 'sc-groups')).map((g) => [g.id, g.schedules ?? []])).toEqual(gruposAntes);
 });
 
-test('listado: la columna «Grupos y agentes» dice lo mismo que el árbol del editor, con la misma regla de grupo entero', async ({
-  page,
-}) => {
-  // «Emergencias 24h» (la 4) la lleva entero «Grupo pedidos», y los agentes de Online Support, Soporte Taller y
-  // Telemarketing ya la tienen todos (por ese grupo o sueltos): el árbol los enseña enteros, y el listado también.
-  const enteros = ['Grupo pedidos', 'Online Support', 'Soporte Taller', 'Telemarketing'];
+test('agentes: «Asignados» enseña solo los marcados, y quitarle uno lo guarda', async ({ page }) => {
   await goto(page, 'admin/agendas/editar/4');
-  await expect(arbol(page).getByRole('status')).toHaveText(new RegExp(` y ${enteros.length} grupos enteros$`));
-  await arbol(page).getByRole('button', { name: /^Asignados/ }).click();
-  for (const grupo of enteros) {
-    await expect(arbol(page).getByRole('checkbox', { name: `Asignar la agenda a todo el grupo ${grupo}`, exact: true })).toBeChecked();
-  }
+  await tabla(page).getByRole('button', { name: /^Asignados/ }).click();
+  const total = await casillas(page).count();
+  expect(total).toBeGreaterThan(0);
+  for (const casilla of await casillas(page).all()) await expect(casilla).toBeChecked();
+  await casillas(page).first().click();
+  await expect(tabla(page).getByRole('button', { name: new RegExp(`^Asignados \\(${total - 1}\\)$`) })).toBeVisible();
+  await guardarArriba(page).click();
+  await expect
+    .poll(async () => (await leer<{ schedules?: number[] }[]>(page, 'sc-agents')).filter((a) => a.schedules?.includes(4)).length)
+    .toBe(total - 1);
+});
 
+test('listado: Descripción, Contactos y Agentes con guion si no hay, y «Agentes» cuenta los de la tabla del editor', async ({ page }) => {
   await goto(page, 'admin/agendas');
-  await expect(page.getByRole('columnheader', { name: 'Grupos y agentes' })).toBeVisible();
-  const cifra = page.getByTestId('repo-table').locator('tbody tr', { hasText: 'Emergencias 24h' }).locator('.group-popover__trigger');
-  for (const grupo of enteros) await expect(cifra).toHaveAccessibleDescription(new RegExp(grupo));
+  const cabeceras = page.getByTestId('repo-table').locator('thead th[data-field]');
+  await expect(cabeceras).toHaveText(['Nombre', 'Descripción', 'Contactos', 'Agentes', 'Modificada', '']);
+  const fila = page.getByTestId('repo-table').locator('tbody tr', { hasText: 'Emergencias 24h' });
+  const cifra = (await fila.locator('td').nth(3).innerText()).trim();
+  await goto(page, 'admin/agendas/editar/4');
+  await expect(tabla(page).getByRole('button', { name: new RegExp(`^Asignados \\(${cifra}\\)$`) })).toBeVisible();
+  // Una agenda sin agentes lo dice con «—», y el globo con nombres no existe.
+  await goto(page, 'admin/agendas');
+  const retencion = page.getByTestId('repo-table').locator('tbody tr', { hasText: 'Retención' });
+  await expect(retencion.locator('td').nth(3)).toContainText('—');
+  await expect(page.getByTestId('repo-table').locator('sc-group-popover')).toHaveCount(0);
+});
+
+test('contactos: marcar varios y borrarlos con el clic derecho, con su confirmación y su aviso (DD-227)', async ({ page }) => {
+  await goto(page, 'admin/agendas/editar/10');
+  const contactos = page.locator('sc-agenda-contacts-table');
+  const filas = contactos.locator('.p-datatable-tbody > tr');
+  const antes = await filas.count();
+  await filas.nth(0).getByRole('checkbox').click();
+  await filas.nth(1).getByRole('checkbox').click();
+  await filas.nth(0).locator('td').nth(2).click({ button: 'right' });
+  const eliminar = page.getByRole('menuitem', { name: 'Eliminar (2)' });
+  await expect(page.getByRole('menuitem')).toHaveCount(1);
+  await eliminar.click();
+  const d = page.getByRole('alertdialog', { name: '¿Eliminar 2 contactos?' });
+  await expect(d).toContainText('Esta acción no se puede deshacer.');
+  await d.getByRole('button', { name: 'Eliminar', exact: true }).click();
+  await expect(d).toBeHidden();
+  await expect(page.getByText('2 contactos eliminados')).toBeVisible();
+  await expect(filas).toHaveCount(Math.min(antes, 10) - 2 > 0 ? Math.min(antes - 2, 10) : 0);
+  // Sin guardar: se puede deshacer.
+  await expect(page.locator('sc-top-bar').getByRole('button', { name: 'Deshacer' })).toBeVisible();
 });
 
 test('contactos: pulsar la fila abre su editor con todos sus campos', async ({ page }) => {
@@ -127,7 +128,7 @@ test('contactos: pulsar la fila abre su editor con todos sus campos', async ({ p
   const fila = page.locator('sc-agenda-contacts-table .p-datatable-tbody > tr', { hasText: 'Meryl' });
   await expect(fila).toContainText('Streep');
   await expect(fila).toContainText('Sunset Pictures');
-  await fila.locator('td').nth(2).click();
+  await fila.locator('td').nth(3).click();
   const d = page.getByRole('dialog', { name: 'Editar contacto' });
   await expect(d.getByLabel('Empresa')).toHaveValue('Sunset Pictures');
   await expect(d.getByLabel('Cliente desde')).toHaveValue('2014');

@@ -6,7 +6,6 @@ import { EditorModule } from 'primeng/editor';
 import {
   ScButtonComponent as ButtonComponent,
   ScInputTextComponent as InputTextComponent,
-  ScMultiSelectComponent as MultiSelectComponent,
   ScSectionCardComponent as SectionCardComponent,
   ScSelectButtonComponent as SelectButtonComponent,
 } from '@smartcontact-hub/components';
@@ -15,7 +14,8 @@ import type { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { ResultadoAccionService } from '@core/services';
 import { injectLangChange } from '@core/utils/lang-change';
-import { GroupsStore } from '@features/admin/groups/state/groups.store';
+import { AgentsStore } from '@features/admin/agents/state/agents.store';
+import { AgentAssignmentTableComponent } from '@features/admin/repositories/components/agent-assignment-table/agent-assignment-table.component';
 import { llegarAAncla, ocasionDeAvisar } from '@shared/utils/alta-secciones';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 
@@ -28,8 +28,8 @@ interface TemplateDraft {
   readonly type: TemplateType;
   /** El contenido tal como lo escribe el editor (HTML). Al guardar se convierte según el canal. */
   readonly html: string;
-  /** Los grupos que usan la plantilla: lo dice cada grupo en sus `templates`, no la plantilla. */
-  readonly groupIds: readonly number[];
+  /** Los agentes a los que se asigna (COA SISMAC-4438): solo agentes; lo dice cada agente en sus `templates`. */
+  readonly agentIds: readonly number[];
 }
 
 /** Lo que ofrece el editor, por canal: WhatsApp solo entiende negrita, cursiva y tachado. */
@@ -40,7 +40,7 @@ const FORMATOS: Record<TemplateType, readonly string[]> = {
 };
 
 /**
- * El editor de una plantilla: su título, su canal, su contenido y los grupos que la usan. Va en su propia ruta, como las
+ * El editor de una plantilla: su nombre, su canal, su contenido y los agentes a los que se asigna. Va en su propia ruta, como las
  * fichas y el de agendas, para que el contenido tenga sitio (en el panel de la lista, la caja era demasiado pequeña) y la
  * guarda avise de lo que no se ha guardado; Guardar y Deshacer suben a la barra de arriba.
  *
@@ -50,11 +50,11 @@ const FORMATOS: Record<TemplateType, readonly string[]> = {
 @Component({
   selector: 'sc-template-editor-page',
   imports: [
+    AgentAssignmentTableComponent,
     ButtonComponent,
     EditorModule,
     FormsModule,
     InputTextComponent,
-    MultiSelectComponent,
     SectionCardComponent,
     SelectButtonComponent,
     TranslateModule,
@@ -67,7 +67,7 @@ export class TemplateEditorPageComponent implements DirtyAware, OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly store = inject(TemplatesStore);
-  private readonly groupsStore = inject(GroupsStore);
+  protected readonly agentsStore = inject(AgentsStore);
   private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
@@ -82,7 +82,7 @@ export class TemplateEditorPageComponent implements DirtyAware, OnInit {
   protected readonly mode = signal<'create' | 'edit'>('create');
   private templateId: number | null = null;
 
-  protected readonly form = signal<TemplateDraft>({ title: '', type: 'chat', html: '', groupIds: [] });
+  protected readonly form = signal<TemplateDraft>({ title: '', type: 'chat', html: '', agentIds: [] });
   private readonly dirtyState = createFormDirtyState(() => this.form());
   readonly formDirty = this.dirtyState.dirty;
 
@@ -96,24 +96,9 @@ export class TemplateEditorPageComponent implements DirtyAware, OnInit {
 
   /** Los formatos del canal elegido: el editor se vuelve a montar al cambiarlo (Quill los lee al nacer). */
   protected readonly formatos = computed(() => [...FORMATOS[this.form().type]]);
-  protected readonly groupValue = computed(() => [...this.form().groupIds]);
   protected readonly editorPlaceholder = computed(() => {
     this.lang();
     return this.translate.instant(`templates.form.body_placeholder`);
-  });
-
-  /** Los grupos, y apagados los que no atienden el canal de la plantilla, con su porqué: una plantilla de WhatsApp no
-   *  le sirve a un grupo sin WhatsApp. */
-  protected readonly groupOptions = computed(() => {
-    this.lang();
-    const type = this.form().type;
-    const reason = this.translate.instant('templates.form.group_without_channel', {
-      channel: this.translate.instant(`templates.type.${type}`),
-    });
-    return this.groupsStore.groups().map((g) => {
-      const atiende = g.channels.includes(type);
-      return { label: g.name, value: g.id, disabled: !atiende, reason: atiende ? null : reason };
-    });
   });
 
   /** El título no se repite entre plantillas (sin contar la propia), como en el panel de antes. */
@@ -156,7 +141,7 @@ export class TemplateEditorPageComponent implements DirtyAware, OnInit {
     if (raw === null) {
       const tipo = this.route.snapshot.queryParamMap.get('tipo');
       const type = TEMPLATE_TYPES.find((t) => t === tipo) ?? 'chat';
-      this.form.set({ title: '', type, html: '', groupIds: [] });
+      this.form.set({ title: '', type, html: '', agentIds: [] });
       this.dirtyState.markPristine();
       return;
     }
@@ -171,10 +156,10 @@ export class TemplateEditorPageComponent implements DirtyAware, OnInit {
       title: tpl.title,
       type: tpl.type,
       html: contenidoParaEditor(tpl.body, tpl.type),
-      groupIds: this.groupsStore
-        .groups()
-        .filter((g) => g.templates?.includes(tpl.id))
-        .map((g) => g.id)
+      agentIds: this.agentsStore
+        .agents()
+        .filter((a) => a.templates?.includes(tpl.id))
+        .map((a) => a.id)
         .sort((a, b) => a - b),
     });
     this.dirtyState.markPristine();
@@ -187,10 +172,6 @@ export class TemplateEditorPageComponent implements DirtyAware, OnInit {
   /** El editor avisa solo de lo que escribe quien lo usa: cargar el contenido no cuenta como un cambio. */
   protected onHtml(html: string | null): void {
     this.update('html', html ?? '');
-  }
-
-  protected onGroups(value: unknown): void {
-    this.update('groupIds', [...(value as number[])].sort((a, b) => a - b));
   }
 
   protected save(): void {
@@ -207,7 +188,7 @@ export class TemplateEditorPageComponent implements DirtyAware, OnInit {
     const body = contenidoParaGuardar(f.html, f.type);
     if (this.mode() === 'create') {
       const created = this.store.addTemplate({ title, type: f.type, body });
-      this.asignarGrupos(created.id, f.groupIds);
+      this.asignar(created.id, f.agentIds);
       this.dirtyState.markPristine();
       const creado = this.translate.instant('templates.toasts.created', { name: created.title });
       // El toast, ya en la ficha a la que se llega (DD-211 §5).
@@ -217,20 +198,20 @@ export class TemplateEditorPageComponent implements DirtyAware, OnInit {
       return;
     }
     this.store.updateTemplate(this.templateId!, { title, type: f.type, body });
-    this.asignarGrupos(this.templateId!, f.groupIds);
+    this.asignar(this.templateId!, f.agentIds);
     this.form.set({ ...f, title });
     this.dirtyState.markPristine();
     this.resultado.contar(this.translate.instant('templates.toasts.updated', { name: title }));
   }
 
-  /** Pone o quita la plantilla de las `templates` de cada grupo que cambió: solo toca a los que cambian. */
-  private asignarGrupos(templateId: number, ids: readonly number[]): void {
+  /** Pone o quita la plantilla de las `templates` de cada agente que cambió: solo toca a los que cambian. */
+  private asignar(templateId: number, ids: readonly number[]): void {
     const deben = new Set(ids);
-    for (const grupo of this.groupsStore.groups()) {
-      const tiene = grupo.templates?.includes(templateId) ?? false;
-      if (tiene === deben.has(grupo.id)) continue;
-      const resto = (grupo.templates ?? []).filter((id) => id !== templateId);
-      this.groupsStore.updateGroup(grupo.id, { templates: deben.has(grupo.id) ? [...resto, templateId] : resto });
+    for (const agente of this.agentsStore.agents()) {
+      const tiene = agente.templates?.includes(templateId) ?? false;
+      if (tiene === deben.has(agente.id)) continue;
+      const resto = (agente.templates ?? []).filter((id) => id !== templateId);
+      this.agentsStore.updateAgent(agente.id, { templates: deben.has(agente.id) ? [...resto, templateId] : resto });
     }
   }
 

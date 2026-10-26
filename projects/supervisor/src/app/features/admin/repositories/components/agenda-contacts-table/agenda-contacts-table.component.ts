@@ -81,6 +81,8 @@ export class AgendaContactsTableComponent {
   readonly importar = output<void>();
   readonly edit = output<AgendaContact>();
   readonly remove = output<AgendaContact>();
+  /** Eliminar varios (DD-227): con dos o más marcados, el clic derecho sobre uno ofrece solo «Eliminar (N)». */
+  readonly removeMany = output<readonly AgendaContact[]>();
 
   /** La búsqueda de las listas, en el nombre y en el teléfono; un teléfono, también por sus cifras (`contactoCoincide`). */
   protected readonly query = signal('');
@@ -88,6 +90,31 @@ export class AgendaContactsTableComponent {
     const q = this.query();
     const todos = this.contacts();
     return q.trim() ? todos.filter((c) => contactoCoincide(c, q)) : todos;
+  });
+
+  /** Los marcados, por id: si un contacto desaparece de la agenda (borrado, Deshacer), se va también de la selección. */
+  protected readonly selectedIds = linkedSignal<readonly AgendaContact[], ReadonlySet<number>>({
+    source: () => this.contacts(),
+    computation: (contactos, antes) => {
+      const vivos = new Set(contactos.map((c) => c.id));
+      return new Set([...(antes?.value ?? [])].filter((id) => vivos.has(id)));
+    },
+  });
+  protected readonly selectedRows = computed(() => this.contacts().filter((c) => this.selectedIds().has(c.id)));
+
+  protected onSelectionChange(selection: unknown): void {
+    const filas = Array.isArray(selection) ? (selection as readonly AgendaContact[]) : [];
+    this.selectedIds.set(new Set(filas.map((c) => c.id)));
+  }
+
+  protected readonly rowAria = (c: AgendaContact): string => {
+    this.lang();
+    return this.translate.instant('repositories.agendas.select_contact_aria', { name: c.name || this.translate.instant('repositories.agendas.no_name') });
+  };
+
+  protected readonly selectAllAria = computed(() => {
+    this.lang();
+    return this.translate.instant('repositories.agendas.select_all_contacts_aria');
   });
 
   /**
@@ -214,6 +241,8 @@ export class AgendaContactsTableComponent {
 
   /* Un solo menú para toda la tabla, como en las listas: se repuebla al apuntar a otra fila. */
   private readonly menuTarget = signal<AgendaContact | null>(null);
+  /** Con dos o más marcados y el menú sobre uno de ellos: la selección entera, y el menú ofrece solo «Eliminar (N)». */
+  private readonly menuSelection = signal<readonly AgendaContact[] | null>(null);
   protected readonly menuOpen = signal(false);
   protected readonly menuId = `sc-agenda-contact-menu-${++agendaContactMenuIdCounter}`;
   /** Si el menú (uno para toda la tabla) es el de esta fila: su «⋮» dice que está abierto (DD-171). */
@@ -222,6 +251,17 @@ export class AgendaContactsTableComponent {
   }
   protected readonly menuItems = computed<MenuItem[]>(() => {
     this.lang();
+    const marcados = this.menuSelection();
+    if (marcados) {
+      return [
+        {
+          label: this.translate.instant('common.delete_count', { count: marcados.length }),
+          icon: 'sc-icon-font sc-icon-font--delete',
+          styleClass: 'sc-menu-item--danger',
+          command: () => this.removeMany.emit(marcados),
+        },
+      ];
+    }
     const contacto = this.menuTarget();
     if (!contacto) return [];
     return [
@@ -241,9 +281,23 @@ export class AgendaContactsTableComponent {
     ];
   });
 
+  /** Con la fila entre dos o más marcadas, su menú es el de la selección; si no, el de esa fila. */
+  private apuntar(contacto: AgendaContact): void {
+    const marcados = this.selectedRows();
+    const deLaSeleccion = marcados.length >= 2 && marcados.includes(contacto);
+    this.menuSelection.set(deLaSeleccion ? marcados : null);
+    this.menuTarget.set(contacto);
+  }
+
   protected openMenu(contacto: AgendaContact, menu: { toggle: (event: Event) => void }, event: Event): void {
     event.stopPropagation();
-    this.menuTarget.set(contacto);
+    this.apuntar(contacto);
     menu.toggle(event);
+  }
+
+  /** El clic derecho abre el mismo menú que el «⋮». */
+  protected onRowContextMenu(event: ScDatatableRowEvent<AgendaContact>, menu: { toggle: (event: Event) => void }): void {
+    this.apuntar(event.row);
+    menu.toggle(event.originalEvent);
   }
 }

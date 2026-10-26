@@ -33,6 +33,7 @@ const LISTAS = [
   'admin/equipos',
   'admin/labels',
   'admin/agendas',
+  'admin/plantillas',
   'admin/tipificaciones',
   'admin/horarios',
   'admin/variables',
@@ -68,13 +69,6 @@ for (const ruta of LISTAS) {
     expect(huecos(m)).toEqual([28, 14, 7]);
   });
 }
-
-test('plantillas: las pestañas, a 14 del título y a 14 de su buscador', async ({ page }) => {
-  await goto(page, 'admin/plantillas');
-  await page.locator('.table-card').waitFor();
-  const m = await cajas(page, ['main h1.page__heading', 'sc-tabs.tabs', '.page__action-bar', '.table-card']);
-  expect(huecos(m)).toEqual([28, 14, 14, 7]);
-});
 
 test('conversaciones: el segmentado a 14 del título y de los filtros, y los filtros a 7 de la tabla', async ({ page }) => {
   await goto(page, 'conversaciones');
