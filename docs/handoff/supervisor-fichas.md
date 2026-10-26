@@ -75,6 +75,14 @@ El del índice en la caja gris de Contact Center, con su interruptor para volver
 trampas propias): `git show archive/handoff-fichas-2026-10-26:docs/handoff/supervisor-fichas.md`.
 
 El de marcar una casilla de Grupos o Agentes sin acortar la tabla (2026-10-21, fallo de DD-215, sin trampas propias): `git show 5a04de14:docs/handoff/supervisor-fichas.md`.
+El de la ficha de grupo como la versión 17 de su página de COA (2026-10-22, DD-223, sin trampas propias): `git show
+5374bb7a:docs/handoff/supervisor-fichas.md`.
+
+## ✅ 2026-10-26 · Duplicar tipificaciones y equipos abre un alta rellena (DD-232)
+> **Sello:** rama `claude/duplicate-typifications-teams-920106` sobre `main` `aaa8e0fd`.
+- **Código**: `?seedFromId` en `tipificacion-ficha-page` y `equipo-editor-page`; Equipos usa `duplicateAsCreate` (nuevo en
+  `RepoPageConfig`). Prueba: `duplicar-tipificaciones-equipos.spec.ts`.
+- **Figma**: pasos 12 y 13 al final de los listados de Tipificaciones y Equipos (`3935:8821`, `3935:29304`), sin renumerar.
 
 ## ✅ 2026-10-26 · Agendas y Plantillas como sus COA: solo a agentes, en una tabla con sus grupos (DD-230)
 
@@ -134,22 +142,6 @@ El de marcar una casilla de Grupos o Agentes sin acortar la tabla (2026-10-21, f
   `~/Documents/Claude/2026-10 Grupos COA/Capturas 4058/`; fuera las dos repetidas, y la de «Sin canales», cambiada por
   una de la congelada (G14). La extensión no lee archivos del Mac: se suben a los adjuntos de la página y las coloca
   desde ahí.
-
-## ✅ 2026-10-22 · La ficha de grupo, como la versión 17 de su página de COA (DD-223)
-
-> **Sello:** rama `areses/grupos-como-coa-4058` sobre `main` `b703321f` (ya con DD-222), un PR. Tras fundir, la
-> congelada 4058 avanza a ese commit (`docs/PROTOTIPOS.md`), con el OK de producto.
-
-- **Revisión de COA 4058 v17**, frase a frase contra la congelada: el borrador para pegar vive fuera del repo
-  (`~/Documents/Claude/2026-10 Grupos COA/`). Salieron tres diferencias y un texto de la tabla, que arregla este PR.
-- **«En qué conversaciones»** con comentarios o con tipificación (`conPostconversacion`, `tipifica`).
-- **Activar un canal llega a los agentes sin ninguno** (`fillEmptyLinks`, prueba unitaria en `group-channels.test.mjs`);
-  quien no lo tiene permitido sale al guardar, con el aviso «¿Sacar del grupo a 1 agente?» (`sacarConfirm`). Antes, al
-  crear, salía en silencio.
-- **Tabla vacía con su motivo** (`vacio` en `agent-channel-table`): «Sin agentes asignados» en Asignados sin búsqueda.
-- **Sin hacer entonces**: «Editar en Repositorios» del modal de la tipificación ofrecía descartar con cambios, y
-  «Gestionar en Repositorios», guardar (resuelto en DD-224). Y la rueda del MiniAdmin (entrar a la edición desde la monitorización
-  de cada grupo, solo administradores): el prototipo no tiene esa pantalla; va como nota en Figma (§61).
 
 ## SIGUIENTE — sin preguntar
 

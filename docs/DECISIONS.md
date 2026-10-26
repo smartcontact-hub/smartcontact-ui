@@ -162,6 +162,33 @@
 
 ---
 
+## DD-232 · 2026-10-26 — Duplicar tipificaciones y equipos abre un alta rellena, como Grupos y Agentes
+
+**Contexto** · Duplicar en Grupos (DD-218) y Agentes (DD-225) abre «Nuevo grupo» / «Nuevo agente» con la copia, y la entidad
+no existe hasta pulsar «Crear». Tipificaciones creaba la copia en la lista en el acto, con «(copia)», sin abrirla; Equipos
+no ofrecía Duplicar (el menú de fila de Figma decía «Sin "Duplicar"»).
+
+**Decisión** · «Duplicar» en el menú de fila de ambas listas navega al alta con `?seedFromId=:id`
+(`/admin/tipificaciones/crear`, `/admin/equipos/crear`). La ficha precarga la copia, como la de grupo: el nombre, «X (1)»
+(`nombreDeCopia`: el siguiente número libre; duplicar «X (1)» da «X (2)»); y todo lo demás tal cual: en la tipificación,
+descripción y árbol de categorías (copia profunda); en el equipo, descripción y agentes marcados. La copia es el punto de
+partida: «Deshacer» vuelve a ella y salir sin tocar nada no pregunta ni deja nada en la lista. Es un alta normal: el nombre
+no puede repetirse y cada rama necesita nombre. Un `seedFromId` que no existe vuelve a la lista. En `sc-repo-list-page`
+nace `duplicateAsCreate` (con `editRoute`): Equipos lo usa; Agendas y las demás listas sin editor propio siguen copiando
+en la lista.
+
+**Razón** · Un solo gesto de duplicar en el producto; la copia no deja basura si no se quería, y el usuario edita lo que
+quiera antes de crearla.
+
+**Descartadas** · Dejar Tipificaciones como estaba (copia en el acto): es lo que DD-217 §8 descartó para grupos, porque
+crea una copia que luego hay que borrar. Poner `duplicateAsCreate` en Agendas: su editor no lee `seedFromId`; queda para
+cuando producto lo pida.
+
+**Consecuencias** · Figma, páginas «Tipificaciones» y «Equipos»: listado con los pasos 12 («Nueva … con la copia, sin
+crear») y 13 («… recién creada»), el menú de Equipos con «Duplicar», y portadas, pasos del menú, hojas «Cómo se comporta»,
+índices y hand-off al día. E2E: `duplicar-tipificaciones-equipos.spec.ts`. `common.copy_suffix` sigue en uso (Agendas y
+demás listas).
+
 ## DD-231 · 2026-10-26 — Equipos borra como Grupos y Agentes, y el «⋮» sin excepciones en `sc-list-page`
 
 **Contexto** · DD-227 dejó el «⋮» y el clic derecho de una fila marcada con el mismo menú de la selección. Dos PR traían una

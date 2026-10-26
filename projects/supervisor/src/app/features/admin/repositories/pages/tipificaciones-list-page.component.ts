@@ -28,7 +28,6 @@ import { ResultadoAccionService, XlsxExportService } from '@core/services';
 import { LanguageService } from '@core/services/language.service';
 import { injectLangChange } from '@core/utils/lang-change';
 import { injectConfirmarBorradoVarios } from '@features/admin/services/confirmar-borrado';
-import { copyName } from '@shared/utils/copy-name';
 import { CeldaVaciaComponent, ImportDialogComponent, ListPageComponent } from '@shared/components';
 import { GroupsStore } from '@features/admin/groups/state/groups.store';
 import { resolveGroup } from '@features/admin/groups/data/groups-data';
@@ -205,12 +204,13 @@ export class TipificacionesListPageComponent {
     },
   ];
 
-  /** La copia, con el mismo árbol y un nombre que no se repite; se queda en la lista, sin abrirla. */
+  /**
+   * Duplicar abre el ALTA rellena con la copia, como Grupos y Agentes: «X (1)», con el mismo árbol y la misma descripción.
+   * La tipificación no existe hasta pulsar «Crear tipificación»: cerrar sin tocar nada no deja una copia en la lista.
+   * Antes se creaba en el acto, con «(copia)».
+   */
   protected duplicar(t: Tipificacion): void {
-    const { id: _id, ...resto } = t;
-    const name = copyName(t.name, this.store.items().map((i) => i.name), this.translate.instant('common.copy_suffix'));
-    const copia = this.store.addItem({ ...resto, name });
-    this.toast(this.translate.instant('common.duplicated_toast', { name: copia.name }));
+    void this.router.navigate(['/admin/tipificaciones/crear'], { queryParams: { seedFromId: t.id } });
   }
 
   /** Con varias marcadas, el «⋮» y el clic derecho sobre una de ellas ofrecen solo «Eliminar (N)»: editar varias a la vez no existe. */
