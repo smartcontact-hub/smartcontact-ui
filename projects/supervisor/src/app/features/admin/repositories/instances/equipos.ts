@@ -83,5 +83,8 @@ export class EquiposPageComponent {
     sheetNameKey: 'repositories.equipos.title',
     // Su editor, con sus agentes: la fila lo abre, y «Crear» va a su alta (como Voice).
     editRoute: '/admin/equipos',
+    // Duplicar abre «Nuevo equipo» relleno, con sus agentes, como Grupos y Agentes: el equipo no existe hasta «Crear equipo».
+    duplicable: true,
+    duplicateAsCreate: true,
   };
 }

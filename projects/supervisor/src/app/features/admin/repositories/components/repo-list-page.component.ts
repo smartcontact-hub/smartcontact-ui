@@ -405,8 +405,13 @@ export class RepoListPageComponent<T extends RepoEntity> {
     this.creating.set(false);
   }
 
-  /** La copia: los mismos datos y un nombre que no se repite. Se queda en la lista, sin abrirla. */
+  /** La copia: los mismos datos y un nombre que no se repite. Con `duplicateAsCreate` abre el alta rellena; si no, se queda en la lista, sin abrirla. */
   protected onRowDuplicate(item: T): void {
+    const base = this.config().editRoute;
+    if (base && this.config().duplicateAsCreate) {
+      void this.router.navigate([`${base}/crear`], { queryParams: { seedFromId: item.id } });
+      return;
+    }
     const { id: _id, ...resto } = item;
     const name = copyName(item.name, this.store().items().map((i) => i.name), this.translate.instant('common.copy_suffix'));
     const copia = this.store().addItem({ ...resto, name, ...this.modificada() } as Omit<T, 'id'>);

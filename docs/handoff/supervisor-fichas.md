@@ -74,6 +74,12 @@ DD-219, sin trampas propias): `git show fdf913d4:docs/handoff/supervisor-fichas.
 El del índice en la caja gris de Contact Center, con su interruptor para volver al plano (2026-10-21, DD-220 y DD-221, sin
 trampas propias): `git show archive/handoff-fichas-2026-10-26:docs/handoff/supervisor-fichas.md`.
 
+## ✅ 2026-10-26 · Duplicar tipificaciones y equipos abre un alta rellena (DD-229)
+> **Sello:** rama `claude/duplicate-typifications-teams-920106` sobre `main` `aaa8e0fd`.
+- **Código**: `?seedFromId` en `tipificacion-ficha-page` y `equipo-editor-page`; Equipos usa `duplicateAsCreate` (nuevo en
+  `RepoPageConfig`). Prueba: `duplicar-tipificaciones-equipos.spec.ts`.
+- **Figma**: pasos 12 y 13 al final de los listados de Tipificaciones y Equipos (`3935:8821`, `3935:29304`), sin renumerar.
+
 ## ✅ 2026-10-26 · Eliminar varios en todas las tablas, sin barra de lote, y las congeladas al día (DD-227)
 
 > **Sello:** rama `areses/multiple-delete-ux-discussion-6ecde6` sobre `main` `9a90d5bd`.

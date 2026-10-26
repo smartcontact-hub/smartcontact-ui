@@ -28,6 +28,7 @@ import {
   type AvisoDeFicha,
 } from '@shared/utils/alta-secciones';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
+import { nombreDeCopia } from '@shared/utils/copy-name';
 import { GroupsStore } from '@features/admin/groups/state/groups.store';
 import { resolveGroup } from '@features/admin/groups/data/groups-data';
 
@@ -332,6 +333,19 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit {
     if (raw === null) {
       if (this.route.snapshot.queryParamMap.has('seccion')) {
         void this.sectionLinks.go(this.sectionLinks.section(this.route, null), { replace: true });
+      }
+      // DUPLICAR es un alta rellena, como en Grupos y Agentes: «Atención al cliente (1)» con la descripción y el árbol
+      // del original. La tipificación no existe hasta «Crear tipificación»; la copia es el punto de partida
+      // («Deshacer» vuelve a ella y salir sin tocar nada no pregunta).
+      const seedFromId = this.route.snapshot.queryParamMap.get('seedFromId');
+      if (seedFromId) {
+        const source = this.store.items().find((x) => x.id === Number(seedFromId));
+        if (!source) {
+          void this.router.navigateByUrl('/admin/tipificaciones', { replaceUrl: true });
+          return;
+        }
+        const { id: _id, ...borrador } = structuredClone(source);
+        this.form.set({ ...borrador, name: nombreDeCopia(source.name, this.store.items().map((i) => i.name)) });
       }
       this.dirtyState.markPristine();
       return;
