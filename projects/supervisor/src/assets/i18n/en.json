@@ -1197,7 +1197,7 @@
       "text": "Create your first message template to speed up service"
     },
     "table": {
-      "title": "Name",
+      "title": "Title",
       "type": "Channel",
       "body": "Content",
       "updated": "Modified",
@@ -1210,8 +1210,8 @@
     },
     "form": {
       "create_title": "New template",
-      "title": "Name",
-      "title_placeholder": "Template name",
+      "title": "Title",
+      "title_placeholder": "Template title",
       "channel": "Channel",
       "body": "Content",
       "body_placeholder": "Write the template content...",
@@ -1230,7 +1230,7 @@
       "agents_row_aria": "Assign the template to {{name}}"
     },
     "errors": {
-      "title_required": "Name is required",
+      "title_required": "Title is required",
       "body_required": "Content is required"
     },
     "delete": {
@@ -1389,6 +1389,12 @@
     },
     "agendas": {
       "title": "Address books",
+      "toasts": {
+        "created": "Address book \"{{name}}\" created",
+        "updated": "Address book \"{{name}}\" updated",
+        "deleted": "Address book \"{{name}}\" deleted",
+        "deleted_bulk": "{{count}} address books deleted"
+      },
       "singular": "address book",
       "create_title": "New address book",
       "plural": "address books",
@@ -1473,10 +1479,12 @@
       "import_confirm_one": "Add 1 contact",
       "name_placeholder": "E.g. National Sales",
       "errors": {
+        "title_required": "Title is required",
         "phone_invalid": "This phone number is not valid: use digits, with a + in front if it has a prefix.",
         "phone_taken": "That phone number is already in this address book.",
         "contact_empty": "Fill in at least one detail of the contact."
       },
+      "col_title": "Title",
       "col_agents": "Agents",
       "select_contact_aria": "Select contact {{name}}",
       "select_all_contacts_aria": "Select all contacts",
@@ -1728,7 +1736,8 @@
       "toasts": {
         "created": "Team \"{{name}}\" created",
         "updated": "Team \"{{name}}\" updated",
-        "deleted": "Team \"{{name}}\" deleted"
+        "deleted": "Team \"{{name}}\" deleted",
+        "deleted_bulk": "{{count}} teams deleted"
       }
     },
     "agent_assignment": {

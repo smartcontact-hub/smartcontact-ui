@@ -47,6 +47,7 @@
 > | El «+» de `sc-button` (`icon="add"`) es siempre redondo: círculo sin rótulo, píldora con él (enmienda DD-167 y DD-187) | DD-229 |
 > | Con el índice en la caja, el carril mide 235, el de la caja en Figma: ningún rótulo de las fichas salta de línea · sin la caja, 196 (enmienda DD-220) | DD-221 |
 > | El índice de secciones, en la caja gris de Contact Center en las seis pantallas que lo llevan (Contact Center, fichas de grupo, agente y usuario, tipificación y constructor de reglas), como en Figma: un solo interruptor de la app (`SC_FORM_SECTION_NAV_CAJA`), y volver al índice plano es borrar su línea | DD-220 |
+> | Agendas y Plantillas llaman «Título» a su campo principal (columna, «Ordenar por», placeholder y avisos) y el resto de listas sigue con «Nombre»; los avisos de Agendas dicen «Agenda «X» creada/eliminada» y borrar un contacto suelto pregunta (enmienda DD-230) | DD-236 |
 > | El nombre repetido se permite en todas las fichas del Supervisor: ni aviso en vivo ni «Crear»/«Guardar» apagados por él (enmienda DD-217 §1, DD-219 y DD-222 §4) | DD-235 |
 > | Lo que falta, como SISMAC-4058: «Crear» y «Guardar» apagados mientras falte algo, con «Falta: …» o «Listo para crear» arriba del resumen (cada cosa a su campo) y el motivo en el tooltip · el aviso bajo el campo en gris desde el principio y en rojo al dejarlo vacío · el índice no se pone rojo por lo tocado · en grupo, agente, usuario y tipificación (enmienda DD-217 §1 y §4; vuelve DD-136) | DD-219 |
 > | Grupos como sus páginas de COA (SISMAC-4056 y 4058): la cifra de agentes lleva a la ficha · duplicar es un alta · con varios marcados, el clic derecho solo elimina · Servicios y Agentes de mayor a menor al primer clic (`defaultSortOrder`) · la miga dice el nombre · «Agentes asignados» sin estado ni filtro, ordenable por nombre (`headerTemplate`), el nivel en desplegable y Habilitado bloqueado con «Activación por grupo» · confirmar dice qué, a cuántos y con su verbo (enmienda DD-121, DD-151, DD-159 §1, DD-185 §7 y §8, DD-187 §4, DD-204 §6, DD-215 §1 y §2 y DD-217 §8) | DD-218 |
@@ -163,6 +164,30 @@
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
 
 ---
+
+## DD-236 · 2026-10-27 — Agendas y Plantillas llaman «Título» a su campo principal; el resto de listas sigue con «Nombre»
+
+**Contexto** · DD-230 alineó Plantillas con Agendas y el resto de repositorios y cambió «Título» por «Nombre». En la reunión de
+equipo se decidió lo contrario para estas dos: en Voice se llama «Título», los COA (SISMAC-4438 y SISMAC-4440) ya lo dicen
+así, y «Nombre» suena a nombre propio de una persona o un grupo.
+
+**Decisión** · En Agendas y Plantillas el campo, la columna, «Ordenar por», el placeholder y los avisos dicen **«Título»**
+(`repositories.agendas.col_title`, `repositories.agendas.errors.title_required`, `templates.*.title*`). Grupos, Agentes,
+Tipificaciones y Equipos siguen con «Nombre»: son entidades con nombre propio; una agenda o una plantilla es contenido con
+título. La columna «Nombre» de la tabla de contactos de una agenda no cambia (es el nombre de una persona). Enmienda DD-230.
+
+**Razón** · Misma palabra que el usuario ya conoce de Voice y que el COA, y la agenda deja de tener un «Nombre» propio y otro
+en la tabla de sus contactos.
+
+**Y los avisos de borrar** · El COA manda también en esto: los avisos de Agendas dicen «Agenda «X» creada/eliminada» y «3 agendas
+eliminadas» (`repositories.agendas.toasts`, como Equipos), y borrar un contacto suelto pregunta «¿Eliminar 1 contacto?» como
+varios. El menú con varias filas marcadas sigue diciendo «Eliminar (3)» en todas las listas (DD-227): el COA lo recoge así.
+
+**Descartadas** ·
+- *Mantener «Nombre» por consistencia con el resto*: la excepción tiene criterio (contenido frente a entidad) y lo pidió el equipo.
+
+**Consecuencias** · i18n en los cuatro idiomas; `agendas-listado`, `agenda-agentes` y `plantillas-editor` con «Título». Proto y
+Figma de estas dos pantallas, a editar para que sigan al COA.
 
 ## DD-235 · 2026-10-27 — El nombre repetido se permite en todas las fichas del Supervisor
 

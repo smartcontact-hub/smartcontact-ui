@@ -1197,7 +1197,7 @@
       "text": "Crea tu primera plantilla de mensaje para agilizar la atención"
     },
     "table": {
-      "title": "Nombre",
+      "title": "Título",
       "type": "Canal",
       "body": "Contenido",
       "updated": "Modificada",
@@ -1210,8 +1210,8 @@
     },
     "form": {
       "create_title": "Nueva plantilla",
-      "title": "Nombre",
-      "title_placeholder": "Nombre de la plantilla",
+      "title": "Título",
+      "title_placeholder": "Título de la plantilla",
       "channel": "Canal",
       "body": "Contenido",
       "body_placeholder": "Escribe el contenido de la plantilla...",
@@ -1230,7 +1230,7 @@
       "agents_row_aria": "Asignar la plantilla a {{name}}"
     },
     "errors": {
-      "title_required": "El nombre es obligatorio",
+      "title_required": "El título es obligatorio",
       "body_required": "El contenido es obligatorio"
     },
     "delete": {
@@ -1389,6 +1389,12 @@
     },
     "agendas": {
       "title": "Agendas",
+      "toasts": {
+        "created": "Agenda «{{name}}» creada",
+        "updated": "Agenda «{{name}}» actualizada",
+        "deleted": "Agenda «{{name}}» eliminada",
+        "deleted_bulk": "{{count}} agendas eliminadas"
+      },
       "singular": "agenda",
       "create_title": "Nueva agenda",
       "plural": "agendas",
@@ -1473,10 +1479,12 @@
       "import_confirm_one": "Añadir 1 contacto",
       "name_placeholder": "Ej: Ventas Nacional",
       "errors": {
+        "title_required": "El título es obligatorio",
         "phone_invalid": "El teléfono no es válido: usa cifras, con un + delante si lleva prefijo.",
         "phone_taken": "Ese teléfono ya está en esta agenda.",
         "contact_empty": "Escribe al menos un dato del contacto."
       },
+      "col_title": "Título",
       "col_agents": "Agentes",
       "select_contact_aria": "Marcar el contacto {{name}}",
       "select_all_contacts_aria": "Marcar todos los contactos",
@@ -1728,7 +1736,8 @@
       "toasts": {
         "created": "Equipo «{{name}}» creado",
         "updated": "Equipo «{{name}}» actualizado",
-        "deleted": "Equipo «{{name}}» eliminado"
+        "deleted": "Equipo «{{name}}» eliminado",
+        "deleted_bulk": "{{count}} equipos eliminados"
       }
     },
     "agent_assignment": {

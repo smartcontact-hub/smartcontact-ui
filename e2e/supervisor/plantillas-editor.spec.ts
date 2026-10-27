@@ -22,7 +22,7 @@ test('la lista: sin pestañas, con su columna Canal, contenido en texto plano, a
   await goto(page, 'admin/plantillas');
   await expect(page.getByRole('tab')).toHaveCount(0);
   const tabla = page.locator('[data-testid="templates-table"]');
-  await expect(tabla.locator('thead th[data-field]')).toHaveText(['Nombre', 'Canal', 'Contenido', 'Agentes', 'Modificada', '']);
+  await expect(tabla.locator('thead th[data-field]')).toHaveText(['Título', 'Canal', 'Contenido', 'Agentes', 'Modificada', '']);
   const cuerpo = tabla.locator('.table__body-text').first();
   await expect(cuerpo).not.toContainText('<');
   // Chat, Email y WhatsApp, todas en la misma lista.
@@ -59,21 +59,21 @@ test('crear una de WhatsApp: la negrita se guarda con su marca', async ({ page }
   expect(nueva).toMatchObject({ type: 'whatsapp', body: '*Hola* mundo' });
 });
 
-test('crear de email: HTML saneado; sin nombre ni contenido, lo dice cada campo al pulsar (DD-217)', async ({ page }) => {
+test('crear de email: HTML saneado; sin título ni contenido, lo dice cada campo al pulsar (DD-217)', async ({ page }) => {
   await goto(page, 'admin/plantillas/crear?tipo=email');
   // «Crear plantilla», siempre activo y sin «Falta: …» al lado: callado hasta que se pulsa.
   await expect(guardar(page)).toBeEnabled();
   await expect(page.locator('.form-save-reason')).toHaveCount(0);
-  await expect(page.getByText('El nombre es obligatorio')).toHaveCount(0);
+  await expect(page.getByText('El título es obligatorio')).toHaveCount(0);
   await guardar(page).click();
   await expect(page).toHaveURL(/\/admin\/plantillas\/crear/);
-  await expect(page.getByText('El nombre es obligatorio')).toBeVisible();
+  await expect(page.getByText('El título es obligatorio')).toBeVisible();
   await expect(page.getByText('El contenido es obligatorio')).toBeVisible();
   await expect(page.locator('#template-title')).toBeFocused();
 
   // El rojo se va en vivo al arreglarlo; el siguiente intento lleva al contenido, que es lo que queda.
   await page.locator('#template-title').fill('Con enlace');
-  await expect(page.getByText('El nombre es obligatorio')).toHaveCount(0);
+  await expect(page.getByText('El título es obligatorio')).toHaveCount(0);
   await guardar(page).click();
   await expect(editor(page)).toBeFocused();
   await page.keyboard.type('Texto <b>no es negrita</b>');
@@ -85,12 +85,12 @@ test('crear de email: HTML saneado; sin nombre ni contenido, lo dice cada campo 
   expect(t?.body).toBe('<p>Texto &lt;b&gt;no es negrita&lt;/b&gt;</p>');
 });
 
-test('un nombre repetido se permite: no avisa y se guarda (DD-235)', async ({ page }) => {
+test('un título repetido se permite: no avisa y se guarda (DD-235)', async ({ page }) => {
   await goto(page, 'admin/plantillas/crear');
   await page.locator('#template-title').fill('saludo inicial');
   await editor(page).click();
   await page.keyboard.type('x');
-  await expect(page.getByText('Ya existe una plantilla con este nombre')).toHaveCount(0);
+  await expect(page.getByText('Ya existe una plantilla con este título')).toHaveCount(0);
   await guardar(page).click();
   await expect(page).toHaveURL(/\/admin\/plantillas\/editar\/\d+$/);
   expect((await guardadas(page)).some((t) => t.title === 'saludo inicial' && t.body === '<p>x</p>')).toBe(true);
@@ -151,7 +151,7 @@ test('importar: la vista previa dice qué entra y qué no, y lo importado aparec
   await page.getByRole('button', { name: 'Acciones', exact: true }).click();
   await page.getByRole('menuitem', { name: 'Importar', exact: true }).click();
   const d = page.getByRole('dialog', { name: 'Importar plantillas' });
-  const csv = ['Nombre;Canal;Contenido', 'Recordatorio;WhatsApp;Hola *{cliente}*\\nHasta pronto', ';chat;sin título', 'Saludo inicial;chat;repetida'].join('\n');
+  const csv = ['Título;Canal;Contenido', 'Recordatorio;WhatsApp;Hola *{cliente}*\\nHasta pronto', ';chat;sin título', 'Saludo inicial;chat;repetida'].join('\n');
   await d.locator('input[type="file"]').setInputFiles({ name: 'plantillas.csv', mimeType: 'text/csv', buffer: Buffer.from(csv, 'utf8') });
   await expect(d).toContainText('Se creará 1 plantilla');
   await expect(d).toContainText('Línea 3: falta el título');
