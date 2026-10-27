@@ -93,6 +93,11 @@ export const TELEFONOS_PERMITIDOS = new Map([
   ['910010101', 'agent: inventado, forma de fijo de Madrid'],
   ['910010102', 'agent: inventado, forma de fijo de Madrid'],
   ['910010103', 'agent: inventado, forma de fijo de Madrid'],
+  ['623456789', 'agent: inventado, directorio del marcador'],
+  ['900123234', 'agent: inventado, directorio del marcador'],
+  ['912340000', 'agent: inventado, directorio del marcador'],
+  ['915550123', 'agent: inventado, directorio del marcador'],
+  ['934520520', 'agent: inventado, directorio del marcador'],
 
   // projects/agent-mini — su cabecera declara todo el fichero inventado.
   ['600445566', 'agent-mini: inventado. Sustituyó al de la extracción en SUS DOS formas, la de 9 dígitos y la separada, que sobrevivió medio día a la primera limpieza'],
