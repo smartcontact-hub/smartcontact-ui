@@ -2,7 +2,27 @@
  * Directorio de ejemplo para el marcador: agentes (con extensión CENTREX) y contactos de
  * agenda (con varios teléfonos). Datos inventados, solo para ver el comportamiento.
  */
-export type DirState = 'green' | 'red' | 'blue';
+/**
+ * Estados del agente por familia de color, como en el Supervisor: Disponible en verde;
+ * No disponible y sus motivos en rojo; Administrativo en marrón; Post-conversando y
+ * Conversación en azul; Desconectado en gris.
+ */
+export type DirState =
+  | 'disponible'
+  | 'no_disponible'
+  | 'administrativo'
+  | 'post_conversando'
+  | 'conversacion'
+  | 'desconectado';
+
+export const DIR_STATE_LABEL: Readonly<Record<DirState, string>> = {
+  disponible: 'Disponible',
+  no_disponible: 'No disponible',
+  administrativo: 'Administrativo',
+  post_conversando: 'Post-conversando',
+  conversacion: 'En conversación',
+  desconectado: 'Desconectado',
+};
 
 export interface DirEntry {
   readonly id: string;
@@ -14,14 +34,15 @@ export interface DirEntry {
 }
 
 export const DIRECTORY: readonly DirEntry[] = [
-  { id: 'a1', name: 'Ana García', kind: 'agent', numbers: ['123'], state: 'green' },
-  { id: 'a2', name: 'Carlos Martín', kind: 'agent', numbers: ['230'], state: 'red' },
-  { id: 'a3', name: 'Marta Ruiz', kind: 'agent', numbers: ['231'], state: 'blue' },
-  { id: 'a4', name: 'Daniel López', kind: 'agent', numbers: ['234'], state: 'green' },
-  { id: 'a5', name: 'Lucía Fernández', kind: 'agent', numbers: ['315'], state: 'red' },
-  { id: 'a6', name: 'Javier Soler', kind: 'agent', numbers: ['410'], state: 'blue' },
+  { id: 'a1', name: 'Ana García', kind: 'agent', numbers: ['123'], state: 'disponible' },
+  { id: 'a2', name: 'Carlos Martín', kind: 'agent', numbers: ['230'], state: 'no_disponible' },
+  { id: 'a3', name: 'Marta Ruiz', kind: 'agent', numbers: ['231'], state: 'conversacion' },
+  { id: 'a4', name: 'Daniel López', kind: 'agent', numbers: ['234'], state: 'disponible' },
+  { id: 'a5', name: 'Lucía Fernández', kind: 'agent', numbers: ['315'], state: 'administrativo' },
+  { id: 'a6', name: 'Javier Soler', kind: 'agent', numbers: ['410'], state: 'post_conversando' },
   // Extensión de 4 cifras que choca con un número corto del registro (1440).
-  { id: 'a7', name: 'Pablo Gil', kind: 'agent', numbers: ['1440'], state: 'green' },
+  { id: 'a7', name: 'Pablo Gil', kind: 'agent', numbers: ['1440'], state: 'disponible' },
+  { id: 'a8', name: 'Sara Vidal', kind: 'agent', numbers: ['502'], state: 'desconectado' },
   { id: 'c1', name: 'Ana Beltrán', kind: 'contact', numbers: ['623456789', '915550123'] },
   { id: 'c2', name: 'Recepción Madrid', kind: 'contact', numbers: ['912340000'] },
   { id: 'c3', name: 'Soporte técnico', kind: 'contact', numbers: ['900123234', '9234'] },

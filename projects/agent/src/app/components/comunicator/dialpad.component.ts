@@ -14,6 +14,7 @@ import {
   reservedKind,
   resolveDialed,
   DIRECTORY,
+  DIR_STATE_LABEL,
   searchDirectory,
   type DirEntry,
 } from '../../data/directory';
@@ -100,7 +101,13 @@ const KEYS = [
                 (click)="choose(m)"
               >
                 @if (m.kind === 'agent') {
-                <i class="sugg__dot" title="Agente"></i>
+                <i
+                  class="sugg__dot"
+                  [class]="m.state"
+                  role="img"
+                  [attr.title]="stateLabel(m)"
+                  [attr.aria-label]="stateLabel(m)"
+                ></i>
                 } @else {
                 <i class="sugg__agenda" title="Agenda" role="img" aria-label="Agenda"></i>
                 }
@@ -336,6 +343,12 @@ const KEYS = [
       margin: 0 0.1vw;
       background: #69c663;
     }
+    .sugg__dot.no_disponible { background: #f75454; }
+    .sugg__dot.administrativo { background: #a9794f; }
+    .sugg__dot.post_conversando,
+    .sugg__dot.conversacion { background: #5b9bff; }
+    .sugg__dot.post_conversando { background: transparent; box-shadow: inset 0 0 0 0.1vw #5b9bff; }
+    .sugg__dot.desconectado { background: #85898d; }
     .who {
       margin: 0.5vw 0 0;
       font-family: var(--ag-font);
@@ -634,6 +647,9 @@ export class DialpadComponent {
   protected readonly emptyVisible = computed(
     () => this.open() && !this.target() && this.number().length >= 2 && !this.matches().length
   );
+  protected stateLabel(m: DirEntry): string {
+    return m.state ? DIR_STATE_LABEL[m.state] : 'Agente';
+  }
   protected hl(t: string) {
     return highlight(t, this.number());
   }
