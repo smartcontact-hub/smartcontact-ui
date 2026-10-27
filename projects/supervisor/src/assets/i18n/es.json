@@ -1270,6 +1270,7 @@
         "edit_breadcrumb": "Editar cuenta",
         "create_submit": "Crear cuenta",
         "name_placeholder": "mailbox@example.com",
+        "name_taken": "Ya hay una cuenta con esta dirección",
         "section_account": "Cuenta",
         "section_incoming": "Datos del correo entrante",
         "section_outgoing": "Datos del correo saliente",
@@ -1797,6 +1798,7 @@
       "create_title": "Nuevo usuario",
       "create_breadcrumb": "Nuevo usuario",
       "edit_breadcrumb": "Editar usuario",
+      "duplicate_title": "Duplicar usuario",
       "duplicate_breadcrumb": "Duplicar usuario",
       "duplicate_hint": "Duplicando «{{source}}»: rellena los campos obligatorios y guarda",
       "section": {
@@ -1932,6 +1934,7 @@
       "create_title": "Nuevo grupo",
       "create_breadcrumb": "Nuevo grupo",
       "edit_breadcrumb": "Editar grupo",
+      "duplicate_title": "Duplicar grupo",
       "duplicate_breadcrumb": "Duplicar grupo",
       "duplicate_hint": "Duplicando «{{source}}»: rellena los campos obligatorios y guarda",
       "section": {
@@ -2304,6 +2307,7 @@
       "create_title": "Nuevo agente",
       "create_breadcrumb": "Nuevo agente",
       "edit_breadcrumb": "Editar agente",
+      "duplicate_title": "Duplicar agente",
       "duplicate_breadcrumb": "Duplicar agente",
       "duplicate_hint": "Duplicando «{{source}}»: rellena los campos obligatorios y guarda",
       "section": {

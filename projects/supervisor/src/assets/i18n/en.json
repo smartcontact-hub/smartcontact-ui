@@ -1270,6 +1270,7 @@
         "edit_breadcrumb": "Edit account",
         "create_submit": "Create account",
         "name_placeholder": "mailbox@example.com",
+        "name_taken": "An account with this address already exists",
         "section_account": "Account",
         "section_incoming": "Incoming mail settings",
         "section_outgoing": "Outgoing mail settings",
@@ -1823,6 +1824,7 @@
         "email_empty": "No email"
       },
       "danger_zone_description": "Deleting this user revokes panel access and deletes their permissions. The action cannot be undone.",
+      "duplicate_title": "Duplicate user",
       "duplicate_breadcrumb": "Duplicate user",
       "duplicate_hint": "Duplicating «{{source}}»: fill in the required fields and save",
       "headline": {
@@ -2045,6 +2047,7 @@
         "confirm": "Remove"
       },
       "danger_zone_description": "Deleting this group removes it from the rules and routes that reference it. The action cannot be undone.",
+      "duplicate_title": "Duplicate group",
       "duplicate_breadcrumb": "Duplicate group",
       "duplicate_hint": "Duplicating «{{source}}»: fill in the required fields and save",
       "announcements": {
@@ -2465,6 +2468,7 @@
         "slot_tracking": "Recording and tracking"
       },
       "danger_zone_description": "Deleting this agent unassigns them from all groups they participate in. The action cannot be undone.",
+      "duplicate_title": "Duplicate agent",
       "duplicate_breadcrumb": "Duplicate agent",
       "duplicate_hint": "Duplicating «{{source}}»: fill in the required fields and save",
       "summary": {
