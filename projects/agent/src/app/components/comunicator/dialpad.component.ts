@@ -2,11 +2,21 @@ import {
   ChangeDetectionStrategy,
   Component,
   effect,
+  computed,
   inject,
   signal,
 } from '@angular/core';
 import { AgentStateService } from '../../agent-state.service';
 import { GRUPOS, type Grupo } from '../../data/seed';
+import {
+  highlight,
+  matchedNumber,
+  reservedKind,
+  resolveDialed,
+  DIRECTORY,
+  searchDirectory,
+  type DirEntry,
+} from '../../data/directory';
 
 const KEYS = [
   '1',
@@ -47,11 +57,19 @@ const KEYS = [
             <div class="display__num">
               <input
                 type="text"
-                inputmode="numeric"
-                pattern="^[0-9]*$"
-                aria-label="Número a marcar"
+                placeholder="Nombre o extensión"
+                aria-label="Nombre o número a marcar"
+                autocomplete="off"
+                role="combobox"
+                aria-autocomplete="list"
+                aria-controls="dial-sugg"
+                [attr.aria-expanded]="listVisible()"
+                [attr.aria-activedescendant]="matches()[active()] ? 'sugg-' + matches()[active()].id : null"
                 [value]="number()"
                 (input)="onInput($event)"
+                (keydown)="onKey($event)"
+                (blur)="closeSoon()"
+                (focus)="open.set(true)"
               />
             </div>
             <button
@@ -61,6 +79,53 @@ const KEYS = [
               (click)="del()"
             ></button>
           </div>
+
+          @if (listVisible()) {
+          <div class="sugg">
+            <div class="sr" aria-live="polite">
+              {{ matches().length }} {{ matches().length === 1 ? 'coincidencia' : 'coincidencias' }}
+            </div>
+            <div class="sugg__list" id="dial-sugg" role="listbox" aria-label="Coincidencias">
+              @for (m of matches(); track m.id; let i = $index) {
+              <button
+                class="sugg__item"
+                type="button"
+                role="option"
+                tabindex="-1"
+                [id]="'sugg-' + m.id"
+                [class.active]="i === active()"
+                [attr.aria-selected]="i === active()"
+                (mousedown)="$event.preventDefault()"
+                (mousemove)="active.set(i)"
+                (click)="choose(m)"
+              >
+                @if (m.kind === 'agent') {
+                <i class="sugg__dot" title="Agente"></i>
+                } @else {
+                <i class="sugg__agenda" title="Agenda" role="img" aria-label="Agenda"></i>
+                }
+                <span class="sugg__name">
+                  @for (p of hl(m.name); track $index) {<span [class.hl]="p.b">{{ p.t }}</span>}
+                </span>
+                <span class="sugg__num">
+                  @for (p of hl(numOf(m)); track $index) {<span [class.hl]="p.b">{{ p.t }}</span>}
+                </span>
+              </button>
+              }
+            </div>
+          </div>
+          } @else if (emptyVisible()) {
+          <div class="sugg sugg--empty">
+            {{ dialable() ? 'Sin coincidencias. Se marca tal cual.' : 'No hay agentes ni contactos con ese nombre.' }}
+          </div>
+          }
+          @if (hint(); as h) {
+          <p class="who who--warn">{{ h }}</p>
+          } @else if (target(); as t) {
+          <p class="who">{{ t.name }} · {{ t.kind === 'agent' ? 'Agente' : 'Agenda' }}</p>
+          } @else if (number() && dialable()) {
+          <p class="who who--ext">Sin coincidencia: sale al exterior</p>
+          }
 
           <div class="keys">
             @for (k of keys; track k) {
@@ -118,8 +183,8 @@ const KEYS = [
           class="btn-call makecall"
           type="button"
           aria-label="Llamar"
-          [disabled]="!number()"
-          (click)="state.startCall()"
+          [disabled]="!dialable()"
+          (click)="call()"
         ></button>
         } @else {
         <p class="security">No se puede llamar desde el estado actual</p>
@@ -145,6 +210,7 @@ const KEYS = [
 
     /* .dialpad .keypad — margin 3.438 1.823 2.396 1.875vw */
     .keypad {
+      position: relative;
       margin: 3.440935vw 1.820055vw 2.396979vw 1.875vw;
     }
     /* Estado que no permite llamar: el real lo atenúa y lo deja inerte. */
@@ -184,6 +250,104 @@ const KEYS = [
       font-family: 'Roboto', var(--ag-font);
       font-size: 1.407968vw;
       text-align: center;
+    }
+    .display__num input::placeholder {
+      font-size: 0.78vw;
+      color: rgba(255, 255, 255, 0.5);
+    }
+    .sugg {
+      position: absolute;
+      z-index: 3;
+      width: 13.5vw;
+      margin-top: 0.2vw;
+      overflow: hidden;
+      border-radius: 0.927198vw;
+      background: #1f2429;
+      box-shadow: 0.157968vw 0.157968vw 0.052198vw rgba(0, 0, 0, 0.18),
+        0 0.6vw 1.2vw rgba(0, 0, 0, 0.35);
+    }
+    .sugg__item {
+      display: flex;
+      align-items: center;
+      gap: 0.6vw;
+      width: 100%;
+      padding: 0.7vw 0.9vw;
+      border: 0;
+      background: transparent;
+      color: #fff;
+      font-family: var(--ag-font);
+      font-size: 0.728022vw;
+      text-align: left;
+      cursor: pointer;
+    }
+    .sugg__item:hover,
+    .sugg__item.active {
+      background: #3b4657;
+    }
+    .sugg__item.active .sugg__num {
+      opacity: 1;
+    }
+    .sugg__item .hl {
+      font-weight: 700;
+      color: #fff;
+    }
+    .sr {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+    }
+    .sugg__list {
+      max-height: 12vw;
+      overflow-y: auto;
+    }
+    .sugg--empty {
+      padding: 0.6vw 0.8vw;
+      font-family: var(--ag-font);
+      font-size: 0.728022vw;
+      color: #b7c2d2;
+    }
+    .sugg__name {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .sugg__num {
+      opacity: 0.7;
+      font-variant-numeric: tabular-nums;
+    }
+    .sugg__agenda {
+      width: 0.7vw;
+      height: 0.7vw;
+      flex: none;
+      background-color: #b1bdcd;
+      -webkit-mask: url('/icons/comunicator/agenda.svg') no-repeat center / contain;
+      mask: url('/icons/comunicator/agenda.svg') no-repeat center / contain;
+    }
+    .sugg__dot {
+      width: 0.5vw;
+      height: 0.5vw;
+      flex: none;
+      border-radius: 50%;
+      margin: 0 0.1vw;
+      background: #69c663;
+    }
+    .who {
+      margin: 0.5vw 0 0;
+      font-family: var(--ag-font);
+      font-size: 0.7vw;
+      text-align: center;
+      color: #fff;
+    }
+    .who--warn {
+      color: #ffb84d;
+    }
+    .who--ext {
+      opacity: 0.55;
     }
     .display__del {
       display: flex;
@@ -440,7 +604,9 @@ export class DialpadComponent {
     effect(() => {
       const n = this.state.dialNumber();
       if (n) {
+        this.target.set(null);
         this.number.set(n);
+        this.open.set(false);
       }
     });
   }
@@ -454,30 +620,114 @@ export class DialpadComponent {
   protected readonly number = signal('');
   protected readonly pressed = signal<string | null>(null);
 
+  /** Registro elegido en el buscador (o resuelto al llamar). */
+  protected readonly target = signal<DirEntry | null>(null);
+  protected readonly open = signal(true);
+  protected readonly matches = computed(() => {
+    const q = this.number();
+    // Solo se busca por nombre o con 2+ caracteres; cualquier número se puede marcar igual.
+    return this.open() && !this.target() && q.length >= 2 ? searchDirectory(q) : [];
+  });
+  protected readonly active = signal(-1);
+  protected readonly listVisible = computed(() => this.matches().length > 0);
+  /** Nada que listar: lo escrito no casa con nadie (con 2+ caracteres). */
+  protected readonly emptyVisible = computed(
+    () => this.open() && !this.target() && this.number().length >= 2 && !this.matches().length
+  );
+  protected hl(t: string) {
+    return highlight(t, this.number());
+  }
+  protected numOf(m: DirEntry): string {
+    return matchedNumber(m, this.number());
+  }
+  /** Se puede llamar a cualquier marcación numérica, de la longitud que sea (extensiones). */
+  /** Número corto o emergencia: gana al marcado interno y avisa si choca con una extensión. */
+  protected readonly hint = computed(() => {
+    const n = this.number();
+    const r = reservedKind(n);
+    if (!r) return null;
+    const clash = DIRECTORY.find((e) => e.kind === 'agent' && e.numbers.includes(n));
+    if (clash) return `Choca con la extensión de ${clash.name}: sale al exterior`;
+    return r === 'emergency' ? 'Emergencias: sale al exterior' : 'Número corto: sale al exterior';
+  });
+  protected readonly dialable = computed(() =>
+    /^\+?[0-9*#]+$/.test(this.number().replace(/[\s()-]/g, ''))
+  );
+
   protected press(k: string): void {
+    this.target.set(null);
+    this.active.set(-1);
+    this.open.set(true);
     this.number.update((n) => n + k);
     this.pressed.set(k);
     setTimeout(() => this.pressed.set(null), 120);
   }
 
   protected del(): void {
+    this.target.set(null);
+    this.active.set(-1);
+    this.open.set(true);
     this.number.update((n) => n.slice(0, -1));
   }
 
+  protected choose(m: DirEntry): void {
+    // Un agente cuya extensión es un número corto se marca igual, pero el aviso lo recuerda.
+    this.target.set(m);
+    this.number.set(matchedNumber(m, this.number()));
+    this.active.set(-1);
+    this.open.set(false);
+  }
+
+  protected closeSoon(): void {
+    setTimeout(() => this.open.set(false), 120);
+  }
+
+  protected onKey(e: KeyboardEvent): void {
+    const n = this.matches().length;
+    if (e.key === 'Escape' || e.key === 'Tab') {
+      this.open.set(false);
+    } else if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && n) {
+      e.preventDefault();
+      const next =
+        e.key === 'ArrowDown'
+          ? (this.active() + 1) % n
+          : this.active() <= 0
+          ? n - 1
+          : this.active() - 1;
+      this.active.set(next);
+      // La fila resaltada tiene que quedar a la vista aunque la lista haga scroll.
+      const id = 'sugg-' + this.matches()[next].id;
+      setTimeout(() => document.getElementById(id)?.scrollIntoView({ block: 'nearest' }));
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      // Intro elige solo si hay una opción resaltada; si no, cursa la llamada.
+      const sel = this.matches()[this.active()];
+      if (sel) {
+        this.choose(sel);
+      } else if (this.dialable()) {
+        this.call();
+      }
+    }
+  }
+
   /**
-   * Escribiendo solo entran DÍGITOS — en una línea de marcación no se escriben letras.
-   * ('*' y '#' sí entran, pero por las teclas, como en el real.)
-   *
-   * Hay que reescribir el valor del input a mano: si el filtro no cambia la señal
-   * —teclear una letra deja el mismo número—, Angular no repinta y el carácter se
-   * queda visible en el DOM aunque el modelo esté limpio.
+   * Cursar la llamada: la extensión se sustituye por el nombre del agente o del contacto de
+   * agenda; lo que no coincide sale al exterior.
    */
+  protected call(): void {
+    if (!this.dialable()) return;
+    this.open.set(false);
+    if (!this.target()) {
+      this.target.set(resolveDialed(this.number()).entry);
+    }
+    this.state.startCall();
+  }
+
   protected onInput(e: Event): void {
     const el = e.target as HTMLInputElement;
-    const clean = el.value.replace(/[^0-9]/g, '');
-    if (el.value !== clean) {
-      el.value = clean;
-    }
-    this.number.set(clean);
+    this.target.set(null);
+    this.active.set(-1);
+    this.open.set(true);
+    this.number.set(el.value);
   }
 }
