@@ -1270,6 +1270,7 @@
         "edit_breadcrumb": "Modifier le compte",
         "create_submit": "Créer le compte",
         "name_placeholder": "mailbox@example.com",
+        "name_taken": "Un compte avec cette adresse existe déjà",
         "section_account": "Compte",
         "section_incoming": "Données du courrier entrant",
         "section_outgoing": "Données du courrier sortant",
@@ -1828,6 +1829,7 @@
         "email_empty": "Sans email"
       },
       "danger_zone_description": "Supprimer cet utilisateur révoque son accès au panneau et efface ses permissions. L'action ne peut pas être annulée.",
+      "duplicate_title": "Dupliquer l'utilisateur",
       "duplicate_breadcrumb": "Dupliquer l'utilisateur",
       "duplicate_hint": "Duplication de «{{source}}» : remplissez les champs obligatoires et sauvegardez",
       "headline": {
@@ -2050,6 +2052,7 @@
         "confirm": "Retirer"
       },
       "danger_zone_description": "Supprimer ce groupe le retire des règles et routes qui le référencent. L'action ne peut pas être annulée.",
+      "duplicate_title": "Dupliquer le groupe",
       "duplicate_breadcrumb": "Dupliquer le groupe",
       "duplicate_hint": "Duplication de «{{source}}» : remplissez les champs obligatoires et sauvegardez",
       "announcements": {
@@ -2470,6 +2473,7 @@
         "slot_tracking": "Enregistrement et suivi"
       },
       "danger_zone_description": "Supprimer cet agent le désassigne de tous les groupes auxquels il participe. L'action ne peut pas être annulée.",
+      "duplicate_title": "Dupliquer l'agent",
       "duplicate_breadcrumb": "Dupliquer l'agent",
       "duplicate_hint": "Duplication de «{{source}}» : remplissez les champs obligatoires et sauvegardez",
       "summary": {

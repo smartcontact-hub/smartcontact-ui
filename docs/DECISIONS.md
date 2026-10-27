@@ -168,7 +168,7 @@
 
 **Contexto** · DD-217 §1 y DD-219 trataban el nombre repetido como un error de contenido en vivo: aviso rojo bajo el campo,
 punto y texto en el índice y «Crear …» / «Guardar» apagados; DD-222 §4 lo cita como el ejemplo de error en vivo. Estaba en
-Grupos, Tipificaciones, Agendas, Equipos, Plantillas y los editores de cuenta y trigger de Email.
+Grupos, Tipificaciones, Agendas, Equipos, Plantillas y el editor de trigger de Email.
 
 **Decisión** · Dos fichas pueden llevar el mismo nombre. Ninguna ficha avisa ni apaga el botón por ello, y el índice, el
 tooltip «Falta: …» y las claves i18n (`name_taken`, `duplicate_title`) ya no lo mencionan. Lo que sí sigue siendo un error en
@@ -182,7 +182,8 @@ repetirse.
 **Fuera de alcance** ·
 - Las opciones hermanas de una tipificación con el mismo nombre (`hermanasRepetidas`): el agente no sabría cuál es cuál.
 - Los repetidos de la importación de contactos y tipificaciones (DD-166).
-- Los campos únicos que no son el nombre: email del agente (`agents.errors.email_taken`), extensión y códigos.
+- Los campos únicos que no son el nombre: email del agente (`agents.errors.email_taken`), extensión y códigos, y la
+  dirección de la cuenta de Email (`repositories.emails.mailbox.name_taken`: su «nombre» es la dirección, que sí es única).
 - Los paneles de alta rápida de la lista (`repo-form-panel`, `label-form-panel`) y Memory conservan su comprobación.
 
 **Consecuencias** · `e2e/supervisor/ficha-grupo.spec.ts`, `name-inplace.spec.ts` y `plantillas-editor.spec.ts` pasan de

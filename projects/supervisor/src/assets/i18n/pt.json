@@ -1270,6 +1270,7 @@
         "edit_breadcrumb": "Editar conta",
         "create_submit": "Criar conta",
         "name_placeholder": "mailbox@example.com",
+        "name_taken": "Já existe uma conta com este endereço",
         "section_account": "Conta",
         "section_incoming": "Dados do correio de entrada",
         "section_outgoing": "Dados do correio de saída",
@@ -1828,6 +1829,7 @@
         "email_empty": "Sem email"
       },
       "danger_zone_description": "Eliminar este usuário revoga seu acesso ao painel e apaga suas permissões. A ação não pode ser desfeita.",
+      "duplicate_title": "Duplicar usuário",
       "duplicate_breadcrumb": "Duplicar usuário",
       "duplicate_hint": "Duplicando «{{source}}»: preencha os campos obrigatórios e salve",
       "headline": {
@@ -2050,6 +2052,7 @@
         "confirm": "Retirar"
       },
       "danger_zone_description": "Eliminar este grupo o retira das regras e rotas que o referenciam. A ação não pode ser desfeita.",
+      "duplicate_title": "Duplicar grupo",
       "duplicate_breadcrumb": "Duplicar grupo",
       "duplicate_hint": "Duplicando «{{source}}»: preencha os campos obrigatórios e salve",
       "announcements": {
@@ -2470,6 +2473,7 @@
         "slot_tracking": "Gravação e acompanhamento"
       },
       "danger_zone_description": "Eliminar este agente o desassocia de todos os grupos onde participa. A ação não pode ser desfeita.",
+      "duplicate_title": "Duplicar agente",
       "duplicate_breadcrumb": "Duplicar agente",
       "duplicate_hint": "Duplicando «{{source}}»: preencha os campos obrigatórios e salve",
       "summary": {
