@@ -89,7 +89,7 @@ test('agentes: «Asignados» enseña solo los marcados, y quitarle uno lo guarda
 test('listado: Descripción, Contactos y Agentes con guion si no hay, y «Agentes» cuenta los de la tabla del editor', async ({ page }) => {
   await goto(page, 'admin/agendas');
   const cabeceras = page.getByTestId('repo-table').locator('thead th[data-field]');
-  await expect(cabeceras).toHaveText(['Nombre', 'Descripción', 'Contactos', 'Agentes', 'Modificada', '']);
+  await expect(cabeceras).toHaveText(['Título', 'Descripción', 'Contactos', 'Agentes', 'Modificada', '']);
   const fila = page.getByTestId('repo-table').locator('tbody tr', { hasText: 'Emergencias 24h' });
   const cifra = (await fila.locator('td').nth(3).innerText()).trim();
   await goto(page, 'admin/agendas/editar/4');

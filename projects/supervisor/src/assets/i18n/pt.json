@@ -1197,7 +1197,7 @@
       "text": "Crie seu primeiro modelo de mensagem para agilizar o atendimento"
     },
     "table": {
-      "title": "Nome",
+      "title": "Título",
       "type": "Canal",
       "body": "Conteúdo",
       "updated": "Modificada",
@@ -1210,8 +1210,8 @@
     },
     "form": {
       "create_title": "Novo modelo",
-      "title": "Nome",
-      "title_placeholder": "Nome do modelo",
+      "title": "Título",
+      "title_placeholder": "Título do modelo",
       "channel": "Canal",
       "body": "Conteúdo",
       "body_placeholder": "Escreva o conteúdo do modelo...",
@@ -1230,8 +1230,8 @@
       "agents_row_aria": "Atribuir o modelo a {{name}}"
     },
     "errors": {
-      "title_required": "O nome é obrigatório",
-      "duplicate_title": "Já existe um modelo com este nome",
+      "title_required": "O título é obrigatório",
+      "duplicate_title": "Já existe um modelo com este título",
       "body_required": "O conteúdo é obrigatório"
     },
     "delete": {
@@ -1475,11 +1475,13 @@
       "import_confirm_one": "Adicionar 1 contato",
       "name_placeholder": "Ex: Vendas Nacional",
       "errors": {
-        "name_taken": "Já existe uma agenda com este nome.",
+        "name_taken": "Já existe uma agenda com este título.",
+        "title_required": "O título é obrigatório",
         "phone_invalid": "O telefone não é válido: use dígitos, com um + na frente se tiver prefixo.",
         "phone_taken": "Esse telefone já está nesta agenda.",
         "contact_empty": "Preencha pelo menos um dado do contato."
       },
+      "col_title": "Título",
       "col_agents": "Agentes",
       "select_contact_aria": "Selecionar o contato {{name}}",
       "select_all_contacts_aria": "Selecionar todos os contatos",

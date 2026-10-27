@@ -13,7 +13,7 @@ import { type Agenda, AgendasStore } from '../state/agendas.store';
 const columnas = (agentesDe: (agenda: Agenda) => number): readonly RepoColumnDef<Agenda>[] => [
   {
     key: 'name',
-    labelKey: 'repositories.columns.name',
+    labelKey: 'repositories.agendas.col_title',
     kind: 'text',
     accessor: (i) => i.name,
     // Sin ancho: es la columna que crece.
@@ -62,7 +62,7 @@ const columnas = (agentesDe: (agenda: Agenda) => number): readonly RepoColumnDef
 export const AGENDA_FIELDS: readonly RepoFieldDef[] = [
   {
     key: 'name',
-    labelKey: 'repositories.columns.name',
+    labelKey: 'repositories.agendas.col_title',
     type: 'text',
     required: true,
     placeholderKey: 'repositories.agendas.name_placeholder',

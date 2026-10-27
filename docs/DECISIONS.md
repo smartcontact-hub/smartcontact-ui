@@ -163,6 +163,26 @@
 
 ---
 
+## DD-235 · 2026-10-27 — Agendas y Plantillas llaman «Título» a su campo principal; el resto de listas sigue con «Nombre»
+
+**Contexto** · DD-230 alineó Plantillas con Agendas y el resto de repositorios y cambió «Título» por «Nombre». En la reunión de
+equipo se decidió lo contrario para estas dos: en Voice se llama «Título», los COA (SISMAC-4438 y SISMAC-4440) ya lo dicen
+así, y «Nombre» suena a nombre propio de una persona o un grupo.
+
+**Decisión** · En Agendas y Plantillas el campo, la columna, «Ordenar por», el placeholder y los avisos dicen **«Título»**
+(`repositories.agendas.col_title`, `repositories.agendas.errors.title_required`, `templates.*.title*`). Grupos, Agentes,
+Tipificaciones y Equipos siguen con «Nombre»: son entidades con nombre propio; una agenda o una plantilla es contenido con
+título. La columna «Nombre» de la tabla de contactos de una agenda no cambia (es el nombre de una persona). Enmienda DD-230.
+
+**Razón** · Misma palabra que el usuario ya conoce de Voice y que el COA, y la agenda deja de tener un «Nombre» propio y otro
+en la tabla de sus contactos.
+
+**Descartadas** ·
+- *Mantener «Nombre» por consistencia con el resto*: la excepción tiene criterio (contenido frente a entidad) y lo pidió el equipo.
+
+**Consecuencias** · i18n en los cuatro idiomas; `agendas-listado`, `agenda-agentes` y `plantillas-editor` con «Título». Proto y
+Figma de estas dos pantallas, a editar para que sigan al COA.
+
 ## DD-234 · 2026-10-26 — Duplicar una agenda o una plantilla es un alta, como duplicar un grupo o un agente
 
 **Contexto** · DD-230 dejó «Duplicar» en Agendas y Plantillas como estaba: la copia se creaba en el acto, con «X (copia)», y

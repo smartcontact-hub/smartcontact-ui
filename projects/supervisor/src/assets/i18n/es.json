@@ -1197,7 +1197,7 @@
       "text": "Crea tu primera plantilla de mensaje para agilizar la atención"
     },
     "table": {
-      "title": "Nombre",
+      "title": "Título",
       "type": "Canal",
       "body": "Contenido",
       "updated": "Modificada",
@@ -1210,8 +1210,8 @@
     },
     "form": {
       "create_title": "Nueva plantilla",
-      "title": "Nombre",
-      "title_placeholder": "Nombre de la plantilla",
+      "title": "Título",
+      "title_placeholder": "Título de la plantilla",
       "channel": "Canal",
       "body": "Contenido",
       "body_placeholder": "Escribe el contenido de la plantilla...",
@@ -1230,8 +1230,8 @@
       "agents_row_aria": "Asignar la plantilla a {{name}}"
     },
     "errors": {
-      "title_required": "El nombre es obligatorio",
-      "duplicate_title": "Ya existe una plantilla con este nombre",
+      "title_required": "El título es obligatorio",
+      "duplicate_title": "Ya existe una plantilla con este título",
       "body_required": "El contenido es obligatorio"
     },
     "delete": {
@@ -1475,11 +1475,13 @@
       "import_confirm_one": "Añadir 1 contacto",
       "name_placeholder": "Ej: Ventas Nacional",
       "errors": {
-        "name_taken": "Ya hay una agenda con este nombre.",
+        "name_taken": "Ya hay una agenda con este título.",
+        "title_required": "El título es obligatorio",
         "phone_invalid": "El teléfono no es válido: usa cifras, con un + delante si lleva prefijo.",
         "phone_taken": "Ese teléfono ya está en esta agenda.",
         "contact_empty": "Escribe al menos un dato del contacto."
       },
+      "col_title": "Título",
       "col_agents": "Agentes",
       "select_contact_aria": "Marcar el contacto {{name}}",
       "select_all_contacts_aria": "Marcar todos los contactos",

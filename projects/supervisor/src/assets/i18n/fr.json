@@ -1197,7 +1197,7 @@
       "text": "Créez votre premier modèle de message pour accélérer le service"
     },
     "table": {
-      "title": "Nom",
+      "title": "Titre",
       "type": "Canal",
       "body": "Contenu",
       "updated": "Modifiée",
@@ -1210,8 +1210,8 @@
     },
     "form": {
       "create_title": "Nouveau modèle",
-      "title": "Nom",
-      "title_placeholder": "Nom du modèle",
+      "title": "Titre",
+      "title_placeholder": "Titre du modèle",
       "channel": "Canal",
       "body": "Contenu",
       "body_placeholder": "Écrivez le contenu du modèle...",
@@ -1230,8 +1230,8 @@
       "agents_row_aria": "Assigner le modèle à {{name}}"
     },
     "errors": {
-      "title_required": "Le nom est obligatoire",
-      "duplicate_title": "Un modèle avec ce nom existe déjà",
+      "title_required": "Le titre est obligatoire",
+      "duplicate_title": "Un modèle avec ce titre existe déjà",
       "body_required": "Le contenu est obligatoire"
     },
     "delete": {
@@ -1475,11 +1475,13 @@
       "import_confirm_one": "Ajouter 1 contact",
       "name_placeholder": "Ex : Ventes nationales",
       "errors": {
-        "name_taken": "Un carnet porte déjà ce nom.",
+        "name_taken": "Un carnet porte déjà ce titre.",
+        "title_required": "Le titre est obligatoire",
         "phone_invalid": "Ce numéro n'est pas valide : utilisez des chiffres, avec un + devant s'il a un indicatif.",
         "phone_taken": "Ce numéro est déjà dans ce carnet.",
         "contact_empty": "Saisissez au moins une donnée du contact."
       },
+      "col_title": "Titre",
       "col_agents": "Agents",
       "select_contact_aria": "Sélectionner le contact {{name}}",
       "select_all_contacts_aria": "Sélectionner tous les contacts",

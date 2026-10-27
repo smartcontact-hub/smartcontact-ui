@@ -108,7 +108,7 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
    * Lo que falta se dice al pulsar «Crear …» o «Guardar» (DD-217, como en las fichas): el botón no se apaga por ello ni
    * lleva motivo al lado; al pulsar sin nombre, lo dice su campo y le da el foco. Un nombre repetido se dice en vivo.
    */
-  private readonly faltas = computed<readonly string[]>(() => (this.form().name.trim() ? [] : ['repositories.errors.name_required']));
+  private readonly faltas = computed<readonly string[]>(() => (this.form().name.trim() ? [] : ['repositories.agendas.errors.title_required']));
   private readonly ocasion = ocasionDeAvisar({
     editando: () => this.mode() === 'edit',
     cambios: () => this.formDirty(),
