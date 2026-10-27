@@ -85,17 +85,15 @@ test('crear de email: HTML saneado; sin nombre ni contenido, lo dice cada campo 
   expect(t?.body).toBe('<p>Texto &lt;b&gt;no es negrita&lt;/b&gt;</p>');
 });
 
-test('un nombre repetido no se guarda: lo dice su campo en vivo', async ({ page }) => {
+test('un nombre repetido se permite: no avisa y se guarda (DD-235)', async ({ page }) => {
   await goto(page, 'admin/plantillas/crear');
-  const antes = (await guardadas(page)).length;
   await page.locator('#template-title').fill('saludo inicial');
   await editor(page).click();
   await page.keyboard.type('x');
-  await expect(page.getByText('Ya existe una plantilla con este nombre').first()).toBeVisible();
+  await expect(page.getByText('Ya existe una plantilla con este nombre')).toHaveCount(0);
   await guardar(page).click();
-  await expect(page).toHaveURL(/\/admin\/plantillas\/crear/);
-  await expect(page.locator('#template-title')).toBeFocused();
-  expect((await guardadas(page)).length).toBe(antes);
+  await expect(page).toHaveURL(/\/admin\/plantillas\/editar\/\d+$/);
+  expect((await guardadas(page)).some((t) => t.title === 'saludo inicial' && t.body === '<p>x</p>')).toBe(true);
 });
 
 test('agentes: asignar uno desde la plantilla lo deja en el agente, sin tocar a su grupo', async ({ page }) => {
