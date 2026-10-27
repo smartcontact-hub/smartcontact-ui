@@ -16,7 +16,6 @@
       <div class="page__panel-anchor">
         <sc-repo-form-panel
           [fields]="config().fields"
-          [existingNames]="existingNames()"
           [entitySingular]="entitySingular()"
           [createTitleKey]="config().createTitleKey"
           (save)="onCreateSubmit($event)"
@@ -126,7 +125,6 @@
       <sc-repo-form-panel
         [fields]="config().fields"
         [initial]="item"
-        [existingNames]="existingNames()"
         [entitySingular]="entitySingular()"
         (save)="onEditSubmit(item.id, $event)"
         (cancelled)="closeEditPanel()"

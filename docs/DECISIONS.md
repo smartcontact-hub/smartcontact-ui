@@ -209,7 +209,12 @@ repetirse.
 - Los repetidos de la importación de contactos y tipificaciones (DD-166).
 - Los campos únicos que no son el nombre: email del agente (`agents.errors.email_taken`), extensión y códigos, y la
   dirección de la cuenta de Email (`repositories.emails.mailbox.name_taken`: su «nombre» es la dirección, que sí es única).
-- Los paneles de alta rápida de la lista (`repo-form-panel`, `label-form-panel`) y Memory conservan su comprobación.
+- Memory (entidades y categorías, `features/memory`) conserva su comprobación: no es una ficha del Supervisor admin.
+
+**Ampliación (mismo día)** · Los paneles de alta rápida de la lista (`repo-form-panel`: Entidades IA, Intenciones, Horarios,
+Clasificación IA y Variables; `label-form-panel`: Etiquetas) también lo permiten. Medido: ninguno se referencia por
+nombre (Etiquetas y Horarios, por ID; Variables lleva su propia `key`; las de IA no las lee ninguna otra pantalla). Fuera
+`existingNames`, la comprobación y las claves `duplicate_name`.
 
 **Consecuencias** · `e2e/supervisor/ficha-grupo.spec.ts`, `name-inplace.spec.ts` y `plantillas-editor.spec.ts` pasan de
 esperar el bloqueo a esperar que el botón se activa y guarda.

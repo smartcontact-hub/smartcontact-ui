@@ -1108,8 +1108,7 @@
       "description_placeholder": "Breve descripción..."
     },
     "errors": {
-      "name_required": "El nombre es obligatorio",
-      "duplicate_name": "Ya existe una label con este nombre"
+      "name_required": "El nombre es obligatorio"
     },
     "color": {
       "gray": "Gris",
@@ -1322,7 +1321,6 @@
     "search_placeholder": "Buscar {{entity}}…",
     "errors": {
       "name_required": "El nombre es obligatorio",
-      "duplicate_name": "Ya existe un/a {{entity}} con este nombre",
       "field_required": "«{{field}}» es obligatorio"
     },
     "form": {

@@ -60,7 +60,6 @@ export class RepoFormPanelComponent<T extends RepoEntity> implements OnInit, Aft
 
   readonly fields = input.required<readonly RepoFieldDef[]>();
   readonly initial = input<T | null>(null);
-  readonly existingNames = input.required<readonly string[]>();
   /** Nombre singular de la entidad ya traducido (resuelto en el caller via
    *  `translate.instant(config().entitySingularKey)`). S51 sweep AED i18n. */
   readonly entitySingular = input.required<string>();
@@ -169,19 +168,6 @@ export class RepoFormPanelComponent<T extends RepoEntity> implements OnInit, Aft
     const name = (values['name'] ?? '').trim();
     if (!name && this.nameRequired()) {
       this.error.set(this.translate.instant('repositories.errors.name_required'));
-      return false;
-    }
-    const initialName = this.initial()?.name ?? '';
-    const duplicate = !!name && this.existingNames().some(
-      (n) =>
-        n.toLowerCase() === name.toLowerCase() && n.toLowerCase() !== initialName.toLowerCase(),
-    );
-    if (duplicate) {
-      this.error.set(
-        this.translate.instant('repositories.errors.duplicate_name', {
-          entity: this.entitySingular(),
-        }),
-      );
       return false;
     }
     for (const field of this.fields()) {
