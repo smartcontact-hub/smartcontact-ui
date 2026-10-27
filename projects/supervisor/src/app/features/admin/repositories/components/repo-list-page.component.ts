@@ -118,8 +118,6 @@ export class RepoListPageComponent<T extends RepoEntity> {
   /** Siempre por nombre: esta lista no tiene cabeceras para ordenar. */
   protected readonly sorted = computed(() => [...this.items()].sort((a, b) => a.name.localeCompare(b.name)));
 
-  protected readonly existingNames = computed(() => this.items().map((item) => item.name));
-
   /** Reactividad al cambio de idioma para resolver `entitySingularKey` y
    *  `entityPluralKey` del config (S51 sweep AED i18n). Patrón S49 reactive
    *  pattern — sin esta dependency `translate.instant` no se re-evalúa al
@@ -344,7 +342,7 @@ export class RepoListPageComponent<T extends RepoEntity> {
       });
     } else {
       this.store().deleteItems(ids);
-      this.toastSuccess('repositories.toasts.deleted_bulk', {
+      this.toastSuccess(this.toastKey('deleted_bulk', 'repositories.toasts.deleted_bulk'), {
         count: ids.length,
         entity: this.entityPlural(),
       });
@@ -454,7 +452,7 @@ export class RepoListPageComponent<T extends RepoEntity> {
   }
 
   /** El aviso propio de la instancia, si lo declara (`toastsKey`); si no, el genérico. */
-  private toastKey(corto: 'created' | 'updated' | 'deleted', generico: string): string {
+  private toastKey(corto: 'created' | 'updated' | 'deleted' | 'deleted_bulk', generico: string): string {
     const base = this.config().toastsKey;
     return base ? `${base}.${corto}` : generico;
   }

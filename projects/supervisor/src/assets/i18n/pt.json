@@ -1108,8 +1108,7 @@
       "description_placeholder": "Breve descrição..."
     },
     "errors": {
-      "name_required": "O nome é obrigatório",
-      "duplicate_name": "Já existe uma etiqueta com este nome"
+      "name_required": "O nome é obrigatório"
     },
     "color": {
       "gray": "Cinza",
@@ -1197,7 +1196,7 @@
       "text": "Crie seu primeiro modelo de mensagem para agilizar o atendimento"
     },
     "table": {
-      "title": "Nome",
+      "title": "Título",
       "type": "Canal",
       "body": "Conteúdo",
       "updated": "Modificada",
@@ -1210,8 +1209,8 @@
     },
     "form": {
       "create_title": "Novo modelo",
-      "title": "Nome",
-      "title_placeholder": "Nome do modelo",
+      "title": "Título",
+      "title_placeholder": "Título do modelo",
       "channel": "Canal",
       "body": "Conteúdo",
       "body_placeholder": "Escreva o conteúdo do modelo...",
@@ -1230,7 +1229,7 @@
       "agents_row_aria": "Atribuir o modelo a {{name}}"
     },
     "errors": {
-      "title_required": "O nome é obrigatório",
+      "title_required": "O título é obrigatório",
       "body_required": "O conteúdo é obrigatório"
     },
     "delete": {
@@ -1270,6 +1269,7 @@
         "edit_breadcrumb": "Editar conta",
         "create_submit": "Criar conta",
         "name_placeholder": "mailbox@example.com",
+        "name_taken": "Já existe uma conta com este endereço",
         "section_account": "Conta",
         "section_incoming": "Dados do correio de entrada",
         "section_outgoing": "Dados do correio de saída",
@@ -1321,7 +1321,6 @@
     "search_placeholder": "Buscar {{entity}}…",
     "errors": {
       "name_required": "O nome é obrigatório",
-      "duplicate_name": "Já existe um/uma {{entity}} com este nome",
       "field_required": "\"{{field}}\" é obrigatório"
     },
     "form": {
@@ -1388,6 +1387,12 @@
     },
     "agendas": {
       "title": "Agendas",
+      "toasts": {
+        "created": "Agenda «{{name}}» criada",
+        "updated": "Agenda «{{name}}» atualizada",
+        "deleted": "Agenda «{{name}}» eliminada",
+        "deleted_bulk": "{{count}} agendas eliminadas"
+      },
       "singular": "agenda",
       "create_title": "Nova agenda",
       "plural": "agendas",
@@ -1472,10 +1477,12 @@
       "import_confirm_one": "Adicionar 1 contato",
       "name_placeholder": "Ex: Vendas Nacional",
       "errors": {
+        "title_required": "O título é obrigatório",
         "phone_invalid": "O telefone não é válido: use dígitos, com um + na frente se tiver prefixo.",
         "phone_taken": "Esse telefone já está nesta agenda.",
         "contact_empty": "Preencha pelo menos um dado do contato."
       },
+      "col_title": "Título",
       "col_agents": "Agentes",
       "select_contact_aria": "Selecionar o contato {{name}}",
       "select_all_contacts_aria": "Selecionar todos os contatos",
@@ -1727,7 +1734,8 @@
       "toasts": {
         "created": "Equipe «{{name}}» criada",
         "updated": "Equipe «{{name}}» atualizada",
-        "deleted": "Equipe «{{name}}» excluída"
+        "deleted": "Equipe «{{name}}» excluída",
+        "deleted_bulk": "{{count}} equipes excluídas"
       }
     },
     "agent_assignment": {
@@ -1828,6 +1836,7 @@
         "email_empty": "Sem email"
       },
       "danger_zone_description": "Eliminar este usuário revoga seu acesso ao painel e apaga suas permissões. A ação não pode ser desfeita.",
+      "duplicate_title": "Duplicar usuário",
       "duplicate_breadcrumb": "Duplicar usuário",
       "duplicate_hint": "Duplicando «{{source}}»: preencha os campos obrigatórios e salve",
       "headline": {
@@ -2050,6 +2059,7 @@
         "confirm": "Retirar"
       },
       "danger_zone_description": "Eliminar este grupo o retira das regras e rotas que o referenciam. A ação não pode ser desfeita.",
+      "duplicate_title": "Duplicar grupo",
       "duplicate_breadcrumb": "Duplicar grupo",
       "duplicate_hint": "Duplicando «{{source}}»: preencha os campos obrigatórios e salve",
       "announcements": {
@@ -2470,6 +2480,7 @@
         "slot_tracking": "Gravação e acompanhamento"
       },
       "danger_zone_description": "Eliminar este agente o desassocia de todos os grupos onde participa. A ação não pode ser desfeita.",
+      "duplicate_title": "Duplicar agente",
       "duplicate_breadcrumb": "Duplicar agente",
       "duplicate_hint": "Duplicando «{{source}}»: preencha os campos obrigatórios e salve",
       "summary": {

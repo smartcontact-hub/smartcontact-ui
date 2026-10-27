@@ -1108,8 +1108,7 @@
       "description_placeholder": "Brève description..."
     },
     "errors": {
-      "name_required": "Le nom est obligatoire",
-      "duplicate_name": "Une étiquette avec ce nom existe déjà"
+      "name_required": "Le nom est obligatoire"
     },
     "color": {
       "gray": "Gris",
@@ -1197,7 +1196,7 @@
       "text": "Créez votre premier modèle de message pour accélérer le service"
     },
     "table": {
-      "title": "Nom",
+      "title": "Titre",
       "type": "Canal",
       "body": "Contenu",
       "updated": "Modifiée",
@@ -1210,8 +1209,8 @@
     },
     "form": {
       "create_title": "Nouveau modèle",
-      "title": "Nom",
-      "title_placeholder": "Nom du modèle",
+      "title": "Titre",
+      "title_placeholder": "Titre du modèle",
       "channel": "Canal",
       "body": "Contenu",
       "body_placeholder": "Écrivez le contenu du modèle...",
@@ -1230,7 +1229,7 @@
       "agents_row_aria": "Assigner le modèle à {{name}}"
     },
     "errors": {
-      "title_required": "Le nom est obligatoire",
+      "title_required": "Le titre est obligatoire",
       "body_required": "Le contenu est obligatoire"
     },
     "delete": {
@@ -1270,6 +1269,7 @@
         "edit_breadcrumb": "Modifier le compte",
         "create_submit": "Créer le compte",
         "name_placeholder": "mailbox@example.com",
+        "name_taken": "Un compte avec cette adresse existe déjà",
         "section_account": "Compte",
         "section_incoming": "Données du courrier entrant",
         "section_outgoing": "Données du courrier sortant",
@@ -1321,7 +1321,6 @@
     "search_placeholder": "Rechercher {{entity}}…",
     "errors": {
       "name_required": "Le nom est obligatoire",
-      "duplicate_name": "Un/Une {{entity}} avec ce nom existe déjà",
       "field_required": "\"{{field}}\" est obligatoire"
     },
     "form": {
@@ -1388,6 +1387,12 @@
     },
     "agendas": {
       "title": "Carnets",
+      "toasts": {
+        "created": "Carnet « {{name}} » créé",
+        "updated": "Carnet « {{name}} » mis à jour",
+        "deleted": "Carnet « {{name}} » supprimé",
+        "deleted_bulk": "{{count}} carnets supprimés"
+      },
       "singular": "carnet",
       "create_title": "Nouveau carnet",
       "plural": "carnets",
@@ -1472,10 +1477,12 @@
       "import_confirm_one": "Ajouter 1 contact",
       "name_placeholder": "Ex : Ventes nationales",
       "errors": {
+        "title_required": "Le titre est obligatoire",
         "phone_invalid": "Ce numéro n'est pas valide : utilisez des chiffres, avec un + devant s'il a un indicatif.",
         "phone_taken": "Ce numéro est déjà dans ce carnet.",
         "contact_empty": "Saisissez au moins une donnée du contact."
       },
+      "col_title": "Titre",
       "col_agents": "Agents",
       "select_contact_aria": "Sélectionner le contact {{name}}",
       "select_all_contacts_aria": "Sélectionner tous les contacts",
@@ -1727,7 +1734,8 @@
       "toasts": {
         "created": "Équipe « {{name}} » créée",
         "updated": "Équipe « {{name}} » mise à jour",
-        "deleted": "Équipe « {{name}} » supprimée"
+        "deleted": "Équipe « {{name}} » supprimée",
+        "deleted_bulk": "{{count}} équipes supprimées"
       }
     },
     "agent_assignment": {
@@ -1828,6 +1836,7 @@
         "email_empty": "Sans email"
       },
       "danger_zone_description": "Supprimer cet utilisateur révoque son accès au panneau et efface ses permissions. L'action ne peut pas être annulée.",
+      "duplicate_title": "Dupliquer l'utilisateur",
       "duplicate_breadcrumb": "Dupliquer l'utilisateur",
       "duplicate_hint": "Duplication de «{{source}}» : remplissez les champs obligatoires et sauvegardez",
       "headline": {
@@ -2050,6 +2059,7 @@
         "confirm": "Retirer"
       },
       "danger_zone_description": "Supprimer ce groupe le retire des règles et routes qui le référencent. L'action ne peut pas être annulée.",
+      "duplicate_title": "Dupliquer le groupe",
       "duplicate_breadcrumb": "Dupliquer le groupe",
       "duplicate_hint": "Duplication de «{{source}}» : remplissez les champs obligatoires et sauvegardez",
       "announcements": {
@@ -2470,6 +2480,7 @@
         "slot_tracking": "Enregistrement et suivi"
       },
       "danger_zone_description": "Supprimer cet agent le désassigne de tous les groupes auxquels il participe. L'action ne peut pas être annulée.",
+      "duplicate_title": "Dupliquer l'agent",
       "duplicate_breadcrumb": "Dupliquer l'agent",
       "duplicate_hint": "Duplication de «{{source}}» : remplissez les champs obligatoires et sauvegardez",
       "summary": {

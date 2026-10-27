@@ -1082,8 +1082,6 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
 
   /** Etiquetas (apagado por DD-142): su ventana propia, como antes. */
   protected readonly creatingLabel = signal(false);
-  protected readonly labelExistingNames = computed(() => this.labelsStore.labels().map((l) => l.name));
-
   protected onCreateLabelSubmit(submission: LabelFormSubmission): void {
     const created = this.labelsStore.addLabel(submission);
     this.onIdsChange('labelIds', [...this.form().labelIds, created.id]);

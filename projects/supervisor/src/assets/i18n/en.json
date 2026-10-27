@@ -1108,8 +1108,7 @@
       "description_placeholder": "Brief description..."
     },
     "errors": {
-      "name_required": "Name is required",
-      "duplicate_name": "A label with this name already exists"
+      "name_required": "Name is required"
     },
     "color": {
       "gray": "Gray",
@@ -1197,7 +1196,7 @@
       "text": "Create your first message template to speed up service"
     },
     "table": {
-      "title": "Name",
+      "title": "Title",
       "type": "Channel",
       "body": "Content",
       "updated": "Modified",
@@ -1210,8 +1209,8 @@
     },
     "form": {
       "create_title": "New template",
-      "title": "Name",
-      "title_placeholder": "Template name",
+      "title": "Title",
+      "title_placeholder": "Template title",
       "channel": "Channel",
       "body": "Content",
       "body_placeholder": "Write the template content...",
@@ -1230,7 +1229,7 @@
       "agents_row_aria": "Assign the template to {{name}}"
     },
     "errors": {
-      "title_required": "Name is required",
+      "title_required": "Title is required",
       "body_required": "Content is required"
     },
     "delete": {
@@ -1270,6 +1269,7 @@
         "edit_breadcrumb": "Edit account",
         "create_submit": "Create account",
         "name_placeholder": "mailbox@example.com",
+        "name_taken": "An account with this address already exists",
         "section_account": "Account",
         "section_incoming": "Incoming mail settings",
         "section_outgoing": "Outgoing mail settings",
@@ -1321,7 +1321,6 @@
     "search_placeholder": "Search {{entity}}…",
     "errors": {
       "name_required": "Name is required",
-      "duplicate_name": "A {{entity}} with this name already exists",
       "field_required": "\"{{field}}\" is required"
     },
     "form": {
@@ -1388,6 +1387,12 @@
     },
     "agendas": {
       "title": "Address books",
+      "toasts": {
+        "created": "Address book \"{{name}}\" created",
+        "updated": "Address book \"{{name}}\" updated",
+        "deleted": "Address book \"{{name}}\" deleted",
+        "deleted_bulk": "{{count}} address books deleted"
+      },
       "singular": "address book",
       "create_title": "New address book",
       "plural": "address books",
@@ -1472,10 +1477,12 @@
       "import_confirm_one": "Add 1 contact",
       "name_placeholder": "E.g. National Sales",
       "errors": {
+        "title_required": "Title is required",
         "phone_invalid": "This phone number is not valid: use digits, with a + in front if it has a prefix.",
         "phone_taken": "That phone number is already in this address book.",
         "contact_empty": "Fill in at least one detail of the contact."
       },
+      "col_title": "Title",
       "col_agents": "Agents",
       "select_contact_aria": "Select contact {{name}}",
       "select_all_contacts_aria": "Select all contacts",
@@ -1727,7 +1734,8 @@
       "toasts": {
         "created": "Team \"{{name}}\" created",
         "updated": "Team \"{{name}}\" updated",
-        "deleted": "Team \"{{name}}\" deleted"
+        "deleted": "Team \"{{name}}\" deleted",
+        "deleted_bulk": "{{count}} teams deleted"
       }
     },
     "agent_assignment": {
@@ -1828,6 +1836,7 @@
         "email_empty": "No email"
       },
       "danger_zone_description": "Deleting this user revokes panel access and deletes their permissions. The action cannot be undone.",
+      "duplicate_title": "Duplicate user",
       "duplicate_breadcrumb": "Duplicate user",
       "duplicate_hint": "Duplicating «{{source}}»: fill in the required fields and save",
       "headline": {
@@ -2050,6 +2059,7 @@
         "confirm": "Remove"
       },
       "danger_zone_description": "Deleting this group removes it from the rules and routes that reference it. The action cannot be undone.",
+      "duplicate_title": "Duplicate group",
       "duplicate_breadcrumb": "Duplicate group",
       "duplicate_hint": "Duplicating «{{source}}»: fill in the required fields and save",
       "announcements": {
@@ -2470,6 +2480,7 @@
         "slot_tracking": "Recording and tracking"
       },
       "danger_zone_description": "Deleting this agent unassigns them from all groups they participate in. The action cannot be undone.",
+      "duplicate_title": "Duplicate agent",
       "duplicate_breadcrumb": "Duplicate agent",
       "duplicate_hint": "Duplicating «{{source}}»: fill in the required fields and save",
       "summary": {

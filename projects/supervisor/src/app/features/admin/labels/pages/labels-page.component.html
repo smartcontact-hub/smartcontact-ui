@@ -16,7 +16,6 @@
     @if (creating()) {
       <div class="page__panel-anchor">
         <sc-label-form-panel
-          [existingNames]="existingNames()"
           (save)="onCreateSubmit($event)"
           (cancelled)="closeCreatePanel()"
         />
@@ -70,7 +69,6 @@
     >
       <sc-label-form-panel
         [initial]="label"
-        [existingNames]="existingNames()"
         (save)="onEditSubmit(label.id, $event)"
         (cancelled)="closeEditPanel()"
       />
