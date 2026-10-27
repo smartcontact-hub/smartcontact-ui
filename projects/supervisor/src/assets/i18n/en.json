@@ -1563,6 +1563,11 @@
         "options_required": "Add at least one option",
         "names_required": "Give each option a different name"
       },
+      "missing": {
+        "options": "One option",
+        "unnamed": "Unnamed options",
+        "names": "Distinct names"
+      },
       "section": {
         "general": "General",
         "categorization": "Categories"
