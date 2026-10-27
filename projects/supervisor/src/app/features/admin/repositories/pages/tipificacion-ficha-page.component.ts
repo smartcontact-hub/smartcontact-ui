@@ -180,12 +180,7 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit {
 
   /* ── General ──────────────────────────────────────────────────────────── */
 
-  protected readonly nameTaken = computed(() => {
-    const name = this.form().name.trim().toLowerCase();
-    return !!name && this.store.items().some((t) => t.id !== this.editingId() && t.name.trim().toLowerCase() === name);
-  });
-
-  private readonly generalCompleta = computed(() => !!this.form().name.trim() && !this.nameTaken());
+  private readonly generalCompleta = computed(() => !!this.form().name.trim());
 
   /* ── Categorías ───────────────────────────────────────────────────────── */
 
@@ -225,8 +220,8 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit {
     ];
   });
 
-  /** Hay algo que no deja crear ni guardar: lo que falta o el nombre repetido. */
-  private readonly pendiente = computed(() => this.faltas().length > 0 || this.nameTaken());
+  /** Hay algo que no deja crear ni guardar: lo que falta. */
+  private readonly pendiente = computed(() => this.faltas().length > 0);
 
   /**
    * El botón se puede pulsar sin nada pendiente: al crear, en cuanto están el nombre y una opción; al editar, además, con
@@ -238,7 +233,6 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit {
   protected readonly motivoApagado = computed(() => {
     this.lang();
     if (this.canSave()) return '';
-    if (this.nameTaken()) return this.translate.instant('repositories.tipificaciones.errors.name_taken');
     const primera = this.faltas()[0];
     return this.translate.instant(primera ?? 'common.no_changes');
   });
@@ -253,10 +247,9 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit {
     faltas: () => this.faltas(),
   });
 
-  /** El aviso rojo bajo el nombre: repetido, en vivo (es contenido); vacío, al dejarlo así. */
+  /** El aviso rojo bajo el nombre: vacío, al dejarlo así. */
   protected readonly nameError = computed<string | undefined>(() => {
     this.lang();
-    if (this.nameTaken()) return this.translate.instant('repositories.tipificaciones.errors.name_taken');
     const falta = 'repositories.tipificaciones.errors.name_required';
     return this.faltas().includes(falta) && this.ocasion.acusa(falta) ? this.translate.instant(falta) : undefined;
   });
@@ -275,15 +268,12 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit {
   }
 
   /**
-   * Los avisos del índice, en el orden de la ficha (DD-219): el nombre repetido, en vivo, y lo que falta si lo guardado
+   * Los avisos del índice, en el orden de la ficha (DD-219): lo que falta si lo guardado
    * ya venía sin ello o se pulsó con ello pendiente. De aquí salen el punto del índice, lo que dice y adónde lleva.
    */
   private readonly avisos = computed<readonly AvisoDeFicha[]>(() => {
     this.lang();
     const out: AvisoDeFicha[] = [];
-    if (this.nameTaken()) {
-      out.push({ seccion: GENERAL, texto: this.translate.instant('repositories.tipificaciones.errors.name_taken'), ancla: 'tip-name' });
-    }
     for (const falta of this.faltas()) {
       if (!this.ocasion.acusaEnIndice(falta)) continue;
       if (falta.endsWith('name_required')) out.push({ seccion: GENERAL, texto: this.translate.instant(falta), ancla: 'tip-name' });

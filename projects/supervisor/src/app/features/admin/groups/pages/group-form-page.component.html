@@ -57,7 +57,6 @@
               <sc-name-inplace
                 [name]="form().name"
                 [label]="'groups.form.fields.name' | translate"
-                [error]="nameTaken() ? ('groups.errors.name_taken' | translate) : null"
                 (nameChange)="onNameChange($event)"
               />
             </h1>

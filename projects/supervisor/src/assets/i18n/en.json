@@ -1231,7 +1231,6 @@
     },
     "errors": {
       "title_required": "Name is required",
-      "duplicate_title": "A template with this name already exists",
       "body_required": "Content is required"
     },
     "delete": {
@@ -1271,7 +1270,6 @@
         "edit_breadcrumb": "Edit account",
         "create_submit": "Create account",
         "name_placeholder": "mailbox@example.com",
-        "name_taken": "An account with this address already exists",
         "section_account": "Account",
         "section_incoming": "Incoming mail settings",
         "section_outgoing": "Outgoing mail settings",
@@ -1295,7 +1293,6 @@
         "create_breadcrumb": "New trigger",
         "edit_breadcrumb": "Edit trigger",
         "create_submit": "Create trigger",
-        "name_taken": "A trigger with this name already exists",
         "section_trigger": "Trigger",
         "section_condition": "Condition",
         "section_action": "Action",
@@ -1475,7 +1472,6 @@
       "import_confirm_one": "Add 1 contact",
       "name_placeholder": "E.g. National Sales",
       "errors": {
-        "name_taken": "There is already an address book with this name.",
         "phone_invalid": "This phone number is not valid: use digits, with a + in front if it has a prefix.",
         "phone_taken": "That phone number is already in this address book.",
         "contact_empty": "Fill in at least one detail of the contact."
@@ -1563,7 +1559,6 @@
       "delete_option_body_one": "The option below it is deleted too.",
       "errors": {
         "option_taken": "“{{name}}” is already at this level",
-        "name_taken": "There is already a typification with this name",
         "name_required": "Name is required",
         "options_required": "Add at least one option",
         "names_required": "Give each option a different name"
@@ -1725,7 +1720,6 @@
       "agents": "Agents",
       "create_submit": "Create team",
       "edit_breadcrumb": "Edit team",
-      "name_taken": "There is already a team with this name",
       "assigned_count": "{{count}} in the team",
       "no_description": "No description",
       "agents_aria": "{{count}} agents",
@@ -1834,7 +1828,6 @@
         "email_empty": "No email"
       },
       "danger_zone_description": "Deleting this user revokes panel access and deletes their permissions. The action cannot be undone.",
-      "duplicate_title": "Duplicate user",
       "duplicate_breadcrumb": "Duplicate user",
       "duplicate_hint": "Duplicating «{{source}}»: fill in the required fields and save",
       "headline": {
@@ -2057,7 +2050,6 @@
         "confirm": "Remove"
       },
       "danger_zone_description": "Deleting this group removes it from the rules and routes that reference it. The action cannot be undone.",
-      "duplicate_title": "Duplicate group",
       "duplicate_breadcrumb": "Duplicate group",
       "duplicate_hint": "Duplicating «{{source}}»: fill in the required fields and save",
       "announcements": {
@@ -2220,7 +2212,6 @@
     },
     "errors": {
       "name_required": "Name is required",
-      "name_taken": "A group with this name already exists",
       "phone_required": "The outbound phone is required",
       "whatsapp_required": "The WhatsApp number is required",
       "typification_required": "Typification is required"
@@ -2479,7 +2470,6 @@
         "slot_tracking": "Recording and tracking"
       },
       "danger_zone_description": "Deleting this agent unassigns them from all groups they participate in. The action cannot be undone.",
-      "duplicate_title": "Duplicate agent",
       "duplicate_breadcrumb": "Duplicate agent",
       "duplicate_hint": "Duplicating «{{source}}»: fill in the required fields and save",
       "summary": {

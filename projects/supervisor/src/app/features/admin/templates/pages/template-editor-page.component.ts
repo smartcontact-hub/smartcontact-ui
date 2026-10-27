@@ -102,15 +102,9 @@ export class TemplateEditorPageComponent implements DirtyAware, OnInit {
     return this.translate.instant(`templates.form.body_placeholder`);
   });
 
-  /** El título no se repite entre plantillas (sin contar la propia), como en el panel de antes. */
-  protected readonly titleTaken = computed(() => {
-    const title = this.form().title.trim().toLowerCase();
-    return !!title && this.store.templates().some((t) => t.id !== this.templateId && t.title.trim().toLowerCase() === title);
-  });
-
   /*
    * Lo que falta se dice al pulsar «Crear plantilla» o «Guardar» (DD-217, como en las fichas): el botón no se apaga por
-   * ello ni lleva motivo al lado; al pulsar, lo dice cada campo y el primero recibe el foco. El título repetido, en vivo.
+   * ello ni lleva motivo al lado; al pulsar, lo dice cada campo y el primero recibe el foco.
    */
   private readonly faltas = computed<readonly string[]>(() => {
     const f = this.form();
@@ -126,7 +120,6 @@ export class TemplateEditorPageComponent implements DirtyAware, OnInit {
   });
   protected readonly titleError = computed<string | undefined>(() => {
     this.lang();
-    if (this.titleTaken()) return this.translate.instant('templates.errors.duplicate_title');
     const falta = 'templates.errors.title_required';
     return this.faltas().includes(falta) && this.ocasion.acusa(falta) ? this.translate.instant(falta) : undefined;
   });
@@ -201,7 +194,7 @@ export class TemplateEditorPageComponent implements DirtyAware, OnInit {
 
   protected save(): void {
     if (!this.canSave()) return;
-    if (this.faltas().length > 0 || this.titleTaken()) {
+    if (this.faltas().length > 0) {
       this.ocasion.intentar();
       if (this.titleError()) llegarAAncla('template-title', this.injector);
       else this.enfocarContenido();
