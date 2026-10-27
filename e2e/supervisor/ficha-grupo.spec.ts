@@ -66,10 +66,10 @@ test('crear es la misma ficha: abre en General con Teléfono, «Crear grupo» ap
   const crear = page.getByRole('button', { name: 'Crear grupo' });
   await expect(crear).toBeDisabled();
 
-  // Un nombre que ya existe se dice en vivo, y tampoco deja crear.
+  // Un nombre que ya existe se permite (DD-235): ni aviso ni botón apagado por ello.
   await page.locator('#group-name').fill('campaigns');
-  await expect(general).toContainText('Ya hay un grupo con este nombre');
-  await expect(crear).toBeDisabled();
+  await expect(general).not.toContainText('Ya hay un grupo con este nombre');
+  await expect(general.locator('.sc-field__msg--error')).toHaveCount(0);
 
   // Sin canales no falta nada en General: son opcionales (DD-217), y sin Teléfono tampoco hace falta su número.
   await page.locator('#group-name').fill(`E2E Alta ${Date.now()}`);

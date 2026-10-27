@@ -98,6 +98,20 @@ test('eliminarla dice cuántos grupos la usan, y esos grupos dejan de tipificar'
   await expect(page.getByRole('switch', { name: /Tipificar/ })).not.toBeChecked();
 });
 
+test('un nombre que ya existe se permite: ni aviso ni Crear apagado, y se crea (DD-235)', async ({ page }) => {
+  await goto(page, 'admin/tipificaciones/crear');
+  await page.locator('#tip-name').fill('Atención al cliente');
+  await page.locator('#tip-name').blur();
+  await expect(page.locator('.sc-field__msg--error')).toHaveCount(0);
+  await page.locator('sc-form-section-nav').getByText('Categorías').click();
+  await page.getByRole('button', { name: 'Añadir categoría' }).click();
+  await campos(page).first().fill('Una');
+  const crear = barra(page).getByRole('button', { name: 'Crear tipificación' });
+  await expect(crear).toBeEnabled();
+  await crear.click();
+  await expect(page).toHaveURL(/\/admin\/tipificaciones\/editar\/\d+/);
+});
+
 test('un alta de punta a punta: nombre, opciones y Crear, y sale en el listado', async ({ page }) => {
   await goto(page, 'admin/tipificaciones/crear');
   // «Crear tipificación», apagado mientras falten el nombre o una opción (DD-219); el nombre lo dice en gris.
