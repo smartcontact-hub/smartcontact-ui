@@ -76,7 +76,7 @@ const SECCION_DEL_CAMPO: Readonly<Record<keyof Borrador, string>> = {
  * sección Grupos con los canales de cada uno.
  *
  * SIN SALTOS (DD-174): ningún aviso entra ni sale empujando lo de debajo. Cada uno tiene su línea reservada (bajo el
- * árbol) o va en la barra, junto a Guardar; el nombre repetido marca su campo en rojo y lo dice la barra.
+ * árbol) o va en la barra, junto a Guardar.
  */
 @Component({
   selector: 'sc-tipificacion-ficha-page',
@@ -302,7 +302,6 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit {
     const f = this.form();
     const por: Record<string, string[]> = {};
     if (!f.name.trim()) (por[GENERAL] ??= []).push(t('common.summary_missing_name'));
-    else if (this.nameTaken()) (por[GENERAL] ??= []).push(t('repositories.tipificaciones.errors.name_taken').toLowerCase());
     if (f.options.length === 0) (por[CATEGORIAS] ??= []).push(t('repositories.tipificaciones.missing.options'));
     else if (this.opcionesSinNombre()) (por[CATEGORIAS] ??= []).push(t('repositories.tipificaciones.missing.unnamed'));
     else if (this.nombresMal()) (por[CATEGORIAS] ??= []).push(t('repositories.tipificaciones.missing.names'));
