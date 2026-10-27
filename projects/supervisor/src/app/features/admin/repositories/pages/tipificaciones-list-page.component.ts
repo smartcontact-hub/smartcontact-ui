@@ -232,7 +232,7 @@ export class TipificacionesListPageComponent {
 
   /** Eliminar las marcadas: la confirmación simple, con su cifra; los grupos que las usaban dejan de tipificar. */
   protected async onBulkDelete(tipificaciones: readonly Tipificacion[]): Promise<void> {
-    if (!(await this.confirmarBorradoVarios(tipificaciones.length))) return;
+    if (!(await this.confirmarBorradoVarios(tipificaciones.length, this.uso.avisoVarias(tipificaciones.map((t) => t.id))))) return;
     this.borrar(tipificaciones);
   }
 
@@ -249,10 +249,9 @@ export class TipificacionesListPageComponent {
     this.uso.soltar(new Set(ids));
     this.store.deleteItems(ids);
     this.selectedIds.update((marcadas) => new Set([...marcadas].filter((id) => !ids.includes(id))));
-    const entity = this.translate.instant('repositories.tipificaciones.singular');
     this.toast(
       borradas.length === 1
-        ? this.translate.instant('repositories.toasts.deleted_single', { entity, name: borradas[0]!.name })
+        ? this.translate.instant('repositories.tipificaciones.toasts.deleted', { name: borradas[0]!.name })
         : this.translate.instant('repositories.tipificaciones.deleted_bulk', { count: borradas.length }),
     );
   }

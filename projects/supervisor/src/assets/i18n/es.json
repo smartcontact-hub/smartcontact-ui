@@ -1393,6 +1393,10 @@
         "deleted": "Agenda «{{name}}» eliminada",
         "deleted_bulk": "{{count}} agendas eliminadas"
       },
+      "delete_dialog": {
+        "title": "¿Eliminar la agenda «{{name}}»?",
+        "title_bulk": "¿Eliminar {{count}} agendas?"
+      },
       "singular": "agenda",
       "create_title": "Nueva agenda",
       "plural": "agendas",
@@ -1508,7 +1512,7 @@
       "create_title": "Nueva tipificación",
       "plural": "tipificaciones",
       "name_placeholder": "Ej. Atención al cliente",
-      "description_placeholder": "Ej. Motivo de la conversación de un cliente",
+      "description_placeholder": "Breve descripción...",
       "create_submit": "Crear tipificación",
       "edit_breadcrumb": "Editar tipificación",
       "search_placeholder": "Buscar tipificaciones…",
@@ -1620,10 +1624,17 @@
       "used_in_one": "en 1 grupo",
       "add_category": "Añadir categoría",
       "in_use_one": "La usa 1 grupo.",
+      "in_use_bulk": "Las usan {{count}} grupos.",
+      "in_use_bulk_one": "Las usa 1 grupo.",
       "in_use": "La usan {{count}} grupos.",
       "delete_dialog": {
         "title": "¿Eliminar la tipificación «{{name}}»?",
         "title_bulk": "¿Eliminar {{count}} tipificaciones?"
+      },
+      "toasts": {
+        "created": "Tipificación «{{name}}» creada",
+        "updated": "Tipificación «{{name}}» actualizada",
+        "deleted": "Tipificación «{{name}}» eliminada"
       },
       "deleted_bulk": "{{count}} tipificaciones eliminadas",
       "add_subcategory": "Añadir subcategoría"

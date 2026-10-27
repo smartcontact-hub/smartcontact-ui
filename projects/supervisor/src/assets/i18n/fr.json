@@ -1393,6 +1393,10 @@
         "deleted": "Carnet « {{name}} » supprimé",
         "deleted_bulk": "{{count}} carnets supprimés"
       },
+      "delete_dialog": {
+        "title": "Supprimer le carnet « {{name}} » ?",
+        "title_bulk": "Supprimer {{count}} carnets ?"
+      },
       "singular": "carnet",
       "create_title": "Nouveau carnet",
       "plural": "carnets",
@@ -1508,7 +1512,7 @@
       "create_title": "Nouvelle typification",
       "plural": "typifications",
       "name_placeholder": "Ex. Service client",
-      "description_placeholder": "Ex. Motif de la conversation d’un client",
+      "description_placeholder": "Brève description...",
       "create_submit": "Créer la typification",
       "edit_breadcrumb": "Modifier la typification",
       "search_placeholder": "Rechercher des typifications…",
@@ -1620,10 +1624,17 @@
       "used_in_one": "dans 1 groupe",
       "add_category": "Ajouter une catégorie",
       "in_use_one": "Utilisée par 1 groupe.",
+      "in_use_bulk": "Utilisées par {{count}} groupes.",
+      "in_use_bulk_one": "Utilisées par 1 groupe.",
       "in_use": "Utilisée par {{count}} groupes.",
       "delete_dialog": {
         "title": "Supprimer la typification « {{name}} » ?",
         "title_bulk": "Supprimer {{count}} typifications ?"
+      },
+      "toasts": {
+        "created": "Typification « {{name}} » créée",
+        "updated": "Typification « {{name}} » mise à jour",
+        "deleted": "Typification « {{name}} » supprimée"
       },
       "deleted_bulk": "{{count}} typifications supprimées",
       "add_subcategory": "Ajouter une sous-catégorie"

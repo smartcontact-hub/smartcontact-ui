@@ -1,5 +1,5 @@
-<!-- Guardar y Deshacer suben a la barra de arriba, como en las fichas: sin motivo al lado (lo que falta lo dice cada campo
-     al pulsar, DD-217); «Deshacer», solo si hay algo que deshacer. -->
+<!-- Guardar y Deshacer suben a la barra de arriba, como en las fichas: apagado mientras falte algo, con el motivo en su
+     tooltip (DD-219); «Deshacer», solo si hay algo que deshacer. -->
 <ng-template #topbarActions>
   @if (mode() === 'edit' && formDirty()) {
     <span class="form-save-reason sc-text-caption-regular" role="status">{{ 'common.unsaved_changes' | translate }}</span>
@@ -10,6 +10,7 @@
   <sc-button
     variant="primary"
     [disabled]="!canSave()"
+    [pTooltip]="motivoApagado()" tooltipPosition="top"
     [label]="(mode() === 'create' ? 'templates.form.create_submit' : 'common.save') | translate"
     (clicked)="save()"
   />
@@ -31,8 +32,10 @@
               [label]="'templates.form.title' | translate"
               [placeholder]="'templates.form.title_placeholder' | translate"
               [value]="form().title"
+              [helperText]="titleHint()"
               [error]="titleError()"
               (valueChange)="update('title', $event)"
+              (focusout)="dejarTitulo($event)"
             />
           </div>
           <div class="field">
@@ -82,6 +85,8 @@
         }
         @if (bodyError(); as error) {
           <p class="field__error sc-text-caption-regular" role="alert">{{ error | translate }}</p>
+        } @else if (bodyHint(); as hint) {
+          <p class="template-editor__hint sc-text-caption-regular">{{ hint | translate }}</p>
         }
         @if (form().type === 'whatsapp') {
           <p class="template-editor__hint sc-text-caption-regular">{{ 'templates.form.whatsapp_hint' | translate }}</p>

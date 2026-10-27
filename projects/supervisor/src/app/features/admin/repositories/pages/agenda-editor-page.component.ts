@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component, computed, HostListener, inject, Injector, type OnInit, signal, type TemplateRef, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, HostListener, inject, type OnInit, signal, type TemplateRef, viewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TooltipModule } from 'primeng/tooltip';
 import {
   ScButtonComponent as ButtonComponent,
   ScConfirmService,
@@ -37,7 +38,7 @@ import { hoy } from '@shared/utils/today';
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
 import { AgendasStore, type AgendaContact } from '../state/agendas.store';
 import { ResultadoAccionService } from '@core/services';
-import { llegarAAncla, ocasionDeAvisar } from '@shared/utils/alta-secciones';
+import { ayudaDeObligatorio, dejoElCampo, ocasionDeAvisar } from '@shared/utils/alta-secciones';
 
 interface AgendaDraft {
   readonly name: string;
@@ -68,6 +69,7 @@ const VACIA: AgendaDraft = { name: '', description: '', contacts: [], customLabe
     InputTextComponent,
     RepoFormPanelComponent,
     SectionCardComponent,
+    TooltipModule,
     TranslateModule,
   ],
   templateUrl: './agenda-editor-page.component.html',
@@ -84,7 +86,6 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
   private readonly language = inject(LanguageService);
   private readonly lang = injectLangChange();
 
-  private readonly injector = inject(Injector);
   private readonly topbarActions = viewChild<TemplateRef<unknown>>('topbarActions');
 
   constructor() {
@@ -99,8 +100,8 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
   readonly formDirty = this.dirtyState.dirty;
 
   /*
-   * Lo que falta se dice al pulsar «Crear …» o «Guardar» (DD-217, como en las fichas): el botón no se apaga por ello ni
-   * lleva motivo al lado; al pulsar sin nombre, lo dice su campo y le da el foco.
+   * Lo que falta, como en Grupos y Agentes (DD-219): «Crear» y «Guardar» apagados mientras falte el título, con el motivo en
+   * su tooltip; el aviso, en gris bajo el campo desde el principio y en rojo al dejarlo vacío.
    */
   private readonly faltas = computed<readonly string[]>(() => (this.form().name.trim() ? [] : ['repositories.agendas.errors.title_required']));
   private readonly ocasion = ocasionDeAvisar({
@@ -113,8 +114,25 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
     const falta = this.faltas()[0];
     return falta && this.ocasion.acusa(falta) ? this.translate.instant(falta) : undefined;
   });
+  protected readonly nameHint = computed<string | undefined>(() => {
+    this.lang();
+    const falta = this.faltas()[0];
+    return falta && !this.ocasion.acusa(falta) ? ayudaDeObligatorio(this.translate.instant(falta)) : undefined;
+  });
 
-  protected readonly canSave = computed(() => this.mode() === 'create' || this.formDirty());
+  protected dejarNombre(event: FocusEvent): void {
+    const falta = this.faltas()[0];
+    if (falta && dejoElCampo(event)) this.ocasion.tocar(falta);
+  }
+
+  protected readonly canSave = computed(() => this.faltas().length === 0 && (this.mode() === 'create' || this.formDirty()));
+
+  /** Por qué está apagado el botón, para su tooltip: lo que falta o, sin cambios, «No hay cambios». */
+  protected readonly motivoApagado = computed(() => {
+    this.lang();
+    if (this.canSave()) return '';
+    return this.translate.instant(this.faltas()[0] ?? 'common.no_changes');
+  });
 
   ngOnInit(): void {
     const raw = this.route.snapshot.paramMap.get('id');
@@ -169,11 +187,6 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
 
   protected save(): void {
     if (!this.canSave()) return;
-    if (this.faltas().length > 0) {
-      this.ocasion.intentar();
-      llegarAAncla('agenda-name', this.injector);
-      return;
-    }
     this.ocasion.olvidar();
     const f = this.form();
     const draft = { ...f, name: f.name.trim(), description: f.description.trim() };

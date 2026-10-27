@@ -29,6 +29,13 @@ export class TipificacionUsoService {
     return this.translate.instant(`repositories.tipificaciones.in_use${grupos.length === 1 ? '_one' : ''}`, { count: grupos.length });
   }
 
+  /** Lo mismo para varias a la vez, en plural: cuántos grupos usan alguna de ellas, o `null` si no las usa nadie. */
+  avisoVarias(ids: readonly number[]): string | null {
+    const grupos = this.grupos(new Set(ids));
+    if (grupos.length === 0) return null;
+    return this.translate.instant(`repositories.tipificaciones.in_use_bulk${grupos.length === 1 ? '_one' : ''}`, { count: grupos.length });
+  }
+
   /** Al eliminarlas, los grupos que las usaban dejan de tipificar hasta que elijan otra. */
   soltar(ids: ReadonlySet<number>): void {
     for (const g of this.grupos(ids)) {

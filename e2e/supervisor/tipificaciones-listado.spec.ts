@@ -135,3 +135,16 @@ test('el grupo elige una tipificación, ve su árbol sin salir y, si tipifica, n
   await expect(page.locator('#group-section-general')).toContainText('La tipificación es obligatoria');
   await expect(page.locator('sc-top-bar').getByRole('button', { name: 'Guardar' })).toBeDisabled();
 });
+
+test('eliminar varias dice cuántos grupos las usan, y el aviso cuenta cuántas se fueron (COA SISMAC-4451)', async ({ page }) => {
+  await goto(page, 'admin/tipificaciones');
+  await fila(page, 'Atención al cliente').getByRole('checkbox').check();
+  await fila(page, 'Soporte técnico').getByRole('checkbox').check();
+  await fila(page, 'Soporte técnico').click({ button: 'right' });
+  await page.getByRole('menuitem', { name: 'Eliminar (2)' }).click();
+  const pregunta = page.getByRole('alertdialog', { name: '¿Eliminar 2 tipificaciones?' });
+  await expect(pregunta).toContainText('Las usan');
+  await expect(pregunta).toContainText('Esta acción no se puede deshacer.');
+  await pregunta.getByRole('button', { name: 'Eliminar' }).click();
+  await expect(page.getByText('2 tipificaciones eliminadas')).toBeVisible();
+});

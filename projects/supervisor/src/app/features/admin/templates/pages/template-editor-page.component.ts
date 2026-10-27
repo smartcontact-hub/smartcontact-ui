@@ -1,8 +1,9 @@
-import { afterNextRender, ChangeDetectionStrategy, Component, computed, HostListener, inject, Injector, signal, type OnInit, type TemplateRef, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, HostListener, inject, signal, type OnInit, type TemplateRef, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { EditorModule } from 'primeng/editor';
+import { TooltipModule } from 'primeng/tooltip';
 import {
   ScButtonComponent as ButtonComponent,
   ScInputTextComponent as InputTextComponent,
@@ -16,7 +17,7 @@ import { ResultadoAccionService } from '@core/services';
 import { injectLangChange } from '@core/utils/lang-change';
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
 import { AgentAssignmentTableComponent } from '@features/admin/repositories/components/agent-assignment-table/agent-assignment-table.component';
-import { llegarAAncla, ocasionDeAvisar } from '@shared/utils/alta-secciones';
+import { ayudaDeObligatorio, dejoElCampo, ocasionDeAvisar } from '@shared/utils/alta-secciones';
 import { nombreDeCopia } from '@shared/utils/copy-name';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 
@@ -58,6 +59,7 @@ const FORMATOS: Record<TemplateType, readonly string[]> = {
     InputTextComponent,
     SectionCardComponent,
     SelectButtonComponent,
+    TooltipModule,
     TranslateModule,
   ],
   templateUrl: './template-editor-page.component.html',
@@ -72,7 +74,6 @@ export class TemplateEditorPageComponent implements DirtyAware, OnInit {
   private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
-  private readonly injector = inject(Injector);
 
   private readonly topbarActions = viewChild<TemplateRef<unknown>>('topbarActions');
 
@@ -103,8 +104,8 @@ export class TemplateEditorPageComponent implements DirtyAware, OnInit {
   });
 
   /*
-   * Lo que falta se dice al pulsar «Crear plantilla» o «Guardar» (DD-217, como en las fichas): el botón no se apaga por
-   * ello ni lleva motivo al lado; al pulsar, lo dice cada campo y el primero recibe el foco.
+   * Lo que falta, como en Grupos y Agentes (DD-219): «Crear plantilla» y «Guardar» apagados mientras falte el título o el
+   * contenido, con el motivo en su tooltip; cada aviso, en gris bajo su campo desde el principio y en rojo al dejarlo vacío.
    */
   private readonly faltas = computed<readonly string[]>(() => {
     const f = this.form();
@@ -128,7 +129,29 @@ export class TemplateEditorPageComponent implements DirtyAware, OnInit {
     return this.faltas().includes(falta) && this.ocasion.acusa(falta) ? falta : null;
   });
 
-  protected readonly canSave = computed(() => this.mode() === 'create' || this.formDirty());
+  protected readonly titleHint = computed<string | undefined>(() => {
+    this.lang();
+    const falta = 'templates.errors.title_required';
+    return this.faltas().includes(falta) && !this.ocasion.acusa(falta) ? ayudaDeObligatorio(this.translate.instant(falta)) : undefined;
+  });
+  protected readonly bodyHint = computed(() => {
+    const falta = 'templates.errors.body_required';
+    return this.faltas().includes(falta) && !this.ocasion.acusa(falta) ? falta : null;
+  });
+
+  protected dejarTitulo(event: FocusEvent): void {
+    const falta = 'templates.errors.title_required';
+    if (this.faltas().includes(falta) && dejoElCampo(event)) this.ocasion.tocar(falta);
+  }
+
+  protected readonly canSave = computed(() => this.faltas().length === 0 && (this.mode() === 'create' || this.formDirty()));
+
+  /** Por qué está apagado el botón, para su tooltip: lo primero que falta o, sin cambios, «No hay cambios». */
+  protected readonly motivoApagado = computed(() => {
+    this.lang();
+    if (this.canSave()) return '';
+    return this.translate.instant(this.faltas()[0] ?? 'common.no_changes');
+  });
 
   ngOnInit(): void {
     const raw = this.route.snapshot.paramMap.get('id');
@@ -194,12 +217,6 @@ export class TemplateEditorPageComponent implements DirtyAware, OnInit {
 
   protected save(): void {
     if (!this.canSave()) return;
-    if (this.faltas().length > 0) {
-      this.ocasion.intentar();
-      if (this.titleError()) llegarAAncla('template-title', this.injector);
-      else this.enfocarContenido();
-      return;
-    }
     this.ocasion.olvidar();
     const f = this.form();
     const title = f.title.trim();
@@ -236,18 +253,6 @@ export class TemplateEditorPageComponent implements DirtyAware, OnInit {
   protected discard(): void {
     this.form.set(this.dirtyState.pristineValue());
     this.ocasion.olvidar();
-  }
-
-  /** El contenido no es un campo con `id`: el foco va a la caja de escritura del editor, como haría el ratón. */
-  private enfocarContenido(): void {
-    afterNextRender(
-      () => {
-        const caja = document.querySelector<HTMLElement>('.template-editor .ql-editor');
-        caja?.closest('sc-section-card')?.scrollIntoView({ block: 'start' });
-        caja?.focus({ preventScroll: true });
-      },
-      { injector: this.injector },
-    );
   }
 
   @HostListener('window:beforeunload', ['$event'])

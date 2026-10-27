@@ -57,7 +57,7 @@ test('Agendas: eliminar avisa «Agenda «X» eliminada» y varias a la vez, «2 
   await goto(page, 'admin/agendas');
   await fila(page, 'Soporte Premium').getByLabel('Más acciones').click();
   await page.getByRole('menuitem', { name: 'Eliminar' }).click();
-  await page.getByRole('alertdialog', { name: /¿Eliminar/ }).getByRole('button', { name: 'Eliminar' }).click();
+  await page.getByRole('alertdialog', { name: '¿Eliminar la agenda «Soporte Premium»?' }).getByRole('button', { name: 'Eliminar' }).click();
   await expect(page.getByText('Agenda «Soporte Premium» eliminada')).toBeVisible();
 
   await fila(page, 'Ventas Nacional').getByRole('checkbox').check();
