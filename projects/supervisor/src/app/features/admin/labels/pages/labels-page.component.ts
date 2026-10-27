@@ -91,8 +91,6 @@ export class LabelsPageComponent {
   /** Siempre por nombre: esta lista no tiene cabeceras para ordenar. */
   protected readonly sorted = computed(() => [...this.labels()].sort((a, b) => a.name.localeCompare(b.name)));
 
-  protected readonly existingNames = computed(() => this.labels().map((label) => label.name));
-
   /* ── La tabla, ahora `sc-datatable` (B4) ──────────────────────────────
    * Las tres celdas son composiciones propias de la página (chip de color,
    * panel de edición anclado, kebab), así que van por `cellTemplate`: el DS

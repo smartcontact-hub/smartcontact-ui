@@ -1108,8 +1108,7 @@
       "description_placeholder": "Brief description..."
     },
     "errors": {
-      "name_required": "Name is required",
-      "duplicate_name": "A label with this name already exists"
+      "name_required": "Name is required"
     },
     "color": {
       "gray": "Gray",
@@ -1322,7 +1321,6 @@
     "search_placeholder": "Search {{entity}}…",
     "errors": {
       "name_required": "Name is required",
-      "duplicate_name": "A {{entity}} with this name already exists",
       "field_required": "\"{{field}}\" is required"
     },
     "form": {

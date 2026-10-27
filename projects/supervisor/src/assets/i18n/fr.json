@@ -1108,8 +1108,7 @@
       "description_placeholder": "Brève description..."
     },
     "errors": {
-      "name_required": "Le nom est obligatoire",
-      "duplicate_name": "Une étiquette avec ce nom existe déjà"
+      "name_required": "Le nom est obligatoire"
     },
     "color": {
       "gray": "Gris",
@@ -1322,7 +1321,6 @@
     "search_placeholder": "Rechercher {{entity}}…",
     "errors": {
       "name_required": "Le nom est obligatoire",
-      "duplicate_name": "Un/Une {{entity}} avec ce nom existe déjà",
       "field_required": "\"{{field}}\" est obligatoire"
     },
     "form": {

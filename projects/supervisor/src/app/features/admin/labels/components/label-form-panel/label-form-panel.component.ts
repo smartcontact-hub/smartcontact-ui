@@ -64,7 +64,6 @@ export class LabelFormPanelComponent implements OnInit, AfterViewInit {
   private readonly lang = injectLangChange();
 
   readonly initial = input<Label | null>(null);
-  readonly existingNames = input.required<readonly string[]>();
 
   /** Dentro de un diálogo (la ficha de grupo crea así desde Recursos): sin caja, sin título y sin `role="dialog"`,
    *  porque el diálogo ya pone los tres; el formulario ocupa su cuerpo. */
@@ -137,16 +136,6 @@ export class LabelFormPanelComponent implements OnInit, AfterViewInit {
     const trimmed = this.name().trim();
     if (!trimmed) {
       this.error.set('labels.errors.name_required');
-      return false;
-    }
-    const initial = this.initial();
-    const duplicate = this.existingNames().some(
-      (n) =>
-        n.toLowerCase() === trimmed.toLowerCase() &&
-        n.toLowerCase() !== (initial?.name ?? '').toLowerCase(),
-    );
-    if (duplicate) {
-      this.error.set('labels.errors.duplicate_name');
       return false;
     }
     this.error.set('');

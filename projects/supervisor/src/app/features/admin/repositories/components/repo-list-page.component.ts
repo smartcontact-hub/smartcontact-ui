@@ -118,8 +118,6 @@ export class RepoListPageComponent<T extends RepoEntity> {
   /** Siempre por nombre: esta lista no tiene cabeceras para ordenar. */
   protected readonly sorted = computed(() => [...this.items()].sort((a, b) => a.name.localeCompare(b.name)));
 
-  protected readonly existingNames = computed(() => this.items().map((item) => item.name));
-
   /** Reactividad al cambio de idioma para resolver `entitySingularKey` y
    *  `entityPluralKey` del config (S51 sweep AED i18n). Patrón S49 reactive
    *  pattern — sin esta dependency `translate.instant` no se re-evalúa al
