@@ -1391,6 +1391,12 @@
     },
     "agendas": {
       "title": "Address books",
+      "toasts": {
+        "created": "Address book \"{{name}}\" created",
+        "updated": "Address book \"{{name}}\" updated",
+        "deleted": "Address book \"{{name}}\" deleted",
+        "deleted_bulk": "{{count}} address books deleted"
+      },
       "singular": "address book",
       "create_title": "New address book",
       "plural": "address books",
@@ -1730,7 +1736,8 @@
       "toasts": {
         "created": "Team \"{{name}}\" created",
         "updated": "Team \"{{name}}\" updated",
-        "deleted": "Team \"{{name}}\" deleted"
+        "deleted": "Team \"{{name}}\" deleted",
+        "deleted_bulk": "{{count}} teams deleted"
       }
     },
     "agent_assignment": {

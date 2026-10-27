@@ -1391,6 +1391,12 @@
     },
     "agendas": {
       "title": "Carnets",
+      "toasts": {
+        "created": "Carnet « {{name}} » créé",
+        "updated": "Carnet « {{name}} » mis à jour",
+        "deleted": "Carnet « {{name}} » supprimé",
+        "deleted_bulk": "{{count}} carnets supprimés"
+      },
       "singular": "carnet",
       "create_title": "Nouveau carnet",
       "plural": "carnets",
@@ -1730,7 +1736,8 @@
       "toasts": {
         "created": "Équipe « {{name}} » créée",
         "updated": "Équipe « {{name}} » mise à jour",
-        "deleted": "Équipe « {{name}} » supprimée"
+        "deleted": "Équipe « {{name}} » supprimée",
+        "deleted_bulk": "{{count}} équipes supprimées"
       }
     },
     "agent_assignment": {

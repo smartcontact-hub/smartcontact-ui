@@ -177,6 +177,10 @@ título. La columna «Nombre» de la tabla de contactos de una agenda no cambia 
 **Razón** · Misma palabra que el usuario ya conoce de Voice y que el COA, y la agenda deja de tener un «Nombre» propio y otro
 en la tabla de sus contactos.
 
+**Y los avisos de borrar** · El COA manda también en esto: los avisos de Agendas dicen «Agenda «X» creada/eliminada» y «3 agendas
+eliminadas» (`repositories.agendas.toasts`, como Equipos), y borrar un contacto suelto pregunta «¿Eliminar 1 contacto?» como
+varios. El menú con varias filas marcadas sigue diciendo «Eliminar (3)» en todas las listas (DD-227): el COA lo recoge así.
+
 **Descartadas** ·
 - *Mantener «Nombre» por consistencia con el resto*: la excepción tiene criterio (contenido frente a entidad) y lo pidió el equipo.
 

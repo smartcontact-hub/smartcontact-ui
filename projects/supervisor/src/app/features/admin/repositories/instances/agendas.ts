@@ -97,6 +97,7 @@ export class AgendasPageComponent {
     entitySingularKey: 'repositories.agendas.singular',
     createTitleKey: 'repositories.agendas.create_title',
     entityPluralKey: 'repositories.agendas.plural',
+    toastsKey: 'repositories.agendas.toasts',
     icon: 'call',
     breadcrumbExtraKey: 'repositories.agendas.title',
     columns: columnas((agenda) => this.agentesPorAgenda().get(agenda.id) ?? 0),

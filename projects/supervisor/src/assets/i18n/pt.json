@@ -1391,6 +1391,12 @@
     },
     "agendas": {
       "title": "Agendas",
+      "toasts": {
+        "created": "Agenda «{{name}}» criada",
+        "updated": "Agenda «{{name}}» atualizada",
+        "deleted": "Agenda «{{name}}» eliminada",
+        "deleted_bulk": "{{count}} agendas eliminadas"
+      },
       "singular": "agenda",
       "create_title": "Nova agenda",
       "plural": "agendas",
@@ -1730,7 +1736,8 @@
       "toasts": {
         "created": "Equipe «{{name}}» criada",
         "updated": "Equipe «{{name}}» atualizada",
-        "deleted": "Equipe «{{name}}» excluída"
+        "deleted": "Equipe «{{name}}» excluída",
+        "deleted_bulk": "{{count}} equipes excluídas"
       }
     },
     "agent_assignment": {

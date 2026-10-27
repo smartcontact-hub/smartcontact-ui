@@ -80,8 +80,18 @@ test('editar y borrar un contacto desde su menú de fila', async ({ page }) => {
   const otra = filas(page).filter({ hasText: 'Facturación' });
   await otra.getByRole('button', { name: 'Más acciones' }).click();
   await page.locator('.p-menu-overlay').getByRole('menuitem', { name: 'Eliminar' }).click();
+  // Pregunta antes de borrar (COA SISMAC-4440): cancelar no toca nada, aceptar sí.
+  const aviso = page.getByRole('alertdialog', { name: '¿Eliminar 1 contacto?' });
+  await expect(aviso).toContainText('Esta acción no se puede deshacer.');
+  await expect(filas(page)).toHaveCount(4);
+  await aviso.getByRole('button', { name: 'Cancelar' }).click();
+  await expect(filas(page)).toHaveCount(4);
+  await otra.getByRole('button', { name: 'Más acciones' }).click();
+  await page.locator('.p-menu-overlay').getByRole('menuitem', { name: 'Eliminar' }).click();
+  await page.getByRole('alertdialog', { name: '¿Eliminar 1 contacto?' }).getByRole('button', { name: 'Eliminar' }).click();
   await expect(filas(page)).toHaveCount(3);
   await expect(tabla(page)).not.toContainText('Facturación');
+  await expect(page.getByText('1 contacto eliminado')).toBeVisible();
 });
 
 test('Atrás con cambios sin guardar avisa; descartar no guarda', async ({ page }) => {

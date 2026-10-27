@@ -49,4 +49,23 @@ test('Agendas: «Duplicar» abre «Nueva agenda» con la copia («X (1)»), que 
   await page.locator('sc-top-bar').getByRole('button', { name: 'Crear agenda' }).click();
   await expect(page).toHaveURL(/\/admin\/agendas\/editar\/\d+$/);
   expect(await guardadas()).toContain('Soporte Premium (1)');
+  // El aviso lo dice el COA: «Agenda «X (1)» creada», no el genérico «creado/a».
+  await expect(page.getByText('Agenda «Soporte Premium (1)» creada')).toBeVisible();
+});
+
+test('Agendas: eliminar avisa «Agenda «X» eliminada» y varias a la vez, «2 agendas eliminadas» (COA SISMAC-4440)', async ({ page }) => {
+  await goto(page, 'admin/agendas');
+  await fila(page, 'Soporte Premium').getByLabel('Más acciones').click();
+  await page.getByRole('menuitem', { name: 'Eliminar' }).click();
+  await page.getByRole('alertdialog', { name: /¿Eliminar/ }).getByRole('button', { name: 'Eliminar' }).click();
+  await expect(page.getByText('Agenda «Soporte Premium» eliminada')).toBeVisible();
+
+  await fila(page, 'Ventas Nacional').getByRole('checkbox').check();
+  await page.getByTestId('repo-table').locator('tbody tr').nth(1).getByRole('checkbox').check();
+  await fila(page, 'Ventas Nacional').click({ button: 'right' });
+  await page.getByRole('menuitem', { name: 'Eliminar (2)' }).click();
+  const aviso = page.getByRole('alertdialog', { name: '¿Eliminar 2 agendas?' });
+  await expect(aviso).toContainText('Esta acción no se puede deshacer.');
+  await aviso.getByRole('button', { name: 'Eliminar' }).click();
+  await expect(page.getByText('2 agendas eliminadas')).toBeVisible();
 });

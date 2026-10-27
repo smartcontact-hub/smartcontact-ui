@@ -190,7 +190,7 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
       const created = this.store.addItem({ ...datos, updatedAt: hoy() });
       this.asignar(created.id, agentIds);
       this.dirtyState.markPristine();
-      const creado = this.texto('repositories.toasts.created', created.name);
+      const creado = this.texto('repositories.agendas.toasts.created', created.name);
       // El toast, ya en la ficha a la que se llega (DD-211 §5).
       void this.router.navigateByUrl(`/admin/agendas/editar/${created.id}`, { replaceUrl: true }).then(() => this.resultado.contar(creado));
       return;
@@ -199,7 +199,7 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
     this.asignar(this.agendaId!, agentIds);
     this.form.set(draft);
     this.dirtyState.markPristine();
-    this.resultado.contar(this.texto('repositories.toasts.updated', draft.name));
+    this.resultado.contar(this.texto('repositories.agendas.toasts.updated', draft.name));
   }
 
   /** Pone o quita esta agenda de las `schedules` de cada agente que cambió: solo toca a los que cambian. */
@@ -303,8 +303,9 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
     this.contactDialog.set(null);
   }
 
+  /** Uno solo también pregunta (COA SISMAC-4440, «Eliminar contacto»): el mismo modal que varios, con su cifra en singular. */
   protected removeContact(contact: AgendaContact): void {
-    this.form.update((f) => ({ ...f, contacts: f.contacts.filter((c) => c.id !== contact.id) }));
+    void this.removeContacts([contact]);
   }
 
   /* ── Eliminar varios (DD-227): el clic derecho sobre un contacto marcado entre dos o más ──────────────────────── */
@@ -426,7 +427,7 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
 
   /** El texto de «creado», «actualizado» o «eliminado» de esta entidad. */
   private texto(key: string, name: string): string {
-    return this.translate.instant(key, { entity: this.translate.instant('repositories.agendas.singular'), name });
+    return this.translate.instant(key, { name });
   }
 
 }
