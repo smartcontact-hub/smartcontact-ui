@@ -47,6 +47,8 @@
 > | El «+» de `sc-button` (`icon="add"`) es siempre redondo: círculo sin rótulo, píldora con él (enmienda DD-167 y DD-187) | DD-229 |
 > | Con el índice en la caja, el carril mide 235, el de la caja en Figma: ningún rótulo de las fichas salta de línea · sin la caja, 196 (enmienda DD-220) | DD-221 |
 > | El índice de secciones, en la caja gris de Contact Center en las seis pantallas que lo llevan (Contact Center, fichas de grupo, agente y usuario, tipificación y constructor de reglas), como en Figma: un solo interruptor de la app (`SC_FORM_SECTION_NAV_CAJA`), y volver al índice plano es borrar su línea | DD-220 |
+> | Agendas y Plantillas llaman «Título» a su campo principal (columna, «Ordenar por», placeholder y avisos) y el resto de listas sigue con «Nombre»; los avisos de Agendas dicen «Agenda «X» creada/eliminada» y borrar un contacto suelto pregunta (enmienda DD-230) | DD-236 |
+> | El nombre repetido se permite en todas las fichas del Supervisor: ni aviso en vivo ni «Crear»/«Guardar» apagados por él (enmienda DD-217 §1, DD-219 y DD-222 §4) | DD-235 |
 > | Lo que falta, como SISMAC-4058: «Crear» y «Guardar» apagados mientras falte algo, con «Falta: …» o «Listo para crear» arriba del resumen (cada cosa a su campo) y el motivo en el tooltip · el aviso bajo el campo en gris desde el principio y en rojo al dejarlo vacío · el índice no se pone rojo por lo tocado · en grupo, agente, usuario y tipificación (enmienda DD-217 §1 y §4; vuelve DD-136) | DD-219 |
 > | Grupos como sus páginas de COA (SISMAC-4056 y 4058): la cifra de agentes lleva a la ficha · duplicar es un alta · con varios marcados, el clic derecho solo elimina · Servicios y Agentes de mayor a menor al primer clic (`defaultSortOrder`) · la miga dice el nombre · «Agentes asignados» sin estado ni filtro, ordenable por nombre (`headerTemplate`), el nivel en desplegable y Habilitado bloqueado con «Activación por grupo» · confirmar dice qué, a cuántos y con su verbo (enmienda DD-121, DD-151, DD-159 §1, DD-185 §7 y §8, DD-187 §4, DD-204 §6, DD-215 §1 y §2 y DD-217 §8) | DD-218 |
 > | Lo que falta se dice al pulsar Crear o Guardar, en su campo y en el índice con su texto (`sectionErrorHints`), y se llega al primero · Crear siempre activo, sin motivo junto al botón ni «Falta / Listo para crear» · el ✓, de la sección que se dejó tal como está (su firma) · sin puertas · los grupos pueden no tener canales · quitar y poner un canal no le quita nada a nadie · fuera los avisos amarillos · duplicar un grupo no pregunta: «(1)» · Recursos en chips que llenan su fila, sin «+» ni lápiz y con lo que contienen al pasar, en las dos fichas · los editores de Repositorios, igual · la ayuda acaba en punto y el subtítulo no (enmienda DD-121, DD-136, DD-143 §2, §3 y §5, DD-158, DD-167, DD-199 §1 y §3, DD-187, DD-204, DD-206, DD-209 §4, DD-211 §6 y DD-212 §1) | DD-217 |
@@ -163,7 +165,7 @@
 
 ---
 
-## DD-235 · 2026-10-27 — Agendas y Plantillas llaman «Título» a su campo principal; el resto de listas sigue con «Nombre»
+## DD-236 · 2026-10-27 — Agendas y Plantillas llaman «Título» a su campo principal; el resto de listas sigue con «Nombre»
 
 **Contexto** · DD-230 alineó Plantillas con Agendas y el resto de repositorios y cambió «Título» por «Nombre». En la reunión de
 equipo se decidió lo contrario para estas dos: en Voice se llama «Título», los COA (SISMAC-4438 y SISMAC-4440) ya lo dicen
@@ -186,6 +188,32 @@ varios. El menú con varias filas marcadas sigue diciendo «Eliminar (3)» en to
 
 **Consecuencias** · i18n en los cuatro idiomas; `agendas-listado`, `agenda-agentes` y `plantillas-editor` con «Título». Proto y
 Figma de estas dos pantallas, a editar para que sigan al COA.
+
+## DD-235 · 2026-10-27 — El nombre repetido se permite en todas las fichas del Supervisor
+
+**Contexto** · DD-217 §1 y DD-219 trataban el nombre repetido como un error de contenido en vivo: aviso rojo bajo el campo,
+punto y texto en el índice y «Crear …» / «Guardar» apagados; DD-222 §4 lo cita como el ejemplo de error en vivo. Estaba en
+Grupos, Tipificaciones, Agendas, Equipos, Plantillas y los editores de cuenta y trigger de Email.
+
+**Decisión** · Dos fichas pueden llevar el mismo nombre. Ninguna ficha avisa ni apaga el botón por ello, y el índice, el
+tooltip «Falta: …» y las claves i18n (`name_taken`, `duplicate_title`) ya no lo mencionan. Lo que sí sigue siendo un error en
+vivo es lo que no se puede guardar de verdad (por ejemplo, una cola imposible). Enmienda DD-217 §1, DD-219 y DD-222 §4 en
+lo del nombre repetido. El nombre «X (1)» de duplicar (DD-231, DD-232, DD-234) sigue igual: es el siguiente libre, no un
+requisito de unicidad.
+
+**Razón** · Cada elemento tiene un ID propio aunque no se muestre al usuario, así que el nombre no identifica y puede
+repetirse.
+
+**Fuera de alcance** ·
+- Las opciones hermanas de una tipificación con el mismo nombre (`hermanasRepetidas`): el agente no sabría cuál es cuál.
+- Los repetidos de la importación de contactos y tipificaciones (DD-166).
+- Los campos únicos que no son el nombre: email del agente (`agents.errors.email_taken`), extensión y códigos.
+- Los paneles de alta rápida de la lista (`repo-form-panel`, `label-form-panel`) y Memory conservan su comprobación.
+
+**Consecuencias** · `e2e/supervisor/ficha-grupo.spec.ts`, `name-inplace.spec.ts` y `plantillas-editor.spec.ts` pasan de
+esperar el bloqueo a esperar que el botón se activa y guarda.
+
+---
 
 ## DD-234 · 2026-10-26 — Duplicar una agenda o una plantilla es un alta, como duplicar un grupo o un agente
 

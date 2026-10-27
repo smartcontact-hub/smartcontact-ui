@@ -1231,7 +1231,6 @@
     },
     "errors": {
       "title_required": "Le titre est obligatoire",
-      "duplicate_title": "Un modèle avec ce titre existe déjà",
       "body_required": "Le contenu est obligatoire"
     },
     "delete": {
@@ -1271,7 +1270,6 @@
         "edit_breadcrumb": "Modifier le compte",
         "create_submit": "Créer le compte",
         "name_placeholder": "mailbox@example.com",
-        "name_taken": "Un compte avec cette adresse existe déjà",
         "section_account": "Compte",
         "section_incoming": "Données du courrier entrant",
         "section_outgoing": "Données du courrier sortant",
@@ -1295,7 +1293,6 @@
         "create_breadcrumb": "Nouveau trigger",
         "edit_breadcrumb": "Modifier le trigger",
         "create_submit": "Créer le trigger",
-        "name_taken": "Un trigger avec ce nom existe déjà",
         "section_trigger": "Trigger",
         "section_condition": "Condition",
         "section_action": "Action",
@@ -1481,7 +1478,6 @@
       "import_confirm_one": "Ajouter 1 contact",
       "name_placeholder": "Ex : Ventes nationales",
       "errors": {
-        "name_taken": "Un carnet porte déjà ce titre.",
         "title_required": "Le titre est obligatoire",
         "phone_invalid": "Ce numéro n'est pas valide : utilisez des chiffres, avec un + devant s'il a un indicatif.",
         "phone_taken": "Ce numéro est déjà dans ce carnet.",
@@ -1571,7 +1567,6 @@
       "delete_option_body_one": "L'option en dessous est aussi supprimée.",
       "errors": {
         "option_taken": "« {{name}} » existe déjà à ce niveau",
-        "name_taken": "Une typification porte déjà ce nom",
         "name_required": "Le nom est obligatoire",
         "options_required": "Ajoutez au moins une option",
         "names_required": "Donnez un nom différent à chaque option"
@@ -1728,7 +1723,6 @@
       "agents": "Agents",
       "create_submit": "Créer l'équipe",
       "edit_breadcrumb": "Modifier l'équipe",
-      "name_taken": "Il existe déjà une équipe avec ce nom",
       "assigned_count": "{{count}} dans l'équipe",
       "no_description": "Sans description",
       "agents_aria": "{{count}} agents",
@@ -1838,7 +1832,6 @@
         "email_empty": "Sans email"
       },
       "danger_zone_description": "Supprimer cet utilisateur révoque son accès au panneau et efface ses permissions. L'action ne peut pas être annulée.",
-      "duplicate_title": "Dupliquer l'utilisateur",
       "duplicate_breadcrumb": "Dupliquer l'utilisateur",
       "duplicate_hint": "Duplication de «{{source}}» : remplissez les champs obligatoires et sauvegardez",
       "headline": {
@@ -2061,7 +2054,6 @@
         "confirm": "Retirer"
       },
       "danger_zone_description": "Supprimer ce groupe le retire des règles et routes qui le référencent. L'action ne peut pas être annulée.",
-      "duplicate_title": "Dupliquer le groupe",
       "duplicate_breadcrumb": "Dupliquer le groupe",
       "duplicate_hint": "Duplication de «{{source}}» : remplissez les champs obligatoires et sauvegardez",
       "announcements": {
@@ -2224,7 +2216,6 @@
     },
     "errors": {
       "name_required": "Le nom est obligatoire",
-      "name_taken": "Un groupe porte déjà ce nom",
       "phone_required": "Le téléphone sortant est obligatoire",
       "whatsapp_required": "Le numéro WhatsApp est obligatoire",
       "typification_required": "La typification est obligatoire"
@@ -2483,7 +2474,6 @@
         "slot_tracking": "Enregistrement et suivi"
       },
       "danger_zone_description": "Supprimer cet agent le désassigne de tous les groupes auxquels il participe. L'action ne peut pas être annulée.",
-      "duplicate_title": "Dupliquer l'agent",
       "duplicate_breadcrumb": "Dupliquer l'agent",
       "duplicate_hint": "Duplication de «{{source}}» : remplissez les champs obligatoires et sauvegardez",
       "summary": {

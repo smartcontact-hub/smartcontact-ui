@@ -338,14 +338,9 @@ export class EquipoEditorPageComponent implements DirtyAware, OnInit {
 
   /* ── Guardar ─────────────────────────────────────────────────────────────── */
 
-  protected readonly nameTaken = computed(() => {
-    const name = this.form().name.trim().toLowerCase();
-    return !!name && this.store.items().some((g) => g.id !== this.grupoId && g.name.trim().toLowerCase() === name);
-  });
-
   /*
    * Como la ficha de grupo (DD-219) y lo que pide el COA de SISMAC-4453: «Crear equipo» y «Guardar» se apagan mientras
-   * falte el nombre o esté repetido, y su tooltip dice por qué. Un nombre repetido se dice en vivo; el obligatorio, en
+   * falte el nombre, y su tooltip dice por qué. El obligatorio, en
    * rojo al dejar el campo vacío (y se queda en vivo hasta que se rellena). Sin aviso gris previo: el COA no lo pide.
    */
   private readonly faltas = computed<readonly string[]>(() => (this.form().name.trim() ? [] : ['repositories.errors.name_required']));
@@ -356,7 +351,6 @@ export class EquipoEditorPageComponent implements DirtyAware, OnInit {
   });
   protected readonly nameError = computed<string | undefined>(() => {
     this.lang();
-    if (this.nameTaken()) return this.translate.instant('repositories.equipos.name_taken');
     const falta = this.faltas()[0];
     return falta && this.ocasion.acusa(falta) ? this.translate.instant(falta) : undefined;
   });
@@ -368,17 +362,16 @@ export class EquipoEditorPageComponent implements DirtyAware, OnInit {
 
   /** Se puede pulsar con el nombre bien puesto: en el alta, ya; al editar, además, con cambios (vuelve a apagarse si deshaces). */
   protected readonly canSave = computed(
-    () => this.faltas().length === 0 && !this.nameTaken() && (this.mode() === 'create' || this.formDirty()),
+    () => this.faltas().length === 0 && (this.mode() === 'create' || this.formDirty()),
   );
 
-  /** Por qué está apagado el botón, para su tooltip: «Falta: nombre», el nombre repetido o «No hay cambios que guardar». */
+  /** Por qué está apagado el botón, para su tooltip: «Falta: nombre» o «No hay cambios que guardar». */
   protected readonly motivoApagado = computed(() => {
     this.lang();
     if (this.canSave()) return '';
     if (this.faltas().length > 0) {
       return this.translate.instant('common.summary_missing', { items: this.translate.instant('common.summary_missing_name') });
     }
-    if (this.nameTaken()) return this.translate.instant('repositories.equipos.name_taken');
     return this.translate.instant('common.no_changes');
   });
 
@@ -443,7 +436,7 @@ export class EquipoEditorPageComponent implements DirtyAware, OnInit {
 
   protected save(): void {
     if (!this.canSave()) return;
-    if (this.faltas().length > 0 || this.nameTaken()) {
+    if (this.faltas().length > 0) {
       this.ocasion.intentar();
       llegarAAncla('grupo-agentes-name', this.injector);
       return;

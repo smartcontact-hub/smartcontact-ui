@@ -95,7 +95,7 @@ El de la ficha de grupo como la versión 17 de su página de COA (2026-10-22, DD
   Plantillas sin pestañas, con columna Canal. Contactos con casillas y borrado múltiple (confirmación simple, como Reglas).
 - **Para el COA**: «Duplicar» es un alta («X (1)», DD-234), las pestañas pasan a columna Canal y Crear va siempre activo (DD-217). **Trampa**: en el e2e, Nombre es un `th` (`rowHeader`): el `td` de «Agentes» es el 3, no el 4. **Pendiente de producto**: la
   ficha de grupo sigue asignando Agendas y Plantillas al grupo (Recursos).
-- **«Título» (DD-235, 2026-10-27)**: Agendas y Plantillas vuelven a llamar «Título» a su campo (lo decidió el equipo; Voice y
+- **«Título» (DD-236, 2026-10-27)**: Agendas y Plantillas vuelven a llamar «Título» a su campo (lo decidió el equipo; Voice y
   los COA lo dicen así). Los contactos de una agenda y el resto de listas siguen con «Nombre». Falta editar proto y Figma.
 
 ## ✅ 2026-10-26 · Eliminar varios en todas las tablas, sin barra de lote, y las congeladas al día (DD-227)

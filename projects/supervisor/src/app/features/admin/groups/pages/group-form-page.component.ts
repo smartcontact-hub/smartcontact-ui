@@ -381,7 +381,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
    */
   protected readonly generalValid = computed(() => {
     const f = this.form();
-    return f.name.trim().length > 0 && !this.nameTaken() && !this.typificationMissing();
+    return f.name.trim().length > 0 && !this.typificationMissing();
   });
 
   /** «Clasificar llamadas» encendido sin tipificación elegida: falta la tipificación. */
@@ -490,7 +490,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
   /**
    * Los avisos del índice, en el orden de la ficha (DD-219): lo que falta, solo si lo guardado ya venía sin ello o se
    * pulsó con ello pendiente (lo que se toca se dice bajo su campo, donde se mira), y lo que está mal escrito, en vivo
-   * (un nombre repetido, una cola imposible). De aquí salen el punto del índice, lo que dice cada sección en él y
+   * (una cola imposible). De aquí salen el punto del índice, lo que dice cada sección en él y
    * adónde lleva pulsar con algo pendiente.
    */
   private readonly avisos = computed<readonly AvisoDeFicha[]>(() => {
@@ -498,9 +498,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
     const t = (key: string) => this.translate.instant(key);
     const out: AvisoDeFicha[] = [];
     for (const o of this.obligatorios()) {
-      if (o.clave === 'name' && this.nameTaken()) {
-        out.push({ seccion: o.seccion, texto: t('groups.errors.name_taken'), ancla: o.ancla });
-      } else if (o.falta && this.ocasion.acusaEnIndice(o.clave)) {
+      if (o.falta && this.ocasion.acusaEnIndice(o.clave)) {
         out.push({ seccion: o.seccion, texto: t(o.aviso), ancla: o.ancla });
       }
     }
@@ -549,7 +547,6 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
       // En el índice, el nombre más corto: «WhatsApp», no «número de WhatsApp» (la fila mide ~160 px de texto).
       if (o.falta) (por[o.seccion] ??= []).push(t(o.clave === 'whatsapp' ? 'groups.form.summary.missing_whatsapp_short' : o.etiqueta));
     }
-    if (this.nameTaken()) (por['group-section-general'] ??= []).push(t('groups.errors.name_taken'));
     if (this.colaMal()) (por['group-section-distribution'] ??= []).push(t('groups.form.advanced.queue_invalid'));
     const out: Record<string, string> = {};
     for (const [id, items] of Object.entries(por)) out[id] = items.join(', ').replace(/^./, (c) => c.toUpperCase());
@@ -578,9 +575,8 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
     return out;
   });
 
-  /** El aviso rojo bajo el nombre: repetido, en vivo (es contenido); vacío, al dejarlo así (DD-219). */
+  /** El aviso rojo bajo el nombre: vacío, al dejarlo así (DD-219). */
   protected readonly nameError = computed<string | null>(() => {
-    if (this.nameTaken()) return 'groups.errors.name_taken';
     return this.errorDe('name');
   });
 
@@ -643,7 +639,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
   protected readonly initial = signal<Group | null>(null);
   protected readonly form = signal<FormState>(this.emptyForm());
   /*
-   * R6 · una sola política de error (DD-219). Un error de CONTENIDO (un nombre repetido, una cola imposible) se dice en
+   * R6 · una sola política de error (DD-219). Un error de CONTENIDO (una cola imposible) se dice en
    * vivo, en su campo. Lo que FALTA no es un error mientras se rellena: va en gris bajo su campo desde el principio y en
    * rojo al dejarlo vacío, y «Falta: …» del resumen lo dice entero, con cada cosa llevando a su campo. «Crear» y
    * «Guardar» se apagan mientras falte algo, y su tooltip dice qué (`motivoApagado`).
@@ -697,7 +693,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
   protected readonly canSave = computed(() => !this.pendiente() && (this.mode() === 'create' || this.dirtyState.dirty()));
 
   /** Hay algo que no deja crear ni guardar: lo que falta o lo que está mal escrito. */
-  private readonly pendiente = computed(() => this.faltas().length > 0 || this.nameTaken() || this.queueInvalid());
+  private readonly pendiente = computed(() => this.faltas().length > 0 || this.queueInvalid());
 
   /**
    * Por qué está apagado el botón, para su tooltip: lo que falta («Falta: nombre, teléfono saliente»), lo primero mal
@@ -1346,17 +1342,6 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
   protected onLinksChange(links: readonly GroupAgentLink[]): void {
     this.form.update((f) => ({ ...f, links }));
   }
-
-  /** Otro grupo ya se llama así: se dice en vivo bajo el campo y Guardar espera. */
-  protected readonly nameTaken = computed(() => {
-    const wanted = this.form().name.trim().toLocaleLowerCase('es');
-    return (
-      wanted.length > 0 &&
-      this.groupsStore
-        .groups()
-        .some((g) => g.id !== this.editingId() && g.name.trim().toLocaleLowerCase('es') === wanted)
-    );
-  });
 
   protected onNameChange(name: string): void {
     this.updateField('name', name ?? '');

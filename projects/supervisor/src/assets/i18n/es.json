@@ -1231,7 +1231,6 @@
     },
     "errors": {
       "title_required": "El título es obligatorio",
-      "duplicate_title": "Ya existe una plantilla con este título",
       "body_required": "El contenido es obligatorio"
     },
     "delete": {
@@ -1271,7 +1270,6 @@
         "edit_breadcrumb": "Editar cuenta",
         "create_submit": "Crear cuenta",
         "name_placeholder": "mailbox@example.com",
-        "name_taken": "Ya hay una cuenta con esta dirección",
         "section_account": "Cuenta",
         "section_incoming": "Datos del correo entrante",
         "section_outgoing": "Datos del correo saliente",
@@ -1295,7 +1293,6 @@
         "create_breadcrumb": "Nuevo trigger",
         "edit_breadcrumb": "Editar trigger",
         "create_submit": "Crear trigger",
-        "name_taken": "Ya hay un trigger con este nombre",
         "section_trigger": "Trigger",
         "section_condition": "Condición",
         "section_action": "Acción",
@@ -1481,7 +1478,6 @@
       "import_confirm_one": "Añadir 1 contacto",
       "name_placeholder": "Ej: Ventas Nacional",
       "errors": {
-        "name_taken": "Ya hay una agenda con este título.",
         "title_required": "El título es obligatorio",
         "phone_invalid": "El teléfono no es válido: usa cifras, con un + delante si lleva prefijo.",
         "phone_taken": "Ese teléfono ya está en esta agenda.",
@@ -1571,7 +1567,6 @@
       "delete_option_body_one": "Se elimina también la opción que tiene debajo.",
       "errors": {
         "option_taken": "Ya hay «{{name}}» en este nivel",
-        "name_taken": "Ya hay una tipificación con este nombre",
         "name_required": "El nombre es obligatorio",
         "options_required": "Añade al menos una opción",
         "names_required": "Dale a cada opción un nombre distinto"
@@ -1728,7 +1723,6 @@
       "agents": "Agentes",
       "create_submit": "Crear equipo",
       "edit_breadcrumb": "Editar equipo",
-      "name_taken": "Ya hay un equipo con este nombre",
       "assigned_count": "{{count}} en el equipo",
       "no_description": "Sin descripción",
       "agents_aria": "{{count}} agentes",
@@ -1812,7 +1806,6 @@
       "create_title": "Nuevo usuario",
       "create_breadcrumb": "Nuevo usuario",
       "edit_breadcrumb": "Editar usuario",
-      "duplicate_title": "Duplicar usuario",
       "duplicate_breadcrumb": "Duplicar usuario",
       "duplicate_hint": "Duplicando «{{source}}»: rellena los campos obligatorios y guarda",
       "section": {
@@ -1948,7 +1941,6 @@
       "create_title": "Nuevo grupo",
       "create_breadcrumb": "Nuevo grupo",
       "edit_breadcrumb": "Editar grupo",
-      "duplicate_title": "Duplicar grupo",
       "duplicate_breadcrumb": "Duplicar grupo",
       "duplicate_hint": "Duplicando «{{source}}»: rellena los campos obligatorios y guarda",
       "section": {
@@ -2224,7 +2216,6 @@
     },
     "errors": {
       "name_required": "El nombre es obligatorio",
-      "name_taken": "Ya hay un grupo con este nombre",
       "phone_required": "El teléfono saliente es obligatorio",
       "whatsapp_required": "El número de WhatsApp es obligatorio",
       "typification_required": "La tipificación es obligatoria"
@@ -2322,7 +2313,6 @@
       "create_title": "Nuevo agente",
       "create_breadcrumb": "Nuevo agente",
       "edit_breadcrumb": "Editar agente",
-      "duplicate_title": "Duplicar agente",
       "duplicate_breadcrumb": "Duplicar agente",
       "duplicate_hint": "Duplicando «{{source}}»: rellena los campos obligatorios y guarda",
       "section": {

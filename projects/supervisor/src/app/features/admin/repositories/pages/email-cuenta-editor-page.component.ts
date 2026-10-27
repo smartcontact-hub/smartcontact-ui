@@ -103,14 +103,9 @@ export class EmailCuentaEditorPageComponent implements DirtyAware, OnInit {
     ];
   });
 
-  protected readonly nameTaken = computed(() => {
-    const name = this.form().name.trim().toLowerCase();
-    return !!name && this.store.items().some((m) => m.id !== this.mailboxId && m.name.trim().toLowerCase() === name);
-  });
-
   /*
    * Lo que falta se dice al pulsar «Crear …» o «Guardar» (DD-217, como en las fichas): el botón no se apaga por ello ni
-   * lleva motivo al lado; al pulsar sin nombre, lo dice su campo y le da el foco. Un nombre repetido se dice en vivo.
+   * lleva motivo al lado; al pulsar sin nombre, lo dice su campo y le da el foco.
    */
   private readonly faltas = computed<readonly string[]>(() => (this.form().name.trim() ? [] : ['repositories.errors.name_required']));
   private readonly ocasion = ocasionDeAvisar({
@@ -120,7 +115,6 @@ export class EmailCuentaEditorPageComponent implements DirtyAware, OnInit {
   });
   protected readonly nameError = computed<string | undefined>(() => {
     this.lang();
-    if (this.nameTaken()) return this.translate.instant('repositories.emails.mailbox.name_taken');
     const falta = this.faltas()[0];
     return falta && this.ocasion.acusa(falta) ? this.translate.instant(falta) : undefined;
   });
@@ -203,7 +197,7 @@ export class EmailCuentaEditorPageComponent implements DirtyAware, OnInit {
 
   protected save(): void {
     if (!this.canSave()) return;
-    if (this.faltas().length > 0 || this.nameTaken()) {
+    if (this.faltas().length > 0) {
       this.ocasion.intentar();
       llegarAAncla('mailbox-name', this.injector);
       return;

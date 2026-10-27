@@ -42,15 +42,15 @@ test('grupo · el título se edita en su sitio sin mover la cabecera', async ({ 
   expect(await yIndice(page), 'editar no debe empujar el índice').toBeCloseTo(y, 0);
 });
 
-test('grupo · nombre repetido avisa, y Escape lo devuelve', async ({ page }) => {
+test('grupo · un nombre que ya existe se permite, y Escape lo devuelve', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/1');
   const antes = (await titulo(page).innerText()).trim();
 
   await titulo(page).click();
   await campo(page).fill('ACD outbound');
-  await expect(page.locator('.name-inplace__error')).toHaveText('Ya hay un grupo con este nombre');
-  // Hay un cambio, pero no se podría guardar: «Guardar» sigue apagado y lo dice el campo (DD-219).
-  await expect(guardar(page)).toBeDisabled();
+  // DD-235: el nombre repetido no avisa ni apaga «Guardar».
+  await expect(page.locator('.name-inplace__error')).toHaveCount(0);
+  await expect(guardar(page)).toBeEnabled();
 
   await page.keyboard.press('Escape');
   await expect(campo(page)).toHaveCount(0);

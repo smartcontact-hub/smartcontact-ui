@@ -1231,7 +1231,6 @@
     },
     "errors": {
       "title_required": "O título é obrigatório",
-      "duplicate_title": "Já existe um modelo com este título",
       "body_required": "O conteúdo é obrigatório"
     },
     "delete": {
@@ -1271,7 +1270,6 @@
         "edit_breadcrumb": "Editar conta",
         "create_submit": "Criar conta",
         "name_placeholder": "mailbox@example.com",
-        "name_taken": "Já existe uma conta com este endereço",
         "section_account": "Conta",
         "section_incoming": "Dados do correio de entrada",
         "section_outgoing": "Dados do correio de saída",
@@ -1295,7 +1293,6 @@
         "create_breadcrumb": "Novo trigger",
         "edit_breadcrumb": "Editar trigger",
         "create_submit": "Criar trigger",
-        "name_taken": "Já existe um trigger com este nome",
         "section_trigger": "Trigger",
         "section_condition": "Condição",
         "section_action": "Ação",
@@ -1481,7 +1478,6 @@
       "import_confirm_one": "Adicionar 1 contato",
       "name_placeholder": "Ex: Vendas Nacional",
       "errors": {
-        "name_taken": "Já existe uma agenda com este título.",
         "title_required": "O título é obrigatório",
         "phone_invalid": "O telefone não é válido: use dígitos, com um + na frente se tiver prefixo.",
         "phone_taken": "Esse telefone já está nesta agenda.",
@@ -1571,7 +1567,6 @@
       "delete_option_body_one": "A opção abaixo também é eliminada.",
       "errors": {
         "option_taken": "Já existe «{{name}}» neste nível",
-        "name_taken": "Já existe uma tipificação com este nome",
         "name_required": "O nome é obrigatório",
         "options_required": "Adicione pelo menos uma opção",
         "names_required": "Dê a cada opção um nome diferente"
@@ -1728,7 +1723,6 @@
       "agents": "Agentes",
       "create_submit": "Criar equipe",
       "edit_breadcrumb": "Editar equipe",
-      "name_taken": "Já existe uma equipe com este nome",
       "assigned_count": "{{count}} na equipe",
       "no_description": "Sem descrição",
       "agents_aria": "{{count}} agentes",
@@ -1838,7 +1832,6 @@
         "email_empty": "Sem email"
       },
       "danger_zone_description": "Eliminar este usuário revoga seu acesso ao painel e apaga suas permissões. A ação não pode ser desfeita.",
-      "duplicate_title": "Duplicar usuário",
       "duplicate_breadcrumb": "Duplicar usuário",
       "duplicate_hint": "Duplicando «{{source}}»: preencha os campos obrigatórios e salve",
       "headline": {
@@ -2061,7 +2054,6 @@
         "confirm": "Retirar"
       },
       "danger_zone_description": "Eliminar este grupo o retira das regras e rotas que o referenciam. A ação não pode ser desfeita.",
-      "duplicate_title": "Duplicar grupo",
       "duplicate_breadcrumb": "Duplicar grupo",
       "duplicate_hint": "Duplicando «{{source}}»: preencha os campos obrigatórios e salve",
       "announcements": {
@@ -2224,7 +2216,6 @@
     },
     "errors": {
       "name_required": "O nome é obrigatório",
-      "name_taken": "Já existe um grupo com este nome",
       "phone_required": "O telefone de saída é obrigatório",
       "whatsapp_required": "O número de WhatsApp é obrigatório",
       "typification_required": "A tipificação é obrigatória"
@@ -2483,7 +2474,6 @@
         "slot_tracking": "Gravação e acompanhamento"
       },
       "danger_zone_description": "Eliminar este agente o desassocia de todos os grupos onde participa. A ação não pode ser desfeita.",
-      "duplicate_title": "Duplicar agente",
       "duplicate_breadcrumb": "Duplicar agente",
       "duplicate_hint": "Duplicando «{{source}}»: preencha os campos obrigatórios e salve",
       "summary": {
