@@ -1568,6 +1568,11 @@
         "options_required": "Añade al menos una opción",
         "names_required": "Dale a cada opción un nombre distinto"
       },
+      "missing": {
+        "options": "Una opción",
+        "unnamed": "Opciones sin nombre",
+        "names": "Nombres distintos"
+      },
       "section": {
         "general": "General",
         "categorization": "Categorías"

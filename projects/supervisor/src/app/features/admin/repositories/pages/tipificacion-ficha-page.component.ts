@@ -193,10 +193,12 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit {
   protected readonly niveles = computed(() => nivelesDe(this.form()));
 
   /** Opciones sin nombre, o con el de una hermana: el agente no sabría cuál es cuál. */
-  private readonly nombresMal = computed(() => {
+  private readonly opcionesSinNombre = computed(() => {
     const sinNombre = (lista: readonly TipificacionOpcion[]): boolean => lista.some((o) => !o.label.trim() || sinNombre(o.children));
-    return sinNombre(this.form().options) || hermanasRepetidas(this.form().options).length > 0;
+    return sinNombre(this.form().options);
   });
+
+  private readonly nombresMal = computed(() => this.opcionesSinNombre() || hermanasRepetidas(this.form().options).length > 0);
 
   /** Con alguna opción, y todas con nombre y sin repetir. Cada rama llega hasta donde haga falta. */
   private readonly categoriasCompletas = computed(() => this.form().options.length > 0 && !this.nombresMal());
@@ -290,11 +292,42 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit {
     return out;
   });
 
-  /** El punto rojo del índice: la sección tiene un aviso a la vista. */
-  protected readonly sectionsWithErrors = computed<ReadonlySet<string>>(() => new Set(this.avisos().map((a) => a.seccion)));
+  /**
+   * El punto rojo del índice: la sección tiene un aviso a la vista. En el alta, la que se dejó con algo por hacer, como
+   * en el agente y el grupo (DD-222).
+   */
+  protected readonly sectionsWithErrors = computed<ReadonlySet<string>>(() =>
+    this.mode() === 'create'
+      ? new Set([...this.alta.estados()].filter(([, estado]) => estado === 'error').map(([id]) => id))
+      : new Set(this.avisos().map((a) => a.seccion)),
+  );
 
-  /** Lo que dice cada sección con aviso en el índice, en texto (DD-217). */
-  protected readonly sectionErrorHints = computed(() => avisosDelIndice(this.avisos()));
+  /**
+   * Todo lo que le falta a cada sección, en una línea corta para el índice («Nombre», «Una opción»), sin «Falta:»: el gris
+   * y el rojo ya lo dicen. Lo mal escrito entra detrás (DD-222).
+   */
+  private readonly faltasPorSeccion = computed<Readonly<Record<string, string>>>(() => {
+    this.lang();
+    const t = (key: string) => this.translate.instant(key);
+    const f = this.form();
+    const por: Record<string, string[]> = {};
+    if (!f.name.trim()) (por[GENERAL] ??= []).push(t('common.summary_missing_name'));
+    else if (this.nameTaken()) (por[GENERAL] ??= []).push(t('repositories.tipificaciones.errors.name_taken').toLowerCase());
+    if (f.options.length === 0) (por[CATEGORIAS] ??= []).push(t('repositories.tipificaciones.missing.options'));
+    else if (this.opcionesSinNombre()) (por[CATEGORIAS] ??= []).push(t('repositories.tipificaciones.missing.unnamed'));
+    else if (this.nombresMal()) (por[CATEGORIAS] ??= []).push(t('repositories.tipificaciones.missing.names'));
+    const out: Record<string, string> = {};
+    for (const [id, items] of Object.entries(por)) out[id] = items.join(', ').replace(/^./, (c) => c.toUpperCase());
+    return out;
+  });
+
+  /** Lo que dice cada sección en el índice: en el alta, todo lo que falta (en gris hasta dejar la sección); al editar, el aviso a la vista (DD-217). */
+  protected readonly sectionErrorHints = computed<Readonly<Record<string, string>>>(() =>
+    this.mode() === 'create' ? this.faltasPorSeccion() : avisosDelIndice(this.avisos()),
+  );
+
+  /** Los marcadores del índice en el alta y al duplicar: sin revisar, en curso, completa y en rojo. Al editar, ninguno. */
+  protected readonly sectionStates = computed(() => (this.mode() === 'create' ? this.alta.estados() : null));
 
   /** Lleva a un campo de la ficha (o al título de su sección): a su sección, y en ella al sitio, con el foco. */
   private irACampo(seccion: string, ancla: string | null): void {
@@ -318,6 +351,9 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit {
   /** Debajo del nombre: cuántos niveles y, al editar, en cuántos grupos se usa. */
   protected readonly headlineMeta = computed(() => {
     this.lang();
+    // En el alta no hay subtítulo: los niveles salen de las categorías, y lo que falta lo dice el índice. Que apareciera al
+    // escribir el nombre movía el título.
+    if (this.mode() === 'create') return '';
     const n = this.niveles();
     const niveles = this.translate.instant(`repositories.tipificaciones.levels_count${n === 1 ? '_one' : ''}`, { count: n });
     if (this.mode() !== 'edit') return niveles;

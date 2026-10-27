@@ -8,6 +8,12 @@
  * `src/styles/_page.scss`, y `.field`, `.sub-section` y `.switch-field` en `_forms.scss`. Aquí solo lo que es de esta
  * ficha. */
 
+/* La línea bajo el título se reserva aunque vaya vacía (el alta no lleva subtítulo): el índice arranca a la misma altura
+ * que en las fichas de agente y grupo, que siempre la llevan. */
+.ficha-rail .headline__meta {
+  min-height: 1lh;
+}
+
 /* La columna del teléfono: el hueco del resumen de las fichas (el área `summary` de la rejilla de `.ficha-rail`), fija al
  * bajar como él, pero SIN su recorte: `.ficha-summary` desplaza por dentro (`overflow-y: auto`), y eso cortaba en recto
  * por los lados la sombra del teléfono. Teléfono, título y resultado caben enteros a 1440 × 900. */
