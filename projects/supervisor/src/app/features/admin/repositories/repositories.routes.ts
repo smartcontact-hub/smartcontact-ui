@@ -22,6 +22,18 @@ const repoInstance = (labelKey: string) => ({
   ],
 });
 
+/**
+ * Las migas de Agendas y de Email abren con el nivel de Administración (sin enlace, como en el hub y en Tipificaciones):
+ * Administración → Repositorios → Agendas, como el COA (DD-238). Las demás instancias siguen con `repoInstance`.
+ */
+const repoInstanceEnAdmin = (labelKey: string) => ({
+  breadcrumb: [
+    { labelKey: 'sidebar.administration', link: false as const },
+    { labelKey: 'sidebar.repositories', link: '/admin/repositorios' as const },
+    { labelKey },
+  ],
+});
+
 export const REPOSITORIES_ROUTES: Routes = [
   {
     path: 'repositorios',
@@ -38,7 +50,7 @@ export const REPOSITORIES_ROUTES: Routes = [
     /* La agenda tiene su editor (DD-163), como las fichas: el alta y la edición en su ruta, con la guarda de
      * siempre. La miga de "Agendas" enlaza a la lista; la del editor es la tercera. */
     path: 'agendas',
-    data: repoInstance('repositories.agendas.title'),
+    data: repoInstanceEnAdmin('repositories.agendas.title'),
     children: [
       { path: '', loadComponent: () => import('./instances/agendas').then((m) => m.AgendasPageComponent) },
       {
@@ -128,7 +140,7 @@ export const REPOSITORIES_ROUTES: Routes = [
   {
     /* El repositorio de Email (DD-185): las cuentas de correo y los triggers, cada uno con su editor en su ruta. */
     path: 'emails',
-    data: repoInstance('repositories.emails.title'),
+    data: repoInstanceEnAdmin('repositories.emails.title'),
     children: [
       { path: '', loadComponent: () => import('./pages/emails-page.component').then((m) => m.EmailsPageComponent) },
       {

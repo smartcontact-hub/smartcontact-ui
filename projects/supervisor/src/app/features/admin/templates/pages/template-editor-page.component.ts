@@ -74,12 +74,6 @@ export class TemplateEditorPageComponent implements DirtyAware, OnInit {
   private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
-  private readonly breadcrumbs = inject(BreadcrumbService);
-
-  /** El nombre guardado de la plantilla que se edita: la miga lo dice (COA SISMAC-4438), no lo que se teclea. */
-  private readonly nombreGuardado = signal<string | null>(null);
-  private readonly migaConNombre = effect(() => this.breadcrumbs.nombrar(this.route, this.mode() === 'edit' ? this.nombreGuardado() : null));
-  private readonly sinMiga = inject(DestroyRef).onDestroy(() => this.breadcrumbs.nombrar(this.route, null));
 
   private readonly topbarActions = viewChild<TemplateRef<unknown>>('topbarActions');
 
@@ -88,6 +82,15 @@ export class TemplateEditorPageComponent implements DirtyAware, OnInit {
   }
 
   protected readonly mode = signal<'create' | 'edit'>('create');
+
+  /** La miga de la edición dice el nombre guardado, como en Grupos y Agentes (DD-238): el que se teclea aún no es el
+   *  suyo. Al crear, el de la ruta. */
+  private readonly breadcrumbs = inject(BreadcrumbService);
+  private readonly nombreGuardado = signal<string | null>(null);
+  private readonly migaConNombre = effect(() =>
+    this.breadcrumbs.nombrar(this.route, this.mode() === 'edit' ? this.nombreGuardado() : null),
+  );
+  private readonly sinMiga = inject(DestroyRef).onDestroy(() => this.breadcrumbs.nombrar(this.route, null));
   private templateId: number | null = null;
 
   protected readonly form = signal<TemplateDraft>({ title: '', type: 'chat', html: '', agentIds: [] });

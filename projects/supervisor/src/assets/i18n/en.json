@@ -1102,7 +1102,7 @@
       "create_title": "New label",
       "edit_title": "Edit label",
       "name": "Name",
-      "name_placeholder": "Label name",
+      "name_placeholder": "E.g. Priority customer",
       "color": "Color",
       "description": "Description",
       "description_placeholder": "Brief description..."

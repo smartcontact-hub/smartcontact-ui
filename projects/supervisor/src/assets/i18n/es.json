@@ -1102,7 +1102,7 @@
       "create_title": "Nueva label",
       "edit_title": "Editar label",
       "name": "Nombre",
-      "name_placeholder": "Nombre de la label",
+      "name_placeholder": "Ej: Cliente prioritario",
       "color": "Color",
       "description": "Descripción",
       "description_placeholder": "Breve descripción..."
@@ -1510,7 +1510,7 @@
       "singular": "tipificación",
       "create_title": "Nueva tipificación",
       "plural": "tipificaciones",
-      "name_placeholder": "Ej. Atención al cliente",
+      "name_placeholder": "Ej: Atención al cliente",
       "description_placeholder": "Breve descripción...",
       "create_submit": "Crear tipificación",
       "edit_breadcrumb": "Editar tipificación",
