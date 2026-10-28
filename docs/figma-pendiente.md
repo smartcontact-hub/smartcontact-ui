@@ -1648,6 +1648,13 @@ botón de X1 a X3 lleva `key`.
   fila 12: lo apagado es «Exportar», no el botón «Acciones». Notas de Dev Mode de «Si algo falla 5» y «Otras
   configuraciones 8» y «9» con punto final, y la capa de la fila 14 del alta, «Fila: 14. Agente». Versión del fichero:
   «Grupos: repaso COA, Figma y prototipo (DD-224, §62) (2026-10-22)».
+- [ ] **§63 · Grupos: Agendas y Plantillas fuera de Recursos, y el aviso de borrar sin «grupos» (DD-239)** · **Estado:**
+  pendiente · **Dónde:** Figma, la página Grupos (`41:2847`), las hojas de Alta y Edición, sección Recursos. Producto cerró el
+  2026-10-28 que Agendas, Plantillas y Equipos se asignan solo a agentes. Lo que cambia: en Recursos, el bloque
+  «Repositorios» (Agendas, Plantillas de chat y de email, «Gestionar en Repositorios») se tacha o se retira, como en el COA
+  4058, y queda «Ficha de cliente»; la caja resumen pierde su fila «Recursos»; y el modal de eliminar una plantilla (hoja de
+  Plantillas) dice «Los agentes que la tengan asignada perderán la referencia.», sin «y grupos». Regla de siempre: solo
+  repuntes y ocultar capas, nada nuevo.
 
 ---
 
