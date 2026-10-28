@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Tipificaciones: el buscador de la lista mira cualquier campo, también los nombres de los grupos que la usan aunque solo salgan al pasar el ratón (enmienda la regla de Agentes y Grupos solo para esta lista), y la edición acaba en el nombre guardado de la tipificación, como en Grupos y Agentes | DD-238 |
 > | Duplicar una agenda o una plantilla es un alta, como un grupo o un agente (enmienda DD-230): abre «Nueva agenda/plantilla» con la copia y su nombre «X (1)» (`seedFromId`, `nombreDeCopia`), que no existe hasta «Crear» · no copia a qué agentes se asigna | DD-234 |
 > | Agendas y Plantillas como sus COA (SISMAC-4440 y 4438): se asignan SOLO a agentes, en una tabla plana de agentes con su columna «Grupos» (`sc-agent-assignment-table`), sin árbol ni grupos dinámicos (enmienda DD-211 §1) · el listado de Agendas con Descripción, Contactos y Agentes (cifra, sin globo) ordenables · Plantillas sin pestañas, con columna Canal · contactos con casillas y borrado múltiple (completa DD-227 en una tabla anidada) | DD-230 |
 > | El «+» de `sc-button` (`icon="add"`) es siempre redondo: círculo sin rótulo, píldora con él (enmienda DD-167 y DD-187) | DD-229 |
@@ -165,6 +166,34 @@
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
 
 ---
+
+## DD-238 · 2026-10-28 — Tipificaciones: el buscador mira también los grupos y la edición acaba en el nombre guardado
+
+**Contexto** · Al alinear COA, Figma y prototipo de Tipificaciones, diseño y producto vieron cuatro desajustes: el COA dice que el
+buscador mira «cualquier campo» y el prototipo solo miraba nombre y descripción; en la edición la miga decía «Editar tipificación»
+(Grupos y Agentes dicen el nombre); el placeholder de la descripción difería entre Figma y prototipo; y el título del alta sigue
+al nombre que se teclea, algo que el COA no recogía. El tooltip de Grupos ya cortaba en quince nombres con «y N más».
+
+**Decisión** ·
+1. El buscador de la lista mira el nombre, la descripción, los niveles y **los nombres de los grupos que la usan**. Poner el
+   nombre de un grupo enseña las tipificaciones con las que clasifica. Enmienda, solo para esta lista, la regla de Agentes y
+   Grupos de no contar lo que sale únicamente al pasar el ratón (2026-09-24): aquí producto pidió buscar por grupo.
+2. En la edición, la miga acaba en el **nombre guardado** de la tipificación («Administración › Repositorios › Tipificaciones ›
+   Atención al cliente»), no en «Editar tipificación». Teclear no la cambia; guardar sí. Al crear, «Nueva tipificación».
+3. El placeholder de la descripción es «Breve descripción...», el de todos los repositorios (DD-237): Figma lo tenía con un ejemplo.
+4. El título de la página sigue en vivo lo que se escribe en el nombre (ya era así en proto y Figma): queda anotado en el alta.
+
+**Razón** · Las listas y fichas del Supervisor se leen igual; si el COA, Figma y el prototipo dicen cosas distintas, manda la última
+decisión de producto y las tres se ponen al día.
+
+**Descartadas** ·
+- *Buscar solo por lo que se lee en la fila*: dejaba sin respuesta el caso que pidió producto (buscar por grupo).
+- *Poner un ejemplo en el placeholder de la descripción*: producto eligió lo mismo que el resto de sitios.
+
+**Consecuencias** · `tipificaciones-listado` y `breadcrumb-current` ganan una prueba cada una, en rojo con el código anterior.
+Figma (`↳ Tipificaciones`): miga con el nombre en los ocho estados de edición y en el mapa, placeholder, y las notas del buscador,
+la edición y el alta. El COA recibe el buscador por grupos, el tope de quince nombres del tooltip, la miga con nombre y el título
+en vivo. **Pendiente de producto:** Agendas, Plantillas y las cuentas y triggers de Email siguen con «Editar …» en la miga.
 
 ## DD-237 · 2026-10-27 — Agendas y Plantillas siguen el flujo de Grupos y Agentes; Tipificaciones, sus avisos y modales como el COA
 

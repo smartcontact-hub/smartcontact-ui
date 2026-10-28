@@ -97,6 +97,7 @@ El de la ficha de grupo como la versión 17 de su página de COA (2026-10-22, DD
   ficha de grupo sigue asignando Agendas y Plantillas al grupo (Recursos).
 - **«Título» (DD-236, 2026-10-27)**: Agendas y Plantillas vuelven a llamar «Título» a su campo (lo decidió el equipo; Voice y
   los COA lo dicen así). Los contactos de una agenda y el resto de listas siguen con «Nombre». Falta editar proto y Figma.
+- **Tipificaciones (DD-238, 2026-10-28)**: el buscador de la lista mira también los nombres de los grupos; la edición acaba en el nombre guardado en la miga; placeholder de la descripción «Breve descripción...». Agendas, Plantillas y Email siguen con «Editar …» en la miga: pendiente de producto.
 - **Como Agentes y Grupos (DD-237, 2026-10-27)**: «Crear»/«Guardar» de Agendas y Plantillas, apagados mientras falte el título
   (o el contenido), con el motivo en el tooltip y el aviso en gris bajo el campo; avisos de Tipificaciones «Tipificación «X»
   creada»; modal de una agenda «¿Eliminar la agenda «X»?»; borrar varias tipificaciones dice «Las usan N grupos». **Falta**: el

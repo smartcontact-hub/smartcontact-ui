@@ -50,3 +50,18 @@ test('miga · la edición de un grupo o un agente acaba en su nombre guardado, y
   await page.locator('sc-top-bar sc-breadcrumb').getByRole('link', { name: 'Grupos', exact: true }).click();
   await expect(ultimo).toHaveText('Grupos');
 });
+
+/* La de una tipificación hace lo mismo que la de un grupo o un agente (COA de Tipificaciones): acaba en su nombre GUARDADO,
+ * no en «Editar tipificación»; mientras se teclea no cambia, y al guardar sí. En el alta, el de la ruta. */
+test('miga · la edición de una tipificación acaba en su nombre guardado, y el alta en «Nueva tipificación»', async ({ page }) => {
+  const ultimo = page.locator('sc-top-bar sc-breadcrumb .p-breadcrumb-list > li').last();
+  await goto(page, 'admin/tipificaciones/crear');
+  await expect(ultimo).toHaveText('Nueva tipificación');
+  await goto(page, 'admin/tipificaciones/editar/1');
+  await expect(ultimo).toHaveText('Atención al cliente');
+
+  await page.locator('#tip-name').fill('Atención al cliente VIP');
+  await expect(ultimo, 'lo tecleado aún no es el nombre de la tipificación').toHaveText('Atención al cliente');
+  await page.locator('sc-top-bar').getByRole('button', { name: 'Guardar', exact: true }).click();
+  await expect(ultimo).toHaveText('Atención al cliente VIP');
+});
