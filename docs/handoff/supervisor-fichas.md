@@ -82,12 +82,11 @@ El del repaso de Grupos entre COA, Figma y prototipo, con «Editar en Repositori
 
 ## ✅ 2026-10-28 · Agendas, Plantillas y Equipos: solo a agentes, confirmado con producto (DD-239)
 
-> **Sello:** rama `areses/team-docs-update-69ebf8` sobre `main` HEAD `2d3724ad`.
+> **Sello:** rama `areses/team-docs-update-69ebf8` sobre `main` HEAD `a922b1b3`.
 
 - **Hecho**: el aviso de borrar una plantilla dice «Los agentes que la tengan asignada perderán la referencia.» (sin «y
-  grupos»), en `templates.delete.single_detail` y `bulk_footer`. DD-239 recoge la decisión, quién la cierra (producto, 28/10)
-  y por qué: la columna «Grupos» filtra y marca, no asigna; asignar a un grupo queda a futuro. Equipos (SISMAC-4453) es lo
-  mismo: nombre, descripción y agentes.
+  grupos»), en `templates.delete.*`. DD-239 recoge la decisión (producto, 28/10): la columna «Grupos» filtra y marca, no
+  asigna; asignar a un grupo queda a futuro. Equipos (SISMAC-4453) es lo mismo: nombre, descripción y agentes.
 - **Ficha de grupo**: el bloque «Repositorios» de Recursos (Agendas, Plantillas, «Gestionar en Repositorios») queda apagado tras
   `conRecursosDeRepositorio = false`, como Etiquetas (DD-142); «Ficha de cliente» sigue, y `Group.schedules/templates` se
   conservan al guardar. El resumen no pinta «Recursos» sin filas. Pruebas: `ficha-recursos-dialogos`, `recursos-resumen`,
