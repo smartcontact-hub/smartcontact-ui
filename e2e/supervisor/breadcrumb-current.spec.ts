@@ -65,3 +65,41 @@ test('miga · la edición de una tipificación acaba en su nombre guardado, y el
   await page.locator('sc-top-bar').getByRole('button', { name: 'Guardar', exact: true }).click();
   await expect(ultimo).toHaveText('Atención al cliente VIP');
 });
+
+/* Y las demás fichas de Repositorios y Plantillas hacen lo mismo (DD-238): el último tramo es el nombre GUARDADO, no
+ * «Editar …», y el alta lleva el de la ruta. */
+for (const [ruta, nombre, alta, tituloEditable] of [
+  ['admin/agendas/editar/10', 'Clientes VIP', 'admin/agendas/crear', '#agenda-name'],
+  ['admin/plantillas/editar/3', 'Despedida chat', 'admin/plantillas/crear', '#template-title'],
+  ['admin/emails/cuentas/editar/1', 'soporte@example.com', 'admin/emails/cuentas/crear', '#mailbox-name'],
+  ['admin/emails/triggers/editar/1', 'Facturas', 'admin/emails/triggers/crear', '#trigger-name'],
+] as const) {
+  test(`miga · ${ruta.split('/')[1]}${ruta.split('/')[2] === 'cuentas' || ruta.split('/')[2] === 'triggers' ? ' ' + ruta.split('/')[2] : ''}: la edición acaba en su nombre guardado`, async ({ page }) => {
+    const ultimo = page.locator('sc-top-bar sc-breadcrumb .p-breadcrumb-list > li').last();
+    await goto(page, ruta);
+    await expect(ultimo).toHaveText(nombre);
+    await goto(page, alta);
+    await expect(ultimo).not.toHaveText(/^Editar/);
+    if (tituloEditable) {
+      await goto(page, ruta);
+      await page.locator(tituloEditable).fill(`${nombre} bis`);
+      await expect(ultimo, 'lo tecleado aún no es el nombre guardado').toHaveText(nombre);
+    }
+  });
+}
+
+/* Agendas, Plantillas y Email abren la miga con «Administración», como Tipificaciones, Grupos y Agentes (DD-238). */
+for (const [ruta, ultimo] of [
+  ['admin/agendas', 'Agendas'],
+  ['admin/plantillas', 'Plantillas'],
+  ['admin/emails', 'Email'],
+] as const) {
+  test(`miga · ${ruta}: Administración › Repositorios › ${ultimo}`, async ({ page }) => {
+    await goto(page, ruta);
+    const tramos = page.locator('sc-top-bar sc-breadcrumb .p-breadcrumb-list > li');
+    await expect(tramos.filter({ hasText: 'Administración' })).toHaveCount(1);
+    await expect(tramos.filter({ hasText: 'Repositorios' })).toHaveCount(1);
+    await expect(tramos.last()).toHaveText(ultimo);
+  });
+}
+
