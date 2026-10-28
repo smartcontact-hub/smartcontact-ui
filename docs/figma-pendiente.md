@@ -1648,13 +1648,16 @@ botón de X1 a X3 lleva `key`.
   fila 12: lo apagado es «Exportar», no el botón «Acciones». Notas de Dev Mode de «Si algo falla 5» y «Otras
   configuraciones 8» y «9» con punto final, y la capa de la fila 14 del alta, «Fila: 14. Agente». Versión del fichero:
   «Grupos: repaso COA, Figma y prototipo (DD-224, §62) (2026-10-22)».
-- [ ] **§63 · Grupos: Agendas y Plantillas fuera de Recursos, y el aviso de borrar sin «grupos» (DD-239)** · **Estado:**
-  pendiente · **Dónde:** Figma, la página Grupos (`41:2847`), las hojas de Alta y Edición, sección Recursos. Producto cerró el
-  2026-10-28 que Agendas, Plantillas y Equipos se asignan solo a agentes. Lo que cambia: en Recursos, el bloque
-  «Repositorios» (Agendas, Plantillas de chat y de email, «Gestionar en Repositorios») se tacha o se retira, como en el COA
-  4058, y queda «Ficha de cliente»; la caja resumen pierde su fila «Recursos»; y el modal de eliminar una plantilla (hoja de
-  Plantillas) dice «Los agentes que la tengan asignada perderán la referencia.», sin «y grupos». Regla de siempre: solo
-  repuntes y ocultar capas, nada nuevo.
+- ~~**§63 · Grupos: Agendas y Plantillas fuera de Recursos, y el aviso de borrar sin «grupos» (DD-239)**~~ → **HECHO el
+  2026-10-28** en el fichero Supervisor (`Hjyy41SYKqcRuIzCGggfYH`), solo ocultando capas y retocando texto, sin dibujo nuevo.
+  Página Grupos (`41:2847`): oculto el bloque «Repositorios» de Recursos (Alta, Edición y Mapa de componentes: 3) y la fila
+  «Recursos» de la caja resumen (36, en Alta, Edición, Listado y Mapa), más la ayuda «Lo que se asigna desde Repositorios»
+  (3). Notas de Dev Mode al día: la de Recursos y el paso 5 del alta dicen que se oculta (DD-239), la del resumen ya no suma
+  «Plantillas de chat», y el Mapa lo anota. Páginas Plantillas (`4077:58411`): «Los agentes que la tengan asignada
+  perderán la referencia» en las tres notas del borrado. Versiones: «Grupos: antes de DD-239…» y «Grupos y Plantillas:
+  Agendas y Plantillas solo a agentes (DD-239, §63)». **Queda por decidir**: «Si algo falla 7 / Edición de grupo /
+  Gestionar en Repositorios con cambios» (`3314:65868`) enseña el aviso «guarda antes el grupo» sin el enlace que lo
+  abre: el COA 4058 aún lo recoge, y en el código el aviso sigue vivo para «Editar en Repositorios» de la tipificación.
 
 ---
 

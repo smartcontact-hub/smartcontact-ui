@@ -91,10 +91,10 @@ El del repaso de Grupos entre COA, Figma y prototipo, con «Editar en Repositori
   `conRecursosDeRepositorio = false`, como Etiquetas (DD-142); «Ficha de cliente» sigue, y `Group.schedules/templates` se
   conservan al guardar. El resumen no pinta «Recursos» sin filas. Pruebas: `ficha-recursos-dialogos`, `recursos-resumen`,
   `resumen-enlazado` y `revision-producto-1020` ajustadas (lo del grupo, medido en el agente 3).
-- **COA leídos el 2026-10-28** (4058, 4438, 4440 y 4453): el prototipo cuadra con ellos; el 4058 ya dice que Recursos y su fila
-  del resumen «se hacen pero se ocultan», y no hay nada que pegar en él.
+- **COA leídos el 2026-10-28** (4058, 4438, 4440 y 4453): el prototipo cuadra; el 4058 ya dice que Recursos y su fila del
+  resumen «se hacen pero se ocultan». **Figma, hecho** (`figma-pendiente` §63): bloque y fila ocultos, textos al día.
 - **Falta**: preguntar a producto por el «y sus asignaciones a grupos» del COA de Equipos (un equipo no se asigna a grupos), y
-  repasar Figma (hoja de Grupos, `figma-pendiente` §63).
+  si «Si algo falla 7» de Figma (Gestionar en Repositorios con cambios) se queda sin su enlace.
 
 ## ✅ 2026-10-26 · Duplicar tipificaciones y equipos abre un alta rellena (DD-232)
 > **Sello:** rama `claude/duplicate-typifications-teams-920106` sobre `main` `aaa8e0fd`.
