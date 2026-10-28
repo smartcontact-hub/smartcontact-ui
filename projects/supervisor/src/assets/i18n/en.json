@@ -1393,6 +1393,10 @@
         "deleted": "Address book \"{{name}}\" deleted",
         "deleted_bulk": "{{count}} address books deleted"
       },
+      "delete_dialog": {
+        "title": "Delete address book \"{{name}}\"?",
+        "title_bulk": "Delete {{count}} address books?"
+      },
       "singular": "address book",
       "create_title": "New address book",
       "plural": "address books",
@@ -1508,7 +1512,7 @@
       "create_title": "New typification",
       "plural": "typifications",
       "name_placeholder": "E.g. Customer service",
-      "description_placeholder": "E.g. Why a customer got in touch",
+      "description_placeholder": "Brief description...",
       "create_submit": "Create typification",
       "edit_breadcrumb": "Edit typification",
       "search_placeholder": "Search typifications…",
@@ -1620,10 +1624,17 @@
       "used_in_one": "in 1 group",
       "add_category": "Add category",
       "in_use_one": "Used by 1 group.",
+      "in_use_bulk": "Used by {{count}} groups.",
+      "in_use_bulk_one": "Used by 1 group.",
       "in_use": "Used by {{count}} groups.",
       "delete_dialog": {
         "title": "Delete typification \"{{name}}\"?",
         "title_bulk": "Delete {{count}} typifications?"
+      },
+      "toasts": {
+        "created": "Typification \"{{name}}\" created",
+        "updated": "Typification \"{{name}}\" updated",
+        "deleted": "Typification \"{{name}}\" deleted"
       },
       "deleted_bulk": "{{count}} typifications deleted",
       "add_subcategory": "Add subcategory"

@@ -59,25 +59,25 @@ test('crear una de WhatsApp: la negrita se guarda con su marca', async ({ page }
   expect(nueva).toMatchObject({ type: 'whatsapp', body: '*Hola* mundo' });
 });
 
-test('crear de email: HTML saneado; sin título ni contenido, lo dice cada campo al pulsar (DD-217)', async ({ page }) => {
+test('crear de email: HTML saneado; «Crear plantilla» apagado mientras falte el título o el contenido, como Grupos y Agentes (DD-237)', async ({ page }) => {
   await goto(page, 'admin/plantillas/crear?tipo=email');
-  // «Crear plantilla», siempre activo y sin «Falta: …» al lado: callado hasta que se pulsa.
-  await expect(guardar(page)).toBeEnabled();
-  await expect(page.locator('.form-save-reason')).toHaveCount(0);
-  await expect(page.getByText('El título es obligatorio')).toHaveCount(0);
-  await guardar(page).click();
-  await expect(page).toHaveURL(/\/admin\/plantillas\/crear/);
-  await expect(page.getByText('El título es obligatorio')).toBeVisible();
+  // Apagado desde el principio, con lo que falta en gris bajo cada campo y el motivo en el tooltip.
+  await expect(guardar(page)).toBeDisabled();
+  await expect(page.getByText('El título es obligatorio.')).toBeVisible();
   await expect(page.getByText('El contenido es obligatorio')).toBeVisible();
-  await expect(page.locator('#template-title')).toBeFocused();
+  await expect(page.locator('.form-save-reason')).toHaveCount(0);
+  // Dejar el título vacío lo pone en rojo (el aviso gris se vuelve el de siempre, sin punto).
+  await page.locator('#template-title').focus();
+  await page.locator('#template-title').blur();
+  await expect(page.getByText('El título es obligatorio', { exact: true })).toBeVisible();
 
-  // El rojo se va en vivo al arreglarlo; el siguiente intento lleva al contenido, que es lo que queda.
   await page.locator('#template-title').fill('Con enlace');
   await expect(page.getByText('El título es obligatorio')).toHaveCount(0);
-  await guardar(page).click();
-  await expect(editor(page)).toBeFocused();
+  await expect(guardar(page), 'sin contenido sigue apagado').toBeDisabled();
+  await editor(page).click();
   await page.keyboard.type('Texto <b>no es negrita</b>');
   await expect(page.getByText('El contenido es obligatorio')).toHaveCount(0);
+  await expect(guardar(page)).toBeEnabled();
   await guardar(page).click();
   await expect(page).toHaveURL(/\/admin\/plantillas\/editar\/\d+$/);
   const t = (await guardadas(page)).find((x) => x.title === 'Con enlace');

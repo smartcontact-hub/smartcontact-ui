@@ -1,5 +1,5 @@
-<!-- Guardar y Deshacer suben a la barra de arriba, como en las fichas: sin motivo al lado (lo que falta lo dice su campo
-     al pulsar, DD-217); «Deshacer», solo si hay algo que deshacer. -->
+<!-- Guardar y Deshacer suben a la barra de arriba, como en las fichas: apagado mientras falte algo, con el motivo en su
+     tooltip (DD-219); «Deshacer», solo si hay algo que deshacer. -->
 <ng-template #topbarActions>
   @if (mode() === 'edit' && formDirty()) {
     <span class="form-save-reason sc-text-caption-regular" role="status">{{ 'common.unsaved_changes' | translate }}</span>
@@ -10,6 +10,7 @@
   <sc-button
     variant="primary"
     [disabled]="!canSave()"
+    [pTooltip]="motivoApagado()" tooltipPosition="top"
     [label]="(mode() === 'create' ? 'repositories.agendas.create_submit' : 'common.save') | translate"
     (clicked)="save()"
   />
@@ -32,8 +33,10 @@
               [label]="'repositories.agendas.col_title' | translate"
               [placeholder]="'repositories.agendas.name_placeholder' | translate"
               [value]="form().name"
+              [helperText]="nameHint()"
               [error]="nameError()"
               (valueChange)="update('name', $event)"
+              (focusout)="dejarNombre($event)"
             />
           </div>
           <div class="field field--full">

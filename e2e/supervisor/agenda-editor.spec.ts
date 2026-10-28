@@ -120,6 +120,19 @@ test('crear una agenda: «Crear» del listado lleva al editor vacío, y al crear
   await expect.poll(async () => (await guardadas(page)).some((a) => a.name === 'Proveedores')).toBe(true);
 });
 
+test('«Crear agenda» apagado sin título, con el aviso en gris y en rojo al dejarlo vacío, como Grupos y Agentes (DD-237)', async ({ page }) => {
+  await goto(page, 'admin/agendas/crear');
+  const crear = page.locator('sc-top-bar').getByRole('button', { name: 'Crear agenda' });
+  await expect(crear).toBeDisabled();
+  await expect(page.getByText('El título es obligatorio.')).toBeVisible();
+  await page.locator('#agenda-name').focus();
+  await page.locator('#agenda-name').blur();
+  await expect(page.getByText('El título es obligatorio', { exact: true })).toBeVisible();
+  await page.locator('#agenda-name').fill('Con título');
+  await expect(page.getByText('El título es obligatorio')).toHaveCount(0);
+  await expect(crear).toBeEnabled();
+});
+
 test('lo guardado antes como texto con comas se lee como contactos sin nombre, sin repetidos', async ({ page }) => {
   await page.addInitScript(() => {
     localStorage.setItem('sc-agendas-repo-v', '2');

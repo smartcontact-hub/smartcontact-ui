@@ -98,6 +98,7 @@ export class AgendasPageComponent {
     createTitleKey: 'repositories.agendas.create_title',
     entityPluralKey: 'repositories.agendas.plural',
     toastsKey: 'repositories.agendas.toasts',
+    simpleDelete: { titleKey: 'repositories.agendas.delete_dialog.title', titleBulkKey: 'repositories.agendas.delete_dialog.title_bulk' },
     icon: 'call',
     breadcrumbExtraKey: 'repositories.agendas.title',
     columns: columnas((agenda) => this.agentesPorAgenda().get(agenda.id) ?? 0),

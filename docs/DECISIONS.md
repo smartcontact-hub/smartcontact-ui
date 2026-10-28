@@ -47,6 +47,7 @@
 > | El «+» de `sc-button` (`icon="add"`) es siempre redondo: círculo sin rótulo, píldora con él (enmienda DD-167 y DD-187) | DD-229 |
 > | Con el índice en la caja, el carril mide 235, el de la caja en Figma: ningún rótulo de las fichas salta de línea · sin la caja, 196 (enmienda DD-220) | DD-221 |
 > | El índice de secciones, en la caja gris de Contact Center en las seis pantallas que lo llevan (Contact Center, fichas de grupo, agente y usuario, tipificación y constructor de reglas), como en Figma: un solo interruptor de la app (`SC_FORM_SECTION_NAV_CAJA`), y volver al índice plano es borrar su línea | DD-220 |
+> | Agendas y Plantillas como Grupos y Agentes: «Crear» y «Guardar» apagados mientras falte el título (o el contenido), con el motivo en el tooltip y el aviso en gris bajo el campo, rojo al dejarlo vacío (enmienda DD-217 §1) · los avisos de Tipificaciones dicen «Tipificación «X» creada/actualizada/eliminada» · el modal de una agenda dice «¿Eliminar la agenda «X»?» · borrar varias tipificaciones dice «Las usan N grupos» · Descripción de Tipificaciones con «Breve descripción...» | DD-237 |
 > | Agendas y Plantillas llaman «Título» a su campo principal (columna, «Ordenar por», placeholder y avisos) y el resto de listas sigue con «Nombre»; los avisos de Agendas dicen «Agenda «X» creada/eliminada» y borrar un contacto suelto pregunta (enmienda DD-230) | DD-236 |
 > | El nombre repetido se permite en todas las fichas del Supervisor: ni aviso en vivo ni «Crear»/«Guardar» apagados por él (enmienda DD-217 §1, DD-219 y DD-222 §4) | DD-235 |
 > | Lo que falta, como SISMAC-4058: «Crear» y «Guardar» apagados mientras falte algo, con «Falta: …» o «Listo para crear» arriba del resumen (cada cosa a su campo) y el motivo en el tooltip · el aviso bajo el campo en gris desde el principio y en rojo al dejarlo vacío · el índice no se pone rojo por lo tocado · en grupo, agente, usuario y tipificación (enmienda DD-217 §1 y §4; vuelve DD-136) | DD-219 |
@@ -164,6 +165,30 @@
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
 
 ---
+
+## DD-237 · 2026-10-27 — Agendas y Plantillas siguen el flujo de Grupos y Agentes; Tipificaciones, sus avisos y modales como el COA
+
+**Contexto** · Al leer a la vez los COA de Tipificaciones (SISMAC-4451), Agendas y Plantillas contra el código, el botón de alta
+se comportaba de dos maneras: apagado con el motivo en el tooltip en Grupos, Agentes, Usuarios y Tipificaciones (DD-219), y
+siempre activo, con el aviso al pulsar, en Agendas y Plantillas (DD-217 §1). Rafa pidió buscar la consistencia con Agentes y Grupos.
+
+**Decisión** · Agendas y Plantillas pasan al flujo de Grupos y Agentes: «Crear …» y «Guardar» **apagados mientras falte el
+título** (en Plantillas, también el contenido), con lo primero que falta (o «No hay cambios») en el tooltip; el aviso, **en gris
+bajo el campo desde el principio** y en rojo al dejarlo vacío. «Título» sigue siendo el nombre del campo en estas dos (DD-236);
+Tipificaciones, Grupos, Agentes y Equipos siguen con «Nombre». Además, los avisos de Tipificaciones dicen «Tipificación «X»
+creada/actualizada/eliminada» (antes el genérico «creado/a»), el modal de borrar una agenda nombra lo que borra («¿Eliminar la
+agenda «X»?», como los demás), borrar varias tipificaciones dice «Las usan N grupos» (una sola ya lo decía) y el placeholder de
+su descripción es «Breve descripción...» como el resto de repositorios. Enmienda DD-217 §1 para Agendas y Plantillas.
+
+**Razón** · Un mismo gesto (rellenar el campo obligatorio y pulsar Crear) no puede comportarse distinto según la pantalla.
+
+**Descartadas** ·
+- *Dejar Agendas y Plantillas siempre activas y apagar solo las demás*: es la inconsistencia que se quería quitar.
+- *Cambiar «Título» por «Nombre» para parecerse a Agentes y Grupos*: lo decidió DD-236 y los COA lo dicen así.
+
+**Consecuencias** · i18n en los cuatro idiomas; `agenda-editor`, `plantillas-editor`, `tipificacion-ficha` y `tipificaciones-listado`
+con sus pruebas al día. Los COA de Agendas y Plantillas pasan de «siempre activo» a «apagado mientras falte…», el de Tipificaciones
+recibe los textos de «Eliminar (3)» y se corrigen sus erratas; proto y Figma, a editar para que sigan al COA.
 
 ## DD-236 · 2026-10-27 — Agendas y Plantillas llaman «Título» a su campo principal; el resto de listas sigue con «Nombre»
 

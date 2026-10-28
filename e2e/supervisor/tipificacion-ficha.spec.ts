@@ -93,6 +93,7 @@ test('eliminarla dice cuántos grupos la usan, y esos grupos dejan de tipificar'
   await expect(pregunta.getByRole('textbox'), 'no pide escribir el nombre').toHaveCount(0);
   await pregunta.getByRole('button', { name: 'Eliminar' }).click();
   await expect(page).toHaveURL(/\/admin\/tipificaciones$/);
+  await expect(page.getByText('Tipificación «Atención al cliente» eliminada')).toBeVisible();
 
   await goto(page, 'admin/grupos/editar/2?seccion=general');
   await expect(page.getByRole('switch', { name: /Tipificar/ })).not.toBeChecked();

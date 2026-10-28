@@ -405,7 +405,7 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit {
     if (this.mode() === 'create') {
       const created = this.store.addItem(borrador);
       this.dirtyState.markPristine();
-      const creado = this.texto('repositories.toasts.created', created.name);
+      const creado = this.texto('repositories.tipificaciones.toasts.created', created.name);
       const slug = Object.entries(TipificacionFichaPageComponent.SLUGS).find(([, v]) => v === this.activeSection())?.[0];
       // Tras llegar a la edición: antes, el cambio de página se lo llevaría (DD-191).
       void this.router
@@ -420,7 +420,7 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit {
     this.form.set(borrador);
     this.ocasion.olvidar();
     this.dirtyState.markPristine();
-    this.resultado.contar(this.texto('repositories.toasts.updated', borrador.name));
+    this.resultado.contar(this.texto('repositories.tipificaciones.toasts.updated', borrador.name));
   }
 
   protected discard(): void {
@@ -458,7 +458,7 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit {
     this.store.deleteItem(id);
     this.deleteVisible.set(false);
     this.dirtyState.markPristine();
-    this.resultado.contar(this.texto('repositories.toasts.deleted_single', name));
+    this.resultado.contar(this.texto('repositories.tipificaciones.toasts.deleted', name));
     void this.router.navigateByUrl('/admin/tipificaciones');
   }
 
@@ -477,7 +477,7 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit {
 
   /** El texto de «creado», «actualizado» o «eliminado» de esta entidad. */
   private texto(key: string, name: string): string {
-    return this.translate.instant(key, { entity: this.translate.instant('repositories.tipificaciones.singular'), name });
+    return this.translate.instant(key, { name });
   }
 
 }

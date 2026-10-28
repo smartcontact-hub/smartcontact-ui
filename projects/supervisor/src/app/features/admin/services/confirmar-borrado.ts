@@ -24,13 +24,13 @@ export function injectConfirmarBorrado(titleKey: string): (name: string) => Prom
 }
 
 /** La misma pregunta para varios a la vez, con su cifra (`titleKey`, con `{{count}}`): «¿Eliminar 3 grupos?» (SISMAC-4056). */
-export function injectConfirmarBorradoVarios(titleKey: string): (count: number) => Promise<boolean> {
+export function injectConfirmarBorradoVarios(titleKey: string): (count: number, detail?: string | null) => Promise<boolean> {
   const confirm = inject(ScConfirmService);
   const translate = inject(TranslateService);
-  return (count) =>
+  return (count, detail) =>
     confirm.request({
       title: translate.instant(titleKey, { count }),
-      body: translate.instant('common.delete_dialog.body'),
+      body: [detail, translate.instant('common.delete_dialog.body')].filter(Boolean).join(' '),
       acceptLabel: translate.instant('common.delete'),
       rejectLabel: translate.instant('common.cancel'),
       acceptTone: 'danger',
