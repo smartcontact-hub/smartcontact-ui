@@ -47,6 +47,7 @@ export const adminRoutes: Routes = [
     path: 'plantillas',
     data: {
       breadcrumb: [
+        { labelKey: 'sidebar.administration', link: false },
         { labelKey: 'sidebar.repositories', link: '/admin/repositorios' },
         { labelKey: 'templates.breadcrumb' },
       ],

@@ -41,6 +41,12 @@ export class ScConfirmDialogComponent {
      * 1440). EXCEPCIÓN documentada: el Kit no da ancho para el globo, así que se topa en un paso de la escala
      * (350px, lo que mide el toast, la otra pieza flotante con una frase) y no en el token de otro componente.
      */
+    /**
+     * El diálogo centrado crece con su frase y una larga lo estira hasta ~700px (medido en «Eliminar plantilla»). Se topa
+     * en 461px, lo que mide el más ancho de la plataforma (el de Tipificaciones): la frase pasa a otra línea en vez de
+     * ensanchar el diálogo.
+     */
+    protected readonly dialogStyle = { 'max-width': '28.8125rem' };
     protected readonly popupStyle = { 'max-width': 'var(--sc-spacing-25)' };
     /** El globo no pinta título: su nombre para el lector es el título de la petición (`role="alertdialog"`). */
     protected readonly popupPt = {
