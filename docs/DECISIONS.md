@@ -42,7 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
-> | Tipificaciones: el buscador de la lista mira cualquier campo, también los nombres de los grupos que la usan aunque solo salgan al pasar el ratón (enmienda la regla de Agentes y Grupos solo para esta lista) · la edición de Tipificaciones, Agendas, Plantillas y las cuentas y triggers de Email acaba en el nombre guardado, y Agendas, Plantillas y Email abren la miga con «Administración», como Grupos y Agentes | DD-238 |
+> | Tipificaciones: el buscador de la lista mira cualquier campo, también los nombres de los grupos que la usan aunque solo salgan al pasar el ratón (enmienda la regla de Agentes y Grupos solo para esta lista) · la edición de Tipificaciones, Agendas, Plantillas y las cuentas y triggers de Email acaba en el nombre guardado, y Agendas, Plantillas y Email abren la miga con «Administración», como Grupos y Agentes · el nombre de las fichas de Repositorios lleva «Ej: …» y la descripción «Breve descripción...» | DD-238 |
 > | Duplicar una agenda o una plantilla es un alta, como un grupo o un agente (enmienda DD-230): abre «Nueva agenda/plantilla» con la copia y su nombre «X (1)» (`seedFromId`, `nombreDeCopia`), que no existe hasta «Crear» · no copia a qué agentes se asigna | DD-234 |
 > | Agendas y Plantillas como sus COA (SISMAC-4440 y 4438): se asignan SOLO a agentes, en una tabla plana de agentes con su columna «Grupos» (`sc-agent-assignment-table`), sin árbol ni grupos dinámicos (enmienda DD-211 §1) · el listado de Agendas con Descripción, Contactos y Agentes (cifra, sin globo) ordenables · Plantillas sin pestañas, con columna Canal · contactos con casillas y borrado múltiple (completa DD-227 en una tabla anidada) | DD-230 |
 > | El «+» de `sc-button` (`icon="add"`) es siempre redondo: círculo sin rótulo, píldora con él (enmienda DD-167 y DD-187) | DD-229 |
@@ -182,7 +182,9 @@ al nombre que se teclea, algo que el COA no recogía. El tooltip de Grupos ya co
    cliente»), no en «Editar tipificación». Teclear no la cambia; guardar sí. Al crear, «Nueva tipificación». Lo mismo, a
    petición de producto, en Agendas, Plantillas y las cuentas y triggers de Email, que además **abren la miga con
    «Administración»** (sin enlace), como Tipificaciones, Grupos y Agentes: antes decían «Repositorios › Agendas › Editar agenda».
-3. El placeholder de la descripción es «Breve descripción...», el de todos los repositorios (DD-237): Figma lo tenía con un ejemplo.
+3. Los placeholders de las fichas de Repositorios se escriben igual: el nombre lleva un ejemplo con «Ej: » (Tipificaciones decía
+   «Ej.», Plantillas «Título de la plantilla» y Etiquetas «Nombre de la label») y la descripción, donde la hay, «Breve
+   descripción...» (DD-237; Figma la tenía con un ejemplo). Agentes y Grupos no llevan placeholder y no cambian.
 4. El título de la página sigue en vivo lo que se escribe en el nombre (ya era así en proto y Figma): queda anotado en el alta.
 
 **Razón** · Las listas y fichas del Supervisor se leen igual; si el COA, Figma y el prototipo dicen cosas distintas, manda la última
@@ -192,10 +194,10 @@ decisión de producto y las tres se ponen al día.
 - *Buscar solo por lo que se lee en la fila*: dejaba sin respuesta el caso que pidió producto (buscar por grupo).
 - *Poner un ejemplo en el placeholder de la descripción*: producto eligió lo mismo que el resto de sitios.
 
-**Consecuencias** · `tipificaciones-listado` y `breadcrumb-current` ganan sus pruebas (la de la miga, una por ficha), en rojo con el código anterior.
+**Consecuencias** · `tipificaciones-listado` y `breadcrumb-current` ganan sus pruebas (la de la miga, una por ficha) y `placeholders-fichas` fija los textos de los placeholders, en rojo con el código anterior.
 Figma (`↳ Tipificaciones`; Agendas y Plantillas, en cuanto se pongan al día): miga con el nombre en los ocho estados de edición y en el mapa, placeholder, y las notas del buscador,
 la edición y el alta. El COA recibe el buscador por grupos, el tope de quince nombres del tooltip, la miga con nombre y el título
-en vivo. **Pendiente de producto:** los placeholders del nombre y de la descripción de las fichas (Agentes y Grupos no llevan; Agendas, Plantillas, Equipos y Tipificaciones, sí, con «Ej:» y «Ej.» mezclados), y la miga de Usuarios («Editar usuario») y de las demás instancias de Repositorios, que siguen como estaban.
+en vivo. **Pendiente de producto:** la miga de Usuarios («Editar usuario») y la de las demás instancias de Repositorios (Etiquetas, Horarios, Variables…), que siguen como estaban, y la dirección de la cuenta de Email, que lleva su propio ejemplo.
 
 ## DD-237 · 2026-10-27 — Agendas y Plantillas siguen el flujo de Grupos y Agentes; Tipificaciones, sus avisos y modales como el COA
 
