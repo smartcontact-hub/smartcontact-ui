@@ -1,0 +1,107 @@
+<sc-button
+  label="Assign"
+  icon="arrow_drop_down"
+  iconPosition="right"
+  variant="secondary"
+  appearance="outlined"
+  ariaHasPopup="dialog"
+  [ariaExpanded]="panel() === 'assign'"
+  [disabled]="!hasSelection()"
+  (click)="toggle($event, 'assign')"
+/>
+<sc-button
+  label="Change status"
+  icon="arrow_drop_down"
+  iconPosition="right"
+  variant="secondary"
+  appearance="outlined"
+  ariaHasPopup="dialog"
+  [ariaExpanded]="panel() === 'status'"
+  [disabled]="!hasSelection()"
+  (click)="toggle($event, 'status')"
+/>
+<!-- Cancellation y File no tienen nada que elegir: abren directo el modal de confirmación, sin desplegable. -->
+<sc-button
+  label="Cancellation"
+  variant="secondary"
+  appearance="outlined"
+  ariaHasPopup="dialog"
+  [disabled]="!hasSelection()"
+  (click)="pop.hide(); ask('cancellation')"
+/>
+<sc-button
+  label="File"
+  variant="secondary"
+  appearance="outlined"
+  ariaHasPopup="dialog"
+  [disabled]="!hasSelection()"
+  (click)="pop.hide(); ask('file')"
+/>
+
+<!-- Un solo popover para los dos desplegables: nunca hay más de uno abierto. -->
+<p-popover #pop [dt]="popoverTokens" (onHide)="onPopoverHide()">
+  @switch (panel()) {
+    @case ('assign') {
+      <div class="bulk-panel bulk-panel--assign">
+        <p-listbox
+          [dt]="listboxTokens"
+          [options]="$any(agents)"
+          [filter]="true"
+          filterPlaceHolder="Search agents"
+          scrollHeight="var(--sc-spacing-12-5)"
+          ariaLabel="Agents"
+          (onChange)="pickAgent($any($event).value); pop.hide()"
+        />
+      </div>
+    }
+    @case ('status') {
+      <div class="bulk-panel bulk-panel--status">
+        <sc-select
+          appendTo="self"
+          placeholder="Select status"
+          ariaLabel="New status"
+          optionLabel="label"
+          optionValue="value"
+          [options]="statuses"
+          [value]="pendingStatus()"
+          (valueChange)="pickStatus($any($event))"
+        />
+        @if (needsSubstatus()) {
+          <sc-select
+            appendTo="self"
+            placeholder="Select substatus"
+            ariaLabel="Substatus"
+            optionLabel="label"
+            optionValue="value"
+            [options]="substatuses"
+            [value]="pendingSubstatus()"
+            (valueChange)="pendingSubstatus.set($any($event))"
+          />
+        }
+        <div class="bulk-panel__actions">
+          <sc-button label="Spam" variant="danger" appearance="text" (click)="markSpam(); pop.hide()" />
+          <sc-button label="Accept" [disabled]="!canAccept()" (click)="acceptStatus(); pop.hide()" />
+        </div>
+      </div>
+    }
+  }
+</p-popover>
+
+<sc-dialog
+  width="60rem"
+  [(visible)]="dialogOpen"
+  [title]="title()"
+  [subtitle]="subtitle()"
+>
+  <sc-datatable
+    scrollable
+    scrollHeight="var(--sc-spacing-12-5)"
+    dataKey="id"
+    [value]="rows()"
+    [columns]="columns"
+  />
+  <div modal-actions>
+    <sc-button label="Cancel" variant="secondary" appearance="outlined" (click)="dialogOpen.set(false)" />
+    <sc-button [label]="confirmLabel()" [variant]="confirmVariant()" (click)="confirm()" />
+  </div>
+</sc-dialog>

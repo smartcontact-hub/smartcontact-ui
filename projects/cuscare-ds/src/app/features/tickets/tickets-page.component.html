@@ -23,14 +23,9 @@
 >
   <sc-button scListHeadingAction label="New ticket" icon="add" size="sm" />
 
-  <!-- Las cuatro acciones en bloque, a la vista como en producción: son los accesos directos de los agentes y actúan
-       sobre las filas marcadas, así que sin selección están apagadas. De momento solo la maqueta. -->
-  <ng-container ngProjectAs="[scListActions]">
-    <sc-button label="Assign" icon="arrow_drop_down" iconPosition="right" variant="secondary" appearance="outlined" [disabled]="!hasSelection()" />
-    <sc-button label="Change status" icon="arrow_drop_down" iconPosition="right" variant="secondary" appearance="outlined" [disabled]="!hasSelection()" />
-    <sc-button label="Cancellation" icon="arrow_drop_down" iconPosition="right" variant="secondary" appearance="outlined" [disabled]="!hasSelection()" />
-    <sc-button label="File" icon="arrow_drop_down" iconPosition="right" variant="secondary" appearance="outlined" [disabled]="!hasSelection()" />
-  </ng-container>
+  <!-- Las cuatro acciones en bloque, a la vista como en producción: actúan sobre las filas marcadas, así que sin selección están
+       apagadas. Cada una abre su desplegable o, directo, el modal de confirmación. -->
+  <app-ticket-bulk-actions scListActions [tickets]="selectedRows()" (confirmed)="onBulkConfirmed($event)" />
 </app-list-page>
 
 <ng-template #cell let-row let-col="col">

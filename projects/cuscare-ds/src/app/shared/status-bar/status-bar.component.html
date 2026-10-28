@@ -1,0 +1,105 @@
+<footer class="status-bar sc-dark">
+  <div #anchor class="status-bar__state" (click)="pop.toggle($event, anchor)">
+    <sc-button
+      size="sm"
+      fullWidth
+      ariaHasPopup="dialog"
+      [ariaExpanded]="open()"
+      [variant]="current().tone === 'ok' ? 'success' : 'danger'"
+      [label]="current().label"
+      [ariaLabel]="'Agent status: ' + current().label + '. Change status.'"
+    />
+  </div>
+  <button
+    class="status-bar__avatar"
+    type="button"
+    aria-haspopup="dialog"
+    aria-label="Communicator"
+    [attr.aria-expanded]="softphoneOpen()"
+    (click)="softphoneOpen.set(!softphoneOpen())"
+  >
+    <sc-avatar label="CD" ariaLabel="" />
+  </button>
+</footer>
+
+<p-popover
+  #pop
+  [styleClass]="softphoneOpen() ? 'states-popover states-popover--beside sc-dark' : 'states-popover sc-dark'"
+  ariaLabel="Agent status"
+  [dismissable]="false"
+  [baseZIndex]="1060"
+  [dt]="popoverTokens"
+  (onShow)="open.set(true); adminOpen.set(false); groupSearch.set('')"
+  (onHide)="open.set(false)"
+>
+  <div class="states sc-text-body-regular">
+    <header class="states__head">
+      <h2 class="states__title">Status</h2>
+      <sc-button
+        class="states__close"
+        iconOnly
+        icon="close"
+        variant="plain"
+        appearance="text"
+        size="sm"
+        ariaLabel="Close status panel"
+        (click)="pop.hide()"
+      />
+    </header>
+
+    <p-listbox
+      [dt]="listboxTokens"
+      [options]="$any(simpleStates)"
+      optionLabel="label"
+      optionValue="key"
+      scrollHeight="none"
+      ariaLabel="Agent status"
+      [ngModel]="current().tone === 'admin' ? null : current().key"
+      (ngModelChange)="pickSimple($event); pop.hide()"
+    >
+      <ng-template #item let-state>
+        <span class="states__row" [class.states__row--current]="state.key === current().key">
+          <span class="states__dot states__dot--{{ state.tone }}" aria-hidden="true"></span>
+          {{ state.label }}
+        </span>
+      </ng-template>
+    </p-listbox>
+
+    <div class="admin" [class.admin--current]="current().tone === 'admin'">
+      <button
+        class="admin__row"
+        type="button"
+        aria-controls="admin-groups"
+        [attr.aria-expanded]="adminOpen()"
+        (click)="adminOpen.set(!adminOpen())"
+      >
+        <span class="states__dot states__dot--admin" aria-hidden="true"></span>
+        <span class="admin__label">{{ adminState.label }}</span>
+        <sc-icon class="admin__chevron" [name]="adminOpen() ? 'expand_less' : 'expand_more'" [size]="16" />
+      </button>
+      @if (adminOpen()) {
+        <div id="admin-groups" class="admin__body">
+          <sc-search
+            size="sm"
+            placeholder="Search..."
+            ariaLabel="Search groups"
+            [showClear]="false"
+            [(value)]="groupSearch"
+          />
+          <p class="admin__hint">Select group</p>
+          <p-listbox
+            class="admin__groups"
+            [dt]="groupsTokens"
+            [options]="groups()"
+            ariaLabel="Groups for Administrativo"
+            scrollHeight="var(--sc-spacing-5)"
+            [ngModel]="group()"
+            (ngModelChange)="pickGroup($event); pop.hide()"
+          />
+        </div>
+      }
+    </div>
+  </div>
+</p-popover>
+
+<app-softphone [(visible)]="softphoneOpen" [tone]="current().tone" />

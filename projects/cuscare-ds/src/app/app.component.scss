@@ -1,4 +1,5 @@
 :host {
+  --app-footer-height: var(--sc-spacing-2-75);
   display: block;
   min-height: 100vh;
   background: var(--sc-color-slate-50);
@@ -7,7 +8,7 @@
 /* El sidebar es fijo y se superpone al desplegarse: la página reserva su ancho plegado. */
 .app__main {
   margin-left: var(--sc-sidebar-width);
-  height: 100vh;
+  height: calc(100vh - var(--app-footer-height));
   background: var(--sc-color-slate-50);
 }
 
@@ -23,4 +24,12 @@
 /* El acceso va a pantalla completa. */
 .app__main--bare {
   margin-left: 0;
+  height: 100vh;
+}
+
+/* El pie va fijo abajo, a todo el ancho, por encima de la barra lateral desplegada. */
+.app__footer {
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: calc(var(--sc-z-sidebar) + 1);
 }

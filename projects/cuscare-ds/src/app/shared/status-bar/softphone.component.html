@@ -1,0 +1,155 @@
+<p-dialog
+  styleClass="softphone sc-dark"
+  position="bottomright"
+  ariaLabel="Communicator"
+  [(visible)]="visible"
+  [modal]="false"
+  [draggable]="true"
+  [closable]="false"
+  [closeOnEscape]="false"
+  [focusOnShow]="false"
+  [focusTrap]="false"
+  [resizable]="false"
+  [baseZIndex]="1060"
+  [maskStyle]="maskStyle"
+  [dt]="dialogTokens"
+>
+  <ng-template #header>
+    <div class="softphone__top">
+      <sc-button
+        class="softphone__top-collapse"
+        iconOnly
+        variant="plain"
+        appearance="text"
+        size="sm"
+        icon="expand_more"
+        ariaLabel="Close communicator"
+        (click)="visible.set(false)"
+      />
+      <sc-button
+        class="softphone__top-gear"
+        [class.softphone__top-gear--on]="view() === 'settings'"
+        iconOnly
+        variant="plain"
+        appearance="text"
+        size="sm"
+        icon="settings"
+        ariaLabel="Settings"
+        (click)="go('settings')"
+      />
+    </div>
+  </ng-template>
+
+  <ng-template #content>
+    <div class="softphone__body" [class.softphone__body--dim]="view() === 'agents' || view() === 'settings'">
+      @switch (view()) {
+        @case ('history') {
+          <h2 class="softphone__title">History</h2>
+          <p class="softphone__empty">No calls yet.</p>
+        }
+        @case ('dialer') {
+          <div class="dialer">
+            <div class="dialer__line">
+              <output class="dialer__number" aria-live="polite">{{ dialed() }}</output>
+              <sc-button
+                iconOnly
+                variant="plain"
+                appearance="text"
+                size="sm"
+                icon="backspace"
+                ariaLabel="Delete last digit"
+                [disabled]="!dialed()"
+                (click)="erase()"
+              />
+            </div>
+            <div class="dialer__keys">
+              @for (key of keys; track key) {
+                <sc-button variant="plain" appearance="text" size="lg" [label]="key" (click)="press(key)" />
+              }
+            </div>
+            <sc-button
+              class="dialer__call"
+              variant="plain"
+              appearance="outlined"
+              fullWidth
+              icon="call"
+              ariaLabel="Call"
+              [disabled]="!dialed()"
+            />
+          </div>
+        }
+        @case ('agents') {
+          <h2 class="softphone__title">Agents</h2>
+          <div class="softphone__pad">
+            <sc-search size="sm" placeholder="Search..." ariaLabel="Search agents and groups" [showClear]="false" [(value)]="contactsSearch" />
+            <sc-tabs ariaLabel="Agents and groups" [tabs]="contactsTabs" [(value)]="contactsTab" />
+          </div>
+          <ul class="softphone__list">
+            @for (name of contacts(); track name) {
+              <li class="softphone__item">
+                <sc-avatar [label]="name.slice(0, 2).toUpperCase()" ariaLabel="" />
+                {{ name }}
+              </li>
+            }
+          </ul>
+        }
+        @case ('settings') {
+          <h2 class="softphone__title">Settings</h2>
+          <div class="softphone__pad">
+            <sc-tabs ariaLabel="Settings sections" [tabs]="settingsTabs" [(value)]="settingsTab" />
+          </div>
+          @if (settingsTab() === 'profile') {
+            <div class="profile">
+              <sc-avatar label="CD" size="xlarge" ariaLabel="Demo user" />
+              <dl class="profile__data">
+                <dt class="visually-hidden">Name</dt>
+                <dd>DEMO - CusCare Demo</dd>
+                <dt>PIN:</dt>
+                <dd>000000</dd>
+                <dt>Extension:</dt>
+                <dd>205</dd>
+              </dl>
+            </div>
+            <div class="softphone__groups-head">
+              <h3 class="softphone__groups-title">Assigned groups</h3>
+              <sc-search
+                size="sm"
+                placeholder="Search..."
+                ariaLabel="Search assigned groups"
+                [showClear]="false"
+                [(value)]="groupsSearch"
+              />
+            </div>
+            <ul class="softphone__list">
+              @for (group of myGroups(); track group) {
+                <li class="softphone__item">{{ group }}</li>
+              }
+            </ul>
+            <div class="softphone__pad">
+              <sc-button variant="danger" fullWidth icon="logout" label="Sign out" />
+            </div>
+          } @else {
+            <p class="softphone__empty">No preferences yet.</p>
+          }
+        }
+      }
+    </div>
+  </ng-template>
+
+  <ng-template #footer>
+    <nav class="softphone__nav" [class]="'softphone__nav softphone__nav--' + tone()" aria-label="Communicator sections">
+      @for (item of nav; track item.view) {
+        <button
+          class="softphone__nav-btn"
+          type="button"
+          [class.softphone__nav-btn--on]="view() === item.view"
+          [attr.aria-pressed]="view() === item.view"
+          [attr.aria-label]="item.label"
+          (click)="go(item.view)"
+        >
+          <sc-icon [name]="item.icon" [size]="20" [filled]="view() === item.view" />
+        </button>
+      }
+    </nav>
+  </ng-template>
+</p-dialog>

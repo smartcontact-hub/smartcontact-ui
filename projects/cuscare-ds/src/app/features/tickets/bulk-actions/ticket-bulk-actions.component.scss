@@ -1,0 +1,17 @@
+/* Contenido del desplegable. El popover se pinta fuera del componente, en el cuerpo. */
+.bulk-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-75);
+  inline-size: var(--sc-spacing-18);
+
+  &--status {
+    padding: var(--sc-spacing-1);
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+}

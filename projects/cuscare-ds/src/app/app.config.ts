@@ -1,7 +1,7 @@
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { provideSmartContactUi } from '@smartcontact-hub/components';
+import { provideScToast, provideSmartContactUi } from '@smartcontact-hub/components';
 import { provideTranslateService } from '@ngx-translate/core';
 
 import { appRoutes } from './app.routes';
@@ -19,6 +19,8 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(appRoutes, withComponentInputBinding()),
     provideAnimationsAsync(),
+    // Avisos de la app (`sc-toast`): los usan las acciones en bloque del listado.
+    provideScToast(),
     // Frontera del tema del DS: PrimeNG + el preset publicado (--sc-*). El orden de capas
     // (`reset, primeng`) es load-bearing: ver styles/_layers.scss.
     provideSmartContactUi({

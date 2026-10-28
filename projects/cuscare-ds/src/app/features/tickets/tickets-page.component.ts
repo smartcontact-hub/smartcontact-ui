@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  inject,
   signal,
   TemplateRef,
   viewChild,
@@ -9,6 +10,7 @@ import {
 import {
   ScButtonComponent,
   ScTagComponent,
+  ScToastService,
   type ColumnDef,
   type ScColumnCellContext,
   type ScColumnDef,
@@ -20,6 +22,8 @@ import { ListPageComponent } from '../../shared/list-page/list-page.component';
 import { plain, type FilterContext, type FilterDef, type FilterOption, type OptionsTextValue } from '../../shared/list-page/list-filters';
 import { REFUND_METHODS, REFUND_STATES, REQUEST_TYPES, SUB_STATUSES, TICKETS_ALL, type TicketRow, type TicketStatus } from '../../data/seed';
 import { RequestTypeFilterComponent } from './request-type-filter.component';
+import type { BulkActionRequest } from './bulk-actions/bulk-actions';
+import { TicketBulkActionsComponent } from './bulk-actions/ticket-bulk-actions.component';
 import {
   DEFAULT_REQUEST_TYPE_FILTER,
   EMPTY_TYPE,
@@ -179,7 +183,7 @@ const FILTERS: Readonly<Record<string, FilterDef<TicketRow>>> = {
 
 @Component({
   selector: 'app-tickets-page',
-  imports: [ListPageComponent, RequestTypeFilterComponent, ScButtonComponent, ScIconComponent, ScTagComponent, TooltipModule],
+  imports: [ListPageComponent, RequestTypeFilterComponent, TicketBulkActionsComponent, ScButtonComponent, ScIconComponent, ScTagComponent, TooltipModule],
   templateUrl: './tickets-page.component.html',
   styleUrl: './tickets-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -188,6 +192,33 @@ export class TicketsPageComponent {
   protected readonly rows = TICKETS_ALL;
   protected readonly selectedIds = signal<ReadonlySet<string>>(new Set());
   protected readonly hasSelection = computed(() => this.selectedIds().size > 0);
+  /** Las filas marcadas, para las acciones en bloque. */
+  protected readonly selectedRows = computed(() => {
+    const ids = this.selectedIds();
+    return ids.size ? this.rows.filter((row) => ids.has(row.id)) : [];
+  });
+  private readonly toast = inject(ScToastService);
+
+  /** Se confirmó una acción en bloque: de momento solo la maqueta, que avisa y deja la selección limpia. */
+  protected onBulkConfirmed(request: BulkActionRequest): void {
+    const n = this.selectedIds().size;
+    const tickets = `${n} ${n === 1 ? 'ticket' : 'tickets'}`;
+    switch (request.kind) {
+      case 'assign':
+        this.toast.success('Tickets assigned', `${tickets} assigned to ${request.value}.`);
+        break;
+      case 'status':
+        this.toast.success('Status changed', `${tickets} set to ${request.value}.`);
+        break;
+      case 'cancellation':
+        this.toast.success('Service cancelled', `All products cancelled on ${tickets}.`);
+        break;
+      case 'file':
+        this.toast.success('Tickets filed', `${tickets} filed.`);
+        break;
+    }
+    this.selectedIds.set(new Set());
+  }
 
   /** Gestor de columnas: qué se puede enseñar, y cuáles nacen ocultas. */
   protected readonly managedColumns: readonly ColumnDef[] = COLUMNS.map((c) => ({

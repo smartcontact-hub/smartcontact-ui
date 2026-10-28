@@ -1,0 +1,159 @@
+:host {
+  display: block;
+}
+
+/* Barra oscura a todo el ancho, con el estado y el avatar pegados a la derecha. */
+.status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--sc-spacing-0-75);
+  block-size: var(--sc-spacing-2-75);
+  padding-inline: var(--sc-spacing-0-75);
+  background: var(--sc-bg-surface);
+}
+
+.status-bar__state {
+  inline-size: var(--sc-spacing-12-5);
+}
+
+.status-bar__avatar {
+  display: inline-flex;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+/* El popover se pinta fuera del componente, en el cuerpo: por eso la regla cuelga de su clase. Queda centrado justo encima de la píldora. */
+::ng-deep .states-popover {
+  translate: calc(0.5 * (var(--sc-spacing-18) - var(--sc-spacing-12-5))) calc(-1 * var(--sc-spacing-0-5));
+}
+
+/* Con el comunicador abierto, el panel de estados se pone a su izquierda, con un hueco, a la misma altura. */
+::ng-deep .states-popover--beside {
+  translate: 0 calc(-1 * var(--sc-spacing-0-5));
+  left: auto !important;
+  right: calc(2 * var(--sc-spacing-1-5) + var(--sc-spacing-18)) !important;
+}
+
+/* Panel de estados */
+.states {
+  /* Producto Agent: letra de 11,5 px en producción; el token más cercano es el de 12. */
+  font-size: var(--sc-font-size-100);
+  inline-size: var(--sc-spacing-18);
+  color: var(--sc-text-primary);
+
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    block-size: var(--sc-spacing-3);
+    border-block-end: 1px solid var(--sc-bg-canvas);
+  }
+
+  &__title {
+    margin: 0;
+    font-size: var(--sc-font-size-200);
+    font-weight: var(--sc-font-weight-regular);
+  }
+
+  &__close {
+    position: absolute;
+    inset-inline-end: var(--sc-spacing-0-5);
+  }
+
+  &__row {
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-1);
+    inline-size: 100%;
+
+    &--current {
+      font-weight: var(--sc-font-weight-bold);
+    }
+  }
+
+  &__dot {
+    flex: none;
+    inline-size: var(--sc-spacing-0-5);
+    block-size: var(--sc-spacing-0-5);
+    border-radius: 50%;
+
+    &--ok {
+      background: var(--sc-bg-success);
+    }
+
+    &--busy {
+      background: var(--sc-bg-danger);
+    }
+
+    &--admin {
+      background: var(--sc-color-red-800);
+    }
+  }
+}
+
+/* «Administrativo»: una fila como las de los demás estados (mismo alto y mismo alineado) que despliega su buscador y sus grupos. */
+.admin {
+  &__row {
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-1);
+    inline-size: 100%;
+    block-size: var(--sc-spacing-2-75);
+    padding: 0 var(--sc-spacing-1-25);
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+
+    &:hover,
+    &:focus-visible {
+      background: var(--sc-bg-canvas);
+    }
+  }
+
+  &--current &__label {
+    font-weight: var(--sc-font-weight-bold);
+  }
+
+  &__chevron {
+    margin-inline-start: auto;
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sc-spacing-0-5);
+    padding: 0 var(--sc-spacing-1) var(--sc-spacing-1);
+  }
+
+  /* Buscador sobre fondo oscuro. */
+  ::ng-deep .sc-search__control {
+    background: var(--sc-bg-canvas);
+    border-color: transparent;
+    color: var(--sc-text-primary);
+  }
+
+  ::ng-deep .sc-search__control::placeholder,
+  ::ng-deep .sc-search .sc-icon {
+    color: var(--sc-text-secondary);
+  }
+
+  &__hint {
+    margin: 0;
+    font-style: italic;
+    color: var(--sc-text-secondary);
+  }
+
+  &__groups {
+    display: block;
+    border-radius: var(--sc-spacing-0-75);
+    background: var(--sc-bg-canvas);
+  }
+}

@@ -12,3 +12,9 @@
 <main class="app__main" [class.app__main--bare]="isLogin()">
   <router-outlet />
 </main>
+
+@if (!isLogin()) {
+  <app-status-bar class="app__footer" />
+}
+
+<sc-toast position="top-right" />

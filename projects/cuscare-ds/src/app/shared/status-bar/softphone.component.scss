@@ -1,0 +1,244 @@
+/* El diálogo se pinta fuera del componente, en el cuerpo: sus reglas cuelgan de su clase. */
+::ng-deep .softphone {
+  --softphone-radius: var(--sc-spacing-1-75);
+
+  /* Producto Agent: letra de 11,5 px en producción; el token más cercano es el de 12. */
+  font-size: var(--sc-font-size-100);
+  inline-size: var(--sc-spacing-18);
+  block-size: calc(var(--sc-spacing-25) + var(--sc-spacing-12-5) - var(--sc-spacing-1-75));
+  max-block-size: 100%;
+  /* Sin margen propio: PrimeNG lo quita al arrastrar y el panel daría un salto. El hueco va en la máscara (maskStyle). */
+  margin: 0 !important;
+  overflow: hidden;
+
+  .p-dialog-content {
+    flex: 1;
+    min-block-size: 0;
+    overflow: hidden;
+  }
+}
+
+/* Franja superior: es la cabecera del diálogo, por donde se arrastra. */
+.softphone__top {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 100%;
+  block-size: var(--sc-spacing-1-25);
+  cursor: grab;
+}
+
+.softphone__top-gear {
+  position: absolute;
+  inset-inline-end: 0;
+  inset-block: 0;
+
+  &--on {
+    background: var(--sc-bg-surface);
+    border-start-start-radius: var(--sc-spacing-0-75);
+  }
+}
+
+/* Cuerpo: la vista de cada icono, con su tono propio. */
+.softphone__body {
+  display: flex;
+  flex-direction: column;
+  block-size: 100%;
+  padding-block-end: var(--softphone-radius);
+  border-start-start-radius: var(--softphone-radius);
+  border-start-end-radius: var(--softphone-radius);
+  background: var(--sc-bg-surface);
+  overflow-y: auto;
+
+  &--dim {
+    background: var(--sc-bg-canvas);
+  }
+}
+
+.softphone__title {
+  margin: 0;
+  padding-block: var(--sc-spacing-0-375);
+  text-align: center;
+  font-size: var(--sc-font-size-200);
+  font-weight: var(--sc-font-weight-semibold);
+}
+
+.softphone__empty {
+  margin: 0;
+  padding: var(--sc-spacing-1-5);
+  text-align: center;
+  color: var(--sc-text-secondary);
+}
+
+.softphone__pad {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
+  padding: var(--sc-spacing-0-5) var(--sc-spacing-1-25);
+}
+
+.softphone__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  flex: 1;
+  min-block-size: 0;
+  overflow-y: auto;
+}
+
+.softphone__item {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-75);
+  padding: var(--sc-spacing-0-625) var(--sc-spacing-1-25);
+}
+
+/* Teclado de marcar */
+.dialer {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: var(--sc-spacing-1);
+  padding: var(--sc-spacing-4) var(--sc-spacing-1-25) var(--sc-spacing-1);
+
+  &__line {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-block-size: var(--sc-spacing-1-5);
+    border-block-end: 1px solid var(--sc-border-default);
+  }
+
+  &__number {
+    font-size: var(--sc-font-size-200);
+  }
+
+  &__keys {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    justify-items: center;
+    row-gap: var(--sc-spacing-0-875);
+    inline-size: var(--sc-spacing-12-5);
+    margin-inline: auto;
+    margin-block: var(--sc-spacing-2) auto;
+
+    ::ng-deep .p-button {
+      block-size: var(--sc-spacing-2);
+      font-size: var(--sc-font-size-400);
+    }
+  }
+
+  &__call {
+    display: block;
+    margin-block-start: auto;
+
+    ::ng-deep p-button,
+    ::ng-deep .p-button {
+      display: flex;
+      inline-size: 100%;
+    }
+  }
+}
+
+/* Cabecera de los grupos asignados: el rótulo y un buscador pequeño a su lado. */
+.softphone__groups-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sc-spacing-0-5);
+  padding: var(--sc-spacing-0-5) var(--sc-spacing-1-25);
+
+  sc-search {
+    inline-size: var(--sc-spacing-5);
+    flex: none;
+  }
+}
+
+.softphone__groups-title {
+  margin: 0;
+  font-size: inherit;
+  font-weight: var(--sc-font-weight-regular);
+}
+
+/* Perfil */
+.profile {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-1);
+  padding: var(--sc-spacing-1) var(--sc-spacing-1-25);
+
+  &__data {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    column-gap: var(--sc-spacing-0-5);
+    margin: 0;
+
+    dd {
+      margin: 0;
+    }
+
+    dd:first-of-type {
+      grid-column: 1 / -1;
+      font-weight: var(--sc-font-weight-semibold);
+    }
+  }
+}
+
+/* Barra de iconos: toma el tono del estado y se monta sobre el cuerpo con las esquinas redondeadas. */
+.softphone__nav {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  inline-size: 100%;
+  block-size: var(--sc-spacing-4);
+  margin-block-start: calc(-1 * var(--softphone-radius));
+  border-start-start-radius: var(--softphone-radius);
+  border-start-end-radius: var(--softphone-radius);
+  background: var(--sc-bg-canvas);
+
+  &--busy {
+    background: var(--sc-color-red-900);
+  }
+}
+
+.softphone__nav-btn {
+  display: inline-flex;
+  padding: var(--sc-spacing-0-5);
+  border: 0;
+  background: transparent;
+  color: var(--sc-text-secondary);
+  cursor: pointer;
+
+  &--on,
+  &:hover {
+    color: var(--sc-text-primary);
+  }
+}
+
+.visually-hidden {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+/* Dentro del comunicador, lo que traen los componentes del DS toma la letra del producto Agent. */
+::ng-deep .softphone {
+  .p-tab,
+  .sc-search__control,
+  .p-button {
+    font-size: var(--sc-font-size-100);
+  }
+
+  .p-tablist {
+    block-size: var(--sc-spacing-2-25);
+  }
+
+  /* Iniciales del avatar del perfil: 16 px en producción. */
+  .profile .p-avatar {
+    font-size: var(--sc-font-size-300);
+  }
+}

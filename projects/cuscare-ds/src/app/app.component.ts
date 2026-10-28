@@ -3,12 +3,14 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, map, startWith } from 'rxjs/operators';
 
+import { ScToastComponent } from '@smartcontact-hub/components';
 import { SidebarComponent } from './shared/sidebar/sidebar.component';
+import { StatusBarComponent } from './shared/status-bar/status-bar.component';
 import { NAV_ITEMS } from './nav-data';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, SidebarComponent],
+  imports: [RouterOutlet, ScToastComponent, SidebarComponent, StatusBarComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
