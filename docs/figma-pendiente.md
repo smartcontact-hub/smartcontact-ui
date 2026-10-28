@@ -1655,9 +1655,9 @@ botón de X1 a X3 lleva `key`.
   (3). Notas de Dev Mode al día: la de Recursos y el paso 5 del alta dicen que se oculta (DD-239), la del resumen ya no suma
   «Plantillas de chat», y el Mapa lo anota. Páginas Plantillas (`4077:58411`): «Los agentes que la tengan asignada
   perderán la referencia» en las tres notas del borrado. Versiones: «Grupos: antes de DD-239…» y «Grupos y Plantillas:
-  Agendas y Plantillas solo a agentes (DD-239, §63)». **Queda por decidir**: «Si algo falla 7 / Edición de grupo /
-  Gestionar en Repositorios con cambios» (`3314:65868`) enseña el aviso «guarda antes el grupo» sin el enlace que lo
-  abre: el COA 4058 aún lo recoge, y en el código el aviso sigue vivo para «Editar en Repositorios» de la tipificación.
+  Agendas y Plantillas solo a agentes (DD-239, §63)». «Si algo falla 7 / Edición de grupo / Gestionar en
+  Repositorios con cambios» (`3314:65868`) se queda como el COA 4058, que aún lo recoge: el enlace va con el bloque oculto y
+  su nota lo dice; el aviso sigue vivo en «Editar en Repositorios» de la tipificación.
 
 ---
 
