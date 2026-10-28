@@ -221,9 +221,10 @@ prototipo desde DD-230; lo único que seguía diciendo lo contrario era un texto
   prototipo cuadra sin tocar el COA. Los de Plantillas (4438) y Agendas (4440) dicen que se asignan solo a agentes y que
   pertenecer a un grupo no asigna al resto, y el 4438 ya dice que borrar avisa a «los agentes»: era el prototipo el que
   decía «y grupos». **Diferencia que queda**: el COA 4438 no pone aviso de «perderán la referencia» en el borrado múltiple
-  y el prototipo sí (DD-233); no es de esta decisión. **Pregunta abierta a producto**: el COA 4453 de Equipos dice en el
-  borrado múltiple «y sus asignaciones a grupos», y un equipo no se asigna a grupos. Figma (hoja de Grupos) y el
-  prototipo del aviso, por repasar.
+  y el prototipo sí (DD-233); no es de esta decisión. **Equipos, cerrado (producto,
+  2026-10-28)**: un equipo se asigna únicamente a agentes. El «y sus asignaciones a grupos» del borrado múltiple del COA
+  4453 es redacción que sobra: borrar un equipo quita sus agentes del equipo y no toca nada más; el prototipo ya lo hace
+  así (`equipo-editor-page`, DD-231 y DD-232), sin cambio de código.
 
 ---
 
