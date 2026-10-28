@@ -52,7 +52,7 @@
 | `sc-color-dot-picker` | CUSTOM | experimental (sin maestro en el Kit) | — | 1 inputs | sc-selectbutton | ✓ | 3 |
 | `sc-column-selector` | STANDARD | experimental (sin maestro en el Kit) | primeng/popover, primeng/tooltip | 1 inputs | — | ✓ | 1 |
 | `sc-command-palette` | CUSTOM | experimental (sin maestro en el Kit) | — | 0 inputs | — | ✓ | 4 |
-| `sc-confirmdialog` | STANDARD | ready | primeng/confirmdialog, primeng/confirmpopup | 0 inputs | — | ✓ | 1 |
+| `sc-confirmdialog` | STANDARD | ready | primeng/autofocus, primeng/button, primeng/confirmdialog, primeng/confirmpopup | 0 inputs | — | ✓ | 1 |
 | `sc-datatable` | EXTENDED | ready | primeng/table | 63 inputs | sc-skeleton sc-button | ✓ | 18 |
 | `sc-datepicker` | EXTENDED | ready | primeng/datepicker | 24 inputs | sc-field-label sc-button sc-field-msg | ✓ | 1 |
 | `sc-delete-entity-dialog` | STANDARD | experimental (sin maestro en el Kit) | primeng/tooltip | 2 inputs | sc-dialog sc-message sc-button | ✓ | 1 |

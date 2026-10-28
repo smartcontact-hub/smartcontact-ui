@@ -1516,7 +1516,7 @@
           "sirve": "Pone el foco en un elemento al cargar.",
           "cuando": null,
           "aqui": "Directo en supervisor (sección 3)",
-          "estado": "directo",
+          "estado": "ds",
           "obsoleto": false
         },
         {
