@@ -1102,7 +1102,7 @@
       "create_title": "Nouvelle étiquette",
       "edit_title": "Éditer l'étiquette",
       "name": "Nom",
-      "name_placeholder": "Nom de l'étiquette",
+      "name_placeholder": "Ex : Client prioritaire",
       "color": "Couleur",
       "description": "Description",
       "description_placeholder": "Brève description..."
@@ -1210,7 +1210,7 @@
     "form": {
       "create_title": "Nouveau modèle",
       "title": "Titre",
-      "title_placeholder": "Titre du modèle",
+      "title_placeholder": "Ex : Accueil client",
       "channel": "Canal",
       "body": "Contenu",
       "body_placeholder": "Écrivez le contenu du modèle...",
@@ -1511,7 +1511,7 @@
       "singular": "typification",
       "create_title": "Nouvelle typification",
       "plural": "typifications",
-      "name_placeholder": "Ex. Service client",
+      "name_placeholder": "Ex : Service client",
       "description_placeholder": "Brève description...",
       "create_submit": "Créer la typification",
       "edit_breadcrumb": "Modifier la typification",

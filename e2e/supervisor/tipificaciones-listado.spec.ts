@@ -148,3 +148,15 @@ test('eliminar varias dice cuántos grupos las usan, y el aviso cuenta cuántas 
   await pregunta.getByRole('button', { name: 'Eliminar' }).click();
   await expect(page.getByText('2 tipificaciones eliminadas')).toBeVisible();
 });
+
+test('el buscador mira cualquier campo, también el nombre de un grupo que usa la tipificación', async ({ page }) => {
+  await goto(page, 'admin/tipificaciones');
+  const buscador = page.getByPlaceholder('Buscar tipificaciones…');
+  // «Online Support» es un grupo que clasifica con «Atención al cliente»: no sale en ninguna celda, solo al pasar el ratón.
+  await buscador.fill('Online Support');
+  await expect(fila(page, 'Atención al cliente')).toHaveCount(1);
+  await expect(fila(page, 'Soporte técnico')).toHaveCount(0);
+  // Y lo que ya buscaba sigue buscando: el nombre y la descripción.
+  await buscador.fill('Soporte técnico');
+  await expect(fila(page, 'Soporte técnico')).toHaveCount(1);
+});

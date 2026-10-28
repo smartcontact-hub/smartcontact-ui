@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, HostListener, inject, Injector, input, signal, type OnInit, type TemplateRef, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, HostListener, inject, Injector, input, signal, type OnInit, type TemplateRef, viewChild } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { ActivatedRoute, Router, type UrlTree } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -13,7 +13,7 @@ import {
 
 import type { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
-import { ResultadoAccionService, SectionLinksService } from '@core/services';
+import { BreadcrumbService, ResultadoAccionService, SectionLinksService } from '@core/services';
 import { injectLangChange } from '@core/utils/lang-change';
 import { AltaPieComponent } from '@shared/components';
 import {
@@ -114,6 +114,15 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit {
   constructor() {
     useTopbarActions(this.topbarActions);
   }
+
+  /** La miga de la edición dice el nombre de la tipificación guardada, como en Grupos y Agentes («Administración › Repositorios
+   *  › Tipificaciones › Atención al cliente»): el que se teclea aún no es el suyo. Al crear, «Nueva tipificación», de la ruta. */
+  private readonly breadcrumbs = inject(BreadcrumbService);
+  private readonly nombreGuardado = signal<string | null>(null);
+  private readonly migaConNombre = effect(() =>
+    this.breadcrumbs.nombrar(this.route, this.mode() === 'edit' ? this.nombreGuardado() : null),
+  );
+  private readonly sinMiga = inject(DestroyRef).onDestroy(() => this.breadcrumbs.nombrar(this.route, null));
 
   protected readonly trashIcon = 'delete';
   protected readonly editingId = signal<number | null>(null);
@@ -380,6 +389,7 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit {
       return;
     }
     this.editingId.set(t.id);
+    this.nombreGuardado.set(t.name);
     const { id: _id, ...borrador } = t;
     this.form.set(borrador);
     this.dirtyState.markPristine();
@@ -417,6 +427,7 @@ export class TipificacionFichaPageComponent implements DirtyAware, OnInit {
       return;
     }
     this.store.updateItem(this.editingId()!, borrador);
+    this.nombreGuardado.set(borrador.name);
     this.form.set(borrador);
     this.ocasion.olvidar();
     this.dirtyState.markPristine();
