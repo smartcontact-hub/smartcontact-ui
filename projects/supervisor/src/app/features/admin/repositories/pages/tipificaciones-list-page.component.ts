@@ -179,9 +179,11 @@ export class TipificacionesListPageComponent {
     }
   };
 
-  /** Lo que se busca: lo que se lee en la fila, el nombre y la descripción. */
+  /** Lo que se busca (COA de Tipificaciones, «cualquier campo»): el nombre, la descripción, los niveles y los nombres de los
+   *  grupos que la usan, aunque estos solo salgan al pasar el ratón: poner el nombre de un grupo enseña las tipificaciones
+   *  que clasifican con él. */
   protected readonly matchesSearch = (t: Tipificacion, q: string): boolean =>
-    t.name.toLowerCase().includes(q) || t.description.toLowerCase().includes(q);
+    [t.name, t.description, this.levelsLabel(t), ...this.groupsOf(t).map((g) => g.name)].some((v) => v.toLowerCase().includes(q));
 
   protected onCreateClick(): void {
     void this.router.navigateByUrl('/admin/tipificaciones/crear');
