@@ -1102,7 +1102,7 @@
       "create_title": "Nova etiqueta",
       "edit_title": "Editar etiqueta",
       "name": "Nome",
-      "name_placeholder": "Nome da etiqueta",
+      "name_placeholder": "Ex: Cliente prioritário",
       "color": "Cor",
       "description": "Descrição",
       "description_placeholder": "Breve descrição..."
@@ -1210,7 +1210,7 @@
     "form": {
       "create_title": "Novo modelo",
       "title": "Título",
-      "title_placeholder": "Título do modelo",
+      "title_placeholder": "Ex: Boas-vindas ao cliente",
       "channel": "Canal",
       "body": "Conteúdo",
       "body_placeholder": "Escreva o conteúdo do modelo...",
@@ -1511,7 +1511,7 @@
       "singular": "tipificação",
       "create_title": "Nova tipificação",
       "plural": "tipificações",
-      "name_placeholder": "Ex. Apoio ao cliente",
+      "name_placeholder": "Ex: Apoio ao cliente",
       "description_placeholder": "Breve descrição...",
       "create_submit": "Criar tipificação",
       "edit_breadcrumb": "Editar tipificação",

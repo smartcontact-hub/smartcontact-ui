@@ -1102,7 +1102,7 @@
       "create_title": "Nueva label",
       "edit_title": "Editar label",
       "name": "Nombre",
-      "name_placeholder": "Nombre de la label",
+      "name_placeholder": "Ej: Cliente prioritario",
       "color": "Color",
       "description": "Descripción",
       "description_placeholder": "Breve descripción..."
@@ -1210,7 +1210,7 @@
     "form": {
       "create_title": "Nueva plantilla",
       "title": "Título",
-      "title_placeholder": "Título de la plantilla",
+      "title_placeholder": "Ej: Bienvenida a clientes",
       "channel": "Canal",
       "body": "Contenido",
       "body_placeholder": "Escribe el contenido de la plantilla...",
@@ -1511,7 +1511,7 @@
       "singular": "tipificación",
       "create_title": "Nueva tipificación",
       "plural": "tipificaciones",
-      "name_placeholder": "Ej. Atención al cliente",
+      "name_placeholder": "Ej: Atención al cliente",
       "description_placeholder": "Breve descripción...",
       "create_submit": "Crear tipificación",
       "edit_breadcrumb": "Editar tipificación",

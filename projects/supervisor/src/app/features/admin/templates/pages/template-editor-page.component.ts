@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, HostListener, inject, signal, type OnInit, type TemplateRef, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, HostListener, inject, signal, type OnInit, type TemplateRef, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -13,7 +13,7 @@ import {
 
 import type { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
-import { ResultadoAccionService } from '@core/services';
+import { BreadcrumbService, ResultadoAccionService } from '@core/services';
 import { injectLangChange } from '@core/utils/lang-change';
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
 import { AgentAssignmentTableComponent } from '@features/admin/repositories/components/agent-assignment-table/agent-assignment-table.component';
@@ -82,6 +82,15 @@ export class TemplateEditorPageComponent implements DirtyAware, OnInit {
   }
 
   protected readonly mode = signal<'create' | 'edit'>('create');
+
+  /** La miga de la edición dice el nombre guardado, como en Grupos y Agentes (DD-238): el que se teclea aún no es el
+   *  suyo. Al crear, el de la ruta. */
+  private readonly breadcrumbs = inject(BreadcrumbService);
+  private readonly nombreGuardado = signal<string | null>(null);
+  private readonly migaConNombre = effect(() =>
+    this.breadcrumbs.nombrar(this.route, this.mode() === 'edit' ? this.nombreGuardado() : null),
+  );
+  private readonly sinMiga = inject(DestroyRef).onDestroy(() => this.breadcrumbs.nombrar(this.route, null));
   private templateId: number | null = null;
 
   protected readonly form = signal<TemplateDraft>({ title: '', type: 'chat', html: '', agentIds: [] });
@@ -170,6 +179,7 @@ export class TemplateEditorPageComponent implements DirtyAware, OnInit {
     }
     this.mode.set('edit');
     this.templateId = tpl.id;
+    this.nombreGuardado.set(tpl.title);
     this.form.set({
       title: tpl.title,
       type: tpl.type,
@@ -234,6 +244,7 @@ export class TemplateEditorPageComponent implements DirtyAware, OnInit {
     }
     this.store.updateTemplate(this.templateId!, { title, type: f.type, body });
     this.asignar(this.templateId!, f.agentIds);
+    this.nombreGuardado.set(title);
     this.form.set({ ...f, title });
     this.dirtyState.markPristine();
     this.resultado.contar(this.translate.instant('templates.toasts.updated', { name: title }));
