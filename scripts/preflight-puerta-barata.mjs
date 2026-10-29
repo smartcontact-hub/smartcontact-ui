@@ -74,7 +74,7 @@ import { revisarHandoff } from "./handoff-shape.mjs";
  * tumbó una cadena en `test:unit`, a los ocho minutos, por una comprobación de milisegundos.
  */
 export function puertaBarata(cwd = process.cwd()) {
-  const problemas = handoffsFueraDeForma(cwd);
+  const problemas = [...handoffsFueraDeForma(cwd), ...ddsCogidasEnMain(cwd)];
   const dir = localizarMemoria(cwd);
   if (!dir || !existsSync(dir)) return problemas;
   return [...problemas, ...revisarMemoria(leerMemoria(dir)).map((p) => `memoria (${dir}) — ${p}`)];
@@ -405,6 +405,48 @@ export function avisarDds({ mias = [], maxMain = 0, rama = "", cliente, escribir
     return true;
   } catch {
     return false;
+  }
+}
+
+/* EL NÚMERO DE DD, frente a `main` (LEARNINGS #21, 2026-10-29). El aviso de arriba mira los PR abiertos; este mira lo
+ * que YA se fundió y BLOQUEA. El #555 tomó DD-239, que era del #549, y luego DD-240, que el #554 fundió antes: las dos
+ * veces lo vio tarde `docs:coherence` (solo cuando la rama trae `main`) y hubo que renumerar a mano 30 o 40 citas. */
+
+/** `número → título` de cada cabecera `## DD-N · fecha — título` de un texto o de las líneas `prefijo` de un parche. Pura. */
+export function cabecerasDeDds(texto, prefijo = "") {
+  const re = new RegExp(`^${prefijo.replace(/[+-]/g, "\\$&")}## DD-(\\d+)(?![\\d·])(.*)$`, "gm");
+  const titulos = new Map();
+  for (const [, n, resto] of String(texto ?? "").matchAll(re)) titulos.set(Number(n), (resto.split("—").slice(1).join("—") || resto).trim());
+  return titulos;
+}
+
+/**
+ * Las DD que añade el parche de tu rama con un número que `main` ya tiene con OTRO título, y el siguiente libre para
+ * cada una. Una cabecera que el parche quita y pone con el mismo número es un cambio de título, no una DD nueva. Pura.
+ */
+export function ddsQueChocanConMain({ parche = "", main = "" } = {}) {
+  const enMain = cabecerasDeDds(main);
+  const quitadas = cabecerasDeDds(parche, "-");
+  const nuevas = [...cabecerasDeDds(parche, "+")].filter(([n]) => !quitadas.has(n));
+  const choques = nuevas.filter(([n, t]) => enMain.has(n) && enMain.get(n) !== t);
+  let siguiente = Math.max(0, ...enMain.keys(), ...nuevas.filter(([n]) => !enMain.has(n)).map(([n]) => n));
+  return choques.map(([dd, titulo]) => ({ dd, titulo, enMain: enMain.get(dd), libre: ++siguiente }));
+}
+
+/** Los choques de tu rama con `origin/main`, como problemas de la puerta. Sin git o sin `origin/main`, nada. */
+function ddsCogidasEnMain(cwd) {
+  try {
+    const g = (args) => execFileSync("git", args, { cwd, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"], maxBuffer: 64 * 1024 * 1024 });
+    const base = g(["merge-base", "HEAD", "origin/main"]).trim();
+    const parche = g(["diff", base, "--", "docs/DECISIONS.md"]);
+    if (!parche) return [];
+    return ddsQueChocanConMain({ parche, main: g(["show", "origin/main:docs/DECISIONS.md"]) }).map(
+      (c) =>
+        `docs/DECISIONS.md — DD-${c.dd} ya está en origin/main con otro título («${c.enMain}»): ` +
+        `renumera a DD-${c.libre} con todas sus citas: solo las líneas que no están en main.`,
+    );
+  } catch {
+    return [];
   }
 }
 
