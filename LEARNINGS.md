@@ -153,10 +153,10 @@
     local, otra sesión).** `git worktree list`, su `status --porcelain`, el `rev-parse` de la rama; si el fichero
     está sucio en su árbol, no lo toques. Una rama, una sesión: si necesitas su trabajo sin fundir, rama propia y
     PR. Compara contra `origin/main` tras un `fetch`, no tu `main` local, que miente sobre los conflictos. ⚙️
-    `main-drift-guard` y `bash-guard`; el «fetch first» de git es la última red, no la primera comprobación.
+    `main-drift-guard`, `bash-guard` y la puerta del preflight (DD-N cogido en `origin/main`); el «fetch first», la última red.
     Evidencia: 2026-09-23 #237/#239/#240 sobre fichas que Rafa miraba en local · 2026-09-28 una hermana salió a
     los 15 min por sus procesos, no su árbol · s46 push rechazado: Rafa arregló en paralelo el mismo fallo y ya
-    había mergeado el PR.
+    había mergeado el PR · 2026-10-29 #555 chocó con DD-239 y DD-240.
 
 ## Entrega
 
