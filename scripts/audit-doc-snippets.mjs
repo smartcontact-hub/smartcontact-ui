@@ -415,6 +415,30 @@ export function argTypesDe(ts) {
 }
 
 /**
+ * Las claves de `inputValues` de un `open(ScXComponent, { inputValues: { … } })`: así se abren
+ * `sc-alert-modal` y los contenidos de `sc-custom-modal` (DD-240), y esas claves SON sus inputs.
+ * Sin leerlas, el gate reclamaba `closeRequested` y `actionRequested` en una página cuyo primer
+ * ejemplo los enseña. Solo cuenta para (b): el snippet de servicio no tiene plantilla que comparar.
+ */
+export function inputValuesDe(codigo) {
+  const out = [];
+  for (const m of codigo.matchAll(/open\s*(?:<[^(]*>)?\(\s*Sc(\w+)Component\s*,\s*\{\s*inputValues:\s*\{/g)) {
+    let prof = 1;
+    let j = m.index + m[0].length;
+    const ini = j;
+    for (; j < codigo.length && prof > 0; j += 1) {
+      if (codigo[j] === '{') prof += 1;
+      else if (codigo[j] === '}') prof -= 1;
+    }
+    let cuerpo = codigo.slice(ini, j - 1).replace(/'[^']*'|"[^"]*"/g, "''");
+    while (/\{[^{}]*\}/.test(cuerpo)) cuerpo = cuerpo.replace(/\{[^{}]*\}/g, '');
+    const tag = 'sc-' + m[1].replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
+    out.push({ tag, atributos: new Set([...cuerpo.matchAll(/(?:^|[,\s])(\w+)\s*:/g)].map((x) => x[1])) });
+  }
+  return out;
+}
+
+/**
  * (b) Inputs públicos del componente que la página no enseña NI como ejemplo NI como knob.
  * Va por TRINQUETE y no por lista: sembrar 90 excepciones sería un vertedero, y una lista que
  * nadie lee es peor que un número que solo puede bajar.
@@ -423,7 +447,9 @@ export function inputsSinEjemplo(tag, codigos, knobs, inputs) {
   const declara = inputs[tag];
   if (!declara) return [];
   const enSnippets = new Set();
-  for (const c of codigos) for (const u of usosNormalizados(c)) if (u.tag === tag) for (const a of u.atributos) enSnippets.add(a);
+  for (const c of codigos) {
+    for (const u of [...usosNormalizados(c), ...inputValuesDe(c)]) if (u.tag === tag) for (const a of u.atributos) enSnippets.add(a);
+  }
   return [...declara].filter((p) => !INPUT_FONTANERIA.test(p) && !enSnippets.has(p) && !knobs.has(p)).sort();
 }
 

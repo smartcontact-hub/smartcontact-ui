@@ -8,7 +8,7 @@ import { injectAlertModal } from './alert-modal';
  * route guard and by anything else that needs to ask the user before
  * throwing away unsaved work.
  *
- * Es `sc-alert-modal` en `warning` (DD-239): pide atención, y el foco abre en «Seguir editando».
+ * Es `sc-alert-modal` en `warning` (DD-240): pide atención, y el foco abre en «Seguir editando».
  */
 @Injectable({ providedIn: 'root' })
 export class DiscardDialogService {

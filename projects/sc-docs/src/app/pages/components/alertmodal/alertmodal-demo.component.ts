@@ -62,10 +62,14 @@ ref.onClose.subscribe((result) => {
 
 const VARIANTS_SNIPPET = `<!-- En la página se pintan en línea para compararlas; en una pantalla se abren con
      ScDynamicDialogService.open(ScAlertModalComponent, { inputValues: { variant, … } }). -->
-<sc-alert-modal variant="default" title="Cambios sin guardar" … />
-<sc-alert-modal variant="info" title="Reconectando…" … />
-<sc-alert-modal variant="warning" title="¿Descartar los cambios?" … />
-<sc-alert-modal variant="error" title="¿Eliminar el agente «Ana Martín»?" … />`;
+<sc-alert-modal
+  variant="error"
+  title="¿Eliminar el agente «Ana Martín»?"
+  message="Esta acción no se puede deshacer."
+  actionLabel="Eliminar"
+  secondaryActionLabel="Cancelar"
+/>
+<!-- default, info y warning, igual con su variante. -->`;
 
 const LIMITS_SNIPPET = `// Tercer botón (extensión nuestra): «No guardar» a la izquierda.
 const ref = this.dynamicDialog.open(ScAlertModalComponent, {
@@ -116,6 +120,11 @@ export class AlertModalDemoComponent {
         control: { kind: 'text' },
         description: 'Extensión nuestra: un tercer botón a la izquierda.',
       },
+      {
+        name: 'icon',
+        control: { kind: 'text' },
+        description: 'Cambia el icono de la variante; vacío, el suyo.',
+      },
       { name: 'showIcon', control: { kind: 'boolean' } },
       { name: 'showCloseButton', control: { kind: 'boolean' } },
     ],
@@ -126,6 +135,7 @@ export class AlertModalDemoComponent {
       actionLabel: COPY.error.action,
       secondaryActionLabel: 'Cancelar',
       tertiaryActionLabel: '',
+      icon: '',
       showIcon: true,
       showCloseButton: true,
     },
@@ -165,6 +175,7 @@ export class AlertModalDemoComponent {
           actionLabel: args['actionLabel'] || null,
           secondaryActionLabel: args['secondaryActionLabel'] || null,
           tertiaryActionLabel: args['tertiaryActionLabel'] || null,
+          icon: args['icon'] || null,
           showIcon: args['showIcon'],
           showCloseButton: args['showCloseButton'],
           closeRequested: () => ref.close('closed'),
@@ -185,6 +196,7 @@ export class AlertModalDemoComponent {
       actionLabel: 'Guardar',
       secondaryActionLabel: 'Cancelar',
       tertiaryActionLabel: 'No guardar',
+      icon: '',
       showIcon: true,
       showCloseButton: true,
     });

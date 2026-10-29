@@ -6,8 +6,8 @@
 import type { TranslationObject } from '@ngx-translate/core';
 
 export const SC_CUSTOM_MODAL_TRANSLATIONS: Record<string, TranslationObject> = {
-  en: { sc: { customModal: { close: 'Close' } } },
   es: { sc: { customModal: { close: 'Cerrar' } } },
+  en: { sc: { customModal: { close: 'Close' } } },
   fr: { sc: { customModal: { close: 'Fermer' } } },
   pt: { sc: { customModal: { close: 'Fechar' } } },
 };

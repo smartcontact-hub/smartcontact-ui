@@ -42,7 +42,7 @@ const ACTION_VARIANT: Record<ScAlertModalVariant, ScButtonVariant> = {
 let alertModalIdCounter = 0;
 
 /**
- * Aviso o confirmación en un modal (Kit «❖ Alert modal», 15876:601; DD-239). Es el `sc-alert-modal` de
+ * Aviso o confirmación en un modal (Kit «❖ Alert modal», 15876:601; DD-240). Es el `sc-alert-modal` de
  * ui.smart-contact.com con su misma API: un `sc-custom-modal` con variante, icono, título, mensaje y acciones. Se abre
  * como lo abren ellos:
  *
@@ -89,6 +89,7 @@ export class ScAlertModalComponent {
 
   /** Intención: decide el icono, el tono de la superficie y el del botón principal. */
   readonly variant = input<ScAlertModalVariant>('default');
+  /** Título del aviso: su nombre para el lector. Hasta 2 líneas. */
   readonly title = input<string | null>(null);
   /** Texto del cuerpo. Admite HTML sencillo (`<p>`, `<ul>`, `<strong>`, enlaces), que Angular sanea. */
   readonly message = input<string | null>(null);
@@ -100,8 +101,11 @@ export class ScAlertModalComponent {
   readonly tertiaryActionLabel = input<string | null>(null);
   /** Sustituye al icono de la variante. */
   readonly icon = input<string | null>(null);
+  /** El icono de la variante (o el de `icon`). */
   readonly showIcon = input(true, { transform: booleanAttribute });
+  /** Nombre de la X. Sin él, «Cerrar» en el idioma de la app. */
   readonly closeAriaLabel = input<string | null>(null);
+  /** La X de la cabecera. */
   readonly showCloseButton = input(true, { transform: booleanAttribute });
   /** Clases extra en la superficie. */
   readonly styleClass = input('');
@@ -127,11 +131,17 @@ export class ScAlertModalComponent {
   private readonly inDialog = !!inject(DynamicDialogRef, { optional: true });
   private decided = false;
 
+  /** Un aviso interrumpe: el diálogo se anuncia como `alertdialog`. */
+  protected readonly dialogRole = 'alertdialog' as const;
   protected readonly messageId = `sc-alert-modal-message-${++alertModalIdCounter}`;
   protected readonly resolvedIcon = computed(() =>
     this.showIcon() ? (this.icon() ?? SC_ALERT_MODAL_ICONS[this.variant()]) : null,
   );
   protected readonly actionVariant = computed(() => ACTION_VARIANT[this.variant()]);
+  /** La X lleva el tono de la variante; en `default`, el gris de siempre. */
+  protected readonly closeVariant = computed<ScButtonVariant>(() =>
+    this.variant() === 'default' ? 'secondary' : ACTION_VARIANT[this.variant()],
+  );
   protected readonly surfaceClass = computed(() =>
     ['sc-alert-modal__surface', `sc-alert-modal__surface--${this.variant()}`, this.styleClass()]
       .filter(Boolean)

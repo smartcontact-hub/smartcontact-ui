@@ -9,7 +9,13 @@
     [icon]="args.icon || null"
     [title]="args.title || null"
     [subtitle]="args.subtitle || null"
+    [iconSize]="args.iconSize"
     [showCloseButton]="args.showCloseButton"
+    [closeVariant]="args.closeVariant"
+    [role]="args.role"
+    [surfaceClass]="args.surfaceClass"
+    [bodyClass]="args.bodyClass"
+    [footerClass]="args.footerClass"
   >
     <div scCustomModalBody>
       <p>Cada vez que el agente cambia de canal, la conversación sigue en el mismo hilo.</p>
@@ -19,4 +25,25 @@
   </sc-custom-modal>
   <sc-button label="Abrir" data-testid="custom-open" (clicked)="open(args)" />
   <p>Resultado: <span data-testid="custom-result">{{ result() }}</span></p>
+</ng-template>
+
+<ng-template #declarative>
+  <sc-button label="Editar categoría" data-testid="custom-declarative-open" (clicked)="openEditor()" />
+  <p>Resultado: <span data-testid="custom-declarative-result">{{ result() }}</span></p>
+  <sc-custom-modal
+    [(visible)]="editing"
+    title="Editar categoría"
+    width="36rem"
+    [dismissableMask]="true"
+    bodyClass="sc-custom-modal__body--flush"
+    (closed)="onClosed()"
+  >
+    <div scCustomModalBody>
+      <p style="margin: 0; padding: var(--sc-spacing-1) var(--sc-spacing-1-25)">
+        El cuerpo va a ras: el contenido pone su propio margen.
+      </p>
+    </div>
+    <sc-button scCustomModalFooter label="Cancelar" variant="primary" appearance="text" (clicked)="editing.set(false)" />
+    <sc-button scCustomModalFooter label="Guardar" (clicked)="save()" />
+  </sc-custom-modal>
 </ng-template>

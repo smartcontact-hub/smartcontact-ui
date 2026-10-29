@@ -13,6 +13,7 @@ import {
   model,
   output,
   signal,
+  viewChild,
 } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { DialogModule } from 'primeng/dialog';
@@ -29,19 +30,12 @@ import {
 } from '@smartcontact-hub/icons';
 
 import { ScButtonComponent } from '../button/sc-button.component';
+import type { ScButtonVariant } from '../../core/types/button.types';
 import type { ScDynamicDialogConfig } from '../dynamic-dialog/sc-dynamic-dialog.service';
 import { SC_CUSTOM_MODAL_TRANSLATIONS } from './i18n/sc-custom-modal.translations';
 
 export type ScCustomModalIconSize = 'sm' | 'md' | 'lg';
 export type ScCustomModalRole = 'dialog' | 'alertdialog';
-
-/** Marca el contenido que va al cuerpo del modal: `<div scCustomModalBody>…</div>`. */
-@Directive({ selector: '[scCustomModalBody]', standalone: true })
-export class ScCustomModalBodyDirective {}
-
-/** Marca lo que va al pie (los botones): `<sc-button scCustomModalFooter … />`. Sin nada en el pie, no se pinta. */
-@Directive({ selector: '[scCustomModalFooter]', standalone: true })
-export class ScCustomModalFooterDirective {}
 
 /**
  * Lo que `ScDynamicDialogService` necesita para que el modal sea solo esta carcasa: sin la cabecera de PrimeNG y con
@@ -64,26 +58,30 @@ const ICON_SIZES: Record<ScCustomModalIconSize, ScIconTalla> = {
 let customModalIdCounter = 0;
 
 /**
- * Carcasa de modal del DS (Kit «❖ Custom modal», 13644:1039; DD-239). Es el `sc-custom-modal` de
+ * Carcasa de modal del DS (Kit «❖ Custom modal», 13644:1039; DD-240). Es el `sc-custom-modal` de
  * ui.smart-contact.com con su misma API: cabecera con icono, título, subtítulo y X; cuerpo y pie proyectados con
  * `scCustomModalBody` y `scCustomModalFooter`. Se abre por `ScDynamicDialogService` desde un componente de
  * contenido que la pinta.
  *
  * Diferencias con la suya (las corrige sin cambiar la API):
- *   - Un solo diálogo para el lector (DD-140): dentro de un diálogo de PrimeNG, el rol, el nombre y la descripción
- *     van a ese diálogo, que es el que atrapa el foco; la carcasa no repite el rol. Fuera de él, lo lleva la carcasa.
+ *   - Un solo diálogo para el lector (DD-140): el rol, el nombre y la descripción van al diálogo de PrimeNG que la
+ *     envuelve, que es el que atrapa el foco; la carcasa no repite el rol.
  *   - `aria-labelledby` y `aria-describedby` apuntan al título y al subtítulo de verdad.
  *   - Escape también emite `closed`, y la X cierra el diálogo aunque no se pase `closeRequested`.
  *   - El título largo ocupa hasta dos líneas en vez de cortarse en una.
  *   - El nombre de la X sale traducido si no se pasa `closeAriaLabel`.
  *
+ * ```html
+ * <!-- conversation-modal.html -->
+ * <sc-custom-modal icon="format_align_left" title="Conversación" subtitle="12 mensajes" [closeRequested]="close">
+ *   <div scCustomModalBody>…</div>
+ *   <sc-button scCustomModalFooter label="Cancelar" appearance="text" (clicked)="close()" />
+ *   <sc-button scCustomModalFooter label="Guardar" (clicked)="save()" />
+ * </sc-custom-modal>
+ * ```
+ *
  * ```ts
- * @Component({ template: `
- *   <sc-custom-modal icon="format_align_left" title="Conversación" subtitle="12 mensajes" [closeRequested]="close">
- *     <div scCustomModalBody>…</div>
- *     <sc-button scCustomModalFooter label="Cancelar" appearance="text" (clicked)="close()" />
- *     <sc-button scCustomModalFooter label="Guardar" (clicked)="save()" />
- *   </sc-custom-modal>` })
+ * @Component({ templateUrl: './conversation-modal.html' })
  * class ConversationModal { static scDynamicDialogDefaults = SC_CUSTOM_MODAL_DYNAMIC_DIALOG_DEFAULTS; … }
  *
  * this.dynamicDialog.open(ConversationModal, { inputValues: { … } });
@@ -115,6 +113,8 @@ export class ScCustomModalComponent {
   readonly width = input<string | null>(null);
   /** Con `[(visible)]`: un clic fuera del modal lo cierra. */
   readonly dismissableMask = input(false, { transform: booleanAttribute });
+  /** Tono de la X; `sc-alert-modal` le pasa el de su variante, como la Severity del Kit. */
+  readonly closeVariant = input<ScButtonVariant>('secondary');
   /** Con `[(visible)]`: el modal ha terminado de abrirse. */
   readonly shown = output<void>();
 
@@ -124,6 +124,7 @@ export class ScCustomModalComponent {
   readonly subtitle = input<string | null>(null);
   /** Icono junto al título (nombre del DS o de Material Symbols). Decorativo. */
   readonly icon = input<string | null>(null);
+  /** Tamaño del icono: `sm` 14, `md` 16 y `lg` 18, el del Kit. */
   readonly iconSize = input<ScCustomModalIconSize>('lg');
   /** `alertdialog` para avisos que interrumpen (lo usa `sc-alert-modal`). */
   readonly role = input<ScCustomModalRole>('dialog');
@@ -135,12 +136,15 @@ export class ScCustomModalComponent {
   readonly ariaDescribedBy = input<string | null>(null);
   /** Nombre de la X. Sin él, «Cerrar» en el idioma de la app. */
   readonly closeAriaLabel = input<string | null>(null);
+  /** La X de la cabecera. Sin ella, el modal se cierra con un botón del pie (o Escape, si se abrió por servicio). */
   readonly showCloseButton = input(true, { transform: booleanAttribute });
   /** Clases en la superficie (el host): para cambiar fondo, borde o color con las variables `--sc-custom-modal-*`. */
   readonly surfaceClass = input('');
   /** Clases en la raíz interna (`section.sc-custom-modal`). */
   readonly styleClass = input('');
+  /** Clases en el cuerpo; `sc-custom-modal__body--flush` lo deja a ras, sin padding. */
   readonly bodyClass = input('');
+  /** Clases en el pie. */
   readonly footerClass = input('');
   /** Cómo cerrar desde fuera; con `ScDynamicDialogService`, `() => ref.close()`. */
   readonly closeRequested = input<(() => void) | null>(null);
@@ -162,8 +166,6 @@ export class ScCustomModalComponent {
     () => !!(this.icon() || this.title() || this.subtitle() || this.showCloseButton()),
   );
   protected readonly declarative = computed(() => this.visible() !== undefined);
-  /** Fuera de un diálogo de PrimeNG, el rol lo lleva la carcasa. */
-  protected readonly ownRole = computed(() => (this.dialogEl() || this.declarative() ? null : this.role()));
   /** El diálogo de `[(visible)]` va transparente: la carcasa es lo único que se ve. */
   protected readonly dialogStyle = SC_CUSTOM_MODAL_DYNAMIC_DIALOG_DEFAULTS.style;
   protected readonly contentStyle = SC_CUSTOM_MODAL_DYNAMIC_DIALOG_DEFAULTS.contentStyle;
@@ -238,7 +240,20 @@ export class ScCustomModalComponent {
     if (!open) this.emitClosed();
   }
 
+  private readonly surface = viewChild<ElementRef<HTMLElement>>('surface');
+
+  /**
+   * Con `[(visible)]` el foco abre en el primer control del cuerpo (el primer campo de un formulario), y si no hay,
+   * en el pie o en la X. PrimeNG lo ponía en la X, y su tooltip automático (DD-200) salía al abrir cualquier modal.
+   */
   protected onShow(): void {
+    const root = this.surface()?.nativeElement;
+    const focusable = 'input:not([disabled]):not([type=hidden]), textarea:not([disabled]), select:not([disabled]), button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])';
+    const target =
+      root?.querySelector<HTMLElement>(`.sc-custom-modal__body :is(${focusable})`) ??
+      root?.querySelector<HTMLElement>(`.sc-custom-modal__footer :is(${focusable})`) ??
+      root?.querySelector<HTMLElement>(`.sc-custom-modal__close :is(${focusable})`);
+    target?.focus();
     this.shown.emit();
   }
 
@@ -261,3 +276,11 @@ function setOrRemove(el: HTMLElement, name: string, value: string | null): void 
   if (value) el.setAttribute(name, value);
   else el.removeAttribute(name);
 }
+
+/** Marca el contenido que va al cuerpo del modal: `<div scCustomModalBody>…</div>`. */
+@Directive({ selector: '[scCustomModalBody]', standalone: true })
+export class ScCustomModalBodyDirective {}
+
+/** Marca lo que va al pie (los botones): `<sc-button scCustomModalFooter … />`. Sin nada en el pie, no se pinta. */
+@Directive({ selector: '[scCustomModalFooter]', standalone: true })
+export class ScCustomModalFooterDirective {}

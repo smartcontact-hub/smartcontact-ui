@@ -173,6 +173,22 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
+## ✅ 2026-10-29 · `sc-custom-modal` y `sc-alert-modal`, como en ui.smart-contact.com (DD-240)
+
+**Sello:** rama `areses/confirmdialog-documentation-search-466499`, sobre `main` con el #548 fundido.
+
+**Lo que cambia.** El DS tiene los dos modales de los devs con sus nombres y su API: `sc-custom-modal` (carcasa; extensión
+nuestra `[(visible)]`, `width`, `dismissableMask`) y `sc-alert-modal` (variantes default, info, warning y error; extensión
+nuestra `tertiaryActionLabel`). Se retiran `sc-dialog` y el confirm centrado (`@deprecated`); el globo con `target` sigue.
+En el Supervisor, los 19 modales van sobre `sc-custom-modal` y las confirmaciones sobre `sc-alert-modal` (`injectAlertModal`):
+borrar es `error`, descartar `warning`. sc-docs tiene las dos páginas; `audit:doc-snippets` lee ya las claves de `inputValues`.
+
+**Figma.** Página «❖ Alert modal» (15876:601) con instancias de Custom modal; variables `custommodal/info/*` y el
+`codeSyntax` de las 29 a `--sc-cmp-custommodal-*`. Falta que Rafa publique la librería y Code Connect (desde `main`).
+
+**Pendiente.** Decidir los tipos Error y Warn de Custom modal (Alert modal los usa por dentro, y hay 9 instancias fuera);
+contar a los devs sus fallos y que su página de Custom Modal está rota en producción (`ChunkLoadError`).
+
 ## ✅ 2026-10-22 · El índice del alta lleva un marcador de paso (`sc-step-marker`, DD-222)
 
 **Sello:** rama `areses/indice-checks-aleatorios-e7aa39`, sobre HEAD `12bd0f44` de `main`.

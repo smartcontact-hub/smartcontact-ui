@@ -13,8 +13,8 @@
   flex-direction: column;
   box-sizing: border-box;
   width: var(--sc-custom-modal-width);
-  min-width: var(--sc-custom-modal-min-width, 0);
-  max-width: min(var(--sc-custom-modal-max-width, 100vw), 100%);
+  min-width: var(--sc-custom-modal-min-width);
+  max-width: min(var(--sc-custom-modal-max-width), 100%);
   max-height: var(--sc-custom-modal-max-height);
   min-height: 0;
   overflow: hidden;
@@ -42,10 +42,12 @@
 
   &__icon {
     display: inline-flex;
-    align-self: center;
+    /* Va con la línea del título, como en el maestro: centrado en el bloque, con subtítulo bajaba a media altura. */
+    align-self: start;
+    margin-top: calc((var(--sc-custom-modal-title-line-height) - var(--sc-custom-modal-icon-size)) / 2);
     /* El hueco entre icono y título del maestro (12.25) es mayor que el de la cabecera (7). */
     margin-right: calc(var(--sc-custom-modal-header-icon-gap) - var(--sc-custom-modal-header-gap));
-    color: var(--sc-custom-modal-icon-color, var(--sc-custom-modal-color));
+    color: var(--sc-custom-modal-icon-color);
   }
 
   &__heading {
@@ -59,12 +61,12 @@
       font-size: var(--sc-custom-modal-title-font-size);
       line-height: var(--sc-custom-modal-title-line-height);
       font-weight: var(--sc-custom-modal-title-font-weight);
-      color: var(--sc-custom-modal-title-color, var(--sc-custom-modal-color));
+      color: var(--sc-custom-modal-title-color);
       /* Hasta dos líneas: el suyo corta en una y el título deja de leerse. */
       display: -webkit-box;
       -webkit-box-orient: vertical;
-      -webkit-line-clamp: var(--sc-custom-modal-title-lines, 2);
-      line-clamp: var(--sc-custom-modal-title-lines, 2);
+      -webkit-line-clamp: var(--sc-custom-modal-title-lines);
+      line-clamp: var(--sc-custom-modal-title-lines);
       overflow: hidden;
       overflow-wrap: anywhere;
     }
@@ -80,23 +82,11 @@
 
   &__close {
     display: block;
-    color: var(--sc-custom-modal-close-color);
     opacity: var(--sc-custom-modal-close-opacity);
 
     &:hover,
     &:focus-within {
-      color: var(--sc-custom-modal-close-color-hover);
       opacity: var(--sc-custom-modal-close-opacity-hover);
-    }
-
-    /* El botón de texto pinta su propio color: aquí hereda el de la X, que es el que cambia por variante. */
-    ::ng-deep .p-button,
-    ::ng-deep .p-button:not(:disabled):hover,
-    ::ng-deep .p-button:not(:disabled):focus-visible,
-    ::ng-deep .p-button:not(:disabled):active,
-    ::ng-deep .p-button-icon,
-    ::ng-deep sc-icon {
-      color: inherit;
     }
   }
 

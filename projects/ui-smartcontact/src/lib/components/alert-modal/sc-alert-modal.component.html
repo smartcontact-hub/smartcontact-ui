@@ -1,9 +1,11 @@
+<!-- `role` es la entrada de la carcasa (el rol que pone al diálogo de PrimeNG), no un atributo de este elemento. -->
 <sc-custom-modal
-  role="alertdialog"
+  [role]="dialogRole"
   iconSize="lg"
   [title]="title()"
   [icon]="resolvedIcon()"
   [showCloseButton]="showCloseButton()"
+  [closeVariant]="closeVariant()"
   [closeAriaLabel]="closeAriaLabel()"
   [closeRequested]="closeRequested()"
   [ariaDescribedBy]="message() ? messageId : null"

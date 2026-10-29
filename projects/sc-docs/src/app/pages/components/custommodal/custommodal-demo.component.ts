@@ -43,6 +43,21 @@ const ref = this.dynamicDialog.open(ConversationModal, {
   inputValues: { title, subtitle, close: () => ref.close(), save: () => ref.close('saved') },
 });`;
 
+const DECLARATIVE_SNIPPET = `<!-- Extensión nuestra: sin servicio, atado al estado de la pantalla con [(visible)]. -->
+<sc-button label="Editar categoría" (clicked)="openEditor()" />
+<sc-custom-modal
+  [(visible)]="editing"
+  title="Editar categoría"
+  width="36rem"
+  [dismissableMask]="true"
+  bodyClass="sc-custom-modal__body--flush"
+  (closed)="onClosed()"
+>
+  <div scCustomModalBody>…</div>
+  <sc-button scCustomModalFooter label="Cancelar" variant="primary" appearance="text" (clicked)="editing.set(false)" />
+  <sc-button scCustomModalFooter label="Guardar" (clicked)="save()" />
+</sc-custom-modal>`;
+
 /** El contenido que abre la demo: el patrón de ui.smart-contact.com, un componente que pinta `sc-custom-modal`. */
 @Component({
   selector: 'app-custommodal-demo-content',
@@ -91,8 +106,10 @@ export class CustomModalDemoContentComponent {
 export class CustomModalDemoComponent {
   private readonly dynamicDialog = inject(ScDynamicDialogService);
   readonly result = signal<string>('—');
+  readonly editing = signal(false);
 
   protected readonly playgroundTpl = viewChild<TemplateRef<StoryContext>>('playground');
+  protected readonly declarativeTpl = viewChild<TemplateRef<StoryContext>>('declarative');
 
   protected readonly meta: StoryMeta = {
     tag: 'sc-custom-modal',
@@ -103,20 +120,58 @@ export class CustomModalDemoComponent {
       { name: 'title', control: { kind: 'text' } },
       { name: 'subtitle', control: { kind: 'text' } },
       { name: 'icon', control: { kind: 'text' }, description: 'Nombre del icono; vacío, sin icono.' },
+      { name: 'iconSize', control: { kind: 'select', options: ['sm', 'md', 'lg'] } },
       { name: 'showCloseButton', control: { kind: 'boolean' } },
+      {
+        name: 'closeVariant',
+        control: { kind: 'select', options: ['secondary', 'info', 'warn', 'danger'] },
+        description: 'Tono de la X; `sc-alert-modal` le pasa el de su variante.',
+      },
+      {
+        name: 'role',
+        control: { kind: 'select', options: ['dialog', 'alertdialog'] },
+        description: 'El rol del diálogo que la envuelve; `alertdialog` para avisos que interrumpen.',
+      },
+      {
+        name: 'surfaceClass',
+        control: { kind: 'text' },
+        description: 'Clases en la superficie, para cambiar `--sc-custom-modal-*` desde fuera.',
+      },
+      {
+        name: 'bodyClass',
+        control: { kind: 'select', options: ['', 'sc-custom-modal__body--flush'] },
+        description: '`sc-custom-modal__body--flush` deja el cuerpo a ras.',
+      },
+      { name: 'footerClass', control: { kind: 'text' }, description: 'Clases en el pie.' },
     ],
     defaultArgs: {
       title: 'Conversación con Ana Martín',
       subtitle: '12 mensajes · Chat',
       icon: 'format_align_left',
+      iconSize: 'lg',
       showCloseButton: true,
+      closeVariant: 'secondary',
+      role: 'dialog',
+      surfaceClass: '',
+      bodyClass: '',
+      footerClass: '',
     },
   };
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {
     const pg = this.playgroundTpl();
-    if (!pg) return [];
-    return [{ name: 'Playground', playground: true, template: pg, snippet: PLAYGROUND_SNIPPET }];
+    const dc = this.declarativeTpl();
+    if (!pg || !dc) return [];
+    return [
+      { name: 'Playground', playground: true, template: pg, snippet: PLAYGROUND_SNIPPET },
+      {
+        name: 'Declarativo',
+        template: dc,
+        snippet: DECLARATIVE_SNIPPET,
+        description:
+          'Extensión nuestra: sin servicio, con `[(visible)]`, para un modal que vive en la plantilla de la pantalla. `width` cambia el ancho y `dismissableMask` cierra con un clic fuera.',
+      },
+    ];
   });
 
   open(args: ScArgs): void {
@@ -134,5 +189,20 @@ export class CustomModalDemoComponent {
       },
     );
     ref.onClose.subscribe((value) => this.result.set(value ?? 'escape'));
+  }
+
+  openEditor(): void {
+    this.result.set('—');
+    this.editing.set(true);
+  }
+
+  /** `closed` avisa de cualquier cierre; tras «Guardar» el resultado ya dice «saved». */
+  onClosed(): void {
+    this.result.update((r) => (r === 'saved' ? r : 'closed'));
+  }
+
+  save(): void {
+    this.editing.set(false);
+    this.result.set('saved');
   }
 }

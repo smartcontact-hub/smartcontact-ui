@@ -934,6 +934,9 @@ Los tokens **brand-visible** (paletas, spacing, radius, scale, surface, shadows 
 
 ### 5.10 Modal legacy custom — descartado a favor del Kit Pro Dialog
 
+> **Enmendada por DD-240 (2026-10-29).** El modal a medida vuelve, como `sc-custom-modal`: es la carcasa que usan los devs en
+> ui.smart-contact.com, con su API, y `sc-dialog` se retira. Lo de abajo queda como historia del primer descarte.
+
 **Origen**: el DS antiguo de Smart Contact tenía un **Modal custom** pre-existente a la adopción del Kit Pro PrimeOne. Audit vía Figma MCP confirmó su estructura:
 
 | Pieza | Legacy custom | Kit Pro Dialog (`6738:50209`) |

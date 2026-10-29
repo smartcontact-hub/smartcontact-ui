@@ -22,8 +22,6 @@
   --sc-custom-modal-border-color: var(--sc-alert-modal-border-color);
   --sc-custom-modal-title-color: var(--sc-alert-modal-title-color);
   --sc-custom-modal-icon-color: var(--sc-alert-modal-icon-color);
-  --sc-custom-modal-close-color: var(--sc-alert-modal-title-color);
-  --sc-custom-modal-close-color-hover: var(--sc-alert-modal-title-color);
 }
 
 .sc-alert-modal__surface--info {
@@ -50,7 +48,7 @@
 .sc-alert-modal__message {
   font-size: var(--sc-font-size-200);
   line-height: var(--sc-line-height-200);
-  color: var(--sc-alert-modal-message-color, var(--sc-custom-modal-color));
+  color: var(--sc-alert-modal-message-color);
   overflow-wrap: anywhere;
   /* Hasta 4 líneas; lo que pase se corta con «…». */
   display: -webkit-box;

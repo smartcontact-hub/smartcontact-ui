@@ -1,15 +1,8 @@
 <!-- La carcasa se define una vez y se pinta en uno de dos sitios: dentro del diálogo de PrimeNG que abre
      `[(visible)]` (extensión nuestra) o tal cual, dentro de DynamicDialog o en línea. -->
 <ng-template #shell>
-  <section
-    class="sc-custom-modal"
-    [class]="styleClass()"
-    [attr.role]="ownRole()"
-    [attr.aria-modal]="ownRole() ? 'true' : null"
-    [attr.aria-labelledby]="ownRole() ? labelledBy() : null"
-    [attr.aria-label]="ownRole() && !labelledBy() ? ariaLabel() : null"
-    [attr.aria-describedby]="ownRole() ? describedBy() : null"
-  >
+  <!-- Sin rol propio: el diálogo es el de PrimeNG que la envuelve (DD-140); en línea no es un modal. -->
+  <section #surface class="sc-custom-modal" [class]="styleClass()">
     @if (hasHeader()) {
       <header
         class="sc-custom-modal__header"
@@ -34,7 +27,7 @@
             iconSize="lg"
             iconOnly
             appearance="text"
-            variant="secondary"
+            [variant]="closeVariant()"
             rounded
             [ariaLabel]="closeAriaLabel() || ('sc.customModal.close' | translate)"
             (clicked)="close()"
@@ -62,6 +55,7 @@
     [dismissableMask]="dismissableMask()"
     [draggable]="false"
     [resizable]="false"
+    [focusOnShow]="false"
     [showHeader]="false"
     styleClass="sc-custom-modal-dialog"
     [style]="dialogStyle"
