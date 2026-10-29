@@ -173,22 +173,19 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
-## ✅ 2026-10-29 · `sc-custom-modal` y `sc-alert-modal`, como en ui.smart-contact.com (DD-240)
+## ✅ 2026-10-29 · `sc-custom-modal` y `sc-alert-modal`, como en ui.smart-contact.com (DD-240, #555)
 
-**Sello:** rama `areses/confirmdialog-documentation-search-466499`, sobre `main` con el #548 fundido. Salen por el tope los
-dos tramos del 2026-10-14 (catálogo de PrimeNG y `/lab/arbol`): `git show e57ab438:docs/handoff/design-system.md`.
+**Sello:** rama `areses/confirmdialog-documentation-search-466499`. Salen los tramos del 2026-10-14: `git show e57ab438:docs/handoff/design-system.md`.
 
-**Lo que cambia.** El DS tiene los dos modales de los devs con sus nombres y su API: `sc-custom-modal` (carcasa; extensión
-nuestra `[(visible)]`, `width`, `dismissableMask`) y `sc-alert-modal` (variantes default, info, warning y error; extensión
-nuestra `tertiaryActionLabel`). Se retiran `sc-dialog` y el confirm centrado (`@deprecated`); el globo con `target` sigue.
-En el Supervisor, los 19 modales van sobre `sc-custom-modal` y las confirmaciones sobre `sc-alert-modal` (`injectAlertModal`):
-borrar es `error`, descartar `warning`. sc-docs tiene las dos páginas; `audit:doc-snippets` lee ya las claves de `inputValues`.
+**Lo que cambia.** Los dos modales de los devs, con sus nombres y su API (extensiones nuestras marcadas). Se retiran `sc-dialog`
+y el confirm centrado; el globo con `target` sigue. Supervisor: 19 modales sobre la carcasa, confirmaciones con `injectAlertModal`
+(borrar `error`, descartar `warning`). Lo vigilan `audit:modales` y la regla «Modales» de AGENTS.md.
 
-**Figma.** Página «❖ Alert modal» (15876:601) con instancias de Custom modal; variables `custommodal/info/*` y el
-`codeSyntax` de las 29 a `--sc-cmp-custommodal-*`. Falta que Rafa publique la librería y Code Connect (desde `main`).
+**Figma.** «❖ Custom modal» es solo la carcasa (sin Error ni Warn; sus 9 instancias pasaron a Alert modal). «❖ Alert modal»
+(15876:601) lleva las cuatro variantes. Falta publicar la librería y el Code Connect (desde `main`, tras fundir #555).
 
-**Pendiente.** Decidir los tipos Error y Warn de Custom modal (Alert modal los usa por dentro, y hay 9 instancias fuera);
-contar a los devs sus fallos y que su página de Custom Modal está rota en producción (`ChunkLoadError`).
+**Pendiente.** Contar a los devs sus fallos (roles anidados, Escape sin aviso, foco en la X) y que su página de Custom Modal
+está rota en producción (`ChunkLoadError`).
 
 ## ✅ 2026-10-22 · El índice del alta lleva un marcador de paso (`sc-step-marker`, DD-222)
 
@@ -279,6 +276,9 @@ variables, 30 comentarios activos.
 
 ## ⚠️ Trampas de este frente
 
+- ⚠️ **Un `sc-button` de solo icono con el foco dentro de un `p-dialog` se queda el primer Escape**: su tooltip (DD-200) se
+  registra como capa de encima y PrimeNG solo cierra si el diálogo es la de arriba. Por eso `sc-custom-modal` nunca abre
+  con el foco en la X (DD-240). Con prisa en la máquina el tooltip llega antes y la prueba falla a ratos: no es inestable.
 - ⚠️ **La página de PrimeNG de sc-docs sale de un artefacto** que reescribe `npm run primeng-catalog:gen`: un `primeng/x`
   nuevo en una app lo deja atrás y `audit:primeng-catalog` se pone rojo hasta regenerarlo (pasó con ContextMenu, #400).
 - ⚠️ **Cinco trampas de PrimeNG 22 en `p-treetable`**, junto a su arreglo en `treetable-lab-page.component.ts`: `selection`
