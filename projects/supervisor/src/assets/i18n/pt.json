@@ -1210,7 +1210,6 @@
     "form": {
       "create_title": "Novo modelo",
       "title": "Título",
-      "title_placeholder": "Ex: Boas-vindas ao cliente",
       "channel": "Canal",
       "body": "Conteúdo",
       "body_placeholder": "Escreva o conteúdo do modelo...",
@@ -1233,8 +1232,8 @@
       "body_required": "O conteúdo é obrigatório"
     },
     "delete": {
-      "single_detail": "Os agentes e grupos que o tenham atribuído perderão a referência.",
-      "bulk_footer": "Os agentes e grupos que os tenham atribuídos perderão a referência."
+      "single_detail": "Os agentes que o tenham atribuído perderão a referência.",
+      "bulk_footer": "Os agentes que os tenham atribuído perderão a referência."
     },
     "toasts": {
       "created": "Modelo \"{{name}}\" criado",
