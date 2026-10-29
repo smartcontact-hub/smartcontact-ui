@@ -11,7 +11,11 @@ import { cabecerasDeDds, ddsQueChocanConMain, puertaBarata } from '../preflight-
 // dos veces lo vio tarde `docs:coherence`. La puerta del preflight compara ahora las cabeceras que añade la rama con las
 // de `origin/main` y se pone roja si el número ya está cogido con otro título.
 
-const MAIN = '# Decisiones\n\n## DD-240 · 2026-10-29 — El «+» se dibuja con las puntas redondeadas\ntexto\n## DD-239 · 2026-10-28 — Agendas\n## DD-23·b · 2026-06-22 — Apéndice\n';
+// Dentro de un hook de git, `GIT_DIR` apunta al repo de verdad: el repo de juguete y la puerta, que lanza su propio
+// `git`, caerían sobre él. Este fichero corre en su propio proceso, así que se tiran aquí una vez.
+for (const k of Object.keys(process.env)) if (k.startsWith('GIT_')) delete process.env[k];
+
+const MAIN ='# Decisiones\n\n## DD-240 · 2026-10-29 — El «+» se dibuja con las puntas redondeadas\ntexto\n## DD-239 · 2026-10-28 — Agendas\n## DD-23·b · 2026-06-22 — Apéndice\n';
 
 test('cabecerasDeDds: número y título, sin apéndices; con prefijo, solo las líneas del parche que lo llevan', () => {
   assert.deepEqual([...cabecerasDeDds(MAIN)], [
