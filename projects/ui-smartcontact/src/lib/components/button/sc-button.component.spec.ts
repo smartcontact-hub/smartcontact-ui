@@ -70,3 +70,17 @@ describe('sc-button · iconOnly, la propiedad «Icon Only» del Kit', () => {
     expect(boton.textContent).toContain('Nueva agenda');
   });
 });
+
+describe('sc-button · radio del «+»', () => {
+  beforeEach(() => TestBed.configureTestingModule({}));
+
+  it('el «+» con rótulo es redondo', async () => {
+    const { boton } = await montar({ label: 'Nueva agenda', icon: 'add' });
+    expect(boton.classList.contains('p-button-rounded')).toBe(true);
+  });
+
+  it('la variante info con «+» lleva el radio del botón, no el redondo', async () => {
+    const { boton } = await montar({ label: 'Nueva plantilla', icon: 'add', variant: 'info' });
+    expect(boton.classList.contains('p-button-rounded')).toBe(false);
+  });
+});

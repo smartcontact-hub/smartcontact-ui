@@ -119,8 +119,14 @@ export class ScButtonComponent {
 
     readonly rounded = input(false, { transform: booleanAttribute });
 
-    /** El «+» (`icon="add"`) es siempre redondo: círculo en solo icono, píldora con rótulo. */
-    protected readonly isRounded = computed(() => this.rounded() || this.icon() === 'add');
+    /**
+     * El «+» (`icon="add"`) es redondo: círculo en solo icono, píldora con rótulo. La variante `info`
+     * (el CTA de los estados vacíos) queda fuera y lleva el radio de su botón; solo `rounded` explícito
+     * la redondea.
+     */
+    protected readonly isRounded = computed(
+        () => this.rounded() || (this.icon() === 'add' && this.variant() !== 'info')
+    );
 
     /**
      * Solo el icono, como la propiedad «Icon Only» del Kit: el rótulo no se pinta y pasa a ser el nombre accesible y el

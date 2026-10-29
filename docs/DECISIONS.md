@@ -46,7 +46,7 @@
 > | Duplicar una agenda o una plantilla es un alta, como un grupo o un agente (enmienda DD-230): abre «Nueva agenda/plantilla» con la copia y su nombre «X (1)» (`seedFromId`, `nombreDeCopia`), que no existe hasta «Crear» · no copia a qué agentes se asigna | DD-234 |
 > | Agendas y Plantillas como sus COA (SISMAC-4440 y 4438): se asignan SOLO a agentes, en una tabla plana de agentes con su columna «Grupos» (`sc-agent-assignment-table`), sin árbol ni grupos dinámicos (enmienda DD-211 §1) · el listado de Agendas con Descripción, Contactos y Agentes (cifra, sin globo) ordenables · Plantillas sin pestañas, con columna Canal · contactos con casillas y borrado múltiple (completa DD-227 en una tabla anidada) | DD-230 |
 > | A quién se asignan Agendas, Plantillas y Equipos: solo a agentes, con la columna «Grupos» para filtrar y marcar de golpe; asignar a un grupo queda a futuro; el aviso de borrar no nombra grupos (confirmado con producto, 2026-10-28) | DD-239 |
-> | El «+» de `sc-button` (`icon="add"`) es siempre redondo: círculo sin rótulo, píldora con él (enmienda DD-167 y DD-187) | DD-229 |
+> | El «+» de `sc-button` (`icon="add"`) es redondo: círculo sin rótulo, píldora con él; salvo en la variante `info` (el CTA de los estados vacíos), que lleva el radio de su botón (enmienda DD-167 y DD-187) | DD-229 |
 > | Con el índice en la caja, el carril mide 235, el de la caja en Figma: ningún rótulo de las fichas salta de línea · sin la caja, 196 (enmienda DD-220) | DD-221 |
 > | El índice de secciones, en la caja gris de Contact Center en las seis pantallas que lo llevan (Contact Center, fichas de grupo, agente y usuario, tipificación y constructor de reglas), como en Figma: un solo interruptor de la app (`SC_FORM_SECTION_NAV_CAJA`), y volver al índice plano es borrar su línea | DD-220 |
 > | Agendas y Plantillas como Grupos y Agentes: «Crear» y «Guardar» apagados mientras falte el título (o el contenido), con el motivo en el tooltip y el aviso en gris bajo el campo, rojo al dejarlo vacío (enmienda DD-217 §1) · los avisos de Tipificaciones dicen «Tipificación «X» creada/actualizada/eliminada» · el modal de una agenda dice «¿Eliminar la agenda «X»?» · borrar varias tipificaciones dice «Las usan N grupos» · Descripción de Tipificaciones con «Breve descripción...» | DD-237 |
@@ -483,7 +483,7 @@ agenda o plantilla que un grupo tenía asignado entero ya no cuenta en «Agentes
 `agenda-agentes.spec.ts` reescrita; ajustadas `plantillas-editor`, `agendas-listado`, `admin-datatable-pilot`,
 `cabecera-escalera`, `tablas-revision-1015` y `tabla-al-pie`.
 
-## DD-229 · 2026-10-26 — El «+» de `sc-button` es siempre redondo: círculo sin rótulo, píldora con él
+## DD-229 · 2026-10-26 — El «+» de `sc-button` es redondo: círculo sin rótulo, píldora con él; salvo la variante `info`
 
 **Contexto** · En el prototipo los botones con «+» (`icon="add"`) salían con la esquina del botón normal; solo los que
 alguien marcaba con `rounded` eran redondos. DD-167 pedía el «+» redondo; DD-187 lo dejó con la forma del botón entero del Kit.
@@ -496,6 +496,11 @@ rótulo («Nueva cuenta de correo», «Añadir contacto»…). Sin propiedad nue
 
 **Consecuencias** · Cambia la forma de todos los «+» de las apps con `sc-button`; el de solo icono es un círculo de 31,5 junto a un campo de 32,5 (1 px menos, como ya medía DD-167); los de PrimeNG nativo no se tocan.
 Precisa DD-167 y DD-187 §«+».
+
+**Enmienda · 2026-10-29** · La variante `info` queda fuera de la regla: `isRounded` es `rounded() || (icon() === 'add' && variant() !== 'info')`.
+El único `variant="info"` de las apps es el CTA de `sc-empty-state` («Nueva plantilla», «Nuevo grupo»…), que con la regla
+salía en píldora de 28 px y no con el radio del botón `info` del Kit (`--sc-cmp-button-border-radius`). Un `rounded` explícito
+sigue redondeándolo. Cubierto por `sc-button.component.spec.ts` («radio del «+»»). Cambian las capturas `emptystate` y `button`.
 
 ## DD-228 · 2026-10-26 — En los menús, el icono lleva siempre el color de su texto, también con el ratón encima
 
