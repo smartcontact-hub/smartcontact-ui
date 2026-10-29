@@ -58,6 +58,9 @@ let modalIdCounter = 0;
  *   </div>
  * </sc-dialog>
  * ```
+ *
+ * @deprecated Usa `sc-custom-modal`, la carcasa de modal que comparten los dos DS (la de ui.smart-contact.com), y
+ * `sc-alert-modal` para avisos y confirmaciones (DD-239).
  */
 @Component({
   selector: 'sc-dialog',

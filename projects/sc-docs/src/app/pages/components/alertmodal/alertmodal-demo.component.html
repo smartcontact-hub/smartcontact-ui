@@ -20,16 +20,18 @@
 </ng-template>
 
 <ng-template #variantsTpl>
-  @for (v of variants; track v) {
-    <sc-alert-modal
-      [attr.data-testid]="'alert-' + v"
-      [variant]="v"
-      [title]="copy[v].title"
-      [message]="copy[v].message"
-      [actionLabel]="copy[v].action"
-      secondaryActionLabel="Cancelar"
-    />
-  }
+  <div style="display: grid; gap: var(--sc-spacing-1); justify-items: start">
+    @for (v of variants; track v) {
+      <sc-alert-modal
+        [attr.data-testid]="'alert-' + v"
+        [variant]="v"
+        [title]="copy[v].title"
+        [message]="copy[v].message"
+        [actionLabel]="copy[v].action"
+        secondaryActionLabel="Cancelar"
+      />
+    }
+  </div>
 </ng-template>
 
 <ng-template #limits>

@@ -16,6 +16,10 @@ import { SC_CONFIRM_POPUP_KEY, SC_CONFIRM_TERTIARY_KEY, ScConfirmService } from 
  *
  * Nombre DD-12 (pegado): envuelve 1:1 un componente PrimeNG. El origen lo
  * llamaba `sc-confirm-host`; el racional del rename está en el tag `archive/docs-history`.
+ *
+ * @deprecated El diálogo centrado lo sustituye `sc-alert-modal`, el aviso que comparten los dos DS (DD-239).
+ * Sigue vigente solo el globo pegado al botón (`ScConfirmService.request({ …, target })`), que aún no tiene
+ * sustituto.
  */
 @Component({
     selector: 'sc-confirmdialog',

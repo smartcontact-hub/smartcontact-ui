@@ -96,6 +96,8 @@ let customModalIdCounter = 0;
   host: {
     class: 'sc-custom-modal-host',
     '[class]': 'surfaceClass()',
+    // `role` es una entrada: escrito como atributo en la plantilla, el navegador también lo leería en el host.
+    '[attr.role]': 'null',
   },
 })
 export class ScCustomModalComponent {
