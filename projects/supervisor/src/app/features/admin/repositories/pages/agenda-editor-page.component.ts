@@ -8,6 +8,7 @@ import {
   ScDialogComponent as DialogComponent,
   ScInputTextComponent as InputTextComponent,
   ScSectionCardComponent as SectionCardComponent,
+  ScSubsectionComponent as SubsectionComponent,
 } from '@smartcontact-hub/components';
 
 import type { DirtyAware } from '@core/guards';
@@ -61,6 +62,7 @@ const VACIA: AgendaDraft = { name: '', description: '', contacts: [], customLabe
 @Component({
   selector: 'sc-agenda-editor-page',
   imports: [
+    SubsectionComponent,
     AgendaContactsTableComponent,
     AgentAssignmentTableComponent,
     ButtonComponent,

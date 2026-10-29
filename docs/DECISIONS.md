@@ -46,7 +46,7 @@
 > | Duplicar una agenda o una plantilla es un alta, como un grupo o un agente (enmienda DD-230): abre «Nueva agenda/plantilla» con la copia y su nombre «X (1)» (`seedFromId`, `nombreDeCopia`), que no existe hasta «Crear» · no copia a qué agentes se asigna | DD-234 |
 > | Agendas y Plantillas como sus COA (SISMAC-4440 y 4438): se asignan SOLO a agentes, en una tabla plana de agentes con su columna «Grupos» (`sc-agent-assignment-table`), sin árbol ni grupos dinámicos (enmienda DD-211 §1) · el listado de Agendas con Descripción, Contactos y Agentes (cifra, sin globo) ordenables · Plantillas sin pestañas, con columna Canal · contactos con casillas y borrado múltiple (completa DD-227 en una tabla anidada) | DD-230 |
 > | A quién se asignan Agendas, Plantillas y Equipos: solo a agentes, con la columna «Grupos» para filtrar y marcar de golpe; asignar a un grupo queda a futuro; el aviso de borrar no nombra grupos (confirmado con producto, 2026-10-28) | DD-239 |
-> | El «+» de `sc-button` (`icon="add"`) es siempre redondo: círculo sin rótulo, píldora con él (enmienda DD-167 y DD-187) | DD-229 |
+> | El «+» (`add`) se dibuja con Material Symbols Rounded, puntas redondeadas; el botón que lo lleva conserva la esquina del Kit (corrige DD-229, que redondeó el botón) | DD-240 |
 > | Con el índice en la caja, el carril mide 235, el de la caja en Figma: ningún rótulo de las fichas salta de línea · sin la caja, 196 (enmienda DD-220) | DD-221 |
 > | El índice de secciones, en la caja gris de Contact Center en las seis pantallas que lo llevan (Contact Center, fichas de grupo, agente y usuario, tipificación y constructor de reglas), como en Figma: un solo interruptor de la app (`SC_FORM_SECTION_NAV_CAJA`), y volver al índice plano es borrar su línea | DD-220 |
 > | Agendas y Plantillas como Grupos y Agentes: «Crear» y «Guardar» apagados mientras falte el título (o el contenido), con el motivo en el tooltip y el aviso en gris bajo el campo, rojo al dejarlo vacío (enmienda DD-217 §1) · los avisos de Tipificaciones dicen «Tipificación «X» creada/actualizada/eliminada» · el modal de una agenda dice «¿Eliminar la agenda «X»?» · borrar varias tipificaciones dice «Las usan N grupos» · Descripción de Tipificaciones con «Breve descripción...» | DD-237 |
@@ -167,6 +167,31 @@
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
 
 ---
+
+## DD-240 · 2026-10-29 — El «+» se dibuja con las puntas redondeadas; el botón que lo lleva conserva la esquina del Kit
+
+**Contexto** · La revisión de producto del 2026-10-26 pidió el «+» redondeado: el glifo `add` de Material Symbols
+Outlined (DD-31) acaba en esquinas vivas. DD-229 lo leyó como «el botón con «+» es redondo» y puso en círculo o píldora
+todo `sc-button` con `icon="add"`, también el CTA `info` de los estados vacíos, que salía en píldora de 28 px.
+
+**Decisión** · El trazo del «+» sale de Material Symbols Rounded: `.sc-icon-font--add` y `sc-icon` con `name="add"`
+(clase `sc-icon--add`) usan la familia `'Material Symbols Rounded Add'`, la fuente Rounded recortada a ese glifo y su
+ligadura (`styles/fonts/material-symbols-rounded-add.woff2`, 1,7 KB, ejes FILL, wght, GRAD y opsz). Los demás iconos
+siguen en Outlined. `sc-button` vuelve a redondear solo con `rounded` explícito: sin `isRounded`.
+
+**Razón** · Los dos estilos comparten codepoints y caja de 24, así que el «+» cambia de puntas sin moverse. La fuente
+Rounded entera pesa 5,3 MB (`material-symbols-rounded-latin-full-normal.woff2`); el recorte, 1,7 KB.
+
+**Descartadas** · Pasar todos los iconos a Rounded: cambia todo el set y re-litiga DD-31 sin que nadie lo haya pedido.
+Un SVG propio para el «+»: rompe la única API de icono (la fuente por ligadura). La excepción `info` sobre DD-229
+(propuesta el 2026-10-29): arreglaba el estado vacío pero dejaba redondos los demás botones, que nadie pidió.
+
+**Consecuencias** · Todos los «+» de las apps con `sc-button` o `sc-icon` vuelven a la esquina del Kit (6 px) y
+pintan el trazo redondeado. Los iconos compuestos (`person_add`, `group_add`…) siguen en Outlined. El recorte se
+regenera con `pyftsubset` (fonttools) sobre la fuente de `@fontsource-variable/material-symbols-rounded`:
+`--text="add" --unicodes=U+E145 --layout-features=rclt,rlig --flavor=woff2`. Material Symbols liga por `rlig`, no
+por `liga`: recortado con `liga`, la fuente carga y pinta la palabra «add». Sustituye DD-229; DD-167 y DD-187 vuelven a regir
+la forma del botón. Cubierto en `e2e/components.spec.ts` («Solo icono»): la familia del «+» y que «add» mide un glifo de 1 em.
 
 ## DD-239 · 2026-10-28 — Agendas, Plantillas y Equipos se asignan solo a agentes; la columna «Grupos» filtra, no asigna
 
@@ -484,6 +509,8 @@ agenda o plantilla que un grupo tenía asignado entero ya no cuenta en «Agentes
 `cabecera-escalera`, `tablas-revision-1015` y `tabla-al-pie`.
 
 ## DD-229 · 2026-10-26 — El «+» de `sc-button` es siempre redondo: círculo sin rótulo, píldora con él
+
+> **Sustituida por DD-240 (2026-10-29).** Leyó mal la revisión: lo redondo era el trazo del «+», no el botón.
 
 **Contexto** · En el prototipo los botones con «+» (`icon="add"`) salían con la esquina del botón normal; solo los que
 alguien marcaba con `rounded` eran redondos. DD-167 pedía el «+» redondo; DD-187 lo dejó con la forma del botón entero del Kit.

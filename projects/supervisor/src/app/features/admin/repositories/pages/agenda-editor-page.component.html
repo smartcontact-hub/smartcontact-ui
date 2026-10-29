@@ -23,7 +23,8 @@
 
 
     <sc-section-card titleKey="repositories.agendas.section_general" surface="subtle" icon="tune">
-      <section class="sub-section">
+      <sc-subsection>
+<div class="bloque">
         <div class="grid grid--2">
           <div class="field">
             <sc-inputtext
@@ -49,11 +50,13 @@
             />
           </div>
         </div>
-      </section>
+      </div>
+</sc-subsection>
     </sc-section-card>
 
     <sc-section-card titleKey="repositories.agendas.contacts" surface="subtle" icon="call">
-      <section class="sub-section">
+      <sc-subsection>
+<div class="bloque">
         <sc-agenda-contacts-table
           [contacts]="form().contacts"
           [fields]="contactColumns()"
@@ -63,19 +66,22 @@
           (remove)="removeContact($event)"
           (removeMany)="removeContacts($event)"
         />
-      </section>
+      </div>
+</sc-subsection>
     </sc-section-card>
 
     <!-- A quién se asigna, la última sección: una tabla de agentes con sus grupos (COA SISMAC-4440). Solo a agentes. -->
     <sc-section-card titleKey="repositories.agendas.section_agents" surface="subtle" icon="headphones">
-      <section class="sub-section">
+      <sc-subsection>
+<div class="bloque">
         <sc-agent-assignment-table
           [agents]="agentsStore.agents()"
           [assigned]="form().agentIds"
           rowAriaKey="repositories.agendas.agents_row_aria"
           (assignedChange)="update('agentIds', $event)"
         />
-      </section>
+      </div>
+</sc-subsection>
     </sc-section-card>
   </div>
 </div>
