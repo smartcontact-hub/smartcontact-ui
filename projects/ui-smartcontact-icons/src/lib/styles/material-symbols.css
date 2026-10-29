@@ -20,7 +20,7 @@
   font-family: 'Material Symbols Rounded Add';
   font-style: normal;
   font-display: block;
-  font-weight: 100 700;
+  font-weight: 100 700; /* el rango del axis variable, como la de arriba; no es un font-weight de diseño */
   src: url('./fonts/material-symbols-rounded-add.woff2') format('woff2-variations');
 }
 
