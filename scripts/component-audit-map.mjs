@@ -59,7 +59,7 @@ export const CUANDO = {
   'sc-color-dot-picker': 'Para elegir un color de una paleta corta y cerrada, con su nombre — el color solo no se puede oír.',
   'sc-column-selector': 'Para que el usuario decida qué columnas ve en una tabla.',
   'sc-command-palette': 'Para llegar a cualquier sitio o acción escribiendo, sin recorrer menús. Es atajo, nunca el único camino.',
-  'sc-confirmdialog': 'Para confirmar una acción normal. Si lo que se borra hay que enseñarlo, `sc-delete-entity-dialog`.',
+  'sc-confirmdialog': 'Para confirmar una acción normal, con 2 botones o 3 (`choose()`). Mide de 320 a 480 px de ancho y hasta 400 de alto; título de 1 a 2 líneas y descripción de 1 a 4. Si lo que se borra hay que enseñarlo, `sc-delete-entity-dialog`.',
   'sc-datatable': 'Para datos tabulares con columnas comparables. Si cada fila es en realidad un formulario, NO es una tabla.',
   'sc-datepicker': 'Para elegir una fecha del calendario, cuando importa el día concreto y no un rango relativo («últimos 7 días»).',
   'sc-delete-entity-dialog': 'Para confirmar un borrado ENSEÑANDO qué se borra, en singular o en bloque.',

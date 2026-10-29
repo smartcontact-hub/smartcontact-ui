@@ -21,3 +21,9 @@
   <sc-button label="Expirar contraseña" variant="secondary" appearance="outlined" data-testid="confirm-popup" (clicked)="askNear($event)" />
   <p>Resultado: <span>{{ result() }}</span></p>
 </ng-template>
+
+<ng-template #limits>
+  <sc-button label="Texto largo" variant="secondary" appearance="outlined" data-testid="confirm-long" (clicked)="askLong()" />
+  <sc-button label="Tres botones" variant="secondary" appearance="outlined" data-testid="confirm-three" (clicked)="askThree()" />
+  <p>Resultado: <span>{{ result() }}</span></p>
+</ng-template>

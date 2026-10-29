@@ -971,6 +971,64 @@ test.describe('sc-confirmdialog', () => {
     await expect(boton).toBeFocused();
     await expect(page.getByTestId('confirm-result')).toHaveText('rechazado');
   });
+
+  /** Ancho y alto de maqueta: `boundingBox` mide con la escala de la animación de entrada aplicada. */
+  const cajaDe = (locator: Locator) => locator.evaluate((el: HTMLElement) => ({ ancho: el.offsetWidth, alto: el.offsetHeight }));
+
+  /** Líneas que se VEN de un texto recortado, y las que ocuparía entero (su alto sin recorte). */
+  const lineasDe = (locator: Locator) =>
+    locator.evaluate((el) => {
+      const lh = parseFloat(getComputedStyle(el).lineHeight);
+      return { vistas: Math.round(el.clientHeight / lh), enteras: Math.round(el.scrollHeight / lh) };
+    });
+
+  test('medidas: 320 px con texto corto; 480 de tope, título en 2 líneas y descripción en 4 con texto largo', async ({ page }) => {
+    await gotoPage(page, 'confirmdialog');
+    await page.getByTestId('confirm-primary').locator('button').click();
+    const dialog = page.locator('.p-confirmdialog');
+    await expect(dialog).toBeVisible();
+    expect((await cajaDe(dialog)).ancho).toBe(320);
+    await dialog.getByRole('button', { name: 'Cancelar' }).click();
+    await expect(dialog).toHaveCount(0);
+
+    await page.getByTestId('confirm-long').locator('button').click();
+    await expect(dialog).toBeVisible();
+    const caja = await cajaDe(dialog);
+    expect(caja.ancho).toBe(480);
+    expect(caja.alto).toBeLessThanOrEqual(400);
+    const titulo = dialog.locator('.p-dialog-title');
+    const cuerpo = dialog.locator('.p-confirmdialog-message');
+    // Las líneas «enteras» prueban que el texto de la demo sí pasa del tope: sin el recorte, esta sonda enrojece.
+    expect(await lineasDe(titulo)).toEqual({ vistas: 2, enteras: expect.any(Number) });
+    expect((await lineasDe(titulo)).enteras).toBeGreaterThan(2);
+    expect((await lineasDe(cuerpo)).vistas).toBe(4);
+    expect((await lineasDe(cuerpo)).enteras).toBeGreaterThan(4);
+    // Lo recortado se puede leer entero al pasar el ratón.
+    await expect(titulo).toHaveAttribute('title', /fin de semana»\?$/);
+    await expect(cuerpo).toHaveAttribute('title', /no se puede deshacer\.$/);
+    await page.keyboard.press('Escape');
+  });
+
+  test('tres botones: la tercera acción resuelve «tertiary», y Escape cuenta como rechazar', async ({ page }) => {
+    await gotoPage(page, 'confirmdialog');
+    const dialog = page.locator('.p-confirmdialog');
+    const abrir = page.getByTestId('confirm-three').locator('button');
+    await abrir.click();
+    await expect(dialog.locator('.p-dialog-footer').getByRole('button')).toHaveText(['No guardar', 'Cancelar', 'Guardar']);
+    await expect(dialog.getByRole('button', { name: 'Guardar', exact: true })).toBeFocused();
+    await dialog.getByRole('button', { name: 'No guardar' }).click();
+    await expect(page.getByTestId('confirm-result')).toHaveText('tercera');
+
+    await abrir.click();
+    await dialog.getByRole('button', { name: 'Guardar', exact: true }).click();
+    await expect(page.getByTestId('confirm-result')).toHaveText('aceptado');
+
+    await abrir.click();
+    await expect(dialog).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(dialog).toHaveCount(0);
+    await expect(page.getByTestId('confirm-result')).toHaveText('rechazado');
+  });
 });
 
 test.describe('sc-inputtext', () => {
