@@ -34,10 +34,11 @@
 ## Clasificación (auto-generada)
 
 <!-- @audit:components — TABLA GENERADA por `node scripts/component-audit.mjs --write`. NO editar a mano. -->
-**62 componentes** · 22 custom · 10 standard · 30 extended · 49 usados en Supervisor · estado (DD-190): 33 ready, 28 experimental, 1 deprecated.
+**64 componentes** · 22 custom · 10 standard · 32 extended · 49 usados en Supervisor · estado (DD-190): 33 ready, 28 experimental, 3 deprecated.
 
 | Componente | Tipo | Estado | PrimeNG base | API propia | Anidados | Demo | Usos en Supervisor |
 |---|---|---|---|---|---|---|---|
+| `sc-alert-modal` | EXTENDED | ready | primeng/dynamicdialog | 14 inputs | sc-custom-modal sc-button | ✓ | — |
 | `sc-avatar` | EXTENDED | ready | primeng/avatar, primeng/overlaybadge | 12 inputs | — | ✓ | 4 |
 | `sc-avatargroup` | STANDARD | experimental (sin demo) | primeng/avatargroup | 0 inputs | — | — | — |
 | `sc-badge` | STANDARD | ready | primeng/badge | 3 inputs | — | ✓ | 6 |
@@ -52,11 +53,12 @@
 | `sc-color-dot-picker` | CUSTOM | experimental (sin maestro en el Kit) | — | 1 inputs | sc-selectbutton | ✓ | 3 |
 | `sc-column-selector` | STANDARD | experimental (sin maestro en el Kit) | primeng/popover, primeng/tooltip | 1 inputs | — | ✓ | 1 |
 | `sc-command-palette` | CUSTOM | experimental (sin maestro en el Kit) | — | 0 inputs | — | ✓ | 4 |
-| `sc-confirmdialog` | STANDARD | ready | primeng/autofocus, primeng/button, primeng/confirmdialog, primeng/confirmpopup | 0 inputs | — | ✓ | 1 |
+| `sc-confirmdialog` | STANDARD | deprecated | primeng/autofocus, primeng/button, primeng/confirmdialog, primeng/confirmpopup | 0 inputs | — | ✓ | 1 |
+| `sc-custom-modal` | EXTENDED | ready | primeng/dialog, primeng/dynamicdialog | 19 inputs | sc-button | ✓ | 18 |
 | `sc-datatable` | EXTENDED | ready | primeng/table | 63 inputs | sc-skeleton sc-button | ✓ | 18 |
 | `sc-datepicker` | EXTENDED | ready | primeng/datepicker | 24 inputs | sc-field-label sc-button sc-field-msg | ✓ | 1 |
-| `sc-delete-entity-dialog` | STANDARD | experimental (sin maestro en el Kit) | primeng/tooltip | 2 inputs | sc-dialog sc-message sc-button | ✓ | 1 |
-| `sc-dialog` | EXTENDED | ready | primeng/dialog | 14 inputs | — | ✓ | 18 |
+| `sc-delete-entity-dialog` | STANDARD | experimental (sin maestro en el Kit) | primeng/tooltip | 2 inputs | sc-custom-modal sc-message sc-button | ✓ | 1 |
+| `sc-dialog` | EXTENDED | deprecated | primeng/dialog | 14 inputs | — | ✓ | — |
 | `sc-divider` | STANDARD | ready | primeng/divider | 3 inputs | — | ✓ | 22 |
 | `sc-drawer` | EXTENDED | ready | primeng/drawer | 11 inputs | — | ✓ | 3 |
 | `sc-empty-state` | CUSTOM | experimental (sin maestro en el Kit) | — | 4 inputs | sc-button | ✓ | 24 |
@@ -69,13 +71,13 @@
 | `sc-gauge` | CUSTOM | experimental (sin maestro en el Kit) | — | 9 inputs | — | ✓ | 1 |
 | `sc-group-popover` | STANDARD | experimental (sin maestro en el Kit) | primeng/tooltip | 3 inputs | — | ✓ | 6 |
 | `sc-icon-tile` | CUSTOM | experimental (sin maestro en el Kit) | — | 3 inputs | — | ✓ | — |
-| `sc-impact-preview-dialog` | CUSTOM | experimental (sin maestro en el Kit) | — | 3 inputs | sc-dialog sc-button | ✓ | 1 |
+| `sc-impact-preview-dialog` | CUSTOM | experimental (sin maestro en el Kit) | — | 3 inputs | sc-custom-modal sc-button | ✓ | 1 |
 | `sc-inline-rename-cell` | CUSTOM | experimental (sin maestro en el Kit) | — | 2 inputs | — | ✓ | 2 |
 | `sc-inputgroup` | STANDARD | ready | primeng/inputgroup | 2 inputs | — | ✓ | 1 |
 | `sc-inputnumber` | EXTENDED | ready | primeng/inputtext | 18 inputs | sc-field-label sc-field-msg | ✓ | 20 |
 | `sc-inputtags` | EXTENDED | experimental (sin maestro en el Kit) | primeng/inputtags | 18 inputs | sc-field-label sc-field-msg | ✓ | 2 |
 | `sc-inputtext` | EXTENDED | ready | primeng/inputtext | 20 inputs | sc-field-label sc-field-msg | ✓ | 45 |
-| `sc-keyboard-shortcuts` | CUSTOM | experimental (sin maestro en el Kit) | — | 1 inputs | sc-dialog | ✓ | 2 |
+| `sc-keyboard-shortcuts` | CUSTOM | experimental (sin maestro en el Kit) | — | 1 inputs | sc-custom-modal | ✓ | 2 |
 | `sc-message` | EXTENDED | ready | primeng/message | 6 inputs | — | ✓ | 7 |
 | `sc-multiselect` | EXTENDED | ready | primeng/chip, primeng/multiselect, primeng/tooltip | 38 inputs | sc-field-label sc-field-msg | ✓ | 16 |
 | `sc-option-cards` | EXTENDED | experimental (sin maestro en el Kit ni demo) | primeng/radiobutton | 5 inputs | — | — | 3 |

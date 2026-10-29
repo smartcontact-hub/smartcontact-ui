@@ -59,11 +59,13 @@ export const CUANDO = {
   'sc-color-dot-picker': 'Para elegir un color de una paleta corta y cerrada, con su nombre — el color solo no se puede oír.',
   'sc-column-selector': 'Para que el usuario decida qué columnas ve en una tabla.',
   'sc-command-palette': 'Para llegar a cualquier sitio o acción escribiendo, sin recorrer menús. Es atajo, nunca el único camino.',
-  'sc-confirmdialog': 'Para confirmar una acción normal, con 2 botones o 3 (`choose()`). Mide de 320 a 480 px de ancho y hasta 400 de alto; título de 1 a 2 líneas y descripción de 1 a 4. Si lo que se borra hay que enseñarlo, `sc-delete-entity-dialog`.',
+  'sc-alert-modal': 'Para un aviso o una pregunta con una acción clara (borrar, descartar cambios, sesión caducada), abierto por `ScDynamicDialogService` como en ui.smart-contact.com. La variante dice la intención: `error` destruye o bloquea, `warning` pide atención, `info` informa y `default` confirma algo neutro. Mide de 320 a 480 px y hasta 400 de alto. Si lleva más que texto, `sc-custom-modal`.',
+  'sc-confirmdialog': 'Retirado (DD-241): para confirmar, `sc-alert-modal`. Queda solo el globo pegado al botón (`ScConfirmService.request({ target })`), para una frase sobre lo que se acaba de pulsar.',
+  'sc-custom-modal': 'Para un modal con contenido propio (un formulario, una tabla, un reproductor): la carcasa que comparten los dos DS. Se abre por `ScDynamicDialogService`, como en ui.smart-contact.com, o con `[(visible)]` si su formulario se ata al estado de la pantalla. Para un aviso con una acción, `sc-alert-modal`.',
   'sc-datatable': 'Para datos tabulares con columnas comparables. Si cada fila es en realidad un formulario, NO es una tabla.',
   'sc-datepicker': 'Para elegir una fecha del calendario, cuando importa el día concreto y no un rango relativo («últimos 7 días»).',
   'sc-delete-entity-dialog': 'Para confirmar un borrado ENSEÑANDO qué se borra, en singular o en bloque.',
-  'sc-dialog': 'Para una tarea corta que interrumpe sin sacarte de la pantalla. Si es larga o hay que consultar lo de detrás, `sc-drawer`.',
+  'sc-dialog': 'Retirado (DD-241): usa `sc-custom-modal`, la carcasa que comparten los dos DS.',
   'sc-divider': 'Para separar visualmente dos bloques cuando el espacio no basta.',
   'sc-drawer': 'Para un panel lateral con trabajo que conserva el contexto de detrás.',
   'sc-empty-state': 'Para cuando no hay nada que enseñar: dice por qué está vacío y qué hacer. Una lista vacía sin esto parece rota.',
@@ -159,7 +161,7 @@ export const KIT_MAESTROS = new Set([
   'FileUpload', 'Breadcrumb', 'ContextMenu', 'Dock', 'Menu', 'Menubar', 'MegaMenu', 'PanelMenu', 'TieredMenu',
   'Message', 'Toast', 'Carousel', 'Galleria', 'Image', 'ImageCompare', 'Avatar', 'Badge', 'BlockUI', 'Chip',
   'Inplace', 'MeterGroup', 'ScrollTop', 'Skeleton', 'ProgressBar', 'ProgressSpinner', 'Tag', 'Terminal',
-  'Custom modal', 'Sidebar', 'Navmenu', 'Section',
+  'Custom modal', 'Alert modal', 'Sidebar', 'Navmenu', 'Section',
 ]);
 
 /** Componente del DS → su página del Kit, cuando el nombre no casa solo (el Kit escribe «Divide»). */

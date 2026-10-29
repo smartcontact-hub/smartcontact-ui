@@ -173,6 +173,20 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
+## ✅ 2026-10-29 · `sc-custom-modal` y `sc-alert-modal`, como en ui.smart-contact.com (DD-241, #555)
+
+**Sello:** rama `areses/confirmdialog-documentation-search-466499`. Salen los tramos del 2026-10-14: `git show e57ab438:docs/handoff/design-system.md`.
+
+**Lo que cambia.** Los dos modales de los devs, con sus nombres y su API (extensiones nuestras marcadas). Se retiran `sc-dialog`
+y el confirm centrado; el globo con `target` sigue. Supervisor: 19 modales sobre la carcasa, confirmaciones con `injectAlertModal`
+(borrar `error`, descartar `warning`). Lo vigilan `audit:modales` y la regla «Modales» de AGENTS.md.
+
+**Figma.** «❖ Custom modal» es solo la carcasa (sin Error ni Warn; sus 9 instancias pasaron a Alert modal). «❖ Alert modal»
+(15876:601) lleva las cuatro variantes. Falta publicar la librería y el Code Connect (desde `main`, tras fundir #555).
+
+**Pendiente.** Contar a los devs sus fallos (roles anidados, Escape sin aviso, foco en la X) y que su página de Custom Modal
+está rota en producción (`ChunkLoadError`).
+
 ## ✅ 2026-10-22 · El índice del alta lleva un marcador de paso (`sc-step-marker`, DD-222)
 
 **Sello:** rama `areses/indice-checks-aleatorios-e7aa39`, sobre HEAD `12bd0f44` de `main`.
@@ -184,25 +198,6 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 **Figma.** El DS tiene el conjunto `step-marker` (15724:271) y `nav-item` (12555:23029) con 21 variantes. Falta que Rafa publique la librería; después hay que cambiar los 33 índices de la página Grupos del archivo del Supervisor (variante nueva por `importComponentByKeyAsync` + `swapComponent`) y tocar las notas «Cómo se comporta».
 
 **Pendiente.** Replicar el marcador en las fichas de agente, usuario y tipificación; revisar el copy fr y pt.
-
-## ✅ 2026-10-14 · PrimeNG por familias: catálogo de 109, barrido de usos y página en sc-docs
-
-**Sello:** rama `arebury/primeng-component-usage`, sobre HEAD `6ddbec7d` (#400). Sale por el tope el tramo del 2026-10-13
-(DD-202): `git show 6ddbec7d:docs/handoff/design-system.md`.
-
-**Lo que cambia.** El catálogo (§6) dice de los 109 módulos para qué sirven y cuándo elegir cada uno frente a su vecino; §7 es el barrido de usos; sc-docs lo pinta en `/#/components/primeng`, que es también el sitio de los nativos sin wrapper. De paso: los avisos de Conversaciones salen (llevaban una clave que nadie pintaba) y las confirmaciones que destruyen abren en «Cancelar».
-⚠️ **La página sale de un artefacto** que reescribe `npm run primeng-catalog:gen` con el estado del repo: un `primeng/x` nuevo en una app lo deja atrás y `audit:primeng-catalog` se pone rojo hasta regenerarlo (pasó con ContextMenu en `lab/arbol`, #400: este PR lo regeneró al traer `main`).
-
-## ✅ 2026-10-14 · El árbol de `/lab/arbol` hace los ejemplos de primeng.dev/treetable
-
-**Sello:** rama `arebury/tabla-primeng-completa`, sobre `a26d7fab` (#399). Sale por el tope el tramo de iconos del
-2026-10-13 (DD-200): `git show a26d7fab:docs/handoff/design-system.md`.
-
-**Lo que cambia.** `p-treetable` nativo, sin wrapper, con los 32 ejemplos de primeng.dev (cabecera agrupada con totales,
-selección, filtros, edición que suma al equipo, menú contextual, carga perezosa, congelar…): siete grupos en la píldora.
-
-- ⚠️ **Cinco trampas de PrimeNG 22, junto a su arreglo** en `treetable-lab-page.component.ts`: `selection` frente a
-  `selectionKeys`, `dataKey` en `node.data`, `totalRecords` vacío, `customSort` por nivel y el paginador que no recorta.
 
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 
@@ -281,6 +276,13 @@ variables, 30 comentarios activos.
 
 ## ⚠️ Trampas de este frente
 
+- ⚠️ **Un `sc-button` de solo icono con el foco dentro de un `p-dialog` se queda el primer Escape**: su tooltip (DD-200) se
+  registra como capa de encima y PrimeNG solo cierra si el diálogo es la de arriba. Por eso `sc-custom-modal` nunca abre
+  con el foco en un botón (DD-241). Con prisa en la máquina el tooltip llega antes y la prueba falla a ratos: no es inestable.
+- ⚠️ **La página de PrimeNG de sc-docs sale de un artefacto** que reescribe `npm run primeng-catalog:gen`: un `primeng/x`
+  nuevo en una app lo deja atrás y `audit:primeng-catalog` se pone rojo hasta regenerarlo (pasó con ContextMenu, #400).
+- ⚠️ **Cinco trampas de PrimeNG 22 en `p-treetable`**, junto a su arreglo en `treetable-lab-page.component.ts`: `selection`
+  frente a `selectionKeys`, `dataKey` en `node.data`, `totalRecords` vacío, `customSort` por nivel y el paginador que no recorta.
 - ⚠️ **`stateKey` tapa dos fallos de PrimeNG 22** (`reponerEstado` y `onStateSave` de `sc-datatable.component.ts`): sus entradas pisan lo repuesto en el mismo arranque, y un filtro en fila vacío rompía la tabla al volver. Al subir PrimeNG, quita los dos y mira si la prueba «stateKey: al volver…» sigue verde. (Tramo archivado: `git show archive/handoff-design-system-2026-10-22:docs/handoff/design-system.md`.)
 
 - 🪤 **Al quitar un import de PrimeNG, el trinquete de descripciones pide JSDoc** para lo que heredaba la suya: la de la pieza hermana sirve donde coincide (DD-172).

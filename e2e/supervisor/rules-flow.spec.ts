@@ -151,7 +151,7 @@ test('el vacío ofrece elegir el tipo de regla', async ({ page }) => {
   for (let remaining = await rows.count(); remaining > 0; remaining -= 1) {
     const label = (await rows.first().locator('.rules-table__name').innerText()).trim();
     await openKebabAction(page, label, /eliminar/i);
-    await page.locator('.p-confirmdialog').getByRole('button', { name: /eliminar|confirmar/i }).click();
+    await page.getByRole('alertdialog').getByRole('button', { name: /eliminar|confirmar/i }).click();
     await expect(rows).toHaveCount(remaining - 1);
   }
 

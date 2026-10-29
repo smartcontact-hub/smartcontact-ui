@@ -32,6 +32,12 @@
       "port": 4300
     },
     {
+      "name": "supervisor-static-spa",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["--yes", "http-server", "dist/supervisor/browser", "-p", "4412", "-c-1", "--silent", "--proxy", "http://localhost:4412?"],
+      "port": 4412
+    },
+    {
       "name": "supervisor",
       "runtimeExecutable": "npx",
       "runtimeArgs": ["ng", "serve", "supervisor", "--port", "4400"],

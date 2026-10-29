@@ -4,7 +4,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ListboxModule } from 'primeng/listbox';
 import {
   ScButtonComponent as ButtonComponent,
-  ScDialogComponent as DialogComponent,
+  ScCustomModalComponent as DialogComponent,
   ScInputTextComponent as InputTextComponent,
   ScRadioButtonComponent as RadioButtonComponent,
   ScSelectComponent as SelectComponent,

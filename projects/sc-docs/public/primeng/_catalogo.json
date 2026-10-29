@@ -878,7 +878,7 @@
           "sirve": "El mismo diálogo, abierto desde código con un componente dentro.",
           "cuando": "El contenido es un componente que se abre desde varios sitios.",
           "aqui": "<code>ScDynamicDialogService</code>; directo en sc-docs (sección 3)",
-          "estado": "directo",
+          "estado": "ds",
           "obsoleto": false
         },
         {

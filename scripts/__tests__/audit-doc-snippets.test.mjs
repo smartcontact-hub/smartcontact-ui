@@ -15,6 +15,7 @@ import {
   historiasSinSuCodigo,
   inputsDeComponentes,
   inputsSinEjemplo,
+  inputValuesDe,
   plantillasDe,
   revisarCobertura,
   revisarProyeccion,
@@ -390,6 +391,23 @@ test('(b) un input contado por el knob NO cuenta como sin ejemplo; uno ausente S
   const inputs = { 'sc-cosa': new Set(['label', 'variant', 'sinRastro', 'inputId']) };
   const faltan = inputsSinEjemplo('sc-cosa', ['<sc-cosa label="A" />'], new Set(['variant']), inputs);
   assert.deepEqual(faltan, ['sinRastro'], '`inputId` es fontanería y `variant` está en los knobs');
+});
+
+test('(b) las claves de `inputValues` de un open(ScXComponent) cuentan como ejemplo', () => {
+  const codigo = `const ref = this.dynamicDialog.open(ScCosaRaraComponent, {
+  inputValues: {
+    title: 'Hola: mundo',
+    closeRequested: () => ref.close('closed'),
+    onAction: () => { const x = { anidado: 1 }; },
+  },
+});`;
+  const [uso] = inputValuesDe(codigo);
+  assert.equal(uso.tag, 'sc-cosa-rara');
+  assert.deepEqual([...uso.atributos].sort(), ['closeRequested', 'onAction', 'title'], 'ni `anidado` ni el «mundo» del texto');
+  const inputs = { 'sc-cosa-rara': new Set(['title', 'closeRequested', 'sinRastro']) };
+  assert.deepEqual(inputsSinEjemplo('sc-cosa-rara', [codigo], new Set(), inputs), ['sinRastro']);
+  // Con el contenido de un componente propio (no `Sc…Component`) no se atribuye a nadie.
+  assert.deepEqual(inputValuesDe(codigo.replace('ScCosaRaraComponent', 'MiModal')), []);
 });
 
 test('(b) el trinquete solo baja: el corpus real no puede empeorar', () => {

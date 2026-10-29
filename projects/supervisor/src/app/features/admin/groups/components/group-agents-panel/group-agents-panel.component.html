@@ -42,13 +42,13 @@
 </sc-drawer>
 
 @if (confirmDiscard()) {
-  <sc-dialog
+  <sc-custom-modal
     [visible]="true"
     [title]="'common.discard_title' | translate"
     [subtitle]="'common.discard_body' | translate"
-    (cancelled)="keepEditing()"
+    (closed)="keepEditing()"
   >
-    <div modal-actions>
+    <div scCustomModalFooter>
       <sc-button type="button" size="sm" variant="secondary" appearance="outlined" (clicked)="keepEditing()">
         <span>{{ 'common.discard_keep' | translate }}</span>
       </sc-button>
@@ -56,5 +56,5 @@
         <span>{{ 'common.discard_confirm' | translate }}</span>
       </sc-button>
     </div>
-  </sc-dialog>
+  </sc-custom-modal>
 }

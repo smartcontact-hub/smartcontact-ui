@@ -1,10 +1,10 @@
-<sc-dialog
+<sc-custom-modal
   [visible]="visible()"
   icon="dashboard_customize"
   [title]="(editing() ? 'dashboard.assistant.title_edit' : 'dashboard.assistant.title_new') | translate"
   [subtitle]="(size() === 'big' ? 'dashboard.assistant.subtitle_big' : 'dashboard.assistant.subtitle_small') | translate"
   width="min(65rem, 94vw)"
-  (cancelled)="close()"
+  (closed)="close()"
 >
   <div class="assistant">
     <div class="assistant__form">
@@ -110,7 +110,7 @@
     </aside>
   </div>
 
-  <div modal-actions>
+  <div scCustomModalFooter>
     <sc-button type="button" size="sm" variant="secondary" [label]="'common.cancel' | translate" (clicked)="close()" />
     <sc-button
       type="button"
@@ -121,4 +121,4 @@
       (clicked)="save()"
     />
   </div>
-</sc-dialog>
+</sc-custom-modal>

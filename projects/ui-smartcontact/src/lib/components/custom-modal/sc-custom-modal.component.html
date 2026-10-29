@@ -1,0 +1,72 @@
+<!-- La carcasa se define una vez y se pinta en uno de dos sitios: dentro del diálogo de PrimeNG que abre
+     `[(visible)]` (extensión nuestra) o tal cual, dentro de DynamicDialog o en línea. -->
+<ng-template #shell>
+  <!-- Sin rol propio: el diálogo es el de PrimeNG que la envuelve (DD-140); en línea no es un modal. -->
+  <section #surface class="sc-custom-modal" [class]="styleClass()" tabindex="-1">
+    @if (hasHeader()) {
+      <header
+        class="sc-custom-modal__header"
+        [class.sc-custom-modal__header--no-icon]="!icon()"
+        [class.sc-custom-modal__header--no-subtitle]="!subtitle()"
+      >
+        @if (icon(); as ic) {
+          <sc-icon class="sc-custom-modal__icon" [name]="ic" [size]="iconPx()" aria-hidden="true" />
+        }
+        <div class="sc-custom-modal__heading">
+          @if (title(); as t) {
+            <h2 [id]="titleId">{{ t }}</h2>
+          }
+          @if (subtitle(); as sub) {
+            <p [id]="subtitleId">{{ sub }}</p>
+          }
+        </div>
+        @if (showCloseButton()) {
+          <sc-button
+            class="sc-custom-modal__close"
+            icon="close"
+            iconSize="lg"
+            iconOnly
+            appearance="text"
+            [variant]="closeVariant()"
+            rounded
+            [ariaLabel]="closeAriaLabel() || ('sc.customModal.close' | translate)"
+            (clicked)="close()"
+          />
+        }
+      </header>
+    }
+
+    <div class="sc-custom-modal__body" [class]="bodyClass()">
+      <ng-content select="[scCustomModalBody]" />
+      <ng-content />
+    </div>
+
+    <!-- Sin nada proyectado, el pie queda vacío y no ocupa (`:empty` en la hoja). -->
+    <footer class="sc-custom-modal__footer" [class]="footerClass()"><ng-content select="[scCustomModalFooter]" /></footer>
+  </section>
+</ng-template>
+
+@if (declarative()) {
+  <p-dialog
+    [visible]="!!visible()"
+    [modal]="true"
+    [closable]="showCloseButton()"
+    [closeOnEscape]="showCloseButton()"
+    [dismissableMask]="dismissableMask()"
+    [draggable]="false"
+    [resizable]="false"
+    [focusOnShow]="false"
+    [showHeader]="false"
+    styleClass="sc-custom-modal-dialog"
+    [style]="dialogStyle"
+    [contentStyle]="contentStyle"
+    [pt]="dialogPt()"
+    (visibleChange)="onVisibleChange($event)"
+    (onShow)="onShow()"
+    (onHide)="onHide()"
+  >
+    <ng-container *ngTemplateOutlet="shell" />
+  </p-dialog>
+} @else {
+  <ng-container *ngTemplateOutlet="shell" />
+}

@@ -12,6 +12,7 @@ import { provideHttpClient, withFetch } from '@angular/common/http';
 import { MessageService } from 'primeng/api';
 import {
   provideScConfirm,
+  provideScDynamicDialog,
   provideSmartContactUi,
   SC_FORM_SECTION_NAV_CAJA,
 } from '@smartcontact-hub/components';
@@ -86,6 +87,8 @@ export const appConfig: ApplicationConfig = {
     }),
     MessageService,
     ...provideScConfirm(),
+    // Los avisos y confirmaciones centrados son `sc-alert-modal`, que se abre por DynamicDialog (DD-241).
+    ...provideScDynamicDialog(),
     // El índice de secciones en la caja gris de Contact Center, como en Figma (DD-220): Contact Center, las fichas de
     // grupo, agente y usuario, la de tipificación y el constructor de reglas. Para volver al índice plano, borra la línea.
     { provide: SC_FORM_SECTION_NAV_CAJA, useValue: true },

@@ -1,0 +1,44 @@
+<!-- `role` es la entrada de la carcasa (el rol que pone al diálogo de PrimeNG), no un atributo de este elemento. -->
+<sc-custom-modal
+  [role]="dialogRole"
+  iconSize="lg"
+  [title]="title()"
+  [icon]="resolvedIcon()"
+  [showCloseButton]="showCloseButton()"
+  [closeVariant]="closeVariant()"
+  [closeAriaLabel]="closeAriaLabel()"
+  [closeRequested]="closeRequested()"
+  [ariaDescribedBy]="message() ? messageId : null"
+  [surfaceClass]="surfaceClass()"
+  bodyClass="sc-alert-modal__body"
+  (closed)="onClosed()"
+>
+  @if (message(); as msg) {
+    <div scCustomModalBody class="sc-alert-modal__message" [id]="messageId" [innerHTML]="msg"></div>
+  }
+
+  @if (tertiaryActionLabel(); as label) {
+    <sc-button
+      #tertiaryBtn
+      scCustomModalFooter
+      class="sc-alert-modal__tertiary"
+      [label]="label"
+      variant="primary"
+      appearance="text"
+      (clicked)="onTertiary()"
+    />
+  }
+  @if (secondaryActionLabel(); as label) {
+    <sc-button
+      #secondaryBtn
+      scCustomModalFooter
+      [label]="label"
+      variant="primary"
+      appearance="text"
+      (clicked)="onSecondary()"
+    />
+  }
+  @if (actionLabel(); as label) {
+    <sc-button #primaryBtn scCustomModalFooter [label]="label" [variant]="actionVariant()" (clicked)="onAction()" />
+  }
+</sc-custom-modal>

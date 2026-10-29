@@ -10,6 +10,7 @@ import {
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
+import { injectAlertModal } from '@core/services';
 import { ScDividerComponent as DividerComponent } from '@smartcontact-hub/components';
 import { ScTagComponent as TagComponent } from '@smartcontact-hub/components';
 import { ScEmptyStateComponent as EmptyStateComponent } from '@smartcontact-hub/components';
@@ -18,7 +19,6 @@ import { TooltipModule } from 'primeng/tooltip';
 import type { MenuItem } from 'primeng/api';
 
 import {
-  ScConfirmService,
   type ScColumnCellContext,
   type ScColumnDef,
   ScDatatableComponent as DatatableComponent,
@@ -64,7 +64,7 @@ import { CeldaVaciaComponent } from '@shared/components';
 })
 export class EntitiesPageComponent {
   private readonly entitiesStore = inject(EntitiesStore);
-  private readonly confirm = inject(ScConfirmService);
+  private readonly alertModal = injectAlertModal();
   private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
@@ -238,12 +238,12 @@ export class EntitiesPageComponent {
   }
 
   private async confirmDelete(entity: Entity): Promise<void> {
-    const accepted = await this.confirm.request({
+    const accepted = await this.alertModal({
+      variant: 'error',
       title: this.translate.instant('memory.entities.delete_title'),
-      body: this.translate.instant('memory.entities.delete_body', { name: entity.name }),
-      acceptLabel: this.translate.instant('common.delete'),
-      rejectLabel: this.translate.instant('common.cancel'),
-      acceptTone: 'danger',
+      message: this.translate.instant('memory.entities.delete_body', { name: entity.name }),
+      actionLabel: this.translate.instant('common.delete'),
+      secondaryActionLabel: this.translate.instant('common.cancel'),
     });
     if (!accepted) return;
     this.entitiesStore.deleteEntity(entity.id);

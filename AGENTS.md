@@ -341,13 +341,33 @@ no la otra. Cada fila apunta a la decisión o al gate que la sostiene; no hay fi
 | Un botón de solo icono | `sc-button` con `ariaLabel` (el tooltip sale solo, con ratón y teclado) | `pTooltip` que repite el nombre; `title`; un `<button>` con un `sc-icon` dentro | DD-200 |
 | Algo que se lee al pasar el ratón (un icono con significado, un texto cortado, por qué un botón está apagado) | `pTooltip` de PrimeNG, el tooltip del Kit: con `showOnEllipsis` si repite un texto cortado (solo sale con «…») y `tooltipEvent="both"` si va en algo que se enfoca | `title`, que el navegador enseña con su globo del sistema | DD-212 · `audit:screen-hygiene` (9) |
 | Un control con su teclado (deslizador, menú, grupo de opciones, pestañas, capa) o dudar entre dos parecidos | El nativo de su familia en la sección 6 de `docs/AUDIT-PRIMENG-CATALOGO.md`: la pregunta que abre la familia decide entre hermanos, y su «Elígelo cuando…» dice cuál | Un `role="slider"`, `role="menuitem"`, `role="radio"` o `aria-modal` puestos a mano en un `div` o un `button`: prometen un teclado que no traen | `audit:screen-hygiene` (8) |
-| Un diálogo modal con contenido propio (un alta sin salir de la ficha, un aviso con su detalle) | `sc-dialog` con su `title`, que es su nombre para el lector; lo de dentro, sin rol propio | Un `role="dialog"` en lo que va dentro (sale un diálogo dentro de otro); un `p-dialog` a pelo sin nombre | DD-140 |
+| Un diálogo modal con contenido propio (un alta sin salir de la ficha, un reproductor, una tabla) | `sc-custom-modal` con su `title`, que es su nombre para el lector: por `ScDynamicDialogService` como los devs, o con `[(visible)]` si el formulario se ata a la pantalla; lo de dentro, sin rol propio | `sc-dialog` (retirado); un `role="dialog"` en lo que va dentro; un `p-dialog` a pelo sin nombre | DD-140, DD-241 |
+| Un aviso o una pregunta con una acción (borrar, descartar cambios, sesión caducada) | `sc-alert-modal` por `ScDynamicDialogService` (en el Supervisor, `injectAlertModal()`): `error` borra o bloquea, `warning` pide atención, `info` informa | El diálogo centrado de `ScConfirmService` (retirado); un `sc-custom-modal` con dos botones a mano | DD-241 |
 | Borrar una entidad desde su ficha | `sc-form-danger-zone` + `sc-delete-entity-dialog` (el patrón de las nueve fichas que ya lo usan, ver `docs/inventory.md`) | `sc-confirmdialog` genérico; borrar sin confirmar | `docs/inventory.md` |
 | Confirmar con una frase lo que se acaba de pulsar (marcar una columna entera, «Expirar contraseña») | `ScConfirmService.request({ …, target })` con lo pulsado: un `p-confirmpopup` pegado a ello, y el foco vuelve ahí al cerrar (no lo apagues mientras pregunta) | El diálogo centrado para una frase; un globo propio | DD-205 |
-| Confirmar algo cuya consecuencia hay que explicar (una rama con sus hijas) o sin un botón al que pegarse (al guardar, al salir) | `ScConfirmService.request` sin `target`: el `p-confirmdialog` centrado | El globo: tapa poco y explica poco | DD-205 |
+| Confirmar algo cuya consecuencia hay que explicar (una rama con sus hijas) o sin un botón al que pegarse (al guardar, al salir) | `sc-alert-modal` (la fila de arriba) | El globo: tapa poco y explica poco; `ScConfirmService.request` sin `target` (retirado) | DD-205, DD-241 |
 | Un menú de acciones con un segundo nivel (los filtros de un widget) | `p-tieredmenu` con `popup`; lo que quita o borra, con `styleClass: 'sc-menu-item--danger'` | `p-menu` con los grupos planos | DD-205 |
 | Filtrar por un par que reparte todo (tipo, canal, dirección) | `sc-selectbutton multiple [allowEmpty]="false"`: no se queda vacío | Dos casillas sueltas, que dejan la tabla en 0 | DD-205 |
 | Dos flujos que se ven distintos y parece un bug | Mira DD-36 y DD-53 antes de uniformar | Igualarlos «para que cuadren» | DD-36, DD-53 |
+
+**Modales: los de ui.smart-contact.com, sin variaciones (DD-241).**
+
+Los devs usan `sc-custom-modal` y `sc-alert-modal` en toda la plataforma; los nuestros se llaman igual, tienen su misma
+API y se abren igual. Para no abrir un tercer camino:
+
+- **Aviso o pregunta con una acción** → `sc-alert-modal`. En el Supervisor, `injectAlertModal()` de `@core/services`;
+  fuera, `ScDynamicDialogService.open(ScAlertModalComponent, { inputValues })`. La `variant` dice la intención y no se
+  elige por gusto: **borrar o bloquear `error`**, **descartar cambios `warning`**, **informar `info`**, **neutro `default`**.
+- **Contenido propio** (formulario, tabla, reproductor) → `sc-custom-modal`: por servicio como los devs, o con
+  `[(visible)]` si se ata a la pantalla. La carcasa **no tiene tono**: un modal teñido es siempre un `sc-alert-modal`.
+- **Una frase junto a lo pulsado** → `ScConfirmService.request({ …, target })`. Sin `target` no se usa.
+- **Extensiones nuestras** (`[(visible)]`, `width`, `dismissableMask`, `closeVariant`, `shown`, `tertiaryActionLabel`): solo esas, y marcadas
+  así en el JSDoc. Una entrada nueva que los devs no tienen se pregunta antes: rompe el «se llama igual».
+- **Figma calca lo mismo**: «❖ Custom modal» es solo la carcasa (Default); «❖ Alert modal» lleva las cuatro variantes.
+  No se añaden tipos de color a Custom modal.
+
+Lo vigila `audit:modales` (en `verify`, tope 0): `sc-dialog`, un `p-dialog` o `ConfirmationService` a pelo en el
+Supervisor, `<sc-confirmdialog>` fuera de `app.component.html` y un `request()` sin `target` ponen rojo.
 
 ---
 

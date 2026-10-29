@@ -1,9 +1,9 @@
-<sc-dialog
+<sc-custom-modal
   [visible]="visible()"
   [icon]="mode() === 'duplicate' ? duplicateIcon : arrowIcon"
   [title]="title()"
   width="520px"
-  (cancelled)="cancelled.emit()"
+  (closed)="cancelled.emit()"
 >
   @if (badge(); as b) {
     <div class="badge">
@@ -41,7 +41,7 @@
     }
   </ul>
 
-  <div modal-actions>
+  <div scCustomModalFooter>
     <sc-button type="button" size="sm" variant="secondary" (clicked)="cancelled.emit()">
       <span>{{ cancelLabel() ?? ('sc.impactPreviewDialog.cancel' | translate) }}</span>
     </sc-button>
@@ -55,4 +55,4 @@
       <span>{{ confirmLabel() ?? ('sc.impactPreviewDialog.confirm' | translate) }}</span>
     </sc-button>
   </div>
-</sc-dialog>
+</sc-custom-modal>

@@ -1,7 +1,47 @@
 {
   "generated": "component-audit.mjs",
-  "summary": "62 componentes · 22 custom · 10 standard · 30 extended · 49 usados en Supervisor · estado (DD-190): 33 ready, 28 experimental, 1 deprecated.",
+  "summary": "64 componentes · 22 custom · 10 standard · 32 extended · 49 usados en Supervisor · estado (DD-190): 33 ready, 28 experimental, 3 deprecated.",
   "components": [
+    {
+      "name": "alert-modal",
+      "selector": "sc-alert-modal",
+      "provenance": "WRAPPER",
+      "kind": "EXTENDED",
+      "primengBase": "primeng/dynamicdialog",
+      "cva": false,
+      "inputs": 14,
+      "api": [
+        "action",
+        "actionLabel",
+        "actionRequested",
+        "closeAriaLabel",
+        "closeRequested",
+        "closed",
+        "icon",
+        "message",
+        "secondaryActionLabel",
+        "showCloseButton",
+        "showIcon",
+        "styleClass",
+        "tertiaryAction",
+        "tertiaryActionLabel",
+        "tertiaryActionRequested",
+        "title",
+        "variant"
+      ],
+      "nested": [
+        "sc-custom-modal",
+        "sc-button"
+      ],
+      "hasDemo": true,
+      "kit": true,
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
+      "usedInSupervisor": 0,
+      "cuando": "Para un aviso o una pregunta con una acción clara (borrar, descartar cambios, sesión caducada), abierto por `ScDynamicDialogService` como en ui.smart-contact.com. La variante dice la intención: `error` destruye o bloquea, `warning` pide atención, `info` informa y `default` confirma algo neutro. Mide de 320 a 480 px y hasta 400 de alto. Si lleva más que texto, `sc-custom-modal`.",
+      "sobreObsoleto": []
+    },
     {
       "name": "avatar",
       "selector": "sc-avatar",
@@ -417,11 +457,55 @@
       "nested": [],
       "hasDemo": true,
       "kit": true,
+      "estado": "deprecated",
+      "faltas": [],
+      "retirado": "El diálogo centrado lo sustituye `sc-alert-modal`, el aviso que comparten los dos DS (DD-241). Sigue vigente solo el globo pegado al botón (`ScConfirmService.request({ …, target })`), que aún no tiene sustituto.",
+      "usedInSupervisor": 1,
+      "cuando": "Retirado (DD-241): para confirmar, `sc-alert-modal`. Queda solo el globo pegado al botón (`ScConfirmService.request({ target })`), para una frase sobre lo que se acaba de pulsar.",
+      "sobreObsoleto": []
+    },
+    {
+      "name": "custom-modal",
+      "selector": "sc-custom-modal",
+      "provenance": "WRAPPER",
+      "kind": "EXTENDED",
+      "primengBase": "primeng/dialog, primeng/dynamicdialog",
+      "cva": false,
+      "inputs": 19,
+      "api": [
+        "ariaDescribedBy",
+        "ariaLabel",
+        "ariaLabelledBy",
+        "bodyClass",
+        "closeAriaLabel",
+        "closeRequested",
+        "closeVariant",
+        "closed",
+        "dismissableMask",
+        "footerClass",
+        "icon",
+        "iconSize",
+        "role",
+        "showCloseButton",
+        "shown",
+        "styleClass",
+        "subtitle",
+        "surfaceClass",
+        "title",
+        "visible",
+        "visibleChange",
+        "width"
+      ],
+      "nested": [
+        "sc-button"
+      ],
+      "hasDemo": true,
+      "kit": true,
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 1,
-      "cuando": "Para confirmar una acción normal, con 2 botones o 3 (`choose()`). Mide de 320 a 480 px de ancho y hasta 400 de alto; título de 1 a 2 líneas y descripción de 1 a 4. Si lo que se borra hay que enseñarlo, `sc-delete-entity-dialog`.",
+      "usedInSupervisor": 18,
+      "cuando": "Para un modal con contenido propio (un formulario, una tabla, un reproductor): la carcasa que comparten los dos DS. Se abre por `ScDynamicDialogService`, como en ui.smart-contact.com, o con `[(visible)]` si su formulario se ata al estado de la pantalla. Para un aviso con una acción, `sc-alert-modal`.",
       "sobreObsoleto": []
     },
     {
@@ -601,7 +685,7 @@
         "singleDetailMessage"
       ],
       "nested": [
-        "sc-dialog",
+        "sc-custom-modal",
         "sc-message",
         "sc-button"
       ],
@@ -647,11 +731,11 @@
       "nested": [],
       "hasDemo": true,
       "kit": true,
-      "estado": "ready",
+      "estado": "deprecated",
       "faltas": [],
-      "retirado": null,
-      "usedInSupervisor": 18,
-      "cuando": "Para una tarea corta que interrumpe sin sacarte de la pantalla. Si es larga o hay que consultar lo de detrás, `sc-drawer`.",
+      "retirado": "Usa `sc-custom-modal`, la carcasa de modal que comparten los dos DS (la de ui.smart-contact.com), y `sc-alert-modal` para avisos y confirmaciones (DD-241).",
+      "usedInSupervisor": 0,
+      "cuando": "Retirado (DD-241): usa `sc-custom-modal`, la carcasa que comparten los dos DS.",
       "sobreObsoleto": []
     },
     {
@@ -1028,7 +1112,7 @@
         "confirmLabel"
       ],
       "nested": [
-        "sc-dialog",
+        "sc-custom-modal",
         "sc-button"
       ],
       "hasDemo": true,
@@ -1238,7 +1322,7 @@
         "groups"
       ],
       "nested": [
-        "sc-dialog"
+        "sc-custom-modal"
       ],
       "hasDemo": true,
       "kit": false,

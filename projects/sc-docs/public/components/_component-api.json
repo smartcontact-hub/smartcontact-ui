@@ -394,6 +394,188 @@
   "nota": "Contrato de los componentes del DS, cruzado con la API de la versión de PrimeNG instalada. NO editar a mano.",
   "components": [
     {
+      "selector": "sc-alert-modal",
+      "name": "alert-modal",
+      "primengBase": "primeng/dynamicdialog",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
+      "cuando": "Para un aviso o una pregunta con una acción clara (borrar, descartar cambios, sesión caducada), abierto por `ScDynamicDialogService` como en ui.smart-contact.com. La variante dice la intención: `error` destruye o bloquea, `warning` pide atención, `info` informa y `default` confirma algo neutro. Mide de 320 a 480 px y hasta 400 de alto. Si lleva más que texto, `sc-custom-modal`.",
+      "contrato": [
+        {
+          "nombre": "variant",
+          "clase": "input",
+          "tipo": "ScAlertModalVariant",
+          "porDefecto": "'default'",
+          "requerido": false,
+          "descripcion": "Intención: decide el icono, el tono de la superficie y el del botón principal.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "title",
+          "clase": "input",
+          "tipo": "string | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "Título del aviso: su nombre para el lector. Hasta 2 líneas.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "message",
+          "clase": "input",
+          "tipo": "string | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "Texto del cuerpo. Admite HTML sencillo (`<p>`, `<ul>`, `<strong>`, enlaces), que Angular sanea.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "actionLabel",
+          "clase": "input",
+          "tipo": "string | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "Botón principal. Sin él no se pinta.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "secondaryActionLabel",
+          "clase": "input",
+          "tipo": "string | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "Botón secundario, en texto: cierra el modal.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "tertiaryActionLabel",
+          "clase": "input",
+          "tipo": "string | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "Extensión nuestra: un tercer botón en texto, a la izquierda (`tertiaryAction`).",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "icon",
+          "clase": "input",
+          "tipo": "string | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "Sustituye al icono de la variante.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "showIcon",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "true",
+          "requerido": false,
+          "descripcion": "El icono de la variante (o el de `icon`).",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "closeAriaLabel",
+          "clase": "input",
+          "tipo": "string | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "Nombre de la X. Sin él, «Cerrar» en el idioma de la app.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "showCloseButton",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "true",
+          "requerido": false,
+          "descripcion": "La X de la cabecera.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "styleClass",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": "''",
+          "requerido": false,
+          "descripcion": "Clases extra en la superficie.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "closeRequested",
+          "clase": "input",
+          "tipo": "(() => void) | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "Cómo cerrar desde fuera (X, botón secundario, Escape); con DynamicDialog, `() => ref.close('closed')`.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "actionRequested",
+          "clase": "input",
+          "tipo": "(() => void) | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "Qué hacer con la acción principal; con DynamicDialog, `() => ref.close('action')`.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "tertiaryActionRequested",
+          "clase": "input",
+          "tipo": "(() => void) | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "Qué hacer con el tercer botón; con DynamicDialog, `() => ref.close('tertiary')`.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "closed",
+          "clase": "output",
+          "tipo": "void",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Se descarta: X, botón secundario o Escape. No se emite tras una acción.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "action",
+          "clase": "output",
+          "tipo": "void",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Se pulsa la acción principal.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "tertiaryAction",
+          "clase": "output",
+          "tipo": "void",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Se pulsa el tercer botón.",
+          "origen": "nuestro",
+          "nativo": null
+        }
+      ],
+      "ocultas": []
+    },
+    {
       "selector": "sc-avatar",
       "name": "avatar",
       "primengBase": "primeng/avatar, primeng/overlaybadge",
@@ -1839,10 +2021,10 @@
       "selector": "sc-confirmdialog",
       "name": "confirmdialog",
       "primengBase": "primeng/autofocus, primeng/button, primeng/confirmdialog, primeng/confirmpopup",
-      "estado": "ready",
+      "estado": "deprecated",
       "faltas": [],
-      "retirado": null,
-      "cuando": "Para confirmar una acción normal, con 2 botones o 3 (`choose()`). Mide de 320 a 480 px de ancho y hasta 400 de alto; título de 1 a 2 líneas y descripción de 1 a 4. Si lo que se borra hay que enseñarlo, `sc-delete-entity-dialog`.",
+      "retirado": "El diálogo centrado lo sustituye `sc-alert-modal`, el aviso que comparten los dos DS (DD-241). Sigue vigente solo el globo pegado al botón (`ScConfirmService.request({ …, target })`), que aún no tiene sustituto.",
+      "cuando": "Retirado (DD-241): para confirmar, `sc-alert-modal`. Queda solo el globo pegado al botón (`ScConfirmService.request({ target })`), para una frase sobre lo que se acaba de pulsar.",
       "contrato": [],
       "ocultas": [
         "acceptAriaLabel",
@@ -1910,6 +2092,282 @@
         "type",
         "variant",
         "visible"
+      ]
+    },
+    {
+      "selector": "sc-custom-modal",
+      "name": "custom-modal",
+      "primengBase": "primeng/dialog, primeng/dynamicdialog",
+      "estado": "ready",
+      "faltas": [],
+      "retirado": null,
+      "cuando": "Para un modal con contenido propio (un formulario, una tabla, un reproductor): la carcasa que comparten los dos DS. Se abre por `ScDynamicDialogService`, como en ui.smart-contact.com, o con `[(visible)]` si su formulario se ata al estado de la pantalla. Para un aviso con una acción, `sc-alert-modal`.",
+      "contrato": [
+        {
+          "nombre": "visible",
+          "clase": "model",
+          "tipo": "boolean | undefined",
+          "porDefecto": "undefined",
+          "requerido": false,
+          "descripcion": "Con `[(visible)]` la carcasa se abre en su propio diálogo de PrimeNG, sin servicio: para un modal cuyo formulario se ata al estado de la pantalla. Sin él, la carcasa se pinta tal cual (dentro de DynamicDialog).",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Specifies the visibility of the dialog.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "width",
+          "clase": "input",
+          "tipo": "string | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "Ancho de la carcasa (cualquier medida CSS). Sin él, `--sc-custom-modal-width` (480).",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "dismissableMask",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "false",
+          "requerido": false,
+          "descripcion": "Con `[(visible)]`: un clic fuera del modal lo cierra.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Specifies if clicking the modal background should hide the dialog.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "closeVariant",
+          "clase": "input",
+          "tipo": "ScButtonVariant",
+          "porDefecto": "'secondary'",
+          "requerido": false,
+          "descripcion": "Tono de la X; `sc-alert-modal` le pasa el de su variante, como la Severity del Kit.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "shown",
+          "clase": "output",
+          "tipo": "void",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Con `[(visible)]`: el modal ha terminado de abrirse.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "title",
+          "clase": "input",
+          "tipo": "string | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "Título de la cabecera. Es el nombre del diálogo para el lector.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "subtitle",
+          "clase": "input",
+          "tipo": "string | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "Línea bajo el título. Es la descripción del diálogo para el lector.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "icon",
+          "clase": "input",
+          "tipo": "string | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "Icono junto al título (nombre del DS o de Material Symbols). Decorativo.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "iconSize",
+          "clase": "input",
+          "tipo": "ScCustomModalIconSize",
+          "porDefecto": "'lg'",
+          "requerido": false,
+          "descripcion": "Tamaño del icono: `sm` 14, `md` 16 y `lg` 18, el del Kit.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "role",
+          "clase": "input",
+          "tipo": "ScCustomModalRole",
+          "porDefecto": "'dialog'",
+          "requerido": false,
+          "descripcion": "`alertdialog` para avisos que interrumpen (lo usa `sc-alert-modal`).",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "ariaLabel",
+          "clase": "input",
+          "tipo": "string | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "Nombre del diálogo cuando no hay título visible.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "ariaLabelledBy",
+          "clase": "input",
+          "tipo": "string | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "Id de otro elemento que nombra el diálogo. Gana al título.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "ariaDescribedBy",
+          "clase": "input",
+          "tipo": "string | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "Id de otro elemento que describe el diálogo. Gana al subtítulo.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "closeAriaLabel",
+          "clase": "input",
+          "tipo": "string | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "Nombre de la X. Sin él, «Cerrar» en el idioma de la app.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Defines a string that labels the close button for accessibility.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "showCloseButton",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "true",
+          "requerido": false,
+          "descripcion": "La X de la cabecera. Sin ella, el modal se cierra con un botón del pie (o Escape, si se abrió por servicio).",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "surfaceClass",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": "''",
+          "requerido": false,
+          "descripcion": "Clases en la superficie (el host): para cambiar fondo, borde o color con las variables `--sc-custom-modal-*`.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "styleClass",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": "''",
+          "requerido": false,
+          "descripcion": "Clases en la raíz interna (`section.sc-custom-modal`).",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Style class of the component.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
+          "nombre": "bodyClass",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": "''",
+          "requerido": false,
+          "descripcion": "Clases en el cuerpo; `sc-custom-modal__body--flush` lo deja a ras, sin padding.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "footerClass",
+          "clase": "input",
+          "tipo": "string",
+          "porDefecto": "''",
+          "requerido": false,
+          "descripcion": "Clases en el pie.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "closeRequested",
+          "clase": "input",
+          "tipo": "(() => void) | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "Cómo cerrar desde fuera; con `ScDynamicDialogService`, `() => ref.close()`.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "closed",
+          "clase": "output",
+          "tipo": "void",
+          "porDefecto": null,
+          "requerido": false,
+          "descripcion": "Se cierra el modal: X, Escape o `closeRequested`. Una vez por modal.",
+          "origen": "nuestro",
+          "nativo": null
+        }
+      ],
+      "ocultas": [
+        "appendTo",
+        "autoZIndex",
+        "baseZIndex",
+        "blockScroll",
+        "breakpoints",
+        "closable",
+        "closeButtonProps",
+        "closeIcon",
+        "closeOnEscape",
+        "closeTabindex",
+        "contentStyle",
+        "contentStyleClass",
+        "draggable",
+        "focusOnShow",
+        "focusTrap",
+        "header",
+        "keepInViewport",
+        "maskMotionOptions",
+        "maskStyle",
+        "maskStyleClass",
+        "maximizable",
+        "maximizeButtonProps",
+        "maximizeIcon",
+        "minX",
+        "minY",
+        "minimizeIcon",
+        "modal",
+        "motionOptions",
+        "position",
+        "resizable",
+        "rtl",
+        "showHeader",
+        "style"
       ]
     },
     {
@@ -3556,10 +4014,10 @@
       "selector": "sc-dialog",
       "name": "dialog",
       "primengBase": "primeng/dialog",
-      "estado": "ready",
+      "estado": "deprecated",
       "faltas": [],
-      "retirado": null,
-      "cuando": "Para una tarea corta que interrumpe sin sacarte de la pantalla. Si es larga o hay que consultar lo de detrás, `sc-drawer`.",
+      "retirado": "Usa `sc-custom-modal`, la carcasa de modal que comparten los dos DS (la de ui.smart-contact.com), y `sc-alert-modal` para avisos y confirmaciones (DD-241).",
+      "cuando": "Retirado (DD-241): usa `sc-custom-modal`, la carcasa que comparten los dos DS.",
       "contrato": [
         {
           "nombre": "visible",

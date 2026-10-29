@@ -1,8 +1,8 @@
 /* ConversationPlayerModal · Memory iter 5
  * Réplica visual del prototipo React (`ConversationPlayerModal.tsx`) + spec
- * `docs/referencia-ui.md §2`. Live debajo del sc-dialog canonical SCDS.
+ * `docs/referencia-ui.md §2`. Vive dentro de sc-custom-modal.
  *
- * Layout trick: el body del sc-dialog aplica padding lateral (`--sc-dialog-padding`).
+ * Layout trick: el cuerpo de sc-custom-modal aplica padding lateral (`--sc-custom-modal-content-padding`).
  * Nuestro audio bar + tab row + tab body necesitan full-bleed para que el
  * background gris del audio y la border-bottom de tabs lleguen a los lados
  * del modal. Sacamos `.player-body` del padding con `margin: 0 calc(-1 * ...)`
@@ -10,7 +10,7 @@
  */
 
 .player-body {
-  margin: 0 calc(var(--sc-dialog-padding) * -1);
+  margin: 0 calc(var(--sc-custom-modal-content-padding) * -1);
   display: flex;
   flex-direction: column;
   min-height: 360px;

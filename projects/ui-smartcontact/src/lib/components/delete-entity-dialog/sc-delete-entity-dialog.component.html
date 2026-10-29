@@ -1,10 +1,10 @@
-<sc-dialog
+<sc-custom-modal
   [visible]="visible()"
   [icon]="alertIcon"
   [title]="dialogTitle()"
   [subtitle]="dialogSubtitle()"
   width="440px"
-  (cancelled)="cancelled.emit()"
+  (closed)="cancelled.emit()"
 >
   <!-- Uno o varios, la misma forma: el título dice cuántos, una línea
        opcional de detalle, y la puerta tecleada. Antes el lote enseñaba un muro de nombres quitables que con 500
@@ -45,7 +45,7 @@
     <sc-message severity="danger" size="sm" [text]="'sc.deleteEntityDialog.copyFailed' | translate" />
   }
 
-  <div modal-actions>
+  <div scCustomModalFooter>
     <sc-button
       type="button"
       size="sm"
@@ -66,4 +66,4 @@
       <span>{{ 'sc.deleteEntityDialog.delete' | translate }}</span>
     </sc-button>
   </div>
-</sc-dialog>
+</sc-custom-modal>

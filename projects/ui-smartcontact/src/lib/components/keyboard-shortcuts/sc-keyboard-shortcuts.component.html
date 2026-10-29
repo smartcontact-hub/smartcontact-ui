@@ -1,11 +1,10 @@
 <!-- `sc-dialog` (DD-140), candidato 5 del barrido: mete el foco, lo retiene y lo devuelve al cerrar; Esc y la máscara
      cierran como en cualquier otro diálogo. -->
-<sc-dialog
+<sc-custom-modal
   [visible]="visible()"
-  (cancelled)="onClose()"
+  (closed)="onClose()"
   [title]="'sc.keyboardShortcuts.title' | translate"
   [closeAriaLabel]="'sc.keyboardShortcuts.close' | translate"
-  [hasFooter]="false"
   [dismissableMask]="true"
 >
   @for (group of groups(); track group.title) {
@@ -23,4 +22,4 @@
       }
     </div>
   }
-</sc-dialog>
+</sc-custom-modal>

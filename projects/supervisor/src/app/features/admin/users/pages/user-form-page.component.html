@@ -142,13 +142,13 @@
 <!-- Cambiar el tipo pisaría casillas que alguien tocó (o es una edición): se pregunta antes de aplicar su plantilla.
      El tipo ya cambió; cerrar el aviso es mantener las casillas (DD-132). -->
 @if (pendingTemplate(); as pending) {
-  <sc-dialog
+  <sc-custom-modal
     [visible]="true"
     [title]="'users.form.template.apply_title' | translate: { type: (typeLabelKeys[pending.type] | translate) }"
     [subtitle]="(pending.changes === 1 ? 'users.form.template.apply_body_one' : 'users.form.template.apply_body_other') | translate: { count: pending.changes }"
-    (cancelled)="keepAccess()"
+    (closed)="keepAccess()"
   >
-    <div modal-actions>
+    <div scCustomModalFooter>
       <sc-button type="button" size="sm" variant="secondary" appearance="outlined" (clicked)="keepAccess()">
         <span>{{ 'users.form.template.keep' | translate }}</span>
       </sc-button>
@@ -156,7 +156,7 @@
         <span>{{ 'users.form.template.apply' | translate }}</span>
       </sc-button>
     </div>
-  </sc-dialog>
+  </sc-custom-modal>
 }
 
 <!-- LAS SECCIONES, cada una en su plantilla, que se pinta de una en una junto al índice al crear y al editar

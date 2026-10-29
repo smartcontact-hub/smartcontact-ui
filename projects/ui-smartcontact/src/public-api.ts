@@ -57,6 +57,8 @@ export * from './lib/components/selectbutton/sc-selectbutton.component';
 export * from './lib/components/toggleswitch/sc-toggleswitch.component';
 export * from './lib/components/dialog/sc-dialog.component';
 export * from './lib/components/dynamic-dialog/sc-dynamic-dialog.service';
+export * from './lib/components/custom-modal/sc-custom-modal.component';
+export * from './lib/components/alert-modal/sc-alert-modal.component';
 export * from './lib/components/checkbox/sc-checkbox.component';
 export * from './lib/components/empty-state/sc-empty-state.component';
 export * from './lib/components/form-section-nav/sc-form-section-nav.component';

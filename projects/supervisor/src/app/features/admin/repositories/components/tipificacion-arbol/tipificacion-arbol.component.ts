@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { LocationStrategy, NgTemplateOutlet } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
-import { ScDialogComponent as DialogComponent } from '@smartcontact-hub/components';
+import { ScCustomModalComponent as DialogComponent } from '@smartcontact-hub/components';
 
 import type { Tipificacion } from '../../state/tipificaciones.core.mjs';
 
@@ -18,14 +18,14 @@ import type { Tipificacion } from '../../state/tipificaciones.core.mjs';
   imports: [DialogComponent, NgTemplateOutlet, TranslateModule],
   template: `
     @let t = tipificacion();
-    <sc-dialog
+    <sc-custom-modal
       [visible]="visible()"
       [title]="t.name"
       [subtitle]="t.description || null"
       width="min(56rem, 92vw)"
       [dismissableMask]="true"
       [closeAriaLabel]="'common.close' | translate"
-      (cancelled)="cerrar.emit()"
+      (closed)="cerrar.emit()"
     >
       <div class="mapa" [style.--niveles]="t.levels">
         <div class="mapa__cabeza">
@@ -40,12 +40,12 @@ import type { Tipificacion } from '../../state/tipificaciones.core.mjs';
         }
       </div>
 
-      <div modal-actions class="mapa__pie">
+      <div scCustomModalFooter class="mapa__pie">
         <a class="mapa__editar sc-text-caption-semibold" [href]="editarHref()" (click)="onEditar($event)">
           {{ 'repositories.tipificaciones.map_edit' | translate }}
         </a>
       </div>
-    </sc-dialog>
+    </sc-custom-modal>
 
     <ng-template #rama let-opcion let-nivel="nivel">
       <div class="rama">

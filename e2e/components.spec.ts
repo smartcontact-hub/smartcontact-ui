@@ -1041,6 +1041,131 @@ test.describe('sc-confirmdialog', () => {
   });
 });
 
+test.describe('sc-alert-modal', () => {
+  /** Ancho y alto de maqueta: `boundingBox` mide con la escala de la animación de entrada aplicada. */
+  const cajaDe = (locator: Locator) => locator.evaluate((el: HTMLElement) => ({ ancho: el.offsetWidth, alto: el.offsetHeight }));
+
+  /** Líneas que se VEN de un texto recortado, y las que ocuparía entero (su alto sin recorte). */
+  const lineasDe = (locator: Locator) =>
+    locator.evaluate((el) => {
+      const lh = parseFloat(getComputedStyle(el).lineHeight);
+      return { vistas: Math.round(el.clientHeight / lh), enteras: Math.round(el.scrollHeight / lh) };
+    });
+
+  /** El color que resuelve un token, pintado en una sonda: así se compara con lo que pinta el modal. */
+  const colorDe = (page: Page, token: string, prop: 'background-color' | 'color' | 'border-top-color') =>
+    page.evaluate(
+      ([t, p]) => {
+        const sonda = document.createElement('div');
+        sonda.style.setProperty(p === 'background-color' ? 'background' : p === 'color' ? 'color' : 'border', p === 'border-top-color' ? `1px solid var(${t})` : `var(${t})`);
+        document.body.appendChild(sonda);
+        const v = getComputedStyle(sonda).getPropertyValue(p);
+        sonda.remove();
+        return v;
+      },
+      [token, prop] as const,
+    );
+
+  test('las cuatro variantes pintan el tono del Kit: default el del modal, info, warning y error el de Message', async ({ page }) => {
+    await gotoPage(page, 'alertmodal');
+    const superficie = (v: string) => page.getByTestId(`alert-${v}`).locator('.sc-custom-modal');
+    const fondoBase = await colorDe(page, '--sc-dialog-bg', 'background-color');
+    expect((await styleOf(superficie('default'), ['background-color']))['background-color']).toBe(fondoBase);
+    for (const [v, kit] of [['info', 'info'], ['warning', 'warn'], ['error', 'error']] as const) {
+      const fondo = await colorDe(page, `--sc-cmp-message-${kit}-background`, 'background-color');
+      const borde = await colorDe(page, `--sc-cmp-message-${kit}-border-color`, 'border-top-color');
+      const tinta = await colorDe(page, `--sc-cmp-message-${kit}-color`, 'color');
+      // Sin esto la sonda no prueba nada: el tono de la variante tiene que ser OTRO que el del modal neutro.
+      expect(fondo).not.toBe(fondoBase);
+      const s = await styleOf(superficie(v), ['background-color', 'border-top-color']);
+      expect(s, v).toEqual({ 'background-color': fondo, 'border-top-color': borde });
+      expect((await styleOf(superficie(v).locator('h2'), ['color']))['color'], v).toBe(tinta);
+    }
+  });
+
+  test('error: UN alertdialog con título de nombre y mensaje de descripción, foco en Cancelar, Escape avisa', async ({ page }) => {
+    await gotoPage(page, 'alertmodal');
+    await page.getByTestId('alert-open').locator('button').click();
+    const dialogo = page.getByRole('alertdialog');
+    await expect(dialogo).toHaveCount(1);
+    await expect(page.getByRole('dialog')).toHaveCount(0);
+    await expect(dialogo).toHaveAccessibleName('¿Eliminar el agente «Ana Martín»?');
+    await expect(dialogo).toHaveAccessibleDescription('Esta acción no se puede deshacer.');
+    // Lo que destruye abre en la salida segura: un Intro de más no borra.
+    await expect(dialogo.getByRole('button', { name: 'Cancelar' })).toBeFocused();
+    const ancho = (await cajaDe(dialogo.locator('.sc-custom-modal'))).ancho;
+    expect(ancho).toBeGreaterThanOrEqual(320);
+    expect(ancho).toBeLessThanOrEqual(480);
+    await page.keyboard.press('Escape');
+    await expect(dialogo).toHaveCount(0);
+    await expect(page.getByTestId('alert-result')).toHaveText('escape');
+
+    await page.getByTestId('alert-open').locator('button').click();
+    await dialogo.getByRole('button', { name: 'Eliminar' }).click();
+    await expect(page.getByTestId('alert-result')).toHaveText('action');
+    await page.getByTestId('alert-open').locator('button').click();
+    await dialogo.getByRole('button', { name: 'Cerrar' }).click();
+    await expect(page.getByTestId('alert-result')).toHaveText('closed');
+  });
+
+  test('texto largo: 480 de tope y 400 de alto, título en 2 líneas y mensaje en 4; el tercer botón va primero', async ({ page }) => {
+    await gotoPage(page, 'alertmodal');
+    await page.getByTestId('alert-long').locator('button').click();
+    const dialogo = page.getByRole('alertdialog');
+    const superficie = dialogo.locator('.sc-custom-modal');
+    await expect(superficie).toBeVisible();
+    const caja = await cajaDe(superficie);
+    expect(caja.ancho).toBe(480);
+    expect(caja.alto).toBeLessThanOrEqual(400);
+    // Las líneas «enteras» prueban que el texto de la demo sí pasa del tope: sin el recorte, esta sonda enrojece.
+    const titulo = await lineasDe(superficie.locator('h2'));
+    expect(titulo.vistas).toBe(2);
+    expect(titulo.enteras).toBeGreaterThan(2);
+    const mensaje = await lineasDe(superficie.locator('.sc-alert-modal__message'));
+    expect(mensaje.vistas).toBe(4);
+    expect(mensaje.enteras).toBeGreaterThan(4);
+    await expect(superficie.locator('.sc-custom-modal__footer').getByRole('button')).toHaveText(['No guardar', 'Cancelar', 'Guardar']);
+    await expect(dialogo.getByRole('button', { name: 'Cancelar' })).toBeFocused();
+    await dialogo.getByRole('button', { name: 'No guardar' }).click();
+    await expect(page.getByTestId('alert-result').first()).toHaveText('tertiary');
+  });
+});
+
+test.describe('sc-custom-modal', () => {
+  test('por servicio: UN diálogo con el título de nombre; Escape lo cierra', async ({ page }) => {
+    await gotoPage(page, 'custommodal');
+    await page.getByTestId('custom-open').locator('button').click();
+    const dialogo = page.getByRole('dialog');
+    await expect(dialogo).toHaveCount(1);
+    await expect(dialogo).toHaveAccessibleName('Conversación con Ana Martín');
+    await expect(dialogo).toHaveAccessibleDescription('12 mensajes · Chat');
+    // Sin campos, el foco abre en la carcasa y no en un botón: el tooltip de la X se quedaba el primer Escape.
+    await expect(dialogo.locator('.sc-custom-modal')).toBeFocused();
+    await page.keyboard.press('Escape');
+    await expect(dialogo).toHaveCount(0);
+    await expect(page.getByTestId('custom-result')).toHaveText('escape');
+  });
+
+  test('con [(visible)]: abre al ancho pedido con el foco en la carcasa, Escape avisa con `closed` las dos veces y devuelve el foco', async ({ page }) => {
+    await gotoPage(page, 'custommodal');
+    const abrir = page.getByTestId('custom-declarative-open').locator('button');
+    const dialogo = page.getByRole('dialog', { name: 'Editar categoría' });
+    const rem = await page.evaluate(() => parseFloat(getComputedStyle(document.documentElement).fontSize));
+    for (let vez = 0; vez < 2; vez++) {
+      await abrir.click();
+      await expect(dialogo).toBeVisible();
+      // Sin campos en el cuerpo, el foco abre en la carcasa y no en un botón (cuyo tooltip saldría al abrir).
+      await expect(dialogo.locator('.sc-custom-modal')).toBeFocused();
+      await expect(page.getByRole('tooltip')).toHaveCount(0);
+      expect(await dialogo.locator('.sc-custom-modal').evaluate((el: HTMLElement) => el.offsetWidth)).toBe(Math.round(36 * rem));
+      await page.keyboard.press('Escape');
+      await expect(dialogo).toHaveCount(0);
+      await expect(page.getByTestId('custom-declarative-result')).toHaveText('closed');
+      await expect(abrir).toBeFocused();
+    }
+  });
+});
+
 test.describe('sc-inputtext', () => {
   test('chrome de campo + métrica del Kit + CVA, ifta y fluid', async ({ page }) => {
     await gotoPage(page, 'inputtext');
@@ -1387,12 +1512,12 @@ test.describe('sc-sticky-form-header', () => {
 });
 
 test.describe('sc-impact-preview-dialog', () => {
-  test('compone sc-dialog; pruning de items + confirm emite supervivientes', async ({ page }) => {
+  test('compone sc-custom-modal; pruning de items + confirm emite supervivientes', async ({ page }) => {
     await gotoPage(page, 'impactpreviewdialog');
     await page.getByTestId('open-impact').click();
 
     const dialog = page.getByTestId('sc-impact');
-    await expect(dialog.locator('.sc-dialog')).toBeVisible();
+    await expect(dialog.locator('.sc-custom-modal')).toBeVisible();
 
     // 3 items proyectados en el body de la card
     await expect(dialog.locator('.item')).toHaveCount(3);
@@ -1402,18 +1527,18 @@ test.describe('sc-impact-preview-dialog', () => {
     await expect(dialog.locator('.item')).toHaveCount(2);
 
     // confirmar (botón primario del footer) → emite los 2 supervivientes
-    await dialog.locator('[modal-actions] p-button').last().locator('button').click();
+    await dialog.locator('[scCustomModalFooter] p-button').last().locator('button').click();
     await expect(page.getByTestId('impact-result')).toHaveText('confirmado: 2');
   });
 });
 
 test.describe('sc-delete-entity-dialog', () => {
-  test('single: retype del nombre habilita Delete; compone sc-dialog', async ({ page }) => {
+  test('single: retype del nombre habilita Delete; compone sc-custom-modal', async ({ page }) => {
     await gotoPage(page, 'deleteentitydialog');
     await page.getByTestId('open-single').click();
 
     const dialog = page.getByTestId('sc-delete-single');
-    await expect(dialog.locator('.sc-dialog')).toBeVisible();
+    await expect(dialog.locator('.sc-custom-modal')).toBeVisible();
 
     // Delete deshabilitado hasta teclear el nombre exacto
     const del = dialog.getByTestId('delete-confirm-btn').locator('button');
@@ -1737,7 +1862,8 @@ test.describe('sc-keyboard-shortcuts', () => {
     const opener = page.getByTestId('open-shortcuts');
     await opener.click();
     await expect(sheet).toBeVisible();
-    // Es un `sc-dialog` (DD-140): el foco entra al abrir. La capa propia de antes lo dejaba en el botón.
+    // Es un `sc-custom-modal` (DD-140, DD-241): el foco entra al abrir, en la carcasa, que no tiene controles. En la X
+    // no, que su tooltip se quedaba el primer Escape.
     await expect.poll(() => sheet.evaluate((el) => el.contains(document.activeElement))).toBe(true);
 
     // default colocado: 2 grupos intrínsecos, i18n resuelto (es), 4+3 = 7 filas.

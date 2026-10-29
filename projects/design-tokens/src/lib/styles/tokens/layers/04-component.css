@@ -73,6 +73,67 @@
   --sc-dialog-close-bg-hover: var(--sc-color-slate-100);
 
   /* =========================================================== */
+  /* Custom modal y Alert modal (DD-241)                         */
+  /* =========================================================== */
+  /*
+   * Los nombres son los de `sc-custom-modal` y `sc-alert-modal` de ui.smart-contact.com, para que los dos DS
+   * hablen igual. Cada valor lee la variable que ata el maestro del Kit: «❖ Custom modal» (13644:1039) y
+   * «❖ Alert modal» (15876:601). El maestro ata el hueco y el tipo a `dialog/*` y a la escala, y el color a
+   * `component/custommodal/*`; esas variables de color valen lo mismo que `message/*` en los dos modos, y el
+   * export solo trae `aura/custom` en un modo, así que el color sale de `--sc-cmp-message-*`, que sí lleva los dos.
+   */
+  --sc-custom-modal-width: 30rem; /* 480: el ancho del maestro; cada uso lo cambia con esta variable */
+  --sc-custom-modal-max-height: min(85vh, 45rem); /* 720, la descripción del maestro: el cuerpo hace scroll */
+  --sc-custom-modal-body-max-height: 30rem; /* 480 de cuerpo, como el suyo */
+  --sc-custom-modal-background: var(--sc-dialog-bg); /* custommodal/background → overlay/modal/background */
+  --sc-custom-modal-border-color: var(--sc-dialog-border); /* custommodal/border/color */
+  --sc-custom-modal-border-radius: var(--sc-cmp-overlay-modal-border-radius); /* dialog/border/radius: 12 */
+  --sc-custom-modal-shadow: var(--sc-cmp-overlay-modal-shadow); /* el estilo de sombra del modal */
+  --sc-custom-modal-color: var(--sc-dialog-title); /* custommodal/color → overlay/modal/color */
+  --sc-custom-modal-title-color: var(--sc-custom-modal-color); /* el título, el icono y el mensaje: el mismo color */
+  --sc-custom-modal-icon-color: var(--sc-custom-modal-color);
+  --sc-alert-modal-message-color: var(--sc-custom-modal-color);
+  --sc-custom-modal-min-width: 0;
+  --sc-custom-modal-max-width: 100vw;
+  --sc-custom-modal-title-lines: 2;
+  --sc-custom-modal-subheader-color: var(--sc-text-subtle); /* custommodal/subheader/color → float label */
+  --sc-custom-modal-header-padding-y: var(--sc-spacing-1); /* scale/1: 14 */
+  --sc-custom-modal-header-padding-x: var(--sc-spacing-1-25); /* scale/1-25: 17.5 */
+  --sc-custom-modal-header-gap: var(--sc-spacing-0-5); /* scale/0-5: 7, entre título y X */
+  --sc-custom-modal-header-icon-gap: var(--sc-spacing-0-875); /* scale/0-875: 12.25, entre icono y título */
+  --sc-custom-modal-heading-gap: var(--sc-spacing-0-25); /* 3.5 entre título y subtítulo: el maestro pone 4 sin variable */
+  --sc-custom-modal-icon-size: var(--sc-font-size-400); /* custommodal/title/font/size: 18 */
+  --sc-custom-modal-title-font-size: var(--sc-font-size-400); /* 18 */
+  --sc-custom-modal-title-line-height: var(--sc-line-height-300); /* 24 */
+  --sc-custom-modal-title-font-weight: var(--sc-font-weight-semibold);
+  --sc-custom-modal-subheader-font-size: var(--sc-font-size-200); /* 14 */
+  --sc-custom-modal-subheader-line-height: var(--sc-line-height-200); /* 20 */
+  --sc-custom-modal-content-padding: var(--sc-cmp-overlay-modal-padding); /* dialog/content/padding: 15.75 */
+  --sc-custom-modal-footer-padding: var(--sc-cmp-overlay-modal-padding); /* dialog/footer/padding: 15.75 */
+  --sc-custom-modal-footer-gap: var(--sc-cmp-dialog-footer-gap); /* dialog/footer/gap: 10.5 */
+  --sc-custom-modal-close-opacity: 1;
+  --sc-custom-modal-close-opacity-hover: 1;
+
+  /* Por variante del Alert modal: la superficie, el borde, el título y el icono toman el tono; el mensaje queda en
+     el color del modal (el maestro lo ata a `custommodal/color` en las cuatro). */
+  --sc-alert-modal-info-background: var(--sc-cmp-message-info-background); /* custommodal/info/background */
+  --sc-alert-modal-info-border-color: var(--sc-cmp-message-info-border-color);
+  --sc-alert-modal-info-color: var(--sc-cmp-message-info-color);
+  --sc-alert-modal-warning-background: var(--sc-cmp-message-warn-background); /* custommodal/warn/background */
+  --sc-alert-modal-warning-border-color: var(--sc-cmp-message-warn-border-color);
+  --sc-alert-modal-warning-color: var(--sc-cmp-message-warn-color);
+  --sc-alert-modal-error-background: var(--sc-cmp-message-error-background); /* custommodal/error/background */
+  --sc-alert-modal-error-border-color: var(--sc-cmp-message-error-border-color);
+  --sc-alert-modal-error-color: var(--sc-cmp-message-error-color);
+  /* Límites del Alert modal: los del confirm dialog (medidos sobre los 15 diálogos del Supervisor en 4 idiomas,
+     ninguno se recorta) pasan aquí con él. El maestro del Kit los lleva igual (minW 320, maxW 480, maxH 400). */
+  --sc-alert-modal-min-width: 20rem; /* 320px */
+  --sc-alert-modal-max-width: 30rem; /* 480px */
+  --sc-alert-modal-max-height: 25rem; /* 400px */
+  --sc-alert-modal-title-lines: 2;
+  --sc-alert-modal-body-lines: 4;
+
+  /* =========================================================== */
   /* Toast (Smart Contact design — Figma 1050:354)               */
   /* =========================================================== */
   /*

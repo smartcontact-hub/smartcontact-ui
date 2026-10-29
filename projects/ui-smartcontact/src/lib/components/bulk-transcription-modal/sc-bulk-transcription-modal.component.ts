@@ -61,7 +61,7 @@ export type ScBulkTranscriptionModalSurface = 'default' | 'dark' | 'green';
  *     al texto denso que aquí se sigue pintando (`heroHint`);
  *   · **franja de error** `role="alert"` recuperable;
  *   · **estado de carga** en el botón de procesar;
- *   · shell delegado en `<sc-dialog>` — este renderiza su propio `role="dialog"`.
+ *   · shell delegado en `<sc-custom-modal>` — este renderiza su propio `role="dialog"`.
  * Convergerlos es rehacer el port contra la app viva, no un swap. Mientras eso
  * no pase, su único consumidor es la demo de `sc-docs`.
  *

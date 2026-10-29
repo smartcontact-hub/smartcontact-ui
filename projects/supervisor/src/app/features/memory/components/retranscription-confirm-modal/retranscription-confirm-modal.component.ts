@@ -16,7 +16,7 @@ import { ScInputTextComponent as InputTextComponent } from '@smartcontact-hub/co
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 import { map, startWith } from 'rxjs';
 
-import { ScDialogComponent as DialogComponent } from '@smartcontact-hub/components';
+import { ScCustomModalComponent as DialogComponent } from '@smartcontact-hub/components';
 
 /**
  * RetranscriptionConfirmModal · Memory §10 #1 (S46).

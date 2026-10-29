@@ -67,7 +67,7 @@ test('las tres hermanas comparten el mismo componente de vacío', async ({ page 
     await rows.first().locator('.rules-kebab-btn').click();
     await page.locator('.p-menu-overlay .p-menu-item-link', { hasText: /eliminar/i }).click();
     await page
-      .locator('.p-confirmdialog')
+      .getByRole('alertdialog')
       .getByRole('button', { name: /eliminar|confirmar/i })
       .click();
     await expect(rows).toHaveCount(remaining - 1);

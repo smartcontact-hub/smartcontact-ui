@@ -12,7 +12,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { ScIconComponent } from '@smartcontact-hub/icons';
 
-import { ScDialogComponent } from '../dialog/sc-dialog.component';
+import { ScCustomModalComponent } from '../custom-modal/sc-custom-modal.component';
 import { SC_IMPACT_PREVIEW_DIALOG_TRANSLATIONS } from './i18n/sc-impact-preview-dialog.translations';
 import { ScButtonComponent } from '../button/sc-button.component';
 
@@ -46,7 +46,7 @@ export interface ImpactBadge {
 @Component({
   selector: 'sc-impact-preview-dialog',
   standalone: true,
-  imports: [ScButtonComponent, ScIconComponent, ScDialogComponent, TranslateModule],
+  imports: [ScButtonComponent, ScIconComponent, ScCustomModalComponent, TranslateModule],
   templateUrl: './sc-impact-preview-dialog.component.html',
   styleUrl: './sc-impact-preview-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -1,10 +1,10 @@
-<sc-dialog
+<sc-custom-modal
   [visible]="visible()"
   [icon]="downloadIcon"
   [title]="'memory.player.download.title' | translate"
   [subtitle]="'memory.player.download.subtitle' | translate"
   width="440px"
-  (cancelled)="onCancel()"
+  (closed)="onCancel()"
 >
   <div class="download-modal">
     <div class="download-modal__options" role="group">
@@ -55,7 +55,7 @@
     </div>
   </div>
 
-  <div modal-actions>
+  <div scCustomModalFooter>
     <sc-button type="button" size="sm" variant="secondary" (clicked)="onCancel()">
       <span>{{ 'common.cancel' | translate }}</span>
     </sc-button>
@@ -70,4 +70,4 @@
       <span>{{ 'memory.player.download.confirm_btn' | translate }}</span>
     </sc-button>
   </div>
-</sc-dialog>
+</sc-custom-modal>

@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Los modales como en ui.smart-contact.com: `sc-custom-modal` (la carcasa, también con `[(visible)]`) y `sc-alert-modal` (aviso con variante `default`, `info`, `warning` o `error`, abierto por `ScDynamicDialogService`) con su misma API y sus fallos arreglados · borrar es `error`, descartar `warning` · se retiran `sc-dialog` y el confirm centrado; el globo con `target` sigue · Figma: «❖ Alert modal» con instancias de Custom modal | DD-241 |
 > | Tipificaciones: el buscador de la lista mira cualquier campo, también los nombres de los grupos que la usan aunque solo salgan al pasar el ratón (enmienda la regla de Agentes y Grupos solo para esta lista) · la edición de Tipificaciones, Agendas, Plantillas y las cuentas y triggers de Email acaba en el nombre guardado, y Agendas, Plantillas y Email abren la miga con «Administración», como Grupos y Agentes · el nombre de las fichas de Repositorios lleva «Ej: …» y la descripción «Breve descripción...» | DD-238 |
 > | Duplicar una agenda o una plantilla es un alta, como un grupo o un agente (enmienda DD-230): abre «Nueva agenda/plantilla» con la copia y su nombre «X (1)» (`seedFromId`, `nombreDeCopia`), que no existe hasta «Crear» · no copia a qué agentes se asigna | DD-234 |
 > | Agendas y Plantillas como sus COA (SISMAC-4440 y 4438): se asignan SOLO a agentes, en una tabla plana de agentes con su columna «Grupos» (`sc-agent-assignment-table`), sin árbol ni grupos dinámicos (enmienda DD-211 §1) · el listado de Agendas con Descripción, Contactos y Agentes (cifra, sin globo) ordenables · Plantillas sin pestañas, con columna Canal · contactos con casillas y borrado múltiple (completa DD-227 en una tabla anidada) | DD-230 |
@@ -168,6 +169,66 @@
 
 ---
 
+## DD-241 · 2026-10-29 — `sc-custom-modal` y `sc-alert-modal`, como los de ui.smart-contact.com; se retiran `sc-dialog` y el confirm centrado
+
+**Contexto** · El DS de los devs (ui.smart-contact.com) tiene dos componentes propios que hicieron para los errores del Agent (sin
+micrófono, conexión caída, sesión caducada) y que ya usan en toda la plataforma: `sc-custom-modal`, una carcasa con cabecera, cuerpo
+y pie, y `sc-alert-modal`, un aviso sobre ella con variante `default`, `info`, `warning` o `error`. Nosotros confirmábamos con
+`sc-confirmdialog` y los modales iban sobre `sc-dialog`, así que hablábamos de lo mismo con otros nombres. En su web no hay página de
+ConfirmDialog: solo aparece en el tema. El «Modal legacy custom» se había descartado a favor del Dialog del Kit Pro
+(`docs/customs-catalog.md` §5.10); esta decisión lo reabre.
+
+**Decisión** ·
+1. **Los dos componentes, como los suyos**: mismos selectores, inputs, outputs, slots (`scCustomModalBody`, `scCustomModalFooter`),
+   clases BEM y variables (`--sc-custom-modal-*`, `--sc-alert-modal-*`), y se abren como ellos:
+   `ScDynamicDialogService.open(ScAlertModalComponent, { inputValues })`. El servicio toma el `static scDynamicDialogDefaults` del
+   componente que abre, como el suyo.
+2. **Misma API, fallos arreglados**: un solo diálogo para el lector (DD-140) con nombre y descripción reales, el mensaje del aviso es
+   su descripción, Escape emite `closed`, la X cierra aunque no se pase `closeRequested`, el título ocupa hasta 2 líneas y el foco abre
+   en la salida segura con `warning` y `error`. En la carcasa, el foco abre en su primer campo, o en ella misma si no tiene, y nunca
+   en un botón: el tooltip de un botón de icono (DD-200) se quedaba el primer Escape y hacían falta dos para cerrar (la X,
+   el «retroceder 10 s» del reproductor; medido el 2026-10-29). La página de
+   cada uno en sc-docs lista las diferencias.
+3. **Extensiones nuestras, marcadas**: el tercer botón del aviso (`tertiaryActionLabel`, «No guardar», que venía de `choose()`), y en la
+   carcasa `[(visible)]`, `width`, `dismissableMask` y `shown` para abrirla desde la plantilla cuando su formulario se ata al estado de
+   la pantalla.
+4. **Figma manda en el aspecto, y calca el repo de los devs**: «❖ Custom modal» (13644:1039) es solo la carcasa, sin tono, como su
+   `sc-custom-modal`, y gana «Show close» (`showCloseButton`); sus tipos Error y Warn se quitan (2026-10-29): eran avisos, y las 9
+   instancias que los usaban (todas avisos o huecos de ejemplo, ninguna en el fichero del Supervisor) pasan a Alert modal. «❖ Alert
+   modal» (15876:601) es nueva: cuatro variantes sobre la carcasa Default con el tono puesto encima (`custommodal/{info,warn,error}/*`),
+   de modo que un cambio en la carcasa llega al aviso. El tono de un modal es SIEMPRE la `variant` de Alert modal. Se crean las variables `component/custommodal/info/*` (las de error y warn ya estaban) y el nombre de código de las
+   `custommodal/*` pasa a `--sc-cmp-custommodal-*` (decía `--sc-cmp-bulktranscriptionmodal-*`). El código lee lo que ata el maestro:
+   el hueco y el tipo, de `dialog/*` y la escala; el color, de `--sc-cmp-message-*`, que vale lo mismo que `custommodal/*` en los dos
+   modos (el export solo trae `aura/custom` en uno).
+5. **Medidas del aviso**: de 320 a 480 de ancho y hasta 400 de alto, título hasta 2 líneas y mensaje hasta 4 (las del confirm,
+   medidas en los 15 diálogos del Supervisor en cuatro idiomas). La carcasa mide 480 por defecto y hasta 720.
+6. **Variante por intención**: borrar es `error` (el modal se tiñe de rojo), descartar cambios `warning`, avisar al guardar `info`. En el
+   Supervisor los abre un solo sitio, `injectAlertModal()` (`core/services/alert-modal.ts`).
+7. **Se retiran** `sc-dialog` (sustituto: `sc-custom-modal`) y el diálogo centrado de `sc-confirmdialog` (sustituto:
+   `sc-alert-modal`), con `@deprecated` y su motivo (DD-190). Los 19 modales que usaban `sc-dialog` y las 14 confirmaciones centradas
+   del Supervisor pasan a los nuevos. **Sigue vigente el globo** pegado al botón (`ScConfirmService.request({ target })`, DD-205),
+   que el aviso no tiene.
+8. **Code Connect**: plantillas nuevas para los dos, y las del Dialog y el ConfirmDialog del Kit apuntan a ellos.
+
+**Razón** · Los devs construyen desde Figma con su DS; si el nuestro llama igual a lo mismo, el mapa de componentes, Figma y el
+prototipo hablan un solo idioma. Arreglar sin cambiar su API deja que ellos adopten los arreglos sin tocar sus llamadas.
+
+**Descartadas** ·
+- *Solo `sc-alert-modal` sobre nuestro `sc-dialog`*: dos carcasas para lo mismo y `sc-custom-modal` sin equivalente.
+- *Calcar también sus fallos*: tres roles de diálogo anidados, un `aria-labelledby` a un id que no existe y Escape sin aviso.
+- *Retirar también el globo*: tres confirmaciones (las casillas de «todos» y «Expirar contraseña») perdían ver lo pulsado mientras se
+  decide, y el aviso no tiene versión pegada.
+- *Abrir cada modal con formulario por servicio, como ellos*: había que sacar el estado de 19 formularios a entradas; con `[(visible)]`
+  se ata directo, que es lo que hace bien un modal declarado.
+- *Generar las 26 `custommodal/*` con el importador*: el maestro casi no las ata (solo el color) y el export las trae en un solo modo.
+
+**Consecuencias** · Enmienda `docs/customs-catalog.md` §5.10 (el modal a medida vuelve como `sc-custom-modal`) y cierra la nota de
+`docs/conexion-variables.md` sobre su canal propio. Páginas nuevas en sc-docs (Overlays: Custom Modal y Alert Modal), las dos «listas»
+(`KIT_MAESTROS` gana «Alert modal»). Pendiente fuera del repo: publicar la librería de Figma, publicar el Code Connect
+(`npm run figma:connect:publish`, con token) y contar a los devs los arreglos y que su página de Custom Modal no carga en producción.
+
+---
+
 ## DD-240 · 2026-10-29 — El «+» se dibuja con las puntas redondeadas; el botón que lo lleva conserva la esquina del Kit
 
 **Contexto** · La revisión de producto del 2026-10-26 pidió el «+» redondeado: el glifo `add` de Material Symbols
@@ -192,6 +253,8 @@ regenera con `pyftsubset` (fonttools) sobre la fuente de `@fontsource-variable/m
 `--text="add" --unicodes=U+E145 --layout-features=rclt,rlig --flavor=woff2`. Material Symbols liga por `rlig`, no
 por `liga`: recortado con `liga`, la fuente carga y pinta la palabra «add». Sustituye DD-229; DD-167 y DD-187 vuelven a regir
 la forma del botón. Cubierto en `e2e/components.spec.ts` («Solo icono»): la familia del «+» y que «add» mide un glifo de 1 em.
+
+---
 
 ## DD-239 · 2026-10-28 — Agendas, Plantillas y Equipos se asignan solo a agentes; la columna «Grupos» filtra, no asigna
 
