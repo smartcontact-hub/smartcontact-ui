@@ -60,7 +60,7 @@ const ICON_SIZES: Record<ScCustomModalIconSize, ScIconTalla> = {
 let customModalIdCounter = 0;
 
 /**
- * Carcasa de modal del DS (Kit «❖ Custom modal», 13644:1039; DD-240). Es el `sc-custom-modal` de
+ * Carcasa de modal del DS (Kit «❖ Custom modal», 13644:1039; DD-241). Es el `sc-custom-modal` de
  * ui.smart-contact.com con su misma API: cabecera con icono, título, subtítulo y X; cuerpo y pie proyectados con
  * `scCustomModalBody` y `scCustomModalFooter`. Se abre por `ScDynamicDialogService` desde un componente de
  * contenido que la pinta.

@@ -30,7 +30,7 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
   `default`, `info`, `warning` o `error`), con los nombres y la API de los de ui.smart-contact.com. Se abren con
   `ScDynamicDialogService.open(...)`, que ahora fusiona el `static scDynamicDialogDefaults` del componente. Extensiones
   nuestras: `[(visible)]`, `width`, `dismissableMask`, `closeVariant` y `shown` en la carcasa, y `tertiaryActionLabel` en el
-  aviso. ([DD-240](docs/DECISIONS.md))
+  aviso. ([DD-241](docs/DECISIONS.md))
 - **`@smartcontact-hub/components`** — tres opciones nuevas para el hub de Repositorios en tarjetas, y para quien
   las necesite: `sc-drawer` gana `docked`, un panel acoplado a la página (sin sombra, con el borde en su filo interior
   y la esquina de arriba redondeada, como el panel lateral de GitHub), para usarlo con `topOffset`; `sc-avatar` gana
@@ -181,7 +181,7 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
 
 - **`@smartcontact-hub/components`** — `sc-dialog` (usa `sc-custom-modal`) y el diálogo centrado de
   `sc-confirmdialog` / `ScConfirmService` sin `target` (usa `sc-alert-modal`). El globo con `target` sigue vigente.
-  ([DD-240](docs/DECISIONS.md))
+  ([DD-241](docs/DECISIONS.md))
 - **`@smartcontact-hub/styles`** — 31 tokens que no lee ninguna pantalla de este repo quedan **en desuso y se retiran en
   2.0.0**: `--sc-font-weight-display-1`, `--sc-font-weight-h2`, `--sc-font-weight-body-1`, `--sc-font-weight-body-3`, `--sc-font-weight-caption-bold`, `--sc-font-family-display-1`, `--sc-font-family-h1`, `--sc-font-family-h2`, `--sc-font-family-body-3`, `--sc-font-family-caption-bold`, `--sc-dialog-divider`, `--sc-dialog-head-icon-size`, `--sc-dialog-padding-x`, `--sc-dialog-padding-y`, `--sc-toast-close`, `--sc-toast-gap-actions`, `--sc-toast-close-button-width`, `--sc-toast-close-button-height`, `--sc-toast-close-button-radius`, `--sc-toast-close-icon-size`, `--sc-toast-success-icon`, `--sc-toast-info-icon`, `--sc-toast-warn-icon`, `--sc-toast-error-icon`, `--sc-toast-secondary-bg`, `--sc-toast-secondary-border`, `--sc-toast-secondary-icon`, `--sc-toast-violet-icon`, `--sc-shadow-focus-ring-rgb`, `--sc-shadow-focus-ring`, `--sc-font-size-caption-bold`. Se habían quitado después de 1.0.0 (#194 y la limpieza posterior de
   `--sc-font-size-caption-bold`), lo que rompía la promesa de esta cabecera (`--sc-*` solo rompe en un major). Siguen

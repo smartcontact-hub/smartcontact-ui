@@ -4,7 +4,7 @@
 
 import figma from "figma"
 
-// El diálogo de confirmación centrado es ahora sc-alert-modal (DD-240): borrar va con `variant: 'error'`, descartar
+// El diálogo de confirmación centrado es ahora sc-alert-modal (DD-241): borrar va con `variant: 'error'`, descartar
 // cambios con `warning`. La variante de Figma (Dialog True/False) es solo la forma del diálogo en el lienzo. El globo
 // pegado al botón sigue con ScConfirmService.request({ …, target }).
 export default {

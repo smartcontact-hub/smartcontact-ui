@@ -42,7 +42,7 @@ const ACTION_VARIANT: Record<ScAlertModalVariant, ScButtonVariant> = {
 let alertModalIdCounter = 0;
 
 /**
- * Aviso o confirmación en un modal (Kit «❖ Alert modal», 15876:601; DD-240). Es el `sc-alert-modal` de
+ * Aviso o confirmación en un modal (Kit «❖ Alert modal», 15876:601; DD-241). Es el `sc-alert-modal` de
  * ui.smart-contact.com con su misma API: un `sc-custom-modal` con variante, icono, título, mensaje y acciones. Se abre
  * como lo abren ellos:
  *

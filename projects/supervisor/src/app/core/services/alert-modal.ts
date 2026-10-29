@@ -12,7 +12,7 @@ export interface AlertModalRequest {
 
 /**
  * Abre `sc-alert-modal` como lo abren los devs en ui.smart-contact.com (`ScDynamicDialogService.open` con sus
- * `inputValues`, DD-240) y resuelve `true` si se pulsa la acción; la X, «Cancelar» y Escape resuelven `false`. Es el
+ * `inputValues`, DD-241) y resuelve `true` si se pulsa la acción; la X, «Cancelar» y Escape resuelven `false`. Es el
  * único sitio del Supervisor que lo abre: borrar va con `error`, descartar cambios con `warning` y avisar al guardar con
  * `info`. Se llama en el contexto de inyección.
  */

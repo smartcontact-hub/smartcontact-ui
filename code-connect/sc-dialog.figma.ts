@@ -15,7 +15,7 @@ const footer = figma.selectedInstance.getBoolean("Show Footer", {
   false: "",
 })
 
-// El Dialog del Kit se construye en código con sc-custom-modal (sc-dialog se retira, DD-240): la carcasa va en un
+// El Dialog del Kit se construye en código con sc-custom-modal (sc-dialog se retira, DD-241): la carcasa va en un
 // componente de contenido abierto con ScDynamicDialogService.open(…).
 export default {
   id: "dialog",

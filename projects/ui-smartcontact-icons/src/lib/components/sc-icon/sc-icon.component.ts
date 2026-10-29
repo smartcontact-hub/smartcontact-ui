@@ -97,6 +97,7 @@ export class ScIconComponent {
             'sc-icon--inherit': size === 'inherit',
             'sc-icon--spin': this.spin(),
             'sc-icon--filled': this.filled(),
+            'sc-icon--add': resolveScIconName(this.name()) === 'add',
             [`sc-icon--tono-${this.tone()}`]: this.tone() !== 'default',
             [`sc-icon--weight-${this.weight()}`]: true,
             [`sc-icon--grade-${grade < 0 ? 'negative-25' : grade}`]: true,

@@ -3,7 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { injectAlertModal } from '@core/services';
 
 /**
- * Borrar un grupo o un agente es la confirmación simple del DS (`sc-alert-modal` en `error`, DD-240), sin teclear el nombre
+ * Borrar un grupo o un agente es la confirmación simple del DS (`sc-alert-modal` en `error`, DD-241), sin teclear el nombre
  * (DD-215, enmienda DD-145), igual desde el listado que desde la ficha. Desde el 2026-10-20, con el texto más corto que
  * dice todo: el título pregunta con el nombre («¿Eliminar el grupo «Ventas»?»), el cuerpo solo añade lo que no se sabe
  * («Esta acción no se puede deshacer.») y el botón repite el verbo del título («Eliminar»; «Confirmar» no dice qué

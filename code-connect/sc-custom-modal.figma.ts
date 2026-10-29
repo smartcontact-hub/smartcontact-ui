@@ -16,7 +16,7 @@ const footer = figma.selectedInstance.getBoolean("Show footer", {
   <sc-button scCustomModalFooter label="Guardar" (clicked)="save()" />`,
   false: "",
 })
-// La carcasa no tiene tono, como la de los devs: un modal con tono es sc-alert-modal, con su `variant` (DD-240).
+// La carcasa no tiene tono, como la de los devs: un modal con tono es sc-alert-modal, con su `variant` (DD-241).
 
 // Va en la plantilla de un componente de contenido con `static scDynamicDialogDefaults =
 // SC_CUSTOM_MODAL_DYNAMIC_DIALOG_DEFAULTS`, que se abre con ScDynamicDialogService.open(…).

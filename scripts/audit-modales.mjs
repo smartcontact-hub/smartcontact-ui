@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
- * AUDIT · los modales del Supervisor son los de ui.smart-contact.com (DD-240).
+ * AUDIT · los modales del Supervisor son los de ui.smart-contact.com (DD-241).
  *
- * Desde DD-240 hay dos piezas y una sola forma de usar cada una, las mismas que en el DS de los devs:
+ * Desde DD-241 hay dos piezas y una sola forma de usar cada una, las mismas que en el DS de los devs:
  *   · un aviso o una confirmación → `sc-alert-modal` con su `variant` (borrar `error`, descartar `warning`,
  *     informar `info`, neutro `default`), abierto con `injectAlertModal()` o con `ScDynamicDialogService`;
  *   · un modal con contenido propio (formulario, tabla, reproductor) → `sc-custom-modal`;
@@ -92,15 +92,15 @@ function main() {
     if (rel.startsWith('projects/supervisor/')) for (const [n, regla] of confirmsSinTarget(texto)) fallos.push(`${rel}:${n} · ${regla}`);
   }
   if (fallos.length) {
-    console.error(`✗ audit:modales: ${fallos.length} modal(es) fuera de DD-240 (el tope es 0):`);
+    console.error(`✗ audit:modales: ${fallos.length} modal(es) fuera de DD-241 (el tope es 0):`);
     for (const f of fallos) console.error(`   ${f}`);
     console.error(
       '\nAviso o confirmación: sc-alert-modal con su variant (injectAlertModal). Contenido propio: sc-custom-modal.\n' +
-        'Junto a lo pulsado: ScConfirmService con target. AGENTS.md §«Modales» y DD-240.',
+        'Junto a lo pulsado: ScConfirmService con target. AGENTS.md §«Modales» y DD-241.',
     );
     process.exit(1);
   }
-  console.log('✓ audit:modales OK: avisos en sc-alert-modal, contenido en sc-custom-modal y el globo con target (DD-240).');
+  console.log('✓ audit:modales OK: avisos en sc-alert-modal, contenido en sc-custom-modal y el globo con target (DD-241).');
 }
 
 if (process.argv[1] && process.argv[1].endsWith('audit-modales.mjs')) main();

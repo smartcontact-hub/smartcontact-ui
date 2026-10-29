@@ -2023,8 +2023,8 @@
       "primengBase": "primeng/autofocus, primeng/button, primeng/confirmdialog, primeng/confirmpopup",
       "estado": "deprecated",
       "faltas": [],
-      "retirado": "El diálogo centrado lo sustituye `sc-alert-modal`, el aviso que comparten los dos DS (DD-240). Sigue vigente solo el globo pegado al botón (`ScConfirmService.request({ …, target })`), que aún no tiene sustituto.",
-      "cuando": "Retirado (DD-240): para confirmar, `sc-alert-modal`. Queda solo el globo pegado al botón (`ScConfirmService.request({ target })`), para una frase sobre lo que se acaba de pulsar.",
+      "retirado": "El diálogo centrado lo sustituye `sc-alert-modal`, el aviso que comparten los dos DS (DD-241). Sigue vigente solo el globo pegado al botón (`ScConfirmService.request({ …, target })`), que aún no tiene sustituto.",
+      "cuando": "Retirado (DD-241): para confirmar, `sc-alert-modal`. Queda solo el globo pegado al botón (`ScConfirmService.request({ target })`), para una frase sobre lo que se acaba de pulsar.",
       "contrato": [],
       "ocultas": [
         "acceptAriaLabel",
@@ -4016,8 +4016,8 @@
       "primengBase": "primeng/dialog",
       "estado": "deprecated",
       "faltas": [],
-      "retirado": "Usa `sc-custom-modal`, la carcasa de modal que comparten los dos DS (la de ui.smart-contact.com), y `sc-alert-modal` para avisos y confirmaciones (DD-240).",
-      "cuando": "Retirado (DD-240): usa `sc-custom-modal`, la carcasa que comparten los dos DS.",
+      "retirado": "Usa `sc-custom-modal`, la carcasa de modal que comparten los dos DS (la de ui.smart-contact.com), y `sc-alert-modal` para avisos y confirmaciones (DD-241).",
+      "cuando": "Retirado (DD-241): usa `sc-custom-modal`, la carcasa que comparten los dos DS.",
       "contrato": [
         {
           "nombre": "visible",

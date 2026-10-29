@@ -173,7 +173,7 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
-## ✅ 2026-10-29 · `sc-custom-modal` y `sc-alert-modal`, como en ui.smart-contact.com (DD-240, #555)
+## ✅ 2026-10-29 · `sc-custom-modal` y `sc-alert-modal`, como en ui.smart-contact.com (DD-241, #555)
 
 **Sello:** rama `areses/confirmdialog-documentation-search-466499`. Salen los tramos del 2026-10-14: `git show e57ab438:docs/handoff/design-system.md`.
 
@@ -278,7 +278,7 @@ variables, 30 comentarios activos.
 
 - ⚠️ **Un `sc-button` de solo icono con el foco dentro de un `p-dialog` se queda el primer Escape**: su tooltip (DD-200) se
   registra como capa de encima y PrimeNG solo cierra si el diálogo es la de arriba. Por eso `sc-custom-modal` nunca abre
-  con el foco en la X (DD-240). Con prisa en la máquina el tooltip llega antes y la prueba falla a ratos: no es inestable.
+  con el foco en la X (DD-241). Con prisa en la máquina el tooltip llega antes y la prueba falla a ratos: no es inestable.
 - ⚠️ **La página de PrimeNG de sc-docs sale de un artefacto** que reescribe `npm run primeng-catalog:gen`: un `primeng/x`
   nuevo en una app lo deja atrás y `audit:primeng-catalog` se pone rojo hasta regenerarlo (pasó con ContextMenu, #400).
 - ⚠️ **Cinco trampas de PrimeNG 22 en `p-treetable`**, junto a su arreglo en `treetable-lab-page.component.ts`: `selection`

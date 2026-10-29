@@ -416,7 +416,7 @@ export function argTypesDe(ts) {
 
 /**
  * Las claves de `inputValues` de un `open(ScXComponent, { inputValues: { … } })`: así se abren
- * `sc-alert-modal` y los contenidos de `sc-custom-modal` (DD-240), y esas claves SON sus inputs.
+ * `sc-alert-modal` y los contenidos de `sc-custom-modal` (DD-241), y esas claves SON sus inputs.
  * Sin leerlas, el gate reclamaba `closeRequested` y `actionRequested` en una página cuyo primer
  * ejemplo los enseña. Solo cuenta para (b): el snippet de servicio no tiene plantilla que comparar.
  */

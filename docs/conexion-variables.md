@@ -409,7 +409,7 @@ haya que reconstruirlo cada vez que se retoma.
 
 ### El modal a medida lee su propio canal, no el tema
 
-> **Cerrada en nuestro lado por DD-240 (2026-10-29).** Nuestro `sc-custom-modal` lee las variables que ata el maestro del Kit
+> **Cerrada en nuestro lado por DD-241 (2026-10-29).** Nuestro `sc-custom-modal` lee las variables que ata el maestro del Kit
 > (`dialog/*`, la escala y el color de `custommodal/*`, que vale lo mismo que `message/*`), con los nombres de los devs
 > (`--sc-custom-modal-*`). Su componente sigue con su canal propio: la petición de abajo sigue siendo suya.
 
