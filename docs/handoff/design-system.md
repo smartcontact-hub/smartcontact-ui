@@ -175,7 +175,8 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 
 ## ✅ 2026-10-29 · `sc-custom-modal` y `sc-alert-modal`, como en ui.smart-contact.com (DD-240)
 
-**Sello:** rama `areses/confirmdialog-documentation-search-466499`, sobre `main` con el #548 fundido.
+**Sello:** rama `areses/confirmdialog-documentation-search-466499`, sobre `main` con el #548 fundido. Salen por el tope los
+dos tramos del 2026-10-14 (catálogo de PrimeNG y `/lab/arbol`): `git show e57ab438:docs/handoff/design-system.md`.
 
 **Lo que cambia.** El DS tiene los dos modales de los devs con sus nombres y su API: `sc-custom-modal` (carcasa; extensión
 nuestra `[(visible)]`, `width`, `dismissableMask`) y `sc-alert-modal` (variantes default, info, warning y error; extensión
@@ -200,25 +201,6 @@ contar a los devs sus fallos y que su página de Custom Modal está rota en prod
 **Figma.** El DS tiene el conjunto `step-marker` (15724:271) y `nav-item` (12555:23029) con 21 variantes. Falta que Rafa publique la librería; después hay que cambiar los 33 índices de la página Grupos del archivo del Supervisor (variante nueva por `importComponentByKeyAsync` + `swapComponent`) y tocar las notas «Cómo se comporta».
 
 **Pendiente.** Replicar el marcador en las fichas de agente, usuario y tipificación; revisar el copy fr y pt.
-
-## ✅ 2026-10-14 · PrimeNG por familias: catálogo de 109, barrido de usos y página en sc-docs
-
-**Sello:** rama `arebury/primeng-component-usage`, sobre HEAD `6ddbec7d` (#400). Sale por el tope el tramo del 2026-10-13
-(DD-202): `git show 6ddbec7d:docs/handoff/design-system.md`.
-
-**Lo que cambia.** El catálogo (§6) dice de los 109 módulos para qué sirven y cuándo elegir cada uno frente a su vecino; §7 es el barrido de usos; sc-docs lo pinta en `/#/components/primeng`, que es también el sitio de los nativos sin wrapper. De paso: los avisos de Conversaciones salen (llevaban una clave que nadie pintaba) y las confirmaciones que destruyen abren en «Cancelar».
-⚠️ **La página sale de un artefacto** que reescribe `npm run primeng-catalog:gen` con el estado del repo: un `primeng/x` nuevo en una app lo deja atrás y `audit:primeng-catalog` se pone rojo hasta regenerarlo (pasó con ContextMenu en `lab/arbol`, #400: este PR lo regeneró al traer `main`).
-
-## ✅ 2026-10-14 · El árbol de `/lab/arbol` hace los ejemplos de primeng.dev/treetable
-
-**Sello:** rama `arebury/tabla-primeng-completa`, sobre `a26d7fab` (#399). Sale por el tope el tramo de iconos del
-2026-10-13 (DD-200): `git show a26d7fab:docs/handoff/design-system.md`.
-
-**Lo que cambia.** `p-treetable` nativo, sin wrapper, con los 32 ejemplos de primeng.dev (cabecera agrupada con totales,
-selección, filtros, edición que suma al equipo, menú contextual, carga perezosa, congelar…): siete grupos en la píldora.
-
-- ⚠️ **Cinco trampas de PrimeNG 22, junto a su arreglo** en `treetable-lab-page.component.ts`: `selection` frente a
-  `selectionKeys`, `dataKey` en `node.data`, `totalRecords` vacío, `customSort` por nivel y el paginador que no recorta.
 
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 
@@ -297,6 +279,10 @@ variables, 30 comentarios activos.
 
 ## ⚠️ Trampas de este frente
 
+- ⚠️ **La página de PrimeNG de sc-docs sale de un artefacto** que reescribe `npm run primeng-catalog:gen`: un `primeng/x`
+  nuevo en una app lo deja atrás y `audit:primeng-catalog` se pone rojo hasta regenerarlo (pasó con ContextMenu, #400).
+- ⚠️ **Cinco trampas de PrimeNG 22 en `p-treetable`**, junto a su arreglo en `treetable-lab-page.component.ts`: `selection`
+  frente a `selectionKeys`, `dataKey` en `node.data`, `totalRecords` vacío, `customSort` por nivel y el paginador que no recorta.
 - ⚠️ **`stateKey` tapa dos fallos de PrimeNG 22** (`reponerEstado` y `onStateSave` de `sc-datatable.component.ts`): sus entradas pisan lo repuesto en el mismo arranque, y un filtro en fila vacío rompía la tabla al volver. Al subir PrimeNG, quita los dos y mira si la prueba «stateKey: al volver…» sigue verde. (Tramo archivado: `git show archive/handoff-design-system-2026-10-22:docs/handoff/design-system.md`.)
 
 - 🪤 **Al quitar un import de PrimeNG, el trinquete de descripciones pide JSDoc** para lo que heredaba la suya: la de la pieza hermana sirve donde coincide (DD-172).

@@ -189,9 +189,11 @@ ConfirmDialog: solo aparece en el tema. El «Modal legacy custom» se había des
 3. **Extensiones nuestras, marcadas**: el tercer botón del aviso (`tertiaryActionLabel`, «No guardar», que venía de `choose()`), y en la
    carcasa `[(visible)]`, `width`, `dismissableMask` y `shown` para abrirla desde la plantilla cuando su formulario se ata al estado de
    la pantalla.
-4. **Figma manda en el aspecto**: «❖ Custom modal» (13644:1039) es la carcasa, y gana «Show close» (`showCloseButton`); «❖ Alert
-   modal» (15876:601) es nueva, con cuatro variantes hechas con una instancia de Custom modal, de modo que un cambio en la carcasa llega
-   al aviso. Se crean las variables `component/custommodal/info/*` (las de error y warn ya estaban) y el nombre de código de las
+4. **Figma manda en el aspecto, y calca el repo de los devs**: «❖ Custom modal» (13644:1039) es solo la carcasa, sin tono, como su
+   `sc-custom-modal`, y gana «Show close» (`showCloseButton`); sus tipos Error y Warn se quitan (2026-10-29): eran avisos, y las 9
+   instancias que los usaban (todas avisos o huecos de ejemplo, ninguna en el fichero del Supervisor) pasan a Alert modal. «❖ Alert
+   modal» (15876:601) es nueva: cuatro variantes sobre la carcasa Default con el tono puesto encima (`custommodal/{info,warn,error}/*`),
+   de modo que un cambio en la carcasa llega al aviso. El tono de un modal es SIEMPRE la `variant` de Alert modal. Se crean las variables `component/custommodal/info/*` (las de error y warn ya estaban) y el nombre de código de las
    `custommodal/*` pasa a `--sc-cmp-custommodal-*` (decía `--sc-cmp-bulktranscriptionmodal-*`). El código lee lo que ata el maestro:
    el hueco y el tipo, de `dialog/*` y la escala; el color, de `--sc-cmp-message-*`, que vale lo mismo que `custommodal/*` en los dos
    modos (el export solo trae `aura/custom` en uno).

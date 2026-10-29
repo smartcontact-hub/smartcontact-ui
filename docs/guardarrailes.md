@@ -13,7 +13,7 @@
 ## Los comandos
 
 ```bash
-npm run verify         # los 50 checks estáticos encadenados (~40s)
+npm run verify         # los 51 checks estáticos encadenados (~40s)
 npm run e2e            # smoke en navegador (Playwright)
 npm run e2e:contrast   # carril rápido para cambios de COLOR (~80s)
 npm run preflight      # gates + builds AOT (~8 min), antes de pushear; las capturas las compara el CI

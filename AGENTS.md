@@ -350,6 +350,25 @@ no la otra. Cada fila apunta a la decisión o al gate que la sostiene; no hay fi
 | Filtrar por un par que reparte todo (tipo, canal, dirección) | `sc-selectbutton multiple [allowEmpty]="false"`: no se queda vacío | Dos casillas sueltas, que dejan la tabla en 0 | DD-205 |
 | Dos flujos que se ven distintos y parece un bug | Mira DD-36 y DD-53 antes de uniformar | Igualarlos «para que cuadren» | DD-36, DD-53 |
 
+**Modales: los de ui.smart-contact.com, sin variaciones (DD-240).**
+
+Los devs usan `sc-custom-modal` y `sc-alert-modal` en toda la plataforma; los nuestros se llaman igual, tienen su misma
+API y se abren igual. Para no abrir un tercer camino:
+
+- **Aviso o pregunta con una acción** → `sc-alert-modal`. En el Supervisor, `injectAlertModal()` de `@core/services`;
+  fuera, `ScDynamicDialogService.open(ScAlertModalComponent, { inputValues })`. La `variant` dice la intención y no se
+  elige por gusto: **borrar o bloquear `error`**, **descartar cambios `warning`**, **informar `info`**, **neutro `default`**.
+- **Contenido propio** (formulario, tabla, reproductor) → `sc-custom-modal`: por servicio como los devs, o con
+  `[(visible)]` si se ata a la pantalla. La carcasa **no tiene tono**: un modal teñido es siempre un `sc-alert-modal`.
+- **Una frase junto a lo pulsado** → `ScConfirmService.request({ …, target })`. Sin `target` no se usa.
+- **Extensiones nuestras** (`[(visible)]`, `width`, `dismissableMask`, `closeVariant`, `shown`, `tertiaryActionLabel`): solo esas, y marcadas
+  así en el JSDoc. Una entrada nueva que los devs no tienen se pregunta antes: rompe el «se llama igual».
+- **Figma calca lo mismo**: «❖ Custom modal» es solo la carcasa (Default); «❖ Alert modal» lleva las cuatro variantes.
+  No se añaden tipos de color a Custom modal.
+
+Lo vigila `audit:modales` (en `verify`, tope 0): `sc-dialog`, un `p-dialog` o `ConfirmationService` a pelo en el
+Supervisor, `<sc-confirmdialog>` fuera de `app.component.html` y un `request()` sin `target` ponen rojo.
+
 ---
 
 ## Mandatory Workflow
