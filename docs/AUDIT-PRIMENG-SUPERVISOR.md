@@ -215,7 +215,7 @@ Expone todo lo que PrimeNG documenta.
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-subsection` · 23 usos · —
+### `sc-subsection` · 30 usos · —
 
 Expone todo lo que PrimeNG documenta.
 
