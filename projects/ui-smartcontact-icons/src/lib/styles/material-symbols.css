@@ -13,6 +13,17 @@
     format('woff2-variations');
 }
 
+/* El «+» (`add`) sale de Material Symbols Rounded, con las puntas redondeadas; el resto de iconos sigue en Outlined
+ * (DD-31). Es la fuente Rounded recortada a ese glifo y a su ligadura (1,7 KB, con los cuatro ejes): la entera pesa
+ * 5,3 MB. Revisión de producto del 2026-10-26 (DD-240). */
+@font-face {
+  font-family: 'Material Symbols Rounded Add';
+  font-style: normal;
+  font-display: block;
+  font-weight: 100 700;
+  src: url('./fonts/material-symbols-rounded-add.woff2') format('woff2-variations');
+}
+
 .sc-icon,
 .sc-icon-font::before {
   display: inline-block;
@@ -39,6 +50,11 @@
    * lo que ese tamaño promete sin tocar la caja: nada se mueve, no hay saltos. Va
    * como propiedad propia y no en `transform` para no pisar el giro de `--spin`. */
   scale: calc(24 / 18);
+}
+
+.sc-icon--add,
+.sc-icon-font--add::before {
+  font-family: 'Material Symbols Rounded Add', 'Material Symbols Outlined Variable';
 }
 
 .sc-icon-font {
