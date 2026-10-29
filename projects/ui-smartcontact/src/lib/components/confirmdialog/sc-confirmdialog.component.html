@@ -1,2 +1,36 @@
-<p-confirmdialog />
+<p-confirmdialog [style]="dialogStyle" [pt]="dialogPt" />
+<!-- Tres botones: el pie es propio para que quepa la tercera acción; reject y accept, como los pinta PrimeNG. -->
+<p-confirmdialog #tertiary [key]="tertiaryKey" [style]="dialogStyle" [pt]="dialogPt">
+  <ng-template #footer>
+    @let confirmation = tertiary.confirmation();
+    <button
+      type="button"
+      pButton
+      severity="secondary"
+      [text]="true"
+      [style]="tertiaryStyle"
+      (click)="onTertiary(tertiary)"
+    >
+      {{ tertiaryLabel(confirmation) }}
+    </button>
+    <button
+      type="button"
+      class="p-confirmdialog-reject-button"
+      [pButton]="confirmation?.rejectButtonProps"
+      [pAutoFocus]="confirmation?.defaultFocus === 'reject'"
+      (click)="tertiary.onReject()"
+    >
+      {{ confirmation?.rejectButtonProps?.label }}
+    </button>
+    <button
+      type="button"
+      class="p-confirmdialog-accept-button"
+      [pButton]="confirmation?.acceptButtonProps"
+      [pAutoFocus]="confirmation?.defaultFocus === 'accept'"
+      (click)="tertiary.onAccept()"
+    >
+      {{ confirmation?.acceptButtonProps?.label }}
+    </button>
+  </ng-template>
+</p-confirmdialog>
 <p-confirmpopup [key]="popupKey" [pt]="popupPt" [style]="popupStyle" />

@@ -59,9 +59,9 @@ test.describe('la franja, por debajo de 1340', () => {
         )
       );
     // Teléfono, Chat, Email y los dos números, todos en Distribución (DD-204): Teléfono es un enlace como Chat desde
-    // DD-206 §1. Y las tres de Recursos (agendas y plantillas de chat y de email), que desde DD-217 son `scFactRow`
-    // como las de Distribución, en la misma vertical. Sobre una lista vacía, «todos alineados» se cumpliría.
-    expect(xs).toHaveLength(8);
+    // DD-206 §1, y la cifra de Agentes habilitados. Las tres de Recursos (agendas y plantillas) salen del resumen con
+    // DD-239: se asignan solo a agentes. Sobre una lista vacía, «todos alineados» se cumpliría.
+    expect(xs).toHaveLength(5);
     expect(new Set(xs).size, `x de cada valor: ${xs.join(', ')}`).toBe(1);
   });
 });

@@ -410,7 +410,7 @@
       "selector": "sc-confirmdialog",
       "provenance": "WRAPPER",
       "kind": "STANDARD",
-      "primengBase": "primeng/confirmdialog, primeng/confirmpopup",
+      "primengBase": "primeng/autofocus, primeng/button, primeng/confirmdialog, primeng/confirmpopup",
       "cva": false,
       "inputs": 0,
       "api": [],
@@ -421,7 +421,7 @@
       "faltas": [],
       "retirado": null,
       "usedInSupervisor": 1,
-      "cuando": "Para confirmar una acción normal. Si lo que se borra hay que enseñarlo, `sc-delete-entity-dialog`.",
+      "cuando": "Para confirmar una acción normal, con 2 botones o 3 (`choose()`). Mide de 320 a 480 px de ancho y hasta 400 de alto; título de 1 a 2 líneas y descripción de 1 a 4. Si lo que se borra hay que enseñarlo, `sc-delete-entity-dialog`.",
       "sobreObsoleto": []
     },
     {

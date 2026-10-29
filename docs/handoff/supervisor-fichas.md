@@ -77,6 +77,23 @@ trampas propias): `git show archive/handoff-fichas-2026-10-26:docs/handoff/super
 El de marcar una casilla de Grupos o Agentes sin acortar la tabla (2026-10-21, fallo de DD-215, sin trampas propias): `git show 5a04de14:docs/handoff/supervisor-fichas.md`.
 El de la ficha de grupo como la versión 17 de su página de COA (2026-10-22, DD-223, sin trampas propias): `git show
 5374bb7a:docs/handoff/supervisor-fichas.md`.
+El del repaso de Grupos entre COA, Figma y prototipo, con «Editar en Repositorios» (2026-10-22, DD-224, sin trampas propias):
+`git show 2d3724ad:docs/handoff/supervisor-fichas.md`.
+
+## ✅ 2026-10-28 · Agendas, Plantillas y Equipos: solo a agentes, confirmado con producto (DD-239)
+
+> **Sello:** rama `areses/team-docs-update-69ebf8` sobre `main` HEAD `a922b1b3`.
+
+- **Hecho**: el aviso de borrar una plantilla dice «Los agentes que la tengan asignada perderán la referencia.» (sin «y
+  grupos»), en `templates.delete.*`. DD-239 recoge la decisión (producto, 28/10): la columna «Grupos» filtra y marca, no
+  asigna; asignar a un grupo queda a futuro. Equipos (SISMAC-4453) es lo mismo: nombre, descripción y agentes.
+- **Ficha de grupo**: el bloque «Repositorios» de Recursos (Agendas, Plantillas, «Gestionar en Repositorios») queda apagado tras
+  `conRecursosDeRepositorio = false`, como Etiquetas (DD-142); «Ficha de cliente» sigue, y `Group.schedules/templates` se
+  conservan al guardar. El resumen no pinta «Recursos» sin filas. Pruebas: `ficha-recursos-dialogos`, `recursos-resumen`,
+  `resumen-enlazado` y `revision-producto-1020` ajustadas (lo del grupo, medido en el agente 3).
+- **COA leídos el 2026-10-28** (4058, 4438, 4440 y 4453): el prototipo cuadra; el 4058 ya dice que Recursos y su fila del
+  resumen «se hacen pero se ocultan». **Figma, hecho** (`figma-pendiente` §63): bloque y fila ocultos, textos al día.
+- **Equipos, cerrado**: se asigna únicamente a agentes; el «y sus asignaciones a grupos» del COA 4453 sobra y no cambia código.
 
 ## ✅ 2026-10-26 · Duplicar tipificaciones y equipos abre un alta rellena (DD-232)
 > **Sello:** rama `claude/duplicate-typifications-teams-920106` sobre `main` `aaa8e0fd`.
@@ -94,7 +111,8 @@ El de la ficha de grupo como la versión 17 de su página de COA (2026-10-22, DD
 - **Listados**: Agendas con Descripción y Agentes (cifra, «—» en 0), todo ordenable (`sortable` + `sortFn` en `RepoListPage`);
   Plantillas sin pestañas, con columna Canal. Contactos con casillas y borrado múltiple (confirmación simple, como Reglas).
 - **Para el COA**: «Duplicar» es un alta («X (1)», DD-234), las pestañas pasan a columna Canal y Crear va siempre activo (DD-217). **Trampa**: en el e2e, Nombre es un `th` (`rowHeader`): el `td` de «Agentes» es el 3, no el 4. **Pendiente de producto**: la
-  ficha de grupo sigue asignando Agendas y Plantillas al grupo (Recursos).
+  ficha de grupo sigue asignando Agendas y Plantillas al grupo (Recursos). *(Producto lo cerró el 2026-10-28, DD-239: solo
+  agentes; falta retirarlo de Recursos.)*
 - **«Título» (DD-236, 2026-10-27)**: Agendas y Plantillas vuelven a llamar «Título» a su campo (lo decidió el equipo; Voice y
   los COA lo dicen así). Los contactos de una agenda y el resto de listas siguen con «Nombre». Falta editar proto y Figma.
 - **Miga, buscador y placeholders (DD-238, 2026-10-28)**: el buscador de Tipificaciones mira también los nombres de los grupos; la edición de Tipificaciones, Agendas, Plantillas y Email acaba en el nombre guardado, y Agendas, Plantillas y Email abren la miga con «Administración»; el nombre de las fichas de Repositorios lleva «Ej: …» y la descripción «Breve descripción...» (Agentes y Grupos, sin placeholder). Pendiente: Usuarios y el resto de instancias de Repositorios en la miga.
@@ -131,25 +149,6 @@ El de la ficha de grupo como la versión 17 de su página de COA (2026-10-22, DD
   aviso de quitar canales (`removeBodyKey`).
 - **Pruebas**: `agentes-como-coa-4060-4062.spec.ts` nueva; al día las que fijaban el ✓ suelto y «Falta: …».
 - **Fuera**: Contact Center › Servicio pinta Administrativo con `warn`, no en marrón como la columna Estado.
-
-## ✅ 2026-10-22 · Repaso de Grupos entre COA, Figma y prototipo; «Editar en Repositorios» pregunta guardar (DD-224)
-
-> **Sello:** rama `areses/repaso-grupos-coa-figma` sobre `main` `fa98b4bf`, un PR (#507, fundido como `88d2e3e7`). La
-> congelada 4058 avanzó a ese commit el mismo día. COA, publicado el mismo día con todo el repaso: la 4056 en la v13 y
-> la 4058 en la v19, con su tabla de contenidos, las anclas «Indice», «Mensajes» y «Resumen», y la fila 0.2 en el
-> control de versiones. El 2026-10-23, la 4058 sumó capturas (v20, 19 imágenes, fila 0.3) y las dos retocaron el texto
-> de esas filas: hoy, **4056 v14 y 4058 v21**.
-
-- **Repaso**: COA 4058 (v17) y 4056 (v11) frase a frase contra la congelada 4058 (ya con DD-223) y contra el texto de
-  las hojas de Figma de Grupos. Prototipo y Figma cuadraban salvo cinco retoques de texto, hechos con DD-224 (`figma-pendiente` §62); las
-  correcciones de COA, ya publicadas, y el prompt que las aplicó viven fuera del repo (`~/Documents/Claude/2026-10 Grupos COA/`).
-- **«Editar en Repositorios»** del detalle de la tipificación, con cambios, pregunta «¿Guardar los cambios?» como
-  «Gestionar en Repositorios»: `sc-tipificacion-arbol` emite `editar` y la ficha decide (`salirARepositorios`).
-- **«Solo salientes» con Call Blending**: ya lo decía DD-211 §9; desde la v19, también la 4058 de COA.
-- **Capturas de la 4058** (2026-10-23): 14 nuevas, bajo las reglas que no tenían imagen, en
-  `~/Documents/Claude/2026-10 Grupos COA/Capturas 4058/`; fuera las dos repetidas, y la de «Sin canales», cambiada por
-  una de la congelada (G14). La extensión no lee archivos del Mac: se suben a los adjuntos de la página y las coloca
-  desde ahí.
 
 ## SIGUIENTE — sin preguntar
 
