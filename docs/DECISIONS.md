@@ -45,6 +45,7 @@
 > | Tipificaciones: el buscador de la lista mira cualquier campo, también los nombres de los grupos que la usan aunque solo salgan al pasar el ratón (enmienda la regla de Agentes y Grupos solo para esta lista) · la edición de Tipificaciones, Agendas, Plantillas y las cuentas y triggers de Email acaba en el nombre guardado, y Agendas, Plantillas y Email abren la miga con «Administración», como Grupos y Agentes · el nombre de las fichas de Repositorios lleva «Ej: …» y la descripción «Breve descripción...» | DD-238 |
 > | Duplicar una agenda o una plantilla es un alta, como un grupo o un agente (enmienda DD-230): abre «Nueva agenda/plantilla» con la copia y su nombre «X (1)» (`seedFromId`, `nombreDeCopia`), que no existe hasta «Crear» · no copia a qué agentes se asigna | DD-234 |
 > | Agendas y Plantillas como sus COA (SISMAC-4440 y 4438): se asignan SOLO a agentes, en una tabla plana de agentes con su columna «Grupos» (`sc-agent-assignment-table`), sin árbol ni grupos dinámicos (enmienda DD-211 §1) · el listado de Agendas con Descripción, Contactos y Agentes (cifra, sin globo) ordenables · Plantillas sin pestañas, con columna Canal · contactos con casillas y borrado múltiple (completa DD-227 en una tabla anidada) | DD-230 |
+> | A quién se asignan Agendas, Plantillas y Equipos: solo a agentes, con la columna «Grupos» para filtrar y marcar de golpe; asignar a un grupo queda a futuro; el aviso de borrar no nombra grupos (confirmado con producto, 2026-10-28) | DD-239 |
 > | El «+» de `sc-button` (`icon="add"`) es siempre redondo: círculo sin rótulo, píldora con él (enmienda DD-167 y DD-187) | DD-229 |
 > | Con el índice en la caja, el carril mide 235, el de la caja en Figma: ningún rótulo de las fichas salta de línea · sin la caja, 196 (enmienda DD-220) | DD-221 |
 > | El índice de secciones, en la caja gris de Contact Center en las seis pantallas que lo llevan (Contact Center, fichas de grupo, agente y usuario, tipificación y constructor de reglas), como en Figma: un solo interruptor de la app (`SC_FORM_SECTION_NAV_CAJA`), y volver al índice plano es borrar su línea | DD-220 |
@@ -167,6 +168,66 @@
 
 ---
 
+## DD-239 · 2026-10-28 — Agendas, Plantillas y Equipos se asignan solo a agentes; la columna «Grupos» filtra, no asigna
+
+**Contexto** · Al revisar el aviso de borrar una plantilla del prototipo («Los agentes y grupos que la tengan asignada perderán
+la referencia.») saltó la duda de si una plantilla puede asignarse a un grupo. Había tres lecturas en el aire: la revisión de
+producto del 2026-10-15 anotó que Voice «lo permite» (de oídas, sin COA delante); el COA de Voice dice que Agendas y
+Plantillas se asignan a agentes y que elegir un grupo o un nodo en esa pantalla solo marca los checks de los agentes de la
+lista (una «selección rápida» que se podría quitar sin problema); y DD-230 ya las asignaba solo a agentes, pero dejaba el aviso
+y la ficha de grupo «como estaban, pendiente de producto». Producto lo cerró el 2026-10-28: solo agentes, con la columna
+«Grupos» para filtrar y marcar de golpe; asignar a un grupo queda a futuro. SPB, el único cliente con chat, ya asigna las
+plantillas a agentes y no usa la asignación a grupos. Equipos (SISMAC-4453, «antiguo Grupos de agentes», en Repositorios) es
+la misma idea: un equipo es un nombre, una descripción y los agentes que lo forman.
+
+**Decisión** ·
+1. **Agendas, Plantillas y Equipos se asignan solo a agentes.** La relación vive en el agente (`Agent.schedules`,
+   `Agent.templates`) o, en Equipos, en la lista de agentes del equipo. Un grupo no tiene agendas ni plantillas «suyas» que
+   los agentes hereden.
+2. **«Grupos» es información y filtro.** En la tabla de agentes de las fichas de Agenda y Plantilla (`sc-agent-assignment-table`)
+   la columna lleva los grupos del agente; se busca por ella y el check de la cabecera marca los que se ven. Marcar un agente
+   no marca a su grupo ni a los demás (ya era DD-230 §1).
+3. **El aviso de borrar no nombra grupos**: «Los agentes que la tengan asignada perderán la referencia.» (y «las tengan
+   asignadas» con varias), en `templates.delete.single_detail` y `bulk_footer`. Enmienda DD-233 y DD-237. El de Agendas ya
+   no tiene detalle, no cambia.
+4. **Asignar a un grupo queda a futuro**, no descartado: si llega, será una decisión nueva con su regla para el agente que
+   ya la tiene y entra en un grupo que también la tiene (que no salga dos veces).
+
+**Razón** · Es lo que dicen el COA de Voice y los COA de Agendas y Plantillas (SISMAC-4440 y 4438), y lo que ya hace el
+prototipo desde DD-230; lo único que seguía diciendo lo contrario era un texto. El modelo no tiene equipos en grupos
+(`groups-data.ts` no guarda ninguno), y el editor de Equipos ya asigna agentes con la tabla de las fichas.
+
+**Descartadas** ·
+- *Dejar «y grupos» en el aviso por si acaso*: describe una relación que el prototipo no puede crear; promete al desarrollador
+  algo que no se construye.
+- *Asignar a grupos con herencia al agente*: obliga a decidir duplicados y contactos propios (nota de la revisión del 15/10) y
+  el único cliente con chat no lo usa.
+
+**Consecuencias** ·
+- **Textos**: cambian los dos de `templates.delete` en es, en, fr y pt.
+- **Ficha de grupo**: el bloque «Repositorios» de «Recursos» (Agendas, Plantillas de chat y de email, Etiquetas y «Gestionar en
+  Repositorios») se queda hecho y apagado tras `conRecursosDeRepositorio = false`, como Etiquetas tras `conEtiquetas`
+  (DD-142), porque el COA 4058 lo pide así: «se hace pero se va a ocultar». La sección «Recursos» sigue, con «Ficha de
+  cliente»; el índice conserva sus cuatro filas. El resumen del grupo no pinta su tarjeta «Recursos» sin filas
+  (`group-summary`: `@if (resources().length > 0)`), y la cabecera de Recursos pierde su ayuda «Lo que se asigna desde
+  Repositorios» (ya no hay nada de Repositorios en ella). **Los datos se conservan**: `Group.schedules` y `Group.templates` se
+  cargan y se guardan tal cual (de ellas se va lo borrado en Repositorios), así que al encender el flag el grupo vuelve con lo
+  que tenía. Enmienda DD-211 §9 («Recursos, igual en el grupo y en el agente») y DD-217 (los chips de Recursos del grupo).
+- **Agente**: sin cambios. Sigue asignando Agendas, Equipos y Plantillas, y es el único sitio donde se hace.
+- **Pruebas**: `ficha-recursos-dialogos`, `recursos-resumen`, `resumen-enlazado` y `revision-producto-1020` miran lo que queda;
+  lo que era del grupo se mide en el agente (3, con dos equipos y dos agendas).
+- **Contra los COA** (leídos el 2026-10-28): el 4058 ya dice, en Recursos y en la caja resumen, que esa parte «se hace pero se
+  va a ocultar» porque Agendas y Plantillas se asignan solo a agentes, y ya no trae la duda «PENDIENTE CONFIRMAR»: el
+  prototipo cuadra sin tocar el COA. Los de Plantillas (4438) y Agendas (4440) dicen que se asignan solo a agentes y que
+  pertenecer a un grupo no asigna al resto, y el 4438 ya dice que borrar avisa a «los agentes»: era el prototipo el que
+  decía «y grupos». **Diferencia que queda**: el COA 4438 no pone aviso de «perderán la referencia» en el borrado múltiple
+  y el prototipo sí (DD-233); no es de esta decisión. **Equipos, cerrado (producto,
+  2026-10-28)**: un equipo se asigna únicamente a agentes. El «y sus asignaciones a grupos» del borrado múltiple del COA
+  4453 es redacción que sobra: borrar un equipo quita sus agentes del equipo y no toca nada más; el prototipo ya lo hace
+  así (`equipo-editor-page`, DD-231 y DD-232), sin cambio de código.
+
+---
+
 ## DD-238 · 2026-10-28 — El buscador de Tipificaciones mira también los grupos; la miga de las fichas acaba en el nombre guardado
 
 **Contexto** · Al alinear COA, Figma y prototipo de Tipificaciones, diseño y producto vieron cuatro desajustes: el COA dice que el
@@ -198,6 +259,8 @@ decisión de producto y las tres se ponen al día.
 Figma (`↳ Tipificaciones`; Agendas y Plantillas, en cuanto se pongan al día): miga con el nombre en los ocho estados de edición y en el mapa, placeholder, y las notas del buscador,
 la edición y el alta. El COA recibe el buscador por grupos, el tope de quince nombres del tooltip, la miga con nombre y el título
 en vivo. **Pendiente de producto:** la miga de Usuarios («Editar usuario») y la de las demás instancias de Repositorios (Etiquetas, Horarios, Variables…), que siguen como estaban, y la dirección de la cuenta de Email, que lleva su propio ejemplo.
+
+---
 
 ## DD-237 · 2026-10-27 — Agendas y Plantillas siguen el flujo de Grupos y Agentes; Tipificaciones, sus avisos y modales como el COA
 
@@ -314,7 +377,7 @@ entrega es para que los desarrolladores implementen más rápido y un solo patr�
 
 **Decisión** · Todas esas pantallas usan `injectBorradoSimple` (`confirmar-borrado.ts`): al ponerse lo que se va a borrar,
 pregunta («¿Eliminar el usuario «Ana»?» o «¿Eliminar 3 usuarios?»), añade el aviso propio si lo hay («La usan 3 grupos.», «Los
-agentes y grupos que la tengan asignada perderán la referencia.») y el cuerpo «Esta acción no se puede deshacer.». «Eliminar» del
+agentes que la tengan asignada perderán la referencia.», sin «y grupos» desde DD-239) y el cuerpo «Esta acción no se puede deshacer.». «Eliminar» del
 menú ya no lleva puntos suspensivos. Los repositorios usan un título genérico («¿Eliminar «X»?»); Equipos conserva el suyo.
 
 **Razón** · Un patrón, una implementación, y la misma expectativa en todas las listas (DD-227).
@@ -1024,7 +1087,7 @@ desplegable, la tipificación sin su descripción y duplicar con «(1)» en vez 
    script de chat y el número de WhatsApp. Fuera `group-duplicate-dialog`. El agente sigue duplicando a un alta: su
    extensión, su email y su PIN no se copian, y la copia es su punto de partida: «Deshacer» vuelve a ella (antes la
    vaciaba sin preguntar) y salir sin tocar nada no pregunta.
-9. **Recursos, igual en el grupo y en el agente**: Agendas, Equipos y Plantillas en chips, a media columna, con tantos
+9. **Recursos, igual en el grupo y en el agente** *(enmienda DD-239: el grupo ya no los asigna, solo el agente)*: Agendas, Equipos y Plantillas en chips, a media columna, con tantos
    chips como caben y «+N más» por el resto (`chipOverflow="fit"` de `sc-multiselect`, DS: mide y no corta ninguno;
    lo elegido no ensancha el campo, y un nombre más largo que él se acorta con «…» y se lee entero al pasar). Sin «+» al lado ni lápiz en las
    opciones, y sin la ventana de crear o editar (retira el «+» de DD-167, el lápiz de DD-204 y la ventana de DD-187):

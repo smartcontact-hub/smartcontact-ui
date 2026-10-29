@@ -492,6 +492,7 @@ export interface Group {
   /** «Dentro de cada nivel» de Email, si reparte por Niveles. */
   readonly emailSubStrategy?: string;
   readonly labels?: readonly number[];
+  /** Plantillas del grupo: la ficha ya no las asigna (solo a agentes, DD-239); se conservan al guardar por si vuelve. */
   readonly templates?: readonly number[];
   readonly subStrategy?: string;
   readonly chatSubStrategy?: string;
@@ -510,6 +511,7 @@ export interface Group {
   /** La cola y los tiempos de Email, como en Voice. Sin ella, los de `advanced`. */
   readonly emailQueue?: ChannelQueue;
   readonly chat?: ChatSettings;
+  /** Agendas del grupo: como `templates`, ya no se asignan desde la ficha (DD-239) y se conservan al guardar. */
   readonly schedules?: readonly number[];
   /** Draft flag — set on duplicated entities until the user saves (DD#294 in the React prototype). */
 }

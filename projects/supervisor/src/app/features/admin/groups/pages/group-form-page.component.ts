@@ -785,6 +785,13 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
    */
   protected readonly conEtiquetas: boolean = false;
 
+  /**
+   * Agendas y Plantillas de Recursos fuera de la ficha de grupo (DD-239): se asignan solo a agentes y asignar a un grupo
+   * queda a futuro. El bloque «Repositorios» se queda hecho y apagado por si vuelve, y el grupo conserva las agendas y
+   * plantillas que tenía (se leen y se guardan tal cual). Encenderlo es poner esto a `true`.
+   */
+  protected readonly conRecursosDeRepositorio: boolean = false;
+
   /* ── La tipificación del grupo, en General (revisión de tipificaciones del 2026-10-09) ── */
 
   /** Las tipificaciones de Repositorios, por su nombre: se elige UNA. */
@@ -1325,6 +1332,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
   /** Los recursos del grupo por tipo, con cuántos tiene, para Recursos del resumen: Agendas siempre, y las plantillas de
    *  los canales que atiende, como los campos de la sección (revisión del 2026-10-14). Cada fila lleva a su campo. */
   protected readonly summaryResources = computed<readonly GroupSummaryResources[]>(() => {
+    if (!this.conRecursosDeRepositorio) return [];
     const f = this.form();
     return [
       { key: 'agendas', labelKey: 'agents.form.advanced.agendas.title', count: this.resourceRows.agendas(f.scheduleIds, false).length },

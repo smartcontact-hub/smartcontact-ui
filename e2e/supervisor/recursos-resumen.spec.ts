@@ -9,9 +9,10 @@ import { disableAnimations, forceLightTheme, goto, irASeccion } from './helpers'
  * Hasta la revisión de producto del 2026-10-20, «Editar» iba en cada opción, un lápiz que abría la ventana del «+». Desde
  * DD-217 ninguna ficha lo lleva: lo elegido va en chips, la opción enseña al pasar lo que contiene, y se crea y se edita
  * en Repositorios. Lo que fija:
- *   1. bajo el campo no hay lista, lo elegido va en chips y la opción no lleva lápiz, en la ficha y en el alta;
+ *   1. bajo el campo no hay lista, lo elegido va en chips y la opción no lleva lápiz, en la ficha y en el alta del agente;
  *   2. se ofrecen todas las agendas: ya no son activas ni inactivas;
- *   3. lo borrado en Repositorios no se cuenta ni se guarda, y la ficha no abre con cambios por ello.
+ *   3. lo borrado en Repositorios no se guarda, y la ficha no abre con cambios por ello. El grupo ya no asigna agendas ni
+ *      plantillas (solo a agentes, DD-239), pero conserva las que tenía y de ellas se va lo borrado.
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -67,15 +68,16 @@ test('agente · sin lista bajo el campo: lo elegido en chips, y la opción sin l
   await expect(page).toHaveURL(/\/admin\/agentes\/crear/);
 });
 
-test('se ofrecen todas las agendas, tengan o no la puesta el grupo', async ({ page }) => {
-  await goto(page, 'admin/grupos/editar/5?seccion=recursos');
-  expect(await opciones(page, 'group-agendas')).toContain('Soporte Técnico');
-  await goto(page, 'admin/grupos/editar/11?seccion=recursos');
-  expect(await opciones(page, 'group-agendas')).toContain('Soporte Técnico');
+test('se ofrecen todas las agendas, tengan o no la puesta el agente', async ({ page }) => {
+  await goto(page, 'admin/agentes/editar/3?seccion=recursos');
+  expect(await opciones(page, 'agent-agendas')).toContain('Soporte Técnico');
+  await goto(page, 'admin/agentes/editar/1?seccion=recursos');
+  expect(await opciones(page, 'agent-agendas')).toContain('Soporte Técnico');
 });
 
-test('lo borrado en Repositorios no se cuenta ni se guarda, y la ficha no abre con cambios por ello', async ({ page }) => {
-  // La agenda 3 (Cobros), puesta en el grupo 11, ya no existe.
+test('lo borrado en Repositorios no se guarda en el grupo, y la ficha no abre con cambios por ello', async ({ page }) => {
+  // La agenda 3 (Cobros), puesta en el grupo 11, ya no existe. El grupo ya no enseña sus agendas (DD-239), pero las
+  // conserva al guardar, y de ellas se va lo borrado.
   await page.addInitScript(() => {
     if (localStorage.getItem('sc-agendas-repo')) return;
     localStorage.setItem('sc-agendas-repo-v', '2');
@@ -87,12 +89,11 @@ test('lo borrado en Repositorios no se cuenta ni se guarda, y la ficha no abre c
       ]),
     );
   });
-  await goto(page, 'admin/grupos/editar/11?seccion=recursos');
-  // Lo elegido, en chips (DD-217): dos, sin la borrada.
-  await expect(page.locator('sc-multiselect:has(#group-agendas) .p-multiselect-chip')).toHaveCount(2);
+  await goto(page, 'admin/grupos/editar/11?seccion=general');
   await expect(page.locator('sc-top-bar').getByRole('button', { name: 'Deshacer' })).toHaveCount(0);
 
-  await marcar(page, 'group-agendas', 'Soporte Premium');
+  // Un cambio cualquiera para poder guardar: las agendas que quedan son las vivas, sin la borrada.
+  await page.locator('#group-wrapup-comments').click();
   await page.locator('sc-top-bar').getByRole('button', { name: 'Guardar' }).click();
   await expect
     .poll(() =>
@@ -100,5 +101,5 @@ test('lo borrado en Repositorios no se cuenta ni se guarda, y la ficha no abre c
         () => (JSON.parse(localStorage.getItem('sc-groups') ?? '[]') as { id: number; schedules?: number[] }[]).find((g) => g.id === 11)?.schedules,
       ),
     )
-    .toEqual([1]);
+    .toEqual([1, 2]);
 });

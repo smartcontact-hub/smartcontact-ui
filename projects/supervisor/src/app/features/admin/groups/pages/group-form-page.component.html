@@ -675,8 +675,11 @@
     surface="subtle"
     icon="library_books"
     titleKey="groups.form.section.resources"
-    hintKey="groups.form.section.resources_hint"
+    [hintKey]="conRecursosDeRepositorio ? 'groups.form.section.resources_hint' : null"
   >
+    <!-- Agendas y Plantillas se asignan solo a agentes (DD-239): este bloque se queda hecho y apagado por si vuelve, y el
+         grupo conserva lo que tenía. Se enciende con `conRecursosDeRepositorio`. -->
+    @if (conRecursosDeRepositorio) {
     <sc-subsection titleKey="sidebar.repositories">
       <div class="bloque">
       <!-- Dos campos por fila, como el resto de la ficha: el campo no crece para que quepan más chips, que uno solo puede
@@ -775,6 +778,7 @@
       <a class="repo-link sc-text-caption-semibold" [href]="repositoriosHref" (click)="irARepositorios($event)">{{ 'resources.manage_link' | translate }}</a>
       </div>
     </sc-subsection>
+    }
 
     <!-- La ficha de cliente que se le abre al agente (vivía en Avanzado). No es un objeto de Repositorios, pero de
          las cuatro secciones es su casa menos mala, y la visión la cuenta entre los recursos (DD-121). -->

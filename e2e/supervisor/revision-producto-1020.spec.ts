@@ -6,7 +6,8 @@ import { disableAnimations, forceLightTheme, goto, irASeccion, openKebabAction, 
  * REVISIÓN DE PRODUCTO DEL 2026-10-20 EN LAS FICHAS DE GRUPO Y AGENTE (DD-217): duplicar sin modal y con «(1)» (el grupo,
  * desde la misma tarde, al alta rellena, SISMAC-4056), Recursos
  * en chips sin «+» ni lápiz (a media columna, tantos como quepan; al pasar por una opción, su tooltip dice lo que
- * contiene), el resumen de Recursos que lleva a su campo y la tipificación sin su descripción.
+ * contiene) y la tipificación sin su descripción. Los Recursos de Repositorios del grupo salen de la ficha con DD-239
+ * (Agendas y Plantillas se asignan solo a agentes): estas pruebas miran los del agente.
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -15,8 +16,6 @@ test.beforeEach(async ({ page }) => {
   await forceLightTheme(page);
   await disableAnimations(page);
 });
-
-const actual = (page: Page) => page.locator('sc-form-section-nav .form-nav__item[aria-current="page"]');
 
 // Desde el 2026-10-20 como SISMAC-4056: duplicar abre «Nuevo grupo» relleno con la copia, y el grupo existe al pulsar
 // «Crear grupo» (antes, DD-217 §1, se creaba en el acto). Como duplicar agente: salir sin tocar no pregunta.
@@ -114,40 +113,39 @@ async function chipsDe(page: Page, id: string) {
 }
 
 test('Recursos: lo elegido en chips, tantos como caben, sin «+» ni lápiz; «Gestionar en Repositorios» se queda', async ({ page }) => {
-  await goto(page, 'admin/grupos/editar/11?seccion=recursos');
-  const plantillas = page.locator('sc-multiselect').filter({ has: page.locator('#group-templates-chat') });
-  await expect(plantillas.locator('.p-multiselect-chip')).not.toHaveCount(0);
-  await expect(plantillas).not.toContainText('6 plantillas');
+  await goto(page, 'admin/agentes/editar/3?seccion=recursos');
+  const equipos = page.locator('sc-multiselect').filter({ has: page.locator('#agent-teams') });
+  await expect(equipos.locator('.p-multiselect-chip')).not.toHaveCount(0);
+  await expect(equipos).not.toContainText('2 equipos');
   // Caben los que da el ancho, y «+N más» cuenta el resto: ni se quedan cortos (antes, tres y «+7» con media fila
   // vacía) ni la flecha corta ninguno.
-  for (const id of ['group-templates-chat', 'group-agendas']) {
+  for (const id of ['agent-teams', 'agent-agendas']) {
     const { vistos, mas, elegidas, cortados } = await chipsDe(page, id);
     expect(vistos + mas, `${id}: a la vista y en «+N» suman lo elegido`).toBe(elegidas);
     expect(cortados, `${id}: chips cortados por la flecha`).toEqual([]);
     expect(vistos, `${id}: al menos uno a la vista`).toBeGreaterThan(0);
   }
-  // A media columna, Agendas junto a Plantillas de chat: el campo no crece para que quepan más chips.
-  const [agendas, chat] = await Promise.all(
-    ['group-agendas', 'group-templates-chat'].map((id) =>
+  // A media columna, Agendas junto a Equipos: el campo no crece para que quepan más chips.
+  const [agendas, equiposCaja] = await Promise.all(
+    ['agent-agendas', 'agent-teams'].map((id) =>
       page.locator('sc-multiselect').filter({ has: page.locator(`#${id}`) }).evaluate((el) => el.getBoundingClientRect().toJSON() as DOMRect),
     ),
   );
-  expect(Math.abs(agendas.top - chat.top), 'Agendas y Plantillas de chat, en la misma fila').toBeLessThan(0.5);
-  expect(Math.abs(agendas.width - chat.width), 'las dos, del mismo ancho').toBeLessThan(0.5);
+  expect(Math.abs(agendas.top - equiposCaja.top), 'Agendas y Equipos, en la misma fila').toBeLessThan(0.5);
+  expect(Math.abs(agendas.width - equiposCaja.width), 'las dos, del mismo ancho').toBeLessThan(0.5);
   await expect(page.getByRole('button', { name: /^Nueva (agenda|plantilla)$/ })).toHaveCount(0);
 
-  await plantillas.locator('.p-multiselect-dropdown').click();
+  await equipos.locator('.p-multiselect-dropdown').click();
   await expect(page.locator('.p-multiselect-overlay')).toBeVisible();
   await expect(page.locator('.p-multiselect-overlay sc-resource-option button')).toHaveCount(0);
   await page.keyboard.press('Escape');
   await expect(page.getByRole('link', { name: 'Gestionar en Repositorios' })).toBeVisible();
 });
 
-test('Recursos: pasar por una opción hace lo mismo en las tres listas; su tooltip, junto a ella, dice lo que contiene', async ({ page }) => {
+test('Recursos: pasar por una opción hace lo mismo en las listas del agente; su tooltip, junto a ella, dice lo que contiene', async ({ page }) => {
   for (const [ruta, id, contiene] of [
     ['admin/agentes/editar/1?seccion=recursos', 'agent-agendas', /^(\d+ contactos?|Sin contactos)$/],
     ['admin/agentes/editar/1?seccion=recursos', 'agent-teams', /\w{3,}/],
-    ['admin/grupos/editar/11?seccion=recursos', 'group-templates-chat', /\w{4,}/],
   ] as const) {
     await goto(page, ruta);
     const campo = page.locator('sc-multiselect').filter({ has: page.locator(`#${id}`) });
@@ -189,8 +187,8 @@ test('Recursos: un nombre más largo que el campo, en su chip se acorta con «�
       ]),
     );
   });
-  await goto(page, 'admin/grupos/editar/11?seccion=recursos');
-  const campo = page.locator('sc-multiselect').filter({ has: page.locator('#group-agendas') });
+  await goto(page, 'admin/agentes/editar/3?seccion=recursos');
+  const campo = page.locator('sc-multiselect').filter({ has: page.locator('#agent-agendas') });
   const largo = campo.locator('.sc-multiselect__chip-label').first();
   await expect(largo).toContainText('Clientes preferentes');
   const medida = await campo.evaluate((el) => {
@@ -219,20 +217,11 @@ test('Recursos: un nombre más largo que el campo, en su chip se acorta con «�
   expect(lista.alto, 'en más de una línea').toBeGreaterThan(lista.linea * 1.5);
 });
 
-test('Recursos del agente, como los del grupo: chips sin «+» ni lápiz', async ({ page }) => {
+test('Recursos del agente: chips sin «+» ni lápiz', async ({ page }) => {
   await goto(page, 'admin/agentes/editar/1?seccion=recursos');
   await expect(page.locator('#agent-section-resources .p-multiselect-chip').first()).toBeVisible();
   await expect(page.locator('#agent-section-resources').getByRole('button', { name: /^Nuev[oa] / })).toHaveCount(0);
   await expect(page.locator('app-recurso-dialog')).toHaveCount(0);
-});
-
-test('el resumen: Recursos no se despliega, y pulsar una fila lleva a su campo', async ({ page }) => {
-  await goto(page, 'admin/grupos/editar/11');
-  const resumen = page.locator('.ficha-summary');
-  await expect(resumen.locator('[aria-expanded]')).toHaveCount(0);
-  await resumen.getByText('Plantillas de chat').click();
-  await expect(actual(page)).toContainText('Recursos');
-  await expect(page.locator('#group-templates-chat')).toBeFocused();
 });
 
 test('la tipificación elegida, sin su descripción: se queda «Ver detalle»', async ({ page }) => {

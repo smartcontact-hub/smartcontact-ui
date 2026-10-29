@@ -76,6 +76,7 @@
       <!-- Recursos, su propio grupo: una fila por lo que el grupo puede tener (agendas, y plantillas de los canales que
            atiende), con cuántos tiene, que lleva a su campo en Recursos, como las de Distribución (revisión del
            2026-10-20, DD-217: sin el panel que se desplegaba). -->
+      @if (resources().length > 0) {
       <div class="resumen__fact" role="group" aria-labelledby="group-summary-resources">
         <p id="group-summary-resources" class="resumen__label resumen__title-row sc-text-caption-regular">
           <a class="resumen__enlace" [href]="hrefs().recursos" (click)="pulsar($event, { seccion: 'recursos' })">
@@ -97,6 +98,7 @@
           }
         </dl>
       </div>
+      }
     </div>
   </div>
 </section>

@@ -1233,7 +1233,7 @@
     },
     "delete": {
       "single_detail": "Os agentes que o tenham atribuído perderão a referência.",
-      "bulk_footer": "Os agentes que os tenham atribuído perderão a referência."
+      "bulk_footer": "Os agentes que os tenham atribuídos perderão a referência."
     },
     "toasts": {
       "created": "Modelo \"{{name}}\" criado",
