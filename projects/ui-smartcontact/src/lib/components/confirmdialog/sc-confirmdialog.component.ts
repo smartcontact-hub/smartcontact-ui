@@ -42,7 +42,8 @@ export class ScConfirmDialogComponent {
     }
     /**
      * Medidas del diálogo centrado (`--sc-confirmdialog-*`): entre 320 y 480 px de ancho y como mucho 400 de alto.
-     * Aura lo deja crecer con el texto; el diálogo se pinta en `body`, fuera de este host, así que van por `[style]`.
+     * Aura lo deja crecer con el texto (sin tope, «Eliminar plantilla» llegaba a 695px); el diálogo se pinta en `body`,
+     * fuera de este host, así que van por `[style]`. Es regla del DS: vale igual para todas las confirmaciones centradas.
      */
     protected readonly dialogStyle = {
         'min-width': 'var(--sc-confirmdialog-min-width)',

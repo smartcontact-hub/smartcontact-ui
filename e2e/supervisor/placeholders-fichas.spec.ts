@@ -6,7 +6,7 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  * LOS PLACEHOLDERS DE LAS FICHAS DE REPOSITORIOS SE ESCRIBEN IGUAL (DD-238).
  *
  * El nombre lleva un ejemplo con «Ej: » (no «Ej.» ni un rótulo suelto como «Título de la plantilla») y la descripción,
- * donde la hay, «Breve descripción...». Agentes y Grupos no llevan placeholder: su nombre se escribe en el título.
+ * donde la hay, «Breve descripción...». Agentes, Grupos y Plantillas no llevan placeholder en el nombre (Plantillas, por el COA SISMAC-4438).
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -20,7 +20,6 @@ for (const [ficha, ruta, conDescripcion] of [
   ['agendas', 'admin/agendas/crear', true],
   ['tipificaciones', 'admin/tipificaciones/crear', true],
   ['equipos', 'admin/equipos/crear', true],
-  ['plantillas', 'admin/plantillas/crear', false],
 ] as const) {
   test(`${ficha}: el nombre lleva «Ej: …»${conDescripcion ? ' y la descripción, «Breve descripción...»' : ''}`, async ({ page }) => {
     await goto(page, ruta);
