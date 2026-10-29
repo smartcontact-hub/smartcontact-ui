@@ -1,8 +1,8 @@
 {
-  "commit": "8e0db0d6",
+  "commit": "1b977a3d",
   "primeng": "22.1.0",
   "themes": "3.0.2",
-  "generado": "2026-10-26T14:44:50.349Z",
+  "generado": "2026-10-29T09:22:04.529Z",
   "estilosTexto": [
     "display-regular",
     "display-semibold",
@@ -25,15 +25,19 @@
     "diferencia": {
       "anterior": true,
       "ficheros": [
-        "sc-preset.mjs"
+        "smartcontact-tokens.css"
       ],
-      "variables": [],
+      "variables": [
+        "claro|--sc-confirmdialog-body-lines",
+        "claro|--sc-confirmdialog-max-height",
+        "claro|--sc-confirmdialog-max-width",
+        "claro|--sc-confirmdialog-min-width",
+        "claro|--sc-confirmdialog-title-lines"
+      ],
       "retirados": [],
       "semanticaComun": false,
       "reglasCss": false,
-      "componentes": [
-        "toast"
-      ],
+      "componentes": [],
       "guia": false
     },
     "contratoPlugin": {
@@ -45,5 +49,5 @@
     },
     "cambia": true
   },
-  "version": "0.20261026.1444"
+  "version": "0.20261029.922"
 }
