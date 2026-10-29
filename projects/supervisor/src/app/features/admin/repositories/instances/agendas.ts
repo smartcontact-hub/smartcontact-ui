@@ -65,7 +65,6 @@ export const AGENDA_FIELDS: readonly RepoFieldDef[] = [
     labelKey: 'repositories.agendas.col_title',
     type: 'text',
     required: true,
-    placeholderKey: 'repositories.agendas.name_placeholder',
   },
   {
     key: 'description',

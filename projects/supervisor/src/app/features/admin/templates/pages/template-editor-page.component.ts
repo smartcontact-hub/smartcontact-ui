@@ -8,6 +8,7 @@ import {
   ScButtonComponent as ButtonComponent,
   ScInputTextComponent as InputTextComponent,
   ScSectionCardComponent as SectionCardComponent,
+  ScSubsectionComponent as SubsectionComponent,
   ScSelectButtonComponent as SelectButtonComponent,
 } from '@smartcontact-hub/components';
 
@@ -52,6 +53,7 @@ const FORMATOS: Record<TemplateType, readonly string[]> = {
 @Component({
   selector: 'sc-template-editor-page',
   imports: [
+    SubsectionComponent,
     AgentAssignmentTableComponent,
     ButtonComponent,
     EditorModule,

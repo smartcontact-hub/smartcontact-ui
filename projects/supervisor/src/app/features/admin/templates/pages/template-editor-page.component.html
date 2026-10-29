@@ -22,7 +22,8 @@
     <h1 class="page__heading sc-text-title-semibold">{{ form().title.trim() || ('templates.form.create_title' | translate) }}</h1>
 
     <sc-section-card titleKey="templates.form.section_general" surface="subtle" icon="tune">
-      <section class="sub-section">
+      <sc-subsection>
+<div class="bloque">
         <div class="grid grid--2">
           <div class="field">
             <sc-inputtext
@@ -49,13 +50,15 @@
             />
           </div>
         </div>
-      </section>
+      </div>
+</sc-subsection>
     </sc-section-card>
 
     <!-- El contenido: el editor de primeng.dev/editor, tal cual, con su barra a medida del canal. Se vuelve a montar al cambiar
          de canal porque Quill lee sus formatos al nacer. -->
     <sc-section-card titleKey="templates.form.section_content" surface="subtle" icon="edit_note">
-      <section class="sub-section">
+      <sc-subsection>
+<div class="bloque">
         @for (canal of [form().type]; track canal) {
           <p-editor
             class="template-editor"
@@ -90,19 +93,22 @@
         @if (form().type === 'whatsapp') {
           <p class="template-editor__hint sc-text-caption-regular">{{ 'templates.form.whatsapp_hint' | translate }}</p>
         }
-      </section>
+      </div>
+</sc-subsection>
     </sc-section-card>
 
     <!-- A quién se asigna, la última sección: una tabla de agentes con sus grupos (COA SISMAC-4438). Solo a agentes. -->
     <sc-section-card titleKey="templates.form.section_agents" surface="subtle" icon="headphones">
-      <section class="sub-section">
+      <sc-subsection>
+<div class="bloque">
         <sc-agent-assignment-table
           [agents]="agentsStore.agents()"
           [assigned]="form().agentIds"
           rowAriaKey="templates.form.agents_row_aria"
           (assignedChange)="update('agentIds', $event)"
         />
-      </section>
+      </div>
+</sc-subsection>
     </sc-section-card>
   </div>
 </div>

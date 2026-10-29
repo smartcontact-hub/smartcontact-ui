@@ -1306,7 +1306,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 46,
+      "usedInSupervisor": 45,
       "cuando": "Para texto de una línea. Si puede ocupar varias, `sc-textarea`.",
       "sobreObsoleto": []
     },
@@ -1736,7 +1736,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 40,
+      "usedInSupervisor": 39,
       "cuando": "Para una sección con título dentro de un formulario o una ficha.",
       "sobreObsoleto": []
     },
@@ -1963,7 +1963,7 @@
         "kit"
       ],
       "retirado": null,
-      "usedInSupervisor": 23,
+      "usedInSupervisor": 29,
       "cuando": "Para un nivel más dentro de una sección, plegable si lo secundario estorba.",
       "sobreObsoleto": []
     },
