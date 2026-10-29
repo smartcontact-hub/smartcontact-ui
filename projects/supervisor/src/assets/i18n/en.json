@@ -1462,9 +1462,6 @@
         "personalizados": "Custom fields"
       },
       "custom_label": "Custom {{n}}",
-      "custom_labels_title": "Custom field labels",
-      "custom_labels_hint": "Each agenda can name its five custom fields as it likes. Without a label they are called “Custom 1” to “Custom 5”.",
-      "custom_label_placeholder": "Label of Custom {{n}}",
       "import_add": "{{count}} contacts will be added",
       "import_add_one": "1 contact will be added",
       "import_nothing": "There are no new contacts to add.",
@@ -1479,7 +1476,6 @@
       "import_over_one": "1 doesn't fit: the limit is {{max}} contacts per address book.",
       "import_confirm": "Add {{count}} contacts",
       "import_confirm_one": "Add 1 contact",
-      "name_placeholder": "E.g. National Sales",
       "errors": {
         "title_required": "Title is required",
         "phone_invalid": "This phone number is not valid: use digits, with a + in front if it has a prefix.",

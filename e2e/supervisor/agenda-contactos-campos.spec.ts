@@ -4,7 +4,7 @@ import { goto } from './helpers';
 
 /**
  * LOS 34 CAMPOS DE UN CONTACTO, COMO EN VOICE (revisión de producto de Agendas), agrupados en secciones; los cinco
- * personalizados llevan la etiqueta que cada agenda les pone («Personalizado 1» a «Personalizado 5» si no). Desde la
+ * personalizados se llaman «Personalizado 1» a «Personalizado 5». Desde la
  * revisión de producto del 2026-10-15 ninguno es obligatorio, pero un contacto no se guarda sin al menos un dato.
  */
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -53,22 +53,6 @@ test('ningún campo es obligatorio, pero un contacto no se guarda sin ningún da
   await d.getByRole('button', { name: 'Crear' }).click();
   await expect(d).toBeHidden();
   await expect(page.locator('sc-agenda-contacts-table .p-datatable-tbody > tr').first()).toContainText('Solo empresa SL');
-});
-
-test('cada agenda pone su etiqueta a los campos personalizados, y sale en el formulario y se guarda', async ({ page }) => {
-  await goto(page, 'admin/agendas/editar/1');
-  await page.locator('#agenda-custom-1').fill('Cliente VIP');
-  await page.getByRole('button', { name: 'Nuevo contacto' }).click();
-  const d = dialogo(page, 'Nuevo contacto');
-  await expect(d.getByLabel('Cliente VIP')).toBeVisible();
-  await expect(d.getByLabel('Personalizado 1')).toHaveCount(0);
-  await expect(d.getByLabel('Personalizado 2')).toBeVisible();
-  await d.getByRole('button', { name: 'Cancelar' }).click();
-
-  await page.locator('sc-top-bar').getByRole('button', { name: 'Guardar' }).click();
-  await expect
-    .poll(async () => page.evaluate(() => JSON.parse(localStorage.getItem('sc-agendas-repo') ?? '[]').find((a: { id: number }) => a.id === 1)?.customLabels?.[0]))
-    .toBe('Cliente VIP');
 });
 
 test('importar: la plantilla trae los 34 campos y el archivo con más columnas entra completo', async ({ page }) => {

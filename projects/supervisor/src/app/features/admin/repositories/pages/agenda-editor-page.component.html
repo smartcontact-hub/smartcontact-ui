@@ -31,7 +31,6 @@
               fluid
               required
               [label]="'repositories.agendas.col_title' | translate"
-              [placeholder]="'repositories.agendas.name_placeholder' | translate"
               [value]="form().name"
               [helperText]="nameHint()"
               [error]="nameError()"
@@ -52,30 +51,6 @@
         </div>
       </section>
     </sc-section-card>
-
-    <!-- Cómo llama esta agenda a sus cinco campos personalizados (en Voice eran «Personalizado 1 a 5», fijos). Al crear
-         no sale: aún no hay contactos que los usen; aparece al editar. -->
-    @if (mode() === 'edit') {
-    <sc-section-card titleKey="repositories.agendas.custom_labels_title" surface="subtle" icon="edit">
-      <section class="sub-section">
-        <p class="sc-text-body-regular">{{ 'repositories.agendas.custom_labels_hint' | translate }}</p>
-        <div class="grid grid--2">
-          @for (n of [1, 2, 3, 4, 5]; track n) {
-            <div class="field">
-              <sc-inputtext
-                [inputId]="'agenda-custom-' + n"
-                fluid
-                [label]="'repositories.agendas.custom_label_placeholder' | translate: { n }"
-                [placeholder]="'repositories.agendas.custom_label' | translate: { n }"
-                [value]="form().customLabels[n - 1]"
-                (valueChange)="updateCustomLabel(n - 1, $event)"
-              />
-            </div>
-          }
-        </div>
-      </section>
-    </sc-section-card>
-    }
 
     <sc-section-card titleKey="repositories.agendas.contacts" surface="subtle" icon="call">
       <section class="sub-section">

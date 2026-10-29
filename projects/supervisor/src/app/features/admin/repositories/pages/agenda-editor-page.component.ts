@@ -186,6 +186,13 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
   }
 
   protected save(): void {
+    // Como en Grupos: el botón está apagado si falta el título, pero se llega aquí también con Ctrl/Cmd + S. No crea ni
+    // guarda: dice lo que falta en rojo y lleva al campo.
+    if (this.faltas().length > 0) {
+      this.ocasion.intentar();
+      document.getElementById('agenda-name')?.focus();
+      return;
+    }
     if (!this.canSave()) return;
     this.ocasion.olvidar();
     const f = this.form();
@@ -275,9 +282,6 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
   protected readonly etiquetaPersonalizada = (n: number): string =>
     this.form().customLabels[n - 1]?.trim() || this.translate.instant('repositories.agendas.custom_label', { n });
 
-  protected updateCustomLabel(index: number, value: string): void {
-    this.form.update((f) => ({ ...f, customLabels: f.customLabels.map((l, i) => (i === index ? value : l)) }));
-  }
   /** El diálogo de un contacto: `null` cerrado; con `contact: null`, para añadir. */
   protected readonly contactDialog = signal<{ readonly contact: AgendaContact | null } | null>(null);
 
