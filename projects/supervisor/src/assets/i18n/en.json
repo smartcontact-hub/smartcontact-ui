@@ -1210,7 +1210,6 @@
     "form": {
       "create_title": "New template",
       "title": "Title",
-      "title_placeholder": "E.g. Customer welcome",
       "channel": "Channel",
       "body": "Content",
       "body_placeholder": "Write the template content...",

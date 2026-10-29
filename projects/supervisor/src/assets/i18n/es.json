@@ -1210,7 +1210,6 @@
     "form": {
       "create_title": "Nueva plantilla",
       "title": "Título",
-      "title_placeholder": "Ej: Bienvenida a clientes",
       "channel": "Canal",
       "body": "Contenido",
       "body_placeholder": "Escribe el contenido de la plantilla...",

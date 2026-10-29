@@ -1210,7 +1210,6 @@
     "form": {
       "create_title": "Novo modelo",
       "title": "Título",
-      "title_placeholder": "Ex: Boas-vindas ao cliente",
       "channel": "Canal",
       "body": "Conteúdo",
       "body_placeholder": "Escreva o conteúdo do modelo...",
