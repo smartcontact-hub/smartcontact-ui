@@ -1461,9 +1461,6 @@
         "personalizados": "Campos personalizados"
       },
       "custom_label": "Personalizado {{n}}",
-      "custom_labels_title": "Etiquetas dos campos personalizados",
-      "custom_labels_hint": "Cada agenda pode chamar aos seus cinco campos personalizados como quiser. Sem etiqueta, chamam-se «Personalizado 1» a «Personalizado 5».",
-      "custom_label_placeholder": "Etiqueta de Personalizado {{n}}",
       "import_add": "Serão adicionados {{count}} contatos",
       "import_add_one": "Será adicionado 1 contato",
       "import_nothing": "Não há contatos novos para adicionar.",
@@ -1478,7 +1475,6 @@
       "import_over_one": "1 não cabe: o limite é {{max}} contatos por agenda.",
       "import_confirm": "Adicionar {{count}} contatos",
       "import_confirm_one": "Adicionar 1 contato",
-      "name_placeholder": "Ex: Vendas Nacional",
       "errors": {
         "title_required": "O título é obrigatório",
         "phone_invalid": "O telefone não é válido: use dígitos, com um + na frente se tiver prefixo.",

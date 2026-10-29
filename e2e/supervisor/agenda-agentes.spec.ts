@@ -8,7 +8,7 @@ import { goto } from './helpers';
  *   1. la última sección es «Agentes»: una tabla plana con casilla, nombre, email y los grupos del agente, el buscador y
  *      «Todos / Asignados (N)». Se asigna SOLO a agentes: marcar uno no marca a su grupo ni a los demás de él, y los grupos
  *      se muestran como información (para buscar por grupo y marcar de golpe los que salen, con la casilla de la cabecera);
- *   2. las etiquetas de los campos personalizados no salen al crear, solo al editar;
+ *   2. no hay sección de etiquetas de los campos personalizados, ni al crear ni al editar;
  *   3. pulsar la fila de un contacto abre su editor, como en las listas; con casillas, marcar varios y borrarlos con el clic
  *      derecho (DD-227), con su confirmación y su aviso;
  *   4. el diálogo de importar no lleva texto explicativo.
@@ -20,7 +20,7 @@ const casillas = (page: Page) => tabla(page).getByRole('checkbox', { name: /^Asi
 const guardarArriba = (page: Page) => page.locator('sc-top-bar').getByRole('button', { name: /^(Guardar|Crear)/ });
 const leer = <T,>(page: Page, clave: string) => page.evaluate((k) => JSON.parse(localStorage.getItem(k) ?? '[]'), clave) as Promise<T>;
 
-test('crear: sin etiquetas de personalizados, con la sección «Agentes» la última', async ({ page }) => {
+test('crear: con la sección «Agentes» la última', async ({ page }) => {
   await goto(page, 'admin/agendas/crear');
   await expect(page.getByText('Etiquetas de los campos personalizados')).toHaveCount(0);
   const titulos = await page.locator('sc-section-card').evaluateAll((els) => els.map((e) => e.querySelector('h2, h3')?.textContent?.trim() ?? ''));
@@ -28,9 +28,9 @@ test('crear: sin etiquetas de personalizados, con la sección «Agentes» la úl
   expect(titulos.at(-2)).toBe('Contactos');
 });
 
-test('editar: las etiquetas de personalizados sí salen', async ({ page }) => {
+test('editar: tampoco hay sección de etiquetas de los campos personalizados', async ({ page }) => {
   await goto(page, 'admin/agendas/editar/1');
-  await expect(page.getByText('Etiquetas de los campos personalizados')).toBeVisible();
+  await expect(page.getByText('Etiquetas de los campos personalizados')).toHaveCount(0);
 });
 
 test('agentes: tabla plana con nombre, email y grupos; marcar un agente no marca a su grupo', async ({ page }) => {

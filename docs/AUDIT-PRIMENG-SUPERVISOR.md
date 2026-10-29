@@ -123,7 +123,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **4 props nativas no expuestas**: `badgeDisabled`, `badgeSize`, `severity`, `value`
 
-### `sc-inputtext` · 46 usos · primeng/inputtext
+### `sc-inputtext` · 45 usos · primeng/inputtext
 
 **4 props nativas no expuestas**: `pInputTextPT`, `pInputTextUnstyled`, `pSize`, `variant`
 
@@ -199,7 +199,7 @@ Expone todo lo que PrimeNG documenta.
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-section-card` · 40 usos · —
+### `sc-section-card` · 39 usos · —
 
 Expone todo lo que PrimeNG documenta.
 
@@ -215,7 +215,7 @@ Expone todo lo que PrimeNG documenta.
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-subsection` · 30 usos · —
+### `sc-subsection` · 29 usos · —
 
 Expone todo lo que PrimeNG documenta.
 
