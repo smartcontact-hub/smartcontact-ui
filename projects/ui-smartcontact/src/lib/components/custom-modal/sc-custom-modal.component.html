@@ -2,7 +2,7 @@
      `[(visible)]` (extensión nuestra) o tal cual, dentro de DynamicDialog o en línea. -->
 <ng-template #shell>
   <!-- Sin rol propio: el diálogo es el de PrimeNG que la envuelve (DD-140); en línea no es un modal. -->
-  <section #surface class="sc-custom-modal" [class]="styleClass()">
+  <section #surface class="sc-custom-modal" [class]="styleClass()" tabindex="-1">
     @if (hasHeader()) {
       <header
         class="sc-custom-modal__header"

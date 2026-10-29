@@ -40,10 +40,12 @@ export type ScCustomModalRole = 'dialog' | 'alertdialog';
 /**
  * Lo que `ScDynamicDialogService` necesita para que el modal sea solo esta carcasa: sin la cabecera de PrimeNG y con
  * el diálogo transparente y sin relleno. El servicio lo toma solo del `scDynamicDialogDefaults` estático del
- * componente que se abre, como en ui.smart-contact.com.
+ * componente que se abre, como en ui.smart-contact.com. `focusOnShow: false` es nuestro: el foco inicial lo pone la
+ * carcasa, que no lo deja en la X (ver `focusFirst`).
  */
 export const SC_CUSTOM_MODAL_DYNAMIC_DIALOG_DEFAULTS: ScDynamicDialogConfig = {
   showHeader: false,
+  focusOnShow: false,
   styleClass: 'sc-custom-modal-dialog',
   style: { overflow: 'hidden', border: '0', background: 'transparent' },
   contentStyle: { padding: '0', overflow: 'hidden', background: 'transparent' },
@@ -70,6 +72,7 @@ let customModalIdCounter = 0;
  *   - Escape también emite `closed`, y la X cierra el diálogo aunque no se pase `closeRequested`.
  *   - El título largo ocupa hasta dos líneas en vez de cortarse en una.
  *   - El nombre de la X sale traducido si no se pasa `closeAriaLabel`.
+ *   - El foco abre en el primer control, o en la carcasa, nunca en la X (su tooltip se quedaba el primer Escape).
  *
  * ```html
  * <!-- conversation-modal.html -->
@@ -194,6 +197,8 @@ export class ScCustomModalComponent {
     afterNextRender(() => {
       const dialog = this.host.nativeElement.parentElement?.closest<HTMLElement>('[role="dialog"], [role="alertdialog"]');
       this.dialogEl.set(dialog ?? null);
+      // Tras el render de quien la pinta: si ese contenido ya eligió dónde va el foco (sc-alert-modal), se respeta.
+      if (dialog && this.dialogRef) queueMicrotask(() => this.focusFirst());
     });
 
     // El nombre y la descripción del diálogo de PrimeNG: su `aria-labelledby` apunta a una cabecera que con
@@ -242,19 +247,25 @@ export class ScCustomModalComponent {
 
   private readonly surface = viewChild<ElementRef<HTMLElement>>('surface');
 
-  /**
-   * Con `[(visible)]` el foco abre en el primer control del cuerpo (el primer campo de un formulario), y si no hay,
-   * en el pie o en la X. PrimeNG lo ponía en la X, y su tooltip automático (DD-200) salía al abrir cualquier modal.
-   */
   protected onShow(): void {
+    this.focusFirst();
+    this.shown.emit();
+  }
+
+  /**
+   * El foco abre en el primer control del cuerpo (el primer campo de un formulario), y si no hay, en el pie o, sin
+   * controles, en la propia carcasa. Nunca en la X: su tooltip automático (DD-200) salía al abrir y, como capa de
+   * encima, se quedaba el primer Escape (hacían falta dos para cerrar). Si el foco ya está dentro, no se mueve.
+   */
+  private focusFirst(): void {
     const root = this.surface()?.nativeElement;
+    if (!root || root.contains(document.activeElement)) return;
     const focusable = 'input:not([disabled]):not([type=hidden]), textarea:not([disabled]), select:not([disabled]), button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])';
     const target =
-      root?.querySelector<HTMLElement>(`.sc-custom-modal__body :is(${focusable})`) ??
-      root?.querySelector<HTMLElement>(`.sc-custom-modal__footer :is(${focusable})`) ??
-      root?.querySelector<HTMLElement>(`.sc-custom-modal__close :is(${focusable})`);
-    target?.focus();
-    this.shown.emit();
+      root.querySelector<HTMLElement>(`.sc-custom-modal__body :is(${focusable})`) ??
+      root.querySelector<HTMLElement>(`.sc-custom-modal__footer :is(${focusable})`) ??
+      root;
+    target.focus();
   }
 
   protected onHide(): void {

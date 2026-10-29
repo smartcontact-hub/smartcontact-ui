@@ -81,11 +81,8 @@ let alertModalIdCounter = 0;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScAlertModalComponent {
-  /** Lo que `ScDynamicDialogService` toma al abrirlo: la carcasa sin cabecera de PrimeNG y el foco lo pone el aviso. */
-  static readonly scDynamicDialogDefaults: ScDynamicDialogConfig = {
-    ...SC_CUSTOM_MODAL_DYNAMIC_DIALOG_DEFAULTS,
-    focusOnShow: false,
-  };
+  /** Lo que `ScDynamicDialogService` toma al abrirlo: los de la carcasa; el foco lo pone el aviso (`focusInitial`). */
+  static readonly scDynamicDialogDefaults: ScDynamicDialogConfig = SC_CUSTOM_MODAL_DYNAMIC_DIALOG_DEFAULTS;
 
   /** Intención: decide el icono, el tono de la superficie y el del botón principal. */
   readonly variant = input<ScAlertModalVariant>('default');

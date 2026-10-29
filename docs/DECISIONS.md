@@ -185,7 +185,9 @@ ConfirmDialog: solo aparece en el tema. El «Modal legacy custom» se había des
    componente que abre, como el suyo.
 2. **Misma API, fallos arreglados**: un solo diálogo para el lector (DD-140) con nombre y descripción reales, el mensaje del aviso es
    su descripción, Escape emite `closed`, la X cierra aunque no se pase `closeRequested`, el título ocupa hasta 2 líneas y el foco abre
-   en la salida segura con `warning` y `error`. La página de cada uno en sc-docs lista las diferencias.
+   en la salida segura con `warning` y `error`. En la carcasa, el foco abre en su primer control, o en ella misma si no tiene, y nunca
+   en la X: el tooltip de la X (DD-200) se quedaba el primer Escape y hacían falta dos para cerrar (medido el 2026-10-29). La página de
+   cada uno en sc-docs lista las diferencias.
 3. **Extensiones nuestras, marcadas**: el tercer botón del aviso (`tertiaryActionLabel`, «No guardar», que venía de `choose()`), y en la
    carcasa `[(visible)]`, `width`, `dismissableMask` y `shown` para abrirla desde la plantilla cuando su formulario se ata al estado de
    la pantalla.

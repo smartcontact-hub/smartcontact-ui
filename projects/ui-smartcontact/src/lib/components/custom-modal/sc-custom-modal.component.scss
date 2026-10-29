@@ -8,6 +8,12 @@
   display: contents;
 }
 
+/* Solo recibe el foco al abrir un modal sin controles (`tabindex="-1"`): es el punto de llegada, no un control, y el
+   anillo de teclado es de los controles de dentro. */
+.sc-custom-modal:focus {
+  outline: none;
+}
+
 .sc-custom-modal {
   display: flex;
   flex-direction: column;

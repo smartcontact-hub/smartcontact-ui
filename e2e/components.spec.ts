@@ -1129,6 +1129,8 @@ test.describe('sc-custom-modal', () => {
     await expect(dialogo).toHaveCount(1);
     await expect(dialogo).toHaveAccessibleName('Conversación con Ana Martín');
     await expect(dialogo).toHaveAccessibleDescription('12 mensajes · Chat');
+    // El foco no abre en la X: su tooltip se quedaba el primer Escape y hacían falta dos para cerrar.
+    await expect(dialogo.getByRole('button', { name: 'Cancelar' })).toBeFocused();
     await page.keyboard.press('Escape');
     await expect(dialogo).toHaveCount(0);
     await expect(page.getByTestId('custom-result')).toHaveText('escape');
@@ -1850,7 +1852,8 @@ test.describe('sc-keyboard-shortcuts', () => {
     const opener = page.getByTestId('open-shortcuts');
     await opener.click();
     await expect(sheet).toBeVisible();
-    // Es un `sc-dialog` (DD-140): el foco entra al abrir. La capa propia de antes lo dejaba en el botón.
+    // Es un `sc-custom-modal` (DD-140, DD-240): el foco entra al abrir, en la carcasa, que no tiene controles. En la X
+    // no, que su tooltip se quedaba el primer Escape.
     await expect.poll(() => sheet.evaluate((el) => el.contains(document.activeElement))).toBe(true);
 
     // default colocado: 2 grupos intrínsecos, i18n resuelto (es), 4+3 = 7 filas.
