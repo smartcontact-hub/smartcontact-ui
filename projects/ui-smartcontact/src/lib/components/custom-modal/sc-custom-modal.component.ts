@@ -41,7 +41,7 @@ export type ScCustomModalRole = 'dialog' | 'alertdialog';
  * Lo que `ScDynamicDialogService` necesita para que el modal sea solo esta carcasa: sin la cabecera de PrimeNG y con
  * el diálogo transparente y sin relleno. El servicio lo toma solo del `scDynamicDialogDefaults` estático del
  * componente que se abre, como en ui.smart-contact.com. `focusOnShow: false` es nuestro: el foco inicial lo pone la
- * carcasa, que no lo deja en la X (ver `focusFirst`).
+ * carcasa, que no lo deja en un botón (ver `focusFirst`).
  */
 export const SC_CUSTOM_MODAL_DYNAMIC_DIALOG_DEFAULTS: ScDynamicDialogConfig = {
   showHeader: false,
@@ -72,7 +72,7 @@ let customModalIdCounter = 0;
  *   - Escape también emite `closed`, y la X cierra el diálogo aunque no se pase `closeRequested`.
  *   - El título largo ocupa hasta dos líneas en vez de cortarse en una.
  *   - El nombre de la X sale traducido si no se pasa `closeAriaLabel`.
- *   - El foco abre en el primer control, o en la carcasa, nunca en la X (su tooltip se quedaba el primer Escape).
+ *   - El foco abre en el primer campo, o en la carcasa; nunca en un botón (su tooltip se quedaba el primer Escape).
  *
  * ```html
  * <!-- conversation-modal.html -->
@@ -253,19 +253,18 @@ export class ScCustomModalComponent {
   }
 
   /**
-   * El foco abre en el primer control del cuerpo (el primer campo de un formulario), y si no hay, en el pie o, sin
-   * controles, en la propia carcasa. Nunca en la X: su tooltip automático (DD-200) salía al abrir y, como capa de
-   * encima, se quedaba el primer Escape (hacían falta dos para cerrar). Si el foco ya está dentro, no se mueve.
+   * El foco abre en el primer campo del cuerpo (donde se escribe en un formulario) y, si no hay, en la propia carcasa.
+   * Nunca en un botón: el tooltip automático de un botón de solo icono (DD-200) se registra como capa de encima y se
+   * quedaba el primer Escape, de modo que hacían falta dos para cerrar (la X, el «retroceder 10 s» del reproductor).
+   * Desde la carcasa, Tab lleva al primer control. Si el foco ya está dentro (sc-alert-modal elige su botón), no se mueve.
    */
   private focusFirst(): void {
     const root = this.surface()?.nativeElement;
     if (!root || root.contains(document.activeElement)) return;
-    const focusable = 'input:not([disabled]):not([type=hidden]), textarea:not([disabled]), select:not([disabled]), button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])';
-    const target =
-      root.querySelector<HTMLElement>(`.sc-custom-modal__body :is(${focusable})`) ??
-      root.querySelector<HTMLElement>(`.sc-custom-modal__footer :is(${focusable})`) ??
-      root;
-    target.focus();
+    const field = root.querySelector<HTMLElement>(
+      '.sc-custom-modal__body :is(input:not([disabled]):not([type=hidden]), textarea:not([disabled]), select:not([disabled]))',
+    );
+    (field ?? root).focus();
   }
 
   protected onHide(): void {

@@ -147,9 +147,10 @@
     }
   }
 
-  /* Con un formulario en el cuerpo, la botonera va a 28 del último campo: los 15,75 del cuerpo más estos 10,5
-     (DD-123, R3). El aviso solo lleva texto y el cuerpo a ras pone su propio aire: quedan como el Kit. */
+  /* Con un formulario en el cuerpo, la botonera va a 28 del último campo: los 15,75 del cuerpo (Kit,
+     `overlay.modal.padding`) más estos 12,25 (DD-123, R3). `sc-dialog` sumaba 17,5 + 10,5; aquí el cuerpo es el del
+     Kit y el peldaño sube. El aviso solo lleva texto y el cuerpo a ras pone su propio aire: quedan como el Kit. */
   &__body:not(.sc-custom-modal__body--flush):not(.sc-alert-modal__body) + &__footer {
-    padding-top: var(--sc-spacing-0-75);
+    padding-top: var(--sc-spacing-0-875);
   }
 }

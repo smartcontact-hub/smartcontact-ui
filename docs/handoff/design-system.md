@@ -278,7 +278,7 @@ variables, 30 comentarios activos.
 
 - ⚠️ **Un `sc-button` de solo icono con el foco dentro de un `p-dialog` se queda el primer Escape**: su tooltip (DD-200) se
   registra como capa de encima y PrimeNG solo cierra si el diálogo es la de arriba. Por eso `sc-custom-modal` nunca abre
-  con el foco en la X (DD-241). Con prisa en la máquina el tooltip llega antes y la prueba falla a ratos: no es inestable.
+  con el foco en un botón (DD-241). Con prisa en la máquina el tooltip llega antes y la prueba falla a ratos: no es inestable.
 - ⚠️ **La página de PrimeNG de sc-docs sale de un artefacto** que reescribe `npm run primeng-catalog:gen`: un `primeng/x`
   nuevo en una app lo deja atrás y `audit:primeng-catalog` se pone rojo hasta regenerarlo (pasó con ContextMenu, #400).
 - ⚠️ **Cinco trampas de PrimeNG 22 en `p-treetable`**, junto a su arreglo en `treetable-lab-page.component.ts`: `selection`

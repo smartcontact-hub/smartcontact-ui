@@ -1139,14 +1139,14 @@ test.describe('sc-custom-modal', () => {
     await expect(dialogo).toHaveCount(1);
     await expect(dialogo).toHaveAccessibleName('Conversación con Ana Martín');
     await expect(dialogo).toHaveAccessibleDescription('12 mensajes · Chat');
-    // El foco no abre en la X: su tooltip se quedaba el primer Escape y hacían falta dos para cerrar.
-    await expect(dialogo.getByRole('button', { name: 'Cancelar' })).toBeFocused();
+    // Sin campos, el foco abre en la carcasa y no en un botón: el tooltip de la X se quedaba el primer Escape.
+    await expect(dialogo.locator('.sc-custom-modal')).toBeFocused();
     await page.keyboard.press('Escape');
     await expect(dialogo).toHaveCount(0);
     await expect(page.getByTestId('custom-result')).toHaveText('escape');
   });
 
-  test('con [(visible)]: abre al ancho pedido con el foco en el pie, Escape avisa con `closed` las dos veces y devuelve el foco', async ({ page }) => {
+  test('con [(visible)]: abre al ancho pedido con el foco en la carcasa, Escape avisa con `closed` las dos veces y devuelve el foco', async ({ page }) => {
     await gotoPage(page, 'custommodal');
     const abrir = page.getByTestId('custom-declarative-open').locator('button');
     const dialogo = page.getByRole('dialog', { name: 'Editar categoría' });
@@ -1154,8 +1154,8 @@ test.describe('sc-custom-modal', () => {
     for (let vez = 0; vez < 2; vez++) {
       await abrir.click();
       await expect(dialogo).toBeVisible();
-      // Sin controles en el cuerpo, el foco abre en el pie y no en la X (cuyo tooltip saldría al abrir).
-      await expect(dialogo.getByRole('button', { name: 'Cancelar' })).toBeFocused();
+      // Sin campos en el cuerpo, el foco abre en la carcasa y no en un botón (cuyo tooltip saldría al abrir).
+      await expect(dialogo.locator('.sc-custom-modal')).toBeFocused();
       await expect(page.getByRole('tooltip')).toHaveCount(0);
       expect(await dialogo.locator('.sc-custom-modal').evaluate((el: HTMLElement) => el.offsetWidth)).toBe(Math.round(36 * rem));
       await page.keyboard.press('Escape');
