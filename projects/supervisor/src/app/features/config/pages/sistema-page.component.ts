@@ -12,6 +12,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ListboxModule } from 'primeng/listbox';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScSelectComponent as SelectComponent } from '@smartcontact-hub/components';
+import { injectAlertModal } from '@core/services';
 import { ScInputTextComponent as InputTextComponent } from '@smartcontact-hub/components';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 import { ScSectionCardComponent as SectionCardComponent } from '@smartcontact-hub/components';
@@ -22,7 +23,6 @@ import { direccionConJuego, JUEGOS_DE_DATOS, juegoDeDatos, recordarJuego } from 
 import { LanguageService, ResultadoAccionService, ThemeService, type AppLanguage, type ThemeMode } from '@core/services';
 
 import {
-  ScConfirmService,
   ScToggleSwitchComponent as ToggleSwitchComponent,
 } from '@smartcontact-hub/components';
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
@@ -93,7 +93,7 @@ const APP_DATA_PREFIX = 'sc-';
 export class SistemaPageComponent {
   protected readonly theme = inject(ThemeService);
   protected readonly language = inject(LanguageService);
-  private readonly confirm = inject(ScConfirmService);
+  private readonly alertModal = injectAlertModal();
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
   private readonly doc = inject(DOCUMENT);
@@ -206,12 +206,12 @@ export class SistemaPageComponent {
   }
 
   protected async resetData(): Promise<void> {
-    const accepted = await this.confirm.request({
+    const accepted = await this.alertModal({
+      variant: 'error',
       title: this.translate.instant('config.sistema.data.confirm_title'),
-      body: this.translate.instant('config.sistema.data.confirm_body'),
-      acceptLabel: this.translate.instant('config.sistema.data.reset_button'),
-      rejectLabel: this.translate.instant('common.cancel'),
-      acceptTone: 'danger',
+      message: this.translate.instant('config.sistema.data.confirm_body'),
+      actionLabel: this.translate.instant('config.sistema.data.reset_button'),
+      secondaryActionLabel: this.translate.instant('common.cancel'),
     });
     if (!accepted) return;
 

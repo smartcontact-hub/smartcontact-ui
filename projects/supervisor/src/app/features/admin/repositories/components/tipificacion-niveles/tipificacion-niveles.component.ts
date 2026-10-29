@@ -16,7 +16,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import {
   ScButtonComponent as ButtonComponent,
-  ScDialogComponent as DialogComponent,
+  ScCustomModalComponent as DialogComponent,
   ScInputTextComponent as InputTextComponent,
 } from '@smartcontact-hub/components';
 import { injectLangChange } from '@core/utils/lang-change';

@@ -3,7 +3,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { LabelChipComponent } from '@shared/components';
-import { ScDialogComponent as DialogComponent } from '@smartcontact-hub/components';
+import { ScCustomModalComponent as DialogComponent } from '@smartcontact-hub/components';
 import { Label } from '../../data/labels-data';
 import { injectLangChange } from '@core/utils/lang-change';
 

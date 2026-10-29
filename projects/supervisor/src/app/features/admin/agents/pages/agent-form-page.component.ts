@@ -11,6 +11,7 @@ import type {
   ScMatrixRow,
   ScMatrixToggle,
 } from '@smartcontact-hub/components';
+import { injectAlertModal } from '@core/services';
 import { ScButtonComponent as ButtonComponent,
   ScFactRowComponent as FactRowComponent,
 } from '@smartcontact-hub/components';
@@ -265,6 +266,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
   private readonly agendasStore = inject(AgendasStore);
   private readonly equipos = inject(EquiposStore);
   private readonly resourceRows = inject(ResourceRowsService);
+  private readonly alertModal = injectAlertModal();
   private readonly confirmHost = inject(ScConfirmService);
 
   /** Guardar/Cancelar proyectados a la TopBar (modelo "todo arriba" S59):
@@ -1350,16 +1352,16 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
       const sinCanales = new Set(this.availableGroups().filter(group => group.channels.length === 0).map(group => group.id));
       const salen = this.linksVistos().filter(link => link.channels.length === 0 && !sinCanales.has(link.groupId));
       const etiquetas: Readonly<Record<string, string>> = FAMILY_LABEL_KEYS;
-      const accepted = await this.confirmHost.request({
+      const accepted = await this.alertModal({
+        variant: 'error',
         title: this.translate.instant('groups.form.cascade.title'),
-        body: this.translate.instant(this.removeBodyKey(affected.length, salen.length), {
+        message: this.translate.instant(this.removeBodyKey(affected.length, salen.length), {
           channels: quitados.map(c => this.translate.instant(etiquetas[c])).join(', '),
           count: affected.length,
           groups: salen.map(link => nombres.get(link.groupId) ?? String(link.groupId)).join(', '),
         }),
-        acceptLabel: this.translate.instant('groups.form.cascade.confirm'),
-        rejectLabel: this.translate.instant('common.cancel'),
-        acceptTone: 'danger',
+        actionLabel: this.translate.instant('groups.form.cascade.confirm'),
+        secondaryActionLabel: this.translate.instant('common.cancel'),
       });
       if (!accepted) {
         this.destinoTrasGuardar = null;
@@ -1445,12 +1447,12 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
       void this.router.navigateByUrl('/admin/repositorios');
       return;
     }
-    const guardar = await this.confirmHost.request({
+    const guardar = await this.alertModal({
+      variant: 'info',
       title: this.translate.instant('agents.form.repositories_leave.title'),
-      body: this.translate.instant('agents.form.repositories_leave.body'),
-      acceptLabel: this.translate.instant('common.save'),
-      rejectLabel: this.translate.instant('common.discard_keep'),
-      icon: 'info',
+      message: this.translate.instant('agents.form.repositories_leave.body'),
+      actionLabel: this.translate.instant('common.save'),
+      secondaryActionLabel: this.translate.instant('common.discard_keep'),
     });
     if (!guardar) return;
     this.destinoTrasGuardar = '/admin/repositorios';

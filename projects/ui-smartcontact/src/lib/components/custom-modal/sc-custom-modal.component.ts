@@ -4,17 +4,20 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  contentChild,
   DestroyRef,
   Directive,
   effect,
   ElementRef,
   inject,
   input,
+  model,
   output,
   signal,
 } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
+import { DialogModule } from 'primeng/dialog';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
+import type { DialogPassThrough } from 'primeng/types/dialog';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import {
@@ -36,7 +39,7 @@ export type ScCustomModalRole = 'dialog' | 'alertdialog';
 @Directive({ selector: '[scCustomModalBody]', standalone: true })
 export class ScCustomModalBodyDirective {}
 
-/** Marca lo que va al pie (los botones): `<sc-button scCustomModalFooter … />`. Sin nada marcado, no hay pie. */
+/** Marca lo que va al pie (los botones): `<sc-button scCustomModalFooter … />`. Sin nada en el pie, no se pinta. */
 @Directive({ selector: '[scCustomModalFooter]', standalone: true })
 export class ScCustomModalFooterDirective {}
 
@@ -89,7 +92,7 @@ let customModalIdCounter = 0;
 @Component({
   selector: 'sc-custom-modal',
   standalone: true,
-  imports: [ScIconComponent, ScButtonComponent, TranslateModule],
+  imports: [NgTemplateOutlet, DialogModule, ScIconComponent, ScButtonComponent, TranslateModule],
   templateUrl: './sc-custom-modal.component.html',
   styleUrl: './sc-custom-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -98,9 +101,23 @@ let customModalIdCounter = 0;
     '[class]': 'surfaceClass()',
     // `role` es una entrada: escrito como atributo en la plantilla, el navegador también lo leería en el host.
     '[attr.role]': 'null',
+    '[style.--sc-custom-modal-width]': 'width()',
   },
 })
 export class ScCustomModalComponent {
+  // ─── Extensión nuestra: abrirlo desde la plantilla ───────────────────────────────────────────────────────
+  /**
+   * Con `[(visible)]` la carcasa se abre en su propio diálogo de PrimeNG, sin servicio: para un modal cuyo
+   * formulario se ata al estado de la pantalla. Sin él, la carcasa se pinta tal cual (dentro de DynamicDialog).
+   */
+  readonly visible = model<boolean | undefined>(undefined);
+  /** Ancho de la carcasa (cualquier medida CSS). Sin él, `--sc-custom-modal-width` (480). */
+  readonly width = input<string | null>(null);
+  /** Con `[(visible)]`: un clic fuera del modal lo cierra. */
+  readonly dismissableMask = input(false, { transform: booleanAttribute });
+  /** Con `[(visible)]`: el modal ha terminado de abrirse. */
+  readonly shown = output<void>();
+
   /** Título de la cabecera. Es el nombre del diálogo para el lector. */
   readonly title = input<string | null>(null);
   /** Línea bajo el título. Es la descripción del diálogo para el lector. */
@@ -133,7 +150,6 @@ export class ScCustomModalComponent {
 
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly dialogRef = inject(DynamicDialogRef, { optional: true });
-  private readonly footer = contentChild(ScCustomModalFooterDirective);
   /** El `role="dialog"` de PrimeNG que envuelve la carcasa, si lo hay. */
   private readonly dialogEl = signal<HTMLElement | null>(null);
   private closedEmitted = false;
@@ -145,9 +161,21 @@ export class ScCustomModalComponent {
   protected readonly hasHeader = computed(
     () => !!(this.icon() || this.title() || this.subtitle() || this.showCloseButton()),
   );
-  protected readonly hasFooter = computed(() => !!this.footer());
+  protected readonly declarative = computed(() => this.visible() !== undefined);
   /** Fuera de un diálogo de PrimeNG, el rol lo lleva la carcasa. */
-  protected readonly ownRole = computed(() => (this.dialogEl() ? null : this.role()));
+  protected readonly ownRole = computed(() => (this.dialogEl() || this.declarative() ? null : this.role()));
+  /** El diálogo de `[(visible)]` va transparente: la carcasa es lo único que se ve. */
+  protected readonly dialogStyle = SC_CUSTOM_MODAL_DYNAMIC_DIALOG_DEFAULTS.style;
+  protected readonly contentStyle = SC_CUSTOM_MODAL_DYNAMIC_DIALOG_DEFAULTS.contentStyle;
+  /** Rol, nombre y descripción del `p-dialog` de `[(visible)]` (DD-140): por `pt.root`, que pisa los suyos. */
+  protected readonly dialogPt = computed<DialogPassThrough>(() => ({
+    root: {
+      role: this.role(),
+      'aria-labelledby': this.labelledBy(),
+      'aria-label': this.labelledBy() ? null : this.ariaLabel(),
+      'aria-describedby': this.describedBy(),
+    },
+  }));
   protected readonly labelledBy = computed(
     () => this.ariaLabelledBy() ?? (this.title() ? this.titleId : null),
   );
@@ -180,6 +208,17 @@ export class ScCustomModalComponent {
     // Escape lo cierra PrimeNG sin pasar por la carcasa: se avisa igual.
     const sub = this.dialogRef?.onClose.subscribe(() => this.emitClosed());
     inject(DestroyRef).onDestroy(() => sub?.unsubscribe());
+
+    // Con `[(visible)]`, al abrir se apunta quién tenía el foco (el que lo abrió) para devolvérselo al cerrar.
+    let wasOpen = false;
+    effect(() => {
+      const open = !!this.visible();
+      if (open && !wasOpen) {
+        this.closedEmitted = false;
+        this.trigger = (document.activeElement as HTMLElement | null) ?? null;
+      }
+      wasOpen = open;
+    });
   }
 
   /** Cierra como la X: emite `closed` y llama a `closeRequested` (o cierra el diálogo que la envuelve). */
@@ -187,7 +226,28 @@ export class ScCustomModalComponent {
     this.emitClosed();
     const close = this.closeRequested();
     if (close) close();
+    else if (this.declarative()) this.visible.set(false);
     else this.dialogRef?.close();
+  }
+
+  private trigger: HTMLElement | null = null;
+
+  /** Escape o la máscara cierran el `p-dialog` de `[(visible)]`. */
+  protected onVisibleChange(open: boolean): void {
+    this.visible.set(open);
+    if (!open) this.emitClosed();
+  }
+
+  protected onShow(): void {
+    this.shown.emit();
+  }
+
+  protected onHide(): void {
+    this.emitClosed();
+    const el = this.trigger;
+    this.trigger = null;
+    // queueMicrotask deja que PrimeNG termine de desmontar antes de devolver el foco.
+    if (el && typeof el.focus === 'function') queueMicrotask(() => el.focus());
   }
 
   private emitClosed(): void {

@@ -17,7 +17,7 @@ import { ScSearchComponent as SearchComponent } from '@smartcontact-hub/componen
 import { ScButtonComponent as ButtonComponent, ScTabsComponent as TabsComponent } from '@smartcontact-hub/components';
 
 
-import { ScDialogComponent as DialogComponent } from '@smartcontact-hub/components';
+import { ScCustomModalComponent as DialogComponent } from '@smartcontact-hub/components';
 import type { Conversation, Recording, TranscriptionLine } from '../../data/conversation.types';
 import { MultiRecordingPlayerComponent } from '../multi-recording-player/multi-recording-player.component';
 import { formatTime, parseDurationSeconds } from '@shared/utils/audio';

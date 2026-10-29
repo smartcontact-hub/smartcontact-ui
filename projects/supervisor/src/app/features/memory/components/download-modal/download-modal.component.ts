@@ -4,7 +4,7 @@ import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import {
-  ScDialogComponent as DialogComponent,
+  ScCustomModalComponent as DialogComponent,
   ScCheckboxComponent as CheckboxComponent,
 } from '@smartcontact-hub/components';
 

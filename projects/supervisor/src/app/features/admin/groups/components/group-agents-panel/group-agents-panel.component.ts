@@ -12,7 +12,7 @@ import {
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   ScButtonComponent as ButtonComponent,
-  ScDialogComponent as DialogComponent,
+  ScCustomModalComponent as DialogComponent,
   ScDrawerComponent as DrawerComponent,
 } from '@smartcontact-hub/components';
 

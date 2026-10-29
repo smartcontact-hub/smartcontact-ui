@@ -159,7 +159,7 @@ export const KIT_MAESTROS = new Set([
   'FileUpload', 'Breadcrumb', 'ContextMenu', 'Dock', 'Menu', 'Menubar', 'MegaMenu', 'PanelMenu', 'TieredMenu',
   'Message', 'Toast', 'Carousel', 'Galleria', 'Image', 'ImageCompare', 'Avatar', 'Badge', 'BlockUI', 'Chip',
   'Inplace', 'MeterGroup', 'ScrollTop', 'Skeleton', 'ProgressBar', 'ProgressSpinner', 'Tag', 'Terminal',
-  'Custom modal', 'Sidebar', 'Navmenu', 'Section',
+  'Custom modal', 'Alert modal', 'Sidebar', 'Navmenu', 'Section',
 ]);
 
 /** Componente del DS → su página del Kit, cuando el nombre no casa solo (el Kit escribe «Divide»). */

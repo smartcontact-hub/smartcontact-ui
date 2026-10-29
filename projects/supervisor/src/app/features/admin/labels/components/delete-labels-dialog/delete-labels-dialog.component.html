@@ -1,9 +1,9 @@
-<sc-dialog
+<sc-custom-modal
   [visible]="visible()"
   [icon]="trashIcon"
   [title]="dialogTitle()"
   width="440px"
-  (cancelled)="cancelled.emit()"
+  (closed)="cancelled.emit()"
 >
   @if (isSingle()) {
     <p class="delete-labels__text sc-text-body-regular">
@@ -26,7 +26,7 @@
     </div>
   }
 
-  <div modal-actions>
+  <div scCustomModalFooter>
     <sc-button type="button" size="sm" variant="secondary" (clicked)="cancelled.emit()">
       <span>{{ 'common.cancel' | translate }}</span>
     </sc-button>
@@ -34,4 +34,4 @@
       <span>{{ 'common.delete' | translate }}</span>
     </sc-button>
   </div>
-</sc-dialog>
+</sc-custom-modal>

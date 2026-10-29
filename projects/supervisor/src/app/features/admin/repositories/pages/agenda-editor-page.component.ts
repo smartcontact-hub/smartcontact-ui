@@ -4,11 +4,11 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TooltipModule } from 'primeng/tooltip';
 import {
   ScButtonComponent as ButtonComponent,
-  ScConfirmService,
-  ScDialogComponent as DialogComponent,
+  ScCustomModalComponent as DialogComponent,
   ScInputTextComponent as InputTextComponent,
   ScSectionCardComponent as SectionCardComponent,
 } from '@smartcontact-hub/components';
+import { injectAlertModal } from '@core/services';
 
 import type { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
@@ -327,17 +327,17 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
 
   /* ── Eliminar varios (DD-227): el clic derecho sobre un contacto marcado entre dos o más ──────────────────────── */
 
-  private readonly confirm = inject(ScConfirmService);
+  private readonly alertModal = injectAlertModal();
 
   /** «¿Eliminar 3 contactos?», «Esta acción no se puede deshacer.»: la confirmación simple con su cifra, como Reglas. */
   protected async removeContacts(contacts: readonly AgendaContact[]): Promise<void> {
     const n = contacts.length;
-    const accepted = await this.confirm.request({
+    const accepted = await this.alertModal({
+      variant: 'error',
       title: this.translate.instant(`repositories.agendas.contacts_delete_title${n === 1 ? '_one' : ''}`, { count: n }),
-      body: this.translate.instant('common.delete_dialog.body'),
-      acceptLabel: this.translate.instant('common.delete'),
-      rejectLabel: this.translate.instant('common.cancel'),
-      acceptTone: 'danger',
+      message: this.translate.instant('common.delete_dialog.body'),
+      actionLabel: this.translate.instant('common.delete'),
+      secondaryActionLabel: this.translate.instant('common.cancel'),
     });
     if (!accepted) return;
     const ids = new Set(contacts.map((c) => c.id));

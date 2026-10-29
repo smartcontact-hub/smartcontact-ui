@@ -1,12 +1,12 @@
 @let c = conversation();
 
-<sc-dialog
+<sc-custom-modal
   [visible]="visible() && !!c"
   [icon]="isChat() ? chatIcon : phoneIcon"
   [title]="modalTitle()"
   [subtitle]="modalSubtitle()"
   width="720px"
-  (cancelled)="onClose()"
+  (closed)="onClose()"
 >
   @if (c) {
     <div class="player-body">
@@ -288,10 +288,10 @@
     </div>
   }
 
-  <div modal-actions>
+  <div scCustomModalFooter>
     <sc-button type="button" size="sm" variant="secondary" (clicked)="onClose()">
       <span>{{ 'memory.player.close' | translate }}</span>
     </sc-button>
   </div>
-</sc-dialog>
+</sc-custom-modal>
 

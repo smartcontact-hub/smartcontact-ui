@@ -1,4 +1,4 @@
-<sc-dialog
+<sc-custom-modal
   [visible]="visible()"
   [icon]="databaseIcon"
   [title]="
@@ -7,7 +7,7 @@
   "
   [subtitle]="'memory.entities.form.subtitle' | translate"
   width="600px"
-  (cancelled)="onCancel()"
+  (closed)="onCancel()"
 >
   <div class="entity-form">
     <div class="entity-form__row">
@@ -108,7 +108,7 @@
     }
   </div>
 
-  <div modal-actions>
+  <div scCustomModalFooter>
     <sc-button type="button" size="sm" variant="secondary" (clicked)="onCancel()">
       <span>{{ 'common.cancel' | translate }}</span>
     </sc-button>
@@ -128,4 +128,4 @@
       </span>
     </sc-button>
   </div>
-</sc-dialog>
+</sc-custom-modal>

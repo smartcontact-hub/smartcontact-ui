@@ -10,6 +10,7 @@ import {
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
+import { injectAlertModal } from '@core/services';
 import { ScTagComponent as TagComponent } from '@smartcontact-hub/components';
 import type { MenuItem } from 'primeng/api';
 import { TooltipModule } from 'primeng/tooltip';
@@ -19,7 +20,6 @@ import {
   type ScColumnDef,
   ScEmptyStateComponent as EmptyStateComponent,
 } from '@smartcontact-hub/components';
-import { ScConfirmService } from '@smartcontact-hub/components';
 import { LanguageService, ResultadoAccionService } from '@core/services';
 import { injectLangChange } from '@core/utils/lang-change';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
@@ -59,7 +59,7 @@ import { RulesStore } from '../../state/rules.store';
 export class CategoriesPageComponent {
   private readonly categoriesStore = inject(CategoriesStore);
   private readonly rulesStore = inject(RulesStore);
-  private readonly confirm = inject(ScConfirmService);
+  private readonly alertModal = injectAlertModal();
   private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
@@ -240,12 +240,12 @@ export class CategoriesPageComponent {
   }
 
   private async confirmDelete(cat: Category): Promise<void> {
-    const accepted = await this.confirm.request({
+    const accepted = await this.alertModal({
+      variant: 'error',
       title: this.translate.instant('memory.categories.delete_title'),
-      body: this.translate.instant('memory.categories.delete_body', { name: cat.name }),
-      acceptLabel: this.translate.instant('common.delete'),
-      rejectLabel: this.translate.instant('common.cancel'),
-      acceptTone: 'danger',
+      message: this.translate.instant('memory.categories.delete_body', { name: cat.name }),
+      actionLabel: this.translate.instant('common.delete'),
+      secondaryActionLabel: this.translate.instant('common.cancel'),
     });
     if (!accepted) return;
     this.categoriesStore.deleteCategory(cat.id);
@@ -253,12 +253,12 @@ export class CategoriesPageComponent {
   }
 
   private async confirmDeleteMany(rows: readonly Category[]): Promise<void> {
-    const accepted = await this.confirm.request({
+    const accepted = await this.alertModal({
+      variant: 'error',
       title: this.translate.instant('memory.categories.delete_title_bulk', { count: rows.length }),
-      body: this.translate.instant('common.delete_dialog.body'),
-      acceptLabel: this.translate.instant('common.delete'),
-      rejectLabel: this.translate.instant('common.cancel'),
-      acceptTone: 'danger',
+      message: this.translate.instant('common.delete_dialog.body'),
+      actionLabel: this.translate.instant('common.delete'),
+      secondaryActionLabel: this.translate.instant('common.cancel'),
     });
     if (!accepted) return;
     for (const row of rows) this.categoriesStore.deleteCategory(row.id);

@@ -14,7 +14,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ScIconComponent } from '@smartcontact-hub/icons';
 
 import { ScClipboardService } from '../../core/services/sc-clipboard.service';
-import { ScDialogComponent } from '../dialog/sc-dialog.component';
+import { ScCustomModalComponent } from '../custom-modal/sc-custom-modal.component';
 import { SC_DELETE_ENTITY_DIALOG_TRANSLATIONS } from './i18n/sc-delete-entity-dialog.translations';
 import { ScButtonComponent } from '../button/sc-button.component';
 import { ScMessageComponent } from '../message/sc-message.component';
@@ -52,7 +52,7 @@ export interface DeletableEntity {
 @Component({
   selector: 'sc-delete-entity-dialog',
   standalone: true,
-  imports: [TooltipModule, ScButtonComponent, FormsModule, ScIconComponent, ScDialogComponent, ScMessageComponent, TranslateModule],
+  imports: [TooltipModule, ScButtonComponent, FormsModule, ScIconComponent, ScCustomModalComponent, ScMessageComponent, TranslateModule],
   templateUrl: './sc-delete-entity-dialog.component.html',
   styleUrl: './sc-delete-entity-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -118,7 +118,7 @@ export class ScDeleteEntityDialogComponent {
     () => this.items().length > 0 && this.confirmText().trim() === this.confirmTarget(),
   );
 
-  /** i18n title resolved from mode + count, fed into `<sc-dialog [title]>`. */
+  /** i18n title resolved from mode + count, fed into `<sc-custom-modal [title]>`. */
   protected readonly dialogTitle = computed(() => {
     if (this.mode() === 'single') {
       return this.translate.instant('sc.deleteEntityDialog.titleSingle', {

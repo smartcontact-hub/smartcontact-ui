@@ -1,11 +1,11 @@
-<sc-dialog
+<sc-custom-modal
   [visible]="visible()"
   [icon]="headerIcon"
   [title]="'memory.bulk_transcription.modal_title' | translate"
   [subtitle]="subtitle()"
   width="720px"
-  flushBody
-  (cancelled)="onCancel()"
+  bodyClass="sc-custom-modal__body--flush"
+  (closed)="onCancel()"
 >
   <!-- Body 720×200, dos celdas equal divididas por hairline vertical.
        Layout v26 (Figma 297:2559). El header del sc-modal y la acción
@@ -123,7 +123,7 @@
     </div>
   }
 
-  <div modal-actions>
+  <div scCustomModalFooter>
     <sc-button
       type="button"
       size="sm"
@@ -144,4 +144,4 @@
       <span>{{ 'memory.bulk_transcription.process_btn' | translate }}</span>
     </sc-button>
   </div>
-</sc-dialog>
+</sc-custom-modal>

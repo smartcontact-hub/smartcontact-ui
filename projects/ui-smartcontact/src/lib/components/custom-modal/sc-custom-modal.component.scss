@@ -1,29 +1,28 @@
 /*
- * La superficie es el host: así `surfaceClass` (en el host) cambia fondo, borde y color pisando las variables
- * `--sc-custom-modal-*`, como en ui.smart-contact.com. El diálogo de PrimeNG que la envuelve va transparente
- * (`SC_CUSTOM_MODAL_DYNAMIC_DIALOG_DEFAULTS`).
+ * `surfaceClass` va en el host, como en ui.smart-contact.com, y cambia fondo, borde y color pisando las variables
+ * `--sc-custom-modal-*`; quien las pinta es la `section`, que hereda las variables. Así la misma carcasa sirve
+ * dentro de DynamicDialog, en línea o dentro del `p-dialog` de `[(visible)]` (el host no ocupa caja). El diálogo
+ * de PrimeNG que la envuelve va transparente (`SC_CUSTOM_MODAL_DYNAMIC_DIALOG_DEFAULTS`).
  */
 :host {
+  display: contents;
+}
+
+.sc-custom-modal {
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
   width: var(--sc-custom-modal-width);
-  max-width: 100%;
+  min-width: var(--sc-custom-modal-min-width, 0);
+  max-width: min(var(--sc-custom-modal-max-width, 100vw), 100%);
   max-height: var(--sc-custom-modal-max-height);
+  min-height: 0;
   overflow: hidden;
   background: var(--sc-custom-modal-background);
   border: 1px solid var(--sc-custom-modal-border-color);
   border-radius: var(--sc-custom-modal-border-radius);
   box-shadow: var(--sc-custom-modal-shadow);
   color: var(--sc-custom-modal-color);
-}
-
-.sc-custom-modal {
-  display: flex;
-  flex-direction: column;
-  flex: 1 1 auto;
-  min-height: 0;
-  min-width: 0;
 
   &__header {
     display: grid;
@@ -109,6 +108,10 @@
     overflow-x: hidden;
     overflow-y: auto;
     padding: 0 var(--sc-custom-modal-content-padding) var(--sc-custom-modal-content-padding);
+    /* Entre lo que va dentro, 14: el peldaño del medio de 7 · 14 · 28 (DD-123), como tenía `sc-dialog`. */
+    display: flex;
+    flex-direction: column;
+    gap: var(--sc-spacing-1);
 
     /* Sin cabecera, el cuerpo pone su propio hueco arriba. */
     &:first-child {
@@ -120,6 +123,11 @@
     }
   }
 
+  /* Cuerpo a ras: el contenido pone su propio padding hasta el borde (`bodyClass="sc-custom-modal__body--flush"`). */
+  &__body--flush {
+    padding: 0;
+  }
+
   &__footer {
     flex: 0 0 auto;
     display: flex;
@@ -127,5 +135,25 @@
     justify-content: flex-end;
     gap: var(--sc-custom-modal-footer-gap);
     padding: 0 var(--sc-custom-modal-footer-padding) var(--sc-custom-modal-footer-padding);
+
+    &:empty {
+      display: none;
+    }
+
+    /* Un envoltorio proyectado como hijo único del pie (`<div scCustomModalFooter>` con sus botones) reparte
+       los botones con el mismo hueco. */
+    ::ng-deep [scCustomModalFooter]:not(sc-button) {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: flex-end;
+      gap: var(--sc-custom-modal-footer-gap);
+    }
+  }
+
+  /* Con un formulario en el cuerpo, la botonera va a 28 del último campo: los 15,75 del cuerpo más estos 10,5
+     (DD-123, R3). El aviso solo lleva texto y el cuerpo a ras pone su propio aire: quedan como el Kit. */
+  &__body:not(.sc-custom-modal__body--flush):not(.sc-alert-modal__body) + &__footer {
+    padding-top: var(--sc-spacing-0-75);
   }
 }

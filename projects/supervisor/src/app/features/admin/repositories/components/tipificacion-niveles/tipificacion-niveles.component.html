@@ -99,13 +99,13 @@
 <p class="visually-hidden" role="status">{{ anuncio() }}</p>
 
 @if (eliminando(); as e) {
-  <sc-dialog
+  <sc-custom-modal
     [visible]="true"
     [title]="'repositories.tipificaciones.delete_option_title' | translate: { name: e.opcion.label }"
     [subtitle]="(e.debajo === 1 ? 'repositories.tipificaciones.delete_option_body_one' : 'repositories.tipificaciones.delete_option_body') | translate: { count: e.debajo }"
-    (cancelled)="eliminando.set(null)"
+    (closed)="eliminando.set(null)"
   >
-    <div modal-actions>
+    <div scCustomModalFooter>
       <sc-button type="button" size="sm" variant="secondary" appearance="outlined" (clicked)="eliminando.set(null)">
         <span>{{ 'common.cancel' | translate }}</span>
       </sc-button>
@@ -113,5 +113,5 @@
         <span>{{ 'common.delete' | translate }}</span>
       </sc-button>
     </div>
-  </sc-dialog>
+  </sc-custom-modal>
 }

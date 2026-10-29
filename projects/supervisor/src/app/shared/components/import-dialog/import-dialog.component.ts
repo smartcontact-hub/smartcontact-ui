@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { ScButtonComponent, ScDialogComponent } from '@smartcontact-hub/components';
+import { ScButtonComponent, ScCustomModalComponent } from '@smartcontact-hub/components';
 
 /**
  * La vista previa de una importación, ya en frases: qué entra, cada línea con error, las que ya existían y lo que no
@@ -37,7 +37,7 @@ export interface ImportSummary {
  */
 @Component({
   selector: 'sc-import-dialog',
-  imports: [ScButtonComponent, ScDialogComponent, TranslateModule],
+  imports: [ScButtonComponent, ScCustomModalComponent, TranslateModule],
   templateUrl: './import-dialog.component.html',
   styleUrl: './import-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -10,16 +10,13 @@ const variant = figma.selectedInstance.getEnum("Variant", {
   Warning: "warning",
   Error: "error",
 })
-const title = figma.selectedInstance.getString("Title")
-const message = figma.selectedInstance.getString("Message")
+// El título, el icono y la X se editan en la instancia de Custom modal que lleva dentro; el mensaje va en su hueco.
+const shell = figma.selectedInstance.findInstance("Custom modal")
+const title = shell.getString("Edit header")
+const message = shell.findText("Message").textContent
 // showIcon y showCloseButton valen true por defecto: solo se escriben cuando Figma los apaga.
-const showIcon = figma.selectedInstance.getBoolean("Show icon", { true: "", false: "\n    showIcon: false," })
-const showClose = figma.selectedInstance.getBoolean("Show close", { true: "", false: "\n    showCloseButton: false," })
-const secondary = figma.selectedInstance.getBoolean("Secondary action", { true: "\n    secondaryActionLabel: 'Cancelar',", false: "" })
-const tertiary = figma.selectedInstance.getBoolean("Tertiary action", {
-  true: "\n    tertiaryActionLabel: 'No guardar',\n    tertiaryActionRequested: () => ref.close('tertiary'),",
-  false: "",
-})
+const showIcon = shell.getBoolean("Show icon", { true: "", false: "\n    showIcon: false," })
+const showClose = shell.getBoolean("Show close", { true: "", false: "\n    showCloseButton: false," })
 
 // Se abre por servicio, como en ui.smart-contact.com: no se coloca en la plantilla.
 export default {
@@ -29,10 +26,11 @@ export default {
     variant: '${variant}',
     title: '${title}',
     message: '${message}',
-    actionLabel: '…',${secondary}${tertiary}${showIcon}${showClose}
+    actionLabel: '…',
+    secondaryActionLabel: 'Cancelar',${showIcon}${showClose}
     closeRequested: () => ref.close('closed'),
     actionRequested: () => ref.close('action'),
   },
 });
-ref.onClose.subscribe((result) => { /* 'action' | 'tertiary' | 'closed' | undefined (Escape) */ });`,
+ref.onClose.subscribe((result) => { /* 'action' | 'closed' | undefined (Escape) */ });`,
 }

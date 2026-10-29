@@ -1,4 +1,4 @@
-<sc-dialog
+<sc-custom-modal
   [visible]="visible()"
   [icon]="tagsIcon"
   [title]="
@@ -7,7 +7,7 @@
   "
   [subtitle]="'memory.categories.form.subtitle' | translate"
   width="560px"
-  (cancelled)="onCancel()"
+  (closed)="onCancel()"
 >
   <div class="category-form">
     @if (!isEditMode()) {
@@ -254,7 +254,7 @@
     }
   </div>
 
-  <div modal-actions>
+  <div scCustomModalFooter>
     <sc-button type="button" size="sm" variant="secondary" (clicked)="onCancel()">
       <span>{{ 'common.cancel' | translate }}</span>
     </sc-button>
@@ -274,16 +274,16 @@
       </span>
     </sc-button>
   </div>
-</sc-dialog>
+</sc-custom-modal>
 
 <!-- Dialog secundario: plantillas predefinidas -->
-<sc-dialog
+<sc-custom-modal
   [visible]="templatesDialogVisible()"
   [icon]="layoutTemplateIcon"
   [title]="'memory.categories.templates.title' | translate"
   [subtitle]="'memory.categories.templates.subtitle' | translate"
   width="640px"
-  (cancelled)="closeTemplatesDialog()"
+  (closed)="closeTemplatesDialog()"
 >
   <div class="category-templates">
     @for (t of templates; track t.id) {
@@ -299,9 +299,9 @@
     }
   </div>
 
-  <div modal-actions>
+  <div scCustomModalFooter>
     <sc-button type="button" size="sm" variant="secondary" (clicked)="closeTemplatesDialog()">
       <span>{{ 'common.cancel' | translate }}</span>
     </sc-button>
   </div>
-</sc-dialog>
+</sc-custom-modal>

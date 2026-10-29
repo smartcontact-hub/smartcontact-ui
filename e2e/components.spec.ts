@@ -1377,12 +1377,12 @@ test.describe('sc-sticky-form-header', () => {
 });
 
 test.describe('sc-impact-preview-dialog', () => {
-  test('compone sc-dialog; pruning de items + confirm emite supervivientes', async ({ page }) => {
+  test('compone sc-custom-modal; pruning de items + confirm emite supervivientes', async ({ page }) => {
     await gotoPage(page, 'impactpreviewdialog');
     await page.getByTestId('open-impact').click();
 
     const dialog = page.getByTestId('sc-impact');
-    await expect(dialog.locator('.sc-dialog')).toBeVisible();
+    await expect(dialog.locator('.sc-custom-modal')).toBeVisible();
 
     // 3 items proyectados en el body de la card
     await expect(dialog.locator('.item')).toHaveCount(3);
@@ -1392,18 +1392,18 @@ test.describe('sc-impact-preview-dialog', () => {
     await expect(dialog.locator('.item')).toHaveCount(2);
 
     // confirmar (botón primario del footer) → emite los 2 supervivientes
-    await dialog.locator('[modal-actions] p-button').last().locator('button').click();
+    await dialog.locator('[scCustomModalFooter] p-button').last().locator('button').click();
     await expect(page.getByTestId('impact-result')).toHaveText('confirmado: 2');
   });
 });
 
 test.describe('sc-delete-entity-dialog', () => {
-  test('single: retype del nombre habilita Delete; compone sc-dialog', async ({ page }) => {
+  test('single: retype del nombre habilita Delete; compone sc-custom-modal', async ({ page }) => {
     await gotoPage(page, 'deleteentitydialog');
     await page.getByTestId('open-single').click();
 
     const dialog = page.getByTestId('sc-delete-single');
-    await expect(dialog.locator('.sc-dialog')).toBeVisible();
+    await expect(dialog.locator('.sc-custom-modal')).toBeVisible();
 
     // Delete deshabilitado hasta teclear el nombre exacto
     const del = dialog.getByTestId('delete-confirm-btn').locator('button');

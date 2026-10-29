@@ -1,10 +1,10 @@
-<sc-dialog
+<sc-custom-modal
   [visible]="visible()"
   [icon]="retransIcon"
   [title]="'memory.player.retranscribe.title' | translate"
   [subtitle]="'memory.player.retranscribe.subtitle' | translate"
   width="460px"
-  (cancelled)="onCancel()"
+  (closed)="onCancel()"
 >
   <div class="retrans-confirm">
     <div class="retrans-confirm__warning" role="alert">
@@ -32,7 +32,7 @@
     </div>
   </div>
 
-  <div modal-actions>
+  <div scCustomModalFooter>
     <sc-button
       type="button"
       size="sm"
@@ -53,4 +53,4 @@
       <span>{{ 'memory.player.retranscribe.confirm_btn' | translate }}</span>
     </sc-button>
   </div>
-</sc-dialog>
+</sc-custom-modal>

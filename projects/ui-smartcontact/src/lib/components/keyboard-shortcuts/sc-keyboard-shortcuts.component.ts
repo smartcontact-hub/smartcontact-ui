@@ -3,7 +3,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { isTypingTarget } from '../../core/utils/is-typing-target';
 import { ScCommandPaletteService } from '../command-palette/sc-command-palette.service';
-import { ScDialogComponent } from '../dialog/sc-dialog.component';
+import { ScCustomModalComponent } from '../custom-modal/sc-custom-modal.component';
 import { SC_KEYBOARD_SHORTCUTS_TRANSLATIONS } from './i18n/sc-keyboard-shortcuts.translations';
 import { ScKeyboardShortcutsService } from './sc-keyboard-shortcuts.service';
 
@@ -53,7 +53,7 @@ export const SC_KEYBOARD_SHORTCUTS_DEFAULT_GROUPS: readonly ScShortcutGroup[] = 
  */
 @Component({
   selector: 'sc-keyboard-shortcuts',
-  imports: [ScDialogComponent, TranslateModule],
+  imports: [ScCustomModalComponent, TranslateModule],
   templateUrl: './sc-keyboard-shortcuts.component.html',
   styleUrl: './sc-keyboard-shortcuts.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

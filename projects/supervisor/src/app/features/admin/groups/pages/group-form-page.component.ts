@@ -4,7 +4,8 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TooltipModule } from 'primeng/tooltip';
 import { TipificacionArbolComponent } from '@features/admin/repositories/components/tipificacion-arbol/tipificacion-arbol.component';
 import { ScCheckboxComponent as CheckboxComponent } from '@smartcontact-hub/components';
-import { ScButtonComponent as ButtonComponent, ScConfirmService } from '@smartcontact-hub/components';
+import { injectAlertModal } from '@core/services';
+import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
@@ -39,7 +40,7 @@ import {
   ScFileUploadComponent as FileUploadComponent,
   ScTextareaComponent as TextareaComponent,
   ScToggleSwitchComponent as ToggleSwitchComponent,
-  ScDialogComponent as DialogComponent,
+  ScCustomModalComponent as DialogComponent,
   ScSelectComponent as SelectComponent,
   ScInputTagsComponent as InputTagsComponent,
   ScFormSectionNavComponent as FormSectionNavComponent,
@@ -268,7 +269,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
   private readonly resourceRows = inject(ResourceRowsService);
   private readonly labelsStore = inject(LabelsStore);
   private readonly defaultsStore = inject(GroupDefaultsStore);
-  private readonly confirm = inject(ScConfirmService);
+  private readonly alertModal = injectAlertModal();
   private readonly breadcrumbs = inject(BreadcrumbService);
 
   /**
@@ -1522,12 +1523,12 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
       void this.router.navigateByUrl(destino);
       return;
     }
-    const guardar = await this.confirm.request({
+    const guardar = await this.alertModal({
+      variant: 'info',
       title: this.translate.instant('groups.form.repositories_leave.title'),
-      body: this.translate.instant('groups.form.repositories_leave.body'),
-      acceptLabel: this.translate.instant('common.save'),
-      rejectLabel: this.translate.instant('common.discard_keep'),
-      icon: 'info',
+      message: this.translate.instant('groups.form.repositories_leave.body'),
+      actionLabel: this.translate.instant('common.save'),
+      secondaryActionLabel: this.translate.instant('common.discard_keep'),
     });
     if (!guardar) return;
     this.destinoTrasGuardar = destino;

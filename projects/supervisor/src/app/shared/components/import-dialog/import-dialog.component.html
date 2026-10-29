@@ -1,4 +1,4 @@
-<sc-dialog [visible]="true" [title]="title()" (cancelled)="cancelled.emit()">
+<sc-custom-modal [visible]="true" [title]="title()" (closed)="cancelled.emit()">
   <div class="importar">
     @if (help(); as ayuda) {
       <p class="sc-text-body-regular">{{ ayuda }}</p>
@@ -50,7 +50,7 @@
       </div>
     }
   </div>
-  <div modal-actions>
+  <div scCustomModalFooter>
     <sc-button type="button" size="sm" variant="secondary" appearance="outlined" (clicked)="cancelled.emit()">
       <span>{{ 'common.cancel' | translate }}</span>
     </sc-button>
@@ -60,4 +60,4 @@
       </sc-button>
     }
   </div>
-</sc-dialog>
+</sc-custom-modal>

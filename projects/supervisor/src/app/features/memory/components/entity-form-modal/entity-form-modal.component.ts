@@ -14,7 +14,7 @@ import { ScTextareaComponent as TextareaComponent } from '@smartcontact-hub/comp
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { ScInputTagsComponent as InputTagsComponent, ScInputTextComponent as InputTextComponent } from '@smartcontact-hub/components';
-import { ScDialogComponent as DialogComponent } from '@smartcontact-hub/components';
+import { ScCustomModalComponent as DialogComponent } from '@smartcontact-hub/components';
 import { ScSelectComponent as SelectComponent } from '@smartcontact-hub/components';
 
 import type { Entity, EntityListValue, EntityType } from '../../data/entity.types';

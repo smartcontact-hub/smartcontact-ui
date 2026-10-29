@@ -14,7 +14,7 @@ import { injectLangChange } from '@core/utils/lang-change';
 import { EMAIL_RE } from '@core/utils/validators';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 import {
-  ScDialogComponent as DialogComponent,
+  ScCustomModalComponent as DialogComponent,
   ScDividerComponent as DividerComponent,
   ScFormSectionNavComponent as FormSectionNavComponent,
   type FormNavSection,

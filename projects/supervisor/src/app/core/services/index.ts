@@ -13,6 +13,8 @@ export type { PaletteCommand } from './command-palette.service';
 
 
 export { DiscardDialogService } from './discard-dialog.service';
+export { injectAlertModal } from './alert-modal';
+export type { AlertModalRequest } from './alert-modal';
 
 
 export { SectionLinksService } from './section-links.service';

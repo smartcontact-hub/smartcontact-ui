@@ -11,6 +11,7 @@ import { Router, RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
+import { injectAlertModal } from '@core/services';
 import { ScTagComponent as TagComponent } from '@smartcontact-hub/components';
 import { MenuModule } from 'primeng/menu';
 import { TooltipModule } from 'primeng/tooltip';
@@ -18,7 +19,6 @@ import type { MenuItem } from 'primeng/api';
 
 import { ScEmptyStateComponent as EmptyStateComponent } from '@smartcontact-hub/components';
 import { ScMessageComponent as MessageComponent } from '@smartcontact-hub/components';
-import { ScConfirmService } from '@smartcontact-hub/components';
 import { type ScColumnCellContext, type ScColumnDef } from '@smartcontact-hub/components';
 import { LanguageService, ResultadoAccionService } from '@core/services';
 import { injectLangChange } from '@core/utils/lang-change';
@@ -58,7 +58,7 @@ import { RulesStore } from '../../state/rules.store';
 export class RulesPageComponent {
   private readonly rulesStore = inject(RulesStore);
   private readonly resolver = inject(ConditionResolverService);
-  private readonly confirm = inject(ScConfirmService);
+  private readonly alertModal = injectAlertModal();
   private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
@@ -270,12 +270,12 @@ export class RulesPageComponent {
   }
 
   private async confirmDelete(rule: Rule): Promise<void> {
-    const accepted = await this.confirm.request({
+    const accepted = await this.alertModal({
+      variant: 'error',
       title: this.translate.instant('memory.rules.delete_title'),
-      body: this.translate.instant('memory.rules.delete_body', { name: rule.name }),
-      acceptLabel: this.translate.instant('common.delete'),
-      rejectLabel: this.translate.instant('common.cancel'),
-      acceptTone: 'danger',
+      message: this.translate.instant('memory.rules.delete_body', { name: rule.name }),
+      actionLabel: this.translate.instant('common.delete'),
+      secondaryActionLabel: this.translate.instant('common.cancel'),
     });
     if (!accepted) return;
     this.rulesStore.deleteRule(rule.id);
@@ -283,12 +283,12 @@ export class RulesPageComponent {
   }
 
   private async confirmDeleteMany(rows: readonly Rule[]): Promise<void> {
-    const accepted = await this.confirm.request({
+    const accepted = await this.alertModal({
+      variant: 'error',
       title: this.translate.instant('memory.rules.delete_title_bulk', { count: rows.length }),
-      body: this.translate.instant('common.delete_dialog.body'),
-      acceptLabel: this.translate.instant('common.delete'),
-      rejectLabel: this.translate.instant('common.cancel'),
-      acceptTone: 'danger',
+      message: this.translate.instant('common.delete_dialog.body'),
+      actionLabel: this.translate.instant('common.delete'),
+      secondaryActionLabel: this.translate.instant('common.cancel'),
     });
     if (!accepted) return;
     for (const row of rows) this.rulesStore.deleteRule(row.id);

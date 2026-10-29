@@ -135,7 +135,7 @@
 </div>
 
 @if (cascadeConfirm(); as c) {
-  <sc-dialog
+  <sc-custom-modal
     [visible]="true"
     [title]="'groups.form.cascade.title' | translate"
     [subtitle]="
@@ -147,9 +147,9 @@
               orphaned: c.orphaned,
             }
     "
-    (cancelled)="cancelCascade()"
+    (closed)="cancelCascade()"
   >
-    <div modal-actions>
+    <div scCustomModalFooter>
       <sc-button type="button" size="sm" variant="secondary" appearance="outlined" (clicked)="cancelCascade()">
         <span>{{ 'common.cancel' | translate }}</span>
       </sc-button>
@@ -157,18 +157,18 @@
         <span>{{ 'groups.form.cascade.confirm' | translate }}</span>
       </sc-button>
     </div>
-  </sc-dialog>
+  </sc-custom-modal>
 }
 
 <!-- Antes de sacar del grupo a quien se queda sin canales, también al crear: con el verbo y la cifra (DD-223). -->
 @if (sacarConfirm(); as n) {
-  <sc-dialog
+  <sc-custom-modal
     [visible]="true"
     [title]="(n === 1 ? 'groups.form.orphans.title_one' : 'groups.form.orphans.title') | translate: { count: n }"
     [subtitle]="(n === 1 ? 'groups.form.orphans.body_one' : 'groups.form.orphans.body') | translate"
-    (cancelled)="cancelSacar()"
+    (closed)="cancelSacar()"
   >
-    <div modal-actions>
+    <div scCustomModalFooter>
       <sc-button type="button" size="sm" variant="secondary" appearance="outlined" (clicked)="cancelSacar()">
         <span>{{ 'common.cancel' | translate }}</span>
       </sc-button>
@@ -176,22 +176,21 @@
         <span>{{ 'groups.form.orphans.confirm' | translate }}</span>
       </sc-button>
     </div>
-  </sc-dialog>
+  </sc-custom-modal>
 }
 
 @if (creatingLabel()) {
-  <sc-dialog
+  <sc-custom-modal
     [visible]="true"
     [title]="'groups.form.fields.label_new' | translate"
-    [hasFooter]="false"
-    (cancelled)="creatingLabel.set(false)"
+    (closed)="creatingLabel.set(false)"
   >
     <sc-label-form-panel
       flush
       (save)="onCreateLabelSubmit($event)"
       (cancelled)="creatingLabel.set(false)"
     />
-  </sc-dialog>
+  </sc-custom-modal>
 }
 
 <!-- LAS CUATRO SECCIONES, cada una en su plantilla, que se pinta de una en una junto al índice al crear y al editar

@@ -1,9 +1,9 @@
 import { effect, inject, type Signal, untracked } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { ScConfirmService } from '@smartcontact-hub/components';
+import { injectAlertModal } from '@core/services';
 
 /**
- * Borrar un grupo o un agente es la confirmación simple del DS (`sc-confirmdialog`), sin teclear el nombre
+ * Borrar un grupo o un agente es la confirmación simple del DS (`sc-alert-modal` en `error`, DD-239), sin teclear el nombre
  * (DD-215, enmienda DD-145), igual desde el listado que desde la ficha. Desde el 2026-10-20, con el texto más corto que
  * dice todo: el título pregunta con el nombre («¿Eliminar el grupo «Ventas»?»), el cuerpo solo añade lo que no se sabe
  * («Esta acción no se puede deshacer.») y el botón repite el verbo del título («Eliminar»; «Confirmar» no dice qué
@@ -11,29 +11,29 @@ import { ScConfirmService } from '@smartcontact-hub/components';
  * en el contexto de inyección y devuelve la pregunta lista: resuelve `true` si se acepta.
  */
 export function injectConfirmarBorrado(titleKey: string): (name: string) => Promise<boolean> {
-  const confirm = inject(ScConfirmService);
+  const alertModal = injectAlertModal();
   const translate = inject(TranslateService);
   return (name) =>
-    confirm.request({
+    alertModal({
+      variant: 'error',
       title: translate.instant(titleKey, { name }),
-      body: translate.instant('common.delete_dialog.body'),
-      acceptLabel: translate.instant('common.delete'),
-      rejectLabel: translate.instant('common.cancel'),
-      acceptTone: 'danger',
+      message: translate.instant('common.delete_dialog.body'),
+      actionLabel: translate.instant('common.delete'),
+      secondaryActionLabel: translate.instant('common.cancel'),
     });
 }
 
 /** La misma pregunta para varios a la vez, con su cifra (`titleKey`, con `{{count}}`): «¿Eliminar 3 grupos?» (SISMAC-4056). */
 export function injectConfirmarBorradoVarios(titleKey: string): (count: number, detail?: string | null) => Promise<boolean> {
-  const confirm = inject(ScConfirmService);
+  const alertModal = injectAlertModal();
   const translate = inject(TranslateService);
   return (count, detail) =>
-    confirm.request({
+    alertModal({
+      variant: 'error',
       title: translate.instant(titleKey, { count }),
-      body: [detail, translate.instant('common.delete_dialog.body')].filter(Boolean).join(' '),
-      acceptLabel: translate.instant('common.delete'),
-      rejectLabel: translate.instant('common.cancel'),
-      acceptTone: 'danger',
+      message: [detail, translate.instant('common.delete_dialog.body')].filter(Boolean).join(' '),
+      actionLabel: translate.instant('common.delete'),
+      secondaryActionLabel: translate.instant('common.cancel'),
     });
 }
 
@@ -52,7 +52,7 @@ export function injectBorradoSimple<T>(opts: {
   readonly accept: () => void;
   readonly cancel: () => void;
 }): void {
-  const confirm = inject(ScConfirmService);
+  const alertModal = injectAlertModal();
   const translate = inject(TranslateService);
   const clave = (k: string | (() => string)): string => (typeof k === 'string' ? k : k());
   let preguntando = false;
@@ -63,14 +63,13 @@ export function injectBorradoSimple<T>(opts: {
     untracked(() => {
       const extra = opts.detail?.(items);
       const body = [extra, translate.instant('common.delete_dialog.body')].filter(Boolean).join(' ');
-      void confirm
-        .request({
-          title: translate.instant(clave(items.length === 1 ? opts.titleKey : opts.titleBulkKey), opts.params(items)),
-          body,
-          acceptLabel: translate.instant('common.delete'),
-          rejectLabel: translate.instant('common.cancel'),
-          acceptTone: 'danger',
-        })
+      void alertModal({
+        variant: 'error',
+        title: translate.instant(clave(items.length === 1 ? opts.titleKey : opts.titleBulkKey), opts.params(items)),
+        message: body,
+        actionLabel: translate.instant('common.delete'),
+        secondaryActionLabel: translate.instant('common.cancel'),
+      })
         .then((ok) => {
           preguntando = false;
           if (ok) opts.accept();

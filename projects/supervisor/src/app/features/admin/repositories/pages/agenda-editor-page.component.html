@@ -108,12 +108,11 @@
 <!-- Añadir o editar un contacto con el formulario de los «+» de Recursos (`sc-repo-form-panel`, a sangre en el
      diálogo). Ningún campo obligatorio: `validateContact` pide al menos uno con texto y, si hay teléfono, que valga. -->
 @if (contactDialog(); as dialog) {
-  <sc-dialog
+  <sc-custom-modal
     [visible]="true"
     width="46rem"
     [title]="(dialog.contact ? 'repositories.agendas.edit_contact' : 'repositories.agendas.add_contact') | translate"
-    [hasFooter]="false"
-    (cancelled)="contactDialog.set(null)"
+    (closed)="contactDialog.set(null)"
   >
     <sc-repo-form-panel
       flush
@@ -127,7 +126,7 @@
       (save)="onContactSave($event)"
       (cancelled)="contactDialog.set(null)"
     />
-  </sc-dialog>
+  </sc-custom-modal>
 }
 
 <!-- Importar contactos de un CSV, como en Voice (DD-166): la plantilla, el archivo y, antes de añadir nada, qué entra y

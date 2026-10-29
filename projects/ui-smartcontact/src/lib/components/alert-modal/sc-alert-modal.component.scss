@@ -8,11 +8,10 @@
  */
 .sc-alert-modal__surface {
   --sc-custom-modal-width: auto;
+  --sc-custom-modal-min-width: var(--sc-alert-modal-min-width);
+  --sc-custom-modal-max-width: var(--sc-alert-modal-max-width);
+  --sc-custom-modal-max-height: var(--sc-alert-modal-max-height);
   --sc-custom-modal-title-lines: var(--sc-alert-modal-title-lines);
-
-  min-width: var(--sc-alert-modal-min-width);
-  max-width: min(var(--sc-alert-modal-max-width), 100%);
-  max-height: var(--sc-alert-modal-max-height);
 }
 
 /* La variante `default` deja la carcasa como está; las otras tres le pasan su tono. */
