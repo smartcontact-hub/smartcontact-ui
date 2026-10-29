@@ -1102,7 +1102,7 @@
       "create_title": "New label",
       "edit_title": "Edit label",
       "name": "Name",
-      "name_placeholder": "Label name",
+      "name_placeholder": "E.g. Priority customer",
       "color": "Color",
       "description": "Description",
       "description_placeholder": "Brief description..."
@@ -1210,7 +1210,6 @@
     "form": {
       "create_title": "New template",
       "title": "Title",
-      "title_placeholder": "Template title",
       "channel": "Channel",
       "body": "Content",
       "body_placeholder": "Write the template content...",
@@ -1233,8 +1232,8 @@
       "body_required": "Content is required"
     },
     "delete": {
-      "single_detail": "Agents and groups that have it assigned will lose the reference.",
-      "bulk_footer": "Agents and groups that have them assigned will lose the reference."
+      "single_detail": "Agents that have it assigned will lose the reference.",
+      "bulk_footer": "Agents that have them assigned will lose the reference."
     },
     "toasts": {
       "created": "Template \"{{name}}\" created",

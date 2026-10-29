@@ -1102,7 +1102,7 @@
       "create_title": "Nueva label",
       "edit_title": "Editar label",
       "name": "Nombre",
-      "name_placeholder": "Nombre de la label",
+      "name_placeholder": "Ej: Cliente prioritario",
       "color": "Color",
       "description": "Descripción",
       "description_placeholder": "Breve descripción..."
@@ -1210,7 +1210,6 @@
     "form": {
       "create_title": "Nueva plantilla",
       "title": "Título",
-      "title_placeholder": "Título de la plantilla",
       "channel": "Canal",
       "body": "Contenido",
       "body_placeholder": "Escribe el contenido de la plantilla...",
@@ -1233,8 +1232,8 @@
       "body_required": "El contenido es obligatorio"
     },
     "delete": {
-      "single_detail": "Los agentes y grupos que la tengan asignada perderán la referencia.",
-      "bulk_footer": "Los agentes y grupos que las tengan asignadas perderán la referencia."
+      "single_detail": "Los agentes que la tengan asignada perderán la referencia.",
+      "bulk_footer": "Los agentes que las tengan asignadas perderán la referencia."
     },
     "toasts": {
       "created": "Plantilla «{{name}}» creada",
@@ -1507,7 +1506,7 @@
       "singular": "tipificación",
       "create_title": "Nueva tipificación",
       "plural": "tipificaciones",
-      "name_placeholder": "Ej. Atención al cliente",
+      "name_placeholder": "Ej: Atención al cliente",
       "description_placeholder": "Breve descripción...",
       "create_submit": "Crear tipificación",
       "edit_breadcrumb": "Editar tipificación",

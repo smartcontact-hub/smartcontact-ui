@@ -23,7 +23,8 @@ test.beforeEach(async ({ page }) => {
 const SECCIONES = [
   { clave: 'general', titulos: ['Identidad', 'Canales', 'Postconversación'] },
   { clave: 'distribucion', titulos: ['Reglas comunes', 'Teléfono', 'Chat', 'Email'] },
-  { clave: 'recursos', titulos: ['Repositorios', 'Ficha de cliente'] },
+  // «Repositorios» sale con DD-239 (Agendas y Plantillas se asignan solo a agentes): queda la ficha de cliente.
+  { clave: 'recursos', titulos: ['Ficha de cliente'] },
   // Su única subsección va sin título: la sección ya se llama «Agentes asignados» (DD-204).
   { clave: 'agentes', titulos: [] },
 ] as const;

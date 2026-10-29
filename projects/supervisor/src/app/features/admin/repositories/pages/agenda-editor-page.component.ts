@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, HostListener, inject, type OnInit, signal, type TemplateRef, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, HostListener, inject, type OnInit, signal, type TemplateRef, viewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TooltipModule } from 'primeng/tooltip';
@@ -37,7 +37,7 @@ import {
 import { hoy } from '@shared/utils/today';
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
 import { AgendasStore, type AgendaContact } from '../state/agendas.store';
-import { ResultadoAccionService } from '@core/services';
+import { BreadcrumbService, ResultadoAccionService } from '@core/services';
 import { ayudaDeObligatorio, dejoElCampo, ocasionDeAvisar } from '@shared/utils/alta-secciones';
 
 interface AgendaDraft {
@@ -93,6 +93,15 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
   }
 
   protected readonly mode = signal<'create' | 'edit'>('create');
+
+  /** La miga de la edición dice el nombre guardado, como en Grupos y Agentes (DD-238): el que se teclea aún no es el
+   *  suyo. Al crear, el de la ruta. */
+  private readonly breadcrumbs = inject(BreadcrumbService);
+  private readonly nombreGuardado = signal<string | null>(null);
+  private readonly migaConNombre = effect(() =>
+    this.breadcrumbs.nombrar(this.route, this.mode() === 'edit' ? this.nombreGuardado() : null),
+  );
+  private readonly sinMiga = inject(DestroyRef).onDestroy(() => this.breadcrumbs.nombrar(this.route, null));
   private agendaId: number | null = null;
 
   protected readonly form = signal<AgendaDraft>(VACIA);
@@ -148,6 +157,7 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
     }
     this.mode.set('edit');
     this.agendaId = agenda.id;
+    this.nombreGuardado.set(agenda.name);
     this.form.set({
       name: agenda.name,
       description: agenda.description,
@@ -210,6 +220,7 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
     }
     this.store.updateItem(this.agendaId!, { ...datos, updatedAt: hoy() });
     this.asignar(this.agendaId!, agentIds);
+    this.nombreGuardado.set(draft.name);
     this.form.set(draft);
     this.dirtyState.markPristine();
     this.resultado.contar(this.texto('repositories.agendas.toasts.updated', draft.name));

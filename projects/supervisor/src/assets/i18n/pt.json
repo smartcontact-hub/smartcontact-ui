@@ -1102,7 +1102,7 @@
       "create_title": "Nova etiqueta",
       "edit_title": "Editar etiqueta",
       "name": "Nome",
-      "name_placeholder": "Nome da etiqueta",
+      "name_placeholder": "Ex: Cliente prioritário",
       "color": "Cor",
       "description": "Descrição",
       "description_placeholder": "Breve descrição..."
@@ -1210,7 +1210,6 @@
     "form": {
       "create_title": "Novo modelo",
       "title": "Título",
-      "title_placeholder": "Título do modelo",
       "channel": "Canal",
       "body": "Conteúdo",
       "body_placeholder": "Escreva o conteúdo do modelo...",
@@ -1233,8 +1232,8 @@
       "body_required": "O conteúdo é obrigatório"
     },
     "delete": {
-      "single_detail": "Os agentes e grupos que o tenham atribuído perderão a referência.",
-      "bulk_footer": "Os agentes e grupos que os tenham atribuídos perderão a referência."
+      "single_detail": "Os agentes que o tenham atribuído perderão a referência.",
+      "bulk_footer": "Os agentes que os tenham atribuídos perderão a referência."
     },
     "toasts": {
       "created": "Modelo \"{{name}}\" criado",
@@ -1507,7 +1506,7 @@
       "singular": "tipificação",
       "create_title": "Nova tipificação",
       "plural": "tipificações",
-      "name_placeholder": "Ex. Apoio ao cliente",
+      "name_placeholder": "Ex: Apoio ao cliente",
       "description_placeholder": "Breve descrição...",
       "create_submit": "Criar tipificação",
       "edit_breadcrumb": "Editar tipificação",

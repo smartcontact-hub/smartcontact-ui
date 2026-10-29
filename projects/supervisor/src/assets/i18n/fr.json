@@ -1102,7 +1102,7 @@
       "create_title": "Nouvelle étiquette",
       "edit_title": "Éditer l'étiquette",
       "name": "Nom",
-      "name_placeholder": "Nom de l'étiquette",
+      "name_placeholder": "Ex : Client prioritaire",
       "color": "Couleur",
       "description": "Description",
       "description_placeholder": "Brève description..."
@@ -1210,7 +1210,6 @@
     "form": {
       "create_title": "Nouveau modèle",
       "title": "Titre",
-      "title_placeholder": "Titre du modèle",
       "channel": "Canal",
       "body": "Contenu",
       "body_placeholder": "Écrivez le contenu du modèle...",
@@ -1233,8 +1232,8 @@
       "body_required": "Le contenu est obligatoire"
     },
     "delete": {
-      "single_detail": "Les agents et groupes qui l'ont assigné perdront la référence.",
-      "bulk_footer": "Les agents et groupes qui les ont assignés perdront la référence."
+      "single_detail": "Les agents qui l'ont assigné perdront la référence.",
+      "bulk_footer": "Les agents qui les ont assignés perdront la référence."
     },
     "toasts": {
       "created": "Modèle \"{{name}}\" créé",
@@ -1507,7 +1506,7 @@
       "singular": "typification",
       "create_title": "Nouvelle typification",
       "plural": "typifications",
-      "name_placeholder": "Ex. Service client",
+      "name_placeholder": "Ex : Service client",
       "description_placeholder": "Brève description...",
       "create_submit": "Créer la typification",
       "edit_breadcrumb": "Modifier la typification",

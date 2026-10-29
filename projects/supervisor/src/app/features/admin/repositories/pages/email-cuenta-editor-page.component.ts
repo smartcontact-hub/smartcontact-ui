@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, HostListener, inject, Injector, type OnInit, signal, type TemplateRef, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, HostListener, inject, Injector, type OnInit, signal, type TemplateRef, viewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ScButtonComponent as ButtonComponent, ScCheckboxComponent as CheckboxComponent, ScInputNumberComponent as InputNumberComponent, ScInputTextComponent as InputTextComponent, ScMessageComponent, ScPasswordComponent as PasswordComponent, ScSectionCardComponent as SectionCardComponent, ScSelectComponent as SelectComponent } from '@smartcontact-hub/components';
@@ -17,7 +17,7 @@ import {
   MailboxesStore,
   SERVIDOR_VACIO,
 } from '../state/emails.store';
-import { ResultadoAccionService } from '@core/services';
+import { BreadcrumbService, ResultadoAccionService } from '@core/services';
 import { llegarAAncla, ocasionDeAvisar } from '@shared/utils/alta-secciones';
 
 interface MailboxDraft {
@@ -78,6 +78,15 @@ export class EmailCuentaEditorPageComponent implements DirtyAware, OnInit {
   }
 
   protected readonly mode = signal<'create' | 'edit'>('create');
+
+  /** La miga de la edición dice el nombre guardado, como en Grupos y Agentes (DD-238): el que se teclea aún no es el
+   *  suyo. Al crear, el de la ruta. */
+  private readonly breadcrumbs = inject(BreadcrumbService);
+  private readonly nombreGuardado = signal<string | null>(null);
+  private readonly migaConNombre = effect(() =>
+    this.breadcrumbs.nombrar(this.route, this.mode() === 'edit' ? this.nombreGuardado() : null),
+  );
+  private readonly sinMiga = inject(DestroyRef).onDestroy(() => this.breadcrumbs.nombrar(this.route, null));
   private mailboxId: number | null = null;
   private createdAt = '';
   private totalEmails = 0;
@@ -140,6 +149,7 @@ export class EmailCuentaEditorPageComponent implements DirtyAware, OnInit {
     }
     this.mode.set('edit');
     this.mailboxId = mailbox.id;
+    this.nombreGuardado.set(mailbox.name);
     this.createdAt = mailbox.createdAt;
     this.totalEmails = mailbox.totalEmails;
     this.form.set({
@@ -220,6 +230,7 @@ export class EmailCuentaEditorPageComponent implements DirtyAware, OnInit {
       return;
     }
     this.store.updateItem(this.mailboxId!, { ...draft, createdAt: this.createdAt, modifiedAt: ahora(), totalEmails: this.totalEmails });
+    this.nombreGuardado.set(draft.name);
     this.form.set(draft);
     this.dirtyState.markPristine();
     this.resultado.contar(this.texto('repositories.toasts.updated', draft.name));

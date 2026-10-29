@@ -226,6 +226,15 @@
   --sc-dialog-head-icon-size: var(--sc-scale-2); /* 28px */ /* Figma `confirmdialog/icon/size: 28` */
   --sc-dialog-padding-x: var(--sc-dialog-padding);
   --sc-dialog-padding-y: var(--sc-dialog-padding);
+  /* Límites del confirm dialog (`sc-confirmdialog`). El Kit no los modela: son medidas de producto, por eso viven
+   * fuera de las zonas `@sc-gen`. Por debajo del mínimo el texto corto no se apelotona; por encima del máximo la
+   * línea se alarga tanto que cuesta leerla. Título y cuerpo se recortan a esas líneas y el texto entero queda en
+   * su `title`. */
+  --sc-confirmdialog-min-width: 20rem; /* 320px */
+  --sc-confirmdialog-max-width: 30rem; /* 480px */
+  --sc-confirmdialog-max-height: 25rem; /* 400px */
+  --sc-confirmdialog-title-lines: 2;
+  --sc-confirmdialog-body-lines: 4;
   --sc-toast-close: var(--sc-color-slate-800);
   --sc-toast-gap-actions: var(--sc-scale-0-5); /* SC extension — gap entre body y action buttons */
   --sc-toast-close-button-width: var(--sc-scale-1-75); /* 24.5px */ /* Figma `toast/close/button/width: 24.5` */

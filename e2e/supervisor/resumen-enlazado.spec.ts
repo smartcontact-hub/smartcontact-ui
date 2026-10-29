@@ -8,13 +8,12 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  * La revisión de producto del 2026-10-01 pidió que el resumen no fuera solo de mirar: lo que dice se arregla en una
  * sección, y desde él se llega a ella. Lo que fija, en la ficha de grupo:
  *   1. El rótulo de cada tarjeta es un enlace de verdad a su sección (Cmd+clic la abre en otra pestaña): Agentes
- *      activos → Agentes asignados, Distribución → Distribución y colas, Recursos → Recursos. Llega arriba, con el
- *      foco en el título de la sección. Cada grupo se llama como su sección (DD-204: fuera «Salida», que no existía en
- *      la ficha).
+ *      activos → Agentes asignados, Distribución → Distribución y colas. Llega arriba, con el foco en el título de la
+ *      sección. Cada grupo se llama como su sección (DD-204: fuera «Salida», que no existía en la ficha). El resumen ya
+ *      no tiene tarjeta de Recursos: Agendas y Plantillas se asignan solo a agentes (DD-239).
  *   2. Cada fila de Distribución lleva a su sitio: la de un canal, a su bloque; la de un número (el teléfono saliente,
  *      el de WhatsApp, campos de Distribución y colas), a su campo; con el foco ahí y a la vista, sin nada encima (desde
- *      DD-170 el nombre vive en la columna del índice). Y cada fila de Recursos, a su campo (DD-217: hasta entonces
- *      abría un panel rápido con lo asignado).
+ *      DD-170 el nombre vive en la columna del índice).
  *   3. Las filas se nombran por el campo real al que llevan («Teléfono saliente», no «Teléfono»: DD-146), y dos
  *      «Teléfono» no se confunden.
  *   4. En el alta, el resumen abre la sección sin tocar la dirección (DD-143), sin puertas (DD-217).
@@ -47,7 +46,6 @@ test('el rótulo de cada tarjeta es un enlace a su sección, y llega arriba con 
   const destinos = [
     { rotulo: 'Agentes habilitados', slug: 'agentes', titulo: 'Agentes asignados' },
     { rotulo: 'Distribución', slug: 'distribucion', titulo: 'Distribución y colas' },
-    { rotulo: 'Recursos', slug: 'recursos', titulo: 'Recursos' },
   ];
   for (const d of destinos) {
     await expect(resumen(page).getByRole('link', { name: d.rotulo, exact: true }), d.rotulo).toHaveAttribute(
@@ -62,13 +60,10 @@ test('el rótulo de cada tarjeta es un enlace a su sección, y llega arriba con 
     await expect(page.getByRole('heading', { level: 2, name: d.titulo, exact: true }), `${d.rotulo} → su título`).toBeFocused();
     expect(await page.evaluate(() => document.querySelector('main#main-content')!.scrollTop), 'llega arriba').toBe(0);
   }
-  // Cada tipo de recurso es un enlace a su campo en Recursos (DD-217), con el foco en él.
+  // Agendas y Plantillas se asignan solo a agentes (DD-239): sin ellas, el resumen no tiene tarjeta de Recursos.
   await goto(page, 'admin/grupos/editar/11');
-  const agendas = resumen(page).getByRole('group', { name: 'Recursos' }).getByRole('link', { name: /^Agendas/ });
-  await expect(agendas, 'Agendas').toHaveAttribute('href', /\/admin\/grupos\/editar\/11\?seccion=recursos$/);
-  await agendas.click();
-  await expect(page).toHaveURL(/\?seccion=recursos$/);
-  await expect(page.locator('#group-agendas'), 'Agendas → su campo').toBeFocused();
+  await expect(resumen(page).getByRole('link', { name: 'Recursos', exact: true })).toHaveCount(0);
+  await expect(resumen(page).getByRole('group', { name: 'Recursos' })).toHaveCount(0);
 });
 
 test('la fila de Chat en Distribución lleva al bloque de su canal, a la vista y sin nada encima', async ({ page }) => {
@@ -125,15 +120,10 @@ test('cada número de Distribución lleva a su campo: el teléfono saliente y el
 
 test('en el alta, el resumen abre la sección sin tocar la dirección, también sin nombre (DD-217: sin puertas)', async ({ page }) => {
   await goto(page, 'admin/grupos/crear');
-  // Sin nombre y sin teléfono saliente, el título de Recursos abre Recursos, arriba y con el foco en su título, y la
+  // Sin nombre y sin teléfono saliente, el título de Distribución abre su sección, arriba y con el foco en su título, y la
   // dirección sigue sin sección.
-  await resumen(page).getByRole('link', { name: 'Recursos', exact: true }).click();
-  await expect(page.getByRole('heading', { level: 2, name: 'Recursos', exact: true })).toBeFocused();
-  await expect(page).toHaveURL(/\/admin\/grupos\/crear$/);
-  // Y la fila de Agendas, a su campo.
-  await page.locator('sc-form-section-nav').getByText('General', { exact: true }).click();
-  await resumen(page).getByRole('link', { name: /^Agendas/ }).click();
-  await expect(page.locator('#group-agendas')).toBeFocused();
+  await resumen(page).getByRole('link', { name: 'Distribución', exact: true }).click();
+  await expect(page.getByRole('heading', { level: 2, name: 'Distribución y colas', exact: true })).toBeFocused();
   await expect(page).toHaveURL(/\/admin\/grupos\/crear$/);
 });
 
@@ -169,9 +159,9 @@ test('cada enlace del resumen se pulsa en al menos 24 × 24, también a 1366 × 
   await page.setViewportSize({ width: 1366, height: 660 });
   await goto(page, 'admin/grupos/editar/11');
   const enlaces = resumen(page).locator('.resumen__enlace, a.sc-fact-row__link');
-  // Agentes habilitados, Distribución y Recursos (título), Teléfono, Chat, Email, Teléfono saliente y Número WhatsApp,
-  // y las tres de Recursos (agendas y plantillas de chat y de email), enlaces desde DD-217: 11.
-  await expect(enlaces).toHaveCount(11);
+  // Agentes habilitados, Distribución (título), Teléfono, Chat, Email, Teléfono saliente y Número WhatsApp: 7. Las de
+  // Recursos (título y filas de agendas y plantillas) salen con DD-239: se asignan solo a agentes.
+  await expect(enlaces).toHaveCount(7);
   // Las cuatro esquinas de un cuadrado de 24 centrado en el enlace caen en él: así se pulsa aunque pinte 18 de alto. Es
   // la prueba del navegador (`elementFromPoint`), no la caja que se pinta.
   // A 660 de alto la columna del resumen se desplaza por dentro: cada enlace se mide a la vista, como lo pulsaría alguien.
