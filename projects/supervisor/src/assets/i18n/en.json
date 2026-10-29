@@ -2376,7 +2376,17 @@
           "url_iframe": "Iframe URL",
           "dispositivos_externos": "External devices",
           "dispositivos_externos_hint": "Allows the agent to connect from devices outside the corporate network.",
-          "url_iframe_placeholder": "https://example.com/panel"
+          "url_iframe_placeholder": "https://example.com/panel",
+          "iframe": "Iframe",
+          "iframe_dashboard": "Dashboard",
+          "iframe_general": "General",
+          "iframe_custom": "Custom",
+          "iframe_dashboard_hint": "Only sees the Agent dashboard",
+          "iframe_general_hint": "The one set in Contact Center: {{url}}",
+          "iframe_general_hint_empty": "The one set in Contact Center, which has none yet",
+          "url": "URL",
+          "iframe_title": "Title",
+          "iframe_title_placeholder": "E.g. Missed calls"
         },
         "regional": {
           "title": "Regional"
@@ -2473,10 +2483,9 @@
         "col_transferencia": "Transfers",
         "toggle_all_llamada": "Toggle all calls",
         "toggle_all_transferencia": "Toggle all transfers",
-        "row_agentes": "Agents",
-        "row_grupos": "Groups",
         "row_fijos": "Landlines",
         "row_moviles": "Mobiles",
+        "row_agentes_grupos": "Agents and groups",
         "row_internacionales": "International",
         "row_especial": "Special numbering",
         "config_title": "Configuration",
@@ -2499,6 +2508,7 @@
         "missing_channel": "a channel",
         "missing_group": "a group",
         "missing_outbound": "a group for outbound calls",
+        "missing_iframe_url": "the iframe URL",
         "channels": "Channels",
         "no_channels": "No channels",
         "no_enabled_groups": "No enabled groups",
@@ -2527,6 +2537,7 @@
       "email_required": "Email is required",
       "group_required": "At least one group is required",
       "outbound_required": "The group for outbound calls is required: one with Phone",
+      "iframe_url_required": "The URL is required with a Custom iframe",
       "email_taken": "An agent with this email already exists"
     },
     "empty": {

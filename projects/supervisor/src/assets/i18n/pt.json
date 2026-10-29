@@ -2376,7 +2376,17 @@
           "url_iframe": "URL iframe",
           "dispositivos_externos": "Dispositivos externos",
           "dispositivos_externos_hint": "Permite ao agente conectar-se de dispositivos fora da rede corporativa.",
-          "url_iframe_placeholder": "https://exemplo.com/painel"
+          "url_iframe_placeholder": "https://exemplo.com/painel",
+          "iframe": "Iframe",
+          "iframe_dashboard": "Dashboard",
+          "iframe_general": "Geral",
+          "iframe_custom": "Personalizado",
+          "iframe_dashboard_hint": "Só vê o dashboard do Agent",
+          "iframe_general_hint": "A de Contact Center: {{url}}",
+          "iframe_general_hint_empty": "A de Contact Center, que ainda não tem nenhuma",
+          "url": "URL",
+          "iframe_title": "Título",
+          "iframe_title_placeholder": "Ex.: Chamadas perdidas"
         },
         "regional": {
           "title": "Regional"
@@ -2473,10 +2483,9 @@
         "col_transferencia": "Transferências",
         "toggle_all_llamada": "Ativar/desativar todas as chamadas",
         "toggle_all_transferencia": "Ativar/desativar todas as transferências",
-        "row_agentes": "Agentes",
-        "row_grupos": "Grupos",
         "row_fijos": "Fixos",
         "row_moviles": "Móveis",
+        "row_agentes_grupos": "Agentes e grupos",
         "row_internacionales": "Internacionais",
         "row_especial": "Numeração especial",
         "config_title": "Configuração",
@@ -2499,6 +2508,7 @@
         "missing_channel": "um canal",
         "missing_group": "um grupo",
         "missing_outbound": "um grupo para as saídas",
+        "missing_iframe_url": "a URL do iframe",
         "channels": "Canais",
         "no_channels": "Sem canais",
         "no_enabled_groups": "Sem grupos habilitados",
@@ -2527,6 +2537,7 @@
       "email_required": "O email é obrigatório",
       "group_required": "É preciso pelo menos um grupo",
       "outbound_required": "O grupo das chamadas de saída é obrigatório: um com Telefone",
+      "iframe_url_required": "A URL é obrigatória com o iframe Personalizado",
       "email_taken": "Já existe um agente com este email"
     },
     "empty": {

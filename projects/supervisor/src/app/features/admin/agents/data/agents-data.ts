@@ -98,6 +98,16 @@ export const AGENT_TYPE_LABEL_KEYS: Readonly<Record<AgentType, string>> = {
   admin_cuscare: 'agents.type.admin_cuscare',
 };
 
+/** Qué ve el agente en su iframe: solo el dashboard de Agent, la URL de Contact Center › Agentes (la sigue si cambia) o
+ *  una suya. */
+export type IframeMode = 'dashboard' | 'general' | 'custom';
+export const IFRAME_MODES: readonly IframeMode[] = ['dashboard', 'general', 'custom'];
+
+/** Sin modo guardado (datos de antes del desplegable): con URL propia, la suya; sin ella, la de Contact Center. */
+export function iframeModeOf(agent: Pick<Agent, 'iframeMode' | 'iframeUrl'>): IframeMode {
+  return agent.iframeMode ?? (agent.iframeUrl ? 'custom' : 'general');
+}
+
 /**
  * Si el cliente tiene CusCare. Solo entonces la ficha pregunta el tipo de agente (CusCare, Carrier, Admin CusCare): en
  * un cliente sin CusCare todos son normales y el campo no sale (revisión de agentes del 2026-10-09). El cliente de la
@@ -183,24 +193,36 @@ export const SEED_AGENT_PERMISSIONS: AgentPermissions = {
   pendingConversations: false,
 };
 
-/** Las filas de la matriz de permisos: a quién llama o transfiere el agente, otros agentes y grupos (DD-211 §2), y a
- *  qué numeración. */
-export type DestinoKey = 'agentes' | 'grupos' | 'fijos' | 'moviles' | 'internacionales' | 'especial';
+/** Las filas de la matriz de permisos: a qué numeración llama o transfiere el agente y, en una sola fila, a otros
+ *  agentes y grupos (DD-211 §2, juntos como en Contact Center desde la revisión de producto del 2026-10-29). */
+export type DestinoKey = 'fijos' | 'moviles' | 'agentes_grupos' | 'internacionales' | 'especial';
 /** Sus columnas. */
 export type DestinoCol = 'llamada' | 'transferencia';
 
-export const DESTINO_KEYS: readonly DestinoKey[] = ['agentes', 'grupos', 'fijos', 'moviles', 'internacionales', 'especial'];
+export const DESTINO_KEYS: readonly DestinoKey[] = ['fijos', 'moviles', 'agentes_grupos', 'internacionales', 'especial'];
 
-/** Cada casilla de la matriz (destino × llamada o transferencia) es una clave de `AgentPermissions`. La misma matriz
- *  en la ficha de agente y en Contact Center › Agentes. */
-export const PERMISSION_MATRIX_KEYS: Readonly<Record<DestinoKey, Record<DestinoCol, keyof AgentPermissions>>> = {
-  agentes: { llamada: 'callsDestAgents', transferencia: 'transfersDestAgents' },
-  grupos: { llamada: 'callsDestGroups', transferencia: 'transfersDestGroups' },
-  fijos: { llamada: 'callsDestFixed', transferencia: 'transfersDestFixed' },
-  moviles: { llamada: 'callsDestMobile', transferencia: 'transfersDestMobile' },
-  internacionales: { llamada: 'callsDestInternational', transferencia: 'transfersDestInternational' },
-  especial: { llamada: 'callsDestSpecial', transferencia: 'transfersDestSpecial' },
+/** Cada casilla de la matriz (destino × llamada o transferencia) son claves de `AgentPermissions`: una, salvo «Agentes y
+ *  grupos», que lleva las dos. La misma matriz en la ficha de agente y en Contact Center › Agentes. */
+export const PERMISSION_MATRIX_KEYS: Readonly<Record<DestinoKey, Record<DestinoCol, readonly (keyof AgentPermissions)[]>>> = {
+  fijos: { llamada: ['callsDestFixed'], transferencia: ['transfersDestFixed'] },
+  moviles: { llamada: ['callsDestMobile'], transferencia: ['transfersDestMobile'] },
+  agentes_grupos: {
+    llamada: ['callsDestAgents', 'callsDestGroups'],
+    transferencia: ['transfersDestAgents', 'transfersDestGroups'],
+  },
+  internacionales: { llamada: ['callsDestInternational'], transferencia: ['transfersDestInternational'] },
+  especial: { llamada: ['callsDestSpecial'], transferencia: ['transfersDestSpecial'] },
 };
+
+/** Marcada si lo están todas sus claves: un agente con agentes sí y grupos no sale apagado, y al marcarla quedan las dos. */
+export function matrixCell(p: AgentPermissions, row: DestinoKey, col: DestinoCol): boolean {
+  return PERMISSION_MATRIX_KEYS[row][col].every((k) => p[k]);
+}
+
+/** Pone una casilla en `permissions`, que ya es una copia. */
+export function setMatrixCell(p: AgentPermissions, row: DestinoKey, col: DestinoCol, value: boolean): void {
+  for (const k of PERMISSION_MATRIX_KEYS[row][col]) (p as Record<keyof AgentPermissions, boolean>)[k] = value;
+}
 
 /** Con lo que nace un agente nuevo, y lo que fija Contact Center › Agentes (DD-135): sus permisos y la URL de su
  *  iframe. Lo demás (nombre, extensión, grupos…) es de cada agente. */
@@ -266,7 +288,10 @@ export interface Agent {
   readonly defaultOutboundGroupId?: number;
   /** Sus equipos (Repositorios › Equipos): marcas para filtrar, no reparten nada. */
   readonly teams?: readonly number[];
+  readonly iframeMode?: IframeMode;
+  /** Solo cuentan con `iframeMode` «custom». */
   readonly iframeUrl?: string;
+  readonly iframeTitle?: string;
   readonly permissions: AgentPermissions;
   readonly languages?: readonly string[];
   readonly randomOrder?: boolean;

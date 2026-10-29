@@ -96,7 +96,11 @@ import {
   EXTENSION_TYPES,
   ExtensionOption,
   ExtensionType,
-  PERMISSION_MATRIX_KEYS,
+  IFRAME_MODES,
+  IframeMode,
+  iframeModeOf,
+  matrixCell,
+  setMatrixCell,
   PICKUP_TYPES,
   PRESENCE_LABEL_KEYS,
   PickupType,
@@ -124,7 +128,9 @@ interface FormState {
   pickupType: PickupType;
   randomOrder: boolean;
   maxChats: number;
+  iframeMode: IframeMode;
   iframeUrl: string;
+  iframeTitle: string;
   links: readonly GroupAgentLink[];
   defaultOutboundGroupId: number | null;
   permissions: AgentPermissions;
@@ -158,7 +164,9 @@ const AGENT_SECTION_OF_FIELD: Readonly<Record<keyof FormState, string>> = {
   randomOrder: 'agent-section-config',
   maxChats: 'agent-section-config',
   languages: 'agent-section-config',
+  iframeMode: 'agent-section-config',
   iframeUrl: 'agent-section-config',
+  iframeTitle: 'agent-section-config',
   labelIds: 'agent-section-resources',
   scheduleIds: 'agent-section-resources',
   templateIds: 'agent-section-resources',
@@ -312,6 +320,38 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
       disabled: value === 'webrtc' && !this.conWebRtc,
     }));
   });
+
+  /** Qué ve en su iframe (SISMAC-4062): solo el dashboard de Agent, la URL de Contact Center o una suya. */
+  protected readonly iframeModeOptions = computed(() => {
+    this.currentLang();
+    return IFRAME_MODES.map((value) => ({
+      value,
+      label: this.translate.instant(`agents.form.advanced.integracion.iframe_${value}`),
+    }));
+  });
+
+  /** La ayuda del desplegable: qué verá con «Dashboard» y cuál es la URL con «General». Con «Personalizado» lo dice
+   *  su campo. */
+  protected readonly iframeModeHint = computed(() => {
+    this.currentLang();
+    const k = 'agents.form.advanced.integracion.';
+    switch (this.form().iframeMode) {
+      case 'dashboard':
+        return this.translate.instant(k + 'iframe_dashboard_hint');
+      case 'general': {
+        const url = this.agentDefaults.defaults().iframeUrl.trim();
+        return url ? this.translate.instant(k + 'iframe_general_hint', { url }) : this.translate.instant(k + 'iframe_general_hint_empty');
+      }
+      default:
+        return undefined;
+    }
+  });
+
+  protected onIframeModeChange(value: unknown): void {
+    if (typeof value === 'string' && (IFRAME_MODES as readonly string[]).includes(value)) {
+      this.updateField('iframeMode', value as IframeMode);
+    }
+  }
 
   /** El cliente tiene agentes en el navegador: si no, la extensión suena siempre en el teléfono (DD-211 §2). */
   protected readonly conWebRtc = CLIENTE_CON_WEBRTC;
@@ -543,6 +583,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
       'agents.errors.channels_required',
     ],
     'agent-section-groups': ['agents.errors.group_required', 'agents.errors.outbound_required'],
+    'agent-section-config': ['agents.errors.iframe_url_required'],
   };
 
   /** Ir a otra sección. En el alta y al duplicar, la sección se abre sin tocar la dirección: Atrás sale (DD-122, DD-143). */
@@ -609,6 +650,15 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
     }
     if (valen.length > 0 && this.conCallBlending && f.allowedChannels.includes('phone') && this.outboundGroupId() === null) {
       out.push({ seccion: gr, motivo: 'agents.errors.outbound_required', ancla: 'agent-outbound', etiqueta: s + 'missing_outbound' });
+    }
+    // Con «Personalizado», su URL: sin ella no hay nada que enseñarle.
+    if (f.iframeMode === 'custom' && !f.iframeUrl.trim()) {
+      out.push({
+        seccion: 'agent-section-config',
+        motivo: 'agents.errors.iframe_url_required',
+        ancla: 'agent-iframe-url',
+        etiqueta: s + 'missing_iframe_url',
+      });
     }
     return out;
   });
@@ -887,8 +937,8 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
   /**
    * Matrix layout for the calls/transfers permissions, the same one as
    * Contact Center › Agentes (DD-135). Rows are destination categories,
-   * columns are llamada/transferencia. Each (row, col) maps to one flat
-   * `AgentPermissions` key (`PERMISSION_MATRIX_KEYS`).
+   * columns are llamada/transferencia. Each (row, col) maps to one or two
+   * flat `AgentPermissions` keys (`matrixCell`).
    */
   protected readonly destinoKeys = DESTINO_KEYS;
 
@@ -897,7 +947,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
       const p = this.form().permissions;
       const tally = (col: DestinoCol): TriState =>
         triStateOf(
-          this.destinoKeys.filter((k) => p[PERMISSION_MATRIX_KEYS[k][col]])
+          this.destinoKeys.filter((k) => matrixCell(p, k, col))
             .length,
           this.destinoKeys.length
         );
@@ -936,9 +986,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
   protected readonly matrixChecked = computed(() => {
     const permissions = this.form().permissions;
     return (rowId: string, columnId: string): boolean =>
-      permissions[
-        PERMISSION_MATRIX_KEYS[rowId as DestinoKey][columnId as DestinoCol]
-      ];
+      matrixCell(permissions, rowId as DestinoKey, columnId as DestinoCol);
   });
 
   protected onMatrixToggle(e: ScMatrixToggle): void {
@@ -950,18 +998,22 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
   }
 
   protected matrixValue(row: DestinoKey, col: DestinoCol): boolean {
-    return this.form().permissions[PERMISSION_MATRIX_KEYS[row][col]];
+    return matrixCell(this.form().permissions, row, col);
   }
 
   protected toggleMatrix(row: DestinoKey, col: DestinoCol): void {
-    this.togglePermission(PERMISSION_MATRIX_KEYS[row][col]);
+    this.form.update((f) => {
+      const permissions = { ...f.permissions };
+      setMatrixCell(permissions, row, col, !matrixCell(f.permissions, row, col));
+      return { ...f, permissions };
+    });
   }
 
   protected toggleColumnAll(col: DestinoCol, next: boolean): void {
     this.form.update((f) => {
       const permissions = { ...f.permissions };
       for (const row of this.destinoKeys) {
-        permissions[PERMISSION_MATRIX_KEYS[row][col]] = next;
+        setMatrixCell(permissions, row, col, next);
       }
       return { ...f, permissions };
     });
@@ -1092,7 +1144,9 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
         pickupType: agent.pickupType === 'manual' ? 'manual' : 'auto',
         randomOrder: agent.randomOrder ?? false,
         maxChats: agent.maxChats ?? 4,
+        iframeMode: iframeModeOf(agent),
         iframeUrl: agent.iframeUrl ?? '',
+        iframeTitle: agent.iframeTitle ?? '',
         links: this.linksStore.linksForAgent(agent.id),
         defaultOutboundGroupId: agent.defaultOutboundGroupId ?? null,
         permissions: { ...agent.permissions },
@@ -1143,7 +1197,9 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
         pickupType: source.pickupType === 'manual' ? 'manual' : 'auto',
         randomOrder: source.randomOrder ?? false,
         maxChats: source.maxChats ?? 4,
+        iframeMode: iframeModeOf(source),
         iframeUrl: source.iframeUrl ?? '',
+        iframeTitle: source.iframeTitle ?? '',
         links: this.linksStore.linksForAgent(source.id),
         // El grupo de sus salientes, solo con Call Blending (SISMAC-4060).
         defaultOutboundGroupId: this.conCallBlending ? (source.defaultOutboundGroupId ?? null) : null,
@@ -1390,7 +1446,10 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
         pickupType: f.pickupType,
         randomOrder: f.randomOrder,
         maxChats: f.maxChats,
-        iframeUrl: f.iframeUrl.trim() || undefined,
+        iframeMode: f.iframeMode,
+        // La URL y el título propios solo se guardan con «Personalizado»; con las otras dos no se leen.
+        iframeUrl: f.iframeMode === 'custom' ? f.iframeUrl.trim() || undefined : undefined,
+        iframeTitle: f.iframeMode === 'custom' ? f.iframeTitle.trim() || undefined : undefined,
         photo: f.photo ?? undefined,
         languages: f.languages.length > 0 ? f.languages : undefined,
         labels: f.labelIds.size > 0 ? Array.from(f.labelIds) : undefined,
@@ -1550,7 +1609,10 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
       pickupType: 'auto',
       randomOrder: false,
       maxChats: 4,
-      iframeUrl: defaults.iframeUrl,
+      // Nace con la URL de Contact Center › Agentes, y la sigue si allí cambia.
+      iframeMode: 'general',
+      iframeUrl: '',
+      iframeTitle: '',
       links: [],
       defaultOutboundGroupId: null,
       permissions: { ...defaults.permissions },
