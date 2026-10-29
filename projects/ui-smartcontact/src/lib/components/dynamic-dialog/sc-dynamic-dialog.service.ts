@@ -104,7 +104,7 @@ export class ScDynamicDialogService {
     ): ScDynamicDialogRef<ComponentType, CloseValueType> {
         const dialogRef = this.dialogService.open(
             componentType,
-            this.mapConfig(config)
+            this.mapConfig(withComponentDefaults(componentType, config))
         );
 
         return new ScDynamicDialogRef<ComponentType, CloseValueType>(dialogRef);
@@ -129,6 +129,31 @@ export class ScDynamicDialogService {
             position: config.position ?? 'center'
         };
     }
+}
+
+/**
+ * Un componente de contenido puede traer su configuración por defecto en un `static scDynamicDialogDefaults`
+ * (`sc-custom-modal` y `sc-alert-modal` la usan para quitar la cabecera de PrimeNG), como en ui.smart-contact.com.
+ * Lo que pasa quien abre gana; `style` y `contentStyle` se mezclan y `styleClass` se suma.
+ */
+export interface ScDynamicDialogDefaultsHolder {
+    scDynamicDialogDefaults?: ScDynamicDialogConfig;
+}
+
+function withComponentDefaults<DataType, InputValuesType extends ScDynamicDialogInputValues>(
+    componentType: Type<unknown>,
+    config: ScDynamicDialogConfig<DataType, InputValuesType>
+): ScDynamicDialogConfig<DataType, InputValuesType> {
+    const defaults = (componentType as ScDynamicDialogDefaultsHolder).scDynamicDialogDefaults;
+    if (!defaults) return config;
+    const styleClass = [defaults.styleClass, config.styleClass].filter(Boolean).join(' ') || undefined;
+    return {
+        ...(defaults as ScDynamicDialogConfig<DataType, InputValuesType>),
+        ...config,
+        style: { ...defaults.style, ...config.style },
+        contentStyle: { ...defaults.contentStyle, ...config.contentStyle },
+        styleClass,
+    };
 }
 
 export function provideScDynamicDialog(): Provider[] {

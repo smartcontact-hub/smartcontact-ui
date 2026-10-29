@@ -1,0 +1,83 @@
+:host {
+  display: contents;
+}
+
+/*
+ * La superficie es el host de `sc-custom-modal`. Cada variante fija las variables con los nombres de
+ * ui.smart-contact.com (`--sc-alert-modal-*`) y las pasa a la carcasa.
+ */
+.sc-alert-modal__surface {
+  --sc-custom-modal-width: auto;
+  --sc-custom-modal-title-lines: var(--sc-alert-modal-title-lines);
+
+  min-width: var(--sc-alert-modal-min-width);
+  max-width: min(var(--sc-alert-modal-max-width), 100%);
+  max-height: var(--sc-alert-modal-max-height);
+}
+
+/* La variante `default` deja la carcasa como está; las otras tres le pasan su tono. */
+.sc-alert-modal__surface--info,
+.sc-alert-modal__surface--warning,
+.sc-alert-modal__surface--error {
+  --sc-custom-modal-background: var(--sc-alert-modal-background);
+  --sc-custom-modal-border-color: var(--sc-alert-modal-border-color);
+  --sc-custom-modal-title-color: var(--sc-alert-modal-title-color);
+  --sc-custom-modal-icon-color: var(--sc-alert-modal-icon-color);
+  --sc-custom-modal-close-color: var(--sc-alert-modal-title-color);
+  --sc-custom-modal-close-color-hover: var(--sc-alert-modal-title-color);
+}
+
+.sc-alert-modal__surface--info {
+  --sc-alert-modal-background: var(--sc-alert-modal-info-background);
+  --sc-alert-modal-border-color: var(--sc-alert-modal-info-border-color);
+  --sc-alert-modal-title-color: var(--sc-alert-modal-info-color);
+  --sc-alert-modal-icon-color: var(--sc-alert-modal-info-color);
+}
+
+.sc-alert-modal__surface--warning {
+  --sc-alert-modal-background: var(--sc-alert-modal-warning-background);
+  --sc-alert-modal-border-color: var(--sc-alert-modal-warning-border-color);
+  --sc-alert-modal-title-color: var(--sc-alert-modal-warning-color);
+  --sc-alert-modal-icon-color: var(--sc-alert-modal-warning-color);
+}
+
+.sc-alert-modal__surface--error {
+  --sc-alert-modal-background: var(--sc-alert-modal-error-background);
+  --sc-alert-modal-border-color: var(--sc-alert-modal-error-border-color);
+  --sc-alert-modal-title-color: var(--sc-alert-modal-error-color);
+  --sc-alert-modal-icon-color: var(--sc-alert-modal-error-color);
+}
+
+.sc-alert-modal__message {
+  font-size: var(--sc-font-size-200);
+  line-height: var(--sc-line-height-200);
+  color: var(--sc-alert-modal-message-color, var(--sc-custom-modal-color));
+  overflow-wrap: anywhere;
+  /* Hasta 4 líneas; lo que pase se corta con «…». */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--sc-alert-modal-body-lines);
+  line-clamp: var(--sc-alert-modal-body-lines);
+  overflow: hidden;
+
+  :where(p, ul, ol) {
+    margin: 0;
+  }
+
+  :where(p, ul, ol) + :where(p, ul, ol) {
+    margin-top: var(--sc-spacing-0-625);
+  }
+
+  :where(ul, ol) {
+    padding-left: var(--sc-spacing-1-75);
+  }
+
+  :where(a, strong) {
+    font-weight: var(--sc-font-weight-semibold);
+  }
+}
+
+/* El tercer botón se va a la izquierda; los otros dos quedan a la derecha. */
+.sc-alert-modal__tertiary {
+  margin-right: auto;
+}

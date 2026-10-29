@@ -61,6 +61,8 @@
       "inlinerenamecell": "Renombra un valor en la propia celda, sin abrir un diálogo aparte.",
       "dialog": "Ventana modal para una tarea enfocada: formulario, detalle o decisión.",
       "confirmdialog": "Pide confirmar una acción antes de ejecutarla, con foco en el botón seguro.",
+      "custommodal": "Carcasa de modal con cabecera, cuerpo y pie para contenido propio, como la de los devs.",
+      "alertmodal": "Aviso o confirmación con variante, mensaje y hasta tres acciones, como el de los devs.",
       "deleteentitydialog": "Confirmación de borrado con el nombre de la entidad, para no equivocar el objetivo.",
       "impactpreviewdialog": "Enseña qué quedará afectado antes de aplicar un cambio en cascada.",
       "drawer": "Panel lateral que entra desde el borde para detalles o formularios sin salir de la página.",

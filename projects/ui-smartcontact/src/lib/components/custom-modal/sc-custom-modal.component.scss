@@ -1,0 +1,131 @@
+/*
+ * La superficie es el host: así `surfaceClass` (en el host) cambia fondo, borde y color pisando las variables
+ * `--sc-custom-modal-*`, como en ui.smart-contact.com. El diálogo de PrimeNG que la envuelve va transparente
+ * (`SC_CUSTOM_MODAL_DYNAMIC_DIALOG_DEFAULTS`).
+ */
+:host {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: var(--sc-custom-modal-width);
+  max-width: 100%;
+  max-height: var(--sc-custom-modal-max-height);
+  overflow: hidden;
+  background: var(--sc-custom-modal-background);
+  border: 1px solid var(--sc-custom-modal-border-color);
+  border-radius: var(--sc-custom-modal-border-radius);
+  box-shadow: var(--sc-custom-modal-shadow);
+  color: var(--sc-custom-modal-color);
+}
+
+.sc-custom-modal {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+
+  &__header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: start;
+    gap: var(--sc-custom-modal-header-gap);
+    padding: var(--sc-custom-modal-header-padding-y) var(--sc-custom-modal-header-padding-x);
+
+    &:not(.sc-custom-modal__header--no-icon) {
+      grid-template-columns: auto minmax(0, 1fr) auto;
+    }
+
+    &--no-subtitle {
+      align-items: center;
+    }
+  }
+
+  &__icon {
+    display: inline-flex;
+    align-self: center;
+    /* El hueco entre icono y título del maestro (12.25) es mayor que el de la cabecera (7). */
+    margin-right: calc(var(--sc-custom-modal-header-icon-gap) - var(--sc-custom-modal-header-gap));
+    color: var(--sc-custom-modal-icon-color, var(--sc-custom-modal-color));
+  }
+
+  &__heading {
+    display: grid;
+    gap: var(--sc-custom-modal-heading-gap);
+    min-width: 0;
+
+    h2 {
+      margin: 0;
+      font-family: var(--sc-font-family-primary);
+      font-size: var(--sc-custom-modal-title-font-size);
+      line-height: var(--sc-custom-modal-title-line-height);
+      font-weight: var(--sc-custom-modal-title-font-weight);
+      color: var(--sc-custom-modal-title-color, var(--sc-custom-modal-color));
+      /* Hasta dos líneas: el suyo corta en una y el título deja de leerse. */
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: var(--sc-custom-modal-title-lines, 2);
+      line-clamp: var(--sc-custom-modal-title-lines, 2);
+      overflow: hidden;
+      overflow-wrap: anywhere;
+    }
+
+    p {
+      margin: 0;
+      font-size: var(--sc-custom-modal-subheader-font-size);
+      line-height: var(--sc-custom-modal-subheader-line-height);
+      font-weight: var(--sc-font-weight-semibold);
+      color: var(--sc-custom-modal-subheader-color);
+    }
+  }
+
+  &__close {
+    display: block;
+    color: var(--sc-custom-modal-close-color);
+    opacity: var(--sc-custom-modal-close-opacity);
+
+    &:hover,
+    &:focus-within {
+      color: var(--sc-custom-modal-close-color-hover);
+      opacity: var(--sc-custom-modal-close-opacity-hover);
+    }
+
+    /* El botón de texto pinta su propio color: aquí hereda el de la X, que es el que cambia por variante. */
+    ::ng-deep .p-button,
+    ::ng-deep .p-button:not(:disabled):hover,
+    ::ng-deep .p-button:not(:disabled):focus-visible,
+    ::ng-deep .p-button:not(:disabled):active,
+    ::ng-deep .p-button-icon,
+    ::ng-deep sc-icon {
+      color: inherit;
+    }
+  }
+
+  &__body {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 0;
+    max-height: var(--sc-custom-modal-body-max-height);
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 0 var(--sc-custom-modal-content-padding) var(--sc-custom-modal-content-padding);
+
+    /* Sin cabecera, el cuerpo pone su propio hueco arriba. */
+    &:first-child {
+      padding-top: var(--sc-custom-modal-content-padding);
+    }
+
+    &:empty {
+      display: none;
+    }
+  }
+
+  &__footer {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--sc-custom-modal-footer-gap);
+    padding: 0 var(--sc-custom-modal-footer-padding) var(--sc-custom-modal-footer-padding);
+  }
+}

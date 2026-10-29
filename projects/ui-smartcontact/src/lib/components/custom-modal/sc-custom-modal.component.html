@@ -1,0 +1,53 @@
+<section
+  class="sc-custom-modal"
+  [class]="styleClass()"
+  [attr.role]="ownRole()"
+  [attr.aria-modal]="ownRole() ? 'true' : null"
+  [attr.aria-labelledby]="ownRole() ? labelledBy() : null"
+  [attr.aria-label]="ownRole() && !labelledBy() ? ariaLabel() : null"
+  [attr.aria-describedby]="ownRole() ? describedBy() : null"
+>
+  @if (hasHeader()) {
+    <header
+      class="sc-custom-modal__header"
+      [class.sc-custom-modal__header--no-icon]="!icon()"
+      [class.sc-custom-modal__header--no-subtitle]="!subtitle()"
+    >
+      @if (icon(); as ic) {
+        <sc-icon class="sc-custom-modal__icon" [name]="ic" [size]="iconPx()" aria-hidden="true" />
+      }
+      <div class="sc-custom-modal__heading">
+        @if (title(); as t) {
+          <h2 [id]="titleId">{{ t }}</h2>
+        }
+        @if (subtitle(); as sub) {
+          <p [id]="subtitleId">{{ sub }}</p>
+        }
+      </div>
+      @if (showCloseButton()) {
+        <sc-button
+          class="sc-custom-modal__close"
+          icon="close"
+          iconSize="lg"
+          iconOnly
+          appearance="text"
+          variant="secondary"
+          rounded
+          [ariaLabel]="closeAriaLabel() || ('sc.customModal.close' | translate)"
+          (clicked)="close()"
+        />
+      }
+    </header>
+  }
+
+  <div class="sc-custom-modal__body" [class]="bodyClass()">
+    <ng-content select="[scCustomModalBody]" />
+    <ng-content />
+  </div>
+
+  @if (hasFooter()) {
+    <footer class="sc-custom-modal__footer" [class]="footerClass()">
+      <ng-content select="[scCustomModalFooter]" />
+    </footer>
+  }
+</section>

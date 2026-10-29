@@ -58,8 +58,10 @@ const CATEGORY: Record<string, ComponentCategory> = {
   icontile: 'Datos',
   factrow: 'Datos',
   // Overlays
+  alertmodal: 'Overlays',
   commandpalette: 'Overlays',
   confirmdialog: 'Overlays',
+  custommodal: 'Overlays',
   deleteentitydialog: 'Overlays',
   dialog: 'Overlays',
   drawer: 'Overlays',

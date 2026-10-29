@@ -61,6 +61,8 @@
       "inlinerenamecell": "Rename a value in the cell itself, without opening a separate dialog.",
       "dialog": "Modal window for a focused task: form, detail, or decision.",
       "confirmdialog": "Ask to confirm an action before running it, with focus on the safe button.",
+      "custommodal": "Modal shell with header, body and footer for custom content, like the developers' one.",
+      "alertmodal": "Alert or confirmation with a variant, a message and up to three actions, like the developers' one.",
       "deleteentitydialog": "Delete confirmation with the entity's name, so you don't hit the wrong target.",
       "impactpreviewdialog": "Show what will be affected before applying a cascading change.",
       "drawer": "Side panel that slides in from the edge for details or forms without leaving the page.",

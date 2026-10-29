@@ -1,0 +1,38 @@
+<app-story-host [meta]="meta" [stories]="stories()" />
+
+<!-- El modal se pinta en línea para verlo y tocarlo sin abrirlo; «Abrir» lo abre de verdad con DynamicDialog.
+     Los `data-testid` los miden los e2e (no quitar). -->
+
+<ng-template #playground let-args>
+  <sc-alert-modal
+    data-testid="alert-inline"
+    [variant]="args.variant"
+    [title]="args.title || null"
+    [message]="args.message || null"
+    [actionLabel]="args.actionLabel || null"
+    [secondaryActionLabel]="args.secondaryActionLabel || null"
+    [tertiaryActionLabel]="args.tertiaryActionLabel || null"
+    [showIcon]="args.showIcon"
+    [showCloseButton]="args.showCloseButton"
+  />
+  <sc-button label="Abrir" data-testid="alert-open" (clicked)="open(args)" />
+  <p>Resultado: <span data-testid="alert-result">{{ result() }}</span></p>
+</ng-template>
+
+<ng-template #variantsTpl>
+  @for (v of variants; track v) {
+    <sc-alert-modal
+      [attr.data-testid]="'alert-' + v"
+      [variant]="v"
+      [title]="copy[v].title"
+      [message]="copy[v].message"
+      [actionLabel]="copy[v].action"
+      secondaryActionLabel="Cancelar"
+    />
+  }
+</ng-template>
+
+<ng-template #limits>
+  <sc-button label="Texto largo y tres botones" data-testid="alert-long" (clicked)="openLong()" />
+  <p>Resultado: <span>{{ result() }}</span></p>
+</ng-template>

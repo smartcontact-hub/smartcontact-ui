@@ -1,0 +1,22 @@
+<app-story-host [meta]="meta" [stories]="stories()" />
+
+<!-- La carcasa se pinta en línea para verla y tocarla sin abrirla; «Abrir» la abre de verdad con DynamicDialog.
+     Los `data-testid` los miden los e2e (no quitar). -->
+
+<ng-template #playground let-args>
+  <sc-custom-modal
+    data-testid="custom-inline"
+    [icon]="args.icon || null"
+    [title]="args.title || null"
+    [subtitle]="args.subtitle || null"
+    [showCloseButton]="args.showCloseButton"
+  >
+    <div scCustomModalBody>
+      <p>Cada vez que el agente cambia de canal, la conversación sigue en el mismo hilo.</p>
+    </div>
+    <sc-button scCustomModalFooter label="Cancelar" variant="primary" appearance="text" />
+    <sc-button scCustomModalFooter label="Guardar" />
+  </sc-custom-modal>
+  <sc-button label="Abrir" data-testid="custom-open" (clicked)="open(args)" />
+  <p>Resultado: <span data-testid="custom-result">{{ result() }}</span></p>
+</ng-template>

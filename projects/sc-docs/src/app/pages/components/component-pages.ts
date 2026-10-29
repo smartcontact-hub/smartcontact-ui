@@ -244,6 +244,18 @@ export const SC_DEMO_COMPONENT_PAGES = [
       ),
   },
   {
+    path: 'custommodal',
+    label: 'Custom Modal',
+    load: () =>
+      import('./custommodal/custommodal-demo.component').then((m) => m.CustomModalDemoComponent),
+  },
+  {
+    path: 'alertmodal',
+    label: 'Alert Modal',
+    load: () =>
+      import('./alertmodal/alertmodal-demo.component').then((m) => m.AlertModalDemoComponent),
+  },
+  {
     path: 'impactpreviewdialog',
     label: 'ImpactPreviewDialog',
     load: () =>
