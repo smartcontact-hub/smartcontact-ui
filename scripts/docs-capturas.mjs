@@ -167,7 +167,11 @@ async function capturarMiniatura(page, url, ficha, slug, dir) {
   let recorte = null;
   const salida = {};
   for (const tema of ['claro', 'oscuro']) {
-    await page.goto(`${url}/#/components/${ficha}?historia=${slug}&solo=1&tema=${tema}`);
+    // El oscuro, en la página ENTERA y no con `&tema=oscuro`: el oscuro local del lienzo (`.sc-dark` en el panel) no
+    // voltea los `--p-*` de PrimeNG, que se resuelven en la raíz. Medido el 2026-10-30: con él, el campo de `sc-select`
+    // salía blanco (rgb 255) sobre el panel oscuro, y así 19 de las 58 miniaturas; con `.sc-dark` en `<html>`, rgb 9.
+    await page.goto(`${url}/#/components/${ficha}?historia=${slug}&solo=1`);
+    await page.evaluate((oscuro) => document.documentElement.classList.toggle('sc-dark', oscuro), tema === 'oscuro');
     const panel = page.locator('[data-testid="sb-solo"] .sb-canvas__pane').first();
     await panel.waitFor({ timeout: 30_000 });
     await page.waitForLoadState('networkidle', { timeout: 5_000 }).catch(() => undefined);
