@@ -92,7 +92,8 @@ const TEMAS_URL: readonly TemaUrl[] = ['claro', 'oscuro', 'comparar'];
               <!-- «Cuándo se usa» va ARRIBA: es la pregunta que se hace antes que ninguna otra («¿es este o es otro?»).
                    Al final de la ficha, tras todas las stories, quedaba a 6.000 px en la de Button. -->
               @if (cuando(); as cuando) {
-                <div class="sb-host__cuando" data-testid="sb-cuando">
+                <!-- Sin data-testid: la línea base de estilos cuenta los de cada ficha (component-styles.spec.ts). -->
+                <div class="sb-host__cuando">
                   <p class="sb-host__cuando-titulo sc-text-caption-semibold">Cuándo se usa</p>
                   <p class="sb-host__cuando-texto">
                     @for (t of trozos(cuando); track $index) {
