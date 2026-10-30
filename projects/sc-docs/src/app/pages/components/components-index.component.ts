@@ -1,18 +1,19 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { COMPONENT_CATALOG, groupCatalog } from './component-catalog';
-import { ComponentApiService } from '../../storybook/component-api.service';
+import { LanguageService } from '../../shared/language.service';
+import { ComponentApiService, trozosDeCuando } from '../../storybook/component-api.service';
 import { EstadoComponenteComponent } from '../../storybook/estado-componente.component';
 
 /**
  * Portada de la sección Componentes.
  *
- * Cada componente es una tarjeta con su nombre y UNA línea de para qué sirve (el `blurb`
- * del catálogo), agrupadas por familia. La descripción es lo que la sidebar no da: deja
- * escanear el catálogo entero sin abrir 49 páginas, y desde cada card se profundiza. La
- * lista plana de navegación sigue viviendo en la sidebar; aquí el valor es el propósito.
+ * Cada componente es una tarjeta con su miniatura, su nombre y CUÁNDO se usa (la línea del
+ * contrato, la misma que encabeza su ficha), agrupadas por familia. Es lo que la sidebar no
+ * da: deja elegir entre parecidos (Tag, Badge, Chip) sin abrir 59 páginas, y desde cada card
+ * se profundiza. La lista plana de navegación sigue viviendo en la sidebar.
  */
 @Component({
   selector: 'app-components-index',
@@ -57,19 +58,68 @@ import { EstadoComponenteComponent } from '../../storybook/estado-componente.com
           @for (e of group.items; track e.path) {
             <li>
               <a class="card" [routerLink]="['/components', e.path]">
-                <span class="card__name">
-                  {{ e.label }}
-                  <!-- Solo la excepción (DD-190): lo listo no lleva etiqueta, para no llenar de verde el índice. -->
-                  @let est = api.estadoDeRuta(e.path);
-                  @if (est && est.estado !== 'ready') {
-                    <app-estado-componente [estado]="est" />
+                <!-- La miniatura: su primera story (el Playground) recortada a lo que pinta, en el tema de la página.
+                     La toma el robot de capturas (docs-capturas); sin ella, el selector, para que la rejilla no cojee. -->
+                <span class="card__vista" aria-hidden="true">
+                  @let mini = miniaturas()?.[e.path];
+                  @if (mini) {
+                    <img
+                      class="card__img card__img--claro"
+                      [src]="CAPTURAS + mini.claro"
+                      [attr.srcset]="CAPTURAS + mini.claro + ' 2x'"
+                      [width]="mini.ancho"
+                      [height]="mini.alto"
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <img
+                      class="card__img card__img--oscuro"
+                      [src]="CAPTURAS + mini.oscuro"
+                      [attr.srcset]="CAPTURAS + mini.oscuro + ' 2x'"
+                      [width]="mini.ancho"
+                      [height]="mini.alto"
+                      alt=""
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  } @else if (miniaturas()) {
+                    @let selector = api.selectorDeRuta(e.path);
+                    @if (selector) {
+                      <code class="card__tag">&lt;{{ selector }}&gt;</code>
+                    }
                   }
                 </span>
-                @let blurbKey = 'components.blurb.' + e.path;
-                @let blurb = blurbKey | translate;
-                @if (blurb !== blurbKey) {
-                  <span class="card__blurb">{{ blurb }}</span>
-                }
+                <span class="card__cuerpo">
+                  <span class="card__name">
+                    {{ e.label }}
+                    <!-- Solo la excepción (DD-190): lo listo no lleva etiqueta, para no llenar de verde el índice. -->
+                    @let est = api.estadoDeRuta(e.path);
+                    @if (est && est.estado !== 'ready') {
+                      <app-estado-componente [estado]="est" />
+                    }
+                  </span>
+                  <!-- Cuándo se usa, no qué es: el índice sirve para elegir. El «cuándo» sale del contrato y está en
+                       español; en inglés va el «para qué» traducido, y si falta, el «cuándo». -->
+                  @let blurbKey = 'components.blurb.' + e.path;
+                  @let blurb = blurbKey | translate;
+                  @let cuando = api.cuandoDeRuta(e.path);
+                  @if (cuando && (!lang.isEnglish() || blurb === blurbKey)) {
+                    <!-- Cada trozo en su elemento: un texto suelto entre bloques arrastra el salto de línea de la plantilla
+                         y pintaba «sc-select .» con un espacio antes del punto. -->
+                    <span class="card__blurb">
+                      @for (t of trozos(cuando); track $index) {
+                        @if (t.codigo) {
+                          <code>{{ t.texto }}</code>
+                        } @else {
+                          <span>{{ t.texto }}</span>
+                        }
+                      }
+                    </span>
+                  } @else if (blurb !== blurbKey) {
+                    <span class="card__blurb">{{ blurb }}</span>
+                  }
+                </span>
               </a>
             </li>
           }
@@ -216,10 +266,9 @@ import { EstadoComponenteComponent } from '../../storybook/estado-componente.com
     .card {
       display: flex;
       flex-direction: column;
-      gap: var(--sc-spacing-0-375);
       height: 100%;
       box-sizing: border-box;
-      padding: var(--sc-spacing-0-875) var(--sc-spacing-1);
+      overflow: hidden;
       border: 1px solid var(--sc-border-default);
       border-radius: 12px;
       background: var(--sc-bg-surface);
@@ -242,6 +291,56 @@ import { EstadoComponenteComponent } from '../../storybook/estado-componente.com
       outline-offset: 2px;
     }
 
+    /* La miniatura, sobre el fondo sutil: la captura (con el fondo del lienzo) se lee como una hoja encima. Alto fijo,
+       así la rejilla no salta al cargar; la imagen nunca crece por encima de su tamaño real (va a 2x, por el srcset). */
+    .card__vista {
+      display: grid;
+      /* Pistas de tamaño fijo: sin ellas el max-height en % de la imagen no tiene contra qué medirse y se salía. */
+      grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+      place-items: center;
+      overflow: hidden;
+      height: 7.5rem;
+      padding: var(--sc-spacing-0-75);
+      box-sizing: border-box;
+      background: var(--sc-bg-subtle);
+      border-bottom: 1px solid var(--sc-border-default);
+    }
+
+    .card__img {
+      grid-area: 1 / 1;
+      width: auto;
+      height: auto;
+      max-width: 100%;
+      max-height: 100%;
+      border: 1px solid var(--sc-border-default);
+      border-radius: var(--sc-radius-md);
+    }
+
+    .card__img--oscuro {
+      display: none;
+    }
+
+    :host-context(.sc-dark) .card__img--claro {
+      display: none;
+    }
+
+    :host-context(.sc-dark) .card__img--oscuro {
+      display: block;
+    }
+
+    .card__tag {
+      font-family: var(--sc-font-family-mono);
+      font-size: var(--sc-font-size-100);
+      color: var(--sc-text-subtle);
+    }
+
+    .card__cuerpo {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sc-spacing-0-375);
+      padding: var(--sc-spacing-0-875) var(--sc-spacing-1);
+    }
+
     .card__name {
       display: flex;
       align-items: baseline;
@@ -252,10 +351,23 @@ import { EstadoComponenteComponent } from '../../storybook/estado-componente.com
       color: var(--sc-text-primary);
     }
 
+    /* Hasta cuatro líneas: el «cuándo» entero vive arriba de su ficha. */
     .card__blurb {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 4;
+      line-clamp: 4;
+      overflow: hidden;
       font-size: var(--sc-font-size-100);
       line-height: 1.45;
       color: var(--sc-text-secondary);
+    }
+
+    /* Sin partir por el guion, como en la ficha. */
+    .card__blurb code {
+      font-family: var(--sc-font-family-mono);
+      white-space: nowrap;
+      color: var(--sc-text-primary);
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -265,4 +377,29 @@ export class ComponentsIndexComponent {
   protected readonly groups = groupCatalog();
   protected readonly total = COMPONENT_CATALOG.length;
   protected readonly api = inject(ComponentApiService);
+  protected readonly lang = inject(LanguageService);
+  protected readonly trozos = trozosDeCuando;
+  protected readonly CAPTURAS = '/ia/capturas/';
+
+  /** Las miniaturas por ficha, del índice que escribe `docs:capturas`; `null` mientras carga. Sin él, ninguna. */
+  protected readonly miniaturas = signal<Readonly<Record<string, Miniatura>> | null>(null);
+
+  constructor() {
+    fetch(`${this.CAPTURAS}_indice.json`)
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
+      .then((d: { fichas?: Record<string, { miniatura?: Miniatura }> }) => {
+        const porFicha: Record<string, Miniatura> = {};
+        for (const [ficha, f] of Object.entries(d.fichas ?? {})) if (f.miniatura) porFicha[ficha] = f.miniatura;
+        this.miniaturas.set(porFicha);
+      })
+      .catch(() => this.miniaturas.set({}));
+  }
+}
+
+/** La miniatura de una ficha, tal como la apunta `docs:capturas`: rutas y tamaño en px CSS (el PNG va a 2x). */
+interface Miniatura {
+  readonly claro: string;
+  readonly oscuro: string;
+  readonly ancho: number;
+  readonly alto: number;
 }

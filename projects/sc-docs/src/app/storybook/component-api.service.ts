@@ -28,6 +28,23 @@ export interface EstadoComponente {
   readonly retirado: string | null;
 }
 
+/** Un trozo de la línea de «cuándo»: texto, o código si iba entre comillas invertidas (`sc-tag`). */
+export interface TrozoCuando {
+  readonly texto: string;
+  readonly codigo: boolean;
+}
+
+/**
+ * La línea de «cuándo» en trozos, para pintar como código lo que el contrato escribe entre comillas invertidas
+ * («Si va suelto en la fila, es `sc-tag`»). Sin esto la página enseñaba las comillas tal cual.
+ */
+export function trozosDeCuando(cuando: string): readonly TrozoCuando[] {
+  return cuando
+    .split('`')
+    .map((texto, i) => ({ texto, codigo: i % 2 === 1 }))
+    .filter((t) => t.texto.length > 0);
+}
+
 interface ComponenteContrato extends EstadoComponente {
   readonly selector: string;
   readonly name: string;
@@ -95,6 +112,18 @@ export class ComponentApiService {
   cuando(selector: string): string | null {
     this.cargar();
     return this.porSelector()?.get(selector)?.cuando ?? null;
+  }
+
+  /** Su selector (`sc-section-card`) por la ruta de su página, o `null`. */
+  selectorDeRuta(ruta: string): string | null {
+    this.cargar();
+    return this.porRuta()?.get(ruta)?.selector ?? null;
+  }
+
+  /** Su línea de «cuándo se usa» por la ruta de su página, para la tarjeta del índice. */
+  cuandoDeRuta(ruta: string): string | null {
+    this.cargar();
+    return this.porRuta()?.get(ruta)?.cuando ?? null;
   }
 
   private cargar(): void {

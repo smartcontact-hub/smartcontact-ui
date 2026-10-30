@@ -10,7 +10,7 @@ import { StoryPropsTableComponent } from './story-props-table.component';
 import { StoryAnatomyComponent } from './story-anatomy.component';
 import { StorySnippetComponent } from './story-snippet.component';
 import { StoryMatrizComponent, type EjesUrl } from './story-matriz.component';
-import { ComponentApiService } from './component-api.service';
+import { ComponentApiService, trozosDeCuando } from './component-api.service';
 import { EstadoComponenteComponent } from './estado-componente.component';
 import { ejesCandidatos } from './matriz.core.mjs';
 import { codificarArgs, decodificarArgs, slugHistoria, urlDeHistoria } from './story-url';
@@ -19,10 +19,10 @@ import { ScArgs, StoryControlsContext, StoryDef, StoryMeta } from './story.types
 const TEMAS_URL: readonly TemaUrl[] = ['claro', 'oscuro', 'comparar'];
 
 /**
- * Orquesta la página de UN componente: cabecera + Playground (canvas + snippet) + «Todas las combinaciones» + stories
- * de ejemplo (apiladas, cada una con su canvas + código), con el panel de controles a su derecha
- * (`story-panel.component.ts`), fijo al bajar; debajo, a todo el ancho, «Cuándo se usa» y la tabla de API. El demo
- * declara las stories como `<ng-template>` y pasa `meta` + `stories`.
+ * Orquesta la página de UN componente: cabecera (con «Cuándo se usa») + Playground (canvas + snippet) + «Todas las
+ * combinaciones» + stories de ejemplo (apiladas, cada una con su canvas + código), con el panel de controles a su
+ * derecha (`story-panel.component.ts`), fijo al bajar; debajo, a todo el ancho, la tabla de API. El demo declara las
+ * stories como `<ng-template>` y pasa `meta` + `stories`.
  *
  * Apilado (no por pestañas) a propósito: una página = un componente con TODO a la vista, y así los `data-testid` de los
  * ejemplos siguen en el DOM (los e2e de métrica del Kit los miden).
@@ -75,8 +75,8 @@ const TEMAS_URL: readonly TemaUrl[] = ['claro', 'oscuro', 'comparar'];
       </div>
     } @else {
       <div class="sb-host">
-        <!-- El panel de controles acompaña a las stories y no a la referencia: «Cuándo se usa» y la API van debajo, a
-             todo el ancho, y el panel deja de seguir al bajar al llegar a ellas. -->
+        <!-- El panel de controles acompaña a las stories y no a la referencia: la API va debajo, a todo el ancho, y el
+             panel deja de seguir al bajar al llegar a ella. -->
         <div class="sb-host__zona" [class.sb-host__zona--con-panel]="hayControles()">
           <div class="sb-host__contenido">
             <header class="sb-host__head">
@@ -88,6 +88,23 @@ const TEMAS_URL: readonly TemaUrl[] = ['claro', 'oscuro', 'comparar'];
               <app-estado-componente class="sb-host__estado" [estado]="estado()" explicado />
               @if (meta().description) {
                 <p class="sb-host__desc">{{ meta().description }}</p>
+              }
+              <!-- «Cuándo se usa» va ARRIBA: es la pregunta que se hace antes que ninguna otra («¿es este o es otro?»).
+                   Al final de la ficha, tras todas las stories, quedaba a 6.000 px en la de Button. -->
+              @if (cuando(); as cuando) {
+                <!-- Sin data-testid: la línea base de estilos cuenta los de cada ficha (component-styles.spec.ts). -->
+                <div class="sb-host__cuando">
+                  <p class="sb-host__cuando-titulo sc-text-caption-semibold">Cuándo se usa</p>
+                  <p class="sb-host__cuando-texto">
+                    @for (t of trozos(cuando); track $index) {
+                      @if (t.codigo) {
+                        <code>{{ t.texto }}</code>
+                      } @else {
+                        <span>{{ t.texto }}</span>
+                      }
+                    }
+                  </p>
+                </div>
               }
               <!-- Opt-in: una página puede proyectar un aviso bajo la descripción (p. ej. un enlace a
                    otra pantalla relacionada). Sin contenido proyectado, no pinta nada — las otras
@@ -169,13 +186,6 @@ const TEMAS_URL: readonly TemaUrl[] = ['claro', 'oscuro', 'comparar'];
           }
         </div>
 
-        @if (cuando(); as cuando) {
-          <section class="sb-host__story">
-            <p class="sb-host__section-title sc-text-caption-semibold">Cuándo se usa</p>
-            <p class="sb-host__desc">{{ cuando }}</p>
-          </section>
-        }
-
         <section class="sb-host__story sb-host__api">
           <p class="sb-host__section-title sc-text-caption-semibold">API</p>
           <app-story-props-table [miembros]="contrato()" [error]="apiError()" />
@@ -195,6 +205,7 @@ export class StoryHostComponent {
   protected readonly contrato = computed(() => this.api.contrato(this.meta().tag));
   /** Su línea de «cuándo se usa», la pregunta que se hace ANTES que la de las props. */
   protected readonly cuando = computed(() => this.api.cuando(this.meta().tag));
+  protected readonly trozos = trozosDeCuando;
   /** Su estado (DD-190), del mismo contrato generado. */
   protected readonly estado = computed(() => this.api.estado(this.meta().tag));
   protected readonly apiError = this.api.error;

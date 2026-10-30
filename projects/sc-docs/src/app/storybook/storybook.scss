@@ -326,6 +326,36 @@
   line-height: 1.55;
 }
 
+/* «Cuándo se usa», bajo la descripción: la primera pregunta de quien llega («¿es este o es otro?»). Una caja neutra y
+ * no de color: es la referencia de la ficha, no un aviso (AGENTS, «UX de pantalla» 1: el color significa estado). */
+.sb-host__cuando {
+  margin-top: var(--sc-spacing-0-875);
+  max-width: 68ch;
+  padding: var(--sc-spacing-0-75) var(--sc-spacing-1);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-lg);
+  background: var(--sc-bg-subtle);
+}
+
+.sb-host__cuando-titulo {
+  margin: 0 0 var(--sc-spacing-0-25);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--sc-text-secondary);
+}
+
+.sb-host__cuando-texto {
+  margin: 0;
+  line-height: 1.55;
+  color: var(--sc-text-primary);
+
+  /* Un selector no se parte por su guion: «sc-» al final de una línea y «badge» al principio de la otra no se lee. */
+  code {
+    font-family: var(--sc-font-family-mono);
+    white-space: nowrap;
+  }
+}
+
 .sb-host__story-desc {
   margin: 0 0 var(--sc-spacing-0-75);
   max-width: 68ch;
