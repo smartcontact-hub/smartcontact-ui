@@ -407,8 +407,8 @@
       "miniatura": {
         "claro": "progressspinner/_miniatura.png",
         "oscuro": "progressspinner/_miniatura-oscuro.png",
-        "ancho": 140,
-        "alto": 140
+        "ancho": 145,
+        "alto": 145
       }
     },
     "gauge": {
@@ -1418,8 +1418,8 @@
       "miniatura": {
         "claro": "alertmodal/_miniatura.png",
         "oscuro": "alertmodal/_miniatura-oscuro.png",
-        "ancho": 681,
-        "alto": 262
+        "ancho": 603,
+        "alto": 186
       }
     },
     "impactpreviewdialog": {
