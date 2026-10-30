@@ -49,6 +49,7 @@
   (c) **Fuera de PrimeNG jubilado** (`WRAPPERS_SOBRE_COMPONENTE_OBSOLETO_MAX`, hoy 2 tras DD-172): quedan dos, y son de las que se proponen. `sc-button → [pButton]`: la directiva no trae `label`, `icon` ni salidas, y cambia el DOM de todos los botones (mueve las capturas y las 8 entradas `p-button` de `component-styles.json`; `component-structure.json` no tiene ninguna, medido el 2026-10-06). Coste medido y opciones: tramo del 2026-10-06. `sc-multiselect → p-select` con `multiple`: le faltan seis cosas que usamos (`showToggleAll`, `selectAll`, `selectionLimit`, `maxSelectedLabels`, `selectedItemsLabel`, `display`; medido en 22.1.0), y DD-153 eligió ampliar el envoltorio.
   (d) **La plantilla de PR promete lo que no sabe**: medido, ningún gate lee el checklist y solo 2 de sus 6 casillas están respaldadas (`verify` y tokens). Barato: que cada línea diga si la vigila un gate y que «no aplica» no se escriba con un tick. Gateables de verdad, si Rafa quiere: bump de versión y CHANGELOG.
   (e) **`preflightVivo` de `bash-guard` cuenta el preflight de CUALQUIER caja**: busca la carpeta en la línea de comandos, que es relativa (y en macOS `pgrep -af` da solo PIDs). Medido el 2026-09-28: el preflight de otra caja denegó `npm run build:supervisor` en esta. Arreglo: el `cwd` de cada PID (`lsof -a -p PID -d cwd`, `/proc/PID/cwd`), con su test en rojo.
+- **`sc-step-marker` (DD-222)**: replicar el marcador en las fichas de agente, usuario y tipificación; revisar el copy fr y pt; en Figma, tras publicar la librería (`step-marker` 15724:271, `nav-item` 12555:23029), cambiar los 33 índices de Grupos del archivo del Supervisor (`importComponentByKeyAsync` + `swapComponent`) y sus notas «Cómo se comporta».
 - **`sc-datatable` tras cubrir primeng.dev/table (2026-10-14)**: (a) el Playground de Datatable en sc-docs le pasa «Alto
   del scroll» aunque «Scroll propio» esté apagado, y p-table lo pone de tope igual (240 px): mismo arreglo que `scrollHeightArg`
   de `/lab/tabla`, y cambia `datatable-linux.png`; (b) el «Exportar» de los listados de administración (`exportRequest` de
@@ -173,6 +174,18 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
+## ✅ 2026-10-30 · sc-docs: «Cuándo se usa» encabeza cada ficha y el índice lleva miniaturas
+
+**Sello:** rama `areses/sc-doc-improvements-7f1391`, sobre HEAD `e899cfd0` de `main`. Sale el tramo del 2026-10-22 (`sc-step-marker`, DD-222): `git show b131c6bb:docs/handoff/design-system.md`; su pendiente, en SIGUIENTE.
+
+**Lo que cambia.** El «cuándo» del contrato (`_component-api.json`) va bajo la descripción de cada ficha, no tras las stories (en Button
+estaba a ~6.000 px). Las tarjetas del índice dicen cuándo, no qué (en inglés, su blurb traducido) y llevan miniatura en claro y
+oscuro: la primera story recortada a lo que pinta, que toma `docs-capturas` (`_miniatura*.png`, a 2x y a 720 de ancho).
+
+**Pendiente.** El resto del diagnóstico de sc-docs del 2026-10-29, por impacto: `llms.txt` con Patrones, tokens e iconos (y
+`llms-full.txt`, `robots.txt` y `sitemap.xml`, que hoy responden el HTML de la web); índice «En esta página», secciones como
+encabezados y título de pestaña por ficha; DECISIONS.md (1 MB) en un fichero por DD con índice de vigentes; AGENTS.md a ≤300 líneas.
+
 ## ✅ 2026-10-29 · `sc-custom-modal` y `sc-alert-modal`, como en ui.smart-contact.com (DD-241, #555)
 
 **Sello:** rama `areses/confirmdialog-documentation-search-466499`. Salen los tramos del 2026-10-14: `git show e57ab438:docs/handoff/design-system.md`.
@@ -186,18 +199,6 @@ y el confirm centrado; el globo con `target` sigue. Supervisor: 19 modales sobre
 
 **Pendiente.** Contar a los devs sus fallos (roles anidados, Escape sin aviso, foco en la X) y que su página de Custom Modal
 está rota en producción (`ChunkLoadError`).
-
-## ✅ 2026-10-22 · El índice del alta lleva un marcador de paso (`sc-step-marker`, DD-222)
-
-**Sello:** rama `areses/indice-checks-aleatorios-e7aa39`, sobre HEAD `12bd0f44` de `main`.
-
-**Lo que cambia.** Cada fila del índice de secciones lleva un marcador con cinco estados (sin revisar · con novedades · en curso · completa · con faltas) y una segunda línea con su texto. El resultado es vivo una vez que sales de la sección, así que el tick ya no aparece en la fila que dejas ni con el nombre vacío. Pinchar una fila en rojo no redirige. El número de WhatsApp pasa a ser obligatorio. El alta ya no pinta el estado sobre el resumen. El modelo vive en `alta-secciones.core.mjs` (`estadosDeSecciones`) y la historia de sc-docs es «El recorrido de un alta».
-
-**Cómo se mueve (DD-222 §9).** Todo con `prefers-reduced-motion` apagado y sin animar la primera pintura. El marcador cambia de estado en su sitio: relleno y trazo en 200 ms, punto que se encoge y ✓ que se dibuja en 300 ms (el ✓ entra 80 ms tarde, con el relleno ya verde), «!» que crece de 0,6 a 1. Al completarse con el marcador ya pintado, un halo verde de 0 a 7 px en 560 ms, una vez por marcador. El texto de la línea difumina su color en 300 ms. Si cambia la línea de una fila que no se mira, se ilumina 1200 ms con un fondo de marca al 22 %. Con menos movimiento: un fundido de 100 ms. Al editar no hay marcadores: punto rojo y, bajo la sección, lo que falta; y sobre el resumen ya no hay línea de estado en el grupo ni en la edición de agente y usuario.
-
-**Figma.** El DS tiene el conjunto `step-marker` (15724:271) y `nav-item` (12555:23029) con 21 variantes. Falta que Rafa publique la librería; después hay que cambiar los 33 índices de la página Grupos del archivo del Supervisor (variante nueva por `importComponentByKeyAsync` + `swapComponent`) y tocar las notas «Cómo se comporta».
-
-**Pendiente.** Replicar el marcador en las fichas de agente, usuario y tipificación; revisar el copy fr y pt.
 
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 
