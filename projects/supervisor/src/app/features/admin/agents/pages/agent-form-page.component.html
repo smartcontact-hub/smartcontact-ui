@@ -534,17 +534,50 @@
           </div>
         </div>
 
-        <div class="field">
-          <sc-inputtext
-            [label]="'agents.form.advanced.integracion.url_iframe' | translate"
-            inputId="agent-iframe-url"
-            type="url"
-            autocomplete="url"
-            [placeholder]="'agents.form.advanced.integracion.url_iframe_placeholder' | translate"
-            [value]="form().iframeUrl"
-            (valueChange)="updateField('iframeUrl', $event)"
-          />
+        <!-- Qué ve en su iframe y, solo si es una suya, su URL y su título, como en Voice (SISMAC-4062). -->
+        <div class="grid grid--2">
+          <div class="field">
+            <sc-select
+              [label]="'agents.form.advanced.integracion.iframe' | translate"
+              inputId="agent-iframe-mode"
+              optionLabel="label"
+              optionValue="value"
+              [options]="iframeModeOptions()"
+              [helperText]="iframeModeHint()"
+              [value]="form().iframeMode"
+              (valueChange)="onIframeModeChange($event)"
+            />
+          </div>
         </div>
+
+        @if (form().iframeMode === 'custom') {
+          <div class="grid grid--2">
+            <div class="field">
+              <sc-inputtext
+                [label]="'agents.form.advanced.integracion.url' | translate"
+                inputId="agent-iframe-url"
+                type="url"
+                autocomplete="url"
+                [required]="true"
+                [placeholder]="'agents.form.advanced.integracion.url_iframe_placeholder' | translate"
+                [helperText]="ayuda('agents.errors.iframe_url_required')"
+                [error]="falta('agents.errors.iframe_url_required')"
+                [value]="form().iframeUrl"
+                (valueChange)="updateField('iframeUrl', $event)"
+                (focusout)="dejar($event, 'agents.errors.iframe_url_required')"
+              />
+            </div>
+            <div class="field">
+              <sc-inputtext
+                [label]="'agents.form.advanced.integracion.iframe_title' | translate"
+                inputId="agent-iframe-title"
+                [placeholder]="'agents.form.advanced.integracion.iframe_title_placeholder' | translate"
+                [value]="form().iframeTitle"
+                (valueChange)="updateField('iframeTitle', $event)"
+              />
+            </div>
+          </div>
+        }
 
         @if (mode() === 'edit') {
           <!-- Una ACCIÓN, no un ajuste: el botón va junto a lo que explica. -->

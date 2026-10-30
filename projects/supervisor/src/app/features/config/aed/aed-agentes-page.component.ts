@@ -14,7 +14,8 @@ import {
   DESTINO_KEYS,
   DestinoCol,
   DestinoKey,
-  PERMISSION_MATRIX_KEYS,
+  matrixCell,
+  setMatrixCell,
 } from '@features/admin/agents/data/agents-data';
 import { CHANNEL_FAMILIES, FAMILY_LABEL_KEYS } from '@features/admin/groups/data/groups-data';
 import type { Channel } from '@features/admin/services/group-agent-links.types';
@@ -90,18 +91,22 @@ export class AedAgentesPageComponent {
   protected readonly matrixChecked = computed(() => {
     const permissions = this.form().permissions;
     return (rowId: string, columnId: string): boolean =>
-      permissions[PERMISSION_MATRIX_KEYS[rowId as DestinoKey][columnId as DestinoCol]];
+      matrixCell(permissions, rowId as DestinoKey, columnId as DestinoCol);
   });
 
   protected onMatrixToggle(e: ScMatrixToggle): void {
-    this.setPermission(PERMISSION_MATRIX_KEYS[e.rowId as DestinoKey][e.columnId as DestinoCol], e.checked);
+    this.form.update((f) => {
+      const permissions = { ...f.permissions };
+      setMatrixCell(permissions, e.rowId as DestinoKey, e.columnId as DestinoCol, e.checked);
+      return { ...f, permissions };
+    });
   }
 
   /** Marcar o desmarcar una columna entera, como en la ficha. */
   protected onMatrixColumnToggle(e: ScMatrixColumnToggle): void {
     this.form.update((f) => {
       const permissions = { ...f.permissions };
-      for (const row of DESTINO_KEYS) permissions[PERMISSION_MATRIX_KEYS[row][e.columnId as DestinoCol]] = e.checked;
+      for (const row of DESTINO_KEYS) setMatrixCell(permissions, row, e.columnId as DestinoCol, e.checked);
       return { ...f, permissions };
     });
   }
