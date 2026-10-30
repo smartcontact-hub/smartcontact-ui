@@ -2379,7 +2379,17 @@
           "url_iframe": "URL iframe",
           "dispositivos_externos": "Dispositivos externos",
           "dispositivos_externos_hint": "Permite al agente conectarse desde dispositivos fuera de la red corporativa.",
-          "url_iframe_placeholder": "https://ejemplo.com/panel"
+          "url_iframe_placeholder": "https://ejemplo.com/panel",
+          "iframe": "Iframe",
+          "iframe_dashboard": "Dashboard",
+          "iframe_general": "General",
+          "iframe_custom": "Personalizado",
+          "iframe_dashboard_hint": "Solo ve el dashboard de Agent",
+          "iframe_general_hint": "La de Contact Center: {{url}}",
+          "iframe_general_hint_empty": "La de Contact Center, que aún no tiene ninguna",
+          "url": "URL",
+          "iframe_title": "Título",
+          "iframe_title_placeholder": "Ej: Llamadas perdidas"
         },
         "regional": {
           "title": "Regional"
@@ -2476,10 +2486,9 @@
         "col_transferencia": "Transferencias",
         "toggle_all_llamada": "Activar/desactivar todas las llamadas",
         "toggle_all_transferencia": "Activar/desactivar todas las transferencias",
-        "row_agentes": "Agentes",
-        "row_grupos": "Grupos",
         "row_fijos": "Fijos",
         "row_moviles": "Móviles",
+        "row_agentes_grupos": "Agentes y grupos",
         "row_internacionales": "Internacionales",
         "row_especial": "Numeración especial",
         "config_title": "Configuración",
@@ -2499,6 +2508,7 @@
         "missing_channel": "un canal",
         "missing_group": "un grupo",
         "missing_outbound": "un grupo para las salientes",
+        "missing_iframe_url": "la URL del iframe",
         "channels": "Canales",
         "no_channels": "Sin canales",
         "no_enabled_groups": "Sin grupos habilitados",
@@ -2527,6 +2537,7 @@
       "email_required": "El email es obligatorio",
       "group_required": "Hace falta al menos un grupo",
       "outbound_required": "El grupo de las llamadas salientes es obligatorio: uno con Teléfono",
+      "iframe_url_required": "La URL es obligatoria con el iframe Personalizado",
       "email_taken": "Ya hay un agente con este email"
     },
     "empty": {

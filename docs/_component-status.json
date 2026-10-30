@@ -1306,7 +1306,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 45,
+      "usedInSupervisor": 46,
       "cuando": "Para texto de una línea. Si puede ocupar varias, `sc-textarea`.",
       "sobreObsoleto": []
     },
@@ -1792,7 +1792,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 70,
+      "usedInSupervisor": 71,
       "cuando": "Para elegir UNA de muchas. Si son pocas y caben a la vista, `sc-radiobutton` o `sc-selectbutton` ahorran un clic.",
       "sobreObsoleto": []
     },

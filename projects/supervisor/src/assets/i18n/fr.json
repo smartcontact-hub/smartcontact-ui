@@ -2376,7 +2376,17 @@
           "url_iframe": "URL iframe",
           "dispositivos_externos": "Appareils externes",
           "dispositivos_externos_hint": "Permet à l'agent de se connecter depuis des appareils hors du réseau d'entreprise.",
-          "url_iframe_placeholder": "https://exemple.com/tableau-de-bord"
+          "url_iframe_placeholder": "https://exemple.com/tableau-de-bord",
+          "iframe": "Iframe",
+          "iframe_dashboard": "Tableau de bord",
+          "iframe_general": "Général",
+          "iframe_custom": "Personnalisé",
+          "iframe_dashboard_hint": "Ne voit que le tableau de bord d'Agent",
+          "iframe_general_hint": "Celle de Contact Center\u00a0: {{url}}",
+          "iframe_general_hint_empty": "Celle de Contact Center, qui n'en a pas encore",
+          "url": "URL",
+          "iframe_title": "Titre",
+          "iframe_title_placeholder": "Ex. : Appels manqués"
         },
         "regional": {
           "title": "Régional"
@@ -2473,10 +2483,9 @@
         "col_transferencia": "Transferts",
         "toggle_all_llamada": "Activer/désactiver tous les appels",
         "toggle_all_transferencia": "Activer/désactiver tous les transferts",
-        "row_agentes": "Agents",
-        "row_grupos": "Groupes",
         "row_fijos": "Fixes",
         "row_moviles": "Mobiles",
+        "row_agentes_grupos": "Agents et groupes",
         "row_internacionales": "Internationaux",
         "row_especial": "Numérotation spéciale",
         "config_title": "Configuration",
@@ -2499,6 +2508,7 @@
         "missing_channel": "un canal",
         "missing_group": "un groupe",
         "missing_outbound": "un groupe pour les appels sortants",
+        "missing_iframe_url": "l'URL de l'iframe",
         "channels": "Canaux",
         "no_channels": "Aucun canal",
         "no_enabled_groups": "Aucun groupe activé",
@@ -2527,6 +2537,7 @@
       "email_required": "L'email est obligatoire",
       "group_required": "Au moins un groupe est obligatoire",
       "outbound_required": "Le groupe des appels sortants est obligatoire\u00a0: un groupe avec Téléphone",
+      "iframe_url_required": "L'URL est obligatoire avec l'iframe Personnalisé",
       "email_taken": "Un agent utilise déjà cet email"
     },
     "empty": {

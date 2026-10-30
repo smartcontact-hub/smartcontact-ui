@@ -37,7 +37,8 @@ const canal = (page: Page, nombre: string) =>
   page.locator('#group-section-general sc-checkbox').filter({ hasText: new RegExp(`^\\s*${nombre}\\s*$`) });
 
 /** Agentes y Grupos, delante, desde DD-211 §2: de fábrica, permitidos. */
-const DESTINOS = ['Agentes', 'Grupos', 'Fijos', 'Móviles', 'Internacionales', 'Numeración especial'] as const;
+// Agentes y grupos, en una fila, como en Contact Center (revisión de producto del 2026-10-29).
+const DESTINOS = ['Fijos', 'Móviles', 'Agentes y grupos', 'Internacionales', 'Numeración especial'] as const;
 const COLUMNAS = ['Llamadas', 'Transferencias'] as const;
 const OVERFLOW = 'Desbordar conversaciones si no hay agentes conectados';
 
@@ -160,5 +161,28 @@ test('lo que se guarda en Contact Center › Agentes es con lo que nace un agent
   await expect(casilla(page, 'Móviles', 'Transferencias')).toBeChecked();
   await expect(interruptor(page, 'Dispositivos externos')).not.toBeChecked();
   await page.getByRole('button', { name: /Avanzado/ }).click();
-  await expect(page.locator('#agent-iframe-url')).toHaveValue('https://crm.ejemplo.com/ficha');
+  // Nace con el iframe «General», que es la URL de aquí: la dice su ayuda, sin campo propio (SISMAC-4062).
+  const iframe = page.getByRole('combobox', { name: 'Iframe' });
+  await expect(iframe).toHaveText('General');
+  await expect(iframe).toHaveAccessibleDescription(/https:\/\/crm\.ejemplo\.com\/ficha/);
+  await expect(page.locator('#agent-iframe-url')).toHaveCount(0);
+});
+
+test('el iframe pide su URL, y deja poner un título, solo con «Personalizado»', async ({ page }) => {
+  await goto(page, 'admin/agentes/crear');
+  await irASeccion(page, 'Configuración');
+  await page.getByRole('button', { name: /Avanzado/ }).click();
+  const iframe = page.getByRole('combobox', { name: 'Iframe' });
+
+  await iframe.click();
+  await page.getByRole('option', { name: 'Dashboard' }).click();
+  await expect(iframe).toHaveAccessibleDescription('Solo ve el dashboard de Agent');
+  await expect(page.locator('#agent-iframe-url')).toHaveCount(0);
+  await expect(page.locator('#agent-iframe-title')).toHaveCount(0);
+
+  await iframe.click();
+  await page.getByRole('option', { name: 'Personalizado' }).click();
+  await expect(page.locator('#agent-iframe-url')).toBeVisible();
+  await expect(page.getByRole('textbox', { name: 'Título' })).toBeVisible();
+  await expect(page.getByText('La URL es obligatoria con el iframe Personalizado')).toBeVisible();
 });

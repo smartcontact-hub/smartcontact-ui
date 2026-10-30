@@ -89,19 +89,19 @@ test('§2 · sin Teléfono no se ve lo de las llamadas, ni en Configuración ni 
   await expect(page.getByRole('switch', { name: /^Gestión de dispositivos/ })).toHaveCount(1);
 });
 
-test('§2 · Agentes y Grupos en el Destino; sin «Automático con preview» ni «Actualizar teléfono en login»', async ({ page }) => {
+test('§2 · Agentes y grupos en el Destino, en una fila; sin «Automático con preview» ni «Actualizar teléfono en login»', async ({ page }) => {
   await goto(page, 'admin/agentes/editar/1?seccion=configuracion');
-  for (const destino of ['Agentes', 'Grupos']) {
-    for (const columna of ['Llamadas', 'Transferencias']) {
-      await expect(page.getByRole('checkbox', { name: `${destino} — ${columna}`, exact: true })).toBeChecked();
-    }
+  for (const columna of ['Llamadas', 'Transferencias']) {
+    await expect(page.getByRole('checkbox', { name: `Agentes y grupos — ${columna}`, exact: true })).toBeChecked();
   }
+  // Juntos como en Contact Center (revisión de producto del 2026-10-29): ya no hay una fila de cada.
+  await expect(page.getByRole('checkbox', { name: 'Grupos — Llamadas', exact: true })).toHaveCount(0);
   await expect(page.getByText('Automático con preview')).toHaveCount(0);
   await expect(page.getByText('Actualizar teléfono en login')).toHaveCount(0);
 
   // Contact Center › Agentes, la misma matriz; y › General, sin el preview.
   await goto(page, 'config/aed/agentes');
-  await expect(page.getByRole('checkbox', { name: 'Agentes — Llamadas', exact: true })).toBeVisible();
+  await expect(page.getByRole('checkbox', { name: 'Agentes y grupos — Llamadas', exact: true })).toBeVisible();
   await goto(page, 'config/aed/servicio');
   await expect(page.getByText('Tipo de descuelgue')).toBeVisible();
   await expect(page.getByText('Automático con preview')).toHaveCount(0);
@@ -122,10 +122,8 @@ test('§2 · un agente guardado antes de Agentes y Grupos en el Destino los tien
   });
 
   await goto(page, 'admin/agentes/editar/2?seccion=configuracion');
-  for (const destino of ['Agentes', 'Grupos']) {
-    for (const columna of ['Llamadas', 'Transferencias']) {
-      await expect(page.getByRole('checkbox', { name: `${destino} — ${columna}`, exact: true })).toBeChecked();
-    }
+  for (const columna of ['Llamadas', 'Transferencias']) {
+    await expect(page.getByRole('checkbox', { name: `Agentes y grupos — ${columna}`, exact: true })).toBeChecked();
   }
 });
 
