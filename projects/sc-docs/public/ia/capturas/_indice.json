@@ -1,6 +1,6 @@
 {
   "generado": "scripts/docs-capturas.mjs",
-  "fecha": "2026-10-13",
+  "fecha": "2026-10-30",
   "viewport": "1280x900",
   "tema": "claro",
   "fichas": {
@@ -48,6 +48,12 @@
           "nombre": "Abre un popup",
           "png": "button/abre-un-popup.png"
         }
+      },
+      "miniatura": {
+        "claro": "button/_miniatura.png",
+        "oscuro": "button/_miniatura-oscuro.png",
+        "ancho": 197,
+        "alto": 73
       }
     },
     "badge": {
@@ -68,6 +74,12 @@
           "nombre": "Tamaños",
           "png": "badge/tamanos.png"
         }
+      },
+      "miniatura": {
+        "claro": "badge/_miniatura.png",
+        "oscuro": "badge/_miniatura-oscuro.png",
+        "ancho": 58,
+        "alto": 58
       }
     },
     "breadcrumb": {
@@ -96,6 +108,12 @@
           "nombre": "Dentro de una barra",
           "png": "breadcrumb/dentro-de-una-barra.png"
         }
+      },
+      "miniatura": {
+        "claro": "breadcrumb/_miniatura.png",
+        "oscuro": "breadcrumb/_miniatura-oscuro.png",
+        "ancho": 559,
+        "alto": 88
       }
     },
     "card": {
@@ -118,6 +136,12 @@
           "nombre": "Con icono",
           "png": "card/con-icono.png"
         }
+      },
+      "miniatura": {
+        "claro": "card/_miniatura.png",
+        "oscuro": "card/_miniatura-oscuro.png",
+        "ancho": 549,
+        "alto": 146
       }
     },
     "chip": {
@@ -139,6 +163,12 @@
           "nombre": "Variante label",
           "png": "chip/variante-label.png"
         }
+      },
+      "miniatura": {
+        "claro": "chip/_miniatura.png",
+        "oscuro": "chip/_miniatura-oscuro.png",
+        "ancho": 104,
+        "alto": 71
       }
     },
     "tag": {
@@ -168,6 +198,12 @@
           "nombre": "Label sin borde",
           "png": "tag/label-sin-borde.png"
         }
+      },
+      "miniatura": {
+        "claro": "tag/_miniatura.png",
+        "oscuro": "tag/_miniatura-oscuro.png",
+        "ancho": 91,
+        "alto": 62
       }
     },
     "message": {
@@ -191,6 +227,12 @@
           "nombre": "Variantes y tamaños",
           "png": "message/variantes-y-tamanos.png"
         }
+      },
+      "miniatura": {
+        "claro": "message/_miniatura.png",
+        "oscuro": "message/_miniatura-oscuro.png",
+        "ancho": 180,
+        "alto": 57
       }
     },
     "panel": {
@@ -225,6 +267,12 @@
           "nombre": "Cabecera propia",
           "png": "panel/cabecera-propia.png"
         }
+      },
+      "miniatura": {
+        "claro": "panel/_miniatura.png",
+        "oscuro": "panel/_miniatura-oscuro.png",
+        "ancho": 209,
+        "alto": 126
       }
     },
     "skeleton": {
@@ -257,12 +305,19 @@
           "nombre": "Tarjeta",
           "png": "skeleton/tarjeta.png"
         }
+      },
+      "miniatura": {
+        "claro": "skeleton/_miniatura.png",
+        "oscuro": "skeleton/_miniatura-oscuro.png",
+        "ancho": 680,
+        "alto": 56
       }
     },
     "textarea": {
       "anatomia": [
         "sc-textarea",
-        "  textarea.p-component.p-textarea"
+        "  div.sc-textarea__field",
+        "    textarea.p-component.p-textarea"
       ],
       "historias": {
         "playground": {
@@ -277,6 +332,12 @@
           "nombre": "Para copiar",
           "png": "textarea/para-copiar.png"
         }
+      },
+      "miniatura": {
+        "claro": "textarea/_miniatura.png",
+        "oscuro": "textarea/_miniatura-oscuro.png",
+        "ancho": 255,
+        "alto": 113
       }
     },
     "drawer": {
@@ -293,6 +354,12 @@
           "nombre": "Acoplado",
           "png": "drawer/acoplado.png"
         }
+      },
+      "miniatura": {
+        "claro": "drawer/_miniatura.png",
+        "oscuro": "drawer/_miniatura-oscuro.png",
+        "ancho": 144,
+        "alto": 73
       }
     },
     "progressbar": {
@@ -312,6 +379,12 @@
           "nombre": "Modos",
           "png": "progressbar/modos.png"
         }
+      },
+      "miniatura": {
+        "claro": "progressbar/_miniatura.png",
+        "oscuro": "progressbar/_miniatura-oscuro.png",
+        "ancho": 680,
+        "alto": 56
       }
     },
     "progressspinner": {
@@ -330,6 +403,12 @@
           "nombre": "Por defecto",
           "png": "progressspinner/por-defecto.png"
         }
+      },
+      "miniatura": {
+        "claro": "progressspinner/_miniatura.png",
+        "oscuro": "progressspinner/_miniatura-oscuro.png",
+        "ancho": 140,
+        "alto": 140
       }
     },
     "gauge": {
@@ -356,6 +435,12 @@
           "nombre": "Sobre un total",
           "png": "gauge/sobre-un-total.png"
         }
+      },
+      "miniatura": {
+        "claro": "gauge/_miniatura.png",
+        "oscuro": "gauge/_miniatura-oscuro.png",
+        "ancho": 220,
+        "alto": 220
       }
     },
     "radiobutton": {
@@ -376,7 +461,17 @@
         "tamanos": {
           "nombre": "Tamaños",
           "png": "radiobutton/tamanos.png"
+        },
+        "tarjeta": {
+          "nombre": "Tarjeta",
+          "png": "radiobutton/tarjeta.png"
         }
+      },
+      "miniatura": {
+        "claro": "radiobutton/_miniatura.png",
+        "oscuro": "radiobutton/_miniatura-oscuro.png",
+        "ancho": 56,
+        "alto": 56
       }
     },
     "avatar": {
@@ -414,6 +509,12 @@
           "nombre": "Tono de etiqueta",
           "png": "avatar/tono-de-etiqueta.png"
         }
+      },
+      "miniatura": {
+        "claro": "avatar/_miniatura.png",
+        "oscuro": "avatar/_miniatura-oscuro.png",
+        "ancho": 68,
+        "alto": 68
       }
     },
     "toast": {
@@ -430,6 +531,12 @@
           "nombre": "Disparadores",
           "png": "toast/disparadores.png"
         }
+      },
+      "miniatura": {
+        "claro": "toast/_miniatura.png",
+        "oscuro": "toast/_miniatura-oscuro.png",
+        "ancho": 143,
+        "alto": 73
       }
     },
     "divider": {
@@ -451,6 +558,12 @@
           "nombre": "Vertical",
           "png": "divider/vertical.png"
         }
+      },
+      "miniatura": {
+        "claro": "divider/_miniatura.png",
+        "oscuro": "divider/_miniatura-oscuro.png",
+        "ancho": 215,
+        "alto": 126
       }
     },
     "inputgroup": {
@@ -468,6 +581,12 @@
           "nombre": "Con addons",
           "png": "inputgroup/con-addons.png"
         }
+      },
+      "miniatura": {
+        "claro": "inputgroup/_miniatura.png",
+        "oscuro": "inputgroup/_miniatura-oscuro.png",
+        "ancho": 338,
+        "alto": 73
       }
     },
     "search": {
@@ -491,6 +610,12 @@
           "nombre": "Variantes",
           "png": "search/variantes.png"
         }
+      },
+      "miniatura": {
+        "claro": "search/_miniatura.png",
+        "oscuro": "search/_miniatura-oscuro.png",
+        "ancho": 320,
+        "alto": 73
       }
     },
     "datepicker": {
@@ -520,6 +645,12 @@
           "nombre": "Lo que no se ve en los otros ejemplos",
           "png": "datepicker/lo-que-no-se-ve-en-los-otros-ejemplos.png"
         }
+      },
+      "miniatura": {
+        "claro": "datepicker/_miniatura.png",
+        "oscuro": "datepicker/_miniatura-oscuro.png",
+        "ancho": 292,
+        "alto": 97
       }
     },
     "inputnumber": {
@@ -537,6 +668,12 @@
           "nombre": "Estados",
           "png": "inputnumber/estados.png"
         }
+      },
+      "miniatura": {
+        "claro": "inputnumber/_miniatura.png",
+        "oscuro": "inputnumber/_miniatura-oscuro.png",
+        "ancho": 270,
+        "alto": 97
       }
     },
     "multiselect": {
@@ -568,12 +705,18 @@
           "nombre": "Lo que no se ve en los otros ejemplos",
           "png": "multiselect/lo-que-no-se-ve-en-los-otros-ejemplos.png"
         }
+      },
+      "miniatura": {
+        "claro": "multiselect/_miniatura.png",
+        "oscuro": "multiselect/_miniatura-oscuro.png",
+        "ancho": 212,
+        "alto": 97
       }
     },
     "grouppopover": {
       "anatomia": [
         "sc-group-popover",
-        "  p-popover"
+        "  button"
       ],
       "historias": {
         "playground": {
@@ -587,7 +730,17 @@
         "al-pulsar-la-cifra": {
           "nombre": "Al pulsar la cifra",
           "png": "grouppopover/al-pulsar-la-cifra.png"
+        },
+        "segun-cuantos": {
+          "nombre": "Según cuántos",
+          "png": "grouppopover/segun-cuantos.png"
         }
+      },
+      "miniatura": {
+        "claro": "grouppopover/_miniatura.png",
+        "oscuro": "grouppopover/_miniatura-oscuro.png",
+        "ancho": 49,
+        "alto": 60
       }
     },
     "columnselector": {
@@ -604,6 +757,12 @@
           "nombre": "Básico",
           "png": "columnselector/basico.png"
         }
+      },
+      "miniatura": {
+        "claro": "columnselector/_miniatura.png",
+        "oscuro": "columnselector/_miniatura-oscuro.png",
+        "ancho": 76,
+        "alto": 76
       }
     },
     "confirmdialog": {
@@ -620,7 +779,21 @@
         "tonos-y-enfasis": {
           "nombre": "Tonos y énfasis",
           "png": "confirmdialog/tonos-y-enfasis.png"
+        },
+        "junto-al-boton": {
+          "nombre": "Junto al botón",
+          "png": "confirmdialog/junto-al-boton.png"
+        },
+        "medidas-y-limites": {
+          "nombre": "Medidas y límites",
+          "png": "confirmdialog/medidas-y-limites.png"
         }
+      },
+      "miniatura": {
+        "claro": "confirmdialog/_miniatura.png",
+        "oscuro": "confirmdialog/_miniatura-oscuro.png",
+        "ancho": 282,
+        "alto": 73
       }
     },
     "inputtext": {
@@ -646,6 +819,12 @@
           "nombre": "Tamaños",
           "png": "inputtext/tamanos.png"
         }
+      },
+      "miniatura": {
+        "claro": "inputtext/_miniatura.png",
+        "oscuro": "inputtext/_miniatura-oscuro.png",
+        "ancho": 270,
+        "alto": 97
       }
     },
     "password": {
@@ -675,6 +854,12 @@
           "nombre": "Textos y eventos",
           "png": "password/textos-y-eventos.png"
         }
+      },
+      "miniatura": {
+        "claro": "password/_miniatura.png",
+        "oscuro": "password/_miniatura-oscuro.png",
+        "ancho": 292,
+        "alto": 97
       }
     },
     "select": {
@@ -701,6 +886,12 @@
           "nombre": "Lo que no se ve en los otros ejemplos",
           "png": "select/lo-que-no-se-ve-en-los-otros-ejemplos.png"
         }
+      },
+      "miniatura": {
+        "claro": "select/_miniatura.png",
+        "oscuro": "select/_miniatura-oscuro.png",
+        "ancho": 162,
+        "alto": 97
       }
     },
     "selectbutton": {
@@ -731,7 +922,29 @@
         "con-ayuda": {
           "nombre": "Con ayuda",
           "png": "selectbutton/con-ayuda.png"
+        },
+        "multiple": {
+          "nombre": "Múltiple",
+          "png": "selectbutton/multiple.png"
+        },
+        "invalido": {
+          "nombre": "Inválido",
+          "png": "selectbutton/invalido.png"
+        },
+        "deshabilitado": {
+          "nombre": "Deshabilitado",
+          "png": "selectbutton/deshabilitado.png"
+        },
+        "a-todo-el-ancho": {
+          "nombre": "A todo el ancho",
+          "png": "selectbutton/a-todo-el-ancho.png"
         }
+      },
+      "miniatura": {
+        "claro": "selectbutton/_miniatura.png",
+        "oscuro": "selectbutton/_miniatura-oscuro.png",
+        "ancho": 316,
+        "alto": 76
       }
     },
     "fileupload": {
@@ -750,6 +963,10 @@
           "nombre": "Un audio, guardado en el campo",
           "png": "fileupload/un-audio-guardado-en-el-campo.png"
         },
+        "un-audio-guardado-en-su-lista": {
+          "nombre": "Un audio, guardado en su lista",
+          "png": "fileupload/un-audio-guardado-en-su-lista.png"
+        },
         "varios-archivos-con-su-lista": {
           "nombre": "Varios archivos, con su lista",
           "png": "fileupload/varios-archivos-con-su-lista.png"
@@ -758,10 +975,20 @@
           "nombre": "Validación y envío",
           "png": "fileupload/validacion-y-envio.png"
         },
+        "con-subir-y-cancelar": {
+          "nombre": "Con «Subir» y «Cancelar»",
+          "png": "fileupload/con-subir-y-cancelar.png"
+        },
         "basico": {
           "nombre": "Básico",
           "png": "fileupload/basico.png"
         }
+      },
+      "miniatura": {
+        "claro": "fileupload/_miniatura.png",
+        "oscuro": "fileupload/_miniatura-oscuro.png",
+        "ancho": 221,
+        "alto": 142
       }
     },
     "inputtags": {
@@ -792,6 +1019,12 @@
           "nombre": "Deshabilitado",
           "png": "inputtags/deshabilitado.png"
         }
+      },
+      "miniatura": {
+        "claro": "inputtags/_miniatura.png",
+        "oscuro": "inputtags/_miniatura-oscuro.png",
+        "ancho": 380,
+        "alto": 97
       }
     },
     "tabs": {
@@ -815,6 +1048,12 @@
           "nombre": "Con icono y una apagada",
           "png": "tabs/con-icono-y-una-apagada.png"
         }
+      },
+      "miniatura": {
+        "claro": "tabs/_miniatura.png",
+        "oscuro": "tabs/_miniatura-oscuro.png",
+        "ancho": 350,
+        "alto": 89
       }
     },
     "icontile": {
@@ -832,6 +1071,12 @@
           "nombre": "Tallas y tono",
           "png": "icontile/tallas-y-tono.png"
         }
+      },
+      "miniatura": {
+        "claro": "icontile/_miniatura.png",
+        "oscuro": "icontile/_miniatura-oscuro.png",
+        "ancho": 68,
+        "alto": 68
       }
     },
     "factrow": {
@@ -848,7 +1093,17 @@
         "con-un-icono-propio": {
           "nombre": "Con un icono propio",
           "png": "factrow/con-un-icono-propio.png"
+        },
+        "valor-largo-en-una-linea": {
+          "nombre": "Valor largo en una línea",
+          "png": "factrow/valor-largo-en-una-linea.png"
         }
+      },
+      "miniatura": {
+        "claro": "factrow/_miniatura.png",
+        "oscuro": "factrow/_miniatura-oscuro.png",
+        "ancho": 680,
+        "alto": 68
       }
     },
     "toggleswitch": {
@@ -866,6 +1121,12 @@
           "nombre": "Estados",
           "png": "toggleswitch/estados.png"
         }
+      },
+      "miniatura": {
+        "claro": "toggleswitch/_miniatura.png",
+        "oscuro": "toggleswitch/_miniatura-oscuro.png",
+        "ancho": 72,
+        "alto": 61
       }
     },
     "dialog": {
@@ -882,6 +1143,12 @@
           "nombre": "Dynamic dialog",
           "png": "dialog/dynamic-dialog.png"
         }
+      },
+      "miniatura": {
+        "claro": "dialog/_miniatura.png",
+        "oscuro": "dialog/_miniatura-oscuro.png",
+        "ancho": 147,
+        "alto": 73
       }
     },
     "checkbox": {
@@ -903,6 +1170,12 @@
           "nombre": "Tamaños y variantes",
           "png": "checkbox/tamanos-y-variantes.png"
         }
+      },
+      "miniatura": {
+        "claro": "checkbox/_miniatura.png",
+        "oscuro": "checkbox/_miniatura-oscuro.png",
+        "ancho": 153,
+        "alto": 57
       }
     },
     "emptystate": {
@@ -930,6 +1203,12 @@
           "nombre": "Búsqueda sin resultados",
           "png": "emptystate/busqueda-sin-resultados.png"
         }
+      },
+      "miniatura": {
+        "claro": "emptystate/_miniatura.png",
+        "oscuro": "emptystate/_miniatura-oscuro.png",
+        "ancho": 403,
+        "alto": 190
       }
     },
     "formsectionnav": {
@@ -958,14 +1237,24 @@
           "nombre": "Enlaces, rótulo y cambios sin guardar",
           "png": "formsectionnav/enlaces-rotulo-y-cambios-sin-guardar.png"
         },
-        "en-un-alta-en-las-secciones-que-se-dejan-completas": {
-          "nombre": "En un alta: ✓ en las secciones que se dejan completas",
-          "png": "formsectionnav/en-un-alta-en-las-secciones-que-se-dejan-completas.png"
+        "en-un-alta-en-las-que-se-dejan-completas-y-lo-que-falta-al-pulsar-crear": {
+          "nombre": "En un alta: ✓ en las que se dejan completas, y lo que falta al pulsar «Crear»",
+          "png": "formsectionnav/en-un-alta-en-las-que-se-dejan-completas-y-lo-que-falta-al-pulsar-crear.png"
+        },
+        "el-recorrido-de-un-alta-marcador-de-paso-y-su-linea-dd-222": {
+          "nombre": "El recorrido de un alta: marcador de paso y su línea (DD-222)",
+          "png": "formsectionnav/el-recorrido-de-un-alta-marcador-de-paso-y-su-linea-dd-222.png"
         },
         "rotulos-largos-envuelven-no-se-recortan": {
           "nombre": "Rótulos largos (envuelven, no se recortan)",
           "png": "formsectionnav/rotulos-largos-envuelven-no-se-recortan.png"
         }
+      },
+      "miniatura": {
+        "claro": "formsectionnav/_miniatura.png",
+        "oscuro": "formsectionnav/_miniatura-oscuro.png",
+        "ancho": 393,
+        "alto": 276
       }
     },
     "bulkeditmenu": {
@@ -990,6 +1279,12 @@
           "nombre": "De un valor a otro",
           "png": "bulkeditmenu/de-un-valor-a-otro.png"
         }
+      },
+      "miniatura": {
+        "claro": "bulkeditmenu/_miniatura.png",
+        "oscuro": "bulkeditmenu/_miniatura-oscuro.png",
+        "ancho": 534,
+        "alto": 67
       }
     },
     "bulkactionbar": {
@@ -1033,6 +1328,12 @@
           "nombre": "Básica",
           "png": "formdangerzone/basica.png"
         }
+      },
+      "miniatura": {
+        "claro": "formdangerzone/_miniatura.png",
+        "oscuro": "formdangerzone/_miniatura-oscuro.png",
+        "ancho": 711,
+        "alto": 192
       }
     },
     "stickyformheader": {
@@ -1057,12 +1358,74 @@
           "nombre": "Create (input de nombre)",
           "png": "stickyformheader/create-input-de-nombre.png"
         }
+      },
+      "miniatura": {
+        "claro": "stickyformheader/_miniatura.png",
+        "oscuro": "stickyformheader/_miniatura-oscuro.png",
+        "ancho": 408,
+        "alto": 196
+      }
+    },
+    "custommodal": {
+      "anatomia": [
+        "sc-custom-modal.sc-custom-modal-host",
+        "  section.sc-custom-modal",
+        "    header.sc-custom-modal__header",
+        "      sc-button.sc-custom-modal__close",
+        "        p-button",
+        "          button.p-button.p-button-icon-only.p-button-rounded.p-button-secondary.p-button-text.p-component.p-ripple"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "custommodal/playground.png"
+        },
+        "declarativo": {
+          "nombre": "Declarativo",
+          "png": "custommodal/declarativo.png"
+        }
+      },
+      "miniatura": {
+        "claro": "custommodal/_miniatura.png",
+        "oscuro": "custommodal/_miniatura-oscuro.png",
+        "ancho": 681,
+        "alto": 262
+      }
+    },
+    "alertmodal": {
+      "anatomia": [
+        "sc-alert-modal",
+        "  sc-custom-modal.sc-alert-modal__surface.sc-alert-modal__surface--error.sc-custom-modal-host",
+        "    section.sc-custom-modal",
+        "      header.sc-custom-modal__header.sc-custom-modal__header--no-subtitle",
+        "        sc-button.sc-custom-modal__close",
+        "          p-button"
+      ],
+      "historias": {
+        "playground": {
+          "nombre": "Playground",
+          "png": "alertmodal/playground.png"
+        },
+        "variantes": {
+          "nombre": "Variantes",
+          "png": "alertmodal/variantes.png"
+        },
+        "medidas-y-limites": {
+          "nombre": "Medidas y límites",
+          "png": "alertmodal/medidas-y-limites.png"
+        }
+      },
+      "miniatura": {
+        "claro": "alertmodal/_miniatura.png",
+        "oscuro": "alertmodal/_miniatura-oscuro.png",
+        "ancho": 681,
+        "alto": 262
       }
     },
     "impactpreviewdialog": {
       "anatomia": [
         "sc-impact-preview-dialog",
-        "  sc-dialog",
+        "  sc-custom-modal.sc-custom-modal-host",
         "    p-dialog"
       ],
       "historias": {
@@ -1070,12 +1433,18 @@
           "nombre": "Playground",
           "png": "impactpreviewdialog/playground.png"
         }
+      },
+      "miniatura": {
+        "claro": "impactpreviewdialog/_miniatura.png",
+        "oscuro": "impactpreviewdialog/_miniatura-oscuro.png",
+        "ancho": 183,
+        "alto": 61
       }
     },
     "deleteentitydialog": {
       "anatomia": [
         "sc-delete-entity-dialog",
-        "  sc-dialog",
+        "  sc-custom-modal.sc-custom-modal-host",
         "    p-dialog"
       ],
       "historias": {
@@ -1083,14 +1452,22 @@
           "nombre": "Playground",
           "png": "deleteentitydialog/playground.png"
         }
+      },
+      "miniatura": {
+        "claro": "deleteentitydialog/_miniatura.png",
+        "oscuro": "deleteentitydialog/_miniatura-oscuro.png",
+        "ancho": 241,
+        "alto": 61
       }
     },
     "colordotpicker": {
       "anatomia": [
         "sc-color-dot-picker",
-        "  div",
-        "    button",
-        "      span"
+        "  sc-selectbutton.sc-selectbutton",
+        "    p-selectbutton.p-component.p-selectbutton",
+        "      p-togglebutton.p-component.p-inputfield-sm.p-ripple.p-togglebutton.p-togglebutton-sm",
+        "        span.p-togglebutton-content",
+        "          span"
       ],
       "historias": {
         "playground": {
@@ -1101,6 +1478,12 @@
           "nombre": "Básico",
           "png": "colordotpicker/basico.png"
         }
+      },
+      "miniatura": {
+        "claro": "colordotpicker/_miniatura.png",
+        "oscuro": "colordotpicker/_miniatura-oscuro.png",
+        "ancho": 410,
+        "alto": 91
       }
     },
     "photoupload": {
@@ -1119,6 +1502,12 @@
           "nombre": "Tamaños (md 64 · sm 44)",
           "png": "photoupload/tamanos-md-64-sm-44.png"
         }
+      },
+      "miniatura": {
+        "claro": "photoupload/_miniatura.png",
+        "oscuro": "photoupload/_miniatura-oscuro.png",
+        "ancho": 204,
+        "alto": 125
       }
     },
     "commandpalette": {
@@ -1130,17 +1519,31 @@
           "nombre": "Playground",
           "png": "commandpalette/playground.png"
         }
+      },
+      "miniatura": {
+        "claro": "commandpalette/_miniatura.png",
+        "oscuro": "commandpalette/_miniatura-oscuro.png",
+        "ancho": 159,
+        "alto": 61
       }
     },
     "keyboardshortcuts": {
       "anatomia": [
-        "sc-keyboard-shortcuts"
+        "sc-keyboard-shortcuts",
+        "  sc-custom-modal.sc-custom-modal-host",
+        "    p-dialog"
       ],
       "historias": {
         "playground": {
           "nombre": "Playground",
           "png": "keyboardshortcuts/playground.png"
         }
+      },
+      "miniatura": {
+        "claro": "keyboardshortcuts/_miniatura.png",
+        "oscuro": "keyboardshortcuts/_miniatura-oscuro.png",
+        "ancho": 160,
+        "alto": 61
       }
     },
     "inlinerenamecell": {
@@ -1158,6 +1561,12 @@
           "nombre": "Celda de tabla (con toggle)",
           "png": "inlinerenamecell/celda-de-tabla-con-toggle.png"
         }
+      },
+      "miniatura": {
+        "claro": "inlinerenamecell/_miniatura.png",
+        "oscuro": "inlinerenamecell/_miniatura-oscuro.png",
+        "ancho": 308,
+        "alto": 64
       }
     },
     "datatable": {
@@ -1190,7 +1599,49 @@
         "columnas-fijas": {
           "nombre": "Columnas fijas",
           "png": "datatable/columnas-fijas.png"
+        },
+        "orden-por-varias-columnas": {
+          "nombre": "Orden por varias columnas",
+          "png": "datatable/orden-por-varias-columnas.png"
+        },
+        "primer-clic-de-mayor-a-menor-y-cabecera-propia": {
+          "nombre": "Primer clic de mayor a menor y cabecera propia",
+          "png": "datatable/primer-clic-de-mayor-a-menor-y-cabecera-propia.png"
+        },
+        "filtros-por-columna-y-cabecera-agrupada": {
+          "nombre": "Filtros por columna y cabecera agrupada",
+          "png": "datatable/filtros-por-columna-y-cabecera-agrupada.png"
+        },
+        "edicion-por-celda": {
+          "nombre": "Edición por celda",
+          "png": "datatable/edicion-por-celda.png"
+        },
+        "edicion-por-fila": {
+          "nombre": "Edición por fila",
+          "png": "datatable/edicion-por-fila.png"
+        },
+        "detalle-de-fila": {
+          "nombre": "Detalle de fila",
+          "png": "datatable/detalle-de-fila.png"
+        },
+        "filas-agrupadas": {
+          "nombre": "Filas agrupadas",
+          "png": "datatable/filas-agrupadas.png"
+        },
+        "reordenar-y-fijar-filas": {
+          "nombre": "Reordenar y fijar filas",
+          "png": "datatable/reordenar-y-fijar-filas.png"
+        },
+        "exportar-recordar-y-paginador": {
+          "nombre": "Exportar, recordar y paginador",
+          "png": "datatable/exportar-recordar-y-paginador.png"
         }
+      },
+      "miniatura": {
+        "claro": "datatable/_miniatura.png",
+        "oscuro": "datatable/_miniatura-oscuro.png",
+        "ancho": 364,
+        "alto": 323
       }
     },
     "bulktranscriptionmodal": {
@@ -1211,6 +1662,12 @@
           "nombre": "Híbrido (transcripción + análisis)",
           "png": "bulktranscriptionmodal/hibrido-transcripcion-analisis.png"
         }
+      },
+      "miniatura": {
+        "claro": "bulktranscriptionmodal/_miniatura.png",
+        "oscuro": "bulktranscriptionmodal/_miniatura-oscuro.png",
+        "ancho": 711,
+        "alto": 360
       }
     },
     "sectioncard": {
@@ -1242,6 +1699,12 @@
           "nombre": "Sobre el lienzo (surface=card) + título de página",
           "png": "sectioncard/sobre-el-lienzo-surface-card-titulo-de-pagina.png"
         }
+      },
+      "miniatura": {
+        "claro": "sectioncard/_miniatura.png",
+        "oscuro": "sectioncard/_miniatura-oscuro.png",
+        "ancho": 363,
+        "alto": 224
       }
     },
     "subsection": {
@@ -1260,6 +1723,12 @@
           "nombre": "Colapsable",
           "png": "subsection/colapsable.png"
         }
+      },
+      "miniatura": {
+        "claro": "subsection/_miniatura.png",
+        "oscuro": "subsection/_miniatura-oscuro.png",
+        "ancho": 189,
+        "alto": 239
       }
     },
     "slot": {
@@ -1277,6 +1746,39 @@
           "nombre": "En contexto",
           "png": "slot/en-contexto.png"
         }
+      },
+      "miniatura": {
+        "claro": "slot/_miniatura.png",
+        "oscuro": "slot/_miniatura-oscuro.png",
+        "ancho": 127,
+        "alto": 86
+      }
+    },
+    "tooltip": {
+      "anatomia": [],
+      "historias": {
+        "un-icono-con-significado": {
+          "nombre": "Un icono con significado",
+          "png": "tooltip/un-icono-con-significado.png"
+        },
+        "un-texto-cortado": {
+          "nombre": "Un texto cortado",
+          "png": "tooltip/un-texto-cortado.png"
+        },
+        "un-boton-apagado": {
+          "nombre": "Un botón apagado",
+          "png": "tooltip/un-boton-apagado.png"
+        },
+        "con-teclado": {
+          "nombre": "Con teclado",
+          "png": "tooltip/con-teclado.png"
+        }
+      },
+      "miniatura": {
+        "claro": "tooltip/_miniatura.png",
+        "oscuro": "tooltip/_miniatura-oscuro.png",
+        "ancho": 63,
+        "alto": 52
       }
     }
   }
