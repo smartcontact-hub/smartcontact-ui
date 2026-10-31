@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, afterNextRender, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -46,6 +46,29 @@ export class InicioComponent {
 
   /** La barra de iconos de la ilustración de Componentes: botones de solo icono, con un separador en medio. */
   protected readonly barra = ['search', 'edit', 'archive', null, 'favorite', 'bookmark', 'alternate_email'] as const;
+
+  /**
+   * La ficha del agente de la ilustración está viva: su llamada corre (04:12, 04:13…) y la barra de ocupación se llena al
+   * entrar, con la transición del propio `sc-progressbar`. Decorado (`inert`), pero el decorado quieto no dice «producto».
+   */
+  private readonly segundos = signal(4 * 60 + 12);
+  protected readonly reloj = computed(() => {
+    const s = this.segundos();
+    return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+  });
+  protected readonly ocupacion = signal(0);
+
+  constructor() {
+    const destroy = inject(DestroyRef);
+    afterNextRender(() => {
+      const llenar = setTimeout(() => this.ocupacion.set(68), 700);
+      const tic = setInterval(() => this.segundos.update((s) => s + 1), 1000);
+      destroy.onDestroy(() => {
+        clearTimeout(llenar);
+        clearInterval(tic);
+      });
+    });
+  }
 
   /** Las tarjetas pequeñas de «Base compartida». */
   protected readonly base = [

@@ -187,7 +187,7 @@ Fundamentos y el acordeón), migas, «En esta página» leído de los `h2` (`sha
 anidado bajo él en el lateral, porque su derecha es el panel), título de pestaña por página y pie. Portada nueva en `/`
 (`pages/inicio`): tarjetas a dos tonos con ilustraciones propias, formas del logo y componentes `sc-*` reales, `inert`. Índice de
 Componentes sin foto (fuera `public/hero/`), en 3 columnas. Cabeceras de página unificadas: migas, título, entradilla a 18. `audit:text-styles` de sc-docs baja de 94 a 79. El oscuro LOCAL del lienzo ya oscurece PrimeNG (`storybook/tokens-en-lienzo.ts`:
-el Select pasa de 255 a 9). `docs:ia` escribe además `ia/{tokens,patrones,iconos}.md`, `llms-full.txt`, `robots.txt` y `sitemap.xml`.
+el Select pasa de 255 a 9). `docs:ia` escribe además `ia/{tokens,patrones,iconos}.md`, `llms-full.txt`, `robots.txt` y `sitemap.xml`. Marca como el logotipo de las apps (Poppins 600 + «Design Engineering» en su corte fino cursivo, solo marca) y movimiento medido: entrada escalonada de la portada, capas que se separan al pasar, marca del índice que se desliza, sombra de cabecera ligada al scroll; todo quieto con «reducir movimiento».
 
 ## ✅ 2026-10-30 · sc-docs: «Cuándo se usa» encabeza cada ficha y el índice lleva miniaturas
 

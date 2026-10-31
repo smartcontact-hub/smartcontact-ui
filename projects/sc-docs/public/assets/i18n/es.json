@@ -17,7 +17,7 @@
       "sections": "Secciones",
       "language": "Idioma"
     },
-    "brandName": "Smart Contact",
+    "brandName": "SmartContact",
     "menu": "Menú de la sección",
     "side": {
       "aria": "Páginas de {{seccion}}",
@@ -578,7 +578,7 @@
     }
   },
   "inicio": {
-    "title": "Smart Contact",
+    "title": "SmartContact",
     "subtitle": "El sistema de diseño de Smart Contact",
     "cardComponentes": {
       "pre": "Construye pantallas",

@@ -47,3 +47,21 @@
 @import '@fontsource/jetbrains-mono/latin-500.css';
 @import '@fontsource/jetbrains-mono/latin-600.css';
 @import '@fontsource/jetbrains-mono/latin-700.css';
+
+/* Poppins — SOLO la marca: «SmartContact» en 600 y el nombre del producto («Design Engineering») en su corte fino
+ * cursivo, como en el logotipo de las apps (medido en el de `agent`: «SmartContact» seminegrita, «Agent» fina cursiva).
+ * No es letra de pantalla: la interfaz sigue en Inter por sus tokens. Dos ficheros y ni un peso más.
+ *
+ * El corte fino va como FAMILIA propia, «Poppins Fina», con el peso por defecto (el regular): el Kit no tiene peso 300 y
+ * `token-guard` no deja escribirlo a pelo. Así la regla pide `--sc-font-weight-regular` y la familia ya es la fina. */
+@import '@fontsource/poppins/latin-600.css';
+
+@font-face {
+  font-family: 'Poppins Fina';
+  font-style: italic;
+  font-display: swap;
+  /* Sin \`font-weight\`: el descriptor vale \`normal\` (el regular), y un número aquí no puede ser token. */
+  src:
+    url('../../../node_modules/@fontsource/poppins/files/poppins-latin-300-italic.woff2') format('woff2'),
+    url('../../../node_modules/@fontsource/poppins/files/poppins-latin-300-italic.woff') format('woff');
+}
