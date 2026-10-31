@@ -381,6 +381,8 @@ al nombre que se teclea, algo que el COA no recogía. El tooltip de Grupos ya co
 3. Los placeholders de las fichas de Repositorios se escriben igual: el nombre lleva un ejemplo con «Ej: » (Tipificaciones decía
    «Ej.», Plantillas «Título de la plantilla» y Etiquetas «Nombre de la label») y la descripción, donde la hay, «Breve
    descripción...» (DD-237; Figma la tenía con un ejemplo). Agentes y Grupos no llevan placeholder y no cambian.
+   *(Precisión del 2026-10-31, DD-245: el título de Agendas y de Plantillas tampoco lleva placeholder, como piden sus páginas
+   de COA y como ya hacían el prototipo y `placeholders-fichas`; el «Ej: …» es de Equipos, Tipificaciones y Etiquetas.)*
 4. El título de la página sigue en vivo lo que se escribe en el nombre (ya era así en proto y Figma): queda anotado en el alta.
 
 **Razón** · Las listas y fichas del Supervisor se leen igual; si el COA, Figma y el prototipo dicen cosas distintas, manda la última

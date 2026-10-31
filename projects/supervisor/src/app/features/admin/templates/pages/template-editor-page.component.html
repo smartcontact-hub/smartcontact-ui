@@ -67,6 +67,7 @@
             [style]="editorStyle"
             [formats]="formatos()"
             [placeholder]="editorPlaceholder()"
+            (focusout)="dejarContenido($event)"
           >
             <ng-template #header>
               <span class="ql-formats">

@@ -1172,7 +1172,7 @@
       "errors_one": "1 linha com erro, que não é criada:",
       "error_line": "Linha {{line}}: {{reason}}",
       "reason_titulo": "falta o título",
-      "reason_canal": "o canal não é chat, email nem WhatsApp",
+      "reason_canal": "o canal não é Chat, Email nem WhatsApp",
       "reason_contenido": "falta o conteúdo",
       "more_errors": "e mais {{count}}",
       "duplicates": "{{count}} já existiam ou repetem-se no ficheiro.",

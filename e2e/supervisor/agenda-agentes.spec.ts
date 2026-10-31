@@ -142,7 +142,9 @@ test('contactos: pulsar la fila abre su editor con todos sus campos', async ({ p
   await fila.locator('td').nth(3).click();
   const d = page.getByRole('dialog', { name: 'Editar contacto' });
   await expect(d.getByLabel('Empresa')).toHaveValue('Sunset Pictures');
-  await expect(d.getByLabel('Cliente desde')).toHaveValue('2014');
+  // Los campos personalizados se llaman siempre «Personalizado N»: sus etiquetas no se editan (COA SISMAC-4440, DD-245).
+  await expect(d.getByLabel('Personalizado 1')).toHaveValue('2014');
+  await expect(d.getByLabel('Cliente desde')).toHaveCount(0);
   await d.getByLabel('Puesto').fill('Presidenta');
   await d.getByRole('button', { name: 'Guardar' }).click();
   await expect(d).toBeHidden();
