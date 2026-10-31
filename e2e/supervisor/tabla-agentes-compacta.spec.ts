@@ -106,23 +106,28 @@ test('la cabecera es una fila de texto: rótulo y casilla de «todos» centrados
   }
 });
 
-test('la barra: el selector y el buscador, centrados y de borde a borde de la tabla', async ({ page }) => {
+test('la barra: el filtro, el buscador y la cifra, centrados y de borde a borde de la tabla (DD-243)', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/11?seccion=agentes');
   const tabla = page.locator('sc-agent-channel-table');
   await tabla.locator('tbody tr').first().waitFor();
   const m = await tabla.evaluate((el) => {
     const r = (s: string) => el.querySelector(s)!.getBoundingClientRect();
-    const [selector, buscador, caja] = [r('sc-selectbutton .p-selectbutton'), r('sc-search'), r('.table-card')];
+    const [selector, buscador, cifra, caja] = [r('sc-selectbutton .p-selectbutton'), r('sc-search'), r('.assign-bar__count'), r('.table-card')];
     return {
       altos: Math.abs(selector.height - buscador.height),
       centros: Math.abs(selector.top + selector.height / 2 - (buscador.top + buscador.height / 2)),
       izquierda: Math.abs(selector.left - caja.left),
-      derecha: Math.abs(buscador.right - caja.right),
+      cifraCentrada: Math.abs(cifra.top + cifra.height / 2 - (buscador.top + buscador.height / 2)),
+      derecha: Math.abs(cifra.right - caja.right),
+      buscadorACifra: cifra.left - buscador.right,
     };
   });
   // El selector, en su tamaño pequeño, lleva su carril gris: 1,5 más que el campo (34 frente a 32,5), y centrados.
   expect(m.altos, 'casi la misma altura').toBeLessThanOrEqual(1.5);
   expect(m.centros, 'centrados en la misma línea').toBeLessThanOrEqual(0.5);
   expect(m.izquierda, 'el selector, en el borde izquierdo de la tabla').toBeLessThanOrEqual(0.5);
-  expect(m.derecha, 'el buscador, en el borde derecho de la tabla').toBeLessThanOrEqual(0.5);
+  expect(m.cifraCentrada, 'la cifra, en la misma línea').toBeLessThanOrEqual(1);
+  // El buscador llena lo que queda hasta la cifra, a 7, y la cifra cierra la barra en el borde derecho (DD-243).
+  expect(Math.round(m.buscadorACifra), 'del buscador a la cifra, 7').toBe(7);
+  expect(m.derecha, 'la cifra, en el borde derecho de la tabla').toBeLessThanOrEqual(0.5);
 });

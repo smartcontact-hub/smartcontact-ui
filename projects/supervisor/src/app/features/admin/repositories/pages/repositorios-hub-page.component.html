@@ -17,16 +17,9 @@
          encabezado nuevo—, así que sigue habiendo exactamente uno por documento. -->
     <h1 class="page__heading sc-text-title-semibold">{{ 'sidebar.repositories' | translate }}</h1>
 
-    <!-- El buscador (DD-165) y el filtro por categoría, en una línea (DD-179). -->
+    <!-- El filtro por categoría y el buscador, en una línea (DD-179): el filtro primero, como en toda barra con un
+         filtro de conjunto (DD-243), y el buscador busca dentro de lo que deja (DD-165). -->
     <div class="hub__toolbar">
-      <sc-search
-        class="hub__search"
-        [placeholder]="'repositories.hub.search' | translate"
-        [clearAriaLabel]="'labels.clear_search' | translate"
-        [value]="query()"
-        (valueChange)="alEscribir($event)"
-        (focusin)="alEnfocarBuscador($event)"
-      />
       <sc-selectbutton
         class="hub__filter"
         size="sm"
@@ -41,6 +34,14 @@
           <span class="hub-filter__label" [attr.data-tono]="o.value === filtro() ? o.tono : null">{{ o.label }}</span>
         </ng-template>
       </sc-selectbutton>
+      <sc-search
+        class="hub__search"
+        [placeholder]="'repositories.hub.search' | translate"
+        [clearAriaLabel]="'labels.clear_search' | translate"
+        [value]="query()"
+        (valueChange)="alEscribir($event)"
+        (focusin)="alEnfocarBuscador($event)"
+      />
     </div>
 
     <!-- Los recientes: al entrar en el buscador vacío, los últimos repositorios abiertos (la maqueta). -->

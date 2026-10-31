@@ -1,11 +1,8 @@
 <div class="assign">
-  <div class="assign__bar">
-    <span id="group-assignment-filter" class="visually-hidden">{{ 'groups.form.assigned.filter_label' | translate }}</span>
-    <sc-selectbutton size="sm" [options]="filterOptions()" optionValue="value" [value]="filter()"
-      (valueChange)="filter.set($any($event))" [allowEmpty]="false" ariaLabelledBy="group-assignment-filter" />
-    <sc-search class="assign__search" [placeholder]="'groups.form.assigned.query_placeholder' | translate"
-      [clearAriaLabel]="'labels.clear_search' | translate" [value]="query()" (valueChange)="query.set($event)" />
-  </div>
+  <!-- La barra común de las tablas de asignar (DD-243): filtro, buscador y cifra, también en el panel rápido. -->
+  <sc-assign-bar [(filter)]="filter" [(query)]="query" [count]="links().length"
+    [placeholder]="'groups.form.assigned.query_placeholder' | translate"
+    [filterLabel]="'groups.form.assigned.filter_label' | translate" />
   <span class="visually-hidden" aria-live="polite">{{ announcement() }}</span>
   <!-- En la ficha mide lo que todas sus filas, con el pie de la pantalla de tope: al filtrar o buscar no encoge (no baila),
        y con pocos agentes no se estira hasta el fondo con un hueco en blanco (`[filasReservadas]` de `scLlegaAlPie`). En el

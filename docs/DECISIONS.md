@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | La barra de toda tabla de asignar: el filtro del conjunto primero («Todos / Asignados / Sin asignar»), el buscador llenando lo que queda y «N asignados» al final, en una pieza (`sc-assign-bar`) · al editar abre en «Asignados» y en el alta en «Todos», también Agendas y Plantillas · ordenar por nombre en las tablas de asignar y por cualquier columna en el listado de Equipos · el hub de Repositorios, filtro delante del buscador (enmienda DD-176 §4, DD-179 y DD-230 §1) | DD-243 |
 > | Los modales como en ui.smart-contact.com: `sc-custom-modal` (la carcasa, también con `[(visible)]`) y `sc-alert-modal` (aviso con variante `default`, `info`, `warning` o `error`, abierto por `ScDynamicDialogService`) con su misma API y sus fallos arreglados · borrar es `error`, descartar `warning` · se retiran `sc-dialog` y el confirm centrado; el globo con `target` sigue · Figma: «❖ Alert modal» con instancias de Custom modal | DD-241 |
 > | Tipificaciones: el buscador de la lista mira cualquier campo, también los nombres de los grupos que la usan aunque solo salgan al pasar el ratón (enmienda la regla de Agentes y Grupos solo para esta lista) · la edición de Tipificaciones, Agendas, Plantillas y las cuentas y triggers de Email acaba en el nombre guardado, y Agendas, Plantillas y Email abren la miga con «Administración», como Grupos y Agentes · el nombre de las fichas de Repositorios lleva «Ej: …» y la descripción «Breve descripción...» | DD-238 |
 > | Duplicar una agenda o una plantilla es un alta, como un grupo o un agente (enmienda DD-230): abre «Nueva agenda/plantilla» con la copia y su nombre «X (1)» (`seedFromId`, `nombreDeCopia`), que no existe hasta «Crear» · no copia a qué agentes se asigna | DD-234 |
@@ -166,6 +167,52 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-243 · 2026-10-31 — La barra de toda tabla de asignar: el filtro primero, el buscador y la cifra al final
+
+**Contexto** · Desarrollo prepara una tabla reutilizable y vio que la barra de encima cambiaba de una pantalla a otra: en Equipos,
+los botones del filtro y después el buscador; en Agendas, al revés; y el tamaño del buscador y la ordenación, distintos. Medido el
+2026-10-31 en las cinco tablas de asignar: dos órdenes, dos tamaños del filtro, dos juegos de opciones («Todos / Asignados / Sin
+asignar» sin cifra, y «Todos / Asignados (N)»), una cifra suelta solo en Equipos («N en el equipo»), tres copias del mismo marcado,
+la edición de Agendas y Plantillas abriendo en «Todos» y la de las demás en «Asignados», y ordenar por nombre solo en las fichas de
+grupo y agente. El listado de Equipos no ordenaba por ninguna columna.
+
+**Decisión** ·
+1. **El orden**: el filtro del conjunto primero, el buscador después llenando lo que queda, y al final, a la derecha, la cifra (en
+   las tablas de asignar) o «Acciones» y «Columnas» (en los listados). Sin filtro, la barra empieza por el buscador: los listados
+   (`sc-list-page`) no cambian. Es la regla de las listas con vistas (Polaris, Stripe, Linear, Notion): el filtro dice QUÉ conjunto se
+   ve y el buscador busca dentro de él. Buscador primero es para cuando los filtros son desplegables secundarios.
+2. **Una pieza**, `sc-assign-bar` (`shared/components/assign-bar/`), en la ficha de grupo (sus agentes), la de agente (sus grupos),
+   Equipos, Agendas y Plantillas: el filtro en tamaño pequeño con «Todos / Asignados / Sin asignar», el buscador y «N asignados»
+   («1 asignado»), a 7 entre piezas (DD-192). También en el panel rápido del Monitor, cuyo pie decía «Asignados: 14» y ahora
+   solo dice lo que falta guardar («Sin guardar: 2»): un sitio y un texto para la cifra.
+3. **Con qué abre**: al editar, «Asignados»; en el alta, «Todos» (DD-151), también en Agendas y Plantillas, que abrían siempre en
+   «Todos». Marcar o desmarcar no mueve las filas hasta cambiar de filtro o de búsqueda (DD-151), también en Agendas y Plantillas: en
+   «Asignados», quitar uno ya no lo hace desaparecer bajo el cursor.
+4. **Ordenar**: las tablas de asignar, por nombre (A→Z y Z→A), las cinco; los listados, por cualquier columna salvo Estado (DD-180), y
+   el de Equipos gana sus tres.
+5. **Las columnas** de cada tabla son las de su página de COA: Equipos, «Agente» con foto, nombre y email; Agendas y Plantillas,
+   Nombre, Email y Grupos. Se unifica la barra, no el contenido.
+6. **El hub de Repositorios**, que filtra por categoría, pone también el filtro delante del buscador, a 7 (antes, 14).
+
+**Razón** · El filtro decide qué hay en la tabla y la búsqueda trabaja dentro de eso: leerlos en ese orden es leer la tabla en el
+orden en que se construye. Una sola pieza es un solo sitio que desarrollo reproduce una vez, y un cambio (un texto, un tamaño) que no
+hay que repetir en cinco pantallas. La cifra al final, siempre en el mismo sitio, responde «cuántos llevo» sin cambiar de filtro.
+
+**Descartadas** ·
+- *Buscador primero en todas*: era lo de los listados, pero en ellos no hay filtro de conjunto, y obligaba a rehacer Equipos, que
+  desarrollo ya tiene hecho, y las dos fichas.
+- *«Todos / Asignados (N)» en todas*: pierde «Sin asignar», que es como se busca a quién falta por añadir.
+- *Una sola tabla de agentes para Equipos, Agendas y Plantillas*: cada COA pide sus columnas.
+
+**Consecuencias** · Enmienda DD-176 §4 (el buscador llena hasta la cifra, que es la que toca el borde derecho), DD-179 (el orden de la
+barra del hub) y DD-230 §1 («Todos / Asignados (N)»). Textos nuevos en `common.assign_bar.*`; se van
+`groups.form.assigned.filter_*`, `repositories.agent_assignment.filter_all` y `filter_assigned`, `repositories.equipos.assigned_count`
+y `groups.agents_panel.assigned`.
+Prueba: `e2e/supervisor/barra-comun-tablas.spec.ts`. Fuera del repo: las páginas de COA de 4058, 4062, 4453, 4440, 4438 y 4064
+llaman «filtro» a lo que llamaban «pestañas» y cuentan la cifra; Figma, cuando estén todos los bloques del empate.
 
 ---
 

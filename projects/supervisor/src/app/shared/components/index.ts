@@ -28,6 +28,10 @@ export type { ColumnToggleOption } from './column-toggle/column-toggle.component
 export { normalizePrefs } from './column-toggle/column-prefs';
 export type { ColumnPrefs } from './column-toggle/column-prefs';
 
+// La barra de toda tabla de asignar: filtro, buscador y cifra de asignados (DD-243).
+export { AssignBarComponent } from './assign-bar/assign-bar.component';
+export type { AssignFilter } from './assign-bar/assign-bar.component';
+
 // Importar de un CSV: el mismo diálogo en Tipificaciones, Plantillas y Agendas (DD-166, revisión del 2026-10-15).
 export { ImportDialogComponent } from './import-dialog/import-dialog.component';
 export type { ImportSummary } from './import-dialog/import-dialog.component';

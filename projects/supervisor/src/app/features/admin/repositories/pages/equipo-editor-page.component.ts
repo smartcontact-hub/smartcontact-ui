@@ -6,11 +6,11 @@ import {
   ScCheckboxComponent as CheckboxComponent,
   type ScColumnCellContext,
   type ScColumnDef,
+  type ScColumnHeaderContext,
+  type ScDatatableSortEvent,
   ScDatatableComponent as DatatableComponent,
   ScInputTextComponent as InputTextComponent,
-  ScSearchComponent as SearchComponent,
   ScSectionCardComponent as SectionCardComponent,
-  ScSelectButtonComponent as SelectButtonComponent,
   ScSubsectionComponent as SubsectionComponent,
 } from '@smartcontact-hub/components';
 
@@ -18,7 +18,7 @@ import type { DirtyAware } from '@core/guards';
 import { LlegaAlPieDirective } from '@core/directives';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { injectLangChange } from '@core/utils/lang-change';
-import { PresenceAvatarComponent } from '@shared/components';
+import { AssignBarComponent, type AssignFilter, PresenceAvatarComponent } from '@shared/components';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 import { nombreDeCopia } from '@shared/utils/copy-name';
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
@@ -48,16 +48,15 @@ const VACIO: Borrador = { name: '', description: '', agentIds: new Set() };
   selector: 'sc-equipo-editor-page',
   imports: [
     TooltipModule,
+    AssignBarComponent,
     ButtonComponent,
     CheckboxComponent,
     DatatableComponent,
     InputTextComponent,
     LlegaAlPieDirective,
     PresenceAvatarComponent,
-    SearchComponent,
     SectionCardComponent,
     SubsectionComponent,
-    SelectButtonComponent,
     TranslateModule,
   ],
   template: `
@@ -124,32 +123,15 @@ const VACIO: Borrador = { name: '', description: '', agentIds: new Set() };
           <sc-section-card titleKey="repositories.equipos.agents" icon="headphones">
             <sc-subsection>
               <div class="assign">
-                <div class="assign__bar">
-                  <span id="grupo-agentes-filter" class="visually-hidden">{{ 'groups.form.assigned.filter_label' | translate }}</span>
-                  <sc-selectbutton size="sm" [options]="filterOptions()" optionValue="value" [value]="filter()"
-                    (valueChange)="filter.set($any($event))" [allowEmpty]="false" ariaLabelledBy="grupo-agentes-filter" />
-                  <sc-search class="assign__search" [placeholder]="'groups.form.assigned.query_placeholder' | translate"
-                    [clearAriaLabel]="'labels.clear_search' | translate" [value]="query()" (valueChange)="query.set($event)" />
-                  <span class="assign__count sc-text-caption-regular" role="status">
-                    {{ 'repositories.equipos.assigned_count' | translate: { count: form().agentIds.size } }}
-                  </span>
-                </div>
+                <!-- La barra común de las tablas de asignar (DD-243): filtro, buscador y cifra. -->
+                <sc-assign-bar [(filter)]="filter" [(query)]="query" [count]="form().agentIds.size"
+                  [placeholder]="'groups.form.assigned.query_placeholder' | translate"
+                  [filterLabel]="'groups.form.assigned.filter_label' | translate" />
                 <div class="table-card table-card--al-pie" scLlegaAlPie>
+                  <!-- «Agente» se ordena por nombre, como en la ficha de grupo (DD-243): el orden lo pone \`filas\`. -->
                   <sc-datatable variant="list" size="sm" scrollable scrollHeight="flex" virtualScroll
-                    [value]="filas()" [columns]="columns()" dataKey="id">
-                    <ng-template #header>
-                      <tr>
-                        @for (col of columns(); track col.field) {
-                          <th scope="col" [style.text-align]="col.align" [style.width]="col.width" [attr.aria-label]="col.header">
-                            @if (col.field === 'assigned') {
-                              <sc-checkbox [state]="estadoCabecera()" [disabled]="filas().length === 0"
-                                [ariaLabel]="'groups.form.assigned.column_all' | translate: { column: col.header }"
-                                (cycle)="toggleTodos()" />
-                            } @else { {{ col.header }} }
-                          </th>
-                        }
-                      </tr>
-                    </ng-template>
+                    [value]="filas()" [columns]="columns()" dataKey="id"
+                    externalSort [sortField]="orden() ? 'agent' : undefined" [sortOrder]="orden() ?? 1" (sortChange)="onSortChange($event)">
                     <div scTableEmpty class="assign__no-results sc-text-body-regular">{{ 'groups.form.assigned.no_results' | translate }}</div>
                   </sc-datatable>
                 </div>
@@ -159,6 +141,13 @@ const VACIO: Borrador = { name: '', description: '', agentIds: new Set() };
         </div>
       </div>
     </div>
+
+    <!-- La casilla de «todos» en la cabecera de Asignado: las filas a la vista entran o salen todas. -->
+    <ng-template #headerCheckTpl let-col>
+      <sc-checkbox [state]="estadoCabecera()" [disabled]="filas().length === 0"
+        [ariaLabel]="'groups.form.assigned.column_all' | translate: { column: col.header }"
+        (cycle)="toggleTodos()" />
+    </ng-template>
 
     <ng-template #assignedTpl let-row>
       <sc-checkbox
@@ -194,19 +183,6 @@ const VACIO: Borrador = { name: '', description: '', agentIds: new Set() };
       display: flex;
       flex-direction: column;
       gap: var(--sc-spacing-1);
-    }
-    .assign__bar {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: var(--sc-spacing-0-5);
-    }
-    .assign__search {
-      flex: 1 1 240px;
-      min-width: 0;
-    }
-    .assign__count {
-      color: var(--sc-text-secondary);
     }
     .assign__name {
       display: inline-flex;
@@ -253,6 +229,7 @@ export class EquipoEditorPageComponent implements DirtyAware, OnInit {
   private readonly topbarActions = viewChild<TemplateRef<unknown>>('topbarActions');
   private readonly assignedTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('assignedTpl');
   private readonly agentTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('agentTpl');
+  private readonly headerCheckTpl = viewChild<TemplateRef<ScColumnHeaderContext<Agent>>>('headerCheckTpl');
 
   constructor() {
     useTopbarActions(this.topbarActions);
@@ -273,37 +250,49 @@ export class EquipoEditorPageComponent implements DirtyAware, OnInit {
         header: this.translate.instant('groups.form.assigned.assignment'),
         width: '3.5rem',
         align: 'center' as const,
+        headerAriaLabel: this.translate.instant('groups.form.assigned.assignment'),
+        headerTemplate: this.headerCheckTpl(),
         cellTemplate: this.assignedTpl(),
         stopRowClick: true,
       },
-      { field: 'agent', header: this.translate.instant('groups.form.assigned.col_agent'), rowHeader: true, cellTemplate: this.agentTpl() },
+      {
+        field: 'agent',
+        header: this.translate.instant('groups.form.assigned.col_agent'),
+        sortable: true,
+        rowHeader: true,
+        cellTemplate: this.agentTpl(),
+      },
     ];
   });
 
   /* ── La lista de agentes, como la del grupo (DD-151) ─────────────────────── */
 
   protected readonly query = signal('');
-  protected readonly filter = linkedSignal(() => (this.mode() === 'create' ? 'all' : 'assigned'));
-  protected readonly filterOptions = computed(() => {
-    this.lang();
-    return ['all', 'assigned', 'unassigned'].map((value) => ({
-      value,
-      label: this.translate.instant(`groups.form.assigned.filter_${value}`),
-    }));
-  });
+  protected readonly filter = linkedSignal<AssignFilter>(() => (this.mode() === 'create' ? 'all' : 'assigned'));
+
+  /** El orden por nombre: \`1\`, A→Z; \`-1\`, Z→A; \`null\`, el de la lista de agentes. */
+  protected readonly orden = signal<1 | -1 | null>(null);
+
+  /* Solo si CAMBIA: la tabla vuelve a avisar del orden cada vez que recibe filas nuevas (como en la ficha de grupo). */
+  protected onSortChange(event: ScDatatableSortEvent): void {
+    const orden = event.field === 'agent' && (event.order === 1 || event.order === -1) ? event.order : null;
+    if (orden !== this.orden()) this.orden.set(orden);
+  }
 
   /** Las filas a la vista. Marcar no las mueve hasta que cambia la búsqueda o la vista (`untracked`, como en el grupo). */
   protected readonly filas = computed(() => {
     const filtro = this.filter();
     const q = this.query().trim().toLowerCase();
     const dentro = untracked(this.form).agentIds;
-    return this.agentsStore
+    const orden = this.orden();
+    const filas = this.agentsStore
       .agents()
       .filter(
         (a) =>
           (filtro === 'all' || (filtro === 'assigned') === dentro.has(a.id)) &&
           (!q || `${a.name} ${a.email ?? ''}`.toLowerCase().includes(q)),
       );
+    return orden ? [...filas].sort((a, b) => a.name.localeCompare(b.name, 'es') * orden) : filas;
   });
 
   protected readonly estadoCabecera = computed<'all' | 'some' | 'none'>(() => {

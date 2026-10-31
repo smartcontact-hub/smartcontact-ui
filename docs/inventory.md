@@ -88,10 +88,10 @@
 | `sc-progressbar` | EXTENDED | ready | primeng/progressbar | 6 inputs | — | ✓ | — |
 | `sc-progressspinner` | EXTENDED | ready | primeng/progressspinner | 4 inputs | — | ✓ | — |
 | `sc-radiobutton` | EXTENDED | ready | primeng/radiobutton | 7 inputs | — | ✓ | 3 |
-| `sc-search` | EXTENDED | experimental (sin maestro en el Kit) | primeng/iconfield, primeng/inputicon, primeng/inputtext | 11 inputs | — | ✓ | 13 |
+| `sc-search` | EXTENDED | experimental (sin maestro en el Kit) | primeng/iconfield, primeng/inputicon, primeng/inputtext | 11 inputs | — | ✓ | 10 |
 | `sc-section-card` | CUSTOM | ready | — | 9 inputs | sc-button | ✓ | 39 |
 | `sc-select` | EXTENDED | ready | primeng/select | 30 inputs | sc-field-label sc-field-msg | ✓ | 71 |
-| `sc-selectbutton` | EXTENDED | ready | primeng/selectbutton | 15 inputs | sc-field-msg | ✓ | 25 |
+| `sc-selectbutton` | EXTENDED | ready | primeng/selectbutton | 15 inputs | sc-field-msg | ✓ | 22 |
 | `sc-skeleton` | EXTENDED | ready | primeng/skeleton | 6 inputs | — | ✓ | 1 |
 | `sc-slot` | CUSTOM | experimental (sin maestro en el Kit) | — | 4 inputs | — | ✓ | 12 |
 | `sc-step-marker` | CUSTOM | experimental (sin maestro en el Kit ni demo) | — | 1 inputs | — | — | — |

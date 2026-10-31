@@ -1030,7 +1030,14 @@
       "choose": "Choose file",
       "choose_other": "Choose another file"
     },
-    "columns_search": "Search columns…"
+    "columns_search": "Search columns…",
+    "assign_bar": {
+      "all": "All",
+      "assigned": "Assigned",
+      "unassigned": "Unassigned",
+      "count_one": "{{count}} assigned",
+      "count_other": "{{count}} assigned"
+    }
   },
   "topbar": {
     "go_to_dashboard": "Go to dashboard",
@@ -1733,7 +1740,6 @@
       "agents": "Agents",
       "create_submit": "Create team",
       "edit_breadcrumb": "Edit team",
-      "assigned_count": "{{count}} in the team",
       "no_description": "No description",
       "agents_aria": "{{count}} agents",
       "agents_aria_one": "1 agent",
@@ -1746,12 +1752,11 @@
     },
     "agent_assignment": {
       "search": "Search agents…",
-      "filter_all": "All",
-      "filter_assigned": "Assigned ({{count}})",
       "filter_aria": "Show agents",
       "email": "Email",
       "no_results": "No agent matches “{{query}}”.",
       "none_assigned": "No agents are assigned yet.",
+      "none_unassigned": "All the agents are assigned.",
       "empty": "There are no agents yet",
       "select_all_aria": "Select all the agents shown"
     }
@@ -1995,9 +2000,6 @@
         "last_channel_hint": "At least one channel is required. Uncheck Assigned to remove the agent from the group.",
         "last_channel_aria": "{{name}} — {{channel}}: only channel; uncheck Assigned to remove from the group",
         "assignment": "Assigned",
-        "filter_all": "All",
-        "filter_assigned": "Assigned",
-        "filter_unassigned": "Unassigned",
         "filter_label": "Filter by assignment",
         "column_all": "Change {{column}} in filtered results",
         "bulk_done": "Updated {{count}} agents.",
@@ -2259,7 +2261,6 @@
     "bulk_edit_title": "Apply change to {{count}} group(s)",
     "agents_panel": {
       "title": "Agents: {{name}}",
-      "assigned": "Assigned: {{count}}",
       "unsaved": "Unsaved: {{count}}",
       "save_count": "Save ({{count}})",
       "saved": "Agents of \"{{name}}\" updated"

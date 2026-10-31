@@ -1030,7 +1030,14 @@
       "choose": "Elegir archivo",
       "choose_other": "Elegir otro archivo"
     },
-    "columns_search": "Buscar columnas…"
+    "columns_search": "Buscar columnas…",
+    "assign_bar": {
+      "all": "Todos",
+      "assigned": "Asignados",
+      "unassigned": "Sin asignar",
+      "count_one": "{{count}} asignado",
+      "count_other": "{{count}} asignados"
+    }
   },
   "topbar": {
     "go_to_dashboard": "Ir al dashboard",
@@ -1733,7 +1740,6 @@
       "agents": "Agentes",
       "create_submit": "Crear equipo",
       "edit_breadcrumb": "Editar equipo",
-      "assigned_count": "{{count}} en el equipo",
       "no_description": "Sin descripción",
       "agents_aria": "{{count}} agentes",
       "agents_aria_one": "1 agente",
@@ -1746,12 +1752,11 @@
     },
     "agent_assignment": {
       "search": "Buscar agentes…",
-      "filter_all": "Todos",
-      "filter_assigned": "Asignados ({{count}})",
       "filter_aria": "Mostrar agentes",
       "email": "Email",
       "no_results": "Ningún agente coincide con «{{query}}».",
       "none_assigned": "Aún no hay agentes asignados.",
+      "none_unassigned": "Todos los agentes están asignados.",
       "empty": "No hay agentes todavía",
       "select_all_aria": "Marcar todos los agentes que se ven"
     }
@@ -1998,9 +2003,6 @@
         "last_channel_hint": "Debe atender al menos un canal. Para quitarlo del grupo, desmarca Asignado.",
         "last_channel_aria": "{{name}} — {{channel}}: único canal; para quitarlo del grupo, desmarca Asignado",
         "assignment": "Asignado",
-        "filter_all": "Todos",
-        "filter_assigned": "Asignados",
-        "filter_unassigned": "Sin asignar",
         "filter_label": "Filtrar por asignación",
         "column_all": "Cambiar {{column}} en los resultados filtrados",
         "bulk_done": "Se han actualizado {{count}} agentes.",
@@ -2259,7 +2261,6 @@
     "bulk_edit_title": "Aplicar cambio a {{count}} grupo(s)",
     "agents_panel": {
       "title": "Agentes: {{name}}",
-      "assigned": "Asignados: {{count}}",
       "unsaved": "Sin guardar: {{count}}",
       "save_count": "Guardar ({{count}})",
       "saved": "Agentes de «{{name}}» actualizados"

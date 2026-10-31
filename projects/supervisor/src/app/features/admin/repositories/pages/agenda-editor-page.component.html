@@ -77,6 +77,7 @@
         <sc-agent-assignment-table
           [agents]="agentsStore.agents()"
           [assigned]="form().agentIds"
+          [editing]="mode() === 'edit'"
           rowAriaKey="repositories.agendas.agents_row_aria"
           (assignedChange)="update('agentIds', $event)"
         />

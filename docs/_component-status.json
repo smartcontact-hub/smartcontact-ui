@@ -1705,7 +1705,7 @@
         "kit"
       ],
       "retirado": null,
-      "usedInSupervisor": 13,
+      "usedInSupervisor": 10,
       "cuando": "Para filtrar escribiendo. Solo se lleva el foco al entrar si buscar es LA acción de la pantalla.",
       "sobreObsoleto": []
     },
@@ -1830,7 +1830,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 25,
+      "usedInSupervisor": 22,
       "cuando": "Para elegir una opción de 2-4 que se explican solas, todas visibles. Si cambia de COLECCIÓN en vez de filtrar, son pestañas (DD-113).",
       "sobreObsoleto": []
     },

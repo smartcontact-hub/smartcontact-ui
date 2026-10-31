@@ -45,7 +45,8 @@ export class EquiposPageComponent {
   /** Cuántos agentes lleva cada uno: lo único que dice de él, aparte de su nombre. Con varios, la cifra enseña sus
    *  nombres en un tooltip, como las demás listas con una relación (Tipificaciones, Agentes, Grupos). */
   private readonly columns: readonly RepoColumnDef<Equipo>[] = [
-    { key: 'name', labelKey: 'repositories.columns.name', kind: 'text', accessor: (i) => i.name, emphasis: true },
+    // Se ordena por cualquier columna, como todo listado (DD-180, DD-243).
+    { key: 'name', labelKey: 'repositories.columns.name', kind: 'text', accessor: (i) => i.name, emphasis: true, sortable: true },
     {
       key: 'description',
       labelKey: 'repositories.columns.description',
@@ -53,6 +54,7 @@ export class EquiposPageComponent {
       accessor: (i) => i.description,
       width: '320px',
       emptyDash: true,
+      sortable: true,
     },
     {
       // Como en el COA de SISMAC-4453: la cifra siempre (0 incluido), con los nombres al pasar, y al pulsarla se abre el equipo.
@@ -65,6 +67,7 @@ export class EquiposPageComponent {
       emptyAsZero: true,
       groupsAriaKey: 'repositories.equipos.agents_aria',
       width: '112px',
+      sortable: true,
     },
   ];
 
