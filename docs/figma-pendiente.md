@@ -1543,6 +1543,31 @@ botón de X1 a X3 lleva `key`.
 
 ---
 
+## 64 · La barra común de asignar y el hub de Repositorios como su COA (DD-243, DD-245; 2026-10-31)
+
+**Estado:** dibujado en el Supervisor; queda lo de abajo · **Dónde:** el Supervisor (`Hjyy41SYKqcRuIzCGggfYH`), páginas
+Equipos, Agendas, Plantillas, Grupos, Agentes y Repositorios · **Evidencia:** `barra-comun-tablas.spec.ts` y
+`repositorios-hub.spec.ts`.
+
+**Hecho** (por el server de la nube, el 2026-10-31):
+- **Barra de asignar**: filtro «Todos / Asignados / Sin asignar» (tamaño pequeño), buscador y, al final, el contador
+  «N asignados» («1 asignado»; estilo de la descripción, color `text/secondary`). Agendas (19 barras) y Plantillas (13)
+  pasan de «Todos / Asignados (N)» y del buscador delante a las tres opciones con el filtro delante; Grupos (9) y Agentes
+  (5) ganan el contador; Equipos (16) cambia «N en el equipo» por «N asignados». Las notas «Cómo se comporta» de Equipos,
+  Agendas y Plantillas dicen la barra, con qué abre y el orden por nombre. El vacío dice «Asígnalos desde «Todos».».
+- **Hub** (`3993:10509` y `3997:295`): el filtro delante del buscador, a 7 (`scale/0-5`); «Diseñador Conversacional» con
+  mayúscula; las ocho tarjetas «Próximamente» del COA (también en el mapa, `3998:532`) llevan esa marca en la línea del
+  nombre (fila `encabezado`, estilo y color de la descripción).
+
+**Queda:**
+- **Comunicación sin su azul**: en Figma, título, icono y cifra de Comunicación van atados a `blue/700`, que en la
+  librería es el marino de marca; el código usa `azure` (`--sc-label-blue-*`, #1d4ed8), que la librería no tiene. Hace
+  falta la familia en la librería (o decidir otra) antes de reatar.
+- **«❖ Alert modal» con superficie blanca** (DD-242): lo hace la sesión del Bloque 1, sobre lo que midió en código; la
+  publicación de la librería es de Rafa.
+- **Enlaces de Figma en los COA** de 4438, 4440 y 4064 (páginas `4077:58411`, `4067:100978` y `3491:35886`): van en los
+  prompts de `~/Documents/Claude/2026-10 Empate flujos AED/`; los pega y publica Rafa.
+
 ## Lo de estas semanas que NO va a Figma, y por qué
 
 - **El juego de datos** (Demo · Editorial · Tortura, en Configuración → Sistema → Datos; DD-124): es una herramienta de
