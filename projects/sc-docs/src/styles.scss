@@ -60,7 +60,9 @@ body {
 
 /* Cada página entra con un fundido corto al navegar: el marco (cabecera, lateral) se queda quieto y cambia lo de
    dentro. Solo opacidad: el host de una ruta no siempre es un bloque, y un `transform` o un `display` aquí movería la
-   maqueta de todas las páginas. Las cajas que solo envuelven a otra ruta no entran: la que entra es la página. */
+   maqueta de todas las páginas. Las cajas que solo envuelven a otra ruta no entran: la que entra es la página.
+   `backwards` y no `both`: al acabar, la animación suelta la página. Sostener la opacidad final la deja en su propia
+   capa y el texto se suaviza distinto (las capturas base de las fichas lo cazan). Igual en las entradas de la portada. */
 @keyframes demo-entra-pagina {
   from {
     opacity: 0;
@@ -68,7 +70,7 @@ body {
 }
 
 .demo-main router-outlet + :not(app-storybook-shell, app-fundamentos-shell) {
-  animation: demo-entra-pagina var(--sc-transition-slow) var(--demo-ease-salida) both;
+  animation: demo-entra-pagina var(--sc-transition-slow) var(--demo-ease-salida) backwards;
 }
 
 @media (prefers-reduced-motion: reduce) {

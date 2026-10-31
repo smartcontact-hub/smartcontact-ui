@@ -293,7 +293,7 @@
       width: 4px;
       border-radius: var(--sc-radius-md);
       background: var(--sc-border-accent);
-      animation: demo-barra var(--sc-transition-slow) var(--demo-ease-salida) both;
+      animation: demo-barra var(--sc-transition-slow) var(--demo-ease-salida) backwards;
     }
 
     &:focus-visible {

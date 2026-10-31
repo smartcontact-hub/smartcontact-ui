@@ -623,7 +623,7 @@ a.ini-enlace:focus-visible,
 }
 
 .ini-hero__forma {
-  animation: ini-entra-forma 1100ms var(--demo-ease-salida) both;
+  animation: ini-entra-forma 1100ms var(--demo-ease-salida) backwards;
 }
 
 .ini-hero__esfera,
@@ -646,20 +646,20 @@ a.ini-enlace:focus-visible,
 }
 
 .ini-hero__titulo {
-  animation: ini-sube 700ms var(--demo-ease-salida) both;
+  animation: ini-sube 700ms var(--demo-ease-salida) backwards;
 }
 
 /* El producto llega un instante después que la marca, como quien firma. */
 .ini-hero__producto {
-  animation: ini-sube 700ms var(--demo-ease-salida) 140ms both;
+  animation: ini-sube 700ms var(--demo-ease-salida) 140ms backwards;
 }
 
 .ini-hero__sub {
-  animation: ini-sube 700ms var(--demo-ease-salida) 220ms both;
+  animation: ini-sube 700ms var(--demo-ease-salida) 220ms backwards;
 }
 
 .ini-rejilla > .ini-card {
-  animation: ini-sube 800ms var(--demo-ease-salida) both;
+  animation: ini-sube 800ms var(--demo-ease-salida) backwards;
 
   &:nth-child(1) {
     animation-delay: 180ms;
@@ -677,11 +677,11 @@ a.ini-enlace:focus-visible,
 /* Los trazos se dibujan cuando ya está la tarjeta; sus nodos aparecen al terminar. */
 .ini-ilus__trazo path {
   stroke-dasharray: 1;
-  animation: ini-dibuja 1400ms var(--demo-ease-salida) 600ms both;
+  animation: ini-dibuja 1400ms var(--demo-ease-salida) 600ms backwards;
 }
 
 .ini-ilus__trazo circle {
-  animation: ini-aparece 500ms ease-out 1300ms both;
+  animation: ini-aparece 500ms ease-out 1300ms backwards;
 }
 
 /* Las capas de cada ilustración, a distinta profundidad al pasar por la tarjeta. La ventana va pegada al borde de la
