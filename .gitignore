@@ -89,3 +89,6 @@ Thumbs.db
 # `docs-capturas` en Linux.
 /projects/sc-docs/public/ia/*.md
 /projects/sc-docs/public/llms.txt
+/projects/sc-docs/public/llms-full.txt
+/projects/sc-docs/public/robots.txt
+/projects/sc-docs/public/sitemap.xml

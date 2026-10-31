@@ -586,8 +586,12 @@ export const TIPOGRAFIA_SUELTA_MAX = 59;
  *
  * 96 → 94 el 2026-10-05: sale `component-page.scss`, que no importaba nadie desde la migración de julio (sus `h1` y
  * `h2` contaban sin pintar nada). Sus `.row` y `.col` viven ahora en `styles.scss`, acotadas al lienzo.
+ *
+ * 94 → 79 el 2026-10-31, con el shell nuevo de la doc (cabecera, lateral por sección, «En esta página»): el shell, la
+ * portada, el índice y las cabeceras de página piden su letra con `.sc-text-*`, y cada página deja de reponer el
+ * tamaño de su `h1`, que pone uno solo, `.demo-main h1`.
  */
-export const TIPOGRAFIA_SUELTA_DOCS_MAX = 94;
+export const TIPOGRAFIA_SUELTA_DOCS_MAX = 79;
 
 /** Las hojas de sc-docs que SÍ cuentan: su contenido, no el simulador del navegador. */
 export const esSimuladorDeNavegador = (hoja) => /pages\/validar\//.test(hoja);

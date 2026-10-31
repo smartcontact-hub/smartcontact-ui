@@ -145,6 +145,11 @@ export const routes: Routes = [
   { path: 'theme', pathMatch: 'full', redirectTo: 'tema' },
   { path: 'fundamentos/tema', pathMatch: 'full', redirectTo: 'tema' },
 
-  // Componentes es el protagonista de la doc: es la portada.
-  { path: '', pathMatch: 'full', redirectTo: 'components' },
+  // Portada: la puerta a las cinco secciones, con la composición de las docs de sistema de diseño de referencia.
+  // Antes `/` llevaba directo a Componentes; Componentes sigue siendo la primera tarjeta.
+  {
+    path: '',
+    pathMatch: 'full',
+    loadComponent: () => import('./pages/inicio/inicio.component').then((m) => m.InicioComponent),
+  },
 ];

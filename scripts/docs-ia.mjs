@@ -12,6 +12,10 @@
  *   projects/sc-docs/public/llms.txt           índice para agentes (formato llmstxt.org), servido en la raíz
  *   projects/sc-docs/public/ia/<ficha>.md      la ficha: cuándo, estado, importar, propiedades, cada story con su código
  *                                             y su enlace, anatomía, dónde se usa y su captura
+ *   projects/sc-docs/public/ia/{tokens,patrones,iconos}.md   los Fundamentos: qué token es para qué, la barra de calidad
+ *                                             de una pantalla y qué icono dice cada cosa, leídos de donde los lee la web
+ *   projects/sc-docs/public/llms-full.txt      todo lo anterior en un solo fichero, para quien lo quiere de una vez
+ *   projects/sc-docs/public/{robots.txt,sitemap.xml}   sin ellos el SPA respondía su `index.html` a quien los pedía
  * Con `--paquete`, además, lo mismo dentro de `dist/ui-smartcontact/` (`llms.txt` + `ia/`): así viaja con el paquete del
  * DS, y el agente de un repo que lo instala lo lee en `node_modules` sin internet.
  *
@@ -301,7 +305,7 @@ export function fichaMd({ pagina, meta, historias, componente, clase, usos, capt
   return l.join('\n').replace(/\n{3,}/g, '\n\n');
 }
 
-export function llmsTxt(fichas, fecha) {
+export function llmsTxt(fichas, fecha, fundamentos = []) {
   const l = [
     '# Smart Contact UI',
     '',
@@ -315,15 +319,130 @@ export function llmsTxt(fichas, fecha) {
     '',
   ];
   for (const f of fichas) l.push(`- [${f.titulo} (\`<${f.tag}>\`)](ia/${f.pagina}.md)${f.cuando ? `: ${f.cuando}` : ''}`);
+  if (fundamentos.length) {
+    l.push('', '## Fundamentos', '');
+    for (const f of fundamentos) l.push(`- [${f.titulo}](ia/${f.pagina}.md): ${f.resumen}`);
+  }
   l.push(
     '',
     '## Datos',
     '',
     `- [Contrato de todos los componentes, en JSON](${SITIO}/components/_component-api.json): propiedades, tipos, valores por defecto, estado y «cuándo», generado del código.`,
     `- [Dónde se usa cada componente en la app, en JSON](${SITIO}/usage/_usage-status.json)`,
+    `- [Qué token semántico es para qué, en JSON](${SITIO}/tokens/_semantic-docs.json)`,
+    `- [Versiones publicadas y qué trae cada una, en JSON](${SITIO}/novedades/_novedades.json)`,
+    '',
+    '## Optional',
+    '',
+    `- [Todo en un solo fichero](${SITIO}/llms-full.txt): este índice seguido de cada ficha entera.`,
     '',
   );
   return l.join('\n');
+}
+
+// ── Fundamentos: lo que un agente necesita además de las fichas ────────────────────────────────
+
+/** Qué token es para qué: `_semantic-docs.json`, el mismo que pinta Fundamentos → Escala y color. */
+function tokensMd(fecha) {
+  const docs = JSON.parse(readFileSync(join(root, 'projects/sc-docs/public/tokens/_semantic-docs.json'), 'utf8'));
+  const l = [
+    '# Tokens semánticos `--sc-*`',
+    '',
+    '> El contrato de color del DS. Una pantalla pide el ROL (`--sc-bg-surface`, `--sc-text-secondary`), nunca un color de ' +
+      'paleta (`--sc-color-slate-200`): el rol voltea solo en oscuro, la paleta no. Los tamaños y espacios salen de ' +
+      '`--sc-spacing-*` y la letra de las clases `.sc-text-*`.',
+    '',
+    `Generado el ${fecha} de \`tokens/_semantic-docs.json\`. En la web: ${SITIO}/#/fundamentos/escala-color`,
+    '',
+  ];
+  const familias = new Map();
+  for (const t of docs.tokens) familias.set(t.familia, [...(familias.get(t.familia) ?? []), t]);
+  for (const [familia, tokens] of familias) {
+    l.push(`## ${familia[0].toUpperCase()}${familia.slice(1)}`, '');
+    for (const t of tokens) {
+      l.push(`- \`--${t.token}\`: ${t.uso}${t.no ? ` ${t.no}` : ''}${t.dd ? ` (${t.dd})` : ''}`);
+    }
+    l.push('');
+  }
+  return l.join('\n');
+}
+
+/** La barra de calidad de una pantalla: los principios de Fundamentos → Patrones, con su texto de la web. */
+function patronesMd(fecha) {
+  const es = JSON.parse(readFileSync(join(root, 'projects/sc-docs/public/assets/i18n/es.json'), 'utf8'));
+  const p = es.fundamentos.patterns;
+  const sinHtml = (t) => String(t ?? '').replace(/<[^>]+>/g, '');
+  const l = [
+    `# ${p.title}`,
+    '',
+    `> ${sinHtml(p.lead)}`,
+    '',
+    `Generado el ${fecha} de la página de Patrones. En la web: ${SITIO}/#/fundamentos/patrones`,
+    '',
+  ];
+  for (const pr of Object.values(p.principles)) {
+    l.push(`## ${pr.title}`, '', `- Aplica: ${sinHtml(pr.apply)}`, `- Evita: ${sinHtml(pr.avoid)}`, `- Ya lo tienes: ${sinHtml(pr.have)}`, '');
+  }
+  return l.join('\n');
+}
+
+/** Qué icono dice cada cosa (DD-200): `sc-icon-meanings.ts`, el mismo que leen la página Iconos y `audit:icons`. */
+function iconosMd(fecha) {
+  const fuente = readFileSync(join(root, 'projects/ui-smartcontact-icons/src/lib/icons/sc-icon-meanings.ts'), 'utf8');
+  const bloque = (nombre) => fuente.slice(fuente.indexOf(`export const ${nombre}`)).split('} as const')[0];
+  const conceptos = [...bloque('SC_ICONS').matchAll(/^\s+(\w+): '([\w]+)',?$/gm)];
+  const reservados = [...bloque('SC_ICON_RESERVADOS').matchAll(/^\s+(\w+): \{ significa: '([^']*)', noSignifica: '([^']*)'.*?(?:enSuLugar: '(\w+)')?\s*\},?$/gm)];
+  const l = [
+    '# Iconos',
+    '',
+    '> Un solo juego, Material Symbols, por `<sc-icon name="…">` (paquete `@smartcontact-hub/icons`). Un concepto, un ' +
+      'icono; y los iconos reservados significan una sola cosa en todo el producto (DD-200). Úsalos por concepto: ' +
+      '`SC_ICONS.agentes`, no el nombre suelto.',
+    '',
+    `Generado el ${fecha} de \`sc-icon-meanings.ts\`. En la web: ${SITIO}/#/fundamentos/iconos`,
+    '',
+    '## Un icono por concepto (`SC_ICONS`)',
+    '',
+    ...conceptos.map(([, clave, icono]) => `- \`${clave}\`: \`${icono}\``),
+    '',
+    '## Reservados (`SC_ICON_RESERVADOS`)',
+    '',
+    ...reservados.map(
+      ([, icono, si, no, otro]) => `- \`${icono}\`: ${si}. No es: ${no.toLowerCase()}.${otro ? ` Para eso, \`${otro}\`.` : ''}`,
+    ),
+    '',
+  ];
+  return l.join('\n');
+}
+
+/** Las páginas de Fundamentos para agentes, con su línea del índice. */
+export function fundamentos(fecha) {
+  return [
+    { pagina: 'tokens', titulo: 'Tokens semánticos', resumen: 'qué rol de color usar para cada cosa, y qué no hacer con él.', md: tokensMd(fecha) },
+    { pagina: 'patrones', titulo: 'Patrones de pantalla', resumen: 'la barra de calidad de una pantalla: color funcional, carga, copy, iconos, contraste, agrupación.', md: patronesMd(fecha) },
+    { pagina: 'iconos', titulo: 'Iconos', resumen: 'qué icono dice cada concepto y qué iconos tienen un solo significado.', md: iconosMd(fecha) },
+  ];
+}
+
+/** `llms-full.txt`: el índice y, detrás, cada página entera, para leerlo todo de una vez. */
+export function llmsFull(llms, fichas, fund) {
+  return [llms, ...fund.map((f) => f.md), ...fichas.map((f) => f.md)].join('\n\n---\n\n');
+}
+
+/** El sitio es un SPA por `#`: lo que un buscador puede leer como página son los ficheros de texto. */
+function robotsTxt() {
+  return ['User-agent: *', 'Allow: /', '', `Sitemap: ${SITIO}/sitemap.xml`, ''].join('\n');
+}
+
+function sitemapXml(fichas, fund, fecha) {
+  const urls = ['/', '/llms.txt', '/llms-full.txt', ...fund.map((f) => `/ia/${f.pagina}.md`), ...fichas.map((f) => `/ia/${f.pagina}.md`)];
+  return [
+    '<?xml version="1.0" encoding="UTF-8"?>',
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+    ...urls.map((u) => `  <url><loc>${SITIO}${u}</loc><lastmod>${fecha}</lastmod></url>`),
+    '</urlset>',
+    '',
+  ].join('\n');
 }
 
 // ── main ───────────────────────────────────────────────────────────────────────────────────────
@@ -366,16 +485,24 @@ export function generar() {
       historias: leida.historias.length,
     });
   }
-  return { fichas, problemas, entradas: entradas.length, llms: llmsTxt(fichas, fecha) };
+  const fund = fundamentos(fecha);
+  const llms = llmsTxt(fichas, fecha, fund);
+  return { fichas, fundamentos: fund, problemas, entradas: entradas.length, llms, fecha };
 }
 
-function escribir(dirBase, { fichas, llms }) {
+/** `web`: lo que solo tiene sentido servido en el sitio (`robots.txt`, `sitemap.xml`); el paquete no lo lleva. */
+function escribir(dirBase, { fichas, fundamentos: fund, llms, fecha }, { web = false } = {}) {
   const ia = join(dirBase, 'ia');
   mkdirSync(ia, { recursive: true });
   // Las fichas de componentes que ya no existen, fuera (las capturas, no: son de `docs:capturas`).
   for (const f of readdirSync(ia)) if (f.endsWith('.md')) rmSync(join(ia, f));
-  for (const f of fichas) writeFileSync(join(ia, `${f.pagina}.md`), f.md);
+  for (const f of [...fund, ...fichas]) writeFileSync(join(ia, `${f.pagina}.md`), f.md);
   writeFileSync(join(dirBase, 'llms.txt'), llms);
+  writeFileSync(join(dirBase, 'llms-full.txt'), llmsFull(llms, fichas, fund));
+  if (web) {
+    writeFileSync(join(dirBase, 'robots.txt'), robotsTxt());
+    writeFileSync(join(dirBase, 'sitemap.xml'), sitemapXml(fichas, fund, fecha));
+  }
 }
 
 if (process.argv[1] && process.argv[1].endsWith('docs-ia.mjs')) {
@@ -385,7 +512,7 @@ if (process.argv[1] && process.argv[1].endsWith('docs-ia.mjs')) {
     for (const p of resultado.problemas) console.error(`  · ${p}`);
     process.exit(1);
   }
-  escribir(join(root, 'projects/sc-docs/public'), resultado);
+  escribir(join(root, 'projects/sc-docs/public'), resultado, { web: true });
   let destinos = 'projects/sc-docs/public/';
   if (process.argv.includes('--paquete')) {
     const dist = join(root, 'dist/ui-smartcontact');
@@ -397,5 +524,7 @@ if (process.argv[1] && process.argv[1].endsWith('docs-ia.mjs')) {
     destinos += ' y dist/ui-smartcontact/';
   }
   const stories = resultado.fichas.reduce((n, f) => n + f.historias, 0);
-  console.log(`✔ docs:ia — ${resultado.fichas.length} fichas, ${stories} stories, en ${destinos}`);
+  console.log(
+    `✔ docs:ia — ${resultado.fichas.length} fichas, ${stories} stories y ${resultado.fundamentos.length} páginas de Fundamentos, en ${destinos}`,
+  );
 }

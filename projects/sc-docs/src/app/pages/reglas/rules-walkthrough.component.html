@@ -1,26 +1,9 @@
 <article class="rules">
   <div class="rules__main">
   <header class="rules__head">
-    <p class="eyebrow sc-text-caption-semibold">{{ 'reglas.eyebrow' | translate }}</p>
     <h1>{{ 'reglas.title' | translate }}</h1>
-    <p class="lead" [innerHTML]="'reglas.lead' | translate"></p>
+    <p class="lead sc-text-h3-regular" [innerHTML]="'reglas.lead' | translate"></p>
   </header>
-
-  <nav class="toc" [attr.aria-label]="'reglas.tocTitle' | translate">
-    <p class="toc__title sc-text-caption-semibold">{{ 'reglas.tocTitle' | translate }}</p>
-    <ol class="toc__list">
-      <li><a href="#paso-1">{{ 'reglas.toc.p1' | translate }}</a></li>
-      <li><a href="#paso-2">{{ 'reglas.toc.p2' | translate }}</a></li>
-      <li><a href="#paso-3">{{ 'reglas.toc.p3' | translate }}</a></li>
-      <li><a href="#paso-4">{{ 'reglas.toc.p4' | translate }}</a></li>
-      <li><a href="#paso-5">{{ 'reglas.toc.p5' | translate }}</a></li>
-      <li><a href="#paso-6">{{ 'reglas.toc.p6' | translate }}</a></li>
-      <li><a href="#paso-7">{{ 'reglas.toc.p7' | translate }}</a></li>
-      <li><a href="#paso-8">{{ 'reglas.toc.p8' | translate }}</a></li>
-      <li><a href="#paso-9">{{ 'reglas.toc.p9' | translate }}</a></li>
-      <li><a href="#conclusiones">{{ 'reglas.toc.conclusiones' | translate }}</a></li>
-    </ol>
-  </nav>
 
   <section class="step" id="paso-1">
     <h2><span class="step__n">01</span> {{ 'reglas.s1.title' | translate }}</h2>
