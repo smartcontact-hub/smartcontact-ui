@@ -155,6 +155,12 @@ export class TemplateEditorPageComponent implements DirtyAware, OnInit {
     if (this.faltas().includes(falta) && dejoElCampo(event)) this.ocasion.tocar(falta);
   }
 
+  /** Se dejó el editor del contenido vacío: su aviso pasa a rojo, como el del título (DD-237). Pulsar su barra no cuenta. */
+  protected dejarContenido(event: FocusEvent): void {
+    const falta = 'templates.errors.body_required';
+    if (this.faltas().includes(falta) && dejoElCampo(event)) this.ocasion.tocar(falta);
+  }
+
   protected readonly canSave = computed(() => this.faltas().length === 0 && (this.mode() === 'create' || this.formDirty()));
 
   /** Por qué está apagado el botón, para su tooltip: lo primero que falta o, sin cambios, «No hay cambios». */
@@ -228,6 +234,14 @@ export class TemplateEditorPageComponent implements DirtyAware, OnInit {
   }
 
   protected save(): void {
+    // Como Agendas y Grupos: el botón está apagado si falta algo, pero se llega aquí también con Ctrl/Cmd + S. No crea ni
+    // guarda: dice lo que falta en rojo y lleva al primer campo que falta.
+    if (this.faltas().length > 0) {
+      this.ocasion.intentar();
+      const sitio = this.faltas()[0] === 'templates.errors.title_required' ? '#template-title' : '.template-editor .ql-editor';
+      document.querySelector<HTMLElement>(sitio)?.focus();
+      return;
+    }
     if (!this.canSave()) return;
     this.ocasion.olvidar();
     const f = this.form();

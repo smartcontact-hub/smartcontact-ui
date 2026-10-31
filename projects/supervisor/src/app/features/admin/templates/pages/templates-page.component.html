@@ -48,7 +48,8 @@
 <!-- Celdas de la tabla. Fuera de la lista para que los `viewChild`
      las resuelvan; `columns()` las recoge. Contexto `{ $implicit: tpl }`. -->
 <ng-template #titleTpl let-tpl>
-  <span class="table__title-text sc-text-body-semibold">{{ tpl.title }}</span>
+  <!-- Si el título no cabe, se corta con «…» y se lee entero al pasar el ratón (COA SISMAC-4438). -->
+  <span class="table__title-text sc-text-body-semibold" [pTooltip]="tpl.title" showOnEllipsis tooltipPosition="top">{{ tpl.title }}</span>
 </ng-template>
 
 <ng-template #typeTpl let-tpl>

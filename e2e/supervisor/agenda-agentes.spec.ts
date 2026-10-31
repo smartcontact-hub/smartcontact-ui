@@ -6,7 +6,7 @@ import { goto } from './helpers';
  * AGENDAS: A QUÉ AGENTES SE ASIGNA, EL EDITOR DE UN CONTACTO Y LO QUE NO SALE AL CREAR. COA SISMAC-4440 y la reunión del
  * 2026-10-26 (sustituye el árbol Grupo → Agentes de DD-211 §1):
  *   1. la última sección es «Agentes»: una tabla plana con casilla, nombre, email y los grupos del agente, el buscador y
- *      «Todos / Asignados (N)». Se asigna SOLO a agentes: marcar uno no marca a su grupo ni a los demás de él, y los grupos
+ *      la barra común (DD-243): «Todos / Asignados / Sin asignar» y «N asignados». Se asigna SOLO a agentes: marcar uno no marca a su grupo ni a los demás de él, y los grupos
  *      se muestran como información (para buscar por grupo y marcar de golpe los que salen, con la casilla de la cabecera);
  *   2. no hay sección de etiquetas de los campos personalizados, ni al crear ni al editar;
  *   3. pulsar la fila de un contacto abre su editor, como en las listas; con casillas, marcar varios y borrarlos con el clic
@@ -17,6 +17,10 @@ test.use({ storageState: { cookies: [], origins: [] } });
 
 const tabla = (page: Page) => page.locator('sc-agent-assignment-table');
 const casillas = (page: Page) => tabla(page).getByRole('checkbox', { name: /^Asignar la agenda a / });
+/** La cifra de la barra: «1 asignado», «N asignados». */
+const cifra = (page: Page) => tabla(page).locator('.assign-bar__count');
+const asignados = (n: number | string) => (Number(n) === 1 ? '1 asignado' : `${n} asignados`);
+const filtro = (page: Page, nombre: 'Todos' | 'Asignados' | 'Sin asignar') => tabla(page).getByRole('button', { name: nombre, exact: true });
 const guardarArriba = (page: Page) => page.locator('sc-top-bar').getByRole('button', { name: /^(Guardar|Crear)/ });
 const leer = <T,>(page: Page, clave: string) => page.evaluate((k) => JSON.parse(localStorage.getItem(k) ?? '[]'), clave) as Promise<T>;
 
@@ -37,17 +41,19 @@ test('agentes: tabla plana con nombre, email y grupos; marcar un agente no marca
   await goto(page, 'admin/agendas/crear');
   await page.locator('#agenda-name').fill('Agenda de agentes');
   await expect(tabla(page).locator('thead th[data-field]')).toHaveText(['Nombre', 'Email', 'Grupos']);
-  await expect(tabla(page).getByRole('button', { name: /^Asignados \(0\)$/ })).toBeVisible();
+  await expect(cifra(page)).toHaveText(asignados(0));
+  // En el alta abre en «Todos»; al editar, en «Asignados» (DD-151).
+  await expect(filtro(page, 'Todos')).toHaveAttribute('aria-pressed', 'true');
   // Scarlett Johansson está en varios grupos, y los otros agentes de esos grupos no se marcan con ella.
   await tabla(page).getByPlaceholder('Buscar agentes…').fill('Scarlett');
   await expect(casillas(page)).toHaveCount(1);
   await expect(tabla(page).locator('tbody tr').first()).toContainText('ACD Demo C2CB');
   await casillas(page).first().click();
-  await expect(tabla(page).getByRole('button', { name: /^Asignados \(1\)$/ })).toBeVisible();
+  await expect(cifra(page)).toHaveText(asignados(1));
   await tabla(page).getByPlaceholder('Buscar agentes…').fill('');
-  await expect(tabla(page).getByRole('button', { name: /^Asignados \(1\)$/ })).toBeVisible();
+  await expect(cifra(page)).toHaveText(asignados(1));
   // Solo ella está marcada: «Asignados» enseña una única fila.
-  await tabla(page).getByRole('button', { name: /^Asignados/ }).click();
+  await filtro(page, 'Asignados').click();
   await expect(casillas(page)).toHaveCount(1);
   await expect(casillas(page).first()).toBeChecked();
 });
@@ -56,6 +62,9 @@ test('agentes: buscar por grupo y marcar todos los que salen con la casilla de l
   await goto(page, 'admin/agendas/editar/4');
   const antes = (await leer<{ id: number; schedules?: number[] }[]>(page, 'sc-agents')).filter((a) => a.schedules?.includes(4)).length;
   const gruposAntes = (await leer<{ id: number; schedules?: number[] }[]>(page, 'sc-groups')).map((g) => [g.id, g.schedules ?? []]);
+  // La edición abre en «Asignados»: para marcar a los del grupo, primero «Todos».
+  await expect(filtro(page, 'Asignados')).toHaveAttribute('aria-pressed', 'true');
+  await filtro(page, 'Todos').click();
   await tabla(page).getByPlaceholder('Buscar agentes…').fill('Campaigns');
   const filas = await tabla(page).locator('tbody tr').count();
   expect(filas).toBeGreaterThan(1);
@@ -63,7 +72,7 @@ test('agentes: buscar por grupo y marcar todos los que salen con la casilla de l
   for (const casilla of await casillas(page).all()) await expect(casilla).toBeChecked();
   // Lo que el filtro esconde se conserva: el contador sube, no se sustituye por lo visible.
   await tabla(page).getByPlaceholder('Buscar agentes…').fill('');
-  await expect(tabla(page).getByRole('button', { name: /^Asignados \(\d+\)$/ })).toBeVisible();
+  await expect(cifra(page)).toHaveText(/^\d+ asignados?$/);
   await guardarArriba(page).click();
   await expect
     .poll(async () => (await leer<{ schedules?: number[] }[]>(page, 'sc-agents')).filter((a) => a.schedules?.includes(4)).length)
@@ -74,12 +83,14 @@ test('agentes: buscar por grupo y marcar todos los que salen con la casilla de l
 
 test('agentes: «Asignados» enseña solo los marcados, y quitarle uno lo guarda', async ({ page }) => {
   await goto(page, 'admin/agendas/editar/4');
-  await tabla(page).getByRole('button', { name: /^Asignados/ }).click();
+  await expect(filtro(page, 'Asignados')).toHaveAttribute('aria-pressed', 'true');
   const total = await casillas(page).count();
   expect(total).toBeGreaterThan(0);
   for (const casilla of await casillas(page).all()) await expect(casilla).toBeChecked();
   await casillas(page).first().click();
-  await expect(tabla(page).getByRole('button', { name: new RegExp(`^Asignados \\(${total - 1}\\)$`) })).toBeVisible();
+  await expect(cifra(page)).toHaveText(asignados(total - 1));
+  // La fila desmarcada se queda hasta cambiar de filtro o de búsqueda (DD-151): no desaparece bajo el cursor.
+  await expect(casillas(page)).toHaveCount(total);
   await guardarArriba(page).click();
   await expect
     .poll(async () => (await leer<{ schedules?: number[] }[]>(page, 'sc-agents')).filter((a) => a.schedules?.includes(4)).length)
@@ -91,9 +102,9 @@ test('listado: Descripción, Contactos y Agentes con guion si no hay, y «Agente
   const cabeceras = page.getByTestId('repo-table').locator('thead th[data-field]');
   await expect(cabeceras).toHaveText(['Título', 'Descripción', 'Contactos', 'Agentes', 'Modificada', '']);
   const fila = page.getByTestId('repo-table').locator('tbody tr', { hasText: 'Emergencias 24h' });
-  const cifra = (await fila.locator('td').nth(3).innerText()).trim();
+  const cifraListado = (await fila.locator('td').nth(3).innerText()).trim();
   await goto(page, 'admin/agendas/editar/4');
-  await expect(tabla(page).getByRole('button', { name: new RegExp(`^Asignados \\(${cifra}\\)$`) })).toBeVisible();
+  await expect(cifra(page)).toHaveText(asignados(cifraListado));
   // Una agenda sin agentes lo dice con «—», y el globo con nombres no existe.
   await goto(page, 'admin/agendas');
   const retencion = page.getByTestId('repo-table').locator('tbody tr', { hasText: 'Retención' });
@@ -131,7 +142,9 @@ test('contactos: pulsar la fila abre su editor con todos sus campos', async ({ p
   await fila.locator('td').nth(3).click();
   const d = page.getByRole('dialog', { name: 'Editar contacto' });
   await expect(d.getByLabel('Empresa')).toHaveValue('Sunset Pictures');
-  await expect(d.getByLabel('Cliente desde')).toHaveValue('2014');
+  // Los campos personalizados se llaman siempre «Personalizado N»: sus etiquetas no se editan (COA SISMAC-4440, DD-245).
+  await expect(d.getByLabel('Personalizado 1')).toHaveValue('2014');
+  await expect(d.getByLabel('Cliente desde')).toHaveCount(0);
   await d.getByLabel('Puesto').fill('Presidenta');
   await d.getByRole('button', { name: 'Guardar' }).click();
   await expect(d).toBeHidden();

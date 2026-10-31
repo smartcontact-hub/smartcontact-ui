@@ -1030,7 +1030,14 @@
       "choose": "Choisir un fichier",
       "choose_other": "Choisir un autre fichier"
     },
-    "columns_search": "Rechercher des colonnes…"
+    "columns_search": "Rechercher des colonnes…",
+    "assign_bar": {
+      "all": "Tous",
+      "assigned": "Affectés",
+      "unassigned": "Non affectés",
+      "count_one": "{{count}} affecté",
+      "count_other": "{{count}} affectés"
+    }
   },
   "topbar": {
     "go_to_dashboard": "Aller au tableau de bord",
@@ -1165,7 +1172,7 @@
       "errors_one": "1 ligne en erreur, qui n’est pas créée :",
       "error_line": "Ligne {{line}} : {{reason}}",
       "reason_titulo": "le titre est manquant",
-      "reason_canal": "le canal n’est ni chat, ni e-mail, ni WhatsApp",
+      "reason_canal": "le canal n’est ni Chat, ni Email, ni WhatsApp",
       "reason_contenido": "le contenu est manquant",
       "more_errors": "et {{count}} de plus",
       "duplicates": "{{count}} existaient déjà ou se répètent dans le fichier.",
@@ -1732,7 +1739,6 @@
       "agents": "Agents",
       "create_submit": "Créer l'équipe",
       "edit_breadcrumb": "Modifier l'équipe",
-      "assigned_count": "{{count}} dans l'équipe",
       "no_description": "Sans description",
       "agents_aria": "{{count}} agents",
       "agents_aria_one": "1 agent",
@@ -1745,12 +1751,11 @@
     },
     "agent_assignment": {
       "search": "Rechercher des agents…",
-      "filter_all": "Tous",
-      "filter_assigned": "Assignés ({{count}})",
       "filter_aria": "Afficher les agents",
       "email": "Email",
       "no_results": "Aucun agent ne correspond à « {{query}} ».",
       "none_assigned": "Aucun agent affecté pour le moment.",
+      "none_unassigned": "Tous les agents sont affectés.",
       "empty": "Aucun agent pour le moment",
       "select_all_aria": "Sélectionner tous les agents affichés"
     }
@@ -1972,7 +1977,7 @@
       "assigned": {
         "query_placeholder": "Rechercher des agents…",
         "empty_title": "Aucun agent assigné",
-        "empty": "Assignez-les depuis l’onglet « Tous ».",
+        "empty": "Assignez-les depuis « Tous ».",
         "no_results": "Aucun agent ne correspond au filtre.",
         "col_agent": "Agent",
         "col_active": "Activé",
@@ -1994,9 +1999,6 @@
         "last_channel_hint": "Un canal au minimum est requis. Décochez Affecté pour retirer cet agent du groupe.",
         "last_channel_aria": "{{name}} — {{channel}} : seul canal ; décochez Affecté pour retirer cet agent du groupe",
         "assignment": "Affecté",
-        "filter_all": "Tous",
-        "filter_assigned": "Affectés",
-        "filter_unassigned": "Non affectés",
         "filter_label": "Filtrer par affectation",
         "column_all": "Modifier {{column}} dans les résultats filtrés",
         "bulk_done": "{{count}} agents mis à jour.",
@@ -2258,7 +2260,6 @@
     "bulk_edit_title": "Appliquer la modification à {{count}} groupe(s)",
     "agents_panel": {
       "title": "Agents : {{name}}",
-      "assigned": "Assignés : {{count}}",
       "unsaved": "Non enregistrés : {{count}}",
       "save_count": "Sauvegarder ({{count}})",
       "saved": "Agents de \"{{name}}\" mis à jour"
@@ -2436,7 +2437,7 @@
         "picker_placeholder": "Rechercher ou ajouter un groupe…",
         "picker_aria": "Ajouter un groupe à l'agent",
         "empty_title": "Aucun groupe assigné",
-        "empty": "Assignez-les depuis l’onglet « Tous ».",
+        "empty": "Assignez-les depuis « Tous ».",
         "col_group": "Groupe",
         "col_channels_here": "Canaux dans ce groupe",
         "col_active": "Activé",

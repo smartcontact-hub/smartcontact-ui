@@ -6,11 +6,11 @@ import {
   ScCheckboxComponent as CheckboxComponent,
   type ScColumnCellContext,
   type ScColumnDef,
+  type ScColumnHeaderContext,
+  type ScDatatableSortEvent,
   ScDatatableComponent as DatatableComponent,
   ScInputTextComponent as InputTextComponent,
-  ScSearchComponent as SearchComponent,
   ScSectionCardComponent as SectionCardComponent,
-  ScSelectButtonComponent as SelectButtonComponent,
   ScSubsectionComponent as SubsectionComponent,
 } from '@smartcontact-hub/components';
 
@@ -18,7 +18,7 @@ import type { DirtyAware } from '@core/guards';
 import { LlegaAlPieDirective } from '@core/directives';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { injectLangChange } from '@core/utils/lang-change';
-import { PresenceAvatarComponent } from '@shared/components';
+import { AssignBarComponent, type AssignFilter, PresenceAvatarComponent } from '@shared/components';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 import { nombreDeCopia } from '@shared/utils/copy-name';
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
@@ -27,7 +27,7 @@ import type { Agent } from '@features/admin/agents/data/agents-data';
 import { EquiposStore } from '../state/equipos.store';
 import { BreadcrumbService, ResultadoAccionService } from '@core/services';
 import { TooltipModule } from 'primeng/tooltip';
-import { dejoElCampo, llegarAAncla, ocasionDeAvisar } from '@shared/utils/alta-secciones';
+import { ayudaDeObligatorio, dejoElCampo, llegarAAncla, ocasionDeAvisar } from '@shared/utils/alta-secciones';
 
 interface Borrador {
   readonly name: string;
@@ -48,16 +48,15 @@ const VACIO: Borrador = { name: '', description: '', agentIds: new Set() };
   selector: 'sc-equipo-editor-page',
   imports: [
     TooltipModule,
+    AssignBarComponent,
     ButtonComponent,
     CheckboxComponent,
     DatatableComponent,
     InputTextComponent,
     LlegaAlPieDirective,
     PresenceAvatarComponent,
-    SearchComponent,
     SectionCardComponent,
     SubsectionComponent,
-    SelectButtonComponent,
     TranslateModule,
   ],
   template: `
@@ -99,6 +98,7 @@ const VACIO: Borrador = { name: '', description: '', agentIds: new Set() };
                     [required]="true"
                     [placeholder]="'repositories.equipos.name_placeholder' | translate"
                     [value]="form().name"
+                    [helperText]="nameHint()"
                     [error]="nameError()"
                     (valueChange)="update('name', $event)"
                     (focusout)="dejarElNombre($event)"
@@ -121,35 +121,18 @@ const VACIO: Borrador = { name: '', description: '', agentIds: new Set() };
             </sc-subsection>
           </sc-section-card>
 
-          <sc-section-card titleKey="repositories.equipos.agents" icon="headphones">
+          <sc-section-card id="equipo-agentes" titleKey="repositories.equipos.agents" icon="headphones">
             <sc-subsection>
               <div class="assign">
-                <div class="assign__bar">
-                  <span id="grupo-agentes-filter" class="visually-hidden">{{ 'groups.form.assigned.filter_label' | translate }}</span>
-                  <sc-selectbutton size="sm" [options]="filterOptions()" optionValue="value" [value]="filter()"
-                    (valueChange)="filter.set($any($event))" [allowEmpty]="false" ariaLabelledBy="grupo-agentes-filter" />
-                  <sc-search class="assign__search" [placeholder]="'groups.form.assigned.query_placeholder' | translate"
-                    [clearAriaLabel]="'labels.clear_search' | translate" [value]="query()" (valueChange)="query.set($event)" />
-                  <span class="assign__count sc-text-caption-regular" role="status">
-                    {{ 'repositories.equipos.assigned_count' | translate: { count: form().agentIds.size } }}
-                  </span>
-                </div>
+                <!-- La barra común de las tablas de asignar (DD-243): filtro, buscador y cifra. -->
+                <sc-assign-bar [(filter)]="filter" [(query)]="query" [count]="form().agentIds.size"
+                  [placeholder]="'groups.form.assigned.query_placeholder' | translate"
+                  [filterLabel]="'groups.form.assigned.filter_label' | translate" />
                 <div class="table-card table-card--al-pie" scLlegaAlPie>
+                  <!-- «Agente» se ordena por nombre, como en la ficha de grupo (DD-243): el orden lo pone \`filas\`. -->
                   <sc-datatable variant="list" size="sm" scrollable scrollHeight="flex" virtualScroll
-                    [value]="filas()" [columns]="columns()" dataKey="id">
-                    <ng-template #header>
-                      <tr>
-                        @for (col of columns(); track col.field) {
-                          <th scope="col" [style.text-align]="col.align" [style.width]="col.width" [attr.aria-label]="col.header">
-                            @if (col.field === 'assigned') {
-                              <sc-checkbox [state]="estadoCabecera()" [disabled]="filas().length === 0"
-                                [ariaLabel]="'groups.form.assigned.column_all' | translate: { column: col.header }"
-                                (cycle)="toggleTodos()" />
-                            } @else { {{ col.header }} }
-                          </th>
-                        }
-                      </tr>
-                    </ng-template>
+                    [value]="filas()" [columns]="columns()" dataKey="id"
+                    externalSort [sortField]="orden() ? 'agent' : undefined" [sortOrder]="orden() ?? 1" (sortChange)="onSortChange($event)">
                     <div scTableEmpty class="assign__no-results sc-text-body-regular">{{ 'groups.form.assigned.no_results' | translate }}</div>
                   </sc-datatable>
                 </div>
@@ -159,6 +142,13 @@ const VACIO: Borrador = { name: '', description: '', agentIds: new Set() };
         </div>
       </div>
     </div>
+
+    <!-- La casilla de «todos» en la cabecera de Asignado: las filas a la vista entran o salen todas. -->
+    <ng-template #headerCheckTpl let-col>
+      <sc-checkbox [state]="estadoCabecera()" [disabled]="filas().length === 0"
+        [ariaLabel]="'groups.form.assigned.column_all' | translate: { column: col.header }"
+        (cycle)="toggleTodos()" />
+    </ng-template>
 
     <ng-template #assignedTpl let-row>
       <sc-checkbox
@@ -170,7 +160,7 @@ const VACIO: Borrador = { name: '', description: '', agentIds: new Set() };
 
     <ng-template #agentTpl let-row>
       <span class="assign__name">
-        <sc-presence-avatar [name]="row.name" [size]="24" />
+        <sc-presence-avatar [name]="row.name" [photo]="row.photo" [size]="24" />
         <span class="assign__identity">
           <span class="assign__name-label sc-text-body-semibold" [pTooltip]="row.name" showOnEllipsis tooltipPosition="top">{{ row.name }}</span>
           @if (row.email) { <span class="assign__email sc-text-caption-regular" [pTooltip]="row.email" showOnEllipsis tooltipPosition="top">{{ row.email }}</span> }
@@ -194,19 +184,6 @@ const VACIO: Borrador = { name: '', description: '', agentIds: new Set() };
       display: flex;
       flex-direction: column;
       gap: var(--sc-spacing-1);
-    }
-    .assign__bar {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: var(--sc-spacing-0-5);
-    }
-    .assign__search {
-      flex: 1 1 240px;
-      min-width: 0;
-    }
-    .assign__count {
-      color: var(--sc-text-secondary);
     }
     .assign__name {
       display: inline-flex;
@@ -253,6 +230,7 @@ export class EquipoEditorPageComponent implements DirtyAware, OnInit {
   private readonly topbarActions = viewChild<TemplateRef<unknown>>('topbarActions');
   private readonly assignedTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('assignedTpl');
   private readonly agentTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('agentTpl');
+  private readonly headerCheckTpl = viewChild<TemplateRef<ScColumnHeaderContext<Agent>>>('headerCheckTpl');
 
   constructor() {
     useTopbarActions(this.topbarActions);
@@ -273,37 +251,49 @@ export class EquipoEditorPageComponent implements DirtyAware, OnInit {
         header: this.translate.instant('groups.form.assigned.assignment'),
         width: '3.5rem',
         align: 'center' as const,
+        headerAriaLabel: this.translate.instant('groups.form.assigned.assignment'),
+        headerTemplate: this.headerCheckTpl(),
         cellTemplate: this.assignedTpl(),
         stopRowClick: true,
       },
-      { field: 'agent', header: this.translate.instant('groups.form.assigned.col_agent'), rowHeader: true, cellTemplate: this.agentTpl() },
+      {
+        field: 'agent',
+        header: this.translate.instant('groups.form.assigned.col_agent'),
+        sortable: true,
+        rowHeader: true,
+        cellTemplate: this.agentTpl(),
+      },
     ];
   });
 
   /* ── La lista de agentes, como la del grupo (DD-151) ─────────────────────── */
 
   protected readonly query = signal('');
-  protected readonly filter = linkedSignal(() => (this.mode() === 'create' ? 'all' : 'assigned'));
-  protected readonly filterOptions = computed(() => {
-    this.lang();
-    return ['all', 'assigned', 'unassigned'].map((value) => ({
-      value,
-      label: this.translate.instant(`groups.form.assigned.filter_${value}`),
-    }));
-  });
+  protected readonly filter = linkedSignal<AssignFilter>(() => (this.mode() === 'create' ? 'all' : 'assigned'));
+
+  /** El orden por nombre: \`1\`, A→Z; \`-1\`, Z→A; \`null\`, el de la lista de agentes. */
+  protected readonly orden = signal<1 | -1 | null>(null);
+
+  /* Solo si CAMBIA: la tabla vuelve a avisar del orden cada vez que recibe filas nuevas (como en la ficha de grupo). */
+  protected onSortChange(event: ScDatatableSortEvent): void {
+    const orden = event.field === 'agent' && (event.order === 1 || event.order === -1) ? event.order : null;
+    if (orden !== this.orden()) this.orden.set(orden);
+  }
 
   /** Las filas a la vista. Marcar no las mueve hasta que cambia la búsqueda o la vista (`untracked`, como en el grupo). */
   protected readonly filas = computed(() => {
     const filtro = this.filter();
     const q = this.query().trim().toLowerCase();
     const dentro = untracked(this.form).agentIds;
-    return this.agentsStore
+    const orden = this.orden();
+    const filas = this.agentsStore
       .agents()
       .filter(
         (a) =>
           (filtro === 'all' || (filtro === 'assigned') === dentro.has(a.id)) &&
           (!q || `${a.name} ${a.email ?? ''}`.toLowerCase().includes(q)),
       );
+    return orden ? [...filas].sort((a, b) => a.name.localeCompare(b.name, 'es') * orden) : filas;
   });
 
   protected readonly estadoCabecera = computed<'all' | 'some' | 'none'>(() => {
@@ -339,9 +329,9 @@ export class EquipoEditorPageComponent implements DirtyAware, OnInit {
   /* ── Guardar ─────────────────────────────────────────────────────────────── */
 
   /*
-   * Como la ficha de grupo (DD-219) y lo que pide el COA de SISMAC-4453: «Crear equipo» y «Guardar» se apagan mientras
-   * falte el nombre, y su tooltip dice por qué. El obligatorio, en
-   * rojo al dejar el campo vacío (y se queda en vivo hasta que se rellena). Sin aviso gris previo: el COA no lo pide.
+   * Como Agendas y Plantillas (DD-237) y lo que pide el COA de SISMAC-4453: «Crear equipo» y «Guardar» se apagan mientras
+   * falte el nombre, y su tooltip dice por qué («El nombre es obligatorio»). El aviso, en gris bajo el campo desde el
+   * principio y en rojo al dejarlo vacío (y en vivo hasta que se rellena).
    */
   private readonly faltas = computed<readonly string[]>(() => (this.form().name.trim() ? [] : ['repositories.errors.name_required']));
   private readonly ocasion = ocasionDeAvisar({
@@ -355,6 +345,12 @@ export class EquipoEditorPageComponent implements DirtyAware, OnInit {
     return falta && this.ocasion.acusa(falta) ? this.translate.instant(falta) : undefined;
   });
 
+  protected readonly nameHint = computed<string | undefined>(() => {
+    this.lang();
+    const falta = this.faltas()[0];
+    return falta && !this.ocasion.acusa(falta) ? ayudaDeObligatorio(this.translate.instant(falta)) : undefined;
+  });
+
   /** Se dejó el campo del nombre: si sigue vacío, desde ahora en rojo. No al abrir una lista para elegir. */
   protected dejarElNombre(event: FocusEvent): void {
     if (dejoElCampo(event) && this.faltas().length > 0) this.ocasion.tocar(this.faltas()[0]!);
@@ -365,14 +361,11 @@ export class EquipoEditorPageComponent implements DirtyAware, OnInit {
     () => this.faltas().length === 0 && (this.mode() === 'create' || this.formDirty()),
   );
 
-  /** Por qué está apagado el botón, para su tooltip: «Falta: nombre» o «No hay cambios que guardar». */
+  /** Por qué está apagado el botón, para su tooltip: lo que falta («El nombre es obligatorio») o «No hay cambios que guardar». */
   protected readonly motivoApagado = computed(() => {
     this.lang();
     if (this.canSave()) return '';
-    if (this.faltas().length > 0) {
-      return this.translate.instant('common.summary_missing', { items: this.translate.instant('common.summary_missing_name') });
-    }
-    return this.translate.instant('common.no_changes');
+    return this.translate.instant(this.faltas()[0] ?? 'common.no_changes');
   });
 
   /** La miga de la edición dice el nombre del equipo guardado, como en Grupos y Agentes («Administración › Repositorios › Equipos › Francés»). */
@@ -417,6 +410,8 @@ export class EquipoEditorPageComponent implements DirtyAware, OnInit {
     const ids = new Set(this.agentsStore.agents().filter((a) => a.teams?.includes(grupo.id)).map((a) => a.id));
     this.form.set({ name: grupo.name, description: grupo.description, agentIds: ids });
     this.dirtyState.markPristine();
+    // Desde la cifra de agentes del listado se llega ya a «Agentes» (COA SISMAC-4453).
+    if (this.route.snapshot.queryParamMap.get('seccion') === 'agentes') llegarAAncla('equipo-agentes', this.injector);
   }
 
 

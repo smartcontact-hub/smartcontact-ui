@@ -16,8 +16,14 @@
  * sus cuatro celdas y el vacío de búsqueda, que se proyectan desde la
  * plantilla y por eso conservan el encapsulado del componente. */
 .table {
+  /* El título se corta a una línea con «…» en su propio span, como el cuerpo: así `showOnEllipsis` ve el corte y enseña
+   * el título entero al pasar el ratón (COA SISMAC-4438). */
   &__title-text {
+    display: block;
     color: var(--sc-text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   &__body-text {

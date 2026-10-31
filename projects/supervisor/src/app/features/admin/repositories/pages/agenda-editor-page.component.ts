@@ -45,14 +45,11 @@ interface AgendaDraft {
   readonly name: string;
   readonly description: string;
   readonly contacts: readonly AgendaContact[];
-  /** Las etiquetas de los cinco campos personalizados: una por campo, vacía = la de siempre. */
-  readonly customLabels: readonly string[];
   /** A qué agentes se asigna (COA SISMAC-4440): solo a agentes, que lo dicen en sus `schedules`. No es algo de la agenda. */
   readonly agentIds: readonly number[];
 }
 
-const SIN_ETIQUETAS: readonly string[] = ['', '', '', '', ''];
-const VACIA: AgendaDraft = { name: '', description: '', contacts: [], customLabels: SIN_ETIQUETAS, agentIds: [] };
+const VACIA: AgendaDraft = { name: '', description: '', contacts: [], agentIds: [] };
 
 /**
  * El editor de una agenda (DD-163): su nombre, su estado y sus contactos. Va en su propia ruta, como las fichas, para que
@@ -164,7 +161,6 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
       name: agenda.name,
       description: agenda.description,
       contacts: agenda.contacts,
-      customLabels: SIN_ETIQUETAS.map((_, i) => agenda.customLabels?.[i] ?? ''),
       agentIds: this.agentsStore.agents().filter((a) => a.schedules?.includes(agenda.id)).map((a) => a.id),
     });
     this.dirtyState.markPristine();
@@ -188,7 +184,6 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
       name: nombreDeCopia(origen.name, this.store.items().map((a) => a.name)),
       description: origen.description,
       contacts: origen.contacts,
-      customLabels: SIN_ETIQUETAS.map((_, i) => origen.customLabels?.[i] ?? ''),
       agentIds: [],
     });
   }
@@ -248,12 +243,11 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
 
   /**
    * Los campos del formulario de un contacto: los de Voice, agrupados. Ninguno es obligatorio, pero no se guarda sin al
-   * menos uno con texto (`validateContact`; revisión de producto del 2026-10-15). Los personalizados llevan la etiqueta
-   * de ESTA agenda, o «Personalizado N».
+   * menos uno con texto (`validateContact`; revisión de producto del 2026-10-15). Los personalizados se llaman siempre
+   * «Personalizado N»: sus etiquetas no se editan (COA SISMAC-4440, DD-245).
    */
   protected readonly contactFields = computed<readonly RepoFieldDef[]>(() => {
     this.lang();
-    const etiquetas = this.form().customLabels;
     return SECCIONES_DE_CONTACTO.flatMap(({ seccion, campos }) =>
       campos.map((clave, i): RepoFieldDef => {
         const personalizado = clave.startsWith('custom');
@@ -261,7 +255,7 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
         return {
           key: clave,
           labelKey: clave === 'name' ? 'repositories.columns.name' : clave === 'phone' ? 'repositories.agendas.phone' : `repositories.agendas.fields.${clave}`,
-          label: personalizado ? etiquetas[n - 1]?.trim() || this.translate.instant('repositories.agendas.custom_label', { n }) : undefined,
+          label: personalizado ? this.etiquetaPersonalizada(n) : undefined,
           sectionKey: i === 0 ? `repositories.agendas.sections.${seccion}` : undefined,
           wide: clave === 'workAddress' || clave === 'homeAddress' || clave === 'notes' || clave === 'website',
           type: clave === 'notes' ? 'textarea' : 'text',
@@ -291,9 +285,9 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
     }));
   });
 
-  /** Cómo se llama el campo personalizado N en esta agenda. */
+  /** Cómo se llama el campo personalizado N: «Personalizado N», en todas las agendas. */
   protected readonly etiquetaPersonalizada = (n: number): string =>
-    this.form().customLabels[n - 1]?.trim() || this.translate.instant('repositories.agendas.custom_label', { n });
+    this.translate.instant('repositories.agendas.custom_label', { n });
 
   /** El diálogo de un contacto: `null` cerrado; con `contact: null`, para añadir. */
   protected readonly contactDialog = signal<{ readonly contact: AgendaContact | null } | null>(null);

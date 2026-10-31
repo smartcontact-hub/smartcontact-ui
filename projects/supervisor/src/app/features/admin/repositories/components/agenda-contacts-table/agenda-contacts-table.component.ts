@@ -208,7 +208,8 @@ export class AgendaContactsTableComponent {
       ...this.fields().map(
         (f): ScColumnDef<AgendaContact> =>
           f.key === 'name'
-            ? { field: 'name', header: f.label, rowHeader: true, cellTemplate: this.nameTpl() }
+            ? // Nombre se queda fijo al desplazar la tabla de lado, como en los listados (COA SISMAC-4440).
+              { field: 'name', header: f.label, rowHeader: true, frozen: true, cellTemplate: this.nameTpl() }
             : { field: f.key, header: f.label },
       ),
       {
@@ -219,6 +220,9 @@ export class AgendaContactsTableComponent {
         width: 'var(--sc-spacing-4)',
         align: 'right',
         stopRowClick: true,
+        // Fija a la derecha, como el «⋮» de los listados (COA SISMAC-4440).
+        frozen: true,
+        alignFrozen: 'right',
         cellTemplate: this.actionsTpl(),
       },
     ];

@@ -9,18 +9,6 @@
   gap: var(--sc-spacing-1);
   min-height: 0;
 
-  &__bar {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: var(--sc-spacing-0-5);
-  }
-
-  &__search {
-    flex: 1 1 240px;
-    min-width: 0;
-  }
-
   &__name {
     display: inline-flex;
     align-items: center;

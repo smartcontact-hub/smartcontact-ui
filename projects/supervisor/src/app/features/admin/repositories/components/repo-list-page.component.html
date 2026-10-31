@@ -101,7 +101,7 @@
           [display]="groupsDisplay(col.field)"
           [groups]="grupos"
           [countAriaLabel]="groupsAria(grupos.length, col.field)"
-          (activated)="onRowOpen(item)"
+          (activated)="onCountOpen(item, col.field)"
         />
       }
     } @else if (getStatusEntry(item, col.field); as status) {

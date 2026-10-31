@@ -54,7 +54,7 @@ test('equipos · Duplicar abre el alta con la descripción y los agentes copiado
   await expect(page.locator('#grupo-agentes-description')).toHaveValue('Atienden en inglés');
   expect(await guardado(page, 'sc-equipos'), 'todavía no existe').toEqual(antes);
   // Los agentes del original llegan marcados.
-  await expect(page.locator('.assign__count')).not.toContainText(/^\s*0\s/);
+  await expect(page.locator('.assign-bar__count')).not.toContainText(/^\s*0\s/);
 
   await page.locator('sc-top-bar').getByRole('button', { name: 'Crear equipo' }).click();
   await expect(page).toHaveURL(/\/admin\/equipos\/editar\/\d+/);

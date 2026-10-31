@@ -16,8 +16,6 @@ export interface Agenda {
   readonly description: string;
   /** Cuándo se tocó por última vez (AAAA-MM-DD): una agenda cambia con el tiempo y eso es lo que ayuda a saber. */
   readonly updatedAt: string;
-  /** Cómo llama esta agenda a sus cinco campos personalizados; vacío, «Personalizado N» (se resuelve al mostrarlo). */
-  readonly customLabels?: readonly string[];
 }
 
 /** Los contactos de una semilla, numerados en su orden. */
@@ -154,7 +152,6 @@ const SEED: readonly Agenda[] = [
     contacts: CLIENTES_VIP,
     description: 'Contactos de ejemplo con todos sus campos rellenos',
     updatedAt: '2026-10-13',
-    customLabels: ['Cliente desde', 'Segmento', '', '', ''],
   },
 ];
 

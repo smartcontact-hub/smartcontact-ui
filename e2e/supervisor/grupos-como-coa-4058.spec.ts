@@ -112,7 +112,7 @@ test('un grupo recién creado abre en Asignados y dice que no tiene agentes, no 
   await expect(page).toHaveURL(/\/admin\/grupos\/editar\/.*seccion=agentes/);
 
   await expect(tabla(page)).toContainText('Sin agentes asignados');
-  await expect(tabla(page)).toContainText('Asígnalos desde la pestaña «Todos».');
+  await expect(tabla(page)).toContainText('Asígnalos desde «Todos».');
   await expect(tabla(page)).not.toContainText('No hay agentes que coincidan');
 
   // Buscando, sí: nada coincide.

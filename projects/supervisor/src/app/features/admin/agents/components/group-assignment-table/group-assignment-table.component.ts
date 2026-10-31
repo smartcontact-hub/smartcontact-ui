@@ -20,8 +20,6 @@ import {
   ScCheckboxComponent as CheckboxComponent,
   ScConfirmService,
   ScEmptyStateComponent as EmptyStateComponent,
-  ScSearchComponent as SearchComponent,
-  ScSelectButtonComponent as SelectButtonComponent,
   ScSelectComponent as SelectComponent,
   ScButtonComponent as ButtonComponent,
   ScToggleSwitchComponent as ToggleSwitchComponent,
@@ -51,7 +49,7 @@ import {
   permittedFamilies,
   toggleLinkChannel,
 } from '@features/admin/services/group-channels.core.mjs';
-import { CeldaVaciaComponent } from '@shared/components';
+import { AssignBarComponent, CeldaVaciaComponent } from '@shared/components';
 
 /** Lightweight group reference accepted by this table. */
 export interface AgentGroupAssignmentRef {
@@ -107,8 +105,7 @@ const REM = { assigned: 3.5, group: 12, channel: { phone: 7, chat: 4.5, email: 4
     EmptyStateComponent,
     IconComponent,
     LlegaAlPieDirective,
-    SearchComponent,
-    SelectButtonComponent,
+    AssignBarComponent,
     SelectComponent,
     ToggleSwitchComponent,
     TooltipModule,
@@ -219,13 +216,6 @@ export class GroupAssignmentTableComponent {
   protected readonly query = signal('');
   /** Al editar, los asignados; en el alta, todos (no tiene ninguno). */
   protected readonly filter = linkedSignal<'all' | 'assigned' | 'unassigned'>(() => (this.agentId() === 0 ? 'all' : 'assigned'));
-  protected readonly filterOptions = computed(() => {
-    this.currentLang();
-    return ['all', 'assigned', 'unassigned'].map((value) => ({
-      value,
-      label: this.translate.instant(`groups.form.assigned.filter_${value}`),
-    }));
-  });
   protected readonly announcement = signal('');
   protected readonly pending = signal(false);
 
