@@ -41,7 +41,7 @@
       "faltas": [],
       "retirado": null,
       "usedInSupervisor": 0,
-      "cuando": "Para un aviso o una pregunta con una acción clara (borrar, descartar cambios, sesión caducada), abierto por `ScDynamicDialogService` como en ui.smart-contact.com. La variante dice la intención: `error` destruye o bloquea, `warning` pide atención, `info` informa y `default` confirma algo neutro. La superficie dice quién lo provoca: blanca (`surface: 'plain'`) si decide el usuario (borrar, descartar), teñida (`tinted`, la de siempre) si es un error del sistema (sin micrófono). Mide de 320 a 480 px y hasta 400 de alto. Si lleva más que texto, `sc-custom-modal`.",
+      "cuando": "Para un aviso o una pregunta con una acción clara (borrar, descartar cambios, sesión caducada), abierto por `ScDynamicDialogService` como en ui.smart-contact.com. La variante dice la intención: `error` destruye o bloquea, `warning` pide atención, `info` informa y `default` confirma algo neutro. La superficie dice quién lo provoca: blanca (`surface: 'plain'`, el confirm centrado de antes) si decide el usuario (borrar, descartar), teñida (`tinted`, la de siempre) si es un error del sistema (sin micrófono). Mide de 320 a 480 px y hasta 400 de alto. Si lleva más que texto, `sc-custom-modal`.",
       "sobreObsoleto": []
     },
     {
@@ -473,13 +473,14 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/dialog, primeng/dynamicdialog",
       "cva": false,
-      "inputs": 19,
+      "inputs": 20,
       "api": [
         "ariaDescribedBy",
         "ariaLabel",
         "ariaLabelledBy",
         "bodyClass",
         "closeAriaLabel",
+        "closeIconSize",
         "closeRequested",
         "closeVariant",
         "closed",

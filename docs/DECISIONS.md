@@ -42,7 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
-> | Confirmar lo que decide el usuario (borrar, descartar, guardar antes de salir) no tiñe el modal: `sc-alert-modal` con `surface: 'plain'`, blanco con el icono y el botón en el color de la variante · el tinte (`tinted`, por defecto) queda para los errores del sistema, que pueden no cerrarse con Escape (`closeOnEscape: false`, SISMAC-4292) · en el Supervisor, `injectAlertModal()` pide la superficie en cada aviso (enmienda DD-241 §6) | DD-242 |
+> | Confirmar lo que decide el usuario (borrar, descartar, guardar antes de salir) no tiñe el modal: `sc-alert-modal` con `surface: 'plain'`, que calca el confirm centrado de antes (blanco, el icono en gris junto al mensaje y sus botones) · el tinte (`tinted`, por defecto) queda para los errores del sistema, que pueden no cerrarse con Escape (`closeOnEscape: false`, SISMAC-4292) · en el Supervisor, `injectAlertModal()` pide la superficie en cada aviso (enmienda DD-241 §6) | DD-242 |
 > | Los modales como en ui.smart-contact.com: `sc-custom-modal` (la carcasa, también con `[(visible)]`) y `sc-alert-modal` (aviso con variante `default`, `info`, `warning` o `error`, abierto por `ScDynamicDialogService`) con su misma API y sus fallos arreglados · borrar es `error`, descartar `warning` · se retiran `sc-dialog` y el confirm centrado; el globo con `target` sigue · Figma: «❖ Alert modal» con instancias de Custom modal | DD-241 |
 > | Tipificaciones: el buscador de la lista mira cualquier campo, también los nombres de los grupos que la usan aunque solo salgan al pasar el ratón (enmienda la regla de Agentes y Grupos solo para esta lista) · la edición de Tipificaciones, Agendas, Plantillas y las cuentas y triggers de Email acaba en el nombre guardado, y Agendas, Plantillas y Email abren la miga con «Administración», como Grupos y Agentes · el nombre de las fichas de Repositorios lleva «Ej: …» y la descripción «Breve descripción...» | DD-238 |
 > | Duplicar una agenda o una plantilla es un alta, como un grupo o un agente (enmienda DD-230): abre «Nueva agenda/plantilla» con la copia y su nombre «X (1)» (`seedFromId`, `nombreDeCopia`), que no existe hasta «Crear» · no copia a qué agentes se asigna | DD-234 |
@@ -178,9 +178,15 @@ pregunta que el usuario provoca al pulsar «Eliminar» recibía la urgencia de u
 que los errores del sistema no se cierren con Escape, y el aviso no lo permitía (DD-241 §2).
 
 **Decisión** ·
-1. **`surface: 'tinted' | 'plain'`**, entrada nueva de `sc-alert-modal`, por defecto `'tinted'` (lo de siempre). Con
-   `'plain'` el fondo, el borde y el título son los de `default`, y solo el icono y el botón principal llevan el color de
-   la variante: rojo en `error`, ámbar en `warning`, azul en `info`. La X va en gris, como en `default`.
+1. **`surface: 'tinted' | 'plain'`**, entrada nueva de `sc-alert-modal`, por defecto `'tinted'` (lo de siempre). `'plain'`
+   calca el confirm centrado de antes (`sc-confirmdialog`, `p-confirmdialog` con el Kit), medido contra él en sus tres
+   tonos: fondo y borde del modal, cabecera con 15,75 en los cuatro lados y el título a 20 de línea, texto en
+   `--sc-text-primary`, sin icono en la cabecera y el icono de 21 (`--sc-cmp-confirmdialog-icon-size`) en gris junto al
+   mensaje, a 14; la X con el aspa de 14 (`closeIconSize: 'sm'`, entrada nueva de `sc-custom-modal`). Los botones, los de
+   `ScConfirmService.request`: en `error`, «Cancelar» gris relleno y la acción roja rellena; en `warning`, la salida
+   segura rellena en el primario y la acción roja con borde (`emphasis: 'reject'`); en `info` y `default`, «Cancelar» gris
+   y la acción en el primario. El icono, el triángulo de aviso, e `info` para informar. Única diferencia que queda: el
+   aspa de la X es la de Material Symbols (la única librería de iconos del DS), no la de PrimeNG, más fina.
 2. **Quién lo provoca decide la superficie**: blanca para lo que decide el usuario (borrar, descartar cambios, guardar
    antes de salir); teñida para un error del sistema (sin micrófono, conexión caída, sesión caducada).
 3. **`closeOnEscape`**, entrada nueva, por defecto `true`. Con `false`, el aviso para el Escape antes de que llegue a
@@ -189,17 +195,19 @@ que los errores del sistema no se cierren con Escape, y el aviso no lo permitía
    aviso nuevo lo decida. Los 14 de hoy (`confirmar-borrado.ts`, Reglas, Categorías, Entidades, contactos de Agendas,
    restablecer datos, la cascada de canales del agente, `DiscardDialogService` y «guardar antes de ir a Repositorios» en
    las fichas de grupo y agente) pasan a `'plain'`. Enmienda DD-241 §6, que decía «el modal se tiñe de rojo».
-5. Las dos entradas son **extensiones nuestras**, marcadas así en el JSDoc y en AGENTS.md §Modales: los devs reciben la
-   propuesta para su `sc-alert-modal`.
+5. Las tres entradas (`surface`, `closeOnEscape` y `closeIconSize`) son **extensiones nuestras**, marcadas así en el JSDoc
+   y en AGENTS.md §Modales: los devs reciben la propuesta para su `sc-alert-modal` y su `sc-custom-modal`.
 
 **Razón** · El tinte es la señal más fuerte que tiene un modal y se gasta en lo que interrumpe sin que nadie lo pida. Un
-borrado ya lo pidió el usuario: le basta el icono y el botón rojos para saber que es destructivo, y el foco sigue abriendo
-en «Cancelar» (DD-241 §2). Por defecto `'tinted'` para que ninguna llamada de los devs cambie de aspecto sin tocarla.
+borrado ya lo pidió el usuario: le basta el botón rojo para saber que es destructivo, y el foco sigue abriendo en
+«Cancelar» (DD-241 §2). La forma blanca no se inventa: es la que el Supervisor ya usaba para confirmar hasta DD-241. Por defecto `'tinted'` para que ninguna llamada de los devs cambie de aspecto sin tocarla.
 
 **Descartadas** ·
 - *Recuperar el confirm dialog centrado para los borrados*: vuelve el tercer camino que DD-241 retiró, con otra API y otro
   aspecto que el de los devs.
-- *Borrar con la variante `default`*: pierde el rojo del botón y el icono de «cancel», que dicen «esto destruye».
+- *Borrar con la variante `default`*: pierde el rojo del botón, que dice «esto destruye».
+- *Blanca con el icono en el color de la variante, en la cabecera, y la salida en texto* (la primera versión, del mismo
+  día): una pieza nueva que no se parecía a nada que ya hubiera; se pidió el confirm de antes, calcado.
 - *`'plain'` por defecto*: cambiaría de golpe los avisos de error de los devs (micrófono, conexión), que deben seguir
   teñidos.
 - *`closeOnEscape` en la configuración de `ScDynamicDialogService`*: ya existe, pero quien abre el aviso tendría que saber

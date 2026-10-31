@@ -3,9 +3,10 @@
   [role]="dialogRole"
   iconSize="lg"
   [title]="title()"
-  [icon]="resolvedIcon()"
+  [icon]="headerIcon()"
   [showCloseButton]="showCloseButton()"
   [closeVariant]="closeVariant()"
+  [closeIconSize]="plain() ? 'sm' : 'lg'"
   [closeAriaLabel]="closeAriaLabel()"
   [closeRequested]="closeRequested()"
   [ariaDescribedBy]="message() ? messageId : null"
@@ -14,7 +15,17 @@
   (closed)="onClosed()"
 >
   @if (message(); as msg) {
-    <div scCustomModalBody class="sc-alert-modal__message" [id]="messageId" [innerHTML]="msg"></div>
+    @if (plain()) {
+      <!-- Blanca (DD-242): el icono va junto al mensaje, como en el confirm centrado de antes. -->
+      <div scCustomModalBody class="sc-alert-modal__content">
+        @if (resolvedIcon(); as ic) {
+          <span class="sc-alert-modal__icon" aria-hidden="true"><sc-icon [name]="ic" size="inherit" /></span>
+        }
+        <div class="sc-alert-modal__message" [id]="messageId" [innerHTML]="msg"></div>
+      </div>
+    } @else {
+      <div scCustomModalBody class="sc-alert-modal__message" [id]="messageId" [innerHTML]="msg"></div>
+    }
   }
 
   @if (tertiaryActionLabel(); as label) {
@@ -23,7 +34,7 @@
       scCustomModalFooter
       class="sc-alert-modal__tertiary"
       [label]="label"
-      variant="primary"
+      [variant]="plain() ? 'secondary' : 'primary'"
       appearance="text"
       (clicked)="onTertiary()"
     />
@@ -33,12 +44,19 @@
       #secondaryBtn
       scCustomModalFooter
       [label]="label"
-      variant="primary"
-      appearance="text"
+      [variant]="buttons().secondary.variant"
+      [appearance]="buttons().secondary.appearance"
       (clicked)="onSecondary()"
     />
   }
   @if (actionLabel(); as label) {
-    <sc-button #primaryBtn scCustomModalFooter [label]="label" [variant]="actionVariant()" (clicked)="onAction()" />
+    <sc-button
+      #primaryBtn
+      scCustomModalFooter
+      [label]="label"
+      [variant]="buttons().primary.variant"
+      [appearance]="buttons().primary.appearance"
+      (clicked)="onAction()"
+    />
   }
 </sc-custom-modal>

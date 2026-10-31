@@ -183,14 +183,14 @@ export class AlertModalDemoComponent {
     tag: 'sc-alert-modal',
     title: 'Alert Modal',
     description:
-      'Aviso o confirmación en un modal: un `sc-custom-modal` con variante, icono, título, mensaje y hasta tres acciones. Es el `sc-alert-modal` de ui.smart-contact.com, con su misma API, y se abre igual que allí, con `ScDynamicDialogService.open(ScAlertModalComponent, { inputValues })`. La variante dice la intención: `default` confirma algo neutro, `info` informa o enseña progreso, `warning` pide atención (descartar cambios) y `error` destruye o bloquea (borrar, sesión caducada, sin micrófono). Úsalo para una pregunta o un aviso con una acción clara; para contenido propio (un formulario, una tabla, un reproductor), `sc-custom-modal`; para una frase pegada a lo que se pulsó, el globo de `ScConfirmService` con `target`. Mide de 320 a 480 px de ancho y hasta 400 de alto; el título ocupa hasta 2 líneas y el mensaje hasta 4. Frente al suyo: un solo diálogo para el lector, el mensaje es su descripción, Escape avisa con `closed`, y el foco abre en la salida segura con `warning` y `error`. `tertiaryActionLabel`, `surface` y `closeOnEscape` son extensiones nuestras. La superficie dice quién provoca el aviso: teñida (`tinted`, la de siempre) para un error del sistema, como «No se detecta el micrófono»; blanca (`plain`), con el icono y el botón en el color de la variante, para lo que decide el usuario, como borrar o descartar cambios (DD-242). Pulsa «Abrir» para verlo como diálogo.',
+      'Aviso o confirmación en un modal: un `sc-custom-modal` con variante, icono, título, mensaje y hasta tres acciones. Es el `sc-alert-modal` de ui.smart-contact.com, con su misma API, y se abre igual que allí, con `ScDynamicDialogService.open(ScAlertModalComponent, { inputValues })`. La variante dice la intención: `default` confirma algo neutro, `info` informa o enseña progreso, `warning` pide atención (descartar cambios) y `error` destruye o bloquea (borrar, sesión caducada, sin micrófono). Úsalo para una pregunta o un aviso con una acción clara; para contenido propio (un formulario, una tabla, un reproductor), `sc-custom-modal`; para una frase pegada a lo que se pulsó, el globo de `ScConfirmService` con `target`. Mide de 320 a 480 px de ancho y hasta 400 de alto; el título ocupa hasta 2 líneas y el mensaje hasta 4. Frente al suyo: un solo diálogo para el lector, el mensaje es su descripción, Escape avisa con `closed`, y el foco abre en la salida segura con `warning` y `error`. `tertiaryActionLabel`, `surface` y `closeOnEscape` son extensiones nuestras. La superficie dice quién provoca el aviso: teñida (`tinted`, la de siempre) para un error del sistema, como «No se detecta el micrófono»; blanca (`plain`), que calca el confirm centrado de antes (el icono en gris junto al mensaje y sus botones), para lo que decide el usuario, como borrar o descartar cambios (DD-242). Pulsa «Abrir» para verlo como diálogo.',
     argTypes: [
       { name: 'variant', control: { kind: 'select', options: VARIANTS } },
       {
         name: 'surface',
         control: { kind: 'select', options: SURFACES },
         description:
-          'Extensión nuestra: `tinted` tiñe la superficie (error del sistema); `plain` la deja blanca (borrar, descartar).',
+          'Extensión nuestra: `tinted` tiñe la superficie (error del sistema); `plain` es el confirm de antes, blanco (borrar, descartar).',
       },
       { name: 'title', control: { kind: 'text' } },
       { name: 'message', control: { kind: 'text' }, description: 'Admite HTML sencillo, que Angular sanea.' },
@@ -248,7 +248,7 @@ export class AlertModalDemoComponent {
         template: sf,
         snippet: SURFACES_SNIPPET,
         description:
-          'Teñida, a la izquierda: un error del sistema, que interrumpe sin que nadie lo haya pedido (sin micrófono, conexión inestable); puede no cerrarse con Escape. Blanca, a la derecha: una decisión del usuario (borrar, descartar cambios), con el icono y el botón en el color de la variante, sin teñir el modal entero (DD-242).',
+          'Teñida, a la izquierda: un error del sistema, que interrumpe sin que nadie lo haya pedido (sin micrófono, conexión inestable); puede no cerrarse con Escape. Blanca, a la derecha: una decisión del usuario (borrar, descartar cambios), como el confirm centrado de antes: el icono en gris junto al mensaje, «Cancelar» relleno al borrar y la salida segura rellena al descartar (DD-242).',
       },
       {
         name: 'Medidas y límites',

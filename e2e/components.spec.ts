@@ -1087,28 +1087,46 @@ test.describe('sc-alert-modal', () => {
     }
   });
 
-  test('superficie (DD-242): sin `surface` se tiñe; `plain` deja fondo, borde y título neutros y el icono en la variante', async ({ page }) => {
+  test('superficie (DD-242): sin `surface` se tiñe; `plain` calca el confirm de antes (blanco, icono gris junto al mensaje)', async ({ page }) => {
     await gotoPage(page, 'alertmodal');
     const fondoBase = await colorDe(page, '--sc-dialog-bg', 'background-color');
     const bordeBase = await colorDe(page, '--sc-custom-modal-border-color', 'border-top-color');
-    const tituloBase = await colorDe(page, '--sc-custom-modal-title-color', 'color');
+    const texto = await colorDe(page, '--sc-text-primary', 'color');
+    const iconoConfirm = await page.evaluate(() => {
+      const sonda = document.createElement('div');
+      sonda.style.fontSize = 'var(--sc-cmp-confirmdialog-icon-size)';
+      document.body.appendChild(sonda);
+      const v = getComputedStyle(sonda).fontSize;
+      sonda.remove();
+      return v;
+    });
     for (const [v, kit] of [['error', 'error'], ['warning', 'warn']] as const) {
       const fondo = await colorDe(page, `--sc-cmp-message-${kit}-background`, 'background-color');
-      const tinta = await colorDe(page, `--sc-cmp-message-${kit}-color`, 'color');
       expect(fondo).not.toBe(fondoBase);
-      expect(tinta).not.toBe(tituloBase);
       // Sin `surface`: la de siempre, teñida (un error del sistema).
       const tenida = page.getByTestId(`alert-${v}`).locator('.sc-custom-modal');
       expect((await styleOf(tenida, ['background-color']))['background-color'], v).toBe(fondo);
-      // `plain`: el fondo, el borde y el título del modal neutro; solo el icono lleva la variante.
+      // `plain`: el confirm centrado de antes. Fondo y borde del modal, texto en el color del modal, sin icono en la
+      // cabecera y el de 21 junto al mensaje, en gris, y la X pequeña.
       const blanca = page.getByTestId(`alert-${v}-plain`).locator('.sc-custom-modal');
       expect(await styleOf(blanca, ['background-color', 'border-top-color']), v).toEqual({
         'background-color': fondoBase,
         'border-top-color': bordeBase,
       });
-      expect((await styleOf(blanca.locator('h2'), ['color']))['color'], v).toBe(tituloBase);
-      expect((await styleOf(blanca.locator('.sc-custom-modal__icon'), ['color']))['color'], v).toBe(tinta);
+      expect((await styleOf(blanca.locator('h2'), ['color']))['color'], v).toBe(texto);
+      await expect(blanca.locator('.sc-custom-modal__header .sc-custom-modal__icon'), v).toHaveCount(0);
+      const icono = blanca.locator('.sc-alert-modal__content .sc-alert-modal__icon');
+      expect(await styleOf(icono, ['color', 'font-size']), v).toEqual({ color: texto, 'font-size': iconoConfirm });
+      expect((await styleOf(blanca.locator('.sc-custom-modal__close .p-button-icon'), ['font-size']))['font-size'], v).toBe('14px');
     }
+    // Los botones del confirm: borrar, «Cancelar» relleno y la acción roja rellena; descartar, la salida segura
+    // rellena y la acción roja con borde.
+    const botones = (v: string) => page.getByTestId(`alert-${v}-plain`).locator('.sc-custom-modal__footer button');
+    const transparente = 'rgba(0, 0, 0, 0)';
+    expect((await styleOf(botones('error').nth(0), ['background-color']))['background-color']).not.toBe(transparente);
+    expect((await styleOf(botones('error').nth(1), ['background-color']))['background-color']).not.toBe(transparente);
+    expect((await styleOf(botones('warning').nth(0), ['background-color']))['background-color']).not.toBe(transparente);
+    expect((await styleOf(botones('warning').nth(1), ['background-color']))['background-color']).toBe(transparente);
   });
 
   test('closeOnEscape=false (DD-242): Escape no cierra el error del sistema; la acción sí', async ({ page }) => {

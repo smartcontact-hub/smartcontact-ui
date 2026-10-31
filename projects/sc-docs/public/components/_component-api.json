@@ -400,7 +400,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "cuando": "Para un aviso o una pregunta con una acción clara (borrar, descartar cambios, sesión caducada), abierto por `ScDynamicDialogService` como en ui.smart-contact.com. La variante dice la intención: `error` destruye o bloquea, `warning` pide atención, `info` informa y `default` confirma algo neutro. La superficie dice quién lo provoca: blanca (`surface: 'plain'`) si decide el usuario (borrar, descartar), teñida (`tinted`, la de siempre) si es un error del sistema (sin micrófono). Mide de 320 a 480 px y hasta 400 de alto. Si lleva más que texto, `sc-custom-modal`.",
+      "cuando": "Para un aviso o una pregunta con una acción clara (borrar, descartar cambios, sesión caducada), abierto por `ScDynamicDialogService` como en ui.smart-contact.com. La variante dice la intención: `error` destruye o bloquea, `warning` pide atención, `info` informa y `default` confirma algo neutro. La superficie dice quién lo provoca: blanca (`surface: 'plain'`, el confirm centrado de antes) si decide el usuario (borrar, descartar), teñida (`tinted`, la de siempre) si es un error del sistema (sin micrófono). Mide de 320 a 480 px y hasta 400 de alto. Si lleva más que texto, `sc-custom-modal`.",
       "contrato": [
         {
           "nombre": "variant",
@@ -418,7 +418,7 @@
           "tipo": "ScAlertModalSurface",
           "porDefecto": "'tinted'",
           "requerido": false,
-          "descripcion": "Extensión nuestra (DD-242): `tinted` tiñe la superficie con la variante (error del sistema); `plain` la deja blanca, con el icono y el botón principal en el color de la variante (borrar, descartar cambios).",
+          "descripcion": "Extensión nuestra (DD-242): `tinted` tiñe la superficie con la variante (error del sistema); `plain` es el confirm centrado de antes, blanco y con el icono en gris junto al mensaje (borrar, descartar cambios).",
           "origen": "nuestro",
           "nativo": null
         },
@@ -2170,6 +2170,16 @@
           "porDefecto": "'secondary'",
           "requerido": false,
           "descripcion": "Tono de la X; `sc-alert-modal` le pasa el de su variante, como la Severity del Kit.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "closeIconSize",
+          "clase": "input",
+          "tipo": "ScButtonIconSize",
+          "porDefecto": "'lg'",
+          "requerido": false,
+          "descripcion": "Extensión nuestra: talla del aspa de la X; `sc-alert-modal` en blanco le pasa `sm`, la del confirm de antes (DD-242).",
           "origen": "nuestro",
           "nativo": null
         },
