@@ -80,6 +80,23 @@ El de la ficha de grupo como la versión 17 de su página de COA (2026-10-22, DD
 El del repaso de Grupos entre COA, Figma y prototipo, con «Editar en Repositorios» (2026-10-22, DD-224, sin trampas propias):
 `git show 2d3724ad:docs/handoff/supervisor-fichas.md`.
 
+## ✅ 2026-10-31 · Borrar y descartar no tiñen el modal: la superficie blanca calca el confirm de antes (DD-242)
+
+> **Sello:** rama `areses/beautiful-elion-ebd58a` sobre `main` `00f1e062`. Bloque 1 del empate de los flujos del AED.
+
+- **DS**: `sc-alert-modal` gana `surface` (`tinted` por defecto, `plain`) y `closeOnEscape`; `sc-custom-modal`,
+  `closeIconSize`. `plain` es el confirm centrado de antes, medido contra `p-confirmdialog` en sus tres tonos: icono gris
+  de 21 junto al mensaje, X de 14 y sus botones (borrar: «Cancelar» gris relleno; descartar: la salida segura rellena y
+  la acción roja con borde). Solo difiere el aspa de la X (Material, no la de PrimeNG).
+- **Supervisor**: `AlertModalRequest.surface` es obligatoria; los 14 avisos de hoy van en `plain`. Un error del sistema
+  iría en `tinted` y, si no debe cerrarse con Escape, con `closeOnEscape: false` (SISMAC-4292).
+- **Pruebas**: `e2e/supervisor/alert-modal-superficie.spec.ts` (borrar y descartar, blancos) y `components.spec.ts`
+  (teñida sin `surface`, el calco en blanco y que Escape no cierra con `closeOnEscape: false`).
+- **Pendiente fuera del repo**: la propiedad de superficie en «❖ Alert modal» (15876:601), en el Bloque 8 del plan, y el
+  mensaje a los devs (borrador en `~/Documents/Claude/2026-10 Empate flujos AED/`).
+- **Trampa**: `npm run verify` reescribe `dist/` y deja sin el DS a un `ng serve` vivo del mismo worktree; tras
+  `verify`, reconstruye el DS y relanza antes de medir.
+
 ## ✅ 2026-10-28 · Agendas, Plantillas y Equipos: solo a agentes, confirmado con producto (DD-239)
 
 > **Sello:** rama `areses/team-docs-update-69ebf8` sobre `main` HEAD `a922b1b3`.
