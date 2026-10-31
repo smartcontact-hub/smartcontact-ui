@@ -73,11 +73,12 @@
   justify-self: start;
 }
 
-/* Una opción: el tirador, su nombre y la papelera, en una línea. */
+/* Una opción: el tirador, su nombre y la papelera, en una línea. Arriba y no al centro: con su aviso debajo («Ya hay
+ * «X» en este nivel», DD-244) el campo crece, y el tirador y la papelera se quedan a la altura del texto. */
 .opcion {
   grid-column: 1;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--sc-spacing-0-25);
   min-width: 0;
 }
@@ -92,6 +93,8 @@
   align-items: center;
   justify-content: center;
   flex: none;
+  /* El alto del botón de icono de al lado, para quedar centrado con el campo. */
+  min-block-size: var(--sc-spacing-2-25);
   padding: 0;
   border: 0;
   border-radius: var(--sc-radius-sm);

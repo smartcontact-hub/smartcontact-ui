@@ -10,7 +10,8 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  *   1. el nombre encima del índice, con General y Categorías, y debajo cuántos niveles y en cuántos grupos;
  *   2. dos formas de añadir que no se confunden: «Añadir categoría», en la esquina de la sección, pone la primera del
  *      primer nivel; la flecha de una fila pone la primera de la columna de al lado, debajo de esa opción;
- *   3. un nombre repetido entre hermanas se dice bajo el árbol y no deja guardar; completo, no hay línea;
+ *   3. un nombre repetido entre hermanas se dice bajo SU campo («Ya hay «X» en este nivel», DD-244), no bajo el árbol,
+ *      y no deja guardar;
  *   4. el teléfono de la vista previa no cambia de tamaño al elegir;
  *   5. eliminarla dice qué grupos la usan, y al eliminarla esos grupos dejan de tipificar;
  *   6. un alta de punta a punta: nombre, opciones y Crear, y sale en el listado.
@@ -58,20 +59,39 @@ test('«Añadir categoría» pone la primera del primer nivel; «Añadir subcate
   await expect(page.locator('sc-tipificacion-niveles sc-button[icon="subdirectory_arrow_right"]')).toHaveCount(0);
 });
 
-test('un nombre repetido entre hermanas se dice bajo el árbol y no deja guardar; completo, no hay línea', async ({ page }) => {
+test('un nombre repetido entre hermanas se dice bajo su campo y no deja guardar (DD-244)', async ({ page }) => {
   await goto(page, 'admin/tipificaciones/editar/1?seccion=categorias');
+  const repetida = primerNivel(page).nth(2);
+  await expect(repetida).not.toHaveAttribute('aria-invalid', 'true');
+
+  await repetida.fill('consulta');
+  // El aviso es de la que repite, con su nombre, y el lector lo oye con el campo; la primera «Consulta» no se marca.
+  await expect(repetida).toHaveAttribute('aria-invalid', 'true');
+  await expect(repetida).toHaveAccessibleDescription('Ya hay «consulta» en este nivel');
+  await expect(primerNivel(page).first()).not.toHaveAttribute('aria-invalid', 'true');
+  // Bajo su campo y en su columna, no en una línea bajo el árbol.
+  const aviso = page.locator('sc-tipificacion-niveles .opcion .sc-field__msg--error');
+  await expect(aviso).toHaveCount(1);
+  const campo = (await repetida.boundingBox())!;
+  const caja = (await aviso.boundingBox())!;
+  expect(caja.y, 'debajo del campo').toBeGreaterThanOrEqual(campo.y + campo.height);
+  expect(caja.y - (campo.y + campo.height), 'pegado a él').toBeLessThan(14);
+  expect(caja.x, 'en su columna').toBeGreaterThanOrEqual(campo.x - 1);
+  // El aviso alarga la fila, pero la papelera sigue a la altura del campo, no en medio de campo y aviso.
+  const fila = page.locator('sc-tipificacion-niveles .arbol__rama > .rama > .opcion').nth(2);
+  const papelera = (await fila.locator('sc-button button').boundingBox())!;
+  expect(Math.abs(papelera.y + papelera.height / 2 - (campo.y + campo.height / 2)), 'papelera centrada con el campo').toBeLessThan(2);
   await expect(page.locator('.niveles__estado')).toHaveCount(0);
 
-  await primerNivel(page).nth(2).fill('consulta');
-  await expect(page.locator('.niveles__estado')).toHaveText(/Hay opciones con el mismo nombre en una misma lista/);
   // Sin «Falta: …» en la barra; «Guardar» apagado mientras se repita (DD-219), y con Ctrl+S el índice lo dice.
   await expect(barra(page)).not.toContainText('Falta');
   await expect(barra(page).getByRole('button', { name: 'Guardar' })).toBeDisabled();
   await page.keyboard.press('ControlOrMeta+s');
   await expect(page.locator('sc-form-section-nav .form-nav__item--has-error')).toContainText('Dale a cada opción un nombre distinto');
 
-  await primerNivel(page).nth(2).fill('Gestión');
-  await expect(page.locator('.niveles__estado')).toHaveCount(0);
+  await repetida.fill('Gestión');
+  await expect(aviso).toHaveCount(0);
+  await expect(repetida).not.toHaveAttribute('aria-invalid', 'true');
 });
 
 test('el teléfono de la vista previa no cambia de tamaño al elegir', async ({ page }) => {

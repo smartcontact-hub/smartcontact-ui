@@ -50,7 +50,7 @@
         [ariaLabel]="(titulo(nivel) | translate) + ': ' + (opcion.label || ('repositories.tipificaciones.unnamed' | translate))"
         [placeholder]="'repositories.tipificaciones.option_placeholder' | translate"
         [value]="opcion.label"
-        [invalid]="invalida(opcion) && !!opcion.label"
+        [error]="repetida(opcion)"
         (valueChange)="renombrar(padres, opcion.id, $event)"
         (keydown)="tecla($event, padres, opcion)"
         (focusout)="alSalir(padres, opcion)"

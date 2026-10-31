@@ -115,21 +115,24 @@ export class TipificacionNivelesComponent {
     return `repositories.tipificaciones.level_title.${nivel + 1}`;
   }
 
-  /* ── Lo que está mal: sin nombre, repetida o rama corta ──────────────────── */
+  /* ── Lo que está mal: sin nombre o repetida ──────────────────────────────── */
 
   private readonly repetidas = computed(() => repetidasPorId(this.arbol()));
 
-  protected invalida(opcion: TipificacionOpcion): boolean {
-    return !opcion.label.trim() || this.repetidas().has(opcion.id);
+  /** El aviso de una opción que repite el nombre de una hermana, bajo su campo: «Ya hay «X» en este nivel» (COA de
+   *  SISMAC-4451, DD-244). Lo lleva la que repite, no la primera: la que se está escribiendo. */
+  protected repetida(opcion: TipificacionOpcion): string | undefined {
+    this.lang();
+    if (!this.repetidas().has(opcion.id)) return undefined;
+    return this.translate.instant('repositories.tipificaciones.errors.option_taken', { name: opcion.label.trim() });
   }
 
-  /** La línea bajo el árbol, solo cuando falta algo (una hermana repetida, una opción sin nombre). Completo, calla: el
-   *  árbol ya se ve entero, y el resumen («33 opciones en 3 niveles») no decía nada nuevo (DD-187). */
+  /** La línea bajo el árbol, solo cuando hay opciones sin nombre: una vacía no tiene campo con texto al que señalar. La
+   *  repetida lo dice en su campo (DD-244). Completo, calla: el árbol ya se ve entero, y el resumen («33 opciones en 3
+   *  niveles») no decía nada nuevo (DD-187). */
   protected readonly estado = computed<string | null>(() => {
     this.lang();
-    const t = (k: string) => this.translate.instant(`repositories.tipificaciones.tree_status.${k}`);
-    if (this.repetidas().size > 0) return t('repeated');
-    if (this.sinNombre(this.arbol())) return t('unnamed');
+    if (this.sinNombre(this.arbol())) return this.translate.instant('repositories.tipificaciones.tree_status.unnamed');
     return null;
   });
 
