@@ -1601,7 +1601,6 @@
         "move_hint": "Drag it, or use the up and down arrows"
       },
       "tree_status": {
-        "repeated": "Some options share a name in the same list.",
         "unnamed": "Some options have no name."
       },
       "preview": {

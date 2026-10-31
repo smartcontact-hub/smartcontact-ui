@@ -79,6 +79,20 @@ El de la ficha de grupo como la versión 17 de su página de COA (2026-10-22, DD
 5374bb7a:docs/handoff/supervisor-fichas.md`.
 El del repaso de Grupos entre COA, Figma y prototipo, con «Editar en Repositorios» (2026-10-22, DD-224, sin trampas propias):
 `git show 2d3724ad:docs/handoff/supervisor-fichas.md`.
+El de Agentes como sus borradores de COA, 4060 y 4062 (2026-10-23, DD-225, sin trampas propias): `git show
+deb87737:docs/handoff/supervisor-fichas.md`.
+
+## ✅ 2026-10-31 · Tipificaciones: la opción repetida lo dice en su campo (DD-244)
+
+> **Sello:** rama `areses/brave-taussig-9cf3e0` sobre `main` HEAD `deb87737`.
+
+- **Hecho**: dos hermanas con el mismo nombre se dicen bajo el campo de la que repite, «Ya hay «X» en este nivel»
+  (`errors.option_taken`, que existía sin uso), como pide el COA de SISMAC-4451 v7 (2026-10-30). Bajo el árbol queda solo
+  «Hay opciones sin nombre.»; fuera `tree_status.repeated`. La fila de la opción alinea arriba para que el tirador y la
+  papelera no bajen con el aviso. Prueba: `tipificacion-ficha` (rojo con el código anterior).
+- **COA 4451**: releído en vivo el 2026-10-31, sigue en v7. El prompt maestro con sus BUSCA/PON (erratas, «⋮», nivel 3,
+  tope de 15 en Grupos, exportar lo que se ve y los huecos) está en `~/Documents/Claude/2026-10 Empate flujos AED/`; lo
+  pega y publica Rafa. Figma (`3503:49633`), en el Bloque 8.
 
 ## ✅ 2026-10-28 · Agendas, Plantillas y Equipos: solo a agentes, confirmado con producto (DD-239)
 
@@ -130,25 +144,6 @@ El del repaso de Grupos entre COA, Figma y prototipo, con «Editar en Repositori
   Repositorios, Tipificaciones, Categorías y Reglas. Fuera la barra de lote de esas cinco (la edición masiva no se entregó);
   su código (`bulkEntity`, `requestDeleteSelection`, edición de Usuarios) queda aparcado. Conversaciones conserva la suya.
 - **«⋮»**: con la fila entre varias marcadas abre el menú de la selección, «Eliminar (N)» (`common.delete_count`), como el clic derecho.
-
-## ✅ 2026-10-23 · Agentes como sus borradores de COA, 4060 y 4062 (DD-225)
-
-> **Sello:** rama `areses/distracted-mclaren-9c96d2` sobre `main` `a0820c6b`, un PR (#511, fundido como `8f2056b7`).
-> La congelada 4062 avanzó a ese commit el mismo día, y luego a `a01e13e6` (#513, DD-226). Los borradores, las
-> decisiones y lo que falta en Figma viven fuera del repo (`~/Documents/Claude/2026-10 Agentes COA/`, su LÉEME).
-
-- **Listado**: borrar varios con el clic derecho (`selectionMenu`, `onBulkDelete`); Teléfono y Estado de inicio
-  (`sc-agents-columns-v6`); Estado ordena por `PRESENCE_SORT_RANK`; «Grupos» de mayor a menor (`defaultSortOrder`);
-  Canales en el Excel.
-- **Estado «Conversación»** (Dashboard: «En pausa»), agente 17; una lista guardada no lo trae (versión sin subir). Color
-  por familia: Administrativo marrón; Post-conversando, azul sin borde (DD-226). A 1440 desplaza de lado (226 px).
-- **Ficha**: duplicar no copia foto, móvil ni estado, y todo agente nace «Desconectado»; solo extensiones libres
-  (`extensionOptions`); email repetido en vivo (`agents.errors.email_taken`); tabla de grupos vacía con su motivo
-  (`vacio`); índice del alta con marcadores (`sectionStates`, `faltasPorSeccion`, `OBLIGATORIOS_DE`) y sin «Falta: …»
-  sobre el resumen; «Deshacer» llama a `alta.reiniciar()`; salientes solo con `CLIENTE_CON_CALL_BLENDING`; singular del
-  aviso de quitar canales (`removeBodyKey`).
-- **Pruebas**: `agentes-como-coa-4060-4062.spec.ts` nueva; al día las que fijaban el ✓ suelto y «Falta: …».
-- **Fuera**: Contact Center › Servicio pinta Administrativo con `warn`, no en marrón como la columna Estado.
 
 ## SIGUIENTE — sin preguntar
 

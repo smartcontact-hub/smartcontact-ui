@@ -43,6 +43,7 @@
 > | Tema | DD |
 > |---|---|
 > | Repositorios como sus páginas de COA: Equipos avisa del nombre en gris y en rojo, su cifra abre la ficha en «Agentes» y enseña la foto (4453) · Agendas fija Nombre y «⋮» y sus campos son siempre «Personalizado N» (4440) · Plantillas corta el título con tooltip y avisa en rojo como Agendas (4438) · el hub: ocho «Próximamente» con su cifra y sin panel, un reciente entra en su repositorio y Labels con «Administración» (4064) (enmienda DD-179 §4 y §6) | DD-245 |
+> | Tipificaciones: dos opciones hermanas con el mismo nombre se dicen bajo el campo de la que repite, «Ya hay «X» en este nivel», como el COA de SISMAC-4451 (v7, 2026-10-30); bajo el árbol queda solo «Hay opciones sin nombre» (enmienda DD-187 §12 en lo del repetido) | DD-244 |
 > | La barra de toda tabla de asignar: el filtro del conjunto primero («Todos / Asignados / Sin asignar»), el buscador llenando lo que queda y «N asignados» al final, en una pieza (`sc-assign-bar`) · al editar abre en «Asignados» y en el alta en «Todos», también Agendas y Plantillas · ordenar por nombre en las tablas de asignar y por cualquier columna en el listado de Equipos · el hub de Repositorios, filtro delante del buscador (enmienda DD-176 §4, DD-179 y DD-230 §1) | DD-243 |
 > | Los modales como en ui.smart-contact.com: `sc-custom-modal` (la carcasa, también con `[(visible)]`) y `sc-alert-modal` (aviso con variante `default`, `info`, `warning` o `error`, abierto por `ScDynamicDialogService`) con su misma API y sus fallos arreglados · borrar es `error`, descartar `warning` · se retiran `sc-dialog` y el confirm centrado; el globo con `target` sigue · Figma: «❖ Alert modal» con instancias de Custom modal | DD-241 |
 > | Tipificaciones: el buscador de la lista mira cualquier campo, también los nombres de los grupos que la usan aunque solo salgan al pasar el ratón (enmienda la regla de Agentes y Grupos solo para esta lista) · la edición de Tipificaciones, Agendas, Plantillas y las cuentas y triggers de Email acaba en el nombre guardado, y Agendas, Plantillas y Email abren la miga con «Administración», como Grupos y Agentes · el nombre de las fichas de Repositorios lleva «Ej: …» y la descripción «Breve descripción...» | DD-238 |
@@ -211,6 +212,36 @@ arreglar: DD-179 §1 dice que el hub cabe sin desplazar a 1440 × 800, y con 13 
 su prueba mide `.hub`, que no es lo que desplaza (`.app-shell__content`). Pruebas: `equipos-como-coa-4453.spec.ts`,
 `agendas-plantillas-como-coa.spec.ts`, `repositorios-hub.spec.ts` (9) y `breadcrumb-current.spec.ts` (Labels). Fuera del repo:
 las páginas de COA de 4453, 4440, 4438 y 4064, por prompt; Figma, en el último bloque del empate.
+
+---
+
+## DD-244 · 2026-10-31 — Tipificaciones: la opción repetida lo dice en su campo, «Ya hay «X» en este nivel»
+
+**Contexto** · Dos opciones hermanas con el mismo nombre no dejan guardar (DD-235 lo deja fuera del permiso: el agente no
+sabría cuál es cuál), y hasta hoy lo decía una línea bajo el árbol, «Hay opciones con el mismo nombre en una misma lista.»,
+lejos de la opción y sin decir cuál. El COA de SISMAC-4451 (v7, del 2026-10-30, posterior a DD-237 y DD-238) pide el aviso
+«Ya hay «Nombre» en este nivel», y la clave `repositories.tipificaciones.errors.option_taken` ya existía en los cuatro idiomas
+sin que nada la usara.
+
+**Decisión** · La opción que repite el nombre de una hermana lleva bajo su campo «Ya hay «X» en este nivel», con el nombre que se
+ha escrito, en rojo y en vivo (es un error de contenido, DD-219 §4); el campo se marca y el lector lo oye con él. La primera de las
+dos no se marca: el aviso es de la que se está escribiendo. Bajo el árbol queda solo «Hay opciones sin nombre», que no tiene un
+campo con texto al que señalar. Fuera la clave `tree_status.repeated`. La fila de la opción alinea arriba, así que el tirador y la
+papelera siguen a la altura del campo cuando el aviso la alarga. Enmienda DD-187 §12 («la línea de resumen del árbol solo aparece
+si falta algo») en lo del repetido; «Guardar» apagado y el índice con «Dale a cada opción un nombre distinto» siguen igual.
+
+**Razón** · El COA es más nuevo que cualquier DD sobre esto y lo decide; además un aviso junto al campo dice cuál es la repetida,
+y el de debajo del árbol obligaba a buscarla entre todas las ramas.
+
+**Descartadas** ·
+- *Quitar el control y dejar repetir, como el nombre de la tipificación (DD-235)*: importar junta las hermanas por nombre
+  (`meterCamino`, sin mayúsculas), así que exportar y volver a importar fundiría dos «Consulta» en una con las hijas
+  mezcladas; y el agente, al colgar, vería dos filas iguales sin saber cuál es cuál. Lo prohíbe además el propio COA.
+
+**Consecuencias** · `tipificacion-niveles.component.{ts,html,scss}`, i18n en los cuatro idiomas y
+`e2e/supervisor/tipificacion-ficha.spec.ts`, que mide el aviso con su texto, debajo del campo y en su columna, la papelera a la
+altura del campo y que no hay línea bajo el árbol (rojo con el código anterior: descripción vacía). Figma (`3503:49633`), cuando
+toque el Bloque 8 del empate de flujos.
 
 ---
 
