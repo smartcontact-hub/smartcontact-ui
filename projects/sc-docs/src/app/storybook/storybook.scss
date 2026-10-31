@@ -302,8 +302,6 @@
 
 .sb-host__head h1 {
   margin: 0;
-  font-size: var(--sc-font-size-500, var(--sc-font-size-h1));
-  font-weight: var(--sc-font-weight-semibold);
   color: var(--sc-text-primary);
 }
 
@@ -319,11 +317,11 @@
   color: var(--sc-text-secondary);
 }
 
+/* La entradilla, a 18 como en las docs de referencia: dice qué es antes del «cuándo». */
 .sb-host__desc {
-  margin: var(--sc-spacing-0-5) 0 0 0;
-  max-width: 60ch;
+  margin: var(--sc-spacing-0-75) 0 0 0;
+  max-width: 62ch;
   color: var(--sc-text-secondary);
-  line-height: 1.55;
 }
 
 /* «Cuándo se usa», bajo la descripción: la primera pregunta de quien llega («¿es este o es otro?»). Una caja neutra y
@@ -386,6 +384,18 @@
 /* Entre los grupos de la tabla de API («Entradas», «Dos sentidos», «Salidas»), el escalón de entre grupos: cada título
  * va con SU tabla y no se lee como la última fila de la de encima (AGENTS, «UX de pantalla» 9: entre grupos, al menos
  * el doble que dentro). La clase base es también la de cada historia y la de «API», que no cambian. */
+/* El título de cada sección de la ficha (cada historia, «Todas las combinaciones», «API»): un `h2` con filete debajo, como
+ * las secciones de una doc de referencia. El índice de la ficha, en el lateral, se lee de estos títulos. Los grupos de la
+ * tabla de API siguen con la clase base, en pequeño. */
+.sb-host__section-title.sb-host__h2 {
+  margin: var(--sc-spacing-1-5) 0 var(--sc-spacing-1);
+  padding-bottom: var(--sc-spacing-0-5);
+  border-bottom: 1px solid var(--sc-border-default);
+  letter-spacing: -0.01em;
+  text-transform: none;
+  color: var(--sc-text-primary);
+}
+
 .sb-props + .sb-host__section-title {
   margin-block-start: var(--sc-spacing-2);
 }
@@ -413,7 +423,8 @@
 
 .sb-panel {
   position: sticky;
-  top: var(--sc-spacing-1-25);
+  /* Bajo la cabecera fija del shell (`app.component.scss`, `--demo-alto-cabecera`). */
+  top: calc(var(--demo-alto-cabecera, 0px) + var(--sc-spacing-1-25));
   z-index: 3;
   align-self: start;
 }

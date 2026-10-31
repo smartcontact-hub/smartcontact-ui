@@ -1,0 +1,219 @@
+<!-- Degradados de la portada, una sola vez: los usan todas las ilustraciones. Los colores, de tokens (ver la hoja). -->
+<svg class="ini-defs" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="ini-grad-mar" x1="0" y1="0" x2="1" y2="1">
+      <stop class="ini-stop--cian" offset="0" />
+      <stop class="ini-stop--cielo" offset="0.55" />
+      <stop class="ini-stop--hondo" offset="1" />
+    </linearGradient>
+    <radialGradient id="ini-grad-esfera" cx="0.32" cy="0.3" r="0.8">
+      <stop class="ini-stop--brillo" offset="0" />
+      <stop class="ini-stop--cian" offset="0.28" />
+      <stop class="ini-stop--cielo" offset="0.7" />
+      <stop class="ini-stop--hondo" offset="1" />
+    </radialGradient>
+    <radialGradient id="ini-grad-lima" cx="0.4" cy="0.6" r="0.6">
+      <stop class="ini-stop--lima" offset="0" />
+      <stop class="ini-stop--cian" offset="0.6" stop-opacity="0.9" />
+      <stop class="ini-stop--cielo" offset="1" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="ini-grad-cristal" x1="0" y1="0" x2="1" y2="1">
+      <stop class="ini-stop--cian" offset="0" stop-opacity="0.85" />
+      <stop class="ini-stop--cielo" offset="1" stop-opacity="0.75" />
+    </linearGradient>
+    <linearGradient id="ini-grad-velo" x1="0" y1="0" x2="1" y2="0">
+      <stop class="ini-stop--blanco" offset="0" stop-opacity="1" />
+      <stop class="ini-stop--blanco" offset="1" stop-opacity="0" />
+    </linearGradient>
+  </defs>
+</svg>
+
+<section class="ini-hero">
+  <!-- La forma de la esquina: una esfera y un cristal sacados de los círculos del logo. -->
+  <svg class="ini-hero__forma" viewBox="0 0 420 260" aria-hidden="true" focusable="false">
+    <circle cx="300" cy="70" r="150" fill="url(#ini-grad-esfera)" />
+    <rect x="70" y="-60" width="230" height="200" rx="28" transform="rotate(-16 185 40)" fill="url(#ini-grad-cristal)" />
+    <circle cx="230" cy="120" r="70" fill="url(#ini-grad-lima)" opacity="0.85" />
+  </svg>
+  <h1 class="ini-hero__titulo sc-text-h1-regular">{{ 'inicio.title' | translate }}</h1>
+  <p class="ini-hero__sub sc-text-h3-regular">{{ 'inicio.subtitle' | translate }}</p>
+</section>
+
+<div class="ini-pagina">
+  <div class="ini-rejilla">
+    <!-- Componentes -->
+    <article class="ini-card ini-card--ancha">
+      <div class="ini-card__texto">
+        <h2 class="ini-card__titular">
+          <span class="ini-card__pre">{{ 'inicio.cardComponentes.pre' | translate }}</span>
+          {{ 'inicio.cardComponentes.post' | translate }}
+        </h2>
+        <a class="ini-enlace sc-text-subtitle-semibold" routerLink="/components">
+          {{ 'inicio.cardComponentes.link' | translate: { total } }}
+          <sc-icon name="chevron_right" [size]="16" />
+        </a>
+      </div>
+
+      <div class="ini-ilus ini-ilus--componentes" inert aria-hidden="true">
+        <svg class="ini-ilus__trazo" viewBox="0 0 260 240" focusable="false">
+          <path d="M40 30 L18 150 M40 30 C60 80 110 70 140 64 C160 60 150 40 170 34 M18 150 L4 220" />
+          <circle cx="40" cy="30" r="17" />
+          <circle cx="40" cy="30" r="8" />
+          <circle cx="170" cy="34" r="17" />
+          <circle cx="170" cy="34" r="8" />
+          <circle cx="8" cy="200" r="17" />
+        </svg>
+
+        <div class="ini-ilus__ventana">
+          <span class="ini-ilus__puntos"><i></i><i></i><i></i></span>
+          <div class="ini-ilus__medida">
+            <span class="ini-ilus__cota ini-ilus__cota--ancho">ancho: 480px</span>
+            <span class="ini-ilus__cota ini-ilus__cota--alto">alto: máx. 320px</span>
+          </div>
+        </div>
+
+        <sc-message class="ini-ilus__mensaje" severity="success" variant="outlined" icon="check_circle" text="¡Guardado!" [closable]="true" size="sm" />
+
+        <div class="ini-ilus__barra-zona">
+          <sc-tag class="ini-ilus__rotulo" value="Separador" severity="info" size="sm" />
+          <div class="ini-ilus__barra">
+            @for (i of barra; track $index) {
+              @if (i) {
+                <sc-button [icon]="i" appearance="text" variant="secondary" size="sm" [ariaLabel]="i" />
+              } @else {
+                <span class="ini-ilus__separador"></span>
+              }
+            }
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- Fundamentos -->
+    <article class="ini-card ini-card--estrecha">
+      <div class="ini-ilus ini-ilus--marcas" aria-hidden="true">
+        <!-- De la línea al volumen: el logo y un círculo, en trazo, en plano y con degradado. -->
+        @for (fila of [0, 1]; track fila) {
+          @for (paso of [0, 1, 2]; track paso) {
+            <svg class="ini-marca" [attr.data-paso]="paso" viewBox="0 0 110 100" focusable="false">
+              @if (fila === 0) {
+                <circle cx="38" cy="24" r="22" />
+                <circle cx="93" cy="24" r="15" />
+                <circle cx="71" cy="74" r="22" />
+                <circle cx="16" cy="74" r="15" />
+              } @else {
+                <circle cx="55" cy="50" r="40" />
+                <circle class="ini-marca__brillo" cx="68" cy="62" r="16" />
+              }
+            </svg>
+          }
+        }
+      </div>
+      <div class="ini-card__texto ini-card__texto--abajo">
+        <h2 class="ini-card__titular">
+          <span class="ini-card__pre">{{ 'inicio.cardFundamentos.pre' | translate }}</span>
+          {{ 'inicio.cardFundamentos.post' | translate }}
+        </h2>
+        <a class="ini-enlace sc-text-subtitle-semibold" routerLink="/fundamentos">
+          {{ 'inicio.cardFundamentos.link' | translate }}
+          <sc-icon name="chevron_right" [size]="16" />
+        </a>
+      </div>
+    </article>
+
+    <!-- Uso real -->
+    <article class="ini-card ini-card--entera">
+      <div class="ini-card__texto">
+        <h2 class="ini-card__titular">
+          <span class="ini-card__pre">{{ 'inicio.cardUso.pre' | translate }}</span>
+          {{ 'inicio.cardUso.post' | translate }}
+        </h2>
+        <a class="ini-enlace ini-enlace--abajo sc-text-subtitle-semibold" routerLink="/uso">
+          {{ 'inicio.cardUso.link' | translate }}
+          <sc-icon name="chevron_right" [size]="16" />
+        </a>
+      </div>
+
+      <div class="ini-ilus ini-ilus--uso" inert aria-hidden="true">
+        <svg class="ini-ilus__trazo ini-ilus__trazo--uso" viewBox="0 0 200 180" focusable="false">
+          <path d="M150 0 C140 40 120 60 90 64 C70 66 60 80 62 110 M150 0 L176 -30" />
+          <circle cx="90" cy="64" r="15" />
+          <circle cx="90" cy="64" r="7" />
+          <circle cx="62" cy="120" r="15" />
+          <circle cx="62" cy="120" r="7" />
+        </svg>
+
+        <div class="ini-ilus__pantalla">
+          <img src="/usage/admin-agentes.png" width="1440" height="900" alt="" loading="lazy" decoding="async" />
+        </div>
+
+        <div class="ini-ilus__ficha">
+          <div class="ini-ilus__ficha-fila">
+            <sc-avatar label="AR" size="normal" shape="circle" />
+            <div class="ini-ilus__ficha-nombre">
+              <strong class="sc-text-body-semibold">Agente 122</strong>
+              <span class="sc-text-caption-regular">En llamada, 04:12</span>
+            </div>
+            <sc-tag value="Disponible" severity="success" size="sm" />
+          </div>
+          <sc-progressbar [value]="68" [showValue]="false" ariaLabel="Ocupación" />
+          <div class="ini-ilus__ficha-fila">
+            <span class="sc-text-body-regular">Grabación</span>
+            <sc-toggleswitch [checked]="true" ariaLabel="Grabación" />
+          </div>
+        </div>
+
+        <sc-icon-tile class="ini-ilus__azulejo" icon="code" tone="brand" />
+      </div>
+    </article>
+  </div>
+
+  <!-- Base compartida -->
+  <section class="ini-seccion">
+    <h2 class="ini-seccion__titulo sc-text-h2-semibold">{{ 'inicio.base' | translate }}</h2>
+    <div class="ini-tres">
+      @for (b of base; track b.clave) {
+        <a class="ini-mini" [routerLink]="b.ruta">
+          <sc-icon-tile [icon]="b.icono" size="md" />
+          <h3 class="ini-mini__titulo sc-text-title-semibold">{{ 'inicio.' + b.clave + '.title' | translate }}</h3>
+          <p class="ini-mini__texto sc-text-body-regular">{{ 'inicio.' + b.clave + '.text' | translate }}</p>
+          <span class="ini-enlace sc-text-subtitle-semibold">{{ 'inicio.more' | translate }} <sc-icon name="chevron_right" [size]="16" /></span>
+        </a>
+      }
+    </div>
+  </section>
+
+  <!-- Al día -->
+  <section class="ini-seccion">
+    <h2 class="ini-seccion__titulo sc-text-h2-semibold">{{ 'inicio.aldia' | translate }}</h2>
+    <div class="ini-dos">
+      <a class="ini-mini ini-mini--arte" routerLink="/novedades">
+        <svg class="ini-arte" viewBox="0 0 440 190" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+          <rect width="440" height="190" class="ini-arte__fondo" />
+          <circle cx="90" cy="150" r="120" fill="url(#ini-grad-esfera)" />
+          <circle cx="70" cy="190" r="60" fill="url(#ini-grad-lima)" />
+          <rect x="120" y="90" width="150" height="130" rx="10" transform="rotate(-12 195 155)" fill="url(#ini-grad-cristal)" />
+          <rect width="440" height="190" fill="url(#ini-grad-velo)" transform="scale(-1 1) translate(-440 0)" opacity="0.9" />
+        </svg>
+        <h3 class="ini-mini__titulo sc-text-title-semibold">{{ 'inicio.novedades.title' | translate }}</h3>
+        <p class="ini-mini__texto sc-text-body-regular">{{ 'inicio.novedades.text' | translate }}</p>
+        <span class="ini-enlace sc-text-subtitle-semibold">{{ 'inicio.more' | translate }} <sc-icon name="chevron_right" [size]="16" /></span>
+      </a>
+
+      <a class="ini-mini ini-mini--arte" routerLink="/reglas">
+        <svg class="ini-arte" viewBox="0 0 440 190" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+          <rect width="440" height="190" class="ini-arte__fondo" />
+          <rect width="440" height="190" fill="url(#ini-grad-mar)" opacity="0.18" />
+          <circle cx="250" cy="100" r="70" fill="url(#ini-grad-esfera)" />
+          <rect x="250" y="40" width="110" height="110" rx="8" transform="rotate(45 305 95)" fill="url(#ini-grad-cristal)" />
+          <circle cx="285" cy="118" r="34" fill="url(#ini-grad-lima)" />
+          <path class="ini-arte__linea" d="M0 40 C120 60 160 160 250 150 C320 140 360 80 440 60 M0 120 L200 190" />
+          <circle class="ini-arte__nodo" cx="330" cy="112" r="4" />
+        </svg>
+        <h3 class="ini-mini__titulo sc-text-title-semibold">{{ 'inicio.reglas.title' | translate }}</h3>
+        <p class="ini-mini__texto sc-text-body-regular">{{ 'inicio.reglas.text' | translate }}</p>
+        <span class="ini-enlace sc-text-subtitle-semibold">{{ 'inicio.more' | translate }} <sc-icon name="chevron_right" [size]="16" /></span>
+      </a>
+    </div>
+  </section>
+</div>

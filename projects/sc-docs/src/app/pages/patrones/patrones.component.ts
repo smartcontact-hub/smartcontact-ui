@@ -31,8 +31,6 @@ interface Principle {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PatronesComponent {
-  protected readonly heroIcon = 'auto_awesome';
-
   protected readonly principles: readonly Principle[] = [
     { icon: 'palette', key: 'color' },
     { icon: 'progress_activity', key: 'loading' },

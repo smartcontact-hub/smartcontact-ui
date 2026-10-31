@@ -1,0 +1,558 @@
+/*
+ * Portada. Composición medida en primer.style (2026-10-31): título centrado sobre el gris de fondo, una rejilla de
+ * tarjetas blancas de 12 columnas (7 + 5, luego una entera) con 24 px de hueco, y dos filas de tarjetas pequeñas
+ * (3 y 2). Ancho útil ~62 rem. Todo con tokens; los degradados de las ilustraciones, con la paleta del DS.
+ */
+
+:host {
+  display: block;
+}
+
+/* ─────────── Degradados ─────────── */
+
+.ini-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+.ini-stop--cian {
+  stop-color: var(--sc-color-cyan-300);
+}
+
+.ini-stop--cielo {
+  stop-color: var(--sc-color-sky-500);
+}
+
+.ini-stop--hondo {
+  stop-color: var(--sc-color-sky-700);
+}
+
+.ini-stop--brillo {
+  stop-color: var(--sc-color-cyan-100);
+}
+
+.ini-stop--lima {
+  stop-color: var(--sc-color-emerald-300);
+}
+
+.ini-stop--blanco {
+  stop-color: var(--sc-bg-surface);
+}
+
+/* ─────────── Título ─────────── */
+
+.ini-hero {
+  position: relative;
+  overflow: hidden;
+  padding: var(--sc-spacing-5) var(--sc-spacing-1-5) var(--sc-spacing-4);
+  text-align: center;
+
+  &__forma {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: min(30rem, 45vw);
+    height: auto;
+    pointer-events: none;
+  }
+
+  &__titulo {
+    position: relative;
+    margin: 0;
+    font-weight: var(--sc-font-weight-medium);
+    letter-spacing: -0.03em;
+  }
+
+  &__sub {
+    position: relative;
+    margin: var(--sc-spacing-0-5) 0 0;
+    color: var(--sc-text-primary);
+  }
+}
+
+/* ─────────── Rejilla de tarjetas grandes ─────────── */
+
+.ini-pagina {
+  width: min(100% - 2 * var(--sc-spacing-1-5), 62rem);
+  margin: 0 auto;
+}
+
+.ini-rejilla {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--sc-spacing-1-75);
+}
+
+.ini-card {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 32rem;
+  border-radius: var(--sc-radius-2xl);
+  background: var(--sc-bg-surface);
+  box-shadow: var(--sc-shadow-xs);
+
+  &--ancha {
+    grid-column: span 7;
+  }
+
+  &--estrecha {
+    grid-column: span 5;
+  }
+
+  &--entera {
+    grid-column: span 12;
+    flex-direction: row;
+    min-height: 23rem;
+  }
+
+  &__texto {
+    position: relative;
+    z-index: 1;
+    padding: var(--sc-spacing-3) var(--sc-spacing-3) 0;
+
+    &--abajo {
+      margin-top: auto;
+      padding-bottom: var(--sc-spacing-3);
+    }
+  }
+
+  &--entera &__texto {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 42%;
+    padding-bottom: var(--sc-spacing-3);
+  }
+
+  /* Titular a dos tonos: la primera mitad callada, lo que importa en negro. */
+  &__titular {
+    margin: 0 0 var(--sc-spacing-1-25);
+    color: var(--sc-text-primary);
+    font-size: var(--sc-font-size-650);
+    line-height: var(--sc-line-height-650);
+    font-weight: var(--sc-font-weight-semibold);
+    letter-spacing: -0.02em;
+  }
+
+  &__pre {
+    display: block;
+    color: var(--sc-text-secondary);
+    font-weight: var(--sc-font-weight-medium);
+  }
+}
+
+.ini-enlace {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-25);
+  color: var(--sc-text-link);
+  font-weight: var(--sc-font-weight-semibold);
+  text-decoration: none;
+
+  sc-icon {
+    transition: transform 160ms ease-out;
+  }
+
+  &--abajo {
+    margin-top: auto;
+  }
+}
+
+a.ini-enlace:hover sc-icon,
+.ini-mini:hover .ini-enlace sc-icon {
+  transform: translateX(2px);
+}
+
+a.ini-enlace:focus-visible,
+.ini-mini:focus-visible {
+  outline: 2px solid var(--sc-border-focus);
+  outline-offset: 2px;
+  border-radius: var(--sc-radius-md);
+}
+
+/* ─────────── Ilustraciones ─────────── */
+
+.ini-ilus {
+  position: relative;
+  flex: 1;
+  pointer-events: none;
+  user-select: none;
+}
+
+.ini-ilus__trazo {
+  position: absolute;
+  fill: none;
+  stroke: var(--sc-border-strong);
+  stroke-width: 1.5;
+  overflow: visible;
+
+  circle {
+    fill: var(--sc-bg-surface);
+  }
+}
+
+/* 1 · Componentes: trazo, ventana con su cota, un mensaje y una barra de iconos con su rótulo. */
+.ini-ilus--componentes {
+  min-height: 19rem;
+
+  .ini-ilus__trazo {
+    left: 0;
+    top: 1.5rem;
+    width: 11rem;
+  }
+}
+
+.ini-ilus__ventana {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 58%;
+  height: 72%;
+  border: 1px solid var(--sc-border-default);
+  border-right: 0;
+  border-bottom: 0;
+  border-top-left-radius: var(--sc-radius-xl);
+  background: var(--sc-bg-default);
+}
+
+.ini-ilus__puntos {
+  display: flex;
+  gap: var(--sc-spacing-0-25);
+  padding: var(--sc-spacing-0-75);
+  border-bottom: 1px solid var(--sc-border-default);
+
+  i {
+    width: 6px;
+    height: 6px;
+    border-radius: var(--sc-radius-full);
+    background: var(--sc-border-strong);
+  }
+}
+
+/* La cota: una caja con su medida, en el acento, como las marcas de redline de una especificación. */
+.ini-ilus__medida {
+  position: absolute;
+  left: 18%;
+  right: 0;
+  top: 38%;
+  bottom: 8%;
+  border: 6px solid color-mix(in srgb, var(--sc-color-sky-300) 70%, transparent);
+  border-right: 0;
+  border-top-left-radius: var(--sc-radius-lg);
+  border-bottom-left-radius: var(--sc-radius-lg);
+  background: color-mix(in srgb, var(--sc-color-sky-500) 8%, var(--sc-bg-surface));
+  box-shadow: var(--sc-shadow-card);
+}
+
+.ini-ilus__cota {
+  position: absolute;
+  color: var(--sc-text-link);
+  font-family: var(--sc-font-family-mono);
+  font-size: var(--sc-font-size-100);
+  line-height: var(--sc-line-height-100);
+  white-space: nowrap;
+
+  &--ancho {
+    right: var(--sc-spacing-1);
+    top: var(--sc-spacing-0-75);
+  }
+
+  &--alto {
+    left: var(--sc-spacing-1-5);
+    bottom: var(--sc-spacing-1);
+  }
+
+  &--alto::before {
+    content: '';
+    position: absolute;
+    left: calc(-1 * var(--sc-spacing-0-75));
+    bottom: 0;
+    height: 5.5rem;
+    border-left: 1px solid currentColor;
+  }
+}
+
+.ini-ilus__mensaje {
+  position: absolute;
+  left: 22%;
+  top: 30%;
+  z-index: 1;
+  width: 15rem;
+  border-radius: var(--sc-radius-md);
+  background: var(--sc-bg-surface);
+  box-shadow: var(--sc-shadow-card);
+}
+
+.ini-ilus__barra-zona {
+  position: absolute;
+  left: 13%;
+  bottom: 9%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sc-spacing-0-375);
+}
+
+.ini-ilus__barra {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px var(--sc-spacing-0-25);
+  border: 3px solid color-mix(in srgb, var(--sc-color-sky-300) 55%, transparent);
+  border-radius: var(--sc-radius-lg);
+  background: var(--sc-bg-surface);
+}
+
+.ini-ilus__separador {
+  width: 0;
+  height: 1.25rem;
+  margin: 0 var(--sc-spacing-0-25);
+  border-left: 1px dashed var(--sc-border-accent);
+}
+
+/* 2 · Fundamentos: el logo y un círculo, de la línea al volumen. */
+.ini-ilus--marcas {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--sc-spacing-2) var(--sc-spacing-1-5);
+  padding: var(--sc-spacing-3) var(--sc-spacing-3) 0;
+  flex: none;
+}
+
+.ini-marca {
+  width: 100%;
+  max-width: 5.5rem;
+  height: auto;
+  justify-self: center;
+  overflow: visible;
+
+  circle {
+    fill: none;
+    stroke: var(--sc-text-secondary);
+    stroke-width: 1.5;
+  }
+
+  &[data-paso='1'] circle {
+    fill: var(--sc-color-sky-500);
+    stroke: none;
+  }
+
+  &[data-paso='1'] .ini-marca__brillo {
+    fill: var(--sc-color-cyan-300);
+  }
+
+  &[data-paso='2'] circle {
+    fill: url(#ini-grad-esfera);
+    stroke: none;
+    filter: drop-shadow(0 6px 10px rgb(var(--sc-shadow-color-rgb) / 0.18));
+  }
+
+  &[data-paso='2'] .ini-marca__brillo {
+    fill: url(#ini-grad-lima);
+    filter: none;
+  }
+
+  &[data-paso='0'] .ini-marca__brillo {
+    stroke-dasharray: 3 3;
+  }
+}
+
+/* 3 · Uso real: una pantalla real del producto y una ficha hecha con componentes. */
+.ini-ilus--uso {
+  min-height: 20rem;
+
+  .ini-ilus__trazo--uso {
+    left: 6%;
+    top: 0;
+    width: 9rem;
+  }
+}
+
+.ini-ilus__pantalla {
+  position: absolute;
+  left: 22%;
+  top: var(--sc-spacing-2-5);
+  width: 30rem;
+  overflow: hidden;
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-lg);
+  box-shadow: var(--sc-shadow-popover);
+
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+}
+
+.ini-ilus__ficha {
+  position: absolute;
+  left: 8%;
+  bottom: var(--sc-spacing-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-75);
+  width: 17rem;
+  padding: var(--sc-spacing-1);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-lg);
+  background: var(--sc-bg-surface);
+  box-shadow: var(--sc-shadow-popover);
+}
+
+.ini-ilus__ficha-fila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sc-spacing-0-75);
+}
+
+.ini-ilus__ficha-nombre {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+
+  span {
+    color: var(--sc-text-secondary);
+  }
+}
+
+.ini-ilus__azulejo {
+  position: absolute;
+  right: var(--sc-spacing-3);
+  top: var(--sc-spacing-1-5);
+}
+
+
+/* ─────────── Secciones de tarjetas pequeñas ─────────── */
+
+.ini-seccion {
+  margin-top: var(--sc-spacing-3);
+
+  &__titulo {
+    margin: 0 0 var(--sc-spacing-1-25);
+    color: var(--sc-text-primary);
+    font-weight: var(--sc-font-weight-semibold);
+    letter-spacing: -0.01em;
+  }
+}
+
+.ini-tres,
+.ini-dos {
+  display: grid;
+  gap: var(--sc-spacing-1-5);
+}
+
+.ini-tres {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.ini-dos {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.ini-mini {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sc-spacing-0-75);
+  padding: var(--sc-spacing-2);
+  border-radius: var(--sc-radius-xl);
+  background: var(--sc-bg-surface);
+  box-shadow: var(--sc-shadow-xs);
+  color: inherit;
+  text-decoration: none;
+  transition: box-shadow 160ms ease-out;
+
+  &:hover {
+    box-shadow: var(--sc-shadow-card);
+  }
+
+  &__titulo {
+    margin: var(--sc-spacing-0-5) 0 0;
+    font-weight: var(--sc-font-weight-semibold);
+  }
+
+  &__texto {
+    margin: 0 0 auto;
+    color: var(--sc-text-secondary);
+  }
+
+  .ini-enlace {
+    margin-top: var(--sc-spacing-0-75);
+  }
+}
+
+.ini-arte {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 440 / 190;
+  margin-bottom: var(--sc-spacing-0-5);
+  border-radius: var(--sc-radius-lg);
+
+  &__fondo {
+    fill: var(--sc-bg-default);
+  }
+
+  &__linea {
+    fill: none;
+    stroke: var(--sc-color-sky-500);
+    stroke-width: 1.25;
+  }
+
+  &__nodo {
+    fill: var(--sc-color-emerald-300);
+  }
+}
+
+/* ─────────── Estrecho ─────────── */
+
+@media (max-width: 56rem) {
+  .ini-card--ancha,
+  .ini-card--estrecha,
+  .ini-card--entera {
+    grid-column: span 12;
+  }
+
+  .ini-card,
+  .ini-card--entera {
+    min-height: 0;
+  }
+
+  .ini-card--entera {
+    flex-direction: column;
+  }
+
+  .ini-card--estrecha .ini-card__texto--abajo {
+    margin-top: var(--sc-spacing-1-5);
+  }
+
+  .ini-tres,
+  .ini-dos {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 40rem) {
+  .ini-card__texto {
+    padding: var(--sc-spacing-2) var(--sc-spacing-1-5) 0;
+  }
+
+  .ini-card__texto--abajo,
+  .ini-card--entera .ini-card__texto {
+    padding-bottom: var(--sc-spacing-2);
+  }
+
+  .ini-ilus__pantalla {
+    width: 22rem;
+  }
+
+  .ini-ilus__mensaje {
+    left: 8%;
+  }
+}

@@ -16,6 +16,26 @@
     "cmd": {
       "sections": "Secciones",
       "language": "Idioma"
+    },
+    "brandName": "Smart Contact",
+    "menu": "Menú de la sección",
+    "side": {
+      "aria": "Páginas de {{seccion}}",
+      "search": "Buscar en la doc",
+      "empezar": "Empezar",
+      "todos": "Todos los componentes",
+      "base": "Materia prima",
+      "pantallas": "Pantallas"
+    },
+    "toc": {
+      "title": "En esta página"
+    },
+    "crumbs": "Ruta",
+    "footer": {
+      "tagline": "El sistema de diseño de Smart Contact",
+      "lab": "Lab",
+      "legal": "Aviso legal",
+      "version": "Versión publicada"
     }
   },
   "categories": {
@@ -28,7 +48,6 @@
     "Patrones": "Patrones"
   },
   "componentsIndex": {
-    "eyebrow": "Sistema de diseño",
     "title": "Componentes",
     "lead": "{{total}} wrappers <code>sc-*</code> de <code>@smartcontact-hub/components</code>, en {{families}} familias. Para qué sirve cada uno de un vistazo; entra en cualquiera para ver sus variantes, estados y código, en claro y oscuro."
   },
@@ -359,22 +378,8 @@
     "uses": "usos"
   },
   "reglas": {
-    "eyebrow": "Estado del proyecto",
     "title": "Sistema de reglas",
     "lead": "El sistema de reglas se rehízo entero. Antes: grabar llamadas, con prioridades, conflictos y borradores. Ahora: <strong>transcribir</strong>, con varias reglas activas sin conflictos y un constructor que cualquiera entiende. Cada cambio se cuenta con su <strong>antes</strong>, su <strong>ahora</strong> y su <strong>porqué</strong>. Las capturas son del Supervisor real.",
-    "tocTitle": "La historia, paso a paso",
-    "toc": {
-      "p1": "Qué es una regla",
-      "p2": "El giro a transcripción",
-      "p3": "El alcance: de casillas a un árbol",
-      "p4": "Prioridad y conflictos: de lo difícil a nada",
-      "p5": "Borradores: un estado de menos",
-      "p6": "La estimación en vivo",
-      "p7": "Dónde viven: Repositorios",
-      "p8": "Transcripción en detalle",
-      "p9": "Lo que queda por cerrar",
-      "conclusiones": "Conclusiones"
-    },
     "before": "Antes",
     "after": "Ahora",
     "zoom": "Ampliar",
@@ -571,5 +576,52 @@
       "close": "Cerrar (Esc)",
       "hint": "Pulsa <kbd>Esc</kbd> o haz clic fuera para cerrar"
     }
+  },
+  "inicio": {
+    "title": "Smart Contact",
+    "subtitle": "El sistema de diseño de Smart Contact",
+    "cardComponentes": {
+      "pre": "Construye pantallas",
+      "post": "con los Componentes",
+      "link": "Ver los {{total}} componentes"
+    },
+    "cardFundamentos": {
+      "pre": "Diseña sobre",
+      "post": "los Fundamentos",
+      "link": "Ver escala, color y tipografía"
+    },
+    "cardUso": {
+      "pre": "Mira el sistema",
+      "post": "en el producto real",
+      "link": "Ver el uso real"
+    },
+    "base": "Base compartida",
+    "patrones": {
+      "title": "Patrones de pantalla",
+      "text": "Cómo se arma una pantalla: carga, vacíos, color funcional y agrupación.",
+      "link": "Ver patrones"
+    },
+    "iconos": {
+      "title": "Iconos",
+      "text": "Un solo juego de iconos Material, con su nombre y su tamaño.",
+      "link": "Ver iconos"
+    },
+    "tipografia": {
+      "title": "Tipografía",
+      "text": "Los estilos de texto del Kit de Figma, con su tamaño y su interlineado.",
+      "link": "Ver tipografía"
+    },
+    "aldia": "Al día",
+    "novedades": {
+      "title": "Novedades",
+      "text": "Qué versión está publicada y qué trae cada una.",
+      "link": "Ver novedades"
+    },
+    "reglas": {
+      "title": "Reglas",
+      "text": "Lo que el sistema decide por ti, explicado paso a paso.",
+      "link": "Ver reglas"
+    },
+    "more": "Ver más"
   }
 }

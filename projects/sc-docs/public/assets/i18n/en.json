@@ -16,6 +16,26 @@
     "cmd": {
       "sections": "Sections",
       "language": "Language"
+    },
+    "brandName": "Smart Contact",
+    "menu": "Section menu",
+    "side": {
+      "aria": "{{seccion}} pages",
+      "search": "Search the docs",
+      "empezar": "Getting started",
+      "todos": "All components",
+      "base": "Raw material",
+      "pantallas": "Screens"
+    },
+    "toc": {
+      "title": "On this page"
+    },
+    "crumbs": "Breadcrumb",
+    "footer": {
+      "tagline": "The Smart Contact design system",
+      "lab": "Lab",
+      "legal": "Legal notice",
+      "version": "Published version"
     }
   },
   "categories": {
@@ -28,7 +48,6 @@
     "Patrones": "Patterns"
   },
   "componentsIndex": {
-    "eyebrow": "Design system",
     "title": "Components",
     "lead": "{{total}} <code>sc-*</code> wrappers from <code>@smartcontact-hub/components</code>, across {{families}} families. What each one is for at a glance; open any to see its variants, states, and code, in light and dark."
   },
@@ -359,22 +378,8 @@
     "uses": "uses"
   },
   "reglas": {
-    "eyebrow": "Project status",
     "title": "Rules system",
     "lead": "The rules system was rebuilt from scratch. Before: recording calls, with priorities, conflicts, and drafts. Now: <strong>transcribing</strong>, with several active rules and no conflicts, and a builder anyone understands. Each change is told with its <strong>before</strong>, its <strong>now</strong>, and its <strong>why</strong>. The screenshots are from the real Supervisor.",
-    "tocTitle": "The story, step by step",
-    "toc": {
-      "p1": "What a rule is",
-      "p2": "The pivot to transcription",
-      "p3": "Scope: from checkboxes to a tree",
-      "p4": "Priority and conflicts: from hard to nothing",
-      "p5": "Drafts: one state fewer",
-      "p6": "The live estimate",
-      "p7": "Where they live: Repositories",
-      "p8": "Transcription in detail",
-      "p9": "What's left to close",
-      "conclusiones": "Conclusions"
-    },
     "before": "Before",
     "after": "Now",
     "zoom": "Zoom in",
@@ -571,5 +576,52 @@
       "close": "Close (Esc)",
       "hint": "Press <kbd>Esc</kbd> or click outside to close"
     }
+  },
+  "inicio": {
+    "title": "Smart Contact",
+    "subtitle": "The Smart Contact design system",
+    "cardComponentes": {
+      "pre": "Build screens",
+      "post": "with Components",
+      "link": "See all {{total}} components"
+    },
+    "cardFundamentos": {
+      "pre": "Design on top of",
+      "post": "the Foundations",
+      "link": "See scale, color and type"
+    },
+    "cardUso": {
+      "pre": "See the system",
+      "post": "in the real product",
+      "link": "See real-world usage"
+    },
+    "base": "Shared foundations",
+    "patrones": {
+      "title": "Screen patterns",
+      "text": "How a screen is put together: loading, empty states, functional color and grouping.",
+      "link": "See patterns"
+    },
+    "iconos": {
+      "title": "Icons",
+      "text": "One Material icon set, with its names and sizes.",
+      "link": "See icons"
+    },
+    "tipografia": {
+      "title": "Typography",
+      "text": "The Figma Kit text styles, with their size and line height.",
+      "link": "See typography"
+    },
+    "aldia": "Stay up to date",
+    "novedades": {
+      "title": "What's new",
+      "text": "Which version is published and what each one brings.",
+      "link": "See what's new"
+    },
+    "reglas": {
+      "title": "Rules",
+      "text": "What the system decides for you, explained step by step.",
+      "link": "See the rules"
+    },
+    "more": "Learn more"
   }
 }

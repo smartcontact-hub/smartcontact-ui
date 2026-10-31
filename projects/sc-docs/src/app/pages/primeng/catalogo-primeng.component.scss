@@ -9,16 +9,9 @@
 .hero {
   margin-bottom: var(--sc-spacing-2);
 
-  &__eyebrow {
-    margin: 0;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--sc-text-subtle);
-  }
-
   /* Tamaño y peso los pone `.demo-main h1` (styles.scss), el título de todas las secciones de la doc. */
   &__title {
-    margin: var(--sc-spacing-0-125) 0 var(--sc-spacing-0-5);
+    margin: 0 0 var(--sc-spacing-0-75);
     color: var(--sc-text-primary);
   }
 
