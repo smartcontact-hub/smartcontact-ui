@@ -81,6 +81,8 @@ El del repaso de Grupos entre COA, Figma y prototipo, con «Editar en Repositori
 `git show 2d3724ad:docs/handoff/supervisor-fichas.md`.
 El de Agentes como sus borradores de COA, 4060 y 4062 (2026-10-23, DD-225, sin trampas propias): `git show
 deb87737:docs/handoff/supervisor-fichas.md`.
+El de Eliminar varios sin barra de lote (2026-10-26, DD-227) y el de Duplicar como alta (2026-10-26, DD-232), sin trampas
+propias: `git show archive/handoff-fichas-2026-10-31:docs/handoff/supervisor-fichas.md`.
 
 ## ✅ 2026-10-31 · La barra común de asignar y Repositorios como sus COA (DD-243, DD-245)
 
@@ -126,12 +128,6 @@ deb87737:docs/handoff/supervisor-fichas.md`.
   resumen «se hacen pero se ocultan». **Figma, hecho** (`figma-pendiente` §63): bloque y fila ocultos, textos al día.
 - **Equipos, cerrado**: se asigna únicamente a agentes; el «y sus asignaciones a grupos» del COA 4453 sobra y no cambia código.
 
-## ✅ 2026-10-26 · Duplicar tipificaciones y equipos abre un alta rellena (DD-232)
-> **Sello:** rama `claude/duplicate-typifications-teams-920106` sobre `main` `aaa8e0fd`.
-- **Código**: `?seedFromId` en `tipificacion-ficha-page` y `equipo-editor-page`; Equipos usa `duplicateAsCreate` (nuevo en
-  `RepoPageConfig`). Prueba: `duplicar-tipificaciones-equipos.spec.ts`.
-- **Figma**: pasos 12 y 13 al final de los listados de Tipificaciones y Equipos (`3935:8821`, `3935:29304`), sin renumerar.
-
 ## ✅ 2026-10-26 · Agendas y Plantillas como sus COA: solo a agentes, en una tabla con sus grupos (DD-230)
 
 > **Sello:** rama `areses/plantillas-agendas-feedback-b6bf8f` sobre `main` HEAD `5a04de14`.
@@ -152,15 +148,6 @@ deb87737:docs/handoff/supervisor-fichas.md`.
   creada»; modal de una agenda «¿Eliminar la agenda «X»?»; borrar varias tipificaciones dice «Las usan N grupos». **Falta**: el
   COA de Agendas y Plantillas (hoy dice «siempre activo»), el de Tipificaciones (texto de «Eliminar (3)», erratas y «Título (1)»
   por «Nombre (1)») y proto y Figma.
-
-## ✅ 2026-10-26 · Eliminar varios en todas las tablas, sin barra de lote, y las congeladas al día (DD-227)
-
-> **Sello:** rama `areses/multiple-delete-ux-discussion-6ecde6` sobre `main` `9a90d5bd`.
-
-- **Tablas**: clic derecho sobre una marcada → «Eliminar» (`selectionMenu`) en Usuarios, Etiquetas, Plantillas,
-  Repositorios, Tipificaciones, Categorías y Reglas. Fuera la barra de lote de esas cinco (la edición masiva no se entregó);
-  su código (`bulkEntity`, `requestDeleteSelection`, edición de Usuarios) queda aparcado. Conversaciones conserva la suya.
-- **«⋮»**: con la fila entre varias marcadas abre el menú de la selección, «Eliminar (N)» (`common.delete_count`), como el clic derecho.
 
 ## SIGUIENTE — sin preguntar
 
