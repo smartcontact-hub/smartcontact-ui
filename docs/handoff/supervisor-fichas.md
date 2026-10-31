@@ -109,7 +109,7 @@ archive/handoff-fichas-2026-10-31:docs/handoff/supervisor-fichas.md`.
   iría en `tinted` y, si no debe cerrarse con Escape, con `closeOnEscape: false` (SISMAC-4292).
 - **Pruebas**: `e2e/supervisor/alert-modal-superficie.spec.ts` (borrar y descartar, blancos) y `components.spec.ts`
   (teñida sin `surface`, el calco en blanco y que Escape no cierra con `closeOnEscape: false`).
-- **Pendiente fuera del repo**: «❖ Alert modal» ya tiene `Surface` en el DS, sin publicar (`figma-pendiente.md` §64);
+- **Pendiente fuera del repo**: «❖ Alert modal» ya tiene `Surface` en el DS, sin publicar (`figma-pendiente.md` §65);
   publicar la librería y el Code Connect, y el mensaje a los devs (borrador en `~/Documents/Claude/2026-10 Empate flujos AED/`).
 - **Trampa**: `npm run verify` reescribe `dist/` y deja sin el DS a un `ng serve` vivo del mismo worktree; tras
   `verify`, reconstruye el DS y relanza antes de medir.
