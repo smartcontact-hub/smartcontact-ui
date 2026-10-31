@@ -99,8 +99,8 @@ DD-230; su trampa sube a «Trampas del frente»): `git show archive/handoff-fich
 - **COA**: prompts de 4453, 4440, 4438, 4064, 4058 y 4062 en `~/Documents/Claude/2026-10 Empate flujos AED/`; los pega
   y publica Rafa. Releídos en vivo el 2026-10-31 (4056 v14, 4058 v23, 4060 v2, 4062 v4, 4438 v11, 4440 v10, 4064 v2).
 - **Medido de paso, sin arreglar**: el hub no cabe a 1440 × 800 (sobran 318 px, ya antes) y su prueba mide `.hub`, que no
-  desplaza (`.app-shell__content` sí). **Figma**: barras y hub hechos (`figma-pendiente` §64); el azul de Comunicación
-  y el «❖ Alert modal» blanco, pendientes.
+  desplaza (`.app-shell__content` sí). **Figma**: barras y hub hechos (`figma-pendiente` §64); el «❖ Alert modal» blanco,
+  hecho sin publicar (§65); el azul de Comunicación, pendiente.
 
 ## ✅ 2026-10-31 · Tipificaciones: la opción repetida lo dice en su campo (DD-244)
 
@@ -126,8 +126,8 @@ DD-230; su trampa sube a «Trampas del frente»): `git show archive/handoff-fich
   iría en `tinted` y, si no debe cerrarse con Escape, con `closeOnEscape: false` (SISMAC-4292).
 - **Pruebas**: `e2e/supervisor/alert-modal-superficie.spec.ts` (borrar y descartar, blancos) y `components.spec.ts`
   (teñida sin `surface`, el calco en blanco y que Escape no cierra con `closeOnEscape: false`).
-- **Pendiente fuera del repo**: la propiedad de superficie en «❖ Alert modal» (15876:601), en el Bloque 8 del plan, y el
-  mensaje a los devs (borrador en `~/Documents/Claude/2026-10 Empate flujos AED/`).
+- **Pendiente fuera del repo**: «❖ Alert modal» ya tiene `Surface` en el DS, sin publicar (`figma-pendiente.md` §65);
+  publicar la librería y el Code Connect, y el mensaje a los devs (borrador en `~/Documents/Claude/2026-10 Empate flujos AED/`).
 - **Trampa**: `npm run verify` reescribe `dist/` y deja sin el DS a un `ng serve` vivo del mismo worktree; tras
   `verify`, reconstruye el DS y relanza antes de medir.
 
