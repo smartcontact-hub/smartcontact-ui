@@ -73,9 +73,25 @@
     color: var(--sc-bg-primary);
   }
 
+  /* El tamaño, de la clase del DS en la plantilla (`.sc-text-h3-regular`, 18); la letra y el peso, los del logotipo. */
+  &__brand-name,
+  &__brand-sub {
+    font-family: var(--demo-letra-marca);
+    white-space: nowrap;
+  }
+
   &__brand-name {
     font-weight: var(--sc-font-weight-semibold);
-    white-space: nowrap;
+    letter-spacing: -0.01em;
+  }
+
+  /* El producto, como «Agent» en el logotipo: el corte fino cursivo de Poppins (`fonts.css`, «Poppins Fina»). */
+  &__brand-sub {
+    margin-left: calc(-1 * var(--sc-spacing-0-25));
+    color: var(--sc-text-secondary);
+    font-family: var(--demo-letra-marca-fina);
+    font-style: italic;
+    font-weight: var(--sc-font-weight-regular);
   }
 
   &__nav {
@@ -161,6 +177,23 @@
     font-family: var(--sc-font-family-primary);
     font-size: var(--sc-font-size-100);
     line-height: var(--sc-line-height-100);
+  }
+}
+
+/* La cabecera gana su sombra al bajar: dice que hay contenido debajo. Ligada al scroll del documento, sin
+   JavaScript; donde no hay animaciones ligadas al scroll, se queda con su filete. */
+@keyframes demo-cabecera-sombra {
+  to {
+    border-bottom-color: transparent;
+    box-shadow: var(--sc-shadow-sm);
+  }
+}
+
+@supports (animation-timeline: scroll()) {
+  .demo-top {
+    animation: demo-cabecera-sombra linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 4rem;
   }
 }
 
@@ -250,6 +283,7 @@
       font-weight: var(--sc-font-weight-semibold);
     }
 
+    /* La barra del activo crece desde su centro al llegar: marca a dónde has ido, no solo dónde estás. */
     &.is-active::after {
       content: '';
       position: absolute;
@@ -259,6 +293,7 @@
       width: 4px;
       border-radius: var(--sc-radius-md);
       background: var(--sc-border-accent);
+      animation: demo-barra var(--sc-transition-slow) var(--demo-ease-salida) both;
     }
 
     &:focus-visible {
@@ -291,6 +326,19 @@
   overflow-y: auto;
   padding: var(--sc-spacing-2-5) var(--sc-spacing-1-5) var(--sc-spacing-2) var(--sc-spacing-0-5);
   scrollbar-width: thin;
+}
+
+@keyframes demo-barra {
+  from {
+    transform: scaleY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .demo-top,
+  .demo-sidebar__enlace.is-active::after {
+    animation: none;
+  }
 }
 
 /* ─────────── Migas y pie ─────────── */
@@ -447,6 +495,12 @@
 
   .demo-pie {
     margin-inline: var(--sc-spacing-1);
+  }
+}
+
+@media (max-width: 72rem) {
+  .demo-top__brand-sub {
+    display: none;
   }
 }
 

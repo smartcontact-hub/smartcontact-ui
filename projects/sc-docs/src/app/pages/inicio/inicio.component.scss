@@ -58,11 +58,29 @@
     pointer-events: none;
   }
 
+  /* El logotipo en grande, en su letra (Poppins, `fonts.css`): tamaño del H1 del DS, peso y cursiva del logotipo. */
   &__titulo {
     position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: baseline;
+    gap: 0 var(--sc-spacing-0-875);
     margin: 0;
-    font-weight: var(--sc-font-weight-medium);
-    letter-spacing: -0.03em;
+    font-family: var(--demo-letra-marca);
+  }
+
+  &__marca {
+    font-weight: var(--sc-font-weight-semibold);
+    letter-spacing: -0.02em;
+  }
+
+  /* Como «Agent» en el logotipo: el corte fino cursivo de Poppins (`fonts.css`, «Poppins Fina»), en gris. */
+  &__producto {
+    color: var(--sc-text-secondary);
+    font-family: var(--demo-letra-marca-fina);
+    font-style: italic;
+    font-weight: var(--sc-font-weight-regular);
   }
 
   &__sub {
@@ -554,5 +572,229 @@ a.ini-enlace:focus-visible,
 
   .ini-ilus__mensaje {
     left: 8%;
+  }
+}
+
+/* ─────────── Movimiento ───────────
+ *
+ * Un solo momento protagonista y gestos de respuesta, nada de ruido. Al cargar, el título y las tarjetas suben
+ * escalonados, los trazos de línea se dibujan y la forma de la esquina entra y luego flota muy despacio. Al pasar por
+ * una tarjeta, sus capas se separan a distinta profundidad, como hojas sueltas. Solo `transform` y `opacity`.
+ * Duraciones del DS (`--sc-transition-*`) para la respuesta; la entrada, más larga, a mano y una sola vez.
+ * Con «reducir movimiento», todo quieto (al final del fichero).
+ */
+
+@keyframes ini-sube {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+@keyframes ini-entra-forma {
+  from {
+    opacity: 0;
+    transform: translate(28px, -20px) scale(0.94);
+  }
+}
+
+@keyframes ini-dibuja {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+
+@keyframes ini-aparece {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes ini-flota-a {
+  50% {
+    transform: translate(-10px, 8px);
+  }
+}
+
+@keyframes ini-flota-b {
+  50% {
+    transform: translate(8px, -6px) rotate(-2deg);
+  }
+}
+
+.ini-hero__forma {
+  animation: ini-entra-forma 1100ms var(--demo-ease-salida) both;
+}
+
+.ini-hero__esfera,
+.ini-hero__cristal,
+.ini-hero__brillo {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.ini-hero__esfera {
+  animation: ini-flota-a 16s ease-in-out 1100ms infinite;
+}
+
+.ini-hero__cristal {
+  animation: ini-flota-b 21s ease-in-out 1100ms infinite;
+}
+
+.ini-hero__brillo {
+  animation: ini-flota-b 13s ease-in-out 1100ms infinite reverse;
+}
+
+.ini-hero__titulo {
+  animation: ini-sube 700ms var(--demo-ease-salida) both;
+}
+
+/* El producto llega un instante después que la marca, como quien firma. */
+.ini-hero__producto {
+  animation: ini-sube 700ms var(--demo-ease-salida) 140ms both;
+}
+
+.ini-hero__sub {
+  animation: ini-sube 700ms var(--demo-ease-salida) 220ms both;
+}
+
+.ini-rejilla > .ini-card {
+  animation: ini-sube 800ms var(--demo-ease-salida) both;
+
+  &:nth-child(1) {
+    animation-delay: 180ms;
+  }
+
+  &:nth-child(2) {
+    animation-delay: 270ms;
+  }
+
+  &:nth-child(3) {
+    animation-delay: 360ms;
+  }
+}
+
+/* Los trazos se dibujan cuando ya está la tarjeta; sus nodos aparecen al terminar. */
+.ini-ilus__trazo path {
+  stroke-dasharray: 1;
+  animation: ini-dibuja 1400ms var(--demo-ease-salida) 600ms both;
+}
+
+.ini-ilus__trazo circle {
+  animation: ini-aparece 500ms ease-out 1300ms both;
+}
+
+/* Las capas de cada ilustración, a distinta profundidad al pasar por la tarjeta. La ventana va pegada al borde de la
+   tarjeta y no se mueve: se mueve la caja de cotas que lleva dentro. */
+.ini-ilus__medida,
+.ini-ilus__mensaje,
+.ini-ilus__barra-zona,
+.ini-ilus__pantalla,
+.ini-ilus__ficha,
+.ini-ilus__azulejo,
+.ini-marca {
+  transition: transform 600ms var(--demo-ease-salida);
+}
+
+.ini-card:hover {
+  .ini-ilus__medida {
+    transform: translateY(-8px);
+  }
+
+  .ini-ilus__mensaje {
+    transform: translate(6px, -10px);
+  }
+
+  .ini-ilus__barra-zona {
+    transform: translateY(-6px);
+  }
+
+  .ini-ilus__pantalla {
+    transform: translate(-6px, -6px);
+  }
+
+  .ini-ilus__ficha {
+    transform: translate(4px, -12px);
+  }
+
+  .ini-ilus__azulejo {
+    transform: translateY(-8px) rotate(-6deg);
+  }
+}
+
+/* Fundamentos: una ola de izquierda a derecha por las seis marcas. */
+.ini-card--estrecha:hover .ini-marca {
+  transform: translateY(-6px);
+}
+
+.ini-ilus--marcas .ini-marca {
+  @for $i from 1 through 6 {
+    &:nth-child(#{$i}) {
+      transition-delay: #{($i - 1) * 40}ms;
+    }
+  }
+}
+
+/* Las tarjetas pequeñas: suben un poco y su arte se acerca. Al pulsar, el encogido de los botones del DS (DD-113). */
+.ini-mini {
+  transition:
+    box-shadow var(--sc-transition-base) ease-out,
+    transform var(--sc-transition-base) var(--demo-ease-salida);
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: scale(0.98);
+    transition-duration: var(--sc-transition-fast);
+  }
+}
+
+.ini-arte__formas {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 900ms var(--demo-ease-salida);
+}
+
+.ini-mini:hover .ini-arte__formas {
+  transform: scale(1.06) rotate(-2deg);
+}
+
+/* Las secciones de abajo suben al entrar en pantalla, sin JavaScript: animación ligada al scroll donde la hay. */
+@supports (animation-timeline: view()) {
+  .ini-seccion {
+    animation: ini-sube linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 35%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ini-hero__forma,
+  .ini-hero__esfera,
+  .ini-hero__cristal,
+  .ini-hero__brillo,
+  .ini-hero__titulo,
+  .ini-hero__producto,
+  .ini-hero__sub,
+  .ini-rejilla > .ini-card,
+  .ini-ilus__trazo path,
+  .ini-ilus__trazo circle,
+  .ini-seccion {
+    animation: none;
+  }
+
+  .ini-ilus__medida,
+  .ini-ilus__mensaje,
+  .ini-ilus__barra-zona,
+  .ini-ilus__pantalla,
+  .ini-ilus__ficha,
+  .ini-ilus__azulejo,
+  .ini-marca,
+  .ini-mini,
+  .ini-arte__formas {
+    transition: none;
+    transform: none !important;
   }
 }

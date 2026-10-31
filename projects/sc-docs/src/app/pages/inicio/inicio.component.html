@@ -31,11 +31,22 @@
 <section class="ini-hero">
   <!-- La forma de la esquina: una esfera y un cristal sacados de los círculos del logo. -->
   <svg class="ini-hero__forma" viewBox="0 0 420 260" aria-hidden="true" focusable="false">
-    <circle cx="300" cy="70" r="150" fill="url(#ini-grad-esfera)" />
-    <rect x="70" y="-60" width="230" height="200" rx="28" transform="rotate(-16 185 40)" fill="url(#ini-grad-cristal)" />
-    <circle cx="230" cy="120" r="70" fill="url(#ini-grad-lima)" opacity="0.85" />
+    <!-- Entra una vez y luego flota, muy despacio: la esfera y el cristal a ritmos distintos. -->
+    <g class="ini-hero__esfera">
+      <circle cx="300" cy="70" r="150" fill="url(#ini-grad-esfera)" />
+    </g>
+    <g class="ini-hero__cristal">
+      <rect x="70" y="-60" width="230" height="200" rx="28" transform="rotate(-16 185 40)" fill="url(#ini-grad-cristal)" />
+    </g>
+    <g class="ini-hero__brillo">
+      <circle cx="230" cy="120" r="70" fill="url(#ini-grad-lima)" opacity="0.85" />
+    </g>
   </svg>
-  <h1 class="ini-hero__titulo sc-text-h1-regular">{{ 'inicio.title' | translate }}</h1>
+  <!-- El logotipo en grande: «SmartContact» y, en fina cursiva, el producto. -->
+  <h1 class="ini-hero__titulo sc-text-h1-regular">
+    <span class="ini-hero__marca">{{ 'inicio.title' | translate }}</span>
+    <span class="ini-hero__producto">{{ 'chrome.brandSub' | translate }}</span>
+  </h1>
   <p class="ini-hero__sub sc-text-h3-regular">{{ 'inicio.subtitle' | translate }}</p>
 </section>
 
@@ -56,7 +67,7 @@
 
       <div class="ini-ilus ini-ilus--componentes" inert aria-hidden="true">
         <svg class="ini-ilus__trazo" viewBox="0 0 260 240" focusable="false">
-          <path d="M40 30 L18 150 M40 30 C60 80 110 70 140 64 C160 60 150 40 170 34 M18 150 L4 220" />
+          <path pathLength="1" d="M40 30 L18 150 M40 30 C60 80 110 70 140 64 C160 60 150 40 170 34 M18 150 L4 220" />
           <circle cx="40" cy="30" r="17" />
           <circle cx="40" cy="30" r="8" />
           <circle cx="170" cy="34" r="17" />
@@ -136,7 +147,7 @@
 
       <div class="ini-ilus ini-ilus--uso" inert aria-hidden="true">
         <svg class="ini-ilus__trazo ini-ilus__trazo--uso" viewBox="0 0 200 180" focusable="false">
-          <path d="M150 0 C140 40 120 60 90 64 C70 66 60 80 62 110 M150 0 L176 -30" />
+          <path pathLength="1" d="M150 0 C140 40 120 60 90 64 C70 66 60 80 62 110 M150 0 L176 -30" />
           <circle cx="90" cy="64" r="15" />
           <circle cx="90" cy="64" r="7" />
           <circle cx="62" cy="120" r="15" />
@@ -152,11 +163,11 @@
             <sc-avatar label="AR" size="normal" shape="circle" />
             <div class="ini-ilus__ficha-nombre">
               <strong class="sc-text-body-semibold">Agente 122</strong>
-              <span class="sc-text-caption-regular">En llamada, 04:12</span>
+              <span class="sc-text-caption-regular">En llamada, {{ reloj() }}</span>
             </div>
             <sc-tag value="Disponible" severity="success" size="sm" />
           </div>
-          <sc-progressbar [value]="68" [showValue]="false" ariaLabel="Ocupación" />
+          <sc-progressbar [value]="ocupacion()" [showValue]="false" ariaLabel="Ocupación" />
           <div class="ini-ilus__ficha-fila">
             <span class="sc-text-body-regular">Grabación</span>
             <sc-toggleswitch [checked]="true" ariaLabel="Grabación" />
@@ -190,9 +201,11 @@
       <a class="ini-mini ini-mini--arte" routerLink="/novedades">
         <svg class="ini-arte" viewBox="0 0 440 190" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
           <rect width="440" height="190" class="ini-arte__fondo" />
-          <circle cx="90" cy="150" r="120" fill="url(#ini-grad-esfera)" />
-          <circle cx="70" cy="190" r="60" fill="url(#ini-grad-lima)" />
-          <rect x="120" y="90" width="150" height="130" rx="10" transform="rotate(-12 195 155)" fill="url(#ini-grad-cristal)" />
+          <g class="ini-arte__formas">
+            <circle cx="90" cy="150" r="120" fill="url(#ini-grad-esfera)" />
+            <circle cx="70" cy="190" r="60" fill="url(#ini-grad-lima)" />
+            <rect x="120" y="90" width="150" height="130" rx="10" transform="rotate(-12 195 155)" fill="url(#ini-grad-cristal)" />
+          </g>
           <rect width="440" height="190" fill="url(#ini-grad-velo)" transform="scale(-1 1) translate(-440 0)" opacity="0.9" />
         </svg>
         <h3 class="ini-mini__titulo sc-text-title-semibold">{{ 'inicio.novedades.title' | translate }}</h3>
@@ -204,9 +217,11 @@
         <svg class="ini-arte" viewBox="0 0 440 190" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
           <rect width="440" height="190" class="ini-arte__fondo" />
           <rect width="440" height="190" fill="url(#ini-grad-mar)" opacity="0.18" />
-          <circle cx="250" cy="100" r="70" fill="url(#ini-grad-esfera)" />
-          <rect x="250" y="40" width="110" height="110" rx="8" transform="rotate(45 305 95)" fill="url(#ini-grad-cristal)" />
-          <circle cx="285" cy="118" r="34" fill="url(#ini-grad-lima)" />
+          <g class="ini-arte__formas">
+            <circle cx="250" cy="100" r="70" fill="url(#ini-grad-esfera)" />
+            <rect x="250" y="40" width="110" height="110" rx="8" transform="rotate(45 305 95)" fill="url(#ini-grad-cristal)" />
+            <circle cx="285" cy="118" r="34" fill="url(#ini-grad-lima)" />
+          </g>
           <path class="ini-arte__linea" d="M0 40 C120 60 160 160 250 150 C320 140 360 80 440 60 M0 120 L200 190" />
           <circle class="ini-arte__nodo" cx="330" cy="112" r="4" />
         </svg>

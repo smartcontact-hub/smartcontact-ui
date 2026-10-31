@@ -162,14 +162,27 @@ import { EstadoComponenteComponent } from '../../storybook/estado-componente.com
       background: var(--sc-bg-surface);
       text-decoration: none;
       transition:
-        box-shadow 140ms ease-out,
-        border-color 140ms ease-out;
+        box-shadow var(--sc-transition-base) ease-out,
+        border-color var(--sc-transition-base) ease-out,
+        transform var(--sc-transition-base) var(--demo-ease-salida);
     }
 
+    /* Al pasar, la tarjeta sube un poco y su miniatura se acerca; al pulsar, el encogido de los botones del DS (DD-113). */
     .card:hover {
       border-color: var(--sc-border-strong);
       box-shadow: var(--sc-shadow-card);
+      transform: translateY(-2px);
     }
+
+    .card:active {
+      transform: scale(0.98);
+      transition-duration: var(--sc-transition-fast);
+    }
+
+    .card:hover .card__img {
+      transform: scale(1.04);
+    }
+
 
     .card:focus-visible {
       outline: 2px solid var(--sc-color-sky-500);
@@ -200,6 +213,7 @@ import { EstadoComponenteComponent } from '../../storybook/estado-componente.com
       max-height: 100%;
       border-radius: var(--sc-radius-sm);
       box-shadow: var(--sc-shadow-xs);
+      transition: transform 600ms var(--demo-ease-salida);
     }
 
     .card__img--oscuro {
@@ -250,6 +264,20 @@ import { EstadoComponenteComponent } from '../../storybook/estado-componente.com
       font-family: var(--sc-font-family-mono);
       white-space: nowrap;
       color: var(--sc-text-primary);
+    }
+
+    /* Al final a propósito: una consulta no suma especificidad, y delante la pisaban la transición de \`.card__img\`. */
+    @media (prefers-reduced-motion: reduce) {
+      .card,
+      .card__img {
+        transition: none;
+      }
+
+      .card:hover,
+      .card:active,
+      .card:hover .card__img {
+        transform: none;
+      }
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

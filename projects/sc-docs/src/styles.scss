@@ -49,6 +49,34 @@ body {
   color: var(--sc-text-primary);
 }
 
+/* La curva de salida de la doc: frena al llegar, sin rebote. La pide todo el movimiento de la doc (las duraciones son
+   las del DS, `--sc-transition-*`); no es un token del DS porque el Kit no define curvas. */
+:root {
+  --demo-ease-salida: cubic-bezier(0.25, 1, 0.5, 1);
+  /* La letra del logotipo (`fonts.css`): solo para la marca, nunca para la interfaz. */
+  --demo-letra-marca: 'Poppins', var(--sc-font-family-primary);
+  --demo-letra-marca-fina: 'Poppins Fina', var(--sc-font-family-primary);
+}
+
+/* Cada página entra con un fundido corto al navegar: el marco (cabecera, lateral) se queda quieto y cambia lo de
+   dentro. Solo opacidad: el host de una ruta no siempre es un bloque, y un `transform` o un `display` aquí movería la
+   maqueta de todas las páginas. Las cajas que solo envuelven a otra ruta no entran: la que entra es la página. */
+@keyframes demo-entra-pagina {
+  from {
+    opacity: 0;
+  }
+}
+
+.demo-main router-outlet + :not(app-storybook-shell, app-fundamentos-shell) {
+  animation: demo-entra-pagina var(--sc-transition-slow) var(--demo-ease-salida) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .demo-main router-outlet + :not(app-storybook-shell, app-fundamentos-shell) {
+    animation: none;
+  }
+}
+
 /* Los títulos a los que salta «En esta página» (`toc.component.ts`) no se esconden bajo la cabecera fija. */
 .demo-main :is(h2, h3) {
   scroll-margin-top: 5rem;

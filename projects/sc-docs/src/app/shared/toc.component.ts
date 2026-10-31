@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, effect, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, afterRenderEffect, effect, inject, input, signal } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 
 /** Una entrada del índice: un `h2` de la página, con el id que lleva (o que se le pone). */
@@ -36,6 +36,15 @@ function slug(texto: string): string {
         @if (!compacto()) {
           <p class="toc__titulo sc-text-caption-semibold">{{ 'chrome.toc.title' | translate }}</p>
         }
+        <!-- Una sola marca de acento que se desliza hasta la sección activa, en vez de saltar de un enlace a otro. -->
+        <span
+          class="toc__marca"
+          aria-hidden="true"
+          [style.left.px]="marca().x"
+          [style.transform]="'translateY(' + marca().y + 'px)'"
+          [style.height.px]="marca().alto"
+          [class.is-visible]="marca().alto > 0"
+        ></span>
         <ul class="toc__lista">
           @for (e of entradas(); track e.id) {
             <li>
@@ -87,8 +96,37 @@ function slug(texto: string): string {
       color: var(--sc-text-secondary);
     }
 
-    .toc--compacto .toc__enlace.is-active::before {
-      left: calc(-1 * var(--sc-spacing-0-5) - 1px);
+    .toc {
+      position: relative;
+    }
+
+    .toc__marca {
+      position: absolute;
+      top: 0;
+      width: 2px;
+      margin-left: calc(-1 * var(--sc-spacing-0-5));
+      border-radius: var(--sc-radius-full);
+      background: var(--sc-border-accent);
+      opacity: 0;
+      pointer-events: none;
+      transition:
+        transform var(--sc-transition-slow) var(--demo-ease-salida),
+        height var(--sc-transition-slow) var(--demo-ease-salida),
+        opacity var(--sc-transition-base) ease-out;
+
+      &.is-visible {
+        opacity: 1;
+      }
+    }
+
+    .toc--compacto .toc__marca {
+      margin-left: 0;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .toc__marca {
+        transition: none;
+      }
     }
 
     .toc__enlace {
@@ -112,17 +150,6 @@ function slug(texto: string): string {
         font-weight: var(--sc-font-weight-semibold);
       }
 
-      &.is-active::before {
-        content: '';
-        position: absolute;
-        left: calc(-1 * var(--sc-spacing-0-5));
-        top: var(--sc-spacing-0-25);
-        bottom: var(--sc-spacing-0-25);
-        width: 2px;
-        border-radius: var(--sc-radius-full);
-        background: var(--sc-border-accent);
-      }
-
       &:focus-visible {
         outline: 2px solid var(--sc-border-focus);
         outline-offset: 1px;
@@ -143,21 +170,50 @@ export class TocComponent {
   protected readonly entradas = signal<readonly EntradaToc[]>([]);
   protected readonly activa = signal<string | null>(null);
   protected readonly href = () => '#' + this.ruta();
+  /** Dónde va la marca: la caja del enlace activo, medida en el navegador, relativa al `nav`. */
+  protected readonly marca = signal({ x: 0, y: 0, alto: 0 });
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
 
   private mutaciones?: MutationObserver;
-  private visibles?: IntersectionObserver;
+  private titulos: readonly HTMLElement[] = [];
   private espera?: ReturnType<typeof setTimeout>;
+  private cuadro = 0;
+  /** Al bajar, una lectura por fotograma como mucho. */
+  private readonly alDesplazar = () => {
+    if (this.cuadro) return;
+    this.cuadro = requestAnimationFrame(() => {
+      this.cuadro = 0;
+      this.activarSegunScroll();
+    });
+  };
 
   constructor() {
+    // Tras pintar el enlace activo, la marca va a su caja, recortada por su relleno vertical. En el compacto, sobre el
+    // filete de la lista; en el otro, en el borde del enlace (la hoja la saca hacia fuera).
+    afterRenderEffect(() => {
+      this.activa();
+      this.entradas();
+      const nav = this.host.nativeElement.querySelector<HTMLElement>('.toc');
+      const activo = nav?.querySelector<HTMLElement>('.toc__enlace.is-active');
+      const lista = activo?.closest<HTMLElement>('.toc__lista');
+      if (!nav || !activo || !lista) return this.marca.set({ x: 0, y: 0, alto: 0 });
+      const n = nav.getBoundingClientRect();
+      const a = activo.getBoundingClientRect();
+      const relleno = parseFloat(getComputedStyle(activo).paddingTop);
+      const x = (this.compacto() ? lista.getBoundingClientRect().left - lista.clientLeft : a.left) - n.left;
+      this.marca.set({ x, y: a.top - n.top + relleno, alto: a.height - 2 * relleno });
+    });
     effect(() => {
       const raiz = this.raiz();
       this.ruta();
       this.selector();
       this.observar(raiz);
     });
+    window.addEventListener('scroll', this.alDesplazar, { passive: true });
     inject(DestroyRef).onDestroy(() => {
       this.mutaciones?.disconnect();
-      this.visibles?.disconnect();
+      window.removeEventListener('scroll', this.alDesplazar);
+      cancelAnimationFrame(this.cuadro);
       clearTimeout(this.espera);
     });
   }
@@ -203,19 +259,24 @@ export class TocComponent {
     });
     const iguales =
       entradas.length === this.entradas().length && entradas.every((e, i) => e.id === this.entradas()[i]?.id && e.texto === this.entradas()[i]?.texto);
+    this.titulos = titulos;
     if (iguales) return;
     this.entradas.set(entradas);
+    this.activarSegunScroll();
+  }
 
-    // Activa la sección cuyo título acaba de pasar por arriba (bajo la cabecera fija).
-    this.visibles?.disconnect();
-    this.visibles = new IntersectionObserver(
-      (vistas) => {
-        const arriba = vistas.filter((v) => v.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
-        if (arriba) this.activa.set(arriba.target.id);
-      },
-      { rootMargin: '-72px 0px -65% 0px' },
-    );
-    titulos.forEach((h) => this.visibles?.observe(h));
-    if (!this.activa() || !entradas.some((e) => e.id === this.activa())) this.activa.set(entradas[0]?.id ?? null);
+  /**
+   * La sección activa es la del último título que ya pasó por arriba (bajo la cabecera fija y su aire), y la última si
+   * la página llegó al final. Se mira la posición cada vez y no los cruces: un salto largo de scroll (el Inicio del
+   * teclado, un enlace) no pasa por los títulos de en medio, y un detector de cruces se quedaba en el primero.
+   */
+  private activarSegunScroll(): void {
+    if (!this.titulos.length) return;
+    const linea = window.innerHeight * 0.25;
+    const alFinal = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
+    let activo = this.titulos[0];
+    for (const h of this.titulos) if (h.getBoundingClientRect().top <= linea) activo = h;
+    if (alFinal) activo = this.titulos[this.titulos.length - 1];
+    this.activa.set(activo.id);
   }
 }
