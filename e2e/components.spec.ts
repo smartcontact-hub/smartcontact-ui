@@ -132,6 +132,10 @@ const screenshotBaseline = async (page: Page, name: string) => {
    * y axe corre al ver el lienzo, así que la foto dependería de si llegó antes o después. Oculto sin quitarlo, para que
    * no mueva nada; sus fallos los vigila `sc-docs-a11y.spec.ts`. */
   await page.addStyleTag({ content: '[data-testid="sb-a11y"] { visibility: hidden !important; }' });
+  /* La cabecera del shell es fija (`sticky`): en una captura de un `main` más alto que la ventana se pintaba ENCIMA de
+   * su primera franja, y cualquier cambio de la cabecera habría movido todas las baselines. Durante la foto va en su
+   * sitio, sin flotar. Por elemento y no por clase, por lo mismo que el `main` de arriba. */
+  await page.addStyleTag({ content: 'header { position: static !important; }' });
   await expect(contenido).toHaveScreenshot(`${name}.png`, { animations: 'disabled' });
 };
 

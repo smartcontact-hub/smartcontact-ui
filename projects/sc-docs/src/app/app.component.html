@@ -84,7 +84,8 @@
         </aside>
       }
 
-      <main #principal class="demo-main">
+      <div class="demo-columna">
+        <main #principal class="demo-main">
         @if (migas().length) {
           <nav class="demo-migas sc-text-body-regular" [attr.aria-label]="'chrome.crumbs' | translate">
             <ol>
@@ -104,7 +105,9 @@
         }
 
         <router-outlet />
+        </main>
 
+        <!-- Fuera del `main`: es del marco, no de la página (las baselines visuales fotografían el `main`). -->
         <footer class="demo-pie sc-text-caption-regular">
           <span>{{ 'chrome.footer.tagline' | translate }}</span>
           <span class="demo-pie__enlaces">
@@ -112,7 +115,7 @@
             <a routerLink="/aviso-legal">{{ 'chrome.footer.legal' | translate }}</a>
           </span>
         </footer>
-      </main>
+      </div>
 
       @if (conIndice()) {
         <aside class="demo-indice">

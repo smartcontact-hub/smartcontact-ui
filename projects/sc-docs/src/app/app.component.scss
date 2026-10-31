@@ -268,16 +268,18 @@
   }
 }
 
-.demo-main {
+/* La columna de la página: el `main` crece y el pie se queda abajo aunque la página sea corta. */
+.demo-columna {
   min-width: 0;
-  padding: var(--sc-spacing-2-5) var(--sc-spacing-4) var(--sc-spacing-2);
   display: flex;
   flex-direction: column;
+  min-height: calc(100vh - var(--demo-alto-cabecera));
 }
 
-/* Lo que pinta la ruta crece; el pie se queda abajo aunque la página sea corta. */
-.demo-main > :not(.demo-migas):not(.demo-pie) {
+.demo-main {
   flex: 1 0 auto;
+  min-width: 0;
+  padding: var(--sc-spacing-2-5) var(--sc-spacing-4) 0;
 }
 
 .demo-indice {
@@ -338,8 +340,8 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--sc-spacing-0-75);
-  margin-top: var(--sc-spacing-4);
-  padding-top: var(--sc-spacing-1-5);
+  margin: var(--sc-spacing-4) var(--sc-spacing-4) 0;
+  padding: var(--sc-spacing-1-5) 0 var(--sc-spacing-2);
   border-top: 1px solid var(--sc-border-default);
   color: var(--sc-text-secondary);
 
@@ -395,6 +397,10 @@
   .demo-main {
     padding-inline: var(--sc-spacing-2-5);
   }
+
+  .demo-pie {
+    margin-inline: var(--sc-spacing-2-5);
+  }
 }
 
 /* Estrecho: el lateral se pliega tras el botón de menú y las secciones se deslizan en la cabecera. */
@@ -436,7 +442,11 @@
   }
 
   .demo-main {
-    padding: var(--sc-spacing-1-5) var(--sc-spacing-1) var(--sc-spacing-1-5);
+    padding: var(--sc-spacing-1-5) var(--sc-spacing-1) 0;
+  }
+
+  .demo-pie {
+    margin-inline: var(--sc-spacing-1);
   }
 }
 
