@@ -65,6 +65,8 @@ export class EquiposPageComponent {
       groups: (i) => this.agentesDe(i),
       groupsDisplay: 'count',
       emptyAsZero: true,
+      // Al pulsarla se abre la ficha ya en «Agentes», como pide el COA.
+      countOpensSection: 'agentes',
       groupsAriaKey: 'repositories.equipos.agents_aria',
       width: '112px',
       sortable: true,

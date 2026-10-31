@@ -27,7 +27,7 @@ import type { Agent } from '@features/admin/agents/data/agents-data';
 import { EquiposStore } from '../state/equipos.store';
 import { BreadcrumbService, ResultadoAccionService } from '@core/services';
 import { TooltipModule } from 'primeng/tooltip';
-import { dejoElCampo, llegarAAncla, ocasionDeAvisar } from '@shared/utils/alta-secciones';
+import { ayudaDeObligatorio, dejoElCampo, llegarAAncla, ocasionDeAvisar } from '@shared/utils/alta-secciones';
 
 interface Borrador {
   readonly name: string;
@@ -98,6 +98,7 @@ const VACIO: Borrador = { name: '', description: '', agentIds: new Set() };
                     [required]="true"
                     [placeholder]="'repositories.equipos.name_placeholder' | translate"
                     [value]="form().name"
+                    [helperText]="nameHint()"
                     [error]="nameError()"
                     (valueChange)="update('name', $event)"
                     (focusout)="dejarElNombre($event)"
@@ -120,7 +121,7 @@ const VACIO: Borrador = { name: '', description: '', agentIds: new Set() };
             </sc-subsection>
           </sc-section-card>
 
-          <sc-section-card titleKey="repositories.equipos.agents" icon="headphones">
+          <sc-section-card id="equipo-agentes" titleKey="repositories.equipos.agents" icon="headphones">
             <sc-subsection>
               <div class="assign">
                 <!-- La barra común de las tablas de asignar (DD-243): filtro, buscador y cifra. -->
@@ -159,7 +160,7 @@ const VACIO: Borrador = { name: '', description: '', agentIds: new Set() };
 
     <ng-template #agentTpl let-row>
       <span class="assign__name">
-        <sc-presence-avatar [name]="row.name" [size]="24" />
+        <sc-presence-avatar [name]="row.name" [photo]="row.photo" [size]="24" />
         <span class="assign__identity">
           <span class="assign__name-label sc-text-body-semibold" [pTooltip]="row.name" showOnEllipsis tooltipPosition="top">{{ row.name }}</span>
           @if (row.email) { <span class="assign__email sc-text-caption-regular" [pTooltip]="row.email" showOnEllipsis tooltipPosition="top">{{ row.email }}</span> }
@@ -328,9 +329,9 @@ export class EquipoEditorPageComponent implements DirtyAware, OnInit {
   /* ── Guardar ─────────────────────────────────────────────────────────────── */
 
   /*
-   * Como la ficha de grupo (DD-219) y lo que pide el COA de SISMAC-4453: «Crear equipo» y «Guardar» se apagan mientras
-   * falte el nombre, y su tooltip dice por qué. El obligatorio, en
-   * rojo al dejar el campo vacío (y se queda en vivo hasta que se rellena). Sin aviso gris previo: el COA no lo pide.
+   * Como Agendas y Plantillas (DD-237) y lo que pide el COA de SISMAC-4453: «Crear equipo» y «Guardar» se apagan mientras
+   * falte el nombre, y su tooltip dice por qué («El nombre es obligatorio»). El aviso, en gris bajo el campo desde el
+   * principio y en rojo al dejarlo vacío (y en vivo hasta que se rellena).
    */
   private readonly faltas = computed<readonly string[]>(() => (this.form().name.trim() ? [] : ['repositories.errors.name_required']));
   private readonly ocasion = ocasionDeAvisar({
@@ -344,6 +345,12 @@ export class EquipoEditorPageComponent implements DirtyAware, OnInit {
     return falta && this.ocasion.acusa(falta) ? this.translate.instant(falta) : undefined;
   });
 
+  protected readonly nameHint = computed<string | undefined>(() => {
+    this.lang();
+    const falta = this.faltas()[0];
+    return falta && !this.ocasion.acusa(falta) ? ayudaDeObligatorio(this.translate.instant(falta)) : undefined;
+  });
+
   /** Se dejó el campo del nombre: si sigue vacío, desde ahora en rojo. No al abrir una lista para elegir. */
   protected dejarElNombre(event: FocusEvent): void {
     if (dejoElCampo(event) && this.faltas().length > 0) this.ocasion.tocar(this.faltas()[0]!);
@@ -354,14 +361,11 @@ export class EquipoEditorPageComponent implements DirtyAware, OnInit {
     () => this.faltas().length === 0 && (this.mode() === 'create' || this.formDirty()),
   );
 
-  /** Por qué está apagado el botón, para su tooltip: «Falta: nombre» o «No hay cambios que guardar». */
+  /** Por qué está apagado el botón, para su tooltip: lo que falta («El nombre es obligatorio») o «No hay cambios que guardar». */
   protected readonly motivoApagado = computed(() => {
     this.lang();
     if (this.canSave()) return '';
-    if (this.faltas().length > 0) {
-      return this.translate.instant('common.summary_missing', { items: this.translate.instant('common.summary_missing_name') });
-    }
-    return this.translate.instant('common.no_changes');
+    return this.translate.instant(this.faltas()[0] ?? 'common.no_changes');
   });
 
   /** La miga de la edición dice el nombre del equipo guardado, como en Grupos y Agentes («Administración › Repositorios › Equipos › Francés»). */
@@ -406,6 +410,8 @@ export class EquipoEditorPageComponent implements DirtyAware, OnInit {
     const ids = new Set(this.agentsStore.agents().filter((a) => a.teams?.includes(grupo.id)).map((a) => a.id));
     this.form.set({ name: grupo.name, description: grupo.description, agentIds: ids });
     this.dirtyState.markPristine();
+    // Desde la cifra de agentes del listado se llega ya a «Agentes» (COA SISMAC-4453).
+    if (this.route.snapshot.queryParamMap.get('seccion') === 'agentes') llegarAAncla('equipo-agentes', this.injector);
   }
 
 

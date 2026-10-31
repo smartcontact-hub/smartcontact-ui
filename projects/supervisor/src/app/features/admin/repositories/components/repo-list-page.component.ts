@@ -170,6 +170,8 @@ export class RepoListPageComponent<T extends RepoEntity> {
       sortable: c.sortable,
       // El estado se pinta con su etiqueta: mientras carga, su píldora.
       skeleton: c.kind === 'status' ? 'tag' : undefined,
+      // La cifra que abre la ficha en su sección no deja que la fila la vuelva a abrir arriba.
+      stopRowClick: !!c.countOpensSection,
       cellTemplate: cell,
     }));
   });
@@ -262,6 +264,14 @@ export class RepoListPageComponent<T extends RepoEntity> {
   protected onRowOpen(item: T): void {
     const base = this.config().editRoute;
     if (base) void this.router.navigateByUrl(`${base}/editar/${item.id}`);
+  }
+
+  /** La cifra de una relación abre la ficha; con `countOpensSection`, ya en esa sección (Equipos: sus agentes, COA SISMAC-4453). */
+  protected onCountOpen(item: T, field: string): void {
+    const base = this.config().editRoute;
+    const seccion = this.config().columns.find((c) => c.key === field)?.countOpensSection;
+    if (!base) return;
+    void this.router.navigate([`${base}/editar/${item.id}`], seccion ? { queryParams: { seccion } } : {});
   }
 
   /** El texto entero al pasar el ratón, solo en las columnas que recortan: con un dato más largo que lo medido, la
