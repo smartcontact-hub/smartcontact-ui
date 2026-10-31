@@ -2673,6 +2673,7 @@
         "agentes": {
           "heading": "Agents",
           "hint": "Every new agent starts with these; you can change them later in the agent",
+          "iframe_url_hint": "Agents with the “General” iframe see this one; if you change it, it changes for all of them.",
           "edit_crumb": "Edit agent"
         },
         "grupos": {

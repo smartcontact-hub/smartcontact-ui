@@ -2672,12 +2672,13 @@
         },
         "agentes": {
           "heading": "Agentes",
-          "hint": "Con esto nace cada agente nuevo; luego se cambia en su ficha",
+          "hint": "Los agentes nuevos empiezan con estos valores; luego se cambian en la ficha de cada uno",
+          "iframe_url_hint": "La ven los agentes con el iframe «General»; si la cambias, les cambia a todos.",
           "edit_crumb": "Editar agente"
         },
         "grupos": {
           "heading": "Grupos",
-          "hint": "Con esto nace cada grupo nuevo; luego se cambia en su ficha",
+          "hint": "Los grupos nuevos empiezan con estos valores; luego se cambian en la ficha de cada uno",
           "strategy_hint": "Niveles, Ring All, Skills y Agente exclusivo se eligen en la ficha de cada grupo, donde se configuran.",
           "edit_crumb": "Editar grupo"
         }

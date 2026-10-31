@@ -2673,6 +2673,7 @@
         "agentes": {
           "heading": "Agents",
           "hint": "Chaque nouvel agent démarre avec ces valeurs ; elles se modifient ensuite dans sa fiche",
+          "iframe_url_hint": "Les agents avec l’iframe « Général » voient celle-ci ; si vous la modifiez, elle change pour tous.",
           "edit_crumb": "Modifier l'agent"
         },
         "grupos": {
