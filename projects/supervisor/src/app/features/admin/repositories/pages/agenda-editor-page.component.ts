@@ -340,6 +340,7 @@ export class AgendaEditorPageComponent implements DirtyAware, OnInit {
     const n = contacts.length;
     const accepted = await this.alertModal({
       variant: 'error',
+      surface: 'plain',
       title: this.translate.instant(`repositories.agendas.contacts_delete_title${n === 1 ? '_one' : ''}`, { count: n }),
       message: this.translate.instant('common.delete_dialog.body'),
       actionLabel: this.translate.instant('common.delete'),

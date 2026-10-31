@@ -38,7 +38,7 @@
 
 | Componente | Tipo | Estado | PrimeNG base | API propia | Anidados | Demo | Usos en Supervisor |
 |---|---|---|---|---|---|---|---|
-| `sc-alert-modal` | EXTENDED | ready | primeng/dynamicdialog | 14 inputs | sc-custom-modal sc-button | ✓ | — |
+| `sc-alert-modal` | EXTENDED | ready | primeng/dynamicdialog | 16 inputs | sc-custom-modal sc-button | ✓ | — |
 | `sc-avatar` | EXTENDED | ready | primeng/avatar, primeng/overlaybadge | 12 inputs | — | ✓ | 4 |
 | `sc-avatargroup` | STANDARD | experimental (sin demo) | primeng/avatargroup | 0 inputs | — | — | — |
 | `sc-badge` | STANDARD | ready | primeng/badge | 3 inputs | — | ✓ | 6 |
@@ -54,7 +54,7 @@
 | `sc-column-selector` | STANDARD | experimental (sin maestro en el Kit) | primeng/popover, primeng/tooltip | 1 inputs | — | ✓ | 1 |
 | `sc-command-palette` | CUSTOM | experimental (sin maestro en el Kit) | — | 0 inputs | — | ✓ | 4 |
 | `sc-confirmdialog` | STANDARD | deprecated | primeng/autofocus, primeng/button, primeng/confirmdialog, primeng/confirmpopup | 0 inputs | — | ✓ | 1 |
-| `sc-custom-modal` | EXTENDED | ready | primeng/dialog, primeng/dynamicdialog | 19 inputs | sc-button | ✓ | 18 |
+| `sc-custom-modal` | EXTENDED | ready | primeng/dialog, primeng/dynamicdialog | 20 inputs | sc-button | ✓ | 18 |
 | `sc-datatable` | EXTENDED | ready | primeng/table | 63 inputs | sc-skeleton sc-button | ✓ | 18 |
 | `sc-datepicker` | EXTENDED | ready | primeng/datepicker | 24 inputs | sc-field-label sc-button sc-field-msg | ✓ | 1 |
 | `sc-delete-entity-dialog` | STANDARD | experimental (sin maestro en el Kit) | primeng/tooltip | 2 inputs | sc-custom-modal sc-message sc-button | ✓ | 1 |

@@ -14,14 +14,49 @@
   --sc-custom-modal-title-lines: var(--sc-alert-modal-title-lines);
 }
 
-/* La variante `default` deja la carcasa como está; las otras tres le pasan su tono. */
-.sc-alert-modal__surface--info,
-.sc-alert-modal__surface--warning,
-.sc-alert-modal__surface--error {
+/* La variante `default` deja la carcasa como está; las otras tres, teñidas (`tinted`), le pasan su tono. */
+.sc-alert-modal__surface--tinted:is(
+    .sc-alert-modal__surface--info,
+    .sc-alert-modal__surface--warning,
+    .sc-alert-modal__surface--error
+  ) {
   --sc-custom-modal-background: var(--sc-alert-modal-background);
   --sc-custom-modal-border-color: var(--sc-alert-modal-border-color);
   --sc-custom-modal-title-color: var(--sc-alert-modal-title-color);
   --sc-custom-modal-icon-color: var(--sc-alert-modal-icon-color);
+}
+
+/*
+ * Blanca (`plain`, DD-242): el confirm centrado de antes (`p-confirmdialog` con el Kit), calcado y medido contra él.
+ * La cabecera con el relleno del modal en los cuatro lados y el título a 20 de línea; el texto y el icono en el color
+ * del modal; el icono de 21 junto al mensaje, a 14 de él.
+ */
+.sc-alert-modal__surface--plain {
+  --sc-custom-modal-header-padding-y: var(--sc-cmp-overlay-modal-padding);
+  --sc-custom-modal-header-padding-x: var(--sc-cmp-overlay-modal-padding);
+  --sc-custom-modal-title-line-height: var(--sc-line-height-200);
+  --sc-custom-modal-color: var(--sc-text-primary);
+  --sc-custom-modal-title-color: var(--sc-text-primary);
+  --sc-custom-modal-icon-color: var(--sc-text-primary);
+  --sc-alert-modal-message-color: var(--sc-text-primary);
+}
+
+.sc-alert-modal__content {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-cmp-confirmdialog-content-gap);
+
+  .sc-alert-modal__message {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+}
+
+.sc-alert-modal__icon {
+  display: inline-flex;
+  flex: none;
+  font-size: var(--sc-cmp-confirmdialog-icon-size);
+  color: var(--sc-custom-modal-icon-color);
 }
 
 .sc-alert-modal__surface--info {
