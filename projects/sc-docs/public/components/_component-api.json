@@ -400,7 +400,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "cuando": "Para un aviso o una pregunta con una acción clara (borrar, descartar cambios, sesión caducada), abierto por `ScDynamicDialogService` como en ui.smart-contact.com. La variante dice la intención: `error` destruye o bloquea, `warning` pide atención, `info` informa y `default` confirma algo neutro. Mide de 320 a 480 px y hasta 400 de alto. Si lleva más que texto, `sc-custom-modal`.",
+      "cuando": "Para un aviso o una pregunta con una acción clara (borrar, descartar cambios, sesión caducada), abierto por `ScDynamicDialogService` como en ui.smart-contact.com. La variante dice la intención: `error` destruye o bloquea, `warning` pide atención, `info` informa y `default` confirma algo neutro. La superficie dice quién lo provoca: blanca (`surface: 'plain'`) si decide el usuario (borrar, descartar), teñida (`tinted`, la de siempre) si es un error del sistema (sin micrófono). Mide de 320 a 480 px y hasta 400 de alto. Si lleva más que texto, `sc-custom-modal`.",
       "contrato": [
         {
           "nombre": "variant",
@@ -409,6 +409,26 @@
           "porDefecto": "'default'",
           "requerido": false,
           "descripcion": "Intención: decide el icono, el tono de la superficie y el del botón principal.",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "surface",
+          "clase": "input",
+          "tipo": "ScAlertModalSurface",
+          "porDefecto": "'tinted'",
+          "requerido": false,
+          "descripcion": "Extensión nuestra (DD-242): `tinted` tiñe la superficie con la variante (error del sistema); `plain` la deja blanca, con el icono y el botón principal en el color de la variante (borrar, descartar cambios).",
+          "origen": "nuestro",
+          "nativo": null
+        },
+        {
+          "nombre": "closeOnEscape",
+          "clase": "input",
+          "tipo": "boolean",
+          "porDefecto": "true",
+          "requerido": false,
+          "descripcion": "Extensión nuestra (DD-242): con `false`, Escape no cierra el aviso (un error del sistema, SISMAC-4292).",
           "origen": "nuestro",
           "nativo": null
         },

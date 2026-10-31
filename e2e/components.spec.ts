@@ -1087,6 +1087,44 @@ test.describe('sc-alert-modal', () => {
     }
   });
 
+  test('superficie (DD-242): sin `surface` se tiñe; `plain` deja fondo, borde y título neutros y el icono en la variante', async ({ page }) => {
+    await gotoPage(page, 'alertmodal');
+    const fondoBase = await colorDe(page, '--sc-dialog-bg', 'background-color');
+    const bordeBase = await colorDe(page, '--sc-custom-modal-border-color', 'border-top-color');
+    const tituloBase = await colorDe(page, '--sc-custom-modal-title-color', 'color');
+    for (const [v, kit] of [['error', 'error'], ['warning', 'warn']] as const) {
+      const fondo = await colorDe(page, `--sc-cmp-message-${kit}-background`, 'background-color');
+      const tinta = await colorDe(page, `--sc-cmp-message-${kit}-color`, 'color');
+      expect(fondo).not.toBe(fondoBase);
+      expect(tinta).not.toBe(tituloBase);
+      // Sin `surface`: la de siempre, teñida (un error del sistema).
+      const tenida = page.getByTestId(`alert-${v}`).locator('.sc-custom-modal');
+      expect((await styleOf(tenida, ['background-color']))['background-color'], v).toBe(fondo);
+      // `plain`: el fondo, el borde y el título del modal neutro; solo el icono lleva la variante.
+      const blanca = page.getByTestId(`alert-${v}-plain`).locator('.sc-custom-modal');
+      expect(await styleOf(blanca, ['background-color', 'border-top-color']), v).toEqual({
+        'background-color': fondoBase,
+        'border-top-color': bordeBase,
+      });
+      expect((await styleOf(blanca.locator('h2'), ['color']))['color'], v).toBe(tituloBase);
+      expect((await styleOf(blanca.locator('.sc-custom-modal__icon'), ['color']))['color'], v).toBe(tinta);
+    }
+  });
+
+  test('closeOnEscape=false (DD-242): Escape no cierra el error del sistema; la acción sí', async ({ page }) => {
+    await gotoPage(page, 'alertmodal');
+    await page.getByTestId('alert-system').locator('button').click();
+    const dialogo = page.getByRole('alertdialog', { name: 'No se detecta el micrófono' });
+    await expect(dialogo).toBeVisible();
+    await page.keyboard.press('Escape');
+    await page.keyboard.press('Escape');
+    await expect(dialogo).toBeVisible();
+    await expect(page.getByTestId('alert-system-result')).toHaveText('—');
+    await dialogo.getByRole('button', { name: 'Reintentar' }).click();
+    await expect(dialogo).toHaveCount(0);
+    await expect(page.getByTestId('alert-system-result')).toHaveText('action');
+  });
+
   test('error: UN alertdialog con título de nombre y mensaje de descripción, foco en Cancelar, Escape avisa', async ({ page }) => {
     await gotoPage(page, 'alertmodal');
     await page.getByTestId('alert-open').locator('button').click();

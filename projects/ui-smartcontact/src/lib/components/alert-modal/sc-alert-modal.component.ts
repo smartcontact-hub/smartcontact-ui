@@ -4,12 +4,14 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   ElementRef,
   inject,
   input,
   output,
   viewChild,
 } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 
 import { ScButtonComponent } from '../button/sc-button.component';
@@ -23,6 +25,13 @@ import {
 import type { ScDynamicDialogConfig } from '../dynamic-dialog/sc-dynamic-dialog.service';
 
 export type ScAlertModalVariant = 'default' | 'info' | 'warning' | 'error';
+
+/**
+ * Extensión nuestra (DD-242). `tinted` tiñe la superficie con la variante: un error del sistema (sin micrófono, sesión
+ * caducada). `plain` la deja blanca y solo el icono y el botón principal llevan el color: una decisión del usuario
+ * (borrar, descartar cambios).
+ */
+export type ScAlertModalSurface = 'tinted' | 'plain';
 
 /** El icono de cada variante si no se pasa `icon`. El de error es `cancel`, el glifo del Kit (ellos usan `x_circle`). */
 export const SC_ALERT_MODAL_ICONS: Record<ScAlertModalVariant, string> = {
@@ -71,6 +80,7 @@ let alertModalIdCounter = 0;
  *     e `info`: un Intro de más no borra nada (WAI-ARIA APG, «Dialog (Modal) Pattern»). El suyo abre en la X.
  *   - Mide de 320 a 480 de ancho y hasta 400 de alto; el título ocupa hasta 2 líneas y el mensaje hasta 4.
  *   - Extensión nuestra: un tercer botón a la izquierda (`tertiaryActionLabel`, «No guardar»).
+ *   - Extensión nuestra: `surface` (`tinted` o `plain`) y `closeOnEscape` (DD-242).
  */
 @Component({
   selector: 'sc-alert-modal',
@@ -86,6 +96,13 @@ export class ScAlertModalComponent {
 
   /** Intención: decide el icono, el tono de la superficie y el del botón principal. */
   readonly variant = input<ScAlertModalVariant>('default');
+  /**
+   * Extensión nuestra (DD-242): `tinted` tiñe la superficie con la variante (error del sistema); `plain` la deja
+   * blanca, con el icono y el botón principal en el color de la variante (borrar, descartar cambios).
+   */
+  readonly surface = input<ScAlertModalSurface>('tinted');
+  /** Extensión nuestra (DD-242): con `false`, Escape no cierra el aviso (un error del sistema, SISMAC-4292). */
+  readonly closeOnEscape = input(true, { transform: booleanAttribute });
   /** Título del aviso: su nombre para el lector. Hasta 2 líneas. */
   readonly title = input<string | null>(null);
   /** Texto del cuerpo. Admite HTML sencillo (`<p>`, `<ul>`, `<strong>`, enlaces), que Angular sanea. */
@@ -135,12 +152,17 @@ export class ScAlertModalComponent {
     this.showIcon() ? (this.icon() ?? SC_ALERT_MODAL_ICONS[this.variant()]) : null,
   );
   protected readonly actionVariant = computed(() => ACTION_VARIANT[this.variant()]);
-  /** La X lleva el tono de la variante; en `default`, el gris de siempre. */
+  /** La X lleva el tono de la variante en la superficie teñida; en `default` y en la blanca, el gris de siempre. */
   protected readonly closeVariant = computed<ScButtonVariant>(() =>
-    this.variant() === 'default' ? 'secondary' : ACTION_VARIANT[this.variant()],
+    this.variant() === 'default' || this.surface() === 'plain' ? 'secondary' : ACTION_VARIANT[this.variant()],
   );
   protected readonly surfaceClass = computed(() =>
-    ['sc-alert-modal__surface', `sc-alert-modal__surface--${this.variant()}`, this.styleClass()]
+    [
+      'sc-alert-modal__surface',
+      `sc-alert-modal__surface--${this.variant()}`,
+      `sc-alert-modal__surface--${this.surface()}`,
+      this.styleClass(),
+    ]
       .filter(Boolean)
       .join(' '),
   );
@@ -149,6 +171,18 @@ export class ScAlertModalComponent {
     afterNextRender(() => {
       if (this.inDialog) this.focusInitial();
     });
+
+    // PrimeNG ata su Escape al abrir, con la configuración de quien abre: el aviso lo para antes, en la captura.
+    const document = inject(DOCUMENT);
+    const blockEscape = (event: KeyboardEvent): void => {
+      if (event.key !== 'Escape' || this.closeOnEscape()) return;
+      const dialog = this.host.nativeElement.closest('[role="alertdialog"]') ?? this.host.nativeElement;
+      if (!dialog.contains(document.activeElement)) return;
+      event.stopImmediatePropagation();
+      event.preventDefault();
+    };
+    document.addEventListener('keydown', blockEscape, true);
+    inject(DestroyRef).onDestroy(() => document.removeEventListener('keydown', blockEscape, true));
   }
 
   protected onClosed(): void {

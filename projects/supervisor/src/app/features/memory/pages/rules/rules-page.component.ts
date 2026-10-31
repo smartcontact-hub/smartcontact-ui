@@ -272,6 +272,7 @@ export class RulesPageComponent {
   private async confirmDelete(rule: Rule): Promise<void> {
     const accepted = await this.alertModal({
       variant: 'error',
+      surface: 'plain',
       title: this.translate.instant('memory.rules.delete_title'),
       message: this.translate.instant('memory.rules.delete_body', { name: rule.name }),
       actionLabel: this.translate.instant('common.delete'),
@@ -285,6 +286,7 @@ export class RulesPageComponent {
   private async confirmDeleteMany(rows: readonly Rule[]): Promise<void> {
     const accepted = await this.alertModal({
       variant: 'error',
+      surface: 'plain',
       title: this.translate.instant('memory.rules.delete_title_bulk', { count: rows.length }),
       message: this.translate.instant('common.delete_dialog.body'),
       actionLabel: this.translate.instant('common.delete'),

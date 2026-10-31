@@ -43,6 +43,7 @@
 > | Tema | DD |
 > |---|---|
 > | Tipificaciones: dos opciones hermanas con el mismo nombre se dicen bajo el campo de la que repite, «Ya hay «X» en este nivel», como el COA de SISMAC-4451 (v7, 2026-10-30); bajo el árbol queda solo «Hay opciones sin nombre» (enmienda DD-187 §12 en lo del repetido) | DD-244 |
+> | Confirmar lo que decide el usuario (borrar, descartar, guardar antes de salir) no tiñe el modal: `sc-alert-modal` con `surface: 'plain'`, blanco con el icono y el botón en el color de la variante · el tinte (`tinted`, por defecto) queda para los errores del sistema, que pueden no cerrarse con Escape (`closeOnEscape: false`, SISMAC-4292) · en el Supervisor, `injectAlertModal()` pide la superficie en cada aviso (enmienda DD-241 §6) | DD-242 |
 > | Los modales como en ui.smart-contact.com: `sc-custom-modal` (la carcasa, también con `[(visible)]`) y `sc-alert-modal` (aviso con variante `default`, `info`, `warning` o `error`, abierto por `ScDynamicDialogService`) con su misma API y sus fallos arreglados · borrar es `error`, descartar `warning` · se retiran `sc-dialog` y el confirm centrado; el globo con `target` sigue · Figma: «❖ Alert modal» con instancias de Custom modal | DD-241 |
 > | Tipificaciones: el buscador de la lista mira cualquier campo, también los nombres de los grupos que la usan aunque solo salgan al pasar el ratón (enmienda la regla de Agentes y Grupos solo para esta lista) · la edición de Tipificaciones, Agendas, Plantillas y las cuentas y triggers de Email acaba en el nombre guardado, y Agendas, Plantillas y Email abren la miga con «Administración», como Grupos y Agentes · el nombre de las fichas de Repositorios lleva «Ej: …» y la descripción «Breve descripción...» | DD-238 |
 > | Duplicar una agenda o una plantilla es un alta, como un grupo o un agente (enmienda DD-230): abre «Nueva agenda/plantilla» con la copia y su nombre «X (1)» (`seedFromId`, `nombreDeCopia`), que no existe hasta «Crear» · no copia a qué agentes se asigna | DD-234 |
@@ -198,6 +199,52 @@ y el de debajo del árbol obligaba a buscarla entre todas las ramas.
 altura del campo y que no hay línea bajo el árbol (rojo con el código anterior: descripción vacía). Figma (`3503:49633`), cuando
 toque el Bloque 8 del empate de flujos.
 
+---
+
+## DD-242 · 2026-10-31 — Confirmar un borrado no tiñe el modal: `sc-alert-modal` gana `surface` y `closeOnEscape`
+
+**Contexto** · Con DD-241 borrar pasó a `sc-alert-modal` en `error`, que tiñe de rojo toda la superficie: el mismo aspecto
+que «No se detecta el micrófono» (Figma «Gestión de errores», `XiPJxHfz5UuekksPIoEj9u` nodo 370:6140, fondo rosado). Una
+pregunta que el usuario provoca al pulsar «Eliminar» recibía la urgencia de un fallo del sistema. Además, SISMAC-4292 pide
+que los errores del sistema no se cierren con Escape, y el aviso no lo permitía (DD-241 §2).
+
+**Decisión** ·
+1. **`surface: 'tinted' | 'plain'`**, entrada nueva de `sc-alert-modal`, por defecto `'tinted'` (lo de siempre). Con
+   `'plain'` el fondo, el borde y el título son los de `default`, y solo el icono y el botón principal llevan el color de
+   la variante: rojo en `error`, ámbar en `warning`, azul en `info`. La X va en gris, como en `default`.
+2. **Quién lo provoca decide la superficie**: blanca para lo que decide el usuario (borrar, descartar cambios, guardar
+   antes de salir); teñida para un error del sistema (sin micrófono, conexión caída, sesión caducada).
+3. **`closeOnEscape`**, entrada nueva, por defecto `true`. Con `false`, el aviso para el Escape antes de que llegue a
+   PrimeNG (una escucha en captura mientras el foco está dentro): la X y los botones siguen cerrando.
+4. **Supervisor**: `injectAlertModal()` pide `surface` en cada aviso (obligatoria en `AlertModalRequest`), para que un
+   aviso nuevo lo decida. Los 14 de hoy (`confirmar-borrado.ts`, Reglas, Categorías, Entidades, contactos de Agendas,
+   restablecer datos, la cascada de canales del agente, `DiscardDialogService` y «guardar antes de ir a Repositorios» en
+   las fichas de grupo y agente) pasan a `'plain'`. Enmienda DD-241 §6, que decía «el modal se tiñe de rojo».
+5. Las dos entradas son **extensiones nuestras**, marcadas así en el JSDoc y en AGENTS.md §Modales: los devs reciben la
+   propuesta para su `sc-alert-modal`.
+
+**Razón** · El tinte es la señal más fuerte que tiene un modal y se gasta en lo que interrumpe sin que nadie lo pida. Un
+borrado ya lo pidió el usuario: le basta el icono y el botón rojos para saber que es destructivo, y el foco sigue abriendo
+en «Cancelar» (DD-241 §2). Por defecto `'tinted'` para que ninguna llamada de los devs cambie de aspecto sin tocarla.
+
+**Descartadas** ·
+- *Recuperar el confirm dialog centrado para los borrados*: vuelve el tercer camino que DD-241 retiró, con otra API y otro
+  aspecto que el de los devs.
+- *Borrar con la variante `default`*: pierde el rojo del botón y el icono de «cancel», que dicen «esto destruye».
+- *`'plain'` por defecto*: cambiaría de golpe los avisos de error de los devs (micrófono, conexión), que deben seguir
+  teñidos.
+- *`closeOnEscape` en la configuración de `ScDynamicDialogService`*: ya existe, pero quien abre el aviso tendría que saber
+  que va en otro objeto; como entrada del aviso viaja con el resto de `inputValues`.
+
+**Consecuencias** · sc-docs: la ficha de Alert Modal gana la story «Superficies» (teñida y blanca, `error` y `warning`) y un
+error del sistema que no se cierra con Escape; su «Cuándo se usa» lo dice. AGENTS.md: la fila «Borrar una entidad» manda
+`confirmar-borrado.ts` con la superficie blanca (decía `sc-form-danger-zone` + `sc-delete-entity-dialog`, contra DD-215 y
+DD-233). Cubierto en `e2e/supervisor/alert-modal-superficie.spec.ts` (borrar y descartar, blancos) y en
+`e2e/components.spec.ts` (sin `surface` sigue teñido; `closeOnEscape: false` no cierra con Escape). Pendiente fuera del repo: la propiedad de superficie en «❖
+Alert modal» (15876:601) y su Code Connect, y contárselo a los devs.
+
+---
+
 ## DD-241 · 2026-10-29 — `sc-custom-modal` y `sc-alert-modal`, como los de ui.smart-contact.com; se retiran `sc-dialog` y el confirm centrado
 
 **Contexto** · El DS de los devs (ui.smart-contact.com) tiene dos componentes propios que hicieron para los errores del Agent (sin
@@ -231,7 +278,7 @@ ConfirmDialog: solo aparece en el tema. El «Modal legacy custom» se había des
    modos (el export solo trae `aura/custom` en uno).
 5. **Medidas del aviso**: de 320 a 480 de ancho y hasta 400 de alto, título hasta 2 líneas y mensaje hasta 4 (las del confirm,
    medidas en los 15 diálogos del Supervisor en cuatro idiomas). La carcasa mide 480 por defecto y hasta 720.
-6. **Variante por intención**: borrar es `error` (el modal se tiñe de rojo), descartar cambios `warning`, avisar al guardar `info`. En el
+6. **Variante por intención**: borrar es `error` (el modal se tiñe de rojo; desde DD-242, con la superficie blanca), descartar cambios `warning`, avisar al guardar `info`. En el
    Supervisor los abre un solo sitio, `injectAlertModal()` (`core/services/alert-modal.ts`).
 7. **Se retiran** `sc-dialog` (sustituto: `sc-custom-modal`) y el diálogo centrado de `sc-confirmdialog` (sustituto:
    `sc-alert-modal`), con `@deprecated` y su motivo (DD-190). Los 19 modales que usaban `sc-dialog` y las 14 confirmaciones centradas
