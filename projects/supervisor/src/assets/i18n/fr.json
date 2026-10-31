@@ -1594,7 +1594,6 @@
         "move_hint": "Faites-la glisser, ou utilisez les flèches haut et bas"
       },
       "tree_status": {
-        "repeated": "Des options portent le même nom dans une même liste.",
         "unnamed": "Des options n'ont pas de nom."
       },
       "preview": {

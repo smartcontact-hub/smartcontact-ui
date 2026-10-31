@@ -1594,7 +1594,6 @@
         "move_hint": "Arraste-a, ou use as setas para cima e para baixo"
       },
       "tree_status": {
-        "repeated": "Há opções com o mesmo nome na mesma lista.",
         "unnamed": "Há opções sem nome."
       },
       "preview": {
