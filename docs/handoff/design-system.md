@@ -49,6 +49,9 @@
   (c) **Fuera de PrimeNG jubilado** (`WRAPPERS_SOBRE_COMPONENTE_OBSOLETO_MAX`, hoy 2 tras DD-172): quedan dos, y son de las que se proponen. `sc-button → [pButton]`: la directiva no trae `label`, `icon` ni salidas, y cambia el DOM de todos los botones (mueve las capturas y las 8 entradas `p-button` de `component-styles.json`; `component-structure.json` no tiene ninguna, medido el 2026-10-06). Coste medido y opciones: tramo del 2026-10-06. `sc-multiselect → p-select` con `multiple`: le faltan seis cosas que usamos (`showToggleAll`, `selectAll`, `selectionLimit`, `maxSelectedLabels`, `selectedItemsLabel`, `display`; medido en 22.1.0), y DD-153 eligió ampliar el envoltorio.
   (d) **La plantilla de PR promete lo que no sabe**: medido, ningún gate lee el checklist y solo 2 de sus 6 casillas están respaldadas (`verify` y tokens). Barato: que cada línea diga si la vigila un gate y que «no aplica» no se escriba con un tick. Gateables de verdad, si Rafa quiere: bump de versión y CHANGELOG.
   (e) **`preflightVivo` de `bash-guard` cuenta el preflight de CUALQUIER caja**: busca la carpeta en la línea de comandos, que es relativa (y en macOS `pgrep -af` da solo PIDs). Medido el 2026-09-28: el preflight de otra caja denegó `npm run build:supervisor` en esta. Arreglo: el `cwd` de cada PID (`lsof -a -p PID -d cwd`, `/proc/PID/cwd`), con su test en rojo.
+- **Modales (DD-241, #555)**: contar a los devs sus fallos (roles anidados, Escape sin aviso, foco en la X) y que su página de
+  Custom Modal está rota en producción (`ChunkLoadError`); publicar la librería de Figma y el Code Connect desde `main`.
+- **sc-docs, lo que queda del diagnóstico del 2026-10-29**: DECISIONS.md (1 MB) en un fichero por DD con índice de vigentes, y AGENTS.md a ≤300 líneas; cada uno en su sesión (los leen hooks y gates por sección).
 - **`sc-step-marker` (DD-222)**: replicar el marcador en las fichas de agente, usuario y tipificación; revisar el copy fr y pt; en Figma, tras publicar la librería (`step-marker` 15724:271, `nav-item` 12555:23029), cambiar los 33 índices de Grupos del archivo del Supervisor (`importComponentByKeyAsync` + `swapComponent`) y sus notas «Cómo se comporta».
 - **`sc-datatable` tras cubrir primeng.dev/table (2026-10-14)**: (a) el Playground de Datatable en sc-docs le pasa «Alto
   del scroll» aunque «Scroll propio» esté apagado, y p-table lo pone de tope igual (240 px): mismo arreglo que `scrollHeightArg`
@@ -174,6 +177,18 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
+## ✅ 2026-10-31 · sc-docs con la estructura de Primer: portada, cabecera, lateral por sección e «En esta página»
+
+**Sello:** rama `areses/sc-doc-improvements-7f1391`, sobre HEAD `deb87737` de `main`. Sale el tramo del 2026-10-29 (#555): `git show deb87737:docs/handoff/design-system.md`; su pendiente, en SIGUIENTE.
+
+**Lo que cambia.** Medido primer.style y calcada su estructura con tokens propios: cabecera de 64 px con las cinco secciones
+(el smoke las cuenta), lateral solo en Fundamentos y Componentes con sus grupos a la vista (sustituye las pestañas de
+Fundamentos y el acordeón), migas, «En esta página» leído de los `h2` (`shared/toc.component.ts`; en la ficha de un componente,
+anidado bajo él en el lateral, porque su derecha es el panel), título de pestaña por página y pie. Portada nueva en `/`
+(`pages/inicio`): tarjetas a dos tonos con ilustraciones propias, formas del logo y componentes `sc-*` reales, `inert`. Índice de
+Componentes sin foto (fuera `public/hero/`), en 3 columnas. Cabeceras de página unificadas: migas, título, entradilla a 18. `audit:text-styles` de sc-docs baja de 94 a 79. El oscuro LOCAL del lienzo ya oscurece PrimeNG (`storybook/tokens-en-lienzo.ts`:
+el Select pasa de 255 a 9). `docs:ia` escribe además `ia/{tokens,patrones,iconos}.md`, `llms-full.txt`, `robots.txt` y `sitemap.xml`.
+
 ## ✅ 2026-10-30 · sc-docs: «Cuándo se usa» encabeza cada ficha y el índice lleva miniaturas
 
 **Sello:** rama `areses/sc-doc-improvements-7f1391`, sobre HEAD `e899cfd0` de `main`. Sale el tramo del 2026-10-22 (`sc-step-marker`, DD-222): `git show b131c6bb:docs/handoff/design-system.md`; su pendiente, en SIGUIENTE.
@@ -182,23 +197,7 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 estaba a ~6.000 px). Las tarjetas del índice dicen cuándo, no qué (en inglés, su blurb traducido) y llevan miniatura en claro y
 oscuro: la primera story recortada a lo que pinta, que toma `docs-capturas` (`_miniatura*.png`, a 2x y a 720 de ancho).
 
-**Pendiente.** El resto del diagnóstico de sc-docs del 2026-10-29, por impacto: `llms.txt` con Patrones, tokens e iconos (y
-`llms-full.txt`, `robots.txt` y `sitemap.xml`, que hoy responden el HTML de la web); índice «En esta página», secciones como
-encabezados y título de pestaña por ficha; DECISIONS.md (1 MB) en un fichero por DD con índice de vigentes; AGENTS.md a ≤300 líneas.
-
-## ✅ 2026-10-29 · `sc-custom-modal` y `sc-alert-modal`, como en ui.smart-contact.com (DD-241, #555)
-
-**Sello:** rama `areses/confirmdialog-documentation-search-466499`. Salen los tramos del 2026-10-14: `git show e57ab438:docs/handoff/design-system.md`.
-
-**Lo que cambia.** Los dos modales de los devs, con sus nombres y su API (extensiones nuestras marcadas). Se retiran `sc-dialog`
-y el confirm centrado; el globo con `target` sigue. Supervisor: 19 modales sobre la carcasa, confirmaciones con `injectAlertModal`
-(borrar `error`, descartar `warning`). Lo vigilan `audit:modales` y la regla «Modales» de AGENTS.md.
-
-**Figma.** «❖ Custom modal» es solo la carcasa (sin Error ni Warn; sus 9 instancias pasaron a Alert modal). «❖ Alert modal»
-(15876:601) lleva las cuatro variantes. Falta publicar la librería y el Code Connect (desde `main`, tras fundir #555).
-
-**Pendiente.** Contar a los devs sus fallos (roles anidados, Escape sin aviso, foco en la X) y que su página de Custom Modal
-está rota en producción (`ChunkLoadError`).
+**Pendiente.** Hecho o movido en el tramo del 2026-10-31.
 
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 

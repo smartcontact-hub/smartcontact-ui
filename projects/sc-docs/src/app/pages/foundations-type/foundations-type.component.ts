@@ -1,8 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
 
-import { ScIconComponent } from '@smartcontact-hub/icons';
-
 /** Una fila de la escala tipográfica: un step y su valor. */
 interface TypeRow {
   step: string; // '300'
@@ -55,14 +53,12 @@ const rem = (px: number): string => `${+(px / 16).toFixed(4)}`;
 @Component({
   selector: 'app-foundations-type',
   standalone: true,
-  imports: [ScIconComponent, TranslatePipe],
+  imports: [TranslatePipe],
   templateUrl: './foundations-type.component.html',
   styleUrl: './foundations-type.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FoundationsTypeComponent {
-  protected readonly typeIcon = 'text_fields';
-
   /** Font-size: 8 tamaños redondos, step-named, en rem. */
   protected readonly sizes: TypeRow[] = [
     { step: '100', px: 12 },

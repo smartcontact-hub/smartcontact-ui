@@ -19,40 +19,19 @@ import { EstadoComponenteComponent } from '../../storybook/estado-componente.com
   selector: 'app-components-index',
   imports: [EstadoComponenteComponent, RouterLink, TranslatePipe],
   template: `
-    <header class="hero">
-      <img
-        class="hero__img hero__img--light"
-        src="/hero/components.jpg"
-        width="1600"
-        height="1067"
-        alt=""
-        aria-hidden="true"
-        fetchpriority="high"
-      />
-      <img
-        class="hero__img hero__img--dark"
-        src="/hero/components-dark.jpg"
-        width="1600"
-        height="1067"
-        alt=""
-        aria-hidden="true"
-      />
-      <div class="hero__scrim" aria-hidden="true"></div>
-      <div class="hero__content">
-        <p class="eyebrow sc-text-caption-semibold">{{ 'componentsIndex.eyebrow' | translate }}</p>
-        <h1>{{ 'componentsIndex.title' | translate }}</h1>
-        <p
-          class="lead"
-          [innerHTML]="'componentsIndex.lead' | translate: { total: total, families: groups.length }"
-        ></p>
-      </div>
+    <header class="cabecera">
+      <h1>{{ 'componentsIndex.title' | translate }}</h1>
+      <p
+        class="lead sc-text-h3-regular"
+        [innerHTML]="'componentsIndex.lead' | translate: { total: total, families: groups.length }"
+      ></p>
     </header>
 
     @for (group of groups; track group.category) {
       <section class="fam">
-        <h2 class="fam__title">
+        <h2 class="fam__title sc-text-h2-semibold">
           {{ 'categories.' + group.category | translate }}
-          <span class="fam__count">{{ group.items.length }}</span>
+          <span class="fam__count sc-text-body-regular">{{ group.items.length }}</span>
         </h2>
         <ul class="cards">
           @for (e of group.items; track e.path) {
@@ -91,7 +70,7 @@ import { EstadoComponenteComponent } from '../../storybook/estado-componente.com
                   }
                 </span>
                 <span class="card__cuerpo">
-                  <span class="card__name">
+                  <span class="card__name sc-text-title-semibold">
                     {{ e.label }}
                     <!-- Solo la excepción (DD-190): lo listo no lleva etiqueta, para no llenar de verde el índice. -->
                     @let est = api.estadoDeRuta(e.path);
@@ -107,7 +86,7 @@ import { EstadoComponenteComponent } from '../../storybook/estado-componente.com
                   @if (cuando && (!lang.isEnglish() || blurb === blurbKey)) {
                     <!-- Cada trozo en su elemento: un texto suelto entre bloques arrastra el salto de línea de la plantilla
                          y pintaba «sc-select .» con un espacio antes del punto. -->
-                    <span class="card__blurb">
+                    <span class="card__blurb sc-text-body-regular">
                       @for (t of trozos(cuando); track $index) {
                         @if (t.codigo) {
                           <code>{{ t.texto }}</code>
@@ -117,7 +96,7 @@ import { EstadoComponenteComponent } from '../../storybook/estado-componente.com
                       }
                     </span>
                   } @else if (blurb !== blurbKey) {
-                    <span class="card__blurb">{{ blurb }}</span>
+                    <span class="card__blurb sc-text-body-regular">{{ blurb }}</span>
                   }
                 </span>
               </a>
@@ -128,136 +107,44 @@ import { EstadoComponenteComponent } from '../../storybook/estado-componente.com
     }
   `,
   styles: `
-    /* Portada: la primera parte (título + intro) va sobre una foto abstracta clara. La imagen
-       lleva width/height y va en object-fit:cover → ratio bloqueado, responsive y sin salto de
-       layout (el propio patrón que gatea audit:screen-hygiene). */
-    .hero {
-      position: relative;
-      overflow: hidden;
-      border-radius: 16px;
-      margin-bottom: var(--sc-spacing-2-25);
-      background: var(--sc-bg-subtle);
-    }
-
-    .hero__img,
-    .hero__scrim {
-      position: absolute;
-      inset: 0;
-    }
-
-    .hero__img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      /* Cross-fade al cambiar de tema (ver reglas :host-context(.sc-dark) abajo). */
-      transition: opacity 480ms ease;
-    }
-
-    /* Claro: se ve la foto clara; la oscura está apilada debajo, invisible. */
-    .hero__img--dark {
-      opacity: 0;
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .hero__img {
-        transition: none;
-      }
-    }
-
-    /* Lavado del lado del texto. Claro: blanco, para que el texto oscuro despegue de la foto.
-       Oscuro: la foto se atenúa y el lavado es oscuro, para que el texto claro siga legible
-       (si no, texto claro sobre foto blanca = ilegible). */
-    .hero__scrim {
-      background: linear-gradient(
-        90deg,
-        rgba(255, 255, 255, 0.72) 0%,
-        rgba(255, 255, 255, 0.3) 48%,
-        rgba(255, 255, 255, 0) 80%
-      );
-    }
-
-    /* Oscuro: se cruza a la foto oscura propia (no la clara oscurecida a la fuerza). */
-    :host-context(.sc-dark) .hero__img--light {
-      opacity: 0;
-    }
-
-    :host-context(.sc-dark) .hero__img--dark {
-      opacity: 1;
-    }
-
-    :host-context(.sc-dark) .hero__scrim {
-      background: linear-gradient(
-        90deg,
-        rgba(11, 15, 20, 0.82) 0%,
-        rgba(11, 15, 20, 0.5) 50%,
-        rgba(11, 15, 20, 0.15) 85%
-      );
-    }
-
-    .hero__content {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      min-height: 240px;
-      max-width: 62ch;
-      padding: var(--sc-spacing-2-5) var(--sc-spacing-2-75);
-    }
-
-    .eyebrow {
-      margin: 0 0 var(--sc-spacing-0-5);
-      font-size: var(--sc-font-size-50);
-      font-weight: var(--sc-font-weight-semibold);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--sc-color-sky-600);
+    /* Cabecera como la de las docs de referencia: título y entradilla a 18, sin foto ni caja. */
+    .cabecera {
+      max-width: 52rem;
     }
 
     h1 {
-      margin: 0 0 var(--sc-spacing-0-75);
-      font-size: var(--sc-font-size-650); /* 32px — la doc nombra el paso (DD-48) */
-      line-height: var(--sc-line-height-650);
-      font-weight: var(--sc-font-weight-semibold);
-      letter-spacing: -0.01em;
-      color: var(--sc-text-primary);
+      margin: 0 0 var(--sc-spacing-1);
     }
 
     .lead {
-      max-width: 68ch;
       margin: 0;
-      font-size: var(--sc-font-size-300);
-      line-height: var(--sc-line-height-300);
       color: var(--sc-text-secondary);
     }
 
     /* Familia: encabezado + rejilla de componentes. Ritmo por separación, no por caja. */
     .fam {
-      margin-top: var(--sc-spacing-2-25);
+      margin-top: var(--sc-spacing-3);
     }
 
     .fam__title {
       display: flex;
       align-items: baseline;
       gap: var(--sc-spacing-0-5);
-      margin: 0 0 var(--sc-spacing-0-875);
-      font-size: var(--sc-font-size-100);
-      font-weight: var(--sc-font-weight-semibold);
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--sc-text-secondary);
+      margin: 0 0 var(--sc-spacing-1-25);
+      padding-bottom: var(--sc-spacing-0-5);
+      border-bottom: 1px solid var(--sc-border-default);
+      color: var(--sc-text-primary);
     }
 
     .fam__count {
-      font-size: var(--sc-font-size-50);
-      font-weight: var(--sc-font-weight-semibold);
-      color: var(--sc-text-subtle);
+      color: var(--sc-text-secondary);
       font-variant-numeric: tabular-nums;
     }
 
     .cards {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(15.5rem, 1fr));
-      gap: var(--sc-spacing-0-75);
+      grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+      gap: var(--sc-spacing-1-5);
       margin: 0;
       padding: 0;
       list-style: none;
@@ -269,21 +156,19 @@ import { EstadoComponenteComponent } from '../../storybook/estado-componente.com
       height: 100%;
       box-sizing: border-box;
       overflow: hidden;
+      padding: var(--sc-spacing-1-5);
       border: 1px solid var(--sc-border-default);
-      border-radius: 12px;
+      border-radius: var(--sc-radius-lg);
       background: var(--sc-bg-surface);
       text-decoration: none;
-      box-shadow: var(--sc-shadow-card);
       transition:
         box-shadow 140ms ease-out,
-        transform 140ms ease-out,
         border-color 140ms ease-out;
     }
 
     .card:hover {
       border-color: var(--sc-border-strong);
-      box-shadow: var(--sc-shadow-dropdown);
-      transform: translateY(-2px);
+      box-shadow: var(--sc-shadow-card);
     }
 
     .card:focus-visible {
@@ -299,11 +184,12 @@ import { EstadoComponenteComponent } from '../../storybook/estado-componente.com
       grid-template: minmax(0, 1fr) / minmax(0, 1fr);
       place-items: center;
       overflow: hidden;
-      height: 7.5rem;
-      padding: var(--sc-spacing-0-75);
+      height: 9.5rem;
+      padding: var(--sc-spacing-1);
       box-sizing: border-box;
-      background: var(--sc-bg-subtle);
-      border-bottom: 1px solid var(--sc-border-default);
+      border: 1px solid var(--sc-border-default);
+      border-radius: var(--sc-radius-md);
+      background: var(--sc-bg-default);
     }
 
     .card__img {
@@ -312,8 +198,8 @@ import { EstadoComponenteComponent } from '../../storybook/estado-componente.com
       height: auto;
       max-width: 100%;
       max-height: 100%;
-      border: 1px solid var(--sc-border-default);
-      border-radius: var(--sc-radius-md);
+      border-radius: var(--sc-radius-sm);
+      box-shadow: var(--sc-shadow-xs);
     }
 
     .card__img--oscuro {
@@ -338,7 +224,7 @@ import { EstadoComponenteComponent } from '../../storybook/estado-componente.com
       display: flex;
       flex-direction: column;
       gap: var(--sc-spacing-0-375);
-      padding: var(--sc-spacing-0-875) var(--sc-spacing-1);
+      padding-top: var(--sc-spacing-1-25);
     }
 
     .card__name {
@@ -346,8 +232,6 @@ import { EstadoComponenteComponent } from '../../storybook/estado-componente.com
       align-items: baseline;
       justify-content: space-between;
       gap: var(--sc-spacing-0-5);
-      font-size: var(--sc-font-size-200);
-      font-weight: var(--sc-font-weight-semibold);
       color: var(--sc-text-primary);
     }
 
@@ -358,8 +242,6 @@ import { EstadoComponenteComponent } from '../../storybook/estado-componente.com
       -webkit-line-clamp: 4;
       line-clamp: 4;
       overflow: hidden;
-      font-size: var(--sc-font-size-100);
-      line-height: 1.45;
       color: var(--sc-text-secondary);
     }
 

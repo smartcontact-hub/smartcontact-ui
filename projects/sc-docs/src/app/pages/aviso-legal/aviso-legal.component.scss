@@ -9,17 +9,8 @@
 .hero {
   margin-bottom: var(--sc-spacing-3);
 
-  &__eyebrow {
-    margin: 0;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--sc-text-subtle);
-  }
-
   &__title {
-    margin: 2px 0 var(--sc-spacing-0-75);
-    font-size: var(--sc-font-size-700);
-    font-weight: var(--sc-font-weight-semibold);
+    margin: 0 0 var(--sc-spacing-0-75);
     color: var(--sc-text-primary);
   }
 

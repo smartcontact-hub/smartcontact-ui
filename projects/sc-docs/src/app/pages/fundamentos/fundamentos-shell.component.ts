@@ -1,42 +1,16 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { TranslatePipe } from '@ngx-translate/core';
-
-/** Una pestaña de la sección: ruta hija (también la clave i18n del rótulo). */
-interface FundamentosTab {
-  readonly path: string;
-}
+import { RouterOutlet } from '@angular/router';
 
 /**
- * Shell de la sección «Fundamentos»: fila de pestañas + `<router-outlet>`.
- *
- * Existe para dar JERARQUÍA al top-nav. Escala/color y tipografía son la materia prima
- * del sistema; agrupadas bajo Fundamentos, la barra de primer nivel queda más corta. El
- * smoke del preset («Tema PrimeNG») fue la tercera pestaña, pero ahora que cada componente
- * `sc-*` ya demuestra el tema no gana un hueco de sección: se movió a Lab (verificación),
- * accesible en `/tema` con redirect desde `/fundamentos/tema`.
+ * Sección «Fundamentos»: solo el outlet. Sus páginas (escala y color, tipografía, iconos, patrones) se eligen en el
+ * lateral del shell (`app.component`), como en cualquier doc de sistema de diseño; antes las elegía una fila de
+ * pestañas aquí, que con el lateral sería una segunda navegación para lo mismo. Se queda como ruta padre para que
+ * `/fundamentos` y sus hijas sigan donde estaban.
  */
 @Component({
   selector: 'app-fundamentos-shell',
-  imports: [RouterLink, RouterLinkActive, RouterOutlet, TranslatePipe],
-  styleUrl: './fundamentos-shell.component.scss',
+  imports: [RouterOutlet],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
-    <nav class="fnd-tabs" [attr.aria-label]="'chrome.nav.fundamentos' | translate">
-      @for (tab of tabs; track tab.path) {
-        <a [routerLink]="tab.path" routerLinkActive="is-active">
-          {{ 'fundamentos.tabs.' + tab.path | translate }}
-        </a>
-      }
-    </nav>
-    <router-outlet />
-  `,
+  template: `<router-outlet />`,
 })
-export class FundamentosShellComponent {
-  protected readonly tabs: readonly FundamentosTab[] = [
-    { path: 'escala-color' },
-    { path: 'tipografia' },
-    { path: 'patrones' },
-    { path: 'iconos' },
-  ];
-}
+export class FundamentosShellComponent {}
