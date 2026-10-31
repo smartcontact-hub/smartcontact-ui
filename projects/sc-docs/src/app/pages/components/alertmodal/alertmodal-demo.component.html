@@ -37,7 +37,7 @@
 </ng-template>
 
 <ng-template #surfacesTpl>
-  <div style="display: grid; gap: var(--sc-spacing-1); grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start">
+  <div style="display: grid; gap: var(--sc-spacing-1); grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--sc-alert-modal-min-width)), 1fr)); align-items: start">
     @for (s of surfaces; track s.variant + s.surface) {
       <sc-alert-modal
         [attr.data-testid]="'alert-' + s.variant + '-' + s.surface"

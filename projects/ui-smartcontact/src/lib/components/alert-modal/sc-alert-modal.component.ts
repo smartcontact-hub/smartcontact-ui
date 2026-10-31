@@ -14,8 +14,10 @@ import {
 import { DOCUMENT } from '@angular/common';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 
+import { ScIconComponent } from '@smartcontact-hub/icons';
+
 import { ScButtonComponent } from '../button/sc-button.component';
-import type { ScButtonVariant } from '../../core/types/button.types';
+import type { ScButtonAppearance, ScButtonVariant } from '../../core/types/button.types';
 import {
   SC_CUSTOM_MODAL_DYNAMIC_DIALOG_DEFAULTS,
   ScCustomModalBodyDirective,
@@ -28,8 +30,8 @@ export type ScAlertModalVariant = 'default' | 'info' | 'warning' | 'error';
 
 /**
  * Extensión nuestra (DD-242). `tinted` tiñe la superficie con la variante: un error del sistema (sin micrófono, sesión
- * caducada). `plain` la deja blanca y solo el icono y el botón principal llevan el color: una decisión del usuario
- * (borrar, descartar cambios).
+ * caducada). `plain` es el confirm centrado de antes (`sc-confirmdialog`), calcado: blanco, el icono en gris junto al
+ * mensaje y sus botones. Para una decisión del usuario (borrar, descartar cambios).
  */
 export type ScAlertModalSurface = 'tinted' | 'plain';
 
@@ -46,6 +48,43 @@ const ACTION_VARIANT: Record<ScAlertModalVariant, ScButtonVariant> = {
   info: 'info',
   warning: 'warn',
   error: 'danger',
+};
+
+/** En blanco, los iconos del confirm de antes: el triángulo de aviso, y `info` para informar. */
+const PLAIN_ICONS: Record<ScAlertModalVariant, string> = {
+  default: 'exclamation-triangle',
+  info: 'info',
+  warning: 'exclamation-triangle',
+  error: 'exclamation-triangle',
+};
+
+interface AlertButtons {
+  readonly secondary: { readonly variant: ScButtonVariant; readonly appearance: ScButtonAppearance };
+  readonly primary: { readonly variant: ScButtonVariant; readonly appearance: ScButtonAppearance };
+}
+
+/**
+ * En blanco, los botones del confirm de antes (`ScConfirmService.request`): borrar es «Cancelar» gris y la acción
+ * roja (`acceptTone: 'danger'`); descartar lleva el peso en la salida segura y la acción roja con borde
+ * (`emphasis: 'reject'`); informar y lo neutro, «Cancelar» gris y la acción en el primario.
+ */
+const PLAIN_BUTTONS: Record<ScAlertModalVariant, AlertButtons> = {
+  default: {
+    secondary: { variant: 'secondary', appearance: 'filled' },
+    primary: { variant: 'primary', appearance: 'filled' },
+  },
+  info: {
+    secondary: { variant: 'secondary', appearance: 'filled' },
+    primary: { variant: 'primary', appearance: 'filled' },
+  },
+  warning: {
+    secondary: { variant: 'primary', appearance: 'filled' },
+    primary: { variant: 'danger', appearance: 'outlined' },
+  },
+  error: {
+    secondary: { variant: 'secondary', appearance: 'filled' },
+    primary: { variant: 'danger', appearance: 'filled' },
+  },
 };
 
 let alertModalIdCounter = 0;
@@ -85,7 +124,13 @@ let alertModalIdCounter = 0;
 @Component({
   selector: 'sc-alert-modal',
   standalone: true,
-  imports: [ScCustomModalComponent, ScCustomModalBodyDirective, ScCustomModalFooterDirective, ScButtonComponent],
+  imports: [
+    ScCustomModalComponent,
+    ScCustomModalBodyDirective,
+    ScCustomModalFooterDirective,
+    ScButtonComponent,
+    ScIconComponent,
+  ],
   templateUrl: './sc-alert-modal.component.html',
   styleUrl: './sc-alert-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -97,8 +142,8 @@ export class ScAlertModalComponent {
   /** Intención: decide el icono, el tono de la superficie y el del botón principal. */
   readonly variant = input<ScAlertModalVariant>('default');
   /**
-   * Extensión nuestra (DD-242): `tinted` tiñe la superficie con la variante (error del sistema); `plain` la deja
-   * blanca, con el icono y el botón principal en el color de la variante (borrar, descartar cambios).
+   * Extensión nuestra (DD-242): `tinted` tiñe la superficie con la variante (error del sistema); `plain` es el
+   * confirm centrado de antes, blanco y con el icono en gris junto al mensaje (borrar, descartar cambios).
    */
   readonly surface = input<ScAlertModalSurface>('tinted');
   /** Extensión nuestra (DD-242): con `false`, Escape no cierra el aviso (un error del sistema, SISMAC-4292). */
@@ -148,10 +193,23 @@ export class ScAlertModalComponent {
   /** Un aviso interrumpe: el diálogo se anuncia como `alertdialog`. */
   protected readonly dialogRole = 'alertdialog' as const;
   protected readonly messageId = `sc-alert-modal-message-${++alertModalIdCounter}`;
+  protected readonly plain = computed(() => this.surface() === 'plain');
   protected readonly resolvedIcon = computed(() =>
-    this.showIcon() ? (this.icon() ?? SC_ALERT_MODAL_ICONS[this.variant()]) : null,
+    this.showIcon()
+      ? (this.icon() ?? (this.plain() ? PLAIN_ICONS : SC_ALERT_MODAL_ICONS)[this.variant()])
+      : null,
   );
-  protected readonly actionVariant = computed(() => ACTION_VARIANT[this.variant()]);
+  /** En blanco con mensaje, el icono va junto al mensaje y no en la cabecera. */
+  protected readonly headerIcon = computed(() => (this.plain() && this.message() ? null : this.resolvedIcon()));
+  /** Teñida: la salida en texto y la acción en el tono de la variante. Blanca: los del confirm de antes. */
+  protected readonly buttons = computed<AlertButtons>(() =>
+    this.plain()
+      ? PLAIN_BUTTONS[this.variant()]
+      : {
+          secondary: { variant: 'primary', appearance: 'text' },
+          primary: { variant: ACTION_VARIANT[this.variant()], appearance: 'filled' },
+        },
+  );
   /** La X lleva el tono de la variante en la superficie teñida; en `default` y en la blanca, el gris de siempre. */
   protected readonly closeVariant = computed<ScButtonVariant>(() =>
     this.variant() === 'default' || this.surface() === 'plain' ? 'secondary' : ACTION_VARIANT[this.variant()],
