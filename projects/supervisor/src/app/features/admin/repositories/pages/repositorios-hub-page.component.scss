@@ -198,6 +198,34 @@
     font-variant-numeric: tabular-nums;
   }
 
+  /* «Próximamente» (COA SISMAC-4064, DD-245): no abre nada, así que ni el borde al pasar, ni pulsar al 96 %, ni la
+   * mano. Sin opacidad, como haría un deshabilitado: la descripción, en gris, dejaría de llegar a 4,5:1. */
+  &--soon {
+    cursor: default;
+
+    &:hover {
+      border-color: var(--sc-border-default);
+    }
+
+    &:active {
+      scale: none;
+    }
+  }
+
+  /* El nombre y «Próximamente» en una línea, cada uno a un lado; si no caben, la marca baja. */
+  &__heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    column-gap: var(--sc-spacing-0-5);
+  }
+
+  &__soon {
+    color: var(--sc-text-subtle);
+    white-space: nowrap;
+  }
+
   /* Tres líneas como mucho (en español caben todas las de hoy), para que un texto largo no estire la fila; entera, en
    * el panel. */
   &__description {

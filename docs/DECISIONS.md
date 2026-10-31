@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Repositorios como sus páginas de COA: Equipos avisa del nombre en gris y en rojo, su cifra abre la ficha en «Agentes» y enseña la foto (4453) · Agendas fija Nombre y «⋮» y sus campos son siempre «Personalizado N» (4440) · Plantillas corta el título con tooltip y avisa en rojo como Agendas (4438) · el hub: ocho «Próximamente» con su cifra y sin panel, un reciente entra en su repositorio y Labels con «Administración» (4064) (enmienda DD-179 §4 y §6) | DD-245 |
 > | La barra de toda tabla de asignar: el filtro del conjunto primero («Todos / Asignados / Sin asignar»), el buscador llenando lo que queda y «N asignados» al final, en una pieza (`sc-assign-bar`) · al editar abre en «Asignados» y en el alta en «Todos», también Agendas y Plantillas · ordenar por nombre en las tablas de asignar y por cualquier columna en el listado de Equipos · el hub de Repositorios, filtro delante del buscador (enmienda DD-176 §4, DD-179 y DD-230 §1) | DD-243 |
 > | Los modales como en ui.smart-contact.com: `sc-custom-modal` (la carcasa, también con `[(visible)]`) y `sc-alert-modal` (aviso con variante `default`, `info`, `warning` o `error`, abierto por `ScDynamicDialogService`) con su misma API y sus fallos arreglados · borrar es `error`, descartar `warning` · se retiran `sc-dialog` y el confirm centrado; el globo con `target` sigue · Figma: «❖ Alert modal» con instancias de Custom modal | DD-241 |
 > | Tipificaciones: el buscador de la lista mira cualquier campo, también los nombres de los grupos que la usan aunque solo salgan al pasar el ratón (enmienda la regla de Agentes y Grupos solo para esta lista) · la edición de Tipificaciones, Agendas, Plantillas y las cuentas y triggers de Email acaba en el nombre guardado, y Agendas, Plantillas y Email abren la miga con «Administración», como Grupos y Agentes · el nombre de las fichas de Repositorios lleva «Ej: …» y la descripción «Breve descripción...» | DD-238 |
@@ -167,6 +168,49 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-245 · 2026-10-31 — Repositorios como sus páginas de COA: Equipos, Agendas, Plantillas y el hub
+
+**Contexto** · El empate de los flujos del AED entre COA, prototipo y Figma (primero el prototipo; Figma, al final). Medido el
+2026-10-31 leyendo cada página de COA en vivo contra el código: SISMAC-4453 (Equipos, v6), 4440 (Agendas, v10), 4438 (Plantillas,
+v11) y 4064 (el hub de Repositorios, v2). Lo que el COA pide y el prototipo no hacía se arregla aquí; lo que el prototipo ya decidió
+(DD-151, DD-227, DD-231, DD-232, DD-239) y el COA no cuenta, va al COA, sin tocar el prototipo.
+
+**Decisión** ·
+1. **Equipos (4453).** El nombre avisa como Agendas y Plantillas (DD-237): «El nombre es obligatorio.» en gris bajo el campo desde
+   el principio, en rojo al dejarlo vacío, y el tooltip de «Crear equipo» dice lo mismo (antes, «Falta: nombre»). La cifra de agentes
+   del listado abre el equipo ya en «Agentes» (`countOpensSection`, con `stopRowClick`: la fila no lo vuelve a abrir arriba). La tabla
+   de agentes enseña la foto de cada uno.
+2. **Agendas (4440).** En la tabla de contactos, Nombre queda fijo a la izquierda y el «⋮» a la derecha al desplazar de lado. Los
+   campos personalizados se llaman siempre «Personalizado N»: sus etiquetas por agenda no se editan, y se van sus restos (borrador,
+   duplicado y semilla). El COA se corrige.
+3. **Plantillas (4438).** El título que no cabe se corta en su celda y se lee entero al pasar el ratón. Ctrl/Cmd + S con algo
+   pendiente lo dice en rojo y lleva al campo, y dejar el contenido vacío lo pone en rojo, como Agendas. El error de importar nombra
+   los canales como su columna: «Chat, Email ni WhatsApp».
+4. **El hub (4064).** Los ocho que el COA da por «Próximamente» (Horarios, Email, Labels, Variables, Entidades, Intenciones,
+   Entidades IA y Clasificación IA) llevan su cifra, como todas («Contadores»), y «Próximamente» en la línea del nombre, en gris; no
+   abren panel (`aria-disabled`; pulsar una con un panel abierto cuenta como fuera y lo cierra). Elegir un reciente entra en su
+   repositorio («se accede al repositorio correspondiente»), y solo cuentan los que se abren. La miga de Labels empieza en
+   «Administración», como las demás. Los tres de IA siguen llevando a Conversaciones: se corrige el COA.
+
+**Razón** · El COA es la especificación con la que desarrolla el equipo: donde dice algo concreto y el prototipo no lo hace, el
+prototipo es el que se aparta. Donde el prototipo ya resolvió algo con una DD, el que se queda corto es el COA.
+
+**Descartadas** ·
+- *«Próximamente» al pie de la tarjeta*: alargaba la fila de Comunicación 32 px. En la línea del nombre no añade alto y cabe en los
+  cuatro idiomas a 1440, 1280 y 1024 (medido).
+- *La tarjeta apagada con opacidad, la receta de deshabilitado de `sc-option-card`*: la descripción, en gris, bajaría de 4,5:1.
+- *Las ocho sin cifra*: el COA dice que todas la llevan.
+- *Etiquetas editables por agenda para los campos personalizados*: fuera; el COA se corrige.
+- *Un reciente que busca, como hacía (DD-179 §6)*: el COA dice que entra.
+
+**Consecuencias** · Enmienda DD-179 §4 (no toda tarjeta abre panel) y §6 (elegir un reciente entra en él). Medido de paso, sin
+arreglar: DD-179 §1 dice que el hub cabe sin desplazar a 1440 × 800, y con 13 tarjetas no cabe (sobran 318 px, ya antes de esta DD);
+su prueba mide `.hub`, que no es lo que desplaza (`.app-shell__content`). Pruebas: `equipos-como-coa-4453.spec.ts`,
+`agendas-plantillas-como-coa.spec.ts`, `repositorios-hub.spec.ts` (9) y `breadcrumb-current.spec.ts` (Labels). Fuera del repo:
+las páginas de COA de 4453, 4440, 4438 y 4064, por prompt; Figma, en el último bloque del empate.
 
 ---
 

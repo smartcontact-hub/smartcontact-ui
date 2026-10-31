@@ -68,7 +68,10 @@ interface HubItem {
   /** Cuántos hay: lo que cuenta el almacén que enseña su página (DD-165). */
   readonly count: () => number;
   /** Sus entradas, para el panel. Se llama dentro de un `computed` que lee el idioma. */
-  readonly entradas: () => HubEntrada[];
+  readonly entradas?: () => HubEntrada[];
+  /** Aún sin implementar (COA SISMAC-4064, «Repositorios disponibles e implementación»): tarjeta con su cifra y
+   *  «Próximamente», sin panel (DD-245). */
+  readonly proximamente?: true;
 }
 
 interface HubCategory {
@@ -89,6 +92,7 @@ interface HubCard {
   /** El nombre que oye el lector: «Agendas (9)» (DD-165 §2). */
   readonly aria: string;
   readonly icon: LucideIconData;
+  readonly proximamente: boolean;
 }
 
 interface HubSection {
@@ -113,8 +117,9 @@ const MAX_RECIENTES = 3;
  *   · pulsar una tarjeta la marca y abre a la derecha un panel con sus entradas y «Abrir repositorio»; pulsarla otra
  *     vez lo cierra, y otra tarjeta lo cambia. Escape y un clic fuera lo cierran. Lo que hay en el panel es lo de verdad (cada entrada
  *     lleva a su sitio), no la lista de ejemplo de la maqueta;
- *   · encima, el buscador y un filtro por categoría, que al cambiar mueve las categorías (`startViewTransition`);
- *   · el buscador vacío, al entrar en él, ofrece los últimos repositorios abiertos.
+ *   · encima, el filtro por categoría y el buscador; el filtro, al cambiar, mueve las categorías (`startViewTransition`);
+ *   · el buscador vacío, al entrar en él, ofrece los últimos repositorios abiertos, y elegir uno entra en él;
+ *   · los ocho que el COA da por «Próximamente» (SISMAC-4064) salen con su cifra y esa marca, y no abren panel (DD-245).
  *
  * Todo cabe sin desplazar a 1440 × 800: las categorías de dos van una al lado de la otra. El panel va acoplado bajo la
  * barra de la app; si por el ancho taparía tarjetas, lleva velo, como un modal.
@@ -204,11 +209,6 @@ export class RepositoriosHubPageComponent {
 
   private readonly t = (k: string, params?: object): string => this.translate.instant(k, params);
   private readonly estado = (activa: boolean): string => this.t(`repositories.status.${activa ? 'active' : 'inactive'}`);
-  /** Un repositorio de lista (`repo-list-page`) abre filtrado por el nombre (`?buscar=`, DD-164). */
-  private readonly buscando = (path: string, nombre: string): Pick<HubEntrada, 'link' | 'queryParams'> => ({
-    link: path,
-    queryParams: { buscar: nombre },
-  });
   /** De las filas del resumen de recursos (DD-164), las mismas palabras y el mismo «Editar». */
   private readonly deFilas = (rows: readonly ResourceRow[], path: string): HubEntrada[] =>
     rows.map((r) => ({ id: r.id, nombre: r.name, detalle: r.detail, link: r.edit?.link ?? path, queryParams: r.edit?.queryParams }));
@@ -235,13 +235,7 @@ export class RepositoriosHubPageComponent {
           icon: 'schedule',
           path: '/admin/horarios',
           count: () => this.horarios.items().length,
-          entradas: () =>
-            this.horarios.items().map((h) => ({
-              id: h.id,
-              nombre: h.name,
-              detalle: `${h.schedule}, ${this.estado(h.status === 'active').toLocaleLowerCase()}`,
-              ...this.buscando('/admin/horarios', h.name),
-            })),
+          proximamente: true,
         },
         {
           id: 'emails',
@@ -251,20 +245,7 @@ export class RepositoriosHubPageComponent {
           path: '/admin/emails',
           // Cuentas de correo y triggers: lo que se configura en esa página.
           count: () => this.mailboxes.items().length + this.emailTriggers.items().length,
-          entradas: () => [
-            ...this.mailboxes.items().map((m) => ({
-              id: `cuenta-${m.id}`,
-              nombre: m.name,
-              detalle: this.t('repositories.emails.mailbox_singular'),
-              link: `/admin/emails/cuentas/editar/${m.id}`,
-            })),
-            ...this.emailTriggers.items().map((x) => ({
-              id: `trigger-${x.id}`,
-              nombre: x.name,
-              detalle: this.t('repositories.emails.trigger_singular'),
-              link: `/admin/emails/triggers/editar/${x.id}`,
-            })),
-          ],
+          proximamente: true,
         },
         {
           id: 'plantillas',
@@ -307,8 +288,7 @@ export class RepositoriosHubPageComponent {
           icon: 'label',
           path: '/admin/labels',
           count: () => this.labels.labels().length,
-          entradas: () =>
-            this.labels.labels().map((l) => ({ id: l.id, nombre: l.name, detalle: l.description ?? '', link: '/admin/labels' })),
+          proximamente: true,
         },
         {
           id: 'equipos',
@@ -332,8 +312,7 @@ export class RepositoriosHubPageComponent {
           icon: 'data_object',
           path: '/admin/variables',
           count: () => this.variables.items().length,
-          entradas: () =>
-            this.variables.items().map((v) => ({ id: v.id, nombre: v.name, detalle: v.key, ...this.buscando('/admin/variables', v.name) })),
+          proximamente: true,
         },
       ],
     },
@@ -349,8 +328,7 @@ export class RepositoriosHubPageComponent {
           icon: 'inventory_2',
           path: '/admin/entidades',
           count: () => this.entidades.items().length,
-          entradas: () =>
-            this.entidades.items().map((e) => ({ id: e.id, nombre: e.name, detalle: e.type, ...this.buscando('/admin/entidades', e.name) })),
+          proximamente: true,
         },
         {
           id: 'intenciones',
@@ -359,10 +337,7 @@ export class RepositoriosHubPageComponent {
           icon: 'chat_bubble',
           path: '/admin/intenciones',
           count: () => this.intenciones.items().length,
-          entradas: () =>
-            this.intenciones
-              .items()
-              .map((i) => ({ id: i.id, nombre: i.name, detalle: i.category, ...this.buscando('/admin/intenciones', i.name) })),
+          proximamente: true,
         },
       ],
     },
@@ -391,10 +366,7 @@ export class RepositoriosHubPageComponent {
           icon: 'inventory_2',
           path: '/conversaciones/entidades',
           count: () => this.entidadesIA.entities().length,
-          entradas: () =>
-            this.entidadesIA
-              .entities()
-              .map((e) => ({ id: e.id, nombre: e.name, detalle: e.description, link: '/conversaciones/entidades' })),
+          proximamente: true,
         },
         {
           id: 'clasificacion_ia',
@@ -403,10 +375,7 @@ export class RepositoriosHubPageComponent {
           icon: 'category',
           path: '/conversaciones/categorias',
           count: () => this.categorias.categories().length,
-          entradas: () =>
-            this.categorias
-              .categories()
-              .map((c) => ({ id: c.id, nombre: c.name, detalle: this.estado(c.isActive), link: '/conversaciones/categorias' })),
+          proximamente: true,
         },
       ],
     },
@@ -451,6 +420,7 @@ export class RepositoriosHubPageComponent {
               cifra,
               aria: this.t('repositories.hub.item_aria', { name: nombre, count: cifra }),
               icon: item.icon,
+              proximamente: !!item.proximamente,
             };
           }),
       }))
@@ -462,9 +432,9 @@ export class RepositoriosHubPageComponent {
     this.currentLang();
     const id = this.seleccion();
     const found = id ? this.items.get(id) : undefined;
-    if (!found) return null;
+    if (!found || found.item.proximamente) return null;
     const { item, categoria } = found;
-    const entradas = item.entradas();
+    const entradas = item.entradas?.() ?? [];
     const n = this.cifra().format(entradas.length);
     return {
       id: item.id,
@@ -479,12 +449,12 @@ export class RepositoriosHubPageComponent {
     };
   });
 
-  /** Los recientes que siguen existiendo, con su nombre y su cifra. */
+  /** Los recientes que siguen existiendo y se abren, con su nombre, su cifra y adónde llevan. */
   protected readonly recientes = computed(() => {
     this.currentLang();
     return this.recientesIds().flatMap((id) => {
       const found = this.items.get(id);
-      return found
+      return found && !found.item.proximamente
         ? [
             {
               id,
@@ -492,6 +462,7 @@ export class RepositoriosHubPageComponent {
               icon: found.item.icon,
               tono: found.categoria.tono,
               cifra: this.cifra().format(found.item.count()),
+              path: found.item.path,
             },
           ]
         : [];
@@ -514,12 +485,13 @@ export class RepositoriosHubPageComponent {
   }
 
   /** Un clic fuera del panel lo cierra. PrimeNG lo hace con `dismissible`, pero solo al pulsar el velo, y acoplado no lo
-   *  lleva. Las tarjetas se quedan fuera de la cuenta (cambian de panel o lo cierran ellas), y los recientes también. */
+   *  lleva. Las tarjetas se quedan fuera de la cuenta (cambian de panel o lo cierran ellas), y los recientes también;
+   *  las de «Próximamente», no: no abren nada, así que cuentan como fuera. */
   private readonly alClicFuera = (event: MouseEvent): void => {
     if (this.seleccion() === null || this.panelTapa()) return;
     const target = event.target;
     if (!(target instanceof Element) || !target.isConnected) return;
-    if (target.closest('.p-drawer, .repo-card, .p-popover')) return;
+    if (target.closest('.p-drawer, .repo-card:not(.repo-card--soon), .p-popover')) return;
     this.cerrar();
   };
 
@@ -538,8 +510,9 @@ export class RepositoriosHubPageComponent {
     return n <= 2 ? 2 : n === 3 ? 3 : 4;
   }
 
-  /** Pulsar una tarjeta abre su panel; pulsar la marcada, lo cierra (la maqueta). */
+  /** Pulsar una tarjeta abre su panel; pulsar la marcada, lo cierra (la maqueta). Las de «Próximamente» no abren nada. */
   protected alternar(id: string, event: MouseEvent): void {
+    if (this.items.get(id)?.item.proximamente) return;
     if (this.seleccion() === id) {
       this.cerrar();
       return;
@@ -608,10 +581,12 @@ export class RepositoriosHubPageComponent {
     if (valor !== '') this.recientesPopover()?.hide();
   }
 
-  /** Elegir un reciente lo busca, como la maqueta: queda su tarjeta sola. */
-  protected elegirReciente(nombre: string): void {
-    this.query.set(nombre);
+  /** Elegir un reciente entra en su repositorio (COA SISMAC-4064: «se accede al repositorio correspondiente»), y sube
+   *  el primero de la lista. */
+  protected elegirReciente(id: string, path: string): void {
     this.recientesPopover()?.hide();
+    this.recordar(id);
+    this.abrir(path);
   }
 
   private recordar(id: string): void {

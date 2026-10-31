@@ -44,13 +44,14 @@
       />
     </div>
 
-    <!-- Los recientes: al entrar en el buscador vacío, los últimos repositorios abiertos (la maqueta). -->
+    <!-- Los recientes: al entrar en el buscador vacío, los últimos repositorios abiertos (la maqueta); pulsar uno entra en
+         él (COA SISMAC-4064). -->
     <p-popover #recientesPopover styleClass="hub-recientes" [attr.aria-label]="'repositories.hub.recent' | translate">
       <p class="hub-recientes__title sc-text-caption-semibold">{{ 'repositories.hub.recent' | translate }}</p>
       <ul class="hub-recientes__list">
         @for (r of recientes(); track r.id) {
         <li>
-          <button type="button" class="hub-recientes__item" (click)="elegirReciente(r.nombre)">
+          <button type="button" class="hub-recientes__item" (click)="elegirReciente(r.id, r.path)">
             <sc-icon class="hub-recientes__icon" [attr.data-tono]="r.tono" [name]="r.icon" [size]="14" aria-hidden="true" />
             <span class="sc-text-body-regular">{{ r.nombre }}</span>
             <span class="hub-recientes__count sc-text-caption-regular" aria-hidden="true">{{ r.cifra }}</span>
@@ -60,7 +61,8 @@
       </ul>
     </p-popover>
 
-    <!-- Una sección por categoría, con sus tarjetas (DD-179). Pulsar una abre su panel a la derecha. -->
+    <!-- Una sección por categoría, con sus tarjetas (DD-179). Pulsar una abre su panel a la derecha; las que el COA da por
+         «Próximamente» llevan su cifra y esa marca, y no abren nada (DD-245). -->
     @if (sections().length > 0) {
     <div class="hub__sections" data-testid="repositorios-hub">
       @for (section of sections(); track section.id) {
@@ -80,9 +82,11 @@
               type="button"
               class="repo-card"
               [class.repo-card--selected]="seleccion() === card.id"
+              [class.repo-card--soon]="card.proximamente"
               [attr.aria-label]="card.aria"
-              [attr.aria-describedby]="'repo-desc-' + card.id"
-              [attr.aria-expanded]="seleccion() === card.id"
+              [attr.aria-describedby]="card.proximamente ? 'repo-soon-' + card.id + ' repo-desc-' + card.id : 'repo-desc-' + card.id"
+              [attr.aria-disabled]="card.proximamente || null"
+              [attr.aria-expanded]="card.proximamente ? null : seleccion() === card.id"
               [attr.aria-controls]="seleccion() === card.id ? 'repo-panel' : null"
               (click)="alternar(card.id, $event)"
             >
@@ -100,7 +104,13 @@
                   aria-hidden="true"
                 />
               </span>
-              <span class="repo-card__name sc-text-body-semibold">{{ card.nombre }}</span>
+              <!-- El nombre y, si aún no está, «Próximamente» en su misma línea: no alarga la tarjeta, y todo cabe sin desplazar. -->
+              <span class="repo-card__heading">
+                <span class="repo-card__name sc-text-body-semibold">{{ card.nombre }}</span>
+                @if (card.proximamente) {
+                <span class="repo-card__soon sc-text-caption-regular" [id]="'repo-soon-' + card.id">{{ 'repositories.hub.coming_soon' | translate }}</span>
+                }
+              </span>
               <span class="repo-card__description sc-text-caption-regular" [id]="'repo-desc-' + card.id">{{ card.descripcion }}</span>
             </button>
           </li>

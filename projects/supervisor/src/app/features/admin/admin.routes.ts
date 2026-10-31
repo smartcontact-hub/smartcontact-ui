@@ -37,6 +37,7 @@ export const adminRoutes: Routes = [
     path: 'labels',
     data: {
       breadcrumb: [
+        ADMIN_SECTION,
         { labelKey: 'sidebar.repositories', link: '/admin/repositorios' },
         { labelKey: 'labels.breadcrumb' },
       ],
