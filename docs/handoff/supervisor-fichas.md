@@ -81,6 +81,9 @@ El del repaso de Grupos entre COA, Figma y prototipo, con «Editar en Repositori
 `git show 2d3724ad:docs/handoff/supervisor-fichas.md`.
 El de Agentes como sus borradores de COA, 4060 y 4062 (2026-10-23, DD-225, sin trampas propias): `git show
 deb87737:docs/handoff/supervisor-fichas.md`.
+El de eliminar varios en todas las tablas sin barra de lote (2026-10-26, DD-227, sin trampas propias) y el de Agendas y
+Plantillas como sus COA, solo a agentes (2026-10-26, DD-230; su trampa sube a «Trampas del frente»): `git show
+archive/handoff-fichas-2026-10-31:docs/handoff/supervisor-fichas.md`.
 
 ## ✅ 2026-10-31 · Tipificaciones: la opción repetida lo dice en su campo (DD-244)
 
@@ -131,36 +134,6 @@ deb87737:docs/handoff/supervisor-fichas.md`.
 - **Código**: `?seedFromId` en `tipificacion-ficha-page` y `equipo-editor-page`; Equipos usa `duplicateAsCreate` (nuevo en
   `RepoPageConfig`). Prueba: `duplicar-tipificaciones-equipos.spec.ts`.
 - **Figma**: pasos 12 y 13 al final de los listados de Tipificaciones y Equipos (`3935:8821`, `3935:29304`), sin renumerar.
-
-## ✅ 2026-10-26 · Agendas y Plantillas como sus COA: solo a agentes, en una tabla con sus grupos (DD-230)
-
-> **Sello:** rama `areses/plantillas-agendas-feedback-b6bf8f` sobre `main` HEAD `5a04de14`.
-
-- **`sc-agent-assignment-table`** (nuevo) sustituye al árbol de agendas y al multiselect de plantillas: casilla, nombre,
-  email y grupos; la cabecera marca los visibles y lo oculto por el filtro se conserva. Guarda en `Agent.schedules` /
-  `Agent.templates`; `Group.*` no se toca. Fuera `agenda-asignacion.core.mjs`.
-- **Listados**: Agendas con Descripción y Agentes (cifra, «—» en 0), todo ordenable (`sortable` + `sortFn` en `RepoListPage`);
-  Plantillas sin pestañas, con columna Canal. Contactos con casillas y borrado múltiple (confirmación simple, como Reglas).
-- **Para el COA**: «Duplicar» es un alta («X (1)», DD-234), las pestañas pasan a columna Canal y Crear va siempre activo (DD-217). **Trampa**: en el e2e, Nombre es un `th` (`rowHeader`): el `td` de «Agentes» es el 3, no el 4. **Pendiente de producto**: la
-  ficha de grupo sigue asignando Agendas y Plantillas al grupo (Recursos). *(Producto lo cerró el 2026-10-28, DD-239: solo
-  agentes; falta retirarlo de Recursos.)*
-- **«Título» (DD-236, 2026-10-27)**: Agendas y Plantillas vuelven a llamar «Título» a su campo (lo decidió el equipo; Voice y
-  los COA lo dicen así). Los contactos de una agenda y el resto de listas siguen con «Nombre». Falta editar proto y Figma.
-- **Miga, buscador y placeholders (DD-238, 2026-10-28)**: el buscador de Tipificaciones mira también los nombres de los grupos; la edición de Tipificaciones, Agendas, Plantillas y Email acaba en el nombre guardado, y Agendas, Plantillas y Email abren la miga con «Administración»; el nombre de las fichas de Repositorios lleva «Ej: …» y la descripción «Breve descripción...» (Agentes y Grupos, sin placeholder). Pendiente: Usuarios y el resto de instancias de Repositorios en la miga.
-- **Como Agentes y Grupos (DD-237, 2026-10-27)**: «Crear»/«Guardar» de Agendas y Plantillas, apagados mientras falte el título
-  (o el contenido), con el motivo en el tooltip y el aviso en gris bajo el campo; avisos de Tipificaciones «Tipificación «X»
-  creada»; modal de una agenda «¿Eliminar la agenda «X»?»; borrar varias tipificaciones dice «Las usan N grupos». **Falta**: el
-  COA de Agendas y Plantillas (hoy dice «siempre activo»), el de Tipificaciones (texto de «Eliminar (3)», erratas y «Título (1)»
-  por «Nombre (1)») y proto y Figma.
-
-## ✅ 2026-10-26 · Eliminar varios en todas las tablas, sin barra de lote, y las congeladas al día (DD-227)
-
-> **Sello:** rama `areses/multiple-delete-ux-discussion-6ecde6` sobre `main` `9a90d5bd`.
-
-- **Tablas**: clic derecho sobre una marcada → «Eliminar» (`selectionMenu`) en Usuarios, Etiquetas, Plantillas,
-  Repositorios, Tipificaciones, Categorías y Reglas. Fuera la barra de lote de esas cinco (la edición masiva no se entregó);
-  su código (`bulkEntity`, `requestDeleteSelection`, edición de Usuarios) queda aparcado. Conversaciones conserva la suya.
-- **«⋮»**: con la fila entre varias marcadas abre el menú de la selección, «Eliminar (N)» (`common.delete_count`), como el clic derecho.
 
 ## SIGUIENTE — sin preguntar
 
@@ -408,3 +381,5 @@ deb87737:docs/handoff/supervisor-fichas.md`.
   `.col`. Y al medir, un host con `display: contents` (`sc-divider`) mide 0 siempre: mide su primer hijo.
 - ⚠️ Dos rejillas que comparten columnas se pliegan con la MISMA regla (pieza contra ventana discrepan en algún
   tramo, y dos anchos no lo ven). Barrido de 23 vistas de formulario, de 600 a 1920: 8 en producción, 0 con el cambio.
+- En las e2e de una tabla del DS, Nombre es un `th` (`rowHeader`), no un `td`: en la de Agendas, el `td` de «Agentes» es
+  el 3.º, no el 4.º (DD-230).
