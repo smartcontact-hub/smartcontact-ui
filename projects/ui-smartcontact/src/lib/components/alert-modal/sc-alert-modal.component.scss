@@ -14,13 +14,26 @@
   --sc-custom-modal-title-lines: var(--sc-alert-modal-title-lines);
 }
 
-/* La variante `default` deja la carcasa como está; las otras tres le pasan su tono. */
-.sc-alert-modal__surface--info,
-.sc-alert-modal__surface--warning,
-.sc-alert-modal__surface--error {
+/*
+ * La variante `default` deja la carcasa como está; las otras tres le pasan su tono. Teñida (`tinted`), a toda la
+ * superficie; blanca (`plain`, DD-242), solo al icono: el fondo, el borde y el título se quedan como en `default`.
+ */
+.sc-alert-modal__surface--tinted:is(
+    .sc-alert-modal__surface--info,
+    .sc-alert-modal__surface--warning,
+    .sc-alert-modal__surface--error
+  ) {
   --sc-custom-modal-background: var(--sc-alert-modal-background);
   --sc-custom-modal-border-color: var(--sc-alert-modal-border-color);
   --sc-custom-modal-title-color: var(--sc-alert-modal-title-color);
+  --sc-custom-modal-icon-color: var(--sc-alert-modal-icon-color);
+}
+
+.sc-alert-modal__surface--plain:is(
+    .sc-alert-modal__surface--info,
+    .sc-alert-modal__surface--warning,
+    .sc-alert-modal__surface--error
+  ) {
   --sc-custom-modal-icon-color: var(--sc-alert-modal-icon-color);
 }
 

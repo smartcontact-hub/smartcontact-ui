@@ -38,7 +38,7 @@
 
 | Componente | Tipo | Estado | PrimeNG base | API propia | Anidados | Demo | Usos en Supervisor |
 |---|---|---|---|---|---|---|---|
-| `sc-alert-modal` | EXTENDED | ready | primeng/dynamicdialog | 14 inputs | sc-custom-modal sc-button | ✓ | — |
+| `sc-alert-modal` | EXTENDED | ready | primeng/dynamicdialog | 16 inputs | sc-custom-modal sc-button | ✓ | — |
 | `sc-avatar` | EXTENDED | ready | primeng/avatar, primeng/overlaybadge | 12 inputs | — | ✓ | 4 |
 | `sc-avatargroup` | STANDARD | experimental (sin demo) | primeng/avatargroup | 0 inputs | — | — | — |
 | `sc-badge` | STANDARD | ready | primeng/badge | 3 inputs | — | ✓ | 6 |

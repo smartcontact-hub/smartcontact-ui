@@ -7,6 +7,7 @@
   <sc-alert-modal
     data-testid="alert-inline"
     [variant]="args.variant"
+    [surface]="args.surface"
     [title]="args.title || null"
     [message]="args.message || null"
     [actionLabel]="args.actionLabel || null"
@@ -33,6 +34,24 @@
       />
     }
   </div>
+</ng-template>
+
+<ng-template #surfacesTpl>
+  <div style="display: grid; gap: var(--sc-spacing-1); grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start">
+    @for (s of surfaces; track s.variant + s.surface) {
+      <sc-alert-modal
+        [attr.data-testid]="'alert-' + s.variant + '-' + s.surface"
+        [variant]="s.variant"
+        [surface]="s.surface"
+        [title]="s.title"
+        [message]="s.message"
+        [actionLabel]="s.action"
+        [secondaryActionLabel]="s.secondary"
+      />
+    }
+  </div>
+  <sc-button label="Error del sistema, sin Escape" data-testid="alert-system" (clicked)="openSystemError()" />
+  <p>Resultado: <span data-testid="alert-system-result">{{ systemResult() }}</span></p>
 </ng-template>
 
 <ng-template #limits>
