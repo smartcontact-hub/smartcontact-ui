@@ -82,6 +82,23 @@ El del repaso de Grupos entre COA, Figma y prototipo, con «Editar en Repositori
 El de Agentes como sus borradores de COA, 4060 y 4062 (2026-10-23, DD-225, sin trampas propias): `git show
 deb87737:docs/handoff/supervisor-fichas.md`.
 
+## ✅ 2026-10-31 · La barra común de asignar y Repositorios como sus COA (DD-243, DD-245)
+
+> **Sello:** rama `areses/align-coa-figma-flows-3b1a9b` sobre `main` HEAD `124a4cb8`.
+
+- **Barra (DD-243)**: `sc-assign-bar` en las cinco tablas de asignar y el panel rápido del Monitor: filtro «Todos /
+  Asignados / Sin asignar», buscador que llena y «N asignados» al final. Editar abre en Asignados; ordenar por nombre. El
+  vacío dice «Asígnalos desde «Todos».» (ya no es pestaña). Prueba: `barra-comun-tablas`.
+- **Repositorios (DD-245)**: Equipos (aviso del nombre gris y rojo, la cifra abre en Agentes, foto), Agendas (Nombre y «⋮»
+  fijos, siempre «Personalizado N»), Plantillas (tooltip del título, Ctrl/Cmd+S y contenido en rojo) y el hub (8
+  «Próximamente» sin panel, el reciente entra, Labels con Administración). Pruebas: `equipos-como-coa-4453`,
+  `agendas-plantillas-como-coa`, `repositorios-hub`.
+- **COA**: prompts de 4453, 4440, 4438, 4064, 4058 y 4062 en `~/Documents/Claude/2026-10 Empate flujos AED/`; los pega
+  y publica Rafa. Releídos en vivo el 2026-10-31 (4056 v14, 4058 v23, 4060 v2, 4062 v4, 4438 v11, 4440 v10, 4064 v2).
+- **Medido de paso, sin arreglar**: el hub no cabe a 1440 × 800 (sobran 318 px, ya antes) y su prueba mide `.hub`, que no
+  desplaza (`.app-shell__content` sí). **Pendiente**: Figma, Bloque 8 (barra en cada tabla, hub con filtro delante y
+  «Próximamente», Alert modal sin tinte).
+
 ## ✅ 2026-10-31 · Tipificaciones: la opción repetida lo dice en su campo (DD-244)
 
 > **Sello:** rama `areses/brave-taussig-9cf3e0` sobre `main` HEAD `deb87737`.
