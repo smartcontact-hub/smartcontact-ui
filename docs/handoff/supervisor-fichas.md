@@ -81,12 +81,13 @@ El del repaso de Grupos entre COA, Figma y prototipo, con «Editar en Repositori
 `git show 2d3724ad:docs/handoff/supervisor-fichas.md`.
 El de Agentes como sus borradores de COA, 4060 y 4062 (2026-10-23, DD-225, sin trampas propias): `git show
 deb87737:docs/handoff/supervisor-fichas.md`.
-El de Eliminar varios sin barra de lote (2026-10-26, DD-227) y el de Duplicar como alta (2026-10-26, DD-232), sin trampas
-propias: `git show archive/handoff-fichas-2026-10-31:docs/handoff/supervisor-fichas.md`.
+El de eliminar varios en todas las tablas sin barra de lote (2026-10-26, DD-227, sin trampas propias), el de Duplicar
+como alta (2026-10-26, DD-232, sin trampas propias) y el de Agendas y Plantillas como sus COA, solo a agentes (2026-10-26,
+DD-230; su trampa sube a «Trampas del frente»): `git show archive/handoff-fichas-2026-10-31:docs/handoff/supervisor-fichas.md`.
 
 ## ✅ 2026-10-31 · La barra común de asignar y Repositorios como sus COA (DD-243, DD-245)
 
-> **Sello:** rama `areses/align-coa-figma-flows-3b1a9b` sobre `main` HEAD `124a4cb8`.
+> **Sello:** rama `areses/align-coa-figma-flows-3b1a9b` sobre `main` HEAD `c395300b`.
 
 - **Barra (DD-243)**: `sc-assign-bar` en las cinco tablas de asignar y el panel rápido del Monitor: filtro «Todos /
   Asignados / Sin asignar», buscador que llena y «N asignados» al final. Editar abre en Asignados; ordenar por nombre. El
@@ -98,8 +99,8 @@ propias: `git show archive/handoff-fichas-2026-10-31:docs/handoff/supervisor-fic
 - **COA**: prompts de 4453, 4440, 4438, 4064, 4058 y 4062 en `~/Documents/Claude/2026-10 Empate flujos AED/`; los pega
   y publica Rafa. Releídos en vivo el 2026-10-31 (4056 v14, 4058 v23, 4060 v2, 4062 v4, 4438 v11, 4440 v10, 4064 v2).
 - **Medido de paso, sin arreglar**: el hub no cabe a 1440 × 800 (sobran 318 px, ya antes) y su prueba mide `.hub`, que no
-  desplaza (`.app-shell__content` sí). **Pendiente**: Figma, Bloque 8 (barra en cada tabla, hub con filtro delante y
-  «Próximamente», Alert modal sin tinte).
+  desplaza (`.app-shell__content` sí). **Figma**: barras y hub hechos (`figma-pendiente` §64); el azul de Comunicación
+  y el «❖ Alert modal» blanco, pendientes.
 
 ## ✅ 2026-10-31 · Tipificaciones: la opción repetida lo dice en su campo (DD-244)
 
@@ -112,6 +113,23 @@ propias: `git show archive/handoff-fichas-2026-10-31:docs/handoff/supervisor-fic
 - **COA 4451**: releído en vivo el 2026-10-31, sigue en v7. El prompt maestro con sus BUSCA/PON (erratas, «⋮», nivel 3,
   tope de 15 en Grupos, exportar lo que se ve y los huecos) está en `~/Documents/Claude/2026-10 Empate flujos AED/`; lo
   pega y publica Rafa. Figma (`3503:49633`), en el Bloque 8.
+
+## ✅ 2026-10-31 · Borrar y descartar no tiñen el modal: la superficie blanca calca el confirm de antes (DD-242)
+
+> **Sello:** rama `areses/beautiful-elion-ebd58a` sobre `main` `00f1e062`. Bloque 1 del empate de los flujos del AED.
+
+- **DS**: `sc-alert-modal` gana `surface` (`tinted` por defecto, `plain`) y `closeOnEscape`; `sc-custom-modal`,
+  `closeIconSize`. `plain` es el confirm centrado de antes, medido contra `p-confirmdialog` en sus tres tonos: icono gris
+  de 21 junto al mensaje, X de 14 y sus botones (borrar: «Cancelar» gris relleno; descartar: la salida segura rellena y
+  la acción roja con borde). Solo difiere el aspa de la X (Material, no la de PrimeNG).
+- **Supervisor**: `AlertModalRequest.surface` es obligatoria; los 14 avisos de hoy van en `plain`. Un error del sistema
+  iría en `tinted` y, si no debe cerrarse con Escape, con `closeOnEscape: false` (SISMAC-4292).
+- **Pruebas**: `e2e/supervisor/alert-modal-superficie.spec.ts` (borrar y descartar, blancos) y `components.spec.ts`
+  (teñida sin `surface`, el calco en blanco y que Escape no cierra con `closeOnEscape: false`).
+- **Pendiente fuera del repo**: la propiedad de superficie en «❖ Alert modal» (15876:601), en el Bloque 8 del plan, y el
+  mensaje a los devs (borrador en `~/Documents/Claude/2026-10 Empate flujos AED/`).
+- **Trampa**: `npm run verify` reescribe `dist/` y deja sin el DS a un `ng serve` vivo del mismo worktree; tras
+  `verify`, reconstruye el DS y relanza antes de medir.
 
 ## ✅ 2026-10-28 · Agendas, Plantillas y Equipos: solo a agentes, confirmado con producto (DD-239)
 
@@ -128,26 +146,6 @@ propias: `git show archive/handoff-fichas-2026-10-31:docs/handoff/supervisor-fic
   resumen «se hacen pero se ocultan». **Figma, hecho** (`figma-pendiente` §63): bloque y fila ocultos, textos al día.
 - **Equipos, cerrado**: se asigna únicamente a agentes; el «y sus asignaciones a grupos» del COA 4453 sobra y no cambia código.
 
-## ✅ 2026-10-26 · Agendas y Plantillas como sus COA: solo a agentes, en una tabla con sus grupos (DD-230)
-
-> **Sello:** rama `areses/plantillas-agendas-feedback-b6bf8f` sobre `main` HEAD `5a04de14`.
-
-- **`sc-agent-assignment-table`** (nuevo) sustituye al árbol de agendas y al multiselect de plantillas: casilla, nombre,
-  email y grupos; la cabecera marca los visibles y lo oculto por el filtro se conserva. Guarda en `Agent.schedules` /
-  `Agent.templates`; `Group.*` no se toca. Fuera `agenda-asignacion.core.mjs`.
-- **Listados**: Agendas con Descripción y Agentes (cifra, «—» en 0), todo ordenable (`sortable` + `sortFn` en `RepoListPage`);
-  Plantillas sin pestañas, con columna Canal. Contactos con casillas y borrado múltiple (confirmación simple, como Reglas).
-- **Para el COA**: «Duplicar» es un alta («X (1)», DD-234), las pestañas pasan a columna Canal y Crear va siempre activo (DD-217). **Trampa**: en el e2e, Nombre es un `th` (`rowHeader`): el `td` de «Agentes» es el 3, no el 4. **Pendiente de producto**: la
-  ficha de grupo sigue asignando Agendas y Plantillas al grupo (Recursos). *(Producto lo cerró el 2026-10-28, DD-239: solo
-  agentes; falta retirarlo de Recursos.)*
-- **«Título» (DD-236, 2026-10-27)**: Agendas y Plantillas vuelven a llamar «Título» a su campo (lo decidió el equipo; Voice y
-  los COA lo dicen así). Los contactos de una agenda y el resto de listas siguen con «Nombre». Falta editar proto y Figma.
-- **Miga, buscador y placeholders (DD-238, 2026-10-28)**: el buscador de Tipificaciones mira también los nombres de los grupos; la edición de Tipificaciones, Agendas, Plantillas y Email acaba en el nombre guardado, y Agendas, Plantillas y Email abren la miga con «Administración»; el nombre de las fichas de Repositorios lleva «Ej: …» y la descripción «Breve descripción...» (Agentes y Grupos, sin placeholder). Pendiente: Usuarios y el resto de instancias de Repositorios en la miga.
-- **Como Agentes y Grupos (DD-237, 2026-10-27)**: «Crear»/«Guardar» de Agendas y Plantillas, apagados mientras falte el título
-  (o el contenido), con el motivo en el tooltip y el aviso en gris bajo el campo; avisos de Tipificaciones «Tipificación «X»
-  creada»; modal de una agenda «¿Eliminar la agenda «X»?»; borrar varias tipificaciones dice «Las usan N grupos». **Falta**: el
-  COA de Agendas y Plantillas (hoy dice «siempre activo»), el de Tipificaciones (texto de «Eliminar (3)», erratas y «Título (1)»
-  por «Nombre (1)») y proto y Figma.
 
 ## SIGUIENTE — sin preguntar
 
@@ -395,3 +393,5 @@ propias: `git show archive/handoff-fichas-2026-10-31:docs/handoff/supervisor-fic
   `.col`. Y al medir, un host con `display: contents` (`sc-divider`) mide 0 siempre: mide su primer hijo.
 - ⚠️ Dos rejillas que comparten columnas se pliegan con la MISMA regla (pieza contra ventana discrepan en algún
   tramo, y dos anchos no lo ven). Barrido de 23 vistas de formulario, de 600 a 1920: 8 en producción, 0 con el cambio.
+- En las e2e de una tabla del DS, Nombre es un `th` (`rowHeader`), no un `td`: en la de Agendas, el `td` de «Agentes» es
+  el 3.º, no el 4.º (DD-230).
