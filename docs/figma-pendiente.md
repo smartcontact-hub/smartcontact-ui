@@ -1485,7 +1485,7 @@ numéricos, subsección plegada y lo no dibujado (atajo «/» y solo lectura).
 | 4 | Botón de foto | Hecho el 2026-10-19: el fondo, atado a `highlight/background`; la ficha salió | no | no |
 | 5 | Campos numéricos | Variante sin botones, con sufijo, en `inputnumber` | sí | no |
 | 6 | Título de la página | Hecho el 2026-10-19: la ficha salió (el marco ya usa estilos y variables del Kit) | no | no |
-| 7 | Diálogo de eliminar | Hecho el 2026-10-19 y la ficha salió. Desde DD-241 y DD-242, eliminar es `sc-alert-modal` en `error` con la superficie blanca (`surface: 'plain'`); a «❖ Alert modal» le falta la propiedad de superficie | sí | no |
+| 7 | Diálogo de eliminar | Hecho el 2026-10-19 y la ficha salió. Desde DD-241 y DD-242, eliminar es `sc-alert-modal` en `error` con la superficie blanca (`surface: 'plain'`); «❖ Alert modal» la tiene desde el 2026-10-31, sin publicar (§64) | sí | no |
 | 8 | Resumen con «Falta» | Hecho el 2026-10-19: «Mostrar estado» en la variante Edición de `group-summary` y `agent-summary`; la ficha salió | sí, hecho | no |
 | 9 | Subsección plegada | En `.Subsection`, hecho el 2026-10-21: «Plegable» (flecha `chevron_right` a la derecha) y «Flecha» (DD-157 descartó Accordion). Falta: publicarlo y usarlo en «Avanzado» del agente; y el mismo estado, con pista, en las partes (`sc-slot collapsible`, «Mensajes en cola»). En el prototipo, `<h3>` con el botón dentro y `aria-controls` | a medias | sí |
 | 10 | Atajo «/» | Decidido el 2026-10-19: el «/» se ve, como en el prototipo. Falta dibujarlo con una pieza propia del DS, marcada como propia | sí | no |
@@ -1542,6 +1542,36 @@ hacer · **Dónde:** el Supervisor, páginas «Grupos» y
 botón de X1 a X3 lleva `key`.
 
 ---
+
+## 64 · «❖ Alert modal» con su superficie blanca, el confirm de antes (DD-242, 2026-10-31)
+
+**Hecho en el DS** (`khNq9dJKNi13pNllrqm6dx`, página `15876:601`), con `use_figma`, **sin publicar**:
+
+- El conjunto `15876:698` gana la propiedad **Surface** (`Tinted`, por defecto, y `Plain`). Las cuatro de siempre pasan
+  a `Surface=Tinted, Variant=…` (mismos ids: `15876:638`, `:653`, `:668`, `:683`), así que sus instancias no cambian.
+- Cuatro variantes nuevas, `Surface=Plain`: Default `15917:418`, Info `15917:458`, Warning `15917:506`, Error
+  `15917:201`. Son la misma instancia de «Custom modal» con el calco del ConfirmDialog del Kit (`323:12318`): fondo,
+  borde y título de Default (`component/custommodal/*`); sin icono en la cabecera; el `confirmdialog-icon` que el
+  maestro ya traía oculto, visible junto al mensaje (21, `confirmdialog/icon/size` y `/color`; en Info, el glifo `info`);
+  el hueco a `confirmdialog/content/gap` (14) y centrado; la cabecera con `dialog/header/padding` (15,75) en los cuatro
+  lados, centrada con la X, y el título a `primitive/typography/line/height/200` (20); la X en `Secondary`. Botones: Error,
+  `Secondary` y `Danger` rellenos; Warning, `Primary` relleno y `Danger` con borde; Default e Info, `Secondary` y
+  `Primary`. Todo atado a variables que ya existían (medido después en las cuatro).
+- El conjunto pasa a dos columnas (teñida a la izquierda, blanca a la derecha) y «Documentation» (`15876:806`) gana el
+  párrafo «Superficie».
+- Diferencia que queda frente al código: la cabecera mide 62 y no 63,5, porque la X del Kit mide 31,5 × 30,5.
+
+**Falta:**
+- **Publicar la librería** (lo hace una persona). Hasta entonces el Supervisor no ve la propiedad.
+- **El Supervisor no tiene ningún «Alert modal»** (medido el 2026-10-31, página a página): sus 22 avisos de borrar,
+  descartar y «guardar antes de Repositorios» siguen siendo el `confirmdialog` de antes, que ya se ve blanco, y se
+  quedan. Grupos: `3059:24272`, `3207:52082`, `3314:65885`, `3207:45769`, `3313:42126`. Agentes: `3111:29050`,
+  `3208:29670`, `3405:55958`, `3895:28904`. Tipificaciones: `3512:2185`, `3885:18073`, `3535:41429`, `3535:41559`.
+  Equipos: `3471:9809`, `3921:9198`, `3433:54488`, `3452:63092`. Agendas: `4067:101061`, `4067:101202`, `4074:50117`.
+  Plantillas: `4077:58494`, `4077:58615`. Usuarios, Repositorios, Contact Center y Conversaciones: ninguno. Cambiarlos
+  por «Alert modal» `Plain` es decisión aparte: se verían igual.
+- **Code Connect**: `code-connect/sc-alert-modal.figma.ts` ya traduce `Surface=Plain` a `surface: 'plain'`; falta
+  publicarlo (`npm run figma:connect:publish`, con token).
 
 ## Lo de estas semanas que NO va a Figma, y por qué
 
