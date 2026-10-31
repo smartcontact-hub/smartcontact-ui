@@ -7,34 +7,10 @@
 }
 
 .hero {
-  display: flex;
-  gap: var(--sc-spacing-1);
-  align-items: flex-start;
   margin-bottom: var(--sc-spacing-2-5);
 
-  &__icon {
-    flex: 0 0 auto;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: var(--sc-spacing-3);
-    height: var(--sc-spacing-3);
-    border-radius: var(--sc-radius-md);
-    background: var(--sc-bg-subtle);
-    color: var(--sc-text-secondary);
-  }
-
-  &__eyebrow {
-    margin: 0;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--sc-text-subtle);
-  }
-
   &__title {
-    margin: 2px 0 var(--sc-spacing-0-5);
-    font-size: var(--sc-font-size-700);
-    font-weight: var(--sc-font-weight-semibold);
+    margin: 0 0 var(--sc-spacing-0-75);
     color: var(--sc-text-primary);
   }
 
@@ -67,27 +43,13 @@ code {
     }
   }
 
-  &__icon {
-    flex: 0 0 auto;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: var(--sc-spacing-2-5);
-    height: var(--sc-spacing-2-5);
-    border-radius: var(--sc-radius-md);
-    background: var(--sc-bg-subtle);
-    color: var(--sc-text-secondary);
-  }
-
   &__body {
     flex: 1 1 auto;
     min-width: 0;
   }
 
   &__title {
-    margin: 2px 0 var(--sc-spacing-0-75);
-    font-size: var(--sc-font-size-300);
-    font-weight: var(--sc-font-weight-semibold);
+    margin: 0 0 var(--sc-spacing-0-75);
     color: var(--sc-text-primary);
   }
 

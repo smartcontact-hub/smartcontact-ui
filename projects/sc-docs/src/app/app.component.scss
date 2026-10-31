@@ -1,372 +1,448 @@
 /*
- * Shell de sc-docs, lenguaje visual inspirado en el DS "Constellation" de Digital Virgo
- * (sidebar clara + lienzo aireado + sombras suaves en capas + acento de marca), pero con
- * TOKENS --sc-* propios: el acento es `--sc-color-sky-500` (azul eléctrico SC), NO el rosa
- * de DV, y las sombras salen de `--sc-shadow-*` (color slate, focus ring sky). Solo tomamos
- * estructura y ritmo, no su identidad. Medido del original 2026-08-31: canvas #f7f8fa
- * (= nuestro slate-50), sidebar blanca 248px, título 32px (= --sc-font-size-650),
- * nav activa en tinte + acento + peso, radios 8/12, chips pill.
+ * Shell de sc-docs con la estructura de una doc de sistema de diseño de referencia (Primer, medido en primer.style el
+ * 2026-10-31): cabecera blanca de 64 px con filete inferior, lateral de ~18 rem con filete derecho y grupos de rótulo
+ * pequeño, página en blanco con aire generoso y «En esta página» a la derecha. Todo con tokens `--sc-*` propios: la
+ * estructura y el ritmo son de la referencia; el color, la letra y el acento, del DS.
  */
-.demo-shell {
-  display: flex;
-  align-items: stretch;
-  min-height: 100vh;
+
+:host {
+  --demo-alto-cabecera: 4rem;
+  --demo-ancho-lateral: 18rem;
+  --demo-ancho-indice: 15rem;
+
+  display: block;
 }
 
-.demo-sidebar {
-  flex: 0 0 15rem;
-  width: 15rem;
-  box-sizing: border-box;
+.demo-shell {
+  min-height: 100vh;
+  background: var(--sc-bg-surface);
+}
+
+/* ─────────── Cabecera ─────────── */
+
+.demo-top {
   position: sticky;
   top: 0;
-  align-self: flex-start;
-  height: 100vh;
-  overflow-y: auto;
+  z-index: 50;
   display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: var(--sc-spacing-1-25) var(--sc-spacing-0-875);
+  align-items: center;
+  gap: var(--sc-spacing-1);
+  height: var(--demo-alto-cabecera);
+  box-sizing: border-box;
+  padding: 0 var(--sc-spacing-1-5);
   background: var(--sc-bg-surface);
-  border-right: 1px solid var(--sc-border-default);
+  border-bottom: 1px solid var(--sc-border-default);
+
+  &__menu {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+    border: 1px solid var(--sc-border-default);
+    border-radius: var(--sc-radius-md);
+    background: transparent;
+    color: var(--sc-text-primary);
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: 2px solid var(--sc-border-focus);
+      outline-offset: 1px;
+    }
+  }
 
   &__brand {
     display: flex;
     align-items: center;
     gap: var(--sc-spacing-0-625);
-    padding: var(--sc-spacing-0-25) var(--sc-spacing-0-5);
-    margin-bottom: var(--sc-spacing-0-75);
+    flex: none;
     color: var(--sc-text-primary);
     text-decoration: none;
-  }
 
-  &__mark {
-    flex: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    background: var(--sc-bg-primary);
-    color: var(--sc-color-slate-0);
-    box-shadow: var(--sc-shadow-sm);
+    &:focus-visible {
+      outline: 2px solid var(--sc-border-focus);
+      outline-offset: 2px;
+      border-radius: var(--sc-radius-sm);
+    }
   }
 
   &__logo {
-    width: 17px;
+    width: 1.75rem;
     height: auto;
-  }
-
-  &__brand-text {
-    display: flex;
-    flex-direction: column;
-    line-height: 1.15;
-    min-width: 0;
+    color: var(--sc-bg-primary);
   }
 
   &__brand-name {
-  }
-
-  &__brand-sub {
-    color: var(--sc-text-secondary);
-  }
-
-  /* Disparador del ⌘K: campo falso (abre la paleta al click). */
-  &__search {
-    display: flex;
-    align-items: center;
-    gap: var(--sc-spacing-0-5);
-    margin-bottom: var(--sc-spacing-0-875);
-    padding: var(--sc-spacing-0-5) var(--sc-spacing-0-625);
-    border: 1px solid var(--sc-border-default);
-    border-radius: var(--sc-radius-200);
-    background: var(--sc-bg-default);
-    color: var(--sc-text-secondary);
-    font: inherit;
-    font-size: var(--sc-font-size-100);
-    text-align: left;
-    cursor: pointer;
-    box-shadow: var(--sc-shadow-xs);
-    transition:
-      border-color 120ms ease-out,
-      box-shadow 120ms ease-out;
-
-    &:hover {
-      border-color: var(--sc-border-strong);
-      box-shadow: var(--sc-shadow-sm);
-    }
-
-    &:focus-visible {
-      outline: 2px solid var(--sc-color-sky-500);
-      outline-offset: 1px;
-    }
-  }
-
-  &__search-label {
-    flex: 1;
-  }
-
-  &__kbd {
-    flex: none;
-    padding: 1px var(--sc-spacing-0-375);
-    border: 1px solid var(--sc-border-default);
-    border-radius: var(--sc-radius-100);
-    background: var(--sc-bg-surface);
-    color: var(--sc-text-secondary);
-    font-family: var(--sc-font-family-primary);
-    font-size: var(--sc-font-size-50);
-    line-height: 1.4;
+    font-weight: var(--sc-font-weight-semibold);
+    white-space: nowrap;
   }
 
   &__nav {
     display: flex;
-    flex-direction: column;
-    gap: 2px;
+    align-items: center;
+    gap: var(--sc-spacing-0-25);
+    margin-left: auto;
+    min-width: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    a {
+      padding: var(--sc-spacing-0-375) var(--sc-spacing-0-75);
+      border-radius: var(--sc-radius-md);
+      color: var(--sc-text-secondary);
+      text-decoration: none;
+      white-space: nowrap;
+      transition: color 120ms ease-out;
+
+      &:hover {
+        color: var(--sc-text-primary);
+      }
+
+      &.is-active {
+        color: var(--sc-text-primary);
+        font-weight: var(--sc-font-weight-semibold);
+      }
+
+      &:focus-visible {
+        outline: 2px solid var(--sc-border-focus);
+        outline-offset: -2px;
+      }
+    }
   }
 
   &__tools {
-    margin-top: auto;
-    padding-top: var(--sc-spacing-0-75);
-    border-top: 1px solid var(--sc-border-default);
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--sc-spacing-0-5);
-  }
-
-  /* Idioma + tema, agrupados a la derecha del cluster de herramientas. */
-  &__tools-right {
     display: flex;
     align-items: center;
     gap: var(--sc-spacing-0-5);
-  }
-
-  /* Pie legal: mismo sitio que en cualquier web, abajo del todo y sin peso visual.
-     No lleva la pastilla de la nav porque no compite con ella. */
-  &__legal {
-    margin-top: var(--sc-spacing-0-75);
-    padding: 0 var(--sc-spacing-0-625);
-    color: var(--sc-text-subtle);
-    text-decoration: none;
-
-    &:hover,
-    &.is-active {
-      color: var(--sc-text-secondary);
-      text-decoration: underline;
-      text-underline-offset: 2px;
-    }
-  }
-
-  /* Ítems de nav de sección + herramientas: pastilla al activar / hover. */
-  &__nav > a,
-  &__tool {
-    display: flex;
-    align-items: center;
-    gap: var(--sc-spacing-0-5);
-    padding: var(--sc-spacing-0-5) var(--sc-spacing-0-625);
-    border: 0;
-    border-radius: var(--sc-radius-200);
-    background: transparent;
-    color: var(--sc-text-secondary);
-    font: inherit;
-    font-size: var(--sc-font-size-100);
-    text-align: left;
-    text-decoration: none;
-    white-space: nowrap;
-    cursor: pointer;
-    transition:
-      background-color 120ms ease-out,
-      color 120ms ease-out;
-
-    &:hover {
-      background: var(--sc-bg-subtle);
-      color: var(--sc-text-primary);
-    }
-
-    &.is-active {
-      background: var(--sc-bg-subtle);
-      color: var(--sc-color-sky-600);
-      font-weight: var(--sc-font-weight-semibold);
-    }
-
-    &:focus-visible {
-      outline: 2px solid var(--sc-color-sky-500);
-      outline-offset: 1px;
-    }
-  }
-
-  /* Componentes es el protagonista: badge con el total + peso algo mayor. */
-  &__lead {
-    justify-content: space-between;
-    font-weight: var(--sc-font-weight-medium);
-  }
-
-  &__count {
     flex: none;
-    min-width: 1.4rem;
-    padding: 0 var(--sc-spacing-0-375);
-    border-radius: var(--sc-radius-full);
-    background: var(--sc-bg-subtle);
-    color: var(--sc-color-sky-600);
-    text-align: center;
-  }
-
-  /* Lista de componentes anidada bajo "Componentes" cuando la sección está activa:
-     acordeón single-open (cabeceras de familia + los ítems de la abierta). */
-  &__sub {
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
-    margin: var(--sc-spacing-0-25) 0 var(--sc-spacing-0-5);
-  }
-
-  /* Cabecera de familia: botón que pliega/despliega su grupo. */
-  &__group {
-    display: flex;
-    align-items: center;
-    gap: var(--sc-spacing-0-375);
-    width: 100%;
-    margin: 1px 0;
-    padding: var(--sc-spacing-0-375) var(--sc-spacing-0-5);
-    border: 0;
-    border-radius: var(--sc-radius-200);
-    background: transparent;
-    color: var(--sc-text-secondary);
-    font: inherit;
-    font-size: var(--sc-font-size-100); /* 12 — era `--sc-font-size-25`, que NO EXISTE: se pintaba por su fallback (11px), y 11 no es peldaño de la rampa. Sube al más cercano. */
-    font-weight: var(--sc-font-weight-semibold);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    text-align: left;
-    cursor: pointer;
-    transition:
-      background-color 120ms ease-out,
-      color 120ms ease-out;
-
-    &:hover {
-      background: var(--sc-bg-subtle);
-      color: var(--sc-text-primary);
-    }
-
-    &:focus-visible {
-      outline: 2px solid var(--sc-color-sky-500);
-      outline-offset: 1px;
-    }
-
-    &.is-open {
-      color: var(--sc-text-primary);
-    }
-
-    &.is-open .demo-sidebar__chevron {
-      transform: rotate(90deg);
-    }
-  }
-
-  &__chevron {
-    flex: none;
-    color: var(--sc-text-secondary);
-    transition: transform 120ms ease-out;
-  }
-
-  &__group-name {
-    flex: 1;
-  }
-
-  &__group-count {
-    flex: none;
-    letter-spacing: 0;
-    font-weight: var(--sc-font-weight-semibold);
-    color: var(--sc-text-secondary);
-  }
-
-  &__sublink {
-    margin-left: var(--sc-spacing-1-25);
-    padding: var(--sc-spacing-0-25) var(--sc-spacing-0-625);
+    padding-left: var(--sc-spacing-0-75);
     border-left: 1px solid var(--sc-border-default);
-    border-radius: 0 var(--sc-radius-200) var(--sc-radius-200) 0;
+  }
+
+  /* El disparador del ⌘K, con la forma de un botón secundario de la referencia. */
+  &__search {
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-5);
+    height: 2rem;
+    padding: 0 var(--sc-spacing-0-5) 0 var(--sc-spacing-0-625);
+    border: 1px solid var(--sc-border-default);
+    border-radius: var(--sc-radius-md);
+    background: var(--sc-bg-default);
     color: var(--sc-text-secondary);
-    font-size: var(--sc-font-size-100);
-    text-decoration: none;
+    font: inherit;
+    cursor: pointer;
     transition:
-      background-color 120ms ease-out,
+      border-color 120ms ease-out,
       color 120ms ease-out;
 
     &:hover {
-      background: var(--sc-bg-subtle);
+      border-color: var(--sc-border-strong);
       color: var(--sc-text-primary);
     }
 
+    &:focus-visible {
+      outline: 2px solid var(--sc-border-focus);
+      outline-offset: 1px;
+    }
+  }
+
+  &__kbd {
+    padding: 0 var(--sc-spacing-0-375);
+    border: 1px solid var(--sc-border-default);
+    border-radius: var(--sc-radius-sm);
+    background: var(--sc-bg-surface);
+    color: var(--sc-text-secondary);
+    font-family: var(--sc-font-family-primary);
+    font-size: var(--sc-font-size-100);
+    line-height: var(--sc-line-height-100);
+  }
+}
+
+/* ─────────── Cuerpo: lateral · página · índice ─────────── */
+
+.demo-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+
+  &--lateral {
+    grid-template-columns: var(--demo-ancho-lateral) minmax(0, 1fr);
+  }
+
+  &--indice {
+    grid-template-columns: minmax(0, 1fr) var(--demo-ancho-indice);
+  }
+
+  &--lateral.demo-body--indice {
+    grid-template-columns: var(--demo-ancho-lateral) minmax(0, 1fr) var(--demo-ancho-indice);
+  }
+}
+
+.demo-sidebar {
+  position: sticky;
+  top: var(--demo-alto-cabecera);
+  align-self: start;
+  height: calc(100vh - var(--demo-alto-cabecera));
+  box-sizing: border-box;
+  overflow-y: auto;
+  padding: var(--sc-spacing-1-5) var(--sc-spacing-0-5) var(--sc-spacing-2);
+  border-right: 1px solid var(--sc-border-default);
+  background: var(--sc-bg-surface);
+  scrollbar-width: thin;
+
+  &__titulo {
+    display: block;
+    margin: 0 0 var(--sc-spacing-1);
+    padding: 0 var(--sc-spacing-1);
+    color: var(--sc-text-primary);
+    font-weight: var(--sc-font-weight-semibold);
+    text-decoration: none;
+
+    &:focus-visible {
+      outline: 2px solid var(--sc-border-focus);
+      outline-offset: 2px;
+      border-radius: var(--sc-radius-sm);
+    }
+  }
+
+  &__grupo {
+    padding: var(--sc-spacing-0-5) 0;
+
+    & + & {
+      border-top: 1px solid var(--sc-border-default);
+    }
+  }
+
+  &__grupo-titulo {
+    margin: 0;
+    padding: var(--sc-spacing-0-375) var(--sc-spacing-1);
+    color: var(--sc-text-secondary);
+  }
+
+  &__lista {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* Ítem: fila de 32 px con radio suave; el activo, fondo neutro + barra de acento a la izquierda. */
+  &__enlace {
+    position: relative;
+    display: block;
+    margin: 1px 0;
+    padding: var(--sc-spacing-0-375) var(--sc-spacing-1);
+    border-radius: var(--sc-radius-md);
+    color: var(--sc-text-primary);
+    text-decoration: none;
+    transition: background-color 120ms ease-out;
+
+    &:hover {
+      background: var(--sc-bg-secondary-hover);
+    }
+
     &.is-active {
-      background: var(--sc-bg-subtle);
-      color: var(--sc-color-sky-600);
+      background: var(--sc-bg-secondary-hover);
       font-weight: var(--sc-font-weight-semibold);
     }
 
+    &.is-active::after {
+      content: '';
+      position: absolute;
+      left: calc(-1 * var(--sc-spacing-0-5));
+      top: var(--sc-spacing-0-25);
+      bottom: var(--sc-spacing-0-25);
+      width: 4px;
+      border-radius: var(--sc-radius-md);
+      background: var(--sc-border-accent);
+    }
+
     &:focus-visible {
-      outline: 2px solid var(--sc-color-sky-500);
-      outline-offset: 1px;
+      outline: 2px solid var(--sc-border-focus);
+      outline-offset: -2px;
     }
   }
 }
 
 .demo-main {
-  flex: 1;
   min-width: 0;
-  padding: var(--sc-spacing-2) var(--sc-spacing-2-5);
+  padding: var(--sc-spacing-2-5) var(--sc-spacing-4) var(--sc-spacing-2);
+  display: flex;
+  flex-direction: column;
 }
 
-/* En estrecho la sidebar se colapsa a barra superior (nav deslizante). La lista de
-   componentes anidada se oculta ahí: en móvil se navega por el ⌘K o el índice. */
-@media (max-width: 52rem) {
-  .demo-shell {
-    flex-direction: column;
+/* Lo que pinta la ruta crece; el pie se queda abajo aunque la página sea corta. */
+.demo-main > :not(.demo-migas):not(.demo-pie) {
+  flex: 1 0 auto;
+}
+
+.demo-indice {
+  position: sticky;
+  top: var(--demo-alto-cabecera);
+  align-self: start;
+  max-height: calc(100vh - var(--demo-alto-cabecera));
+  box-sizing: border-box;
+  overflow-y: auto;
+  padding: var(--sc-spacing-2-5) var(--sc-spacing-1-5) var(--sc-spacing-2) var(--sc-spacing-0-5);
+  scrollbar-width: thin;
+}
+
+/* ─────────── Migas y pie ─────────── */
+
+.demo-migas {
+  margin-bottom: var(--sc-spacing-1);
+
+  ol {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    list-style: none;
   }
 
-  .demo-sidebar {
-    flex: none;
-    width: 100%;
-    height: auto;
-    position: static;
-    flex-direction: row;
+  li {
+    display: inline-flex;
     align-items: center;
-    gap: var(--sc-spacing-0-25);
-    padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
-    border-right: 0;
-    border-bottom: 1px solid var(--sc-border-default);
+    color: var(--sc-text-primary);
+  }
 
-    &__brand {
-      margin-bottom: 0;
+  li + li::before {
+    content: '/';
+    margin: 0 var(--sc-spacing-0-5);
+    color: var(--sc-text-secondary);
+  }
+
+  a {
+    color: var(--sc-text-link);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+  }
+
+  li:not(:last-child) > span {
+    color: var(--sc-text-secondary);
+  }
+}
+
+.demo-pie {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sc-spacing-0-75);
+  margin-top: var(--sc-spacing-4);
+  padding-top: var(--sc-spacing-1-5);
+  border-top: 1px solid var(--sc-border-default);
+  color: var(--sc-text-secondary);
+
+  &__enlaces {
+    display: flex;
+    gap: var(--sc-spacing-1-5);
+  }
+
+  a {
+    color: var(--sc-text-secondary);
+    text-decoration: none;
+
+    &:hover {
+      color: var(--sc-text-primary);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+  }
+}
+
+/* ─────────── Portada: a todo el ancho, sobre el gris de fondo ─────────── */
+
+.demo-shell--inicio {
+  background: var(--sc-bg-default);
+
+  .demo-main {
+    padding: 0;
+  }
+
+  .demo-pie {
+    width: min(100% - 2 * var(--sc-spacing-1-5), 62rem);
+    margin: var(--sc-spacing-4) auto 0;
+    padding-bottom: var(--sc-spacing-2);
+  }
+}
+
+/* ─────────── Anchos ─────────── */
+
+/* Sin sitio para el índice: se va, la página se queda con todo el ancho. */
+@media (max-width: 80rem) {
+  .demo-body--indice {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .demo-body--lateral.demo-body--indice {
+    grid-template-columns: var(--demo-ancho-lateral) minmax(0, 1fr);
+  }
+
+  .demo-indice {
+    display: none;
+  }
+
+  .demo-main {
+    padding-inline: var(--sc-spacing-2-5);
+  }
+}
+
+/* Estrecho: el lateral se pliega tras el botón de menú y las secciones se deslizan en la cabecera. */
+@media (max-width: 64rem) {
+  .demo-body--lateral,
+  .demo-body--lateral.demo-body--indice {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .demo-top {
+    gap: var(--sc-spacing-0-5);
+    padding: 0 var(--sc-spacing-1);
+
+    &__menu {
+      display: inline-flex;
     }
 
-    &__brand-sub,
-    &__search,
-    &__sub {
+    &__search-label,
+        &__kbd {
       display: none;
     }
 
-    &__nav {
-      flex-direction: row;
-      align-items: center;
-      overflow-x: auto;
-      scrollbar-width: none;
-
-      &::-webkit-scrollbar {
-        display: none;
-      }
-    }
-
     &__tools {
-      margin-top: 0;
-      margin-left: auto;
-      padding-top: 0;
-      border-top: 0;
-      flex-direction: row;
+      padding-left: var(--sc-spacing-0-5);
+    }
+  }
+
+  .demo-sidebar {
+    display: none;
+    position: fixed;
+    inset: var(--demo-alto-cabecera) 0 0 0;
+    z-index: 40;
+    height: auto;
+    border-right: 0;
+
+    &.is-open {
+      display: block;
     }
   }
 
   .demo-main {
-    padding: var(--sc-spacing-1-5) var(--sc-spacing-1);
+    padding: var(--sc-spacing-1-5) var(--sc-spacing-1) var(--sc-spacing-1-5);
+  }
+}
+
+@media (max-width: 40rem) {
+  .demo-top__brand-name {
+    display: none;
   }
 }
 

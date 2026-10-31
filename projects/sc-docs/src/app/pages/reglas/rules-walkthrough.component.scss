@@ -23,69 +23,12 @@
 .rules__head h1 {
   margin: 0;
   max-width: var(--measure);
-  font-size: var(--sc-font-size-800);
-  line-height: var(--sc-line-height-800);
-  font-weight: var(--sc-font-weight-semibold);
-  letter-spacing: -0.01em;
 }
 
 .lead {
   margin: var(--sc-spacing-1) 0 0;
   max-width: var(--measure);
-  font-size: var(--sc-font-size-300);
-  line-height: var(--sc-line-height-300);
   color: var(--sc-text-secondary);
-}
-
-/* ---------- índice ---------- */
-.toc {
-  background: var(--sc-bg-subtle);
-  border: 1px solid var(--sc-border-subtle);
-  border-radius: var(--sc-radius-lg);
-  padding: var(--sc-spacing-1-25) var(--sc-spacing-1-5);
-}
-
-.toc__title {
-  margin: 0 0 var(--sc-spacing-0-75);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--sc-text-subtle);
-}
-
-.toc__list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
-  gap: var(--sc-spacing-0-5) var(--sc-spacing-1-5);
-  counter-reset: toc;
-}
-
-.toc__list li {
-  counter-increment: toc;
-}
-
-.toc__list a {
-  display: inline-flex;
-  gap: var(--sc-spacing-0-625);
-  align-items: baseline;
-  color: var(--sc-text-primary);
-  text-decoration: none;
-  font-size: var(--sc-font-size-200);
-  transition: color var(--sc-transition-fast);
-}
-
-.toc__list a::before {
-  content: counter(toc, decimal-leading-zero);
-  color: var(--sc-text-subtle);
-  font-variant-numeric: tabular-nums;
-  font-size: var(--sc-font-size-100);
-}
-
-.toc__list a:hover {
-  color: var(--sc-text-accent);
-  text-decoration: underline;
 }
 
 /* ---------- pasos ---------- */

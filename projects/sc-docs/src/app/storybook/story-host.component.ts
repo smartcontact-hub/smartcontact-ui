@@ -87,7 +87,7 @@ const TEMAS_URL: readonly TemaUrl[] = ['claro', 'oscuro', 'comparar'];
               <!-- El estado del componente (DD-190): listo, experimental o retirado, y por qué. -->
               <app-estado-componente class="sb-host__estado" [estado]="estado()" explicado />
               @if (meta().description) {
-                <p class="sb-host__desc">{{ meta().description }}</p>
+                <p class="sb-host__desc sc-text-h3-regular">{{ meta().description }}</p>
               }
               <!-- «Cuándo se usa» va ARRIBA: es la pregunta que se hace antes que ninguna otra («¿es este o es otro?»).
                    Al final de la ficha, tras todas las stories, quedaba a 6.000 px en la de Button. -->
@@ -118,7 +118,7 @@ const TEMAS_URL: readonly TemaUrl[] = ['claro', 'oscuro', 'comparar'];
                 [id]="'historia-' + slug(s)"
                 [class.sb-host__story--enlazada]="slug(s) === historiaUrl()"
               >
-                <p class="sb-host__section-title sc-text-caption-semibold">{{ s.playground ? '✦ ' + s.name : s.name }}</p>
+                <h2 class="sb-host__section-title sb-host__h2 sc-text-h2-semibold">{{ s.name }}</h2>
                 @if (s.description) {
                   <p class="sb-host__story-desc sc-text-body-regular">{{ s.description }}</p>
                 }
@@ -155,7 +155,7 @@ const TEMAS_URL: readonly TemaUrl[] = ['claro', 'oscuro', 'comparar'];
                   id="historia-combinaciones"
                   [class.sb-host__story--enlazada]="historiaUrl() === 'combinaciones'"
                 >
-                  <p class="sb-host__section-title sc-text-caption-semibold">Todas las combinaciones</p>
+                  <h2 class="sb-host__section-title sb-host__h2 sc-text-h2-semibold">Todas las combinaciones</h2>
                   <p class="sb-host__story-desc sc-text-body-regular">
                     El Playground con cada valor de hasta tres controles a la vez. Los demás van como estén arriba: pon ahí
                     un texto muy largo o enciende «loading», y se ve en todas las casillas.
@@ -187,7 +187,7 @@ const TEMAS_URL: readonly TemaUrl[] = ['claro', 'oscuro', 'comparar'];
         </div>
 
         <section class="sb-host__story sb-host__api">
-          <p class="sb-host__section-title sc-text-caption-semibold">API</p>
+          <h2 class="sb-host__section-title sb-host__h2 sc-text-h2-semibold">API</h2>
           <app-story-props-table [miembros]="contrato()" [error]="apiError()" />
         </section>
       </div>

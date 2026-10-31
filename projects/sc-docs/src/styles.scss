@@ -30,7 +30,8 @@ body {
    propio DS —`--sc-font-size-650` = 32px—, así la doc bebe del mismo sitio que todo
    lo demás y el DS y sus componentes NO se tocan. Es fallback: las páginas con su propia
    regla de h1 (el índice) la fijan explícitas. */
-.demo-main h1 {
+/* Un `h1` que ya trae su estilo del DS (`.sc-text-h1-*`, la portada) se queda con él. */
+.demo-main h1:not(.sc-text-h1-regular) {
   /* `!important` a propósito: cada página de sección (foundations, uso, reglas, tema)
      trae su propio `h1` scoped (`h1[_ngcontent]`, misma especificidad que este + inyectado
      después → ganaría). Para propagar el título de display a TODAS desde un solo sitio, sin
@@ -41,9 +42,16 @@ body {
      en vez de seguir tomando prestado un rol cuyo significado ha cambiado. */
   font-size: var(--sc-font-size-650) !important;
   line-height: var(--sc-line-height-650) !important;
-  font-weight: var(--sc-font-weight-semibold) !important;
-  letter-spacing: -0.01em;
+  /* Medio y apretado, como el título de página de las docs de referencia (Primer: 460 de peso): el semibold de antes
+     gritaba frente a la página blanca y aireada del shell nuevo. */
+  font-weight: var(--sc-font-weight-medium) !important;
+  letter-spacing: -0.02em;
   color: var(--sc-text-primary);
+}
+
+/* Los títulos a los que salta «En esta página» (`toc.component.ts`) no se esconden bajo la cabecera fija. */
+.demo-main :is(h2, h3) {
+  scroll-margin-top: 5rem;
 }
 
 /* ─────────── El CÓDIGO de la doc se decide UNA vez ───────────

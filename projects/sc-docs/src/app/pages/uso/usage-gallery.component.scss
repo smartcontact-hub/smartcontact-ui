@@ -3,17 +3,15 @@
   max-width: 72rem;
 }
 
+/* Tamaño y peso del título, los de todas las páginas de la doc (`.demo-main h1`, styles.scss). */
 h1 {
-  font-size: var(--sc-font-size-650); /* 32px — el look de la DOC; tras DD-48 ningún rol cae en 32 (h1 = 48) */
-  line-height: var(--sc-line-height-650);
-  font-weight: var(--sc-font-weight-h1);
-  margin: 0 0 var(--sc-spacing-0-5);
+  margin: 0 0 var(--sc-spacing-0-75);
 }
 
 .uso-intro,
 .uso-meta {
-  color: var(--sc-text-muted);
-  max-width: 48rem;
+  color: var(--sc-text-secondary);
+  max-width: 52rem;
 }
 
 .uso-meta {

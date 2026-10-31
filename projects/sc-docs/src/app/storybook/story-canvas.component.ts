@@ -21,6 +21,7 @@ import { ScIconComponent } from '@smartcontact-hub/icons';
 import { A11yService } from './a11y.service';
 import { IMPACTO_ES, agruparNodos, contarFallos, type NodoA11y, type ViolacionA11y } from './a11y.core.mjs';
 import { StoryMedidorComponent } from './story-medidor.component';
+import { anclarTokensEnLienzo } from './tokens-en-lienzo';
 import { ScArgs, StoryContext } from './story.types';
 import { ThemeToggleComponent } from '../shared/theme-toggle.component';
 
@@ -310,6 +311,8 @@ export class StoryCanvasComponent {
   private readonly alturas = new Map<Document, number>();
 
   constructor() {
+    // El oscuro local necesita que las variables encadenadas se resuelvan dentro del lienzo (ver `tokens-en-lienzo.ts`).
+    anclarTokensEnLienzo();
     // axe pasa al VER el lienzo (no al cargar la página entera: hay diez por ficha) y otra vez cuando cambia lo que
     // pinta. Con retraso, para que el DOM ya esté puesto y una ráfaga de teclas en un control cuente como una.
     effect((onCleanup) => {
