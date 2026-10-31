@@ -2673,6 +2673,7 @@
         "agentes": {
           "heading": "Agentes",
           "hint": "Cada agente novo começa com estes valores; depois mudam-se na ficha do agente",
+          "iframe_url_hint": "Os agentes com o iframe «Geral» veem esta; se a mudares, muda para todos.",
           "edit_crumb": "Editar agente"
         },
         "grupos": {
