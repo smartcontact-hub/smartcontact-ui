@@ -1977,7 +1977,7 @@
       "assigned": {
         "query_placeholder": "Search agents…",
         "empty_title": "No assigned agents",
-        "empty": "Assign them from the \"All\" tab.",
+        "empty": "Assign them from \"All\".",
         "no_results": "No agents match the filter.",
         "col_agent": "Agent",
         "col_active": "Enabled",
@@ -2437,7 +2437,7 @@
         "picker_placeholder": "Search or add group…",
         "picker_aria": "Add group to agent",
         "empty_title": "No assigned groups",
-        "empty": "Assign them from the \"All\" tab.",
+        "empty": "Assign them from \"All\".",
         "col_group": "Group",
         "col_channels_here": "Channels in this group",
         "col_active": "Enabled",

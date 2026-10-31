@@ -1977,7 +1977,7 @@
       "assigned": {
         "query_placeholder": "Rechercher des agents…",
         "empty_title": "Aucun agent assigné",
-        "empty": "Assignez-les depuis l’onglet « Tous ».",
+        "empty": "Assignez-les depuis « Tous ».",
         "no_results": "Aucun agent ne correspond au filtre.",
         "col_agent": "Agent",
         "col_active": "Activé",
@@ -2437,7 +2437,7 @@
         "picker_placeholder": "Rechercher ou ajouter un groupe…",
         "picker_aria": "Ajouter un groupe à l'agent",
         "empty_title": "Aucun groupe assigné",
-        "empty": "Assignez-les depuis l’onglet « Tous ».",
+        "empty": "Assignez-les depuis « Tous ».",
         "col_group": "Groupe",
         "col_channels_here": "Canaux dans ce groupe",
         "col_active": "Activé",

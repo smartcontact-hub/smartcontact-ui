@@ -1980,7 +1980,7 @@
       "assigned": {
         "query_placeholder": "Buscar agentes…",
         "empty_title": "Sin agentes asignados",
-        "empty": "Asígnalos desde la pestaña «Todos».",
+        "empty": "Asígnalos desde «Todos».",
         "no_results": "No hay agentes que coincidan con el filtro.",
         "col_agent": "Agente",
         "col_active": "Habilitado",
@@ -2440,7 +2440,7 @@
         "picker_placeholder": "Buscar o añadir grupo…",
         "picker_aria": "Añadir grupo al agente",
         "empty_title": "Sin grupos asignados",
-        "empty": "Asígnalos desde la pestaña «Todos».",
+        "empty": "Asígnalos desde «Todos».",
         "col_group": "Grupo",
         "col_channels_here": "Canales en este grupo",
         "col_active": "Habilitado",
