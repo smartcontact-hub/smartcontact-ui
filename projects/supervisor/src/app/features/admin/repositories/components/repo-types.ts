@@ -101,7 +101,7 @@ export interface RepoPageConfig<T extends RepoEntity> {
   readonly columnChoices?: boolean;
   /** El campo (AAAA-MM-DD) que se pone a hoy al duplicar o guardar desde el panel de la lista. */
   readonly modifiedField?: string;
-  /** Las claves de sus avisos propios (`created`, `updated`, `deleted`), si no valen los genéricos («{{entity}} «{{name}}» creado/a»). */
+  /** Las claves de sus avisos propios (`created`, `updated`, `deleted`), si no valen los genéricos («{{entity}} «{{name}}»: se ha creado»). */
   readonly toastsKey?: string;
   /** Los títulos propios de su confirmación de borrar (`title`, con `{{name}}`; `title_bulk`, con `{{count}}`); sin ellos, los genéricos. */
   readonly simpleDelete?: { readonly titleKey: string; readonly titleBulkKey: string };

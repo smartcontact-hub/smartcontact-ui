@@ -1330,14 +1330,14 @@
       "field_required": "«{{field}}» es obligatorio"
     },
     "form": {
-      "create_title": "Nuevo/a {{entity}}",
+      "create_title": "Crear {{entity}}",
       "edit_title": "Editar {{entity}}"
     },
     "toasts": {
-      "created": "{{entity}} «{{name}}» creado/a",
-      "updated": "{{entity}} «{{name}}» actualizado/a",
-      "deleted_single": "{{entity}} «{{name}}» eliminado/a",
-      "deleted_bulk": "{{count}} {{entity}} eliminados/as"
+      "created": "{{entity}} «{{name}}»: se ha creado",
+      "updated": "{{entity}} «{{name}}»: se ha actualizado",
+      "deleted_single": "{{entity}} «{{name}}»: se ha eliminado",
+      "deleted_bulk": "{{count}} {{entity}}: se han eliminado"
     },
     "no_results": {
       "with_query": "No hay {{entity}} que coincidan con «{{query}}».",
