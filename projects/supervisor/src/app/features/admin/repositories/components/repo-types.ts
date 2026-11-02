@@ -32,6 +32,8 @@ export interface RepoColumnDef<T extends RepoEntity> {
   readonly groupsDisplay?: 'count' | 'adaptive';
   /** Para `kind === 'groups'` con `count`: sin ninguno se escribe 0 (el COA de Equipos), no «—». */
   readonly emptyAsZero?: boolean;
+  /** Para `kind === 'groups'` con editor propio: pulsar la cifra abre la ficha en esta sección (`?seccion=`), no arriba. */
+  readonly countOpensSection?: string;
   /** Una celda sin dato dice «—» (`sc-celda-vacia`, DD-197) en vez de quedarse en blanco. */
   readonly emptyDash?: boolean;
   /** La cabecera ordena de menor a mayor y al revés: las cifras, por su valor; las fechas, por día; el texto, por su letra. */

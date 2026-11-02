@@ -88,11 +88,13 @@ for (const [ruta, nombre, alta, tituloEditable] of [
   });
 }
 
-/* Agendas, Plantillas y Email abren la miga con «Administración», como Tipificaciones, Grupos y Agentes (DD-238). */
+/* Agendas, Plantillas, Email y Labels abren la miga con «Administración», como Tipificaciones, Grupos y Agentes (DD-238;
+ * Labels, DD-245). */
 for (const [ruta, ultimo] of [
   ['admin/agendas', 'Agendas'],
   ['admin/plantillas', 'Plantillas'],
   ['admin/emails', 'Email'],
+  ['admin/labels', 'Labels'],
 ] as const) {
   test(`miga · ${ruta}: Administración › Repositorios › ${ultimo}`, async ({ page }) => {
     await goto(page, ruta);

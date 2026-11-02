@@ -8,7 +8,8 @@ import { injectAlertModal } from './alert-modal';
  * route guard and by anything else that needs to ask the user before
  * throwing away unsaved work.
  *
- * Es `sc-alert-modal` en `warning` (DD-241): pide atención, y el foco abre en «Seguir editando».
+ * Es `sc-alert-modal` en `warning` (DD-241), con la superficie blanca (DD-242): pide atención sin alarmar, y el foco
+ * abre en «Seguir editando».
  */
 @Injectable({ providedIn: 'root' })
 export class DiscardDialogService {
@@ -19,6 +20,7 @@ export class DiscardDialogService {
   confirm(): Promise<boolean> {
     return this.alertModal({
       variant: 'warning',
+      surface: 'plain',
       title: this.translate.instant('common.discard_title'),
       message: this.translate.instant('common.discard_body'),
       actionLabel: this.translate.instant('common.discard_confirm'),

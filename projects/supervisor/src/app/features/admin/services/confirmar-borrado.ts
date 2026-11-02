@@ -3,7 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { injectAlertModal } from '@core/services';
 
 /**
- * Borrar un grupo o un agente es la confirmación simple del DS (`sc-alert-modal` en `error`, DD-241), sin teclear el nombre
+ * Borrar un grupo o un agente es la confirmación simple del DS (`sc-alert-modal` en `error`, DD-241, con la superficie blanca, DD-242), sin teclear el nombre
  * (DD-215, enmienda DD-145), igual desde el listado que desde la ficha. Desde el 2026-10-20, con el texto más corto que
  * dice todo: el título pregunta con el nombre («¿Eliminar el grupo «Ventas»?»), el cuerpo solo añade lo que no se sabe
  * («Esta acción no se puede deshacer.») y el botón repite el verbo del título («Eliminar»; «Confirmar» no dice qué
@@ -16,6 +16,7 @@ export function injectConfirmarBorrado(titleKey: string): (name: string) => Prom
   return (name) =>
     alertModal({
       variant: 'error',
+      surface: 'plain',
       title: translate.instant(titleKey, { name }),
       message: translate.instant('common.delete_dialog.body'),
       actionLabel: translate.instant('common.delete'),
@@ -30,6 +31,7 @@ export function injectConfirmarBorradoVarios(titleKey: string): (count: number, 
   return (count, detail) =>
     alertModal({
       variant: 'error',
+      surface: 'plain',
       title: translate.instant(titleKey, { count }),
       message: [detail, translate.instant('common.delete_dialog.body')].filter(Boolean).join(' '),
       actionLabel: translate.instant('common.delete'),
@@ -65,6 +67,7 @@ export function injectBorradoSimple<T>(opts: {
       const body = [extra, translate.instant('common.delete_dialog.body')].filter(Boolean).join(' ');
       void alertModal({
         variant: 'error',
+        surface: 'plain',
         title: translate.instant(clave(items.length === 1 ? opts.titleKey : opts.titleBulkKey), opts.params(items)),
         message: body,
         actionLabel: translate.instant('common.delete'),

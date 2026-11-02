@@ -128,6 +128,11 @@ export class CustomModalDemoComponent {
         description: 'Tono de la X; `sc-alert-modal` le pasa el de su variante.',
       },
       {
+        name: 'closeIconSize',
+        control: { kind: 'select', options: ['sm', 'md', 'lg'] },
+        description: 'Extensión nuestra: talla del aspa de la X; `sc-alert-modal` en blanco le pasa `sm` (DD-242).',
+      },
+      {
         name: 'role',
         control: { kind: 'select', options: ['dialog', 'alertdialog'] },
         description: 'El rol del diálogo que la envuelve; `alertdialog` para avisos que interrumpen.',
@@ -151,6 +156,7 @@ export class CustomModalDemoComponent {
       iconSize: 'lg',
       showCloseButton: true,
       closeVariant: 'secondary',
+      closeIconSize: 'lg',
       role: 'dialog',
       surfaceClass: '',
       bodyClass: '',

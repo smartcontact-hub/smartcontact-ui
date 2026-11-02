@@ -42,6 +42,10 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Repositorios como sus páginas de COA: Equipos avisa del nombre en gris y en rojo, su cifra abre la ficha en «Agentes» y enseña la foto (4453) · Agendas fija Nombre y «⋮» y sus campos son siempre «Personalizado N» (4440) · Plantillas corta el título con tooltip y avisa en rojo como Agendas (4438) · el hub: ocho «Próximamente» con su cifra y sin panel, un reciente entra en su repositorio y Labels con «Administración» (4064) (enmienda DD-179 §4 y §6) | DD-245 |
+> | Tipificaciones: dos opciones hermanas con el mismo nombre se dicen bajo el campo de la que repite, «Ya hay «X» en este nivel», como el COA de SISMAC-4451 (v7, 2026-10-30); bajo el árbol queda solo «Hay opciones sin nombre» (enmienda DD-187 §12 en lo del repetido) | DD-244 |
+> | La barra de toda tabla de asignar: el filtro del conjunto primero («Todos / Asignados / Sin asignar»), el buscador llenando lo que queda y «N asignados» al final, en una pieza (`sc-assign-bar`) · al editar abre en «Asignados» y en el alta en «Todos», también Agendas y Plantillas · ordenar por nombre en las tablas de asignar y por cualquier columna en el listado de Equipos · el hub de Repositorios, filtro delante del buscador (enmienda DD-176 §4, DD-179 y DD-230 §1) | DD-243 |
+> | Confirmar lo que decide el usuario (borrar, descartar, guardar antes de salir) no tiñe el modal: `sc-alert-modal` con `surface: 'plain'`, que calca el confirm centrado de antes (blanco, el icono en gris junto al mensaje y sus botones) · el tinte (`tinted`, por defecto) queda para los errores del sistema, que pueden no cerrarse con Escape (`closeOnEscape: false`, SISMAC-4292) · en el Supervisor, `injectAlertModal()` pide la superficie en cada aviso (enmienda DD-241 §6) | DD-242 |
 > | Los modales como en ui.smart-contact.com: `sc-custom-modal` (la carcasa, también con `[(visible)]`) y `sc-alert-modal` (aviso con variante `default`, `info`, `warning` o `error`, abierto por `ScDynamicDialogService`) con su misma API y sus fallos arreglados · borrar es `error`, descartar `warning` · se retiran `sc-dialog` y el confirm centrado; el globo con `target` sigue · Figma: «❖ Alert modal» con instancias de Custom modal | DD-241 |
 > | Tipificaciones: el buscador de la lista mira cualquier campo, también los nombres de los grupos que la usan aunque solo salgan al pasar el ratón (enmienda la regla de Agentes y Grupos solo para esta lista) · la edición de Tipificaciones, Agendas, Plantillas y las cuentas y triggers de Email acaba en el nombre guardado, y Agendas, Plantillas y Email abren la miga con «Administración», como Grupos y Agentes · el nombre de las fichas de Repositorios lleva «Ej: …» y la descripción «Breve descripción...» | DD-238 |
 > | Duplicar una agenda o una plantilla es un alta, como un grupo o un agente (enmienda DD-230): abre «Nueva agenda/plantilla» con la copia y su nombre «X (1)» (`seedFromId`, `nombreDeCopia`), que no existe hasta «Crear» · no copia a qué agentes se asigna | DD-234 |
@@ -169,6 +173,177 @@
 
 ---
 
+## DD-245 · 2026-10-31 — Repositorios como sus páginas de COA: Equipos, Agendas, Plantillas y el hub
+
+**Contexto** · El empate de los flujos del AED entre COA, prototipo y Figma (primero el prototipo; Figma, al final). Medido el
+2026-10-31 leyendo cada página de COA en vivo contra el código: SISMAC-4453 (Equipos, v6), 4440 (Agendas, v10), 4438 (Plantillas,
+v11) y 4064 (el hub de Repositorios, v2). Lo que el COA pide y el prototipo no hacía se arregla aquí; lo que el prototipo ya decidió
+(DD-151, DD-227, DD-231, DD-232, DD-239) y el COA no cuenta, va al COA, sin tocar el prototipo.
+
+**Decisión** ·
+1. **Equipos (4453).** El nombre avisa como Agendas y Plantillas (DD-237): «El nombre es obligatorio.» en gris bajo el campo desde
+   el principio, en rojo al dejarlo vacío, y el tooltip de «Crear equipo» dice lo mismo (antes, «Falta: nombre»). La cifra de agentes
+   del listado abre el equipo ya en «Agentes» (`countOpensSection`, con `stopRowClick`: la fila no lo vuelve a abrir arriba). La tabla
+   de agentes enseña la foto de cada uno.
+2. **Agendas (4440).** En la tabla de contactos, Nombre queda fijo a la izquierda y el «⋮» a la derecha al desplazar de lado. Los
+   campos personalizados se llaman siempre «Personalizado N»: sus etiquetas por agenda no se editan, y se van sus restos (borrador,
+   duplicado y semilla). El COA se corrige.
+3. **Plantillas (4438).** El título que no cabe se corta en su celda y se lee entero al pasar el ratón. Ctrl/Cmd + S con algo
+   pendiente lo dice en rojo y lleva al campo, y dejar el contenido vacío lo pone en rojo, como Agendas. El error de importar nombra
+   los canales como su columna: «Chat, Email ni WhatsApp».
+4. **El hub (4064).** Los ocho que el COA da por «Próximamente» (Horarios, Email, Labels, Variables, Entidades, Intenciones,
+   Entidades IA y Clasificación IA) llevan su cifra, como todas («Contadores»), y «Próximamente» en la línea del nombre, en gris; no
+   abren panel (`aria-disabled`; pulsar una con un panel abierto cuenta como fuera y lo cierra). Elegir un reciente entra en su
+   repositorio («se accede al repositorio correspondiente»), y solo cuentan los que se abren. La miga de Labels empieza en
+   «Administración», como las demás. Los tres de IA siguen llevando a Conversaciones: se corrige el COA.
+
+**Razón** · El COA es la especificación con la que desarrolla el equipo: donde dice algo concreto y el prototipo no lo hace, el
+prototipo es el que se aparta. Donde el prototipo ya resolvió algo con una DD, el que se queda corto es el COA.
+
+**Descartadas** ·
+- *«Próximamente» al pie de la tarjeta*: alargaba la fila de Comunicación 32 px. En la línea del nombre no añade alto y cabe en los
+  cuatro idiomas a 1440, 1280 y 1024 (medido).
+- *La tarjeta apagada con opacidad, la receta de deshabilitado de `sc-option-card`*: la descripción, en gris, bajaría de 4,5:1.
+- *Las ocho sin cifra*: el COA dice que todas la llevan.
+- *Etiquetas editables por agenda para los campos personalizados*: fuera; el COA se corrige.
+- *Un reciente que busca, como hacía (DD-179 §6)*: el COA dice que entra.
+
+**Consecuencias** · Enmienda DD-179 §4 (no toda tarjeta abre panel) y §6 (elegir un reciente entra en él). Medido de paso, sin
+arreglar: DD-179 §1 dice que el hub cabe sin desplazar a 1440 × 800, y con 13 tarjetas no cabe (sobran 318 px, ya antes de esta DD);
+su prueba mide `.hub`, que no es lo que desplaza (`.app-shell__content`). Pruebas: `equipos-como-coa-4453.spec.ts`,
+`agendas-plantillas-como-coa.spec.ts`, `repositorios-hub.spec.ts` (9) y `breadcrumb-current.spec.ts` (Labels). Fuera del repo:
+las páginas de COA de 4453, 4440, 4438 y 4064, por prompt; Figma, en el último bloque del empate.
+
+---
+
+## DD-244 · 2026-10-31 — Tipificaciones: la opción repetida lo dice en su campo, «Ya hay «X» en este nivel»
+
+**Contexto** · Dos opciones hermanas con el mismo nombre no dejan guardar (DD-235 lo deja fuera del permiso: el agente no
+sabría cuál es cuál), y hasta hoy lo decía una línea bajo el árbol, «Hay opciones con el mismo nombre en una misma lista.»,
+lejos de la opción y sin decir cuál. El COA de SISMAC-4451 (v7, del 2026-10-30, posterior a DD-237 y DD-238) pide el aviso
+«Ya hay «Nombre» en este nivel», y la clave `repositories.tipificaciones.errors.option_taken` ya existía en los cuatro idiomas
+sin que nada la usara.
+
+**Decisión** · La opción que repite el nombre de una hermana lleva bajo su campo «Ya hay «X» en este nivel», con el nombre que se
+ha escrito, en rojo y en vivo (es un error de contenido, DD-219 §4); el campo se marca y el lector lo oye con él. La primera de las
+dos no se marca: el aviso es de la que se está escribiendo. Bajo el árbol queda solo «Hay opciones sin nombre», que no tiene un
+campo con texto al que señalar. Fuera la clave `tree_status.repeated`. La fila de la opción alinea arriba, así que el tirador y la
+papelera siguen a la altura del campo cuando el aviso la alarga. Enmienda DD-187 §12 («la línea de resumen del árbol solo aparece
+si falta algo») en lo del repetido; «Guardar» apagado y el índice con «Dale a cada opción un nombre distinto» siguen igual.
+
+**Razón** · El COA es más nuevo que cualquier DD sobre esto y lo decide; además un aviso junto al campo dice cuál es la repetida,
+y el de debajo del árbol obligaba a buscarla entre todas las ramas.
+
+**Descartadas** ·
+- *Quitar el control y dejar repetir, como el nombre de la tipificación (DD-235)*: importar junta las hermanas por nombre
+  (`meterCamino`, sin mayúsculas), así que exportar y volver a importar fundiría dos «Consulta» en una con las hijas
+  mezcladas; y el agente, al colgar, vería dos filas iguales sin saber cuál es cuál. Lo prohíbe además el propio COA.
+
+**Consecuencias** · `tipificacion-niveles.component.{ts,html,scss}`, i18n en los cuatro idiomas y
+`e2e/supervisor/tipificacion-ficha.spec.ts`, que mide el aviso con su texto, debajo del campo y en su columna, la papelera a la
+altura del campo y que no hay línea bajo el árbol (rojo con el código anterior: descripción vacía). Figma (`3503:49633`), cuando
+toque el Bloque 8 del empate de flujos.
+
+---
+
+## DD-243 · 2026-10-31 — La barra de toda tabla de asignar: el filtro primero, el buscador y la cifra al final
+
+**Contexto** · Desarrollo prepara una tabla reutilizable y vio que la barra de encima cambiaba de una pantalla a otra: en Equipos,
+los botones del filtro y después el buscador; en Agendas, al revés; y el tamaño del buscador y la ordenación, distintos. Medido el
+2026-10-31 en las cinco tablas de asignar: dos órdenes, dos tamaños del filtro, dos juegos de opciones («Todos / Asignados / Sin
+asignar» sin cifra, y «Todos / Asignados (N)»), una cifra suelta solo en Equipos («N en el equipo»), tres copias del mismo marcado,
+la edición de Agendas y Plantillas abriendo en «Todos» y la de las demás en «Asignados», y ordenar por nombre solo en las fichas de
+grupo y agente. El listado de Equipos no ordenaba por ninguna columna.
+
+**Decisión** ·
+1. **El orden**: el filtro del conjunto primero, el buscador después llenando lo que queda, y al final, a la derecha, la cifra (en
+   las tablas de asignar) o «Acciones» y «Columnas» (en los listados). Sin filtro, la barra empieza por el buscador: los listados
+   (`sc-list-page`) no cambian. Es la regla de las listas con vistas (Polaris, Stripe, Linear, Notion): el filtro dice QUÉ conjunto se
+   ve y el buscador busca dentro de él. Buscador primero es para cuando los filtros son desplegables secundarios.
+2. **Una pieza**, `sc-assign-bar` (`shared/components/assign-bar/`), en la ficha de grupo (sus agentes), la de agente (sus grupos),
+   Equipos, Agendas y Plantillas: el filtro en tamaño pequeño con «Todos / Asignados / Sin asignar», el buscador y «N asignados»
+   («1 asignado»), a 7 entre piezas (DD-192). También en el panel rápido del Monitor, cuyo pie decía «Asignados: 14» y ahora
+   solo dice lo que falta guardar («Sin guardar: 2»): un sitio y un texto para la cifra.
+3. **Con qué abre**: al editar, «Asignados»; en el alta, «Todos» (DD-151), también en Agendas y Plantillas, que abrían siempre en
+   «Todos». Marcar o desmarcar no mueve las filas hasta cambiar de filtro o de búsqueda (DD-151), también en Agendas y Plantillas: en
+   «Asignados», quitar uno ya no lo hace desaparecer bajo el cursor.
+4. **Ordenar**: las tablas de asignar, por nombre (A→Z y Z→A), las cinco; los listados, por cualquier columna salvo Estado (DD-180), y
+   el de Equipos gana sus tres.
+5. **Las columnas** de cada tabla son las de su página de COA: Equipos, «Agente» con foto, nombre y email; Agendas y Plantillas,
+   Nombre, Email y Grupos. Se unifica la barra, no el contenido.
+6. **El hub de Repositorios**, que filtra por categoría, pone también el filtro delante del buscador, a 7 (antes, 14).
+
+**Razón** · El filtro decide qué hay en la tabla y la búsqueda trabaja dentro de eso: leerlos en ese orden es leer la tabla en el
+orden en que se construye. Una sola pieza es un solo sitio que desarrollo reproduce una vez, y un cambio (un texto, un tamaño) que no
+hay que repetir en cinco pantallas. La cifra al final, siempre en el mismo sitio, responde «cuántos llevo» sin cambiar de filtro.
+
+**Descartadas** ·
+- *Buscador primero en todas*: era lo de los listados, pero en ellos no hay filtro de conjunto, y obligaba a rehacer Equipos, que
+  desarrollo ya tiene hecho, y las dos fichas.
+- *«Todos / Asignados (N)» en todas*: pierde «Sin asignar», que es como se busca a quién falta por añadir.
+- *Una sola tabla de agentes para Equipos, Agendas y Plantillas*: cada COA pide sus columnas.
+
+**Consecuencias** · Enmienda DD-176 §4 (el buscador llena hasta la cifra, que es la que toca el borde derecho), DD-179 (el orden de la
+barra del hub) y DD-230 §1 («Todos / Asignados (N)»). Textos nuevos en `common.assign_bar.*`; se van
+`groups.form.assigned.filter_*`, `repositories.agent_assignment.filter_all` y `filter_assigned`, `repositories.equipos.assigned_count`
+y `groups.agents_panel.assigned`.
+Prueba: `e2e/supervisor/barra-comun-tablas.spec.ts`. Fuera del repo: las páginas de COA de 4058, 4062, 4453, 4440, 4438 y 4064
+llaman «filtro» a lo que llamaban «pestañas» y cuentan la cifra; Figma, cuando estén todos los bloques del empate.
+
+---
+
+## DD-242 · 2026-10-31 — Confirmar un borrado no tiñe el modal: `sc-alert-modal` gana `surface` y `closeOnEscape`
+
+**Contexto** · Con DD-241 borrar pasó a `sc-alert-modal` en `error`, que tiñe de rojo toda la superficie: el mismo aspecto
+que «No se detecta el micrófono» (Figma «Gestión de errores», `XiPJxHfz5UuekksPIoEj9u` nodo 370:6140, fondo rosado). Una
+pregunta que el usuario provoca al pulsar «Eliminar» recibía la urgencia de un fallo del sistema. Además, SISMAC-4292 pide
+que los errores del sistema no se cierren con Escape, y el aviso no lo permitía (DD-241 §2).
+
+**Decisión** ·
+1. **`surface: 'tinted' | 'plain'`**, entrada nueva de `sc-alert-modal`, por defecto `'tinted'` (lo de siempre). `'plain'`
+   calca el confirm centrado de antes (`sc-confirmdialog`, `p-confirmdialog` con el Kit), medido contra él en sus tres
+   tonos: fondo y borde del modal, cabecera con 15,75 en los cuatro lados y el título a 20 de línea, texto en
+   `--sc-text-primary`, sin icono en la cabecera y el icono de 21 (`--sc-cmp-confirmdialog-icon-size`) en gris junto al
+   mensaje, a 14; la X con el aspa de 14 (`closeIconSize: 'sm'`, entrada nueva de `sc-custom-modal`). Los botones, los de
+   `ScConfirmService.request`: en `error`, «Cancelar» gris relleno y la acción roja rellena; en `warning`, la salida
+   segura rellena en el primario y la acción roja con borde (`emphasis: 'reject'`); en `info` y `default`, «Cancelar» gris
+   y la acción en el primario. El icono, el triángulo de aviso, e `info` para informar. Única diferencia que queda: el
+   aspa de la X es la de Material Symbols (la única librería de iconos del DS), no la de PrimeNG, más fina.
+2. **Quién lo provoca decide la superficie**: blanca para lo que decide el usuario (borrar, descartar cambios, guardar
+   antes de salir); teñida para un error del sistema (sin micrófono, conexión caída, sesión caducada).
+3. **`closeOnEscape`**, entrada nueva, por defecto `true`. Con `false`, el aviso para el Escape antes de que llegue a
+   PrimeNG (una escucha en captura mientras el foco está dentro): la X y los botones siguen cerrando.
+4. **Supervisor**: `injectAlertModal()` pide `surface` en cada aviso (obligatoria en `AlertModalRequest`), para que un
+   aviso nuevo lo decida. Los 14 de hoy (`confirmar-borrado.ts`, Reglas, Categorías, Entidades, contactos de Agendas,
+   restablecer datos, la cascada de canales del agente, `DiscardDialogService` y «guardar antes de ir a Repositorios» en
+   las fichas de grupo y agente) pasan a `'plain'`. Enmienda DD-241 §6, que decía «el modal se tiñe de rojo».
+5. Las tres entradas (`surface`, `closeOnEscape` y `closeIconSize`) son **extensiones nuestras**, marcadas así en el JSDoc
+   y en AGENTS.md §Modales: los devs reciben la propuesta para su `sc-alert-modal` y su `sc-custom-modal`.
+
+**Razón** · El tinte es la señal más fuerte que tiene un modal y se gasta en lo que interrumpe sin que nadie lo pida. Un
+borrado ya lo pidió el usuario: le basta el botón rojo para saber que es destructivo, y el foco sigue abriendo en
+«Cancelar» (DD-241 §2). La forma blanca no se inventa: es la que el Supervisor ya usaba para confirmar hasta DD-241. Por defecto `'tinted'` para que ninguna llamada de los devs cambie de aspecto sin tocarla.
+
+**Descartadas** ·
+- *Recuperar el confirm dialog centrado para los borrados*: vuelve el tercer camino que DD-241 retiró, con otra API y otro
+  aspecto que el de los devs.
+- *Borrar con la variante `default`*: pierde el rojo del botón, que dice «esto destruye».
+- *Blanca con el icono en el color de la variante, en la cabecera, y la salida en texto* (la primera versión, del mismo
+  día): una pieza nueva que no se parecía a nada que ya hubiera; se pidió el confirm de antes, calcado.
+- *`'plain'` por defecto*: cambiaría de golpe los avisos de error de los devs (micrófono, conexión), que deben seguir
+  teñidos.
+- *`closeOnEscape` en la configuración de `ScDynamicDialogService`*: ya existe, pero quien abre el aviso tendría que saber
+  que va en otro objeto; como entrada del aviso viaja con el resto de `inputValues`.
+
+**Consecuencias** · sc-docs: la ficha de Alert Modal gana la story «Superficies» (teñida y blanca, `error` y `warning`) y un
+error del sistema que no se cierra con Escape; su «Cuándo se usa» lo dice. AGENTS.md: la fila «Borrar una entidad» manda
+`confirmar-borrado.ts` con la superficie blanca (decía `sc-form-danger-zone` + `sc-delete-entity-dialog`, contra DD-215 y
+DD-233). Cubierto en `e2e/supervisor/alert-modal-superficie.spec.ts` (borrar y descartar, blancos) y en
+`e2e/components.spec.ts` (sin `surface` sigue teñido; `closeOnEscape: false` no cierra con Escape). Pendiente fuera del repo: la propiedad de superficie en «❖
+Alert modal» (15876:601) y su Code Connect, y contárselo a los devs.
+
+---
+
 ## DD-241 · 2026-10-29 — `sc-custom-modal` y `sc-alert-modal`, como los de ui.smart-contact.com; se retiran `sc-dialog` y el confirm centrado
 
 **Contexto** · El DS de los devs (ui.smart-contact.com) tiene dos componentes propios que hicieron para los errores del Agent (sin
@@ -202,7 +377,7 @@ ConfirmDialog: solo aparece en el tema. El «Modal legacy custom» se había des
    modos (el export solo trae `aura/custom` en uno).
 5. **Medidas del aviso**: de 320 a 480 de ancho y hasta 400 de alto, título hasta 2 líneas y mensaje hasta 4 (las del confirm,
    medidas en los 15 diálogos del Supervisor en cuatro idiomas). La carcasa mide 480 por defecto y hasta 720.
-6. **Variante por intención**: borrar es `error` (el modal se tiñe de rojo), descartar cambios `warning`, avisar al guardar `info`. En el
+6. **Variante por intención**: borrar es `error` (el modal se tiñe de rojo; desde DD-242, con la superficie blanca), descartar cambios `warning`, avisar al guardar `info`. En el
    Supervisor los abre un solo sitio, `injectAlertModal()` (`core/services/alert-modal.ts`).
 7. **Se retiran** `sc-dialog` (sustituto: `sc-custom-modal`) y el diálogo centrado de `sc-confirmdialog` (sustituto:
    `sc-alert-modal`), con `@deprecated` y su motivo (DD-190). Los 19 modales que usaban `sc-dialog` y las 14 confirmaciones centradas
@@ -334,6 +509,8 @@ al nombre que se teclea, algo que el COA no recogía. El tooltip de Grupos ya co
 3. Los placeholders de las fichas de Repositorios se escriben igual: el nombre lleva un ejemplo con «Ej: » (Tipificaciones decía
    «Ej.», Plantillas «Título de la plantilla» y Etiquetas «Nombre de la label») y la descripción, donde la hay, «Breve
    descripción...» (DD-237; Figma la tenía con un ejemplo). Agentes y Grupos no llevan placeholder y no cambian.
+   *(Precisión del 2026-10-31, DD-245: el título de Agendas y de Plantillas tampoco lleva placeholder, como piden sus páginas
+   de COA y como ya hacían el prototipo y `placeholders-fichas`; el «Ej: …» es de Equipos, Tipificaciones y Etiquetas.)*
 4. El título de la página sigue en vivo lo que se escribe en el nombre (ya era así en proto y Figma): queda anotado en el alta.
 
 **Razón** · Las listas y fichas del Supervisor se leen igual; si el COA, Figma y el prototipo dicen cosas distintas, manda la última

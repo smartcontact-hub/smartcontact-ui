@@ -33,6 +33,8 @@ import { ContactCenterBorradorService } from './contact-center-borrador.service'
 
 /**
  * Contact Center › Agentes — `/config/aed/agentes`. Con esto nace cada agente nuevo (DD-135).
+ * La URL del iframe es la excepción: no se copia al alta, la siguen en vivo los agentes con el iframe «General»
+ * (SISMAC-4062), y su ayuda lo dice.
  *
  * Con las PALABRAS y la matriz de la ficha de agente: a qué numeración llama y transfiere (cuatro destinos por dos
  * columnas), su Configuración (gestión de dispositivos y activación por grupo) y su Integración (URL del iframe y

@@ -102,6 +102,8 @@ test('agentes: asignar uno desde la plantilla lo deja en el agente, sin tocar a 
   await expect(tabla.locator('thead th[data-field]')).toHaveText(['Nombre', 'Email', 'Grupos']);
   const grupos = (await page.evaluate(() => JSON.parse(localStorage.getItem('sc-groups') ?? '[]') as { id: number; templates?: number[] }[])).map((g) => [g.id, g.templates ?? []]);
   const antes = await page.evaluate(() => (JSON.parse(localStorage.getItem('sc-agents') ?? '[]') as { templates?: number[] }[]).filter((a) => a.templates?.includes(2)).length);
+  // La edición abre en «Asignados» (DD-151, DD-243): para marcar a uno nuevo, «Sin asignar».
+  await tabla.getByRole('button', { name: 'Sin asignar', exact: true }).click();
   const sinMarcar = tabla.getByRole('checkbox', { name: /^Asignar la plantilla a / }).and(page.locator(':not(:checked)'));
   await sinMarcar.first().click();
   await expect(page.locator('sc-top-bar').getByRole('button', { name: 'Guardar' })).toBeEnabled();

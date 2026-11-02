@@ -1410,6 +1410,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
       const etiquetas: Readonly<Record<string, string>> = FAMILY_LABEL_KEYS;
       const accepted = await this.alertModal({
         variant: 'error',
+        surface: 'plain',
         title: this.translate.instant('groups.form.cascade.title'),
         message: this.translate.instant(this.removeBodyKey(affected.length, salen.length), {
           channels: quitados.map(c => this.translate.instant(etiquetas[c])).join(', '),
@@ -1508,6 +1509,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit {
     }
     const guardar = await this.alertModal({
       variant: 'info',
+      surface: 'plain',
       title: this.translate.instant('agents.form.repositories_leave.title'),
       message: this.translate.instant('agents.form.repositories_leave.body'),
       actionLabel: this.translate.instant('common.save'),

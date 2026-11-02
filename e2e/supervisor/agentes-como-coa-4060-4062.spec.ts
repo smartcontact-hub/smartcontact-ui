@@ -300,7 +300,7 @@ test('editar · lo que falta va con la etiqueta corta, y la tabla de grupos vac�
 
   const grupos = page.locator('sc-group-assignment-table');
   await expect(grupos).toContainText('Sin grupos asignados');
-  await expect(grupos).toContainText('Asígnalos desde la pestaña «Todos».');
+  await expect(grupos).toContainText('Asígnalos desde «Todos».');
   await grupos.getByPlaceholder('Buscar grupos…').fill('zzz');
   await expect(grupos).toContainText('Ningún grupo coincide con el filtro.');
 });

@@ -1,13 +1,10 @@
 <!-- La misma barra y la misma tabla que los agentes de un grupo (`agent-channel-table`): la relación vista desde el otro
      lado. -->
 <div class="assign">
-  <div class="assign__bar">
-    <span id="agent-assignment-filter" class="visually-hidden">{{ 'agents.form.assigned.filter_label' | translate }}</span>
-    <sc-selectbutton size="sm" [options]="filterOptions()" optionValue="value" [value]="filter()"
-      (valueChange)="filter.set($any($event))" [allowEmpty]="false" ariaLabelledBy="agent-assignment-filter" />
-    <sc-search class="assign__search" [placeholder]="'agents.form.assigned.filter_placeholder' | translate"
-      [clearAriaLabel]="'labels.clear_search' | translate" [value]="query()" (valueChange)="query.set($event)" />
-  </div>
+  <!-- La barra común de las tablas de asignar (DD-243): filtro, buscador y cifra. -->
+  <sc-assign-bar [(filter)]="filter" [(query)]="query" [count]="links().length"
+    [placeholder]="'agents.form.assigned.filter_placeholder' | translate"
+    [filterLabel]="'agents.form.assigned.filter_label' | translate" />
   <span class="visually-hidden" aria-live="polite">{{ announcement() }}</span>
   <!-- Mide lo que todas sus filas, con el pie de la pantalla de tope: al filtrar o buscar no encoge (no baila), y con
        pocos grupos no se estira hasta el fondo con un hueco en blanco (`[filasReservadas]` de `scLlegaAlPie`). -->

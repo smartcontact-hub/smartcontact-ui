@@ -67,6 +67,7 @@
             [style]="editorStyle"
             [formats]="formatos()"
             [placeholder]="editorPlaceholder()"
+            (focusout)="dejarContenido($event)"
           >
             <ng-template #header>
               <span class="ql-formats">
@@ -104,6 +105,7 @@
         <sc-agent-assignment-table
           [agents]="agentsStore.agents()"
           [assigned]="form().agentIds"
+          [editing]="mode() === 'edit'"
           rowAriaKey="templates.form.agents_row_aria"
           (assignedChange)="update('agentIds', $event)"
         />

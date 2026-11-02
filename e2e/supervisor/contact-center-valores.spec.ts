@@ -132,6 +132,8 @@ test('Contact Center › Agentes habla como la ficha de agente y trae los valore
     await expect(interruptor(page, nombre), nombre).toBeChecked();
   }
   await expect(page.locator('#agentes-iframe-url')).toHaveValue('');
+  // No se copia al alta: la siguen en vivo los agentes con el iframe «General», y su ayuda lo dice (SISMAC-4062).
+  await expect(page.locator('#agentes-iframe-url')).toHaveAccessibleDescription(/iframe «General»; si la cambias, les cambia a todos/);
   // «Llamadas internas» y el título de la URL eran de la maqueta: la ficha de agente no los tiene.
   await expect(page.getByText('Llamadas internas')).toHaveCount(0);
   await expect(page.getByText('Título (opcional)')).toHaveCount(0);

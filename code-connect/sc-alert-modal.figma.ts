@@ -10,6 +10,11 @@ const variant = figma.selectedInstance.getEnum("Variant", {
   Warning: "warning",
   Error: "error",
 })
+// La superficie blanca (Plain) es el confirm de antes, para lo que decide el usuario; teñida es la de siempre (DD-242).
+const surface = figma.selectedInstance.getEnum("Surface", {
+  Tinted: "",
+  Plain: "\n    surface: 'plain',",
+})
 // El título, el icono y la X se editan en la instancia de Custom modal que lleva dentro; el mensaje va en su hueco.
 const shell = figma.selectedInstance.findInstance("Custom modal")
 const title = shell.getString("Edit header")
@@ -23,7 +28,7 @@ export default {
   id: "alert-modal",
   example: figma.code`const ref = this.dynamicDialog.open(ScAlertModalComponent, {
   inputValues: {
-    variant: '${variant}',
+    variant: '${variant}',${surface}
     title: '${title}',
     message: '${message}',
     actionLabel: '…',

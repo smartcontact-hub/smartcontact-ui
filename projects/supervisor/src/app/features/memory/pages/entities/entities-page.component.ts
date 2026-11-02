@@ -240,6 +240,7 @@ export class EntitiesPageComponent {
   private async confirmDelete(entity: Entity): Promise<void> {
     const accepted = await this.alertModal({
       variant: 'error',
+      surface: 'plain',
       title: this.translate.instant('memory.entities.delete_title'),
       message: this.translate.instant('memory.entities.delete_body', { name: entity.name }),
       actionLabel: this.translate.instant('common.delete'),

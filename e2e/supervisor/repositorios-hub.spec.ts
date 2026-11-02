@@ -15,7 +15,8 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  *   5. con el teclado, el foco entra en el panel y vuelve a su tarjeta;
  *   6. acoplado, no tapa ninguna tarjeta y va sin velo; si las taparía, lleva velo y es un diálogo;
  *   7. todo cabe sin desplazar a 1440 × 800;
- *   8. el buscador vacío ofrece los últimos repositorios abiertos, el último primero.
+ *   8. el buscador vacío ofrece los últimos repositorios abiertos, el último primero, y elegir uno entra en él;
+ *   9. los ocho que el COA da por «Próximamente» (SISMAC-4064) llevan su cifra y esa marca, y no abren panel (DD-245).
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -97,12 +98,12 @@ test('el panel: lo abre su tarjeta con sus entradas; otra lo cambia; lo cierran 
   await expect(panel(page).locator('.entrada')).toHaveCount(agendas);
 
   // Otra tarjeta cambia el panel.
-  await tarjeta(page, 'Variables').click();
-  await expect(page.locator('.p-drawer-title')).toHaveText('Variables');
+  await tarjeta(page, 'Equipos').click();
+  await expect(page.locator('.p-drawer-title')).toHaveText('Equipos');
   await expect(agenda).toHaveAttribute('aria-expanded', 'false');
 
   // La misma tarjeta lo cierra.
-  await tarjeta(page, 'Variables').click();
+  await tarjeta(page, 'Equipos').click();
   await expect(page.locator('.repo-card--selected')).toHaveCount(0);
   await expect(panel(page)).toHaveCount(0);
 
@@ -171,21 +172,53 @@ test('todo a la vista: a 1440 × 800 el hub no desplaza', async ({ page }) => {
   expect(sobra).toBe(0);
 });
 
-test('el buscador vacío ofrece los últimos repositorios abiertos, el último primero; elegir uno lo busca', async ({
+test('el buscador vacío ofrece los últimos repositorios abiertos, el último primero; elegir uno entra en él', async ({
   page,
 }) => {
   await goto(page, 'admin/repositorios');
   await tarjeta(page, 'Agendas').click();
-  await tarjeta(page, 'Labels').click();
+  await tarjeta(page, 'Equipos').click();
   await page.keyboard.press('Escape');
 
   await page.getByRole('searchbox').focus();
   const recientes = page.locator('.hub-recientes__item');
   await expect(recientes).toHaveCount(2);
-  await expect(recientes.nth(0)).toContainText('Labels');
+  await expect(recientes.nth(0)).toContainText('Equipos');
   await expect(recientes.nth(1)).toContainText('Agendas');
 
+  // COA SISMAC-4064: «Al pulsar sobre uno de los elementos recientes se accede al repositorio correspondiente».
   await recientes.nth(1).click();
-  await expect(page.getByRole('searchbox')).toHaveValue('Agendas');
-  await expect(page.locator('.repo-card')).toHaveCount(1);
+  await expect(page).toHaveURL(/\/admin\/agendas$/);
+});
+
+test('los ocho «Próximamente» del COA: con su cifra y la marca, y no abren panel', async ({ page }) => {
+  await goto(page, 'admin/repositorios');
+  const pronto = page.locator('.repo-card--soon');
+  await expect(pronto.locator('.repo-card__name')).toHaveText([
+    'Horarios',
+    'Email',
+    'Labels',
+    'Variables',
+    'Entidades',
+    'Intenciones',
+    'Entidades IA',
+    'Clasificación IA',
+  ]);
+  await expect(pronto.locator('.repo-card__soon')).toHaveText(Array(8).fill('Próximamente'));
+  // Todas las tarjetas llevan su cifra (COA, «Contadores»), también estas.
+  await expect(pronto.locator('.repo-card__count')).toHaveText(Array(8).fill(/^\d+$/));
+
+  const horarios = tarjeta(page, 'Horarios');
+  await expect(horarios).toHaveAttribute('aria-disabled', 'true');
+  await expect(horarios).not.toHaveAttribute('aria-expanded');
+  // `force`: Playwright no pulsa lo que lleva `aria-disabled`, pero el ratón de una persona sí llega.
+  await horarios.click({ force: true });
+  await expect(panel(page)).toHaveCount(0);
+  await expect(page.locator('.repo-card--selected')).toHaveCount(0);
+
+  // Con un panel abierto, pulsar una de estas cuenta como fuera: lo cierra.
+  await tarjeta(page, 'Agendas').click();
+  await expect(panel(page)).toBeVisible();
+  await horarios.click({ force: true });
+  await expect(panel(page)).toHaveCount(0);
 });

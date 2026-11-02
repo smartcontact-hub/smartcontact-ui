@@ -1525,6 +1525,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
     }
     const guardar = await this.alertModal({
       variant: 'info',
+      surface: 'plain',
       title: this.translate.instant('groups.form.repositories_leave.title'),
       message: this.translate.instant('groups.form.repositories_leave.body'),
       actionLabel: this.translate.instant('common.save'),

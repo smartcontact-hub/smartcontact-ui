@@ -17,9 +17,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   ScConfirmService,
   ScEmptyStateComponent as EmptyStateComponent,
-  ScSelectButtonComponent as SelectButtonComponent,
   ScSelectComponent as SelectComponent,
-  ScSearchComponent as SearchComponent,
   ScToggleSwitchComponent as ToggleSwitchComponent,
 } from '@smartcontact-hub/components';
 import {
@@ -33,7 +31,7 @@ import {
 import { TooltipModule } from 'primeng/tooltip';
 import { LlegaAlPieDirective } from '@core/directives';
 
-import { PresenceAvatarComponent, ScLinkButtonComponent } from '@shared/components';
+import { AssignBarComponent, PresenceAvatarComponent, ScLinkButtonComponent } from '@shared/components';
 import { ScCheckboxComponent as CheckboxComponent } from '@smartcontact-hub/components';
 
 import {
@@ -106,13 +104,12 @@ export function columnsRem(
   standalone: true,
   imports: [
     LlegaAlPieDirective,
-    SelectButtonComponent,
     SelectComponent,
     CheckboxComponent,
     DatatableComponent,
     EmptyStateComponent,
     PresenceAvatarComponent,
-    SearchComponent,
+    AssignBarComponent,
     ScLinkButtonComponent,
     ToggleSwitchComponent,
     TooltipModule,
@@ -246,10 +243,6 @@ export class AgentChannelTableComponent {
 
   protected readonly query = signal('');
   protected readonly filter = linkedSignal<'all' | 'assigned' | 'unassigned'>(() => this.groupId() === 0 ? 'all' : 'assigned');
-  protected readonly filterOptions = computed(() => {
-    this.currentLang();
-    return ['all', 'assigned', 'unassigned'].map(value => ({ value, label: this.translate.instant(`groups.form.assigned.filter_${value}`) }));
-  });
   protected readonly announcement = signal('');
   protected readonly pending = signal(false);
   private readonly agentById = computed(() => new Map(this.availableAgents().map(agent => [agent.id, agent])));

@@ -208,6 +208,7 @@ export class SistemaPageComponent {
   protected async resetData(): Promise<void> {
     const accepted = await this.alertModal({
       variant: 'error',
+      surface: 'plain',
       title: this.translate.instant('config.sistema.data.confirm_title'),
       message: this.translate.instant('config.sistema.data.confirm_body'),
       actionLabel: this.translate.instant('config.sistema.data.reset_button'),

@@ -30,7 +30,7 @@ import {
 } from '@smartcontact-hub/icons';
 
 import { ScButtonComponent } from '../button/sc-button.component';
-import type { ScButtonVariant } from '../../core/types/button.types';
+import type { ScButtonIconSize, ScButtonVariant } from '../../core/types/button.types';
 import type { ScDynamicDialogConfig } from '../dynamic-dialog/sc-dynamic-dialog.service';
 import { SC_CUSTOM_MODAL_TRANSLATIONS } from './i18n/sc-custom-modal.translations';
 
@@ -118,6 +118,11 @@ export class ScCustomModalComponent {
   readonly dismissableMask = input(false, { transform: booleanAttribute });
   /** Tono de la X; `sc-alert-modal` le pasa el de su variante, como la Severity del Kit. */
   readonly closeVariant = input<ScButtonVariant>('secondary');
+  /**
+   * Extensión nuestra: talla del aspa de la X; `sc-alert-modal` en blanco le pasa `sm`, la del confirm de antes
+   * (DD-242).
+   */
+  readonly closeIconSize = input<ScButtonIconSize>('lg');
   /** Con `[(visible)]`: el modal ha terminado de abrirse. */
   readonly shown = output<void>();
 
