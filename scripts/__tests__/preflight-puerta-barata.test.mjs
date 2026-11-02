@@ -720,9 +720,9 @@ const POPPINS = {
  * Un worktree como los de verdad: `package.json`, su lock y un `node_modules` que es un ENLACE a otro de fuera, con
  * primeng y los paquetes de `instalados` (nombre → versión).
  */
-function worktreeConEnlace({ dependencies = {}, devDependencies = {}, fijados = {}, instalados = {} }) {
+function worktreeConEnlace({ dependencies = {}, devDependencies = {}, fijados = {}, instalados = {}, principal = 'principal' }) {
   const raiz = mkdtempSync(join(tmpdir(), 'sc-faltan-'));
-  const compartido = join(raiz, 'principal', 'node_modules');
+  const compartido = join(raiz, principal, 'node_modules');
   const trabajo = join(raiz, 'worktree');
   for (const [nombre, version] of Object.entries({ primeng: '21.0.0', ...instalados })) {
     mkdirSync(join(compartido, nombre), { recursive: true });
@@ -803,7 +803,7 @@ test('dependenciasInstaladas: el que falta sale con su receta, que comprueba la 
     assert.ok(p.includes(`npm pack @fontsource/poppins@5.3.0 --json | grep -qF '"${POPPINS.integrity}"' &&`), p);
     assert.ok(p.includes('tar -xzf fontsource-poppins-5.3.0.tgz -C paquete --strip-components=1 &&'), p);
     // El destino es el `node_modules` de verdad, con el enlace resuelto: desempaquetar «en el worktree» no serviría.
-    assert.ok(p.includes(`mv paquete ${JSON.stringify(join(compartido, '@fontsource/poppins'))}`), p);
+    assert.ok(p.includes(`mv paquete '${join(compartido, '@fontsource/poppins')}'`), p);
     assert.ok(!p.includes(trabajo), `nada apunta dentro del worktree:\n${p}`);
   } finally {
     rmSync(raiz, { recursive: true, force: true });
@@ -836,8 +836,8 @@ test('dependenciasInstaladas: si el lock no fija el paquete, lo dice en vez de i
 });
 
 test('recetaDePaquete: el .tgz se llama como lo escribe npm pack (sin la @ y con la barra del scope cambiada por un guion)', () => {
-  assert.match(recetaDePaquete({ nombre: '@fontsource/poppins', version: '5.3.0', huella: 'h' }, '/nm'), /tar -xzf fontsource-poppins-5\.3\.0\.tgz -C paquete/);
-  assert.match(recetaDePaquete({ nombre: 'chart.js', version: '4.5.1', huella: 'h' }, '/nm'), /tar -xzf chart\.js-4\.5\.1\.tgz -C paquete/);
+  assert.match(recetaDePaquete({ nombre: '@fontsource/poppins', version: '5.3.0', huella: 'sha512-h' }, '/nm'), /tar -xzf fontsource-poppins-5\.3\.0\.tgz -C paquete/);
+  assert.match(recetaDePaquete({ nombre: 'chart.js', version: '4.5.1', huella: 'sha512-h' }, '/nm'), /tar -xzf chart\.js-4\.5\.1\.tgz -C paquete/);
 });
 
 test('recetaDePaquete: un alias pide al registro el paquete de verdad y lo deja con el nombre del alias', () => {
@@ -845,7 +845,7 @@ test('recetaDePaquete: un alias pide al registro el paquete de verdad y lo deja 
   assert.match(r, /\(el lock fija is-number@7\.0\.0\)/);
   assert.match(r, /npm pack is-number@7\.0\.0 --json/);
   assert.match(r, /tar -xzf is-number-7\.0\.0\.tgz /);
-  assert.match(r, /mv paquete "\/nm\/numero"$/);
+  assert.match(r, /mv paquete '\/nm\/numero'$/);
 });
 
 test('recetaDePaquete: sin huella en el lock, o con un origen que no es un registro, no da receta de npm pack', () => {
@@ -858,6 +858,34 @@ test('recetaDePaquete: sin huella en el lock, o con un origen que no es un regis
     assert.match(r, /tráelo a mano/, r);
     assert.doesNotMatch(r, /npm pack/, r);
   }
+});
+
+test('recetaDePaquete: lo que package.json pide de una URL, de git o de una carpeta no se pide al registro', () => {
+  for (const pide of ['https://example.com/x-1.0.0.tgz', 'git+https://github.com/o/x.git', 'github:o/x', 'o/x', 'file:../x']) {
+    const r = recetaDePaquete({ nombre: 'x', pide, version: '1.0.0', huella: 'sha512-x', origen: 'https://example.com/x-1.0.0.tgz' }, '/nm');
+    assert.match(r, /no de un registro: tráelo a mano/, `${pide}: ${r}`);
+    assert.doesNotMatch(r, /npm pack/, pide);
+  }
+  for (const pide of ['^1.0.0', '~1.0.0', '>=1 <2', '1.0.0', 'latest', 'npm:otro@^1.0.0']) {
+    assert.match(recetaDePaquete({ nombre: 'x', pide, version: '1.0.0', huella: 'sha512-x' }, '/nm'), /npm pack/, pide);
+  }
+});
+
+test('recetaDePaquete: nada del lock que no tenga la forma de npm entra en la receta (se pega en una terminal)', () => {
+  const buena = { nombre: 'x', version: '1.0.0', huella: 'sha512-x' };
+  for (const malo of [
+    { version: '1.0.0; touch PWNED' },
+    { version: '1.0.0$(touch PWNED)' },
+    { huella: "sha512-x' ; touch PWNED ; echo '" },
+    { paquete: 'x`touch PWNED`' },
+    { nombre: 'x;touch PWNED', paquete: 'x' },
+    { nombre: '../../fuera' },
+  ]) {
+    const r = recetaDePaquete({ ...buena, ...malo }, '/nm');
+    assert.match(r, /no tienen la forma de npm: no se pegan en una terminal; tráelo a mano/, JSON.stringify(malo));
+    assert.doesNotMatch(r, /npm pack|PWNED|fuera/, JSON.stringify(malo));
+  }
+  assert.match(recetaDePaquete({ ...buena, version: '1.0.0-beta.2+build.7' }, '/nm'), /npm pack x@1\.0\.0-beta\.2\+build\.7 /);
 });
 
 /* La receta, ejecutada. Un `npm` de mentira delante en el PATH hace lo que `npm pack --json`: deja el .tgz (con `package/`
@@ -921,7 +949,7 @@ test('la receta, ejecutada: una carpeta a medias (sin package.json) sale del com
   writeFileSync(join(destino, 'resto.css'), '/* de una extracción a medias */');
   try {
     const [problema] = dependenciasInstaladas(trabajo);
-    assert.ok(problema.includes(`&& mv ${JSON.stringify(destino)} a-medias && mv paquete`), problema);
+    assert.ok(problema.includes(`&& mv '${destino}' a-medias && mv paquete`), problema);
     const r = correrReceta(problema, { fuente, huella: POPPINS.integrity });
     try {
       assert.equal(r.status, 0, r.salida);
@@ -931,6 +959,20 @@ test('la receta, ejecutada: una carpeta a medias (sin package.json) sale del com
     } finally {
       rmSync(r.dir, { recursive: true, force: true });
     }
+  } finally {
+    rmSync(raiz, { recursive: true, force: true });
+  }
+});
+
+test('la receta, ejecutada: una ruta con espacios, `$` y comillas simples llega tal cual, sin que el shell la toque', () => {
+  const { raiz, trabajo, compartido } = worktreeConEnlace({ ...FALTA_POPPINS, principal: "prin $HOME 'cipal" });
+  const fuente = paqueteDelRegistro(raiz);
+  try {
+    const [problema] = dependenciasInstaladas(trabajo);
+    const r = correrReceta(problema, { fuente, huella: POPPINS.integrity });
+    rmSync(r.dir, { recursive: true, force: true });
+    assert.equal(r.status, 0, r.salida);
+    assert.ok(existsSync(join(compartido, '@fontsource', 'poppins', 'package.json')), `${compartido}\n${problema}`);
   } finally {
     rmSync(raiz, { recursive: true, force: true });
   }
