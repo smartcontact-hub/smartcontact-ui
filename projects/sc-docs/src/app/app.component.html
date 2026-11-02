@@ -51,6 +51,11 @@
         </button>
         <app-language-toggle />
         <app-theme-toggle [dark]="isDark()" (toggled)="toggleDark()" />
+        <!-- Como el «Give feedback» de Primer: abre una issue en el repositorio con la página ya puesta. -->
+        <a class="demo-top__search demo-top__feedback" [href]="feedback()" target="_blank" rel="noopener">
+          <span class="sc-text-body-regular">{{ 'chrome.feedback' | translate }}</span>
+          <span class="demo-oculto">{{ 'chrome.newTab' | translate }}</span>
+        </a>
       </div>
     </header>
 

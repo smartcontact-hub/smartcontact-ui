@@ -2,6 +2,8 @@
   "chrome": {
     "brandSub": "Design Engineering",
     "search": "Search…",
+    "feedback": "Feedback",
+    "newTab": "(opens in a new tab)",
     "nav": {
       "sectionsAria": "Sections",
       "fundamentos": "Foundations",

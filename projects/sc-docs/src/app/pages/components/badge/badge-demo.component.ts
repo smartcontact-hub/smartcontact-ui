@@ -38,7 +38,7 @@ export class BadgeDemoComponent {
     tag: 'sc-badge',
     title: 'Badge',
     description:
-      'Contador / indicador numérico compacto. Wrapper de PrimeNG con variantes de marca y cuatro tamaños.',
+      'Contador / indicador numérico compacto. Con variantes de marca y cuatro tamaños.',
     argTypes: [
       { name: 'label', control: { kind: 'text' }, description: 'Contenido del badge.' },
       {

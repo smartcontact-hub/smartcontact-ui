@@ -144,7 +144,7 @@ export class ButtonDemoComponent {
     tag: 'sc-button',
     title: 'Button',
     description:
-      'Botón de acción. Wrapper de PrimeNG con todo lo que trae el botón del Kit: nueve severidades, cuatro ' +
+      'Botón de acción. Con todo lo que trae el botón del Kit: nueve severidades, cuatro ' +
       'apariencias, tres tamaños, redondo, con sombra e iconos Material. Antes de hacer un botón a mano, búscalo aquí.',
     argTypes: [
       // En el orden del panel del Kit (button-small, button y button-large), con su nombre de Figma debajo. «State»

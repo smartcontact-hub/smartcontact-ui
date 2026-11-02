@@ -143,6 +143,13 @@ export class AppComponent {
 
   /** La ruta sin consulta ni fragmento: la que decide sección, lateral y título. */
   protected readonly ruta = computed(() => this.url().split(/[?#]/)[0] || '/');
+  /** La issue de «Feedback», con la página en el título y su dirección en el cuerpo: quien la abre no tiene que contarla. */
+  protected readonly feedback = computed(() => {
+    const r = this.ruta();
+    const titulo = encodeURIComponent(`sc-docs: ${r}`);
+    const cuerpo = encodeURIComponent(`Página: https://sc-doc.pages.dev/#${r}\n\n`);
+    return `https://github.com/smartcontact-hub/smartcontact-ui/issues/new?title=${titulo}&body=${cuerpo}`;
+  });
 
   /**
    * ¿Es una story suelta (`?solo=1`)? Entonces no hay cabecera ni lateral. Antes de la primera navegación `router.url`

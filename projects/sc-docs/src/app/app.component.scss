@@ -168,6 +168,11 @@
     }
   }
 
+  /* «Feedback» es un enlace con la caja del buscador: sin el subrayado de los enlaces. */
+  &__feedback {
+    text-decoration: none;
+  }
+
   &__kbd {
     padding: 0 var(--sc-spacing-0-375);
     border: 1px solid var(--sc-border-default);
@@ -467,7 +472,8 @@
     }
 
     &__search-label,
-        &__kbd {
+        &__kbd,
+    &__feedback {
       display: none;
     }
 

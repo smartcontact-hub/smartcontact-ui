@@ -28,7 +28,7 @@ export class ProgressBarDemoComponent {
     tag: 'sc-progressbar',
     title: 'Progress Bar',
     description:
-      'Barra de progreso horizontal. Wrapper de PrimeNG con modo determinado (valor + %) o indeterminado (animación continua).',
+      'Barra de progreso horizontal. Con modo determinado (valor + %) o indeterminado (animación continua).',
     argTypes: [
       { name: 'value', control: { kind: 'number', min: 0, max: 100, step: 5 } },
       { name: 'showValue', control: { kind: 'boolean' } },

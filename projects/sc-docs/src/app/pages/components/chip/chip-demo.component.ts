@@ -47,7 +47,7 @@ export class ChipDemoComponent {
     tag: 'sc-chip',
     title: 'Chip',
     description:
-      'Etiqueta compacta interactiva (quitable, con icono). Variante categórica `label`: pastilla tintada con los 9 colores del DS (§4.1). Wrapper de PrimeNG.',
+      'Etiqueta compacta interactiva (quitable, con icono). Variante categórica `label`: pastilla tintada con los 9 colores del DS (§4.1).',
     argTypes: [
       { name: 'label', control: { kind: 'text' } },
       { name: 'icon', control: { kind: 'text' }, description: 'Nombre Material (p.ej. check).' },

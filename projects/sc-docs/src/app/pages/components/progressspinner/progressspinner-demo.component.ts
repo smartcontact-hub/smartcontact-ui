@@ -26,7 +26,7 @@ export class ProgressSpinnerDemoComponent {
     tag: 'sc-progressspinner',
     title: 'Progress Spinner',
     description:
-      'Spinner de carga indeterminado. Wrapper de PrimeNG; el trazo, el relleno y la duración de la animación son configurables.',
+      'Spinner de carga indeterminado. El trazo, el relleno y la duración de la animación son configurables.',
     argTypes: [
       { name: 'strokeWidth', control: { kind: 'text' }, description: 'Grosor del trazo (p.ej. 2)' },
       { name: 'fill', control: { kind: 'text' }, description: 'Color de relleno del círculo' },

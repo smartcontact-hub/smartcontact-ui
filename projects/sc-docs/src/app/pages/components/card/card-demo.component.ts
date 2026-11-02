@@ -34,7 +34,7 @@ export class CardDemoComponent {
     tag: 'sc-card',
     title: 'Card',
     description:
-      'Tarjeta contenedora. Wrapper de PrimeNG con cabecera/subcabecera e icono de cabecera opcionales; el cuerpo es contenido proyectado que hereda tipografía y tokens del tema.',
+      'Tarjeta contenedora. Con cabecera/subcabecera e icono de cabecera opcionales; el cuerpo es contenido proyectado que hereda tipografía y tokens del tema.',
     argTypes: [
       { name: 'header', control: { kind: 'text' } },
       { name: 'subheader', control: { kind: 'text' } },

@@ -19,7 +19,8 @@ import { EstadoComponenteComponent } from './estado-componente.component';
     @let c = componente();
     <div class="pieza">
       <p class="pieza__titulo sc-text-body-semibold">Angular <sc-icon name="code" [size]="20" /></p>
-      <app-estado-componente [estado]="c" explicado />
+      <!-- El motivo solo cuando dice algo que hacer: «Listo» ya lo cuentan la etiqueta y la tarjeta de Figma. -->
+      <app-estado-componente [estado]="c" [explicado]="c.estado !== 'ready'" />
       <p class="pieza__enlaces sc-text-body-regular">
         @if (c.fuente) {
           <a [href]="repo + c.fuente" target="_blank" rel="noopener">Código<span class="oculto"> (en otra pestaña)</span></a>
@@ -114,8 +115,8 @@ export class FichaPiezasComponent {
   readonly componente = input.required<ComponenteContrato>();
   protected readonly repo = REPO_BLOB;
 
-  /** El primer módulo de PrimeNG que envuelve (`primeng/inputtext, primeng/iconfield` → `inputtext`), o `null`. */
+  /** El módulo de PrimeNG que envuelve de verdad (`primengPrincipal`, de `audit:components`), o `null`. */
   protected moduloPrimeng(): string | null {
-    return /primeng\/([a-z0-9-]+)/.exec(this.componente().primengBase)?.[1] ?? null;
+    return this.componente().primengPrincipal;
   }
 }

@@ -70,7 +70,7 @@ export class PanelDemoComponent {
     tag: 'sc-panel',
     title: 'Panel',
     description:
-      'Panel contenedor con cabecera opcional y colapso. Wrapper de PrimeNG; el cuerpo es contenido proyectado.',
+      'Panel contenedor con cabecera opcional y colapso. El cuerpo es contenido proyectado.',
     argTypes: [
       { name: 'header', control: { kind: 'text' } },
       { name: 'toggleable', control: { kind: 'boolean' } },

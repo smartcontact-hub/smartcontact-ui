@@ -12,7 +12,10 @@ import { StorySnippetComponent } from './story-snippet.component';
 import { StoryMatrizComponent, type EjesUrl } from './story-matriz.component';
 import { ComponentApiService, trozosDeCuando } from './component-api.service';
 import { FichaPiezasComponent } from './ficha-piezas.component';
-import { FichaRelacionadosComponent } from './ficha-relacionados.component';
+import { FichaAccesibilidadComponent } from './ficha-accesibilidad.component';
+import { FichaPautasComponent } from './ficha-pautas.component';
+import { FichaPestanasComponent, PESTANAS_FICHA, type PestanaFicha } from './ficha-pestanas.component';
+import { TextoFichaComponent } from './texto-ficha.component';
 import { ejesCandidatos } from './matriz.core.mjs';
 import { codificarArgs, decodificarArgs, slugHistoria, urlDeHistoria } from './story-url';
 import { ScArgs, StoryControlsContext, StoryDef, StoryMeta } from './story.types';
@@ -25,8 +28,9 @@ const TEMAS_URL: readonly TemaUrl[] = ['claro', 'oscuro', 'comparar'];
  * derecha (`story-panel.component.ts`), fijo al bajar; debajo, a todo el ancho, la tabla de API. El demo declara las
  * stories como `<ng-template>` y pasa `meta` + `stories`.
  *
- * Apilado (no por pestañas) a propósito: una página = un componente con TODO a la vista, y así los `data-testid` de los
- * ejemplos siguen en el DOM (los e2e de métrica del Kit los miden).
+ * Tres pestañas, como Primer (`?pestana=`): «Resumen» es la ficha de siempre, con TODAS las stories apiladas (no una por
+ * pestaña: así los `data-testid` de los ejemplos siguen en el DOM y los e2e de métrica del Kit los miden), y es la de
+ * por defecto; «Pautas» y «Accesibilidad» leen lo que el repo ya sabe (`ficha-pautas`, `ficha-accesibilidad`).
  *
  * Cada story tiene DIRECCIÓN (`story-url.core.mjs`): `?historia=<nombre>` baja hasta ella, `&args=` siembra el
  * Playground y `&solo=1` pinta esa story sola, sin la barra lateral ni el resto de la ficha: es lo que abren «abrir
@@ -35,8 +39,10 @@ const TEMAS_URL: readonly TemaUrl[] = ['claro', 'oscuro', 'comparar'];
 @Component({
   selector: 'app-story-host',
   imports: [
+    FichaAccesibilidadComponent,
+    FichaPautasComponent,
+    FichaPestanasComponent,
     FichaPiezasComponent,
-    FichaRelacionadosComponent,
     NgTemplateOutlet,
     StoryAnatomyComponent,
     StoryCanvasComponent,
@@ -44,6 +50,7 @@ const TEMAS_URL: readonly TemaUrl[] = ['claro', 'oscuro', 'comparar'];
     StoryPanelComponent,
     StorySnippetComponent,
     StoryPropsTableComponent,
+    TextoFichaComponent,
   ],
   styleUrl: './storybook.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -79,16 +86,19 @@ const TEMAS_URL: readonly TemaUrl[] = ['claro', 'oscuro', 'comparar'];
       <div class="sb-host">
         <!-- El panel de controles acompaña a las stories y no a la referencia: la API va debajo, a todo el ancho, y el
              panel deja de seguir al bajar al llegar a ella. -->
-        <div class="sb-host__zona" [class.sb-host__zona--con-panel]="hayControles()">
+        <div class="sb-host__zona" [class.sb-host__zona--con-panel]="hayControles() && pestana() === 'resumen'">
           <div class="sb-host__contenido">
             <header class="sb-host__head">
               <h1>
                 {{ meta().title ?? meta().tag }}
                 <span class="sb-host__tag">&lt;{{ meta().tag }}&gt;</span>
               </h1>
-              @if (meta().description) {
-                <p class="sb-host__desc sc-text-h3-regular">{{ meta().description }}</p>
+              @if (meta().description; as d) {
+                <app-texto-ficha class="sb-host__desc sc-text-h3-regular" [texto]="d" plegable [palabras]="15" />
               }
+              <!-- Resumen, Pautas y Accesibilidad, como las pestañas de Primer bajo el título. -->
+              <app-ficha-pestanas class="sb-host__pestanas" [activa]="pestana()" />
+              @if (pestana() === 'resumen') {
               <!-- «Cuándo se usa» va ARRIBA: es la pregunta que se hace antes que ninguna otra («¿es este o es otro?»).
                    Al final de la ficha, tras todas las stories, quedaba a 6.000 px en la de Button. -->
               @if (cuando(); as cuando) {
@@ -115,8 +125,14 @@ const TEMAS_URL: readonly TemaUrl[] = ['claro', 'oscuro', 'comparar'];
                    otra pantalla relacionada). Sin contenido proyectado, no pinta nada — las otras
                    páginas no cambian. -->
               <ng-content select="[sbHeaderExtra]" />
+              }
             </header>
 
+            @if (pestana() === 'pautas' && componente(); as c) {
+              <app-ficha-pautas [componente]="c" />
+            } @else if (pestana() === 'accesibilidad' && componente(); as c) {
+              <app-ficha-accesibilidad [componente]="c" />
+            } @else if (pestana() === 'resumen') {
             @for (s of stories(); track s.name) {
               <section
                 class="sb-host__story"
@@ -124,8 +140,8 @@ const TEMAS_URL: readonly TemaUrl[] = ['claro', 'oscuro', 'comparar'];
                 [class.sb-host__story--enlazada]="slug(s) === historiaUrl()"
               >
                 <h2 class="sb-host__section-title sb-host__h2 sc-text-h2-semibold">{{ s.name }}</h2>
-                @if (s.description) {
-                  <p class="sb-host__story-desc sc-text-body-regular">{{ s.description }}</p>
+                @if (s.description; as d) {
+                  <app-texto-ficha class="sb-host__story-desc sc-text-body-regular" [texto]="d" plegable />
                 }
 
                 @if (s.playground) {
@@ -162,8 +178,7 @@ const TEMAS_URL: readonly TemaUrl[] = ['claro', 'oscuro', 'comparar'];
                 >
                   <h2 class="sb-host__section-title sb-host__h2 sc-text-h2-semibold">Todas las combinaciones</h2>
                   <p class="sb-host__story-desc sc-text-body-regular">
-                    El Playground con cada valor de hasta tres controles a la vez. Los demás van como estén arriba: pon ahí
-                    un texto muy largo o enciende «loading», y se ve en todas las casillas.
+                    Cada valor de hasta tres controles a la vez; el resto, como esté en el Playground.
                   </p>
                   <app-story-matriz
                     [meta]="meta()"
@@ -176,10 +191,10 @@ const TEMAS_URL: readonly TemaUrl[] = ['claro', 'oscuro', 'comparar'];
                 </section>
               }
             }
-
+            }
           </div>
 
-          @if (hayControles()) {
+          @if (hayControles() && pestana() === 'resumen') {
             <app-story-panel
               [argTypes]="meta().argTypes"
               [base]="meta().defaultArgs"
@@ -191,20 +206,11 @@ const TEMAS_URL: readonly TemaUrl[] = ['claro', 'oscuro', 'comparar'];
           }
         </div>
 
-        <section class="sb-host__story sb-host__api">
-          <h2 class="sb-host__section-title sb-host__h2 sc-text-h2-semibold">API</h2>
-          <app-story-props-table [miembros]="contrato()" [error]="apiError()" />
-        </section>
-
-        <!-- Relacionados, derivados del contrato: con qué se confunde (lo que nombra su «cuándo»), de qué está hecho y
-             dónde aparece. Sin ninguno, no hay sección. -->
-        @if (componente(); as c) {
-          @if (c.relaciones.alternativas.length + c.relaciones.usa.length + c.relaciones.usadoEn.length) {
-            <section class="sb-host__story">
-              <h2 class="sb-host__section-title sb-host__h2 sc-text-h2-semibold">Relacionados</h2>
-              <app-ficha-relacionados [componente]="c" />
-            </section>
-          }
+        @if (pestana() === 'resumen') {
+          <section class="sb-host__story sb-host__api">
+            <h2 class="sb-host__section-title sb-host__h2 sc-text-h2-semibold">API</h2>
+            <app-story-props-table [miembros]="contrato()" [error]="apiError()" />
+          </section>
         }
       </div>
     }
@@ -228,6 +234,11 @@ export class StoryHostComponent {
 
   // ── La dirección de la página: lo que trae la URL ──────────────────────────────────────────────
   private readonly qp = toSignal(this.route.queryParamMap, { initialValue: convertToParamMap({}) });
+  /** La pestaña abierta (`?pestana=pautas`); sin parámetro, o con uno que no existe, «Resumen». */
+  protected readonly pestana = computed<PestanaFicha>(() => {
+    const p = this.qp().get('pestana');
+    return PESTANAS_FICHA.some((x) => x.id === p) ? (p as PestanaFicha) : 'resumen';
+  });
   /** El segmento de la ruta de esta ficha (`button`): con él se escriben los enlaces. */
   protected readonly pagina = computed(() => this.route.snapshot.routeConfig?.path ?? null);
   protected readonly solo = computed(() => this.qp().get('solo') === '1');

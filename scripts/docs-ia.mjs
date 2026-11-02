@@ -445,6 +445,33 @@ function sitemapXml(fichas, fund, fecha) {
   ].join('\n');
 }
 
+/**
+ * Las decisiones (DD) que nombran a cada componente, de la más nueva a la más vieja, para la pestaña «Pautas» de su
+ * ficha: una DD cuenta si cita su selector entre comillas invertidas (`sc-button`, `<sc-button>`). Se lee de
+ * `docs/DECISIONS.md`, un `## DD-NNN · fecha — título` por decisión; si algún día se parte en un fichero por DD, esta
+ * es la función que hay que tocar. PURA respecto al texto → testeable.
+ */
+export function decisionesPorSelector(decisiones, selectores) {
+  // Cada cabecera con su línea (para enlazar a `DECISIONS.md?plain=1#L<línea>`) y su texto hasta la siguiente.
+  const cabeceras = [...decisiones.matchAll(/^## (DD-\d+) · (\d{4}-\d{2}-\d{2}) — (.+)$/gm)].map((m, i, todas) => ({
+    id: m[1],
+    fecha: m[2],
+    titulo: m[3].trim(),
+    linea: decisiones.slice(0, m.index).split('\n').length,
+    texto: decisiones.slice(m.index, todas[i + 1]?.index ?? decisiones.length),
+  }));
+  const esc = (t) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const porSelector = {};
+  for (const sel of selectores) {
+    const re = new RegExp('`<?' + esc(sel) + '[\\s>`]');
+    porSelector[sel] = cabeceras
+      .filter((c) => re.test(c.texto))
+      .sort((a, b) => b.fecha.localeCompare(a.fecha) || Number(b.id.slice(3)) - Number(a.id.slice(3)))
+      .map(({ id, fecha, titulo, linea }) => ({ id, fecha, titulo, linea }));
+  }
+  return porSelector;
+}
+
 // ── main ───────────────────────────────────────────────────────────────────────────────────────
 
 /** Todas las fichas, en memoria. `problemas` lista las que no se dejan leer. */
@@ -487,11 +514,15 @@ export function generar() {
   }
   const fund = fundamentos(fecha);
   const llms = llmsTxt(fichas, fecha, fund);
-  return { fichas, fundamentos: fund, problemas, entradas: entradas.length, llms, fecha };
+  const ddTxt = join(root, 'docs/DECISIONS.md');
+  const decisiones = existsSync(ddTxt)
+    ? decisionesPorSelector(readFileSync(ddTxt, 'utf8'), api.components.map((c) => c.selector))
+    : {};
+  return { fichas, fundamentos: fund, problemas, entradas: entradas.length, llms, fecha, decisiones };
 }
 
 /** `web`: lo que solo tiene sentido servido en el sitio (`robots.txt`, `sitemap.xml`); el paquete no lo lleva. */
-function escribir(dirBase, { fichas, fundamentos: fund, llms, fecha }, { web = false } = {}) {
+function escribir(dirBase, { fichas, fundamentos: fund, llms, fecha, decisiones }, { web = false } = {}) {
   const ia = join(dirBase, 'ia');
   mkdirSync(ia, { recursive: true });
   // Las fichas de componentes que ya no existen, fuera (las capturas, no: son de `docs:capturas`).
@@ -500,6 +531,9 @@ function escribir(dirBase, { fichas, fundamentos: fund, llms, fecha }, { web = f
   writeFileSync(join(dirBase, 'llms.txt'), llms);
   writeFileSync(join(dirBase, 'llms-full.txt'), llmsFull(llms, fichas, fund));
   if (web) {
+    // La pestaña «Pautas» de cada ficha lee de aquí sus decisiones (no se commitea: sale de DECISIONS.md en cada build).
+    mkdirSync(join(dirBase, 'components'), { recursive: true });
+    writeFileSync(join(dirBase, 'components/_decisiones.json'), JSON.stringify({ generado: fecha, porSelector: decisiones }, null, 1) + '\n');
     writeFileSync(join(dirBase, 'robots.txt'), robotsTxt());
     writeFileSync(join(dirBase, 'sitemap.xml'), sitemapXml(fichas, fund, fecha));
   }
