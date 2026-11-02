@@ -4899,10 +4899,8 @@
       "selector": "div[scFactRow]",
       "name": "fact-row",
       "primengBase": "—",
-      "estado": "experimental",
-      "faltas": [
-        "kit"
-      ],
+      "estado": "ready",
+      "faltas": [],
       "retirado": null,
       "cuando": "Para pares clave/valor que se leen de un vistazo (un resumen), en un `dl`. Un campo que se edita es `sc-field`; muchos datos en columnas, `sc-datatable`.",
       "fuente": "projects/ui-smartcontact/src/lib/components/fact-row/sc-fact-row.component.ts",
@@ -5987,10 +5985,8 @@
       "selector": "sc-icon-tile",
       "name": "icon-tile",
       "primengBase": "—",
-      "estado": "experimental",
-      "faltas": [
-        "kit"
-      ],
+      "estado": "ready",
+      "faltas": [],
       "retirado": null,
       "cuando": "Para dar a una fila de datos o a un título su icono con peso propio (un resumen). Un icono suelto junto a un texto es `sc-icon`; una persona, `sc-avatar`.",
       "fuente": "projects/ui-smartcontact/src/lib/components/icon-tile/sc-icon-tile.component.ts",
@@ -10266,10 +10262,8 @@
       "selector": "sc-subsection",
       "name": "subsection",
       "primengBase": "—",
-      "estado": "experimental",
-      "faltas": [
-        "kit"
-      ],
+      "estado": "ready",
+      "faltas": [],
       "retirado": null,
       "cuando": "Para un nivel más dentro de una sección, plegable si lo secundario estorba.",
       "fuente": "projects/ui-smartcontact/src/lib/components/subsection/sc-subsection.component.ts",

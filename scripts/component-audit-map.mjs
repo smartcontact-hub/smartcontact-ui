@@ -144,7 +144,8 @@ export const CUBIERTO_POR_NUESTRO = {
 
 /**
  * Los componentes que tienen MAESTRO en el Kit: una página «❖ Nombre» en el fichero del DS
- * (`khNq9dJKNi13pNllrqm6dx`), leídas por la API de Figma el 2026-10-09 (DD-190). Es la mitad del
+ * (`khNq9dJKNi13pNllrqm6dx`), leídas por la API de Figma el 2026-10-09 (DD-190) y releídas el 2026-11-02, que
+ * sumaron «❖ Summary» (los maestros de `icon-tile` y `fact-row`, entre otros del Supervisor). Es la mitad del
  * estado de un componente en sc-docs: «Ready» si tiene maestro en el Kit y página de demo,
  * «Experimental» si le falta algo, «Deprecated» si su clase lleva `@deprecated`.
  *
@@ -161,14 +162,23 @@ export const KIT_MAESTROS = new Set([
   'FileUpload', 'Breadcrumb', 'ContextMenu', 'Dock', 'Menu', 'Menubar', 'MegaMenu', 'PanelMenu', 'TieredMenu',
   'Message', 'Toast', 'Carousel', 'Galleria', 'Image', 'ImageCompare', 'Avatar', 'Badge', 'BlockUI', 'Chip',
   'Inplace', 'MeterGroup', 'ScrollTop', 'Skeleton', 'ProgressBar', 'ProgressSpinner', 'Tag', 'Terminal',
-  'Custom modal', 'Alert modal', 'Sidebar', 'Navmenu', 'Section',
+  'Custom modal', 'Alert modal', 'Sidebar', 'Navmenu', 'Section', 'Summary',
 ]);
 
-/** Componente del DS → su página del Kit, cuando el nombre no casa solo (el Kit escribe «Divide»). */
+/**
+ * Componente del DS → su página del Kit, cuando el nombre no casa solo (el Kit escribe «Divide»). `sc-group-popover`
+ * NO va aquí: su plantilla de Code Connect apunta al maestro genérico de «❖ Popover», no a uno suyo, y sin maestro
+ * propio sigue «experimental».
+ */
 export const KIT_ALIAS = {
   divider: 'Divide',
   'section-card': 'Section',
   avatargroup: 'Avatar',
+  // «❖ Summary»: los frames «icon-tile» (15482:72269) y «fact-row» (15483:99).
+  'icon-tile': 'Summary',
+  'fact-row': 'Summary',
+  // «❖ Section», en «Parts»: la pieza «.Subsection» (12610:23193), con la que se arma «Section».
+  subsection: 'Section',
 };
 
 /**

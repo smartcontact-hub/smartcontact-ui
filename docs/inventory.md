@@ -34,7 +34,7 @@
 ## Clasificación (auto-generada)
 
 <!-- @audit:components — TABLA GENERADA por `node scripts/component-audit.mjs --write`. NO editar a mano. -->
-**64 componentes** · 22 custom · 10 standard · 32 extended · 49 usados en Supervisor · estado (DD-190): 33 ready, 28 experimental, 3 deprecated.
+**64 componentes** · 22 custom · 10 standard · 32 extended · 49 usados en Supervisor · estado (DD-190): 36 ready, 25 experimental, 3 deprecated.
 
 | Componente | Tipo | Estado | PrimeNG base | API propia | Anidados | Demo | Usos en Supervisor |
 |---|---|---|---|---|---|---|---|
@@ -62,7 +62,7 @@
 | `sc-divider` | STANDARD | ready | primeng/divider | 3 inputs | — | ✓ | 22 |
 | `sc-drawer` | EXTENDED | ready | primeng/drawer | 11 inputs | — | ✓ | 3 |
 | `sc-empty-state` | CUSTOM | experimental (sin maestro en el Kit) | — | 4 inputs | sc-button | ✓ | 24 |
-| `div[scFactRow]` | CUSTOM | experimental (sin maestro en el Kit) | — | 5 inputs | — | ✓ | — |
+| `div[scFactRow]` | CUSTOM | ready | — | 5 inputs | — | ✓ | — |
 | `sc-field-label` | CUSTOM | experimental (sin maestro en el Kit ni demo) | — | 3 inputs | — | — | — |
 | `sc-field-msg` | CUSTOM | experimental (sin maestro en el Kit ni demo) | — | 2 inputs | — | — | — |
 | `sc-fileupload` | EXTENDED | ready | primeng/fileupload | 22 inputs | sc-field-msg | ✓ | 2 |
@@ -70,7 +70,7 @@
 | `sc-form-section-nav` | EXTENDED | experimental (sin maestro en el Kit) | primeng/tooltip | 9 inputs | sc-step-marker | ✓ | 6 |
 | `sc-gauge` | CUSTOM | experimental (sin maestro en el Kit) | — | 9 inputs | — | ✓ | 1 |
 | `sc-group-popover` | STANDARD | experimental (sin maestro en el Kit) | primeng/tooltip | 3 inputs | — | ✓ | 6 |
-| `sc-icon-tile` | CUSTOM | experimental (sin maestro en el Kit) | — | 3 inputs | — | ✓ | — |
+| `sc-icon-tile` | CUSTOM | ready | — | 3 inputs | — | ✓ | — |
 | `sc-impact-preview-dialog` | CUSTOM | experimental (sin maestro en el Kit) | — | 3 inputs | sc-custom-modal sc-button | ✓ | 1 |
 | `sc-inline-rename-cell` | CUSTOM | experimental (sin maestro en el Kit) | — | 2 inputs | — | ✓ | 2 |
 | `sc-inputgroup` | STANDARD | ready | primeng/inputgroup | 2 inputs | — | ✓ | 1 |
@@ -96,7 +96,7 @@
 | `sc-slot` | CUSTOM | experimental (sin maestro en el Kit) | — | 4 inputs | — | ✓ | 12 |
 | `sc-step-marker` | CUSTOM | experimental (sin maestro en el Kit ni demo) | — | 1 inputs | — | — | — |
 | `sc-sticky-form-header` | CUSTOM | deprecated | — | 4 inputs | sc-button | ✓ | 2 |
-| `sc-subsection` | CUSTOM | experimental (sin maestro en el Kit) | — | 6 inputs | — | ✓ | 29 |
+| `sc-subsection` | CUSTOM | ready | — | 6 inputs | — | ✓ | 29 |
 | `sc-tabs` | STANDARD | ready | primeng/tabs | 1 inputs | — | ✓ | 1 |
 | `sc-tag` | EXTENDED | ready | primeng/tag, primeng/tooltip | 8 inputs | — | ✓ | 28 |
 | `sc-textarea` | EXTENDED | ready | primeng/textarea | 20 inputs | sc-field-label sc-button sc-field-msg | ✓ | 7 |

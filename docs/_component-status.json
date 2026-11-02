@@ -1,6 +1,6 @@
 {
   "generated": "component-audit.mjs",
-  "summary": "64 componentes · 22 custom · 10 standard · 32 extended · 49 usados en Supervisor · estado (DD-190): 33 ready, 28 experimental, 3 deprecated.",
+  "summary": "64 componentes · 22 custom · 10 standard · 32 extended · 49 usados en Supervisor · estado (DD-190): 36 ready, 25 experimental, 3 deprecated.",
   "components": [
     {
       "name": "alert-modal",
@@ -869,11 +869,9 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "kit": false,
-      "estado": "experimental",
-      "faltas": [
-        "kit"
-      ],
+      "kit": true,
+      "estado": "ready",
+      "faltas": [],
       "retirado": null,
       "usedInSupervisor": 0,
       "cuando": "Para pares clave/valor que se leen de un vistazo (un resumen), en un `dl`. Un campo que se edita es `sc-field`; muchos datos en columnas, `sc-datatable`.",
@@ -1121,11 +1119,9 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "kit": false,
-      "estado": "experimental",
-      "faltas": [
-        "kit"
-      ],
+      "kit": true,
+      "estado": "ready",
+      "faltas": [],
       "retirado": null,
       "usedInSupervisor": 0,
       "cuando": "Para dar a una fila de datos o a un título su icono con peso propio (un resumen). Un icono suelto junto a un texto es `sc-icon`; una persona, `sc-avatar`.",
@@ -2018,11 +2014,9 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "kit": false,
-      "estado": "experimental",
-      "faltas": [
-        "kit"
-      ],
+      "kit": true,
+      "estado": "ready",
+      "faltas": [],
       "retirado": null,
       "usedInSupervisor": 29,
       "cuando": "Para un nivel más dentro de una sección, plegable si lo secundario estorba.",
