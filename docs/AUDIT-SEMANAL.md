@@ -2,7 +2,7 @@
 
 > **Autogenerado** por la rutina cloud "Auditoría semanal"
 > (`.claude/skills/auditoria-semanal/SKILL.md`). Es la versión de **juicio**, en
-> cadencia, de `AUDIT-DEUDA-2026-06.md`: caza lo que los 48 gates de `verify` no
+> cadencia, de `AUDIT-DEUDA-2026-06.md`: caza lo que los gates de `verify` no
 > pueden ver (deuda de diseño + deriva semántica de docs). Cada run añade una
 > sección fechada **arriba**; `[x]` = cerrado. Semana sin hallazgos reales → no
 > hay sección nueva (la rutina no abre PR).
@@ -36,13 +36,13 @@
 
 ### Deriva de docs
 
-- [ ] `docs/customs-catalog.md:753` sigue diciendo «**38 colores**» y «**10 filas**» en la lista
+- [x] `docs/customs-catalog.md:753` sigue diciendo «**38 colores**» y «**10 filas**» en la lista
       `diverge` de `scripts/color-map.mjs`. Medido hoy importando ese módulo: `ENFORCE` 76,
       `DIVERGE` 1, `COLOR` 77. Cuarta semana seguida con el mismo desfase (secciones 2026-09-21,
       2026-10-12 y 2026-10-19) → actualizar las dos cifras y listar solo la divergencia real.
       [gate-able: un guard debería contar las filas por tipo del mapa de color y compararlas con
       las cifras que cita el catálogo]
-- [ ] `docs/AUDIT-SEMANAL.md:5` dice «48 gates» y `.claude/skills/auditoria-semanal/SKILL.md:23`
+- [x] `docs/AUDIT-SEMANAL.md:5` dice «48 gates» y `.claude/skills/auditoria-semanal/SKILL.md:23`
       dice «25 pasos»; el mismo skill dice 51 en `SKILL.md:112`, y `CLAUDE.md:52` y
       `docs/DOCS-INDEX.md:45` también. Medido partiendo el script `verify` de `package.json` por
       `&&`: **51** pasos. → poner 51 en esas dos líneas. [gate-able: la cifra ya se ha quedado
