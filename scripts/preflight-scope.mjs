@@ -20,7 +20,16 @@
  */
 import { execSync, execFileSync } from "node:child_process";
 import { medirRebase } from "./preflight-rebase.mjs";
-import { avisarCarga, avisarDds, avisarLedgers, ddsDeRama, dependenciasInstaladas, generadosAlDia, puertaBarata } from "./preflight-puerta-barata.mjs";
+import {
+  avisarCarga,
+  avisarDds,
+  avisarLedgers,
+  ddsDeRama,
+  dependenciasInstaladas,
+  generadosAlDia,
+  PREFIJO_FALTA,
+  puertaBarata,
+} from "./preflight-puerta-barata.mjs";
 import { enParalelo } from "./en-paralelo.mjs";
 import { APPS, planDe } from "./preflight-alcance.mjs";
 import { analizar as analizarCitas, describir as describirCita } from "./audit-e2e-citas.mjs";
@@ -133,7 +142,8 @@ if (process.argv.includes("--run")) {
   // Y si el número de DD de esta rama ya lo usa otro PR abierto (DD-175): avisa y propone el siguiente libre.
   avisarDds({ ...ddsDeRama(), rama: ramaActual() });
   const citas = citasRetiradas();
-  // Sin dependencias los generados se miden contra nada: se dice la causa y no se proponen sus `--write`.
+  // Sin dependencias los generados se miden contra nada: se dice la causa y no se proponen sus `--write`. Con un
+  // paquete directo de menos, lo mismo: se nombra con su receta y la cadena no arranca hasta tenerlo.
   const sinDeps = dependenciasInstaladas();
   const problemas = [...puertaBarata(process.cwd()), ...sinDeps, ...(sinDeps.length ? [] : generadosAlDia()), ...citas];
   if (problemas.length) {
@@ -144,6 +154,14 @@ if (process.argv.includes("--run")) {
       console.log(
         "  ⚠️ La memoria es COMPARTIDA entre sesiones: si la engordó otra, mira su fecha antes de" +
           "\n     recortarla, y si lleva rato parada, recórtala tú — su ficha bloquea TU preflight.",
+      );
+    }
+    if (sinDeps.some((q) => q.startsWith(PREFIJO_FALTA))) {
+      console.log(
+        "  El `node_modules` del worktree es el del árbol principal y va por detrás de `main`: sin esos paquetes la cadena" +
+          "\n  cae en `build:docs:app`, varios minutos después. NUNCA `npm install` ni `npm ci` en un worktree: borran el enlace." +
+          "\n  Cada receta, desde una carpeta vacía (`cd \"$(mktemp -d)\"`); si la huella no es la del lock, no desempaquetes." +
+          "\n  Solo se miran los paquetes directos: si uno trae dependencias propias que tampoco están, las pedirá el build.",
       );
     }
     if (citas.length) {
