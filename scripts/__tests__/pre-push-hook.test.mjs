@@ -1,10 +1,12 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { mkdtempSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, writeFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
+
+import { AISLAR_GIT, testsQueHeredanGit } from '../preflight-puerta-barata.mjs';
 
 /*
  * El `pre-push` de `.githooks/` con las refs que git le pasa por stdin.
@@ -111,20 +113,7 @@ test('pre-push: el gate no hereda el repositorio de git (GIT_DIR limpio)', () =>
  * corren en el CI y podrían correr bajo otro hook de git; el aislamiento es de cada test.
  */
 test('ningún test lanza git heredando el entorno de git', () => {
-  const dirTests = resolve(import.meta.dirname);
-  const culpables = readdirSync(dirTests)
-    .filter((f) => f.endsWith('.test.mjs'))
-    .filter((f) => {
-      const src = readFileSync(join(dirTests, f), 'utf8');
-      const lanzaGit = /(spawnSync|execFileSync|execSync)\(\s*'git'/.test(src);
-      return lanzaGit && !src.includes("startsWith('GIT_')");
-    });
-  assert.deepEqual(
-    culpables,
-    [],
-    'lanzan git sin aislar el entorno: dentro de un hook de git, GIT_DIR apunta al repositorio de verdad y el test escribe EN ÉL. ' +
-      "Filtra el entorno: Object.fromEntries(Object.entries(process.env).filter(([k]) => !k.startsWith('GIT_')))",
-  );
+  assert.deepEqual(testsQueHeredanGit(resolve(import.meta.dirname)), [], `lanzan git sin aislar el entorno: ${AISLAR_GIT}`);
 });
 
 /*

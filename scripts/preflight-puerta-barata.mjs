@@ -63,6 +63,7 @@ import { cliente as clienteDeGithub, ddsAnadidas } from "./github.mjs";
 export { ddsAnadidas };
 import { localizarMemoria, leerMemoria, revisarMemoria } from "./memory-shape.mjs";
 import { revisarHandoff } from "./handoff-shape.mjs";
+import { revisarLearnings } from "./learnings-shape.mjs";
 
 /**
  * Los problemas que se pueden ver SIN construir nada. Devuelve la lista (vacía = puerta abierta).
@@ -72,9 +73,20 @@ import { revisarHandoff } from "./handoff-shape.mjs";
  *
  * Los hand-offs, con el mismo `revisarHandoff` del CHECK P (2026-10-19): un tramo `## ✅` de más
  * tumbó una cadena en `test:unit`, a los ocho minutos, por una comprobación de milisegundos.
+ *
+ * `LEARNINGS.md` y los tests que lanzan `git` sin tirar las `GIT_*` (2026-10-29): la cadena cayó dos veces en
+ * `test:unit` tras unos cinco minutos, primero por una regla sin `Evidencia:` y luego por pasar de 200 líneas,
+ * y después por un test nuevo que heredaba el entorno de git. Las mismas funciones que usan sus tests.
  */
 export function puertaBarata(cwd = process.cwd()) {
-  const problemas = [...handoffsFueraDeForma(cwd), ...ddsCogidasEnMain(cwd)];
+  const problemas = [
+    ...handoffsFueraDeForma(cwd),
+    ...learningsFueraDeForma(cwd),
+    ...testsQueHeredanGit(join(cwd, "scripts", "__tests__")).map(
+      (f) => `scripts/__tests__/${f} lanza git sin tirar las GIT_* heredadas: ${AISLAR_GIT}`,
+    ),
+    ...ddsCogidasEnMain(cwd),
+  ];
   const dir = localizarMemoria(cwd);
   if (!dir || !existsSync(dir)) return problemas;
   return [...problemas, ...revisarMemoria(leerMemoria(dir)).map((p) => `memoria (${dir}) — ${p}`)];
@@ -87,6 +99,32 @@ function handoffsFueraDeForma(cwd) {
   return readdirSync(dir)
     .filter((f) => f.endsWith(".md"))
     .flatMap((f) => revisarHandoff(readFileSync(join(dir, f), "utf8"), `docs/handoff/${f}`));
+}
+
+/** `LEARNINGS.md` de `cwd` fuera de la forma de `learnings-shape.mjs`. Sin el fichero, nada. */
+function learningsFueraDeForma(cwd) {
+  const fichero = join(cwd, "LEARNINGS.md");
+  if (!existsSync(fichero)) return [];
+  return revisarLearnings(readFileSync(fichero, "utf8")).map((p) => `LEARNINGS.md — ${p}`);
+}
+
+export const AISLAR_GIT =
+  "dentro de un hook de git, GIT_DIR apunta al repositorio de verdad y el test escribe EN ÉL. " +
+  "Filtra el entorno: Object.fromEntries(Object.entries(process.env).filter(([k]) => !k.startsWith('GIT_')))";
+
+/**
+ * Los `*.test.mjs` de `dir` que lanzan `git` y no filtran las `GIT_*` heredadas. Sin la carpeta, nada. La usa
+ * también `pre-push-hook.test.mjs` («ningún test lanza git heredando el entorno de git»).
+ */
+export function testsQueHeredanGit(dir) {
+  if (!existsSync(dir)) return [];
+  return readdirSync(dir)
+    .filter((f) => f.endsWith(".test.mjs"))
+    .filter((f) => {
+      const src = readFileSync(join(dir, f), "utf8");
+      const lanzaGit = /(spawnSync|execFileSync|execSync)\(\s*'git'/.test(src);
+      return lanzaGit && !src.includes("startsWith('GIT_')");
+    });
 }
 
 // ── Las dependencias, instaladas ─────────────────────────────────────────────────────────────────
