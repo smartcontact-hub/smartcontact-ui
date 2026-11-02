@@ -219,6 +219,11 @@ const SCOPE = join(RAIZ, 'scripts/preflight-scope.mjs');
 // `scripts/en-paralelo.mjs`.
 const INCIDENTE = { carga: [205.4, 250.1, 310.8], cpus: 10 };
 
+// 2026-11-02, el mismo Mac: con la carga a 1 minuto de 25 a 32, `npm run preflight` cayó en `test:components` por
+// cuatro tests que agotaron sus 5 s, y el aviso NO salió (2,5 por CPU, por debajo del 4 de entonces). Repetido
+// solo, verde. Se midió solo la carga de 1 minuto; aquí, la más baja.
+const INCIDENTE_COMPONENTES = { carga: [25, 0, 0], cpus: 10 };
+
 const PROCESOS = [
   { pid: 4021, cpu: 102.3, etime: '03-04:12:33', comando: '/Applications/Comet.app/Contents/MacOS/Comet Helper (Renderer)' },
   { pid: 4177, cpu: 99.8, etime: '02:11:09', comando: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome Helper (Renderer)' },
@@ -282,6 +287,13 @@ test('avisoDeCarga: el umbral cae entre lo normal y el incidente medido', () => 
   assert.ok(UMBRAL_CARGA < INCIDENTE.carga[0] / INCIDENTE.cpus);
 });
 
+test('avisoDeCarga: avisa con la carga que ya tumbó `test:components` (2,5 por CPU), el rojo más bajo medido', () => {
+  const t = avisoDeCarga(INCIDENTE_COMPONENTES);
+  assert.ok(t, 'con 2,5 por CPU cayeron cuatro tests de componentes por tiempo: tiene que avisar');
+  assert.match(t, /2\.5 procesos listos por CPU/);
+  assert.ok(UMBRAL_CARGA < INCIDENTE_COMPONENTES.carga[0] / INCIDENTE_COMPONENTES.cpus, 'por debajo del rojo, no en él');
+});
+
 test('avisoDeCarga: con el incidente real dice la carga, las CPUs y los procesos listos por CPU', () => {
   const t = avisoDeCarga({ ...INCIDENTE, consumidores: PROCESOS });
   assert.match(t, /MÁQUINA SATURADA/);
@@ -299,16 +311,16 @@ test('avisoDeCarga: nombra a los cinco que más consumen (aunque lleguen desorde
   assert.doesNotMatch(t, /sextoQueNoSale|septimoQueNoSale/);
 });
 
-test('avisoDeCarga: dice que los tests con reloj pueden caer con CUALQUIER cambio y apunta a los dos', () => {
+test('avisoDeCarga: dice que los tests con reloj pueden caer con CUALQUIER cambio y cómo repetir cada uno', () => {
   const t = avisoDeCarga({ ...INCIDENTE, consumidores: PROCESOS });
   assert.match(t, /CUALQUIER cambio/);
-  for (const { fichero, motivo } of TESTS_CON_RELOJ) {
-    assert.ok(t.includes(fichero), `falta ${fichero}`);
-    assert.ok(t.includes(motivo), `falta el motivo de ${fichero}`);
+  for (const { fichero, motivo, repetir } of TESTS_CON_RELOJ) {
+    assert.ok(t.includes(`${repetir} — ${motivo}`), `falta la línea de ${fichero}, con su comando y su motivo`);
   }
   assert.match(t, /estadoDelArbol/);
   assert.match(t, /4 s/);
   assert.match(t, /90 s/);
+  assert.match(t, /npm run test:components — .*5 s/);
 });
 
 test('avisoDeCarga: dice que NO bloquea y qué hacer si uno de esos tests cae', () => {
@@ -317,16 +329,36 @@ test('avisoDeCarga: dice que NO bloquea y qué hacer si uno de esos tests cae', 
   assert.match(t, /repítelo solo/);
 });
 
-test('TESTS_CON_RELOJ: los dos punteros del aviso existen y nombran una prueba que sigue en su fichero', () => {
+test('TESTS_CON_RELOJ: los punteros del aviso existen, nombran una prueba (o su script) que sigue ahí y se pueden repetir', () => {
   assert.deepEqual(TESTS_CON_RELOJ.map((t) => t.fichero).sort(), [
+    'package.json',
     'scripts/__tests__/playwright-reuse-guard.test.mjs',
     'scripts/__tests__/stop-guard.test.mjs',
   ]);
-  for (const { fichero, ancla } of TESTS_CON_RELOJ) {
+  const scripts = JSON.parse(readFileSync(join(RAIZ, 'package.json'), 'utf8')).scripts;
+  for (const { fichero, ancla, repetir } of TESTS_CON_RELOJ) {
     const ruta = join(RAIZ, fichero);
     assert.ok(existsSync(ruta), `${fichero} no existe`);
     assert.ok(readFileSync(ruta, 'utf8').includes(ancla), `${fichero} ya no contiene «${ancla}»: el aviso apunta a algo que se movió`);
+    // El comando de repetir corre lo que el ancla nombra: el mismo fichero de test, o un script que existe.
+    const npm = /^npm run (\S+)$/.exec(repetir);
+    if (npm) assert.ok(scripts[npm[1]], `«${repetir}»: package.json no tiene el script ${npm[1]}`);
+    else assert.equal(repetir, `node --test ${fichero}`);
   }
+});
+
+test('TESTS_CON_RELOJ: el corte de 5 s de `test:components` sigue siendo el de vitest, que nada cambia', () => {
+  // Si alguien le da a vitest su propia config o su propio `testTimeout`, el motivo del aviso miente.
+  const angular = JSON.parse(readFileSync(join(RAIZ, 'angular.json'), 'utf8'));
+  const prueba = angular.projects['ui-smartcontact'].architect.test;
+  assert.equal(prueba.options.runner, 'vitest');
+  const opciones = JSON.stringify(prueba);
+  assert.doesNotMatch(opciones, /testTimeout|runnerConfig/, 'angular.json cambia la config de vitest: revisa el motivo de test:components');
+  for (const ext of ['ts', 'mts', 'js', 'mjs']) {
+    assert.ok(!existsSync(join(RAIZ, `vitest.config.${ext}`)), `vitest.config.${ext} puede cambiar el corte de 5 s`);
+  }
+  const motivo = TESTS_CON_RELOJ.find((t) => t.repetir === 'npm run test:components')?.motivo ?? '';
+  assert.match(motivo, /5 s/);
 });
 
 test('avisoDeCarga: sin dato fiable no avisa ni revienta (CPUs a 0, NaN, carga vacía, Windows)', () => {
