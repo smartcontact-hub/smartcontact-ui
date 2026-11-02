@@ -19,6 +19,7 @@ import {
   numCpus,
   parsearPs,
   puertaBarata,
+  testsQueHeredanGit,
 } from '../preflight-puerta-barata.mjs';
 import { MAX_PALABRAS_FICHA } from '../memory-shape.mjs';
 
@@ -118,6 +119,76 @@ test('con el hand-off en forma, la puerta se abre', () => {
   const raiz = repoConHandoff(6);
   try {
     assert.deepEqual(conMemoria(join(raiz, 'no-hay-memoria'), () => puertaBarata(raiz)), []);
+  } finally {
+    rmSync(raiz, { recursive: true, force: true });
+  }
+});
+
+/*
+ * LEARNINGS Y LOS TESTS QUE HEREDAN GIT, EN LA MISMA PUERTA (2026-10-29): la cadena cayó dos veces en `test:unit` tras
+ * unos cinco minutos por comprobaciones de milisegundos. Repo de mentira, sin memoria, para que solo hable lo fabricado.
+ */
+function repoCon(ficheros) {
+  const raiz = mkdtempSync(join(tmpdir(), 'sc-puerta-'));
+  for (const [ruta, texto] of Object.entries(ficheros)) {
+    mkdirSync(dirname(join(raiz, ruta)), { recursive: true });
+    writeFileSync(join(raiz, ruta), texto);
+  }
+  return raiz;
+}
+
+const learnings = (cuerpo) => `| # | Si… | → |\n|---|---|---|\n| **1** | a | b |\n\n## S\n\n1. **Disparador → acción.**\n${cuerpo}\n`;
+
+test('la puerta barata caza una regla de LEARNINGS sin `Evidencia:` ANTES de arrancar la cadena', () => {
+  const raiz = repoCon({ 'LEARNINGS.md': learnings('   Sin rastro.') });
+  try {
+    const problemas = conMemoria(join(raiz, 'no-hay-memoria'), () => puertaBarata(raiz));
+    assert.equal(problemas.length, 1, problemas.join('\n'));
+    assert.match(problemas[0], /^LEARNINGS\.md — la regla 1 no tiene línea `Evidencia:`/);
+  } finally {
+    rmSync(raiz, { recursive: true, force: true });
+  }
+});
+
+test('la puerta barata caza un LEARNINGS pasado del tope de líneas', () => {
+  const raiz = repoCon({ 'LEARNINGS.md': learnings('   Evidencia: s00 hecho.') + '\n'.repeat(200) });
+  try {
+    const problemas = conMemoria(join(raiz, 'no-hay-memoria'), () => puertaBarata(raiz));
+    assert.ok(problemas.some((p) => /^LEARNINGS\.md — .*el tope es 200/.test(p)), problemas.join('\n'));
+  } finally {
+    rmSync(raiz, { recursive: true, force: true });
+  }
+});
+
+test('con LEARNINGS en forma, la puerta se abre', () => {
+  const raiz = repoCon({ 'LEARNINGS.md': learnings('   Evidencia: s00 hecho.') });
+  try {
+    assert.deepEqual(conMemoria(join(raiz, 'no-hay-memoria'), () => puertaBarata(raiz)), []);
+  } finally {
+    rmSync(raiz, { recursive: true, force: true });
+  }
+});
+
+// El lanzamiento se compone por trozos para que ESTE fichero no parezca uno de los que lanzan git.
+const lanzaGit = 'spawn' + "Sync('git', ['status'], { cwd: dir });\n";
+const filtra = "const env = Object.fromEntries(Object.entries(process.env).filter(([k]) => !k.startsWith('GIT_')));\n";
+
+test('la puerta barata caza un test que lanza git heredando las GIT_*', () => {
+  const raiz = repoCon({ 'scripts/__tests__/malo.test.mjs': lanzaGit, 'scripts/__tests__/bueno.test.mjs': filtra + lanzaGit });
+  try {
+    const problemas = conMemoria(join(raiz, 'no-hay-memoria'), () => puertaBarata(raiz));
+    assert.equal(problemas.length, 1, problemas.join('\n'));
+    assert.match(problemas[0], /^scripts\/__tests__\/malo\.test\.mjs lanza git sin tirar las GIT_\* heredadas/);
+  } finally {
+    rmSync(raiz, { recursive: true, force: true });
+  }
+});
+
+test('testsQueHeredanGit: el que filtra las GIT_* y el que no lanza git pasan; sin la carpeta, nada', () => {
+  const raiz = repoCon({ 'scripts/__tests__/bueno.test.mjs': filtra + lanzaGit, 'scripts/__tests__/otro.test.mjs': 'const x = 1;\n' });
+  try {
+    assert.deepEqual(testsQueHeredanGit(join(raiz, 'scripts', '__tests__')), []);
+    assert.deepEqual(testsQueHeredanGit(join(raiz, 'no-existe')), []);
   } finally {
     rmSync(raiz, { recursive: true, force: true });
   }
