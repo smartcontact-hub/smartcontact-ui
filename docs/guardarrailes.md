@@ -85,14 +85,14 @@ una vez con `npm run hooks:install`. **Lo que se ve en milisegundos se mira ante
 2. Es estado COMPARTIDO entre sesiones: el 2026-09-11 y el 2026-09-12 una ficha que engordó otro
 chat tumbó dos cadenas de 8 minutos. **Y las e2e que citan lo que la rama retiró** (`audit:e2e-citas`, que también va en `verify`) se ven en el
 segundo 2 y no a los 40 minutos del CI. **Y con la máquina saturada la cadena lo dice al arrancar, sin
-bloquear** (2026-09-29): con la carga a 1 minuto por encima de 4 procesos listos por CPU
+bloquear** (2026-09-29): con la carga a 1 minuto por encima de 2 procesos listos por CPU
 (`os.loadavg()[0] / os.cpus().length`), `avisarCarga` imprime en voz alta la carga, los cinco
 procesos que más CPU gastan (`ps`) y los tests con reloj que pueden caer con cualquier cambio
-(`stop-guard` y `playwright-reuse-guard`). Sale de `preflight:scope -- --run` y del gancho `preverify`,
+(`stop-guard`, `playwright-reuse-guard` y `test:components`), cada uno con el comando para repetirlo solo. Sale de `preflight:scope -- --run` y del gancho `preverify`,
 que npm corre antes de `verify` aunque lo lance otro script o alguien lo teclee a mano —el `verify`
 que tardó ~9 h con la carga a 205–330 se lanzó directo, sin pasar por la puerta—; el `preverify` de
 dentro de `preflight:scope` calla, porque el padre ya avisó. No es un gate: una pasada que sale verde
-con la máquina así sigue valiendo. De dónde sale el 4, con sus mediciones y su límite (la curva de un
+con la máquina así sigue valiendo. De dónde sale el 2 (era 4 hasta que el 2026-11-02 `test:components` cayó por tiempo con 2,5 por CPU), con sus mediciones y su límite (la curva de un
 Linux de 4 CPUs no predice los rojos del Mac), está en la cabecera del script; el reposo de tu máquina
 se lee con `node -e "const o=require('os');console.log(o.loadavg()[0]/o.cpus().length)"`. Y no se
 lanza la cadena sobre una rama que no lleva
