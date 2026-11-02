@@ -160,7 +160,8 @@ if (process.argv.includes("--run")) {
       console.log(
         "  El `node_modules` del worktree es el del árbol principal y va por detrás de `main`: sin esos paquetes la cadena" +
           "\n  cae en `build:docs:app`, varios minutos después. NUNCA `npm install` ni `npm ci` en un worktree: borran el enlace." +
-          "\n  Cada receta, desde una carpeta vacía (`cd \"$(mktemp -d)\"`); si la huella no es la del lock, no desempaquetes." +
+          "\n  Cada receta, desde una carpeta vacía (`cd \"$(mktemp -d)\"`): comprueba la huella del lock, desempaqueta ahí y" +
+          "\n  solo al final mueve el paquete entero al compartido." +
           "\n  Solo se miran los paquetes directos: si uno trae dependencias propias que tampoco están, las pedirá el build.",
       );
     }
