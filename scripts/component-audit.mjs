@@ -23,6 +23,7 @@ import { dirname, resolve } from 'node:path';
 import { rewriteRegion } from './marker-rewrite.mjs';
 import { PROVENANCE_OVERRIDE, DEMO_EXEMPT, PRIMENG_UTIL, NESTED_IGNORE, CUANDO, MODULO_A_TEMA, CUBIERTO_POR_NUESTRO, KIT_MAESTROS, KIT_ALIAS, NATIVOS_ADOPTADOS } from './component-audit-map.mjs';
 import { apiConHerencia } from '../tools/primeng-doc.mjs';
+import { cabecera, CARPETA as CARPETA_CODE_CONNECT } from './audit-code-connect.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const COMPONENTS = resolve(root, 'projects/ui-smartcontact/src/lib/components');
@@ -584,8 +585,8 @@ export function audit(leerTipos = leerTiposInstalados) {
       // de `sc-avatargroup` según el orden del directorio.
       const htmlFile = tsFile.replace(/\.ts$/, '.html');
       const tsText = readFileSync(resolve(dir, tsFile), 'utf8');
-      rows.push(
-        analyzeComponent({
+      rows.push({
+        ...analyzeComponent({
           name,
           tsText,
           htmlText: existsSync(resolve(dir, htmlFile)) ? readFileSync(resolve(dir, htmlFile), 'utf8') : '',
@@ -594,10 +595,52 @@ export function audit(leerTipos = leerTiposInstalados) {
           nativas: nativasDe(modulosPrimeng(tsText), leerTipos),
           obsoletosPrimeng: obsoletosDe(modulosPrimeng(tsText), leerTipos),
         }),
-      );
+        // Su fichero en el repo: el enlace «Código» de la ficha y la llave para casarlo con su plantilla de Code Connect.
+        fuente: resolve(dir, tsFile).replace(root + '/', ''),
+      });
     }
   }
   return rows.sort((a, b) => a.name.localeCompare(b.name));
+}
+
+/**
+ * El master de Figma de cada componente, por su fichero: lo dice la cabecera `// url=` de su plantilla de Code Connect
+ * (`code-connect/*.figma.ts`), la misma que se publica a Figma y que `audit:code-connect` vigila. Sin plantilla no hay
+ * enlace: el nodo no se adivina por el nombre.
+ */
+function figmaPorFuente() {
+  const carpeta = resolve(root, CARPETA_CODE_CONNECT);
+  const mapa = new Map();
+  if (!existsSync(carpeta)) return mapa;
+  for (const f of readdirSync(carpeta).filter((x) => x.endsWith('.figma.ts')).sort()) {
+    const texto = readFileSync(resolve(carpeta, f), 'utf8');
+    const fuente = cabecera(texto, 'source');
+    const url = cabecera(texto, 'url');
+    if (fuente && url && !mapa.has(fuente)) mapa.set(fuente, url);
+  }
+  return mapa;
+}
+
+/**
+ * Con quién se relaciona cada componente, todo derivado y sin lista a mano: las ALTERNATIVAS que nombra su línea de
+ * «cuándo» («Si va suelto en la fila, es `sc-tag`»), los que USA en su plantilla y aquellos en los que APARECE. Solo
+ * entre componentes del contrato: `sc-icon` y compañía viven en otro paquete y no tienen ficha aquí.
+ * PURA → testeable.
+ */
+export function relacionesDe(componentes) {
+  const selectores = new Set(componentes.map((c) => c.selector));
+  return new Map(
+    componentes.map((c) => [
+      c.selector,
+      {
+        alternativas: [...new Set([...(c.cuando ?? '').matchAll(/`(sc-[a-z0-9-]+)`/g)].map((m) => m[1]))].filter(
+          (s) => s !== c.selector && selectores.has(s),
+        ),
+        usa: (c.nested ?? []).filter((s) => selectores.has(s)),
+        usadoEn: componentes.filter((o) => (o.nested ?? []).includes(c.selector)).map((o) => o.selector),
+      },
+    ]),
+  );
 }
 
 /** Tabla markdown para la zona @audit:components de inventory.md. */
@@ -836,6 +879,8 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     return existsSync(p) ? JSON.parse(readFileSync(p, 'utf8')).version : null;
   })();
   const sinVerificar = rows.every((r) => r.contrato.every((m) => m.origen === 'sin-verificar'));
+  const figma = figmaPorFuente();
+  const relaciones = relacionesDe([...rows, ...adoptados]);
   const apiManifest =
     JSON.stringify(
       {
@@ -843,7 +888,21 @@ if (import.meta.url === `file://${process.argv[1]}`) {
         primeng: versionPrimeng,
         catalogoPrimeng: catalogo.map((c) => ({ componente: c, envuelto: envueltos.has(c) })),
         nota: 'Contrato de los componentes del DS, cruzado con la API de la versión de PrimeNG instalada. NO editar a mano.',
-        components: [...rows, ...adoptados].map((r) => ({ selector: r.selector, name: r.name, primengBase: r.primengBase, estado: r.estado, faltas: r.faltas, retirado: r.retirado, cuando: r.cuando, contrato: r.contrato, ocultas: r.ocultas })),
+        components: [...rows, ...adoptados].map((r) => ({
+          selector: r.selector,
+          name: r.name,
+          primengBase: r.primengBase,
+          estado: r.estado,
+          faltas: r.faltas,
+          retirado: r.retirado,
+          cuando: r.cuando,
+          fuente: r.fuente ?? null,
+          figma: figma.get(r.fuente) ?? null,
+          usosSupervisor: r.usedInSupervisor ?? null,
+          relaciones: relaciones.get(r.selector),
+          contrato: r.contrato,
+          ocultas: r.ocultas,
+        })),
       },
       null,
       2,
