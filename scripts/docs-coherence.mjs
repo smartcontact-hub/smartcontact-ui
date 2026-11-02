@@ -312,6 +312,25 @@ for (const { path, lines } of files) {
   }
 }
 
+// ── CHECK Q — las cifras del mapa de color que cita el catálogo cuadran con `color-map.mjs` ──
+// El catálogo decía «38 colores» y «10 filas» cuando el mapa tenía 77 y 1; la auditoría semanal
+// lo marcó cuatro semanas seguidas (2026-09-21 a 2026-10-19) sin que nadie lo corrigiera. Se lee
+// la frase «cruza **N colores**» y la de «**N fila(s)**» de la lista `diverge` contra el módulo.
+{
+  const catalogo = files.find((f) => rel(f.path) === 'docs/customs-catalog.md');
+  if (catalogo) {
+    const { COLOR, DIVERGE } = await import('./color-map.mjs');
+    catalogo.lines.forEach((line, i) => {
+      const c = line.match(/cruza \*\*(\d+) colores\*\*/);
+      if (c && Number(c[1]) !== COLOR.length)
+        fail(`docs/customs-catalog.md:${i + 1} — dice "${c[0]}" pero \`scripts/color-map.mjs\` tiene ${COLOR.length} colores.`);
+      const d = line.match(/lista `diverge`[^*]*\*\*(\d+) filas?\*\*/);
+      if (d && Number(d[1]) !== DIVERGE.length)
+        fail(`docs/customs-catalog.md:${i + 1} — dice "${d[0]}" pero la lista \`diverge\` tiene ${DIVERGE.length} fila(s).`);
+    });
+  }
+}
+
 // ── CHECK I — DECISIONS.md promete "newest first" y tiene que cumplirlo ────────────
 // Su cabecera dice "Formato DD-N, newest first". Estuvo roto desde el 2026-06-30 —los DD-21..34
 // se anexaron ASCENDENTE al final— y estaba anotado como pendiente en DOCS-INDEX todo ese
