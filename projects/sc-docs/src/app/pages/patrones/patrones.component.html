@@ -3,64 +3,18 @@
   <p class="hero__lead sc-text-h3-regular" [innerHTML]="'fundamentos.patterns.lead' | translate"></p>
 </header>
 
+<!-- Una tarjeta por patrón, con su título y nada más: la regla, lo que se evita y con qué se resuelve están en su
+     página. Antes los once iban seguidos aquí, unas 1.500 palabras de una tirada. -->
 <ul class="pt">
-  @for (p of principles; track p.key) {
-    <li class="pt__row">
-      <div class="pt__icon" aria-hidden="true"><sc-icon [name]="p.icon" [size]="20" /></div>
-      <div class="pt__body">
-        <h2 class="pt__title">{{ 'fundamentos.patterns.principles.' + p.key + '.title' | translate }}</h2>
-        <p class="pt__line pt__line--do">
-          <sc-icon class="pt__mark pt__mark--do" name="check" [size]="16" aria-hidden="true" />
-          <span>{{ 'fundamentos.patterns.principles.' + p.key + '.apply' | translate }}</span>
-        </p>
-        <p class="pt__line pt__line--dont">
-          <sc-icon class="pt__mark pt__mark--dont" name="close" [size]="16" aria-hidden="true" />
-          <span>{{ 'fundamentos.patterns.principles.' + p.key + '.avoid' | translate }}</span>
-        </p>
-        <p class="pt__have">
-          <span class="pt__have-label">{{ 'fundamentos.patterns.haveLabel' | translate }}</span
-          >{{ 'fundamentos.patterns.principles.' + p.key + '.have' | translate }}
-        </p>
-      </div>
+  @for (p of patrones; track p.clave) {
+    <li>
+      <a class="pt__card" [routerLink]="'/fundamentos/patrones/' + p.ruta">
+        <span class="pt__icon" aria-hidden="true"><sc-icon [name]="p.icono" [size]="20" /></span>
+        <span class="pt__title sc-text-body-semibold">{{ 'fundamentos.patterns.principles.' + p.clave + '.title' | translate }}</span>
+        <sc-icon class="pt__arrow" name="arrow_forward" [size]="16" aria-hidden="true" />
+      </a>
     </li>
   }
 </ul>
-
-<!-- Do/don't EN VIVO del patrón nº 2, el único principio donde un visual enseña más que el
-     texto: a la izquierda el esqueleto (dogfood real de sc-skeleton), a la derecha el spinner
-     centrado que no reserva estructura. Los demás principios son conceptuales: se quedan en
-     texto a propósito (meterles un mock-up sería el ruido que esta misma barra combate). -->
-<section class="demo" [attr.aria-label]="'fundamentos.patterns.demo.aria' | translate">
-  <h2 class="demo__title sc-text-body-semibold">{{ 'fundamentos.patterns.demo.title' | translate }}</h2>
-  <p class="demo__lead sc-text-caption-regular" [innerHTML]="'fundamentos.patterns.demo.lead' | translate"></p>
-  <div class="demo__pair">
-    <div class="demo__col">
-      <p class="demo__label demo__label--do">
-        <sc-icon class="pt__mark pt__mark--do" name="check" [size]="16" aria-hidden="true" />
-        <span>{{ 'fundamentos.patterns.demo.labelDo' | translate }}</span>
-      </p>
-      <div class="demo__stage">
-        @for (row of [0, 1, 2]; track row) {
-          <div class="demo-row">
-            <sc-skeleton shape="circle" width="2.5rem" height="2.5rem" />
-            <div class="demo-row__lines">
-              <sc-skeleton width="40%" height="0.75rem" />
-              <sc-skeleton width="70%" height="0.75rem" />
-            </div>
-          </div>
-        }
-      </div>
-    </div>
-    <div class="demo__col">
-      <p class="demo__label demo__label--dont">
-        <sc-icon class="pt__mark pt__mark--dont" name="close" [size]="16" aria-hidden="true" />
-        <span>{{ 'fundamentos.patterns.demo.labelDont' | translate }}</span>
-      </p>
-      <div class="demo__stage demo__stage--spinner">
-        <sc-icon name="progress_activity" [spin]="true" [size]="28" aria-hidden="true" />
-      </div>
-    </div>
-  </div>
-</section>
 
 <p class="foot sc-text-caption-regular" [innerHTML]="'fundamentos.patterns.foot' | translate"></p>

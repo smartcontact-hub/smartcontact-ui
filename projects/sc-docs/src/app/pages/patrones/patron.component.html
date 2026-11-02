@@ -1,0 +1,80 @@
+@if (patron(); as p) {
+  @let base = 'fundamentos.patterns.principles.' + p.clave;
+  <h1 class="titulo">{{ base + '.title' | translate }}</h1>
+
+  <!-- Lo que se hace y lo que se evita, lado a lado: la pareja «Do / Don't» de las docs de referencia. -->
+  <div class="pareja">
+    <section class="regla regla--haz">
+      <!-- El icono, fuera del h2: «En esta página» lee el texto del título y diría «check». -->
+      <div class="regla__cabeza">
+        <sc-icon name="check" [size]="16" aria-hidden="true" />
+        <h2 class="regla__titulo sc-text-body-semibold">{{ 'fundamentos.patterns.do' | translate }}</h2>
+      </div>
+      <p class="regla__texto sc-text-body-regular">{{ base + '.apply' | translate }}</p>
+    </section>
+    <section class="regla regla--evita">
+      <div class="regla__cabeza">
+        <sc-icon name="close" [size]="16" aria-hidden="true" />
+        <h2 class="regla__titulo sc-text-body-semibold">{{ 'fundamentos.patterns.dont' | translate }}</h2>
+      </div>
+      <p class="regla__texto sc-text-body-regular">{{ base + '.avoid' | translate }}</p>
+    </section>
+  </div>
+
+  <h2 class="seccion sc-text-h2-semibold">{{ 'fundamentos.patterns.haveLabel' | translate }}</h2>
+  <p class="texto sc-text-body-regular">{{ base + '.have' | translate }}</p>
+
+  @if (p.clave === 'loading') {
+    <!-- A la izquierda el esqueleto (sc-skeleton de verdad), a la derecha el spinner centrado que no reserva nada. -->
+    <h2 class="seccion sc-text-h2-semibold">{{ 'fundamentos.patterns.demo.title' | translate }}</h2>
+    <p class="texto sc-text-body-regular" [innerHTML]="'fundamentos.patterns.demo.lead' | translate"></p>
+    <div class="demo" role="group" [attr.aria-label]="'fundamentos.patterns.demo.aria' | translate">
+      <div class="demo__col">
+        <p class="demo__label">
+          <sc-icon class="marca marca--haz" name="check" [size]="16" aria-hidden="true" />
+          <span>{{ 'fundamentos.patterns.demo.labelDo' | translate }}</span>
+        </p>
+        <div class="demo__stage">
+          @for (fila of [0, 1, 2]; track fila) {
+            <div class="demo-row">
+              <sc-skeleton shape="circle" width="2.5rem" height="2.5rem" />
+              <div class="demo-row__lines">
+                <sc-skeleton width="40%" height="0.75rem" />
+                <sc-skeleton width="70%" height="0.75rem" />
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+      <div class="demo__col">
+        <p class="demo__label">
+          <sc-icon class="marca marca--evita" name="close" [size]="16" aria-hidden="true" />
+          <span>{{ 'fundamentos.patterns.demo.labelDont' | translate }}</span>
+        </p>
+        <div class="demo__stage demo__stage--spinner">
+          <sc-icon name="progress_activity" [spin]="true" [size]="28" aria-hidden="true" />
+        </div>
+      </div>
+    </div>
+  }
+
+  <nav class="vecinos" [attr.aria-label]="'fundamentos.patterns.neighbours' | translate">
+    @if (anterior(); as a) {
+      <a class="vecino" [routerLink]="'/fundamentos/patrones/' + a.ruta">
+        <span class="vecino__rotulo sc-text-caption-regular">{{ 'fundamentos.patterns.prev' | translate }}</span>
+        <span class="vecino__titulo sc-text-body-semibold">{{ 'fundamentos.patterns.principles.' + a.clave + '.nav' | translate }}</span>
+      </a>
+    }
+    @if (siguiente(); as s) {
+      <a class="vecino vecino--siguiente" [routerLink]="'/fundamentos/patrones/' + s.ruta">
+        <span class="vecino__rotulo sc-text-caption-regular">{{ 'fundamentos.patterns.next' | translate }}</span>
+        <span class="vecino__titulo sc-text-body-semibold">{{ 'fundamentos.patterns.principles.' + s.clave + '.nav' | translate }}</span>
+      </a>
+    }
+  </nav>
+} @else {
+  <h1 class="titulo">{{ 'fundamentos.patterns.missing' | translate }}</h1>
+  <p class="texto sc-text-body-regular">
+    <a routerLink="/fundamentos/patrones">{{ 'fundamentos.patterns.all' | translate }}</a>
+  </p>
+}

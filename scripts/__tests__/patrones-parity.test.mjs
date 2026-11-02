@@ -11,7 +11,7 @@ import {
 } from '../patrones-parity.mjs';
 
 const AGENTS = readFileSync('AGENTS.md', 'utf8');
-const RUTA_PATRONES = 'projects/sc-docs/src/app/pages/patrones/patrones.component.ts';
+const RUTA_PATRONES = 'projects/sc-docs/src/app/pages/patrones/patrones-datos.ts';
 const PATRONES = readFileSync(RUTA_PATRONES, 'utf8');
 // El texto de los principios vive en i18n (es = referencia); la página solo guarda la clave.
 const ES = JSON.parse(readFileSync('projects/sc-docs/public/assets/i18n/es.json', 'utf8'));

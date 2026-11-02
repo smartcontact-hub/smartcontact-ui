@@ -2,8 +2,8 @@ import { Routes } from '@angular/router';
 
 export const routes: Routes = [
   {
-    // Sección «Fundamentos»: shell con pestañas + las tres páginas de materia prima.
-    // Agrupadas a propósito — antes eran tres destinos planos de un top-nav de siete.
+    // Sección «Fundamentos»: la materia prima (color, espaciado, tipografía, iconos, movimiento) y los patrones de
+    // pantalla, elegidos en el lateral. Agrupadas a propósito: antes eran destinos planos de un top-nav de siete.
     path: 'fundamentos',
     loadComponent: () =>
       import('./pages/fundamentos/fundamentos-shell.component').then(
@@ -11,9 +11,14 @@ export const routes: Routes = [
       ),
     children: [
       {
-        path: 'escala-color',
+        path: 'color',
         loadComponent: () =>
           import('./pages/foundations/foundations.component').then((m) => m.FoundationsComponent),
+      },
+      {
+        path: 'espaciado',
+        loadComponent: () =>
+          import('./pages/espaciado/espaciado.component').then((m) => m.EspaciadoComponent),
       },
       {
         path: 'tipografia',
@@ -23,15 +28,28 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'iconos',
+        loadComponent: () => import('./pages/iconos/iconos.component').then((m) => m.IconosComponent),
+      },
+      {
+        path: 'movimiento',
+        loadComponent: () =>
+          import('./pages/movimiento/movimiento.component').then((m) => m.MovimientoComponent),
+      },
+      {
         path: 'patrones',
         loadComponent: () =>
           import('./pages/patrones/patrones.component').then((m) => m.PatronesComponent),
       },
       {
-        path: 'iconos',
-        loadComponent: () => import('./pages/iconos/iconos.component').then((m) => m.IconosComponent),
+        // Cada patrón en su página (`/fundamentos/patrones/carga`); antes iban los once seguidos en el índice.
+        path: 'patrones/:ruta',
+        loadComponent: () =>
+          import('./pages/patrones/patron.component').then((m) => m.PatronComponent),
       },
-      { path: '', pathMatch: 'full', redirectTo: 'escala-color' },
+      // «Escala y color» se partió en Color y Espaciado: su dirección lleva a Color, que es lo que más se buscaba.
+      { path: 'escala-color', pathMatch: 'full', redirectTo: 'color' },
+      { path: '', pathMatch: 'full', redirectTo: 'color' },
     ],
   },
   {
@@ -140,7 +158,7 @@ export const routes: Routes = [
 
   // Compatibilidad: las rutas planas de antes de agrupar Fundamentos. Se quedan para que
   // no muera ningún enlace ya repartido (docs, marcadores, previews por rama).
-  { path: 'foundations', pathMatch: 'full', redirectTo: 'fundamentos/escala-color' },
+  { path: 'foundations', pathMatch: 'full', redirectTo: 'fundamentos/color' },
   { path: 'foundations-type', pathMatch: 'full', redirectTo: 'fundamentos/tipografia' },
   { path: 'theme', pathMatch: 'full', redirectTo: 'tema' },
   { path: 'fundamentos/tema', pathMatch: 'full', redirectTo: 'tema' },

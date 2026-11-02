@@ -263,7 +263,7 @@ for (const { path, lines } of files) {
 // y compararlos literalmente sería ruido (ver la cabecera del módulo).
 {
   const agents = readFileSync(resolve(root, 'AGENTS.md'), 'utf8');
-  const rutaPatrones = 'projects/sc-docs/src/app/pages/patrones/patrones.component.ts';
+  const rutaPatrones = 'projects/sc-docs/src/app/pages/patrones/patrones-datos.ts';
   const patrones = readFileSync(resolve(root, rutaPatrones), 'utf8');
   // El texto de los principios vive en i18n (es = referencia); la página solo guarda su clave.
   const es = JSON.parse(
