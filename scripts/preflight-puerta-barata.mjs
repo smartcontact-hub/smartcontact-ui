@@ -37,20 +37,26 @@
  * teclee a mano: el `verify` de 9 h se lanzó directo, sin pasar por la puerta. `preflight-scope` deja
  * `ENV_AVISADA` en el entorno y el `preverify` de dentro calla, para no decir lo mismo dos veces.
  *
- * EL UMBRAL, MEDIDO. `UMBRAL_CARGA` = 4 procesos listos por CPU: `os.loadavg()[0] / os.cpus().length`.
- *   · Reposo, en el contenedor donde se midió (Linux, 4 CPUs): carga 0,01–0,10, o sea 0,03 por CPU. El
- *     reposo del Mac no se puede medir desde allí; en una línea se lee:
+ * EL UMBRAL, MEDIDO. `UMBRAL_CARGA` = 2 procesos listos por CPU: `os.loadavg()[0] / os.cpus().length`.
+ *   · Reposo, en el contenedor donde se midió (Linux, 4 CPUs): carga 0,01–0,10, o sea 0,03 por CPU. En el
+ *     Mac, con otras sesiones abiertas, 0,84 (2026-11-03). En una línea se lee:
  *     `node -e "const o=require('os');console.log(o.loadavg()[0]/o.cpus().length)"`.
  *   · Con K quemadores de CPU (razón K/4) todo se estira casi en proporción a la razón: `node -e 0` pasa de
  *     32 ms a 128 (razón 4) y a 538 (razón 16); los dos ficheros de test, de 1,3 s y 2,2 s en reposo a
  *     5,3 y 8,7 s (razón 4) y a 19,7 y 27,6 s (razón 16). Con razón 4 una cadena de 8 minutos ya tarda
- *     más de media hora: es lo mínimo que uno quiere que le avisen.
+ *     más de media hora.
  *   · Esa curva NO predice los rojos del Mac. Allí cayeron con 20–33 por CPU (205–330 en los 10 núcleos
  *     que citan DD-116 y `en-paralelo.mjs`) y aquí, con razón 16, ninguno de los dos cae: harían falta
  *     ~40 para el corte de 90 s y ~1000 para el `timeout: 4000`. La saturación real degradó mucho más que
  *     el reparto de CPU, así que el umbral sale del hueco entre lo normal (a partir de 1 por CPU, una
- *     máquina ocupada) y lo medido allí, no de esta curva. 4 queda por encima de lo ocupado y cinco veces
- *     por debajo del incidente.
+ *     máquina ocupada) y el rojo más bajo medido allí, no de esta curva. Con el incidente de 2026-09-29
+ *     salió 4: por encima de lo ocupado y cinco veces por debajo de 20.
+ *   · 2026-11-02, el mismo Mac de 10 CPUs: con la carga a 1 minuto de 25 a 32 (2,5–3,2 por CPU), `npm run
+ *     preflight` cayó en `test:components` por cuatro tests que agotaron los 5 s que vitest da a cada uno
+ *     (`sc-button`, `sc-command-palette`, `sc-group-popover`, `sc-form-section-nav`). Repetido solo, verde:
+ *     11 de 11 ficheros. El aviso no salió, porque 2,5 queda por debajo de 4. El rojo más bajo medido pasa
+ *     a ser 2,5, y el umbral baja a 2: por encima de lo ocupado y por debajo de ese rojo. Un nivel solo y no
+ *     dos: el aviso no bloquea, así que uno de más cuesta leer unas líneas y uno de menos, una cadena entera.
  */
 import { execFileSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync, realpathSync } from "node:fs";
@@ -266,7 +272,7 @@ export function generadosAlDia({ cwd = process.cwd(), correr = correrNode } = {}
 // ── El aviso de máquina saturada ─────────────────────────────────────────────────────────────────
 
 /** Procesos listos por CPU (`os.loadavg()[0] / os.cpus().length`) desde los que se avisa; inclusivo. */
-export const UMBRAL_CARGA = 4;
+export const UMBRAL_CARGA = 2;
 
 /** La marca con la que un eslabón le dice a los de dentro «ya avisé»: `preflight-scope` → el `preverify`. */
 export const ENV_AVISADA = "SC_CARGA_AVISADA";
@@ -276,8 +282,9 @@ const MAX_CONSUMIDORES = 5;
 
 /**
  * Los tests cuyo verde depende del reloj: con la máquina saturada pueden caer con cualquier cambio.
- * `ancla` es un trozo del nombre que la prueba tiene en su fichero, y un test comprueba que sigue ahí:
- * un puntero que apunta a algo que se movió manda a buscar donde ya no está (LEARNINGS #17).
+ * `ancla` es un trozo de `fichero` que nombra la prueba, o el script que la lanza, y un test comprueba que
+ * sigue ahí: un puntero que apunta a algo que se movió manda a buscar donde ya no está (LEARNINGS #17).
+ * `repetir` es cómo se corre sola, lo que toca antes de tocar código si cae.
  */
 export const TESTS_CON_RELOJ = [
   {
@@ -285,11 +292,20 @@ export const TESTS_CON_RELOJ = [
     ancla: "estadoDelArbol: lo mide del repo de verdad",
     motivo:
       "«estadoDelArbol: lo mide del repo de verdad…»: sus git llevan `timeout: 4000` (4 s) y, pasado, devuelve { seguro: null }",
+    repetir: "node --test scripts/__tests__/stop-guard.test.mjs",
   },
   {
     fichero: "scripts/__tests__/playwright-reuse-guard.test.mjs",
     ancla: "la rama CI de reuseOnlyOwnServer",
     motivo: "su suite de juguete de Playwright se corta a los 90 s",
+    repetir: "node --test scripts/__tests__/playwright-reuse-guard.test.mjs",
+  },
+  {
+    fichero: "package.json",
+    ancla: '"test:components": "ng test ui-smartcontact',
+    motivo:
+      "los tests de componentes (vitest) se cortan a los 5 s cada uno, el `testTimeout` por defecto de vitest, que `angular.json` no cambia",
+    repetir: "npm run test:components",
   },
 ];
 
@@ -379,12 +395,12 @@ export function avisoDeCarga({ carga, cpus, consumidores = [], umbral = UMBRAL_C
     lineas.push("    Quién la consume: no pude leer `ps`. Míralo tú: `ps -Ao pid,%cpu,etime,comm -r | head`.");
   }
   lineas.push("", "    Con la máquina así, estos tests con reloj pueden salir rojos con CUALQUIER cambio:");
-  for (const t of TESTS_CON_RELOJ) lineas.push(`      · ${t.fichero} — ${t.motivo}.`);
+  for (const t of TESTS_CON_RELOJ) lineas.push(`      · ${t.repetir} — ${t.motivo}.`);
   lineas.push(
     "",
     "    Esto NO bloquea: una pasada que sale verde bajo carga sigue valiendo, y la cadena sigue.",
-    "    Si cae uno de esos tests, repítelo solo con la máquina libre antes de tocar código (LEARNINGS #5):",
-    "      node --test <fichero>",
+    "    Si cae uno de esos tests, repítelo solo con la máquina libre antes de tocar código (LEARNINGS #5),",
+    "    con el comando de su línea.",
     REGLA,
   );
   return lineas.join("\n");
