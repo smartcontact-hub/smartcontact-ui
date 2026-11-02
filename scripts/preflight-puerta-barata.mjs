@@ -55,7 +55,7 @@
 import { execFileSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync, realpathSync } from "node:fs";
 import os from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { cliente as clienteDeGithub, ddsAnadidas } from "./github.mjs";
@@ -157,8 +157,9 @@ export const PREFIJO_FALTA = "falta node_modules/";
 
 /**
  * Los paquetes directos de `package.json` (`dependencies` y `devDependencies`) sin `node_modules/<nombre>/package.json`,
- * cada uno con lo que pide `package.json` y la versión y la huella que fija el lock (`null` si no lo fija). Sin
- * `package.json`, nada.
+ * cada uno con lo que pide `package.json` y lo que fija el lock (`null` si no lo fija): versión, huella, de dónde lo
+ * trae (`origen`) y el paquete de verdad (`paquete`: con un alias `npm:otro@…`, el lock lo guarda en `name`). `aMedias`
+ * dice si ya hay una carpeta con ese nombre, sin `package.json`. Sin `package.json`, nada.
  */
 export function paquetesQueFaltan(cwd = process.cwd()) {
   const leer = (f) => {
@@ -176,23 +177,53 @@ export function paquetesQueFaltan(cwd = process.cwd()) {
     .filter((nombre) => !existsSync(join(cwd, "node_modules", nombre, "package.json")))
     .map((nombre) => {
       const fijado = lock[`node_modules/${nombre}`];
-      return { nombre, pide: pedidos[nombre], version: fijado?.version ?? null, huella: fijado?.integrity ?? null };
+      return {
+        nombre,
+        pide: pedidos[nombre],
+        version: fijado?.version ?? null,
+        huella: fijado?.integrity ?? null,
+        origen: fijado?.resolved ?? null,
+        paquete: fijado?.name ?? nombre,
+        aMedias: existsSync(join(cwd, "node_modules", nombre)),
+      };
     });
 }
 
+// La forma de npm: nombre (con scope o sin él), versión semver y huella SRI. Ni espacios, ni comillas, ni `;$\``.
+const NOMBRE_NPM = /^(@[A-Za-z0-9][\w.~-]*\/)?[A-Za-z0-9][\w.~-]*$/;
+const VERSION_NPM = /^\d+\.\d+\.\d+([-+][0-9A-Za-z.+-]*)?$/;
+const HUELLA_NPM = /^sha(1|256|384|512)-[A-Za-z0-9+/]+=*$/;
+
+/** Una ruta entre comillas simples para `sh`: dentro no se expande nada, y una `'` se cierra, se escapa y se reabre. */
+const entreComillas = (ruta) => `'${ruta.replaceAll("'", "'\\''")}'`;
+
 /**
- * La receta para traer UN paquete sin `npm install`, con la ruta y la huella puestas: `npm pack` de la
- * versión del lock, comprobar que su `integrity` es la del lock y desempaquetarlo en el `node_modules` compartido
- * (`compartido`, ya resuelto el enlace). Pura.
+ * La receta para traer UN paquete sin `npm install`, con las rutas y la huella puestas (`compartido`: el `node_modules`
+ * de verdad, ya resuelto el enlace). Una sola cadena de `&&`, para que nada a medias llegue al compartido: `npm pack` de
+ * la versión del lock, seguir solo si su `integrity` es la del lock, desempaquetar en la carpeta vacía y, al final,
+ * mover el paquete entero a su sitio. Una carpeta vieja sin `package.json` sale antes del compartido. Pura.
+ *
+ * La receta se pega en una terminal, así que nada de `package.json` ni del lock entra en ella sin tener la forma de npm:
+ * un lock retocado podría colar `; orden` en una versión o en un nombre. Las rutas van entre comillas simples.
  */
-export function recetaDePaquete({ nombre, pide, version, huella }, compartido) {
+export function recetaDePaquete({ nombre, pide, version, huella, origen = null, paquete = nombre, aMedias = false }, compartido) {
   if (!version) return `(package.json pide ${pide} y package-lock.json no lo fija: el lock no está al día con package.json)`;
-  const tgz = `${nombre.replace(/^@/, "").replace("/", "-")}-${version}.tgz`;
-  const destino = JSON.stringify(join(compartido, nombre));
+  // `npm pack <nombre>@<versión>` pide al registro: un paquete de git, de una carpeta o de la URL de un .tgz no se trae
+  // así. Un rango, una etiqueta o un alias `npm:` no llevan ni `:` ni `/`; todo lo demás, sí.
+  if (pide && !/^npm:/.test(pide) && /[:/]/.test(pide)) return `(package.json lo pide de ${pide}, no de un registro: tráelo a mano)`;
+  if (origen && !/^https?:\/\//.test(origen)) return `(el lock lo trae de ${origen}, no de un registro: tráelo a mano)`;
+  if (!huella) return `(el lock fija ${version} sin huella: no hay con qué comprobar lo que traigas; tráelo a mano)`;
+  if (![nombre, paquete].every((n) => NOMBRE_NPM.test(n)) || !VERSION_NPM.test(version) || !HUELLA_NPM.test(huella)) {
+    return "(el nombre, la versión o la huella del lock no tienen la forma de npm: no se pegan en una terminal; tráelo a mano)";
+  }
+  const tgz = `${paquete.replace(/^@/, "").replace("/", "-")}-${version}.tgz`;
+  const ruta = join(compartido, nombre);
+  const apartar = aMedias ? ` && mv ${entreComillas(ruta)} a-medias` : "";
   return [
-    `(el lock fija ${version}) → desde una carpeta vacía:`,
-    `        npm pack ${nombre}@${version} --json | grep integrity   # tiene que decir ${huella ?? "lo que diga el lock"}`,
-    `        mkdir -p ${destino} && tar -xzf ${tgz} -C ${destino} --strip-components=1`,
+    `(el lock fija ${paquete === nombre ? "" : `${paquete}@`}${version}) → desde una carpeta vacía; si la huella no cuadra, el compartido no se toca:`,
+    `        npm pack ${paquete}@${version} --json | grep -qF '"${huella}"' &&`,
+    `          mkdir paquete && tar -xzf ${tgz} -C paquete --strip-components=1 &&`,
+    `          mkdir -p ${entreComillas(dirname(ruta))}${apartar} && mv paquete ${entreComillas(ruta)}`,
   ].join("\n");
 }
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Comprueba que los cinco proyectos de Cloudflare Pages siguen configurados como el repo espera.
+ * Comprueba que los proyectos de Cloudflare Pages siguen configurados como el repo espera.
  *
  * Cuatro ajustes viven SOLO en el dashboard de Cloudflare y ningún gate del repo los ve: el
  * comando de build, el directorio de salida, la rama de producción y la variable
@@ -138,7 +138,7 @@ async function main() {
     console.error(`\n${total} desviación(es) en el dashboard de Cloudflare. Se corrige allí o por API (PATCH pages/projects/<proyecto>).`);
     process.exit(1);
   }
-  console.log('\n✓ Los 5 proyectos de Cloudflare están como el repo espera.');
+  console.log(`\n✓ Los ${PROYECTOS.length} proyectos de Cloudflare están como el repo espera.`);
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {

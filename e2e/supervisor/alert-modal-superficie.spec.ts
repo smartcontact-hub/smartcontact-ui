@@ -61,13 +61,18 @@ test('borrar una agenda pregunta con la superficie blanca, como el confirm de an
   await expect(aviso).toHaveCount(0);
 });
 
-test('descartar cambios pregunta con la superficie blanca, como el confirm de antes (DD-242)', async ({ page }) => {
+test('descartar cambios pregunta con la superficie blanca y los botones de borrar (DD-242, enmienda 2026-11-02)', async ({ page }) => {
   await goto(page, 'admin/agendas/crear');
   await page.locator('#agenda-name').fill('Agenda de prueba');
   await page.getByRole('link', { name: 'Agendas', exact: true }).first().click();
   const aviso = page.getByRole('alertdialog', { name: '¿Descartar cambios?' });
   await esperaBlanca(page, aviso, 'warn');
-  // Como el confirm con `emphasis: 'reject'`: la salida segura rellena y «Descartar» con borde, sin relleno.
-  expect(await fondoDe(aviso.getByRole('button', { name: 'Seguir editando' }))).not.toBe('rgba(0, 0, 0, 0)');
-  expect(await fondoDe(aviso.getByRole('button', { name: 'Descartar' }))).toBe('rgba(0, 0, 0, 0)');
+  // Los botones de borrar: «Seguir editando» gris relleno a la izquierda y «Descartar» rojo relleno a la derecha. La
+  // salida segura la protege el foco, que abre en ella.
+  const seguir = aviso.getByRole('button', { name: 'Seguir editando' });
+  const descartar = aviso.getByRole('button', { name: 'Descartar' });
+  expect(await fondoDe(seguir)).not.toBe('rgba(0, 0, 0, 0)');
+  expect(await fondoDe(descartar)).toBe('rgb(220, 38, 38)');
+  expect((await seguir.boundingBox())!.x).toBeLessThan((await descartar.boundingBox())!.x);
+  await expect(seguir).toBeFocused();
 });
