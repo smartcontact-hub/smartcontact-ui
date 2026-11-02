@@ -23,7 +23,12 @@ test('el maestro del Kit casa por nombre y por alias (el Kit escribe «Divide» 
   assert.equal(tieneMaestroEnKit('button'), true);
   assert.equal(tieneMaestroEnKit('divider'), true);
   assert.equal(tieneMaestroEnKit('section-card'), true);
-  assert.equal(tieneMaestroEnKit('fact-row'), false);
+  // «❖ Summary» y la pieza «.Subsection» de «❖ Section», releídas el 2026-11-02.
+  assert.equal(tieneMaestroEnKit('icon-tile'), true);
+  assert.equal(tieneMaestroEnKit('fact-row'), true);
+  assert.equal(tieneMaestroEnKit('subsection'), true);
+  // Su Code Connect apunta al Popover genérico: sin maestro propio.
+  assert.equal(tieneMaestroEnKit('group-popover'), false);
 });
 
 test('solo cuenta el @deprecated de la clase, no el de un alias de tipo del mismo fichero', () => {
