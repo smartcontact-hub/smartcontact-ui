@@ -20,7 +20,7 @@ ignorar la rutina. Sé el crítico más duro *pero justo* del repo.
 - `docs/customs-catalog.md` — las divergencias vs Figma que son **a propósito** (no las marques como bug).
 
 **Fuera de tu alcance — NO lo audites, ya lo caza el CI en cada push:**
-toda la cadena `npm run verify` (25 pasos: `tokens:*`, `audit:theme-scale`,
+toda la cadena `npm run verify` (los pasos de su script en `package.json`, sin cifra aquí: `tokens:*`, `audit:theme-scale`,
 `audit:border-surfaces`, `audit:components`, `audit:datatables`,
 `audit:primeng-coupling`, `usage:check`, `i18n:check`, `test:unit`,
 `docs:guard`, `docs:coherence`, `build`, `test:components`, `typecheck`,
@@ -109,7 +109,7 @@ automatizar debe ser un gate, no documentación"*. Así que cada hallazgo se cla
 
 - **Todo hallazgo cita `file:line`.** Sin ubicación concreta, no es un hallazgo — es una opinión. No la escribas. (Espíritu de `reflect`: "no concrete moment → no claim".)
 - **Si una pasada no encuentra nada real, escribe "sin hallazgos".** Inventar para llenar está **prohibido**.
-- **Nada de lo que ya cubren los 51 gates ni los `e2e:*`** (§0).
+- **Nada de lo que ya cubren los gates de `verify` ni los `e2e:*`** (§0).
 - **Semana sin hallazgos en ninguna pasada → NO abres PR.** Cero ruido.
 
 **Seguridad de CI (CRÍTICO — `docs/AUDIT-SEMANAL.md` lo escanea `docs:coherence` en cada `verify`, para siempre):**
@@ -142,11 +142,18 @@ salvo para marcar `[x]` lo que ya se arregló. Formato de cada sección:
 ```
 
 Entrega vía PR:
-1. `git switch -c audit/semanal-<YYYY-MM-DD>` desde la rama por defecto actualizada.
+1. Rama: si el entorno fija una rama de trabajo, usa esa (reiníciala desde la rama por defecto si su PR ya se mergeó); si no, `git switch -c audit/semanal-<YYYY-MM-DD>` desde la rama por defecto actualizada.
 2. Escribe la sección nueva en `docs/AUDIT-SEMANAL.md`.
-3. **Corre `npm run docs:guard && npm run docs:coherence` localmente** — si rojo, lo más probable es que hayas tecleado un `scripts/*.mjs`/`npm run` inexistente (§3); quítalo y re-corre. No abras el PR en rojo.
-4. Abre el PR con la herramienta MCP de GitHub (`create_pull_request`): en la nube `gh` solo tiene `api`, así que `gh pr create` no existe. Título `chore(audit): auditoría semanal <YYYY-MM-DD>` y cuerpo = resumen de los hallazgos; el servidor le añade un pie que hay que quitar (`pr-footer-guard`). Si ya hay un PR de auditoría abierto sin mergear, **actualízalo** en vez de abrir otro.
+3. **Corre `npm run docs:guard && npm run docs:coherence` localmente** — (con el gate como ÚLTIMO comando y su salida a un fichero, sin `| tail` detrás: el hook de Bash lo deniega) si rojo, lo más probable es que hayas tecleado un `scripts/*.mjs`/`npm run` inexistente (§3); quítalo y re-corre. No abras el PR en rojo.
+4. Abre el PR con la herramienta MCP de GitHub (`create_pull_request`): en la nube `gh` solo tiene `api`, así que `gh pr create` no existe. Título `chore(audit): auditoría semanal <YYYY-MM-DD>` y cuerpo = resumen de los hallazgos; el servidor le añade un pie que hay que quitar (`pr-footer-guard`): tras crearlo, lee el PR y reenvía el cuerpo sin la raya y la línea de atribución con `update_pull_request`. El push exige antes `npm run preflight:scope -- --run`. Si ya hay un PR de auditoría abierto sin mergear, **actualízalo** en vez de abrir otro.
 5. Rafa revisa, mergea (= aceptar en el backlog) o marca cajas.
+
+**Cabecera de cada sección: qué miraste.** Añade una línea «Fuentes comparadas» con lo que de verdad
+contrastaste (generadores corridos, docs leídos, rango de commits y de claves i18n revisadas). Una
+pasada sin hallazgos y sin esa línea no distingue «limpio» de «no miré».
+
+**Correcciones de una línea.** Si el fix de un hallazgo `arréglalo` es una cifra o una frase de un
+doc, hazlo en el mismo PR y marca la casilla `[x]`; el backlog es para lo que necesita decisión.
 
 ## 5. El orden que sigues en cada run
 
