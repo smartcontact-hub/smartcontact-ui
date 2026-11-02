@@ -397,6 +397,7 @@
       "selector": "sc-alert-modal",
       "name": "alert-modal",
       "primengBase": "primeng/dynamicdialog",
+      "primengPrincipal": "dynamicdialog",
       "estado": "ready",
       "faltas": [],
       "retirado": null,
@@ -612,6 +613,7 @@
       "selector": "sc-avatar",
       "name": "avatar",
       "primengBase": "primeng/avatar, primeng/overlaybadge",
+      "primengPrincipal": "avatar",
       "estado": "ready",
       "faltas": [],
       "retirado": null,
@@ -800,6 +802,7 @@
       "selector": "sc-avatargroup",
       "name": "avatargroup",
       "primengBase": "primeng/avatargroup",
+      "primengPrincipal": "avatargroup",
       "estado": "experimental",
       "faltas": [
         "demo"
@@ -823,6 +826,7 @@
       "selector": "sc-badge",
       "name": "badge",
       "primengBase": "primeng/badge",
+      "primengPrincipal": "badge",
       "estado": "ready",
       "faltas": [],
       "retirado": null,
@@ -885,6 +889,7 @@
       "selector": "sc-breadcrumb",
       "name": "breadcrumb",
       "primengBase": "primeng/breadcrumb",
+      "primengPrincipal": "breadcrumb",
       "estado": "ready",
       "faltas": [],
       "retirado": null,
@@ -973,6 +978,7 @@
       "selector": "sc-bulk-action-bar",
       "name": "bulk-action-bar",
       "primengBase": "—",
+      "primengPrincipal": null,
       "estado": "experimental",
       "faltas": [
         "kit"
@@ -1068,6 +1074,7 @@
       "selector": "sc-bulk-edit-menu",
       "name": "bulk-edit-menu",
       "primengBase": "—",
+      "primengPrincipal": null,
       "estado": "experimental",
       "faltas": [
         "kit"
@@ -1143,6 +1150,7 @@
       "selector": "sc-bulk-transcription-modal",
       "name": "bulk-transcription-modal",
       "primengBase": "—",
+      "primengPrincipal": null,
       "estado": "experimental",
       "faltas": [
         "kit"
@@ -1349,6 +1357,7 @@
       "selector": "sc-button",
       "name": "button",
       "primengBase": "primeng/button, primeng/tooltip",
+      "primengPrincipal": "button",
       "estado": "ready",
       "faltas": [],
       "retirado": null,
@@ -1693,6 +1702,7 @@
       "selector": "sc-card",
       "name": "card",
       "primengBase": "primeng/card",
+      "primengPrincipal": "card",
       "estado": "ready",
       "faltas": [],
       "retirado": null,
@@ -1755,6 +1765,7 @@
       "selector": "sc-checkbox",
       "name": "checkbox",
       "primengBase": "—",
+      "primengPrincipal": null,
       "estado": "ready",
       "faltas": [],
       "retirado": null,
@@ -1859,6 +1870,7 @@
       "selector": "sc-chip",
       "name": "chip",
       "primengBase": "primeng/chip",
+      "primengPrincipal": "chip",
       "estado": "ready",
       "faltas": [],
       "retirado": null,
@@ -2022,6 +2034,7 @@
       "selector": "sc-color-dot-picker",
       "name": "color-dot-picker",
       "primengBase": "—",
+      "primengPrincipal": null,
       "estado": "experimental",
       "faltas": [
         "kit"
@@ -2076,6 +2089,7 @@
       "selector": "sc-column-selector",
       "name": "column-selector",
       "primengBase": "primeng/popover, primeng/tooltip",
+      "primengPrincipal": "popover",
       "estado": "experimental",
       "faltas": [
         "kit"
@@ -2180,6 +2194,7 @@
       "selector": "sc-command-palette",
       "name": "command-palette",
       "primengBase": "—",
+      "primengPrincipal": null,
       "estado": "experimental",
       "faltas": [
         "kit"
@@ -2201,6 +2216,7 @@
       "selector": "sc-confirmdialog",
       "name": "confirmdialog",
       "primengBase": "primeng/autofocus, primeng/button, primeng/confirmdialog, primeng/confirmpopup",
+      "primengPrincipal": "confirmdialog",
       "estado": "deprecated",
       "faltas": [],
       "retirado": "El diálogo centrado lo sustituye `sc-alert-modal`, el aviso que comparten los dos DS (DD-241). Sigue vigente solo el globo pegado al botón (`ScConfirmService.request({ …, target })`), que aún no tiene sustituto.",
@@ -2288,6 +2304,7 @@
       "selector": "sc-custom-modal",
       "name": "custom-modal",
       "primengBase": "primeng/dialog, primeng/dynamicdialog",
+      "primengPrincipal": "dialog",
       "estado": "ready",
       "faltas": [],
       "retirado": null,
@@ -2591,6 +2608,7 @@
       "selector": "sc-datatable",
       "name": "datatable",
       "primengBase": "primeng/table",
+      "primengPrincipal": "table",
       "estado": "ready",
       "faltas": [],
       "retirado": null,
@@ -3708,6 +3726,7 @@
       "selector": "sc-datepicker",
       "name": "datepicker",
       "primengBase": "primeng/datepicker",
+      "primengPrincipal": "datepicker",
       "estado": "ready",
       "faltas": [],
       "retirado": null,
@@ -4128,6 +4147,7 @@
       "selector": "sc-delete-entity-dialog",
       "name": "delete-entity-dialog",
       "primengBase": "primeng/tooltip",
+      "primengPrincipal": "tooltip",
       "estado": "experimental",
       "faltas": [
         "kit"
@@ -4266,6 +4286,7 @@
       "selector": "sc-dialog",
       "name": "dialog",
       "primengBase": "primeng/dialog",
+      "primengPrincipal": "dialog",
       "estado": "deprecated",
       "faltas": [],
       "retirado": "Usa `sc-custom-modal`, la carcasa de modal que comparten los dos DS (la de ui.smart-contact.com), y `sc-alert-modal` para avisos y confirmaciones (DD-241).",
@@ -4538,6 +4559,7 @@
       "selector": "sc-divider",
       "name": "divider",
       "primengBase": "primeng/divider",
+      "primengPrincipal": "divider",
       "estado": "ready",
       "faltas": [],
       "retirado": null,
@@ -4603,6 +4625,7 @@
       "selector": "sc-drawer",
       "name": "drawer",
       "primengBase": "primeng/drawer",
+      "primengPrincipal": "drawer",
       "estado": "ready",
       "faltas": [],
       "retirado": null,
@@ -4805,6 +4828,7 @@
       "selector": "sc-empty-state",
       "name": "empty-state",
       "primengBase": "—",
+      "primengPrincipal": null,
       "estado": "experimental",
       "faltas": [
         "kit"
@@ -4899,6 +4923,7 @@
       "selector": "div[scFactRow]",
       "name": "fact-row",
       "primengBase": "—",
+      "primengPrincipal": null,
       "estado": "ready",
       "faltas": [],
       "retirado": null,
@@ -4991,6 +5016,7 @@
       "selector": "sc-field-label",
       "name": "field-label",
       "primengBase": "—",
+      "primengPrincipal": null,
       "estado": "experimental",
       "faltas": [
         "kit",
@@ -5076,6 +5102,7 @@
       "selector": "sc-field-msg",
       "name": "field-msg",
       "primengBase": "—",
+      "primengPrincipal": null,
       "estado": "experimental",
       "faltas": [
         "kit",
@@ -5150,6 +5177,7 @@
       "selector": "sc-fileupload",
       "name": "fileupload",
       "primengBase": "primeng/fileupload",
+      "primengPrincipal": "fileupload",
       "estado": "ready",
       "faltas": [],
       "retirado": null,
@@ -5547,6 +5575,7 @@
       "selector": "sc-form-danger-zone",
       "name": "form-danger-zone",
       "primengBase": "—",
+      "primengPrincipal": null,
       "estado": "experimental",
       "faltas": [
         "kit"
@@ -5621,6 +5650,7 @@
       "selector": "sc-form-section-nav",
       "name": "form-section-nav",
       "primengBase": "primeng/tooltip",
+      "primengPrincipal": "tooltip",
       "estado": "experimental",
       "faltas": [
         "kit"
@@ -5777,6 +5807,7 @@
       "selector": "sc-gauge",
       "name": "gauge",
       "primengBase": "—",
+      "primengPrincipal": null,
       "estado": "experimental",
       "faltas": [
         "kit"
@@ -5891,6 +5922,7 @@
       "selector": "sc-group-popover",
       "name": "group-popover",
       "primengBase": "primeng/tooltip",
+      "primengPrincipal": "tooltip",
       "estado": "experimental",
       "faltas": [
         "kit"
@@ -5985,6 +6017,7 @@
       "selector": "sc-icon-tile",
       "name": "icon-tile",
       "primengBase": "—",
+      "primengPrincipal": null,
       "estado": "ready",
       "faltas": [],
       "retirado": null,
@@ -6039,6 +6072,7 @@
       "selector": "sc-impact-preview-dialog",
       "name": "impact-preview-dialog",
       "primengBase": "—",
+      "primengPrincipal": null,
       "estado": "experimental",
       "faltas": [
         "kit"
@@ -6154,6 +6188,7 @@
       "selector": "sc-inline-rename-cell",
       "name": "inline-rename-cell",
       "primengBase": "—",
+      "primengPrincipal": null,
       "estado": "experimental",
       "faltas": [
         "kit"
@@ -6226,6 +6261,7 @@
       "selector": "sc-inputgroup",
       "name": "inputgroup",
       "primengBase": "primeng/inputgroup",
+      "primengPrincipal": "inputgroup",
       "estado": "ready",
       "faltas": [],
       "retirado": null,
@@ -6266,6 +6302,7 @@
       "selector": "sc-inputnumber",
       "name": "inputnumber",
       "primengBase": "primeng/inputtext",
+      "primengPrincipal": "inputtext",
       "estado": "ready",
       "faltas": [],
       "retirado": null,
@@ -6502,6 +6539,7 @@
       "selector": "sc-inputtags",
       "name": "inputtags",
       "primengBase": "primeng/inputtags",
+      "primengPrincipal": "inputtags",
       "estado": "experimental",
       "faltas": [
         "kit"
@@ -6817,6 +6855,7 @@
       "selector": "sc-inputtext",
       "name": "inputtext",
       "primengBase": "primeng/inputtext",
+      "primengPrincipal": "inputtext",
       "estado": "ready",
       "faltas": [],
       "retirado": null,
@@ -7077,6 +7116,7 @@
       "selector": "sc-keyboard-shortcuts",
       "name": "keyboard-shortcuts",
       "primengBase": "—",
+      "primengPrincipal": null,
       "estado": "experimental",
       "faltas": [
         "kit"
@@ -7111,6 +7151,7 @@
       "selector": "sc-message",
       "name": "message",
       "primengBase": "primeng/message",
+      "primengPrincipal": "message",
       "estado": "ready",
       "faltas": [],
       "retirado": null,
@@ -7235,6 +7276,7 @@
       "selector": "sc-multiselect",
       "name": "multiselect",
       "primengBase": "primeng/chip, primeng/multiselect, primeng/tooltip",
+      "primengPrincipal": "multiselect",
       "estado": "ready",
       "faltas": [],
       "retirado": null,
@@ -7868,6 +7910,7 @@
       "selector": "sc-option-cards",
       "name": "option-card",
       "primengBase": "primeng/radiobutton",
+      "primengPrincipal": "radiobutton",
       "estado": "experimental",
       "faltas": [
         "kit",
@@ -7993,6 +8036,7 @@
       "selector": "sc-panel",
       "name": "panel",
       "primengBase": "primeng/panel",
+      "primengPrincipal": "panel",
       "estado": "ready",
       "faltas": [],
       "retirado": null,
@@ -8118,6 +8162,7 @@
       "selector": "sc-password",
       "name": "password",
       "primengBase": "primeng/config, primeng/inputpassword",
+      "primengPrincipal": "inputpassword",
       "estado": "ready",
       "faltas": [],
       "retirado": null,
@@ -8353,6 +8398,7 @@
       "selector": "sc-permission-matrix",
       "name": "permission-matrix",
       "primengBase": "—",
+      "primengPrincipal": null,
       "estado": "experimental",
       "faltas": [
         "kit",
@@ -8458,6 +8504,7 @@
       "selector": "sc-photo-upload",
       "name": "photo-upload",
       "primengBase": "primeng/tooltip",
+      "primengPrincipal": "tooltip",
       "estado": "experimental",
       "faltas": [
         "kit"
@@ -8572,6 +8619,7 @@
       "selector": "sc-progressbar",
       "name": "progressbar",
       "primengBase": "primeng/progressbar",
+      "primengPrincipal": "progressbar",
       "estado": "ready",
       "faltas": [],
       "retirado": null,
@@ -8677,6 +8725,7 @@
       "selector": "sc-progressspinner",
       "name": "progressspinner",
       "primengBase": "primeng/progressspinner",
+      "primengPrincipal": "progressspinner",
       "estado": "ready",
       "faltas": [],
       "retirado": null,
@@ -8763,6 +8812,7 @@
       "selector": "sc-radiobutton",
       "name": "radiobutton",
       "primengBase": "primeng/radiobutton",
+      "primengPrincipal": "radiobutton",
       "estado": "ready",
       "faltas": [],
       "retirado": null,
@@ -8903,6 +8953,7 @@
       "selector": "sc-search",
       "name": "search",
       "primengBase": "primeng/iconfield, primeng/inputicon, primeng/inputtext",
+      "primengPrincipal": "iconfield",
       "estado": "experimental",
       "faltas": [
         "kit"
@@ -9053,6 +9104,7 @@
       "selector": "sc-section-card",
       "name": "section-card",
       "primengBase": "—",
+      "primengPrincipal": null,
       "estado": "ready",
       "faltas": [],
       "retirado": null,
@@ -9175,6 +9227,7 @@
       "selector": "sc-select",
       "name": "select",
       "primengBase": "primeng/select",
+      "primengPrincipal": "select",
       "estado": "ready",
       "faltas": [],
       "retirado": null,
@@ -9682,6 +9735,7 @@
       "selector": "sc-selectbutton",
       "name": "selectbutton",
       "primengBase": "primeng/selectbutton",
+      "primengPrincipal": "selectbutton",
       "estado": "ready",
       "faltas": [],
       "retirado": null,
@@ -9919,6 +9973,7 @@
       "selector": "sc-skeleton",
       "name": "skeleton",
       "primengBase": "primeng/skeleton",
+      "primengPrincipal": "skeleton",
       "estado": "ready",
       "faltas": [],
       "retirado": null,
@@ -10031,6 +10086,7 @@
       "selector": "sc-slot",
       "name": "slot",
       "primengBase": "—",
+      "primengPrincipal": null,
       "estado": "experimental",
       "faltas": [
         "kit"
@@ -10103,6 +10159,7 @@
       "selector": "sc-step-marker",
       "name": "step-marker",
       "primengBase": "—",
+      "primengPrincipal": null,
       "estado": "experimental",
       "faltas": [
         "kit",
@@ -10140,6 +10197,7 @@
       "selector": "sc-sticky-form-header",
       "name": "sticky-form-header",
       "primengBase": "—",
+      "primengPrincipal": null,
       "estado": "deprecated",
       "faltas": [],
       "retirado": "RETENIDO PARA ROLLBACK (S59, Supervisor DD#65). Ya NO lo usa ningún form de la app: los 3 form shells migraron al modelo \"todo arriba\" (acciones al TopBar + la ficha del panel para la identidad). Se conserva intacto —exportado + showcased en la demo— como red de seguridad por si se revierte el \"todo arriba\". NO borrar sin decisión explícita (ver DD#65 § \"Cómo revertir\").",
@@ -10262,6 +10320,7 @@
       "selector": "sc-subsection",
       "name": "subsection",
       "primengBase": "—",
+      "primengPrincipal": null,
       "estado": "ready",
       "faltas": [],
       "retirado": null,
@@ -10342,6 +10401,7 @@
       "selector": "sc-tabs",
       "name": "tabs",
       "primengBase": "primeng/tabs",
+      "primengPrincipal": "tabs",
       "estado": "ready",
       "faltas": [],
       "retirado": null,
@@ -10407,6 +10467,7 @@
       "selector": "sc-tag",
       "name": "tag",
       "primengBase": "primeng/tag, primeng/tooltip",
+      "primengPrincipal": "tag",
       "estado": "ready",
       "faltas": [],
       "retirado": null,
@@ -10552,6 +10613,7 @@
       "selector": "sc-textarea",
       "name": "textarea",
       "primengBase": "primeng/textarea",
+      "primengPrincipal": "textarea",
       "estado": "ready",
       "faltas": [],
       "retirado": null,
@@ -10822,6 +10884,7 @@
       "selector": "sc-toast",
       "name": "toast",
       "primengBase": "primeng/toast",
+      "primengPrincipal": "toast",
       "estado": "ready",
       "faltas": [],
       "retirado": null,
@@ -10951,6 +11014,7 @@
       "selector": "sc-toggleswitch",
       "name": "toggleswitch",
       "primengBase": "primeng/toggleswitch",
+      "primengPrincipal": "toggleswitch",
       "estado": "ready",
       "faltas": [],
       "retirado": null,
@@ -11113,6 +11177,7 @@
       "selector": "pTooltip",
       "name": "tooltip",
       "primengBase": "primeng/tooltip",
+      "primengPrincipal": "tooltip",
       "estado": "ready",
       "faltas": [],
       "retirado": null,

@@ -3,7 +3,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { generar, leerFicha } from '../docs-ia.mjs';
+import { decisionesPorSelector, generar, leerFicha } from '../docs-ia.mjs';
 
 test('leerFicha: una descripción partida en trozos, un snippet en constante y una story sin plantilla', () => {
   const ts = `
@@ -65,4 +65,20 @@ test('generar: las 56 fichas de sc-docs, cada una con sus stories, y el botón c
   assert.match(boton.md, /## Cuándo se usa\n\nPara una ACCIÓN/);
   assert.match(boton.md, /\?historia=variantes&solo=1/);
   assert.match(boton.md, /\| `ariaLabel` \| entrada \|/);
+});
+
+test('decisionesPorSelector: cuenta la DD que cita el selector entre comillas invertidas, de la más nueva a la más vieja', () => {
+  const dd = [
+    '# Decisiones',
+    '## DD-10 · 2026-01-02 — Primera',
+    'El `sc-button` cambia de radio.',
+    '## DD-12 · 2026-03-04 — Segunda',
+    'Se usa `<sc-button label="x">` y `sc-tag`.',
+    '## DD-11 · 2026-02-03 — Tercera',
+    'Habla de sc-button sin comillas y de `sc-button-group`, que es otro.',
+  ].join('\n');
+  const r = decisionesPorSelector(dd, ['sc-button', 'sc-tag', 'sc-chip']);
+  assert.deepEqual(r['sc-button'].map((d) => d.id), ['DD-12', 'DD-10']);
+  assert.deepEqual(r['sc-tag'], [{ id: 'DD-12', fecha: '2026-03-04', titulo: 'Segunda', linea: 4 }]);
+  assert.deepEqual(r['sc-chip'], []);
 });

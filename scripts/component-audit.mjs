@@ -621,6 +621,26 @@ function figmaPorFuente() {
   return mapa;
 }
 
+/** Módulos de PrimeNG que un wrapper importa sin ser lo que envuelve: el foco automático y la configuración global. */
+const MODULOS_AUXILIARES = new Set(['autofocus', 'config']);
+
+/**
+ * El módulo de PrimeNG que un componente envuelve DE VERDAD, entre los que importa: el que casa con su nombre
+ * (`confirmdialog` en `sc-confirmdialog`, `inputpassword` en `sc-password`) y, si ninguno casa, el primero que no sea
+ * auxiliar. Con él la ficha enlaza a su página de primeng.dev y lee su accesibilidad. `null` si no envuelve nada.
+ * PURA → testeable.
+ */
+export function moduloPrincipal(name, primengBase) {
+  const modulos = [...(primengBase ?? '').matchAll(/primeng\/([a-z0-9-]+)/g)].map((m) => m[1]);
+  const plano = name.replace(/-/g, '');
+  return (
+    modulos.find((m) => m === plano) ??
+    modulos.find((m) => m.includes(plano) || plano.includes(m)) ??
+    modulos.find((m) => !MODULOS_AUXILIARES.has(m)) ??
+    null
+  );
+}
+
 /**
  * Con quién se relaciona cada componente, todo derivado y sin lista a mano: las ALTERNATIVAS que nombra su línea de
  * «cuándo» («Si va suelto en la fila, es `sc-tag`»), los que USA en su plantilla y aquellos en los que APARECE. Solo
@@ -892,6 +912,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
           selector: r.selector,
           name: r.name,
           primengBase: r.primengBase,
+          primengPrincipal: moduloPrincipal(r.name, r.primengBase),
           estado: r.estado,
           faltas: r.faltas,
           retirado: r.retirado,

@@ -58,7 +58,7 @@ export class AvatarDemoComponent {
     tag: 'sc-avatar',
     title: 'Avatar',
     description:
-      'Avatar 1:1 con la spec del Kit (Label / Icon / Image · tamaños 28/42/56 · círculo o cuadrado). Badge superpuesto opcional y fallback de ilustración por hash del nombre. Wrapper de PrimeNG.',
+      'Avatar 1:1 con la spec del Kit (Label / Icon / Image · tamaños 28/42/56 · círculo o cuadrado). Badge superpuesto opcional y fallback de ilustración por hash del nombre.',
     argTypes: [
       { name: 'label', control: { kind: 'text' }, description: 'Iniciales (cara Label).' },
       { name: 'icon', control: { kind: 'text' }, description: 'Nombre Material (cara Icon).' },

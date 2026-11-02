@@ -11,6 +11,7 @@ import {
   informeSupervisor,
   miembrosPublicos,
   nativasDe,
+  moduloPrincipal,
   obsoletosDe,
   relacionesDe,
   selectoresObsoletos,
@@ -471,4 +472,11 @@ test('relacionesDe: alternativas de su «cuándo», lo que usa y dónde aparece,
   assert.deepEqual(r.get('sc-badge'), { alternativas: ['sc-tag'], usa: [], usadoEn: ['sc-card'] });
   assert.deepEqual(r.get('sc-card'), { alternativas: [], usa: ['sc-badge'], usadoEn: [] });
   assert.deepEqual(r.get('sc-tag'), { alternativas: [], usa: [], usadoEn: [] });
+});
+
+test('moduloPrincipal: el que casa con su nombre, y si no, el primero que no es auxiliar', () => {
+  assert.equal(moduloPrincipal('confirmdialog', 'primeng/autofocus, primeng/button, primeng/confirmdialog'), 'confirmdialog');
+  assert.equal(moduloPrincipal('password', 'primeng/config, primeng/inputpassword'), 'inputpassword');
+  assert.equal(moduloPrincipal('custom-modal', 'primeng/dialog, primeng/dynamicdialog'), 'dialog');
+  assert.equal(moduloPrincipal('chip', '—'), null);
 });

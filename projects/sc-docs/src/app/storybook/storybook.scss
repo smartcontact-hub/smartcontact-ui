@@ -306,7 +306,9 @@
 }
 
 /* Dónde está cada pieza (`ficha-piezas.component.ts`), a 14 del «cuándo», como un hermano más. */
-.sb-host__piezas {
+.sb-host__piezas,
+.sb-host__pestanas {
+  display: block;
   margin-top: var(--sc-spacing-1);
 }
 

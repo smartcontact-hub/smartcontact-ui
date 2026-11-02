@@ -62,6 +62,8 @@ export interface ComponenteContrato extends EstadoComponente {
   readonly cuando: string | null;
   /** `primeng/button`, o `—` si es nuestro de cabo a rabo. */
   readonly primengBase: string;
+  /** El módulo de PrimeNG que envuelve de verdad (`confirmdialog` en `sc-confirmdialog`), o `null`. */
+  readonly primengPrincipal: string | null;
   /** Su fichero en el repo, o `null` (un nativo adoptado no tiene fichero nuestro). */
   readonly fuente: string | null;
   /** Su master en Figma, de su plantilla de Code Connect; `null` si no la tiene. */

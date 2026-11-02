@@ -37,7 +37,7 @@ export class MessageDemoComponent {
     tag: 'sc-message',
     title: 'Message',
     description:
-      'Mensaje inline (banner) con severidad de marca. Wrapper de PrimeNG con variantes, tamaños y opción de cierre.',
+      'Mensaje inline (banner) con severidad de marca. Con variantes, tamaños y opción de cierre.',
     argTypes: [
       { name: 'text', control: { kind: 'text' } },
       {

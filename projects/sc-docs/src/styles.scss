@@ -244,3 +244,13 @@ pre code {
   outline: 2px solid var(--sc-color-red-500);
   outline-offset: 2px;
 }
+
+/* Solo para el lector de pantalla: el aviso de que un enlace abre otra pestaña. */
+.demo-oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

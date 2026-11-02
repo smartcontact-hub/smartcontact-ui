@@ -28,10 +28,7 @@ import { anatomiaDe } from './anatomy';
   template: `
     @if (lineas().length) {
       <div class="sb-anatomy" data-testid="sb-anatomy">
-        <p class="sb-anatomy__lead">
-          Lo que se escribe es <code>&lt;{{ tag() }}&gt;</code>. Lo que el navegador renderiza es
-          esto, leído del DOM de la demo de arriba:
-        </p>
+        <p class="sb-anatomy__lead sc-text-caption-semibold">Lo que pinta el navegador</p>
         <pre><code>{{ lineas().join('\n') }}</code></pre>
       </div>
     }

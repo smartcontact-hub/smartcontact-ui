@@ -1,0 +1,1185 @@
+{
+ "generado": "scripts/primeng-a11y.mjs",
+ "fuente": "primefaces/primeng@fe82b29, apps/showcase/doc/<módulo>/accessibility-doc.ts",
+ "licencia": "MIT",
+ "fecha": "2026-11-02",
+ "sinDoc": [
+  "avatargroup",
+  "dynamicdialog",
+  "inputtags"
+ ],
+ "modulos": {
+  "avatar": [
+   {
+    "titulo": "Screen Reader",
+    "parrafos": [
+     "Avatar does not include any roles and attributes by default. Any attribute is passed to the root element so you may add a role like img along with aria-labelledby or aria-label to describe the component. In case avatars need to be tabbable, tabIndex can be added as well to implement custom key handlers."
+    ],
+    "teclas": []
+   },
+   {
+    "titulo": "Keyboard Support",
+    "parrafos": [
+     "Component does not include any interactive elements."
+    ],
+    "teclas": []
+   }
+  ],
+  "badge": [
+   {
+    "titulo": "Screen Reader",
+    "parrafos": [
+     "Badge does not include any roles and attributes by default, any attribute is passed to the root element so aria roles and attributes can be added if required. If the badges are dynamic, aria-live may be utilized as well. In case badges need to be tabbable, tabIndex can be added to implement custom key handlers."
+    ],
+    "teclas": []
+   },
+   {
+    "titulo": "Keyboard Support",
+    "parrafos": [
+     "Component does not include any interactive elements."
+    ],
+    "teclas": []
+   }
+  ],
+  "breadcrumb": [
+   {
+    "titulo": "Screen Reader",
+    "parrafos": [
+     "Breadcrumb uses the nav element and since any attribute is passed to the root implicitly aria-labelledby or aria-label can be used to describe the component. Inside an ordered list is used where the list item separators have aria-hidden to be able to ignored by the screen readers. If the last link represents the current route, aria-current is added with \"page\" as the value."
+    ],
+    "teclas": []
+   },
+   {
+    "titulo": "Keyboard Support",
+    "parrafos": [
+     "No special keyboard interaction is needed, all menuitems are focusable based on the page tab sequence."
+    ],
+    "teclas": []
+   }
+  ],
+  "button": [
+   {
+    "titulo": "Screen Reader",
+    "parrafos": [
+     "Button component renders a native button element that implicitly includes any passed prop. Text to describe the button is defined with the aria-label prop, if not present label prop is used as the value. If the button is icon only or custom templating is used, it is recommended to use aria-label so that screen readers would be able to read the element properly."
+    ],
+    "teclas": []
+   },
+   {
+    "titulo": "Keyboard Support",
+    "parrafos": [],
+    "teclas": [
+     {
+      "tecla": "tab",
+      "funcion": "Moves focus to the button."
+     },
+     {
+      "tecla": "enter",
+      "funcion": "Activates the button."
+     },
+     {
+      "tecla": "space",
+      "funcion": "Activates the button."
+     }
+    ]
+   }
+  ],
+  "card": [
+   {
+    "titulo": "Screen Reader",
+    "parrafos": [
+     "A card can be utilized in many use cases as a result no role is enforced, in fact a role may not be necessary if the card is used for presentational purposes only. Any valid attribute is passed to the container element so if you require to use one of the landmark roles like region, you may use the role property."
+    ],
+    "teclas": []
+   },
+   {
+    "titulo": "Keyboard Support",
+    "parrafos": [
+     "Component does not include any interactive elements."
+    ],
+    "teclas": []
+   }
+  ],
+  "chip": [
+   {
+    "titulo": "Screen Reader",
+    "parrafos": [
+     "Chip uses the label property as the default aria-label, since any attribute is passed to the root element aria-labelledby or aria-label can be used to override the default behavior. Removable chips have a tabindex and focusable with the tab key."
+    ],
+    "teclas": []
+   },
+   {
+    "titulo": "Keyboard Support",
+    "parrafos": [],
+    "teclas": [
+     {
+      "tecla": "backspace",
+      "funcion": "Hides removable."
+     },
+     {
+      "tecla": "enter",
+      "funcion": "Hides removable."
+     }
+    ]
+   }
+  ],
+  "confirmdialog": [
+   {
+    "titulo": "Screen Reader",
+    "parrafos": [
+     "ConfirmDialog component uses alertdialog role along with aria-labelledby referring to the header element however any attribute is passed to the root element so you may use aria-labelledby to override this default behavior. In addition aria-modal is added since focus is kept within the popup.",
+     "It is recommended to use a trigger component that can be accessed with keyboard such as a button, if not adding tabIndex would be necessary.",
+     "When confirm function is used and a trigger is passed as a parameter, ConfirmDialog adds aria-expanded state attribute and aria-controls to the trigger so that the relation between the trigger and the popup is defined.",
+     "If the dialog is controlled with the visible property aria-expanded and aria-controls need to be handled explicitly."
+    ],
+    "teclas": []
+   },
+   {
+    "titulo": "Overlay Keyboard Support",
+    "parrafos": [],
+    "teclas": [
+     {
+      "tecla": "tab",
+      "funcion": "Moves focus to the next the focusable element within the popup."
+     },
+     {
+      "tecla": "shift + tab",
+      "funcion": "Moves focus to the previous the focusable element within the popup."
+     },
+     {
+      "tecla": "escape",
+      "funcion": "Closes the popup and moves focus to the trigger."
+     }
+    ]
+   },
+   {
+    "titulo": "Buttons Keyboard Support",
+    "parrafos": [],
+    "teclas": [
+     {
+      "tecla": "enter",
+      "funcion": "Triggers the action, closes the popup and moves focus to the trigger."
+     },
+     {
+      "tecla": "space",
+      "funcion": "Triggers the action, closes the popup and moves focus to the trigger."
+     }
+    ]
+   }
+  ],
+  "datepicker": [
+   {
+    "titulo": "Screen Reader",
+    "parrafos": [
+     "Value to describe the component can either be provided via label tag combined with inputId prop or using aria-labelledby, aria-label props. The input element has combobox role in addition to aria-autocomplete as \"none\", aria-haspopup as \"dialog\" and aria-expanded attributes. The relation between the input and the popup is created with aria-controls attribute that refers to the id of the popup.",
+     "The optional DatePicker button requires includes aria-haspopup, aria-expanded for states along with aria-controls to define the relation between the popup and the button. The value to read is retrieved from the chooseDate key of the aria property from the locale API. This label is also used for the aria-label of the popup as well. When there is a value selected, it is formatted and appended to the label to be able to notify users about the current value.",
+     "Popup has a dialog role along with aria-modal and aria-label. The navigation buttons at the header has an aria-label retrieved from the prevYear, nextYear, prevMonth, nextMonth, prevDecade and nextDecade keys of the locale aria API. Similarly month picker button uses the chooseMonth and year picker button uses the chooseYear keys.",
+     "Main date table uses grid role that contains th elements with col as the scope along with abbr tag resolving to the full name of the month. Each date cell has an aria-label referring to the full date value. Buttons at the footer utilize their readable labels as aria-label as well. Selected date also receives the aria-selected attribute.",
+     "Timepicker spinner buttons get their labels for aria-label from the aria locale API using the prevHour, nextHour, prevMinute, nextMinute, prevSecond, nextSecond, am and pm keys.",
+     "DatePicker also includes a hidden section that is only available to screen readers with aria-live as \"polite\". This element is updated when the selected date changes to instruct the user about the current date selected."
+    ],
+    "teclas": []
+   },
+   {
+    "titulo": "Choose Date Button Keyboard Support",
+    "parrafos": [],
+    "teclas": [
+     {
+      "tecla": "space",
+      "funcion": "Opens popup and moves focus to the selected date, if there is none focuses on today."
+     },
+     {
+      "tecla": "enter",
+      "funcion": "Opens popup and moves focus to the selected date, if there is none focuses on today."
+     }
+    ]
+   },
+   {
+    "titulo": "Popup Keyboard Support",
+    "parrafos": [],
+    "teclas": [
+     {
+      "tecla": "escape",
+      "funcion": "Closes the popup and moves focus to the input element."
+     },
+     {
+      "tecla": "tab",
+      "funcion": "Moves focus to the next focusable element within the popup."
+     },
+     {
+      "tecla": "shift + tab",
+      "funcion": "Moves focus to the next focusable element within the popup."
+     }
+    ]
+   },
+   {
+    "titulo": "Header Buttons Keyboard Support",
+    "parrafos": [],
+    "teclas": [
+     {
+      "tecla": "enter",
+      "funcion": "Triggers the button action."
+     },
+     {
+      "tecla": "space",
+      "funcion": "Triggers the button action."
+     }
+    ]
+   },
+   {
+    "titulo": "Date Grid Keyboard Support",
+    "parrafos": [],
+    "teclas": [
+     {
+      "tecla": "enter",
+      "funcion": "Selects the date, closes the popup and moves focus to the input element."
+     },
+     {
+      "tecla": "space",
+      "funcion": "Selects the date, closes the popup and moves focus to the input element."
+     },
+     {
+      "tecla": "up arrow",
+      "funcion": "Moves focus to the same day of the previous week."
+     },
+     {
+      "tecla": "down arrow",
+      "funcion": "Moves focus to the same day of the next week."
+     },
+     {
+      "tecla": "right arrow",
+      "funcion": "Moves focus to the next day."
+     },
+     {
+      "tecla": "left arrow",
+      "funcion": "Moves focus to the previous day."
+     },
+     {
+      "tecla": "home",
+      "funcion": "Moves focus to the first day of the current week."
+     },
+     {
+      "tecla": "end",
+      "funcion": "Moves focus to the last day of the current week."
+     },
+     {
+      "tecla": "page up",
+      "funcion": "Changes the date to previous month in date picker mode. Moves to previous year in month picker mode and previous decade in year picker."
+     },
+     {
+      "tecla": "shift + page up",
+      "funcion": "Changes the date to previous year in date picker mode. Has no effect in month or year picker"
+     },
+     {
+      "tecla": "page down",
+      "funcion": "Changes the date to next month in date picker mode. Moves to next year in month picker mode and next decade in year picker."
+     },
+     {
+      "tecla": "shift + page down",
+      "funcion": "Changes the date to next year in date picker mode. Has no effect in month or year picker"
+     }
+    ]
+   },
+   {
+    "titulo": "Footer Buttons Keyboard Support",
+    "parrafos": [],
+    "teclas": [
+     {
+      "tecla": "enter",
+      "funcion": "Triggers the button action."
+     },
+     {
+      "tecla": "space",
+      "funcion": "Triggers the button action."
+     }
+    ]
+   }
+  ],
+  "dialog": [
+   {
+    "titulo": "Screen Reader",
+    "parrafos": [
+     "Dialog component uses dialog role along with aria-labelledby referring to the header element however any attribute is passed to the root element so you may use aria-labelledby to override this default behavior. In addition aria-modal is added since focus is kept within the popup.",
+     "It is recommended to use a trigger component that can be accessed with keyboard such as a button, if not adding tabIndex would be necessary.",
+     "Trigger element also requires aria-expanded and aria-controls to be handled explicitly.",
+     "Close element is a button with an aria-label that refers to the aria.close property of the locale API by default, you may use closeButtonProps to customize the element and override the default aria-label.",
+     "Maximize element is a button with an aria-label that refers to the aria.maximizeLabel and aria.minimizeLabel property of the locale API. It cannot be customized using the maximizeButtonProps."
+    ],
+    "teclas": []
+   },
+   {
+    "titulo": "Overlay Keyboard Support",
+    "parrafos": [],
+    "teclas": [
+     {
+      "tecla": "tab",
+      "funcion": "Moves focus to the next the focusable element within the dialog."
+     },
+     {
+      "tecla": "shift + tab",
+      "funcion": "Moves focus to the previous the focusable element within the dialog."
+     },
+     {
+      "tecla": "escape",
+      "funcion": "Closes the dialog if closeOnEscape is true."
+     }
+    ]
+   },
+   {
+    "titulo": "Close Button Keyboard Support",
+    "parrafos": [
+     "Content"
+    ],
+    "teclas": [
+     {
+      "tecla": "enter",
+      "funcion": "Closes the dialog."
+     },
+     {
+      "tecla": "space",
+      "funcion": "Closes the dialog."
+     }
+    ]
+   }
+  ],
+  "divider": [
+   {
+    "titulo": "Screen Reader",
+    "parrafos": [
+     "Divider uses a separator role with aria-orientation set to either \"horizontal\" or \"vertical\"."
+    ],
+    "teclas": []
+   },
+   {
+    "titulo": "Keyboard Support",
+    "parrafos": [
+     "Component does not include any interactive elements."
+    ],
+    "teclas": []
+   }
+  ],
+  "drawer": [
+   {
+    "titulo": "Screen Reader",
+    "parrafos": [
+     "Drawer component uses complementary role by default, since any attribute is passed to the root element aria role can be changed depending on your use case and additional attributes like aria-labelledby can be added. In addition aria-modal is added since focus is kept within the drawer when opened.",
+     "It is recommended to use a trigger component that can be accessed with keyboard such as a button, if not adding tabIndex would be necessary.",
+     "Trigger element also requires aria-expanded and aria-controls to be handled explicitly."
+    ],
+    "teclas": []
+   },
+   {
+    "titulo": "Overlay Keyboard Support",
+    "parrafos": [],
+    "teclas": [
+     {
+      "tecla": "tab",
+      "funcion": "Moves focus to the next the focusable element within the drawer."
+     },
+     {
+      "tecla": "shift + tab",
+      "funcion": "Moves focus to the previous the focusable element within the drawer."
+     },
+     {
+      "tecla": "escape",
+      "funcion": "Closes the dialog if closeOnEscape is true."
+     }
+    ]
+   },
+   {
+    "titulo": "Close Button Keyboard Support",
+    "parrafos": [],
+    "teclas": [
+     {
+      "tecla": "enter",
+      "funcion": "Closes the drawer."
+     },
+     {
+      "tecla": "space",
+      "funcion": "Closes the drawer."
+     }
+    ]
+   }
+  ],
+  "fileupload": [
+   {
+    "titulo": "Screen Reader",
+    "parrafos": [
+     "FileUpload uses a hidden native input element with type=\"file\" for screen readers."
+    ],
+    "teclas": []
+   },
+   {
+    "titulo": "Keyboard Support",
+    "parrafos": [
+     "Interactive elements of the uploader are buttons, visit the Button accessibility section for more information."
+    ],
+    "teclas": []
+   }
+  ],
+  "iconfield": [
+   {
+    "titulo": "Screen Reader",
+    "parrafos": [
+     "IconField and InputIcon does not require any roles and attributes."
+    ],
+    "teclas": []
+   },
+   {
+    "titulo": "Keyboard Support",
+    "parrafos": [
+     "Components does not include any interactive elements."
+    ],
+    "teclas": []
+   }
+  ],
+  "inputgroup": [
+   {
+    "titulo": "Screen Reader",
+    "parrafos": [
+     "InputGroup and InputGroupAddon does not require any roles and attributes."
+    ],
+    "teclas": []
+   },
+   {
+    "titulo": "Keyboard Support",
+    "parrafos": [
+     "Component does not include any interactive elements."
+    ],
+    "teclas": []
+   }
+  ],
+  "inputpassword": [
+   {
+    "titulo": "Screen Reader",
+    "parrafos": [
+     "Value to describe the component can either be provided via label tag combined with id prop or using ariaLabelledBy, ariaLabel props. Screen reader is notified about the changes to the strength of the password using a section that has aria-live while typing."
+    ],
+    "teclas": []
+   },
+   {
+    "titulo": "Keyboard Support",
+    "parrafos": [],
+    "teclas": [
+     {
+      "tecla": "tab",
+      "funcion": "Moves focus to the input."
+     },
+     {
+      "tecla": "escape",
+      "funcion": "Hides the strength meter if open."
+     }
+    ]
+   }
+  ],
+  "inputtext": [
+   {
+    "titulo": "Screen Reader",
+    "parrafos": [
+     "InputText component renders a native input element that implicitly includes any passed prop. Value to describe the component can either be provided via label tag combined with id prop or using aria-labelledby, aria-label props."
+    ],
+    "teclas": []
+   },
+   {
+    "titulo": "Keyboard Support",
+    "parrafos": [],
+    "teclas": [
+     {
+      "tecla": "tab",
+      "funcion": "Moves focus to the input."
+     }
+    ]
+   }
+  ],
+  "message": [
+   {
+    "titulo": "Screen Reader",
+    "parrafos": [
+     "Message component uses alert role that implicitly defines aria-live as \"assertive\" and aria-atomic as \"true\". Since any attribute is passed to the root element, attributes like aria-labelledby and aria-label can optionally be used as well.",
+     "Close element is a button with an aria-label that refers to the aria.close property of the locale API by default."
+    ],
+    "teclas": []
+   },
+   {
+    "titulo": "Close Button Keyboard Support",
+    "parrafos": [],
+    "teclas": [
+     {
+      "tecla": "enter",
+      "funcion": "Closes the message."
+     },
+     {
+      "tecla": "space",
+      "funcion": "Closes the message."
+     }
+    ]
+   }
+  ],
+  "multiselect": [
+   {
+    "titulo": "Screen Reader",
+    "parrafos": [
+     "Value to describe the component can either be provided with ariaLabelledBy or ariaLabel props. The multiselect component has a combobox role in addition to aria-haspopup and aria-expanded attributes. The relation between the combobox and the popup is created with aria-controls attribute that refers to the id of the popup listbox.",
+     "The popup listbox uses listbox as the role with aria-multiselectable enabled. Each list item has an option role along with aria-label, aria-selected and aria-disabled attributes.",
+     "Checkbox component at the header uses a hidden native checkbox element internally that is only visible to screen readers. Value to read is defined with the selectAll and unselectAll keys of the aria property from the locale API.",
+     "If filtering is enabled, filterInputProps can be defined to give aria-* props to the input element.",
+     "Close button uses close key of the aria property from the locale API as the aria-label by default, this can be overriden with the closeButtonProps."
+    ],
+    "teclas": []
+   },
+   {
+    "titulo": "Closed State Keyboard Support",
+    "parrafos": [],
+    "teclas": [
+     {
+      "tecla": "tab",
+      "funcion": "Moves focus to the multiselect element."
+     },
+     {
+      "tecla": "space",
+      "funcion": "Opens the popup and moves visual focus to the selected option, if there is none then first option receives the focus."
+     },
+     {
+      "tecla": "down arrow",
+      "funcion": "Opens the popup and moves visual focus to the selected option, if there is none then first option receives the focus."
+     },
+     {
+      "tecla": "up arrow",
+      "funcion": "Opens the popup and moves visual focus to the selected option, if there is none then first option receives the focus."
+     }
+    ]
+   },
+   {
+    "titulo": "Popup Keyboard Support",
+    "parrafos": [],
+    "teclas": [
+     {
+      "tecla": "tab",
+      "funcion": "Moves focus to the next focusable element in the popup, if there is none then first focusable element receives the focus."
+     },
+     {
+      "tecla": "shift + tab",
+      "funcion": "Moves focus to the previous focusable element in the popup, if there is none then last focusable element receives the focus."
+     },
+     {
+      "tecla": "enter",
+      "funcion": "Toggles the selection state of the focused option."
+     },
+     {
+      "tecla": "space",
+      "funcion": "Toggles the selection state of the focused option."
+     },
+     {
+      "tecla": "escape",
+      "funcion": "Closes the popup, moves focus to the multiselect element."
+     },
+     {
+      "tecla": "down arrow",
+      "funcion": "Moves focus to the next option, if there is none then visual focus does not change."
+     },
+     {
+      "tecla": "up arrow",
+      "funcion": "Moves focus to the previous option, if there is none then visual focus does not change."
+     },
+     {
+      "tecla": "home",
+      "funcion": "Moves focus to the first option."
+     },
+     {
+      "tecla": "end",
+      "funcion": "Moves focus to the last option."
+     },
+     {
+      "tecla": "any printable character",
+      "funcion": "Moves focus to the option whose label starts with the characters being typed if dropdown is not editable."
+     }
+    ]
+   },
+   {
+    "titulo": "Toggle All Checkbox Keyboard Support",
+    "parrafos": [],
+    "teclas": [
+     {
+      "tecla": "space",
+      "funcion": "Toggles the checked state."
+     },
+     {
+      "tecla": "escape",
+      "funcion": "Closes the popup."
+     }
+    ]
+   },
+   {
+    "titulo": "Filter Input Keyboard Support",
+    "parrafos": [],
+    "teclas": [
+     {
+      "tecla": "enter",
+      "funcion": "Closes the popup and moves focus to the multiselect element."
+     },
+     {
+      "tecla": "escape",
+      "funcion": "Closes the popup and moves focus to the multiselect element."
+     }
+    ]
+   },
+   {
+    "titulo": "Close Button Keyboard Support",
+    "parrafos": [],
+    "teclas": [
+     {
+      "tecla": "enter",
+      "funcion": "Closes the popup and moves focus to the multiselect element."
+     },
+     {
+      "tecla": "space",
+      "funcion": "Closes the popup and moves focus to the multiselect element."
+     },
+     {
+      "tecla": "escape",
+      "funcion": "Closes the popup and moves focus to the multiselect element."
+     }
+    ]
+   }
+  ],
+  "panel": [
+   {
+    "titulo": "Screen Reader",
+    "parrafos": [
+     "Toggleable panels use a content toggle button at the header that has aria-controls to define the id of the content section along with aria-expanded for the visibility state. The value to read the button defaults to the value of the header property and can be customized by defining an aria-label or aria-labelledby via the toggleButtonProps property.",
+     "The content uses region, defines an id that matches the aria-controls of the content toggle button and aria-labelledby referring to the id of the header."
+    ],
+    "teclas": []
+   },
+   {
+    "titulo": "Content Toggle Button Keyboard Support",
+    "parrafos": [],
+    "teclas": [
+     {
+      "tecla": "tab",
+      "funcion": "Moves focus to the next the focusable element in the page tab sequence."
+     },
+     {
+      "tecla": "shift + tab",
+      "funcion": "Moves focus to the previous the focusable element in the page tab sequence."
+     },
+     {
+      "tecla": "enter",
+      "funcion": "Toggles the visibility of the content."
+     },
+     {
+      "tecla": "space",
+      "funcion": "Toggles the visibility of the content."
+     }
+    ]
+   }
+  ],
+  "popover": [
+   {
+    "titulo": "Screen Reader",
+    "parrafos": [
+     "Popover component uses dialog role and since any attribute is passed to the root element you may define attributes like aria-label or aria-labelledby to describe the popup contents. In addition aria-modal is added since focus is kept within the popup.",
+     "It is recommended to use a trigger component that can be accessed with keyboard such as a button, if not adding tabIndex would be necessary. Popover adds aria-expanded state attribute and aria-controls to the trigger so that the relation between the trigger and the popup is defined."
+    ],
+    "teclas": []
+   },
+   {
+    "titulo": "Popover Keyboard Support",
+    "parrafos": [
+     "When the popup gets opened, the first focusable element receives the focus and this can be customized by adding autofocus to an element within the popup."
+    ],
+    "teclas": [
+     {
+      "tecla": "tab",
+      "funcion": "Moves focus to the next the focusable element within the popup."
+     },
+     {
+      "tecla": "shift + tab",
+      "funcion": "Moves focus to the previous the focusable element within the popup."
+     },
+     {
+      "tecla": "escape",
+      "funcion": "Closes the popup and moves focus to the trigger."
+     }
+    ]
+   },
+   {
+    "titulo": "Close Button Keyboard Support",
+    "parrafos": [],
+    "teclas": [
+     {
+      "tecla": "enter",
+      "funcion": "Closes the popup and moves focus to the trigger."
+     },
+     {
+      "tecla": "space",
+      "funcion": "Closes the popup and moves focus to the trigger."
+     }
+    ]
+   }
+  ],
+  "progressbar": [
+   {
+    "titulo": "Screen Reader",
+    "parrafos": [
+     "ProgressBar components uses progressbar role along with aria-valuemin, aria-valuemax and aria-valuenow attributes. Value to describe the component can be defined using aria-labelledby and aria-label props."
+    ],
+    "teclas": []
+   },
+   {
+    "titulo": "Keyboard Support",
+    "parrafos": [
+     "Not applicable."
+    ],
+    "teclas": []
+   }
+  ],
+  "progressspinner": [
+   {
+    "titulo": "Screen Reader",
+    "parrafos": [
+     "ProgressSpinner components uses progressbar role. Value to describe the component can be defined using aria-labelledby and aria-label props."
+    ],
+    "teclas": []
+   },
+   {
+    "titulo": "Keyboard Support",
+    "parrafos": [
+     "Component does not include any interactive elements."
+    ],
+    "teclas": []
+   }
+  ],
+  "radiobutton": [
+   {
+    "titulo": "Screen Reader",
+    "parrafos": [
+     "RadioButton component uses a hidden native radio button element internally that is only visible to screen readers. Value to describe the component can either be provided via label tag combined with inputId prop or using ariaLabelledBy, ariaLabel props."
+    ],
+    "teclas": []
+   },
+   {
+    "titulo": "Keyboard Support",
+    "parrafos": [],
+    "teclas": [
+     {
+      "tecla": "tab",
+      "funcion": "Moves focus to the checked radio button, if there is none within the group then first radio button receives the focus."
+     },
+     {
+      "tecla": "left arrow up arrow",
+      "funcion": "Moves focus to the previous radio button, if there is none then last radio button receives the focus."
+     },
+     {
+      "tecla": "right arrow down arrow",
+      "funcion": "Moves focus to the next radio button, if there is none then first radio button receives the focus."
+     },
+     {
+      "tecla": "space",
+      "funcion": "If the focused radio button is unchecked, changes the state to checked."
+     }
+    ]
+   }
+  ],
+  "select": [
+   {
+    "titulo": "Screen Reader",
+    "parrafos": [
+     "Value to describe the component can either be provided with ariaLabelledBy or ariaLabel props. The select element has a combobox role in addition to aria-haspopup and aria-expanded attributes. If the editable option is enabled aria-autocomplete is also added. The relation between the combobox and the popup is created with aria-controls and aria-activedescendant attribute is used to instruct screen reader which option to read during keyboard navigation within the popup list.",
+     "The popup list has an id that refers to the aria-controls attribute of the combobox element and uses listbox as the role. Each list item has an option role, an id to match the aria-activedescendant of the input element along with aria-label, aria-selected and aria-disabled attributes.",
+     "If filtering is enabled, filterInputProps can be defined to give aria-* props to the filter input element."
+    ],
+    "teclas": []
+   },
+   {
+    "titulo": "Closed State Keyboard Support",
+    "parrafos": [],
+    "teclas": [
+     {
+      "tecla": "tab",
+      "funcion": "Moves focus to the select element."
+     },
+     {
+      "tecla": "space",
+      "funcion": "Opens the popup and moves visual focus to the selected option, if there is none then first option receives the focus."
+     },
+     {
+      "tecla": "down arrow",
+      "funcion": "Opens the popup and moves visual focus to the selected option, if there is none then first option receives the focus."
+     },
+     {
+      "tecla": "up arrow",
+      "funcion": "Opens the popup and moves visual focus to the selected option, if there is none then last option receives the focus."
+     }
+    ]
+   },
+   {
+    "titulo": "Popup Keyboard Support",
+    "parrafos": [],
+    "teclas": [
+     {
+      "tecla": "tab",
+      "funcion": "Moves focus to the next focusable element in the popup, if there is none then first focusable element receives the focus."
+     },
+     {
+      "tecla": "shift + tab",
+      "funcion": "Moves focus to the previous focusable element in the popup, if there is none then last focusable element receives the focus."
+     },
+     {
+      "tecla": "enter",
+      "funcion": "Selects the focused option and closes the popup."
+     },
+     {
+      "tecla": "space",
+      "funcion": "Selects the focused option and closes the popup."
+     },
+     {
+      "tecla": "escape",
+      "funcion": "Closes the popup, moves focus to the select element."
+     },
+     {
+      "tecla": "down arrow",
+      "funcion": "Moves focus to the next option, if there is none then visual focus does not change."
+     },
+     {
+      "tecla": "up arrow",
+      "funcion": "Moves focus to the previous option, if there is none then visual focus does not change."
+     },
+     {
+      "tecla": "right arrow",
+      "funcion": "If the select is editable, removes the visual focus from the current option and moves input cursor to one character left."
+     },
+     {
+      "tecla": "left arrow",
+      "funcion": "If the select is editable, removes the visual focus from the current option and moves input cursor to one character right."
+     },
+     {
+      "tecla": "home",
+      "funcion": "If the select is editable, moves input cursor at the end, if not then moves focus to the first option."
+     },
+     {
+      "tecla": "end",
+      "funcion": "If the select is editable, moves input cursor at the beginning, if not then moves focus to the last option."
+     },
+     {
+      "tecla": "any printable character",
+      "funcion": "Moves focus to the option whose label starts with the characters being typed if select is not editable."
+     }
+    ]
+   },
+   {
+    "titulo": "Filter Input Keyboard Support",
+    "parrafos": [],
+    "teclas": [
+     {
+      "tecla": "enter",
+      "funcion": "Closes the popup and moves focus to the select element."
+     },
+     {
+      "tecla": "escape",
+      "funcion": "Closes the popup and moves focus to the select element."
+     }
+    ]
+   }
+  ],
+  "selectbutton": [
+   {
+    "titulo": "Screen Reader",
+    "parrafos": [
+     "The container element that wraps the buttons has a group role whereas each button element uses button role and aria-pressed is updated depending on selection state. Value to describe an option is automatically set using the ariaLabel property that refers to the label of an option so it is still suggested to define a label even the option display consists of presentational content like icons only."
+    ],
+    "teclas": []
+   },
+   {
+    "titulo": "Keyboard Support",
+    "parrafos": [],
+    "teclas": [
+     {
+      "tecla": "tab",
+      "funcion": "Moves focus to the buttons."
+     },
+     {
+      "tecla": "space",
+      "funcion": "Toggles the checked state of a button."
+     }
+    ]
+   }
+  ],
+  "skeleton": [
+   {
+    "titulo": "Screen Reader",
+    "parrafos": [
+     "Skeleton uses aria-hidden as \"true\" so that it gets ignored by screen readers, any valid attribute is passed to the root element so you may customize it further if required. If multiple skeletons are grouped inside a container, you may use aria-busy on the container element as well to indicate the loading process."
+    ],
+    "teclas": []
+   },
+   {
+    "titulo": "Keyboard Support",
+    "parrafos": [
+     "Component does not include any interactive elements."
+    ],
+    "teclas": []
+   }
+  ],
+  "table": [
+   {
+    "titulo": "Screen Reader",
+    "parrafos": [
+     "Default role of the table is table. Header, body and footer elements use rowgroup, rows use row role, header cells have columnheader and body cells use cell roles. Sortable headers utilizer aria-sort attribute either set to \"ascending\" or \"descending\".",
+     "Table rows and table cells should be specified by users using the aria-posinset, aria-setsize, aria-label, and aria-describedby attributes, as they are determined through templating.",
+     "Built-in checkbox and radiobutton components for row selection use checkbox and radiobutton. The label to describe them is retrieved from the aria.selectRow and aria.unselectRow properties of the locale API. Similarly header checkbox uses selectAll and unselectAll keys. When a row is selected, aria-selected is set to true on a row.",
+     "The element to expand or collapse a row is a button with aria-expanded and aria-controls properties. Value to describe the buttons is derived from aria.expandRow and aria.collapseRow properties of the locale API.",
+     "The filter menu button use aria.showFilterMenu and aria.hideFilterMenu properties as aria-label in addition to the aria-haspopup, aria-expanded and aria-controls to define the relation between the button and the overlay. Popop menu has dialog role with aria-modal as focus is kept within the overlay. The operator dropdown use aria.filterOperator and filter constraints dropdown use aria.filterConstraint properties. Buttons to add rules on the other hand utilize aria.addRule and aria.removeRule properties. The footer buttons similarly use aria.clear and aria.apply properties. filterInputProps of the Column component can be used to define aria labels for the built-in filter components, if a custom component is used with templating you also may define your own aria labels as well.",
+     "Editable cells use custom templating so you need to manage aria roles and attributes manually if required. The row editor controls are button elements with aria.editRow, aria.cancelEdit and aria.saveEdit used for the aria-label.",
+     "Paginator is a standalone component used inside the Table, refer to the paginator for more information about the accessibility features."
+    ],
+    "teclas": []
+   },
+   {
+    "titulo": "Keyboard Support",
+    "parrafos": [
+     "Any button element inside the Table used for cases like filter, row expansion, edit are tabbable and can be used with space and enter keys."
+    ],
+    "teclas": []
+   },
+   {
+    "titulo": "Sortable Headers Keyboard Support",
+    "parrafos": [],
+    "teclas": [
+     {
+      "tecla": "tab",
+      "funcion": "Moves through the headers."
+     },
+     {
+      "tecla": "enter",
+      "funcion": "Sorts the column."
+     },
+     {
+      "tecla": "space",
+      "funcion": "Sorts the column."
+     }
+    ]
+   },
+   {
+    "titulo": "Filter Menu Keyboard Support",
+    "parrafos": [],
+    "teclas": [
+     {
+      "tecla": "tab",
+      "funcion": "Moves through the elements inside the popup."
+     },
+     {
+      "tecla": "escape",
+      "funcion": "Hides the popup."
+     },
+     {
+      "tecla": "enter",
+      "funcion": "Opens the popup."
+     }
+    ]
+   },
+   {
+    "titulo": "Selection Keyboard Support",
+    "parrafos": [],
+    "teclas": [
+     {
+      "tecla": "tab",
+      "funcion": "Moves focus to the first selected row, if there is none then first row receives the focus."
+     },
+     {
+      "tecla": "up arrow",
+      "funcion": "Moves focus to the previous row."
+     },
+     {
+      "tecla": "down arrow",
+      "funcion": "Moves focus to the next row."
+     },
+     {
+      "tecla": "enter",
+      "funcion": "Toggles the selected state of the focused row depending on the metaKeySelection setting."
+     },
+     {
+      "tecla": "space",
+      "funcion": "Toggles the selected state of the focused row depending on the metaKeySelection setting."
+     },
+     {
+      "tecla": "home",
+      "funcion": "Moves focus to the first row."
+     },
+     {
+      "tecla": "end",
+      "funcion": "Moves focus to the last row."
+     },
+     {
+      "tecla": "shift + down arrow",
+      "funcion": "Moves focus to the next row and toggles the selection state."
+     },
+     {
+      "tecla": "shift + up arrow",
+      "funcion": "Moves focus to the previous row and toggles the selection state."
+     },
+     {
+      "tecla": "shift + space",
+      "funcion": "Selects the rows between the most recently selected row and the focused row."
+     },
+     {
+      "tecla": "control + shift + home",
+      "funcion": "Selects the focused rows and all the options up to the first one."
+     },
+     {
+      "tecla": "control + shift + end",
+      "funcion": "Selects the focused rows and all the options down to the last one."
+     },
+     {
+      "tecla": "control + a",
+      "funcion": "Selects all rows."
+     }
+    ]
+   }
+  ],
+  "tabs": [
+   {
+    "titulo": "Screen Reader",
+    "parrafos": [
+     "Tabs container is defined with the tablist role, as any attribute is passed to the container element aria-labelledby can be optionally used to specify an element to describe the Tabs. Each tab header has a tab role along with aria-selected state attribute and aria-controls to refer to the corresponding tab content element. The content element of each tab has tabpanel role, an id to match the aria-controls of the header and aria-labelledby reference to the header as the accessible name."
+    ],
+    "teclas": []
+   },
+   {
+    "titulo": "Tab Header Keyboard Support",
+    "parrafos": [],
+    "teclas": [
+     {
+      "tecla": "tab",
+      "funcion": "Moves focus through the header."
+     },
+     {
+      "tecla": "enter",
+      "funcion": "Activates the focused tab header."
+     },
+     {
+      "tecla": "space",
+      "funcion": "Activates the focused tab header."
+     },
+     {
+      "tecla": "right arrow",
+      "funcion": "Moves focus to the next header."
+     },
+     {
+      "tecla": "left arrow",
+      "funcion": "Moves focus to the previous header."
+     },
+     {
+      "tecla": "home",
+      "funcion": "Moves focus to the last header."
+     },
+     {
+      "tecla": "end",
+      "funcion": "Moves focus to the first header."
+     }
+    ]
+   }
+  ],
+  "tag": [
+   {
+    "titulo": "Screen Reader",
+    "parrafos": [
+     "Tag does not include any roles and attributes by default, any attribute is passed to the root element so aria roles and attributes can be added if required. If the tags are dynamic, aria-live may be utilized as well. In case badges need to be tabbable, tabIndex can be added to implement custom key handlers."
+    ],
+    "teclas": []
+   },
+   {
+    "titulo": "Keyboard Support",
+    "parrafos": [
+     "Component does not include any interactive elements."
+    ],
+    "teclas": []
+   }
+  ],
+  "textarea": [
+   {
+    "titulo": "Screen Reader",
+    "parrafos": [
+     "Textarea component renders a native textarea element that implicitly includes any passed prop. Value to describe the component can either be provided via label tag combined with id prop or using aria-labelledby, aria-label props."
+    ],
+    "teclas": []
+   },
+   {
+    "titulo": "Keyboard Support",
+    "parrafos": [],
+    "teclas": [
+     {
+      "tecla": "tab",
+      "funcion": "Moves focus to the input."
+     }
+    ]
+   }
+  ],
+  "toast": [
+   {
+    "titulo": "Screen Reader",
+    "parrafos": [
+     "Toast component use alert role that implicitly defines aria-live as \"assertive\" and aria-atomic as \"true\".",
+     "Close element is a button with an aria-label that refers to the aria.close property of the locale API by default."
+    ],
+    "teclas": []
+   },
+   {
+    "titulo": "Close Button Keyboard Support",
+    "parrafos": [],
+    "teclas": [
+     {
+      "tecla": "enter",
+      "funcion": "Closes the message."
+     },
+     {
+      "tecla": "space",
+      "funcion": "Closes the message."
+     }
+    ]
+   }
+  ],
+  "toggleswitch": [
+   {
+    "titulo": "Screen Reader",
+    "parrafos": [
+     "InputSwitch component uses a hidden native checkbox element with switch role internally that is only visible to screen readers. Value to describe the component can either be provided via label tag combined with inputId prop or using ariaLabelledBy, ariaLabel props."
+    ],
+    "teclas": []
+   },
+   {
+    "titulo": "Keyboard Support",
+    "parrafos": [],
+    "teclas": [
+     {
+      "tecla": "tab",
+      "funcion": "Moves focus to the switch."
+     },
+     {
+      "tecla": "space",
+      "funcion": "Toggles the checked state."
+     }
+    ]
+   }
+  ],
+  "tooltip": [
+   {
+    "titulo": "Screen Reader",
+    "parrafos": [
+     "Tooltip component uses tooltip role and when it becomes visible the generated id of the tooltip is defined as the aria-describedby of the target."
+    ],
+    "teclas": []
+   },
+   {
+    "titulo": "Keyboard Support",
+    "parrafos": [],
+    "teclas": [
+     {
+      "tecla": "escape",
+      "funcion": "Closes the tooltip when focus is on the target."
+     }
+    ]
+   }
+  ]
+ }
+}
