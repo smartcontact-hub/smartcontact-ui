@@ -29,6 +29,12 @@ export const COMPONENT_ROUTES: Routes = [
         loadComponent: () =>
           import('../primeng/catalogo-primeng.component').then((m) => m.CatalogoPrimengComponent),
       },
+      {
+        // Estado de cada componente (DD-190) y dónde está cada pieza: ficha, maestro en Figma y código. Como el
+        // «Component status» de Primer, con la tabla de todos debajo. Pinta el mismo contrato que la API de las fichas.
+        path: 'estado',
+        loadComponent: () => import('./estado-componentes.component').then((m) => m.EstadoComponentesComponent),
+      },
       ...SC_DEMO_COMPONENT_PAGES.map((page) => ({
         path: page.path,
         loadComponent: page.load as never,

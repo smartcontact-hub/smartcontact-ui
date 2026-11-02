@@ -1,0 +1,151 @@
+/* Página de consulta, con la medida de la de PrimeNG: definiciones arriba a medida de lectura y la tabla a todo el
+ * ancho. Agrupación 7 · 14 · 28: un estado y su párrafo, a 7; entre secciones, a 28. */
+:host {
+  display: block;
+  max-width: 1200px;
+  padding-bottom: var(--sc-spacing-5);
+}
+
+.hero {
+  margin-bottom: var(--sc-spacing-2);
+
+  /* Tamaño y peso los pone `.demo-main h1` (styles.scss), el título de todas las secciones de la doc. */
+  &__title {
+    margin: 0 0 var(--sc-spacing-0-75);
+    color: var(--sc-text-primary);
+  }
+
+  &__lead {
+    max-width: 72ch;
+    margin: 0;
+    color: var(--sc-text-secondary);
+  }
+}
+
+.estado {
+  max-width: 72ch;
+  margin-bottom: var(--sc-spacing-2);
+
+  /* El filete bajo el título es el de los `h2` de las fichas (`.sb-host__h2`). */
+  &__titulo {
+    margin: 0 0 var(--sc-spacing-0-5);
+    padding-bottom: var(--sc-spacing-0-5);
+    border-bottom: 1px solid var(--sc-border-default);
+    color: var(--sc-text-primary);
+  }
+
+  p {
+    margin: 0;
+    color: var(--sc-text-secondary);
+  }
+}
+
+.controles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sc-spacing-1);
+  align-items: center;
+
+  &__buscar {
+    flex: 1 1 20rem;
+    max-width: 28rem;
+  }
+}
+
+.cuenta {
+  margin: var(--sc-spacing-0-5) 0 var(--sc-spacing-1);
+  color: var(--sc-text-subtle);
+}
+
+/* La tabla tiene seis columnas: en una ventana estrecha se desplaza dentro de su marco, no estira la página. */
+.marco {
+  overflow-x: auto;
+}
+
+.tabla {
+  width: 100%;
+  min-width: 44rem;
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: var(--sc-spacing-0-5);
+    border-bottom: 1px solid var(--sc-border-default);
+    text-align: left;
+    vertical-align: middle;
+  }
+
+  thead th {
+    color: var(--sc-text-subtle);
+    font-weight: var(--sc-font-weight-semibold);
+    white-space: nowrap;
+  }
+
+  tbody th {
+    font-weight: var(--sc-font-weight-regular);
+  }
+
+  tbody tr {
+    transition: background-color var(--sc-transition-fast) ease-out;
+  }
+
+  tbody tr:hover {
+    background: var(--sc-bg-secondary-hover);
+  }
+
+  a {
+    color: var(--sc-text-link);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  &__nombre {
+    display: block;
+    font-weight: var(--sc-font-weight-semibold);
+  }
+
+  &__nombre--sin-ficha {
+    color: var(--sc-text-subtle);
+    font-weight: var(--sc-font-weight-regular);
+  }
+
+  &__selector {
+    color: var(--sc-text-secondary);
+  }
+
+  &__nada {
+    color: var(--sc-text-subtle);
+  }
+
+  &__num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.vacio,
+.aviso {
+  margin: var(--sc-spacing-2) 0;
+  color: var(--sc-text-secondary);
+}
+
+.cargando {
+  display: grid;
+  gap: var(--sc-spacing-1);
+}
+
+/* Solo para el lector de pantalla: el nombre del buscador y el aviso de pestaña nueva. */
+.oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tabla tbody tr {
+    transition: none;
+  }
+}

@@ -42,7 +42,8 @@
       "retirado": null,
       "usedInSupervisor": 0,
       "cuando": "Para un aviso o una pregunta con una acción clara (borrar, descartar cambios, sesión caducada), abierto por `ScDynamicDialogService` como en ui.smart-contact.com. La variante dice la intención: `error` destruye o bloquea, `warning` pide atención, `info` informa y `default` confirma algo neutro. La superficie dice quién lo provoca: blanca (`surface: 'plain'`, el confirm centrado de antes) si decide el usuario (borrar, descartar), teñida (`tinted`, la de siempre) si es un error del sistema (sin micrófono). Mide de 320 a 480 px y hasta 400 de alto. Si lleva más que texto, `sc-custom-modal`.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/alert-modal/sc-alert-modal.component.ts"
     },
     {
       "name": "avatar",
@@ -75,7 +76,8 @@
       "retirado": null,
       "usedInSupervisor": 4,
       "cuando": "Para representar a una PERSONA con su foto; sin foto cae a una ilustración estable, siempre la misma para la misma persona.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/avatar/sc-avatar.component.ts"
     },
     {
       "name": "avatargroup",
@@ -96,7 +98,8 @@
       "retirado": null,
       "usedInSupervisor": 0,
       "cuando": "Para apilar varios avatares cuando importa «quiénes» y no «cuántos» exactamente.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/avatar/sc-avatargroup.component.ts"
     },
     {
       "name": "badge",
@@ -119,7 +122,8 @@
       "retirado": null,
       "usedInSupervisor": 6,
       "cuando": "Para un contador o un rótulo muy corto PEGADO a otra cosa. Si va suelto en la fila, es `sc-tag`.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/badge/sc-badge.component.ts"
     },
     {
       "name": "breadcrumb",
@@ -144,7 +148,8 @@
       "retirado": null,
       "usedInSupervisor": 1,
       "cuando": "Para decir dónde estás dentro de una jerarquía y poder subir. No es navegación principal.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/breadcrumb/sc-breadcrumb.component.ts"
     },
     {
       "name": "bulk-action-bar",
@@ -174,7 +179,8 @@
       "retirado": null,
       "usedInSupervisor": 2,
       "cuando": "Para las acciones que aparecen al seleccionar varias filas. Sale con la selección; tras aplicar un cambio en lote, se queda para contarlo con su «Deshacer».",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/bulk-action-bar/sc-bulk-action-bar.component.ts"
     },
     {
       "name": "bulk-edit-menu",
@@ -203,7 +209,8 @@
       "retirado": null,
       "usedInSupervisor": 0,
       "cuando": "Para cambiar UN campo en muchos elementos a la vez, desde la barra de selección.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/bulk-edit-menu/sc-bulk-edit-menu.component.ts"
     },
     {
       "name": "bulk-transcription-modal",
@@ -247,7 +254,8 @@
       "retirado": null,
       "usedInSupervisor": 0,
       "cuando": "Solo para el procesado masivo de conversaciones. Es específico del dominio y hoy solo lo usa la demo.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/bulk-transcription-modal/sc-bulk-transcription-modal.component.ts"
     },
     {
       "name": "button",
@@ -293,7 +301,8 @@
           "sel": "p-button",
           "motivo": "Use the `[pButton]` directive instead."
         }
-      ]
+      ],
+      "fuente": "projects/ui-smartcontact/src/lib/components/button/sc-button.component.ts"
     },
     {
       "name": "card",
@@ -316,7 +325,8 @@
       "retirado": null,
       "usedInSupervisor": 0,
       "cuando": "Para agrupar contenido suelto con una superficie propia. Si el grupo tiene título y pertenece a un formulario, es `sc-section-card`.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/card/sc-card.component.ts"
     },
     {
       "name": "checkbox",
@@ -343,7 +353,8 @@
       "retirado": null,
       "usedInSupervisor": 36,
       "cuando": "Para un sí/no independiente, o para la casilla de un grupo elegido A MEDIAS (tiene tercer estado). Para activar algo al instante, `sc-toggleswitch`.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/checkbox/sc-checkbox.component.ts"
     },
     {
       "name": "chip",
@@ -374,7 +385,8 @@
       "retirado": null,
       "usedInSupervisor": 5,
       "cuando": "Para un valor ya elegido que se puede quitar (un filtro puesto, un destinatario). No es un botón.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/chip/sc-chip.component.ts"
     },
     {
       "name": "color-dot-picker",
@@ -399,7 +411,8 @@
       "retirado": null,
       "usedInSupervisor": 3,
       "cuando": "Para elegir un color de una paleta corta y cerrada, con su nombre — el color solo no se puede oír.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/color-dot-picker/sc-color-dot-picker.component.ts"
     },
     {
       "name": "column-selector",
@@ -424,7 +437,8 @@
       "retirado": null,
       "usedInSupervisor": 1,
       "cuando": "Para que el usuario decida qué columnas ve en una tabla.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/column-selector/sc-column-selector.component.ts"
     },
     {
       "name": "command-palette",
@@ -445,7 +459,8 @@
       "retirado": null,
       "usedInSupervisor": 4,
       "cuando": "Para llegar a cualquier sitio o acción escribiendo, sin recorrer menús. Es atajo, nunca el único camino.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/command-palette/sc-command-palette.component.ts"
     },
     {
       "name": "confirmdialog",
@@ -464,7 +479,8 @@
       "retirado": "El diálogo centrado lo sustituye `sc-alert-modal`, el aviso que comparten los dos DS (DD-241). Sigue vigente solo el globo pegado al botón (`ScConfirmService.request({ …, target })`), que aún no tiene sustituto.",
       "usedInSupervisor": 1,
       "cuando": "Retirado (DD-241): para confirmar, `sc-alert-modal`. Queda solo el globo pegado al botón (`ScConfirmService.request({ target })`), para una frase sobre lo que se acaba de pulsar.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/confirmdialog/sc-confirmdialog.component.ts"
     },
     {
       "name": "custom-modal",
@@ -509,7 +525,8 @@
       "retirado": null,
       "usedInSupervisor": 18,
       "cuando": "Para un modal con contenido propio (un formulario, una tabla, un reproductor): la carcasa que comparten los dos DS. Se abre por `ScDynamicDialogService`, como en ui.smart-contact.com, o con `[(visible)]` si su formulario se ata al estado de la pantalla. Para un aviso con una acción, `sc-alert-modal`.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/custom-modal/sc-custom-modal.component.ts"
     },
     {
       "name": "datatable",
@@ -619,7 +636,8 @@
       "retirado": null,
       "usedInSupervisor": 18,
       "cuando": "Para datos tabulares con columnas comparables. Si cada fila es en realidad un formulario, NO es una tabla.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/datatable/sc-datatable.component.ts"
     },
     {
       "name": "datepicker",
@@ -671,7 +689,8 @@
       "retirado": null,
       "usedInSupervisor": 1,
       "cuando": "Para elegir una fecha del calendario, cuando importa el día concreto y no un rango relativo («últimos 7 días»).",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/datepicker/sc-datepicker.component.ts"
     },
     {
       "name": "delete-entity-dialog",
@@ -701,7 +720,8 @@
       "retirado": null,
       "usedInSupervisor": 1,
       "cuando": "Para confirmar un borrado ENSEÑANDO qué se borra, en singular o en bloque.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/delete-entity-dialog/sc-delete-entity-dialog.component.ts"
     },
     {
       "name": "dialog",
@@ -739,7 +759,8 @@
       "retirado": "Usa `sc-custom-modal`, la carcasa de modal que comparten los dos DS (la de ui.smart-contact.com), y `sc-alert-modal` para avisos y confirmaciones (DD-241).",
       "usedInSupervisor": 0,
       "cuando": "Retirado (DD-241): usa `sc-custom-modal`, la carcasa que comparten los dos DS.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/dialog/sc-dialog.component.ts"
     },
     {
       "name": "divider",
@@ -762,7 +783,8 @@
       "retirado": null,
       "usedInSupervisor": 22,
       "cuando": "Para separar visualmente dos bloques cuando el espacio no basta.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/divider/sc-divider.component.ts"
     },
     {
       "name": "drawer",
@@ -796,7 +818,8 @@
       "retirado": null,
       "usedInSupervisor": 3,
       "cuando": "Para un panel lateral con trabajo que conserva el contexto de detrás.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/drawer/sc-drawer.component.ts"
     },
     {
       "name": "empty-state",
@@ -825,7 +848,8 @@
       "retirado": null,
       "usedInSupervisor": 24,
       "cuando": "Para cuando no hay nada que enseñar: dice por qué está vacío y qué hacer. Una lista vacía sin esto parece rota.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/empty-state/sc-empty-state.component.ts"
     },
     {
       "name": "fact-row",
@@ -853,7 +877,8 @@
       "retirado": null,
       "usedInSupervisor": 0,
       "cuando": "Para pares clave/valor que se leen de un vistazo (un resumen), en un `dl`. Un campo que se edita es `sc-field`; muchos datos en columnas, `sc-datatable`.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/fact-row/sc-fact-row.component.ts"
     },
     {
       "name": "field-label",
@@ -879,7 +904,8 @@
       "retirado": null,
       "usedInSupervisor": 0,
       "cuando": "Solo al construir un campo NUEVO del DS: es la pieza de la etiqueta. En una pantalla se usa el campo entero (`sc-inputtext`, `sc-select`…), nunca esto suelto.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/field/sc-field-label.component.ts"
     },
     {
       "name": "field-msg",
@@ -904,7 +930,8 @@
       "retirado": null,
       "usedInSupervisor": 0,
       "cuando": "Solo al construir un campo NUEVO del DS: es la pieza de la ayuda y del error. En una pantalla se usa el campo entero, nunca esto suelto.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/field/sc-field-msg.component.ts"
     },
     {
       "name": "fileupload",
@@ -953,7 +980,8 @@
       "retirado": null,
       "usedInSupervisor": 2,
       "cuando": "Para subir uno o varios archivos con zona de soltar (audios, importaciones, adjuntos). La foto de una persona o entidad, con su recorte, es `sc-photo-upload`.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/fileupload/sc-fileupload.component.ts"
     },
     {
       "name": "form-danger-zone",
@@ -981,7 +1009,8 @@
       "retirado": null,
       "usedInSupervisor": 0,
       "cuando": "Para la acción irreversible al final de un formulario, separada del resto y explicada.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/form-danger-zone/sc-form-danger-zone.component.ts"
     },
     {
       "name": "form-section-nav",
@@ -1015,7 +1044,8 @@
       "retirado": null,
       "usedInSupervisor": 6,
       "cuando": "Para el índice lateral de un formulario largo, que dice por dónde vas.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/form-section-nav/sc-form-section-nav.component.ts"
     },
     {
       "name": "gauge",
@@ -1046,7 +1076,8 @@
       "retirado": null,
       "usedInSupervisor": 1,
       "cuando": "Para una magnitud contra su máximo, de un vistazo. Para progreso de una tarea, `sc-progressbar`.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/gauge/sc-gauge.component.ts"
     },
     {
       "name": "group-popover",
@@ -1072,7 +1103,8 @@
       "retirado": null,
       "usedInSupervisor": 6,
       "cuando": "Para asomar los grupos de algo sin salir de la fila.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/group-popover/sc-group-popover.component.ts"
     },
     {
       "name": "icon-tile",
@@ -1097,7 +1129,8 @@
       "retirado": null,
       "usedInSupervisor": 0,
       "cuando": "Para dar a una fila de datos o a un título su icono con peso propio (un resumen). Un icono suelto junto a un texto es `sc-icon`; una persona, `sc-avatar`.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/icon-tile/sc-icon-tile.component.ts"
     },
     {
       "name": "impact-preview-dialog",
@@ -1127,7 +1160,8 @@
       "retirado": null,
       "usedInSupervisor": 1,
       "cuando": "Para enseñar a QUÉ va a afectar un cambio masivo ANTES de aplicarlo.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/impact-preview-dialog/sc-impact-preview-dialog.component.ts"
     },
     {
       "name": "inline-rename-cell",
@@ -1153,7 +1187,8 @@
       "retirado": null,
       "usedInSupervisor": 2,
       "cuando": "Para renombrar en el sitio, sin abrir un formulario.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/inline-rename-cell/sc-inline-rename-cell.component.ts"
     },
     {
       "name": "inputgroup",
@@ -1175,7 +1210,8 @@
       "retirado": null,
       "usedInSupervisor": 1,
       "cuando": "Para un campo con algo pegado (icono, botón, prefijo). Mantiene alineadas las dos piezas.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/inputgroup/sc-inputgroup.component.ts"
     },
     {
       "name": "inputnumber",
@@ -1219,7 +1255,8 @@
       "retirado": null,
       "usedInSupervisor": 20,
       "cuando": "Para una cantidad acotada, con mínimo, máximo y paso. Si el número es un identificador (un teléfono, un código), es texto: `sc-inputtext`.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/inputnumber/sc-inputnumber.component.ts"
     },
     {
       "name": "inputtags",
@@ -1265,7 +1302,8 @@
       "retirado": null,
       "usedInSupervisor": 2,
       "cuando": "Para varios valores cortos que escribe el usuario (dominios, etiquetas libres, correos). Si salen de una lista cerrada, `sc-multiselect`; si es uno solo, `sc-inputtext`.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/inputtags/sc-inputtags.component.ts"
     },
     {
       "name": "inputtext",
@@ -1311,7 +1349,8 @@
       "retirado": null,
       "usedInSupervisor": 46,
       "cuando": "Para texto de una línea. Si puede ocupar varias, `sc-textarea`.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/inputtext/sc-inputtext.component.ts"
     },
     {
       "name": "keyboard-shortcuts",
@@ -1336,7 +1375,8 @@
       "retirado": null,
       "usedInSupervisor": 2,
       "cuando": "Para enseñar los atajos disponibles en la pantalla.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/keyboard-shortcuts/sc-keyboard-shortcuts.component.ts"
     },
     {
       "name": "message",
@@ -1363,7 +1403,8 @@
       "retirado": null,
       "usedInSupervisor": 7,
       "cuando": "Para un aviso EN LA PÁGINA, junto a lo que explica. Si es el resultado de una acción y puede desaparecer, `sc-toast`.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/message/sc-message.component.ts"
     },
     {
       "name": "multiselect",
@@ -1432,7 +1473,8 @@
           "sel": "p-multiselect",
           "motivo": "Use Select component with `multiple` property instead."
         }
-      ]
+      ],
+      "fuente": "projects/ui-smartcontact/src/lib/components/multiselect/sc-multiselect.component.ts"
     },
     {
       "name": "option-card",
@@ -1461,7 +1503,8 @@
       "retirado": null,
       "usedInSupervisor": 3,
       "cuando": "Para elegir una de pocas opciones que necesitan explicarse. Si se explican solas, `sc-selectbutton`.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/option-card/sc-option-card.component.ts"
     },
     {
       "name": "panel",
@@ -1490,7 +1533,8 @@
       "retirado": null,
       "usedInSupervisor": 1,
       "cuando": "Para un bloque con cabecera propia, plegable y con acciones.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/panel/sc-panel.component.ts"
     },
     {
       "name": "password",
@@ -1535,7 +1579,8 @@
       "retirado": null,
       "usedInSupervisor": 2,
       "cuando": "Para una contraseña, con su ojo para mostrarla.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/password/sc-password.component.ts"
     },
     {
       "name": "permission-matrix",
@@ -1567,7 +1612,8 @@
       "retirado": null,
       "usedInSupervisor": 2,
       "cuando": "Para dar permisos cruzando quién con qué, marcando por columna entera.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/permission-matrix/sc-permission-matrix.component.ts"
     },
     {
       "name": "photo-upload",
@@ -1596,7 +1642,8 @@
       "retirado": null,
       "usedInSupervisor": 2,
       "cuando": "Para la foto de una persona, con ilustración de reserva.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/photo-upload/sc-photo-upload.component.ts"
     },
     {
       "name": "progressbar",
@@ -1622,7 +1669,8 @@
       "retirado": null,
       "usedInSupervisor": 0,
       "cuando": "Para el avance de una tarea de la que SÍ se sabe cuánto queda. Si no se sabe, `sc-progressspinner`.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/progressbar/sc-progressbar.component.ts"
     },
     {
       "name": "progressspinner",
@@ -1646,7 +1694,8 @@
       "retirado": null,
       "usedInSupervisor": 0,
       "cuando": "Para una espera de duración desconocida. Si la espera es de contenido que va a aparecer, `sc-skeleton` desconcierta menos.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/progressspinner/sc-progressspinner.component.ts"
     },
     {
       "name": "radiobutton",
@@ -1675,7 +1724,8 @@
       "retirado": null,
       "usedInSupervisor": 3,
       "cuando": "Para elegir UNA de pocas opciones excluyentes, todas a la vista. Si son muchas, `sc-select`.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/radiobutton/sc-radiobutton.component.ts"
     },
     {
       "name": "search",
@@ -1710,7 +1760,8 @@
       "retirado": null,
       "usedInSupervisor": 10,
       "cuando": "Para filtrar escribiendo. Solo se lleva el foco al entrar si buscar es LA acción de la pantalla.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/search/sc-search.component.ts"
     },
     {
       "name": "section-card",
@@ -1741,7 +1792,8 @@
       "retirado": null,
       "usedInSupervisor": 39,
       "cuando": "Para una sección con título dentro de un formulario o una ficha.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/section-card/sc-section-card.component.ts"
     },
     {
       "name": "select",
@@ -1797,7 +1849,8 @@
       "retirado": null,
       "usedInSupervisor": 71,
       "cuando": "Para elegir UNA de muchas. Si son pocas y caben a la vista, `sc-radiobutton` o `sc-selectbutton` ahorran un clic.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/select/sc-select.component.ts"
     },
     {
       "name": "selectbutton",
@@ -1835,7 +1888,8 @@
       "retirado": null,
       "usedInSupervisor": 22,
       "cuando": "Para elegir una opción de 2-4 que se explican solas, todas visibles. Si cambia de COLECCIÓN en vez de filtrar, son pestañas (DD-113).",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/selectbutton/sc-selectbutton.component.ts"
     },
     {
       "name": "skeleton",
@@ -1861,7 +1915,8 @@
       "retirado": null,
       "usedInSupervisor": 1,
       "cuando": "Para el hueco de lo que está cargando, con su forma. Evita el salto que da aparecer de golpe.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/skeleton/sc-skeleton.component.ts"
     },
     {
       "name": "slot",
@@ -1887,7 +1942,8 @@
       "retirado": null,
       "usedInSupervisor": 12,
       "cuando": "Para una ranura con título dentro de una composición.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/slot/sc-slot.component.ts"
     },
     {
       "name": "step-marker",
@@ -1911,7 +1967,8 @@
       "retirado": null,
       "usedInSupervisor": 0,
       "cuando": "Para decir dónde está cada sección de un recorrido (sin ver, completa, con algo por hacer) en el índice de un alta. Un estado suelto de un campo es su mensaje (`sc-field-msg`); una marca de cambios sin guardar, el punto del índice.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/step-marker/sc-step-marker.component.ts"
     },
     {
       "name": "sticky-form-header",
@@ -1940,7 +1997,8 @@
       "retirado": "RETENIDO PARA ROLLBACK (S59, Supervisor DD#65). Ya NO lo usa ningún form de la app: los 3 form shells migraron al modelo \"todo arriba\" (acciones al TopBar + la ficha del panel para la identidad). Se conserva intacto —exportado + showcased en la demo— como red de seguridad por si se revierte el \"todo arriba\". NO borrar sin decisión explícita (ver DD#65 § \"Cómo revertir\").",
       "usedInSupervisor": 2,
       "cuando": "Para la cabecera fija de un formulario largo, con guardar y cancelar siempre a mano.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/sticky-form-header/sc-sticky-form-header.component.ts"
     },
     {
       "name": "subsection",
@@ -1968,7 +2026,8 @@
       "retirado": null,
       "usedInSupervisor": 29,
       "cuando": "Para un nivel más dentro de una sección, plegable si lo secundario estorba.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/subsection/sc-subsection.component.ts"
     },
     {
       "name": "tabs",
@@ -1990,7 +2049,8 @@
       "retirado": null,
       "usedInSupervisor": 1,
       "cuando": "Para vistas hermanas de una misma cosa que cambian lo de debajo (Chat y Email, Transcripción y Análisis). Para elegir el valor de un campo, `sc-selectbutton`.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/tabs/sc-tabs.component.ts"
     },
     {
       "name": "tag",
@@ -2018,7 +2078,8 @@
       "retirado": null,
       "usedInSupervisor": 28,
       "cuando": "Para clasificar o marcar un estado EN la fila. Si es un contador pegado a algo, `sc-badge`; si el usuario lo puede quitar, `sc-chip`.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/tag/sc-tag.component.ts"
     },
     {
       "name": "textarea",
@@ -2065,7 +2126,8 @@
       "retirado": null,
       "usedInSupervisor": 7,
       "cuando": "Para texto que puede ocupar varias líneas: una descripción, una nota, el motivo de algo. Si siempre cabe en una, `sc-inputtext`.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/textarea/sc-textarea.component.ts"
     },
     {
       "name": "toast",
@@ -2092,7 +2154,8 @@
       "retirado": null,
       "usedInSupervisor": 0,
       "cuando": "Para el resultado de una acción, que se va solo. Si el aviso pertenece a la página y debe quedarse, `sc-message`.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/toast/sc-toast.component.ts"
     },
     {
       "name": "toggleswitch",
@@ -2122,7 +2185,8 @@
       "retirado": null,
       "usedInSupervisor": 46,
       "cuando": "Para encender o apagar algo CON EFECTO INMEDIATO. Si el cambio se guarda al enviar el formulario, `sc-checkbox`.",
-      "sobreObsoleto": []
+      "sobreObsoleto": [],
+      "fuente": "projects/ui-smartcontact/src/lib/components/toggleswitch/sc-toggleswitch.component.ts"
     }
   ]
 }

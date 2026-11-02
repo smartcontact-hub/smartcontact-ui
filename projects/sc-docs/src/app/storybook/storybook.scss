@@ -305,10 +305,9 @@
   color: var(--sc-text-primary);
 }
 
-/* El estado del componente (DD-190), bajo el título: a 7 de él, como la descripción. */
-.sb-host__estado {
-  display: block;
-  margin-top: var(--sc-spacing-0-5);
+/* Dónde está cada pieza (`ficha-piezas.component.ts`), a 14 del «cuándo», como un hermano más. */
+.sb-host__piezas {
+  margin-top: var(--sc-spacing-1);
 }
 
 .sb-host__tag {
