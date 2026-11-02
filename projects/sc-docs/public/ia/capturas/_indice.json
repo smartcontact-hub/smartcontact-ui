@@ -1,6 +1,6 @@
 {
   "generado": "scripts/docs-capturas.mjs",
-  "fecha": "2026-10-30",
+  "fecha": "2026-11-02",
   "viewport": "1280x900",
   "tema": "claro",
   "fichas": {
@@ -407,8 +407,8 @@
       "miniatura": {
         "claro": "progressspinner/_miniatura.png",
         "oscuro": "progressspinner/_miniatura-oscuro.png",
-        "ancho": 145,
-        "alto": 145
+        "ancho": 140,
+        "alto": 140
       }
     },
     "gauge": {
@@ -1328,12 +1328,6 @@
           "nombre": "Básica",
           "png": "formdangerzone/basica.png"
         }
-      },
-      "miniatura": {
-        "claro": "formdangerzone/_miniatura.png",
-        "oscuro": "formdangerzone/_miniatura-oscuro.png",
-        "ancho": 711,
-        "alto": 192
       }
     },
     "stickyformheader": {
@@ -1395,9 +1389,9 @@
     "alertmodal": {
       "anatomia": [
         "sc-alert-modal",
-        "  sc-custom-modal.sc-alert-modal__surface.sc-alert-modal__surface--error.sc-custom-modal-host",
+        "  sc-custom-modal.sc-alert-modal__surface.sc-alert-modal__surface--error.sc-alert-modal__surface--plain.sc-custom-modal-host",
         "    section.sc-custom-modal",
-        "      header.sc-custom-modal__header.sc-custom-modal__header--no-subtitle",
+        "      header.sc-custom-modal__header.sc-custom-modal__header--no-icon.sc-custom-modal__header--no-subtitle",
         "        sc-button.sc-custom-modal__close",
         "          p-button"
       ],
@@ -1410,6 +1404,10 @@
           "nombre": "Variantes",
           "png": "alertmodal/variantes.png"
         },
+        "superficies": {
+          "nombre": "Superficies",
+          "png": "alertmodal/superficies.png"
+        },
         "medidas-y-limites": {
           "nombre": "Medidas y límites",
           "png": "alertmodal/medidas-y-limites.png"
@@ -1418,8 +1416,8 @@
       "miniatura": {
         "claro": "alertmodal/_miniatura.png",
         "oscuro": "alertmodal/_miniatura-oscuro.png",
-        "ancho": 603,
-        "alto": 186
+        "ancho": 570,
+        "alto": 190
       }
     },
     "impactpreviewdialog": {
