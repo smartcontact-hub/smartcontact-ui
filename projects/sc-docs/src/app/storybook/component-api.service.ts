@@ -45,12 +45,34 @@ export function trozosDeCuando(cuando: string): readonly TrozoCuando[] {
     .filter((t) => t.texto.length > 0);
 }
 
-interface ComponenteContrato extends EstadoComponente {
+/**
+ * Con quién se relaciona, derivado por `audit:components`: las alternativas que nombra su «cuándo», los componentes que
+ * usa en su plantilla y aquellos en los que aparece. Selectores (`sc-tag`).
+ */
+export interface RelacionesComponente {
+  readonly alternativas: readonly string[];
+  readonly usa: readonly string[];
+  readonly usadoEn: readonly string[];
+}
+
+/** Lo que la ficha y la página de estado enseñan de un componente, además de su API. */
+export interface ComponenteContrato extends EstadoComponente {
   readonly selector: string;
   readonly name: string;
   readonly cuando: string | null;
+  /** `primeng/button`, o `—` si es nuestro de cabo a rabo. */
+  readonly primengBase: string;
+  /** Su fichero en el repo, o `null` (un nativo adoptado no tiene fichero nuestro). */
+  readonly fuente: string | null;
+  /** Su master en Figma, de su plantilla de Code Connect; `null` si no la tiene. */
+  readonly figma: string | null;
+  readonly usosSupervisor: number | null;
+  readonly relaciones: RelacionesComponente;
   readonly contrato: readonly ContratoMiembro[];
 }
+
+/** Donde vive el código: los enlaces «Código» apuntan a la rama principal del repositorio. */
+export const REPO_BLOB = 'https://github.com/smartcontact-hub/smartcontact-ui/blob/main/';
 
 /**
  * El CONTRATO de los componentes, servido a la documentación.
@@ -89,6 +111,18 @@ export class ComponentApiService {
     const lista = this.componentes();
     return lista ? new Map(lista.map((c) => [c.name.replace(/-/g, ''), c])) : null;
   });
+
+  /** Todos, en el orden del contrato; `null` mientras carga. La página de estado los lista. */
+  todos(): readonly ComponenteContrato[] | null {
+    this.cargar();
+    return this.componentes();
+  }
+
+  /** Un componente entero por selector, o `null` mientras carga o si no está. */
+  componente(selector: string): ComponenteContrato | null {
+    this.cargar();
+    return this.porSelector()?.get(selector) ?? null;
+  }
 
   /** Su estado por selector, o `null` mientras carga o si no está. */
   estado(selector: string): EstadoComponente | null {

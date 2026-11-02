@@ -334,7 +334,11 @@ export class StoryCanvasComponent {
       if (this.ancho() !== 'libre') return;
       this.soltarIframe();
       if (!this.revisarA11y() || this.desnudo()) return;
+      // Fuera de la vista no se revisa, pero el resultado de antes ya no vale: se olvida, y el observador de arriba lo
+      // pide al volver a verse. Sin esto, un enlace con `args` que llega con el lienzo bajo el pliegue enseñaba los
+      // fallos de la versión anterior.
       if (this.visible) this.programarRevision();
+      else this.fallos.set(null);
     });
 
     this.destroyRef.onDestroy(() => {

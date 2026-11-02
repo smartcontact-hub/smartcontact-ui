@@ -1,0 +1,131 @@
+<header class="hero">
+  <h1 class="hero__title">Estado de los componentes</h1>
+  <p class="hero__lead sc-text-h3-regular">
+    Si un componente está listo para una pantalla de producción, y dónde está cada pieza: su ficha, su maestro en Figma
+    y su código.
+  </p>
+</header>
+
+<!-- Los tres estados de DD-190, como los define Primer: una sección por estado, qué significa y qué hacer con él. -->
+<section class="estado">
+  <h2 class="estado__titulo sc-text-h2-semibold">Listo</h2>
+  <p class="sc-text-body-regular">
+    Tiene maestro en el Kit de Figma y ficha en esta documentación. Es el que se usa en pantallas de producción: hay una
+    pieza de Figma con la que comparar lo que pinta el código.
+  </p>
+</section>
+
+<section class="estado">
+  <h2 class="estado__titulo sc-text-h2-semibold">Experimental</h2>
+  <p class="sc-text-body-regular">
+    Le falta el maestro del Kit o la ficha: su fila dice cuál. Se puede usar, pero puede cambiar, y sin maestro no hay
+    pieza de Figma con la que comparar la pantalla. Antes de llevarlo a una pantalla nueva, pregunta.
+  </p>
+</section>
+
+<section class="estado">
+  <h2 class="estado__titulo sc-text-h2-semibold">Retirado</h2>
+  <p class="sc-text-body-regular">
+    Se va a quitar. No lo uses en pantallas nuevas: su ficha dice por qué y cuál es su relevo, y el código lo marca como
+    obsoleto, así que el editor te avisa al escribirlo.
+  </p>
+</section>
+
+<section class="todos">
+  <h2 class="estado__titulo sc-text-h2-semibold">Todos los componentes</h2>
+
+  @if (fallo()) {
+    <p class="aviso sc-text-body-regular">
+      No se pudo cargar el contrato de los componentes. Está entero en
+      <a [href]="repo + 'projects/sc-docs/public/components/_component-api.json'" target="_blank" rel="noopener"
+        >el repositorio</a
+      >.
+    </p>
+  } @else if (filas().length) {
+    <div class="controles">
+      <label class="oculto" for="estado-buscar">Buscar un componente</label>
+      <sc-search
+        class="controles__buscar"
+        inputId="estado-buscar"
+        placeholder="Busca por nombre, selector o base de PrimeNG"
+        clearAriaLabel="Borrar la búsqueda"
+        [value]="busqueda()"
+        (valueChange)="busqueda.set($event)"
+      />
+      <sc-selectbutton
+        ariaLabel="Filtrar por estado"
+        [options]="opciones"
+        optionLabel="label"
+        optionValue="value"
+        [allowEmpty]="false"
+        [value]="filtro()"
+        (valueChange)="filtro.set($any($event))"
+      />
+    </div>
+    <p class="cuenta sc-text-caption-regular" aria-live="polite">
+      {{ visibles().length }} de {{ filas().length }}: {{ cuenta().ready }} listos, {{ cuenta().experimental }}
+      experimentales y {{ cuenta().deprecated }} retirados.
+    </p>
+
+    @if (visibles().length) {
+      <div class="marco">
+        <table class="tabla sc-text-body-regular">
+          <thead>
+            <tr>
+              <th scope="col">Componente</th>
+              <th scope="col">Estado</th>
+              <th scope="col">Figma</th>
+              <th scope="col">Código</th>
+              <th scope="col">Base</th>
+              <th scope="col" class="tabla__num">Usos en el Supervisor</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (f of visibles(); track f.c.selector) {
+              <tr>
+                <th scope="row">
+                  @if (f.ficha) {
+                    <a class="tabla__nombre" [routerLink]="['/components', f.ficha.path]">{{ f.ficha.label }}</a>
+                  } @else {
+                    <span class="tabla__nombre tabla__nombre--sin-ficha">Sin ficha</span>
+                  }
+                  <code class="tabla__selector">{{ f.c.selector }}</code>
+                </th>
+                <td><app-estado-componente [estado]="f.c" /></td>
+                <td>
+                  @if (f.c.figma) {
+                    <a [href]="f.c.figma" target="_blank" rel="noopener"
+                      >Abrir<span class="oculto"> el maestro de {{ f.c.selector }} en Figma, en otra pestaña</span></a
+                    >
+                  } @else {
+                    <span class="tabla__nada">{{ f.c.faltas.includes('kit') ? 'Sin maestro' : 'Sin enlace' }}</span>
+                  }
+                </td>
+                <td>
+                  @if (f.c.fuente) {
+                    <a [href]="repo + f.c.fuente" target="_blank" rel="noopener"
+                      >Ver<span class="oculto"> el código de {{ f.c.selector }}, en otra pestaña</span></a
+                    >
+                  } @else {
+                    <span class="tabla__nada">De PrimeNG</span>
+                  }
+                </td>
+                <td>{{ base(f.c) }}</td>
+                <td class="tabla__num">{{ f.c.usosSupervisor ?? '—' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    } @else {
+      <p class="vacio sc-text-body-regular">Nada coincide. Prueba con otra palabra o con «Todos».</p>
+    }
+  } @else {
+    <!-- Esqueleto mientras llega el contrato: el hueco de los controles y de la tabla. -->
+    <div class="cargando">
+      <sc-skeleton height="36px" />
+      <sc-skeleton height="24px" width="30%" />
+      <sc-skeleton height="320px" />
+    </div>
+  }
+</section>

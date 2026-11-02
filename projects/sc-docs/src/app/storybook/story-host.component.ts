@@ -11,7 +11,8 @@ import { StoryAnatomyComponent } from './story-anatomy.component';
 import { StorySnippetComponent } from './story-snippet.component';
 import { StoryMatrizComponent, type EjesUrl } from './story-matriz.component';
 import { ComponentApiService, trozosDeCuando } from './component-api.service';
-import { EstadoComponenteComponent } from './estado-componente.component';
+import { FichaPiezasComponent } from './ficha-piezas.component';
+import { FichaRelacionadosComponent } from './ficha-relacionados.component';
 import { ejesCandidatos } from './matriz.core.mjs';
 import { codificarArgs, decodificarArgs, slugHistoria, urlDeHistoria } from './story-url';
 import { ScArgs, StoryControlsContext, StoryDef, StoryMeta } from './story.types';
@@ -34,7 +35,8 @@ const TEMAS_URL: readonly TemaUrl[] = ['claro', 'oscuro', 'comparar'];
 @Component({
   selector: 'app-story-host',
   imports: [
-    EstadoComponenteComponent,
+    FichaPiezasComponent,
+    FichaRelacionadosComponent,
     NgTemplateOutlet,
     StoryAnatomyComponent,
     StoryCanvasComponent,
@@ -84,8 +86,6 @@ const TEMAS_URL: readonly TemaUrl[] = ['claro', 'oscuro', 'comparar'];
                 {{ meta().title ?? meta().tag }}
                 <span class="sb-host__tag">&lt;{{ meta().tag }}&gt;</span>
               </h1>
-              <!-- El estado del componente (DD-190): listo, experimental o retirado, y por qué. -->
-              <app-estado-componente class="sb-host__estado" [estado]="estado()" explicado />
               @if (meta().description) {
                 <p class="sb-host__desc sc-text-h3-regular">{{ meta().description }}</p>
               }
@@ -105,6 +105,11 @@ const TEMAS_URL: readonly TemaUrl[] = ['claro', 'oscuro', 'comparar'];
                     }
                   </p>
                 </div>
+              }
+              <!-- Dónde está cada pieza, como las tarjetas de Primer bajo el título: el código, con su estado (DD-190), y
+                   el maestro de Figma. Todo del contrato generado: el enlace a Figma es el de su plantilla de Code Connect. -->
+              @if (componente(); as c) {
+                <app-ficha-piezas class="sb-host__piezas" [componente]="c" />
               }
               <!-- Opt-in: una página puede proyectar un aviso bajo la descripción (p. ej. un enlace a
                    otra pantalla relacionada). Sin contenido proyectado, no pinta nada — las otras
@@ -190,6 +195,17 @@ const TEMAS_URL: readonly TemaUrl[] = ['claro', 'oscuro', 'comparar'];
           <h2 class="sb-host__section-title sb-host__h2 sc-text-h2-semibold">API</h2>
           <app-story-props-table [miembros]="contrato()" [error]="apiError()" />
         </section>
+
+        <!-- Relacionados, derivados del contrato: con qué se confunde (lo que nombra su «cuándo»), de qué está hecho y
+             dónde aparece. Sin ninguno, no hay sección. -->
+        @if (componente(); as c) {
+          @if (c.relaciones.alternativas.length + c.relaciones.usa.length + c.relaciones.usadoEn.length) {
+            <section class="sb-host__story">
+              <h2 class="sb-host__section-title sb-host__h2 sc-text-h2-semibold">Relacionados</h2>
+              <app-ficha-relacionados [componente]="c" />
+            </section>
+          }
+        }
       </div>
     }
   `,
@@ -206,8 +222,8 @@ export class StoryHostComponent {
   /** Su línea de «cuándo se usa», la pregunta que se hace ANTES que la de las props. */
   protected readonly cuando = computed(() => this.api.cuando(this.meta().tag));
   protected readonly trozos = trozosDeCuando;
-  /** Su estado (DD-190), del mismo contrato generado. */
-  protected readonly estado = computed(() => this.api.estado(this.meta().tag));
+  /** El componente entero del contrato: su estado (DD-190), su código, su maestro de Figma y sus relaciones. */
+  protected readonly componente = computed(() => this.api.componente(this.meta().tag));
   protected readonly apiError = this.api.error;
 
   // ── La dirección de la página: lo que trae la URL ──────────────────────────────────────────────

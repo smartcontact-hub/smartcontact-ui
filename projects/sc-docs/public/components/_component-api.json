@@ -401,6 +401,19 @@
       "faltas": [],
       "retirado": null,
       "cuando": "Para un aviso o una pregunta con una acción clara (borrar, descartar cambios, sesión caducada), abierto por `ScDynamicDialogService` como en ui.smart-contact.com. La variante dice la intención: `error` destruye o bloquea, `warning` pide atención, `info` informa y `default` confirma algo neutro. La superficie dice quién lo provoca: blanca (`surface: 'plain'`, el confirm centrado de antes) si decide el usuario (borrar, descartar), teñida (`tinted`, la de siempre) si es un error del sistema (sin micrófono). Mide de 320 a 480 px y hasta 400 de alto. Si lleva más que texto, `sc-custom-modal`.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/alert-modal/sc-alert-modal.component.ts",
+      "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=15876-698",
+      "usosSupervisor": 0,
+      "relaciones": {
+        "alternativas": [
+          "sc-custom-modal"
+        ],
+        "usa": [
+          "sc-custom-modal",
+          "sc-button"
+        ],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "variant",
@@ -603,6 +616,14 @@
       "faltas": [],
       "retirado": null,
       "cuando": "Para representar a una PERSONA con su foto; sin foto cae a una ilustración estable, siempre la misma para la misma persona.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/avatar/sc-avatar.component.ts",
+      "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=327-13384",
+      "usosSupervisor": 4,
+      "relaciones": {
+        "alternativas": [],
+        "usa": [],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "label",
@@ -785,6 +806,14 @@
       ],
       "retirado": null,
       "cuando": "Para apilar varios avatares cuando importa «quiénes» y no «cuántos» exactamente.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/avatar/sc-avatargroup.component.ts",
+      "figma": null,
+      "usosSupervisor": 0,
+      "relaciones": {
+        "alternativas": [],
+        "usa": [],
+        "usadoEn": []
+      },
       "contrato": [],
       "ocultas": [
         "style"
@@ -798,6 +827,16 @@
       "faltas": [],
       "retirado": null,
       "cuando": "Para un contador o un rótulo muy corto PEGADO a otra cosa. Si va suelto en la fila, es `sc-tag`.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/badge/sc-badge.component.ts",
+      "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=330-13237",
+      "usosSupervisor": 6,
+      "relaciones": {
+        "alternativas": [
+          "sc-tag"
+        ],
+        "usa": [],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "label",
@@ -850,6 +889,14 @@
       "faltas": [],
       "retirado": null,
       "cuando": "Para decir dónde estás dentro de una jerarquía y poder subir. No es navegación principal.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/breadcrumb/sc-breadcrumb.component.ts",
+      "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=185-6637",
+      "usosSupervisor": 1,
+      "relaciones": {
+        "alternativas": [],
+        "usa": [],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "model",
@@ -932,6 +979,17 @@
       ],
       "retirado": null,
       "cuando": "Para las acciones que aparecen al seleccionar varias filas. Sale con la selección; tras aplicar un cambio en lote, se queda para contarlo con su «Deshacer».",
+      "fuente": "projects/ui-smartcontact/src/lib/components/bulk-action-bar/sc-bulk-action-bar.component.ts",
+      "figma": null,
+      "usosSupervisor": 2,
+      "relaciones": {
+        "alternativas": [],
+        "usa": [
+          "sc-message",
+          "sc-button"
+        ],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "count",
@@ -1016,6 +1074,17 @@
       ],
       "retirado": null,
       "cuando": "Para cambiar UN campo en muchos elementos a la vez, desde la barra de selección.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/bulk-edit-menu/sc-bulk-edit-menu.component.ts",
+      "figma": null,
+      "usosSupervisor": 0,
+      "relaciones": {
+        "alternativas": [],
+        "usa": [
+          "sc-select",
+          "sc-button"
+        ],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "fields",
@@ -1080,6 +1149,18 @@
       ],
       "retirado": null,
       "cuando": "Solo para el procesado masivo de conversaciones. Es específico del dominio y hoy solo lo usa la demo.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/bulk-transcription-modal/sc-bulk-transcription-modal.component.ts",
+      "figma": null,
+      "usosSupervisor": 0,
+      "relaciones": {
+        "alternativas": [],
+        "usa": [
+          "sc-icon-tile",
+          "sc-button",
+          "sc-toggleswitch"
+        ],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "selectedCount",
@@ -1272,6 +1353,29 @@
       "faltas": [],
       "retirado": null,
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/button/sc-button.component.ts",
+      "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=7596-35989",
+      "usosSupervisor": 163,
+      "relaciones": {
+        "alternativas": [],
+        "usa": [],
+        "usadoEn": [
+          "sc-alert-modal",
+          "sc-bulk-action-bar",
+          "sc-bulk-edit-menu",
+          "sc-bulk-transcription-modal",
+          "sc-custom-modal",
+          "sc-datatable",
+          "sc-datepicker",
+          "sc-delete-entity-dialog",
+          "sc-empty-state",
+          "sc-form-danger-zone",
+          "sc-impact-preview-dialog",
+          "sc-section-card",
+          "sc-sticky-form-header",
+          "sc-textarea"
+        ]
+      },
       "contrato": [
         {
           "nombre": "label",
@@ -1593,6 +1697,16 @@
       "faltas": [],
       "retirado": null,
       "cuando": "Para agrupar contenido suelto con una superficie propia. Si el grupo tiene título y pertenece a un formulario, es `sc-section-card`.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/card/sc-card.component.ts",
+      "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=238-10355",
+      "usosSupervisor": 0,
+      "relaciones": {
+        "alternativas": [
+          "sc-section-card"
+        ],
+        "usa": [],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "header",
@@ -1645,6 +1759,18 @@
       "faltas": [],
       "retirado": null,
       "cuando": "Para un sí/no independiente, o para la casilla de un grupo elegido A MEDIAS (tiene tercer estado). Para activar algo al instante, `sc-toggleswitch`.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/checkbox/sc-checkbox.component.ts",
+      "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=148-6321",
+      "usosSupervisor": 36,
+      "relaciones": {
+        "alternativas": [
+          "sc-toggleswitch"
+        ],
+        "usa": [],
+        "usadoEn": [
+          "sc-permission-matrix"
+        ]
+      },
       "contrato": [
         {
           "nombre": "state",
@@ -1737,6 +1863,14 @@
       "faltas": [],
       "retirado": null,
       "cuando": "Para un valor ya elegido que se puede quitar (un filtro puesto, un destinatario). No es un botón.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/chip/sc-chip.component.ts",
+      "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=334-13139",
+      "usosSupervisor": 5,
+      "relaciones": {
+        "alternativas": [],
+        "usa": [],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "label",
@@ -1894,6 +2028,16 @@
       ],
       "retirado": null,
       "cuando": "Para elegir un color de una paleta corta y cerrada, con su nombre — el color solo no se puede oír.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/color-dot-picker/sc-color-dot-picker.component.ts",
+      "figma": null,
+      "usosSupervisor": 3,
+      "relaciones": {
+        "alternativas": [],
+        "usa": [
+          "sc-selectbutton"
+        ],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "options",
@@ -1938,6 +2082,14 @@
       ],
       "retirado": null,
       "cuando": "Para que el usuario decida qué columnas ve en una tabla.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/column-selector/sc-column-selector.component.ts",
+      "figma": null,
+      "usosSupervisor": 1,
+      "relaciones": {
+        "alternativas": [],
+        "usa": [],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "columns",
@@ -2034,6 +2186,14 @@
       ],
       "retirado": null,
       "cuando": "Para llegar a cualquier sitio o acción escribiendo, sin recorrer menús. Es atajo, nunca el único camino.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/command-palette/sc-command-palette.component.ts",
+      "figma": null,
+      "usosSupervisor": 4,
+      "relaciones": {
+        "alternativas": [],
+        "usa": [],
+        "usadoEn": []
+      },
       "contrato": [],
       "ocultas": []
     },
@@ -2045,6 +2205,16 @@
       "faltas": [],
       "retirado": "El diálogo centrado lo sustituye `sc-alert-modal`, el aviso que comparten los dos DS (DD-241). Sigue vigente solo el globo pegado al botón (`ScConfirmService.request({ …, target })`), que aún no tiene sustituto.",
       "cuando": "Retirado (DD-241): para confirmar, `sc-alert-modal`. Queda solo el globo pegado al botón (`ScConfirmService.request({ target })`), para una frase sobre lo que se acaba de pulsar.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/confirmdialog/sc-confirmdialog.component.ts",
+      "figma": null,
+      "usosSupervisor": 1,
+      "relaciones": {
+        "alternativas": [
+          "sc-alert-modal"
+        ],
+        "usa": [],
+        "usadoEn": []
+      },
       "contrato": [],
       "ocultas": [
         "acceptAriaLabel",
@@ -2122,6 +2292,23 @@
       "faltas": [],
       "retirado": null,
       "cuando": "Para un modal con contenido propio (un formulario, una tabla, un reproductor): la carcasa que comparten los dos DS. Se abre por `ScDynamicDialogService`, como en ui.smart-contact.com, o con `[(visible)]` si su formulario se ata al estado de la pantalla. Para un aviso con una acción, `sc-alert-modal`.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/custom-modal/sc-custom-modal.component.ts",
+      "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=14238-4140",
+      "usosSupervisor": 18,
+      "relaciones": {
+        "alternativas": [
+          "sc-alert-modal"
+        ],
+        "usa": [
+          "sc-button"
+        ],
+        "usadoEn": [
+          "sc-alert-modal",
+          "sc-delete-entity-dialog",
+          "sc-impact-preview-dialog",
+          "sc-keyboard-shortcuts"
+        ]
+      },
       "contrato": [
         {
           "nombre": "visible",
@@ -2408,6 +2595,17 @@
       "faltas": [],
       "retirado": null,
       "cuando": "Para datos tabulares con columnas comparables. Si cada fila es en realidad un formulario, NO es una tabla.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/datatable/sc-datatable.component.ts",
+      "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=15374-66885",
+      "usosSupervisor": 18,
+      "relaciones": {
+        "alternativas": [],
+        "usa": [
+          "sc-skeleton",
+          "sc-button"
+        ],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "value",
@@ -3514,6 +3712,18 @@
       "faltas": [],
       "retirado": null,
       "cuando": "Para elegir una fecha del calendario, cuando importa el día concreto y no un rango relativo («últimos 7 días»).",
+      "fuente": "projects/ui-smartcontact/src/lib/components/datepicker/sc-datepicker.component.ts",
+      "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=109-10137",
+      "usosSupervisor": 1,
+      "relaciones": {
+        "alternativas": [],
+        "usa": [
+          "sc-field-label",
+          "sc-button",
+          "sc-field-msg"
+        ],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "size",
@@ -3924,6 +4134,18 @@
       ],
       "retirado": null,
       "cuando": "Para confirmar un borrado ENSEÑANDO qué se borra, en singular o en bloque.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/delete-entity-dialog/sc-delete-entity-dialog.component.ts",
+      "figma": null,
+      "usosSupervisor": 1,
+      "relaciones": {
+        "alternativas": [],
+        "usa": [
+          "sc-custom-modal",
+          "sc-message",
+          "sc-button"
+        ],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "visible",
@@ -4048,6 +4270,16 @@
       "faltas": [],
       "retirado": "Usa `sc-custom-modal`, la carcasa de modal que comparten los dos DS (la de ui.smart-contact.com), y `sc-alert-modal` para avisos y confirmaciones (DD-241).",
       "cuando": "Retirado (DD-241): usa `sc-custom-modal`, la carcasa que comparten los dos DS.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/dialog/sc-dialog.component.ts",
+      "figma": null,
+      "usosSupervisor": 0,
+      "relaciones": {
+        "alternativas": [
+          "sc-custom-modal"
+        ],
+        "usa": [],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "visible",
@@ -4310,6 +4542,14 @@
       "faltas": [],
       "retirado": null,
       "cuando": "Para separar visualmente dos bloques cuando el espacio no basta.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/divider/sc-divider.component.ts",
+      "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=302-11810",
+      "usosSupervisor": 22,
+      "relaciones": {
+        "alternativas": [],
+        "usa": [],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "layout",
@@ -4367,6 +4607,14 @@
       "faltas": [],
       "retirado": null,
       "cuando": "Para un panel lateral con trabajo que conserva el contexto de detrás.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/drawer/sc-drawer.component.ts",
+      "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=4461-50366",
+      "usosSupervisor": 3,
+      "relaciones": {
+        "alternativas": [],
+        "usa": [],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "visible",
@@ -4563,6 +4811,16 @@
       ],
       "retirado": null,
       "cuando": "Para cuando no hay nada que enseñar: dice por qué está vacío y qué hacer. Una lista vacía sin esto parece rota.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/empty-state/sc-empty-state.component.ts",
+      "figma": null,
+      "usosSupervisor": 24,
+      "relaciones": {
+        "alternativas": [],
+        "usa": [
+          "sc-button"
+        ],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "icon",
@@ -4647,6 +4905,16 @@
       ],
       "retirado": null,
       "cuando": "Para pares clave/valor que se leen de un vistazo (un resumen), en un `dl`. Un campo que se edita es `sc-field`; muchos datos en columnas, `sc-datatable`.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/fact-row/sc-fact-row.component.ts",
+      "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=15483-99",
+      "usosSupervisor": 0,
+      "relaciones": {
+        "alternativas": [
+          "sc-datatable"
+        ],
+        "usa": [],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "label",
@@ -4732,6 +5000,26 @@
       ],
       "retirado": null,
       "cuando": "Solo al construir un campo NUEVO del DS: es la pieza de la etiqueta. En una pantalla se usa el campo entero (`sc-inputtext`, `sc-select`…), nunca esto suelto.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/field/sc-field-label.component.ts",
+      "figma": null,
+      "usosSupervisor": 0,
+      "relaciones": {
+        "alternativas": [
+          "sc-inputtext",
+          "sc-select"
+        ],
+        "usa": [],
+        "usadoEn": [
+          "sc-datepicker",
+          "sc-inputnumber",
+          "sc-inputtags",
+          "sc-inputtext",
+          "sc-multiselect",
+          "sc-password",
+          "sc-select",
+          "sc-textarea"
+        ]
+      },
       "contrato": [
         {
           "nombre": "block",
@@ -4797,6 +5085,25 @@
       ],
       "retirado": null,
       "cuando": "Solo al construir un campo NUEVO del DS: es la pieza de la ayuda y del error. En una pantalla se usa el campo entero, nunca esto suelto.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/field/sc-field-msg.component.ts",
+      "figma": null,
+      "usosSupervisor": 0,
+      "relaciones": {
+        "alternativas": [],
+        "usa": [],
+        "usadoEn": [
+          "sc-datepicker",
+          "sc-fileupload",
+          "sc-inputnumber",
+          "sc-inputtags",
+          "sc-inputtext",
+          "sc-multiselect",
+          "sc-password",
+          "sc-select",
+          "sc-selectbutton",
+          "sc-textarea"
+        ]
+      },
       "contrato": [
         {
           "nombre": "block",
@@ -4849,6 +5156,18 @@
       "faltas": [],
       "retirado": null,
       "cuando": "Para subir uno o varios archivos con zona de soltar (audios, importaciones, adjuntos). La foto de una persona o entidad, con su recorte, es `sc-photo-upload`.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/fileupload/sc-fileupload.component.ts",
+      "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=505-29350",
+      "usosSupervisor": 2,
+      "relaciones": {
+        "alternativas": [
+          "sc-photo-upload"
+        ],
+        "usa": [
+          "sc-field-msg"
+        ],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "name",
@@ -5236,6 +5555,16 @@
       ],
       "retirado": null,
       "cuando": "Para la acción irreversible al final de un formulario, separada del resto y explicada.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/form-danger-zone/sc-form-danger-zone.component.ts",
+      "figma": null,
+      "usosSupervisor": 0,
+      "relaciones": {
+        "alternativas": [],
+        "usa": [
+          "sc-button"
+        ],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "titleKey",
@@ -5300,6 +5629,16 @@
       ],
       "retirado": null,
       "cuando": "Para el índice lateral de un formulario largo, que dice por dónde vas.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/form-section-nav/sc-form-section-nav.component.ts",
+      "figma": null,
+      "usosSupervisor": 6,
+      "relaciones": {
+        "alternativas": [],
+        "usa": [
+          "sc-step-marker"
+        ],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "sections",
@@ -5446,6 +5785,16 @@
       ],
       "retirado": null,
       "cuando": "Para una magnitud contra su máximo, de un vistazo. Para progreso de una tarea, `sc-progressbar`.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/gauge/sc-gauge.component.ts",
+      "figma": null,
+      "usosSupervisor": 1,
+      "relaciones": {
+        "alternativas": [
+          "sc-progressbar"
+        ],
+        "usa": [],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "segments",
@@ -5550,6 +5899,14 @@
       ],
       "retirado": null,
       "cuando": "Para asomar los grupos de algo sin salir de la fila.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/group-popover/sc-group-popover.component.ts",
+      "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=605-37190",
+      "usosSupervisor": 6,
+      "relaciones": {
+        "alternativas": [],
+        "usa": [],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "groups",
@@ -5636,6 +5993,18 @@
       ],
       "retirado": null,
       "cuando": "Para dar a una fila de datos o a un título su icono con peso propio (un resumen). Un icono suelto junto a un texto es `sc-icon`; una persona, `sc-avatar`.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/icon-tile/sc-icon-tile.component.ts",
+      "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=15482-72269",
+      "usosSupervisor": 0,
+      "relaciones": {
+        "alternativas": [
+          "sc-avatar"
+        ],
+        "usa": [],
+        "usadoEn": [
+          "sc-bulk-transcription-modal"
+        ]
+      },
       "contrato": [
         {
           "nombre": "icon",
@@ -5680,6 +6049,17 @@
       ],
       "retirado": null,
       "cuando": "Para enseñar a QUÉ va a afectar un cambio masivo ANTES de aplicarlo.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/impact-preview-dialog/sc-impact-preview-dialog.component.ts",
+      "figma": null,
+      "usosSupervisor": 1,
+      "relaciones": {
+        "alternativas": [],
+        "usa": [
+          "sc-custom-modal",
+          "sc-button"
+        ],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "visible",
@@ -5784,6 +6164,14 @@
       ],
       "retirado": null,
       "cuando": "Para renombrar en el sitio, sin abrir un formulario.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/inline-rename-cell/sc-inline-rename-cell.component.ts",
+      "figma": null,
+      "usosSupervisor": 2,
+      "relaciones": {
+        "alternativas": [],
+        "usa": [],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "initialValue",
@@ -5846,6 +6234,14 @@
       "faltas": [],
       "retirado": null,
       "cuando": "Para un campo con algo pegado (icono, botón, prefijo). Mantiene alineadas las dos piezas.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/inputgroup/sc-inputgroup.component.ts",
+      "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=263-10540",
+      "usosSupervisor": 1,
+      "relaciones": {
+        "alternativas": [],
+        "usa": [],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "size",
@@ -5878,6 +6274,19 @@
       "faltas": [],
       "retirado": null,
       "cuando": "Para una cantidad acotada, con mínimo, máximo y paso. Si el número es un identificador (un teléfono, un código), es texto: `sc-inputtext`.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/inputnumber/sc-inputnumber.component.ts",
+      "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=203-8804",
+      "usosSupervisor": 20,
+      "relaciones": {
+        "alternativas": [
+          "sc-inputtext"
+        ],
+        "usa": [
+          "sc-field-label",
+          "sc-field-msg"
+        ],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "size",
@@ -6103,6 +6512,20 @@
       ],
       "retirado": null,
       "cuando": "Para varios valores cortos que escribe el usuario (dominios, etiquetas libres, correos). Si salen de una lista cerrada, `sc-multiselect`; si es uno solo, `sc-inputtext`.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/inputtags/sc-inputtags.component.ts",
+      "figma": null,
+      "usosSupervisor": 2,
+      "relaciones": {
+        "alternativas": [
+          "sc-multiselect",
+          "sc-inputtext"
+        ],
+        "usa": [
+          "sc-field-label",
+          "sc-field-msg"
+        ],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "size",
@@ -6402,6 +6825,19 @@
       "faltas": [],
       "retirado": null,
       "cuando": "Para texto de una línea. Si puede ocupar varias, `sc-textarea`.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/inputtext/sc-inputtext.component.ts",
+      "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=23-835",
+      "usosSupervisor": 46,
+      "relaciones": {
+        "alternativas": [
+          "sc-textarea"
+        ],
+        "usa": [
+          "sc-field-label",
+          "sc-field-msg"
+        ],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "size",
@@ -6651,6 +7087,16 @@
       ],
       "retirado": null,
       "cuando": "Para enseñar los atajos disponibles en la pantalla.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/keyboard-shortcuts/sc-keyboard-shortcuts.component.ts",
+      "figma": null,
+      "usosSupervisor": 2,
+      "relaciones": {
+        "alternativas": [],
+        "usa": [
+          "sc-custom-modal"
+        ],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "groups",
@@ -6673,6 +7119,19 @@
       "faltas": [],
       "retirado": null,
       "cuando": "Para un aviso EN LA PÁGINA, junto a lo que explica. Si es el resultado de una acción y puede desaparecer, `sc-toast`.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/message/sc-message.component.ts",
+      "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=393-39252",
+      "usosSupervisor": 7,
+      "relaciones": {
+        "alternativas": [
+          "sc-toast"
+        ],
+        "usa": [],
+        "usadoEn": [
+          "sc-bulk-action-bar",
+          "sc-delete-entity-dialog"
+        ]
+      },
       "contrato": [
         {
           "nombre": "text",
@@ -6784,6 +7243,17 @@
       "faltas": [],
       "retirado": null,
       "cuando": "Para elegir VARIAS de una lista larga. Si son pocas y caben, casillas sueltas se leen mejor.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/multiselect/sc-multiselect.component.ts",
+      "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=171-6457",
+      "usosSupervisor": 16,
+      "relaciones": {
+        "alternativas": [],
+        "usa": [
+          "sc-field-label",
+          "sc-field-msg"
+        ],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "size",
@@ -7409,6 +7879,16 @@
       ],
       "retirado": null,
       "cuando": "Para elegir una de pocas opciones que necesitan explicarse. Si se explican solas, `sc-selectbutton`.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/option-card/sc-option-card.component.ts",
+      "figma": null,
+      "usosSupervisor": 3,
+      "relaciones": {
+        "alternativas": [
+          "sc-selectbutton"
+        ],
+        "usa": [],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "options",
@@ -7521,6 +8001,14 @@
       "faltas": [],
       "retirado": null,
       "cuando": "Para un bloque con cabecera propia, plegable y con acciones.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/panel/sc-panel.component.ts",
+      "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=229-10217",
+      "usosSupervisor": 1,
+      "relaciones": {
+        "alternativas": [],
+        "usa": [],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "header",
@@ -7638,6 +8126,17 @@
       "faltas": [],
       "retirado": null,
       "cuando": "Para una contraseña, con su ojo para mostrarla.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/password/sc-password.component.ts",
+      "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=287-10430",
+      "usosSupervisor": 2,
+      "relaciones": {
+        "alternativas": [],
+        "usa": [
+          "sc-field-label",
+          "sc-field-msg"
+        ],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "size",
@@ -7865,6 +8364,16 @@
       ],
       "retirado": null,
       "cuando": "Para dar permisos cruzando quién con qué, marcando por columna entera.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/permission-matrix/sc-permission-matrix.component.ts",
+      "figma": null,
+      "usosSupervisor": 2,
+      "relaciones": {
+        "alternativas": [],
+        "usa": [
+          "sc-checkbox"
+        ],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "rows",
@@ -7959,6 +8468,14 @@
       ],
       "retirado": null,
       "cuando": "Para la foto de una persona, con ilustración de reserva.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/photo-upload/sc-photo-upload.component.ts",
+      "figma": null,
+      "usosSupervisor": 2,
+      "relaciones": {
+        "alternativas": [],
+        "usa": [],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "photo",
@@ -8063,6 +8580,16 @@
       "faltas": [],
       "retirado": null,
       "cuando": "Para el avance de una tarea de la que SÍ se sabe cuánto queda. Si no se sabe, `sc-progressspinner`.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/progressbar/sc-progressbar.component.ts",
+      "figma": null,
+      "usosSupervisor": 0,
+      "relaciones": {
+        "alternativas": [
+          "sc-progressspinner"
+        ],
+        "usa": [],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "value",
@@ -8158,6 +8685,16 @@
       "faltas": [],
       "retirado": null,
       "cuando": "Para una espera de duración desconocida. Si la espera es de contenido que va a aparecer, `sc-skeleton` desconcierta menos.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/progressspinner/sc-progressspinner.component.ts",
+      "figma": null,
+      "usosSupervisor": 0,
+      "relaciones": {
+        "alternativas": [
+          "sc-skeleton"
+        ],
+        "usa": [],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "strokeWidth",
@@ -8234,6 +8771,16 @@
       "faltas": [],
       "retirado": null,
       "cuando": "Para elegir UNA de pocas opciones excluyentes, todas a la vista. Si son muchas, `sc-select`.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/radiobutton/sc-radiobutton.component.ts",
+      "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=140-5820",
+      "usosSupervisor": 3,
+      "relaciones": {
+        "alternativas": [
+          "sc-select"
+        ],
+        "usa": [],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "value",
@@ -8366,6 +8913,14 @@
       ],
       "retirado": null,
       "cuando": "Para filtrar escribiendo. Solo se lleva el foco al entrar si buscar es LA acción de la pantalla.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/search/sc-search.component.ts",
+      "figma": null,
+      "usosSupervisor": 10,
+      "relaciones": {
+        "alternativas": [],
+        "usa": [],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "size",
@@ -8506,6 +9061,16 @@
       "faltas": [],
       "retirado": null,
       "cuando": "Para una sección con título dentro de un formulario o una ficha.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/section-card/sc-section-card.component.ts",
+      "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=12610-23284",
+      "usosSupervisor": 39,
+      "relaciones": {
+        "alternativas": [],
+        "usa": [
+          "sc-button"
+        ],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "titleKey",
@@ -8618,6 +9183,22 @@
       "faltas": [],
       "retirado": null,
       "cuando": "Para elegir UNA de muchas. Si son pocas y caben a la vista, `sc-radiobutton` o `sc-selectbutton` ahorran un clic.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/select/sc-select.component.ts",
+      "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=156-5882",
+      "usosSupervisor": 71,
+      "relaciones": {
+        "alternativas": [
+          "sc-radiobutton",
+          "sc-selectbutton"
+        ],
+        "usa": [
+          "sc-field-label",
+          "sc-field-msg"
+        ],
+        "usadoEn": [
+          "sc-bulk-edit-menu"
+        ]
+      },
       "contrato": [
         {
           "nombre": "size",
@@ -9109,6 +9690,18 @@
       "faltas": [],
       "retirado": null,
       "cuando": "Para elegir una opción de 2-4 que se explican solas, todas visibles. Si cambia de COLECCIÓN en vez de filtrar, son pestañas (DD-113).",
+      "fuente": "projects/ui-smartcontact/src/lib/components/selectbutton/sc-selectbutton.component.ts",
+      "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=191-6703",
+      "usosSupervisor": 22,
+      "relaciones": {
+        "alternativas": [],
+        "usa": [
+          "sc-field-msg"
+        ],
+        "usadoEn": [
+          "sc-color-dot-picker"
+        ]
+      },
       "contrato": [
         {
           "nombre": "options",
@@ -9334,6 +9927,16 @@
       "faltas": [],
       "retirado": null,
       "cuando": "Para el hueco de lo que está cargando, con su forma. Evita el salto que da aparecer de golpe.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/skeleton/sc-skeleton.component.ts",
+      "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=373-13726",
+      "usosSupervisor": 1,
+      "relaciones": {
+        "alternativas": [],
+        "usa": [],
+        "usadoEn": [
+          "sc-datatable"
+        ]
+      },
       "contrato": [
         {
           "nombre": "shape",
@@ -9438,6 +10041,14 @@
       ],
       "retirado": null,
       "cuando": "Para una ranura con título dentro de una composición.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/slot/sc-slot.component.ts",
+      "figma": null,
+      "usosSupervisor": 12,
+      "relaciones": {
+        "alternativas": [],
+        "usa": [],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "titleKey",
@@ -9503,6 +10114,18 @@
       ],
       "retirado": null,
       "cuando": "Para decir dónde está cada sección de un recorrido (sin ver, completa, con algo por hacer) en el índice de un alta. Un estado suelto de un campo es su mensaje (`sc-field-msg`); una marca de cambios sin guardar, el punto del índice.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/step-marker/sc-step-marker.component.ts",
+      "figma": null,
+      "usosSupervisor": 0,
+      "relaciones": {
+        "alternativas": [
+          "sc-field-msg"
+        ],
+        "usa": [],
+        "usadoEn": [
+          "sc-form-section-nav"
+        ]
+      },
       "contrato": [
         {
           "nombre": "state",
@@ -9525,6 +10148,16 @@
       "faltas": [],
       "retirado": "RETENIDO PARA ROLLBACK (S59, Supervisor DD#65). Ya NO lo usa ningún form de la app: los 3 form shells migraron al modelo \"todo arriba\" (acciones al TopBar + la ficha del panel para la identidad). Se conserva intacto —exportado + showcased en la demo— como red de seguridad por si se revierte el \"todo arriba\". NO borrar sin decisión explícita (ver DD#65 § \"Cómo revertir\").",
       "cuando": "Para la cabecera fija de un formulario largo, con guardar y cancelar siempre a mano.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/sticky-form-header/sc-sticky-form-header.component.ts",
+      "figma": null,
+      "usosSupervisor": 2,
+      "relaciones": {
+        "alternativas": [],
+        "usa": [
+          "sc-button"
+        ],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "mode",
@@ -9639,6 +10272,14 @@
       ],
       "retirado": null,
       "cuando": "Para un nivel más dentro de una sección, plegable si lo secundario estorba.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/subsection/sc-subsection.component.ts",
+      "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=12610-23193",
+      "usosSupervisor": 29,
+      "relaciones": {
+        "alternativas": [],
+        "usa": [],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "titleKey",
@@ -9711,6 +10352,16 @@
       "faltas": [],
       "retirado": null,
       "cuando": "Para vistas hermanas de una misma cosa que cambian lo de debajo (Chat y Email, Transcripción y Análisis). Para elegir el valor de un campo, `sc-selectbutton`.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/tabs/sc-tabs.component.ts",
+      "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=320-12276",
+      "usosSupervisor": 1,
+      "relaciones": {
+        "alternativas": [
+          "sc-selectbutton"
+        ],
+        "usa": [],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "tabs",
@@ -9766,6 +10417,17 @@
       "faltas": [],
       "retirado": null,
       "cuando": "Para clasificar o marcar un estado EN la fila. Si es un contador pegado a algo, `sc-badge`; si el usuario lo puede quitar, `sc-chip`.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/tag/sc-tag.component.ts",
+      "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=373-13337",
+      "usosSupervisor": 28,
+      "relaciones": {
+        "alternativas": [
+          "sc-badge",
+          "sc-chip"
+        ],
+        "usa": [],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "value",
@@ -9900,6 +10562,20 @@
       "faltas": [],
       "retirado": null,
       "cuando": "Para texto que puede ocupar varias líneas: una descripción, una nota, el motivo de algo. Si siempre cabe en una, `sc-inputtext`.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/textarea/sc-textarea.component.ts",
+      "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=6209-7402",
+      "usosSupervisor": 7,
+      "relaciones": {
+        "alternativas": [
+          "sc-inputtext"
+        ],
+        "usa": [
+          "sc-field-label",
+          "sc-button",
+          "sc-field-msg"
+        ],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "value",
@@ -10156,6 +10832,16 @@
       "faltas": [],
       "retirado": null,
       "cuando": "Para el resultado de una acción, que se va solo. Si el aviso pertenece a la página y debe quedarse, `sc-message`.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/toast/sc-toast.component.ts",
+      "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=393-42317",
+      "usosSupervisor": 0,
+      "relaciones": {
+        "alternativas": [
+          "sc-message"
+        ],
+        "usa": [],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "key",
@@ -10275,6 +10961,18 @@
       "faltas": [],
       "retirado": null,
       "cuando": "Para encender o apagar algo CON EFECTO INMEDIATO. Si el cambio se guarda al enviar el formulario, `sc-checkbox`.",
+      "fuente": "projects/ui-smartcontact/src/lib/components/toggleswitch/sc-toggleswitch.component.ts",
+      "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=260-11899",
+      "usosSupervisor": 46,
+      "relaciones": {
+        "alternativas": [
+          "sc-checkbox"
+        ],
+        "usa": [],
+        "usadoEn": [
+          "sc-bulk-transcription-modal"
+        ]
+      },
       "contrato": [
         {
           "nombre": "checked",
@@ -10425,6 +11123,16 @@
       "faltas": [],
       "retirado": null,
       "cuando": "Para lo que se lee al pasar el ratón: un icono con significado, un texto cortado (con `showOnEllipsis`) o por qué un botón está apagado. Nunca un `title`, que el navegador enseña con su globo; el de un botón de solo icono ya lo pone `sc-button`.",
+      "fuente": null,
+      "figma": null,
+      "usosSupervisor": null,
+      "relaciones": {
+        "alternativas": [
+          "sc-button"
+        ],
+        "usa": [],
+        "usadoEn": []
+      },
       "contrato": [
         {
           "nombre": "pTooltip",

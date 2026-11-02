@@ -70,6 +70,7 @@ const COMPONENTES: SeccionLateral = {
       titulo: 'chrome.side.empezar',
       enlaces: [
         { ruta: '/components', clave: 'chrome.side.todos', exacta: true },
+        { ruta: '/components/estado', clave: 'chrome.side.estado' },
         { ruta: '/components/primeng', clave: 'chrome.nav.primeng' },
       ],
     },
@@ -84,6 +85,7 @@ const COMPONENTES: SeccionLateral = {
 const TITULOS: Readonly<Record<string, string>> = {
   '/components': 'chrome.nav.componentes',
   '/components/primeng': 'chrome.nav.primeng',
+  '/components/estado': 'chrome.side.estado',
   '/uso': 'chrome.nav.uso',
   '/reglas': 'chrome.nav.reglas',
   '/novedades': 'chrome.nav.novedades',
@@ -204,6 +206,7 @@ export class AppComponent {
     const sections: ScPaletteCommand[] = [
       { id: 's-fund', label: t('chrome.nav.fundamentos'), category: sectionCat, icon: 'category', action: () => this.go('/fundamentos') },
       { id: 's-comp', label: t('chrome.nav.componentes'), category: sectionCat, icon: 'widgets', action: () => this.go('/components') },
+      { id: 's-estado', label: t('chrome.side.estado'), category: sectionCat, icon: 'fact_check', keywords: ['estado', 'listo', 'experimental', 'retirado', 'figma'], action: () => this.go('/components/estado') },
       { id: 's-primeng', label: t('chrome.nav.primeng'), category: sectionCat, icon: 'view_list', keywords: ['catalogo', 'nativos', 'familias'], action: () => this.go('/components/primeng') },
       { id: 's-uso', label: t('chrome.nav.uso'), category: sectionCat, icon: 'dashboard', action: () => this.go('/uso') },
       { id: 's-reglas', label: t('chrome.nav.reglas'), category: sectionCat, icon: 'rule', action: () => this.go('/reglas') },

@@ -12,6 +12,7 @@ import {
   miembrosPublicos,
   nativasDe,
   obsoletosDe,
+  relacionesDe,
   selectoresObsoletos,
   usaSelector,
   usadosEnNativo,
@@ -458,4 +459,16 @@ test('miembrosPublicos: un tipo con función flecha no se corta en el «>» de �
   const [m] = miembrosPublicos(ts);
   assert.equal(m.tipo, '(() => void) | null');
   assert.equal(m.porDefecto, 'null');
+});
+
+test('relacionesDe: alternativas de su «cuándo», lo que usa y dónde aparece, solo entre componentes con contrato', () => {
+  const r = relacionesDe([
+    { selector: 'sc-badge', cuando: 'Si va suelto en la fila, es `sc-tag`; nunca `sc-badge` ni `sc-icon`.', nested: [] },
+    { selector: 'sc-tag', cuando: null, nested: [] },
+    { selector: 'sc-card', cuando: 'Con acciones, `sc-section-card`.', nested: ['sc-badge', 'sc-icon'] },
+  ]);
+  // Se nombra a sí mismo y a `sc-icon` (otro paquete, sin ficha): ninguno de los dos es una alternativa.
+  assert.deepEqual(r.get('sc-badge'), { alternativas: ['sc-tag'], usa: [], usadoEn: ['sc-card'] });
+  assert.deepEqual(r.get('sc-card'), { alternativas: [], usa: ['sc-badge'], usadoEn: [] });
+  assert.deepEqual(r.get('sc-tag'), { alternativas: [], usa: [], usadoEn: [] });
 });
