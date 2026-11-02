@@ -305,9 +305,8 @@ que los errores del sistema no se cierren con Escape, y el aviso no lo permitía
    tonos: fondo y borde del modal, cabecera con 15,75 en los cuatro lados y el título a 20 de línea, texto en
    `--sc-text-primary`, sin icono en la cabecera y el icono de 21 (`--sc-cmp-confirmdialog-icon-size`) en gris junto al
    mensaje, a 14; la X con el aspa de 14 (`closeIconSize: 'sm'`, entrada nueva de `sc-custom-modal`). Los botones, los de
-   `ScConfirmService.request`: en `error`, «Cancelar» gris relleno y la acción roja rellena; en `warning`, la salida
-   segura rellena en el primario y la acción roja con borde (`emphasis: 'reject'`); en `info` y `default`, «Cancelar» gris
-   y la acción en el primario. El icono, el triángulo de aviso, e `info` para informar. Única diferencia que queda: el
+   `ScConfirmService.request`: en `error`, «Cancelar» gris relleno y la acción roja rellena; en `warning`, lo mismo
+   (enmienda del 2026-11-02, abajo); en `info` y `default`, «Cancelar» gris y la acción en el primario. El icono, el triángulo de aviso, e `info` para informar. Única diferencia que queda: el
    aspa de la X es la de Material Symbols (la única librería de iconos del DS), no la de PrimeNG, más fina.
 2. **Quién lo provoca decide la superficie**: blanca para lo que decide el usuario (borrar, descartar cambios, guardar
    antes de salir); teñida para un error del sistema (sin micrófono, conexión caída, sesión caducada).
@@ -343,6 +342,17 @@ DD-233). Cubierto en `e2e/supervisor/alert-modal-superficie.spec.ts` (borrar y d
 Alert modal» (15876:601) y su Code Connect, y contárselo a los devs.
 
 ---
+
+**Enmienda 2026-11-02** · En `warning` la salida segura iba rellena en el primario y «Descartar» con borde rojo, como el
+`emphasis: 'reject'` del confirm de antes. Al lado del globo de «Quitar» o del aviso de borrar, el botón relleno cambiaba
+de lado: el ojo lee el relleno como la acción, y en «¿Descartar cambios?» la veía a la izquierda. Desde hoy, `warning`
+en blanco lleva los botones de `error`: «Seguir editando» gris a la izquierda y «Descartar» rojo relleno a la derecha.
+La salida segura la sigue protegiendo el foco, que abre en ella. Regla de todos los pies: la salida segura gris a la
+izquierda, la acción rellena a la derecha.
+Contrastado el mismo día con PrimeNG (ConfirmDialog: «Cancel» gris con borde, «Delete» `danger` relleno a la
+derecha), shadcn (AlertDialog: la acción al final del pie, `justify-end`), Primer (acciones principales a la derecha;
+con `danger`, el foco abre en «Cancel») y Atlassian («Don't put primary buttons to the left»): ninguno pone el relleno
+en la salida segura.
 
 ## DD-241 · 2026-10-29 — `sc-custom-modal` y `sc-alert-modal`, como los de ui.smart-contact.com; se retiran `sc-dialog` y el confirm centrado
 
