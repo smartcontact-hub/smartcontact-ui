@@ -13,6 +13,52 @@
 
 ---
 
+## 2026-11-02
+
+> Método: pasada A (deuda de código, ≤5, incluye calidad de copy i18n de las claves nuevas en
+> los cuatro idiomas) + pasada B (deriva de docs) + pasada C (PRs parados >7d) + pasada D (panel
+> de Cloudflare). Contra AGENTS.md/.impeccable.md/customs-catalog.md/DOCS-INDEX.md. Dos semanas
+> desde la última pasada (2026-10-19), 181 commits: barra de asignar, Equipos, Agendas,
+> Plantillas, Tipificaciones y el hub de Repositorios. Pasada C: ningún PR abierto. Pasada D: sin
+> `CLOUDFLARE_API_TOKEN` en este entorno → no comprobado.
+
+### Deuda de código
+
+- [ ] **P2** Copy en español con barras de género en los avisos de Repositorios
+      (`projects/supervisor/src/assets/i18n/es.json:1333`, `:1337-1340`): «Nuevo/a {{entity}}»,
+      «{{entity}} «{{name}}» creado/a», «actualizado/a», «eliminado/a», «eliminados/as». El
+      sustantivo ya llega en una clave aparte, y el editor de cuentas de correo lo alimenta con
+      «cuenta de correo» (femenino, `es.json:1267`) y el de triggers con «trigger» (masculino,
+      `es.json:1269`), así que el aviso real es «cuenta de correo «x» creado/a». Se dice mal en
+      pantalla y `pt.json:1340` arrastra «eliminados/as». → dar al sustantivo su género en una
+      clave (p. ej. un sufijo `a`/`o` o dos plantillas) y escribir «creada»/«creado» sin barra.
+      [arréglalo]
+
+### Deriva de docs
+
+- [ ] `docs/customs-catalog.md:753` sigue diciendo «**38 colores**» y «**10 filas**» en la lista
+      `diverge` de `scripts/color-map.mjs`. Medido hoy importando ese módulo: `ENFORCE` 76,
+      `DIVERGE` 1, `COLOR` 77. Cuarta semana seguida con el mismo desfase (secciones 2026-09-21,
+      2026-10-12 y 2026-10-19) → actualizar las dos cifras y listar solo la divergencia real.
+      [gate-able: un guard debería contar las filas por tipo del mapa de color y compararlas con
+      las cifras que cita el catálogo]
+- [ ] `docs/AUDIT-SEMANAL.md:5` dice «48 gates» y `.claude/skills/auditoria-semanal/SKILL.md:23`
+      dice «25 pasos»; el mismo skill dice 51 en `SKILL.md:112`, y `CLAUDE.md:52` y
+      `docs/DOCS-INDEX.md:45` también. Medido partiendo el script `verify` de `package.json` por
+      `&&`: **51** pasos. → poner 51 en esas dos líneas. [gate-able: la cifra ya se ha quedado
+      atrás cuatro veces; un guard debería contar los pasos de `verify` y compararlos con las
+      cifras de gates que citan los docs]
+
+### Trabajo sin mergear
+
+sin hallazgos (ningún PR abierto).
+
+### Panel de Cloudflare
+
+no comprobado (sin `CLOUDFLARE_API_TOKEN` en este entorno).
+
+---
+
 ## 2026-10-19
 
 > Método: pasada A (deuda de código, ≤5, incluye calidad de copy i18n de las claves nuevas en
