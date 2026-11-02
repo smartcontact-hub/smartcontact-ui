@@ -17,6 +17,7 @@
  *
  * `seccionesDeA11y` es PURA (texto de la plantilla → secciones): su test, en `scripts/__tests__/primeng-a11y.test.mjs`.
  */
+import { Buffer } from 'node:buffer';
 import { execFileSync } from 'node:child_process';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
