@@ -134,13 +134,66 @@ export function testsQueHeredanGit(dir) {
  * sale «no está al día → --write» con cientos de miembros «sin descripción», y ese arreglo escribiría generados a partir
  * de nada (medido el 2026-10-23, PR #515). `npx` deja una `.cache` en la carpeta vacía, así que se mira el paquete y no
  * la carpeta. Si falta, `preflight-scope` no mide los generados: su veredicto no valdría.
+ *
+ * Con `node_modules` puede faltar igual un paquete (2026-11-02): el del worktree es un enlace al del árbol principal, que
+ * va por detrás de `main`, y cuando `main` trae uno nuevo (`@fontsource/poppins`, #562) la cadena no cae hasta
+ * `build:docs:app`, varios minutos después; pasó al menos dos veces. Por eso cada paquete directo de `package.json` que no
+ * esté sale aquí, con la versión y la huella del lock y la receta para traerlo. Solo lo que FALTA: el compartido lleva
+ * versiones distintas a propósito, y un aviso por versión saldría rojo en cada pasada.
  */
 export function dependenciasInstaladas(cwd = process.cwd()) {
-  if (existsSync(join(cwd, "node_modules", "primeng", "package.json"))) return [];
+  if (!existsSync(join(cwd, "node_modules", "primeng", "package.json"))) {
+    return [
+      "sin dependencias: falta node_modules/primeng/package.json (worktree sin `node_modules`) → " +
+        "ln -s /Users/rafareses/dev/smartcontact-ui/node_modules node_modules",
+    ];
+  }
+  const compartido = realpathSync(join(cwd, "node_modules"));
+  return paquetesQueFaltan(cwd).map((p) => `${PREFIJO_FALTA}${p.nombre} ${recetaDePaquete(p, compartido)}`);
+}
+
+/** Con lo que empieza cada paquete que falta entre los problemas: `preflight-scope` lo busca para explicar la receta. */
+export const PREFIJO_FALTA = "falta node_modules/";
+
+/**
+ * Los paquetes directos de `package.json` (`dependencies` y `devDependencies`) sin `node_modules/<nombre>/package.json`,
+ * cada uno con lo que pide `package.json` y la versión y la huella que fija el lock (`null` si no lo fija). Sin
+ * `package.json`, nada.
+ */
+export function paquetesQueFaltan(cwd = process.cwd()) {
+  const leer = (f) => {
+    try {
+      return JSON.parse(readFileSync(join(cwd, f), "utf8"));
+    } catch {
+      return null;
+    }
+  };
+  const pkg = leer("package.json");
+  if (!pkg) return [];
+  const lock = leer("package-lock.json")?.packages ?? {};
+  const pedidos = { ...pkg.dependencies, ...pkg.devDependencies };
+  return Object.keys(pedidos)
+    .filter((nombre) => !existsSync(join(cwd, "node_modules", nombre, "package.json")))
+    .map((nombre) => {
+      const fijado = lock[`node_modules/${nombre}`];
+      return { nombre, pide: pedidos[nombre], version: fijado?.version ?? null, huella: fijado?.integrity ?? null };
+    });
+}
+
+/**
+ * La receta para traer UN paquete sin `npm install`, con la ruta y la huella puestas: `npm pack` de la
+ * versión del lock, comprobar que su `integrity` es la del lock y desempaquetarlo en el `node_modules` compartido
+ * (`compartido`, ya resuelto el enlace). Pura.
+ */
+export function recetaDePaquete({ nombre, pide, version, huella }, compartido) {
+  if (!version) return `(package.json pide ${pide} y package-lock.json no lo fija: el lock no está al día con package.json)`;
+  const tgz = `${nombre.replace(/^@/, "").replace("/", "-")}-${version}.tgz`;
+  const destino = JSON.stringify(join(compartido, nombre));
   return [
-    "sin dependencias: falta node_modules/primeng/package.json (worktree sin `node_modules`) → " +
-      "ln -s /Users/rafareses/dev/smartcontact-ui/node_modules node_modules",
-  ];
+    `(el lock fija ${version}) → desde una carpeta vacía:`,
+    `        npm pack ${nombre}@${version} --json | grep integrity   # tiene que decir ${huella ?? "lo que diga el lock"}`,
+    `        mkdir -p ${destino} && tar -xzf ${tgz} -C ${destino} --strip-components=1`,
+  ].join("\n");
 }
 
 // ── Los ficheros generados, al día ───────────────────────────────────────────────────────────────

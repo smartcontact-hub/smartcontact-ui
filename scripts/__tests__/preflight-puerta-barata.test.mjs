@@ -1,13 +1,14 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync, spawn, spawnSync } from 'node:child_process';
-import { existsSync, mkdtempSync, mkdirSync, readFileSync, writeFileSync, rmSync, symlinkSync } from 'node:fs';
+import { existsSync, mkdtempSync, mkdirSync, readFileSync, realpathSync, writeFileSync, rmSync, symlinkSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 import {
   ENV_AVISADA,
+  PREFIJO_FALTA,
   TESTS_CON_RELOJ,
   UMBRAL_CARGA,
   avisarCarga,
@@ -17,8 +18,10 @@ import {
   generadosAlDia,
   leerProcesos,
   numCpus,
+  paquetesQueFaltan,
   parsearPs,
   puertaBarata,
+  recetaDePaquete,
   testsQueHeredanGit,
 } from '../preflight-puerta-barata.mjs';
 import { MAX_PALABRAS_FICHA } from '../memory-shape.mjs';
@@ -551,8 +554,11 @@ function git(cwd, ...args) {
   execFileSync('git', args, { cwd, env, stdio: 'ignore' });
 }
 
-/** Un repo con `origin` y una rama con un cambio en `scripts/`: el carril de la cadena COMPLETA, que corre `npm run preflight`. */
-function repoConCambioCompartido(cadena) {
+/**
+ * Un repo con `origin` y una rama con un cambio en `scripts/`: el carril de la cadena COMPLETA, que corre `npm run preflight`.
+ * `devDependencies` y `lock` van al `package.json` y al `package-lock.json` de la rama.
+ */
+function repoConCambioCompartido(cadena, { devDependencies, lock } = {}) {
   const raiz = mkdtempSync(join(tmpdir(), 'sc-scope-'));
   const trabajo = join(raiz, 'trabajo');
   git(raiz, 'init', '-q', '--bare', '-b', 'main', 'origin.git');
@@ -571,7 +577,8 @@ function repoConCambioCompartido(cadena) {
   git(trabajo, 'checkout', '-q', '-b', 'rama');
   mkdirSync(join(trabajo, 'scripts'));
   writeFileSync(join(trabajo, 'scripts', 'toque.txt'), 'x');
-  writeFileSync(join(trabajo, 'package.json'), JSON.stringify({ name: 't', version: '1.0.0', scripts: { preflight: cadena } }));
+  writeFileSync(join(trabajo, 'package.json'), JSON.stringify({ name: 't', version: '1.0.0', scripts: { preflight: cadena }, devDependencies }));
+  if (lock) writeFileSync(join(trabajo, 'package-lock.json'), JSON.stringify({ lockfileVersion: 3, packages: lock }));
   git(trabajo, 'add', '-A');
   git(trabajo, 'commit', '-q', '-m', 'cambio');
   return { raiz, trabajo };
@@ -691,6 +698,144 @@ test('dependenciasInstaladas: con primeng instalado (o enlazado) no dice nada', 
   const raiz = arbolConPrimeng(true);
   try {
     assert.deepEqual(dependenciasInstaladas(raiz), []);
+  } finally {
+    rmSync(raiz, { recursive: true, force: true });
+  }
+});
+
+/* ── Un worktree con `node_modules`, pero con un paquete de menos ───────────────── */
+
+// El caso es del 2026-10-31: el `node_modules` del worktree es un enlace al del árbol principal, que va por detrás de
+// `main`, y `main` trajo `@fontsource/poppins` (#562). La cadena no cayó hasta `build:docs:app`, varios minutos después.
+// La huella es la de verdad: `npm pack @fontsource/poppins@5.3.0 --json` la devolvió igual que el lock (medido el 2026-11-02).
+
+const POPPINS = {
+  version: '5.3.0',
+  integrity: 'sha512-cms1nM7U6SN8epIV1WMVOV8VsA645aSm3wHfzIQnkk188U341ThbJGSl2Sv54V29gnDbT2arMPfLzvVIIVCceQ==',
+};
+
+/**
+ * Un worktree como los de verdad: `package.json`, su lock y un `node_modules` que es un ENLACE a otro de fuera, con
+ * primeng y los paquetes de `instalados` (nombre → versión).
+ */
+function worktreeConEnlace({ dependencies = {}, devDependencies = {}, fijados = {}, instalados = {} }) {
+  const raiz = mkdtempSync(join(tmpdir(), 'sc-faltan-'));
+  const compartido = join(raiz, 'principal', 'node_modules');
+  const trabajo = join(raiz, 'worktree');
+  for (const [nombre, version] of Object.entries({ primeng: '21.0.0', ...instalados })) {
+    mkdirSync(join(compartido, nombre), { recursive: true });
+    writeFileSync(join(compartido, nombre, 'package.json'), JSON.stringify({ name: nombre, version }));
+  }
+  mkdirSync(trabajo);
+  symlinkSync(compartido, join(trabajo, 'node_modules'));
+  writeFileSync(join(trabajo, 'package.json'), JSON.stringify({ name: 't', dependencies, devDependencies }));
+  const packages = Object.fromEntries(Object.entries(fijados).map(([n, f]) => [`node_modules/${n}`, f]));
+  writeFileSync(join(trabajo, 'package-lock.json'), JSON.stringify({ lockfileVersion: 3, packages }));
+  return { raiz, trabajo, compartido: realpathSync(compartido) };
+}
+
+test('paquetesQueFaltan: nombra cada directo que falta, de dependencies y de devDependencies, con lo que fija el lock', () => {
+  const { raiz, trabajo } = worktreeConEnlace({
+    dependencies: { primeng: '^21.0.0', 'chart.js': '^4.5.0' },
+    devDependencies: { '@fontsource/poppins': '^5.3.0', typescript: '~5.9.0' },
+    fijados: { 'chart.js': { version: '4.5.1', integrity: 'sha512-chart' }, '@fontsource/poppins': POPPINS },
+    instalados: { typescript: '5.9.2' },
+  });
+  try {
+    assert.deepEqual(paquetesQueFaltan(trabajo), [
+      { nombre: 'chart.js', pide: '^4.5.0', version: '4.5.1', huella: 'sha512-chart' },
+      { nombre: '@fontsource/poppins', pide: '^5.3.0', version: '5.3.0', huella: POPPINS.integrity },
+    ]);
+  } finally {
+    rmSync(raiz, { recursive: true, force: true });
+  }
+});
+
+test('paquetesQueFaltan: una versión distinta de la del lock NO es falta (el compartido va por detrás a propósito)', () => {
+  const { raiz, trabajo } = worktreeConEnlace({
+    devDependencies: { '@fontsource/poppins': '^5.3.0' },
+    fijados: { '@fontsource/poppins': POPPINS },
+    instalados: { '@fontsource/poppins': '5.1.0' },
+  });
+  try {
+    assert.deepEqual(paquetesQueFaltan(trabajo), []);
+    assert.deepEqual(dependenciasInstaladas(trabajo), []);
+  } finally {
+    rmSync(raiz, { recursive: true, force: true });
+  }
+});
+
+test('dependenciasInstaladas: el que falta sale con su receta: npm pack de la versión del lock, su huella y el tar en el compartido', () => {
+  const { raiz, trabajo, compartido } = worktreeConEnlace({
+    devDependencies: { '@fontsource/poppins': '^5.3.0' },
+    fijados: { '@fontsource/poppins': POPPINS },
+  });
+  try {
+    const problemas = dependenciasInstaladas(trabajo);
+    assert.equal(problemas.length, 1, problemas.join('\n'));
+    const [p] = problemas;
+    assert.ok(p.startsWith(`${PREFIJO_FALTA}@fontsource/poppins (el lock fija 5.3.0)`), p);
+    assert.ok(p.includes('npm pack @fontsource/poppins@5.3.0 --json | grep integrity'), p);
+    assert.ok(p.includes(`tiene que decir ${POPPINS.integrity}`), p);
+    // El destino es el `node_modules` de verdad, con el enlace resuelto: desempaquetar «en el worktree» no serviría.
+    const destino = JSON.stringify(join(compartido, '@fontsource/poppins'));
+    assert.ok(p.includes(`mkdir -p ${destino} && tar -xzf fontsource-poppins-5.3.0.tgz -C ${destino} --strip-components=1`), p);
+    assert.ok(!p.includes(trabajo), `nada apunta dentro del worktree:\n${p}`);
+  } finally {
+    rmSync(raiz, { recursive: true, force: true });
+  }
+});
+
+test('dependenciasInstaladas: con el paquete puesto en el compartido, la puerta se abre', () => {
+  const { raiz, trabajo } = worktreeConEnlace({
+    devDependencies: { '@fontsource/poppins': '^5.3.0' },
+    fijados: { '@fontsource/poppins': POPPINS },
+    instalados: { '@fontsource/poppins': '5.3.0' },
+  });
+  try {
+    assert.deepEqual(dependenciasInstaladas(trabajo), []);
+  } finally {
+    rmSync(raiz, { recursive: true, force: true });
+  }
+});
+
+test('dependenciasInstaladas: si el lock no fija el paquete, lo dice en vez de inventar una versión', () => {
+  const { raiz, trabajo } = worktreeConEnlace({ devDependencies: { 'paquete-nuevo': '^1.0.0' } });
+  try {
+    const [p, ...resto] = dependenciasInstaladas(trabajo);
+    assert.deepEqual(resto, []);
+    assert.match(p, /^falta node_modules\/paquete-nuevo \(package\.json pide \^1\.0\.0 y package-lock\.json no lo fija/);
+    assert.doesNotMatch(p, /npm pack/);
+  } finally {
+    rmSync(raiz, { recursive: true, force: true });
+  }
+});
+
+test('recetaDePaquete: el .tgz se llama como lo escribe npm pack (sin la @ y con la barra del scope cambiada por un guion)', () => {
+  assert.match(recetaDePaquete({ nombre: '@fontsource/poppins', version: '5.3.0', huella: 'h' }, '/nm'), /tar -xzf fontsource-poppins-5\.3\.0\.tgz /);
+  assert.match(recetaDePaquete({ nombre: 'chart.js', version: '4.5.1', huella: 'h' }, '/nm'), /tar -xzf chart\.js-4\.5\.1\.tgz -C "\/nm\/chart\.js"/);
+});
+
+test('preflight-scope --run se para ANTES de la cadena si falta un paquete directo, y la arranca en cuanto está', () => {
+  const { raiz, trabajo } = repoConCambioCompartido('echo CADENA-ARRANCADA', {
+    devDependencies: { '@fontsource/poppins': '^5.3.0' },
+    lock: { 'node_modules/@fontsource/poppins': POPPINS },
+  });
+  const correr = () =>
+    spawnSync('sh', ['-c', `node ${JSON.stringify(SCOPE)} --run 2>&1`], { cwd: trabajo, env: entornoLimpio(), encoding: 'utf8', timeout: 180_000 });
+  try {
+    const rojo = correr();
+    assert.equal(rojo.status, 1, rojo.stdout);
+    assert.ok(rojo.stdout.includes(`· ${PREFIJO_FALTA}@fontsource/poppins (el lock fija 5.3.0)`), rojo.stdout);
+    assert.match(rojo.stdout, /NUNCA `npm install` ni `npm ci` en un worktree/);
+    assert.doesNotMatch(rojo.stdout, /CADENA-ARRANCADA/, 'la cadena no puede arrancar con un paquete de menos');
+
+    mkdirSync(join(trabajo, 'node_modules', '@fontsource', 'poppins'), { recursive: true });
+    writeFileSync(join(trabajo, 'node_modules', '@fontsource', 'poppins', 'package.json'), '{"version":"5.3.0"}');
+    const verde = correr();
+    assert.equal(verde.status, 0, verde.stdout);
+    assert.doesNotMatch(verde.stdout, /falta node_modules/);
+    assert.match(verde.stdout, /CADENA-ARRANCADA/);
   } finally {
     rmSync(raiz, { recursive: true, force: true });
   }
