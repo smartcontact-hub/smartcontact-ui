@@ -24,7 +24,7 @@
 
 ### Deuda de código
 
-- [ ] **P2** Copy en español con barras de género en los avisos de Repositorios
+- [x] **P2** Copy en español con barras de género en los avisos de Repositorios
       (`projects/supervisor/src/assets/i18n/es.json:1333`, `:1337-1340`): «Nuevo/a {{entity}}»,
       «{{entity}} «{{name}}» creado/a», «actualizado/a», «eliminado/a», «eliminados/as». El
       sustantivo ya llega en una clave aparte, y el editor de cuentas de correo lo alimenta con
