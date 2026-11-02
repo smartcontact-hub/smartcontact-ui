@@ -1119,14 +1119,15 @@ test.describe('sc-alert-modal', () => {
       expect(await styleOf(icono, ['color', 'font-size']), v).toEqual({ color: texto, 'font-size': iconoConfirm });
       expect((await styleOf(blanca.locator('.sc-custom-modal__close .p-button-icon'), ['font-size']))['font-size'], v).toBe('14px');
     }
-    // Los botones del confirm: borrar, «Cancelar» relleno y la acción roja rellena; descartar, la salida segura
-    // rellena y la acción roja con borde.
+    // Borrar y descartar, los mismos botones (enmienda DD-242 del 2026-11-02): «Cancelar» gris relleno a la izquierda
+    // y la acción roja rellena a la derecha. El relleno no cambia de lado entre un aviso y otro.
     const botones = (v: string) => page.getByTestId(`alert-${v}-plain`).locator('.sc-custom-modal__footer button');
+    const fondo = async (v: string, i: number) => (await styleOf(botones(v).nth(i), ['background-color']))['background-color'];
     const transparente = 'rgba(0, 0, 0, 0)';
-    expect((await styleOf(botones('error').nth(0), ['background-color']))['background-color']).not.toBe(transparente);
-    expect((await styleOf(botones('error').nth(1), ['background-color']))['background-color']).not.toBe(transparente);
-    expect((await styleOf(botones('warning').nth(0), ['background-color']))['background-color']).not.toBe(transparente);
-    expect((await styleOf(botones('warning').nth(1), ['background-color']))['background-color']).toBe(transparente);
+    for (const i of [0, 1]) {
+      expect(await fondo('error', i)).not.toBe(transparente);
+      expect(await fondo('warning', i), `botón ${i} de warning`).toBe(await fondo('error', i));
+    }
   });
 
   test('closeOnEscape=false (DD-242): Escape no cierra el error del sistema; la acción sí', async ({ page }) => {

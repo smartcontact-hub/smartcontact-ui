@@ -86,6 +86,9 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
 
 ### Changed
 
+- **`@smartcontact-hub/components`** — `sc-alert-modal` con `variant="warning"` y `surface="plain"` lleva los botones de
+  `error`: la salida segura gris a la izquierda y la acción roja rellena a la derecha. Antes la salida segura iba rellena
+  en el primario y la acción con borde rojo, y el relleno cambiaba de lado entre un aviso y otro (enmienda de DD-242).
 - **`@smartcontact-hub/components`** — `appendTo` de `sc-select` y `sc-multiselect` pasa de `'body' | null` (por defecto
   `null`, el panel dentro del componente) a `'body' | 'self'` (por defecto `'body'`, el panel en el `<body>`, donde no
   lo recorta una tarjeta o un diálogo con `overflow: hidden`). Quien dependía de que el panel se quedara dentro, que

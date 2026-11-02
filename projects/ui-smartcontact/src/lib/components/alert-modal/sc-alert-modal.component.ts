@@ -64,9 +64,10 @@ interface AlertButtons {
 }
 
 /**
- * En blanco, los botones del confirm de antes (`ScConfirmService.request`): borrar es «Cancelar» gris y la acción
- * roja (`acceptTone: 'danger'`); descartar lleva el peso en la salida segura y la acción roja con borde
- * (`emphasis: 'reject'`); informar y lo neutro, «Cancelar» gris y la acción en el primario.
+ * En blanco, la salida segura siempre gris a la izquierda y la acción siempre rellena a la derecha: borrar y descartar
+ * llevan la acción roja (`acceptTone: 'danger'` del confirm de antes); informar y lo neutro, en el primario. Descartar
+ * ya no pone el peso en «Seguir editando» (`emphasis: 'reject'`): el relleno cambiaba de lado entre un aviso y otro, y
+ * la salida segura la protege el foco, que abre en ella (DD-242, enmienda del 2026-11-02).
  */
 const PLAIN_BUTTONS: Record<ScAlertModalVariant, AlertButtons> = {
   default: {
@@ -78,8 +79,8 @@ const PLAIN_BUTTONS: Record<ScAlertModalVariant, AlertButtons> = {
     primary: { variant: 'primary', appearance: 'filled' },
   },
   warning: {
-    secondary: { variant: 'primary', appearance: 'filled' },
-    primary: { variant: 'danger', appearance: 'outlined' },
+    secondary: { variant: 'secondary', appearance: 'filled' },
+    primary: { variant: 'danger', appearance: 'filled' },
   },
   error: {
     secondary: { variant: 'secondary', appearance: 'filled' },
