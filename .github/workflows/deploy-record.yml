@@ -51,7 +51,7 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: 22
-      - name: Comprobar la configuración de los 5 proyectos en Cloudflare
+      - name: Comprobar la configuración de los proyectos en Cloudflare
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |

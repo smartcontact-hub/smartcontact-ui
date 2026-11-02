@@ -13,6 +13,40 @@
 
 ---
 
+## 2026-11-02 (segunda pasada, tras los cambios del día)
+
+> Método: pasada A (deuda de código, ≤5) + pasada B (deriva de docs) + pasada C (PRs parados >7d) +
+> pasada D (panel de Cloudflare). Contra AGENTS.md/.impeccable.md/customs-catalog.md/DOCS-INDEX.md.
+> Fuentes comparadas: `git log` desde la primera pasada de hoy (un único commit ajeno, tooling del
+> preflight, más #570 y #571, que son de esta misma rutina); `scripts/audit-cf-config.mjs` contra
+> `SITIOS` de `scripts/cf-sites.mjs`; PRs abiertos por la API de GitHub. Claves i18n: ninguna nueva
+> salvo las de #571, ya revisadas. Pasada D: esta ejecución no alcanza `api.cloudflare.com`
+> (el proxy del entorno devuelve 403), así que no la comprobó. En la sesión de prueba del entorno
+> nuevo, el propio script dio ✓ en los seis proyectos (dato de esa sesión, no medido aquí).
+
+### Deuda de código
+
+sin hallazgos.
+
+### Deriva de docs
+
+- [x] `scripts/audit-cf-config.mjs:141` decía «Los 5 proyectos», el comentario de `:3` «cinco» y
+      `.github/workflows/deploy-record.yml:54` «los 5 proyectos»; `SITIOS` en `scripts/cf-sites.mjs`
+      tiene **6** (la salida lista seis ✓ y cierra con «5»). Corregido en esta pasada: el mensaje
+      usa `PROYECTOS.length` y los otros dos textos no llevan cifra. **Gate-able**: un guard
+      debería buscar cifras sueltas de «N proyectos» en el script y el workflow y compararlas con
+      el tamaño de `SITIOS`.
+
+### Trabajo sin mergear
+
+sin hallazgos: #573, #574 y #575 están abiertos desde hoy (menos de 1 h), no cualifican.
+
+### Panel de Cloudflare
+
+no comprobado en esta ejecución (sin salida de red a `api.cloudflare.com`). Ver nota del método.
+
+---
+
 ## 2026-11-02
 
 > Método: pasada A (deuda de código, ≤5, incluye calidad de copy i18n de las claves nuevas en
