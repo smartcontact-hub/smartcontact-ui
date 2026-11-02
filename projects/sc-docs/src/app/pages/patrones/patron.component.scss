@@ -1,0 +1,196 @@
+/* Misma medida de lectura que el índice de Patrones, Color y Tipografía. */
+:host {
+  display: block;
+  max-width: 720px;
+  padding-bottom: var(--sc-spacing-5);
+}
+
+.titulo {
+  margin: 0 0 var(--sc-spacing-2);
+  color: var(--sc-text-primary);
+}
+
+.seccion {
+  margin: var(--sc-spacing-2) 0 var(--sc-spacing-0-75);
+  color: var(--sc-text-primary);
+}
+
+.texto {
+  margin: 0;
+  color: var(--sc-text-secondary);
+}
+
+code {
+  padding: 1px 5px;
+  border-radius: var(--sc-radius-sm);
+  background: var(--sc-bg-subtle);
+  color: var(--sc-text-primary);
+}
+
+/* ── Haz / Evita: dos tarjetas con la raya de color arriba; en estrecho, una debajo de otra ── */
+.pareja {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: var(--sc-spacing-1);
+}
+
+.regla {
+  padding: var(--sc-spacing-1) var(--sc-spacing-1-25) var(--sc-spacing-1-25);
+  border: 1px solid var(--sc-border-default);
+  border-top-width: 3px;
+  border-radius: var(--sc-radius-md);
+
+  &--haz {
+    border-top-color: var(--sc-border-success);
+
+    .regla__cabeza {
+      color: var(--sc-text-success);
+    }
+  }
+
+  &--evita {
+    border-top-color: var(--sc-border-danger);
+
+    .regla__cabeza {
+      color: var(--sc-text-danger);
+    }
+  }
+
+  &__cabeza {
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-5);
+    margin: 0 0 var(--sc-spacing-0-5);
+  }
+
+  &__titulo {
+    margin: 0;
+    color: inherit;
+  }
+
+  &__texto {
+    margin: 0;
+    color: var(--sc-text-primary);
+  }
+}
+
+/* ── El ejemplo vivo del patrón de carga ── */
+.demo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sc-spacing-1-25);
+  margin-top: var(--sc-spacing-1);
+
+  &__col {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sc-spacing-0-75);
+    min-width: 0;
+  }
+
+  &__label {
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-5);
+    margin: 0;
+    font-size: var(--sc-font-size-100);
+    font-weight: var(--sc-font-weight-semibold);
+    color: var(--sc-text-secondary);
+  }
+
+  &__stage {
+    /* Alto compartido para que las dos columnas queden a la par (el esqueleto de tres filas mide ~11.5rem). */
+    min-height: 11.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sc-spacing-1);
+    padding: var(--sc-spacing-1-25);
+    border-radius: var(--sc-radius-md);
+    background: var(--sc-bg-surface);
+    border: 1px solid var(--sc-border-subtle);
+
+    &--spinner {
+      align-items: center;
+      justify-content: center;
+      color: var(--sc-text-subtle);
+    }
+  }
+}
+
+.marca {
+  flex: 0 0 auto;
+
+  &--haz {
+    color: var(--sc-text-success);
+  }
+
+  &--evita {
+    color: var(--sc-text-danger);
+  }
+}
+
+@media (max-width: 34rem) {
+  .demo {
+    grid-template-columns: 1fr;
+  }
+}
+
+.demo-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-1);
+
+  &__lines {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sc-spacing-0-5);
+  }
+}
+
+/* ── Anterior / siguiente, como el pie de las páginas de Primer ── */
+.vecinos {
+  display: flex;
+  gap: var(--sc-spacing-1);
+  margin-top: var(--sc-spacing-3);
+  padding-top: var(--sc-spacing-1-5);
+  border-top: 1px solid var(--sc-border-default);
+}
+
+.vecino {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-25);
+  padding: var(--sc-spacing-0-75) var(--sc-spacing-1);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-md);
+  color: var(--sc-text-primary);
+  text-decoration: none;
+  transition: border-color var(--sc-transition-fast) var(--sc-easing-default);
+
+  &--siguiente {
+    margin-left: auto;
+    align-items: flex-end;
+    text-align: right;
+  }
+
+  &:hover {
+    border-color: var(--sc-border-strong);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-border-focus);
+    outline-offset: 2px;
+  }
+
+  &__rotulo {
+    color: var(--sc-text-subtle);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vecino {
+    transition: none;
+  }
+}

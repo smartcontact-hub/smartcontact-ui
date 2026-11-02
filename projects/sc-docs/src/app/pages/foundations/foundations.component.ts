@@ -7,11 +7,6 @@ import { ScClipboardService } from '@smartcontact-hub/components';
 
 import { LanguageService } from '../../shared/language.service';
 
-interface ScaleStep {
-  token: string;
-  px: number;
-}
-
 interface ColorFamily {
   /** Nombre de la familia primitiva por i18n: `fundamentos.color.primitive.<token>`. */
   token: string;
@@ -37,9 +32,10 @@ interface SwatchInfo {
 }
 
 /**
- * Muestra las fundaciones del DS leyendo los tokens reales (`var(--sc-*)`):
- * la rampa de escala 14-base y las familias primitivas de color. Lo que se ve
- * aquí es lo que el navegador resuelve — sin valores duplicados en la página.
+ * Fundamentos → Color, leyendo los tokens reales (`var(--sc-*)`): las familias
+ * primitivas y para qué sirve cada color semántico. Lo que se ve aquí es lo que
+ * el navegador resuelve, sin valores duplicados en la página. (La escala 14-base
+ * vivía aquí también; ahora tiene su página, Espaciado.)
  *
  * Los swatches abren una tarjeta al pasar por encima (o al recibir foco) con el
  * token, el hex y el HSL, y cada línea se copia al pulsarla. Los tres valores
@@ -58,17 +54,6 @@ export class FoundationsComponent {
   private readonly clipboard = inject(ScClipboardService);
   /** Idioma activo: la sección semántica pinta `uso`/`no` o su versión inglesa. */
   protected readonly lang = inject(LanguageService);
-
-  readonly scaleSteps: ScaleStep[] = [
-    { token: '--sc-scale-0-25', px: 3.5 },
-    { token: '--sc-scale-0-5', px: 7 },
-    { token: '--sc-scale-0-75', px: 10.5 },
-    { token: '--sc-scale-1', px: 14 },
-    { token: '--sc-scale-1-5', px: 21 },
-    { token: '--sc-scale-2', px: 28 },
-    { token: '--sc-scale-3', px: 42 },
-    { token: '--sc-scale-4', px: 56 },
-  ];
 
   readonly colorFamilies: ColorFamily[] = [
     { token: 'blue', steps: [50, 100, 300, 500, 700, 900] },

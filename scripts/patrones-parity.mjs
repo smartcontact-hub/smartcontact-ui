@@ -3,7 +3,7 @@
  * La barra de UX de pantalla vive DOS VECES, y nada lo vigilaba.
  *
  * `AGENTS.md` §«UX de pantalla» la escribe para quien toca el código, y
- * `projects/sc-docs/src/app/pages/patrones/patrones.component.ts` la pinta navegable para
+ * `projects/sc-docs/src/app/pages/patrones/` la pinta navegable (la lista, en `patrones-datos.ts`) para
  * quien la lee. El pie de esa página afirma que son la misma («está también en AGENTS.md»),
  * pero la afirmación no la sostenía nada: medido el 2026-09-06, la copia navegable había
  * perdido por el camino la regla de la paleta en oscuro del principio 1.
@@ -25,8 +25,8 @@
 /** Principios numerados de AGENTS: `1. **Título.** cuerpo…` */
 export const RE_TITULO_AGENTS = /^(\d+)\. \*\*(.+?)\.?\*\*/gm;
 
-/** Claves del array `principles` de la página: `key: '…'` (el texto vive en i18n). */
-export const RE_KEY_DOCS = /key:\s*'([^']+)'/g;
+/** Claves de la lista `PATRONES` de la página: `clave: '…'` (el texto vive en i18n). */
+export const RE_KEY_DOCS = /clave:\s*'([^']+)'/g;
 
 /**
  * Lo que cada principio NO puede perder al reescribirse, por número.
@@ -61,9 +61,9 @@ export function titulosAgents(slice) {
 }
 
 /**
- * Entradas de la página, en el orden del array `principles` del `.ts`. Ese array solo guarda
- * `{ icon, key }`; el texto (título + aplica/evita/ya-lo-tienes) vive en i18n, bajo
- * `fundamentos.patterns.principles.<key>` de `es.json` (referencia). `principios` es ese objeto.
+ * Entradas de la página, en el orden de la lista `PATRONES` de `patrones-datos.ts`. Esa lista solo
+ * guarda `{ clave, icono, ruta }`; el texto (título + aplica/evita/ya-lo-tienes) vive en i18n, bajo
+ * `fundamentos.patterns.principles.<clave>` de `es.json` (referencia). `principios` es ese objeto.
  * El `texto` concatena los cuatro campos, que es contra lo que muerden los `FRAGMENTOS`.
  */
 export function entradasDocs(ts, principios = {}) {
@@ -101,7 +101,7 @@ export function compararPatrones(agentsMd, patronesTs, principios = {}) {
     problemas.push(
       `AGENTS tiene ${enAgents.length} principios y la página ${enDocs.length}. ` +
         'Alguien añadió o quitó uno en un lado. La página se edita en ' +
-        'projects/sc-docs/src/app/pages/patrones/patrones.component.ts.',
+        'projects/sc-docs/src/app/pages/patrones/patrones-datos.ts.',
     );
   }
 

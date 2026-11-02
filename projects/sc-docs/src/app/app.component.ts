@@ -14,6 +14,7 @@ import {
 import { ScIconComponent } from '@smartcontact-hub/icons';
 
 import { COMPONENT_CATALOG, groupCatalog } from './pages/components/component-catalog';
+import { PATRONES } from './pages/patrones/patrones-datos';
 import { ThemeToggleComponent } from './shared/theme-toggle.component';
 import { LanguageToggleComponent } from './shared/language-toggle.component';
 import { LanguageService } from './shared/language.service';
@@ -41,6 +42,9 @@ interface SeccionLateral {
   readonly grupos: readonly GrupoLateral[];
 }
 
+/** El nombre corto de un patrón (`Carga`), el del lateral, las migas y la pestaña del navegador. */
+const claveNavPatron = (clave: string): string => `fundamentos.patterns.principles.${clave}.nav`;
+
 const FUNDAMENTOS: SeccionLateral = {
   id: 'fundamentos',
   titulo: 'chrome.nav.fundamentos',
@@ -49,14 +53,20 @@ const FUNDAMENTOS: SeccionLateral = {
     {
       titulo: 'chrome.side.base',
       enlaces: [
-        { ruta: '/fundamentos/escala-color', clave: 'fundamentos.tabs.escala-color' },
+        { ruta: '/fundamentos/color', clave: 'fundamentos.tabs.color' },
+        { ruta: '/fundamentos/espaciado', clave: 'fundamentos.tabs.espaciado' },
         { ruta: '/fundamentos/tipografia', clave: 'fundamentos.tabs.tipografia' },
         { ruta: '/fundamentos/iconos', clave: 'fundamentos.tabs.iconos' },
+        { ruta: '/fundamentos/movimiento', clave: 'fundamentos.tabs.movimiento' },
       ],
     },
     {
+      // El índice y, debajo, cada patrón con su nombre corto, como los «Patterns» del lateral de Primer.
       titulo: 'chrome.side.pantallas',
-      enlaces: [{ ruta: '/fundamentos/patrones', clave: 'fundamentos.tabs.patrones' }],
+      enlaces: [
+        { ruta: '/fundamentos/patrones', clave: 'fundamentos.tabs.patrones', exacta: true },
+        ...PATRONES.map((p) => ({ ruta: '/fundamentos/patrones/' + p.ruta, clave: claveNavPatron(p.clave) })),
+      ],
     },
   ],
 };
@@ -189,13 +199,18 @@ export class AppComponent {
     const r = this.ruta();
     const comp = /^\/components\/([^/]+)$/.exec(r);
     const fund = /^\/fundamentos\/([^/]+)$/.exec(r);
+    const patron = PATRONES.find((p) => r === '/fundamentos/patrones/' + p.ruta);
     if (comp) {
       const raiz: EnlaceLateral = { ruta: '/components', clave: 'chrome.nav.componentes' };
       if (comp[1] === 'primeng') return [raiz, { ruta: r, clave: 'chrome.nav.primeng' }];
       const c = COMPONENT_CATALOG.find((x) => x.path === comp[1]);
       return c ? [raiz, { ruta: '', clave: 'categories.' + c.category }, { ruta: r, texto: c.label }] : [];
     }
-    if (fund) return [{ ruta: '/fundamentos', clave: 'chrome.nav.fundamentos' }, { ruta: r, clave: 'fundamentos.tabs.' + fund[1] }];
+    const raizFund: EnlaceLateral = { ruta: '/fundamentos', clave: 'chrome.nav.fundamentos' };
+    if (fund) return [raizFund, { ruta: r, clave: 'fundamentos.tabs.' + fund[1] }];
+    if (patron) {
+      return [raizFund, { ruta: '/fundamentos/patrones', clave: 'fundamentos.tabs.patrones' }, { ruta: r, clave: claveNavPatron(patron.clave) }];
+    }
     return [];
   });
 
@@ -242,9 +257,11 @@ export class AppComponent {
     let pagina: string | null = null;
     const comp = /^\/components\/([^/]+)$/.exec(r);
     const fund = /^\/fundamentos\/([^/]+)$/.exec(r);
+    const patron = PATRONES.find((p) => r === '/fundamentos/patrones/' + p.ruta);
     if (TITULOS[r]) pagina = t(TITULOS[r]);
     else if (comp) pagina = COMPONENT_CATALOG.find((c) => c.path === comp[1])?.label ?? null;
     else if (fund) pagina = t('fundamentos.tabs.' + fund[1]);
+    else if (patron) pagina = t(claveNavPatron(patron.clave));
     this.title.setTitle(pagina ? `${pagina} | ${MARCA}` : MARCA);
   }
 

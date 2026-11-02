@@ -9,8 +9,8 @@ import { kitPx } from './kit-metrics';
  */
 
 test('la demo levanta y renderiza las fundaciones', async ({ page }) => {
-  await page.goto('/#/fundamentos/escala-color');
-  await expect(page.getByRole('heading', { name: 'Escala y color' })).toBeVisible();
+  await page.goto('/#/fundamentos/espaciado');
+  await expect(page.getByRole('heading', { name: 'Espaciado', level: 1 })).toBeVisible();
   // La escala resuelve: la barra de --sc-scale-1 mide 14px de ancho.
   const bar = page.locator('tr', { hasText: '--sc-scale-1' }).first().locator('.scale-bar');
   await expect(bar).toBeVisible();
@@ -51,7 +51,7 @@ test('el form field hereda padding y radio del Kit', async ({ page }) => {
 });
 
 test('el modo oscuro flipa los tokens bajo .sc-dark', async ({ page }) => {
-  await page.goto('/#/fundamentos/escala-color');
+  await page.goto('/#/fundamentos/color');
   const before = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
   // El interruptor de tema es ahora un toggle con icono (role=switch), no un botón de texto.
   await page.getByRole('switch', { name: /tema/i }).click();
@@ -69,7 +69,9 @@ test('el modo oscuro flipa los tokens bajo .sc-dark', async ({ page }) => {
  */
 test('las rutas planas de antes de agrupar siguen llevando a su sitio', async ({ page }) => {
   const compat: ReadonlyArray<readonly [string, string]> = [
-    ['/#/foundations', '#/fundamentos/escala-color'],
+    ['/#/foundations', '#/fundamentos/color'],
+    // «Escala y color» se partió en Color y Espaciado: su dirección lleva a Color.
+    ['/#/fundamentos/escala-color', '#/fundamentos/color'],
     ['/#/foundations-type', '#/fundamentos/tipografia'],
     // `tema` salió de Fundamentos (pasó a verificación en Lab): el `/theme` legacy y el
     // `/fundamentos/tema` de cuando era pestaña aterrizan ahora en la ruta propia `/tema`.
@@ -95,18 +97,22 @@ test('las rutas planas de antes de agrupar siguen llevando a su sitio', async ({
  * fuera. Este test hizo justo lo que promete: se puso rojo y obligó a justificar el quinto.
  */
 test('el top-nav se queda en cinco secciones', async ({ page }) => {
-  await page.goto('/#/fundamentos/escala-color');
+  await page.goto('/#/fundamentos/color');
   const nav = page.getByRole('navigation', { name: 'Secciones' });
   await expect(nav.getByRole('link')).toHaveCount(5);
 });
 
 /**
- * Patrones de pantalla es la tercera pestaña de Fundamentos (no una quinta sección del
- * top-nav, a propósito): la barra de calidad de UI vive donde se lee, no como enlace suelto.
+ * Patrones de pantalla vive en Fundamentos (no es una quinta sección del top-nav, a propósito):
+ * la barra de calidad de UI vive donde se lee, no como enlace suelto. El índice lleva a cada
+ * patrón por su página, y la de Carga dogfoodea el skeleton.
  */
-test('la pestaña Patrones de Fundamentos levanta y dogfoodea el skeleton', async ({ page }) => {
+test('Patrones de Fundamentos levanta y su página de Carga dogfoodea el skeleton', async ({ page }) => {
   await page.goto('/#/fundamentos/patrones');
   await expect(page.getByRole('heading', { name: 'Patrones de pantalla', level: 1 })).toBeVisible();
+  await page.getByRole('link', { name: 'Estados de carga' }).click();
+  await expect(page).toHaveURL(/#\/fundamentos\/patrones\/carga$/);
+  await expect(page.getByRole('heading', { name: 'Estados de carga', level: 1 })).toBeVisible();
   // El ejemplo vivo del patrón de carga pinta al menos un sc-skeleton real.
   await expect(page.locator('sc-skeleton').first()).toBeVisible();
 });

@@ -17,24 +17,6 @@ h2 {
   margin-top: var(--sc-spacing-2);
 }
 
-.scale-table {
-  border-collapse: collapse;
-
-  th,
-  td {
-    text-align: left;
-    padding: var(--sc-spacing-0-25) var(--sc-spacing-1);
-    border-bottom: 1px solid var(--sc-border-default);
-  }
-}
-
-.scale-bar {
-  display: inline-block;
-  height: var(--sc-spacing-0-5);
-  background: var(--sc-bg-primary);
-  border-radius: var(--sc-radius-xs);
-}
-
 .swatch-row {
   display: flex;
   align-items: center;

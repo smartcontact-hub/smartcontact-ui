@@ -1,26 +1,6 @@
 <h1>{{ 'fundamentos.color.title' | translate }}</h1>
 <p class="lead sc-text-h3-regular" [innerHTML]="'fundamentos.color.intro' | translate"></p>
 
-<h2>{{ 'fundamentos.color.scaleTitle' | translate }}</h2>
-<table class="scale-table">
-  <thead>
-    <tr>
-      <th>{{ 'fundamentos.color.thToken' | translate }}</th>
-      <th>{{ 'fundamentos.color.thPx' | translate }}</th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    @for (step of scaleSteps; track step.token) {
-      <tr>
-        <td><code>{{ step.token }}</code></td>
-        <td>{{ step.px }}</td>
-        <td><span class="scale-bar" [style.width]="'var(' + step.token + ')'"></span></td>
-      </tr>
-    }
-  </tbody>
-</table>
-
 <h2>{{ 'fundamentos.color.primitiveTitle' | translate }}</h2>
 <p class="swatch-hint sc-text-caption-regular">{{ 'fundamentos.color.primitiveHint' | translate }}</p>
 @for (family of colorFamilies; track family.token) {

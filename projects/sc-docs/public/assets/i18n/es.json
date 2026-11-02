@@ -119,10 +119,12 @@
   },
   "fundamentos": {
     "tabs": {
-      "escala-color": "Escala y color",
+      "color": "Color",
+      "espaciado": "Espaciado",
       "tipografia": "Tipografía",
-      "patrones": "Patrones",
-      "iconos": "Iconos"
+      "iconos": "Iconos",
+      "movimiento": "Movimiento",
+      "patrones": "Patrones"
     },
     "type": {
       "title": "Tipografía",
@@ -171,78 +173,93 @@
       "principles": {
         "color": {
           "title": "Color funcional",
+          "nav": "Color funcional",
           "apply": "Cada color sale de un token --sc-* y significa algo: estado, jerarquía o feedback.",
           "avoid": "Hex a mano, teñir botones e iconos por decoración, o usar un --sc-color-* de paleta como fondo o color de página: no voltea en oscuro y queda ilegible.",
           "have": "La escala --sc-* y el puente al preset. Nunca hace falta un hex."
         },
         "loading": {
           "title": "Estados de carga",
+          "nav": "Carga",
           "apply": "Mientras llegan los datos, pinta un esqueleto con la forma del contenido y reserva su hueco.",
           "avoid": "Spinner centrado, o inyectar los datos y que la página salte (layout shift).",
           "have": "sc-skeleton (rectángulo o círculo, animación de onda). Ejemplo vivo abajo."
         },
         "copy": {
           "title": "Copy sin relleno",
+          "nav": "Textos",
           "apply": "Un título que se explica solo va solo. Descripción únicamente si aporta algo no obvio.",
           "avoid": "Un subtítulo decorativo de una o dos frases bajo cada cabecera.",
           "have": "Regla, no componente: menos texto, más señal. Si al quitarlo no se pierde nada, quítalo. Y el punto final, al unísono: la ayuda bajo un campo acaba en punto; el subtítulo bajo un título va sin él, y lo que nombra (títulos, botones, tooltips, errores), también. Una confirmación pregunta qué y a quién o a cuántos («¿Eliminar el grupo «Ventas»?»), y su botón repite el verbo («Eliminar»), nunca «Confirmar»."
         },
         "icons": {
           "title": "Iconografía consistente",
+          "nav": "Iconografía",
           "apply": "Una sola librería profesional, siempre vía sc-icon (Material Symbols).",
           "avoid": "Emojis en la interfaz, o mezclar dos juegos de iconos.",
           "have": "sc-icon sobre el set generado: un único idioma visual en todas las apps. Qué icono dice cada cosa, en Fundamentos → Iconos."
         },
         "density": {
           "title": "Densidad y jerarquía",
+          "nav": "Densidad",
           "apply": "Layout compacto. Acciones secundarias en un menú kebab, métricas alineadas, chips a icono cuando el color ya dice el estado.",
           "avoid": "Repetir en cada vista los KPIs que ya están en el dashboard, o tarjetas sin dato ni acción.",
           "have": "sc-datatable, sc-card y el patrón de overflow del supervisor."
         },
         "a11y": {
           "title": "Accesibilidad, barra mínima",
+          "nav": "Accesibilidad",
           "apply": "Contraste 4.5:1 en texto y 3:1 en texto grande e iconos. Todo control alcanzable por teclado, con foco visible y etiqueta.",
           "avoid": "Comunicar un estado solo con color, o dejar un control sin label.",
           "have": "El contraste ya vive en los tokens; el riesgo entra al pintar un color a mano."
         },
         "motion": {
           "title": "Sin saltos",
+          "nav": "Sin saltos",
           "apply": "Anima solo transform y opacity. Imágenes con width/height o aspect-ratio. Banners y toasts en un hueco ya reservado.",
           "avoid": "Animar top, left, width o height, o insertar algo encima del contenido al cargar.",
           "have": "La transición de tema del propio sitio ya funde con opacity, sin recolocar nada."
         },
         "type": {
           "title": "Tipografía por clase",
+          "nav": "Tipografía por clase",
           "apply": "El texto de la página lleva una de las 12 clases .sc-text-* (los text styles del Figma del DS). Si el texto de un componente tiene que verse distinto, se mueve su token.",
           "avoid": "Poner .sc-text-* en la etiqueta de un <sc-*>: va sin capa, y sin capa gana siempre, así que lo desconecta del tema.",
           "have": "Las 12 clases ya existen y beben de los tokens de rol; audit:text-styles enrojece si una deja de valer lo que su text style, o si alguien se la pone encima a un componente."
         },
         "grouping": {
           "title": "Agrupación por espacio",
+          "nav": "Agrupación",
           "apply": "Lo que va junto, más cerca que lo que no: 7 entre una etiqueta y su control, 14 entre hermanos (campos, opciones, filas) y 28 entre grupos, entre secciones y antes del botón que envía. Es la escalera 7 · 14 · 28: entre grupos, al menos el doble que dentro. Y la densidad, por lo que se hace en la pantalla: compacto donde se escanea (el monitor, las listas), más aire donde se lee y se rellena (fichas, formularios).",
           "avoid": "Separar dos campos casi lo mismo que una etiqueta de su control (12 contra 7), o dejar el botón a la misma distancia del último campo que los campos entre sí: se lee como un campo más.",
           "have": "Las piezas compartidas del supervisor ya la aplican (.grid y .field en _forms.scss). Si una maqueta trae otro valor, manda la escalera y el cambio del Kit se apunta en figma-pendiente."
         },
         "fill": {
           "title": "Una tabla llega al pie de la pantalla",
+          "nav": "Tablas a toda altura",
           "apply": "Si una tabla dentro de una sección necesita más sitio, aprovecha el resto de la pantalla: desplaza por dentro, con la cabecera fija y el paginador al pie, y su tope es lo que queda hasta el pie, medido desde donde empieza. En una pantalla baja no pasa de su suelo, y entonces desplaza la página.",
           "avoid": "Un tope fijo («el alto de la ventana menos 420 px»): no sabe dónde empieza la tabla, y deja pantalla vacía debajo mientras esconde filas.",
           "have": "En el supervisor, la directiva scLlegaAlPie mide el alto que queda; lo prueba tabla-al-pie: con 2 px más de tabla, la página desplaza."
         },
         "blame": {
           "title": "Lo que falta, en gris y en el resumen; en rojo al dejarlo vacío",
+          "nav": "Lo que falta",
           "apply": "Un obligatorio vacío es algo por rellenar, no un error: su aviso sale bajo el campo desde el principio, en gris, como ayuda, y pasa a rojo al dejar el campo vacío. «Crear» y «Guardar» están apagados mientras falte algo, y arriba del resumen «Falta: nombre, teléfono saliente» lo dice entero, con cada cosa llevando a su campo; «Listo para crear» cuando ya no falta nada. Lo guardado que ya venía sin algo se dice al abrir. Un error de contenido (un nombre repetido, un email mal escrito) va en vivo. El ✓ del índice es de la sección que se dejó tal como está.",
           "avoid": "Un rojo antes de tocar el campo, o un punto rojo en una sección que no se está mirando: se lee como causado por lo último que se hizo. Tampoco un botón gris sin decir qué lo bloquea, ni avisos amarillos de lo que no bloquea nada.",
           "have": "En el supervisor, ocasionDeAvisar decide cuándo va en rojo cada aviso, ayudaDeObligatorio pone el gris y sc-summary-status dice lo que falta; lo vigilan la regla 7 de audit:screen-hygiene, indice-errores y sin-acusar-de-primeras."
         }
-      }
+      },
+      "do": "Haz",
+      "dont": "Evita",
+      "prev": "Anterior",
+      "next": "Siguiente",
+      "neighbours": "Otros patrones",
+      "missing": "Ese patrón no existe",
+      "all": "Ver todos los patrones"
     },
     "color": {
-      "title": "Escala y color",
+      "title": "Color",
       "intro": "Tokens <code>--sc-*</code> del paquete <code>@smartcontact-hub/styles</code>. Cada valor es trazable al export del Kit y se verifica en CI (<code>tokens:gen</code> · <code>tokens:parity</code>).",
-      "scaleTitle": "Escala 14-base",
-      "thToken": "Token",
-      "thPx": "Diseño (px)",
       "primitiveTitle": "Color primitivo",
       "primitiveHint": "Pasa por encima de un color para ver su token, su hex y su HSL. Cada línea se copia al pulsarla.",
       "copyHexAria": "Pulsa para copiar el hex.",
@@ -360,6 +377,48 @@
         "contraste": "Contraste de al menos 3:1 y diana de al menos 24 px."
       },
       "foot": "Contrastado con <a href=\"https://www.nngroup.com/articles/icon-usability/\" target=\"_blank\" rel=\"noopener\">NN/g, Icon Usability</a> y <a href=\"https://primer.style/product/components/icon-button/\" target=\"_blank\" rel=\"noopener\">el IconButton de Primer</a>. Decisión: DD-200."
+    },
+    "spacing": {
+      "title": "Espaciado",
+      "lead": "Una sola escala, de 14 en 14: <code>--sc-scale-*</code>, en rem. En un componente se escribe su alias, <code>--sc-spacing-*</code>; nada de px a pelo ni <code>calc()</code> a mano.",
+      "scaleTitle": "Escala 14-base",
+      "thToken": "Token",
+      "thAlias": "En un componente",
+      "thPx": "px",
+      "thBar": "Muestra",
+      "groupTitle": "Agrupación: 7, 14 y 28",
+      "groupLead": "Lo que va junto, más cerca que lo que no. Entre grupos, al menos el doble que dentro.",
+      "demoAria": "Formulario de muestra: 7 píxeles entre cada etiqueta y su control, 14 entre dos campos del mismo grupo y 28 entre grupos y antes del botón.",
+      "demoName": "Nombre",
+      "demoSurname": "Apellidos",
+      "demoPhone": "Teléfono",
+      "demoSave": "Guardar",
+      "gap7": "7: etiqueta y su control",
+      "gap14": "14: entre campos",
+      "gap28": "28: entre grupos y antes del botón",
+      "groupMore": "La regla entera, en el patrón Agrupación"
+    },
+    "motion": {
+      "title": "Movimiento",
+      "lead": "Tres duraciones y dos curvas: <code>--sc-transition-*</code> y <code>--sc-easing-*</code>. Se anima solo <code>transform</code> y <code>opacity</code>, y si el sistema pide reducir movimiento, nada se mueve.",
+      "play": "Reproducir",
+      "back": "Volver",
+      "durationsTitle": "Duraciones",
+      "curvesTitle": "Curvas",
+      "uses": {
+        "fast": "La respuesta a un gesto: hover, foco, un color o un borde que cambia.",
+        "base": "Algo que aparece o se desplaza: un menú que se abre, una fila que entra.",
+        "slow": "Un cambio grande: una página o un panel que entra.",
+        "default": "Cambios de estado: color, fondo, borde, sombra.",
+        "emphasized": "Lo que entra o se mueve: arranca rápido y frena al llegar."
+      },
+      "rulesTitle": "Reglas",
+      "rules": {
+        "only": "Solo <code>transform</code> y <code>opacity</code>. Animar <code>top</code>, <code>width</code> o <code>height</code> recoloca lo que hay alrededor.",
+        "reduced": "Con «reducir movimiento» activado en el sistema, sin animación: <code>@media (prefers-reduced-motion: reduce)</code> la quita. Los ejemplos de esta página también saltan al final.",
+        "nobounce": "Sin rebotes ni curvas elásticas: el movimiento frena al llegar, no se pasa."
+      },
+      "more": "Por qué nada salta, en el patrón Sin saltos"
     }
   },
   "uso": {

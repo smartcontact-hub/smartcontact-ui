@@ -352,7 +352,7 @@ function tokensMd(fecha) {
       'paleta (`--sc-color-slate-200`): el rol voltea solo en oscuro, la paleta no. Los tamaños y espacios salen de ' +
       '`--sc-spacing-*` y la letra de las clases `.sc-text-*`.',
     '',
-    `Generado el ${fecha} de \`tokens/_semantic-docs.json\`. En la web: ${SITIO}/#/fundamentos/escala-color`,
+    `Generado el ${fecha} de \`tokens/_semantic-docs.json\`. En la web: ${SITIO}/#/fundamentos/color`,
     '',
   ];
   const familias = new Map();

@@ -1,4 +1,3 @@
-import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, linkedSignal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
@@ -43,7 +42,6 @@ const TEMAS_URL: readonly TemaUrl[] = ['claro', 'oscuro', 'comparar'];
     FichaPautasComponent,
     FichaPestanasComponent,
     FichaPiezasComponent,
-    NgTemplateOutlet,
     StoryAnatomyComponent,
     StoryCanvasComponent,
     StoryMatrizComponent,

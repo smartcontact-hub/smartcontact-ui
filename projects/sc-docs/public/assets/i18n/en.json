@@ -119,10 +119,12 @@
   },
   "fundamentos": {
     "tabs": {
-      "escala-color": "Scale & color",
+      "color": "Color",
+      "espaciado": "Spacing",
       "tipografia": "Typography",
-      "patrones": "Patterns",
-      "iconos": "Icons"
+      "iconos": "Icons",
+      "movimiento": "Motion",
+      "patrones": "Patterns"
     },
     "type": {
       "title": "Typography",
@@ -171,78 +173,93 @@
       "principles": {
         "color": {
           "title": "Functional color",
+          "nav": "Functional color",
           "apply": "Every color comes from a --sc-* token and means something: state, hierarchy, or feedback.",
           "avoid": "Hand-written hex, tinting buttons and icons for decoration, or using a --sc-color-* palette value as a page or background color: it doesn't flip in dark mode and becomes unreadable.",
           "have": "The --sc-* scale and the bridge to the preset. You never need a hex."
         },
         "loading": {
           "title": "Loading states",
+          "nav": "Loading",
           "apply": "While data arrives, paint a skeleton shaped like the content and reserve its space.",
           "avoid": "A centered spinner, or injecting data and letting the page jump (layout shift).",
           "have": "sc-skeleton (rectangle or circle, wave animation). Live example below."
         },
         "copy": {
           "title": "Copy without filler",
+          "nav": "Copy",
           "apply": "A title that explains itself stands alone. A description only if it adds something non-obvious.",
           "avoid": "A decorative one- or two-sentence subtitle under every heading.",
           "have": "A rule, not a component: less text, more signal. If removing it loses nothing, remove it. And end punctuation in unison: help text under a field ends with a period; a subtitle under a heading has none, and neither does anything that names (titles, buttons, tooltips, errors). A confirmation asks what and to whom or how many (“Delete the group “Sales”?”), and its button repeats the verb (“Delete”), never “Confirm”."
         },
         "icons": {
           "title": "Consistent iconography",
+          "nav": "Iconography",
           "apply": "A single professional library, always via sc-icon (Material Symbols).",
           "avoid": "Emojis in the interface, or mixing two icon sets.",
           "have": "sc-icon over the generated set: one visual language across every app. What each icon says, in Fundamentals → Icons."
         },
         "density": {
           "title": "Density and hierarchy",
+          "nav": "Density",
           "apply": "Compact layout. Secondary actions in a kebab menu, aligned metrics, chips reduced to an icon when color already states the status.",
           "avoid": "Repeating in every view the KPIs already on the dashboard, or cards with no data or action.",
           "have": "sc-datatable, sc-card, and the supervisor's overflow pattern."
         },
         "a11y": {
           "title": "Accessibility, the minimum bar",
+          "nav": "Accessibility",
           "apply": "4.5:1 contrast on text and 3:1 on large text and icons. Every control reachable by keyboard, with visible focus and a label.",
           "avoid": "Signaling a state with color alone, or leaving a control without a label.",
           "have": "Contrast already lives in the tokens; the risk enters when you paint a color by hand."
         },
         "motion": {
           "title": "No jumps",
+          "nav": "No jumps",
           "apply": "Animate only transform and opacity. Images with width/height or aspect-ratio. Banners and toasts in already-reserved space.",
           "avoid": "Animating top, left, width, or height, or inserting something over the content on load.",
           "have": "The site's own theme transition already crossfades with opacity, without repositioning anything."
         },
         "type": {
           "title": "Typography by class",
+          "nav": "Typography by class",
           "apply": "Page text takes one of the 12 .sc-text-* classes (the DS Figma text styles). If a component’s text needs to look different, move its token.",
           "avoid": "Putting .sc-text-* on an <sc-*> tag: it sits outside the layer, and unlayered always wins, so it disconnects the component from the theme.",
           "have": "The 12 classes already exist and read the role tokens; audit:text-styles goes red if one stops matching its text style, or if someone puts it on top of a component."
         },
         "grouping": {
           "title": "Grouping by space",
+          "nav": "Grouping",
           "apply": "What belongs together sits closer than what doesn't: 7 between a label and its control, 14 between siblings (fields, options, rows) and 28 between groups, between sections and before the submit button. It is the 7 · 14 · 28 ladder: between groups, at least double the gap within. And density follows what the screen is for: compact where people scan (the monitor, lists), more air where they read and fill in (records, forms).",
           "avoid": "Spacing two fields almost as tightly as a label and its control (12 against 7), or leaving the button as close to the last field as the fields are to each other: it reads as one more field.",
           "have": "The supervisor's shared pieces already apply it (.grid and .field in _forms.scss). When a mockup brings another value, the ladder wins and the Kit change is logged in figma-pendiente."
         },
         "fill": {
           "title": "A table reaches the bottom of the screen",
+          "nav": "Full-height tables",
           "apply": "When a table inside a section needs more room, it uses the rest of the screen: it scrolls inside, with a sticky header and the paginator at the bottom, and its cap is what is left down to the bottom, measured from where it starts. On a short screen it stops at its floor, and then the page scrolls.",
           "avoid": "A fixed cap («window height minus 420 px»): it does not know where the table starts, and leaves empty screen below while hiding rows.",
           "have": "In the supervisor, the scLlegaAlPie directive measures the remaining height; tabla-al-pie tests it: 2 px more of table and the page scrolls."
         },
         "blame": {
           "title": "What is missing, in grey and in the summary; in red on leaving it empty",
+          "nav": "What's missing",
           "apply": "An empty required field is something still to fill in, not an error: its message shows under the field from the start, in grey, as help, and turns red on leaving the field empty. «Create» and «Save» stay disabled while something is missing, and above the summary «Missing: name, outbound phone» says all of it, each item leading to its field; «Ready to create» once nothing is missing. A saved record that already lacked something says so on opening. A content error (a repeated name, a mistyped email) shows live. The index ✓ belongs to a section left as it is.",
           "avoid": "Red before the field is touched, or a red dot in a section nobody is looking at: it reads as caused by the last thing done. Nor a grey button that does not say what blocks it, or yellow warnings about things that block nothing.",
           "have": "In the supervisor, ocasionDeAvisar decides when each message turns red, ayudaDeObligatorio puts the grey one and sc-summary-status says what is missing; rule 7 of audit:screen-hygiene, indice-errores and sin-acusar-de-primeras guard it."
         }
-      }
+      },
+      "do": "Do",
+      "dont": "Don't",
+      "prev": "Previous",
+      "next": "Next",
+      "neighbours": "Other patterns",
+      "missing": "That pattern does not exist",
+      "all": "See all patterns"
     },
     "color": {
-      "title": "Scale & color",
+      "title": "Color",
       "intro": "<code>--sc-*</code> tokens from the <code>@smartcontact-hub/styles</code> package. Every value traces back to the Kit export and is verified in CI (<code>tokens:gen</code> · <code>tokens:parity</code>).",
-      "scaleTitle": "14-base scale",
-      "thToken": "Token",
-      "thPx": "Design (px)",
       "primitiveTitle": "Primitive color",
       "primitiveHint": "Hover a color to see its token, hex, and HSL. Each line copies when you click it.",
       "copyHexAria": "Click to copy the hex.",
@@ -360,6 +377,48 @@
         "contraste": "Contrast of at least 3:1 and a target of at least 24 px."
       },
       "foot": "Checked against <a href=\"https://www.nngroup.com/articles/icon-usability/\" target=\"_blank\" rel=\"noopener\">NN/g, Icon Usability</a> and <a href=\"https://primer.style/product/components/icon-button/\" target=\"_blank\" rel=\"noopener\">Primer's IconButton</a>. Decision: DD-200."
+    },
+    "spacing": {
+      "title": "Spacing",
+      "lead": "One scale, in steps of 14: <code>--sc-scale-*</code>, in rem. Inside a component you write its alias, <code>--sc-spacing-*</code>; no raw px and no hand-made <code>calc()</code>.",
+      "scaleTitle": "14-base scale",
+      "thToken": "Token",
+      "thAlias": "Inside a component",
+      "thPx": "px",
+      "thBar": "Sample",
+      "groupTitle": "Grouping: 7, 14 and 28",
+      "groupLead": "What belongs together sits closer than what doesn't. Between groups, at least double the gap within.",
+      "demoAria": "Sample form: 7 pixels between each label and its control, 14 between two fields of the same group and 28 between groups and before the button.",
+      "demoName": "First name",
+      "demoSurname": "Last name",
+      "demoPhone": "Phone",
+      "demoSave": "Save",
+      "gap7": "7: label and its control",
+      "gap14": "14: between fields",
+      "gap28": "28: between groups and before the button",
+      "groupMore": "The full rule, in the Grouping pattern"
+    },
+    "motion": {
+      "title": "Motion",
+      "lead": "Three durations and two curves: <code>--sc-transition-*</code> and <code>--sc-easing-*</code>. Only <code>transform</code> and <code>opacity</code> animate, and when the system asks for reduced motion, nothing moves.",
+      "play": "Play",
+      "back": "Back",
+      "durationsTitle": "Durations",
+      "curvesTitle": "Curves",
+      "uses": {
+        "fast": "The response to a gesture: hover, focus, a color or a border that changes.",
+        "base": "Something that appears or moves: a menu opening, a row coming in.",
+        "slow": "A big change: a page or a panel coming in.",
+        "default": "State changes: color, background, border, shadow.",
+        "emphasized": "What enters or moves: starts fast and slows to a stop."
+      },
+      "rulesTitle": "Rules",
+      "rules": {
+        "only": "Only <code>transform</code> and <code>opacity</code>. Animating <code>top</code>, <code>width</code> or <code>height</code> moves everything around it.",
+        "reduced": "With \"reduce motion\" on in the system, no animation: <code>@media (prefers-reduced-motion: reduce)</code> removes it. The samples on this page jump to the end too.",
+        "nobounce": "No bounce and no elastic curves: motion slows to a stop, it does not overshoot."
+      },
+      "more": "Why nothing jumps, in the No jumps pattern"
     }
   },
   "uso": {

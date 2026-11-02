@@ -1,5 +1,5 @@
 /* Vive DENTRO del shell de Fundamentos: el marco y el padding superior los pone el shell.
- * Misma medida de lectura y alineación a la izquierda que Escala/color y Tipografía. */
+ * Misma medida de lectura y alineación a la izquierda que Color y Tipografía. */
 :host {
   display: block;
   max-width: 720px;
@@ -7,7 +7,7 @@
 }
 
 .hero {
-  margin-bottom: var(--sc-spacing-2-5);
+  margin-bottom: var(--sc-spacing-2);
 
   &__title {
     margin: 0 0 var(--sc-spacing-0-75);
@@ -27,156 +27,83 @@ code {
   color: var(--sc-text-primary);
 }
 
-/* ── Lista de patrones ── */
+/* ── Las tarjetas: dos columnas en ancho, una en estrecho ── */
 .pt {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+  gap: var(--sc-spacing-1);
   list-style: none;
-  margin: 0 0 var(--sc-spacing-2-5);
+  margin: 0 0 var(--sc-spacing-2);
   padding: 0;
 
-  &__row {
+  li {
     display: flex;
-    gap: var(--sc-spacing-1-25);
-    padding: var(--sc-spacing-1-5) 0;
-
-    & + & {
-      border-top: 1px solid var(--sc-border-subtle);
-    }
   }
 
-  &__body {
+  &__card {
+    display: flex;
     flex: 1 1 auto;
-    min-width: 0;
-  }
-
-  &__title {
-    margin: 0 0 var(--sc-spacing-0-75);
-    color: var(--sc-text-primary);
-  }
-
-  &__line {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--sc-spacing-0-75);
-    margin: 0 0 var(--sc-spacing-0-5);
-    font-size: var(--sc-font-size-200);
-    line-height: 1.5;
-    color: var(--sc-text-secondary);
-  }
-
-  &__mark {
-    flex: 0 0 auto;
-    margin-top: 1px;
-
-    &--do {
-      color: var(--sc-text-success);
-    }
-
-    &--dont {
-      color: var(--sc-text-danger);
-    }
-  }
-
-  &__have {
-    margin: var(--sc-spacing-0-75) 0 0;
-    font-size: var(--sc-font-size-100);
-    line-height: 1.5;
-    color: var(--sc-text-subtle);
-  }
-
-  &__have-label {
-    display: inline-block;
-    margin-right: var(--sc-spacing-0-75);
-    padding: 1px var(--sc-spacing-0-5);
-    border-radius: var(--sc-radius-sm);
-    background: var(--sc-bg-info-subtle);
-    color: var(--sc-text-info);
-    font-size: var(--sc-font-size-100);
-    font-weight: var(--sc-font-weight-semibold);
-  }
-}
-
-/* ── Demo viva del skeleton ── */
-.demo {
-  border: 1px solid var(--sc-border-subtle);
-  border-radius: var(--sc-radius-lg);
-  background: var(--sc-bg-subtle);
-  padding: var(--sc-spacing-1-25) var(--sc-spacing-1-5) var(--sc-spacing-1-5);
-
-  &__title {
-    margin: 0 0 var(--sc-spacing-0-5);
-    color: var(--sc-text-primary);
-  }
-
-  &__lead {
-    margin: 0 0 var(--sc-spacing-1-25);
-    color: var(--sc-text-subtle);
-  }
-
-  &__pair {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--sc-spacing-1-25);
-  }
-
-  &__col {
-    display: flex;
-    flex-direction: column;
-    gap: var(--sc-spacing-0-75);
-    min-width: 0;
-  }
-
-  &__label {
-    display: flex;
     align-items: center;
-    gap: var(--sc-spacing-0-5);
-    margin: 0;
-    font-size: var(--sc-font-size-100);
-    font-weight: var(--sc-font-weight-semibold);
+    gap: var(--sc-spacing-1);
+    padding: var(--sc-spacing-1) var(--sc-spacing-1-25);
+    border: 1px solid var(--sc-border-default);
+    border-radius: var(--sc-radius-lg);
+    color: var(--sc-text-primary);
+    text-decoration: none;
+    transition:
+      border-color var(--sc-transition-fast) var(--sc-easing-default),
+      background-color var(--sc-transition-fast) var(--sc-easing-default);
+
+    &:hover {
+      border-color: var(--sc-border-strong);
+      background: var(--sc-bg-subtle);
+
+      .pt__arrow {
+        transform: translateX(2px);
+        color: var(--sc-text-primary);
+      }
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--sc-border-focus);
+      outline-offset: 2px;
+    }
+  }
+
+  &__icon {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    width: var(--sc-spacing-2-5);
+    height: var(--sc-spacing-2-5);
+    border-radius: var(--sc-radius-md);
+    background: var(--sc-bg-subtle);
     color: var(--sc-text-secondary);
   }
 
-  &__stage {
-    /* Alto compartido para que las dos columnas del do/don't queden a la par (el skeleton
-       de 3 filas mide ~11.5rem; el stretch del grid no propaga a un hijo flex, así que se
-       iguala por min-height). */
-    min-height: 11.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: var(--sc-spacing-1);
-    padding: var(--sc-spacing-1-25);
-    border-radius: var(--sc-radius-md);
-    background: var(--sc-bg-surface);
-    border: 1px solid var(--sc-border-subtle);
-
-    &--spinner {
-      align-items: center;
-      justify-content: center;
-      color: var(--sc-text-subtle);
-    }
-  }
-}
-
-/* Una sola columna cuando no caben las dos (móvil). */
-@media (max-width: 34rem) {
-  .demo__pair {
-    grid-template-columns: 1fr;
-  }
-}
-
-.demo-row {
-  display: flex;
-  align-items: center;
-  gap: var(--sc-spacing-1);
-
-  &__lines {
+  &__title {
     flex: 1 1 auto;
-    display: flex;
-    flex-direction: column;
-    gap: var(--sc-spacing-0-5);
+    min-width: 0;
+  }
+
+  &__arrow {
+    flex: 0 0 auto;
+    color: var(--sc-text-subtle);
+    transition:
+      transform var(--sc-transition-fast) var(--sc-easing-emphasized),
+      color var(--sc-transition-fast) var(--sc-easing-default);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pt__card,
+  .pt__arrow {
+    transition: none;
   }
 }
 
 .foot {
-  margin: var(--sc-spacing-1-5) 0 0;
+  margin: 0;
   color: var(--sc-text-subtle);
 }
