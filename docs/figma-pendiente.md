@@ -1649,6 +1649,55 @@ Equipos, Agendas, Plantillas, Grupos, Agentes y Repositorios · **Evidencia:** `
 - **El estado «Solo lectura»** en `inputtext` y `textarea` (§50): sin borde, sobre el fondo suave, enfocable. Hecho cuando
   el PIN de Agentes y el script de chat de Grupos lo usan.
 - **El slot plegable con pista** (`sc-slot collapsible`, «Mensajes en cola» de Grupos), como «Plegable» de `.Subsection`.
+- **`menu-item` con texto al final** (la cifra de «Recientes» del hub): hoy solo lleva icono y texto, y por eso existe
+  «Recent item».
+
+**Segunda vuelta del 2026-11-03: todo enlazado.** Lo que se repetía montado a mano en cada pantalla es ahora componente
+local, en la página nueva «Componentes del Supervisor» (`4428:25889`), y cada copia es una instancia con sus textos y su
+tono (instancias contadas al cerrar, con los pasos nuevos del hub):
+
+| Componente | Id | Instancias | Qué es |
+|---|---|---|---|
+| Record header | `4428:25893` | 87 (Grupos, Agentes, Tipificaciones) | Nombre y datos encima del índice; la línea de extensión del agente, opcional |
+| Empty state | `4430:98988` | 33 | Icono en círculo, título, cuerpo y botón en un slot; en desarrollo, `sc-empty-state` |
+| Popup menu | `4431:26028` | 14 | El contenedor de `p-menu` y `p-popover`; dentro, `menu-item`, `menu-separator` y `menu-submenu-label` del Kit |
+| Repository card | `4435:785` | 97 | La tarjeta del hub; el tono y «marcada», como overrides |
+| Destination row | `4435:796` | 27 | Fila del panel de destinos |
+| Category title | `4435:800` | 28 | Título de categoría con su raya |
+| Destination header | `4435:807` | 3 | Cabecera del panel de destinos |
+| Docked drawer | `4435:874` | 3 | `p-drawer` acoplado a la derecha, con el contenido en un slot (el drawer del Kit solo admite texto) |
+| Recent item | `4445:1282` | 3 | Fila de «Recientes» |
+
+**Cómo pasarlos al Kit sin romper nada.** Las instancias apuntan a este fichero, así que cortar y pegar no basta: crearía
+un componente nuevo y dejaría las instancias huérfanas. Dos caminos:
+1. Publicar el Supervisor como librería (basta la página de componentes), cortar el componente, pegarlo en el Kit y
+   publicar el Kit. Figma lo da por movido y, al aceptar la actualización en el Supervisor, las instancias pasan a apuntar
+   al del Kit con sus overrides.
+2. Sin publicar el Supervisor: crear o pegar el componente en el Kit, publicarlo y cambiar por script cada instancia local
+   por la del Kit (`swapComponent`). Los overrides se conservan si las capas y las propiedades se llaman igual, que es por
+   lo que los nombres de capa y de propiedad son estables.
+
+**Hecho además en la segunda vuelta:**
+- **El hub de Repositorios, cerrado**: el mapa lleva el filtro delante del buscador, como las pantallas; las cajas de
+  PrimeNG, en azul (`p-selectbutton`, `p-drawer`); y el flujo gana los pasos 3 a 7 (Recientes, filtro por categoría,
+  búsqueda sin resultados, el panel con velo a 1280 con `mask/background` y los estados de la tarjeta). El selector de 5
+  opciones ya era el `selectbutton` del Kit.
+- **Notas para desarrollo**: fuera de las notas, hojas y mapas de las siete páginas de administración lo que solo existe en
+  este repo (componentes de página, `sc-datatable`, `sc-section-card`, SCSS, `--sc-*`, DD y «el prototipo la mide a…»). Se
+  quedan los 24 nombres del DS de desarrollo, más `sc-empty-state` y `sc-search`, que tiene en sus demos. Y fuera
+  «dibujo» y «dibujar»: la maqueta se compone.
+- **Copias sueltas**: las secciones «Dialpad» de los hand-off de Agendas y Plantillas, copiadas de Tipificaciones al
+  duplicar la página y sin uso, borradas.
+- **Smart-Contact Icons** (`NLfCIqd4OTkpdzNXx93nZc`): `schedule`, `sell`, `label`, `category` y `arrow_forward`, con la
+  receta de los demás (Material Symbols Rounded, glifo ampliado 24/18 en la caja de 14, relleno atado a `Icon`), y la
+  nota de la página reescrita como orientación.
+
+**Queda:**
+- **Publicar Smart-Contact Icons** y, después, cambiar en el hub los sustitutos: `calendar_today` por `schedule`
+  (Horarios), `bookmark` por `sell` (Tipificaciones) y por `label` (Labels), y `dashboard` por `category`
+  (Clasificación IA). La nota del mapa del hub lo dice hasta entonces.
+- **Usuarios**: la página es de la generación `41:*`, tres marcos sin flujo y con tablas de celdas sueltas. Ponerla al
+  nivel de las demás es maquetarla de nuevo, no ponerla al día.
 
 ## Lo de estas semanas que NO va a Figma, y por qué
 

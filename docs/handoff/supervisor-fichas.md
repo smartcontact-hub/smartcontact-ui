@@ -97,8 +97,11 @@ El de Agendas, Plantillas y Equipos solo a agentes (2026-10-28, DD-239, sin tram
   «Asignados»; DD-244 en Tipificaciones; DD-235 y DD-245 en Equipos (fuera el nombre repetido, que se había escapado);
   las seis «Avanzado» de Agentes con la `.Subsection` plegable del Kit.
 - **«Fuera del DS»**: ninguna ficha quedaba como «se queda»; la página se borró, y lo que pide al Kit está en §66.
-- **No hecho**: Contact Center (no se toca), los COA (sin acceso desde la sesión) y las versiones por página (la API no
-  las guarda).
+- **Segunda vuelta** (fundida la primera en #582, sobre `b4b1305b`): lo montado a mano, a componentes locales en
+  «Componentes del Supervisor», con nombres en inglés; el hub cerrado (pasos 3 a 7); las notas sin lo que solo existe en
+  este repo ni «dibujo»; cinco iconos en Smart-Contact Icons, sin publicar (§66).
+- **No hecho**: Contact Center (no se toca), los COA (sin acceso desde la sesión), las versiones por página (la API no
+  las guarda) y Usuarios, que hay que maquetar de nuevo.
 
 ## ✅ 2026-10-31 · La barra común de asignar y Repositorios como sus COA (DD-243, DD-245)
 
