@@ -1572,6 +1572,17 @@ mismo borde al pasar (antes no cambiaba); «Marcada» ya iba a 2 px en `blue/500
 y los dos textos del mapa de componentes (`3998:87241`, `3998:87278`). Sigue atado a la familia `blue` de la librería, no
 a `azure` (lo de abajo).
 
+**Medidas del hub contra el prototipo (2026-11-03)**, a 1280 × 1160 y a 1920 × 1160: la rejilla (904), las categorías,
+las tarjetas y el panel (350) ya casaban. No casaban dos cosas, en los siete hubs de la página (pasos 01 a 06 y el
+mapa): (a) la fila de Comunicación tenía las tarjetas en `HUG` (128, 130 y 146): en el prototipo la fila las estira a
+146; ahora llevan `minHeight` 146 (con `FILL` en una fila que abraza, las de los pasos 04 y 05, ocultas, se aplastaban a
+30). (b) En el filtro, el `content` de «Clasificación» iba en `FILL` (73 para un texto de 74 más 21 de relleno) y el
+filtro, fijo a 481: ahora cada opción abraza su texto (66 · 112 · 104 · 181 · 42 = 505; en el prototipo, 500) y el
+buscador sigue al filtro. **El velo del paso 06 se queda**: el prototipo lo pone a 1280 (`panelTapa`, DD-179 §4: el panel,
+en x 930, taparía tarjetas que llegan a x 1012); a 1920 no. **Queda**: la cabecera mide 58 en Figma y 56 en el prototipo
+(todo el hub baja 2 px), el título del panel y la flecha de «Abrir repositorio» (`arrow_forward` en el código, chevron en
+Figma) y sus entradas de ejemplo.
+
 **Queda:**
 - **Comunicación sin su azul**: en Figma, título, icono y cifra de Comunicación van atados a `blue/700`, que en la
   librería es el marino de marca; el código usa `azure` (`--sc-label-blue-*`, #1d4ed8), que la librería no tiene. Hace
