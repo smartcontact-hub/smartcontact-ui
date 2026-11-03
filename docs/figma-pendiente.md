@@ -746,6 +746,7 @@ y retocar tres maquetas · **Sin verificar** contra el fichero: el código no ci
 - **Las altas:** agente y usuario enseñan su cabecera al crear («Nuevo agente» hasta que se escribe el nombre), y el
   botón principal dice «Crear agente» / «Crear usuario», como «Crear grupo».
 - **Distribución y colas:** una línea «Ir a: Teléfono · Chat · Email» arriba de la sección, con dos o más canales.
+  Hecho en el Supervisor el 2026-11-03 (§69).
 
 **Cómo sabes que está hecho:** el icono del título de sección y el de la fila activa del índice van a 600 en el Kit, y
 las maquetas de las fichas enseñan las altas y los saltos como el código.
@@ -1379,6 +1380,13 @@ Email) y DD-206 §9.
   (con su ayuda), tiempo de ringing y su cola, como Chat sin Web Chat ni WhatsApp.
 - **Hoja «Cómo se comporta» del alta**: la fila 9 suma la línea de Email y la 15, el corte de la estrategia larga. La
   portada de «Otras configuraciones» nombra Email.
+- **«Ir a» con dos o más canales** (el punto de §29): componente local «Channel jumps» (`4568:27273`, regla 3 de §67),
+  con `Phone`, `Chat` y `Email`, medido contra el prototipo publicado a 1440 (caption 12/18, «Ir a» en
+  `semantic/text/subtle`, enlaces semibold subrayados en `sky/600`, icono a 12). Va en Otras configuraciones 5
+  (Teléfono y Chat) y 11 (Teléfono y Email), las dos únicas pantallas de Distribución con más de un canal. La `Section`
+  del Kit no tiene sitio para él: la cabecera lleva 46 de relleno abajo (override) y el atajo va en absoluto encima, en
+  (28,25 · 55,5) como en el código; los números 9 de la Guía bajan 46. Fila 9 de la hoja y fila «Saltos por canal» del
+  Mapa de componentes.
 
 ## Lo de estas semanas que NO va a Figma, y por qué
 
