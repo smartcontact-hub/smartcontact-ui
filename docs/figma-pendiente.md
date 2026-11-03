@@ -36,12 +36,12 @@ la barra de la app: 350 de ancho, sin sombra, con el borde en su filo interior y
 tres variantes que aún no existen: Drawer acoplado, Avatar con tono de etiqueta y Tag `label` sin borde. Los tonos son
 los de etiqueta del código (`--sc-label-<color>-bg`, `-text`, `-border` y `-dot`: Comunicación azul, Clasificación
 morado, Diseñador teal, IA naranja), que no tienen variables en el Kit, y el azul sale de `azure`, que el Kit no tiene
-(DD-83): decide con qué familia del Kit se pinta antes de dibujarlo. Mídelo antes. **Repaso del 2026-11-03:** la maqueta ya está (hub `3993:10509`, «Repository card» y «Docked drawer») y `azure` ya está en el Kit (§67). Faltan en el Kit el drawer acoplado, el avatar con tono de etiqueta y la etiqueta sin borde.
+(DD-83): decide con qué familia del Kit se pinta antes de dibujarlo. Mídelo antes. **Repaso del 2026-11-03:** la maqueta ya está (hub `3993:10509`, «Repository card» y el drawer acoplado del Kit). El drawer acoplado y la etiqueta con tono y sin borde están en el Kit y en uso desde ese día (§67); el azul es `sky` (DD-247).
 
 **Distribución y colas con el árbol del DS (DD-157, 2026-10-04).** Pendiente en el Kit y en la maqueta de la ficha de
 grupo: la sección en `surface="subtle"`, cada canal un `.Subsection` y cada parte un slot (Distribución, Cola, Mensajes
 en cola y, en Chat, el acceso al final); la música en «Cola»; y una variante plegable del slot, con el título como
-botón y el chevron de la subsección, que en el Kit no existe. Mídelo antes; no requiere variables nuevas. **Repaso del 2026-11-03:** `.Subsection` ya es plegable; falta la parte plegable con pista («Mensajes en cola»), §67.
+botón y el chevron de la subsección, que en el Kit no existe. Mídelo antes; no requiere variables nuevas. **Repaso del 2026-11-03:** `.Subsection` ya es plegable, y la parte plegable con pista («Mensajes en cola») está en el Kit desde ese día (§67).
 
 **F · listado (DD-153, 2026-10-02).** Pendiente de reflejar en el Kit y la maqueta: selector de
 columnas solo con `view_column` (tallas de botón de icono existentes), Asignar y menú fijos a la
@@ -160,24 +160,16 @@ variable cuando su nombre es único y avisa.
 
 ### Paso 5 · Maquetas del Supervisor (~1–2 h)
 
-- [ ] Acepta la actualización de la librería en el fichero del Supervisor.
-- [ ] **3** · TopBar a 56 y el aire de las páginas de lista.
-- [ ] **15** · Filas de formulario y radios a 14; botón de envío a 28.
-- [ ] **16** · `Block` (393:12587), a 17,5.
-- [ ] **5** · Contact Center, con una instancia del índice en lugar del marco.
-- [ ] **18** · El resumen de las fichas.
-- [ ] **29** · Las altas de agente y usuario, con su cabecera y «Crear …», y los saltos por canal de Distribución y colas.
-- [ ] **2** · Tarjetas de opción en Servicio; el interruptor a la derecha en los ajustes de Grupos.
-- [ ] **22 y 23** · Los números sueltos y la presencia de Contact Center.
-- [ ] **24** · Los tres textos de General.
-- [ ] **30** · Contact Center › Grupos y › Agentes, con los bloques y las palabras de sus fichas.
-- [ ] **31** · El resumen de las tres altas, con «Falta: …» y «Listo para crear».
-- [ ] **32** · Las tres altas con el índice de la edición: el ✓ de la sección hecha y «Atrás» / «Siguiente» al pie.
-- [ ] **33** · La ficha de grupo y Contact Center › Grupos: estrategias con «conversaciones», sin «Desbordar sesión».
-- [ ] **34** · El teléfono saliente obligatorio y cerrado, «Caducar sesión» y Recursos sin Etiquetas.
-- [ ] **35** · Las fichas en tres columnas: el título en el contenido, el resumen sin rótulo y «Eliminar» bajo el índice.
-- [ ] **36** · El nombre de la ficha, fijo arriba al bajar.
-- [ ] **37** · El resumen de la ficha de grupo, con sus rótulos y filas como enlaces.
+**Medido el 2026-11-03 contra el fichero del Supervisor**: de las 18 casillas no queda ninguna en las pantallas de
+administración.
+- Hechas: la librería aceptada (el Supervisor usa la publicada); 5, 16, 18, 23, 32 y 35 (en «Cerrado»); y 29, las
+  altas: «Nuevo agente» y «Crear agente» (13), «Nuevo usuario» y «Crear usuario» (8), y la línea «Ir a» de
+  Distribución y colas en las dos pantallas de Grupos con dos canales («Otras configuraciones 5» y «11»).
+- Obsoletas: 3, 31, 33, 34 y 36 (en «Cerrado»).
+- De Contact Center, aparcadas con su evolutivo: 15, 30, el interruptor y las tarjetas de opción de la 2, el
+  número de Servicio de la 22 y los tres textos de General de la 24.
+- Lo que queda de esas fichas es del Kit, no de las maquetas: el icono a 600 (29), la pastilla a 600 (2) y el
+  resumen como enlace (37).
 
 ### Paso 6 · Después, en el repo (una sesión de código; pásale este fichero)
 
@@ -733,7 +725,7 @@ que importaba.
 
 ## 29 · El pase de diseño de las fichas: icono a 600 junto a semibold, altas con «Crear …» y saltos por canal (2026-09-27)
 
-**Repaso del 2026-11-03:** faltan el icono a 600 junto al semibold (`Section` y `nav-item` usan Material Icons Round, sin eje de peso) y la línea «Ir a» de Grupos.
+**Repaso del 2026-11-03:** falta solo el icono a 600 junto al semibold (`Section` y `nav-item` usan Material Icons Round, sin eje de peso). Las altas con «Crear …» y la línea «Ir a» de Grupos ya están (medido, paso 5).
 
 **Estado:** pendiente · **Dónde:** Figma, el maestro `Section` del DS (el icono de su título), el índice lateral (la
 fila activa) y las maquetas de las fichas de grupo, agente y usuario · **Esfuerzo:** revincular el peso de dos iconos
@@ -777,7 +769,7 @@ réplica que el código acaba de quitar.
 
 ## 36b · El color de etiqueta marrón (2026-10-05, DD-176)
 
-**Repaso del 2026-11-03:** falta el color marrón en `tag` (solo tiene Severity) y en `chip`.
+**Repaso del 2026-11-03:** **hecho en `tag`**: `Severity=Label`, `Color=Brown`, en `amber/100` y `amber/900`, como `--sc-label-brown-*` y la etiqueta «Marrón» de sc-docs (el «lleno» de abajo es de antes). `chip` no lleva colores: ninguna pantalla lo usa con color (regla 5 de §67).
 
 **Estado:** pendiente · **Dónde:** Figma, la librería del DS, las variantes de color de `tag`/`chip` en `label` y la
 paleta de puntos · **Esfuerzo:** una variante más, con variables que ya existen.
@@ -1094,8 +1086,9 @@ hacer · **Dónde:** el Supervisor, páginas «Grupos» y
   modal solo admite botones.
 
 **Lo que la librería no tiene** (en las maquetas, separado de su maestro y anotado):
-- `group-summary`: sus variantes solo pintan Teléfono. Con Chat (V1) y con Web Chat y WhatsApp (V5), separado. **En el
-  Kit desde el 2026-11-03**: sus filas van en slots (§67); falta volver V1 y V5 a instancias al publicar.
+- `group-summary`: sus variantes solo pintan Teléfono. Con Chat (V1) y con Web Chat y WhatsApp (V5), separado. **Hecho el
+  2026-11-03**: sus filas van en slots (§67) y los 3 resúmenes de V1 vuelven a ser `group-summary`; V5 no tiene
+  resumen separado en la página.
 - Custom modal: **publicado** (versión «Custom modal: los topes de sc-dialog»): sin ancho máximo y con 720 de alto
   para el diálogo entero, como `max-height: min(85vh, 720px)` de `sc-dialog`; el contenido encoge sin tope propio.
   La cabecera en FILL (versión «Custom modal: la cabecera llena el ancho»), **publicada el 2026-11-03** (CURRENT).
@@ -1104,7 +1097,7 @@ hacer · **Dónde:** el Supervisor, páginas «Grupos» y
 - `.Subsection` plegable: publicado (§54, fila 9).
 
 **Cómo sabes que está hecho:** V1, V2 y V5 vuelven a ser instancias de su maestro sin perder nada (V2 ya lo es), y el
-botón de X1 a X3 lleva `key`.
+botón de X1 a X3 lleva `key`. **Hecho el 2026-11-03** (medido: V1 y `key`; V5 sin resumen propio).
 
 ---
 
@@ -1355,6 +1348,13 @@ en el Kit y en el código de `main`.
 
 «Docked drawer» y «Recent item», sin instancias, borrados de «Componentes del Supervisor»; las tres notas del hub que
 los nombraban, reescritas.
+
+**`Nav-menu`: las esquinas blancas de las filas (2026-11-03, sin publicar).** En el maestro (`15460:72350`, sus tres
+variantes), las filas sin marcar llevaban el blanco con radio 0: sobre el gris de la caja se veían las esquinas
+cuadradas, y al marcar otra fila en una pantalla, la que dejaba de estarlo se quedaba sin blanco. Ahora las 12 filas
+van en blanco (`content/background`) con el radio de la fila (`border/radius/xl`, 12), como `.form-nav--caja` del
+código (DD-221); la marcada tapa su blanco con su gris. Probado sobre gris con la segunda fila marcada. **Falta
+publicar el Kit**; la instancia medida en Grupos ya lo sobrescribía a 12 (el resto, sin medir).
 
 ## 68 · Usuarios maquetada de nuevo, contra el prototipo (cuarta vuelta, 2026-11-03)
 
