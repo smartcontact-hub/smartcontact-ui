@@ -1205,8 +1205,8 @@ Figma) y sus entradas de ejemplo.
 - **Uno no era aviso:** «¿Eliminar «Conexión»?» (Tipificaciones, edición, paso 05) es `sc-custom-modal` en el código
   (`tipificacion-niveles`), sin icono y con «Cancelar» con borde: ahora es «Custom modal» del Kit a 480 (`4482:121862`).
 - **Agentes ganó «Si algo falla 5»** (`4485:71560`): Gestionar en Repositorios con cambios, `Info`, como Grupos («Si
-  algo falla 7»). **Falta:** el multiselect de Equipos dice «Ninguno» y el resumen «Recursos 1»; debe enseñar «Inglés»
-  (el equipo de Tom Hanks), y `State=Selected` del Kit pinta «4 items selected».
+  algo falla 7»). **Hecho en la cuarta vuelta (§68):** Equipos enseña «Inglés» (`multiselect` `Mode=Chips`, una ficha)
+  y Recursos va a dos columnas, como el código.
 - **Notas:** las que decían `confirmdialog`, `p-confirmDialog` o «diálogo de confirmación» dicen ahora `sc-alert-modal`
   (Grupos, Agentes, Tipificaciones, Agendas y Plantillas; la tabla de piezas de Grupos, también).
 - **Code Connect**: `code-connect/sc-alert-modal.figma.ts` ya traduce `Surface=Plain` a `surface: 'plain'`; falta
@@ -1296,8 +1296,7 @@ un componente nuevo y dejaría las instancias huérfanas. Dos caminos:
 - **Publicar Smart-Contact Icons** y, después, cambiar en el hub los sustitutos: `calendar_today` por `schedule`
   (Horarios), `bookmark` por `sell` (Tipificaciones) y por `label` (Labels), y `dashboard` por `category`
   (Clasificación IA). La nota del mapa del hub lo dice hasta entonces.
-- **Usuarios**: la página es de la generación `41:*`, tres marcos sin flujo y con tablas de celdas sueltas. Ponerla al
-  nivel de las demás es maquetarla de nuevo, no ponerla al día.
+- ~~**Usuarios**: maquetarla de nuevo~~ → **hecho en la cuarta vuelta** (§68).
 
 ## 67 · Lo que el Kit no tiene: una regla y una decisión por pieza (2026-11-03)
 
@@ -1316,7 +1315,7 @@ en el Kit y en el código de `main`.
 
 | Pieza | Regla | Decisión | Estado |
 |---|---|---|---|
-| Azul de Comunicación (`azure`) | 4 | Familia primitiva `azure/50` a `azure/950` en «Primitive», con los valores de `--sc-color-azure-*` (el `blue` de Aura) | **Hecho** (`15929:4067` a `15929:4077`) |
+| ~~Azul de Comunicación (`azure`)~~ | 4 | Sin objeto: DD-247 deja Comunicación en `sky` y retira `azure` del código y del Kit (§64) | **Retirado** |
 | Tonos de etiqueta (Tag «label») | 1 y 4 | Variante de tono en `tag`, atada a primitivos (`azure`, `purple`, `teal`, `orange`…), como `--sc-label-*-bg/-text` | Sigue: el hub y Labels la sobrescriben a mano |
 | InputNumber sin botones | 1 | `inputnumber` gana `Type=Plain` (el `inputtext` del Kit); el sufijo va en el valor, como en PrimeNG («400 px») | **Hecho** (`15929:8262`) |
 | Tecla del atajo «/» | 2 | `kbd`, pieza propia, en su página «❖ Kbd», con `Key` como texto | **Hecho** (`15929:10407`) |
@@ -1331,9 +1330,41 @@ en el Kit y en el código de `main`.
 | Repository card, Destination row y header, Category title | 3 | Locales: solo los usa el hub | Se quedan |
 | Iconos `schedule`, `sell`, `label`, `category`, `arrow_forward` y `key` | 2 | En Smart-Contact Icons, con la receta de los demás | **Hecho** (`793:661` a `793:685`, `795:661`) |
 
-**Cuando se publiquen el Kit y los iconos:** atar en el hub los tonos de Comunicación a `azure` y cambiar los iconos
-sustitutos (§66); poner `key` en «Expirar contraseña» de la ficha de agente (§58); y, en el código, sacar `azure` de la
-parte escrita a mano de `01-primitive.css` en cuanto el export del Kit la traiga.
+**Cuando se publiquen el Kit y los iconos:** cambiar los iconos sustitutos del hub (§66) y el `graph_5` de Usuarios por
+`hub` (§68), y poner `key` en «Expirar contraseña» de la ficha de agente (§58).
+
+## 68 · Usuarios maquetada de nuevo, contra el prototipo (cuarta vuelta, 2026-11-03)
+
+**Estado:** hecho; las piezas del Kit, decididas y sin crear · **Dónde:** el Supervisor (`Hjyy41SYKqcRuIzCGggfYH`),
+página Usuarios (`41:2846`) · **Evidencia:** cada pantalla, contrastada con el prototipo publicado de `main` a 1440.
+
+**Hecho:**
+- **La página, al nivel de las demás**: Índice (`4470:8626`), Hand-off (`4470:8633`), Alta (`4470:8789`), Edición
+  (`4470:11232`), Listado (`4469:349`) y Mapa de componentes (`4470:14526`), con portada, pasos numerados, una nota por
+  pantalla y su hoja «Cómo se comporta». Todo con piezas del Kit o de «Componentes del Supervisor».
+- **Alta**: el paso 01 con el índice de secciones; fuera el paso 08 y su flecha; «Si algo falla» con Ctrl+S con lo
+  pendiente y el email mal escrito (el índice en rojo solo al intentar, como el código).
+- **Edición**: pasos 01 y 03 a 06 y «Si algo falla» 1 a 4 (con cambios, email vacío, tipo Administrador con su
+  plantilla); fuera la fila «Expirar contraseña», que la ficha de usuario no tiene.
+- **Listado**: paso 03, Duplicar (la miga dice «Nuevo usuario», como el prototipo); paso 07, el aviso de «Nuevo usuario»
+  en `Info`.
+- **Corregido contra el prototipo**: el anillo de Permisos en `sky/500` (`--sc-bg-accent`); la
+  miga del duplicado.
+- **Borrado**: la sección STAGING (`4482:121769`), reutilizada antes, y «Versión anterior» (`4469:348`).
+- **Agentes, «Si algo falla 5»** (`4485:71560`): Equipos con «Inglés» y Recursos a dos columnas en sus tres copias (§65).
+
+**Piezas del Kit (regla de §67):**
+
+| Pieza | Regla | Decisión | Estado |
+|---|---|---|---|
+| Piel de la tarjeta de sección (`Section`) | 2 | Variante del Kit, la que usan todas las fichas | Sigue |
+| KPI con anillo (resumen de permisos) | 2 | Pieza propia del Kit | Sigue |
+| Resumen de usuario | 3 | No hace falta pieza: se compone con lo que hay | Se queda |
+| Icono `hub` | 2 | En Smart-Contact Icons; mientras, `graph_5` | Sigue |
+
+**Diferencias del Kit con el código, medidas y sin tocar:** `checkbox` a 17 (el código, 27); el texto
+de error de `nav-item` corta a 128; `multiselect` `Mode=Chips` mide 40 de alto (el código, 33); y el subtítulo de «Custom
+modal» va en otro gris que el del código.
 
 ## Lo de estas semanas que NO va a Figma, y por qué
 
