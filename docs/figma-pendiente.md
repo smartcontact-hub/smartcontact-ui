@@ -1566,6 +1566,12 @@ Equipos, Agendas, Plantillas, Grupos, Agentes y Repositorios · **Evidencia:** `
   fila vacía del listado, en el slot de filas de la tabla, a los 322 de alto de las filas). La edición de agente, paso 05
   («desde la cifra de grupos»), decía «con el filtro en Asignados» y estaba en «Todos»: corregida. Las altas siguen en «Todos».
 
+**El borde al pasar, en el tono fuerte (DD-246, 2026-11-03)**, con `use_figma`: paso 07 «Estados de la tarjeta» (`4449:2477`),
+el estado «Al pasar» (`4449:2597`) pasa de `blue/200` a `blue/500` a 1 px, y el de «Próximamente» (`4449:2667`) toma ese
+mismo borde al pasar (antes no cambiaba); «Marcada» ya iba a 2 px en `blue/500`. Reescritos sus rótulos, la nota del paso
+y los dos textos del mapa de componentes (`3998:87241`, `3998:87278`). Sigue atado a la familia `blue` de la librería, no
+a `azure` (lo de abajo).
+
 **Queda:**
 - **Comunicación sin su azul**: en Figma, título, icono y cifra de Comunicación van atados a `blue/700`, que en la
   librería es el marino de marca; el código usa `azure` (`--sc-label-blue-*`, #1d4ed8), que la librería no tiene. Hace

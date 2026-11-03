@@ -162,9 +162,11 @@
   transition-duration: var(--sc-transition-fast);
   transition-timing-function: var(--sc-easing-emphasized);
 
-  /* Al pasar, el borde toma el tono de su grupo (la maqueta). */
+  /* Al pasar, el borde toma el tono FUERTE de su grupo, el análogo de `border-strong` en la receta de `sc-option-cards`
+   * (DD-246). No el borde de la etiqueta: es un 200 que, en teal y naranja (y en oscuro, en los cuatro), queda más
+   * flojo que el gris de reposo, y al pasar el borde se apagaba en vez de encenderse. */
   &:hover {
-    border-color: var(--tono-border, var(--sc-border-strong));
+    border-color: var(--tono-strong, var(--sc-border-strong));
   }
 
   &:active {
@@ -176,12 +178,13 @@
     outline-offset: var(--sc-focus-ring-offset);
   }
 
-  /* Marcada, la de su panel abierto: el borde fuerte de su tono y un halo de un píxel del mismo tono, como la maqueta.
-   * Señales quietas, ninguna el movimiento. Sin fondo tintado: la descripción, en gris, no llega a AA sobre el tinte. */
+  /* Marcada, la de su panel abierto: el borde fuerte de su tono y un halo de un píxel del MISMO color, dos píxeles en
+   * total; lo que la separa de una tarjeta al pasar, que lleva ese color en uno (DD-246). Señales quietas, ninguna el
+   * movimiento. Sin fondo tintado: la descripción, en gris, no llega a AA sobre el tinte. */
   &--selected,
   &--selected:hover {
     border-color: var(--tono-strong, var(--sc-border-primary));
-    box-shadow: 0 0 0 1px var(--tono-border, var(--sc-border-primary));
+    box-shadow: 0 0 0 1px var(--tono-strong, var(--sc-border-primary));
   }
 
   /* Del icono y la cifra al nombre, 10,5; del nombre a su descripción, 3,5 (la maqueta deja 4): son una pieza. */
@@ -198,14 +201,12 @@
     font-variant-numeric: tabular-nums;
   }
 
-  /* «Próximamente» (COA SISMAC-4064, DD-245): no abre nada, así que ni el borde al pasar, ni pulsar al 96 %, ni la
-   * mano. Sin opacidad, como haría un deshabilitado: la descripción, en gris, dejaría de llegar a 4,5:1. */
+  /* «Próximamente» (COA SISMAC-4064, DD-245): no abre nada, así que ni pulsar al 96 % ni la mano. Al pasar, el borde
+   * en su tono como sus hermanas (DD-246): todo el grupo responde igual, y lo que dice que no se abre es el cursor y
+   * la marca, no un borde que se queda gris. Sin opacidad, como haría un deshabilitado: la descripción, en gris,
+   * dejaría de llegar a 4,5:1. */
   &--soon {
     cursor: default;
-
-    &:hover {
-      border-color: var(--sc-border-default);
-    }
 
     &:active {
       scale: none;

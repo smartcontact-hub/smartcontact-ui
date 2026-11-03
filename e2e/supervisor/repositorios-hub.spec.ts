@@ -1,6 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
-import { disableAnimations, forceLightTheme, goto } from './helpers';
+import { enNavegador, type Rgb } from '../shared/color';
+import { disableAnimations, forceDarkTheme, forceLightTheme, goto } from './helpers';
 
 /**
  * REPOSITORIOS EN TARJETAS POR GRUPO, CON SU PANEL (DD-179; las cifras y el buscador, DD-165).
@@ -16,7 +17,9 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  *   6. acoplado, no tapa ninguna tarjeta y va sin velo; si las taparía, lleva velo y es un diálogo;
  *   7. todo cabe sin desplazar a 1440 × 800;
  *   8. el buscador vacío ofrece los últimos repositorios abiertos, el último primero, y elegir uno entra en él;
- *   9. los ocho que el COA da por «Próximamente» (SISMAC-4064) llevan su cifra y esa marca, y no abren panel (DD-245).
+ *   9. los ocho que el COA da por «Próximamente» (SISMAC-4064) llevan su cifra y esa marca, y no abren panel (DD-245);
+ *  10. al pasar, el borde se ENCIENDE en el tono fuerte de su grupo, en claro y en oscuro, también en las de
+ *      «Próximamente»; marcada, su halo es de ese mismo color (DD-246).
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -221,4 +224,55 @@ test('los ocho «Próximamente» del COA: con su cifra y la marca, y no abren pa
   await expect(panel(page)).toBeVisible();
   await horarios.click({ force: true });
   await expect(panel(page)).toHaveCount(0);
+});
+
+/** El borde de arriba de la tarjeta y el tono fuerte de su grupo, ya resueltos, y el contraste del borde sobre su fondo. */
+const bordeDeTarjeta = enNavegador(
+  (kit, el: Element): { borde: Rgb; fuerte: Rgb; halo: Rgb | null; ratio: number } => {
+    const cs = getComputedStyle(el);
+    const fondo = kit.fondo(el);
+    const rgb = (c: number[]): Rgb => [c[0], c[1], c[2]];
+    const borde = kit.sobre(kit.rgba(cs.borderTopColor), fondo);
+    const fuerte = kit.sobre(kit.rgba(cs.getPropertyValue('--tono-strong').trim()), fondo);
+    const sombra = cs.boxShadow === 'none' ? null : cs.boxShadow.match(/^(rgba?\([^)]*\)|color\([^)]*\)|#\w+)/)?.[1];
+    return {
+      borde: rgb(borde),
+      fuerte: rgb(fuerte),
+      halo: sombra ? rgb(kit.sobre(kit.rgba(sombra), fondo)) : null,
+      ratio: kit.ratioContraste(borde, fondo),
+    };
+  },
+);
+
+/* Una de cada grupo, y en IA y Comunicación una que abre y otra «Próximamente»: el fallo se vio en Diseñador (teal, sus
+ * dos «Próximamente», que se quedaban grises) y en IA (naranja, cuyo borde de etiqueta queda por DEBAJO del gris). */
+const AL_PASAR = ['Plantillas', 'Horarios', 'Equipos', 'Labels', 'Entidades', 'Intenciones', 'Reglas IA', 'Clasificación IA'];
+
+for (const tema of ['claro', 'oscuro'] as const) {
+  test(`al pasar, el borde se enciende en el tono fuerte de su grupo, también en «Próximamente» (${tema})`, async ({ page }) => {
+    if (tema === 'oscuro') await forceDarkTheme(page);
+    await goto(page, 'admin/repositorios');
+    for (const nombre of AL_PASAR) {
+      const card = page.locator('.repo-card', { has: page.locator('.repo-card__name', { hasText: new RegExp(`^${nombre}$`) }) });
+      // El ratón, a una esquina vacía: en (0, 0) cae sobre la barra lateral, que al pasar se despliega y tapa la primera
+      // columna. Y sin `force`, para que Playwright diga si otra cosa se lleva el ratón.
+      await page.mouse.move(1430, 890);
+      const reposo = await card.evaluate(bordeDeTarjeta);
+      await card.hover();
+      const encima = await card.evaluate(bordeDeTarjeta);
+      expect(encima.borde, `${nombre}: el borde al pasar es el tono fuerte de su grupo`).toEqual(encima.fuerte);
+      // Que se ENCIENDA: con el borde de la etiqueta (un 200), teal y naranja, y en oscuro los cuatro, se apagaban.
+      expect(encima.ratio, `${nombre}: el borde al pasar se ve más que en reposo`).toBeGreaterThan(reposo.ratio + 0.5);
+    }
+  });
+}
+
+test('marcada, el halo es del mismo tono fuerte que su borde: dos píxeles, no uno como al pasar', async ({ page }) => {
+  await goto(page, 'admin/repositorios');
+  const reglas = tarjeta(page, 'Reglas IA');
+  await reglas.click();
+  await expect(reglas).toHaveClass(/repo-card--selected/);
+  const marcada = await reglas.evaluate(bordeDeTarjeta);
+  expect(marcada.borde).toEqual(marcada.fuerte);
+  expect(marcada.halo).toEqual(marcada.fuerte);
 });
