@@ -116,3 +116,38 @@ test('Patrones de Fundamentos levanta y su página de Carga dogfoodea el skeleto
   // El ejemplo vivo del patrón de carga pinta al menos un sc-skeleton real.
   await expect(page.locator('sc-skeleton').first()).toBeVisible();
 });
+
+/**
+ * Cada patrón se lee de un vistazo: su escena, una frase por lado y lo demás plegado en «La regla entera». Medido el
+ * 2026-11-03 al pasar a escenas: de 104-203 palabras a la vista por patrón a 33-80. Un texto que vuelva a crecer sobre
+ * la página lo para este tope; lo largo va plegado, y entero en la ficha para agentes (`ia/patrones.md`).
+ *
+ * Cuenta lo que se LEE: fuera las escenas (`inert`, son dibujo), las migas, anterior y siguiente, los iconos y lo que
+ * hay dentro de un `<details>` cerrado (Chrome le da caja aunque no se vea, y sin este filtro la cuenta sale doble).
+ */
+const PALABRAS_A_LA_VISTA_MAX = 90;
+
+test('cada patrón se lee de un vistazo: pocas palabras a la vista', async ({ page }) => {
+  await page.goto('/#/fundamentos/patrones');
+  const rutas = await page.locator('.pt__card').evaluateAll((as) => as.map((a) => a.getAttribute('href') ?? ''));
+  expect(rutas.length).toBeGreaterThan(0);
+  for (const ruta of rutas) {
+    await page.goto('about:blank');
+    await page.goto('/' + ruta);
+    await expect(page.locator('app-escena-patron')).toHaveCount(2);
+    const palabras = await page.locator('main').evaluate((main) => {
+      let n = 0;
+      const w = document.createTreeWalker(main, NodeFilter.SHOW_TEXT);
+      while (w.nextNode()) {
+        const el = w.currentNode.parentElement;
+        if (!el || el.closest('[inert], .demo-migas, .vecinos, sc-icon')) continue;
+        const d = el.closest('details');
+        if (d && !d.open && !el.closest('summary')) continue;
+        if (!el.getBoundingClientRect().height) continue;
+        n += (w.currentNode.textContent ?? '').trim().split(/\s+/).filter(Boolean).length;
+      }
+      return n;
+    });
+    expect(palabras, `${ruta}: ${palabras} palabras a la vista`).toBeLessThanOrEqual(PALABRAS_A_LA_VISTA_MAX);
+  }
+});

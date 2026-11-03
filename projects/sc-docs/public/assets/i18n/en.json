@@ -162,18 +162,13 @@
       "title": "Screen patterns",
       "lead": "The quality bar when building a product screen. Each pattern points to what the system <strong>already</strong> solves, so a new screen is born consistent instead of being fixed afterward.",
       "haveLabel": "Already in the system",
-      "demo": {
-        "aria": "Loading state: skeleton vs spinner",
-        "title": "Loading state: the contrast, live",
-        "lead": "On the left, <code>sc-skeleton</code> with the row's silhouette: it reserves the exact space, so nothing jumps when it loads. On the right, the centered spinner: it reserves no structure, and the layout jumps when the data finally arrives.",
-        "labelDo": "Skeleton shaped like the content",
-        "labelDont": "Centered spinner (reserves no space)"
-      },
       "foot": "It's the same bar followed by whoever builds this repo's apps: it's also in <code>AGENTS.md</code> (the «Screen UX» section), the document you read when you touch the code. It's not a checklist to show off, it's what separates a professional screen from a generic one.",
       "principles": {
         "color": {
           "title": "Functional color",
           "nav": "Functional color",
+          "doShort": "Every color comes from a token and means something.",
+          "dontShort": "Hand-written hex, or color just for decoration.",
           "apply": "Every color comes from a --sc-* token and means something: state, hierarchy, or feedback.",
           "avoid": "Hand-written hex, tinting buttons and icons for decoration, or using a --sc-color-* palette value as a page or background color: it doesn't flip in dark mode and becomes unreadable.",
           "have": "The --sc-* scale and the bridge to the preset. You never need a hex."
@@ -181,6 +176,8 @@
         "loading": {
           "title": "Loading states",
           "nav": "Loading",
+          "doShort": "A skeleton shaped like the content, in its space.",
+          "dontShort": "A centered spinner, and the page jumps when the data arrives.",
           "apply": "While data arrives, paint a skeleton shaped like the content and reserve its space.",
           "avoid": "A centered spinner, or injecting data and letting the page jump (layout shift).",
           "have": "sc-skeleton (rectangle or circle, wave animation). Live example below."
@@ -188,6 +185,8 @@
         "copy": {
           "title": "Copy without filler",
           "nav": "Copy",
+          "doShort": "A title that explains itself stands alone.",
+          "dontShort": "A decorative subtitle under every heading.",
           "apply": "A title that explains itself stands alone. A description only if it adds something non-obvious.",
           "avoid": "A decorative one- or two-sentence subtitle under every heading.",
           "have": "A rule, not a component: less text, more signal. If removing it loses nothing, remove it. And end punctuation in unison: help text under a field ends with a period; a subtitle under a heading has none, and neither does anything that names (titles, buttons, tooltips, errors). A confirmation asks what and to whom or how many (“Delete the group “Sales”?”), and its button repeats the verb (“Delete”), never “Confirm”."
@@ -195,6 +194,8 @@
         "icons": {
           "title": "Consistent iconography",
           "nav": "Iconography",
+          "doShort": "One icon set, always through sc-icon.",
+          "dontShort": "Emojis, or two icon sets mixed.",
           "apply": "A single professional library, always via sc-icon (Material Symbols).",
           "avoid": "Emojis in the interface, or mixing two icon sets.",
           "have": "sc-icon over the generated set: one visual language across every app. What each icon says, in Fundamentals → Icons."
@@ -202,6 +203,8 @@
         "density": {
           "title": "Density and hierarchy",
           "nav": "Density",
+          "doShort": "Compact: secondary actions in a menu, metrics aligned.",
+          "dontShort": "KPIs repeated in every view, or cards with no data or action.",
           "apply": "Compact layout. Secondary actions in a kebab menu, aligned metrics, chips reduced to an icon when color already states the status.",
           "avoid": "Repeating in every view the KPIs already on the dashboard, or cards with no data or action.",
           "have": "sc-datatable, sc-card, and the supervisor's overflow pattern."
@@ -209,6 +212,8 @@
         "a11y": {
           "title": "Accessibility, the minimum bar",
           "nav": "Accessibility",
+          "doShort": "Enough contrast, and everything works by keyboard.",
+          "dontShort": "A state told only by color, or a control without a label.",
           "apply": "4.5:1 contrast on text and 3:1 on large text and icons. Every control reachable by keyboard, with visible focus and a label.",
           "avoid": "Signaling a state with color alone, or leaving a control without a label.",
           "have": "Contrast already lives in the tokens; the risk enters when you paint a color by hand."
@@ -216,6 +221,8 @@
         "motion": {
           "title": "No jumps",
           "nav": "No jumps",
+          "doShort": "Animate only transform and opacity.",
+          "dontShort": "Animating size or position, or dropping something on top while loading.",
           "apply": "Animate only transform and opacity. Images with width/height or aspect-ratio. Banners and toasts in already-reserved space.",
           "avoid": "Animating top, left, width, or height, or inserting something over the content on load.",
           "have": "The site's own theme transition already crossfades with opacity, without repositioning anything."
@@ -223,6 +230,8 @@
         "type": {
           "title": "Typography by class",
           "nav": "Typography by class",
+          "doShort": "Every text with one of the 12 .sc-text-* classes.",
+          "dontShort": "Text without its class, or an .sc-text-* class on top of a component.",
           "apply": "Page text takes one of the 12 .sc-text-* classes (the DS Figma text styles). If a component’s text needs to look different, move its token.",
           "avoid": "Putting .sc-text-* on an <sc-*> tag: it sits outside the layer, and unlayered always wins, so it disconnects the component from the theme.",
           "have": "The 12 classes already exist and read the role tokens; audit:text-styles goes red if one stops matching its text style, or if someone puts it on top of a component."
@@ -230,6 +239,8 @@
         "grouping": {
           "title": "Grouping by space",
           "nav": "Grouping",
+          "doShort": "7 between label and control, 14 between fields, 28 before the button.",
+          "dontShort": "The same gaps between fields and before the button.",
           "apply": "What belongs together sits closer than what doesn't: 7 between a label and its control, 14 between siblings (fields, options, rows) and 28 between groups, between sections and before the submit button. It is the 7 · 14 · 28 ladder: between groups, at least double the gap within. And density follows what the screen is for: compact where people scan (the monitor, lists), more air where they read and fill in (records, forms).",
           "avoid": "Spacing two fields almost as tightly as a label and its control (12 against 7), or leaving the button as close to the last field as the fields are to each other: it reads as one more field.",
           "have": "The supervisor's shared pieces already apply it (.grid and .field in _forms.scss). When a mockup brings another value, the ladder wins and the Kit change is logged in figma-pendiente."
@@ -237,6 +248,8 @@
         "fill": {
           "title": "A table reaches the bottom of the screen",
           "nav": "Full-height tables",
+          "doShort": "The table reaches the bottom of the screen and scrolls inside.",
+          "dontShort": "A fixed height that leaves a gap below and hides rows.",
           "apply": "When a table inside a section needs more room, it uses the rest of the screen: it scrolls inside, with a sticky header and the paginator at the bottom, and its cap is what is left down to the bottom, measured from where it starts. On a short screen it stops at its floor, and then the page scrolls.",
           "avoid": "A fixed cap («window height minus 420 px»): it does not know where the table starts, and leaves empty screen below while hiding rows.",
           "have": "In the supervisor, the scLlegaAlPie directive measures the remaining height; tabla-al-pie tests it: 2 px more of table and the page scrolls."
@@ -244,6 +257,8 @@
         "blame": {
           "title": "What is missing, in grey and in the summary; in red on leaving it empty",
           "nav": "What's missing",
+          "doShort": "The notice in gray from the start, and what is missing above.",
+          "dontShort": "Red before the field is touched, or a disabled button that does not say why.",
           "apply": "An empty required field is something still to fill in, not an error: its message shows under the field from the start, in grey, as help, and turns red on leaving the field empty. «Create» and «Save» stay disabled while something is missing, and above the summary «Missing: name, outbound phone» says all of it, each item leading to its field; «Ready to create» once nothing is missing. A saved record that already lacked something says so on opening. A content error (a repeated name, a mistyped email) shows live. The index ✓ belongs to a section left as it is.",
           "avoid": "Red before the field is touched, or a red dot in a section nobody is looking at: it reads as caused by the last thing done. Nor a grey button that does not say what blocks it, or yellow warnings about things that block nothing.",
           "have": "In the supervisor, ocasionDeAvisar decides when each message turns red, ayudaDeObligatorio puts the grey one and sc-summary-status says what is missing; rule 7 of audit:screen-hygiene, indice-errores and sin-acusar-de-primeras guard it."
@@ -255,7 +270,73 @@
       "next": "Next",
       "neighbours": "Other patterns",
       "missing": "That pattern does not exist",
-      "all": "See all patterns"
+      "all": "See all patterns",
+      "scenes": {
+        "missing": "Missing: name",
+        "nameRequired": "Name is required",
+        "create": "Create",
+        "grouping": {
+          "haz": "Two fields 14 pixels apart and the Save button 28 below the last one: it reads as a group and its action.",
+          "evita": "Two fields 12 pixels apart and the Save button at the same distance: it reads as one more field."
+        },
+        "blame": {
+          "haz": "An empty required field with its notice in gray below, \"Missing: name\" above, and Create turned off.",
+          "evita": "The same field in red before anyone touches it, and Create turned off without saying what is missing."
+        },
+        "color": {
+          "haz": "Two agents with their status in a tag: green when available, amber when away.",
+          "evita": "The same statuses in purple and teal, picked for decoration: the color says nothing."
+        },
+        "loading": {
+          "haz": "Three skeleton rows shaped like the list that is on its way.",
+          "evita": "A spinner in the middle of an empty window: it does not reserve the space of the list."
+        },
+        "copy": {
+          "haz": "The title Agents and, right below it, the list.",
+          "evita": "The same title with a filler sentence below that says nothing new."
+        },
+        "icons": {
+          "haz": "An action bar with three icons from the same set.",
+          "evita": "The same bar with symbols from another set mixed with one icon."
+        },
+        "density": {
+          "haz": "A compact list: each agent with their calls aligned and a menu for the rest.",
+          "evita": "The dashboard figures repeated above the list and an empty card, with no data or action."
+        },
+        "a11y": {
+          "haz": "A status told with an icon and text, and a field with its label.",
+          "evita": "The status as a red dot with no text, and a field with no label."
+        },
+        "motion": {
+          "haz": "A saved notice in its own space, above the list, which stays still.",
+          "evita": "The same notice dropped over the list: it covers the first rows."
+        },
+        "type": {
+          "haz": "A title, a paragraph and a note, each with its text class.",
+          "evita": "The same text without its class: the paragraph, sized by hand, comes out bigger than the title."
+        },
+        "fill": {
+          "haz": "A table that reaches the bottom of the screen, with the paginator below.",
+          "evita": "A table with a fixed height: it hides rows and leaves empty space below."
+        },
+        "words": {
+          "agent": "Agent {{n}}",
+          "agents": "Agents",
+          "available": "Available",
+          "away": "Away",
+          "calls": "Calls",
+          "summary": "Summary",
+          "filler": "Here you can see and manage all the agents in your center.",
+          "saved": "Changes saved",
+          "record": "Agent record",
+          "since": "Handles the sales queue since March.",
+          "today": "Updated today",
+          "page": "1-10 of 48",
+          "delete": "Delete",
+          "more": "More actions"
+        }
+      },
+      "more": "The full rule"
     },
     "color": {
       "title": "Color",
