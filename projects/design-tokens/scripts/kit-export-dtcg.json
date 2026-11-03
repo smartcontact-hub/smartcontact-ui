@@ -6476,6 +6476,14 @@
         "subtle": {
           "$type": "color",
           "$value": "{text.muted.color}"
+        },
+        "success": {
+          "$type": "color",
+          "$value": "{green.600}"
+        },
+        "warning": {
+          "$type": "color",
+          "$value": "{yellow.600}"
         }
       },
       "presence": {
@@ -6498,6 +6506,18 @@
         "wrapup": {
           "$type": "color",
           "$value": "{cyan.600}"
+        }
+      },
+      "border": {
+        "subtle": {
+          "$type": "color",
+          "$value": "{zinc.800}"
+        }
+      },
+      "bg": {
+        "secondary-subtle": {
+          "$type": "color",
+          "$value": "{zinc.900}"
         }
       }
     },
@@ -6630,6 +6650,22 @@
             "color": {
               "$type": "color",
               "$value": "#a162075c"
+            }
+          }
+        },
+        "info": {
+          "background": {
+            "$type": "color",
+            "$value": "#7db3ff29"
+          },
+          "color": {
+            "$type": "color",
+            "$value": "{sky.300}"
+          },
+          "border": {
+            "color": {
+              "$type": "color",
+              "$value": "#0369a15c"
             }
           }
         }
