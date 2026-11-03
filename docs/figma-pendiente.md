@@ -1585,8 +1585,15 @@ Figma) y sus entradas de ejemplo.
 
 **Queda:**
 - **Comunicación sin su azul**: en Figma, título, icono y cifra de Comunicación van atados a `blue/700`, que en la
-  librería es el marino de marca; el código usa `azure` (`--sc-label-blue-*`, #1d4ed8), que la librería no tiene. Hace
-  falta la familia en la librería (o decidir otra) antes de reatar.
+  librería es el marino de marca; el código usa `azure` (`--sc-label-blue-*`, #1d4ed8). **Medido el 2026-11-03:** `azure`
+  ya está en el Kit (`Primitive`, 50 a 950, con los valores y el `codeSyntax` del código), pero sin publicar: desde el
+  Supervisor, `importVariableByKeyAsync` de `azure/700` falla. Ninguna otra familia sirve: `sky` es la de información,
+  enlaces y el anillo de foco (#1464fe), `cyan` es el acento y roza el teal de Diseñador, y `violet` se confunde con el
+  morado de Clasificación. Al publicar el Kit: reatar `blue/N → azure/N` en la página Repositorios, donde todo `blue/*` es
+  el tono de Comunicación (cat, tarjetas, panel, recientes y rótulos del paso 07; ningún botón de marca). Es lo que
+  recoge §67, «Cuando se publiquen el Kit y los iconos».
+- **La cabecera mide 58 en el Kit y 56 en el código**: en el `Header` del Kit, `container buttons` mide 32,5; en el código,
+  lo más alto es 28 en una caja de 30,5. Es un componente compartido: mirar quién lo usa antes de tocarlo y publicar.
 - **«❖ Alert modal» con superficie blanca** (DD-242): hecha en el DS, sin publicar (§65); publicar la librería es de Rafa.
 - **Enlaces de Figma en los COA** de 4438, 4440 y 4064 (páginas `4077:58411`, `4067:100978` y `3491:35886`): van en los
   prompts de `~/Documents/Claude/2026-10 Empate flujos AED/`; los pega y publica Rafa.
