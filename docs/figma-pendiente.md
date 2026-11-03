@@ -1699,6 +1699,42 @@ un componente nuevo y dejaría las instancias huérfanas. Dos caminos:
 - **Usuarios**: la página es de la generación `41:*`, tres marcos sin flujo y con tablas de celdas sueltas. Ponerla al
   nivel de las demás es maquetarla de nuevo, no ponerla al día.
 
+## 67 · Lo que el Kit no tiene: una regla y una decisión por pieza (2026-11-03)
+
+**Estado:** decidido; hecho en el Kit lo marcado, sin publicar · **Dónde:** el Kit (`khNq9dJKNi13pNllrqm6dx`), Smart-Contact
+Icons (`NLfCIqd4OTkpdzNXx93nZc`) y la página «Componentes del Supervisor» (`4428:25889`) · **Evidencia:** cada pieza, medida
+en el Kit y en el código de `main`.
+
+**La regla**, igual para todas:
+1. **Si PrimeNG lo tiene**, va al Kit como variante o propiedad del componente que ya lo representa, no como pieza nueva.
+2. **Si PrimeNG no lo tiene y lo usa más de una pantalla** (o el DS de desarrollo ya lo tiene), va al Kit como pieza propia,
+   con nombre en inglés.
+3. **Si solo lo usa una pantalla**, se queda como componente local del fichero de producto.
+4. **Color**: el Kit es la fuente. Una familia que el código usa y el Kit no tiene se añade al Kit con los valores del código,
+   y no se crean semánticas nuevas hasta que haya un segundo uso.
+5. **Variantes**: solo las combinaciones que una pantalla usa; la matriz entera, cuando haga falta.
+
+| Pieza | Regla | Decisión | Estado |
+|---|---|---|---|
+| Azul de Comunicación (`azure`) | 4 | Familia primitiva `azure/50` a `azure/950` en «Primitive», con los valores de `--sc-color-azure-*` (el `blue` de Aura) | **Hecho** (`15929:4067` a `15929:4077`) |
+| Tonos de etiqueta (Tag «label») | 1 y 4 | Variante de tono en `tag`, atada a primitivos (`azure`, `purple`, `teal`, `orange`…), como `--sc-label-*-bg/-text` | Sigue: el hub y Labels la sobrescriben a mano |
+| InputNumber sin botones | 1 | `inputnumber` gana `Type=Plain` (el `inputtext` del Kit); el sufijo va en el valor, como en PrimeNG («400 px») | **Hecho** (`15929:8262`) |
+| Tecla del atajo «/» | 2 | `kbd`, pieza propia, en su página «❖ Kbd», con `Key` como texto | **Hecho** (`15929:10407`) |
+| Solo lectura | 1 y 5 | `State=Readonly` en `inputtext` y `textarea`: sin borde, sobre `surface/50`; solo en la combinación base, que es la que usan el PIN y el script de chat | **Hecho** (`15929:16290`, `15929:30671`); `select` e `inputnumber`, cuando una pantalla lo pida |
+| Texto al final de una opción de menú | 1 | `menu-item` gana `Show Trailing` y `Trailing` (una cifra o un atajo, en gris, a la derecha) | **Hecho**; al publicar, «Recent item» se sustituye por `menu-item` |
+| Estado vacío | 2 | «Empty state» pasa al Kit tal cual (el DS de desarrollo lo tiene en sus demos) | Sigue: moverlo por el camino 1 de §66 |
+| Contenedor de menú con slot | 1 | «Popup menu» pasa al Kit como variante de `menu` con las opciones en un slot (sirve para `p-menu` y `p-popover`) | Sigue: moverlo por el camino 1 de §66 |
+| Drawer con contenido | 1 | `drawer` gana un slot de contenido y la variante acoplada; «Docked drawer» deja de hacer falta | Sigue |
+| Parte plegable de una subsección | 1 | La parte de `.Subsection` se pliega como la subsección entera: la misma flecha y el título como botón | Sigue |
+| Resumen de grupo con Chat y WhatsApp | 2 | Las filas del resumen, en un slot de piezas de fila, para cualquier canal | Sigue (§58) |
+| Record header | 3 | Local: es del molde de las fichas del Supervisor | Se queda |
+| Repository card, Destination row y header, Category title | 3 | Locales: solo los usa el hub | Se quedan |
+| Iconos `schedule`, `sell`, `label`, `category`, `arrow_forward` y `key` | 2 | En Smart-Contact Icons, con la receta de los demás | **Hecho** (`793:661` a `793:685`, `795:661`) |
+
+**Cuando se publiquen el Kit y los iconos:** atar en el hub los tonos de Comunicación a `azure` y cambiar los iconos
+sustitutos (§66); poner `key` en «Expirar contraseña» de la ficha de agente (§58); y, en el código, sacar `azure` de la
+parte escrita a mano de `01-primitive.css` en cuanto el export del Kit la traiga.
+
 ## Lo de estas semanas que NO va a Figma, y por qué
 
 - **El juego de datos** (Demo · Editorial · Tortura, en Configuración → Sistema → Datos; DD-124): es una herramienta de
