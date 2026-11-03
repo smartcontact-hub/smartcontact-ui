@@ -101,9 +101,8 @@ El de Agendas, Plantillas y Equipos solo a agentes (2026-10-28, DD-239, sin tram
   «Componentes del Supervisor», con nombres en inglés; el hub cerrado (pasos 3 a 7); las notas sin lo que solo existe en
   este repo ni «dibujo»; cinco iconos en Smart-Contact Icons, sin publicar (§66).
 - **Tercera vuelta** (#589): 25 fichas cerradas; piezas del Kit e Icons sin publicar (§66, §67); avisos `Plain` (§65).
-- **Cuarta vuelta** (§68): Usuarios maquetada de nuevo (índice, hand-off, alta, edición, listado y mapa), cada pantalla
-  contrastada con el prototipo publicado; «Inglés» en «Si algo falla 5» de Agentes y Recursos a dos columnas. **Queda:**
-  publicar Kit e Icons (una persona), `hub` en Icons y las piezas del Kit que §68 decide.
+- **Cuarta vuelta** (§68): Usuarios maquetada de nuevo contra el prototipo; «Inglés» en «Si algo falla 5» de Agentes.
+  **Queda:** publicar Kit e Icons (una persona), `hub` en Icons y las piezas del Kit que §68 decide.
 - **No hecho**: Contact Center (no se toca), los COA (sin conector en la sesión), las versiones por página.
 
 ## ✅ 2026-10-31 · La barra común de asignar y Repositorios como sus COA (DD-243, DD-245)
