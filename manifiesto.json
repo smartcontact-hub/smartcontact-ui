@@ -1,8 +1,8 @@
 {
-  "commit": "2577e70a",
+  "commit": "9f5dc209",
   "primeng": "22.1.0",
   "themes": "3.0.2",
-  "generado": "2026-11-03T03:56:48.776Z",
+  "generado": "2026-11-03T16:29:53.226Z",
   "estilosTexto": [
     "display-regular",
     "display-semibold",
@@ -25,50 +25,16 @@
     "diferencia": {
       "anterior": true,
       "ficheros": [
-        "smartcontact-tokens.css"
+        "sc-preset.mjs"
       ],
-      "variables": [
-        "claro|--sc-color-azure-100",
-        "claro|--sc-color-azure-200",
-        "claro|--sc-color-azure-300",
-        "claro|--sc-color-azure-400",
-        "claro|--sc-color-azure-50",
-        "claro|--sc-color-azure-500",
-        "claro|--sc-color-azure-600",
-        "claro|--sc-color-azure-700",
-        "claro|--sc-color-azure-800",
-        "claro|--sc-color-azure-900",
-        "claro|--sc-color-azure-950",
-        "claro|--sc-label-blue-bg",
-        "claro|--sc-label-blue-border",
-        "claro|--sc-label-blue-dot",
-        "claro|--sc-label-blue-text",
-        "claro|--sc-toast-info-bg",
-        "claro|--sc-toast-info-border",
-        "claro|--sc-toast-info-icon",
-        "oscuro|--sc-cmp-message-info-border-color",
-        "oscuro|--sc-cmp-toast-info-border-color",
-        "oscuro|--sc-label-blue-bg",
-        "oscuro|--sc-label-blue-border",
-        "oscuro|--sc-label-blue-dot",
-        "oscuro|--sc-label-blue-text"
-      ],
-      "retirados": [
-        "--sc-color-azure-100",
-        "--sc-color-azure-200",
-        "--sc-color-azure-300",
-        "--sc-color-azure-400",
-        "--sc-color-azure-50",
-        "--sc-color-azure-500",
-        "--sc-color-azure-600",
-        "--sc-color-azure-700",
-        "--sc-color-azure-800",
-        "--sc-color-azure-900",
-        "--sc-color-azure-950"
-      ],
+      "variables": [],
+      "retirados": [],
       "semanticaComun": false,
       "reglasCss": false,
-      "componentes": [],
+      "componentes": [
+        "badge",
+        "tag"
+      ],
       "guia": false
     },
     "contratoPlugin": {
@@ -80,5 +46,5 @@
     },
     "cambia": true
   },
-  "version": "0.20261103.356"
+  "version": "0.20261103.1629"
 }

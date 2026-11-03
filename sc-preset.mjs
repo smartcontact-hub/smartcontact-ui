@@ -298,7 +298,7 @@ var tag_default = {
      * 0-25 (3.5): el tag medía 25 de alto contra los 21.5 del Kit. */
     padding: "var(--sc-cmp-tag-padding-y) var(--sc-cmp-tag-padding-x)",
     fontSize: "var(--sc-font-size-100)",
-    fontWeight: "700",
+    fontWeight: "600",
     borderRadius: "{content.border.radius}",
     roundedBorderRadius: "{border.radius.xl}"
   },
@@ -677,7 +677,7 @@ var badge_default = {
     padding: "var(--sc-cmp-badge-padding-y) var(--sc-cmp-badge-padding-x)",
     fontSize: "var(--sc-cmp-badge-font-size)",
     minWidth: "var(--sc-cmp-badge-min-width)",
-    fontWeight: "700",
+    fontWeight: "600",
     borderRadius: "{border.radius.md}"
   },
   colorScheme: {
