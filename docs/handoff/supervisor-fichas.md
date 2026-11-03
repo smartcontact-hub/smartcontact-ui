@@ -104,6 +104,8 @@ El de Agendas, Plantillas y Equipos solo a agentes (2026-10-28, DD-239, sin tram
 - **Cuarta vuelta** (§68): Usuarios maquetada de nuevo contra el prototipo; «Inglés» en «Si algo falla 5» de Agentes.
   **Queda:** publicar Kit e Icons (una persona), `hub` en Icons y las piezas del Kit que §68 decide.
 - **No hecho**: Contact Center (no se toca), los COA (sin conector en la sesión), las versiones por página.
+- **Email en el alta de grupo** (§69, rama `areses/email-channel-distribution-queues-7745e5`): «Otras configuraciones»
+  10 y 11, General con Email y su bloque en Distribución y colas, con su línea en la hoja «Cómo se comporta».
 
 ## ✅ 2026-10-31 · La barra común de asignar y Repositorios como sus COA (DD-243, DD-245)
 

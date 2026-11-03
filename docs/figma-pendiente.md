@@ -1366,6 +1366,20 @@ página Usuarios (`41:2846`) · **Evidencia:** cada pantalla, contrastada con el
 de error de `nav-item` corta a 128; `multiselect` `Mode=Chips` mide 40 de alto (el código, 33); y el subtítulo de «Custom
 modal» va en otro gris que el del código.
 
+## 69 · Grupos: qué se ve con Email en Distribución y colas (2026-11-03)
+
+**Estado:** hecho · **Dónde:** el Supervisor (`Hjyy41SYKqcRuIzCGggfYH`), página Grupos (`41:2847`), fila «Otras
+configuraciones» del alta · **Evidencia:** la plantilla del prototipo (`group-form-page.component.html`, bloque de
+Email) y DD-206 §9.
+
+**Hecho:**
+- **Otras configuraciones 10** (`4562:26262`): General con Teléfono y Email marcados; el índice pide «Teléfono saliente»
+  y el resumen suma Email en las dos tarjetas, con «Menos conversaciones atendidas» cortada con «…» (DD-211 §4).
+- **Otras configuraciones 11** (`4562:26390`): Distribución y colas con el bloque de Email bajo Teléfono: estrategia
+  (con su ayuda), tiempo de ringing y su cola, como Chat sin Web Chat ni WhatsApp.
+- **Hoja «Cómo se comporta» del alta**: la fila 9 suma la línea de Email y la 15, el corte de la estrategia larga. La
+  portada de «Otras configuraciones» nombra Email.
+
 ## Lo de estas semanas que NO va a Figma, y por qué
 
 - **El juego de datos** (Demo · Editorial · Tortura, en Configuración → Sistema → Datos; DD-124): es una herramienta de
