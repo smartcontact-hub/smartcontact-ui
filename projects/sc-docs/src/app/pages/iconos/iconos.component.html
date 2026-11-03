@@ -1,7 +1,9 @@
-<header class="hero">
-  <h1 class="hero__title">{{ 'fundamentos.iconos.title' | translate }}</h1>
-  <p class="hero__lead sc-text-h3-regular" [innerHTML]="'fundamentos.iconos.lead' | translate"></p>
-</header>
+<app-cabecera
+  arte="iconos"
+  [titulo]="'fundamentos.iconos.title' | translate"
+  [entradilla]="'fundamentos.iconos.lead' | translate"
+  [nota]="'fundamentos.iconos.note' | translate"
+/>
 
 <!-- Cuándo: cada fila con su ejemplo vivo, el botón tal cual sale en una pantalla. -->
 <section class="bloque">

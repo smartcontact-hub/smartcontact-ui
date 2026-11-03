@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
+import { CabeceraComponent } from '../../shared/cabecera.component';
 
 interface PasoEscala {
   readonly token: string;
@@ -17,11 +18,15 @@ interface PasoEscala {
 @Component({
   selector: 'app-espaciado',
   standalone: true,
-  imports: [RouterLink, TranslatePipe],
+  imports: [CabeceraComponent, RouterLink, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <h1>{{ 'fundamentos.spacing.title' | translate }}</h1>
-    <p class="lead sc-text-h3-regular" [innerHTML]="'fundamentos.spacing.lead' | translate"></p>
+    <app-cabecera
+      arte="espaciado"
+      [titulo]="'fundamentos.spacing.title' | translate"
+      [entradilla]="'fundamentos.spacing.lead' | translate"
+      [nota]="'fundamentos.spacing.note' | translate"
+    />
 
     <h2>{{ 'fundamentos.spacing.scaleTitle' | translate }}</h2>
     <table class="scale-table sc-text-body-regular">
@@ -75,16 +80,6 @@ interface PasoEscala {
       display: block;
       max-width: 720px;
       padding-bottom: var(--sc-spacing-5);
-    }
-
-    /* Tamaño y peso del título, los de todas las páginas de la doc (\`.demo-main h1\`, styles.scss). */
-    h1 {
-      margin: 0 0 var(--sc-spacing-0-75);
-    }
-
-    .lead {
-      margin: 0 0 var(--sc-spacing-2);
-      color: var(--sc-text-secondary);
     }
 
     h2 {

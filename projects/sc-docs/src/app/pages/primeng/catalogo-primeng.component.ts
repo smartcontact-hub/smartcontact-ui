@@ -5,6 +5,7 @@ import {
   ScSkeletonComponent,
   ScTagComponent,
 } from '@smartcontact-hub/components';
+import { CabeceraComponent } from '../../shared/cabecera.component';
 
 type Estado = 'ds' | 'directo' | 'sin-uso';
 type Filtro = 'todos' | Estado | 'obsoleto';
@@ -53,7 +54,7 @@ const plano = (s: string): string =>
 @Component({
   selector: 'app-catalogo-primeng',
   standalone: true,
-  imports: [ScSearchComponent, ScSelectButtonComponent, ScSkeletonComponent, ScTagComponent],
+  imports: [CabeceraComponent, ScSearchComponent, ScSelectButtonComponent, ScSkeletonComponent, ScTagComponent],
   templateUrl: './catalogo-primeng.component.html',
   styleUrl: './catalogo-primeng.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

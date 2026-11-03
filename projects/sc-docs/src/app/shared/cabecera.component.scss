@@ -1,0 +1,518 @@
+/*
+ * La cabecera de las páginas de dentro, con el lenguaje de la portada (`pages/inicio`): título, una frase y una franja
+ * ilustrada. Los degradados, con la paleta del DS (los mismos pasos que la portada); el oscuro sale solo.
+ */
+
+:host {
+  display: block;
+  margin-bottom: var(--sc-spacing-3);
+}
+
+/* ─────────── Texto ─────────── */
+
+/* Tamaño y peso del título: los de todas las páginas (`.demo-main h1`, styles.scss). */
+.cab__titulo {
+  margin: 0 0 var(--sc-spacing-0-75);
+}
+
+/* Una frase a 18, a una medida que se lee de un tirón. */
+.cab__entradilla {
+  max-width: 44rem;
+  margin: 0;
+  color: var(--sc-text-secondary);
+  text-wrap: pretty;
+}
+
+.cab__nota {
+  max-width: 44rem;
+  margin: var(--sc-spacing-0-5) 0 0;
+  color: var(--sc-text-secondary);
+}
+
+/* ─────────── Franja ilustrada ─────────── */
+
+.cab__arte {
+  position: relative;
+  overflow: hidden;
+  height: 11rem;
+  margin-top: var(--sc-spacing-2);
+  border-radius: var(--sc-radius-xl);
+  background: var(--sc-bg-subtle);
+  pointer-events: none;
+  user-select: none;
+}
+
+.cab-stop--cian {
+  stop-color: var(--sc-color-cyan-300);
+}
+
+.cab-stop--cielo {
+  stop-color: var(--sc-color-sky-500);
+}
+
+.cab-stop--hondo {
+  stop-color: var(--sc-color-sky-700);
+}
+
+.cab-stop--brillo {
+  stop-color: var(--sc-color-cyan-100);
+}
+
+.cab-stop--lima {
+  stop-color: var(--sc-color-emerald-300);
+}
+
+/* Las formas de la portada, a la derecha y cortadas por la franja. */
+.cab__formas {
+  position: absolute;
+  right: var(--sc-spacing-neg-1-5);
+  top: var(--sc-spacing-neg-1);
+  width: min(24rem, 55%);
+  height: auto;
+  overflow: visible;
+}
+
+/* El motivo, centrado en lo que dejan libre las formas: en una página ancha no se queda pegado a la izquierda. */
+.cab__motivo {
+  position: absolute;
+  inset: 0 38% 0 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sc-spacing-0-75);
+  padding: 0 var(--sc-spacing-2);
+}
+
+/* Las que apilan tarjetas: una debajo de otra, cada una un paso a la derecha. */
+.cab__arte:is([data-arte='componentes'], [data-arte='iconos'], [data-arte='estado']) .cab__motivo {
+  flex-direction: column;
+}
+
+.cab__lienzo {
+  position: relative;
+  display: block;
+}
+
+.cab__flota {
+  position: absolute;
+}
+
+/* Trazo con nodos, el de la portada. El SVG va a su tamaño (260 de ancho), para que la bola de Movimiento siga la
+   misma curva que dibuja. */
+.cab__trazo {
+  display: block;
+  width: 16.25rem;
+  height: auto;
+  overflow: visible;
+  fill: none;
+  stroke: var(--sc-border-strong);
+  stroke-width: 1.5;
+
+  circle {
+    fill: var(--sc-bg-surface);
+  }
+}
+
+/* La ventana de la portada: superficie, borde fino y los tres puntos. */
+.cab__ventana {
+  overflow: hidden;
+  width: 15rem;
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-lg);
+  background: var(--sc-bg-default);
+  box-shadow: var(--sc-shadow-card);
+}
+
+.cab__puntos {
+  display: flex;
+  gap: var(--sc-spacing-0-25);
+  padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
+  border-bottom: 1px solid var(--sc-border-default);
+
+  i {
+    width: 6px;
+    height: 6px;
+    border-radius: var(--sc-radius-full);
+    background: var(--sc-border-strong);
+  }
+}
+
+.cab__ventana-cuerpo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
+  padding: var(--sc-spacing-1);
+}
+
+/* Color: una muestra por familia. */
+.cab__muestra {
+  width: var(--sc-spacing-2-75);
+  height: var(--sc-spacing-2-75);
+  border: 3px solid var(--sc-bg-surface);
+  border-radius: var(--sc-radius-lg);
+  box-shadow: var(--sc-shadow-card);
+}
+
+/* Espaciado: un formulario de bloques con sus huecos de 7, 14 y 28 pintados como cotas. */
+.cab__pila {
+  display: flex;
+  flex-direction: column;
+  width: 12rem;
+}
+
+.cab__bloque {
+  height: var(--sc-spacing-1-5);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-md);
+  background: var(--sc-bg-surface);
+
+  &--boton {
+    width: 40%;
+    border-color: transparent;
+    background: var(--sc-color-sky-500);
+  }
+}
+
+.cab__hueco {
+  position: relative;
+  background: color-mix(in srgb, var(--sc-color-sky-300) 45%, transparent);
+
+  &--7 {
+    height: var(--sc-spacing-0-5);
+  }
+
+  &--14 {
+    height: var(--sc-spacing-1);
+  }
+
+  &--28 {
+    height: var(--sc-spacing-2);
+  }
+
+  /* La cifra, en la mono del código de la doc (`styles.scss`), como las cotas de la portada. */
+  code {
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    padding-left: var(--sc-spacing-0-5);
+    translate: 0 -50%;
+    color: var(--sc-text-link);
+  }
+}
+
+/* Tipografía: el «Aa» y la rampa al lado. */
+.cab__aa {
+  color: var(--sc-text-primary);
+}
+
+.cab__rampa {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-125);
+  padding-left: var(--sc-spacing-1);
+  border-left: 1px solid var(--sc-border-default);
+  color: var(--sc-text-secondary);
+
+  :first-child {
+    color: var(--sc-text-primary);
+  }
+}
+
+/* Tarjetas de la app (Componentes, Iconos, Estado): la segunda, un paso a la derecha. */
+.cab__tarjeta {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-75);
+  padding: var(--sc-spacing-0-75) var(--sc-spacing-1);
+  border-radius: var(--sc-radius-lg);
+  background: var(--sc-bg-surface);
+  box-shadow: var(--sc-shadow-card);
+
+  & + & {
+    translate: var(--sc-spacing-3) 0;
+  }
+}
+
+/* Estado: una ficha por estado, en escalera. */
+.cab__fila {
+  justify-content: space-between;
+  width: 13rem;
+
+  & + & {
+    translate: var(--sc-spacing-1-5) 0;
+  }
+
+  & + & + & {
+    translate: var(--sc-spacing-3) 0;
+  }
+}
+
+/* Todo PrimeNG: lo que usamos, en sólido; lo demás, en trazo. */
+.cab__malla {
+  display: grid;
+  grid-template-columns: repeat(6, var(--sc-spacing-2-25));
+  gap: var(--sc-spacing-0-5);
+}
+
+.cab__celda {
+  display: grid;
+  place-items: center;
+  height: var(--sc-spacing-2-25);
+  border: 1px dashed var(--sc-border-strong);
+  border-radius: var(--sc-radius-md);
+  color: var(--sc-text-secondary);
+
+  &--usada {
+    border: 0;
+    background: var(--sc-bg-surface);
+    box-shadow: var(--sc-shadow-xs);
+    color: var(--sc-text-link);
+  }
+}
+
+/* Patrones: la ventana cargando y el aviso de guardado encima. */
+.cab__arte[data-arte='patrones'] .cab__flota {
+  left: 55%;
+  bottom: var(--sc-spacing-neg-1);
+  width: 11rem;
+  border-radius: var(--sc-radius-md);
+  background: var(--sc-bg-surface);
+  box-shadow: var(--sc-shadow-card);
+}
+
+/* Uso real: la pantalla del Supervisor asoma desde arriba y se corta en el borde de abajo, como en la portada. */
+.cab__arte[data-arte='uso'] .cab__motivo {
+  align-items: flex-start;
+  padding-top: var(--sc-spacing-2);
+}
+
+.cab__ventana--captura {
+  width: 22rem;
+  border-bottom: 0;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+}
+
+.cab__arte[data-arte='uso'] .cab__flota {
+  left: 70%;
+  top: var(--sc-spacing-2);
+  box-shadow: var(--sc-shadow-card);
+}
+
+/* Reglas: una regla que se abre en dos acciones. */
+/* Cada acción, al final de su rama (y = 20 y 100 de 120). */
+.cab__arte[data-arte='reglas'] .cab__flota {
+  left: 100%;
+  margin-left: var(--sc-spacing-0-5);
+  translate: 0 -50%;
+
+  &--arriba {
+    top: 16.67%;
+  }
+
+  &--abajo {
+    top: 83.33%;
+  }
+}
+
+/* Movimiento: la duración, encima de donde frena la bola. */
+.cab__arte[data-arte='movimiento'] .cab__flota {
+  right: 0;
+  bottom: 100%;
+}
+
+/* Novedades: la línea de versiones y la última, marcada. */
+.cab__nodo-actual {
+  fill: var(--sc-color-sky-500) !important;
+  stroke: none;
+}
+
+.cab__arte[data-arte='novedades'] .cab__flota {
+  right: 0;
+  bottom: 100%;
+  margin-bottom: var(--sc-spacing-0-5);
+}
+
+/* Movimiento: la bola, a lo largo de la curva que dibuja el trazo. */
+.cab__viajero {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: var(--sc-spacing-1);
+  height: var(--sc-spacing-1);
+  border-radius: var(--sc-radius-full);
+  background: var(--sc-color-sky-500);
+  box-shadow: var(--sc-shadow-card);
+  offset-path: path('M10 100 C90 100 110 20 250 20');
+  offset-distance: 0%;
+}
+
+/* ─────────── Estrecho ─────────── */
+
+@media (max-width: 40rem) {
+  .cab__motivo {
+    inset: 0;
+    justify-content: flex-start;
+    padding: 0 var(--sc-spacing-1-5);
+  }
+
+  .cab__formas {
+    width: 70%;
+    opacity: 0.6;
+  }
+
+  /* Las ramas de Reglas, más cortas: sus etiquetas van al final y no caben a 260. */
+  .cab__arte[data-arte='reglas'] .cab__trazo {
+    width: 10rem;
+  }
+}
+
+/* ─────────── Movimiento ───────────
+ *
+ * El de la portada: el texto y la franja suben escalonados (100 ms entre trozos), las piezas de delante llegan
+ * detrás, una a una, los trazos se dibujan y las formas entran y luego flotan muy despacio. Solo `transform`,
+ * `opacity` y el recorrido de la bola. Con «reducir movimiento», todo quieto.
+ */
+
+@keyframes cab-sube {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+@keyframes cab-entra-forma {
+  from {
+    opacity: 0;
+    transform: translate(28px, -20px) scale(0.94);
+  }
+}
+
+@keyframes cab-dibuja {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+
+@keyframes cab-aparece {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes cab-flota-a {
+  50% {
+    transform: translate(-10px, 8px);
+  }
+}
+
+@keyframes cab-flota-b {
+  50% {
+    transform: translate(8px, -6px) rotate(-2deg);
+  }
+}
+
+/* Ida, pausa, vuelta: la bola se para en cada extremo para que se vea la curva de frenada. */
+@keyframes cab-recorre {
+  0%,
+  20% {
+    offset-distance: 0%;
+  }
+
+  60%,
+  100% {
+    offset-distance: 100%;
+  }
+}
+
+.cab__titulo {
+  animation: cab-sube 700ms var(--demo-ease-salida) backwards;
+}
+
+.cab__entradilla {
+  animation: cab-sube 700ms var(--demo-ease-salida) 100ms backwards;
+}
+
+.cab__nota {
+  animation: cab-sube 700ms var(--demo-ease-salida) 150ms backwards;
+}
+
+.cab__arte {
+  animation: cab-sube 800ms var(--demo-ease-salida) 200ms backwards;
+}
+
+.cab__formas {
+  animation: cab-entra-forma 1100ms var(--demo-ease-salida) 300ms backwards;
+}
+
+.cab__esfera,
+.cab__cristal,
+.cab__brillo {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.cab__esfera {
+  animation: cab-flota-a 16s ease-in-out 1400ms infinite;
+}
+
+.cab__cristal {
+  animation: cab-flota-b 21s ease-in-out 1400ms infinite;
+}
+
+.cab__brillo {
+  animation: cab-flota-b 13s ease-in-out 1400ms infinite reverse;
+}
+
+.cab__pieza {
+  animation: cab-sube 600ms var(--demo-ease-salida) 400ms backwards;
+
+  @for $i from 2 through 12 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{400 + ($i - 1) * 60}ms;
+    }
+  }
+}
+
+.cab__trazo path {
+  stroke-dasharray: 1;
+  animation: cab-dibuja 1200ms var(--demo-ease-salida) 400ms backwards;
+}
+
+.cab__trazo circle {
+  animation: cab-aparece 500ms ease-out 1000ms backwards;
+}
+
+.cab__viajero {
+  animation:
+    cab-aparece 500ms ease-out 1000ms backwards,
+    cab-recorre 5s var(--sc-easing-default) 1400ms infinite alternate;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cab__titulo,
+  .cab__entradilla,
+  .cab__nota,
+  .cab__arte,
+  .cab__formas,
+  .cab__esfera,
+  .cab__cristal,
+  .cab__brillo,
+  .cab__pieza,
+  .cab__trazo path,
+  .cab__trazo circle {
+    animation: none;
+  }
+
+  .cab__viajero {
+    animation: none;
+    offset-distance: 100%;
+  }
+}

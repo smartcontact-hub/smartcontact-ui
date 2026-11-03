@@ -6,6 +6,7 @@ import { COMPONENT_CATALOG, groupCatalog } from './component-catalog';
 import { LanguageService } from '../../shared/language.service';
 import { ComponentApiService, trozosDeCuando } from '../../storybook/component-api.service';
 import { EstadoComponenteComponent } from '../../storybook/estado-componente.component';
+import { CabeceraComponent } from '../../shared/cabecera.component';
 
 /**
  * Portada de la sección Componentes.
@@ -17,15 +18,14 @@ import { EstadoComponenteComponent } from '../../storybook/estado-componente.com
  */
 @Component({
   selector: 'app-components-index',
-  imports: [EstadoComponenteComponent, RouterLink, TranslatePipe],
+  imports: [CabeceraComponent, EstadoComponenteComponent, RouterLink, TranslatePipe],
   template: `
-    <header class="cabecera">
-      <h1>{{ 'componentsIndex.title' | translate }}</h1>
-      <p
-        class="lead sc-text-h3-regular"
-        [innerHTML]="'componentsIndex.lead' | translate: { total: total, families: groups.length }"
-      ></p>
-    </header>
+    <app-cabecera
+      arte="componentes"
+      [titulo]="'componentsIndex.title' | translate"
+      [entradilla]="'componentsIndex.lead' | translate: { total: total, families: groups.length }"
+      [nota]="'componentsIndex.note' | translate"
+    />
 
     @for (group of groups; track group.category) {
       <section class="fam">
@@ -107,20 +107,6 @@ import { EstadoComponenteComponent } from '../../storybook/estado-componente.com
     }
   `,
   styles: `
-    /* Cabecera como la de las docs de referencia: título y entradilla a 18, sin foto ni caja. */
-    .cabecera {
-      max-width: 52rem;
-    }
-
-    h1 {
-      margin: 0 0 var(--sc-spacing-1);
-    }
-
-    .lead {
-      margin: 0;
-      color: var(--sc-text-secondary);
-    }
-
     /* Familia: encabezado + rejilla de componentes. Ritmo por separación, no por caja. */
     .fam {
       margin-top: var(--sc-spacing-3);

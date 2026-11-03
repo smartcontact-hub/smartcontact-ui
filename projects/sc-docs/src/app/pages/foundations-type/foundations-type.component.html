@@ -1,7 +1,9 @@
-<header class="hero">
-  <h1 class="hero__title">{{ 'fundamentos.type.title' | translate }}</h1>
-  <p class="hero__lead sc-text-h3-regular" [innerHTML]="'fundamentos.type.lead' | translate"></p>
-</header>
+<app-cabecera
+  arte="tipografia"
+  [titulo]="'fundamentos.type.title' | translate"
+  [entradilla]="'fundamentos.type.lead' | translate"
+  [nota]="'fundamentos.type.leadNote' | translate"
+/>
 
 <!-- El 14 contra el 16: la confusión que más se repite al leer esta página. La rampa se autora en
      px de diseño y se compila a rem sobre root 16; el 14 que se ve por todo el sistema es la base

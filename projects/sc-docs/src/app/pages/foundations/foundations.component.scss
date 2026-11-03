@@ -1,15 +1,3 @@
-/* Tamaño y peso del título, los de todas las páginas de la doc (`.demo-main h1`, styles.scss). */
-h1 {
-  margin: 0 0 var(--sc-spacing-0-75);
-}
-
-/* La entradilla, a 18 como en las demás páginas. */
-.lead {
-  max-width: 52rem;
-  margin: 0 0 var(--sc-spacing-2-5);
-  color: var(--sc-text-secondary);
-}
-
 h2 {
   font-size: var(--sc-font-size-h3);
   line-height: var(--sc-line-height-h3);

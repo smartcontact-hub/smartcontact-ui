@@ -1,7 +1,8 @@
-<header class="hero">
-  <h1 class="hero__title">{{ 'fundamentos.patterns.title' | translate }}</h1>
-  <p class="hero__lead sc-text-h3-regular" [innerHTML]="'fundamentos.patterns.lead' | translate"></p>
-</header>
+<app-cabecera
+  arte="patrones"
+  [titulo]="'fundamentos.patterns.title' | translate"
+  [entradilla]="'fundamentos.patterns.lead' | translate"
+/>
 
 <!-- Una tarjeta por patrón, con su título y nada más: la regla, lo que se evita y con qué se resuelve están en su
      página. Antes los once iban seguidos aquí, unas 1.500 palabras de una tirada. -->

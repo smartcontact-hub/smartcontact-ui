@@ -3,6 +3,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 
 import { SC_ICON_RESERVADOS, SC_ICONS, ScIconComponent, ScIconTono } from '@smartcontact-hub/icons';
 import { ScButtonComponent } from '@smartcontact-hub/components';
+import { CabeceraComponent } from '../../shared/cabecera.component';
 
 /**
  * Fundamentos → Iconos (DD-200).
@@ -14,7 +15,7 @@ import { ScButtonComponent } from '@smartcontact-hub/components';
 @Component({
   selector: 'app-iconos',
   standalone: true,
-  imports: [ScButtonComponent, ScIconComponent, TranslatePipe],
+  imports: [CabeceraComponent, ScButtonComponent, ScIconComponent, TranslatePipe],
   templateUrl: './iconos.component.html',
   styleUrl: './iconos.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

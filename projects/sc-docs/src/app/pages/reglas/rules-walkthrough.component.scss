@@ -20,17 +20,6 @@
   color: var(--sc-text-subtle);
 }
 
-.rules__head h1 {
-  margin: 0;
-  max-width: var(--measure);
-}
-
-.lead {
-  margin: var(--sc-spacing-1) 0 0;
-  max-width: var(--measure);
-  color: var(--sc-text-secondary);
-}
-
 /* ---------- pasos ---------- */
 .step[id],
 .outcome[id] {

@@ -6,6 +6,7 @@ import { ScIconComponent } from '@smartcontact-hub/icons';
 import { ScClipboardService } from '@smartcontact-hub/components';
 
 import { LanguageService } from '../../shared/language.service';
+import { CabeceraComponent } from '../../shared/cabecera.component';
 
 interface ColorFamily {
   /** Nombre de la familia primitiva por i18n: `fundamentos.color.primitive.<token>`. */
@@ -45,7 +46,7 @@ interface SwatchInfo {
  */
 @Component({
   selector: 'app-foundations',
-  imports: [ScIconComponent, TranslatePipe],
+  imports: [CabeceraComponent, ScIconComponent, TranslatePipe],
   templateUrl: './foundations.component.html',
   styleUrl: './foundations.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

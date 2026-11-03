@@ -52,7 +52,8 @@
   },
   "componentsIndex": {
     "title": "Components",
-    "lead": "{{total}} <code>sc-*</code> wrappers from <code>@smartcontact-hub/components</code>, across {{families}} families. What each one is for at a glance; open any to see its variants, states, and code, in light and dark."
+    "lead": "{{total}} components in {{families}} families, each with when to use it. Open one to see its variants, states and code.",
+    "note": "<code>sc-*</code> wrappers from the <code>@smartcontact-hub/components</code> package, in light and dark."
   },
   "components": {
     "blurb": {
@@ -128,7 +129,7 @@
     },
     "type": {
       "title": "Typography",
-      "lead": "A <strong>rounded</strong> scale in <strong>rem</strong> on a <strong>16</strong> root (<code>font-size-300</code> = 16px = exactly 1rem), <strong>step-named</strong> (the same language as the Pro Kit and the devs) and <strong>decoupled</strong> from the spacing scale. 8 sizes + 7 line heights.",
+      "lead": "Twelve text styles, six roles in two weights, on a scale of their own, separate from spacing.",
       "note": "<strong>14 and 16 are not the same.</strong> The DS doesn't override the browser root (<code>html</code> stays at <code>100%</code>), so <code>1rem</code> = 16px and the ramp lands on round pixels. The <strong>14</strong> you see across the system is the other axis: it's the base of the <a href=\"#/fundamentos/escala-color\">spacing scale</a> (<code>--sc-scale-1</code> = 14px, the suffix is the multiplier) and the default <strong>body</strong> size (<code>font-size-200</code>). Dropping the root to 14 would shrink both axes at once.",
       "lineHeights": "Line heights",
       "weights": "Weights",
@@ -156,11 +157,12 @@
         "no_primeng": "Nothing with a <code>.p-*</code> class: the preset paints it, in its own layer",
         "no_icons": "Icons: <code>&lt;sc-icon&gt;</code> has its own size scale",
         "note": "Measured on the Supervisor mockup: of its <strong>43 texts</strong>, the <strong>25</strong> page-level ones carry an anchored style and the <strong>18</strong> living inside a component carry none. If you need a component to look different, move the <strong>token</strong>; do not put a class on top of it."
-      }
+      },
+      "leadNote": "A rounded rem scale on a 16 root (<code>font-size-300</code> = 16px = 1rem), named by step, the same names the Pro Kit and development use: 8 sizes and 7 line heights."
     },
     "patterns": {
       "title": "Screen patterns",
-      "lead": "The quality bar when building a product screen. Each pattern points to what the system <strong>already</strong> solves, so a new screen is born consistent instead of being fixed afterward.",
+      "lead": "The quality bar for a product screen: each pattern points to what the system <strong>already</strong> solves.",
       "haveLabel": "Already in the system",
       "foot": "It's the same bar followed by whoever builds this repo's apps: it's also in <code>AGENTS.md</code> (the «Screen UX» section), the document you read when you touch the code. It's not a checklist to show off, it's what separates a professional screen from a generic one.",
       "principles": {
@@ -340,7 +342,7 @@
     },
     "color": {
       "title": "Color",
-      "intro": "<code>--sc-*</code> tokens from the <code>@smartcontact-hub/styles</code> package. Every value traces back to the Kit export and is verified in CI (<code>tokens:gen</code> · <code>tokens:parity</code>).",
+      "intro": "Color says what each thing is and what state it is in: the palette, and what each background, text and border means.",
       "primitiveTitle": "Primitive color",
       "primitiveHint": "Hover a color to see its token, hex, and HSL. Each line copies when you click it.",
       "copyHexAria": "Click to copy the hex.",
@@ -367,11 +369,12 @@
         "aviso": "Warning",
         "peligro": "Danger",
         "violeta": "Violet"
-      }
+      },
+      "note": "<code>--sc-*</code> tokens from the <code>@smartcontact-hub/styles</code> package, traceable to the Kit export and verified in CI (<code>tokens:gen</code>, <code>tokens:parity</code>)."
     },
     "iconos": {
       "title": "Icons",
-      "lead": "An icon goes alone only if it reads in five seconds without text. Otherwise, icon and text. If no icon says it, text only. The rule lives in the icons package (<code>SC_ICONS</code> and <code>SC_ICON_RESERVADOS</code>) and <code>audit:icons</code> enforces it.",
+      "lead": "An icon goes alone only if it reads in five seconds without text. Otherwise, icon and text; if no icon says it, text only.",
       "cuando": {
         "title": "When an icon, when text",
         "solo": {
@@ -457,11 +460,12 @@
         "boton": "Icon-only button: <code>ariaLabel</code>. The button shows the tooltip, also on focus; a <code>title</code> is redundant.",
         "contraste": "Contrast of at least 3:1 and a target of at least 24 px."
       },
-      "foot": "Checked against <a href=\"https://www.nngroup.com/articles/icon-usability/\" target=\"_blank\" rel=\"noopener\">NN/g, Icon Usability</a> and <a href=\"https://primer.style/product/components/icon-button/\" target=\"_blank\" rel=\"noopener\">Primer's IconButton</a>. Decision: DD-200."
+      "foot": "Checked against <a href=\"https://www.nngroup.com/articles/icon-usability/\" target=\"_blank\" rel=\"noopener\">NN/g, Icon Usability</a> and <a href=\"https://primer.style/product/components/icon-button/\" target=\"_blank\" rel=\"noopener\">Primer's IconButton</a>. Decision: DD-200.",
+      "note": "The rule lives in the icons package (<code>SC_ICONS</code> and <code>SC_ICON_RESERVADOS</code>) and <code>audit:icons</code> enforces it."
     },
     "spacing": {
       "title": "Spacing",
-      "lead": "One scale, in steps of 14: <code>--sc-scale-*</code>, in rem. Inside a component you write its alias, <code>--sc-spacing-*</code>; no raw px and no hand-made <code>calc()</code>.",
+      "lead": "One scale, in steps of 14, and one rule for grouping: 7 inside a field, 14 between fields and 28 between groups.",
       "scaleTitle": "14-base scale",
       "thToken": "Token",
       "thAlias": "Inside a component",
@@ -477,11 +481,12 @@
       "gap7": "7: label and its control",
       "gap14": "14: between fields",
       "gap28": "28: between groups and before the button",
-      "groupMore": "The full rule, in the Grouping pattern"
+      "groupMore": "The full rule, in the Grouping pattern",
+      "note": "<code>--sc-scale-*</code> scale, in rem. Inside a component you write its alias, <code>--sc-spacing-*</code>; no raw px and no hand-made <code>calc()</code>."
     },
     "motion": {
       "title": "Motion",
-      "lead": "Three durations and two curves: <code>--sc-transition-*</code> and <code>--sc-easing-*</code>. Only <code>transform</code> and <code>opacity</code> animate, and when the system asks for reduced motion, nothing moves.",
+      "lead": "Three durations and two curves. Position and opacity animate, and when the system asks for reduced motion, nothing moves.",
       "play": "Play",
       "back": "Back",
       "durationsTitle": "Durations",
@@ -499,12 +504,13 @@
         "reduced": "With \"reduce motion\" on in the system, no animation: <code>@media (prefers-reduced-motion: reduce)</code> removes it. The samples on this page jump to the end too.",
         "nobounce": "No bounce and no elastic curves: motion slows to a stop, it does not overshoot."
       },
-      "more": "Why nothing jumps, in the No jumps pattern"
+      "more": "Why nothing jumps, in the No jumps pattern",
+      "note": "<code>--sc-transition-*</code> and <code>--sc-easing-*</code> tokens; only <code>transform</code> and <code>opacity</code>."
     }
   },
   "uso": {
     "title": "Real-world component usage",
-    "intro": "Where each DS component appears on the <strong>real</strong> Supervisor screens (not in the isolated demo). Captures taken from the rendered DOM — regenerated with <code>npm run usage:capture</code>, never out of sync.",
+    "intro": "Where each component appears on the <strong>real</strong> Supervisor screens, not in the isolated demo.",
     "meta": "{{screens}} screens · {{seen}}/{{total}} DS components seen · captured {{date}} · {{viewport}} · {{theme}} theme",
     "byComponent": "By component",
     "byScreen": "By screen",
@@ -518,11 +524,12 @@
     "gatedTitle": "Not captured in isolation",
     "gatedNote": "seen in the flow",
     "gatedLead": "The pokédex marks them used, but they only show after an unscripted interaction or with empty data (e.g. an empty state). Documented here; see the «By screen» view of the section where they live.",
-    "uses": "uses"
+    "uses": "uses",
+    "introNote": "Captures taken from the rendered DOM; regenerated with <code>npm run usage:capture</code>, so they never drift."
   },
   "reglas": {
     "title": "Rules system",
-    "lead": "The rules system was rebuilt from scratch. Before: recording calls, with priorities, conflicts, and drafts. Now: <strong>transcribing</strong>, with several active rules and no conflicts, and a builder anyone understands. Each change is told with its <strong>before</strong>, its <strong>now</strong>, and its <strong>why</strong>. The screenshots are from the real Supervisor.",
+    "lead": "The rules system was rebuilt to <strong>transcribe</strong>: several active rules, no conflicts, and a builder anyone understands.",
     "before": "Before",
     "after": "Now",
     "zoom": "Zoom in",
@@ -718,7 +725,8 @@
     "lightbox": {
       "close": "Close (Esc)",
       "hint": "Press <kbd>Esc</kbd> or click outside to close"
-    }
+    },
+    "leadNote": "Each change with its before, its now and its why. The screenshots are from the real Supervisor."
   },
   "inicio": {
     "title": "SmartContact",

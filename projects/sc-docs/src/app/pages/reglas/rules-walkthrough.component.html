@@ -1,9 +1,11 @@
 <article class="rules">
   <div class="rules__main">
-  <header class="rules__head">
-    <h1>{{ 'reglas.title' | translate }}</h1>
-    <p class="lead sc-text-h3-regular" [innerHTML]="'reglas.lead' | translate"></p>
-  </header>
+  <app-cabecera
+    arte="reglas"
+    [titulo]="'reglas.title' | translate"
+    [entradilla]="'reglas.lead' | translate"
+    [nota]="'reglas.leadNote' | translate"
+  />
 
   <section class="step" id="paso-1">
     <h2><span class="step__n">01</span> {{ 'reglas.s1.title' | translate }}</h2>

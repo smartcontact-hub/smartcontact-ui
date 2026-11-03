@@ -1,6 +1,11 @@
-<header class="uso-head">
-  <h1>{{ 'uso.title' | translate }}</h1>
-  <p class="uso-intro sc-text-h3-regular" [innerHTML]="'uso.intro' | translate"></p>
+<app-cabecera
+  arte="uso"
+  [titulo]="'uso.title' | translate"
+  [entradilla]="'uso.intro' | translate"
+  [nota]="'uso.introNote' | translate"
+/>
+
+<div class="uso-head">
   @if (status(); as m) {
     <p class="uso-meta">
       {{
@@ -25,7 +30,7 @@
       (valueChange)="onViewChange($event)"
     />
   }
-</header>
+</div>
 
 @if (error()) {
   <p class="uso-error" [innerHTML]="'uso.error' | translate"></p>

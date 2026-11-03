@@ -1,0 +1,166 @@
+<header class="cab">
+  <h1 class="cab__titulo">{{ titulo() }}</h1>
+  <p class="cab__entradilla sc-text-h3-regular" [innerHTML]="entradilla()"></p>
+  @if (nota()) {
+    <p class="cab__nota sc-text-caption-regular" [innerHTML]="nota()"></p>
+  }
+
+  <!-- La ilustración de la sección: las formas de la portada a la derecha y, delante, componentes `sc-*` de verdad que
+       dicen de qué va la página. Decorado: ni se tabula ni se anuncia. -->
+  <div class="cab__arte" [attr.data-arte]="arte()" inert aria-hidden="true">
+    <svg class="cab__formas" viewBox="0 0 420 260" focusable="false">
+      <defs>
+        <radialGradient id="cab-grad-esfera" cx="0.32" cy="0.3" r="0.8">
+          <stop class="cab-stop--brillo" offset="0" />
+          <stop class="cab-stop--cian" offset="0.28" />
+          <stop class="cab-stop--cielo" offset="0.7" />
+          <stop class="cab-stop--hondo" offset="1" />
+        </radialGradient>
+        <radialGradient id="cab-grad-lima" cx="0.4" cy="0.6" r="0.6">
+          <stop class="cab-stop--lima" offset="0" />
+          <stop class="cab-stop--cian" offset="0.6" stop-opacity="0.9" />
+          <stop class="cab-stop--cielo" offset="1" stop-opacity="0" />
+        </radialGradient>
+        <linearGradient id="cab-grad-cristal" x1="0" y1="0" x2="1" y2="1">
+          <stop class="cab-stop--cian" offset="0" stop-opacity="0.85" />
+          <stop class="cab-stop--cielo" offset="1" stop-opacity="0.75" />
+        </linearGradient>
+      </defs>
+      <g class="cab__esfera">
+        <circle cx="300" cy="150" r="130" fill="url(#cab-grad-esfera)" />
+      </g>
+      <g class="cab__cristal">
+        <rect x="120" y="40" width="200" height="170" rx="24" transform="rotate(-16 220 125)" fill="url(#cab-grad-cristal)" />
+      </g>
+      <g class="cab__brillo">
+        <circle cx="240" cy="190" r="60" fill="url(#cab-grad-lima)" opacity="0.85" />
+      </g>
+    </svg>
+
+    <div class="cab__motivo">
+      @switch (arte()) {
+        @case ('color') {
+          @for (c of colores; track c) {
+            <span class="cab__muestra cab__pieza" [style.background]="'var(--sc-color-' + c + ')'"></span>
+          }
+        }
+        @case ('espaciado') {
+          <div class="cab__pila">
+            <span class="cab__bloque cab__pieza"></span>
+            <span class="cab__hueco cab__hueco--7 cab__pieza"><code>7</code></span>
+            <span class="cab__bloque cab__pieza"></span>
+            <span class="cab__hueco cab__hueco--14 cab__pieza"><code>14</code></span>
+            <span class="cab__bloque cab__pieza"></span>
+            <span class="cab__hueco cab__hueco--28 cab__pieza"><code>28</code></span>
+            <span class="cab__bloque cab__bloque--boton cab__pieza"></span>
+          </div>
+        }
+        @case ('tipografia') {
+          <span class="cab__aa sc-text-h1-semibold cab__pieza">Aa</span>
+          <span class="cab__rampa">
+            <span class="sc-text-h3-semibold cab__pieza">Título</span>
+            <span class="sc-text-subtitle-regular cab__pieza">Subtítulo</span>
+            <span class="sc-text-body-regular cab__pieza">Cuerpo de texto</span>
+            <span class="sc-text-caption-regular cab__pieza">Nota</span>
+          </span>
+        }
+        @case ('iconos') {
+          <!-- La regla de la página en tres botones: solo icono, icono y texto, solo texto. -->
+          <div class="cab__tarjeta cab__pieza">
+            @for (i of iconos; track i) {
+              <sc-button [icon]="i" appearance="text" variant="secondary" size="sm" [ariaLabel]="i" />
+            }
+          </div>
+          <div class="cab__tarjeta cab__pieza">
+            <sc-button label="Columnas" icon="view_column" variant="secondary" appearance="outlined" size="sm" />
+            <sc-button label="Cancelar" variant="secondary" appearance="outlined" size="sm" />
+          </div>
+        }
+        @case ('movimiento') {
+          <!-- Una bola que recorre la curva con la curva del DS (`--sc-easing-default`), ida y vuelta, con pausa. -->
+          <span class="cab__lienzo">
+            <svg class="cab__trazo" viewBox="0 0 260 120" focusable="false">
+              <path pathLength="1" d="M10 100 C90 100 110 20 250 20" />
+              <circle cx="10" cy="100" r="6" />
+              <circle cx="250" cy="20" r="6" />
+            </svg>
+            <span class="cab__viajero"></span>
+            <sc-tag class="cab__flota cab__pieza" value="300 ms" severity="info" />
+          </span>
+        }
+        @case ('patrones') {
+          <span class="cab__lienzo">
+            <div class="cab__ventana cab__pieza">
+              <span class="cab__puntos"><i></i><i></i><i></i></span>
+              <div class="cab__ventana-cuerpo">
+                <sc-skeleton width="70%" height="0.75rem" />
+                <sc-skeleton width="100%" height="0.75rem" />
+                <sc-skeleton width="45%" height="0.75rem" />
+              </div>
+            </div>
+            <sc-message class="cab__flota cab__pieza" severity="success" variant="outlined" icon="check_circle" text="Guardado" size="sm" />
+          </span>
+        }
+        @case ('componentes') {
+          <div class="cab__tarjeta cab__pieza">
+            <sc-button label="Guardar" icon="check" size="sm" />
+            <sc-button label="Cancelar" variant="secondary" appearance="outlined" size="sm" />
+          </div>
+          <div class="cab__tarjeta cab__pieza">
+            <sc-tag value="Disponible" severity="success" />
+            <sc-toggleswitch [checked]="true" ariaLabel="Activo" />
+          </div>
+        }
+        @case ('estado') {
+          @for (e of estados; track e.nombre) {
+            <div class="cab__tarjeta cab__fila cab__pieza">
+              <span class="sc-text-body-semibold">{{ e.nombre }}</span>
+              <sc-tag [value]="e.estado" [severity]="e.tono" />
+            </div>
+          }
+        }
+        @case ('primeng') {
+          <div class="cab__malla">
+            @for (i of malla; track i; let n = $index) {
+              <span class="cab__celda cab__pieza" [class.cab__celda--usada]="n % 3 !== 2"><sc-icon [name]="i" [size]="16" /></span>
+            }
+          </div>
+        }
+        @case ('uso') {
+          <span class="cab__lienzo">
+            <div class="cab__ventana cab__ventana--captura cab__pieza">
+              <span class="cab__puntos"><i></i><i></i><i></i></span>
+              <img src="/usage/admin-agentes.png" width="1440" height="900" alt="" loading="lazy" decoding="async" />
+            </div>
+            <sc-tag class="cab__flota cab__pieza" value="sc-datatable" severity="info" />
+          </span>
+        }
+        @case ('reglas') {
+          <span class="cab__lienzo">
+          <svg class="cab__trazo" viewBox="0 0 260 120" focusable="false">
+            <path pathLength="1" d="M10 60 L90 60 C120 60 120 20 150 20 L250 20 M90 60 C120 60 120 100 150 100 L250 100" />
+            <circle cx="10" cy="60" r="6" />
+            <circle cx="90" cy="60" r="6" />
+            <circle cx="150" cy="20" r="6" />
+            <circle cx="150" cy="100" r="6" />
+          </svg>
+          <sc-tag class="cab__flota cab__flota--arriba cab__pieza" value="Transcribir" severity="info" />
+          <sc-tag class="cab__flota cab__flota--abajo cab__pieza" value="Analizar con IA" severity="success" />
+          </span>
+        }
+        @case ('novedades') {
+          <span class="cab__lienzo cab__lienzo--linea">
+          <svg class="cab__trazo" viewBox="0 0 260 40" focusable="false">
+            <path pathLength="1" d="M10 20 L250 20" />
+            <circle cx="10" cy="20" r="6" />
+            <circle cx="90" cy="20" r="6" />
+            <circle cx="170" cy="20" r="6" />
+            <circle class="cab__nodo-actual" cx="250" cy="20" r="8" />
+          </svg>
+          <sc-tag class="cab__flota cab__pieza" value="Nuevo" severity="info" />
+          </span>
+        }
+      }
+    </div>
+  </div>
+</header>

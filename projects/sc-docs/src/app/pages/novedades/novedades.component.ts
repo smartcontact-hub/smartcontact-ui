@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { ScSkeletonComponent } from '@smartcontact-hub/components';
+import { CabeceraComponent } from '../../shared/cabecera.component';
 
 /** Una sección de una versión («Novedades», «Cambios», «Retirado»…). */
 interface Seccion {
@@ -31,7 +32,7 @@ const RELEASES = 'https://github.com/smartcontact-hub/smartcontact-ui/releases';
 @Component({
   selector: 'app-novedades',
   standalone: true,
-  imports: [ScSkeletonComponent],
+  imports: [CabeceraComponent, ScSkeletonComponent],
   templateUrl: './novedades.component.html',
   styleUrl: './novedades.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

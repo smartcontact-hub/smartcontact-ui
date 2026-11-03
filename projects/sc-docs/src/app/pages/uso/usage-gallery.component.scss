@@ -3,20 +3,11 @@
   max-width: 72rem;
 }
 
-/* Tamaño y peso del título, los de todas las páginas de la doc (`.demo-main h1`, styles.scss). */
-h1 {
-  margin: 0 0 var(--sc-spacing-0-75);
-}
-
-.uso-intro,
 .uso-meta {
   color: var(--sc-text-secondary);
   max-width: 52rem;
-}
-
-.uso-meta {
   font-size: var(--sc-font-size-200); /* 14 — era `--sc-font-size-sm`, que NO EXISTE: la declaración era inválida y el texto heredaba estos mismos 14. Medido. */
-  margin-top: var(--sc-spacing-0-5);
+  margin: 0;
 }
 
 /* La tira la pinta el tema (`p-tabs`). Aquí solo el aire alrededor. */

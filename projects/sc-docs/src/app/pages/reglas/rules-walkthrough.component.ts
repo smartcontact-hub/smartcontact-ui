@@ -11,6 +11,7 @@ import {
 } from '@angular/core';
 import { ScIconComponent } from '@smartcontact-hub/icons';
 import { TranslatePipe } from '@ngx-translate/core';
+import { CabeceraComponent } from '../../shared/cabecera.component';
 
 interface Snippet {
   /** Código REAL del repo (o el de antes, reconstruido), recortado para leerse. */
@@ -43,7 +44,7 @@ interface FeedbackEntry {
  */
 @Component({
   selector: 'app-rules-walkthrough',
-  imports: [ScIconComponent, TranslatePipe],
+  imports: [CabeceraComponent, ScIconComponent, TranslatePipe],
   templateUrl: './rules-walkthrough.component.html',
   styleUrl: './rules-walkthrough.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
