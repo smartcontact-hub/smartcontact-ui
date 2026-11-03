@@ -265,7 +265,7 @@ test.describe('sc-chip', () => {
 test.describe('sc-tag', () => {
   // `tag/padding/y` = scale/0-125 en el maestro (DS › ❖ Tag, 373:13337). Hasta DD-76 el tema
   // ponía 3.5 y este test lo congelaba: 25 de alto contra los 21.5 del Kit.
-  test('métrica del Kit (relleno, font 12/700, radio 6)', async ({ page }) => {
+  test('métrica del Kit (relleno, font 12/600, radio 6)', async ({ page }) => {
     await gotoPage(page, 'tag');
     const tag = page.getByTestId('sc-tag').locator('.p-tag');
     expect(
@@ -274,7 +274,7 @@ test.describe('sc-tag', () => {
       'padding-left': kitPx('tag.root.paddingX'),
       'padding-top': kitPx('tag.root.paddingY'),
       'font-size': '12px',
-      'font-weight': '700',
+      'font-weight': '600',
       'border-radius': '6px',
     });
     await screenshotBaseline(page, 'tag');

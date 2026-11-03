@@ -748,8 +748,9 @@ réplica que el código acaba de quitar.
 
 **Repaso del 2026-11-03:** los estilos están hechos, y `tag` y `badge` van a 600 desde ese día: `tag/font/weight` y
 `badge/font/weight` apuntan a `primitive/typography/font/weight/semibold` (23 textos de `tag`, 56 de `badge` y 56 de
-`overlaybadge`). **Falta el push del plugin**: con él, `tag.ts` y `badge.ts` pasan de 700 a 600 por el export. Queda
-solo decidir las etiquetas en píldora (abajo), con su propio PR (DD-188).
+`overlaybadge`), y el código también: el export lleva las dos variables a `semibold` y `tag.ts` y `badge.ts`, que
+escriben el peso a mano, pasan a 600 en el mismo día (DD-188 §3). Queda solo decidir las etiquetas en píldora (abajo),
+con su propio PR (DD-188).
 
 **Estado:** los estilos, HECHOS; lo demás, pendiente · **Dónde:** fichero del DS, página «ª Typography» (`12899:61527`),
 tablero `Text styles` (`13407:3586`).
@@ -761,8 +762,8 @@ tablero `Text styles` (`13407:3586`).
 - **El maestro `Section`** (`691:23956`): su título pasa a `Subtitle/subtitle-semibold`, y en la variante que titula la
   página, a `Title/title-semibold`. Hoy dibuja `Body/body-semibold` (14) y el código pinta 16 y 20.
 - **Las maquetas del Supervisor:** el título de página (`.page__heading`, el nombre de las fichas) a `Title`.
-- **Tag y Badge a 600:** sus maestros llevan 700 (`tag.ts` y `badge.ts` lo copian del Kit). Primer no tiene 700 y DD-13
-  pedía dos pesos, regular y semibold. El código sigue en 700 hasta que el maestro cambie aquí.
+- ~~**Tag y Badge a 600**~~ → **HECHO el 2026-11-03**, en el Kit y en el código. Ojo: el export no mueve el código
+  solo; `tag.ts` y `badge.ts` llevan el peso escrito, y hay que cambiarlo a mano con el maestro.
 - **Etiquetas en píldora (propuesta, decídela aquí):** Primer separa la etiqueta de dato (píldora con borde de 1, 20 de
   alto, texto 12 en 500) de la de estado (rellena, con icono), y el contador va en su propio chip (12 en 600, 18 de
   alto). El Tag del Kit es uno solo: radio 6, sin borde, 21,5 de alto y 700. Si se adopta, primero aquí y luego el

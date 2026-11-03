@@ -11,7 +11,7 @@ import type { TagDesignTokens } from '@primeuix/themes/types/tag';
          * 0-25 (3.5): el tag medía 25 de alto contra los 21.5 del Kit. */
         padding: "var(--sc-cmp-tag-padding-y) var(--sc-cmp-tag-padding-x)",
         fontSize: "var(--sc-font-size-100)",
-        fontWeight: "700",
+        fontWeight: "600",
         borderRadius: "{content.border.radius}",
         roundedBorderRadius: "{border.radius.xl}"
     },

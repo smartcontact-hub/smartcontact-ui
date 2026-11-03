@@ -24,7 +24,7 @@ import type { BadgeDesignTokens } from '@primeuix/themes/types/badge';
         padding: "var(--sc-cmp-badge-padding-y) var(--sc-cmp-badge-padding-x)",
         fontSize: "var(--sc-cmp-badge-font-size)",
         minWidth: "var(--sc-cmp-badge-min-width)",
-        fontWeight: "700",
+        fontWeight: "600",
         borderRadius: "{border.radius.md}"
     },
     colorScheme: {
