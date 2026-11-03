@@ -17,25 +17,9 @@
    * Todas las familias que el Kit trae (blue, sky, slate, cyan y las de Tailwind) las escribe
    * el generador en la zona `@sc-gen:palette`, desde el export: un color cambiado en Figma
    * llega solo (2026-09-14; antes eran copias a mano y cada cambio salía «desfase mudo»).
-   * Aquí queda solo lo que el Kit NO tiene: el blanco `slate-0` y la familia `azure`. */
+   * Aquí queda solo lo que el Kit NO tiene: el blanco `slate-0`. `azure` se retiró el 2026-11-03:
+   * era casi el mismo azul que `sky` y la etiqueta azul y los avisos de información toman `sky` (DD-247). */
   --sc-color-slate-0: #ffffff;
-
-  /* ---------- Color · Azure (label palette) ---------- */
-  /* Mirrors Aura's `blue` scale (Tailwind blue, saturated sky-blue).
-   * Named `azure` to avoid collision with AED's `--sc-color-blue-*`
-   * which is the custom brand navy. Used by `--sc-label-blue-*`,
-   * which needs a bright sky-blue distinct from brand identity. */
-  --sc-color-azure-50: #eff6ff;
-  --sc-color-azure-100: #dbeafe;
-  --sc-color-azure-200: #bfdbfe;
-  --sc-color-azure-300: #93c5fd;
-  --sc-color-azure-400: #60a5fa;
-  --sc-color-azure-500: #3b82f6;
-  --sc-color-azure-600: #2563eb;
-  --sc-color-azure-700: #1d4ed8;
-  --sc-color-azure-800: #1e40af;
-  --sc-color-azure-900: #1e3a8a;
-  --sc-color-azure-950: #172554;
 
   /* ---------- Color · Paleta del Kit (generada) ---------- */
   /* @sc-gen:palette — bloque GENERADO desde kit-export-dtcg.json. Las familias del mapa

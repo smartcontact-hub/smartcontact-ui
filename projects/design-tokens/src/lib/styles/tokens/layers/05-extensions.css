@@ -242,7 +242,7 @@
   --sc-toast-close-button-radius: var(--sc-scale-0-875); /* 12.25px (= mitad del ancho a circular) */ /* Figma `toast/close/button/border/radius: 12.25` (= width/2 → circular) */
   --sc-toast-close-icon-size: var(--sc-scale-1); /* 14px */ /* Figma `toast/close/icon/size: 14` */
   --sc-toast-success-icon: var(--sc-color-green-600);
-  --sc-toast-info-icon: var(--sc-color-azure-600);
+  --sc-toast-info-icon: var(--sc-color-sky-600);
   --sc-toast-warn-icon: var(--sc-color-yellow-700);
   --sc-toast-error-icon: var(--sc-color-red-600);
   --sc-toast-secondary-bg: var(--sc-color-slate-100); /* slate-100 */

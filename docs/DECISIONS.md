@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Un azul menos: la etiqueta azul (`--sc-label-blue-*`) y los avisos de información toman `sky`; se retira la familia `azure`, en el código y en el Kit · en Figma, Comunicación en `sky` y el fondo de los tonos del hub en el paso 50, como el código | DD-247 |
 > | El borde de las tarjetas del hub de Repositorios, al pasar, en el tono FUERTE de su grupo (el punto de la etiqueta), no en su borde (un 200 más flojo que el gris de reposo) · también en las «Próximamente», sin mano ni pulsar · marcada, el halo del mismo tono fuerte (enmienda DD-179 §2 y DD-245 §4) | DD-246 |
 > | Repositorios como sus páginas de COA: Equipos avisa del nombre en gris y en rojo, su cifra abre la ficha en «Agentes» y enseña la foto (4453) · Agendas fija Nombre y «⋮» y sus campos son siempre «Personalizado N» (4440) · Plantillas corta el título con tooltip y avisa en rojo como Agendas (4438) · el hub: ocho «Próximamente» con su cifra y sin panel, un reciente entra en su repositorio y Labels con «Administración» (4064) (enmienda DD-179 §4 y §6) | DD-245 |
 > | Tipificaciones: dos opciones hermanas con el mismo nombre se dicen bajo el campo de la que repite, «Ya hay «X» en este nivel», como el COA de SISMAC-4451 (v7, 2026-10-30); bajo el árbol queda solo «Hay opciones sin nombre» (enmienda DD-187 §12 en lo del repetido) | DD-244 |
@@ -173,6 +174,37 @@
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
 
 ---
+
+## DD-247 · 2026-11-03 — Un azul menos: la etiqueta azul y los avisos de información toman `sky`; se retira `azure`
+
+**Contexto** · Había tres azules: `blue` (el marino de marca), `sky` (información, enlaces y el anillo de foco) y `azure`
+(el azul de fábrica de Aura, #3b82f6, escrito a mano porque el Kit no lo tiene, DD-83). `azure` solo lo usaban la etiqueta
+azul (`--sc-label-blue-*`) y los avisos de información (toast y mensaje), 13 líneas de tokens y ningún componente ni
+pantalla. En Figma, al no estar en la librería, Comunicación en el hub de Repositorios iba en el marino. Medido el
+2026-11-03: `azure-500` y `sky-500` se distinguen a 1,33:1, y `sky` cumple igual o mejor como etiqueta (texto sobre fondo
+8,86 en claro y 8,23 en oscuro, frente a 6,16 y 8,25; borde fuerte sobre blanco 4,90 frente a 3,68).
+
+**Decisión** ·
+1. **La etiqueta azul es `sky`**: fondo 50, texto 700, borde 200 y punto 500 en claro; en oscuro, 900 al 40 %, 300, 700
+   al 45 % y 400, los mismos pasos que tenía.
+2. **Los avisos de información, también `sky`**, como el texto de información (`--sc-text-info`): fondo 50 al 95 %,
+   borde 200, icono 600; en oscuro, el borde 700 al 36 %.
+3. **Se retira `azure`**: del código (`01-primitive.css` y su divergencia en `palette-map.mjs`) y del Kit de Figma, donde
+   estaba añadida y sin publicar.
+4. **En Figma**, el hub de Repositorios y sus componentes atan Comunicación a `sky` (antes, al marino `blue`), y el fondo
+   del icono y de la cifra de los cuatro tonos pasa del paso 100 al 50, el de `--sc-label-<color>-bg`.
+
+**Razón** · Dos azules con oficio distinto (la marca y el resto) bastan; un tercero casi igual a `sky` costaba mantenerlo
+a mano y publicarlo en la librería sin dar nada que se vea.
+
+**Descartadas** ·
+- *Publicar `azure` en el Kit*: arreglaba Figma, pero dejaba tres azules y uno de ellos fuera del export.
+- *`cyan` o `violet` para Comunicación*: `cyan` roza el teal de Diseñador y `violet` el morado de Clasificación.
+- *Dejar `--sc-color-azure-*` como alias de `sky`*: ninguna de las cuatro apps lo usa fuera de los tokens.
+
+**Consecuencias** · El seleccionado de Comunicación en el hub (borde y halo en `sky-500`) es del color del anillo de foco;
+`azure` ya lo rozaba (1,33:1). Las etiquetas azules y los avisos de información cambian un poco de tono en todo el producto.
+Pruebas: `components.spec.ts` (el fondo del chip `label` azul) y `palette-map.test.mjs`.
 
 ## DD-246 · 2026-11-03 — El borde de las tarjetas del hub, al pasar, en el tono fuerte de su grupo; también en «Próximamente»
 

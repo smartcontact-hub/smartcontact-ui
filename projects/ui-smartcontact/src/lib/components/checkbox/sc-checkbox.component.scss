@@ -11,7 +11,7 @@
  *   Small  (7154:140007): font 12.25, line-height 17.5
  *   Large  (7154:140599): font 15.75, line-height 24.5
  *   Filled (5801:52774): bg slate-50 cuando unchecked
- *   Checked (148:6324):  bg/border #3b82f6 azure = Aura primary → SC
+ *   Checked (148:6324):  bg/border #3b82f6 (Aura primary) → SC
  *                        usa `--sc-bg-primary` (navy) por consistencia
  *                        de brand (mismo patrón que button/tabs/select
  *                        active). Brand divergence documentada.
@@ -140,7 +140,7 @@
 
   /* ──────────────────────────────────────────────────────────────
    * Checked — Figma `Selected=True` (148:6324):
-   *   `checkbox/checked/background: #3b82f6` (azure = Aura primary)
+   *   `checkbox/checked/background: #3b82f6` (Aura primary)
    *   `checkbox/checked/border/color: #3b82f6`
    *   `checkbox/icon/checked/color: #ffffff`
    * SC override: navy `--sc-bg-primary` (=blue-500) por consistencia
