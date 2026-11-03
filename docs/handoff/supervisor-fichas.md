@@ -85,6 +85,21 @@ El de eliminar varios en todas las tablas sin barra de lote (2026-10-26, DD-227,
 como alta (2026-10-26, DD-232, sin trampas propias) y el de Agendas y Plantillas como sus COA, solo a agentes (2026-10-26,
 DD-230; su trampa sube a «Trampas del frente»): `git show archive/handoff-fichas-2026-10-31:docs/handoff/supervisor-fichas.md`.
 
+El de Agendas, Plantillas y Equipos solo a agentes (2026-10-28, DD-239, sin trampas propias): `git show
+0d5c0549:docs/handoff/supervisor-fichas.md`.
+
+## ✅ 2026-11-03 · Repaso del Figma del Supervisor y «Fuera del DS», borrada
+
+> **Sello:** rama `claude/new-session-3g90bx` sobre `main` HEAD `c4ac441f`. Solo Figma y `figma-pendiente`.
+
+- **Figma** (server de la nube; detalle en `figma-pendiente` §54, §64, §65 y §66): los 4 avisos de descartar con los
+  botones de borrar (#575); las 64 barras medidas, dos contadores añadidos, y la edición de Agendas y Plantillas en
+  «Asignados»; DD-244 en Tipificaciones; DD-235 y DD-245 en Equipos (fuera el nombre repetido, que se había escapado);
+  las seis «Avanzado» de Agentes con la `.Subsection` plegable del Kit.
+- **«Fuera del DS»**: ninguna ficha quedaba como «se queda»; la página se borró, y lo que pide al Kit está en §66.
+- **No hecho**: Contact Center (no se toca), los COA (sin acceso desde la sesión) y las versiones por página (la API no
+  las guarda).
+
 ## ✅ 2026-10-31 · La barra común de asignar y Repositorios como sus COA (DD-243, DD-245)
 
 > **Sello:** rama `areses/align-coa-figma-flows-3b1a9b` sobre `main` HEAD `c395300b`.
@@ -130,22 +145,6 @@ DD-230; su trampa sube a «Trampas del frente»): `git show archive/handoff-fich
   publicar la librería y el Code Connect, y el mensaje a los devs (borrador en `~/Documents/Claude/2026-10 Empate flujos AED/`).
 - **Trampa**: `npm run verify` reescribe `dist/` y deja sin el DS a un `ng serve` vivo del mismo worktree; tras
   `verify`, reconstruye el DS y relanza antes de medir.
-
-## ✅ 2026-10-28 · Agendas, Plantillas y Equipos: solo a agentes, confirmado con producto (DD-239)
-
-> **Sello:** rama `areses/team-docs-update-69ebf8` sobre `main` HEAD `a922b1b3`.
-
-- **Hecho**: el aviso de borrar una plantilla dice «Los agentes que la tengan asignada perderán la referencia.» (sin «y
-  grupos»), en `templates.delete.*`. DD-239 recoge la decisión (producto, 28/10): la columna «Grupos» filtra y marca, no
-  asigna; asignar a un grupo queda a futuro. Equipos (SISMAC-4453) es lo mismo: nombre, descripción y agentes.
-- **Ficha de grupo**: el bloque «Repositorios» de Recursos (Agendas, Plantillas, «Gestionar en Repositorios») queda apagado tras
-  `conRecursosDeRepositorio = false`, como Etiquetas (DD-142); «Ficha de cliente» sigue, y `Group.schedules/templates` se
-  conservan al guardar. El resumen no pinta «Recursos» sin filas. Pruebas: `ficha-recursos-dialogos`, `recursos-resumen`,
-  `resumen-enlazado` y `revision-producto-1020` ajustadas (lo del grupo, medido en el agente 3).
-- **COA leídos el 2026-10-28** (4058, 4438, 4440 y 4453): el prototipo cuadra; el 4058 ya dice que Recursos y su fila del
-  resumen «se hacen pero se ocultan». **Figma, hecho** (`figma-pendiente` §63): bloque y fila ocultos, textos al día.
-- **Equipos, cerrado**: se asigna únicamente a agentes; el «y sus asignaciones a grupos» del COA 4453 sobra y no cambia código.
-
 
 ## SIGUIENTE — sin preguntar
 
@@ -225,8 +224,6 @@ DD-230; su trampa sube a «Trampas del frente»): `git show archive/handoff-fich
   revisión del 2026-10-15 (DD-206).
 - **Decisión de diseño:** llevar o no al DS oficial lo que la copia arregló (el borde de 1 de los botones de texto, el
   tooltip con máximo y la celda de selección small; `figma-pendiente` §53). No bloquea las maquetas.
-- **Decisión de diseño:** las 4 fichas que quedan en «Fuera del DS» (aviso, campos numéricos, subsección plegada y lo
-  no dibujado: atajo «/» y solo lectura), con sus alternativas en `figma-pendiente` §54.
 - **Próxima publicación del DS:** decidir si la tabla «(sin slots)» se oculta de la librería (`_` delante). El
   «Update all» en el Supervisor ya está aplicado (2026-10-20).
 - **Rafa:** revisar usuarios contra el Supervisor real. Y en el portátil: poner el 4405 al día con `main` y borrar el

@@ -15,9 +15,9 @@ const LARGO_DEL_COMENTARIO = 255;
  * el comentario si lo pide, y Guardar, que se enciende cuando está todo. Se puede probar: así se entiende qué es un
  * nivel y qué cambia al pedir comentario sin leer una ayuda. No guarda nada.
  *
- * Los niveles son `sc-select` y Guardar es `sc-button` del DS, tal cual salen de Figma («Fuera del DS»): solo se recolorean
- * el estado apagado de los niveles y Guardar, que en la ventana del agente es de borde y texto blancos. El modo oscuro
- * de estas piezas queda pendiente.
+ * Los niveles son `sc-select` y Guardar es `sc-button` del DS, tal cual salen de Figma (hand-off de Tipificaciones,
+ * «Lo que ve el agente al colgar»): solo se recolorean el estado apagado de los niveles y Guardar, que en la ventana del
+ * agente es de borde y texto blancos. El modo oscuro de estas piezas queda pendiente.
  *
  * Su forma es la de la réplica (`agent/…/typification.component.ts` y el Comunicador que la contiene): misma
  * estructura, mismos radios y mismas piezas. Sus colores, los de la familia `--sc-agent-window-*` (05-extensions),
