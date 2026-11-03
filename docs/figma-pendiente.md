@@ -1349,12 +1349,14 @@ en el Kit y en el código de `main`.
 «Docked drawer» y «Recent item», sin instancias, borrados de «Componentes del Supervisor»; las tres notas del hub que
 los nombraban, reescritas.
 
-**`Nav-menu`: las esquinas blancas de las filas (2026-11-03, sin publicar).** En el maestro (`15460:72350`, sus tres
+**`Nav-menu`: las esquinas blancas de las filas (2026-11-03, publicado).** En el maestro (`15460:72350`, sus tres
 variantes), las filas sin marcar llevaban el blanco con radio 0: sobre el gris de la caja se veían las esquinas
 cuadradas, y al marcar otra fila en una pantalla, la que dejaba de estarlo se quedaba sin blanco. Ahora las 12 filas
 van en blanco (`content/background`) con el radio de la fila (`border/radius/xl`, 12), como `.form-nav--caja` del
-código (DD-221); la marcada tapa su blanco con su gris. Probado sobre gris con la segunda fila marcada. **Falta
-publicar el Kit**; la instancia medida en Grupos ya lo sobrescribía a 12 (el resto, sin medir).
+código (DD-221); la marcada tapa su blanco con su gris. Probado sobre gris con la segunda fila marcada.
+Publicado el mismo día. En el Supervisor, 97 filas sobrescritas a radio 0 o sin blanco (en Agentes y Grupos, 38 eran
+filas marcadas en blanco con la esquina recta, las que se veían) igualadas al maestro: 0 de 415 en Usuarios, Agentes, Grupos,
+Tipificaciones y Contact Center. Playground, sin tocar.
 
 ## 68 · Usuarios maquetada de nuevo, contra el prototipo (cuarta vuelta, 2026-11-03)
 
