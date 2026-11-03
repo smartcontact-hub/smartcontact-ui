@@ -1266,8 +1266,8 @@ tono (instancias contadas al cerrar, con los pasos nuevos del hub):
 | Destination row | `4435:796` | 27 | Fila del panel de destinos |
 | Category title | `4435:800` | 28 | Título de categoría con su raya |
 | Destination header | `4435:807` | 3 | Cabecera del panel de destinos |
-| Docked drawer | `4435:874` | 3 | `p-drawer` acoplado a la derecha, con el contenido en un slot (el drawer del Kit solo admite texto) |
-| Recent item | `4445:1282` | 3 | Fila de «Recientes» |
+| Docked drawer | `4435:874` | 3 | `p-drawer` acoplado a la derecha, con el contenido en un slot (el drawer del Kit solo admite texto) **Borrado el 2026-11-03**: lo sustituye el del Kit (§67). |
+| Recent item | `4445:1282` | 3 | Fila de «Recientes» **Borrado el 2026-11-03**: lo sustituye el del Kit (§67). |
 
 **Cómo pasarlos al Kit sin romper nada.** Las instancias apuntan a este fichero, así que cortar y pegar no basta: crearía
 un componente nuevo y dejaría las instancias huérfanas. Dos caminos:
@@ -1334,14 +1334,24 @@ en el Kit y en el código de `main`.
 **Cuando se publiquen el Kit y los iconos**, en el Supervisor, por script (`importComponentByKeyAsync` + `swapComponent`):
 1. Los iconos sustitutos del hub (§66), el `graph_5` de Usuarios por `hub` (§68) y `key` en «Expirar contraseña» de la
    ficha de agente (§58).
-2. «Recent item» por `menu-item` con `Show Trailing`.
-3. Las 74 etiquetas del hub, de `Severity=Secondary` sobrescrita a mano a `Severity=Label` con su `Color`.
-4. «Docked drawer» (3) por `drawer` `Docked=True`, con su contenido en el slot.
-5. Usuarios: las 21 «Section (…, piel de tarjeta)» por `Surface=Card`, y las cifras con anillo (Secciones y Permisos)
-   por `summary-kpi`.
-6. Grupos: V1 y V5 vuelven a ser `group-summary`, con Chat, Web Chat y WhatsApp en sus slots.
+   **Pendiente**: Smart-Contact Icons no estaba publicado el 2026-11-03 (`schedule`, `hub` y `key` no se importan desde
+   el Supervisor). Lo demás se hizo ese día con el Kit publicado:
+2. ✅ «Recent item» por `menu-item` con `Show Trailing`. El `menu-item` del Kit mide 21 de alto (3,5 de relleno y la
+   línea a 14), como en los otros menús del fichero; «Recent item» medía 34. Diferencia del Kit, sin medir en el
+   prototipo.
+3. ✅ Las 97 etiquetas del hub (41 azules, 21 moradas, 14 teal, 21 naranjas), de `Severity=Secondary` sobrescrita a
+   mano a `Severity=Label` con su `Color`, sin rellenos sobrescritos. El maestro «Repository card» lleva `Blue`.
+4. ✅ «Docked drawer» (3) por `drawer` `Docked=True`, con su contenido en el slot y sin pie. La cabecera pasa a la del
+   Kit (título a 20, relleno 15,75), que es la del código: queda resuelto «el título del panel» de §64.
+5. ✅ Usuarios: las 21 «Section (…, piel de tarjeta)» por `Surface=Card` (mismas medidas y textos; los rellenos que
+   llevaban sobrescritos quedan como sobrescritura con el mismo valor), y las 42 cifras con anillo (Secciones y
+   Permisos) por `summary-kpi`, con su arco.
+6. ✅ Grupos: los 3 resúmenes «con Chat» del alta vuelven a ser `group-summary` (`Alta sin agentes`), con Chat en
+   «Canales» y sus cuatro filas en «Filas de distribución». V5 (Web Chat y WhatsApp) no aparece como resumen separado
+   en la página.
 
-Después, «Docked drawer» y «Recent item» sobran en «Componentes del Supervisor».
+«Docked drawer» y «Recent item», sin instancias, borrados de «Componentes del Supervisor»; las tres notas del hub que
+los nombraban, reescritas.
 
 ## 68 · Usuarios maquetada de nuevo, contra el prototipo (cuarta vuelta, 2026-11-03)
 
