@@ -1097,8 +1097,7 @@ hacer · **Dónde:** el Supervisor, páginas «Grupos» y
 - `group-summary`: sus variantes solo pintan Teléfono. Con Chat (V1) y con Web Chat y WhatsApp (V5), separado.
 - Custom modal: **publicado** (versión «Custom modal: los topes de sc-dialog»): sin ancho máximo y con 720 de alto
   para el diálogo entero, como `max-height: min(85vh, 720px)` de `sc-dialog`; el contenido encoge sin tope propio.
-  **Sin publicar:** la cabecera en FILL (versión «Custom modal: la cabecera llena el ancho»). Sin ella, en un diálogo
-  ancho la X se queda a media cabecera; V2 ya lo lleva puesto en la instancia.
+  La cabecera en FILL (versión «Custom modal: la cabecera llena el ancho»), **publicada el 2026-11-03** (CURRENT).
 - Icono `key` (`keyIcon` de la ficha de agente): no está en Smart-Contact Icons; «Expirar contraseña» va sin icono.
 - `.Subsection` plegable: publicado (§54, fila 9).
 
@@ -1163,7 +1162,7 @@ Figma) y sus entradas de ejemplo.
   recoge §67, «Cuando se publiquen el Kit y los iconos».
 - **La cabecera mide 58 en el Kit y 56 en el código**: en el `Header` del Kit, `container buttons` mide 32,5; en el código,
   lo más alto es 28 en una caja de 30,5. Es un componente compartido: mirar quién lo usa antes de tocarlo y publicar.
-- **«❖ Alert modal» con superficie blanca** (DD-242): hecha en el DS, sin publicar (§65); publicar la librería es de Rafa.
+- ~~**«❖ Alert modal» con superficie blanca** (DD-242)~~ → publicada, y los 22 avisos del Supervisor ya la usan (§65).
 - **Enlaces de Figma en los COA** de 4438, 4440 y 4064 (páginas `4077:58411`, `4067:100978` y `3491:35886`): van en los
   prompts de `~/Documents/Claude/2026-10 Empate flujos AED/`; los pega y publica Rafa.
 
@@ -1186,8 +1185,8 @@ Figma) y sus entradas de ejemplo.
 - Diferencia que queda frente al código: la cabecera mide 62 y no 63,5, porque la X del Kit mide 31,5 × 30,5.
 
 **Falta:**
-- **Publicar la librería** (lo hace una persona). Hasta entonces el Supervisor no ve la propiedad.
-- **El Supervisor no tiene ningún «Alert modal»** (medido el 2026-10-31, página a página): sus 22 avisos de borrar,
+- ~~**Publicar la librería**~~ → hecho el 2026-11-03 (ver abajo).
+- **(Superado, abajo)** Sin «Alert modal» en el Supervisor (medido el 2026-10-31, página a página): sus 22 avisos de borrar,
   descartar y «guardar antes de Repositorios» siguen siendo el `confirmdialog` de antes, que ya se ve blanco, y se
   quedan. Grupos: `3059:24272`, `3207:52082`, `3314:65885`, `3207:45769`, `3313:42126`. Agentes: `3111:29050`,
   `3208:29670`, `3405:55958`, `3895:28904`. Tipificaciones: `3512:2185`, `3885:18073`, `3535:41429`, `3535:41559`.
@@ -1200,8 +1199,20 @@ Figma) y sus entradas de ejemplo.
   «Descartar» `Danger` relleno a la derecha (overrides del `button` dentro del `confirmdialog`; ni variantes ni
   propiedades nuevas). Las cuatro notas que los describían, también. Los demás avisos ya iban así; los tres custom modal
   con «Cancelar» con borde («Vas a quitar canales», «¿Sacar del grupo…?» y «¿Eliminar «Conexión»?») son como el código.
-- **Siguen siendo `confirmdialog`, no «Alert modal» `Plain`**: la variante está sin publicar, y el aviso se vería igual.
-  Pasarlos es tarea de después de publicar, con la estructura que ya tienen.
+- **Hecho el 2026-11-03, tercera vuelta:** publicada la librería (CURRENT) y los 22 avisos pasados a «Alert modal»
+  `Surface=Plain`, a 480, con la variante del código (`injectAlertModal`): borrar `Error`, descartar `Warning`
+  («Seguir editando» `Secondary` relleno, «Descartar» `Danger` relleno), guardar antes de Repositorios `Info`. Grupos
+  `4479:48647` (W), `4479:48707`, `4479:48822`, `4479:48852` (E), `4479:48763` (I); Agentes `4479:73569` (W),
+  `4479:73599`, `4479:73629`, `4479:73659` (E); Tipificaciones `4480:12744`, `4480:12804`, `4480:12864` (E); Equipos
+  `4480:43277`, `4480:43307` (E), `4480:43337`, `4480:43393` (W); Agendas `4480:60447`, `4480:60477`, `4480:60507` (E);
+  Plantillas `4480:71408`, `4480:71438` (E). Medido después: ningún `confirmdialog` suelto en esas páginas.
+- **Uno no era aviso:** «¿Eliminar «Conexión»?» (Tipificaciones, edición, paso 05) es `sc-custom-modal` en el código
+  (`tipificacion-niveles`), sin icono y con «Cancelar» con borde: ahora es «Custom modal» del Kit a 480 (`4482:121862`).
+- **Agentes ganó «Si algo falla 5»** (`4485:71560`): Gestionar en Repositorios con cambios, `Info`, como Grupos («Si
+  algo falla 7»). **Falta:** el multiselect de Equipos dice «Ninguno» y el resumen «Recursos 1»; debe enseñar «Inglés»
+  (el equipo de Tom Hanks), y `State=Selected` del Kit pinta «4 items selected».
+- **Notas:** las que decían `confirmdialog`, `p-confirmDialog` o «diálogo de confirmación» dicen ahora `sc-alert-modal`
+  (Grupos, Agentes, Tipificaciones, Agendas y Plantillas; la tabla de piezas de Grupos, también).
 - **Code Connect**: `code-connect/sc-alert-modal.figma.ts` ya traduce `Surface=Plain` a `surface: 'plain'`; falta
   publicarlo (`npm run figma:connect:publish`, con token).
 

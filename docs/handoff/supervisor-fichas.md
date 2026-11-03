@@ -100,8 +100,10 @@ El de Agendas, Plantillas y Equipos solo a agentes (2026-10-28, DD-239, sin tram
 - **Segunda vuelta** (fundida la primera en #582, sobre `b4b1305b`): lo montado a mano, a componentes locales en
   «Componentes del Supervisor», con nombres en inglés; el hub cerrado (pasos 3 a 7); las notas sin lo que solo existe en
   este repo ni «dibujo»; cinco iconos en Smart-Contact Icons, sin publicar (§66).
-- **No hecho**: Contact Center (no se toca), los COA (sin acceso desde la sesión), las versiones por página (la API no
-  las guarda) y Usuarios, que hay que maquetar de nuevo.
+- **Tercera vuelta, A MEDIAS**: fichas repasadas (25 cerradas); Kit e Icons con piezas sin publicar (§66, §67); los 22
+  avisos, a «Alert modal» `Plain` (§65). **Queda:** Usuarios (`41:2846`, a medias: revísala entera), «Inglés» en «Si algo
+  falla 5» de Agentes (§65), publicar, y releer §64 tras DD-246 (#585).
+- **No hecho**: Contact Center (no se toca), los COA (sin conector en la sesión), las versiones por página.
 
 ## ✅ 2026-10-31 · La barra común de asignar y Repositorios como sus COA (DD-243, DD-245)
 
