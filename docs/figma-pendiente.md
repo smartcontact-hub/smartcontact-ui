@@ -13,9 +13,9 @@
 > **Cómo se mantiene.** Lo cerrado se marca aquí, con la fecha. Lo nuevo entra aquí y **no** en la bandeja del
 > hand-off: una cosa que solo se puede hacer en Figma no es trabajo de la próxima sesión.
 >
-> **Cuenta del 2026-11-03:** 46 fichas cerradas y 32 abiertas. De las abiertas, 25 son de dibujo o de medida, casi todas
-> en el Kit (estados y variantes de piezas que ya existen; las piezas nuevas, en la 42), 3 de Contact Center (15, 30 y 64, con su evolutivo) y 4 esperan una
-> decisión o están aparcadas (10, 25, 26 y 46).
+> **Cuenta del 2026-11-03:** 48 fichas cerradas y 30 abiertas. De las abiertas, 22 son de dibujo o de medida, casi todas
+> en el Kit (estados y variantes de piezas que ya existen; las piezas nuevas, en la 42), 3 de Contact Center (15, 30 y 64, con su evolutivo) y 5 esperan una
+> decisión o están aparcadas (10, 25, 26, 38 y 46).
 >
 > ⚠️ **Repasado entero el 2026-09-27** contra el código y el export del Kit de `main` (`4f4f2018`): cada ficha,
 > cada fila de la tabla de la ficha 4 y cada variable citada. **No contra el fichero de Figma**: esa sesión no
@@ -129,7 +129,7 @@ Por orden, de lo que más se usa a lo que menos:
       `h3`), y el de `.Subsection` (`12610:23193`), a 16 atado a `…/size/300`; el título de `.Subsection`, a
       `Subtitle/subtitle-semibold`. **Hecho el 2026-10-17.** El icono que cuelga (ficha 40) es solo del `Block`.
 - [x] **22** · En `Section`, del icono al título: el 8 suelto pasa a `scale/0-625` (8,75). **Hecho el 2026-10-17.**
-- [ ] **2** · La pastilla sin punto y a 600. La etiqueta IFTA se queda en 400 (decidido): en Figma no hay que tocarla.
+- [x] **2** · La pastilla sin punto y a 600. **Hecho el 2026-11-03.** La etiqueta IFTA se queda en 400 (decidido).
 - [ ] **24** · El icono de `button-default` y el texto de `inputtext`, atados al tamaño de letra.
 - [ ] **21 y 20** · Los iconos huérfanos (se publica Smart-Contact-Icons), y después el tablero de la barra lateral de
       la página Testing, que necesita `neurology`.
@@ -234,34 +234,6 @@ color; hasta entonces el par se queda, con su motivo escrito en el spec.
    - el color del botón principal (ROADMAP, «Decisiones de marca pendientes»: decisión de marca);
    - borrar la colección «App» (ficha 26);
    - el botón de solo icono, que no es cuadrado (ficha 25; la hora del datepicker ya está a 14).
-
----
-
-## 2 · Lo que Config cambió en código y Figma aún no sabe (2026-09-13)
-
-**Repaso del 2026-11-03:** falta la pastilla de etiqueta sin punto y a 600 en `tag` (hoy, 700). El resto es de Contact Center o ya está.
-
-**Estado:** pendiente, una a una: bajarla al Kit o revertirla en código · **Evidencia:** medido en código (sesión de
-`/config/aed/*`); **mídelo antes** en el fichero.
-
-- **Pastillas sin punto y a 600.** Vale para la variante `label` de `sc-tag` y `sc-chip`: en una pastilla tintada, el
-  color ya está en el fondo y en el texto. El `<p-tag>` sin variante sigue al Kit: `tag/font/weight` es bold (700).
-  **En Figma:** la pastilla de etiqueta sin punto y con el texto a semibold. **Mídelo antes:** qué peso dibuja hoy el
-  maestro. Esta ficha decía 500; la variable dice 700.
-- **`--sc-text-heading`** (slate-800 en claro, blanco en oscuro) para los títulos de sección. **Ya existe en Figma**
-  (medido el 2026-10-17): `semantic/text/heading`, colección Custom, claro `slate/800` y oscuro `surface/0`. El título
-  de `Section` se repuntó a ella el 2026-10-17 (antes iba a `text/color`). No se crea `text/heading/color`.
-  **Decisión 3, hecha el 2026-10-17:** su claro pasa a `slate/900`, porque `text/color` ya está en `surface/900` y el
-  título no puede ser más claro que su contenido. Las otras capas que la usan se miraron antes: 53 de `❖ Sidebar`, todas
-  en la tabla «Sidebar (Para desarrollo)» (rótulos y nombres de icono sobre blanco, no la barra del producto), 1 de
-  `❖ Navmenu` y 1 de `🌈 Colors`. En código, `--sc-text-heading` a slate-900 el mismo día.
-- **Tarjetas de opción (`sc-option-cards`)** en Servicio, en lugar del modal `103:2718`: es una maqueta del
-  Supervisor.
-- **La etiqueta IFTA (dentro del campo): decidido el 2026-09-28, a 400 en todas.** En código iba a 600 en `sc-select` y
-  `sc-multiselect` y a 400 en `sc-inputtext` y en el `p-iftalabel` nativo (`iftalabel/font/weight` es regular). Figma
-  ya dice 400 y no se toca. En código, `sc-select` y `sc-multiselect` bajan a 400 (paso 6).
-- **El interruptor, a la derecha** en la lista de ajustes de Grupos, y a la izquierda en General y Agentes: va donde
-  van los controles de su patrón. Es una maqueta del Supervisor.
 
 ---
 
@@ -772,27 +744,12 @@ réplica que el código acaba de quitar.
 
 ---
 
-## 37 · El resumen de la ficha de grupo lleva a su sección (2026-10-02)
-
-**Repaso del 2026-11-03:** falta en `group-summary` el estado de enlace, con subrayado al pasar y foco.
-
-**Estado:** pendiente · **Dónde:** Figma, el resumen de la ficha de grupo · **Esfuerzo:** un estado al pasar el ratón,
-sin piezas nuevas · **Sin verificar** contra el fichero: el código no cita los nodos de las fichas.
-
-- **Por qué** (DD-146): lo que dice el resumen se arregla en una sección, y desde él se llega a ella.
-- **Qué dibujar:**
-  - los rótulos (Agentes activos, Reparto, Salida, Recursos) y las claves de las filas (Teléfono, Chat, WhatsApp),
-    al pasar el ratón: subrayados, en el mismo color de texto;
-  - el foco: el anillo del sistema alrededor del enlace;
-  - la tarjeta, igual: no cambia al pasar.
-
-**Cómo sabes que está hecho:** se ve como `/admin/grupos/editar/11` a 1440, con el ratón sobre «Reparto».
-
----
-
 ## 38 · Title y Subtitle: los dos estilos nuevos, el maestro `Section` y la etiqueta a 600 (2026-10-09, DD-188)
 
-**Repaso del 2026-11-03:** los estilos están hechos; faltan `tag` y `badge` a 600 (siguen en bold).
+**Repaso del 2026-11-03:** los estilos están hechos, y `tag` y `badge` van a 600 desde ese día: `tag/font/weight` y
+`badge/font/weight` apuntan a `primitive/typography/font/weight/semibold` (23 textos de `tag`, 56 de `badge` y 56 de
+`overlaybadge`). **Falta el push del plugin**: con él, `tag.ts` y `badge.ts` pasan de 700 a 600 por el export. Queda
+solo decidir las etiquetas en píldora (abajo), con su propio PR (DD-188).
 
 **Estado:** los estilos, HECHOS; lo demás, pendiente · **Dónde:** fichero del DS, página «ª Typography» (`12899:61527`),
 tablero `Text styles` (`13407:3586`).
@@ -1132,6 +1089,8 @@ Figma) y sus entradas de ejemplo. La flecha, **hecha el 2026-11-03**: las 30 (3 
 - ~~**67 · Lo que el Kit no tiene: una regla y una decisión por pieza**~~ → **HECHA el 2026-11-03**, publicada y en uso en el Supervisor: tono de etiqueta, drawer acoplado, parte plegable, `group-summary` en slots, `Surface=Card`, `summary-kpi`, `inputnumber` `Type=Plain`, `kbd`, solo lectura, `menu-item` con texto al final y siete iconos; `Nav-menu` con las filas en blanco y radio 12, también publicado. **La regla sigue valiendo** para cada pieza nueva: (1) si PrimeNG lo tiene, variante o propiedad del componente que lo representa; (2) si no, y lo usa más de una pantalla, pieza propia del Kit, en inglés; (3) si lo usa una pantalla, componente local; (4) el color sale del Kit, y la familia que falte se añade con los valores del código; (5) variantes, solo las combinaciones en uso.
 - ~~**68 · Usuarios maquetada de nuevo, contra el prototipo (cuarta vuelta)**~~ → **HECHA el 2026-11-03**: la página al nivel de las demás (índice, hand-off, alta, edición, listado y mapa), con `Surface=Card`, `summary-kpi` y `hub` en «Servicios asignados» desde el Kit publicado.
 - ~~**69 · Grupos: qué se ve con Email en Distribución y colas**~~ → **HECHA el 2026-11-03**: Otras configuraciones 10, 11 y 12 con Email; «Ir a» como componente local «Channel jumps» (`4568:27273`, regla 3 de §67) en las pantallas con dos o más canales; hoja y mapa al día.
+- ~~**2 · Lo que Config cambió en código y Figma aún no sabe (2026-09-13)**~~ → **HECHA el 2026-11-03**: la pastilla de etiqueta sin punto (`Severity=Label`) y a 600 (`tag/font/weight`, ficha 38); `--sc-text-heading` en `semantic/text/heading`; la etiqueta IFTA, a 400. Las tarjetas de opción de Servicio y el interruptor de los ajustes de Grupos, de Contact Center, van con su evolutivo.
+- ~~**37 · El resumen de la ficha de grupo lleva a su sección (2026-10-02)**~~ → **HECHA el 2026-11-03**: `group-summary` gana `Enlace` (Reposo, Al pasar y Foco; las dos últimas, solo en Edición, regla 5 de §67). Al pasar, «Distribución» subrayado en su color, a 1,75 del texto; en foco, el trazo exterior de la miga, atado a `focus/ring/width` y `focus/ring/color` (`sky/500`), a 2 del texto, como `.resumen__enlace:focus-visible`. Sin piezas ni variables nuevas.
 
 - ~~**El título del componente `Section` a `Heading/h3-semibold`**~~ → **HECHO el 2026-09-13** (DD-75). Eran **4
   capas maestras, no ~35**: la cifra de este fichero mezclaba dos componentes. Las del conjunto `Section` son el título
