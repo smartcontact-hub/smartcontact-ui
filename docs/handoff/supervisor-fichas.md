@@ -90,20 +90,20 @@ El de Agendas, Plantillas y Equipos solo a agentes (2026-10-28, DD-239, sin tram
 
 ## ✅ 2026-11-03 · Repaso del Figma del Supervisor y «Fuera del DS», borrada
 
-> **Sello:** rama `claude/new-session-3g90bx` sobre `main` HEAD `c4ac441f`; la cuarta vuelta, `areses/supervisor-figma-round-4-e8e3b0` sobre `2577e70a`. Solo Figma y `figma-pendiente`.
+> **Sello:** rama `claude/new-session-3g90bx` sobre `main` HEAD `c4ac441f`; la cuarta vuelta, `areses/supervisor-figma-round-4-e8e3b0` sobre `2577e70a`; la quinta, `areses/figma-tareas-pendientes-133fda` sobre `d98242c6`. Solo Figma y `figma-pendiente`.
 
 - **Figma** (server de la nube; detalle en `figma-pendiente` §54, §64, §65 y §66): los 4 avisos de descartar con los
   botones de borrar (#575); las 64 barras medidas, dos contadores añadidos, y la edición de Agendas y Plantillas en
   «Asignados»; DD-244 en Tipificaciones; DD-235 y DD-245 en Equipos (fuera el nombre repetido, que se había escapado);
   las seis «Avanzado» de Agentes con la `.Subsection` plegable del Kit.
 - **«Fuera del DS»**: ninguna ficha quedaba como «se queda»; la página se borró, y lo que pide al Kit está en §66.
-- **Segunda vuelta** (fundida la primera en #582, sobre `b4b1305b`): lo montado a mano, a componentes locales en
-  «Componentes del Supervisor», con nombres en inglés; el hub cerrado (pasos 3 a 7); las notas sin lo que solo existe en
-  este repo ni «dibujo»; cinco iconos en Smart-Contact Icons, sin publicar (§66).
-- **Tercera vuelta** (#589): 25 fichas cerradas; piezas del Kit e Icons sin publicar (§66, §67); avisos `Plain` (§65).
-- **Cuarta vuelta** (§68): Usuarios maquetada de nuevo contra el prototipo; «Inglés» en «Si algo falla 5» de Agentes.
-  **Queda:** publicar Kit e Icons (una persona), `hub` en Icons y las piezas del Kit que §68 decide.
-- **No hecho**: Contact Center (no se toca), los COA (sin conector en la sesión), las versiones por página.
+- **Vueltas 2 a 4** (#582, #589, #590): lo montado a mano, a componentes locales con nombres en inglés; el hub cerrado;
+  25 fichas cerradas; avisos `Plain` (§65); Usuarios maquetada de nuevo; «Inglés» en «Si algo falla 5» de Agentes.
+- **Quinta vuelta** (§67, §68): piezas del Kit publicadas (tono de etiqueta, drawer acoplado, parte plegable,
+  `group-summary` en slots, `Surface=Card`, `summary-kpi`) y usadas; Icons publicado (`schedule`, `sell`, `label`,
+  `category`, `arrow_forward`, `key`, `hub`) y puesto en el hub, Usuarios y Agentes.
+- **No hecho** (con el evolutivo de Contact Center): Contact Center, Conversaciones, releer los COA, la cabecera del hub
+  (58 en Figma, 56 en el prototipo) y las versiones por página.
 
 ## ✅ 2026-10-31 · La barra común de asignar y Repositorios como sus COA (DD-243, DD-245)
 
