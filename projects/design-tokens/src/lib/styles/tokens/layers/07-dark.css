@@ -353,8 +353,8 @@
    * aspecto de nada, solo impide que un color fuera de paleta rompa el
    * pipeline. Cuando el Kit remapee info a la familia de marca (§1.4), estos
    * dos vuelven a generarse solos y estas líneas se borran. */
-  --sc-cmp-message-info-border-color: color-mix(in srgb, var(--sc-color-azure-700) 36%, transparent);
-  --sc-cmp-toast-info-border-color: color-mix(in srgb, var(--sc-color-azure-700) 36%, transparent);
+  --sc-cmp-message-info-border-color: color-mix(in srgb, var(--sc-color-sky-700) 36%, transparent);
+  --sc-cmp-toast-info-border-color: color-mix(in srgb, var(--sc-color-sky-700) 36%, transparent);
   /* Fondo del toast de info en OSCURO — a mano (EXCLUDE en `cmp-color-map.mjs`, 2026-09-14).
    * El export trae sky-50 al 16 %, un velo claro. Aura pinta el toast de info igual que el
    * message de info, así que es su alias: si uno cambia, el otro lo sigue. */
@@ -459,10 +459,10 @@
   --sc-label-teal-border: color-mix(in srgb, var(--sc-color-teal-700) 45%, transparent);
   --sc-label-teal-dot: var(--sc-color-teal-400);
 
-  --sc-label-blue-bg: color-mix(in srgb, var(--sc-color-azure-900) 40%, transparent);
-  --sc-label-blue-text: var(--sc-color-azure-300);
-  --sc-label-blue-border: color-mix(in srgb, var(--sc-color-azure-700) 45%, transparent);
-  --sc-label-blue-dot: var(--sc-color-azure-400);
+  --sc-label-blue-bg: color-mix(in srgb, var(--sc-color-sky-900) 40%, transparent);
+  --sc-label-blue-text: var(--sc-color-sky-300);
+  --sc-label-blue-border: color-mix(in srgb, var(--sc-color-sky-700) 45%, transparent);
+  --sc-label-blue-dot: var(--sc-color-sky-400);
 
   --sc-label-purple-bg: color-mix(in srgb, var(--sc-color-purple-900) 40%, transparent);
   --sc-label-purple-text: var(--sc-color-purple-300);

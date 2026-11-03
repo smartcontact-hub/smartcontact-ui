@@ -185,9 +185,9 @@
   --sc-toast-success-border: var(--sc-color-green-200);
   --sc-toast-success-icon-bg: var(--sc-color-green-600);
 
-  /* Info — Figma `#eff6fff2` bg (blue-50 95%), `#bfdbfe` border (blue-200 ≈ azure), `#2563eb` icon */
-  --sc-toast-info-bg: color-mix(in srgb, var(--sc-color-azure-50) 95%, transparent);
-  --sc-toast-info-border: var(--sc-color-azure-200);
+  /* Info — el `sky` del Kit, como el texto de información (DD-247): fondo sky-50 al 95 %, borde sky-200, icono sky-600 */
+  --sc-toast-info-bg: color-mix(in srgb, var(--sc-color-sky-50) 95%, transparent);
+  --sc-toast-info-border: var(--sc-color-sky-200);
   --sc-toast-info-icon-bg: var(
     --sc-color-sky-500
   ); /* SC override: icon-square uses sky-500 per brand */

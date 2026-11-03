@@ -30,15 +30,14 @@ test('CARA ROJA · cyan (antes soft-blue) desfasado de su fuente cyan del Kit �
   assert.equal(d[0].src, 'cyan');
 });
 
-test('familia sin fuente (azure) → ignorada (no es drift; se informa aparte)', () => {
-  assert.deepEqual(primitiveDrift({ azure: { 500: '#3b82f6' } }, {}), []);
+test('familia sin fuente → ignorada (no es drift; se informa aparte)', () => {
+  assert.deepEqual(primitiveDrift({ huerfana: { 500: '#3b82f6' } }, {}), []);
 });
 
-test('isPrimitiveDiverge: familia entera (azure.) sí; green.950 ya no (DD-83)', () => {
+test('isPrimitiveDiverge: ni green.950 (DD-83) ni azure (DD-247): la lista está vacía', () => {
   assert.ok(!isPrimitiveDiverge('green', '950'));
   assert.ok(!isPrimitiveDiverge('green', '500'));
-  assert.ok(isPrimitiveDiverge('azure', '500'));
-  assert.ok(isPrimitiveDiverge('azure', '900'));
+  assert.ok(!isPrimitiveDiverge('azure', '500'));
   assert.ok(!isPrimitiveDiverge('cyan', '500')); // cyan (antes soft-blue): 1:1 con el Kit, no es divergencia
 });
 

@@ -1691,9 +1691,9 @@ test.describe('sc-chip variante label', () => {
 
     const label = page.getByTestId('sc-chip-label').locator('.sc-chip__label');
     await expect(label.locator('.sc-chip__dot')).toHaveCount(0);
-    // azul = --sc-label-blue-bg (azure-50 #eff6ff)
+    // azul = --sc-label-blue-bg (sky-50 #eef4ff, DD-247)
     expect((await styleOf(label, ['background-color']))['background-color']).toBe(
-      'rgb(239, 246, 255)',
+      'rgb(238, 244, 255)',
     );
 
     // botón × emite removed

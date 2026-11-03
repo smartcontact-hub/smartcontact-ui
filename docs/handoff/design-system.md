@@ -192,8 +192,8 @@ movimiento». Entradillas de 21-48 palabras a 9-23. Las fichas de componente no 
 **Lo que cambia.** DD-246: al pasar, el borde en `--sc-label-<color>-dot`, también en «Próximamente»; halo de la marcada igual
 (`repositorios-hub.spec.ts` §10). Figma: paso 07, Comunicación a 146 y el filtro, en los siete hubs (`figma-pendiente.md` §64).
 
-**Pendiente.** Comunicación, en `blue` (marino) en Figma: `azure` está en el Kit sin publicar; al publicar, reatar `blue/N →
-azure/N` en la página Repositorios (todo su `blue/*` es ese tono). Cabecera del Kit 58 / código 56 (`container buttons` 32,5).
+**Pendiente.** DD-247 lo cerró: Comunicación en `sky` y `azure` fuera (código y Kit). Queda la cabecera del Kit:
+58 frente a 56 del código (`container buttons` 32,5); componente compartido, mira quién lo usa antes de tocarlo.
 
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 
@@ -244,7 +244,6 @@ azure/N` en la página Repositorios (todo su `blue/*` es ese tono). Cabecera del
 | ~~**Tramo actual del breadcrumb**~~ → **DECIDIDO, `bcab818` (2026-08-25)**: la propuesta de Figma `13890:157` (padres slate-500 `#8F97A3`) **se RECHAZA** — da **2,95:1** sobre blanco y no cumple AA. Se queda el código como está (padres slate-600, actual slate-700, ambos AA). Falta solo anotarlo en el nodo de Figma (Bloque 4). *Nota: el mismo commit tokenizó la miga a 14px, otro asunto ya cerrado.* |
 | ~~**El botón de crear cambia de ancho entre listas**~~ → **HECHO, `bcab818` (2026-08-25)**: decisión de Rafa: el ancho no cambia sin motivo. `main.scss:205` → `.top-bar__actions button { min-width: 144px; max-width: 288px }`, anclado en clase NUESTRA. Los cinco (122–142px) aterrizan igual. Aplicado y en `main` |
 | ~~**Qué forma de ficha (agente, grupo, usuario)**~~ → **DECIDIDO** (DD-121, DD-122) | Índice lateral en las tres. Las variantes de `comparar/fichas` quedan de referencia; la rama se archiva con tag desde el portátil |
-| **Publicar el Kit** (`khNq9dJKNi13pNllrqm6dx`): lleva `azure` (para Comunicación en el Supervisor) y lo de §65 | Sin publicar el 2026-11-03: el Supervisor no puede importar `azure/700` |
 | **B5b · prosa i18n del constructor** | Necesita ICU MessageFormat **y diseño**. Sigue aparcada |
 | ~~**«Ayuda» del menú del avatar**~~ → **HECHO 2026-10-14** | Abre `https://supervisor.smart-contact.com/#/login` en otra pestaña (`AYUDA_URL` de `top-bar.component.ts`): la URL que dio Rafa |
 | ~~**Qué flechas quitar al pulsar columnas**~~ → **DECIDIDO 2026-10-14 ([DD-203](../DECISIONS.md))** | Eran «Subir» y «Bajar» del globo «Columnas» de los listados: fuera. Las ↓↑ de PrimeNG al arrastrar una cabecera, que se habían quitado por error, vuelven |

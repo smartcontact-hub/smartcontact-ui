@@ -26,9 +26,8 @@
    * - green → AED `--sc-color-emerald-*` primitive (Aura's `emerald`,
    *   chosen for a brighter "fresh green" distinct from AED's
    *   brand-semantic green which is Aura's `green`).
-   * - blue → AED `--sc-color-azure-*` primitive (Aura's `blue`,
-   *   renamed to `azure` so it doesn't collide with AED's
-   *   `--sc-color-blue-*` which is the custom brand navy).
+   * - blue → `--sc-color-sky-*`, the Kit's bright blue (DD-247). Not
+   *   `--sc-color-blue-*`, which is the brand navy.
    *
    * All label hues now reference primitives; no hex literals.
    */
@@ -70,10 +69,10 @@
   --sc-label-teal-border: var(--sc-color-teal-200);
   --sc-label-teal-dot: var(--sc-color-teal-500);
 
-  --sc-label-blue-bg: var(--sc-color-azure-50);
-  --sc-label-blue-text: var(--sc-color-azure-700);
-  --sc-label-blue-border: var(--sc-color-azure-200);
-  --sc-label-blue-dot: var(--sc-color-azure-500);
+  --sc-label-blue-bg: var(--sc-color-sky-50);
+  --sc-label-blue-text: var(--sc-color-sky-700);
+  --sc-label-blue-border: var(--sc-color-sky-200);
+  --sc-label-blue-dot: var(--sc-color-sky-500);
 
   --sc-label-purple-bg: var(--sc-color-purple-50);
   --sc-label-purple-text: var(--sc-color-purple-700);

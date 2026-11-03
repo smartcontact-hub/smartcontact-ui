@@ -8,7 +8,7 @@
  * `cyan` sin que nadie lo cazara (§1-6 nunca miran color primitivo).
  */
 
-/** DS family → export family (de dónde DEBE seguir su valor). `azure` no tiene fuente directa. */
+/** DS family → export family (de dónde DEBE seguir su valor). */
 export const PRIMITIVE_SOURCE = {
   blue: 'blue', // Primary (navy SC)
   slate: 'slate', // surface (antes 'gray' — renombrada al Kit, DD-23)
@@ -34,12 +34,8 @@ export const PRIMITIVE_DIVERGE = [
   // `green.950` de marca (#0a2916, «un punto más oscuro») se retiró el 2026-09-14: no cumplía
   // ninguna función medible y era la única primitiva que se apartaba del Kit y de Aura. Criterio
   // del sistema: las divergencias con motivo escrito se valoran, no se heredan (DD-83).
-  {
-    match: 'azure.',
-    reason:
-      'azure (#3b82f6, Tailwind blue) NO tiene familia fuente en el export (el export "blue" es navy) — curado/huérfano, ' +
-      'auto-importado de los fondos info. Revisar en la auditoría: ¿familia legítima o renombrar?',
-  },
+  // `azure` (#3b82f6, sin familia en el Kit) se retiró el 2026-11-03: la etiqueta azul y los avisos
+  // de información toman `sky` (DD-247). Hoy no queda ninguna divergencia consciente.
 ];
 
 /**
@@ -60,7 +56,7 @@ export function primitiveDrift(dsFamilies, exFamilies) {
   const drift = [];
   for (const [dsFam, dsSteps] of Object.entries(dsFamilies)) {
     const src = PRIMITIVE_SOURCE[dsFam];
-    if (!src) continue; // familia curada sin fuente (azure…) → se informa aparte, no es drift
+    if (!src) continue; // familia curada sin fuente → se informa aparte, no es drift
     const exSteps = exFamilies[src] || {};
     for (const [step, dsHex] of Object.entries(dsSteps)) {
       const exHex = exSteps[step];
