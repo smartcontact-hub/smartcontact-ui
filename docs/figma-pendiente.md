@@ -1410,6 +1410,9 @@ Email) y DD-206 §9.
   del Kit no tiene sitio para él: la cabecera lleva 46 de relleno abajo (override) y el atajo va en absoluto encima, en
   (28,25 · 55,5) como en el código; los números 9 de la Guía bajan 46. Fila 9 de la hoja y fila «Saltos por canal» del
   Mapa de componentes.
+- **Otras configuraciones 12** (`4573:27279`): la sección entera, para desarrollo, con Teléfono, Chat y Email: «Ir a» con
+  los tres, la `Section` en `nSections=4 subsection` (la cuarta, el bloque de Email de la 11) y el resumen con los tres
+  canales en ese orden. «3. Edición de grupo» y «4. Mapa de componentes» bajan 611 para no pisar el alta.
 
 ## Lo de estas semanas que NO va a Figma, y por qué
 
