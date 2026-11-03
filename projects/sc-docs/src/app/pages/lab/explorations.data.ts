@@ -200,6 +200,30 @@ export const EXPLORATIONS: readonly Exploration[] = [
     },
     history: [],
   },
+  {
+    /* Rama de comparación: no se funde. Si producto la aprueba, se sube a `main` desde aquí. */
+    id: 'cuscare-ds-acciones-masivas',
+    title: 'CusCare · acciones en bloque de Tickets',
+    version: {
+      date: '2026-11-03',
+      behavior: 'Assign y Change status con desplegable; Cancellation y File abren el modal. Los cuatro piden confirmar.',
+      href: 'https://comparar-cuscare-ds-acciones-masivas.sc-cuscare-ds.pages.dev/tickets',
+    },
+    objective: '¿Qué componentes del DS resuelven las cuatro acciones en bloque del listado de Tickets?',
+    status: 'en-revision',
+    statusNote: 'Pendiente de la revisión de producto de CusCare. Marca varias filas del listado para activar los botones.',
+    live: {
+      label: 'comparar-cuscare-ds-acciones-masivas.sc-cuscare-ds.pages.dev/tickets',
+      href: 'https://comparar-cuscare-ds-acciones-masivas.sc-cuscare-ds.pages.dev/tickets',
+    },
+    history: [],
+    figma: [
+      {
+        label: 'Flujos por botón (Playground)',
+        href: 'https://www.figma.com/design/cLO8JZfPuC3EMx6EgCjmsU/Landing-page?node-id=2803-5209',
+      },
+    ],
+  },
 ];
 
 /* ── LABORATORIOS ───────────────────────────────────────────────────────────────────────────────

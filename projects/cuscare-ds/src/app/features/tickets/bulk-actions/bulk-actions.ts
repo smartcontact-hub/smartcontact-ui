@@ -4,17 +4,15 @@ export type BulkActionKind = 'assign' | 'status' | 'cancellation' | 'file';
 /** Lo que se confirmó en el modal: la acción y su dato (agente o estado), si lo lleva. */
 export interface BulkActionRequest {
   readonly kind: BulkActionKind;
-  /** El agente (asignar) o el estado nuevo (cambiar estado). */
+  /** El agente (asignar), el estado nuevo (cambiar estado) o los servicios a cancelar (Cancellation). */
   readonly value?: string;
 }
-
-/** El estado al que lleva el enlace «Spam» de Cambiar estado. */
-export const SPAM_STATUS = 'closed';
 
 /** Estados que se pueden elegir en Cambiar estado. */
 export const CHANGEABLE_STATUSES: readonly { readonly label: string; readonly value: string }[] = [
   { label: 'Pending', value: 'pending' },
   { label: 'Resolved', value: 'resolved' },
+  { label: 'Closed (Spam)', value: 'closed' },
 ];
 
 /** El estado que pide subestado: al elegirlo aparece un segundo desplegable obligatorio. */

@@ -1,6 +1,6 @@
 <sc-button
   label="Assign"
-  icon="arrow_drop_down"
+  icon="keyboard_arrow_down"
   iconPosition="right"
   variant="secondary"
   appearance="outlined"
@@ -11,7 +11,7 @@
 />
 <sc-button
   label="Change status"
-  icon="arrow_drop_down"
+  icon="keyboard_arrow_down"
   iconPosition="right"
   variant="secondary"
   appearance="outlined"
@@ -75,17 +75,22 @@
             optionValue="value"
             [options]="substatuses"
             [value]="pendingSubstatus()"
-            (valueChange)="pendingSubstatus.set($any($event))"
+            (valueChange)="pickSubstatus($any($event))"
           />
         }
-        <div class="bulk-panel__actions">
-          <sc-button label="Spam" variant="danger" appearance="text" (click)="markSpam(); pop.hide()" />
-          <sc-button label="Accept" [disabled]="!canAccept()" (click)="acceptStatus(); pop.hide()" />
-        </div>
       </div>
     }
   }
 </p-popover>
+
+<!-- Celda Service del modal: los servicios que se van a cancelar, en negrita. -->
+<ng-template #serviceCell let-row>
+  @for (product of row.products; track product; let last = $last) {
+    <span [class.bulk-service--chosen]="isChosen(product)">{{ product }}</span>@if (!last) {<span>, </span>}
+  } @empty {
+    —
+  }
+</ng-template>
 
 <sc-dialog
   width="60rem"
@@ -93,15 +98,30 @@
   [title]="title()"
   [subtitle]="subtitle()"
 >
+  @if (isCancellation()) {
+    <sc-multiselect
+      class="bulk-services"
+      label="Select the services you want to cancel"
+      placeholder="Select services"
+      required
+      display="chip"
+      optionLabel="label"
+      optionValue="value"
+      [options]="productOptions()"
+      [value]="selectedProducts()"
+      (valueChange)="selectedProducts.set($any($event))"
+    />
+  }
   <sc-datatable
     scrollable
     scrollHeight="var(--sc-spacing-12-5)"
     dataKey="id"
     [value]="rows()"
-    [columns]="columns"
+    [columns]="columns()"
+    [rowStyleClass]="rowClass()"
   />
   <div modal-actions>
     <sc-button label="Cancel" variant="secondary" appearance="outlined" (click)="dialogOpen.set(false)" />
-    <sc-button [label]="confirmLabel()" [variant]="confirmVariant()" (click)="confirm()" />
+    <sc-button [label]="confirmLabel()" [variant]="confirmVariant()" [disabled]="!canConfirm()" (click)="confirm()" />
   </div>
 </sc-dialog>

@@ -4,14 +4,24 @@
   flex-direction: column;
   gap: var(--sc-spacing-0-75);
   inline-size: var(--sc-spacing-18);
+}
 
-  &--status {
-    padding: var(--sc-spacing-1);
-  }
+/* El selector de servicios del modal de Cancellation ocupa la mitad del ancho, no todo el modal. */
+.bulk-services {
+  display: block;
+  inline-size: 50%;
+}
 
-  &__actions {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
+/*
+ * Filas del modal de Cancellation con servicios elegidos. La fila vive dentro de la tabla del DS, no de este componente: por eso
+ * la regla es global por clase. Los tickets que no llevan ninguno de los servicios se atenúan; en los demás, el servicio elegido va
+ * en negrita.
+ */
+::ng-deep .bulk-row--unaffected td {
+  color: var(--sc-text-secondary);
+}
+
+.bulk-service--chosen {
+  font-weight: var(--sc-font-weight-bold);
+  color: var(--sc-text-primary);
 }

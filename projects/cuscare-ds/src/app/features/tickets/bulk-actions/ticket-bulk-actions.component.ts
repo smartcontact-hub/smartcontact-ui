@@ -1,17 +1,18 @@
-import { afterNextRender, ChangeDetectionStrategy, Component, computed, inject, Injector, input, output, signal, viewChild } from '@angular/core';
+import { afterNextRender, ChangeDetectionStrategy, Component, computed, inject, Injector, input, output, signal, TemplateRef, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ListboxModule } from 'primeng/listbox';
 import { Popover, PopoverModule } from 'primeng/popover';
-import { ScButtonComponent, ScDatatableComponent, ScDialogComponent, ScSelectComponent, type ScColumnDef } from '@smartcontact-hub/components';
+import { ScButtonComponent, ScDatatableComponent, ScDialogComponent, ScMultiSelectComponent, ScSelectComponent, type ScColumnCellContext, type ScColumnDef } from '@smartcontact-hub/components';
 
 import { ASSIGNABLE_AGENTS, type TicketRow } from '../../../data/seed';
-import { CHANGEABLE_STATUSES, PENDING_SUBSTATUSES, SPAM_STATUS, STATUS_WITH_SUBSTATUS, type BulkActionKind, type BulkActionRequest } from './bulk-actions';
+import { CHANGEABLE_STATUSES, PENDING_SUBSTATUSES, STATUS_WITH_SUBSTATUS, type BulkActionKind, type BulkActionRequest } from './bulk-actions';
 
 /** Una fila de la tabla del modal: lo que enseña, ya resuelto. */
 interface ConfirmRow {
   readonly id: string;
   readonly created: string;
   readonly service: string;
+  readonly products: readonly string[];
   readonly group: string;
   readonly status: string;
   readonly channel: string;
@@ -33,7 +34,9 @@ const CONFIRM_COLUMNS: readonly ScColumnDef<ConfirmRow>[] = [
 /**
  * Las cuatro acciones en bloque del listado de Tickets: Assign, Change status, Cancellation y File. Cada una es un botón con
  * su desplegable (Assign y Change status), o abre directo el modal de confirmación (Cancellation y File: no hay nada que
- * elegir). El modal es el mismo para las cuatro: «Vas a… N tickets», la tabla de los tickets afectados y Cancelar / confirmar.
+ * elegir; Cancellation pide en el propio modal qué servicios cancelar). En los desplegables no hay botón de aceptar: elegir la opción que cierra la selección abre el modal (un agente; un
+ * estado, o el subestado si el estado es Pending). «Closed (Spam)» es una opción más de Change status. El modal es el mismo
+ * para las cuatro: «Vas a… N tickets», la tabla de los tickets afectados y Cancelar / confirmar.
  * CUANDO: la barra del listado de Tickets, con filas marcadas. Maqueta: no cambia los datos; avisa de lo confirmado.
  *
  * Un solo `p-popover` compartido por los dos desplegables: nunca hay más de uno abierto. Se cierra al clicar fuera, con Esc, al
@@ -41,7 +44,7 @@ const CONFIRM_COLUMNS: readonly ScColumnDef<ConfirmRow>[] = [
  */
 @Component({
   selector: 'app-ticket-bulk-actions',
-  imports: [FormsModule, ListboxModule, PopoverModule, ScButtonComponent, ScDatatableComponent, ScDialogComponent, ScSelectComponent],
+  imports: [FormsModule, ListboxModule, PopoverModule, ScButtonComponent, ScDatatableComponent, ScDialogComponent, ScMultiSelectComponent, ScSelectComponent],
   templateUrl: './ticket-bulk-actions.component.html',
   styleUrl: './ticket-bulk-actions.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -55,7 +58,11 @@ export class TicketBulkActionsComponent {
 
   protected readonly agents = ASSIGNABLE_AGENTS;
   protected readonly statuses = CHANGEABLE_STATUSES;
-  protected readonly columns = CONFIRM_COLUMNS;
+  private readonly serviceCell = viewChild.required<TemplateRef<ScColumnCellContext<ConfirmRow>>>('serviceCell');
+  /** La columna Service pinta en negrita los servicios elegidos (Cancellation); el resto de columnas, tal cual. */
+  protected readonly columns = computed<readonly ScColumnDef<ConfirmRow>[]>(() =>
+    CONFIRM_COLUMNS.map((c) => (c.field === 'service' ? { ...c, cellTemplate: this.serviceCell() } : c)),
+  );
 
   /** Qué desplegable está abierto (el popover es uno solo). */
   protected readonly panel = signal<'assign' | 'status' | null>(null);
@@ -63,8 +70,6 @@ export class TicketBulkActionsComponent {
   protected readonly pendingSubstatus = signal<string | null>(null);
   protected readonly substatuses = PENDING_SUBSTATUSES;
   protected readonly needsSubstatus = computed(() => this.pendingStatus() === STATUS_WITH_SUBSTATUS);
-  /** Aceptar se enciende con el estado elegido y, si es Pending, también su subestado (obligatorio). */
-  protected readonly canAccept = computed(() => !!this.pendingStatus() && (!this.needsSubstatus() || !!this.pendingSubstatus()));
 
   /** La acción del modal abierto, o `null` si no hay. */
   protected readonly request = signal<BulkActionRequest | null>(null);
@@ -77,11 +82,19 @@ export class TicketBulkActionsComponent {
   protected readonly popoverTokens = { gutter: '0px' };
   protected readonly listboxTokens = { root: { borderColor: 'transparent', background: 'transparent', shadow: 'none' } };
 
+  /** Cancellation: los servicios que cuelgan de los tickets marcados (sin repetir) y los que el usuario elige cancelar. */
+  protected readonly productOptions = computed(() =>
+    [...new Set(this.tickets().flatMap((t) => t.products))].sort().map((p) => ({ label: p, value: p })),
+  );
+  protected readonly selectedProducts = signal<string[]>([]);
+  protected readonly isCancellation = computed(() => this.request()?.kind === 'cancellation');
+
   protected readonly rows = computed<readonly ConfirmRow[]>(() =>
     this.tickets().map((t) => ({
       id: t.id,
       created: t.created,
       service: t.products.join(', ') || '—',
+      products: t.products,
       group: t.group,
       status: cap(t.status),
       channel: cap(t.channel),
@@ -89,7 +102,24 @@ export class TicketBulkActionsComponent {
     })),
   );
 
+  /**
+   * Con servicios elegidos, marca en la tabla qué tickets afecta la baja (llevan alguno) y cuáles no, sin quitar ninguno.
+   * Es una función nueva con cada cambio de la elección: así la tabla la vuelve a leer.
+   */
+  protected readonly rowClass = computed(() => {
+    const chosen = this.selectedProducts();
+    if (!this.isCancellation() || chosen.length === 0) return undefined;
+    return (row: ConfirmRow): string => (row.products.some((p) => chosen.includes(p)) ? 'bulk-row--affected' : 'bulk-row--unaffected');
+  });
+
+  /** Solo Cancellation resalta servicios: en los demás modales la elección que quedó de antes no cuenta. */
+  protected isChosen(product: string): boolean {
+    return this.isCancellation() && this.selectedProducts().includes(product);
+  }
+
   private readonly noun = computed(() => (this.count() === 1 ? 'ticket' : 'tickets'));
+  /** Cancellation no se confirma sin elegir al menos un servicio. */
+  protected readonly canConfirm = computed(() => !this.isCancellation() || this.selectedProducts().length > 0);
 
   protected readonly title = computed(() => {
     switch (this.request()?.kind) {
@@ -115,8 +145,11 @@ export class TicketBulkActionsComponent {
         return `You are about to assign ${n} to ${req.value}.`;
       case 'status':
         return `You are about to change the status of ${n} to ${req.value}.`;
-      case 'cancellation':
-        return `You are about to cancel the service of all products on ${n}.`;
+      case 'cancellation': {
+        const chosen = this.selectedProducts();
+        if (chosen.length === 0) return `You are about to cancel services on ${n}.`;
+        return `You are about to cancel ${chosen.join(', ')} on ${n}.`;
+      }
       case 'file':
         return `You are about to file ${n}.`;
       default:
@@ -164,10 +197,23 @@ export class TicketBulkActionsComponent {
     this.pendingSubstatus.set(null);
   }
 
-  /** Cambiar de estado descarta el subestado que hubiera elegido. */
+  /** Cambiar de estado descarta el subestado que hubiera elegido. Pending espera su subestado; los demás abren ya el modal. */
   protected pickStatus(status: string | null): void {
     this.pendingStatus.set(status);
     this.pendingSubstatus.set(null);
+    if (status && status !== STATUS_WITH_SUBSTATUS) {
+      this.ask('status', status);
+      this.popover().hide();
+    }
+  }
+
+  /** El subestado cierra la elección de Pending: abre el modal. */
+  protected pickSubstatus(substatus: string | null): void {
+    const status = this.pendingStatus();
+    if (!status || !substatus) return;
+    this.pendingSubstatus.set(substatus);
+    this.ask('status', status, PENDING_SUBSTATUSES.find((s) => s.value === substatus)?.label);
+    this.popover().hide();
   }
 
   protected onPopoverHide(): void {
@@ -177,6 +223,7 @@ export class TicketBulkActionsComponent {
   /** Abre el modal de confirmación para una acción. */
   protected ask(kind: BulkActionKind, value?: string, substatus?: string): void {
     const label = kind === 'status' ? (CHANGEABLE_STATUSES.find((s) => s.value === value)?.label ?? cap(value ?? '')) : value;
+    if (kind === 'cancellation') this.selectedProducts.set([]);
     this.request.set({ kind, value: substatus ? `${label} (${substatus})` : label });
     this.dialogOpen.set(true);
   }
@@ -185,20 +232,14 @@ export class TicketBulkActionsComponent {
     if (agent) this.ask('assign', agent);
   }
 
-  protected acceptStatus(): void {
-    const status = this.pendingStatus();
-    if (!status || !this.canAccept()) return;
-    const sub = PENDING_SUBSTATUSES.find((s) => s.value === this.pendingSubstatus())?.label;
-    this.ask('status', status, sub);
-  }
-
-  protected markSpam(): void {
-    this.ask('status', SPAM_STATUS);
-  }
-
   protected confirm(): void {
     const req = this.request();
     this.dialogOpen.set(false);
-    if (req) this.confirmed.emit(req);
+    if (!req) return;
+    if (req.kind === 'cancellation') {
+      this.confirmed.emit({ kind: 'cancellation', value: this.selectedProducts().join(', ') });
+      return;
+    }
+    this.confirmed.emit(req);
   }
 }

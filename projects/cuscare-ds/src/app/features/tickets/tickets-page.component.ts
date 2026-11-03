@@ -211,7 +211,7 @@ export class TicketsPageComponent {
         this.toast.success('Status changed', `${tickets} set to ${request.value}.`);
         break;
       case 'cancellation':
-        this.toast.success('Service cancelled', `All products cancelled on ${tickets}.`);
+        this.toast.success('Service cancelled', `${request.value} cancelled on ${tickets}.`);
         break;
       case 'file':
         this.toast.success('Tickets filed', `${tickets} filed.`);
