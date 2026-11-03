@@ -1094,7 +1094,8 @@ hacer · **Dónde:** el Supervisor, páginas «Grupos» y
   modal solo admite botones.
 
 **Lo que la librería no tiene** (en las maquetas, separado de su maestro y anotado):
-- `group-summary`: sus variantes solo pintan Teléfono. Con Chat (V1) y con Web Chat y WhatsApp (V5), separado.
+- `group-summary`: sus variantes solo pintan Teléfono. Con Chat (V1) y con Web Chat y WhatsApp (V5), separado. **En el
+  Kit desde el 2026-11-03**: sus filas van en slots (§67); falta volver V1 y V5 a instancias al publicar.
 - Custom modal: **publicado** (versión «Custom modal: los topes de sc-dialog»): sin ancho máximo y con 720 de alto
   para el diálogo entero, como `max-height: min(85vh, 720px)` de `sc-dialog`; el contenido encoge sin tope propio.
   La cabecera en FILL (versión «Custom modal: la cabecera llena el ancho»), **publicada el 2026-11-03** (CURRENT).
@@ -1300,7 +1301,7 @@ un componente nuevo y dejaría las instancias huérfanas. Dos caminos:
 
 ## 67 · Lo que el Kit no tiene: una regla y una decisión por pieza (2026-11-03)
 
-**Estado:** decidido; hecho en el Kit lo marcado, sin publicar · **Dónde:** el Kit (`khNq9dJKNi13pNllrqm6dx`), Smart-Contact
+**Estado:** decidido; hecho en el Kit todo lo que va al Kit (2026-11-03), sin publicar · **Dónde:** el Kit (`khNq9dJKNi13pNllrqm6dx`), Smart-Contact
 Icons (`NLfCIqd4OTkpdzNXx93nZc`) y la página «Componentes del Supervisor» (`4428:25889`) · **Evidencia:** cada pieza, medida
 en el Kit y en el código de `main`.
 
@@ -1316,26 +1317,35 @@ en el Kit y en el código de `main`.
 | Pieza | Regla | Decisión | Estado |
 |---|---|---|---|
 | ~~Azul de Comunicación (`azure`)~~ | 4 | Sin objeto: DD-247 deja Comunicación en `sky` y retira `azure` del código y del Kit (§64) | **Retirado** |
-| Tonos de etiqueta (Tag «label») | 1 y 4 | Variante de tono en `tag`, atada a primitivos (`azure`, `purple`, `teal`, `orange`…), como `--sc-label-*-bg/-text` | Sigue: el hub y Labels la sobrescriben a mano |
+| Tonos de etiqueta (Tag «label») | 1 y 4 | Variante de tono en `tag`, atada a primitivos (`sky`, `purple`, `teal`, `orange`…), como `--sc-label-*-bg/-text` | **Hecho el 2026-11-03**: `Severity=Label` con `Color` (Gray, Red, Orange, Amber, Brown, Green, Teal, Blue, Purple; `15952:194` a `15952:226`), sin borde, como la cifra del hub; fondo y texto a los primitivos de `--sc-label-<color>-bg/-text` y 7 de lado (`scale/0-5`), como el código. Con borde, cuando una pantalla lo pida. El peso sigue en el del Kit (700; el código, 600: ficha 38) |
 | InputNumber sin botones | 1 | `inputnumber` gana `Type=Plain` (el `inputtext` del Kit); el sufijo va en el valor, como en PrimeNG («400 px») | **Hecho** (`15929:8262`) |
 | Tecla del atajo «/» | 2 | `kbd`, pieza propia, en su página «❖ Kbd», con `Key` como texto | **Hecho** (`15929:10407`) |
 | Solo lectura | 1 y 5 | `State=Readonly` en `inputtext` y `textarea`: sin borde, sobre `surface/50`; solo en la combinación base, que es la que usan el PIN y el script de chat | **Hecho** (`15929:16290`, `15929:30671`); `select` e `inputnumber`, cuando una pantalla lo pida |
 | Texto al final de una opción de menú | 1 | `menu-item` gana `Show Trailing` y `Trailing` (una cifra o un atajo, en gris, a la derecha) | **Hecho**; al publicar, «Recent item» se sustituye por `menu-item` |
 | Estado vacío | 2 | «Empty state» pasa al Kit tal cual (el DS de desarrollo lo tiene en sus demos) | Sigue: moverlo por el camino 1 de §66 |
 | Contenedor de menú con slot | 1 | «Popup menu» pasa al Kit como variante de `menu` con las opciones en un slot (sirve para `p-menu` y `p-popover`) | Sigue: moverlo por el camino 1 de §66 |
-| Drawer con contenido | 1 | `drawer` gana un slot de contenido y la variante acoplada; «Docked drawer» deja de hacer falta | Sigue |
-| Parte plegable de una subsección | 1 | La parte de `.Subsection` se pliega como la subsección entera: la misma flecha y el título como botón | Sigue |
-| Resumen de grupo con Chat y WhatsApp | 2 | Las filas del resumen, en un slot de piezas de fila, para cualquier canal | Sigue (§58) |
+| Drawer con contenido | 1 | `drawer` gana un slot de contenido y la variante acoplada; «Docked drawer» deja de hacer falta | **Hecho el 2026-11-03**: `Docked=True` (`15953:111`), como `sc-drawer docked`: 350 de ancho, sin velo ni sombra, borde solo en el filo interior y su esquina de arriba a `border/radius/xl`; el contenido, en el slot «Content slot». Las flotantes siguen con texto: el slot, cuando una pantalla lo pida |
+| Parte plegable de una subsección | 1 | La parte de `.Subsection` se pliega como la subsección entera: la misma flecha y el título como botón | **Hecho el 2026-11-03**: cada título de parte (las 10 de las cinco variantes) lleva «Pista» y «flecha», ocultas y sin propiedad, para encenderlas en la parte que toque (como `sc-slot collapsible`, con `hintKey`); plegada, se apaga su «Show Slot N» |
+| Resumen de grupo con Chat y WhatsApp | 2 | Las filas del resumen, en un slot de piezas de fila, para cualquier canal | **Hecho el 2026-11-03**: `group-summary` lleva tres slots, «Canales», «Filas de distribución» y «Filas de recursos», en sus tres variantes; la fila de canal es la pieza nueva `summary-channel` (`15953:1135`) y las demás, `fact-row`. Con 0 agentes, la barra vacía, como el código (DD-217) |
 | Record header | 3 | Local: es del molde de las fichas del Supervisor | Se queda |
 | Repository card, Destination row y header, Category title | 3 | Locales: solo los usa el hub | Se quedan |
 | Iconos `schedule`, `sell`, `label`, `category`, `arrow_forward` y `key` | 2 | En Smart-Contact Icons, con la receta de los demás | **Hecho** (`793:661` a `793:685`, `795:661`) |
 
-**Cuando se publiquen el Kit y los iconos:** cambiar los iconos sustitutos del hub (§66) y el `graph_5` de Usuarios por
-`hub` (§68), y poner `key` en «Expirar contraseña» de la ficha de agente (§58).
+**Cuando se publiquen el Kit y los iconos**, en el Supervisor, por script (`importComponentByKeyAsync` + `swapComponent`):
+1. Los iconos sustitutos del hub (§66), el `graph_5` de Usuarios por `hub` (§68) y `key` en «Expirar contraseña» de la
+   ficha de agente (§58).
+2. «Recent item» por `menu-item` con `Show Trailing`.
+3. Las 74 etiquetas del hub, de `Severity=Secondary` sobrescrita a mano a `Severity=Label` con su `Color`.
+4. «Docked drawer» (3) por `drawer` `Docked=True`, con su contenido en el slot.
+5. Usuarios: las 21 «Section (…, piel de tarjeta)» por `Surface=Card`, y las cifras con anillo (Secciones y Permisos)
+   por `summary-kpi`.
+6. Grupos: V1 y V5 vuelven a ser `group-summary`, con Chat, Web Chat y WhatsApp en sus slots.
+
+Después, «Docked drawer» y «Recent item» sobran en «Componentes del Supervisor».
 
 ## 68 · Usuarios maquetada de nuevo, contra el prototipo (cuarta vuelta, 2026-11-03)
 
-**Estado:** hecho; las piezas del Kit, decididas y sin crear · **Dónde:** el Supervisor (`Hjyy41SYKqcRuIzCGggfYH`),
+**Estado:** hecho; las piezas del Kit, creadas el 2026-11-03 y sin publicar · **Dónde:** el Supervisor (`Hjyy41SYKqcRuIzCGggfYH`),
 página Usuarios (`41:2846`) · **Evidencia:** cada pantalla, contrastada con el prototipo publicado de `main` a 1440.
 
 **Hecho:**
@@ -1357,10 +1367,10 @@ página Usuarios (`41:2846`) · **Evidencia:** cada pantalla, contrastada con el
 
 | Pieza | Regla | Decisión | Estado |
 |---|---|---|---|
-| Piel de la tarjeta de sección (`Section`) | 2 | Variante del Kit, la que usan todas las fichas | Sigue |
-| KPI con anillo (resumen de permisos) | 2 | Pieza propia del Kit | Sigue |
+| Piel de la tarjeta de sección (`Section`) | 2 | Variante del Kit, la que usan todas las fichas | **Hecho el 2026-11-03**: `Surface=Card` (`15955:319`), como `sc-section-card surface="card"`: `surface/0`, borde `content/border/color`, 24,5 de lado y la subsección sin caja propia. Solo con una subsección, la que usa Usuarios (Agentes y Grupos van en la gris) |
+| KPI con anillo (resumen de permisos) | 2 | Pieza propia del Kit | **Hecho el 2026-11-03**: `summary-kpi` (`15956:423`, página «❖ Summary»), como `sc-summary-kpi`: `Destacada`, `Con total` (cifra «/N» y anillo), `Nota` y el slot «Contenido» para las barras por canal |
 | Resumen de usuario | 3 | No hace falta pieza: se compone con lo que hay | Se queda |
-| Icono `hub` | 2 | En Smart-Contact Icons; mientras, `graph_5` | Sigue |
+| Icono `hub` | 2 | En Smart-Contact Icons; mientras, `graph_5` | **Hecho el 2026-11-03** (`801:661`), con la receta de los demás |
 
 **Diferencias del Kit con el código, medidas y sin tocar:** `checkbox` a 17 (el código, 27); el texto
 de error de `nav-item` corta a 128; `multiselect` `Mode=Chips` mide 40 de alto (el código, 33); y el subtítulo de «Custom
