@@ -179,7 +179,7 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 
 ## ✅ 2026-11-03 · sc-docs: cada página con la cabecera de la portada
 
-**Sello:** rama `areses/sc-doc-design-consistency-c3007b`, sobre `0f5bb7c1`. Sale el tramo del 2026-10-31 (#561 a #581, la estructura de Primer): `git show 0f5bb7c1:docs/handoff/design-system.md`.
+**Sello:** rama `areses/sc-doc-design-consistency-c3007b`, sobre HEAD `0f5bb7c1` de `main`. Sale el tramo del 2026-10-31 (#561 a #581, la estructura de Primer): `git show 0f5bb7c1:docs/handoff/design-system.md`.
 
 Las 12 páginas de sección llevan `app-cabecera` (`shared/cabecera.component.*`): título, UNA frase, lo técnico en una nota a
 pie y una franja como las de la portada, con sus formas y componentes `sc-*` reales según `arte`; quieta con «reducir
