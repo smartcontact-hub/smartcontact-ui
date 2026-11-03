@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | El borde de las tarjetas del hub de Repositorios, al pasar, en el tono FUERTE de su grupo (el punto de la etiqueta), no en su borde (un 200 más flojo que el gris de reposo) · también en las «Próximamente», sin mano ni pulsar · marcada, el halo del mismo tono fuerte (enmienda DD-179 §2 y DD-245 §4) | DD-246 |
 > | Repositorios como sus páginas de COA: Equipos avisa del nombre en gris y en rojo, su cifra abre la ficha en «Agentes» y enseña la foto (4453) · Agendas fija Nombre y «⋮» y sus campos son siempre «Personalizado N» (4440) · Plantillas corta el título con tooltip y avisa en rojo como Agendas (4438) · el hub: ocho «Próximamente» con su cifra y sin panel, un reciente entra en su repositorio y Labels con «Administración» (4064) (enmienda DD-179 §4 y §6) | DD-245 |
 > | Tipificaciones: dos opciones hermanas con el mismo nombre se dicen bajo el campo de la que repite, «Ya hay «X» en este nivel», como el COA de SISMAC-4451 (v7, 2026-10-30); bajo el árbol queda solo «Hay opciones sin nombre» (enmienda DD-187 §12 en lo del repetido) | DD-244 |
 > | La barra de toda tabla de asignar: el filtro del conjunto primero («Todos / Asignados / Sin asignar»), el buscador llenando lo que queda y «N asignados» al final, en una pieza (`sc-assign-bar`) · al editar abre en «Asignados» y en el alta en «Todos», también Agendas y Plantillas · ordenar por nombre en las tablas de asignar y por cualquier columna en el listado de Equipos · el hub de Repositorios, filtro delante del buscador (enmienda DD-176 §4, DD-179 y DD-230 §1) | DD-243 |
@@ -172,6 +173,41 @@
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
 
 ---
+
+## DD-246 · 2026-11-03 — El borde de las tarjetas del hub, al pasar, en el tono fuerte de su grupo; también en «Próximamente»
+
+**Contexto** · En el hub de Repositorios, al pasar el ratón, los bordes no salían del color de su grupo: en Diseñador
+Conversacional y en IA se veía sobre todo. Medido el 2026-11-03 en un build de `main` (1440 × 900, claro y oscuro), dos
+causas. (a) Al pasar, el borde tomaba `--sc-label-<color>-border`, que es un 200 en claro y un 700 al 45 % en oscuro:
+contra la superficie, teal 1,26 y naranja 1,35 frente a 1,34 del gris de reposo (`border-default`), y en oscuro los
+cuatro tonos entre 1,39 y 1,59 frente a 1,70. Al pasar, el borde se apagaba en vez de encenderse. (b) Las ocho
+«Próximamente» (DD-245 §4) no cambiaban al pasar: Diseñador Conversacional, cuyas dos tarjetas lo son, no respondía
+nunca, e IA respondía en una de tres.
+
+**Decisión** ·
+1. **Al pasar, el tono fuerte** del grupo, `--sc-label-<color>-dot` (el 500 en claro, el 400 en oscuro): el análogo de
+   `border-strong` en la receta de `sc-option-cards`. Contra la superficie, de 2,49 a 3,96 en claro y de 6,70 a 9,52 en
+   oscuro.
+2. **Las «Próximamente», también**: el borde en su tono al pasar, como sus hermanas. No abren nada, así que siguen sin
+   mano, sin pulsar al 96 % y sin panel (DD-245 §4): lo que dice que no se abren es el cursor y la marca, no un borde
+   que se queda gris.
+3. **Marcada, el halo de un píxel en el mismo tono fuerte** que su borde: dos píxeles del tono, frente a uno al pasar.
+   Con el halo en el borde de la etiqueta, una tarjeta al pasar y la marcada se veían iguales.
+
+**Razón** · Pasar el ratón tiene que reforzar el borde, no apagarlo; los tokens de borde de etiqueta están hechos para
+el contorno de una etiqueta sobre su fondo tintado, no para un estado sobre la superficie. Decidido así en la revisión del
+2026-11-03, frente a dejar grises las «Próximamente».
+
+**Descartadas** ·
+- *Dejar grises las «Próximamente» (DD-245 tal cual)*: un grupo entero (Diseñador Conversacional) no responde al ratón.
+- *El texto de la etiqueta (el 700) al pasar*: más oscuro que la marcada, y la jerarquía se invierte.
+- *Un 300 o 400 propio*: no hay token de etiqueta para él y no se inventan tokens.
+
+**Consecuencias** · Enmienda DD-179 §2 (el borde al pasar era «el borde de la etiqueta» y el halo de la marcada iba en
+ese borde) y DD-245 §4 (las «Próximamente» ya cambian al pasar; siguen sin pulsar ni abrir). Prueba:
+`repositorios-hub.spec.ts` §10 (al pasar, en claro y en oscuro, ocho tarjetas de los cuatro grupos; y el halo), roja con
+el CSS de antes. En Figma (`Hjyy41SYKqcRuIzCGggfYH`, Repositorios, paso 07 «Estados de la tarjeta»): el estado «Al pasar»
+y la nota, `figma-pendiente.md` §64.
 
 ## DD-245 · 2026-10-31 — Repositorios como sus páginas de COA: Equipos, Agendas, Plantillas y el hub
 

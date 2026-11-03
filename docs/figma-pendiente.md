@@ -1566,10 +1566,34 @@ Equipos, Agendas, Plantillas, Grupos, Agentes y Repositorios · **Evidencia:** `
   fila vacía del listado, en el slot de filas de la tabla, a los 322 de alto de las filas). La edición de agente, paso 05
   («desde la cifra de grupos»), decía «con el filtro en Asignados» y estaba en «Todos»: corregida. Las altas siguen en «Todos».
 
+**El borde al pasar, en el tono fuerte (DD-246, 2026-11-03)**, con `use_figma`: paso 07 «Estados de la tarjeta» (`4449:2477`),
+el estado «Al pasar» (`4449:2597`) pasa de `blue/200` a `blue/500` a 1 px, y el de «Próximamente» (`4449:2667`) toma ese
+mismo borde al pasar (antes no cambiaba); «Marcada» ya iba a 2 px en `blue/500`. Reescritos sus rótulos, la nota del paso
+y los dos textos del mapa de componentes (`3998:87241`, `3998:87278`). Sigue atado a la familia `blue` de la librería, no
+a `azure` (lo de abajo).
+
+**Medidas del hub contra el prototipo (2026-11-03)**, a 1280 × 1160 y a 1920 × 1160: la rejilla (904), las categorías,
+las tarjetas y el panel (350) ya casaban. No casaban dos cosas, en los siete hubs de la página (pasos 01 a 06 y el
+mapa): (a) la fila de Comunicación tenía las tarjetas en `HUG` (128, 130 y 146): en el prototipo la fila las estira a
+146; ahora llevan `minHeight` 146 (con `FILL` en una fila que abraza, las de los pasos 04 y 05, ocultas, se aplastaban a
+30). (b) En el filtro, el `content` de «Clasificación» iba en `FILL` (73 para un texto de 74 más 21 de relleno) y el
+filtro, fijo a 481: ahora cada opción abraza su texto (66 · 112 · 104 · 181 · 42 = 505; en el prototipo, 500) y el
+buscador sigue al filtro. **El velo del paso 06 se queda**: el prototipo lo pone a 1280 (`panelTapa`, DD-179 §4: el panel,
+en x 930, taparía tarjetas que llegan a x 1012); a 1920 no. **Queda**: la cabecera mide 58 en Figma y 56 en el prototipo
+(todo el hub baja 2 px), el título del panel y la flecha de «Abrir repositorio» (`arrow_forward` en el código, chevron en
+Figma) y sus entradas de ejemplo.
+
 **Queda:**
 - **Comunicación sin su azul**: en Figma, título, icono y cifra de Comunicación van atados a `blue/700`, que en la
-  librería es el marino de marca; el código usa `azure` (`--sc-label-blue-*`, #1d4ed8), que la librería no tiene. Hace
-  falta la familia en la librería (o decidir otra) antes de reatar.
+  librería es el marino de marca; el código usa `azure` (`--sc-label-blue-*`, #1d4ed8). **Medido el 2026-11-03:** `azure`
+  ya está en el Kit (`Primitive`, 50 a 950, con los valores y el `codeSyntax` del código), pero sin publicar: desde el
+  Supervisor, `importVariableByKeyAsync` de `azure/700` falla. Ninguna otra familia sirve: `sky` es la de información,
+  enlaces y el anillo de foco (#1464fe), `cyan` es el acento y roza el teal de Diseñador, y `violet` se confunde con el
+  morado de Clasificación. Al publicar el Kit: reatar `blue/N → azure/N` en la página Repositorios, donde todo `blue/*` es
+  el tono de Comunicación (cat, tarjetas, panel, recientes y rótulos del paso 07; ningún botón de marca). Es lo que
+  recoge §67, «Cuando se publiquen el Kit y los iconos».
+- **La cabecera mide 58 en el Kit y 56 en el código**: en el `Header` del Kit, `container buttons` mide 32,5; en el código,
+  lo más alto es 28 en una caja de 30,5. Es un componente compartido: mirar quién lo usa antes de tocarlo y publicar.
 - **«❖ Alert modal» con superficie blanca** (DD-242): hecha en el DS, sin publicar (§65); publicar la librería es de Rafa.
 - **Enlaces de Figma en los COA** de 4438, 4440 y 4064 (páginas `4077:58411`, `4067:100978` y `3491:35886`): van en los
   prompts de `~/Documents/Claude/2026-10 Empate flujos AED/`; los pega y publica Rafa.
