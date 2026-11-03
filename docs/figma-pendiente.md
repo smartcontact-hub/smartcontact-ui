@@ -738,6 +738,7 @@ y retocar tres maquetas · **Sin verificar** contra el fichero: el código no ci
 - **Las altas:** agente y usuario enseñan su cabecera al crear («Nuevo agente» hasta que se escribe el nombre), y el
   botón principal dice «Crear agente» / «Crear usuario», como «Crear grupo».
 - **Distribución y colas:** una línea «Ir a: Teléfono · Chat · Email» arriba de la sección, con dos o más canales.
+  Hecho en el Supervisor el 2026-11-03 (§69).
 
 **Cómo sabes que está hecho:** el icono del título de sección y el de la fila activa del índice van a 600 en el Kit, y
 las maquetas de las fichas enseñan las altas y los saltos como el código.
@@ -1390,6 +1391,30 @@ página Usuarios (`41:2846`) · **Evidencia:** cada pantalla, contrastada con el
 **Diferencias del Kit con el código, medidas y sin tocar:** `checkbox` a 17 (el código, 27); el texto
 de error de `nav-item` corta a 128; `multiselect` `Mode=Chips` mide 40 de alto (el código, 33); y el subtítulo de «Custom
 modal» va en otro gris que el del código.
+
+## 69 · Grupos: qué se ve con Email en Distribución y colas (2026-11-03)
+
+**Estado:** hecho · **Dónde:** el Supervisor (`Hjyy41SYKqcRuIzCGggfYH`), página Grupos (`41:2847`), fila «Otras
+configuraciones» del alta · **Evidencia:** la plantilla del prototipo (`group-form-page.component.html`, bloque de
+Email) y DD-206 §9.
+
+**Hecho:**
+- **Otras configuraciones 10** (`4562:26262`): General con Teléfono y Email marcados; el índice pide «Teléfono saliente»
+  y el resumen suma Email en las dos tarjetas, con «Menos conversaciones atendidas» cortada con «…» (DD-211 §4).
+- **Otras configuraciones 11** (`4562:26390`): Distribución y colas con el bloque de Email bajo Teléfono: estrategia
+  (con su ayuda), tiempo de ringing y su cola, como Chat sin Web Chat ni WhatsApp.
+- **Hoja «Cómo se comporta» del alta**: la fila 9 suma la línea de Email y la 15, el corte de la estrategia larga. La
+  portada de «Otras configuraciones» nombra Email.
+- **«Ir a» con dos o más canales** (el punto de §29): componente local «Channel jumps» (`4568:27273`, regla 3 de §67),
+  con `Phone`, `Chat` y `Email`, medido contra el prototipo publicado a 1440 (caption 12/18, «Ir a» en
+  `semantic/text/subtle`, enlaces semibold subrayados en `sky/600`, icono a 12). Va en Otras configuraciones 5
+  (Teléfono y Chat) y 11 (Teléfono y Email), las dos únicas pantallas de Distribución con más de un canal. La `Section`
+  del Kit no tiene sitio para él: la cabecera lleva 46 de relleno abajo (override) y el atajo va en absoluto encima, en
+  (28,25 · 55,5) como en el código; los números 9 de la Guía bajan 46. Fila 9 de la hoja y fila «Saltos por canal» del
+  Mapa de componentes.
+- **Otras configuraciones 12** (`4573:27279`): la sección entera, para desarrollo, con Teléfono, Chat y Email: «Ir a» con
+  los tres, la `Section` en `nSections=4 subsection` (la cuarta, el bloque de Email de la 11) y el resumen con los tres
+  canales en ese orden. «3. Edición de grupo» y «4. Mapa de componentes» bajan 611 para no pisar el alta.
 
 ## Lo de estas semanas que NO va a Figma, y por qué
 

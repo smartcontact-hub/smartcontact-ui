@@ -92,7 +92,7 @@ El de Agendas, Plantillas y Equipos solo a agentes (2026-10-28, DD-239, sin tram
 
 > **Sello:** rama `claude/new-session-3g90bx` sobre `main` HEAD `c4ac441f`; la cuarta vuelta, `areses/supervisor-figma-round-4-e8e3b0` sobre `2577e70a`; la quinta, `areses/figma-tareas-pendientes-133fda` sobre `d98242c6`. Solo Figma y `figma-pendiente`.
 
-- **Figma** (server de la nube; detalle en `figma-pendiente` §54, §64, §65 y §66): los 4 avisos de descartar con los
+- **Figma** (server de la nube; detalle en `figma-pendiente` §54, §64, §65, §66 y §69, Email e «Ir a» en Grupos): los 4 avisos de descartar con los
   botones de borrar (#575); las 64 barras medidas, dos contadores añadidos, y la edición de Agendas y Plantillas en
   «Asignados»; DD-244 en Tipificaciones; DD-235 y DD-245 en Equipos (fuera el nombre repetido, que se había escapado);
   las seis «Avanzado» de Agentes con la `.Subsection` plegable del Kit.
