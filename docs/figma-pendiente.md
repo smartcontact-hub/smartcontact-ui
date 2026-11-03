@@ -1649,6 +1649,91 @@ Equipos, Agendas, Plantillas, Grupos, Agentes y Repositorios · **Evidencia:** `
 - **El estado «Solo lectura»** en `inputtext` y `textarea` (§50): sin borde, sobre el fondo suave, enfocable. Hecho cuando
   el PIN de Agentes y el script de chat de Grupos lo usan.
 - **El slot plegable con pista** (`sc-slot collapsible`, «Mensajes en cola» de Grupos), como «Plegable» de `.Subsection`.
+- **`menu-item` con texto al final** (la cifra de «Recientes» del hub): hoy solo lleva icono y texto, y por eso existe
+  «Recent item».
+
+**Segunda vuelta del 2026-11-03: todo enlazado.** Lo que se repetía montado a mano en cada pantalla es ahora componente
+local, en la página nueva «Componentes del Supervisor» (`4428:25889`), y cada copia es una instancia con sus textos y su
+tono (instancias contadas al cerrar, con los pasos nuevos del hub):
+
+| Componente | Id | Instancias | Qué es |
+|---|---|---|---|
+| Record header | `4428:25893` | 87 (Grupos, Agentes, Tipificaciones) | Nombre y datos encima del índice; la línea de extensión del agente, opcional |
+| Empty state | `4430:98988` | 33 | Icono en círculo, título, cuerpo y botón en un slot; en desarrollo, `sc-empty-state` |
+| Popup menu | `4431:26028` | 14 | El contenedor de `p-menu` y `p-popover`; dentro, `menu-item`, `menu-separator` y `menu-submenu-label` del Kit |
+| Repository card | `4435:785` | 97 | La tarjeta del hub; el tono y «marcada», como overrides |
+| Destination row | `4435:796` | 27 | Fila del panel de destinos |
+| Category title | `4435:800` | 28 | Título de categoría con su raya |
+| Destination header | `4435:807` | 3 | Cabecera del panel de destinos |
+| Docked drawer | `4435:874` | 3 | `p-drawer` acoplado a la derecha, con el contenido en un slot (el drawer del Kit solo admite texto) |
+| Recent item | `4445:1282` | 3 | Fila de «Recientes» |
+
+**Cómo pasarlos al Kit sin romper nada.** Las instancias apuntan a este fichero, así que cortar y pegar no basta: crearía
+un componente nuevo y dejaría las instancias huérfanas. Dos caminos:
+1. Publicar el Supervisor como librería (basta la página de componentes), cortar el componente, pegarlo en el Kit y
+   publicar el Kit. Figma lo da por movido y, al aceptar la actualización en el Supervisor, las instancias pasan a apuntar
+   al del Kit con sus overrides.
+2. Sin publicar el Supervisor: crear o pegar el componente en el Kit, publicarlo y cambiar por script cada instancia local
+   por la del Kit (`swapComponent`). Los overrides se conservan si las capas y las propiedades se llaman igual, que es por
+   lo que los nombres de capa y de propiedad son estables.
+
+**Hecho además en la segunda vuelta:**
+- **El hub de Repositorios, cerrado**: el mapa lleva el filtro delante del buscador, como las pantallas; las cajas de
+  PrimeNG, en azul (`p-selectbutton`, `p-drawer`); y el flujo gana los pasos 3 a 7 (Recientes, filtro por categoría,
+  búsqueda sin resultados, el panel con velo a 1280 con `mask/background` y los estados de la tarjeta). El selector de 5
+  opciones ya era el `selectbutton` del Kit.
+- **Notas para desarrollo**: fuera de las notas, hojas y mapas de las siete páginas de administración lo que solo existe en
+  este repo (componentes de página, `sc-datatable`, `sc-section-card`, SCSS, `--sc-*`, DD y «el prototipo la mide a…»). Se
+  quedan los 24 nombres del DS de desarrollo, más `sc-empty-state` y `sc-search`, que tiene en sus demos. Y fuera
+  «dibujo» y «dibujar»: la maqueta se compone.
+- **Copias sueltas**: las secciones «Dialpad» de los hand-off de Agendas y Plantillas, copiadas de Tipificaciones al
+  duplicar la página y sin uso, borradas.
+- **Smart-Contact Icons** (`NLfCIqd4OTkpdzNXx93nZc`): `schedule`, `sell`, `label`, `category` y `arrow_forward`, con la
+  receta de los demás (Material Symbols Rounded, glifo ampliado 24/18 en la caja de 14, relleno atado a `Icon`), y la
+  nota de la página reescrita como orientación.
+
+**Queda:**
+- **Publicar Smart-Contact Icons** y, después, cambiar en el hub los sustitutos: `calendar_today` por `schedule`
+  (Horarios), `bookmark` por `sell` (Tipificaciones) y por `label` (Labels), y `dashboard` por `category`
+  (Clasificación IA). La nota del mapa del hub lo dice hasta entonces.
+- **Usuarios**: la página es de la generación `41:*`, tres marcos sin flujo y con tablas de celdas sueltas. Ponerla al
+  nivel de las demás es maquetarla de nuevo, no ponerla al día.
+
+## 67 · Lo que el Kit no tiene: una regla y una decisión por pieza (2026-11-03)
+
+**Estado:** decidido; hecho en el Kit lo marcado, sin publicar · **Dónde:** el Kit (`khNq9dJKNi13pNllrqm6dx`), Smart-Contact
+Icons (`NLfCIqd4OTkpdzNXx93nZc`) y la página «Componentes del Supervisor» (`4428:25889`) · **Evidencia:** cada pieza, medida
+en el Kit y en el código de `main`.
+
+**La regla**, igual para todas:
+1. **Si PrimeNG lo tiene**, va al Kit como variante o propiedad del componente que ya lo representa, no como pieza nueva.
+2. **Si PrimeNG no lo tiene y lo usa más de una pantalla** (o el DS de desarrollo ya lo tiene), va al Kit como pieza propia,
+   con nombre en inglés.
+3. **Si solo lo usa una pantalla**, se queda como componente local del fichero de producto.
+4. **Color**: el Kit es la fuente. Una familia que el código usa y el Kit no tiene se añade al Kit con los valores del código,
+   y no se crean semánticas nuevas hasta que haya un segundo uso.
+5. **Variantes**: solo las combinaciones que una pantalla usa; la matriz entera, cuando haga falta.
+
+| Pieza | Regla | Decisión | Estado |
+|---|---|---|---|
+| Azul de Comunicación (`azure`) | 4 | Familia primitiva `azure/50` a `azure/950` en «Primitive», con los valores de `--sc-color-azure-*` (el `blue` de Aura) | **Hecho** (`15929:4067` a `15929:4077`) |
+| Tonos de etiqueta (Tag «label») | 1 y 4 | Variante de tono en `tag`, atada a primitivos (`azure`, `purple`, `teal`, `orange`…), como `--sc-label-*-bg/-text` | Sigue: el hub y Labels la sobrescriben a mano |
+| InputNumber sin botones | 1 | `inputnumber` gana `Type=Plain` (el `inputtext` del Kit); el sufijo va en el valor, como en PrimeNG («400 px») | **Hecho** (`15929:8262`) |
+| Tecla del atajo «/» | 2 | `kbd`, pieza propia, en su página «❖ Kbd», con `Key` como texto | **Hecho** (`15929:10407`) |
+| Solo lectura | 1 y 5 | `State=Readonly` en `inputtext` y `textarea`: sin borde, sobre `surface/50`; solo en la combinación base, que es la que usan el PIN y el script de chat | **Hecho** (`15929:16290`, `15929:30671`); `select` e `inputnumber`, cuando una pantalla lo pida |
+| Texto al final de una opción de menú | 1 | `menu-item` gana `Show Trailing` y `Trailing` (una cifra o un atajo, en gris, a la derecha) | **Hecho**; al publicar, «Recent item» se sustituye por `menu-item` |
+| Estado vacío | 2 | «Empty state» pasa al Kit tal cual (el DS de desarrollo lo tiene en sus demos) | Sigue: moverlo por el camino 1 de §66 |
+| Contenedor de menú con slot | 1 | «Popup menu» pasa al Kit como variante de `menu` con las opciones en un slot (sirve para `p-menu` y `p-popover`) | Sigue: moverlo por el camino 1 de §66 |
+| Drawer con contenido | 1 | `drawer` gana un slot de contenido y la variante acoplada; «Docked drawer» deja de hacer falta | Sigue |
+| Parte plegable de una subsección | 1 | La parte de `.Subsection` se pliega como la subsección entera: la misma flecha y el título como botón | Sigue |
+| Resumen de grupo con Chat y WhatsApp | 2 | Las filas del resumen, en un slot de piezas de fila, para cualquier canal | Sigue (§58) |
+| Record header | 3 | Local: es del molde de las fichas del Supervisor | Se queda |
+| Repository card, Destination row y header, Category title | 3 | Locales: solo los usa el hub | Se quedan |
+| Iconos `schedule`, `sell`, `label`, `category`, `arrow_forward` y `key` | 2 | En Smart-Contact Icons, con la receta de los demás | **Hecho** (`793:661` a `793:685`, `795:661`) |
+
+**Cuando se publiquen el Kit y los iconos:** atar en el hub los tonos de Comunicación a `azure` y cambiar los iconos
+sustitutos (§66); poner `key` en «Expirar contraseña» de la ficha de agente (§58); y, en el código, sacar `azure` de la
+parte escrita a mano de `01-primitive.css` en cuanto el export del Kit la traiga.
 
 ## Lo de estas semanas que NO va a Figma, y por qué
 

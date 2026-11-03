@@ -458,6 +458,12 @@ DesignOps en un repo que lee cualquiera:
   frases que prueba `correction-capture`) o la frase que la propia regla usa tal cual como
   disparador o pregunta de control. Vocabulario: revisión visual, QA visual, decisión de producto, criterio del
   sistema, jerarquía, densidad, affordance, consistencia entre pantallas.
+- **Figma se trabaja como design engineering, no como ilustración**: una pantalla se maqueta, se compone o se monta
+  con componentes; no se «dibuja». Vale para el chat, la documentación y las notas del fichero («la maqueta», no «el
+  dibujo»).
+- **Las notas de Figma las lee desarrollo, que no ve nuestro código**: nombran piezas del DS de desarrollo
+  (ui.smart-contact.com), de PrimeNG o del Kit, nunca componentes, ficheros, variables o DD que solo existen en este
+  repo (`sc-list-page`, «SCSS del hub», `--sc-label-*`, «DD-239»).
 - **Los hooks, al hablarle al agente**, dicen «el usuario».
 - **La excepción es el nombre como DATO**, nunca como firma: el agente de demo con el nombre del
   autor está puesto a propósito (`audit-seed-pii.mjs`). Cada caso va declarado con su motivo en
