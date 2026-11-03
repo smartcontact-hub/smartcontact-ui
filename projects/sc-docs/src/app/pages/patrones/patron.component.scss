@@ -72,79 +72,62 @@ code {
     margin: 0;
     color: var(--sc-text-primary);
   }
-}
 
-/* ── El ejemplo vivo del patrón de carga ── */
-.demo {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--sc-spacing-1-25);
-  margin-top: var(--sc-spacing-1);
+  /* Con escena, como los «Do / Don't» de Primer: el dibujo arriba, sin marco, y la raya de color entre el dibujo y
+     su rótulo. */
+  &--con-escena {
+    /* Las tres filas (dibujo, rótulo, texto) son las de la pareja: los dos dibujos miden lo mismo y las dos rayas
+       quedan a la misma altura, aunque uno tenga más contenido. */
+    display: grid;
+    grid-row: span 3;
+    grid-template-rows: subgrid;
+    row-gap: 0;
+    padding: 0;
+    border: 0;
 
-  &__col {
-    display: flex;
-    flex-direction: column;
-    gap: var(--sc-spacing-0-75);
-    min-width: 0;
-  }
-
-  &__label {
-    display: flex;
-    align-items: center;
-    gap: var(--sc-spacing-0-5);
-    margin: 0;
-    font-size: var(--sc-font-size-100);
-    font-weight: var(--sc-font-weight-semibold);
-    color: var(--sc-text-secondary);
-  }
-
-  &__stage {
-    /* Alto compartido para que las dos columnas queden a la par (el esqueleto de tres filas mide ~11.5rem). */
-    min-height: 11.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: var(--sc-spacing-1);
-    padding: var(--sc-spacing-1-25);
-    border-radius: var(--sc-radius-md);
-    background: var(--sc-bg-surface);
-    border: 1px solid var(--sc-border-subtle);
-
-    &--spinner {
-      align-items: center;
-      justify-content: center;
-      color: var(--sc-text-subtle);
+    .regla__cabeza {
+      margin-top: var(--sc-spacing-0-75);
+      padding-top: var(--sc-spacing-0-5);
+      border-top: 3px solid;
     }
   }
-}
 
-.marca {
-  flex: 0 0 auto;
-
-  &--haz {
-    color: var(--sc-text-success);
+  &--con-escena.regla--haz .regla__cabeza {
+    border-top-color: var(--sc-border-success);
   }
 
-  &--evita {
-    color: var(--sc-text-danger);
+  &--con-escena.regla--evita .regla__cabeza {
+    border-top-color: var(--sc-border-danger);
   }
 }
 
-@media (max-width: 34rem) {
-  .demo {
-    grid-template-columns: 1fr;
+/* ── La regla entera, plegada ── */
+.entera {
+  margin-top: var(--sc-spacing-1);
+
+  summary {
+    width: fit-content;
+    cursor: pointer;
+    color: var(--sc-text-link);
   }
-}
 
-.demo-row {
-  display: flex;
-  align-items: center;
-  gap: var(--sc-spacing-1);
+  summary:focus-visible {
+    outline: 2px solid var(--sc-border-focus);
+    outline-offset: 2px;
+    border-radius: var(--sc-radius-sm);
+  }
 
-  &__lines {
-    flex: 1 1 auto;
-    display: flex;
-    flex-direction: column;
-    gap: var(--sc-spacing-0-5);
+  &__lista {
+    margin: var(--sc-spacing-1) 0 0;
+    color: var(--sc-text-secondary);
+
+    dt {
+      color: var(--sc-text-primary);
+    }
+
+    dd {
+      margin: var(--sc-spacing-0-25) 0 var(--sc-spacing-1);
+    }
   }
 }
 

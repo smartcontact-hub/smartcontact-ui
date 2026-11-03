@@ -593,8 +593,11 @@ export const TIPOGRAFIA_SUELTA_MAX = 59;
  *
  * 79 → 76 el 2026-11-03, con cada patrón de Fundamentos en su página: el índice pasa a tarjetas que piden su letra con
  * `.sc-text-*`, y las líneas «haz» y «evita» y la etiqueta «Ya en el sistema» dejan de poner su tamaño a mano.
+ *
+ * 76 → 75 el mismo día: el ejemplo de carga de Patrones pasa a ser la escena de su «haz» y su «evita», y su rótulo con
+ * tamaño propio se va con él.
  */
-export const TIPOGRAFIA_SUELTA_DOCS_MAX = 76;
+export const TIPOGRAFIA_SUELTA_DOCS_MAX = 75;
 
 /** Las hojas de sc-docs que SÍ cuentan: su contenido, no el simulador del navegador. */
 export const esSimuladorDeNavegador = (hoja) => /pages\/validar\//.test(hoja);

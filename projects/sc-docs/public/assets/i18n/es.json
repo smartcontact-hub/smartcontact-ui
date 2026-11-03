@@ -162,18 +162,13 @@
       "title": "Patrones de pantalla",
       "lead": "La barra de calidad al construir una pantalla de producto. Cada patrón apunta a lo que el sistema <strong>ya</strong> resuelve, para que una pantalla nueva nazca consistente en vez de corregirla después.",
       "haveLabel": "Ya en el sistema",
-      "demo": {
-        "aria": "Estado de carga: esqueleto frente a spinner",
-        "title": "Estado de carga: el contraste, en vivo",
-        "lead": "A la izquierda, <code>sc-skeleton</code> con la silueta de la fila: reserva el hueco exacto, así al cargar no salta nada. A la derecha, el spinner centrado: no reserva estructura, y el layout salta cuando por fin llegan los datos.",
-        "labelDo": "Esqueleto con la forma del contenido",
-        "labelDont": "Spinner centrado (no reserva el hueco)"
-      },
       "foot": "Es la misma barra que sigue quien construye las apps de este repo: está también en <code>AGENTS.md</code> (sección «UX de pantalla»), el documento que se lee al tocar el código. No es una checklist para lucir, es lo que separa una pantalla profesional de una genérica.",
       "principles": {
         "color": {
           "title": "Color funcional",
           "nav": "Color funcional",
+          "doShort": "Cada color sale de un token y significa algo.",
+          "dontShort": "Hex a mano, o color solo por decoración.",
           "apply": "Cada color sale de un token --sc-* y significa algo: estado, jerarquía o feedback.",
           "avoid": "Hex a mano, teñir botones e iconos por decoración, o usar un --sc-color-* de paleta como fondo o color de página: no voltea en oscuro y queda ilegible.",
           "have": "La escala --sc-* y el puente al preset. Nunca hace falta un hex."
@@ -181,6 +176,8 @@
         "loading": {
           "title": "Estados de carga",
           "nav": "Carga",
+          "doShort": "Un esqueleto con la forma del contenido, en su hueco.",
+          "dontShort": "Un spinner centrado, y la página salta al llegar los datos.",
           "apply": "Mientras llegan los datos, pinta un esqueleto con la forma del contenido y reserva su hueco.",
           "avoid": "Spinner centrado, o inyectar los datos y que la página salte (layout shift).",
           "have": "sc-skeleton (rectángulo o círculo, animación de onda). Ejemplo vivo abajo."
@@ -188,6 +185,8 @@
         "copy": {
           "title": "Copy sin relleno",
           "nav": "Textos",
+          "doShort": "Un título que se explica solo va solo.",
+          "dontShort": "Un subtítulo decorativo bajo cada cabecera.",
           "apply": "Un título que se explica solo va solo. Descripción únicamente si aporta algo no obvio.",
           "avoid": "Un subtítulo decorativo de una o dos frases bajo cada cabecera.",
           "have": "Regla, no componente: menos texto, más señal. Si al quitarlo no se pierde nada, quítalo. Y el punto final, al unísono: la ayuda bajo un campo acaba en punto; el subtítulo bajo un título va sin él, y lo que nombra (títulos, botones, tooltips, errores), también. Una confirmación pregunta qué y a quién o a cuántos («¿Eliminar el grupo «Ventas»?»), y su botón repite el verbo («Eliminar»), nunca «Confirmar»."
@@ -195,6 +194,8 @@
         "icons": {
           "title": "Iconografía consistente",
           "nav": "Iconografía",
+          "doShort": "Un solo juego de iconos, siempre con sc-icon.",
+          "dontShort": "Emojis, o dos juegos de iconos mezclados.",
           "apply": "Una sola librería profesional, siempre vía sc-icon (Material Symbols).",
           "avoid": "Emojis en la interfaz, o mezclar dos juegos de iconos.",
           "have": "sc-icon sobre el set generado: un único idioma visual en todas las apps. Qué icono dice cada cosa, en Fundamentos → Iconos."
@@ -202,6 +203,8 @@
         "density": {
           "title": "Densidad y jerarquía",
           "nav": "Densidad",
+          "doShort": "Compacto: lo secundario en un menú, las métricas alineadas.",
+          "dontShort": "KPIs repetidos en cada vista, o tarjetas sin dato ni acción.",
           "apply": "Layout compacto. Acciones secundarias en un menú kebab, métricas alineadas, chips a icono cuando el color ya dice el estado.",
           "avoid": "Repetir en cada vista los KPIs que ya están en el dashboard, o tarjetas sin dato ni acción.",
           "have": "sc-datatable, sc-card y el patrón de overflow del supervisor."
@@ -209,6 +212,8 @@
         "a11y": {
           "title": "Accesibilidad, barra mínima",
           "nav": "Accesibilidad",
+          "doShort": "Contraste suficiente, y todo se usa con teclado.",
+          "dontShort": "Un estado dicho solo con color, o un control sin etiqueta.",
           "apply": "Contraste 4.5:1 en texto y 3:1 en texto grande e iconos. Todo control alcanzable por teclado, con foco visible y etiqueta.",
           "avoid": "Comunicar un estado solo con color, o dejar un control sin label.",
           "have": "El contraste ya vive en los tokens; el riesgo entra al pintar un color a mano."
@@ -216,6 +221,8 @@
         "motion": {
           "title": "Sin saltos",
           "nav": "Sin saltos",
+          "doShort": "Anima solo transform y opacity.",
+          "dontShort": "Animar el tamaño o la posición, o meter algo encima al cargar.",
           "apply": "Anima solo transform y opacity. Imágenes con width/height o aspect-ratio. Banners y toasts en un hueco ya reservado.",
           "avoid": "Animar top, left, width o height, o insertar algo encima del contenido al cargar.",
           "have": "La transición de tema del propio sitio ya funde con opacity, sin recolocar nada."
@@ -223,6 +230,8 @@
         "type": {
           "title": "Tipografía por clase",
           "nav": "Tipografía por clase",
+          "doShort": "Cada texto, con una de las 12 clases .sc-text-*.",
+          "dontShort": "Texto sin su clase, o una clase .sc-text-* encima de un componente.",
           "apply": "El texto de la página lleva una de las 12 clases .sc-text-* (los text styles del Figma del DS). Si el texto de un componente tiene que verse distinto, se mueve su token.",
           "avoid": "Poner .sc-text-* en la etiqueta de un <sc-*>: va sin capa, y sin capa gana siempre, así que lo desconecta del tema.",
           "have": "Las 12 clases ya existen y beben de los tokens de rol; audit:text-styles enrojece si una deja de valer lo que su text style, o si alguien se la pone encima a un componente."
@@ -230,6 +239,8 @@
         "grouping": {
           "title": "Agrupación por espacio",
           "nav": "Agrupación",
+          "doShort": "7 entre etiqueta y control, 14 entre campos, 28 antes del botón.",
+          "dontShort": "Los mismos huecos entre campos y antes del botón.",
           "apply": "Lo que va junto, más cerca que lo que no: 7 entre una etiqueta y su control, 14 entre hermanos (campos, opciones, filas) y 28 entre grupos, entre secciones y antes del botón que envía. Es la escalera 7 · 14 · 28: entre grupos, al menos el doble que dentro. Y la densidad, por lo que se hace en la pantalla: compacto donde se escanea (el monitor, las listas), más aire donde se lee y se rellena (fichas, formularios).",
           "avoid": "Separar dos campos casi lo mismo que una etiqueta de su control (12 contra 7), o dejar el botón a la misma distancia del último campo que los campos entre sí: se lee como un campo más.",
           "have": "Las piezas compartidas del supervisor ya la aplican (.grid y .field en _forms.scss). Si una maqueta trae otro valor, manda la escalera y el cambio del Kit se apunta en figma-pendiente."
@@ -237,6 +248,8 @@
         "fill": {
           "title": "Una tabla llega al pie de la pantalla",
           "nav": "Tablas a toda altura",
+          "doShort": "La tabla llega al pie de la pantalla y desplaza por dentro.",
+          "dontShort": "Un alto fijo que deja hueco abajo y esconde filas.",
           "apply": "Si una tabla dentro de una sección necesita más sitio, aprovecha el resto de la pantalla: desplaza por dentro, con la cabecera fija y el paginador al pie, y su tope es lo que queda hasta el pie, medido desde donde empieza. En una pantalla baja no pasa de su suelo, y entonces desplaza la página.",
           "avoid": "Un tope fijo («el alto de la ventana menos 420 px»): no sabe dónde empieza la tabla, y deja pantalla vacía debajo mientras esconde filas.",
           "have": "En el supervisor, la directiva scLlegaAlPie mide el alto que queda; lo prueba tabla-al-pie: con 2 px más de tabla, la página desplaza."
@@ -244,6 +257,8 @@
         "blame": {
           "title": "Lo que falta, en gris y en el resumen; en rojo al dejarlo vacío",
           "nav": "Lo que falta",
+          "doShort": "El aviso en gris desde el principio, y arriba lo que falta.",
+          "dontShort": "Rojo antes de tocar el campo, o un botón apagado sin decir por qué.",
           "apply": "Un obligatorio vacío es algo por rellenar, no un error: su aviso sale bajo el campo desde el principio, en gris, como ayuda, y pasa a rojo al dejar el campo vacío. «Crear» y «Guardar» están apagados mientras falte algo, y arriba del resumen «Falta: nombre, teléfono saliente» lo dice entero, con cada cosa llevando a su campo; «Listo para crear» cuando ya no falta nada. Lo guardado que ya venía sin algo se dice al abrir. Un error de contenido (un nombre repetido, un email mal escrito) va en vivo. El ✓ del índice es de la sección que se dejó tal como está.",
           "avoid": "Un rojo antes de tocar el campo, o un punto rojo en una sección que no se está mirando: se lee como causado por lo último que se hizo. Tampoco un botón gris sin decir qué lo bloquea, ni avisos amarillos de lo que no bloquea nada.",
           "have": "En el supervisor, ocasionDeAvisar decide cuándo va en rojo cada aviso, ayudaDeObligatorio pone el gris y sc-summary-status dice lo que falta; lo vigilan la regla 7 de audit:screen-hygiene, indice-errores y sin-acusar-de-primeras."
@@ -255,7 +270,73 @@
       "next": "Siguiente",
       "neighbours": "Otros patrones",
       "missing": "Ese patrón no existe",
-      "all": "Ver todos los patrones"
+      "all": "Ver todos los patrones",
+      "scenes": {
+        "missing": "Falta: nombre",
+        "nameRequired": "El nombre es obligatorio",
+        "create": "Crear",
+        "grouping": {
+          "haz": "Dos campos a 14 píxeles entre sí y el botón Guardar a 28 del último: se lee como un grupo y su acción.",
+          "evita": "Dos campos a 12 píxeles entre sí y el botón Guardar a la misma distancia: se lee como un campo más."
+        },
+        "blame": {
+          "haz": "Un campo obligatorio vacío con su aviso en gris debajo, «Falta: nombre» arriba y Crear apagado.",
+          "evita": "El mismo campo en rojo antes de tocarlo, y Crear apagado sin decir qué falta."
+        },
+        "color": {
+          "haz": "Dos agentes con su estado en una etiqueta: verde si está disponible, ámbar si está ausente.",
+          "evita": "Los mismos estados en morado y verde azulado, elegidos por adorno: el color no dice nada."
+        },
+        "loading": {
+          "haz": "Tres filas de esqueleto con la forma de la lista que va a llegar.",
+          "evita": "Un spinner en el centro de una ventana vacía: no reserva el hueco de la lista."
+        },
+        "copy": {
+          "haz": "El título «Agentes» y debajo, directamente, la lista.",
+          "evita": "El mismo título con una frase de relleno debajo que no dice nada nuevo."
+        },
+        "icons": {
+          "haz": "Una barra de acciones con tres iconos del mismo juego.",
+          "evita": "La misma barra con símbolos de otro juego mezclados con un icono."
+        },
+        "density": {
+          "haz": "Una lista compacta: cada agente con sus llamadas alineadas y un menú para lo secundario.",
+          "evita": "Las cifras del panel repetidas encima de la lista y una tarjeta vacía, sin dato ni acción."
+        },
+        "a11y": {
+          "haz": "Un estado dicho con icono y texto, y un campo con su etiqueta.",
+          "evita": "El estado como un punto rojo sin texto, y un campo sin etiqueta."
+        },
+        "motion": {
+          "haz": "Un aviso de guardado en su hueco, encima de la lista quieta.",
+          "evita": "El mismo aviso metido encima de la lista: tapa las primeras filas."
+        },
+        "type": {
+          "haz": "Un título, un párrafo y una nota, cada uno con su clase de texto.",
+          "evita": "El mismo texto sin su clase: el párrafo, con un tamaño puesto a mano, sale más grande que el título."
+        },
+        "fill": {
+          "haz": "Una tabla que llega al pie de la pantalla, con el paginador abajo.",
+          "evita": "Una tabla con un alto fijo: esconde filas y deja hueco vacío debajo."
+        },
+        "words": {
+          "agent": "Agente {{n}}",
+          "agents": "Agentes",
+          "available": "Disponible",
+          "away": "Ausente",
+          "calls": "Llamadas",
+          "summary": "Resumen",
+          "filler": "Aquí puedes ver y gestionar todos los agentes de tu centro.",
+          "saved": "Cambios guardados",
+          "record": "Ficha del agente",
+          "since": "Atiende la cola de ventas desde marzo.",
+          "today": "Actualizado hoy",
+          "page": "1-10 de 48",
+          "delete": "Eliminar",
+          "more": "Más acciones"
+        }
+      },
+      "more": "La regla entera"
     },
     "color": {
       "title": "Color",
