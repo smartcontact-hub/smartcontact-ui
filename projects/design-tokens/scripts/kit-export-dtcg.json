@@ -7673,7 +7673,7 @@
         },
         "weight": {
           "$type": "number",
-          "$value": "{primitive.typography.font.weight.bold}"
+          "$value": "{primitive.typography.font.weight.semibold}"
         }
       },
       "min": {
@@ -14741,7 +14741,7 @@
         },
         "weight": {
           "$type": "number",
-          "$value": "{primitive.typography.font.weight.bold}"
+          "$value": "{primitive.typography.font.weight.semibold}"
         }
       },
       "border": {
