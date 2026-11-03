@@ -13,6 +13,10 @@
 > **Cómo se mantiene.** Lo cerrado se marca aquí, con la fecha. Lo nuevo entra aquí y **no** en la bandeja del
 > hand-off: una cosa que solo se puede hacer en Figma no es trabajo de la próxima sesión.
 >
+> **Cuenta del 2026-11-03:** 46 fichas cerradas y 32 abiertas. De las abiertas, 25 son de dibujo o de medida, casi todas
+> en el Kit (estados y variantes de piezas que ya existen; las piezas nuevas, en la 42), 3 de Contact Center (15, 30 y 64, con su evolutivo) y 4 esperan una
+> decisión o están aparcadas (10, 25, 26 y 46).
+>
 > ⚠️ **Repasado entero el 2026-09-27** contra el código y el export del Kit de `main` (`4f4f2018`): cada ficha,
 > cada fila de la tabla de la ficha 4 y cada variable citada. **No contra el fichero de Figma**: esa sesión no
 > tenía server de Figma. Lo que solo se ve en el fichero lo marca cada ficha con **«mídelo antes»**. Ninguna ficha
@@ -768,21 +772,6 @@ réplica que el código acaba de quitar.
 
 ---
 
-## 36b · El color de etiqueta marrón (2026-10-05, DD-176)
-
-**Repaso del 2026-11-03:** **hecho en `tag`**: `Severity=Label`, `Color=Brown`, en `amber/100` y `amber/900`, como `--sc-label-brown-*` y la etiqueta «Marrón» de sc-docs (el «lleno» de abajo es de antes). `chip` no lleva colores: ninguna pantalla lo usa con color (regla 5 de §67).
-
-**Estado:** pendiente · **Dónde:** Figma, la librería del DS, las variantes de color de `tag`/`chip` en `label` y la
-paleta de puntos · **Esfuerzo:** una variante más, con variables que ya existen.
-
-- **Por qué** (DD-176 §8): el estado Administrativo va en marrón, y la paleta del Kit no trae familia marrón.
-- **Qué añadir:** el color `brown`, lleno: fondo `amber-800` y texto blanco; en oscuro, `amber-900` con `amber-100`. Va
-  detrás de `amber` en el orden de la paleta.
-
-**Cómo sabes que está hecho:** la etiqueta «Marrón» de sc-docs (`/components/tag`) y la de Figma dicen lo mismo.
-
----
-
 ## 37 · El resumen de la ficha de grupo lleva a su sección (2026-10-02)
 
 **Repaso del 2026-11-03:** falta en `group-summary` el estado de enlace, con subrayado al pasar y foco.
@@ -1031,77 +1020,6 @@ small, al revés: la app ya va a la del Kit, 5,25 × 7, DD-214) y las maquetas d
 
 ---
 
-## 54 · «Fuera del DS»: cerrada, y la página se borra (decidido el 2026-11-03)
-
-**Estado:** cerrada el 2026-11-03. Ninguna ficha quedaba como «se queda» (algo que desarrollo construye distinto y que no
-existe en el Kit, en PrimeNG ni en el DS de desarrollo), así que la página `3034:114` (marco `3156:195`) se borró. La
-versión guardada antes del repaso la conserva · **Evidencia:** el fichero medido con el server de la nube, el Kit, el
-código del prototipo de `main` y DD-230 a DD-245.
-
-Cada ficha se resolvió con una de tres salidas: **A**, ya existe y la maqueta la usa; **B**, se queda en la página con su
-porqué; **C**, sale de la página y pasa a ser una pieza que crear en el Kit (§66).
-
-| # | Ficha | Decisión | Por qué, y dónde queda lo que decía |
-|---|---|---|---|
-| 1, 2, 4, 6, 7, 8 | Alto de fila, barra de arriba, botón de foto, título, eliminar, «Falta» | Hechas el 2026-10-19 | Salieron entonces (tabla del 2026-10-19 en git: `git show 0d5c0549:docs/figma-pendiente.md`) |
-| 3 | Toast | Ya no estaba | La página no la tenía el 2026-11-03; el prototipo usa el `p-toast` de PrimeNG |
-| 5 | Campos numéricos | **C** | El prototipo usa `sc-inputnumber` (`p-inputnumber`) sin botones y con sufijo: existe en PrimeNG y en el DS de desarrollo, y en el Kit solo con botones. Qué construir ya lo dice el mapa de componentes de Grupos («Sin botones. "Alto" lleva el sufijo "px"»). La variante del Kit, en §66 |
-| 9 | Subsección plegada | **A** | «Plegable» de `.Subsection` está publicado y el prototipo usa `sc-subsection collapsible`. Las seis «Avanzado» de Agentes pasan a esa propiedad: la abierta, con título, pista y la flecha `keyboard_arrow_down`; la plegada, con `chevron_right` y sin slot. Los dos altos no cambian (56; la abierta, 474,5 → 476,5). Lo que falta, el slot plegable de «Mensajes en cola», en §66 |
-| 10 | Atajo «/» | **C** | El `kbd` no existe en el Kit ni en PrimeNG. Las hojas de los listados ya dicen cómo es («vacío, muestra el kbd "/"; con texto, pasa a botón ✕»). La pieza del Kit, en §66 |
-| 11 | Solo lectura | **C** | `readonly` existe en PrimeNG; el Kit no tiene el estado. La hoja de Agentes (PIN) y el mapa de Grupos (script de chat) dicen ahora cómo se ve: sin borde, sobre el fondo suave, y se enfoca y se copia (DD-211 §10). El estado del Kit, en §66 y §50 |
-| — | `sc-tipificacion-vista` (la sección de Tipificaciones, posterior al 2026-10-19) | **A** | El conjunto `3526:279` no tenía instancias fuera de la página. Tipificaciones usa su propuesta con piezas del DS (`3806:17946`, en su hand-off, «Lo que ve el agente al colgar»), y desarrollo pone de momento el componente del puesto de agente. Se fue con la página |
-
-**Lo que se cambió al borrarla:** las frases de los hand-offs de Grupos, Agentes, Tipificaciones, Equipos, Agendas y
-Plantillas que mandaban a «Fuera del DS» dicen ahora que la diferencia entre el dibujo y la app la cuentan la hoja y el mapa
-de componentes de su flujo; la leyenda violeta de los mapas («dibujado solo en este archivo») ya no nombra la página. En
-ninguna otra página quedaba un texto o un enlace que apuntara a ella (medido en las diez de contenido y en la portada).
-
----
-
-## 58 · Los flujos que faltaban en Grupos y Agentes, y lo que la librería no tiene para ellos (2026-10-21)
-
-**Estado:** dibujado en el Supervisor; en la librería, Custom modal y `.Subsection` plegable publicados, el resto sin
-hacer · **Dónde:** el Supervisor, páginas «Grupos» y
-«Agentes»; la librería y Smart-Contact Icons · **Evidencia:** el código de esta rama y una captura por pantalla.
-
-**Hecho en el Supervisor** (versión «Grupos y agentes: flujos nuevos, toasts y empty states»):
-- Alta de grupo, fila «Otras configuraciones» (`3396:20051`): Chat y Tipificar conversaciones (V1), el detalle de la
-  tipificación (V2), Niveles (V3), Ring All (V4), Web Chat y WhatsApp (V5), Nivel Teléfono (V6) y la tabla de agentes
-  sin resultados (V7). «Nivel {canal}» y «Tipificar conversaciones», que §56 dejó solo en la hoja, ya tienen maqueta.
-- Listado de grupos: varios eliminados, con el toast «3 grupos eliminados» (paso 10), y la tabla sin grupos (paso 11).
-- Edición de agente: el filtro de grupos sin resultados (paso 06) y la fila «Expirar contraseña» (`3403:47822`, X1 a
-  X3). La tabla de grupos asignados enseñaba 3 filas en cuatro pantallas (alto fijo de 131): ahora mide sus filas.
-- Agentes, sección nueva «3. Listado de agentes» (`3405:12408`): tabla, menú de fila, duplicar, eliminar con su toast,
-  búsqueda sin resultados y sin agentes.
-- Las seis hojas «Cómo se comporta», en el idioma de desarrollo (componente, ruta, propiedad), sin cómo se midió; cada
-  nombre de icono enlaza a la tarjeta «Iconos» de su hand-off. Índices, portadas y hand-off, al día.
-- Cada hoja, a la izquierda de su flujo (versión «Hojas a la izquierda, enlaces de ida y vuelta e índice a 235»). El
-  título de cada fila lleva a su pantalla; de vuelta, la nota de Dev Mode de cada pantalla («filas 6, 9 y 10», con su enlace) y
-  cada número morado llevan a la hoja, y «(E2)» de la hoja, a su paso. Las notas de las pantallas clonadas, reescritas.
-- El índice de las fichas, de 196 a 235 con mínimo de 235 (DD-221), en las 54 pantallas; en el Mapa, cada caja en su
-  pieza. En la caja, cada fila blanca con el radio de la fila (`border/radius/xl`), también en Contact Center y
-  ❖ Navmenu.
-- V2 (`3475:23798`), instancia del Custom modal publicado, 896 × 720 a 1080 como el diálogo real, con el árbol en el
-  slot (versión «Hojas a la izquierda, enlaces de ida y vuelta, índice a 235 en píldora y V2 con el Custom modal»).
-  «Editar en Repositorios» va al final del slot con su nota: en código está en `modal-actions`, pero el pie del Custom
-  modal solo admite botones.
-
-**Lo que la librería no tiene** (en las maquetas, separado de su maestro y anotado):
-- `group-summary`: sus variantes solo pintan Teléfono. Con Chat (V1) y con Web Chat y WhatsApp (V5), separado. **Hecho el
-  2026-11-03**: sus filas van en slots (§67) y los 3 resúmenes de V1 vuelven a ser `group-summary`; V5 no tiene
-  resumen separado en la página.
-- Custom modal: **publicado** (versión «Custom modal: los topes de sc-dialog»): sin ancho máximo y con 720 de alto
-  para el diálogo entero, como `max-height: min(85vh, 720px)` de `sc-dialog`; el contenido encoge sin tope propio.
-  La cabecera en FILL (versión «Custom modal: la cabecera llena el ancho»), **publicada el 2026-11-03** (CURRENT).
-- ~~Icono `key` (`keyIcon` de la ficha de agente)~~ → **Hecho el 2026-11-03**: el botón «Expirar contraseña» de X1 a X3
-  lleva `key` a la izquierda, como `[icon]="keyIcon"` del código (el botón pasa de 124 a 143 de ancho).
-- `.Subsection` plegable: publicado (§54, fila 9).
-
-**Cómo sabes que está hecho:** V1, V2 y V5 vuelven a ser instancias de su maestro sin perder nada (V2 ya lo es), y el
-botón de X1 a X3 lleva `key`. **Hecho el 2026-11-03** (medido: V1 y `key`; V5 sin resumen propio).
-
----
-
 ## 64 · La barra común de asignar y el hub de Repositorios como su COA (DD-243, DD-245; 2026-10-31)
 
 **Estado:** dibujado en el Supervisor; queda lo de abajo · **Dónde:** el Supervisor (`Hjyy41SYKqcRuIzCGggfYH`), páginas
@@ -1158,264 +1076,6 @@ Figma) y sus entradas de ejemplo. La flecha, **hecha el 2026-11-03**: las 30 (3 
 - **Enlaces de Figma en los COA** de 4438, 4440 y 4064 (páginas `4077:58411`, `4067:100978` y `3491:35886`): van en los
   prompts de `~/Documents/Claude/2026-10 Empate flujos AED/`; los pega y publica Rafa.
 
-## 65 · «❖ Alert modal» con su superficie blanca, el confirm de antes (DD-242, 2026-10-31)
-
-**Hecho en el DS** (`khNq9dJKNi13pNllrqm6dx`, página `15876:601`), con `use_figma`, **sin publicar**:
-
-- El conjunto `15876:698` gana la propiedad **Surface** (`Tinted`, por defecto, y `Plain`). Las cuatro de siempre pasan
-  a `Surface=Tinted, Variant=…` (mismos ids: `15876:638`, `:653`, `:668`, `:683`), así que sus instancias no cambian.
-- Cuatro variantes nuevas, `Surface=Plain`: Default `15917:418`, Info `15917:458`, Warning `15917:506`, Error
-  `15917:201`. Son la misma instancia de «Custom modal» con el calco del ConfirmDialog del Kit (`323:12318`): fondo,
-  borde y título de Default (`component/custommodal/*`); sin icono en la cabecera; el `confirmdialog-icon` que el
-  maestro ya traía oculto, visible junto al mensaje (21, `confirmdialog/icon/size` y `/color`; en Info, el glifo `info`);
-  el hueco a `confirmdialog/content/gap` (14) y centrado; la cabecera con `dialog/header/padding` (15,75) en los cuatro
-  lados, centrada con la X, y el título a `primitive/typography/line/height/200` (20); la X en `Secondary`. Botones: Error,
-  `Secondary` y `Danger` rellenos; Warning, `Primary` relleno y `Danger` con borde; Default e Info, `Secondary` y
-  `Primary`. Todo atado a variables que ya existían (medido después en las cuatro).
-- El conjunto pasa a dos columnas (teñida a la izquierda, blanca a la derecha) y «Documentation» (`15876:806`) gana el
-  párrafo «Superficie».
-- Diferencia que queda frente al código: la cabecera mide 62 y no 63,5, porque la X del Kit mide 31,5 × 30,5.
-
-**Falta:**
-- ~~**Publicar la librería**~~ → hecho el 2026-11-03 (ver abajo).
-- **(Superado, abajo)** Sin «Alert modal» en el Supervisor (medido el 2026-10-31, página a página): sus 22 avisos de borrar,
-  descartar y «guardar antes de Repositorios» siguen siendo el `confirmdialog` de antes, que ya se ve blanco, y se
-  quedan. Grupos: `3059:24272`, `3207:52082`, `3314:65885`, `3207:45769`, `3313:42126`. Agentes: `3111:29050`,
-  `3208:29670`, `3405:55958`, `3895:28904`. Tipificaciones: `3512:2185`, `3885:18073`, `3535:41429`, `3535:41559`.
-  Equipos: `3471:9809`, `3921:9198`, `3433:54488`, `3452:63092`. Agendas: `4067:101061`, `4067:101202`, `4074:50117`.
-  Plantillas: `4077:58494`, `4077:58615`. Usuarios, Repositorios, Contact Center y Conversaciones: ninguno. Cambiarlos
-  por «Alert modal» `Plain` es decisión aparte: se verían igual.
-- **Repaso del 2026-11-03, descartar como borrar (enmienda de DD-242, #575):** los cuatro avisos de descartar (Grupos
-  `3059:24272`, Agentes `3111:29050`, Equipos `3433:54488` y `3452:63092`) llevaban «Seguir editando» en el primario y
-  «Descartar» con borde. Ahora llevan los botones de borrar: «Seguir editando» `Secondary` relleno a la izquierda y
-  «Descartar» `Danger` relleno a la derecha (overrides del `button` dentro del `confirmdialog`; ni variantes ni
-  propiedades nuevas). Las cuatro notas que los describían, también. Los demás avisos ya iban así; los tres custom modal
-  con «Cancelar» con borde («Vas a quitar canales», «¿Sacar del grupo…?» y «¿Eliminar «Conexión»?») son como el código.
-- **Hecho el 2026-11-03, tercera vuelta:** publicada la librería (CURRENT) y los 22 avisos pasados a «Alert modal»
-  `Surface=Plain`, a 480, con la variante del código (`injectAlertModal`): borrar `Error`, descartar `Warning`
-  («Seguir editando» `Secondary` relleno, «Descartar» `Danger` relleno), guardar antes de Repositorios `Info`. Grupos
-  `4479:48647` (W), `4479:48707`, `4479:48822`, `4479:48852` (E), `4479:48763` (I); Agentes `4479:73569` (W),
-  `4479:73599`, `4479:73629`, `4479:73659` (E); Tipificaciones `4480:12744`, `4480:12804`, `4480:12864` (E); Equipos
-  `4480:43277`, `4480:43307` (E), `4480:43337`, `4480:43393` (W); Agendas `4480:60447`, `4480:60477`, `4480:60507` (E);
-  Plantillas `4480:71408`, `4480:71438` (E). Medido después: ningún `confirmdialog` suelto en esas páginas.
-- **Uno no era aviso:** «¿Eliminar «Conexión»?» (Tipificaciones, edición, paso 05) es `sc-custom-modal` en el código
-  (`tipificacion-niveles`), sin icono y con «Cancelar» con borde: ahora es «Custom modal» del Kit a 480 (`4482:121862`).
-- **Agentes ganó «Si algo falla 5»** (`4485:71560`): Gestionar en Repositorios con cambios, `Info`, como Grupos («Si
-  algo falla 7»). **Hecho en la cuarta vuelta (§68):** Equipos enseña «Inglés» (`multiselect` `Mode=Chips`, una ficha)
-  y Recursos va a dos columnas, como el código.
-- **Notas:** las que decían `confirmdialog`, `p-confirmDialog` o «diálogo de confirmación» dicen ahora `sc-alert-modal`
-  (Grupos, Agentes, Tipificaciones, Agendas y Plantillas; la tabla de piezas de Grupos, también).
-- **Code Connect**: `code-connect/sc-alert-modal.figma.ts` ya traduce `Surface=Plain` a `surface: 'plain'`; falta
-  publicarlo (`npm run figma:connect:publish`, con token).
-
-## 66 · Repaso del Supervisor del 2026-11-03: lo que no se hizo y las piezas que pide el Kit
-
-**Estado:** abierto · **Dónde:** el Supervisor (`Hjyy41SYKqcRuIzCGggfYH`) y el Kit (`khNq9dJKNi13pNllrqm6dx`) ·
-**Evidencia:** el repaso con el server de la nube del 2026-11-03 (§54, §64 y §65).
-
-**Hecho en el repaso, además de §54, §64 y §65:**
-- **Tipificaciones (DD-244)**: en el alta, paso 07, la opción repetida lleva bajo su campo, en rojo, «Ya hay "Consulta" en
-  este nivel» (la ayuda del `inputtext`, atada a `red/600` y al estilo de las ayudas); la fila alinea arriba y crece con el
-  aviso, y la línea de debajo del árbol se oculta. La nota del paso y dos filas de la hoja, al día.
-- **Nombre repetido (DD-235, del 2026-10-27, que la pasada del 2026-10-31 no recogió)**: Equipos pierde el caso «Nombre
-  repetido» de la edición (E4 pasa a E3) y su aviso, y sus hojas, notas, índice y portadas dejan de contarlo. El tooltip de
-  «Crear equipo» y «Guardar» dice «El nombre es obligatorio» (DD-245; antes, «Falta: nombre»), y el alta, paso 02, lleva la
-  ayuda gris bajo el nombre vacío (`text/muted/color`). En la hoja del alta de Grupos, el nombre «puede repetirse».
-
-**No se hizo:**
-- **Contact Center**: no se toca en esta pasada (decisión del repaso). Su página es de la generación `2286:*` y no lleva
-  las ayudas del #567: «Los agentes nuevos empiezan con estos valores; luego se cambian en la ficha de cada uno» (y su
-  pareja de «grupos») y, bajo «URL iframe», «La ven los agentes con el iframe "General"; si la cambias, les cambia a todos.».
-- **Los COA no se releyeron**: la sesión no tenía acceso a Confluence, ni al sitio publicado (el proxy lo cortaba). Todo
-  se comparó contra el código de `main` y DD-230 a DD-245. Antes de dar el fichero por empatado con los COA de las
-  versiones del 2 y 3 de noviembre, hay que pasarlos.
-- **Versiones por página**: la API de la nube no guarda versiones (`saveVersionHistoryAsync` no está soportada). La de
-  antes del repaso se guardó a mano; la de después («repaso del Supervisor (2026-11-03)»), también a mano.
-- **Barrido completo pantalla a pantalla**: se miró lo que cambió desde el 2026-10-31 (descartar, barras, ficha de agente,
-  Repositorios, Tipificaciones) y lo que salió al paso (DD-235). Usuarios y Conversaciones no se repasaron.
-- **Sin verificar en el cliente**: en las capturas del server, el selector «Canal» de Plantillas pinta «Primary» en la
-  tercera opción, aunque el texto y la propiedad del nodo dicen «WhatsApp». Parece cosa del renderizado; míralo en Figma.
-
-**Piezas que pide el Kit** (salen de §54; no se crearon, porque el repaso solo usa variables y estilos que ya existen):
-- **InputNumber sin botones y con sufijo** (§53): las maquetas de Grupos usan `inputtext`; el prototipo,
-  `sc-inputnumber`. Hecho cuando la variante existe y «Máximo de conversaciones», «Alto» y los segundos de los mensajes
-  periódicos son instancias suyas.
-- **`kbd`**, la tecla del atajo «/» del buscador, marcada como pieza propia (no la tiene PrimeNG). Hecho cuando los
-  buscadores de los listados la llevan a la derecha.
-- **El estado «Solo lectura»** en `inputtext` y `textarea` (§50): sin borde, sobre el fondo suave, enfocable. Hecho cuando
-  el PIN de Agentes y el script de chat de Grupos lo usan.
-- **El slot plegable con pista** (`sc-slot collapsible`, «Mensajes en cola» de Grupos), como «Plegable» de `.Subsection`.
-- **`menu-item` con texto al final** (la cifra de «Recientes» del hub): hoy solo lleva icono y texto, y por eso existe
-  «Recent item».
-
-**Segunda vuelta del 2026-11-03: todo enlazado.** Lo que se repetía montado a mano en cada pantalla es ahora componente
-local, en la página nueva «Componentes del Supervisor» (`4428:25889`), y cada copia es una instancia con sus textos y su
-tono (instancias contadas al cerrar, con los pasos nuevos del hub):
-
-| Componente | Id | Instancias | Qué es |
-|---|---|---|---|
-| Record header | `4428:25893` | 87 (Grupos, Agentes, Tipificaciones) | Nombre y datos encima del índice; la línea de extensión del agente, opcional |
-| Empty state | `4430:98988` | 33 | Icono en círculo, título, cuerpo y botón en un slot; en desarrollo, `sc-empty-state` |
-| Popup menu | `4431:26028` | 14 | El contenedor de `p-menu` y `p-popover`; dentro, `menu-item`, `menu-separator` y `menu-submenu-label` del Kit |
-| Repository card | `4435:785` | 97 | La tarjeta del hub; el tono y «marcada», como overrides |
-| Destination row | `4435:796` | 27 | Fila del panel de destinos |
-| Category title | `4435:800` | 28 | Título de categoría con su raya |
-| Destination header | `4435:807` | 3 | Cabecera del panel de destinos |
-| Docked drawer | `4435:874` | 3 | `p-drawer` acoplado a la derecha, con el contenido en un slot (el drawer del Kit solo admite texto) **Borrado el 2026-11-03**: lo sustituye el del Kit (§67). |
-| Recent item | `4445:1282` | 3 | Fila de «Recientes» **Borrado el 2026-11-03**: lo sustituye el del Kit (§67). |
-
-**Cómo pasarlos al Kit sin romper nada.** Las instancias apuntan a este fichero, así que cortar y pegar no basta: crearía
-un componente nuevo y dejaría las instancias huérfanas. Dos caminos:
-1. Publicar el Supervisor como librería (basta la página de componentes), cortar el componente, pegarlo en el Kit y
-   publicar el Kit. Figma lo da por movido y, al aceptar la actualización en el Supervisor, las instancias pasan a apuntar
-   al del Kit con sus overrides.
-2. Sin publicar el Supervisor: crear o pegar el componente en el Kit, publicarlo y cambiar por script cada instancia local
-   por la del Kit (`swapComponent`). Los overrides se conservan si las capas y las propiedades se llaman igual, que es por
-   lo que los nombres de capa y de propiedad son estables.
-
-**Hecho además en la segunda vuelta:**
-- **El hub de Repositorios, cerrado**: el mapa lleva el filtro delante del buscador, como las pantallas; las cajas de
-  PrimeNG, en azul (`p-selectbutton`, `p-drawer`); y el flujo gana los pasos 3 a 7 (Recientes, filtro por categoría,
-  búsqueda sin resultados, el panel con velo a 1280 con `mask/background` y los estados de la tarjeta). El selector de 5
-  opciones ya era el `selectbutton` del Kit.
-- **Notas para desarrollo**: fuera de las notas, hojas y mapas de las siete páginas de administración lo que solo existe en
-  este repo (componentes de página, `sc-datatable`, `sc-section-card`, SCSS, `--sc-*`, DD y «el prototipo la mide a…»). Se
-  quedan los 24 nombres del DS de desarrollo, más `sc-empty-state` y `sc-search`, que tiene en sus demos. Y fuera
-  «dibujo» y «dibujar»: la maqueta se compone.
-- **Copias sueltas**: las secciones «Dialpad» de los hand-off de Agendas y Plantillas, copiadas de Tipificaciones al
-  duplicar la página y sin uso, borradas.
-- **Smart-Contact Icons** (`NLfCIqd4OTkpdzNXx93nZc`): `schedule`, `sell`, `label`, `category` y `arrow_forward`, con la
-  receta de los demás (Material Symbols Rounded, glifo ampliado 24/18 en la caja de 14, relleno atado a `Icon`), y la
-  nota de la página reescrita como orientación.
-
-**Queda:**
-- ~~**Publicar Smart-Contact Icons** y cambiar en el hub los sustitutos~~ → **Hecho el 2026-11-03**: 30 iconos de
-  avatar y de «Recientes» (`calendar_today` por `schedule`, `bookmark` por `sell` y por `label`, `dashboard` por
-  `category`) y 30 `chevron_forward` del panel por `arrow_forward`. La nota del mapa del hub, reescrita: un icono por
-  concepto, como en el código.
-- ~~**Usuarios**: maquetarla de nuevo~~ → **hecho en la cuarta vuelta** (§68).
-
-## 67 · Lo que el Kit no tiene: una regla y una decisión por pieza (2026-11-03)
-
-**Estado:** decidido; hecho en el Kit todo lo que va al Kit (2026-11-03), sin publicar · **Dónde:** el Kit (`khNq9dJKNi13pNllrqm6dx`), Smart-Contact
-Icons (`NLfCIqd4OTkpdzNXx93nZc`) y la página «Componentes del Supervisor» (`4428:25889`) · **Evidencia:** cada pieza, medida
-en el Kit y en el código de `main`.
-
-**La regla**, igual para todas:
-1. **Si PrimeNG lo tiene**, va al Kit como variante o propiedad del componente que ya lo representa, no como pieza nueva.
-2. **Si PrimeNG no lo tiene y lo usa más de una pantalla** (o el DS de desarrollo ya lo tiene), va al Kit como pieza propia,
-   con nombre en inglés.
-3. **Si solo lo usa una pantalla**, se queda como componente local del fichero de producto.
-4. **Color**: el Kit es la fuente. Una familia que el código usa y el Kit no tiene se añade al Kit con los valores del código,
-   y no se crean semánticas nuevas hasta que haya un segundo uso.
-5. **Variantes**: solo las combinaciones que una pantalla usa; la matriz entera, cuando haga falta.
-
-| Pieza | Regla | Decisión | Estado |
-|---|---|---|---|
-| ~~Azul de Comunicación (`azure`)~~ | 4 | Sin objeto: DD-247 deja Comunicación en `sky` y retira `azure` del código y del Kit (§64) | **Retirado** |
-| Tonos de etiqueta (Tag «label») | 1 y 4 | Variante de tono en `tag`, atada a primitivos (`sky`, `purple`, `teal`, `orange`…), como `--sc-label-*-bg/-text` | **Hecho el 2026-11-03**: `Severity=Label` con `Color` (Gray, Red, Orange, Amber, Brown, Green, Teal, Blue, Purple; `15952:194` a `15952:226`), sin borde, como la cifra del hub; fondo y texto a los primitivos de `--sc-label-<color>-bg/-text` y 7 de lado (`scale/0-5`), como el código. Con borde, cuando una pantalla lo pida. El peso sigue en el del Kit (700; el código, 600: ficha 38) |
-| InputNumber sin botones | 1 | `inputnumber` gana `Type=Plain` (el `inputtext` del Kit); el sufijo va en el valor, como en PrimeNG («400 px») | **Hecho** (`15929:8262`) |
-| Tecla del atajo «/» | 2 | `kbd`, pieza propia, en su página «❖ Kbd», con `Key` como texto | **Hecho** (`15929:10407`) |
-| Solo lectura | 1 y 5 | `State=Readonly` en `inputtext` y `textarea`: sin borde, sobre `surface/50`; solo en la combinación base, que es la que usan el PIN y el script de chat | **Hecho** (`15929:16290`, `15929:30671`); `select` e `inputnumber`, cuando una pantalla lo pida |
-| Texto al final de una opción de menú | 1 | `menu-item` gana `Show Trailing` y `Trailing` (una cifra o un atajo, en gris, a la derecha) | **Hecho**; al publicar, «Recent item» se sustituye por `menu-item` |
-| Estado vacío | 2 | «Empty state» pasa al Kit tal cual (el DS de desarrollo lo tiene en sus demos) | Sigue: moverlo por el camino 1 de §66 |
-| Contenedor de menú con slot | 1 | «Popup menu» pasa al Kit como variante de `menu` con las opciones en un slot (sirve para `p-menu` y `p-popover`) | Sigue: moverlo por el camino 1 de §66 |
-| Drawer con contenido | 1 | `drawer` gana un slot de contenido y la variante acoplada; «Docked drawer» deja de hacer falta | **Hecho el 2026-11-03**: `Docked=True` (`15953:111`), como `sc-drawer docked`: 350 de ancho, sin velo ni sombra, borde solo en el filo interior y su esquina de arriba a `border/radius/xl`; el contenido, en el slot «Content slot». Las flotantes siguen con texto: el slot, cuando una pantalla lo pida |
-| Parte plegable de una subsección | 1 | La parte de `.Subsection` se pliega como la subsección entera: la misma flecha y el título como botón | **Hecho el 2026-11-03**: cada título de parte (las 10 de las cinco variantes) lleva «Pista» y «flecha», ocultas y sin propiedad, para encenderlas en la parte que toque (como `sc-slot collapsible`, con `hintKey`); plegada, se apaga su «Show Slot N» |
-| Resumen de grupo con Chat y WhatsApp | 2 | Las filas del resumen, en un slot de piezas de fila, para cualquier canal | **Hecho el 2026-11-03**: `group-summary` lleva tres slots, «Canales», «Filas de distribución» y «Filas de recursos», en sus tres variantes; la fila de canal es la pieza nueva `summary-channel` (`15953:1135`) y las demás, `fact-row`. Con 0 agentes, la barra vacía, como el código (DD-217) |
-| Record header | 3 | Local: es del molde de las fichas del Supervisor | Se queda |
-| Repository card, Destination row y header, Category title | 3 | Locales: solo los usa el hub | Se quedan |
-| Iconos `schedule`, `sell`, `label`, `category`, `arrow_forward` y `key` | 2 | En Smart-Contact Icons, con la receta de los demás | **Hecho** (`793:661` a `793:685`, `795:661`) |
-
-**Cuando se publiquen el Kit y los iconos**, en el Supervisor, por script (`importComponentByKeyAsync` + `swapComponent`):
-1. Los iconos sustitutos del hub (§66), el `graph_5` de Usuarios por `hub` (§68) y `key` en «Expirar contraseña» de la
-   ficha de agente (§58).
-   ✅ Con Smart-Contact Icons publicado el 2026-11-03: los 60 iconos del hub (§66), los 25 `graph_5` de Usuarios
-   (índice y título de «Servicios asignados») y `key` en los tres botones; las filas de la tarjeta «Iconos» de Usuarios
-   y Agentes ya no dicen «Falta en la librería». Lo demás, ese mismo día con el Kit publicado:
-2. ✅ «Recent item» por `menu-item` con `Show Trailing`. El `menu-item` del Kit mide 21 de alto (3,5 de relleno y la
-   línea a 14), como en los otros menús del fichero; «Recent item» medía 34. Diferencia del Kit, sin medir en el
-   prototipo.
-3. ✅ Las 97 etiquetas del hub (41 azules, 21 moradas, 14 teal, 21 naranjas), de `Severity=Secondary` sobrescrita a
-   mano a `Severity=Label` con su `Color`, sin rellenos sobrescritos. El maestro «Repository card» lleva `Blue`.
-4. ✅ «Docked drawer» (3) por `drawer` `Docked=True`, con su contenido en el slot y sin pie. La cabecera pasa a la del
-   Kit (título a 20, relleno 15,75), que es la del código: queda resuelto «el título del panel» de §64.
-5. ✅ Usuarios: las 21 «Section (…, piel de tarjeta)» por `Surface=Card` (mismas medidas y textos; los rellenos que
-   llevaban sobrescritos quedan como sobrescritura con el mismo valor), y las 42 cifras con anillo (Secciones y
-   Permisos) por `summary-kpi`, con su arco.
-6. ✅ Grupos: los 3 resúmenes «con Chat» del alta vuelven a ser `group-summary` (`Alta sin agentes`), con Chat en
-   «Canales» y sus cuatro filas en «Filas de distribución». V5 (Web Chat y WhatsApp) no aparece como resumen separado
-   en la página.
-
-«Docked drawer» y «Recent item», sin instancias, borrados de «Componentes del Supervisor»; las tres notas del hub que
-los nombraban, reescritas.
-
-**`Nav-menu`: las esquinas blancas de las filas (2026-11-03, publicado).** En el maestro (`15460:72350`, sus tres
-variantes), las filas sin marcar llevaban el blanco con radio 0: sobre el gris de la caja se veían las esquinas
-cuadradas, y al marcar otra fila en una pantalla, la que dejaba de estarlo se quedaba sin blanco. Ahora las 12 filas
-van en blanco (`content/background`) con el radio de la fila (`border/radius/xl`, 12), como `.form-nav--caja` del
-código (DD-221); la marcada tapa su blanco con su gris. Probado sobre gris con la segunda fila marcada.
-Publicado el mismo día. En el Supervisor, 97 filas sobrescritas a radio 0 o sin blanco (en Agentes y Grupos, 38 eran
-filas marcadas en blanco con la esquina recta, las que se veían) igualadas al maestro: 0 de 415 en Usuarios, Agentes, Grupos,
-Tipificaciones y Contact Center. Playground, sin tocar.
-
-## 68 · Usuarios maquetada de nuevo, contra el prototipo (cuarta vuelta, 2026-11-03)
-
-**Estado:** hecho; las piezas del Kit, creadas el 2026-11-03 y sin publicar · **Dónde:** el Supervisor (`Hjyy41SYKqcRuIzCGggfYH`),
-página Usuarios (`41:2846`) · **Evidencia:** cada pantalla, contrastada con el prototipo publicado de `main` a 1440.
-
-**Hecho:**
-- **La página, al nivel de las demás**: Índice (`4470:8626`), Hand-off (`4470:8633`), Alta (`4470:8789`), Edición
-  (`4470:11232`), Listado (`4469:349`) y Mapa de componentes (`4470:14526`), con portada, pasos numerados, una nota por
-  pantalla y su hoja «Cómo se comporta». Todo con piezas del Kit o de «Componentes del Supervisor».
-- **Alta**: el paso 01 con el índice de secciones; fuera el paso 08 y su flecha; «Si algo falla» con Ctrl+S con lo
-  pendiente y el email mal escrito (el índice en rojo solo al intentar, como el código).
-- **Edición**: pasos 01 y 03 a 06 y «Si algo falla» 1 a 4 (con cambios, email vacío, tipo Administrador con su
-  plantilla); fuera la fila «Expirar contraseña», que la ficha de usuario no tiene.
-- **Listado**: paso 03, Duplicar (la miga dice «Nuevo usuario», como el prototipo); paso 07, el aviso de «Nuevo usuario»
-  en `Info`.
-- **Corregido contra el prototipo**: el anillo de Permisos en `sky/500` (`--sc-bg-accent`); la
-  miga del duplicado.
-- **Borrado**: la sección STAGING (`4482:121769`), reutilizada antes, y «Versión anterior» (`4469:348`).
-- **Agentes, «Si algo falla 5»** (`4485:71560`): Equipos con «Inglés» y Recursos a dos columnas en sus tres copias (§65).
-
-**Piezas del Kit (regla de §67):**
-
-| Pieza | Regla | Decisión | Estado |
-|---|---|---|---|
-| Piel de la tarjeta de sección (`Section`) | 2 | Variante del Kit, la que usan todas las fichas | **Hecho el 2026-11-03**: `Surface=Card` (`15955:319`), como `sc-section-card surface="card"`: `surface/0`, borde `content/border/color`, 24,5 de lado y la subsección sin caja propia. Solo con una subsección, la que usa Usuarios (Agentes y Grupos van en la gris) |
-| KPI con anillo (resumen de permisos) | 2 | Pieza propia del Kit | **Hecho el 2026-11-03**: `summary-kpi` (`15956:423`, página «❖ Summary»), como `sc-summary-kpi`: `Destacada`, `Con total` (cifra «/N» y anillo), `Nota` y el slot «Contenido» para las barras por canal |
-| Resumen de usuario | 3 | No hace falta pieza: se compone con lo que hay | Se queda |
-| Icono `hub` | 2 | En Smart-Contact Icons; mientras, `graph_5` | **Hecho el 2026-11-03** (`801:661`), con la receta de los demás; en Usuarios desde ese día (25) |
-
-**Diferencias del Kit con el código, medidas y sin tocar:** `checkbox` a 17 (el código, 27); el texto
-de error de `nav-item` corta a 128; `multiselect` `Mode=Chips` mide 40 de alto (el código, 33); y el subtítulo de «Custom
-modal» va en otro gris que el del código.
-
-## 69 · Grupos: qué se ve con Email en Distribución y colas (2026-11-03)
-
-**Estado:** hecho · **Dónde:** el Supervisor (`Hjyy41SYKqcRuIzCGggfYH`), página Grupos (`41:2847`), fila «Otras
-configuraciones» del alta · **Evidencia:** la plantilla del prototipo (`group-form-page.component.html`, bloque de
-Email) y DD-206 §9.
-
-**Hecho:**
-- **Otras configuraciones 10** (`4562:26262`): General con Teléfono y Email marcados; el índice pide «Teléfono saliente»
-  y el resumen suma Email en las dos tarjetas, con «Menos conversaciones atendidas» cortada con «…» (DD-211 §4).
-- **Otras configuraciones 11** (`4562:26390`): Distribución y colas con el bloque de Email bajo Teléfono: estrategia
-  (con su ayuda), tiempo de ringing y su cola, como Chat sin Web Chat ni WhatsApp.
-- **Hoja «Cómo se comporta» del alta**: la fila 9 suma la línea de Email y la 15, el corte de la estrategia larga. La
-  portada de «Otras configuraciones» nombra Email.
-- **«Ir a» con dos o más canales** (el punto de §29): componente local «Channel jumps» (`4568:27273`, regla 3 de §67),
-  con `Phone`, `Chat` y `Email`, medido contra el prototipo publicado a 1440 (caption 12/18, «Ir a» en
-  `semantic/text/subtle`, enlaces semibold subrayados en `sky/600`, icono a 12). Va en Otras configuraciones 5
-  (Teléfono y Chat) y 11 (Teléfono y Email), las dos únicas pantallas de Distribución con más de un canal. La `Section`
-  del Kit no tiene sitio para él: la cabecera lleva 46 de relleno abajo (override) y el atajo va en absoluto encima, en
-  (28,25 · 55,5) como en el código; los números 9 de la Guía bajan 46. Fila 9 de la hoja y fila «Saltos por canal» del
-  Mapa de componentes.
-- **Otras configuraciones 12** (`4573:27279`): la sección entera, para desarrollo, con Teléfono, Chat y Email: «Ir a» con
-  los tres, la `Section` en `nSections=4 subsection` (la cuarta, el bloque de Email de la 11) y el resumen con los tres
-  canales en ese orden. «3. Edición de grupo» y «4. Mapa de componentes» bajan 611 para no pisar el alta.
-
 ## Lo de estas semanas que NO va a Figma, y por qué
 
 - **El juego de datos** (Demo · Editorial · Tortura, en Configuración → Sistema → Datos; DD-124): es una herramienta de
@@ -1459,11 +1119,19 @@ Email) y DD-206 §9.
 - ~~**40 · El icono que acompaña a un texto, al tamaño y al peso de ese texto (2026-10-09, DD-189)**~~ → **HECHA el 2026-11-03**: el icono de `Section` a 18 (`…/font/size/400`) y el de `.Subsection` a 16 (`…/size/300`); el peso va con la 29.
 - ~~**44 · Una celda sin dato: «—» en gris suave (2026-10-11, DD-197)**~~ → **HECHA el 2026-11-03**: `datatable-content` Type=Empty «—» en `text/muted/color`, en uso en Grupos.
 - ~~**48 · Resumen de las fichas: la tarjeta de datos plana en las tres y sus baldosas en el color de la marca (2026-10-15, DD-209)**~~ → **HECHA el 2026-11-03**: la tarjeta de datos en `content/background` con borde sutil, radio xl y sin sombra, y `icon-tile` con el tono de la marca.
-- ~~**50 · Agendas en árbol, la ficha de agente con lo contratado y el toast de toda acción (2026-10-16, DD-211)**~~ → **HECHA el 2026-11-03**: lo que quedaba, el estado de solo lectura, está en `inputtext` y `textarea` (§67, sin publicar); el árbol y el diálogo de duplicar los dejaron sin objeto DD-230 y DD-218.
+- ~~**50 · Agendas en árbol, la ficha de agente con lo contratado y el toast de toda acción (2026-10-16, DD-211)**~~ → **HECHA el 2026-11-03**: lo que quedaba, el estado de solo lectura, está en `inputtext` y `textarea` (§67, publicado el 2026-11-03); el árbol y el diálogo de duplicar los dejaron sin objeto DD-230 y DD-218.
 - ~~**52 · El tema del plugin que recibe el equipo externo lleva Custom con el valor del oscuro (medido el 2026-10-17)**~~ → **HECHA el 2026-11-03**: en el export, `semantic.text.heading`, `subtle` e `inverse` ya apuntan a sus variables. `accent` sigue sin decidir.
 - ~~**La cifra principal del resumen, con color (DD-161, 2026-10-04)**~~ → **HECHA el 2026-11-03**: la tarjeta destacada con degradado y anillo, en `group-summary` `15486:188` y `agent-summary` `15510:72610`.
 - ~~**El alta, el listado y la tabla al pie (DD-158 a DD-160, 2026-10-04)**~~ → **HECHA el 2026-11-03**: el pie del alta de Agentes y el listado de Grupos `3118:17013` sin la columna «Asignar».
 - ~~**Estado del agente en su columna (DD-156, 2026-10-04)**~~ → **OBSOLETA el 2026-11-03**: DD-218 quitó el estado de «Agentes asignados».
+- ~~**36b · El color de etiqueta marrón (2026-10-05, DD-176)**~~ → **HECHA el 2026-11-03**: `tag` `Severity=Label`, `Color=Brown`, en `amber/100` y `amber/900`, como `--sc-label-brown-*` y la etiqueta «Marrón» de sc-docs. `chip` sin colores: ninguna pantalla lo usa con color.
+- ~~**54 · «Fuera del DS»: cerrada, y la página se borra**~~ → **HECHA el 2026-11-03**: ninguna ficha quedaba como «se queda»; la página `3034:114` se borró (la versión de antes del repaso la conserva). Cada ficha salió por A (ya existe y se usa), B (se queda con su porqué) o C (pieza para el Kit, §67). La ficha 1, hecha en el prototipo (DD-97).
+- ~~**58 · Los flujos que faltaban en Grupos y Agentes, y lo que la librería no tiene para ellos (2026-10-21)**~~ → **HECHA el 2026-11-03**: los flujos, en el Supervisor desde el 2026-10-21 (V1 a V7 del alta de grupo, el listado de Agentes, X1 a X3); y lo de la librería, hecho: Custom modal y `.Subsection` plegable publicados, `group-summary` con las filas en slots (V1 vuelve a ser instancia; V5 no tiene resumen propio) y `key` en «Expirar contraseña».
+- ~~**65 · «❖ Alert modal» con su superficie blanca (DD-242, 2026-10-31)**~~ → **HECHA el 2026-11-03**: `Surface` (`Tinted` y `Plain`) en el conjunto `15876:698`, publicado, y los 22 avisos del Supervisor en `Plain`.
+- ~~**66 · Repaso del Supervisor del 2026-11-03: lo que no se hizo y las piezas que pide el Kit**~~ → **HECHA el 2026-11-03**: Tipificaciones (DD-244), Equipos sin «Nombre repetido» (DD-235), el hub de Repositorios cerrado, las notas sin lo que solo existe en este repo, Usuarios (§68) y los iconos nuevos publicados y en uso; las piezas que pedía al Kit, decididas y hechas en §67.
+- ~~**67 · Lo que el Kit no tiene: una regla y una decisión por pieza**~~ → **HECHA el 2026-11-03**, publicada y en uso en el Supervisor: tono de etiqueta, drawer acoplado, parte plegable, `group-summary` en slots, `Surface=Card`, `summary-kpi`, `inputnumber` `Type=Plain`, `kbd`, solo lectura, `menu-item` con texto al final y siete iconos; `Nav-menu` con las filas en blanco y radio 12, también publicado. **La regla sigue valiendo** para cada pieza nueva: (1) si PrimeNG lo tiene, variante o propiedad del componente que lo representa; (2) si no, y lo usa más de una pantalla, pieza propia del Kit, en inglés; (3) si lo usa una pantalla, componente local; (4) el color sale del Kit, y la familia que falte se añade con los valores del código; (5) variantes, solo las combinaciones en uso.
+- ~~**68 · Usuarios maquetada de nuevo, contra el prototipo (cuarta vuelta)**~~ → **HECHA el 2026-11-03**: la página al nivel de las demás (índice, hand-off, alta, edición, listado y mapa), con `Surface=Card`, `summary-kpi` y `hub` en «Servicios asignados» desde el Kit publicado.
+- ~~**69 · Grupos: qué se ve con Email en Distribución y colas**~~ → **HECHA el 2026-11-03**: Otras configuraciones 10, 11 y 12 con Email; «Ir a» como componente local «Channel jumps» (`4568:27273`, regla 3 de §67) en las pantallas con dos o más canales; hoja y mapa al día.
 
 - ~~**El título del componente `Section` a `Heading/h3-semibold`**~~ → **HECHO el 2026-09-13** (DD-75). Eran **4
   capas maestras, no ~35**: la cifra de este fichero mezclaba dos componentes. Las del conjunto `Section` son el título
