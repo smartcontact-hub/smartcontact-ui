@@ -18,25 +18,9 @@
    * Todas las familias que el Kit trae (blue, sky, slate, cyan y las de Tailwind) las escribe
    * el generador en la zona `@sc-gen:palette`, desde el export: un color cambiado en Figma
    * llega solo (2026-09-14; antes eran copias a mano y cada cambio salía «desfase mudo»).
-   * Aquí queda solo lo que el Kit NO tiene: el blanco `slate-0` y la familia `azure`. */
+   * Aquí queda solo lo que el Kit NO tiene: el blanco `slate-0`. `azure` se retiró el 2026-11-03:
+   * era casi el mismo azul que `sky` y la etiqueta azul y los avisos de información toman `sky` (DD-247). */
   --sc-color-slate-0: #ffffff;
-
-  /* ---------- Color · Azure (label palette) ---------- */
-  /* Mirrors Aura's `blue` scale (Tailwind blue, saturated sky-blue).
-   * Named `azure` to avoid collision with AED's `--sc-color-blue-*`
-   * which is the custom brand navy. Used by `--sc-label-blue-*`,
-   * which needs a bright sky-blue distinct from brand identity. */
-  --sc-color-azure-50: #eff6ff;
-  --sc-color-azure-100: #dbeafe;
-  --sc-color-azure-200: #bfdbfe;
-  --sc-color-azure-300: #93c5fd;
-  --sc-color-azure-400: #60a5fa;
-  --sc-color-azure-500: #3b82f6;
-  --sc-color-azure-600: #2563eb;
-  --sc-color-azure-700: #1d4ed8;
-  --sc-color-azure-800: #1e40af;
-  --sc-color-azure-900: #1e3a8a;
-  --sc-color-azure-950: #172554;
 
   /* ---------- Color · Paleta del Kit (generada) ---------- */
   /* @sc-gen:palette — bloque GENERADO desde kit-export-dtcg.json. Las familias del mapa
@@ -890,9 +874,8 @@
    * - green → AED `--sc-color-emerald-*` primitive (Aura's `emerald`,
    *   chosen for a brighter "fresh green" distinct from AED's
    *   brand-semantic green which is Aura's `green`).
-   * - blue → AED `--sc-color-azure-*` primitive (Aura's `blue`,
-   *   renamed to `azure` so it doesn't collide with AED's
-   *   `--sc-color-blue-*` which is the custom brand navy).
+   * - blue → `--sc-color-sky-*`, the Kit's bright blue (DD-247). Not
+   *   `--sc-color-blue-*`, which is the brand navy.
    *
    * All label hues now reference primitives; no hex literals.
    */
@@ -934,10 +917,10 @@
   --sc-label-teal-border: var(--sc-color-teal-200);
   --sc-label-teal-dot: var(--sc-color-teal-500);
 
-  --sc-label-blue-bg: var(--sc-color-azure-50);
-  --sc-label-blue-text: var(--sc-color-azure-700);
-  --sc-label-blue-border: var(--sc-color-azure-200);
-  --sc-label-blue-dot: var(--sc-color-azure-500);
+  --sc-label-blue-bg: var(--sc-color-sky-50);
+  --sc-label-blue-text: var(--sc-color-sky-700);
+  --sc-label-blue-border: var(--sc-color-sky-200);
+  --sc-label-blue-dot: var(--sc-color-sky-500);
 
   --sc-label-purple-bg: var(--sc-color-purple-50);
   --sc-label-purple-text: var(--sc-color-purple-700);
@@ -1152,9 +1135,9 @@
   --sc-toast-success-border: var(--sc-color-green-200);
   --sc-toast-success-icon-bg: var(--sc-color-green-600);
 
-  /* Info — Figma `#eff6fff2` bg (blue-50 95%), `#bfdbfe` border (blue-200 ≈ azure), `#2563eb` icon */
-  --sc-toast-info-bg: color-mix(in srgb, var(--sc-color-azure-50) 95%, transparent);
-  --sc-toast-info-border: var(--sc-color-azure-200);
+  /* Info — el `sky` del Kit, como el texto de información (DD-247): fondo sky-50 al 95 %, borde sky-200, icono sky-600 */
+  --sc-toast-info-bg: color-mix(in srgb, var(--sc-color-sky-50) 95%, transparent);
+  --sc-toast-info-border: var(--sc-color-sky-200);
   --sc-toast-info-icon-bg: var(
     --sc-color-sky-500
   ); /* SC override: icon-square uses sky-500 per brand */
@@ -2216,7 +2199,7 @@
   --sc-toast-close-button-radius: var(--sc-scale-0-875); /* 12.25px (= mitad del ancho a circular) */ /* Figma `toast/close/button/border/radius: 12.25` (= width/2 → circular) */
   --sc-toast-close-icon-size: var(--sc-scale-1); /* 14px */ /* Figma `toast/close/icon/size: 14` */
   --sc-toast-success-icon: var(--sc-color-green-600);
-  --sc-toast-info-icon: var(--sc-color-azure-600);
+  --sc-toast-info-icon: var(--sc-color-sky-600);
   --sc-toast-warn-icon: var(--sc-color-yellow-700);
   --sc-toast-error-icon: var(--sc-color-red-600);
   --sc-toast-secondary-bg: var(--sc-color-slate-100); /* slate-100 */
@@ -2584,8 +2567,8 @@
    * aspecto de nada, solo impide que un color fuera de paleta rompa el
    * pipeline. Cuando el Kit remapee info a la familia de marca (§1.4), estos
    * dos vuelven a generarse solos y estas líneas se borran. */
-  --sc-cmp-message-info-border-color: color-mix(in srgb, var(--sc-color-azure-700) 36%, transparent);
-  --sc-cmp-toast-info-border-color: color-mix(in srgb, var(--sc-color-azure-700) 36%, transparent);
+  --sc-cmp-message-info-border-color: color-mix(in srgb, var(--sc-color-sky-700) 36%, transparent);
+  --sc-cmp-toast-info-border-color: color-mix(in srgb, var(--sc-color-sky-700) 36%, transparent);
   /* Fondo del toast de info en OSCURO — a mano (EXCLUDE en `cmp-color-map.mjs`, 2026-09-14).
    * El export trae sky-50 al 16 %, un velo claro. Aura pinta el toast de info igual que el
    * message de info, así que es su alias: si uno cambia, el otro lo sigue. */
@@ -2690,10 +2673,10 @@
   --sc-label-teal-border: color-mix(in srgb, var(--sc-color-teal-700) 45%, transparent);
   --sc-label-teal-dot: var(--sc-color-teal-400);
 
-  --sc-label-blue-bg: color-mix(in srgb, var(--sc-color-azure-900) 40%, transparent);
-  --sc-label-blue-text: var(--sc-color-azure-300);
-  --sc-label-blue-border: color-mix(in srgb, var(--sc-color-azure-700) 45%, transparent);
-  --sc-label-blue-dot: var(--sc-color-azure-400);
+  --sc-label-blue-bg: color-mix(in srgb, var(--sc-color-sky-900) 40%, transparent);
+  --sc-label-blue-text: var(--sc-color-sky-300);
+  --sc-label-blue-border: color-mix(in srgb, var(--sc-color-sky-700) 45%, transparent);
+  --sc-label-blue-dot: var(--sc-color-sky-400);
 
   --sc-label-purple-bg: color-mix(in srgb, var(--sc-color-purple-900) 40%, transparent);
   --sc-label-purple-text: var(--sc-color-purple-300);
