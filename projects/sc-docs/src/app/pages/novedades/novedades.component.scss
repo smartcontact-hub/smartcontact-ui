@@ -6,20 +6,6 @@
   padding-bottom: var(--sc-spacing-5);
 }
 
-.hero {
-  margin-bottom: var(--sc-spacing-2);
-
-  &__title {
-    margin: 0 0 var(--sc-spacing-0-75);
-    color: var(--sc-text-primary);
-  }
-
-  &__lead {
-    margin: 0;
-    color: var(--sc-text-secondary);
-  }
-}
-
 /* La versión de hoy y su descarga: es a lo que viene la mayoría, así que va arriba y
  * separada del historial, no como la primera fila de una lista larga. */
 .actual {

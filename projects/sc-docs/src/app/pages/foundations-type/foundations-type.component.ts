@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
+import { CabeceraComponent } from '../../shared/cabecera.component';
 
 /** Una fila de la escala tipográfica: un step y su valor. */
 interface TypeRow {
@@ -53,7 +54,7 @@ const rem = (px: number): string => `${+(px / 16).toFixed(4)}`;
 @Component({
   selector: 'app-foundations-type',
   standalone: true,
-  imports: [TranslatePipe],
+  imports: [CabeceraComponent, TranslatePipe],
   templateUrl: './foundations-type.component.html',
   styleUrl: './foundations-type.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

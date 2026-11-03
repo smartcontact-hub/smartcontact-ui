@@ -52,7 +52,8 @@
   },
   "componentsIndex": {
     "title": "Componentes",
-    "lead": "{{total}} wrappers <code>sc-*</code> de <code>@smartcontact-hub/components</code>, en {{families}} familias. Para qué sirve cada uno de un vistazo; entra en cualquiera para ver sus variantes, estados y código, en claro y oscuro."
+    "lead": "{{total}} componentes en {{families}} familias, cada uno con cuándo se usa. Entra en uno para ver sus variantes, estados y código.",
+    "note": "Wrappers <code>sc-*</code> del paquete <code>@smartcontact-hub/components</code>, en claro y oscuro."
   },
   "components": {
     "blurb": {
@@ -128,7 +129,7 @@
     },
     "type": {
       "title": "Tipografía",
-      "lead": "Escala <strong>redonda</strong> en <strong>rem</strong> sobre root <strong>16</strong> (<code>font-size-300</code> = 16px = 1rem exacto), <strong>step-named</strong> (mismo idioma que el Kit Pro y los devs) y <strong>desacoplada</strong> de la escala de espaciado. 8 tamaños + 7 line-heights.",
+      "lead": "Doce estilos de texto, seis roles en dos pesos, sobre una escala propia, separada de la del espaciado.",
       "note": "<strong>El 14 y el 16 no son lo mismo.</strong> El DS no pisa el root del navegador (<code>html</code> se queda en <code>100%</code>), así que <code>1rem</code> = 16px y la rampa cae en píxeles redondos. El <strong>14</strong> que se ve por todo el sistema es el otro eje: es la base de la <a href=\"#/fundamentos/escala-color\">escala de espaciado</a> (<code>--sc-scale-1</code> = 14px, el sufijo es el multiplicador) y el tamaño del <strong>cuerpo</strong> por defecto (<code>font-size-200</code>). Bajar el root a 14 encogería los dos ejes a la vez.",
       "lineHeights": "Line-heights",
       "weights": "Pesos",
@@ -156,11 +157,12 @@
         "no_primeng": "Nada con clase <code>.p-*</code>: lo pinta el preset, en su capa",
         "no_icons": "Los iconos: <code>&lt;sc-icon&gt;</code> lleva su propia escala de tamaños",
         "note": "Medido en la maqueta del Supervisor: de sus <strong>43 textos</strong>, los <strong>25</strong> de página llevan estilo anclado y los <strong>18</strong> que viven dentro de un componente no llevan ninguno. Si necesitas cambiar cómo se ve el texto de un componente, se mueve el <strong>token</strong>, no se le pone una clase encima."
-      }
+      },
+      "leadNote": "Escala redonda en rem sobre root 16 (<code>font-size-300</code> = 16px = 1rem), con nombre por paso, el mismo que usan el Kit Pro y desarrollo: 8 tamaños y 7 interlineados."
     },
     "patterns": {
       "title": "Patrones de pantalla",
-      "lead": "La barra de calidad al construir una pantalla de producto. Cada patrón apunta a lo que el sistema <strong>ya</strong> resuelve, para que una pantalla nueva nazca consistente en vez de corregirla después.",
+      "lead": "La barra de calidad de una pantalla de producto: cada patrón apunta a lo que el sistema <strong>ya</strong> resuelve.",
       "haveLabel": "Ya en el sistema",
       "foot": "Es la misma barra que sigue quien construye las apps de este repo: está también en <code>AGENTS.md</code> (sección «UX de pantalla»), el documento que se lee al tocar el código. No es una checklist para lucir, es lo que separa una pantalla profesional de una genérica.",
       "principles": {
@@ -340,7 +342,7 @@
     },
     "color": {
       "title": "Color",
-      "intro": "Tokens <code>--sc-*</code> del paquete <code>@smartcontact-hub/styles</code>. Cada valor es trazable al export del Kit y se verifica en CI (<code>tokens:gen</code> · <code>tokens:parity</code>).",
+      "intro": "El color dice qué es cada cosa y en qué estado está: la paleta y lo que significa cada fondo, texto y borde.",
       "primitiveTitle": "Color primitivo",
       "primitiveHint": "Pasa por encima de un color para ver su token, su hex y su HSL. Cada línea se copia al pulsarla.",
       "copyHexAria": "Pulsa para copiar el hex.",
@@ -367,11 +369,12 @@
         "aviso": "Aviso",
         "peligro": "Peligro",
         "violeta": "Violeta"
-      }
+      },
+      "note": "Tokens <code>--sc-*</code> del paquete <code>@smartcontact-hub/styles</code>, trazables al export del Kit y verificados en CI (<code>tokens:gen</code>, <code>tokens:parity</code>)."
     },
     "iconos": {
       "title": "Iconos",
-      "lead": "Un icono va solo si se entiende en cinco segundos sin texto. Si no, icono y texto. Si ningún icono lo dice, solo texto. La regla vive en el paquete de iconos (<code>SC_ICONS</code> y <code>SC_ICON_RESERVADOS</code>) y la vigila <code>audit:icons</code>.",
+      "lead": "Un icono va solo si se entiende en cinco segundos sin texto. Si no, icono y texto; si ningún icono lo dice, solo texto.",
       "cuando": {
         "title": "Cuándo icono, cuándo texto",
         "solo": {
@@ -457,11 +460,12 @@
         "boton": "Botón de solo icono: <code>ariaLabel</code>. El tooltip lo pone el botón, también al enfocar; un <code>title</code> sobra.",
         "contraste": "Contraste de al menos 3:1 y diana de al menos 24 px."
       },
-      "foot": "Contrastado con <a href=\"https://www.nngroup.com/articles/icon-usability/\" target=\"_blank\" rel=\"noopener\">NN/g, Icon Usability</a> y <a href=\"https://primer.style/product/components/icon-button/\" target=\"_blank\" rel=\"noopener\">el IconButton de Primer</a>. Decisión: DD-200."
+      "foot": "Contrastado con <a href=\"https://www.nngroup.com/articles/icon-usability/\" target=\"_blank\" rel=\"noopener\">NN/g, Icon Usability</a> y <a href=\"https://primer.style/product/components/icon-button/\" target=\"_blank\" rel=\"noopener\">el IconButton de Primer</a>. Decisión: DD-200.",
+      "note": "La regla vive en el paquete de iconos (<code>SC_ICONS</code> y <code>SC_ICON_RESERVADOS</code>) y la vigila <code>audit:icons</code>."
     },
     "spacing": {
       "title": "Espaciado",
-      "lead": "Una sola escala, de 14 en 14: <code>--sc-scale-*</code>, en rem. En un componente se escribe su alias, <code>--sc-spacing-*</code>; nada de px a pelo ni <code>calc()</code> a mano.",
+      "lead": "Una sola escala, de 14 en 14, y una regla para agrupar: 7 dentro de un campo, 14 entre campos y 28 entre grupos.",
       "scaleTitle": "Escala 14-base",
       "thToken": "Token",
       "thAlias": "En un componente",
@@ -477,11 +481,12 @@
       "gap7": "7: etiqueta y su control",
       "gap14": "14: entre campos",
       "gap28": "28: entre grupos y antes del botón",
-      "groupMore": "La regla entera, en el patrón Agrupación"
+      "groupMore": "La regla entera, en el patrón Agrupación",
+      "note": "Escala <code>--sc-scale-*</code>, en rem. En un componente se escribe su alias, <code>--sc-spacing-*</code>; nada de px a pelo ni <code>calc()</code> a mano."
     },
     "motion": {
       "title": "Movimiento",
-      "lead": "Tres duraciones y dos curvas: <code>--sc-transition-*</code> y <code>--sc-easing-*</code>. Se anima solo <code>transform</code> y <code>opacity</code>, y si el sistema pide reducir movimiento, nada se mueve.",
+      "lead": "Tres duraciones y dos curvas. Se anima la posición y la opacidad, y si el sistema pide reducir movimiento, nada se mueve.",
       "play": "Reproducir",
       "back": "Volver",
       "durationsTitle": "Duraciones",
@@ -499,12 +504,13 @@
         "reduced": "Con «reducir movimiento» activado en el sistema, sin animación: <code>@media (prefers-reduced-motion: reduce)</code> la quita. Los ejemplos de esta página también saltan al final.",
         "nobounce": "Sin rebotes ni curvas elásticas: el movimiento frena al llegar, no se pasa."
       },
-      "more": "Por qué nada salta, en el patrón Sin saltos"
+      "more": "Por qué nada salta, en el patrón Sin saltos",
+      "note": "Tokens <code>--sc-transition-*</code> y <code>--sc-easing-*</code>; solo <code>transform</code> y <code>opacity</code>."
     }
   },
   "uso": {
     "title": "Uso real de componentes",
-    "intro": "Dónde aparece cada componente del DS en las pantallas <strong>reales</strong> del Supervisor (no en la demo aislada). Capturas tomadas del DOM renderizado — se regeneran con <code>npm run usage:capture</code>, no se desfasan.",
+    "intro": "Dónde aparece cada componente en las pantallas <strong>reales</strong> del Supervisor, no en la demo aislada.",
     "meta": "{{screens}} pantallas · {{seen}}/{{total}} componentes DS vistos · capturado {{date}} · {{viewport}} · tema {{theme}}",
     "byComponent": "Por componente",
     "byScreen": "Por pantalla",
@@ -518,11 +524,12 @@
     "gatedTitle": "No capturados aislados",
     "gatedNote": "se ven en el flujo",
     "gatedLead": "La pokédex los marca usados, pero solo se ven tras una interacción no scriptada o con datos vacíos (p.ej. estado vacío). Documentados aquí; mira la vista «Por pantalla» de la sección donde viven.",
-    "uses": "usos"
+    "uses": "usos",
+    "introNote": "Capturas del DOM renderizado; se regeneran con <code>npm run usage:capture</code>, así que no se desfasan."
   },
   "reglas": {
     "title": "Sistema de reglas",
-    "lead": "El sistema de reglas se rehízo entero. Antes: grabar llamadas, con prioridades, conflictos y borradores. Ahora: <strong>transcribir</strong>, con varias reglas activas sin conflictos y un constructor que cualquiera entiende. Cada cambio se cuenta con su <strong>antes</strong>, su <strong>ahora</strong> y su <strong>porqué</strong>. Las capturas son del Supervisor real.",
+    "lead": "El sistema de reglas se rehízo para <strong>transcribir</strong>: varias reglas activas, sin conflictos y con un constructor que cualquiera entiende.",
     "before": "Antes",
     "after": "Ahora",
     "zoom": "Ampliar",
@@ -718,7 +725,8 @@
     "lightbox": {
       "close": "Cerrar (Esc)",
       "hint": "Pulsa <kbd>Esc</kbd> o haz clic fuera para cerrar"
-    }
+    },
+    "leadNote": "Cada cambio, con su antes, su ahora y su porqué. Las capturas son del Supervisor real."
   },
   "inicio": {
     "title": "SmartContact",

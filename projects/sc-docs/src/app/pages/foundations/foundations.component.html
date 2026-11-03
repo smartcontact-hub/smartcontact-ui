@@ -1,5 +1,9 @@
-<h1>{{ 'fundamentos.color.title' | translate }}</h1>
-<p class="lead sc-text-h3-regular" [innerHTML]="'fundamentos.color.intro' | translate"></p>
+<app-cabecera
+  arte="color"
+  [titulo]="'fundamentos.color.title' | translate"
+  [entradilla]="'fundamentos.color.intro' | translate"
+  [nota]="'fundamentos.color.note' | translate"
+/>
 
 <h2>{{ 'fundamentos.color.primitiveTitle' | translate }}</h2>
 <p class="swatch-hint sc-text-caption-regular">{{ 'fundamentos.color.primitiveHint' | translate }}</p>

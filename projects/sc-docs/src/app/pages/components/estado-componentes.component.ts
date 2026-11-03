@@ -5,6 +5,7 @@ import { ScSearchComponent, ScSelectButtonComponent, ScSkeletonComponent } from 
 import { ComponentApiService, ComponenteContrato, REPO_BLOB } from '../../storybook/component-api.service';
 import { EstadoComponenteComponent } from '../../storybook/estado-componente.component';
 import { fichaDe } from './fichas';
+import { CabeceraComponent } from '../../shared/cabecera.component';
 
 type Filtro = 'todos' | ComponenteContrato['estado'];
 
@@ -26,7 +27,7 @@ const plano = (s: string): string =>
  */
 @Component({
   selector: 'app-estado-componentes',
-  imports: [EstadoComponenteComponent, RouterLink, ScSearchComponent, ScSelectButtonComponent, ScSkeletonComponent],
+  imports: [CabeceraComponent, EstadoComponenteComponent, RouterLink, ScSearchComponent, ScSelectButtonComponent, ScSkeletonComponent],
   templateUrl: './estado-componentes.component.html',
   styleUrl: './estado-componentes.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

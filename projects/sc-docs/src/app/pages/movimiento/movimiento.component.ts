@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { ScButtonComponent } from '@smartcontact-hub/components';
+import { CabeceraComponent } from '../../shared/cabecera.component';
 
 /** Una fila de la página: el token, su valor resuelto y con qué duración y curva corre su ejemplo. */
 interface FilaMovimiento {
@@ -24,11 +25,15 @@ interface FilaMovimiento {
 @Component({
   selector: 'app-movimiento',
   standalone: true,
-  imports: [RouterLink, ScButtonComponent, TranslatePipe],
+  imports: [CabeceraComponent, RouterLink, ScButtonComponent, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <h1>{{ 'fundamentos.motion.title' | translate }}</h1>
-    <p class="lead sc-text-h3-regular" [innerHTML]="'fundamentos.motion.lead' | translate"></p>
+    <app-cabecera
+      arte="movimiento"
+      [titulo]="'fundamentos.motion.title' | translate"
+      [entradilla]="'fundamentos.motion.lead' | translate"
+      [nota]="'fundamentos.motion.note' | translate"
+    />
 
     <sc-button
       class="reproducir"
@@ -79,16 +84,6 @@ interface FilaMovimiento {
       display: block;
       max-width: 720px;
       padding-bottom: var(--sc-spacing-5);
-    }
-
-    /* Tamaño y peso del título, los de todas las páginas de la doc (\`.demo-main h1\`, styles.scss). */
-    h1 {
-      margin: 0 0 var(--sc-spacing-0-75);
-    }
-
-    .lead {
-      margin: 0 0 var(--sc-spacing-1-5);
-      color: var(--sc-text-secondary);
     }
 
     h2 {

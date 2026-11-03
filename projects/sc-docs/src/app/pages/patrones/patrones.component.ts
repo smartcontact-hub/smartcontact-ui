@@ -5,6 +5,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { ScIconComponent } from '@smartcontact-hub/icons';
 
 import { PATRONES } from './patrones-datos';
+import { CabeceraComponent } from '../../shared/cabecera.component';
 
 /**
  * Fundamentos → Patrones de pantalla: el índice.
@@ -16,7 +17,7 @@ import { PATRONES } from './patrones-datos';
 @Component({
   selector: 'app-patrones',
   standalone: true,
-  imports: [RouterLink, ScIconComponent, TranslatePipe],
+  imports: [CabeceraComponent, RouterLink, ScIconComponent, TranslatePipe],
   templateUrl: './patrones.component.html',
   styleUrl: './patrones.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

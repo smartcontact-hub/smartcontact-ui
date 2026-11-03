@@ -177,6 +177,17 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
+## ✅ 2026-11-03 · sc-docs: cada página con la cabecera de la portada
+
+**Sello:** rama `areses/sc-doc-design-consistency-c3007b`, sobre HEAD `0f5bb7c1` de `main`. Sale el tramo del 2026-10-30 (#560): `git show 0f5bb7c1:docs/handoff/design-system.md`.
+
+Las 12 páginas de dentro (Color, Espaciado, Tipografía, Iconos, Movimiento, Patrones, Componentes, Estado, Todo PrimeNG,
+Uso real, Reglas y Novedades) llevan `app-cabecera` (`shared/cabecera.component.*`): título, UNA frase de entradilla, lo
+técnico (paquete, gate) en una nota a tamaño de pie, y una franja ilustrada como las de la portada, con sus formas y,
+delante, componentes `sc-*` de verdad que dicen de qué va la página (`arte`). Entra escalonada y las formas flotan; quieta
+con «reducir movimiento». Entradillas de 21-48 palabras a 9-23. Las fichas de componente NO cambian (sus capturas base,
+tampoco). Medido: smoke, axe (216 stories) y herramientas, 20/20 contra el `ng serve` del árbol.
+
 ## ✅ 2026-10-31 · sc-docs con la estructura de Primer: portada, cabecera, lateral por sección e «En esta página»
 
 **Sello:** rama `areses/sc-doc-improvements-7f1391`, sobre HEAD `deb87737` de `main`. Sale el tramo del 2026-10-29 (#555): `git show deb87737:docs/handoff/design-system.md`; su pendiente, en SIGUIENTE.
@@ -188,16 +199,6 @@ anidado bajo él en el lateral, porque su derecha es el panel), título de pesta
 (`pages/inicio`): tarjetas a dos tonos con ilustraciones propias, formas del logo y componentes `sc-*` reales, `inert`. Índice de
 Componentes sin foto (fuera `public/hero/`), en 3 columnas. Cabeceras de página unificadas: migas, título, entradilla a 18. `audit:text-styles` de sc-docs baja de 94 a 79. El oscuro LOCAL del lienzo ya oscurece PrimeNG (`storybook/tokens-en-lienzo.ts`:
 el Select pasa de 255 a 9). `docs:ia` escribe además `ia/{tokens,patrones,iconos}.md`, `llms-full.txt`, `robots.txt` y `sitemap.xml`. Marca como el logotipo de las apps (Poppins 600 + «Design Engineering» en su corte fino cursivo, solo marca) y movimiento medido: entrada escalonada de la portada, capas que se separan al pasar, marca del índice que se desliza, sombra de cabecera ligada al scroll; todo quieto con «reducir movimiento». Luego, «Estado de los componentes» (`/components/estado`) y, en cada ficha, tarjetas Angular y Figma (estado, código, maestro) y «Relacionados»: todo de `_component-api.json`, al que `audit:components` añade `fuente`, `figma` (de Code Connect) y `relaciones`. Releída la lista de maestros del Kit (2026-11-02): «❖ Summary» y tres alias, y `sc-icon-tile`, `scFactRow` y `sc-subsection` pasan a Listo; `sc-group-popover` sigue experimental (su Code Connect es el Popover genérico). Fichas como las de Primer (#579): pestañas Resumen, Pautas (relacionados y las DD que la nombran, de `_decisiones.json`, que escribe `docs:ia`) y Accesibilidad (ARIA del contrato y lo que documenta PrimeNG, `_a11y-primeng.json`; lo regenera `scripts/primeng-a11y.mjs` A MANO, pide `gh` y red), cabecera de una frase y el resto plegado, y Feedback en la cabecera. Fundamentos como los de Primer (2026-11-03): Color y Espaciado separados (`/fundamentos/escala-color` lleva a Color), Movimiento (`--sc-transition-*` y `--sc-easing-*`, leídos del navegador) y cada patrón en su página (`/fundamentos/patrones/<ruta>`; la lista, en `pages/patrones/patrones-datos.ts`). Luego (2026-11-03), cada patrón con su «haz» y su «evita» dibujados con componentes de verdad (`shared/escena.component.ts`, la ventana de la portada; las escenas en `pages/patrones/escena-patron.component.ts`) y dichos en una frase (`doShort`, `dontShort`): de 104-203 palabras a la vista a 33-80, y la regla entera plegada debajo. Lo vigila un smoke (`e2e/smoke.spec.ts`, ≤90 palabras a la vista por patrón).
-
-## ✅ 2026-10-30 · sc-docs: «Cuándo se usa» encabeza cada ficha y el índice lleva miniaturas
-
-**Sello:** rama `areses/sc-doc-improvements-7f1391`, sobre HEAD `e899cfd0` de `main`. Sale el tramo del 2026-10-22 (`sc-step-marker`, DD-222): `git show b131c6bb:docs/handoff/design-system.md`; su pendiente, en SIGUIENTE.
-
-**Lo que cambia.** El «cuándo» del contrato (`_component-api.json`) va bajo la descripción de cada ficha, no tras las stories (en Button
-estaba a ~6.000 px). Las tarjetas del índice dicen cuándo, no qué (en inglés, su blurb traducido) y llevan miniatura en claro y
-oscuro: la primera story recortada a lo que pinta, que toma `docs-capturas` (`_miniatura*.png`, a 2x y a 720 de ancho).
-
-**Pendiente.** Hecho o movido en el tramo del 2026-10-31.
 
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 
