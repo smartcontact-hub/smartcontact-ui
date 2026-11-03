@@ -90,7 +90,7 @@ El de Agendas, Plantillas y Equipos solo a agentes (2026-10-28, DD-239, sin tram
 
 ## ✅ 2026-11-03 · Repaso del Figma del Supervisor y «Fuera del DS», borrada
 
-> **Sello:** rama `claude/new-session-3g90bx` sobre `main` HEAD `c4ac441f`. Solo Figma y `figma-pendiente`.
+> **Sello:** rama `claude/new-session-3g90bx` sobre `main` HEAD `c4ac441f`; la cuarta vuelta, `areses/supervisor-figma-round-4-e8e3b0` sobre `2577e70a`. Solo Figma y `figma-pendiente`.
 
 - **Figma** (server de la nube; detalle en `figma-pendiente` §54, §64, §65 y §66): los 4 avisos de descartar con los
   botones de borrar (#575); las 64 barras medidas, dos contadores añadidos, y la edición de Agendas y Plantillas en
@@ -100,9 +100,10 @@ El de Agendas, Plantillas y Equipos solo a agentes (2026-10-28, DD-239, sin tram
 - **Segunda vuelta** (fundida la primera en #582, sobre `b4b1305b`): lo montado a mano, a componentes locales en
   «Componentes del Supervisor», con nombres en inglés; el hub cerrado (pasos 3 a 7); las notas sin lo que solo existe en
   este repo ni «dibujo»; cinco iconos en Smart-Contact Icons, sin publicar (§66).
-- **Tercera vuelta, A MEDIAS**: fichas repasadas (25 cerradas); Kit e Icons con piezas sin publicar (§66, §67); los 22
-  avisos, a «Alert modal» `Plain` (§65). **Queda:** Usuarios (`41:2846`, a medias: revísala entera), «Inglés» en «Si algo
-  falla 5» de Agentes (§65), publicar, y releer §64 tras DD-246 (#585).
+- **Tercera vuelta** (#589): 25 fichas cerradas; piezas del Kit e Icons sin publicar (§66, §67); avisos `Plain` (§65).
+- **Cuarta vuelta** (§68): Usuarios maquetada de nuevo (índice, hand-off, alta, edición, listado y mapa), cada pantalla
+  contrastada con el prototipo publicado; «Inglés» en «Si algo falla 5» de Agentes y Recursos a dos columnas. **Queda:**
+  publicar Kit e Icons (una persona), `hub` en Icons y las piezas del Kit que §68 decide.
 - **No hecho**: Contact Center (no se toca), los COA (sin conector en la sesión), las versiones por página.
 
 ## ✅ 2026-10-31 · La barra común de asignar y Repositorios como sus COA (DD-243, DD-245)
