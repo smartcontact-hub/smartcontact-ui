@@ -36,31 +36,17 @@ la barra de la app: 350 de ancho, sin sombra, con el borde en su filo interior y
 tres variantes que aún no existen: Drawer acoplado, Avatar con tono de etiqueta y Tag `label` sin borde. Los tonos son
 los de etiqueta del código (`--sc-label-<color>-bg`, `-text`, `-border` y `-dot`: Comunicación azul, Clasificación
 morado, Diseñador teal, IA naranja), que no tienen variables en el Kit, y el azul sale de `azure`, que el Kit no tiene
-(DD-83): decide con qué familia del Kit se pinta antes de dibujarlo. Mídelo antes.
-
-**La cifra principal del resumen, con color (DD-161, 2026-10-04).** Pendiente en la maqueta de las fichas: una
-tarjeta del resumen por ficha con el degradado del botón principal (pulsado → reposo → al pasar, a 135°), el texto
-`text-inverse`, la sombra de tarjeta y el anillo y las barras en el color del texto sobre una pista al 25 %. Si se
-quieren tokens propios de degradado, nacen en el Kit. Mídelo antes.
-
-**El alta, el listado y la tabla al pie (DD-158 a DD-160, 2026-10-04).** «Atrás» secundario y «Siguiente» principal,
-juntos a la izquierda y sin icono; sin la columna «Asignar» en Grupos; y la tabla de agentes del grupo hasta el pie de
-la pantalla. Solo maqueta: ninguna variable nueva.
+(DD-83): decide con qué familia del Kit se pinta antes de dibujarlo. Mídelo antes. **Repaso del 2026-11-03:** la maqueta ya está (hub `3993:10509`, «Repository card» y «Docked drawer») y `azure` ya está en el Kit (§67). Faltan en el Kit el drawer acoplado, el avatar con tono de etiqueta y la etiqueta sin borde.
 
 **Distribución y colas con el árbol del DS (DD-157, 2026-10-04).** Pendiente en el Kit y en la maqueta de la ficha de
 grupo: la sección en `surface="subtle"`, cada canal un `.Subsection` y cada parte un slot (Distribución, Cola, Mensajes
 en cola y, en Chat, el acceso al final); la música en «Cola»; y una variante plegable del slot, con el título como
-botón y el chevron de la subsección, que en el Kit no existe. Mídelo antes; no requiere variables nuevas.
-
-**Estado del agente en su columna (DD-156, 2026-10-04).** Pendiente de reflejar en la maqueta de la asignación de
-agentes del grupo (ficha y panel): «Estado» es la columna que sigue a «Agente», con la etiqueta del listado, y cada
-columna mide lo que lleva (Asignado y Habilitado, su rótulo). La referencia de producto dibuja un punto de color: se
-mantiene la etiqueta del listado y de Contact Center › Servicio. Mídelo antes; no requiere variables nuevas.
+botón y el chevron de la subsección, que en el Kit no existe. Mídelo antes; no requiere variables nuevas. **Repaso del 2026-11-03:** `.Subsection` ya es plegable; falta la parte plegable con pista («Mensajes en cola»), §67.
 
 **F · listado (DD-153, 2026-10-02).** Pendiente de reflejar en el Kit y la maqueta: selector de
 columnas solo con `view_column` (tallas de botón de icono existentes), Asignar y menú fijos a la
 derecha, fondo opaco por estado y sombra solo mientras hay contenido oculto. Mídelo antes contra
-las demos de MultiSelect y DataTable; no requiere variables nuevas ni modifica el export de tokens.
+las demos de MultiSelect y DataTable; no requiere variables nuevas ni modifica el export de tokens. **Repaso del 2026-11-03:** falta en el Kit la columna fija de la tabla (fondo opaco y sombra con contenido oculto).
 
 ---
 
@@ -255,25 +241,9 @@ color; hasta entonces el par se queda, con su motivo escrito en el spec.
 
 ---
 
-## 1 · Publicar la librería
-
-**Estado:** publicada el 2026-10-21, con las tandas de abajo; queda una nueva, la cabecera del Custom modal (§58) ·
-**Dónde:** Figma, panel *Assets* → icono de librerías → *Publicar* · **Esfuerzo:** un minuto
-
-Los ficheros que usan la librería no ven sus cambios hasta que se publica, y publicar es un paso de persona. Estas
-tandas esperaban hasta la publicación del 2026-10-21:
-
-- la del 2026-09-13: el título de `Section` a `h3` y el borrado de `app/typography/xl|xxl` (DD-75);
-- la del 2026-09-14: el interlineado atado en los maestros de botón y campo (DD-91);
-- y la colección «App» como alias de Custom (DD-92), también del 2026-09-14.
-
-Se suma lo que se haga en los pasos 1 a 3 del plan.
-
-**Cómo sabes que está hecho:** en el fichero del Supervisor desaparece el aviso de actualizaciones pendientes.
-
----
-
 ## 2 · Lo que Config cambió en código y Figma aún no sabe (2026-09-13)
+
+**Repaso del 2026-11-03:** falta la pastilla de etiqueta sin punto y a 600 en `tag` (hoy, 700). El resto es de Contact Center o ya está.
 
 **Estado:** pendiente, una a una: bajarla al Kit o revertirla en código · **Evidencia:** medido en código (sesión de
 `/config/aed/*`); **mídelo antes** en el fichero.
@@ -299,22 +269,9 @@ Se suma lo que se haga en los pasos 1 a 3 del plan.
 
 ---
 
-## 3 · La cabecera y el aire de página se compactaron en código (2026-09-14)
-
-**Estado:** pendiente de bajarlo al fichero · **Evidencia:** medido en código, en builds del Supervisor a 1440; el
-export no tiene variables para esto.
-
-- **TopBar a 56 de alto** (`scale/4`). Figma `12277-4705` dibuja 72, con 20 arriba y abajo. Es el mismo token que el
-  bloque del logo de la barra lateral, para que las dos rayas casen. El avatar va a `--sc-cmp-avatar-width` (28), y la
-  miga, sin relleno propio (DD-90).
-- **Páginas de lista:** de la barra al título 17,5 (`scale/1-25`), lados 28 (`scale/2`), del título al contenido 14
-  (`scale/1`) y del buscador a la tabla 12,25 (`scale/0-875`).
-- **No se aplica a las páginas con índice ni a las de formulario:** esas empiezan a 22,75 y 24,5 (`_page.scss`), que
-  DD-94 dejó como estaban.
-
----
-
 ## 4 · Las medidas de PrimeOne que Aura 3 cambió: el código ya sigue a Aura (2026-09-14)
+
+**Repaso del 2026-11-03:** solo quedan las tres medidas que se separan en /y y /x: `divider/vertical/padding`, `divider/horizontal/padding` e `inputgroup/addon/padding`.
 
 **Estado:** las 52 de alias y `toast/blur`, **HECHAS** en Figma y en el export desde el 2026-09-28 (#276; medido en el
 fichero el 2026-10-17). Falta quitar sus filas de `PENDIENTE_FIGMA` (paso 6). Las tres que se separan, pendientes:
@@ -412,50 +369,9 @@ igual: quita la fila». Se quitan esas filas de `PENDIENTE_FIGMA`. En las tres s
 
 ---
 
-## 5 · El índice lateral de las pantallas con rail no es componente de la librería (2026-09-14)
-
-**Estado:** pendiente · **Verificado** con el server de Figma el 2026-09-14: en el fichero del DS no hay ningún
-componente de índice lateral (revisados sus 228 componentes y conjuntos). En el fichero del Supervisor, el único dibujo
-es un MARCO, no una instancia: `393:12565`, «sc-form-section-nav (pure-sc)», de 196 de ancho, dentro de la maqueta de
-Contact Center.
-
-En código es UNA pieza desde el 2026-09-27 (DD-122): `sc-form-section-nav` con `[flush]`, en las cinco pantallas con
-índice (fichas de agente, grupo y usuario, constructor de reglas y Contact Center). Contact Center no se movió un píxel
-al cambiar de pieza (medido contra `main`, en claro y en oscuro). Las cifras, medidas a 1440 y comprobadas en el código
-el 2026-09-27:
-
-- carril de 196, fijo a 22,75 de arriba y a 28 del contenido;
-- item de 37,5, con relleno 8,75, hueco 5,25 y radio 12;
-- texto 14/20 en 400 (600 el activo), icono de 14 de caja, y el activo sobre `rgb(236, 239, 243)`.
-
-Mientras sea un marco suelto, cada maqueta nueva lo vuelve a dibujar a mano y puede salir distinto: es lo que pasó con
-la generación anterior (`12277:4818`, panel gris con el icono en su cajita).
-
-**Lo que el código ya tiene y Figma no (DD-122):**
-
-- **El rótulo de encima** (`titleKey`, «Contact Center», `Text` `393:12569`): 14/20 en semibold y gris secundario, con
-  3,5/12,25 de relleno. **Mídelo antes:** un comentario anterior del código lo anotaba en regular. Si la maqueta dice
-  regular, el código la sigue (DD-111).
-- **Sección con cambios sin guardar** (`sectionsWithChanges`): el mismo punto de 8 que el de error, en `--sc-bg-primary`
-  (marino en claro, sky-300 en oscuro) en vez de rojo. Si una sección tiene las dos cosas, se ve el rojo. La ficha tiene
-  un solo «Guardar», y el índice dice dónde está lo que se va a guardar.
-
-**Cómo se hace:** convertir el marco `393:12565` en componente del DS, con los estados de item del código:
-
-- reposo;
-- activo: fondo `--sc-bg-hover` y texto en semibold;
-- con algo obligatorio sin rellenar: punto rojo;
-- con cambios sin guardar: punto de marca.
-
-La etiqueta, en `Body/body-regular`, y el rótulo opcional encima. El icono, a 20 mientras Figma no agrande el glifo
-(ficha 7): 20 en Figma pinta lo mismo que los 14 de caja del código; con la ficha 7 hecha, baja a 14. Opcional: la ficha
-de encima (avatar 36, nombre en `Body/body-semibold` y dato en `Caption/caption-regular`).
-
-**Cómo sabes que está hecho:** la maqueta de Contact Center usa una instancia del componente en lugar del marco.
-
----
-
 ## 6 · La miga: un tramo que se puede pulsar se subraya al pasar el ratón (2026-09-14)
+
+**Repaso del 2026-11-03:** falta subrayar el tramo al pasar (`Label Hover=True` sigue sin subrayado) y la nota de la manita.
 
 **Estado:** pendiente de bajarlo al fichero · **Verificado el 2026-09-14** contra el fichero del DS: página
 `❖ Breadcrumb` (`6738:52933`), conjunto `breadcrumb-item` (`6115:29096`). Las dos variantes `Type=Label, Hover=True`
@@ -495,6 +411,8 @@ de encima (avatar 36, nombre en `Body/body-semibold` y dato en `Caption/caption-
 
 ## 7 · Los iconos pintan un tercio más grande en código que en Figma (2026-09-14)
 
+**Repaso del 2026-11-03:** los glifos ya no van a tamaño literal (`schedule` mide 15,6 en su caja de 14), pero falta compararlos lado a lado con sc-docs: `check` mide 14 × 10.
+
 **Estado:** decidido el 2026-09-28: se agranda si el `IconSet` ata la caja · **Evidencia:** medido en código (DD-104); **mídelo antes** en el
 fichero.
 
@@ -519,47 +437,9 @@ sc-docs, lado a lado, pintan la papelera del mismo tamaño.
 
 ---
 
-## 8 · Grises intermedios: los textos y la opción no elegida, un paso más oscuros (2026-09-14)
-
-**Estado:** **HECHO en el fichero el 2026-10-17** (las 8 filas); push y paso 6 el mismo día (export del 2026-10-17) · decidido el 2026-09-14
-(DD-106) · **Evidencia:** verificado de punta a
-punta en código, no en el fichero. Se simuló este cambio en `kit-export-dtcg.json`, `tokens:import` lo escribió y el
-Supervisor pintó los grises nuevos (`theme-contrast`: 53 de 53). Las rutas de variable salen del export; el 2026-09-27
-todas decían aún la columna «Hoy».
-
-**Cómo se hace, sin crear variables ni tocar la paleta:** cada una pasa a apuntar a otro paso. Todo en modo claro; el
-oscuro no se toca.
-
-| Export | Variable | Hoy | Nuevo | Qué consigue |
-|---|---|---|---|---|
-| `aura/semantic/light` | `text/color` | `surface/700` | **`surface/900`** (DD-188) | texto principal 7,38 → 16,9:1; del secundario se separa 2,29:1 (con 800, 1,65) |
-| `aura/semantic/light` | `form/field/color` | `surface/700` | **`surface/900`** (DD-188) | alimenta el mismo `--sc-text-primary`: se mueven juntas |
-| `aura/semantic/light` | `text/muted/color` | `slate/600` | **`slate/700`** | texto secundario 4,52 → 7,38:1 |
-| `aura/semantic/light` | `text/hover/color` | `surface/800` | **`surface/900`** (decidido) | con el texto ya en 900 (DD-188) no cambia de color al pasar el ratón: lo marca el fondo, como en GitHub |
-| `aura/component/light` | `togglebutton/color` | `surface/500` | **`surface/700`** | opción no elegida de SelectButton 2,56 → 6,40:1 |
-| `aura/component/light` | `togglebutton/hover/color` | `surface/700` | **`surface/900`** | que el ratón encima se siga notando |
-| `aura/component/light` | `togglebutton/icon/color` | `surface/500` | **`surface/700`** | el icono, igual que su texto |
-| `aura/component/light` | `togglebutton/icon/hover/color` | `surface/700` | **`surface/900`** | ídem |
-
-El título de sección (`--sc-text-heading`, slate-800) mediría igual que el texto principal nuevo: sube a slate-900
-(decidido), con su variable nueva `text/heading/color` (ficha 2).
-
-**Lo que cierra el código cuando llegue el export** (paso 6):
-
-- sacar `light:togglebutton.color` y `light:togglebutton.hover.color` de `EXCLUDE` (`scripts/cmp-color-map.mjs`).
-  Mientras sigan ahí, el generador no escribe `--sc-cmp-togglebutton-color` y el cambio no llega;
-- en `togglebutton.ts`, los 2 slots aún escritos a mano pasan a `var(--sc-cmp-togglebutton-*)`;
-- `--sc-text-subtle` vive fuera de la zona generada: pasa a slate-700 a mano, con el secundario;
-- en `e2e/supervisor/theme-contrast.spec.ts`, las dos excepciones del secundario en slate-600
-  (`fg=rgb(111,119,132)`) dejan de aplicar y se borran.
-
-**Cómo sabes que está hecho:** el PR del robot trae `--sc-text-primary: var(--sc-color-slate-800)` y
-`--sc-text-secondary: var(--sc-color-slate-700)` en `02-semantic.css`. Tras el paso 6, `--sc-cmp-togglebutton-color:
-var(--sc-color-slate-700)` en `04-component.css`.
-
----
-
 ## 9 · El Dashboard: lo que PrimeNG ya tiene y el fichero del DS aún no dibuja (2026-09-14)
+
+**Repaso del 2026-11-03:** el peso de las pestañas ya va atado. Faltan los bordes a 0, las flechas de desbordamiento, el punto de Badge y el hueco «Añadir widget».
 
 **Estado:** pendiente · **Verificado el 2026-09-14** con el bridge contra el fichero del DS y PrimeOne 4.0.0, y en el
 código de PrimeNG 22.1.0. Las variables, otra vez contra el export el 2026-09-27. Las piezas del Dashboard salen de los
@@ -611,6 +491,8 @@ componentes de [primeng.dev](https://primeng.dev) con los valores y las variable
 
 ## 10 · Dos buscadores que no se parecen: decisión de Figma, no de código (2026-09-14)
 
+**Repaso del 2026-11-03:** sin decidir (decisión 5).
+
 **Estado:** pendiente de decidir (decisión 5) · **Evidencia:** medido en la barra de Conversaciones del Supervisor, en
 local, con capturas a 3x.
 
@@ -630,6 +512,8 @@ El texto de la opción no elegida de SelectButton, que esta ficha también citab
 ---
 
 ## 11 · Panel en aviso: la variante `Severity` que el código ya tiene (2026-09-14)
+
+**Repaso del 2026-11-03:** `panel` sigue sin la propiedad Severity (None, Warn y Danger), que el código tiene.
 
 **Estado:** pendiente · **Verificado el 2026-09-14** con el bridge: `❖ Panel` (`6738:49736`), conjunto `panel`
 (`229:10217`), no tiene variante de aviso; PrimeOne 4.0.0 tampoco.
@@ -651,40 +535,9 @@ hace falta crear variables.
 
 ---
 
-## 12 · Los botones rojos en claro, un paso más oscuros por contraste (2026-09-15)
-
-**Estado:** **HECHO en el fichero el 2026-10-17** (las 8 variables); push y paso 6 el mismo día (export del 2026-10-17) · **Evidencia:** export
-de `main` (comprobado el 2026-09-27) y el guard
-`tokens:cmp-rewire`.
-
-- **El sólido.** El Kit pinta el botón `danger` en `red/500` con texto blanco: **3,76:1**, no llega a AA. El código usa
-  un paso más (`red/600`, 4,83:1; ratón encima `red/700`, pulsado `red/800`) y lo declara en `EXCLUDE`
-  (`scripts/cmp-color-map.mjs`), así que el generador no emite esos seis `--sc-cmp-button-danger-*`.
-- **El de texto** («Eliminar» en la cabecera de las fichas). `button/text/danger/color` es `red/500` sobre blanco:
-  **3,76:1**. Desde DD-128 (2026-09-28), el código ya pinta `red/600` con una divergencia declarada
-  (`light:button.text.danger.color` en `EXCLUDE`). Con el Kit en `red/600`, esa fila sobra.
-- **El contorneado** (`button/outlined/danger/color`, `red/500`) es el mismo caso. No se ha medido que la app lo use.
-  Decidido el 2026-09-28: sube con el de texto.
-
-**Cómo se hace, en `aura/component/light`:**
-
-| Variable | Hoy | Nuevo |
-|---|---|---|
-| `button/danger/background` y `button/danger/border/color` | `red/500` | **`red/600`** |
-| `button/danger/hover/background` y `button/danger/hover/border/color` | `red/600` | **`red/700`** |
-| `button/danger/active/background` y `button/danger/active/border/color` | `red/700` | **`red/800`** |
-| `button/text/danger/color` | `red/500` | **`red/600`** |
-| `button/outlined/danger/color` (decidido el 2026-09-28) | `red/500` | **`red/600`** |
-
-`hover/color` y `active/color` (el blanco del texto) **no cambian**: solo el fondo y el borde.
-
-**Cómo sabes que está hecho:** tras el push, se quitan las seis filas de `EXCLUDE`, el preset lee
-`var(--sc-cmp-button-danger-*)` y `tokens:cmp-rewire` sigue en verde. Sale también la fila de
-`light:button.text.danger.color` (DD-128), en el paso 6.
-
----
-
 ## 13 · El botón se encoge al pulsarlo: la interacción que el código ya tiene (2026-09-15)
+
+**Repaso del 2026-11-03:** el estado Active del botón mide lo mismo: falta encogerlo al 96 % con una transición de 150 ms.
 
 **Estado:** pendiente · **Mídelo antes:** no se ha abierto `❖ Button` para ver si tiene estado pulsado ni
 interacciones de prototipo.
@@ -703,28 +556,9 @@ que la historia «Al pulsar» de `#/components/button` en sc-docs.
 
 ---
 
-## 14 · La etiqueta «Draft» (secundaria) no llega al contraste (2026-09-24)
-
-**Estado:** **HECHO en el fichero el 2026-10-17**, con su push · **Dónde:** variable `tag/secondary/color` de
-`aura/component/light`: era `surface/600`, pasa a
-**`surface/700`** · **Esfuerzo:** un cambio de alias · **Evidencia:** medido en el navegador y en el código generado;
-el alias, en el export del 2026-09-27.
-
-- **Medido:** el texto de `<p-tag severity="secondary">` sale en `#6f7784` (slate-600) sobre `#eceff3` (slate-100):
-  **3,92:1**, por debajo del 4,5 que pide un texto de 12 px. En Aura (primeng.dev/tag, la «Draft») es `#475569`
-  sobre `#f1f5f9`: 6,92:1. Nuestro slate-600 es más claro que el de Aura.
-- **Con slate-700 (`#4f5663`): 6,40:1.** Y rima: el resto de etiquetas ya apuntan a su 700 sobre su 100 (verde, cielo,
-  amarillo, rojo); la secundaria es la única en 600.
-- **Alcance:** todas las etiquetas secundarias de la plataforma («Desconectado» en Agentes, la columna Tipo, lo que use
-  `severity="secondary"`). En código llega sola: `--sc-cmp-tag-secondary-color` vive en la zona generada y `EXCLUDE`
-  solo la tiene en oscuro.
-
-**Cómo sabes que está hecho:** tras el push, `--sc-cmp-tag-secondary-color` dice `var(--sc-color-slate-700)` y la
-etiqueta «Desconectado» de `/admin/agentes` mide 6,40:1.
-
----
-
 ## 15 · La escalera de agrupación manda sobre la maqueta: filas de formulario a 14 (2026-09-27)
+
+**Repaso del 2026-11-03:** sus nodos (`2286:*`) ya no están en ninguna página y lo que queda es de Contact Center: fuera de este repaso.
 
 **Estado:** pendiente · **Dónde:** las maquetas de formulario de Grupos y Servicio del fichero del Supervisor, y las que
 copien su fila · **Evidencia:** los nodos son los que cita el código; el código, comprobado el 2026-09-27.
@@ -743,24 +577,9 @@ copien su fila · **Evidencia:** los nodos son los que cita el código; el códi
 
 ---
 
-## 16 · La caja de sección, 17,5 arriba y abajo en las dos pieles (2026-09-27)
-
-**Estado:** `Section` **HECHO el 2026-10-17** (`12610:23284`: arriba y abajo atados a `scale/1-25` en las cuatro
-variantes); el `Block`, pendiente (paso 5) · **Dónde:** el maestro `Section` del DS (relleno vertical atado a `scale/1-625`) y el
-`Block` del Supervisor (393:12587, atado a `scale/1-75`) · **Esfuerzo:** revincular el relleno de arriba y de abajo de
-los dos a **`scale/1-25`** · **Evidencia:** los nodos y sus variables son los que cita
-`sc-section-card.component.scss`; el código, comprobado el 2026-09-27.
-
-- **Por qué** (DD-125): el relleno vertical no separaba nada; la caja ya la delimitan su borde y su fondo. En código,
-  17,5 arriba y abajo en las dos pieles. Los lados (16 la gris, 24,5 la blanca) y el aire del título a su contenido
-  (14 y 16) no cambian.
-- **Plegada**, la cabecera mide 17,5 arriba y abajo.
-
-**Cómo sabes que está hecho:** `Section` y `Block` miden 17,5 arriba y abajo.
-
----
-
 ## 17 · El diálogo con formulario: la botonera a 28 del último campo, 14 entre campos y 10,5 entre botones (2026-09-27)
+
+**Repaso del 2026-11-03:** falta el pie del Custom modal a 12,25 del cuerpo cuando hay formulario (`dialog/footer/padding/top` vale 0).
 
 **Estado:** pendiente · marco a 15,75, decidido el 2026-09-28 · **Dónde:** el maestro del diálogo del DS y las maquetas que lo
 usan con un formulario («Nueva entidad», «Nueva categoría», «Duplicar grupo») · **Evidencia:** export del 2026-09-27 y
@@ -796,57 +615,9 @@ código; **mídelo antes** en el maestro: el código no cita su nodo.
 
 ---
 
-## 18 · El widget del resumen de las fichas: cifra, «/total» y anillo (2026-09-27)
-
-**Estado:** pendiente · **Dónde:** las maquetas de las fichas de grupo, agente y usuario (el resumen de la derecha) del
-fichero del Supervisor y, si se quiere reutilizable, un componente nuevo allí · **Esfuerzo:** una pieza con dos
-variantes, con anillo y sin él · **Evidencia:** el código; ningún nodo, porque el resumen nació en código (DD-121) y el
-Kit no lo dibuja.
-
-- **Por qué** (DD-126): cada proporción del resumen es un widget, como el ejemplo «Preview» de ProgressSpinner en
-  primeng.dev.
-- **La tarjeta:** en `--sc-bg-primary-subtle` (en el Kit, `highlight/background` = `primary/50`), sin borde a la vista,
-  con relleno `scale/0-75` y radio `border/radius/xl`.
-- **Por dentro, de arriba abajo:**
-  - el rótulo, con su icono a 5,25, en caption regular;
-  - a 7, la cifra (h1 semibold; h2 en el grupo), con «/total» a 1,75 (h3 regular; body en el grupo);
-  - a la derecha de la cifra, a 10,5, el anillo: de 42, trazo 10, el arco en `--sc-bg-accent` y sin el «N%».
-
-  Todo el texto en `--sc-text-primary`: el secundario no llega a AA sobre el tinte.
-- **La nota** va debajo de la cifra. Sale en el agente sin grupos, que tampoco lleva anillo, y en el grupo, con anillo.
-- **En el grupo**, los canales cuelgan debajo, a 28.
-
-**Cómo sabes que está hecho:** las tres fichas de Figma enseñan el resumen con esta pieza, y
-`summary-kpi.component.ts` puede citar su nodo.
-
----
-
-## 19 · Cuatro grises del Kit bajo AA que el código ya sube (2026-07 a 2026-09)
-
-**Estado:** **HECHO en el fichero el 2026-10-17** (las 4); push y paso 6 el mismo día (export del 2026-10-17) · **Evidencia:** export del
-2026-09-27 y las divergencias declaradas en `scripts/color-map.mjs` y
-`scripts/cmp-color-map.mjs` (DD-87, DD-111). Cada fila dice «revertir cuando el Kit suba el suyo». El código pinta los
-cuatro en slate-600 (4,52:1 sobre blanco).
-
-| Export | Variable | Hoy | Nuevo | Contraste hoy | Dónde se ve |
-|---|---|---|---|---|---|
-| `aura/component/light` | `button/outlined/secondary/color` | `surface/500` | **`surface/600`** | 2,95:1 | «Añadir» de AED |
-| `aura/semantic/light` | `form/field/icon/color` | `surface/400` | **`surface/600`** | 2,04:1 (un icono pide 3:1) | iconos dentro de los campos |
-| `aura/semantic/light` | `navigation/item/icon/color` | `surface/400` | **`surface/600`** | 2,04:1 | iconos de menús |
-| `aura/semantic/light` | `form/field/placeholder/color` | `surface/500` | **`surface/600`** | 2,95:1 | texto de ayuda de los campos |
-
-**Cómo sabes que está hecho:** tras el push y el paso 6, las cuatro filas salen de `EXCLUDE` y de las divergencias de
-`color-map.mjs`, y `tokens:parity` sigue en verde.
-
-**El marcador, un paso más (2026-10-17):** en código lo pinta `--sc-text-subtle`, que ese día sube a slate-700 con el
-secundario (DD-106). Para que Figma y código digan lo mismo, `form/field/placeholder/color` pasó también a
-`surface/700` en el fichero, después del push. **Llegó con el tercer envío del mismo día** (`8f030ffb`): su fila pasa a
-`enforce` contra `--sc-text-subtle`, que en claro escribe ya el generador. El robot no abrió PR porque un run cancelado
-borró el envío (ver «Herramientas»); entró a mano, con el arreglo del robot.
-
----
-
 ## 20 · La barra lateral del Supervisor (SISMAC-4340): lo que Figma dibuja distinto (2026-09-15)
+
+**Repaso del 2026-11-03:** lo seleccionado ya va en cyan y el comportamiento está rotulado. Faltan `neurology` en vez de `brain` en Testing y el fondo oscuro de `sidebar` a la superficie.
 
 **Estado:** pendiente · **Dónde:** fichero del DS, página Testing: sección `SISMAC-4340 Sidebar` (`14855:1269`), tablero
 `14912-6324`, versiones anteriores en `14930-1011` · **Evidencia:** DD-112 y DD-118, y el hand-off
@@ -866,6 +637,8 @@ borró el envío (ver «Herramientas»); entró a mano, con el arreglo del robot
 
 ## 21 · Iconos huérfanos: publicar Smart-Contact-Icons y pasar el script (2026-09-20)
 
+**Repaso del 2026-11-03:** `neurology` y `dashboard` ya están publicados; falta pasar el script de huérfanos.
+
 **Estado:** pendiente, tres pasos de persona y un script · **Evidencia:** hand-off `supervisor-fichas.md`; el script y
 su `LEEME.md` viven fuera del repo, en `~/Documents/Claude/2026-09 iconos-material/huerfanos/`.
 
@@ -878,6 +651,8 @@ su `LEEME.md` viven fuera del repo, en `~/Documents/Claude/2026-09 iconos-materi
 ---
 
 ## 22 · Números sueltos en las maquetas que el código redondeó a la escala
+
+**Repaso del 2026-11-03:** la fila de `Section` está hecha; el resto no tiene nodo o está en otro fichero.
 
 **Estado:** pendiente, de poco esfuerzo · **Evidencia:** los comentarios del código que citan cada nodo. Es la «lista de
 discrepancias del Figma» que prometía `sc-section-card.component.scss`: en la maqueta el número está suelto (sin
@@ -897,16 +672,9 @@ git): **mídelo antes**.
 
 ---
 
-## 23 · La presencia en Contact Center y en «Editar agente» (2026-09-13)
-
-**Estado:** pendiente · **Evidencia:** DD-78, «Consecuencias»; sin verificar desde entonces.
-
-La página Contact Center y el marco «Editar agente» del fichero del Supervisor dibujan la presencia con tags
-redondeados. En código es un desplegable con un punto de color. Cambiar el dibujo por el del código.
-
----
-
 ## 24 · Los cabos de Figma de DD-24: icono y tamaño de letra, y tres textos (2026-06-22)
+
+**Repaso del 2026-11-03:** faltan el icono de `button` atado a `app/font/size` y el texto de `inputtext` atado a su tamaño de letra.
 
 **Estado:** pendiente · **Evidencia:** `docs/ROADMAP.md`, «Round-trip DD-24»; no re-medido desde junio, **mídelo
 antes**.
@@ -921,6 +689,8 @@ antes**.
 ---
 
 ## 25 · Aparcado: el botón de solo icono no es cuadrado; la hora del datepicker, hecha (2026-09-14)
+
+**Repaso del 2026-11-03:** sigue aparcado: el botón de solo icono mide 31,5 × 32,5.
 
 **Estado:** el botón, aparcado (un píxel no se ve); la hora, **HECHA el 2026-10-18** · **Evidencia:** DD-91,
 «Consecuencias».
@@ -937,6 +707,8 @@ antes**.
 
 ## 26 · Aparcado: borrar la colección «App» (2026-09-14)
 
+**Repaso del 2026-11-03:** sin cambios (opcional).
+
 **Estado:** opcional · **Evidencia:** DD-92.
 
 «App» se quedó como alias de Custom: el DS ya no la usa y no puede desviarse. Borrarla exige publicar la librería,
@@ -945,23 +717,9 @@ que importaba.
 
 ---
 
-## 27 · Tokenizar los text styles: la raíz común de cuatro fallos (2026-08-07)
-
-**Estado:** en el fichero, **hecho** (medido el 2026-10-18: los 14 text styles atan tamaño, interlineado y peso a
-variable); falta re-validar los cuatro componentes · **Evidencia:** `docs/ROADMAP.md`, «Tokenizar los text styles del
-Figma» (SISMAC-4074); entregable en la página `Feedback`, sección `14015-179`.
-
-Para el equipo externo, cada text style es una clase de `smartcontact-typography.css` (rama `tema-zip`) con su mismo
-nombre: `Body/body-regular` → `sc-text-body-regular`. El `README.md` del paquete lo explica, con la tabla de las 14
-(«Estilos de texto», generada del CSS por `tema-zip.mjs`).
-
-Select, MultiSelect, Chip y Toast fallaban en la validación web ↔ Figma por lo mismo: los estilos de texto de Figma no
-exportan su tamaño y su interlineado como variables. Antes de actuar, iguala el estado de cada componente: varias
-diferencias de entonces eran el mismo componente en otro estado.
-
----
-
 ## 28 · Menores
+
+**Repaso del 2026-11-03:** `card` ya tiene «Show icon» y `azure` ya está en el Kit (§67). Quedan las variables mono y canvas.
 
 - **`font-family-mono`** no existe en Figma (`customs-catalog.md`). Ojo: el código pone `'JetBrains Mono'` delante de la
   pila del sistema (`01-primitive.css`), y el catálogo decía «Opción A: pila del sistema, sin fuente propia». Aclarar
@@ -974,6 +732,8 @@ diferencias de entonces eran el mismo componente en otro estado.
 ---
 
 ## 29 · El pase de diseño de las fichas: icono a 600 junto a semibold, altas con «Crear …» y saltos por canal (2026-09-27)
+
+**Repaso del 2026-11-03:** faltan el icono a 600 junto al semibold (`Section` y `nav-item` usan Material Icons Round, sin eje de peso) y la línea «Ir a» de Grupos.
 
 **Estado:** pendiente · **Dónde:** Figma, el maestro `Section` del DS (el icono de su título), el índice lateral (la
 fila activa) y las maquetas de las fichas de grupo, agente y usuario · **Esfuerzo:** revincular el peso de dos iconos
@@ -994,6 +754,8 @@ las maquetas de las fichas enseñan las altas y los saltos como el código.
 
 ## 30 · Contact Center › Grupos y › Agentes hablan como sus fichas, y guardan (2026-09-29)
 
+**Repaso del 2026-11-03:** es de Contact Center: fuera de este repaso.
+
 **Estado:** pendiente · **Dónde:** Figma, las maquetas `1:12676` (Contact Center · Grupos) y `393:12562` (Contact
 Center · Agentes) del fichero del Supervisor · **Esfuerzo:** redibujar el contenido de dos tarjetas con piezas que ya
 existen en las fichas · **Sin verificar** contra el fichero: se da por hecho que las maquetas siguen dibujando la
@@ -1013,113 +775,9 @@ réplica que el código acaba de quitar.
 
 ---
 
-## 31 · Las altas dicen lo que falta, hasta «Listo para crear» (2026-09-29)
-
-**Estado:** pendiente · **Dónde:** Figma, las maquetas de las altas de grupo, agente y usuario (el resumen de la
-derecha) · **Esfuerzo:** una línea de texto con icono, en dos estados · **Sin verificar** contra el fichero: el código
-no cita los nodos.
-
-- **Por qué** (DD-136): el resumen de cada alta dice lo que le falta y, cuando se puede crear, lo confirma.
-- **Qué dibujar:** bajo el título «Resumen», una línea en caption semibold con su icono a 600: «Falta: nombre ·
-  extensión» en el ámbar de los avisos, con `error`; y «Listo para crear» en el verde de éxito, con `check_circle`.
-  Sin porcentaje ni barra.
-
-**Cómo sabes que está hecho:** las tres altas del fichero enseñan los dos estados como el código.
-
----
-
-## 32 · Las altas, con el índice de la edición: el ✓ y «Atrás / Siguiente» (2026-10-01)
-
-**Estado:** pendiente · **Dónde:** Figma, las maquetas de las altas de grupo, agente y usuario, y el índice
-(`393:12565`, el `sc-form-section-nav` de la maqueta) · **Esfuerzo:** una marca nueva en el índice y un pie por alta,
-sin piezas nuevas · **Sin verificar** contra el fichero: el código no cita los nodos de las altas.
-
-- **Por qué** (DD-143, que revierte los pasos de DD-138): el alta tiene la maqueta de la edición, con el índice.
-- **Qué dibujar:**
-  - en el índice, el ✓ (`check_circle`, en el verde de éxito, con el peso de la etiqueta) detrás de la etiqueta de la
-    sección que se dejó completa, en el sitio del punto; la que se dejó sin lo obligatorio, con el punto rojo;
-  - la sección abierta, en su caja con su cabecera, como al editar;
-  - al pie, fuera de la caja, «Atrás» a la izquierda y «Siguiente» a la derecha, botones pequeños secundarios con
-    contorno, a 28 de la caja; la primera sección, solo «Siguiente», y la última, solo «Atrás».
-- «Crear …» sigue arriba, en la barra.
-
-**Cómo sabes que está hecho:** las tres altas del fichero enseñan el índice, el ✓ y el pie como
-`/admin/grupos/crear`, `/admin/agentes/crear` y `/admin/usuarios/crear`.
-
----
-
-## 33 · La ficha de grupo con las palabras de la revisión de producto (2026-10-01)
-
-**Estado:** pendiente · **Dónde:** Figma, las maquetas de la ficha de grupo (Distribución y colas, Recursos) y
-`1:12676` (Contact Center · Grupos) del fichero del Supervisor · **Esfuerzo:** textos y una fila menos, sin piezas
-nuevas · **Sin verificar** contra el fichero: el código no cita los nodos de la ficha.
-
-- **Por qué** (DD-141): la revisión de producto del 2026-10-01 cambia palabras y quita un campo.
-- **Qué cambiar:**
-  - las estrategias: «Menos conversaciones atendidas» (Teléfono y «Dentro de cada nivel») y «Menos conversaciones
-    activas» (Chat), en los desplegables y en el listado de grupos;
-  - fuera la fila «Desbordar sesión» de las reglas comunes, en la ficha y en Contact Center;
-  - la ayuda de Prioridad: «La prioridad con que entran sus llamadas. Solo cuenta en las entrantes.»;
-  - la ayuda del tamaño de cola, una por modo: «Como mucho 50 conversaciones esperando en total, haya los agentes que
-    haya» (Fijo) y «Varía con los agentes conectados: 50 conversaciones en cola por cada uno» (por agente conectado);
-  - los minutos de «Cerrar chat por inactividad», 5;
-  - la tipificación, por su categoría: «Consulta», sin «(3)»;
-  - en Contact Center, los desplegables a 350 (`scale/25`).
-
-**Cómo sabes que está hecho:** las maquetas dicen lo mismo que `/admin/grupos/editar/11?seccion=distribucion` y
-`/config/aed/grupos`, y ninguna dice «Desbordar sesión».
-
----
-
-## 34 · El teléfono saliente, obligatorio y de una lista; «Caducar sesión», y Recursos sin Etiquetas (2026-10-01)
-
-**Estado:** pendiente · **Dónde:** Figma, las maquetas de la ficha de grupo (Distribución y colas, Recursos), del
-diálogo de duplicar y `1:12676` (Contact Center · Grupos) del fichero del Supervisor · **Esfuerzo:** un campo en dos
-estados, textos y un campo menos · **Sin verificar** contra el fichero: el código no cita los nodos de la ficha.
-
-- **Por qué** (DD-142): la segunda revisión con el equipo fija el teléfono saliente como obligatorio con Teléfono, y
-  de los números asignados.
-- **Qué cambiar:**
-  - «Teléfono saliente *», un desplegable cerrado, sin escritura, con el marcador «Elige un número» y la ayuda «El número
-    que ven los clientes cuando un agente del grupo llama.»; y su estado de error: «El teléfono saliente es
-    obligatorio», con el punto en «Distribución y colas» del índice;
-  - lo mismo en el diálogo de duplicar, cuyo subtítulo dice «El teléfono saliente, no.»;
-  - «Caducar sesión» en vez de «Cerrar chat por inactividad», en la ficha y en Contact Center;
-  - la ayuda de «Balanceada»: «Reparte las conversaciones de forma equilibrada entre los agentes.»;
-  - Recursos sin el campo Etiquetas.
-
-**Cómo sabes que está hecho:** las maquetas dicen lo mismo que `/admin/grupos/editar/1?seccion=distribucion`, el
-diálogo de duplicar de un grupo con Teléfono y `/config/aed/grupos`.
-
----
-
-## 35 · Las fichas en tres columnas: el nombre encima del índice y el resumen sin rótulo (2026-10-01, DD-170 el 2026-10-05)
-
-**Estado:** pendiente en agente y usuario; la de grupo ya está dibujada (fichero «Landing page»,
-`cLO8JZfPuC3EMx6EgCjmsU`, nodo 2467:7078) · **Dónde:** Figma, las maquetas de las fichas de agente y usuario, al crear
-y al editar · **Esfuerzo:** recolocar la cabecera y «Eliminar», y quitar un rótulo, sin piezas nuevas.
-
-- **Por qué** (DD-144 y DD-170): tres columnas sin fila de cabecera, que arrancan a la misma altura.
-- **Qué cambiar,** como en el nodo 2467:7078:
-  - el nombre de la ficha y su línea, arriba de la columna del índice (196), a 14 del índice;
-  - la sección, arriba de la columna del centro, que es la que crece (Fill de ancho, Hug de alto);
-  - el resumen, sin su rótulo «Resumen», arriba de su columna (240);
-  - «Eliminar», bajo el índice, a 28 de su última fila;
-  - por debajo de 1340, el nombre sigue encima del índice y el resumen pasa a una franja encima de la sección.
-
-**Cómo sabes que está hecho:** las maquetas se ven como `/admin/grupos/editar/11`, `/admin/agentes/editar/1` y
-`/admin/usuarios/crear` a 1440.
-
----
-
-## 36 · El nombre de la ficha, fijo arriba al bajar (2026-10-01)
-
-**Estado:** retirada el 2026-10-05 (DD-170): el nombre vive en la columna del índice, que ya se queda fija al bajar.
-No hay estado «al bajar» que dibujar.
-
----
-
 ## 36b · El color de etiqueta marrón (2026-10-05, DD-176)
+
+**Repaso del 2026-11-03:** falta el color marrón en `tag` (solo tiene Severity) y en `chip`.
 
 **Estado:** pendiente · **Dónde:** Figma, la librería del DS, las variantes de color de `tag`/`chip` en `label` y la
 paleta de puntos · **Esfuerzo:** una variante más, con variables que ya existen.
@@ -1133,6 +791,8 @@ paleta de puntos · **Esfuerzo:** una variante más, con variables que ya existe
 ---
 
 ## 37 · El resumen de la ficha de grupo lleva a su sección (2026-10-02)
+
+**Repaso del 2026-11-03:** falta en `group-summary` el estado de enlace, con subrayado al pasar y foco.
 
 **Estado:** pendiente · **Dónde:** Figma, el resumen de la ficha de grupo · **Esfuerzo:** un estado al pasar el ratón,
 sin piezas nuevas · **Sin verificar** contra el fichero: el código no cita los nodos de las fichas.
@@ -1149,6 +809,8 @@ sin piezas nuevas · **Sin verificar** contra el fichero: el código no cita los
 ---
 
 ## 38 · Title y Subtitle: los dos estilos nuevos, el maestro `Section` y la etiqueta a 600 (2026-10-09, DD-188)
+
+**Repaso del 2026-11-03:** los estilos están hechos; faltan `tag` y `badge` a 600 (siguen en bold).
 
 **Estado:** los estilos, HECHOS; lo demás, pendiente · **Dónde:** fichero del DS, página «ª Typography» (`12899:61527`),
 tablero `Text styles` (`13407:3586`).
@@ -1174,6 +836,8 @@ fichero mide 16 (20 en la variante de página).
 
 ## 39 · Plantillas de vistas: listado, ficha y diálogo ya montados (2026-10-09, DD-188)
 
+**Repaso del 2026-11-03:** no hay página de plantillas en el Kit.
+
 **Estado:** pendiente · **Origen:** el estudio de Primer. GitHub publica en Figma, además de sus componentes, una
 librería de plantillas («Primer Interfaces») con las vistas y los patrones que más se repiten, para empezar una maqueta
 desde algo ya montado y no desde piezas sueltas.
@@ -1189,23 +853,9 @@ que calca, y sin un número suelto que no salga de una variable.
 
 ---
 
-## 40 · El icono que acompaña a un texto, al tamaño y al peso de ese texto (2026-10-09, DD-189)
-
-**Estado:** pendiente · **Dónde:** el maestro `Section` (`691:23956`; su icono, `691:23976`) y las maquetas que lo usan.
-
-- **El icono de la cabecera** pasa de 14 a 16 (el tamaño de `Subtitle`) y a 20 en la variante que titula la página
-  (`Title`), en peso 600. Si el `IconSet` expone el eje óptico, a 20.
-- **Lo que cuelga**: el título tiene que seguir en la vertical del contenido; el icono retrocede 12,5 con 16 y 16,5 con
-  20 (sangría 12,25 − hueco 8,75 − icono).
-- **La regla, para cualquier maqueta**: un icono junto a un texto toma su tamaño y su peso; los de control (chevron,
-  cerrar) se quedan en su talla.
-
-**Cómo sabes que está hecho:** en el fichero, el icono de `Section` mide 16 (20 en la de página) y el texto del título
-empieza en la misma x que el contenido de la caja.
-
----
-
 ## 41 · La cabecera de página en la escalera 7 · 14 · 28 (2026-10-11, DD-192)
+
+**Repaso del 2026-11-03:** el listado de Grupos ya mide 28, 14 y 7; solo queda la plantilla de listado (la 39).
 
 **Estado:** pendiente · **Dónde:** el `content` de Contact Center (`393:12564`) y las plantillas de la ficha 39.
 
@@ -1219,6 +869,8 @@ del `content`, y la plantilla de listado mide 28, 14 y 7.
 ---
 
 ## 42 · Las piezas nuevas del DS desde la revisión de grupos: FileUpload, IconTile, FactRow, Tag mediano, InputTags y la burbuja de estado (2026-10-11, DD-184 a DD-187 y DD-195)
+
+**Repaso del 2026-11-03:** `icon-tile` y `fact-row` ya están. Faltan Tag mediano, InputTags, la burbuja de estado y «Subir archivo» en FileUpload Basic.
 
 **Estado:** pendiente · **Dónde:** el fichero del DS (maestros) · Ninguna variable nueva: todo sale de las que ya hay.
 La ficha de grupo entera no va (no tiene maqueta desde DD-121; ver abajo). **Mídelo antes**: ningún nodo de esta ficha
@@ -1252,6 +904,8 @@ número suelto), y cada uno con el enlace a su página de sc-docs en la descripc
 
 ## 43 · La barra de lote cuenta el resultado, con «Deshacer» (2026-10-11, DD-196)
 
+**Repaso del 2026-11-03:** solo aplica a Conversaciones (DD-215 la quitó de Grupos y Agentes) y no está en el Kit ni en esa página.
+
 **Estado:** pendiente · **Dónde:** la barra de lote, si se maqueta (no tiene maestro en el Kit) y la plantilla de
 listado de la ficha 39.
 
@@ -1265,18 +919,9 @@ ninguna maqueta de listado enseña un toast tras editar en lote.
 
 ---
 
-## 44 · Una celda sin dato: «—» en gris suave (2026-10-11, DD-197)
-
-**Estado:** pendiente · **Dónde:** las tablas de las plantillas de la ficha 39 y las maquetas con tablas.
-
-- **Celda sin dato**: «—» con el color `text/subtle`, alineado como el resto de la columna. Nunca en blanco.
-- **Una cifra a cero** se escribe «0», como las demás cifras.
-
-**Cómo sabes que está hecho:** ninguna tabla del fichero deja una celda en blanco, y sus guiones van en `text/subtle`.
-
----
-
 ## 45 · La ayuda de un campo, debajo de su control; copiar, dentro del campo (2026-10-11, DD-198)
+
+**Repaso del 2026-11-03:** copiar dentro del campo está hecho; la ayuda entre rótulo y control no se ha medido.
 
 **Estado:** pendiente · **Dónde:** el maestro del botón segmentado (si lo hay), las maquetas de la ficha de grupo y las
 plantillas de la ficha 39.
@@ -1292,6 +937,8 @@ lleva su copiar dentro.
 ---
 
 ## 46 · Iconos: un significado por icono y el estado de una conversación con forma (2026-10-13, DD-200)
+
+**Repaso del 2026-11-03:** no se puede medir por script: pide repasar el significado de cada icono.
 
 **Estado:** pendiente · **Dónde:** los maestros que llevan icono (Button «Icon Only», Section, Empty state) y las maquetas
 del Supervisor; en el fichero del Supervisor, «Memory +» › Iconografía transcripciones.
@@ -1313,6 +960,8 @@ menú, y la iconografía de transcripciones tiene sus tres insignias.
 
 ## 47 · Fichas: un peldaño de la rampa por nivel de título, y el FileUpload «Advanced» entero (2026-10-15, DD-206)
 
+**Repaso del 2026-11-03:** falta FileUpload Advanced con solo «Elegir» en el Kit; la maqueta lo resuelve con un override.
+
 - **Títulos**: el maestro `Section` (691:23956) pasa su cabecera a `Heading/h3-semibold` (18/24) y `Subsection` (nodo
   `12610:23080`) la suya a `Subtitle/subtitle-semibold` (16/24); `Slot` se queda en `Body/body-semibold` (14/20). La
   página sigue en `Title` (20/28). En código desde DD-206 §13.
@@ -1321,15 +970,9 @@ menú, y la iconografía de transcripciones tiene sus tres insignias.
 - **Ayudas de campo**: a 7 de su control en todos los campos (la especificación de `sc-select`); `SelectButton`,
   `InputTags` y `Textarea` las dibujaban a 3,5.
 
-## 48 · Resumen de las fichas: la tarjeta de datos plana en las tres y sus baldosas en el color de la marca (2026-10-15, DD-209)
-
-- **IconTile**: el maestro gana la variante `Tone=Brand`: el relleno, el degradado de 135° de la tarjeta destacada del
-  resumen (`bg/primary-active` → `bg/primary` al 55 % → `bg/primary-hover`), el icono en `text/inverse` y un brillo
-  arriba del mismo blanco al 18 %. Sin tokens nuevos.
-- **Tarjeta de datos del resumen**: blanca (`bg/surface`) con borde de 1 en `border/subtle` y radio `radius/xl`, sin
-  sombra, en agente, grupo y usuario; sus baldosas, `Tone=Brand`.
-
 ## 49 · Tablas: la celda de grupos según cuántos, y el multiselect con «+N más» (2026-10-15, DD-210)
+
+**Repaso del 2026-11-03:** el «+N más» del multiselect está hecho; falta `popover` con Display=Adaptive para la celda de grupos.
 
 - **GroupPopover**: el maestro gana la variante `Display=Adaptive` con sus tres casos: ninguno, «—» en `text/subtle`;
   uno, el nombre del grupo en `text/primary`, sin subrayado, cortado con «…» si no cabe; dos o más, la cifra con su
@@ -1339,43 +982,9 @@ menú, y la iconografía de transcripciones tiene sus tres insignias.
 - **Opción apagada con su porqué** en un desplegable (los grupos de una plantilla): el nombre apagado y, a su lado, el
   motivo en `caption` y `text/subtle` («No atiende Chat»).
 
-## 50 · Agendas en árbol, la ficha de agente con lo contratado y el toast de toda acción (2026-10-16, DD-211)
-
-**Estado:** **hecho el 2026-10-18** en el fichero del Supervisor para las fichas de grupo y agente y el listado de
-grupos: las anotaciones de lo contratado, la ficha de agente (el PIN, anotado; la matriz con Agentes y Grupos), el globo
-de la edición en bloque (anotado), el ✓ de las altas, el toast y lo de la ficha de grupo. **Queda:** el árbol de agendas
-y Contact Center (no entraron en ese pase), el estado «Solo lectura», que pide variantes nuevas en el Kit, y la
-anotación de Call Blending en el diálogo «Duplicar grupo» (2026-10-19, abajo).
-
-- **Agenda › «Grupos y agentes»**: el árbol (TreeTable) con la flecha, la casilla tri-estado y el nombre en la primera
-  columna, y el email en la segunda; el grupo en `body-semibold`, plegado; «Sin grupo» el último. Encima, el buscador,
-  «Todos / Asignados (n)», «N de M agentes y G grupos enteros» y la regla en una línea en `caption` y `text/subtle`.
-  Anota el comportamiento: un agente marcado lo está en todos sus grupos; un grupo entero es dinámico; quitar a uno lo
-  deja parcial; un grupo cuyos agentes ya la tienen todos sale entero también al abrir la agenda, y el listado lo cuenta
-  igual.
-- **Anotaciones de lo contratado** (el prototipo lo enseña todo; en producción se oculta):
-  - **Call Blending**: «Llamadas salientes» del grupo (teléfono y audio saliente), «Grupo para llamadas salientes» del
-    agente, «Solo salientes» en la tipificación del grupo, la fila del teléfono saliente en los resúmenes y su columna
-    en el listado. **Y el desplegable «Teléfono saliente» del diálogo «Duplicar grupo»** (añadido el 2026-10-19): sin
-    Call Blending no sale; el diálogo se queda con el nombre y la prioridad.
-  - **CusCare**: el campo «Tipo de agente» y su fila del resumen.
-  - **WebRTC**: sin él, «Navegador» deshabilitado en «Dónde suena» y la ayuda «Solo teléfono…».
-- **Estado «Solo lectura» de los campos** (InputText, InputNumber, Textarea y Select del Kit, que hoy no lo tienen): sin
-  borde, fondo `bg/default`, texto `text/primary` a contraste completo; en el Select, sin la flecha (que deja su
-  sitio), y en el Textarea, sin el asa de cambiar el tamaño. Con el foco de teclado, el anillo de foco del sistema. Es el del PIN y el del código de Web Chat.
-- **Ficha de agente**: el PIN no sale en el alta; al editar, de solo lectura (el estado de arriba). Sin Teléfono, sin «Grabar llamadas», sin la
-  matriz de Llamadas y sin Grabación ni Salientes en el resumen. La matriz con Agentes y Grupos encima de Fijos. Fuera
-  «Automático con preview» y «Actualizar teléfono en login».
-- **Edición en bloque de las tablas de asignar**: el globo junto a la casilla; mientras pregunta, las casillas de las
-  filas bloqueadas; al aceptar, cancelar o pulsar fuera, se desbloquean.
-- **Índice de las altas**: ✓ en toda sección que se deja completa, también sin obligatorios.
-- **Toast**: el resultado de crear, guardar, duplicar o eliminar, abajo a la derecha (`Toast` del Kit, `success`); fuera
-  el mensaje junto a los botones de la barra. En una lista, la barra de lote sigue con «Deshacer».
-- **Contact Center**: «Guardar» y «Deshacer» una vez en la barra para las tres secciones, y el punto de cambios en el
-  índice.
-- **Ficha de grupo**: el audio saliente en «Mensajes en cola»; en la tabla de agentes, cada canal con su nivel al lado.
-
 ## 51 · `.Subsection` mide distinto que `sc-subsection` (medido el 2026-10-17)
+
+**Repaso del 2026-11-03:** solo falta el hueco del icono al título a `scale/0-625` (hoy, 12 suelto).
 
 **Estado:** sin decidir; no lo cita ninguna DD · **Dónde:** `.Subsection` (`12610:23193`, cinco variantes) contra
 `sc-subsection.component.scss`.
@@ -1386,49 +995,9 @@ anotación de Call Blending en el diálogo «Duplicar grupo» (2026-10-19, abajo
 
 Si manda el código, los tres son repuntes a variables que ya existen.
 
-## 52 · El tema del plugin que recibe el equipo externo lleva Custom con el valor del oscuro (medido el 2026-10-17)
-
-**Estado:** **HECHO el 2026-10-18** para los tres: repunte en las dos columnas de Custom, librería publicada y
-`tema-plugin.zip` publicado (`b4028a0d`, export `cf1f0c99`). Medido en ese zip con el motor de PrimeNG: en claro, el
-título pasa de 1,00 a 16,90:1 y el sutil de 2,56 a 7,38:1; el inverso, blanco; el oscuro, igual que antes. `accent`,
-sin repunte: al equipo externo le bastaría una línea en `extend.ts`, `accent: "light-dark({violet.700},
-{violet.400})"` (7,10 y 6,51:1), pero el color del acento está en revisión: no se pasa hasta decidirlo · **Dónde:** fichero del DS, colección Custom:
-`semantic/text/heading`, `subtle`, `inverse` y `accent` · **Evidencia:** `tema-plugin.zip` de la rama `tema-zip`
-(export `7b06bcce`, `ts/extend.ts`) y el export del 2026-10-17.
-
-**Medido el 2026-10-18, antes de tocar:**
-
-- **El fallo, con el motor de temas de PrimeNG** (`@primeuix/styled`, como `tema-plugin-zip.mjs`): con el zip publicado,
-  en claro el título sale `#ffffff` sobre `#ffffff` (1,00:1), el sutil `#a1a1aa` (2,56:1), el acento `#a78bfa` (2,72:1)
-  y el inverso oscuro, `#181d26`, cuando debe ser blanco.
-- **El arreglo, simulado sobre una copia del zip:** con `{text.color}`, `{text.muted.color}` y
-  `{primary.contrast.color}`, el título sale slate-900 y blanco (16,90 y 17,72:1), el sutil slate-700 y zinc-400 (7,38 y
-  6,91:1) y el inverso blanco y zinc-900: lo mismo que `tema-smartcontact.zip`.
-- **Cómo exporta el plugin:** Custom tiene dos columnas (Light, la de por defecto, y Dark) y el export lleva solo la Dark.
-  Un alias de Custom a otra colección sale como referencia: `component/custommodal/background` apunta a
-  `overlay/modal/background` y el export dice `"{overlay.modal.background}"` (47 alias así en Custom).
-- **Ninguna capa cambia:** en las 98 páginas del fichero, 63 capas usan esas tres variables (53 en `❖ Sidebar`, 4 en
-  `❖ Section`, 3 en `🌈 Colors`, 2 en `⚪️ Internal Components` y 1 en `❖ Navmenu`), y todas resuelven el mismo color
-  antes y después (`resolveForConsumer`). El fichero del Supervisor no se miró: su clave no está en el repo.
-- **Para deshacerlo:** `heading` Light → `Primitive/slate/900`, Dark → `Semantic Color Scheme/surface/0`; `subtle` Light
-  → `Primitive/slate/700`, Dark → `Primitive/zinc/400`; `inverse` Light → `Semantic Color Scheme/surface/0`, Dark →
-  `Semantic Color Scheme/surface/900`. Las colecciones conservan el número de variables (Custom, 68).
-
-- El plugin exporta Custom con un solo valor, el del modo oscuro: `heading = {surface.0}`, `subtle = {zinc.400}`,
-  `inverse = {surface.900}` y `accent = {violet.400}`. En el tema de nuestras apps manda el DS (`tema-zip.mjs`,
-  `MANDA_EL_DS`), pero el del plugin (DD-88) lo lleva tal cual: en claro, un título con `text.heading` sale blanco sobre
-  blanco.
-- **El repunte (hecho el 2026-10-18).** En las dos columnas de Custom: `semantic/text/heading` → `text/color` (900 y 0,
-  los valores de antes), `semantic/text/subtle` → `text/muted/color` (700 y zinc 400) y `semantic/text/inverse` →
-  `primary/contrast/color` (blanco y zinc 900).
-- **`accent` no tiene repunte:** ninguna variable del esquema de color vale violet 700 en claro y violet 400 en oscuro.
-  Pide una variable nueva en el esquema de color (otra sesión), o se queda anotado.
-- Después del export, se revisan `MANDA_EL_DS` y el bucket de esas claves en `coverage-map.mjs`.
-
-**Cómo sabes que está hecho:** en `tema-plugin.zip`, `ts/extend.ts` dice `heading: "{text.color}"`,
-`subtle: "{text.muted.color}"` e `inverse: "{primary.contrast.color}"`.
-
 ## 53 · Lo que el Kit no tiene para las fichas de grupo y agente y el listado de grupos (medido el 2026-10-18)
+
+**Repaso del 2026-11-03:** hechos la casilla indeterminada, la celda de selección pequeña, el icono del botón atado y, hoy, `inputnumber` sin botones, el solo lectura, `kbd`, `azure` y el texto final de `menu-item` (§67). Siguen: el botón de texto pequeño a 27, `menu-item` a 27 y con variante de peligro, la cabecera Selected en blanco, Body medium, avatar de 24, overlaybadge con punto, «Empty state» en el Kit e `icon/secondary`.
 
 **Estado:** sin hacer; en las maquetas del Supervisor va ajustado a la app y anotado, sin tocar la librería · **Dónde:**
 fichero del DS, y el del Supervisor (páginas «Grupos» y «Agentes», cada una con su índice; «Fuera del DS», borrada el 2026-11-03, §54;
@@ -1779,6 +1348,34 @@ parte escrita a mano de `01-primitive.css` en cuanto el export del Kit la traiga
 ---
 
 ## Cerrado
+
+**Repaso del 2026-11-03** (fichas cerradas ese día; el detalle de cada una, en `git log -p docs/figma-pendiente.md`):
+
+- ~~**1 · Publicar la librería**~~ → **HECHA el 2026-11-03**: Custom modal `14238:4140` (cabecera en FILL) y «❖ Alert modal» `15876:698` con `Surface`, publicados (CURRENT).
+- ~~**3 · La cabecera y el aire de página se compactaron en código (2026-09-14)**~~ → **OBSOLETA el 2026-11-03**: la dejan sin objeto DD-188 (cabecera a 58) y DD-192 (escalera 7 · 14 · 28), y el listado de Grupos `3118:17001` ya las sigue.
+- ~~**5 · El índice lateral de las pantallas con rail no es componente de la librería (2026-09-14)**~~ → **HECHA el 2026-11-03**: `nav-item` `12555:23029` (Active a 600, con error, con cambios y hecha) y `Nav-menu` con rótulo, en uso en Grupos y Agentes. Lo de Contact Center, fuera.
+- ~~**8 · Grises intermedios: los textos y la opción no elegida, un paso más oscuros (2026-09-14)**~~ → **HECHA el 2026-11-03**: `text/color` y `form/field/color` a `surface/900`, `text/muted/color` a `slate/700`, `togglebutton/*` a 700 y 900, en el Kit y en el export.
+- ~~**12 · Los botones rojos en claro, un paso más oscuros por contraste (2026-09-15)**~~ → **HECHA el 2026-11-03**: `button/danger/background`, `button/text/danger/color` y `button/outlined/danger/color` a `red/600` (al pasar, 700; pulsado, 800).
+- ~~**14 · La etiqueta «Draft» (secundaria) no llega al contraste (2026-09-24)**~~ → **HECHA el 2026-11-03**: `tag/secondary/color` a `surface/700`, en el Kit y en el export.
+- ~~**16 · La caja de sección, 17,5 arriba y abajo en las dos pieles (2026-09-27)**~~ → **HECHA el 2026-11-03**: `Section` `12610:23284`, arriba y abajo a `scale/1-25` en sus cuatro variantes. El bloque de Contact Center, fuera.
+- ~~**18 · El widget del resumen de las fichas: cifra, «/total» y anillo (2026-09-27)**~~ → **HECHA el 2026-11-03**: el anillo de 42 con pista y valor, en `group-summary` `15486:188` y `agent-summary` `15510:72610`.
+- ~~**19 · Cuatro grises del Kit bajo AA que el código ya sube (2026-07 a 2026-09)**~~ → **HECHA el 2026-11-03**: `button/outlined/secondary/color`, `form/field/icon/color` y `navigation/item/icon/color` a `surface/600`; el placeholder, a `surface/700`.
+- ~~**23 · La presencia en Contact Center y en «Editar agente» (2026-09-13)**~~ → **HECHA el 2026-11-03**: el «Estado» de la ficha de agente es un `select` con «Disponible» en las seis pantallas de Agentes. Lo de Contact Center, fuera.
+- ~~**27 · Tokenizar los text styles: la raíz común de cuatro fallos (2026-08-07)**~~ → **HECHA el 2026-11-03**: los 14 estilos de texto atan tamaño, interlineado, estilo y familia a variables.
+- ~~**31 · Las altas dicen lo que falta, hasta «Listo para crear» (2026-09-29)**~~ → **OBSOLETA el 2026-11-03**: DD-222 y DD-225 quitaron «Listo para crear» de las fichas de grupo y agente.
+- ~~**32 · Las altas, con el índice de la edición: el ✓ y «Atrás / Siguiente» (2026-10-01)**~~ → **HECHA el 2026-11-03**: el pie del alta de Agentes («Atrás» secundario y «Siguiente» principal) y `nav-item` con la marca de hecha.
+- ~~**33 · La ficha de grupo con las palabras de la revisión de producto (2026-10-01)**~~ → **OBSOLETA el 2026-11-03**: los textos de la ficha de grupo cambiaron después (`priority_hint`, `strategy_help.balanced`) y la maqueta ya no dice «Desbordar sesión».
+- ~~**34 · El teléfono saliente, obligatorio y de una lista; «Caducar sesión», y Recursos sin Etiquetas (2026-10-01)**~~ → **OBSOLETA el 2026-11-03**: la dejan sin objeto DD-218 (duplicar es un alta) y DD-239 (Recursos oculto en el grupo); «Caducar sesión» ya está en Grupos.
+- ~~**35 · Las fichas en tres columnas: el nombre encima del índice y el resumen sin rótulo (2026-10-01, DD-170 el 2026-10-05)**~~ → **HECHA el 2026-11-03**: «Record header» `4428:25893` encima del índice, a 235 y en `Title/title-semibold`, en todas las fichas.
+- ~~**36 · El nombre de la ficha, fijo arriba al bajar (2026-10-01)**~~ → **OBSOLETA el 2026-11-03**: DD-170 retiró el nombre fijo arriba.
+- ~~**40 · El icono que acompaña a un texto, al tamaño y al peso de ese texto (2026-10-09, DD-189)**~~ → **HECHA el 2026-11-03**: el icono de `Section` a 18 (`…/font/size/400`) y el de `.Subsection` a 16 (`…/size/300`); el peso va con la 29.
+- ~~**44 · Una celda sin dato: «—» en gris suave (2026-10-11, DD-197)**~~ → **HECHA el 2026-11-03**: `datatable-content` Type=Empty «—» en `text/muted/color`, en uso en Grupos.
+- ~~**48 · Resumen de las fichas: la tarjeta de datos plana en las tres y sus baldosas en el color de la marca (2026-10-15, DD-209)**~~ → **HECHA el 2026-11-03**: la tarjeta de datos en `content/background` con borde sutil, radio xl y sin sombra, y `icon-tile` con el tono de la marca.
+- ~~**50 · Agendas en árbol, la ficha de agente con lo contratado y el toast de toda acción (2026-10-16, DD-211)**~~ → **HECHA el 2026-11-03**: lo que quedaba, el estado de solo lectura, está en `inputtext` y `textarea` (§67, sin publicar); el árbol y el diálogo de duplicar los dejaron sin objeto DD-230 y DD-218.
+- ~~**52 · El tema del plugin que recibe el equipo externo lleva Custom con el valor del oscuro (medido el 2026-10-17)**~~ → **HECHA el 2026-11-03**: en el export, `semantic.text.heading`, `subtle` e `inverse` ya apuntan a sus variables. `accent` sigue sin decidir.
+- ~~**La cifra principal del resumen, con color (DD-161, 2026-10-04)**~~ → **HECHA el 2026-11-03**: la tarjeta destacada con degradado y anillo, en `group-summary` `15486:188` y `agent-summary` `15510:72610`.
+- ~~**El alta, el listado y la tabla al pie (DD-158 a DD-160, 2026-10-04)**~~ → **HECHA el 2026-11-03**: el pie del alta de Agentes y el listado de Grupos `3118:17013` sin la columna «Asignar».
+- ~~**Estado del agente en su columna (DD-156, 2026-10-04)**~~ → **OBSOLETA el 2026-11-03**: DD-218 quitó el estado de «Agentes asignados».
 
 - ~~**El título del componente `Section` a `Heading/h3-semibold`**~~ → **HECHO el 2026-09-13** (DD-75). Eran **4
   capas maestras, no ~35**: la cifra de este fichero mezclaba dos componentes. Las del conjunto `Section` son el título
