@@ -501,13 +501,14 @@
   text-align: center;
 }
 
-/* Estrecho: por encima de la página. Plegado, el botón flota abajo a la derecha; abierto, el panel ocupa el alto de la
- * ventana pegado a la derecha, con la sombra de lo que flota. */
+/* Estrecho: por encima de la página. Plegado, el botón flota abajo a la derecha, justo ENCIMA del de «Pregunta a la IA»
+ * (que ocupa esa esquina hasta 63px de alto) y en su misma columna; abierto, el panel ocupa el alto de la ventana pegado
+ * a la derecha, con la sombra de lo que flota, y tapa al de la IA. */
 .sb-panel--encima {
   position: fixed;
   top: auto;
-  right: var(--sc-spacing-1-25);
-  bottom: var(--sc-spacing-1-25);
+  right: var(--sc-spacing-1-5);
+  bottom: var(--sc-spacing-5);
   z-index: 20;
 
   &.sb-panel--abierto {

@@ -190,10 +190,11 @@ const stylesOf = async (page: Page, route: string, tag: string, esperados?: numb
     content: '*, *::before, *::after { animation-duration: 0s !important; animation-delay: 0s !important; transition-duration: 0s !important; transition-delay: 0s !important; }',
   });
 
-  // Las anclas de la DEMO: fuera las herramientas de sc-docs (la barra de cada lienzo, el panel de controles y «Todas
-  // las combinaciones», DD-202), que llevan `data-testid` para sus propias pruebas y no son estilos del DS.
+  // Las anclas de la DEMO: fuera las herramientas de sc-docs (la barra de cada lienzo, el panel de controles, «Todas
+  // las combinaciones», DD-202, y el botón de «Pregunta a la IA»), que llevan `data-testid` para sus propias pruebas y
+  // no son estilos del DS.
   const anclas = page.locator(
-    '[data-testid]:not(.sb-canvas__bar [data-testid]):not(app-story-panel [data-testid]):not(app-story-matriz [data-testid])',
+    '[data-testid]:not(.sb-canvas__bar [data-testid]):not(app-story-panel [data-testid]):not(app-story-matriz [data-testid]):not(app-ask-ai [data-testid])',
   );
 
   // Esperar al NÚMERO, no a «que haya alguno». `evaluateAll` lee en una pasada y no

@@ -5,7 +5,9 @@
   position: fixed;
   inset-block-end: var(--sc-spacing-1-5);
   inset-inline-end: var(--sc-spacing-1-5);
-  z-index: 60;
+  /* Encima de la página (sus capas llegan a 5) y DEBAJO de lo que se abre sobre ella: el panel de controles del lienzo
+     en ventana estrecha (20) y el menú lateral del móvil (40). Con 60 tapaba sus esquinas de abajo (e2e de herramientas). */
+  z-index: 15;
   display: inline-flex;
   align-items: center;
   gap: var(--sc-spacing-0-5);
