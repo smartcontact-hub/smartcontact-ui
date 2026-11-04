@@ -29,7 +29,6 @@ const fila = (page: Page, etiqueta: string) => page.locator('sc-form-section-nav
 const actual = (page: Page) => page.locator('sc-form-section-nav .form-nav__item[aria-current="page"]');
 const siguiente = (page: Page) => page.getByRole('button', { name: 'Siguiente', exact: true });
 const atras = (page: Page) => page.getByRole('button', { name: 'Atrás', exact: true });
-const completa = /Esta sección está completa/;
 
 async function grupoConNombre(page: Page): Promise<void> {
   await goto(page, 'admin/grupos/crear');
