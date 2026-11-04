@@ -88,6 +88,18 @@ DD-230; su trampa sube a «Trampas del frente»): `git show archive/handoff-fich
 El de Agendas, Plantillas y Equipos solo a agentes (2026-10-28, DD-239, sin trampas propias): `git show
 0d5c0549:docs/handoff/supervisor-fichas.md`.
 
+## ✅ 2026-11-04 · El alta de usuario con marcadores, y alta frente a edición explicado a desarrollo (DD-248)
+
+> **Sello:** rama `areses/estudiar-arreglar-f833da` sobre `main` HEAD `9f5dc209`.
+
+- **La duda de desarrollo**: en Grupos, unas pantallas llevan «Atrás / Siguiente» y marcadores y otras no. Es adrede: el
+  alta guía y marca, la edición no (DD-143, DD-222 §8). En Figma, la hoja para desarrollo de Grupos lo dice en un solo
+  bloque, «Alta o edición: el índice y el pie cambian» (nodo `3371:61607`).
+- **Usuarios era la excepción** (pie sin marcadores): ahora lleva los del grupo y el agente (DD-248), con
+  `alta-usuario-marcadores.spec.ts`.
+- **No hecho**: los marcadores en las pantallas del alta de usuario en Figma (página `41:2846`), con las variantes
+  `Marca=Paso …` del nav-item, como Grupos y Agentes.
+
 ## ✅ 2026-11-03 · Repaso del Figma del Supervisor y «Fuera del DS», borrada
 
 > **Sello:** rama `claude/new-session-3g90bx` sobre `main` HEAD `c4ac441f`; la cuarta vuelta, `areses/supervisor-figma-round-4-e8e3b0` sobre `2577e70a`; la quinta, `areses/figma-tareas-pendientes-133fda` sobre `d98242c6`. Solo Figma y `figma-pendiente`.

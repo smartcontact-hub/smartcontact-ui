@@ -25,7 +25,7 @@ import {
   ScToggleSwitchComponent as ToggleSwitchComponent,
 } from '@smartcontact-hub/components';
 import { AVAILABLE_GROUPS_REF } from '@shared/data/groups-ref';
-import { AltaPieComponent, SummaryKpiComponent, SummaryStatusComponent, type FaltaDelResumen } from '@shared/components';
+import { AltaPieComponent, SummaryKpiComponent, type FaltaDelResumen } from '@shared/components';
 import {
   avisosDelIndice,
   ayudaDeObligatorio,
@@ -98,7 +98,6 @@ const USER_SECTION_OF_FIELD: Readonly<Record<keyof FormState, string>> = {
     SectionCardComponent,
     SelectComponent,
     SummaryKpiComponent,
-    SummaryStatusComponent,
     AltaPieComponent,
     ToggleSwitchComponent,
     TranslateModule,
@@ -193,7 +192,10 @@ export class UserFormPageComponent implements DirtyAware, OnInit {
       labelKey: 'users.form.section.services',
       icon: 'hub',
     };
-    return [identity, access, services].map((sec) => ({
+    // «Revisada» y no «Completa» donde no hay nada que cumplir, como en el grupo y el agente (DD-222, DD-225): Acceso y
+    // Servicios asignados. Solo en el alta y al duplicar: al editar todo está guardado.
+    const alta = this.mode() !== 'edit';
+    return [identity, { ...access, optional: alta }, { ...services, optional: alta }].map((sec) => ({
       ...sec,
       href: this.sectionLinks.href(this.sectionUrl(sec.id)),
     }));
@@ -236,6 +238,10 @@ export class UserFormPageComponent implements DirtyAware, OnInit {
   /** Ir a otra sección. En el alta y al duplicar, la sección se abre sin tocar la dirección: Atrás sale (DD-122, DD-143). */
   protected goTo(id: string): void {
     if (this.mode() !== 'edit') {
+      // Dejar Identidad con algo vacío: desde ahora todo lo suyo se dice en rojo, como en el grupo (DD-222 §6).
+      if (id !== this.alta.abierta() && this.alta.abierta() === 'user-section-identity') {
+        for (const motivo of this.faltas()) this.ocasion.tocar(motivo);
+      }
       this.alta.abrir(id);
       return;
     }
@@ -295,7 +301,7 @@ export class UserFormPageComponent implements DirtyAware, OnInit {
     if (dejoElCampo(event) && this.faltas().includes(motivo)) this.ocasion.tocar(motivo);
   }
 
-  /** «Falta: …» del resumen, con cada cosa llevando a su campo (DD-219). */
+  /** Lo que falta, con su etiqueta corta: la línea de Identidad en el índice y el tooltip de «Crear usuario» (DD-219). */
   protected readonly summaryMissing = computed<readonly FaltaDelResumen[]>(() => {
     this.lang();
     const i = 'user-section-identity';
@@ -305,14 +311,6 @@ export class UserFormPageComponent implements DirtyAware, OnInit {
     };
     return this.faltas().map((m) => ({ etiqueta: this.translate.instant(etiquetas[m].etiqueta), seccion: i, ancla: etiquetas[m].ancla }));
   });
-
-  /** «Listo para crear»: al crear o duplicar, con «Crear usuario» encendido. */
-  protected readonly summaryReady = computed(() => this.mode() !== 'edit' && this.canSave());
-
-  /** Una cosa de «Falta: …»: a su campo. */
-  protected irAFalta(item: FaltaDelResumen): void {
-    this.irACampo(item.seccion, item.ancla);
-  }
 
   /**
    * Los avisos del índice, en el orden de la ficha (DD-219): lo que falta, si lo guardado ya venía sin ello o se pulsó
@@ -330,11 +328,32 @@ export class UserFormPageComponent implements DirtyAware, OnInit {
     return out;
   });
 
-  /** El punto rojo del índice: la sección tiene un aviso a la vista. */
-  protected readonly sectionsWithErrors = computed<ReadonlySet<string>>(() => new Set(this.avisos().map((a) => a.seccion)));
+  /** El punto rojo del índice: la sección tiene un aviso a la vista. En el alta, la que se dejó con algo por hacer (DD-222). */
+  protected readonly sectionsWithErrors = computed<ReadonlySet<string>>(() =>
+    this.mode() !== 'edit'
+      ? new Set([...this.alta.estados()].filter(([, estado]) => estado === 'error').map(([id]) => id))
+      : new Set(this.avisos().map((a) => a.seccion)),
+  );
 
-  /** Lo que dice cada sección con aviso en el índice, en texto (DD-217). */
-  protected readonly sectionErrorHints = computed(() => avisosDelIndice(this.avisos()));
+  /**
+   * Lo que dice cada sección en el índice, en texto. En el alta, TODO lo que le falta con la etiqueta corta («Nombre,
+   * email»), en gris hasta que se deja la sección, y detrás el email mal escrito, como el agente (DD-225 §8). Al editar,
+   * el aviso de las secciones con uno a la vista (DD-217).
+   */
+  protected readonly sectionErrorHints = computed<Readonly<Record<string, string>>>(() => {
+    if (this.mode() === 'edit') return avisosDelIndice(this.avisos());
+    const items = this.summaryMissing().map((f) => f.etiqueta);
+    const mal = this.emailError();
+    if (mal) items.push(this.translate.instant(mal).replace(/^./, (c: string) => c.toLowerCase()));
+    if (items.length === 0) return {};
+    return { 'user-section-identity': items.join(', ').replace(/^./, (c) => c.toUpperCase()) };
+  });
+
+  /**
+   * El marcador de cada sección, en el alta y al duplicar (DD-222, como el grupo y el agente): sin revisar, en curso,
+   * completa (o revisada) y en rojo. Al editar no hay marcadores: el punto rojo y lo que falta bajo la sección.
+   */
+  protected readonly sectionStates = computed(() => (this.mode() !== 'edit' ? this.alta.estados() : null));
 
   /** Las secciones con cambios sin guardar (DD-122), al editar. */
   protected readonly sectionsWithChanges = computed<ReadonlySet<string>>(() => {
@@ -673,6 +692,8 @@ export class UserFormPageComponent implements DirtyAware, OnInit {
   protected discard(): void {
     this.form.set(this.dirtyState.pristineValue());
     this.ocasion.olvidar();
+    // En el alta, el índice como al empezar: la sección abierta sigue abierta y las demás, sin revisar (DD-225 §8).
+    if (this.mode() !== 'edit') this.alta.reiniciar();
   }
 
   /** Lleva a un campo de la ficha: a su sección, y en ella al campo, arriba y con el foco. */

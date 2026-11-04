@@ -127,11 +127,11 @@ test('el pie: «Atrás» y «Siguiente» juntos a la izquierda, «Siguiente» el
   await expect(siguiente(page).locator('sc-icon, .p-button-icon')).toHaveCount(0);
 });
 
-test('usuario · Acceso, sin nada obligatorio, lleva ✓ al dejarla (DD-211 §6)', async ({ page }) => {
+test('usuario · Acceso, sin nada obligatorio, queda «Revisada» al dejarla, con su marcador verde (DD-211 §6, DD-225 §8)', async ({ page }) => {
   await goto(page, 'admin/usuarios/crear');
   await irASeccion(page, 'Acceso');
   await siguiente(page).click();
   await expect(actual(page)).toContainText('Servicios asignados');
-  await expect(fila(page, 'Acceso')).toHaveAccessibleName(completa);
-  await expect(fila(page, 'Acceso').locator('.form-nav__done')).toHaveCount(1);
+  await expect(fila(page, 'Acceso')).toHaveAccessibleName(/Revisada/);
+  await expect(fila(page, 'Acceso').locator('sc-step-marker.sc-step-marker--hecha')).toHaveCount(1);
 });
