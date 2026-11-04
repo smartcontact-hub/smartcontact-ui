@@ -40,8 +40,8 @@
  *      en ≥3 sesiones sin ⚙️ falla hasta que se mecaniza o se declara «no mecanizable» (2026-09-09).
  *   N. La MEMORIA del agente conserva su forma (`scripts/memory-shape.mjs`): ≤40 fichas de ≤250
  *      palabras, índice ≤1.000 palabras y ≡ fichas. Es el otro almacén de lecciones y no tenía tope:
- *      63 fichas y 26.164 palabras el 2026-09-09, 36 tocadas en un mes. Vive fuera del repo, así que
- *      sin directorio (CI) se omite y lo dice.
+ *      63 fichas y 26.164 palabras el 2026-09-09. Fuera del repo: sin directorio (CI) se omite y lo
+ *      dice. ⚙️ `hooks/memory-shape-guard.mjs` lo canta al escribir.
  *   O. Todo script propio de la cadena `verify` tiene su `scripts/__tests__/<nombre>.test.mjs`
  *      (LEARNINGS #2 y #6: «un gate que no enrojece no es un gate»). Los que nacieron sin él están
  *      en una lista que solo puede ENCOGER: si un legado gana test, sale de la lista en el mismo commit.

@@ -47,6 +47,16 @@
             "timeout": 5
           }
         ]
+      },
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/scripts/hooks/memory-shape-guard.mjs",
+            "timeout": 5
+          }
+        ]
       }
     ],
     "SessionStart": [
