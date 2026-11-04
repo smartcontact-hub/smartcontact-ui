@@ -596,8 +596,13 @@ export const TIPOGRAFIA_SUELTA_MAX = 59;
  *
  * 76 → 75 el mismo día: el ejemplo de carga de Patrones pasa a ser la escena de su «haz» y su «evita», y su rótulo con
  * tamaño propio se va con él.
+ *
+ * 75 → 58 el 2026-11-04, con el barrido de tipografía de sc-docs medido en el navegador (71 rutas: de 2.626 textos fuera
+ * de los 14 estilos a 168, que son las muestras de la rampa, el título de página a 32 y piezas del DS): la tabla de API,
+ * los controles, el «Copiar», el «Cuándo se usa», Reglas, Aviso legal, Novedades, Uso, Lab y Fundamentos piden su
+ * letra con \`.sc-text-*\`.
  */
-export const TIPOGRAFIA_SUELTA_DOCS_MAX = 75;
+export const TIPOGRAFIA_SUELTA_DOCS_MAX = 58;
 
 /** Las hojas de sc-docs que SÍ cuentan: su contenido, no el simulador del navegador. */
 export const esSimuladorDeNavegador = (hoja) => /pages\/validar\//.test(hoja);

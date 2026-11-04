@@ -103,7 +103,7 @@ const TEMAS_URL: readonly TemaUrl[] = ['claro', 'oscuro', 'comparar'];
                 <!-- Sin data-testid: la línea base de estilos cuenta los de cada ficha (component-styles.spec.ts). -->
                 <div class="sb-host__cuando">
                   <p class="sb-host__cuando-titulo sc-text-caption-semibold">Cuándo se usa</p>
-                  <p class="sb-host__cuando-texto">
+                  <p class="sb-host__cuando-texto sc-text-body-regular">
                     @for (t of trozos(cuando); track $index) {
                       @if (t.codigo) {
                         <code>{{ t.texto }}</code>

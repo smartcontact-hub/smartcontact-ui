@@ -11,7 +11,7 @@ import { ScIconComponent } from '@smartcontact-hub/icons';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="sb-snippet">
-      <button type="button" class="sb-snippet__copy" (click)="copy()">
+      <button type="button" class="sb-snippet__copy sc-text-caption-regular" (click)="copy()">
         <sc-icon [name]="copied() ? 'check' : 'content_copy'" size="inherit" />
         {{ copied() ? 'Copiado' : 'Copiar' }}
       </button>

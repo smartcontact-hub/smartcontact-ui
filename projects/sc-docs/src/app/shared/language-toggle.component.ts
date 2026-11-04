@@ -20,7 +20,7 @@ import { LanguageService, ScLang } from './language.service';
       @for (l of langs; track l.code) {
         <button
           type="button"
-          class="lt__seg"
+          class="lt__seg sc-text-caption-semibold"
           [class.is-active]="lang.current() === l.code"
           [attr.aria-pressed]="lang.current() === l.code"
           [attr.lang]="l.code"
@@ -58,9 +58,6 @@ import { LanguageService, ScLang } from './language.service';
       border-radius: var(--sc-radius-full, 999px);
       background: transparent;
       color: var(--sc-text-secondary);
-      font-family: inherit;
-      font-size: var(--sc-font-size-50);
-      font-weight: 600;
       letter-spacing: 0.02em;
       cursor: pointer;
       transition:

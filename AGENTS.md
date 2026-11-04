@@ -463,7 +463,11 @@ DesignOps en un repo que lee cualquiera:
   dibujo»).
 - **Las notas de Figma las lee desarrollo, que no ve nuestro código**: nombran piezas del DS de desarrollo
   (ui.smart-contact.com), de PrimeNG o del Kit, nunca componentes, ficheros, variables o DD que solo existen en este
-  repo (`sc-list-page`, «SCSS del hub», `--sc-label-*`, «DD-239»).
+  repo (`sc-list-page`, «SCSS del hub», `--sc-label-*`, «DD-239»). Y cuentan solo lo que el dev hace: cómo se montó el
+  Figma (limitaciones del Kit, «componente local», «Por decidir») no va en la entrega, se comprueba y se apunta en
+  `figma-pendiente` (ficha 53). **Antes de dar por entregada una página del Supervisor**, `node tools/figma-revision.mjs
+  "<página>"` y se ejecuta lo que imprime: costuras, textos sin text style y filas de menú apretadas tienen que salir
+  vacíos (se limpiaron el 2026-11-04; tres de las cinco limitaciones anotadas ya eran falsas).
 - **Los hooks, al hablarle al agente**, dicen «el usuario».
 - **La excepción es el nombre como DATO**, nunca como firma: el agente de demo con el nombre del
   autor está puesto a propósito (`audit-seed-pii.mjs`). Cada caso va declarado con su motivo en

@@ -22,9 +22,8 @@
     flex-wrap: wrap;
   }
 
+  /* `.sc-text-subtitle-semibold` en la plantilla (16/24). */
   &__tag {
-    font-size: var(--sc-font-size-300);
-    font-weight: var(--sc-font-weight-semibold);
     color: var(--sc-text-primary);
   }
 
@@ -38,6 +37,7 @@
   }
 }
 
+/* El enlace, \`.sc-text-caption-regular\` en la plantilla (12/18). */
 .descargas {
   margin: 0;
   padding: 0;
@@ -52,7 +52,6 @@
     padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
     border: 1px solid var(--sc-border-default);
     border-radius: var(--sc-radius-sm);
-    font-size: var(--sc-font-size-100);
     text-decoration: none;
     color: var(--sc-text-primary);
 
@@ -92,8 +91,6 @@
     gap: var(--sc-spacing-1);
     flex-wrap: wrap;
     margin: 0 0 var(--sc-spacing-0-75);
-    font-size: var(--sc-font-size-400);
-    font-weight: var(--sc-font-weight-semibold);
     color: var(--sc-text-primary);
   }
 

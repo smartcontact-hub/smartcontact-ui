@@ -67,7 +67,6 @@
 .step p {
   max-width: var(--measure);
   margin: 0 0 var(--sc-spacing-0-75);
-  line-height: var(--sc-line-height-300);
 }
 
 .note {
@@ -82,7 +81,6 @@
 
 .parts li {
   margin-block: var(--sc-spacing-0-375);
-  line-height: var(--sc-line-height-300);
 }
 
 /* sección crux: panel contenido + el ÚNICO acento sky del recorrido */
@@ -132,8 +130,6 @@ li code {
   cursor: pointer;
   list-style: none;
   user-select: none;
-  font-size: var(--sc-font-size-100);
-  font-weight: var(--sc-font-weight-medium);
   color: var(--sc-text-secondary);
 }
 
@@ -182,11 +178,10 @@ li code {
 }
 
 /* ---------- beat: antes / ahora / por qué ---------- */
+/* La entradilla, como la de la cabecera de cada página: \`.sc-text-h3-regular\` en la plantilla. */
 .beat__lead {
   max-width: var(--measure);
   margin: 0 0 var(--sc-spacing-1-25);
-  font-size: var(--sc-font-size-300);
-  line-height: var(--sc-line-height-300);
   color: var(--sc-text-secondary);
 }
 
@@ -255,7 +250,6 @@ li code {
 
 .why__text {
   margin: 0;
-  line-height: var(--sc-line-height-300);
   color: var(--sc-text-primary);
 }
 
@@ -287,7 +281,6 @@ li code {
 
 .qlist li {
   padding: var(--sc-spacing-1) 0;
-  line-height: var(--sc-line-height-300);
   color: var(--sc-text-secondary);
 }
 
@@ -315,7 +308,6 @@ li code {
 
 .outcome > p {
   max-width: var(--measure);
-  line-height: var(--sc-line-height-300);
 }
 
 .decisions {
@@ -367,7 +359,6 @@ li code {
 .actions li {
   position: relative;
   padding-left: var(--sc-spacing-1-5);
-  line-height: var(--sc-line-height-300);
 }
 
 /* marcador de acción: cuadradito sky (las acciones SON el call-to-action) */
@@ -391,7 +382,6 @@ li code {
 
 .loose li {
   margin-block: var(--sc-spacing-0-25);
-  line-height: var(--sc-line-height-300);
 }
 
 /* ---------- pie ---------- */
@@ -602,9 +592,6 @@ summary:focus-visible {
   border-radius: var(--sc-radius-full);
   background: var(--sc-bg-surface);
   color: var(--sc-text-primary);
-  font: inherit;
-  font-size: var(--sc-font-size-100);
-  font-weight: var(--sc-font-weight-medium);
   box-shadow: var(--sc-shadow-dropdown);
   cursor: pointer;
   transition:

@@ -14,7 +14,7 @@
   @if (ultima(); as v) {
     <section class="actual">
       <div class="actual__cabecera">
-        <span class="actual__tag">Versión {{ v.version }}</span>
+        <span class="actual__tag sc-text-subtitle-semibold">Versión {{ v.version }}</span>
         @if (v.fecha) {
           <span class="actual__fecha sc-text-caption-regular">{{ fechaLarga(v.fecha) }}</span>
         }
@@ -25,7 +25,7 @@
       <ul class="descargas">
         @for (p of ['styles', 'icons', 'components']; track p) {
           <li>
-            <a [href]="descarga(p, v.version)">
+            <a class="sc-text-caption-regular" [href]="descarga(p, v.version)">
               <span class="descargas__nombre">&#64;smartcontact-hub/{{ p }}</span>
               <span class="descargas__ext">.tgz</span>
             </a>
@@ -39,7 +39,7 @@
 
   @for (v of lista; track v.version) {
     <article class="version">
-      <h3 class="version__titulo">
+      <h3 class="version__titulo sc-text-h3-semibold">
         {{ v.version }}
         @if (v.fecha) {
           <span class="version__fecha sc-text-caption-regular">{{ fechaLarga(v.fecha) }}</span>

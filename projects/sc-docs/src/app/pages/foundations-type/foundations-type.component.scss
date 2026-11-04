@@ -24,7 +24,7 @@ code {
   border-radius: 0 var(--sc-radius-md) var(--sc-radius-md) 0;
   background: var(--sc-bg-subtle);
   font-size: var(--sc-font-size-100);
-  line-height: 1.6;
+  line-height: var(--sc-line-height-100);
   color: var(--sc-text-secondary);
 
   strong {
@@ -153,7 +153,7 @@ code {
   &__lead {
     margin: 0 0 var(--sc-spacing-1-5);
     font-size: var(--sc-font-size-100);
-    line-height: 1.6;
+    line-height: var(--sc-line-height-100);
     color: var(--sc-text-secondary);
   }
 
@@ -272,7 +272,7 @@ code {
     flex-direction: column;
     gap: var(--sc-spacing-0-5);
     font-size: var(--sc-font-size-100);
-    line-height: 1.5;
+    line-height: var(--sc-line-height-100);
     color: var(--sc-text-secondary);
   }
 

@@ -39,7 +39,7 @@ import { ArgType, ScArgs } from './story.types';
             <div class="sb-controls__label">
               <code>{{ at.label ?? at.name }}</code>
               @if (at.description) {
-                <span>{{ at.description }}</span>
+                <span class="sc-text-caption-regular">{{ at.description }}</span>
               }
             </div>
             @if (cambiado(at.name)) {
