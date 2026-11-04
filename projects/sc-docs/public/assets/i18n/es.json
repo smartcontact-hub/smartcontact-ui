@@ -39,6 +39,67 @@
       "lab": "Lab",
       "legal": "Aviso legal",
       "version": "Versión publicada"
+    },
+    "ask": {
+      "boton": "Pregunta a la IA",
+      "titulo": "Pregunta a la IA",
+      "nueva": "Nueva conversación",
+      "sobre": "Pregunta sobre {{tema}}",
+      "sobreDoc": "Pregunta sobre Smart Contact UI",
+      "intro": "Componentes, tokens o cómo montar una pantalla. Busca en la doc y contesta con ejemplos de verdad.",
+      "placeholder": "Pregunta lo que quieras…",
+      "enviar": "Enviar",
+      "parar": "Parar",
+      "leido": "Ha leído:",
+      "cargando": "Escribiendo la respuesta",
+      "copiar": "Copiar",
+      "copiado": "Copiado",
+      "aviso": "La IA puede equivocarse.",
+      "fichas": {
+        "tokens": "Tokens",
+        "patrones": "Patrones",
+        "iconos": "Iconos"
+      },
+      "sug": {
+        "uso": "¿Cómo uso {{tema}}?",
+        "props": "¿Qué propiedades tiene {{tema}}?",
+        "cuando": "¿Cuándo uso {{tema}} y cuándo otro componente?",
+        "aviso": "¿Qué componente uso para avisar de un error?",
+        "color": "¿Qué token de color uso para un texto secundario?",
+        "importar": "¿Cómo importo un componente en mi app?"
+      },
+      "error": {
+        "cupo": "Hoy ya no quedan respuestas gratis. Vuelve mañana.",
+        "rapido": "Demasiadas preguntas seguidas. Espera un minuto.",
+        "fallo": "No he podido contestar. Prueba otra vez.",
+        "red": "No llego al asistente. Revisa la conexión y prueba otra vez."
+      },
+      "cerrar": "Cerrar",
+      "abrirEjemplo": "Abrir",
+      "playground": "Abrir en el Playground",
+      "copiarRespuesta": "Copiar respuesta",
+      "voz": {
+        "hablar": "Hablar",
+        "parar": "Dejar de escuchar",
+        "escuchando": "Escuchando…",
+        "error": {
+          "permiso": "Sin permiso para el micrófono. Actívalo en el candado de la barra de direcciones.",
+          "silencio": "No te he oído. Pulsa el micrófono y habla otra vez.",
+          "micro": "No encuentro ningún micrófono.",
+          "red": "El reconocimiento de voz necesita conexión.",
+          "otro": "No he podido escucharte. Escribe la pregunta."
+        }
+      },
+      "historial": {
+        "ver": "Conversaciones guardadas",
+        "volver": "Volver a la conversación",
+        "titulo": "Conversaciones",
+        "borrar": "Borrar conversación",
+        "vacio": "Aún no hay conversaciones guardadas.",
+        "unaPregunta": "1 pregunta",
+        "preguntas": "{{n}} preguntas",
+        "ahora": "ahora mismo"
+      }
     }
   },
   "categories": {

@@ -39,6 +39,67 @@
       "lab": "Lab",
       "legal": "Legal notice",
       "version": "Published version"
+    },
+    "ask": {
+      "boton": "Ask AI",
+      "titulo": "Ask AI",
+      "nueva": "New chat",
+      "sobre": "Ask about {{tema}}",
+      "sobreDoc": "Ask about Smart Contact UI",
+      "intro": "Components, tokens or how to build a screen. It searches the docs and answers with real examples.",
+      "placeholder": "Ask anything…",
+      "enviar": "Send",
+      "parar": "Stop",
+      "leido": "Read:",
+      "cargando": "Writing the answer",
+      "copiar": "Copy",
+      "copiado": "Copied",
+      "aviso": "AI can make mistakes.",
+      "fichas": {
+        "tokens": "Tokens",
+        "patrones": "Patterns",
+        "iconos": "Icons"
+      },
+      "sug": {
+        "uso": "How do I use {{tema}}?",
+        "props": "Which inputs and outputs does {{tema}} have?",
+        "cuando": "When do I use {{tema}} and when another component?",
+        "aviso": "Which component do I use to show an error?",
+        "color": "Which color token do I use for secondary text?",
+        "importar": "How do I import a component into my app?"
+      },
+      "error": {
+        "cupo": "No free answers left today. Come back tomorrow.",
+        "rapido": "Too many questions in a row. Wait a minute.",
+        "fallo": "Could not answer. Try again.",
+        "red": "Cannot reach the assistant. Check your connection and try again."
+      },
+      "cerrar": "Close",
+      "abrirEjemplo": "Open",
+      "playground": "Open in Playground",
+      "copiarRespuesta": "Copy answer",
+      "voz": {
+        "hablar": "Speak",
+        "parar": "Stop listening",
+        "escuchando": "Listening…",
+        "error": {
+          "permiso": "No microphone permission. Turn it on from the lock icon in the address bar.",
+          "silencio": "I did not hear you. Press the microphone and speak again.",
+          "micro": "No microphone found.",
+          "red": "Speech recognition needs a connection.",
+          "otro": "Could not listen. Type your question."
+        }
+      },
+      "historial": {
+        "ver": "Saved chats",
+        "volver": "Back to the chat",
+        "titulo": "Chats",
+        "borrar": "Delete chat",
+        "vacio": "No saved chats yet.",
+        "unaPregunta": "1 question",
+        "preguntas": "{{n}} questions",
+        "ahora": "just now"
+      }
     }
   },
   "categories": {

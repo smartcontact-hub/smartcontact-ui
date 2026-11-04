@@ -1,0 +1,18 @@
+// «Pregunta a la IA» de sc-docs: un Worker aparte, no una función de Pages, para no tocar el build de los seis sitios.
+// Local: `npm run dev` en esta carpeta (puerto 8787; la IA corre siempre en Cloudflare, gasta del mismo cupo).
+// Publicar: `npm run deploy` en esta carpeta. Lleva su propio package.json: tocar el de la raíz reconstruye los seis sitios.
+{
+  "name": "sc-docs-ask",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-01",
+  "workers_dev": true,
+  "ai": { "binding": "AI" },
+  // Freno por IP: 8 preguntas por minuto. Con el plan gratis el cupo de IA es además un tope diario duro.
+  "ratelimits": [{ "name": "LIMITE", "namespace_id": "4401", "simple": { "limit": 8, "period": 60 } }],
+  "vars": {
+    // De dónde lee las fichas: la doc publicada (`scripts/docs-ia.mjs` las genera en cada build).
+    "SITIO": "https://sc-doc.pages.dev",
+    "MODELO": "@cf/google/gemma-4-26b-a4b-it",
+    "ORIGENES": "https://sc-doc.pages.dev,http://localhost:4200,http://localhost:4201,http://127.0.0.1:4200"
+  }
+}

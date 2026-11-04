@@ -260,3 +260,10 @@ pre code {
   clip-path: inset(50%);
   white-space: nowrap;
 }
+
+/* «Pregunta a la IA» (shared/ask-ai) pinta su propia cabecera en una fila, con sus acciones. La de PrimeNG, sin título
+   ni cerrar, se quedaba como una franja vacía con su relleno encima. El cajón vive fuera del componente (en el `body`),
+   así que esto va aquí y se acota con `:has()` a ESE cajón. */
+.p-drawer:has(.ask) > .p-drawer-header {
+  display: none;
+}
