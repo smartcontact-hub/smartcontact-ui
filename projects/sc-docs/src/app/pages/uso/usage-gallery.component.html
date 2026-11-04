@@ -40,7 +40,7 @@
   <!-- ── Por componente ─────────────────────────────────────────────── -->
   @for (row of componentRows(); track row.selector) {
     <section class="uso-comp">
-      <h2><code>{{ row.selector }}</code> <span class="uso-count">{{ 'uso.screensCount' | translate: { count: row.screens.length } }}</span></h2>
+      <h2 class="sc-text-h3-semibold"><code>{{ row.selector }}</code> <span class="uso-count sc-text-caption-regular">{{ 'uso.screensCount' | translate: { count: row.screens.length } }}</span></h2>
       <div class="uso-thumbs">
         @for (s of row.screens; track s.id) {
           <a class="uso-thumb" [href]="src(s.shots[0])" target="_blank" rel="noopener">
@@ -54,7 +54,7 @@
 
   @if (global().length) {
     <section class="uso-comp uso-comp--note">
-      <h2>{{ 'uso.shellGlobal' | translate }} <span class="uso-count">{{ 'uso.shellGlobalNote' | translate }}</span></h2>
+      <h2 class="sc-text-h3-semibold">{{ 'uso.shellGlobal' | translate }} <span class="uso-count sc-text-caption-regular">{{ 'uso.shellGlobalNote' | translate }}</span></h2>
       <p>{{ 'uso.shellGlobalLead' | translate }}</p>
       <ul class="uso-list">
         @for (g of global(); track g) {
@@ -66,7 +66,7 @@
 
   @if (gated().length) {
     <section class="uso-comp uso-comp--note">
-      <h2>{{ 'uso.gatedTitle' | translate }} <span class="uso-count">{{ 'uso.gatedNote' | translate }}</span></h2>
+      <h2 class="sc-text-h3-semibold">{{ 'uso.gatedTitle' | translate }} <span class="uso-count sc-text-caption-regular">{{ 'uso.gatedNote' | translate }}</span></h2>
       <p>{{ 'uso.gatedLead' | translate }}</p>
       <ul class="uso-list">
         @for (g of gated(); track g.selector) {
@@ -79,7 +79,7 @@
   <!-- ── Por pantalla ───────────────────────────────────────────────── -->
   @for (s of screens(); track s.id) {
     <section class="uso-screen">
-      <h2>{{ s.label }} <span class="uso-route"><code>/{{ s.route }}</code></span></h2>
+      <h2 class="sc-text-h3-semibold">{{ s.label }} <span class="uso-route"><code>/{{ s.route }}</code></span></h2>
       <div class="uso-screen__grid">
         <div class="uso-shots">
           @for (shot of s.shots; track shot) {

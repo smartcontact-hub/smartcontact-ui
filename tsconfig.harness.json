@@ -69,6 +69,9 @@
    * Van al `include` y NO a la lista de exentos porque **type-checkean limpios**:
    * comprobado uno a uno con `tsc --noEmit` antes de decidir (exit 0, y sus tipos
    * resuelven en `node_modules/@primeuix/themes/types`). Eximir lo que sí se puede
-   * comprobar es regalar cobertura. */
-  "include": ["*.ts", "*.js", "e2e/**/*.ts", "tools/**/*.ts", ".theme-designer/**/*.ts"]
+   * comprobar es regalar cobertura.
+   *
+   * `workers/**` entra desde el 2026-11-04 por lo mismo: el Worker de «Pregunta a la IA» declara a mano los tipos del
+   * runtime de Cloudflare que usa (sin `@cloudflare/workers-types`) y type-checkea limpio; antes de declararlos, 3 errores. */
+  "include": ["*.ts", "*.js", "e2e/**/*.ts", "tools/**/*.ts", ".theme-designer/**/*.ts", "workers/**/*.ts"]
 }

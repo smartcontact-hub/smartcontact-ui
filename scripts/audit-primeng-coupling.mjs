@@ -520,8 +520,11 @@ for (const { tag, entrada, f, linea } of inertes) {
  * Comprueba `CSSStyleRule` PRIMERO. */
 
 /* Tope POR APP. Es un trinquete, no una meta. Baja el número si retiras;
- * súbelo solo con el cubo escrito en el commit. */
-const TOPE_SIN_CAPA = { supervisor: 1, agent: 0, cuscare: 0, 'sc-docs': 0, 'agent-mini': 0 };
+ * súbelo solo con el cubo escrito en el commit.
+ * sc-docs 1 (2026-11-04, DELIBERADA): «Pregunta a la IA» pinta su propia cabecera con acciones (historial, nueva,
+ * cerrar), que `sc-drawer` no ofrece, y oculta la de PrimeNG, que sin título ni cerrar era una franja vacía
+ * (`projects/sc-docs/src/styles.scss`, acotada con `:has(.ask)`). Si el DS gana una cabecera con acciones, se retira. */
+const TOPE_SIN_CAPA = { supervisor: 1, agent: 0, cuscare: 0, 'sc-docs': 1, 'agent-mini': 0 };
 
 const bloquesConP = (scss) => {
   const s = sinComentarios(scss);

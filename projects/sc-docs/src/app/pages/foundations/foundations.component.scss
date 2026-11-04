@@ -180,12 +180,12 @@ h2 {
     color: var(--sc-text-secondary);
   }
 
+  /* `.sc-text-caption-regular` en la plantilla (12/18). */
   &__no {
     display: flex;
     align-items: flex-start;
     gap: var(--sc-spacing-0-25);
     margin: var(--sc-spacing-0-25) 0 0;
-    font-size: var(--sc-font-size-100);
     color: var(--sc-text-subtle);
 
     sc-icon {

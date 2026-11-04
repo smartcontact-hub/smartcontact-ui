@@ -31,7 +31,7 @@ import { ContratoMiembro } from './component-api.service';
     } @else {
       @for (grupo of grupos(); track grupo.titulo) {
         <p class="sb-host__section-title sc-text-caption-semibold">{{ grupo.titulo }}</p>
-        <table class="sb-props">
+        <table class="sb-props sc-text-caption-regular">
           <thead>
             <tr>
               <th>Nombre</th>

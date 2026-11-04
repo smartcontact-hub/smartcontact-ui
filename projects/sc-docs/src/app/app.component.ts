@@ -19,6 +19,7 @@ import { ThemeToggleComponent } from './shared/theme-toggle.component';
 import { LanguageToggleComponent } from './shared/language-toggle.component';
 import { LanguageService } from './shared/language.service';
 import { TocComponent } from './shared/toc.component';
+import { AskAiComponent } from './shared/ask-ai/ask-ai.component';
 
 /** Un enlace del lateral. `clave` es i18n; `texto`, un nombre propio que no se traduce (Button, Select…). */
 interface EnlaceLateral {
@@ -125,6 +126,7 @@ const MARCA = 'Smart Contact UI';
     ThemeToggleComponent,
     LanguageToggleComponent,
     TocComponent,
+    AskAiComponent,
     TranslatePipe,
   ],
   templateUrl: './app.component.html',

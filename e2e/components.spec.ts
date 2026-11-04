@@ -136,6 +136,9 @@ const screenshotBaseline = async (page: Page, name: string) => {
    * su primera franja, y cualquier cambio de la cabecera habría movido todas las baselines. Durante la foto va en su
    * sitio, sin flotar. Por elemento y no por clase, por lo mismo que el `main` de arriba. */
   await page.addStyleTag({ content: 'header { position: static !important; }' });
+  /* El botón flotante de «Pregunta a la IA» es del marco y va fijo abajo a la derecha: caería encima del `main` en
+   * cualquier foto y movería todas las baselines. Oculto sin quitarlo, como el de accesibilidad. */
+  await page.addStyleTag({ content: '[data-testid="ask-ai-fab"] { visibility: hidden !important; }' });
   await expect(contenido).toHaveScreenshot(`${name}.png`, { animations: 'disabled' });
 };
 

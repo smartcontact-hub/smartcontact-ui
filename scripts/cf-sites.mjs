@@ -32,6 +32,8 @@ export const NO_SE_PUBLICA = [
   'tools/*',
   'scripts/__tests__/*',
   'scripts/hooks/*',
+  // El Worker de «Pregunta a la IA» de sc-docs: se publica aparte, con wrangler (workers/sc-docs-ask/).
+  'workers/*',
   'AGENTS.md',
   'CHANGELOG.md',
   'CLAUDE.md',

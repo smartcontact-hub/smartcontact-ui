@@ -1,0 +1,93 @@
+/* ── El botón flotante ────────────────────────────────────────────────────────────────────────────────────────────
+   Una píldora de superficie con sombra en capas (un anillo de 1px que hace de borde, una de apoyo y una de ambiente):
+   da profundidad sin el borde gris de un botón secundario. Al pulsar baja a 0.96; al abrir el panel se aparta. */
+.ask-fab {
+  position: fixed;
+  inset-block-end: var(--sc-spacing-1-5);
+  inset-inline-end: var(--sc-spacing-1-5);
+  /* Encima de la página (sus capas llegan a 5) y DEBAJO de lo que se abre sobre ella: el panel de controles del lienzo
+     en ventana estrecha (20) y el menú lateral del móvil (40). Con 60 tapaba sus esquinas de abajo (e2e de herramientas). */
+  z-index: 15;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  padding-block: var(--sc-spacing-0-375);
+  padding-inline: var(--sc-spacing-0-375) var(--sc-spacing-1);
+  border: 0;
+  border-radius: var(--sc-radius-full);
+  background: var(--sc-bg-default);
+  color: var(--sc-text-primary);
+  cursor: pointer;
+  box-shadow:
+    0 0 0 1px rgb(var(--sc-shadow-color-rgb) / 0.08),
+    0 1px 2px -1px rgb(var(--sc-shadow-color-rgb) / 0.08),
+    0 4px 12px -2px rgb(var(--sc-shadow-color-rgb) / 0.1);
+  /* `visibility` no se anima: al volver es visible en el acto. Con 150ms valía `hidden` en el primer fotograma, y el
+     foco que el panel le devuelve al cerrarse se perdía en el `body` (medido). Al irse, espera a que acabe el fundido. */
+  transition-property: box-shadow, scale, opacity, translate, visibility;
+  transition-duration: 150ms, 150ms, 150ms, 150ms, 0s;
+  transition-timing-function: ease-out;
+
+  &:hover {
+    box-shadow:
+      0 0 0 1px rgb(var(--sc-shadow-color-rgb) / 0.12),
+      0 2px 4px -1px rgb(var(--sc-shadow-color-rgb) / 0.1),
+      0 8px 20px -4px rgb(var(--sc-shadow-color-rgb) / 0.16);
+  }
+
+  &:active {
+    scale: 0.96;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-border-focus);
+    outline-offset: 2px;
+  }
+
+  /* Al abrir el panel: se desvanece y baja un poco, y deja de ser pulsable. */
+  &.is-oculto {
+    opacity: 0;
+    translate: 0 4px;
+    visibility: hidden;
+    pointer-events: none;
+    transition-delay: 0s, 0s, 0s, 0s, 150ms;
+  }
+}
+
+/* El icono en su círculo: el radio es «completo» en los dos, así que siguen concéntricos sea cual sea el hueco. */
+.ask-fab__icono {
+  display: grid;
+  place-items: center;
+  inline-size: var(--sc-spacing-2-25);
+  block-size: var(--sc-spacing-2-25);
+  border-radius: var(--sc-radius-full);
+  background: var(--sc-bg-subtle);
+  color: var(--sc-text-primary);
+}
+
+/* En un móvil, solo el icono. */
+@media (max-width: 40rem) {
+  .ask-fab {
+    padding-inline: var(--sc-spacing-0-375);
+  }
+
+  .ask-fab__texto {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ask-fab {
+    transition-property: opacity, visibility;
+    transition-duration: 150ms, 0s;
+  }
+
+  .ask-fab.is-oculto {
+    transition-delay: 0s, 150ms;
+  }
+}

@@ -1,0 +1,21 @@
+<!-- El botón flotante, abajo a la derecha. Neutro, sin color propio: la IA se marca con su icono y su texto. Se aparta
+     mientras el panel está abierto. `data-testid`: la baseline visual de cada ficha lo oculta (e2e/components.spec.ts). -->
+<button
+  #fab
+  type="button"
+  class="ask-fab"
+  data-testid="ask-ai-fab"
+  [class.is-oculto]="ask.abierto()"
+  [attr.aria-expanded]="ask.abierto()"
+  [attr.tabindex]="ask.abierto() ? -1 : null"
+  (click)="ask.abrir()"
+>
+  <span class="ask-fab__icono"><sc-icon name="auto_awesome" [size]="18" /></span>
+  <span class="ask-fab__texto sc-text-body-regular">{{ 'chrome.ask.boton' | translate }}</span>
+</button>
+
+<!-- El panel, fuera de la carga inicial: se descarga en un rato libre y se monta al abrirlo por primera vez. Al cerrarlo
+     se queda montado, y la conversación sigue ahí al volver. -->
+@defer (when ask.usado(); prefetch on idle) {
+  <app-ask-ai-panel [ruta]="ruta()" />
+}

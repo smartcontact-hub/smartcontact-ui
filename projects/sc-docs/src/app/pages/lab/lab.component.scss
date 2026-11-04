@@ -45,11 +45,10 @@
   color: var(--sc-text-heading);
 }
 
+/* La entradilla, como la de la cabecera de cada página: `.sc-text-h3-regular` en la plantilla. */
 .lead {
   margin: var(--sc-spacing-1) 0 0;
   max-width: var(--measure);
-  font-size: var(--sc-font-size-300);
-  line-height: var(--sc-line-height-300);
   color: var(--sc-text-secondary);
 }
 

@@ -170,8 +170,8 @@
     color: var(--sc-text-primary);
     font-weight: var(--sc-font-weight-semibold);
   }
+  /* La tipografía, por su clase en la plantilla (\`.sc-text-caption-regular\`). */
   span {
-    font-size: var(--sc-font-size-50);
     color: var(--sc-text-secondary);
   }
 }
@@ -219,8 +219,6 @@
   border-radius: var(--sc-radius-200);
   background: rgb(255 255 255 / 0.08);
   color: rgb(255 255 255 / 0.92);
-  font: inherit;
-  font-size: var(--sc-font-size-50);
   cursor: pointer;
   transition: background-color 150ms ease-out;
 
@@ -243,10 +241,11 @@
 }
 
 /* ── Props table ── */
+/* La tipografía de la tabla, por su clase en la plantilla (\`.sc-text-caption-regular\`, 12/18): las celdas la
+ * heredan, y la cabecera solo cambia el peso. */
 .sb-props {
   width: 100%;
   border-collapse: collapse;
-  font-size: var(--sc-font-size-100);
 
   th,
   td {
@@ -258,7 +257,6 @@
   th {
     color: var(--sc-text-secondary);
     font-weight: var(--sc-font-weight-semibold);
-    font-size: var(--sc-font-size-50);
     text-transform: uppercase;
     letter-spacing: 0.04em;
   }
@@ -306,7 +304,11 @@
 }
 
 /* Dónde está cada pieza (`ficha-piezas.component.ts`), a 14 del «cuándo», como un hermano más. */
-.sb-host__piezas,
+/* Las tarjetas de piezas ponen su propia rejilla (`app-ficha-piezas`): aquí solo el hueco de arriba. */
+.sb-host__piezas {
+  margin-top: var(--sc-spacing-1);
+}
+
 .sb-host__pestanas {
   display: block;
   margin-top: var(--sc-spacing-1);
@@ -345,7 +347,6 @@
 
 .sb-host__cuando-texto {
   margin: 0;
-  line-height: 1.55;
   color: var(--sc-text-primary);
 
   /* Un selector no se parte por su guion: «sc-» al final de una línea y «badge» al principio de la otra no se lee. */
@@ -501,13 +502,14 @@
   text-align: center;
 }
 
-/* Estrecho: por encima de la página. Plegado, el botón flota abajo a la derecha; abierto, el panel ocupa el alto de la
- * ventana pegado a la derecha, con la sombra de lo que flota. */
+/* Estrecho: por encima de la página. Plegado, el botón flota abajo a la derecha, justo ENCIMA del de «Pregunta a la IA»
+ * (que ocupa esa esquina hasta 63px de alto) y en su misma columna; abierto, el panel ocupa el alto de la ventana pegado
+ * a la derecha, con la sombra de lo que flota, y tapa al de la IA. */
 .sb-panel--encima {
   position: fixed;
   top: auto;
-  right: var(--sc-spacing-1-25);
-  bottom: var(--sc-spacing-1-25);
+  right: var(--sc-spacing-1-5);
+  bottom: var(--sc-spacing-5);
   z-index: 20;
 
   &.sb-panel--abierto {

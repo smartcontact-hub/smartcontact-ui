@@ -36,7 +36,17 @@ import { EstadoComponenteComponent } from './estado-componente.component';
       </p>
     </div>
     <div class="pieza">
-      <p class="pieza__titulo sc-text-body-semibold">Figma <sc-icon name="design_services" [size]="20" /></p>
+      <!-- El logo de Figma, que Material Symbols no trae: en el gris del icono de Angular, a su alto de 20. -->
+      <p class="pieza__titulo sc-text-body-semibold">
+        Figma
+        <svg class="pieza__logo" viewBox="0 0 38 57" aria-hidden="true" focusable="false">
+          <path d="M19 28.5a9.5 9.5 0 1 1 19 0 9.5 9.5 0 0 1-19 0z" />
+          <path d="M0 47.5A9.5 9.5 0 0 1 9.5 38H19v9.5a9.5 9.5 0 1 1-19 0z" />
+          <path d="M19 0v19h9.5a9.5 9.5 0 1 0 0-19H19z" />
+          <path d="M0 9.5A9.5 9.5 0 0 0 9.5 19H19V0H9.5A9.5 9.5 0 0 0 0 9.5z" />
+          <path d="M0 28.5A9.5 9.5 0 0 0 9.5 38H19V19H9.5A9.5 9.5 0 0 0 0 28.5z" />
+        </svg>
+      </p>
       @if (c.figma) {
         <p class="pieza__enlaces sc-text-body-regular">
           <a [href]="c.figma" target="_blank" rel="noopener">Ver en Figma<span class="oculto"> (en otra pestaña)</span></a>
@@ -49,10 +59,10 @@ import { EstadoComponenteComponent } from './estado-componente.component';
     </div>
   `,
   styles: `
-    /* Del ancho de su contenido y en fila; en una ventana estrecha bajan una bajo otra. */
+    /* Dos columnas iguales, Angular y Figma juntas; en una ventana estrecha bajan una bajo otra. */
     :host {
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
       gap: var(--sc-spacing-1);
     }
 
@@ -60,8 +70,6 @@ import { EstadoComponenteComponent } from './estado-componente.component';
       display: flex;
       flex-direction: column;
       gap: var(--sc-spacing-0-5);
-      flex: 0 1 20rem;
-      min-width: 14rem;
       padding: var(--sc-spacing-1);
       border: 1px solid var(--sc-border-default);
       border-radius: var(--sc-radius-lg);
@@ -76,8 +84,16 @@ import { EstadoComponenteComponent } from './estado-componente.component';
       color: var(--sc-text-primary);
     }
 
-    .pieza__titulo sc-icon {
+    .pieza__titulo sc-icon,
+    .pieza__logo {
       color: var(--sc-text-secondary);
+    }
+
+    /* 20 de alto, el tamaño del icono de Angular; el ancho sale de la proporción del logo. */
+    .pieza__logo {
+      block-size: var(--sc-icon-size-2xl);
+      inline-size: auto;
+      fill: currentColor;
     }
 
     /* Los enlaces van al pie de la tarjeta, separados por una barra, como en Primer. */
