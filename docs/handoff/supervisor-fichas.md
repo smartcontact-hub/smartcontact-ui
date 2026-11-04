@@ -88,6 +88,9 @@ DD-230; su trampa sube a «Trampas del frente»): `git show archive/handoff-fich
 El de Agendas, Plantillas y Equipos solo a agentes (2026-10-28, DD-239, sin trampas propias): `git show
 0d5c0549:docs/handoff/supervisor-fichas.md`.
 
+El de borrar y descartar sin teñir el modal (2026-10-31, DD-242; su trampa ya está en LEARNINGS #5): `git show
+93e71f3d:docs/handoff/supervisor-fichas.md`.
+
 ## ✅ 2026-11-04 · El alta de usuario con marcadores, y alta frente a edición explicado a desarrollo (DD-248)
 
 > **Sello:** rama `areses/estudiar-arreglar-f833da` sobre `main` HEAD `9f5dc209`.
@@ -145,23 +148,6 @@ El de Agendas, Plantillas y Equipos solo a agentes (2026-10-28, DD-239, sin tram
 - **COA 4451**: releído en vivo el 2026-10-31, sigue en v7. El prompt maestro con sus BUSCA/PON (erratas, «⋮», nivel 3,
   tope de 15 en Grupos, exportar lo que se ve y los huecos) está en `~/Documents/Claude/2026-10 Empate flujos AED/`; lo
   pega y publica Rafa. Figma (`3503:49633`), en el Bloque 8.
-
-## ✅ 2026-10-31 · Borrar y descartar no tiñen el modal: la superficie blanca calca el confirm de antes (DD-242)
-
-> **Sello:** rama `areses/beautiful-elion-ebd58a` sobre `main` `00f1e062`. Bloque 1 del empate de los flujos del AED.
-
-- **DS**: `sc-alert-modal` gana `surface` (`tinted` por defecto, `plain`) y `closeOnEscape`; `sc-custom-modal`,
-  `closeIconSize`. `plain` es el confirm centrado de antes, medido contra `p-confirmdialog` en sus tres tonos: icono gris
-  de 21 junto al mensaje, X de 14 y sus botones (borrar: «Cancelar» gris relleno; descartar: la salida segura rellena y
-  la acción roja con borde). Solo difiere el aspa de la X (Material, no la de PrimeNG).
-- **Supervisor**: `AlertModalRequest.surface` es obligatoria; los 14 avisos de hoy van en `plain`. Un error del sistema
-  iría en `tinted` y, si no debe cerrarse con Escape, con `closeOnEscape: false` (SISMAC-4292).
-- **Pruebas**: `e2e/supervisor/alert-modal-superficie.spec.ts` (borrar y descartar, blancos) y `components.spec.ts`
-  (teñida sin `surface`, el calco en blanco y que Escape no cierra con `closeOnEscape: false`).
-- **Pendiente fuera del repo**: «❖ Alert modal» con `Surface`, publicada el 2026-11-03 (`figma-pendiente.md` §65);
-  queda el Code Connect y el mensaje a los devs (borrador en `~/Documents/Claude/2026-10 Empate flujos AED/`).
-- **Trampa**: `npm run verify` reescribe `dist/` y deja sin el DS a un `ng serve` vivo del mismo worktree; tras
-  `verify`, reconstruye el DS y relanza antes de medir.
 
 ## SIGUIENTE — sin preguntar
 
