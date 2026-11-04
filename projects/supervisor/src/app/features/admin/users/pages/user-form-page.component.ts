@@ -342,6 +342,7 @@ export class UserFormPageComponent implements DirtyAware, OnInit {
    */
   protected readonly sectionErrorHints = computed<Readonly<Record<string, string>>>(() => {
     if (this.mode() === 'edit') return avisosDelIndice(this.avisos());
+    this.lang();
     const items = this.summaryMissing().map((f) => f.etiqueta);
     const mal = this.emailError();
     if (mal) items.push(this.translate.instant(mal).replace(/^./, (c: string) => c.toLowerCase()));
