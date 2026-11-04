@@ -21,7 +21,7 @@
 
   <section class="step beat" id="paso-3">
     <h2><span class="step__n">03</span> {{ 'reglas.s3.title' | translate }}</h2>
-    <p class="beat__lead" [innerHTML]="'reglas.s3.lead' | translate"></p>
+    <p class="beat__lead sc-text-h3-regular" [innerHTML]="'reglas.s3.lead' | translate"></p>
 
     <div class="compare">
       <div class="compare__side compare__side--before">
@@ -66,7 +66,7 @@
     </div>
 
     <details class="ref">
-      <summary>{{ 'reglas.beforeAfterCode' | translate }}</summary>
+      <summary class="sc-text-caption-semibold">{{ 'reglas.beforeAfterCode' | translate }}</summary>
       <div class="snippet-pair">
         <figure class="snippet">
           <pre><code>{{ scopeBefore.code }}</code></pre>
@@ -86,7 +86,7 @@
 
   <section class="step beat step--core" id="paso-4">
     <h2><span class="step__n">04</span> {{ 'reglas.s4.title' | translate }}</h2>
-    <p class="beat__lead" [innerHTML]="'reglas.s4.lead' | translate"></p>
+    <p class="beat__lead sc-text-h3-regular" [innerHTML]="'reglas.s4.lead' | translate"></p>
 
     <div class="compare">
       <div class="compare__side compare__side--before">
@@ -131,7 +131,7 @@
     </div>
 
     <details class="ref">
-      <summary>{{ 'reglas.beforeAfterCode' | translate }}</summary>
+      <summary class="sc-text-caption-semibold">{{ 'reglas.beforeAfterCode' | translate }}</summary>
       <div class="snippet-pair">
         <figure class="snippet">
           <pre><code>{{ conflictBefore.code }}</code></pre>
@@ -147,7 +147,7 @@
 
   <section class="step beat" id="paso-5">
     <h2><span class="step__n">05</span> {{ 'reglas.s5.title' | translate }}</h2>
-    <p class="beat__lead" [innerHTML]="'reglas.s5.lead' | translate"></p>
+    <p class="beat__lead sc-text-h3-regular" [innerHTML]="'reglas.s5.lead' | translate"></p>
 
     <div class="compare">
       <div class="compare__side compare__side--before">
@@ -197,7 +197,7 @@
     <p [innerHTML]="'reglas.s6.p1' | translate"></p>
     <p class="note" [innerHTML]="'reglas.s6.note' | translate"></p>
     <details class="ref">
-      <summary>{{ 'reglas.seeCode' | translate }}</summary>
+      <summary class="sc-text-caption-semibold">{{ 'reglas.seeCode' | translate }}</summary>
       <figure class="snippet snippet--full">
         <pre><code>{{ estimate.code }}</code></pre>
         <figcaption>{{ estimate.src }}</figcaption>
@@ -209,7 +209,7 @@
     <h2><span class="step__n">07</span> {{ 'reglas.s7.title' | translate }}</h2>
     <p [innerHTML]="'reglas.s7.p1' | translate"></p>
     <details class="ref">
-      <summary>{{ 'reglas.seeCode' | translate }}</summary>
+      <summary class="sc-text-caption-semibold">{{ 'reglas.seeCode' | translate }}</summary>
       <figure class="snippet snippet--full">
         <pre><code>{{ summary.code }}</code></pre>
         <figcaption>{{ summary.src }}</figcaption>
@@ -320,7 +320,7 @@
   <button
     #feedbackHandle
     type="button"
-    class="rules__fb-handle"
+    class="rules__fb-handle sc-text-caption-semibold"
     [attr.aria-label]="'reglas.feedback.title' | translate"
     aria-haspopup="dialog"
     [attr.aria-expanded]="feedbackOpen()"

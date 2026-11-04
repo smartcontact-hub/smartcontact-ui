@@ -42,11 +42,17 @@ body {
      en vez de seguir tomando prestado un rol cuyo significado ha cambiado. */
   font-size: var(--sc-font-size-650) !important;
   line-height: var(--sc-line-height-650) !important;
-  /* Medio y apretado, como el título de página de las docs de referencia (Primer: 460 de peso): el semibold de antes
-     gritaba frente a la página blanca y aireada del shell nuevo. */
-  font-weight: var(--sc-font-weight-medium) !important;
+  /* Semibold, el peso de los títulos del DS: la doc usa los dos pesos del sistema (400 y 600, DD-13 y DD-188), y un
+     500 aquí era el único tercer peso de toda la página. El tamaño y el tracking negativo ya lo separan del h2. */
+  font-weight: var(--sc-font-weight-semibold) !important;
   letter-spacing: -0.02em;
   color: var(--sc-text-primary);
+}
+
+/* El énfasis dentro de un texto, a semibold: el «bold» del navegador es 700, un peso que el DS no usa (DD-188). Con
+   especificidad cero, para que cualquier regla propia que pida otro peso le gane. */
+:where(.demo-main) :where(strong, b) {
+  font-weight: var(--sc-font-weight-semibold);
 }
 
 /* La curva de salida de la doc: frena al llegar, sin rebote. La pide todo el movimiento de la doc (las duraciones son

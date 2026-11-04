@@ -20,20 +20,17 @@
   }
 }
 
+/* La tipografía, por su clase en la plantilla: el título de bloque, `Subtitle` (16/24); el texto, `Body` (14/20). */
 .bloque {
   margin-top: var(--sc-spacing-2-5);
 
   h2 {
     margin: 0 0 var(--sc-spacing-0-75);
-    font-size: var(--sc-font-size-300);
-    font-weight: var(--sc-font-weight-semibold);
     color: var(--sc-text-primary);
   }
 
   p {
     margin: 0 0 var(--sc-spacing-0-75);
-    font-size: var(--sc-font-size-200);
-    line-height: 1.65;
     color: var(--sc-text-secondary);
 
     &:last-child {

@@ -939,6 +939,11 @@ medido contra sc-supervisor.pages.dev a 1440.
   de foto SÍ tiene variable, `highlight/background` (`blue/50` en claro, como `--sc-bg-subtle`; medido el 2026-10-19),
   y el dibujo no la usa; las sombras del resumen (`--sc-shadow-xs`, `--sc-shadow-card`) sin estilos de efecto. El
   Nav-menu ya trae el rótulo del índice (`titleKey`), oculto por defecto.
+- **Medido el 2026-11-04**, al sacar de las maquetas las notas sobre el Kit (una limitación del Kit no va en el mapa ni en
+  el hand-off: se apunta aquí): `Nav-menu` no tiene `Filas=2` (Tipificaciones usa la de 3 con una oculta), y
+  `datatable-selection-cell` mide 43,8 de ancho y la columna de la casilla de la app, 40
+  (sc-supervisor.pages.dev, `/admin/tipificaciones`, a 1920). Las otras notas de ese tipo ya no eran ciertas: el
+  selectbutton del Kit llega a 5 opciones, y el tono de etiqueta y el drawer acoplado los resolvió la ficha 67.
 - **La copia del DS** (`C5soC7CxcuKSIFPEDCd3gz`) tiene arreglados los botones de texto con su borde, el tooltip con
   máximo de 157,5 y la celda de selección small. Llevarlos al oficial es una decisión de diseño pendiente.
 

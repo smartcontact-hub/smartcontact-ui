@@ -170,8 +170,8 @@
     color: var(--sc-text-primary);
     font-weight: var(--sc-font-weight-semibold);
   }
+  /* La tipografía, por su clase en la plantilla (\`.sc-text-caption-regular\`). */
   span {
-    font-size: var(--sc-font-size-50);
     color: var(--sc-text-secondary);
   }
 }
@@ -219,8 +219,6 @@
   border-radius: var(--sc-radius-200);
   background: rgb(255 255 255 / 0.08);
   color: rgb(255 255 255 / 0.92);
-  font: inherit;
-  font-size: var(--sc-font-size-50);
   cursor: pointer;
   transition: background-color 150ms ease-out;
 
@@ -243,10 +241,11 @@
 }
 
 /* ── Props table ── */
+/* La tipografía de la tabla, por su clase en la plantilla (\`.sc-text-caption-regular\`, 12/18): las celdas la
+ * heredan, y la cabecera solo cambia el peso. */
 .sb-props {
   width: 100%;
   border-collapse: collapse;
-  font-size: var(--sc-font-size-100);
 
   th,
   td {
@@ -258,7 +257,6 @@
   th {
     color: var(--sc-text-secondary);
     font-weight: var(--sc-font-weight-semibold);
-    font-size: var(--sc-font-size-50);
     text-transform: uppercase;
     letter-spacing: 0.04em;
   }
@@ -349,7 +347,6 @@
 
 .sb-host__cuando-texto {
   margin: 0;
-  line-height: 1.55;
   color: var(--sc-text-primary);
 
   /* Un selector no se parte por su guion: «sc-» al final de una línea y «badge» al principio de la otra no se lee. */
