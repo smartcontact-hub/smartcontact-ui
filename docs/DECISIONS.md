@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | El alta de usuario lleva los marcadores de paso del grupo y del agente: Identidad dice lo que falta, Acceso y Servicios asignados «Revisada» al dejarlas · sin «Falta: …» sobre el resumen · cierra la deuda de DD-222 §5 | DD-248 |
 > | Un azul menos: la etiqueta azul (`--sc-label-blue-*`) y los avisos de información toman `sky`; se retira la familia `azure`, en el código y en el Kit · en Figma, Comunicación en `sky` y el fondo de los tonos del hub en el paso 50, como el código | DD-247 |
 > | El borde de las tarjetas del hub de Repositorios, al pasar, en el tono FUERTE de su grupo (el punto de la etiqueta), no en su borde (un 200 más flojo que el gris de reposo) · también en las «Próximamente», sin mano ni pulsar · marcada, el halo del mismo tono fuerte (enmienda DD-179 §2 y DD-245 §4) | DD-246 |
 > | Repositorios como sus páginas de COA: Equipos avisa del nombre en gris y en rojo, su cifra abre la ficha en «Agentes» y enseña la foto (4453) · Agendas fija Nombre y «⋮» y sus campos son siempre «Personalizado N» (4440) · Plantillas corta el título con tooltip y avisa en rojo como Agendas (4438) · el hub: ocho «Próximamente» con su cifra y sin panel, un reciente entra en su repositorio y Labels con «Administración» (4064) (enmienda DD-179 §4 y §6) | DD-245 |
@@ -174,6 +175,35 @@
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
 
 ---
+
+## DD-248 · 2026-11-04 — El alta de usuario, con los marcadores de paso como el grupo y el agente
+
+**Contexto** · DD-222 puso un marcador de paso en cada fila del índice del alta de grupo; DD-225 §8, en la del agente. El
+alta de usuario se quedó fuera: llevaba «Atrás / Siguiente» (DD-143) pero el ✓ suelto y «Falta: …» sobre el resumen,
+la única alta con pie y sin marcadores. DD-222 §5 lo dejó anotado como deuda. Salió al repasar con desarrollo por qué
+el alta y la edición se ven distintas en Figma: en todos los flujos el alta lleva pie y marcadores y la edición ninguno,
+menos en Usuarios.
+
+**Decisión** ·
+1. **Un marcador y una línea en cada fila**, con `seccionesDeAlta` como el grupo y el agente: Identidad dice lo que
+   falta («Nombre, email»), Acceso y Servicios asignados «Sin revisar», y «Revisada» al dejarlas (no tienen nada
+   obligatorio, DD-211 §6).
+2. **Dejar Identidad sin lo obligatorio la pone en rojo** con lo que falta, y al volver sus campos lo dicen en rojo
+   (DD-222 §6). Un email mal escrito se dice en la misma línea, detrás de lo que falta.
+3. **Sin «Falta: …» ni «Listo para crear» sobre el resumen** (DD-222 §5); el tooltip de «Crear usuario» sigue diciendo
+   qué falta.
+4. **«Deshacer» deja el índice como al empezar.** La edición sigue sin marcadores (DD-222 §8).
+
+**Razón** · Las cuatro altas del Supervisor se comportan igual, y desarrollo tiene una sola regla que construir: el
+alta guía y marca, la edición no.
+
+**Descartadas** ·
+- *Quitar el pie del alta de usuario*: tres secciones caben en una pantalla, pero rompía la regla común de las altas.
+- *Dejar el ✓ de DD-143*: era la excepción que provocó la duda.
+
+**Consecuencias** · Figma: las pantallas del alta de usuario aún llevan el índice sin marcadores; queda en el hand-off
+de `supervisor-fichas`. Pruebas: `alta-usuario-marcadores.spec.ts` (nueva), `admin-forms.spec.ts` y
+`altas-obligatorio.spec.ts`.
 
 ## DD-247 · 2026-11-03 — Un azul menos: la etiqueta azul y los avisos de información toman `sky`; se retira `azure`
 
