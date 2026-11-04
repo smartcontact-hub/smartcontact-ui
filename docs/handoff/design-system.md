@@ -183,11 +183,11 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 
 Botón flotante abajo a la derecha que abre un panel acoplado (`shared/ask-ai/`). Contesta el Worker `workers/sc-docs-ask/`
 (Workers AI, `gemma-4-26b-a4b-it`) con el `llms.txt` y los `ia/<ficha>.md` publicados: el navegador solo manda el nombre de
-la ficha. Medido: ~70 neuronas por pregunta, unas 140 al día dentro del cupo gratis. La respuesta trae la story en vivo y
-«Playground»; hay micro (Web Speech, gratis) y conversaciones guardadas en el navegador.
+la ficha. Medido: ~70 neuronas por pregunta, unas 140 al día dentro del cupo gratis. La cuenta es Free: pasado el cupo
+no cobra, el panel dice que se acabó el de hoy. El panel se carga con `@defer` al abrirlo; la carga inicial no crece.
 
-**Pendiente.** El Worker se publica a mano (script `deploy` de `workers/sc-docs-ask/package.json`); Pages no lo toca (`workers/*` en `NO_SE_PUBLICA`:
-`cf-watch-paths --aplicar` antes de fundir). Sin medir: el plan de Cloudflare, el micro con voz real y el límite de 8 por
+**Pendiente.** El Worker se publica a mano (script `deploy` de `workers/sc-docs-ask/package.json`); Pages no lo toca
+(`workers/*` en `NO_SE_PUBLICA`, rutas ya aplicadas en el panel). Sin medir: el micro con voz real y el límite de 8 por
 minuto, que es aproximado (no cortó 10 seguidas).
 
 ## ✅ 2026-11-03 · El hub de Repositorios: el borde al pasar en el tono fuerte, y su Figma medido contra el prototipo
