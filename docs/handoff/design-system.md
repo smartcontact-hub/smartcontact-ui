@@ -177,13 +177,18 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
-## ✅ 2026-11-03 · sc-docs: cada página con la cabecera de la portada
+## ✅ 2026-11-04 · sc-docs: «Pregunta a la IA», un chat que contesta con la propia doc
 
-**Sello:** rama `areses/sc-doc-design-consistency-c3007b`, sobre HEAD `0f5bb7c1` de `main`. Sale el tramo del 2026-10-31 (#561 a #581, la estructura de Primer): `git show 0f5bb7c1:docs/handoff/design-system.md`.
+**Sello:** rama `areses/sc-doc-ask-ai-button-5c318c`, sobre HEAD `9f5dc209` de `main`. Sale el tramo del 2026-11-03 (la cabecera de cada página de sc-docs): `git show 9f5dc209:docs/handoff/design-system.md`.
 
-Las 12 páginas de sección llevan `app-cabecera` (`shared/cabecera.component.*`): título, UNA frase, lo técnico en una nota a
-pie y una franja como las de la portada, con sus formas y componentes `sc-*` reales según `arte`; quieta con «reducir
-movimiento». Entradillas de 21-48 palabras a 9-23. Las fichas de componente no cambian. Smoke, axe y herramientas: 20/20.
+Botón flotante abajo a la derecha que abre un panel acoplado (`shared/ask-ai/`). Contesta el Worker `workers/sc-docs-ask/`
+(Workers AI, `gemma-4-26b-a4b-it`) con el `llms.txt` y los `ia/<ficha>.md` publicados: el navegador solo manda el nombre de
+la ficha. Medido: ~70 neuronas por pregunta, unas 140 al día dentro del cupo gratis. La respuesta trae la story en vivo y
+«Playground»; hay micro (Web Speech, gratis) y conversaciones guardadas en el navegador.
+
+**Pendiente.** El Worker se publica a mano (script `deploy` de `workers/sc-docs-ask/package.json`); Pages no lo toca (`workers/*` en `NO_SE_PUBLICA`:
+`cf-watch-paths --aplicar` antes de fundir). Sin medir: el plan de Cloudflare, el micro con voz real y el límite de 8 por
+minuto, que es aproximado (no cortó 10 seguidas).
 
 ## ✅ 2026-11-03 · El hub de Repositorios: el borde al pasar en el tono fuerte, y su Figma medido contra el prototipo
 

@@ -1,0 +1,258 @@
+<!-- El botón flotante, abajo a la derecha. Neutro, sin color propio: la IA se marca con su icono y su texto. Se aparta
+     mientras el panel está abierto. `data-testid`: la baseline visual de cada ficha lo oculta (e2e/components.spec.ts). -->
+<button
+  #fab
+  type="button"
+  class="ask-fab"
+  data-testid="ask-ai-fab"
+  [class.is-oculto]="ask.abierto()"
+  [attr.aria-expanded]="ask.abierto()"
+  [attr.tabindex]="ask.abierto() ? -1 : null"
+  (click)="ask.abrir()"
+>
+  <span class="ask-fab__icono"><sc-icon name="auto_awesome" [size]="18" /></span>
+  <span class="ask-fab__texto sc-text-body-regular">{{ 'chrome.ask.boton' | translate }}</span>
+</button>
+
+<!-- Acoplado bajo la cabecera de la doc, como el panel de Repositorios del Supervisor (DD-179): sin máscara ni sombra,
+     con el filo interior y su esquina de arriba redondeada. La página sigue a mano para leer la ficha mientras contesta.
+     Sin la cabecera de PrimeNG (styles.scss la quita): la propia va en una fila, con «Nueva conversación» y cerrar. -->
+<sc-drawer
+  position="right"
+  width="var(--sc-spacing-25)"
+  topOffset="var(--demo-alto-cabecera)"
+  docked
+  [modal]="false"
+  [showCloseIcon]="false"
+  [visible]="ask.abierto()"
+  (visibleChange)="ask.abierto.set($event)"
+  (hidden)="devolverFoco(fab)"
+>
+  @if (ask.usado()) {
+    <div class="ask">
+      <header class="ask__cabecera">
+        <sc-icon class="ask__cabecera-icono" name="auto_awesome" [size]="16" />
+        <h2 class="ask__titulo sc-text-body-semibold">{{ 'chrome.ask.titulo' | translate }}</h2>
+        <span class="ask__cabecera-acciones">
+          @if (conversaciones().length) {
+            <!-- La lista de conversaciones guardadas: el icono va relleno mientras se ve, que es su estado activo. -->
+            <sc-button
+              size="sm"
+              variant="secondary"
+              appearance="text"
+              icon="history"
+              [iconFilled]="verHistorial()"
+              [iconOnly]="true"
+              [label]="(verHistorial() ? 'chrome.ask.historial.volver' : 'chrome.ask.historial.ver') | translate"
+              [ariaLabel]="(verHistorial() ? 'chrome.ask.historial.volver' : 'chrome.ask.historial.ver') | translate"
+              (clicked)="verHistorial.set(!verHistorial())"
+            />
+          }
+          @if (mensajes().length) {
+            <sc-button
+              size="sm"
+              variant="secondary"
+              appearance="text"
+              icon="add"
+              [iconOnly]="true"
+              [label]="'chrome.ask.nueva' | translate"
+              [ariaLabel]="'chrome.ask.nueva' | translate"
+              (clicked)="nueva()"
+            />
+          }
+          <sc-button
+            size="sm"
+            variant="secondary"
+            appearance="text"
+            icon="close"
+            [iconOnly]="true"
+            [label]="'chrome.ask.cerrar' | translate"
+            [ariaLabel]="'chrome.ask.cerrar' | translate"
+            (clicked)="ask.abierto.set(false)"
+          />
+        </span>
+      </header>
+
+      <div #hilo class="ask__hilo" aria-live="polite" (click)="alPulsarHilo($event)">
+        @if (verHistorial()) {
+          <!-- Las conversaciones guardadas en este navegador, la última arriba. Abrir una la trae al hilo. -->
+          <section class="ask__historial" [attr.aria-label]="'chrome.ask.historial.titulo' | translate">
+            <h3 class="ask__historial-titulo sc-text-caption-semibold">{{ 'chrome.ask.historial.titulo' | translate }}</h3>
+            <ul class="ask__conversaciones">
+              @for (c of conversaciones(); track c.id) {
+                <li class="ask__conversacion" [class.is-activa]="c.id === activa()">
+                  <button
+                    type="button"
+                    class="ask__conversacion-abrir"
+                    [attr.aria-current]="c.id === activa() ? 'true' : null"
+                    (click)="abrirConversacion(c)"
+                  >
+                    <span class="ask__conversacion-titulo sc-text-body-regular">{{ c.titulo }}</span>
+                    <span class="ask__conversacion-detalle sc-text-caption-regular">{{ detalleConversacion(c) }}</span>
+                  </button>
+                  <sc-button
+                    size="sm"
+                    variant="secondary"
+                    appearance="text"
+                    icon="delete"
+                    [iconOnly]="true"
+                    [label]="'chrome.ask.historial.borrar' | translate"
+                    [ariaLabel]="('chrome.ask.historial.borrar' | translate) + ': ' + c.titulo"
+                    (clicked)="borrarConversacion(c.id)"
+                  />
+                </li>
+              } @empty {
+                <li class="ask__conversaciones-vacio sc-text-body-regular">{{ 'chrome.ask.historial.vacio' | translate }}</li>
+              }
+            </ul>
+          </section>
+        } @else if (!mensajes().length) {
+          <div class="ask__vacio">
+            <h3 class="ask__vacio-titulo sc-text-h3-semibold">
+              @if (tema(); as t) {
+                {{ 'chrome.ask.sobre' | translate: { tema: t.texto ?? (t.clave! | translate) } }}
+              } @else {
+                {{ 'chrome.ask.sobreDoc' | translate }}
+              }
+            </h3>
+            <p class="ask__vacio-texto sc-text-body-regular">{{ 'chrome.ask.intro' | translate }}</p>
+            <ul class="ask__sugerencias">
+              @for (s of sugerencias(); track $index) {
+                <li>
+                  <button type="button" class="ask__sugerencia sc-text-body-regular" (click)="enviar(s, true)">
+                    <span>{{ s }}</span>
+                    <sc-icon class="ask__sugerencia-flecha" name="north_east" [size]="16" />
+                  </button>
+                </li>
+              }
+            </ul>
+          </div>
+        } @else {
+          @for (m of mensajes(); track $index; let i = $index) {
+            @if (m.rol === 'user') {
+              <p class="ask__pregunta sc-text-body-regular">{{ m.texto }}</p>
+            } @else {
+              <div class="ask__respuesta">
+                @if (m.fichas?.length) {
+                  <p class="ask__fuentes sc-text-caption-regular">
+                    <sc-icon name="article" [size]="14" />
+                    <span>{{ 'chrome.ask.leido' | translate }}</span>
+                    @for (f of m.fichas; track f; let ultima = $last) {
+                      <a [routerLink]="rutaDeFicha(f)">{{ nombreFicha(f) }}</a>{{ ultima ? '' : ',' }}
+                    }
+                  </p>
+                }
+                @let partes = partir(m.texto);
+                @let vista = partes.vista ?? m.vistaPorDefecto ?? null;
+                @if (m.texto) {
+                  <div class="ask-md sc-text-body-regular" [innerHTML]="html(partes.texto)"></div>
+                } @else if (m.cargando) {
+                  <div class="ask__cargando">
+                    <span class="demo-oculto">{{ 'chrome.ask.cargando' | translate }}</span>
+                    <sc-skeleton width="90%" />
+                    <sc-skeleton width="75%" />
+                    <sc-skeleton width="55%" />
+                  </div>
+                }
+                @if (m.error) {
+                  <sc-message severity="warn" size="sm" [text]="m.error | translate" />
+                }
+                @if (!m.cargando && m.texto) {
+                  <!-- El componente de verdad, cuando la respuesta enlaza una story: se pinta al terminar, no a trozos. -->
+                  @if (vista; as v) {
+                    <app-ask-ai-vista [vista]="v" />
+                  }
+                  <div class="ask__acciones">
+                    @if (fichaDe(m, vista); as ficha) {
+                      <sc-button
+                        size="sm"
+                        variant="secondary"
+                        appearance="text"
+                        icon="tune"
+                        [label]="'chrome.ask.playground' | translate"
+                        (clicked)="abrirPlayground(ficha, vista)"
+                      />
+                    }
+                    <sc-button
+                      size="sm"
+                      variant="secondary"
+                      appearance="text"
+                      [icon]="copiada() === i ? 'check' : 'content_copy'"
+                      [iconOnly]="true"
+                      [label]="(copiada() === i ? 'chrome.ask.copiado' : 'chrome.ask.copiarRespuesta') | translate"
+                      [ariaLabel]="(copiada() === i ? 'chrome.ask.copiado' : 'chrome.ask.copiarRespuesta') | translate"
+                      (clicked)="copiarRespuesta(i, m.texto)"
+                    />
+                  </div>
+                }
+              </div>
+            }
+          }
+        }
+      </div>
+
+      <div class="ask__pie">
+        <!-- La caja de escribir: el campo sin borde propio y el botón dentro, como el de primeng.dev. -->
+        <div class="ask__caja">
+          <label class="ask__oculto" for="ask-pregunta">{{ 'chrome.ask.placeholder' | translate }}</label>
+          <sc-textarea
+            class="ask__campo"
+            inputId="ask-pregunta"
+            [rows]="2"
+            [fluid]="true"
+            [placeholder]="(escuchando() ? 'chrome.ask.voz.escuchando' : 'chrome.ask.placeholder') | translate"
+            [value]="borrador()"
+            (valueChange)="borrador.set($event)"
+            (keydown)="alTeclear($event)"
+          />
+          <!-- Hablar: el reconocimiento de voz del navegador (ask-ai-voz.ts). Escuchando, el icono va relleno, el anillo
+               late y la caja dice «Escuchando…»: el estado no depende solo del movimiento. -->
+          @if (vozDisponible()) {
+            <span class="ask__voz" [class.is-escuchando]="escuchando()">
+              <sc-button
+                size="sm"
+                variant="secondary"
+                appearance="text"
+                icon="mic"
+                [iconFilled]="escuchando()"
+                [rounded]="true"
+                [iconOnly]="true"
+                [disabled]="ocupado()"
+                [label]="(escuchando() ? 'chrome.ask.voz.parar' : 'chrome.ask.voz.hablar') | translate"
+                [ariaLabel]="(escuchando() ? 'chrome.ask.voz.parar' : 'chrome.ask.voz.hablar') | translate"
+                (clicked)="alternarVoz()"
+              />
+            </span>
+          }
+          @if (ocupado()) {
+            <sc-button
+              size="sm"
+              variant="secondary"
+              icon="stop"
+              [rounded]="true"
+              [iconOnly]="true"
+              [label]="'chrome.ask.parar' | translate"
+              [ariaLabel]="'chrome.ask.parar' | translate"
+              (clicked)="parar()"
+            />
+          } @else {
+            <sc-button
+              size="sm"
+              icon="arrow_upward"
+              [rounded]="true"
+              [iconOnly]="true"
+              [label]="'chrome.ask.enviar' | translate"
+              [ariaLabel]="'chrome.ask.enviar' | translate"
+              [disabled]="!borrador().trim()"
+              (clicked)="enviar()"
+            />
+          }
+        </div>
+        @if (errorVoz(); as e) {
+          <p class="ask__voz-error sc-text-caption-regular" role="status">{{ e | translate }}</p>
+        }
+        <p class="ask__aviso sc-text-caption-regular">{{ 'chrome.ask.aviso' | translate }}</p>
+      </div>
+    </div>
+  }
+</sc-drawer>

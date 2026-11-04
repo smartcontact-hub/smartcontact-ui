@@ -1,0 +1,3 @@
+# Lo que deja `wrangler dev` en local (caché, estado de miniflare, bundles): no se versiona.
+.wrangler/
+node_modules/
