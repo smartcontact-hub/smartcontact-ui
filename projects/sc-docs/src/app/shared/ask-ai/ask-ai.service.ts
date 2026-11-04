@@ -13,9 +13,9 @@ export const ASK_ENDPOINT = /^(localhost|127\.0\.0\.1)$/.test(globalThis.locatio
 export class AskAiService {
   readonly abierto = signal(false);
   /**
-   * ¿Se ha abierto alguna vez? El contenido del panel se monta entonces, no al cargar la página: ni pesa en cada ficha
-   * ni se pinta antes de que lleguen las traducciones (sus botones de solo icono nacían sin nombre y `sc-button` lo
-   * avisaba, DD-200). Al cerrar se queda montado: la conversación sigue ahí al volver.
+   * ¿Se ha abierto alguna vez? El panel se monta entonces (`@defer` en `ask-ai.component.html`), no al cargar la
+   * página: ni pesa en cada ficha ni se pinta antes de que lleguen las traducciones (sus botones de solo icono nacían
+   * sin nombre y `sc-button` lo avisaba, DD-200). Al cerrar se queda montado: la conversación sigue ahí al volver.
    */
   readonly usado = signal(false);
 
