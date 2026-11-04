@@ -49,10 +49,10 @@ import { EstadoComponenteComponent } from './estado-componente.component';
     </div>
   `,
   styles: `
-    /* Del ancho de su contenido y en fila; en una ventana estrecha bajan una bajo otra. */
+    /* Dos columnas iguales, Angular y Figma juntas; en una ventana estrecha bajan una bajo otra. */
     :host {
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
       gap: var(--sc-spacing-1);
     }
 
@@ -60,8 +60,6 @@ import { EstadoComponenteComponent } from './estado-componente.component';
       display: flex;
       flex-direction: column;
       gap: var(--sc-spacing-0-5);
-      flex: 0 1 20rem;
-      min-width: 14rem;
       padding: var(--sc-spacing-1);
       border: 1px solid var(--sc-border-default);
       border-radius: var(--sc-radius-lg);

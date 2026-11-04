@@ -306,7 +306,11 @@
 }
 
 /* Dónde está cada pieza (`ficha-piezas.component.ts`), a 14 del «cuándo», como un hermano más. */
-.sb-host__piezas,
+/* Las tarjetas de piezas ponen su propia rejilla (`app-ficha-piezas`): aquí solo el hueco de arriba. */
+.sb-host__piezas {
+  margin-top: var(--sc-spacing-1);
+}
+
 .sb-host__pestanas {
   display: block;
   margin-top: var(--sc-spacing-1);

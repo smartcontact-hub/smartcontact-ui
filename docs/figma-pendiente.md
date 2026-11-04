@@ -13,9 +13,9 @@
 > **Cómo se mantiene.** Lo cerrado se marca aquí, con la fecha. Lo nuevo entra aquí y **no** en la bandeja del
 > hand-off: una cosa que solo se puede hacer en Figma no es trabajo de la próxima sesión.
 >
-> **Cuenta del 2026-11-03:** 48 fichas cerradas y 30 abiertas. De las abiertas, 22 son de dibujo o de medida, casi todas
-> en el Kit (estados y variantes de piezas que ya existen; las piezas nuevas, en la 42), 3 de Contact Center (15, 30 y 64, con su evolutivo) y 5 esperan una
-> decisión o están aparcadas (10, 25, 26, 38 y 46).
+> **Cuenta del 2026-11-04:** 49 fichas cerradas y 29 abiertas. De las abiertas, 22 son de dibujo o de medida, casi todas
+> en el Kit (estados y variantes de piezas que ya existen; las piezas nuevas, en la 42), 3 de Contact Center (15, 30 y 64, con su evolutivo) y 4 esperan una
+> decisión o están aparcadas (10, 25, 26 y 46).
 >
 > ⚠️ **Repasado entero el 2026-09-27** contra el código y el export del Kit de `main` (`4f4f2018`): cada ficha,
 > cada fila de la tabla de la ficha 4 y cada variable citada. **No contra el fichero de Figma**: esa sesión no
@@ -744,36 +744,6 @@ réplica que el código acaba de quitar.
 
 ---
 
-## 38 · Title y Subtitle: los dos estilos nuevos, el maestro `Section` y la etiqueta a 600 (2026-10-09, DD-188)
-
-**Repaso del 2026-11-03:** los estilos están hechos, y `tag` y `badge` van a 600 desde ese día: `tag/font/weight` y
-`badge/font/weight` apuntan a `primitive/typography/font/weight/semibold` (23 textos de `tag`, 56 de `badge` y 56 de
-`overlaybadge`), y el código también: el export lleva las dos variables a `semibold` y `tag.ts` y `badge.ts`, que
-escriben el peso a mano, pasan a 600 en el mismo día (DD-188 §3). Queda solo decidir las etiquetas en píldora (abajo),
-con su propio PR (DD-188).
-
-**Estado:** los estilos, HECHOS; lo demás, pendiente · **Dónde:** fichero del DS, página «ª Typography» (`12899:61527`),
-tablero `Text styles` (`13407:3586`).
-
-- **Hecho el 2026-10-09:** `Title/title-semibold` (20/28, atado a `font/size/450` y `line/height/450`) y
-  `Subtitle/subtitle-semibold` (16/24, a `font/size/300` y `line/height/300`), Inter Semi Bold, con sus filas en el
-  tablero (`15334:14` y `15334:18`) y una viñeta nueva en las reglas de jerarquía (`13407:3602`). **Falta publicar la
-  librería** (paso 4) para que el fichero del Supervisor los vea.
-- **El maestro `Section`** (`691:23956`): su título pasa a `Subtitle/subtitle-semibold`, y en la variante que titula la
-  página, a `Title/title-semibold`. Hoy dibuja `Body/body-semibold` (14) y el código pinta 16 y 20.
-- **Las maquetas del Supervisor:** el título de página (`.page__heading`, el nombre de las fichas) a `Title`.
-- ~~**Tag y Badge a 600**~~ → **HECHO el 2026-11-03**, en el Kit y en el código. Ojo: el export no mueve el código
-  solo; `tag.ts` y `badge.ts` llevan el peso escrito, y hay que cambiarlo a mano con el maestro.
-- **Etiquetas en píldora (propuesta, decídela aquí):** Primer separa la etiqueta de dato (píldora con borde de 1, 20 de
-  alto, texto 12 en 500) de la de estado (rellena, con icono), y el contador va en su propio chip (12 en 600, 18 de
-  alto). El Tag del Kit es uno solo: radio 6, sin borde, 21,5 de alto y 700. Si se adopta, primero aquí y luego el
-  código por el export.
-
-**Cómo sabes que está hecho:** `npm run audit:text-styles` lista los 14 estilos en verde, y el título de `Section` en el
-fichero mide 16 (20 en la variante de página).
-
----
-
 ## 39 · Plantillas de vistas: listado, ficha y diálogo ya montados (2026-10-09, DD-188)
 
 **Repaso del 2026-11-03:** no hay página de plantillas en el Kit.
@@ -827,8 +797,7 @@ se ha leído en el fichero.
   valor (14 semibold, color de título) a la derecha, centrados en la fila; si no cabe, el valor baja y sigue a la
   derecha. Variante con enlace: la clave subrayada al pasar. Las filas, a 7 entre sí dentro de su tarjeta.
 - **Tag mediano** (`sc-tag size="md"`, DD-186): la píldora a 14 en semibold con relleno 1,75 × 10,5, para un valor entre
-  valores de 14. El Tag del Kit (12 en negrita) sigue siendo el pequeño. Va con la ficha 38: si el Tag pasa a 600, el
-  mediano ya nace así.
+  valores de 14. El Tag del Kit (12 en semibold desde la ficha 38) sigue siendo el pequeño; el mediano nace a 600 como él.
 - **InputTags** (`sc-inputtags`, DD-195): el Kit no tiene maestro (por eso sale «experimental» en sc-docs). El campo
   de los demás (32,5 de alto, borde y radio de campo) con las etiquetas dentro: el Chip del Kit a 24,5 de alto, texto
   14, radio 6, y su ✕ al final; el texto guía a 14 detrás de la última. Mira antes si PrimeOne lo trae.
@@ -1092,6 +1061,7 @@ Figma) y sus entradas de ejemplo. La flecha, **hecha el 2026-11-03**: las 30 (3 
 - ~~**69 · Grupos: qué se ve con Email en Distribución y colas**~~ → **HECHA el 2026-11-03**: Otras configuraciones 10, 11 y 12 con Email; «Ir a» como componente local «Channel jumps» (`4568:27273`, regla 3 de §67) en las pantallas con dos o más canales; hoja y mapa al día.
 - ~~**2 · Lo que Config cambió en código y Figma aún no sabe (2026-09-13)**~~ → **HECHA el 2026-11-03**: la pastilla de etiqueta sin punto (`Severity=Label`) y a 600 (`tag/font/weight`, ficha 38); `--sc-text-heading` en `semantic/text/heading`; la etiqueta IFTA, a 400. Las tarjetas de opción de Servicio y el interruptor de los ajustes de Grupos, de Contact Center, van con su evolutivo.
 - ~~**37 · El resumen de la ficha de grupo lleva a su sección (2026-10-02)**~~ → **HECHA el 2026-11-03**: `group-summary` gana `Enlace` (Reposo, Al pasar y Foco; las dos últimas, solo en Edición, regla 5 de §67). Al pasar, «Distribución» subrayado en su color, a 1,75 del texto; en foco, el trazo exterior de la miga, atado a `focus/ring/width` y `focus/ring/color` (`sky/500`), a 2 del texto, como `.resumen__enlace:focus-visible`. Sin piezas ni variables nuevas.
+- ~~**38 · Title y Subtitle, el maestro `Section` y la etiqueta a 600 (2026-10-09, DD-188)**~~ → **HECHA el 2026-11-04**: los dos estilos, el maestro `Section` y las maquetas, hechos y publicados; `tag` y `badge` a 600 en el Kit (`tag/font/weight` y `badge/font/weight` a `semibold`) y en el código (`tag.ts` y `badge.ts` llevan el peso escrito: se cambia a mano con el maestro, el export no lo mueve). **Las etiquetas en píldora no se adoptan**: lo que Primer separa ya está separado (estado = `sc-tag` con `severity`; dato = `variant="label"`, con borde y tinte, y `Severity=Label` en el Kit; contador = `sc-badge`), su peso 500 choca con los dos pesos de DD-13 y DD-188, y la forma sola no salió entre lo medido en DD-188. La píldora existe para quien la pida (`rounded`, y `size="md"` de DD-186). Se reabre si una pantalla real confunde estado y categoría, y solo para `variant="label"`.
 
 - ~~**El título del componente `Section` a `Heading/h3-semibold`**~~ → **HECHO el 2026-09-13** (DD-75). Eran **4
   capas maestras, no ~35**: la cifra de este fichero mezclaba dos componentes. Las del conjunto `Section` son el título
