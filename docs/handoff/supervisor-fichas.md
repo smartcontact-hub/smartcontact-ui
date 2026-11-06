@@ -90,6 +90,18 @@ El de Agendas, Plantillas y Equipos solo a agentes (2026-10-28, DD-239, sin tram
 
 El de borrar y descartar sin teñir el modal (2026-10-31, DD-242; su trampa ya está en LEARNINGS #5): `git show
 93e71f3d:docs/handoff/supervisor-fichas.md`.
+El de la opción repetida de Tipificaciones (2026-10-31, DD-244, sin trampas propias): `git show 1bf926c4:docs/handoff/supervisor-fichas.md`.
+
+## ✅ 2026-11-06 · En el hub de Repositorios, pulsar otra tarjeta marca la otra (DD-249)
+
+> **Sello:** rama `areses/repo-card-selection-interactions-8ce085` sobre `main` HEAD `1bf926c4`.
+
+- **Hecho**: sin velo mientras quede una tarjeta entera a la vista (si pisa alguna, flota con sombra) y siete gestos más.
+- **Congeladas**: 4058, 4062 y 4064 avanzan con esto y con lo fundido desde `b4b1305b` (DD-246 a DD-248); su fila, en otro PR.
+- **No hecho**: el paso 06 del hub en Figma (`figma-pendiente` §64) y el COA de 4064, cuyo prompt del 2026-10-31 cuenta el
+  velo. Releer su versión viva antes de corregir.
+- **Trampa de sonda**: con el panel abierto, pulsar en las coordenadas de una tarjeta tapada cae en un enlace del panel y
+  navega fuera; parece que la tarjeta no se marca. Mide con `elementFromPoint`, o pulsa solo lo que asoma.
 
 ## ✅ 2026-11-04 · El alta de usuario con marcadores, y alta frente a edición explicado a desarrollo (DD-248)
 
@@ -136,18 +148,6 @@ El de borrar y descartar sin teñir el modal (2026-10-31, DD-242; su trampa ya e
 - **Medido de paso, sin arreglar**: el hub no cabe a 1440 × 800 (sobran 318 px, ya antes) y su prueba mide `.hub`, que no
   desplaza (`.app-shell__content` sí). **Figma**: barras y hub hechos (`figma-pendiente` §64); el «❖ Alert modal» blanco,
   publicado el 2026-11-03 (§65); el azul de Comunicación, `sky` (DD-247).
-
-## ✅ 2026-10-31 · Tipificaciones: la opción repetida lo dice en su campo (DD-244)
-
-> **Sello:** rama `areses/brave-taussig-9cf3e0` sobre `main` HEAD `deb87737`.
-
-- **Hecho**: dos hermanas con el mismo nombre se dicen bajo el campo de la que repite, «Ya hay «X» en este nivel»
-  (`errors.option_taken`, que existía sin uso), como pide el COA de SISMAC-4451 v7 (2026-10-30). Bajo el árbol queda solo
-  «Hay opciones sin nombre.»; fuera `tree_status.repeated`. La fila de la opción alinea arriba para que el tirador y la
-  papelera no bajen con el aviso. Prueba: `tipificacion-ficha` (rojo con el código anterior).
-- **COA 4451**: releído en vivo el 2026-10-31, sigue en v7. El prompt maestro con sus BUSCA/PON (erratas, «⋮», nivel 3,
-  tope de 15 en Grupos, exportar lo que se ve y los huecos) está en `~/Documents/Claude/2026-10 Empate flujos AED/`; lo
-  pega y publica Rafa. Figma (`3503:49633`), en el Bloque 8.
 
 ## SIGUIENTE — sin preguntar
 

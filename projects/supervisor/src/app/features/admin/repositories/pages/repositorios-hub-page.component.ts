@@ -6,9 +6,11 @@ import {
   computed,
   DestroyRef,
   DOCUMENT,
+  effect,
   inject,
   Injector,
   signal,
+  untracked,
   viewChild,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -115,14 +117,15 @@ const MAX_RECIENTES = 3;
  * («Premium Repository Hub») lo lleva a una rejilla de tarjetas por categoría (icono, cifra, nombre y descripción),
  * y su comportamiento:
  *   · pulsar una tarjeta la marca y abre a la derecha un panel con sus entradas y «Abrir repositorio»; pulsarla otra
- *     vez lo cierra, y otra tarjeta lo cambia. Escape y un clic fuera lo cierran. Lo que hay en el panel es lo de verdad (cada entrada
+ *     vez lo cierra, y otra tarjeta lo cambia, a cualquier ancho (DD-249). Escape y un clic fuera lo cierran. Lo que hay en el panel es lo de verdad (cada entrada
  *     lleva a su sitio), no la lista de ejemplo de la maqueta;
  *   · encima, el filtro por categoría y el buscador; el filtro, al cambiar, mueve las categorías (`startViewTransition`);
  *   · el buscador vacío, al entrar en él, ofrece los últimos repositorios abiertos, y elegir uno entra en él;
  *   · los ocho que el COA da por «Próximamente» (SISMAC-4064) salen con su cifra y esa marca, y no abren panel (DD-245).
  *
  * Todo cabe sin desplazar a 1440 × 800: las categorías de dos van una al lado de la otra. El panel va acoplado bajo la
- * barra de la app; si por el ancho taparía tarjetas, lleva velo, como un modal.
+ * barra de la app; si por el ancho pisa tarjetas, flota con sombra y las demás siguen a mano. Solo si no deja ninguna
+ * entera a la vista lleva velo, como un modal (DD-249).
  *
  * Cada categoría lleva un tono de etiqueta del DS (azul, morado, teal y naranja; no los de estado, rojo, verde y ámbar,
  * ni el marrón de «Administrativo», DD-176): en su título, en el icono y la cifra de cada destino, en el borde de la
@@ -469,40 +472,66 @@ export class RepositoriosHubPageComponent {
     });
   });
 
-  /** ¿El panel taparía tarjetas? Entonces va con velo, como modal (la maqueta lo hace en pantallas pequeñas). No sale de
-   *  un ancho fijo sino de medir: depende de la ventana y de si el menú lateral está abierto. */
-  protected readonly panelTapa = signal(false);
+  /** ¿El panel pisa alguna tarjeta? Entonces es una capa y se nota: lleva sombra en vez de ir acoplado. No sale de un
+   *  ancho fijo sino de medir: depende de la ventana y de lo que dejen a la vista el filtro y el buscador. */
+  protected readonly panelFlota = signal(false);
+  /** ¿No deja ninguna tarjeta entera a la vista? Entonces no hay otra que elegir, y va con velo, como modal. Se decide al
+   *  abrir y no cambia hasta cerrar: PrimeNG solo lee `modal` al mostrarse, y cambiarlo a medias dejaría un diálogo sin
+   *  velo, que además no atendería al clic fuera. */
+  protected readonly panelModal = signal(false);
+
+  /** Dónde empezó la última pulsación: ver `alClicFuera`. */
+  private pulsadoEn: EventTarget | null = null;
 
   constructor() {
     const ventana = this.document.defaultView;
-    const medir = (): void => this.panelTapa.set(this.tapaTarjetas());
+    const medir = (): void => this.panelFlota.set(this.tarjetasBajoElPanel().alguna);
+    const alPulsar = (event: PointerEvent): void => {
+      this.pulsadoEn = event.target;
+    };
     ventana?.addEventListener('resize', medir);
+    this.document.addEventListener('pointerdown', alPulsar, true);
     this.document.addEventListener('click', this.alClicFuera);
     inject(DestroyRef).onDestroy(() => {
       ventana?.removeEventListener('resize', medir);
+      this.document.removeEventListener('pointerdown', alPulsar, true);
       this.document.removeEventListener('click', this.alClicFuera);
+    });
+    // La tarjeta marcada ya no se ve (el filtro o el buscador, con el teclado, sin un clic fuera): su panel se va con ella.
+    effect(() => {
+      const id = this.seleccion();
+      if (id !== null && !this.sections().some((s) => s.cards.some((c) => c.id === id))) untracked(() => this.cerrar());
     });
   }
 
-  /** Un clic fuera del panel lo cierra. PrimeNG lo hace con `dismissible`, pero solo al pulsar el velo, y acoplado no lo
-   *  lleva. Las tarjetas se quedan fuera de la cuenta (cambian de panel o lo cierran ellas), y los recientes también;
-   *  las de «Próximamente», no: no abren nada, así que cuentan como fuera. */
+  /** Un clic fuera del panel lo cierra. PrimeNG lo hace con `dismissible`, pero solo al pulsar el velo, y sin velo no hay
+   *  nada que pulsar. Las tarjetas se quedan fuera de la cuenta: cambian de panel o lo cierran ellas, y las de
+   *  «Próximamente» no hacen nada. Los recientes, también.
+   *
+   *  ⚠️ Cuenta dónde EMPEZÓ la pulsación, no dónde acabó: arrastrar para seleccionar un texto del panel y soltar fuera da
+   *  un `click` en el ancestro común, y eso no es un clic fuera. El teclado (`detail` 0) no pulsa nada: su `click` manda. */
   private readonly alClicFuera = (event: MouseEvent): void => {
-    if (this.seleccion() === null || this.panelTapa()) return;
-    const target = event.target;
+    if (this.seleccion() === null || this.panelModal()) return;
+    const target = event.detail > 0 && this.pulsadoEn ? this.pulsadoEn : event.target;
     if (!(target instanceof Element) || !target.isConnected) return;
-    if (target.closest('.p-drawer, .repo-card:not(.repo-card--soon), .p-popover')) return;
+    if (target.closest('.p-drawer, .repo-card, .p-popover')) return;
     this.cerrar();
   };
 
-  /** El panel mide `--sc-spacing-25` y entra por la derecha: tapa si las tarjetas llegan más allá de su borde. */
-  private tapaTarjetas(): boolean {
+  /** Dónde empieza el panel, que mide `--sc-spacing-25` y entra por la derecha. */
+  private bordeDelPanel(): number {
     const ventana = this.document.defaultView;
-    const rejilla = this.document.querySelector('.hub__sections');
-    if (!ventana || !rejilla) return false;
+    if (!ventana) return Infinity;
     const raiz = ventana.getComputedStyle(this.document.documentElement);
     const ancho = parseFloat(raiz.getPropertyValue('--sc-spacing-25')) * parseFloat(raiz.fontSize);
-    return rejilla.getBoundingClientRect().right > ventana.innerWidth - ancho;
+    return ventana.innerWidth - ancho;
+  }
+
+  /** Qué tarjetas quedarían bajo el panel: alguna, aunque sea en parte, o todas. */
+  private tarjetasBajoElPanel(): { alguna: boolean; todas: boolean } {
+    const borde = this.bordeDelPanel();
+    const pisadas = Array.from(this.document.querySelectorAll('.repo-card'), (c) => c.getBoundingClientRect().right > borde);
+    return { alguna: pisadas.some(Boolean), todas: pisadas.length > 0 && pisadas.every(Boolean) };
   }
 
   /** Columnas de la rejilla de una categoría, como en la maqueta: dos con dos o menos, tres con tres, cuatro con más. */
@@ -510,24 +539,41 @@ export class RepositoriosHubPageComponent {
     return n <= 2 ? 2 : n === 3 ? 3 : 4;
   }
 
-  /** Pulsar una tarjeta abre su panel; pulsar la marcada, lo cierra (la maqueta). Las de «Próximamente» no abren nada. */
+  /** Abierto con el ratón, el foco sigue en la página. Si el tabulador llega a una tarjeta que el panel tapa entera, el
+   *  panel se aparta: el foco no se queda donde no se ve (WCAG 2.4.11). */
+  protected alEnfocarTarjeta(event: FocusEvent): void {
+    if (this.seleccion() === null) return;
+    const tarjeta = (event.target as Element).closest('.repo-card');
+    if (tarjeta && tarjeta.getBoundingClientRect().left >= this.bordeDelPanel()) this.cerrar();
+  }
+
+  /** Pulsar una tarjeta abre su panel; pulsar otra lo cambia; pulsar la marcada, lo cierra (la maqueta). Las de
+   *  «Próximamente» no hacen nada: ni abren ni le quitan la marca a la que la tiene. */
   protected alternar(id: string, event: MouseEvent): void {
     if (this.items.get(id)?.item.proximamente) return;
+    // El segundo clic de un doble clic no deshace el primero: quien lo hace quiere abrir, no abrir y cerrar.
+    if (event.detail > 1) return;
     if (this.seleccion() === id) {
       this.cerrar();
       return;
     }
     // `detail` 0: la pulsó el teclado (Enter o Espacio). Entonces el foco entra en el panel, y vuelve aquí al cerrar.
     this.abiertoCon = event.detail === 0 ? (event.currentTarget as HTMLElement) : null;
-    this.panelTapa.set(this.tapaTarjetas());
+    const bajoElPanel = this.tarjetasBajoElPanel();
+    this.panelFlota.set(bajoElPanel.alguna);
+    if (this.seleccion() === null) this.panelModal.set(bajoElPanel.todas);
     this.seleccion.set(id);
     this.recordar(id);
-    // Tras pintarse el panel (o su contenido nuevo, si ya estaba abierto): antes no existe a qué llevar el foco.
-    if (this.abiertoCon) {
-      afterNextRender(() => this.document.getElementById('repo-panel')?.querySelector<HTMLElement>('a, button')?.focus(), {
-        injector: this.injector,
-      });
-    }
+    // Tras pintarse el panel (o su contenido nuevo, si ya estaba abierto): el repositorio nuevo se lee desde arriba, y
+    // antes no existe a qué llevar el foco.
+    afterNextRender(
+      () => {
+        const contenido = this.document.getElementById('repo-panel')?.closest('.p-drawer-content');
+        if (contenido) contenido.scrollTop = 0;
+        if (this.abiertoCon) this.document.getElementById('repo-panel')?.querySelector<HTMLElement>('a, button')?.focus();
+      },
+      { injector: this.injector },
+    );
   }
 
   protected cerrar(): void {

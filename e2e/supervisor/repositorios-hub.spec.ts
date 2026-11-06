@@ -14,12 +14,17 @@ import { disableAnimations, forceDarkTheme, forceLightTheme, goto } from './help
  *   4. el panel: lo abre su tarjeta, con sus entradas; otra tarjeta lo cambia; lo cierran la misma tarjeta, Escape y
  *      un clic fuera; «Abrir repositorio» y cada entrada llevan a su sitio;
  *   5. con el teclado, el foco entra en el panel y vuelve a su tarjeta;
- *   6. acoplado, no tapa ninguna tarjeta y va sin velo; si las taparía, lleva velo y es un diálogo;
+ *   6. acoplado, no tapa ninguna tarjeta y va sin velo; si pisa alguna, flota con sombra y las demás siguen a mano; solo
+ *      si no deja ninguna entera a la vista lleva velo y es un diálogo;
  *   7. todo cabe sin desplazar a 1440 × 800;
  *   8. el buscador vacío ofrece los últimos repositorios abiertos, el último primero, y elegir uno entra en él;
- *   9. los ocho que el COA da por «Próximamente» (SISMAC-4064) llevan su cifra y esa marca, y no abren panel (DD-245);
+ *   9. los ocho que el COA da por «Próximamente» (SISMAC-4064) llevan su cifra y esa marca, no abren panel y no le quitan
+ *      la marca a la que la tiene (DD-245);
  *  10. al pasar, el borde se ENCIENDE en el tono fuerte de su grupo, en claro y en oscuro, también en las de
- *      «Próximamente»; marcada, su halo es de ese mismo color (DD-246).
+ *      «Próximamente»; marcada, su halo es de ese mismo color (DD-246);
+ *  11. marcar otra tarjeta es natural (DD-249, también el 6 y el 9): el doble clic no abre y cierra, arrastrar un texto
+ *      del panel hacia fuera no lo cierra, el panel nuevo se lee desde arriba, encoger la ventana no lo deja sin poder
+ *      cerrarse, y si la marcada deja de verse su panel se va con ella.
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -36,6 +41,9 @@ const filasDeLista = async (page: Page, ruta: string): Promise<number> => {
 
 const tarjeta = (page: Page, nombre: string) => page.locator('.repo-card', { hasText: nombre }).first();
 const panel = (page: Page) => page.locator('#repo-panel');
+/** Dos fotogramas: lo que deba cambiar ya ha cambiado. Para afirmar que algo SIGUE igual tras un gesto. */
+const trasPintar = (page: Page) =>
+  page.evaluate(() => new Promise((listo) => requestAnimationFrame(() => requestAnimationFrame(listo))));
 
 test('cada tarjeta dice cuántos hay, la cifra de su lista, y el lector la oye con su nombre', async ({ page }) => {
   const tipificaciones = await filasDeLista(page, 'admin/tipificaciones');
@@ -148,7 +156,9 @@ test('con el teclado, Enter abre el panel y lleva el foco dentro; Escape lo devu
   await expect(agenda).toBeFocused();
 });
 
-test('acoplado no tapa ninguna tarjeta y va sin velo; si las taparía, lleva velo y es un diálogo', async ({ page }) => {
+const sombra = (page: Page) => page.locator('.p-drawer').evaluate((el) => getComputedStyle(el).boxShadow);
+
+test('acoplado no tapa ninguna tarjeta y va sin velo ni sombra', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await goto(page, 'admin/repositorios');
   await tarjeta(page, 'Agendas').click();
@@ -158,12 +168,149 @@ test('acoplado no tapa ninguna tarjeta y va sin velo; si las taparía, lleva vel
   const derecha = await page.locator('.repo-card').evaluateAll((els) => Math.max(...els.map((e) => e.getBoundingClientRect().right)));
   expect(derecha).toBeLessThanOrEqual(borde);
   await expect(page.locator('.p-drawer-mask')).toHaveCount(0);
+  expect(await sombra(page)).toBe('none');
+});
 
-  await page.keyboard.press('Escape');
+/* El ratón de verdad y sin `force`: Playwright no pulsa lo que tiene algo encima, y el velo se llevaba el clic. */
+for (const ancho of [1440, 1280, 1100, 1024, 900, 768]) {
+  test(`a ${ancho}, con una tarjeta marcada, pulsar otra marca la otra: sin velo que se lleve el clic`, async ({ page }) => {
+    await page.setViewportSize({ width: ancho, height: 900 });
+    await goto(page, 'admin/repositorios');
+    await tarjeta(page, 'Agendas').click();
+    await expect(page.locator('.p-drawer-mask')).toHaveCount(0);
+
+    await tarjeta(page, 'Tipificaciones').click();
+    await expect(page.locator('.repo-card--selected')).toHaveCount(1);
+    await expect(tarjeta(page, 'Tipificaciones')).toHaveClass(/repo-card--selected/);
+    await expect(page.locator('.p-drawer-title')).toHaveText('Tipificaciones');
+    await expect(page.locator('.p-drawer')).toHaveAttribute('role', 'complementary');
+  });
+}
+
+test('si pisa tarjetas, flota con sombra; un clic fuera lo sigue cerrando', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
+  await goto(page, 'admin/repositorios');
   await tarjeta(page, 'Agendas').click();
-  await expect(drawer).toHaveAttribute('role', 'dialog');
-  await expect(page.locator('.p-drawer-mask')).toHaveCount(1);
+  await expect(panel(page)).toBeVisible();
+  expect(await sombra(page)).not.toBe('none');
+  await page.locator('h1').click();
+  await expect(panel(page)).toHaveCount(0);
+});
+
+test('si no deja ninguna tarjeta entera a la vista, lleva velo y es un diálogo; pulsar el velo lo cierra', async ({ page }) => {
+  await page.setViewportSize({ width: 600, height: 900 });
+  await goto(page, 'admin/repositorios');
+  await tarjeta(page, 'Agendas').click();
+  await expect(page.locator('.p-drawer')).toHaveAttribute('role', 'dialog');
+  const velo = page.locator('.p-drawer-mask');
+  await expect(velo).toHaveCount(1);
+  await velo.click({ position: { x: 100, y: 400 } });
+  await expect(panel(page)).toHaveCount(0);
+});
+
+test('encoger la ventana con el panel abierto: sigue sin velo, otra tarjeta lo cambia y un clic fuera lo cierra', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await goto(page, 'admin/repositorios');
+  await tarjeta(page, 'Agendas').click();
+  await expect(panel(page)).toBeVisible();
+
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await expect.poll(() => sombra(page)).not.toBe('none');
+  await expect(page.locator('.p-drawer')).toHaveAttribute('role', 'complementary');
+
+  await tarjeta(page, 'Tipificaciones').click();
+  await expect(page.locator('.p-drawer-title')).toHaveText('Tipificaciones');
+  await page.locator('h1').click();
+  await expect(panel(page)).toHaveCount(0);
+});
+
+test('el doble clic en una tarjeta la deja abierta: no abre y cierra', async ({ page }) => {
+  await goto(page, 'admin/repositorios');
+  await tarjeta(page, 'Agendas').dblclick();
+  await trasPintar(page);
+  await expect(panel(page)).toBeVisible();
+  await expect(tarjeta(page, 'Agendas')).toHaveClass(/repo-card--selected/);
+});
+
+test('arrastrar para seleccionar un texto del panel y soltar fuera no lo cierra; un clic fuera, sí', async ({ page }) => {
+  await goto(page, 'admin/repositorios');
+  await tarjeta(page, 'Agendas').click();
+  const caja = await panel(page).locator('.panel__description').boundingBox();
+  if (!caja) throw new Error('el panel no pinta su descripción');
+  await page.mouse.move(caja.x + 60, caja.y + 6);
+  await page.mouse.down();
+  await page.mouse.move(caja.x - 300, caja.y + 200, { steps: 6 });
+  await page.mouse.up();
+  await trasPintar(page);
+  await expect(panel(page)).toBeVisible();
+
+  await page.locator('h1').click();
+  await expect(panel(page)).toHaveCount(0);
+});
+
+test('al cambiar de tarjeta, el panel vuelve arriba: el repositorio nuevo se lee desde el principio', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 600 });
+  await goto(page, 'admin/repositorios');
+  await tarjeta(page, 'Agendas').click();
+  const contenido = page.locator('.p-drawer-content');
+  await expect(panel(page)).toBeVisible();
+  await contenido.evaluate((el) => {
+    el.scrollTop = 200;
+  });
+  expect(await contenido.evaluate((el) => el.scrollTop)).toBe(200);
+
+  await tarjeta(page, 'Plantillas').click();
+  await expect(page.locator('.p-drawer-title')).toHaveText('Plantillas');
+  await expect.poll(() => contenido.evaluate((el) => el.scrollTop)).toBe(0);
+});
+
+test('si el buscador o el filtro dejan fuera la tarjeta marcada, su panel se va con ella; si sigue a la vista, se queda', async ({
+  page,
+}) => {
+  await goto(page, 'admin/repositorios');
+  await tarjeta(page, 'Agendas').click();
+  await expect(panel(page)).toBeVisible();
+
+  // Con el teclado, sin el clic fuera que lo cerraría.
+  const buscador = page.getByRole('searchbox');
+  await buscador.focus();
+  await page.keyboard.type('agen');
+  await expect(tarjeta(page, 'Horarios')).toHaveCount(0);
+  await expect(tarjeta(page, 'Agendas')).toBeVisible();
+  await trasPintar(page);
+  await expect(panel(page)).toBeVisible();
+
+  await buscador.fill('equipos');
+  await expect(tarjeta(page, 'Equipos')).toBeVisible();
+  await expect(panel(page)).toHaveCount(0);
+
+  await buscador.fill('');
+  await tarjeta(page, 'Agendas').click();
+  await expect(panel(page)).toBeVisible();
+  await page.getByRole('button', { name: 'IA', exact: true }).focus();
+  await page.keyboard.press('Enter');
+  await expect(page.locator('.cat')).toHaveCount(1);
+  await expect(panel(page)).toHaveCount(0);
+});
+
+test('abierto con el ratón, si el tabulador llega a una tarjeta que el panel tapa entera, el panel se aparta', async ({ page }) => {
+  await page.setViewportSize({ width: 1024, height: 768 });
+  await goto(page, 'admin/repositorios');
+  await tarjeta(page, 'Agendas').click();
+  await expect(panel(page)).toBeVisible();
+  const tapada = await tarjeta(page, 'Plantillas').evaluate(
+    (el) => el.getBoundingClientRect().left >= (document.querySelector('.p-drawer')?.getBoundingClientRect().left ?? Infinity),
+  );
+  expect(tapada, 'a 1024, Plantillas queda entera bajo el panel').toBe(true);
+
+  // Agendas → Horarios → Email → Plantillas. Hasta llegar a ella, el panel sigue ahí.
+  await page.keyboard.press('Tab');
+  await page.keyboard.press('Tab');
+  await trasPintar(page);
+  await expect(panel(page)).toBeVisible();
+  await page.keyboard.press('Tab');
+  await expect(tarjeta(page, 'Plantillas')).toBeFocused();
+  await expect(panel(page)).toHaveCount(0);
 });
 
 test('todo a la vista: a 1440 × 800 el hub no desplaza', async ({ page }) => {
@@ -219,11 +366,14 @@ test('los ocho «Próximamente» del COA: con su cifra y la marca, y no abren pa
   await expect(panel(page)).toHaveCount(0);
   await expect(page.locator('.repo-card--selected')).toHaveCount(0);
 
-  // Con un panel abierto, pulsar una de estas cuenta como fuera: lo cierra.
+  // Con un panel abierto, pulsar una de estas no hace nada: ni la marca ni le quita la marca a la que la tiene.
   await tarjeta(page, 'Agendas').click();
   await expect(panel(page)).toBeVisible();
   await horarios.click({ force: true });
-  await expect(panel(page)).toHaveCount(0);
+  await trasPintar(page);
+  await expect(page.locator('.p-drawer-title')).toHaveText('Agendas');
+  await expect(tarjeta(page, 'Agendas')).toHaveClass(/repo-card--selected/);
+  await expect(horarios).not.toHaveClass(/repo-card--selected/);
 });
 
 /** El borde de arriba de la tarjeta y el tono fuerte de su grupo, ya resueltos, y el contraste del borde sobre su fondo. */

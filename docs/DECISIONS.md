@@ -43,6 +43,7 @@
 > | Tema | DD |
 > |---|---|
 > | El alta de usuario lleva los marcadores de paso del grupo y del agente: Identidad dice lo que falta, Acceso y Servicios asignados «Revisada» al dejarlas · sin «Falta: …» sobre el resumen · cierra la deuda de DD-222 §5 | DD-248 |
+> | En el hub de Repositorios, pulsar otra tarjeta marca la otra a cualquier ancho: si el panel pisa tarjetas, flota con sombra y sin velo; velo solo si no deja ninguna entera a la vista, decidido al abrir · «Próximamente» no hace nada con otra marcada · el doble clic no abre y cierra, arrastrar un texto del panel hacia fuera no lo cierra, al cambiar el panel vuelve arriba, y si la marcada deja de verse su panel se va con ella (enmienda DD-179 §4 y DD-245 §4) | DD-249 |
 > | Un azul menos: la etiqueta azul (`--sc-label-blue-*`) y los avisos de información toman `sky`; se retira la familia `azure`, en el código y en el Kit · en Figma, Comunicación en `sky` y el fondo de los tonos del hub en el paso 50, como el código | DD-247 |
 > | El borde de las tarjetas del hub de Repositorios, al pasar, en el tono FUERTE de su grupo (el punto de la etiqueta), no en su borde (un 200 más flojo que el gris de reposo) · también en las «Próximamente», sin mano ni pulsar · marcada, el halo del mismo tono fuerte (enmienda DD-179 §2 y DD-245 §4) | DD-246 |
 > | Repositorios como sus páginas de COA: Equipos avisa del nombre en gris y en rojo, su cifra abre la ficha en «Agentes» y enseña la foto (4453) · Agendas fija Nombre y «⋮» y sus campos son siempre «Personalizado N» (4440) · Plantillas corta el título con tooltip y avisa en rojo como Agendas (4438) · el hub: ocho «Próximamente» con su cifra y sin panel, un reciente entra en su repositorio y Labels con «Administración» (4064) (enmienda DD-179 §4 y §6) | DD-245 |
@@ -173,6 +174,51 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-249 · 2026-11-06 — En el hub, pulsar otra tarjeta marca la otra, a cualquier ancho
+
+**Contexto** · DD-179 §4 dice que otra tarjeta cambia el panel y que, si por el ancho taparía tarjetas, lleva velo y es
+modal. Las dos cosas chocan: con velo, el clic a otra tarjeta lo recibe el velo, y la nueva no se marca; solo se cierra la
+anterior. Pasa por debajo de 1362 px de ventana (la rejilla acaba en x 1012 y el panel mide 350). Jugado el 2026-11-06 con
+Playwright y ratón de verdad, de 1920 a 500 px, salieron otros siete gestos que no se comportaban como se espera.
+
+**Decisión** ·
+1. **Velo solo si no queda ninguna tarjeta entera a la vista** (medido al abrir: por debajo de unos 768 px). Si el panel
+   pisa alguna, no es modal: flota, con la sombra del `sc-drawer` sin `docked`, y las demás se pueden marcar. El rol
+   vuelve a ser `complementary`, como acoplado.
+2. **El velo se decide al abrir y no cambia hasta cerrar.** PrimeNG solo lee `modal` al mostrarse: encoger la ventana con
+   el panel abierto lo dejaba como diálogo sin velo, que además no atendía al clic fuera. Lo que sí cambia al vuelo es la
+   sombra.
+3. **«Próximamente», con otra marcada, no hace nada**: ni abre ni le quita la marca a la que la tiene. Antes contaba como
+   fuera y cerraba el panel (DD-245 §4).
+4. **El doble clic deja la tarjeta abierta.** El segundo clic no deshace el primero.
+5. **El clic fuera cuenta dónde empezó la pulsación.** Arrastrar para seleccionar un texto del panel y soltar fuera da un
+   `click` en el ancestro común, y lo cerraba.
+6. **Al cambiar de tarjeta, el panel vuelve arriba.** Conservaba el desplazamiento del repositorio anterior.
+7. **Si la marcada deja de verse, su panel se va con ella.** Con el teclado, el buscador o el filtro la dejaban fuera y el
+   panel se quedaba abierto, sin tarjeta marcada.
+8. **Si el tabulador llega a una tarjeta que el panel tapa entera, el panel se aparta** (abierto con el ratón, el foco sigue
+   en la página; WCAG 2.4.11). Abierto con el teclado no pasa: el foco está dentro del panel.
+
+**Razón** · Cambiar de tarjeta es el gesto principal de esta pantalla, y el velo lo rompía justo cuando el panel estorba
+más. Tarjetas bajo un panel de 350, medido: a 1280, 3 en parte; a 1100, 1 entera y 3 en parte; a 1024 y a 900, 3 enteras y 3
+en parte; a 768, 5 enteras. A 640 ya no queda ninguna entera (la primera acaba en x 353 y el panel empieza en x 290), y ahí
+el panel es casi toda la pantalla: el velo vuelve a tener sentido.
+
+**Descartadas** ·
+- *El velo, y que el clic lo atraviese hasta la tarjeta*: el velo dice que la página está parada, y las tarjetas no
+  reaccionan al pasar porque el ratón está sobre él. Se pulsaría a ciegas.
+- *Hacer sitio: encoger la rejilla al abrir el panel*: las tarjetas se mueven bajo el ratón en el momento de pulsar, y a
+  partir de cierto ancho la rejilla pasa de cuatro columnas a dos y todas cambian de sitio.
+- *«Próximamente» cerrando el panel, DD-245 tal cual*: al pasar responde como sus hermanas (DD-246), así que no se lee como
+  un hueco, y se perdía el panel sin ganar nada.
+
+**Consecuencias** · Enmienda DD-179 §4 (el velo) y DD-245 §4 («Próximamente»). Queda a sabiendas: a 1100 px o menos, una
+tarjeta tapada entera solo se alcanza cerrando el panel. Prueba: `repositorios-hub.spec.ts` §6, §9 y §11; 13 de sus pruebas
+enrojecen con el código anterior. Fuera del repo: Figma dibuja el velo en el paso 06 del hub (`figma-pendiente` §64), y el
+COA de 4064 lo cuenta si se publicó su prompt del 2026-10-31.
 
 ---
 
