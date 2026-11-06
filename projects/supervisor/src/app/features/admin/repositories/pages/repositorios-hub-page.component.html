@@ -64,7 +64,7 @@
     <!-- Una sección por categoría, con sus tarjetas (DD-179). Pulsar una abre su panel a la derecha; las que el COA da por
          «Próximamente» llevan su cifra y esa marca, y no abren nada (DD-245). -->
     @if (sections().length > 0) {
-    <div class="hub__sections" data-testid="repositorios-hub">
+    <div class="hub__sections" data-testid="repositorios-hub" (focusin)="alEnfocarTarjeta($event)">
       @for (section of sections(); track section.id) {
       <section
         class="cat"
@@ -134,15 +134,16 @@
 </div>
 
 <!-- El panel de la tarjeta marcada (la maqueta): acoplado bajo la barra de la app, como el panel lateral de GitHub, y
-     sin máscara, así que la página sigue a mano para marcar otra; con velo solo si taparía tarjetas (`panelTapa`). Su título es el nombre del repositorio; debajo, su
+     sin máscara, así que la página sigue a mano para marcar otra. Si pisa tarjetas, flota con sombra (`panelFlota`) y las
+     demás se siguen pudiendo marcar; con velo, solo si no deja ninguna entera a la vista (`panelModal`). Su título es el nombre del repositorio; debajo, su
      categoría, lo que es y «Abrir repositorio», lo primero que se hace aquí; luego sus entradas, cada una a su sitio.
      Lo cierran la X, Escape, volver a pulsar su tarjeta y un clic fuera. -->
 <sc-drawer
   position="right"
   width="var(--sc-spacing-25)"
   topOffset="var(--sc-spacing-4)"
-  docked
-  [modal]="panelTapa()"
+  [docked]="!panelFlota()"
+  [modal]="panelModal()"
   [visible]="!!panel()"
   (visibleChange)="$event || cerrar()"
   [header]="panel()?.nombre ?? null"

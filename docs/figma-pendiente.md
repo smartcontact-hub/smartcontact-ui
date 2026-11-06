@@ -992,12 +992,16 @@ mapa): (a) la fila de Comunicación tenía las tarjetas en `HUG` (128, 130 y 146
 146; ahora llevan `minHeight` 146 (con `FILL` en una fila que abraza, las de los pasos 04 y 05, ocultas, se aplastaban a
 30). (b) En el filtro, el `content` de «Clasificación» iba en `FILL` (73 para un texto de 74 más 21 de relleno) y el
 filtro, fijo a 481: ahora cada opción abraza su texto (66 · 112 · 104 · 181 · 42 = 505; en el prototipo, 500) y el
-buscador sigue al filtro. **El velo del paso 06 se queda**: el prototipo lo pone a 1280 (`panelTapa`, DD-179 §4: el panel,
-en x 930, taparía tarjetas que llegan a x 1012); a 1920 no. **Queda**: la cabecera mide 58 en Figma y 56 en el prototipo
+buscador sigue al filtro. **El velo del paso 06** casaba ese día con el prototipo, que lo ponía a 1280; desde DD-249 ya no
+(ver «Queda»). **Queda**: la cabecera mide 58 en Figma y 56 en el prototipo
 (todo el hub baja 2 px), el título del panel y la flecha de «Abrir repositorio» (`arrow_forward` en el código, chevron en
 Figma) y sus entradas de ejemplo. La flecha, **hecha el 2026-11-03**: las 30 (3 botones y 27 entradas) son `arrow_forward`.
 
 **Queda:**
+- **El velo del paso 06 (DD-249, 2026-11-06)**: a 1280 el panel ya no lleva velo: pisa la última columna con la sombra del
+  drawer sin acoplar, y las demás tarjetas siguen a mano. El velo queda para cuando no cabe ninguna tarjeta entera (por
+  debajo de unos 768 px). En el paso 06: quitar el velo, poner esa sombra y reescribir su nota. Y si alguna nota dice que
+  «Próximamente» cierra el panel, corregirla: con otra marcada, no hace nada.
 - ~~**Comunicación sin su azul**~~ → **Hecho el 2026-11-03 (DD-247)**: Comunicación va en `sky`, que ya está publicada
   (en la página Repositorios, 82 en 700, 65 del fondo al 50 y 6 bordes en 500; en «Componentes del Supervisor», las 12 de
   las piezas del hub), y el fondo de los cuatro tonos del hub pasa del 100 al 50, como `--sc-label-<color>-bg`. `azure`
