@@ -92,9 +92,9 @@ El de borrar y descartar sin teñir el modal (2026-10-31, DD-242; su trampa ya e
 93e71f3d:docs/handoff/supervisor-fichas.md`.
 El de la opción repetida de Tipificaciones (2026-10-31, DD-244, sin trampas propias): `git show 1bf926c4:docs/handoff/supervisor-fichas.md`.
 
-El de la barra común de asignar y Repositorios como sus COA (2026-10-31, DD-243 y DD-245): `git show archive/handoff-fichas-2026-11-10:docs/handoff/supervisor-fichas.md`.
+El de la barra común de asignar y Repositorios como sus COA (2026-10-31, DD-243 y DD-245): `git show 87e4d63f:docs/handoff/supervisor-fichas.md`.
 
-El de Repaso del Figma del Supervisor y «Fuera del DS», borrada (2026-11-03): `git show archive/handoff-fichas-2026-11-10:docs/handoff/supervisor-fichas.md`.
+El de Repaso del Figma del Supervisor y «Fuera del DS», borrada (2026-11-03): `git show 87e4d63f:docs/handoff/supervisor-fichas.md`.
 
 ## ✅ 2026-11-10 · Candado de canal fuera en Agentes y Grupos asignados, columnas según la General (DD-250)
 
