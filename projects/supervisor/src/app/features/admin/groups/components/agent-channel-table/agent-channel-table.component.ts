@@ -31,7 +31,7 @@ import {
 import { TooltipModule } from 'primeng/tooltip';
 import { LlegaAlPieDirective } from '@core/directives';
 
-import { AssignBarComponent, PresenceAvatarComponent, ScLinkButtonComponent } from '@shared/components';
+import { AssignBarComponent, PresenceAvatarComponent } from '@shared/components';
 import { ScCheckboxComponent as CheckboxComponent } from '@smartcontact-hub/components';
 
 import {
@@ -110,7 +110,6 @@ export function columnsRem(
     EmptyStateComponent,
     PresenceAvatarComponent,
     AssignBarComponent,
-    ScLinkButtonComponent,
     ToggleSwitchComponent,
     TooltipModule,
     TranslateModule,
@@ -225,6 +224,7 @@ export class AgentChannelTableComponent {
 
   readonly groupChannels = input.required<readonly GroupChannel[]>();
   /** Las familias que ofrece el grupo: una columna por cada una (DD-147). */
+  /* Los canales de la General del grupo: quitar uno en el grupo quita su columna. Cada agente se activa o desactiva por canal en su fila (DD-250). */
   protected readonly families = computed(() => familiesOf(this.groupChannels()));
   readonly links = input.required<readonly GroupAgentLink[]>();
   readonly availableAgents =

@@ -12,7 +12,7 @@
     <!-- La cabecera es la del DS, como en la tabla del grupo: la casilla de «todos» en su `headerTemplate`, y «Grupo» se
          ordena por nombre con su flecha (SISMAC-4058). -->
     <sc-datatable variant="list" size="sm" scrollable scrollHeight="flex" virtualScroll
-      [value]="visibleRows()" [columns]="columns()" [tableMinWidth]="tableMinWidth" dataKey="group.id"
+      [value]="visibleRows()" [columns]="columns()" [tableMinWidth]="tableMinWidth()" dataKey="group.id"
       externalSort [sortField]="orden() ? 'group' : undefined" [sortOrder]="orden() ?? 1" (sortChange)="onSortChange($event)">
       <div scTableEmpty>
         @let v = vacio();
@@ -88,14 +88,6 @@
 <ng-template #channelTpl let-row let-col="col">
   @if (!offers(row.group, col.field)) {
     <span class="assign__none sc-text-body-regular"><sc-celda-vacia [texto]="'agents.form.assigned.channel_not_offered' | translate" /></span>
-  } @else if (!allowed(col.field)) {
-    <!-- Sin ese canal en General: la casilla apagada y el candado que lleva allí. -->
-    <span class="assign__permission">
-      <sc-checkbox state="none" disabled [ariaLabel]="'groups.form.assigned.not_allowed' | translate: { name: row.group.name, channel: col.header }" />
-      <sc-button variant="secondary" appearance="text" size="sm" icon="lock"
-        [ariaLabel]="'agents.form.assigned.not_allowed_hint' | translate: { channel: col.header }"
-        (clicked)="irA.emit('canales')" />
-    </span>
   } @else if (isLastChannel(row.link, col.field)) {
     <span class="assign__locked" [pTooltip]="'groups.form.assigned.last_channel_hint' | translate" tooltipPosition="top">
       <sc-checkbox state="all" [disabled]="true"

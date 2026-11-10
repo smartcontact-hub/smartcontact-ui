@@ -29,7 +29,7 @@ async function seed(page: Page, restricted = false) {
 // La tabla es la misma en la ficha y en el panel del Monitor; desde el 2026-10-20 el panel ya no se abre desde el listado
 // de grupos (SISMAC-4056), y se mide en la ficha.
 {
-  test('solo Chat bloquea Teléfono, enlaza a sus canales y no permite añadir a quien solo tiene Email', async ({ page }) => {
+  test('solo Chat bloquea Teléfono, sin candado ni enlace, y no permite añadir a quien solo tiene Email', async ({ page }) => {
     await seed(page, true);
     await goto(page, 'admin/grupos/editar/11?seccion=agentes');
     const table = page.locator('sc-agent-channel-table');
@@ -37,8 +37,9 @@ async function seed(page: Page, restricted = false) {
     const blocked = row.getByRole('checkbox', { name: /Agente Chat.*Teléfono.*no está entre los canales/i });
     await expect(blocked).toBeDisabled();
     await expect(blocked).not.toBeChecked();
-    // Sus canales están en General desde DD-187 (antes, en Permisos).
-    await expect(row.getByRole('link', { name: /canales de Agente Chat/i })).toHaveAttribute('href', '/admin/agentes/editar/1?seccion=general');
+    // Sin candado ni enlace a General (DD-250): la casilla apagada es todo lo que dice.
+    await expect(row.getByRole('link', { name: /canales de Agente Chat/i })).toHaveCount(0);
+    await expect(row.locator('.assign__permission')).toHaveCount(0);
     await table.getByRole('button', { name: 'Todos', exact: true }).click();
     const incompatible = table.locator('tbody tr', { hasText: 'Agente Email' });
     await expect(incompatible).toContainText('Sin canales compatibles');
@@ -99,8 +100,9 @@ test('tabla, resúmenes y listado solo cuentan las familias permitidas, aunque e
   await expect(summary.locator('.resumen__channel', { hasText: 'Chat' }).locator('.resumen__digits')).toHaveText('1');
   await goto(page, 'admin/agentes/editar/1?seccion=grupos');
   const row = page.locator('sc-group-assignment-table tbody tr', { hasText: 'Grupo mixto' });
-  await expect(row.getByRole('checkbox', { name: /Teléfono.*no está entre los canales/i })).toBeDisabled();
-  await expect(row.getByRole('checkbox', { name: /Teléfono.*no está entre los canales/i })).not.toBeChecked();
+  // Agente Chat solo tiene Chat en General (DD-250): su tabla de grupos no tiene columna de Teléfono, ni casilla de Teléfono.
+  await expect(page.locator('sc-group-assignment-table thead')).not.toContainText('Teléfono');
+  await expect(row.getByRole('checkbox', { name: /Teléfono/i })).toHaveCount(0);
   // Los datos sueltos van en filas `sc-fact-row` (DD-186): «Canales», con el icono de cada uno en su `dd`, como la lista.
   const canales = summary.locator('.resumen__pair', { hasText: 'Canales' }).locator('dd');
   await expect(canales.getByRole('img', { name: 'Chat', exact: true })).toHaveCount(1);
