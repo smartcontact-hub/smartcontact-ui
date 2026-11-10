@@ -92,6 +92,24 @@ El de borrar y descartar sin teñir el modal (2026-10-31, DD-242; su trampa ya e
 93e71f3d:docs/handoff/supervisor-fichas.md`.
 El de la opción repetida de Tipificaciones (2026-10-31, DD-244, sin trampas propias): `git show 1bf926c4:docs/handoff/supervisor-fichas.md`.
 
+El de la barra común de asignar y Repositorios como sus COA (2026-10-31, DD-243 y DD-245): `git show archive/handoff-fichas-2026-11-10:docs/handoff/supervisor-fichas.md`.
+
+El de Repaso del Figma del Supervisor y «Fuera del DS», borrada (2026-11-03): `git show archive/handoff-fichas-2026-11-10:docs/handoff/supervisor-fichas.md`.
+
+## ✅ 2026-11-10 · Candado de canal fuera en Agentes y Grupos asignados, columnas según la General (DD-250)
+
+**Qué quedó hecho.** Sin candado, sin enlace ni tooltip en las dos tablas. Grupos asignados (agente) enseña solo los
+canales que el agente tiene en su General. Agentes asignados (grupo) enseña los canales de la General del grupo; cada
+agente activa o desactiva su casilla por canal en su fila, sin candado. Código: `group-assignment-table` y
+`agent-channel-table`; `agente-canales-permitidos.spec.ts` ajustado. DD-250 en `docs/DECISIONS.md`, con la fila del índice.
+Figma: la E5 (`3681:25364`) sin icono en la casilla de Meryl Streep, sin marcador 8, y la nota 5 con «tiene la casilla
+desactivada». COA de grupos y de agentes actualizados por Marta, fuera del repo.
+
+**Rastro.** PR #606 (`claude/kind-heisenberg-cy3zyd` → `main`), fusionado en `main` como `be6801e6`. Último commit de la
+rama `87e4d63f`. CI del PR en `87e4d63f`: success (run 42822285822). El de `d7a78ba1`, también success (run 42817995439).
+
+**Sello:** `main` HEAD `be6801e6` (PR #606 fusionado).
+
 ## ✅ 2026-11-06 · En el hub de Repositorios, pulsar otra tarjeta marca la otra (DD-249)
 
 > **Sello:** rama `areses/repo-card-selection-interactions-8ce085` sobre `main` HEAD `1bf926c4`.
@@ -115,41 +133,16 @@ El de la opción repetida de Tipificaciones (2026-10-31, DD-244, sin trampas pro
 - **No hecho**: los marcadores en las pantallas del alta de usuario en Figma (página `41:2846`), con las variantes
   `Marca=Paso …` del nav-item, como Grupos y Agentes.
 
-## ✅ 2026-11-03 · Repaso del Figma del Supervisor y «Fuera del DS», borrada
-
-> **Sello:** rama `claude/new-session-3g90bx` sobre `main` HEAD `c4ac441f`; la cuarta vuelta, `areses/supervisor-figma-round-4-e8e3b0` sobre `2577e70a`; la quinta, `areses/figma-tareas-pendientes-133fda` sobre `d98242c6`. Solo Figma y `figma-pendiente`.
-
-- **Figma** (server de la nube; detalle en `figma-pendiente` §54, §64, §65, §66 y §69, Email e «Ir a» en Grupos): los 4 avisos de descartar con los
-  botones de borrar (#575); las 64 barras medidas, dos contadores añadidos, y la edición de Agendas y Plantillas en
-  «Asignados»; DD-244 en Tipificaciones; DD-235 y DD-245 en Equipos (fuera el nombre repetido, que se había escapado);
-  las seis «Avanzado» de Agentes con la `.Subsection` plegable del Kit.
-- **«Fuera del DS»**: ninguna ficha quedaba como «se queda»; la página se borró, y lo que pide al Kit está en §66.
-- **Vueltas 2 a 4** (#582, #589, #590): lo montado a mano, a componentes locales con nombres en inglés; el hub cerrado;
-  25 fichas cerradas; avisos `Plain` (§65); Usuarios maquetada de nuevo; «Inglés» en «Si algo falla 5» de Agentes.
-- **Quinta vuelta** (§67, §68): piezas del Kit publicadas (tono de etiqueta, drawer acoplado, parte plegable,
-  `group-summary` en slots, `Surface=Card`, `summary-kpi`) y usadas; Icons publicado (`schedule`, `sell`, `label`,
-  `category`, `arrow_forward`, `key`, `hub`) y puesto en el hub, Usuarios y Agentes.
-- **No hecho** (con el evolutivo de Contact Center): Contact Center, Conversaciones, releer los COA, la cabecera del hub
-  (58 en Figma, 56 en el prototipo) y las versiones por página.
-
-## ✅ 2026-10-31 · La barra común de asignar y Repositorios como sus COA (DD-243, DD-245)
-
-> **Sello:** rama `areses/align-coa-figma-flows-3b1a9b` sobre `main` HEAD `c395300b`.
-
-- **Barra (DD-243)**: `sc-assign-bar` en las cinco tablas de asignar y el panel rápido del Monitor: filtro «Todos /
-  Asignados / Sin asignar», buscador que llena y «N asignados» al final. Editar abre en Asignados; ordenar por nombre. El
-  vacío dice «Asígnalos desde «Todos».» (ya no es pestaña). Prueba: `barra-comun-tablas`.
-- **Repositorios (DD-245)**: Equipos (aviso del nombre gris y rojo, la cifra abre en Agentes, foto), Agendas (Nombre y «⋮»
-  fijos, siempre «Personalizado N»), Plantillas (tooltip del título, Ctrl/Cmd+S y contenido en rojo) y el hub (8
-  «Próximamente» sin panel, el reciente entra, Labels con Administración). Pruebas: `equipos-como-coa-4453`,
-  `agendas-plantillas-como-coa`, `repositorios-hub`.
-- **COA**: prompts de 4453, 4440, 4438, 4064, 4058 y 4062 en `~/Documents/Claude/2026-10 Empate flujos AED/`; los pega
-  y publica Rafa. Releídos en vivo el 2026-10-31 (4056 v14, 4058 v23, 4060 v2, 4062 v4, 4438 v11, 4440 v10, 4064 v2).
-- **Medido de paso, sin arreglar**: el hub no cabe a 1440 × 800 (sobran 318 px, ya antes) y su prueba mide `.hub`, que no
-  desplaza (`.app-shell__content` sí). **Figma**: barras y hub hechos (`figma-pendiente` §64); el «❖ Alert modal» blanco,
-  publicado el 2026-11-03 (§65); el azul de Comunicación, `sky` (DD-247).
-
 ## SIGUIENTE — sin preguntar
+
+-0. **PR #606: fusionado en `main` (`be6801e6`).** El prototipo `sc-supervisor.pages.dev` sirve `main`, así que ya enseña el
+   cambio tras el despliegue. Los prototipos congelados se hacen con `npm run proto`, cuando se decida.
+   Pendiente de decisión de Marta: si la línea `aria-label` de la casilla desactivada («…no está entre los canales») se
+   quita también del nombre accesible (hoy se conserva para los lectores de pantalla).
+-0b. **Limpieza de i18n:** retirar `agents.form.assigned.not_allowed_hint` y `groups.form.assigned.permissions_link`, que ya
+   no tienen uso.
+-0c. **Figma:** en la E5, renumerar o dejar el hueco del marcador 8 (ahora van 5, 14, 16). Y la etiqueta «Asignados» que se
+   parte en dos líneas en Editar agente → Grupos asignados (nodo `3111:15657`): la arregla Marta.
 
 -2b. **Componente tabla (otra sesión):** el «evolutivo» de la tabla con los devs (BI y voz). Propuesta de producto:
    elegir UNA vez qué funciones de la Table de PrimeNG queremos y cerrarlo; hay un Excel con las de BI.
