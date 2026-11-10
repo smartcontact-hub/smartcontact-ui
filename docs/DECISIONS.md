@@ -193,7 +193,7 @@
 - *Mantener el candado con su tooltip (estado vigente de DD-217 §13)*: descartado por la decisión de producto de esta fecha.
 - *Dejar el candado solo en la tabla de grupos*: no se considera, porque la decisión es quitarlo en las dos.
 
-**Consecuencias** · Enmienda DD-217 §13 (el candado de canal en las dos tablas) y DD-187 §2 (el candado en los canales). En código: `group-assignment-table` filtra sus columnas por la General del agente y `agent-channel-table` por la General del grupo, como dice el punto 2; las dos quitan el candado, su enlace y su tooltip; `agente-canales-permitidos.spec.ts` se ajusta. Las claves `not_allowed_hint` y `permissions_link` de `i18n` quedan sin uso y se retiran en otra tarea. Pendiente en Figma: la pantalla E5 de `figma-pendiente.md` §61 pinta el candado.
+**Consecuencias** · Enmienda DD-217 §13 y DD-187 §2. En código: `group-assignment-table` filtra sus columnas por la General del agente y `agent-channel-table` por la General del grupo, como dice el punto 2; `agente-canales-permitidos.spec.ts` se ajusta. En Figma, la pantalla E5 de `figma-pendiente.md` §61 se actualizó el 2026-11-10: sin icono en la casilla y con la nota 5 en la regla nueva. Pendiente: retirar de `i18n` las claves `not_allowed_hint` y `permissions_link`, que ya no tienen uso.
 
 ---
 
