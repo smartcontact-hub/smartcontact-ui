@@ -1142,7 +1142,7 @@ Figma) y sus entradas de ejemplo. La flecha, **hecha el 2026-11-03**: las 30 (3 
 - ~~**§61 · La ficha de grupo, como su página de COA publicada (DD-223)**~~ → **HECHO el 2026-10-22** en la página
   Grupos (`41:2847`). Tres pantallas nuevas: V8 (`3678:25449`), solo «Permitir comentarios» con «En qué
   conversaciones», en «Otras configuraciones»; E5 (`3681:25364`), un agente sin canales del grupo con «Sin canales
-  compatibles» y el candado, y el Custom modal «¿Sacar del grupo a 1 agente?» con «Cancelar» y «Sacar» en rojo; V9
+  compatibles» (sin candado desde DD-250, que lo quita de las dos tablas), y el Custom modal «¿Sacar del grupo a 1 agente?» con «Cancelar» y «Sacar» en rojo; V9
   (`3682:26036`), el grupo recién creado en «Asignados» con «Sin agentes asignados» y «Asígnalos desde la pestaña
   «Todos».» (V7, con búsqueda, sin tocar). V1 y V2 con el rótulo «En qué conversaciones». Hojas del alta (filas 7, 8,
   12, 14 y 16) y de la edición (fila 1: la entrada desde la rueda de la monitorización, solo administradores, sin

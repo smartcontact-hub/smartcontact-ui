@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | La tabla de grupos del agente enseña solo los canales que tiene marcados en General, sin candado ni enlace (enmienda DD-217 §13 y DD-187 §2) | DD-250 |
 > | El alta de usuario lleva los marcadores de paso del grupo y del agente: Identidad dice lo que falta, Acceso y Servicios asignados «Revisada» al dejarlas · sin «Falta: …» sobre el resumen · cierra la deuda de DD-222 §5 | DD-248 |
 > | En el hub de Repositorios, pulsar otra tarjeta marca la otra a cualquier ancho: si el panel pisa tarjetas, flota con sombra y sin velo; velo solo si no deja ninguna entera a la vista, decidido al abrir · «Próximamente» no hace nada con otra marcada · el doble clic no abre y cierra, arrastrar un texto del panel hacia fuera no lo cierra, al cambiar el panel vuelve arriba, y si la marcada deja de verse su panel se va con ella (enmienda DD-179 §4 y DD-245 §4) | DD-249 |
 > | Un azul menos: la etiqueta azul (`--sc-label-blue-*`) y los avisos de información toman `sky`; se retira la familia `azure`, en el código y en el Kit · en Figma, Comunicación en `sky` y el fondo de los tonos del hub en el paso 50, como el código | DD-247 |
@@ -174,6 +175,25 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-250 · 2026-11-10 — Fuera el candado de canal: la tabla del agente enseña solo los canales que tiene marcados
+
+**Contexto** · Desde DD-187 §2 y DD-217 §13, las dos tablas de asignación pintan un candado en el canal que el grupo ofrece y el agente no tiene marcado en General. El candado lleva a General › Canales y tiene el tooltip «X no está entre sus canales: se marcan en General». Producto decide quitarlo, con su enlace y su tooltip.
+
+**Decisión** ·
+1. **Sin candado en las dos tablas.** Se quitan el icono, el enlace a General › Canales y el tooltip. En una celda de canal que el agente no tiene marcado, la casilla queda apagada y sin nada más.
+2. **La tabla de grupos del agente (Grupos asignados) enseña solo los canales que el agente tiene marcados en General.** Si el usuario marca solo Teléfono, no ve las columnas de Email ni de Chat. Lo que se ve es lo que ha marcado, y nada más.
+3. **Las reglas que no cambian**: un canal que el grupo no ofrece sale con un guion; el último canal de un grupo asignado no se quita desde la tabla («Debe atender al menos un canal. Para quitarlo del grupo, desmarca Asignado.»); un grupo que no deja ningún canal al agente sale con «Sin canales compatibles» y no se puede asignar; un grupo sin canales se puede asignar siempre.
+
+**Razón** · Decisión de producto del 2026-11-10. El candado añadía un enlace y un tooltip en una celda que ya dice lo que pasa, y mostrar columnas que el agente no puede atender obligaba a explicar por qué estaban ahí.
+
+**Descartadas** ·
+- *Mantener el candado con su tooltip (estado vigente de DD-217 §13)*: descartado por la decisión de producto de esta fecha.
+- *Dejar el candado solo en la tabla de grupos*: no se considera, porque la decisión es quitarlo en las dos.
+
+**Consecuencias** · Enmienda DD-217 §13 (el candado de canal en las dos tablas) y DD-187 §2 (el candado en los canales). Pendiente en el código: `group-assignment-table` (líneas 91-98) y `agent-channel-table` (líneas 58-68) pintan el candado; las claves `not_allowed`, `not_allowed_hint` y `permissions_link` de `i18n` quedan sin uso. Las pruebas que lo comprueban (`panel-agentes-grupo.spec.ts`, `agente-grupos-asignados.spec.ts`) enrojecen al quitarlo y se actualizan con el cambio. Pendiente en Figma: la pantalla E5 de `figma-pendiente.md` §61 pinta el candado. Pendiente de confirmar con producto: si la columna de un canal que el agente no tiene se quita del todo en la tabla del agente o sigue en la tabla del grupo con su casilla apagada (el punto 2 se aplica a la tabla del agente).
 
 ---
 
