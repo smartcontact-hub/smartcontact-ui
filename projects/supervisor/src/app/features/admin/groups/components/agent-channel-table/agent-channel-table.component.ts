@@ -224,9 +224,8 @@ export class AgentChannelTableComponent {
 
   readonly groupChannels = input.required<readonly GroupChannel[]>();
   /** Las familias que ofrece el grupo: una columna por cada una (DD-147). */
-  /* Solo las familias que algún agente de la lista tiene marcadas en General: un canal que nadie puede atender no tiene columna. */
-  protected readonly families = computed(() =>
-    familiesOf(this.groupChannels()).filter(ch => this.availableAgents().some(agent => this.allowed(agent, ch))));
+  /* Los canales de la General del grupo: quitar uno en el grupo quita su columna. Cada agente se activa o desactiva por canal en su fila (DD-250). */
+  protected readonly families = computed(() => familiesOf(this.groupChannels()));
   readonly links = input.required<readonly GroupAgentLink[]>();
   readonly availableAgents =
     input.required<readonly AgentChannelTableAgent[]>();

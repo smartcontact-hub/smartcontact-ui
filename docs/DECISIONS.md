@@ -184,7 +184,7 @@
 
 **Decisión** ·
 1. **Sin candado en las dos tablas.** Se quitan el icono, el enlace a General › Canales y el tooltip. En una celda de canal que el agente no tiene marcado, la casilla queda apagada y sin nada más.
-2. **Las dos tablas enseñan solo los canales marcados.** En la tabla de grupos del agente (Grupos asignados), las columnas son los canales que el agente tiene marcados en General: si el usuario marca solo Teléfono, no ve las columnas de Email ni de Chat. En la tabla de agentes del grupo, las columnas son los canales del grupo que algún agente de la lista tiene marcados en General, y un canal que el agente de esa fila no tiene sale con la casilla apagada, sin candado. Mismo criterio en las dos: lo que se ve es lo que se puede atender.
+2. **Las columnas son de la General de cada entidad, como en Voice.** En la tabla de grupos del agente (Grupos asignados), las columnas son los canales que el agente tiene marcados en General: si solo marca Teléfono, no ve las de Chat ni Email. En la tabla de agentes del grupo (Agentes asignados), las columnas son los canales que el grupo tiene en su General: si se quita Email en el grupo, desaparece su columna. Cada agente se activa o desactiva por canal en su fila; si no tiene ese canal en General, su casilla sale desactivada, sin candado ni enlace.
 3. **Las reglas que no cambian**: un canal que el grupo no ofrece sale con un guion; el último canal de un grupo asignado no se quita desde la tabla («Debe atender al menos un canal. Para quitarlo del grupo, desmarca Asignado.»); un grupo que no deja ningún canal al agente sale con «Sin canales compatibles» y no se puede asignar; un grupo sin canales se puede asignar siempre.
 
 **Razón** · Decisión de producto del 2026-11-10. El candado añadía un enlace y un tooltip en una celda que ya dice lo que pasa, y mostrar columnas que el agente no puede atender obligaba a explicar por qué estaban ahí.
@@ -193,7 +193,7 @@
 - *Mantener el candado con su tooltip (estado vigente de DD-217 §13)*: descartado por la decisión de producto de esta fecha.
 - *Dejar el candado solo en la tabla de grupos*: no se considera, porque la decisión es quitarlo en las dos.
 
-**Consecuencias** · Enmienda DD-217 §13 (el candado de canal en las dos tablas) y DD-187 §2 (el candado en los canales). En código: `group-assignment-table` y `agent-channel-table` quitan el candado, su enlace y su tooltip, y filtran las columnas de canal como dice el punto 2; `agente-canales-permitidos.spec.ts` se ajusta. Las claves `not_allowed_hint` y `permissions_link` de `i18n` quedan sin uso y se retiran en otra tarea. Pendiente en Figma: la pantalla E5 de `figma-pendiente.md` §61 pinta el candado.
+**Consecuencias** · Enmienda DD-217 §13 (el candado de canal en las dos tablas) y DD-187 §2 (el candado en los canales). En código: `group-assignment-table` filtra sus columnas por la General del agente y `agent-channel-table` por la General del grupo, como dice el punto 2; las dos quitan el candado, su enlace y su tooltip; `agente-canales-permitidos.spec.ts` se ajusta. Las claves `not_allowed_hint` y `permissions_link` de `i18n` quedan sin uso y se retiran en otra tarea. Pendiente en Figma: la pantalla E5 de `figma-pendiente.md` §61 pinta el candado.
 
 ---
 
