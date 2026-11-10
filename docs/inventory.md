@@ -46,9 +46,9 @@
 | `sc-bulk-action-bar` | CUSTOM | experimental (sin maestro en el Kit) | — | 3 inputs | sc-message sc-button | ✓ | 2 |
 | `sc-bulk-edit-menu` | CUSTOM | experimental (sin maestro en el Kit) | — | 2 inputs | sc-select sc-button | ✓ | — |
 | `sc-bulk-transcription-modal` | CUSTOM | experimental (sin maestro en el Kit) | — | 16 inputs | sc-icon-tile sc-button sc-toggleswitch | ✓ | — |
-| `sc-button` | EXTENDED | ready | primeng/button, primeng/tooltip | 20 inputs | — | ✓ | 163 |
+| `sc-button` | EXTENDED | ready | primeng/button, primeng/tooltip | 20 inputs | — | ✓ | 162 |
 | `sc-card` | STANDARD | ready | primeng/card | 3 inputs | — | ✓ | — |
-| `sc-checkbox` | CUSTOM | ready | — | 6 inputs | — | ✓ | 36 |
+| `sc-checkbox` | CUSTOM | ready | — | 6 inputs | — | ✓ | 35 |
 | `sc-chip` | EXTENDED | ready | primeng/chip | 9 inputs | — | ✓ | 5 |
 | `sc-color-dot-picker` | CUSTOM | experimental (sin maestro en el Kit) | — | 1 inputs | sc-selectbutton | ✓ | 3 |
 | `sc-column-selector` | STANDARD | experimental (sin maestro en el Kit) | primeng/popover, primeng/tooltip | 1 inputs | — | ✓ | 1 |
