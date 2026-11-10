@@ -161,7 +161,7 @@ export class GroupAssignmentTableComponent {
         rowHeader: true,
         cellTemplate: this.groupTpl(),
       },
-      ...CHANNEL_FAMILIES.map((ch) => {
+      ...this.visibleFamilies().map((ch) => {
         const canal = this.translate.instant(FAMILY_LABEL_KEYS[ch]);
         return {
           field: ch,
@@ -188,9 +188,12 @@ export class GroupAssignmentTableComponent {
   });
 
   /** Lo que suman las columnas: el mínimo de la tabla, que desplaza por dentro antes que cortar el nombre. */
-  protected readonly tableMinWidth = `${
-    REM.assigned + REM.group + CHANNEL_FAMILIES.reduce((s, f) => s + REM.channel[f], 0) + REM.enabled
-  }rem`;
+  /* Solo las familias que el agente tiene marcadas en General: un canal que no tiene no tiene columna, ni candado. */
+  protected readonly visibleFamilies = computed(() => CHANNEL_FAMILIES.filter(ch => this.allowedChannels().includes(ch)));
+
+  protected readonly tableMinWidth = computed(() => `${
+    REM.assigned + REM.group + this.visibleFamilies().reduce((s, f) => s + REM.channel[f], 0) + REM.enabled
+  }rem`);
 
   readonly links = input.required<readonly GroupAgentLink[]>();
   readonly availableGroups = input.required<readonly AgentGroupAssignmentRef[]>();

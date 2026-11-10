@@ -56,17 +56,8 @@
 <!-- Una columna por canal DEL GRUPO, como la matriz de Contact Center. -->
 <ng-template #channelTpl let-row let-col="col">
   @if (!allowed(row.agent, col.field)) {
-    <span class="assign__permission">
-      <sc-checkbox state="none" disabled [ariaLabel]="'groups.form.assigned.not_allowed' | translate: { name: row.agent.name, channel: col.header }" />
-      <sc-link-button
-        icon="lock"
-        [routerLink]="['/admin/agentes/editar', row.agent.id]"
-        [queryParams]="{ seccion: 'general' }"
-        [ariaLabel]="'groups.form.assigned.permissions_link' | translate: { name: row.agent.name, channel: col.header }"
-        [pTooltip]="'groups.form.assigned.not_allowed_hint' | translate: { channel: col.header }"
-        tooltipPosition="top"
-      />
-    </span>
+    <!-- Sin ese canal en General: la casilla apagada, sin candado ni enlace. -->
+    <sc-checkbox state="none" disabled [ariaLabel]="'groups.form.assigned.not_allowed' | translate: { name: row.agent.name, channel: col.header }" />
   } @else if (isLastChannel(row.link, col.field)) {
     <!-- El ÚLTIMO canal no se quita aquí. Una casilla apagada no recibe foco ni ratón, así que el porqué va en su
          nombre accesible y en el tooltip de la envoltura. -->
