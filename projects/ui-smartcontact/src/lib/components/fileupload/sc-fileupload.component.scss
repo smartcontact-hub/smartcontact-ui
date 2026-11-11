@@ -28,6 +28,15 @@
   color: var(--sc-text-subtle);
 }
 
+/* El icono de «Elegir» va en línea de base con el texto, y el glifo de Material Symbols queda por encima del centro de
+ * las mayúsculas: medido en el prototipo de Grupos (distribución, «Música de espera»), a 2× de captura, el centro del
+ * «+» está en 30,0 y el de la «E» en 33,5 (1,75 px CSS). Con −0,125 em (1,75 px a 14 px) pasa a 0,5 px de diferencia,
+ * dentro del redondeo de píxel. El host `sc-icon` es el que va en línea (`inline-flex`); su `span` interior es de bloque
+ * y `vertical-align` no le afecta. */
+.sc-fileupload__icono {
+  vertical-align: -0.125em;
+}
+
 /* PrimeNG pinta la miniatura de cada archivo aunque no sea una imagen: sin `objectURL` queda un `<img>` roto, sin
  * `src` o con él vacío, que enseña su `alt`, el nombre repetido (un audio, revisión del 2026-10-15). Solo en ese caso,
  * fuera; la de una imagen se queda como en primeng.dev. customs-catalog §8. */
