@@ -67,9 +67,11 @@
         </div>
       }
 
-      <div class="modal-horario__fila">
-        <sc-toggleswitch inputId="especial-anual" [checked]="cadaAnio()" ariaLabelledBy="especial-anual-rotulo" (checkedChange)="cadaAnio.set($event)" />
-        <label class="sc-text-body-regular" id="especial-anual-rotulo" for="especial-anual">{{ 'repositories.horarios.repeat_yearly' | translate }}</label>
+      <div class="switch-field">
+        <sc-toggleswitch inputId="especial-anual" [ariaLabel]="'repositories.horarios.repeat_yearly' | translate" [checked]="cadaAnio()" (checkedChange)="cadaAnio.set($event)" />
+        <div class="switch-field__copy">
+          <label class="switch-field__label sc-text-body-regular" for="especial-anual">{{ 'repositories.horarios.repeat_yearly' | translate }}</label>
+        </div>
       </div>
     </div>
   </div>

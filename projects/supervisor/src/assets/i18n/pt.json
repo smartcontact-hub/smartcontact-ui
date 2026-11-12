@@ -1646,7 +1646,12 @@
       "period_deleted": "Período «{{name}}» eliminado",
       "special_delete_title": "Eliminar a data especial «{{name}}»?",
       "special_deleted": "Data especial «{{name}}» eliminada",
-      "only_year": "Só {{year}}"
+      "only_year": "Só {{year}}",
+      "in_use": "É usado por {{count}} grupos: passarão a atender sempre.",
+      "in_use_one": "É usado por 1 grupo: passará a atender sempre.",
+      "inactive_hint": "É usado por {{count}} grupos: desligado, conservam-no, mas não se poderá escolher noutros.",
+      "inactive_hint_one": "É usado por 1 grupo: desligado, conserva-o, mas não se poderá escolher noutros.",
+      "never_open": "Com estas regras não se atende nenhum dia."
     },
     "festivos": {
       "title": "Feriados",
@@ -1682,7 +1687,9 @@
         "name_required": "O nome é obrigatório"
       },
       "day_delete_title": "Eliminar o feriado «{{name}}»?",
-      "day_deleted": "Feriado «{{name}}» eliminado"
+      "day_deleted": "Feriado «{{name}}» eliminado",
+      "in_use": "É aplicado por {{count}} horários: deixarão de fechar estes dias.",
+      "in_use_one": "É aplicado por 1 horário: deixará de fechar estes dias."
     },
     "tipificaciones": {
       "title": "Tipificações",

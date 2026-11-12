@@ -50,14 +50,16 @@
               />
             </div>
           </div>
-          <div class="horario__estado">
+          <div class="switch-field">
             <sc-toggleswitch
               inputId="festivos-activo"
-              ariaLabelledBy="festivos-activo-rotulo"
+              [ariaLabel]="'repositories.festivos.active' | translate"
               [checked]="form().status === 'active'"
               (checkedChange)="update('status', $event ? 'active' : 'inactive')"
             />
-            <label class="sc-text-body-regular" id="festivos-activo-rotulo" for="festivos-activo">{{ 'repositories.festivos.active' | translate }}</label>
+            <div class="switch-field__copy">
+              <label class="switch-field__label sc-text-body-regular" for="festivos-activo">{{ 'repositories.festivos.active' | translate }}</label>
+            </div>
           </div>
         </div>
       </sc-subsection>

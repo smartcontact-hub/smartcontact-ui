@@ -30,6 +30,7 @@ import { type FechaEspecialNueva, HorarioEspecialModalComponent } from '../compo
 import { HorarioPeriodoModalComponent } from '../components/horario/horario-periodo-modal.component';
 import { DIAS_DE_LA_SEMANA, HorarioSemanaComponent } from '../components/horario/horario-semana.component';
 import { FestivosStore } from '../state/festivos.store';
+import { subcanalesConHorario } from '../state/horario-uso.service';
 import {
   ahoraEn,
   duenoDe,
@@ -124,6 +125,25 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
   readonly formDirty = this.dirtyState.dirty;
 
   protected readonly calendarios = this.festivosStore.items;
+
+  /**
+   * Solo las reglas, para el calendario: teclear el nombre no cambia ninguna, y sin esto el año (365 días) se volvía a
+   * calcular con cada tecla. Medido con la CPU frenada 6 veces: 80-100 ms por tecla antes (DD-252).
+   */
+  protected readonly reglas = computed(
+    () => {
+      const { week, periods, specials, holidayCalendarIds } = this.form();
+      return { week, periods, specials, holidayCalendarIds };
+    },
+    { equal: (a, b) => a.week === b.week && a.periods === b.periods && a.specials === b.specials && a.holidayCalendarIds === b.holidayCalendarIds },
+  );
+
+  /** Con estas reglas no se atiende ningún día: no bloquea guardar (puede ser a propósito), pero se dice. */
+  protected readonly nuncaAbre = computed(() => {
+    const { week, periods, specials } = this.reglas();
+    const vacia = (semana: Semana): boolean => semana.every((dia) => dia.length === 0);
+    return vacia(week) && periods.every((p) => vacia(p.week)) && specials.every((e) => e.slots.length === 0);
+  });
 
   /* ── Lo que falta (DD-219): el nombre y una semana que valga ──────────────────────────────────────────────────── */
 
@@ -260,8 +280,15 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
   protected readonly grupos = computed(() => {
     const id = this.horarioId;
     if (id === null || this.mode() !== 'edit') return [];
-    return this.groupsStore.groups().filter((g) => Object.values(g.chat?.attendanceScheduleIds ?? {}).includes(id));
+    return this.groupsStore.groups().filter((g) => subcanalesConHorario(g).some((s) => s.id === id));
   });
+  /** Con grupos que lo usan, lo que pasa al apagarlo, bajo el interruptor (DD-152). */
+  protected readonly avisoAlApagar = computed(() => {
+    this.lang();
+    const n = this.grupos().length;
+    return n === 0 ? null : (this.translate.instant(`repositories.horarios.inactive_hint${n === 1 ? '_one' : ''}`, { count: n }) as string);
+  });
+
   protected readonly avisoDeGrupos = computed(() => {
     this.lang();
     const n = this.grupos().length;

@@ -1646,7 +1646,12 @@
       "period_deleted": "Period “{{name}}” deleted",
       "special_delete_title": "Delete the special date “{{name}}”?",
       "special_deleted": "Special date “{{name}}” deleted",
-      "only_year": "{{year}} only"
+      "only_year": "{{year}} only",
+      "in_use": "{{count}} groups use it: they will be always open.",
+      "in_use_one": "1 group uses it: it will be always open.",
+      "inactive_hint": "{{count}} groups use it: turned off, they keep it, but it can't be chosen elsewhere.",
+      "inactive_hint_one": "1 group uses it: turned off, it keeps it, but it can't be chosen elsewhere.",
+      "never_open": "With these rules, no day is open."
     },
     "festivos": {
       "title": "Holidays",
@@ -1682,7 +1687,9 @@
         "name_required": "Name is required"
       },
       "day_delete_title": "Delete the holiday “{{name}}”?",
-      "day_deleted": "Holiday “{{name}}” deleted"
+      "day_deleted": "Holiday “{{name}}” deleted",
+      "in_use": "{{count}} schedules apply it: they will stop closing these days.",
+      "in_use_one": "1 schedule applies it: it will stop closing these days."
     },
     "tipificaciones": {
       "title": "Typifications",

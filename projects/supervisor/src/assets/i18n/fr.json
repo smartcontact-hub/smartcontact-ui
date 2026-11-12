@@ -1646,7 +1646,12 @@
       "period_deleted": "Période «\u00a0{{name}}\u00a0» supprimée",
       "special_delete_title": "Supprimer la date spéciale «\u00a0{{name}}\u00a0»\u00a0?",
       "special_deleted": "Date spéciale «\u00a0{{name}}\u00a0» supprimée",
-      "only_year": "{{year}} seulement"
+      "only_year": "{{year}} seulement",
+      "in_use": "{{count}} groupes l’utilisent\u00a0: ils seront toujours ouverts.",
+      "in_use_one": "1 groupe l’utilise\u00a0: il sera toujours ouvert.",
+      "inactive_hint": "{{count}} groupes l’utilisent\u00a0: désactivé, ils le gardent, mais il ne pourra pas être choisi ailleurs.",
+      "inactive_hint_one": "1 groupe l’utilise\u00a0: désactivé, il le garde, mais il ne pourra pas être choisi ailleurs.",
+      "never_open": "Avec ces règles, aucun jour n’est ouvert."
     },
     "festivos": {
       "title": "Jours fériés",
@@ -1682,7 +1687,9 @@
         "name_required": "Le nom est obligatoire"
       },
       "day_delete_title": "Supprimer le jour férié «\u00a0{{name}}\u00a0»\u00a0?",
-      "day_deleted": "Jour férié «\u00a0{{name}}\u00a0» supprimé"
+      "day_deleted": "Jour férié «\u00a0{{name}}\u00a0» supprimé",
+      "in_use": "{{count}} horaires l’appliquent\u00a0: ils cesseront de fermer ces jours.",
+      "in_use_one": "1 horaire l’applique\u00a0: il cessera de fermer ces jours."
     },
     "tipificaciones": {
       "title": "Typifications",

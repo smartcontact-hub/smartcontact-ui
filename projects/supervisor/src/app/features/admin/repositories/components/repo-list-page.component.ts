@@ -102,6 +102,11 @@ export class RepoListPageComponent<T extends RepoEntity> {
     titleKey: () => this.config().simpleDelete?.titleKey ?? 'repositories.delete_dialog.title',
     titleBulkKey: () => this.config().simpleDelete?.titleBulkKey ?? 'repositories.delete_dialog.title_bulk',
     params: (items) => ({ name: items[0]!.name, count: items.length, entity: this.entityPlural() }),
+    // A quién afecta, si la entidad lo dice (DD-252), como el borrado de una tipificación.
+    detail: () => {
+      const target = this.deleteTarget();
+      return target ? (this.config().uso?.aviso(target.map((t) => t.id)) ?? null) : null;
+    },
     accept: () => this.confirmDelete(null),
     cancel: () => this.cancelDelete(),
   });
@@ -344,6 +349,8 @@ export class RepoListPageComponent<T extends RepoEntity> {
       ids = toasted.map((t) => t.id);
     }
 
+    // Primero se sueltan las referencias: si no, el siguiente que se cree heredaría el id (DD-252).
+    this.config().uso?.soltar(ids);
     if (ids.length === 1) {
       this.store().deleteItem(ids[0]!);
       this.toastSuccess(this.toastKey('deleted', 'repositories.toasts.deleted_single'), {

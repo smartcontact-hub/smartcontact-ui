@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 
 import { RepoListPageComponent } from '../components/repo-list-page.component';
 import { RepoColumnDef, RepoPageConfig } from '../components/repo-types';
+import { FestivosUsoService } from '../state/horario-uso.service';
 import { type CalendarioDeFestivos, FestivosStore } from '../state/festivos.store';
 import { HorariosStore } from '../state/horarios.store';
 
@@ -31,6 +32,7 @@ const columnas = (horariosDe: (c: CalendarioDeFestivos) => number): readonly Rep
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FestivosPageComponent {
+  private readonly uso = inject(FestivosUsoService);
   protected readonly store = inject(FestivosStore);
   private readonly horariosStore = inject(HorariosStore);
 
@@ -54,6 +56,7 @@ export class FestivosPageComponent {
     searchKeys: ['name', 'description'],
     filePrefix: 'festivos',
     sheetNameKey: 'repositories.festivos.title',
+    uso: { aviso: (ids) => this.uso.aviso(ids), soltar: (ids) => this.uso.soltar(ids) },
     editRoute: '/admin/festivos',
     duplicable: true,
     duplicateAsCreate: true,

@@ -94,6 +94,7 @@ import {
 } from '../data/groups-data';
 import { GroupDefaultsStore } from '../state/group-defaults.store';
 import { HorariosStore } from '@features/admin/repositories/state/horarios.store';
+import { resumenDeLaSemana } from '@features/admin/repositories/state/horarios.core.mjs';
 import { TipificacionesStore } from '@features/admin/repositories/state/tipificaciones.store';
 import { AgendasStore } from '@features/admin/repositories/state/agendas.store';
 import { TemplatesStore } from '@features/admin/templates/state/templates.store';
@@ -676,12 +677,28 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
     (this.hasChatFamily() && !validQueueSize(this.form().chatQueue)) ||
     (this.hasEmail() && !validQueueSize(this.form().emailQueue)));
 
+  private horariosVivos(ids: ChatSettings['attendanceScheduleIds']): ChatSettings['attendanceScheduleIds'] {
+    if (!ids) return ids;
+    const existen = new Set(this.horariosStore.items().map((h) => h.id));
+    return Object.fromEntries(Object.entries(ids).map(([sub, id]) => [sub, typeof id === 'number' && !existen.has(id) ? null : id]));
+  }
+
   protected attendanceOptions(channel: ChatSubchannel) {
     this.lang();
     const current = this.form().chat.attendanceScheduleIds?.[channel];
     return [{ label: this.translate.instant('groups.form.chat.schedule_always'), value: null, disabled: false },
       ...this.horariosStore.items().filter(h => h.status === 'active' || h.id === current)
         .map(h => ({ label: h.name, value: h.id, disabled: h.status !== 'active' }))];
+  }
+
+  /** La semana del horario elegido en una línea («L–J 09:00–18:00; V 09:00–15:00»), bajo su desplegable; con «Siempre», nada. */
+  protected attendanceSummary(channel: ChatSubchannel): string | undefined {
+    this.lang();
+    const id = this.attendanceSchedule(channel);
+    const horario = id === null ? undefined : this.horariosStore.items().find((h) => h.id === id);
+    if (!horario) return undefined;
+    const dias = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].map((d) => this.translate.instant(`repositories.horarios.days_short.${d}`));
+    return resumenDeLaSemana(horario.week, dias, this.translate.instant('repositories.horarios.closed'), this.translate.instant('repositories.horarios.all_day'));
   }
 
   protected setAttendanceSchedule(channel: ChatSubchannel, value: unknown): void {
@@ -1021,7 +1038,8 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
       phoneQueue: g.phoneQueue,
       chatQueue: g.chatQueue,
       emailQueue: g.emailQueue,
-      chat: g.chat,
+      // Un horario que ya no existe se abre como «Siempre» (DD-252), igual que una agenda borrada sale de la lista.
+      chat: { ...g.chat, attendanceScheduleIds: this.horariosVivos(g.chat.attendanceScheduleIds) },
       channels: new Set(group.channels),
       strategy: group.strategy,
       subStrategy: group.subStrategy ?? SUB_STRATEGIES[0]!,

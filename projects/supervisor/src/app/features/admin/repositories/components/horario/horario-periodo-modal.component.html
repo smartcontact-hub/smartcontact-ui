@@ -34,9 +34,11 @@
       </div>
     </div>
 
-    <div class="modal-horario__fila">
-      <sc-toggleswitch inputId="periodo-anual" [checked]="cadaAnio()" ariaLabelledBy="periodo-anual-rotulo" (checkedChange)="cadaAnio.set($event)" />
-      <label class="sc-text-body-regular" id="periodo-anual-rotulo" for="periodo-anual">{{ 'repositories.horarios.repeat_yearly' | translate }}</label>
+    <div class="switch-field">
+      <sc-toggleswitch inputId="periodo-anual" [ariaLabel]="'repositories.horarios.repeat_yearly' | translate" [checked]="cadaAnio()" (checkedChange)="cadaAnio.set($event)" />
+      <div class="switch-field__copy">
+        <label class="switch-field__label sc-text-body-regular" for="periodo-anual">{{ 'repositories.horarios.repeat_yearly' | translate }}</label>
+      </div>
     </div>
 
     <div class="field">

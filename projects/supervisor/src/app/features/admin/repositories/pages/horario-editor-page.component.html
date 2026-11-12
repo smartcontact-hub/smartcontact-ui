@@ -69,14 +69,22 @@
                   />
                 </div>
               </div>
-              <div class="horario__estado">
+              <!-- Interruptor con su rótulo, como «Activo» en la ficha de usuario. Con grupos que lo usan, dice qué les pasa al
+                   apagarlo (DD-152: lo conservan, pero no se ofrece a otros). -->
+              <div class="switch-field" [class.switch-field--top]="avisoAlApagar()">
                 <sc-toggleswitch
                   inputId="horario-activo"
-                  ariaLabelledBy="horario-activo-rotulo"
+                  [ariaLabel]="'repositories.horarios.active' | translate"
+                  [ariaDescribedBy]="avisoAlApagar() ? 'horario-activo-ayuda' : null"
                   [checked]="form().status === 'active'"
                   (checkedChange)="update('status', $event ? 'active' : 'inactive')"
                 />
-                <label class="sc-text-body-regular" id="horario-activo-rotulo" for="horario-activo">{{ 'repositories.horarios.active' | translate }}</label>
+                <div class="switch-field__copy">
+                  <label class="switch-field__label sc-text-body-regular" for="horario-activo">{{ 'repositories.horarios.active' | translate }}</label>
+                  @if (avisoAlApagar(); as ayuda) {
+                    <p id="horario-activo-ayuda" class="switch-field__hint sc-text-caption-regular">{{ ayuda }}</p>
+                  }
+                </div>
               </div>
             </div>
           </sc-subsection>
@@ -161,7 +169,10 @@
         <sc-section-card titleKey="repositories.horarios.section_calendar" hintKey="repositories.horarios.section_calendar_hint" surface="subtle" icon="calendar_month">
           <sc-subsection>
             <div class="bloque">
-              <sc-horario-calendario [reglas]="form()" [calendarios]="calendarios()" [zona]="form().timezone" (cambiarDia)="cambiarDia($event)" />
+              @if (nuncaAbre()) {
+                <sc-message severity="warn" [text]="'repositories.horarios.never_open' | translate" />
+              }
+              <sc-horario-calendario [reglas]="reglas()" [calendarios]="calendarios()" [zona]="form().timezone" (cambiarDia)="cambiarDia($event)" />
             </div>
           </sc-subsection>
         </sc-section-card>

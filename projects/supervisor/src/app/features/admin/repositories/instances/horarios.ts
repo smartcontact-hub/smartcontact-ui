@@ -7,6 +7,7 @@ import { GroupsStore } from '@features/admin/groups/state/groups.store';
 import { DIAS_DE_LA_SEMANA } from '../components/horario/horario-semana.component';
 import { RepoListPageComponent } from '../components/repo-list-page.component';
 import { RepoColumnDef, RepoPageConfig } from '../components/repo-types';
+import { HorarioUsoService, subcanalesConHorario } from '../state/horario-uso.service';
 import { FestivosStore } from '../state/festivos.store';
 import { ahoraEn, estadoEn, resumenDeLaSemana } from '../state/horarios.core.mjs';
 import { type Horario, HorariosStore } from '../state/horarios.store';
@@ -60,17 +61,18 @@ const columnas = (d: Datos): readonly RepoColumnDef<Horario>[] => [
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HorariosPageComponent {
+  private readonly uso = inject(HorarioUsoService);
   protected readonly store = inject(HorariosStore);
   private readonly festivos = inject(FestivosStore);
   private readonly groupsStore = inject(GroupsStore);
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
 
-  /** Cuántos grupos atienden con cada horario (DD-152): los que lo eligen en algún subcanal de chat. */
+  /** Cuántos grupos atienden con cada horario (DD-152): los que lo tienen en un subcanal que lo usa de verdad (DD-252). */
   private readonly gruposPorHorario = computed(() => {
     const cuenta = new Map<number, number>();
     for (const g of this.groupsStore.groups()) {
-      for (const id of new Set(Object.values(g.chat?.attendanceScheduleIds ?? {}))) if (typeof id === 'number') cuenta.set(id, (cuenta.get(id) ?? 0) + 1);
+      for (const id of new Set(subcanalesConHorario(g).map((s) => s.id))) cuenta.set(id, (cuenta.get(id) ?? 0) + 1);
     }
     return cuenta;
   });
@@ -106,6 +108,7 @@ export class HorariosPageComponent {
     searchKeys: ['name', 'timezone', 'description'],
     filePrefix: 'horarios',
     sheetNameKey: 'repositories.horarios.title',
+    uso: { aviso: (ids) => this.uso.aviso(ids), soltar: (ids) => this.uso.soltar(ids) },
     editRoute: '/admin/horarios',
     duplicable: true,
     duplicateAsCreate: true,
