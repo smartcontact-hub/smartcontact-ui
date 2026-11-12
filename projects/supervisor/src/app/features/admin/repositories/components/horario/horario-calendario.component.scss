@@ -63,6 +63,15 @@
   aspect-ratio: 1;
   padding: 0;
   cursor: pointer;
+  /* Como todos los botones de la app (`sc-preset/css.ts`, la pulsación de DD-113 §9): el fondo cambia en 150 ms y al
+   * pulsar se hunde al 96 %. Solo esas dos propiedades. */
+  transition:
+    background-color 150ms ease-out,
+    transform 150ms ease-out;
+
+  &:active {
+    transform: scale(0.96);
+  }
 
   &:hover {
     background: var(--sc-bg-hover);
@@ -93,7 +102,8 @@
   color: var(--sc-text-secondary);
 }
 
-/* Fecha especial o festivo: una marca en la esquina. */
+/* Fecha especial o festivo: una marca en la esquina, del color de marca. No el amarillo de aviso: una fecha especial no
+ * avisa de nada, y el color aquí significa algo (AGENTS, UX 1). */
 .cal__dia--excepcion::after {
   position: absolute;
   inset-block-start: var(--sc-spacing-0-125);
@@ -101,7 +111,7 @@
   inline-size: var(--sc-spacing-0-25);
   block-size: var(--sc-spacing-0-25);
   border-radius: var(--sc-radius-full);
-  background: var(--sc-icon-warning);
+  background: var(--sc-icon-primary);
   content: '';
 }
 
