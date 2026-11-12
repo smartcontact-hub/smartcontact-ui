@@ -102,8 +102,8 @@ const ALTAS = [
   /* Desde DD-163, «Nueva agenda» navega a su editor; el diálogo es «Nuevo contacto», dentro del editor. El alta
    * (`/crear`) no entra: su primer botón es «Crear agenda», que guarda. */
   'admin/agendas/editar/1',
-  /* Desde DD-251, «Nuevo horario» navega a su editor, que se mide en RUTAS; sus diálogos (periodo y fecha especial)
-   * se abren dentro de él. */
+  /* Desde DD-251, «Nuevo horario» navega a su editor, que se mide en RUTAS; sus diálogos (periodo y fecha especial),
+   * en la prueba de abajo: aquí el primer «Añadir» es «Añadir franja», que no abre ninguno. */
   /* Desde DD-173, «Nueva tipificación» navega a su ficha, que se mide en RUTAS; no tiene panel de alta. */
   'admin/variables',
   'admin/entidades',
@@ -230,6 +230,17 @@ for (const ruta of RUTAS) {
     await goto(page, ruta);
     await page.waitForLoadState('networkidle');
     cuadrar(await medirRuta(page, ruta));
+  });
+}
+
+/* Los dos diálogos del editor de un horario (DD-251, DD-252), abiertos por su nombre. */
+for (const boton of ['Añadir periodo', 'Añadir fechas especiales']) {
+  test(`agrupación · ${boton} en el editor de un horario`, async ({ page }) => {
+    await goto(page, 'admin/horarios/editar/9');
+    await page.waitForLoadState('networkidle');
+    await page.getByRole('button', { name: boton, exact: true }).first().click();
+    await expect(page.locator('[role="dialog"]:visible, .p-dialog:visible').first()).toBeVisible();
+    cuadrar(await medirVista(page, `admin/horarios/editar/9 · ${boton}`));
   });
 }
 

@@ -1,4 +1,4 @@
-import { afterNextRender, ChangeDetectionStrategy, Component, computed, ElementRef, inject, Injector, input, output, signal } from '@angular/core';
+import { afterNextRender, ChangeDetectionStrategy, Component, computed, DestroyRef, effect, ElementRef, inject, Injector, input, output, signal, untracked } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ScButtonComponent, ScSelectButtonComponent, ScTagComponent } from '@smartcontact-hub/components';
 
@@ -105,6 +105,30 @@ export class HorarioCalendarioComponent {
     this.lang();
     const celda = this.celda(this.seleccion());
     return { ...celda, titulo: this.formatos().dia.format(aFecha(celda.fecha)), horas: this.horas(celda.dia), motivo: this.motivo(celda.dia) };
+  });
+
+  /*
+   * Destello de los días que cambian (DD-252), como el de las filas del índice de una ficha (DD-222 §9): al guardar un
+   * periodo o una fecha especial, los días cuyo resultado cambió se encienden una vez y se apagan, para ver de reojo qué
+   * ha tocado la regla. El primer pintado, un cambio de año y uno de idioma no destellan. Con «reducir movimiento», nada.
+   */
+  protected readonly destello = signal<ReadonlySet<string>>(new Set());
+  private anterior: { anio: number; firmas: Map<string, string> } | null = null;
+  private temporizador: ReturnType<typeof setTimeout> | undefined;
+  private readonly sinTemporizador = inject(DestroyRef).onDestroy(() => clearTimeout(this.temporizador));
+  private readonly vigilarCambios = effect(() => {
+    const meses = this.meses();
+    const anio = untracked(() => this.anio());
+    const firmas = new Map<string, string>();
+    for (const m of meses) for (const c of m.celdas) firmas.set(c.fecha, `${c.dia.tipo}|${c.color ?? ''}|${c.dia.tramos.map((t) => t.join('-')).join(',')}`);
+    const previo = this.anterior;
+    this.anterior = { anio, firmas };
+    if (!previo || previo.anio !== anio) return;
+    const cambiados = [...firmas].filter(([fecha, firma]) => previo.firmas.get(fecha) !== firma).map(([fecha]) => fecha);
+    if (cambiados.length === 0) return;
+    this.destello.set(new Set(cambiados));
+    clearTimeout(this.temporizador);
+    this.temporizador = setTimeout(() => this.destello.set(new Set()), 1200);
   });
 
   /** Los periodos de este horario, para la leyenda. */

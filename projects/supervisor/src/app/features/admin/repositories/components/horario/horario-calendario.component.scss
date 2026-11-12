@@ -105,6 +105,30 @@
   content: '';
 }
 
+/* Destello de un día que acaba de cambiar (DD-252, como DD-222 §9): una capa de marca que se apaga. Solo `opacity`. */
+.cal__dia--destello::before {
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: var(--sc-bg-primary);
+  opacity: 0;
+  pointer-events: none;
+  animation: cal-destello 1200ms var(--sc-easing-default);
+  content: '';
+}
+
+@keyframes cal-destello {
+  from {
+    opacity: 0.35;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cal__dia--destello::before {
+    animation: none;
+  }
+}
+
 .cal__dia--hoy {
   font-weight: var(--sc-font-weight-semibold);
   text-decoration: underline;

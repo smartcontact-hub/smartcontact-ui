@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, input, output, si
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import type { MenuItem } from 'primeng/api';
 import { MenuModule } from 'primeng/menu';
+import { TooltipModule } from 'primeng/tooltip';
 import {
   type ScColumnCellContext,
   type ScColumnDef,
@@ -44,7 +45,7 @@ let menuIdCounter = 0;
  */
 @Component({
   selector: 'sc-horario-filas-table',
-  imports: [MenuModule, ScButtonComponent, ScDatatableComponent, ScEmptyStateComponent, ScTagComponent, TranslateModule],
+  imports: [MenuModule, ScButtonComponent, ScDatatableComponent, ScEmptyStateComponent, ScTagComponent, TooltipModule, TranslateModule],
   templateUrl: './horario-filas-table.component.html',
   styleUrl: './horario-filas-table.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

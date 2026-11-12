@@ -37,7 +37,8 @@
   @if (etiquetas().has(col.field) && row.color) {
     <sc-tag variant="label" [labelColor]="row.color" [value]="row.celdas[col.field]" />
   } @else {
-    {{ row.celdas[col.field] }}
+    <!-- Una línea, como las demás tablas: lo que no cabe se recorta y se lee entero al pasar (`table__td-text`). -->
+    <span class="table__td-text sc-text-body-regular" [pTooltip]="row.celdas[col.field]" showOnEllipsis tooltipPosition="top">{{ row.celdas[col.field] }}</span>
   }
 </ng-template>
 

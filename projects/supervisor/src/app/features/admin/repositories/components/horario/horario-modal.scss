@@ -1,8 +1,9 @@
 /* Lo común de los dos diálogos del horario (periodo y fecha especial): grupos a 14 y, dentro, a 7. */
+/* Entre grupos, 28; dentro de cada uno (`.bloque`), 14 (AGENTS, UX 9). */
 .modal-horario {
   display: flex;
   flex-direction: column;
-  gap: var(--sc-spacing-1);
+  gap: var(--sc-spacing-2);
 }
 
 .modal-horario__pie {

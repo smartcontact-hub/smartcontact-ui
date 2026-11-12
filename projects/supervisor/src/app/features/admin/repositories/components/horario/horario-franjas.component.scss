@@ -18,3 +18,18 @@
 .franjas__guion {
   color: var(--sc-text-secondary);
 }
+
+/* Dentro de la semana, sus filas entran en la rejilla del día (nombre · interruptor · franjas): cada una, en la tercera
+ * columna. Fuera (la fecha especial), una columna como siempre. */
+:host(.semana__franjas) {
+  display: contents;
+
+  .franjas__fila,
+  .franjas__mas {
+    grid-column: 3;
+  }
+
+  .franjas__mas {
+    justify-self: start;
+  }
+}

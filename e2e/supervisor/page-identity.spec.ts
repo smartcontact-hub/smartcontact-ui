@@ -50,6 +50,8 @@ test.beforeEach(async ({ page }) => {
 const CONTENIDO = [
   { ruta: 'admin/repositorios', nombre: 'hub de repositorios' },
   { ruta: 'admin/agendas', nombre: 'repositorio · agendas' },
+  { ruta: 'admin/horarios', nombre: 'repositorio · horarios' },
+  { ruta: 'admin/festivos', nombre: 'repositorio · festivos' },
   { ruta: 'config/aed/servicio', nombre: 'AED · servicio' },
   { ruta: 'config/aed/agentes', nombre: 'AED · agentes' },
   { ruta: 'config/aed/grupos', nombre: 'AED · grupos' },

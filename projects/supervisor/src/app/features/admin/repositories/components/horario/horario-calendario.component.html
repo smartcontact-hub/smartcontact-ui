@@ -34,6 +34,7 @@
             [class.cal__dia--excepcion]="celda.excepcion"
             [class.cal__dia--hoy]="esHoy(celda.fecha)"
             [class.cal__dia--elegido]="celda.fecha === seleccion()"
+            [class.cal__dia--destello]="destello().has(celda.fecha)"
             [attr.data-color]="celda.color"
             [attr.data-fecha]="celda.fecha"
             [attr.aria-label]="celda.aria"

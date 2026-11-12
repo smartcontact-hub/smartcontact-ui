@@ -5,45 +5,48 @@
   (closed)="cerrado.emit()"
 >
   <div class="modal-horario">
-    <div class="grid grid--2">
-      <div class="field">
-        <sc-inputtext
-          inputId="periodo-nombre"
-          fluid
-          required
-          [label]="'repositories.columns.name' | translate"
-          [placeholder]="'repositories.horarios.period_name_placeholder' | translate"
-          [value]="nombre()"
-          [error]="errorDeNombre()"
-          (valueChange)="nombre.set($event)"
-          (focusout)="dejarNombre($event)"
-        />
+    <!-- Dos grupos (AGENTS, UX 9): lo que define el periodo, a 14 entre campos; y su semana, a 28. -->
+    <div class="bloque">
+      <div class="grid grid--2">
+        <div class="field">
+          <sc-inputtext
+            inputId="periodo-nombre"
+            fluid
+            required
+            [label]="'repositories.columns.name' | translate"
+            [placeholder]="'repositories.horarios.period_name_placeholder' | translate"
+            [value]="nombre()"
+            [error]="errorDeNombre()"
+            (valueChange)="nombre.set($event)"
+            (focusout)="dejarNombre($event)"
+          />
+        </div>
+        <div class="field">
+          <sc-datepicker
+            inputId="periodo-fechas"
+            selectionMode="range"
+            required
+            [label]="'repositories.horarios.period_dates' | translate"
+            [placeholder]="'repositories.horarios.period_dates_placeholder' | translate"
+            [range]="rango()"
+            [error]="errorDeFechas()"
+            [helperText]="resumen()"
+            (rangeChange)="rango.set($event)"
+          />
+        </div>
       </div>
-      <div class="field">
-        <sc-datepicker
-          inputId="periodo-fechas"
-          selectionMode="range"
-          required
-          [label]="'repositories.horarios.period_dates' | translate"
-          [placeholder]="'repositories.horarios.period_dates_placeholder' | translate"
-          [range]="rango()"
-          [error]="errorDeFechas()"
-          [helperText]="resumen()"
-          (rangeChange)="rango.set($event)"
-        />
-      </div>
-    </div>
 
-    <div class="switch-field">
-      <sc-toggleswitch inputId="periodo-anual" [ariaLabel]="'repositories.horarios.repeat_yearly' | translate" [checked]="cadaAnio()" (checkedChange)="cadaAnio.set($event)" />
-      <div class="switch-field__copy">
-        <label class="switch-field__label sc-text-body-regular" for="periodo-anual">{{ 'repositories.horarios.repeat_yearly' | translate }}</label>
+      <div class="switch-field">
+        <sc-toggleswitch inputId="periodo-anual" [ariaLabel]="'repositories.horarios.repeat_yearly' | translate" [checked]="cadaAnio()" (checkedChange)="cadaAnio.set($event)" />
+        <div class="switch-field__copy">
+          <label class="switch-field__label sc-text-body-regular" for="periodo-anual">{{ 'repositories.horarios.repeat_yearly' | translate }}</label>
+        </div>
       </div>
-    </div>
 
-    <div class="field">
-      <span class="field__label sc-text-caption-semibold">{{ 'repositories.horarios.period_color' | translate }}</span>
-      <sc-color-dot-picker [options]="colores()" [value]="color()" (valueChange)="color.set($event)" [ariaLabel]="'repositories.horarios.period_color' | translate" />
+      <div class="field">
+        <span class="field__label sc-text-caption-semibold">{{ 'repositories.horarios.period_color' | translate }}</span>
+        <sc-color-dot-picker [options]="colores()" [value]="color()" (valueChange)="color.set($event)" [ariaLabel]="'repositories.horarios.period_color' | translate" />
+      </div>
     </div>
 
     <div class="field">

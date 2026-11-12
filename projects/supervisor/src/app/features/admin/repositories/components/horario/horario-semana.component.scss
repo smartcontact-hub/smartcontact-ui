@@ -12,15 +12,22 @@
   list-style: none;
 }
 
-/* Nombre · interruptor · franjas: las tres columnas alineadas entre días, y el error debajo de las franjas. */
+/* Nombre · interruptor · franjas, en una rejilla: cada franja es una fila de la tercera columna (`display: contents` en
+ * `sc-horario-franjas`), así que el nombre y el interruptor se centran con la PRIMERA franja sin medir alturas, y las
+ * demás franjas, «Añadir franja» y el error caen debajo, en su columna. */
 .semana__dia {
   display: grid;
   grid-template-columns: var(--sc-spacing-5) auto minmax(0, 1fr);
-  align-items: start;
+  align-items: center;
   column-gap: var(--sc-spacing-1);
-  row-gap: var(--sc-spacing-0-25);
+  row-gap: var(--sc-spacing-0-5);
   padding-block: var(--sc-spacing-0-5);
   border-block-end: 1px solid var(--sc-border-subtle);
+
+  /* El primero, sin aire encima: el rótulo de la semana (en el diálogo de periodo) ya pone el suyo. */
+  &:first-child {
+    padding-block-start: 0;
+  }
 
   &:last-child {
     border-block-end: 0;
@@ -28,11 +35,13 @@
 }
 
 .semana__nombre,
-.semana__cerrado {
-  padding-block-start: var(--sc-spacing-0-5);
+sc-toggleswitch {
+  grid-row: 1;
 }
 
 .semana__cerrado {
+  grid-column: 3;
+  grid-row: 1;
   color: var(--sc-text-secondary);
 }
 
