@@ -2999,7 +2999,20 @@
     "date_is": "La date est",
     "date_is_not": "La date n'est pas",
     "date_before": "Date antérieure à",
-    "date_after": "Date postérieure à"
+    "date_after": "Date postérieure à",
+    "choose_year": "Choisir l’année",
+    "choose_month": "Choisir le mois",
+    "choose_date": "Choisir la date",
+    "prev_decade": "Décennie précédente",
+    "next_decade": "Décennie suivante",
+    "prev_year": "Année précédente",
+    "next_year": "Année suivante",
+    "prev_month": "Mois précédent",
+    "next_month": "Mois suivant",
+    "prev_hour": "Heure précédente",
+    "next_hour": "Heure suivante",
+    "prev_minute": "Minute précédente",
+    "next_minute": "Minute suivante"
   },
   "auth": {
     "login": {

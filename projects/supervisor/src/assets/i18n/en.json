@@ -2999,7 +2999,20 @@
     "date_is": "Date is",
     "date_is_not": "Date is not",
     "date_before": "Date is before",
-    "date_after": "Date is after"
+    "date_after": "Date is after",
+    "choose_year": "Choose year",
+    "choose_month": "Choose month",
+    "choose_date": "Choose date",
+    "prev_decade": "Previous decade",
+    "next_decade": "Next decade",
+    "prev_year": "Previous year",
+    "next_year": "Next year",
+    "prev_month": "Previous month",
+    "next_month": "Next month",
+    "prev_hour": "Previous hour",
+    "next_hour": "Next hour",
+    "prev_minute": "Previous minute",
+    "next_minute": "Next minute"
   },
   "auth": {
     "login": {

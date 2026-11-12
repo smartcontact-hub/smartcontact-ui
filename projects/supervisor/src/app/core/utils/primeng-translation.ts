@@ -71,6 +71,21 @@ export function primengTranslation(
     choose: t('primeng.choose'),
     upload: t('primeng.upload'),
     cancel: t('primeng.cancel'),
+    // Los nombres de los botones del calendario y de la hora (DD-252): el lector los anunciaba en inglés («Choose Date»,
+    // «Next Month», «Next Hour») dentro de una interfaz en español; los vio la batería de estrés de Horarios.
+    chooseYear: t('primeng.choose_year'),
+    chooseMonth: t('primeng.choose_month'),
+    chooseDate: t('primeng.choose_date'),
+    prevDecade: t('primeng.prev_decade'),
+    nextDecade: t('primeng.next_decade'),
+    prevYear: t('primeng.prev_year'),
+    nextYear: t('primeng.next_year'),
+    prevMonth: t('primeng.prev_month'),
+    nextMonth: t('primeng.next_month'),
+    prevHour: t('primeng.prev_hour'),
+    nextHour: t('primeng.next_hour'),
+    prevMinute: t('primeng.prev_minute'),
+    nextMinute: t('primeng.next_minute'),
     aria: { ...ariaActual, removeLabel: t('primeng.remove') },
   };
 }
