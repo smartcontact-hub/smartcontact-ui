@@ -810,8 +810,9 @@ test.describe('sc-datepicker', () => {
     });
     await expect(page.getByTestId('sc-datepicker-error').getByText('La fecha no es válida')).toBeVisible();
     await input.click();
-    await expect(page.locator('.p-datepicker-panel')).toBeVisible();
-    const panel = page.locator('.p-datepicker-panel');
+    // El panel que abre el campo: la demo enseña además uno en línea (selección múltiple, DD-251), que no es este.
+    const panel = page.locator('.p-datepicker-panel:not(.p-datepicker-panel-inline)');
+    await expect(panel).toBeVisible();
     expect((await styleOf(panel, ['border-radius']))['border-radius']).toBe('6px');
     await page.keyboard.press('Escape');
     await screenshotBaseline(page, 'datepicker');
