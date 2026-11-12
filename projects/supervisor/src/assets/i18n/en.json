@@ -1372,7 +1372,6 @@
         "emails": "Mail accounts and triggers that route incoming emails",
         "agendas": "The contacts each agent sees in their phone's address book",
         "horarios": "Schedule slots and operating shifts for the contact center",
-        "festivos": "Holidays shared by several schedules",
         "plantillas": "Predefined messages for quick replies and campaigns",
         "tipificaciones": "Closing categories to classify conversations",
         "labels": "Color labels to organize and filter entities",

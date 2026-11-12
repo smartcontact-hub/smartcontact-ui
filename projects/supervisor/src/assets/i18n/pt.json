@@ -1372,7 +1372,6 @@
         "emails": "Contas de correio e triggers que distribuem os emails recebidos",
         "agendas": "Os contatos que cada agente vê na agenda do seu telefone",
         "horarios": "Faixas horárias e turnos operacionais do contact center",
-        "festivos": "Feriados partilhados por vários horários",
         "plantillas": "Mensagens predefinidas para respostas rápidas e campanhas",
         "tipificaciones": "Categorias de fechamento para classificar conversas",
         "labels": "Etiquetas de cor para organizar e filtrar entidades",

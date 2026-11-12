@@ -92,7 +92,15 @@ export const REPOSITORIES_ROUTES: Routes = [
   {
     /* Los calendarios de festivos que los horarios aplican: su lista y su editor. */
     path: 'festivos',
-    data: repoInstanceEnAdmin('repositories.festivos.title'),
+    /* Cuelgan de Horarios, que es desde donde se llega («Gestionar festivos»): no tienen tarjeta en el hub. */
+    data: {
+      breadcrumb: [
+        { labelKey: 'sidebar.administration', link: false as const },
+        { labelKey: 'sidebar.repositories', link: '/admin/repositorios' as const },
+        { labelKey: 'repositories.horarios.title', link: '/admin/horarios' as const },
+        { labelKey: 'repositories.festivos.title' },
+      ],
+    },
     children: [
       { path: '', loadComponent: () => import('./instances/festivos').then((m) => m.FestivosPageComponent) },
       {
