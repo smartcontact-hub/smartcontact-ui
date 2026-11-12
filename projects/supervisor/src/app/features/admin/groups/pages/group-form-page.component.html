@@ -450,7 +450,7 @@
             <div class="field">
               <span class="field__label sc-text-caption-semibold" id="group-hold-music-label">{{ 'groups.form.announcements.hold_music' | translate }}</span>
               <div class="upload-field" role="group" aria-labelledby="group-hold-music-label">
-                <ng-container *ngTemplateOutlet="filePicker; context: { key: 'holdMusicFile', id: 'group-hold-music' }" />
+                <ng-container *ngTemplateOutlet="audioPicker; context: { key: 'holdMusicFile', id: 'group-hold-music' }" />
               </div>
             </div>
           </div>
@@ -472,7 +472,7 @@
                   <span class="field__label sc-text-caption-semibold" id="group-outbound-audio-label">{{ 'groups.form.announcements.outbound_audio' | translate }}</span>
                   <div class="upload-field" role="group" aria-labelledby="group-outbound-audio-label">
                     <!-- Su ayuda dice para qué llamadas es: aquí ya no la tiene al lado del teléfono saliente. -->
-                    <ng-container *ngTemplateOutlet="filePicker; context: { key: 'outboundAudioFile', id: 'group-outbound-audio', help: 'groups.form.announcements.outbound_audio_info' }" />
+                    <ng-container *ngTemplateOutlet="audioPicker; context: { key: 'outboundAudioFile', id: 'group-outbound-audio', help: 'groups.form.announcements.outbound_audio_info' }" />
                   </div>
                 </div>
               }
@@ -889,6 +889,25 @@
   <div class="field">
     <sc-select [label]="'groups.form.advanced.transfer' | translate" [inputId]="'group-' + channel + '-transfer'" [value]="queue.transferSec" [helperText]="'groups.form.advanced.transfer_hint' | translate" (valueChange)="setQueueNumber(channel, 'transferSec', $event)" optionValue="value" [options]="durationOptions(queue.transferSec)" />
   </div>
+</ng-template>
+
+<!-- Elegir un audio, en la música de espera y en el audio saliente: el campo propio del Supervisor (botón «Elegir»,
+     nombre, ✕ y reproductor), no el de subida de archivos del DS, que no contempla el reproductor. Los demás audios
+     (identificador de cola, «Eres el siguiente») siguen con `filePicker` hasta que se decida el evolutivo. -->
+<ng-template #audioPicker let-key="key" let-id="id" let-help="help">
+  <sc-audio-picker
+    [inputId]="id + '-upload'"
+    [file]="audioDe(key)"
+    [accept]="audioAccept"
+    [chooseLabel]="'groups.form.announcements.pick_audio' | translate"
+    [dropLabel]="'groups.form.announcements.drop_file' | translate"
+    [removeLabel]="'groups.form.announcements.remove_file' | translate"
+    [invalidTypeSummary]="'groups.form.announcements.invalid_type' | translate"
+    [invalidTypeDetail]="'groups.form.announcements.invalid_type_detail' | translate"
+    [helperText]="(help ? (help | translate) + ' ' : '') + ('groups.form.announcements.audio_formats' | translate)"
+    (fileChosen)="onAudioPicked($any(key), $event)"
+    (removed)="setAnnouncement($any(key), null)"
+  />
 </ng-template>
 
 <!-- Elegir un audio: el «Advanced» de primeng.dev (revisión del 2026-10-15, que deshace el «basic» del 2026-10-09)

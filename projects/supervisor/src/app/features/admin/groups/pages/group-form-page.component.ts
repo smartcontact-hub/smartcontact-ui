@@ -17,6 +17,7 @@ import {
   NameInplaceComponent,
   ResourceOptionComponent,
   type FaltaDelResumen,
+  AudioPickerComponent,
 } from '@shared/components';
 import { changedKeys, createFormDirtyState } from '@shared/utils/form-dirty-state';
 import { nombreDeCopia } from '@shared/utils/copy-name';
@@ -215,6 +216,7 @@ type AudioKey = 'holdMusicFile' | 'queueIdFile' | 'nextInLineFile' | 'outboundAu
   selector: 'sc-group-form-page',
   imports: [
     NgTemplateOutlet,
+    AudioPickerComponent,
     ChannelIconComponent,
     NameInplaceComponent,
     CheckboxComponent,
@@ -1168,6 +1170,16 @@ export class GroupFormPageComponent implements DirtyAware, OnInit {
   protected onAudioFile(key: AudioKey, files: readonly File[]): void {
     const file = files[0];
     if (file) this.setAnnouncement(key, { name: file.name, size: file.size });
+  }
+
+  /** El audio elegido en el campo propio (música de espera y audio saliente): su nombre y su tamaño. */
+  protected onAudioPicked(key: AudioKey, file: File): void {
+    this.setAnnouncement(key, { name: file.name, size: file.size });
+  }
+
+  /** Lo que hay guardado de un audio, para el campo propio. */
+  protected audioDe(key: string): AudioFile | null {
+    return this.form().announcements[key as AudioKey];
   }
 
   /** Lo guardado de cada audio, para la lista del uploader. La misma lista mientras no cambie: el uploader la pinta

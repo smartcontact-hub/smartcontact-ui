@@ -2083,6 +2083,7 @@
         "source_file": "Ficheiro",
         "tts_text": "Texto que a voz lê",
         "choose_file": "Carregar ficheiro",
+        "pick_audio": "Escolher",
         "drop_file": "ou largue aqui o ficheiro.",
         "remove_file": "Remover ficheiro",
         "audio_formats": "Aceita ficheiros .wav e .mp3.",

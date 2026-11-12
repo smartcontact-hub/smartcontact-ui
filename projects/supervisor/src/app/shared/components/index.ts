@@ -67,3 +67,7 @@ export { AltaPieComponent } from './alta-pie/alta-pie.component';
 // Botón de solo icono que navega con routerLink (quick-win de la auditoría UX, 2026-10): local
 // porque depende de @angular/router, que @smartcontact-hub/components no tiene como peer.
 export { ScLinkButtonComponent } from './link-button/sc-link-button.component';
+
+// El campo de audio de las fichas: «Elegir», nombre, ✕ y reproductor. Propio del Supervisor hasta el evolutivo de la subida de archivos.
+export { AudioPickerComponent } from './audio-picker/audio-picker.component';
+export type { AudioPickerFile } from './audio-picker/audio-picker.component';
