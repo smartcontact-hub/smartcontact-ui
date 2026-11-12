@@ -342,7 +342,7 @@ export function motivoSinRevision(rutas) {
   return [
     `Has tocado ${rutas.length} fichero(s) de pantalla del Supervisor sin pasar la revisión previa: el primer filtro visual no puede ser el usuario (DD-123).`,
     ...rutas.slice(0, 5).map((r) => `  · ${r}`),
-    'Antes de enseñarlo: `npm run revision -- <ruta de cada pantalla>` (la captura a 1440 y mide la agrupación). Mira las capturas con la skill better-layout, arregla lo medible y lista al usuario lo que sea de gusto.',
+    'Antes de enseñarlo: `npm run revision -- <ruta de cada pantalla>` (la captura a 1440, mide la agrupación y busca cada pieza de la plantilla en el resto del Supervisor, DD-252). Mira las capturas con la skill better-layout, arregla lo medible y lista al usuario lo que sea de gusto.',
     'Si paras a mitad y aún no hay nada que enseñar, dilo en el mensaje y vuelve a cerrar: a la segunda deja pasar.',
   ].join('\n');
 }

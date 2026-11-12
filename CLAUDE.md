@@ -30,6 +30,7 @@ del trabajo con agentes están en [AGENTS.md](AGENTS.md): léelas antes de tocar
 5. El primer arreglo falló → lo siguiente es una MEDICIÓN, no otro arreglo. (#8)
 6. Push → preflight UNA vez sobre el árbol FINAL; veredicto = `npm run ci:verdict`. (#7)
 7. "Bloqueado", "esperando a Rafa", o voy a RECOMENDAR un cambio → ¿qué decidió ya el repo? (#10 #14)
+8. Voy a CONSTRUIR una pieza de pantalla → ¿cuál usa ya el Supervisor para eso? `npm run revision` lo mide. (#10)
 <!-- tarjeta:fin -->
 
 Resumen operativo:

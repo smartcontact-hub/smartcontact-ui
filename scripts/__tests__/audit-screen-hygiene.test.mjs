@@ -12,6 +12,7 @@ import {
   acusaDePrimeras,
   rolesAMano,
   titlesNativos,
+  filasEditadasAMano,
   NATIVO_DEL_ROL,
   TOAST_DEL_SISTEMA,
 } from '../audit-screen-hygiene.mjs';
@@ -237,4 +238,36 @@ test('titlesNativos: la entrada `title` de un componente nuestro no es un toolti
 test('titlesNativos: ni un comentario ni `pTooltip` cuentan; en un .ts, solo su `template:`', () => {
   assert.deepEqual(titlesNativos('<!-- <span title="x"> --><span [pTooltip]="x" tooltipPosition="top"></span>', true), []);
   assert.deepEqual(titlesNativos("// <span title=\"x\">\nconst a = 1;\n@Component({ template: `<b [title]=\"n\"></b>` })", false), [3]);
+});
+
+// filasEditadasAMano (DD-252): el lápiz o el «⋮» por fila en una lista hecha a mano. Lo que NO marca importa tanto
+// como lo que sí: las papeleras de las filas que se editan en el sitio y todo lo de dentro de una sc-datatable.
+test('filasEditadasAMano marca el lápiz y el «⋮» de solo icono en un @for, con paréntesis en su expresión', () => {
+  const html = [
+    '<ul>',
+    '  @for (fila of periodos(); track fila.id) {',
+    '    <li>{{ fila.name }}',
+    '      <sc-button variant="secondary" icon="edit" iconOnly [ariaLabel]="x" />',
+    '      <sc-button icon="more_vert" [ariaLabel]="y" />',
+    '    </li>',
+    '  }',
+    '</ul>',
+  ].join('\n');
+  assert.deepEqual(filasEditadasAMano(html), [4, 5]);
+});
+
+test('filasEditadasAMano NO marca papeleras ni ×, botones con texto, ni nada dentro de una sc-datatable o de un comentario', () => {
+  const html = [
+    '@for (c of condiciones(); track c.id) {',
+    '  <sc-button icon="delete" iconOnly [ariaLabel]="q" />',
+    '  <sc-button icon="close" iconOnly [ariaLabel]="q" />',
+    '  <sc-button icon="edit" [label]="\'Editar\' | translate" />',
+    '}',
+    '<sc-datatable variant="list">',
+    '  @for (f of filas(); track f.id) { <sc-button icon="more_vert" iconOnly /> }',
+    '</sc-datatable>',
+    '<!-- @for (f of filas(); track f.id) { <sc-button icon="edit" iconOnly /> } -->',
+    '<sc-button icon="edit" iconOnly [ariaLabel]="fuera de un @for" />',
+  ].join('\n');
+  assert.deepEqual(filasEditadasAMano(html), []);
 });

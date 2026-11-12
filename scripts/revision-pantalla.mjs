@@ -16,6 +16,9 @@
  * `e2e/supervisor/agrupacion.spec.ts` (etiqueta→control contra campo→campo, opciones en fila, botón
  * que envía). Sale con 1 si una vista incumple la regla: lo medible se arregla antes de enseñar.
  *
+ * Y al final, el inventario de piezas de las plantillas cambiadas frente a origin/main (`scripts/piezas-pantalla.mjs`,
+ * DD-252): una pieza sin ningún uso en el resto del Supervisor, y sin declarar, también sale con 1.
+ *
  * Qué NO hace: juzgar. Las capturas se miran con la skill `better-layout` (agrupación, alineación,
  * orden de lectura) y lo que sea gusto se le lista al usuario, no se decide solo.
  *
@@ -28,6 +31,8 @@ import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { chromium } from '@playwright/test';
+
+import { inventario } from './piezas-pantalla.mjs';
 
 const BASE = (process.env.SC_SUPERVISOR_URL || 'http://localhost:4405').replace(/\/$/, '');
 const MEDIDA = resolve('e2e/supervisor/agrupacion-medida.js');
@@ -194,8 +199,11 @@ async function main() {
       ? `\n${rojas} vista(s) en rojo. Por debajo del doble (DD-123): sube el hueco ENTRE al peldaño siguiente de 7 · 14 · 28, o baja el de DENTRO. Aire que se suma (R4, DD-125): quita el margen o el relleno de la cadena que imprime.`
       : '\nAgrupación medida: en regla.',
   );
+  // Las piezas, antes de mirar las capturas: una pieza sin precedente en el Supervisor también pone rojo (DD-252). Va
+  // aquí porque esta revisión ya la exige el hook de cierre tras tocar una pantalla: no es un paso más que recordar.
+  const sinPrecedente = inventario();
   console.log('Ahora MIRA las capturas con la skill better-layout; arregla lo medible y lista al usuario lo que sea de gusto.');
-  process.exit(rojas ? 1 : 0);
+  process.exit(rojas || sinPrecedente ? 1 : 0);
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === resolve(process.argv[1])) {
