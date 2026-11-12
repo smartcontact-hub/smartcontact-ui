@@ -63,12 +63,6 @@
 .sc-datepicker--inline {
   gap: 0;
 
-  /* En línea el título no cambia de vista (DD-253, `pt` en el componente): apagado, no promete un clic. */
-  .p-datepicker-select-month:disabled,
-  .p-datepicker-select-year:disabled {
-    cursor: default;
-  }
-
   /* Seis semanas siempre (DD-253). PrimeNG pinta cuatro, cinco o seis según el mes, y en línea el panel no flota: al
    * pasar de mes cambiaba de alto y movía lo de alrededor (un diálogo centrado, entero). Lo que falta hasta seis va en
    * una fila vacía al final, del alto de una fila de días: el día y su relleno arriba y abajo (medido: 35 en md). */
