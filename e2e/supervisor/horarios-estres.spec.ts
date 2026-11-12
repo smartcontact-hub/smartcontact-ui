@@ -370,6 +370,86 @@ test('guardado con la forma de antes («L-V 09:00–18:00»): abre con esa seman
   await expect(diaDeLaSemana(page, 5)).toContainText('Cerrado');
 });
 
+/* ── Sin saltos ni trazos (DD-253) ───────────────────────────────────────────────────────────────────────────── */
+
+test('diálogo de fecha especial: no se mueve al cambiar de mes, no abre la vista de meses y no acusa el nombre de primeras', async ({ page }) => {
+  await goto(page, POSTVENTA);
+  await page.getByRole('button', { name: 'Nueva fecha especial', exact: true }).first().click();
+  const modal = dialogo(page);
+  await expect(modal).toBeVisible();
+  const cal = modal.locator('sc-datepicker');
+
+  // El diálogo abre con el foco en el nombre; ir al mes de la fecha, que es lo primero que se hace, se lleva el foco a la
+  // flecha y no es dejar el nombre vacío. (Pinchar un día no se lo lleva: PrimeNG retiene el foco.)
+  const nombre = modal.locator('#especial-nombre');
+  await expect(nombre).toBeFocused();
+  await cal.locator('.p-datepicker-next-button').click();
+  await expect(nombre).not.toBeFocused();
+  await expect(nombre).not.toHaveAttribute('aria-invalid', 'true');
+
+  const caja = async (): Promise<string> => {
+    const b = (await modal.boundingBox())!;
+    return `${Math.round(b.y)}·${Math.round(b.height)}`;
+  };
+  const antes = await caja();
+  // Doce meses: pasa por meses de cuatro, cinco y seis semanas, y el diálogo (centrado) no se mueve.
+  for (let i = 0; i < 12; i++) {
+    await cal.locator('.p-datepicker-next-button').click();
+    expect(await caja()).toBe(antes);
+  }
+  const titulo = cal.locator('.p-datepicker-select-month');
+  await expect(titulo).toBeDisabled();
+  await titulo.click({ force: true });
+  await expect(cal.locator('.p-datepicker-month-view')).toHaveCount(0);
+
+  // Escribir, borrar y salir, sí.
+  await nombre.fill('x');
+  await nombre.fill('');
+  await nombre.press('Tab');
+  await expect(nombre).toHaveAttribute('aria-invalid', 'true');
+});
+
+test('el año: ningún día lleva caja, el cerrado va tachado, y el día elegido se lee arriba aunque el panel baje a diciembre', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await goto(page, POSTVENTA);
+  const bordes = await page.locator('.cal__dia').evaluateAll((els) => [...new Set(els.map((e) => getComputedStyle(e).borderTopStyle))]);
+  expect(bordes).toEqual(['none']);
+  await expect(page.locator('.cal__dia--cerrado').first()).toHaveCSS('text-decoration-line', /line-through/);
+
+  await elegirDia(page, iso(ANIO, 12, 9));
+  const fecha = new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'long' }).format(new Date(ANIO, 11, 9));
+  await expect(detalle(page)).toContainText(fecha);
+  const caja = (await detalle(page).boundingBox())!;
+  expect(caja.y).toBeGreaterThanOrEqual(0);
+  expect(caja.y + caja.height).toBeLessThanOrEqual(900);
+  // Y el diciembre que se pinchó también está a la vista: la cabecera no lo tapa.
+  const dic = (await dia(page, iso(ANIO, 12, 9)).boundingBox())!;
+  expect(dic.y).toBeGreaterThanOrEqual(caja.y + caja.height);
+});
+
+// El editor con su resultado al lado: 1600 desde 1340 (como las fichas con resumen), y cada día con su objetivo de 24
+// (WCAG 2.5.8: 24 de lado, o día y hueco que sumen 24).
+for (const ancho of [1340, 1440, 1600, 1920]) {
+  test(`ancho ${ancho}: el editor llega a 1600 como mucho, no desborda y cada día del año tiene su objetivo de 24`, async ({ page }) => {
+    await page.setViewportSize({ width: ancho, height: 900 });
+    await goto(page, POSTVENTA);
+    const inner = (await page.locator('.page__inner').first().boundingBox())!;
+    expect(inner.width).toBeLessThanOrEqual(1600);
+    if (ancho >= 1920) expect(inner.width).toBe(1600);
+    const desborda = await page.evaluate(() => {
+      const main = document.querySelector('main#main-content') as HTMLElement;
+      return main.scrollWidth - main.clientWidth;
+    });
+    expect(desborda).toBeLessThanOrEqual(0);
+    const minimo = await page.locator('.cal__rejilla').first().evaluate((rejilla) => {
+      const hueco = parseFloat(getComputedStyle(rejilla).columnGap);
+      const lado = (rejilla.querySelector('.cal__dia') as HTMLElement).getBoundingClientRect().width;
+      return lado >= 24 ? lado : lado + hueco;
+    });
+    expect(minimo).toBeGreaterThanOrEqual(24);
+  });
+}
+
 /* ── Límites ─────────────────────────────────────────────────────────────────────────────────────────────────── */
 
 test('límites: nombres de 120 caracteres no desbordan la pantalla ni las tablas', async ({ page }) => {

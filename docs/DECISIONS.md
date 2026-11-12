@@ -44,6 +44,7 @@
 > |---|---|
 > | Las dos tablas de asignación enseñan solo los canales marcados (el agente en General; el grupo, los de sus agentes), sin candado ni enlace (enmienda DD-217 §13 y DD-187 §2) | DD-250 |
 > | El alta de usuario lleva los marcadores de paso del grupo y del agente: Identidad dice lo que falta, Acceso y Servicios asignados «Revisada» al dejarlas · sin «Falta: …» sobre el resumen · cierra la deuda de DD-222 §5 | DD-248 |
+> | El año de un horario sin trazos (cerrado en gris y tachado), con su cabecera fija arriba y el editor a 1600 desde 1340 · `sc-datepicker` en línea no cambia de vista y reserva seis semanas: no salta · un obligatorio no se acusa por el foco que puso el diálogo · `sc-section-card` y `sc-subsection` recortan con `clip` (enmienda DD-251 §2 y DD-252 §2) | DD-253 |
 > | Horarios con las piezas de las fichas: sublistas en la tabla de una sección (fila que abre, «⋮» con Editar y Eliminar), switch-field, año en `sc-selectbutton` · borrar en uso avisa y suelta (sin ids heredados) · la semana del horario bajo su desplegable en el grupo · el arnés no deja entrar piezas sin precedente (`audit:screen-hygiene` §10, inventario en `npm run revision`) | DD-252 |
 > | Un horario es su semana, sus periodos y sus fechas especiales, con el año al lado · cada fecha, un único dueño (fecha especial › festivo › periodo › semana) · los festivos, un repositorio aparte que cada horario aplica · Horarios sale de «Próximamente» y pasa a editor (enmienda DD-245 §4) | DD-251 |
 > | En el hub de Repositorios, pulsar otra tarjeta marca la otra a cualquier ancho: si el panel pisa tarjetas, flota con sombra y sin velo; velo solo si no deja ninguna entera a la vista, decidido al abrir · «Próximamente» no hace nada con otra marcada · el doble clic no abre y cierra, arrastrar un texto del panel hacia fuera no lo cierra, al cambiar el panel vuelve arriba, y si la marcada deja de verse su panel se va con ella (enmienda DD-179 §4 y DD-245 §4) | DD-249 |
@@ -179,6 +180,55 @@
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
 
 ---
+
+## DD-253 · 2026-11-13 — El año sin trazos y con su cabecera fija, el editor a lo ancho, y un diálogo de fecha que no salta
+
+**Contexto** · Tras fundir #609, mirando la versión publicada: cada día del año llevaba un trazo (365 cajas que competían
+con lo que significa algo); a la derecha sobraban 300–500 px; y en «Nueva fecha especial» el diálogo se movía entero al
+tocar algo, y pinchar el título del mes llevaba a una rejilla de meses sin forma visible de volver. Revisión con
+`/better-interface` (accesibilidad, maquetación, textos, tipografía, color y pulido).
+
+**Decisión** ·
+1. **El año sin trazos.** Abierto, solo el número; periodo, el fondo de su etiqueta; **cerrado, en gris y con el número
+   tachado**, como un día no disponible de una reserva (el tachado es la señal que no depende del color; elegido con el
+   usuario frente a «trazo solo en los cerrados» y «solo atenuado»); especial o festivo, su punto; hoy, seminegrita y
+   subrayado; el elegido, su contorno. La leyenda son días de ejemplo («1») pintados igual. Enmienda DD-251 §2.
+2. **La cabecera del año, fija arriba de su panel**: el año, «Hoy» y el día elegido (título, estado, origen y «Editar
+   este día», de alto fijo). Los meses pasan por debajo, así que el día que se pincha en diciembre se lee sin subir.
+3. **El editor a lo ancho**: `page__inner--resultado` (`_page.scss`), el tope de las fichas con resumen (1600 desde 1340;
+   1200 por debajo, con el año debajo de las reglas). Festivos, sin resultado al lado, se queda en 1200.
+4. **Días con su objetivo de 24 (WCAG 2.5.8)**: tres meses por fila desde 33rem de panel (por debajo, dos), cuatro desde
+   46rem; con el ancho de §3, a 1440 un día mide 23,2 y, con su hueco de 1,75, llega a 24.
+5. **`sc-datepicker` en línea no salta** (DS): el título del mes no cambia a la vista de meses ni de años (`pt` con
+   `disabled`, el estado que PrimeNG ya le da con `numberOfMonths > 1`; se navega con las flechas, sin el cursor de
+   mano), y reserva siempre seis semanas con una fila vacía del alto de una de días (PrimeNG pinta cuatro, cinco o seis
+   según el mes, y el diálogo centrado se movía).
+6. **Un obligatorio no se acusa por el foco que puso el diálogo**: «Nombre» abre enfocado (`focusFirst` del DS); salir de
+   él sin haber escrito no es dejarlo vacío. Se pone rojo si se escribió y se vació, o al intentar crear. El aviso gris
+   de DD-219 sigue desde el principio. En los diálogos de periodo y de fecha especial.
+7. **`sc-section-card` y `sc-subsection` recortan con `overflow: clip`** (DS), con `display: flow-root`: recortan al
+   radio igual que con `hidden`, pero sin volverse contenedor de scroll, que anulaba el `sticky` de §2. `flow-root`
+   conserva el contexto de bloque que daba `hidden` (ningún margen se pliega hacia fuera).
+
+**Razón** · Medido en esta sesión, con cada sonda en rojo con su fallo puesto (`horarios-estres.spec.ts`, «Sin saltos ni
+trazos»): el diálogo se movía 18 px al pasar de mes (222 → 240) y ahora no se mueve en doce meses; con el umbral viejo un
+día medía 23,9 a 1340; sin `sticky` el detalle quedaba a −144; con la regla vieja, pasar de mes ya ponía «Nombre» en
+rojo. El calendario en línea mide 284,5 en treinta meses seguidos (antes, 249,5 o 284,5). Prueba unitaria del título
+apagado en `sc-datepicker.component.spec.ts`, en rojo sin el arreglo.
+
+**Descartadas** ·
+- **El año con `p-datepicker` y `numberOfMonths=12`**: vuelta a mirar por pregunta del usuario; sigue lo de DD-251 (se lee
+  un año y se avanza de año en año, y una rejilla de 4 × 3 pide rehacer su maquetación interna). Lo que sí se tomó de
+  él es el lenguaje del día: sin caja, número solo, fondo para el estado.
+- **Cerrado con trazo a trazos solo en los cerrados**: un tercio de los días seguía con caja.
+- **Cerrado solo atenuado**: el estado dependía solo del color.
+- **Fijar los diálogos arriba en vez de centrados**: arregla el salto en todos, pero cambia todos los diálogos de la app;
+  aquí basta con que el contenido no cambie de alto.
+
+**Consecuencias** · Cualquier `sticky` dentro de una tarjeta o subsección del DS ya funciona (hoy, solo la cabecera del
+año; la del mapa de tipificaciones tiene su propio scroll). Pendiente: las reglas de comportamiento de los tooltips (el
+del botón apagado parte «El nombre es obligatorio» en dos líneas: el tope del Kit, `--sc-cmp-tooltip-max-width`, es de
+175).
 
 ## DD-252 · 2026-11-12 — Horarios con las piezas de las fichas, en uso sin ids muertos, y un arnés que no deja colar piezas
 

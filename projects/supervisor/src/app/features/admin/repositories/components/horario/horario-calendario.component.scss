@@ -5,6 +5,18 @@
   container-type: inline-size;
 }
 
+/* La cabecera del año, fija arriba de su panel (DD-253): con el panel desplazado, los meses pasan por debajo y el día
+ * elegido sigue a la vista. Con el fondo de la superficie que la rodea, para que no se transparenten. */
+.cal__cabecera {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1);
+  background: var(--sc-bg-surface);
+}
+
 .cal__barra {
   display: flex;
   align-items: center;
@@ -15,7 +27,9 @@
   margin-inline-start: auto;
 }
 
-/* Tres meses por fila; cuatro si cabe y dos si no. */
+/* Tres meses por fila; cuatro si cabe y dos si no. Los cortes salen del tamaño del día: con tres por fila, por debajo
+ * de 33rem un día bajaba de 22,25 y, con su hueco de 1,75, del objetivo de 24 de WCAG 2.5.8 (DD-253). Con cuatro, desde
+ * 46rem, mide 23,3. */
 .cal__anual {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -25,7 +39,7 @@
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
-  @container (max-width: 26rem) {
+  @container (max-width: 33rem) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -49,14 +63,23 @@
   text-align: center;
 }
 
-/* Un día abierto de la semana habitual: la superficie, sin más. */
+/* Un día abierto de la semana habitual: solo su número, sin caja (DD-253: 365 cajas con trazo competían con lo que
+ * sí significa algo, el periodo, el cierre y la fecha especial). */
 .cal__dia,
 .cal__muestra {
   position: relative;
-  border: 1px solid var(--sc-border-default);
+  border: 0;
   border-radius: var(--sc-radius-sm);
-  background: var(--sc-bg-surface);
+  background: transparent;
   color: var(--sc-text-primary);
+}
+
+/* La muestra de la leyenda es un día de ejemplo («1»), del tamaño de un día pequeño. */
+.cal__muestra {
+  display: inline-grid;
+  place-items: center;
+  inline-size: var(--sc-spacing-1-5);
+  aspect-ratio: 1;
 }
 
 .cal__dia {
@@ -87,19 +110,23 @@
 .cal__dia--periodo {
   @each $color in ('blue', 'green', 'purple', 'orange', 'teal', 'amber', 'red', 'brown') {
     &[data-color='#{$color}'] {
-      border-color: var(--sc-label-#{$color}-border);
       background: var(--sc-label-#{$color}-bg);
       color: var(--sc-label-#{$color}-text);
     }
   }
 }
 
-/* Cerrado: apagado y con el borde a trazos, para que no dependa solo del color; conserva el borde de su periodo.
- * Repetida la clase para ganar al color del periodo, que lleva un atributo. */
+/* Cerrado: en gris y con el número tachado, como un día no disponible de una reserva; el tachado es lo que no depende
+ * del color (DD-253). Gana al color del periodo: repetida la clase, porque el periodo lleva un atributo. */
 .cal__dia--cerrado.cal__dia--cerrado.cal__dia--cerrado {
-  border-style: dashed;
   background: var(--sc-bg-secondary-subtle);
   color: var(--sc-text-secondary);
+  text-decoration: line-through;
+}
+
+/* Hoy y cerrado a la vez: las dos rayas. */
+.cal__dia--cerrado.cal__dia--cerrado.cal__dia--cerrado.cal__dia--hoy {
+  text-decoration-line: underline line-through;
 }
 
 /* Fecha especial o festivo: una marca en la esquina, del color de marca. No el amarillo de aviso: una fecha especial no
@@ -118,7 +145,7 @@
 /* Destello de un día que acaba de cambiar (DD-252, como DD-222 §9): una capa de marca que se apaga. Solo `opacity`. */
 .cal__dia--destello::before {
   position: absolute;
-  inset: -1px;
+  inset: 0;
   border-radius: inherit;
   background: var(--sc-bg-primary);
   opacity: 0;
@@ -163,12 +190,6 @@
     align-items: center;
     gap: var(--sc-spacing-0-25);
   }
-}
-
-.cal__muestra {
-  display: inline-block;
-  inline-size: var(--sc-spacing-1);
-  block-size: var(--sc-spacing-1);
 }
 
 .cal__detalle {

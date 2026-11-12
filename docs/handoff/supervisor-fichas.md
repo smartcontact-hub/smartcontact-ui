@@ -96,6 +96,20 @@ El de la barra común de asignar y Repositorios como sus COA (2026-10-31, DD-243
 79567b53:docs/handoff/supervisor-fichas.md`.
 El del repaso del Figma del Supervisor y «Fuera del DS», borrada (2026-11-03, sin trampas propias; el detalle sigue en
 `figma-pendiente` §54 a §69): `git show d94ac6ec:docs/handoff/supervisor-fichas.md`.
+El del alta de usuario con marcadores y alta frente a edición (2026-11-04, DD-248, sin trampas propias; su «No hecho»,
+los marcadores del alta de usuario en Figma, sigue en pie): `git show 1f086aca:docs/handoff/supervisor-fichas.md`.
+
+## ✅ 2026-11-13 · El año sin trazos, el editor a lo ancho y un diálogo de fecha que no salta (DD-253)
+
+> **Sello:** rama `claude/calendarios-horarios-especiales-l3z4wx`, rehecha sobre `main` `1f086aca` (#609 fundido).
+
+- **Hecho**: año sin cajas (cerrado en gris y tachado, decidido con el usuario), cabecera del año fija arriba con el día
+  elegido, editor a 1600 desde 1340, días con objetivo de 24. DS: `sc-datepicker` en línea sin cambio de vista y con seis
+  semanas fijas; `sc-section-card` y `sc-subsection` recortan con `clip`. Los diálogos no acusan el nombre de primeras.
+- **No hecho**: las reglas de los tooltips (el del botón apagado parte «El nombre es obligatorio»; tope del Kit, 175).
+- **Trampa de sonda**: pinchar un día de un `p-datepicker` en línea NO quita el foco del campo que lo tenía (PrimeNG lo
+  retiene); para probar un «salir del campo» usa un control que sí lo tome, como la flecha del mes.
+- **Trampa de entorno**: `overflow: hidden` en un antecesor anula un `position: sticky` aunque nada haga scroll en él.
 
 ## ✅ 2026-11-12 · Horarios con las piezas de las fichas, en uso sin ids muertos, y el arnés de piezas (DD-252)
 
@@ -135,18 +149,6 @@ El del repaso del Figma del Supervisor y «Fuera del DS», borrada (2026-11-03, 
   velo. Releer su versión viva antes de corregir.
 - **Trampa de sonda**: con el panel abierto, pulsar en las coordenadas de una tarjeta tapada cae en un enlace del panel y
   navega fuera; parece que la tarjeta no se marca. Mide con `elementFromPoint`, o pulsa solo lo que asoma.
-
-## ✅ 2026-11-04 · El alta de usuario con marcadores, y alta frente a edición explicado a desarrollo (DD-248)
-
-> **Sello:** rama `areses/estudiar-arreglar-f833da` sobre `main` HEAD `9f5dc209`.
-
-- **La duda de desarrollo**: en Grupos, unas pantallas llevan «Atrás / Siguiente» y marcadores y otras no. Es adrede: el
-  alta guía y marca, la edición no (DD-143, DD-222 §8). En Figma, la hoja para desarrollo de Grupos lo dice en un solo
-  bloque, «Alta o edición: el índice y el pie cambian» (nodo `3371:61607`).
-- **Usuarios era la excepción** (pie sin marcadores): ahora lleva los del grupo y el agente (DD-248), con
-  `alta-usuario-marcadores.spec.ts`.
-- **No hecho**: los marcadores en las pantallas del alta de usuario en Figma (página `41:2846`), con las variantes
-  `Marca=Paso …` del nav-item, como Grupos y Agentes.
 
 ## SIGUIENTE — sin preguntar
 

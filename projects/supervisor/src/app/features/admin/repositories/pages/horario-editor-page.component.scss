@@ -1,5 +1,5 @@
-/* El editor de un horario: arquetipo de editor (`page__inner`, 1200) sobre el lienzo, como la agenda. Sus tarjetas se
- * apilan con el margen que les da el DS. */
+/* El editor de un horario: arquetipo de editor con su resultado al lado (`page__inner--resultado`, `_page.scss`) sobre
+ * el lienzo. Sus tarjetas se apilan con el margen que les da el DS. Festivos usa esta hoja con el molde de 1200. */
 :host {
   display: block;
   height: 100%;

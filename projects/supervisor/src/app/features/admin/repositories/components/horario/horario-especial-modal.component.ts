@@ -175,8 +175,18 @@ export class HorarioEspecialModalComponent implements OnInit {
     this.confirmar();
   }
 
+  /* El diálogo abre con el foco en el nombre (`focusFirst` del DS): salir de él sin haber escrito es pasar al
+   * siguiente campo, no dejarlo vacío. Se acusa en rojo si se escribió y se vació, o al pulsar «Crear» (DD-253; el
+   * aviso gris de DD-219 sigue desde el principio). */
+  private readonly nombreEscrito = signal(false);
+
+  protected escribirNombre(valor: string): void {
+    this.nombre.set(valor);
+    this.nombreEscrito.set(true);
+  }
+
   protected dejarNombre(event: FocusEvent): void {
-    if (dejoElCampo(event)) this.nombreTocado.set(true);
+    if (this.nombreEscrito() && dejoElCampo(event)) this.nombreTocado.set(true);
   }
 
   protected confirmar(): void {

@@ -184,6 +184,10 @@ export class ScDatepickerComponent {
         'aria-invalid': this.isInvalid() ? 'true' : null,
       },
     },
+    // En línea, el título («noviembre 2026») no cambia a la vista de meses ni de años (DD-253): el panel vive en la
+    // página o en un diálogo, y esa vista mide otra altura, así que movía todo lo de alrededor y no se veía cómo
+    // volver. Es el estado que PrimeNG ya le da al título con `numberOfMonths > 1`; se navega con las flechas.
+    ...(this.inline() ? { selectMonth: { disabled: true }, selectYear: { disabled: true } } : {}),
   }));
 
   private readonly panel = createScPanelSizing('sc-datepicker', this.size);

@@ -89,6 +89,11 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
 
 ### Changed
 
+- **`@smartcontact-hub/components`** — `sc-datepicker` en línea (`inline`) ya no cambia a la vista de meses o de años
+  al pulsar el título (se navega con las flechas) y reserva siempre seis semanas: al pasar de mes no cambia de alto ni
+  mueve lo que lo rodea. `sc-section-card` y `sc-subsection` recortan con `overflow: clip` en vez de `hidden` (mismo
+  recorte, mismo contexto de bloque con `flow-root`), así que un `position: sticky` dentro de ellas funciona.
+  ([DD-253](docs/DECISIONS.md))
 - **`@smartcontact-hub/components`** — `sc-alert-modal` con `variant="warning"` y `surface="plain"` lleva los botones de
   `error`: la salida segura gris a la izquierda y la acción roja rellena a la derecha. Antes la salida segura iba rellena
   en el primario y la acción con borde rojo, y el relleno cambiaba de lado entre un aviso y otro (enmienda de DD-242).

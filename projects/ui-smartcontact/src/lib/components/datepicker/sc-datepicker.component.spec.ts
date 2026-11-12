@@ -79,6 +79,18 @@ describe('sc-datepicker · días sueltos y solo la hora', () => {
     expect(fixture.componentInstance.dias()?.map((d) => d.getDate())).toEqual([5]);
   });
 
+  it('en línea, el título del mes no cambia a la vista de meses: se navega con las flechas (DD-253)', () => {
+    const fixture = TestBed.createComponent(HostDeModos);
+    fixture.detectChanges();
+    const raiz = fixture.nativeElement as HTMLElement;
+    const titulo = raiz.querySelector<HTMLButtonElement>('.p-datepicker-select-month')!;
+    expect(titulo.disabled).toBe(true);
+    titulo.click();
+    fixture.detectChanges();
+    expect(raiz.querySelector('.p-datepicker-month-view')).toBeNull();
+    expect(raiz.querySelector('.p-datepicker-day-view')).not.toBeNull();
+  });
+
   it('con `timeOnly`, el campo enseña la hora y lleva su nombre accesible', async () => {
     const fixture = TestBed.createComponent(HostDeModos);
     fixture.detectChanges();

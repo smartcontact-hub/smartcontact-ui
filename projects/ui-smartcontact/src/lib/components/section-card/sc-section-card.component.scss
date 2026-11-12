@@ -16,7 +16,11 @@
   background: var(--sc-bg-secondary-subtle);
   border: 0;
   border-radius: var(--sc-radius-400);
-  overflow: hidden;
+  /* Recorta lo de dentro a su radio con `clip`, no con `hidden` (DD-253): `hidden` la volvía un contenedor de scroll y
+   * anulaba el `position: sticky` de lo que lleva dentro (la cabecera del año de un horario). `flow-root` conserva el
+   * contexto de bloque que daba `hidden`, para que ningún margen se pliegue hacia fuera. */
+  display: flow-root;
+  overflow: clip;
   transition: border-color var(--sc-transition-fast) ease;
   /* Aire para un enlace con `#` a la sección (limpia el sticky header). */
   scroll-margin-top: var(--sc-form-anchor-offset);
