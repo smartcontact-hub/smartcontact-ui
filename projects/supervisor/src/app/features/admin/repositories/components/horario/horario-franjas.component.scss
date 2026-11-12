@@ -1,0 +1,20 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sc-spacing-0-5);
+}
+
+.franjas__fila {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+}
+
+.franjas__hora {
+  inline-size: var(--sc-spacing-5);
+}
+
+.franjas__guion {
+  color: var(--sc-text-secondary);
+}

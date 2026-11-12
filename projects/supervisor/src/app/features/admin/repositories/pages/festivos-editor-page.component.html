@@ -1,0 +1,119 @@
+<ng-template #topbarActions>
+  @if (mode() === 'edit' && formDirty()) {
+    <span class="form-save-reason sc-text-caption-regular" role="status">{{ 'common.unsaved_changes' | translate }}</span>
+  }
+  @if (formDirty()) {
+    <sc-button variant="secondary" appearance="outlined" [label]="'common.undo' | translate" (clicked)="discard()" />
+  }
+  <sc-button
+    variant="primary"
+    [disabled]="!canSave()"
+    [pTooltip]="motivoApagado()" tooltipPosition="top"
+    [label]="(mode() === 'create' ? 'repositories.festivos.create_submit' : 'common.save') | translate"
+    (clicked)="save()"
+  />
+</ng-template>
+
+<div class="page">
+  <div class="page__inner">
+    <h1 class="page__heading sc-text-title-semibold">{{ form().name.trim() || ('repositories.festivos.create_title' | translate) }}</h1>
+
+    <sc-section-card titleKey="repositories.horarios.section_general" surface="subtle" icon="tune">
+      <sc-subsection>
+        <div class="bloque">
+          @if (aviso(); as texto) {
+            <sc-message severity="info" [text]="texto" />
+          }
+          <div class="grid grid--2">
+            <div class="field">
+              <sc-inputtext
+                inputId="festivos-name"
+                fluid
+                required
+                [label]="'repositories.columns.name' | translate"
+                [placeholder]="'repositories.festivos.name_placeholder' | translate"
+                [value]="form().name"
+                [helperText]="nameHint()"
+                [error]="nameError()"
+                (valueChange)="update('name', $event)"
+                (focusout)="dejarNombre($event)"
+              />
+            </div>
+            <div class="field field--full">
+              <sc-inputtext
+                inputId="festivos-description"
+                fluid
+                [label]="'repositories.columns.description' | translate"
+                [placeholder]="'repositories.placeholders.description' | translate"
+                [value]="form().description"
+                (valueChange)="update('description', $event)"
+              />
+            </div>
+          </div>
+          <div class="horario__estado">
+            <sc-toggleswitch
+              inputId="festivos-activo"
+              ariaLabelledBy="festivos-activo-rotulo"
+              [checked]="form().status === 'active'"
+              (checkedChange)="update('status', $event ? 'active' : 'inactive')"
+            />
+            <label class="sc-text-body-regular" id="festivos-activo-rotulo" for="festivos-activo">{{ 'repositories.festivos.active' | translate }}</label>
+          </div>
+        </div>
+      </sc-subsection>
+    </sc-section-card>
+
+    <sc-section-card titleKey="repositories.festivos.section_days" hintKey="repositories.festivos.section_days_hint" surface="subtle" icon="event_busy">
+      <sc-subsection>
+        <div class="bloque">
+          @if (dias().length > 0) {
+            <ul class="horario__lista" role="list">
+              @for (fila of dias(); track fila.dia.id) {
+                <li class="horario__fila">
+                  <span class="horario__fila-fecha sc-text-body-semibold">{{ fila.fecha }}</span>
+                  <span class="horario__fila-datos">
+                    <span class="sc-text-body-regular">{{ fila.dia.name }}</span>
+                    @if (fila.dia.yearly) {
+                      <span class="horario__fila-detalle sc-text-caption-regular">{{ 'repositories.horarios.yearly' | translate }}</span>
+                    }
+                  </span>
+                  <sc-button
+                    variant="secondary"
+                    appearance="text"
+                    size="sm"
+                    icon="edit"
+                    iconOnly
+                    [ariaLabel]="'common.edit_named' | translate: { name: fila.dia.name + ', ' + fila.fecha }"
+                    (clicked)="editarDia(fila.dia)"
+                  />
+                </li>
+              }
+            </ul>
+          } @else {
+            <p class="horario__vacio sc-text-body-regular">{{ 'repositories.festivos.days_empty' | translate }}</p>
+          }
+          <sc-button
+            class="horario__anadir"
+            variant="secondary"
+            appearance="outlined"
+            size="sm"
+            icon="add"
+            [label]="'repositories.festivos.day_add' | translate"
+            (clicked)="diaDialog.set({ dia: null })"
+          />
+        </div>
+      </sc-subsection>
+    </sc-section-card>
+  </div>
+</div>
+
+@if (diaDialog(); as dialog) {
+  <sc-horario-especial-modal
+    variante="festivo"
+    [especial]="dialog.dia"
+    [existentes]="comoEspeciales()"
+    (guardar)="guardarDias($event)"
+    (eliminar)="quitarDia($event)"
+    (cerrado)="diaDialog.set(null)"
+  />
+}

@@ -6,6 +6,7 @@ import {
   inject,
   input,
   model,
+  numberAttribute,
   output,
   viewChild,
   ViewEncapsulation,
@@ -25,7 +26,7 @@ import { SC_DATEPICKER_TRANSLATIONS } from './i18n/sc-datepicker.translations';
 /** @deprecated Usa `ScFieldSize`. Alias conservado por compatibilidad de imports. */
 export type ScDatepickerSize = ScFieldSize;
 export type ScDatepickerView = 'date' | 'month' | 'year';
-export type ScDatepickerSelectionMode = 'single' | 'range';
+export type ScDatepickerSelectionMode = 'single' | 'range' | 'multiple';
 
 /**
  * Atajo del pie del calendario («Hoy», «Últimos 7 días»). `resolve` se evalúa AL PULSAR, no al
@@ -100,6 +101,8 @@ export class ScDatepickerComponent {
   readonly placeholder = input<string>('dd/mm/aaaa');
   readonly disabled = input(false, { transform: booleanAttribute });
   readonly inputId = input<string>();
+  /** Nombre accesible del campo cuando no lleva `label` visible (una hora dentro de una fila que ya la nombra). */
+  readonly ariaLabel = input<string>();
   readonly name = input<string>();
 
   // ─── Datepicker-specific ───────────────────────────────────────────
@@ -122,8 +125,9 @@ export class ScDatepickerComponent {
   /** Locale identifier consumed by PrimeNG. Default Spanish. */
   readonly locale = input<unknown>();
   /**
-   * `single` (un día, en `value`) o `range` (dos, en `range`). El rango es el `selectionMode`
-   * nativo de PrimeNG: primer clic abre, segundo cierra.
+   * `single` (un día, en `value`), `range` (dos, en `range`) o `multiple` (días sueltos, en `dates`).
+   * Son los `selectionMode` nativos de PrimeNG: en el rango, primer clic abre y segundo cierra; en
+   * `multiple`, cada clic pone o quita un día.
    */
   readonly selectionMode = input<ScDatepickerSelectionMode>('single');
   /**
@@ -131,6 +135,13 @@ export class ScDatepickerComponent {
    * se muestra con los atajos y «Limpiar» en lugar de «Hoy / Limpiar».
    */
   readonly presets = input<readonly ScDatepickerPreset[]>([]);
+  /**
+   * Solo la hora (`timeOnly` nativo): el campo se escribe como `hh:mm` y el panel trae las horas y los
+   * minutos. El valor sigue siendo un `Date` en `value`, del que solo cuentan la hora y los minutos.
+   */
+  readonly timeOnly = input(false, { transform: booleanAttribute });
+  /** De cuántos en cuántos minutos avanzan las flechas del panel de hora. */
+  readonly stepMinute = input(1, { transform: numberAttribute });
   /** Rótulo del botón que vacía la fecha en el pie con atajos. */
   readonly clearLabel = input<string | null>(null);
 
@@ -139,6 +150,8 @@ export class ScDatepickerComponent {
   readonly value = model<Date | null>(null);
   /** Valor en modo `range`: `[inicio, fin]`, con `fin` a `null` mientras se elige. */
   readonly range = model<readonly (Date | null)[] | null>(null);
+  /** Valor en modo `multiple`: los días marcados, en el orden en que se marcaron. */
+  readonly dates = model<readonly Date[] | null>(null);
 
   // ─── Outputs (paridad con sc-inputtext / sc-select) ────────────────
   /** El campo ha recibido el foco. */
@@ -180,24 +193,28 @@ export class ScDatepickerComponent {
   private readonly picker = viewChild(DatePicker);
 
   protected readonly isRange = computed(() => this.selectionMode() === 'range');
-  protected readonly pickerValue = computed(() => (this.isRange() ? this.range() : this.value()));
+  protected readonly isMultiple = computed(() => this.selectionMode() === 'multiple');
+  protected readonly pickerValue = computed(() => (this.isMultiple() ? this.dates() : this.isRange() ? this.range() : this.value()));
   protected readonly hasPresets = computed(() => this.presets().length > 0);
 
   protected onModelChange(v: Date | (Date | null)[] | null): void {
-    if (this.isRange()) this.range.set((v as (Date | null)[] | null) ?? null);
+    if (this.isMultiple()) this.dates.set((v as Date[] | null) ?? null);
+    else if (this.isRange()) this.range.set((v as (Date | null)[] | null) ?? null);
     else this.value.set((v as Date | null) ?? null);
   }
 
   protected applyPreset(preset: ScDatepickerPreset): void {
     const r = preset.resolve();
     const [start, end] = r instanceof Date ? [r, r] : r;
-    if (this.isRange()) this.range.set([start, end]);
+    if (this.isMultiple()) this.dates.set([start]);
+    else if (this.isRange()) this.range.set([start, end]);
     else this.value.set(start);
     this.picker()?.hideOverlay();
   }
 
   protected clearFromBar(): void {
-    if (this.isRange()) this.range.set(null);
+    if (this.isMultiple()) this.dates.set(null);
+    else if (this.isRange()) this.range.set(null);
     else this.value.set(null);
     this.picker()?.hideOverlay();
   }

@@ -1,0 +1,84 @@
+/* Las reglas a un lado y el año al otro, a partes iguales; el año se queda a la vista al bajar por las reglas. Por
+ * debajo de dos columnas cómodas, el año va debajo. */
+.horario {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: start;
+  gap: var(--sc-spacing-2);
+
+  @media (max-width: 1279px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.horario__reglas {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-2);
+  min-inline-size: 0;
+}
+
+.horario__resultado {
+  position: sticky;
+  inset-block-start: var(--sc-spacing-2);
+  min-inline-size: 0;
+
+  @media (max-width: 1279px) {
+    position: static;
+  }
+}
+
+.horario__estado {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+}
+
+.horario__lista {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr) auto;
+  column-gap: var(--sc-spacing-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.horario__fila {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  align-items: center;
+  padding-block: var(--sc-spacing-0-5);
+  border-block-end: 1px solid var(--sc-border-subtle);
+
+  &:last-child {
+    border-block-end: 0;
+  }
+}
+
+.horario__fila-fecha {
+  white-space: nowrap;
+}
+
+.horario__fila-datos {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+
+.horario__fila-detalle,
+.horario__vacio {
+  color: var(--sc-text-secondary);
+}
+
+.horario__vacio {
+  margin: 0;
+}
+
+.horario__anadir {
+  align-self: flex-start;
+}
+
+.horario__enlace {
+  color: var(--sc-text-link);
+}

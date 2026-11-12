@@ -10,6 +10,7 @@
 <p-datepicker
   class="sc-datepicker__control"
   [inputId]="resolvedId()"
+  [ariaLabel]="ariaLabel()"
   [placeholder]="placeholder()"
   [disabled]="disabled()"
   [dateFormat]="dateFormat()"
@@ -22,6 +23,8 @@
   [iconDisplay]="'input'"
   [showButtonBar]="showButtonBar() || hasPresets()"
   [selectionMode]="selectionMode()"
+  [timeOnly]="timeOnly()"
+  [stepMinute]="stepMinute()"
   [size]="pSize()"
   [panelStyleClass]="panelStyleClass()"
   [appendTo]="'body'"

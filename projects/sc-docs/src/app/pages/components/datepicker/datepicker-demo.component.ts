@@ -17,6 +17,15 @@ const MENOS_VISTOS_SNIPPET = `<!-- "minDate" y "maxDate" acotan el calendario: l
 <!-- "invalid" marca el campo SIN texto de error, para cuando el error se cuenta en otro sitio. -->
 <sc-datepicker label="Inválida" [invalid]="true" />`;
 
+const VARIOS_SNIPPET = `<!-- "selectionMode=multiple": cada clic pone o quita un día. El valor va en "dates" (los días,
+     en el orden en que se marcaron). En línea ("inline") el calendario queda a la vista: sirve para
+     marcar de una vez todos los días que llevan lo mismo. Sin etiqueta visible, su nombre va en "ariaLabel". -->
+<sc-datepicker inline selectionMode="multiple" ariaLabel="Días festivos" [(dates)]="festivos" />`;
+
+const HORA_SNIPPET = `<!-- "timeOnly": solo la hora, escrita como hh:mm. El valor sigue en "value" y es un Date del que
+     solo cuentan la hora y los minutos. "stepMinute" es el salto de las flechas del panel. -->
+<sc-datepicker label="Apertura" timeOnly placeholder="hh:mm" [stepMinute]="15" [(value)]="apertura" />`;
+
 const RANGO_SNIPPET = `<!-- "selectionMode=range": primer clic abre el periodo, segundo lo cierra. El valor va en
      "range" ([inicio, fin]), no en "value". "presets" pone atajos en el pie del panel; cada
      uno calcula su periodo AL PULSAR, así «Hoy» es hoy aunque la pantalla lleve abierta desde ayer. -->
@@ -53,6 +62,8 @@ export class DatepickerDemoComponent {
   protected readonly estadosTpl = viewChild<TemplateRef<StoryContext>>('estados');
   protected readonly menosVistosTpl = viewChild<TemplateRef<StoryContext>>('menosVistos');
   protected readonly rangoTpl = viewChild<TemplateRef<StoryContext>>('rango');
+  protected readonly variosTpl = viewChild<TemplateRef<StoryContext>>('varios');
+  protected readonly horaTpl = viewChild<TemplateRef<StoryContext>>('hora');
 
   protected readonly periodo = signal<readonly (Date | null)[] | null>(null);
   protected readonly periodoTexto = computed(() => {
@@ -75,6 +86,8 @@ export class DatepickerDemoComponent {
   protected readonly primerDia = new Date(this.hoy.getFullYear(), this.hoy.getMonth(), 1);
   protected readonly ultimoDia = new Date(this.hoy.getFullYear(), this.hoy.getMonth() + 1, 0);
   protected readonly acotada = signal<Date | null>(null);
+  protected readonly festivos = signal<readonly Date[] | null>(null);
+  protected readonly apertura = signal<Date | null>(new Date(2026, 0, 1, 9, 0));
 
   readonly value = signal<Date | null>(null);
 
@@ -82,7 +95,7 @@ export class DatepickerDemoComponent {
     tag: 'sc-datepicker',
     title: 'Datepicker',
     description:
-      'Selector de fecha sobre `p-datepicker` con la chrome del field-pattern (label + requerido + helper/error). Día único o rango (`selectionMode`), con atajos opcionales en el pie del panel (`presets`); formato es-ES por defecto.',
+      'Selector de fecha sobre `p-datepicker` con la chrome del field-pattern (label + requerido + helper/error). Día único, rango o días sueltos (`selectionMode`), o solo la hora (`timeOnly`), con atajos opcionales en el pie del panel (`presets`); formato es-ES por defecto.',
     argTypes: [
       { name: 'label', control: { kind: 'text' } },
       { name: 'placeholder', control: { kind: 'text' } },
@@ -121,11 +134,15 @@ export class DatepickerDemoComponent {
     const es = this.estadosTpl();
     const mv = this.menosVistosTpl();
     const ra = this.rangoTpl();
-    if (!pg || !ba || !es || !mv || !ra) return [];
+    const va = this.variosTpl();
+    const ho = this.horaTpl();
+    if (!pg || !ba || !es || !mv || !ra || !va || !ho) return [];
     return [
       { name: 'Playground', playground: true, template: pg },
       { name: 'Con valor', template: ba, snippet: '<sc-datepicker label="Fecha de inicio" [(value)]="value" />' },
       { name: 'Rango con atajos', template: ra, snippet: RANGO_SNIPPET },
+      { name: 'Varios días sueltos', template: va, snippet: VARIOS_SNIPPET },
+      { name: 'Solo la hora', template: ho, snippet: HORA_SNIPPET },
       { name: 'Estados', template: es, snippet: ESTADOS_SNIPPET },
       { name: 'Lo que no se ve en los otros ejemplos', template: mv, snippet: MENOS_VISTOS_SNIPPET },
     ];
