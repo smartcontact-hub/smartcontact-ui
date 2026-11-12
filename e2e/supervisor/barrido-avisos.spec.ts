@@ -40,7 +40,8 @@ test.skip('borrar: copiar el nombre lo dice el ✓, y el lector lo oye, sin toas
 });
 
 test('repositorio: el estado es un interruptor, y el panel devuelve el foco a «Crear» al cerrarse (22 y 29)', async ({ page }) => {
-  await goto(page, 'admin/horarios');
+  // En Reglas IA: Horarios, donde se medía, tiene su editor desde DD-251.
+  await goto(page, 'admin/reglas-ia');
   const crear = page.locator('.top-bar__cta button').first();
   await crear.focus();
   await page.keyboard.press('Enter');

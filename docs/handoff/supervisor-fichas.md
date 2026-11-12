@@ -92,6 +92,24 @@ El de borrar y descartar sin teñir el modal (2026-10-31, DD-242; su trampa ya e
 93e71f3d:docs/handoff/supervisor-fichas.md`.
 El de la opción repetida de Tipificaciones (2026-10-31, DD-244, sin trampas propias): `git show 1bf926c4:docs/handoff/supervisor-fichas.md`.
 
+El de la barra común de asignar y Repositorios como sus COA (2026-10-31, DD-243 y DD-245, sin trampas propias): `git show
+79567b53:docs/handoff/supervisor-fichas.md`.
+
+## ✅ 2026-11-12 · Horarios con periodos, fechas especiales y festivos (DD-251)
+
+> **Sello:** rama `claude/calendarios-horarios-especiales-l3z4wx` sobre `main` HEAD `79567b53`.
+
+- **Hecho**: un horario es su semana, sus periodos y sus fechas especiales, con el año al lado (`/admin/horarios`, lista y
+  editor); los festivos, repositorio aparte que cada horario aplica (`/admin/festivos`). Lógica pura en
+  `repositories/state/horarios.core.mjs`; la prueba de aceptación es la hoja de postventa de 2025 (`horarios.test.mjs`).
+- **`sc-datepicker`**: `selectionMode="multiple"` (`dates`), `timeOnly`, `stepMinute` y `ariaLabel`.
+- **No hecho**: decir a qué grupos afecta ANTES de borrar un horario (hoy, la confirmación simple); locución por regla; el nodo
+  de horario de la IVR; el COA y el Figma de la pantalla. Las horas de la semilla «Postventa» son de ejemplo.
+- **Trampa de sonda**: en `p-datepicker` de rango, `fill()` sobre el campo no cambia el modelo y el botón sigue apagado;
+  parece un fallo del diálogo. Elige los dos días en el panel.
+- **Trampa de entorno**: `tools/primeng-doc.mjs` necesita `gh` contra `primefaces/primeng`; en una sesión en la nube sin ese
+  repositorio falla. La API instalada está en `node_modules/primeng/types/primeng-datepicker.d.ts`.
+
 ## ✅ 2026-11-06 · En el hub de Repositorios, pulsar otra tarjeta marca la otra (DD-249)
 
 > **Sello:** rama `areses/repo-card-selection-interactions-8ce085` sobre `main` HEAD `1bf926c4`.
@@ -131,23 +149,6 @@ El de la opción repetida de Tipificaciones (2026-10-31, DD-244, sin trampas pro
   `category`, `arrow_forward`, `key`, `hub`) y puesto en el hub, Usuarios y Agentes.
 - **No hecho** (con el evolutivo de Contact Center): Contact Center, Conversaciones, releer los COA, la cabecera del hub
   (58 en Figma, 56 en el prototipo) y las versiones por página.
-
-## ✅ 2026-10-31 · La barra común de asignar y Repositorios como sus COA (DD-243, DD-245)
-
-> **Sello:** rama `areses/align-coa-figma-flows-3b1a9b` sobre `main` HEAD `c395300b`.
-
-- **Barra (DD-243)**: `sc-assign-bar` en las cinco tablas de asignar y el panel rápido del Monitor: filtro «Todos /
-  Asignados / Sin asignar», buscador que llena y «N asignados» al final. Editar abre en Asignados; ordenar por nombre. El
-  vacío dice «Asígnalos desde «Todos».» (ya no es pestaña). Prueba: `barra-comun-tablas`.
-- **Repositorios (DD-245)**: Equipos (aviso del nombre gris y rojo, la cifra abre en Agentes, foto), Agendas (Nombre y «⋮»
-  fijos, siempre «Personalizado N»), Plantillas (tooltip del título, Ctrl/Cmd+S y contenido en rojo) y el hub (8
-  «Próximamente» sin panel, el reciente entra, Labels con Administración). Pruebas: `equipos-como-coa-4453`,
-  `agendas-plantillas-como-coa`, `repositorios-hub`.
-- **COA**: prompts de 4453, 4440, 4438, 4064, 4058 y 4062 en `~/Documents/Claude/2026-10 Empate flujos AED/`; los pega
-  y publica Rafa. Releídos en vivo el 2026-10-31 (4056 v14, 4058 v23, 4060 v2, 4062 v4, 4438 v11, 4440 v10, 4064 v2).
-- **Medido de paso, sin arreglar**: el hub no cabe a 1440 × 800 (sobran 318 px, ya antes) y su prueba mide `.hub`, que no
-  desplaza (`.app-shell__content` sí). **Figma**: barras y hub hechos (`figma-pendiente` §64); el «❖ Alert modal» blanco,
-  publicado el 2026-11-03 (§65); el azul de Comunicación, `sky` (DD-247).
 
 ## SIGUIENTE — sin preguntar
 

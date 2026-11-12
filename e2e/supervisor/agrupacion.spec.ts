@@ -70,6 +70,12 @@ const RUTAS = [
   'admin/agendas/crear',
   'admin/agendas/editar/1',
   'admin/horarios',
+  // El editor de un horario (DD-251), en el alta y con periodos y fechas especiales, y el de un calendario de festivos.
+  'admin/horarios/crear',
+  'admin/horarios/editar/9',
+  'admin/festivos',
+  'admin/festivos/crear',
+  'admin/festivos/editar/1',
   'admin/tipificaciones',
   // La ficha de una tipificación (DD-173), en el alta y con su árbol.
   'admin/tipificaciones/crear',
@@ -96,7 +102,8 @@ const ALTAS = [
   /* Desde DD-163, «Nueva agenda» navega a su editor; el diálogo es «Nuevo contacto», dentro del editor. El alta
    * (`/crear`) no entra: su primer botón es «Crear agenda», que guarda. */
   'admin/agendas/editar/1',
-  'admin/horarios',
+  /* Desde DD-251, «Nuevo horario» navega a su editor, que se mide en RUTAS; sus diálogos (periodo y fecha especial)
+   * se abren dentro de él. */
   /* Desde DD-173, «Nueva tipificación» navega a su ficha, que se mide en RUTAS; no tiene panel de alta. */
   'admin/variables',
   'admin/entidades',

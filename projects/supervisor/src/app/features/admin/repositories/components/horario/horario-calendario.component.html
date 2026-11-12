@@ -1,0 +1,72 @@
+<div class="cal__barra">
+  <sc-button variant="secondary" appearance="text" size="sm" icon="chevron_left" iconOnly [ariaLabel]="'repositories.horarios.calendar.prev_year' | translate" (clicked)="moverAnio(-1)" />
+  <span class="cal__anio sc-text-subtitle-semibold" aria-live="polite">{{ anio() }}</span>
+  <sc-button variant="secondary" appearance="text" size="sm" icon="chevron_right" iconOnly [ariaLabel]="'repositories.horarios.calendar.next_year' | translate" (clicked)="moverAnio(1)" />
+  <sc-button class="cal__hoy" variant="secondary" appearance="outlined" size="sm" [label]="'repositories.horarios.calendar.today' | translate" (clicked)="irAHoy()" />
+</div>
+
+<!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events -->
+<div class="cal__anual" role="group" [attr.aria-label]="'repositories.horarios.calendar.aria' | translate: { year: anio() }" (keydown)="teclado($event)">
+  @for (mes of meses(); track $index) {
+    <section class="cal__mes">
+      <h4 class="cal__mes-nombre sc-text-caption-semibold">{{ mes.nombre }}</h4>
+      <div class="cal__rejilla">
+        @for (inicial of iniciales(); track $index) {
+          <span class="cal__inicial sc-text-caption-regular" aria-hidden="true">{{ inicial }}</span>
+        }
+        @for (hueco of mes.huecos; track $index) {
+          <span></span>
+        }
+        @for (celda of mes.celdas; track celda.fecha) {
+          <button
+            type="button"
+            class="cal__dia sc-text-caption-regular"
+            [class.cal__dia--cerrado]="!celda.abierto"
+            [class.cal__dia--periodo]="celda.color"
+            [class.cal__dia--excepcion]="celda.excepcion"
+            [class.cal__dia--hoy]="esHoy(celda.fecha)"
+            [class.cal__dia--elegido]="celda.fecha === seleccion()"
+            [attr.data-color]="celda.color"
+            [attr.data-fecha]="celda.fecha"
+            [attr.aria-label]="celda.aria"
+            [attr.aria-pressed]="celda.fecha === seleccion()"
+            [attr.tabindex]="celda.fecha === seleccion() ? 0 : -1"
+            (click)="elegir(celda.fecha)"
+          >
+            {{ celda.numero }}
+          </button>
+        }
+      </div>
+    </section>
+  }
+</div>
+
+<ul class="cal__leyenda sc-text-caption-regular" role="list">
+  <li><span class="cal__muestra"></span>{{ 'repositories.horarios.legend.week' | translate }}</li>
+  @for (periodo of periodos(); track periodo.id) {
+    <li><span class="cal__muestra cal__dia--periodo" [attr.data-color]="periodo.color"></span>{{ periodo.name }}</li>
+  }
+  <li><span class="cal__muestra cal__dia--cerrado"></span>{{ 'repositories.horarios.closed' | translate }}</li>
+  @if (hayExcepciones()) {
+    <li><span class="cal__muestra cal__dia--excepcion"></span>{{ 'repositories.horarios.legend.exception' | translate }}</li>
+  }
+</ul>
+
+<section class="cal__detalle" aria-live="polite">
+  <h4 class="cal__detalle-titulo sc-text-body-semibold">{{ detalle().titulo }} · {{ anio() }}</h4>
+  <p class="cal__detalle-horas">
+    <sc-tag [severity]="detalle().abierto ? 'success' : 'secondary'" [value]="(detalle().abierto ? 'repositories.horarios.open' : 'repositories.horarios.closed') | translate" />
+    @if (detalle().abierto) {
+      <span class="sc-text-body-regular">{{ detalle().horas }}</span>
+    }
+  </p>
+  <p class="cal__detalle-motivo sc-text-caption-regular">{{ detalle().motivo }}</p>
+  <sc-button
+    variant="secondary"
+    appearance="outlined"
+    size="sm"
+    icon="edit_calendar"
+    [label]="(detalle().dia.especial ? 'repositories.horarios.calendar.edit_special' : 'repositories.horarios.calendar.change_day') | translate"
+    (clicked)="cambiarDia.emit(detalle().fecha)"
+  />
+</section>

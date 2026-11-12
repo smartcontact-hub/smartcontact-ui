@@ -1,0 +1,91 @@
+<sc-custom-modal
+  [visible]="true"
+  width="44rem"
+  [title]="(textos() + (especial() ? '_edit' : '_add')) | translate"
+  (closed)="cerrado.emit()"
+>
+  <div class="modal-horario modal-horario--especial">
+    <!-- Al añadir, el calendario a la vista: se marcan de una vez todos los días que llevan lo mismo. Al editar, un día. -->
+    <div class="modal-horario__fechas">
+      @if (especial()) {
+        <sc-datepicker
+          inputId="especial-fecha"
+          required
+          [label]="'repositories.horarios.special_date' | translate"
+          [value]="fechas()[0] ?? null"
+          [error]="errorDeFechas()"
+          (valueChange)="ponerFecha($event)"
+        />
+      } @else {
+        <span class="field__label sc-text-caption-semibold" id="especial-fechas-rotulo">{{ 'repositories.horarios.special_dates' | translate }}</span>
+        <sc-datepicker inline selectionMode="multiple" [ariaLabel]="'repositories.horarios.special_dates' | translate" [dates]="fechas()" (datesChange)="fechas.set($event ?? [])" />
+        @if (errorDeFechas(); as error) {
+          <p class="modal-horario__error sc-text-caption-regular" role="alert">{{ error }}</p>
+        } @else {
+          <p class="modal-horario__ayuda sc-text-caption-regular">{{ cuantas() || ('repositories.horarios.special_dates_help' | translate) }}</p>
+        }
+      }
+    </div>
+
+    <div class="modal-horario__datos">
+      <div class="field">
+        <sc-inputtext
+          inputId="especial-nombre"
+          fluid
+          required
+          [label]="'repositories.columns.name' | translate"
+          [placeholder]="(textos() + '_name_placeholder') | translate"
+          [value]="nombre()"
+          [error]="errorDeNombre()"
+          (valueChange)="nombre.set($event)"
+          (focusout)="dejarNombre($event)"
+        />
+      </div>
+
+      @if (variante() === 'especial') {
+      <div class="field">
+        <span class="field__label sc-text-caption-semibold" id="especial-modo-rotulo">{{ 'repositories.horarios.special_mode' | translate }}</span>
+        <sc-selectbutton
+          ariaLabelledBy="especial-modo-rotulo"
+          [options]="modos()"
+          optionLabel="label"
+          optionValue="value"
+          [allowEmpty]="false"
+          [value]="modo()"
+          (valueChange)="modo.set($any($event))"
+        />
+      </div>
+      }
+
+      @if (modo() === 'open') {
+        <div class="field">
+          <span class="field__label sc-text-caption-semibold">{{ 'repositories.horarios.special_slots' | translate }}</span>
+          <sc-horario-franjas [franjas]="franjas()" [etiqueta]="nombre()" (franjasChange)="franjas.set($event)" />
+          @if (errorDeFranjas(); as error) {
+            <p class="modal-horario__error sc-text-caption-regular" role="alert">{{ error }}</p>
+          }
+        </div>
+      }
+
+      <div class="modal-horario__fila">
+        <sc-toggleswitch inputId="especial-anual" [checked]="cadaAnio()" ariaLabelledBy="especial-anual-rotulo" (checkedChange)="cadaAnio.set($event)" />
+        <label class="sc-text-body-regular" id="especial-anual-rotulo" for="especial-anual">{{ 'repositories.horarios.repeat_yearly' | translate }}</label>
+      </div>
+    </div>
+  </div>
+
+  <div scCustomModalFooter class="modal-horario__pie">
+    @if (especial(); as e) {
+      <sc-button class="modal-horario__eliminar" variant="danger" appearance="text" [label]="'common.delete' | translate" (clicked)="eliminar.emit(e.id)" />
+    }
+    <sc-button variant="secondary" appearance="outlined" [label]="'common.cancel' | translate" (clicked)="cerrado.emit()" />
+    <sc-button
+      variant="primary"
+      [disabled]="!puedeGuardar()"
+      [pTooltip]="motivoApagado()"
+      tooltipPosition="top"
+      [label]="(especial() ? 'common.save' : textos() + '_add_submit') | translate"
+      (clicked)="confirmar()"
+    />
+  </div>
+</sc-custom-modal>

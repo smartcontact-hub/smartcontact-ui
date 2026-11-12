@@ -44,6 +44,7 @@
 > |---|---|
 > | Las dos tablas de asignación enseñan solo los canales marcados (el agente en General; el grupo, los de sus agentes), sin candado ni enlace (enmienda DD-217 §13 y DD-187 §2) | DD-250 |
 > | El alta de usuario lleva los marcadores de paso del grupo y del agente: Identidad dice lo que falta, Acceso y Servicios asignados «Revisada» al dejarlas · sin «Falta: …» sobre el resumen · cierra la deuda de DD-222 §5 | DD-248 |
+> | Un horario es su semana, sus periodos y sus fechas especiales, con el año al lado · cada fecha, un único dueño (fecha especial › festivo › periodo › semana) · los festivos, un repositorio aparte que cada horario aplica · Horarios sale de «Próximamente» y pasa a editor (enmienda DD-245 §4) | DD-251 |
 > | En el hub de Repositorios, pulsar otra tarjeta marca la otra a cualquier ancho: si el panel pisa tarjetas, flota con sombra y sin velo; velo solo si no deja ninguna entera a la vista, decidido al abrir · «Próximamente» no hace nada con otra marcada · el doble clic no abre y cierra, arrastrar un texto del panel hacia fuera no lo cierra, al cambiar el panel vuelve arriba, y si la marcada deja de verse su panel se va con ella (enmienda DD-179 §4 y DD-245 §4) | DD-249 |
 > | Un azul menos: la etiqueta azul (`--sc-label-blue-*`) y los avisos de información toman `sky`; se retira la familia `azure`, en el código y en el Kit · en Figma, Comunicación en `sky` y el fondo de los tonos del hub en el paso 50, como el código | DD-247 |
 > | El borde de las tarjetas del hub de Repositorios, al pasar, en el tono FUERTE de su grupo (el punto de la etiqueta), no en su borde (un 200 más flojo que el gris de reposo) · también en las «Próximamente», sin mano ni pulsar · marcada, el halo del mismo tono fuerte (enmienda DD-179 §2 y DD-245 §4) | DD-246 |
@@ -177,6 +178,59 @@
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
 
 ---
+
+## DD-251 · 2026-11-12 — Un horario es su semana, sus periodos y sus fechas especiales; los festivos, un calendario aparte que se aplica
+
+**Contexto** · Un horario era un texto libre («L-V 09:00–18:00») en una lista con panel, y su tarjeta del hub estaba en
+«Próximamente» (DD-245 §4). No sabía de festivos, de verano ni de vísperas: postventa lo lleva en una hoja de colores con cinco
+tipos de día. Producto exploró el problema en tres prototipos HTML, cada uno con un modelo: (a) horarios con vigencia `MM-DD` y
+prioridad numérica más excepciones con locución; (b) franjas reutilizables que cada calendario suma por día; (c) «periodos v2»:
+un periodo general, periodos sin solape y días especiales, cada fecha con un único dueño, y los periodos apuntando a una
+biblioteca de horarios semanales.
+
+**Decisión** ·
+1. **Una sola entidad, el `Horario` que ya existía** (`horarios.core.mjs`): su semana habitual, sus periodos (una temporada con
+   su propia semana, de `MM-DD` a `MM-DD`, que se repite cada año o vale un año) y sus fechas especiales (un día con sus horas
+   escritas ahí mismo, o cerrado; puntual o de cada año). Los grupos siguen eligiéndolo por `id` (DD-152).
+2. **Cada fecha tiene un único dueño**, en este orden: fecha especial propia › festivo aplicado › periodo › semana habitual. Sin
+   prioridades numéricas: dos periodos no pueden compartir fechas, y el error nombra al otro.
+3. **Los festivos son un repositorio aparte** (`/admin/festivos`): calendarios de días cerrados que cada horario aplica
+   («Festivos que aplica»). Es lo que de verdad comparten varios horarios y cambia cada año.
+4. **Una franja puede cruzar la medianoche** («23:00–07:00»): pertenece al día en que empieza y su madrugada vale al día
+   siguiente, salvo que ese día sea fecha especial o festivo, que sustituyen la fecha entera.
+5. **El editor enseña el resultado al lado**: las reglas a la izquierda y el año a la derecha, que se repinta con cada cambio. Al
+   elegir un día dice sus horas y quién las decide, y «Cambiar este día» abre su fecha especial. Las fechas especiales se añaden
+   de varias en varias, marcándolas en un calendario.
+6. **Horarios sale de «Próximamente»** en el hub (enmienda DD-245 §4: quedan siete) y pasa de panel a editor en su ruta, como
+   Agendas (DD-163). Lo guardado como texto se pone al día al leerlo con `normalize`, sin subir la versión (DD-141).
+7. **`sc-datepicker` gana `selectionMode="multiple"` (modelo `dates`), `timeOnly`, `stepMinute` y `ariaLabel`**, que son los
+   nativos de `p-datepicker` pasados tal cual (DD-113).
+
+**Razón** · La hoja de postventa de 2025 se reproduce día a día con ese modelo (`scripts/__tests__/horarios.test.mjs`, que
+transcribe la hoja y la compara con los 365 días de la semilla «Postventa»): sus cinco colores son tres cosas, la fila del
+viernes, un periodo y unas fechas. Y es lo que hace el mercado: en Zendesk, 8x8 y el chat de Five9 un horario lleva dentro su zona,
+su semana y sus excepciones; Aircall y Talkdesk separan solo las fechas especiales o los festivos; el único que compone piezas
+reutilizables es Genesys (horarios y grupos de horarios, con orden festivo › cerrado › abierto). De los prototipos se conserva lo
+que decide: el dueño único y los periodos sin solape de (c), la vista de año y el «por qué» de (b) y (c), y la idea de comprobar
+una fecha de (a), que aquí es elegir el día.
+
+**Descartadas** ·
+- **Dos bibliotecas, calendarios que apuntan a horarios semanales** (prototipos b y c). Saber a qué hora se cierra un viernes de
+  verano pedía tres saltos (calendario, periodo, horario, fila), y una fecha especial obligaba a crear una semana entera para un
+  día. La reutilización que justificaba la biblioteca se cubre con «Duplicar», «Copiar las franjas de…» y los festivos compartidos.
+- **Prioridades numéricas y vigencias a mano** (prototipo a): dos reglas para la misma fecha se resolvían por un número que no
+  se ve en el calendario.
+- **El año con `p-datepicker` en línea y `numberOfMonths`**: ahí se elige una fecha y se avanza de mes en mes; aquí se lee un año
+  y se avanza de año en año, y la rejilla de cuatro por tres pedía rehacer su disposición interna (lo que vigila
+  `audit:primeng-coupling`). Es una rejilla propia de la pantalla (`horario-calendario.component`), con un solo día en el orden
+  de tabulación y las flechas para moverse.
+- **Festivos como pestaña de la página de Horarios**: la lista de repositorio es una página entera; otro repositorio en el hub
+  es la forma que ya tienen los demás.
+- **Locución por regla y nodo de horario de la IVR**: fuera de esta tanda.
+
+**Consecuencias** · Borrar un horario que usan grupos sigue con la confirmación simple de la lista: decir a quién afecta antes de
+borrar queda pendiente (hoy lo dice el editor, «Lo usan N grupos»). La columna «Ahora» de la lista dice «Abierto» o «Cerrado» en
+la zona de cada horario, sin la hora del cambio. Las horas de la semilla «Postventa» son de ejemplo: la hoja no las trae.
 
 ## DD-250 · 2026-11-10 — Fuera el candado de canal: la tabla del agente enseña solo los canales que tiene marcados
 

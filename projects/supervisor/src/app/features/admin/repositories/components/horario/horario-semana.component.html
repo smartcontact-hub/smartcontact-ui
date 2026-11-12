@@ -1,0 +1,51 @@
+<ul class="semana" role="list">
+  @for (dia of dias(); track dia.indice) {
+    <li class="semana__dia">
+      <span class="semana__nombre sc-text-body-semibold" [id]="prefijo() + '-dia-' + dia.indice">{{ dia.nombre }}</span>
+      <sc-toggleswitch
+        [checked]="dia.franjas.length > 0"
+        [ariaLabelledBy]="prefijo() + '-dia-' + dia.indice"
+        (checkedChange)="abrir(dia.indice, $event)"
+      />
+      @if (dia.franjas.length > 0) {
+        <sc-horario-franjas class="semana__franjas" [franjas]="dia.franjas" [etiqueta]="dia.nombre" (franjasChange)="ponerDia(dia.indice, $event)" />
+      } @else {
+        <span class="semana__cerrado sc-text-body-regular">{{ 'repositories.horarios.closed' | translate }}</span>
+      }
+      @if (falta()?.dia === dia.indice) {
+        <p class="semana__error sc-text-caption-regular" role="alert">{{ 'repositories.horarios.errors.week_' + falta()!.codigo | translate }}</p>
+      }
+    </li>
+  }
+</ul>
+
+<div class="semana__copiar">
+  <sc-select
+    class="semana__origen"
+    [label]="'repositories.horarios.copy_from' | translate"
+    [options]="opcionesDeDia()"
+    optionLabel="label"
+    optionValue="value"
+    [value]="origen()"
+    (valueChange)="elegirOrigen($event)"
+  />
+  <sc-multiselect
+    class="semana__destinos"
+    [label]="'repositories.horarios.copy_to' | translate"
+    [placeholder]="'repositories.horarios.copy_to_placeholder' | translate"
+    [options]="destinosPosibles()"
+    optionLabel="label"
+    optionValue="value"
+    [maxSelectedLabels]="7"
+    [value]="destinos()"
+    (valueChange)="destinos.set($any($event))"
+  />
+  <sc-button
+    variant="secondary"
+    appearance="outlined"
+    icon="content_copy"
+    [disabled]="destinos().length === 0"
+    [label]="'repositories.horarios.copy' | translate"
+    (clicked)="copiar()"
+  />
+</div>

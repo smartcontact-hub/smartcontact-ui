@@ -1,0 +1,59 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1);
+}
+
+.semana {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Nombre · interruptor · franjas: las tres columnas alineadas entre días, y el error debajo de las franjas. */
+.semana__dia {
+  display: grid;
+  grid-template-columns: var(--sc-spacing-5) auto minmax(0, 1fr);
+  align-items: start;
+  column-gap: var(--sc-spacing-1);
+  row-gap: var(--sc-spacing-0-25);
+  padding-block: var(--sc-spacing-0-5);
+  border-block-end: 1px solid var(--sc-border-subtle);
+
+  &:last-child {
+    border-block-end: 0;
+  }
+}
+
+.semana__nombre,
+.semana__cerrado {
+  padding-block-start: var(--sc-spacing-0-5);
+}
+
+.semana__cerrado {
+  color: var(--sc-text-secondary);
+}
+
+.semana__error {
+  grid-column: 3;
+  margin: 0;
+  color: var(--sc-text-danger);
+}
+
+.semana__copiar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--sc-spacing-0-5);
+}
+
+.semana__origen {
+  inline-size: var(--sc-spacing-12-5);
+}
+
+.semana__destinos {
+  flex: 1;
+  min-inline-size: var(--sc-spacing-12-5);
+}

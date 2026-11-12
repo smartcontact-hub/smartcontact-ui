@@ -58,6 +58,21 @@
   </div>
 </ng-template>
 
+<!-- Días sueltos, con el calendario a la vista: el modo «multiple» de primeng.dev/datepicker. -->
+<ng-template #varios>
+  <div class="col">
+    <sc-datepicker inline selectionMode="multiple" ariaLabel="Días festivos" [(dates)]="festivos" data-testid="sc-datepicker-multiple" />
+    <p>Marcados: {{ festivos()?.length ?? 0 }}</p>
+  </div>
+</ng-template>
+
+<!-- Solo la hora: «timeOnly» de primeng.dev/datepicker. -->
+<ng-template #hora>
+  <div class="col">
+    <sc-datepicker label="Apertura" timeOnly placeholder="hh:mm" [stepMinute]="15" [(value)]="apertura" data-testid="sc-datepicker-time" />
+  </div>
+</ng-template>
+
 <ng-template #estados>
   <div class="col">
     <sc-datepicker label="Obligatoria" [required]="true" />
