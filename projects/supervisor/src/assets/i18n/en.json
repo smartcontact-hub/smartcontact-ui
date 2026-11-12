@@ -1533,7 +1533,7 @@
       "section_periods": "Periods",
       "section_periods_hint": "A season with its own week",
       "section_specials": "Special dates and holidays",
-      "section_specials_hint": "Days with their own hours, or closed",
+      "section_specials_hint": "They override the week and the periods",
       "section_calendar": "Calendar",
       "section_calendar_hint": "Pick a day to see its hours and where they come from",
       "days": {

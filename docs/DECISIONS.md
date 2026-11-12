@@ -235,6 +235,13 @@ prototipo «periodos v2» haciendo las mismas tareas: Nochevieja de 9 a 14, 12 �
 - **Botón «Festivos» en la barra de la lista de Horarios**: ninguna lista pone una acción de navegación junto a
   «Nuevo»; a los festivos se llega desde el campo que los usa («Gestionar calendarios de festivos», como «Gestionar en Repositorios»
   de DD-217 §9) y por la miga.
+- **Índice de secciones a la izquierda** (`sc-form-section-nav`): en la app cada entrada abre su sección SOLA (DD-122,
+  `showSection`); aquí partiría en vistas lo que se lee junto, porque semana, periodos y fechas especiales son capas de
+  un mismo día y el año de al lado es su suma. Lo llevan las seis pantallas de DD-220 (fichas, Contact Center,
+  constructor), no los editores de un repositorio (agenda, cuenta y trigger de correo, festivos). Y el carril de 235
+  bajaría la columna de reglas de 586 a unos 506 (calculado a 1440), con las tablas otra vez recortadas. Aquí hace de
+  índice el año: elegir un día dice de qué regla salen sus horas, y «Editar este día» lleva a ella. Lo que sí faltaba
+  para no adivinar, qué manda sobre qué, lo dice la ayuda de la tarjeta («Mandan sobre la semana y los periodos»).
 - **Tarjeta de Festivos en el hub de Repositorios**: probada; el hub refleja los ocho repositorios del COA y cabe a
   1440 × 800 sin desplazar (13 tarjetas), y `repositorios-hub.spec.ts` lo guarda. Una decimocuarta lo rompía.
 - **La leyenda que ilumina sus días al pasar**: sin precedente, y accesible con teclado convertía la leyenda en

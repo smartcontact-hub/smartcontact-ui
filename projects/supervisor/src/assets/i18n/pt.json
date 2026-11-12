@@ -1533,7 +1533,7 @@
       "section_periods": "Períodos",
       "section_periods_hint": "Uma temporada com a sua própria semana",
       "section_specials": "Datas especiais e feriados",
-      "section_specials_hint": "Dias com as suas próprias horas, ou fechados",
+      "section_specials_hint": "Prevalecem sobre a semana e os períodos",
       "section_calendar": "Calendário",
       "section_calendar_hint": "Escolhe um dia para ver as horas e de onde vêm",
       "days": {
