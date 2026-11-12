@@ -10,7 +10,7 @@
   <sc-button
     variant="primary"
     [disabled]="!canSave()"
-    [pTooltip]="motivoApagado()" tooltipPosition="top"
+    [pTooltip]="motivoApagado()" tooltipPosition="top" tooltipEvent="both"
     [label]="(mode() === 'create' ? 'repositories.horarios.create_submit' : 'common.save') | translate"
     (clicked)="save()"
   />
@@ -99,7 +99,7 @@
                     <li class="horario__fila">
                       <sc-tag variant="label" [labelColor]="fila.periodo.color" [value]="fila.periodo.name" />
                       <span class="horario__fila-datos">
-                        <span class="sc-text-body-regular">{{ fila.fechas }} · {{ fila.cuando }}</span>
+                        <span class="sc-text-body-regular">{{ fila.cuando }}</span>
                         <span class="horario__fila-detalle sc-text-caption-regular">{{ fila.resumen }}</span>
                       </span>
                       <sc-button
@@ -157,7 +157,7 @@
                       <span class="horario__fila-datos">
                         <span class="sc-text-body-regular">{{ fila.especial.name }}</span>
                         <span class="horario__fila-detalle sc-text-caption-regular">
-                          {{ fila.horas ?? ('repositories.horarios.closed' | translate) }}@if (fila.especial.yearly) { · {{ 'repositories.horarios.yearly' | translate }} }
+                          {{ fila.detalle }}
                         </span>
                       </span>
                       <sc-button

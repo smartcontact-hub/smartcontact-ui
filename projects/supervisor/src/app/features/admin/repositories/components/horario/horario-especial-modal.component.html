@@ -1,7 +1,7 @@
 <sc-custom-modal
   [visible]="true"
   width="44rem"
-  [title]="(textos() + (especial() ? '_edit' : '_add')) | translate"
+  [title]="claves().titulo | translate"
   (closed)="cerrado.emit()"
 >
   <div class="modal-horario modal-horario--especial">
@@ -34,7 +34,7 @@
           fluid
           required
           [label]="'repositories.columns.name' | translate"
-          [placeholder]="(textos() + '_name_placeholder') | translate"
+          [placeholder]="claves().nombre | translate"
           [value]="nombre()"
           [error]="errorDeNombre()"
           (valueChange)="nombre.set($event)"
@@ -84,7 +84,8 @@
       [disabled]="!puedeGuardar()"
       [pTooltip]="motivoApagado()"
       tooltipPosition="top"
-      [label]="(especial() ? 'common.save' : textos() + '_add_submit') | translate"
+      tooltipEvent="both"
+      [label]="claves().enviar | translate"
       (clicked)="confirmar()"
     />
   </div>

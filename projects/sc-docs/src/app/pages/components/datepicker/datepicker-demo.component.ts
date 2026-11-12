@@ -24,7 +24,7 @@ const VARIOS_SNIPPET = `<!-- "selectionMode=multiple": cada clic pone o quita un
 
 const HORA_SNIPPET = `<!-- "timeOnly": solo la hora, escrita como hh:mm. El valor sigue en "value" y es un Date del que
      solo cuentan la hora y los minutos. "stepMinute" es el salto de las flechas del panel. -->
-<sc-datepicker label="Apertura" timeOnly placeholder="hh:mm" [stepMinute]="15" [(value)]="apertura" />`;
+<sc-datepicker label="Apertura" [timeOnly]="true" placeholder="hh:mm" [stepMinute]="15" [(value)]="apertura" />`;
 
 const RANGO_SNIPPET = `<!-- "selectionMode=range": primer clic abre el periodo, segundo lo cierra. El valor va en
      "range" ([inicio, fin]), no en "value". "presets" pone atajos en el pie del panel; cada

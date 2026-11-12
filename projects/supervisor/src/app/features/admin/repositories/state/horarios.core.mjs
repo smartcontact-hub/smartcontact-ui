@@ -214,7 +214,7 @@ export function gruposDeLaSemana(semana) {
 }
 
 /**
- * La semana en una línea: «L–J 09:00–18:00 · V 09:00–15:00». `dias` son los siete nombres cortos; `cerrado`, lo que
+ * La semana en una línea: «L–J 09:00–18:00; V 09:00–15:00» (sin punto medio, DD-183). `dias` son los siete nombres cortos; `cerrado`, lo que
  * dice una semana sin ninguna franja; `siempre`, lo que dice un 24/7.
  */
 export function resumenDeLaSemana(semana, dias, cerrado, siempre) {
@@ -223,7 +223,7 @@ export function resumenDeLaSemana(semana, dias, cerrado, siempre) {
   if (grupos.length === 1 && grupos[0].desde === 0 && grupos[0].hasta === 6 && mismasFranjas(grupos[0].franjas, [[0, MINUTOS_DEL_DIA]])) return siempre;
   return grupos
     .map((g) => `${g.desde === g.hasta ? dias[g.desde] : `${dias[g.desde]}–${dias[g.hasta]}`} ${g.franjas.map(textoDeFranja).join(', ')}`)
-    .join(' · ');
+    .join('; ');
 }
 
 /** Cuántos días de un año son de cada dueño: la semana habitual, cada periodo, los festivos y las fechas especiales. */

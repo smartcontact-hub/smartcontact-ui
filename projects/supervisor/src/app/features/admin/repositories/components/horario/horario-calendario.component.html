@@ -53,7 +53,7 @@
 </ul>
 
 <section class="cal__detalle" aria-live="polite">
-  <h4 class="cal__detalle-titulo sc-text-body-semibold">{{ detalle().titulo }} · {{ anio() }}</h4>
+  <h4 class="cal__detalle-titulo sc-text-body-semibold">{{ detalle().titulo }}</h4>
   <p class="cal__detalle-horas">
     <sc-tag [severity]="detalle().abierto ? 'success' : 'secondary'" [value]="(detalle().abierto ? 'repositories.horarios.open' : 'repositories.horarios.closed') | translate" />
     @if (detalle().abierto) {
@@ -65,7 +65,7 @@
     variant="secondary"
     appearance="outlined"
     size="sm"
-    icon="edit_calendar"
+    icon="edit"
     [label]="(detalle().dia.especial ? 'repositories.horarios.calendar.edit_special' : 'repositories.horarios.calendar.change_day') | translate"
     (clicked)="cambiarDia.emit(detalle().fecha)"
   />

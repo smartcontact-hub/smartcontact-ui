@@ -60,6 +60,7 @@
       [disabled]="!puedeGuardar()"
       [pTooltip]="motivoApagado()"
       tooltipPosition="top"
+      tooltipEvent="both"
       [label]="(periodo() ? 'common.save' : 'repositories.horarios.period_add_submit') | translate"
       (clicked)="confirmar()"
     />

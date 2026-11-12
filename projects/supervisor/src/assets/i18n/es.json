@@ -1533,13 +1533,13 @@
       "used_by_one": "Lo usa el grupo «{{name}}»: lo que cambies aquí cambia su atención.",
       "section_general": "General",
       "section_week": "Semana habitual",
-      "section_week_hint": "Las horas de una semana normal.",
+      "section_week_hint": "Las horas de una semana normal",
       "section_periods": "Periodos",
-      "section_periods_hint": "Una temporada con su propia semana.",
+      "section_periods_hint": "Una temporada con su propia semana",
       "section_specials": "Fechas especiales y festivos",
-      "section_specials_hint": "Días con sus propias horas, o cerrados.",
+      "section_specials_hint": "Días con sus propias horas, o cerrados",
       "section_calendar": "Calendario",
-      "section_calendar_hint": "Elige un día para ver sus horas y de dónde salen.",
+      "section_calendar_hint": "Elige un día para ver sus horas y de dónde salen",
       "days": {
         "mon": "Lunes",
         "tue": "Martes",
@@ -1590,7 +1590,7 @@
       "special_slots": "Franjas",
       "specials_empty": "Sin fechas especiales.",
       "holiday_calendars": "Festivos que aplica",
-      "holiday_calendars_placeholder": "Ninguno",
+      "holiday_calendars_placeholder": "Sin festivos",
       "holiday_calendars_help": "Sus días se cierran en este horario.",
       "manage_holidays": "Gestionar festivos",
       "calendar": {
@@ -1630,7 +1630,11 @@
         "slots_vacia": "Una franja empieza y acaba a la misma hora",
         "slots_solape": "Dos franjas se pisan",
         "slots_noche": "Solo la última franja puede acabar al día siguiente"
-      }
+      },
+      "period_when_yearly": "{{dates}}, cada año",
+      "period_when_year": "{{dates}} de {{year}}",
+      "special_detail": "{{hours}}",
+      "special_detail_yearly": "{{hours}}, cada año"
     },
     "festivos": {
       "title": "Festivos",
@@ -1654,7 +1658,7 @@
       "col_days": "Días",
       "col_schedules": "Horarios",
       "section_days": "Días festivos",
-      "section_days_hint": "Estos días se cierran en los horarios que apliquen el calendario.",
+      "section_days_hint": "Estos días se cierran en los horarios que apliquen el calendario",
       "days_empty": "Sin días todavía.",
       "day_add": "Añadir festivos",
       "day_edit": "Editar festivo",
