@@ -4,7 +4,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { indiceDePrecedentes, piezasDe, revisarPlantilla, selectoresDe } from '../piezas-pantalla.mjs';
+import { indiceDePrecedentes, piezasDe, revisarPlantilla, selectoresDe, soloNuevas } from '../piezas-pantalla.mjs';
 
 const ds = new Set(['sc-button', 'sc-datatable', 'sc-tag', 'sc-section-card']);
 const opciones = { ds, propios: new Set(['sc-horario-semana']) };
@@ -76,4 +76,13 @@ test('los selectores salen de sus decoradores', () => {
 test('declarada una vez basta para la misma pieza repetida en la plantilla', () => {
   const html = '<!-- pieza nueva: DD-252, dos horas -->\n<table></table>\n\n\n\n\n<table></table>';
   assert.deepEqual(revisarPlantilla(html, new Map(), opciones).map((f) => [f.lineas, f.falla]), [[[2, 7], false]]);
+});
+
+test('solo se juzga lo que el cambio añade: lo que la plantilla ya tenía en origin/main no', () => {
+  const antes = '<table></table>';
+  const ahora = '<table></table>\n<sc-button icon="edit" iconOnly [ariaLabel]="x" />';
+  const filas = soloNuevas(revisarPlantilla(ahora, new Map(), opciones), antes, opciones);
+  assert.deepEqual(filas.map((f) => f.firma), ['sc-button solo icono «edit» · suelta']);
+  // Nueva entera (sin versión en origin/main): todo cuenta.
+  assert.equal(soloNuevas(revisarPlantilla(ahora, new Map(), opciones), '', opciones).length, 2);
 });

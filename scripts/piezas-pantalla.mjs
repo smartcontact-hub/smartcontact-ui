@@ -9,7 +9,8 @@
  * (tokens, espaciado e iconos estaban en regla) y lo tuvo que señalar el usuario: el lápiz no existía en ninguna otra
  * ficha. Faltaba la pregunta de LEARNINGS #10 —¿qué te sirve ya el sistema?— hecha por una máquina.
  *
- * Qué hace: saca las PIEZAS de cada plantilla y busca cada una en el resto del Supervisor. Una pieza es:
+ * Qué hace: saca las PIEZAS que el cambio AÑADE a cada plantilla (las que su versión de origin/main ya tenía no se
+ * juzgan) y busca cada una en el resto del Supervisor, contando como precedente lo que había en origin/main. Una pieza es:
  *   · cada componente del DS (`sc-*` que declara `projects/ui-smartcontact`) o nativo de PrimeNG (`p-*`); en `sc-button`,
  *     además, si es de solo icono y cuál (el icono es todo lo que dice);
  *   · lo hecho a mano que suele esconder una pieza que ya existe: `<ul>`/`<ol>`, `<table>`, `<button>` nativo y
@@ -141,6 +142,16 @@ export function revisarPlantilla(html, indice, opciones) {
   });
 }
 
+/**
+ * Solo lo que la rama AÑADE: las firmas que la versión de origin/main de la misma plantilla ya tenía no se juzgan (no
+ * son de este cambio; tocar una ficha no obliga a declarar lo que ya llevaba).
+ */
+export function soloNuevas(filas, html0, opciones) {
+  if (!html0) return filas;
+  const antes = new Set(piezasDe(html0, opciones).map((p) => p.firma));
+  return filas.filter((f) => !antes.has(f.firma));
+}
+
 /** Los selectores que declara un conjunto de ficheros `.ts`. */
 export function selectoresDe(fuentes) {
   const out = new Set();
@@ -182,18 +193,28 @@ export function inventario(rutas = plantillasCambiadas(), log = (s) => console.l
   const propios = selectoresDe([...nuevosTs, ...sinSeguir].filter(existsSync).map((f) => readFileSync(f, 'utf8')));
   const opciones = { ds, propios };
   const revisadas = new Set(rutas);
-  const otras = lista(git('ls-files', `${SUPERVISOR}*.html`, `${SUPERVISOR}*.ts`))
-    .filter((r) => !revisadas.has(r) && !LAB.test(r) && conPlantilla(r))
-    .map((r) => [r, plantillaDe(r)]);
+  const base = git('merge-base', 'HEAD', 'origin/main').trim() || 'origin/main';
+  /** La plantilla como está en origin/main (vacía si es nueva). */
+  const deBase = (ruta) => {
+    const src = git('show', `${base}:${ruta}`);
+    return ruta.endsWith('.ts') ? soloPlantillas(src) : src;
+  };
+  const otras = [
+    ...lista(git('ls-files', `${SUPERVISOR}*.html`, `${SUPERVISOR}*.ts`))
+      .filter((r) => !revisadas.has(r) && !LAB.test(r) && conPlantilla(r))
+      .map((r) => [r, plantillaDe(r)]),
+    // Lo que las plantillas revisadas ya tenían en origin/main también es el sistema: es precedente.
+    ...rutas.map((r) => [`${r} (origin/main)`, deBase(r)]).filter(([, html]) => html),
+  ];
   const indice = indiceDePrecedentes(otras, opciones);
   let fallos = 0;
   log(`\nPiezas de ${rutas.length} plantilla(s), contra ${otras.length} del resto del Supervisor (DD-252):`);
   for (const ruta of rutas) {
-    const filas = revisarPlantilla(plantillaDe(ruta), indice, opciones);
+    const filas = soloNuevas(revisarPlantilla(plantillaDe(ruta), indice, opciones), deBase(ruta), opciones);
     const malas = filas.filter((f) => f.falla);
     fallos += malas.length;
     const declaradas = filas.filter((f) => !f.ejemplo && f.declarada);
-    log(`${malas.length ? '✗' : '✓'} ${ruta} · ${filas.length} pieza(s)${declaradas.length ? `, ${declaradas.length} nueva(s) declarada(s)` : ''}`);
+    log(`${malas.length ? '✗' : '✓'} ${ruta} · ${filas.length} pieza(s) nueva(s) en este cambio${declaradas.length ? `, ${declaradas.length} declarada(s)` : ''}`);
     for (const f of filas.filter((x) => x.falla || !x.ejemplo)) {
       const donde = f.lineas.slice(0, 4).join(', ');
       log(`    ${f.falla ? 'SIN PRECEDENTE' : 'declarada'} · ${f.firma} · línea ${donde}`);
