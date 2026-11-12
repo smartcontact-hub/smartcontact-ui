@@ -6,14 +6,13 @@
     (dragleave)="dragging.set(false)"
     (drop)="onDrop($event)"
   >
-    <!-- El input nativo va oculto y lo abre un botón del DS: fuera del tabulador y del lector, que si no anuncian un
-         segundo botón «Choose File» en inglés. -->
+    <!-- El input nativo va oculto (`hidden`: sin caja, así que no cuenta como el control del campo al medir el aire
+         entre campos) y lo abre un botón del DS: fuera del tabulador y del lector, que si no anuncian un segundo botón
+         «Choose File» en inglés. -->
     <input
       #archivo
-      class="visually-hidden"
+      hidden
       type="file"
-      tabindex="-1"
-      aria-hidden="true"
       [id]="inputId()"
       [accept]="accept()"
       (change)="onInput($event)"

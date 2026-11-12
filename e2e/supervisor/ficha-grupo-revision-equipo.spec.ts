@@ -89,8 +89,8 @@ test('los tiempos llegan a 5 minutos y más', async ({ page }) => {
 test('subir audios: solo «Elegir», sin «Subir» ni «Cancelar», varios periódicos, .wav y .mp3, y rechazo de otros tipos', async ({ page }) => {
   await goto(page, 'admin/grupos/editar/11?seccion=distribucion');
   const telefono = page.locator('#group-channel-phone');
-  // `auto`, el modo nativo sin los dos botones: la ficha ya tiene «Guardar» (revisión del 2026-10-15).
-  const botones = telefono.locator('#group-hold-music-upload').getByRole('button');
+  // El campo de audio propio: un solo botón, «Elegir»; la ficha ya tiene «Guardar».
+  const botones = telefono.getByRole('group', { name: 'Música de espera/transferencia', exact: true }).getByRole('button');
   await expect(botones).toHaveCount(1);
   await expect(botones).toHaveAccessibleName('Elegir');
 
@@ -105,10 +105,11 @@ test('subir audios: solo «Elegir», sin «Subir» ni «Cancelar», varios peri�
   await expect(lista.getByText('dos.wav', { exact: true })).toHaveCount(1);
 
   // .wav y .mp3 entran (desarrollo, 2026-10-15); otro tipo se rechaza y lo dice.
-  const musica = page.locator('#group-hold-music-upload');
-  await musica.locator('input[type="file"]').setInputFiles({ name: 'voz.mp3', mimeType: 'audio/mpeg', buffer: Buffer.from('ID3') });
-  await expect(musica.locator('.p-fileupload-file')).toContainText('voz.mp3');
-  await musica.locator('input[type="file"]').setInputFiles({ name: 'nota.txt', mimeType: 'text/plain', buffer: Buffer.from('hola') });
+  const musica = telefono.getByRole('group', { name: 'Música de espera/transferencia', exact: true });
+  const archivo = page.locator('#group-hold-music-upload');
+  await archivo.setInputFiles({ name: 'voz.mp3', mimeType: 'audio/mpeg', buffer: Buffer.from('ID3') });
+  await expect(musica.getByText('voz.mp3', { exact: true })).toBeVisible();
+  await archivo.setInputFiles({ name: 'nota.txt', mimeType: 'text/plain', buffer: Buffer.from('hola') });
   await expect(telefono.getByText('tipo de archivo no válido', { exact: false })).toBeVisible();
   await expect(telefono.getByText('Admite archivos .wav y .mp3.').first()).toBeVisible();
 });
