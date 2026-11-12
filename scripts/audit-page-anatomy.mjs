@@ -54,7 +54,7 @@ const sh = (cmd) => {
 };
 
 /** Los arquetipos que existen. Sin modificador = el editor por defecto (1200). */
-export const ARQUETIPOS = ['list', 'hub', 'reading', 'with-panel', 'rail'];
+export const ARQUETIPOS = ['list', 'hub', 'reading', 'with-panel', 'rail', 'resultado'];
 
 /**
  * Páginas que NO declaran arquetipo, con su motivo. Entrada muerta (el fichero ya no
@@ -263,7 +263,7 @@ if (process.argv[1] && process.argv[1].endsWith('audit-page-anatomy.mjs')) {
 
   log(
     `audit:page-anatomy — ${plantillas.length} página(s): list ${censo.list} · editor ${censo.editor} · ` +
-      `hub ${censo.hub} · reading ${censo.reading} · with-panel ${censo['with-panel']} · rail ${censo.rail} · ` +
+      `hub ${censo.hub} · reading ${censo.reading} · with-panel ${censo['with-panel']} · rail ${censo.rail} · resultado ${censo.resultado} · ` +
       `exentas ${censo.exentas} (trinquete de anchos sueltos: ${Object.keys(ANCHOS_PENDIENTES).length})\n`,
   );
 

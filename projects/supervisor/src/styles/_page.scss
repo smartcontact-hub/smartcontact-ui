@@ -56,6 +56,15 @@
     max-width: none;
   }
 
+  /* Editor con su resultado al lado (el horario y su año, DD-253): la misma cuenta que las fichas con resumen. Con 1200
+   * las dos columnas se quedaban en 586 y el año apretaba sus días por debajo de 24; desde 1340 el tope sube a 1600, y por
+   * debajo, con el resultado debajo de las reglas, sigue en 1200. */
+  &--resultado {
+    @media (min-width: 1340px) {
+      max-width: 1600px;
+    }
+  }
+
   /* Hub de tarjetas: rejilla de destinos, no contenido continuo. */
   &--hub {
     max-width: 960px;
@@ -240,15 +249,6 @@
  * con sus cuatro canales pide unos 740. A 1440 queda en 812. */
 .page__inner--rail.ficha-rail--summary {
   max-width: 1600px;
-}
-
-/* UN EDITOR CON SU RESULTADO AL LADO (el horario y su año, DD-253): la misma cuenta que las fichas con resumen. Con
- * 1200 las dos columnas se quedaban en 586 y el año apretaba sus días por debajo de 24; desde 1340 el tope sube a
- * 1600, y por debajo, con el resultado debajo de las reglas, sigue en 1200. */
-@media (min-width: 1340px) {
-  .page__inner.page__inner--resultado {
-    max-width: 1600px;
-  }
 }
 
 .ficha-summary {
