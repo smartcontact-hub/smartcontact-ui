@@ -1593,12 +1593,11 @@
       "holiday_calendars_help": "Os seus dias ficam fechados neste horário.",
       "manage_holidays": "Gerir feriados",
       "calendar": {
-        "prev_year": "Ano anterior",
-        "next_year": "Ano seguinte",
         "today": "Hoje",
         "aria": "Calendário de {{year}}",
         "change_day": "Alterar este dia",
-        "edit_special": "Editar data especial"
+        "edit_special": "Editar data especial",
+        "year": "Ano"
       },
       "legend": {
         "week": "Semana habitual",
@@ -1630,10 +1629,24 @@
         "slots_solape": "Duas faixas sobrepõem-se",
         "slots_noche": "Só a última faixa pode acabar no dia seguinte"
       },
-      "period_when_yearly": "{{dates}}, todos os anos",
-      "period_when_year": "{{dates}} de {{year}}",
-      "special_detail": "{{hours}}",
-      "special_detail_yearly": "{{hours}}, todos os anos"
+      "cols": {
+        "period": "Período",
+        "dates": "Datas",
+        "week": "Semana",
+        "date": "Data",
+        "name": "Nome",
+        "hours": "Horas",
+        "repeat": "Repetição"
+      },
+      "specials_filter": "Que datas especiais se veem",
+      "specials_upcoming": "Próximas",
+      "specials_past": "Passadas",
+      "specials_past_empty": "Sem datas especiais passadas.",
+      "period_delete_title": "Eliminar o período «{{name}}»?",
+      "period_deleted": "Período «{{name}}» eliminado",
+      "special_delete_title": "Eliminar a data especial «{{name}}»?",
+      "special_deleted": "Data especial «{{name}}» eliminada",
+      "only_year": "Só {{year}}"
     },
     "festivos": {
       "title": "Feriados",
@@ -1667,7 +1680,9 @@
       "used_by_one": "É aplicado pelo horário «{{name}}»: o que alterares aqui altera os dias fechados dele.",
       "errors": {
         "name_required": "O nome é obrigatório"
-      }
+      },
+      "day_delete_title": "Eliminar o feriado «{{name}}»?",
+      "day_deleted": "Feriado «{{name}}» eliminado"
     },
     "tipificaciones": {
       "title": "Tipificações",

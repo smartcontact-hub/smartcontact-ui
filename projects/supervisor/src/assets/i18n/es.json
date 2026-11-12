@@ -1593,12 +1593,11 @@
       "holiday_calendars_help": "Sus días se cierran en este horario.",
       "manage_holidays": "Gestionar festivos",
       "calendar": {
-        "prev_year": "Año anterior",
-        "next_year": "Año siguiente",
         "today": "Hoy",
         "aria": "Calendario de {{year}}",
         "change_day": "Cambiar este día",
-        "edit_special": "Editar fecha especial"
+        "edit_special": "Editar fecha especial",
+        "year": "Año"
       },
       "legend": {
         "week": "Semana habitual",
@@ -1630,10 +1629,24 @@
         "slots_solape": "Dos franjas se pisan",
         "slots_noche": "Solo la última franja puede acabar al día siguiente"
       },
-      "period_when_yearly": "{{dates}}, cada año",
-      "period_when_year": "{{dates}} de {{year}}",
-      "special_detail": "{{hours}}",
-      "special_detail_yearly": "{{hours}}, cada año"
+      "cols": {
+        "period": "Periodo",
+        "dates": "Fechas",
+        "week": "Semana",
+        "date": "Fecha",
+        "name": "Nombre",
+        "hours": "Horas",
+        "repeat": "Repetición"
+      },
+      "specials_filter": "Qué fechas especiales se ven",
+      "specials_upcoming": "Próximas",
+      "specials_past": "Pasadas",
+      "specials_past_empty": "Sin fechas especiales pasadas.",
+      "period_delete_title": "¿Eliminar el periodo «{{name}}»?",
+      "period_deleted": "Periodo «{{name}}» eliminado",
+      "special_delete_title": "¿Eliminar la fecha especial «{{name}}»?",
+      "special_deleted": "Fecha especial «{{name}}» eliminada",
+      "only_year": "Solo {{year}}"
     },
     "festivos": {
       "title": "Festivos",
@@ -1667,7 +1680,9 @@
       "used_by_one": "Lo aplica el horario «{{name}}»: lo que cambies aquí cambia sus días cerrados.",
       "errors": {
         "name_required": "El nombre es obligatorio"
-      }
+      },
+      "day_delete_title": "¿Eliminar el festivo «{{name}}»?",
+      "day_deleted": "Festivo «{{name}}» eliminado"
     },
     "tipificaciones": {
       "title": "Tipificaciones",

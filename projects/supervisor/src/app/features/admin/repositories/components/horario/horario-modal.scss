@@ -18,11 +18,6 @@
   inline-size: 100%;
 }
 
-/* «Eliminar», a la izquierda: lejos de «Guardar». */
-.modal-horario__eliminar {
-  margin-inline-end: auto;
-}
-
 /* La fecha especial al añadir: el calendario a un lado y sus datos al otro. */
 .modal-horario--especial {
   flex-flow: row wrap;

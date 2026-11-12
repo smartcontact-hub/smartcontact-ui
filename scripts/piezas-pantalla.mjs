@@ -18,7 +18,7 @@
  * Los componentes propios de la app (`sc-horario-semana`) no son piezas: se miran sus plantillas.
  *
  * Una pieza sin ningún uso en otra plantilla del Supervisor (fuera de `features/lab`) sale con 1, salvo que la
- * plantilla la declare en alguna de las tres líneas anteriores con `<!-- pieza nueva: DD-NNN, motivo -->`. Declararla
+ * plantilla la declare (una vez, en las tres líneas anteriores) con `<!-- pieza nueva: DD-NNN, motivo -->`. Declararla
  * no la aprueba: la pone a la vista, con su DD, para quien revisa. Lo llama `npm run revision` (que el hook de cierre
  * exige tras tocar una pantalla), así que no hay un paso más que recordar.
  *
@@ -129,9 +129,10 @@ export function indiceDePrecedentes(plantillas, opciones) {
 export function revisarPlantilla(html, indice, opciones) {
   const porFirma = new Map();
   for (const p of piezasDe(html, opciones)) {
-    const e = porFirma.get(p.firma) ?? { firma: p.firma, lineas: [], declarada: true };
+    // Basta declararla una vez por plantilla: la misma pieza repetida (las dos horas de una franja) es una decisión.
+    const e = porFirma.get(p.firma) ?? { firma: p.firma, lineas: [], declarada: false };
     e.lineas.push(p.linea);
-    e.declarada &&= p.declarada;
+    e.declarada ||= p.declarada;
     porFirma.set(p.firma, e);
   }
   return [...porFirma.values()].map((e) => {

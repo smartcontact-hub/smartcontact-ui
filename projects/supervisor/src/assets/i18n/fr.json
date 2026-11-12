@@ -1593,12 +1593,11 @@
       "holiday_calendars_help": "Leurs jours sont fermés dans cet horaire.",
       "manage_holidays": "Gérer les jours fériés",
       "calendar": {
-        "prev_year": "Année précédente",
-        "next_year": "Année suivante",
         "today": "Aujourd'hui",
         "aria": "Calendrier de {{year}}",
         "change_day": "Changer ce jour",
-        "edit_special": "Modifier la date spéciale"
+        "edit_special": "Modifier la date spéciale",
+        "year": "Année"
       },
       "legend": {
         "week": "Semaine habituelle",
@@ -1630,10 +1629,24 @@
         "slots_solape": "Deux plages se chevauchent",
         "slots_noche": "Seule la dernière plage peut finir le lendemain"
       },
-      "period_when_yearly": "{{dates}}, chaque année",
-      "period_when_year": "{{dates}} {{year}}",
-      "special_detail": "{{hours}}",
-      "special_detail_yearly": "{{hours}}, chaque année"
+      "cols": {
+        "period": "Période",
+        "dates": "Dates",
+        "week": "Semaine",
+        "date": "Date",
+        "name": "Nom",
+        "hours": "Heures",
+        "repeat": "Répétition"
+      },
+      "specials_filter": "Quelles dates spéciales afficher",
+      "specials_upcoming": "À venir",
+      "specials_past": "Passées",
+      "specials_past_empty": "Aucune date spéciale passée.",
+      "period_delete_title": "Supprimer la période «\u00a0{{name}}\u00a0»\u00a0?",
+      "period_deleted": "Période «\u00a0{{name}}\u00a0» supprimée",
+      "special_delete_title": "Supprimer la date spéciale «\u00a0{{name}}\u00a0»\u00a0?",
+      "special_deleted": "Date spéciale «\u00a0{{name}}\u00a0» supprimée",
+      "only_year": "{{year}} seulement"
     },
     "festivos": {
       "title": "Jours fériés",
@@ -1667,7 +1680,9 @@
       "used_by_one": "L’horaire «\u00a0{{name}}\u00a0» l’applique\u00a0: ce que vous changez ici change ses jours fermés.",
       "errors": {
         "name_required": "Le nom est obligatoire"
-      }
+      },
+      "day_delete_title": "Supprimer le jour férié «\u00a0{{name}}\u00a0»\u00a0?",
+      "day_deleted": "Jour férié «\u00a0{{name}}\u00a0» supprimé"
     },
     "tipificaciones": {
       "title": "Typifications",

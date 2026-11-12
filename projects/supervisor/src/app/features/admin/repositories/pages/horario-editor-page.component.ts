@@ -8,15 +8,15 @@ import {
   ScMessageComponent,
   ScMultiSelectComponent,
   ScSectionCardComponent,
+  ScSelectButtonComponent,
   ScSelectComponent,
   ScSubsectionComponent,
-  ScTagComponent,
   ScToggleSwitchComponent,
 } from '@smartcontact-hub/components';
 
 import type { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
-import { BreadcrumbService, ResultadoAccionService } from '@core/services';
+import { BreadcrumbService, injectAlertModal, ResultadoAccionService } from '@core/services';
 import { LanguageService } from '@core/services/language.service';
 import { injectLangChange } from '@core/utils/lang-change';
 import { GroupsStore } from '@features/admin/groups/state/groups.store';
@@ -25,11 +25,13 @@ import { nombreDeCopia } from '@shared/utils/copy-name';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 
 import { HorarioCalendarioComponent } from '../components/horario/horario-calendario.component';
+import { type ColumnaDeHorario, type FilaDeHorario, HorarioFilasTableComponent } from '../components/horario/horario-filas-table.component';
 import { type FechaEspecialNueva, HorarioEspecialModalComponent } from '../components/horario/horario-especial-modal.component';
 import { HorarioPeriodoModalComponent } from '../components/horario/horario-periodo-modal.component';
 import { DIAS_DE_LA_SEMANA, HorarioSemanaComponent } from '../components/horario/horario-semana.component';
 import { FestivosStore } from '../state/festivos.store';
 import {
+  ahoraEn,
   duenoDe,
   type FechaEspecial,
   type Horario,
@@ -69,6 +71,7 @@ const aFecha = (iso: string): Date => new Date(`${iso}T12:00:00`);
   imports: [
     HorarioCalendarioComponent,
     HorarioEspecialModalComponent,
+    HorarioFilasTableComponent,
     HorarioPeriodoModalComponent,
     HorarioSemanaComponent,
     RouterLink,
@@ -77,9 +80,9 @@ const aFecha = (iso: string): Date => new Date(`${iso}T12:00:00`);
     ScMessageComponent,
     ScMultiSelectComponent,
     ScSectionCardComponent,
+    ScSelectButtonComponent,
     ScSelectComponent,
     ScSubsectionComponent,
-    ScTagComponent,
     ScToggleSwitchComponent,
     TooltipModule,
     TranslateModule,
@@ -172,32 +175,78 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
     return [...new Set([this.form().timezone, 'UTC', ...conocidas])].sort().map((z) => ({ value: z, label: z }));
   });
 
-  protected readonly periodos = computed(() => {
+  /** Las cabeceras de las dos tablas, en el idioma de la app. */
+  protected readonly columnasDePeriodos = computed<readonly ColumnaDeHorario[]>(() => {
+    this.lang();
+    const t = (k: string): string => this.translate.instant(`repositories.horarios.cols.${k}`);
+    return [
+      { campo: 'nombre', titulo: t('period'), etiqueta: true },
+      { campo: 'fechas', titulo: t('dates') },
+      { campo: 'repeticion', titulo: t('repeat') },
+      { campo: 'semana', titulo: t('week') },
+    ];
+  });
+
+  protected readonly columnasDeEspeciales = computed<readonly ColumnaDeHorario[]>(() => {
+    this.lang();
+    const t = (k: string): string => this.translate.instant(`repositories.horarios.cols.${k}`);
+    return [
+      { campo: 'fecha', titulo: t('date') },
+      { campo: 'nombre', titulo: t('name') },
+      { campo: 'repeticion', titulo: t('repeat') },
+      { campo: 'horas', titulo: t('hours') },
+    ];
+  });
+
+  protected readonly periodos = computed<readonly FilaDeHorario[]>(() => {
     this.lang();
     const dia = new Intl.DateTimeFormat(this.language.locale(), { day: 'numeric', month: 'short' });
     return this.form().periods.map((p) => ({
-      periodo: p,
-      cuando: this.translate.instant(p.year === null ? 'repositories.horarios.period_when_yearly' : 'repositories.horarios.period_when_year', {
-        dates: `${dia.format(aFecha(`2024-${p.from}`))} – ${dia.format(aFecha(`2024-${p.to}`))}`,
-        year: p.year,
-      }) as string,
-      resumen: this.resumen(p.week),
+      id: p.id,
+      color: p.color,
+      celdas: {
+        nombre: p.name,
+        fechas: `${dia.format(aFecha(`2024-${p.from}`))} – ${dia.format(aFecha(`2024-${p.to}`))}`,
+        repeticion: this.repeticion(p.year),
+        semana: this.resumen(p.week),
+      },
     }));
   });
 
+  /** «Cada año» o «Solo 2026»: la misma columna en las tres tablas (periodos, fechas especiales y festivos). */
+  private repeticion(anio: number | null): string {
+    return anio === null ? this.translate.instant('repositories.horarios.yearly') : this.translate.instant('repositories.horarios.only_year', { year: anio });
+  }
+
+  /** Las fechas de un año que ya pasó (en la zona del horario). Las que se repiten nunca pasan. */
+  private readonly esPasada = (e: FechaEspecial): boolean => !e.yearly && e.date < ahoraEn(this.form().timezone).fecha;
+  protected readonly hayPasadas = computed(() => this.form().specials.some(this.esPasada));
+  protected readonly verPasadas = signal(false);
+  protected readonly filtroDeEspeciales = computed(() => {
+    this.lang();
+    return [
+      { value: 'proximas', label: this.translate.instant('repositories.horarios.specials_upcoming') },
+      { value: 'pasadas', label: this.translate.instant('repositories.horarios.specials_past') },
+    ];
+  });
+
   /** Las fechas especiales, por orden en el año: primero las que se repiten, por día, y luego las de un año, por fecha. */
-  protected readonly especiales = computed(() => {
+  protected readonly especiales = computed<readonly FilaDeHorario[]>(() => {
     this.lang();
     const conAnio = new Intl.DateTimeFormat(this.language.locale(), { day: 'numeric', month: 'short', year: 'numeric' });
     const sinAnio = new Intl.DateTimeFormat(this.language.locale(), { day: 'numeric', month: 'short' });
+    const pasadas = this.verPasadas() && this.hayPasadas();
     return [...this.form().specials]
+      .filter((e) => this.esPasada(e) === pasadas)
       .sort((a, b) => Number(b.yearly) - Number(a.yearly) || (a.yearly ? a.date.slice(5).localeCompare(b.date.slice(5)) : a.date.localeCompare(b.date)))
       .map((e) => ({
-        especial: e,
-        fecha: (e.yearly ? sinAnio : conAnio).format(aFecha(e.yearly ? `2024${e.date.slice(4)}` : e.date)),
-        detalle: this.translate.instant(e.yearly ? 'repositories.horarios.special_detail_yearly' : 'repositories.horarios.special_detail', {
-          hours: e.slots.length > 0 ? e.slots.map(textoDeFranja).join(', ') : this.translate.instant('repositories.horarios.closed'),
-        }) as string,
+        id: e.id,
+        celdas: {
+          fecha: (e.yearly ? sinAnio : conAnio).format(aFecha(e.yearly ? `2024${e.date.slice(4)}` : e.date)),
+          nombre: e.name,
+          repeticion: this.repeticion(e.yearly ? null : Number(e.date.slice(0, 4))),
+          horas: e.slots.length > 0 ? e.slots.map(textoDeFranja).join(', ') : this.translate.instant('repositories.horarios.closed'),
+        },
       }));
   });
 
@@ -273,6 +322,44 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
       return { ...f, periods: existe ? f.periods.map((p) => (p.id === periodo.id ? periodo : p)) : [...f.periods, periodo] };
     });
     this.periodoDialog.set(null);
+  }
+
+  protected abrirPeriodo(id: number): void {
+    const periodo = this.form().periods.find((p) => p.id === id);
+    if (periodo) this.periodoDialog.set({ periodo });
+  }
+
+  /** Desde el «⋮», como un contacto de la agenda: pregunta y quita; Deshacer lo devuelve hasta que se guarda. */
+  protected async eliminarPeriodo(id: number): Promise<void> {
+    const periodo = this.form().periods.find((p) => p.id === id);
+    if (!periodo || !(await this.confirmarQuitar('repositories.horarios.period_delete_title', periodo.name))) return;
+    this.quitarPeriodo(id);
+    this.resultado.contar(this.translate.instant('repositories.horarios.period_deleted', { name: periodo.name }));
+  }
+
+  protected abrirEspecial(id: number): void {
+    const especial = this.form().specials.find((e) => e.id === id);
+    if (especial) this.especialDialog.set({ especial, fecha: null });
+  }
+
+  protected async eliminarEspecial(id: number): Promise<void> {
+    const especial = this.form().specials.find((e) => e.id === id);
+    if (!especial || !(await this.confirmarQuitar('repositories.horarios.special_delete_title', especial.name))) return;
+    this.quitarEspecial(id);
+    this.resultado.contar(this.translate.instant('repositories.horarios.special_deleted', { name: especial.name }));
+  }
+
+  private readonly alertModal = injectAlertModal();
+
+  private confirmarQuitar(titulo: string, name: string): Promise<boolean> {
+    return this.alertModal({
+      variant: 'error',
+      surface: 'plain',
+      title: this.translate.instant(titulo, { name }),
+      message: this.translate.instant('common.delete_dialog.body'),
+      actionLabel: this.translate.instant('common.delete'),
+      secondaryActionLabel: this.translate.instant('common.cancel'),
+    });
   }
 
   protected quitarPeriodo(id: number): void {

@@ -13,7 +13,7 @@ import {
 
 import type { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
-import { BreadcrumbService, ResultadoAccionService } from '@core/services';
+import { BreadcrumbService, injectAlertModal, ResultadoAccionService } from '@core/services';
 import { LanguageService } from '@core/services/language.service';
 import { injectLangChange } from '@core/utils/lang-change';
 import { ayudaDeObligatorio, dejoElCampo, ocasionDeAvisar } from '@shared/utils/alta-secciones';
@@ -21,7 +21,8 @@ import { nombreDeCopia } from '@shared/utils/copy-name';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 
 import { type FechaEspecialNueva, HorarioEspecialModalComponent } from '../components/horario/horario-especial-modal.component';
-import { type CalendarioDeFestivos, type Festivo, FestivosStore } from '../state/festivos.store';
+import { type ColumnaDeHorario, type FilaDeHorario, HorarioFilasTableComponent } from '../components/horario/horario-filas-table.component';
+import { type CalendarioDeFestivos, FestivosStore } from '../state/festivos.store';
 import { type FechaEspecial, siguienteId } from '../state/horarios.core.mjs';
 import { HorariosStore } from '../state/horarios.store';
 
@@ -39,6 +40,7 @@ const aFecha = (iso: string): Date => new Date(`${iso}T12:00:00`);
   selector: 'sc-festivos-editor-page',
   imports: [
     HorarioEspecialModalComponent,
+    HorarioFilasTableComponent,
     ScButtonComponent,
     ScInputTextComponent,
     ScMessageComponent,
@@ -108,14 +110,31 @@ export class FestivosEditorPageComponent implements DirtyAware, OnInit {
     return this.translate.instant(this.faltas()[0] ?? 'common.no_changes');
   });
 
+  protected readonly columnas = computed<readonly ColumnaDeHorario[]>(() => {
+    this.lang();
+    const t = (k: string): string => this.translate.instant(`repositories.horarios.cols.${k}`);
+    return [
+      { campo: 'fecha', titulo: t('date') },
+      { campo: 'nombre', titulo: t('name') },
+      { campo: 'repeticion', titulo: t('repeat') },
+    ];
+  });
+
   /** Los días por orden en el año: primero los que se repiten y luego los de un año. */
-  protected readonly dias = computed(() => {
+  protected readonly dias = computed<readonly FilaDeHorario[]>(() => {
     this.lang();
     const conAnio = new Intl.DateTimeFormat(this.language.locale(), { day: 'numeric', month: 'short', year: 'numeric' });
     const sinAnio = new Intl.DateTimeFormat(this.language.locale(), { day: 'numeric', month: 'short' });
     return [...this.form().days]
       .sort((a, b) => Number(b.yearly) - Number(a.yearly) || (a.yearly ? a.date.slice(5).localeCompare(b.date.slice(5)) : a.date.localeCompare(b.date)))
-      .map((d) => ({ dia: d, fecha: (d.yearly ? sinAnio : conAnio).format(aFecha(d.yearly ? `2024${d.date.slice(4)}` : d.date)) }));
+      .map((d) => ({
+        id: d.id,
+        celdas: {
+          fecha: (d.yearly ? sinAnio : conAnio).format(aFecha(d.yearly ? `2024${d.date.slice(4)}` : d.date)),
+          nombre: d.name,
+          repeticion: this.translate.instant(d.yearly ? 'repositories.horarios.yearly' : 'repositories.horarios.only_year', { year: d.date.slice(0, 4) }),
+        },
+      }));
   });
 
   /** Los días con la forma que pide el diálogo, que es el de las fechas especiales: sin franjas, cerrados. */
@@ -163,9 +182,29 @@ export class FestivosEditorPageComponent implements DirtyAware, OnInit {
   /** El diálogo de un día: `null` cerrado; con `dia: null`, para añadir. */
   protected readonly diaDialog = signal<{ readonly dia: FechaEspecial | null } | null>(null);
 
-  protected editarDia(dia: Festivo): void {
-    this.diaDialog.set({ dia: { ...dia, slots: [] } });
+  protected abrirDia(id: number): void {
+    const dia = this.form().days.find((d) => d.id === id);
+    if (dia) this.diaDialog.set({ dia: { ...dia, slots: [] } });
   }
+
+  /** Desde el «⋮», como un contacto de la agenda: pregunta y quita; Deshacer lo devuelve hasta que se guarda. */
+  protected async eliminarDia(id: number): Promise<void> {
+    const dia = this.form().days.find((d) => d.id === id);
+    if (!dia) return;
+    const ok = await this.alertModal({
+      variant: 'error',
+      surface: 'plain',
+      title: this.translate.instant('repositories.festivos.day_delete_title', { name: dia.name }),
+      message: this.translate.instant('common.delete_dialog.body'),
+      actionLabel: this.translate.instant('common.delete'),
+      secondaryActionLabel: this.translate.instant('common.cancel'),
+    });
+    if (!ok) return;
+    this.quitarDia(id);
+    this.resultado.contar(this.translate.instant('repositories.festivos.day_deleted', { name: dia.name }));
+  }
+
+  private readonly alertModal = injectAlertModal();
 
   protected guardarDias(nuevos: readonly FechaEspecialNueva[]): void {
     this.form.update((f) => {

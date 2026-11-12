@@ -93,38 +93,15 @@
         <sc-section-card titleKey="repositories.horarios.section_periods" hintKey="repositories.horarios.section_periods_hint" surface="subtle" icon="date_range">
           <sc-subsection>
             <div class="bloque">
-              @if (periodos().length > 0) {
-                <ul class="horario__lista" role="list">
-                  @for (fila of periodos(); track fila.periodo.id) {
-                    <li class="horario__fila">
-                      <sc-tag variant="label" [labelColor]="fila.periodo.color" [value]="fila.periodo.name" />
-                      <span class="horario__fila-datos">
-                        <span class="sc-text-body-regular">{{ fila.cuando }}</span>
-                        <span class="horario__fila-detalle sc-text-caption-regular">{{ fila.resumen }}</span>
-                      </span>
-                      <sc-button
-                        variant="secondary"
-                        appearance="text"
-                        size="sm"
-                        icon="edit"
-                        iconOnly
-                        [ariaLabel]="'common.edit_named' | translate: { name: fila.periodo.name }"
-                        (clicked)="periodoDialog.set({ periodo: fila.periodo })"
-                      />
-                    </li>
-                  }
-                </ul>
-              } @else {
-                <p class="horario__vacio sc-text-body-regular">{{ 'repositories.horarios.periods_empty' | translate }}</p>
-              }
-              <sc-button
-                class="horario__anadir"
-                variant="secondary"
-                appearance="outlined"
-                size="sm"
-                icon="add"
-                [label]="'repositories.horarios.period_add' | translate"
-                (clicked)="periodoDialog.set({ periodo: null })"
+              <sc-horario-filas-table
+                [filas]="periodos()"
+                [columnas]="columnasDePeriodos()"
+                anadirKey="repositories.horarios.period_add"
+                vacioKey="repositories.horarios.periods_empty"
+                vacioIcono="date_range"
+                (abrir)="abrirPeriodo($event)"
+                (eliminar)="eliminarPeriodo($event)"
+                (anadir)="periodoDialog.set({ periodo: null })"
               />
             </div>
           </sc-subsection>
@@ -149,41 +126,31 @@
                 <a class="horario__enlace sc-text-caption-regular" routerLink="/admin/festivos">{{ 'repositories.horarios.manage_holidays' | translate }}</a>
               </div>
 
-              @if (especiales().length > 0) {
-                <ul class="horario__lista" role="list">
-                  @for (fila of especiales(); track fila.especial.id) {
-                    <li class="horario__fila">
-                      <span class="horario__fila-fecha sc-text-body-semibold">{{ fila.fecha }}</span>
-                      <span class="horario__fila-datos">
-                        <span class="sc-text-body-regular">{{ fila.especial.name }}</span>
-                        <span class="horario__fila-detalle sc-text-caption-regular">
-                          {{ fila.detalle }}
-                        </span>
-                      </span>
-                      <sc-button
-                        variant="secondary"
-                        appearance="text"
-                        size="sm"
-                        icon="edit"
-                        iconOnly
-                        [ariaLabel]="'common.edit_named' | translate: { name: fila.especial.name + ', ' + fila.fecha }"
-                        (clicked)="especialDialog.set({ especial: fila.especial, fecha: null })"
-                      />
-                    </li>
-                  }
-                </ul>
-              } @else {
-                <p class="horario__vacio sc-text-body-regular">{{ 'repositories.horarios.specials_empty' | translate }}</p>
-              }
-              <sc-button
-                class="horario__anadir"
-                variant="secondary"
-                appearance="outlined"
-                size="sm"
-                icon="add"
-                [label]="'repositories.horarios.special_add' | translate"
-                (clicked)="especialDialog.set({ especial: null, fecha: null })"
-              />
+              <sc-horario-filas-table
+                [filas]="especiales()"
+                [columnas]="columnasDeEspeciales()"
+                anadirKey="repositories.horarios.special_add"
+                [vacioKey]="verPasadas() ? 'repositories.horarios.specials_past_empty' : 'repositories.horarios.specials_empty'"
+                vacioIcono="event_busy"
+                (abrir)="abrirEspecial($event)"
+                (eliminar)="eliminarEspecial($event)"
+                (anadir)="especialDialog.set({ especial: null, fecha: null })"
+              >
+                <!-- Las de años pasados no estorban: «Próximas» por defecto, como el filtro de la barra de asignar (DD-243). -->
+                @if (hayPasadas()) {
+                  <sc-selectbutton
+                    filasBarra
+                    size="sm"
+                    [ariaLabel]="'repositories.horarios.specials_filter' | translate"
+                    [options]="filtroDeEspeciales()"
+                    optionLabel="label"
+                    optionValue="value"
+                    [allowEmpty]="false"
+                    [value]="verPasadas() ? 'pasadas' : 'proximas'"
+                    (valueChange)="verPasadas.set($event === 'pasadas')"
+                  />
+                }
+              </sc-horario-filas-table>
             </div>
           </sc-subsection>
         </sc-section-card>
@@ -209,7 +176,6 @@
     [horario]="form()"
     [anio]="anioDeTrabajo"
     (guardar)="guardarPeriodo($event)"
-    (eliminar)="quitarPeriodo($event)"
     (cerrado)="periodoDialog.set(null)"
   />
 }
@@ -220,7 +186,6 @@
     [fechaInicial]="dialog.fecha"
     [existentes]="form().specials"
     (guardar)="guardarEspeciales($event)"
-    (eliminar)="quitarEspecial($event)"
     (cerrado)="especialDialog.set(null)"
   />
 }

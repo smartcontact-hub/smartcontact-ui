@@ -1,7 +1,15 @@
 <div class="cal__barra">
-  <sc-button variant="secondary" appearance="text" size="sm" icon="chevron_left" iconOnly [ariaLabel]="'repositories.horarios.calendar.prev_year' | translate" (clicked)="moverAnio(-1)" />
-  <span class="cal__anio sc-text-subtitle-semibold" aria-live="polite">{{ anio() }}</span>
-  <sc-button variant="secondary" appearance="text" size="sm" icon="chevron_right" iconOnly [ariaLabel]="'repositories.horarios.calendar.next_year' | translate" (clicked)="moverAnio(1)" />
+  <!-- El año, entre los que se planifican, a la vista: como el filtro de la barra de asignar (DD-243), sin flechas. -->
+  <sc-selectbutton
+    size="sm"
+    [ariaLabel]="'repositories.horarios.calendar.year' | translate"
+    [options]="anios()"
+    optionLabel="label"
+    optionValue="value"
+    [allowEmpty]="false"
+    [value]="anio()"
+    (valueChange)="irAlAnio($any($event))"
+  />
   <sc-button class="cal__hoy" variant="secondary" appearance="outlined" size="sm" [label]="'repositories.horarios.calendar.today' | translate" (clicked)="irAHoy()" />
 </div>
 

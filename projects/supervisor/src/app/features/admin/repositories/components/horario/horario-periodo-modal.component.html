@@ -51,9 +51,6 @@
   </div>
 
   <div scCustomModalFooter class="modal-horario__pie">
-    @if (periodo(); as p) {
-      <sc-button class="modal-horario__eliminar" variant="danger" appearance="text" [label]="'common.delete' | translate" (clicked)="eliminar.emit(p.id)" />
-    }
     <sc-button variant="secondary" appearance="outlined" [label]="'common.cancel' | translate" (clicked)="cerrado.emit()" />
     <sc-button
       variant="primary"

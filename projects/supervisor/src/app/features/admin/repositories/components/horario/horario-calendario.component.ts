@@ -1,6 +1,6 @@
 import { afterNextRender, ChangeDetectionStrategy, Component, computed, ElementRef, inject, Injector, input, output, signal } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { ScButtonComponent, ScTagComponent } from '@smartcontact-hub/components';
+import { ScButtonComponent, ScSelectButtonComponent, ScTagComponent } from '@smartcontact-hub/components';
 
 import { LanguageService } from '@core/services/language.service';
 import { injectLangChange } from '@core/utils/lang-change';
@@ -41,7 +41,7 @@ const aFecha = (iso: string): Date => new Date(`${iso}T12:00:00`);
  */
 @Component({
   selector: 'sc-horario-calendario',
-  imports: [ScButtonComponent, ScTagComponent, TranslateModule],
+  imports: [ScButtonComponent, ScSelectButtonComponent, ScTagComponent, TranslateModule],
   templateUrl: './horario-calendario.component.html',
   styleUrl: './horario-calendario.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -132,9 +132,14 @@ export class HorarioCalendarioComponent {
     this.anioElegido.set(null);
   }
 
-  protected moverAnio(salto: number): void {
-    const anio = this.anio() + salto;
-    if (anio < 1970 || anio > 2100) return;
+  /** Los años que se planifican: el pasado, este y los dos siguientes; y el que se mira, si se salió de ellos. */
+  protected readonly anios = computed(() => {
+    const actual = Number(this.hoy().slice(0, 4));
+    return [...new Set([actual - 1, actual, actual + 1, actual + 2, this.anio()])].sort((a, b) => a - b).map((a) => ({ value: a, label: String(a) }));
+  });
+
+  protected irAlAnio(anio: number): void {
+    if (anio === this.anio()) return;
     // El mismo día en el otro año; un 29 de febrero pasa al 28.
     const resto = this.seleccion().slice(4);
     const fecha = `${anio}${resto}`;

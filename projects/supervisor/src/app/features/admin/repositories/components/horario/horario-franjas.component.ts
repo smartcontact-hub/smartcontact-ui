@@ -24,6 +24,7 @@ const aMinutos = (hora: Date): number => hora.getHours() * 60 + hora.getMinutes(
   template: `
     @for (fila of filas(); track $index) {
       <div class="franjas__fila">
+        <!-- pieza nueva: DD-252, la hora de una franja es un sc-datepicker timeOnly (catálogo §6: una hora → sc-datepicker), repetido por franja como los controles de una condición de regla. -->
         <sc-datepicker
           class="franjas__hora"
           timeOnly
@@ -50,8 +51,7 @@ const aMinutos = (hora: Date): number => hora.getHours() * 60 + hora.getMinutes(
           variant="secondary"
           appearance="text"
           size="sm"
-          icon="close"
-          iconOnly
+          icon="delete"
           [ariaLabel]="'repositories.horarios.slot_remove_aria' | translate: { day: etiqueta() }"
           (clicked)="quitar($index)"
         />

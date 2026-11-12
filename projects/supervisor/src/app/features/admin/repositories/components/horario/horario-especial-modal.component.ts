@@ -62,7 +62,6 @@ export class HorarioEspecialModalComponent implements OnInit {
   readonly existentes = input<readonly FechaEspecial[]>([]);
 
   readonly guardar = output<readonly FechaEspecialNueva[]>();
-  readonly eliminar = output<number>();
   readonly cerrado = output<void>();
 
   protected readonly nombre = signal('');

@@ -65,7 +65,6 @@ export class HorarioPeriodoModalComponent implements OnInit {
   readonly anio = input(new Date().getFullYear());
 
   readonly guardar = output<Periodo>();
-  readonly eliminar = output<number>();
   readonly cerrado = output<void>();
 
   protected readonly nombre = signal('');

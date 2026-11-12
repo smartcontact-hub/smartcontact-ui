@@ -72,3 +72,8 @@ test('un comentario no es una pieza y no mueve las líneas', () => {
 test('los selectores salen de sus decoradores', () => {
   assert.deepEqual([...selectoresDe(["@Component({ selector: 'sc-uno', template: '' })", "selector: 'sc-dos',"])], ['sc-uno', 'sc-dos']);
 });
+
+test('declarada una vez basta para la misma pieza repetida en la plantilla', () => {
+  const html = '<!-- pieza nueva: DD-252, dos horas -->\n<table></table>\n\n\n\n\n<table></table>';
+  assert.deepEqual(revisarPlantilla(html, new Map(), opciones).map((f) => [f.lineas, f.falla]), [[[2, 7], false]]);
+});

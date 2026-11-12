@@ -66,40 +66,15 @@
     <sc-section-card titleKey="repositories.festivos.section_days" hintKey="repositories.festivos.section_days_hint" surface="subtle" icon="event_busy">
       <sc-subsection>
         <div class="bloque">
-          @if (dias().length > 0) {
-            <ul class="horario__lista" role="list">
-              @for (fila of dias(); track fila.dia.id) {
-                <li class="horario__fila">
-                  <span class="horario__fila-fecha sc-text-body-semibold">{{ fila.fecha }}</span>
-                  <span class="horario__fila-datos">
-                    <span class="sc-text-body-regular">{{ fila.dia.name }}</span>
-                    @if (fila.dia.yearly) {
-                      <span class="horario__fila-detalle sc-text-caption-regular">{{ 'repositories.horarios.yearly' | translate }}</span>
-                    }
-                  </span>
-                  <sc-button
-                    variant="secondary"
-                    appearance="text"
-                    size="sm"
-                    icon="edit"
-                    iconOnly
-                    [ariaLabel]="'common.edit_named' | translate: { name: fila.dia.name + ', ' + fila.fecha }"
-                    (clicked)="editarDia(fila.dia)"
-                  />
-                </li>
-              }
-            </ul>
-          } @else {
-            <p class="horario__vacio sc-text-body-regular">{{ 'repositories.festivos.days_empty' | translate }}</p>
-          }
-          <sc-button
-            class="horario__anadir"
-            variant="secondary"
-            appearance="outlined"
-            size="sm"
-            icon="add"
-            [label]="'repositories.festivos.day_add' | translate"
-            (clicked)="diaDialog.set({ dia: null })"
+          <sc-horario-filas-table
+            [filas]="dias()"
+            [columnas]="columnas()"
+            anadirKey="repositories.festivos.day_add"
+            vacioKey="repositories.festivos.days_empty"
+            vacioIcono="event_busy"
+            (abrir)="abrirDia($event)"
+            (eliminar)="eliminarDia($event)"
+            (anadir)="diaDialog.set({ dia: null })"
           />
         </div>
       </sc-subsection>
@@ -113,7 +88,6 @@
     [especial]="dialog.dia"
     [existentes]="comoEspeciales()"
     (guardar)="guardarDias($event)"
-    (eliminar)="quitarDia($event)"
     (cerrado)="diaDialog.set(null)"
   />
 }

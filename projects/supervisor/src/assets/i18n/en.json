@@ -1593,12 +1593,11 @@
       "holiday_calendars_help": "Their days are closed in this schedule.",
       "manage_holidays": "Manage holidays",
       "calendar": {
-        "prev_year": "Previous year",
-        "next_year": "Next year",
         "today": "Today",
         "aria": "Calendar for {{year}}",
         "change_day": "Change this day",
-        "edit_special": "Edit special date"
+        "edit_special": "Edit special date",
+        "year": "Year"
       },
       "legend": {
         "week": "Regular week",
@@ -1630,10 +1629,24 @@
         "slots_solape": "Two time slots overlap",
         "slots_noche": "Only the last time slot can end the next day"
       },
-      "period_when_yearly": "{{dates}}, every year",
-      "period_when_year": "{{dates}}, {{year}}",
-      "special_detail": "{{hours}}",
-      "special_detail_yearly": "{{hours}}, every year"
+      "cols": {
+        "period": "Period",
+        "dates": "Dates",
+        "week": "Week",
+        "date": "Date",
+        "name": "Name",
+        "hours": "Hours",
+        "repeat": "Repeats"
+      },
+      "specials_filter": "Which special dates are shown",
+      "specials_upcoming": "Upcoming",
+      "specials_past": "Past",
+      "specials_past_empty": "No past special dates.",
+      "period_delete_title": "Delete the period “{{name}}”?",
+      "period_deleted": "Period “{{name}}” deleted",
+      "special_delete_title": "Delete the special date “{{name}}”?",
+      "special_deleted": "Special date “{{name}}” deleted",
+      "only_year": "{{year}} only"
     },
     "festivos": {
       "title": "Holidays",
@@ -1667,7 +1680,9 @@
       "used_by_one": "The schedule “{{name}}” applies it: what you change here changes its closed days.",
       "errors": {
         "name_required": "Name is required"
-      }
+      },
+      "day_delete_title": "Delete the holiday “{{name}}”?",
+      "day_deleted": "Holiday “{{name}}” deleted"
     },
     "tipificaciones": {
       "title": "Typifications",

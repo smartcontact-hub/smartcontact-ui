@@ -4,17 +4,16 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   align-items: start;
-  gap: var(--sc-spacing-2);
+  /* Solo entre columnas: en una columna, las tarjetas ya traen su margen. */
+  column-gap: var(--sc-spacing-2);
 
   @media (max-width: 1279px) {
     grid-template-columns: minmax(0, 1fr);
   }
 }
 
+/* Las tarjetas se apilan con el margen que les da el DS, como en la agenda: un `gap` aquí lo sumaba (49 en vez de 21). */
 .horario__reglas {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sc-spacing-2);
   min-inline-size: 0;
 }
 
@@ -32,51 +31,6 @@
   display: flex;
   align-items: center;
   gap: var(--sc-spacing-0-5);
-}
-
-.horario__lista {
-  display: grid;
-  grid-template-columns: max-content minmax(0, 1fr) auto;
-  column-gap: var(--sc-spacing-1);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.horario__fila {
-  display: grid;
-  grid-column: 1 / -1;
-  grid-template-columns: subgrid;
-  align-items: center;
-  padding-block: var(--sc-spacing-0-5);
-  border-block-end: 1px solid var(--sc-border-subtle);
-
-  &:last-child {
-    border-block-end: 0;
-  }
-}
-
-.horario__fila-fecha {
-  white-space: nowrap;
-}
-
-.horario__fila-datos {
-  display: flex;
-  flex-direction: column;
-  min-inline-size: 0;
-}
-
-.horario__fila-detalle,
-.horario__vacio {
-  color: var(--sc-text-secondary);
-}
-
-.horario__vacio {
-  margin: 0;
-}
-
-.horario__anadir {
-  align-self: flex-start;
 }
 
 .horario__enlace {

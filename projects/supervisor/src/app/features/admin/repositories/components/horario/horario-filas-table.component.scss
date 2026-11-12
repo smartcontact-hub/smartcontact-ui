@@ -1,0 +1,21 @@
+/* La barra y debajo la tabla: hermanos, a 14 (UX de pantalla, regla 9), como los contactos de la agenda. */
+:host {
+  display: block;
+}
+
+.filas {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1);
+}
+
+.filas__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+}
+
+/* «Añadir», siempre a la derecha, haya o no un filtro delante. */
+.filas__anadir {
+  margin-inline-start: auto;
+}
