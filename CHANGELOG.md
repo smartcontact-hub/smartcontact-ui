@@ -26,6 +26,9 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
 
 ### Added
 
+- **`@smartcontact-hub/components`** — `sc-datepicker` gana `selectionMode="multiple"` (con el modelo `dates`), `timeOnly`,
+  `stepMinute` y `ariaLabel`: los días de una fecha especial y la hora de una franja de los horarios del Supervisor.
+  ([DD-251](docs/DECISIONS.md))
 - **`@smartcontact-hub/components`** — `sc-custom-modal` (carcasa de modal) y `sc-alert-modal` (aviso con variante
   `default`, `info`, `warning` o `error`), con los nombres y la API de los de ui.smart-contact.com. Se abren con
   `ScDynamicDialogService.open(...)`, que ahora fusiona el `static scDynamicDialogDefaults` del componente. Extensiones
