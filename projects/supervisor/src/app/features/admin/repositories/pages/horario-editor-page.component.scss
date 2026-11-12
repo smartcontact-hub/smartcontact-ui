@@ -1,5 +1,13 @@
-/* Las reglas a un lado y el año al otro, a partes iguales; el año se queda a la vista al bajar por las reglas. Por
- * debajo de dos columnas cómodas, el año va debajo. */
+/* El editor de un horario: arquetipo de editor (`page__inner`, 1200) sobre el lienzo, como la agenda. Sus tarjetas se
+ * apilan con el margen que les da el DS. */
+:host {
+  display: block;
+  height: 100%;
+  background: var(--sc-bg-canvas);
+}
+
+/* Las reglas a un lado y el año al otro. Por debajo de 1340, el corte de las fichas con resumen (`_page.scss`), el año
+ * va debajo. */
 .horario {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -7,26 +15,35 @@
   /* Solo entre columnas: en una columna, las tarjetas ya traen su margen. */
   column-gap: var(--sc-spacing-2);
 
-  @media (max-width: 1279px) {
+  @media (max-width: 1339px) {
     grid-template-columns: minmax(0, 1fr);
   }
 }
 
-/* Las tarjetas se apilan con el margen que les da el DS, como en la agenda: un `gap` aquí lo sumaba (49 en vez de 21). */
 .horario__reglas {
   min-inline-size: 0;
 }
 
+/* El año se queda a la vista al bajar por las reglas, y lo que no quepa hace scroll dentro: la misma receta que el
+ * resumen de las fichas (`.ficha-summary` en `_page.scss`), para que el detalle del día no se quede fuera. */
 .horario__resultado {
   position: sticky;
   inset-block-start: var(--sc-spacing-2);
   min-inline-size: 0;
+  max-block-size: calc(100dvh - var(--sc-topbar-height) - 2 * var(--sc-spacing-2));
+  overflow-y: auto;
 
-  @media (max-width: 1279px) {
+  @media (max-width: 1339px) {
     position: static;
+    max-block-size: none;
+    overflow-y: visible;
   }
 }
 
-.horario__enlace {
+/* Igual que en las fichas de grupo y de agente. */
+.repo-link {
+  align-self: flex-start;
   color: var(--sc-text-link);
+  text-decoration: underline;
+  text-underline-offset: var(--sc-spacing-0-125);
 }

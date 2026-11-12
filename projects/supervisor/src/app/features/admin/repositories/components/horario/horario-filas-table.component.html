@@ -26,7 +26,7 @@
       (rowContextMenu)="onRowContextMenu($event, menuRef)"
     >
       <div scTableEmpty>
-        <sc-empty-state [icon]="vacioIcono()" [titleKey]="vacioKey()" [ctaKey]="anadirKey()" (cta)="anadir.emit()" />
+        <sc-empty-state [icon]="vacioIcono()" [titleKey]="vacioKey()" [bodyKey]="vacioCuerpoKey() ?? ''" [ctaKey]="anadirKey()" (cta)="anadir.emit()" />
       </div>
     </sc-datatable>
   </div>

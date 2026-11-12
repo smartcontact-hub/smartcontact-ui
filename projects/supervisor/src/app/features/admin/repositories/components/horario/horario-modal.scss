@@ -6,13 +6,6 @@
   gap: var(--sc-spacing-2);
 }
 
-.modal-horario__pie {
-  display: flex;
-  justify-content: flex-end;
-  gap: var(--sc-spacing-0-5);
-  inline-size: 100%;
-}
-
 /* La fecha especial al añadir: el calendario a un lado y sus datos al otro. */
 .modal-horario--especial {
   flex-flow: row wrap;
@@ -31,14 +24,4 @@
   flex: 1;
   gap: var(--sc-spacing-1);
   min-inline-size: var(--sc-spacing-18);
-}
-
-.modal-horario__ayuda,
-.modal-horario__error {
-  margin: 0;
-  color: var(--sc-text-secondary);
-}
-
-.modal-horario__error {
-  color: var(--sc-text-danger);
 }

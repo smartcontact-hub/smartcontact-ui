@@ -4,7 +4,7 @@
   [title]="claves().titulo | translate"
   (closed)="cerrado.emit()"
 >
-  <div class="modal-horario modal-horario--especial">
+  <div (keydown.enter)="alPulsarIntro($event)" class="modal-horario modal-horario--especial">
     <!-- Al añadir, el calendario a la vista: se marcan de una vez todos los días que llevan lo mismo. Al editar, un día. -->
     <div class="modal-horario__fechas">
       @if (especial()) {
@@ -17,12 +17,12 @@
           (valueChange)="ponerFecha($event)"
         />
       } @else {
-        <span class="field__label sc-text-caption-semibold" id="especial-fechas-rotulo">{{ 'repositories.horarios.special_dates' | translate }}</span>
+        <span class="field__label sc-text-caption-semibold">{{ 'repositories.horarios.special_dates' | translate }}</span>
         <sc-datepicker inline selectionMode="multiple" [ariaLabel]="'repositories.horarios.special_dates' | translate" [dates]="fechas()" (datesChange)="fechas.set($event ?? [])" />
         @if (errorDeFechas(); as error) {
-          <p class="modal-horario__error sc-text-caption-regular" role="alert">{{ error }}</p>
+          <p class="field__error sc-text-caption-regular" role="alert">{{ error }}</p>
         } @else {
-          <p class="modal-horario__ayuda sc-text-caption-regular">{{ cuantas() || ('repositories.horarios.special_dates_help' | translate) }}</p>
+          <p class="field__help sc-text-caption-regular">{{ cuantas() || ('repositories.horarios.special_dates_help' | translate) }}</p>
         }
       }
     </div>
@@ -36,6 +36,7 @@
           [label]="'repositories.columns.name' | translate"
           [placeholder]="claves().nombre | translate"
           [value]="nombre()"
+          [helperText]="ayudaDeNombre()"
           [error]="errorDeNombre()"
           (valueChange)="nombre.set($event)"
           (focusout)="dejarNombre($event)"
@@ -62,7 +63,7 @@
           <span class="field__label sc-text-caption-semibold">{{ 'repositories.horarios.special_slots' | translate }}</span>
           <sc-horario-franjas [franjas]="franjas()" [etiqueta]="nombre()" (franjasChange)="franjas.set($event)" />
           @if (errorDeFranjas(); as error) {
-            <p class="modal-horario__error sc-text-caption-regular" role="alert">{{ error }}</p>
+            <p class="field__error sc-text-caption-regular" role="alert">{{ error }}</p>
           }
         </div>
       }
@@ -76,9 +77,10 @@
     </div>
   </div>
 
-  <div scCustomModalFooter class="modal-horario__pie">
-    <sc-button variant="secondary" appearance="outlined" [label]="'common.cancel' | translate" (clicked)="cerrado.emit()" />
+  <div scCustomModalFooter>
+    <sc-button size="sm" variant="secondary" appearance="outlined" [label]="'common.cancel' | translate" (clicked)="cerrado.emit()" />
     <sc-button
+      size="sm"
       variant="primary"
       [disabled]="!puedeGuardar()"
       [pTooltip]="motivoApagado()"

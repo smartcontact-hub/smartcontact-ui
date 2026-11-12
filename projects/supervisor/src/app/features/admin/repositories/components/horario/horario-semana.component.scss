@@ -12,30 +12,24 @@
   list-style: none;
 }
 
-/* Nombre · interruptor · franjas, en una rejilla: cada franja es una fila de la tercera columna (`display: contents` en
- * `sc-horario-franjas`), así que el nombre y el interruptor se centran con la PRIMERA franja sin medir alturas, y las
- * demás franjas, «Añadir franja» y el error caen debajo, en su columna. */
+/* Interruptor · día · franjas, en una rejilla: cada franja es una fila de la tercera columna (`display: contents` en
+ * `sc-horario-franjas`), así que el interruptor y el día se centran con la PRIMERA franja sin medir alturas, y las
+ * demás franjas, «Añadir franja» y el error caen debajo, en su columna. Entre días, el aire de la escalera, sin
+ * líneas (DD-113: nada de bordes entre hermanos). */
 .semana__dia {
   display: grid;
-  grid-template-columns: var(--sc-spacing-5) auto minmax(0, 1fr);
+  grid-template-columns: auto var(--sc-spacing-5) minmax(0, 1fr);
   align-items: center;
   column-gap: var(--sc-spacing-1);
   row-gap: var(--sc-spacing-0-5);
-  padding-block: var(--sc-spacing-0-5);
-  border-block-end: 1px solid var(--sc-border-subtle);
-
-  /* El primero, sin aire encima: el rótulo de la semana (en el diálogo de periodo) ya pone el suyo. */
-  &:first-child {
-    padding-block-start: 0;
-  }
-
-  &:last-child {
-    border-block-end: 0;
-  }
 }
 
-.semana__nombre,
-sc-toggleswitch {
+.semana {
+  gap: var(--sc-spacing-1);
+}
+
+sc-toggleswitch,
+.semana__nombre {
   grid-row: 1;
 }
 
@@ -47,15 +41,14 @@ sc-toggleswitch {
 
 .semana__error {
   grid-column: 3;
-  margin: 0;
-  color: var(--sc-text-danger);
 }
 
 .semana__copiar {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-end;
-  gap: var(--sc-spacing-0-5);
+  /* El hueco entre campos de una fila de `.grid` (`_forms.scss`). */
+  gap: var(--sc-spacing-1-75);
 }
 
 .semana__origen {

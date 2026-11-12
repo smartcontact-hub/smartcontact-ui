@@ -4,7 +4,7 @@
   [title]="(periodo() ? 'repositories.horarios.period_edit' : 'repositories.horarios.period_add') | translate"
   (closed)="cerrado.emit()"
 >
-  <div class="modal-horario">
+  <div (keydown.enter)="alPulsarIntro($event)" class="modal-horario">
     <!-- Dos grupos (AGENTS, UX 9): lo que define el periodo, a 14 entre campos; y su semana, a 28. -->
     <div class="bloque">
       <div class="grid grid--2">
@@ -16,6 +16,7 @@
             [label]="'repositories.columns.name' | translate"
             [placeholder]="'repositories.horarios.period_name_placeholder' | translate"
             [value]="nombre()"
+            [helperText]="ayudaDeNombre()"
             [error]="errorDeNombre()"
             (valueChange)="nombre.set($event)"
             (focusout)="dejarNombre($event)"
@@ -50,20 +51,21 @@
     </div>
 
     <div class="field">
-      <span class="field__label sc-text-caption-semibold">{{ 'repositories.horarios.period_week' | translate }}</span>
-      <sc-horario-semana prefijo="periodo" [semana]="semana()" [falta]="faltaDeSemana()" (semanaChange)="semana.set($event)" />
+      <span class="field__label sc-text-caption-semibold" id="periodo-semana-rotulo">{{ 'repositories.horarios.period_week' | translate }}</span>
+      <sc-horario-semana role="group" aria-labelledby="periodo-semana-rotulo" prefijo="periodo" [semana]="semana()" [falta]="faltaDeSemana()" (semanaChange)="semana.set($event)" />
     </div>
   </div>
 
-  <div scCustomModalFooter class="modal-horario__pie">
-    <sc-button variant="secondary" appearance="outlined" [label]="'common.cancel' | translate" (clicked)="cerrado.emit()" />
+  <div scCustomModalFooter>
+    <sc-button size="sm" variant="secondary" appearance="outlined" [label]="'common.cancel' | translate" (clicked)="cerrado.emit()" />
     <sc-button
+      size="sm"
       variant="primary"
       [disabled]="!puedeGuardar()"
       [pTooltip]="motivoApagado()"
       tooltipPosition="top"
       tooltipEvent="both"
-      [label]="(periodo() ? 'common.save' : 'repositories.horarios.period_add_submit') | translate"
+      [label]="(periodo() ? 'common.save' : 'common.create') | translate"
       (clicked)="confirmar()"
     />
   </div>

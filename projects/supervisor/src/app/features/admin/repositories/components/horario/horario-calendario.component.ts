@@ -1,6 +1,6 @@
 import { afterNextRender, ChangeDetectionStrategy, Component, computed, DestroyRef, effect, ElementRef, inject, Injector, input, output, signal, untracked } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { ScButtonComponent, ScSelectButtonComponent, ScTagComponent } from '@smartcontact-hub/components';
+import { ScButtonComponent, ScDividerComponent, ScSelectButtonComponent, ScTagComponent } from '@smartcontact-hub/components';
 
 import { LanguageService } from '@core/services/language.service';
 import { injectLangChange } from '@core/utils/lang-change';
@@ -41,7 +41,7 @@ const aFecha = (iso: string): Date => new Date(`${iso}T12:00:00`);
  */
 @Component({
   selector: 'sc-horario-calendario',
-  imports: [ScButtonComponent, ScSelectButtonComponent, ScTagComponent, TranslateModule],
+  imports: [ScButtonComponent, ScDividerComponent, ScSelectButtonComponent, ScTagComponent, TranslateModule],
   templateUrl: './horario-calendario.component.html',
   styleUrl: './horario-calendario.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -87,7 +87,7 @@ async function pulsarEnPanel(page: Page, fecha: string): Promise<void> {
 }
 
 async function nuevoPeriodo(page: Page, nombre: string, desde: string, hasta: string, cadaAnio = true): Promise<Locator> {
-  await page.getByRole('button', { name: 'Añadir periodo', exact: true }).first().click();
+  await page.getByRole('button', { name: 'Nuevo periodo', exact: true }).first().click();
   const modal = dialogo(page);
   await modal.locator('#periodo-nombre').fill(nombre);
   await modal.locator('#periodo-fechas').click();
@@ -157,7 +157,7 @@ test('periodos: dos que comparten fechas no se guardan, y el error nombra al otr
   await goto(page, POSTVENTA);
   const modal = await nuevoPeriodo(page, 'Julio', iso(ANIO, 7, 1), iso(ANIO, 7, 31));
   await expect(modal).toContainText('Comparte fechas con el periodo «Verano»');
-  await expect(modal.getByRole('button', { name: 'Añadir periodo', exact: true })).toBeDisabled();
+  await expect(modal.getByRole('button', { name: 'Crear', exact: true })).toBeDisabled();
 });
 
 test('periodos: uno anual de octubre a mayo cruza el año y cubre el 29 de febrero; de un solo año, no se puede', async ({ page }) => {
@@ -165,7 +165,7 @@ test('periodos: uno anual de octubre a mayo cruza el año y cubre el 29 de febre
   const modal = await nuevoPeriodo(page, 'Invierno', iso(ANIO, 10, 1), iso(ANIO + 1, 5, 31), false);
   await expect(modal).toContainText('Un periodo de un solo año no puede acabar en el siguiente');
   await modal.locator('#periodo-anual').click();
-  await modal.getByRole('button', { name: 'Añadir periodo', exact: true }).click();
+  await modal.getByRole('button', { name: 'Crear', exact: true }).click();
   await expect(tabla(page, 0).locator('tbody tr')).toHaveCount(2);
 
   const anioBisiesto = [ANIO - 1, ANIO, ANIO + 1, ANIO + 2].find(bisiesto)!;
@@ -203,34 +203,34 @@ test('periodos: el clic derecho da el mismo menú que el «⋮»', async ({ page
 test('fechas especiales: tres días de una vez, cerrados; una ya puesta se dice con su nombre', async ({ page }) => {
   await goto(page, POSTVENTA);
   const antes = await tabla(page, 1).locator('tbody tr').count();
-  await page.getByRole('button', { name: 'Añadir fechas especiales', exact: true }).first().click();
+  await page.getByRole('button', { name: 'Nueva fecha especial', exact: true }).first().click();
   const modal = dialogo(page);
   await modal.locator('#especial-nombre').fill('Puente');
   for (const d of [iso(ANIO + 1, 3, 9), iso(ANIO + 1, 3, 10), iso(ANIO + 1, 3, 11)]) await pulsarEnPanel(page, d);
   await expect(modal).toContainText('3 días marcados');
-  await modal.getByRole('button', { name: 'Añadir', exact: true }).click();
+  await modal.getByRole('button', { name: 'Crear', exact: true }).click();
   await expect(tabla(page, 1).locator('tbody tr')).toHaveCount(antes + 3);
   await elegirDia(page, iso(ANIO + 1, 3, 10));
   await expect(detalle(page)).toContainText('Fecha especial «Puente»');
   await expect(detalle(page)).toContainText('Cerrado');
 
-  await page.getByRole('button', { name: 'Añadir fechas especiales', exact: true }).first().click();
+  await page.getByRole('button', { name: 'Nueva fecha especial', exact: true }).first().click();
   await dialogo(page).locator('#especial-nombre').fill('Otra');
   await pulsarEnPanel(page, iso(ANIO + 1, 3, 10));
   await expect(dialogo(page)).toContainText('ya es «Puente»');
-  await expect(dialogo(page).getByRole('button', { name: 'Añadir', exact: true })).toBeDisabled();
+  await expect(dialogo(page).getByRole('button', { name: 'Crear', exact: true })).toBeDisabled();
 });
 
-test('fechas especiales: «Cambiar este día» abre un festivo con horas propias; sobre una especial, la edita', async ({ page }) => {
+test('fechas especiales: «Editar este día» abre un festivo con horas propias; sobre una especial, la edita', async ({ page }) => {
   await goto(page, POSTVENTA);
   await elegirDia(page, iso(ANIO, 12, 25));
   await expect(detalle(page)).toContainText('Festivo «Navidad» (Festivos Barcelona)');
-  await page.getByRole('button', { name: 'Cambiar este día', exact: true }).click();
+  await page.getByRole('button', { name: 'Editar este día', exact: true }).click();
   const modal = dialogo(page);
-  await expect(modal).toContainText('Añadir fechas especiales');
+  await expect(modal).toContainText('Nueva fecha especial');
   await modal.locator('#especial-nombre').fill('Campaña');
   await modal.getByText('Con horario', { exact: true }).click();
-  await modal.getByRole('button', { name: 'Añadir', exact: true }).click();
+  await modal.getByRole('button', { name: 'Crear', exact: true }).click();
   await expect(detalle(page)).toContainText('Fecha especial «Campaña»');
   await expect(detalle(page)).toContainText('Abierto');
 
@@ -246,8 +246,8 @@ test('fechas especiales: «Próximas» y «Pasadas» reparten todas, sin perder 
   const proximas = await tabla(page, 1).locator('tbody tr:not(.p-datatable-empty-message)').count();
   if (await filtro.count()) {
     await filtro.getByText('Pasadas', { exact: true }).click();
-    const pasadas = await tabla(page, 1).locator('tbody tr:not(.p-datatable-empty-message)').count();
-    expect(proximas + pasadas).toBe(5);
+    // La tabla se repinta un instante después del clic: se espera a que cuadre, y si se pierde una no cuadra nunca.
+    await expect.poll(async () => proximas + (await tabla(page, 1).locator('tbody tr:not(.p-datatable-empty-message)').count())).toBe(5);
   } else {
     expect(proximas).toBe(5);
   }
@@ -302,6 +302,16 @@ test('en uso: borrar un horario que usa un grupo lo dice, lo suelta, y el siguie
 test('en uso: apagar un horario que usan grupos dice qué les pasa', async ({ page }) => {
   await goto(page, POSTVENTA);
   await expect(page.locator('#horario-activo-ayuda')).toHaveText(/Lo usa 1 grupo: apagado, lo conserva/);
+});
+
+test('en uso: la ayuda de «Activo» de un calendario dice qué horarios lo aplican; las listas, en masculino', async ({ page }) => {
+  await goto(page, 'admin/festivos/editar/1');
+  await expect(page.locator('#festivos-activo-ayuda')).toHaveText(/^Lo aplican 2 horarios: apagado, dejarán de cerrar estos días\.$/);
+  await goto(page, 'admin/festivos');
+  await expect(page.getByRole('row').filter({ hasText: 'Festivos Barcelona' })).toContainText('Activo');
+  await goto(page, 'admin/horarios');
+  await expect(page.getByRole('row').filter({ hasText: 'Postventa' })).toContainText('Activo');
+  await expect(page.getByRole('row').filter({ hasText: 'Postventa' })).not.toContainText('Activa');
 });
 
 /* ── El año ──────────────────────────────────────────────────────────────────────────────────────────────────── */
@@ -377,8 +387,9 @@ test('límites: nombres de 120 caracteres no desbordan la pantalla ni las tablas
   expect((await fila.boundingBox())!.height).toBeLessThanOrEqual(50);
 });
 
-for (const ancho of [1024, 1279, 1280, 1920]) {
-  test(`anchos: a ${ancho} no desborda, y por debajo de 1280 el año va debajo de las reglas`, async ({ page }) => {
+// El corte es el de las fichas con resumen al lado (`.ficha-summary`, 1340).
+for (const ancho of [1024, 1339, 1340, 1920]) {
+  test(`anchos: a ${ancho} no desborda, y por debajo de 1340 el año va debajo de las reglas`, async ({ page }) => {
     await page.setViewportSize({ width: ancho, height: 900 });
     await goto(page, POSTVENTA);
     const desborda = await page.evaluate(() => {
@@ -388,7 +399,7 @@ for (const ancho of [1024, 1279, 1280, 1920]) {
     expect(desborda).toBeLessThanOrEqual(0);
     const reglas = (await page.locator('.horario__reglas').boundingBox())!;
     const ano = (await page.locator('.horario__resultado').boundingBox())!;
-    if (ancho < 1280) expect(ano.y).toBeGreaterThan(reglas.y + reglas.height - 1);
+    if (ancho < 1340) expect(ano.y).toBeGreaterThan(reglas.y + reglas.height - 1);
     else expect(Math.abs(ano.y - reglas.y)).toBeLessThan(2);
   });
 }

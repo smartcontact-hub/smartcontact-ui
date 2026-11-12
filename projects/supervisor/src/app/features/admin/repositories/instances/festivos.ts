@@ -19,8 +19,9 @@ const columnas = (horariosDe: (c: CalendarioDeFestivos) => number): readonly Rep
     width: '96px',
     accessor: (i) => i.status,
     statusMap: {
-      active: { labelKey: 'repositories.status.active', tone: 'success' },
-      inactive: { labelKey: 'repositories.status.inactive', tone: 'secondary' },
+      // En masculino: un horario y un calendario (la clave compartida, «Activa», es de regla y categoría).
+      active: { labelKey: 'repositories.festivos.active', tone: 'success' },
+      inactive: { labelKey: 'repositories.festivos.inactive', tone: 'secondary' },
     },
   },
 ];

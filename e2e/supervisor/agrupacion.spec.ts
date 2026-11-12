@@ -234,7 +234,7 @@ for (const ruta of RUTAS) {
 }
 
 /* Los dos diálogos del editor de un horario (DD-251, DD-252), abiertos por su nombre. */
-for (const boton of ['Añadir periodo', 'Añadir fechas especiales']) {
+for (const boton of ['Nuevo periodo', 'Nueva fecha especial']) {
   test(`agrupación · ${boton} en el editor de un horario`, async ({ page }) => {
     await goto(page, 'admin/horarios/editar/9');
     await page.waitForLoadState('networkidle');

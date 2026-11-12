@@ -13,7 +13,7 @@ import {
 } from '@smartcontact-hub/components';
 
 import { injectLangChange } from '@core/utils/lang-change';
-import { dejoElCampo } from '@shared/utils/alta-secciones';
+import { ayudaDeObligatorio, dejoElCampo } from '@shared/utils/alta-secciones';
 
 import {
   coberturaAnual,
@@ -153,6 +153,19 @@ export class HorarioPeriodoModalComponent implements OnInit {
     const dias = coberturaAnual({ ...this.horario(), periods: [...otros, c] }, anio).periodos.find((p) => p.id === c.id)?.dias ?? 0;
     return this.translate.instant('repositories.horarios.period_days', { count: dias, year: anio });
   });
+
+  /** El aviso de obligatorio, en gris desde el principio (DD-219); en rojo lo dice `errorDeNombre`. */
+  protected readonly ayudaDeNombre = computed(() => {
+    this.lang();
+    return this.nombre().trim() || this.errorDeNombre() ? undefined : ayudaDeObligatorio(this.translate.instant('repositories.horarios.errors.name_required'));
+  });
+
+  /** Intro envía, como el diálogo de un contacto de la agenda; no en un botón, que ya hace lo suyo. */
+  protected alPulsarIntro(event: Event): void {
+    if ((event.target as HTMLElement | null)?.tagName === 'BUTTON') return;
+    event.preventDefault();
+    this.confirmar();
+  }
 
   protected dejarNombre(event: FocusEvent): void {
     if (dejoElCampo(event)) this.nombreTocado.set(true);

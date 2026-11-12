@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, HostListener, inject, type OnInit, signal, type TemplateRef, viewChild } from '@angular/core';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { LocationStrategy } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TooltipModule } from 'primeng/tooltip';
 import {
   ScButtonComponent,
+  ScDividerComponent,
   ScInputTextComponent,
-  ScMessageComponent,
   ScMultiSelectComponent,
   ScSectionCardComponent,
   ScSelectButtonComponent,
@@ -75,10 +76,9 @@ const aFecha = (iso: string): Date => new Date(`${iso}T12:00:00`);
     HorarioFilasTableComponent,
     HorarioPeriodoModalComponent,
     HorarioSemanaComponent,
-    RouterLink,
     ScButtonComponent,
+    ScDividerComponent,
     ScInputTextComponent,
-    ScMessageComponent,
     ScMultiSelectComponent,
     ScSectionCardComponent,
     ScSelectButtonComponent,
@@ -138,12 +138,6 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
     { equal: (a, b) => a.week === b.week && a.periods === b.periods && a.specials === b.specials && a.holidayCalendarIds === b.holidayCalendarIds },
   );
 
-  /** Con estas reglas no se atiende ningún día: no bloquea guardar (puede ser a propósito), pero se dice. */
-  protected readonly nuncaAbre = computed(() => {
-    const { week, periods, specials } = this.reglas();
-    const vacia = (semana: Semana): boolean => semana.every((dia) => dia.length === 0);
-    return vacia(week) && periods.every((p) => vacia(p.week)) && specials.every((e) => e.slots.length === 0);
-  });
 
   /* ── Lo que falta (DD-219): el nombre y una semana que valga ──────────────────────────────────────────────────── */
 
@@ -202,7 +196,6 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
     return [
       { campo: 'nombre', titulo: t('period'), etiqueta: true },
       { campo: 'fechas', titulo: t('dates') },
-      { campo: 'repeticion', titulo: t('repeat') },
       { campo: 'semana', titulo: t('week') },
     ];
   });
@@ -211,9 +204,9 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
     this.lang();
     const t = (k: string): string => this.translate.instant(`repositories.horarios.cols.${k}`);
     return [
-      { campo: 'fecha', titulo: t('date') },
+      // El nombre nombra la fila, como en la agenda (DD-193): primero.
       { campo: 'nombre', titulo: t('name') },
-      { campo: 'repeticion', titulo: t('repeat') },
+      { campo: 'fecha', titulo: t('date') },
       { campo: 'horas', titulo: t('hours') },
     ];
   });
@@ -221,26 +214,17 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
   protected readonly periodos = computed<readonly FilaDeHorario[]>(() => {
     this.lang();
     const dia = new Intl.DateTimeFormat(this.language.locale(), { day: 'numeric', month: 'short' });
-    return this.form().periods.map((p) => ({
-      id: p.id,
-      color: p.color,
-      celdas: {
-        nombre: p.name,
-        fechas: `${dia.format(aFecha(`2024-${p.from}`))} – ${dia.format(aFecha(`2024-${p.to}`))}`,
-        repeticion: this.repeticion(p.year),
-        semana: this.resumen(p.week),
-      },
-    }));
+    const conAnio = new Intl.DateTimeFormat(this.language.locale(), { day: 'numeric', month: 'short', year: 'numeric' });
+    return this.form().periods.map((p) => {
+      const desde = dia.format(aFecha(`2024-${p.from}`));
+      // La repetición va en la fecha (DD-252): lo de un año lleva su año; lo que se repite, no. Una columna aparte no cabía.
+      const fechas = `${desde} – ${(p.year === null ? dia : conAnio).format(aFecha(`${p.year ?? 2024}-${p.to}`))}`;
+      return { id: p.id, color: p.color, celdas: { nombre: p.name, fechas, semana: this.resumen(p.week) } };
+    });
   });
-
-  /** «Cada año» o «Solo 2026»: la misma columna en las tres tablas (periodos, fechas especiales y festivos). */
-  private repeticion(anio: number | null): string {
-    return anio === null ? this.translate.instant('repositories.horarios.yearly') : this.translate.instant('repositories.horarios.only_year', { year: anio });
-  }
 
   /** Las fechas de un año que ya pasó (en la zona del horario). Las que se repiten nunca pasan. */
   private readonly esPasada = (e: FechaEspecial): boolean => !e.yearly && e.date < ahoraEn(this.form().timezone).fecha;
-  protected readonly hayPasadas = computed(() => this.form().specials.some(this.esPasada));
   protected readonly verPasadas = signal(false);
   protected readonly filtroDeEspeciales = computed(() => {
     this.lang();
@@ -255,16 +239,16 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
     this.lang();
     const conAnio = new Intl.DateTimeFormat(this.language.locale(), { day: 'numeric', month: 'short', year: 'numeric' });
     const sinAnio = new Intl.DateTimeFormat(this.language.locale(), { day: 'numeric', month: 'short' });
-    const pasadas = this.verPasadas() && this.hayPasadas();
+    const pasadas = this.verPasadas();
     return [...this.form().specials]
       .filter((e) => this.esPasada(e) === pasadas)
       .sort((a, b) => Number(b.yearly) - Number(a.yearly) || (a.yearly ? a.date.slice(5).localeCompare(b.date.slice(5)) : a.date.localeCompare(b.date)))
       .map((e) => ({
         id: e.id,
         celdas: {
+          // Con su año si es de uno; sin año si se repite, como los periodos.
           fecha: (e.yearly ? sinAnio : conAnio).format(aFecha(e.yearly ? `2024${e.date.slice(4)}` : e.date)),
           nombre: e.name,
-          repeticion: this.repeticion(e.yearly ? null : Number(e.date.slice(0, 4))),
           horas: e.slots.length > 0 ? e.slots.map(textoDeFranja).join(', ') : this.translate.instant('repositories.horarios.closed'),
         },
       }));
@@ -282,19 +266,42 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
     if (id === null || this.mode() !== 'edit') return [];
     return this.groupsStore.groups().filter((g) => subcanalesConHorario(g).some((s) => s.id === id));
   });
-  /** Con grupos que lo usan, lo que pasa al apagarlo, bajo el interruptor (DD-152). */
-  protected readonly avisoAlApagar = computed(() => {
+  /** La ayuda de «Activo», siempre: quién lo usa y qué pasa al apagarlo (DD-152), o dónde se usa si nadie lo usa. */
+  protected readonly ayudaDeActivo = computed(() => {
     this.lang();
     const n = this.grupos().length;
-    return n === 0 ? null : (this.translate.instant(`repositories.horarios.inactive_hint${n === 1 ? '_one' : ''}`, { count: n }) as string);
+    return this.translate.instant(n === 0 ? 'repositories.horarios.active_hint' : `repositories.horarios.inactive_hint${n === 1 ? '_one' : ''}`, { count: n }) as string;
   });
 
-  protected readonly avisoDeGrupos = computed(() => {
-    this.lang();
-    const n = this.grupos().length;
-    if (n === 0) return null;
-    return this.translate.instant(`repositories.horarios.used_by${n === 1 ? '_one' : ''}`, { count: n, name: this.grupos()[0]?.name });
-  });
+  /* ── Ir a Festivos: sale del horario, así que con cambios pide guardar antes, como «Gestionar en Repositorios» del
+   *    grupo (SISMAC-4058). Con Cmd+clic o el botón central se abre en otra pestaña sin preguntar. ─────────────────── */
+
+  protected readonly festivosHref = inject(LocationStrategy).prepareExternalUrl('/admin/festivos');
+  private destinoTrasGuardar: string | null = null;
+
+  protected irAFestivos(event: MouseEvent): void {
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    void this.salirAFestivos();
+  }
+
+  private async salirAFestivos(): Promise<void> {
+    if (!this.formDirty()) {
+      void this.router.navigateByUrl('/admin/festivos');
+      return;
+    }
+    const guardar = await this.alertModal({
+      variant: 'info',
+      surface: 'plain',
+      title: this.translate.instant('repositories.horarios.festivos_leave.title'),
+      message: this.translate.instant('repositories.horarios.festivos_leave.body'),
+      actionLabel: this.translate.instant('common.save'),
+      secondaryActionLabel: this.translate.instant('common.discard_keep'),
+    });
+    if (!guardar) return;
+    this.destinoTrasGuardar = '/admin/festivos';
+    this.save();
+  }
 
   ngOnInit(): void {
     const raw = this.route.snapshot.paramMap.get('id');
@@ -439,8 +446,10 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
       const created = this.store.addItem(draft);
       this.dirtyState.markPristine();
       const creado = this.translate.instant('repositories.horarios.toasts.created', { name: created.name });
-      // El toast, ya en la ficha a la que se llega (DD-211 §5).
-      void this.router.navigateByUrl(`/admin/horarios/editar/${created.id}`, { replaceUrl: true }).then(() => this.resultado.contar(creado));
+      // El toast, ya en la ficha a la que se llega (DD-211 §5); o en Festivos, si se guardó para ir allí.
+      const destino = this.destinoTrasGuardar ?? `/admin/horarios/editar/${created.id}`;
+      this.destinoTrasGuardar = null;
+      void this.router.navigateByUrl(destino, { replaceUrl: destino !== '/admin/festivos' }).then(() => this.resultado.contar(creado));
       return;
     }
     this.store.updateItem(this.horarioId!, draft);
@@ -448,6 +457,10 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
     this.form.set(draft);
     this.dirtyState.markPristine();
     this.resultado.contar(this.translate.instant('repositories.horarios.toasts.updated', { name: draft.name }));
+    if (this.destinoTrasGuardar) {
+      void this.router.navigateByUrl(this.destinoTrasGuardar);
+      this.destinoTrasGuardar = null;
+    }
   }
 
   protected discard(): void {

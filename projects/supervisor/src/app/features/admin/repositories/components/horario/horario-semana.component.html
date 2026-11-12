@@ -1,19 +1,21 @@
 <ul class="semana" role="list">
   @for (dia of dias(); track dia.indice) {
+    <!-- Como un interruptor de ficha (`switch-field`): el interruptor y, detrás, el día como su rótulo. -->
     <li class="semana__dia">
-      <span class="semana__nombre sc-text-body-semibold" [id]="prefijo() + '-dia-' + dia.indice">{{ dia.nombre }}</span>
       <sc-toggleswitch
+        [inputId]="prefijo() + '-dia-' + dia.indice"
+        [ariaLabel]="dia.nombre"
         [checked]="dia.franjas.length > 0"
-        [ariaLabelledBy]="prefijo() + '-dia-' + dia.indice"
         (checkedChange)="abrir(dia.indice, $event)"
       />
+      <label class="semana__nombre sc-text-body-regular" [for]="prefijo() + '-dia-' + dia.indice">{{ dia.nombre }}</label>
       @if (dia.franjas.length > 0) {
         <sc-horario-franjas class="semana__franjas" [franjas]="dia.franjas" [etiqueta]="dia.nombre" (franjasChange)="ponerDia(dia.indice, $event)" />
       } @else {
         <span class="semana__cerrado sc-text-body-regular">{{ 'repositories.horarios.closed' | translate }}</span>
       }
       @if (falta()?.dia === dia.indice) {
-        <p class="semana__error sc-text-caption-regular" role="alert">{{ 'repositories.horarios.errors.week_' + falta()!.codigo | translate }}</p>
+        <p class="semana__error field__error sc-text-caption-regular" role="alert">{{ 'repositories.horarios.errors.week_' + falta()!.codigo | translate }}</p>
       }
     </li>
   }
@@ -45,6 +47,9 @@
     appearance="outlined"
     icon="content_copy"
     [disabled]="destinos().length === 0"
+    [pTooltip]="destinos().length === 0 ? ('repositories.horarios.copy_disabled' | translate) : ''"
+    tooltipPosition="top"
+    tooltipEvent="both"
     [label]="'repositories.horarios.copy' | translate"
     (clicked)="copiar()"
   />

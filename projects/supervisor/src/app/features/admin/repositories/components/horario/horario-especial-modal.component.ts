@@ -13,7 +13,7 @@ import {
 
 import { LanguageService } from '@core/services/language.service';
 import { injectLangChange } from '@core/utils/lang-change';
-import { dejoElCampo } from '@shared/utils/alta-secciones';
+import { ayudaDeObligatorio, dejoElCampo } from '@shared/utils/alta-secciones';
 
 import { diaRepetido, type FechaEspecial, type Franja, validarFranjas } from '../../state/horarios.core.mjs';
 import { HorarioFranjasComponent } from './horario-franjas.component';
@@ -80,7 +80,7 @@ export class HorarioEspecialModalComponent implements OnInit {
         ? editando ? 'repositories.festivos.day_edit' : 'repositories.festivos.day_add'
         : editando ? 'repositories.horarios.special_edit' : 'repositories.horarios.special_add',
       nombre: festivo ? 'repositories.festivos.day_name_placeholder' : 'repositories.horarios.special_name_placeholder',
-      enviar: editando ? 'common.save' : festivo ? 'repositories.festivos.day_add_submit' : 'repositories.horarios.special_add_submit',
+      enviar: editando ? 'common.save' : 'common.create',
     };
   });
 
@@ -160,6 +160,19 @@ export class HorarioEspecialModalComponent implements OnInit {
 
   protected ponerFecha(fecha: Date | null): void {
     this.fechas.set(fecha ? [fecha] : []);
+  }
+
+  /** El aviso de obligatorio, en gris desde el principio (DD-219); en rojo lo dice `errorDeNombre`. */
+  protected readonly ayudaDeNombre = computed(() => {
+    this.lang();
+    return this.nombre().trim() || this.errorDeNombre() ? undefined : ayudaDeObligatorio(this.translate.instant('repositories.horarios.errors.name_required'));
+  });
+
+  /** Intro envía, como el diálogo de un contacto de la agenda; no en un botón, que ya hace lo suyo. */
+  protected alPulsarIntro(event: Event): void {
+    if ((event.target as HTMLElement | null)?.tagName === 'BUTTON') return;
+    event.preventDefault();
+    this.confirmar();
   }
 
   protected dejarNombre(event: FocusEvent): void {

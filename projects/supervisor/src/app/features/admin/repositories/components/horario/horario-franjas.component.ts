@@ -28,7 +28,7 @@ const aMinutos = (hora: Date): number => hora.getHours() * 60 + hora.getMinutes(
         <sc-datepicker
           class="franjas__hora"
           timeOnly
-          placeholder="hh:mm"
+          [placeholder]="'repositories.horarios.time_placeholder' | translate"
           [showIcon]="false"
           [ariaLabel]="('repositories.horarios.slot_start_aria' | translate: { day: etiqueta() })"
           [value]="fila.inicio"
@@ -38,7 +38,7 @@ const aMinutos = (hora: Date): number => hora.getHours() * 60 + hora.getMinutes(
         <sc-datepicker
           class="franjas__hora"
           timeOnly
-          placeholder="hh:mm"
+          [placeholder]="'repositories.horarios.time_placeholder' | translate"
           [showIcon]="false"
           [ariaLabel]="('repositories.horarios.slot_end_aria' | translate: { day: etiqueta() })"
           [value]="fila.fin"
@@ -47,11 +47,13 @@ const aMinutos = (hora: Date): number => hora.getHours() * 60 + hora.getMinutes(
         @if (fila.noche) {
           <sc-tag severity="secondary" [value]="'repositories.horarios.next_day' | translate" />
         }
+        <!-- Quitar una franja es el ✕ de texto que quita un valor de una lista, como en la ficha de entidad: la papelera es
+             para eliminar algo que existe (\`SC_ICON_RESERVADOS\`). -->
         <sc-button
           variant="secondary"
           appearance="text"
           size="sm"
-          icon="delete"
+          icon="close"
           [ariaLabel]="'repositories.horarios.slot_remove_aria' | translate: { day: etiqueta() }"
           (clicked)="quitar($index)"
         />

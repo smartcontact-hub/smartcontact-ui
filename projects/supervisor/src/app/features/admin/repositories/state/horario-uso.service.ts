@@ -35,7 +35,8 @@ export class HorarioUsoService {
   aviso(ids: readonly number[]): string | null {
     const n = this.grupos(new Set(ids)).length;
     if (n === 0) return null;
-    return this.translate.instant(`repositories.horarios.in_use${n === 1 ? '_one' : ''}`, { count: n });
+    const clave = ids.length > 1 ? 'in_use_bulk' : 'in_use';
+    return this.translate.instant(`repositories.horarios.${clave}${n === 1 ? '_one' : ''}`, { count: n });
   }
 
   /** Al eliminarlos, los grupos que los tenían (en cualquier subcanal, activo o no) vuelven a «Siempre». */
@@ -63,7 +64,8 @@ export class FestivosUsoService {
     const quitar = new Set(ids);
     const n = this.horariosStore.items().filter((h) => h.holidayCalendarIds.some((id) => quitar.has(id))).length;
     if (n === 0) return null;
-    return this.translate.instant(`repositories.festivos.in_use${n === 1 ? '_one' : ''}`, { count: n });
+    const clave = ids.length > 1 ? 'in_use_bulk' : 'in_use';
+    return this.translate.instant(`repositories.festivos.${clave}${n === 1 ? '_one' : ''}`, { count: n });
   }
 
   soltar(ids: readonly number[]): void {

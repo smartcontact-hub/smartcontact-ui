@@ -4,9 +4,10 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TooltipModule } from 'primeng/tooltip';
 import {
   ScButtonComponent,
+  ScDividerComponent,
   ScInputTextComponent,
-  ScMessageComponent,
   ScSectionCardComponent,
+  ScSelectButtonComponent,
   ScSubsectionComponent,
   ScToggleSwitchComponent,
 } from '@smartcontact-hub/components';
@@ -23,7 +24,7 @@ import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 import { type FechaEspecialNueva, HorarioEspecialModalComponent } from '../components/horario/horario-especial-modal.component';
 import { type ColumnaDeHorario, type FilaDeHorario, HorarioFilasTableComponent } from '../components/horario/horario-filas-table.component';
 import { type CalendarioDeFestivos, FestivosStore } from '../state/festivos.store';
-import { type FechaEspecial, siguienteId } from '../state/horarios.core.mjs';
+import { ahoraEn, type FechaEspecial, siguienteId } from '../state/horarios.core.mjs';
 import { HorariosStore } from '../state/horarios.store';
 
 type Borrador = Omit<CalendarioDeFestivos, 'id'>;
@@ -42,9 +43,10 @@ const aFecha = (iso: string): Date => new Date(`${iso}T12:00:00`);
     HorarioEspecialModalComponent,
     HorarioFilasTableComponent,
     ScButtonComponent,
+    ScDividerComponent,
     ScInputTextComponent,
-    ScMessageComponent,
     ScSectionCardComponent,
+    ScSelectButtonComponent,
     ScSubsectionComponent,
     ScToggleSwitchComponent,
     TooltipModule,
@@ -114,9 +116,22 @@ export class FestivosEditorPageComponent implements DirtyAware, OnInit {
     this.lang();
     const t = (k: string): string => this.translate.instant(`repositories.horarios.cols.${k}`);
     return [
-      { campo: 'fecha', titulo: t('date') },
+      // El nombre nombra la fila, como en las fechas especiales del horario: primero.
       { campo: 'nombre', titulo: t('name') },
-      { campo: 'repeticion', titulo: t('repeat') },
+      { campo: 'fecha', titulo: t('date') },
+    ];
+  });
+
+  /* Los de un año que ya pasó, aparte: «Próximos» por defecto, como las fechas especiales del horario. Un calendario no
+   * tiene zona (la pone cada horario que lo aplica): se mira la del navegador. */
+  private readonly hoy = ahoraEn(Intl.DateTimeFormat().resolvedOptions().timeZone).fecha;
+  private readonly esPasado = (d: { readonly yearly: boolean; readonly date: string }): boolean => !d.yearly && d.date < this.hoy;
+  protected readonly verPasados = signal(false);
+  protected readonly filtroDeDias = computed(() => {
+    this.lang();
+    return [
+      { value: 'proximos', label: this.translate.instant('repositories.festivos.days_upcoming') },
+      { value: 'pasados', label: this.translate.instant('repositories.festivos.days_past') },
     ];
   });
 
@@ -125,14 +140,16 @@ export class FestivosEditorPageComponent implements DirtyAware, OnInit {
     this.lang();
     const conAnio = new Intl.DateTimeFormat(this.language.locale(), { day: 'numeric', month: 'short', year: 'numeric' });
     const sinAnio = new Intl.DateTimeFormat(this.language.locale(), { day: 'numeric', month: 'short' });
+    const pasados = this.verPasados();
     return [...this.form().days]
+      .filter((d) => this.esPasado(d) === pasados)
       .sort((a, b) => Number(b.yearly) - Number(a.yearly) || (a.yearly ? a.date.slice(5).localeCompare(b.date.slice(5)) : a.date.localeCompare(b.date)))
       .map((d) => ({
         id: d.id,
         celdas: {
+          // Con su año si es de un año; sin año si se repite, como en el horario.
           fecha: (d.yearly ? sinAnio : conAnio).format(aFecha(d.yearly ? `2024${d.date.slice(4)}` : d.date)),
           nombre: d.name,
-          repeticion: this.translate.instant(d.yearly ? 'repositories.horarios.yearly' : 'repositories.horarios.only_year', { year: d.date.slice(0, 4) }),
         },
       }));
   });
@@ -140,14 +157,12 @@ export class FestivosEditorPageComponent implements DirtyAware, OnInit {
   /** Los días con la forma que pide el diálogo, que es el de las fechas especiales: sin franjas, cerrados. */
   protected readonly comoEspeciales = computed<readonly FechaEspecial[]>(() => this.form().days.map((d) => ({ ...d, slots: [] })));
 
-  /** Los horarios que lo aplican: cambiarlo les cambia a ellos. */
-  protected readonly aviso = computed(() => {
+  /** La ayuda de «Activo»: qué horarios lo aplican y qué les pasa al apagarlo; sin ninguno, qué hace apagarlo. */
+  protected readonly ayudaDeActivo = computed(() => {
     this.lang();
     const id = this.calendarioId;
-    if (id === null || this.mode() !== 'edit') return null;
-    const horarios = this.horariosStore.items().filter((h) => h.holidayCalendarIds.includes(id));
-    if (horarios.length === 0) return null;
-    return this.translate.instant(`repositories.festivos.used_by${horarios.length === 1 ? '_one' : ''}`, { count: horarios.length, name: horarios[0]?.name });
+    const n = id === null || this.mode() !== 'edit' ? 0 : this.horariosStore.items().filter((h) => h.holidayCalendarIds.includes(id)).length;
+    return this.translate.instant(n === 0 ? 'repositories.festivos.active_hint' : `repositories.festivos.inactive_hint${n === 1 ? '_one' : ''}`, { count: n }) as string;
   });
 
   ngOnInit(): void {

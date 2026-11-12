@@ -48,8 +48,9 @@ const columnas = (d: Datos): readonly RepoColumnDef<Horario>[] => [
     width: '96px',
     accessor: (i) => i.status,
     statusMap: {
-      active: { labelKey: 'repositories.status.active', tone: 'success' },
-      inactive: { labelKey: 'repositories.status.inactive', tone: 'secondary' },
+      // En masculino: un horario y un calendario (la clave compartida, «Activa», es de regla y categoría).
+      active: { labelKey: 'repositories.horarios.active', tone: 'success' },
+      inactive: { labelKey: 'repositories.horarios.inactive', tone: 'secondary' },
     },
   },
 ];

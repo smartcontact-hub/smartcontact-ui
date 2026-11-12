@@ -59,6 +59,8 @@ export class HorarioFilasTableComponent {
   /** La clave del botón de añadir, que también es la llamada del vacío. */
   readonly anadirKey = input.required<string>();
   readonly vacioKey = input.required<string>();
+  /** La explicación del vacío, debajo de su título (que va sin punto, DD-217). */
+  readonly vacioCuerpoKey = input<string | null>(null);
   readonly vacioIcono = input('event');
 
   readonly abrir = output<number>();

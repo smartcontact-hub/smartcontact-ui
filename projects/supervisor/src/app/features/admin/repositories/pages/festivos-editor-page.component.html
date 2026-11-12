@@ -21,9 +21,6 @@
     <sc-section-card titleKey="repositories.horarios.section_general" surface="subtle" icon="tune">
       <sc-subsection>
         <div class="bloque">
-          @if (aviso(); as texto) {
-            <sc-message severity="info" [text]="texto" />
-          }
           <div class="grid grid--2">
             <div class="field">
               <sc-inputtext
@@ -50,19 +47,27 @@
               />
             </div>
           </div>
-          <div class="switch-field">
-            <sc-toggleswitch
-              inputId="festivos-activo"
-              [ariaLabel]="'repositories.festivos.active' | translate"
-              [checked]="form().status === 'active'"
-              (checkedChange)="update('status', $event ? 'active' : 'inactive')"
-            />
-            <div class="switch-field__copy">
-              <label class="switch-field__label sc-text-body-regular" for="festivos-activo">{{ 'repositories.festivos.active' | translate }}</label>
-            </div>
-          </div>
         </div>
       </sc-subsection>
+
+      <!-- «Activo», en su propio bloque y con su ayuda siempre, como en el horario y la ficha de usuario: dice qué horarios
+           lo aplican y qué les pasa al apagarlo. -->
+      <sc-divider />
+      <section class="sub-section">
+        <div class="switch-field switch-field--top">
+          <sc-toggleswitch
+            inputId="festivos-activo"
+            ariaDescribedBy="festivos-activo-ayuda"
+            [ariaLabel]="'repositories.festivos.active' | translate"
+            [checked]="form().status === 'active'"
+            (checkedChange)="update('status', $event ? 'active' : 'inactive')"
+          />
+          <div class="switch-field__copy">
+            <label class="switch-field__label sc-text-body-regular" for="festivos-activo">{{ 'repositories.festivos.active' | translate }}</label>
+            <p id="festivos-activo-ayuda" class="switch-field__hint sc-text-caption-regular">{{ ayudaDeActivo() }}</p>
+          </div>
+        </div>
+      </section>
     </sc-section-card>
 
     <sc-section-card titleKey="repositories.festivos.section_days" hintKey="repositories.festivos.section_days_hint" surface="subtle" icon="event_busy">
@@ -72,12 +77,26 @@
             [filas]="dias()"
             [columnas]="columnas()"
             anadirKey="repositories.festivos.day_add"
-            vacioKey="repositories.festivos.days_empty"
+            [vacioKey]="verPasados() ? 'repositories.festivos.days_past_empty' : 'repositories.festivos.days_empty'"
+            [vacioCuerpoKey]="verPasados() ? null : 'repositories.festivos.days_empty_body'"
             vacioIcono="event_busy"
             (abrir)="abrirDia($event)"
             (eliminar)="eliminarDia($event)"
             (anadir)="diaDialog.set({ dia: null })"
-          />
+          >
+            <!-- Los de años pasados no estorban: «Próximos» por defecto, como las fechas especiales del horario. -->
+            <sc-selectbutton
+              filasBarra
+              size="sm"
+              [ariaLabel]="'repositories.festivos.days_filter' | translate"
+              [options]="filtroDeDias()"
+              optionLabel="label"
+              optionValue="value"
+              [allowEmpty]="false"
+              [value]="verPasados() ? 'pasados' : 'proximos'"
+              (valueChange)="verPasados.set($event === 'pasados')"
+            />
+          </sc-horario-filas-table>
         </div>
       </sc-subsection>
     </sc-section-card>

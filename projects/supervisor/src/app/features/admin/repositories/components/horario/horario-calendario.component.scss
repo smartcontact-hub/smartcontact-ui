@@ -8,7 +8,7 @@
 .cal__barra {
   display: flex;
   align-items: center;
-  gap: var(--sc-spacing-0-25);
+  gap: var(--sc-spacing-0-5);
 }
 
 .cal__hoy {
@@ -139,8 +139,8 @@
   }
 }
 
+/* Hoy, en seminegrita (su clase de texto, en la plantilla) y subrayado: no depende solo del peso. */
 .cal__dia--hoy {
-  font-weight: var(--sc-font-weight-semibold);
   text-decoration: underline;
 }
 
@@ -176,8 +176,6 @@
   flex-direction: column;
   align-items: flex-start;
   gap: var(--sc-spacing-0-5);
-  padding-block-start: var(--sc-spacing-1);
-  border-block-start: 1px solid var(--sc-border-default);
 }
 
 .cal__detalle-titulo,
