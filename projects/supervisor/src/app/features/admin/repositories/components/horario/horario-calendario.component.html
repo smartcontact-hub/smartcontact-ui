@@ -13,7 +13,6 @@
   <sc-button class="cal__hoy" variant="secondary" appearance="outlined" size="sm" [label]="'repositories.horarios.calendar.today' | translate" (clicked)="irAHoy()" />
 </div>
 
-<!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events -->
 <div class="cal__anual" role="group" [attr.aria-label]="'repositories.horarios.calendar.aria' | translate: { year: anio() }" (keydown)="teclado($event)">
   @for (mes of meses(); track $index) {
     <section class="cal__mes">

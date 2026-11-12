@@ -358,6 +358,7 @@ test('guardado con la forma de antes («L-V 09:00–18:00»): abre con esa seman
     sessionStorage.setItem('sembrado', '1');
     localStorage.setItem(
       'sc-horarios-repo',
+      // sc:cita-ok — es el dato que guardaba la versión de antes, no la ayuda de interfaz que se retiró.
       JSON.stringify([{ id: 1, name: 'De antes', schedule: 'L-V 09:00–18:00', timezone: 'Europe/Madrid', description: '', status: 'active' }]),
     );
     localStorage.setItem('sc-horarios-repo-v', '1');

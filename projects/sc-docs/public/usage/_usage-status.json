@@ -593,7 +593,7 @@
     },
     {
       "selector": "sc-empty-state",
-      "usedInSupervisor": 24
+      "usedInSupervisor": 25
     },
     {
       "selector": "sc-fileupload",
@@ -613,7 +613,7 @@
     },
     {
       "selector": "sc-message",
-      "usedInSupervisor": 9
+      "usedInSupervisor": 7
     },
     {
       "selector": "sc-panel",
@@ -637,7 +637,7 @@
     },
     {
       "selector": "sc-subsection",
-      "usedInSupervisor": 36
+      "usedInSupervisor": 37
     },
     {
       "selector": "sc-tabs",

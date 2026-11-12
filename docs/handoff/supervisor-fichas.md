@@ -94,6 +94,21 @@ El de la opción repetida de Tipificaciones (2026-10-31, DD-244, sin trampas pro
 
 El de la barra común de asignar y Repositorios como sus COA (2026-10-31, DD-243 y DD-245, sin trampas propias): `git show
 79567b53:docs/handoff/supervisor-fichas.md`.
+El del repaso del Figma del Supervisor y «Fuera del DS», borrada (2026-11-03, sin trampas propias; el detalle sigue en
+`figma-pendiente` §54 a §69): `git show d94ac6ec:docs/handoff/supervisor-fichas.md`.
+
+## ✅ 2026-11-12 · Horarios con las piezas de las fichas, en uso sin ids muertos, y el arnés de piezas (DD-252)
+
+> **Sello:** rama `claude/calendarios-horarios-especiales-l3z4wx`, rebasada sobre `main` (con el campo de audio, #608).
+
+- **Hecho**: sublistas en `sc-datatable` con «⋮» (fuera los lápices); borrar un horario o un calendario en uso avisa y
+  suelta (el siguiente ya no hereda el id); la semana bajo «Horario de atención» del grupo; «Activo» con ayuda que dice
+  quién lo usa; filtro «Próximas / Pasadas»; destello de los días que cambian. Revisión a ciegas aplicada.
+- **Arnés**: `audit:screen-hygiene` §10 y el inventario de piezas dentro de `npm run revision` (`scripts/piezas-pantalla.mjs`).
+- **No hecho**: llegar a Festivos sin pasar por un horario (descartado en DD-252: el hub refleja el COA); locución por
+  regla y el nodo del diseñador VUI; el backend; el COA y el Figma de las pantallas.
+- **Trampa de sonda**: tras pulsar un `sc-selectbutton` que filtra una tabla, contar filas en el acto lee la tabla de
+  antes (sumó 6 de 5). Espera con `expect.poll` a que cuadre.
 
 ## ✅ 2026-11-12 · Horarios con periodos, fechas especiales y festivos (DD-251)
 
@@ -132,23 +147,6 @@ El de la barra común de asignar y Repositorios como sus COA (2026-10-31, DD-243
   `alta-usuario-marcadores.spec.ts`.
 - **No hecho**: los marcadores en las pantallas del alta de usuario en Figma (página `41:2846`), con las variantes
   `Marca=Paso …` del nav-item, como Grupos y Agentes.
-
-## ✅ 2026-11-03 · Repaso del Figma del Supervisor y «Fuera del DS», borrada
-
-> **Sello:** rama `claude/new-session-3g90bx` sobre `main` HEAD `c4ac441f`; la cuarta vuelta, `areses/supervisor-figma-round-4-e8e3b0` sobre `2577e70a`; la quinta, `areses/figma-tareas-pendientes-133fda` sobre `d98242c6`. Solo Figma y `figma-pendiente`.
-
-- **Figma** (server de la nube; detalle en `figma-pendiente` §54, §64, §65, §66 y §69, Email e «Ir a» en Grupos): los 4 avisos de descartar con los
-  botones de borrar (#575); las 64 barras medidas, dos contadores añadidos, y la edición de Agendas y Plantillas en
-  «Asignados»; DD-244 en Tipificaciones; DD-235 y DD-245 en Equipos (fuera el nombre repetido, que se había escapado);
-  las seis «Avanzado» de Agentes con la `.Subsection` plegable del Kit.
-- **«Fuera del DS»**: ninguna ficha quedaba como «se queda»; la página se borró, y lo que pide al Kit está en §66.
-- **Vueltas 2 a 4** (#582, #589, #590): lo montado a mano, a componentes locales con nombres en inglés; el hub cerrado;
-  25 fichas cerradas; avisos `Plain` (§65); Usuarios maquetada de nuevo; «Inglés» en «Si algo falla 5» de Agentes.
-- **Quinta vuelta** (§67, §68): piezas del Kit publicadas (tono de etiqueta, drawer acoplado, parte plegable,
-  `group-summary` en slots, `Surface=Card`, `summary-kpi`) y usadas; Icons publicado (`schedule`, `sell`, `label`,
-  `category`, `arrow_forward`, `key`, `hub`) y puesto en el hub, Usuarios y Agentes.
-- **No hecho** (con el evolutivo de Contact Center): Contact Center, Conversaciones, releer los COA, la cabecera del hub
-  (58 en Figma, 56 en el prototipo) y las versiones por página.
 
 ## SIGUIENTE — sin preguntar
 

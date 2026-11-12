@@ -23,7 +23,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 ## Por componente
 
-### `sc-datatable` · 18 usos · primeng/table
+### `sc-datatable` · 20 usos · primeng/table
 
 **73 props nativas no expuestas**: `alwaysShowPaginator`, `ariaLabel`, `columnsInput`, `compareSelectionBy`, `contextMenu`, `contextMenuSelectionInput`, `currency`, `currencyDisplay`, `customSort`, `defaultSortOrder`, `display`, `editingRowKeysInput`, `expandedRowKeysInput`, `exportHeader`, `field`, `filterButtonProps`, `filterDelay`, `filterLocale`, `filterOn`, `filtersInput`, `frozenColumns`, `frozenWidth`, `groupRowsByOrder`, `hideOnClear`, `lazyLoadOnInit`, `loadingIcon`, `locale`, `localeMatcher`, `matchMode`, `matchModeOptions`, `maxConstraints`, `maxFractionDigits`, `minFractionDigits`, `multiSortMetaInput`, `operator`, `pageLinks`, `paginatorDropdownAppendTo`, `paginatorDropdownScrollHeight`, `paginatorLocale`, `paginatorStyleClass`, `placeholder`, `prefix`, `resetPageOnSort`, `rowExpandMode`, `rowHover`, `rowSelectable`, `rowTrackBy`, `selectAllInput`, `selectionPageOnly`, `showAddButton`, `showApplyButton`, `showButtons`, `showClearButton`, `showFirstLastIcon`, `showInitialSortBadge`, `showJumpToPageDropdown`, `showJumpToPageInput`, `showLoader`, `showMatchModes`, `showMenu`, `showOperator`, `showPageLinks`, `sortFieldInput`, `sortOrderInput`, `suffix`, `tableStyle`, `tableStyleClass`, `type`, `useGrouping`, `valueInput`, `virtualScrollDelay`, `virtualScrollItemSize`, `virtualScrollOptions`
 
@@ -39,7 +39,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **52 props nativas no expuestas**: `appendTo`, `ariaLabelledBy`, `autoZIndex`, `autofocus`, `baseZIndex`, `clearButtonStyleClass`, `dataType`, `defaultDate`, `disabledDates`, `disabledDays`, `firstDayOfWeek`, `fluid`, `focusTrap`, `hideOnDateTimeSelect`, `hourFormat`, `icon`, `iconAriaLabel`, `iconDisplay`, `inputSize`, `inputStyle`, `inputStyleClass`, `keepInvalid`, `max`, `maxDateCount`, `maxlength`, `min`, `minlength`, `motionOptions`, `multipleSeparator`, `numberOfMonths`, `panelStyle`, `panelStyleClass`, `pattern`, `rangeSeparator`, `readonlyInput`, `responsiveOptions`, `selectOtherMonths`, `shortYearCutoff`, `showOnFocus`, `showOtherMonths`, `showSeconds`, `showTime`, `showWeek`, `startWeekFromFirstDayOfYear`, `step`, `stepHour`, `stepSecond`, `tabindex`, `timeSeparator`, `todayButtonStyleClass`, `touchUI`, `variant`
 
-### `sc-button` · 187 usos · primeng/button, primeng/tooltip
+### `sc-button` · 179 usos · primeng/button, primeng/tooltip
 
 **43 props nativas no expuestas**: `appendTo`, `autoHide`, `autofocus`, `badge`, `badgeSeverity`, `buttonProps`, `content`, `escape`, `fitContent`, `fluid`, `hideDelay`, `hideOnEscape`, `hostName`, `iconPos`, `life`, `link`, `loadingIcon`, `outlined`, `pButton`, `pButtonIconPT`, `pButtonLabelPT`, `pButtonLabelUnstyled`, `pButtonPT`, `pButtonUnstyled`, `pTooltipPT`, `pTooltipUnstyled`, `plain`, `positionLeft`, `positionStyle`, `positionTop`, `severity`, `showDelay`, `showOnEllipsis`, `style`, `styleClass`, `tabindex`, `text`, `tooltipDisabled`, `tooltipEvent`, `tooltipOptions`, `tooltipPosition`, `tooltipStyleClass`, `tooltipZIndex`
 
@@ -103,7 +103,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **7 props nativas no expuestas**: `fluid`, `iconPosition`, `invalid`, `pInputTextPT`, `pInputTextUnstyled`, `pSize`, `variant`
 
-### `sc-selectbutton` · 23 usos · primeng/selectbutton
+### `sc-selectbutton` · 26 usos · primeng/selectbutton
 
 **7 props nativas no expuestas**: `autofocus`, `dataKey`, `name`, `required`, `styleClass`, `tabindex`, `unselectable`
 
@@ -131,7 +131,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **4 props nativas no expuestas**: `iconPos`, `motionOptions`, `toggleButtonProps`, `toggler`
 
-### `sc-message` · 9 usos · primeng/message
+### `sc-message` · 7 usos · primeng/message
 
 **3 props nativas no expuestas**: `closeIcon`, `life`, `motionOptions`
 
@@ -167,11 +167,11 @@ Expone todo lo que PrimeNG documenta.
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-divider` · 22 usos · primeng/divider
+### `sc-divider` · 25 usos · primeng/divider
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-empty-state` · 24 usos · —
+### `sc-empty-state` · 25 usos · —
 
 Expone todo lo que PrimeNG documenta.
 
@@ -215,7 +215,7 @@ Expone todo lo que PrimeNG documenta.
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-subsection` · 36 usos · —
+### `sc-subsection` · 37 usos · —
 
 Expone todo lo que PrimeNG documenta.
 

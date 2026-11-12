@@ -294,7 +294,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 187,
+      "usedInSupervisor": 179,
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "sobreObsoleto": [
         {
@@ -634,7 +634,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 18,
+      "usedInSupervisor": 20,
       "cuando": "Para datos tabulares con columnas comparables. Si cada fila es en realidad un formulario, NO es una tabla.",
       "sobreObsoleto": [],
       "fuente": "projects/ui-smartcontact/src/lib/components/datatable/sc-datatable.component.ts"
@@ -786,7 +786,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 22,
+      "usedInSupervisor": 25,
       "cuando": "Para separar visualmente dos bloques cuando el espacio no basta.",
       "sobreObsoleto": [],
       "fuente": "projects/ui-smartcontact/src/lib/components/divider/sc-divider.component.ts"
@@ -851,7 +851,7 @@
         "kit"
       ],
       "retirado": null,
-      "usedInSupervisor": 24,
+      "usedInSupervisor": 25,
       "cuando": "Para cuando no hay nada que enseñar: dice por qué está vacío y qué hacer. Una lista vacía sin esto parece rota.",
       "sobreObsoleto": [],
       "fuente": "projects/ui-smartcontact/src/lib/components/empty-state/sc-empty-state.component.ts"
@@ -1402,7 +1402,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 9,
+      "usedInSupervisor": 7,
       "cuando": "Para un aviso EN LA PÁGINA, junto a lo que explica. Si es el resultado de una acción y puede desaparecer, `sc-toast`.",
       "sobreObsoleto": [],
       "fuente": "projects/ui-smartcontact/src/lib/components/message/sc-message.component.ts"
@@ -1887,7 +1887,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 23,
+      "usedInSupervisor": 26,
       "cuando": "Para elegir una opción de 2-4 que se explican solas, todas visibles. Si cambia de COLECCIÓN en vez de filtrar, son pestañas (DD-113).",
       "sobreObsoleto": [],
       "fuente": "projects/ui-smartcontact/src/lib/components/selectbutton/sc-selectbutton.component.ts"
@@ -2023,7 +2023,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 36,
+      "usedInSupervisor": 37,
       "cuando": "Para un nivel más dentro de una sección, plegable si lo secundario estorba.",
       "sobreObsoleto": [],
       "fuente": "projects/ui-smartcontact/src/lib/components/subsection/sc-subsection.component.ts"

@@ -191,20 +191,26 @@ eligiera.
 **Decisión** ·
 1. **Las sublistas, en la tabla de una sección**, como los contactos de una agenda (DD-163 §3, DD-215 §1):
    `horario-filas-table` con `sc-datatable variant="list"`; la fila abre su diálogo (clic e Intro), el «⋮» y el clic
-   derecho llevan Editar y Eliminar (que pregunta, como la agenda), «Añadir» va encima, el vacío es `sc-empty-state`,
-   las celdas van en una línea (`table__td-text`). Las tres con la misma columna «Repetición» («Cada año», «Solo
-   2027»). Las fechas especiales pasadas se apartan con «Próximas / Pasadas» (`sc-selectbutton`, como la barra de
-   asignar, DD-243). «Eliminar» sale de los diálogos.
-2. **Lo demás, con las piezas que ya existían**: la franja se quita con la papelera (como una condición de regla), el
-   año se elige con un `sc-selectbutton` (sin flechas, que no tenían precedente), «Activo» y «Se repite cada año» son
-   el `switch-field` de las fichas. La hora de una franja es la única pieza declarada nueva: `sc-datepicker timeOnly`
-   repetido por franja (catálogo §6: una hora → `sc-datepicker`).
+   derecho llevan Editar y Eliminar (que pregunta, como la agenda), «Nuevo…» va encima a la derecha y el diálogo
+   termina en «Crear», el vacío es `sc-empty-state` con título y explicación, las celdas van en una línea
+   (`table__td-text`) y el nombre va primero. La repetición va en la fecha: lo de un año lleva su año («25 mar 2027»),
+   lo que se repite, no («24 dic»); una columna «Repetición» aparte recortaba hasta «Nochebuena» en los ~480 px de la
+   columna de reglas. Las fechas especiales y los festivos pasados se apartan con «Próximas / Pasadas»
+   (`sc-selectbutton`, como la barra de asignar, DD-243). «Eliminar» sale de los diálogos.
+2. **Lo demás, con las piezas que ya existían**: la franja se quita con el ✕ que quita un valor de una lista (ficha de
+   entidad; la papelera es para eliminar algo que existe, `SC_ICON_RESERVADOS`); cada día de la semana es un
+   `switch-field` (interruptor y, detrás, el día como su rótulo, sin bordes entre días); el año se elige con un
+   `sc-selectbutton` (sin flechas, que no tenían precedente); «Activo» va tras un `sc-divider` con su ayuda siempre,
+   como en la ficha de usuario, y la ayuda dice quién lo usa y qué les pasa al apagarlo; los diálogos llevan el pie
+   pequeño de la ficha de grupo. El editor usa el molde `page__inner` y pone el año al lado a partir de 1340, con la
+   receta de `.ficha-summary` (pegado al bajar, con su propio desplazamiento). La hora de una franja es la única pieza
+   declarada nueva: `sc-datepicker timeOnly` repetido por franja (catálogo §6: una hora → `sc-datepicker`).
 3. **En uso**: `HorarioUsoService` y `FestivosUsoService`, calcados de `TipificacionUsoService`. Borrar un horario dice
    a cuántos grupos afecta y qué les pasa («pasarán a atender siempre») y les suelta la referencia; borrar un
    calendario de festivos lo quita de los horarios. La ficha de grupo abre como «Siempre» un horario que ya no existe.
    `RepoPageConfig` gana `uso` para engancharlo. Se cuentan solo los subcanales que usan el horario de verdad.
 4. **Conexión con el grupo**: bajo «Horario de atención», la semana del horario en una línea; en la demo, el grupo
-   Reclamaciones atiende con «Postventa». Apagar un horario en uso dice qué pasa (DD-152).
+   Reclamaciones atiende con «Postventa». Apagar un horario en uso dice qué pasa (DD-152), en la ayuda de «Activo».
 5. **Microinteracción**: al cambiar una regla, los días del año que cambian destellan una vez (opacidad, 1200 ms,
    como DD-222 §9); con «reducir movimiento», nada. Los días se hunden al pulsar como todos los botones (DD-113 §9).
 6. **Arnés**: `audit:screen-hygiene` §10 (trinquete) caza el lápiz o el «⋮» de solo icono por fila en una lista hecha a
@@ -212,20 +218,25 @@ eligiera.
    que el cambio añade en el resto del Supervisor y sale con 1 si no tiene precedente ni está declarada con
    `<!-- pieza nueva: DD-NNN, motivo -->`. Regla #10 de LEARNINGS y punto 8 de la tarjeta.
 7. **De paso**: los botones del calendario y de la hora de PrimeNG («Choose Date», «Next Month») se anunciaban en
-   inglés; ahora en los cuatro idiomas.
+   inglés; ahora en los cuatro idiomas. Horarios y calendarios dicen su estado en masculino («Activo»): la clave
+   compartida de las listas de repositorio es femenina («Activa», de regla y categoría).
 
 **Razón** · Medido en esta sesión: el inventario pone en rojo la plantilla de DD-251 (sus dos lápices) y en verde la
-nueva; la regla 10 caza exactamente esos tres lápices en todo el repo. `e2e/supervisor/horarios-estres.spec.ts` (26
-pruebas) recorre el modelo por la pantalla, y quitando el soltar a propósito el grupo acaba con un horario que no
-eligió. Hueco entre tarjetas: 49 → 21 (el de las demás fichas). Semana: nombre, interruptor y franja al mismo eje
+nueva; la regla 10 caza exactamente esos tres lápices en todo el repo. `e2e/supervisor/horarios-estres.spec.ts` (27
+pruebas) recorre el modelo por la pantalla; quitando el soltar a propósito el grupo acaba con un horario que no eligió,
+y perdiendo una fecha en el filtro «Próximas / Pasadas» la suma no cuadra (4 de 5). Una revisión a ciegas (capturas y
+código, sin conclusiones) contrastó cada pieza con su precedente; sus hallazgos están aplicados.
+Hueco entre tarjetas: 49 → 21 (el de las demás fichas). Semana: interruptor, día y franja al mismo eje
 (585-590,8 → 590,8). Filas de tabla: 62 → 49. Tecla en el nombre, con la CPU a 1/6: 83-99 → 46-52 ms. Comparado con el
 prototipo «periodos v2» haciendo las mismas tareas: Nochevieja de 9 a 14, 12 → 7 acciones; un puente de tres días,
 15 → 8; los viernes de verano hasta las 14:00, 4 y 4; preparar el año siguiente, 115 → 32.
 
 **Descartadas** ·
 - **Botón «Festivos» en la barra de la lista de Horarios**: ninguna lista pone una acción de navegación junto a
-  «Nuevo»; a los festivos se llega desde el campo que los usa («Gestionar festivos», como «Gestionar en Repositorios»
+  «Nuevo»; a los festivos se llega desde el campo que los usa («Gestionar calendarios de festivos», como «Gestionar en Repositorios»
   de DD-217 §9) y por la miga.
+- **Tarjeta de Festivos en el hub de Repositorios**: probada; el hub refleja los ocho repositorios del COA y cabe a
+  1440 × 800 sin desplazar (13 tarjetas), y `repositorios-hub.spec.ts` lo guarda. Una decimocuarta lo rompía.
 - **La leyenda que ilumina sus días al pasar**: sin precedente, y accesible con teclado convertía la leyenda en
   controles nuevos.
 - **Bloquear el borrado de un horario en uso**: Tipificaciones suelta y avisa; se sigue igual.

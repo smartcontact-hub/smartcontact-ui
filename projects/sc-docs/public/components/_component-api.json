@@ -1364,7 +1364,7 @@
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "fuente": "projects/ui-smartcontact/src/lib/components/button/sc-button.component.ts",
       "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=7596-35989",
-      "usosSupervisor": 187,
+      "usosSupervisor": 179,
       "relaciones": {
         "alternativas": [],
         "usa": [],
@@ -2615,7 +2615,7 @@
       "cuando": "Para datos tabulares con columnas comparables. Si cada fila es en realidad un formulario, NO es una tabla.",
       "fuente": "projects/ui-smartcontact/src/lib/components/datatable/sc-datatable.component.ts",
       "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=15374-66885",
-      "usosSupervisor": 18,
+      "usosSupervisor": 20,
       "relaciones": {
         "alternativas": [],
         "usa": [
@@ -4618,7 +4618,7 @@
       "cuando": "Para separar visualmente dos bloques cuando el espacio no basta.",
       "fuente": "projects/ui-smartcontact/src/lib/components/divider/sc-divider.component.ts",
       "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=302-11810",
-      "usosSupervisor": 22,
+      "usosSupervisor": 25,
       "relaciones": {
         "alternativas": [],
         "usa": [],
@@ -4889,7 +4889,7 @@
       "cuando": "Para cuando no hay nada que enseñar: dice por qué está vacío y qué hacer. Una lista vacía sin esto parece rota.",
       "fuente": "projects/ui-smartcontact/src/lib/components/empty-state/sc-empty-state.component.ts",
       "figma": null,
-      "usosSupervisor": 24,
+      "usosSupervisor": 25,
       "relaciones": {
         "alternativas": [],
         "usa": [
@@ -7210,7 +7210,7 @@
       "cuando": "Para un aviso EN LA PÁGINA, junto a lo que explica. Si es el resultado de una acción y puede desaparecer, `sc-toast`.",
       "fuente": "projects/ui-smartcontact/src/lib/components/message/sc-message.component.ts",
       "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=393-39252",
-      "usosSupervisor": 9,
+      "usosSupervisor": 7,
       "relaciones": {
         "alternativas": [
           "sc-toast"
@@ -9794,7 +9794,7 @@
       "cuando": "Para elegir una opción de 2-4 que se explican solas, todas visibles. Si cambia de COLECCIÓN en vez de filtrar, son pestañas (DD-113).",
       "fuente": "projects/ui-smartcontact/src/lib/components/selectbutton/sc-selectbutton.component.ts",
       "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=191-6703",
-      "usosSupervisor": 23,
+      "usosSupervisor": 26,
       "relaciones": {
         "alternativas": [],
         "usa": [
@@ -10379,7 +10379,7 @@
       "cuando": "Para un nivel más dentro de una sección, plegable si lo secundario estorba.",
       "fuente": "projects/ui-smartcontact/src/lib/components/subsection/sc-subsection.component.ts",
       "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=12610-23193",
-      "usosSupervisor": 36,
+      "usosSupervisor": 37,
       "relaciones": {
         "alternativas": [],
         "usa": [],
