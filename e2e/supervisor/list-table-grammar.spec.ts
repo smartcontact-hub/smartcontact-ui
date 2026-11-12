@@ -108,6 +108,10 @@ const PAGINAS = [
   { ruta: 'admin/agendas/editar/1', nombre: 'contactos de una agenda', altoFila: 49 },
   // Horarios y Variables: el mismo reparto de `repo-list-page` que agendas, sin su propio editor.
   { ruta: 'admin/horarios', nombre: 'horarios', altoFila: 49 },
+  /* Las tablas de una sección del editor de horario (DD-252): periodos y fechas especiales, como los contactos de una
+   * agenda; y la de días de un calendario de festivos. Su fila más alta la manda el «⋮». */
+  { ruta: 'admin/horarios/editar/9', nombre: 'periodos y fechas especiales de un horario', altoFila: 49 },
+  { ruta: 'admin/festivos/editar/1', nombre: 'días de un calendario de festivos', altoFila: 49 },
   { ruta: 'admin/variables', nombre: 'variables', altoFila: 49 },
 ] as const;
 
@@ -123,6 +127,9 @@ const ABREN_FILA = [
   { ruta: 'admin/agendas', nombre: 'agendas' },
   // Los contactos de una agenda (en repositorios): la fila abre su editor, en un diálogo.
   { ruta: 'admin/agendas/editar/10', nombre: 'repositorios · contactos de una agenda' },
+  // Periodos, fechas especiales y festivos (DD-252): la fila abre su diálogo.
+  { ruta: 'admin/horarios/editar/9', nombre: 'periodos y fechas especiales de un horario' },
+  { ruta: 'admin/festivos/editar/1', nombre: 'días de un calendario de festivos' },
 ] as const;
 
 /**
@@ -136,6 +143,8 @@ const ABREN_MODAL = new Set([
   'conversaciones/categorias',
   'conversaciones/entidades',
   'admin/agendas/editar/10',
+  'admin/horarios/editar/9',
+  'admin/festivos/editar/1',
 ]);
 
 /** Relleno de una pieza de la tabla tal como lo da `getComputedStyle(el).padding`: alto y ancho,

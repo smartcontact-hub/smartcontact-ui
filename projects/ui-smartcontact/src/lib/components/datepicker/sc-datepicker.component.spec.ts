@@ -48,3 +48,44 @@ describe('sc-datepicker · los aria del campo', () => {
     expect(raiz.querySelector(`[id="${describedby!}"]`)?.textContent).toContain('Falta la fecha');
   });
 });
+
+/* Los dos modos que pasan tal cual al nativo: días sueltos (su valor va en `dates`) y solo la hora. */
+@Component({
+  standalone: true,
+  imports: [ScDatepickerComponent],
+  template: `
+    <sc-datepicker inline selectionMode="multiple" ariaLabel="Festivos" [(dates)]="dias" />
+    <sc-datepicker inputId="hora" timeOnly ariaLabel="Apertura" [(value)]="hora" />
+  `,
+})
+class HostDeModos {
+  readonly dias = signal<readonly Date[] | null>(null);
+  readonly hora = signal<Date | null>(new Date(2026, 0, 1, 9, 30));
+}
+
+describe('sc-datepicker · días sueltos y solo la hora', () => {
+  it('en `multiple`, cada día pulsado entra en `dates` y volver a pulsarlo lo quita', () => {
+    const fixture = TestBed.createComponent(HostDeModos);
+    fixture.detectChanges();
+    const raiz = fixture.nativeElement as HTMLElement;
+    const dias = () => [...raiz.querySelectorAll<HTMLElement>('td:not(.p-datepicker-other-month) .p-datepicker-day')];
+    dias()[2].click();
+    fixture.detectChanges();
+    dias()[4].click();
+    fixture.detectChanges();
+    expect(fixture.componentInstance.dias()?.map((d) => d.getDate())).toEqual([3, 5]);
+    dias()[2].click();
+    fixture.detectChanges();
+    expect(fixture.componentInstance.dias()?.map((d) => d.getDate())).toEqual([5]);
+  });
+
+  it('con `timeOnly`, el campo enseña la hora y lleva su nombre accesible', async () => {
+    const fixture = TestBed.createComponent(HostDeModos);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    const input = (fixture.nativeElement as HTMLElement).querySelector<HTMLInputElement>('input#hora')!;
+    expect(input.value).toBe('09:30');
+    expect(input.getAttribute('aria-label')).toBe('Apertura');
+  });
+});

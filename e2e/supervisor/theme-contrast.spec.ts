@@ -85,6 +85,11 @@ const RUTAS = [
   'admin/agendas',
   // El editor de una agenda (DD-163): sus campos, la tabla de contactos y su paginador, en los dos temas.
   'admin/agendas/editar/1',
+  // Horarios (DD-251, DD-252): la lista con «Ahora», el editor con su año (días de periodo, cerrados y la marca de las
+  // fechas especiales) y un calendario de festivos, en los dos temas.
+  'admin/horarios',
+  'admin/horarios/editar/9',
+  'admin/festivos/editar/1',
   'admin/reglas-ia',
   // El constructor de condiciones de una regla nueva (medido 2026-10-05): «Añadir alternativa
   // (O)» es `variant="secondary" appearance="text"`, y ese slot del preset no está en la lista

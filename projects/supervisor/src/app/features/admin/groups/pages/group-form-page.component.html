@@ -842,7 +842,8 @@
     <!-- En su columna, como los demás desplegables de la sección: a todo el ancho era el único. -->
     <div class="grid grid--2">
       <div class="field">
-        <sc-select [label]="'groups.form.chat.attendance_schedule' | translate" [inputId]="'group-' + sub + '-schedule'" optionValue="value" optionDisabled="disabled" [options]="attendanceOptions(sub)" [value]="attendanceSchedule(sub)" (valueChange)="setAttendanceSchedule(sub, $event)" />
+        <!-- Debajo, la semana del horario elegido en una línea (DD-252): elegirlo por el nombre sin saber qué horas son era a ciegas. -->
+        <sc-select [label]="'groups.form.chat.attendance_schedule' | translate" [inputId]="'group-' + sub + '-schedule'" optionValue="value" optionDisabled="disabled" [options]="attendanceOptions(sub)" [value]="attendanceSchedule(sub)" [helperText]="attendanceSummary(sub)" (valueChange)="setAttendanceSchedule(sub, $event)" />
       </div>
     </div>
     @if (attendanceSchedule(sub) !== null) {

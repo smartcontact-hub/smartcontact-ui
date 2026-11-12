@@ -48,6 +48,8 @@ const RUTAS = [
   'admin/repositorios',
   // El editor de una agenda (DD-163): campos, buscador, «Nuevo contacto», menú de fila y paginador.
   'admin/agendas/editar/1',
+  // El editor de un horario (DD-251, DD-252): la semana, las tablas de periodos y fechas y los días del año.
+  'admin/horarios/editar/9',
   'config/aed/servicio',
   'config/sistema',
 ] as const;

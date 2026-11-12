@@ -70,9 +70,52 @@ export const REPOSITORIES_ROUTES: Routes = [
     ],
   },
   {
+    /* El horario tiene su editor, como la agenda: su semana, sus periodos y sus fechas especiales, con el año al lado. */
     path: 'horarios',
-    data: repoInstance('repositories.horarios.title'),
-    loadComponent: () => import('./instances/horarios').then((m) => m.HorariosPageComponent),
+    data: repoInstanceEnAdmin('repositories.horarios.title'),
+    children: [
+      { path: '', loadComponent: () => import('./instances/horarios').then((m) => m.HorariosPageComponent) },
+      {
+        path: 'crear',
+        data: { breadcrumb: { labelKey: 'repositories.horarios.create_title' } },
+        loadComponent: () => import('./pages/horario-editor-page.component').then((m) => m.HorarioEditorPageComponent),
+        canDeactivate: [formDirtyGuard],
+      },
+      {
+        path: 'editar/:id',
+        data: { breadcrumb: { labelKey: 'repositories.horarios.edit_breadcrumb' } },
+        loadComponent: () => import('./pages/horario-editor-page.component').then((m) => m.HorarioEditorPageComponent),
+        canDeactivate: [formDirtyGuard],
+      },
+    ],
+  },
+  {
+    /* Los calendarios de festivos que los horarios aplican: su lista y su editor. */
+    path: 'festivos',
+    /* Cuelgan de Horarios, que es desde donde se llega («Gestionar festivos»): no tienen tarjeta en el hub. */
+    data: {
+      breadcrumb: [
+        { labelKey: 'sidebar.administration', link: false as const },
+        { labelKey: 'sidebar.repositories', link: '/admin/repositorios' as const },
+        { labelKey: 'repositories.horarios.title', link: '/admin/horarios' as const },
+        { labelKey: 'repositories.festivos.title' },
+      ],
+    },
+    children: [
+      { path: '', loadComponent: () => import('./instances/festivos').then((m) => m.FestivosPageComponent) },
+      {
+        path: 'crear',
+        data: { breadcrumb: { labelKey: 'repositories.festivos.create_title' } },
+        loadComponent: () => import('./pages/festivos-editor-page.component').then((m) => m.FestivosEditorPageComponent),
+        canDeactivate: [formDirtyGuard],
+      },
+      {
+        path: 'editar/:id',
+        data: { breadcrumb: { labelKey: 'repositories.festivos.edit_breadcrumb' } },
+        loadComponent: () => import('./pages/festivos-editor-page.component').then((m) => m.FestivosEditorPageComponent),
+        canDeactivate: [formDirtyGuard],
+      },
+    ],
   },
   {
     /* Como el «grupo de agentes» de Voice, el equipo tiene su editor: su nombre y sus agentes (revisión del 2026-10-09). */

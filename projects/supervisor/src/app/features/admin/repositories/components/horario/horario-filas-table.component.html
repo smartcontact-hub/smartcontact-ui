@@ -1,0 +1,69 @@
+<div class="filas">
+  <!-- Lo que cambia qué filas se ven (un filtro) a la izquierda y «Añadir» a la derecha, como la barra de la agenda. -->
+  <div class="filas__bar">
+    <ng-content select="[filasBarra]" />
+    <sc-button
+      class="filas__anadir"
+      size="sm"
+      variant="secondary"
+      appearance="outlined"
+      icon="add"
+      [label]="anadirKey() | translate"
+      (clicked)="anadir.emit()"
+    />
+  </div>
+
+  <div class="table-card">
+    <sc-datatable
+      variant="list"
+      dataKey="id"
+      [value]="filas()"
+      [columns]="columns()"
+      rowsFocusable
+      [rowStyleClass]="rowClass"
+      (rowClick)="onRowClick($event)"
+      (rowKeydown)="onRowKeydown($event)"
+      (rowContextMenu)="onRowContextMenu($event, menuRef)"
+    >
+      <div scTableEmpty>
+        <sc-empty-state [icon]="vacioIcono()" [titleKey]="vacioKey()" [bodyKey]="vacioCuerpoKey() ?? ''" [ctaKey]="anadirKey()" (cta)="anadir.emit()" />
+      </div>
+    </sc-datatable>
+  </div>
+</div>
+
+<!-- Celdas propias. Fuera del `<sc-datatable>` para que `viewChild` las resuelva. -->
+<ng-template #celdaTpl let-row let-col="col">
+  @if (etiquetas().has(col.field) && row.color) {
+    <sc-tag variant="label" [labelColor]="row.color" [value]="row.celdas[col.field]" />
+  } @else {
+    <!-- Una línea, como las demás tablas: lo que no cabe se recorta y se lee entero al pasar (`table__td-text`). -->
+    <span class="table__td-text sc-text-body-regular" [pTooltip]="row.celdas[col.field]" showOnEllipsis tooltipPosition="top">{{ row.celdas[col.field] }}</span>
+  }
+</ng-template>
+
+<ng-template #accionesTpl let-row>
+  <sc-button
+    class="rules-kebab-btn"
+    variant="secondary"
+    appearance="text"
+    size="sm"
+    icon="more_vert"
+    [ariaLabel]="'labels.row_menu' | translate"
+    ariaHasPopup="menu"
+    [ariaExpanded]="menuOpen() && esLaDelMenu(row)"
+    [ariaControls]="menuId"
+    (clicked)="openMenu(row, menuRef, $event)"
+  />
+</ng-template>
+
+<p-menu
+  #menuRef
+  [id]="menuId"
+  [model]="menuItems()"
+  [popup]="true"
+  appendTo="body"
+  styleClass="rules-kebab-menu"
+  (onShow)="menuOpen.set(true)"
+  (onHide)="menuOpen.set(false)"
+/>

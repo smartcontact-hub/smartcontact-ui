@@ -4,7 +4,7 @@
  * que hasta ahora SOLO vivían en la doc (AGENTS.md §UX de pantalla). Un principio
  * que no tiene gate se pudre: esto lo convierte en un chequeo.
  *
- * Gatea NUEVE cosas. La primera, la segunda, la cuarta, la octava y la novena, como TRINQUETE por conteo (el mismo patrón
+ * Gatea DIEZ cosas. La primera, la segunda, la cuarta, la octava, la novena y la décima, como TRINQUETE por conteo (el mismo patrón
  * que `audit:api-era`: la lista solo puede MENGUAR, y muerde en las dos direcciones):
  *
  * 1. EMOJIS EN LA INTERFAZ. Los iconos salen de `<sc-icon>` (Material Symbols); un
@@ -63,6 +63,15 @@
  *    pasar el ratón va en el tooltip del Kit, el `pTooltip` de PrimeNG, no en el globo del navegador: `showOnEllipsis` si
  *    solo repite un texto cortado y `tooltipEvent="both"` si va en algo que se enfoca. La entrada `title` de un componente
  *    nuestro (`sc-dialog`) no cuenta. Mira el Supervisor y la librería del DS.
+ *
+ * 10. EDITAR UNA FILA DESDE UNA LISTA HECHA A MANO (DD-252), como trinquete por conteo. Una sublista que se edita (los
+ *    contactos de una agenda, los periodos de un horario) es una `sc-datatable variant="list"` en su sección: la fila
+ *    abre y el «⋮» lleva lo secundario (DD-163 §3, DD-215 §1); el lápiz por fila lo retiró DD-217 §9 de las fichas. Se
+ *    marca, en plantillas del Supervisor, un botón de solo icono (`iconOnly`, o con `icon` y sin `label`) con el icono de
+ *    editar (`edit`) o del menú de fila (`more_vert`) dentro de un `@for` que no está dentro de una `sc-datatable`. Las
+ *    papeleras y las × de las filas que se editan en el sitio (condiciones de una regla, opciones de una tipificación)
+ *    no: su fila ES el formulario. Nació porque la primera versión de Horarios pintó tres sublistas a mano con un lápiz
+ *    por fila y ninguna máquina lo vio.
  *
  * QUÉ HACER SI SE PONE ROJO:
  *   · «nuevo incumplimiento» → arréglalo (usa `<sc-icon>` en vez del emoji; añade
@@ -378,6 +387,55 @@ export function chequearTrinquete(actual, congelado, etiqueta, comoArreglar) {
   return problemas;
 }
 
+/* ── 10 · Editar una fila desde una lista hecha a mano (DD-252) ─────────────────────────────────────────────────── */
+
+/** Iconos que, en un botón de solo icono, abren la edición de una fila: el lápiz y el «⋮». */
+const ICONO_DE_FILA = /^(?:edit|more_vert)$/;
+
+/** Las plantillas del Supervisor que editan filas a mano HOY, y cuántas veces. La lista solo MENGUA. */
+export const FILAS_A_MANO = {};
+
+/** El cierre `}` del bloque que abre la llave en `desde` (cuenta llaves; las de una interpolación `{{ }}` se compensan). */
+function cierreDeBloque(texto, desde) {
+  let nivel = 0;
+  for (let i = desde; i < texto.length; i++) {
+    if (texto[i] === '{') nivel++;
+    else if (texto[i] === '}' && --nivel === 0) return i;
+  }
+  return texto.length;
+}
+
+/**
+ * Las líneas de los botones de solo icono con lápiz o «⋮» dentro de un `@for` que no está dentro de una
+ * `sc-datatable`. Los comentarios no cuentan y no mueven las líneas.
+ */
+export function filasEditadasAMano(html) {
+  const limpio = enBlanco(html, /<!--[\s\S]*?-->/g);
+  const tablas = [];
+  for (const m of limpio.matchAll(/<sc-datatable\b/g)) {
+    const fin = limpio.indexOf('</sc-datatable>', m.index);
+    tablas.push([m.index, fin < 0 ? limpio.length : fin]);
+  }
+  const dentroDeTabla = (i) => tablas.some(([a, b]) => i > a && i < b);
+  const lineas = new Set();
+  for (const m of limpio.matchAll(/@for\s*\(/g)) {
+    if (dentroDeTabla(m.index)) continue;
+    // La expresión del `@for` lleva paréntesis dentro (`periodos()`): se cuentan hasta cerrar el suyo.
+    let i = m.index + m[0].length;
+    for (let nivel = 1; i < limpio.length && nivel > 0; i++) nivel += limpio[i] === '(' ? 1 : limpio[i] === ')' ? -1 : 0;
+    const abre = limpio.indexOf('{', i);
+    if (abre < 0) continue;
+    const bloque = limpio.slice(abre, cierreDeBloque(limpio, abre));
+    for (const b of bloque.matchAll(/<sc-button\b[^>]*>/g)) {
+      const tag = b[0];
+      const icono = /(?:^|\s)icon="([^"]+)"/.exec(tag)?.[1] ?? '';
+      const soloIcono = /(?:^|\s)iconOnly\b/.test(tag) || !/(?:^|\s)\[?label\]?\s*=/.test(tag);
+      if (soloIcono && ICONO_DE_FILA.test(icono)) lineas.add(limpio.slice(0, abre + b.index).split('\n').length);
+    }
+  }
+  return [...lineas].sort((a, b) => a - b);
+}
+
 /* ── main ──────────────────────────────────────────────────────────────────── */
 if (process.argv[1] && process.argv[1].endsWith('audit-screen-hygiene.mjs')) {
   const ficheros = sh(
@@ -402,6 +460,8 @@ if (process.argv[1] && process.argv[1].endsWith('audit-screen-hygiene.mjs')) {
   const roles = {};
   const piezasDe = {};
   const titles = [];
+  const filasAMano = {};
+  const filasDe = {};
   let desplegables = 0;
   for (const f of ficheros) {
     const src = readFileSync(f, 'utf8');
@@ -429,6 +489,11 @@ if (process.argv[1] && process.argv[1].endsWith('audit-screen-hygiene.mjs')) {
       for (const linea of titlesNativos(src, f.endsWith('.html'))) titles.push(`${f}:${linea}`);
     }
     if (f.startsWith('projects/supervisor/') && f.endsWith('.html')) {
+      const filas = filasEditadasAMano(src);
+      if (filas.length) {
+        filasAMano[f] = filas.length;
+        filasDe[f] = filas;
+      }
       for (const linea of guionesSueltos(src)) guiones.push(`${f}:${linea}`);
       for (const linea of ayudasEncima(src)) encima.push(`${f}:${linea}`);
     }
@@ -455,6 +520,20 @@ if (process.argv[1] && process.argv[1].endsWith('audit-screen-hygiene.mjs')) {
         piezasDe[f].map(({ linea, rol }) => [
           `${f}:${linea}: role="${rol}" a mano, sin el teclado del nativo.`,
           `      → ${NATIVO_DEL_ROL[rol]}; su documentación entera con \`node tools/primeng-doc.mjs <x>\`.`,
+        ]),
+      ),
+    ...chequearTrinquete(
+      filasAMano,
+      FILAS_A_MANO,
+      'fila(s) que se editan desde una lista hecha a mano',
+      'una sublista que se edita es una `sc-datatable variant="list"` en su sección: la fila abre y el «⋮» lleva Editar y Eliminar (DD-163 §3, DD-215 §1, DD-252); calca `components/agenda-contacts-table`.',
+    ),
+    ...Object.entries(filasAMano)
+      .filter(([f, n]) => n > (FILAS_A_MANO[f] ?? 0))
+      .flatMap(([f]) =>
+        filasDe[f].map((linea) => [
+          `${f}:${linea}: botón de lápiz o «⋮» en una fila de una lista hecha a mano.`,
+          '      → `sc-datatable variant="list"` con `(rowClick)` y el «⋮» en su columna de acciones (DD-252).',
         ]),
       ),
     ...titles.map((donde) => [
@@ -494,7 +573,7 @@ if (process.argv[1] && process.argv[1].endsWith('audit-screen-hygiene.mjs')) {
     log(
       '✓ audit:screen-hygiene OK — sin emojis nuevos en la interfaz, ninguna imagen nueva sin reservar su hueco, ' +
         'cada desplegable con nombre, ningún toast nuevo fuera de los del sistema, ningún «—» suelto, ninguna ayuda encima de su control, ' +
-        'ningún obligatorio que acuse de primeras, ninguna pieza nueva hecha a mano que imite a un nativo y ningún `title` nativo.',
+        'ningún obligatorio que acuse de primeras, ninguna pieza nueva hecha a mano que imite a un nativo, ningún `title` nativo y ninguna fila que se edite desde una lista hecha a mano.',
     );
     process.exit(0);
   }

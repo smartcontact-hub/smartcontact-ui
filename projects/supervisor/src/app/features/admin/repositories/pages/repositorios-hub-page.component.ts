@@ -238,7 +238,13 @@ export class RepositoriosHubPageComponent {
           icon: 'schedule',
           path: '/admin/horarios',
           count: () => this.horarios.items().length,
-          proximamente: true,
+          entradas: () =>
+            this.horarios.items().map((h) => ({
+              id: h.id,
+              nombre: h.name,
+              detalle: h.description,
+              link: `/admin/horarios/editar/${h.id}`,
+            })),
         },
         {
           id: 'emails',

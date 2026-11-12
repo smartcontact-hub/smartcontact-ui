@@ -589,11 +589,11 @@
     },
     {
       "selector": "sc-custom-modal",
-      "usedInSupervisor": 18
+      "usedInSupervisor": 20
     },
     {
       "selector": "sc-empty-state",
-      "usedInSupervisor": 24
+      "usedInSupervisor": 25
     },
     {
       "selector": "sc-fileupload",
@@ -637,7 +637,7 @@
     },
     {
       "selector": "sc-subsection",
-      "usedInSupervisor": 29
+      "usedInSupervisor": 37
     },
     {
       "selector": "sc-tabs",

@@ -92,6 +92,39 @@ El de borrar y descartar sin teñir el modal (2026-10-31, DD-242; su trampa ya e
 93e71f3d:docs/handoff/supervisor-fichas.md`.
 El de la opción repetida de Tipificaciones (2026-10-31, DD-244, sin trampas propias): `git show 1bf926c4:docs/handoff/supervisor-fichas.md`.
 
+El de la barra común de asignar y Repositorios como sus COA (2026-10-31, DD-243 y DD-245, sin trampas propias): `git show
+79567b53:docs/handoff/supervisor-fichas.md`.
+El del repaso del Figma del Supervisor y «Fuera del DS», borrada (2026-11-03, sin trampas propias; el detalle sigue en
+`figma-pendiente` §54 a §69): `git show d94ac6ec:docs/handoff/supervisor-fichas.md`.
+
+## ✅ 2026-11-12 · Horarios con las piezas de las fichas, en uso sin ids muertos, y el arnés de piezas (DD-252)
+
+> **Sello:** rama `claude/calendarios-horarios-especiales-l3z4wx`, rebasada sobre `main` (con el campo de audio, #608).
+
+- **Hecho**: sublistas en `sc-datatable` con «⋮» (fuera los lápices); borrar un horario o un calendario en uso avisa y
+  suelta (el siguiente ya no hereda el id); la semana bajo «Horario de atención» del grupo; «Activo» con ayuda que dice
+  quién lo usa; filtro «Próximas / Pasadas»; destello de los días que cambian. Revisión a ciegas aplicada.
+- **Arnés**: `audit:screen-hygiene` §10 y el inventario de piezas dentro de `npm run revision` (`scripts/piezas-pantalla.mjs`).
+- **No hecho**: llegar a Festivos sin pasar por un horario (descartado en DD-252: el hub refleja el COA); locución por
+  regla y el nodo del diseñador VUI; el backend; el COA y el Figma de las pantallas.
+- **Trampa de sonda**: tras pulsar un `sc-selectbutton` que filtra una tabla, contar filas en el acto lee la tabla de
+  antes (sumó 6 de 5). Espera con `expect.poll` a que cuadre.
+
+## ✅ 2026-11-12 · Horarios con periodos, fechas especiales y festivos (DD-251)
+
+> **Sello:** rama `claude/calendarios-horarios-especiales-l3z4wx` sobre `main` HEAD `79567b53`.
+
+- **Hecho**: un horario es su semana, sus periodos y sus fechas especiales, con el año al lado (`/admin/horarios`, lista y
+  editor); los festivos, repositorio aparte que cada horario aplica (`/admin/festivos`). Lógica pura en
+  `repositories/state/horarios.core.mjs`; la prueba de aceptación es la hoja de postventa de 2025 (`horarios.test.mjs`).
+- **`sc-datepicker`**: `selectionMode="multiple"` (`dates`), `timeOnly`, `stepMinute` y `ariaLabel`.
+- **No hecho**: decir a qué grupos afecta ANTES de borrar un horario (hoy, la confirmación simple); locución por regla; el nodo
+  de horario de la IVR; el COA y el Figma de la pantalla. Las horas de la semilla «Postventa» son de ejemplo.
+- **Trampa de sonda**: en `p-datepicker` de rango, `fill()` sobre el campo no cambia el modelo y el botón sigue apagado;
+  parece un fallo del diálogo. Elige los dos días en el panel.
+- **Trampa de entorno**: `tools/primeng-doc.mjs` necesita `gh` contra `primefaces/primeng`; en una sesión en la nube sin ese
+  repositorio falla. La API instalada está en `node_modules/primeng/types/primeng-datepicker.d.ts`.
+
 ## ✅ 2026-11-06 · En el hub de Repositorios, pulsar otra tarjeta marca la otra (DD-249)
 
 > **Sello:** rama `areses/repo-card-selection-interactions-8ce085` sobre `main` HEAD `1bf926c4`.
@@ -114,40 +147,6 @@ El de la opción repetida de Tipificaciones (2026-10-31, DD-244, sin trampas pro
   `alta-usuario-marcadores.spec.ts`.
 - **No hecho**: los marcadores en las pantallas del alta de usuario en Figma (página `41:2846`), con las variantes
   `Marca=Paso …` del nav-item, como Grupos y Agentes.
-
-## ✅ 2026-11-03 · Repaso del Figma del Supervisor y «Fuera del DS», borrada
-
-> **Sello:** rama `claude/new-session-3g90bx` sobre `main` HEAD `c4ac441f`; la cuarta vuelta, `areses/supervisor-figma-round-4-e8e3b0` sobre `2577e70a`; la quinta, `areses/figma-tareas-pendientes-133fda` sobre `d98242c6`. Solo Figma y `figma-pendiente`.
-
-- **Figma** (server de la nube; detalle en `figma-pendiente` §54, §64, §65, §66 y §69, Email e «Ir a» en Grupos): los 4 avisos de descartar con los
-  botones de borrar (#575); las 64 barras medidas, dos contadores añadidos, y la edición de Agendas y Plantillas en
-  «Asignados»; DD-244 en Tipificaciones; DD-235 y DD-245 en Equipos (fuera el nombre repetido, que se había escapado);
-  las seis «Avanzado» de Agentes con la `.Subsection` plegable del Kit.
-- **«Fuera del DS»**: ninguna ficha quedaba como «se queda»; la página se borró, y lo que pide al Kit está en §66.
-- **Vueltas 2 a 4** (#582, #589, #590): lo montado a mano, a componentes locales con nombres en inglés; el hub cerrado;
-  25 fichas cerradas; avisos `Plain` (§65); Usuarios maquetada de nuevo; «Inglés» en «Si algo falla 5» de Agentes.
-- **Quinta vuelta** (§67, §68): piezas del Kit publicadas (tono de etiqueta, drawer acoplado, parte plegable,
-  `group-summary` en slots, `Surface=Card`, `summary-kpi`) y usadas; Icons publicado (`schedule`, `sell`, `label`,
-  `category`, `arrow_forward`, `key`, `hub`) y puesto en el hub, Usuarios y Agentes.
-- **No hecho** (con el evolutivo de Contact Center): Contact Center, Conversaciones, releer los COA, la cabecera del hub
-  (58 en Figma, 56 en el prototipo) y las versiones por página.
-
-## ✅ 2026-10-31 · La barra común de asignar y Repositorios como sus COA (DD-243, DD-245)
-
-> **Sello:** rama `areses/align-coa-figma-flows-3b1a9b` sobre `main` HEAD `c395300b`.
-
-- **Barra (DD-243)**: `sc-assign-bar` en las cinco tablas de asignar y el panel rápido del Monitor: filtro «Todos /
-  Asignados / Sin asignar», buscador que llena y «N asignados» al final. Editar abre en Asignados; ordenar por nombre. El
-  vacío dice «Asígnalos desde «Todos».» (ya no es pestaña). Prueba: `barra-comun-tablas`.
-- **Repositorios (DD-245)**: Equipos (aviso del nombre gris y rojo, la cifra abre en Agentes, foto), Agendas (Nombre y «⋮»
-  fijos, siempre «Personalizado N»), Plantillas (tooltip del título, Ctrl/Cmd+S y contenido en rojo) y el hub (8
-  «Próximamente» sin panel, el reciente entra, Labels con Administración). Pruebas: `equipos-como-coa-4453`,
-  `agendas-plantillas-como-coa`, `repositorios-hub`.
-- **COA**: prompts de 4453, 4440, 4438, 4064, 4058 y 4062 en `~/Documents/Claude/2026-10 Empate flujos AED/`; los pega
-  y publica Rafa. Releídos en vivo el 2026-10-31 (4056 v14, 4058 v23, 4060 v2, 4062 v4, 4438 v11, 4440 v10, 4064 v2).
-- **Medido de paso, sin arreglar**: el hub no cabe a 1440 × 800 (sobran 318 px, ya antes) y su prueba mide `.hub`, que no
-  desplaza (`.app-shell__content` sí). **Figma**: barras y hub hechos (`figma-pendiente` §64); el «❖ Alert modal» blanco,
-  publicado el 2026-11-03 (§65); el azul de Comunicación, `sky` (DD-247).
 
 ## SIGUIENTE — sin preguntar
 

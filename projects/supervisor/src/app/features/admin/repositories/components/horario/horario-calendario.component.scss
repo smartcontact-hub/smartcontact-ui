@@ -1,0 +1,200 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1);
+  container-type: inline-size;
+}
+
+.cal__barra {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+}
+
+.cal__hoy {
+  margin-inline-start: auto;
+}
+
+/* Tres meses por fila; cuatro si cabe y dos si no. */
+.cal__anual {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--sc-spacing-1);
+
+  @container (min-width: 46rem) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  @container (max-width: 26rem) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.cal__mes-nombre {
+  margin: 0 0 var(--sc-spacing-0-25);
+
+  &::first-letter {
+    text-transform: uppercase;
+  }
+}
+
+.cal__rejilla {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: var(--sc-spacing-0-125);
+}
+
+.cal__inicial {
+  color: var(--sc-text-secondary);
+  text-align: center;
+}
+
+/* Un día abierto de la semana habitual: la superficie, sin más. */
+.cal__dia,
+.cal__muestra {
+  position: relative;
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-sm);
+  background: var(--sc-bg-surface);
+  color: var(--sc-text-primary);
+}
+
+.cal__dia {
+  aspect-ratio: 1;
+  padding: 0;
+  cursor: pointer;
+  /* Como todos los botones de la app (`sc-preset/css.ts`, la pulsación de DD-113 §9): el fondo cambia en 150 ms y al
+   * pulsar se hunde al 96 %. Solo esas dos propiedades. */
+  transition:
+    background-color 150ms ease-out,
+    transform 150ms ease-out;
+
+  &:active {
+    transform: scale(0.96);
+  }
+
+  &:hover {
+    background: var(--sc-bg-hover);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-border-focus);
+    outline-offset: 1px;
+  }
+}
+
+/* El periodo tiñe el día con su color de etiqueta. */
+.cal__dia--periodo {
+  @each $color in ('blue', 'green', 'purple', 'orange', 'teal', 'amber', 'red', 'brown') {
+    &[data-color='#{$color}'] {
+      border-color: var(--sc-label-#{$color}-border);
+      background: var(--sc-label-#{$color}-bg);
+      color: var(--sc-label-#{$color}-text);
+    }
+  }
+}
+
+/* Cerrado: apagado y con el borde a trazos, para que no dependa solo del color; conserva el borde de su periodo.
+ * Repetida la clase para ganar al color del periodo, que lleva un atributo. */
+.cal__dia--cerrado.cal__dia--cerrado.cal__dia--cerrado {
+  border-style: dashed;
+  background: var(--sc-bg-secondary-subtle);
+  color: var(--sc-text-secondary);
+}
+
+/* Fecha especial o festivo: una marca en la esquina, del color de marca. No el amarillo de aviso: una fecha especial no
+ * avisa de nada, y el color aquí significa algo (AGENTS, UX 1). */
+.cal__dia--excepcion::after {
+  position: absolute;
+  inset-block-start: var(--sc-spacing-0-125);
+  inset-inline-end: var(--sc-spacing-0-125);
+  inline-size: var(--sc-spacing-0-25);
+  block-size: var(--sc-spacing-0-25);
+  border-radius: var(--sc-radius-full);
+  background: var(--sc-icon-primary);
+  content: '';
+}
+
+/* Destello de un día que acaba de cambiar (DD-252, como DD-222 §9): una capa de marca que se apaga. Solo `opacity`. */
+.cal__dia--destello::before {
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: var(--sc-bg-primary);
+  opacity: 0;
+  pointer-events: none;
+  animation: cal-destello 1200ms var(--sc-easing-default);
+  content: '';
+}
+
+@keyframes cal-destello {
+  from {
+    opacity: 0.35;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cal__dia--destello::before {
+    animation: none;
+  }
+}
+
+/* Hoy, en seminegrita (su clase de texto, en la plantilla) y subrayado: no depende solo del peso. */
+.cal__dia--hoy {
+  text-decoration: underline;
+}
+
+.cal__dia--elegido {
+  outline: 2px solid var(--sc-border-primary);
+  outline-offset: 1px;
+}
+
+.cal__leyenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sc-spacing-0-5) var(--sc-spacing-1);
+  margin: 0;
+  padding: 0;
+  color: var(--sc-text-secondary);
+  list-style: none;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-25);
+  }
+}
+
+.cal__muestra {
+  display: inline-block;
+  inline-size: var(--sc-spacing-1);
+  block-size: var(--sc-spacing-1);
+}
+
+.cal__detalle {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sc-spacing-0-5);
+}
+
+.cal__detalle-titulo,
+.cal__detalle-horas,
+.cal__detalle-motivo {
+  margin: 0;
+}
+
+.cal__detalle-titulo::first-letter {
+  text-transform: uppercase;
+}
+
+.cal__detalle-horas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+}
+
+.cal__detalle-motivo {
+  color: var(--sc-text-secondary);
+}

@@ -55,6 +55,8 @@ const RUTAS = [
   'admin/repositorios',
   // El editor de una agenda (DD-163): los iconos de sus secciones, de «Nuevo contacto» y del menú de fila.
   'admin/agendas/editar/1',
+  // El editor de un horario (DD-251, DD-252): sus secciones, la papelera de las franjas y el menú de fila de sus tablas.
+  'admin/horarios/editar/9',
 ];
 
 type Hallazgos = { medidos: number; sinCalibrar: string[]; rozan: string[] };

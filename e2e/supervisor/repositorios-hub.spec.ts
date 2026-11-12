@@ -341,11 +341,10 @@ test('el buscador vacío ofrece los últimos repositorios abiertos, el último p
   await expect(page).toHaveURL(/\/admin\/agendas$/);
 });
 
-test('los ocho «Próximamente» del COA: con su cifra y la marca, y no abren panel', async ({ page }) => {
+test('los siete «Próximamente» (los ocho del COA menos Horarios, DD-251): con su cifra y la marca, y no abren panel', async ({ page }) => {
   await goto(page, 'admin/repositorios');
   const pronto = page.locator('.repo-card--soon');
   await expect(pronto.locator('.repo-card__name')).toHaveText([
-    'Horarios',
     'Email',
     'Labels',
     'Variables',
@@ -354,26 +353,26 @@ test('los ocho «Próximamente» del COA: con su cifra y la marca, y no abren pa
     'Entidades IA',
     'Clasificación IA',
   ]);
-  await expect(pronto.locator('.repo-card__soon')).toHaveText(Array(8).fill('Próximamente'));
+  await expect(pronto.locator('.repo-card__soon')).toHaveText(Array(7).fill('Próximamente'));
   // Todas las tarjetas llevan su cifra (COA, «Contadores»), también estas.
-  await expect(pronto.locator('.repo-card__count')).toHaveText(Array(8).fill(/^\d+$/));
+  await expect(pronto.locator('.repo-card__count')).toHaveText(Array(7).fill(/^\d+$/));
 
-  const horarios = tarjeta(page, 'Horarios');
-  await expect(horarios).toHaveAttribute('aria-disabled', 'true');
-  await expect(horarios).not.toHaveAttribute('aria-expanded');
+  const pronta = tarjeta(page, 'Email');
+  await expect(pronta).toHaveAttribute('aria-disabled', 'true');
+  await expect(pronta).not.toHaveAttribute('aria-expanded');
   // `force`: Playwright no pulsa lo que lleva `aria-disabled`, pero el ratón de una persona sí llega.
-  await horarios.click({ force: true });
+  await pronta.click({ force: true });
   await expect(panel(page)).toHaveCount(0);
   await expect(page.locator('.repo-card--selected')).toHaveCount(0);
 
   // Con un panel abierto, pulsar una de estas no hace nada: ni la marca ni le quita la marca a la que la tiene.
   await tarjeta(page, 'Agendas').click();
   await expect(panel(page)).toBeVisible();
-  await horarios.click({ force: true });
+  await pronta.click({ force: true });
   await trasPintar(page);
   await expect(page.locator('.p-drawer-title')).toHaveText('Agendas');
   await expect(tarjeta(page, 'Agendas')).toHaveClass(/repo-card--selected/);
-  await expect(horarios).not.toHaveClass(/repo-card--selected/);
+  await expect(pronta).not.toHaveClass(/repo-card--selected/);
 });
 
 /** El borde de arriba de la tarjeta y el tono fuerte de su grupo, ya resueltos, y el contraste del borde sobre su fondo. */
@@ -396,7 +395,7 @@ const bordeDeTarjeta = enNavegador(
 
 /* Una de cada grupo, y en IA y Comunicación una que abre y otra «Próximamente»: el fallo se vio en Diseñador (teal, sus
  * dos «Próximamente», que se quedaban grises) y en IA (naranja, cuyo borde de etiqueta queda por DEBAJO del gris). */
-const AL_PASAR = ['Plantillas', 'Horarios', 'Equipos', 'Labels', 'Entidades', 'Intenciones', 'Reglas IA', 'Clasificación IA'];
+const AL_PASAR = ['Plantillas', 'Email', 'Equipos', 'Labels', 'Entidades', 'Intenciones', 'Reglas IA', 'Clasificación IA'];
 
 for (const tema of ['claro', 'oscuro'] as const) {
   test(`al pasar, el borde se enciende en el tono fuerte de su grupo, también en «Próximamente» (${tema})`, async ({ page }) => {

@@ -1,0 +1,27 @@
+/* Lo común de los dos diálogos del horario (periodo y fecha especial): grupos a 14 y, dentro, a 7. */
+/* Entre grupos, 28; dentro de cada uno (`.bloque`), 14 (AGENTS, UX 9). */
+.modal-horario {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-2);
+}
+
+/* La fecha especial al añadir: el calendario a un lado y sus datos al otro. */
+.modal-horario--especial {
+  flex-flow: row wrap;
+  align-items: flex-start;
+  gap: var(--sc-spacing-2);
+}
+
+.modal-horario__fechas,
+.modal-horario__datos {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
+}
+
+.modal-horario__datos {
+  flex: 1;
+  gap: var(--sc-spacing-1);
+  min-inline-size: var(--sc-spacing-18);
+}

@@ -1,0 +1,61 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1);
+}
+
+.semana {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Interruptor · día · franjas, en una rejilla: cada franja es una fila de la tercera columna (`display: contents` en
+ * `sc-horario-franjas`), así que el interruptor y el día se centran con la PRIMERA franja sin medir alturas, y las
+ * demás franjas, «Añadir franja» y el error caen debajo, en su columna. Entre días, el aire de la escalera, sin
+ * líneas (DD-113: nada de bordes entre hermanos). */
+.semana__dia {
+  display: grid;
+  grid-template-columns: auto var(--sc-spacing-5) minmax(0, 1fr);
+  align-items: center;
+  column-gap: var(--sc-spacing-1);
+  row-gap: var(--sc-spacing-0-5);
+}
+
+.semana {
+  gap: var(--sc-spacing-1);
+}
+
+sc-toggleswitch,
+.semana__nombre {
+  grid-row: 1;
+}
+
+.semana__cerrado {
+  grid-column: 3;
+  grid-row: 1;
+  color: var(--sc-text-secondary);
+}
+
+.semana__error {
+  grid-column: 3;
+}
+
+.semana__copiar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  /* El hueco entre campos de una fila de `.grid` (`_forms.scss`). */
+  gap: var(--sc-spacing-1-75);
+}
+
+.semana__origen {
+  inline-size: var(--sc-spacing-12-5);
+}
+
+.semana__destinos {
+  flex: 1;
+  min-inline-size: var(--sc-spacing-12-5);
+}

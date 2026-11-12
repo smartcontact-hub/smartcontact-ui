@@ -1,0 +1,114 @@
+<ng-template #topbarActions>
+  @if (mode() === 'edit' && formDirty()) {
+    <span class="form-save-reason sc-text-caption-regular" role="status">{{ 'common.unsaved_changes' | translate }}</span>
+  }
+  @if (formDirty()) {
+    <sc-button variant="secondary" appearance="outlined" [label]="'common.undo' | translate" (clicked)="discard()" />
+  }
+  <sc-button
+    variant="primary"
+    [disabled]="!canSave()"
+    [pTooltip]="motivoApagado()" tooltipPosition="top" tooltipEvent="both"
+    [label]="(mode() === 'create' ? 'repositories.festivos.create_submit' : 'common.save') | translate"
+    (clicked)="save()"
+  />
+</ng-template>
+
+<div class="page">
+  <div class="page__inner">
+    <h1 class="page__heading sc-text-title-semibold">{{ form().name.trim() || ('repositories.festivos.create_title' | translate) }}</h1>
+
+    <sc-section-card titleKey="repositories.horarios.section_general" surface="subtle" icon="tune">
+      <sc-subsection>
+        <div class="bloque">
+          <div class="grid grid--2">
+            <div class="field">
+              <sc-inputtext
+                inputId="festivos-name"
+                fluid
+                required
+                [label]="'repositories.columns.name' | translate"
+                [placeholder]="'repositories.festivos.name_placeholder' | translate"
+                [value]="form().name"
+                [helperText]="nameHint()"
+                [error]="nameError()"
+                (valueChange)="update('name', $event)"
+                (focusout)="dejarNombre($event)"
+              />
+            </div>
+            <div class="field field--full">
+              <sc-inputtext
+                inputId="festivos-description"
+                fluid
+                [label]="'repositories.columns.description' | translate"
+                [placeholder]="'repositories.placeholders.description' | translate"
+                [value]="form().description"
+                (valueChange)="update('description', $event)"
+              />
+            </div>
+          </div>
+        </div>
+      </sc-subsection>
+
+      <!-- «Activo», en su propio bloque y con su ayuda siempre, como en el horario y la ficha de usuario: dice qué horarios
+           lo aplican y qué les pasa al apagarlo. -->
+      <sc-divider />
+      <section class="sub-section">
+        <div class="switch-field switch-field--top">
+          <sc-toggleswitch
+            inputId="festivos-activo"
+            ariaDescribedBy="festivos-activo-ayuda"
+            [ariaLabel]="'repositories.festivos.active' | translate"
+            [checked]="form().status === 'active'"
+            (checkedChange)="update('status', $event ? 'active' : 'inactive')"
+          />
+          <div class="switch-field__copy">
+            <label class="switch-field__label sc-text-body-regular" for="festivos-activo">{{ 'repositories.festivos.active' | translate }}</label>
+            <p id="festivos-activo-ayuda" class="switch-field__hint sc-text-caption-regular">{{ ayudaDeActivo() }}</p>
+          </div>
+        </div>
+      </section>
+    </sc-section-card>
+
+    <sc-section-card titleKey="repositories.festivos.section_days" hintKey="repositories.festivos.section_days_hint" surface="subtle" icon="event_busy">
+      <sc-subsection>
+        <div class="bloque">
+          <sc-horario-filas-table
+            [filas]="dias()"
+            [columnas]="columnas()"
+            anadirKey="repositories.festivos.day_add"
+            [vacioKey]="verPasados() ? 'repositories.festivos.days_past_empty' : 'repositories.festivos.days_empty'"
+            [vacioCuerpoKey]="verPasados() ? null : 'repositories.festivos.days_empty_body'"
+            vacioIcono="event_busy"
+            (abrir)="abrirDia($event)"
+            (eliminar)="eliminarDia($event)"
+            (anadir)="diaDialog.set({ dia: null })"
+          >
+            <!-- Los de años pasados no estorban: «Próximos» por defecto, como las fechas especiales del horario. -->
+            <sc-selectbutton
+              filasBarra
+              size="sm"
+              [ariaLabel]="'repositories.festivos.days_filter' | translate"
+              [options]="filtroDeDias()"
+              optionLabel="label"
+              optionValue="value"
+              [allowEmpty]="false"
+              [value]="verPasados() ? 'pasados' : 'proximos'"
+              (valueChange)="verPasados.set($event === 'pasados')"
+            />
+          </sc-horario-filas-table>
+        </div>
+      </sc-subsection>
+    </sc-section-card>
+  </div>
+</div>
+
+@if (diaDialog(); as dialog) {
+  <sc-horario-especial-modal
+    variante="festivo"
+    [especial]="dialog.dia"
+    [existentes]="comoEspeciales()"
+    (guardar)="guardarDias($event)"
+    (cerrado)="diaDialog.set(null)"
+  />
+}

@@ -103,6 +103,14 @@ export interface RepoPageConfig<T extends RepoEntity> {
   readonly modifiedField?: string;
   /** Las claves de sus avisos propios (`created`, `updated`, `deleted`), si no valen los genéricos («{{entity}} «{{name}}»: se ha creado»). */
   readonly toastsKey?: string;
+  /**
+   * Quién usa lo que se borra (DD-252): `aviso` lo dice en la confirmación («Lo usan 2 grupos: …») y `soltar` quita
+   * las referencias antes de borrar, para que nadie se quede apuntando a un id que heredaría el siguiente.
+   */
+  readonly uso?: {
+    readonly aviso: (ids: readonly number[]) => string | null;
+    readonly soltar: (ids: readonly number[]) => void;
+  };
   /** Los títulos propios de su confirmación de borrar (`title`, con `{{name}}`; `title_bulk`, con `{{count}}`); sin ellos, los genéricos. */
   readonly simpleDelete?: { readonly titleKey: string; readonly titleBulkKey: string };
 }

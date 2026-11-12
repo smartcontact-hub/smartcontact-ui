@@ -659,6 +659,15 @@ export const GROUPS_SEED: readonly Group[] = [
     schedules: [1, 2],
     // Con WhatsApp el número es obligatorio (DD-222): los grupos de ejemplo ya lo llevan.
     advanced: { ...DEFAULT_ADVANCED, whatsappNumber: WHATSAPP_NUMBERS[0] ?? '' },
+    // Atiende Web Chat y WhatsApp con el horario «Postventa» (DD-252): la demo enseña la conexión, y sus dos mensajes.
+    chat: {
+      ...DEFAULT_CHAT_SETTINGS,
+      attendanceScheduleIds: { chat: 9, whatsapp: 9 },
+      queueMessages: {
+        chat: { ...EMPTY_CHAT_MESSAGES, outOfSchedule: 'Ahora estamos fuera de horario. Te respondemos en cuanto abramos.', nonWorkingDay: 'Hoy no atendemos. Te respondemos el próximo día laborable.' },
+        whatsapp: { ...EMPTY_CHAT_MESSAGES, outOfSchedule: 'Ahora estamos fuera de horario. Te respondemos en cuanto abramos.', nonWorkingDay: 'Hoy no atendemos. Te respondemos el próximo día laborable.' },
+      },
+    },
   },
   {
     id: 13,
