@@ -1,0 +1,49 @@
+<div class="audio-picker">
+  <div
+    class="audio-picker__box"
+    [class.audio-picker__box--drag]="dragging()"
+    (dragover)="onDragOver($event)"
+    (dragleave)="dragging.set(false)"
+    (drop)="onDrop($event)"
+  >
+    <!-- El input nativo va oculto (`hidden`: sin caja, así que no cuenta como el control del campo al medir el aire
+         entre campos) y lo abre un botón del DS: fuera del tabulador y del lector, que si no anuncian un segundo botón
+         «Choose File» en inglés. -->
+    <input
+      #archivo
+      hidden
+      type="file"
+      [id]="inputId()"
+      [accept]="accept()"
+      (change)="onInput($event)"
+    />
+    <div class="audio-picker__row">
+      <sc-button type="button" icon="add" [label]="chooseLabel()" (clicked)="archivo.click()" />
+      @if (file(); as f) {
+        <span class="audio-picker__name sc-text-body-regular">{{ f.name }}</span>
+        <sc-button
+          type="button"
+          class="audio-picker__remove"
+          variant="danger"
+          appearance="text"
+          icon="close"
+          [iconOnly]="true"
+          [rounded]="true"
+          [ariaLabel]="removeLabel()"
+          (clicked)="remove()"
+        />
+      }
+    </div>
+    @if (file(); as f) {
+      <audio class="audio-picker__player" controls preload="metadata" [attr.src]="src()" [attr.aria-label]="f.name"></audio>
+    } @else {
+      <span class="audio-picker__drop sc-text-caption-regular">{{ dropLabel() }}</span>
+    }
+  </div>
+  @if (rejected(); as aviso) {
+    <span class="audio-picker__msg audio-picker__msg--error sc-text-caption-regular" role="alert" [id]="errorId()">{{ aviso }}</span>
+  }
+  @if (helperText()) {
+    <span class="audio-picker__msg sc-text-caption-regular" [id]="helperId()">{{ helperText() }}</span>
+  }
+</div>

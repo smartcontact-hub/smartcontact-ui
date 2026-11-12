@@ -1,0 +1,62 @@
+/* Campo de audio: caja con borde, la fila (Elegir · nombre · ✕) y debajo la zona de soltar o el reproductor. La ayuda,
+ * a 7 de la caja, como la de los demás campos (7 · 14 · 28). */
+:host {
+  display: block;
+}
+
+.audio-picker {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
+}
+
+.audio-picker__box {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1);
+  padding: var(--sc-spacing-1-125);
+  background: var(--sc-bg-surface);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-md);
+}
+
+/* Al arrastrar un archivo encima, el borde dice dónde se suelta. */
+.audio-picker__box--drag {
+  border-color: var(--sc-border-focus);
+}
+
+.audio-picker__row {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-875);
+  min-width: 0;
+}
+
+.audio-picker__name {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--sc-text-primary);
+}
+
+.audio-picker__remove {
+  margin-inline-start: auto;
+}
+
+.audio-picker__drop {
+  color: var(--sc-text-primary);
+}
+
+.audio-picker__player {
+  width: 100%;
+}
+
+.audio-picker__msg {
+  color: var(--sc-text-subtle);
+}
+
+.audio-picker__msg--error {
+  color: var(--sc-text-danger);
+}
