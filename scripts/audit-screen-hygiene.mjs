@@ -148,7 +148,7 @@ export const IMG_PENDIENTES = {
   'projects/sc-docs/src/app/pages/reglas/rules-walkthrough.component.html': 7,
   'projects/sc-docs/src/app/pages/uso/usage-gallery.component.html': 2,
   'projects/supervisor/src/app/core/layout/sidebar/sidebar.component.html': 1,
-  'projects/supervisor/src/app/shared/components/illustrated-avatar/illustrated-avatar.component.html': 2,
+  'projects/supervisor/src/app/shared/components/illustrated-avatar/illustrated-avatar.component.html': 1,
   'projects/ui-smartcontact/src/lib/components/avatar/sc-avatar.component.ts': 1,
   'projects/ui-smartcontact/src/lib/components/photo-upload/sc-photo-upload.component.html': 2,
 };

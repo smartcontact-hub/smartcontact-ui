@@ -23,6 +23,16 @@
    * le falta una rampa neutra para RELLENOS no interactivos —todos los
    * neutros están nombrados por estado— y esa es la deuda de fondo. */
   background: var(--sc-bg-secondary-hover);
+  width: var(--avatar-size);
+  height: var(--avatar-size);
+
+  /* Tipo Icon: el glifo centrado, en el color del texto (su tamaño, la mitad del círculo, lo pone la plantilla). */
+  &--icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--sc-text-primary);
+  }
 
   &__media {
     width: 100%;

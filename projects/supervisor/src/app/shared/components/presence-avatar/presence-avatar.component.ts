@@ -23,7 +23,7 @@ import { TooltipModule } from 'primeng/tooltip';
   imports: [TooltipModule, OverlayBadgeModule, IllustratedAvatarComponent, TranslateModule],
   template: `
     <p-overlay-badge badgeSize="small" [style]="dotStyle()" class="presence-avatar" [pTooltip]="label() ? (label()! | translate) : ''" tooltipPosition="top">
-      <sc-illustrated-avatar [name]="name()" [photo]="photo()" [size]="size()" [pool]="pool()" />
+      <sc-illustrated-avatar [name]="name()" [photo]="photo()" [size]="size()" />
     </p-overlay-badge>
     @if (label(); as text) {
       <span class="visually-hidden">{{ text | translate }}</span>
@@ -41,7 +41,6 @@ export class PresenceAvatarComponent {
   readonly name = input.required<string>();
   readonly photo = input<string | null | undefined>(null);
   readonly size = input<number | string>(32);
-  readonly pool = input<'illustrated' | 'abstract'>('illustrated');
   readonly presence = input<PresenceStatus | null | undefined>(null);
 
   /** La palabra del estado, en el idioma de la pantalla. */

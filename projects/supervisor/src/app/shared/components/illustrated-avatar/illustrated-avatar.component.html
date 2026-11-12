@@ -1,13 +1,15 @@
 <span
   class="avatar"
-  [style.width]="sizePx()"
-  [style.height]="sizePx()"
+  [class.avatar--icon]="!photoSrc()"
+  [style.--avatar-size]="sizePx()"
+  [style.font-size]="photoSrc() ? null : iconSize()"
   [attr.aria-label]="name()"
   role="img"
 >
   @if (photoSrc(); as src) {
     <img class="avatar__media" [src]="src" [alt]="name()" />
   } @else {
-    <img class="avatar__media" [src]="illustrationSrc()" alt="" aria-hidden="true" />
+    <!-- Sin foto: el avatar de tipo Icon del Kit (círculo, icono de usuario), no una cara inventada. -->
+    <sc-icon class="avatar__icon" name="user" size="inherit" aria-hidden="true" />
   }
 </span>

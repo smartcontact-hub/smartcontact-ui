@@ -17,7 +17,6 @@
 export { PresenceAvatarComponent } from './presence-avatar/presence-avatar.component';
 
 export { IllustratedAvatarComponent } from './illustrated-avatar/illustrated-avatar.component';
-export type { IllustratedAvatarPool } from './illustrated-avatar/illustrated-avatar.component';
 
 
 export { ListPageComponent } from './list-page/list-page.component';
