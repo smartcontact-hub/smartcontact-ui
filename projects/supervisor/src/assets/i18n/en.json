@@ -1533,13 +1533,13 @@
       "used_by_one": "The group “{{name}}” uses it: what you change here changes its service hours.",
       "section_general": "General",
       "section_week": "Regular week",
-      "section_week_hint": "The hours of a normal week.",
+      "section_week_hint": "The hours of a normal week",
       "section_periods": "Periods",
-      "section_periods_hint": "A season with its own week.",
+      "section_periods_hint": "A season with its own week",
       "section_specials": "Special dates and holidays",
-      "section_specials_hint": "Days with their own hours, or closed.",
+      "section_specials_hint": "Days with their own hours, or closed",
       "section_calendar": "Calendar",
-      "section_calendar_hint": "Pick a day to see its hours and where they come from.",
+      "section_calendar_hint": "Pick a day to see its hours and where they come from",
       "days": {
         "mon": "Monday",
         "tue": "Tuesday",
@@ -1590,7 +1590,7 @@
       "special_slots": "Time slots",
       "specials_empty": "No special dates.",
       "holiday_calendars": "Holidays applied",
-      "holiday_calendars_placeholder": "None",
+      "holiday_calendars_placeholder": "No holidays",
       "holiday_calendars_help": "Their days are closed in this schedule.",
       "manage_holidays": "Manage holidays",
       "calendar": {
@@ -1612,17 +1612,17 @@
         "week": "Regular week"
       },
       "errors": {
-        "name_required": "The name is required",
+        "name_required": "Name is required",
         "week_hora": "A time is missing",
         "week_vacia": "A time slot starts and ends at the same time",
         "week_solape": "Two time slots on the same day overlap",
         "week_noche": "Only the last time slot of the day can end the next day",
         "week_pisa_siguiente": "The overnight time slot overlaps the first one of the next day",
-        "period_nombre": "The name is required",
+        "period_nombre": "Name is required",
         "period_fechas": "Choose the dates of the period",
         "period_cruza_anio": "A single-year period cannot end in the next year",
         "period_overlap": "It shares dates with the period “{{name}}”",
-        "special_name": "The name is required",
+        "special_name": "Name is required",
         "special_dates": "Mark at least one day",
         "special_repeated": "{{date}} is already “{{name}}”: edit it in the list",
         "slots_ninguna": "Add at least one time slot",
@@ -1630,7 +1630,11 @@
         "slots_vacia": "A time slot starts and ends at the same time",
         "slots_solape": "Two time slots overlap",
         "slots_noche": "Only the last time slot can end the next day"
-      }
+      },
+      "period_when_yearly": "{{dates}}, every year",
+      "period_when_year": "{{dates}}, {{year}}",
+      "special_detail": "{{hours}}",
+      "special_detail_yearly": "{{hours}}, every year"
     },
     "festivos": {
       "title": "Holidays",
@@ -1654,7 +1658,7 @@
       "col_days": "Days",
       "col_schedules": "Schedules",
       "section_days": "Holidays",
-      "section_days_hint": "These days are closed in the schedules that apply the calendar.",
+      "section_days_hint": "These days are closed in the schedules that apply the calendar",
       "days_empty": "No days yet.",
       "day_add": "Add holidays",
       "day_edit": "Edit holiday",
@@ -1663,7 +1667,7 @@
       "used_by": "{{count}} schedules apply it: what you change here changes their closed days.",
       "used_by_one": "The schedule “{{name}}” applies it: what you change here changes its closed days.",
       "errors": {
-        "name_required": "The name is required"
+        "name_required": "Name is required"
       }
     },
     "tipificaciones": {

@@ -69,7 +69,7 @@
 <!-- Solo la hora: «timeOnly» de primeng.dev/datepicker. -->
 <ng-template #hora>
   <div class="col">
-    <sc-datepicker label="Apertura" timeOnly placeholder="hh:mm" [stepMinute]="15" [(value)]="apertura" data-testid="sc-datepicker-time" />
+    <sc-datepicker label="Apertura" [timeOnly]="true" placeholder="hh:mm" [stepMinute]="15" [(value)]="apertura" data-testid="sc-datepicker-time" />
   </div>
 </ng-template>
 

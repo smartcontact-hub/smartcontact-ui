@@ -177,8 +177,10 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
     const dia = new Intl.DateTimeFormat(this.language.locale(), { day: 'numeric', month: 'short' });
     return this.form().periods.map((p) => ({
       periodo: p,
-      fechas: `${dia.format(aFecha(`2024-${p.from}`))} – ${dia.format(aFecha(`2024-${p.to}`))}`,
-      cuando: p.year === null ? this.translate.instant('repositories.horarios.yearly') : String(p.year),
+      cuando: this.translate.instant(p.year === null ? 'repositories.horarios.period_when_yearly' : 'repositories.horarios.period_when_year', {
+        dates: `${dia.format(aFecha(`2024-${p.from}`))} – ${dia.format(aFecha(`2024-${p.to}`))}`,
+        year: p.year,
+      }) as string,
       resumen: this.resumen(p.week),
     }));
   });
@@ -193,7 +195,9 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
       .map((e) => ({
         especial: e,
         fecha: (e.yearly ? sinAnio : conAnio).format(aFecha(e.yearly ? `2024${e.date.slice(4)}` : e.date)),
-        horas: e.slots.length > 0 ? e.slots.map(textoDeFranja).join(' · ') : null,
+        detalle: this.translate.instant(e.yearly ? 'repositories.horarios.special_detail_yearly' : 'repositories.horarios.special_detail', {
+          hours: e.slots.length > 0 ? e.slots.map(textoDeFranja).join(', ') : this.translate.instant('repositories.horarios.closed'),
+        }) as string,
       }));
   });
 

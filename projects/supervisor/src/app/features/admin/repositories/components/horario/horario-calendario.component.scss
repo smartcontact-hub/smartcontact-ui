@@ -106,7 +106,7 @@
 }
 
 .cal__dia--hoy {
-  font-weight: 700;
+  font-weight: var(--sc-font-weight-semibold);
   text-decoration: underline;
 }
 

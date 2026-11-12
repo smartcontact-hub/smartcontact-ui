@@ -589,7 +589,7 @@
     },
     {
       "selector": "sc-custom-modal",
-      "usedInSupervisor": 18
+      "usedInSupervisor": 20
     },
     {
       "selector": "sc-empty-state",
@@ -613,7 +613,7 @@
     },
     {
       "selector": "sc-message",
-      "usedInSupervisor": 7
+      "usedInSupervisor": 9
     },
     {
       "selector": "sc-panel",
@@ -637,7 +637,7 @@
     },
     {
       "selector": "sc-subsection",
-      "usedInSupervisor": 29
+      "usedInSupervisor": 36
     },
     {
       "selector": "sc-tabs",

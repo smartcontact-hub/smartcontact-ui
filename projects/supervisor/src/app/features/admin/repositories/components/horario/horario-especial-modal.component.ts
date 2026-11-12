@@ -73,7 +73,17 @@ export class HorarioEspecialModalComponent implements OnInit {
   private readonly nombreTocado = signal(false);
 
   /** La raíz de sus textos: los de la fecha especial o los del festivo. */
-  protected readonly textos = computed(() => (this.variante() === 'festivo' ? 'repositories.festivos.day' : 'repositories.horarios.special'));
+  protected readonly claves = computed(() => {
+    const festivo = this.variante() === 'festivo';
+    const editando = this.especial() !== null;
+    return {
+      titulo: festivo
+        ? editando ? 'repositories.festivos.day_edit' : 'repositories.festivos.day_add'
+        : editando ? 'repositories.horarios.special_edit' : 'repositories.horarios.special_add',
+      nombre: festivo ? 'repositories.festivos.day_name_placeholder' : 'repositories.horarios.special_name_placeholder',
+      enviar: editando ? 'common.save' : festivo ? 'repositories.festivos.day_add_submit' : 'repositories.horarios.special_add_submit',
+    };
+  });
 
   protected readonly modos = computed(() => {
     this.lang();
@@ -139,7 +149,7 @@ export class HorarioEspecialModalComponent implements OnInit {
 
   protected readonly errorDeNombre = computed(() => (!this.nombre().trim() && this.nombreTocado() ? this.motivo() : undefined));
   protected readonly errorDeFechas = computed(() => (this.nombre().trim() && this.repetida() ? this.motivo() : undefined));
-  protected readonly errorDeFranjas = computed(() => (this.codigoDeFranjas() ? this.translate.instant(`repositories.horarios.errors.slots_${this.codigoDeFranjas()}`) : undefined));
+  protected readonly errorDeFranjas = computed(() => (this.lang(), this.codigoDeFranjas() ? this.translate.instant(`repositories.horarios.errors.slots_${this.codigoDeFranjas()}`) : undefined));
   protected readonly motivoApagado = this.motivo;
   protected readonly puedeGuardar = computed(() => this.motivo() === '');
 

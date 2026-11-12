@@ -69,7 +69,7 @@ export class HorarioCalendarioComponent {
     const locale = this.language.locale();
     return {
       mes: new Intl.DateTimeFormat(locale, { month: 'long' }),
-      dia: new Intl.DateTimeFormat(locale, { weekday: 'long', day: 'numeric', month: 'long' }),
+      dia: new Intl.DateTimeFormat(locale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }),
       inicial: new Intl.DateTimeFormat(locale, { weekday: 'narrow' }),
     };
   });
@@ -115,7 +115,7 @@ export class HorarioCalendarioComponent {
   private horas(dia: DiaResuelto): string {
     if (dia.tramos.length === 0) return this.translate.instant('repositories.horarios.closed');
     if (dia.minutosAbiertos === 1440) return this.translate.instant('repositories.horarios.all_day');
-    return dia.tramos.map(textoDeFranja).join(' · ');
+    return dia.tramos.map(textoDeFranja).join(', ');
   }
 
   /** Quién decide las horas de ese día, en una frase. */

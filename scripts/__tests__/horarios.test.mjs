@@ -163,7 +163,7 @@ test('la hora de ahora se pide en la zona del horario', () => {
 /* ── Resúmenes ──────────────────────────────────────────────────────────────────────────────────────────────────── */
 
 test('la semana en una línea', () => {
-  assert.equal(resumenDeLaSemana(postventa.week, DIAS, 'Cerrado', '24 h'), 'L–J 09:00–18:00 · V 09:00–15:00');
+  assert.equal(resumenDeLaSemana(postventa.week, DIAS, 'Cerrado', '24 h'), 'L–J 09:00–18:00; V 09:00–15:00');
   assert.equal(resumenDeLaSemana(noche.week, DIAS, 'Cerrado', '24 h'), 'L–D 23:00–07:00');
   assert.equal(resumenDeLaSemana(HORARIOS_SEMILLA[6].week, DIAS, 'Cerrado', '24 h'), '24 h');
   assert.equal(resumenDeLaSemana([[], [], [], [], [], [], []], DIAS, 'Cerrado', '24 h'), 'Cerrado');

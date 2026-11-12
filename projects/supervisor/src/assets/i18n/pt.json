@@ -1533,13 +1533,13 @@
       "used_by_one": "É usado pelo grupo «{{name}}»: o que alterares aqui altera o atendimento dele.",
       "section_general": "Geral",
       "section_week": "Semana habitual",
-      "section_week_hint": "As horas de uma semana normal.",
+      "section_week_hint": "As horas de uma semana normal",
       "section_periods": "Períodos",
-      "section_periods_hint": "Uma temporada com a sua própria semana.",
+      "section_periods_hint": "Uma temporada com a sua própria semana",
       "section_specials": "Datas especiais e feriados",
-      "section_specials_hint": "Dias com as suas próprias horas, ou fechados.",
+      "section_specials_hint": "Dias com as suas próprias horas, ou fechados",
       "section_calendar": "Calendário",
-      "section_calendar_hint": "Escolhe um dia para ver as horas e de onde vêm.",
+      "section_calendar_hint": "Escolhe um dia para ver as horas e de onde vêm",
       "days": {
         "mon": "Segunda-feira",
         "tue": "Terça-feira",
@@ -1590,7 +1590,7 @@
       "special_slots": "Faixas",
       "specials_empty": "Sem datas especiais.",
       "holiday_calendars": "Feriados que aplica",
-      "holiday_calendars_placeholder": "Nenhum",
+      "holiday_calendars_placeholder": "Sem feriados",
       "holiday_calendars_help": "Os seus dias ficam fechados neste horário.",
       "manage_holidays": "Gerir feriados",
       "calendar": {
@@ -1630,7 +1630,11 @@
         "slots_vacia": "Uma faixa começa e acaba à mesma hora",
         "slots_solape": "Duas faixas sobrepõem-se",
         "slots_noche": "Só a última faixa pode acabar no dia seguinte"
-      }
+      },
+      "period_when_yearly": "{{dates}}, todos os anos",
+      "period_when_year": "{{dates}} de {{year}}",
+      "special_detail": "{{hours}}",
+      "special_detail_yearly": "{{hours}}, todos os anos"
     },
     "festivos": {
       "title": "Feriados",
@@ -1654,7 +1658,7 @@
       "col_days": "Dias",
       "col_schedules": "Horários",
       "section_days": "Feriados",
-      "section_days_hint": "Estes dias ficam fechados nos horários que aplicam o calendário.",
+      "section_days_hint": "Estes dias ficam fechados nos horários que aplicam o calendário",
       "days_empty": "Ainda sem dias.",
       "day_add": "Adicionar feriados",
       "day_edit": "Editar feriado",
