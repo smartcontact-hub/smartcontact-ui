@@ -303,8 +303,7 @@ test('abierto con el ratón, si el tabulador llega a una tarjeta que el panel ta
   );
   expect(tapada, 'a 1024, Plantillas queda entera bajo el panel').toBe(true);
 
-  // Agendas → Horarios → Festivos → Email → Plantillas. Hasta llegar a ella, el panel sigue ahí.
-  await page.keyboard.press('Tab');
+  // Agendas → Horarios → Email → Plantillas. Hasta llegar a ella, el panel sigue ahí.
   await page.keyboard.press('Tab');
   await page.keyboard.press('Tab');
   await trasPintar(page);

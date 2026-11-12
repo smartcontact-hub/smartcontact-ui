@@ -194,7 +194,7 @@ biblioteca de horarios semanales.
    escritas ahí mismo, o cerrado; puntual o de cada año). Los grupos siguen eligiéndolo por `id` (DD-152).
 2. **Cada fecha tiene un único dueño**, en este orden: fecha especial propia › festivo aplicado › periodo › semana habitual. Sin
    prioridades numéricas: dos periodos no pueden compartir fechas, y el error nombra al otro.
-3. **Los festivos son un repositorio aparte** (`/admin/festivos`): calendarios de días cerrados que cada horario aplica
+3. **Los festivos son una lista aparte** (`/admin/festivos`, que cuelga de Horarios): calendarios de días cerrados que cada horario aplica
    («Festivos que aplica»). Es lo que de verdad comparten varios horarios y cambia cada año.
 4. **Una franja puede cruzar la medianoche** («23:00–07:00»): pertenece al día en que empieza y su madrugada vale al día
    siguiente, salvo que ese día sea fecha especial o festivo, que sustituyen la fecha entera.
@@ -224,8 +224,10 @@ una fecha de (a), que aquí es elegir el día.
   y se avanza de año en año, y la rejilla de cuatro por tres pedía rehacer su disposición interna (lo que vigila
   `audit:primeng-coupling`). Es una rejilla propia de la pantalla (`horario-calendario.component`), con un solo día en el orden
   de tabulación y las flechas para moverse.
-- **Festivos como pestaña de la página de Horarios**: la lista de repositorio es una página entera; otro repositorio en el hub
-  es la forma que ya tienen los demás.
+- **Festivos como pestaña de la página de Horarios**: la lista de repositorio es una página entera.
+- **Festivos con tarjeta propia en el hub**: una quinta tarjeta en Comunicación abre otra fila y el hub deja de caber a
+  1440 × 800 (`repositorios-hub.spec`, «todo a la vista»). Se llega desde el horario, «Gestionar festivos», y su miga cuelga
+  de Horarios. Darle sitio en el hub es una decisión del hub, pendiente.
 - **Locución por regla y nodo de horario de la IVR**: fuera de esta tanda.
 
 **Consecuencias** · Borrar un horario que usan grupos sigue con la confirmación simple de la lista: decir a quién afecta antes de

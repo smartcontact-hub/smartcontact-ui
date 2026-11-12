@@ -45,7 +45,6 @@ import type { LucideIconData } from '../components/repo-types';
 import { AgendasStore } from '../state/agendas.store';
 import { EmailTriggersStore, MailboxesStore } from '../state/emails.store';
 import { EntidadesStore } from '../state/entidades.store';
-import { FestivosStore } from '../state/festivos.store';
 import { HorariosStore } from '../state/horarios.store';
 import { EquiposStore } from '../state/equipos.store';
 import { IntencionesStore } from '../state/intenciones.store';
@@ -166,7 +165,6 @@ export class RepositoriosHubPageComponent {
   private readonly mailboxes = inject(MailboxesStore);
   private readonly emailTriggers = inject(EmailTriggersStore);
   private readonly horarios = inject(HorariosStore);
-  private readonly festivos = inject(FestivosStore);
   private readonly equipos = inject(EquiposStore);
   private readonly templates = inject(TemplatesStore);
   private readonly tipificaciones = inject(TipificacionesStore);
@@ -246,22 +244,6 @@ export class RepositoriosHubPageComponent {
               nombre: h.name,
               detalle: h.description,
               link: `/admin/horarios/editar/${h.id}`,
-            })),
-        },
-        {
-          // Los días cerrados que varios horarios comparten: se mantienen una vez y cada horario los aplica.
-          id: 'festivos',
-          labelKey: 'repositories.festivos.title',
-          descriptionKey: 'repositories.hub.descriptions.festivos',
-          icon: 'event_busy',
-          path: '/admin/festivos',
-          count: () => this.festivos.items().length,
-          entradas: () =>
-            this.festivos.items().map((c) => ({
-              id: c.id,
-              nombre: c.name,
-              detalle: c.description,
-              link: `/admin/festivos/editar/${c.id}`,
             })),
         },
         {
