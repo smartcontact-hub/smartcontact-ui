@@ -2076,7 +2076,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 36,
+      "usedInSupervisor": 37,
       "cuando": "Para clasificar o marcar un estado EN la fila. Si es un contador pegado a algo, `sc-badge`; si el usuario lo puede quitar, `sc-chip`.",
       "sobreObsoleto": [],
       "fuente": "projects/ui-smartcontact/src/lib/components/tag/sc-tag.component.ts"

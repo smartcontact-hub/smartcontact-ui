@@ -109,9 +109,14 @@
     } @else if (getStatusEntry(item, col.field); as status) {
       <!-- Estado con el `tag` del DS y su severidad (DD-76): Figma dibuja así el estado
            de Agentes. El tono lo declara cada instancia en su `statusMap`. -->
-      <sc-tag [severity]="status.tone" [value]="status.labelKey | translate" />
       @if (statusDetail(item, col.field); as detalle) {
-        <span class="table__status-detail sc-text-caption-regular">{{ detalle }}</span>
+        <!-- Etiqueta y detalle en UNA línea: si el detalle no cabe se corta con «…» y el globo lo dice entero. -->
+        <span class="table__status">
+          <sc-tag [severity]="status.tone" [value]="status.labelKey | translate" />
+          <span class="table__status-detail sc-text-caption-regular" [pTooltip]="detalle" tooltipPosition="top" tooltipEvent="both">{{ detalle }}</span>
+        </span>
+      } @else {
+        <sc-tag [severity]="status.tone" [value]="status.labelKey | translate" />
       }
     } @else if (showDash(item, col.field)) {
       <sc-celda-vacia />
