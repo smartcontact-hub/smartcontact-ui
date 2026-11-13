@@ -38,7 +38,7 @@ const DIAS = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
       <sc-repo-list-page [config]="configFestivos" [store]="festivos">
         <div repoBeforeToolbar class="pestanas">
           <sc-tabs [tabs]="pestanas()" [ariaLabel]="t.listas" [value]="lista()" (valueChange)="ir($event)" />
-          <sc-button variant="secondary" appearance="outlined" icon="download" label="Importar festivos oficiales" (clicked)="importando.set(true)" />
+          <sc-button variant="secondary" appearance="outlined" icon="upload" label="Importar festivos oficiales" (clicked)="importando.set(true)" />
         </div>
       </sc-repo-list-page>
     }
