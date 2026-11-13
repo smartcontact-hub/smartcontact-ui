@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Horarios lado a lado: los tres prototipos de Calendarios portados tal cual frente al rediseño del Lab, decisión a decisión, qué sube a main y en qué orden, y el primer PR.">
+<meta name="description" content="Horarios lado a lado: la propuesta de referencia, portada tal cual, frente al rediseño del Lab, decisión a decisión; qué sube a main, en qué orden, y el primer PR.">
 <title>Horarios, lado a lado</title>
 <link rel="preload" href="fonts/inter-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/inter-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
@@ -17,7 +17,7 @@
 @font-face { font-family: 'JetBrains Mono'; font-weight: 600; font-display: swap; src: url(fonts/jetbrains-mono-latin-600-normal.woff2) format('woff2'); }
 
 /* Escenario de 1920 × 1080 escalado a la ventana. Fondo marino de la marca; dos colores que no cambian en todo el
-   recorrido: ámbar para los prototipos portados tal cual, cian para el Lab, y plata para lo que ya está en main. */
+   recorrido: ámbar para la propuesta de referencia, portada tal cual, cian para el Lab, y plata para lo que ya está en main. */
 :root {
   --ink-950: #05080f; --ink-900: #0a101c; --ink-850: #0e1626; --ink-800: #131d31; --ink-700: #1c2942;
   --text: #f5f7fb; --soft: #c3cbd8; --muted: #8f9aad; --faint: #5f6a7d;
@@ -104,7 +104,7 @@ code { font-family: var(--mono); font-size: .86em; color: var(--text); backgroun
 .chip { display: inline-flex; align-items: center; gap: 12px; padding: 14px 20px 14px 16px; border-radius: 14px; background: rgba(255, 255, 255, .05); border: 1px solid var(--line-2); font-size: 23px; font-weight: 600; }
 .chip svg { width: 22px; height: 22px; color: var(--ok); flex: none; }
 
-/* Duo: tus prototipos a la izquierda, el Lab a la derecha */
+/* Duo: la referencia a la izquierda, el Lab a la derecha */
 .k-duo .slot--L { left: 76px; top: 252px; width: 864px; height: 486px; }
 .k-duo .slot--R { left: 980px; top: 252px; width: 864px; height: 486px; }
 
@@ -150,7 +150,7 @@ code { font-family: var(--mono); font-size: .86em; color: var(--text); backgroun
 .cover__shot .side { top: -40px; }
 .cover__shot--b .side { top: auto; bottom: -40px; }
 
-/* Abanico de los tres prototipos */
+/* Abanico: las tres pantallas de la referencia */
 .fan { position: absolute; left: 76px; top: 250px; width: 1120px; height: 760px; }
 .fan__item { position: absolute; width: 760px; height: 427.5px; }
 .fan__item > .slot { inset: 0; }
@@ -358,15 +358,15 @@ code { font-family: var(--mono); font-size: .86em; color: var(--text); backgroun
 const ALT = {
   'm-listado': 'Listado de Horarios en main, con las columnas Ahora y Estado',
   'm-editor': 'Editor de un horario en main: General, la semana día a día y el año a la derecha',
-  'p-periodos-anio': 'Prototipo Periodos v2: lista de calendarios, el año entero y el panel del día',
-  'p-periodos-lista': 'Prototipo Periodos v2: el año repartido entre periodos sin solapes',
-  'p-periodos-horario-editar': 'Prototipo Periodos v2: editor del horario semanal con una fila por día',
-  'p-periodos-periodo': 'Prototipo Periodos v2: diálogo Añadir periodo, que apunta a un horario semanal',
-  'p-periodos-especial': 'Prototipo Periodos v2: diálogo Añadir día especial',
-  'p-horarios-anio': 'Prototipo Horarios y calendarios: el año y el día seleccionado',
-  'p-horarios-reutilizables': 'Prototipo Horarios y calendarios: horarios reutilizables vinculados a calendarios',
-  'p-ivr-horarios': 'Prototipo Calendarios IVR: configuración y horarios por periodo',
-  'p-ivr-simulador': 'Prototipo Calendarios IVR: simulador de llamada que responde Fuera de hora',
+  'p-periodos-anio': 'Referencia, Periodos v2: lista de calendarios, el año entero y el panel del día',
+  'p-periodos-lista': 'Referencia, Periodos v2: el año repartido entre periodos sin solapes',
+  'p-periodos-horario-editar': 'Referencia, Periodos v2: editor del horario semanal con una fila por día',
+  'p-periodos-periodo': 'Referencia, Periodos v2: diálogo Añadir periodo, que apunta a un horario semanal',
+  'p-periodos-especial': 'Referencia, Periodos v2: diálogo Añadir día especial',
+  'p-horarios-anio': 'Referencia, Horarios y calendarios: el año y el día seleccionado',
+  'p-horarios-reutilizables': 'Referencia, Horarios y calendarios: horarios reutilizables vinculados a calendarios',
+  'p-ivr-horarios': 'Referencia, Calendarios IVR: configuración y horarios por periodo',
+  'p-ivr-simulador': 'Referencia, Calendarios IVR: simulador de llamada que responde Fuera de hora',
   'l-listado': 'Lab: Tiempo, la lista de horarios con una sola columna de estado',
   'l-festivos': 'Lab: Tiempo, las listas de festivos con cuántos horarios las aplican',
   'l-editor': 'Lab: editor de Postventa con la semana en tramos, tres meses y Nochebuena elegida',
@@ -378,20 +378,23 @@ const ALT = {
   'l-periodo': 'Lab: diálogo de periodo con su semana por tramos',
 };
 const TONE = (img) => img[0] === 'p' ? 'proto' : img[0] === 'l' ? 'lab' : 'main';
-const SIDE_LABEL = { proto: 'Tu prototipo <span>portado tal cual</span>', lab: 'Lab <span>el rediseño</span>', main: 'Main <span>hoy</span>' };
+const SIDE_LABEL = { proto: 'Referencia <span>portada tal cual</span>', lab: 'Lab <span>el rediseño</span>', main: 'Main <span>hoy</span>' };
 
-const CHAPTERS = ['Punto de partida', 'Tu modelo', 'Lado a lado', 'Lo que falta', 'Hacia main', '«Ahora»', 'Para decidir'];
+/* Dónde se toca cada versión: el preview de su rama. */
+const REF = { href: 'https://claude-proto-referencia.sc-supervisor.pages.dev/lab/calendarios/periodos', u: 'claude-proto-referencia.sc-supervisor.pages.dev/lab/calendarios', pr: '#617' };
+
+const CHAPTERS = ['Punto de partida', 'La referencia', 'Lado a lado', 'Lo que falta', 'Hacia main', '«Ahora»', 'Para decidir'];
 
 /* Regiones, en píxeles de la captura (1600 × 900). */
 const R = {
   m_cols: [740, 160, 830, 500], m_ahoraVerano: [758, 410, 82, 40], m_estadoVerano: [1428, 410, 82, 40], m_ahoraCol: [752, 172, 92, 476],
   m_general: [107, 128, 717, 400], m_semana: [107, 547, 717, 353], m_dia: [880, 232, 668, 140],
-  p_lista: [110, 232, 215, 250], p_anio: [346, 362, 948, 538], p_tabs: [108, 172, 220, 42], p_nav: [100, 150, 470, 340],
-  p_distrib: [346, 416, 1203, 106], p_filas: [421, 365, 757, 227], p_select: [491, 392, 616, 59], p_dialogo: [475, 150, 648, 598],
-  p_especial: [475, 198, 648, 501], p_aviso: [107, 771, 1464, 42], p_tarjetas: [107, 296, 1464, 520],
-  p_resultado: [872, 331, 680, 569], p_publicar: [1192, 187, 360, 32],
+  p_lista: [110, 254, 215, 250], p_anio: [346, 384, 948, 516], p_tabs: [108, 194, 220, 42], p_nav: [100, 172, 470, 340],
+  p_distrib: [346, 438, 1203, 106], p_filas: [421, 365, 757, 227], p_select: [491, 392, 616, 59], p_dialogo: [475, 150, 648, 598],
+  p_especial: [475, 198, 648, 501], p_aviso: [107, 793, 1464, 42], p_tarjetas: [107, 318, 1464, 520],
+  p_resultado: [872, 353, 680, 547], p_publicar: [1192, 209, 360, 32],
   l_tabs: [107, 136, 261, 37], l_miga: [157, 16, 171, 26], l_cabeza: [100, 0, 720, 250], l_estadoCol: [544, 232, 264, 480],
-  l_fines: [550, 330, 222, 36], l_verano: [550, 477, 72, 36], l_general: [550, 380, 196, 36],
+  l_fines: [550, 330, 189, 36], l_verano: [550, 477, 73, 33], l_general: [550, 379, 143, 36],
   l_tabla: [107, 291, 1464, 140], l_uso: [1272, 291, 140, 140],
   l_tramos: [130, 187, 374, 328], l_dia: [566, 427, 983, 72], l_yalas: [1280, 426, 262, 40], l_leyenda: [130, 747, 374, 112],
   l_tira: [544, 128, 1027, 392], l_toggle: [1421, 152, 128, 29],
@@ -406,8 +409,8 @@ const SLIDES = [
     kind: 'cover', ch: 0,
     title: 'Portada',
     beats: [
-      { t: 8, note: 'En unos minutos te cuento cómo hemos llegado al rediseño de Horarios y por qué decide distinto en algunas cosas. Todo lo que vas a ver son capturas de pantallas reales, no maquetas.' },
-      { t: 9, note: 'Las dos versiones viven en ramas aparte, en borrador, y no tocan main. Tus prototipos están portados tal cual, con nuestros componentes, para que comparemos flujos y no estilos. Si quieres tocarlas mientras hablamos, son estos dos enlaces.' },
+      { t: 8, note: 'En unos minutos, cómo hemos llegado al rediseño de Horarios y por qué decide distinto en algunas cosas. Todo lo que se ve son capturas de pantallas reales, no maquetas.' },
+      { t: 9, note: 'Las dos versiones viven en ramas aparte, en borrador, y no tocan main. La referencia está portada tal cual, con nuestros componentes, para comparar flujos y no estilos. Para tocarlas mientras se habla, están estos dos enlaces.' },
     ],
   },
   {
@@ -429,7 +432,7 @@ const SLIDES = [
     kind: 'single', ch: 0, S: 'm-editor',
     eyebrow: '01 · Punto de partida',
     title: 'El editor enseña el resultado al lado, pero no cabe en una pantalla',
-    fact: { k: 'Se queda', t: 'El día elegido dice <b>sus horas y qué regla las decide</b> (DD-254). Está en las tres versiones.' },
+    fact: { k: 'Se queda', t: 'El día elegido dice <b>sus horas y qué regla las decide</b> (DD-254). Está en main y en las dos versiones.' },
     beats: [
       { cap: 'Las reglas a la izquierda y el año a la derecha, que se repinta con cada cambio.', note: 'La idea de ver el resultado al lado ya estaba en main y es buena. Lo que falla es el espacio.' },
       { S: { cam: R.m_general, rings: [{ r: R.m_general }] },
@@ -440,15 +443,15 @@ const SLIDES = [
         note: 'Para ver el horario entero hay que hacer scroll, y al hacerlo se pierde el calendario.' },
       { S: { cam: R.m_dia, rings: [{ r: R.m_dia }] },
         cap: 'Lo bueno se queda: el día elegido dice <b>sus horas y de dónde salen</b>.',
-        note: 'Esto lo mantenemos en todas las versiones, también en la tuya.' },
+        note: 'Esto se mantiene en main y en las dos versiones.' },
     ],
   },
 
-  /* ── 02 · Tu modelo ─────────────────────────────────────────────────────────────────────── */
+  /* ── 02 · La referencia ─────────────────────────────────────────────────────────────────── */
   {
     kind: 'fan', ch: 1, imgs: ['p-periodos-anio', 'p-horarios-anio', 'p-ivr-horarios'], labels: ['Periodos v2', 'Horarios y calendarios', 'Calendarios IVR'],
-    eyebrow: '02 · Tu modelo',
-    title: 'Tus tres prototipos dicen lo mismo',
+    eyebrow: '02 · La referencia',
+    title: 'Una propuesta de referencia, <em>tres pantallas</em>',
     list: [
       ['El calendario es lo que se usa.', 'Tiene zona horaria y resuelve cada fecha por capas: día especial, periodo y semana habitual.'],
       ['El horario semanal es una pieza.', 'Varios calendarios la comparten y la reutilizan.'],
@@ -456,7 +459,7 @@ const SLIDES = [
       ['Se comprueba antes de guardar.', 'Una fecha a una hora, y los solapes entre periodos.'],
     ],
     beats: [
-      { t: 7, note: 'Los he leído como uno solo, porque coinciden en lo importante. Periodos v2 es el más maduro, así que es el que más uso para comparar.' },
+      { t: 7, note: 'La referencia es una sola propuesta repartida en tres pantallas, y las tres coinciden en lo importante. Periodos v2 es la más madura, así que es la que más uso para comparar.' },
       { lift: 0, t: 8, note: 'En los tres, lo que se asigna a un grupo o a la IVR es el calendario. Por eso es él quien tiene la zona horaria.' },
       { lift: 1, t: 7, note: 'Y el horario semanal es la pieza que se reutiliza: en Horarios y calendarios dice a cuántos calendarios está vinculado.' },
       { lift: 0, t: 7, note: 'Abrir en el año da contexto al instante, y el panel del día contesta a «¿por qué este día es así?».' },
@@ -465,22 +468,22 @@ const SLIDES = [
   },
   {
     kind: 'duo', ch: 1, L: 'p-periodos-lista', R: 'l-editor',
-    eyebrow: '02 · Tu modelo',
-    title: 'En lo que más importa, <em>ya pensamos igual</em>',
+    eyebrow: '02 · La referencia',
+    title: 'En lo que más importa, <em>las dos coinciden</em>',
     chips: ['Un dueño por fecha', 'Periodos sin solape', 'El día dice de dónde sale', 'Comprobar una hora'],
     chipsAt: 4,
     beats: [
       { cap: 'Las dos versiones dan a cada fecha <b>un solo dueño</b>, y lo enseñan en pantalla.', note: 'Antes de las diferencias, lo que compartimos. Es más de lo que parece.' },
       { L: { cam: R.p_distrib, rings: [{ r: R.p_distrib, label: 'Cada día, de un solo periodo', pos: 'b' }] },
-        cap: 'Tu Periodos v2 lo dibuja como una barra: cada día del año pertenece a un periodo o a un día especial, <b>sin solapes</b>.',
-        note: 'Esta barra es de lo mejor de tu prototipo: se entiende de un vistazo que no hay huecos ni dobles.' },
+        cap: 'Periodos v2 lo dibuja como una barra: cada día del año pertenece a un periodo o a un día especial, <b>sin solapes</b>.',
+        note: 'Esta barra es de lo mejor de la referencia: se entiende de un vistazo que no hay huecos ni dobles.' },
       { R: { cam: R.l_leyenda, rings: [{ r: R.l_leyenda, label: 'Manda el de más arriba', pos: 't' }] },
         cap: 'El Lab aplica la misma regla y la dice en el editor: día especial o festivo, después periodo, después semana habitual.',
-        note: 'Es tu orden de capas, con el festivo al nivel del día especial.' },
+        note: 'Es el mismo orden de capas de la referencia, con el festivo al nivel del día especial.' },
       { R: { cam: [560, 410, 995, 110], rings: [{ r: R.l_dia }, { r: R.l_yalas, label: '¿Y a las 14:28?', pos: 'b' }] },
         cap: 'Y los dos explican un día concreto: Nochebuena abre <b>de 09:00 a 14:00</b> porque es día especial, y a las 14:28 ya no se atiende.',
-        note: 'Tu panel de «Fecha seleccionada» y esta barra hacen el mismo trabajo. La diferencia es que aquí también se comprueba una hora sin salir del editor.' },
-      { cap: 'Cuatro ideas tuyas que el rediseño conserva tal cual:', note: 'Con esto en común, las diferencias son de flujo, no de modelo de datos.' },
+        note: 'El panel «Fecha seleccionada» de la referencia y esta barra hacen el mismo trabajo. La diferencia es que aquí también se comprueba una hora sin salir del editor.' },
+      { cap: 'Cuatro ideas de la referencia que el rediseño conserva tal cual:', note: 'Con esto en común, las diferencias son de flujo, no de modelo de datos.' },
     ],
   },
 
@@ -490,9 +493,9 @@ const SLIDES = [
     eyebrow: '03 · Decisión <i>1</i> de 7',
     title: 'Se comparten <em>los festivos</em>, no la semana',
     beats: [
-      { cap: 'Tu modelo comparte franjas y semanas entre calendarios. <b>El Lab comparte listas de festivos.</b>', note: 'Esta es la diferencia de fondo, y de ella salen casi todas las demás.' },
-      { L: { cam: [107, 600, 1464, 260], rings: [{ r: R.p_aviso, label: 'Tu propio aviso', pos: 't' }] },
-        cap: 'Tu prototipo ya avisa del riesgo: <b>si cambias un horario compartido, cambian todos los calendarios vinculados.</b>',
+      { cap: 'La referencia comparte franjas y semanas entre calendarios. <b>El Lab comparte listas de festivos.</b>', note: 'Esta es la diferencia de fondo, y de ella salen casi todas las demás.' },
+      { L: { cam: [107, 622, 1464, 260], rings: [{ r: R.p_aviso, label: 'Su propio aviso', pos: 't' }] },
+        cap: 'La referencia ya avisa del riesgo: <b>si cambias un horario compartido, cambian todos los calendarios vinculados.</b>',
         note: 'Compartir una semana es cómodo hasta que un equipo necesita salir media hora antes que otro.' },
       { R: { cam: [107, 250, 1464, 220], rings: [{ r: R.l_uso, label: 'La aplican 2 horarios', pos: 'b' }] },
         cap: 'Una lista de festivos sí se repite tal cual entre equipos, y caduca cada año. <b>Festivos Barcelona la aplican dos horarios.</b>',
@@ -506,7 +509,7 @@ const SLIDES = [
     eyebrow: '03 · Decisión <i>2</i> de 7',
     title: 'Vive en Repositorios, dentro de <em>«Tiempo»</em>',
     beats: [
-      { cap: 'Tu prototipo es una página propia con pestañas. El Lab lo pone en Repositorios, en una clasificación <b>«Tiempo» con dos listas</b>.', note: 'Dónde vive cambia cómo se llega y cómo se explica.' },
+      { cap: 'La referencia es una página propia con pestañas. El Lab lo pone en Repositorios, en una clasificación <b>«Tiempo» con dos listas</b>.', note: 'Dónde vive cambia cómo se llega y cómo se explica.' },
       { L: { cam: R.p_nav, rings: [{ r: R.p_tabs, label: 'Calendarios y Horarios', pos: 'b' }] },
         cap: 'Calendarios y Horarios, cada uno con su lista a la izquierda y el detalle a la derecha.',
         note: 'Es una página completa para un área que, en el menú, compite con Agendas o Tipificaciones.' },
@@ -514,7 +517,7 @@ const SLIDES = [
         cap: 'En el Lab son dos pestañas de la misma clasificación, y se llega <b>como a Agendas o a Tipificaciones</b>.',
         note: 'Mismo patrón que el resto de Repositorios: nadie tiene que aprender una pantalla nueva.' },
       { why: 'Repositorios es donde el supervisor ya busca lo que reutiliza. Y una tarjeta nueva en el hub no cabe a 1440 × 800 (DD-251); una pestaña dentro de «Tiempo», sí.',
-        note: 'Esta la decidimos el 13 de noviembre. Si prefieres una entrada propia, es la decisión más fácil de cambiar de todas.' },
+        note: 'Se decidió el 13 de noviembre. Si se prefiere una entrada propia, es la decisión más fácil de cambiar de todas.' },
     ],
   },
   {
@@ -523,12 +526,12 @@ const SLIDES = [
     title: 'El listado dice si se atiende ahora, <em>y hasta cuándo</em>',
     beats: [
       { cap: 'Lo primero que se mira de un horario no es cuántas reglas tiene: <b>es si está atendiendo</b>.', note: 'Pensemos en quien abre esta lista un martes a las 17:50.' },
-      { L: { cam: R.p_lista, rings: [{ r: [121, 280, 191, 75], label: '2 periodos, 2 especiales', pos: 'b' }] },
-        cap: 'Tu lista de calendarios cuenta periodos y días especiales.',
+      { L: { cam: R.p_lista, rings: [{ r: [121, 302, 191, 75], label: '2 periodos, 2 especiales', pos: 'b' }] },
+        cap: 'La lista de calendarios de la referencia cuenta periodos y días especiales.',
         note: 'Es útil para quien lo configura, pero no responde a la pregunta del momento.' },
       { R: { cam: R.l_estadoCol, rings: [{ r: R.l_fines, label: 'Cuándo abre', pos: 't' }, { r: R.l_verano, label: 'Inactivo, sin hora', pos: 'b' }] },
         cap: 'El Lab junta «Ahora» y «Estado» en una columna: <b>abierto o cerrado, y cuándo cambia</b>; o «Inactivo», sin hora.',
-        note: '«Cerrado, abre mañana a las 10:00». Una sola lectura, y en la zona horaria de cada horario.' },
+        note: '«Cerrado, abre mañana 10:00». Una sola lectura, corta para que quepa en una línea, y en la zona horaria de cada horario.' },
       { why: 'El número de reglas se ve al abrir el horario. El estado de ahora es lo que se consulta de un vistazo, y main ya sabe calcularlo: solo falta decirlo.',
         note: 'Por eso es el primer PR que propongo: el cálculo ya existe y está probado.' },
     ],
@@ -538,7 +541,7 @@ const SLIDES = [
     eyebrow: '03 · Decisión <i>4</i> de 7',
     title: 'La semana se escribe <em>en tramos</em>, no día a día',
     beats: [
-      { cap: 'Tu editor tiene una fila por día y «Copiar lunes a». <b>El Lab agrupa los días que comparten horas.</b>', note: 'Es la parte del editor que más se toca, así que es donde más se nota.' },
+      { cap: 'El editor de la referencia tiene una fila por día y «Copiar lunes a». <b>El Lab agrupa los días que comparten horas.</b>', note: 'Es la parte del editor que más se toca, así que es donde más se nota.' },
       { L: { cam: R.p_filas, rings: [{ r: R.p_filas, label: 'Tres veces lo mismo', pos: 'b' }] },
         cap: 'Lunes, martes y miércoles repiten 09:00 a 14:00 y 16:00 a 18:00. <b>Cada cambio se hace en cada fila</b>, o se vuelve a copiar.',
         note: 'Con siete días y jornada partida son catorce campos de hora para decir una sola cosa.' },
@@ -554,9 +557,9 @@ const SLIDES = [
     eyebrow: '03 · Decisión <i>5</i> de 7',
     title: 'La semana y el calendario, <em>a la vista a la vez</em>',
     beats: [
-      { cap: 'Tu prototipo abre en el año, y las horas se cambian en otra pestaña. <b>En el Lab, la semana y el calendario comparten pantalla.</b>', note: 'Esta es la petición con la que empezó el rediseño.' },
+      { cap: 'La referencia abre en el año, y las horas se cambian en otra pestaña. <b>En el Lab, la semana y el calendario comparten pantalla.</b>', note: 'Esta es la petición con la que empezó el rediseño.' },
       { L: { cam: R.p_anio },
-        cap: 'El año de tu Periodos v2 se lee muy bien, pero <b>de septiembre a diciembre queda por debajo del pliegue</b>.',
+        cap: 'El año de Periodos v2 se lee muy bien, pero <b>de septiembre a diciembre queda por debajo del pliegue</b>.',
         note: 'Y para cambiar una hora hay que salir a la pestaña Horarios y volver.' },
       { R: { cam: R.l_tira, rings: [{ r: R.l_toggle, label: '3 meses o año', pos: 'bl' }] },
         cap: 'El Lab pinta el año en una tira de 12 × 31 que <b>cabe entera</b>, y cambia a tres meses cuando hace falta detalle.',
@@ -570,7 +573,7 @@ const SLIDES = [
     eyebrow: '03 · Decisión <i>6</i> de 7',
     title: 'Los periodos nacen en el calendario <em>y llevan su semana</em>',
     beats: [
-      { cap: 'Para crear un periodo, tu prototipo pide fechas y un horario semanal que ya exista. <b>El Lab parte de los días que eliges en el calendario.</b>', note: 'Aquí se nota la diferencia de modelo de la decisión 1.' },
+      { cap: 'Para crear un periodo, la referencia pide fechas y un horario semanal que ya exista. <b>El Lab parte de los días que eliges en el calendario.</b>', note: 'Aquí se nota la diferencia de modelo de la decisión 1.' },
       { L: { cam: R.p_dialogo, rings: [{ r: R.p_select, label: 'Hay que crearlo antes', pos: 'b' }] },
         cap: 'El periodo apunta a un horario de la biblioteca. Un día especial, igual: <b>o cerrado todo el día, o un horario semanal entero</b>.',
         note: 'Para abrir Nochebuena hasta las 14:00 hay que crear antes una semana completa que solo se usa ese día.' },
@@ -580,7 +583,7 @@ const SLIDES = [
       { R: { img: 'l-periodo', cam: R.l_semanaPeriodo, rings: [{ r: R.l_semanaPeriodo, label: 'Su semana, en tramos', pos: 't' }] },
         cap: 'El periodo lleva dentro su semana, con los mismos tramos. Y un día especial puede ser <b>«Horario especial» de 09:00 a 14:00</b> sin crear una semana para un día.',
         note: 'El diálogo de periodo del Lab hereda la lógica del de producción; solo cambia la semana por la de tramos.' },
-      { why: 'Saber a qué hora cierra un viernes de verano no debería pedir tres saltos: calendario, periodo y horario semanal. Tu validación se queda: dos periodos no comparten fechas, y el error nombra al otro.',
+      { why: 'Saber a qué hora cierra un viernes de verano no debería pedir tres saltos: calendario, periodo y horario semanal. La validación de la referencia se queda: dos periodos no comparten fechas, y el error nombra al otro.',
         note: 'La validación de solapes está en main desde DD-251 y el Lab la usa tal cual.' },
     ],
   },
@@ -589,7 +592,7 @@ const SLIDES = [
     eyebrow: '03 · Decisión <i>7</i> de 7',
     title: 'Los festivos se importan, <em>no se escriben uno a uno</em>',
     beats: [
-      { cap: 'En tu prototipo cada festivo es un día especial que se crea a mano, y <b>al cambiar de año no se copia</b>.', note: 'Tu Periodos v2 lo dice a propósito: los periodos y días especiales tienen fechas concretas.' },
+      { cap: 'En la referencia cada festivo es un día especial que se crea a mano, y <b>al cambiar de año no se copia</b>.', note: 'Periodos v2 lo dice a propósito: los periodos y días especiales tienen fechas concretas.' },
       { L: { cam: R.p_especial, rings: [{ r: R.p_especial }] },
         cap: 'Doce festivos son <b>doce veces este diálogo</b>, y otra vez el año siguiente.',
         note: 'Y con varios horarios, cada uno repite los mismos doce.' },
@@ -611,7 +614,7 @@ const SLIDES = [
   {
     kind: 'single', ch: 3, S: 'p-ivr-simulador',
     eyebrow: '04 · Lo que falta en el Lab',
-    title: 'Lo que tus prototipos tienen y <em>el Lab todavía no</em>',
+    title: 'Lo que la referencia tiene y <em>el Lab todavía no</em>',
     list: [
       [1, '<b>Mensaje de fuera de hora</b> por regla, y el simulador de llamada.'],
       [2, '<b>Versiones:</b> borrador, guardar versión y publicar.'],
@@ -619,11 +622,11 @@ const SLIDES = [
     ],
     propuesta: { at: 3, t: 'Entran después de la pantalla, junto con el nodo de horario del Diseñador VUI. DD-251 ya los dejó fuera de la primera tanda.' },
     beats: [
-      { cap: 'Tu Calendarios IVR responde a la pregunta que de verdad importa en producción: <b>¿qué oye quien llama ahora mismo?</b>', note: 'Aquí tu prototipo va por delante, y lo quiero decir claro.' },
+      { cap: 'Calendarios IVR responde a la pregunta que de verdad importa en producción: <b>¿qué oye quien llama ahora mismo?</b>', note: 'Aquí la referencia va por delante, y conviene decirlo claro.' },
       { S: { cam: R.p_resultado, rings: [{ r: R.p_resultado }] },
         cap: '«Fuera de hora», con su mensaje, la regla que decide y por qué. <b>El Lab no tiene esto.</b>',
         note: 'Es la pieza que une horarios e IVR, y la que más valor da a soporte.' },
-      { S: { cam: [1040, 150, 540, 110], rings: [{ r: R.p_publicar, label: 'Validado, borrador, publicar', pos: 'bl' }] },
+      { S: { cam: [1040, 172, 540, 110], rings: [{ r: R.p_publicar, label: 'Validado, borrador, publicar', pos: 'bl' }] },
         cap: 'Y publicar con versiones: en un cambio de horario en caliente, <b>es tranquilidad</b>.',
         note: 'Un cambio de horario mal hecho deja a clientes sin atender. Poder volver atrás vale mucho.' },
       { cap: 'Nada de esto choca con el rediseño: <b>se suma encima</b>.', note: 'Propongo dejarlo para después de la pantalla, cuando el modelo esté cerrado.' },
@@ -642,17 +645,17 @@ const SLIDES = [
       { t: 'Elegir y actuar en el calendario', where: 'Editor', size: 'M', d: 'Día, rango o semana, la barra de acciones y «¿Y a las…?».' },
       { t: 'El editor sin scroll', where: 'Editor', size: 'M', d: 'Dos filas a la derecha y una sola lista de excepciones. Recoloca lo anterior.' },
       { t: 'Festivos importados', where: 'Festivos', size: 'M', d: 'De dónde salen los oficiales: un catálogo anual o un servicio.', dep: 'Espera una decisión de datos' },
-      { t: '«Tiempo» en Repositorios', where: 'Hub y listas', size: 'L', d: 'Cambia el hub y su COA.', dep: 'Espera tu visto bueno' },
+      { t: '«Tiempo» en Repositorios', where: 'Hub y listas', size: 'L', d: 'Cambia el hub y su COA.', dep: 'Espera el visto bueno' },
     ],
-    foot: '<b>No sube:</b> el andamio del Lab (rutas <code>/lab</code> y textos solo en español) ni el port literal de tus prototipos, que se queda como referencia.',
+    foot: '<b>No sube:</b> el andamio del Lab (rutas <code>/lab</code> y textos solo en español) ni el port literal de la referencia, que se queda para consultar.',
     beats: [
       { t: 7, note: 'Lo ordeno por riesgo y por dependencias: primero lo que no depende de nadie y se puede probar solo.' },
       { cap: 'Empieza por lo más pequeño y visible: <b>el listado</b>.', note: 'Un PR de un día, que mejora algo que se ve en cuanto se entra.' },
       { cap: 'Después la semana, que es <b>lo que más se toca</b> del editor.', note: 'Cambia también la semana del diálogo de periodo, que comparte la pieza.' },
-      { cap: 'Con la semana en su sitio, <b>elegir días y actuar sobre ellos</b>.', note: 'Aquí entra «¿Y a las…?», que es tu «Comprobar fecha» dentro del editor.' },
+      { cap: 'Con la semana en su sitio, <b>elegir días y actuar sobre ellos</b>.', note: 'Aquí entra «¿Y a las…?», que es el «Comprobar fecha» de la referencia dentro del editor.' },
       { cap: 'La maqueta sin scroll va cuarta: <b>recoloca lo anterior</b>, así que se hace cuando ya funciona.', note: 'Si la hiciéramos primero, la rehaceríamos dos veces.' },
       { cap: 'Los festivos importados esperan a una <b>decisión de datos</b>.', note: '¿Mantenemos un catálogo por año, o lo leemos de un servicio? Es una pregunta para producto y backend.' },
-      { cap: '«Tiempo» en el hub, al final: <b>toca a todos</b>, y conviene decidirlo contigo.', note: 'Es la única que cambia la navegación.' },
+      { cap: '«Tiempo» en el hub, al final: <b>toca a todos</b>, y conviene decidirlo juntos.', note: 'Es la única que cambia la navegación.' },
       { cap: 'Cada paso es útil por sí solo: <b>si paramos en el tercero, main ya está mejor que hoy</b>.', note: 'Y nada del Lab entra tal cual: cada pieza pasa por las reglas de main, sus cuatro idiomas y sus pruebas.' },
     ],
   },
@@ -665,10 +668,10 @@ const SLIDES = [
     ejemplos: {
       at: 3,
       rows: [
-        ['Horario General', 'jueves a las 17:00', 'open', 'cierra a las 18:00'],
-        ['Horario General', 'viernes a las 19:00', 'closed', 'abre el lun a las 09:00'],
-        ['Postventa', '24 de diciembre a las 13:00, día especial', 'open', 'cierra a las 14:00'],
-        ['Horario LATAM', '12:44 en Madrid, 05:44 en México', 'closed', 'abre a las 14:00'],
+        ['Horario General', 'jueves a las 17:00', 'open', 'cierra 18:00'],
+        ['Horario General', 'viernes a las 19:00', 'closed', 'abre lun 09:00'],
+        ['Postventa', '24 de diciembre a las 13:00, día especial', 'open', 'cierra 14:00'],
+        ['Horario LATAM', '12:44 en Madrid, 05:44 en México', 'closed', 'abre 14:00'],
         ['24/7 Emergencias', 'cualquier momento', 'open', 'siempre'],
         ['Horario Verano', 'desactivado', 'off', ''],
       ],
@@ -711,20 +714,20 @@ const SLIDES = [
     eyebrow: '07 · Para decidir hoy',
     title: 'Tres preguntas, <em>y la tercera no espera</em>',
     qs: [
-      ['¿Compartimos listas de festivos, como el Lab, o semanas, como tu modelo?', 'De esto salen las decisiones 6 y 7.'],
+      ['¿Compartimos listas de festivos, como el Lab, o semanas, como la referencia?', 'De esto salen las decisiones 6 y 7.'],
       ['¿Horarios vive en Repositorios, dentro de «Tiempo», con Horarios y Festivos?', 'Es la más fácil de cambiar, y la última en subir.'],
       ['¿Abrimos ya el PR de «Ahora»?', 'No depende de las otras dos.'],
     ],
     links: [
       { tone: 'lab', k: 'Lab', t: 'El rediseño', u: 'claude-lab-horarios.sc-supervisor.pages.dev/lab/horarios', href: 'https://claude-lab-horarios.sc-supervisor.pages.dev/lab/horarios' },
-      { tone: 'proto', k: 'Tu prototipo', t: 'Portado tal cual', u: 'claude-proto-jefe.sc-supervisor.pages.dev/lab/calendarios', href: 'https://claude-proto-jefe.sc-supervisor.pages.dev/lab/calendarios/periodos' },
-      { tone: 'lab', k: 'GitHub', t: 'Los dos PR, en borrador', u: 'smartcontact-ui #614 y #615', href: 'https://github.com/smartcontact-hub/smartcontact-ui/pulls' },
+      { tone: 'proto', k: 'Referencia', t: 'La propuesta, portada tal cual', u: REF.u, href: REF.href },
+      { tone: 'lab', k: 'GitHub', t: 'Los dos PR, en borrador', u: 'smartcontact-ui #614 y #617', href: 'https://github.com/smartcontact-hub/smartcontact-ui/pulls' },
     ],
     beats: [
       { t: 6, note: 'Para cerrar, tres preguntas. Con las dos primeras se ordena todo lo demás.' },
-      { t: 8, note: 'Si prefieres compartir semanas, el Lab puede convivir con ello: una semana compartida sería otra lista de Tiempo.' },
+      { t: 8, note: 'Si se prefiere compartir semanas, el Lab puede convivir con ello: una semana compartida sería otra lista de Tiempo.' },
       { t: 8, note: 'La navegación es lo más visible para el resto del producto, por eso la dejo para el final.' },
-      { t: 8, note: 'Y esta es la que me gustaría llevarme hoy: el PR de «Ahora» se puede abrir mañana.' },
+      { t: 8, note: 'Y esta es la que conviene cerrar hoy: el PR de «Ahora» se puede abrir mañana.' },
       { t: 8, note: 'Los enlaces quedan aquí para tocar las dos versiones con calma. Gracias.' },
     ],
   },
@@ -784,11 +787,11 @@ function build(s, i) {
   if (s.kind === 'cover') {
     h = `<div class="cover__text">
         <div class="eyebrow" data-in>Supervisor · Horarios · 13 de noviembre de 2026</div>
-        <h1 class="cover__title" data-in>De tus prototipos a la <em>pantalla de Horarios</em></h1>
-        <p class="cover__lead" data-in>Tus tres prototipos y el rediseño del Lab, montados con la interfaz real del Supervisor y comparados decisión a decisión. Al final: qué sube a main, en qué orden y por dónde empezar.</p>
+        <h1 class="cover__title" data-in>Dos versiones de Horarios, <em>lado a lado</em></h1>
+        <p class="cover__lead" data-in>La propuesta de referencia y el rediseño del Lab, montados con la interfaz real del Supervisor y comparados decisión a decisión. Al final: qué sube a main, en qué orden y por dónde empezar.</p>
       </div>
       <div class="cover__links">
-        <a class="link-card" data-tone="proto" data-at="1" href="https://claude-proto-jefe.sc-supervisor.pages.dev/lab/calendarios/periodos" target="_blank" rel="noopener"><div class="link-card__k">Tu prototipo · PR #615</div><div class="link-card__t">Portado tal cual</div><div class="link-card__u">/lab/calendarios</div></a>
+        <a class="link-card" data-tone="proto" data-at="1" href="${REF.href}" target="_blank" rel="noopener"><div class="link-card__k">Referencia · PR ${REF.pr}</div><div class="link-card__t">La propuesta, portada tal cual</div><div class="link-card__u">/lab/calendarios</div></a>
         <a class="link-card" data-tone="lab" data-at="1" href="https://claude-lab-horarios.sc-supervisor.pages.dev/lab/horarios" target="_blank" rel="noopener"><div class="link-card__k">Lab · PR #614</div><div class="link-card__t">El rediseño</div><div class="link-card__u">/lab/horarios</div></a>
       </div>
       <div class="cover__shots" aria-hidden="true">
@@ -1066,7 +1069,7 @@ function updateHud() {
   for (let k = 0; k < state.s; k++) done += SLIDES[k].beats.length;
   done += state.b + 1;
   $('#hudFill').style.transform = `scaleX(${done / totalBeats})`;
-  const titulo = strip(s.title === 'Portada' ? 'De tus prototipos a la pantalla de Horarios' : s.title);
+  const titulo = strip(s.title === 'Portada' ? 'Dos versiones de Horarios, lado a lado' : s.title);
   $('#hudWhere').innerHTML = `<b>0${s.ch + 1} ${CHAPTERS[s.ch]}</b>${titulo}`;
   $$('#hudDots button').forEach((d, k) => { d.classList.toggle('is-on', k === state.s); d.classList.toggle('is-past', k < state.s); d.setAttribute('aria-current', k === state.s ? 'step' : 'false'); });
   $$('#idx button').forEach((d) => d.classList.toggle('is-on', +d.dataset.s === state.s));
@@ -1139,7 +1142,7 @@ function boot() {
       if (s.ch !== ci) return;
       const b = document.createElement('button');
       b.type = 'button'; b.dataset.s = i;
-      b.innerHTML = strip(s.title === 'Portada' ? 'Portada: de tus prototipos a la pantalla de Horarios' : s.title);
+      b.innerHTML = strip(s.title === 'Portada' ? 'Portada: dos versiones de Horarios, lado a lado' : s.title);
       b.addEventListener('click', () => { overlay('index', false); go(i, 0, i >= state.s ? 1 : -1); });
       col.appendChild(b);
     });

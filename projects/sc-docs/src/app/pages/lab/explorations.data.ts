@@ -254,7 +254,7 @@ export const LABS: readonly Lab[] = [
   {
     id: 'lab-horarios-presentacion',
     title: 'Horarios, la presentación',
-    question: '¿Por qué el rediseño de Horarios decide distinto que el prototipo, qué sube a main y por dónde se empieza?',
+    question: '¿Por qué el rediseño de Horarios decide distinto que la propuesta de referencia, qué sube a main y por dónde se empieza?',
     controls: ['Flechas o espacio: paso a paso', 'P: reproducir solo', 'N: notas', 'Z: la captura entera'],
     where: 'El teclado, o la barra de abajo al mover el ratón.',
     // Una página estática de sc-docs (public/explorations): vive en su rama, así que el enlace es el preview de la rama.
