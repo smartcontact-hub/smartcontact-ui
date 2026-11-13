@@ -294,7 +294,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 205,
+      "usedInSupervisor": 208,
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "sobreObsoleto": [
         {
@@ -351,7 +351,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 36,
+      "usedInSupervisor": 37,
       "cuando": "Para un sí/no independiente, o para la casilla de un grupo elegido A MEDIAS (tiene tercer estado). Para activar algo al instante, `sc-toggleswitch`.",
       "sobreObsoleto": [],
       "fuente": "projects/ui-smartcontact/src/lib/components/checkbox/sc-checkbox.component.ts"
@@ -523,7 +523,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 23,
+      "usedInSupervisor": 24,
       "cuando": "Para un modal con contenido propio (un formulario, una tabla, un reproductor): la carcasa que comparten los dos DS. Se abre por `ScDynamicDialogService`, como en ui.smart-contact.com, o con `[(visible)]` si su formulario se ata al estado de la pantalla. Para un aviso con una acción, `sc-alert-modal`.",
       "sobreObsoleto": [],
       "fuente": "projects/ui-smartcontact/src/lib/components/custom-modal/sc-custom-modal.component.ts"
@@ -1849,7 +1849,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 76,
+      "usedInSupervisor": 77,
       "cuando": "Para elegir UNA de muchas. Si son pocas y caben a la vista, `sc-radiobutton` o `sc-selectbutton` ahorran un clic.",
       "sobreObsoleto": [],
       "fuente": "projects/ui-smartcontact/src/lib/components/select/sc-select.component.ts"
@@ -2047,7 +2047,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 1,
+      "usedInSupervisor": 3,
       "cuando": "Para vistas hermanas de una misma cosa que cambian lo de debajo (Chat y Email, Transcripción y Análisis). Para elegir el valor de un campo, `sc-selectbutton`.",
       "sobreObsoleto": [],
       "fuente": "projects/ui-smartcontact/src/lib/components/tabs/sc-tabs.component.ts"

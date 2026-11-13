@@ -1364,7 +1364,7 @@
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "fuente": "projects/ui-smartcontact/src/lib/components/button/sc-button.component.ts",
       "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=7596-35989",
-      "usosSupervisor": 205,
+      "usosSupervisor": 208,
       "relaciones": {
         "alternativas": [],
         "usa": [],
@@ -1772,7 +1772,7 @@
       "cuando": "Para un sí/no independiente, o para la casilla de un grupo elegido A MEDIAS (tiene tercer estado). Para activar algo al instante, `sc-toggleswitch`.",
       "fuente": "projects/ui-smartcontact/src/lib/components/checkbox/sc-checkbox.component.ts",
       "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=148-6321",
-      "usosSupervisor": 36,
+      "usosSupervisor": 37,
       "relaciones": {
         "alternativas": [
           "sc-toggleswitch"
@@ -2311,7 +2311,7 @@
       "cuando": "Para un modal con contenido propio (un formulario, una tabla, un reproductor): la carcasa que comparten los dos DS. Se abre por `ScDynamicDialogService`, como en ui.smart-contact.com, o con `[(visible)]` si su formulario se ata al estado de la pantalla. Para un aviso con una acción, `sc-alert-modal`.",
       "fuente": "projects/ui-smartcontact/src/lib/components/custom-modal/sc-custom-modal.component.ts",
       "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=14238-4140",
-      "usosSupervisor": 23,
+      "usosSupervisor": 24,
       "relaciones": {
         "alternativas": [
           "sc-alert-modal"
@@ -9300,7 +9300,7 @@
       "cuando": "Para elegir UNA de muchas. Si son pocas y caben a la vista, `sc-radiobutton` o `sc-selectbutton` ahorran un clic.",
       "fuente": "projects/ui-smartcontact/src/lib/components/select/sc-select.component.ts",
       "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=156-5882",
-      "usosSupervisor": 76,
+      "usosSupervisor": 77,
       "relaciones": {
         "alternativas": [
           "sc-radiobutton",
@@ -10474,7 +10474,7 @@
       "cuando": "Para vistas hermanas de una misma cosa que cambian lo de debajo (Chat y Email, Transcripción y Análisis). Para elegir el valor de un campo, `sc-selectbutton`.",
       "fuente": "projects/ui-smartcontact/src/lib/components/tabs/sc-tabs.component.ts",
       "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=320-12276",
-      "usosSupervisor": 1,
+      "usosSupervisor": 3,
       "relaciones": {
         "alternativas": [
           "sc-selectbutton"
