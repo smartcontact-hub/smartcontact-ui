@@ -50,6 +50,8 @@ import { EquiposStore } from '../state/equipos.store';
 import { IntencionesStore } from '../state/intenciones.store';
 import { TipificacionesStore } from '../state/tipificaciones.store';
 import { VariablesStore } from '../state/variables.store';
+import { FestivosStore } from '../state/festivos.store';
+import { labHorariosActivo } from '@features/lab/horarios/lab-modo';
 
 /** Una entrada de un repositorio, en el panel: su nombre, un dato suyo y adónde lleva. */
 interface HubEntrada {
@@ -165,6 +167,7 @@ export class RepositoriosHubPageComponent {
   private readonly mailboxes = inject(MailboxesStore);
   private readonly emailTriggers = inject(EmailTriggersStore);
   private readonly horarios = inject(HorariosStore);
+  private readonly festivos = inject(FestivosStore);
   private readonly equipos = inject(EquiposStore);
   private readonly templates = inject(TemplatesStore);
   private readonly tipificaciones = inject(TipificacionesStore);
@@ -231,21 +234,35 @@ export class RepositoriosHubPageComponent {
           count: () => this.agendas.items().length,
           entradas: () => this.deFilas(this.filas.agendas(this.agendas.items().map((a) => a.id), true), '/admin/agendas'),
         },
-        {
-          id: 'horarios',
-          labelKey: 'repositories.horarios.title',
-          descriptionKey: 'repositories.hub.descriptions.horarios',
-          icon: 'schedule',
-          path: '/admin/horarios',
-          count: () => this.horarios.items().length,
-          entradas: () =>
-            this.horarios.items().map((h) => ({
-              id: h.id,
-              nombre: h.name,
-              detalle: h.description,
-              link: `/admin/horarios/editar/${h.id}`,
-            })),
-        },
+        // Con el laboratorio de Horarios encendido, la tarjeta es «Tiempo» y lleva al rediseño (horarios y festivos).
+        labHorariosActivo()
+          ? {
+              id: 'horarios',
+              labelKey: 'Tiempo',
+              descriptionKey: 'Horarios y festivos: cuándo se atiende y qué días se cierra.',
+              icon: 'schedule',
+              path: '/lab/horarios',
+              count: () => this.horarios.items().length + this.festivos.items().length,
+              entradas: () => [
+                ...this.horarios.items().map((h) => ({ id: h.id, nombre: h.name, detalle: h.description, link: `/lab/horarios/editar/${h.id}` })),
+                ...this.festivos.items().map((c) => ({ id: `f${c.id}`, nombre: c.name, detalle: `${c.days.length} festivos`, link: `/lab/horarios/festivos/editar/${c.id}` })),
+              ],
+            }
+          : {
+              id: 'horarios',
+              labelKey: 'repositories.horarios.title',
+              descriptionKey: 'repositories.hub.descriptions.horarios',
+              icon: 'schedule',
+              path: '/admin/horarios',
+              count: () => this.horarios.items().length,
+              entradas: () =>
+                this.horarios.items().map((h) => ({
+                  id: h.id,
+                  nombre: h.name,
+                  detalle: h.description,
+                  link: `/admin/horarios/editar/${h.id}`,
+                })),
+            },
         {
           id: 'emails',
           labelKey: 'repositories.emails.title',

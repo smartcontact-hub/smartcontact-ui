@@ -14,6 +14,7 @@ import { type Horario, HorariosStore } from '@features/admin/repositories/state/
 
 import { estadoDeHorario } from './lab-horarios-estado';
 import { LabImportarListaComponent } from './lab-importar-lista.component';
+import { activarLabHorarios } from './lab-modo';
 import { T } from './lab-textos';
 
 const DIAS = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
@@ -32,6 +33,7 @@ const DIAS = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
       <sc-repo-list-page [config]="config" [store]="store">
         <div repoBeforeToolbar class="pestanas">
           <sc-tabs [tabs]="pestanas()" [ariaLabel]="t.listas" [value]="lista()" (valueChange)="ir($event)" />
+          <sc-button variant="secondary" appearance="text" size="sm" label="Volver a la versión original" (clicked)="salirDelLab()" />
         </div>
       </sc-repo-list-page>
     } @else {
@@ -39,6 +41,7 @@ const DIAS = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
         <div repoBeforeToolbar>
           <div class="pestanas">
             <sc-tabs [tabs]="pestanas()" [ariaLabel]="t.listas" [value]="lista()" (valueChange)="ir($event)" />
+            <sc-button variant="secondary" appearance="text" size="sm" label="Volver a la versión original" (clicked)="salirDelLab()" />
             <sc-button variant="secondary" appearance="outlined" icon="upload" label="Importar festivos oficiales" (clicked)="importando.set(true)" />
           </div>
           <!-- Cómo va, en tres pasos y a la vista: crear, marcar, aplicar. Y dónde se quita cada cosa. -->
@@ -88,6 +91,12 @@ export class LabTiempoComponent {
 
   protected ir(valor: string | number | undefined): void {
     void this.router.navigate([], { queryParams: { lista: valor === 'festivos' ? 'festivos' : null }, replaceUrl: true });
+  }
+
+  /** Apaga el modo rediseño: Repositorios vuelve a llevar a las pantallas de siempre. */
+  protected salirDelLab(): void {
+    activarLabHorarios(false);
+    void this.router.navigateByUrl(this.lista() === 'festivos' ? '/admin/festivos' : '/admin/horarios');
   }
 
   protected creada(c: CalendarioDeFestivos): void {
