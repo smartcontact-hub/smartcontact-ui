@@ -48,3 +48,10 @@
 /* El panel de fila y el menú contextual propios murieron en la Ola 2: ambos
  * los sustituye el <p-menu> compartido, y el botón usa `.rules-kebab-btn`,
  * el kebab global de `main.scss`. */
+
+/* La línea gris detrás del estado («cierra 18:00»): en la misma fila que la etiqueta, a 7 de ella. */
+.table__status-detail {
+  margin-inline-start: var(--sc-spacing-0-5);
+  color: var(--sc-text-secondary);
+  white-space: nowrap;
+}

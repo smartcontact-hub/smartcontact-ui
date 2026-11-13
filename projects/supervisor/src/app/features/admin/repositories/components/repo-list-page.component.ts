@@ -286,6 +286,10 @@ export class RepoListPageComponent<T extends RepoEntity> {
     return this.isKind(key, 'truncate') ? this.getCellValue(item, key) : '';
   }
 
+  protected statusDetail(item: T, key: string): string {
+    return this.config().columns.find((c) => c.key === key)?.statusDetail?.(item) ?? '';
+  }
+
   protected getStatusEntry(
     item: T,
     key: string,

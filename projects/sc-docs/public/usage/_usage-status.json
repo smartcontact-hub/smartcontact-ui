@@ -589,7 +589,7 @@
     },
     {
       "selector": "sc-custom-modal",
-      "usedInSupervisor": 20
+      "usedInSupervisor": 23
     },
     {
       "selector": "sc-empty-state",

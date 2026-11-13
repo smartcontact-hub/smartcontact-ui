@@ -95,6 +95,17 @@ export const appRoutes: Routes = [
         loadComponent: () =>
           import('./features/lab/table-lab-page.component').then((m) => m.TableLabPageComponent),
       },
+      /* Laboratorio de Horarios: listado, alta y edición rehechos sin atarse a las decisiones de la pantalla real. Lee y
+       * escribe los mismos almacenes que /admin/horarios, así que lo que se cree aquí se ve allí. */
+      {
+        path: 'lab/horarios',
+        data: { breadcrumb: [{ labelKey: 'sidebar.repositories', link: '/admin/repositorios' }, { labelKey: 'repositories.horarios.title', link: '/lab/horarios' }] },
+        children: [
+          { path: '', loadComponent: () => import('./features/lab/horarios/lab-horarios-list.component').then((m) => m.LabHorariosListComponent) },
+          { path: 'crear', loadComponent: () => import('./features/lab/horarios/lab-horario-editor.component').then((m) => m.LabHorarioEditorComponent) },
+          { path: 'editar/:id', loadComponent: () => import('./features/lab/horarios/lab-horario-editor.component').then((m) => m.LabHorarioEditorComponent) },
+        ],
+      },
       {
         path: 'lab/arbol',
         loadComponent: () =>

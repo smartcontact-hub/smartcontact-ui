@@ -108,6 +108,9 @@
       <!-- Estado con el `tag` del DS y su severidad (DD-76): Figma dibuja así el estado
            de Agentes. El tono lo declara cada instancia en su `statusMap`. -->
       <sc-tag [severity]="status.tone" [value]="status.labelKey | translate" />
+      @if (statusDetail(item, col.field); as detalle) {
+        <span class="table__status-detail sc-text-caption-regular">{{ detalle }}</span>
+      }
     } @else if (showDash(item, col.field)) {
       <sc-celda-vacia />
     } @else {
