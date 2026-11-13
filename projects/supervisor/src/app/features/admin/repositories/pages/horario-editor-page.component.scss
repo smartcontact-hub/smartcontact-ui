@@ -1,49 +1,71 @@
-/* El editor de un horario: arquetipo de editor con su resultado al lado (`page__inner--resultado`, `_page.scss`) sobre
- * el lienzo. Sus tarjetas se apilan con el margen que les da el DS. Festivos usa esta hoja con el molde de 1200. */
+/* El editor de un horario (experimento): el calendario manda. Cabecera compacta, calendario a todo el ancho con el alto
+ * que deja la pantalla, y las reglas en segundo plano debajo. Sobre el lienzo, sin tarjetas alrededor del calendario. */
 :host {
   display: block;
   height: 100%;
   background: var(--sc-bg-canvas);
 }
 
-/* Las reglas a un lado y el año al otro. Por debajo de 1340, el corte de las fichas con resumen (`_page.scss`), el año
- * va debajo. */
 .horario {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  align-items: start;
-  /* Solo entre columnas: en una columna, las tarjetas ya traen su margen. */
-  column-gap: var(--sc-spacing-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1);
+}
 
-  @media (max-width: 1339px) {
-    grid-template-columns: minmax(0, 1fr);
-  }
+.cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--sc-spacing-1);
+}
+
+.cabecera__titulo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-25);
+  min-inline-size: 0;
+}
+
+.cabecera__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-25);
+  margin: 0;
+  color: var(--sc-text-secondary);
+}
+
+.cabecera__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sc-spacing-1);
+}
+
+.cabecera__error {
+  margin: 0;
+  color: var(--sc-text-danger);
+}
+
+/* El calendario: un panel que se estira al alto de la ventana (menos la barra y los márgenes), con la rejilla
+ * repartiéndose lo que quede. En pantallas bajas no baja de 34 rem para que el mes respire. */
+.horario__calendario {
+  display: flex;
+  flex-direction: column;
+  block-size: max(34rem, calc(100dvh - var(--sc-topbar-height) - 11 * var(--sc-spacing-1)));
+  padding: var(--sc-spacing-1);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-lg);
+  background: var(--sc-bg-surface);
 }
 
 .horario__reglas {
-  min-inline-size: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-75);
+  margin-block-start: var(--sc-spacing-1);
 }
 
-/* El año se queda a la vista al bajar por las reglas, y lo que no quepa hace scroll dentro: la misma receta que el
- * resumen de las fichas (`.ficha-summary` en `_page.scss`), para que el detalle del día no se quede fuera. */
-.horario__resultado {
-  position: sticky;
-  inset-block-start: var(--sc-spacing-2);
-  min-inline-size: 0;
-  max-block-size: calc(100dvh - var(--sc-topbar-height) - 2 * var(--sc-spacing-2));
-  overflow-y: auto;
-
-  @media (max-width: 1339px) {
-    position: static;
-    max-block-size: none;
-    overflow-y: visible;
-  }
-}
-
-/* Igual que en las fichas de grupo y de agente. */
-.repo-link {
-  align-self: flex-start;
-  color: var(--sc-text-link);
-  text-decoration: underline;
-  text-underline-offset: var(--sc-spacing-0-125);
+.horario__reglas-titulo {
+  margin: 0;
 }

@@ -1517,7 +1517,7 @@
         "title_bulk": "Delete {{count}} schedules?"
       },
       "col_week": "Regular week",
-      "col_now": "Now",
+      "col_now": "Service now",
       "col_periods": "Periods",
       "col_specials": "Special dates",
       "col_groups": "Groups",
@@ -1656,6 +1656,65 @@
       "active_hint": "Only active schedules can be chosen in a group.",
       "in_use_bulk": "{{count}} groups use them: they will be always open.",
       "in_use_bulk_one": "1 group uses them: it will be always open.",
+      "x": {
+        "view": {
+          "label": "Calendar view",
+          "day": "Day",
+          "week": "Week",
+          "month": "Month",
+          "year": "Year"
+        },
+        "nav": {
+          "prev": "Previous",
+          "next": "Next",
+          "month": "Month",
+          "year": "Year"
+        },
+        "layers": {
+          "label": "Show",
+          "week": "Regular week",
+          "holiday": "Holidays",
+          "special": "Special dates",
+          "closed": "Closed",
+          "show_all": "Show all"
+        },
+        "day": {
+          "pick": "Pick a day to see its hours and edit it",
+          "edit_origin_none": "Edit what rules this day",
+          "edit_period": "Edit this day's period",
+          "edit_holidays": "Edit this day's holidays",
+          "edit_week": "Edit the regular week",
+          "only_this_day": "Change this day only",
+          "edit_special": "Edit this special date"
+        },
+        "in_hours": "In hours",
+        "out_of_hours": "Out of hours",
+        "now_detail": {
+          "until": "until {{time}}",
+          "until_day": "until {{day}} at {{time}}",
+          "opens_today": "opens at {{time}}",
+          "opens_tomorrow": "opens tomorrow at {{time}}",
+          "opens_day": "opens {{day}} at {{time}}"
+        },
+        "general": {
+          "title": "Schedule details",
+          "edit": "Edit details"
+        },
+        "rules": {
+          "title": "Schedule rules",
+          "week_edit": "Edit the regular week",
+          "week_hint": "What applies when nothing else does.",
+          "periods_hint": "Seasons with their own week: summer, campaigns…",
+          "specials_title": "Special dates and holidays",
+          "specials_hint": "Single days that override everything else.",
+          "yearly": "every year",
+          "past_hidden": "{{count}} from past years, hidden."
+        },
+        "week_modal": {
+          "hint": "Each day's time ranges, down to the exact minute. They apply to the calendar when saved.",
+          "apply": "Apply"
+        }
+      },
       "festivos_leave": {
         "title": "Save the changes?",
         "body": "To go to Holidays, save the schedule first."

@@ -1517,7 +1517,7 @@
         "title_bulk": "Supprimer {{count}} horaires\u00a0?"
       },
       "col_week": "Semaine habituelle",
-      "col_now": "Maintenant",
+      "col_now": "Service actuel",
       "col_periods": "Périodes",
       "col_specials": "Dates spéciales",
       "col_groups": "Groupes",
@@ -1656,6 +1656,65 @@
       "active_hint": "Seuls les horaires actifs peuvent être choisis dans un groupe.",
       "in_use_bulk": "{{count}} groupes les utilisent\u00a0: ils seront toujours ouverts.",
       "in_use_bulk_one": "1 groupe les utilise\u00a0: il sera toujours ouvert.",
+      "x": {
+        "view": {
+          "label": "Vue du calendrier",
+          "day": "Jour",
+          "week": "Semaine",
+          "month": "Mois",
+          "year": "Année"
+        },
+        "nav": {
+          "prev": "Précédent",
+          "next": "Suivant",
+          "month": "Mois",
+          "year": "Année"
+        },
+        "layers": {
+          "label": "Afficher",
+          "week": "Semaine habituelle",
+          "holiday": "Jours fériés",
+          "special": "Dates spéciales",
+          "closed": "Fermé",
+          "show_all": "Tout afficher"
+        },
+        "day": {
+          "pick": "Choisissez un jour pour voir ses horaires et le modifier",
+          "edit_origin_none": "Modifier ce qui décide ce jour",
+          "edit_period": "Modifier la période de ce jour",
+          "edit_holidays": "Modifier les jours fériés de ce jour",
+          "edit_week": "Modifier la semaine habituelle",
+          "only_this_day": "Modifier ce jour uniquement",
+          "edit_special": "Modifier cette date spéciale"
+        },
+        "in_hours": "Dans les horaires",
+        "out_of_hours": "Hors horaires",
+        "now_detail": {
+          "until": "jusqu'à {{time}}",
+          "until_day": "jusqu'au {{day}} à {{time}}",
+          "opens_today": "ouvre à {{time}}",
+          "opens_tomorrow": "ouvre demain à {{time}}",
+          "opens_day": "ouvre le {{day}} à {{time}}"
+        },
+        "general": {
+          "title": "Données de l'horaire",
+          "edit": "Modifier les données"
+        },
+        "rules": {
+          "title": "Règles de l'horaire",
+          "week_edit": "Modifier la semaine habituelle",
+          "week_hint": "Ce qui vaut quand rien d'autre ne s'applique.",
+          "periods_hint": "Saisons avec leur propre semaine : été, campagnes…",
+          "specials_title": "Dates spéciales et jours fériés",
+          "specials_hint": "Jours isolés qui priment sur le reste.",
+          "yearly": "chaque année",
+          "past_hidden": "{{count}} des années passées, masquées."
+        },
+        "week_modal": {
+          "hint": "Les plages de chaque jour, à la minute près. Elles s'appliquent au calendrier à l'enregistrement.",
+          "apply": "Appliquer"
+        }
+      },
       "festivos_leave": {
         "title": "Sauvegarder les modifications ?",
         "body": "Pour aller à Jours fériés, sauvegardez d'abord l'horaire."

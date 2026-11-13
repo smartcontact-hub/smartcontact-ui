@@ -1,0 +1,287 @@
+<!-- Experimento: el calendario como protagonista. Barra (navegar + vista), filtros a la vista, el día elegido en una
+     línea y, debajo, la rejilla, que ocupa todo el alto que deja la pantalla. -->
+<div class="vista">
+  <header class="vista__barra">
+    <div class="vista__nav">
+      <sc-button
+        variant="secondary"
+        appearance="outlined"
+        size="sm"
+        icon="chevron_left"
+        [ariaLabel]="'repositories.horarios.x.nav.prev' | translate"
+        [disabled]="!puedeAnterior()"
+        (clicked)="ir(-1)"
+      />
+      <sc-button
+        variant="secondary"
+        appearance="outlined"
+        size="sm"
+        icon="chevron_right"
+        [ariaLabel]="'repositories.horarios.x.nav.next' | translate"
+        [disabled]="!puedeSiguiente()"
+        (clicked)="ir(1)"
+      />
+      <!-- Mes y año con sus selectores: solo ofrecen lo que se puede mirar (5 años atrás, 3 adelante). Sustituyen a
+           las flechas de año de antes: ir a hace tres años eran tres clics. -->
+      @if (vista() !== 'year') {
+        <sc-select
+          class="vista__mes"
+          size="sm"
+          [ariaLabel]="'repositories.horarios.x.nav.month' | translate"
+          [options]="opcionesDeMes()"
+          optionLabel="label"
+          optionValue="value"
+          [value]="mes()"
+          (valueChange)="irAlMes($event)"
+        />
+      }
+      <sc-select
+        class="vista__anio"
+        size="sm"
+        [ariaLabel]="'repositories.horarios.x.nav.year' | translate"
+        [options]="opcionesDeAnio()"
+        optionLabel="label"
+        optionValue="value"
+        [value]="anio()"
+        (valueChange)="irAlAnio($event)"
+      />
+      @if (titulo(); as t) {
+        <span class="vista__titulo sc-text-body-semibold">{{ t }}</span>
+      }
+    </div>
+    <sc-selectbutton
+      size="sm"
+      [ariaLabel]="'repositories.horarios.x.view.label' | translate"
+      [options]="opcionesDeVista()"
+      optionLabel="label"
+      optionValue="value"
+      [allowEmpty]="false"
+      [value]="vista()"
+      (valueChange)="cambiarVista($any($event))"
+    />
+  </header>
+
+  <!-- Los filtros, arriba y a la vista: lo apagado se atenúa en la rejilla, no desaparece. -->
+  <div class="vista__filtros" role="group" [attr.aria-label]="'repositories.horarios.x.layers.label' | translate">
+    <span class="vista__filtros-rotulo sc-text-caption-semibold">{{ 'repositories.horarios.x.layers.label' | translate }}</span>
+    @for (capa of capas(); track capa.clave) {
+      <button
+        type="button"
+        class="filtro sc-text-caption-semibold"
+        [class.filtro--apagado]="!capa.activa"
+        [attr.data-color]="capa.color"
+        [attr.aria-pressed]="capa.activa"
+        (click)="alternar(capa.clave)"
+      >
+        @if (capa.icono) {
+          <sc-icon [name]="capa.icono" size="sm" aria-hidden="true" />
+        } @else {
+          <span class="filtro__punto" aria-hidden="true"></span>
+        }
+        {{ capa.etiqueta }}
+      </button>
+    }
+    @if (hayFiltros()) {
+      <sc-button size="sm" variant="secondary" appearance="text" [label]="'repositories.horarios.x.layers.show_all' | translate" (clicked)="mostrarTodo()" />
+    }
+  </div>
+
+  <!-- El día elegido, en una línea: sus horas, quién las decide y dos lápices. Mide lo mismo con cualquier día. -->
+  <section class="vista__dia" aria-live="polite">
+    @if (detalle(); as d) {
+      <span class="vista__dia-titulo sc-text-body-semibold">{{ d.titulo }}</span>
+      <span class="vista__dia-estado sc-text-body-regular" [class.vista__dia-estado--abierto]="d.abierto">
+        <sc-icon [name]="d.abierto ? 'check_circle' : 'do_not_disturb_on'" size="sm" filled aria-hidden="true" />
+        {{ (d.abierto ? 'repositories.horarios.x.in_hours' : 'repositories.horarios.x.out_of_hours') | translate }}
+      </span>
+      @if (d.abierto) {
+        <span class="sc-text-body-regular">{{ d.horas.join(' · ') }}</span>
+      }
+      <span class="vista__dia-motivo sc-text-caption-regular">{{ d.motivo }}</span>
+    } @else {
+      <span class="vista__dia-vacio sc-text-body-regular">{{ 'repositories.horarios.x.day.pick' | translate }}</span>
+    }
+
+    <span class="vista__dia-acciones">
+      @if (origen(); as o) {
+        <sc-button
+          variant="secondary"
+          appearance="text"
+          size="sm"
+          icon="edit"
+          [disabled]="!detalle()"
+          [ariaLabel]="o.clave | translate"
+          [pTooltip]="o.clave | translate"
+          tooltipPosition="top"
+          (clicked)="editarOrigen()"
+        />
+        <sc-button
+          variant="secondary"
+          appearance="text"
+          size="sm"
+          icon="edit_calendar"
+          [disabled]="!detalle()"
+          [ariaLabel]="'repositories.horarios.x.day.only_this_day' | translate"
+          [pTooltip]="'repositories.horarios.x.day.only_this_day' | translate"
+          tooltipPosition="top"
+          (clicked)="cambiarDia.emit(detalle()!.fecha)"
+        />
+      } @else {
+        <sc-button
+          variant="secondary"
+          appearance="text"
+          size="sm"
+          icon="edit"
+          [ariaLabel]="'repositories.horarios.x.day.edit_special' | translate"
+          [pTooltip]="'repositories.horarios.x.day.edit_special' | translate"
+          tooltipPosition="top"
+          (clicked)="cambiarDia.emit(detalle()!.fecha)"
+        />
+      }
+    </span>
+  </section>
+
+  <div class="vista__cuerpo" (keydown)="teclado($event)">
+    @switch (vista()) {
+      @case ('year') {
+        <div class="anio" role="group" [attr.aria-label]="'repositories.horarios.calendar.aria' | translate: { year: anio() }">
+          @for (m of meses(); track $index) {
+            <section class="anio__mes">
+              <h3 class="anio__nombre sc-text-caption-semibold">{{ m.nombre }}</h3>
+              <div class="anio__rejilla">
+                @for (inicial of iniciales(); track $index) {
+                  <span class="anio__inicial sc-text-caption-regular" aria-hidden="true">{{ inicial }}</span>
+                }
+                @for (hueco of m.huecos; track $index) {
+                  <span></span>
+                }
+                @for (c of m.celdas; track c.fecha) {
+                  <button
+                    type="button"
+                    class="mini"
+                    [class.mini--cerrado]="!c.abierto"
+                    [class.mini--periodo]="c.color"
+                    [class.mini--excepcion]="c.dia.tipo === 'especial' || c.dia.tipo === 'festivo'"
+                    [class.mini--hoy]="esHoy(c.fecha)"
+                    [class.mini--elegido]="c.fecha === seleccion()"
+                    [class.mini--apagado]="c.apagada"
+                    [class.sc-text-caption-regular]="!esHoy(c.fecha)"
+                    [class.sc-text-caption-semibold]="esHoy(c.fecha)"
+                    [attr.data-color]="c.color"
+                    [attr.data-fecha]="c.fecha"
+                    [attr.aria-label]="c.aria"
+                    [attr.aria-pressed]="c.fecha === seleccion()"
+                    [attr.tabindex]="tabIndexDe(c.fecha)"
+                    (click)="elegir(c.fecha)"
+                  >
+                    {{ c.numero }}
+                  </button>
+                }
+              </div>
+            </section>
+          }
+        </div>
+      }
+
+      @case ('month') {
+        <div class="mes" role="group" [attr.aria-label]="'repositories.horarios.calendar.aria' | translate: { year: anio() }" [style.--semanas]="semanas().length / 7">
+          @for (nombre of nombresDeDia(); track $index) {
+            <span class="mes__dow sc-text-caption-semibold">{{ nombre }}</span>
+          }
+          @for (c of semanas(); track c.fecha) {
+            <button
+              type="button"
+              class="dia"
+              [class.dia--cerrado]="!c.abierto"
+              [class.dia--periodo]="c.color"
+              [class.dia--fuera]="c.fuera"
+              [class.dia--elegido]="c.fecha === seleccion()"
+              [class.dia--apagado]="c.apagada"
+              [attr.data-color]="c.color"
+              [attr.data-fecha]="c.fecha"
+              [attr.aria-label]="c.aria"
+              [attr.aria-pressed]="c.fecha === seleccion()"
+              [attr.tabindex]="tabIndexDe(c.fecha)"
+              (click)="elegir(c.fecha)"
+            >
+              <span class="dia__num sc-text-caption-semibold" [class.dia__num--hoy]="esHoy(c.fecha)">{{ c.numero }}</span>
+              @if (c.nombre) {
+                <span class="dia__nombre dia__nombre--{{ c.dia.tipo }} sc-text-caption-semibold">
+                  <sc-icon [name]="c.dia.tipo === 'festivo' ? 'flag' : 'event'" size="sm" aria-hidden="true" />
+                  <span class="dia__nombre-texto">{{ c.nombre }}</span>
+                </span>
+              }
+              @if (c.abierto) {
+                <span class="dia__horas sc-text-caption-regular">
+                  @for (h of c.horas; track h) {
+                    <span>{{ h }}</span>
+                  }
+                </span>
+              } @else if (!c.nombre) {
+                <span class="dia__cerrado sc-text-caption-regular">{{ 'repositories.horarios.closed' | translate }}</span>
+              }
+            </button>
+          }
+        </div>
+      }
+
+      @default {
+        <!-- Semana y día: la línea de las 24 horas, con una raya cada 30 minutos. Cada tramo se pinta a su minuto. -->
+        <div class="linea" #lienzo [style.--columnas]="columnas().length">
+          <div class="linea__cabecera">
+            <span></span>
+            @for (col of columnas(); track col.celda.fecha) {
+              <button
+                type="button"
+                class="linea__dia sc-text-caption-semibold"
+                [class.linea__dia--elegido]="col.celda.fecha === seleccion()"
+                [class.linea__dia--hoy]="esHoy(col.celda.fecha)"
+                [attr.data-fecha]="col.celda.fecha"
+                [attr.aria-label]="col.celda.aria"
+                [attr.aria-pressed]="col.celda.fecha === seleccion()"
+                [attr.tabindex]="tabIndexDe(col.celda.fecha)"
+                (click)="elegir(col.celda.fecha)"
+              >
+                <span>{{ col.cabecera }}</span>
+                @if (col.celda.nombre) {
+                  <span class="linea__nombre sc-text-caption-regular">{{ col.celda.nombre }}</span>
+                }
+              </button>
+            }
+          </div>
+          <div class="linea__cuerpo">
+            <div class="linea__horas" aria-hidden="true">
+              @for (h of horasDelDia; track h) {
+                <span class="linea__hora sc-text-caption-regular">{{ h }}</span>
+              }
+            </div>
+            @for (col of columnas(); track col.celda.fecha) {
+              <div class="linea__col" [class.linea__col--elegida]="col.celda.fecha === seleccion()" [class.linea__col--apagada]="col.celda.apagada">
+                @for (b of col.bloques; track b.top) {
+                  <div
+                    class="bloque sc-text-caption-semibold"
+                    [class.bloque--periodo]="col.celda.color"
+                    [class.bloque--especial]="col.celda.dia.tipo === 'especial'"
+                    [attr.data-color]="col.celda.color"
+                    [style.top.%]="b.top"
+                    [style.height.%]="b.alto"
+                  >
+                    {{ b.texto }}
+                  </div>
+                }
+                @if (!col.celda.abierto) {
+                  <span class="linea__cerrado sc-text-caption-regular">{{ 'repositories.horarios.closed' | translate }}</span>
+                }
+                @if (lineaAhora(); as ahora) {
+                  @if (ahora.fecha === col.celda.fecha) {
+                    <span class="linea__ahora" aria-hidden="true" [style.top.%]="ahora.top"></span>
+                  }
+                }
+              </div>
+            }
+          </div>
+        </div>
+      }
+    }
+  </div>
+</div>

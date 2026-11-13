@@ -10,13 +10,15 @@ import { RepoListPageComponent } from '../components/repo-list-page.component';
 import { RepoColumnDef, RepoPageConfig } from '../components/repo-types';
 import { HorarioUsoService, subcanalesConHorario } from '../state/horario-uso.service';
 import { FestivosStore } from '../state/festivos.store';
-import { ahoraEn, estadoEn, resumenDeLaSemana } from '../state/horarios.core.mjs';
+import { ahoraEn, diaDeLaSemana, estadoEn, horaDe, resumenDeLaSemana, sumarDias } from '../state/horarios.core.mjs';
 import { type Horario, HorariosStore } from '../state/horarios.store';
 
 interface Datos {
   readonly resumen: (h: Horario) => string;
   readonly ahora: (h: Horario) => string;
   readonly grupos: (h: Horario) => readonly GroupRef[];
+  /** «hasta las 18:00» / «abre el lun 09:00». */
+  readonly matiz: (h: Horario) => string;
 }
 
 /**
@@ -29,13 +31,15 @@ const columnas = (d: Datos): readonly RepoColumnDef<Horario>[] => [
   { key: 'week', labelKey: 'repositories.horarios.col_week', kind: 'truncate', accessor: d.resumen },
   {
     key: 'now',
+    // «Ahora» no decía a qué se refería: es si el IVR atiende en este momento (en la zona del horario), con lo que viene después.
     labelKey: 'repositories.horarios.col_now',
-    kind: 'status',
-    width: '112px',
+    kind: 'availability',
+    width: '248px',
     accessor: d.ahora,
+    detail: d.matiz,
     statusMap: {
-      open: { labelKey: 'repositories.horarios.open', tone: 'success' },
-      closed: { labelKey: 'repositories.horarios.closed', tone: 'secondary' },
+      open: { labelKey: 'repositories.horarios.x.in_hours', tone: 'success', icon: 'check_circle' },
+      closed: { labelKey: 'repositories.horarios.x.out_of_hours', tone: 'secondary', icon: 'do_not_disturb_on' },
     },
   },
   { key: 'periods', labelKey: 'repositories.horarios.col_periods', kind: 'count', width: '104px', accessor: (i) => String(i.periods.length), emptyDash: true, sortable: true },
@@ -48,7 +52,9 @@ const columnas = (d: Datos): readonly RepoColumnDef<Horario>[] => [
     // La cifra ordena y se exporta; la celda enseña el nombre si es uno y la cifra con los nombres al pasar si son más.
     accessor: (i) => String(d.grupos(i).length),
     groups: d.grupos,
-    groupsDisplay: 'adaptive',
+    // La cifra siempre, con los nombres al pasar (como Equipos): el nombre suelto cambiaba el ancho y el alineado de la columna.
+    groupsDisplay: 'count',
+    emptyAsZero: true,
     sortable: true,
   },
   { key: 'timezone', labelKey: 'repositories.horarios.timezone', kind: 'text', accessor: (i) => i.timezone, width: '176px', sortable: true },
@@ -56,12 +62,14 @@ const columnas = (d: Datos): readonly RepoColumnDef<Horario>[] => [
     key: 'status',
     labelKey: 'repositories.columns.status',
     kind: 'status',
+    // Un glifo, no una segunda pastilla junto a «Ahora»: dos pastillas iguales en la misma fila leían como lo mismo.
+    statusDisplay: 'icon',
     width: '96px',
     accessor: (i) => i.status,
     statusMap: {
       // En masculino: un horario y un calendario (la clave compartida, «Activa», es de regla y categoría).
-      active: { labelKey: 'repositories.horarios.active', tone: 'success' },
-      inactive: { labelKey: 'repositories.horarios.inactive', tone: 'secondary' },
+      active: { labelKey: 'repositories.horarios.active', tone: 'success', icon: 'check_circle' },
+      inactive: { labelKey: 'repositories.horarios.inactive', tone: 'secondary', icon: 'pause_circle' },
     },
   },
 ];
@@ -100,6 +108,25 @@ export class HorariosPageComponent {
     };
   });
 
+  /** Cuándo cambia el estado de ahora: «hasta las 18:00» si atiende, «abre mañana 09:00» si no. */
+  private matizDe(h: Horario): string {
+    const lang = this.lang();
+    void lang;
+    const { fecha, minutos } = ahoraEn(h.timezone);
+    const estado = estadoEn(h, fecha, minutos, this.festivos.items());
+    if (!estado.cambia) return '';
+    const hora = horaDe(estado.cambia.minutos);
+    const t = (k: string, p?: Record<string, unknown>): string => this.translate.instant(`repositories.horarios.x.now_detail.${k}`, p);
+    if (estado.abierto) return estado.cambia.fecha === fecha ? t('until', { time: hora }) : t('until_day', { day: this.diaCorto(estado.cambia.fecha), time: hora });
+    if (estado.cambia.fecha === fecha) return t('opens_today', { time: hora });
+    if (estado.cambia.fecha === sumarDias(fecha, 1)) return t('opens_tomorrow', { time: hora });
+    return t('opens_day', { day: this.diaCorto(estado.cambia.fecha), time: hora });
+  }
+
+  private diaCorto(iso: string): string {
+    return this.translate.instant(`repositories.horarios.days_short.${DIAS_DE_LA_SEMANA[diaDeLaSemana(iso)]}`);
+  }
+
   protected readonly config: RepoPageConfig<Horario> = {
     titleKey: 'repositories.horarios.title',
     entitySingularKey: 'repositories.horarios.singular',
@@ -117,6 +144,7 @@ export class HorariosPageComponent {
         return estadoEn(h, fecha, minutos, this.festivos.items()).abierto ? 'open' : 'closed';
       },
       grupos: (h) => this.gruposPorHorario().get(h.id) ?? [],
+      matiz: (h) => this.matizDe(h),
     }),
     fields: [{ key: 'name', labelKey: 'repositories.columns.name', type: 'text', required: true, placeholderKey: 'repositories.horarios.name_placeholder' }],
     searchKeys: ['name', 'timezone', 'description'],

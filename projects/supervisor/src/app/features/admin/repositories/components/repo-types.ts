@@ -10,7 +10,7 @@ export interface RepoEntity {
 }
 
 /** Visual presentation for a column. `count` es una cifra: la lista la escribe con el separador de miles del idioma. */
-export type RepoColumnKind = 'text' | 'truncate' | 'status' | 'count' | 'date' | 'groups';
+export type RepoColumnKind = 'text' | 'truncate' | 'status' | 'count' | 'date' | 'groups' | 'availability';
 
 export interface RepoColumnDef<T extends RepoEntity> {
   readonly key: string;
@@ -36,6 +36,10 @@ export interface RepoColumnDef<T extends RepoEntity> {
   readonly countOpensSection?: string;
   /** Una celda sin dato dice «—» (`sc-celda-vacia`, DD-197) en vez de quedarse en blanco. */
   readonly emptyDash?: boolean;
+  /** Para `kind === 'status'`: `tag` (por defecto) o `icon`, solo el glifo del estado con su texto en el nombre accesible y el tooltip. */
+  readonly statusDisplay?: 'tag' | 'icon';
+  /** Para `kind === 'availability'`: el matiz que va tras el estado («hasta las 18:00»); sin él, solo el estado. */
+  readonly detail?: (item: T) => string;
   /** La cabecera ordena de menor a mayor y al revés: las cifras, por su valor; las fechas, por día; el texto, por su letra. */
   readonly sortable?: boolean;
 
@@ -44,6 +48,8 @@ export interface RepoColumnDef<T extends RepoEntity> {
 export interface RepoStatusEntry {
   readonly labelKey: string;
   readonly tone: 'success' | 'secondary' | 'warning' | 'danger' | 'info';
+  /** Glifo del estado cuando la columna lo enseña como icono (`statusDisplay: 'icon'`) o como punto (`availability`). */
+  readonly icon?: string;
 }
 
 /** `switch`: un interruptor de dos estados (Activa o Inactiva); con dos opciones, un desplegable pedía dos clics. */

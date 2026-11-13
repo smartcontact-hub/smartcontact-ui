@@ -1,0 +1,542 @@
+/* El calendario del horario (experimento). Ocupa el alto que le deja la pantalla: la barra, los filtros y la línea del día
+ * son fijos y la rejilla se reparte el resto. Solo tokens `--sc-*`. */
+:host {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-block-size: 0;
+  container-type: inline-size;
+}
+
+.vista {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-75);
+  min-block-size: 0;
+}
+
+/* ── Barra ─────────────────────────────────────────────────────────────────────────────────────────────────────── */
+
+.vista__barra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sc-spacing-0-75);
+}
+
+.vista__nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+}
+
+.vista__mes {
+  inline-size: var(--sc-spacing-12-5);
+}
+
+.vista__anio {
+  min-inline-size: var(--sc-spacing-5);
+}
+
+.vista__titulo {
+  margin-inline-start: var(--sc-spacing-0-5);
+  text-transform: capitalize;
+}
+
+/* ── Filtros: botones con estado (`aria-pressed`). No hay en el DS un chip que se encienda y se apague. ──────────── */
+
+.vista__filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+}
+
+.vista__filtros-rotulo {
+  margin-inline-end: var(--sc-spacing-0-25);
+  color: var(--sc-text-secondary);
+}
+
+.filtro {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-375);
+  padding: var(--sc-spacing-0-25) var(--sc-spacing-0-625);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-full);
+  background: var(--sc-bg-surface);
+  color: var(--sc-text-primary);
+  cursor: pointer;
+  transition:
+    background-color 150ms ease-out,
+    opacity 150ms ease-out;
+
+  &:hover {
+    background: var(--sc-bg-hover);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-border-focus);
+    outline-offset: 1px;
+  }
+
+  /* Apagado: el contorno se queda y el relleno y el texto se van; el icono lo dice también con la forma (punto vacío). */
+  &--apagado {
+    background: transparent;
+    color: var(--sc-text-secondary);
+    text-decoration: line-through;
+
+    .filtro__punto {
+      background: transparent;
+    }
+  }
+
+  @each $color in ('blue', 'green', 'purple', 'orange', 'teal', 'amber', 'red', 'brown') {
+    &[data-color='#{$color}']:not(.filtro--apagado) {
+      border-color: var(--sc-label-#{$color}-bg);
+      background: var(--sc-label-#{$color}-bg);
+      color: var(--sc-label-#{$color}-text);
+    }
+  }
+}
+
+.filtro__punto {
+  inline-size: var(--sc-spacing-0-5);
+  block-size: var(--sc-spacing-0-5);
+  border: 1px solid currentColor;
+  border-radius: var(--sc-radius-full);
+  background: currentColor;
+}
+
+/* ── El día elegido, en una línea ──────────────────────────────────────────────────────────────────────────────── */
+
+.vista__dia {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sc-spacing-0-25) var(--sc-spacing-1);
+  min-block-size: var(--sc-spacing-2-5);
+  padding: var(--sc-spacing-0-25) var(--sc-spacing-0-75);
+  border-radius: var(--sc-radius-md);
+  background: var(--sc-bg-subtle);
+}
+
+.vista__dia-titulo::first-letter {
+  text-transform: uppercase;
+}
+
+.vista__dia-estado {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-25);
+  color: var(--sc-text-secondary);
+
+  &--abierto {
+    color: var(--sc-text-success);
+  }
+}
+
+.vista__dia-motivo,
+.vista__dia-vacio {
+  color: var(--sc-text-secondary);
+}
+
+.vista__dia-acciones {
+  display: inline-flex;
+  gap: var(--sc-spacing-0-125);
+  margin-inline-start: auto;
+}
+
+.vista__cuerpo {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-block-size: 0;
+}
+
+/* ── Colores de periodo: el mismo tinte en todas las vistas ────────────────────────────────────────────────────── */
+
+@mixin tinte($selector) {
+  @each $color in ('blue', 'green', 'purple', 'orange', 'teal', 'amber', 'red', 'brown') {
+    #{$selector}[data-color='#{$color}'] {
+      background: var(--sc-label-#{$color}-bg);
+      color: var(--sc-label-#{$color}-text);
+    }
+  }
+}
+
+/* ── Mes ───────────────────────────────────────────────────────────────────────────────────────────────────────── */
+
+.mes {
+  display: grid;
+  flex: 1;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  grid-template-rows: auto repeat(var(--semanas, 5), minmax(var(--sc-spacing-5), 1fr));
+  min-block-size: 0;
+  border-block-start: 1px solid var(--sc-border-default);
+  border-inline-start: 1px solid var(--sc-border-default);
+}
+
+.mes__dow {
+  padding: var(--sc-spacing-0-5) var(--sc-spacing-0-5);
+  border-block-end: 1px solid var(--sc-border-default);
+  border-inline-end: 1px solid var(--sc-border-default);
+  color: var(--sc-text-secondary);
+  text-align: start;
+  text-transform: capitalize;
+}
+
+.dia {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sc-spacing-0-25);
+  min-inline-size: 0;
+  padding: var(--sc-spacing-0-375) var(--sc-spacing-0-5);
+  overflow: hidden;
+  border: 0;
+  border-block-end: 1px solid var(--sc-border-default);
+  border-inline-end: 1px solid var(--sc-border-default);
+  background: var(--sc-bg-surface);
+  color: var(--sc-text-primary);
+  text-align: start;
+  cursor: pointer;
+  transition:
+    background-color 150ms ease-out,
+    opacity 150ms ease-out;
+
+  &:hover {
+    background: var(--sc-bg-hover);
+  }
+
+  &:focus-visible {
+    z-index: 1;
+    outline: 2px solid var(--sc-border-focus);
+    outline-offset: -2px;
+  }
+
+  &--fuera {
+    color: var(--sc-text-subtle);
+  }
+
+  &--cerrado {
+    background: var(--sc-bg-secondary-subtle);
+    color: var(--sc-text-secondary);
+  }
+
+  /* Elegido: un trazo de marca por dentro, para no empujar a los vecinos. */
+  &--elegido {
+    z-index: 1;
+    box-shadow: inset 0 0 0 2px var(--sc-border-primary);
+  }
+
+  &--apagado {
+    opacity: 0.35;
+  }
+}
+
+/* El periodo tiñe el día, igual que en el año. Gana al cerrado por llevar el atributo. */
+@include tinte('.dia--periodo');
+
+.dia__num {
+  display: inline-grid;
+  place-items: center;
+  min-inline-size: var(--sc-spacing-1-25);
+  block-size: var(--sc-spacing-1-25);
+  border-radius: var(--sc-radius-full);
+
+  /* Hoy: solo marcado en la rejilla, sin botón (marca de relleno + peso). */
+  &--hoy {
+    background: var(--sc-bg-primary);
+    color: var(--sc-text-on-primary);
+  }
+}
+
+/* Fecha especial o festivo: con contorno y glifo, no relleno: se distingue sin depender del color. */
+.dia__nombre {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-125);
+  max-inline-size: 100%;
+  padding: 0 var(--sc-spacing-0-375);
+  border: 1px solid var(--sc-border-strong);
+  border-radius: var(--sc-radius-sm);
+  background: var(--sc-bg-surface);
+  color: var(--sc-text-primary);
+
+  &--especial {
+    border-color: var(--sc-border-violet);
+    background: var(--sc-bg-violet-subtle);
+  }
+}
+
+.dia__nombre-texto {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dia__horas {
+  display: flex;
+  flex-direction: column;
+  max-inline-size: 100%;
+  color: var(--sc-text-secondary);
+
+  span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.dia__cerrado {
+  color: var(--sc-text-secondary);
+}
+
+/* ── Año ───────────────────────────────────────────────────────────────────────────────────────────────────────── */
+
+.anio {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--sc-spacing-1) var(--sc-spacing-1-5);
+  overflow-y: auto;
+
+  @container (min-width: 60rem) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  @container (max-width: 36rem) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.anio__nombre {
+  margin: 0 0 var(--sc-spacing-0-25);
+  text-transform: capitalize;
+}
+
+.anio__rejilla {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: var(--sc-spacing-0-125);
+}
+
+.anio__inicial {
+  color: var(--sc-text-secondary);
+  text-align: center;
+}
+
+.mini {
+  position: relative;
+  aspect-ratio: 1;
+  padding: 0;
+  border: 0;
+  border-radius: var(--sc-radius-sm);
+  background: transparent;
+  color: var(--sc-text-primary);
+  cursor: pointer;
+  transition:
+    background-color 150ms ease-out,
+    opacity 150ms ease-out,
+    transform 150ms ease-out;
+
+  &:hover {
+    background: var(--sc-bg-hover);
+  }
+
+  &:active {
+    transform: scale(0.96);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-border-focus);
+    outline-offset: 1px;
+  }
+
+  &--hoy {
+    text-decoration: underline;
+  }
+
+  &--elegido {
+    outline: 2px solid var(--sc-border-primary);
+    outline-offset: 1px;
+  }
+
+  &--apagado {
+    opacity: 0.3;
+  }
+}
+
+@include tinte('.mini--periodo');
+
+.mini--cerrado.mini--cerrado.mini--cerrado {
+  background: var(--sc-bg-secondary-subtle);
+  color: var(--sc-text-secondary);
+  text-decoration: line-through;
+}
+
+.mini--cerrado.mini--cerrado.mini--cerrado.mini--hoy {
+  text-decoration-line: underline line-through;
+}
+
+.mini--excepcion::after {
+  position: absolute;
+  inset-block-start: var(--sc-spacing-0-125);
+  inset-inline-end: var(--sc-spacing-0-125);
+  inline-size: var(--sc-spacing-0-25);
+  block-size: var(--sc-spacing-0-25);
+  border-radius: var(--sc-radius-full);
+  background: var(--sc-icon-primary);
+  content: '';
+}
+
+/* ── Semana y día: la línea de 24 horas ────────────────────────────────────────────────────────────────────────── */
+
+.linea {
+  --hora: var(--sc-spacing-3);
+  --gutter: var(--sc-spacing-3);
+
+  flex: 1;
+  min-block-size: 0;
+  overflow: auto;
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-md);
+  background: var(--sc-bg-surface);
+}
+
+.linea__cabecera {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: var(--gutter) repeat(var(--columnas), minmax(0, 1fr));
+  border-block-end: 1px solid var(--sc-border-default);
+  background: var(--sc-bg-surface);
+}
+
+.linea__dia {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sc-spacing-0-125);
+  padding: var(--sc-spacing-0-5);
+  border: 0;
+  border-inline-start: 1px solid var(--sc-border-default);
+  background: transparent;
+  color: var(--sc-text-primary);
+  text-transform: capitalize;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--sc-bg-hover);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-border-focus);
+    outline-offset: -2px;
+  }
+
+  &--hoy span:first-child {
+    text-decoration: underline;
+  }
+
+  &--elegido {
+    box-shadow: inset 0 -2px 0 var(--sc-border-primary);
+  }
+}
+
+.linea__nombre {
+  color: var(--sc-text-secondary);
+  text-transform: none;
+}
+
+.linea__cuerpo {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--gutter) repeat(var(--columnas), minmax(0, 1fr));
+  block-size: calc(24 * var(--hora));
+}
+
+.linea__horas {
+  display: grid;
+  grid-template-rows: repeat(24, var(--hora));
+}
+
+.linea__hora {
+  padding-inline-end: var(--sc-spacing-0-5);
+  color: var(--sc-text-secondary);
+  text-align: end;
+  /* La etiqueta cae sobre su raya, no debajo (la de las 00:00 se queda dentro, que no la recorte la cabecera). */
+  transform: translateY(calc(-1 * var(--sc-spacing-0-5)));
+
+  &:first-child {
+    transform: none;
+  }
+}
+
+/* Una raya por hora y otra más tenue por media hora: el formato de 30 minutos del horario. */
+.linea__col {
+  position: relative;
+  border-inline-start: 1px solid var(--sc-border-default);
+  background-image:
+    linear-gradient(to bottom, var(--sc-border-default) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--sc-border-subtle) 1px, transparent 1px);
+  background-size:
+    100% var(--hora),
+    100% calc(var(--hora) / 2);
+
+  &--elegida {
+    background-color: var(--sc-bg-primary-subtle);
+  }
+
+  &--apagada {
+    opacity: 0.35;
+  }
+}
+
+.bloque {
+  position: absolute;
+  inset-inline: var(--sc-spacing-0-125);
+  min-block-size: var(--sc-spacing-0-75);
+  padding: var(--sc-spacing-0-25) var(--sc-spacing-0-5);
+  overflow: hidden;
+  border-inline-start: 3px solid var(--sc-border-primary);
+  border-radius: var(--sc-radius-sm);
+  background: var(--sc-bg-primary-subtle);
+  color: var(--sc-text-primary);
+
+  &--especial {
+    border-inline-start-color: var(--sc-border-violet);
+    background: var(--sc-bg-violet-subtle);
+  }
+}
+
+@include tinte('.bloque--periodo');
+
+.linea__cerrado {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: var(--sc-spacing-0-5);
+  color: var(--sc-text-secondary);
+  text-align: center;
+}
+
+.linea__ahora {
+  position: absolute;
+  inset-inline: 0;
+  z-index: 1;
+  border-block-start: 2px solid var(--sc-border-danger);
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .filtro,
+  .dia,
+  .mini {
+    transition: none;
+  }
+}

@@ -1,0 +1,180 @@
+/* Las tres reglas, en segundo plano bajo el calendario (experimento). Una fila de tres; dos, y una, según el ancho. */
+:host {
+  display: block;
+  container-type: inline-size;
+}
+
+.reglas {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--sc-spacing-1);
+
+  @container (max-width: 64rem) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @container (max-width: 40rem) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.regla {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
+  min-inline-size: 0;
+  padding: var(--sc-spacing-1);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-lg);
+  background: var(--sc-bg-surface);
+}
+
+.regla__cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sc-spacing-0-5);
+}
+
+.regla__titulo {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  margin: 0;
+}
+
+.regla__cuenta {
+  padding: 0 var(--sc-spacing-0-5);
+  border-radius: var(--sc-radius-full);
+  background: var(--sc-bg-secondary-subtle);
+  color: var(--sc-text-secondary);
+}
+
+.regla__ayuda,
+.regla__nota {
+  margin: 0;
+  color: var(--sc-text-secondary);
+}
+
+.regla__vacio {
+  margin: var(--sc-spacing-0-5) 0 0;
+  color: var(--sc-text-secondary);
+}
+
+/* ── Semana ────────────────────────────────────────────────────────────────────────────────────────────────────── */
+
+.semana {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-375);
+  margin: var(--sc-spacing-0-25) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.semana__dia {
+  display: grid;
+  grid-template-columns: var(--sc-spacing-1-25) minmax(var(--sc-spacing-4), 1fr) minmax(0, 1.6fr);
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+}
+
+.semana__barra {
+  position: relative;
+  block-size: var(--sc-spacing-0-5);
+  border-radius: var(--sc-radius-full);
+  background: var(--sc-bg-secondary-subtle);
+
+  i {
+    position: absolute;
+    inset-block: 0;
+    border-radius: var(--sc-radius-full);
+    background: var(--sc-bg-primary);
+  }
+}
+
+.semana__texto {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  &--cerrado {
+    color: var(--sc-text-secondary);
+  }
+}
+
+/* ── Listas ────────────────────────────────────────────────────────────────────────────────────────────────────── */
+
+.lista {
+  display: flex;
+  flex-direction: column;
+  max-block-size: calc(var(--sc-spacing-4) * 3);
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.fila {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-75);
+  padding-block: var(--sc-spacing-0-375);
+}
+
+.fila__marca {
+  flex: none;
+  inline-size: var(--sc-spacing-0-5);
+  block-size: var(--sc-spacing-1-75);
+  border-radius: var(--sc-radius-full);
+  background: var(--sc-border-strong);
+
+  /* La marca de especial va con el contorno violeta del calendario. */
+  &--especial {
+    background: var(--sc-border-violet);
+  }
+
+  @each $color in ('blue', 'green', 'purple', 'orange', 'teal', 'amber', 'red', 'brown') {
+    &[data-color='#{$color}'] {
+      background: var(--sc-label-#{$color}-text);
+    }
+  }
+}
+
+.fila__cuerpo {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+
+.fila__nombre,
+.fila__detalle {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fila__detalle {
+  color: var(--sc-text-secondary);
+}
+
+.fila__acciones {
+  display: inline-flex;
+  flex: none;
+}
+
+.regla__festivos {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
+  margin-block-start: auto;
+  padding-block-start: var(--sc-spacing-0-5);
+}
+
+.repo-link {
+  align-self: flex-start;
+  color: var(--sc-text-link);
+  text-decoration: underline;
+  text-underline-offset: var(--sc-spacing-0-125);
+}

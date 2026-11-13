@@ -174,7 +174,7 @@ export class RepoListPageComponent<T extends RepoEntity> {
       rowHeader: c.emphasis,
       sortable: c.sortable,
       // El estado se pinta con su etiqueta: mientras carga, su píldora.
-      skeleton: c.kind === 'status' ? 'tag' : undefined,
+      skeleton: c.kind === 'status' && c.statusDisplay !== 'icon' ? 'tag' : undefined,
       // La cifra que abre la ficha en su sección no deja que la fila la vuelva a abrir arriba.
       stopRowClick: !!c.countOpensSection,
       cellTemplate: cell,
@@ -289,10 +289,20 @@ export class RepoListPageComponent<T extends RepoEntity> {
   protected getStatusEntry(
     item: T,
     key: string,
-  ): { labelKey: string; tone: 'success' | 'secondary' | 'warning' | 'danger' | 'info' } | null {
+  ): { labelKey: string; tone: 'success' | 'secondary' | 'warning' | 'danger' | 'info'; icon?: string } | null {
     const column = this.config().columns.find((c) => c.key === key);
-    if (!column || column.kind !== 'status' || !column.statusMap) return null;
+    if (!column || (column.kind !== 'status' && column.kind !== 'availability') || !column.statusMap) return null;
     return column.statusMap[column.accessor(item)] ?? null;
+  }
+
+  /** Cómo se pinta el estado de la columna: pastilla, glifo o disponibilidad (glifo + texto + matiz). */
+  protected statusDisplay(key: string): 'tag' | 'icon' | 'availability' {
+    const column = this.config().columns.find((c) => c.key === key);
+    return column?.kind === 'availability' ? 'availability' : (column?.statusDisplay ?? 'tag');
+  }
+
+  protected detailOf(item: T, key: string): string {
+    return this.config().columns.find((c) => c.key === key)?.detail?.(item) ?? '';
   }
 
   protected onCreateClick(): void {
@@ -453,7 +463,7 @@ export class RepoListPageComponent<T extends RepoEntity> {
     const headers = cfg.columns.map((c) => this.translate.instant(c.labelKey));
     const rows = visibleRows.map((item) =>
       cfg.columns.map((c) => {
-        if (c.kind === 'status' && c.statusMap) {
+        if ((c.kind === 'status' || c.kind === 'availability') && c.statusMap) {
           const entry = c.statusMap[c.accessor(item)];
           return entry ? this.translate.instant(entry.labelKey) : c.accessor(item);
         }

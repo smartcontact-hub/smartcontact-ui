@@ -16,187 +16,94 @@
   />
 </ng-template>
 
+<!-- Experimento: el calendario manda. Dos filas: arriba, el calendario a todo el ancho y el alto que deja la pantalla;
+     debajo, las reglas en segundo plano (semana habitual, periodos, fechas especiales). Los datos generales se fueron
+     a un diálogo tras el lápiz de la cabecera; «Activo» se queda a la vista. -->
 <div class="page">
-  <!-- Arquetipo de editor con su resultado al lado (`page__inner--resultado`: 1600 desde 1340, como las fichas con
-       resumen). Las reglas y el año lado a lado: el año se repinta con cada cambio; por debajo de 1340 va debajo. -->
-  <div class="page__inner page__inner--resultado">
-    <h1 class="page__heading sc-text-title-semibold">{{ form().name.trim() || ('repositories.horarios.create_title' | translate) }}</h1>
-
-    <div class="horario">
-      <!-- Las reglas: de la más general (la semana) a la más concreta (una fecha). Mandan al revés: fecha especial,
-           festivo, periodo y semana. -->
-      <div class="horario__reglas">
-        <sc-section-card titleKey="repositories.horarios.section_general" surface="subtle" icon="tune">
-          <sc-subsection>
-            <div class="bloque">
-              <div class="field">
-                <sc-inputtext
-                  inputId="horario-name"
-                  fluid
-                  required
-                  [label]="'repositories.columns.name' | translate"
-                  [placeholder]="'repositories.horarios.name_placeholder' | translate"
-                  [value]="form().name"
-                  [helperText]="nameHint()"
-                  [error]="nameError()"
-                  (valueChange)="update('name', $event)"
-                  (focusout)="dejarNombre($event)"
-                />
-              </div>
-              <div class="field">
-                <sc-select
-                  inputId="horario-zona"
-                  filter
-                  [label]="'repositories.horarios.timezone' | translate"
-                  [helperText]="'repositories.horarios.timezone_help' | translate"
-                  [options]="zonas()"
-                  optionLabel="label"
-                  optionValue="value"
-                  [value]="form().timezone"
-                  (valueChange)="update('timezone', $any($event))"
-                />
-              </div>
-              <div class="field">
-                <sc-inputtext
-                  inputId="horario-description"
-                  fluid
-                  [label]="'repositories.columns.description' | translate"
-                  [placeholder]="'repositories.placeholders.description' | translate"
-                  [value]="form().description"
-                  (valueChange)="update('description', $event)"
-                />
-              </div>
-            </div>
-          </sc-subsection>
-
-          <!-- «Activo», en su propio bloque y con su ayuda siempre, como en la ficha de usuario. La ayuda dice quién lo usa
-               y qué les pasa al apagarlo (DD-152): es el único sitio donde se dice. -->
-          <sc-divider />
-          <section class="sub-section">
-            <div class="switch-field switch-field--top">
-              <sc-toggleswitch
-                inputId="horario-activo"
-                ariaDescribedBy="horario-activo-ayuda"
-                [ariaLabel]="'repositories.horarios.active' | translate"
-                [checked]="form().status === 'active'"
-                (checkedChange)="update('status', $event ? 'active' : 'inactive')"
-              />
-              <div class="switch-field__copy">
-                <label class="switch-field__label sc-text-body-regular" for="horario-activo">{{ 'repositories.horarios.active' | translate }}</label>
-                <p id="horario-activo-ayuda" class="switch-field__hint sc-text-caption-regular">{{ ayudaDeActivo() }}</p>
-              </div>
-            </div>
-          </section>
-        </sc-section-card>
-
-        <sc-section-card anchorId="horario-semana" titleKey="repositories.horarios.section_week" hintKey="repositories.horarios.section_week_hint" surface="subtle" icon="schedule">
-          <sc-subsection>
-            <div class="bloque">
-              <sc-horario-semana [semana]="form().week" [falta]="faltaDeSemana()" (semanaChange)="update('week', $event)" />
-            </div>
-          </sc-subsection>
-        </sc-section-card>
-
-        <sc-section-card titleKey="repositories.horarios.section_periods" hintKey="repositories.horarios.section_periods_hint" surface="subtle" icon="date_range">
-          <sc-subsection>
-            <div class="bloque">
-              <sc-horario-filas-table
-                [filas]="periodos()"
-                [columnas]="columnasDePeriodos()"
-                anadirKey="repositories.horarios.period_add"
-                vacioKey="repositories.horarios.periods_empty"
-                vacioCuerpoKey="repositories.horarios.periods_empty_body"
-                vacioIcono="date_range"
-                (abrir)="abrirPeriodo($event)"
-                (eliminar)="eliminarPeriodo($event)"
-                (anadir)="periodoDialog.set({ periodo: null })"
-              />
-            </div>
-          </sc-subsection>
-        </sc-section-card>
-
-        <!-- Dos grupos en la misma tarjeta, a 28 (UX 9): los festivos compartidos que aplica y sus fechas propias. -->
-        <sc-section-card titleKey="repositories.horarios.section_specials" hintKey="repositories.horarios.section_specials_hint" surface="subtle" icon="event_busy">
-          <sc-subsection titleKey="repositories.horarios.holiday_calendars">
-            <div class="bloque">
-              <!-- Como Recursos en la ficha de grupo: media columna, con buscador y tantos chips como caben. -->
-              <div class="grid grid--2">
-                <div class="field">
-                  <sc-multiselect
-                    inputId="horario-festivos"
-                    display="chip"
-                    chipOverflow="fit"
-                    [filter]="true"
-                    [ariaLabel]="'repositories.horarios.holiday_calendars' | translate"
-                    [placeholder]="'repositories.horarios.holiday_calendars_placeholder' | translate"
-                    [helperText]="'repositories.horarios.holiday_calendars_help' | translate"
-                    [options]="opcionesDeFestivos()"
-                    optionLabel="label"
-                    optionValue="value"
-                    [value]="$any(form().holidayCalendarIds)"
-                    (valueChange)="ponerFestivos($event)"
-                  />
-                </div>
-              </div>
-              <!-- Sale del horario: con cambios, pide guardar antes, como «Gestionar en Repositorios» del grupo. -->
-              <a class="repo-link sc-text-caption-semibold" [href]="festivosHref" (click)="irAFestivos($event)">{{ 'repositories.horarios.manage_holidays' | translate }}</a>
-            </div>
-          </sc-subsection>
-
-          <sc-subsection titleKey="repositories.horarios.specials_own">
-            <div class="bloque">
-              <sc-horario-filas-table
-                [filas]="especiales()"
-                [columnas]="columnasDeEspeciales()"
-                anadirKey="repositories.horarios.special_add"
-                [vacioKey]="verPasadas() ? 'repositories.horarios.specials_past_empty' : 'repositories.horarios.specials_empty'"
-                [vacioCuerpoKey]="verPasadas() ? null : 'repositories.horarios.specials_empty_body'"
-                vacioIcono="event_busy"
-                (abrir)="abrirEspecial($event)"
-                (eliminar)="eliminarEspecial($event)"
-                (anadir)="especialDialog.set({ especial: null, fecha: null, mes: diaDelAnio() })"
-              >
-                <!-- Las de años pasados no estorban: «Próximas» por defecto, siempre a la vista, como el filtro de la barra
-                     de asignar (DD-243). -->
-                <sc-selectbutton
-                  filasBarra
-                  size="sm"
-                  [ariaLabel]="'repositories.horarios.specials_filter' | translate"
-                  [options]="filtroDeEspeciales()"
-                  optionLabel="label"
-                  optionValue="value"
-                  [allowEmpty]="false"
-                  [value]="verPasadas() ? 'pasadas' : 'proximas'"
-                  (valueChange)="verPasadas.set($event === 'pasadas')"
-                />
-              </sc-horario-filas-table>
-            </div>
-          </sc-subsection>
-        </sc-section-card>
+  <div class="page__inner page__inner--list horario">
+    <header class="cabecera">
+      <div class="cabecera__titulo">
+        <h1 class="page__heading sc-text-title-semibold">{{ form().name.trim() || ('repositories.horarios.create_title' | translate) }}</h1>
+        <p class="cabecera__meta sc-text-caption-regular">
+          <sc-icon name="public" size="sm" aria-hidden="true" />
+          {{ form().timezone }}@if (form().description) { <span aria-hidden="true">·</span> {{ form().description }} }
+        </p>
       </div>
-
-      <!-- El resultado: el año, que se repinta con cada cambio de la izquierda. -->
-      <div class="horario__resultado">
-        <sc-section-card titleKey="repositories.horarios.section_calendar" hintKey="repositories.horarios.section_calendar_hint" surface="subtle" icon="calendar_month">
-          <sc-subsection>
-            <div class="bloque">
-              <sc-horario-calendario
-                [reglas]="reglas()"
-                [calendarios]="calendarios()"
-                [zona]="form().timezone"
-                [(diaElegido)]="diaDelAnio"
-                (cambiarDia)="cambiarDia($event)"
-                (editarPeriodo)="abrirPeriodo($event)"
-                (editarSemana)="editarSemana()"
-                (editarFestivos)="editarFestivos($event)"
-              />
-            </div>
-          </sc-subsection>
-        </sc-section-card>
+      <div class="cabecera__acciones">
+        <!-- «Activo» se enciende y se apaga con frecuencia: a la vista. Su ayuda (quién lo usa y qué pasa al apagarlo, DD-152)
+             va en el tooltip y en la descripción del interruptor. -->
+        <div class="switch-field" [pTooltip]="ayudaDeActivo()" tooltipPosition="bottom">
+          <sc-toggleswitch
+            inputId="horario-activo"
+            ariaDescribedBy="horario-activo-ayuda"
+            [ariaLabel]="'repositories.horarios.active' | translate"
+            [checked]="form().status === 'active'"
+            (checkedChange)="update('status', $event ? 'active' : 'inactive')"
+          />
+          <div class="switch-field__copy">
+            <label class="switch-field__label sc-text-body-regular" for="horario-activo">{{ 'repositories.horarios.active' | translate }}</label>
+          </div>
+          <p id="horario-activo-ayuda" class="visually-hidden">{{ ayudaDeActivo() }}</p>
+        </div>
+        <sc-button
+          variant="secondary"
+          appearance="outlined"
+          size="sm"
+          icon="edit"
+          [label]="'repositories.horarios.x.general.edit' | translate"
+          [class.cabecera__editar--falta]="faltaElNombre()"
+          (clicked)="datosDialog.set(true)"
+        />
       </div>
-    </div>
+    </header>
+
+    @if (faltaElNombre() && nameError()) {
+      <p class="cabecera__error sc-text-caption-regular" role="alert">{{ nameError() }}</p>
+    }
+
+    <section class="horario__calendario" [attr.aria-label]="'repositories.horarios.section_calendar' | translate">
+      <sc-horario-vista
+        [reglas]="reglas()"
+        [calendarios]="calendarios()"
+        [zona]="form().timezone"
+        [(diaElegido)]="diaDelAnio"
+        (cambiarDia)="cambiarDia($event)"
+        (editarPeriodo)="abrirPeriodo($event)"
+        (editarSemana)="editarSemana()"
+        (editarFestivos)="editarFestivos($event)"
+      />
+    </section>
+
+    <section class="horario__reglas" [attr.aria-label]="'repositories.horarios.x.rules.title' | translate">
+      <h2 class="horario__reglas-titulo sc-text-body-semibold">{{ 'repositories.horarios.x.rules.title' | translate }}</h2>
+      <sc-horario-reglas
+        [semana]="form().week"
+        [periodos]="form().periods"
+        [especiales]="form().specials"
+        [zona]="form().timezone"
+        [calendarios]="calendarios()"
+        [festivosAplicados]="form().holidayCalendarIds"
+        (editarSemana)="editarSemana()"
+        (anadirPeriodo)="periodoDialog.set({ periodo: null })"
+        (abrirPeriodo)="abrirPeriodo($event)"
+        (eliminarPeriodo)="eliminarPeriodo($event)"
+        (anadirEspecial)="especialDialog.set({ especial: null, fecha: null, mes: diaDelAnio() })"
+        (abrirEspecial)="abrirEspecial($event)"
+        (eliminarEspecial)="eliminarEspecial($event)"
+        (cambiarFestivos)="ponerFestivos($event)"
+        (gestionarFestivos)="irAFestivos($event)"
+      />
+    </section>
   </div>
 </div>
+
+@if (datosDialog()) {
+  <sc-horario-datos-modal [datos]="{ name: form().name, timezone: form().timezone, description: form().description }" (guardar)="guardarDatos($event)" (cerrado)="datosDialog.set(false)" />
+}
+
+@if (semanaDialog()) {
+  <sc-horario-semana-modal [semanaInicial]="form().week" (guardar)="guardarSemana($event)" (cerrado)="semanaDialog.set(false)" />
+}
 
 @if (periodoDialog(); as dialog) {
   <sc-horario-periodo-modal

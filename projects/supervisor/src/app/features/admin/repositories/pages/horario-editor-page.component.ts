@@ -1,47 +1,35 @@
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, HostListener, inject, Injector, type OnInit, signal, type TemplateRef, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, HostListener, inject, type OnInit, signal, type TemplateRef, viewChild } from '@angular/core';
 import { LocationStrategy } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TooltipModule } from 'primeng/tooltip';
-import {
-  ScButtonComponent,
-  ScDividerComponent,
-  ScInputTextComponent,
-  ScMultiSelectComponent,
-  ScSectionCardComponent,
-  ScSelectButtonComponent,
-  ScSelectComponent,
-  ScSubsectionComponent,
-  ScToggleSwitchComponent,
-} from '@smartcontact-hub/components';
+import { ScIconComponent } from '@smartcontact-hub/icons';
+import { ScButtonComponent, ScToggleSwitchComponent } from '@smartcontact-hub/components';
 
 import type { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { BreadcrumbService, injectAlertModal, ResultadoAccionService } from '@core/services';
-import { LanguageService } from '@core/services/language.service';
 import { injectLangChange } from '@core/utils/lang-change';
 import { GroupsStore } from '@features/admin/groups/state/groups.store';
-import { ayudaDeObligatorio, dejoElCampo, llegarATarjeta, ocasionDeAvisar } from '@shared/utils/alta-secciones';
+import { ocasionDeAvisar } from '@shared/utils/alta-secciones';
 import { nombreDeCopia } from '@shared/utils/copy-name';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 
-import { HorarioCalendarioComponent } from '../components/horario/horario-calendario.component';
-import { type ColumnaDeHorario, type FilaDeHorario, HorarioFilasTableComponent } from '../components/horario/horario-filas-table.component';
+import { type DatosDeHorario, HorarioDatosModalComponent } from '../components/horario/horario-datos-modal.component';
 import { type FechaEspecialNueva, HorarioEspecialModalComponent } from '../components/horario/horario-especial-modal.component';
 import { HorarioPeriodoModalComponent } from '../components/horario/horario-periodo-modal.component';
-import { DIAS_DE_LA_SEMANA, HorarioSemanaComponent } from '../components/horario/horario-semana.component';
+import { HorarioReglasComponent } from '../components/horario/horario-reglas.component';
+import { HorarioSemanaModalComponent } from '../components/horario/horario-semana-modal.component';
+import { HorarioVistaComponent } from '../components/horario/horario-vista.component';
 import { FestivosStore } from '../state/festivos.store';
 import { subcanalesConHorario } from '../state/horario-uso.service';
 import {
-  ahoraEn,
   duenoDe,
   type FechaEspecial,
   type Horario,
   type Periodo,
-  resumenDeLaSemana,
   type Semana,
   siguienteId,
-  textoDeFranja,
   validarSemana,
 } from '../state/horarios.core.mjs';
 import { HorariosStore } from '../state/horarios.store';
@@ -61,7 +49,6 @@ const VACIO: Borrador = {
 };
 
 const FALTA_NOMBRE = 'repositories.horarios.errors.name_required';
-const aFecha = (iso: string): Date => new Date(`${iso}T12:00:00`);
 
 /**
  * El editor de un horario: cuándo se atiende. A la izquierda, sus reglas (la semana habitual, los periodos y las
@@ -71,19 +58,14 @@ const aFecha = (iso: string): Date => new Date(`${iso}T12:00:00`);
 @Component({
   selector: 'sc-horario-editor-page',
   imports: [
-    HorarioCalendarioComponent,
+    HorarioDatosModalComponent,
     HorarioEspecialModalComponent,
-    HorarioFilasTableComponent,
     HorarioPeriodoModalComponent,
-    HorarioSemanaComponent,
+    HorarioReglasComponent,
+    HorarioSemanaModalComponent,
+    HorarioVistaComponent,
     ScButtonComponent,
-    ScDividerComponent,
-    ScInputTextComponent,
-    ScMultiSelectComponent,
-    ScSectionCardComponent,
-    ScSelectButtonComponent,
-    ScSelectComponent,
-    ScSubsectionComponent,
+    ScIconComponent,
     ScToggleSwitchComponent,
     TooltipModule,
     TranslateModule,
@@ -100,7 +82,6 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
   private readonly groupsStore = inject(GroupsStore);
   private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
-  private readonly language = inject(LanguageService);
   private readonly lang = injectLangChange();
 
   private readonly topbarActions = viewChild<TemplateRef<unknown>>('topbarActions');
@@ -156,13 +137,22 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
     this.lang();
     return this.faltaElNombre() && this.ocasion.acusa(FALTA_NOMBRE) ? this.translate.instant(FALTA_NOMBRE) : undefined;
   });
-  protected readonly nameHint = computed<string | undefined>(() => {
-    this.lang();
-    return this.faltaElNombre() && !this.ocasion.acusa(FALTA_NOMBRE) ? ayudaDeObligatorio(this.translate.instant(FALTA_NOMBRE)) : undefined;
-  });
+  /* ── Datos generales (nombre, zona, descripción): en su diálogo (experimento) ──────────────────────────────────── */
 
-  protected dejarNombre(event: FocusEvent): void {
-    if (this.faltaElNombre() && dejoElCampo(event)) this.ocasion.tocar(FALTA_NOMBRE);
+  protected readonly datosDialog = signal(false);
+
+  protected guardarDatos(datos: DatosDeHorario): void {
+    this.form.update((f) => ({ ...f, ...datos }));
+    this.datosDialog.set(false);
+  }
+
+  /* ── Semana habitual: en su diálogo ───────────────────────────────────────────────────────────────────────────── */
+
+  protected readonly semanaDialog = signal(false);
+
+  protected guardarSemana(semana: Semana): void {
+    this.update('week', semana);
+    this.semanaDialog.set(false);
   }
 
   protected readonly canSave = computed(() => this.faltas().length === 0 && (this.mode() === 'create' || this.formDirty()));
@@ -173,92 +163,6 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
   });
 
   /* ── Lo que se enseña ─────────────────────────────────────────────────────────────────────────────────────────── */
-
-  private readonly diasCortos = computed(() => {
-    this.lang();
-    return DIAS_DE_LA_SEMANA.map((d) => this.translate.instant(`repositories.horarios.days_short.${d}`) as string);
-  });
-
-  private resumen(semana: Semana): string {
-    return resumenDeLaSemana(semana, this.diasCortos(), this.translate.instant('repositories.horarios.closed'), this.translate.instant('repositories.horarios.all_day'));
-  }
-
-  /** Las zonas horarias que conoce el navegador; la del horario siempre está, aunque no la conozca. */
-  protected readonly zonas = computed(() => {
-    const conocidas = typeof Intl.supportedValuesOf === 'function' ? Intl.supportedValuesOf('timeZone') : [];
-    return [...new Set([this.form().timezone, 'UTC', ...conocidas])].sort().map((z) => ({ value: z, label: z }));
-  });
-
-  /** Las cabeceras de las dos tablas, en el idioma de la app. */
-  protected readonly columnasDePeriodos = computed<readonly ColumnaDeHorario[]>(() => {
-    this.lang();
-    const t = (k: string): string => this.translate.instant(`repositories.horarios.cols.${k}`);
-    return [
-      { campo: 'nombre', titulo: t('period'), etiqueta: true },
-      { campo: 'fechas', titulo: t('dates') },
-      { campo: 'semana', titulo: t('week') },
-    ];
-  });
-
-  protected readonly columnasDeEspeciales = computed<readonly ColumnaDeHorario[]>(() => {
-    this.lang();
-    const t = (k: string): string => this.translate.instant(`repositories.horarios.cols.${k}`);
-    return [
-      // El nombre nombra la fila, como en la agenda (DD-193): primero.
-      { campo: 'nombre', titulo: t('name') },
-      { campo: 'fecha', titulo: t('date') },
-      { campo: 'horas', titulo: t('hours') },
-    ];
-  });
-
-  protected readonly periodos = computed<readonly FilaDeHorario[]>(() => {
-    this.lang();
-    const dia = new Intl.DateTimeFormat(this.language.locale(), { day: 'numeric', month: 'short' });
-    const conAnio = new Intl.DateTimeFormat(this.language.locale(), { day: 'numeric', month: 'short', year: 'numeric' });
-    return this.form().periods.map((p) => {
-      const desde = dia.format(aFecha(`2024-${p.from}`));
-      // La repetición va en la fecha (DD-252): lo de un año lleva su año; lo que se repite, no. Una columna aparte no cabía.
-      const fechas = `${desde} – ${(p.year === null ? dia : conAnio).format(aFecha(`${p.year ?? 2024}-${p.to}`))}`;
-      return { id: p.id, color: p.color, celdas: { nombre: p.name, fechas, semana: this.resumen(p.week) } };
-    });
-  });
-
-  /** Las fechas de un año que ya pasó (en la zona del horario). Las que se repiten nunca pasan. */
-  private readonly esPasada = (e: FechaEspecial): boolean => !e.yearly && e.date < ahoraEn(this.form().timezone).fecha;
-  protected readonly verPasadas = signal(false);
-  protected readonly filtroDeEspeciales = computed(() => {
-    this.lang();
-    return [
-      { value: 'proximas', label: this.translate.instant('repositories.horarios.specials_upcoming') },
-      { value: 'pasadas', label: this.translate.instant('repositories.horarios.specials_past') },
-    ];
-  });
-
-  /** Las fechas especiales, por orden en el año: primero las que se repiten, por día, y luego las de un año, por fecha. */
-  protected readonly especiales = computed<readonly FilaDeHorario[]>(() => {
-    this.lang();
-    const conAnio = new Intl.DateTimeFormat(this.language.locale(), { day: 'numeric', month: 'short', year: 'numeric' });
-    const sinAnio = new Intl.DateTimeFormat(this.language.locale(), { day: 'numeric', month: 'short' });
-    const pasadas = this.verPasadas();
-    return [...this.form().specials]
-      .filter((e) => this.esPasada(e) === pasadas)
-      .sort((a, b) => Number(b.yearly) - Number(a.yearly) || (a.yearly ? a.date.slice(5).localeCompare(b.date.slice(5)) : a.date.localeCompare(b.date)))
-      .map((e) => ({
-        id: e.id,
-        celdas: {
-          // Con su año si es de uno; sin año si se repite, como los periodos.
-          fecha: (e.yearly ? sinAnio : conAnio).format(aFecha(e.yearly ? `2024${e.date.slice(4)}` : e.date)),
-          nombre: e.name,
-          horas: e.slots.length > 0 ? e.slots.map(textoDeFranja).join(', ') : this.translate.instant('repositories.horarios.closed'),
-        },
-      }));
-  });
-
-  protected readonly opcionesDeFestivos = computed(() =>
-    this.calendarios()
-      .filter((c) => c.status !== 'inactive' || this.form().holidayCalendarIds.includes(c.id))
-      .map((c) => ({ value: c.id, label: c.name })),
-  );
 
   /** Los grupos que atienden con este horario (DD-152): cambiarlo les cambia a ellos. */
   protected readonly grupos = computed(() => {
@@ -309,6 +213,8 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
     if (raw === null) {
       this.seedFromDuplicate();
       this.dirtyState.markPristine();
+      // Un horario nuevo empieza por su nombre: el diálogo de datos se abre solo.
+      if (!this.form().name) this.datosDialog.set(true);
       return;
     }
     const horario = this.store.items().find((h) => h.id === Number(raw));
@@ -419,11 +325,9 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
 
   /* ── Lo que decide el día elegido, en su sitio (DD-254) ─────────────────────────────────────────────────────────── */
 
-  private readonly injector = inject(Injector);
-
-  /** «Editar semana»: la tarjeta de la semana habitual, a la vista y con el foco en su título. */
+  /** «Editar semana»: abre la semana habitual en su diálogo. */
   protected editarSemana(): void {
-    llegarATarjeta('horario-semana', this.injector);
+    this.semanaDialog.set(true);
   }
 
   /** «Editar festivos»: el calendario que decide ese día; sale del horario, así que con cambios pide guardar antes. */

@@ -105,9 +105,24 @@
         />
       }
     } @else if (getStatusEntry(item, col.field); as status) {
-      <!-- Estado con el `tag` del DS y su severidad (DD-76): Figma dibuja así el estado
-           de Agentes. El tono lo declara cada instancia en su `statusMap`. -->
-      <sc-tag [severity]="status.tone" [value]="status.labelKey | translate" />
+      @if (statusDisplay(col.field) === 'icon') {
+        <!-- Experimento: el estado como glifo. El texto sigue en el nombre accesible y en el tooltip. -->
+        <span class="estado-icono estado-icono--{{ status.tone }}" role="img" [attr.aria-label]="status.labelKey | translate" [pTooltip]="status.labelKey | translate" tooltipPosition="top">
+          <sc-icon [name]="status.icon ?? 'check_circle'" size="sm" filled aria-hidden="true" />
+        </span>
+      } @else if (statusDisplay(col.field) === 'availability') {
+        <!-- Experimento: «Atención ahora» con glifo + estado + matiz, en vez de la pastilla que repetía «Estado». -->
+        <span class="disponibilidad">
+          <span class="estado-icono estado-icono--{{ status.tone }}"><sc-icon [name]="status.icon ?? 'circle'" size="sm" filled aria-hidden="true" /></span>
+          <span>{{ status.labelKey | translate }}</span>
+          @if (detailOf(item, col.field); as matiz) {
+            <span class="disponibilidad__matiz sc-text-caption-regular">{{ matiz }}</span>
+          }
+        </span>
+      } @else {
+        <sc-tag [severity]="status.tone" [value]="status.labelKey | translate" />
+      }
+    } @else if (false) {
     } @else if (showDash(item, col.field)) {
       <sc-celda-vacia />
     } @else {

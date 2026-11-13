@@ -1517,7 +1517,7 @@
         "title_bulk": "Eliminar {{count}} horários?"
       },
       "col_week": "Semana habitual",
-      "col_now": "Agora",
+      "col_now": "Atendimento agora",
       "col_periods": "Períodos",
       "col_specials": "Datas especiais",
       "col_groups": "Grupos",
@@ -1656,6 +1656,65 @@
       "active_hint": "Só os horários ativos se podem escolher num grupo.",
       "in_use_bulk": "São usados por {{count}} grupos: passarão a atender sempre.",
       "in_use_bulk_one": "São usados por 1 grupo: passará a atender sempre.",
+      "x": {
+        "view": {
+          "label": "Vista do calendário",
+          "day": "Dia",
+          "week": "Semana",
+          "month": "Mês",
+          "year": "Ano"
+        },
+        "nav": {
+          "prev": "Anterior",
+          "next": "Seguinte",
+          "month": "Mês",
+          "year": "Ano"
+        },
+        "layers": {
+          "label": "Mostrar",
+          "week": "Semana habitual",
+          "holiday": "Feriados",
+          "special": "Datas especiais",
+          "closed": "Fechado",
+          "show_all": "Mostrar tudo"
+        },
+        "day": {
+          "pick": "Escolha um dia para ver as suas horas e editá-lo",
+          "edit_origin_none": "Editar o que decide este dia",
+          "edit_period": "Editar o período deste dia",
+          "edit_holidays": "Editar os feriados deste dia",
+          "edit_week": "Editar a semana habitual",
+          "only_this_day": "Alterar só este dia",
+          "edit_special": "Editar esta data especial"
+        },
+        "in_hours": "Em horário",
+        "out_of_hours": "Fora de horário",
+        "now_detail": {
+          "until": "até às {{time}}",
+          "until_day": "até {{day}} às {{time}}",
+          "opens_today": "abre às {{time}}",
+          "opens_tomorrow": "abre amanhã às {{time}}",
+          "opens_day": "abre {{day}} às {{time}}"
+        },
+        "general": {
+          "title": "Dados do horário",
+          "edit": "Editar dados"
+        },
+        "rules": {
+          "title": "Regras do horário",
+          "week_edit": "Editar a semana habitual",
+          "week_hint": "O que vale quando nada mais manda.",
+          "periods_hint": "Épocas com a sua própria semana: verão, campanhas…",
+          "specials_title": "Datas especiais e feriados",
+          "specials_hint": "Dias soltos que mandam sobre tudo o resto.",
+          "yearly": "todos os anos",
+          "past_hidden": "{{count}} de anos passados, ocultas."
+        },
+        "week_modal": {
+          "hint": "As faixas de cada dia, ao minuto. Aplicam-se ao calendário ao guardar.",
+          "apply": "Aplicar"
+        }
+      },
       "festivos_leave": {
         "title": "Salvar as alterações?",
         "body": "Para ir a Feriados, salve antes o horário."

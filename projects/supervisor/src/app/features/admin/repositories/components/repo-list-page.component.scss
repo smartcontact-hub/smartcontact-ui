@@ -48,3 +48,26 @@
 /* El panel de fila y el menú contextual propios murieron en la Ola 2: ambos
  * los sustituye el <p-menu> compartido, y el botón usa `.rules-kebab-btn`,
  * el kebab global de `main.scss`. */
+
+/* Experimento (rama de Horarios): el estado como glifo y la disponibilidad con su matiz. El color solo refuerza: el
+ * texto va siempre (nombre accesible, tooltip o la propia celda). */
+.estado-icono {
+  display: inline-flex;
+  align-items: center;
+  color: var(--sc-icon-secondary);
+
+  &--success {
+    color: var(--sc-icon-success);
+  }
+}
+
+.disponibilidad {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  color: var(--sc-text-primary);
+
+  &__matiz {
+    color: var(--sc-text-secondary);
+  }
+}
