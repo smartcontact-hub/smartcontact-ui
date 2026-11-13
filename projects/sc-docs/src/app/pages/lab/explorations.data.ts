@@ -261,4 +261,14 @@ export const LABS: readonly Lab[] = [
     href: 'https://claude-lab-horarios.sc-supervisor.pages.dev/lab/horarios',
     label: 'claude-lab-horarios.sc-supervisor.pages.dev/lab/horarios',
   },
+  {
+    id: 'lab-tiempo-premium',
+    title: 'Tiempo, versión premium',
+    question: '¿Y si horarios y festivos se vieran como un SaaS premium, en una sola pantalla y sin atarse al DS?',
+    controls: ['Semana en líneas de 24 h', 'Calendario con calor', 'Ficha del día con su porqué', 'El año de festivos en doce meses'],
+    where: 'Entra por Repositorios › Tiempo; pulsa un día del calendario para ver su ficha.',
+    // Vive en su rama experimental: el preview de la rama, no producción. Ese dominio entra ya en el rediseño.
+    href: 'https://claude-lab-horarios-premium.sc-supervisor.pages.dev/lab/tiempo',
+    label: 'claude-lab-horarios-premium.sc-supervisor.pages.dev/lab/tiempo',
+  },
 ];

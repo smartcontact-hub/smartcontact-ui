@@ -1,0 +1,359 @@
+/*
+ * LABORATORIO «Tiempo», versión premium: el listado Tiempo (horarios y listas de festivos).
+ * Hoja global (ViewEncapsulation.None) que cuelga entera de `.tp`; ver tp-base.scss para el sistema.
+ */
+
+/* ── Listado Tiempo ─────────────────────────────────────────────────────────────────────────────────────────────── */
+
+.tp-head__acciones {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+.tp-barra {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--s-3);
+}
+.tp-buscar {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  inline-size: 17rem;
+  block-size: 2rem;
+  padding-inline: var(--s-3) var(--s-1-5);
+  border-radius: var(--r-sm);
+  background: var(--tp-surface);
+  box-shadow: var(--tp-ring);
+  color: var(--tp-ink-3);
+  transition-property: box-shadow;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+
+  &:focus-within {
+    box-shadow: 0 0 0 1px var(--tp-accent), 0 0 0 4px var(--tp-accent-ring);
+  }
+}
+.tp-buscar__input {
+  flex: 1;
+  min-inline-size: 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-size: var(--t-13);
+  color: var(--tp-ink);
+  &:focus {
+    outline: 0;
+  }
+  &::placeholder {
+    color: var(--tp-ink-3);
+  }
+  &::-webkit-search-cancel-button {
+    display: none;
+  }
+}
+.tp-buscar .tp-kbd {
+  background: var(--tp-muted);
+  color: var(--tp-ink-3);
+}
+
+.tp-kpis {
+  display: grid;
+  flex: none;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--s-4);
+}
+.tp-kpi {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--s-3);
+  min-block-size: 6.25rem;
+  padding: var(--s-4) var(--s-5);
+}
+.tp-kpi__fila {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  min-inline-size: 0;
+}
+.tp-kpi__n {
+  font-size: 1.75rem;
+  line-height: 2rem;
+  font-weight: 650;
+  letter-spacing: -0.03em;
+}
+.tp-kpi__txt {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+.tp-kpi__icono {
+  display: grid;
+  flex: none;
+  place-items: center;
+  inline-size: 2.25rem;
+  block-size: 2.25rem;
+  border-radius: var(--r-sm);
+  background: color-mix(in oklch, var(--tp-accent) 12%, var(--tp-surface));
+  color: var(--tp-accent-ink);
+  &.is-abre {
+    background: var(--tp-especial-soft);
+    color: var(--tp-especial-ink);
+  }
+}
+.tp-kpi__barra {
+  display: flex;
+  gap: 0.125rem;
+  block-size: 0.375rem;
+  overflow: hidden;
+  border-radius: var(--r-full);
+  i {
+    min-inline-size: 0;
+    flex-basis: 0;
+    transition-property: flex-grow;
+    transition-duration: 400ms;
+    transition-timing-function: var(--tp-ease);
+  }
+  .is-open {
+    background: var(--tp-open-dot);
+  }
+  .is-closed {
+    background: var(--tp-sunken);
+  }
+  .is-inactive {
+    background: color-mix(in oklch, #f5a524 55%, var(--tp-surface));
+  }
+}
+
+.tp-tabla {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-block-size: 18rem;
+  overflow: hidden;
+}
+.tp-tabla__cab,
+.tp-fila {
+  display: grid;
+  grid-template-columns: minmax(12rem, 1.1fr) minmax(13rem, 0.9fr) minmax(20rem, 1.6fr) 9rem 7.5rem 2.5rem;
+  align-items: center;
+  gap: var(--s-4);
+  padding-inline: var(--s-5) var(--s-3);
+}
+.tp-tabla__cab {
+  flex: none;
+  block-size: 2.5rem;
+  border-block-end: 1px solid var(--tp-hair);
+}
+.tp-tabla__cuerpo {
+  flex: 1;
+  min-block-size: 0;
+  overflow: auto;
+}
+.tp-fila {
+  position: relative;
+  min-block-size: 4rem;
+  padding-block: var(--s-2);
+  cursor: pointer;
+  transition-property: background-color;
+  transition-duration: 100ms;
+  transition-timing-function: ease-out;
+
+  & + & {
+    border-block-start: 1px solid var(--tp-hair);
+  }
+  &:hover,
+  &:focus-visible {
+    background: var(--tp-subtle);
+  }
+  &:focus-visible {
+    outline: 0;
+    box-shadow: inset 2px 0 0 var(--tp-accent);
+  }
+}
+.tp-fila__nombre {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-0-5);
+  min-inline-size: 0;
+}
+.tp-fila__semana {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  min-inline-size: 0;
+}
+.tp-fila__resumen {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+.tp-fila__exc {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-1);
+}
+.tp-fila__acc {
+  display: flex;
+  justify-content: flex-end;
+}
+.tp-fila__menu {
+  opacity: 0;
+  transition-property: opacity, background-color;
+  .tp-fila:hover &,
+  .tp-fila:focus-within &,
+  &[aria-expanded='true'] {
+    opacity: 1;
+  }
+}
+
+/* La semana en miniatura: siete pistas de 24 h apiladas, la de hoy con su raya de «ahora». */
+.tp-mini {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: 0.125rem;
+  inline-size: 8.5rem;
+}
+.tp-mini__dia {
+  position: relative;
+  display: block;
+  block-size: 0.25rem;
+  border-radius: var(--r-full);
+  background: var(--tp-muted);
+
+  i {
+    position: absolute;
+    inset-block: 0;
+    border-radius: var(--r-full);
+    background: color-mix(in oklch, var(--tp-accent) 55%, var(--tp-surface));
+  }
+  b {
+    position: absolute;
+    inset-block: -0.125rem;
+    inline-size: 0.125rem;
+    margin-inline-start: -0.0625rem;
+    border-radius: var(--r-full);
+    background: var(--tp-festivo);
+  }
+  &.is-hoy {
+    background: var(--tp-sunken);
+    i {
+      background: var(--tp-accent);
+    }
+  }
+}
+.tp-fila:has(.tp-pill--inactive) .tp-mini__dia i {
+  background: var(--tp-ink-4);
+}
+
+
+/* Festivos: cada lista con su año en una rejilla de 12 × 31. */
+.tp-listas {
+  display: grid;
+  flex: 1;
+  grid-template-columns: repeat(auto-fill, minmax(21rem, 1fr));
+  grid-auto-rows: min-content;
+  gap: var(--s-4);
+  min-block-size: 18rem;
+  overflow: auto;
+  margin: calc(-1 * var(--s-1));
+  padding: var(--s-1);
+}
+.tp-lista {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  padding: var(--s-5);
+  cursor: pointer;
+  transition-property: box-shadow, translate;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+
+  &:hover {
+    box-shadow: var(--tp-ring-hover), 0 8px 24px -12px oklch(0 0 0 / 0.18);
+    translate: 0 -1px;
+  }
+}
+.tp-lista__cab {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+}
+.tp-lista__titulo,
+.tp-lista__prox {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+.tp-lista__pie {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  min-block-size: 2.25rem;
+}
+.tp-anio {
+  display: grid;
+  grid-template-columns: 0.75rem repeat(31, minmax(0, 1fr));
+  gap: 0.125rem;
+  align-items: center;
+}
+.tp-anio__mes {
+  font-size: 0.5625rem;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--tp-ink-4);
+  text-transform: uppercase;
+}
+.tp-anio__d {
+  aspect-ratio: 1;
+  border-radius: 0.125rem;
+  background: var(--tp-muted);
+  &.is-p {
+    opacity: 0.45;
+  }
+  &.is-f {
+    background: var(--tp-festivo);
+    opacity: 1;
+  }
+  &.is-f.is-p {
+    background: color-mix(in oklch, var(--tp-festivo) 40%, var(--tp-surface));
+  }
+  &.is-h {
+    box-shadow: 0 0 0 1.5px var(--tp-accent);
+    opacity: 1;
+  }
+  &.is-x {
+    visibility: hidden;
+  }
+}
+
+.tp-lista--nueva {
+  align-items: flex-start;
+  justify-content: center;
+  gap: var(--s-2);
+  border: 0;
+  background: transparent;
+  box-shadow: inset 0 0 0 1.5px var(--tp-hair-strong);
+  border-radius: var(--r-lg);
+  text-align: start;
+  background-image: radial-gradient(circle at 100% 0%, color-mix(in oklch, var(--tp-festivo) 9%, transparent), transparent 60%);
+
+  &:hover {
+    box-shadow: inset 0 0 0 1.5px color-mix(in oklch, var(--tp-festivo) 45%, transparent);
+    translate: 0 -1px;
+  }
+  .tp-flags {
+    margin-block-end: var(--s-2);
+  }
+}
+.tp-lista__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
+  margin-block-start: var(--s-2);
+  color: var(--tp-festivo-ink);
+}

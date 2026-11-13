@@ -1,0 +1,381 @@
+<div class="tp tp-editor">
+  <div class="tp-lienzo">
+    <!-- Cabecera: el nombre se edita donde se lee; debajo, todo lo general en una línea. A la derecha, el año repartido. -->
+    <header class="tp-head tp-stagger" style="--i: 0">
+      <div class="tp-head__main">
+        <button type="button" class="tp-head__back" (click)="volver()">
+          <sc-tp-icono nombre="arrow-left" [tam]="14" />
+          Tiempo
+        </button>
+        <div class="tp-head__title">
+          <input
+            class="tp-inline tp-head__name t-display"
+            [attr.aria-label]="t.nombreHorario"
+            [placeholder]="t.ejemploHorario"
+            [value]="form().name"
+            [autofocus]="modo() === 'crear'"
+            (input)="update('name', $any($event.target).value)"
+          />
+          @if (form().status === 'inactive') {
+            <span class="tp-pill tp-pill--inactive"><span class="tp-dot tp-dot--inactive"></span>Inactivo</span>
+          } @else {
+            <span class="tp-pill" [class.tp-pill--open]="estado().clave === 'open'">
+              <span class="tp-dot" [class.tp-dot--open]="estado().clave === 'open'"></span>
+              {{ estado().clave === 'open' ? 'Abierto' : 'Cerrado' }}
+              <span class="tp-pill__extra t-num">{{ estado().detalle }}</span>
+            </span>
+          }
+        </div>
+        <div class="tp-head__meta">
+          <label class="tp-meta">
+            <sc-tp-icono nombre="globe" [tam]="14" />
+            <select class="tp-meta__select" [attr.aria-label]="t.zona" [value]="form().timezone" (change)="update('timezone', $any($event.target).value)">
+              @for (z of zonas(); track z) {
+                <option [value]="z" [selected]="z === form().timezone">{{ z.replace('_', ' ') }}</option>
+              }
+            </select>
+          </label>
+          <span class="tp-sep"></span>
+          <span class="tp-meta">
+            <sc-tp-icono nombre="users" [tam]="14" />
+            @if (grupos().length === 0) {
+              <span class="t-3">{{ modo() === 'crear' ? 'Nuevo: aún sin grupos' : 'Ningún grupo lo usa' }}</span>
+            } @else {
+              <span class="tp-avatars">
+                @for (g of grupos().slice(0, 3); track $index) {
+                  <span class="tp-avatar" [style.--c]="avatarColor(g)">{{ iniciales(g) }}</span>
+                }
+              </span>
+              <span [attr.data-tip]="grupos().join(', ')">Lo {{ grupos().length === 1 ? 'usa 1 grupo' : 'usan ' + grupos().length + ' grupos' }}</span>
+            }
+          </span>
+          <span class="tp-sep"></span>
+          <label class="tp-meta tp-meta--switch">
+            <button type="button" class="tp-switch" role="switch" [attr.aria-checked]="form().status !== 'inactive'" [attr.aria-label]="t.activo" (click)="update('status', form().status === 'inactive' ? 'active' : 'inactive')"></button>
+            {{ form().status === 'inactive' ? 'Inactivo' : 'Activo' }}
+          </label>
+          <span class="tp-sep"></span>
+          <input class="tp-inline tp-meta__desc" [attr.aria-label]="t.descripcion" [placeholder]="t.anadeDescripcion" [value]="form().description" (input)="update('description', $any($event.target).value)" />
+        </div>
+      </div>
+
+      <div class="tp-reparto" role="group" [attr.aria-label]="t.reparto(anio())">
+        <div class="tp-reparto__cab">
+          <span class="t-eyebrow">{{ anio() }}</span>
+          <span class="t-small t-num"><strong class="t-strong">{{ reparto().abiertos }}</strong><span class="t-2">días abiertos</span></span>
+          <span class="t-small t-num"><strong class="t-strong">{{ reparto().excepciones }}</strong><span class="t-2">con excepción</span></span>
+        </div>
+        <div class="tp-reparto__barra">
+          @for (r of reparto().trozos; track r.clave) {
+            <i [style.flex-grow]="r.n" [style.background]="r.color" [attr.data-tip]="r.texto"></i>
+          }
+        </div>
+      </div>
+    </header>
+
+    <div class="tp-editor__rejilla">
+      <!-- La semana habitual -->
+      <section class="tp-card tp-editor__semana tp-stagger" style="--i: 1">
+        <header class="tp-card__head">
+          <div class="tp-card__title">
+            <h2 class="t-title">Semana habitual</h2>
+            <span class="t-small t-3 t-num">{{ horasSemana() }} a la semana</span>
+          </div>
+        </header>
+        <div class="tp-editor__semana-cuerpo">
+          <sc-tp-semana [semana]="form().week" [senalado]="senalado()" [ahora]="form().status === 'inactive' ? null : ahoraSemana()" (semanaChange)="update('week', $event)" />
+        </div>
+      </section>
+
+      <div class="tp-editor__tiempo">
+        <!-- El calendario -->
+        <section class="tp-card tp-editor__cal tp-stagger" style="--i: 2">
+          <sc-tp-calendario
+            [reglas]="reglas()"
+            [calendarios]="calendarios()"
+            [hoy]="hoy()"
+            [resaltadas]="resaltadas()"
+            [(seleccion)]="seleccion"
+            [(inicio)]="inicio"
+            [(vista)]="vista"
+            (pulsado)="colgarFicha($event)"
+            (diaDeSemana)="senalarDia($event)"
+          />
+        </section>
+
+        <!-- Lo que cambia la semana -->
+        <section class="tp-card tp-editor__exc tp-stagger" style="--i: 3">
+          <header class="tp-card__head">
+            <div class="tp-card__title">
+              <h2 class="t-title">Cambia la semana</h2>
+            </div>
+            <sc-tp-seg pequeno [etiqueta]="t.filtrarExcepciones" [opciones]="filtros()" [valor]="filtro()" (cambio)="filtro.set($any($event))" />
+            <span class="tp-spacer"></span>
+            @if (cuantasPasadas() > 0) {
+              <button type="button" class="tp-btn tp-btn--ghost tp-btn--sm" (click)="verPasadas.set(!verPasadas())">
+                {{ verPasadas() ? 'Próximas' : cuantasPasadas() + ' pasadas' }}
+              </button>
+            }
+            <div class="tp-anadir">
+              <button type="button" class="tp-btn tp-btn--sm" [attr.aria-expanded]="menuAnadir()" (click)="menuAnadir.set(!menuAnadir())">
+                <sc-tp-icono nombre="plus" [tam]="14" />
+                Añadir
+                <sc-tp-icono nombre="chevron-down" [tam]="14" />
+              </button>
+              @if (menuAnadir()) {
+                <div class="tp-menu tp-in tp-anadir__menu" role="menu" animate.leave="tp-out">
+                  <button type="button" class="tp-menu__item" role="menuitem" (click)="anadir('festivos')">
+                    <span class="tp-mark tp-mark--festivo tp-mark--sm"><sc-tp-icono nombre="calendar-x" [tam]="14" /></span>
+                    <span class="tp-menu__txt"><span class="t-small t-strong">Festivos oficiales</span><span class="t-micro t-3">De tu país o región, o una lista</span></span>
+                  </button>
+                  <button type="button" class="tp-menu__item" role="menuitem" (click)="anadir('periodo')">
+                    <span class="tp-mark tp-mark--periodo tp-mark--sm" style="--c: var(--tp-p-teal)"><sc-tp-icono nombre="sun" [tam]="14" /></span>
+                    <span class="tp-menu__txt"><span class="t-small t-strong">Periodo</span><span class="t-micro t-3">Una temporada con su semana</span></span>
+                  </button>
+                  <button type="button" class="tp-menu__item" role="menuitem" (click)="anadir('especial')">
+                    <span class="tp-mark tp-mark--especial tp-mark--sm"><sc-tp-icono nombre="star" [tam]="14" /></span>
+                    <span class="tp-menu__txt"><span class="t-small t-strong">Día especial</span><span class="t-micro t-3">Otras horas o cerrado un día</span></span>
+                  </button>
+                </div>
+              }
+            </div>
+          </header>
+
+          <div class="tp-editor__exc-cuerpo">
+            @if (visibles().length === 0) {
+              <div class="tp-vacio tp-vacio--exc">
+                <div class="tp-capas-ilus" aria-hidden="true">
+                  <span class="tp-mark tp-mark--festivo"><sc-tp-icono nombre="calendar-x" [tam]="16" /></span>
+                  <span class="tp-mark tp-mark--periodo" style="--c: var(--tp-p-teal)"><sc-tp-icono nombre="sun" [tam]="16" /></span>
+                  <span class="tp-mark tp-mark--especial"><sc-tp-icono nombre="star" [tam]="16" /></span>
+                </div>
+                <p class="t-body t-strong">{{ verPasadas() ? 'Nada pasado' : 'La semana habitual manda todo el año' }}</p>
+                <p class="t-small t-2">Cierra los festivos de tu región, añade el horario de verano o elige días en el calendario.</p>
+                <div class="tp-vacio__acciones">
+                  <button type="button" class="tp-btn tp-btn--sm" (click)="anadir('festivos')"><sc-tp-icono nombre="download" [tam]="14" />Festivos oficiales</button>
+                  <button type="button" class="tp-btn tp-btn--sm" (click)="anadir('periodo')"><sc-tp-icono nombre="sun" [tam]="14" />Periodo</button>
+                </div>
+              </div>
+            } @else {
+              <ul class="tp-exc" role="list">
+                @for (e of visibles(); track e.tipo + e.id) {
+                  <li class="tp-exc__fila" (mouseenter)="resaltar(e)" (mouseleave)="resaltar(null)" (focusin)="resaltar(e)" (focusout)="resaltar(null)">
+                    <button type="button" class="tp-exc__abrir" (click)="abrir(e)">
+                      @if (e.hoja; as h) {
+                        <span class="tp-hoja tp-hoja--sm" style="--c: var(--tp-especial)"><span class="tp-hoja__mes">{{ h.mes }}</span><span class="tp-hoja__dia">{{ h.dia }}</span></span>
+                      } @else if (e.tipo === 'periodo') {
+                        <span class="tp-mark tp-mark--periodo" [style.--c]="e.color"><sc-tp-icono nombre="sun" [tam]="16" /></span>
+                      } @else {
+                        <span class="tp-mark tp-mark--festivo"><sc-tp-icono nombre="calendar-x" [tam]="16" /></span>
+                      }
+                      <span class="tp-exc__txt">
+                        <span class="t-small t-strong t-trunc">{{ e.nombre }}</span>
+                        <span class="t-micro t-3 t-trunc tp-exc__cuando">
+                          @if (e.anual) {
+                            <sc-tp-icono nombre="repeat" [tam]="12" />
+                          }
+                          {{ e.cuando }}
+                        </span>
+                      </span>
+                      @if (e.tipo === 'periodo') {
+                        <span class="tp-exc__anio" [attr.data-tip]="e.cuando" aria-hidden="true">
+                          @for (b of e.barra; track $index) {
+                            <i [style.left.%]="b.desde * 100" [style.width.%]="(b.hasta - b.desde) * 100" [style.background]="e.color"></i>
+                          }
+                          <b [style.left.%]="(+hoy().slice(5, 7) - 1 + (+hoy().slice(8) - 1) / 31) / 0.12"></b>
+                        </span>
+                      }
+                      <span class="tp-exc__horas t-micro t-num" [class.is-cerrado]="e.cerrado">{{ e.horas }}</span>
+                    </button>
+                    <button type="button" class="tp-btn tp-btn--ghost tp-btn--icon tp-btn--sm tp-exc__x" [attr.aria-label]="t.quitar(e.nombre)" (click)="quitar(e, $event)">
+                      <sc-tp-icono nombre="x" [tam]="14" />
+                    </button>
+                  </li>
+                }
+              </ul>
+            }
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <!-- La ficha del día: junto al día pulsado -->
+  @if (ficha(); as f) {
+    @if (elegido(); as e) {
+      <div
+        class="tp-ficha tp-in"
+        role="dialog"
+        [attr.aria-label]="e.titulo"
+        [class.tp-ficha--arriba]="f.arriba"
+        [style.top.px]="f.top"
+        [style.bottom.px]="f.bottom"
+        [style.left.px]="f.left"
+        animate.leave="tp-out"
+      >
+        <header class="tp-ficha__cab">
+          <div class="tp-ficha__titulo">
+            <h3 class="t-body t-strong">{{ e.titulo }}</h3>
+            @if (e.esHoy) {
+              <span class="tp-pill tp-pill--accent tp-pill--xs">Hoy</span>
+            }
+          </div>
+          <button type="button" class="tp-btn tp-btn--ghost tp-btn--icon tp-btn--sm" [attr.aria-label]="t.cerrar" (click)="cerrarFicha()">
+            <sc-tp-icono nombre="x" [tam]="14" />
+          </button>
+        </header>
+
+        @if (e.unDia) {
+          <div class="tp-ficha__estado">
+            <span class="tp-pill" [class.tp-pill--open]="e.abierto">
+              <span class="tp-dot" [class.tp-dot--open]="e.abierto && e.esHoy" [style.background]="e.abierto ? 'var(--tp-open-dot)' : null"></span>
+              {{ e.abierto ? 'Abierto' : 'Cerrado' }}
+            </span>
+            <span class="t-small t-2 t-num">{{ e.abierto ? e.horas : 'todo el día' }}</span>
+          </div>
+          <div class="tp-ficha__linea">
+            <sc-tp-linea [trozos]="e.trozos" [ahora]="e.esHoy ? ahora().minutos : null" />
+            <div class="tp-ficha__eje t-num" aria-hidden="true">
+              @for (h of marcas; track h) {
+                <span>{{ h }}</span>
+              }
+            </div>
+          </div>
+
+          <div class="tp-ficha__capas">
+            <span class="t-eyebrow">Por qué</span>
+            <ol class="tp-reglas" role="list">
+              @for (c of e.capas; track c.tipo) {
+                <li class="tp-regla" [attr.data-estado]="c.estado" [attr.data-tipo]="c.tipo" [style.--c]="c.color">
+                  <span class="tp-regla__ico">
+                    <sc-tp-icono [nombre]="c.tipo === 'especial' ? 'star' : c.tipo === 'festivo' ? 'calendar-x' : c.tipo === 'periodo' ? 'sun' : 'layers'" [tam]="12" />
+                  </span>
+                  <span class="tp-regla__txt">
+                    <span class="t-small t-strong t-trunc">{{ c.titulo }}</span>
+                    <span class="t-micro t-trunc">{{ c.detalle }}</span>
+                  </span>
+                  @if (c.estado === 'manda') {
+                    <span class="tp-regla__badge">Manda</span>
+                  } @else if (c.estado === 'tapada') {
+                    <span class="tp-regla__badge tp-regla__badge--debajo">Debajo</span>
+                  }
+                </li>
+              }
+            </ol>
+          </div>
+
+          @if (prueba(); as p) {
+            <div class="tp-ficha__prueba">
+              <span class="t-small t-2">A las</span>
+              <sc-tp-hora [valor]="horaPrueba()" [etiqueta]="t.horaPrueba" (cambio)="horaPrueba.set($event)" />
+              <span class="tp-pill tp-pill--xs" [class.tp-pill--open]="p.abierto">
+                <sc-tp-icono [nombre]="p.abierto ? 'check' : 'x'" [tam]="12" [trazo]="2" />
+                {{ p.abierto ? 'Se atiende' : 'No se atiende' }}
+              </span>
+            </div>
+            @if (p.nota) {
+              <p class="t-micro t-3 tp-ficha__nota">{{ p.nota }}</p>
+            }
+          }
+
+          <footer class="tp-ficha__acc">
+            @switch (e.r?.tipo) {
+              @case ('especial') {
+                <button type="button" class="tp-btn tp-btn--sm tp-btn--primary" (click)="otrasHoras()">Editar este día</button>
+                <button type="button" class="tp-btn tp-btn--sm" (click)="quitarEspecialDe(e.fecha)">Quitar día especial</button>
+              }
+              @case ('festivo') {
+                <button type="button" class="tp-btn tp-btn--sm tp-btn--primary" (click)="otrasHoras(true)">Abrir este día</button>
+                <button type="button" class="tp-btn tp-btn--sm" (click)="verLista(e.r!.calendario!.id)">
+                  Ver la lista
+                  <sc-tp-icono nombre="arrow-up-right" [tam]="12" />
+                </button>
+              }
+              @case ('periodo') {
+                <button type="button" class="tp-btn tp-btn--sm tp-btn--primary" (click)="otrasHoras()">Otras horas</button>
+                @if (e.abierto) {
+                  <button type="button" class="tp-btn tp-btn--sm" (click)="cerrarElegidos()">Cerrar este día</button>
+                }
+                <button type="button" class="tp-btn tp-btn--sm tp-btn--ghost" (click)="periodoDialog.set({ periodo: e.r!.periodo, rango: null }); ficha.set(null)">Editar periodo</button>
+              }
+              @default {
+                <button type="button" class="tp-btn tp-btn--sm tp-btn--primary" (click)="otrasHoras()">Otras horas</button>
+                @if (e.abierto) {
+                  <button type="button" class="tp-btn tp-btn--sm" (click)="cerrarElegidos()">Cerrar este día</button>
+                }
+                <button type="button" class="tp-btn tp-btn--sm tp-btn--ghost" (click)="verEnSemana(e.fecha)">Ver en la semana</button>
+              }
+            }
+          </footer>
+        } @else {
+          <div class="tp-ficha__estado">
+            <span class="tp-pill" [class.tp-pill--open]="e.abiertos > 0">{{ e.total }} días</span>
+            <span class="t-small t-2">{{ e.abiertos }} abiertos, {{ e.total - e.abiertos }} cerrados</span>
+          </div>
+          <div class="tp-ficha__rango">
+            @for (d of e.dias; track d.fecha) {
+              <div class="tp-ficha__rdia">
+                <span class="t-micro t-3 t-num">{{ d.letra }} {{ d.n }}</span>
+                <sc-tp-linea [trozos]="d.trozos" [color]="d.tipo === 'festivo' ? 'var(--tp-festivo)' : d.tipo === 'especial' ? 'var(--tp-especial)' : null" />
+              </div>
+            }
+            @if (e.total > e.dias.length) {
+              <span class="t-micro t-3">y {{ e.total - e.dias.length }} días más</span>
+            }
+          </div>
+          <footer class="tp-ficha__acc">
+            <button type="button" class="tp-btn tp-btn--sm tp-btn--primary" (click)="periodoDeSeleccion()">
+              <sc-tp-icono nombre="sun" [tam]="14" />
+              Crear periodo
+            </button>
+            @if (e.abiertos > 0) {
+              <button type="button" class="tp-btn tp-btn--sm" (click)="cerrarElegidos()">Cerrar {{ e.total }} días</button>
+            }
+          </footer>
+        }
+      </div>
+    }
+  }
+
+  <!-- Guardar: aparece cuando hay algo que guardar -->
+  <div class="tp-savebar" [attr.data-visible]="modo() === 'crear' || dirty()" role="region" [attr.aria-label]="t.guardar">
+    <span class="tp-savebar__msg">
+      <span class="tp-savebar__dot"></span>
+      {{ modo() === 'crear' ? 'Horario nuevo' : 'Cambios sin guardar' }}
+      @if (motivo()) {
+        <span class="tp-savebar__why">{{ motivo() }}</span>
+      }
+    </span>
+    @if (modo() === 'crear') {
+      <button type="button" class="tp-btn tp-btn--ghost tp-btn--sm" (click)="volver()">Cancelar</button>
+    } @else {
+      <button type="button" class="tp-btn tp-btn--ghost tp-btn--sm" (click)="discard()">Deshacer</button>
+    }
+    <button type="button" class="tp-btn tp-btn--primary tp-btn--sm" [disabled]="!puedeGuardar()" (click)="save()">
+      {{ modo() === 'crear' ? 'Crear horario' : 'Guardar' }}
+      <kbd class="tp-kbd">⌘S</kbd>
+    </button>
+  </div>
+
+  @if (periodoDialog(); as d) {
+    <sc-tp-periodo [periodo]="d.periodo" [rango]="d.rango" [horario]="form()" [anio]="anio()" (guardar)="guardarPeriodo($event)" (quitar)="quitarPeriodo($event)" (cerrado)="periodoDialog.set(null)" />
+  }
+  @if (especialDialog(); as d) {
+    <sc-tp-especial [especial]="d.especial" [fecha]="d.fecha" [abrir]="d.abrir" [existentes]="form().specials" [semana]="form().week" (guardar)="guardarEspecial($event)" (quitar)="quitarEspecial($event)" (cerrado)="especialDialog.set(null)" />
+  }
+  @if (importando()) {
+    <sc-tp-importar modo="horario" [aplicadas]="form().holidayCalendarIds" (lista)="aplicarLista($event)" (aplicar)="aplicarLista($event)" (diasElegidos)="importarDias($event)" (cerrado)="importando.set(false)" />
+  }
+  @if (saliendo()) {
+    <sc-tp-modal titulo="¿Salir sin guardar?" subtitulo="Hay cambios en este horario que aún no están guardados." icono="alert" ancho="28rem" (cerrar)="responderSalida('seguir')">
+      <div tpPie class="tp-modal__acciones">
+        <button type="button" class="tp-btn tp-btn--ghost" (click)="responderSalida('descartar')">Descartar</button>
+        <span class="tp-spacer"></span>
+        <button type="button" class="tp-btn" (click)="responderSalida('seguir')">Seguir editando</button>
+        <button type="button" class="tp-btn tp-btn--primary" [disabled]="!puedeGuardar()" (click)="responderSalida('guardar')">Guardar y salir</button>
+      </div>
+    </sc-tp-modal>
+  }
+
+  <sc-tp-avisos />
+</div>

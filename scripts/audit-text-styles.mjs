@@ -329,6 +329,9 @@ export const PESOS_VALIDOS = new Set(FIGMA_TEXT_STYLES.map((e) => e.weight));
  * `.vpick__check`, …): ahí el tamaño es una caja de glifo, no un estilo de texto, y
  * marcarlos convertía el gate en ruido — la primera pasada dio 3 de 9 así.
  */
+/** LABORATORIO «Tiempo» premium (rama experimental que no se funde): su propio sistema visual, fuera del DS a propósito. */
+export const esLabTiempo = (hoja) => hoja.includes('/features/lab/tiempo/');
+
 export const TIPOGRAFIA_DELIBERADA = {
   '.impact__hero':
     'Número héroe de la tarjeta de impacto. Su tamaño sale del Figma de Memory y está ' +
@@ -459,7 +462,8 @@ log('='.repeat(62));
   const hojas = execSync(
     "find projects/supervisor/src/app projects/supervisor/src/styles -name '*.scss'",
     { encoding: 'utf8', cwd: root },
-  ).split('\n').filter(Boolean).sort();
+  ).split('\n').filter(Boolean)
+    .filter((h) => !esLabTiempo(h)).sort();
 
   const fuera = [];
   const vistos = new Set();
@@ -651,7 +655,8 @@ log('='.repeat(62));
   const hojas = execSync(
     "find projects/supervisor/src/app projects/supervisor/src/styles -name '*.scss'",
     { encoding: 'utf8', cwd: root },
-  ).split('\n').filter(Boolean).sort();
+  ).split('\n').filter(Boolean)
+    .filter((h) => !esLabTiempo(h)).sort();
   let sueltas = 0;
   for (const hoja of hojas) sueltas += tipografiaSuelta(readFileSync(resolve(root, hoja), 'utf8'));
   log(`  ${hojas.length} hoja(s) · ${sueltas} regla(s) con \`font-size\` · tope ${TIPOGRAFIA_SUELTA_MAX}`);
