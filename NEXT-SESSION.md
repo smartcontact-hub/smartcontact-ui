@@ -44,6 +44,10 @@
    llamaron «s43»), y una cabecera con estado es lo que se pelea en cada fusión. La fecha y una
    sección propia no necesitan que nadie se coordine.
 
+8. **Si eres el coordinador de un Project** (el hilo que habla con el usuario y abre un hilo por tarea), tu manual es
+   [`docs/coordinacion.md`](docs/coordinacion.md): el encargo, el número de DD que repartes, una pantalla por hilo y
+   la fusión de uno en uno. Es un piloto desde el 2026-11-13, en el frente del Supervisor (Horarios).
+
 ⚠️ Un hand-off es una **pista, no un hecho**: lleva la fecha de cuando se midió. Confírmalo
 antes de construir encima.
 
