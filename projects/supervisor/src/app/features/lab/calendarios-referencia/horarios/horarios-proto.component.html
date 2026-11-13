@@ -1,0 +1,473 @@
+<div class="page">
+  <div class="page__inner page__inner--list">
+    <app-referencia-cabecera
+      actual="horarios"
+      titulo="Horarios y calendarios"
+      frase="Define las franjas. Decide cuándo se aplican. Comprueba el resultado."
+      etiqueta="Prototipo interactivo"
+    />
+
+    <sc-tabs [tabs]="tabs" [value]="section()" (valueChange)="setSection($event)" ariaLabel="Horarios y calendarios" />
+
+    @if (section() === 'cal') {
+      <div class="pj-layout">
+        <aside class="pj-list">
+          <div class="pj-list__title sc-text-caption-semibold">MIS CALENDARIOS · {{ db().calendars.length }}</div>
+          <sc-search size="sm" placeholder="Buscar calendario…" [value]="query()" (valueChange)="query.set($event)" />
+          <div class="pj-stack hc-calitems">
+            @for (c of lista(); track c.id) {
+              <button type="button" class="pj-calitem" [class.is-on]="c.id === calId()" (click)="changeCal(c.id)">
+                <b class="sc-text-body-semibold">{{ c.name }}</b>
+                <small class="sc-text-caption-regular">{{ resumenCal(c) }}</small>
+              </button>
+            } @empty {
+              <p class="pj-muted sc-text-caption-regular">Sin resultados</p>
+            }
+          </div>
+          <button type="button" class="pj-link sc-text-body-regular" (click)="calendarForm()">+ Nuevo calendario</button>
+          <p class="pj-muted sc-text-caption-regular hc-caption">Los horarios se vinculan al calendario y pueden reutilizarse.</p>
+        </aside>
+
+        <main class="pj-main">
+          <div class="pj-row pj-between pj-wrap pj-title-row">
+            <div>
+              <h2 class="sc-text-h3-semibold">{{ cal().name }}</h2>
+              <p class="pj-muted sc-text-caption-regular pj-row hc-zone"><sc-icon name="schedule" size="sm" />{{ cal().zone }} · Horas locales del calendario</p>
+            </div>
+            <div class="pj-row">
+              <sc-button variant="secondary" appearance="outlined" label="Configurar" (clicked)="calendarForm(calId())" />
+              <sc-button variant="primary" label="+ Día especial" (clicked)="ruleForm('special')" />
+            </div>
+          </div>
+
+          <div class="hc-subrow">
+            <sc-selectbutton [options]="subtabs" optionValue="value" [allowEmpty]="false" [value]="sub()" (valueChange)="setSub($event)" ariaLabel="Vista" />
+          </div>
+
+          @switch (sub()) {
+            @case ('view') {
+              <div class="pj-split hc-split">
+                <div class="pj-panel">
+                  <div class="pj-toolbar">
+                    <sc-button variant="secondary" appearance="outlined" size="sm" icon="chevron_left" iconOnly ariaLabel="Anterior" (clicked)="move(-1)" />
+                    <sc-button variant="secondary" appearance="outlined" size="sm" icon="chevron_right" iconOnly ariaLabel="Siguiente" (clicked)="move(1)" />
+                    <strong class="sc-text-subtitle-semibold">{{ titulo() }}</strong>
+                    <sc-button variant="secondary" appearance="outlined" size="sm" label="Hoy" (clicked)="today()" />
+                    <div class="pj-grow"></div>
+                    <sc-selectbutton [options]="vistas" optionValue="value" [allowEmpty]="false" size="sm" [value]="view()" (valueChange)="setView($event)" ariaLabel="Escala" />
+                  </div>
+
+                  @switch (view()) {
+                    @case ('year') {
+                      <div class="pj-year-grid">
+                        @for (m of meses(); track m.first) {
+                          <div>
+                            <button type="button" class="pj-month-title sc-text-caption-semibold" (click)="openMonth(m.first)">{{ m.nombre }}</button>
+                            <div class="pj-mini sc-text-caption-regular">
+                              @for (d of DIAS_LETRA; track $index) { <small>{{ d }}</small> }
+                              @for (h of m.huecos; track h) { <span></span> }
+                              @for (c of m.dias; track c.iso) {
+                                <button
+                                  type="button"
+                                  class="hc-date sc-text-caption-regular"
+                                  [class.is-open]="c.e.union.length"
+                                  [class.is-selected]="c.iso === selected()"
+                                  [class.is-special]="c.e.exception"
+                                  [attr.style]="estilo(c.e)"
+                                  tooltipPosition="top" tooltipEvent="both" [pTooltip]="tituloCelda(c)"
+                                  [attr.aria-label]="fmt(c.iso) + ': ' + unionText(c.e)"
+                                  (click)="choose(c.iso)"
+                                >
+                                  {{ c.dia }}
+                                  <span class="hc-marks">
+                                    @for (id of c.e.ids; track id) { <i [attr.style]="pintura(colorDe(id))"></i> }
+                                  </span>
+                                </button>
+                              }
+                            </div>
+                          </div>
+                        }
+                      </div>
+                    }
+                    @case ('month') {
+                      <div class="pj-month-grid">
+                        @for (d of DIAS_CORTOS; track d) { <div class="pj-dow sc-text-caption-regular">{{ d }}</div> }
+                        @for (h of mes().antes; track h) { <div class="pj-monthday is-empty"></div> }
+                        @for (c of mes().dias; track c.iso) {
+                          <button type="button" class="pj-monthday" [class.is-selected]="c.iso === selected()" (click)="choose(c.iso)">
+                            <span class="sc-text-caption-semibold">{{ c.dia }} {{ c.e.exception ? '◆' : '' }}</span>
+                            @for (id of c.e.ids; track id) {
+                              <span class="pj-chip sc-text-caption-regular" [attr.style]="pintura(colorDe(id))">{{ sch(id)?.name }}</span>
+                            }
+                            <span class="pj-muted sc-text-caption-regular hc-openlabel">{{ c.e.union.length ? hours(c.e) : 'Cerrado' }}</span>
+                          </button>
+                        }
+                        @for (h of mes().despues; track h) { <div class="pj-monthday is-empty"></div> }
+                      </div>
+                    }
+                    @default {
+                      <div class="hc-timeline" [style.--cols]="dias().length">
+                        <div class="hc-timehead">
+                          <span></span>
+                          @for (d of dias(); track d.iso) {
+                            <button type="button" class="sc-text-caption-regular" [class.is-selected]="d.iso === selected()" (click)="choose(d.iso)">
+                              {{ DIAS_CORTOS[(fecha(d.iso).getDay() + 6) % 7] }} {{ fecha(d.iso).getDate() }}<br />
+                              <span class="pj-muted">{{ hours(d.e) }}</span>
+                            </button>
+                          }
+                        </div>
+                        <div class="hc-timebody">
+                          <div class="hc-ruler">
+                            @for (i of reglas; track i) {
+                              <span class="hc-tick sc-text-caption-regular" [style.top.%]="(i / 12) * 100">{{ i * 2 }}:00</span>
+                            }
+                          </div>
+                          @for (d of dias(); track d.iso) {
+                            <div class="hc-lane">
+                              @for (x of d.e.segments; track $index) {
+                                <div
+                                  class="hc-event sc-text-caption-regular"
+                                  [attr.style]="eventoEstilo(d.e, x)"
+                                  tooltipPosition="top" [pTooltip]="sch(x.id)?.name + ' ' + hhmm(x.a) + '–' + hhmm(x.b) + (x.carry ? ' · Inicio el día anterior' : '')"
+                                >
+                                  {{ hhmm(x.a) }}–{{ hhmm(x.b) }}<br />{{ sch(x.id)?.name }}
+                                  @if (x.carry) { <br />↳ día anterior }
+                                </div>
+                              }
+                              @if (!d.e.union.length) {
+                                <div class="pj-muted sc-text-caption-regular hc-lane__closed">Cerrado</div>
+                              }
+                            </div>
+                          }
+                        </div>
+                      </div>
+                    }
+                  }
+
+                  <div class="pj-legend sc-text-caption-regular">
+                    @for (s of leyenda(); track s.id) {
+                      <span class="pj-row hc-legend__item"><i class="pj-dot" [attr.style]="pintura(s.color)"></i>{{ s.name }}</span>
+                    }
+                    <span>◆ Día especial</span>
+                    <span>■ Cerrado</span>
+                  </div>
+                  <p class="pj-footer sc-text-caption-regular">
+                    {{ view() === 'year' ? 'Pulsa un día para ver sus franjas; pulsa un mes para ampliarlo. Las marcas inferiores muestran los horarios coincidentes.' : 'Selecciona un día para consultar la disponibilidad y su origen.' }}
+                  </p>
+                </div>
+
+                @let e = detalle();
+                <aside class="pj-panel hc-detail">
+                  <div>
+                    <span class="pj-eyebrow sc-text-caption-semibold">Día seleccionado</span>
+                    <h3 class="sc-text-body-semibold pj-capital hc-detail__date">{{ fmt(selected(), { weekday: 'long', day: 'numeric', month: 'long' }) }}</h3>
+                    <p class="pj-muted sc-text-caption-regular">{{ fecha(selected()).getFullYear() }} · {{ cal().zone }}</p>
+                    <div class="hc-status sc-text-body-semibold">{{ e.union.length ? '◷ Con atención · ' + hours(e) : '○ Sin atención' }}</div>
+                    <div class="hc-effective">
+                      <span class="pj-eyebrow sc-text-caption-semibold">Disponibilidad efectiva</span>
+                      <p class="sc-text-body-regular">{{ unionText(e) }}</p>
+                    </div>
+                    @for (id of e.ids; track id) {
+                      <div class="hc-schedule-line">
+                        <b class="pj-row sc-text-caption-semibold"><i class="pj-dot" [attr.style]="pintura(colorDe(id))"></i>{{ sch(id)?.name }}</b>
+                        @for (t of segmentosDe(e, id); track $index) {
+                          <p class="pj-muted sc-text-caption-regular">{{ t }}</p>
+                        }
+                      </div>
+                    }
+                  </div>
+                  <div>
+                    <div class="hc-explain sc-text-caption-regular">
+                      <span class="pj-muted">{{ e.type }}</span><br />
+                      <b>{{ e.source }}</b>
+                      @if (e.exception) { <br />Sustituye todo el horario de esta fecha. }
+                      @else if (e.type === 'Periodo especial') { <br />Sustituye la semana habitual. }
+                      @if (tieneCarry(e)) { <br />Incluye la continuación de un horario nocturno. }
+                    </div>
+                    <div class="pj-stack">
+                      <sc-button
+                        variant="secondary"
+                        appearance="outlined"
+                        fullWidth
+                        [label]="e.exception ? 'Editar día especial' : '+ Cambiar este día'"
+                        (clicked)="ruleForm('special', e.exception?.id, selected())"
+                      />
+                      @if (view() !== 'day') {
+                        <sc-button variant="secondary" appearance="text" fullWidth label="Ver detalle horario →" (clicked)="setView('day')" />
+                      }
+                    </div>
+                  </div>
+                </aside>
+              </div>
+            }
+
+            @case ('rules') {
+              <div class="pj-note sc-text-caption-regular hc-note--first">
+                <b>Orden de aplicación:</b> día especial → periodo especial → semana habitual. Un día especial puede abrir un domingo o cerrar completamente una fecha.
+              </div>
+              <section class="pj-panel">
+                <div class="pj-row pj-between pj-row--top">
+                  <div>
+                    <h3 class="sc-text-body-semibold">Semana habitual</h3>
+                    <p class="pj-muted sc-text-caption-regular hc-sub">Asigna los horarios que comienzan cada día. Las continuaciones nocturnas se ven en el calendario.</p>
+                  </div>
+                  <sc-button variant="secondary" appearance="outlined" label="Editar semana" (clicked)="calendarForm(calId())" />
+                </div>
+                <table class="hc-weekly">
+                  <thead>
+                    <tr class="sc-text-caption-regular"><th>Día</th><th>Horarios asociados</th><th>Disponibilidad</th></tr>
+                  </thead>
+                  <tbody>
+                    @for (w of DIAS; track w; let i = $index) {
+                      <tr>
+                        <td class="sc-text-body-regular">{{ w }}</td>
+                        <td>
+                          <div class="pj-row pj-wrap hc-badges">
+                            @for (id of cal().week[i]; track id) {
+                              <span class="pj-pill sc-text-caption-regular"><i class="pj-dot" [attr.style]="pintura(colorDe(id))"></i>{{ sch(id)?.name }}</span>
+                            } @empty {
+                              <span class="pj-muted sc-text-body-regular">Sin inicios de horario</span>
+                            }
+                          </div>
+                        </td>
+                        <td class="pj-muted sc-text-caption-regular">{{ dispDia(i) }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </section>
+
+              <section class="pj-panel hc-card">
+                <div class="pj-row pj-between pj-row--top">
+                  <div>
+                    <h3 class="sc-text-body-semibold">Periodos especiales</h3>
+                    <p class="pj-muted sc-text-caption-regular hc-sub">Un horario alternativo durante una temporada.</p>
+                  </div>
+                  <sc-button variant="secondary" appearance="outlined" label="+ Añadir periodo" (clicked)="ruleForm('period')" />
+                </div>
+                @for (p of cal().periods; track p.id) {
+                  <ng-container *ngTemplateOutlet="regla; context: { $implicit: p, type: 'period' }" />
+                } @empty {
+                  <p class="pj-muted sc-text-body-regular hc-empty">No hay periodos especiales.</p>
+                }
+              </section>
+
+              <section class="pj-panel hc-card">
+                <div class="pj-row pj-between pj-row--top">
+                  <div>
+                    <h3 class="sc-text-body-semibold">Días especiales</h3>
+                    <p class="pj-muted sc-text-caption-regular hc-sub">Cierres, aperturas extraordinarias y jornadas reducidas.</p>
+                  </div>
+                  <sc-button variant="secondary" appearance="outlined" label="+ Añadir día" (clicked)="ruleForm('special')" />
+                </div>
+                @for (p of cal().specials; track p.id) {
+                  <ng-container *ngTemplateOutlet="regla; context: { $implicit: p, type: 'special' }" />
+                } @empty {
+                  <p class="pj-muted sc-text-body-regular hc-empty">No hay días especiales.</p>
+                }
+              </section>
+              <div class="pj-note pj-note--warn sc-text-caption-regular">
+                Horarios nocturnos: los días de la semana indican cuándo comienza el turno. Un día especial sustituye la fecha completa. Los límites de periodos y días especiales cortan a las 00:00 cualquier continuidad nocturna.
+              </div>
+            }
+
+            @case ('sim') {
+              <div class="pj-panel">
+                <h3 class="sc-text-body-semibold">¿Qué disponibilidad se aplica?</h3>
+                <p class="pj-muted sc-text-body-regular hc-sub">Introduce una fecha y hora en la zona {{ cal().zone }}.</p>
+                <div class="pj-row pj-wrap hc-simform">
+                  <sc-datepicker inputId="hc-sim-date" label="Fecha" [value]="dSim()" (valueChange)="fromIso($event, simDate.set)" />
+                  <sc-inputtext inputId="hc-sim-time" label="Hora" placeholder="10:00" [value]="simTime()" (valueChange)="simTime.set($event)" />
+                  <sc-button variant="primary" label="Comprobar" (clicked)="simulate()" />
+                </div>
+                @if (simResult(); as r) {
+                  <div class="hc-sim-result" [class.is-closed]="!r.open">
+                    <h2 class="sc-text-h3-semibold">{{ r.open ? 'Con atención' : 'Sin atención' }} a las {{ r.t }}</h2>
+                    <p class="sc-text-body-regular">{{ fmt(r.s, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) }}</p>
+                    <p class="sc-text-body-semibold">{{ unionText(r.e) }}</p>
+                    <p class="sc-text-body-regular">Origen: {{ r.e.source }} · {{ r.e.type }}</p>
+                    <p class="sc-text-caption-regular">Inicio incluido y fin excluido: a la hora exacta de cierre ya no hay atención.</p>
+                    <sc-button variant="secondary" appearance="outlined" label="Ver este día" (clicked)="verDia(r.s)" />
+                  </div>
+                }
+              </div>
+            }
+          }
+
+          <p class="pj-footer sc-text-caption-regular">
+            Datos de ejemplo · Sin conexión con servicios reales · Los cambios se conservan en este navegador.
+            <button type="button" class="pj-link sc-text-caption-regular" (click)="resetForm()">Restablecer demo</button>
+          </p>
+        </main>
+      </div>
+    } @else {
+      <main class="hc-schedules-page">
+        <div class="pj-row pj-between pj-title-row">
+          <div>
+            <h2 class="sc-text-h3-semibold">Horarios reutilizables</h2>
+            <p class="pj-muted sc-text-body-regular">Cada horario contiene franjas; el calendario determina los días y las fechas.</p>
+          </div>
+          <sc-button variant="primary" label="+ Nuevo horario" (clicked)="scheduleForm()" />
+        </div>
+        <div class="hc-schedule-grid">
+          @for (s of db().schedules; track s.id) {
+            <article class="pj-panel hc-schedule-card" [attr.style]="pintura(s.color)">
+              <div class="pj-row"><i class="pj-dot"></i><h3 class="sc-text-body-semibold">{{ s.name }}</h3></div>
+              <p class="pj-muted sc-text-body-regular hc-schedule-card__slots">
+                @for (x of s.slots; track $index) { {{ franjaTexto(x) }}<br /> }
+              </p>
+              <div class="hc-bar">
+                @for (x of s.slots; track $index) {
+                  <i [style.left.%]="x[0] / 14.4" [style.width.%]="(x[1] > 1440 ? 1440 - x[0] : x[1] - x[0]) / 14.4"></i>
+                }
+              </div>
+              <div class="pj-row pj-between pj-muted sc-text-caption-regular"><span>00:00</span><span>24:00</span></div>
+              <p class="pj-muted sc-text-caption-regular hc-schedule-card__uso">Vinculado a {{ uses(s.id).length }} calendario(s)</p>
+              <div class="pj-row hc-schedule-card__actions">
+                <sc-button variant="secondary" appearance="outlined" size="sm" label="Editar" (clicked)="scheduleForm(s.id)" />
+                <button type="button" class="pj-link sc-text-body-regular" (click)="duplicateSchedule(s.id)">Duplicar</button>
+                <sc-button variant="danger" appearance="text" size="sm" icon="delete" iconOnly ariaLabel="Eliminar horario" (clicked)="deleteSchedule(s.id)" />
+              </div>
+            </article>
+          }
+        </div>
+        <div class="pj-note sc-text-caption-regular">
+          Si modificas un horario compartido, cambian todos los calendarios vinculados. Puedes duplicarlo para crear una variante independiente. Los horarios que se solapan se combinan sin duplicar el tiempo de apertura.
+        </div>
+      </main>
+    }
+  </div>
+</div>
+
+<ng-template #regla let-p let-type="type">
+  <div class="hc-rule">
+    <div class="hc-rule__symbol">{{ type === 'period' ? '◷' : p.ids.length ? '◆' : '○' }}</div>
+    <div class="pj-grow">
+      <b class="sc-text-body-semibold">{{ p.name }}</b>
+      <p class="pj-muted sc-text-caption-regular">{{ reglaFechas(p, type) }}</p>
+      <p class="pj-muted sc-text-caption-regular">{{ reglaHorarios(p) }}</p>
+    </div>
+    <sc-button variant="secondary" appearance="outlined" size="sm" label="Editar" (clicked)="ruleForm(type, p.id)" />
+  </div>
+</ng-template>
+
+@if (dialogo(); as d) {
+  <sc-custom-modal [visible]="true" [title]="tituloDialogo(d)" [width]="d.kind === 'confirm' ? '440px' : '650px'" (closed)="cerrar()">
+    @switch (d.kind) {
+      @case ('calendar') {
+        <div class="pj-cols">
+          <sc-inputtext inputId="hc-cal-name" fluid label="Nombre" placeholder="Ej. Atención al cliente" [maxlength]="70" [value]="fName()" (valueChange)="fName.set($event)" />
+          <sc-select inputId="hc-cal-zone" label="Zona horaria" [options]="zonas" optionValue="value" [value]="fZone()" (valueChange)="fZone.set($any($event))" />
+        </div>
+        <h3 class="sc-text-body-semibold hc-dialog-heading">Semana habitual</h3>
+        <p class="pj-muted sc-text-caption-regular">Marca los horarios que se aplican cada día. Sin selección = sin inicios de turno. Puede continuar un turno nocturno del día anterior.</p>
+        <table class="hc-weekly">
+          <tbody>
+            @for (w of DIAS; track w; let i = $index) {
+              <tr>
+                <td class="sc-text-body-regular">{{ w }}</td>
+                <td>
+                  <div class="pj-row pj-wrap hc-checks">
+                    @for (s of db().schedules; track s.id) {
+                      <sc-checkbox size="sm" [state]="fWeek()[i].includes(s.id) ? 'all' : 'none'" (cycle)="toggleWeek(i, s.id)">
+                        <span class="pj-row hc-check-label sc-text-caption-regular"><i class="pj-dot" [attr.style]="pintura(s.color)"></i>{{ s.name }}</span>
+                      </sc-checkbox>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+        <div class="pj-note sc-text-caption-regular">Varios horarios seleccionados se suman. El calendario abre cuando al menos uno está activo.</div>
+      }
+      @case ('schedule') {
+        <div class="pj-field">
+          <sc-inputtext inputId="hc-sch-name" fluid label="Nombre" placeholder="Ej. Jornada de mañana" [maxlength]="70" [value]="fName()" (valueChange)="fName.set($event)" />
+        </div>
+        <div class="pj-field">
+          <span class="sc-text-caption-semibold">Color</span>
+          <sc-color-dot-picker [options]="colores" [value]="fColor()" (valueChange)="fColor.set($event)" ariaLabel="Color" />
+        </div>
+        <h3 class="sc-text-body-semibold hc-dialog-heading">Franjas horarias</h3>
+        <p class="pj-muted sc-text-caption-regular">Formato 24 h. Puedes usar 24:00 como fin. Si el fin es anterior al inicio, continúa al día siguiente.</p>
+        @for (s of fSlots(); track $index; let k = $index) {
+          <div class="pj-row hc-slot">
+            <sc-inputtext size="sm" ariaLabel="Inicio" placeholder="09:00" [value]="s.a" (valueChange)="setSlot(k, 'a', $event)" />
+            <span class="sc-text-body-regular">hasta</span>
+            <sc-inputtext size="sm" ariaLabel="Fin" placeholder="18:00" [value]="s.b" (valueChange)="setSlot(k, 'b', $event)" />
+            <sc-button variant="secondary" appearance="text" size="sm" icon="close" iconOnly ariaLabel="Quitar franja" (clicked)="removeSlot(k)" />
+          </div>
+        }
+        <button type="button" class="pj-link sc-text-body-regular" (click)="addSlot()">+ Añadir franja</button>
+        @if (d.existing && uses(d.data.id).length) {
+          <div class="pj-note pj-note--warn sc-text-caption-regular">
+            Este cambio se aplicará a {{ uses(d.data.id).length }} calendario(s): <b>{{ nombresUso(d.data.id) }}</b>.
+          </div>
+        }
+      }
+      @case ('confirm') {
+        <p class="sc-text-body-regular">{{ d.text }}</p>
+      }
+      @default {
+        <div class="pj-field">
+          <sc-inputtext inputId="hc-rule-name" fluid label="Nombre" placeholder="Ej. Jornada de verano / Cierre extraordinario" [maxlength]="70" [value]="fName()" (valueChange)="fName.set($event)" />
+        </div>
+        <div class="pj-cols">
+          <sc-datepicker inputId="hc-rule-from" label="Desde" [value]="dFrom()" (valueChange)="fromIso($event, fFrom.set)" />
+          <sc-datepicker inputId="hc-rule-to" label="Hasta, incluido" [value]="dTo()" (valueChange)="fromIso($event, fTo.set)" />
+        </div>
+        @if (d.kind === 'special') {
+          <div class="pj-field">
+            <sc-checkbox size="sm" [state]="fAnnual() ? 'all' : 'none'" (cycle)="fAnnual.set(!fAnnual())"><span class="sc-text-body-regular">Repetir cada año (solo un día)</span></sc-checkbox>
+          </div>
+        } @else {
+          <div class="pj-field">
+            <span class="sc-text-caption-semibold">Días con atención dentro del periodo</span>
+            <div class="pj-row pj-wrap hc-checks">
+              @for (w of DIAS; track w; let i = $index) {
+                <sc-checkbox size="sm" [state]="fDays().includes(i) ? 'all' : 'none'" (cycle)="toggleDia(i)"><span class="sc-text-caption-regular">{{ w.slice(0, 3) }}</span></sc-checkbox>
+              }
+            </div>
+          </div>
+        }
+        <div class="pj-field">
+          <sc-select inputId="hc-rule-mode" label="Disponibilidad" [options]="modos" optionValue="value" [value]="fMode()" (valueChange)="fMode.set($any($event))" />
+        </div>
+        @if (fMode() === 'custom') {
+          <div class="pj-row pj-wrap hc-checks">
+            @for (s of db().schedules; track s.id) {
+              <sc-checkbox size="sm" [state]="fPicks().includes(s.id) ? 'all' : 'none'" (cycle)="togglePick(s.id)">
+                <span class="pj-row hc-check-label sc-text-caption-regular"><i class="pj-dot" [attr.style]="pintura(s.color)"></i>{{ s.name }}</span>
+              </sc-checkbox>
+            }
+          </div>
+        }
+        <div class="pj-note sc-text-caption-regular">
+          {{ d.kind === 'period' ? 'Sustituye la semana habitual durante estas fechas. Los días no marcados quedan cerrados.' : 'Sustituye la fecha completa, también si normalmente no es laborable. Tiene prioridad sobre los periodos. Las franjas nocturnas se recortan a esta fecha.' }}
+        </div>
+      }
+    }
+
+    @if (error()) {
+      <sc-message class="hc-form-error" severity="danger" [text]="error()" />
+    }
+
+    <div scCustomModalFooter class="pj-dialog-actions">
+      @if (d.kind === 'calendar' && d.existing) {
+        <button type="button" class="pj-link pj-link--danger sc-text-body-regular" (click)="deleteCalendar()">Eliminar</button>
+      }
+      @if ((d.kind === 'period' || d.kind === 'special') && d.existing) {
+        <button type="button" class="pj-link pj-link--danger sc-text-body-regular" (click)="removeRule()">Eliminar regla</button>
+      }
+      <div class="pj-grow"></div>
+      <sc-button variant="secondary" appearance="outlined" label="Cancelar" (clicked)="cerrar()" />
+      @switch (d.kind) {
+        @case ('confirm') { <sc-button variant="primary" [label]="d.label" (clicked)="ejecutar(d)" /> }
+        @case ('calendar') { <sc-button variant="primary" label="Guardar calendario" (clicked)="commit()" /> }
+        @case ('schedule') { <sc-button variant="primary" label="Guardar" (clicked)="commit()" /> }
+        @default { <sc-button variant="primary" label="Guardar regla" (clicked)="commit()" /> }
+      }
+    </div>
+  </sc-custom-modal>
+}

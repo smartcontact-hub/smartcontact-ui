@@ -71,6 +71,8 @@ function main() {
   for (const ruta of ALCANCE.flatMap((d) => [...ficheros(join(RAIZ, d))])) {
     const rel = relative(RAIZ, ruta);
     if (/\.spec\.ts$/.test(rel)) continue;
+    // Los prototipos de Calendarios del Lab calcan sus HTML de origen, puntos medios incluidos (rama experimental).
+    if (rel.includes('features/lab/calendarios-referencia/')) continue;
     if (/\/assets\/i18n\/[a-z]{2}\.json$/.test(rel)) {
       for (const clave of clavesConPunto(JSON.parse(readFileSync(ruta, 'utf8')))) fallos.push(`${rel} · ${clave}`);
       continue;

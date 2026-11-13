@@ -251,4 +251,14 @@ export const LABS: readonly Lab[] = [
     href: 'https://sc-supervisor.pages.dev/lab/tabla',
     label: 'sc-supervisor.pages.dev/lab/tabla',
   },
+  {
+    id: 'lab-calendarios-referencia',
+    title: 'Calendarios: propuesta de referencia',
+    question: '¿Cómo se ve la propuesta de referencia de Calendarios montada tal cual con las piezas del DS, al lado de la nuestra?',
+    controls: ['Periodos', 'Horarios', 'IVR'],
+    where: 'Una versión con tres pantallas: el selector de la cabecera salta de una a otra.',
+    // Vive en su rama experimental: el preview de la rama, no producción.
+    href: 'https://claude-proto-referencia.sc-supervisor.pages.dev/lab/calendarios/periodos',
+    label: 'claude-proto-referencia.sc-supervisor.pages.dev/lab/calendarios',
+  },
 ];
