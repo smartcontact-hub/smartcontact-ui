@@ -50,6 +50,8 @@
   tableTestId="repo-table"
   (exportRequest)="onExport($event)"
 >
+  <!-- Lo que la página que la usa quiera poner entre el título y la barra (unas pestañas, un aviso). -->
+  <ng-container ngProjectAs="[scListBeforeToolbar]"><ng-content select="[repoBeforeToolbar]" /></ng-container>
   <!-- Sin filas: con búsqueda, «Sin resultados» y limpiarla; sin búsqueda, que aún no hay ninguno y crear el
        primero. El MISMO vacío del DS que el resto de listas (2026-09-14). -->
   <div scListNoResults>

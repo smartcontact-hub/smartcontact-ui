@@ -99,9 +99,9 @@ export const appRoutes: Routes = [
        * escribe los mismos almacenes que /admin/horarios, así que lo que se cree aquí se ve allí. */
       {
         path: 'lab/horarios',
-        data: { breadcrumb: [{ labelKey: 'sidebar.repositories', link: '/admin/repositorios' }, { labelKey: 'repositories.horarios.title', link: '/lab/horarios' }] },
+        data: { breadcrumb: [{ labelKey: 'sidebar.repositories', link: '/admin/repositorios' }, { labelKey: 'Tiempo', link: '/lab/horarios' }] },
         children: [
-          { path: '', loadComponent: () => import('./features/lab/horarios/lab-horarios-list.component').then((m) => m.LabHorariosListComponent) },
+          { path: '', loadComponent: () => import('./features/lab/horarios/lab-tiempo.component').then((m) => m.LabTiempoComponent) },
           { path: 'crear', loadComponent: () => import('./features/lab/horarios/lab-horario-editor.component').then((m) => m.LabHorarioEditorComponent) },
           { path: 'editar/:id', loadComponent: () => import('./features/lab/horarios/lab-horario-editor.component').then((m) => m.LabHorarioEditorComponent) },
         ],

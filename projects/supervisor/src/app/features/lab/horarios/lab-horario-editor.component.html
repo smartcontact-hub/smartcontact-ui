@@ -195,7 +195,7 @@
   <div class="dialogo">
     @if (listasDisponibles().length > 0) {
       <div class="bloque">
-        <p class="sc-text-body-semibold bloque__titulo">Listas que ya tienes</p>
+        <p class="sc-text-body-semibold bloque__titulo">Listas de Tiempo</p>
         <ul class="listas" role="list">
           @for (c of listasDisponibles(); track c.id) {
             <li class="lista-op">
@@ -224,7 +224,7 @@
       <p class="sc-text-caption-regular nota">Datos de ejemplo de 2026 en el laboratorio: en producción vendrían de un servicio oficial y se renovarían cada año.</p>
       <sc-selectbutton size="sm" [ariaLabel]="t.destino" [options]="destinos" optionLabel="label" optionValue="value" [allowEmpty]="false" [value]="destino()" (valueChange)="destino.set($any($event))" />
       <p class="sc-text-caption-regular nota">
-        {{ destino() === 'lista' ? (listaExistente() ? 'Ya existe esa lista: se aplicará la que hay.' : 'Se crea una lista que otros horarios pueden aplicar: se mantiene una vez.') : 'Se copian como días especiales de este horario: luego puedes cambiar cualquiera (p. ej. abrir de 09:00 a 14:00).' }}
+        {{ destino() === 'lista' ? (listaExistente() ? 'Ya existe esa lista: se aplicará la que hay.' : 'Se crea una lista en Repositorios › Tiempo › Festivos que otros horarios pueden aplicar: se mantiene una vez.') : 'Se copian como días especiales de este horario: luego puedes cambiar cualquiera (p. ej. abrir de 09:00 a 14:00).' }}
       </p>
     </div>
   </div>

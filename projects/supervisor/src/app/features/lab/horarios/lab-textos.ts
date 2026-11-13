@@ -18,6 +18,8 @@ export const T = {
   quitar: (nombre: string): string => `Quitar ${nombre}`,
   datos: 'Datos del horario',
   festivos: 'Añadir festivos',
+  importarLista: 'Importar festivos oficiales',
+  listas: 'Listas de Tiempo',
   destino: 'Dónde guardarlos',
   diasDelTramo: (i: number): string => `Días del tramo ${i + 1}`,
   quitarTramo: (i: number): string => `Quitar tramo ${i + 1}`,

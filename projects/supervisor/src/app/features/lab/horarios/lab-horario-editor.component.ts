@@ -297,7 +297,7 @@ export class LabHorarioEditorComponent implements OnInit {
       const fechas = new Set(c.days.map((d) => (d.yearly ? `${anio}${d.date.slice(4)}` : d.date)));
       filas.push({
         tipo: 'lista', id: c.id, nombre: c.name, color: null,
-        cuando: `${c.days.length} días, lista compartida, en ${this.usosDe(c.id)} horario${this.usosDe(c.id) === 1 ? '' : 's'}`,
+        cuando: `${c.days.length} días, lista de Tiempo, en ${this.usosDe(c.id)} horario${this.usosDe(c.id) === 1 ? '' : 's'}`,
         horas: 'Cerrado', orden: '0', fechas, pasada: false,
       });
     }
@@ -370,10 +370,10 @@ export class LabHorarioEditorComponent implements OnInit {
   protected readonly regiones = REGIONES.map((r) => ({ value: r.id, label: r.nombre }));
   protected readonly region = signal('es-md');
   protected readonly descartados = signal<ReadonlySet<string>>(new Set());
-  protected readonly destino = signal<'lista' | 'horario'>('horario');
+  protected readonly destino = signal<'lista' | 'horario'>('lista');
   protected readonly destinos = [
-    { value: 'horario', label: 'Como días especiales' },
-    { value: 'lista', label: 'Como lista compartida' },
+    { value: 'lista', label: 'Como lista de Tiempo' },
+    { value: 'horario', label: 'Solo en este horario' },
   ];
   protected readonly diasRegion = computed(() => diasDe(this.region()));
   protected readonly nombreRegion = computed(() => REGIONES.find((r) => r.id === this.region())?.nombre ?? '');
