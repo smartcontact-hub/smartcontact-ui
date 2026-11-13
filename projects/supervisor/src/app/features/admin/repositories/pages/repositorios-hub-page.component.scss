@@ -245,9 +245,13 @@
 .panel {
   display: flex;
   flex-direction: column;
-  min-block-size: 100%;
+  /* Alto exacto del contenido del cajón, no un mínimo: el cuerpo (`__scroll`) es lo único que se desplaza y la cabeza
+   * queda fija. Con `min-block-size` el panel crecía con la lista y desplazaba el cajón entero. */
+  block-size: 100%;
+  min-block-size: 0;
 
   &__head {
+    flex: none;
     display: flex;
     flex-direction: column;
     gap: var(--sc-spacing-0-5);
@@ -274,14 +278,24 @@
     margin-block-start: var(--sc-spacing-0-5);
   }
 
+  /* El recuento y la lista, con su propio desplazamiento vertical. Sale al margen del cajón lo mismo que antes la lista,
+   * para que el fondo al pasar por una entrada llegue a los bordes y su texto siga alineado con la cabeza. */
+  &__scroll {
+    flex: 1;
+    min-block-size: 0;
+    margin-inline: calc(var(--sc-spacing-0-75) * -1);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
   &__count {
     margin: 0 0 var(--sc-spacing-0-5);
+    padding-inline: var(--sc-spacing-0-75);
     color: var(--sc-text-subtle);
   }
 
   &__list {
-    flex: 1;
-    margin: 0 calc(var(--sc-spacing-0-75) * -1);
+    margin: 0;
     padding: 0;
     list-style: none;
   }

@@ -252,7 +252,7 @@ test('al cambiar de tarjeta, el panel vuelve arriba: el repositorio nuevo se lee
   await page.setViewportSize({ width: 1440, height: 600 });
   await goto(page, 'admin/repositorios');
   await tarjeta(page, 'Agendas').click();
-  const contenido = page.locator('.p-drawer-content');
+  const contenido = page.locator('#repo-panel .panel__scroll');
   await expect(panel(page)).toBeVisible();
   await contenido.evaluate((el) => {
     el.scrollTop = 200;
@@ -262,6 +262,29 @@ test('al cambiar de tarjeta, el panel vuelve arriba: el repositorio nuevo se lee
   await tarjeta(page, 'Plantillas').click();
   await expect(page.locator('.p-drawer-title')).toHaveText('Plantillas');
   await expect.poll(() => contenido.evaluate((el) => el.scrollTop)).toBe(0);
+});
+
+test('con muchas entradas, solo se desplaza la lista: título, categoría, descripción y «Abrir repositorio» quedan fijos', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 500 });
+  await goto(page, 'admin/repositorios');
+  await tarjeta(page, 'Plantillas').click();
+  await expect(panel(page)).toBeVisible();
+  const lista = page.locator('#repo-panel .panel__scroll');
+  const cabeza = page.locator('#repo-panel .panel__head');
+  const antes = await cabeza.boundingBox();
+  const desborda = await lista.evaluate((el) => el.scrollHeight > el.clientHeight);
+  expect(desborda, 'a 500 px de alto la lista no cabe: debe desplazarse').toBe(true);
+  await lista.evaluate((el) => {
+    el.scrollTop = el.scrollHeight;
+  });
+  expect(await lista.evaluate((el) => el.scrollTop)).toBeGreaterThan(0);
+  // El cajón entero no se desplaza; la cabeza no se mueve.
+  expect(await page.locator('.p-drawer-content').evaluate((el) => el.scrollTop)).toBe(0);
+  expect(await cabeza.boundingBox()).toEqual(antes);
+  await expect(page.locator('.p-drawer-title')).toBeInViewport();
+  await expect(page.locator('#repo-panel .panel__open')).toBeInViewport();
 });
 
 test('si el buscador o el filtro dejan fuera la tarjeta marcada, su panel se va con ella; si sigue a la vista, se queda', async ({
