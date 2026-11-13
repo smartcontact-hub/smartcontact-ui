@@ -576,6 +576,9 @@ export class RepositoriosHubPageComponent {
       () => {
         const contenido = this.document.getElementById('repo-panel')?.closest('.p-drawer-content');
         if (contenido) contenido.scrollTop = 0;
+        // Lo que se desplaza ahora es la lista del panel, no el cajón entero.
+        const lista = this.document.querySelector('#repo-panel .panel__scroll');
+        if (lista) lista.scrollTop = 0;
         if (this.abiertoCon) this.document.getElementById('repo-panel')?.querySelector<HTMLElement>('a, button')?.focus();
       },
       { injector: this.injector },

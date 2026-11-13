@@ -166,6 +166,9 @@
       />
     </div>
 
+    <!-- Lo único que se desplaza: el recuento y las entradas. Lo de arriba (título, categoría, descripción y «Abrir
+         repositorio») queda fijo, así que con muchas entradas no se pierde de vista. -->
+    <div class="panel__scroll">
     <h3 class="panel__count sc-text-caption-semibold">{{ p.cuantas }}</h3>
     <ul class="panel__list">
       @for (e of p.entradas; track e.id) {
@@ -184,7 +187,7 @@
       <li class="panel__empty sc-text-caption-regular">{{ 'repositories.hub.no_entries' | translate }}</li>
       }
     </ul>
-
+    </div>
   </div>
   }
 </sc-drawer>
