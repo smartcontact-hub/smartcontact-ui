@@ -59,13 +59,7 @@
   background: var(--sc-bg-surface);
 }
 
+/* Las reglas, en segundo plano: debajo del calendario, con el aire que ya traen sus tarjetas. */
 .horario__reglas {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sc-spacing-0-75);
   margin-block-start: var(--sc-spacing-1);
-}
-
-.horario__reglas-titulo {
-  margin: 0;
 }

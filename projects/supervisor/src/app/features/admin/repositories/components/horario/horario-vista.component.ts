@@ -76,6 +76,8 @@ interface Capa {
 const aFecha = (iso: string): Date => new Date(`${iso}T12:00:00`);
 const dosCifras = (n: number): string => String(n).padStart(2, '0');
 const limites = (hoyAnio: number): { min: string; max: string } => ({ min: `${hoyAnio - ANIOS_ATRAS}-01-01`, max: `${hoyAnio + ANIOS_ADELANTE}-12-31` });
+const colorDeDueno = (dia: DiaResuelto, abierto: boolean): string | null =>
+  dia.tipo === 'festivo' ? 'red' : dia.tipo === 'especial' ? 'purple' : !abierto ? 'gray' : (dia.periodo?.color ?? null);
 const diasDelMes = (anio: number, mes: number): number => new Date(Date.UTC(anio, mes + 1, 0)).getUTCDate();
 
 /**
@@ -228,11 +230,10 @@ export class HorarioVistaComponent {
     const apagadas = this.apagadas();
     const r = this.reglas();
     const lista: Omit<Capa, 'activa'>[] = [
-      { clave: 'week', etiqueta: t('week'), color: 'green', icono: 'view_week' },
+      { clave: 'week', etiqueta: t('week'), color: 'gray', icono: 'view_week' },
       ...r.periods.map((p) => ({ clave: `period:${p.id}`, etiqueta: p.name, color: p.color as string, icono: 'date_range' })),
       ...(r.holidayCalendarIds.length > 0 ? [{ clave: 'holiday', etiqueta: t('holiday'), color: 'red', icono: 'flag' }] : []),
       ...(r.specials.length > 0 ? [{ clave: 'special', etiqueta: t('special'), color: 'purple', icono: 'event' }] : []),
-      { clave: 'closed', etiqueta: t('closed'), color: 'gray', icono: 'do_not_disturb_on' },
     ];
     return lista.map((c) => ({ ...c, activa: !apagadas.has(c.clave) }));
   });
@@ -289,10 +290,11 @@ export class HorarioVistaComponent {
     const capa = dia.tipo === 'periodo' && dia.periodo ? `period:${dia.periodo.id}` : dia.tipo === 'semana' ? 'week' : dia.tipo === 'festivo' ? 'holiday' : 'special';
     const abierto = dia.tramos.length > 0;
     const apagadas = this.apagadas();
-    const apagada = apagadas.has(capa) || (!abierto && apagadas.has('closed'));
-    // Cada dueño tiene su color: el festivo, rojo; la fecha especial, morado; el periodo, el suyo; la semana habitual,
-    // azul. Un día cerrado de semana o de periodo es gris. Una capa apagada pierde su color: así se ve el filtro.
-    const color = apagada ? null : dia.tipo === 'festivo' ? 'red' : dia.tipo === 'especial' ? 'purple' : !abierto ? 'gray' : (dia.periodo?.color ?? 'green');
+    const apagada = apagadas.has(capa);
+    // Solo lo que se sale de lo habitual lleva color, y cada capa pinta lo suyo, así que los filtros conviven: el festivo,
+    // rojo; la fecha especial, morado; el periodo, el suyo. La semana habitual es el fondo, sin color. Un día cerrado
+    // es gris. Una capa apagada pierde su color.
+    const color = apagada ? null : colorDeDueno(dia, abierto);
     return {
       fecha,
       numero: Number(fecha.slice(8)),
@@ -379,9 +381,16 @@ export class HorarioVistaComponent {
     if (!fecha) return null;
     const celda = this.celda(fecha, null);
     // La línea del día lleva el color de su dueño aunque ese filtro esté apagado: es la respuesta a lo que se pregunta.
-    const tipo = celda.dia.tipo;
-    const color = tipo === 'festivo' ? 'red' : tipo === 'especial' ? 'purple' : !celda.abierto ? 'gray' : (celda.dia.periodo?.color ?? 'green');
-    return { ...celda, color, titulo: this.formatos().largo.format(aFecha(fecha)), motivo: this.motivo(celda.dia) };
+    const color = colorDeDueno(celda.dia, celda.abierto);
+    const hoja = new Intl.DateTimeFormat(this.language.locale(), { month: 'short' }).format(aFecha(fecha)).replace('.', '');
+    return {
+      ...celda,
+      color,
+      hojaMes: hoja,
+      titulo: this.formatos().largo.format(aFecha(fecha)),
+      motivo: this.motivo(celda.dia),
+      duenoColor: celda.dia.tipo === 'festivo' ? 'red' : celda.dia.tipo === 'especial' ? 'purple' : (celda.dia.periodo?.color ?? 'gray'),
+    };
   });
 
   /** Qué lápiz de «editar lo que decide el día» corresponde: su etiqueta, o `null` si el día es una fecha especial. */

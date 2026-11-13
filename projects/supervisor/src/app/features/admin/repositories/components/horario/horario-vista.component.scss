@@ -63,43 +63,24 @@
 .filtro {
   display: inline-flex;
   align-items: center;
-  gap: var(--sc-spacing-0-25);
-  padding: var(--sc-spacing-0-25) var(--sc-spacing-0-75) var(--sc-spacing-0-25) var(--sc-spacing-0-5);
-  border: 1px solid transparent;
-  border-radius: var(--sc-radius-full);
+  gap: var(--sc-spacing-0-125);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--sc-icon-secondary);
   cursor: pointer;
-  transition:
-    background-color 150ms ease-out,
-    border-color 150ms ease-out;
 
   &:focus-visible {
     outline: 2px solid var(--sc-border-focus);
-    outline-offset: 1px;
+    outline-offset: 2px;
+    border-radius: var(--sc-radius-full);
   }
 
-  /* Encendido: relleno con su color y el check. Apagado: contorno neutro y el glifo de la capa en su color. */
-  @each $color in ('blue', 'green', 'purple', 'orange', 'teal', 'amber', 'red', 'brown', 'gray') {
-    &[data-color='#{$color}'] {
-      background: var(--sc-label-#{$color}-bg);
-      color: var(--sc-label-#{$color}-text);
+  &--apagado {
+    opacity: 0.6;
 
-      &:hover {
-        border-color: var(--sc-label-#{$color}-text);
-      }
-
-      &.filtro--apagado {
-        border-color: var(--sc-border-default);
-        background: var(--sc-bg-surface);
-        color: var(--sc-text-secondary);
-
-        sc-icon {
-          color: var(--sc-label-#{$color}-text);
-        }
-
-        &:hover {
-          background: var(--sc-bg-hover);
-        }
-      }
+    &:hover {
+      opacity: 1;
     }
   }
 }
@@ -110,35 +91,64 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--sc-spacing-0-25) var(--sc-spacing-0-75);
-  min-block-size: var(--sc-spacing-2-5);
-  padding: var(--sc-spacing-0-375) var(--sc-spacing-0-75);
-  border-inline-start: var(--sc-spacing-0-375) solid var(--sc-border-default);
-  border-radius: var(--sc-radius-md);
-  background: var(--sc-bg-subtle);
-  transition: background-color 150ms ease-out;
+  gap: var(--sc-spacing-0-75) var(--sc-spacing-1);
+  min-block-size: var(--sc-spacing-3);
+  padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-lg);
+  background: var(--sc-bg-surface);
+}
 
-  /* La línea toma el color de quien decide el día: el mismo que lleva ese día en el calendario. */
+/* La hoja de calendario: mes y día, del color de quien decide ese día. La semana habitual, en neutro. */
+.hoja {
+  display: inline-flex;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--sc-spacing-3);
+  block-size: var(--sc-spacing-3);
+  border-radius: var(--sc-radius-md);
+  background: var(--sc-bg-secondary-subtle);
+  color: var(--sc-text-primary);
+  line-height: 1;
+
+  &__mes {
+    text-transform: uppercase;
+  }
+
   @each $color in ('blue', 'green', 'purple', 'orange', 'teal', 'amber', 'red', 'brown', 'gray') {
     &[data-color='#{$color}'] {
-      border-inline-start-color: var(--sc-label-#{$color}-text);
       background: var(--sc-label-#{$color}-bg);
+      color: var(--sc-label-#{$color}-text);
     }
   }
+}
+
+.vista__dia-cuerpo {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-25);
+  min-inline-size: 0;
+}
+
+.vista__dia-linea,
+.vista__dia-tramos {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
 }
 
 .vista__dia-titulo::first-letter {
   text-transform: uppercase;
 }
 
-.vista__dia-horas,
-.vista__dia-motivo {
-  color: var(--sc-text-primary);
-}
-
-.vista__dia-motivo {
-  padding-inline-start: var(--sc-spacing-0-75);
-  border-inline-start: 1px solid var(--sc-border-strong);
+.vista__dia-tramo + .vista__dia-tramo::before {
+  margin-inline-end: var(--sc-spacing-0-5);
+  color: var(--sc-text-secondary);
+  content: '·';
 }
 
 .vista__dia-vacio {
@@ -493,6 +503,9 @@
   overflow: hidden;
   border-inline-start: 3px solid currentColor;
   border-radius: var(--sc-radius-sm);
+  /* Sin color, es la semana habitual: el neutro de marca. */
+  background: var(--sc-bg-primary-subtle);
+  color: var(--sc-text-primary);
 }
 
 @include tinte('.bloque');
