@@ -96,19 +96,24 @@ export const appRoutes: Routes = [
         loadComponent: () =>
           import('./features/lab/table-lab-page.component').then((m) => m.TableLabPageComponent),
       },
-      /* Laboratorio de Horarios: listado, alta y edición rehechos sin atarse a las decisiones de la pantalla real. Lee y
-       * escribe los mismos almacenes que /admin/horarios, así que lo que se cree aquí se ve allí. */
+      /* Laboratorio «Tiempo» (horarios y festivos), versión premium: listado y editores rehechos con su propio aspecto. Lee
+       * y escribe los mismos almacenes que /admin/horarios y /admin/festivos. */
+      {
+        path: 'lab/tiempo',
+        canActivate: [entrarEnLab],
+        data: { breadcrumb: [{ labelKey: 'sidebar.administration', link: false as const }, { labelKey: 'sidebar.repositories', link: '/admin/repositorios' }, { labelKey: 'Tiempo', link: '/lab/tiempo' }] },
+        loadChildren: () => import('./features/lab/tiempo/tp-rutas').then((m) => m.tiempoRoutes),
+      },
+      /* El laboratorio anterior de Horarios lleva aquí a su equivalente de «Tiempo»: un solo rediseño a la vista. */
       {
         path: 'lab/horarios',
-        canActivate: [entrarEnLab],
-        data: { breadcrumb: [{ labelKey: 'sidebar.administration', link: false as const }, { labelKey: 'sidebar.repositories', link: '/admin/repositorios' }, { labelKey: 'Tiempo', link: '/lab/horarios' }] },
         children: [
-          { path: '', loadComponent: () => import('./features/lab/horarios/lab-tiempo.component').then((m) => m.LabTiempoComponent) },
-          { path: 'crear', loadComponent: () => import('./features/lab/horarios/lab-horario-editor.component').then((m) => m.LabHorarioEditorComponent) },
-          { path: 'editar/:id', loadComponent: () => import('./features/lab/horarios/lab-horario-editor.component').then((m) => m.LabHorarioEditorComponent) },
-          { path: 'festivos', pathMatch: 'full', redirectTo: '/lab/horarios?lista=festivos' },
-          { path: 'festivos/crear', loadComponent: () => import('./features/lab/horarios/lab-festivos-editor.component').then((m) => m.LabFestivosEditorComponent) },
-          { path: 'festivos/editar/:id', loadComponent: () => import('./features/lab/horarios/lab-festivos-editor.component').then((m) => m.LabFestivosEditorComponent) },
+          { path: '', pathMatch: 'full', redirectTo: '/lab/tiempo' },
+          { path: 'crear', redirectTo: '/lab/tiempo/horario/nuevo' },
+          { path: 'editar/:id', redirectTo: '/lab/tiempo/horario/:id' },
+          { path: 'festivos', pathMatch: 'full', redirectTo: '/lab/tiempo?lista=festivos' },
+          { path: 'festivos/crear', redirectTo: '/lab/tiempo/festivos/nueva' },
+          { path: 'festivos/editar/:id', redirectTo: '/lab/tiempo/festivos/:id' },
         ],
       },
       {

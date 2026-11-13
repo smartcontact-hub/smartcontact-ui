@@ -1,0 +1,270 @@
+<div class="tp tp-tiempo">
+  <div class="tp-lienzo">
+    <header class="tp-head tp-stagger" style="--i: 0">
+      <div class="tp-head__main">
+        <h1 class="t-display">Tiempo</h1>
+        <p class="t-body t-2">Cuándo se atiende y qué días se cierra.</p>
+      </div>
+      <div class="tp-head__acciones">
+        <button type="button" class="tp-btn tp-btn--ghost tp-btn--sm" (click)="salir()">Ver la versión original</button>
+        @if (lista() === 'festivos') {
+          <button type="button" class="tp-btn" (click)="importando.set(true)">
+            <sc-tp-icono nombre="download" [tam]="16" />
+            Importar oficiales
+          </button>
+        }
+        <button type="button" class="tp-btn tp-btn--primary" (click)="crear()">
+          <sc-tp-icono nombre="plus" [tam]="16" [trazo]="2" />
+          {{ lista() === 'festivos' ? 'Nueva lista' : 'Nuevo horario' }}
+        </button>
+      </div>
+    </header>
+
+    <div class="tp-barra tp-stagger" style="--i: 1">
+      <sc-tp-seg [etiqueta]="t.listas" [opciones]="pestanas()" [valor]="lista()" (cambio)="ir($event)" />
+      @if (lista() === 'horarios') {
+        <sc-tp-seg pequeno [etiqueta]="t.filtro" [opciones]="filtros()" [valor]="filtro()" (cambio)="filtro.set($any($event))" />
+      }
+      <span class="tp-spacer"></span>
+      <label class="tp-buscar">
+        <sc-tp-icono nombre="search" [tam]="14" />
+        <input #buscador class="tp-buscar__input" type="search" [attr.aria-label]="t.buscar" [placeholder]="lista() === 'festivos' ? t.buscar : t.buscarHorario" [value]="busqueda()" (input)="busqueda.set($any($event.target).value)" />
+        <kbd class="tp-kbd">/</kbd>
+      </label>
+    </div>
+
+    @if (lista() === 'horarios') {
+      <!-- Lo que importa de un vistazo -->
+      <section class="tp-kpis">
+        <article class="tp-kpi tp-card tp-stagger" style="--i: 2">
+          <span class="t-eyebrow">Ahora</span>
+          <div class="tp-kpi__fila">
+            <span class="tp-kpi__n t-num">{{ cuenta().open }}</span>
+            <span class="t-small t-2">atienden de {{ cuenta().open + cuenta().closed }} activos</span>
+          </div>
+          <div class="tp-kpi__barra" aria-hidden="true">
+            <i class="is-open" [style.flex-grow]="cuenta().open"></i>
+            <i class="is-closed" [style.flex-grow]="cuenta().closed"></i>
+            <i class="is-inactive" [style.flex-grow]="cuenta().inactive"></i>
+          </div>
+        </article>
+        <article class="tp-kpi tp-card tp-stagger" style="--i: 3">
+          <span class="t-eyebrow">Próximo cambio</span>
+          @if (proximoCambio(); as p) {
+            <div class="tp-kpi__fila">
+              <span class="tp-kpi__icono" [class.is-abre]="p.abre"><sc-tp-icono [nombre]="p.abre ? 'sun' : 'moon'" [tam]="16" /></span>
+              <span class="tp-kpi__txt">
+                <span class="t-body t-strong t-trunc">{{ p.nombre }}</span>
+                <span class="t-small t-2">{{ p.abre ? 'abre' : 'cierra' }} a las <span class="t-num">{{ p.hora }}</span>, {{ p.texto }}</span>
+              </span>
+            </div>
+          } @else {
+            <span class="t-small t-3">Nada cambia en dos semanas</span>
+          }
+        </article>
+        <article class="tp-kpi tp-card tp-stagger" style="--i: 4">
+          <span class="t-eyebrow">Próximo festivo</span>
+          @if (proximoFestivo(); as f) {
+            <div class="tp-kpi__fila">
+              <span class="tp-hoja"><span class="tp-hoja__mes">{{ f.mes }}</span><span class="tp-hoja__dia">{{ f.dia }}</span></span>
+              <span class="tp-kpi__txt">
+                <span class="t-body t-strong t-trunc">{{ f.nombre }}</span>
+                <span class="t-small t-2">{{ f.falta }}, cierra {{ f.usos }} {{ f.usos === 1 ? 'horario' : 'horarios' }}</span>
+              </span>
+            </div>
+          } @else {
+            <span class="t-small t-3">Ninguna lista activa</span>
+          }
+        </article>
+        <article class="tp-kpi tp-card tp-stagger" style="--i: 5">
+          <span class="t-eyebrow">Sin usar</span>
+          <div class="tp-kpi__fila">
+            <span class="tp-kpi__n t-num" [class.t-3]="sinUso() === 0">{{ sinUso() }}</span>
+            <span class="t-small t-2">{{ sinUso() === 1 ? 'horario activo que ningún grupo tiene' : 'horarios activos que ningún grupo tiene' }}</span>
+          </div>
+        </article>
+      </section>
+
+      <section class="tp-card tp-tabla tp-stagger" style="--i: 6" role="table" [attr.aria-label]="t.horarios">
+        <div class="tp-tabla__cab t-eyebrow" role="row">
+          <span role="columnheader">Horario</span>
+          <span role="columnheader">Ahora</span>
+          <span role="columnheader">Semana</span>
+          <span role="columnheader">Cambia la semana</span>
+          <span role="columnheader">Lo usan</span>
+          <span role="columnheader"></span>
+        </div>
+        <div class="tp-tabla__cuerpo" role="rowgroup">
+          @for (h of filas(); track h.id) {
+            <div class="tp-fila" role="row" tabindex="0" (click)="abrir(h.id)" (keydown.enter)="abrir(h.id)">
+              <div class="tp-fila__nombre" role="cell">
+                <span class="t-body t-strong t-trunc">{{ h.nombre }}</span>
+                <span class="tp-meta t-micro t-3"><sc-tp-icono nombre="globe" [tam]="12" />{{ h.zona }}</span>
+              </div>
+              <div role="cell">
+                <span class="tp-pill" [class.tp-pill--open]="h.estado === 'open'" [class.tp-pill--inactive]="h.estado === 'inactive'">
+                  <span class="tp-dot" [class.tp-dot--open]="h.estado === 'open'" [class.tp-dot--inactive]="h.estado === 'inactive'"></span>
+                  {{ h.estado === 'open' ? 'Abierto' : h.estado === 'closed' ? 'Cerrado' : 'Inactivo' }}
+                  @if (h.detalle) {
+                    <span class="tp-pill__extra t-num">{{ h.detalle }}</span>
+                  }
+                </span>
+              </div>
+              <div class="tp-fila__semana" role="cell">
+                <span class="tp-mini" [attr.data-tip]="h.resumen">
+                  @for (d of h.dias; track d.d) {
+                    <span class="tp-mini__dia" [class.is-hoy]="d.hoy">
+                      @for (tz of d.trozos; track $index) {
+                        <i [style.left.%]="(tz.desde / 1440) * 100" [style.width.%]="((tz.hasta - tz.desde) / 1440) * 100"></i>
+                      }
+                      @if (d.ahora !== null) {
+                        <b [style.left.%]="(d.ahora / 1440) * 100"></b>
+                      }
+                    </span>
+                  }
+                </span>
+                <span class="tp-fila__resumen">
+                  <span class="t-small t-2 t-trunc t-num">{{ h.resumen }}</span>
+                  <span class="t-micro t-3 t-num">{{ h.horasSemana }} a la semana</span>
+                </span>
+              </div>
+              <div class="tp-fila__exc" role="cell">
+                @if (h.periodos + h.especiales + h.listas === 0) {
+                  <span class="t-small t-4">Ninguna</span>
+                } @else {
+                  @if (h.listas) {
+                    <span class="tp-tag tp-tag--festivo" [attr.data-tip]="h.listas === 1 ? '1 lista de festivos' : h.listas + ' listas de festivos'"><sc-tp-icono nombre="calendar-x" [tam]="12" />{{ h.listas }}</span>
+                  }
+                  @if (h.periodos) {
+                    <span class="tp-tag tp-tag--periodo" [attr.data-tip]="h.periodos === 1 ? '1 periodo' : h.periodos + ' periodos'"><sc-tp-icono nombre="sun" [tam]="12" />{{ h.periodos }}</span>
+                  }
+                  @if (h.especiales) {
+                    <span class="tp-tag tp-tag--especial" [attr.data-tip]="h.especiales === 1 ? '1 día especial' : h.especiales + ' días especiales'"><sc-tp-icono nombre="star" [tam]="12" />{{ h.especiales }}</span>
+                  }
+                }
+              </div>
+              <div class="tp-fila__uso" role="cell">
+                @if (h.grupos.length === 0) {
+                  <span class="t-small t-4">Ningún grupo</span>
+                } @else {
+                  <span class="tp-avatars" [attr.data-tip]="h.grupos.join(', ')">
+                    @for (g of h.grupos.slice(0, 3); track $index) {
+                      <span class="tp-avatar" [style.--c]="avatarColor(g)">{{ iniciales(g) }}</span>
+                    }
+                    @if (h.grupos.length > 3) {
+                      <span class="tp-avatar tp-avatar--more">+{{ h.grupos.length - 3 }}</span>
+                    }
+                  </span>
+                }
+              </div>
+              <div class="tp-fila__acc" role="cell">
+                <button type="button" class="tp-btn tp-btn--ghost tp-btn--icon tp-btn--sm tp-fila__menu" [attr.aria-label]="t.acciones(h.nombre)" [attr.aria-expanded]="menu()?.id === h.id" (click)="abrirMenu(h.id, $event)">
+                  <sc-tp-icono nombre="more" [tam]="16" />
+                </button>
+              </div>
+            </div>
+          } @empty {
+            <div class="tp-vacio">
+              <span class="tp-vacio__ico"><sc-tp-icono nombre="search" [tam]="20" /></span>
+              <p class="t-body t-strong">Nada coincide</p>
+              <p class="t-small t-2">Prueba con otro nombre o quita el filtro.</p>
+              <button type="button" class="tp-btn tp-btn--sm" (click)="busqueda.set(''); filtro.set('todos')">Ver todos</button>
+            </div>
+          }
+        </div>
+      </section>
+    } @else {
+      <section class="tp-listas">
+        @for (c of tarjetas(); track c.id; let i = $index) {
+          <article class="tp-lista tp-card tp-stagger" [style.--i]="i + 2" tabindex="0" (click)="abrirLista(c.id)" (keydown.enter)="abrirLista(c.id)">
+            <header class="tp-lista__cab">
+              <span class="tp-mark tp-mark--festivo"><sc-tp-icono nombre="calendar-x" [tam]="16" /></span>
+              <span class="tp-lista__titulo">
+                <span class="t-body t-strong t-trunc">{{ c.nombre }}</span>
+                <span class="t-micro t-3">{{ c.n }} {{ c.n === 1 ? 'día cerrado' : 'días cerrados' }}</span>
+              </span>
+              <span class="tp-pill" [class.tp-pill--open]="c.activa" [class.tp-pill--inactive]="!c.activa">
+                <span class="tp-dot" [class.tp-dot--inactive]="!c.activa" [style.background]="c.activa ? 'var(--tp-open-dot)' : null"></span>
+                {{ c.activa ? 'Activa' : 'Apagada' }}
+              </span>
+            </header>
+            <div class="tp-anio" aria-hidden="true">
+              @for (m of c.meses; track $index; let k = $index) {
+                <span class="tp-anio__mes">{{ mesesCortos[k].charAt(0) }}</span>
+                @for (d of m; track $index) {
+                  <i [class]="'tp-anio__d' + (d.includes('x') ? ' is-x' : '') + (d.includes('f') ? ' is-f' : '') + (d.includes('p') ? ' is-p' : '') + (d.includes('h') ? ' is-h' : '')"></i>
+                }
+              }
+            </div>
+            <footer class="tp-lista__pie">
+              @if (c.proximo; as p) {
+                <span class="tp-hoja tp-hoja--sm"><span class="tp-hoja__mes">{{ p.mes }}</span><span class="tp-hoja__dia">{{ p.dia }}</span></span>
+                <span class="tp-lista__prox">
+                  <span class="t-small t-strong t-trunc">{{ p.nombre }}</span>
+                  <span class="t-micro t-3">Próximo, {{ p.falta }}</span>
+                </span>
+              } @else {
+                <span class="t-small t-3">Sin días por delante</span>
+              }
+              <span class="tp-spacer"></span>
+              @if (c.usos.length) {
+                <span class="tp-avatars" [attr.data-tip]="'La aplican: ' + c.usos.join(', ')">
+                  @for (u of c.usos.slice(0, 3); track $index) {
+                    <span class="tp-avatar" [style.--c]="avatarColor(u)">{{ iniciales(u) }}</span>
+                  }
+                  @if (c.usos.length > 3) {
+                    <span class="tp-avatar tp-avatar--more">+{{ c.usos.length - 3 }}</span>
+                  }
+                </span>
+              } @else {
+                <span class="t-micro t-3">Ningún horario</span>
+              }
+            </footer>
+          </article>
+        }
+        <button type="button" class="tp-lista tp-lista--nueva tp-stagger" [style.--i]="tarjetas().length + 2" (click)="importando.set(true)">
+          <span class="tp-flags">
+            @for (b of banderas; track b[0]) {
+              <span class="tp-flag" [style.background]="b[1]"></span>
+            }
+          </span>
+          <span class="t-body t-strong">Importar festivos oficiales</span>
+          <span class="t-small t-2">España, sus comunidades y México. Se crea una lista que luego enciendes en los horarios que deben cerrar esos días.</span>
+          <span class="tp-lista__cta t-small t-strong">Elegir región <sc-tp-icono nombre="chevron-right" [tam]="14" /></span>
+        </button>
+      </section>
+    }
+  </div>
+
+  @if (menu(); as m) {
+    <div class="tp-menu tp-in" role="menu" [style.position]="'fixed'" [style.top.px]="m.y" [style.left.px]="m.x" style="translate: -100% 0" animate.leave="tp-out">
+      <button type="button" class="tp-menu__item" role="menuitem" (click)="abrir(m.id)"><sc-tp-icono nombre="pencil" [tam]="14" />Abrir</button>
+      <button type="button" class="tp-menu__item" role="menuitem" (click)="duplicar(m.id)"><sc-tp-icono nombre="copy" [tam]="14" />Duplicar</button>
+      <hr class="tp-divider tp-menu__sep" />
+      <button type="button" class="tp-menu__item tp-menu__item--danger" role="menuitem" (click)="pedirBorrar(m.id)"><sc-tp-icono nombre="trash" [tam]="14" />Eliminar</button>
+    </div>
+  }
+
+  @if (borrando(); as b) {
+    <sc-tp-modal [titulo]="'¿Eliminar «' + b.name + '»?'" icono="trash" ancho="26rem" (cerrar)="borrando.set(null)">
+      @if (gruposDelBorrado().length) {
+        <p class="t-small t-2">
+          Lo usan {{ gruposDelBorrado().length === 1 ? 'el grupo' : gruposDelBorrado().length + ' grupos' }}
+          <strong>{{ gruposDelBorrado().join(', ') }}</strong>: volverán a atender siempre, sin horario.
+        </p>
+      } @else {
+        <p class="t-small t-2">Ningún grupo lo usa. Podrás deshacerlo justo después.</p>
+      }
+      <div tpPie class="tp-modal__acciones">
+        <button type="button" class="tp-btn" (click)="borrando.set(null)">Cancelar</button>
+        <button type="button" class="tp-btn tp-btn--danger" (click)="borrar()">Eliminar</button>
+      </div>
+    </sc-tp-modal>
+  }
+
+  @if (importando()) {
+    <sc-tp-importar modo="lista" (lista)="importada($event)" (cerrado)="importando.set(false)" />
+  }
+
+  <sc-tp-avisos />
+</div>

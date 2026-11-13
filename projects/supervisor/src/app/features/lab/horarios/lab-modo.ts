@@ -3,16 +3,19 @@ import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 
 /**
- * LABORATORIO: el «modo rediseño» de Horarios. Entrar una vez en /lab/horarios lo enciende para este navegador; desde
+ * LABORATORIO: el «modo rediseño» de Horarios. Entrar una vez en /lab/tiempo (o /lab/horarios) lo enciende para este navegador; desde
  * entonces Repositorios lleva a «Tiempo» y las rutas de siempre (/admin/horarios, /admin/festivos) saltan a su versión
  * del laboratorio, así se navega por la app sin caer en la pantalla original. «Volver a la versión original» lo apaga.
- * Sin entrar en el laboratorio, nada cambia: la app y sus pruebas siguen igual.
+ * Sin entrar en el laboratorio, nada cambia: la app y sus pruebas siguen igual. En el preview de la rama premium nace
+ * encendido (quien entra por ese dominio viene a ver el rediseño); «Ver la versión original» lo apaga también allí.
  */
 const CLAVE = 'sc-lab-horarios';
+const PREVIEW = 'claude-lab-horarios-premium.sc-supervisor.pages.dev';
 
 export function labHorariosActivo(): boolean {
   try {
-    return localStorage.getItem(CLAVE) === '1';
+    const v = localStorage.getItem(CLAVE);
+    return v === '1' || (v !== '0' && location.hostname === PREVIEW);
   } catch {
     return false;
   }
@@ -20,8 +23,7 @@ export function labHorariosActivo(): boolean {
 
 export function activarLabHorarios(si: boolean): void {
   try {
-    if (si) localStorage.setItem(CLAVE, '1');
-    else localStorage.removeItem(CLAVE);
+    localStorage.setItem(CLAVE, si ? '1' : '0');
   } catch {
     /* Sin almacenamiento, el modo dura lo que dura la pestaña en el laboratorio. */
   }

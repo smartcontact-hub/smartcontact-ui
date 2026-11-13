@@ -1,0 +1,284 @@
+/*
+ * LABORATORIO «Tiempo», versión premium: una lista de festivos (el año en doce meses, a quién cierra y sus días). Hoja
+ * global (ViewEncapsulation.None) que cuelga de `.tp`; el sistema se explica en tp-base.scss.
+ */
+
+.tp-fest__rejilla {
+  display: grid;
+  flex: 1;
+  grid-template-columns: minmax(0, 1fr) 23rem;
+  gap: var(--s-5);
+  min-block-size: 32rem;
+}
+
+/* ── El año: doce meses, cada día un botón ──────────────────────────────────────────────────────────────────────── */
+
+.tp-fest__anio {
+  display: flex;
+  flex-direction: column;
+  min-block-size: 0;
+
+  .tp-card__head {
+    gap: var(--s-2);
+  }
+  .tp-cal__nav {
+    display: inline-flex;
+    gap: var(--s-0-5);
+  }
+}
+.tp-doce {
+  display: grid;
+  flex: 1;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-content: start;
+  gap: var(--s-4) var(--s-6);
+  min-block-size: 0;
+  overflow: auto;
+  padding: 0 var(--s-5) var(--s-4);
+}
+.tp-doce__mes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1-5);
+  min-inline-size: 0;
+}
+.tp-doce__nombre {
+  display: flex;
+  align-items: center;
+  gap: var(--s-1-5);
+  block-size: 1.25rem;
+  padding-inline-start: var(--s-1);
+
+  &::first-letter {
+    text-transform: uppercase;
+  }
+}
+.tp-doce__n {
+  min-inline-size: 1.125rem;
+  padding-inline: var(--s-1);
+  border-radius: var(--r-full);
+  background: var(--tp-festivo-soft);
+  font-size: var(--t-11);
+  font-weight: 600;
+  line-height: 1.125rem;
+  text-align: center;
+  color: var(--tp-festivo-ink);
+  animation: tp-in 180ms var(--tp-ease) both;
+}
+.tp-doce__grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.125rem;
+}
+.tp-doce__l {
+  display: grid;
+  place-items: center;
+  block-size: 1rem;
+  font-size: 0.625rem;
+  font-weight: 600;
+  color: var(--tp-ink-4);
+}
+.tp-doce__d {
+  position: relative;
+  display: grid;
+  place-items: center;
+  block-size: 1.375rem;
+  padding: 0;
+  border: 0;
+  border-radius: 0.3125rem;
+  background: transparent;
+  font-size: var(--t-11);
+  font-weight: 500;
+  line-height: 1;
+  color: var(--tp-ink-2);
+  cursor: pointer;
+  transition-property: background-color, color, box-shadow, scale;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+
+  &:hover {
+    background: var(--tp-muted);
+    color: var(--tp-ink);
+  }
+  &:active {
+    scale: 0.96;
+  }
+  &.is-finde {
+    color: var(--tp-ink-3);
+  }
+  &.is-pasado:not(.is-f) {
+    color: var(--tp-ink-4);
+  }
+  &.is-hoy {
+    box-shadow: inset 0 0 0 1.5px var(--tp-accent);
+    font-weight: 650;
+    color: var(--tp-accent-ink);
+  }
+  &.is-f {
+    background: var(--tp-festivo);
+    font-weight: 650;
+    color: #fff;
+    box-shadow: 0 1px 2px color-mix(in oklch, var(--tp-festivo) 40%, transparent);
+
+    &:hover {
+      background: color-mix(in oklch, var(--tp-festivo) 88%, black);
+    }
+    &.is-pasado {
+      background: color-mix(in oklch, var(--tp-festivo) 45%, var(--tp-surface));
+      box-shadow: none;
+    }
+  }
+  &.is-res {
+    z-index: 1;
+    box-shadow:
+      0 0 0 2px var(--tp-surface),
+      0 0 0 3.5px var(--tp-festivo);
+  }
+}
+
+/* ── El lado: a quién cierra y sus días ─────────────────────────────────────────────────────────────────────────── */
+
+.tp-fest__lado {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+  min-block-size: 0;
+}
+.tp-fest__aplica {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  max-block-size: 42%;
+  min-block-size: 0;
+}
+.tp-aplica {
+  display: flex;
+  flex-direction: column;
+  min-block-size: 0;
+  overflow: auto;
+  margin: 0;
+  padding: 0 var(--s-2) var(--s-2);
+  list-style: none;
+}
+.tp-aplica__fila {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  min-block-size: 2.5rem;
+  padding-inline: var(--s-3);
+  border-radius: var(--r-xs);
+  color: var(--tp-ink-3);
+  transition-property: background-color, color;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+
+  &:hover {
+    background: var(--tp-subtle);
+  }
+  &.is-on {
+    color: var(--tp-ink);
+  }
+  .tp-avatar {
+    transition-property: opacity, filter;
+    transition-duration: 150ms;
+    transition-timing-function: ease-out;
+  }
+  &:not(.is-on) .tp-avatar {
+    opacity: 0.55;
+    filter: grayscale(1);
+  }
+}
+.tp-aplica__nombre {
+  flex: 1;
+  min-inline-size: 0;
+}
+
+.tp-fest__dias {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-block-size: 0;
+}
+.tp-fest__dias-cuerpo {
+  flex: 1;
+  min-block-size: 0;
+  overflow: auto;
+  padding: 0 var(--s-2) var(--s-2);
+
+  .tp-vacio {
+    block-size: 100%;
+    padding-block: var(--s-6);
+  }
+}
+.tp-dias {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.tp-dias__sep {
+  padding: var(--s-3) var(--s-3) var(--s-1);
+}
+.tp-dias__fila {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  min-block-size: 3rem;
+  padding: var(--s-1) var(--s-1) var(--s-1) var(--s-2);
+  border-radius: var(--r-xs);
+  transition-property: background-color, opacity;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+
+  &:hover,
+  &:focus-within {
+    background: var(--tp-subtle);
+  }
+  &.is-pasado {
+    opacity: 0.6;
+  }
+  &.is-pasado:hover,
+  &.is-pasado:focus-within {
+    opacity: 1;
+  }
+  &.is-nueva {
+    animation: tp-nueva 1.6s ease-out both;
+  }
+  > .tp-btn {
+    opacity: 0;
+  }
+  &:hover > .tp-btn,
+  &:focus-within > .tp-btn,
+  > .tp-btn[aria-pressed='true'] {
+    opacity: 1;
+  }
+}
+@keyframes tp-nueva {
+  from {
+    background: var(--tp-festivo-soft);
+  }
+}
+.tp-dias__txt {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-inline-size: 0;
+
+  .tp-inline {
+    padding-block: 0;
+  }
+  .t-micro {
+    padding-inline-start: 0;
+  }
+  .t-micro::first-letter {
+    text-transform: uppercase;
+  }
+}
+.tp-dias__cada[aria-pressed='true'] {
+  color: var(--tp-accent-ink);
+  sc-tp-icono {
+    color: inherit;
+  }
+}

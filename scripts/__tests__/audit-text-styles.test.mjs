@@ -17,6 +17,7 @@ import {
   TIPOGRAFIA_SUELTA_MAX,
   TIPOGRAFIA_SUELTA_DOCS_MAX,
   esSimuladorDeNavegador,
+  esLabTiempo,
 } from '../audit-text-styles.mjs';
 
 /*
@@ -225,7 +226,7 @@ test('el tope es el conteo REAL del repo, no un número inventado', () => {
   const hojas = execSync(
     "find projects/supervisor/src/app projects/supervisor/src/styles -name '*.scss'",
     { encoding: 'utf8' },
-  ).split('\n').filter(Boolean);
+  ).split('\n').filter(Boolean).filter((h) => !esLabTiempo(h));
   const n = hojas.reduce((acc, h) => acc + tipografiaSuelta(readFileSync(h, 'utf8')), 0);
   assert.equal(n, TIPOGRAFIA_SUELTA_MAX);
 });

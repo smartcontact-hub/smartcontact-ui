@@ -1,0 +1,263 @@
+/*
+ * LABORATORIO «Tiempo», versión premium: piezas compartidas (segmentado, marcas, hojas, avatares, pista de 24 h, etiquetas y tooltip).
+ * Hoja global (ViewEncapsulation.None) que cuelga entera de `.tp`; el sistema se explica en tp-base.scss.
+ */
+
+/* ── Control segmentado: el fondo se desliza a la opción elegida ────────────────────────────────────────────────── */
+
+.tp-seg {
+  position: relative;
+  display: inline-flex;
+  padding: 0.1875rem;
+  border-radius: var(--r-md);
+  background: var(--tp-muted);
+  isolation: isolate;
+}
+.tp-seg__thumb {
+  position: absolute;
+  z-index: -1;
+  inset-block: 0.1875rem;
+  inset-inline-start: 0;
+  border-radius: calc(var(--r-md) - 0.1875rem);
+  background: var(--tp-surface);
+  box-shadow: var(--tp-ring);
+  transition-property: translate, inline-size;
+  transition-duration: 260ms;
+  transition-timing-function: var(--tp-ease);
+}
+.tp-seg__opt {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1-5);
+  block-size: 1.75rem;
+  padding-inline: var(--s-3);
+  border: 0;
+  border-radius: calc(var(--r-md) - 0.1875rem);
+  background: transparent;
+  font-size: var(--t-13);
+  font-weight: 540;
+  color: var(--tp-ink-3);
+  white-space: nowrap;
+  cursor: pointer;
+  transition-property: color;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+
+  &:hover {
+    color: var(--tp-ink-2);
+  }
+  &[aria-pressed='true'],
+  &[aria-selected='true'] {
+    color: var(--tp-ink);
+  }
+}
+.tp-seg__n {
+  min-inline-size: 1.125rem;
+  padding-inline: var(--s-1);
+  border-radius: var(--r-full);
+  background: color-mix(in oklch, var(--tp-ink) 6%, transparent);
+  font-size: var(--t-11);
+  font-weight: 600;
+  line-height: 1.125rem;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.tp-seg--sm .tp-seg__opt {
+  block-size: 1.5rem;
+  padding-inline: var(--s-2);
+  font-size: var(--t-12);
+}
+
+/* ── Marcas de tipo: un color por cada cosa que cambia la semana ────────────────────────────────────────────────── */
+
+.tp-mark {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  inline-size: 2rem;
+  block-size: 2rem;
+  border-radius: var(--r-sm);
+  background: var(--tp-muted);
+  color: var(--tp-ink-2);
+}
+.tp-mark--festivo {
+  background: var(--tp-festivo-soft);
+  color: var(--tp-festivo-ink);
+}
+.tp-mark--especial {
+  background: var(--tp-especial-soft);
+  color: var(--tp-especial-ink);
+}
+.tp-mark--periodo {
+  background: color-mix(in oklch, var(--c) 15%, var(--tp-surface));
+  color: color-mix(in oklch, var(--c) 80%, var(--tp-ink));
+}
+.tp-mark--sm {
+  inline-size: 1.75rem;
+  block-size: 1.75rem;
+  border-radius: var(--r-xs);
+}
+
+/* Un día del calendario como hoja de taco: el mes arriba, el día grande. */
+.tp-hoja {
+  display: inline-flex;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  inline-size: 2.25rem;
+  overflow: hidden;
+  border-radius: var(--r-sm);
+  background: var(--tp-surface);
+  box-shadow: var(--tp-ring);
+  line-height: 1;
+}
+.tp-hoja__mes {
+  inline-size: 100%;
+  padding-block: 0.1875rem;
+  background: var(--c, var(--tp-festivo));
+  font-size: 0.5625rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-align: center;
+  text-transform: uppercase;
+  color: #fff;
+}
+.tp-hoja__dia {
+  padding-block: 0.25rem 0.3125rem;
+  font-size: var(--t-14);
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+/* ── Avatares ───────────────────────────────────────────────────────────────────────────────────────────────────── */
+
+.tp-avatars {
+  display: inline-flex;
+  align-items: center;
+}
+.tp-avatar {
+  display: inline-grid;
+  place-items: center;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  border-radius: var(--r-full);
+  background: color-mix(in oklch, var(--c) 18%, var(--tp-surface));
+  box-shadow: 0 0 0 2px var(--tp-surface);
+  font-size: 0.5625rem;
+  font-weight: 650;
+  letter-spacing: 0.01em;
+  color: color-mix(in oklch, var(--c) 75%, var(--tp-ink));
+
+  & + & {
+    margin-inline-start: calc(-1 * var(--s-1-5));
+  }
+}
+.tp-avatar--more {
+  --c: var(--tp-ink-3);
+}
+
+/* ── Pista de 24 h ──────────────────────────────────────────────────────────────────────────────────────────────── */
+
+.tp-linea {
+  position: relative;
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  border-radius: var(--r-xs);
+  background: var(--tp-muted);
+  overflow: hidden;
+}
+.tp-linea__tramo {
+  position: absolute;
+  inset-block: 0;
+  border-radius: var(--s-1);
+  background: var(--c, var(--tp-accent));
+  transition-property: left, width, background-color;
+  transition-duration: 320ms;
+  transition-timing-function: var(--tp-ease);
+}
+.tp-linea__tramo--arrastre {
+  background: repeating-linear-gradient(135deg, var(--c, var(--tp-accent)) 0 3px, color-mix(in oklch, var(--c, var(--tp-accent)) 55%, var(--tp-surface)) 3px 6px);
+}
+.tp-linea__ahora {
+  position: absolute;
+  inset-block: -0.125rem;
+  inline-size: 2px;
+  margin-inline-start: -1px;
+  border-radius: var(--r-full);
+  background: var(--tp-festivo);
+  box-shadow: 0 0 0 2px var(--tp-surface);
+}
+.tp-linea--cerrada {
+  background: var(--tp-hatch), var(--tp-muted);
+}
+
+/* ── Tooltip propio (sin `title`): aparece a los 400 ms y se va al instante ─────────────────────────────────────── */
+
+:where([data-tip]) {
+  position: relative;
+}
+[data-tip]::after {
+  content: attr(data-tip);
+  position: absolute;
+  z-index: 30;
+  inset-block-end: calc(100% + 0.375rem);
+  inset-inline-start: 50%;
+  translate: -50% 0.125rem;
+  padding: var(--s-1) var(--s-2);
+  border-radius: var(--r-xs);
+  background: var(--tp-inverse);
+  font-size: var(--t-12);
+  font-weight: 500;
+  line-height: 1rem;
+  letter-spacing: 0;
+  text-transform: none;
+  white-space: nowrap;
+  color: var(--tp-on-inverse);
+  opacity: 0;
+  pointer-events: none;
+  transition-property: opacity, translate;
+  transition-duration: 120ms;
+  transition-timing-function: ease-out;
+}
+[data-tip]:hover::after,
+[data-tip]:focus-visible::after {
+  opacity: 1;
+  translate: -50% 0;
+  transition-delay: 400ms;
+}
+
+
+.tp-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
+  block-size: 1.375rem;
+  padding-inline: var(--s-1-5) var(--s-2);
+  border-radius: var(--r-xs);
+  font-size: var(--t-12);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.tp-tag--festivo {
+  background: var(--tp-festivo-soft);
+  color: var(--tp-festivo-ink);
+}
+.tp-tag--especial {
+  background: var(--tp-especial-soft);
+  color: var(--tp-especial-ink);
+}
+.tp-tag--periodo {
+  background: color-mix(in oklch, var(--tp-p-teal) 14%, var(--tp-surface));
+  color: color-mix(in oklch, var(--tp-p-teal) 70%, var(--tp-ink));
+}
+
+
+.tp-hoja--sm {
+  inline-size: 2rem;
+  .tp-hoja__dia {
+    padding-block: 0.1875rem 0.25rem;
+    font-size: var(--t-13);
+  }
+}

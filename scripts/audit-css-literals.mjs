@@ -107,7 +107,7 @@ export function exceso(zona, n) {
 const hojasDe = (dir) =>
   readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
     const full = join(dir, e.name);
-    if (e.isDirectory()) return hojasDe(full);
+    if (e.isDirectory()) return full.endsWith('/features/lab/tiempo') ? [] : hojasDe(full); // LABORATORIO «Tiempo» premium (rama experimental que no se funde): su propio sistema visual, fuera del DS a propósito.
     return /\.s?css$/.test(e.name) ? [full] : [];
   });
 

@@ -241,11 +241,11 @@ export class RepositoriosHubPageComponent {
               labelKey: 'Tiempo',
               descriptionKey: 'Horarios y festivos: cuándo se atiende y qué días se cierra.',
               icon: 'schedule',
-              path: '/lab/horarios',
+              path: '/lab/tiempo',
               count: () => this.horarios.items().length + this.festivos.items().length,
               entradas: () => [
-                ...this.horarios.items().map((h) => ({ id: h.id, nombre: h.name, detalle: h.description, link: `/lab/horarios/editar/${h.id}` })),
-                ...this.festivos.items().map((c) => ({ id: `f${c.id}`, nombre: c.name, detalle: `${c.days.length} festivos`, link: `/lab/horarios/festivos/editar/${c.id}` })),
+                ...this.horarios.items().map((h) => ({ id: h.id, nombre: h.name, detalle: h.description, link: `/lab/tiempo/horario/${h.id}` })),
+                ...this.festivos.items().map((c) => ({ id: `f${c.id}`, nombre: c.name, detalle: `${c.days.length} festivos`, link: `/lab/tiempo/festivos/${c.id}` })),
               ],
             }
           : {

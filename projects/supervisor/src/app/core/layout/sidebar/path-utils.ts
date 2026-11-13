@@ -7,6 +7,7 @@ const REPO_SUB_PATHS = [
   '/admin/horarios',
   '/admin/festivos',
   '/lab/horarios',
+  '/lab/tiempo',
   '/admin/plantillas',
   '/admin/emails',
   '/admin/tipificaciones',
