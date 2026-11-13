@@ -361,6 +361,11 @@
   background: var(--sc-bg-secondary-subtle);
 }
 
+.muestra--marca {
+  border-color: var(--sc-border-danger);
+  background: var(--sc-bg-danger-subtle-active);
+}
+
 .muestra--marca::after {
   position: absolute;
   inset-block-start: 1px;

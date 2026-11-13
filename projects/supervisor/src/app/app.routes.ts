@@ -104,6 +104,9 @@ export const appRoutes: Routes = [
           { path: '', loadComponent: () => import('./features/lab/horarios/lab-tiempo.component').then((m) => m.LabTiempoComponent) },
           { path: 'crear', loadComponent: () => import('./features/lab/horarios/lab-horario-editor.component').then((m) => m.LabHorarioEditorComponent) },
           { path: 'editar/:id', loadComponent: () => import('./features/lab/horarios/lab-horario-editor.component').then((m) => m.LabHorarioEditorComponent) },
+          { path: 'festivos', pathMatch: 'full', redirectTo: '/lab/horarios?lista=festivos' },
+          { path: 'festivos/crear', loadComponent: () => import('./features/lab/horarios/lab-festivos-editor.component').then((m) => m.LabFestivosEditorComponent) },
+          { path: 'festivos/editar/:id', loadComponent: () => import('./features/lab/horarios/lab-festivos-editor.component').then((m) => m.LabFestivosEditorComponent) },
         ],
       },
       {

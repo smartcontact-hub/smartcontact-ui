@@ -107,6 +107,8 @@
               @if (e.unDia) {
                 @if (e.dueno?.tipo === 'periodo') {
                   <sc-button variant="secondary" appearance="text" size="sm" label="Editar periodo" (clicked)="periodoDialog.set({ periodo: e.dueno!.periodo, rango: null })" />
+                } @else if (e.dueno?.tipo === 'festivo') {
+                  <sc-button variant="secondary" appearance="text" size="sm" icon="event_busy" [label]="'Abrir ' + e.dueno!.calendario!.name" (clicked)="listaAbierta.set(e.dueno!.calendario)" />
                 } @else if (e.dueno?.tipo === 'semana') {
                   <sc-button variant="secondary" appearance="text" size="sm" icon="arrow_back" label="Ver en la semana" (clicked)="editarSemanaDe(e.fecha)" />
                 }
@@ -235,31 +237,11 @@
 </sc-custom-modal>
 }
 
-<!-- Una lista compartida aplicada: sus días, para leerlos sin salir. -->
-@if (listaAbierta()) {
-<sc-custom-modal [visible]="true" [title]="listaAbierta()?.name ?? ''" width="30rem" (closed)="listaAbierta.set(null)">
-  @if (listaAbierta(); as l) {
-    <ul class="catalogo" role="list">
-      @for (d of l.days; track d.id) {
-        <li class="catalogo__dia">
-          <span class="sc-text-body-regular catalogo__fecha">{{ d.date.slice(8) }}/{{ d.date.slice(5, 7) }}</span>
-          <span class="sc-text-body-regular">{{ d.name }}</span>
-          @if (d.yearly) {
-            <sc-tag severity="secondary" value="Cada año" />
-          }
-        </li>
-      }
-    </ul>
-    <p class="sc-text-caption-regular nota">Es compartida: cambiarla cambia todos los horarios que la aplican. Se edita en Festivos.</p>
-  }
-  <div scCustomModalFooter>
-    <sc-button variant="primary" label="Cerrar" (clicked)="listaAbierta.set(null)" />
-  </div>
-</sc-custom-modal>
-}
+<!-- Una lista compartida aplicada: se edita en un panel lateral, con el horario a la vista. -->
+<sc-lab-lista-panel [lista]="listaAbierta()" [anio]="+inicio().slice(0, 4)" [hoy]="hoy()" (cerrado)="listaAbierta.set(null)" (dejar)="dejarLista($event)" />
 
 @if (periodoDialog(); as d) {
-  <sc-horario-periodo-modal [periodo]="d.periodo" [rangoInicial]="d.rango" [horario]="form()" [anio]="+inicio().slice(0, 4)" (guardar)="guardarPeriodo($event)" (cerrado)="periodoDialog.set(null)" />
+  <sc-lab-periodo-modal [periodo]="d.periodo" [rangoInicial]="d.rango" [horario]="form()" [anio]="+inicio().slice(0, 4)" (guardar)="guardarPeriodo($event)" (cerrado)="periodoDialog.set(null)" />
 }
 @if (especialDialog(); as d) {
   <sc-horario-especial-modal [especial]="d.especial" [fechaInicial]="d.fecha" [existentes]="form().specials" (guardar)="guardarEspeciales($event)" (cerrado)="especialDialog.set(null)" />

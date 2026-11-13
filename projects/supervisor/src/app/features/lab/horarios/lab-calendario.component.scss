@@ -198,3 +198,11 @@ button.mes__sem {
 .dia--resaltado {
   box-shadow: 0 0 0 2px var(--sc-border-primary);
 }
+
+/* Un festivo o un día especial cerrado: rojo de calendario de pared, para que se lea de un vistazo entre los cerrados de
+ * la semana (que van rayados). */
+.dia--marca.dia--cerrado.dia--cerrado.dia--cerrado.dia--cerrado {
+  border-color: var(--sc-border-danger);
+  background: var(--sc-bg-danger-subtle-active);
+  color: var(--sc-label-red-text);
+}

@@ -36,9 +36,18 @@ const DIAS = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
       </sc-repo-list-page>
     } @else {
       <sc-repo-list-page [config]="configFestivos" [store]="festivos">
-        <div repoBeforeToolbar class="pestanas">
-          <sc-tabs [tabs]="pestanas()" [ariaLabel]="t.listas" [value]="lista()" (valueChange)="ir($event)" />
-          <sc-button variant="secondary" appearance="outlined" icon="upload" label="Importar festivos oficiales" (clicked)="importando.set(true)" />
+        <div repoBeforeToolbar>
+          <div class="pestanas">
+            <sc-tabs [tabs]="pestanas()" [ariaLabel]="t.listas" [value]="lista()" (valueChange)="ir($event)" />
+            <sc-button variant="secondary" appearance="outlined" icon="upload" label="Importar festivos oficiales" (clicked)="importando.set(true)" />
+          </div>
+          <!-- Cómo va, en tres pasos y a la vista: crear, marcar, aplicar. Y dónde se quita cada cosa. -->
+          <ol class="pasos sc-text-caption-regular">
+            <li><span class="pasos__n sc-text-caption-semibold">1</span>Crea una lista o impórtala de tu país o región</li>
+            <li><span class="pasos__n sc-text-caption-semibold">2</span>Ábrela y marca o quita días en su calendario</li>
+            <li><span class="pasos__n sc-text-caption-semibold">3</span>Enciéndela en los horarios que deben cerrar esos días</li>
+          </ol>
+          <p class="quitar sc-text-caption-regular">Para que un horario deje de usarla, apágala en la lista o pulsa ✕ en el horario. Para borrarla del todo, ⋮ y Eliminar.</p>
         </div>
       </sc-repo-list-page>
     }
@@ -50,6 +59,10 @@ const DIAS = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
     :host { display: block; height: 100%; }
     .pestanas { display: flex; align-items: center; gap: var(--sc-spacing-1); margin-block-end: var(--sc-spacing-1); }
     .pestanas sc-tabs { flex: 1; }
+    .pasos { display: flex; flex-wrap: wrap; gap: var(--sc-spacing-0-5) var(--sc-spacing-2); margin: 0 0 var(--sc-spacing-0-5); padding: 0; list-style: none; color: var(--sc-text-primary); }
+    .pasos li { display: flex; align-items: center; gap: var(--sc-spacing-0-5); }
+    .pasos__n { display: inline-grid; place-items: center; inline-size: 1.25rem; block-size: 1.25rem; border-radius: var(--sc-radius-full); background: var(--sc-bg-primary); color: var(--sc-text-on-primary); }
+    .quitar { margin: 0 0 var(--sc-spacing-1); color: var(--sc-text-secondary); }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -79,7 +92,7 @@ export class LabTiempoComponent {
 
   protected creada(c: CalendarioDeFestivos): void {
     this.importando.set(false);
-    void this.router.navigateByUrl(`/admin/festivos/editar/${c.id}`);
+    void this.router.navigateByUrl(`/lab/horarios/festivos/editar/${c.id}`);
   }
 
   /* ── Horarios ─────────────────────────────────────────────────────────────────────────────────────────────────── */
@@ -193,7 +206,7 @@ export class LabTiempoComponent {
     filePrefix: 'festivos',
     sheetNameKey: 'repositories.festivos.title',
     uso: { aviso: (ids) => this.usoFestivos.aviso(ids), soltar: (ids) => this.usoFestivos.soltar(ids) },
-    editRoute: '/admin/festivos',
+    editRoute: '/lab/horarios/festivos',
     duplicable: true,
     duplicateAsCreate: true,
   };

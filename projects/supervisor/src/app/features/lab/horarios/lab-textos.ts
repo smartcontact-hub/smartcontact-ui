@@ -23,4 +23,8 @@ export const T = {
   destino: 'Dónde guardarlos',
   diasDelTramo: (i: number): string => `Días del tramo ${i + 1}`,
   quitarTramo: (i: number): string => `Quitar tramo ${i + 1}`,
+  nombreFestivo: 'Nombre del festivo',
+  ejemploLista: 'Ej.: Festivos Madrid',
+  verEnCalendario: (fecha: string): string => `Ver ${fecha} en el calendario`,
+  cadaAnio: (nombre: string): string => `Repetir ${nombre} cada año`,
 } as const;

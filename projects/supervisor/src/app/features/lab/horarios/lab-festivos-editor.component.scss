@@ -1,0 +1,28 @@
+/* Lo propio del editor de una lista de festivos; el molde (cabecera, rejilla, paneles) es el del horario. */
+.aplica {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-75);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.aplica__fila {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-75);
+}
+
+.aplica__ayuda {
+  padding-inline: var(--sc-spacing-1);
+}
+
+.muestra--festivo {
+  border-color: var(--sc-border-danger);
+  background: var(--sc-bg-danger-subtle-active);
+}
+
+.cab__datos {
+  column-gap: var(--sc-spacing-1-5);
+}

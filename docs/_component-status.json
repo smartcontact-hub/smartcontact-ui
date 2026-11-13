@@ -294,7 +294,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 208,
+      "usedInSupervisor": 223,
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "sobreObsoleto": [
         {
@@ -409,7 +409,7 @@
         "kit"
       ],
       "retirado": null,
-      "usedInSupervisor": 4,
+      "usedInSupervisor": 5,
       "cuando": "Para elegir un color de una paleta corta y cerrada, con su nombre — el color solo no se puede oír.",
       "sobreObsoleto": [],
       "fuente": "projects/ui-smartcontact/src/lib/components/color-dot-picker/sc-color-dot-picker.component.ts"
@@ -693,7 +693,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 7,
+      "usedInSupervisor": 8,
       "cuando": "Para elegir una fecha del calendario, cuando importa el día concreto y no un rango relativo («últimos 7 días»).",
       "sobreObsoleto": [],
       "fuente": "projects/ui-smartcontact/src/lib/components/datepicker/sc-datepicker.component.ts"
@@ -822,7 +822,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 3,
+      "usedInSupervisor": 4,
       "cuando": "Para un panel lateral con trabajo que conserva el contexto de detrás.",
       "sobreObsoleto": [],
       "fuente": "projects/ui-smartcontact/src/lib/components/drawer/sc-drawer.component.ts"
@@ -1349,7 +1349,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 56,
+      "usedInSupervisor": 61,
       "cuando": "Para texto de una línea. Si puede ocupar varias, `sc-textarea`.",
       "sobreObsoleto": [],
       "fuente": "projects/ui-smartcontact/src/lib/components/inputtext/sc-inputtext.component.ts"
@@ -2183,7 +2183,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 52,
+      "usedInSupervisor": 56,
       "cuando": "Para encender o apagar algo CON EFECTO INMEDIATO. Si el cambio se guarda al enviar el formulario, `sc-checkbox`.",
       "sobreObsoleto": [],
       "fuente": "projects/ui-smartcontact/src/lib/components/toggleswitch/sc-toggleswitch.component.ts"

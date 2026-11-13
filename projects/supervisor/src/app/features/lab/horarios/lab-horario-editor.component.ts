@@ -19,7 +19,7 @@ import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { ResultadoAccionService } from '@core/services';
 import { GroupsStore } from '@features/admin/groups/state/groups.store';
 import { type FechaEspecialNueva, HorarioEspecialModalComponent } from '@features/admin/repositories/components/horario/horario-especial-modal.component';
-import { HorarioPeriodoModalComponent } from '@features/admin/repositories/components/horario/horario-periodo-modal.component';
+import { LabPeriodoModalComponent } from './lab-periodo-modal.component';
 import { FestivosStore } from '@features/admin/repositories/state/festivos.store';
 import { subcanalesConHorario } from '@features/admin/repositories/state/horario-uso.service';
 import {
@@ -44,6 +44,7 @@ import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 import { LabCalendarioComponent, type Seleccion } from './lab-calendario.component';
 import { diasDe, esFija, REGIONES } from './lab-festivos-catalogo';
 import { estadoDeHorario } from './lab-horarios-estado';
+import { LabListaPanelComponent } from './lab-lista-panel.component';
 import { LabSemanaComponent, NOMBRES } from './lab-semana.component';
 import { T } from './lab-textos';
 
@@ -91,8 +92,9 @@ const fmtLargo = new Intl.DateTimeFormat('es', { weekday: 'long', day: 'numeric'
   selector: 'sc-lab-horario-editor',
   imports: [
     HorarioEspecialModalComponent,
-    HorarioPeriodoModalComponent,
+    LabPeriodoModalComponent,
     LabCalendarioComponent,
+    LabListaPanelComponent,
     LabSemanaComponent,
     ScButtonComponent,
     ScCheckboxComponent,
@@ -326,6 +328,13 @@ export class LabHorarioEditorComponent implements OnInit {
     const orden = [...e.fechas].sort();
     const primera = orden.find((f) => f >= this.hoy()) ?? orden[0];
     if (primera && this.vista() === 'meses') this.inicio.set(primera.slice(0, 7));
+  }
+
+  protected dejarLista(id: number): void {
+    const nombre = this.calendarios().find((c) => c.id === id)?.name ?? 'La lista';
+    this.form.update((f) => ({ ...f, holidayCalendarIds: f.holidayCalendarIds.filter((x) => x !== id) }));
+    this.listaAbierta.set(null);
+    this.resultado.contar(`«${nombre}» ya no se aplica: guarda el horario para dejarlo así`);
   }
 
   protected quitar(e: Excepcion): void {

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
 import {
   ScButtonComponent,
   ScCheckboxComponent,
@@ -7,7 +7,7 @@ import {
   ScSelectComponent,
 } from '@smartcontact-hub/components';
 
-import { type CalendarioDeFestivos, FestivosStore } from '@features/admin/repositories/state/festivos.store';
+import { type CalendarioDeFestivos, type Festivo, FestivosStore } from '@features/admin/repositories/state/festivos.store';
 
 import { diasDe, esFija, REGIONES } from './lab-festivos-catalogo';
 import { T } from './lab-textos';
@@ -35,13 +35,17 @@ import { T } from './lab-textos';
           }
         </ul>
         <p class="sc-text-caption-regular nota">
+          @if (soloDias()) {
+            Se suman a esta lista; los que ya tiene no se repiten.
+          } @else {
           {{ existente() ? 'Ya tienes «' + nombre() + '»: se abrirá esa en vez de crear otra.' : 'Se crea «' + nombre() + '». Luego la aplicas a los horarios que quieras.' }}
+          }
           Datos de ejemplo de 2026.
         </p>
       </div>
       <div scCustomModalFooter>
         <sc-button variant="secondary" appearance="outlined" label="Cancelar" (clicked)="cerrado.emit()" />
-        <sc-button variant="primary" [label]="existente() ? 'Abrir la que hay' : 'Crear lista con ' + (dias().length - fuera().size) + ' días'" [disabled]="dias().length === fuera().size" (clicked)="crear()" />
+        <sc-button variant="primary" [label]="soloDias() ? 'Añadir ' + (dias().length - fuera().size) + ' días' : existente() ? 'Abrir la que hay' : 'Crear lista con ' + (dias().length - fuera().size) + ' días'" [disabled]="dias().length === fuera().size" (clicked)="crear()" />
       </div>
     </sc-custom-modal>
   `,
@@ -56,7 +60,10 @@ import { T } from './lab-textos';
 })
 export class LabImportarListaComponent {
   private readonly store = inject(FestivosStore);
+  /** Desde el editor de una lista: no crea otra, solo entrega los días para sumarlos a la que se edita. */
+  readonly soloDias = input(false);
   readonly creada = output<CalendarioDeFestivos>();
+  readonly elegidos = output<readonly Omit<Festivo, 'id'>[]>();
   readonly cerrado = output<void>();
 
   protected readonly t = T;
@@ -82,6 +89,10 @@ export class LabImportarListaComponent {
   }
 
   protected crear(): void {
+    if (this.soloDias()) {
+      this.elegidos.emit(this.dias().filter((d) => !this.fuera().has(d.date)).map((d) => ({ name: d.name, date: d.date, yearly: esFija(d.date) })));
+      return;
+    }
     const ya = this.existente();
     if (ya) return this.creada.emit(ya);
     const dias = this.dias().filter((d) => !this.fuera().has(d.date));
