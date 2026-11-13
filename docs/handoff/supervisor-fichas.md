@@ -110,6 +110,7 @@ los marcadores del alta de usuario en Figma, sigue en pie): `git show 1f086aca:d
 - **Trampa de sonda**: pinchar un día de un `p-datepicker` en línea NO quita el foco del campo que lo tenía (PrimeNG lo
   retiene); para probar un «salir del campo» usa un control que sí lo tome, como la flecha del mes.
 - **Trampa de entorno**: `overflow: hidden` en un antecesor anula un `position: sticky` aunque nada haga scroll en él.
+- **Trampa de línea base**: una demo que pinta el mes en curso marca «hoy» y su línea base cae al día siguiente.
 
 ## ✅ 2026-11-12 · Horarios con las piezas de las fichas, en uso sin ids muertos, y el arnés de piezas (DD-252)
 
