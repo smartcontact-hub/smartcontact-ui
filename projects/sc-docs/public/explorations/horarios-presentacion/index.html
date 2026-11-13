@@ -1,0 +1,1222 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Horarios lado a lado: los tres prototipos de Calendarios portados tal cual frente al rediseño del Lab, decisión a decisión, qué sube a main y en qué orden, y el primer PR.">
+<title>Horarios, lado a lado</title>
+<link rel="preload" href="fonts/inter-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/inter-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face { font-family: Inter; font-weight: 400; font-display: swap; src: url(fonts/inter-latin-400-normal.woff2) format('woff2'); }
+@font-face { font-family: Inter; font-weight: 500; font-display: swap; src: url(fonts/inter-latin-500-normal.woff2) format('woff2'); }
+@font-face { font-family: Inter; font-weight: 600; font-display: swap; src: url(fonts/inter-latin-600-normal.woff2) format('woff2'); }
+@font-face { font-family: Inter; font-weight: 700; font-display: swap; src: url(fonts/inter-latin-700-normal.woff2) format('woff2'); }
+@font-face { font-family: Inter; font-weight: 800; font-display: swap; src: url(fonts/inter-latin-800-normal.woff2) format('woff2'); }
+@font-face { font-family: 'JetBrains Mono'; font-weight: 500; font-display: swap; src: url(fonts/jetbrains-mono-latin-500-normal.woff2) format('woff2'); }
+@font-face { font-family: 'JetBrains Mono'; font-weight: 600; font-display: swap; src: url(fonts/jetbrains-mono-latin-600-normal.woff2) format('woff2'); }
+
+/* Escenario de 1920 × 1080 escalado a la ventana. Fondo marino de la marca; dos colores que no cambian en todo el
+   recorrido: ámbar para los prototipos portados tal cual, cian para el Lab, y plata para lo que ya está en main. */
+:root {
+  --ink-950: #05080f; --ink-900: #0a101c; --ink-850: #0e1626; --ink-800: #131d31; --ink-700: #1c2942;
+  --text: #f5f7fb; --soft: #c3cbd8; --muted: #8f9aad; --faint: #5f6a7d;
+  --line: rgba(255, 255, 255, .09); --line-2: rgba(255, 255, 255, .16);
+  --lab: #5fd6e8; --lab-soft: rgba(95, 214, 232, .14);
+  --proto: #f4c472; --proto-soft: rgba(244, 196, 114, .14);
+  --main: #c9d3e2; --main-soft: rgba(201, 211, 226, .12);
+  --ok: #7ee2a8; --bad: #ff9a9a;
+  --display: Inter, 'Helvetica Neue', Arial, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  --ease: cubic-bezier(.22, 1, .36, 1);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body { background: var(--ink-950); color: var(--text); font-family: var(--display); -webkit-font-smoothing: antialiased; overflow: hidden; }
+button { font: inherit; color: inherit; }
+code { font-family: var(--mono); font-size: .86em; color: var(--text); background: rgba(255, 255, 255, .07); padding: .08em .36em; border-radius: 6px; }
+
+#viewport { position: fixed; inset: 0; overflow: hidden; }
+#deck { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; overflow: hidden; }
+#bg { position: absolute; inset: 0; background:
+  radial-gradient(1400px 900px at 22% -8%, #17243f 0%, rgba(23, 36, 63, 0) 62%),
+  radial-gradient(1200px 800px at 108% 110%, #0f2438 0%, rgba(15, 36, 56, 0) 58%),
+  linear-gradient(180deg, var(--ink-900), var(--ink-950)); }
+#grid { position: absolute; inset: 0; background-image: radial-gradient(circle, rgba(255, 255, 255, .05) 1.2px, transparent 1.5px); background-size: 40px 40px;
+  -webkit-mask-image: radial-gradient(1300px 820px at 50% 42%, #000 25%, transparent 80%); mask-image: radial-gradient(1300px 820px at 50% 42%, #000 25%, transparent 80%); }
+#glow { position: absolute; width: 1700px; height: 1700px; left: 640px; top: -980px; border-radius: 50%; background: radial-gradient(circle, rgba(95, 214, 232, .10), rgba(95, 214, 232, 0) 62%); animation: drift 28s ease-in-out infinite alternate; }
+@keyframes drift { to { transform: translate(-420px, 200px); } }
+
+.slide { position: absolute; inset: 0; visibility: hidden; }
+.slide.is-on { visibility: visible; }
+
+/* ── Cabecera de cada diapositiva ── */
+.head { position: absolute; left: 76px; top: 58px; right: 76px; }
+.eyebrow { font-family: var(--mono); font-weight: 600; font-size: 17px; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); display: flex; align-items: center; gap: 14px; }
+.eyebrow i { font-style: normal; color: var(--lab); }
+.title { margin: 16px 0 0; font-weight: 800; font-size: 56px; line-height: 1.05; letter-spacing: -.04em; max-width: 1700px; text-wrap: balance; }
+.title em { font-style: normal; color: var(--lab); }
+
+/* ── Capturas: un marco, una cámara dentro (zoom y desplazamiento) y anillos que señalan ── */
+.slot { position: absolute; }
+.slot > .frame { position: absolute; inset: 0; }
+.frame { margin: 0; border-radius: 16px; overflow: hidden; background: #fff; isolation: isolate;
+  box-shadow: 0 50px 100px -30px rgba(0, 0, 0, .7), 0 0 0 1px rgba(255, 255, 255, .16); }
+.frame[data-tone=proto] { --c: var(--proto); }
+.frame[data-tone=lab] { --c: var(--lab); }
+.frame[data-tone=main] { --c: var(--main); }
+.frame__cam { position: absolute; inset: 0; transform-origin: 0 0; will-change: transform; }
+.frame__img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; user-select: none; -webkit-user-drag: none; }
+.frame__zoom { position: absolute; right: 12px; top: 12px; z-index: 5; width: 40px; height: 40px; border-radius: 10px; border: 0; display: grid; place-items: center;
+  background: rgba(5, 8, 15, .72); color: #fff; cursor: zoom-in; opacity: 0; transition: opacity .25s var(--ease); }
+.frame:hover .frame__zoom, .frame__zoom:focus-visible { opacity: 1; }
+.frame__zoom svg { width: 20px; height: 20px; }
+.ring { position: absolute; left: 0; top: 0; width: 0; height: 0; opacity: 0; pointer-events: none; z-index: 3; border-radius: 10px;
+  border: 2.5px solid var(--c); box-shadow: 0 0 0 6px color-mix(in srgb, var(--c) 24%, transparent), 0 0 28px color-mix(in srgb, var(--c) 40%, transparent); }
+.ring--1 { box-shadow: 0 0 0 6px color-mix(in srgb, var(--c) 24%, transparent), 0 0 28px color-mix(in srgb, var(--c) 40%, transparent), 0 0 0 4000px rgba(5, 9, 16, .42); }
+.ring__tag { position: absolute; left: 50%; top: calc(100% + 12px); transform: translateX(-50%); white-space: nowrap; font: 600 17px/1 var(--mono); letter-spacing: .01em;
+  color: #07111c; background: var(--c); padding: 8px 12px; border-radius: 8px; box-shadow: 0 10px 28px rgba(0, 0, 0, .4); }
+.ring:not(.has-tag) .ring__tag { display: none; }
+.ring[data-pos=t] .ring__tag { top: auto; bottom: calc(100% + 12px); }
+.ring[data-pos=bl] .ring__tag { left: -2px; transform: none; }
+.ring[data-pos=br] .ring__tag { left: auto; right: -2px; transform: none; }
+.ring[data-pos=tl] .ring__tag { top: auto; bottom: calc(100% + 12px); left: -2px; transform: none; }
+.ring[data-pos=tr] .ring__tag { top: auto; bottom: calc(100% + 12px); left: auto; right: -2px; transform: none; }
+.ring[data-pos^=i] .ring__tag { top: auto; bottom: 12px; }
+.ring[data-pos=il] .ring__tag { left: 12px; transform: none; }
+.ring[data-pos=ir] .ring__tag { left: auto; right: 12px; transform: none; }
+.side { position: absolute; left: 2px; top: -42px; display: flex; align-items: center; gap: 12px; font: 600 15px/1 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--c); white-space: nowrap; }
+.side::before { content: ''; width: 9px; height: 9px; border-radius: 50%; background: var(--c); box-shadow: 0 0 14px var(--c); }
+.side span { color: var(--muted); letter-spacing: .06em; text-transform: none; font-weight: 500; }
+.slot[data-tone=proto] { --c: var(--proto); }
+.slot[data-tone=lab] { --c: var(--lab); }
+.slot[data-tone=main] { --c: var(--main); }
+
+/* ── Texto que acompaña: el pie de cada paso y su «por qué» ── */
+.say { position: absolute; left: 76px; right: 76px; top: 782px; height: 250px; }
+.cap { position: absolute; left: 0; top: 0; margin: 0; max-width: 1560px; font-size: 30px; line-height: 1.42; font-weight: 500; color: var(--soft); text-wrap: pretty; }
+.cap b { color: var(--text); font-weight: 600; }
+.why { position: absolute; left: 0; top: 0; right: 0; display: flex; gap: 32px; opacity: 0; }
+.why__k { flex: none; width: 128px; padding-top: 10px; font: 600 16px/1 var(--mono); letter-spacing: .2em; text-transform: uppercase; color: var(--lab); }
+.why__t { margin: 0; font-size: 29px; line-height: 1.46; color: var(--text); max-width: 1500px; text-wrap: pretty; }
+.chips { position: absolute; left: 0; top: 64px; display: flex; gap: 14px; flex-wrap: wrap; }
+.chip { display: inline-flex; align-items: center; gap: 12px; padding: 14px 20px 14px 16px; border-radius: 14px; background: rgba(255, 255, 255, .05); border: 1px solid var(--line-2); font-size: 23px; font-weight: 600; }
+.chip svg { width: 22px; height: 22px; color: var(--ok); flex: none; }
+
+/* Duo: tus prototipos a la izquierda, el Lab a la derecha */
+.k-duo .slot--L { left: 76px; top: 252px; width: 864px; height: 486px; }
+.k-duo .slot--R { left: 980px; top: 252px; width: 864px; height: 486px; }
+
+/* Single: una captura grande y el texto a la derecha */
+.k-single .slot--S { left: 76px; top: 244px; width: 1184px; height: 666px; }
+.k-single .say { left: 1312px; right: 76px; top: 244px; height: 666px; }
+.k-single .cap { font-size: 28px; line-height: 1.45; max-width: none; }
+.fact { position: absolute; left: 1312px; right: 76px; bottom: 170px; padding: 24px 26px; border-radius: 16px; background: rgba(255, 255, 255, .04); border: 1px solid var(--line); }
+.fact__k { font: 600 14px/1 var(--mono); letter-spacing: .18em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+.fact__t { font-size: 21px; line-height: 1.5; color: var(--soft); }
+.fact__t b { color: var(--text); font-weight: 600; }
+.list { position: absolute; left: 1312px; right: 76px; top: 470px; margin: 0; padding: 0; list-style: none; display: grid; gap: 16px; }
+.list li { position: relative; padding-left: 24px; font-size: 22px; line-height: 1.45; color: var(--soft); }
+.list li::before { content: ''; position: absolute; left: 0; top: 12px; width: 8px; height: 8px; border-radius: 50%; background: var(--c, var(--proto)); }
+.list li b { color: var(--text); font-weight: 600; }
+.propuesta { position: absolute; left: 1312px; right: 76px; bottom: 170px; padding: 22px 24px; border-radius: 16px; background: var(--lab-soft); border: 1px solid rgba(95, 214, 232, .35); font-size: 21px; line-height: 1.5; }
+.propuesta b { color: var(--lab); font: 600 14px/1 var(--mono); letter-spacing: .18em; text-transform: uppercase; display: block; margin-bottom: 12px; }
+
+/* Portada */
+.cover__text { position: absolute; left: 120px; top: 168px; width: 900px; }
+.cover__text .eyebrow { font-size: 18px; }
+.cover__title { margin: 28px 0 0; font-weight: 800; font-size: 86px; line-height: .98; letter-spacing: -.048em; text-wrap: balance; }
+.cover__title em { font-style: normal; background: linear-gradient(90deg, var(--proto), var(--lab)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.cover__lead { margin: 34px 0 0; font-size: 28px; line-height: 1.5; color: var(--soft); max-width: 860px; text-wrap: pretty; }
+.cover__links { position: absolute; left: 120px; top: 790px; display: flex; gap: 20px; }
+.link-card { display: block; width: 430px; padding: 22px 24px; border-radius: 16px; text-decoration: none; color: var(--text); background: rgba(255, 255, 255, .04); border: 1px solid var(--line-2); position: relative; overflow: hidden; transition: background .25s var(--ease), border-color .25s var(--ease); }
+.link-card:hover { background: rgba(255, 255, 255, .08); }
+.link-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--c); }
+.link-card[data-tone=proto] { --c: var(--proto); }
+.link-card[data-tone=lab] { --c: var(--lab); }
+.link-card__k { font: 600 14px/1 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--c); }
+.link-card__t { margin-top: 12px; font-size: 24px; font-weight: 700; letter-spacing: -.015em; }
+.link-card__u { margin-top: 8px; font: 500 15px/1.3 var(--mono); color: var(--muted); }
+.cover__shots { position: absolute; left: 1050px; top: 150px; width: 820px; height: 780px; perspective: 2400px; }
+.cover__shot { position: absolute; width: 760px; height: 427.5px; transform-style: preserve-3d; }
+.cover__shot--a { left: 0; top: 40px; }
+.cover__shot--b { left: 70px; top: 330px; }
+.cover__shot > .slot { inset: 0; transform: perspective(2200px) rotateY(-13deg) rotateX(5deg); transform-origin: 0 50%; }
+.cover__shot--b > .slot { transform: perspective(2200px) rotateY(-13deg) rotateX(5deg) translateZ(40px); }
+.cover__shot .frame { position: absolute; inset: 0; animation: float 9s ease-in-out infinite alternate; }
+.cover__shot--b .frame { animation-delay: -4.5s; }
+@keyframes float { to { transform: translateY(-12px); } }
+.cover__shot .side { top: -40px; }
+.cover__shot--b .side { top: auto; bottom: -40px; }
+
+/* Abanico de los tres prototipos */
+.fan { position: absolute; left: 76px; top: 250px; width: 1120px; height: 760px; }
+.fan__item { position: absolute; width: 760px; height: 427.5px; }
+.fan__item > .slot { inset: 0; }
+.fan__item:nth-child(1) { left: 0; top: 0; }
+.fan__item:nth-child(2) { left: 180px; top: 150px; }
+.fan__item:nth-child(3) { left: 360px; top: 300px; }
+.fan__label { position: absolute; left: 14px; bottom: 14px; z-index: 4; padding: 8px 12px; border-radius: 8px; background: rgba(5, 8, 15, .82); color: var(--proto); font: 600 15px/1 var(--mono); letter-spacing: .1em; text-transform: uppercase; }
+.fan-list { position: absolute; left: 1256px; right: 76px; top: 262px; margin: 0; padding: 0; list-style: none; display: grid; gap: 30px; }
+.fan-list li { display: grid; grid-template-columns: 52px 1fr; gap: 8px; font-size: 24px; line-height: 1.45; color: var(--soft); }
+.fan-list li span { font: 600 18px/1.6 var(--mono); color: var(--proto); }
+.fan-list li b { color: var(--text); font-weight: 600; display: block; margin-bottom: 4px; font-size: 26px; }
+
+/* Hoja de ruta */
+.road { position: absolute; left: 76px; right: 76px; top: 300px; height: 470px; }
+.road__lead { position: absolute; left: 76px; right: 300px; top: 196px; font-size: 26px; line-height: 1.45; color: var(--soft); max-width: 1300px; }
+.road__track { position: absolute; left: 14px; right: 14px; top: 40px; height: 2px; background: rgba(255, 255, 255, .1); }
+.road__fill { position: absolute; inset: 0; background: linear-gradient(90deg, var(--lab), var(--proto)); transform-origin: 0 50%; transform: scaleX(0); }
+.road__steps { position: absolute; left: 0; right: 0; top: 0; display: grid; grid-template-columns: repeat(6, 1fr); gap: 28px; }
+.step { position: relative; padding-top: 74px; }
+.step__dot { position: absolute; left: 6px; top: 30px; width: 22px; height: 22px; border-radius: 50%; background: var(--ink-850); border: 2px solid var(--lab); box-shadow: 0 0 0 6px rgba(95, 214, 232, .14); }
+.step--dep .step__dot { border-color: var(--proto); box-shadow: 0 0 0 6px rgba(244, 196, 114, .14); }
+.step__card { padding: 22px 22px 24px; border-radius: 16px; background: rgba(255, 255, 255, .045); border: 1px solid var(--line-2); min-height: 330px; }
+.step--dep .step__card { border-color: rgba(244, 196, 114, .4); }
+.step__n { font: 600 34px/1 var(--mono); color: var(--lab); letter-spacing: -.02em; }
+.step--dep .step__n { color: var(--proto); }
+.step__t { margin-top: 16px; font-size: 25px; line-height: 1.2; font-weight: 700; letter-spacing: -.02em; }
+.step__meta { margin-top: 14px; display: flex; gap: 8px; flex-wrap: wrap; }
+.step__meta span { font: 600 13px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); padding: 7px 9px; border-radius: 7px; background: rgba(255, 255, 255, .06); }
+.step__d { margin-top: 16px; font-size: 19px; line-height: 1.5; color: var(--soft); }
+.step__flag { margin-top: 14px; font: 600 13px/1.3 var(--mono); letter-spacing: .06em; color: var(--proto); }
+.road__foot { position: absolute; left: 76px; right: 76px; top: 930px; font-size: 21px; color: var(--muted); }
+.road__foot b { color: var(--soft); font-weight: 600; }
+.k-road .say { top: 818px; height: 100px; }
+.k-road .cap { font-size: 28px; }
+
+/* Ejemplos de «Ahora» */
+.ejemplos { position: absolute; left: 76px; top: 252px; width: 1768px; height: 486px; padding: 30px 40px; border-radius: 18px; background: rgba(255, 255, 255, .04); border: 1px solid var(--line-2); display: grid; grid-template-columns: 1fr 1fr; column-gap: 64px; align-content: center; }
+.ej { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 22px 0; border-bottom: 1px solid var(--line); }
+.ej:nth-last-child(-n+2) { border-bottom: 0; }
+.ej__s { font-size: 22px; line-height: 1.35; color: var(--soft); }
+.ej__s small { display: block; font-size: 17px; color: var(--muted); margin-top: 4px; }
+.ej__r { display: flex; align-items: center; gap: 12px; flex: none; font-size: 20px; color: var(--soft); white-space: nowrap; }
+.tag { display: inline-block; padding: 6px 11px; border-radius: 7px; font: 600 17px/1 var(--display); }
+.tag--open { background: rgba(126, 226, 168, .16); color: var(--ok); }
+.tag--closed { background: rgba(255, 255, 255, .1); color: var(--soft); }
+.tag--off { background: rgba(244, 196, 114, .16); color: var(--proto); }
+
+/* El encargo */
+.brief { position: absolute; left: 76px; top: 244px; width: 1176px; padding: 18px 0; border-radius: 18px; background: rgba(255, 255, 255, .035); border: 1px solid var(--line-2); }
+.brief__row { position: relative; display: grid; grid-template-columns: 262px 1fr; gap: 24px; padding: 15px 34px; transition: background .5s var(--ease); }
+.brief__row::before { content: ''; position: absolute; left: 0; top: 10px; bottom: 10px; width: 3px; border-radius: 2px; background: var(--lab); opacity: 0; transition: opacity .5s var(--ease); }
+.brief__row.is-hl { background: var(--lab-soft); }
+.brief__row.is-hl::before { opacity: 1; }
+.brief__k { font: 600 16px/1.6 var(--mono); letter-spacing: .06em; color: var(--lab); }
+.brief__v { font-size: 21px; line-height: 1.5; color: var(--text); }
+.k-brief .say { left: 1312px; right: 76px; top: 244px; height: 700px; }
+.k-brief .cap { font-size: 28px; line-height: 1.45; }
+
+/* Cierre */
+.qs { position: absolute; left: 76px; right: 76px; top: 290px; margin: 0; padding: 0; list-style: none; display: grid; gap: 40px; }
+.qs li { display: grid; grid-template-columns: 96px 1fr; align-items: baseline; }
+.qs li span { font: 600 44px/1 var(--mono); color: var(--lab); }
+.qs li p { margin: 0; font-size: 40px; line-height: 1.25; font-weight: 600; letter-spacing: -.025em; }
+.qs li p small { display: block; margin-top: 10px; font-size: 24px; font-weight: 500; color: var(--muted); letter-spacing: 0; }
+.close__links { position: absolute; left: 76px; right: 76px; top: 826px; display: flex; gap: 16px; flex-wrap: wrap; }
+.close__links .link-card { width: 420px; padding: 18px 22px; }
+.close__links .link-card__t { font-size: 21px; margin-top: 10px; }
+
+/* ── Mandos, notas, índice y lupa: fuera del escenario, a tamaño real ── */
+#hud { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; padding: 30px 22px 16px; background: linear-gradient(to top, rgba(5, 8, 15, .9), rgba(5, 8, 15, 0)); transition: opacity .45s var(--ease), transform .45s var(--ease); }
+#hud.is-hidden { opacity: 0; transform: translateY(10px); pointer-events: none; }
+.hud__bar { position: relative; height: 3px; border-radius: 2px; background: rgba(255, 255, 255, .09); overflow: hidden; margin-bottom: 12px; }
+.hud__bar i { position: absolute; inset: 0; background: linear-gradient(90deg, var(--proto), var(--lab)); transform-origin: 0 50%; transform: scaleX(0); transition: transform .6s var(--ease); }
+.hud__bar u { position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: rgba(255, 255, 255, .7); transform-origin: 0 50%; transform: scaleX(0); text-decoration: none; }
+.hud__row { display: flex; align-items: center; gap: 18px; }
+.hud__where { flex: 1 1 0; min-width: 0; font: 500 13px/1.35 var(--mono); color: var(--muted); letter-spacing: .04em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hud__where b { color: var(--text); font-weight: 600; margin-right: 10px; }
+.hud__dots { display: flex; gap: 6px; flex: none; }
+.hud__dots button { width: 9px; height: 9px; border-radius: 5px; border: 0; padding: 0; cursor: pointer; background: rgba(255, 255, 255, .2); transition: width .45s var(--ease), background .3s; }
+.hud__dots button.is-past { background: rgba(255, 255, 255, .55); }
+.hud__dots button.is-on { width: 30px; background: var(--lab); }
+.hud__btns { flex: 1 1 0; display: flex; gap: 6px; justify-content: flex-end; }
+.hbtn { height: 38px; min-width: 38px; padding: 0 11px; border-radius: 10px; border: 1px solid rgba(255, 255, 255, .13); background: rgba(255, 255, 255, .05); display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: background .2s; }
+.hbtn:hover { background: rgba(255, 255, 255, .11); }
+.hbtn[aria-pressed=true] { background: var(--lab-soft); border-color: rgba(95, 214, 232, .5); color: var(--lab); }
+.hbtn svg { width: 18px; height: 18px; flex: none; }
+.hbtn svg[hidden] { display: none; }
+.hbtn:focus-visible, .hud__dots button:focus-visible, .link-card:focus-visible, .frame__zoom:focus-visible { outline: 2px solid var(--lab); outline-offset: 2px; }
+
+#notes { position: fixed; left: 0; right: 0; bottom: 0; z-index: 15; height: 250px; padding: 24px 36px 92px; display: none; grid-template-columns: 260px 1fr; gap: 32px;
+  background: rgba(9, 14, 24, .97); border-top: 1px solid var(--line-2); }
+#notes.is-open { display: grid; }
+.notes__k { font: 600 12px/1.6 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+.notes__k b { display: block; color: var(--lab); font-size: 13px; margin-top: 6px; letter-spacing: .08em; }
+.notes__t { font-size: 20px; line-height: 1.6; color: var(--text); max-width: 1180px; overflow: auto; }
+
+.overlay { position: fixed; inset: 0; z-index: 30; display: none; background: rgba(5, 8, 15, .95); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); overflow: auto; }
+.overlay.is-open { display: block; }
+.overlay__in { max-width: 1240px; margin: 0 auto; padding: 56px 32px 80px; }
+.overlay__close { position: fixed; right: 22px; top: 18px; }
+.overlay h2 { margin: 0 0 30px; font-size: 34px; letter-spacing: -.03em; }
+.idx { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 28px 32px; }
+.idx__ch { font: 600 13px/1 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+.idx__ch i { font-style: normal; color: var(--lab); margin-right: 8px; }
+.idx button { display: block; width: 100%; text-align: left; padding: 11px 14px; margin-bottom: 6px; border-radius: 10px; border: 1px solid var(--line); background: rgba(255, 255, 255, .03); font-size: 16px; line-height: 1.35; cursor: pointer; }
+.idx button:hover, .idx button.is-on { border-color: rgba(95, 214, 232, .5); background: var(--lab-soft); }
+.keys { display: grid; grid-template-columns: 160px 1fr; gap: 14px 24px; font-size: 18px; color: var(--soft); }
+.keys kbd { font: 600 14px/1 var(--mono); padding: 7px 10px; border-radius: 7px; background: rgba(255, 255, 255, .08); border: 1px solid var(--line-2); color: var(--text); margin-right: 6px; display: inline-block; }
+
+#lightbox { position: fixed; inset: 0; z-index: 40; display: none; background: rgba(3, 5, 10, .95); cursor: zoom-in; overflow: hidden; }
+#lightbox.is-open { display: block; }
+#lightbox img { position: absolute; inset: 0; margin: auto; max-width: 94vw; max-height: 88vh; border-radius: 12px; box-shadow: 0 40px 120px rgba(0, 0, 0, .7); }
+#lightbox.is-zoomed { cursor: zoom-out; }
+#lightbox.is-zoomed img { right: auto; bottom: auto; margin: 0; max-width: none; max-height: none; border-radius: 0; }
+#lightbox .lb__hint { position: absolute; left: 50%; bottom: 22px; transform: translateX(-50%); font: 500 13px var(--mono); color: var(--muted); letter-spacing: .04em; }
+
+#hint { position: fixed; left: 0; right: 0; margin: 0 auto; width: max-content; bottom: 84px; z-index: 25; padding: 12px 18px; border-radius: 12px; background: rgba(9, 14, 24, .92); border: 1px solid var(--line-2); font: 500 14px/1.4 var(--mono); color: var(--soft); white-space: nowrap; pointer-events: none; opacity: 0; }
+#hint kbd { font: 600 13px/1 var(--mono); padding: 4px 7px; border-radius: 6px; background: rgba(255, 255, 255, .1); color: var(--text); }
+
+@media (max-width: 760px) {
+  .hud__where, .hbtn .lbl { display: none; }
+  #hud { padding: 22px 10px 12px; }
+  .hud__dots { gap: 4px; }
+  .hud__dots button { width: 6px; height: 6px; }
+  .hud__dots button.is-on { width: 16px; }
+  #notes { grid-template-columns: 1fr; height: 42vh; padding: 16px 16px 84px; gap: 8px; }
+  .notes__t { font-size: 17px; }
+  #hint { display: none; }
+}
+#rotate { display: none; }
+@media (max-width: 760px) and (orientation: portrait) {
+  #rotate { display: flex; position: fixed; left: 16px; right: 16px; top: 22px; z-index: 5; justify-content: center; gap: 10px; align-items: center; font: 500 14px/1.4 var(--mono); color: var(--muted); text-align: center; }
+  #rotate svg { width: 18px; height: 18px; flex: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #glow, .cover__shot .frame { animation: none; }
+  #hud, .hud__bar i, .brief__row, .brief__row::before { transition: none; }
+}
+</style>
+</head>
+<body>
+<div id="viewport">
+  <main id="deck" aria-roledescription="presentación">
+    <div id="bg" aria-hidden="true"><div id="glow"></div><div id="grid"></div></div>
+    <div id="slides"></div>
+  </main>
+</div>
+
+<aside id="notes" aria-label="Notas para quien presenta">
+  <div class="notes__k">Notas <b id="notesWhere"></b></div>
+  <div class="notes__t" id="notesText" aria-live="polite"></div>
+</aside>
+
+<nav id="hud" aria-label="Mandos de la presentación">
+  <div class="hud__bar" aria-hidden="true"><i id="hudFill"></i><u id="hudTick"></u></div>
+  <div class="hud__row">
+    <div class="hud__where" id="hudWhere"></div>
+    <div class="hud__dots" id="hudDots"></div>
+    <div class="hud__btns">
+      <button class="hbtn" id="bPrev" type="button" aria-label="Paso anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <button class="hbtn" id="bPlay" type="button" aria-pressed="false" aria-label="Reproducir solo"><svg id="icPlay" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z"/></svg><svg id="icPause" viewBox="0 0 24 24" fill="currentColor" hidden><rect x="6.5" y="5" width="4" height="14" rx="1"/><rect x="13.5" y="5" width="4" height="14" rx="1"/></svg><span class="lbl">Reproducir</span></button>
+      <button class="hbtn" id="bNext" type="button" aria-label="Paso siguiente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+      <button class="hbtn" id="bNotes" type="button" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 7h14M5 12h14M5 17h9"/></svg><span class="lbl">Notas</span></button>
+      <button class="hbtn" id="bIndex" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg><span class="lbl">Índice</span></button>
+      <button class="hbtn" id="bFull" type="button" aria-label="Pantalla completa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+    </div>
+  </div>
+</nav>
+
+<div class="overlay" id="index" role="dialog" aria-modal="true" aria-label="Índice">
+  <button class="hbtn overlay__close" type="button" data-close>Cerrar <kbd style="font:600 12px var(--mono);opacity:.7">Esc</kbd></button>
+  <div class="overlay__in">
+    <h2>Índice</h2>
+    <div class="idx" id="idx"></div>
+    <h2 style="margin-top:56px">Atajos</h2>
+    <div class="keys">
+      <div><kbd>→</kbd><kbd>espacio</kbd></div><div>Paso siguiente (también un clic en el fondo)</div>
+      <div><kbd>←</kbd></div><div>Paso anterior</div>
+      <div><kbd>P</kbd></div><div>Reproducir solo, a ritmo de lectura; otra vez para pausar</div>
+      <div><kbd>N</kbd></div><div>Notas para quien presenta</div>
+      <div><kbd>Z</kbd></div><div>La captura entera, con lupa (también el botón de cada captura)</div>
+      <div><kbd>1</kbd>…<kbd>7</kbd></div><div>Ir al capítulo</div>
+      <div><kbd>F</kbd></div><div>Pantalla completa</div>
+      <div><kbd>O</kbd></div><div>Este índice</div>
+    </div>
+  </div>
+</div>
+
+<div id="lightbox" role="dialog" aria-modal="true" aria-label="Captura a tamaño real"><img alt=""><div class="lb__hint">Clic para acercar o alejar · Esc para cerrar</div></div>
+<div id="rotate" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="3" width="10" height="18" rx="2"/><path d="M3 12a9 9 0 0 1 3-6.7M21 12a9 9 0 0 1-3 6.7"/></svg>Gira el móvil para verla más grande</div>
+<div id="hint" aria-hidden="true"><kbd>→</kbd> avanzar &nbsp; <kbd>P</kbd> reproducir &nbsp; <kbd>N</kbd> notas &nbsp; <kbd>O</kbd> índice</div>
+
+<script src="lib/motion.min.js"></script>
+<script>
+(() => {
+'use strict';
+
+/* ════════════════════════════════════════════════════════════════════════════════════════════════
+ * CONTENIDO
+ * Cada diapositiva tiene pasos. Un paso dice qué enseña cada captura (cam: la región, en píxeles de la
+ * captura a 1600 × 900), qué señala (rings), el pie (cap) o el «por qué» (why), y lo que se dice (note).
+ * Un paso es absoluto: se puede llegar a él desde cualquier otro y queda igual.
+ * ════════════════════════════════════════════════════════════════════════════════════════════════ */
+
+const ALT = {
+  'm-listado': 'Listado de Horarios en main, con las columnas Ahora y Estado',
+  'm-editor': 'Editor de un horario en main: General, la semana día a día y el año a la derecha',
+  'p-periodos-anio': 'Prototipo Periodos v2: lista de calendarios, el año entero y el panel del día',
+  'p-periodos-lista': 'Prototipo Periodos v2: el año repartido entre periodos sin solapes',
+  'p-periodos-horario-editar': 'Prototipo Periodos v2: editor del horario semanal con una fila por día',
+  'p-periodos-periodo': 'Prototipo Periodos v2: diálogo Añadir periodo, que apunta a un horario semanal',
+  'p-periodos-especial': 'Prototipo Periodos v2: diálogo Añadir día especial',
+  'p-horarios-anio': 'Prototipo Horarios y calendarios: el año y el día seleccionado',
+  'p-horarios-reutilizables': 'Prototipo Horarios y calendarios: horarios reutilizables vinculados a calendarios',
+  'p-ivr-horarios': 'Prototipo Calendarios IVR: configuración y horarios por periodo',
+  'p-ivr-simulador': 'Prototipo Calendarios IVR: simulador de llamada que responde Fuera de hora',
+  'l-listado': 'Lab: Tiempo, la lista de horarios con una sola columna de estado',
+  'l-festivos': 'Lab: Tiempo, las listas de festivos con cuántos horarios las aplican',
+  'l-editor': 'Lab: editor de Postventa con la semana en tramos, tres meses y Nochebuena elegida',
+  'l-rango': 'Lab: del 23 de noviembre al 4 de diciembre elegidos en el calendario',
+  'l-anio': 'Lab: el año en una tira de 12 por 31',
+  'l-importar': 'Lab: importar los festivos oficiales de la Comunidad de Madrid',
+  'l-lista': 'Lab: la lista Festivos Barcelona, con su año y los horarios que la aplican',
+  'l-panel': 'Lab: la lista de festivos en un panel lateral abierto desde el horario',
+  'l-periodo': 'Lab: diálogo de periodo con su semana por tramos',
+};
+const TONE = (img) => img[0] === 'p' ? 'proto' : img[0] === 'l' ? 'lab' : 'main';
+const SIDE_LABEL = { proto: 'Tu prototipo <span>portado tal cual</span>', lab: 'Lab <span>el rediseño</span>', main: 'Main <span>hoy</span>' };
+
+const CHAPTERS = ['Punto de partida', 'Tu modelo', 'Lado a lado', 'Lo que falta', 'Hacia main', '«Ahora»', 'Para decidir'];
+
+/* Regiones, en píxeles de la captura (1600 × 900). */
+const R = {
+  m_cols: [740, 160, 830, 500], m_ahoraVerano: [758, 410, 82, 40], m_estadoVerano: [1428, 410, 82, 40], m_ahoraCol: [752, 172, 92, 476],
+  m_general: [107, 128, 717, 400], m_semana: [107, 547, 717, 353], m_dia: [880, 232, 668, 140],
+  p_lista: [110, 232, 215, 250], p_anio: [346, 362, 948, 538], p_tabs: [108, 172, 220, 42], p_nav: [100, 150, 470, 340],
+  p_distrib: [346, 416, 1203, 106], p_filas: [421, 365, 757, 227], p_select: [491, 392, 616, 59], p_dialogo: [475, 150, 648, 598],
+  p_especial: [475, 198, 648, 501], p_aviso: [107, 771, 1464, 42], p_tarjetas: [107, 296, 1464, 520],
+  p_resultado: [872, 331, 680, 569], p_publicar: [1192, 187, 360, 32],
+  l_tabs: [107, 136, 261, 37], l_miga: [157, 16, 171, 26], l_cabeza: [100, 0, 720, 250], l_estadoCol: [544, 232, 264, 480],
+  l_fines: [550, 330, 222, 36], l_verano: [550, 477, 72, 36], l_general: [550, 380, 196, 36],
+  l_tabla: [107, 291, 1464, 140], l_uso: [1272, 291, 140, 140],
+  l_tramos: [130, 187, 374, 328], l_dia: [566, 427, 983, 72], l_yalas: [1280, 426, 262, 40], l_leyenda: [130, 747, 374, 112],
+  l_tira: [544, 128, 1027, 392], l_toggle: [1421, 152, 128, 29],
+  l_cal: [544, 128, 1027, 392], l_barra: [566, 456, 983, 40],
+  l_oficial: [536, 331, 528, 312], l_listaVista: [107, 70, 1464, 500], l_aplican: [107, 414, 418, 461],
+  l_drawer: [896, 0, 704, 900], l_pie: [912, 848, 672, 35], l_semanaPeriodo: [464, 451, 672, 248],
+};
+
+const SLIDES = [
+  /* ── 01 · Punto de partida ─────────────────────────────────────────────────────────────── */
+  {
+    kind: 'cover', ch: 0,
+    title: 'Portada',
+    beats: [
+      { t: 8, note: 'En unos minutos te cuento cómo hemos llegado al rediseño de Horarios y por qué decide distinto en algunas cosas. Todo lo que vas a ver son capturas de pantallas reales, no maquetas.' },
+      { t: 9, note: 'Las dos versiones viven en ramas aparte, en borrador, y no tocan main. Tus prototipos están portados tal cual, con nuestros componentes, para que comparemos flujos y no estilos. Si quieres tocarlas mientras hablamos, son estos dos enlaces.' },
+    ],
+  },
+  {
+    kind: 'single', ch: 0, S: 'm-listado',
+    eyebrow: '01 · Punto de partida',
+    title: 'En main, un horario ya tiene semana, periodos y fechas especiales',
+    fact: { k: 'DD-251 · 12 nov', t: 'Cada fecha tiene <b>un único dueño</b>, en este orden: fecha especial, festivo aplicado, periodo y semana habitual. Esa lógica es buena y se queda.' },
+    beats: [
+      { cap: 'El listado de Horarios tal como está hoy en main.', note: 'Esto es lo que ya está fundido desde el 12 de noviembre. La lógica de fondo es buena y la vamos a conservar: cada fecha tiene un único dueño.' },
+      { S: { cam: R.m_cols, rings: [{ r: R.m_ahoraVerano, label: 'Abierto', pos: 't' }, { r: R.m_estadoVerano, label: 'Inactivo', pos: 't' }] },
+        cap: '«Ahora» y «Estado» son dos etiquetas verdes que dicen casi lo mismo. <b>Horario Verano está inactivo y sale «Abierto».</b>',
+        note: 'Es lo primero que vimos al revisarlo: dos columnas que compiten, y una que contradice a la otra.' },
+      { S: { cam: R.m_ahoraCol, rings: [{ r: R.m_ahoraCol }] },
+        cap: 'Y «Abierto» no dice <b>hasta cuándo</b>, que es justo lo que pregunta quien mira esta lista.',
+        note: 'Un supervisor no quiere saber solo si está abierto: quiere saber si le da tiempo. Lo resuelve el primer PR que propongo al final.' },
+    ],
+  },
+  {
+    kind: 'single', ch: 0, S: 'm-editor',
+    eyebrow: '01 · Punto de partida',
+    title: 'El editor enseña el resultado al lado, pero no cabe en una pantalla',
+    fact: { k: 'Se queda', t: 'El día elegido dice <b>sus horas y qué regla las decide</b> (DD-254). Está en las tres versiones.' },
+    beats: [
+      { cap: 'Las reglas a la izquierda y el año a la derecha, que se repinta con cada cambio.', note: 'La idea de ver el resultado al lado ya estaba en main y es buena. Lo que falla es el espacio.' },
+      { S: { cam: R.m_general, rings: [{ r: R.m_general }] },
+        cap: 'Nombre, zona y descripción ocupan <b>media pantalla también al editar</b>, cuando ya casi no se tocan.',
+        note: 'Al crear un horario tiene sentido. Al editarlo es ruido que empuja la semana hacia abajo.' },
+      { S: { cam: R.m_semana, rings: [{ r: R.m_semana }] },
+        cap: 'Debajo, siete filas, una por día, y «Copiar» para llevar las franjas de un día a otros. <b>La semana queda por debajo del pliegue.</b>',
+        note: 'Para ver el horario entero hay que hacer scroll, y al hacerlo se pierde el calendario.' },
+      { S: { cam: R.m_dia, rings: [{ r: R.m_dia }] },
+        cap: 'Lo bueno se queda: el día elegido dice <b>sus horas y de dónde salen</b>.',
+        note: 'Esto lo mantenemos en todas las versiones, también en la tuya.' },
+    ],
+  },
+
+  /* ── 02 · Tu modelo ─────────────────────────────────────────────────────────────────────── */
+  {
+    kind: 'fan', ch: 1, imgs: ['p-periodos-anio', 'p-horarios-anio', 'p-ivr-horarios'], labels: ['Periodos v2', 'Horarios y calendarios', 'Calendarios IVR'],
+    eyebrow: '02 · Tu modelo',
+    title: 'Tus tres prototipos dicen lo mismo',
+    list: [
+      ['El calendario es lo que se usa.', 'Tiene zona horaria y resuelve cada fecha por capas: día especial, periodo y semana habitual.'],
+      ['El horario semanal es una pieza.', 'Varios calendarios la comparten y la reutilizan.'],
+      ['El año es la vista por defecto.', 'Y el día elegido explica de qué regla sale.'],
+      ['Se comprueba antes de guardar.', 'Una fecha a una hora, y los solapes entre periodos.'],
+    ],
+    beats: [
+      { t: 7, note: 'Los he leído como uno solo, porque coinciden en lo importante. Periodos v2 es el más maduro, así que es el que más uso para comparar.' },
+      { lift: 0, t: 8, note: 'En los tres, lo que se asigna a un grupo o a la IVR es el calendario. Por eso es él quien tiene la zona horaria.' },
+      { lift: 1, t: 7, note: 'Y el horario semanal es la pieza que se reutiliza: en Horarios y calendarios dice a cuántos calendarios está vinculado.' },
+      { lift: 0, t: 7, note: 'Abrir en el año da contexto al instante, y el panel del día contesta a «¿por qué este día es así?».' },
+      { lift: 2, t: 8, note: 'El simulador de la IVR y el «Comprobar fecha» son la misma idea: probar antes de publicar.' },
+    ],
+  },
+  {
+    kind: 'duo', ch: 1, L: 'p-periodos-lista', R: 'l-editor',
+    eyebrow: '02 · Tu modelo',
+    title: 'En lo que más importa, <em>ya pensamos igual</em>',
+    chips: ['Un dueño por fecha', 'Periodos sin solape', 'El día dice de dónde sale', 'Comprobar una hora'],
+    chipsAt: 4,
+    beats: [
+      { cap: 'Las dos versiones dan a cada fecha <b>un solo dueño</b>, y lo enseñan en pantalla.', note: 'Antes de las diferencias, lo que compartimos. Es más de lo que parece.' },
+      { L: { cam: R.p_distrib, rings: [{ r: R.p_distrib, label: 'Cada día, de un solo periodo', pos: 'b' }] },
+        cap: 'Tu Periodos v2 lo dibuja como una barra: cada día del año pertenece a un periodo o a un día especial, <b>sin solapes</b>.',
+        note: 'Esta barra es de lo mejor de tu prototipo: se entiende de un vistazo que no hay huecos ni dobles.' },
+      { R: { cam: R.l_leyenda, rings: [{ r: R.l_leyenda, label: 'Manda el de más arriba', pos: 't' }] },
+        cap: 'El Lab aplica la misma regla y la dice en el editor: día especial o festivo, después periodo, después semana habitual.',
+        note: 'Es tu orden de capas, con el festivo al nivel del día especial.' },
+      { R: { cam: [560, 410, 995, 110], rings: [{ r: R.l_dia }, { r: R.l_yalas, label: '¿Y a las 14:28?', pos: 'b' }] },
+        cap: 'Y los dos explican un día concreto: Nochebuena abre <b>de 09:00 a 14:00</b> porque es día especial, y a las 14:28 ya no se atiende.',
+        note: 'Tu panel de «Fecha seleccionada» y esta barra hacen el mismo trabajo. La diferencia es que aquí también se comprueba una hora sin salir del editor.' },
+      { cap: 'Cuatro ideas tuyas que el rediseño conserva tal cual:', note: 'Con esto en común, las diferencias son de flujo, no de modelo de datos.' },
+    ],
+  },
+
+  /* ── 03 · Lado a lado ───────────────────────────────────────────────────────────────────── */
+  {
+    kind: 'duo', ch: 2, L: 'p-horarios-reutilizables', R: 'l-festivos',
+    eyebrow: '03 · Decisión <i>1</i> de 7',
+    title: 'Se comparten <em>los festivos</em>, no la semana',
+    beats: [
+      { cap: 'Tu modelo comparte franjas y semanas entre calendarios. <b>El Lab comparte listas de festivos.</b>', note: 'Esta es la diferencia de fondo, y de ella salen casi todas las demás.' },
+      { L: { cam: [107, 600, 1464, 260], rings: [{ r: R.p_aviso, label: 'Tu propio aviso', pos: 't' }] },
+        cap: 'Tu prototipo ya avisa del riesgo: <b>si cambias un horario compartido, cambian todos los calendarios vinculados.</b>',
+        note: 'Compartir una semana es cómodo hasta que un equipo necesita salir media hora antes que otro.' },
+      { R: { cam: [107, 250, 1464, 220], rings: [{ r: R.l_uso, label: 'La aplican 2 horarios', pos: 'b' }] },
+        cap: 'Una lista de festivos sí se repite tal cual entre equipos, y caduca cada año. <b>Festivos Barcelona la aplican dos horarios.</b>',
+        note: 'Lo que de verdad comparten varios equipos es el calendario de festivos de su ciudad.' },
+      { why: 'Dos equipos casi nunca tienen la misma semana, y cuando la tienen basta con «Duplicar». Los festivos los comparte media empresa y cambian cada enero. Así lo hacen Aircall y Talkdesk; Zendesk, 8x8 y Five9 guardan la semana dentro del horario.',
+        note: 'Lo que perdemos: cambiar una semana compartida en un solo sitio. Si se echa en falta, se añade «aplicar a varios horarios», que es más barato que una biblioteca de semanas.' },
+    ],
+  },
+  {
+    kind: 'duo', ch: 2, L: 'p-periodos-anio', R: 'l-listado',
+    eyebrow: '03 · Decisión <i>2</i> de 7',
+    title: 'Vive en Repositorios, dentro de <em>«Tiempo»</em>',
+    beats: [
+      { cap: 'Tu prototipo es una página propia con pestañas. El Lab lo pone en Repositorios, en una clasificación <b>«Tiempo» con dos listas</b>.', note: 'Dónde vive cambia cómo se llega y cómo se explica.' },
+      { L: { cam: R.p_nav, rings: [{ r: R.p_tabs, label: 'Calendarios y Horarios', pos: 'b' }] },
+        cap: 'Calendarios y Horarios, cada uno con su lista a la izquierda y el detalle a la derecha.',
+        note: 'Es una página completa para un área que, en el menú, compite con Agendas o Tipificaciones.' },
+      { R: { cam: R.l_cabeza, rings: [{ r: R.l_tabs, label: 'Horarios (9) y Festivos (2)', pos: 'b' }, { r: R.l_miga, label: 'Repositorios › Tiempo', pos: 'bl' }] },
+        cap: 'En el Lab son dos pestañas de la misma clasificación, y se llega <b>como a Agendas o a Tipificaciones</b>.',
+        note: 'Mismo patrón que el resto de Repositorios: nadie tiene que aprender una pantalla nueva.' },
+      { why: 'Repositorios es donde el supervisor ya busca lo que reutiliza. Y una tarjeta nueva en el hub no cabe a 1440 × 800 (DD-251); una pestaña dentro de «Tiempo», sí.',
+        note: 'Esta la decidimos el 13 de noviembre. Si prefieres una entrada propia, es la decisión más fácil de cambiar de todas.' },
+    ],
+  },
+  {
+    kind: 'duo', ch: 2, L: 'p-periodos-anio', R: 'l-listado',
+    eyebrow: '03 · Decisión <i>3</i> de 7',
+    title: 'El listado dice si se atiende ahora, <em>y hasta cuándo</em>',
+    beats: [
+      { cap: 'Lo primero que se mira de un horario no es cuántas reglas tiene: <b>es si está atendiendo</b>.', note: 'Pensemos en quien abre esta lista un martes a las 17:50.' },
+      { L: { cam: R.p_lista, rings: [{ r: [121, 280, 191, 75], label: '2 periodos, 2 especiales', pos: 'b' }] },
+        cap: 'Tu lista de calendarios cuenta periodos y días especiales.',
+        note: 'Es útil para quien lo configura, pero no responde a la pregunta del momento.' },
+      { R: { cam: R.l_estadoCol, rings: [{ r: R.l_fines, label: 'Cuándo abre', pos: 't' }, { r: R.l_verano, label: 'Inactivo, sin hora', pos: 'b' }] },
+        cap: 'El Lab junta «Ahora» y «Estado» en una columna: <b>abierto o cerrado, y cuándo cambia</b>; o «Inactivo», sin hora.',
+        note: '«Cerrado, abre mañana a las 10:00». Una sola lectura, y en la zona horaria de cada horario.' },
+      { why: 'El número de reglas se ve al abrir el horario. El estado de ahora es lo que se consulta de un vistazo, y main ya sabe calcularlo: solo falta decirlo.',
+        note: 'Por eso es el primer PR que propongo: el cálculo ya existe y está probado.' },
+    ],
+  },
+  {
+    kind: 'duo', ch: 2, L: 'p-periodos-horario-editar', R: 'l-editor',
+    eyebrow: '03 · Decisión <i>4</i> de 7',
+    title: 'La semana se escribe <em>en tramos</em>, no día a día',
+    beats: [
+      { cap: 'Tu editor tiene una fila por día y «Copiar lunes a». <b>El Lab agrupa los días que comparten horas.</b>', note: 'Es la parte del editor que más se toca, así que es donde más se nota.' },
+      { L: { cam: R.p_filas, rings: [{ r: R.p_filas, label: 'Tres veces lo mismo', pos: 'b' }] },
+        cap: 'Lunes, martes y miércoles repiten 09:00 a 14:00 y 16:00 a 18:00. <b>Cada cambio se hace en cada fila</b>, o se vuelve a copiar.',
+        note: 'Con siete días y jornada partida son catorce campos de hora para decir una sola cosa.' },
+      { R: { cam: [100, 130, 440, 440], rings: [{ r: R.l_tramos, label: 'Dos tramos, toda la semana', pos: 'b' }] },
+        cap: 'En el Lab, Postventa son dos tramos: L M X J de 09:00 a 18:00 y V de 09:00 a 15:00. <b>Para que el martes cambie, se desmarca la M.</b>',
+        note: 'Marcar una bolita en otro tramo la mueve allí. No hay forma de que un día quede en dos sitios.' },
+      { why: 'Es la regla de Aircall y la que mejor se lee: la semana entera en dos líneas. No hay botón de copiar porque no hay nada que copiar, y los días sin tramo se dicen debajo: «Cerrado: sábado, domingo».',
+        note: 'Se conserva lo que ya funcionaba: «Añadir franja» propone una franja una hora después de la última.' },
+    ],
+  },
+  {
+    kind: 'duo', ch: 2, L: 'p-periodos-anio', R: 'l-anio',
+    eyebrow: '03 · Decisión <i>5</i> de 7',
+    title: 'La semana y el calendario, <em>a la vista a la vez</em>',
+    beats: [
+      { cap: 'Tu prototipo abre en el año, y las horas se cambian en otra pestaña. <b>En el Lab, la semana y el calendario comparten pantalla.</b>', note: 'Esta es la petición con la que empezó el rediseño.' },
+      { L: { cam: R.p_anio },
+        cap: 'El año de tu Periodos v2 se lee muy bien, pero <b>de septiembre a diciembre queda por debajo del pliegue</b>.',
+        note: 'Y para cambiar una hora hay que salir a la pestaña Horarios y volver.' },
+      { R: { cam: R.l_tira, rings: [{ r: R.l_toggle, label: '3 meses o año', pos: 'bl' }] },
+        cap: 'El Lab pinta el año en una tira de 12 × 31 que <b>cabe entera</b>, y cambia a tres meses cuando hace falta detalle.',
+        note: 'Los festivos en rojo, los periodos en su color y el día de hoy marcado.' },
+      { why: 'Se edita a la izquierda y el resultado se repinta a la derecha, sin perder ninguna de las dos. Era la petición de partida: tener el horario siempre delante, sin scroll.',
+        note: 'El editor del Lab cabe entero a 1600 × 900, sin scroll de página.' },
+    ],
+  },
+  {
+    kind: 'duo', ch: 2, L: 'p-periodos-periodo', R: 'l-rango',
+    eyebrow: '03 · Decisión <i>6</i> de 7',
+    title: 'Los periodos nacen en el calendario <em>y llevan su semana</em>',
+    beats: [
+      { cap: 'Para crear un periodo, tu prototipo pide fechas y un horario semanal que ya exista. <b>El Lab parte de los días que eliges en el calendario.</b>', note: 'Aquí se nota la diferencia de modelo de la decisión 1.' },
+      { L: { cam: R.p_dialogo, rings: [{ r: R.p_select, label: 'Hay que crearlo antes', pos: 'b' }] },
+        cap: 'El periodo apunta a un horario de la biblioteca. Un día especial, igual: <b>o cerrado todo el día, o un horario semanal entero</b>.',
+        note: 'Para abrir Nochebuena hasta las 14:00 hay que crear antes una semana completa que solo se usa ese día.' },
+      { R: { cam: R.l_cal, rings: [{ r: R.l_barra, label: '12 días, 10 abiertos', pos: 't' }] },
+        cap: 'En el Lab, Mayús+clic del 23 de noviembre al 4 de diciembre, y la barra ofrece <b>«Crear periodo con estas fechas»</b> o «Cerrar estos días».',
+        note: 'El diálogo se abre con el rango ya puesto. También se elige una semana entera con su número.' },
+      { R: { img: 'l-periodo', cam: R.l_semanaPeriodo, rings: [{ r: R.l_semanaPeriodo, label: 'Su semana, en tramos', pos: 't' }] },
+        cap: 'El periodo lleva dentro su semana, con los mismos tramos. Y un día especial puede ser <b>«Horario especial» de 09:00 a 14:00</b> sin crear una semana para un día.',
+        note: 'El diálogo de periodo del Lab hereda la lógica del de producción; solo cambia la semana por la de tramos.' },
+      { why: 'Saber a qué hora cierra un viernes de verano no debería pedir tres saltos: calendario, periodo y horario semanal. Tu validación se queda: dos periodos no comparten fechas, y el error nombra al otro.',
+        note: 'La validación de solapes está en main desde DD-251 y el Lab la usa tal cual.' },
+    ],
+  },
+  {
+    kind: 'duo', ch: 2, L: 'p-periodos-especial', R: 'l-importar',
+    eyebrow: '03 · Decisión <i>7</i> de 7',
+    title: 'Los festivos se importan, <em>no se escriben uno a uno</em>',
+    beats: [
+      { cap: 'En tu prototipo cada festivo es un día especial que se crea a mano, y <b>al cambiar de año no se copia</b>.', note: 'Tu Periodos v2 lo dice a propósito: los periodos y días especiales tienen fechas concretas.' },
+      { L: { cam: R.p_especial, rings: [{ r: R.p_especial }] },
+        cap: 'Doce festivos son <b>doce veces este diálogo</b>, y otra vez el año siguiente.',
+        note: 'Y con varios horarios, cada uno repite los mismos doce.' },
+      { R: { cam: [520, 280, 560, 380], rings: [{ r: [536, 331, 528, 50], label: 'España, Comunidad de Madrid', pos: 't' }] },
+        cap: 'En el Lab se elige país o comunidad y <b>llegan los doce de golpe</b>. Se desmarca el que no aplique.',
+        note: 'En el Lab son datos de ejemplo de 2026: en producción vendrían de un servicio oficial o de un catálogo que se renueva cada año.' },
+      { R: { img: 'l-lista', cam: R.l_listaVista, rings: [{ r: R.l_aplican, label: 'Qué horarios la aplican', pos: 'tl' }] },
+        cap: 'Se guardan como una lista de Tiempo: su año en rojo, sus días editables y, a la izquierda, <b>qué horarios la aplican</b>.',
+        note: 'Aplicar o soltar la lista se hace desde la propia lista, con un interruptor por horario.' },
+      { R: { img: 'l-panel', cam: R.l_drawer, rings: [{ r: R.l_pie, label: 'Guardar en 2 horarios', pos: 't' }] },
+        cap: 'Desde un horario, la lista se abre en un panel sin salir de él, y al guardar <b>dice a cuántos horarios afecta</b>.',
+        note: '«Dejar de aplicar aquí» la suelta solo de ese horario, sin tocar a los demás.' },
+      { why: 'Los festivos vuelven cada enero y en cada horario. Con una lista, se corrigen una vez y llegan a todos los horarios que la aplican. Si uno necesita algo distinto, los importa como días especiales propios.',
+        note: 'Las dos opciones están en el mismo diálogo: lista compartida, por defecto, o días especiales de ese horario.' },
+    ],
+  },
+
+  /* ── 04 · Lo que falta ──────────────────────────────────────────────────────────────────── */
+  {
+    kind: 'single', ch: 3, S: 'p-ivr-simulador',
+    eyebrow: '04 · Lo que falta en el Lab',
+    title: 'Lo que tus prototipos tienen y <em>el Lab todavía no</em>',
+    list: [
+      [1, '<b>Mensaje de fuera de hora</b> por regla, y el simulador de llamada.'],
+      [2, '<b>Versiones:</b> borrador, guardar versión y publicar.'],
+      [2, '<b>Validación visible</b> antes de publicar, y exportar a JSON para desarrollo.'],
+    ],
+    propuesta: { at: 3, t: 'Entran después de la pantalla, junto con el nodo de horario del Diseñador VUI. DD-251 ya los dejó fuera de la primera tanda.' },
+    beats: [
+      { cap: 'Tu Calendarios IVR responde a la pregunta que de verdad importa en producción: <b>¿qué oye quien llama ahora mismo?</b>', note: 'Aquí tu prototipo va por delante, y lo quiero decir claro.' },
+      { S: { cam: R.p_resultado, rings: [{ r: R.p_resultado }] },
+        cap: '«Fuera de hora», con su mensaje, la regla que decide y por qué. <b>El Lab no tiene esto.</b>',
+        note: 'Es la pieza que une horarios e IVR, y la que más valor da a soporte.' },
+      { S: { cam: [1040, 150, 540, 110], rings: [{ r: R.p_publicar, label: 'Validado, borrador, publicar', pos: 'bl' }] },
+        cap: 'Y publicar con versiones: en un cambio de horario en caliente, <b>es tranquilidad</b>.',
+        note: 'Un cambio de horario mal hecho deja a clientes sin atender. Poder volver atrás vale mucho.' },
+      { cap: 'Nada de esto choca con el rediseño: <b>se suma encima</b>.', note: 'Propongo dejarlo para después de la pantalla, cuando el modelo esté cerrado.' },
+    ],
+  },
+
+  /* ── 05 · Hacia main ────────────────────────────────────────────────────────────────────── */
+  {
+    kind: 'road', ch: 4,
+    eyebrow: '05 · Hacia main',
+    title: 'Qué sube a main, <em>y en qué orden</em>',
+    lead: 'Un PR por pantalla y de uno en uno, cada uno con su DD y su prueba en rojo antes del cambio. Lo que depende de otros, al final.',
+    steps: [
+      { t: '«Ahora» dice cuándo cambia', where: 'Listado', size: 'S', d: 'La hora del cambio ya se calcula en main: solo falta decirla.' },
+      { t: 'La semana por tramos', where: 'Editor y periodo', size: 'M', d: 'Sustituye las siete filas y «Copiar».' },
+      { t: 'Elegir y actuar en el calendario', where: 'Editor', size: 'M', d: 'Día, rango o semana, la barra de acciones y «¿Y a las…?».' },
+      { t: 'El editor sin scroll', where: 'Editor', size: 'M', d: 'Dos filas a la derecha y una sola lista de excepciones. Recoloca lo anterior.' },
+      { t: 'Festivos importados', where: 'Festivos', size: 'M', d: 'De dónde salen los oficiales: un catálogo anual o un servicio.', dep: 'Espera una decisión de datos' },
+      { t: '«Tiempo» en Repositorios', where: 'Hub y listas', size: 'L', d: 'Cambia el hub y su COA.', dep: 'Espera tu visto bueno' },
+    ],
+    foot: '<b>No sube:</b> el andamio del Lab (rutas <code>/lab</code> y textos solo en español) ni el port literal de tus prototipos, que se queda como referencia.',
+    beats: [
+      { t: 7, note: 'Lo ordeno por riesgo y por dependencias: primero lo que no depende de nadie y se puede probar solo.' },
+      { cap: 'Empieza por lo más pequeño y visible: <b>el listado</b>.', note: 'Un PR de un día, que mejora algo que se ve en cuanto se entra.' },
+      { cap: 'Después la semana, que es <b>lo que más se toca</b> del editor.', note: 'Cambia también la semana del diálogo de periodo, que comparte la pieza.' },
+      { cap: 'Con la semana en su sitio, <b>elegir días y actuar sobre ellos</b>.', note: 'Aquí entra «¿Y a las…?», que es tu «Comprobar fecha» dentro del editor.' },
+      { cap: 'La maqueta sin scroll va cuarta: <b>recoloca lo anterior</b>, así que se hace cuando ya funciona.', note: 'Si la hiciéramos primero, la rehaceríamos dos veces.' },
+      { cap: 'Los festivos importados esperan a una <b>decisión de datos</b>.', note: '¿Mantenemos un catálogo por año, o lo leemos de un servicio? Es una pregunta para producto y backend.' },
+      { cap: '«Tiempo» en el hub, al final: <b>toca a todos</b>, y conviene decidirlo contigo.', note: 'Es la única que cambia la navegación.' },
+      { cap: 'Cada paso es útil por sí solo: <b>si paramos en el tercero, main ya está mejor que hoy</b>.', note: 'Y nada del Lab entra tal cual: cada pieza pasa por las reglas de main, sus cuatro idiomas y sus pruebas.' },
+    ],
+  },
+
+  /* ── 06 · «Ahora» ───────────────────────────────────────────────────────────────────────── */
+  {
+    kind: 'duo', ch: 5, L: 'm-listado', R: 'l-listado', duoUntil: 2,
+    eyebrow: '06 · El primer PR',
+    title: '«Ahora» dice <em>cuándo cambia</em>',
+    ejemplos: {
+      at: 3,
+      rows: [
+        ['Horario General', 'jueves a las 17:00', 'open', 'cierra a las 18:00'],
+        ['Horario General', 'viernes a las 19:00', 'closed', 'abre el lun a las 09:00'],
+        ['Postventa', '24 de diciembre a las 13:00, día especial', 'open', 'cierra a las 14:00'],
+        ['Horario LATAM', '12:44 en Madrid, 05:44 en México', 'closed', 'abre a las 14:00'],
+        ['24/7 Emergencias', 'cualquier momento', 'open', 'siempre'],
+        ['Horario Verano', 'desactivado', 'off', ''],
+      ],
+    },
+    beats: [
+      { cap: 'Antes y después, <b>en el mismo listado</b>.', note: 'Es el PR que propongo abrir ya.' },
+      { L: { cam: R.m_cols, rings: [{ r: R.m_ahoraVerano, label: 'Abierto', pos: 't' }, { r: R.m_estadoVerano, label: 'Inactivo', pos: 't' }] },
+        cap: 'Hoy: dos columnas, y un horario inactivo <b>que sale «Abierto»</b>.', note: 'Lo vimos al principio.' },
+      { R: { cam: R.l_estadoCol, rings: [{ r: R.l_general, label: 'Cuándo cierra', pos: 't' }, { r: R.l_verano, label: 'Inactivo', pos: 'b' }] },
+        cap: 'Después: una columna. Activo dice abierto o cerrado y <b>cuándo cambia</b>; inactivo, solo «Inactivo».',
+        note: 'La etiqueta de siempre y, al lado, una línea gris con la hora. Sin punto medio, como pide main.' },
+      { cap: 'Respeta <b>el dueño de cada fecha</b> y la zona de cada horario: México no es Madrid.', note: 'Estas seis situaciones son, tal cual, la prueba del PR.' },
+    ],
+  },
+  {
+    kind: 'brief', ch: 5,
+    eyebrow: '06 · El primer PR',
+    title: 'El encargo, <em>listo para abrir</em>',
+    rows: [
+      ['Frente', '<code>docs/handoff/supervisor-fichas.md</code>'],
+      ['Qué', 'En Repositorios, Horarios: una sola columna de estado que dice si se atiende y cuándo cambia.'],
+      ['No toques', 'El editor, Festivos y las columnas Periodos y Fechas especiales.'],
+      ['Parte de', 'DD-251 (Consecuencias), <code>estadoEn()</code> en <code>horarios.core.mjs</code> y <code>instances/horarios.ts</code>; del Lab, <code>statusDetail</code> y el texto de cuándo cambia.'],
+      ['DD reservada', 'DD-255, la siguiente libre hoy.'],
+      ['Se comprueba con', 'Una prueba con el reloj fijo, en rojo antes del cambio: las seis situaciones de la diapositiva anterior.'],
+      ['Para y pregunta si', 'Hay que quitar columnas, o el texto no cabe en inglés, francés o portugués.'],
+      ['Cierra con', 'PR con la plantilla, CI leído con <code>ci:verdict</code>, su tramo del hand-off y el parte en llano.'],
+    ],
+    beats: [
+      { cap: 'Es pequeño y seguro: la lógica ya está en main, <b>probada con la hoja de postventa</b>. El PR solo la dice en el listado.', note: 'Sigue el formato de encargo del manual de coordinación: con esto, un hilo lo hace sin preguntar.' },
+      { hl: 'Parte de', cap: '<code>estadoEn()</code> ya devuelve si está abierto <b>y cuándo cambia</b>. Hoy el listado se queda solo con lo primero.', note: 'Mira dos semanas hacia delante y respeta festivos, periodos y franjas que cruzan la medianoche.' },
+      { hl: 'Se comprueba con', cap: 'La prueba fija el reloj y <b>enrojece con el código de hoy</b>. Así sabemos que mide lo que decimos.', note: 'Si la prueba no enrojece antes del cambio, no es prueba.' },
+      { hl: 'Para y pregunta si', cap: 'Quitar Periodos y Fechas especiales del listado <b>es otra decisión</b>. Este PR no la toma.', note: 'El Lab las quita; en main lo decidimos aparte.' },
+    ],
+  },
+
+  /* ── 07 · Para decidir ──────────────────────────────────────────────────────────────────── */
+  {
+    kind: 'close', ch: 6,
+    eyebrow: '07 · Para decidir hoy',
+    title: 'Tres preguntas, <em>y la tercera no espera</em>',
+    qs: [
+      ['¿Compartimos listas de festivos, como el Lab, o semanas, como tu modelo?', 'De esto salen las decisiones 6 y 7.'],
+      ['¿Horarios vive en Repositorios, dentro de «Tiempo», con Horarios y Festivos?', 'Es la más fácil de cambiar, y la última en subir.'],
+      ['¿Abrimos ya el PR de «Ahora»?', 'No depende de las otras dos.'],
+    ],
+    links: [
+      { tone: 'lab', k: 'Lab', t: 'El rediseño', u: 'claude-lab-horarios.sc-supervisor.pages.dev/lab/horarios', href: 'https://claude-lab-horarios.sc-supervisor.pages.dev/lab/horarios' },
+      { tone: 'proto', k: 'Tu prototipo', t: 'Portado tal cual', u: 'claude-proto-jefe.sc-supervisor.pages.dev/lab/calendarios', href: 'https://claude-proto-jefe.sc-supervisor.pages.dev/lab/calendarios/periodos' },
+      { tone: 'lab', k: 'GitHub', t: 'Los dos PR, en borrador', u: 'smartcontact-ui #614 y #615', href: 'https://github.com/smartcontact-hub/smartcontact-ui/pulls' },
+    ],
+    beats: [
+      { t: 6, note: 'Para cerrar, tres preguntas. Con las dos primeras se ordena todo lo demás.' },
+      { t: 8, note: 'Si prefieres compartir semanas, el Lab puede convivir con ello: una semana compartida sería otra lista de Tiempo.' },
+      { t: 8, note: 'La navegación es lo más visible para el resto del producto, por eso la dejo para el final.' },
+      { t: 8, note: 'Y esta es la que me gustaría llevarme hoy: el PR de «Ahora» se puede abrir mañana.' },
+      { t: 8, note: 'Los enlaces quedan aquí para tocar las dos versiones con calma. Gracias.' },
+    ],
+  },
+];
+
+/* ════════════════════════════════════════════════════════════════════════════════════════════════
+ * MOTOR
+ * ════════════════════════════════════════════════════════════════════════════════════════════════ */
+
+const M = window.Motion;
+const RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const EASE = [0.22, 1, 0.36, 1];
+const BASE_W = 1600, BASE_H = 900, IMG = 'img/';
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const strip = (h) => (h || '').replace(/<[^>]+>/g, '');
+
+/* Con «reducir movimiento», todo llega a su sitio sin moverse. Sin Motion (si no carga), igual. */
+function run(el, kf, o = {}) {
+  const opts = RM ? { ...o, duration: 0, delay: 0 } : { ease: EASE, ...o };
+  if (M && M.animate) return M.animate(el, kf, opts);
+  const els = Array.isArray(el) ? el : [el];
+  for (const e of els) for (const [k, v] of Object.entries(kf)) {
+    const val = Array.isArray(v) ? v[v.length - 1] : v;
+    if (k === 'x' || k === 'y' || k === 'scale') continue;
+    e.style[k] = typeof val === 'number' && k !== 'opacity' ? val + 'px' : val;
+  }
+  return Promise.resolve();
+}
+const stagger = (s, o) => (M && M.stagger ? M.stagger(s, o) : 0);
+
+const ICON_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+const ICON_ZOOM = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4 4M11 8.5v5M8.5 11h5"/></svg>';
+
+function frameHTML(side, img, label = true) {
+  const tone = TONE(img);
+  return `<div class="slot slot--${side}" data-tone="${tone}" data-in>
+    ${label ? `<div class="side">${SIDE_LABEL[tone]}</div>` : ''}
+    <figure class="frame" data-side="${side}" data-tone="${tone}" data-base="${img}">
+      <div class="frame__cam"></div>
+      <div class="ring ring--1"><span class="ring__tag"></span></div>
+      <div class="ring ring--2"><span class="ring__tag"></span></div>
+      <button class="frame__zoom" type="button" aria-label="Ver la captura entera">${ICON_ZOOM}</button>
+    </figure>
+  </div>`;
+}
+const headHTML = (s) => `<header class="head" data-in><div class="eyebrow">${s.eyebrow}</div><h2 class="title">${s.title}</h2></header>`;
+const sayHTML = (extra = '') => `<div class="say" data-in><p class="cap" aria-live="polite"></p><div class="why"><div class="why__k">Por qué</div><p class="why__t"></p></div>${extra}</div>`;
+
+function build(s, i) {
+  const el = document.createElement('section');
+  el.className = `slide k-${s.kind}`;
+  el.setAttribute('aria-roledescription', 'diapositiva');
+  el.setAttribute('aria-label', `${i + 1} de ${SLIDES.length}`);
+  let h = '';
+  if (s.kind === 'cover') {
+    h = `<div class="cover__text">
+        <div class="eyebrow" data-in>Supervisor · Horarios · 13 de noviembre de 2026</div>
+        <h1 class="cover__title" data-in>De tus prototipos a la <em>pantalla de Horarios</em></h1>
+        <p class="cover__lead" data-in>Tus tres prototipos y el rediseño del Lab, montados con la interfaz real del Supervisor y comparados decisión a decisión. Al final: qué sube a main, en qué orden y por dónde empezar.</p>
+      </div>
+      <div class="cover__links">
+        <a class="link-card" data-tone="proto" data-at="1" href="https://claude-proto-jefe.sc-supervisor.pages.dev/lab/calendarios/periodos" target="_blank" rel="noopener"><div class="link-card__k">Tu prototipo · PR #615</div><div class="link-card__t">Portado tal cual</div><div class="link-card__u">/lab/calendarios</div></a>
+        <a class="link-card" data-tone="lab" data-at="1" href="https://claude-lab-horarios.sc-supervisor.pages.dev/lab/horarios" target="_blank" rel="noopener"><div class="link-card__k">Lab · PR #614</div><div class="link-card__t">El rediseño</div><div class="link-card__u">/lab/horarios</div></a>
+      </div>
+      <div class="cover__shots" aria-hidden="true">
+        <div class="cover__shot cover__shot--a" data-in>${frameHTML('A', 'p-periodos-anio')}</div>
+        <div class="cover__shot cover__shot--b" data-in>${frameHTML('B', 'l-editor')}</div>
+      </div>`;
+  } else if (s.kind === 'single') {
+    const tone = TONE(s.S);
+    h = headHTML(s) + frameHTML('S', s.S) + sayHTML();
+    if (s.fact) h += `<div class="fact" data-in><div class="fact__k">${s.fact.k}</div><div class="fact__t">${s.fact.t}</div></div>`;
+    if (s.list) h += `<ul class="list" style="--c: var(--${tone})">${s.list.map(([at, t]) => `<li data-at="${at}">${t}</li>`).join('')}</ul>`;
+    if (s.propuesta) h += `<div class="propuesta" data-at="${s.propuesta.at}"><b>Propuesta</b>${s.propuesta.t}</div>`;
+  } else if (s.kind === 'duo') {
+    const until = s.duoUntil != null ? ` data-until="${s.duoUntil}"` : '';
+    h = headHTML(s) + `<div class="duo"${until}>${frameHTML('L', s.L)}${frameHTML('R', s.R)}</div>`;
+    const chips = s.chips ? `<div class="chips">${s.chips.map((c) => `<span class="chip" data-at="${s.chipsAt}">${ICON_CHECK}${c}</span>`).join('')}</div>` : '';
+    h += sayHTML(chips);
+    if (s.ejemplos) {
+      const tag = (k) => k === 'open' ? '<span class="tag tag--open">Abierto</span>' : k === 'closed' ? '<span class="tag tag--closed">Cerrado</span>' : '<span class="tag tag--off">Inactivo</span>';
+      h += `<div class="ejemplos" data-at="${s.ejemplos.at}">${s.ejemplos.rows.map(([n, c, k, d]) => `<div class="ej"><div class="ej__s">${n}<small>${c}</small></div><div class="ej__r">${tag(k)}${d}</div></div>`).join('')}</div>`;
+    }
+  } else if (s.kind === 'fan') {
+    h = headHTML(s) + `<div class="fan">${s.imgs.map((img, k) => `<div class="fan__item" data-in>${frameHTML('F' + k, img, false).replace('</figure>', `<span class="fan__label">${s.labels[k]}</span></figure>`)}</div>`).join('')}</div>`;
+    h += `<ol class="fan-list">${s.list.map(([b, t], k) => `<li data-at="${k + 1}"><span>0${k + 1}</span><div><b>${b}</b>${t}</div></li>`).join('')}</ol>`;
+  } else if (s.kind === 'road') {
+    h = headHTML(s) + `<p class="road__lead" data-in>${s.lead}</p>
+      <div class="road" data-in><div class="road__track"><div class="road__fill"></div></div><div class="road__steps">
+      ${s.steps.map((st, k) => `<div class="step${st.dep ? ' step--dep' : ''}" data-at="${k + 1}"><div class="step__dot"></div><div class="step__card">
+        <div class="step__n">0${k + 1}</div><div class="step__t">${st.t}</div><div class="step__meta"><span>${st.where}</span><span>${st.size}</span></div>
+        <div class="step__d">${st.d}</div>${st.dep ? `<div class="step__flag">${st.dep}</div>` : ''}</div></div>`).join('')}
+      </div></div>` + sayHTML() + `<p class="road__foot" data-at="${s.steps.length + 1}">${s.foot}</p>`;
+  } else if (s.kind === 'brief') {
+    h = headHTML(s) + `<div class="brief" data-in>${s.rows.map(([k, v]) => `<div class="brief__row" data-k="${k}"><div class="brief__k">${k}</div><div class="brief__v">${v}</div></div>`).join('')}</div>` + sayHTML();
+  } else if (s.kind === 'close') {
+    h = headHTML(s) + `<ol class="qs">${s.qs.map(([q, sub], k) => `<li data-at="${k + 1}"><span>0${k + 1}</span><p>${q}<small>${sub}</small></p></li>`).join('')}</ol>
+      <div class="close__links">${s.links.map((l) => `<a class="link-card" data-tone="${l.tone}" data-at="${s.qs.length + 1}" href="${l.href}" target="_blank" rel="noopener"><div class="link-card__k">${l.k}</div><div class="link-card__t">${l.t}</div><div class="link-card__u">${l.u}</div></a>`).join('')}</div>`;
+  }
+  el.innerHTML = h;
+  s.el = el;
+  s.frames = {};
+  for (const f of $$('.frame', el)) {
+    s.frames[f.dataset.side] = f;
+    setImg(f, f.dataset.base, true);
+  }
+  return el;
+}
+
+/* ── Capturas: imagen, cámara y anillos ── */
+function setImg(frame, name, instant) {
+  const cam = $('.frame__cam', frame);
+  const cur = $('.frame__img.is-cur', cam);
+  if (cur && cur.dataset.name === name) return;
+  const img = new Image();
+  img.className = 'frame__img is-cur';
+  img.decoding = 'async';
+  img.draggable = false;
+  img.alt = ALT[name] || '';
+  img.dataset.name = name;
+  img.src = IMG + name + '.webp';
+  if (cur) cur.classList.remove('is-cur');
+  cam.appendChild(img);
+  if (instant || !cur) { img.style.opacity = 1; if (cur) cur.remove(); return; }
+  img.style.opacity = 0;
+  Promise.resolve(run(img, { opacity: 1 }, { duration: 0.7 })).then(() => { if (cur.isConnected) cur.remove(); });
+}
+
+function camTo(frame, region, rings, instant) {
+  const W = frame.offsetWidth, H = frame.offsetHeight;
+  let s = 1, tx = 0, ty = 0;
+  if (region) {
+    const [x, y, w, h] = region;
+    s = clamp(Math.min(BASE_W / (w * 1.16), BASE_H / (h * 1.16)), 1, 3.3);
+    const cx = (x + w / 2) / BASE_W, cy = (y + h / 2) / BASE_H;
+    tx = clamp(W * (0.5 - cx * s), W - W * s, 0);
+    ty = clamp(H * (0.5 - cy * s), H - H * s, 0);
+  }
+  const key = region ? region.join(',') : '';
+  const moved = frame.dataset.cam !== key;
+  frame.dataset.cam = key;
+  const d = instant ? 0 : 1.4;
+  run($('.frame__cam', frame), { x: tx, y: ty, scale: s }, { duration: d });
+
+  $$('.ring', frame).forEach((el, i) => {
+    const spec = rings && rings[i];
+    if (!spec) {
+      el.classList.remove('is-on');
+      run(el, { opacity: 0 }, { duration: instant ? 0 : 0.3 });
+      return;
+    }
+    const [x, y, w, h] = spec.r;
+    const box = { left: W * (x / BASE_W) * s + tx - 7, top: H * (y / BASE_H) * s + ty - 7, width: W * (w / BASE_W) * s + 14, height: H * (h / BASE_H) * s + 14 };
+    const tag = $('.ring__tag', el);
+    tag.textContent = spec.label || '';
+    el.classList.toggle('has-tag', !!spec.label);
+    el.dataset.pos = spec.label ? placeTag(spec.pos || 'b', box, tag.offsetWidth, tag.offsetHeight, W, H) : 'b';
+    const was = el.classList.contains('is-on');
+    el.classList.add('is-on');
+    if (instant) { run(el, { ...box, opacity: 1, scale: 1 }, { duration: 0 }); return; }
+    if (was && !moved) { run(el, { ...box, opacity: 1, scale: 1 }, { duration: 0.6 }); return; }
+    if (was) { run(el, { ...box, opacity: 1, scale: 1 }, { duration: 1.4 }); return; }
+    run(el, { ...box, opacity: 0, scale: 1.08 }, { duration: 0 });
+    run(el, { opacity: 1, scale: 1 }, { duration: 0.7, delay: moved ? 0.95 : 0.15 });
+  });
+}
+
+/* La etiqueta de un anillo va donde se pidió, salvo que se salga del marco: entonces cambia de lado o de alineación. */
+function placeTag(want, box, tw, th, W, H) {
+  const gap = 12, pad = 10;
+  let v = want[0] === 't' ? 't' : 'b';
+  let hz = want[1] || 'c';
+  const cabeArriba = box.top - gap - th >= pad, cabeAbajo = box.top + box.height + gap + th <= H - pad;
+  if (v === 't' && !cabeArriba) v = cabeAbajo ? 'b' : 'i';
+  else if (v === 'b' && !cabeAbajo) v = cabeArriba ? 't' : 'i';
+  const left = hz === 'c' ? box.left + box.width / 2 - tw / 2 : hz === 'l' ? box.left - 2 : box.left + box.width + 2 - tw;
+  if (left < pad) hz = 'l';
+  else if (left + tw > W - pad) hz = 'r';
+  return v + (hz === 'c' ? '' : hz);
+}
+
+/* ── Texto ── */
+function setCap(el, html, instant) {
+  if (!el || el.dataset.html === html) return;
+  el.dataset.html = html;
+  if (instant) { el.innerHTML = html; run(el, { opacity: html ? 1 : 0, y: 0 }, { duration: 0 }); return; }
+  Promise.resolve(run(el, { opacity: 0, y: -8 }, { duration: 0.25 })).then(() => {
+    if (el.dataset.html !== html) return;
+    el.innerHTML = html;
+    if (html) run(el, { opacity: [0, 1], y: [14, 0] }, { duration: 0.8, delay: 0.05 });
+  });
+}
+function setWhy(el, html, instant) {
+  if (!el) return;
+  const t = $('.why__t', el);
+  if (el.dataset.html === html) return;
+  el.dataset.html = html;
+  if (!html) { run(el, { opacity: 0 }, { duration: instant ? 0 : 0.25 }); return; }
+  t.innerHTML = html;
+  run(el, { opacity: [0, 1], y: [16, 0] }, { duration: instant ? 0 : 0.9, delay: instant ? 0 : 0.2 });
+}
+function reveal(el, show, instant) {
+  if (el.dataset.shown === String(show)) return;
+  el.dataset.shown = String(show);
+  el.style.pointerEvents = show ? '' : 'none';
+  el.setAttribute('aria-hidden', String(!show));
+  run(el, { opacity: show ? 1 : 0, y: show ? 0 : 14, filter: show ? 'blur(0px)' : 'blur(4px)' }, { duration: instant ? 0 : show ? 0.8 : 0.35 });
+}
+
+/* ── Estado ── */
+const state = { s: -1, b: 0, playing: false, notes: false };
+let timer = null;
+
+function stickyImg(s, side, bi) {
+  let img = s.frames[side] ? s.frames[side].dataset.base : null;
+  for (let k = 0; k <= bi; k++) { const st = s.beats[k] && s.beats[k][side]; if (st && st.img) img = st.img; }
+  return img;
+}
+
+function applyBeat(si, bi, instant) {
+  const s = SLIDES[si];
+  const B = s.beats[bi] || {};
+  const el = s.el;
+
+  setCap($('.cap', el), B.cap || '', instant);
+  setWhy($('.why', el), B.why || '', instant);
+
+  const sides = Object.keys(s.frames).filter((k) => ['L', 'R', 'S'].includes(k));
+  const zoomed = sides.filter((k) => B[k] && B[k].cam);
+  for (const side of sides) {
+    const f = s.frames[side];
+    const st = B[side] || {};
+    setImg(f, stickyImg(s, side, bi), instant);
+    camTo(f, st.cam || null, st.rings || null, instant);
+    const dim = zoomed.length === 1 && !zoomed.includes(side);
+    run(f.parentElement, { opacity: dim ? 0.34 : 1, filter: dim ? 'saturate(.5)' : 'saturate(1)' }, { duration: instant ? 0 : 0.8 });
+  }
+
+  if (s.kind === 'fan') {
+    $$('.fan__item', el).forEach((it, k) => {
+      const lifted = B.lift === k, any = B.lift != null;
+      run(it, { y: lifted ? -22 : 0, scale: lifted ? 1.035 : 1, opacity: !any || lifted ? 1 : 0.42 }, { duration: instant ? 0 : 0.9 });
+      it.style.zIndex = lifted ? 5 : k;
+    });
+  }
+  if (s.kind === 'brief') $$('.brief__row', el).forEach((r) => r.classList.toggle('is-hl', r.dataset.k === B.hl));
+  if (s.kind === 'road') {
+    const n = clamp(bi, 0, s.steps.length);
+    const fill = $('.road__fill', el);
+    run(fill, { scaleX: n === 0 ? 0 : (n - 0.5) / s.steps.length }, { duration: instant ? 0 : 1.2 });
+  }
+
+  for (const r of $$('[data-at], [data-until]', el)) {
+    const at = r.dataset.at != null ? +r.dataset.at : 0;
+    const until = r.dataset.until != null ? +r.dataset.until : Infinity;
+    reveal(r, bi >= at && bi <= until, instant);
+  }
+
+  // Notas y mandos
+  $('#notesText').innerHTML = B.note || '';
+  $('#notesWhere').textContent = `${si + 1}.${bi + 1}`;
+  updateHud();
+  try { history.replaceState(null, '', `#${si + 1}.${bi + 1}`); } catch (e) { /* un iframe sin permiso: no pasa nada */ }
+  schedule();
+}
+
+function enterSlide(si, dir, instant) {
+  const prev = state.s >= 0 ? SLIDES[state.s] : null;
+  const s = SLIDES[si];
+  if (prev && prev !== s) {
+    const old = prev.el;
+    Promise.resolve(run(old, { opacity: 0, y: dir > 0 ? -26 : 26, filter: 'blur(6px)' }, { duration: instant ? 0 : 0.5 }))
+      .then(() => { if (SLIDES[state.s] !== prev) old.classList.remove('is-on'); });
+  }
+  const el = s.el;
+  // Todo a cero, sin animar: la diapositiva entra limpia.
+  for (const f of Object.values(s.frames)) { setImg(f, f.dataset.base, true); camTo(f, null, null, true); run(f.parentElement, { opacity: 1, filter: 'saturate(1)' }, { duration: 0 }); }
+  for (const c of $$('.cap', el)) { c.dataset.html = ''; c.innerHTML = ''; }
+  for (const w of $$('.why', el)) { w.dataset.html = ''; run(w, { opacity: 0 }, { duration: 0 }); }
+  for (const r of $$('[data-at], [data-until]', el)) { delete r.dataset.shown; reveal(r, false, true); }
+  el.classList.add('is-on');
+  run(el, { opacity: 1, y: 0, filter: 'blur(0px)' }, { duration: 0 });
+  const parts = $$('[data-in]', el);
+  if (instant) { run(parts, { opacity: 1, y: 0, filter: 'blur(0px)' }, { duration: 0 }); return; }
+  run(parts, { opacity: [0, 1], y: [dir > 0 ? 34 : -34, 0], filter: ['blur(10px)', 'blur(0px)'] }, { duration: 1.0, delay: stagger(0.09, { startDelay: 0.12 }) });
+}
+
+function go(si, bi, dir = 1, instant = false) {
+  si = clamp(si, 0, SLIDES.length - 1);
+  bi = clamp(bi, 0, SLIDES[si].beats.length - 1);
+  if (si !== state.s) enterSlide(si, dir, instant);
+  state.s = si; state.b = bi;
+  applyBeat(si, bi, instant);
+}
+const atEnd = () => state.s === SLIDES.length - 1 && state.b === SLIDES[state.s].beats.length - 1;
+function next() {
+  const s = SLIDES[state.s];
+  if (state.b < s.beats.length - 1) go(state.s, state.b + 1, 1);
+  else if (state.s < SLIDES.length - 1) go(state.s + 1, 0, 1);
+  else stop();
+}
+function prev() {
+  if (state.b > 0) go(state.s, state.b - 1, -1);
+  else if (state.s > 0) go(state.s - 1, SLIDES[state.s - 1].beats.length - 1, -1);
+}
+
+/* ── Reproducir solo: cada paso dura lo que tarda en leerse, con calma ── */
+function dwell(B) {
+  if (B.t) return B.t;
+  const words = strip(B.cap || B.why || '').split(/\s+/).filter(Boolean).length;
+  return clamp(4 + words * 0.36, 6.5, 18);
+}
+function schedule() {
+  clearTimeout(timer);
+  const tick = $('#hudTick');
+  if (!state.playing) { run(tick, { scaleX: 0 }, { duration: 0 }); return; }
+  const ms = dwell(SLIDES[state.s].beats[state.b]) * 1000;
+  if (M && M.animate && !RM) M.animate(tick, { scaleX: [0, 1] }, { duration: ms / 1000, ease: 'linear' });
+  timer = setTimeout(() => { if (atEnd()) stop(); else next(); }, ms);
+}
+function play() { state.playing = true; syncPlay(); if (atEnd()) go(0, 0, 1); else schedule(); hideHudSoon(); }
+function stop() { state.playing = false; syncPlay(); schedule(); showHud(); }
+function syncPlay() {
+  const b = $('#bPlay');
+  b.setAttribute('aria-pressed', String(state.playing));
+  b.setAttribute('aria-label', state.playing ? 'Pausar' : 'Reproducir solo');
+  $('.lbl', b).textContent = state.playing ? 'Pausar' : 'Reproducir';
+  // En un <svg>, «hidden» es un atributo, no una propiedad.
+  $('#icPlay').toggleAttribute('hidden', state.playing); $('#icPause').toggleAttribute('hidden', !state.playing);
+}
+
+/* ── Mandos ── */
+const totalBeats = SLIDES.reduce((n, s) => n + s.beats.length, 0);
+function updateHud() {
+  const s = SLIDES[state.s];
+  let done = 0;
+  for (let k = 0; k < state.s; k++) done += SLIDES[k].beats.length;
+  done += state.b + 1;
+  $('#hudFill').style.transform = `scaleX(${done / totalBeats})`;
+  const titulo = strip(s.title === 'Portada' ? 'De tus prototipos a la pantalla de Horarios' : s.title);
+  $('#hudWhere').innerHTML = `<b>0${s.ch + 1} ${CHAPTERS[s.ch]}</b>${titulo}`;
+  $$('#hudDots button').forEach((d, k) => { d.classList.toggle('is-on', k === state.s); d.classList.toggle('is-past', k < state.s); d.setAttribute('aria-current', k === state.s ? 'step' : 'false'); });
+  $$('#idx button').forEach((d) => d.classList.toggle('is-on', +d.dataset.s === state.s));
+}
+let hideT = null;
+function showHud() { $('#hud').classList.remove('is-hidden'); clearTimeout(hideT); hideT = setTimeout(hideHudSoon, 2800); }
+function hideHudSoon() { if (state.notes || $('#hud').matches(':hover') || $('#hud').contains(document.activeElement)) return; $('#hud').classList.add('is-hidden'); }
+
+function toggleNotes(force) {
+  state.notes = force != null ? force : !state.notes;
+  $('#notes').classList.toggle('is-open', state.notes);
+  $('#bNotes').setAttribute('aria-pressed', String(state.notes));
+  fit();
+  if (state.notes) showHud();
+}
+function fit() {
+  const notesH = state.notes ? $('#notes').offsetHeight : 0;
+  const vw = window.innerWidth, vh = window.innerHeight - notesH;
+  const k = Math.min(vw / 1920, vh / 1080);
+  $('#deck').style.transform = `translate(${(vw - 1920 * k) / 2}px, ${Math.max(0, (vh - 1080 * k) / 2)}px) scale(${k})`;
+}
+function overlay(id, open) {
+  const o = $('#' + id);
+  o.classList.toggle('is-open', open);
+  if (open) { if (state.playing) stop(); const b = $('button.is-on', o) || $('button', o); if (b) b.focus(); }
+}
+const anyOverlay = () => $('.overlay.is-open') || $('#lightbox.is-open');
+
+/* ── Lupa ── */
+function openLightbox(frame) {
+  const img = $('.frame__img.is-cur', frame);
+  if (!img) return;
+  if (state.playing) stop();
+  const lb = $('#lightbox');
+  const big = $('img', lb);
+  big.src = img.src; big.alt = img.alt;
+  lb.classList.remove('is-zoomed'); big.style.left = ''; big.style.top = ''; big.style.width = '';
+  lb.classList.add('is-open');
+  run(big, { opacity: [0, 1], scale: [0.96, 1] }, { duration: 0.5 });
+}
+function panLightbox(e) {
+  const lb = $('#lightbox');
+  if (!lb.classList.contains('is-zoomed')) return;
+  const big = $('img', lb);
+  const w = Math.max(1600, window.innerWidth * 1.7), h = w * 9 / 16;
+  big.style.width = w + 'px';
+  const px = clamp(e.clientX / window.innerWidth, 0, 1), py = clamp(e.clientY / window.innerHeight, 0, 1);
+  big.style.left = -(w - window.innerWidth) * px + 'px';
+  big.style.top = -(h - window.innerHeight) * py + 'px';
+}
+
+/* ── Arranque ── */
+function boot() {
+  const host = $('#slides');
+  SLIDES.forEach((s, i) => host.appendChild(build(s, i)));
+
+  const dots = $('#hudDots');
+  SLIDES.forEach((s, i) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.setAttribute('aria-label', `Ir a la diapositiva ${i + 1}: ${strip(s.title)}`);
+    b.addEventListener('click', () => go(i, 0, i >= state.s ? 1 : -1));
+    dots.appendChild(b);
+  });
+  const idx = $('#idx');
+  CHAPTERS.forEach((c, ci) => {
+    const col = document.createElement('div');
+    col.innerHTML = `<div class="idx__ch"><i>0${ci + 1}</i>${c}</div>`;
+    SLIDES.forEach((s, i) => {
+      if (s.ch !== ci) return;
+      const b = document.createElement('button');
+      b.type = 'button'; b.dataset.s = i;
+      b.innerHTML = strip(s.title === 'Portada' ? 'Portada: de tus prototipos a la pantalla de Horarios' : s.title);
+      b.addEventListener('click', () => { overlay('index', false); go(i, 0, i >= state.s ? 1 : -1); });
+      col.appendChild(b);
+    });
+    idx.appendChild(col);
+  });
+
+  $('#bPrev').addEventListener('click', () => { stop(); prev(); });
+  $('#bNext').addEventListener('click', () => { stop(); next(); });
+  $('#bPlay').addEventListener('click', () => (state.playing ? stop() : play()));
+  $('#bNotes').addEventListener('click', () => toggleNotes());
+  $('#bIndex').addEventListener('click', () => overlay('index', true));
+  $('#bFull').addEventListener('click', toggleFull);
+  $$('[data-close]').forEach((b) => b.addEventListener('click', () => overlay(b.closest('.overlay').id, false)));
+
+  $('#deck').addEventListener('click', (e) => {
+    const zoom = e.target.closest('.frame__zoom');
+    if (zoom) { openLightbox(zoom.closest('.frame')); return; }
+    if (e.target.closest('a, button')) return;
+    if (state.playing) stop();
+    next();
+  });
+  const lb = $('#lightbox');
+  lb.addEventListener('click', (e) => { lb.classList.toggle('is-zoomed'); if (lb.classList.contains('is-zoomed')) panLightbox(e); else { const big = $('img', lb); big.style.left = ''; big.style.top = ''; big.style.width = ''; } });
+  lb.addEventListener('mousemove', panLightbox);
+
+  document.addEventListener('keydown', (e) => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    const k = e.key;
+    if (k === 'Escape') { if ($('#lightbox.is-open')) $('#lightbox').classList.remove('is-open'); else $$('.overlay.is-open').forEach((o) => overlay(o.id, false)); return; }
+    if (anyOverlay()) { if ((k === 'o' || k === 'O') && $('#index.is-open')) overlay('index', false); return; }
+    if (['ArrowRight', 'ArrowDown', 'PageDown', ' ', 'Enter'].includes(k)) {
+      if (k === 'Enter' && e.target.closest && e.target.closest('button, a')) return;
+      e.preventDefault(); if (state.playing) stop(); next();
+    } else if (['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace'].includes(k)) { e.preventDefault(); if (state.playing) stop(); prev(); }
+    else if (k === 'Home') { stop(); go(0, 0, -1); }
+    else if (k === 'End') { stop(); go(SLIDES.length - 1, SLIDES[SLIDES.length - 1].beats.length - 1, 1); }
+    else if (k === 'p' || k === 'P') { state.playing ? stop() : play(); }
+    else if (k === 'n' || k === 'N') toggleNotes();
+    else if (k === 'o' || k === 'O' || k === '?') overlay('index', true);
+    else if (k === 'f' || k === 'F') toggleFull();
+    else if (k === 'z' || k === 'Z') {
+      const s = SLIDES[state.s], B = s.beats[state.b] || {};
+      const side = ['S', 'R', 'L'].find((x) => B[x] && B[x].cam) || ['S', 'R', 'L', 'B'].find((x) => s.frames[x]);
+      if (side) openLightbox(s.frames[side]);
+    } else if (/^[1-7]$/.test(k)) {
+      const i = SLIDES.findIndex((s) => s.ch === +k - 1);
+      if (i >= 0) { stop(); go(i, 0, i >= state.s ? 1 : -1); }
+    }
+  });
+
+  let tx = null;
+  window.addEventListener('touchstart', (e) => { tx = e.touches[0].clientX; }, { passive: true });
+  window.addEventListener('touchend', (e) => {
+    if (tx == null || anyOverlay()) return;
+    const dx = e.changedTouches[0].clientX - tx; tx = null;
+    if (Math.abs(dx) > 50) { stop(); dx < 0 ? next() : prev(); }
+  }, { passive: true });
+
+  window.addEventListener('mousemove', showHud, { passive: true });
+  window.addEventListener('resize', fit);
+  fit();
+
+  const m = /^#(\d+)(?:\.(\d+))?$/.exec(location.hash);
+  go(m ? +m[1] - 1 : 0, m && m[2] ? +m[2] - 1 : 0, 1, false);
+  showHud();
+
+  const hint = $('#hint');
+  run(hint, { opacity: [0, 1], y: [8, 0] }, { duration: 0.6, delay: 1.2 });
+  setTimeout(() => run(hint, { opacity: 0 }, { duration: 0.6 }), 6500);
+}
+function toggleFull() {
+  if (document.fullscreenElement) document.exitFullscreen && document.exitFullscreen();
+  else document.documentElement.requestFullscreen && document.documentElement.requestFullscreen().catch(() => {});
+}
+
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
+})();
+</script>
+</body>
+</html>

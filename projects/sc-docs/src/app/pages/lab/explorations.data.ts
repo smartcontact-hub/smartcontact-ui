@@ -251,4 +251,14 @@ export const LABS: readonly Lab[] = [
     href: 'https://sc-supervisor.pages.dev/lab/tabla',
     label: 'sc-supervisor.pages.dev/lab/tabla',
   },
+  {
+    id: 'lab-horarios-presentacion',
+    title: 'Horarios, la presentación',
+    question: '¿Por qué el rediseño de Horarios decide distinto que el prototipo, qué sube a main y por dónde se empieza?',
+    controls: ['Flechas o espacio: paso a paso', 'P: reproducir solo', 'N: notas', 'Z: la captura entera'],
+    where: 'El teclado, o la barra de abajo al mover el ratón.',
+    // Una página estática de sc-docs (public/explorations): vive en su rama, así que el enlace es el preview de la rama.
+    href: 'https://claude-presentacion-horarios.sc-doc.pages.dev/explorations/horarios-presentacion/index.html',
+    label: 'claude-presentacion-horarios.sc-doc.pages.dev/explorations/horarios-presentacion',
+  },
 ];
