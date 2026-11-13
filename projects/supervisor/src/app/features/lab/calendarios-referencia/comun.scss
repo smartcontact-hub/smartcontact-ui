@@ -1,0 +1,346 @@
+/*
+ * Piezas comunes a los tres prototipos de Calendarios del Lab: la misma maqueta de los HTML originales, con los
+ * colores, radios, espaciados y textos del DS. `--c` es el color de la regla (periodo, horario) y `--wash` su fondo.
+ */
+:host {
+  display: block;
+}
+
+.pj-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-75);
+}
+.pj-row--top {
+  align-items: flex-start;
+}
+.pj-between {
+  justify-content: space-between;
+}
+.pj-wrap {
+  flex-wrap: wrap;
+}
+.pj-grow {
+  flex: 1;
+}
+.pj-muted {
+  color: var(--sc-text-secondary);
+}
+.pj-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
+}
+.pj-stack--lg {
+  gap: var(--sc-spacing-1);
+}
+
+.pj-panel {
+  background: var(--sc-bg-surface);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-200);
+  padding: var(--sc-spacing-1-125);
+  min-width: 0;
+}
+
+.pj-note {
+  background: var(--sc-bg-info-subtle);
+  border: 1px solid var(--sc-border-info-subtle);
+  border-radius: var(--sc-radius-100);
+  color: var(--sc-text-primary);
+  padding: var(--sc-spacing-0-75) var(--sc-spacing-0-875);
+  margin-block: var(--sc-spacing-1);
+}
+.pj-note--warn {
+  background: var(--sc-bg-warning-subtle);
+  border-color: var(--sc-border-warning-subtle);
+}
+.pj-ok {
+  background: var(--sc-bg-success-subtle);
+  border: 1px solid var(--sc-border-success-subtle);
+  border-radius: var(--sc-radius-100);
+  padding: var(--sc-spacing-0-75);
+}
+
+.pj-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-375);
+  border-radius: var(--sc-radius-100);
+  padding: var(--sc-spacing-0-25) var(--sc-spacing-0-5);
+  background: var(--sc-bg-subtle);
+  color: var(--sc-text-primary);
+}
+
+.pj-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: var(--sc-radius-full);
+  display: inline-block;
+  background: var(--c);
+  flex-shrink: 0;
+}
+
+/* La lista de calendarios a la izquierda y el trabajo a la derecha. */
+.pj-layout {
+  display: grid;
+  grid-template-columns: 13.5rem minmax(0, 1fr);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-200);
+  background: var(--sc-bg-canvas);
+  margin-block-start: var(--sc-spacing-1);
+  min-height: 40rem;
+  overflow: hidden;
+}
+.pj-list {
+  background: var(--sc-bg-surface);
+  border-inline-end: 1px solid var(--sc-border-default);
+  padding: var(--sc-spacing-1-25) var(--sc-spacing-0-875);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-375);
+}
+.pj-list__title {
+  color: var(--sc-text-secondary);
+  margin: 0 var(--sc-spacing-0-5) var(--sc-spacing-0-75);
+}
+.pj-calitem {
+  display: block;
+  width: 100%;
+  text-align: start;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--sc-radius-100);
+  padding: var(--sc-spacing-0-875) var(--sc-spacing-0-75);
+  color: var(--sc-text-primary);
+  cursor: pointer;
+
+  &:hover {
+    background: var(--sc-bg-hover);
+  }
+  &:focus-visible {
+    outline: 2px solid var(--sc-border-focus);
+    outline-offset: 2px;
+  }
+  &.is-on {
+    background: var(--sc-bg-primary-subtle);
+    border-color: var(--sc-border-primary);
+  }
+  b {
+    display: block;
+    margin-block-end: var(--sc-spacing-0-375);
+  }
+  small {
+    color: var(--sc-text-secondary);
+  }
+}
+.pj-main {
+  padding: var(--sc-spacing-1-5);
+  min-width: 0;
+}
+.pj-title-row {
+  margin-block-end: var(--sc-spacing-1-25);
+}
+
+.pj-toolbar {
+  display: flex;
+  gap: var(--sc-spacing-0-5);
+  align-items: center;
+  flex-wrap: wrap;
+  margin-block-end: var(--sc-spacing-1-25);
+
+  strong {
+    text-transform: capitalize;
+    min-width: 8rem;
+  }
+}
+
+/* El año en doce meses pequeños. */
+.pj-year-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--sc-spacing-1-25) var(--sc-spacing-1-125);
+
+  @media (min-width: 1550px) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+.pj-month-title {
+  border: 0;
+  background: transparent;
+  padding: 0 0 var(--sc-spacing-0-75);
+  color: var(--sc-text-heading);
+  cursor: pointer;
+}
+.pj-mini {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: var(--sc-spacing-0-25);
+
+  small {
+    text-align: center;
+    color: var(--sc-text-secondary);
+    padding-block-end: var(--sc-spacing-0-25);
+  }
+}
+.pj-date {
+  height: 1.75rem;
+  border: 0;
+  border-radius: var(--sc-radius-50);
+  padding: 0;
+  position: relative;
+  background: var(--wash);
+  color: var(--sc-text-primary);
+  border-block-end: 3px solid var(--c);
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-border-focus);
+    outline-offset: 1px;
+  }
+  &.is-closed {
+    background: var(--sc-bg-subtle);
+    color: var(--sc-text-subtle);
+    border-block-end-style: dotted;
+  }
+  &.is-special {
+    background: var(--sc-label-amber-bg);
+    color: var(--sc-label-amber-text);
+    border-block-end-color: var(--sc-label-amber-dot);
+  }
+  &.is-special::after {
+    /* El rombo del prototipo, dibujado: sin glifo no hace falta tamaño de letra. */
+    content: '';
+    width: 0.3125rem;
+    height: 0.3125rem;
+    transform: rotate(45deg);
+    position: absolute;
+    inset-inline-end: 2px;
+    inset-block-start: 2px;
+    background: var(--sc-label-amber-dot);
+  }
+  &.is-selected {
+    outline: 2px solid var(--sc-text-heading);
+    outline-offset: 1px;
+  }
+}
+
+/* El mes en una rejilla de siete columnas. */
+.pj-month-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  border-inline-start: 1px solid var(--sc-border-default);
+  border-block-start: 1px solid var(--sc-border-default);
+}
+.pj-dow {
+  text-align: center;
+  padding: var(--sc-spacing-0-75) 0;
+  color: var(--sc-text-secondary);
+  border-block-end: 1px solid var(--sc-border-default);
+  border-inline-end: 1px solid var(--sc-border-default);
+}
+.pj-monthday {
+  border: 0;
+  border-inline-end: 1px solid var(--sc-border-default);
+  border-block-end: 1px solid var(--sc-border-default);
+  border-radius: 0;
+  min-height: 6.25rem;
+  padding: var(--sc-spacing-0-5) var(--sc-spacing-0-375);
+  text-align: start;
+  min-width: 0;
+  background: var(--sc-bg-surface);
+  color: var(--sc-text-primary);
+  display: block;
+  cursor: pointer;
+
+  &.is-selected {
+    background: var(--sc-bg-primary-subtle);
+    box-shadow: inset 0 0 0 2px var(--sc-border-primary);
+  }
+  &.is-empty {
+    background: var(--sc-bg-canvas);
+    cursor: default;
+  }
+}
+.pj-chip {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background: var(--wash);
+  border-inline-start: 3px solid var(--c);
+  border-radius: var(--sc-radius-50);
+  margin-block-start: var(--sc-spacing-0-375);
+  padding: var(--sc-spacing-0-25);
+}
+
+.pj-legend {
+  display: flex;
+  gap: var(--sc-spacing-0-875);
+  flex-wrap: wrap;
+  border-block-start: 1px solid var(--sc-border-default);
+  padding-block-start: var(--sc-spacing-0-75);
+  margin-block-start: var(--sc-spacing-1-125);
+  color: var(--sc-text-secondary);
+}
+
+/* El panel de la fecha elegida, a la derecha del calendario. */
+.pj-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 15rem;
+  gap: var(--sc-spacing-1-125);
+  align-items: start;
+
+  @media (max-width: 1170px) {
+    grid-template-columns: 1fr;
+  }
+}
+.pj-eyebrow {
+  color: var(--sc-text-secondary);
+  text-transform: uppercase;
+}
+.pj-capital {
+  text-transform: capitalize;
+}
+
+.pj-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sc-spacing-1);
+}
+
+.pj-footer {
+  color: var(--sc-text-secondary);
+  margin-block-start: var(--sc-spacing-1-25);
+}
+
+/* Botón de texto: los «+ Nuevo calendario», «Duplicar», «Restablecer demo» del prototipo. */
+.pj-link {
+  border: 0;
+  background: transparent;
+  color: var(--sc-text-link);
+  padding: var(--sc-spacing-0-375);
+  cursor: pointer;
+  text-align: start;
+
+  &:hover {
+    text-decoration: underline;
+  }
+  &--danger {
+    color: var(--sc-text-danger);
+  }
+}
+
+.pj-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
+  margin-block: var(--sc-spacing-1);
+}
+
+.pj-dialog-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  width: 100%;
+}

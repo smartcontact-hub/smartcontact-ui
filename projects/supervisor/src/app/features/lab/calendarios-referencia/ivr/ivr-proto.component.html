@@ -1,0 +1,341 @@
+<div class="page">
+  <div class="page__inner page__inner--list">
+    <app-referencia-cabecera
+      actual="ivr"
+      titulo="Calendarios IVR"
+      frase="Mockup para definir horarios, excepciones y mensajes de fuera de hora sin depender de una hoja de cálculo."
+      etiqueta="Mockup interactivo"
+    />
+
+    @let c = cal();
+    @let sch = schedule();
+    <div class="pj-layout ivr-layout">
+      <aside class="pj-list ivr-side">
+        <div class="pj-row pj-between pj-list__title sc-text-caption-semibold"><span>CALENDARIOS</span><span>{{ state().calendars.length }}</span></div>
+        @for (k of state().calendars; track k.id) {
+          <button type="button" class="pj-calitem" [class.is-on]="k.id === c.id" (click)="selectCalendar(k.id)">
+            <b class="sc-text-body-semibold">{{ k.name }}</b>
+            <small class="sc-text-caption-regular">{{ k.schedules.length }} horarios · {{ k.exceptions.length }} días especiales · {{ k.timezone }}</small>
+          </button>
+        }
+        <sc-button variant="secondary" appearance="outlined" fullWidth label="+ Crear calendario" (clicked)="addCalendar()" />
+
+        <section class="ivr-side-card">
+          <div class="pj-eyebrow sc-text-caption-semibold">Leyenda</div>
+          <div class="pj-stack sc-text-caption-regular">
+            <div class="pj-row"><span class="ivr-swatch is-open"></span><span>En hora: continuar flujo IVR</span></div>
+            <div class="pj-row"><span class="ivr-swatch is-closed"></span><span>Fuera de hora: reproducir mensaje</span></div>
+            <div class="pj-row"><span class="ivr-swatch is-special"></span><span>Día especial: prioridad sobre horarios</span></div>
+          </div>
+        </section>
+
+        <section class="ivr-side-card">
+          <div class="pj-eyebrow sc-text-caption-semibold">Orden de evaluación</div>
+          <p class="pj-muted sc-text-caption-regular">
+            1. Días especiales por prioridad<br />
+            2. Horario activo por vigencia<br />
+            3. Tramo semanal del día y hora<br />
+            4. Mensaje asociado a la regla
+          </p>
+        </section>
+      </aside>
+
+      <main class="pj-main ivr-main">
+        <header class="pj-row pj-between pj-wrap pj-row--top ivr-topbar">
+          <div class="ivr-title">
+            <h2 class="sc-text-h2-semibold">{{ c.name }}</h2>
+            <p class="pj-muted sc-text-body-regular">{{ c.description || 'Sin descripción' }} · Editando: <strong>{{ sch.name }}</strong></p>
+          </div>
+          <div class="pj-row pj-wrap ivr-actions">
+            <sc-tag [value]="issues().text" [severity]="issues().severity" rounded />
+            <sc-tag [value]="state().status" [severity]="esPublicado() ? 'success' : 'secondary'" rounded />
+            <sc-button variant="secondary" appearance="outlined" label="Guardar versión" (clicked)="saveVersion()" />
+            <sc-button variant="primary" label="Publicar" (clicked)="publish()" />
+          </div>
+        </header>
+
+        <sc-tabs [tabs]="tabs" [value]="state().activeTab" (valueChange)="setTab($event)" ariaLabel="Secciones del calendario" />
+
+        <div class="ivr-workspace">
+          @switch (state().activeTab) {
+            @case ('horarios') {
+              <section class="pj-panel">
+                <div class="pj-row pj-between pj-row--top ivr-panel-header">
+                  <div>
+                    <h3 class="sc-text-h3-semibold">Configuración del calendario</h3>
+                    <p class="pj-muted sc-text-caption-regular">Datos comunes que el IVR necesita para evaluar cualquier llamada.</p>
+                  </div>
+                  <sc-button variant="danger" appearance="outlined" size="sm" label="Eliminar calendario" (clicked)="deleteCalendar()" />
+                </div>
+                <div class="ivr-config-grid">
+                  <sc-inputtext inputId="ivr-name" fluid label="Nombre" [value]="c.name" (valueChange)="updateCalendarField('name', $event)" />
+                  <sc-select inputId="ivr-tz" label="Zona horaria" [options]="timezones" optionValue="value" [value]="c.timezone" (valueChange)="updateCalendarField('timezone', $any($event))" />
+                  <div class="ivr-span-2">
+                    <sc-inputtext inputId="ivr-desc" fluid label="Descripción" [value]="c.description" (valueChange)="updateCalendarField('description', $event)" />
+                  </div>
+                  <sc-inputtext inputId="ivr-route" fluid label="Acción si está en hora" [value]="c.inHoursRoute" (valueChange)="updateCalendarField('inHoursRoute', $event)" />
+                  <sc-inputtext inputId="ivr-fallback" fluid label="Mensaje de respaldo" [value]="c.fallbackMessage" (valueChange)="updateCalendarField('fallbackMessage', $event)" />
+                </div>
+              </section>
+
+              <section class="pj-panel">
+                <div class="pj-row pj-between pj-row--top ivr-panel-header">
+                  <div>
+                    <h3 class="sc-text-h3-semibold">Horarios o periodos</h3>
+                    <p class="pj-muted sc-text-caption-regular">Cada calendario puede tener varios horarios: invierno, verano, campaña, horario reducido, etc.</p>
+                  </div>
+                  <sc-button variant="primary" size="sm" label="+ Añadir horario" (clicked)="addSchedule()" />
+                </div>
+                <div class="ivr-schedule-cards">
+                  @for (s of c.schedules; track s.id; let i = $index) {
+                    <button type="button" class="ivr-schedule-card" [class.is-active]="s.id === sch.id" (click)="selectSchedule(s.id)">
+                      <span class="pj-eyebrow sc-text-caption-semibold">Horario {{ i + 1 }}</span>
+                      <strong class="sc-text-subtitle-semibold">{{ s.name }}</strong>
+                      <small class="pj-muted sc-text-caption-regular">Vigencia: {{ s.validityStart || 'sin inicio' }} a {{ s.validityEnd || 'sin fin' }} · Prioridad {{ s.priority || 0 }}</small>
+                      <sc-tag [value]="s.id === sch.id ? 'Editando' : 'Seleccionar'" [severity]="s.id === sch.id ? 'success' : 'info'" rounded />
+                    </button>
+                  }
+                </div>
+              </section>
+
+              <section class="ivr-layout-2">
+                <article class="pj-panel">
+                  <div class="ivr-panel-header">
+                    <h3 class="sc-text-h3-semibold">Parrilla semanal</h3>
+                    <p class="pj-muted sc-text-caption-regular">Arrastra sobre la parrilla para abrir o cerrar tramos de 30 minutos. El verde continúa el flujo; el rosa reproduce mensaje.</p>
+                  </div>
+                  <div class="ivr-grid-wrap">
+                    <div class="ivr-grid" role="grid" [attr.aria-label]="'Parrilla semanal de ' + sch.name">
+                      <div class="ivr-corner sc-text-caption-semibold">Día / hora</div>
+                      @for (slot of slots; track slot) {
+                        <div class="ivr-head sc-text-caption-semibold">
+                          @if (slot % 2 === 0) { <span class="ivr-rot">{{ slotToTime(slot) }}</span> }
+                        </div>
+                      }
+                      @for (dayName of DAY_NAMES; track dayName; let day = $index) {
+                        <div class="ivr-day sc-text-caption-semibold">
+                          {{ dayName }}
+                          <small class="pj-muted" tooltipPosition="top" [pTooltip]="summarizeDay(sch, day)">{{ summarizeDay(sch, day) }}</small>
+                        </div>
+                        @for (slot of slots; track slot) {
+                          <div
+                            class="ivr-slot"
+                            [class.is-open]="abiertos()[day].has(slot)"
+                            tabindex="0"
+                            role="gridcell"
+                            [attr.aria-label]="etiquetaCelda(day, slot)"
+                            (mousedown)="cellDown($event, day, slot)"
+                            (mouseenter)="cellEnter(day, slot)"
+                            (keydown)="cellKey($event, day, slot)"
+                          ></div>
+                        }
+                      }
+                    </div>
+                  </div>
+                </article>
+
+                <aside class="pj-panel">
+                  <div class="ivr-panel-header">
+                    <h3 class="sc-text-subtitle-semibold">Editor del horario</h3>
+                    <p class="pj-muted sc-text-caption-regular">Define vigencia, prioridad y mensaje específico para este periodo.</p>
+                  </div>
+                  <div class="ivr-config-grid">
+                    <div class="ivr-span-2">
+                      <sc-inputtext inputId="ivr-sch-name" fluid label="Nombre del horario" [value]="sch.name" (valueChange)="updateScheduleField('name', $event)" />
+                    </div>
+                    <sc-inputtext inputId="ivr-sch-from" fluid label="Vigencia desde" placeholder="MM-DD" [value]="sch.validityStart" (valueChange)="updateScheduleField('validityStart', $event)" />
+                    <sc-inputtext inputId="ivr-sch-to" fluid label="Vigencia hasta" placeholder="MM-DD" [value]="sch.validityEnd" (valueChange)="updateScheduleField('validityEnd', $event)" />
+                    <sc-inputnumber inputId="ivr-sch-prio" label="Prioridad" [value]="sch.priority" (valueChange)="updatePriority($event)" />
+                    <div class="pj-stack ivr-acciones">
+                      <span class="sc-text-caption-semibold">Acciones</span>
+                      <sc-button variant="danger" appearance="outlined" label="Eliminar horario" (clicked)="deleteSchedule(sch.id)" />
+                    </div>
+                    <div class="ivr-span-2">
+                      <sc-textarea inputId="ivr-sch-msg" fluid label="Mensaje fuera de hora de este horario" [rows]="3" [value]="sch.outMessage" (valueChange)="updateScheduleField('outMessage', $event)" />
+                    </div>
+                  </div>
+
+                  <div class="ivr-block">
+                    <h4 class="sc-text-body-semibold">Edición rápida de tramos</h4>
+                    <p class="pj-muted sc-text-caption-regular">Selecciona días, tramo horario y acción. Útil para no pintar celda a celda.</p>
+                    <div class="pj-row pj-wrap ivr-day-chips">
+                      @for (day of DAY_NAMES; track day; let i = $index) {
+                        <sc-checkbox size="sm" [state]="quickDays()[i] ? 'all' : 'none'" (cycle)="toggleQuickDay(i)">
+                          <span class="sc-text-caption-semibold">{{ DAY_SHORT[i] }} <span class="pj-muted sc-text-caption-regular">{{ day }}</span></span>
+                        </sc-checkbox>
+                      }
+                    </div>
+                    <div class="pj-row pj-wrap ivr-tool-row">
+                      <sc-inputtext inputId="ivr-range-start" label="Inicio" placeholder="08:00" [value]="rangeStart()" (valueChange)="rangeStart.set($event)" />
+                      <sc-inputtext inputId="ivr-range-end" label="Fin" placeholder="15:00" [value]="rangeEnd()" (valueChange)="rangeEnd.set($event)" />
+                      <sc-button variant="primary" label="Abrir tramo" (clicked)="applyRange(true)" />
+                      <sc-button variant="secondary" appearance="outlined" label="Cerrar tramo" (clicked)="applyRange(false)" />
+                      <sc-button variant="danger" appearance="outlined" label="Limpiar días" (clicked)="clearSelectedDays()" />
+                    </div>
+                  </div>
+
+                  <div class="ivr-block">
+                    <h4 class="sc-text-body-semibold">Validación</h4>
+                    <div class="pj-stack">
+                      @for (item of checks(); track $index) {
+                        <div class="ivr-validation sc-text-caption-regular" [class]="'is-' + item.type"><span class="ivr-validation__dot"></span><span>{{ item.text }}</span></div>
+                      }
+                    </div>
+                  </div>
+                </aside>
+              </section>
+            }
+
+            @case ('especiales') {
+              <section class="pj-panel">
+                <div class="pj-row pj-between pj-row--top ivr-panel-header">
+                  <div>
+                    <h3 class="sc-text-h3-semibold">Días especiales</h3>
+                    <p class="pj-muted sc-text-caption-regular">Las excepciones tienen prioridad sobre el horario semanal. Pueden cerrar todo el día o definir un horario reducido.</p>
+                  </div>
+                  <sc-button variant="primary" size="sm" label="+ Añadir día especial" (clicked)="addException()" />
+                </div>
+                @if (c.exceptions.length) {
+                  <div class="pj-stack pj-stack--lg">
+                    @for (ex of exceptionsOrdenadas(); track ex.id) {
+                      <article class="ivr-exception">
+                        <div class="pj-row pj-between pj-row--top">
+                          <div class="pj-stack">
+                            <strong class="sc-text-subtitle-semibold">{{ ex.name || 'Día especial' }}</strong>
+                            <small class="pj-muted sc-text-caption-regular">{{ ex.date || 'Sin fecha' }} · {{ ex.repeatsYearly ? 'repite anualmente' : 'fecha puntual' }} · {{ modeText(ex) }}</small>
+                            @if (duplicada(ex)) { <sc-tag value="Fecha duplicada: gana mayor prioridad" severity="warn" rounded /> }
+                          </div>
+                          <sc-button variant="danger" appearance="outlined" size="sm" label="Eliminar" (clicked)="deleteException(ex.id)" />
+                        </div>
+                        <div class="ivr-exception-form">
+                          <sc-inputtext [inputId]="'ivr-ex-name-' + ex.id" fluid label="Nombre" [value]="ex.name" (valueChange)="updateException(ex.id, 'name', $event)" />
+                          <sc-datepicker [inputId]="'ivr-ex-date-' + ex.id" label="Fecha" [value]="fechasEx().get(ex.id) ?? null" (valueChange)="setExceptionDate(ex.id, $event)" />
+                          <sc-select [inputId]="'ivr-ex-rep-' + ex.id" label="Repetición" [options]="repeticiones" optionValue="value" [value]="ex.repeatsYearly" (valueChange)="updateException(ex.id, 'repeatsYearly', $event === true)" />
+                          <sc-select [inputId]="'ivr-ex-mode-' + ex.id" label="Comportamiento" [options]="comportamientos" optionValue="value" [value]="ex.mode" (valueChange)="updateException(ex.id, 'mode', $any($event))" />
+                          <sc-inputnumber [inputId]="'ivr-ex-prio-' + ex.id" label="Prioridad" [value]="ex.priority" (valueChange)="updateException(ex.id, 'priority', aNumero($event))" />
+                          <div class="ivr-exception-form__wide">
+                            <sc-textarea [inputId]="'ivr-ex-msg-' + ex.id" fluid label="Mensaje IVR para fuera de hora / cierre" [rows]="3" [value]="ex.message" (valueChange)="updateException(ex.id, 'message', $event)" />
+                          </div>
+                        </div>
+                        @if (ex.mode === 'custom') {
+                          <div>
+                            <div class="pj-row pj-wrap ivr-intervals">
+                              @for (it of ex.intervals; track $index; let i = $index) {
+                                <span class="ivr-interval sc-text-caption-semibold">
+                                  {{ it.start }}-{{ it.end }}
+                                  <sc-button variant="success" appearance="text" size="sm" icon="close" iconOnly ariaLabel="Quitar tramo" (clicked)="removeExceptionInterval(ex.id, i)" />
+                                </span>
+                              } @empty {
+                                <sc-tag value="Sin tramos: se tratará como cerrado" severity="warn" rounded />
+                              }
+                            </div>
+                            <div class="pj-row pj-wrap ivr-inline-interval">
+                              <strong class="sc-text-caption-semibold">Añadir tramo abierto</strong>
+                              <sc-inputtext size="sm" ariaLabel="Inicio de tramo especial" placeholder="08:00" [value]="tramo(ex.id).start" (valueChange)="setTramo(ex.id, 'start', $event)" />
+                              <sc-inputtext size="sm" ariaLabel="Fin de tramo especial" placeholder="12:00" [value]="tramo(ex.id).end" (valueChange)="setTramo(ex.id, 'end', $event)" />
+                              <sc-button variant="primary" size="sm" label="Añadir" (clicked)="addExceptionInterval(ex.id)" />
+                            </div>
+                          </div>
+                        } @else {
+                          <p class="pj-muted sc-text-caption-regular">Este día siempre devolverá “fuera de hora”, aunque el horario semanal indique que está abierto.</p>
+                        }
+                      </article>
+                    }
+                  </div>
+                } @else {
+                  <sc-empty-state icon="event_busy" titleKey="No hay días especiales todavía." bodyKey="Empieza añadiendo festivos, huelgas, cierres puntuales o aperturas reducidas." />
+                }
+              </section>
+            }
+
+            @case ('simulador') {
+              @let r = result();
+              <section class="ivr-sim-grid">
+                <article class="pj-panel">
+                  <div class="ivr-panel-header">
+                    <h3 class="sc-text-h3-semibold">Simulador de llamada</h3>
+                    <p class="pj-muted sc-text-caption-regular">Comprueba qué haría el IVR con una fecha y hora concretas antes de publicar.</p>
+                  </div>
+                  <div class="ivr-config-grid">
+                    <sc-datepicker inputId="ivr-sim-date" label="Fecha de entrada" [value]="simFecha()" (valueChange)="setSimFecha($event)" />
+                    <sc-inputtext inputId="ivr-sim-time" fluid label="Hora de entrada" placeholder="10:00" [value]="simHora()" (valueChange)="setSimHora($event)" />
+                    <sc-inputtext inputId="ivr-sim-cal" fluid label="Calendario" readonly [value]="c.name" />
+                    <sc-inputtext inputId="ivr-sim-tz" fluid label="Zona horaria" readonly [value]="c.timezone" />
+                    <div class="ivr-span-2">
+                      <sc-button variant="primary" fullWidth label="Evaluar llamada" (clicked)="runSimulation()" />
+                    </div>
+                  </div>
+                  <div class="pj-stack ivr-block">
+                    <div class="ivr-validation is-ok sc-text-caption-regular"><span class="ivr-validation__dot"></span><span>Los días especiales se evalúan antes que la parrilla semanal.</span></div>
+                    <div class="ivr-validation is-ok sc-text-caption-regular"><span class="ivr-validation__dot"></span><span>Si hay dos excepciones para la misma fecha, se usa la de mayor prioridad.</span></div>
+                    <div class="ivr-validation is-warn sc-text-caption-regular"><span class="ivr-validation__dot"></span><span>Este mockup evalúa la hora local del navegador; en producción el backend debe evaluar con la zona horaria del calendario.</span></div>
+                  </div>
+                </article>
+
+                <article class="ivr-result" [class.is-open]="r.status === 'open'">
+                  <div class="pj-row pj-between pj-row--top">
+                    <div class="pj-stack">
+                      <sc-tag [value]="r.status === 'open' ? 'Continuar flujo' : 'Mensaje fuera de hora'" [severity]="r.status === 'open' ? 'success' : 'danger'" rounded />
+                      <h2 class="sc-text-display-semibold">{{ r.title }}</h2>
+                    </div>
+                    <sc-tag [value]="r.source" severity="info" rounded />
+                  </div>
+                  <p class="pj-muted sc-text-body-regular">{{ r.message }}</p>
+                  <div class="ivr-result__message">
+                    <span class="pj-eyebrow sc-text-caption-semibold">Respuesta IVR sugerida</span>
+                    <span class="sc-text-body-regular">{{ r.status === 'open' ? c.inHoursRoute : r.message }}</span>
+                  </div>
+                  <div class="ivr-route">
+                    <div><small class="pj-eyebrow sc-text-caption-semibold">Acción</small><strong class="sc-text-body-semibold">{{ r.route }}</strong></div>
+                    <div><small class="pj-eyebrow sc-text-caption-semibold">Regla origen</small><strong class="sc-text-body-semibold">{{ r.source }}</strong></div>
+                  </div>
+                  <div class="pj-stack">
+                    @for (d of r.details; track $index) {
+                      <div class="ivr-validation sc-text-caption-regular" [class]="r.status === 'open' ? 'is-ok' : 'is-warn'"><span class="ivr-validation__dot"></span><span>{{ d }}</span></div>
+                    }
+                  </div>
+                </article>
+              </section>
+            }
+
+            @case ('exportar') {
+              <section class="pj-panel">
+                <div class="pj-row pj-between pj-row--top pj-wrap ivr-panel-header">
+                  <div>
+                    <h3 class="sc-text-h3-semibold">Exportación conceptual</h3>
+                    <p class="pj-muted sc-text-caption-regular">Ejemplo de estructura que un backend o API de IVR podría consumir. No es una especificación cerrada, es una propuesta de contrato.</p>
+                  </div>
+                  <div class="pj-row pj-wrap">
+                    <sc-button variant="secondary" appearance="outlined" size="sm" label="Copiar JSON" (clicked)="copyJson()" />
+                    <sc-button variant="primary" size="sm" label="Descargar JSON" (clicked)="downloadJson()" />
+                    <sc-button variant="danger" appearance="outlined" size="sm" label="Restablecer demo" (clicked)="resetDemo()" />
+                  </div>
+                </div>
+                <pre class="ivr-export sc-text-caption-regular">{{ exportJson() }}</pre>
+              </section>
+            }
+          }
+        </div>
+      </main>
+    </div>
+  </div>
+</div>
+
+@if (dialogo(); as d) {
+  <sc-custom-modal [visible]="true" [title]="tituloDialogo(d)" width="440px" (closed)="cerrar()">
+    @if (d.kind === 'confirm') {
+      <p class="sc-text-body-regular">{{ d.text }}</p>
+    } @else {
+      <sc-inputtext inputId="ivr-prompt" fluid [ariaLabel]="tituloDialogo(d)" [value]="fName()" (valueChange)="fName.set($event)" />
+    }
+    <div scCustomModalFooter class="pj-dialog-actions">
+      <div class="pj-grow"></div>
+      <sc-button variant="secondary" appearance="outlined" label="Cancelar" (clicked)="cerrar()" />
+      @if (d.kind === 'confirm') {
+        <sc-button variant="primary" [label]="d.label" (clicked)="ejecutar(d)" />
+      } @else {
+        <sc-button variant="primary" label="Aceptar" [disabled]="!fName().trim()" (clicked)="aceptarNombre()" />
+      }
+    </div>
+  </sc-custom-modal>
+}
