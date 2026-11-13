@@ -74,12 +74,26 @@
   color: var(--sc-text-primary);
 }
 
-/* La muestra de la leyenda es un día de ejemplo («1»), del tamaño de un día pequeño. */
+/* La muestra de la leyenda: un cuadrado sin texto con el aspecto de un día. La de la semana habitual, sin marca, es el
+ * hueco de un día: su contorno. */
 .cal__muestra {
-  display: inline-grid;
-  place-items: center;
-  inline-size: var(--sc-spacing-1-5);
+  display: inline-block;
+  inline-size: var(--sc-spacing-1);
   aspect-ratio: 1;
+}
+
+.cal__muestra:not(.cal__dia--periodo, .cal__dia--cerrado, .cal__dia--excepcion) {
+  border: 1px solid var(--sc-border-default);
+}
+
+/* El cerrado de la leyenda, tachado en diagonal: lo que en el año es el número tachado. */
+.cal__muestra.cal__dia--cerrado::before {
+  position: absolute;
+  inset-inline: var(--sc-spacing-0-125);
+  inset-block-start: 50%;
+  border-block-start: 1px solid currentColor;
+  transform: rotate(-45deg);
+  content: '';
 }
 
 .cal__dia {

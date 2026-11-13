@@ -76,14 +76,15 @@
   }
 </div>
 
-<!-- Cada muestra es un día de ejemplo, pintado como los del año: así se lee lo que significa cada aspecto. -->
+<!-- Cada muestra es un cuadrado sin texto con el aspecto de un día (un número dentro contaba como pastilla hecha a mano,
+     `hand-made-pieces`): el hueco de un día sin marca, el color del periodo, el cerrado tachado y el punto. -->
 <ul class="cal__leyenda sc-text-caption-regular" role="list">
-  <li><span class="cal__muestra" aria-hidden="true">1</span>{{ 'repositories.horarios.legend.week' | translate }}</li>
+  <li><span class="cal__muestra" aria-hidden="true"></span>{{ 'repositories.horarios.legend.week' | translate }}</li>
   @for (periodo of periodos(); track periodo.id) {
-    <li><span class="cal__muestra cal__dia--periodo" aria-hidden="true" [attr.data-color]="periodo.color">1</span>{{ periodo.name }}</li>
+    <li><span class="cal__muestra cal__dia--periodo" aria-hidden="true" [attr.data-color]="periodo.color"></span>{{ periodo.name }}</li>
   }
-  <li><span class="cal__muestra cal__dia--cerrado" aria-hidden="true">1</span>{{ 'repositories.horarios.closed' | translate }}</li>
+  <li><span class="cal__muestra cal__dia--cerrado" aria-hidden="true"></span>{{ 'repositories.horarios.closed' | translate }}</li>
   @if (hayExcepciones()) {
-    <li><span class="cal__muestra cal__dia--excepcion" aria-hidden="true">1</span>{{ 'repositories.horarios.legend.exception' | translate }}</li>
+    <li><span class="cal__muestra cal__dia--excepcion" aria-hidden="true"></span>{{ 'repositories.horarios.legend.exception' | translate }}</li>
   }
 </ul>
