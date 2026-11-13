@@ -229,7 +229,10 @@ apagado en `sc-datepicker.component.spec.ts`, en rojo sin el arreglo.
 
 **Consecuencias** · La demo en línea de `sc-datepicker` en sc-docs abre en un mes ya pasado con tres días marcados: con
 el mes en curso pintaba «hoy», y su línea base de estructura caía al día siguiente de regenerarla (lo enseñó el CI de
-este PR un día después; en `main` habría caído igual). Cualquier `sticky` dentro de una tarjeta o subsección del DS ya funciona (hoy, solo la cabecera del
+este PR un día después; en `main` habría caído igual). Con días marcados, axe ve que PrimeNG repite `aria-selected` en
+el `span` del día, donde no vale (`aria-allowed-attr`): el estado ya lo lleva su celda (`td`, en un `role="grid"`), que es
+lo que anuncia un lector; el `span` lo ignora. Ni el `pt` (PrimeNG lo vuelve a poner en cada pasada) ni un rol (ninguno
+admite `aria-selected` ahí sin romper la tabla) lo quitan: entra en el tope de `e2e/baselines/a11y.json` (3). Cualquier `sticky` dentro de una tarjeta o subsección del DS ya funciona (hoy, solo la cabecera del
 año; la del mapa de tipificaciones tiene su propio scroll). Pendiente: las reglas de comportamiento de los tooltips (el
 del botón apagado parte «El nombre es obligatorio» en dos líneas: el tope del Kit, `--sc-cmp-tooltip-max-width`, es de
 175).

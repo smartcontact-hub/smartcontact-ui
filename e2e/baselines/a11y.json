@@ -26,6 +26,11 @@
       "label": 1
     }
   },
+  "datepicker": {
+    "varios-dias-sueltos": {
+      "aria-allowed-attr": 3
+    }
+  },
   "gauge": {
     "grosor-y-track": {
       "svg-img-alt": 3
