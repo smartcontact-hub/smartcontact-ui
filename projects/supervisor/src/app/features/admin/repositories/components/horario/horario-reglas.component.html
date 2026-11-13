@@ -1,105 +1,114 @@
+<!-- Las reglas, en segundo plano: una fila de tres `sc-section-card` (semana habitual, periodos, fechas especiales), cada una
+     con su acción en la cabecera (`scSectionActions`). -->
 <div class="reglas">
-  <!-- Fila 1: la semana habitual y los periodos, en `sc-section-card` como el resto de fichas. -->
-  <div class="reglas__fila">
-    <sc-section-card titleKey="repositories.horarios.section_week" hintKey="repositories.horarios.section_week_hint" surface="subtle">
-      <sc-subsection>
-        <div class="bloque">
-          <ul class="semana" role="list">
-            @for (dia of dias(); track $index) {
-              <li class="semana__dia">
-                <span class="semana__nombre sc-text-body-regular">{{ dia.nombre }}</span>
-                <span class="semana__tramos">
-                  @for (t of dia.tramos; track t) {
-                    <sc-tag variant="label" labelColor="blue" [value]="t" />
-                  } @empty {
-                    <sc-tag severity="secondary" [value]="'repositories.horarios.closed' | translate" />
-                  }
-                </span>
-              </li>
-            }
-          </ul>
-          <sc-button
-            class="bloque__accion"
-            variant="secondary"
-            appearance="outlined"
-            size="sm"
-            icon="edit"
-            [label]="'repositories.horarios.x.rules.week_edit' | translate"
-            (clicked)="editarSemana.emit()"
-          />
-        </div>
-      </sc-subsection>
-    </sc-section-card>
+  <sc-section-card titleKey="repositories.horarios.section_week" hintKey="repositories.horarios.section_week_hint" surface="card">
+    <sc-button
+      scSectionActions
+      variant="secondary"
+      appearance="text"
+      size="sm"
+      icon="edit"
+      [ariaLabel]="'repositories.horarios.x.rules.week_edit' | translate"
+      (clicked)="editarSemana.emit()"
+    />
+    <ul class="semana" role="list">
+      @for (dia of dias(); track $index) {
+        <li class="semana__dia">
+          <span class="semana__nombre sc-text-body-semibold">{{ dia.etiqueta }}</span>
+          <span class="semana__tramos sc-text-body-regular" [class.semana__tramos--cerrado]="dia.tramos.length === 0">{{ dia.tramos.length ? dia.tramos.join(' · ') : cerradoTexto() }}</span>
+        </li>
+      }
+    </ul>
+  </sc-section-card>
 
-    <sc-section-card titleKey="repositories.horarios.section_periods" hintKey="repositories.horarios.section_periods_hint" surface="subtle">
-      <sc-subsection>
-        <div class="bloque">
-          <sc-horario-filas-table
-            [filas]="filasDePeriodos()"
-            [columnas]="columnasDePeriodos()"
-            anadirKey="repositories.horarios.period_add"
-            vacioKey="repositories.horarios.periods_empty"
-            vacioCuerpoKey="repositories.horarios.periods_empty_body"
-            vacioIcono="date_range"
-            (abrir)="abrirPeriodo.emit($event)"
-            (eliminar)="eliminarPeriodo.emit($event)"
-            (anadir)="anadirPeriodo.emit()"
-          />
-        </div>
-      </sc-subsection>
-    </sc-section-card>
-  </div>
+  <sc-section-card titleKey="repositories.horarios.section_periods" hintKey="repositories.horarios.section_periods_hint" surface="card">
+    <sc-button
+      scSectionActions
+      variant="secondary"
+      appearance="text"
+      size="sm"
+      icon="add"
+      [ariaLabel]="'repositories.horarios.period_add' | translate"
+      (clicked)="anadirPeriodo.emit()"
+    />
+    @if (filasDePeriodos().length === 0) {
+      <p class="vacio sc-text-body-regular">{{ 'repositories.horarios.periods_empty_body' | translate }}</p>
+    } @else {
+      <ul class="lista" role="list">
+        @for (p of filasDePeriodos(); track p.id) {
+          <li class="fila">
+            <span class="fila__cuerpo">
+              <sc-tag class="fila__etiqueta" variant="label" [labelColor]="$any(p.color)" [value]="p.nombre" />
+              <span class="fila__detalle sc-text-caption-regular">{{ p.fechas }}@if (p.repite) { · {{ 'repositories.horarios.x.rules.yearly' | translate }} }</span>
+            </span>
+            <span class="fila__acciones">
+              <sc-button variant="secondary" appearance="text" size="sm" icon="edit" [ariaLabel]="('repositories.horarios.period_edit' | translate) + ' ' + p.nombre" (clicked)="abrirPeriodo.emit(p.id)" />
+              <sc-button variant="secondary" appearance="text" size="sm" icon="delete" [ariaLabel]="('common.delete' | translate) + ' ' + p.nombre" (clicked)="eliminarPeriodo.emit(p.id)" />
+            </span>
+          </li>
+        }
+      </ul>
+    }
+  </sc-section-card>
 
-  <!-- Fila 2: las fechas especiales y los festivos, a lo ancho. Dos grupos en la misma tarjeta, a 28 entre ellos. -->
-  <sc-section-card titleKey="repositories.horarios.section_specials" hintKey="repositories.horarios.section_specials_hint" surface="subtle">
-    <sc-subsection titleKey="repositories.horarios.holiday_calendars">
-      <div class="bloque">
-        <div class="festivos">
-          <sc-multiselect
-            inputId="horario-festivos"
-            display="chip"
-            chipOverflow="fit"
-            [filter]="true"
-            [ariaLabel]="'repositories.horarios.holiday_calendars' | translate"
-            [placeholder]="'repositories.horarios.holiday_calendars_placeholder' | translate"
-            [helperText]="'repositories.horarios.holiday_calendars_help' | translate"
-            [options]="opcionesDeFestivos()"
-            optionLabel="label"
-            optionValue="value"
-            [value]="$any(festivosAplicados())"
-            (valueChange)="cambiarFestivos.emit($any($event) ?? [])"
-          />
-        </div>
-        <a class="repo-link sc-text-caption-semibold" [href]="festivosHref()" (click)="gestionarFestivos.emit($event)">{{ 'repositories.horarios.manage_holidays' | translate }}</a>
-      </div>
-    </sc-subsection>
-
-    <sc-subsection titleKey="repositories.horarios.specials_own">
-      <div class="bloque">
-        <sc-horario-filas-table
-          [filas]="filasDeEspeciales()"
-          [columnas]="columnasDeEspeciales()"
-          anadirKey="repositories.horarios.special_add"
-          [vacioKey]="verPasadas() ? 'repositories.horarios.specials_past_empty' : 'repositories.horarios.specials_empty'"
-          [vacioCuerpoKey]="verPasadas() ? null : 'repositories.horarios.specials_empty_body'"
-          vacioIcono="event_busy"
-          (abrir)="abrirEspecial.emit($event)"
-          (eliminar)="eliminarEspecial.emit($event)"
-          (anadir)="anadirEspecial.emit()"
-        >
-          <sc-selectbutton
-            filasBarra
-            size="sm"
-            [ariaLabel]="'repositories.horarios.specials_filter' | translate"
-            [options]="filtroDeEspeciales()"
-            optionLabel="label"
-            optionValue="value"
-            [allowEmpty]="false"
-            [value]="verPasadas() ? 'pasadas' : 'proximas'"
-            (valueChange)="verPasadas.set($event === 'pasadas')"
-          />
-        </sc-horario-filas-table>
-      </div>
-    </sc-subsection>
+  <sc-section-card titleKey="repositories.horarios.section_specials" hintKey="repositories.horarios.section_specials_hint" surface="card">
+    <sc-button
+      scSectionActions
+      variant="secondary"
+      appearance="text"
+      size="sm"
+      icon="add"
+      [ariaLabel]="'repositories.horarios.special_add' | translate"
+      (clicked)="anadirEspecial.emit()"
+    />
+    <sc-selectbutton
+      size="sm"
+      [ariaLabel]="'repositories.horarios.specials_filter' | translate"
+      [options]="filtroDeEspeciales()"
+      optionLabel="label"
+      optionValue="value"
+      [allowEmpty]="false"
+      [value]="filtro()"
+      (valueChange)="filtro.set($any($event))"
+    />
+    @if (filasDeEspeciales().length === 0) {
+      <p class="vacio sc-text-body-regular">{{ (filtro() === 'proximas' ? 'repositories.horarios.specials_empty_body' : 'repositories.horarios.specials_past_empty') | translate }}</p>
+    } @else {
+      <ul class="lista lista--especiales" role="list">
+        @for (e of filasDeEspeciales(); track e.id) {
+          <li class="fila">
+            <span class="hoja" aria-hidden="true">
+              <span class="hoja__mes sc-text-caption-semibold">{{ e.mes }}</span>
+              <span class="hoja__dia sc-text-body-semibold">{{ e.dia }}</span>
+            </span>
+            <span class="fila__cuerpo">
+              <span class="fila__nombre sc-text-body-regular">{{ e.nombre }}</span>
+              <span class="fila__detalle sc-text-caption-regular">{{ e.tramos.length ? e.tramos.join(' · ') : e.cerrado }}@if (e.repite) { · {{ 'repositories.horarios.x.rules.yearly' | translate }} } @else if (e.anio) { · {{ e.anio }} }</span>
+            </span>
+            <span class="fila__acciones">
+              <sc-button variant="secondary" appearance="text" size="sm" icon="edit" [ariaLabel]="('repositories.horarios.special_edit' | translate) + ' ' + e.nombre" (clicked)="abrirEspecial.emit(e.id)" />
+              <sc-button variant="secondary" appearance="text" size="sm" icon="delete" [ariaLabel]="('common.delete' | translate) + ' ' + e.nombre" (clicked)="eliminarEspecial.emit(e.id)" />
+            </span>
+          </li>
+        }
+      </ul>
+    }
+    <div class="festivos">
+      <sc-multiselect
+        inputId="horario-festivos"
+        display="chip"
+        chipOverflow="fit"
+        size="sm"
+        [filter]="true"
+        [label]="'repositories.horarios.holiday_calendars' | translate"
+        [placeholder]="'repositories.horarios.holiday_calendars_placeholder' | translate"
+        [options]="opcionesDeFestivos()"
+        optionLabel="label"
+        optionValue="value"
+        [value]="$any(festivosAplicados())"
+        (valueChange)="cambiarFestivos.emit($any($event) ?? [])"
+      />
+      <a class="repo-link sc-text-caption-semibold" [href]="festivosHref()" (click)="gestionarFestivos.emit($event)">{{ 'repositories.horarios.manage_holidays' | translate }}</a>
+    </div>
   </sc-section-card>
 </div>

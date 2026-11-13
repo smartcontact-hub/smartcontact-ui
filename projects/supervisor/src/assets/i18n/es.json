@@ -1708,6 +1708,7 @@
           "periods_hint": "Temporadas con su propia semana: verano, campaña…",
           "specials_title": "Fechas especiales y festivos",
           "specials_hint": "Días sueltos que mandan sobre todo lo demás.",
+          "specials_all": "Todas",
           "yearly": "cada año",
           "past_hidden": "{{count}} de años pasados, ocultas."
         },

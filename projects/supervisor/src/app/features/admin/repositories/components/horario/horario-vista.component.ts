@@ -8,6 +8,7 @@ import {
   ElementRef,
   inject,
   Injector,
+  type OnInit,
   input,
   model,
   output,
@@ -18,7 +19,7 @@ import {
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TooltipModule } from 'primeng/tooltip';
 import { ScIconComponent } from '@smartcontact-hub/icons';
-import { ScButtonComponent, ScSelectButtonComponent, ScSelectComponent, ScTagComponent } from '@smartcontact-hub/components';
+import { ScButtonComponent, ScChipComponent, ScSelectButtonComponent, ScSelectComponent, ScTagComponent } from '@smartcontact-hub/components';
 
 import { LanguageService } from '@core/services/language.service';
 import { injectLangChange } from '@core/utils/lang-change';
@@ -68,7 +69,8 @@ interface Bloque {
 interface Capa {
   readonly clave: string;
   readonly etiqueta: string;
-  readonly color: string;
+  /** El color de su punto; `null` es la semana habitual, que no lleva color en el calendario (punto vacío). */
+  readonly color: string | null;
   readonly icono: string;
   readonly activa: boolean;
 }
@@ -98,12 +100,12 @@ const diasDelMes = (anio: number, mes: number): number => new Date(Date.UTC(anio
  */
 @Component({
   selector: 'sc-horario-vista',
-  imports: [ScButtonComponent, ScIconComponent, ScSelectButtonComponent, ScSelectComponent, ScTagComponent, TooltipModule, TranslateModule],
+  imports: [ScButtonComponent, ScChipComponent, ScIconComponent, ScSelectButtonComponent, ScSelectComponent, ScTagComponent, TooltipModule, TranslateModule],
   templateUrl: './horario-vista.component.html',
   styleUrl: './horario-vista.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HorarioVistaComponent {
+export class HorarioVistaComponent implements OnInit {
   private readonly translate = inject(TranslateService);
   private readonly language = inject(LanguageService);
   private readonly lang = injectLangChange();
@@ -120,6 +122,11 @@ export class HorarioVistaComponent {
   readonly editarPeriodo = output<number>();
   readonly editarSemana = output<void>();
   readonly editarFestivos = output<number>();
+
+  /** Se abre con hoy elegido: la línea del día dice de entrada qué día es y cómo está. */
+  ngOnInit(): void {
+    if (!this.diaElegido()) this.diaElegido.set(this.hoy());
+  }
 
   /* ── Tiempo: hoy y la hora, en la zona del horario ────────────────────────────────────────────────────────────── */
 
@@ -230,10 +237,11 @@ export class HorarioVistaComponent {
     const apagadas = this.apagadas();
     const r = this.reglas();
     const lista: Omit<Capa, 'activa'>[] = [
-      { clave: 'week', etiqueta: t('week'), color: 'gray', icono: 'view_week' },
+      { clave: 'week', etiqueta: t('week'), color: null, icono: 'view_week' },
       ...r.periods.map((p) => ({ clave: `period:${p.id}`, etiqueta: p.name, color: p.color as string, icono: 'date_range' })),
       ...(r.holidayCalendarIds.length > 0 ? [{ clave: 'holiday', etiqueta: t('holiday'), color: 'red', icono: 'flag' }] : []),
       ...(r.specials.length > 0 ? [{ clave: 'special', etiqueta: t('special'), color: 'purple', icono: 'event' }] : []),
+      { clave: 'closed', etiqueta: t('closed'), color: 'gray', icono: 'do_not_disturb_on' },
     ];
     return lista.map((c) => ({ ...c, activa: !apagadas.has(c.clave) }));
   });
@@ -290,7 +298,7 @@ export class HorarioVistaComponent {
     const capa = dia.tipo === 'periodo' && dia.periodo ? `period:${dia.periodo.id}` : dia.tipo === 'semana' ? 'week' : dia.tipo === 'festivo' ? 'holiday' : 'special';
     const abierto = dia.tramos.length > 0;
     const apagadas = this.apagadas();
-    const apagada = apagadas.has(capa);
+    const apagada = apagadas.has(capa) || (!abierto && apagadas.has('closed'));
     // Solo lo que se sale de lo habitual lleva color, y cada capa pinta lo suyo, así que los filtros conviven: el festivo,
     // rojo; la fecha especial, morado; el periodo, el suyo. La semana habitual es el fondo, sin color. Un día cerrado
     // es gris. Una capa apagada pierde su color.
@@ -382,11 +390,10 @@ export class HorarioVistaComponent {
     const celda = this.celda(fecha, null);
     // La línea del día lleva el color de su dueño aunque ese filtro esté apagado: es la respuesta a lo que se pregunta.
     const color = colorDeDueno(celda.dia, celda.abierto);
-    const hoja = new Intl.DateTimeFormat(this.language.locale(), { month: 'short' }).format(aFecha(fecha)).replace('.', '');
     return {
       ...celda,
       color,
-      hojaMes: hoja,
+      corto: new Intl.DateTimeFormat(this.language.locale(), { weekday: 'short', day: 'numeric', month: 'short' }).format(aFecha(fecha)).replaceAll('.', ''),
       titulo: this.formatos().largo.format(aFecha(fecha)),
       motivo: this.motivo(celda.dia),
       duenoColor: celda.dia.tipo === 'festivo' ? 'red' : celda.dia.tipo === 'especial' ? 'purple' : (celda.dia.periodo?.color ?? 'gray'),

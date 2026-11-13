@@ -1708,6 +1708,7 @@
           "periods_hint": "Saisons avec leur propre semaine : été, campagnes…",
           "specials_title": "Dates spéciales et jours fériés",
           "specials_hint": "Jours isolés qui priment sur le reste.",
+          "specials_all": "Toutes",
           "yearly": "chaque année",
           "past_hidden": "{{count}} des années passées, masquées."
         },

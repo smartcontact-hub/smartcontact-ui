@@ -1,28 +1,11 @@
 <!-- Experimento: el calendario como protagonista. Barra (navegar + vista), filtros a la vista, el día elegido en una
      línea y, debajo, la rejilla, que ocupa todo el alto que deja la pantalla. -->
 <div class="vista">
+  <!-- Una sola fila: navegar (mes y año con sus selectores), el día elegido en una línea y la vista. Debajo, los filtros. -->
   <header class="vista__barra">
     <div class="vista__nav">
-      <sc-button
-        variant="secondary"
-        appearance="outlined"
-        size="sm"
-        icon="chevron_left"
-        [ariaLabel]="'repositories.horarios.x.nav.prev' | translate"
-        [disabled]="!puedeAnterior()"
-        (clicked)="ir(-1)"
-      />
-      <sc-button
-        variant="secondary"
-        appearance="outlined"
-        size="sm"
-        icon="chevron_right"
-        [ariaLabel]="'repositories.horarios.x.nav.next' | translate"
-        [disabled]="!puedeSiguiente()"
-        (clicked)="ir(1)"
-      />
-      <!-- Mes y año con sus selectores: solo ofrecen lo que se puede mirar (5 años atrás, 3 adelante). Sustituyen a
-           las flechas de año de antes: ir a hace tres años eran tres clics. -->
+      <sc-button variant="secondary" appearance="outlined" size="sm" icon="chevron_left" [ariaLabel]="'repositories.horarios.x.nav.prev' | translate" [disabled]="!puedeAnterior()" (clicked)="ir(-1)" />
+      <sc-button variant="secondary" appearance="outlined" size="sm" icon="chevron_right" [ariaLabel]="'repositories.horarios.x.nav.next' | translate" [disabled]="!puedeSiguiente()" (clicked)="ir(1)" />
       @if (vista() !== 'year') {
         <sc-select
           class="vista__mes"
@@ -49,6 +32,33 @@
         <span class="vista__titulo sc-text-body-semibold">{{ t }}</span>
       }
     </div>
+
+    <!-- El día elegido (hoy, al abrir) junto a los selectores: su fecha, cómo está, sus horas y quién lo decide, y los lápices. -->
+    <div class="vista__dia" aria-live="polite">
+      @if (detalle(); as d) {
+        <span class="vista__dia-titulo sc-text-body-semibold">{{ d.corto }}</span>
+        <sc-tag
+          [severity]="d.abierto ? 'success' : 'secondary'"
+          [icon]="d.abierto ? 'check_circle' : 'do_not_disturb_on'"
+          [value]="(d.abierto ? 'repositories.horarios.x.in_hours' : 'repositories.horarios.x.out_of_hours') | translate"
+        />
+        @if (d.abierto) {
+          <span class="vista__dia-horas sc-text-body-regular">{{ d.horas.join(' · ') }}</span>
+        }
+        <span class="vista__dia-dueno sc-text-caption-regular">
+          <span class="punto" [attr.data-color]="d.duenoColor" aria-hidden="true"></span>{{ d.motivo }}
+        </span>
+      }
+      <span class="vista__dia-acciones">
+        @if (origen(); as o) {
+          <sc-button variant="secondary" appearance="text" size="sm" icon="edit" [disabled]="!detalle()" [ariaLabel]="o.clave | translate" [pTooltip]="o.clave | translate" tooltipPosition="top" (clicked)="editarOrigen()" />
+          <sc-button variant="secondary" appearance="text" size="sm" icon="edit_calendar" [disabled]="!detalle()" [ariaLabel]="'repositories.horarios.x.day.only_this_day' | translate" [pTooltip]="'repositories.horarios.x.day.only_this_day' | translate" tooltipPosition="top" (clicked)="cambiarDia.emit(detalle()!.fecha)" />
+        } @else {
+          <sc-button variant="secondary" appearance="text" size="sm" icon="edit" [ariaLabel]="'repositories.horarios.x.day.edit_special' | translate" [pTooltip]="'repositories.horarios.x.day.edit_special' | translate" tooltipPosition="top" (clicked)="cambiarDia.emit(detalle()!.fecha)" />
+        }
+      </span>
+    </div>
+
     <sc-selectbutton
       size="sm"
       [ariaLabel]="'repositories.horarios.x.view.label' | translate"
@@ -61,93 +71,20 @@
     />
   </header>
 
-  <!-- Los filtros, arriba y a la vista: lo apagado se atenúa en la rejilla, no desaparece. -->
+  <!-- Los filtros: `sc-chip` de PrimeNG. Aplicado lleva el check; sin aplicar, no. El punto (contenido proyectado, como el
+       ejemplo «Template» del chip) lleva el color de la capa en el calendario; la semana habitual no lleva color: punto vacío. -->
   <div class="vista__filtros" role="group" [attr.aria-label]="'repositories.horarios.x.layers.label' | translate">
-    <span class="vista__filtros-rotulo sc-text-caption-semibold">{{ 'repositories.horarios.x.layers.label' | translate }}</span>
     @for (capa of capas(); track capa.clave) {
-      <!-- Cada capa es una etiqueta del DS (`sc-tag` de etiqueta, con su color) metida en un botón con estado. Encendida,
-           con su color y un check; apagada, en gris. Las capas no se pisan: cada una pinta lo suyo en el calendario. -->
       <button type="button" class="filtro" [class.filtro--apagado]="!capa.activa" [attr.aria-pressed]="capa.activa" (click)="alternar(capa.clave)">
-        @if (capa.activa) {
-          <sc-icon name="check" size="sm" aria-hidden="true" />
-        }
-        <sc-tag variant="label" [labelColor]="capa.activa ? $any(capa.color) : 'gray'" [value]="capa.etiqueta" />
+        <sc-chip [label]="capa.etiqueta" [icon]="capa.activa ? 'check' : null">
+          <span class="punto" [attr.data-color]="capa.color" aria-hidden="true"></span>
+        </sc-chip>
       </button>
     }
     @if (hayFiltros()) {
       <sc-button size="sm" variant="secondary" appearance="text" [label]="'repositories.horarios.x.layers.show_all' | translate" (clicked)="mostrarTodo()" />
     }
   </div>
-
-  <!-- El día elegido, en una línea: sus horas, quién las decide y dos lápices. Mide lo mismo con cualquier día. -->
-  <!-- El día elegido, en una tarjeta de una fila: la hoja de calendario con su fecha (del color de quien decide el día),
-       quién lo decide, sus tramos y el estado. Los lápices, a la derecha. -->
-  <section class="vista__dia" aria-live="polite">
-    @if (detalle(); as d) {
-      <span class="hoja" aria-hidden="true" [attr.data-color]="d.duenoColor">
-        <span class="hoja__mes sc-text-caption-semibold">{{ d.hojaMes }}</span>
-        <span class="hoja__dia sc-text-title-semibold">{{ d.numero }}</span>
-      </span>
-      <span class="vista__dia-cuerpo">
-        <span class="vista__dia-linea">
-          <span class="vista__dia-titulo sc-text-body-semibold">{{ d.titulo }}</span>
-          <sc-tag variant="label" [labelColor]="$any(d.duenoColor)" [value]="d.motivo" />
-        </span>
-        <span class="vista__dia-tramos">
-          @for (h of d.horas; track h) {
-            <span class="vista__dia-tramo sc-text-body-regular">{{ h }}</span>
-          } @empty {
-            <span class="sc-text-body-regular vista__dia-vacio">{{ 'repositories.horarios.closed' | translate }}</span>
-          }
-        </span>
-      </span>
-      <sc-tag
-        [severity]="d.abierto ? 'success' : 'secondary'"
-        [icon]="d.abierto ? 'check_circle' : 'do_not_disturb_on'"
-        [value]="(d.abierto ? 'repositories.horarios.x.in_hours' : 'repositories.horarios.x.out_of_hours') | translate"
-      />
-    } @else {
-      <span class="vista__dia-vacio sc-text-body-regular">{{ 'repositories.horarios.x.day.pick' | translate }}</span>
-    }
-
-    <span class="vista__dia-acciones">
-      @if (origen(); as o) {
-        <sc-button
-          variant="secondary"
-          appearance="text"
-          size="sm"
-          icon="edit"
-          [disabled]="!detalle()"
-          [ariaLabel]="o.clave | translate"
-          [pTooltip]="o.clave | translate"
-          tooltipPosition="top"
-          (clicked)="editarOrigen()"
-        />
-        <sc-button
-          variant="secondary"
-          appearance="text"
-          size="sm"
-          icon="edit_calendar"
-          [disabled]="!detalle()"
-          [ariaLabel]="'repositories.horarios.x.day.only_this_day' | translate"
-          [pTooltip]="'repositories.horarios.x.day.only_this_day' | translate"
-          tooltipPosition="top"
-          (clicked)="cambiarDia.emit(detalle()!.fecha)"
-        />
-      } @else {
-        <sc-button
-          variant="secondary"
-          appearance="text"
-          size="sm"
-          icon="edit"
-          [ariaLabel]="'repositories.horarios.x.day.edit_special' | translate"
-          [pTooltip]="'repositories.horarios.x.day.edit_special' | translate"
-          tooltipPosition="top"
-          (clicked)="cambiarDia.emit(detalle()!.fecha)"
-        />
-      }
-    </span>
-  </section>
 
   <div class="vista__cuerpo" (keydown)="teclado($event)">
     @switch (vista()) {

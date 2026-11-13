@@ -12,7 +12,7 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: var(--sc-spacing-0-75);
+  gap: var(--sc-spacing-0-5);
   min-block-size: 0;
 }
 
@@ -22,8 +22,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--sc-spacing-0-75);
+  gap: var(--sc-spacing-0-75) var(--sc-spacing-1);
 }
 
 .vista__nav {
@@ -55,29 +54,22 @@
   gap: var(--sc-spacing-0-5);
 }
 
-.vista__filtros-rotulo {
-  margin-inline-end: var(--sc-spacing-0-25);
-  color: var(--sc-text-secondary);
-}
-
+/* Cada filtro es un `sc-chip` (el `p-chip` de PrimeNG) dentro de un botón con estado. El botón no pinta nada: el chip es el
+ * aspecto. Aplicado, el chip lleva el check; sin aplicar, queda más tenue. */
 .filtro {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--sc-spacing-0-125);
   padding: 0;
   border: 0;
+  border-radius: var(--sc-radius-full);
   background: transparent;
-  color: var(--sc-icon-secondary);
   cursor: pointer;
 
   &:focus-visible {
     outline: 2px solid var(--sc-border-focus);
     outline-offset: 2px;
-    border-radius: var(--sc-radius-full);
   }
 
   &--apagado {
-    opacity: 0.6;
+    opacity: 0.65;
 
     &:hover {
       opacity: 1;
@@ -85,73 +77,44 @@
   }
 }
 
-/* ── El día elegido, en una línea ──────────────────────────────────────────────────────────────────────────────── */
-
-.vista__dia {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--sc-spacing-0-75) var(--sc-spacing-1);
-  min-block-size: var(--sc-spacing-3);
-  padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
-  border: 1px solid var(--sc-border-default);
-  border-radius: var(--sc-radius-lg);
-  background: var(--sc-bg-surface);
-}
-
-/* La hoja de calendario: mes y día, del color de quien decide ese día. La semana habitual, en neutro. */
-.hoja {
-  display: inline-flex;
+/* El punto de color de una capa: contenido proyectado del chip. Sin color (la semana habitual), un anillo vacío. */
+.punto {
+  display: inline-block;
   flex: none;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  inline-size: var(--sc-spacing-3);
-  block-size: var(--sc-spacing-3);
-  border-radius: var(--sc-radius-md);
-  background: var(--sc-bg-secondary-subtle);
-  color: var(--sc-text-primary);
-  line-height: 1;
-
-  &__mes {
-    text-transform: uppercase;
-  }
+  inline-size: var(--sc-spacing-0-5);
+  block-size: var(--sc-spacing-0-5);
+  margin-inline-end: var(--sc-spacing-0-25);
+  border: 1px solid var(--sc-icon-secondary);
+  border-radius: var(--sc-radius-full);
+  background: transparent;
 
   @each $color in ('blue', 'green', 'purple', 'orange', 'teal', 'amber', 'red', 'brown', 'gray') {
     &[data-color='#{$color}'] {
-      background: var(--sc-label-#{$color}-bg);
-      color: var(--sc-label-#{$color}-text);
+      border-color: var(--sc-label-#{$color}-text);
+      background: var(--sc-label-#{$color}-text);
     }
   }
 }
 
-.vista__dia-cuerpo {
+/* El día elegido, junto a los selectores: una línea que se estira entre la navegación y la vista. */
+.vista__dia {
   display: flex;
   flex: 1;
-  flex-direction: column;
-  gap: var(--sc-spacing-0-25);
-  min-inline-size: 0;
-}
-
-.vista__dia-linea,
-.vista__dia-tramos {
-  display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--sc-spacing-0-5);
+  gap: var(--sc-spacing-0-25) var(--sc-spacing-0-75);
+  min-inline-size: 0;
+  padding-inline-start: var(--sc-spacing-1);
+  border-inline-start: 1px solid var(--sc-border-default);
 }
 
-.vista__dia-titulo::first-letter {
-  text-transform: uppercase;
+.vista__dia-titulo {
+  text-transform: capitalize;
 }
 
-.vista__dia-tramo + .vista__dia-tramo::before {
-  margin-inline-end: var(--sc-spacing-0-5);
-  color: var(--sc-text-secondary);
-  content: '·';
-}
-
-.vista__dia-vacio {
+.vista__dia-dueno {
+  display: inline-flex;
+  align-items: center;
   color: var(--sc-text-secondary);
 }
 
@@ -308,10 +271,10 @@
 .anio {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--sc-spacing-1) var(--sc-spacing-1-5);
+  gap: var(--sc-spacing-0-75) var(--sc-spacing-1);
   overflow-y: auto;
 
-  @container (min-width: 60rem) {
+  @container (min-width: 52rem) {
     grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
@@ -328,7 +291,7 @@
 .anio__rejilla {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: var(--sc-spacing-0-125);
+  gap: 1px;
 }
 
 .anio__inicial {
@@ -338,7 +301,8 @@
 
 .mini {
   position: relative;
-  aspect-ratio: 1;
+  /* Días bajos, no cuadrados: los doce meses caben a la vez, sin desplazarse. */
+  block-size: var(--sc-spacing-1-5);
   padding: 0;
   border: 0;
   border-radius: var(--sc-radius-sm);

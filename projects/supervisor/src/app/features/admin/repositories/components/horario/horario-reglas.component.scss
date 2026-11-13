@@ -1,59 +1,127 @@
-/* Las reglas en segundo plano: dos filas de `sc-section-card`. La primera, a dos columnas; por debajo de 64 rem, a una. */
+/* Las reglas en segundo plano: una fila de tres `sc-section-card`; dos por debajo de 72 rem y una por debajo de 44. */
 :host {
   display: block;
   container-type: inline-size;
 }
 
 .reglas {
-  display: flex;
-  flex-direction: column;
-}
-
-.reglas__fila {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  column-gap: var(--sc-spacing-2);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   align-items: start;
+  column-gap: var(--sc-spacing-1);
 
-  @container (max-width: 64rem) {
+  @container (max-width: 72rem) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @container (max-width: 44rem) {
     grid-template-columns: minmax(0, 1fr);
   }
 }
 
-/* Dentro de cada grupo, 14 entre bloques (AGENTS, UX 9). */
-.bloque {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sc-spacing-1);
+/* El contenido de cada tarjeta, a 14 entre bloques. */
+sc-section-card {
+  --reglas-gap: var(--sc-spacing-0-75);
 }
 
-.bloque__accion {
-  align-self: flex-start;
+.lista {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .semana {
   display: grid;
   grid-template-columns: max-content minmax(0, 1fr);
-  align-items: center;
+  align-items: baseline;
   gap: var(--sc-spacing-0-5) var(--sc-spacing-1);
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-/* Cada fila reparte sus dos celdas en las columnas de la lista, para que los tramos arranquen alineados. */
+/* Las filas reparten sus dos celdas en las columnas de la lista, para que las horas arranquen alineadas. */
 .semana__dia {
   display: contents;
 }
 
-.semana__tramos {
+.semana__tramos--cerrado {
+  color: var(--sc-text-secondary);
+}
+
+.vacio {
+  margin: 0;
+  color: var(--sc-text-secondary);
+}
+
+.lista {
+  max-block-size: calc(var(--sc-spacing-5) * 3);
+  overflow-y: auto;
+}
+
+.lista--especiales {
+  margin-block-start: var(--sc-spacing-0-75);
+}
+
+.fila {
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--sc-spacing-0-5);
+  align-items: center;
+  gap: var(--sc-spacing-0-75);
+  padding-block: var(--sc-spacing-0-375);
+}
+
+.fila__cuerpo {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sc-spacing-0-125);
+  min-inline-size: 0;
+}
+
+.fila__nombre,
+.fila__detalle {
+  max-inline-size: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fila__detalle {
+  color: var(--sc-text-secondary);
+}
+
+.fila__acciones {
+  display: inline-flex;
+  flex: none;
+}
+
+/* La hoja de calendario de una fecha especial: mes y día, en el morado que esa capa lleva en el calendario. */
+.hoja {
+  display: inline-flex;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--sc-spacing-2-25);
+  block-size: var(--sc-spacing-2-25);
+  border-radius: var(--sc-radius-md);
+  background: var(--sc-label-purple-bg);
+  color: var(--sc-label-purple-text);
+  line-height: 1;
+
+  &__mes {
+    text-transform: uppercase;
+  }
 }
 
 .festivos {
-  max-inline-size: var(--sc-spacing-25);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
+  margin-block-start: var(--sc-spacing-1);
 }
 
 .repo-link {

@@ -1,13 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import {
-  ScButtonComponent,
-  ScMultiSelectComponent,
-  ScSectionCardComponent,
-  ScSelectButtonComponent,
-  ScSubsectionComponent,
-  ScTagComponent,
-} from '@smartcontact-hub/components';
+import { ScButtonComponent, ScMultiSelectComponent, ScSectionCardComponent, ScSelectButtonComponent, ScTagComponent } from '@smartcontact-hub/components';
 
 import { LanguageService } from '@core/services/language.service';
 import { injectLangChange } from '@core/utils/lang-change';
@@ -17,11 +10,10 @@ import {
   type CalendarioDeFestivos,
   type FechaEspecial,
   type Periodo,
-  resumenDeLaSemana,
+  type Franja,
   type Semana,
   textoDeFranja,
 } from '../../state/horarios.core.mjs';
-import { type ColumnaDeHorario, type FilaDeHorario, HorarioFilasTableComponent } from './horario-filas-table.component';
 
 const aFecha = (iso: string): Date => new Date(`${iso}T12:00:00`);
 const CLAVES_DIA = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const;
@@ -34,16 +26,7 @@ const CLAVES_DIA = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const;
  */
 @Component({
   selector: 'sc-horario-reglas',
-  imports: [
-    HorarioFilasTableComponent,
-    ScButtonComponent,
-    ScMultiSelectComponent,
-    ScSectionCardComponent,
-    ScSelectButtonComponent,
-    ScSubsectionComponent,
-    ScTagComponent,
-    TranslateModule,
-  ],
+  imports: [ScButtonComponent, ScMultiSelectComponent, ScSectionCardComponent, ScSelectButtonComponent, ScTagComponent, TranslateModule],
   templateUrl: './horario-reglas.component.html',
   styleUrl: './horario-reglas.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -60,6 +43,10 @@ export class HorarioReglasComponent {
   readonly calendarios = input.required<readonly CalendarioDeFestivos[]>();
   readonly festivosAplicados = input.required<readonly number[]>();
   readonly festivosHref = input('/admin/festivos');
+  protected readonly cerradoTexto = computed(() => {
+    this.lang();
+    return this.translate.instant('repositories.horarios.closed') as string;
+  });
 
   readonly editarSemana = output<void>();
   readonly anadirPeriodo = output<void>();
@@ -71,87 +58,74 @@ export class HorarioReglasComponent {
   readonly cambiarFestivos = output<number[]>();
   readonly gestionarFestivos = output<MouseEvent>();
 
-  /** Los siete días con sus tramos, para leer la semana de un vistazo. */
+  /** La semana en grupos de días seguidos con las mismas franjas («Lun–Jue 09:00–18:00», «Sáb–Dom Cerrado»): tres filas, no siete. */
   protected readonly dias = computed(() => {
     this.lang();
-    return CLAVES_DIA.map((clave, i) => ({
-      nombre: this.translate.instant(`repositories.horarios.days.${clave}`) as string,
-      tramos: (this.semana()[i] ?? []).map(textoDeFranja),
+    const nombre = (i: number): string => (this.translate.instant(`repositories.horarios.days.${CLAVES_DIA[i]}`) as string).slice(0, 3);
+    const mismas = (a: readonly Franja[], b: readonly Franja[]): boolean => a.length === b.length && a.every((f, i) => f[0] === b[i][0] && f[1] === b[i][1]);
+    const grupos: { desde: number; hasta: number; franjas: readonly Franja[] }[] = [];
+    for (let d = 0; d < 7; d++) {
+      const franjas = this.semana()[d] ?? [];
+      const ultimo = grupos[grupos.length - 1];
+      if (ultimo && mismas(ultimo.franjas, franjas)) ultimo.hasta = d;
+      else grupos.push({ desde: d, hasta: d, franjas });
+    }
+    return grupos.map((g) => ({
+      etiqueta: g.desde === g.hasta ? nombre(g.desde) : `${nombre(g.desde)}–${nombre(g.hasta)}`,
+      tramos: g.franjas.map(textoDeFranja),
     }));
   });
 
-  private resumen(semana: Semana): string {
-    const t = (k: string): string => this.translate.instant(k);
-    return resumenDeLaSemana(
-      semana,
-      CLAVES_DIA.map((d) => t(`repositories.horarios.days_short.${d}`)),
-      t('repositories.horarios.closed'),
-      t('repositories.horarios.all_day'),
-    );
-  }
-
-  protected readonly columnasDePeriodos = computed<readonly ColumnaDeHorario[]>(() => {
-    this.lang();
-    const t = (k: string): string => this.translate.instant(`repositories.horarios.cols.${k}`);
-    return [
-      { campo: 'nombre', titulo: t('period'), etiqueta: true },
-      { campo: 'fechas', titulo: t('dates') },
-      { campo: 'semana', titulo: t('week') },
-    ];
-  });
-
-  protected readonly columnasDeEspeciales = computed<readonly ColumnaDeHorario[]>(() => {
-    this.lang();
-    const t = (k: string): string => this.translate.instant(`repositories.horarios.cols.${k}`);
-    return [
-      { campo: 'nombre', titulo: t('name') },
-      { campo: 'fecha', titulo: t('date') },
-      { campo: 'horas', titulo: t('hours') },
-    ];
-  });
-
-  protected readonly filasDePeriodos = computed<readonly FilaDeHorario[]>(() => {
+  protected readonly filasDePeriodos = computed(() => {
     this.lang();
     const dia = new Intl.DateTimeFormat(this.language.locale(), { day: 'numeric', month: 'short' });
     const conAnio = new Intl.DateTimeFormat(this.language.locale(), { day: 'numeric', month: 'short', year: 'numeric' });
     return this.periodos().map((p) => ({
       id: p.id,
+      nombre: p.name,
       color: p.color,
-      celdas: {
-        nombre: p.name,
-        fechas: `${dia.format(aFecha(`2024-${p.from}`))} – ${(p.year === null ? dia : conAnio).format(aFecha(`${p.year ?? 2024}-${p.to}`))}`,
-        semana: this.resumen(p.week),
-      },
+      fechas: `${dia.format(aFecha(`2024-${p.from}`))} – ${(p.year === null ? dia : conAnio).format(aFecha(`${p.year ?? 2024}-${p.to}`))}`,
+      repite: p.year === null,
     }));
   });
 
-  /** Las fechas de un año que ya pasó no estorban: «Próximas» por defecto. Las que se repiten nunca pasan. */
-  protected readonly verPasadas = signal(false);
+  /** Las fechas especiales: próximas (por defecto), pasadas o todas. Las que se repiten cada año nunca pasan. */
+  protected readonly filtro = signal<'proximas' | 'pasadas' | 'todas'>('proximas');
   protected readonly filtroDeEspeciales = computed(() => {
     this.lang();
+    const t = (k: string): string => this.translate.instant(k);
     return [
-      { value: 'proximas', label: this.translate.instant('repositories.horarios.specials_upcoming') as string },
-      { value: 'pasadas', label: this.translate.instant('repositories.horarios.specials_past') as string },
+      { value: 'proximas', label: t('repositories.horarios.specials_upcoming') },
+      { value: 'pasadas', label: t('repositories.horarios.specials_past') },
+      { value: 'todas', label: t('repositories.horarios.x.rules.specials_all') },
     ];
   });
 
-  protected readonly filasDeEspeciales = computed<readonly FilaDeHorario[]>(() => {
+  protected readonly filasDeEspeciales = computed(() => {
     this.lang();
     const hoy = ahoraEn(this.zona()).fecha;
-    const conAnio = new Intl.DateTimeFormat(this.language.locale(), { day: 'numeric', month: 'short', year: 'numeric' });
-    const sinAnio = new Intl.DateTimeFormat(this.language.locale(), { day: 'numeric', month: 'short' });
-    const pasadas = this.verPasadas();
-    return [...this.especiales()]
-      .filter((e) => (!e.yearly && e.date < hoy) === pasadas)
-      .sort((a, b) => Number(b.yearly) - Number(a.yearly) || (a.yearly ? a.date.slice(5).localeCompare(b.date.slice(5)) : a.date.localeCompare(b.date)))
-      .map((e) => ({
-        id: e.id,
-        celdas: {
+    const anio = hoy.slice(0, 4);
+    const mes = new Intl.DateTimeFormat(this.language.locale(), { month: 'short' });
+    const conAnio = new Intl.DateTimeFormat(this.language.locale(), { year: 'numeric' });
+    const cerrado = this.translate.instant('repositories.horarios.closed') as string;
+    const filtro = this.filtro();
+    const clave = (e: FechaEspecial): string => (e.yearly ? `${anio}${e.date.slice(4)}` : e.date);
+    return this.especiales()
+      .filter((e) => filtro === 'todas' || (!e.yearly && e.date < hoy) === (filtro === 'pasadas'))
+      .sort((a, b) => clave(a).localeCompare(clave(b)))
+      .map((e) => {
+        const iso = e.yearly ? `2024${e.date.slice(4)}` : e.date;
+        return {
+          id: e.id,
           nombre: e.name,
-          fecha: (e.yearly ? sinAnio : conAnio).format(aFecha(e.yearly ? `2024${e.date.slice(4)}` : e.date)),
-          horas: e.slots.length > 0 ? e.slots.map(textoDeFranja).join(', ') : (this.translate.instant('repositories.horarios.closed') as string),
-        },
-      }));
+          dia: Number(iso.slice(8)),
+          mes: mes.format(aFecha(iso)).replace('.', ''),
+          anio: e.yearly ? '' : conAnio.format(aFecha(iso)),
+          repite: e.yearly,
+          tramos: e.slots.map(textoDeFranja),
+          cerrado,
+        };
+      });
   });
 
   protected readonly opcionesDeFestivos = computed(() =>

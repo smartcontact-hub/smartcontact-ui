@@ -1708,6 +1708,7 @@
           "periods_hint": "Seasons with their own week: summer, campaigns…",
           "specials_title": "Special dates and holidays",
           "specials_hint": "Single days that override everything else.",
+          "specials_all": "All",
           "yearly": "every year",
           "past_hidden": "{{count}} from past years, hidden."
         },

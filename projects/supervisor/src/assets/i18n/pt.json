@@ -1708,6 +1708,7 @@
           "periods_hint": "Épocas com a sua própria semana: verão, campanhas…",
           "specials_title": "Datas especiais e feriados",
           "specials_hint": "Dias soltos que mandam sobre tudo o resto.",
+          "specials_all": "Todas",
           "yearly": "todos os anos",
           "past_hidden": "{{count}} de anos passados, ocultas."
         },
