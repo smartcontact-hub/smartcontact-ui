@@ -294,7 +294,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 179,
+      "usedInSupervisor": 181,
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "sobreObsoleto": [
         {
@@ -646,7 +646,7 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/datepicker",
       "cva": false,
-      "inputs": 28,
+      "inputs": 29,
       "api": [
         "ariaLabel",
         "blurred",
@@ -654,6 +654,7 @@
         "dateFormat",
         "dates",
         "datesChange",
+        "defaultDate",
         "disabled",
         "error",
         "focused",
