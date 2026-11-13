@@ -1,8 +1,8 @@
 {
-  "commit": "9f5dc209",
+  "commit": "a3230789",
   "primeng": "22.1.0",
   "themes": "3.0.2",
-  "generado": "2026-11-03T16:29:53.226Z",
+  "generado": "2026-11-13T08:56:13.310Z",
   "estilosTexto": [
     "display-regular",
     "display-semibold",
@@ -30,11 +30,8 @@
       "variables": [],
       "retirados": [],
       "semanticaComun": false,
-      "reglasCss": false,
-      "componentes": [
-        "badge",
-        "tag"
-      ],
+      "reglasCss": true,
+      "componentes": [],
       "guia": false
     },
     "contratoPlugin": {
@@ -46,5 +43,5 @@
     },
     "cambia": true
   },
-  "version": "0.20261103.1629"
+  "version": "0.20261113.856"
 }

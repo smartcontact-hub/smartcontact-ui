@@ -5251,6 +5251,11 @@ ${typographyRule(lgTypographySelectors, dt, "lg", fromDesignPx(16), fromDesignPx
     line-height: ${token(dt, "app.typography.md.line.height", fromDesignPx(20))};
 }
 
+/* Un tooltip que no cabe en una l\xEDnea parte en dos iguales, nunca con una palabra sola abajo (DD-254). */
+.p-tooltip-text {
+    text-wrap: balance;
+}
+
 .p-message-sm .p-message-text {
     line-height: ${token(dt, "app.typography.sm.line.height", fromDesignPx(18))};
 }
