@@ -8,7 +8,7 @@
   <sc-button
     variant="primary"
     [disabled]="!canSave()"
-    [pTooltip]="motivoApagado()" tooltipPosition="top" tooltipEvent="both"
+    [pTooltip]="motivoApagado()" tooltipPosition="bottom" tooltipEvent="both"
     [label]="(mode() === 'create' ? 'repositories.festivos.create_submit' : 'common.save') | translate"
     (clicked)="save()"
   />

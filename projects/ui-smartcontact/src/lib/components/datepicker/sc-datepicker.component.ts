@@ -147,6 +147,11 @@ export class ScDatepickerComponent {
   readonly stepMinute = input(1, { transform: numberAttribute });
   /** Rótulo del botón que vacía la fecha en el pie con atajos. */
   readonly clearLabel = input<string | null>(null);
+  /**
+   * El mes que se enseña al abrir mientras no hay nada elegido (`defaultDate` nativo), sin marcar ningún día: un
+   * diálogo que añade fechas abre en el mes que ya se estaba mirando (DD-254). Sin él, el mes de hoy.
+   */
+  readonly defaultDate = input<Date | null>(null);
 
   // ─── Two-way value binding ─────────────────────────────────────────
   /** La fecha elegida, o `null` si no hay ninguna. Enlace de dos sentidos: `[(value)]`. */
@@ -202,7 +207,15 @@ export class ScDatepickerComponent {
 
   protected readonly isRange = computed(() => this.selectionMode() === 'range');
   protected readonly isMultiple = computed(() => this.selectionMode() === 'multiple');
-  protected readonly pickerValue = computed(() => (this.isMultiple() ? this.dates() : this.isRange() ? this.range() : this.value()));
+  /**
+   * Una lista vacía le llega a PrimeNG como `null` (DD-254). PrimeNG solo abre en `defaultDate` si su valor es falso, y
+   * `[]` no lo es; y cada valor nuevo le hace recalcular el mes (`writeControlValue` → `updateUI`): al desmarcar el
+   * último día emite `null`, quien lo usa suele devolver `[]`, y con ese `[]` el calendario saltaba al mes de hoy.
+   */
+  protected readonly pickerValue = computed(() => {
+    const valor = this.isMultiple() ? this.dates() : this.isRange() ? this.range() : this.value();
+    return Array.isArray(valor) && valor.length === 0 ? null : valor;
+  });
   protected readonly hasPresets = computed(() => this.presets().length > 0);
 
   protected onModelChange(v: Date | (Date | null)[] | null): void {

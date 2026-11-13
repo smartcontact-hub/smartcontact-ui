@@ -98,6 +98,17 @@ El del repaso del Figma del Supervisor y «Fuera del DS», borrada (2026-11-03, 
 `figma-pendiente` §54 a §69): `git show d94ac6ec:docs/handoff/supervisor-fichas.md`.
 El del alta de usuario con marcadores y alta frente a edición (2026-11-04, DD-248, sin trampas propias; su «No hecho»,
 los marcadores del alta de usuario en Figma, sigue en pie): `git show 1f086aca:docs/handoff/supervisor-fichas.md`.
+El de otra tarjeta del hub (2026-11-06, DD-249; su «No hecho» sigue en pie): `git show 3e8c2201:docs/handoff/supervisor-fichas.md`.
+
+## ✅ 2026-11-13 · El día dice de dónde viene, «Grupos» con nombres y las leyes de los tooltips (DD-254)
+
+> **Sello:** rama `claude/calendarios-horarios-especiales-l3z4wx`, rehecha sobre `main` `3e8c2201` (#610 fundido).
+
+- **Hecho**: el día elegido ofrece su origen y «Cambiar solo este día»; «Nueva fecha especial» abre en el mes elegido
+  (`sc-datepicker` con `defaultDate`); «Grupos» con nombres; leyes de tooltips con `audit:tooltips`; tope a 252 en Figma.
+- **No hecho**: el export del Kit (Theme Designer, el usuario); al llegar, sonda de «El nombre es obligatorio» en una línea.
+- **Trampa de sonda**: en la barra superior PrimeNG ya baja solo un tooltip `top`: «sale debajo» no enrojece; lo vigila el gate.
+- **Trampa de PrimeNG**: `p-datepicker` recalcula el mes con cada valor nuevo y solo usa `defaultDate` si el valor es falso.
 
 ## ✅ 2026-11-13 · El año sin trazos, el editor a lo ancho y un diálogo de fecha que no salta (DD-253)
 
@@ -139,17 +150,6 @@ los marcadores del alta de usuario en Figma, sigue en pie): `git show 1f086aca:d
   parece un fallo del diálogo. Elige los dos días en el panel.
 - **Trampa de entorno**: `tools/primeng-doc.mjs` necesita `gh` contra `primefaces/primeng`; en una sesión en la nube sin ese
   repositorio falla. La API instalada está en `node_modules/primeng/types/primeng-datepicker.d.ts`.
-
-## ✅ 2026-11-06 · En el hub de Repositorios, pulsar otra tarjeta marca la otra (DD-249)
-
-> **Sello:** rama `areses/repo-card-selection-interactions-8ce085` sobre `main` HEAD `1bf926c4`.
-
-- **Hecho**: sin velo mientras quede una tarjeta entera a la vista (si pisa alguna, flota con sombra) y siete gestos más.
-- **Congeladas**: 4058, 4062 y 4064 avanzan con esto y con lo fundido desde `b4b1305b` (DD-246 a DD-248); su fila, en otro PR.
-- **No hecho**: el paso 06 del hub en Figma (`figma-pendiente` §64) y el COA de 4064, cuyo prompt del 2026-10-31 cuenta el
-  velo. Releer su versión viva antes de corregir.
-- **Trampa de sonda**: con el panel abierto, pulsar en las coordenadas de una tarjeta tapada cae en un enlace del panel y
-  navega fuera; parece que la tarjeta no se marca. Mide con `elementFromPoint`, o pulsa solo lo que asoma.
 
 ## SIGUIENTE — sin preguntar
 

@@ -58,6 +58,12 @@ export class HorarioEspecialModalComponent implements OnInit {
   readonly especial = input<FechaEspecial | null>(null);
   /** Al añadir, el día que ya viene marcado (el elegido en el calendario del año). */
   readonly fechaInicial = input<string | null>(null);
+  /** Al añadir sin día marcado, un día del mes en el que abre (el que se miraba en el año, DD-254); `null`, el de hoy. */
+  readonly mesInicial = input<string | null>(null);
+  protected readonly mesDeInicio = computed(() => {
+    const mes = this.mesInicial();
+    return mes ? aFecha(mes) : null;
+  });
   /** Las fechas especiales que ya tiene el horario: una fecha no se repite. */
   readonly existentes = input<readonly FechaEspecial[]>([]);
 

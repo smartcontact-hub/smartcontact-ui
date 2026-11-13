@@ -1590,7 +1590,10 @@
       "calendar": {
         "today": "Today",
         "aria": "Calendar for {{year}}",
-        "change_day": "Edit this day",
+        "edit_period": "Edit period",
+        "edit_week": "Edit week",
+        "edit_holidays": "Edit holidays",
+        "only_this_day": "Change this day only",
         "edit_special": "Edit special date",
         "year": "Year"
       },
@@ -2192,7 +2195,7 @@
         "col_level": "Level {{channel}}",
         "level_aria": "Level for {{name}} — {{channel}}",
         "paused": "Disabled",
-        "last_channel_hint": "At least one channel is required. Uncheck Assigned to remove the agent from the group.",
+        "last_channel_hint": "At least one channel is required: uncheck Assigned to remove the agent from the group",
         "last_channel_aria": "{{name}} — {{channel}}: only channel; uncheck Assigned to remove from the group",
         "assignment": "Assigned",
         "filter_label": "Filter by assignment",

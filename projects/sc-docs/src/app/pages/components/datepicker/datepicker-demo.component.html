@@ -37,6 +37,7 @@
       data-testid="sc-datepicker-rango"
     />
     <sc-datepicker label="Inválida, sin texto de error" [invalid]="true" data-testid="sc-datepicker-invalid" />
+    <sc-datepicker label="Abre en junio" [defaultDate]="junio" [(value)]="otra" data-testid="sc-datepicker-mes" />
     <p>Acotada: «{{ acotada() ? acotada()!.toLocaleDateString('es-ES') : '—' }}»</p>
   </div>
 </ng-template>

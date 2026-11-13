@@ -1590,7 +1590,10 @@
       "calendar": {
         "today": "Aujourd'hui",
         "aria": "Calendrier de {{year}}",
-        "change_day": "Modifier ce jour",
+        "edit_period": "Modifier la période",
+        "edit_week": "Modifier la semaine",
+        "edit_holidays": "Modifier les jours fériés",
+        "only_this_day": "Modifier ce jour uniquement",
         "edit_special": "Modifier la date spéciale",
         "year": "Année"
       },
@@ -2192,7 +2195,7 @@
         "col_level": "Niveau {{channel}}",
         "level_aria": "Niveau de {{name}} — {{channel}}",
         "paused": "Désactivé",
-        "last_channel_hint": "Un canal au minimum est requis. Décochez Affecté pour retirer cet agent du groupe.",
+        "last_channel_hint": "Un canal au minimum est requis : décochez Affecté pour retirer cet agent du groupe",
         "last_channel_aria": "{{name}} — {{channel}} : seul canal ; décochez Affecté pour retirer cet agent du groupe",
         "assignment": "Affecté",
         "filter_label": "Filtrer par affectation",

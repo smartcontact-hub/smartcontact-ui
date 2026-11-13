@@ -206,6 +206,25 @@ export function llegarASeccion(id: string, injector: Injector): void {
 }
 
 /**
+ * La llegada a una tarjeta de la MISMA página (DD-254), desde otro sitio de ella: el «Editar semana» del día elegido en
+ * el año del horario. Como `llegarASeccion`, el foco va al título de la tarjeta (`sc-section-card` con `anchorId` = id),
+ * pero sin subir la zona de contenido: la tarjeta se trae a la vista donde esté.
+ */
+export function llegarATarjeta(id: string, injector: Injector): void {
+  afterNextRender(
+    () => {
+      const tarjeta = document.getElementById(id);
+      const titulo = tarjeta?.querySelector<HTMLElement>('h2');
+      if (!tarjeta || !titulo) return;
+      tarjeta.scrollIntoView({ block: 'start' });
+      titulo.tabIndex = -1;
+      titulo.focus({ preventScroll: true });
+    },
+    { injector },
+  );
+}
+
+/**
  * La llegada a un sitio DENTRO de una sección (DD-146): el bloque de un canal o un campo, desde el resumen. Ya pintada
  * la sección, lo trae arriba y le da el foco. El nombre fijo no lo tapa: la zona que se desplaza aparta sus anclas
  * (DD-145). Un campo llega con su rótulo, así que se trae su `.field` y se enfoca el control.

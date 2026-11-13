@@ -44,6 +44,7 @@
 > |---|---|
 > | Las dos tablas de asignación enseñan solo los canales marcados (el agente en General; el grupo, los de sus agentes), sin candado ni enlace (enmienda DD-217 §13 y DD-187 §2) | DD-250 |
 > | El alta de usuario lleva los marcadores de paso del grupo y del agente: Identidad dice lo que falta, Acceso y Servicios asignados «Revisada» al dejarlas · sin «Falta: …» sobre el resumen · cierra la deuda de DD-222 §5 | DD-248 |
+> | El día elegido en el año del horario ofrece editar lo que lo decide (su periodo, la semana, sus festivos) y aparte «Cambiar solo este día» · «Nueva fecha especial» abre en el mes elegido (`sc-datepicker` con `defaultDate`) · «Grupos» de Horarios con los nombres · las leyes de los tooltips: posición declarada, abajo en la barra, sin punto final, partido en dos iguales, y el tope del Kit a 252 (`audit:tooltips`; enmienda DD-253 §2) | DD-254 |
 > | El año de un horario sin trazos (cerrado en gris y tachado), con su cabecera fija arriba y el editor a 1600 desde 1340 · `sc-datepicker` en línea no cambia de vista y reserva seis semanas: no salta · un obligatorio no se acusa por el foco que puso el diálogo · `sc-section-card` y `sc-subsection` recortan con `clip` (enmienda DD-251 §2 y DD-252 §2) | DD-253 |
 > | Horarios con las piezas de las fichas: sublistas en la tabla de una sección (fila que abre, «⋮» con Editar y Eliminar), switch-field, año en `sc-selectbutton` · borrar en uso avisa y suelta (sin ids heredados) · la semana del horario bajo su desplegable en el grupo · el arnés no deja entrar piezas sin precedente (`audit:screen-hygiene` §10, inventario en `npm run revision`) | DD-252 |
 > | Un horario es su semana, sus periodos y sus fechas especiales, con el año al lado · cada fecha, un único dueño (fecha especial › festivo › periodo › semana) · los festivos, un repositorio aparte que cada horario aplica · Horarios sale de «Próximamente» y pasa a editor (enmienda DD-245 §4) | DD-251 |
@@ -178,6 +179,66 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-254 · 2026-11-13 — El día dice de dónde viene, «Grupos» con nombres, el diálogo abre en tu mes, y las leyes de los tooltips
+
+**Contexto** · Tras DD-253, un estudio de flujo de Horarios (qué se puede hacer más fácil sin perder nada) y una queja:
+el tooltip del «Crear» apagado partía «El nombre es obligatorio» en dos líneas. Medido en código: «Editar este día»
+creaba siempre una fecha especial, también en un día de verano (`cambiarDia` solo miraba `dueno.especial`); «Nueva
+fecha especial» abría en el mes de hoy, y sin la vista de meses (DD-253 §5) ir lejos eran muchas flechas; la columna
+«Grupos» de Horarios era una cifra sin nombres; y los tooltips no tenían más regla escrita que DD-200, DD-212 y DD-217.
+El usuario aprobó las cuatro propuestas; en el ancho del tooltip eligió que lo cambiara yo en el Kit.
+
+**Decisión** ·
+1. **El día dice de dónde viene y se edita allí.** El detalle del día elegido ofrece la acción de lo que lo decide
+   («Editar periodo», «Editar semana», «Editar festivos») y aparte «Cambiar solo este día», que crea la fecha especial
+   con el día marcado (o la edita si ya lo es). Sin nombres en las etiquetas: la línea de origen ya dice «Periodo
+   «Verano»». «Editar semana» trae la tarjeta de la semana a la vista con el foco en su título (`llegarATarjeta`);
+   «Editar festivos» va al editor de ese calendario, y con cambios sin guardar pregunta antes, como «Gestionar
+   festivos». Los dos botones, en una fila: el detalle mide lo mismo con cualquier día (enmienda DD-253 §2).
+2. **«Nueva fecha especial» abre en el mes del día elegido en el año**, sin marcarlo; sin día elegido, en el de hoy.
+   DS: `sc-datepicker` gana `defaultDate` (el nativo) y le pasa a PrimeNG una lista vacía como `null`: PrimeNG solo
+   abre en `defaultDate` con un valor falso, y cada valor nuevo le hace recalcular el mes, así que al desmarcar el
+   último día (emite `null`, el diálogo lo devuelve como `[]`) saltaba al mes de hoy. Ese salto ya pasaba en `main`.
+3. **«Grupos» de Horarios con los nombres**, como Tipificaciones: `kind: 'groups'` en modo `adaptive` (un grupo, su
+   nombre; varios, la cifra con los nombres al pasar). La cifra sigue ordenando y exportándose.
+4. **Las leyes de los tooltips**, encima de DD-200, DD-212 y DD-217:
+   - **Ancho**: una frase corta cabe en una línea. El tope del Kit, `tooltip/max/width`, pasa de `{scale.12-5}` (175) a
+     `{scale.18}` (252), cambiado en Figma; entra al repo con el siguiente export del Theme Designer.
+   - **Si parte, parte en dos iguales** (`text-wrap: balance` en `.p-tooltip-text`): nunca una palabra sola abajo.
+   - **Posición declarada siempre**: `top`; `bottom` en la barra superior (los «Guardar» de `#topbarActions` y el
+     selector de demo); `right` solo junto a una lista lateral; `left` nunca.
+   - **Qué dice**: el nombre de un icono, un texto cortado o por qué algo está apagado, en una frase sin punto final.
+   - **Lo vigila `audit:tooltips`** (tope 0): posición declarada, nunca `left`, abajo en la barra, y sin punto final en
+     el texto que se lee sin ejecutar (literal o clave resuelta en el `es.json` de su app).
+
+**Razón** · Medido en esta sesión, cada sonda en rojo con su fallo puesto: el detalle de un día de periodo, de semana,
+festivo y especial con sus botones y el mismo alto; «Editar periodo» abre «Verano»; «Editar semana» trae la tarjeta y
+le da el foco; «Editar festivos» llega a `/admin/festivos/editar/1` y pregunta si hay cambios; «Nueva fecha especial»
+abre en junio del año siguiente sin marcar nada (`horarios-estres.spec.ts`, «El día dice de dónde viene»). En el DS,
+sin la lista vacía como `null`, el calendario abría en noviembre de 2026 en vez de junio de 2030, y al desmarcar volvía
+de enero de 2027 a noviembre (`sc-datepicker.component.spec.ts`). El tooltip de «Crear grupo» partía en 153 y 51 px
+(«saliente» sola) y ahora en 95 y 109 (`tooltips-del-kit.spec.ts`). El gate encontró siete tooltips con punto final en
+el laboratorio y uno de dos frases (`groups.form.assigned.last_channel_hint`); y leía mal las plantillas en línea con
+una comilla invertida escapada (no veía dos tooltips del editor de equipos), lo mismo que `audit:icons`, que ya lee
+entero.
+
+**Descartadas** ·
+- **Dejar «Editar este día» como estaba y explicarlo con un texto de ayuda**: el error era el camino, no la etiqueta.
+- **Poner el nombre del origen en la etiqueta** («Editar periodo «Verano»»): repetía la línea de origen y alargaba
+  el botón hasta partir la fila.
+- **Un `sc-tooltip` propio para poner las reglas por defecto**: DD-212 ya decidió el `pTooltip` tal cual; las reglas
+  van en un gate.
+- **Centrar el texto del tooltip**: repartiría el hueco de la derecha a los dos lados, pero es una decisión del Kit.
+
+**Consecuencias** · Declarar `bottom` en la barra no cambia lo que se ve: con `top`, PrimeNG ya lo bajaba solo (medido
+en «Crear grupo», con el atributo leído en el navegador); ahora el código dice dónde sale. `text-wrap: balance` reparte
+las líneas, pero no estrecha la caja: un tooltip de poco más de una línea queda con hueco a la derecha (en «Crear
+grupo», 175 de caja para líneas de 95 y 109). Con el tope a 252 esa frase cabe en una línea. Pendiente del export del
+Kit (lo lanza el usuario con el Theme Designer); hasta entonces el repo sigue en 175, porque el bloque `@sc-gen` no se
+toca a mano.
 
 ---
 

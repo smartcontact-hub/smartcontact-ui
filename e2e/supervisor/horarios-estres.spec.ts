@@ -221,11 +221,11 @@ test('fechas especiales: tres días de una vez, cerrados; una ya puesta se dice 
   await expect(dialogo(page).getByRole('button', { name: 'Crear', exact: true })).toBeDisabled();
 });
 
-test('fechas especiales: «Editar este día» abre un festivo con horas propias; sobre una especial, la edita', async ({ page }) => {
+test('fechas especiales: «Cambiar solo este día» abre un festivo con horas propias; sobre una especial, la edita', async ({ page }) => {
   await goto(page, POSTVENTA);
   await elegirDia(page, iso(ANIO, 12, 25));
   await expect(detalle(page)).toContainText('Festivo «Navidad» (Festivos Barcelona)');
-  await page.getByRole('button', { name: 'Editar este día', exact: true }).click();
+  await detalle(page).getByRole('button', { name: 'Cambiar solo este día', exact: true }).click();
   const modal = dialogo(page);
   await expect(modal).toContainText('Nueva fecha especial');
   await modal.locator('#especial-nombre').fill('Campaña');
@@ -238,6 +238,90 @@ test('fechas especiales: «Editar este día» abre un festivo con horas propias;
   await page.getByRole('button', { name: 'Editar fecha especial', exact: true }).click();
   await expect(dialogo(page)).toContainText('Editar fecha especial');
   await expect(dialogo(page).locator('#especial-nombre')).toHaveValue('Nochebuena');
+});
+
+/* ── El día dice de dónde viene (DD-254) ────────────────────────────────────────────────────────────────────────
+ * El detalle del día elegido ofrece editar lo que lo decide (su periodo, la semana o sus festivos) y, aparte, «Cambiar
+ * solo este día», que es crear una fecha especial. Antes, «Editar este día» creaba siempre una fecha especial, también
+ * en un día de verano: quien quería cambiar el verano acababa con una excepción de un día. */
+
+const accionesDelDia = (page: Page): Locator => detalle(page).locator('.cal__detalle-acciones sc-button');
+
+test('el día dice de dónde viene: cada origen con su acción, y el detalle mide lo mismo con cualquiera', async ({ page }) => {
+  await goto(page, POSTVENTA);
+  const casos: [string, string[]][] = [
+    [iso(ANIO, 7, 15), ['Editar periodo', 'Cambiar solo este día']],
+    [primerMartesDeMarzo(ANIO), ['Editar semana', 'Cambiar solo este día']],
+    [iso(ANIO, 12, 25), ['Editar festivos', 'Cambiar solo este día']],
+    [iso(ANIO, 12, 24), ['Editar fecha especial']],
+  ];
+  const altos: number[] = [];
+  for (const [fecha, botones] of casos) {
+    await elegirDia(page, fecha);
+    await expect(accionesDelDia(page), fecha).toHaveText(botones);
+    altos.push((await detalle(page).boundingBox())!.height);
+  }
+  expect(Math.max(...altos) - Math.min(...altos), `altos del detalle: ${altos.join(', ')}`).toBeLessThan(0.5);
+});
+
+test('«Editar periodo» abre su periodo; «Cambiar solo este día», una fecha especial con ese día marcado', async ({ page }) => {
+  await goto(page, POSTVENTA);
+  await elegirDia(page, iso(ANIO, 7, 15));
+  await expect(detalle(page)).toContainText('Periodo «Verano»');
+  await detalle(page).getByRole('button', { name: 'Editar periodo', exact: true }).click();
+  await expect(dialogo(page)).toContainText('Editar periodo');
+  await expect(dialogo(page).locator('#periodo-nombre')).toHaveValue('Verano');
+  await dialogo(page).getByRole('button', { name: 'Cancelar', exact: true }).click();
+  await expect(dialogo(page)).toHaveCount(0);
+
+  await detalle(page).getByRole('button', { name: 'Cambiar solo este día', exact: true }).click();
+  await expect(dialogo(page)).toContainText('Nueva fecha especial');
+  await expect(dialogo(page).locator('.p-datepicker-day-selected')).toHaveText('15');
+  await expect(dialogo(page).locator('.p-datepicker-select-month')).toHaveText(/julio/i);
+});
+
+test('«Editar semana» trae la semana habitual a la vista, con el foco en su título', async ({ page }) => {
+  await goto(page, POSTVENTA);
+  await elegirDia(page, primerMartesDeMarzo(ANIO));
+  const titulo = page.locator('#horario-semana h2');
+  // Desde abajo del todo: el año sigue a la vista (va fijo a la derecha) y la semana se ha ido por arriba.
+  await page.locator('#main-content').evaluate((el) => el.scrollTo({ top: el.scrollHeight }));
+  await expect(titulo).not.toBeInViewport();
+  await detalle(page).getByRole('button', { name: 'Editar semana', exact: true }).click();
+  await expect(titulo).toBeFocused();
+  await expect(titulo).toBeInViewport();
+  await expect(titulo).toHaveText(/Semana habitual/);
+});
+
+test('«Editar festivos» lleva a su calendario; con cambios sin guardar, pregunta antes', async ({ page }) => {
+  await goto(page, POSTVENTA);
+  await elegirDia(page, iso(ANIO, 12, 25));
+  await detalle(page).getByRole('button', { name: 'Editar festivos', exact: true }).click();
+  await expect(page).toHaveURL(/\/admin\/festivos\/editar\/1$/);
+
+  await goto(page, POSTVENTA);
+  await diaDeLaSemana(page, 5).getByRole('switch').click();
+  await elegirDia(page, iso(ANIO, 12, 25));
+  await detalle(page).getByRole('button', { name: 'Editar festivos', exact: true }).click();
+  const aviso = page.getByRole('alertdialog', { name: '¿Guardar los cambios?' });
+  await expect(aviso).toBeVisible();
+  await aviso.getByRole('button', { name: 'Guardar', exact: true }).click();
+  await expect(page).toHaveURL(/\/admin\/festivos\/editar\/1$/);
+});
+
+test('«Nueva fecha especial» abre en el mes del día elegido en el año, sin marcarlo; sin elegir, en el de hoy', async ({ page }) => {
+  await goto(page, POSTVENTA);
+  const mes = (): Locator => dialogo(page).locator('.p-datepicker-select-month');
+  const anio = (): Locator => dialogo(page).locator('.p-datepicker-select-year');
+  await page.getByRole('button', { name: 'Nueva fecha especial', exact: true }).first().click();
+  await expect(mes()).toHaveText(new RegExp(MESES[new Date().getMonth()]!, 'i'));
+  await dialogo(page).getByRole('button', { name: 'Cancelar', exact: true }).click();
+
+  await elegirDia(page, iso(ANIO + 1, 6, 10));
+  await page.getByRole('button', { name: 'Nueva fecha especial', exact: true }).first().click();
+  await expect(mes()).toHaveText(/junio/i);
+  await expect(anio()).toHaveText(String(ANIO + 1));
+  await expect(dialogo(page).locator('.p-datepicker-day-selected')).toHaveCount(0);
 });
 
 test('fechas especiales: «Próximas» y «Pasadas» reparten todas, sin perder ninguna', async ({ page }) => {

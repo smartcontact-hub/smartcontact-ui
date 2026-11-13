@@ -212,7 +212,7 @@ export function divergencias(ref, target, locale, excepciones = EXCEPCIONES_DIVE
  *     las páginas que lo escriben a mano): una sola frase y sin punto final; si pide dos, la segunda se une con «;» o
  *     baja a la ayuda de un campo.
  *   · Lo que NOMBRA (títulos, rótulos, botones, chips, tooltips, toasts, errores bajo el campo) va sin punto; no se mide
- *     porque no se mezclaba.
+ *     aquí porque no se mezclaba. El de los tooltips sí, desde que había ocho con punto: `audit:tooltips` (DD-254).
  * Medido el 2026-10-20: 25 textos fuera de regla, la mayoría en las fichas de grupo y agente («Tiempo que espera el
  * agente…» sin punto junto a «El número que ve el cliente cuando le llaman.»).
  */

@@ -233,3 +233,10 @@
 .cal__detalle-motivo {
   color: var(--sc-text-secondary);
 }
+
+/* El origen y «solo este día», juntos y en una fila: el detalle mide lo mismo con cualquier día (DD-253 §2). */
+.cal__detalle-acciones {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: var(--sc-spacing-0-5);
+}

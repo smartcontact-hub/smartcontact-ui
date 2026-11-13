@@ -482,7 +482,7 @@ if (process.argv[1] && process.argv[1].endsWith('audit-icons.mjs')) {
         const fallos = [];
         if (f.endsWith('.html')) fallos.push(...revisarPlantilla(fuente, ctx));
         else {
-            for (const t of fuente.matchAll(/template\s*:\s*`([\s\S]*?)`/g)) {
+            for (const t of fuente.matchAll(/template\s*:\s*`((?:\\[\s\S]|[^`\\])*)`/g)) {
                 fallos.push(...revisarPlantilla(t[1], ctx, t.index + t[0].indexOf('`') + 1, fuente));
             }
             for (const o of iconosEnTs(fuente)) {

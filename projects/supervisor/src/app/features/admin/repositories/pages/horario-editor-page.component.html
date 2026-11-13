@@ -10,7 +10,7 @@
   <sc-button
     variant="primary"
     [disabled]="!canSave()"
-    [pTooltip]="motivoApagado()" tooltipPosition="top" tooltipEvent="both"
+    [pTooltip]="motivoApagado()" tooltipPosition="bottom" tooltipEvent="both"
     [label]="(mode() === 'create' ? 'repositories.horarios.create_submit' : 'common.save') | translate"
     (clicked)="save()"
   />
@@ -89,7 +89,7 @@
           </section>
         </sc-section-card>
 
-        <sc-section-card titleKey="repositories.horarios.section_week" hintKey="repositories.horarios.section_week_hint" surface="subtle" icon="schedule">
+        <sc-section-card anchorId="horario-semana" titleKey="repositories.horarios.section_week" hintKey="repositories.horarios.section_week_hint" surface="subtle" icon="schedule">
           <sc-subsection>
             <div class="bloque">
               <sc-horario-semana [semana]="form().week" [falta]="faltaDeSemana()" (semanaChange)="update('week', $event)" />
@@ -154,7 +154,7 @@
                 vacioIcono="event_busy"
                 (abrir)="abrirEspecial($event)"
                 (eliminar)="eliminarEspecial($event)"
-                (anadir)="especialDialog.set({ especial: null, fecha: null })"
+                (anadir)="especialDialog.set({ especial: null, fecha: null, mes: diaDelAnio() })"
               >
                 <!-- Las de años pasados no estorban: «Próximas» por defecto, siempre a la vista, como el filtro de la barra
                      de asignar (DD-243). -->
@@ -180,7 +180,16 @@
         <sc-section-card titleKey="repositories.horarios.section_calendar" hintKey="repositories.horarios.section_calendar_hint" surface="subtle" icon="calendar_month">
           <sc-subsection>
             <div class="bloque">
-              <sc-horario-calendario [reglas]="reglas()" [calendarios]="calendarios()" [zona]="form().timezone" (cambiarDia)="cambiarDia($event)" />
+              <sc-horario-calendario
+                [reglas]="reglas()"
+                [calendarios]="calendarios()"
+                [zona]="form().timezone"
+                [(diaElegido)]="diaDelAnio"
+                (cambiarDia)="cambiarDia($event)"
+                (editarPeriodo)="abrirPeriodo($event)"
+                (editarSemana)="editarSemana()"
+                (editarFestivos)="editarFestivos($event)"
+              />
             </div>
           </sc-subsection>
         </sc-section-card>
@@ -203,6 +212,7 @@
   <sc-horario-especial-modal
     [especial]="dialog.especial"
     [fechaInicial]="dialog.fecha"
+    [mesInicial]="dialog.mes ?? null"
     [existentes]="form().specials"
     (guardar)="guardarEspeciales($event)"
     (cerrado)="especialDialog.set(null)"
