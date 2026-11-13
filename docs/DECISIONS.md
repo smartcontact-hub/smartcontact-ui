@@ -208,7 +208,9 @@ tocar algo, y pinchar el título del mes llevaba a una rejilla de meses sin form
    de DD-219 sigue desde el principio. En los diálogos de periodo y de fecha especial.
 7. **`sc-section-card` y `sc-subsection` recortan con `overflow: clip`** (DS), con `display: flow-root`: recortan al
    radio igual que con `hidden`, pero sin volverse contenedor de scroll, que anulaba el `sticky` de §2. `flow-root`
-   conserva el contexto de bloque que daba `hidden` (ningún margen se pliega hacia fuera).
+   conserva el contexto de bloque que daba `hidden` (ningún margen se pliega hacia fuera). La variante `flush`, que ya
+   iba con `overflow: visible` y sin contenerlos, vuelve a `display: block`: con `flow-root` medía 14 más (lo enseñó la
+   captura de sc-docs; medido en el DOM, 87,75 frente a 73,75).
 
 **Razón** · Medido en esta sesión, con cada sonda en rojo con su fallo puesto (`horarios-estres.spec.ts`, «Sin saltos ni
 trazos»): el diálogo se movía 18 px al pasar de mes (222 → 240) y ahora no se mueve en doce meses; con el umbral viejo un
