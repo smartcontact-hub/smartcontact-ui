@@ -1,16 +1,41 @@
-<div class="cal__barra">
-  <!-- El año, entre los que se planifican, a la vista: como el filtro de la barra de asignar (DD-243), sin flechas. -->
-  <sc-selectbutton
-    size="sm"
-    [ariaLabel]="'repositories.horarios.calendar.year' | translate"
-    [options]="anios()"
-    optionLabel="label"
-    optionValue="value"
-    [allowEmpty]="false"
-    [value]="anio()"
-    (valueChange)="irAlAnio($any($event))"
-  />
-  <sc-button class="cal__hoy" variant="secondary" appearance="outlined" size="sm" [label]="'repositories.horarios.calendar.today' | translate" (clicked)="irAHoy()" />
+<!-- La cabecera del año, fija arriba (DD-253): el año, «Hoy» y el día elegido. Los meses se desplazan por debajo, así
+     que la respuesta al día que se pincha se ve también con el panel desplazado hasta diciembre. -->
+<div class="cal__cabecera">
+  <div class="cal__barra">
+    <!-- El año, entre los que se planifican, a la vista: como el filtro de la barra de asignar (DD-243), sin flechas. -->
+    <sc-selectbutton
+      size="sm"
+      [ariaLabel]="'repositories.horarios.calendar.year' | translate"
+      [options]="anios()"
+      optionLabel="label"
+      optionValue="value"
+      [allowEmpty]="false"
+      [value]="anio()"
+      (valueChange)="irAlAnio($any($event))"
+    />
+    <sc-button class="cal__hoy" variant="secondary" appearance="outlined" size="sm" [label]="'repositories.horarios.calendar.today' | translate" (clicked)="irAHoy()" />
+  </div>
+
+  <!-- El día elegido: mide lo mismo con cualquier día (título, estado, origen y botón), así que el año no salta. -->
+  <section class="cal__detalle" aria-live="polite">
+    <h3 class="cal__detalle-titulo sc-text-body-semibold">{{ detalle().titulo }}</h3>
+    <p class="cal__detalle-horas">
+      <sc-tag [severity]="detalle().abierto ? 'success' : 'secondary'" [value]="(detalle().abierto ? 'repositories.horarios.open' : 'repositories.horarios.closed') | translate" />
+      @if (detalle().abierto) {
+        <span class="sc-text-body-regular">{{ detalle().horas }}</span>
+      }
+    </p>
+    <p class="cal__detalle-motivo sc-text-caption-regular">{{ detalle().motivo }}</p>
+    <sc-button
+      variant="secondary"
+      appearance="outlined"
+      size="sm"
+      [label]="(detalle().dia.especial ? 'repositories.horarios.calendar.edit_special' : 'repositories.horarios.calendar.change_day') | translate"
+      (clicked)="cambiarDia.emit(detalle().fecha)"
+    />
+  </section>
+
+  <sc-divider />
 </div>
 
 <div class="cal__anual" role="group" [attr.aria-label]="'repositories.horarios.calendar.aria' | translate: { year: anio() }" (keydown)="teclado($event)">
@@ -51,33 +76,15 @@
   }
 </div>
 
+<!-- Cada muestra es un cuadrado sin texto con el aspecto de un día (un número dentro contaba como pastilla hecha a mano,
+     `hand-made-pieces`): el hueco de un día sin marca, el color del periodo, el cerrado tachado y el punto. -->
 <ul class="cal__leyenda sc-text-caption-regular" role="list">
-  <li><span class="cal__muestra"></span>{{ 'repositories.horarios.legend.week' | translate }}</li>
+  <li><span class="cal__muestra" aria-hidden="true"></span>{{ 'repositories.horarios.legend.week' | translate }}</li>
   @for (periodo of periodos(); track periodo.id) {
-    <li><span class="cal__muestra cal__dia--periodo" [attr.data-color]="periodo.color"></span>{{ periodo.name }}</li>
+    <li><span class="cal__muestra cal__dia--periodo" aria-hidden="true" [attr.data-color]="periodo.color"></span>{{ periodo.name }}</li>
   }
-  <li><span class="cal__muestra cal__dia--cerrado"></span>{{ 'repositories.horarios.closed' | translate }}</li>
+  <li><span class="cal__muestra cal__dia--cerrado" aria-hidden="true"></span>{{ 'repositories.horarios.closed' | translate }}</li>
   @if (hayExcepciones()) {
-    <li><span class="cal__muestra cal__dia--excepcion"></span>{{ 'repositories.horarios.legend.exception' | translate }}</li>
+    <li><span class="cal__muestra cal__dia--excepcion" aria-hidden="true"></span>{{ 'repositories.horarios.legend.exception' | translate }}</li>
   }
 </ul>
-
-<sc-divider />
-
-<section class="cal__detalle" aria-live="polite">
-  <h3 class="cal__detalle-titulo sc-text-body-semibold">{{ detalle().titulo }}</h3>
-  <p class="cal__detalle-horas">
-    <sc-tag [severity]="detalle().abierto ? 'success' : 'secondary'" [value]="(detalle().abierto ? 'repositories.horarios.open' : 'repositories.horarios.closed') | translate" />
-    @if (detalle().abierto) {
-      <span class="sc-text-body-regular">{{ detalle().horas }}</span>
-    }
-  </p>
-  <p class="cal__detalle-motivo sc-text-caption-regular">{{ detalle().motivo }}</p>
-  <sc-button
-    variant="secondary"
-    appearance="outlined"
-    size="sm"
-    [label]="(detalle().dia.especial ? 'repositories.horarios.calendar.edit_special' : 'repositories.horarios.calendar.change_day') | translate"
-    (clicked)="cambiarDia.emit(detalle().fecha)"
-  />
-</section>

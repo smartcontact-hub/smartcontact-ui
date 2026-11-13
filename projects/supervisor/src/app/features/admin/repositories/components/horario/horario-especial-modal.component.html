@@ -38,7 +38,7 @@
           [value]="nombre()"
           [helperText]="ayudaDeNombre()"
           [error]="errorDeNombre()"
-          (valueChange)="nombre.set($event)"
+          (valueChange)="escribirNombre($event)"
           (focusout)="dejarNombre($event)"
         />
       </div>

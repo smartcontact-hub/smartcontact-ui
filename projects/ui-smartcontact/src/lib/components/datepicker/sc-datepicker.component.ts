@@ -16,6 +16,9 @@ import {
 import { FormsModule } from '@angular/forms';
 import { DatePicker, DatePickerModule } from 'primeng/datepicker';
 import type { DatePickerPassThrough } from 'primeng/types/datepicker';
+
+/** El título de un calendario en línea: apagado y sin cursor de mano (DD-253). */
+const TITULO_FIJO = { disabled: true, style: { cursor: 'default' } } as const;
 import { ScButtonComponent } from '../button/sc-button.component';
 import { ScFieldLabelComponent } from '../field/sc-field-label.component';
 import { ScFieldMsgComponent } from '../field/sc-field-msg.component';
@@ -184,6 +187,11 @@ export class ScDatepickerComponent {
         'aria-invalid': this.isInvalid() ? 'true' : null,
       },
     },
+    // En línea, el título («noviembre 2026») no cambia a la vista de meses ni de años (DD-253): el panel vive en la
+    // página o en un diálogo, y esa vista mide otra altura, así que movía todo lo de alrededor y no se veía cómo
+    // volver. Es el estado que PrimeNG ya le da al título con `numberOfMonths > 1`; se navega con las flechas. Sin el
+    // cursor de mano, que prometía un clic; por `pt` y no por una regla sobre su clase (`audit:primeng-coupling`).
+    ...(this.inline() ? { selectMonth: TITULO_FIJO, selectYear: TITULO_FIJO } : {}),
   }));
 
   private readonly panel = createScPanelSizing('sc-datepicker', this.size);

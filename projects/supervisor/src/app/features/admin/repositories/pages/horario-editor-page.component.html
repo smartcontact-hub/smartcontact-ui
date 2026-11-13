@@ -17,9 +17,9 @@
 </ng-template>
 
 <div class="page">
-  <!-- Arquetipo de editor (`page__inner`, 1200), como la agenda. Dentro, las reglas y su resultado lado a lado: el año
-       se repinta con cada cambio; por debajo de 1340 (el corte de las fichas con resumen) va debajo. -->
-  <div class="page__inner">
+  <!-- Arquetipo de editor con su resultado al lado (`page__inner--resultado`: 1600 desde 1340, como las fichas con
+       resumen). Las reglas y el año lado a lado: el año se repinta con cada cambio; por debajo de 1340 va debajo. -->
+  <div class="page__inner page__inner--resultado">
     <h1 class="page__heading sc-text-title-semibold">{{ form().name.trim() || ('repositories.horarios.create_title' | translate) }}</h1>
 
     <div class="horario">

@@ -13,7 +13,9 @@
   /* Card blanca (Figma: content/background #fff → --sc-bg-surface, radio lg=8). */
   background: var(--sc-bg-surface);
   border-radius: var(--sc-radius-300);
-  overflow: hidden;
+  /* `clip` y no `hidden`, por lo mismo que `sc-section-card` (DD-253): recorta al radio sin anular el `sticky` de dentro. */
+  display: flow-root;
+  overflow: clip;
 
   &__head {
     padding: var(--sc-spacing-1-143);

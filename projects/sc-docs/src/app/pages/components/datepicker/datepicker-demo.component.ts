@@ -86,7 +86,10 @@ export class DatepickerDemoComponent {
   protected readonly primerDia = new Date(this.hoy.getFullYear(), this.hoy.getMonth(), 1);
   protected readonly ultimoDia = new Date(this.hoy.getFullYear(), this.hoy.getMonth() + 1, 0);
   protected readonly acotada = signal<Date | null>(null);
-  protected readonly festivos = signal<readonly Date[] | null>(null);
+  /* Días ya marcados en un mes que ya pasó (DD-253): el calendario en línea abre en el mes del primero, así que no pinta
+   * «hoy» y su HTML y su captura no cambian de un día para otro (con `null` abría en el mes en curso y la línea base de
+   * estructura caía al día siguiente). */
+  protected readonly festivos = signal<readonly Date[] | null>([new Date(2025, 11, 24), new Date(2025, 11, 25), new Date(2025, 11, 31)]);
   protected readonly apertura = signal<Date | null>(new Date(2026, 0, 1, 9, 0));
 
   readonly value = signal<Date | null>(null);
