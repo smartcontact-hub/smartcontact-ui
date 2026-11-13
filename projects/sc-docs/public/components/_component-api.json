@@ -1364,7 +1364,7 @@
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "fuente": "projects/ui-smartcontact/src/lib/components/button/sc-button.component.ts",
       "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=7596-35989",
-      "usosSupervisor": 179,
+      "usosSupervisor": 181,
       "relaciones": {
         "alternativas": [],
         "usa": [],
@@ -4090,6 +4090,21 @@
           "nativo": null
         },
         {
+          "nombre": "defaultDate",
+          "clase": "input",
+          "tipo": "Date | null",
+          "porDefecto": "null",
+          "requerido": false,
+          "descripcion": "El mes que se enseña al abrir mientras no hay nada elegido (`defaultDate` nativo), sin marcar ningún día: un diálogo que añade fechas abre en el mes que ya se estaba mirando (DD-254). Sin él, el mes de hoy.",
+          "origen": "nativo",
+          "nativo": {
+            "descripcion": "Set the date to highlight on first opening if the field is blank.",
+            "porDefecto": null,
+            "obsoleta": null,
+            "heredadaDe": null
+          }
+        },
+        {
           "nombre": "value",
           "clase": "model",
           "tipo": "Date | null",
@@ -4148,7 +4163,6 @@
         "baseZIndex",
         "clearButtonStyleClass",
         "dataType",
-        "defaultDate",
         "disabledDates",
         "disabledDays",
         "firstDayOfWeek",

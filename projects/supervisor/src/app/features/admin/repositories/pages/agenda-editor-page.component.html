@@ -10,7 +10,7 @@
   <sc-button
     variant="primary"
     [disabled]="!canSave()"
-    [pTooltip]="motivoApagado()" tooltipPosition="top"
+    [pTooltip]="motivoApagado()" tooltipPosition="bottom"
     [label]="(mode() === 'create' ? 'repositories.agendas.create_submit' : 'common.save') | translate"
     (clicked)="save()"
   />

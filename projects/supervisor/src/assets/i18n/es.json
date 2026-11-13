@@ -1590,7 +1590,10 @@
       "calendar": {
         "today": "Hoy",
         "aria": "Calendario de {{year}}",
-        "change_day": "Editar este día",
+        "edit_period": "Editar periodo",
+        "edit_week": "Editar semana",
+        "edit_holidays": "Editar festivos",
+        "only_this_day": "Cambiar solo este día",
         "edit_special": "Editar fecha especial",
         "year": "Año"
       },
@@ -2195,7 +2198,7 @@
         "col_level": "Nivel {{channel}}",
         "level_aria": "Nivel de {{name}} — {{channel}}",
         "paused": "Deshabilitado",
-        "last_channel_hint": "Debe atender al menos un canal. Para quitarlo del grupo, desmarca Asignado.",
+        "last_channel_hint": "Debe atender al menos un canal: para quitarlo del grupo, desmarca Asignado",
         "last_channel_aria": "{{name}} — {{channel}}: único canal; para quitarlo del grupo, desmarca Asignado",
         "assignment": "Asignado",
         "filter_label": "Filtrar por asignación",

@@ -1590,7 +1590,10 @@
       "calendar": {
         "today": "Hoje",
         "aria": "Calendário de {{year}}",
-        "change_day": "Editar este dia",
+        "edit_period": "Editar período",
+        "edit_week": "Editar semana",
+        "edit_holidays": "Editar feriados",
+        "only_this_day": "Alterar só este dia",
         "edit_special": "Editar data especial",
         "year": "Ano"
       },
@@ -2192,7 +2195,7 @@
         "col_level": "Nível {{channel}}",
         "level_aria": "Nível de {{name}} — {{channel}}",
         "paused": "Desabilitado",
-        "last_channel_hint": "É necessário pelo menos um canal. Desmarque Atribuído para remover o agente do grupo.",
+        "last_channel_hint": "É necessário pelo menos um canal: desmarque Atribuído para remover o agente do grupo",
         "last_channel_aria": "{{name}} — {{channel}}: único canal; desmarque Atribuído para remover do grupo",
         "assignment": "Atribuído",
         "filter_label": "Filtrar por atribuição",

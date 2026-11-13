@@ -15,7 +15,11 @@ const MENOS_VISTOS_SNIPPET = `<!-- "minDate" y "maxDate" acotan el calendario: l
 <sc-datepicker label="Solo este mes" [minDate]="primerDia" [maxDate]="ultimoDia" [(value)]="fecha" />
 
 <!-- "invalid" marca el campo SIN texto de error, para cuando el error se cuenta en otro sitio. -->
-<sc-datepicker label="Inválida" [invalid]="true" />`;
+<sc-datepicker label="Inválida" [invalid]="true" />
+
+<!-- "defaultDate": el mes con el que abre mientras no hay nada elegido, sin marcar ningún día. Un diálogo
+     que añade fechas abre así en el mes que ya se estaba mirando. -->
+<sc-datepicker label="Abre en junio" [defaultDate]="junio" [(value)]="otra" />`;
 
 const VARIOS_SNIPPET = `<!-- "selectionMode=multiple": cada clic pone o quita un día. El valor va en "dates" (los días,
      en el orden en que se marcaron). En línea ("inline") el calendario queda a la vista: sirve para
@@ -86,6 +90,9 @@ export class DatepickerDemoComponent {
   protected readonly primerDia = new Date(this.hoy.getFullYear(), this.hoy.getMonth(), 1);
   protected readonly ultimoDia = new Date(this.hoy.getFullYear(), this.hoy.getMonth() + 1, 0);
   protected readonly acotada = signal<Date | null>(null);
+  /** Un mes fijo y pasado: abierto, el panel no pinta «hoy» y la demo no cambia de un día para otro (DD-253). */
+  protected readonly junio = new Date(2025, 5, 1);
+  protected readonly otra = signal<Date | null>(null);
   /* Días ya marcados en un mes que ya pasó (DD-253): el calendario en línea abre en el mes del primero, así que no pinta
    * «hoy» y su HTML y su captura no cambian de un día para otro (con `null` abría en el mes en curso y la línea base de
    * estructura caía al día siguiente). */

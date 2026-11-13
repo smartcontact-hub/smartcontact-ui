@@ -32,3 +32,8 @@
     tooltipEvent="both"
   />
 </ng-template>
+
+<!-- En la barra superior el tooltip va abajo (DD-254): arriba no hay sitio. -->
+<ng-template #barra>
+  <sc-button label="Guardar" [disabled]="true" pTooltip="El nombre es obligatorio" tooltipPosition="bottom" />
+</ng-template>

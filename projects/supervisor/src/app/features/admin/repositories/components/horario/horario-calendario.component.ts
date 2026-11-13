@@ -1,4 +1,4 @@
-import { afterNextRender, ChangeDetectionStrategy, Component, computed, DestroyRef, effect, ElementRef, inject, Injector, input, output, signal, untracked } from '@angular/core';
+import { afterNextRender, ChangeDetectionStrategy, Component, computed, DestroyRef, effect, ElementRef, inject, Injector, input, model, output, signal, untracked } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ScButtonComponent, ScDividerComponent, ScSelectButtonComponent, ScTagComponent } from '@smartcontact-hub/components';
 
@@ -34,7 +34,8 @@ const aFecha = (iso: string): Date => new Date(`${iso}T12:00:00`);
 
 /**
  * El año de un horario, día a día: qué días se atiende, cuáles son de un periodo y cuáles son fecha especial o festivo.
- * Al elegir un día dice sus horas y quién las decide, y ofrece cambiarlo. Es una rejilla propia y no un `p-datepicker`:
+ * Al elegir un día dice sus horas y quién las decide, y ofrece cambiar eso que lo decide (su periodo, la semana o sus
+ * festivos) o solo ese día (DD-254). Es una rejilla propia y no un `p-datepicker`:
  * aquí no se elige una fecha, se lee un año entero y se avanza de año en año.
  *
  * Teclado: un solo día recibe el foco con Tab y las flechas mueven la selección (un día, o una semana arriba y abajo).
@@ -56,12 +57,19 @@ export class HorarioCalendarioComponent {
   readonly reglas = input.required<Reglas>();
   readonly calendarios = input<readonly CalendarioDeFestivos[]>([]);
   readonly zona = input('Europe/Madrid');
-  /** Pide una fecha especial para el día elegido: lleva su fecha. */
+  /** Pide una fecha especial para el día elegido (crearla o, si ya lo es, editarla): lleva su fecha. */
   readonly cambiarDia = output<string>();
+  /** Pide editar el periodo que decide el día elegido: lleva su id. */
+  readonly editarPeriodo = output<number>();
+  /** Pide ir a la semana habitual, que decide el día elegido. */
+  readonly editarSemana = output<void>();
+  /** Pide editar el calendario de festivos que decide el día elegido: lleva su id. */
+  readonly editarFestivos = output<number>();
+  /** El día que eligió el usuario, o `null` si aún no eligió ninguno (entonces se enseña hoy). */
+  readonly diaElegido = model<string | null>(null);
 
   private readonly hoy = computed(() => ahoraEn(this.zona()).fecha);
-  private readonly elegida = signal<string | null>(null);
-  protected readonly seleccion = computed(() => this.elegida() ?? this.hoy());
+  protected readonly seleccion = computed(() => this.diaElegido() ?? this.hoy());
   private readonly anioElegido = signal<number | null>(null);
   protected readonly anio = computed(() => this.anioElegido() ?? Number(this.seleccion().slice(0, 4)));
 
@@ -131,6 +139,19 @@ export class HorarioCalendarioComponent {
     this.temporizador = setTimeout(() => this.destello.set(new Set()), 1200);
   });
 
+  /** La acción sobre lo que decide el día elegido (DD-254); una fecha especial no tiene otra: se edita ella. */
+  protected readonly origen = computed(() => {
+    const tipo = this.detalle().dia.tipo;
+    return tipo === 'especial' ? null : `repositories.horarios.calendar.edit_${tipo === 'periodo' ? 'period' : tipo === 'festivo' ? 'holidays' : 'week'}`;
+  });
+
+  protected editarOrigen(): void {
+    const dia = this.detalle().dia;
+    if (dia.tipo === 'periodo' && dia.periodo) this.editarPeriodo.emit(dia.periodo.id);
+    else if (dia.tipo === 'festivo' && dia.calendario) this.editarFestivos.emit(dia.calendario.id);
+    else if (dia.tipo === 'semana') this.editarSemana.emit();
+  }
+
   /** Los periodos de este horario, para la leyenda. */
   protected readonly periodos = computed(() => this.reglas().periods);
   protected readonly hayExcepciones = computed(() => this.meses().some((m) => m.celdas.some((c) => c.excepcion)));
@@ -152,7 +173,7 @@ export class HorarioCalendarioComponent {
   }
 
   protected elegir(fecha: string): void {
-    this.elegida.set(fecha);
+    this.diaElegido.set(fecha);
     this.anioElegido.set(null);
   }
 
@@ -167,7 +188,7 @@ export class HorarioCalendarioComponent {
     // El mismo día en el otro año; un 29 de febrero pasa al 28.
     const resto = this.seleccion().slice(4);
     const fecha = `${anio}${resto}`;
-    this.elegida.set(Number.isNaN(Date.parse(`${fecha}T00:00:00Z`)) || new Date(`${fecha}T00:00:00Z`).toISOString().slice(0, 10) !== fecha ? `${anio}-02-28` : fecha);
+    this.diaElegido.set(Number.isNaN(Date.parse(`${fecha}T00:00:00Z`)) || new Date(`${fecha}T00:00:00Z`).toISOString().slice(0, 10) !== fecha ? `${anio}-02-28` : fecha);
     this.anioElegido.set(null);
   }
 

@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import type { GroupRef } from '@smartcontact-hub/components';
 
 import { injectLangChange } from '@core/utils/lang-change';
 import { GroupsStore } from '@features/admin/groups/state/groups.store';
@@ -15,12 +16,12 @@ import { type Horario, HorariosStore } from '../state/horarios.store';
 interface Datos {
   readonly resumen: (h: Horario) => string;
   readonly ahora: (h: Horario) => string;
-  readonly grupos: (h: Horario) => number;
+  readonly grupos: (h: Horario) => readonly GroupRef[];
 }
 
 /**
  * Nombre, la semana habitual en una línea, si ahora mismo se atiende, cuántos periodos y fechas especiales lleva,
- * cuántos grupos lo usan, su zona y su estado. Lo demás, en su editor.
+ * qué grupos lo usan (sus nombres al pasar, como en Tipificaciones: DD-254), su zona y su estado. Lo demás, en su editor.
  */
 const columnas = (d: Datos): readonly RepoColumnDef<Horario>[] => [
   // Sin ancho: es la columna que crece.
@@ -39,7 +40,17 @@ const columnas = (d: Datos): readonly RepoColumnDef<Horario>[] => [
   },
   { key: 'periods', labelKey: 'repositories.horarios.col_periods', kind: 'count', width: '104px', accessor: (i) => String(i.periods.length), emptyDash: true, sortable: true },
   { key: 'specials', labelKey: 'repositories.horarios.col_specials', kind: 'count', width: '144px', accessor: (i) => String(i.specials.length), emptyDash: true, sortable: true },
-  { key: 'groups', labelKey: 'repositories.horarios.col_groups', kind: 'count', width: '104px', accessor: (i) => String(d.grupos(i)), emptyDash: true, sortable: true },
+  {
+    key: 'groups',
+    labelKey: 'repositories.horarios.col_groups',
+    kind: 'groups',
+    width: '104px',
+    // La cifra ordena y se exporta; la celda enseña el nombre si es uno y la cifra con los nombres al pasar si son más.
+    accessor: (i) => String(d.grupos(i).length),
+    groups: d.grupos,
+    groupsDisplay: 'adaptive',
+    sortable: true,
+  },
   { key: 'timezone', labelKey: 'repositories.horarios.timezone', kind: 'text', accessor: (i) => i.timezone, width: '176px', sortable: true },
   {
     key: 'status',
@@ -69,13 +80,15 @@ export class HorariosPageComponent {
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
 
-  /** Cuántos grupos atienden con cada horario (DD-152): los que lo tienen en un subcanal que lo usa de verdad (DD-252). */
+  /** Los grupos que atienden con cada horario (DD-152): los que lo tienen en un subcanal que lo usa de verdad (DD-252). */
   private readonly gruposPorHorario = computed(() => {
-    const cuenta = new Map<number, number>();
+    const grupos = new Map<number, GroupRef[]>();
     for (const g of this.groupsStore.groups()) {
-      for (const id of new Set(subcanalesConHorario(g).map((s) => s.id))) cuenta.set(id, (cuenta.get(id) ?? 0) + 1);
+      for (const id of new Set(subcanalesConHorario(g).map((s) => s.id))) {
+        grupos.set(id, [...(grupos.get(id) ?? []), { id: g.id, name: g.name, active: true }]);
+      }
     }
-    return cuenta;
+    return grupos;
   });
 
   private readonly textos = computed(() => {
@@ -103,7 +116,7 @@ export class HorariosPageComponent {
         const { fecha, minutos } = ahoraEn(h.timezone);
         return estadoEn(h, fecha, minutos, this.festivos.items()).abierto ? 'open' : 'closed';
       },
-      grupos: (h) => this.gruposPorHorario().get(h.id) ?? 0,
+      grupos: (h) => this.gruposPorHorario().get(h.id) ?? [],
     }),
     fields: [{ key: 'name', labelKey: 'repositories.columns.name', type: 'text', required: true, placeholderKey: 'repositories.horarios.name_placeholder' }],
     searchKeys: ['name', 'timezone', 'description'],

@@ -9,7 +9,7 @@
   <sc-button
     variant="primary"
     [disabled]="!canSave()"
-    [pTooltip]="motivoApagado()" tooltipPosition="top"
+    [pTooltip]="motivoApagado()" tooltipPosition="bottom"
     [label]="(mode() === 'create' ? 'repositories.tipificaciones.create_submit' : 'common.save') | translate"
     (clicked)="save()"
   />

@@ -16,7 +16,7 @@
     <sc-button class="cal__hoy" variant="secondary" appearance="outlined" size="sm" [label]="'repositories.horarios.calendar.today' | translate" (clicked)="irAHoy()" />
   </div>
 
-  <!-- El día elegido: mide lo mismo con cualquier día (título, estado, origen y botón), así que el año no salta. -->
+  <!-- El día elegido: mide lo mismo con cualquier día (título, estado, origen y acciones), así que el año no salta. -->
   <section class="cal__detalle" aria-live="polite">
     <h3 class="cal__detalle-titulo sc-text-body-semibold">{{ detalle().titulo }}</h3>
     <p class="cal__detalle-horas">
@@ -26,13 +26,28 @@
       }
     </p>
     <p class="cal__detalle-motivo sc-text-caption-regular">{{ detalle().motivo }}</p>
-    <sc-button
-      variant="secondary"
-      appearance="outlined"
-      size="sm"
-      [label]="(detalle().dia.especial ? 'repositories.horarios.calendar.edit_special' : 'repositories.horarios.calendar.change_day') | translate"
-      (clicked)="cambiarDia.emit(detalle().fecha)"
-    />
+    <!-- Lo que decide el día se edita en su sitio (DD-254): su periodo, la semana o sus festivos; y aparte, solo ese día,
+         que es crear una fecha especial. Si ya es una fecha especial, se edita ella. -->
+    <div class="cal__detalle-acciones">
+      @if (origen(); as clave) {
+        <sc-button variant="secondary" appearance="outlined" size="sm" [label]="clave | translate" (clicked)="editarOrigen()" />
+        <sc-button
+          variant="secondary"
+          appearance="text"
+          size="sm"
+          [label]="'repositories.horarios.calendar.only_this_day' | translate"
+          (clicked)="cambiarDia.emit(detalle().fecha)"
+        />
+      } @else {
+        <sc-button
+          variant="secondary"
+          appearance="outlined"
+          size="sm"
+          [label]="'repositories.horarios.calendar.edit_special' | translate"
+          (clicked)="cambiarDia.emit(detalle().fecha)"
+        />
+      }
+    </div>
   </section>
 
   <sc-divider />

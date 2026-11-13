@@ -26,6 +26,8 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
 
 ### Added
 
+- **`@smartcontact-hub/components`** — `sc-datepicker` gana `defaultDate`: el mes que enseña al abrir mientras no hay
+  nada elegido, sin marcar ningún día. ([DD-254](docs/DECISIONS.md))
 - **`@smartcontact-hub/components`** — `sc-datepicker` gana `selectionMode="multiple"` (con el modelo `dates`), `timeOnly`,
   `stepMinute` y `ariaLabel`: los días de una fecha especial y la hora de una franja de los horarios del Supervisor.
   ([DD-251](docs/DECISIONS.md))
@@ -89,6 +91,9 @@ de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
 
 ### Changed
 
+- **`@smartcontact-hub/components`** — `sc-datepicker` pasa a PrimeNG una lista vacía como `null`: al desmarcar el
+  último día de `multiple`, el calendario ya no salta al mes de hoy. El tooltip del tema parte en dos líneas iguales
+  (`text-wrap: balance`) cuando no cabe en una. ([DD-254](docs/DECISIONS.md))
 - **`@smartcontact-hub/components`** — `sc-datepicker` en línea (`inline`) ya no cambia a la vista de meses o de años
   al pulsar el título (se navega con las flechas) y reserva siempre seis semanas: al pasar de mes no cambia de alto ni
   mueve lo que lo rodea. `sc-section-card` y `sc-subsection` recortan con `overflow: clip` en vez de `hidden` (mismo

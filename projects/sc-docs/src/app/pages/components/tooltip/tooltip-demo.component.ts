@@ -26,6 +26,10 @@ const TECLADO_SNIPPET = `<!-- En algo que se enfoca, también con el teclado: po
   tooltipEvent="both"
 />`;
 
+const BARRA_SNIPPET = `<!-- En la barra superior (lo que una pantalla pone en su #topbarActions), abajo: arriba no cabe
+     y PrimeNG lo bajaría solo; se escribe donde sale. -->
+<sc-button label="Guardar" [disabled]="true" pTooltip="El nombre es obligatorio" tooltipPosition="bottom" />`;
+
 /**
  * Demo del tooltip del Kit en formato story. No hay `sc-tooltip`: es el `pTooltip` de PrimeNG tal cual, con el tema del
  * DS (DD-212), y su API, en la tabla de abajo, es la de la versión instalada. Sin Playground: sus knobs escribirían un
@@ -43,12 +47,13 @@ export class TooltipDemoComponent {
   protected readonly cortadoTpl = viewChild<TemplateRef<StoryContext>>('cortado');
   protected readonly apagadoTpl = viewChild<TemplateRef<StoryContext>>('apagado');
   protected readonly tecladoTpl = viewChild<TemplateRef<StoryContext>>('teclado');
+  protected readonly barraTpl = viewChild<TemplateRef<StoryContext>>('barra');
 
   protected readonly meta: StoryMeta = {
     tag: 'pTooltip',
     title: 'Tooltip',
     description:
-      'Lo que se lee al pasar el ratón: el nombre de un icono, un texto cortado o por qué un botón está apagado. Es el pTooltip de PrimeNG tal cual, con el tema del DS, sobre el elemento que lo necesita; nunca un title, que el navegador enseña con su globo del sistema (DD-212).',
+      'Lo que se lee al pasar el ratón: el nombre de un icono, un texto cortado o por qué un botón está apagado. Es el pTooltip de PrimeNG tal cual, con el tema del DS, sobre el elemento que lo necesita; nunca un title, que el navegador enseña con su globo del sistema (DD-212). Siempre con su posición: arriba, y abajo en la barra superior; nunca a la izquierda. Dice una frase sin punto final y, si no cabe en una línea, parte en dos iguales (DD-254).',
     argTypes: [],
     defaultArgs: {},
   };
@@ -58,12 +63,14 @@ export class TooltipDemoComponent {
     const co = this.cortadoTpl();
     const ap = this.apagadoTpl();
     const te = this.tecladoTpl();
-    if (!ic || !co || !ap || !te) return [];
+    const ba = this.barraTpl();
+    if (!ic || !co || !ap || !te || !ba) return [];
     return [
       { name: 'Un icono con significado', template: ic, snippet: ICONO_SNIPPET },
       { name: 'Un texto cortado', template: co, snippet: CORTADO_SNIPPET },
       { name: 'Un botón apagado', template: ap, snippet: APAGADO_SNIPPET },
       { name: 'Con teclado', template: te, snippet: TECLADO_SNIPPET },
+      { name: 'En la barra superior', template: ba, snippet: BARRA_SNIPPET },
     ];
   });
 }

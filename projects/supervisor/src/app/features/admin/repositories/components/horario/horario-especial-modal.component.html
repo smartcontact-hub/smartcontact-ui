@@ -18,7 +18,14 @@
         />
       } @else {
         <span class="field__label sc-text-caption-semibold">{{ 'repositories.horarios.special_dates' | translate }}</span>
-        <sc-datepicker inline selectionMode="multiple" [ariaLabel]="'repositories.horarios.special_dates' | translate" [dates]="fechas()" (datesChange)="fechas.set($event ?? [])" />
+        <sc-datepicker
+          inline
+          selectionMode="multiple"
+          [ariaLabel]="'repositories.horarios.special_dates' | translate"
+          [defaultDate]="mesDeInicio()"
+          [dates]="fechas()"
+          (datesChange)="fechas.set($event ?? [])"
+        />
         @if (errorDeFechas(); as error) {
           <p class="field__error sc-text-caption-regular" role="alert">{{ error }}</p>
         } @else {

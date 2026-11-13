@@ -22,7 +22,7 @@
     variant="primary"
     [disabled]="!canSave()"
     [loading]="saving()"
-    [pTooltip]="motivoApagado()" tooltipPosition="top"
+    [pTooltip]="motivoApagado()" tooltipPosition="bottom"
     [label]="(mode() === 'edit' ? 'common.save' : 'users.form.create_submit') | translate"
     (clicked)="save()"
   />

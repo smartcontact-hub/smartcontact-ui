@@ -13,7 +13,9 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  *   5. en la ficha de grupo, la ayuda de Prioridad dice que solo cuenta en las conversaciones entrantes («Duplicar grupo»,
  *      que la compartía, ya no es un diálogo: DD-217);
  *   6. Monitor y Conversaciones, igual: sin `title` nativo, y sus iconos (la presencia, lo que hace una regla) dicen su
- *      nombre en el tooltip. Lo cortado de sus tablas lo miden `dashboard` y `conversations-table-scroll`.
+ *      nombre en el tooltip. Lo cortado de sus tablas lo miden `dashboard` y `conversations-table-scroll`;
+ *   7. un tooltip que no cabe en una línea parte en dos iguales, sin una palabra sola abajo (DD-254). Las demás leyes de
+ *      DD-254 (la posición declarada, abajo en la barra, sin punto final) las vigila `audit:tooltips`.
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -82,6 +84,23 @@ test('«Crear grupo» apagado dice en el tooltip lo que falta', async ({ page })
   await expect(crear).toBeDisabled();
   await page.locator('sc-top-bar sc-button', { has: crear }).hover();
   await expect(tooltip(page)).toHaveText('Falta: nombre, teléfono saliente');
+});
+
+test('un tooltip que parte en dos, parte equilibrado: sin una palabra sola abajo (DD-254)', async ({ page }) => {
+  await goto(page, 'admin/grupos/crear');
+  const crear = page.getByRole('button', { name: 'Crear grupo', exact: true });
+  await page.locator('sc-top-bar sc-button', { has: crear }).hover();
+  await expect(tooltip(page)).toHaveText('Falta: nombre, teléfono saliente');
+  // El ancho de cada línea del texto, por su caja en pantalla. Sin `text-wrap: balance` salía 153 y 51 («saliente»
+  // sola); con el tope del Kit a 252 cabe en una, y una línea también cumple.
+  const lineas = await page.locator('.p-tooltip-text').evaluate((el) => {
+    const r = document.createRange();
+    r.selectNodeContents(el);
+    const porFila = new Map<number, number>();
+    for (const x of r.getClientRects()) porFila.set(Math.round(x.top), (porFila.get(Math.round(x.top)) ?? 0) + x.width);
+    return [...porFila.values()];
+  });
+  expect(Math.min(...lineas) / Math.max(...lineas), `líneas de ${lineas.map(Math.round).join(' y ')} px`).toBeGreaterThanOrEqual(0.5);
 });
 
 test('ficha de grupo: la ayuda de Prioridad dice que solo cuenta en las conversaciones entrantes', async ({ page }) => {

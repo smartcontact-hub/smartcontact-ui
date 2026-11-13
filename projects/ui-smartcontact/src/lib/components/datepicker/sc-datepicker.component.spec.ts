@@ -101,3 +101,55 @@ describe('sc-datepicker · días sueltos y solo la hora', () => {
     expect(input.getAttribute('aria-label')).toBe('Apertura');
   });
 });
+
+/* El mes con el que abre, sin marcar nada (DD-254): un diálogo que añade fechas abre en el mes que ya se miraba. */
+@Component({
+  standalone: true,
+  imports: [ScDatepickerComponent],
+  // Como el diálogo de fechas especiales: lo que emite, a una lista, y vacía si no hay nada (`$event ?? []`).
+  template: `<sc-datepicker inline selectionMode="multiple" ariaLabel="Fechas" [defaultDate]="junio" [dates]="dias()" (datesChange)="dias.set($event ?? [])" />`,
+})
+class HostConMesInicial {
+  readonly junio = new Date(2030, 5, 15);
+  readonly dias = signal<readonly Date[] | null>([]);
+}
+
+describe('sc-datepicker · el mes con el que abre (DD-254)', () => {
+  async function montarConMes() {
+    const fixture = TestBed.createComponent(HostConMesInicial);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    const raiz = fixture.nativeElement as HTMLElement;
+    const mes = () => `${raiz.querySelector('.p-datepicker-select-month')?.textContent?.trim()} ${raiz.querySelector('.p-datepicker-select-year')?.textContent?.trim()}`;
+    return { fixture, raiz, mes };
+  }
+
+  it('con la lista vacía, abre en el mes de `defaultDate` y sin ningún día marcado', async () => {
+    const { fixture, raiz, mes } = await montarConMes();
+    expect(mes()).toBe('June 2030');
+    expect(raiz.querySelectorAll('.p-datepicker-day-selected')).toHaveLength(0);
+    expect(fixture.componentInstance.dias()).toEqual([]);
+  });
+
+  it('desmarcar el último día no lo mueve de mes', async () => {
+    const { fixture, raiz, mes } = await montarConMes();
+    for (let i = 0; i < 2; i++) {
+      raiz.querySelector<HTMLButtonElement>('.p-datepicker-next-button')!.click();
+      fixture.detectChanges();
+    }
+    const antes = mes();
+    const dia = () => raiz.querySelectorAll<HTMLElement>('td:not(.p-datepicker-other-month) .p-datepicker-day')[9];
+    dia().click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    expect(fixture.componentInstance.dias()?.map((d) => d.getDate())).toEqual([10]);
+    dia().click();
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    expect(fixture.componentInstance.dias()).toEqual([]);
+    expect(mes()).toBe(antes);
+  });
+});
