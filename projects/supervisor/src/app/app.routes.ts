@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { rutaInterna } from '@shared/utils/ruta-interna.core.mjs';
+import { entrarEnLab } from './features/lab/horarios/lab-modo';
 
 /**
  * Marca de la PESTAÑA: con ella la app se enmarca en el laboratorio del Sidebar en vez del shell.
@@ -94,6 +95,21 @@ export const appRoutes: Routes = [
         path: 'lab/tabla',
         loadComponent: () =>
           import('./features/lab/table-lab-page.component').then((m) => m.TableLabPageComponent),
+      },
+      /* Laboratorio de Horarios: listado, alta y edición rehechos sin atarse a las decisiones de la pantalla real. Lee y
+       * escribe los mismos almacenes que /admin/horarios, así que lo que se cree aquí se ve allí. */
+      {
+        path: 'lab/horarios',
+        canActivate: [entrarEnLab],
+        data: { breadcrumb: [{ labelKey: 'sidebar.administration', link: false as const }, { labelKey: 'sidebar.repositories', link: '/admin/repositorios' }, { labelKey: 'Tiempo', link: '/lab/horarios' }] },
+        children: [
+          { path: '', loadComponent: () => import('./features/lab/horarios/lab-tiempo.component').then((m) => m.LabTiempoComponent) },
+          { path: 'crear', loadComponent: () => import('./features/lab/horarios/lab-horario-editor.component').then((m) => m.LabHorarioEditorComponent) },
+          { path: 'editar/:id', loadComponent: () => import('./features/lab/horarios/lab-horario-editor.component').then((m) => m.LabHorarioEditorComponent) },
+          { path: 'festivos', pathMatch: 'full', redirectTo: '/lab/horarios?lista=festivos' },
+          { path: 'festivos/crear', loadComponent: () => import('./features/lab/horarios/lab-festivos-editor.component').then((m) => m.LabFestivosEditorComponent) },
+          { path: 'festivos/editar/:id', loadComponent: () => import('./features/lab/horarios/lab-festivos-editor.component').then((m) => m.LabFestivosEditorComponent) },
+        ],
       },
       {
         path: 'lab/arbol',

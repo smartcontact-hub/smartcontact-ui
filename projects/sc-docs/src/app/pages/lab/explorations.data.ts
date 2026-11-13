@@ -251,4 +251,14 @@ export const LABS: readonly Lab[] = [
     href: 'https://sc-supervisor.pages.dev/lab/tabla',
     label: 'sc-supervisor.pages.dev/lab/tabla',
   },
+  {
+    id: 'lab-horarios',
+    title: 'Horarios, sin scroll',
+    question: '¿Cómo se monta un horario con su semana, sus festivos y sus excepciones sin perder el calendario de vista?',
+    controls: ['Días en bolitas por tramo', 'Calendario: 3 meses o año', 'Elegir día, rango o semana', 'Festivos precargados'],
+    where: 'Abre un horario de la lista; «Festivos» importa los de un país o comunidad.',
+    // Vive en su rama experimental: el preview de la rama, no producción.
+    href: 'https://claude-lab-horarios.sc-supervisor.pages.dev/lab/horarios',
+    label: 'claude-lab-horarios.sc-supervisor.pages.dev/lab/horarios',
+  },
 ];

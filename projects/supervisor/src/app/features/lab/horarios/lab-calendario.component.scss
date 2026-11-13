@@ -1,0 +1,208 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1);
+  min-block-size: 0;
+}
+
+.barra {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+}
+
+.barra__titulo {
+  min-inline-size: 15rem;
+  margin: 0;
+  text-align: center;
+
+  &::first-letter {
+    text-transform: uppercase;
+  }
+}
+
+.barra__ayuda {
+  margin-inline-start: var(--sc-spacing-1);
+  color: var(--sc-text-secondary);
+}
+
+.barra__vista {
+  margin-inline-start: auto;
+}
+
+.meses {
+  display: grid;
+  flex: 1;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--sc-spacing-2);
+  min-block-size: 0;
+}
+
+
+.mes__nombre {
+  margin: 0 0 var(--sc-spacing-0-25);
+
+  &::first-letter {
+    text-transform: uppercase;
+  }
+}
+
+/* El número de semana delante, más estrecho; luego los siete días. */
+.mes__rejilla {
+  display: grid;
+  grid-template-columns: 1.5rem repeat(7, minmax(0, 1fr));
+  gap: var(--sc-spacing-0-125);
+}
+
+.mes__inicial,
+.mes__sem {
+  padding: 0;
+  border: 0;
+  border-radius: var(--sc-radius-sm);
+  background: transparent;
+  color: var(--sc-text-secondary);
+  text-align: center;
+}
+
+button.mes__inicial,
+button.mes__sem {
+  cursor: pointer;
+
+  &:hover {
+    background: var(--sc-bg-hover);
+    color: var(--sc-text-primary);
+  }
+}
+
+.mes__sem {
+  color: var(--sc-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.dia {
+  position: relative;
+  padding: 0;
+  border: 0;
+  border-radius: var(--sc-radius-sm);
+  background: transparent;
+  color: var(--sc-text-primary);
+  cursor: pointer;
+  font-variant-numeric: tabular-nums;
+  transition:
+    background-color 150ms ease-out,
+    transform 150ms ease-out;
+
+  &:hover {
+    background: var(--sc-bg-hover);
+  }
+
+  &:active {
+    transform: scale(0.96);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-border-focus);
+    outline-offset: 1px;
+  }
+}
+
+.meses:not(.meses--anio) .dia {
+  block-size: 1.875rem;
+}
+
+.tira {
+  display: grid;
+  flex: 1;
+  grid-template-columns: 2.5rem repeat(31, minmax(0, 1fr));
+  grid-auto-rows: minmax(0.875rem, 1fr);
+  gap: var(--sc-spacing-0-125);
+  min-block-size: 0;
+}
+
+.tira__num {
+  color: var(--sc-text-secondary);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.tira__mes {
+  align-self: center;
+  text-transform: capitalize;
+}
+
+/* En la tira un día es un cuadradito sin número: el título dice cuál es. Abierto = blanco con borde; el fin de semana,
+ * un poco más oscuro para orientarse. */
+.dia--tira {
+  min-block-size: 0.875rem;
+  border: 1px solid var(--sc-border-default);
+}
+
+.dia--tira.dia--cerrado.dia--cerrado.dia--cerrado {
+  border-color: transparent;
+  background: repeating-linear-gradient(-45deg, var(--sc-bg-secondary-subtle) 0 3px, transparent 3px 5px), var(--sc-bg-secondary-subtle);
+}
+
+.dia--tira.dia--hoy {
+  outline: 2px solid var(--sc-border-primary);
+  outline-offset: 0;
+}
+
+.dia--tira.dia--marca::after {
+  inset-block-start: 1px;
+  inset-inline-end: 1px;
+  inline-size: 3px;
+  block-size: 3px;
+}
+
+.dia--periodo {
+  @each $color in ('blue', 'green', 'purple', 'orange', 'teal', 'amber', 'red', 'brown') {
+    &[data-color='#{$color}'] {
+      background: var(--sc-label-#{$color}-bg);
+      color: var(--sc-label-#{$color}-text);
+    }
+  }
+}
+
+.dia--cerrado.dia--cerrado.dia--cerrado {
+  background: var(--sc-bg-secondary-subtle);
+  color: var(--sc-text-secondary);
+  text-decoration: line-through;
+}
+
+.dia--marca::after {
+  position: absolute;
+  inset-block-start: var(--sc-spacing-0-125);
+  inset-inline-end: var(--sc-spacing-0-125);
+  inline-size: var(--sc-spacing-0-25);
+  block-size: var(--sc-spacing-0-25);
+  border-radius: var(--sc-radius-full);
+  background: var(--sc-icon-primary);
+  content: '';
+}
+
+.dia--hoy {
+  font-weight: var(--sc-font-weight-semibold);
+  text-decoration: underline;
+}
+
+/* Lo elegido: relleno de marca, como el rango de un selector de fechas. Gana a periodo y cerrado mientras está elegido. */
+.dia--elegido.dia--elegido.dia--elegido.dia--elegido {
+  background: var(--sc-bg-primary);
+  color: var(--sc-text-on-primary);
+}
+
+.dia--extremo {
+  font-weight: var(--sc-font-weight-semibold);
+}
+
+.dia--resaltado {
+  box-shadow: 0 0 0 2px var(--sc-border-primary);
+}
+
+/* Un festivo o un día especial cerrado: rojo de calendario de pared, para que se lea de un vistazo entre los cerrados de
+ * la semana (que van rayados). */
+.dia--marca.dia--cerrado.dia--cerrado.dia--cerrado.dia--cerrado {
+  border-color: var(--sc-border-danger);
+  background: var(--sc-bg-danger-subtle-active);
+  color: var(--sc-label-red-text);
+}

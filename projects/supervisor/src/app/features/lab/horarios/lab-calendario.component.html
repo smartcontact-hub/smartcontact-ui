@@ -1,0 +1,102 @@
+<div class="barra">
+  <sc-button variant="secondary" appearance="text" size="sm" icon="chevron_left" [ariaLabel]="t.anterior" (clicked)="mover(-1)" />
+  <h3 class="barra__titulo sc-text-body-semibold">{{ titulo() }}</h3>
+  <sc-button variant="secondary" appearance="text" size="sm" icon="chevron_right" [ariaLabel]="t.siguiente" (clicked)="mover(1)" />
+  <sc-button variant="secondary" appearance="outlined" size="sm" label="Hoy" (clicked)="irAHoy()" />
+  <span class="barra__ayuda sc-text-caption-regular">Clic, un día; Mayús+clic, un rango; nº de semana, la semana entera</span>
+  <sc-selectbutton
+    class="barra__vista"
+    size="sm"
+    [ariaLabel]="t.vista"
+    [options]="vistas"
+    optionLabel="label"
+    optionValue="value"
+    [allowEmpty]="false"
+    [value]="vista()"
+    (valueChange)="vista.set($any($event))"
+  />
+</div>
+
+@if (vista() === 'anio') {
+  <!-- El año en una tira: un mes por fila y los días en columnas del 1 al 31, para ver de un vistazo temporadas y
+       cierres sin desplazar nada. -->
+  <div class="tira" role="group" [attr.aria-label]="t.anio" (keydown)="teclado($event)">
+    <span></span>
+    @for (n of numeros; track n) {
+      <span class="tira__num sc-text-caption-regular" aria-hidden="true">{{ n }}</span>
+    }
+    @for (mes of meses(); track mes.clave) {
+      <span class="tira__mes sc-text-caption-semibold">{{ mes.nombre.slice(0, 3) }}</span>
+      @for (semana of mes.semanas; track semana.lunes) {
+        @for (celda of semana.celdas; track $index) {
+          @if (celda) {
+            <button
+              type="button"
+              class="dia dia--tira"
+              [class.dia--finde]="esFinde(celda.fecha)"
+              [class.dia--cerrado]="!celda.abierto"
+              [class.dia--periodo]="celda.color"
+              [class.dia--marca]="celda.marca"
+              [class.dia--hoy]="celda.fecha === hoy()"
+              [class.dia--elegido]="elegida(celda.fecha)"
+              [class.dia--resaltado]="resaltadas().has(celda.fecha)"
+              [attr.data-color]="celda.color"
+              [attr.aria-label]="celda.aria"
+              [pTooltip]="celda.aria" tooltipPosition="top" tooltipEvent="both"
+              [attr.aria-pressed]="elegida(celda.fecha)"
+              (click)="elegir(celda.fecha, $event)"
+            ></button>
+          }
+        }
+      }
+      @for (h of huecosFinDeMes(mes.semanas); track $index) {
+        <span></span>
+      }
+    }
+  </div>
+} @else {
+<div class="meses" [class.meses--anio]="vista() === 'anio'" role="group" [attr.aria-label]="t.calendario" (keydown)="teclado($event)">
+  @for (mes of meses(); track mes.clave) {
+    <section class="mes">
+      <h4 class="mes__nombre sc-text-caption-semibold">{{ mes.nombre }}</h4>
+      <div class="mes__rejilla">
+        <span class="mes__sem sc-text-caption-regular" aria-hidden="true"></span>
+        @for (letra of letras; track d; let d = $index) {
+          <button type="button" class="mes__inicial sc-text-caption-regular" [pTooltip]="'Ver los ' + nombres[d] + ' en la semana habitual'" tooltipPosition="top" tooltipEvent="both" (click)="diaDeSemana.emit(d)">{{ letra }}</button>
+        }
+        @for (semana of mes.semanas; track semana.lunes) {
+          <button
+            type="button"
+            class="mes__sem sc-text-caption-regular"
+            [attr.aria-label]="t.elegirSemana(semana.numero)"
+            (click)="elegirSemana(semana.lunes)"
+          >{{ semana.numero }}</button>
+          @for (celda of semana.celdas; track $index) {
+            @if (celda) {
+              <button
+                type="button"
+                class="dia"
+                [class.sc-text-caption-regular]="vista() === 'anio'"
+                [class.sc-text-body-regular]="vista() === 'meses'"
+                [class.dia--cerrado]="!celda.abierto"
+                [class.dia--periodo]="celda.color"
+                [class.dia--marca]="celda.marca"
+                [class.dia--hoy]="celda.fecha === hoy()"
+                [class.dia--elegido]="elegida(celda.fecha)"
+                [class.dia--extremo]="extremo(celda.fecha)"
+                [class.dia--resaltado]="resaltadas().has(celda.fecha)"
+                [attr.data-color]="celda.color"
+                [attr.aria-label]="celda.aria"
+                [attr.aria-pressed]="elegida(celda.fecha)"
+                (click)="elegir(celda.fecha, $event)"
+              >{{ celda.numero }}</button>
+            } @else {
+              <span></span>
+            }
+          }
+        }
+      </div>
+    </section>
+  }
+</div>
+}

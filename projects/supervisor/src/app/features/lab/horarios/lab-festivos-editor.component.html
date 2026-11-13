@@ -1,0 +1,105 @@
+<ng-template #topbarActions>
+  @if (dirty()) {
+    @if (mode() === 'edit') {
+      <span class="sin-guardar sc-text-caption-regular" role="status">Cambios sin guardar</span>
+    }
+    <sc-button variant="secondary" appearance="outlined" label="Deshacer" (clicked)="discard()" />
+  }
+  <sc-button variant="primary" [disabled]="!puedeGuardar()" [pTooltip]="motivo()" tooltipPosition="bottom" tooltipEvent="both" [label]="mode() === 'create' ? 'Crear lista' : 'Guardar'" (clicked)="save()" />
+</ng-template>
+
+<div class="lab">
+  <header class="cab">
+    <div class="cab__titulo">
+      <sc-icon name="event_busy" />
+      <h1 class="sc-text-title-semibold">{{ form().name.trim() || 'Nueva lista de festivos' }}</h1>
+    </div>
+    <div class="cab__datos sc-text-caption-regular">
+      <span class="cab__dato"><span class="muestra muestra--festivo" aria-hidden="true"></span>{{ form().days.length === 0 ? 'Sin días todavía' : form().days.length + (form().days.length === 1 ? ' día cerrado' : ' días cerrados') }}</span>
+      <span class="cab__dato"><sc-icon name="schedule" size="sm" />{{ aplicada().length === 0 ? 'Ningún horario la aplica' : 'La aplican ' + aplicada().length + (aplicada().length === 1 ? ' horario' : ' horarios') }}</span>
+    </div>
+  </header>
+
+  <div class="rejilla">
+    <!-- Izquierda: qué es la lista y a quién se aplica. -->
+    <aside class="col-semana">
+      <section class="panel panel--general">
+        <h2 class="panel__titulo sc-text-body-semibold">Datos</h2>
+        <sc-inputtext inputId="lab-lista-nombre" fluid required label="Nombre" [placeholder]="t.ejemploLista" [value]="form().name" (valueChange)="update('name', $event)" />
+        <sc-inputtext inputId="lab-lista-desc" fluid label="Descripción" [placeholder]="t.opcional" [value]="form().description" (valueChange)="update('description', $event)" />
+        <div class="interruptor">
+          <sc-toggleswitch inputId="lab-lista-activa" [checked]="form().status === 'active'" (checkedChange)="update('status', $event ? 'active' : 'inactive')" />
+          <label for="lab-lista-activa" class="sc-text-body-regular">Activa</label>
+          <span class="sc-text-caption-regular interruptor__ayuda">Apagada, ningún horario cierra por ella.</span>
+        </div>
+      </section>
+
+      <section class="panel panel--semana">
+        <div class="panel__cab">
+          <h2 class="panel__titulo sc-text-body-semibold">Horarios que la aplican</h2>
+        </div>
+        <p class="sc-text-caption-regular nota aplica__ayuda">Un horario que la aplica cierra todos sus días. Enciéndelo aquí y no tienes que ir horario por horario.</p>
+        <div class="panel__cuerpo">
+          @if (filasHorarios().length === 0) {
+            <p class="sc-text-caption-regular nota">Aún no hay horarios.</p>
+          } @else {
+            <ul class="aplica" role="list">
+              @for (h of filasHorarios(); track h.id) {
+                <li class="aplica__fila">
+                  <sc-toggleswitch [inputId]="'lab-aplica-' + h.id" [checked]="h.aplicada" (checkedChange)="alternarHorario(h.id, $event)" />
+                  <label class="sc-text-body-regular" [for]="'lab-aplica-' + h.id">{{ h.nombre }}</label>
+                </li>
+              }
+            </ul>
+          }
+        </div>
+      </section>
+    </aside>
+
+    <!-- Derecha: el calendario para marcar días y, debajo, los días con su nombre. -->
+    <div class="col-tiempo">
+      <section class="panel panel--calendario">
+        <sc-lab-calendario
+          [reglas]="reglas"
+          [calendarios]="calendarios()"
+          [hoy]="hoy"
+          [resaltadas]="resaltadas()"
+          [(seleccion)]="seleccion"
+          [(inicio)]="inicio"
+          [(vista)]="vista"
+        />
+
+        <div class="elegido" aria-live="polite">
+          @if (elegido(); as e) {
+            <div class="elegido__texto">
+              <span class="elegido__titulo sc-text-body-semibold">{{ e.titulo }}</span>
+              @if (e.ya === e.fechas.length) {
+                <sc-tag severity="secondary" [value]="e.fechas.length === 1 ? 'En la lista' : 'Todos en la lista'" />
+                @if (e.nombre) {
+                  <span class="sc-text-body-regular">{{ e.nombre }}</span>
+                }
+              } @else if (e.ya > 0) {
+                <span class="elegido__origen sc-text-caption-regular">{{ e.ya }} ya están en la lista</span>
+              }
+            </div>
+            <div class="elegido__acciones">
+              @if (e.ya < e.fechas.length) {
+                <sc-button variant="primary" size="sm" icon="add" [label]="e.fechas.length === 1 ? 'Añadir como festivo' : 'Añadir ' + (e.fechas.length - e.ya) + ' días'" (clicked)="anadirElegidos()" />
+              }
+              @if (e.ya > 0) {
+                <sc-button variant="danger" appearance="outlined" size="sm" [label]="e.ya === 1 ? 'Quitar de la lista' : 'Quitar ' + e.ya + ' días'" (clicked)="quitarElegidos()" />
+              }
+              <sc-button variant="secondary" appearance="text" size="sm" icon="close" [ariaLabel]="t.soltar" (clicked)="seleccion.set(null)" />
+            </div>
+          } @else {
+            <span class="elegido__vacio sc-text-caption-regular">Pulsa un día para añadirlo o quitarlo. Mayús+clic elige varios seguidos.</span>
+          }
+        </div>
+      </section>
+
+      <section class="panel panel--lista">
+        <sc-lab-dias-lista [days]="form().days" (daysChange)="update('days', $event)" [anio]="anio()" [hoy]="hoy" [nuevo]="nuevo()" (ver)="irA($event)" (resaltar)="resaltar($event)" />
+      </section>
+    </div>
+  </div>
+</div>

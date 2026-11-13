@@ -50,6 +50,8 @@
   tableTestId="repo-table"
   (exportRequest)="onExport($event)"
 >
+  <!-- Lo que la página que la usa quiera poner entre el título y la barra (unas pestañas, un aviso). -->
+  <ng-container ngProjectAs="[scListBeforeToolbar]"><ng-content select="[repoBeforeToolbar]" /></ng-container>
   <!-- Sin filas: con búsqueda, «Sin resultados» y limpiarla; sin búsqueda, que aún no hay ninguno y crear el
        primero. El MISMO vacío del DS que el resto de listas (2026-09-14). -->
   <div scListNoResults>
@@ -107,7 +109,15 @@
     } @else if (getStatusEntry(item, col.field); as status) {
       <!-- Estado con el `tag` del DS y su severidad (DD-76): Figma dibuja así el estado
            de Agentes. El tono lo declara cada instancia en su `statusMap`. -->
-      <sc-tag [severity]="status.tone" [value]="status.labelKey | translate" />
+      @if (statusDetail(item, col.field); as detalle) {
+        <!-- Etiqueta y detalle en UNA línea: si el detalle no cabe se corta con «…» y el globo lo dice entero. -->
+        <span class="table__status">
+          <sc-tag [severity]="status.tone" [value]="status.labelKey | translate" />
+          <span class="table__status-detail sc-text-caption-regular" [pTooltip]="detalle" tooltipPosition="top" tooltipEvent="both">{{ detalle }}</span>
+        </span>
+      } @else {
+        <sc-tag [severity]="status.tone" [value]="status.labelKey | translate" />
+      }
     } @else if (showDash(item, col.field)) {
       <sc-celda-vacia />
     } @else {
