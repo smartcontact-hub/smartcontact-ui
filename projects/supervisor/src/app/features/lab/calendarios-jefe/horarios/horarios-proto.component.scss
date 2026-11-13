@@ -1,0 +1,312 @@
+/* Lo propio de «Horarios y calendarios»: marcas por horario, la línea de tiempo de semana y día, reglas y simulador. */
+
+.hc-calitems {
+  margin-block-start: var(--sc-spacing-0-875);
+}
+.hc-caption {
+  padding: var(--sc-spacing-0-75);
+}
+.hc-zone {
+  gap: var(--sc-spacing-0-375);
+  margin-block-start: var(--sc-spacing-0-375);
+}
+.hc-subrow {
+  margin-block: var(--sc-spacing-1-25);
+}
+.hc-split {
+  grid-template-columns: minmax(0, 1fr) 15rem;
+
+  @media (max-width: 1150px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* El día del año: abierto pinta el fondo del primer horario; debajo, una marca por horario que coincide. */
+.hc-date {
+  height: 1.75rem;
+  border: 0;
+  padding: 0;
+  position: relative;
+  border-radius: var(--sc-radius-50);
+  background: var(--sc-bg-subtle);
+  color: var(--sc-text-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-125);
+  cursor: pointer;
+
+  &.is-open {
+    background: var(--wash);
+    color: var(--sc-text-primary);
+  }
+  &.is-selected {
+    outline: 2px solid var(--sc-text-heading);
+    outline-offset: 1px;
+  }
+  &:focus-visible {
+    outline: 2px solid var(--sc-border-focus);
+    outline-offset: 1px;
+  }
+  &.is-special::after {
+    /* El rombo del prototipo, dibujado: sin glifo no hace falta tamaño de letra. */
+    content: '';
+    width: 0.3125rem;
+    height: 0.3125rem;
+    transform: rotate(45deg);
+    position: absolute;
+    inset-block-start: 2px;
+    inset-inline-end: 2px;
+    background: var(--sc-label-amber-dot);
+  }
+}
+.hc-marks {
+  display: flex;
+  gap: var(--sc-spacing-0-125);
+  justify-content: center;
+  height: 3px;
+
+  i {
+    width: 0.4375rem;
+    height: 3px;
+    background: var(--c);
+    border-radius: var(--sc-radius-50);
+  }
+}
+.hc-openlabel {
+  display: block;
+  margin-block-start: var(--sc-spacing-0-375);
+}
+.hc-legend__item {
+  gap: var(--sc-spacing-0-375);
+}
+
+/* Semana y día: una columna por día sobre una regla de 24 horas. */
+.hc-timeline {
+  overflow: auto;
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-100);
+}
+.hc-timehead,
+.hc-timebody {
+  display: grid;
+  grid-template-columns: 2.625rem repeat(var(--cols), minmax(4rem, 1fr));
+  min-width: 31rem;
+}
+.hc-timehead > button {
+  border: 0;
+  border-inline-start: 1px solid var(--sc-border-default);
+  background: var(--sc-bg-surface);
+  color: var(--sc-text-primary);
+  text-align: center;
+  padding: var(--sc-spacing-0-75) var(--sc-spacing-0-125);
+  cursor: pointer;
+
+  &.is-selected {
+    background: var(--sc-bg-primary-subtle);
+  }
+}
+.hc-timebody {
+  height: 36rem;
+}
+.hc-ruler {
+  position: relative;
+  background: var(--sc-bg-canvas);
+}
+.hc-tick {
+  position: absolute;
+  inset-inline-end: 0.3125rem;
+  color: var(--sc-text-secondary);
+  transform: translateY(-50%);
+}
+.hc-lane {
+  position: relative;
+  border-inline-start: 1px solid var(--sc-border-default);
+  background: repeating-linear-gradient(to bottom, transparent 0, transparent 1.4375rem, var(--sc-border-subtle) 1.4375rem, var(--sc-border-subtle) 1.5rem);
+}
+.hc-lane__closed {
+  text-align: center;
+  padding-block-start: var(--sc-spacing-1-75);
+}
+.hc-event {
+  position: absolute;
+  border: 1px solid var(--c);
+  border-inline-start: 3px solid var(--c);
+  border-radius: var(--sc-radius-50);
+  background: var(--wash);
+  padding: var(--sc-spacing-0-25);
+  overflow: hidden;
+  color: var(--sc-text-primary);
+}
+
+.hc-detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1);
+}
+.hc-detail__date {
+  margin-block: var(--sc-spacing-0-75) var(--sc-spacing-0-375);
+}
+.hc-status {
+  margin-block: var(--sc-spacing-1) var(--sc-spacing-0-875);
+}
+.hc-effective {
+  background: var(--sc-bg-info-subtle);
+  border: 1px solid var(--sc-border-info-subtle);
+  border-radius: var(--sc-radius-100);
+  padding: var(--sc-spacing-0-75);
+  margin-block-end: var(--sc-spacing-1);
+}
+.hc-schedule-line {
+  padding-block: var(--sc-spacing-0-75);
+  border-block-end: 1px solid var(--sc-border-default);
+
+  b {
+    gap: var(--sc-spacing-0-5);
+  }
+  p {
+    margin-block-start: var(--sc-spacing-0-375);
+    margin-inline-start: var(--sc-spacing-1);
+  }
+}
+.hc-explain {
+  margin-block: var(--sc-spacing-1);
+}
+
+.hc-note--first {
+  margin-block-start: 0;
+}
+.hc-card {
+  margin-block-start: var(--sc-spacing-1-125);
+}
+.hc-sub {
+  margin-block-start: var(--sc-spacing-0-375);
+}
+.hc-empty {
+  margin-block-start: var(--sc-spacing-1-25);
+}
+.hc-weekly {
+  width: 100%;
+  border-collapse: collapse;
+  margin-block-start: var(--sc-spacing-1);
+
+  th,
+  td {
+    padding: var(--sc-spacing-0-75) var(--sc-spacing-0-5);
+    text-align: start;
+    border-block-end: 1px solid var(--sc-border-default);
+  }
+  th {
+    color: var(--sc-text-secondary);
+  }
+}
+.hc-badges {
+  gap: var(--sc-spacing-0-375);
+}
+.hc-rule {
+  display: flex;
+  gap: var(--sc-spacing-0-875);
+  align-items: center;
+  border-block-start: 1px solid var(--sc-border-default);
+  padding-block: var(--sc-spacing-1);
+  margin-block-start: var(--sc-spacing-1);
+
+  &:last-child {
+    padding-block-end: 0;
+  }
+  p {
+    margin-block-start: var(--sc-spacing-0-375);
+  }
+}
+.hc-rule__symbol {
+  width: 2.25rem;
+  height: 2.25rem;
+  display: grid;
+  place-items: center;
+  background: var(--sc-bg-subtle);
+  color: var(--sc-text-secondary);
+  border-radius: var(--sc-radius-100);
+}
+
+.hc-simform {
+  align-items: flex-end;
+  margin-block-start: var(--sc-spacing-1-25);
+}
+.hc-sim-result {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sc-spacing-0-5);
+  margin-block-start: var(--sc-spacing-1-25);
+  border-inline-start: 4px solid var(--sc-border-success);
+  background: var(--sc-bg-success-subtle);
+  padding: var(--sc-spacing-1-25);
+
+  &.is-closed {
+    border-color: var(--sc-border-strong);
+    background: var(--sc-bg-subtle);
+  }
+}
+
+.hc-schedules-page {
+  margin-block-start: var(--sc-spacing-1-5);
+}
+.hc-schedule-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--sc-spacing-1);
+
+  @media (max-width: 1150px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  @media (max-width: 760px) {
+    grid-template-columns: 1fr;
+  }
+}
+.hc-schedule-card {
+  border-block-start: 3px solid var(--c);
+}
+.hc-schedule-card__slots,
+.hc-schedule-card__uso {
+  margin-block-start: var(--sc-spacing-0-75);
+}
+.hc-schedule-card__actions {
+  margin-block-start: var(--sc-spacing-1);
+}
+.hc-bar {
+  height: 1.125rem;
+  background: var(--sc-bg-subtle);
+  position: relative;
+  border-radius: var(--sc-radius-50);
+  margin-block: var(--sc-spacing-1) var(--sc-spacing-0-375);
+
+  i {
+    position: absolute;
+    top: 3px;
+    height: 0.75rem;
+    border-radius: var(--sc-radius-50);
+    background: var(--c);
+  }
+}
+
+.hc-dialog-heading {
+  margin-block: var(--sc-spacing-1) var(--sc-spacing-0-5);
+}
+.hc-checks {
+  gap: var(--sc-spacing-0-75);
+}
+.hc-check-label {
+  gap: var(--sc-spacing-0-375);
+}
+.hc-slot {
+  margin-block: var(--sc-spacing-0-625);
+
+  sc-inputtext {
+    width: 7rem;
+  }
+}
+.hc-form-error {
+  display: block;
+  margin-block-start: var(--sc-spacing-0-875);
+}

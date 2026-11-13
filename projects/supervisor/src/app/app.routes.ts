@@ -34,6 +34,16 @@ function isLabSidebarEnabled(): boolean {
   return explicit === '1' || location.hostname === LAB_SIDEBAR_PREVIEW_HOST;
 }
 
+/** Las migas de los prototipos de Calendarios del Lab: las mismas que pintaba cada HTML (Administración › Repositorios
+ * › su título). El título va tal cual: no es una clave de traducción, y sin clave el servicio de migas lo deja como está. */
+const labCalendarios = (titulo: string) => ({
+  breadcrumb: [
+    { labelKey: 'sidebar.administration', link: false as const },
+    { labelKey: 'sidebar.repositories', link: '/admin/repositorios' as const },
+    { labelKey: titulo },
+  ],
+});
+
 /**
  * Top-level route table.
  *
@@ -101,6 +111,27 @@ export const appRoutes: Routes = [
           import('./features/lab/treetable-lab-page.component').then(
             (m) => m.TreetableLabPageComponent,
           ),
+      },
+      /* Rama experimental: los tres prototipos de Calendarios que llegaron en HTML, montados tal cual con las piezas del
+       * DS para verlos dentro del Supervisor. No sustituyen a Horarios ni enlazan con él. */
+      { path: 'lab/calendarios', pathMatch: 'full', redirectTo: 'lab/calendarios/periodos' },
+      {
+        path: 'lab/calendarios/periodos',
+        data: labCalendarios('Calendarios y horarios'),
+        loadComponent: () =>
+          import('./features/lab/calendarios-jefe/periodos/periodos-proto.component').then((m) => m.PeriodosProtoComponent),
+      },
+      {
+        path: 'lab/calendarios/horarios',
+        data: labCalendarios('Horarios y calendarios'),
+        loadComponent: () =>
+          import('./features/lab/calendarios-jefe/horarios/horarios-proto.component').then((m) => m.HorariosProtoComponent),
+      },
+      {
+        path: 'lab/calendarios/ivr',
+        data: labCalendarios('Calendarios IVR'),
+        loadComponent: () =>
+          import('./features/lab/calendarios-jefe/ivr/ivr-proto.component').then((m) => m.IvrProtoComponent),
       },
       {
         path: '',

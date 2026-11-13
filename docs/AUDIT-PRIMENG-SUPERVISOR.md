@@ -35,19 +35,19 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **64 props nativas no expuestas**: `alt`, `ariaFilterLabel`, `autoHide`, `autoOptionFocus`, `autocomplete`, `autofocus`, `autofocusFilter`, `chipIcon`, `chipProps`, `content`, `dataKey`, `displaySelectedLabel`, `dropdownIcon`, `escape`, `filterFields`, `filterLocale`, `filterMatchMode`, `filterPlaceHolder`, `filterValue`, `fitContent`, `fluid`, `focusOnHover`, `hideDelay`, `hideOnEscape`, `highlightOnSelect`, `id`, `image`, `lazy`, `life`, `loading`, `loadingIcon`, `motionOptions`, `overlayOptions`, `overlayVisible`, `pTooltipPT`, `pTooltipUnstyled`, `panelStyle`, `panelStyleClass`, `positionLeft`, `positionStyle`, `positionTop`, `readonly`, `removable`, `removeIcon`, `resetFilterOnHide`, `scrollHeight`, `selectAll`, `selectOnFocus`, `showDelay`, `showHeader`, `showOnEllipsis`, `tabindex`, `tooltip`, `tooltipDisabled`, `tooltipEvent`, `tooltipOptions`, `tooltipPosition`, `tooltipPositionStyle`, `tooltipStyleClass`, `tooltipZIndex`, `variant`, `virtualScroll`, `virtualScrollItemSize`, `virtualScrollOptions`
 
-### `sc-datepicker` · 6 usos · primeng/datepicker
+### `sc-datepicker` · 14 usos · primeng/datepicker
 
 **51 props nativas no expuestas**: `appendTo`, `ariaLabelledBy`, `autoZIndex`, `autofocus`, `baseZIndex`, `clearButtonStyleClass`, `dataType`, `disabledDates`, `disabledDays`, `firstDayOfWeek`, `fluid`, `focusTrap`, `hideOnDateTimeSelect`, `hourFormat`, `icon`, `iconAriaLabel`, `iconDisplay`, `inputSize`, `inputStyle`, `inputStyleClass`, `keepInvalid`, `max`, `maxDateCount`, `maxlength`, `min`, `minlength`, `motionOptions`, `multipleSeparator`, `numberOfMonths`, `panelStyle`, `panelStyleClass`, `pattern`, `rangeSeparator`, `readonlyInput`, `responsiveOptions`, `selectOtherMonths`, `shortYearCutoff`, `showOnFocus`, `showOtherMonths`, `showSeconds`, `showTime`, `showWeek`, `startWeekFromFirstDayOfYear`, `step`, `stepHour`, `stepSecond`, `tabindex`, `timeSeparator`, `todayButtonStyleClass`, `touchUI`, `variant`
 
-### `sc-button` · 181 usos · primeng/button, primeng/tooltip
+### `sc-button` · 245 usos · primeng/button, primeng/tooltip
 
 **43 props nativas no expuestas**: `appendTo`, `autoHide`, `autofocus`, `badge`, `badgeSeverity`, `buttonProps`, `content`, `escape`, `fitContent`, `fluid`, `hideDelay`, `hideOnEscape`, `hostName`, `iconPos`, `life`, `link`, `loadingIcon`, `outlined`, `pButton`, `pButtonIconPT`, `pButtonLabelPT`, `pButtonLabelUnstyled`, `pButtonPT`, `pButtonUnstyled`, `pTooltipPT`, `pTooltipUnstyled`, `plain`, `positionLeft`, `positionStyle`, `positionTop`, `severity`, `showDelay`, `showOnEllipsis`, `style`, `styleClass`, `tabindex`, `text`, `tooltipDisabled`, `tooltipEvent`, `tooltipOptions`, `tooltipPosition`, `tooltipStyleClass`, `tooltipZIndex`
 
-### `sc-select` · 73 usos · primeng/select
+### `sc-select` · 84 usos · primeng/select
 
 **43 props nativas no expuestas**: `ariaFilterLabel`, `autoOptionFocus`, `autofocus`, `autofocusFilter`, `checkmark`, `dataKey`, `dropdownIcon`, `filterFields`, `filterLocale`, `filterMatchMode`, `filterValue`, `fluid`, `focusOnHover`, `group`, `id`, `inputSize`, `lazy`, `loadingIcon`, `max`, `maxlength`, `min`, `minlength`, `motionOptions`, `multiple`, `optionGroupChildren`, `optionGroupLabel`, `overlayOptions`, `panelStyle`, `panelStyleClass`, `pattern`, `resetFilterOnHide`, `scrollHeight`, `selectOnFocus`, `step`, `tabindex`, `tooltip`, `tooltipPosition`, `tooltipPositionStyle`, `tooltipStyleClass`, `variant`, `virtualScroll`, `virtualScrollItemSize`, `virtualScrollOptions`
 
-### `sc-custom-modal` · 20 usos · primeng/dialog, primeng/dynamicdialog
+### `sc-custom-modal` · 23 usos · primeng/dialog, primeng/dynamicdialog
 
 **33 props nativas no expuestas**: `appendTo`, `autoZIndex`, `baseZIndex`, `blockScroll`, `breakpoints`, `closable`, `closeButtonProps`, `closeIcon`, `closeOnEscape`, `closeTabindex`, `contentStyle`, `contentStyleClass`, `draggable`, `focusOnShow`, `focusTrap`, `header`, `keepInViewport`, `maskMotionOptions`, `maskStyle`, `maskStyleClass`, `maximizable`, `maximizeButtonProps`, `maximizeIcon`, `minX`, `minY`, `minimizeIcon`, `modal`, `motionOptions`, `position`, `resizable`, `rtl`, `showHeader`, `style`
 
@@ -79,7 +79,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **21 props nativas no expuestas**: `appendTo`, `autoHide`, `content`, `escape`, `fitContent`, `hideDelay`, `hideOnEscape`, `life`, `pTooltipPT`, `pTooltipUnstyled`, `positionLeft`, `positionStyle`, `positionTop`, `showDelay`, `showOnEllipsis`, `tooltipDisabled`, `tooltipEvent`, `tooltipOptions`, `tooltipPosition`, `tooltipStyleClass`, `tooltipZIndex`
 
-### `sc-tag` · 31 usos · primeng/tag, primeng/tooltip
+### `sc-tag` · 39 usos · primeng/tag, primeng/tooltip
 
 **21 props nativas no expuestas**: `appendTo`, `autoHide`, `content`, `escape`, `fitContent`, `hideDelay`, `hideOnEscape`, `life`, `pTooltipPT`, `pTooltipUnstyled`, `positionLeft`, `positionStyle`, `positionTop`, `showDelay`, `showOnEllipsis`, `tooltipDisabled`, `tooltipEvent`, `tooltipOptions`, `tooltipPosition`, `tooltipStyleClass`, `tooltipZIndex`
 
@@ -99,15 +99,15 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **7 props nativas no expuestas**: `ariaLabelledBy`, `autofocus`, `binary`, `disabled`, `invalid`, `required`, `tabindex`
 
-### `sc-search` · 10 usos · primeng/iconfield, primeng/inputicon, primeng/inputtext
+### `sc-search` · 11 usos · primeng/iconfield, primeng/inputicon, primeng/inputtext
 
 **7 props nativas no expuestas**: `fluid`, `iconPosition`, `invalid`, `pInputTextPT`, `pInputTextUnstyled`, `pSize`, `variant`
 
-### `sc-selectbutton` · 26 usos · primeng/selectbutton
+### `sc-selectbutton` · 31 usos · primeng/selectbutton
 
 **7 props nativas no expuestas**: `autofocus`, `dataKey`, `name`, `required`, `styleClass`, `tabindex`, `unselectable`
 
-### `sc-tabs` · 1 usos · primeng/tabs
+### `sc-tabs` · 4 usos · primeng/tabs
 
 **7 props nativas no expuestas**: `disabled`, `lazy`, `scrollStrategy`, `scrollable`, `selectOnFocus`, `showNavigators`, `tabindex`
 
@@ -115,7 +115,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **7 props nativas no expuestas**: `autofocus`, `falseValue`, `invalid`, `name`, `required`, `tabindex`, `trueValue`
 
-### `sc-inputnumber` · 20 usos · primeng/inputtext
+### `sc-inputnumber` · 22 usos · primeng/inputtext
 
 **5 props nativas no expuestas**: `fluid`, `pInputTextPT`, `pInputTextUnstyled`, `pSize`, `variant`
 
@@ -123,7 +123,7 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **4 props nativas no expuestas**: `badgeDisabled`, `badgeSize`, `severity`, `value`
 
-### `sc-inputtext` · 52 usos · primeng/inputtext
+### `sc-inputtext` · 81 usos · primeng/inputtext
 
 **4 props nativas no expuestas**: `pInputTextPT`, `pInputTextUnstyled`, `pSize`, `variant`
 
@@ -131,11 +131,11 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 **4 props nativas no expuestas**: `iconPos`, `motionOptions`, `toggleButtonProps`, `toggler`
 
-### `sc-message` · 7 usos · primeng/message
+### `sc-message` · 10 usos · primeng/message
 
 **3 props nativas no expuestas**: `closeIcon`, `life`, `motionOptions`
 
-### `sc-textarea` · 7 usos · primeng/textarea
+### `sc-textarea` · 9 usos · primeng/textarea
 
 **3 props nativas no expuestas**: `pSize`, `pTextareaPT`, `pTextareaUnstyled`
 
@@ -155,11 +155,11 @@ Cambiarlas rompe API pública nuestra, así que es un major (DD-58): se propone,
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-checkbox` · 35 usos · —
+### `sc-checkbox` · 42 usos · —
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-color-dot-picker` · 4 usos · —
+### `sc-color-dot-picker` · 6 usos · —
 
 Expone todo lo que PrimeNG documenta.
 
@@ -171,7 +171,7 @@ Expone todo lo que PrimeNG documenta.
 
 Expone todo lo que PrimeNG documenta.
 
-### `sc-empty-state` · 25 usos · —
+### `sc-empty-state` · 26 usos · —
 
 Expone todo lo que PrimeNG documenta.
 

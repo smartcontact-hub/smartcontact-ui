@@ -46,7 +46,7 @@
  * Uso: `node scripts/i18n-check.mjs` (en la cadena `verify`).
  */
 import { readFileSync, readdirSync, statSync } from 'node:fs';
-import { resolve, dirname, join, relative } from 'node:path';
+import { resolve, dirname, join, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -319,6 +319,10 @@ if (process.argv[1] && process.argv[1].endsWith('i18n-check.mjs')) {
     const srcDir = resolve(root, app.code);
     const htmls = walk(srcDir, ['.html']);
     const tss = walk(srcDir, ['.ts']);
+    /* Los prototipos de Calendarios de la rama experimental son un port literal de HTML en español: su copy y sus fechas
+     * van tal cual. Las claves que pidan (B) sí se miran; F y G no, solo en esa carpeta. */
+    const PORT_LITERAL = 'features/lab/calendarios-jefe/';
+    const enPortLiteral = (f) => f.split(sep).join('/').includes(PORT_LITERAL);
 
     // ── B. claves pedidas por el código que no existen ──────────────────────
     const pedidas = new Map();
@@ -334,7 +338,7 @@ if (process.argv[1] && process.argv[1].endsWith('i18n-check.mjs')) {
 
     // ── F. copy a pelo en plantillas ────────────────────────────────────────
     const aPelo = [];
-    for (const f of htmls)
+    for (const f of htmls.filter((x) => !enPortLiteral(x)))
       for (const hit of copyAPelo(readFileSync(f, 'utf8')))
         aPelo.push(`${relative(root, f)}  →  ${hit.slice(0, 70)}`);
     if (aPelo.length)
@@ -343,7 +347,7 @@ if (process.argv[1] && process.argv[1].endsWith('i18n-check.mjs')) {
 
     // ── G. locale clavado ───────────────────────────────────────────────────
     const clavados = [];
-    for (const f of tss)
+    for (const f of tss.filter((x) => !enPortLiteral(x)))
       for (const tag of localesClavados(readFileSync(f, 'utf8')))
         clavados.push(`${relative(root, f)}  →  toLocale…('${tag}')`);
     if (clavados.length)

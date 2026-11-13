@@ -1,0 +1,217 @@
+/* Lo propio de «Calendarios y periodos»: el panel de la fecha, el día en horas, la barra del año y los periodos. */
+
+.pj-subrow {
+  margin-block: var(--sc-spacing-1-125);
+}
+
+.pj-openlabel {
+  display: block;
+  color: var(--sc-text-secondary);
+  margin-block-start: var(--sc-spacing-0-375);
+}
+
+.pj-legend__item {
+  gap: var(--sc-spacing-0-375);
+}
+
+.pj-detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1);
+
+  @media (max-width: 1170px) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.pj-detail__date {
+  margin-block: var(--sc-spacing-0-75) var(--sc-spacing-0-5);
+}
+.pj-detail__schedule {
+  margin-block-start: var(--sc-spacing-0-5);
+}
+.pj-detail__actions {
+  margin-block-start: var(--sc-spacing-0-75);
+}
+.pj-owner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-25);
+  margin-block-start: var(--sc-spacing-1);
+  padding: var(--sc-spacing-0-75);
+  border-radius: var(--sc-radius-100);
+  background: var(--wash);
+  border-inline-start: 3px solid var(--c);
+}
+.pj-hours {
+  padding-block: var(--sc-spacing-0-75);
+  margin-block: var(--sc-spacing-0-75);
+  border-block-end: 1px solid var(--sc-border-default);
+}
+
+.pj-daytitle {
+  margin-block-end: var(--sc-spacing-1-25);
+}
+.pj-dayhours {
+  padding-block: var(--sc-spacing-1-25);
+  border-block-start: 1px solid var(--sc-border-default);
+  margin-block-start: var(--sc-spacing-1-5);
+}
+/* El día entero en una pista de 24 horas, una raya por hora. */
+.pj-track {
+  height: 3.625rem;
+  position: relative;
+  border-radius: var(--sc-radius-100);
+  margin-block-start: var(--sc-spacing-1-125);
+  background: repeating-linear-gradient(
+    to right,
+    var(--sc-bg-subtle) 0,
+    var(--sc-bg-subtle) calc(100% / 24 - 1px),
+    var(--sc-border-default) calc(100% / 24 - 1px),
+    var(--sc-border-default) calc(100% / 24)
+  );
+}
+.pj-block {
+  position: absolute;
+  top: 0.5rem;
+  height: 2.625rem;
+  background: var(--c);
+  color: var(--sc-text-inverse);
+  border-radius: var(--sc-radius-50);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.pj-ticks {
+  display: flex;
+  justify-content: space-between;
+  color: var(--sc-text-secondary);
+  margin-block-start: var(--sc-spacing-0-5);
+}
+.pj-time-list {
+  margin-block-start: var(--sc-spacing-1-25);
+}
+
+.pj-note--first {
+  margin-block-start: 0;
+}
+.pj-bar {
+  display: flex;
+  height: 0.875rem;
+  border-radius: var(--sc-radius-50);
+  overflow: hidden;
+  gap: var(--sc-spacing-0-125);
+  margin-block-start: var(--sc-spacing-0-875);
+  background: var(--sc-bg-subtle);
+
+  span {
+    height: 100%;
+    background: var(--c);
+    min-width: 0;
+  }
+}
+.pj-statusline {
+  margin-block-start: var(--sc-spacing-0-75);
+}
+.pj-section-heading {
+  margin-block: var(--sc-spacing-1-75) var(--sc-spacing-0-875);
+}
+.pj-period-row {
+  border: 1px solid var(--sc-border-default);
+  border-inline-start: 4px solid var(--c);
+  background: var(--sc-bg-surface);
+  border-radius: var(--sc-radius-200);
+  padding: var(--sc-spacing-1-125);
+}
+.pj-period-row__schedule {
+  margin-block-start: var(--sc-spacing-0-625);
+}
+.pj-period-row__caption {
+  margin-block-start: var(--sc-spacing-0-625);
+}
+.pj-details {
+  margin-block-start: var(--sc-spacing-0-75);
+  color: var(--sc-text-secondary);
+
+  summary {
+    cursor: pointer;
+    color: var(--sc-text-link);
+  }
+}
+.pj-ranges {
+  margin-block-start: var(--sc-spacing-0-625);
+  gap: var(--sc-spacing-0-375);
+}
+.pj-special-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-875);
+  border-block-start: 1px solid var(--sc-border-default);
+  padding-block: var(--sc-spacing-1);
+
+  &:first-child {
+    border-block-start: 0;
+    padding-block-start: 0;
+  }
+  &:last-child {
+    padding-block-end: 0;
+  }
+}
+
+.pj-schedules-page {
+  margin-block-start: var(--sc-spacing-1-5);
+}
+.pj-schedules {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sc-spacing-1-125);
+
+  @media (max-width: 760px) {
+    grid-template-columns: 1fr;
+  }
+}
+.pj-schedule__table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-block-start: var(--sc-spacing-0-875);
+
+  td {
+    border-block-end: 1px solid var(--sc-border-subtle);
+    padding-block: var(--sc-spacing-0-5);
+  }
+  td:last-child {
+    text-align: end;
+  }
+}
+.pj-schedule__actions {
+  margin-block-start: var(--sc-spacing-1);
+}
+
+/* El editor de la semana: día, «Con horario» y sus franjas. */
+.pj-weekedit {
+  display: grid;
+  grid-template-columns: 6rem 7rem minmax(0, 1fr);
+  align-items: start;
+  gap: var(--sc-spacing-0-75);
+  border-block-end: 1px solid var(--sc-border-default);
+  padding-block: var(--sc-spacing-0-875);
+
+  > strong {
+    padding-block-start: var(--sc-spacing-0-5);
+  }
+}
+.pj-slot sc-inputtext {
+  width: 6rem;
+}
+.pj-copyline {
+  margin-block-start: var(--sc-spacing-1);
+}
+.pj-preview__line {
+  margin-block: var(--sc-spacing-0-5);
+}
+.pj-form-error {
+  display: block;
+  margin-block-start: var(--sc-spacing-0-875);
+}

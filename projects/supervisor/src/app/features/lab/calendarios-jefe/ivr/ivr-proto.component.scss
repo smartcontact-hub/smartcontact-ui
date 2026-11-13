@@ -1,0 +1,358 @@
+/* Lo propio de «Calendarios IVR»: la lista con su leyenda, la parrilla de 48 tramos, los días especiales en línea, el
+ * resultado del simulador y el JSON. Verde = en hora (continuar flujo); rosa = fuera de hora (mensaje). */
+
+.ivr-layout {
+  grid-template-columns: 17rem minmax(0, 1fr);
+
+  @media (max-width: 1120px) {
+    grid-template-columns: 1fr;
+  }
+}
+.ivr-side {
+  gap: var(--sc-spacing-0-75);
+
+  @media (max-width: 1120px) {
+    border-inline-end: 0;
+    border-block-end: 1px solid var(--sc-border-default);
+  }
+}
+.ivr-side-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-75);
+  background: var(--sc-bg-canvas);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-200);
+  padding: var(--sc-spacing-1);
+  margin-block-start: var(--sc-spacing-0-75);
+}
+.ivr-swatch {
+  width: 1.125rem;
+  height: 1.125rem;
+  border-radius: var(--sc-radius-100);
+  flex: 0 0 auto;
+  border: 1px solid var(--sc-border-default);
+
+  &.is-open {
+    background: var(--sc-label-green-bg);
+    border-color: var(--sc-label-green-border);
+  }
+  &.is-closed {
+    background: var(--sc-label-red-bg);
+    border-color: var(--sc-label-red-border);
+  }
+  &.is-special {
+    background: repeating-linear-gradient(135deg, var(--sc-label-amber-dot) 0 6px, var(--sc-label-amber-bg) 6px 12px);
+  }
+}
+
+.ivr-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1-25);
+}
+.ivr-title p {
+  margin-block-start: var(--sc-spacing-0-375);
+}
+.ivr-actions {
+  justify-content: flex-end;
+}
+.ivr-workspace {
+  display: grid;
+  gap: var(--sc-spacing-1-25);
+  min-width: 0;
+}
+.ivr-panel-header {
+  margin-block-end: var(--sc-spacing-1-125);
+
+  p {
+    margin-block-start: var(--sc-spacing-0-375);
+  }
+}
+.ivr-config-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sc-spacing-1);
+  align-items: end;
+
+  @media (max-width: 780px) {
+    grid-template-columns: 1fr;
+  }
+}
+.ivr-span-2 {
+  grid-column: 1 / -1;
+}
+.ivr-acciones {
+  gap: var(--sc-spacing-0-375);
+}
+
+.ivr-schedule-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: var(--sc-spacing-0-875);
+}
+.ivr-schedule-card {
+  display: grid;
+  gap: var(--sc-spacing-0-625);
+  justify-items: start;
+  text-align: start;
+  border: 1px solid var(--sc-border-default);
+  background: var(--sc-bg-canvas);
+  color: var(--sc-text-primary);
+  border-radius: var(--sc-radius-200);
+  padding: var(--sc-spacing-1);
+  min-height: 8rem;
+  cursor: pointer;
+
+  &.is-active {
+    border-color: var(--sc-border-primary);
+    background: var(--sc-bg-primary-subtle);
+  }
+  &:focus-visible {
+    outline: 2px solid var(--sc-border-focus);
+    outline-offset: 2px;
+  }
+}
+
+.ivr-layout-2 {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(21rem, 0.95fr);
+  gap: var(--sc-spacing-1-25);
+  align-items: start;
+
+  @media (max-width: 1400px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* La parrilla: la columna del día fija a la izquierda y 48 tramos de 30 minutos. */
+.ivr-grid-wrap {
+  overflow: auto;
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-200);
+  background: var(--sc-bg-surface);
+}
+.ivr-grid {
+  display: grid;
+  grid-template-columns: 8.25rem repeat(48, 1.25rem);
+  width: max-content;
+  min-width: 100%;
+  user-select: none;
+}
+.ivr-head,
+.ivr-corner,
+.ivr-day,
+.ivr-slot {
+  border-inline-end: 1px solid var(--sc-border-subtle);
+  border-block-end: 1px solid var(--sc-border-subtle);
+}
+.ivr-head,
+.ivr-corner {
+  height: 2.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--sc-text-secondary);
+  background: var(--sc-bg-canvas);
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+.ivr-rot {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+.ivr-corner {
+  left: 0;
+  z-index: 3;
+  justify-content: flex-start;
+  padding-inline-start: var(--sc-spacing-0-875);
+  color: var(--sc-text-primary);
+}
+.ivr-day {
+  height: 2.25rem;
+  background: var(--sc-bg-surface);
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sc-spacing-0-5);
+  padding-inline: var(--sc-spacing-0-875) var(--sc-spacing-0-75);
+  text-transform: capitalize;
+
+  small {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 3.625rem;
+    text-transform: none;
+  }
+}
+.ivr-slot {
+  height: 2.25rem;
+  position: relative;
+  cursor: pointer;
+  background-color: var(--sc-label-red-bg);
+  background-image: linear-gradient(135deg, var(--sc-bg-surface) 25%, transparent 25%, transparent 50%, var(--sc-bg-surface) 50%, var(--sc-bg-surface) 75%, transparent 75%, transparent);
+  background-size: 10px 10px;
+  background-blend-mode: soft-light;
+
+  &.is-open {
+    background: var(--sc-label-green-bg);
+  }
+  &:hover,
+  &:focus-visible {
+    box-shadow: inset 0 0 0 2px var(--sc-border-focus);
+    outline: none;
+    z-index: 4;
+  }
+}
+
+.ivr-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-75);
+  margin-block-start: var(--sc-spacing-1-25);
+}
+.ivr-day-chips {
+  gap: var(--sc-spacing-1);
+}
+.ivr-tool-row {
+  align-items: flex-end;
+  gap: var(--sc-spacing-0-625);
+
+  sc-inputtext {
+    width: 7.5rem;
+  }
+}
+.ivr-validation {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--sc-spacing-0-75);
+  align-items: start;
+  padding: var(--sc-spacing-0-75);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-200);
+  background: var(--sc-bg-canvas);
+}
+.ivr-validation__dot {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: var(--sc-radius-full);
+  margin-block-start: var(--sc-spacing-0-25);
+  background: var(--sc-label-green-dot);
+
+  .is-warn & {
+    background: var(--sc-label-amber-dot);
+  }
+  .is-danger & {
+    background: var(--sc-label-red-dot);
+  }
+}
+
+.ivr-exception {
+  border: 1px solid var(--sc-border-default);
+  background: var(--sc-bg-surface);
+  border-radius: var(--sc-radius-200);
+  padding: var(--sc-spacing-1);
+  display: grid;
+  gap: var(--sc-spacing-0-875);
+}
+.ivr-exception-form {
+  display: grid;
+  grid-template-columns: 1.25fr 11rem 9.5rem 11rem 8rem;
+  gap: var(--sc-spacing-1);
+  align-items: end;
+
+  @media (max-width: 1280px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.ivr-exception-form__wide {
+  grid-column: 1 / -1;
+}
+.ivr-intervals {
+  gap: var(--sc-spacing-0-5);
+  margin-block-end: var(--sc-spacing-0-75);
+}
+.ivr-interval {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-25);
+  border-radius: var(--sc-radius-full);
+  background: var(--sc-bg-success-subtle);
+  color: var(--sc-text-success);
+  padding-inline-start: var(--sc-spacing-0-75);
+}
+.ivr-inline-interval {
+  gap: var(--sc-spacing-0-5);
+  padding: var(--sc-spacing-0-75);
+  border-radius: var(--sc-radius-200);
+  background: var(--sc-bg-canvas);
+  border: 1px dashed var(--sc-border-strong);
+
+  sc-inputtext {
+    width: 6rem;
+  }
+}
+
+.ivr-sim-grid {
+  display: grid;
+  grid-template-columns: minmax(19rem, 0.8fr) minmax(0, 1.2fr);
+  gap: var(--sc-spacing-1-25);
+  align-items: start;
+
+  @media (max-width: 1120px) {
+    grid-template-columns: 1fr;
+  }
+}
+.ivr-result {
+  display: grid;
+  gap: var(--sc-spacing-1-125);
+  border-radius: var(--sc-radius-200);
+  padding: var(--sc-spacing-1-75);
+  border: 1px solid var(--sc-label-red-border);
+  background: radial-gradient(circle at 94% 6%, var(--sc-label-red-bg), transparent 32%), var(--sc-bg-surface);
+  box-shadow: var(--sc-shadow-card);
+
+  &.is-open {
+    border-color: var(--sc-label-green-border);
+    background: radial-gradient(circle at 94% 6%, var(--sc-label-green-bg), transparent 32%), var(--sc-bg-surface);
+  }
+}
+.ivr-result__message {
+  display: grid;
+  gap: var(--sc-spacing-0-375);
+  border-radius: var(--sc-radius-200);
+  padding: var(--sc-spacing-1);
+  background: var(--sc-bg-canvas);
+  border: 1px solid var(--sc-border-default);
+}
+.ivr-route {
+  display: grid;
+  gap: var(--sc-spacing-0-5);
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+
+  > div {
+    display: grid;
+    gap: var(--sc-spacing-0-375);
+    border: 1px solid var(--sc-border-default);
+    border-radius: var(--sc-radius-200);
+    padding: var(--sc-spacing-0-875);
+    background: var(--sc-bg-surface);
+  }
+}
+
+.ivr-export {
+  margin: 0;
+  padding: var(--sc-spacing-1-25);
+  border-radius: var(--sc-radius-200);
+  background: var(--sc-bg-canvas);
+  color: var(--sc-text-primary);
+  border: 1px solid var(--sc-border-default);
+  overflow: auto;
+  min-height: 26rem;
+  font-family: var(--sc-font-family-mono);
+}

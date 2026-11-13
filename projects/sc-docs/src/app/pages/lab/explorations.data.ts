@@ -251,4 +251,14 @@ export const LABS: readonly Lab[] = [
     href: 'https://sc-supervisor.pages.dev/lab/tabla',
     label: 'sc-supervisor.pages.dev/lab/tabla',
   },
+  {
+    id: 'lab-calendarios-proto',
+    title: 'Calendarios, los tres prototipos',
+    question: '¿Cómo se ven los tres prototipos de Calendarios que llegaron en HTML montados tal cual con las piezas del DS?',
+    controls: ['Periodos', 'Horarios', 'IVR'],
+    where: 'El selector de la cabecera cambia de prototipo.',
+    // Vive en su rama experimental: el preview de la rama, no producción.
+    href: 'https://claude-proto-jefe.sc-supervisor.pages.dev/lab/calendarios/periodos',
+    label: 'claude-proto-jefe.sc-supervisor.pages.dev/lab/calendarios',
+  },
 ];
