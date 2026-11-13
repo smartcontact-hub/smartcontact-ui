@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TooltipModule } from 'primeng/tooltip';
+import { ScIconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent, ScMultiSelectComponent } from '@smartcontact-hub/components';
 
 import { LanguageService } from '@core/services/language.service';
@@ -29,7 +30,7 @@ const aFecha = (iso: string): Date => new Date(`${iso}T12:00:00`);
  */
 @Component({
   selector: 'sc-horario-reglas',
-  imports: [ScButtonComponent, ScMultiSelectComponent, TooltipModule, TranslateModule],
+  imports: [ScButtonComponent, ScIconComponent, ScMultiSelectComponent, TooltipModule, TranslateModule],
   templateUrl: './horario-reglas.component.html',
   styleUrl: './horario-reglas.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

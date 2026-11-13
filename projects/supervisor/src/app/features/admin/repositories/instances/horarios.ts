@@ -34,7 +34,7 @@ const columnas = (d: Datos): readonly RepoColumnDef<Horario>[] => [
     // «Ahora» no decía a qué se refería: es si el IVR atiende en este momento (en la zona del horario), con lo que viene después.
     labelKey: 'repositories.horarios.col_now',
     kind: 'availability',
-    width: '248px',
+    width: '200px',
     accessor: d.ahora,
     detail: d.matiz,
     statusMap: {
@@ -42,13 +42,13 @@ const columnas = (d: Datos): readonly RepoColumnDef<Horario>[] => [
       closed: { labelKey: 'repositories.horarios.x.out_of_hours', tone: 'secondary', icon: 'do_not_disturb_on' },
     },
   },
-  { key: 'periods', labelKey: 'repositories.horarios.col_periods', kind: 'count', width: '104px', accessor: (i) => String(i.periods.length), emptyDash: true, sortable: true },
-  { key: 'specials', labelKey: 'repositories.horarios.col_specials', kind: 'count', width: '144px', accessor: (i) => String(i.specials.length), emptyDash: true, sortable: true },
+  { key: 'periods', labelKey: 'repositories.horarios.col_periods', kind: 'count', width: '88px', accessor: (i) => String(i.periods.length), emptyDash: true, sortable: true },
+  { key: 'specials', labelKey: 'repositories.horarios.col_specials', kind: 'count', width: '112px', accessor: (i) => String(i.specials.length), emptyDash: true, sortable: true },
   {
     key: 'groups',
     labelKey: 'repositories.horarios.col_groups',
     kind: 'groups',
-    width: '104px',
+    width: '80px',
     // La cifra ordena y se exporta; la celda enseña el nombre si es uno y la cifra con los nombres al pasar si son más.
     accessor: (i) => String(d.grupos(i).length),
     groups: d.grupos,
@@ -57,19 +57,18 @@ const columnas = (d: Datos): readonly RepoColumnDef<Horario>[] => [
     emptyAsZero: true,
     sortable: true,
   },
-  { key: 'timezone', labelKey: 'repositories.horarios.timezone', kind: 'text', accessor: (i) => i.timezone, width: '176px', sortable: true },
+  { key: 'timezone', labelKey: 'repositories.horarios.timezone', kind: 'text', accessor: (i) => i.timezone, width: '136px', sortable: true },
   {
     key: 'status',
     labelKey: 'repositories.columns.status',
     kind: 'status',
-    // Un glifo, no una segunda pastilla junto a «Ahora»: dos pastillas iguales en la misma fila leían como lo mismo.
-    statusDisplay: 'icon',
-    width: '96px',
+    // Una sola columna con pastilla: la de Disponibilidad lleva glifo, como los canales de Grupos.
+    width: '104px',
     accessor: (i) => i.status,
     statusMap: {
       // En masculino: un horario y un calendario (la clave compartida, «Activa», es de regla y categoría).
-      active: { labelKey: 'repositories.horarios.active', tone: 'success', icon: 'check_circle' },
-      inactive: { labelKey: 'repositories.horarios.inactive', tone: 'secondary', icon: 'pause_circle' },
+      active: { labelKey: 'repositories.horarios.active', tone: 'success', },
+      inactive: { labelKey: 'repositories.horarios.inactive', tone: 'secondary' },
     },
   },
 ];

@@ -25,8 +25,11 @@
       <div class="cabecera__titulo">
         <h1 class="page__heading sc-text-title-semibold">{{ form().name.trim() || ('repositories.horarios.create_title' | translate) }}</h1>
         <p class="cabecera__meta sc-text-caption-regular">
-          <sc-icon name="public" size="sm" aria-hidden="true" />
-          {{ form().timezone }}@if (form().description) { <span aria-hidden="true">·</span> {{ form().description }} }
+          <!-- La zona como etiqueta con su hora de referencia («Madrid · GMT+1»), no como un texto con un globo. -->
+          <sc-tag variant="label" labelColor="teal" icon="schedule" [value]="zonaCorta()" [pTooltip]="form().timezone" tooltipPosition="bottom" />
+          @if (form().description) {
+            <span>{{ form().description }}</span>
+          }
         </p>
       </div>
       <div class="cabecera__acciones">
@@ -36,12 +39,12 @@
           <sc-toggleswitch
             inputId="horario-activo"
             ariaDescribedBy="horario-activo-ayuda"
-            [ariaLabel]="'repositories.horarios.active' | translate"
+            [ariaLabel]="'repositories.horarios.x.active_label' | translate"
             [checked]="form().status === 'active'"
             (checkedChange)="update('status', $event ? 'active' : 'inactive')"
           />
           <div class="switch-field__copy">
-            <label class="switch-field__label sc-text-body-regular" for="horario-activo">{{ 'repositories.horarios.active' | translate }}</label>
+            <label class="switch-field__label sc-text-body-regular" for="horario-activo">{{ 'repositories.horarios.x.active_label' | translate }}</label>
           </div>
           <p id="horario-activo-ayuda" class="visually-hidden">{{ ayudaDeActivo() }}</p>
         </div>

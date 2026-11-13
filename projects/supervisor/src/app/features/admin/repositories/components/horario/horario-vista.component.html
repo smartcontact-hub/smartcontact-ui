@@ -65,6 +65,7 @@
   <div class="vista__filtros" role="group" [attr.aria-label]="'repositories.horarios.x.layers.label' | translate">
     <span class="vista__filtros-rotulo sc-text-caption-semibold">{{ 'repositories.horarios.x.layers.label' | translate }}</span>
     @for (capa of capas(); track capa.clave) {
+      <!-- Como un ToggleButton de PrimeNG: encendido lleva el check y su color; apagado, el contorno y su glifo. -->
       <button
         type="button"
         class="filtro sc-text-caption-semibold"
@@ -73,11 +74,7 @@
         [attr.aria-pressed]="capa.activa"
         (click)="alternar(capa.clave)"
       >
-        @if (capa.icono) {
-          <sc-icon [name]="capa.icono" size="sm" aria-hidden="true" />
-        } @else {
-          <span class="filtro__punto" aria-hidden="true"></span>
-        }
+        <sc-icon [name]="capa.activa ? 'check' : capa.icono" size="sm" aria-hidden="true" />
         {{ capa.etiqueta }}
       </button>
     }
@@ -87,17 +84,18 @@
   </div>
 
   <!-- El día elegido, en una línea: sus horas, quién las decide y dos lápices. Mide lo mismo con cualquier día. -->
-  <section class="vista__dia" aria-live="polite">
+  <section class="vista__dia" aria-live="polite" [attr.data-color]="detalle()?.color">
     @if (detalle(); as d) {
       <span class="vista__dia-titulo sc-text-body-semibold">{{ d.titulo }}</span>
-      <span class="vista__dia-estado sc-text-body-regular" [class.vista__dia-estado--abierto]="d.abierto">
-        <sc-icon [name]="d.abierto ? 'check_circle' : 'do_not_disturb_on'" size="sm" filled aria-hidden="true" />
-        {{ (d.abierto ? 'repositories.horarios.x.in_hours' : 'repositories.horarios.x.out_of_hours') | translate }}
-      </span>
+      <sc-tag
+        [severity]="d.abierto ? 'success' : 'secondary'"
+        [icon]="d.abierto ? 'check_circle' : 'do_not_disturb_on'"
+        [value]="(d.abierto ? 'repositories.horarios.x.in_hours' : 'repositories.horarios.x.out_of_hours') | translate"
+      />
       @if (d.abierto) {
-        <span class="sc-text-body-regular">{{ d.horas.join(' · ') }}</span>
+        <span class="vista__dia-horas sc-text-body-semibold">{{ d.horas.join(' · ') }}</span>
       }
-      <span class="vista__dia-motivo sc-text-caption-regular">{{ d.motivo }}</span>
+      <span class="vista__dia-motivo sc-text-caption-semibold">{{ d.motivo }}</span>
     } @else {
       <span class="vista__dia-vacio sc-text-body-regular">{{ 'repositories.horarios.x.day.pick' | translate }}</span>
     }
@@ -159,8 +157,7 @@
                   <button
                     type="button"
                     class="mini"
-                    [class.mini--cerrado]="!c.abierto"
-                    [class.mini--periodo]="c.color"
+                    [class.mini--tinte]="c.color"
                     [class.mini--excepcion]="c.dia.tipo === 'especial' || c.dia.tipo === 'festivo'"
                     [class.mini--hoy]="esHoy(c.fecha)"
                     [class.mini--elegido]="c.fecha === seleccion()"
@@ -192,8 +189,7 @@
             <button
               type="button"
               class="dia"
-              [class.dia--cerrado]="!c.abierto"
-              [class.dia--periodo]="c.color"
+              [class.dia--tinte]="c.color"
               [class.dia--fuera]="c.fuera"
               [class.dia--elegido]="c.fecha === seleccion()"
               [class.dia--apagado]="c.apagada"
@@ -260,9 +256,7 @@
                 @for (b of col.bloques; track b.top) {
                   <div
                     class="bloque sc-text-caption-semibold"
-                    [class.bloque--periodo]="col.celda.color"
-                    [class.bloque--especial]="col.celda.dia.tipo === 'especial'"
-                    [attr.data-color]="col.celda.color"
+                    [attr.data-color]="col.celda.color ?? 'green'"
                     [style.top.%]="b.top"
                     [style.height.%]="b.alto"
                   >

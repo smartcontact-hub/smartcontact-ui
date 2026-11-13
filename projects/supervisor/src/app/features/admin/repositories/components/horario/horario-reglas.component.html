@@ -1,8 +1,10 @@
 <div class="reglas">
   <!-- Semana habitual: sus siete días de un vistazo, con la barra de 24 horas de cada uno. -->
-  <section class="regla" aria-labelledby="regla-semana">
+  <section class="regla" data-color="green" aria-labelledby="regla-semana">
     <header class="regla__cabecera">
-      <h3 id="regla-semana" class="regla__titulo sc-text-body-semibold">{{ 'repositories.horarios.section_week' | translate }}</h3>
+      <h3 id="regla-semana" class="regla__titulo sc-text-body-semibold">
+        <span class="regla__icono"><sc-icon name="view_week" size="sm" aria-hidden="true" /></span>
+        {{ 'repositories.horarios.section_week' | translate }}</h3>
       <sc-button
         variant="secondary"
         appearance="text"
@@ -31,9 +33,10 @@
   </section>
 
   <!-- Periodos: temporadas, muchos días seguidos con su propia semana. -->
-  <section class="regla" aria-labelledby="regla-periodos">
+  <section class="regla" data-color="blue" aria-labelledby="regla-periodos">
     <header class="regla__cabecera">
       <h3 id="regla-periodos" class="regla__titulo sc-text-body-semibold">
+        <span class="regla__icono"><sc-icon name="date_range" size="sm" aria-hidden="true" /></span>
         {{ 'repositories.horarios.section_periods' | translate }}
         <span class="regla__cuenta sc-text-caption-regular">{{ periodos().length }}</span>
       </h3>
@@ -71,9 +74,10 @@
   </section>
 
   <!-- Fechas especiales y festivos: días sueltos que pisan lo demás. -->
-  <section class="regla" aria-labelledby="regla-especiales">
+  <section class="regla" data-color="purple" aria-labelledby="regla-especiales">
     <header class="regla__cabecera">
       <h3 id="regla-especiales" class="regla__titulo sc-text-body-semibold">
+        <span class="regla__icono"><sc-icon name="event" size="sm" aria-hidden="true" /></span>
         {{ 'repositories.horarios.x.rules.specials_title' | translate }}
         <span class="regla__cuenta sc-text-caption-regular">{{ especiales().length }}</span>
       </h3>

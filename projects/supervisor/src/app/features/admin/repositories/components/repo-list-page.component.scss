@@ -49,18 +49,8 @@
  * los sustituye el <p-menu> compartido, y el botón usa `.rules-kebab-btn`,
  * el kebab global de `main.scss`. */
 
-/* Experimento (rama de Horarios): el estado como glifo y la disponibilidad con su matiz. El color solo refuerza: el
- * texto va siempre (nombre accesible, tooltip o la propia celda). */
-.estado-icono {
-  display: inline-flex;
-  align-items: center;
-  color: var(--sc-icon-secondary);
-
-  &--success {
-    color: var(--sc-icon-success);
-  }
-}
-
+/* Experimento (rama de Horarios): la disponibilidad con su matiz. El glifo es el de los canales de Grupos
+ * (`sc-channel-row__item`); el texto va siempre al lado. */
 .disponibilidad {
   display: inline-flex;
   align-items: center;

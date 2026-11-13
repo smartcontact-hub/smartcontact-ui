@@ -3,8 +3,7 @@ import { LocationStrategy } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TooltipModule } from 'primeng/tooltip';
-import { ScIconComponent } from '@smartcontact-hub/icons';
-import { ScButtonComponent, ScToggleSwitchComponent } from '@smartcontact-hub/components';
+import { ScButtonComponent, ScTagComponent, ScToggleSwitchComponent } from '@smartcontact-hub/components';
 
 import type { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
@@ -65,7 +64,7 @@ const FALTA_NOMBRE = 'repositories.horarios.errors.name_required';
     HorarioSemanaModalComponent,
     HorarioVistaComponent,
     ScButtonComponent,
-    ScIconComponent,
+    ScTagComponent,
     ScToggleSwitchComponent,
     TooltipModule,
     TranslateModule,
@@ -137,6 +136,18 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
     this.lang();
     return this.faltaElNombre() && this.ocasion.acusa(FALTA_NOMBRE) ? this.translate.instant(FALTA_NOMBRE) : undefined;
   });
+  /** «Madrid · GMT+1»: la ciudad de la zona y su diferencia con GMT hoy. */
+  protected readonly zonaCorta = computed(() => {
+    const zona = this.form().timezone;
+    const ciudad = (zona.split('/').pop() ?? zona).replaceAll('_', ' ');
+    try {
+      const gmt = new Intl.DateTimeFormat('en', { timeZone: zona, timeZoneName: 'shortOffset' }).formatToParts(new Date()).find((p) => p.type === 'timeZoneName')?.value;
+      return gmt ? `${ciudad} · ${gmt.replace('GMT', 'GMT ').trim()}` : ciudad;
+    } catch {
+      return ciudad;
+    }
+  });
+
   /* ── Datos generales (nombre, zona, descripción): en su diálogo (experimento) ──────────────────────────────────── */
 
   protected readonly datosDialog = signal(false);

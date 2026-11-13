@@ -1517,7 +1517,7 @@
         "title_bulk": "Delete {{count}} schedules?"
       },
       "col_week": "Regular week",
-      "col_now": "Service now",
+      "col_now": "Availability",
       "col_periods": "Periods",
       "col_specials": "Special dates",
       "col_groups": "Groups",
@@ -1687,14 +1687,15 @@
           "only_this_day": "Change this day only",
           "edit_special": "Edit this special date"
         },
-        "in_hours": "In hours",
-        "out_of_hours": "Out of hours",
+        "active_label": "Schedule active",
+        "in_hours": "Available",
+        "out_of_hours": "Unavailable",
         "now_detail": {
           "until": "until {{time}}",
-          "until_day": "until {{day}} at {{time}}",
-          "opens_today": "opens at {{time}}",
-          "opens_tomorrow": "opens tomorrow at {{time}}",
-          "opens_day": "opens {{day}} at {{time}}"
+          "until_day": "until {{day}} {{time}}",
+          "opens_today": "opens {{time}}",
+          "opens_tomorrow": "opens tomorrow {{time}}",
+          "opens_day": "opens {{day}} {{time}}"
         },
         "general": {
           "title": "Schedule details",

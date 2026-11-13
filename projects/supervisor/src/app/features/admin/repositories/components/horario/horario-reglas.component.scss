@@ -26,7 +26,37 @@
   padding: var(--sc-spacing-1);
   border: 1px solid var(--sc-border-default);
   border-radius: var(--sc-radius-lg);
+  border-block-start-width: var(--sc-spacing-0-25);
   background: var(--sc-bg-surface);
+
+  /* Cada regla lleva el color de su capa en el calendario (semana azul, periodos, fechas especiales moradas). */
+  @each $color in ('blue', 'green', 'purple', 'orange', 'teal', 'amber', 'red', 'brown', 'gray') {
+    &[data-color='#{$color}'] {
+      border-block-start-color: var(--sc-label-#{$color}-text);
+
+      .regla__icono {
+        background: var(--sc-label-#{$color}-bg);
+        color: var(--sc-label-#{$color}-text);
+      }
+
+      .regla__cuenta {
+        background: var(--sc-label-#{$color}-bg);
+        color: var(--sc-label-#{$color}-text);
+      }
+
+      .semana__barra i {
+        background: var(--sc-label-#{$color}-text);
+      }
+    }
+  }
+}
+
+.regla__icono {
+  display: inline-grid;
+  place-items: center;
+  inline-size: var(--sc-spacing-1-75);
+  block-size: var(--sc-spacing-1-75);
+  border-radius: var(--sc-radius-md);
 }
 
 .regla__cabecera {
@@ -46,8 +76,6 @@
 .regla__cuenta {
   padding: 0 var(--sc-spacing-0-5);
   border-radius: var(--sc-radius-full);
-  background: var(--sc-bg-secondary-subtle);
-  color: var(--sc-text-secondary);
 }
 
 .regla__ayuda,
@@ -89,7 +117,6 @@
     position: absolute;
     inset-block: 0;
     border-radius: var(--sc-radius-full);
-    background: var(--sc-bg-primary);
   }
 }
 

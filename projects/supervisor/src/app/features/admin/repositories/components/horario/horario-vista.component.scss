@@ -63,52 +63,45 @@
 .filtro {
   display: inline-flex;
   align-items: center;
-  gap: var(--sc-spacing-0-375);
-  padding: var(--sc-spacing-0-25) var(--sc-spacing-0-625);
-  border: 1px solid var(--sc-border-default);
+  gap: var(--sc-spacing-0-25);
+  padding: var(--sc-spacing-0-25) var(--sc-spacing-0-75) var(--sc-spacing-0-25) var(--sc-spacing-0-5);
+  border: 1px solid transparent;
   border-radius: var(--sc-radius-full);
-  background: var(--sc-bg-surface);
-  color: var(--sc-text-primary);
   cursor: pointer;
   transition:
     background-color 150ms ease-out,
-    opacity 150ms ease-out;
-
-  &:hover {
-    background: var(--sc-bg-hover);
-  }
+    border-color 150ms ease-out;
 
   &:focus-visible {
     outline: 2px solid var(--sc-border-focus);
     outline-offset: 1px;
   }
 
-  /* Apagado: el contorno se queda y el relleno y el texto se van; el icono lo dice también con la forma (punto vacío). */
-  &--apagado {
-    background: transparent;
-    color: var(--sc-text-secondary);
-    text-decoration: line-through;
-
-    .filtro__punto {
-      background: transparent;
-    }
-  }
-
-  @each $color in ('blue', 'green', 'purple', 'orange', 'teal', 'amber', 'red', 'brown') {
-    &[data-color='#{$color}']:not(.filtro--apagado) {
-      border-color: var(--sc-label-#{$color}-bg);
+  /* Encendido: relleno con su color y el check. Apagado: contorno neutro y el glifo de la capa en su color. */
+  @each $color in ('blue', 'green', 'purple', 'orange', 'teal', 'amber', 'red', 'brown', 'gray') {
+    &[data-color='#{$color}'] {
       background: var(--sc-label-#{$color}-bg);
       color: var(--sc-label-#{$color}-text);
+
+      &:hover {
+        border-color: var(--sc-label-#{$color}-text);
+      }
+
+      &.filtro--apagado {
+        border-color: var(--sc-border-default);
+        background: var(--sc-bg-surface);
+        color: var(--sc-text-secondary);
+
+        sc-icon {
+          color: var(--sc-label-#{$color}-text);
+        }
+
+        &:hover {
+          background: var(--sc-bg-hover);
+        }
+      }
     }
   }
-}
-
-.filtro__punto {
-  inline-size: var(--sc-spacing-0-5);
-  block-size: var(--sc-spacing-0-5);
-  border: 1px solid currentColor;
-  border-radius: var(--sc-radius-full);
-  background: currentColor;
 }
 
 /* ── El día elegido, en una línea ──────────────────────────────────────────────────────────────────────────────── */
@@ -117,29 +110,37 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--sc-spacing-0-25) var(--sc-spacing-1);
+  gap: var(--sc-spacing-0-25) var(--sc-spacing-0-75);
   min-block-size: var(--sc-spacing-2-5);
-  padding: var(--sc-spacing-0-25) var(--sc-spacing-0-75);
+  padding: var(--sc-spacing-0-375) var(--sc-spacing-0-75);
+  border-inline-start: var(--sc-spacing-0-375) solid var(--sc-border-default);
   border-radius: var(--sc-radius-md);
   background: var(--sc-bg-subtle);
+  transition: background-color 150ms ease-out;
+
+  /* La línea toma el color de quien decide el día: el mismo que lleva ese día en el calendario. */
+  @each $color in ('blue', 'green', 'purple', 'orange', 'teal', 'amber', 'red', 'brown', 'gray') {
+    &[data-color='#{$color}'] {
+      border-inline-start-color: var(--sc-label-#{$color}-text);
+      background: var(--sc-label-#{$color}-bg);
+    }
+  }
 }
 
 .vista__dia-titulo::first-letter {
   text-transform: uppercase;
 }
 
-.vista__dia-estado {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--sc-spacing-0-25);
-  color: var(--sc-text-secondary);
-
-  &--abierto {
-    color: var(--sc-text-success);
-  }
+.vista__dia-horas,
+.vista__dia-motivo {
+  color: var(--sc-text-primary);
 }
 
-.vista__dia-motivo,
+.vista__dia-motivo {
+  padding-inline-start: var(--sc-spacing-0-75);
+  border-inline-start: 1px solid var(--sc-border-strong);
+}
+
 .vista__dia-vacio {
   color: var(--sc-text-secondary);
 }
@@ -160,7 +161,7 @@
 /* ── Colores de periodo: el mismo tinte en todas las vistas ────────────────────────────────────────────────────── */
 
 @mixin tinte($selector) {
-  @each $color in ('blue', 'green', 'purple', 'orange', 'teal', 'amber', 'red', 'brown') {
+  @each $color in ('blue', 'green', 'purple', 'orange', 'teal', 'amber', 'red', 'brown', 'gray') {
     #{$selector}[data-color='#{$color}'] {
       background: var(--sc-label-#{$color}-bg);
       color: var(--sc-label-#{$color}-text);
@@ -223,11 +224,6 @@
     color: var(--sc-text-subtle);
   }
 
-  &--cerrado {
-    background: var(--sc-bg-secondary-subtle);
-    color: var(--sc-text-secondary);
-  }
-
   /* Elegido: un trazo de marca por dentro, para no empujar a los vecinos. */
   &--elegido {
     z-index: 1;
@@ -235,12 +231,12 @@
   }
 
   &--apagado {
-    opacity: 0.35;
+    opacity: 0.5;
   }
 }
 
-/* El periodo tiñe el día, igual que en el año. Gana al cerrado por llevar el atributo. */
-@include tinte('.dia--periodo');
+/* El dueño tiñe el día, igual que en el año. Gana al cerrado por llevar el atributo. */
+@include tinte('.dia--tinte');
 
 .dia__num {
   display: inline-grid;
@@ -358,6 +354,7 @@
   }
 
   &--hoy {
+    font-weight: 700;
     text-decoration: underline;
   }
 
@@ -371,17 +368,7 @@
   }
 }
 
-@include tinte('.mini--periodo');
-
-.mini--cerrado.mini--cerrado.mini--cerrado {
-  background: var(--sc-bg-secondary-subtle);
-  color: var(--sc-text-secondary);
-  text-decoration: line-through;
-}
-
-.mini--cerrado.mini--cerrado.mini--cerrado.mini--hoy {
-  text-decoration-line: underline line-through;
-}
+@include tinte('.mini--tinte');
 
 .mini--excepcion::after {
   position: absolute;
@@ -504,18 +491,11 @@
   min-block-size: var(--sc-spacing-0-75);
   padding: var(--sc-spacing-0-25) var(--sc-spacing-0-5);
   overflow: hidden;
-  border-inline-start: 3px solid var(--sc-border-primary);
+  border-inline-start: 3px solid currentColor;
   border-radius: var(--sc-radius-sm);
-  background: var(--sc-bg-primary-subtle);
-  color: var(--sc-text-primary);
-
-  &--especial {
-    border-inline-start-color: var(--sc-border-violet);
-    background: var(--sc-bg-violet-subtle);
-  }
 }
 
-@include tinte('.bloque--periodo');
+@include tinte('.bloque');
 
 .linea__cerrado {
   position: absolute;

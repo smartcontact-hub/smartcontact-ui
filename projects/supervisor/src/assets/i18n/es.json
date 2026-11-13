@@ -1517,7 +1517,7 @@
         "title_bulk": "¿Eliminar {{count}} horarios?"
       },
       "col_week": "Semana habitual",
-      "col_now": "Atención ahora",
+      "col_now": "Disponibilidad",
       "col_periods": "Periodos",
       "col_specials": "Fechas especiales",
       "col_groups": "Grupos",
@@ -1687,14 +1687,15 @@
           "only_this_day": "Cambiar solo este día",
           "edit_special": "Editar esta fecha especial"
         },
-        "in_hours": "En horario",
-        "out_of_hours": "Fuera de horario",
+        "active_label": "Horario activo",
+        "in_hours": "Disponible",
+        "out_of_hours": "No disponible",
         "now_detail": {
-          "until": "hasta las {{time}}",
-          "until_day": "hasta el {{day}} a las {{time}}",
-          "opens_today": "abre a las {{time}}",
-          "opens_tomorrow": "abre mañana a las {{time}}",
-          "opens_day": "abre el {{day}} a las {{time}}"
+          "until": "hasta {{time}}",
+          "until_day": "hasta {{day}} {{time}}",
+          "opens_today": "abre {{time}}",
+          "opens_tomorrow": "abre mañana {{time}}",
+          "opens_day": "abre {{day}} {{time}}"
         },
         "general": {
           "title": "Datos del horario",

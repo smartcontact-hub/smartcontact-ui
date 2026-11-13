@@ -107,13 +107,14 @@
     } @else if (getStatusEntry(item, col.field); as status) {
       @if (statusDisplay(col.field) === 'icon') {
         <!-- Experimento: el estado como glifo. El texto sigue en el nombre accesible y en el tooltip. -->
-        <span class="estado-icono estado-icono--{{ status.tone }}" role="img" [attr.aria-label]="status.labelKey | translate" [pTooltip]="status.labelKey | translate" tooltipPosition="top">
-          <sc-icon [name]="status.icon ?? 'check_circle'" size="sm" filled aria-hidden="true" />
+        <span class="sc-channel-row__item" role="img" [attr.aria-label]="status.labelKey | translate" [pTooltip]="status.labelKey | translate" tooltipPosition="top">
+          <sc-icon [name]="status.icon ?? 'check_circle'" size="inherit" aria-hidden="true" />
         </span>
       } @else if (statusDisplay(col.field) === 'availability') {
         <!-- Experimento: «Atención ahora» con glifo + estado + matiz, en vez de la pastilla que repetía «Estado». -->
         <span class="disponibilidad">
-          <span class="estado-icono estado-icono--{{ status.tone }}"><sc-icon [name]="status.icon ?? 'circle'" size="sm" filled aria-hidden="true" /></span>
+          <!-- El glifo, como los de canal de Grupos: 16, un solo color neutro (`sc-channel-row__item`). -->
+          <span class="sc-channel-row__item" aria-hidden="true"><sc-icon [name]="status.icon ?? 'circle'" size="inherit" /></span>
           <span>{{ status.labelKey | translate }}</span>
           @if (detailOf(item, col.field); as matiz) {
             <span class="disponibilidad__matiz sc-text-caption-regular">{{ matiz }}</span>
