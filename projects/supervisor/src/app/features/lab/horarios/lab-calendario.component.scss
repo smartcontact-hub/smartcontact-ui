@@ -92,8 +92,9 @@ button.mes__sem {
     background-color 150ms ease-out,
     transform 150ms ease-out;
 
+  /* Al pasar, un anillo: un fondo taparía el color que dice cuánto abre ese día. */
   &:hover {
-    background: var(--sc-bg-hover);
+    box-shadow: inset 0 0 0 1px var(--sc-border-primary);
   }
 
   &:active {
@@ -130,16 +131,9 @@ button.mes__sem {
   text-transform: capitalize;
 }
 
-/* En la tira un día es un cuadradito sin número: el título dice cuál es. Abierto = blanco con borde; el fin de semana,
- * un poco más oscuro para orientarse. */
+/* En la tira un día es un cuadradito sin número: el globo dice cuál es. Su color, como en los meses: cuánto abre. */
 .dia--tira {
   min-block-size: 0.875rem;
-  border: 1px solid var(--sc-border-default);
-}
-
-.dia--tira.dia--cerrado.dia--cerrado.dia--cerrado {
-  border-color: transparent;
-  background: repeating-linear-gradient(-45deg, var(--sc-bg-secondary-subtle) 0 3px, transparent 3px 5px), var(--sc-bg-secondary-subtle);
 }
 
 .dia--tira.dia--hoy {
@@ -163,10 +157,48 @@ button.mes__sem {
   }
 }
 
+/* El calendario con calor: la semana tiñe cada día según las horas que abre (más horas, más color) y el cerrado va
+ * rayado. Un periodo lleva su color; un festivo, rojo, y un día especial, ámbar, con su punto. */
+.dia[data-tipo='semana'][data-calor='1'] {
+  background: var(--sc-bg-primary-subtle);
+}
+
+.dia[data-tipo='semana'][data-calor='2'] {
+  background: var(--sc-bg-primary-subtle-hover);
+}
+
+.dia[data-tipo='semana'][data-calor='3'] {
+  background: var(--sc-bg-primary-subtle-active);
+}
+
 .dia--cerrado.dia--cerrado.dia--cerrado {
-  background: var(--sc-bg-secondary-subtle);
+  background: repeating-linear-gradient(-45deg, var(--sc-border-default) 0 1px, transparent 1px 4px), var(--sc-bg-secondary-subtle);
   color: var(--sc-text-secondary);
-  text-decoration: line-through;
+}
+
+.dia.dia.dia[data-tipo='festivo'] {
+  background: var(--sc-bg-danger-subtle-active);
+  color: var(--sc-text-danger);
+  font-weight: var(--sc-font-weight-semibold);
+}
+
+.dia.dia.dia[data-tipo='especial'] {
+  background: var(--sc-bg-warning-subtle);
+  box-shadow: inset 0 0 0 1px var(--sc-border-warning);
+  color: var(--sc-text-warning);
+  font-weight: var(--sc-font-weight-semibold);
+}
+
+.dia.dia.dia[data-tipo='especial'].dia--cerrado {
+  background: repeating-linear-gradient(-45deg, var(--sc-border-warning) 0 1px, transparent 1px 4px), var(--sc-bg-warning-subtle);
+}
+
+.dia[data-tipo='festivo']::after {
+  background: var(--sc-border-danger);
+}
+
+.dia[data-tipo='especial']::after {
+  background: var(--sc-border-warning);
 }
 
 .dia--marca::after {
@@ -185,8 +217,8 @@ button.mes__sem {
   text-decoration: underline;
 }
 
-/* Lo elegido: relleno de marca, como el rango de un selector de fechas. Gana a periodo y cerrado mientras está elegido. */
-.dia--elegido.dia--elegido.dia--elegido.dia--elegido {
+/* Lo elegido: relleno de marca, como el rango de un selector de fechas. Gana a todo lo demás mientras está elegido. */
+.dia--elegido.dia--elegido.dia--elegido.dia--elegido.dia--elegido {
   background: var(--sc-bg-primary);
   color: var(--sc-text-on-primary);
 }
@@ -199,10 +231,4 @@ button.mes__sem {
   box-shadow: 0 0 0 2px var(--sc-border-primary);
 }
 
-/* Un festivo o un día especial cerrado: rojo de calendario de pared, para que se lea de un vistazo entre los cerrados de
- * la semana (que van rayados). */
-.dia--marca.dia--cerrado.dia--cerrado.dia--cerrado.dia--cerrado {
-  border-color: var(--sc-border-danger);
-  background: var(--sc-bg-danger-subtle-active);
-  color: var(--sc-label-red-text);
-}
+

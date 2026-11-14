@@ -27,6 +27,10 @@ interface Celda {
   readonly abierto: boolean;
   readonly color: string | null;
   readonly marca: boolean;
+  /** Cuánto abre: 0 cerrado; 1 hasta 6 h; 2 hasta 10 h; 3 más (el calendario se tiñe más cuantas más horas). */
+  readonly calor: 0 | 1 | 2 | 3;
+  /** Quién manda ese día: la semana, un periodo, un día especial o un festivo. */
+  readonly tipo: 'semana' | 'periodo' | 'especial' | 'festivo';
   readonly aria: string;
 }
 
@@ -123,6 +127,8 @@ export class LabCalendarioComponent {
           abierto: r.tramos.length > 0,
           color: r.tipo === 'periodo' ? (r.periodo?.color ?? null) : null,
           marca: r.tipo === 'especial' || r.tipo === 'festivo',
+          calor: r.minutosAbiertos <= 0 ? 0 : r.minutosAbiertos <= 360 ? 1 : r.minutosAbiertos <= 600 ? 2 : 3,
+          tipo: r.tipo,
           aria: `${fmtDia.format(new Date(y, m, d))}: ${r.tramos.length > 0 ? horas : 'cerrado'}`,
         });
       }
