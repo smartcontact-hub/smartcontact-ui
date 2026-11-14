@@ -1,7 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
-import { type GroupRef, ScButtonComponent, ScTabsComponent } from '@smartcontact-hub/components';
+import { type GroupRef, ScButtonComponent, ScTabsComponent, ScTagComponent } from '@smartcontact-hub/components';
+import { ScIconComponent } from '@smartcontact-hub/icons';
+import { TooltipModule } from 'primeng/tooltip';
 import { map } from 'rxjs';
 
 import { GroupsStore } from '@features/admin/groups/state/groups.store';
@@ -12,8 +14,11 @@ import { FestivosUsoService, HorarioUsoService, subcanalesConHorario } from '@fe
 import { ahoraEn, resumenDeLaSemana } from '@features/admin/repositories/state/horarios.core.mjs';
 import { type Horario, HorariosStore } from '@features/admin/repositories/state/horarios.store';
 
+import { CeldaVaciaComponent } from '@shared/components';
+
 import { estadoDeHorario } from './lab-horarios-estado';
 import { LabImportarListaComponent } from './lab-importar-lista.component';
+import { horas, LabSemanaMiniComponent, minutosDeLaSemana } from './lab-semana-mini.component';
 import { activarLabHorarios } from './lab-modo';
 import { T } from './lab-textos';
 
@@ -27,10 +32,57 @@ const DIAS = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
  */
 @Component({
   selector: 'sc-lab-tiempo',
-  imports: [LabImportarListaComponent, RepoListPageComponent, ScButtonComponent, ScTabsComponent],
+  imports: [
+    CeldaVaciaComponent,
+    LabImportarListaComponent,
+    LabSemanaMiniComponent,
+    RepoListPageComponent,
+    ScButtonComponent,
+    ScIconComponent,
+    ScTabsComponent,
+    ScTagComponent,
+    TooltipModule,
+  ],
   template: `
+    <!-- Las celdas que dibujan (de la versión premium, con las piezas y los tokens del DS): el nombre con su zona
+         debajo, la semana en miniatura con su resumen y lo que cambia la semana. Las demás son las de siempre. -->
+    <ng-template #nombreTpl let-h>
+      <span class="nombre">
+        <span class="nombre__titulo sc-text-body-semibold" [pTooltip]="h.name" showOnEllipsis tooltipPosition="top">{{ h.name }}</span>
+        <span class="nombre__zona sc-text-caption-regular"><sc-icon name="public" size="inherit" />{{ fila(h).zona }}</span>
+      </span>
+    </ng-template>
+    <ng-template #semanaTpl let-h>
+      @let f = fila(h);
+      <span class="semana">
+        <sc-lab-semana-mini [semana]="h.week" [hoy]="f.hoy" [ahora]="f.ahora" [inactivo]="h.status === 'inactive'" [resumen]="f.resumen" />
+        <span class="semana__txt">
+          <span class="semana__resumen sc-text-body-regular" [pTooltip]="f.resumen" showOnEllipsis tooltipPosition="top">{{ f.resumen }}</span>
+          <span class="semana__horas sc-text-caption-regular">{{ f.horas }} a la semana</span>
+        </span>
+      </span>
+    </ng-template>
+    <ng-template #cambiosTpl let-h>
+      @let f = fila(h);
+      @if (f.listas + f.periodos + f.especiales === 0) {
+        <sc-celda-vacia />
+      } @else {
+        <span class="cambios">
+          @if (f.listas) {
+            <sc-tag severity="danger" icon="event_busy" [value]="f.listas + ''" [pTooltip]="t.listasDeFestivos(f.listas)" tooltipPosition="top" tooltipEvent="both" />
+          }
+          @if (f.periodos) {
+            <sc-tag severity="info" icon="wb_sunny" [value]="f.periodos + ''" [pTooltip]="t.periodos(f.periodos)" tooltipPosition="top" tooltipEvent="both" />
+          }
+          @if (f.especiales) {
+            <sc-tag severity="warning" icon="star" [value]="f.especiales + ''" [pTooltip]="t.diasEspeciales(f.especiales)" tooltipPosition="top" tooltipEvent="both" />
+          }
+        </span>
+      }
+    </ng-template>
+
     @if (lista() === 'horarios') {
-      <sc-repo-list-page [config]="config" [store]="store">
+      <sc-repo-list-page [config]="config" [store]="store" [cellTemplates]="{ name: nombreTpl, week: semanaTpl, changes: cambiosTpl }">
         <div repoBeforeToolbar class="pestanas">
           <sc-tabs [tabs]="pestanas()" [ariaLabel]="t.listas" [value]="lista()" (valueChange)="ir($event)" />
           <sc-button variant="secondary" appearance="text" size="sm" label="Volver a la versión original" (clicked)="salirDelLab()" />
@@ -60,6 +112,12 @@ const DIAS = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
   `,
   styles: `
     :host { display: block; height: 100%; }
+    .nombre, .semana__txt { display: flex; flex-direction: column; min-inline-size: 0; }
+    .nombre__titulo, .semana__resumen { overflow: hidden; color: var(--sc-text-primary); text-overflow: ellipsis; white-space: nowrap; }
+    .nombre__zona { display: flex; align-items: center; gap: var(--sc-spacing-0-25); color: var(--sc-text-secondary); white-space: nowrap; }
+    .semana { display: flex; align-items: center; gap: var(--sc-spacing-1); min-inline-size: 0; }
+    .semana__horas { color: var(--sc-text-secondary); white-space: nowrap; }
+    .cambios { display: flex; gap: var(--sc-spacing-0-5); }
     .pestanas { display: flex; align-items: center; gap: var(--sc-spacing-1); margin-block-end: var(--sc-spacing-1); }
     .pestanas sc-tabs { flex: 1; }
     .pasos { display: flex; flex-wrap: wrap; gap: var(--sc-spacing-0-5) var(--sc-spacing-2); margin: 0 0 var(--sc-spacing-0-5); padding: 0; list-style: none; color: var(--sc-text-primary); }
@@ -80,6 +138,13 @@ export class LabTiempoComponent {
 
   protected readonly t = T;
   protected readonly importando = signal(false);
+
+  /** El reloj de la tabla: la marca de «ahora» de cada semana se mueve cada 30 s. */
+  private readonly ahora = signal(new Date());
+  constructor() {
+    const id = setInterval(() => this.ahora.set(new Date()), 30_000);
+    inject(DestroyRef).onDestroy(() => clearInterval(id));
+  }
   protected readonly lista = toSignal(this.route.queryParamMap.pipe(map((q) => (q.get('lista') === 'festivos' ? 'festivos' : 'horarios'))), {
     initialValue: 'horarios',
   });
@@ -114,13 +179,42 @@ export class LabTiempoComponent {
     return grupos;
   });
 
+  /** Lo que dibujan las celdas propias de cada horario: su zona, su semana y lo que la cambia. */
+  private readonly filas = computed(() => {
+    const cuando = this.ahora();
+    const listas = new Set(this.festivos.items().map((c) => c.id));
+    return new Map(
+      this.store.items().map((h) => {
+        const { fecha, minutos } = ahoraEn(h.timezone, cuando);
+        return [
+          h.id,
+          {
+            zona: h.timezone.replace(/_/g, ' '),
+            hoy: (new Date(`${fecha}T12:00:00Z`).getUTCDay() + 6) % 7,
+            ahora: minutos,
+            resumen: resumenDeLaSemana(h.week, DIAS, 'Cerrado toda la semana', 'Abierto 24/7'),
+            horas: horas(minutosDeLaSemana(h.week)),
+            listas: h.holidayCalendarIds.filter((id) => listas.has(id)).length,
+            periodos: h.periods.length,
+            especiales: h.specials.length,
+          },
+        ] as const;
+      }),
+    );
+  });
+
+  protected fila(h: Horario) {
+    return this.filas().get(h.id) ?? { zona: '', hoy: null, ahora: null, resumen: '', horas: '', listas: 0, periodos: 0, especiales: 0 };
+  }
+
+  /** Las columnas de la versión premium: Horario (con su zona), Ahora, Semana, Cambia la semana y Lo usan. */
   private readonly columnas: readonly RepoColumnDef<Horario>[] = [
-    { key: 'name', labelKey: 'repositories.columns.name', kind: 'text', accessor: (i) => i.name, emphasis: true, sortable: true },
+    { key: 'name', labelKey: 'Horario', kind: 'text', width: '20%', accessor: (i) => i.name, emphasis: true, sortable: true },
     {
       key: 'status',
-      labelKey: 'repositories.columns.status',
+      labelKey: 'Ahora',
       kind: 'status',
-      width: '264px',
+      width: '216px',
       accessor: (h) => estadoDeHorario(h, this.festivos.items()).clave,
       statusDetail: (h) => estadoDeHorario(h, this.festivos.items()).detalle,
       statusMap: {
@@ -129,18 +223,25 @@ export class LabTiempoComponent {
         inactive: { labelKey: 'repositories.horarios.inactive', tone: 'warning' },
       },
     },
-    { key: 'week', labelKey: 'repositories.horarios.col_week', kind: 'truncate', accessor: (h) => resumenDeLaSemana(h.week, DIAS, 'Cerrado', 'Todo el día') },
+    { key: 'week', labelKey: 'Semana', kind: 'truncate', accessor: (h) => resumenDeLaSemana(h.week, DIAS, 'Cerrado toda la semana', 'Abierto 24/7') },
+    {
+      key: 'changes',
+      labelKey: 'Cambia la semana',
+      kind: 'count',
+      width: '184px',
+      accessor: (h) => String(this.fila(h).listas + h.periods.length + h.specials.length),
+      sortable: true,
+    },
     {
       key: 'groups',
-      labelKey: 'repositories.horarios.col_groups',
+      labelKey: 'Lo usan',
       kind: 'groups',
-      width: '120px',
+      width: '136px',
       accessor: (i) => String(this.gruposPorHorario().get(i.id)?.length ?? 0),
       groups: (h) => this.gruposPorHorario().get(h.id) ?? [],
       groupsDisplay: 'adaptive',
       sortable: true,
     },
-    { key: 'timezone', labelKey: 'repositories.horarios.timezone', kind: 'text', accessor: (i) => i.timezone.replace(/_/g, ' '), width: '192px', sortable: true },
   ];
 
   protected readonly config: RepoPageConfig<Horario> = {

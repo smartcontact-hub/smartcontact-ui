@@ -10540,7 +10540,7 @@
       "cuando": "Para clasificar o marcar un estado EN la fila. Si es un contador pegado a algo, `sc-badge`; si el usuario lo puede quitar, `sc-chip`.",
       "fuente": "projects/ui-smartcontact/src/lib/components/tag/sc-tag.component.ts",
       "figma": "https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System?node-id=373-13337",
-      "usosSupervisor": 37,
+      "usosSupervisor": 40,
       "relaciones": {
         "alternativas": [
           "sc-badge",
