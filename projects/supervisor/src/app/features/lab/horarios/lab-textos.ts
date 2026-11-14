@@ -27,4 +27,7 @@ export const T = {
   ejemploLista: 'Ej.: Festivos Madrid',
   verEnCalendario: (fecha: string): string => `Ver ${fecha} en el calendario`,
   cadaAnio: (nombre: string): string => `Repetir ${nombre} cada año`,
+  listasDeFestivos: (n: number): string => (n === 1 ? '1 lista de festivos' : `${n} listas de festivos`),
+  periodos: (n: number): string => (n === 1 ? '1 periodo' : `${n} periodos`),
+  diasEspeciales: (n: number): string => (n === 1 ? '1 día especial' : `${n} días especiales`),
 } as const;

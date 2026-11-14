@@ -46,6 +46,7 @@ import { diasDe, esFija, REGIONES } from './lab-festivos-catalogo';
 import { estadoDeHorario } from './lab-horarios-estado';
 import { LabListaPanelComponent } from './lab-lista-panel.component';
 import { LabSemanaComponent, NOMBRES } from './lab-semana.component';
+import { LabSemanaLineasComponent } from './lab-semana-lineas.component';
 import { T } from './lab-textos';
 
 type Borrador = Omit<Horario, 'id'>;
@@ -96,6 +97,7 @@ const fmtLargo = new Intl.DateTimeFormat('es', { weekday: 'long', day: 'numeric'
     LabCalendarioComponent,
     LabListaPanelComponent,
     LabSemanaComponent,
+    LabSemanaLineasComponent,
     ScButtonComponent,
     ScCheckboxComponent,
     ScDatepickerComponent,
@@ -144,6 +146,11 @@ export class LabHorarioEditorComponent implements OnInit {
   );
 
   protected readonly hoy = computed(() => ahoraEn(this.form().timezone).fecha);
+  /** Hoy (lunes = 0) y la hora de ahora en la zona del horario, para la marca de la semana dibujada. */
+  protected readonly ahora = computed(() => {
+    const { fecha, minutos } = ahoraEn(this.form().timezone);
+    return { dia: diaDeLaSemana(fecha), minutos };
+  });
   protected readonly inicio = signal(new Date().toISOString().slice(0, 7));
   protected readonly vista = signal<'meses' | 'anio'>('meses');
   protected readonly seleccion = signal<Seleccion | null>(null);

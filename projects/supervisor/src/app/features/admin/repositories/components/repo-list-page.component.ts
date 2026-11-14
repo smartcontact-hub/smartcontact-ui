@@ -78,6 +78,10 @@ export class RepoListPageComponent<T extends RepoEntity> {
 
   readonly config = input.required<RepoPageConfig<T>>();
   readonly store = input.required<RepoStore<T>>();
+  /** Celdas propias por columna (`key` de la columna → plantilla), para lo que no es texto, cifra, estado ni grupos:
+   *  un dibujo, dos líneas. Las demás columnas siguen con la plantilla de siempre; ordenar, buscar y exportar siguen
+   *  leyendo el `accessor`. */
+  readonly cellTemplates = input<Readonly<Record<string, TemplateRef<ScColumnCellContext<T>>>>>({});
 
   /** CTA + panel inline proyectados a la TopBar (modelo "todo arriba" S59). */
   private readonly topbarActions = viewChild<TemplateRef<unknown>>('topbarActions');
@@ -177,7 +181,7 @@ export class RepoListPageComponent<T extends RepoEntity> {
       skeleton: c.kind === 'status' ? 'tag' : undefined,
       // La cifra que abre la ficha en su sección no deja que la fila la vuelva a abrir arriba.
       stopRowClick: !!c.countOpensSection,
-      cellTemplate: cell,
+      cellTemplate: this.cellTemplates()[c.key] ?? cell,
     }));
   });
 

@@ -49,6 +49,14 @@
           <span class="panel__resumen sc-text-caption-regular">{{ resumen() }}</span>
         </div>
         <div class="panel__cuerpo">
+          <!-- La semana dibujada: lo que dicen los tramos de debajo, de un vistazo. Cambia según se editan. -->
+          <sc-lab-semana-lineas
+            [semana]="form().week"
+            [hoy]="form().status === 'inactive' ? null : ahora().dia"
+            [ahora]="form().status === 'inactive' ? null : ahora().minutos"
+            [resaltado]="diaResaltado()"
+            [resumen]="resumen()"
+          />
           <sc-lab-semana [semana]="form().week" [diaResaltado]="diaResaltado()" (semanaChange)="update('week', $event)" />
           @if (faltaSemana(); as falta) {
             <p class="error sc-text-caption-regular" role="alert">Las franjas del {{ ['lunes','martes','miércoles','jueves','viernes','sábado','domingo'][falta.dia] }} se pisan o no son válidas.</p>
@@ -58,11 +66,15 @@
         <div class="leyenda">
           <p class="leyenda__titulo sc-text-caption-semibold">Cómo se decide cada día</p>
           <ol class="leyenda__orden sc-text-caption-regular">
-            <li><span class="muestra muestra--marca"></span>Día especial o festivo</li>
+            <li><span class="muestra muestra--especial"></span>Día especial</li>
+            <li><span class="muestra muestra--festivo"></span>Festivo</li>
             <li><span class="muestra muestra--periodo"></span>Periodo (p. ej. verano)</li>
-            <li><span class="muestra"></span>Semana habitual</li>
+            <li>
+              <span class="rampa"><span class="muestra" data-calor="1"></span><span class="muestra" data-calor="2"></span><span class="muestra" data-calor="3"></span></span>
+              Semana habitual: más horas, más color
+            </li>
           </ol>
-          <p class="leyenda__nota sc-text-caption-regular">Manda el de más arriba. <span class="muestra muestra--cerrado"></span> tachado = cerrado.</p>
+          <p class="leyenda__nota sc-text-caption-regular">Manda el de más arriba. <span class="muestra muestra--cerrado"></span> Rayado, cerrado.</p>
         </div>
       </section>
     </aside>

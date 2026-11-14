@@ -5,8 +5,8 @@ import { Router } from '@angular/router';
 /**
  * LABORATORIO: el «modo rediseño» de Horarios. Entrar una vez en /lab/horarios lo enciende para este navegador; desde
  * entonces Repositorios lleva a «Tiempo» y las rutas de siempre (/admin/horarios, /admin/festivos) saltan a su versión
- * del laboratorio, así se navega por la app sin caer en la pantalla original. «Volver a la versión original» lo apaga.
- * Sin entrar en el laboratorio, nada cambia: la app y sus pruebas siguen igual.
+ * del laboratorio, así se navega por la app sin caer en la pantalla original. La pantalla ya no ofrece salir: se apaga
+ * borrando la clave `sc-lab-horarios` del navegador. Sin entrar en el laboratorio, nada cambia: la app y sus pruebas siguen igual.
  */
 const CLAVE = 'sc-lab-horarios';
 
