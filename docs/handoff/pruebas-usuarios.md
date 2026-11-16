@@ -21,7 +21,15 @@ sc-docs es la sala de control y el Supervisor, la sala de pruebas. La skill `pro
 - Supervisor: `projects/supervisor/src/app/core/prueba/` — `prueba-arranque.ts` (lee `#prueba=` antes del router, en
   `main.ts`), `prueba.service.ts` (mide), `prueba-capa.component.ts` (lo que ve la persona, con `@defer`),
   `prueba-ganchos.ts` (`registrarPrueba`).
-- Pruebas: `scripts/__tests__/prueba-usuarios.test.mjs` (14, en `test:unit`).
+- Pruebas: `scripts/__tests__/prueba-usuarios.test.mjs` (14) y `prueba-informe.test.mjs` (7), en `test:unit`.
+
+**Informe tras la prueba (DD-256 §8):** `informe`, `csvDeResultados` e `informeEnTexto` en `prueba.core.mjs`. TSR con
+intervalo, ToT, SEQ, FCS y Lostness (estos dos, del ensayo), y accionables por gravedad. La sala enseña los tres más
+graves; «Copiar informe» y «Descargar CSV» dan el resto.
+
+**La sala (DD-256 §9):** marcador, un punto por persona (copia su enlace; se enciende al llegar su código), la caja que
+coge los códigos al pegarlos y «Qué arreglar». Lo demás, plegado en «Todo el detalle». Lenguaje del Lab: papel blanco
+sobre gris, entrada escalonada de 100 ms, movimiento reducido respetado.
 
 **Primera prueba:** Horarios A (Separado) y B (Junto), 6 personas, una tarea («Dar de alta un festivo») con dos gemelas.
 Apunta al preview de `claude-discovery-horarios`, que es de otro hilo.
@@ -38,3 +46,6 @@ Apunta al preview de `claude-discovery-horarios`, que es de otro hilo.
   producción el enlace de una prueba no hace nada, a propósito.
 - ⚠️ La misión es `<tarea>-<vuelta>`: `festivo-1` es la que la persona hace PRIMERO, no la de la versión A.
 - ⚠️ sc-docs no tiene `withComponentInputBinding`: los parámetros de ruta se leen con `ActivatedRoute`.
+- ⚠️ La caja de códigos se vacía en el turno siguiente (`setTimeout`): vaciarla en el mismo deja la señal de '' a '' y el
+  texto pegado se queda a la vista.
+- ⚠️ La ruta `/lab/pruebas/` es de portada en `app.component.ts` (`esPortada`): fondo gris y sin «En esta página».

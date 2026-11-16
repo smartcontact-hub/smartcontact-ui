@@ -55,14 +55,18 @@ control del Lab, y allí está todo.
    sola que…»). Con eso el Lab ya enseña la tarjeta y la sala de control.
 
 4. **Ensáyala** con Playwright en el preview: abre `/#/prueba/<id>/ensayo`, «Empezar», haz la misión, «He terminado»,
-   valora, y comprueba que el código llega a la sala de control y el veredicto lo lee. El ensayo se ve, pero no cuenta.
+   valora, y comprueba que el código llega a la sala de control y el veredicto lo lee. El ensayo se ve, pero no cuenta;
+   el de quien modera, por el camino corto, es la referencia del primer clic (FCS) y de Lostness.
 
 5. **Entrega UN enlace**: la sala de control (`https://sc-doc.pages.dev/#/lab/pruebas/<id>`, o el preview de sc-docs si
-   aún no está en `main`). Ahí están los enlaces de cada persona, la guía de la sesión y la caja de los códigos.
+   aún no está en `main`). Un punto por persona copia su enlace; la caja coge los códigos al pegarlos; la guía de la
+   sesión y la regla están en «Todo el detalle».
 
-6. **Lee el resultado** cuando te lo pidan: el veredicto sale solo en la sala. Si te pegan los códigos en el chat,
-   calcúlalo con `leerResultados` y `veredicto` de `prueba.core.mjs` en Node, sin inventar cifras. Al decidir, pasa la
-   prueba a `estado: 'decidida'` con `resultado: { fecha, resumen }`: solo el resumen.
+6. **Lee el resultado** cuando te lo pidan: el veredicto y los tres accionables más graves salen solos en la sala, y
+   «Copiar informe» y «Descargar CSV» dan el resto para seguir trabajando. Si te pegan los códigos en el chat, calcúlalo
+   con `leerResultados`, `veredicto` e `informe` de `prueba.core.mjs` en Node (`informeEnTexto` lo deja en Markdown), sin
+   inventar cifras. Al decidir, pasa la prueba a `estado: 'decidida'` con `resultado: { fecha, resumen }`: solo el
+   resumen.
 
 ## Qué se mide y por qué
 
@@ -70,6 +74,10 @@ control del Lab, y allí está todo.
   la mitad más que la otra), luego la preferencia. Una diferencia solo cuenta con la prueba de signos exacta, p < 0,10:
   con 6 personas, 5 a 0. Si no, «Empate» y decide lo que se vio en las sesiones. No lo maquilles.
 - **Explica, no decide**: primer clic (con dónde), clics en vacío, pantallas recorridas y en qué momento se pidió ayuda.
+- **El informe, con las siglas de siempre** (DD-256 §8): TSR (bien y sin ayuda, con su intervalo), ToT (tiempo de lo que
+  salió bien), SEQ (facilidad 1–7, media del sector 5,5), FCS (primer clic igual al del ensayo) y Lostness (más de 0,4 es
+  perderse). FCS y Lostness necesitan el **ensayo**: hazlo tú antes, por el camino corto. Cada accionable dice qué se vio,
+  con su cifra, y qué hacer. La «retención» no es de una prueba así: es analítica de producto.
 - **No**: mapas de calor (con 6 personas no dicen nada), SUS (para una tarea es demasiado), grabar la pantalla (la
   llamada ya graba, si la persona quiere), analítica de terceros.
 

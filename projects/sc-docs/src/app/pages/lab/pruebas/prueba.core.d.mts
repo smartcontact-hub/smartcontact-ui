@@ -96,3 +96,46 @@ export function pSignos(a: number, b: number): number;
 export function exito(p: PasoResultado): boolean | null;
 export function limpio(p: PasoResultado): boolean | null;
 export function veredicto(plan: PlanMinimo, resultados: readonly Resultado[]): Veredicto;
+
+/** El informe tras la prueba (DD-256 §8): métricas con su sigla y accionables. */
+export const ENSAYO: string;
+export const REFERENCIAS: { readonly tsr: number; readonly seq: number; readonly lostness: number };
+export type Gravedad = 'alta' | 'media' | 'baja';
+export interface MetricasVersion {
+  id: string;
+  nombre: string;
+  n: number;
+  tsr: { exitos: number; pct: number; ic: [number, number] } | null;
+  tot: number | null;
+  seq: number | null;
+  fcs: { bueno: string; aciertos: number; pct: number } | null;
+  lostness: number | null;
+  ayuda: number | null;
+  enVacio: number;
+  preferida: number;
+}
+export interface Hallazgo {
+  regla: string;
+  gravedad: Gravedad;
+  version: string;
+  nombre: string;
+  tarea: string | null;
+  sigla: string;
+  titulo: string;
+  evidencia: string;
+  accion: string;
+}
+export interface Informe {
+  personas: number;
+  conEnsayo: boolean;
+  tareas: { id: string; titulo: string; versiones: MetricasVersion[] }[];
+  hallazgos: Hallazgo[];
+  nombre(id: string): string;
+}
+export function informe(plan: PlanMinimo, resultados: readonly Resultado[]): Informe;
+export function csvDeResultados(plan: PlanMinimo, resultados: readonly Resultado[]): string;
+export function informeEnTexto(
+  plan: PlanMinimo & { readonly titulo?: string; readonly pregunta?: string },
+  inf: Informe,
+  v: Veredicto,
+): string;

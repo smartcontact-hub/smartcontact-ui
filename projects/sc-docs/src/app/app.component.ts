@@ -177,9 +177,12 @@ export class AppComponent {
 
   /**
    * Las páginas con la composición de la portada: fondo gris, a todo el ancho y sin «En esta página». El Lab la comparte
-   * desde el 2026-11-16: se parece a la portada a propósito y lleva su propio índice arriba.
+   * desde el 2026-11-16: se parece a la portada a propósito y lleva su propio índice arriba. La sala de una prueba con
+   * personas (`/lab/pruebas/…`, DD-256) también: es del Lab y no lleva más que lo que se usa.
    */
-  protected readonly esPortada = computed(() => this.ruta() === '/' || this.ruta() === '/lab');
+  protected readonly esPortada = computed(
+    () => this.ruta() === '/' || this.ruta() === '/lab' || this.ruta().startsWith('/lab/pruebas/'),
+  );
 
   /** El lateral de la sección en la que estás, o null si la sección es de una sola página. */
   protected readonly seccion = computed<SeccionLateral | null>(() => {

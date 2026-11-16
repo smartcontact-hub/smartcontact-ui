@@ -360,8 +360,8 @@ export function veredicto(plan, resultados) {
     /** @type {Record<Criterio, string>} */
     const frases = {
       exito: `Gana ${nombre(x)}: ${a} ${veces(a)} la resolvieron bien y sin ayuda en ${nombre(x)} y no en ${otro}; ${alReves}.`,
-      facilidad: `Gana ${nombre(x)} por facilidad: se resolvieron igual, pero ${a} ${veces(a)} la vieron más fácil en ${nombre(x)}; ${alReves}.`,
-      tiempo: `Gana ${nombre(x)} por tiempo: se resolvieron igual, pero ${a} ${veces(a)} tardaron al menos un 50 % más en ${otro}; ${alReves}.`,
+      facilidad: `Gana ${nombre(x)} por facilidad: al resolverla no hay diferencia que cuente, pero ${a} ${veces(a)} la vieron más fácil en ${nombre(x)}; ${alReves}.`,
+      tiempo: `Gana ${nombre(x)} por tiempo: ni al resolverla ni en facilidad hay diferencia que cuente, pero ${a} ${veces(a)} tardaron al menos un 50 % más en ${otro}; ${alReves}.`,
       preferencia: `Gana ${nombre(x)} por preferencia: en lo demás empatan, y ${a} ${veces(a)} la prefieren frente a ${b} que prefieren ${otro}.`,
     };
     return { ...base, ganadora: x, motivo: c, frase: frases[c] };
@@ -374,4 +374,384 @@ export function veredicto(plan, resultados) {
     motivo: null,
     frase: `Empate: con ${propios.length} ${propios.length === 1 ? 'persona' : 'personas'} los datos no separan las versiones.${pocas} Decide lo que visteis en las sesiones.`,
   };
+}
+
+/* ───────────────────────────── El informe: métricas con su sigla y qué hacer (DD-256 §8) ───────────────────────────── */
+
+/** El participante del ensayo: quien modera hace la prueba por el camino corto. Se ve, no cuenta, y es la referencia. */
+export const ENSAYO = 'ensayo';
+
+/**
+ * Las referencias contra las que se lee cada métrica, con su fuente. Son medias del sector, no metas: sirven para
+ * saber si una cifra es rara, no para aprobar una versión.
+ */
+export const REFERENCIAS = {
+  /** Tasa de éxito media en tareas de usabilidad (MeasuringU, ~1.200 tareas). */
+  tsr: 0.78,
+  /** Media de la pregunta única de facilidad (MeasuringU, SEQ). */
+  seq: 5.5,
+  /** Lostness: por encima, la persona se ha perdido (Smith, 1996). */
+  lostness: 0.4,
+};
+
+/** z para un intervalo del 95 %. */
+const Z = 1.96;
+
+/**
+ * Intervalo de confianza del 95 % de una proporción con el método de Wald ajustado (Agresti-Coull), el que recomienda
+ * MeasuringU con muestras pequeñas: con 6 personas, «5 de 6» es «entre el 42 % y el 99 %».
+ * @param {number} x
+ * @param {number} n
+ * @returns {[number, number]}
+ */
+function waldAjustado(x, n) {
+  const na = n + Z * Z;
+  const pa = (x + (Z * Z) / 2) / na;
+  const m = Z * Math.sqrt((pa * (1 - pa)) / na);
+  return [Math.max(0, pa - m), Math.min(1, pa + m)];
+}
+
+/** @param {readonly number[]} xs */
+const media = (xs) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null);
+
+/** @param {readonly number[]} xs */
+const mediaGeometrica = (xs) => (xs.length ? Math.exp(xs.reduce((a, b) => a + Math.log(b), 0) / xs.length) : null);
+
+/**
+ * Lostness de un intento (Smith, 1996): √((N/S − 1)² + (R/N − 1)²), con S las pantallas que visitó, N las distintas y
+ * R las del camino corto. 0 es ir derecho; más de 0,4, perderse.
+ * @param {readonly string[]} pantallas
+ * @param {number} r
+ */
+function lostnessDe(pantallas, r) {
+  const s = pantallas.length;
+  if (!s || !r) return null;
+  const n = new Set(pantallas).size;
+  return Math.sqrt((n / s - 1) ** 2 + (Math.min(r, n) / n - 1) ** 2);
+}
+
+/** @param {number} x */
+const pct = (x) => `${Math.round(x * 100)} %`;
+
+/** «45 s», «1 min 20 s». @param {number} s */
+const seg = (s) => {
+  const r = Math.round(s);
+  return r < 60 ? `${r} s` : `${Math.floor(r / 60)} min${r % 60 ? ` ${r % 60} s` : ''}`;
+};
+
+/** @param {number} x */
+const coma = (x) => (Math.round(x * 10) / 10).toString().replace('.', ',');
+
+/**
+ * Las métricas de una versión en una tarea, con la sigla con que las nombra cualquiera que haga UX research.
+ * @typedef {{
+ *   id: string, nombre: string, n: number,
+ *   tsr: { exitos: number, pct: number, ic: [number, number] } | null,
+ *   tot: number | null, seq: number | null,
+ *   fcs: { bueno: string, aciertos: number, pct: number } | null,
+ *   lostness: number | null, ayuda: number | null, enVacio: number, preferida: number,
+ * }} MetricasVersion
+ * @typedef {'alta' | 'media' | 'baja'} Gravedad
+ * @typedef {{
+ *   regla: string, gravedad: Gravedad, version: string, nombre: string, tarea: string | null,
+ *   sigla: string, titulo: string, evidencia: string, accion: string,
+ * }} Hallazgo
+ */
+
+/**
+ * El informe tras la prueba: por tarea y versión, las métricas con su sigla; y los hallazgos, cada uno con lo que se
+ * vio y qué hacer, por gravedad. El ensayo no cuenta como persona: de él salen el primer clic bueno (FCS) y el camino
+ * corto (Lostness).
+ * @param {PlanMinimo} plan
+ * @param {readonly Resultado[]} resultados
+ */
+export function informe(plan, resultados) {
+  const propios = resultados.filter((r) => r.prueba === plan.id);
+  const ensayo = unicos(propios).find((r) => r.participante === ENSAYO) ?? null;
+  const personas = unicos(propios.filter((r) => r.participante !== ENSAYO));
+  const nombre = (/** @type {string} */ id) => plan.versiones.find((v) => v.id === id)?.nombre ?? id;
+  const variasTareas = plan.tareas.length > 1;
+  const enTarea = (/** @type {PasoResultado} */ p, /** @type {Tarea} */ t) => p.mision.startsWith(`${t.id}-`);
+
+  const tareas = plan.tareas.map((t) => {
+    const versiones = plan.versiones.map((v) => {
+      const pasos = personas.flatMap((r) => r.pasos.filter((p) => p.version === v.id && enTarea(p, t)));
+      const ref = ensayo?.pasos.find((p) => p.version === v.id && enTarea(p, t)) ?? null;
+      const corregidos = pasos.filter((p) => limpio(p) !== null);
+      const exitos = corregidos.filter((p) => limpio(p) === true).length;
+      const bien = pasos.filter((p) => exito(p) === true);
+      const facil = /** @type {number[]} */ (pasos.map((p) => p.facilidad).filter((f) => f != null));
+      const bueno = ref?.primerClic ?? null;
+      const conClic = pasos.filter((p) => p.primerClic);
+      const lost = ref?.pantallas.length
+        ? /** @type {number[]} */ (pasos.map((p) => lostnessDe(p.pantallas, ref.pantallas.length)).filter((l) => l !== null))
+        : [];
+      /** @type {MetricasVersion} */
+      const m = {
+        id: v.id,
+        nombre: v.nombre,
+        n: pasos.length,
+        tsr: corregidos.length
+          ? { exitos, pct: exitos / corregidos.length, ic: waldAjustado(exitos, corregidos.length) }
+          : null,
+        tot: mediaGeometrica(bien.map((p) => p.ms / 1000)),
+        seq: media(facil),
+        fcs:
+          bueno && conClic.length
+            ? {
+                bueno,
+                aciertos: conClic.filter((p) => p.primerClic === bueno).length,
+                pct: conClic.filter((p) => p.primerClic === bueno).length / conClic.length,
+              }
+            : null,
+        lostness: media(lost),
+        ayuda: pasos.length ? pasos.filter((p) => p.ayudas.length).length / pasos.length : null,
+        enVacio: pasos.reduce((n, p) => n + p.enVacio.length, 0),
+        preferida: personas.filter((r) => r.preferencia?.version === v.id).length,
+      };
+      return { m, pasos };
+    });
+    return { tarea: t, versiones };
+  });
+
+  /** @type {Hallazgo[]} */
+  const hallazgos = [];
+  for (const { tarea: t, versiones } of tareas) {
+    const tarea = variasTareas ? t.titulo : null;
+    const en = variasTareas ? ` en «${t.titulo}»` : '';
+    for (const { m, pasos } of versiones) {
+      if (!m.n) continue;
+      /** @param {Omit<Hallazgo, 'version' | 'nombre' | 'tarea'>} h */
+      const anota = (h) => hallazgos.push({ ...h, version: m.id, nombre: m.nombre, tarea });
+
+      // TSR: la tarea no sale. Con lo que más falta, si la rama corrige y lo dice.
+      if (m.tsr && m.tsr.pct < REFERENCIAS.tsr) {
+        const titulares = contar(
+          pasos.filter((p) => limpio(p) === false && p.comprobacion?.titular).map((p) => /** @type {string} */ (p.comprobacion?.titular)),
+        );
+        const [falta, veces] = titulares[0] ?? [null, 0];
+        anota({
+          regla: 'tsr-bajo',
+          gravedad: m.tsr.pct < 0.5 ? 'alta' : 'media',
+          sigla: 'TSR',
+          titulo: `${m.nombre}: la tarea no sale${en}`,
+          evidencia: `TSR ${m.tsr.exitos} de ${m.n} (${pct(m.tsr.pct)}; entre el ${pct(m.tsr.ic[0])} y el ${pct(m.tsr.ic[1])}), por debajo del ${pct(REFERENCIAS.tsr)} de media.${falta ? ` Lo que más falta: «${falta}» (${veces} ${veces === 1 ? 'vez' : 'veces'}).` : ''}`,
+          accion: falta
+            ? `Haz que no se pueda pasar por alto lo que más se queda sin hacer: «${falta}».`
+            : 'Busca en las sesiones el paso donde se tuerce: la tarea no sale sola.',
+        });
+      }
+
+      // Atasco: varias personas piden ayuda en la misma pantalla.
+      const atascos = contar(pasos.flatMap((p) => [...new Set(p.ayudas.map((a) => a.pantalla))]));
+      for (const [pantalla, k] of atascos) {
+        if (k < 2) continue;
+        anota({
+          regla: 'atasco',
+          gravedad: k >= m.n / 2 ? 'alta' : 'media',
+          sigla: 'Ayuda',
+          titulo: `${m.nombre}: se atascan en ${pantalla}${en}`,
+          evidencia: `${k} personas pidieron ayuda en ${pantalla}.`,
+          accion: `Lo que hay que hacer en ${pantalla} no se ve: revisa qué esperaban encontrar ahí y ponlo a la vista.`,
+        });
+      }
+
+      // FCS: el primer clic no va donde va el camino corto.
+      if (m.fcs && m.fcs.pct < 0.5) {
+        const otros = contar(pasos.map((p) => p.primerClic).filter((c) => c && c !== m.fcs?.bueno).map(String));
+        const [dondeVan, k] = otros[0] ?? [null, 0];
+        anota({
+          regla: 'primer-clic',
+          gravedad: m.fcs.pct < 0.34 ? 'alta' : 'media',
+          sigla: 'FCS',
+          titulo: `${m.nombre}: no encuentran por dónde empezar${en}`,
+          evidencia: `FCS ${m.fcs.aciertos} de ${m.n} (${pct(m.fcs.pct)}): el camino corto empieza en «${m.fcs.bueno}».${dondeVan ? ` El primer clic más repetido fue «${dondeVan}» (${k}).` : ''}`,
+          accion: dondeVan
+            ? `Haz que «${m.fcs.bueno}» destaque, o pon la entrada donde la buscan: «${dondeVan}».`
+            : `Haz que «${m.fcs.bueno}» destaque desde donde empiezan.`,
+        });
+      }
+
+      // Clic en vacío repetido: algo parece pulsable y no lo es.
+      const vacios = contar(pasos.flatMap((p) => [...new Set(p.enVacio)]).filter((c) => !c.startsWith('espacio vacío')));
+      for (const [donde, k] of vacios) {
+        if (k < 2) continue;
+        anota({
+          regla: 'vacio',
+          gravedad: 'media',
+          sigla: 'Clic en vacío',
+          titulo: `${m.nombre}: parece pulsable y no lo es${en}`,
+          evidencia: `«${donde}»: ${k} personas lo pulsaron y no hizo nada.`,
+          accion: 'Hazlo pulsable, que es lo que esperan, o quítale el aspecto de control.',
+        });
+      }
+
+      // SEQ: se percibe difícil.
+      if (m.seq !== null && m.seq < REFERENCIAS.seq) {
+        anota({
+          regla: 'seq-bajo',
+          gravedad: m.seq < 4.5 ? 'media' : 'baja',
+          sigla: 'SEQ',
+          titulo: `${m.nombre}: se percibe difícil${en}`,
+          evidencia: `SEQ ${coma(m.seq)} sobre 7, por debajo de la media de ${coma(REFERENCIAS.seq)}.`,
+          accion: 'Busca el paso que más dudas dio en las sesiones: aunque salga, cuesta.',
+        });
+      }
+
+      // Lostness: dan vueltas.
+      if (m.lostness !== null && m.lostness > REFERENCIAS.lostness) {
+        anota({
+          regla: 'perdidos',
+          gravedad: 'media',
+          sigla: 'Lostness',
+          titulo: `${m.nombre}: dan vueltas${en}`,
+          evidencia: `Lostness ${coma(m.lostness)} de media; por encima de ${coma(REFERENCIAS.lostness)} es perderse.`,
+          accion: 'Acerca el destino o dale un acceso directo desde donde empiezan.',
+        });
+      }
+    }
+
+    // ToT: una versión mucho más lenta que la más rápida (a partir de un 50 %).
+    const conTiempo = versiones.filter(({ m }) => m.tot !== null);
+    const rapida = conTiempo.reduce((a, b) => (a && /** @type {number} */ (a.m.tot) <= /** @type {number} */ (b.m.tot) ? a : b), conTiempo[0]);
+    for (const { m } of conTiempo) {
+      if (!rapida || m.id === rapida.m.id || /** @type {number} */ (m.tot) < /** @type {number} */ (rapida.m.tot) * FACTOR_TIEMPO) continue;
+      hallazgos.push({
+        regla: 'lenta',
+        gravedad: 'baja',
+        version: m.id,
+        nombre: m.nombre,
+        tarea,
+        sigla: 'ToT',
+        titulo: `${m.nombre}: cuesta más tiempo${en}`,
+        evidencia: `ToT ${seg(/** @type {number} */ (m.tot))} frente a ${seg(/** @type {number} */ (rapida.m.tot))} en ${rapida.m.nombre}, contando solo lo que salió bien.`,
+        accion: 'Mira qué paso añade el tiempo: suele ser un desvío o una confirmación de más.',
+      });
+    }
+
+    // La paradoja preferencia-rendimiento: la prefieren, pero se resuelve peor.
+    const conPref = versiones.filter(({ m }) => m.tsr);
+    const masPreferida = [...conPref].sort((a, b) => b.m.preferida - a.m.preferida)[0];
+    const mejor = [...conPref].sort((a, b) => /** @type {number} */ (b.m.tsr?.pct) - /** @type {number} */ (a.m.tsr?.pct))[0];
+    if (
+      masPreferida &&
+      mejor &&
+      masPreferida.m.id !== mejor.m.id &&
+      masPreferida.m.preferida > Math.max(0, ...conPref.filter((x) => x !== masPreferida).map((x) => x.m.preferida)) &&
+      /** @type {number} */ (mejor.m.tsr?.pct) > /** @type {number} */ (masPreferida.m.tsr?.pct)
+    ) {
+      const p = masPreferida.m;
+      hallazgos.push({
+        regla: 'paradoja',
+        gravedad: 'media',
+        version: p.id,
+        nombre: p.nombre,
+        tarea,
+        sigla: 'Preferencia',
+        titulo: `${p.nombre}: gusta más, pero funciona peor${en}`,
+        evidencia: `La prefieren ${p.preferida} personas, pero su TSR es ${pct(/** @type {number} */ (p.tsr?.pct))} frente a ${pct(/** @type {number} */ (mejor.m.tsr?.pct))} en ${mejor.m.nombre} (la paradoja preferencia-rendimiento).`,
+        accion: `Decide por lo que funciona y llévate a ${mejor.m.nombre} lo que gusta de ${p.nombre}: lo dicen en el «por qué».`,
+      });
+    }
+  }
+
+  const peso = { alta: 0, media: 1, baja: 2 };
+  const orden = (/** @type {string} */ id) => plan.versiones.findIndex((v) => v.id === id);
+  hallazgos.sort((a, b) => peso[a.gravedad] - peso[b.gravedad] || orden(a.version) - orden(b.version));
+
+  return {
+    personas: personas.length,
+    conEnsayo: ensayo !== null,
+    tareas: tareas.map(({ tarea: t, versiones }) => ({ id: t.id, titulo: t.titulo, versiones: versiones.map(({ m }) => m) })),
+    hallazgos,
+    nombre,
+  };
+}
+
+/**
+ * Cuántas veces sale cada valor, de más a menos.
+ * @param {readonly string[]} xs
+ * @returns {[string, number][]}
+ */
+function contar(xs) {
+  /** @type {Map<string, number>} */
+  const c = new Map();
+  for (const x of xs) c.set(x, (c.get(x) ?? 0) + 1);
+  return [...c.entries()].sort((a, b) => b[1] - a[1]);
+}
+
+/** @param {unknown} v */
+const celda = (v) => {
+  const s = v === null || v === undefined ? '' : String(v);
+  return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+};
+
+/**
+ * Los datos en bruto para una hoja de cálculo: una fila por intento, con cada métrica por intento. El ensayo va
+ * marcado. Sin nombres: las personas son P1, P2…
+ * @param {PlanMinimo} plan
+ * @param {readonly Resultado[]} resultados
+ */
+export function csvDeResultados(plan, resultados) {
+  const cab = [
+    'participante', 'ensayo', 'version', 'nombre_version', 'tarea', 'mision', 'vuelta', 'exito', 'sin_ayuda',
+    'comprobacion_bien', 'comprobacion_total', 'lo_que_falta', 'moderador', 'segundos', 'clics', 'clics_en_vacio',
+    'ayudas', 'primer_clic', 'pantallas_visitadas', 'pantallas_distintas', 'seq', 'prefiere', 'por_que',
+  ];
+  const sn = (/** @type {boolean | null} */ b) => (b === null ? '' : b ? 'si' : 'no');
+  const filas = unicos(resultados.filter((r) => r.prueba === plan.id)).flatMap((r) =>
+    r.pasos.map((p, i) => {
+      const t = plan.tareas.find((x) => p.mision.startsWith(`${x.id}-`));
+      return [
+        r.participante, r.participante === ENSAYO ? 'si' : 'no', p.version,
+        plan.versiones.find((v) => v.id === p.version)?.nombre ?? p.version, t?.titulo ?? '', p.mision, i + 1,
+        sn(exito(p)), sn(limpio(p)), p.comprobacion?.bien ?? '', p.comprobacion?.total ?? '',
+        p.comprobacion?.titular ?? '', p.moderador ?? '', Math.round(p.ms / 1000), p.clics, p.enVacio.length,
+        p.ayudas.length, p.primerClic ?? '', p.pantallas.length, new Set(p.pantallas).size, p.facilidad ?? '',
+        r.preferencia ? (r.preferencia.version ?? 'igual') : '', r.preferencia?.porque ?? '',
+      ].map(celda).join(',');
+    }),
+  );
+  return `${[cab.join(','), ...filas].join('\n')}\n`;
+}
+
+/**
+ * El informe para pegar en un documento o un ticket: el veredicto, las métricas con su sigla y los accionables.
+ * @param {PlanMinimo & { readonly titulo?: string, readonly pregunta?: string }} plan
+ * @param {ReturnType<typeof informe>} inf
+ * @param {ReturnType<typeof veredicto>} v
+ */
+export function informeEnTexto(plan, inf, v) {
+  const l = [`# ${plan.titulo ?? plan.id}`, ''];
+  if (plan.pregunta) l.push(plan.pregunta, '');
+  l.push(`**Veredicto:** ${v.frase}`, '', `${inf.personas} personas${inf.conEnsayo ? ', con ensayo de referencia' : ''}.`, '');
+  for (const t of inf.tareas) {
+    l.push(`## Métricas · ${t.titulo}`, '');
+    l.push('| | TSR | ToT | SEQ | FCS | Lostness | Ayuda | Clics en vacío | La prefieren |', '|---|---|---|---|---|---|---|---|---|');
+    for (const m of t.versiones) {
+      const celdas = [
+        m.tsr ? `${m.tsr.exitos} de ${m.n} (${pct(m.tsr.pct)}; ${pct(m.tsr.ic[0])}–${pct(m.tsr.ic[1])})` : '—',
+        m.tot !== null ? seg(m.tot) : '—',
+        m.seq !== null ? coma(m.seq) : '—',
+        m.fcs ? pct(m.fcs.pct) : '—',
+        m.lostness !== null ? coma(m.lostness) : '—',
+        m.ayuda !== null ? pct(m.ayuda) : '—',
+        String(m.enVacio),
+        String(m.preferida),
+      ];
+      l.push(`| ${m.nombre} | ${celdas.join(' | ')} |`);
+    }
+    l.push('');
+  }
+  l.push('## Qué hacer', '');
+  if (!inf.hallazgos.length) l.push('Nada destaca en los datos: decide lo que visteis en las sesiones.', '');
+  const GRAVEDAD = { alta: 'Grave', media: 'Importante', baja: 'Menor' };
+  for (const h of inf.hallazgos) {
+    l.push(`- **${GRAVEDAD[h.gravedad]} · ${h.titulo}** (${h.sigla}). ${h.evidencia} Qué hacer: ${h.accion}`);
+  }
+  l.push(
+    '',
+    'TSR: tasa de éxito, con ayuda cuenta como fallo; entre paréntesis, su intervalo del 95 %. ToT: tiempo en la tarea, media geométrica de lo que salió bien. SEQ: facilidad de 1 a 7 (media del sector, 5,5). FCS: primer clic igual al del ensayo. Lostness: 0 es ir derecho; más de 0,4, perderse.',
+  );
+  return `${l.join('\n')}\n`;
 }

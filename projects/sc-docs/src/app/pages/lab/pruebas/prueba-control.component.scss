@@ -1,12 +1,17 @@
-/* Sala de control de una prueba con usuarios (DD-256). Color y espaciado de `--sc-*`; la tipografía, de las clases
-   `.sc-text-*` del HTML. Los tres pasos, en blanco con borde: los botones de texto del DS no llegan a 4,5:1 sobre el
-   gris (medido con axe el 2026-11-16). El verde solo dice «gana» o «recibido».
-   Ritmo 7 · 14 · 28: dentro de un bloque, `--sc-spacing-0-5`/`-1`; entre bloques, `--sc-spacing-2`. */
+/*
+ * LA SALA DE UNA PRUEBA CON PERSONAS (DD-256), con el lenguaje del Lab: papel blanco sobre el gris, radio grande y sombra
+ * mínima, cifras grandes y un solo acento. Lo que importa se ve de un vistazo (el marcador y los puntos de las personas,
+ * que se rellenan cuando llega su código); lo demás espera plegado.
+ *
+ * Color de los roles del sistema (`--sc-bg-*`, `--sc-text-*`): azul de marca para lo que ya está («recibido», la barra),
+ * verde solo para «gana», cielo solo para enlaces y foco. Tipografía por clase `.sc-text-*` en el HTML.
+ * Ritmo 7 · 14 · 28: dentro de una pieza `-0-5`, entre hermanas `-1`, entre secciones `-2`.
+ * Movimiento: entrada escalonada de 100 ms (opacidad, desenfoque de 4 px y 12 px de subida), barras que crecen, puntos
+ * que se encienden, cambio de icono con escala, opacidad y desenfoque, y 0,96 al pulsar. Con movimiento reducido, nada.
+ */
+
 :host {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sc-spacing-2);
-  max-width: 64rem;
+  display: block;
 }
 
 p,
@@ -16,16 +21,43 @@ h3,
 dl,
 dd,
 ol,
-ul,
-blockquote {
+ul {
   margin: 0;
 }
 
 a {
   color: var(--sc-text-link);
+  text-underline-offset: 0.2em;
 }
 
-/* ── Cabecera ─────────────────────────────────────────────────────── */
+/* ─────────── Página ─────────── */
+
+.pc {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-2);
+  width: min(100% - 2 * var(--sc-spacing-1-5), 62rem);
+  margin: 0 auto;
+  padding-block: var(--sc-spacing-3) var(--sc-spacing-5);
+}
+
+/* Papel: blanco sobre el gris, con un filo de sombra en vez de borde (la sombra eleva; el borde, separa). */
+.pc-version,
+.pc-panel {
+  background: var(--sc-bg-surface);
+  border-radius: var(--sc-radius-xl);
+  box-shadow:
+    0 0 0 1px rgb(var(--sc-shadow-color-rgb) / 0.06),
+    var(--sc-shadow-xs);
+}
+
+.pc-nota {
+  color: var(--sc-text-secondary);
+  text-wrap: pretty;
+}
+
+/* ─────────── Cabecera ─────────── */
+
 .pc-cab {
   display: flex;
   flex-direction: column;
@@ -37,351 +69,617 @@ a {
   align-items: center;
   gap: var(--sc-spacing-0-25);
   align-self: flex-start;
+  margin-block-end: var(--sc-spacing-1);
   text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
-.pc-cab__titulo {
+.pc-cab__ante {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: var(--sc-spacing-0-75);
+  gap: var(--sc-spacing-0-5);
+  color: var(--sc-text-secondary);
 }
 
-.pc-cab__entradilla {
-  max-width: 48rem;
+.pc-titulo {
+  color: var(--sc-text-heading);
+  text-wrap: balance;
+}
+
+.pc-pregunta {
+  max-width: 44rem;
   color: var(--sc-text-secondary);
   text-wrap: pretty;
 }
 
-.pc-cab__nota {
-  color: var(--sc-text-secondary);
-}
+/* ─────────── Marcador ─────────── */
 
-/* ── Bloques ──────────────────────────────────────────────────────── */
-.pc-bloque {
+.pc-marcador {
   display: flex;
   flex-direction: column;
   gap: var(--sc-spacing-1);
-  padding: var(--sc-spacing-1-5);
-  background: var(--sc-bg-surface);
-  border: 1px solid var(--sc-border-subtle);
-  border-radius: var(--sc-radius-xl);
-}
-
-/* Lo que se consulta una vez: en gris y sin borde, un escalón por debajo de los tres pasos. */
-.pc-bloque--suave {
-  background: var(--sc-bg-secondary-subtle);
-  border-color: transparent;
-}
-
-.pc-bloque__cab {
-  display: flex;
-  align-items: center;
-  gap: var(--sc-spacing-0-75);
-}
-
-.pc-bloque__cab h2 {
-  color: var(--sc-text-heading);
-}
-
-/* El número del paso: dice el orden sin repetirlo en el título. */
-.pc-paso {
-  display: grid;
-  place-items: center;
-  flex: none;
-  inline-size: var(--sc-spacing-2);
-  block-size: var(--sc-spacing-2);
-  border-radius: var(--sc-radius-full);
-  background: var(--sc-bg-primary-subtle);
-  color: var(--sc-text-link);
-}
-
-.pc-lead {
-  max-width: 48rem;
-  color: var(--sc-text-secondary);
-  text-wrap: pretty;
-}
-
-.pc-sub {
-  margin-block-start: var(--sc-spacing-1);
-  color: var(--sc-text-heading);
-}
-
-.pc-acciones {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--sc-spacing-0-75);
-}
-
-.pc-acciones__nota {
-  color: var(--sc-text-secondary);
-}
-
-.pc-enlace {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--sc-spacing-0-25);
-  text-decoration: none;
-}
-
-/* ── 1 · Personas ─────────────────────────────────────────────────── */
-.pc-personas {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
-  gap: var(--sc-spacing-0-5);
-  padding: 0;
-  list-style: none;
-}
-
-.pc-persona {
-  display: flex;
-  align-items: center;
-  gap: var(--sc-spacing-0-75);
-  min-block-size: var(--sc-spacing-3);
-  border-block-end: 1px solid var(--sc-border-subtle);
-}
-
-.pc-persona__quien {
-  min-inline-size: var(--sc-spacing-1-5);
-}
-
-.pc-persona__orden {
-  flex: 1;
-  min-inline-size: 0;
-  overflow: hidden;
-  color: var(--sc-text-secondary);
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-/* ── 2 · Guía ─────────────────────────────────────────────────────── */
-.pc-guia {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sc-spacing-0-5);
-  max-width: 48rem;
-  padding-inline-start: var(--sc-spacing-1-25);
-  color: var(--sc-text-secondary);
-  text-wrap: pretty;
-}
-
-.pc-guia .sc-text-body-semibold {
-  color: var(--sc-text-primary);
-}
-
-/* ── 3 · Pegar y veredicto ────────────────────────────────────────── */
-.pc-pegar {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sc-spacing-0-75);
-}
-
-/* El selector de ficheros nativo no se ve: lo abre el botón «Subir archivos .json». */
-.pc-fichero {
-  display: none;
-}
-
-.pc-aviso {
-  color: var(--sc-text-secondary);
 }
 
 .pc-veredicto {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--sc-spacing-1);
-  margin-block-start: var(--sc-spacing-1);
-  padding: var(--sc-spacing-1-25);
-  background: var(--sc-bg-secondary-subtle);
-  border-radius: var(--sc-radius-lg);
-}
-
-.pc-veredicto.is-gana {
-  background: var(--sc-bg-success-subtle);
-}
-
-.pc-veredicto__texto {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sc-spacing-0-25);
+  color: var(--sc-text-heading);
   text-wrap: pretty;
-}
-
-.pc-veredicto__nota {
-  color: var(--sc-text-secondary);
 }
 
 .pc-versiones {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
-  gap: var(--sc-spacing-0-75);
+  gap: var(--sc-spacing-1);
 }
 
 .pc-version {
   display: flex;
   flex-direction: column;
   gap: var(--sc-spacing-0-75);
-  padding: var(--sc-spacing-1-25);
-  border: 1px solid var(--sc-border-subtle);
-  border-radius: var(--sc-radius-lg);
-}
+  padding: var(--sc-spacing-1-5);
+  transition: box-shadow var(--sc-transition-slow) ease-out;
 
-.pc-version.is-gana {
-  border-color: var(--sc-border-success);
+  /* La que gana: un anillo verde, además de la etiqueta «Gana» (el color nunca va solo). */
+  &.is-gana {
+    box-shadow:
+      0 0 0 2px var(--sc-border-success),
+      var(--sc-shadow-card);
+  }
 }
 
 .pc-version__cab {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--sc-spacing-0-5);
+  gap: var(--sc-spacing-0-75);
 }
 
-.pc-cifras {
+.pc-letra {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--sc-spacing-0-75) var(--sc-spacing-1);
+  flex: none;
+  place-items: center;
+  inline-size: var(--sc-spacing-2);
+  block-size: var(--sc-spacing-2);
+  border-radius: var(--sc-radius-full);
+  background: var(--sc-bg-primary);
+  color: var(--sc-text-on-primary);
+}
+
+.pc-version__nombre {
+  min-inline-size: 0;
+  color: var(--sc-text-heading);
+}
+
+.pc-enlace {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-25);
+  margin-inline-start: auto;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 .pc-cifra {
   display: flex;
-  flex-direction: column;
-  gap: var(--sc-spacing-0-25);
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sc-spacing-0-5);
+  margin-block-start: var(--sc-spacing-0-5);
 }
 
-.pc-cifra dt {
+.pc-cifra__n {
+  color: var(--sc-text-heading);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.pc-cifra__de {
   color: var(--sc-text-secondary);
 }
 
-.pc-cifra dd {
+/* La barra dice la proporción de un vistazo; la cifra de encima la dice en palabras. */
+.pc-barra {
+  overflow: hidden;
+  block-size: var(--sc-spacing-0-375);
+  border-radius: var(--sc-radius-full);
+  background: var(--sc-bg-subtle);
+}
+
+.pc-barra__relleno {
+  display: block;
+  block-size: 100%;
+  border-radius: inherit;
+  background: var(--sc-bg-primary);
+  transform: scaleX(var(--p, 0));
+  transform-origin: left center;
+  transition:
+    transform 700ms var(--demo-ease-salida),
+    background-color var(--sc-transition-slow) ease-out;
+  animation: pc-crece 1000ms var(--demo-ease-salida) 500ms backwards;
+
+  .is-gana & {
+    background: var(--sc-bg-success);
+  }
+}
+
+.pc-version__mas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sc-spacing-1);
+  color: var(--sc-text-secondary);
   font-variant-numeric: tabular-nums;
 }
 
-/* ── Persona a persona ────────────────────────────────────────────── */
-.pc-detalles {
+abbr[title] {
+  text-decoration: underline dotted;
+  text-underline-offset: 0.2em;
+  cursor: help;
+}
+
+/* ─────────── Personas y resultados: un papel partido en dos ─────────── */
+
+/* Las dos mitades se separan con una línea de 1 px que sale del hueco de la rejilla: vertical a lo ancho, horizontal en
+   estrecho, sin reglas que cambien de lado. */
+.pc-panel--dos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+  gap: 1px;
+  overflow: hidden;
+  background: var(--sc-border-subtle);
+  transition: outline-color var(--sc-transition-fast) ease-out;
+  outline: 2px dashed transparent;
+  outline-offset: 4px;
+
+  &.is-encima {
+    outline-color: var(--sc-border-focus);
+  }
+}
+
+.pc-panel__parte {
   display: flex;
   flex-direction: column;
+  gap: var(--sc-spacing-1);
+  padding: var(--sc-spacing-1-5);
+  background: var(--sc-bg-surface);
+}
+
+.pc-panel__cab {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
   gap: var(--sc-spacing-0-5);
+  color: var(--sc-text-heading);
 }
 
-.pc-detalle {
-  border: 1px solid var(--sc-border-subtle);
-  border-radius: var(--sc-radius-lg);
+.pc-cuenta {
+  color: var(--sc-text-secondary);
+  font-variant-numeric: tabular-nums;
 }
 
-.pc-detalle__resumen {
+/* Los botones de texto llevan su relleno: se adelantan lo mismo para que el icono caiga en la línea del texto. */
+.pc-panel__accion {
+  align-self: flex-start;
+  margin-block-start: auto;
+  margin-inline-start: calc(var(--sc-spacing-0-5) * -1);
+}
+
+/* El selector de ficheros nativo no se ve: lo abre «Subir archivos .json». */
+.pc-fichero {
+  display: none;
+}
+
+/* Un punto por persona. Vacío hasta que llega su código; entonces se enciende en el azul de marca. */
+.pc-puntos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sc-spacing-0-5);
+  padding: 0;
+  list-style: none;
+}
+
+.pc-puntos__item {
+  animation: pc-aparece 500ms var(--demo-ease-salida) backwards;
+  animation-delay: calc(450ms + var(--i, 0) * 50ms);
+}
+
+.pc-punto {
+  position: relative;
+  display: grid;
+  place-items: center;
+  inline-size: var(--sc-spacing-3);
+  block-size: var(--sc-spacing-3);
+  padding: 0;
+  border: 0;
+  border-radius: var(--sc-radius-full);
+  background: var(--sc-bg-surface);
+  box-shadow: inset 0 0 0 1px var(--sc-border-default);
+  color: var(--sc-text-secondary);
+  cursor: pointer;
+  font-variant-numeric: tabular-nums;
+  transition-property: background-color, color, box-shadow, scale;
+  transition-duration: var(--sc-transition-base), var(--sc-transition-base), var(--sc-transition-base), 150ms;
+  transition-timing-function: ease-out;
+
+  &:hover {
+    box-shadow: inset 0 0 0 1px var(--sc-border-strong);
+    color: var(--sc-text-primary);
+  }
+
+  &:active {
+    scale: 0.96;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-border-focus);
+    outline-offset: 2px;
+  }
+
+  &.is-recibido {
+    background: var(--sc-bg-primary);
+    box-shadow: inset 0 0 0 1px transparent;
+    color: var(--sc-text-on-primary);
+  }
+}
+
+/* «Copiado»: el nombre cede su sitio a un ✓ y vuelve; los dos siguen en el DOM y se cruzan. */
+.pc-punto__texto,
+.pc-punto__hecho {
+  grid-area: 1 / 1;
+  transition-property: opacity, filter, scale;
+  transition-duration: 300ms;
+  transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+.pc-punto__hecho {
+  opacity: 0;
+  filter: blur(4px);
+  scale: 0.25;
+}
+
+.pc-punto.is-copiado {
+  .pc-punto__texto {
+    opacity: 0;
+    filter: blur(4px);
+    scale: 0.25;
+  }
+
+  .pc-punto__hecho {
+    opacity: 1;
+    filter: blur(0);
+    scale: 1;
+  }
+}
+
+/* ─────────── Qué arreglar ─────────── */
+
+.pc-arreglos {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1);
+  padding: var(--sc-spacing-1-5);
+}
+
+.pc-arreglos__cab {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sc-spacing-0-5);
+  color: var(--sc-text-heading);
+}
+
+.pc-arreglos__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sc-spacing-0-25);
+  margin-inline: calc(var(--sc-spacing-0-5) * -1);
+}
+
+.pc-arreglos__lista {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  list-style: none;
+}
+
+/* Cada accionable con su número delante: el orden ES la prioridad. */
+.pc-arreglo {
+  display: grid;
+  grid-template-columns: var(--sc-spacing-2) minmax(0, 1fr);
+  gap: var(--sc-spacing-1);
+  padding-block: var(--sc-spacing-1);
+  animation: pc-entra 700ms var(--demo-ease-salida) backwards;
+  animation-delay: calc(600ms + var(--i, 0) * 100ms);
+
+  & + & {
+    border-block-start: 1px solid var(--sc-border-subtle);
+  }
+}
+
+.pc-arreglo__n {
+  color: var(--sc-text-secondary);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+
+.pc-arreglo__texto {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-25);
+  text-wrap: pretty;
+}
+
+.pc-arreglo__titular {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: var(--sc-spacing-0-5);
-  padding: var(--sc-spacing-0-75) var(--sc-spacing-1);
-  list-style: none;
+  color: var(--sc-text-heading);
+}
+
+/* ─────────── Todo el detalle ─────────── */
+
+.pc-detalle {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1);
+}
+
+.pc-detalle__resumen {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-25);
+  align-self: flex-start;
+  border-radius: var(--sc-radius-md);
+  color: var(--sc-text-primary);
   cursor: pointer;
+  list-style: none;
+
+  &::-webkit-details-marker {
+    display: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-border-focus);
+    outline-offset: 2px;
+  }
 }
 
-.pc-detalle__resumen::-webkit-details-marker {
-  display: none;
-}
+.pc-galon {
+  transition: rotate var(--sc-transition-base) ease-out;
 
-.pc-detalle__galon {
-  transition: transform var(--sc-transition-fast) ease;
-}
-
-.pc-detalle[open] .pc-detalle__galon {
-  transform: rotate(180deg);
-}
-
-.pc-detalle__meta {
-  color: var(--sc-text-secondary);
+  .pc-detalle[open] & {
+    rotate: 180deg;
+  }
 }
 
 .pc-detalle__cuerpo {
   display: flex;
   flex-direction: column;
-  gap: var(--sc-spacing-1);
-  padding: 0 var(--sc-spacing-1) var(--sc-spacing-1);
+  gap: var(--sc-spacing-2);
+  margin-block-start: var(--sc-spacing-1);
+  padding: var(--sc-spacing-1-5);
+
+  .pc-detalle[open] & {
+    animation: pc-abre var(--sc-transition-slow) ease-out;
+  }
 }
 
-.pc-detalle__quitar {
-  align-self: flex-start;
-}
-
-.pc-cita {
-  padding-inline-start: var(--sc-spacing-0-75);
-  border-inline-start: 2px solid var(--sc-border-strong);
-  color: var(--sc-text-primary);
-  text-wrap: pretty;
-}
-
-.pc-intento {
+.pc-bloque {
   display: flex;
   flex-direction: column;
   gap: var(--sc-spacing-0-5);
+  color: var(--sc-text-primary);
 }
 
-.pc-intento__cab {
+.pc-tabla-caja {
+  overflow-x: auto;
+}
+
+.pc-tabla {
+  inline-size: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+
+  th,
+  td {
+    padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
+    border-block-end: 1px solid var(--sc-border-subtle);
+    text-align: start;
+    white-space: nowrap;
+  }
+
+  th:first-child {
+    padding-inline-start: 0;
+  }
+
+  thead th {
+    color: var(--sc-text-secondary);
+  }
+}
+
+.pc-siglas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  gap: var(--sc-spacing-0-25) var(--sc-spacing-1);
+  color: var(--sc-text-secondary);
+
+  div {
+    display: flex;
+    gap: var(--sc-spacing-0-5);
+  }
+
+  dt {
+    flex: none;
+    color: var(--sc-text-primary);
+  }
+}
+
+.pc-gente {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  list-style: none;
+}
+
+.pc-gente__persona {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
+  padding-block: var(--sc-spacing-1);
+
+  & + & {
+    border-block-start: 1px solid var(--sc-border-subtle);
+  }
+}
+
+.pc-gente__cab {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: var(--sc-spacing-0-5);
 }
 
-.pc-intento__meta {
+.pc-gente__quitar {
+  margin-inline-start: auto;
+}
+
+.pc-gente__paso {
   color: var(--sc-text-secondary);
-  font-variant-numeric: tabular-nums;
-}
-
-.pc-datos {
-  display: grid;
-  grid-template-columns: max-content minmax(0, 1fr);
-  gap: var(--sc-spacing-0-25) var(--sc-spacing-1);
-}
-
-.pc-datos dt {
-  color: var(--sc-text-secondary);
-}
-
-.pc-datos dd {
   overflow-wrap: anywhere;
+  text-wrap: pretty;
 }
 
-/* ── Qué se prueba · cómo se decide ───────────────────────────────── */
-.pc-dos {
+.pc-gente__version {
+  color: var(--sc-text-primary);
+}
+
+.pc-cita {
+  color: var(--sc-text-primary);
+  text-wrap: pretty;
+}
+
+.pc-guia {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr));
-  gap: var(--sc-spacing-1);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: var(--sc-spacing-2);
   align-items: start;
 }
 
 .pc-lista {
   display: flex;
   flex-direction: column;
-  gap: var(--sc-spacing-0-5);
-  padding: 0;
-  list-style: none;
-}
-
-.pc-lista__fila {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--sc-spacing-1);
-}
-
-.pc-tarea {
-  margin-block-start: var(--sc-spacing-0-5);
-}
-
-.pc-gemelas,
-.pc-regla {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sc-spacing-0-5);
+  gap: var(--sc-spacing-0-25);
   padding-inline-start: var(--sc-spacing-1-25);
   text-wrap: pretty;
 }
 
-.pc-gemelas__cuando {
-  display: block;
-  color: var(--sc-text-secondary);
+.pc-oculto {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ─────────── Aviso ─────────── */
+
+/* Confirma lo que acabas de hacer abajo, sin mover nada, y se va solo. */
+.pc-aviso {
+  position: fixed;
+  inset-block-end: var(--sc-spacing-2);
+  inset-inline-start: 50%;
+  z-index: 10;
+  max-inline-size: min(100% - 2 * var(--sc-spacing-1-5), 32rem);
+  padding: var(--sc-spacing-0-75) var(--sc-spacing-1-25);
+  border-radius: var(--sc-radius-full);
+  background: var(--sc-bg-primary);
+  box-shadow: var(--sc-shadow-dialog);
+  color: var(--sc-text-on-primary);
+  opacity: 0;
+  pointer-events: none;
+  text-align: center;
+  transform: translate(-50%, 8px);
+  transition:
+    opacity var(--sc-transition-base) ease-out,
+    transform var(--sc-transition-base) ease-out;
+
+  &.is-visible {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+/* ─────────── Entrada escalonada ─────────── */
+
+.pc-entra {
+  animation: pc-entra 700ms var(--demo-ease-salida) backwards;
+}
+
+.pc-veredicto {
+  animation-delay: 100ms;
+}
+
+.pc-version {
+  animation-delay: calc(200ms + var(--i, 0) * 100ms);
+}
+
+.pc-panel.pc-entra {
+  animation-delay: 400ms;
+}
+
+.pc-panel.pc-arreglos {
+  animation-delay: 500ms;
+}
+
+@keyframes pc-entra {
+  from {
+    opacity: 0;
+    filter: blur(4px);
+    transform: translateY(12px);
+  }
+}
+
+@keyframes pc-aparece {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+}
+
+@keyframes pc-crece {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes pc-abre {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pc-entra,
+  .pc-puntos__item,
+  .pc-barra__relleno,
+  .pc-arreglo,
+  .pc-detalle__cuerpo {
+    animation: none !important;
+  }
+
+  .pc-barra__relleno,
+  .pc-punto,
+  .pc-punto__texto,
+  .pc-punto__hecho,
+  .pc-galon,
+  .pc-aviso {
+    transition-property: opacity, background-color, color, box-shadow;
+  }
 }
