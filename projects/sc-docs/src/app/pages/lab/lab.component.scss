@@ -245,7 +245,7 @@
 
 @container (min-width: 52rem) {
   .hrow {
-    grid-template-columns: 1fr minmax(0, 24rem);
+    grid-template-columns: 1fr minmax(0, 30rem);
     align-items: start;
   }
 
