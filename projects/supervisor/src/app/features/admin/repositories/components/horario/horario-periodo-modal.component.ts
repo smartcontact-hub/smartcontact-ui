@@ -9,6 +9,7 @@ import {
   ScCustomModalFooterDirective,
   ScDatepickerComponent,
   ScInputTextComponent,
+  ScTagComponent,
   ScTextareaComponent,
   ScToggleSwitchComponent,
 } from '@smartcontact-hub/components';
@@ -28,6 +29,8 @@ import {
 } from '../../state/horarios.core.mjs';
 import { HorarioSemanaComponent } from './horario-semana.component';
 
+/** Los colores en el orden del tag del DS (Figma): los nueve de etiqueta y, al final, el negro. */
+const ORDEN_DEL_DS = ['gray', 'red', 'orange', 'amber', 'brown', 'green', 'teal', 'blue', 'purple', 'black'] as const;
 const dosCifras = (n: number): string => String(n).padStart(2, '0');
 const mesDia = (fecha: Date): string => `${dosCifras(fecha.getMonth() + 1)}-${dosCifras(fecha.getDate())}`;
 
@@ -46,6 +49,7 @@ const mesDia = (fecha: Date): string => `${dosCifras(fecha.getMonth() + 1)}-${do
     ScCustomModalFooterDirective,
     ScDatepickerComponent,
     ScInputTextComponent,
+    ScTagComponent,
     ScTextareaComponent,
     ScToggleSwitchComponent,
     TooltipModule,
@@ -75,11 +79,19 @@ export class HorarioPeriodoModalComponent implements OnInit {
   protected readonly color = signal<string>('blue');
   protected readonly semana = signal<Semana>([]);
   protected readonly mensaje = signal('');
+  /** Lo que se leerá en la etiqueta de muestra: el nombre, o el del color mientras no lo haya. */
+  protected readonly muestra = computed(() => this.nombre().trim() || (this.translate.instant(`labels.color.${this.color()}`) as string));
   private readonly nombreTocado = signal(false);
 
   protected readonly colores = computed<readonly ColorDotOption[]>(() => {
     this.lang();
-    return COLORES_DE_PERIODO.map((c) => ({ value: c, label: this.translate.instant(`labels.color.${c}`), color: `var(--sc-label-${c}-dot)` }));
+    // El punto lleva el color del TEXTO del tag (el que se verá en la etiqueta), no el de su punto de etiqueta; el negro es el
+    // tag «contrast». Así lo que se elige y lo que se ve son lo mismo.
+    return ORDEN_DEL_DS.map((c) => ({
+      value: c,
+      label: this.translate.instant(`labels.color.${c}`),
+      color: c === 'black' ? 'var(--sc-cmp-tag-contrast-background)' : `var(--sc-label-${c}-text)`,
+    }));
   });
 
   ngOnInit(): void {

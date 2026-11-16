@@ -94,6 +94,11 @@
       background: var(--sc-label-#{$color}-text);
     }
   }
+
+  &[data-color='black'] {
+    border-color: var(--sc-cmp-tag-contrast-background);
+    background: var(--sc-cmp-tag-contrast-background);
+  }
 }
 
 /* El día elegido, junto a los selectores: dos líneas que se estiran entre la navegación y la vista. */
@@ -157,6 +162,12 @@
       background: var(--sc-label-#{$color}-bg);
       color: var(--sc-label-#{$color}-text);
     }
+  }
+
+  /* El negro es el tag «contrast»: de fondo, su color muy aclarado; de texto, el color entero. */
+  #{$selector}[data-color='black'] {
+    background: color-mix(in srgb, var(--sc-cmp-tag-contrast-background) 10%, var(--sc-bg-surface));
+    color: var(--sc-cmp-tag-contrast-background);
   }
 }
 

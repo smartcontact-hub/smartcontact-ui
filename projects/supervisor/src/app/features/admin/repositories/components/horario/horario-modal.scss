@@ -25,3 +25,9 @@
   gap: var(--sc-spacing-1);
   min-inline-size: var(--sc-spacing-18);
 }
+
+/* La etiqueta de muestra del color del periodo, bajo el selector. */
+.modal-horario__muestra {
+  display: inline-flex;
+  margin-block-start: var(--sc-spacing-0-5);
+}

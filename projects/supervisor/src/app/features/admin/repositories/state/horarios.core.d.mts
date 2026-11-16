@@ -5,7 +5,7 @@ export type Franja = readonly [number, number];
 /** Las franjas de cada día, de lunes (0) a domingo (6). Un día sin franjas está cerrado. */
 export type Semana = readonly (readonly Franja[])[];
 
-export type ColorDePeriodo = 'blue' | 'green' | 'purple' | 'orange' | 'teal' | 'amber' | 'red' | 'brown';
+export type ColorDePeriodo = 'blue' | 'green' | 'purple' | 'orange' | 'teal' | 'amber' | 'red' | 'brown' | 'gray' | 'black';
 
 /** Una temporada con su propia semana. `from` y `to` son `MM-DD`; `year: null` se repite cada año. */
 export interface Periodo {

@@ -1126,7 +1126,8 @@
       "green": "Verde",
       "teal": "Turquesa",
       "blue": "Azul",
-      "purple": "Morado"
+      "purple": "Morado",
+      "black": "Negro"
     },
     "delete": {
       "title_single": "Eliminar label",

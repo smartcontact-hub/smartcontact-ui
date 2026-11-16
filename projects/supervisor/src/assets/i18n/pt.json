@@ -1126,7 +1126,8 @@
       "green": "Verde",
       "teal": "Turquesa",
       "blue": "Azul",
-      "purple": "Roxo"
+      "purple": "Roxo",
+      "black": "Preto"
     },
     "delete": {
       "title_single": "Eliminar etiqueta",

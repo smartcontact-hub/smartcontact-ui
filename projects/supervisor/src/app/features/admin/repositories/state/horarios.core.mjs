@@ -22,8 +22,8 @@
 const DIA = 86_400_000;
 export const MINUTOS_DEL_DIA = 1440;
 
-/** Los colores que puede llevar un periodo: los de etiqueta del sistema, menos el gris (que es «cerrado»). */
-export const COLORES_DE_PERIODO = ['blue', 'green', 'purple', 'orange', 'teal', 'amber', 'red', 'brown'];
+/** Los colores que puede llevar un periodo: los del tag del sistema (los nueve de etiqueta y el negro, que es su variante «contrast»). */
+export const COLORES_DE_PERIODO = ['blue', 'green', 'purple', 'orange', 'teal', 'amber', 'red', 'brown', 'gray', 'black'];
 
 /* ── Horas ──────────────────────────────────────────────────────────────────────────────────────────────────────── */
 

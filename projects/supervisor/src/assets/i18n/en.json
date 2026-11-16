@@ -1126,7 +1126,8 @@
       "green": "Green",
       "teal": "Teal",
       "blue": "Blue",
-      "purple": "Purple"
+      "purple": "Purple",
+      "black": "Black"
     },
     "delete": {
       "title_single": "Delete label",

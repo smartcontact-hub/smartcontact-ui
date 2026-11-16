@@ -47,6 +47,14 @@
       <div class="field">
         <span class="field__label sc-text-caption-semibold">{{ 'repositories.horarios.period_color' | translate }}</span>
         <sc-color-dot-picker [options]="colores()" [value]="color()" (valueChange)="color.set($event)" [ariaLabel]="'repositories.horarios.period_color' | translate" />
+        <!-- La etiqueta tal como se verá en el calendario y en la lista de periodos. -->
+        <span class="modal-horario__muestra">
+          @if (color() === 'black') {
+            <sc-tag severity="contrast" [value]="muestra()" />
+          } @else {
+            <sc-tag variant="label" [bordered]="false" [labelColor]="$any(color())" [value]="muestra()" />
+          }
+        </span>
       </div>
     </div>
 

@@ -1126,7 +1126,8 @@
       "green": "Vert",
       "teal": "Turquoise",
       "blue": "Bleu",
-      "purple": "Violet"
+      "purple": "Violet",
+      "black": "Noir"
     },
     "delete": {
       "title_single": "Supprimer l'étiquette",

@@ -41,7 +41,11 @@
             <!-- La etiqueta del periodo (`sc-tag` de etiqueta, con su color del DS) y, a su lado, sus fechas: si no caben, se
                  recortan y se leen enteras al pasar el ratón. -->
             <span class="fila__cuerpo fila__cuerpo--linea">
-              <sc-tag class="fila__etiqueta" variant="label" [bordered]="false" [labelColor]="$any(p.color)" [value]="p.nombre" />
+              @if (p.color === 'black') {
+                <sc-tag class="fila__etiqueta" severity="contrast" [value]="p.nombre" />
+              } @else {
+                <sc-tag class="fila__etiqueta" variant="label" [bordered]="false" [labelColor]="$any(p.color)" [value]="p.nombre" />
+              }
               <span class="fila__fechas sc-text-caption-regular" [pTooltip]="p.fechas + (p.repite ? ' · ' + ('repositories.horarios.x.rules.yearly' | translate) : '')" showOnEllipsis tooltipPosition="top">{{ p.fechas }}@if (p.repite) { · {{ 'repositories.horarios.x.rules.yearly' | translate }} }</span>
             </span>
             <span class="fila__acciones">
