@@ -31,7 +31,6 @@ import {
   diaDeLaSemana,
   type Horario,
   MINUTOS_DEL_DIA,
-  mensajeDe,
   rejillaDelAnio,
   resolverDia,
   sumarDias,
@@ -397,7 +396,6 @@ export class HorarioVistaComponent implements OnInit {
       corto: new Intl.DateTimeFormat(this.language.locale(), { weekday: 'short', day: 'numeric', month: 'short' }).format(aFecha(fecha)).replaceAll('.', ''),
       titulo: this.formatos().largo.format(aFecha(fecha)),
       motivo: this.motivo(celda.dia),
-      mensaje: mensajeDe(this.reglas(), fecha, this.calendarios()).texto,
       duenoColor: celda.dia.tipo === 'festivo' ? 'red' : celda.dia.tipo === 'especial' ? 'purple' : (celda.dia.periodo?.color ?? 'gray'),
     };
   });

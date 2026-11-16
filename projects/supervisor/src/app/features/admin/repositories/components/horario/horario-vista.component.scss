@@ -136,23 +136,6 @@
   align-items: center;
 }
 
-.vista__dia-mensaje {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--sc-spacing-0-375);
-  color: var(--sc-text-secondary);
-}
-
-/* El mensaje, hasta dos líneas y con puntos suspensivos si aún no cabe (entero, al pasar el ratón). Sin esto se cortaba a mitad de palabra. */
-.vista__dia-mensaje-texto {
-  display: -webkit-box;
-  min-inline-size: 0;
-  overflow: hidden;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-}
-
 .vista__cuerpo {
   display: flex;
   flex: 1;
