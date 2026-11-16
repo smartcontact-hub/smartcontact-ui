@@ -88,6 +88,12 @@ export const DATO_PERMITIDO = [
     motivo: 'una rama como las que crea la app, con el alias como prefijo: `bash-guard` debe dejarla pasar',
   },
   {
+    fichero: 'projects/sc-docs/src/app/pages/lab/horarios.data.ts',
+    texto: "mantenedor: { nombre: 'Rafa Areses'",
+    motivo:
+      'el autor que la página Lab enseña en cada versión de Horarios, como «Marta Recio» en Guardado: contenido de la página, no una firma del código',
+  },
+  {
     fichero: 'scripts/hooks/cloud-identity.mjs',
     texto: "nombre: 'Rafa Areses Brackenbury'",
     motivo: 'la identidad de git de las sesiones cloud (DD-134): el nombre de la cuenta que firma los commits, un dato de configuración',

@@ -316,7 +316,7 @@ no la otra. Cada fila apunta a la decisión o al gate que la sostiene; no hay fi
 | Identidad y acciones primarias de la página | El breadcrumb + `TopBarSlotService` (`use-topbar-actions.ts`) | Una cabecera de página propia (se retiró) | DD-33 |
 | El ancho y el molde de una página | `.page__inner` con su arquetipo (`--list`, `--hub`, `--reading`…) | Anchos y márgenes a mano | DD-53, `audit:page-anatomy` |
 | Un campo de formulario | `.field` de `_forms.scss`; los wrappers ya traen `sc-field-label` y `sc-field-msg` | Label, ayuda o error pintados a mano | DD-44 |
-| Texto de la página (título, lead, celda, caption) | Una de las 12 clases `.sc-text-*` | `font-size`/`font-weight` sueltos; el peso 500 no existe | DD-55, DD-67, `audit:text-styles` |
+| Texto de la página (título, lead, celda, caption) | Una de las 14 clases `.sc-text-*` | `font-size`/`font-weight` sueltos; el peso 500 no existe | DD-55, DD-67, `audit:text-styles` |
 | Que el texto de un `<sc-*>` se vea distinto | Mover su token | Una `.sc-text-*` encima del componente (lo desconecta del tema) | DD-55 |
 | Una etiqueta de solo lectura (estado, severidad) | `sc-tag` | `sc-chip` (eso es lo que el usuario puede quitar: outline + ×) | `customs-catalog.md` §5 |
 | Pedir una contraseña | `sc-password` (ojo con teclado y nombre accesible) | `sc-inputtext type="password"`; un ojo pintado a mano | DD-110 |
@@ -610,10 +610,10 @@ These define:
 `input.required()` / `model()`, outputs with `output()`, queries with
 `viewChild()/contentChild()`, and derived state with `computed()` — never a
 getter. Booleans take `{ transform: booleanAttribute }`. `@Input()/@Output()`
-is frozen: 16 library components still use it and they are the *only* ones
-allowed to, tracked in `LEGACY_PENDIENTES` (`scripts/audit-api-era.mjs`). That
-list only shrinks — `npm run audit:api-era` fails if anything new declares the
-old API, and also if a migrated component is left on the list. Until
+is frozen: no library component declares it any more, and `LEGACY_PENDIENTES`
+(`scripts/audit-api-era.mjs`), the list of the ones that were allowed to, has been
+empty since 2026-08-30 and never grows — `npm run audit:api-era` fails if anything
+declares the old API. Until
 2026-08-14 the references above straddled both eras, so the pattern an agent
 copied depended on which file it opened first; `sc-button` is now the canonical
 example of the target era.

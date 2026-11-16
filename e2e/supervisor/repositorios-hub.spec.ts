@@ -18,8 +18,8 @@ import { disableAnimations, forceDarkTheme, forceLightTheme, goto } from './help
  *      si no deja ninguna entera a la vista lleva velo y es un diálogo;
  *   7. todo cabe sin desplazar a 1440 × 800;
  *   8. el buscador vacío ofrece los últimos repositorios abiertos, el último primero, y elegir uno entra en él;
- *   9. los ocho que el COA da por «Próximamente» (SISMAC-4064) llevan su cifra y esa marca, no abren panel y no le quitan
- *      la marca a la que la tiene (DD-245);
+ *   9. los que el COA da por «Próximamente» (SISMAC-4064) llevan su cifra y esa marca, no abren panel y no le quitan
+ *      la marca a la que la tiene (DD-245); Horarios (DD-251) y Variables (DD-255) ya no lo son, y Variables abre el suyo;
  *  10. al pasar, el borde se ENCIENDE en el tono fuerte de su grupo, en claro y en oscuro, también en las de
  *      «Próximamente»; marcada, su halo es de ese mismo color (DD-246);
  *  11. marcar otra tarjeta es natural (DD-249, también el 6 y el 9): el doble clic no abre y cierra, arrastrar un texto
@@ -252,7 +252,7 @@ test('al cambiar de tarjeta, el panel vuelve arriba: el repositorio nuevo se lee
   await page.setViewportSize({ width: 1440, height: 600 });
   await goto(page, 'admin/repositorios');
   await tarjeta(page, 'Agendas').click();
-  const contenido = page.locator('.p-drawer-content');
+  const contenido = page.locator('#repo-panel .panel__scroll');
   await expect(panel(page)).toBeVisible();
   await contenido.evaluate((el) => {
     el.scrollTop = 200;
@@ -262,6 +262,29 @@ test('al cambiar de tarjeta, el panel vuelve arriba: el repositorio nuevo se lee
   await tarjeta(page, 'Plantillas').click();
   await expect(page.locator('.p-drawer-title')).toHaveText('Plantillas');
   await expect.poll(() => contenido.evaluate((el) => el.scrollTop)).toBe(0);
+});
+
+test('con muchas entradas, solo se desplaza la lista: título, categoría, descripción y «Abrir repositorio» quedan fijos', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 500 });
+  await goto(page, 'admin/repositorios');
+  await tarjeta(page, 'Plantillas').click();
+  await expect(panel(page)).toBeVisible();
+  const lista = page.locator('#repo-panel .panel__scroll');
+  const cabeza = page.locator('#repo-panel .panel__head');
+  const antes = await cabeza.boundingBox();
+  const desborda = await lista.evaluate((el) => el.scrollHeight > el.clientHeight);
+  expect(desborda, 'a 500 px de alto la lista no cabe: debe desplazarse').toBe(true);
+  await lista.evaluate((el) => {
+    el.scrollTop = el.scrollHeight;
+  });
+  expect(await lista.evaluate((el) => el.scrollTop)).toBeGreaterThan(0);
+  // El cajón entero no se desplaza; la cabeza no se mueve.
+  expect(await page.locator('.p-drawer-content').evaluate((el) => el.scrollTop)).toBe(0);
+  expect(await cabeza.boundingBox()).toEqual(antes);
+  await expect(page.locator('.p-drawer-title')).toBeInViewport();
+  await expect(page.locator('#repo-panel .panel__open')).toBeInViewport();
 });
 
 test('si el buscador o el filtro dejan fuera la tarjeta marcada, su panel se va con ella; si sigue a la vista, se queda', async ({
@@ -341,21 +364,22 @@ test('el buscador vacío ofrece los últimos repositorios abiertos, el último p
   await expect(page).toHaveURL(/\/admin\/agendas$/);
 });
 
-test('los siete «Próximamente» (los ocho del COA menos Horarios, DD-251): con su cifra y la marca, y no abren panel', async ({ page }) => {
+test('los seis «Próximamente» (los ocho del COA menos Horarios, DD-251, y Variables, DD-255): con su cifra y la marca, y no abren panel', async ({
+  page,
+}) => {
   await goto(page, 'admin/repositorios');
   const pronto = page.locator('.repo-card--soon');
   await expect(pronto.locator('.repo-card__name')).toHaveText([
     'Email',
     'Labels',
-    'Variables',
     'Entidades',
     'Intenciones',
     'Entidades IA',
     'Clasificación IA',
   ]);
-  await expect(pronto.locator('.repo-card__soon')).toHaveText(Array(7).fill('Próximamente'));
+  await expect(pronto.locator('.repo-card__soon')).toHaveText(Array(6).fill('Próximamente'));
   // Todas las tarjetas llevan su cifra (COA, «Contadores»), también estas.
-  await expect(pronto.locator('.repo-card__count')).toHaveText(Array(7).fill(/^\d+$/));
+  await expect(pronto.locator('.repo-card__count')).toHaveText(Array(6).fill(/^\d+$/));
 
   const pronta = tarjeta(page, 'Email');
   await expect(pronta).toHaveAttribute('aria-disabled', 'true');
@@ -373,6 +397,36 @@ test('los siete «Próximamente» (los ocho del COA menos Horarios, DD-251): con
   await expect(page.locator('.p-drawer-title')).toHaveText('Agendas');
   await expect(tarjeta(page, 'Agendas')).toHaveClass(/repo-card--selected/);
   await expect(pronta).not.toHaveClass(/repo-card--selected/);
+});
+
+test('Variables abre su panel (DD-255): una entrada por variable, cada una abre la lista buscándola, y «Abrir repositorio» la lista entera', async ({
+  page,
+}) => {
+  const variables = await filasDeLista(page, 'admin/variables');
+  await goto(page, 'admin/repositorios');
+  // Por su nombre exacto: «variables» sale también en descripciones de otras tarjetas.
+  const card = page.locator('.repo-card', { has: page.locator('.repo-card__name', { hasText: /^Variables$/ }) });
+  await expect(card).not.toHaveAttribute('aria-disabled');
+  await expect(card.locator('.repo-card__soon')).toHaveCount(0);
+
+  await card.click();
+  await expect(card).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.locator('.p-drawer-title')).toHaveText('Variables');
+  await expect(panel(page).locator('.entrada')).toHaveCount(variables);
+
+  // Cada entrada dice su clave y lleva a la lista buscándola: queda su fila sola.
+  const primera = panel(page).locator('.entrada').first();
+  const clave = (await primera.locator('.entrada__detail').innerText()).trim();
+  expect(clave).toMatch(/^\{.+\}$/);
+  await primera.click();
+  await expect(page).toHaveURL(/\/admin\/variables\?buscar=/);
+  await expect(page.locator('tbody tr')).toHaveCount(1);
+  await expect(page.locator('tbody tr')).toContainText(clave);
+
+  await goto(page, 'admin/repositorios');
+  await card.click();
+  await panel(page).getByRole('button', { name: 'Abrir repositorio' }).click();
+  await expect(page).toHaveURL(/\/admin\/variables$/);
 });
 
 /** El borde de arriba de la tarjeta y el tono fuerte de su grupo, ya resueltos, y el contraste del borde sobre su fondo. */
