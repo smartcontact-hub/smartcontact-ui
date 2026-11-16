@@ -171,10 +171,13 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
       display: block;
     }
 
+    /* Con tope de alto: en las tarjetas de dos columnas la proporción la dejaba en 214 px y la ilustración se comía
+       media tarjeta. Con el tope recorta arriba y abajo (\`slice\`), y el dibujo está centrado. */
     .arte {
       display: block;
       inline-size: 100%;
       block-size: auto;
+      max-block-size: 10rem;
       aspect-ratio: 440 / 200;
     }
 

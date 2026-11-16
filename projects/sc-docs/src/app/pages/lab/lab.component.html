@@ -65,7 +65,7 @@
           <span class="lab-indice__label sc-text-body-semibold">{{ s.label }}</span>
           <span class="lab-indice__hint sc-text-caption-regular">{{ s.hint }}</span>
         </span>
-        <span class="lab-indice__cifra sc-text-h3-semibold">{{ s.count }}</span>
+        <span class="lab-indice__cifra sc-text-subtitle-semibold">{{ s.count }}</span>
       </button>
     }
   </nav>
@@ -101,14 +101,14 @@
 
           <div class="lab-tarjeta__cuerpo">
             <p class="lab-tarjeta__fecha sc-text-caption-regular">{{ fecha(ex.version.date) }}</p>
-            <h3 [id]="'expl-' + ex.id" class="lab-tarjeta__titulo sc-text-title-semibold">{{ ex.title }}</h3>
+            <h3 [id]="'expl-' + ex.id" class="lab-tarjeta__titulo sc-text-subtitle-semibold">{{ ex.title }}</h3>
             <p class="lab-tarjeta__q sc-text-body-regular">{{ ex.objective }}</p>
             @if (ex.statusNote) {
               <p class="lab-tarjeta__nota sc-text-caption-regular">{{ ex.statusNote }}</p>
             }
 
             <div class="lab-tarjeta__pie">
-              <a class="lab-enlace sc-text-subtitle-semibold" [href]="ex.live.href" target="_blank" rel="noopener">
+              <a class="lab-enlace sc-text-body-semibold" [href]="ex.live.href" target="_blank" rel="noopener">
                 Abrir <sc-icon name="arrow_outward" [size]="16" />
               </a>
               <span class="lab-tarjeta__donde sc-text-caption-regular">{{ ex.live.label }}</span>
@@ -170,7 +170,7 @@
           </div>
 
           <div class="lab-tarjeta__cuerpo">
-            <h3 [id]="'lab-' + lab.id" class="lab-tarjeta__titulo sc-text-title-semibold">{{ lab.title }}</h3>
+            <h3 [id]="'lab-' + lab.id" class="lab-tarjeta__titulo sc-text-subtitle-semibold">{{ lab.title }}</h3>
             <p class="lab-tarjeta__q sc-text-body-regular">{{ lab.question }}</p>
             <ul class="lab-mandos" [attr.aria-label]="'Lo que se toca en ' + lab.title">
               @for (c of lab.controls; track c) {
@@ -180,7 +180,7 @@
             <p class="lab-tarjeta__nota sc-text-caption-regular">{{ lab.where }}</p>
 
             <div class="lab-tarjeta__pie">
-              <a class="lab-enlace sc-text-subtitle-semibold" [href]="lab.href" target="_blank" rel="noopener">
+              <a class="lab-enlace sc-text-body-semibold" [href]="lab.href" target="_blank" rel="noopener">
                 Abrir <sc-icon name="arrow_outward" [size]="16" />
               </a>
               <span class="lab-tarjeta__donde sc-text-caption-regular">{{ lab.label }}</span>
@@ -274,10 +274,17 @@
             }
           </div>
           <div class="lab-tarjeta__cuerpo">
-            <h3 class="lab-tarjeta__titulo sc-text-title-semibold">{{ g.title }}</h3>
-            <p class="lab-tarjeta__nota sc-text-caption-regular">{{ g.by }}</p>
+            <h3 class="lab-tarjeta__titulo sc-text-subtitle-semibold">{{ g.title }}</h3>
+            <!-- Quién lo hizo, como en Horarios: avatar, nombre y lo demás en caption. -->
+            <p class="lab-autor">
+              <span class="lab-autor__avatar" aria-hidden="true">
+                <sc-avatar [label]="g.autor.iniciales" [labelColor]="g.autor.color" />
+              </span>
+              <span class="lab-autor__nombre sc-text-caption-semibold">{{ g.autor.nombre }}</span>
+              <span class="lab-autor__meta sc-text-caption-regular">{{ g.meta }}</span>
+            </p>
             <div class="lab-tarjeta__pie">
-              <a class="lab-enlace sc-text-subtitle-semibold" [href]="g.href" target="_blank" rel="noopener">
+              <a class="lab-enlace sc-text-body-semibold" [href]="g.href" target="_blank" rel="noopener">
                 Abrir <sc-icon name="arrow_outward" [size]="16" />
               </a>
             </div>

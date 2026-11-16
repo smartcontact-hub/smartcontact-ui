@@ -275,6 +275,27 @@
   color: var(--sc-text-secondary);
 }
 
+/* Quién lo hizo: el mismo avatar, nombre y caption que las autorías de Horarios. */
+.lab-autor {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sc-spacing-0-25) var(--sc-spacing-0-5);
+  margin: 0;
+}
+
+.lab-autor__avatar {
+  display: inline-flex;
+}
+
+.lab-autor__nombre {
+  color: var(--sc-text-primary);
+}
+
+.lab-autor__meta {
+  color: var(--sc-text-secondary);
+}
+
 /* Siempre en dos filas, la llamada y debajo el dominio: con `flex-wrap` unas tarjetas partían y otras no, y la
    llamada de una caía donde en la vecina estaba la URL. */
 .lab-tarjeta__pie {

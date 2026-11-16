@@ -5,16 +5,12 @@
         <span class="hz__pulso" aria-hidden="true"></span>
         Se prueba ahora
       </p>
-      <h2 id="t-horarios" class="hz__titular">
+      <h2 id="t-horarios" class="hz__titular sc-text-h2-semibold">
         <span class="hz__pre">Horarios,</span>
         en todas sus versiones
       </h2>
       <p class="hz__lead sc-text-body-regular">
-        El Lab y lo que sale de él, la propuesta de referencia y lo que sirve para compararlas, con quién hizo cada una.
-        Cada enlace abre el preview de su rama, que se actualiza con cada push.
-      </p>
-      <p class="hz__cifra sc-text-caption-regular">
-        <strong class="sc-text-subtitle-semibold">{{ total }}</strong> enlaces en {{ grupos.length }} grupos
+        Cada versión con quién la hizo. Los enlaces abren el preview de su rama, que se actualiza con cada push.
       </p>
     </div>
 
@@ -72,51 +68,51 @@
     </div>
   </div>
 
-  @for (g of grupos; track g.title; let gi = $index) {
-    <section class="hz-grupo" [attr.aria-labelledby]="'hz-grupo-' + gi">
-      <header class="hz-grupo__cabeza">
-        <h3 [id]="'hz-grupo-' + gi" class="hz-grupo__titulo sc-text-caption-semibold">{{ g.title }}</h3>
-        <p class="hz-grupo__lead sc-text-body-regular">{{ g.lead }}</p>
+  <!-- Un bloque por autoría, todos con el mismo peso; dentro, las versiones en filas como las de «Enlaces». -->
+  @for (a of autorias; track a.autor.nombre; let ai = $index) {
+    <section class="ha" [attr.aria-labelledby]="'ha-' + ai">
+      <header class="ha__cabeza">
+        <span class="ha__avatar" aria-hidden="true">
+          <sc-avatar [label]="a.autor.iniciales" [labelColor]="a.autor.color" />
+        </span>
+        <h3 [id]="'ha-' + ai" class="ha__nombre sc-text-subtitle-semibold">{{ a.autor.nombre }}</h3>
+        <p class="ha__lead sc-text-caption-regular">{{ a.lead }}</p>
       </header>
 
-      <ul class="hz-rejilla" [class.hz-rejilla--dos]="g.versions.length === 2">
-        @for (v of g.versions; track v.id) {
-          <li class="hv" [class.hv--ancha]="v.links.length > 1">
-            <div class="hv__cuerpo">
-              @if (v.origin) {
-                <span class="hv__origen sc-text-caption-semibold">{{ v.origin }}</span>
-              }
-              <h4 class="hv__titulo sc-text-title-semibold">{{ v.title }}</h4>
-              <p class="hv__texto sc-text-body-regular">{{ v.summary }}</p>
-            </div>
+      @for (g of a.grupos; track g.title; let gi = $index) {
+        <p [id]="'ha-' + ai + '-' + gi" class="ha__grupo sc-text-caption-semibold">{{ g.title }}</p>
+        <ul class="hf" [attr.aria-labelledby]="'ha-' + ai + '-' + gi">
+          @for (v of g.versions; track v.id) {
+            <li class="hf__fila">
+              <div class="hf__que">
+                <h4 class="hf__titulo sc-text-body-semibold">
+                  {{ v.title }}
+                  @if (v.origin) {
+                    <span class="hf__origen sc-text-caption-semibold">{{ v.origin }}</span>
+                  }
+                </h4>
+                <p class="hf__texto sc-text-caption-regular">{{ v.summary }}</p>
+              </div>
 
-            <ul class="hv__abrir" [attr.aria-label]="'Abrir ' + v.title">
-              @for (l of v.links; track l.href) {
-                <li>
-                  <a class="hv__enlace sc-text-subtitle-semibold" [href]="l.href" target="_blank" rel="noopener">
-                    {{ l.label }}
-                    <sc-icon name="arrow_outward" [size]="16" />
-                  </a>
-                </li>
-              }
-            </ul>
-            <!-- El dominio parte tras cada punto o barra, nunca a media palabra. -->
-            <p class="hv__dominio sc-text-caption-regular">
-              @for (t of trozos(v.domain); track $index) {{{ t }}<wbr />}
-            </p>
-
-            <footer class="hv__pie">
-              <span class="hv__avatar" aria-hidden="true">
-                <sc-avatar [label]="v.author.iniciales" [labelColor]="v.author.color" />
-              </span>
-              <span class="hv__autor sc-text-caption-semibold">{{ v.author.nombre }}</span>
-              <a class="hv__fuente sc-text-caption-regular" [href]="v.source.href" target="_blank" rel="noopener">{{
-                v.source.label
-              }}</a>
-            </footer>
-          </li>
-        }
-      </ul>
+              <div class="hf__donde">
+                <ul class="hf__abrir" [attr.aria-label]="'Abrir ' + v.title">
+                  @for (l of v.links; track l.href) {
+                    <li>
+                      <a class="hf__enlace sc-text-body-semibold" [href]="l.href" target="_blank" rel="noopener">
+                        {{ l.label }}
+                        <sc-icon name="arrow_outward" [size]="16" />
+                      </a>
+                    </li>
+                  }
+                </ul>
+                <a class="hf__fuente sc-text-caption-regular" [href]="v.source.href" target="_blank" rel="noopener">{{
+                  v.source.label
+                }}</a>
+              </div>
+            </li>
+          }
+        </ul>
+      }
     </section>
   }
 </article>

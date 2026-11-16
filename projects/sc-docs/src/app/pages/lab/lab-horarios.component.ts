@@ -19,8 +19,9 @@ const DIA_DURA = 16;
  *
  * Arriba, como las tarjetas grandes de la portada, un titular a dos tonos y una ilustración hecha con piezas DE VERDAD
  * del DS: la semana dibujada por tramos con la marca de ahora, el estado («Abierto») en un `sc-tag` y un mes con el
- * calor de las horas que abre cada día. Es decorado (`inert` y oculto al lector). Debajo, las versiones en tarjetas con
- * quién la hizo y su PR.
+ * calor de las horas que abre cada día. Es decorado (`inert` y oculto al lector). Debajo, un bloque por autoría, todos
+ * iguales: quién, y sus versiones en filas (qué es a la izquierda, qué se abre y su PR a la derecha), como la agenda de
+ * «Enlaces».
  */
 @Component({
   selector: 'app-lab-horarios',
@@ -30,8 +31,7 @@ const DIA_DURA = 16;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LabHorariosComponent {
-  protected readonly grupos = HORARIOS;
-  protected readonly total = HORARIOS.reduce((n, g) => n + g.versions.length, 0);
+  protected readonly autorias = HORARIOS;
 
   /** La semana de la ilustración: entre semana de 9 a 18, el jueves partido, el sábado por la mañana y el domingo cerrado. */
   protected readonly semana: readonly { readonly dia: string; readonly tramos: readonly Tramo[] }[] = [
@@ -59,11 +59,6 @@ export class LabHorariosComponent {
       return { calor: dia === 6 ? 0 : dia === 5 ? 1 : dia === 3 || dia === 4 ? 2 : 3 };
     },
   );
-
-  /** «a.b/c» → [«a.», «b/», «c»]: los trozos entre los que el dominio puede partir de línea. */
-  protected trozos(dominio: string): string[] {
-    return dominio.match(/[^./]+[./]?/g) ?? [dominio];
-  }
 
   /** Posición de una hora en la pista, en %. */
   protected pos(hora: number): number {
