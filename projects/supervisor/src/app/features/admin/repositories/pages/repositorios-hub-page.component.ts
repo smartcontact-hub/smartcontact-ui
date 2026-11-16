@@ -121,7 +121,8 @@ const MAX_RECIENTES = 3;
  *     lleva a su sitio), no la lista de ejemplo de la maqueta;
  *   · encima, el filtro por categoría y el buscador; el filtro, al cambiar, mueve las categorías (`startViewTransition`);
  *   · el buscador vacío, al entrar en él, ofrece los últimos repositorios abiertos, y elegir uno entra en él;
- *   · los ocho que el COA da por «Próximamente» (SISMAC-4064) salen con su cifra y esa marca, y no abren panel (DD-245).
+ *   · los que el COA da por «Próximamente» (SISMAC-4064) salen con su cifra y esa marca, y no abren panel (DD-245); de
+ *     sus ocho ya han salido Horarios (DD-251) y Variables (DD-255).
  *
  * Todo cabe sin desplazar a 1440 × 800: las categorías de dos van una al lado de la otra. El panel va acoplado bajo la
  * barra de la app; si por el ancho pisa tarjetas, flota con sombra y las demás siguen a mano. Solo si no deja ninguna
@@ -321,7 +322,16 @@ export class RepositoriosHubPageComponent {
           icon: 'data_object',
           path: '/admin/variables',
           count: () => this.variables.items().length,
-          proximamente: true,
+          // Sale de «Próximamente» (DD-255): su página existe desde antes del COA. Sin editor propio, cada entrada abre la
+          // lista ya buscando su clave (`?buscar=`, DD-164).
+          entradas: () =>
+            this.variables.items().map((v) => ({
+              id: v.id,
+              nombre: v.name,
+              detalle: v.key,
+              link: '/admin/variables',
+              queryParams: { buscar: v.key },
+            })),
         },
       ],
     },

@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Variables sale de «Próximamente» en el hub de Repositorios: abre su panel, una entrada por variable que abre la lista buscando su clave (`?buscar=`), y «Abrir repositorio» lleva a su página · quedan seis «Próximamente» (enmienda DD-245 §4 y DD-251 §6) | DD-255 |
 > | Las dos tablas de asignación enseñan solo los canales marcados (el agente en General; el grupo, los de sus agentes), sin candado ni enlace (enmienda DD-217 §13 y DD-187 §2) | DD-250 |
 > | El alta de usuario lleva los marcadores de paso del grupo y del agente: Identidad dice lo que falta, Acceso y Servicios asignados «Revisada» al dejarlas · sin «Falta: …» sobre el resumen · cierra la deuda de DD-222 §5 | DD-248 |
 > | El día elegido en el año del horario ofrece editar lo que lo decide (su periodo, la semana, sus festivos) y aparte «Cambiar solo este día» · «Nueva fecha especial» abre en el mes elegido (`sc-datepicker` con `defaultDate`) · «Grupos» de Horarios con los nombres · las leyes de los tooltips: posición declarada, abajo en la barra, sin punto final, partido en dos iguales, y el tope del Kit a 252 (`audit:tooltips`; enmienda DD-253 §2) | DD-254 |
@@ -179,6 +180,36 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-255 · 2026-11-16 — Variables sale de «Próximamente» en el hub de Repositorios y abre su panel
+
+**Contexto** · DD-245 §4 dejó en «Próximamente» los ocho destinos que el COA del hub (SISMAC-4064, v2) da por no
+implementados, Variables entre ellos: su tarjeta lleva la marca, `aria-disabled` y no abre nada. Pero Variables tenía su
+página desde antes de ese COA (`/admin/variables`: la lista de `repo-list-page` con su alta y su edición en panel, DD-124
+y DD-163) y sus pruebas (`list-table-grammar`, `nombre-repetido-paneles`). En sc-supervisor.pages.dev la tarjeta no se
+podía pulsar, y el usuario pidió volver a activarla (2026-11-16).
+
+**Decisión** ·
+1. **Variables sale de «Próximamente»** (enmienda DD-245 §4; de los ocho quedan seis, tras Horarios en DD-251 §6). Su
+   tarjeta abre el panel como las demás, y «Abrir repositorio» lleva a `/admin/variables`.
+2. **Una entrada por variable**, con su nombre y su clave (`{agente}`). Sin editor en su propia ruta, cada entrada abre la
+   lista ya buscando su clave (`?buscar=`, DD-164): queda su fila sola.
+
+**Razón** · La página existía y funcionaba, así que «Próximamente» decía del prototipo algo que no era verdad. Donde el
+prototipo ya resolvió algo, el que se queda corto es el COA (DD-245, «Razón»).
+
+**Descartadas** ·
+- *Entradas que llevan a la lista entera, sin buscar*: el panel promete que cada entrada lleva a su sitio (DD-179 §4), y
+  la lista entera obliga a buscarla otra vez.
+- *Abrir la edición de esa variable desde su entrada (`?editar=`, como Plantillas)*: `repo-list-page` solo lee `buscar`;
+  añadirlo es cambiar la pieza común de los diez repositorios de lista para uno.
+- *La tarjeta que entra directa en su página, sin panel*: sería la única que no abre panel sin ser «Próximamente».
+
+**Consecuencias** · Enmienda DD-245 §4 y el recuento de DD-251 §6 (de siete a seis). Pruebas: `repositorios-hub.spec.ts`
+(la de «Próximamente», de siete a seis, y una nueva para Variables, en rojo con la marca puesta). Fuera del repo: el COA
+de SISMAC-4064 y el hub en Figma siguen con Variables en «Próximamente» (`figma-pendiente` §64, «Queda»).
 
 ---
 
