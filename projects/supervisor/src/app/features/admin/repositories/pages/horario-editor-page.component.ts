@@ -1,12 +1,14 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, HostListener, inject, type OnInit, signal, type TemplateRef, viewChild } from '@angular/core';
 import { LocationStrategy } from '@angular/common';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TooltipModule } from 'primeng/tooltip';
-import { ScButtonComponent, ScTagComponent, ScToggleSwitchComponent } from '@smartcontact-hub/components';
+import { ScButtonComponent, ScSelectComponent, ScTagComponent, ScToggleSwitchComponent } from '@smartcontact-hub/components';
 
 import type { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
+import { LanguageService } from '@core/services/language.service';
 import { BreadcrumbService, injectAlertModal, ResultadoAccionService } from '@core/services';
 import { injectLangChange } from '@core/utils/lang-change';
 import { GroupsStore } from '@features/admin/groups/state/groups.store';
@@ -65,6 +67,7 @@ const FALTA_NOMBRE = 'repositories.horarios.errors.name_required';
     HorarioSemanaModalComponent,
     HorarioVistaComponent,
     ScButtonComponent,
+    ScSelectComponent,
     ScTagComponent,
     ScToggleSwitchComponent,
     TooltipModule,
@@ -83,6 +86,8 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
   private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly language = inject(LanguageService);
 
   private readonly topbarActions = viewChild<TemplateRef<unknown>>('topbarActions');
 
@@ -223,12 +228,28 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
     this.save();
   }
 
+  /** Cada vez que cambia el calendario de la ruta (también al cambiarlo con el selector, sin salir de la pantalla). */
   ngOnInit(): void {
-    const raw = this.route.snapshot.paramMap.get('id');
+    this.route.paramMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((p) => this.cargar(p.get('id')));
+  }
+
+  private cargar(raw: string | null): void {
+    // Vuelve a un estado limpio: el calendario anterior no deja nada abierto ni sin decir.
+    this.periodoDialog.set(null);
+    this.especialDialog.set(null);
+    this.datosDialog.set(false);
+    this.semanaDialog.set(false);
+    this.ocasion.olvidar();
+    this.diaDelAnio.set(null);
     if (raw === null) {
+      this.mode.set('create');
+      this.horarioId = null;
+      this.idActual.set(null);
+      this.nombreGuardado.set(null);
+      this.form.set(VACIO);
       this.seedFromDuplicate();
       this.dirtyState.markPristine();
-      // Un horario nuevo empieza por su nombre: el diálogo de datos se abre solo. Y con los festivos nacionales ya aplicados.
+      // Un calendario nuevo empieza por su nombre: el diálogo de datos se abre solo. Y con los festivos nacionales ya aplicados.
       if (!this.form().name) {
         const nacionales = this.calendarios().find((c) => c.name === 'Festivos España');
         if (nacionales) this.form.update((f) => ({ ...f, holidayCalendarIds: [nacionales.id] }));
@@ -244,10 +265,30 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
     }
     this.mode.set('edit');
     this.horarioId = horario.id;
+    this.idActual.set(horario.id);
     this.nombreGuardado.set(horario.name);
     const { id: _id, ...datos } = horario;
     this.form.set(datos);
     this.dirtyState.markPristine();
+  }
+
+  /* ── El selector de calendario: cambia de uno a otro sin pasar por la lista. Con cambios sin guardar, la guarda de la ruta pregunta. ── */
+
+  protected readonly idActual = signal<number | null>(null);
+  protected readonly opcionesDeCalendarios = computed(() =>
+    [...this.store.items()].sort((a, b) => a.name.localeCompare(b.name, this.language.locale())).map((h) => ({ value: h.id, label: h.name })),
+  );
+
+  protected irACalendario(id: unknown): void {
+    const destino = Number(id);
+    const actual = this.idActual();
+    if (!Number.isFinite(destino) || destino === actual) return;
+    void this.router.navigate(['/admin/horarios/editar', destino]).then((ok) => {
+      // Si se queda donde estaba (la guarda lo frenó), el selector vuelve a su calendario.
+      if (ok) return;
+      this.idActual.set(null);
+      queueMicrotask(() => this.idActual.set(actual));
+    });
   }
 
   /** Duplicar es un alta (DD-234): `?seedFromId` abre «Nuevo horario» con los datos del original y su nombre «X (1)». */

@@ -1499,23 +1499,23 @@
       "contacts_delete_title_one": "Supprimer 1 contact ?"
     },
     "horarios": {
-      "title": "Horaires",
-      "singular": "horaire",
-      "create_title": "Nouvel horaire",
-      "plural": "horaires",
+      "title": "Calendriers",
+      "singular": "calendrier",
+      "create_title": "Nouveau calendrier",
+      "plural": "calendriers",
       "timezone": "Fuseau horaire",
-      "name_placeholder": "Ex.\u00a0: Horaire général",
-      "edit_breadcrumb": "Modifier l’horaire",
-      "create_submit": "Créer l’horaire",
+      "name_placeholder": "Ex. : Calendrier général",
+      "edit_breadcrumb": "Modifier le calendrier",
+      "create_submit": "Créer le calendrier",
       "toasts": {
-        "created": "Horaire «\u00a0{{name}}\u00a0» créé",
-        "updated": "Horaire «\u00a0{{name}}\u00a0» mis à jour",
-        "deleted": "Horaire «\u00a0{{name}}\u00a0» supprimé",
-        "deleted_bulk": "{{count}} horaires supprimés"
+        "created": "Calendrier « {{name}} » créé",
+        "updated": "Calendrier « {{name}} » mis à jour",
+        "deleted": "Calendrier « {{name}} » supprimé",
+        "deleted_bulk": "{{count}} calendriers supprimés"
       },
       "delete_dialog": {
-        "title": "Supprimer l’horaire «\u00a0{{name}}\u00a0»\u00a0?",
-        "title_bulk": "Supprimer {{count}} horaires\u00a0?"
+        "title": "Supprimer le calendrier « {{name}} » ?",
+        "title_bulk": "Supprimer {{count}} calendriers ?"
       },
       "col_week": "Semaine habituelle",
       "col_now": "Disponibilité",
@@ -1527,7 +1527,7 @@
       "all_day": "Toute la journée",
       "next_day": "Lendemain",
       "active": "Actif",
-      "timezone_help": "Les heures de l’horaire se lisent dans ce fuseau.",
+      "timezone_help": "Les heures du calendrier se lisent dans ce fuseau.",
       "section_general": "Général",
       "section_week": "Semaine habituelle",
       "section_week_hint": "Les heures d’une semaine normale",
@@ -1584,10 +1584,10 @@
       "special_open": "Avec horaire",
       "special_slots": "Plages",
       "specials_empty": "Aucune date spéciale",
-      "holiday_calendars": "Calendriers de jours fériés",
-      "holiday_calendars_placeholder": "Aucun calendrier",
-      "holiday_calendars_help": "Leurs jours sont fermés dans cet horaire.",
-      "manage_holidays": "Gérer les calendriers de jours fériés",
+      "holiday_calendars": "Jours fériés appliqués",
+      "holiday_calendars_placeholder": "Aucun",
+      "holiday_calendars_help": "Leurs jours sont fermés dans ce calendrier.",
+      "manage_holidays": "Gérer les jours fériés",
       "calendar": {
         "today": "Aujourd'hui",
         "aria": "Calendrier de {{year}}",
@@ -1651,10 +1651,10 @@
       "inactive": "Inactif",
       "copy_disabled": "Choisissez d’abord vers quels jours copier",
       "time_placeholder": "hh:mm",
-      "specials_own": "Dates spéciales de cet horaire",
+      "specials_own": "Dates spéciales de ce calendrier",
       "periods_empty_body": "La semaine habituelle s’applique toute l’année.",
       "specials_empty_body": "Chaque jour suit sa période ou la semaine habituelle.",
-      "active_hint": "Seuls les horaires actifs peuvent être choisis dans un groupe.",
+      "active_hint": "Seuls les calendriers actifs peuvent être choisis dans un groupe.",
       "in_use_bulk": "{{count}} groupes les utilisent\u00a0: ils seront toujours ouverts.",
       "in_use_bulk_one": "1 groupe les utilise\u00a0: il sera toujours ouvert.",
       "x": {
@@ -1688,7 +1688,7 @@
           "only_this_day": "Modifier ce jour uniquement",
           "edit_special": "Modifier cette date spéciale"
         },
-        "active_label": "Horaire actif",
+        "active_label": "Calendrier actif",
         "in_hours": "Disponible",
         "out_of_hours": "Indisponible",
         "now_detail": {
@@ -1699,11 +1699,11 @@
           "opens_day": "ouvre {{day}} {{time}}"
         },
         "general": {
-          "title": "Données de l'horaire",
+          "title": "Données du calendrier",
           "edit": "Modifier les données"
         },
         "rules": {
-          "title": "Règles de l'horaire",
+          "title": "Règles du calendrier",
           "week_edit": "Modifier la semaine habituelle",
           "week_hint": "Ce qui vaut quand rien d'autre ne s'applique.",
           "periods_hint": "Saisons avec leur propre semaine : été, campagnes…",
@@ -1722,14 +1722,19 @@
             "out_help": "Ce que les appelants entendent sans réponse, quand aucune période ni date spéciale n'en dit autre chose.",
             "period_help": "Ce que les appelants entendent hors des horaires de cette période, ses jours fériés et week-ends. Vide : celui de l'horaire."
           },
-          "week_modal": {
+          "switcher": {
+          "label": "Calendrier",
+          "placeholder": "Choisir un calendrier",
+          "search": "Rechercher un calendrier…"
+        },
+        "week_modal": {
           "hint": "Les plages de chaque jour, à la minute près. Elles s'appliquent au calendrier à l'enregistrement.",
           "apply": "Appliquer"
         }
       },
       "festivos_leave": {
         "title": "Sauvegarder les modifications ?",
-        "body": "Pour aller à Jours fériés, sauvegardez d'abord l'horaire."
+        "body": "Pour aller aux Jours fériés, enregistrez d’abord le calendrier."
       }
     },
     "festivos": {

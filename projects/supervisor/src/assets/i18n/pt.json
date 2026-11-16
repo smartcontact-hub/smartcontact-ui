@@ -1499,23 +1499,23 @@
       "contacts_delete_title_one": "Eliminar 1 contato?"
     },
     "horarios": {
-      "title": "Horários",
-      "singular": "horário",
-      "create_title": "Novo horário",
-      "plural": "horários",
+      "title": "Calendários",
+      "singular": "calendário",
+      "create_title": "Novo calendário",
+      "plural": "calendários",
       "timezone": "Fuso horário",
-      "name_placeholder": "Ex.: Horário geral",
-      "edit_breadcrumb": "Editar horário",
-      "create_submit": "Criar horário",
+      "name_placeholder": "Ex.: Calendário geral",
+      "edit_breadcrumb": "Editar calendário",
+      "create_submit": "Criar calendário",
       "toasts": {
-        "created": "Horário «{{name}}» criado",
-        "updated": "Horário «{{name}}» atualizado",
-        "deleted": "Horário «{{name}}» eliminado",
-        "deleted_bulk": "{{count}} horários eliminados"
+        "created": "Calendário «{{name}}» criado",
+        "updated": "Calendário «{{name}}» atualizado",
+        "deleted": "Calendário «{{name}}» eliminado",
+        "deleted_bulk": "{{count}} calendários eliminados"
       },
       "delete_dialog": {
-        "title": "Eliminar o horário «{{name}}»?",
-        "title_bulk": "Eliminar {{count}} horários?"
+        "title": "Eliminar o calendário «{{name}}»?",
+        "title_bulk": "Eliminar {{count}} calendários?"
       },
       "col_week": "Semana habitual",
       "col_now": "Disponibilidade",
@@ -1527,7 +1527,7 @@
       "all_day": "Todo o dia",
       "next_day": "Dia seguinte",
       "active": "Ativo",
-      "timezone_help": "As horas do horário leem-se neste fuso.",
+      "timezone_help": "As horas do calendário leem-se neste fuso.",
       "section_general": "Geral",
       "section_week": "Semana habitual",
       "section_week_hint": "As horas de uma semana normal",
@@ -1584,10 +1584,10 @@
       "special_open": "Com horário",
       "special_slots": "Faixas",
       "specials_empty": "Sem datas especiais",
-      "holiday_calendars": "Calendários de feriados",
-      "holiday_calendars_placeholder": "Nenhum calendário",
-      "holiday_calendars_help": "Os seus dias ficam fechados neste horário.",
-      "manage_holidays": "Gerir calendários de feriados",
+      "holiday_calendars": "Feriados aplicados",
+      "holiday_calendars_placeholder": "Nenhum",
+      "holiday_calendars_help": "Os seus dias fecham neste calendário.",
+      "manage_holidays": "Gerir feriados",
       "calendar": {
         "today": "Hoje",
         "aria": "Calendário de {{year}}",
@@ -1651,10 +1651,10 @@
       "inactive": "Inativo",
       "copy_disabled": "Escolhe primeiro para que dias copiar",
       "time_placeholder": "hh:mm",
-      "specials_own": "Datas especiais deste horário",
+      "specials_own": "Datas especiais deste calendário",
       "periods_empty_body": "A semana habitual vale todo o ano.",
       "specials_empty_body": "Cada dia segue o seu período ou a semana habitual.",
-      "active_hint": "Só os horários ativos se podem escolher num grupo.",
+      "active_hint": "Só os calendários ativos se podem escolher num grupo.",
       "in_use_bulk": "São usados por {{count}} grupos: passarão a atender sempre.",
       "in_use_bulk_one": "São usados por 1 grupo: passará a atender sempre.",
       "x": {
@@ -1688,7 +1688,7 @@
           "only_this_day": "Alterar só este dia",
           "edit_special": "Editar esta data especial"
         },
-        "active_label": "Horário ativo",
+        "active_label": "Calendário ativo",
         "in_hours": "Disponível",
         "out_of_hours": "Indisponível",
         "now_detail": {
@@ -1699,11 +1699,11 @@
           "opens_day": "abre {{day}} {{time}}"
         },
         "general": {
-          "title": "Dados do horário",
+          "title": "Dados do calendário",
           "edit": "Editar dados"
         },
         "rules": {
-          "title": "Regras do horário",
+          "title": "Regras do calendário",
           "week_edit": "Editar a semana habitual",
           "week_hint": "O que vale quando nada mais manda.",
           "periods_hint": "Épocas com a sua própria semana: verão, campanhas…",
@@ -1722,14 +1722,19 @@
             "out_help": "O que ouve quem liga sem atendimento, quando nenhum período nem data especial diz outra coisa.",
             "period_help": "O que ouve quem liga fora das horas deste período, nos seus feriados e fins de semana. Vazio: a do horário."
           },
-          "week_modal": {
+          "switcher": {
+          "label": "Calendário",
+          "placeholder": "Escolha um calendário",
+          "search": "Procurar calendário…"
+        },
+        "week_modal": {
           "hint": "As faixas de cada dia, ao minuto. Aplicam-se ao calendário ao guardar.",
           "apply": "Aplicar"
         }
       },
       "festivos_leave": {
         "title": "Salvar as alterações?",
-        "body": "Para ir a Feriados, salve antes o horário."
+        "body": "Para ir a Feriados, guarde primeiro o calendário."
       }
     },
     "festivos": {

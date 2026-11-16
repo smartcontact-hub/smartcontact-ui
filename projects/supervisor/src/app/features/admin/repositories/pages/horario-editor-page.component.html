@@ -33,6 +33,21 @@
         </p>
       </div>
       <div class="cabecera__acciones">
+        <!-- El calendario sobre el que se opera: cambia de uno a otro sin volver a la lista, con buscador. -->
+        <sc-select
+          class="cabecera__selector"
+          inputId="horario-selector"
+          size="sm"
+          filter
+          [ariaLabel]="'repositories.horarios.x.switcher.label' | translate"
+          [placeholder]="'repositories.horarios.x.switcher.placeholder' | translate"
+          [filterPlaceholder]="'repositories.horarios.x.switcher.search' | translate"
+          [options]="opcionesDeCalendarios()"
+          optionLabel="label"
+          optionValue="value"
+          [value]="idActual()"
+          (valueChange)="irACalendario($event)"
+        />
         <!-- «Activo» se enciende y se apaga con frecuencia: a la vista. Su ayuda (quién lo usa y qué pasa al apagarlo, DD-152)
              va en el tooltip y en la descripción del interruptor. -->
         <div class="switch-field" [pTooltip]="ayudaDeActivo()" tooltipPosition="bottom">

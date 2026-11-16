@@ -1499,23 +1499,23 @@
       "contacts_delete_title_one": "Delete 1 contact?"
     },
     "horarios": {
-      "title": "Schedules",
-      "singular": "schedule",
-      "create_title": "New schedule",
-      "plural": "schedules",
+      "title": "Calendars",
+      "singular": "calendar",
+      "create_title": "New calendar",
+      "plural": "calendars",
       "timezone": "Timezone",
-      "name_placeholder": "E.g. General schedule",
-      "edit_breadcrumb": "Edit schedule",
-      "create_submit": "Create schedule",
+      "name_placeholder": "E.g.: General calendar",
+      "edit_breadcrumb": "Edit calendar",
+      "create_submit": "Create calendar",
       "toasts": {
-        "created": "Schedule “{{name}}” created",
-        "updated": "Schedule “{{name}}” updated",
-        "deleted": "Schedule “{{name}}” deleted",
-        "deleted_bulk": "{{count}} schedules deleted"
+        "created": "Calendar “{{name}}” created",
+        "updated": "Calendar “{{name}}” updated",
+        "deleted": "Calendar “{{name}}” deleted",
+        "deleted_bulk": "{{count}} calendars deleted"
       },
       "delete_dialog": {
-        "title": "Delete the schedule “{{name}}”?",
-        "title_bulk": "Delete {{count}} schedules?"
+        "title": "Delete the calendar “{{name}}”?",
+        "title_bulk": "Delete {{count}} calendars?"
       },
       "col_week": "Regular week",
       "col_now": "Availability",
@@ -1527,7 +1527,7 @@
       "all_day": "All day",
       "next_day": "Next day",
       "active": "Active",
-      "timezone_help": "The schedule's hours are read in this time zone.",
+      "timezone_help": "The calendar’s hours are read in this time zone.",
       "section_general": "General",
       "section_week": "Regular week",
       "section_week_hint": "The hours of a normal week",
@@ -1584,10 +1584,10 @@
       "special_open": "With hours",
       "special_slots": "Time slots",
       "specials_empty": "No special dates",
-      "holiday_calendars": "Holiday calendars",
-      "holiday_calendars_placeholder": "No calendar",
-      "holiday_calendars_help": "Their days are closed in this schedule.",
-      "manage_holidays": "Manage holiday calendars",
+      "holiday_calendars": "Applied holidays",
+      "holiday_calendars_placeholder": "None",
+      "holiday_calendars_help": "Their days are closed in this calendar.",
+      "manage_holidays": "Manage holidays",
       "calendar": {
         "today": "Today",
         "aria": "Calendar for {{year}}",
@@ -1651,10 +1651,10 @@
       "inactive": "Inactive",
       "copy_disabled": "Choose which days to copy to first",
       "time_placeholder": "hh:mm",
-      "specials_own": "Special dates of this schedule",
+      "specials_own": "Special dates of this calendar",
       "periods_empty_body": "The regular week applies all year.",
       "specials_empty_body": "Each day follows its period or the regular week.",
-      "active_hint": "Only active schedules can be chosen in a group.",
+      "active_hint": "Only active calendars can be chosen in a group.",
       "in_use_bulk": "{{count}} groups use them: they will be always open.",
       "in_use_bulk_one": "1 group uses them: it will be always open.",
       "x": {
@@ -1688,7 +1688,7 @@
           "only_this_day": "Change this day only",
           "edit_special": "Edit this special date"
         },
-        "active_label": "Schedule active",
+        "active_label": "Calendar active",
         "in_hours": "Available",
         "out_of_hours": "Unavailable",
         "now_detail": {
@@ -1699,11 +1699,11 @@
           "opens_day": "opens {{day}} {{time}}"
         },
         "general": {
-          "title": "Schedule details",
+          "title": "Calendar details",
           "edit": "Edit details"
         },
         "rules": {
-          "title": "Schedule rules",
+          "title": "Calendar rules",
           "week_edit": "Edit the regular week",
           "week_hint": "What applies when nothing else does.",
           "periods_hint": "Seasons with their own week: summer, campaigns…",
@@ -1722,14 +1722,19 @@
             "out_help": "What callers hear when nobody answers and no period or special date says otherwise.",
             "period_help": "What callers hear outside this period's hours, and on its holidays and weekends. Empty: the schedule's."
           },
-          "week_modal": {
+          "switcher": {
+          "label": "Calendar",
+          "placeholder": "Choose a calendar",
+          "search": "Search calendar…"
+        },
+        "week_modal": {
           "hint": "Each day's time ranges, down to the exact minute. They apply to the calendar when saved.",
           "apply": "Apply"
         }
       },
       "festivos_leave": {
         "title": "Save the changes?",
-        "body": "To go to Holidays, save the schedule first."
+        "body": "To go to Holidays, save the calendar first."
       }
     },
     "festivos": {

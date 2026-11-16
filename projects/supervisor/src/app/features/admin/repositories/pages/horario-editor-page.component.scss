@@ -42,6 +42,10 @@
   gap: var(--sc-spacing-1);
 }
 
+.cabecera__selector {
+  inline-size: var(--sc-spacing-18);
+}
+
 .cabecera__error {
   margin: 0;
   color: var(--sc-text-danger);
