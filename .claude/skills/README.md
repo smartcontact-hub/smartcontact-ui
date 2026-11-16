@@ -61,6 +61,7 @@ directo, no hace falta memorizarlos.
 
 ## Convivencia con lo que ya teníamos
 
-- `reflect` y `auditoria-semanal` son nuestras, no se tocan.
+- `reflect`, `auditoria-semanal` y `probar-prototipos` (desempatar versiones con personas, DD-256) son nuestras, no
+  se tocan.
 - La familia `design-*` (impeccable, etc.) genera estética. Esta familia
   verifica y ordena con nuestro sistema. Verbos distintos, no compiten.

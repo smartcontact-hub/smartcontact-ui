@@ -13,6 +13,7 @@ import {
 import { AUTORES, HORARIOS_FICHAS, HORARIOS_YA_ESTA, type HorariosAutor } from './horarios.data';
 import { LabArteComponent } from './lab-arte.component';
 import { LabHorariosComponent } from './lab-horarios.component';
+import { ESTADO_PRUEBA, PRUEBAS, type EstadoPrueba } from './pruebas/pruebas.data';
 
 /** Un destino del directorio. `route` = navega dentro de este mismo sitio. */
 interface DemoLink {
@@ -59,7 +60,7 @@ const GUARDADO: readonly Guardado[] = [
   },
 ];
 
-type SectionId = 'horarios' | 'exploraciones' | 'laboratorios' | 'enlaces' | 'guardado';
+type SectionId = 'horarios' | 'pruebas' | 'exploraciones' | 'laboratorios' | 'enlaces' | 'guardado';
 
 const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
 
@@ -68,9 +69,10 @@ const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'o
  * y secciones de tarjetas debajo. El marco la trata como la portada (`app.component.ts`, `esPortada`): a todo el ancho y
  * sin «En esta página», porque el índice de arriba ya lleva a cada sección.
  *
- * Cinco familias, y cada una responde a algo distinto:
+ * Seis familias, y cada una responde a algo distinto:
  *
  *   · HORARIOS      — el frente que se prueba ahora, con todas sus versiones y quién hizo cada una.
+ *   · PRUEBAS       — versiones que se desempatan con personas; cada tarjeta lleva a su sala de control (DD-256).
  *   · EXPLORACIONES — versiones que se comparan abriendo enlaces; cada tarjeta dice en qué quedó.
  *   · LABORATORIOS  — una página con su conmutador dentro; se usan.
  *   · ENLACES       — la agenda de destinos.
@@ -106,6 +108,8 @@ export class LabComponent {
    */
   protected readonly labs = LABS.filter((l) => !HORARIOS_YA_ESTA.has(l.id) && !HORARIOS_YA_ESTA.has(l.href));
   protected readonly statusLabel = EXPLORATION_STATUS_LABEL;
+  protected readonly pruebas = PRUEBAS;
+  protected readonly estadoPrueba = ESTADO_PRUEBA;
 
   /** Los bocetos, con la miniatura de los que son una página ya resuelta: una ruta fija de este mismo sitio. */
   protected readonly guardado = GUARDADO.map((g) => ({
@@ -198,6 +202,7 @@ export class LabComponent {
       label: 'Horarios',
       hint: 'Se prueba ahora',
     },
+    { id: 'pruebas', icon: 'ads_click', count: PRUEBAS.length, label: 'Pruebas', hint: 'Con personas' },
     { id: 'exploraciones', icon: 'compare', count: EXPLORATIONS.length, label: 'Exploraciones', hint: 'Lo que se comparó' },
     { id: 'laboratorios', icon: 'science', count: this.labs.length, label: 'Laboratorios', hint: 'Para tocar' },
     {
@@ -213,6 +218,12 @@ export class LabComponent {
   protected statusSeverity(status: ExplorationStatus): 'success' | 'warn' | 'secondary' {
     if (status === 'oficial') return 'success';
     if (status === 'en-revision') return 'warn';
+    return 'secondary';
+  }
+
+  protected pruebaSeverity(estado: EstadoPrueba): 'success' | 'warn' | 'secondary' {
+    if (estado === 'decidida') return 'success';
+    if (estado === 'en-curso') return 'warn';
     return 'secondary';
   }
 

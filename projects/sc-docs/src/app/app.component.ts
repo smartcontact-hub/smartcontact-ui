@@ -166,12 +166,13 @@ export class AppComponent {
   /**
    * ¿Es una story suelta (`?solo=1`)? Entonces no hay cabecera ni lateral. Antes de la primera navegación `router.url`
    * aún vale `/`: se lee del hash para no pintar el marco un instante y quitarlo después (el iframe de un ancho fijo lo
-   * enseñaría parpadeando).
+   * enseñaría parpadeando). Las puertas de una prueba con usuarios (`/prueba/…`, DD-256) también van sueltas: las abre
+   * gente que no sabe qué es este sitio.
    */
-  private readonly soloAlArrancar = /[?&]solo=1(&|$)/.test(document.location.hash);
+  private readonly soloAlArrancar = /[?&]solo=1(&|$)|^#\/prueba\//.test(document.location.hash);
   protected readonly solo = computed(() => {
     const url = this.url();
-    return /[?&]solo=1(&|$)/.test(url) || (url === '/' && this.soloAlArrancar);
+    return /[?&]solo=1(&|$)/.test(url) || url.startsWith('/prueba/') || (url === '/' && this.soloAlArrancar);
   });
 
   /**

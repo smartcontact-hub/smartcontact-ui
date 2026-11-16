@@ -76,6 +76,22 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/lab/lab.component').then((m) => m.LabComponent),
   },
   {
+    // Pruebas con usuarios (DD-256): la sala de control de cada prueba cuelga del Lab; las dos puertas (`prueba/…`) son
+    // lo que abre cada persona con su enlace, y van sin cabecera ni lateral (`app.component.ts`, `solo`).
+    path: 'lab/pruebas/:id',
+    loadComponent: () =>
+      import('./pages/lab/pruebas/prueba-control.component').then((m) => m.PruebaControlComponent),
+  },
+  {
+    path: 'prueba/:id/:participante',
+    loadComponent: () =>
+      import('./pages/lab/pruebas/prueba-inicio.component').then((m) => m.PruebaInicioComponent),
+  },
+  {
+    path: 'prueba/:id/:participante/fin',
+    loadComponent: () => import('./pages/lab/pruebas/prueba-fin.component').then((m) => m.PruebaFinComponent),
+  },
+  {
     // Estudio del color del botón principal y del acento: una PROPUESTA, sin aplicar. Laboratorio del Lab (página con su
     // conmutador dentro); la muestra va aparte porque la página la pinta en un iframe (`?solo=1`), donde puede reescribir
     // las variables en la raíz sin tocar la doc.
