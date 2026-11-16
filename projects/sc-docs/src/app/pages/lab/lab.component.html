@@ -22,8 +22,64 @@
     </nav>
   </header>
 
+  <!-- ── HORARIOS ──────────────────────────────────────────────────────────────────────────────
+       El frente que se está probando ahora, arriba de todo y con todas sus versiones juntas: cada
+       rama ponía su tarjeta en el Lab de SU rama, y aquí, que se sirve desde `main`, no salía
+       ninguna. Filas como las de los laboratorios, sin número (no hay orden que contar), con quién
+       la hizo y su PR debajo; una versión con varias pantallas lleva un enlace por pantalla. -->
+  <section class="sec" id="sec-horarios" #secHorarios aria-labelledby="t-horarios">
+    <header class="sec__head">
+      <h2 id="t-horarios" class="sc-text-h2-semibold">Horarios</h2>
+      <p class="sec__lead">
+        Todas sus versiones en un sitio: el Lab, lo que sale de él y la propuesta de referencia. Cada enlace
+        abre el preview de su rama, que se actualiza con cada push.
+      </p>
+    </header>
+
+    <div class="hgroups">
+      @for (group of horarios; track group.title; let g = $index) {
+        <section class="hgroup" [attr.aria-labelledby]="'hgroup-' + g">
+          <h3 [id]="'hgroup-' + g" class="group__title sc-text-caption-semibold">{{ group.title }}</h3>
+          <ul class="hlist">
+            @for (v of group.versions; track v.id) {
+              <li class="hrow">
+                <div class="hrow__body">
+                  <h4 class="hrow__title">
+                    <span class="sc-text-body-semibold">{{ v.title }}</span>
+                    @if (v.origin) {
+                      <span class="hrow__origin sc-text-caption-regular">{{ v.origin }}</span>
+                    }
+                  </h4>
+                  <p class="hrow__summary sc-text-body-regular">{{ v.summary }}</p>
+                  <p class="hrow__by sc-text-caption-regular">
+                    <span class="hrow__author sc-text-caption-semibold">{{ v.author }}</span>
+                    <span aria-hidden="true">·</span>
+                    <a class="hrow__source" [href]="v.source.href" target="_blank" rel="noopener">{{ v.source.label }}</a>
+                  </p>
+                </div>
+
+                <div class="hrow__aside">
+                  <ul class="hrow__links" [attr.aria-label]="'Abrir ' + v.title">
+                    @for (l of v.links; track l.href) {
+                      <li>
+                        <a class="cta sc-text-body-semibold" [href]="l.href" target="_blank" rel="noopener">
+                          {{ l.label }} <span class="cta__arrow" aria-hidden="true">↗</span>
+                        </a>
+                      </li>
+                    }
+                  </ul>
+                  <span class="hrow__url sc-text-caption-regular">{{ v.domain }}</span>
+                </div>
+              </li>
+            }
+          </ul>
+        </section>
+      }
+    </div>
+  </section>
+
   <!-- ── EXPLORACIONES ─────────────────────────────────────────────────────────────────────────
-       Lo primero porque es lo que espera una decisión. El color no decora: dice en qué quedó cada
+       Justo después de Horarios porque es lo que espera una decisión. El color no decora: dice en qué quedó cada
        una (verde decidida, ámbar esperando, gris archivada) y se ve antes de leer el rótulo. -->
   <section class="sec" id="sec-exploraciones" #secExploraciones aria-labelledby="t-exploraciones">
     <header class="sec__head">

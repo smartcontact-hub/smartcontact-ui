@@ -8,6 +8,9 @@ import {
   LABS,
   type ExplorationStatus,
 } from './explorations.data';
+import { HORARIOS } from './horarios.data';
+
+type SectionId = 'horarios' | 'exploraciones' | 'laboratorios' | 'enlaces';
 
 /** Un destino del directorio. `route` = navega dentro de este mismo sitio. */
 interface DemoLink {
@@ -30,6 +33,9 @@ interface DemoLinkGroup {
  *   · LABORATORIOS  — una página con su conmutador dentro; se usan.
  *   · ENLACES       — la agenda de destinos.
  *
+ * Encima de las tres, HORARIOS: el frente que se está probando ahora, con todas sus versiones juntas. Cada rama
+ * experimental ponía su tarjeta en el Lab de su rama, así que aquí, que se sirve desde `main`, no salía ninguna.
+ *
  * La página se rehízo el 2026-09-22 (demasiada densidad y ruido visual). Antes eran 2.809px de alto, 764
  * palabras y cuatro niveles de título en una sola columna, con una nota de tres líneas por
  * enlace. Lo que se fue: las notas largas del directorio (lo que explica un sitio está en ese
@@ -43,10 +49,12 @@ interface DemoLinkGroup {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LabComponent {
+  protected readonly horarios = HORARIOS;
   protected readonly explorations = EXPLORATIONS;
   protected readonly labs = LABS;
   protected readonly statusLabel = EXPLORATION_STATUS_LABEL;
 
+  private readonly secHorarios = viewChild<ElementRef<HTMLElement>>('secHorarios');
   private readonly secExploraciones = viewChild<ElementRef<HTMLElement>>('secExploraciones');
   private readonly secLaboratorios = viewChild<ElementRef<HTMLElement>>('secLaboratorios');
   private readonly secEnlaces = viewChild<ElementRef<HTMLElement>>('secEnlaces');
@@ -67,6 +75,12 @@ export class LabComponent {
    */
   protected readonly sections = computed(() => [
     {
+      id: 'horarios' as const,
+      count: this.horarios.reduce((n, g) => n + g.versions.length, 0),
+      label: 'Horarios',
+      hint: 'Todas sus versiones',
+    },
+    {
       id: 'exploraciones' as const,
       count: this.explorations.length,
       label: 'Exploraciones',
@@ -85,13 +99,13 @@ export class LabComponent {
    * Scroll por código y no un `href="#…"`: este sitio enruta por hash (`/#/lab`), así que un
    * ancla de toda la vida se lleva por delante la ruta. Medido el 2026-09-22.
    */
-  protected goTo(id: 'exploraciones' | 'laboratorios' | 'enlaces'): void {
-    const target =
-      id === 'exploraciones'
-        ? this.secExploraciones()
-        : id === 'laboratorios'
-          ? this.secLaboratorios()
-          : this.secEnlaces();
+  protected goTo(id: SectionId): void {
+    const target = {
+      horarios: this.secHorarios,
+      exploraciones: this.secExploraciones,
+      laboratorios: this.secLaboratorios,
+      enlaces: this.secEnlaces,
+    }[id]();
     target?.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
