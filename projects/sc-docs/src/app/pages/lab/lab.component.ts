@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, ElementRef, inject } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
-import { ScIconTileComponent, ScTagComponent } from '@smartcontact-hub/components';
+import { ScAvatarComponent, ScIconTileComponent, ScTagComponent } from '@smartcontact-hub/components';
 import { ScIconComponent } from '@smartcontact-hub/icons';
 
 import {
@@ -10,7 +10,7 @@ import {
   LABS,
   type ExplorationStatus,
 } from './explorations.data';
-import { HORARIOS } from './horarios.data';
+import { AUTORES, HORARIOS_FICHAS, HORARIOS_YA_ESTA, type HorariosAutor } from './horarios.data';
 import { LabArteComponent } from './lab-arte.component';
 import { LabHorariosComponent } from './lab-horarios.component';
 
@@ -32,7 +32,9 @@ interface DemoLinkGroup {
 /** Un boceto guardado: se mira, no se compara. */
 interface Guardado {
   readonly title: string;
-  readonly by: string;
+  readonly autor: HorariosAutor;
+  /** Cuándo y con qué, en caption junto al nombre. */
+  readonly meta: string;
   readonly href: string;
   /** Cómo se enseña la miniatura: la página en un iframe o la imagen tal cual. */
   readonly preview: 'pagina' | 'imagen';
@@ -42,13 +44,15 @@ interface Guardado {
 const GUARDADO: readonly Guardado[] = [
   {
     title: 'Pantalla de carga (esqueleto)',
-    by: 'Marta Recio · jul 2026 · HTML sin tokens',
+    autor: AUTORES.marta,
+    meta: 'jul 2026 · HTML sin tokens',
     href: '/explorations/skeleton-screen/index.html',
     preview: 'pagina',
   },
   {
     title: 'Icono de carga (búsqueda)',
-    by: 'Marta Recio · jul 2026 · Lottie y GIF',
+    autor: AUTORES.marta,
+    meta: 'jul 2026 · Lottie y GIF',
     href: '/explorations/search-loading/search_loading_icon.gif',
     preview: 'imagen',
     alt: 'Icono animado de carga: una lupa buscando con el texto Cargando resultados',
@@ -78,7 +82,15 @@ const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'o
  */
 @Component({
   selector: 'app-lab',
-  imports: [RouterLink, ScIconComponent, ScIconTileComponent, ScTagComponent, LabArteComponent, LabHorariosComponent],
+  imports: [
+    RouterLink,
+    ScAvatarComponent,
+    ScIconComponent,
+    ScIconTileComponent,
+    ScTagComponent,
+    LabArteComponent,
+    LabHorariosComponent,
+  ],
   templateUrl: './lab.component.html',
   styleUrl: './lab.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -88,7 +100,11 @@ export class LabComponent {
   private readonly sanitizer = inject(DomSanitizer);
 
   protected readonly explorations = EXPLORATIONS;
-  protected readonly labs = LABS;
+  /**
+   * Los laboratorios, sin los que ya salen en Horarios: cada rama de Horarios añade su tarjeta aquí y, al fundirse,
+   * saldría dos veces. Se reconoce por su `id` o por su enlace (`HORARIOS_YA_ESTA`), así que se va sola.
+   */
+  protected readonly labs = LABS.filter((l) => !HORARIOS_YA_ESTA.has(l.id) && !HORARIOS_YA_ESTA.has(l.href));
   protected readonly statusLabel = EXPLORATION_STATUS_LABEL;
 
   /** Los bocetos, con la miniatura de los que son una página ya resuelta: una ruta fija de este mismo sitio. */
@@ -178,12 +194,12 @@ export class LabComponent {
     {
       id: 'horarios',
       icon: 'calendar_month',
-      count: HORARIOS.reduce((n, g) => n + g.versions.length, 0),
+      count: HORARIOS_FICHAS,
       label: 'Horarios',
       hint: 'Se prueba ahora',
     },
     { id: 'exploraciones', icon: 'compare', count: EXPLORATIONS.length, label: 'Exploraciones', hint: 'Esperan decisión' },
-    { id: 'laboratorios', icon: 'science', count: LABS.length, label: 'Laboratorios', hint: 'Para tocar' },
+    { id: 'laboratorios', icon: 'science', count: this.labs.length, label: 'Laboratorios', hint: 'Para tocar' },
     {
       id: 'enlaces',
       icon: 'link',

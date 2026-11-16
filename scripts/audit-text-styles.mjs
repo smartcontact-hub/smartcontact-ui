@@ -604,8 +604,10 @@ export const TIPOGRAFIA_SUELTA_MAX = 59;
  *
  * 58 → 50 el 2026-11-16, con la página de Conexión de variables rehecha en tarjetas: título, entradilla, bloques,
  * leyenda, tabla y listas piden su letra con \`.sc-text-*\`, y la hoja deja de poner ocho tamaños a mano.
+ *
+ * 50 → 49 el 2026-11-16, con el repaso de tipografía del Lab: el titular de Horarios pasa a \`.sc-text-h2-semibold\`.
  */
-export const TIPOGRAFIA_SUELTA_DOCS_MAX = 50;
+export const TIPOGRAFIA_SUELTA_DOCS_MAX = 49;
 
 /** Las hojas de sc-docs que SÍ cuentan: su contenido, no el simulador del navegador. */
 export const esSimuladorDeNavegador = (hoja) => /pages\/validar\//.test(hoja);
