@@ -9,6 +9,7 @@ import {
   ScCustomModalFooterDirective,
   ScDatepickerComponent,
   ScInputTextComponent,
+  ScTextareaComponent,
   ScToggleSwitchComponent,
 } from '@smartcontact-hub/components';
 
@@ -45,6 +46,7 @@ const mesDia = (fecha: Date): string => `${dosCifras(fecha.getMonth() + 1)}-${do
     ScCustomModalFooterDirective,
     ScDatepickerComponent,
     ScInputTextComponent,
+    ScTextareaComponent,
     ScToggleSwitchComponent,
     TooltipModule,
     TranslateModule,
@@ -72,6 +74,7 @@ export class HorarioPeriodoModalComponent implements OnInit {
   protected readonly cadaAnio = signal(true);
   protected readonly color = signal<string>('blue');
   protected readonly semana = signal<Semana>([]);
+  protected readonly mensaje = signal('');
   private readonly nombreTocado = signal(false);
 
   protected readonly colores = computed<readonly ColorDotOption[]>(() => {
@@ -94,6 +97,7 @@ export class HorarioPeriodoModalComponent implements OnInit {
     this.cadaAnio.set(p.year === null);
     this.color.set(p.color);
     this.semana.set(p.week);
+    this.mensaje.set(p.outMessage ?? '');
     // Uno que cruza el fin de año acaba en el siguiente.
     this.rango.set([new Date(anio, m1 - 1, d1), new Date(p.from > p.to ? anio + 1 : anio, m2 - 1, d2)]);
   }
@@ -109,6 +113,7 @@ export class HorarioPeriodoModalComponent implements OnInit {
       to: desde ? mesDia(hasta ?? desde) : '',
       year: this.cadaAnio() ? null : (desde?.getFullYear() ?? this.anio()),
       week: this.semana(),
+      outMessage: this.mensaje().trim(),
     };
   });
 

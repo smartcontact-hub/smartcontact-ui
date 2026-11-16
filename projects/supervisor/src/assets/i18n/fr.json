@@ -1712,7 +1712,16 @@
           "yearly": "chaque année",
           "past_hidden": "{{count}} des années passées, masquées."
         },
-        "week_modal": {
+        "message": {
+            "label": "Message automatique",
+            "placeholder": "Ex. : Aujourd'hui est férié et nous sommes indisponibles. Nous vous répondrons le prochain jour ouvré.",
+            "help_holiday": "Ce que les appelants entendent ce jour férié. Vide : le message hors horaires de la période où il tombe.",
+            "help_special": "Ce que les appelants entendent ce jour sans réponse. Vide : celui de la période ou hors horaires.",
+            "out_label": "Message hors horaires",
+            "out_help": "Ce que les appelants entendent sans réponse, quand aucune période ni date spéciale n'en dit autre chose.",
+            "period_help": "Ce que les appelants entendent hors des horaires de cette période, ses jours fériés et week-ends. Vide : celui de l'horaire."
+          },
+          "week_modal": {
           "hint": "Les plages de chaque jour, à la minute près. Elles s'appliquent au calendrier à l'enregistrement.",
           "apply": "Appliquer"
         }

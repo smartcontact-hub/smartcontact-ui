@@ -14,6 +14,7 @@ import {
   fechasEntre,
   horaDe,
   duenoDe,
+  mensajeDe,
   minutosDe,
   normalizarHorario,
   periodosSeSolapan,
@@ -275,6 +276,29 @@ test('un horario guardado como texto pasa a semana sin perder lo demás', () => 
   assert.deepEqual(nuevo.week[0], [[900, 1380]]);
   assert.deepEqual(nuevo.periods, []);
   assert.deepEqual(nuevo.holidayCalendarIds, []);
-  // Uno ya con la forma de ahora no cambia.
-  assert.deepEqual(normalizarHorario(postventa), postventa);
+  // Uno ya con la forma de ahora no cambia al volver a leerlo (y el mensaje, que no existía, nace vacío).
+  assert.deepEqual(normalizarHorario(normalizarHorario(postventa)), normalizarHorario(postventa));
+  assert.equal(normalizarHorario(postventa).outMessage, '');
+});
+
+test('el mensaje automático: el propio del día, si no el del periodo, si no el del horario', () => {
+  const lj = [[480, 840]];
+  const h = {
+    outMessage: 'Fuera de horario',
+    week: [lj, lj, lj, lj, lj, [], []],
+    periods: [{ id: 1, name: 'Verano', color: 'blue', from: '06-01', to: '08-31', year: null, week: [lj, lj, lj, lj, lj, [], []], outMessage: 'Horario de verano' }],
+    specials: [{ id: 1, name: 'Huelga', date: '2026-07-07', yearly: false, slots: [], message: 'Hoy hay huelga' }, { id: 2, name: 'Sin texto', date: '2026-07-08', yearly: false, slots: [] }],
+    holidayCalendarIds: [1],
+  };
+  const cals = [{ id: 1, name: 'F', description: '', status: 'active', days: [{ id: 1, name: 'San Juan', date: '2000-06-24', yearly: true, message: 'Feliz San Juan' }, { id: 2, name: 'Asunción', date: '2000-08-15', yearly: true }, { id: 3, name: 'Reyes', date: '2000-01-06', yearly: true }] }];
+  assert.deepEqual(mensajeDe(h, '2026-07-07', cals), { texto: 'Hoy hay huelga', origen: 'especial' });
+  // Una fecha especial sin texto suena como el periodo en el que cae.
+  assert.deepEqual(mensajeDe(h, '2026-07-08', cals), { texto: 'Horario de verano', origen: 'periodo' });
+  assert.deepEqual(mensajeDe(h, '2026-06-24', cals), { texto: 'Feliz San Juan', origen: 'festivo' });
+  // Un festivo sin texto hereda: en verano, el del periodo; fuera, el del horario.
+  assert.deepEqual(mensajeDe(h, '2026-08-15', cals), { texto: 'Horario de verano', origen: 'periodo' });
+  assert.deepEqual(mensajeDe(h, '2026-01-06', cals), { texto: 'Fuera de horario', origen: 'semana' });
+  // Un sábado de verano (cerrado) suena como el periodo; uno de invierno, como el horario.
+  assert.equal(mensajeDe(h, '2026-07-11', cals).texto, 'Horario de verano');
+  assert.equal(mensajeDe(h, '2026-02-07', cals).texto, 'Fuera de horario');
 });

@@ -7,6 +7,7 @@ import {
   ScCustomModalFooterDirective,
   ScDatepickerComponent,
   ScInputTextComponent,
+  ScTextareaComponent,
   ScSelectButtonComponent,
   ScToggleSwitchComponent,
 } from '@smartcontact-hub/components';
@@ -39,6 +40,7 @@ export type FechaEspecialNueva = Omit<FechaEspecial, 'id'> & { readonly id: numb
     ScDatepickerComponent,
     ScInputTextComponent,
     ScSelectButtonComponent,
+    ScTextareaComponent,
     ScToggleSwitchComponent,
     TooltipModule,
     TranslateModule,
@@ -75,6 +77,7 @@ export class HorarioEspecialModalComponent implements OnInit {
   protected readonly cadaAnio = signal(false);
   protected readonly modo = signal<'closed' | 'open'>('closed');
   protected readonly franjas = signal<readonly Franja[]>([[540, 840]]);
+  protected readonly mensaje = signal('');
   private readonly nombreTocado = signal(false);
 
   /** La raíz de sus textos: los de la fecha especial o los del festivo. */
@@ -105,6 +108,7 @@ export class HorarioEspecialModalComponent implements OnInit {
       // La que se repite guarda un año cualquiera: se enseña en el actual.
       this.fechas.set([aFecha(e.yearly ? `${new Date().getFullYear()}${e.date.slice(4)}` : e.date)]);
       this.cadaAnio.set(e.yearly);
+      this.mensaje.set(e.message ?? '');
       this.modo.set(e.slots.length > 0 ? 'open' : 'closed');
       if (e.slots.length > 0) this.franjas.set(e.slots);
       return;
@@ -120,6 +124,7 @@ export class HorarioEspecialModalComponent implements OnInit {
       date: aIso(fecha),
       yearly: this.cadaAnio(),
       slots: this.modo() === 'open' ? this.franjas() : [],
+      message: this.mensaje().trim(),
     })),
   );
 

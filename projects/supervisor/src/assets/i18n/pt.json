@@ -1712,7 +1712,16 @@
           "yearly": "todos os anos",
           "past_hidden": "{{count}} de anos passados, ocultas."
         },
-        "week_modal": {
+        "message": {
+            "label": "Mensagem automática",
+            "placeholder": "Ex.: Hoje é feriado e não estamos disponíveis. Atenderemos no próximo dia útil.",
+            "help_holiday": "O que ouve quem liga neste feriado. Vazio: a mensagem fora de horário do período em que cai.",
+            "help_special": "O que ouve quem liga neste dia sem atendimento. Vazio: a do período ou a de fora de horário.",
+            "out_label": "Mensagem fora de horário",
+            "out_help": "O que ouve quem liga sem atendimento, quando nenhum período nem data especial diz outra coisa.",
+            "period_help": "O que ouve quem liga fora das horas deste período, nos seus feriados e fins de semana. Vazio: a do horário."
+          },
+          "week_modal": {
           "hint": "As faixas de cada dia, ao minuto. Aplicam-se ao calendário ao guardar.",
           "apply": "Aplicar"
         }

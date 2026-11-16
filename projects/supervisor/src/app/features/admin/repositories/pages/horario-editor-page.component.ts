@@ -41,6 +41,7 @@ const VACIO: Borrador = {
   timezone: 'Europe/Madrid',
   description: '',
   status: 'active',
+  outMessage: '',
   week: [LABORABLE, LABORABLE, LABORABLE, LABORABLE, LABORABLE, [], []],
   periods: [],
   specials: [],
@@ -112,10 +113,13 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
    */
   protected readonly reglas = computed(
     () => {
-      const { week, periods, specials, holidayCalendarIds } = this.form();
-      return { week, periods, specials, holidayCalendarIds };
+      const { week, periods, specials, holidayCalendarIds, outMessage } = this.form();
+      return { week, periods, specials, holidayCalendarIds, outMessage };
     },
-    { equal: (a, b) => a.week === b.week && a.periods === b.periods && a.specials === b.specials && a.holidayCalendarIds === b.holidayCalendarIds },
+    {
+      equal: (a, b) =>
+        a.week === b.week && a.periods === b.periods && a.specials === b.specials && a.holidayCalendarIds === b.holidayCalendarIds && a.outMessage === b.outMessage,
+    },
   );
 
 
@@ -161,8 +165,8 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
 
   protected readonly semanaDialog = signal(false);
 
-  protected guardarSemana(semana: Semana): void {
-    this.update('week', semana);
+  protected guardarSemana({ semana, mensaje }: { readonly semana: Semana; readonly mensaje: string }): void {
+    this.form.update((f) => ({ ...f, week: semana, outMessage: mensaje }));
     this.semanaDialog.set(false);
   }
 

@@ -153,6 +153,22 @@ export function duenoDe(horario, iso, calendarios = []) {
   return { tipo: 'semana', especial: null, festivo: null, calendario: null, periodo: null, franjas: horario.week?.[dia] ?? [] };
 }
 
+/**
+ * El mensaje automático que oye quien llama cuando no se le atiende (día cerrado o fuera de las horas): el de la fecha
+ * especial o el del festivo si lo tienen; si no, el de fuera de horario del periodo que cubre el día y, si tampoco, el del
+ * horario. Un festivo o un fin de semana sin mensaje propio suena, así, como el periodo en el que caen (no hay que repetirlo).
+ * `{ texto, origen }`; `texto` vacío si ninguno lo define. `origen`: 'especial' | 'festivo' | 'periodo' | 'semana'.
+ */
+export function mensajeDe(horario, iso, calendarios = []) {
+  const dueno = duenoDe(horario, iso, calendarios);
+  const propio = dueno.tipo === 'especial' ? dueno.especial?.message : dueno.tipo === 'festivo' ? dueno.festivo?.message : '';
+  if ((propio ?? '').trim()) return { texto: propio.trim(), origen: dueno.tipo };
+  // Lo que valdría el día sin la fecha especial ni el festivo: su periodo o la semana habitual.
+  const debajo = duenoDe({ ...horario, specials: [] }, iso, []);
+  if (debajo.periodo?.outMessage?.trim()) return { texto: debajo.periodo.outMessage.trim(), origen: 'periodo' };
+  return { texto: (horario.outMessage ?? '').trim(), origen: 'semana' };
+}
+
 /** Une tramos que se tocan o se pisan; los devuelve ordenados. */
 function unir(tramos) {
   const orden = tramos.filter(([a, b]) => b > a).map(([a, b]) => [a, b]).sort((x, y) => x[0] - y[0]);
@@ -364,9 +380,10 @@ export function normalizarHorario(crudo) {
     timezone: resto.timezone || 'Europe/Madrid',
     description: resto.description ?? '',
     status: resto.status ?? 'active',
+    outMessage: resto.outMessage ?? '',
     week: Array.isArray(resto.week) ? semanaLimpia(resto.week) : semanaDeTexto(schedule),
-    periods: (Array.isArray(resto.periods) ? resto.periods : []).map((p) => ({ ...p, year: p.year ?? null, week: semanaLimpia(p.week) })),
-    specials: (Array.isArray(resto.specials) ? resto.specials : []).map((s) => ({ ...s, yearly: !!s.yearly, slots: Array.isArray(s.slots) ? s.slots : [] })),
+    periods: (Array.isArray(resto.periods) ? resto.periods : []).map((p) => ({ ...p, year: p.year ?? null, outMessage: p.outMessage ?? '', week: semanaLimpia(p.week) })),
+    specials: (Array.isArray(resto.specials) ? resto.specials : []).map((s) => ({ ...s, yearly: !!s.yearly, message: s.message ?? '', slots: Array.isArray(s.slots) ? s.slots : [] })),
     holidayCalendarIds: Array.isArray(resto.holidayCalendarIds) ? resto.holidayCalendarIds : [],
   };
 }

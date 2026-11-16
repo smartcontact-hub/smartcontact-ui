@@ -109,7 +109,7 @@
 }
 
 @if (semanaDialog()) {
-  <sc-horario-semana-modal [semanaInicial]="form().week" (guardar)="guardarSemana($event)" (cerrado)="semanaDialog.set(false)" />
+  <sc-horario-semana-modal [semanaInicial]="form().week" [mensajeInicial]="form().outMessage ?? ''" (guardar)="guardarSemana($event)" (cerrado)="semanaDialog.set(false)" />
 }
 
 @if (periodoDialog(); as dialog) {

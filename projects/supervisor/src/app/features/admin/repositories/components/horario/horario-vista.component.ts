@@ -31,13 +31,14 @@ import {
   diaDeLaSemana,
   type Horario,
   MINUTOS_DEL_DIA,
+  mensajeDe,
   rejillaDelAnio,
   resolverDia,
   sumarDias,
   textoDeFranja,
 } from '../../state/horarios.core.mjs';
 
-type Reglas = Pick<Horario, 'week' | 'periods' | 'specials' | 'holidayCalendarIds'>;
+type Reglas = Pick<Horario, 'week' | 'periods' | 'specials' | 'holidayCalendarIds'> & { readonly outMessage?: string };
 export type VistaDeHorario = 'year' | 'month' | 'week' | 'day';
 
 /** Cuántos años atrás se puede mirar y cuántos adelante se planifica. */
@@ -396,6 +397,7 @@ export class HorarioVistaComponent implements OnInit {
       corto: new Intl.DateTimeFormat(this.language.locale(), { weekday: 'short', day: 'numeric', month: 'short' }).format(aFecha(fecha)).replaceAll('.', ''),
       titulo: this.formatos().largo.format(aFecha(fecha)),
       motivo: this.motivo(celda.dia),
+      mensaje: mensajeDe(this.reglas(), fecha, this.calendarios()).texto,
       duenoColor: celda.dia.tipo === 'festivo' ? 'red' : celda.dia.tipo === 'especial' ? 'purple' : (celda.dia.periodo?.color ?? 'gray'),
     };
   });

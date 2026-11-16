@@ -1712,7 +1712,16 @@
           "yearly": "cada año",
           "past_hidden": "{{count}} de años pasados, ocultas."
         },
-        "week_modal": {
+        "message": {
+            "label": "Mensaje automático",
+            "placeholder": "Ej.: Hoy es festivo y no estamos disponibles. Te atenderemos el próximo día laborable.",
+            "help_holiday": "Lo que oye quien llama este festivo. Vacío: el mensaje de fuera de horario del periodo en el que cae.",
+            "help_special": "Lo que oye quien llama este día cuando no se le atiende. Vacío: el del periodo o el de fuera de horario.",
+            "out_label": "Mensaje de fuera de horario",
+            "out_help": "Lo que oye quien llama cuando no se le atiende y ningún periodo ni fecha especial dice otra cosa.",
+            "period_help": "Lo que oye quien llama fuera de las horas de este periodo, y en sus festivos y fines de semana. Vacío: el del horario."
+          },
+          "week_modal": {
           "hint": "Las franjas de cada día, con la hora exacta. Se aplican al calendario al guardar.",
           "apply": "Aplicar"
         }

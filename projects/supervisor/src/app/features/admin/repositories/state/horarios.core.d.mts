@@ -16,6 +16,8 @@ export interface Periodo {
   readonly to: string;
   readonly year: number | null;
   readonly week: Semana;
+  /** El mensaje automático de fuera de horario de este periodo; vacío, el del horario. */
+  readonly outMessage?: string;
 }
 
 /** Un día con sus propias horas; sin franjas, cerrado. `yearly` lo repite cada año en ese día y mes. */
@@ -25,6 +27,8 @@ export interface FechaEspecial {
   readonly date: string;
   readonly yearly: boolean;
   readonly slots: readonly Franja[];
+  /** El mensaje automático para quien llama ese día; vacío, el del periodo o el de fuera de horario. */
+  readonly message?: string;
 }
 
 export interface Horario {
@@ -33,6 +37,8 @@ export interface Horario {
   readonly timezone: string;
   readonly description: string;
   readonly status: string;
+  /** El mensaje automático de fuera de horario. */
+  readonly outMessage?: string;
   readonly week: Semana;
   readonly periods: readonly Periodo[];
   readonly specials: readonly FechaEspecial[];
@@ -46,6 +52,8 @@ export interface Festivo {
   readonly name: string;
   readonly date: string;
   readonly yearly: boolean;
+  /** El mensaje automático para quien llama ese día; vacío, el del periodo o el de fuera de horario. */
+  readonly message?: string;
 }
 
 /** Una lista de días cerrados que varios horarios pueden aplicar. */
@@ -57,7 +65,7 @@ export interface CalendarioDeFestivos {
   readonly days: readonly Festivo[];
 }
 
-type Reglas = Pick<Horario, 'week' | 'periods' | 'specials' | 'holidayCalendarIds'>;
+type Reglas = Pick<Horario, 'week' | 'periods' | 'specials' | 'holidayCalendarIds'> & { readonly outMessage?: string };
 
 export type TipoDeDueno = 'especial' | 'festivo' | 'periodo' | 'semana';
 
@@ -108,6 +116,7 @@ export function rejillaDelAnio(anio: number): { mes: number; huecos: number; fec
 export function ahoraEn(zona: string, cuando?: Date): Momento;
 
 export function amplitud(periodo: Pick<Periodo, 'from' | 'to'>): number;
+export function mensajeDe(horario: Reglas, iso: string, calendarios?: readonly CalendarioDeFestivos[]): { texto: string; origen: TipoDeDueno };
 export function periodoCubre(periodo: Pick<Periodo, 'from' | 'to' | 'year'>, iso: string): boolean;
 export function duenoDe(horario: Reglas, iso: string, calendarios?: readonly CalendarioDeFestivos[]): Dueno;
 export function resolverDia(horario: Reglas, iso: string, calendarios?: readonly CalendarioDeFestivos[]): DiaResuelto;

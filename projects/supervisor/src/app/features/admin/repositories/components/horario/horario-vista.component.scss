@@ -118,6 +118,17 @@
   color: var(--sc-text-secondary);
 }
 
+.vista__dia-mensaje {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-25);
+  max-inline-size: var(--sc-spacing-18);
+  overflow: hidden;
+  color: var(--sc-text-secondary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .vista__dia-acciones {
   display: inline-flex;
   gap: var(--sc-spacing-0-125);

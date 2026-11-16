@@ -1712,7 +1712,16 @@
           "yearly": "every year",
           "past_hidden": "{{count}} from past years, hidden."
         },
-        "week_modal": {
+        "message": {
+            "label": "Automatic message",
+            "placeholder": "E.g.: Today is a holiday and we are unavailable. We will assist you on the next working day.",
+            "help_holiday": "What callers hear on this holiday. Empty: the out-of-hours message of the period it falls in.",
+            "help_special": "What callers hear on this day when nobody answers. Empty: the period's or the out-of-hours message.",
+            "out_label": "Out-of-hours message",
+            "out_help": "What callers hear when nobody answers and no period or special date says otherwise.",
+            "period_help": "What callers hear outside this period's hours, and on its holidays and weekends. Empty: the schedule's."
+          },
+          "week_modal": {
           "hint": "Each day's time ranges, down to the exact minute. They apply to the calendar when saved.",
           "apply": "Apply"
         }

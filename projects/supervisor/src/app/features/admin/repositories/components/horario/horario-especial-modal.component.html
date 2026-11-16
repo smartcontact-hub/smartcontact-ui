@@ -75,6 +75,20 @@
         </div>
       }
 
+      <!-- El mensaje automático que oye quien llama este día. Vacío, el del periodo o el de fuera de horario. -->
+      <div class="field">
+        <sc-textarea
+          inputId="especial-mensaje"
+          fluid
+          [rows]="3"
+          [label]="'repositories.horarios.x.message.label' | translate"
+          [placeholder]="'repositories.horarios.x.message.placeholder' | translate"
+          [helperText]="(variante() === 'festivo' ? 'repositories.horarios.x.message.help_holiday' : 'repositories.horarios.x.message.help_special') | translate"
+          [value]="mensaje()"
+          (valueChange)="mensaje.set($event)"
+        />
+      </div>
+
       <div class="switch-field">
         <sc-toggleswitch inputId="especial-anual" [ariaLabel]="'repositories.horarios.repeat_yearly' | translate" [checked]="cadaAnio()" (checkedChange)="cadaAnio.set($event)" />
         <div class="switch-field__copy">

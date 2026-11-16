@@ -49,6 +49,12 @@
         <span class="vista__dia-dueno sc-text-caption-regular">
           <span class="punto" [attr.data-color]="d.duenoColor" aria-hidden="true"></span>{{ d.motivo }}
         </span>
+        @if (d.mensaje) {
+          <!-- El mensaje automático que oiría quien llama si no se le atiende ese día. -->
+          <span class="vista__dia-mensaje sc-text-caption-regular" [pTooltip]="d.mensaje" tooltipPosition="bottom">
+            <sc-icon name="chat" size="sm" aria-hidden="true" />{{ d.mensaje }}
+          </span>
+        }
       }
       <span class="vista__dia-acciones">
         @if (origen(); as o) {
