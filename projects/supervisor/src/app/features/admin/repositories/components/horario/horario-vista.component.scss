@@ -96,43 +96,50 @@
   }
 }
 
-/* El día elegido, junto a los selectores: una línea que se estira entre la navegación y la vista. */
+/* El día elegido, junto a los selectores: dos líneas que se estiran entre la navegación y la vista. */
 .vista__dia {
   display: flex;
   flex: 1;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--sc-spacing-0-25) var(--sc-spacing-0-75);
+  flex-direction: column;
+  gap: var(--sc-spacing-0-125);
   min-inline-size: 0;
   padding-inline-start: var(--sc-spacing-1);
   border-inline-start: 1px solid var(--sc-border-default);
+}
+
+.vista__dia-linea {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
+
+  &--detalle {
+    color: var(--sc-text-secondary);
+  }
 }
 
 .vista__dia-titulo {
   text-transform: capitalize;
 }
 
+.vista__dia-horas {
+  color: var(--sc-text-primary);
+}
+
 .vista__dia-dueno {
   display: inline-flex;
   align-items: center;
-  color: var(--sc-text-secondary);
 }
 
 .vista__dia-mensaje {
   display: inline-flex;
   align-items: center;
   gap: var(--sc-spacing-0-25);
-  max-inline-size: var(--sc-spacing-18);
+  max-inline-size: var(--sc-spacing-25);
   overflow: hidden;
   color: var(--sc-text-secondary);
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.vista__dia-acciones {
-  display: inline-flex;
-  gap: var(--sc-spacing-0-125);
-  margin-inline-start: auto;
 }
 
 .vista__cuerpo {

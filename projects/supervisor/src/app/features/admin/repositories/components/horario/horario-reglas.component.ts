@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TooltipModule } from 'primeng/tooltip';
 import { ScButtonComponent, ScMultiSelectComponent, ScSectionCardComponent, ScSelectButtonComponent, ScTagComponent } from '@smartcontact-hub/components';
 
 import { LanguageService } from '@core/services/language.service';
@@ -26,7 +27,7 @@ const CLAVES_DIA = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const;
  */
 @Component({
   selector: 'sc-horario-reglas',
-  imports: [ScButtonComponent, ScMultiSelectComponent, ScSectionCardComponent, ScSelectButtonComponent, ScTagComponent, TranslateModule],
+  imports: [ScButtonComponent, ScMultiSelectComponent, ScSectionCardComponent, ScSelectButtonComponent, ScTagComponent, TooltipModule, TranslateModule],
   templateUrl: './horario-reglas.component.html',
   styleUrl: './horario-reglas.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

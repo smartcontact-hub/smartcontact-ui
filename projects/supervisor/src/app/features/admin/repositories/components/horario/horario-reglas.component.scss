@@ -72,6 +72,25 @@ sc-section-card {
   min-inline-size: 0;
 }
 
+.fila__cuerpo--linea {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--sc-spacing-0-75);
+}
+
+.fila__etiqueta {
+  flex: none;
+  max-inline-size: 60%;
+}
+
+.fila__fechas {
+  min-inline-size: 0;
+  overflow: hidden;
+  color: var(--sc-text-secondary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .fila__nombre,
 .fila__detalle {
   max-inline-size: 100%;

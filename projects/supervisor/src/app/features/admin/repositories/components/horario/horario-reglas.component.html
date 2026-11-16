@@ -2,7 +2,7 @@
 <!-- Las reglas, en segundo plano: una fila de tres `sc-section-card` (semana habitual, periodos, fechas especiales), cada una
      con su acción en la cabecera (`scSectionActions`). -->
 <div class="reglas">
-  <sc-section-card titleKey="repositories.horarios.section_week" hintKey="repositories.horarios.section_week_hint" surface="card" icon="view_week">
+  <sc-section-card titleKey="repositories.horarios.section_week" surface="card" icon="view_week">
     <sc-button
       scSectionActions
       variant="secondary"
@@ -22,7 +22,7 @@
     </ul>
   </sc-section-card>
 
-  <sc-section-card titleKey="repositories.horarios.section_periods" hintKey="repositories.horarios.section_periods_hint" surface="card" icon="date_range">
+  <sc-section-card titleKey="repositories.horarios.section_periods" surface="card" icon="date_range">
     <sc-button
       scSectionActions
       variant="secondary"
@@ -38,9 +38,11 @@
       <ul class="lista" role="list">
         @for (p of filasDePeriodos(); track p.id) {
           <li class="fila">
-            <span class="fila__cuerpo">
-              <sc-tag class="fila__etiqueta" variant="label" [labelColor]="$any(p.color)" [value]="p.nombre" />
-              <span class="fila__detalle sc-text-caption-regular">{{ p.fechas }}@if (p.repite) { · {{ 'repositories.horarios.x.rules.yearly' | translate }} }</span>
+            <!-- La etiqueta del periodo (`sc-tag` de etiqueta, con su color del DS) y, a su lado, sus fechas: si no caben, se
+                 recortan y se leen enteras al pasar el ratón. -->
+            <span class="fila__cuerpo fila__cuerpo--linea">
+              <sc-tag class="fila__etiqueta" variant="label" [bordered]="false" [labelColor]="$any(p.color)" [value]="p.nombre" />
+              <span class="fila__fechas sc-text-caption-regular" [pTooltip]="p.fechas + (p.repite ? ' · ' + ('repositories.horarios.x.rules.yearly' | translate) : '')" showOnEllipsis tooltipPosition="top">{{ p.fechas }}@if (p.repite) { · {{ 'repositories.horarios.x.rules.yearly' | translate }} }</span>
             </span>
             <span class="fila__acciones">
               <sc-button variant="secondary" appearance="text" size="sm" icon="edit" [ariaLabel]="('repositories.horarios.period_edit' | translate) + ' ' + p.nombre" (clicked)="abrirPeriodo.emit(p.id)" />
@@ -52,7 +54,7 @@
     }
   </sc-section-card>
 
-  <sc-section-card titleKey="repositories.horarios.section_specials" hintKey="repositories.horarios.section_specials_hint" surface="card" icon="event">
+  <sc-section-card titleKey="repositories.horarios.section_specials" surface="card" icon="event">
     <sc-button
       scSectionActions
       variant="secondary"

@@ -113,4 +113,34 @@ export const HORARIOS_SEMILLA = [
     ],
     holidayCalendarIds: [1],
   },
+  {
+    ...base,
+    id: 10,
+    name: 'TRDBCN · Oficina de atención al usuario',
+    description: 'Calendario real de un cliente (2025). Teléfono 93 217 55 10. Entrada: locución OMAR_01',
+    outMessage: 'Locución OMAR_03: fuera de este horario no entra la llamada.',
+    // Jornada completa: lunes a jueves de 8 a 14 y de 15:30 a 18; viernes de 8 a 14. Cubre de enero a mayo y de septiembre a diciembre.
+    week: [[[480, 840], [930, 1080]], [[480, 840], [930, 1080]], [[480, 840], [930, 1080]], [[480, 840], [930, 1080]], [[480, 840]], [], []],
+    // Jornada intensiva: de lunes a viernes de 8 a 15, del 1 de junio al 31 de agosto.
+    periods: [
+      {
+        id: 1,
+        name: 'Jornada intensiva',
+        color: 'blue',
+        from: '06-01',
+        to: '08-31',
+        year: null,
+        outMessage: 'Locución OMAR_04: fuera de este horario no entra la llamada.',
+        week: semana([[480, 900]]),
+      },
+    ],
+    // Los días verdes del calendario: de 8 a 15, con su propia locución.
+    specials: [
+      { id: 1, name: 'Jueves Santo', date: '2025-04-17', yearly: false, slots: [[480, 900]], message: 'Locución OMAR_05: fuera de este horario no entra la llamada.' },
+      { id: 2, name: 'Nochebuena', date: '2000-12-24', yearly: true, slots: [[480, 900]], message: 'Locución OMAR_05: fuera de este horario no entra la llamada.' },
+      { id: 3, name: 'Nochevieja', date: '2000-12-31', yearly: true, slots: [[480, 900]], message: 'Locución OMAR_05: fuera de este horario no entra la llamada.' },
+    ],
+    // Los festivos (rojo en lectivo, naranja en verano) suenan como el periodo en el que caen: no llevan mensaje propio.
+    holidayCalendarIds: [1],
+  },
 ];

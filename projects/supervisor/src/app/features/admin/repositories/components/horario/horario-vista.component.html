@@ -34,20 +34,23 @@
       }
     </div>
 
-    <!-- El día elegido (hoy, al abrir) junto a los selectores: su fecha, cómo está, sus horas y quién lo decide, y los lápices. -->
+    <!-- El día elegido (hoy, al abrir) junto a los selectores, en dos líneas: la fecha y cómo está; debajo, sus horas y quién las
+         decide. Editar el día o crear una fecha especial está en sus secciones, no aquí. -->
     <div class="vista__dia" aria-live="polite">
       @if (detalle(); as d) {
-        <span class="vista__dia-titulo sc-text-body-semibold">{{ d.corto }}</span>
-        <sc-tag
-          [severity]="d.abierto ? 'success' : 'secondary'"
-          [icon]="d.abierto ? 'check_circle' : 'do_not_disturb_on'"
-          [value]="(d.abierto ? 'repositories.horarios.x.in_hours' : 'repositories.horarios.x.out_of_hours') | translate"
-        />
-        @if (d.abierto) {
-          <span class="vista__dia-horas sc-text-body-regular">{{ d.horas.join(' · ') }}</span>
-        }
-        <span class="vista__dia-dueno sc-text-caption-regular">
-          <span class="punto" [attr.data-color]="d.duenoColor" aria-hidden="true"></span>{{ d.motivo }}
+        <span class="vista__dia-linea">
+          <span class="vista__dia-titulo sc-text-body-semibold">{{ d.corto }}</span>
+          <sc-tag
+            [severity]="d.abierto ? 'success' : 'secondary'"
+            [icon]="d.abierto ? 'check_circle' : 'do_not_disturb_on'"
+            [value]="(d.abierto ? 'repositories.horarios.x.in_hours' : 'repositories.horarios.x.out_of_hours') | translate"
+          />
+        </span>
+        <span class="vista__dia-linea vista__dia-linea--detalle sc-text-caption-regular">
+          @if (d.abierto) {
+            <span class="vista__dia-horas">{{ d.horas.join(' · ') }}</span>
+          }
+          <span class="vista__dia-dueno"><span class="punto" [attr.data-color]="d.duenoColor" aria-hidden="true"></span>{{ d.motivo }}</span>
         </span>
         @if (d.mensaje) {
           <!-- El mensaje automático que oiría quien llama si no se le atiende ese día. -->
@@ -56,14 +59,6 @@
           </span>
         }
       }
-      <span class="vista__dia-acciones">
-        @if (origen(); as o) {
-          <sc-button variant="secondary" appearance="text" size="sm" icon="edit" [disabled]="!detalle()" [ariaLabel]="o.clave | translate" [pTooltip]="o.clave | translate" tooltipPosition="top" (clicked)="editarOrigen()" />
-          <sc-button variant="secondary" appearance="text" size="sm" icon="edit_calendar" [disabled]="!detalle()" [ariaLabel]="'repositories.horarios.x.day.only_this_day' | translate" [pTooltip]="'repositories.horarios.x.day.only_this_day' | translate" tooltipPosition="top" (clicked)="cambiarDia.emit(detalle()!.fecha)" />
-        } @else {
-          <sc-button variant="secondary" appearance="text" size="sm" icon="edit" [ariaLabel]="'repositories.horarios.x.day.edit_special' | translate" [pTooltip]="'repositories.horarios.x.day.edit_special' | translate" tooltipPosition="top" (clicked)="cambiarDia.emit(detalle()!.fecha)" />
-        }
-      </span>
     </div>
 
     <sc-selectbutton
