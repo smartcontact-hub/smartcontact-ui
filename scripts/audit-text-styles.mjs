@@ -601,8 +601,11 @@ export const TIPOGRAFIA_SUELTA_MAX = 59;
  * de los 14 estilos a 168, que son las muestras de la rampa, el título de página a 32 y piezas del DS): la tabla de API,
  * los controles, el «Copiar», el «Cuándo se usa», Reglas, Aviso legal, Novedades, Uso, Lab y Fundamentos piden su
  * letra con \`.sc-text-*\`.
+ *
+ * 58 → 50 el 2026-11-16, con la página de Conexión de variables rehecha en tarjetas: título, entradilla, bloques,
+ * leyenda, tabla y listas piden su letra con \`.sc-text-*\`, y la hoja deja de poner ocho tamaños a mano.
  */
-export const TIPOGRAFIA_SUELTA_DOCS_MAX = 58;
+export const TIPOGRAFIA_SUELTA_DOCS_MAX = 50;
 
 /** Las hojas de sc-docs que SÍ cuentan: su contenido, no el simulador del navegador. */
 export const esSimuladorDeNavegador = (hoja) => /pages\/validar\//.test(hoja);
