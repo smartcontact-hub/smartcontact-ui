@@ -5,7 +5,6 @@ import {
   ScDatepickerComponent,
   ScInputTextComponent,
   ScSectionCardComponent,
-  ScSelectButtonComponent,
   ScSelectComponent,
   ScToggleSwitchComponent,
 } from '@smartcontact-hub/components';
@@ -52,7 +51,6 @@ const aIso = (d: Date): string => isoDe(Date.UTC(d.getFullYear(), d.getMonth(), 
     ScDatepickerComponent,
     ScInputTextComponent,
     ScSectionCardComponent,
-    ScSelectButtonComponent,
     ScSelectComponent,
     ScToggleSwitchComponent,
     TooltipModule,
@@ -94,9 +92,6 @@ const aIso = (d: Date): string => isoDe(Date.UTC(d.getFullYear(), d.getMonth(), 
                   <sc-cal-semana [semana]="h.semana" />
                   <p class="pista sc-text-caption-regular">{{ usoTexto(h.id) }}</p>
                 }
-                <div class="field">
-                  <sc-select inputId="cal-locucion" label="Fuera de horario suena" [options]="locuciones" optionLabel="label" optionValue="value" [value]="cal().locucion" (valueChange)="b.cambiar({ locucion: $any($event) })" />
-                </div>
               </div>
             </sc-section-card>
 
@@ -127,17 +122,6 @@ const aIso = (d: Date): string => isoDe(Date.UTC(d.getFullYear(), d.getMonth(), 
                           optionValue="value"
                           [value]="p.horarioId"
                           (valueChange)="elegirHorario($any($event), 'periodo-' + p.id)"
-                        />
-                      </div>
-                      <div class="field">
-                        <sc-select
-                          [inputId]="'periodo-locucion-' + p.id"
-                          label="Fuera de horario suena"
-                          [options]="locucionesPeriodo"
-                          optionLabel="label"
-                          optionValue="value"
-                          [value]="p.locucion ?? ''"
-                          (valueChange)="b.cambiarPeriodo(p.id, { locucion: $any($event) || null })"
                         />
                       </div>
                     </div>
@@ -193,7 +177,7 @@ const aIso = (d: Date): string => isoDe(Date.UTC(d.getFullYear(), d.getMonth(), 
           <aside class="a__resultado">
             <sc-section-card [titleKey]="'Así queda ' + anio" surface="card" icon="calendar_month">
               <div class="bloque">
-                <sc-selectbutton size="sm" ariaLabel="Colorear por" [options]="lentes" optionLabel="label" optionValue="value" [allowEmpty]="false" [value]="lente()" (valueChange)="lente.set($any($event))" />
+
                 <sc-cal-anio [anio]="anio" [dias]="vista().dias" [hoy]="hoy" [seleccion]="dia()" [resaltar]="resaltar()" (seleccionChange)="dia.set($event)" (encima)="encima.set($event)" />
                 <ul class="leyenda" role="list">
                   @for (l of vista().leyenda; track l.clave) {
@@ -257,22 +241,22 @@ const aIso = (d: Date): string => isoDe(Date.UTC(d.getFullYear(), d.getMonth(), 
     .leyenda__item {
       display: inline-flex; align-items: center; gap: var(--sc-spacing-0-375);
       padding: var(--sc-spacing-0-25) var(--sc-spacing-0-5);
-      border: 1px solid var(--sc-border-subtle); border-radius: var(--sc-radius-full);
-      background: var(--sc-bg-surface); color: var(--sc-text-primary); cursor: pointer;
+      border: 1px solid transparent; border-radius: var(--sc-radius-full);
+      background: transparent; color: var(--sc-text-primary); cursor: pointer;
       transition-property: background-color, border-color, scale; transition-duration: 150ms; transition-timing-function: ease-out;
       &:hover { background: var(--sc-bg-hover); }
       &:active { scale: 0.96; }
       &:focus-visible { outline: 2px solid var(--sc-border-focus); outline-offset: 1px; }
     }
     .leyenda__item--on { border-color: var(--sc-border-primary); background: var(--sc-bg-primary-subtle); }
-    .leyenda__item i { inline-size: var(--sc-spacing-0-75); block-size: var(--sc-spacing-0-75); border-radius: var(--sc-radius-xs); border: 1px solid var(--sc-border-subtle); background: var(--sc-bg-surface); }
-    .leyenda__item i[data-tono='cerrado'] { background: var(--sc-bg-subtle); }
-    .leyenda__item i[data-tono='t-info'] { background: var(--sc-bg-info-subtle); border-color: var(--sc-border-info); }
-    .leyenda__item i[data-tono='t-violet'] { background: var(--sc-bg-violet-subtle); border-color: var(--sc-border-violet); }
-    .leyenda__item i[data-tono='t-success'] { background: var(--sc-bg-success-subtle); border-color: var(--sc-border-success); }
-    .leyenda__item i[data-tono='t-primary'] { background: var(--sc-bg-primary-subtle); border-color: var(--sc-border-primary); }
-    .leyenda__item i[data-tono='t-warning'] { background: var(--sc-bg-warning-subtle); border-color: var(--sc-border-warning); }
-    .leyenda__item i[data-tono='t-danger'] { background: var(--sc-bg-danger-subtle); border-color: var(--sc-border-danger); }
+    .leyenda__item i { inline-size: var(--sc-spacing-0-75); block-size: var(--sc-spacing-0-75); border-radius: var(--sc-radius-xs); background: color-mix(in srgb, var(--sc-text-heading) 6%, var(--sc-bg-surface)); }
+    .leyenda__item i[data-tono='cerrado'] { background: transparent; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--sc-text-heading) 14%, transparent); }
+    .leyenda__item i[data-tono='t-info'] { background: color-mix(in srgb, var(--sc-bg-info) 34%, var(--sc-bg-surface)); }
+    .leyenda__item i[data-tono='t-violet'] { background: color-mix(in srgb, var(--sc-bg-violet) 30%, var(--sc-bg-surface)); }
+    .leyenda__item i[data-tono='t-success'] { background: color-mix(in srgb, var(--sc-bg-success) 30%, var(--sc-bg-surface)); }
+    .leyenda__item i[data-tono='t-primary'] { background: color-mix(in srgb, var(--sc-bg-primary) 26%, var(--sc-bg-surface)); }
+    .leyenda__item i[data-tono='t-warning'] { background: color-mix(in srgb, var(--sc-bg-warning) 55%, var(--sc-bg-surface)); }
+    .leyenda__item i[data-tono='t-danger'] { background: color-mix(in srgb, var(--sc-bg-danger) 72%, var(--sc-bg-surface)); }
     .leyenda__n { color: var(--sc-text-secondary); font-variant-numeric: tabular-nums; }
     .detalle { margin: 0; min-block-size: 3em; color: var(--sc-text-secondary); }
   `,

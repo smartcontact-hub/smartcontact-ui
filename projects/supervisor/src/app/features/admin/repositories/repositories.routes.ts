@@ -115,6 +115,14 @@ export const REPOSITORIES_ROUTES: Routes = [
     ],
   },
   {
+    /* Discovery de Horarios: los días especiales (festivos oficiales por ubicación y los propios), cada uno con los
+     * calendarios que lo usan, como el «special date» de Aircall pero con los oficiales ya puestos. */
+    path: 'dias-especiales',
+    data: repoInstanceEnAdmin('repositories.especiales.title'),
+    canActivate: [entrarEnDiscovery],
+    loadComponent: () => import('@features/lab/calendarios/cal-especiales-pagina.component').then((m) => m.CalEspecialesPaginaComponent),
+  },
+  {
     /* Discovery de Horarios: el horario del prototipo, una semana tipo que comparten varios calendarios. En su propia
      * ruta para no pisar la de hoy; la miga dice «Horarios». */
     path: 'semanas',

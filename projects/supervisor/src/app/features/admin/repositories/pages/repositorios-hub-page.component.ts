@@ -48,7 +48,7 @@ import { EntidadesStore } from '../state/entidades.store';
 import { HorariosStore } from '../state/horarios.store';
 import { discoveryActivo } from '@features/lab/calendarios/cal-modo';
 import { CalStore } from '@features/lab/calendarios/cal-store';
-import { resumenDeSemana } from '@features/lab/calendarios/cal-modelo';
+import { resumenDeSemana, textoDeFranjas } from '@features/lab/calendarios/cal-modelo';
 import { EquiposStore } from '../state/equipos.store';
 import { IntencionesStore } from '../state/intenciones.store';
 import { TipificacionesStore } from '../state/tipificaciones.store';
@@ -268,6 +268,21 @@ export class RepositoriosHubPageComponent {
                     nombre: h.nombre,
                     detalle: resumenDeSemana(h.semana),
                     link: `/admin/semanas/editar/${h.id}`,
+                  })),
+              },
+              {
+                id: 'especiales',
+                labelKey: 'repositories.especiales.title',
+                descriptionKey: 'repositories.hub.descriptions.especiales',
+                icon: 'event_busy',
+                path: '/admin/dias-especiales',
+                count: () => this.calStore.especiales().length,
+                entradas: () =>
+                  this.calStore.especiales().map((e) => ({
+                    id: e.id,
+                    nombre: e.nombre,
+                    detalle: textoDeFranjas(e.franjas),
+                    link: '/admin/dias-especiales',
                   })),
               },
             ]

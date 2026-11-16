@@ -114,11 +114,21 @@ function semanaDe(tramos: readonly Tramo[]): Semana {
     .dibujo__horas span { position: absolute; translate: -50% 0; }
     .dibujo__dia { display: grid; grid-template-columns: var(--sc-spacing-1-5) minmax(0, 1fr); align-items: center; }
     .dibujo__letra { color: var(--sc-text-secondary); }
-    .dibujo__raya { position: relative; block-size: var(--sc-spacing-0-75); border-radius: var(--sc-radius-sm); background: var(--sc-bg-subtle); }
+    .dibujo__raya { position: relative; block-size: var(--sc-spacing-0-75); border-radius: var(--sc-radius-full); background: color-mix(in srgb, var(--sc-text-heading) 5%, var(--sc-bg-surface)); }
     .dibujo--compacta { gap: var(--sc-spacing-0-125); padding-block-start: 0; }
     .dibujo--compacta .dibujo__dia { grid-template-columns: minmax(0, 1fr); }
-    .dibujo--compacta .dibujo__raya { block-size: var(--sc-spacing-0-25); }
-    .dibujo__raya i { position: absolute; inset-block: 0; border-radius: inherit; background: var(--sc-bg-primary); }
+    .dibujo--compacta .dibujo__raya {
+      block-size: var(--sc-spacing-0-25);
+      /* Guías a las 6, 12 y 18 h: así se ve la pausa del mediodía sin leer horas. */
+      background:
+        linear-gradient(90deg, transparent calc(25% - 0.5px), var(--guia) calc(25% - 0.5px) calc(25% + 0.5px), transparent calc(25% + 0.5px),
+          transparent calc(50% - 0.5px), var(--guia) calc(50% - 0.5px) calc(50% + 0.5px), transparent calc(50% + 0.5px),
+          transparent calc(75% - 0.5px), var(--guia) calc(75% - 0.5px) calc(75% + 0.5px), transparent calc(75% + 0.5px)),
+        color-mix(in srgb, var(--sc-text-heading) 5%, var(--sc-bg-surface));
+    }
+    .dibujo--compacta { --guia: color-mix(in srgb, var(--sc-text-heading) 14%, transparent); }
+    .dibujo--compacta .dibujo__raya i { z-index: 1; }
+    .dibujo__raya i { position: absolute; inset-block: 0; border-radius: inherit; background: color-mix(in srgb, var(--sc-bg-info) 72%, var(--sc-bg-surface)); }
     .tramos { display: flex; flex-direction: column; gap: var(--sc-spacing-1); margin: 0; padding: 0; list-style: none; }
     .tramo {
       display: flex; flex-direction: column; gap: var(--sc-spacing-0-5);

@@ -8,7 +8,6 @@ import {
   ScDatepickerComponent,
   ScInputTextComponent,
   ScSelectButtonComponent,
-  ScSelectComponent,
   ScToggleSwitchComponent,
 } from '@smartcontact-hub/components';
 
@@ -36,7 +35,6 @@ const aIso = (d: Date): string => isoDe(Date.UTC(d.getFullYear(), d.getMonth(), 
     ScDatepickerComponent,
     ScInputTextComponent,
     ScSelectButtonComponent,
-    ScSelectComponent,
     ScToggleSwitchComponent,
     TooltipModule,
   ],
@@ -73,17 +71,6 @@ const aIso = (d: Date): string => isoDe(Date.UTC(d.getFullYear(), d.getMonth(), 
           @if (como() === 'horas') {
             <sc-horario-franjas [franjas]="franjas()" etiqueta="este día" (franjasChange)="franjas.set($event)" />
           }
-          <div class="field">
-            <sc-select
-              inputId="festivo-locucion"
-              label="Fuera de horario suena"
-              [options]="opcionesLocucion"
-              optionLabel="label"
-              optionValue="value"
-              [value]="locucion() ?? ''"
-              (valueChange)="locucion.set($any($event) || null)"
-            />
-          </div>
         </div>
 
         <div class="bloque">

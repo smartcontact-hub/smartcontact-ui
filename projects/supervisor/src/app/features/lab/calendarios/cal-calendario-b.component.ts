@@ -4,7 +4,6 @@ import {
   ScButtonComponent,
   ScDatepickerComponent,
   ScInputTextComponent,
-  ScSelectButtonComponent,
   ScSelectComponent,
   ScToggleSwitchComponent,
 } from '@smartcontact-hub/components';
@@ -65,7 +64,6 @@ type Panel =
     ScDatepickerComponent,
     ScIconComponent,
     ScInputTextComponent,
-    ScSelectButtonComponent,
     ScSelectComponent,
     ScToggleSwitchComponent,
     TooltipModule,
@@ -75,7 +73,7 @@ type Panel =
       <section class="b__lienzo" aria-label="El año">
         <header class="b__barra">
           <h1 class="b__titulo sc-text-title-semibold">{{ cal().nombre.trim() || 'Nuevo calendario' }} <span class="b__anio">{{ anio }}</span></h1>
-          <sc-selectbutton size="sm" ariaLabel="Colorear por" [options]="lentes" optionLabel="label" optionValue="value" [allowEmpty]="false" [value]="lente()" (valueChange)="lente.set($any($event))" />
+
         </header>
         <ul class="leyenda" role="list">
           @for (l of vista().leyenda; track l.clave) {
@@ -105,7 +103,7 @@ type Panel =
         @switch (panel().modo) {
           @case ('reglas') {
             <div class="panel">
-              <p class="consejo sc-text-body-regular"><sc-icon name="touch_app" size="sm" />Pulsa un día o arrastra sobre varios para cambiarlos.</p>
+              <p class="consejo sc-text-caption-regular">Pulsa un día o arrastra sobre varios para cambiarlos.</p>
 
               <div class="grupo">
                 <sc-inputtext inputId="b-nombre" fluid required size="sm" label="Nombre" placeholder="Por ejemplo, Oficinas Madrid" [value]="cal().nombre" (valueChange)="b.cambiar({ nombre: $event })" />
@@ -122,7 +120,6 @@ type Panel =
                 @if (horarioBase(); as h) {
                   <sc-cal-semana [semana]="h.semana" />
                 }
-                <sc-select inputId="b-locucion" size="sm" label="Fuera de horario suena" [options]="locuciones" optionLabel="label" optionValue="value" [value]="cal().locucion" (valueChange)="b.cambiar({ locucion: $any($event) })" />
               </div>
 
               <div class="grupo">
@@ -176,7 +173,6 @@ type Panel =
                 <div class="ficha">
                   <p class="ficha__horas sc-text-title-semibold">{{ horasTexto(d.franjas) }}</p>
                   <p class="sc-text-body-regular">{{ porQue(d) }}</p>
-                  <p class="pista sc-text-caption-regular">Fuera de horario suena {{ d.locucion }}</p>
                 </div>
               } @else {
                 <p class="pista sc-text-body-regular">{{ resumenRango(r) }}</p>
@@ -224,7 +220,6 @@ type Panel =
               @if (horario(p.horarioId); as h) {
                 <sc-cal-semana [semana]="h.semana" />
               }
-              <sc-select inputId="b-periodo-locucion" size="sm" label="Fuera de horario suena" [options]="locucionesPeriodo" optionLabel="label" optionValue="value" [value]="p.locucion ?? ''" (valueChange)="tocarPeriodo({ locucion: $any($event) || null })" />
               <div class="pie">
                 @if (!$any(panel()).nuevo) {
                   <sc-button class="pie__izq" variant="danger" appearance="text" size="sm" icon="close" label="Quitar" (clicked)="quitarPeriodo(p)" />
@@ -285,7 +280,7 @@ type Panel =
     .b__anio { color: var(--sc-text-subtle); font-variant-numeric: tabular-nums; }
     .b__pie { margin: 0; min-block-size: 1.5em; color: var(--sc-text-secondary); }
     .panel { display: flex; flex-direction: column; gap: var(--sc-spacing-1); padding: var(--sc-spacing-1-25); }
-    .consejo { display: flex; align-items: center; gap: var(--sc-spacing-0-5); margin: 0; padding: var(--sc-spacing-0-75) var(--sc-spacing-1); border-radius: var(--sc-radius-md); background: var(--sc-bg-primary-subtle); color: var(--sc-text-heading); }
+    .consejo { margin: 0; color: var(--sc-text-secondary); }
     .grupo { display: flex; flex-direction: column; gap: var(--sc-spacing-0-75); padding-block-start: var(--sc-spacing-1); border-block-start: 1px solid var(--sc-border-subtle); }
     .grupo:first-of-type { padding-block-start: 0; border: 0; }
     .grupo__titulo { margin: 0; color: var(--sc-text-heading); }
@@ -324,22 +319,22 @@ type Panel =
     .leyenda__item {
       display: inline-flex; align-items: center; gap: var(--sc-spacing-0-375);
       padding: var(--sc-spacing-0-25) var(--sc-spacing-0-5);
-      border: 1px solid var(--sc-border-subtle); border-radius: var(--sc-radius-full);
-      background: var(--sc-bg-surface); color: var(--sc-text-primary); cursor: pointer;
+      border: 1px solid transparent; border-radius: var(--sc-radius-full);
+      background: transparent; color: var(--sc-text-primary); cursor: pointer;
       transition-property: background-color, border-color, scale; transition-duration: 150ms; transition-timing-function: ease-out;
       &:hover { background: var(--sc-bg-hover); }
       &:active { scale: 0.96; }
       &:focus-visible { outline: 2px solid var(--sc-border-focus); outline-offset: 1px; }
     }
     .leyenda__item--on { border-color: var(--sc-border-primary); background: var(--sc-bg-primary-subtle); }
-    .leyenda__item i { inline-size: var(--sc-spacing-0-75); block-size: var(--sc-spacing-0-75); border-radius: var(--sc-radius-xs); border: 1px solid var(--sc-border-subtle); background: var(--sc-bg-surface); }
-    .leyenda__item i[data-tono='cerrado'] { background: var(--sc-bg-subtle); }
-    .leyenda__item i[data-tono='t-info'] { background: var(--sc-bg-info-subtle); border-color: var(--sc-border-info); }
-    .leyenda__item i[data-tono='t-violet'] { background: var(--sc-bg-violet-subtle); border-color: var(--sc-border-violet); }
-    .leyenda__item i[data-tono='t-success'] { background: var(--sc-bg-success-subtle); border-color: var(--sc-border-success); }
-    .leyenda__item i[data-tono='t-primary'] { background: var(--sc-bg-primary-subtle); border-color: var(--sc-border-primary); }
-    .leyenda__item i[data-tono='t-warning'] { background: var(--sc-bg-warning-subtle); border-color: var(--sc-border-warning); }
-    .leyenda__item i[data-tono='t-danger'] { background: var(--sc-bg-danger-subtle); border-color: var(--sc-border-danger); }
+    .leyenda__item i { inline-size: var(--sc-spacing-0-75); block-size: var(--sc-spacing-0-75); border-radius: var(--sc-radius-xs); background: color-mix(in srgb, var(--sc-text-heading) 6%, var(--sc-bg-surface)); }
+    .leyenda__item i[data-tono='cerrado'] { background: transparent; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--sc-text-heading) 14%, transparent); }
+    .leyenda__item i[data-tono='t-info'] { background: color-mix(in srgb, var(--sc-bg-info) 34%, var(--sc-bg-surface)); }
+    .leyenda__item i[data-tono='t-violet'] { background: color-mix(in srgb, var(--sc-bg-violet) 30%, var(--sc-bg-surface)); }
+    .leyenda__item i[data-tono='t-success'] { background: color-mix(in srgb, var(--sc-bg-success) 30%, var(--sc-bg-surface)); }
+    .leyenda__item i[data-tono='t-primary'] { background: color-mix(in srgb, var(--sc-bg-primary) 26%, var(--sc-bg-surface)); }
+    .leyenda__item i[data-tono='t-warning'] { background: color-mix(in srgb, var(--sc-bg-warning) 55%, var(--sc-bg-surface)); }
+    .leyenda__item i[data-tono='t-danger'] { background: color-mix(in srgb, var(--sc-bg-danger) 72%, var(--sc-bg-surface)); }
     .leyenda__n { color: var(--sc-text-secondary); font-variant-numeric: tabular-nums; }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -398,7 +393,7 @@ export class CalCalendarioBComponent {
     const iso = this.encima();
     if (!iso) return 'Pasa por un día para ver qué horas tiene y por qué.';
     const d = resolver(this.estado(), this.calPintado(), iso);
-    return `${textoDeRango(iso, iso)}: ${this.horasTexto(d.franjas)}. ${porQue(d)}. Fuera de horario suena ${d.locucion}.`;
+    return `${textoDeRango(iso, iso)}: ${this.horasTexto(d.franjas)}. ${porQue(d)}.`;
   });
 
   protected horario(id: number) {

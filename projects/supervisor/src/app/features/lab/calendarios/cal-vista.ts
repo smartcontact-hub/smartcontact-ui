@@ -32,7 +32,7 @@ export function porQue(d: DiaResuelto): string {
 }
 
 export const etiquetaDe = (d: DiaResuelto): string =>
-  `${fechaConDia(d.fecha)}: ${textoDeFranjas(d.franjas)}. ${porQue(d)}. Fuera de horario suena ${d.locucion}.`;
+  `${fechaConDia(d.fecha)}: ${textoDeFranjas(d.franjas)}. ${porQue(d)}.`;
 
 /** Los días del año con su color y la leyenda, con cuántos días lleva cada cosa. */
 export function vistaDelAnio(estado: Estado, cal: Calendario, anio: number, lente: Lente): { dias: Map<string, DiaVista>; leyenda: EntradaDeLeyenda[] } {

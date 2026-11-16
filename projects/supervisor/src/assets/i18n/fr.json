@@ -1383,7 +1383,8 @@
         "clasificacion_ia": "Modèles de classification automatique de conversations",
         "equipos": "Des agents qui ont quelque chose en commun, pour les retrouver en filtrant",
         "calendarios": "Les horaires de chaque service tout au long de l’année, avec ses jours fériés",
-        "horarios_semana": "Semaines types partagées par plusieurs calendriers"
+        "horarios_semana": "Semaines types partagées par plusieurs calendriers",
+        "especiales": "Jours fériés et jours aux horaires inhabituels"
       },
       "all": "Tous",
       "filter": "Filtrer par catégorie",
@@ -1498,6 +1499,9 @@
       "contacts_deleted_bulk_one": "1 contact supprimé",
       "contacts_delete_title": "Supprimer {{count}} contacts ?",
       "contacts_delete_title_one": "Supprimer 1 contact ?"
+    },
+    "especiales": {
+      "title": "Jours spéciaux"
     },
     "calendarios": {
       "title": "Calendriers",

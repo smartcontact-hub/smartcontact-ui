@@ -67,41 +67,45 @@ const normal = (a: string, b: string): Rango => (a <= b ? { desde: a, hasta: b }
       gap: var(--sc-spacing-1) var(--sc-spacing-1-25);
       user-select: none;
     }
-    :host(.grande) { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--sc-spacing-1-25) var(--sc-spacing-2); }
+    :host(.grande) { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--sc-spacing-1) var(--sc-spacing-2); }
+    :host(.grande) .dia { aspect-ratio: 1.45; }
     .mes { min-inline-size: 0; }
     .mes__nombre { margin: 0 0 var(--sc-spacing-0-25); color: var(--sc-text-heading); text-transform: capitalize; }
-    .mes__rejilla { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: var(--sc-spacing-0-125); }
+    .mes__rejilla { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: var(--sc-spacing-0-25) var(--sc-spacing-0-125); }
     .mes__letra { text-align: center; color: var(--sc-text-subtle); }
+    /* VISUAL (fuera del DS a propósito): el DS solo tiene el tinte -subtle (50) y el sólido; aquí hace falta un tinte medio
+       que se lea a un vistazo. Se mezcla el sólido semántico con la superficie, así sigue al tema oscuro. Candidato al Kit. */
     .dia {
+      --tinte: transparent;
       position: relative;
       display: grid; place-items: center;
       aspect-ratio: 1.2;
       min-inline-size: 0;
       padding: 0;
-      border: 1px solid transparent;
-      border-radius: var(--sc-radius-xs);
-      background: var(--sc-bg-surface);
-      color: var(--sc-text-primary);
+      border: 0;
+      border-radius: var(--sc-radius-sm);
+      background: var(--tinte);
+      color: var(--sc-text-heading);
       font-variant-numeric: tabular-nums;
       cursor: pointer;
-      transition: opacity 150ms ease-out, box-shadow 150ms ease-out;
+      transition: opacity 150ms ease-out, box-shadow 150ms ease-out, transform 150ms ease-out;
       &:focus-visible { outline: 2px solid var(--sc-border-focus); outline-offset: 1px; z-index: 1; }
     }
-    .dia[data-tono='abierto'] { border-color: var(--sc-border-subtle); }
-    .dia[data-tono='cerrado'] { background: var(--sc-bg-subtle); color: var(--sc-text-subtle); }
-    .dia[data-tono='t-info'] { background: var(--sc-bg-info-subtle); color: var(--sc-text-info); }
-    .dia[data-tono='t-violet'] { background: var(--sc-bg-violet-subtle); color: var(--sc-text-violet); }
-    .dia[data-tono='t-success'] { background: var(--sc-bg-success-subtle); color: var(--sc-text-success); }
-    .dia[data-tono='t-primary'] { background: var(--sc-bg-primary-subtle); color: var(--sc-text-link); }
-    .dia[data-tono='t-warning'] { background: var(--sc-bg-warning-subtle); color: var(--sc-text-warning); }
-    .dia[data-tono='t-danger'] { background: var(--sc-bg-danger-subtle); color: var(--sc-text-danger); }
+    .dia[data-tono='abierto'] { --tinte: color-mix(in srgb, var(--sc-text-heading) 6%, var(--sc-bg-surface)); }
+    .dia[data-tono='cerrado'] { color: var(--sc-text-subtle); }
+    .dia[data-tono='t-info'] { --tinte: color-mix(in srgb, var(--sc-bg-info) 34%, var(--sc-bg-surface)); }
+    .dia[data-tono='t-violet'] { --tinte: color-mix(in srgb, var(--sc-bg-violet) 30%, var(--sc-bg-surface)); }
+    .dia[data-tono='t-success'] { --tinte: color-mix(in srgb, var(--sc-bg-success) 30%, var(--sc-bg-surface)); }
+    .dia[data-tono='t-primary'] { --tinte: color-mix(in srgb, var(--sc-bg-primary) 26%, var(--sc-bg-surface)); }
+    .dia[data-tono='t-warning'] { --tinte: color-mix(in srgb, var(--sc-bg-warning) 55%, var(--sc-bg-surface)); }
+    .dia[data-tono='t-danger'] { --tinte: color-mix(in srgb, var(--sc-bg-danger) 72%, var(--sc-bg-surface)); color: var(--sc-text-on-error); font-weight: 600; }
     .dia--rayado {
       background-image: repeating-linear-gradient(135deg, transparent 0 3px, color-mix(in srgb, currentColor 22%, transparent) 3px 4px);
     }
-    .dia--hoy { box-shadow: inset 0 0 0 2px var(--sc-border-strong); font-weight: 600; }
+    .dia--hoy { box-shadow: 0 0 0 2px var(--sc-text-heading); font-weight: 600; z-index: 1; }
     .dia--apagado { opacity: 0.28; }
     .dia--sel { box-shadow: inset 0 0 0 2px var(--sc-border-primary); background-color: var(--sc-bg-primary-subtle-active); color: var(--sc-text-heading); }
-    .dia:hover { box-shadow: inset 0 0 0 1px var(--sc-border-strong); }
+    .dia:hover { transform: scale(1.08); z-index: 1; }
     .dia--sel:hover { box-shadow: inset 0 0 0 2px var(--sc-border-primary); }
     @media (prefers-reduced-motion: reduce) { .dia { transition: none; } }
   `,

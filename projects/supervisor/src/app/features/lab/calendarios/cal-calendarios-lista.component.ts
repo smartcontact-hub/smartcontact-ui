@@ -9,12 +9,14 @@ import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { ResultadoAccionService } from '@core/services/resultado-accion.service';
 import { CeldaVaciaComponent, ListPageComponent } from '@shared/components';
 import { CalFestivoDialogoComponent } from './cal-festivo-dialogo.component';
-import { ahoraEn, type Calendario, mesDiaCorto, ubicacion } from './cal-modelo';
+import { ahoraEn, type Calendario, mesDiaCorto, type Semana, ubicacion } from './cal-modelo';
+import { CalSemanaComponent } from './cal-semana.component';
 import { CalStore } from './cal-store';
 
 interface Fila extends Calendario {
   readonly ahora: { abierto: boolean; texto: string };
   readonly horarioNombre: string;
+  readonly semana: Semana | null;
   readonly periodosTexto: string;
   readonly festivosDe: string;
   readonly especialesN: number;
@@ -28,7 +30,7 @@ interface Fila extends Calendario {
  */
 @Component({
   selector: 'sc-cal-calendarios-lista',
-  imports: [CalFestivoDialogoComponent, CeldaVaciaComponent, ListPageComponent, ScButtonComponent, ScGroupPopoverComponent, ScIconComponent, TooltipModule],
+  imports: [CalFestivoDialogoComponent, CalSemanaComponent, CeldaVaciaComponent, ListPageComponent, ScButtonComponent, ScGroupPopoverComponent, ScIconComponent, TooltipModule],
   template: `
     <ng-template #acciones>
       <sc-button class="top-bar__cta" variant="secondary" appearance="outlined" icon="add" label="Nuevo festivo" (clicked)="festivo.set(true)" />
@@ -55,9 +57,12 @@ interface Fila extends Calendario {
       <span class="celda sc-text-body-semibold">{{ c.nombre }}</span>
     </ng-template>
     <ng-template #ahoraTpl let-c>
-      <span class="ahora sc-text-body-regular" [class.ahora--abierto]="c.ahora.abierto">
-        <i aria-hidden="true"></i>{{ c.ahora.texto }}
-      </span>
+      <span class="ahora sc-text-body-regular" [class.ahora--abierto]="c.ahora.abierto">{{ c.ahora.texto }}</span>
+    </ng-template>
+    <ng-template #semanaTpl let-c>
+      @if (c.semana) {
+        <sc-cal-semana class="mini" compacta [semana]="c.semana" />
+      }
     </ng-template>
     <ng-template #horarioTpl let-c>
       <span class="celda celda--dos">
@@ -93,10 +98,10 @@ interface Fila extends Calendario {
     :host { display: block; height: 100%; }
     .celda--dos { display: flex; flex-direction: column; }
     .celda__pista { color: var(--sc-text-secondary); }
-    .ahora { display: inline-flex; align-items: center; gap: var(--sc-spacing-0-5); color: var(--sc-text-secondary); }
-    .ahora i { inline-size: var(--sc-spacing-0-5); block-size: var(--sc-spacing-0-5); border-radius: var(--sc-radius-full); background: var(--sc-border-strong); }
-    .ahora--abierto { color: var(--sc-text-primary); }
-    .ahora--abierto i { background: var(--sc-bg-success); }
+    /* Código de color, sin punto: verde si atiende, gris si no. */
+    .ahora { color: var(--sc-text-subtle); }
+    .ahora--abierto { color: var(--sc-text-success); font-weight: 600; }
+    .mini { display: block; inline-size: 10rem; }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -118,6 +123,7 @@ export class CalCalendariosListaComponent {
       ...c,
       ahora: ahoraEn(estado, c),
       horarioNombre: this.store.horario(c.horarioId)?.nombre ?? 'Sin horario',
+      semana: this.store.horario(c.horarioId)?.semana ?? null,
       periodosTexto: c.periodos.map((p) => `${p.nombre}: ${this.store.horario(p.horarioId)?.nombre ?? ''}, ${mesDiaCorto(p.desde)} a ${mesDiaCorto(p.hasta)}`).join('; '),
       festivosDe: ubicacion(c.ubicacion)?.etiqueta ?? '',
       especialesN: estado.especiales.filter((e) => e.calendarioIds.includes(c.id)).length,
@@ -127,6 +133,7 @@ export class CalCalendariosListaComponent {
 
   private readonly nombreTpl = viewChild<TemplateRef<ScColumnCellContext<Fila>>>('nombreTpl');
   private readonly ahoraTpl = viewChild<TemplateRef<ScColumnCellContext<Fila>>>('ahoraTpl');
+  private readonly semanaTpl = viewChild<TemplateRef<ScColumnCellContext<Fila>>>('semanaTpl');
   private readonly horarioTpl = viewChild<TemplateRef<ScColumnCellContext<Fila>>>('horarioTpl');
   private readonly festivosTpl = viewChild<TemplateRef<ScColumnCellContext<Fila>>>('festivosTpl');
   private readonly especialesTpl = viewChild<TemplateRef<ScColumnCellContext<Fila>>>('especialesTpl');
@@ -134,7 +141,8 @@ export class CalCalendariosListaComponent {
 
   protected readonly columnas = computed<readonly ScColumnDef<Fila>[]>(() => [
     { field: 'nombre', header: 'Nombre', sortable: true, cellTemplate: this.nombreTpl() },
-    { field: 'ahora', header: 'Ahora', sortable: true, cellTemplate: this.ahoraTpl(), width: '15rem' },
+    { field: 'ahora', header: 'Ahora', sortable: true, cellTemplate: this.ahoraTpl(), width: '13rem' },
+    { field: 'semana', header: 'Semana', cellTemplate: this.semanaTpl(), width: '12rem' },
     { field: 'horario', header: 'Horario', cellTemplate: this.horarioTpl() },
     { field: 'festivos', header: 'Festivos de', sortable: true, cellTemplate: this.festivosTpl(), width: '15rem' },
     { field: 'especiales', header: 'Días especiales', sortable: true, cellTemplate: this.especialesTpl(), width: '9rem' },

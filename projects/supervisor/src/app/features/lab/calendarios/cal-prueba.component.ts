@@ -13,7 +13,7 @@ import { CalPapelComponent } from './cal-papel.component';
 import { CalPruebaService, reloj, type Variante } from './cal-prueba.service';
 
 /** Las pantallas donde vive la prueba: el hub de Repositorios y las dos secciones nuevas, con el modo discovery encendido. */
-const EN_PRUEBA = /^\/admin\/(repositorios|calendarios|semanas)(\/|\?|$)/;
+const EN_PRUEBA = /^\/admin\/(repositorios|calendarios|semanas|dias-especiales)(\/|\?|$)/;
 
 /**
  * PROTOTIPO DE DISCOVERY: la barra del modo prueba. Abajo a la izquierda, junto al menú y fuera del trabajo: quien modera

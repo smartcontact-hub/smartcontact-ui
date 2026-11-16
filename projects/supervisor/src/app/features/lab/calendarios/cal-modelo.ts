@@ -311,7 +311,8 @@ export function resolver(estado: Estado, cal: Calendario, iso: string): DiaResue
 }
 
 /** Lo que se compara en la prueba: las horas del día y lo que suena fuera de ellas. */
-export const firma = (d: DiaResuelto): string => `${claveFranjas(d.franjas)}|${d.locucion}`;
+/** Lo que se corrige de un día: sus horas. La locución es cosa del diseño de voz, no del calendario. */
+export const firma = (d: DiaResuelto): string => claveFranjas(d.franjas);
 
 /** «Abierto hasta las 14:00», «Cerrado, abre mañana a las 08:00». */
 export function ahoraEn(estado: Estado, cal: Calendario): { abierto: boolean; texto: string } {

@@ -63,7 +63,7 @@ interface Fila extends Horario {
   `,
   styles: `
     :host { display: block; height: 100%; }
-    .mini { inline-size: 8rem; }
+    .mini { inline-size: 12rem; }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
