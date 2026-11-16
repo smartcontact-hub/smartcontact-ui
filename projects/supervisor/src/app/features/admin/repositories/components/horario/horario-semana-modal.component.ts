@@ -15,7 +15,7 @@ import { HorarioSemanaComponent } from './horario-semana.component';
   selector: 'sc-horario-semana-modal',
   imports: [HorarioSemanaComponent, ScButtonComponent, ScCustomModalComponent, ScCustomModalFooterDirective, ScTextareaComponent, TooltipModule, TranslateModule],
   template: `
-    <sc-custom-modal [visible]="true" width="48rem" [title]="'repositories.horarios.section_week' | translate" [subtitle]="'repositories.horarios.x.week_modal.hint' | translate" (closed)="cerrado.emit()">
+    <sc-custom-modal [visible]="true" width="48rem" [title]="'repositories.horarios.section_week' | translate" (closed)="cerrado.emit()">
       <sc-horario-semana prefijo="semana-modal" [semana]="semana()" [falta]="falta()" (semanaChange)="semana.set($event)" />
       <!-- El mensaje automático de fuera de horario del horario: lo que oye quien llama cuando no se le atiende. -->
       <sc-textarea

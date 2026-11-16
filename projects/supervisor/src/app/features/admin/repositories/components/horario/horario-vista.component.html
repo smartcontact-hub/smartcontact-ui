@@ -47,7 +47,8 @@
           />
         </span>
         <span class="vista__dia-linea vista__dia-linea--detalle sc-text-caption-regular">
-          @if (d.abierto) {
+          <!-- Un día abierto las 24 horas no escribe «todo el día»: la etiqueta «Disponible» ya lo dice. -->
+          @if (d.abierto && d.dia.minutosAbiertos !== 1440) {
             <span class="vista__dia-horas">{{ d.horas.join(' · ') }}</span>
           }
           <span class="vista__dia-dueno"><span class="punto" [attr.data-color]="d.duenoColor" aria-hidden="true"></span>{{ d.motivo }}</span>
