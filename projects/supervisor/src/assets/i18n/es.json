@@ -1381,7 +1381,9 @@
         "reglas_ia": "Reglas de negocio aplicadas al motor de inteligencia artificial",
         "entidades_ia": "Entidades semánticas gestionadas por modelos de lenguaje",
         "clasificacion_ia": "Modelos de clasificación automática de conversaciones",
-        "equipos": "Agentes con algo en común, para encontrarlos al filtrar"
+        "equipos": "Agentes con algo en común, para encontrarlos al filtrar",
+        "calendarios": "El horario de cada servicio a lo largo del año, con sus festivos",
+        "horarios_semana": "Semanas tipo que comparten varios calendarios"
       },
       "all": "Todos",
       "filter": "Filtrar por categoría",
@@ -1496,6 +1498,11 @@
       "contacts_deleted_bulk_one": "1 contacto eliminado",
       "contacts_delete_title": "¿Eliminar {{count}} contactos?",
       "contacts_delete_title_one": "¿Eliminar 1 contacto?"
+    },
+    "calendarios": {
+      "title": "Calendarios",
+      "create_title": "Nuevo calendario",
+      "edit_breadcrumb": "Editar calendario"
     },
     "horarios": {
       "title": "Horarios",

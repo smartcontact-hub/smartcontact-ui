@@ -70,21 +70,42 @@ export const REPOSITORIES_ROUTES: Routes = [
     ],
   },
   {
-    /* El horario tiene su editor, como la agenda: su semana, sus periodos y sus fechas especiales, con el año al lado. */
+    /* Discovery de Horarios (prototipo, rama experimental): el calendario que usa un servicio, con su año. Según la
+     * variante del modo prueba se ve el camino A (separado) o el B (junto). */
+    path: 'calendarios',
+    data: repoInstanceEnAdmin('repositories.calendarios.title'),
+    children: [
+      { path: '', loadComponent: () => import('@features/lab/calendarios/cal-calendarios-lista.component').then((m) => m.CalCalendariosListaComponent) },
+      {
+        path: 'crear',
+        data: { breadcrumb: { labelKey: 'repositories.calendarios.create_title' } },
+        loadComponent: () => import('@features/lab/calendarios/cal-calendario-pagina.component').then((m) => m.CalCalendarioPaginaComponent),
+        canDeactivate: [formDirtyGuard],
+      },
+      {
+        path: 'editar/:id',
+        data: { breadcrumb: { labelKey: 'repositories.calendarios.edit_breadcrumb' } },
+        loadComponent: () => import('@features/lab/calendarios/cal-calendario-pagina.component').then((m) => m.CalCalendarioPaginaComponent),
+        canDeactivate: [formDirtyGuard],
+      },
+    ],
+  },
+  {
+    /* Discovery de Horarios: el horario es una semana tipo que comparten varios calendarios. */
     path: 'horarios',
     data: repoInstanceEnAdmin('repositories.horarios.title'),
     children: [
-      { path: '', loadComponent: () => import('./instances/horarios').then((m) => m.HorariosPageComponent) },
+      { path: '', loadComponent: () => import('@features/lab/calendarios/cal-horarios-lista.component').then((m) => m.CalHorariosListaComponent) },
       {
         path: 'crear',
         data: { breadcrumb: { labelKey: 'repositories.horarios.create_title' } },
-        loadComponent: () => import('./pages/horario-editor-page.component').then((m) => m.HorarioEditorPageComponent),
+        loadComponent: () => import('@features/lab/calendarios/cal-horario-editor.component').then((m) => m.CalHorarioEditorComponent),
         canDeactivate: [formDirtyGuard],
       },
       {
         path: 'editar/:id',
         data: { breadcrumb: { labelKey: 'repositories.horarios.edit_breadcrumb' } },
-        loadComponent: () => import('./pages/horario-editor-page.component').then((m) => m.HorarioEditorPageComponent),
+        loadComponent: () => import('@features/lab/calendarios/cal-horario-editor.component').then((m) => m.CalHorarioEditorComponent),
         canDeactivate: [formDirtyGuard],
       },
     ],
