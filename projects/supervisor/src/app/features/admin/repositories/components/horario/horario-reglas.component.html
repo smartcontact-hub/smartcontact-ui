@@ -9,8 +9,24 @@
       appearance="text"
       size="sm"
       icon="edit"
-      [ariaLabel]="'repositories.horarios.x.rules.week_edit' | translate"
+      [ariaLabel]="'repositories.horariosTipo.x.edit' | translate"
       (clicked)="editarSemana.emit()"
+    />
+    <!-- El calendario no lleva la semana dentro: elige un horario, que otros calendarios pueden usar también. -->
+    <sc-select
+      class="horario-sel"
+      inputId="horario-sel"
+      size="sm"
+      filter
+      [label]="'repositories.horariosTipo.x.picker.label' | translate"
+      [placeholder]="'repositories.horariosTipo.x.picker.placeholder' | translate"
+      [filterPlaceholder]="'repositories.horariosTipo.x.picker.search' | translate"
+      [helperText]="compartidoCon() > 0 ? ('repositories.horariosTipo.x.picker.shared' | translate: { count: compartidoCon() }) : undefined"
+      [options]="opcionesDeHorarios()"
+      optionLabel="label"
+      optionValue="value"
+      [value]="horarioId()"
+      (valueChange)="cambiarHorario.emit($any($event))"
     />
     <ul class="semana" role="list">
       @for (dia of dias(); track $index) {
@@ -20,6 +36,7 @@
         </li>
       }
     </ul>
+    <a class="repo-link sc-text-caption-semibold" href="/admin/horarios-tipo" (click)="gestionarHorarios.emit($event)">{{ 'repositories.horariosTipo.x.picker.manage' | translate }}</a>
   </sc-section-card>
 
   <sc-section-card titleKey="repositories.horarios.section_periods" surface="card" icon="date_range">

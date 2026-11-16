@@ -1373,6 +1373,7 @@
         "emails": "Mail accounts and triggers that route incoming emails",
         "agendas": "The contacts each agent sees in their phone's address book",
         "horarios": "Schedule slots and operating shifts for the contact center",
+        "horariosTipo": "Week templates that calendars reuse",
         "plantillas": "Predefined messages for quick replies and campaigns",
         "tipificaciones": "Closing categories to classify conversations",
         "labels": "Color labels to organize and filter entities",
@@ -1737,7 +1738,74 @@
         "body": "To go to Holidays, save the calendar first."
       }
     },
+    "horariosTipo": {
+      "title": "Schedules",
+      "singular": "schedule",
+      "create_title": "New schedule",
+      "plural": "schedules",
+      "name_placeholder": "E.g.: Office 9 to 6",
+      "edit_breadcrumb": "Edit schedule",
+      "create_submit": "Create schedule",
+      "col_uses": "Calendars using it",
+      "toasts": {
+        "created": "Schedule “{{name}}” created",
+        "updated": "Schedule “{{name}}” updated",
+        "deleted": "Schedule “{{name}}” deleted",
+        "deleted_bulk": "{{count}} schedules deleted"
+      },
+      "delete_dialog": {
+        "title": "Delete the schedule “{{name}}”?",
+        "title_bulk": "Delete {{count}} schedules?"
+      },
+      "in_use": "{{count}} calendars use it: they will keep their week, unlinked.",
+      "in_use_one": "1 calendar uses it: it will keep its week, unlinked.",
+      "in_use_bulk": "{{count}} calendars use them: they will keep their week, unlinked.",
+      "in_use_bulk_one": "1 calendar uses them: it will keep its week, unlinked.",
+      "x": {
+        "edit": "Edit schedule",
+        "edit_named": "Edit “{{name}}”",
+        "picker": {
+          "label": "Schedule",
+          "placeholder": "Choose a schedule",
+          "search": "Search schedule…",
+          "shared": "Also used by {{count}} more calendars",
+          "manage": "Manage schedules"
+        },
+        "shared": {
+          "title": "“{{name}}” is used by other calendars",
+          "body": "{{count}} more calendars use this schedule. Apply the change to all of them or only to this one?",
+          "body_one": "1 more calendar uses this schedule. Apply the change to all of them or only to this one?",
+          "all": "In all",
+          "all_help": "The schedule changes in every calendar that uses it.",
+          "only_this": "Only this one",
+          "only_this_help": "This calendar switches to a copy of the schedule with the change; the others are untouched."
+        },
+        "section_general": "General",
+        "section_uses": "Where it is used",
+        "uses_none": "No calendar uses it yet.",
+        "uses_note": "Changes reach the {{count}} calendars that use it.",
+        "uses_general": "general schedule",
+        "uses_periods": "{{count}} period(s)"
+      }
+    },
     "festivos": {
+      "x": {
+        "official": {
+          "open": "Add predefined holidays",
+          "title": "Add holidays",
+          "lists": "Existing lists",
+          "days": "{{count}} days",
+          "apply": "Apply",
+          "official": "From the official calendar",
+          "region": "Country or region",
+          "region_help": "Those that always fall on the same day are added for every year.",
+          "already": "Already there",
+          "every_year": "every year",
+          "add": "Add {{count}} holidays",
+          "add_one": "Add 1 holiday",
+          "added": "{{count}} holidays added"
+        }
+      },
       "title": "Holidays",
       "singular": "holiday calendar",
       "plural": "holiday calendars",

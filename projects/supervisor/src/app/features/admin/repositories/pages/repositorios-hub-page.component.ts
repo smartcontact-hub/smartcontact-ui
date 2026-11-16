@@ -45,6 +45,7 @@ import type { LucideIconData } from '../components/repo-types';
 import { AgendasStore } from '../state/agendas.store';
 import { EmailTriggersStore, MailboxesStore } from '../state/emails.store';
 import { EntidadesStore } from '../state/entidades.store';
+import { HorariosTipoStore } from '../state/horarios-tipo.store';
 import { HorariosStore } from '../state/horarios.store';
 import { EquiposStore } from '../state/equipos.store';
 import { IntencionesStore } from '../state/intenciones.store';
@@ -165,6 +166,7 @@ export class RepositoriosHubPageComponent {
   private readonly mailboxes = inject(MailboxesStore);
   private readonly emailTriggers = inject(EmailTriggersStore);
   private readonly horarios = inject(HorariosStore);
+  private readonly horariosTipo = inject(HorariosTipoStore);
   private readonly equipos = inject(EquiposStore);
   private readonly templates = inject(TemplatesStore);
   private readonly tipificaciones = inject(TipificacionesStore);
@@ -235,7 +237,7 @@ export class RepositoriosHubPageComponent {
           id: 'horarios',
           labelKey: 'repositories.horarios.title',
           descriptionKey: 'repositories.hub.descriptions.horarios',
-          icon: 'schedule',
+          icon: 'calendar_month',
           path: '/admin/horarios',
           count: () => this.horarios.items().length,
           entradas: () =>
@@ -244,6 +246,21 @@ export class RepositoriosHubPageComponent {
               nombre: h.name,
               detalle: h.description,
               link: `/admin/horarios/editar/${h.id}`,
+            })),
+        },
+        {
+          id: 'horarios-tipo',
+          labelKey: 'repositories.horariosTipo.title',
+          descriptionKey: 'repositories.hub.descriptions.horariosTipo',
+          icon: 'view_week',
+          path: '/admin/horarios-tipo',
+          count: () => this.horariosTipo.items().length,
+          entradas: () =>
+            this.horariosTipo.items().map((h) => ({
+              id: h.id,
+              nombre: h.name,
+              detalle: h.description,
+              link: `/admin/horarios-tipo/editar/${h.id}`,
             })),
         },
         {

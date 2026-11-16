@@ -14,7 +14,7 @@ export type { Horario } from './horarios.core.mjs';
 export const HorariosStore = createRepoStore<Horario>('HorariosStore', {
   storageKey: 'sc-horarios-repo',
   versionKey: 'sc-horarios-repo-v',
-  currentVersion: 2,
+  currentVersion: 3,
   defaults: HORARIOS_SEMILLA,
   normalize: (item) => normalizarHorario(item as unknown as Record<string, unknown>),
 });

@@ -1373,6 +1373,7 @@
         "emails": "Cuentas de correo y triggers que reparten los emails entrantes",
         "agendas": "Los contactos que cada agente ve en la agenda de su teléfono",
         "horarios": "Calendarios con sus horarios, periodos y días especiales",
+        "horariosTipo": "Semanas tipo que los calendarios reutilizan",
         "plantillas": "Mensajes predefinidos para respuestas rápidas y campañas",
         "tipificaciones": "Categorías de cierre para clasificar conversaciones",
         "labels": "Etiquetas de color para organizar y filtrar entidades",
@@ -1737,7 +1738,74 @@
         "body": "Para ir a Festivos, guarda antes el calendario."
       }
     },
+    "horariosTipo": {
+      "title": "Horarios",
+      "singular": "horario",
+      "create_title": "Nuevo horario",
+      "plural": "horarios",
+      "name_placeholder": "Ej.: Oficina de 9 a 18",
+      "edit_breadcrumb": "Editar horario",
+      "create_submit": "Crear horario",
+      "col_uses": "Calendarios que lo usan",
+      "toasts": {
+        "created": "Horario «{{name}}» creado",
+        "updated": "Horario «{{name}}» actualizado",
+        "deleted": "Horario «{{name}}» eliminado",
+        "deleted_bulk": "{{count}} horarios eliminados"
+      },
+      "delete_dialog": {
+        "title": "¿Eliminar el horario «{{name}}»?",
+        "title_bulk": "¿Eliminar {{count}} horarios?"
+      },
+      "in_use": "Lo usan {{count}} calendarios: se quedarán con su semana, sin vínculo.",
+      "in_use_one": "Lo usa 1 calendario: se quedará con su semana, sin vínculo.",
+      "in_use_bulk": "Los usan {{count}} calendarios: se quedarán con su semana, sin vínculo.",
+      "in_use_bulk_one": "Los usa 1 calendario: se quedará con su semana, sin vínculo.",
+      "x": {
+        "edit": "Editar horario",
+        "edit_named": "Editar «{{name}}»",
+        "picker": {
+          "label": "Horario",
+          "placeholder": "Elige un horario",
+          "search": "Buscar horario…",
+          "shared": "Lo usan también {{count}} calendarios más",
+          "manage": "Gestionar horarios"
+        },
+        "shared": {
+          "title": "«{{name}}» lo usan otros calendarios",
+          "body": "{{count}} calendarios más usan este horario. ¿Aplicas el cambio a todos o solo a este?",
+          "body_one": "1 calendario más usa este horario. ¿Aplicas el cambio a todos o solo a este?",
+          "all": "En todos",
+          "all_help": "El horario cambia en todos los calendarios que lo usan.",
+          "only_this": "Solo en este",
+          "only_this_help": "Este calendario pasa a una copia del horario con el cambio; los demás no se tocan."
+        },
+        "section_general": "General",
+        "section_uses": "Dónde se usa",
+        "uses_none": "Ningún calendario lo usa todavía.",
+        "uses_note": "Los cambios llegan a los {{count}} calendarios que lo usan.",
+        "uses_general": "horario general",
+        "uses_periods": "{{count}} periodo(s)"
+      }
+    },
     "festivos": {
+      "x": {
+        "official": {
+          "open": "Añadir festivos definidos",
+          "title": "Añadir festivos",
+          "lists": "Listas ya creadas",
+          "days": "{{count}} días",
+          "apply": "Aplicar",
+          "official": "Del calendario oficial",
+          "region": "País o región",
+          "region_help": "Los que caen siempre el mismo día se añaden para todos los años.",
+          "already": "Ya está",
+          "every_year": "cada año",
+          "add": "Añadir {{count}} festivos",
+          "add_one": "Añadir 1 festivo",
+          "added": "{{count}} festivos añadidos"
+        }
+      },
       "title": "Festivos",
       "singular": "calendario de festivos",
       "plural": "calendarios de festivos",

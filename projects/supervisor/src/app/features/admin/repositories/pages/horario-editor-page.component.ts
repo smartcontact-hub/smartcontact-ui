@@ -16,6 +16,7 @@ import { ocasionDeAvisar } from '@shared/utils/alta-secciones';
 import { nombreDeCopia } from '@shared/utils/copy-name';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 
+import { type AlcanceDelCambio, HorarioCompartidoModalComponent } from '../components/horario/horario-compartido-modal.component';
 import { type DatosDeHorario, HorarioDatosModalComponent } from '../components/horario/horario-datos-modal.component';
 import { type FechaEspecialNueva, HorarioEspecialModalComponent } from '../components/horario/horario-especial-modal.component';
 import { HorarioPeriodoModalComponent } from '../components/horario/horario-periodo-modal.component';
@@ -23,6 +24,8 @@ import { HorarioReglasComponent } from '../components/horario/horario-reglas.com
 import { HorarioSemanaModalComponent } from '../components/horario/horario-semana-modal.component';
 import { HorarioVistaComponent } from '../components/horario/horario-vista.component';
 import { FestivosStore } from '../state/festivos.store';
+import { HorariosTipoService } from '../state/horarios-tipo.service';
+import { HorariosTipoStore } from '../state/horarios-tipo.store';
 import { subcanalesConHorario } from '../state/horario-uso.service';
 import {
   duenoDe,
@@ -44,6 +47,7 @@ const VACIO: Borrador = {
   description: '',
   status: 'active',
   outMessage: '',
+  weekId: null,
   week: [LABORABLE, LABORABLE, LABORABLE, LABORABLE, LABORABLE, [], []],
   periods: [],
   specials: [],
@@ -60,6 +64,7 @@ const FALTA_NOMBRE = 'repositories.horarios.errors.name_required';
 @Component({
   selector: 'sc-horario-editor-page',
   imports: [
+    HorarioCompartidoModalComponent,
     HorarioDatosModalComponent,
     HorarioEspecialModalComponent,
     HorarioPeriodoModalComponent,
@@ -82,6 +87,8 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
   private readonly router = inject(Router);
   private readonly store = inject(HorariosStore);
   private readonly festivosStore = inject(FestivosStore);
+  private readonly tipos = inject(HorariosTipoStore);
+  private readonly tiposService = inject(HorariosTipoService);
   private readonly groupsStore = inject(GroupsStore);
   private readonly resultado = inject(ResultadoAccionService);
   private readonly translate = inject(TranslateService);
@@ -170,9 +177,62 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
 
   protected readonly semanaDialog = signal(false);
 
-  protected guardarSemana({ semana, mensaje }: { readonly semana: Semana; readonly mensaje: string }): void {
-    this.form.update((f) => ({ ...f, week: semana, outMessage: mensaje }));
+  /** Los horarios que se pueden elegir, y cuántos calendarios más usan el elegido. */
+  protected readonly opcionesDeHorarios = computed(() => this.tipos.items().map((t) => ({ value: t.id, label: t.name })));
+  protected readonly compartidoCon = computed(() => {
+    const id = this.form().weekId;
+    return id == null ? 0 : this.tiposService.usos(id, this.idActual()).length;
+  });
+  protected readonly nombreDelHorario = computed(() => this.tipos.items().find((t) => t.id === this.form().weekId)?.name ?? '');
+
+  protected cambiarHorario(id: number): void {
+    const tipo = this.tipos.items().find((t) => t.id === id);
+    if (tipo) this.form.update((f) => ({ ...f, weekId: tipo.id, week: tipo.week }));
+  }
+
+  /** La semana editada en el diálogo: si el horario lo usan otros calendarios, pregunta si el cambio va a todos o solo a este. */
+  private readonly semanaPendiente = signal<Semana | null>(null);
+  protected readonly compartidoDialog = signal(false);
+
+  protected guardarSemana(semana: Semana): void {
     this.semanaDialog.set(false);
+    const id = this.form().weekId;
+    if (id == null) {
+      // Sin horario: la semana editada pasa a ser un horario nuevo, con el nombre del calendario.
+      const creado = this.tipos.addItem({ name: this.form().name || this.translate.instant('repositories.horariosTipo.singular'), description: '', week: semana });
+      this.form.update((f) => ({ ...f, weekId: creado.id, week: semana }));
+      return;
+    }
+    if (this.tiposService.usos(id, this.idActual()).length === 0) {
+      this.tiposService.actualizarSemana(id, semana);
+      this.form.update((f) => ({ ...f, week: semana }));
+      return;
+    }
+    this.semanaPendiente.set(semana);
+    this.compartidoDialog.set(true);
+  }
+
+  protected resolverCompartido(alcance: AlcanceDelCambio): void {
+    const semana = this.semanaPendiente();
+    const id = this.form().weekId;
+    this.compartidoDialog.set(false);
+    this.semanaPendiente.set(null);
+    if (!semana || id == null) return;
+    if (alcance === 'todos') {
+      this.tiposService.actualizarSemana(id, semana);
+      this.form.update((f) => ({ ...f, week: semana }));
+    } else {
+      // Solo en este: una copia del horario con la semana nueva, para este calendario.
+      const copia = this.tiposService.copiar(id, semana);
+      this.form.update((f) => ({ ...f, weekId: copia.id, week: semana }));
+    }
+  }
+
+  /** Ir a la lista de horarios: sale del calendario, así que con cambios pide guardar antes. */
+  protected irAHorarios(event: MouseEvent): void {
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    void this.salirAFestivos('/admin/horarios-tipo');
   }
 
   protected readonly canSave = computed(() => this.faltas().length === 0 && (this.mode() === 'create' || this.formDirty()));
@@ -253,6 +313,9 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
       if (!this.form().name) {
         const nacionales = this.calendarios().find((c) => c.name === 'Festivos España');
         if (nacionales) this.form.update((f) => ({ ...f, holidayCalendarIds: [nacionales.id] }));
+        // Nace con un horario ya elegido (el primero que haya): un calendario no existe sin horario.
+        const base = this.tipos.items()[0];
+        if (base) this.form.update((f) => ({ ...f, weekId: base.id, week: base.week }));
         this.dirtyState.markPristine();
         this.datosDialog.set(true);
       }

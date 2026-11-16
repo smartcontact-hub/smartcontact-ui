@@ -18,6 +18,8 @@ export interface Periodo {
   readonly week: Semana;
   /** El mensaje automático de fuera de horario de este periodo; vacío, el del horario. */
   readonly outMessage?: string;
+  /** El horario (semana tipo) del que sale `week`. */
+  readonly weekId?: number | null;
 }
 
 /** Un día con sus propias horas; sin franjas, cerrado. `yearly` lo repite cada año en ese día y mes. */
@@ -31,6 +33,14 @@ export interface FechaEspecial {
   readonly message?: string;
 }
 
+/** Un horario: una semana tipo, de lunes a domingo, que varios calendarios pueden usar. */
+export interface HorarioTipo {
+  readonly id: number;
+  readonly name: string;
+  readonly description: string;
+  readonly week: Semana;
+}
+
 export interface Horario {
   readonly id: number;
   readonly name: string;
@@ -39,6 +49,8 @@ export interface Horario {
   readonly status: string;
   /** El mensaje automático de fuera de horario. */
   readonly outMessage?: string;
+  /** El horario (semana tipo) del que sale `week`; `null` si la semana es propia. `week` es su copia, que se pone al día al editarlo. */
+  readonly weekId?: number | null;
   readonly week: Semana;
   readonly periods: readonly Periodo[];
   readonly specials: readonly FechaEspecial[];
@@ -143,5 +155,6 @@ export function validarPeriodo(horario: Pick<Horario, 'periods'>, periodo: Perio
 export function diaRepetido<T extends { id: number; date: string; yearly: boolean }>(dias: readonly T[], dia: T): T | null;
 
 export function semanaDeTexto(texto: string | null | undefined): Franja[][];
+export function normalizarHorarioTipo(crudo: Record<string, unknown>): HorarioTipo;
 export function normalizarHorario(crudo: Record<string, unknown>): Horario;
 export function siguienteId(lista: readonly { id: number }[]): number;

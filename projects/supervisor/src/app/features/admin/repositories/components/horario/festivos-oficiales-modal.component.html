@@ -1,0 +1,61 @@
+<sc-custom-modal [visible]="true" width="44rem" [title]="'repositories.festivos.x.official.title' | translate" (closed)="cerrado.emit()">
+  <div class="oficiales">
+    <!-- Las listas que ya existen, para aplicarlas enteras. -->
+    @if (listas().length > 0) {
+      <section class="oficiales__grupo" aria-labelledby="oficiales-listas">
+        <h3 id="oficiales-listas" class="oficiales__titulo sc-text-body-semibold">{{ 'repositories.festivos.x.official.lists' | translate }}</h3>
+        <ul class="oficiales__listas" role="list">
+          @for (l of listas(); track l.id) {
+            <li class="oficiales__lista">
+              <span class="sc-text-body-regular">{{ l.name }}</span>
+              <span class="oficiales__dias sc-text-caption-regular">{{ 'repositories.festivos.x.official.days' | translate: { count: l.days.length } }}</span>
+              <sc-button
+                class="oficiales__aplicar"
+                size="sm"
+                variant="secondary"
+                appearance="outlined"
+                [label]="'repositories.festivos.x.official.apply' | translate"
+                (clicked)="aplicar(l)"
+              />
+            </li>
+          }
+        </ul>
+      </section>
+    }
+
+    <!-- Los calendarios oficiales por país o región: lo que cae siempre el mismo día se añade para todos los años. -->
+    <section class="oficiales__grupo" aria-labelledby="oficiales-oficial">
+      <h3 id="oficiales-oficial" class="oficiales__titulo sc-text-body-semibold">{{ 'repositories.festivos.x.official.official' | translate }}</h3>
+      <sc-select
+        inputId="festivos-region"
+        filter
+        [label]="'repositories.festivos.x.official.region' | translate"
+        [helperText]="'repositories.festivos.x.official.region_help' | translate"
+        [options]="regiones"
+        optionLabel="label"
+        optionValue="value"
+        [value]="region()"
+        (valueChange)="cambiarRegion($event)"
+      />
+      <ul class="oficiales__dias-lista" role="list">
+        @for (f of filas(); track f.clave) {
+          <li class="oficiales__fila">
+            <sc-checkbox [state]="marcada(f) ? 'all' : 'none'" [disabled]="f.yaEsta" [ariaLabel]="f.nuevo.name + ' ' + f.fecha" (cycle)="alternar(f)" />
+            <span class="oficiales__fecha sc-text-body-regular">{{ f.fecha }}</span>
+            <span class="oficiales__nombre sc-text-body-regular">{{ f.nuevo.name }}</span>
+            @if (f.yaEsta) {
+              <span class="oficiales__ya sc-text-caption-regular">{{ 'repositories.festivos.x.official.already' | translate }}</span>
+            } @else if (f.nuevo.yearly) {
+              <span class="oficiales__ya sc-text-caption-regular">{{ 'repositories.festivos.x.official.every_year' | translate }}</span>
+            }
+          </li>
+        }
+      </ul>
+    </section>
+  </div>
+
+  <div scCustomModalFooter>
+    <sc-button size="sm" variant="secondary" appearance="outlined" [label]="'common.cancel' | translate" (clicked)="cerrado.emit()" />
+    <sc-button size="sm" variant="primary" [disabled]="cuantas() === 0" [label]="textoDeAnadir()" (clicked)="confirmar()" />
+  </div>
+</sc-custom-modal>

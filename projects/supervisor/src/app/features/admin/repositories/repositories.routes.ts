@@ -90,6 +90,26 @@ export const REPOSITORIES_ROUTES: Routes = [
     ],
   },
   {
+    /* Los horarios: semanas tipo que los calendarios reutilizan. Su lista y su editor, junto a los calendarios. */
+    path: 'horarios-tipo',
+    data: repoInstanceEnAdmin('repositories.horariosTipo.title'),
+    children: [
+      { path: '', loadComponent: () => import('./instances/horarios-tipo').then((m) => m.HorariosTipoPageComponent) },
+      {
+        path: 'crear',
+        data: { breadcrumb: { labelKey: 'repositories.horariosTipo.create_title' } },
+        loadComponent: () => import('./pages/horario-tipo-editor-page.component').then((m) => m.HorarioTipoEditorPageComponent),
+        canDeactivate: [formDirtyGuard],
+      },
+      {
+        path: 'editar/:id',
+        data: { breadcrumb: { labelKey: 'repositories.horariosTipo.edit_breadcrumb' } },
+        loadComponent: () => import('./pages/horario-tipo-editor-page.component').then((m) => m.HorarioTipoEditorPageComponent),
+        canDeactivate: [formDirtyGuard],
+      },
+    ],
+  },
+  {
     /* Los calendarios de festivos que los horarios aplican: su lista y su editor. */
     path: 'festivos',
     /* Cuelgan de Horarios, que es desde donde se llega («Gestionar festivos»): no tienen tarjeta en el hub. */

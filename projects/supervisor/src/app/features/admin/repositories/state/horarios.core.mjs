@@ -381,11 +381,17 @@ export function normalizarHorario(crudo) {
     description: resto.description ?? '',
     status: resto.status ?? 'active',
     outMessage: resto.outMessage ?? '',
+    weekId: resto.weekId ?? null,
     week: Array.isArray(resto.week) ? semanaLimpia(resto.week) : semanaDeTexto(schedule),
-    periods: (Array.isArray(resto.periods) ? resto.periods : []).map((p) => ({ ...p, year: p.year ?? null, outMessage: p.outMessage ?? '', week: semanaLimpia(p.week) })),
+    periods: (Array.isArray(resto.periods) ? resto.periods : []).map((p) => ({ ...p, year: p.year ?? null, outMessage: p.outMessage ?? '', weekId: p.weekId ?? null, week: semanaLimpia(p.week) })),
     specials: (Array.isArray(resto.specials) ? resto.specials : []).map((s) => ({ ...s, yearly: !!s.yearly, message: s.message ?? '', slots: Array.isArray(s.slots) ? s.slots : [] })),
     holidayCalendarIds: Array.isArray(resto.holidayCalendarIds) ? resto.holidayCalendarIds : [],
   };
+}
+
+/** Un horario (semana tipo) con todos sus campos. */
+export function normalizarHorarioTipo(crudo) {
+  return { ...crudo, name: crudo?.name ?? '', description: crudo?.description ?? '', week: semanaLimpia(crudo?.week) };
 }
 
 /** El siguiente identificador libre de una lista de cosas con `id` numérico. */

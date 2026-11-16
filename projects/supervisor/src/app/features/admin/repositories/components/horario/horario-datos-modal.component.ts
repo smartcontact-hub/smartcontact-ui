@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, type OnInit, output, signal } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TooltipModule } from 'primeng/tooltip';
-import { ScButtonComponent, ScCustomModalComponent, ScCustomModalFooterDirective, ScInputTextComponent, ScSelectComponent } from '@smartcontact-hub/components';
+import { ScButtonComponent, ScCustomModalComponent, ScCustomModalFooterDirective, ScInputTextComponent, ScSelectComponent, ScTextareaComponent } from '@smartcontact-hub/components';
 
 import { injectLangChange } from '@core/utils/lang-change';
 import { ayudaDeObligatorio, dejoElCampo } from '@shared/utils/alta-secciones';
@@ -10,6 +10,7 @@ export interface DatosDeHorario {
   readonly name: string;
   readonly timezone: string;
   readonly description: string;
+  readonly outMessage: string;
 }
 
 /**
@@ -19,7 +20,7 @@ export interface DatosDeHorario {
  */
 @Component({
   selector: 'sc-horario-datos-modal',
-  imports: [ScButtonComponent, ScCustomModalComponent, ScCustomModalFooterDirective, ScInputTextComponent, ScSelectComponent, TooltipModule, TranslateModule],
+  imports: [ScButtonComponent, ScCustomModalComponent, ScCustomModalFooterDirective, ScInputTextComponent, ScSelectComponent, ScTextareaComponent, TooltipModule, TranslateModule],
   template: `
     <sc-custom-modal [visible]="true" width="34rem" [title]="'repositories.horarios.x.general.title' | translate" (closed)="cerrado.emit()">
       <div class="datos">
@@ -53,6 +54,17 @@ export interface DatosDeHorario {
           [placeholder]="'repositories.placeholders.description' | translate"
           [value]="descripcion()"
           (valueChange)="descripcion.set($event)"
+        />
+        <!-- El mensaje automático de fuera de horario del calendario: lo que oye quien llama cuando no se le atiende. -->
+        <sc-textarea
+          inputId="horario-mensaje"
+          fluid
+          [rows]="3"
+          [label]="'repositories.horarios.x.message.out_label' | translate"
+          [placeholder]="'repositories.horarios.x.message.placeholder' | translate"
+          [helperText]="'repositories.horarios.x.message.out_help' | translate"
+          [value]="mensaje()"
+          (valueChange)="mensaje.set($event)"
         />
       </div>
       <div scCustomModalFooter>
@@ -90,6 +102,7 @@ export class HorarioDatosModalComponent implements OnInit {
   protected readonly nombre = signal('');
   protected readonly zona = signal('Europe/Madrid');
   protected readonly descripcion = signal('');
+  protected readonly mensaje = signal('');
   protected readonly tocado = signal(false);
 
   ngOnInit(): void {
@@ -97,6 +110,7 @@ export class HorarioDatosModalComponent implements OnInit {
     this.nombre.set(d.name);
     this.zona.set(d.timezone);
     this.descripcion.set(d.description);
+    this.mensaje.set(d.outMessage);
   }
 
   protected readonly faltaNombre = computed(() => {
@@ -119,6 +133,6 @@ export class HorarioDatosModalComponent implements OnInit {
       this.tocado.set(true);
       return;
     }
-    this.guardar.emit({ name: this.nombre().trim(), timezone: this.zona(), description: this.descripcion().trim() });
+    this.guardar.emit({ name: this.nombre().trim(), timezone: this.zona(), description: this.descripcion().trim(), outMessage: this.mensaje().trim() });
   }
 }

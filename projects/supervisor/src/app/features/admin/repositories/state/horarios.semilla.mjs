@@ -80,7 +80,7 @@ export const FESTIVOS_SEMILLA = [
 
 const base = { timezone: 'Europe/Madrid', status: 'active', periods: [], specials: [], holidayCalendarIds: [] };
 
-export const HORARIOS_SEMILLA = [
+const CALENDARIOS_CRUDOS = [
   { ...base, id: 1, name: 'Horario General', description: 'Horario estándar de oficina', week: semana([[540, 1080]]), holidayCalendarIds: [1] },
   { ...base, id: 2, name: 'Turno Mañana', description: 'Turno de mañana para soporte', week: semana([[420, 900]]) },
   { ...base, id: 3, name: 'Turno Tarde', description: 'Turno de tarde para soporte', week: semana([[900, 1380]]) },
@@ -144,3 +144,38 @@ export const HORARIOS_SEMILLA = [
     holidayCalendarIds: [1],
   },
 ];
+
+/**
+ * Separa las semanas de los calendarios en horarios (semanas tipo) que se reutilizan: una semana idéntica es el mismo
+ * horario, aunque salga en dos calendarios o en un periodo. Cada calendario y cada periodo guarda a cuál apunta (`weekId`) y,
+ * como copia, su `week`. Al primer calendario que lo usa le da el nombre.
+ */
+function separarHorarios(calendarios) {
+  const horarios = [];
+  const porSemana = new Map();
+  const idDe = (semanaDelHorario, nombre) => {
+    const clave = JSON.stringify(semanaDelHorario);
+    if (!porSemana.has(clave)) {
+      horarios.push({ id: horarios.length + 1, name: nombre, description: '', week: semanaDelHorario });
+      porSemana.set(clave, horarios.length);
+    }
+    return porSemana.get(clave);
+  };
+  const resultado = calendarios.map((c) => ({
+    ...c,
+    weekId: idDe(c.week, c.name),
+    periods: c.periods.map((p) => ({ ...p, weekId: idDe(p.week, `${c.name} · ${p.name}`) })),
+  }));
+  return { horarios, calendarios: resultado };
+}
+
+const separados = separarHorarios(CALENDARIOS_CRUDOS);
+
+/** Nombres que dicen qué es el horario, no de qué calendario salió. */
+const NOMBRES_DE_HORARIO = { 8: 'Jornada intensiva (8–15)', 9: 'Postventa (viernes corto)', 10: 'Jornada completa (viernes 8–14)' };
+
+/** Los calendarios de ejemplo, cada uno apuntando a su horario. */
+export const HORARIOS_SEMILLA = separados.calendarios;
+
+/** Los horarios (semanas tipo) de ejemplo: «Horario Verano» lo usan tres calendarios. */
+export const HORARIOS_TIPO_SEMILLA = separados.horarios.map((h) => ({ ...h, name: NOMBRES_DE_HORARIO[h.id] ?? h.name }));

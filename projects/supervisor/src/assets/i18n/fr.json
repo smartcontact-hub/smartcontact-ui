@@ -1373,6 +1373,7 @@
         "emails": "Comptes de messagerie et triggers qui répartissent les emails entrants",
         "agendas": "Les contacts que chaque agent voit dans le carnet de son téléphone",
         "horarios": "Plages horaires et quarts opérationnels du centre de contact",
+        "horariosTipo": "Semaines types que les calendriers réutilisent",
         "plantillas": "Messages prédéfinis pour réponses rapides et campagnes",
         "tipificaciones": "Catégories de clôture pour classifier les conversations",
         "labels": "Étiquettes de couleur pour organiser et filtrer les entités",
@@ -1737,7 +1738,74 @@
         "body": "Pour aller aux Jours fériés, enregistrez d’abord le calendrier."
       }
     },
+    "horariosTipo": {
+      "title": "Horaires",
+      "singular": "horaire",
+      "create_title": "Nouvel horaire",
+      "plural": "horaires",
+      "name_placeholder": "Ex. : Bureau de 9 h à 18 h",
+      "edit_breadcrumb": "Modifier l'horaire",
+      "create_submit": "Créer l'horaire",
+      "col_uses": "Calendriers qui l'utilisent",
+      "toasts": {
+        "created": "Horaire « {{name}} » créé",
+        "updated": "Horaire « {{name}} » mis à jour",
+        "deleted": "Horaire « {{name}} » supprimé",
+        "deleted_bulk": "{{count}} horaires supprimés"
+      },
+      "delete_dialog": {
+        "title": "Supprimer l'horaire « {{name}} » ?",
+        "title_bulk": "Supprimer {{count}} horaires ?"
+      },
+      "in_use": "{{count}} calendriers l'utilisent : ils garderont leur semaine, sans lien.",
+      "in_use_one": "1 calendrier l'utilise : il gardera sa semaine, sans lien.",
+      "in_use_bulk": "{{count}} calendriers les utilisent : ils garderont leur semaine, sans lien.",
+      "in_use_bulk_one": "1 calendrier les utilise : il gardera sa semaine, sans lien.",
+      "x": {
+        "edit": "Modifier l'horaire",
+        "edit_named": "Modifier « {{name}} »",
+        "picker": {
+          "label": "Horaire",
+          "placeholder": "Choisir un horaire",
+          "search": "Rechercher un horaire…",
+          "shared": "Utilisé aussi par {{count}} autres calendriers",
+          "manage": "Gérer les horaires"
+        },
+        "shared": {
+          "title": "« {{name}} » est utilisé par d'autres calendriers",
+          "body": "{{count}} autres calendriers utilisent cet horaire. Appliquer le changement à tous ou seulement à celui-ci ?",
+          "body_one": "1 autre calendrier utilise cet horaire. Appliquer le changement à tous ou seulement à celui-ci ?",
+          "all": "À tous",
+          "all_help": "L'horaire change dans tous les calendriers qui l'utilisent.",
+          "only_this": "Seulement celui-ci",
+          "only_this_help": "Ce calendrier passe à une copie de l'horaire avec le changement ; les autres ne bougent pas."
+        },
+        "section_general": "Général",
+        "section_uses": "Où il est utilisé",
+        "uses_none": "Aucun calendrier ne l'utilise encore.",
+        "uses_note": "Les changements atteignent les {{count}} calendriers qui l'utilisent.",
+        "uses_general": "horaire général",
+        "uses_periods": "{{count}} période(s)"
+      }
+    },
     "festivos": {
+      "x": {
+        "official": {
+          "open": "Ajouter des jours fériés prédéfinis",
+          "title": "Ajouter des jours fériés",
+          "lists": "Listes existantes",
+          "days": "{{count}} jours",
+          "apply": "Appliquer",
+          "official": "Du calendrier officiel",
+          "region": "Pays ou région",
+          "region_help": "Ceux qui tombent toujours le même jour sont ajoutés pour toutes les années.",
+          "already": "Déjà présent",
+          "every_year": "chaque année",
+          "add": "Ajouter {{count}} jours fériés",
+          "add_one": "Ajouter 1 jour férié",
+          "added": "{{count}} jours fériés ajoutés"
+        }
+      },
       "title": "Jours fériés",
       "singular": "calendrier de jours fériés",
       "plural": "calendriers de jours fériés",

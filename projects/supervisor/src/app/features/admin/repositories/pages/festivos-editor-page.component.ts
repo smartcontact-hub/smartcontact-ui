@@ -21,10 +21,11 @@ import { ayudaDeObligatorio, dejoElCampo, ocasionDeAvisar } from '@shared/utils/
 import { nombreDeCopia } from '@shared/utils/copy-name';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 
+import { FestivosOficialesModalComponent, type FestivoNuevo } from '../components/horario/festivos-oficiales-modal.component';
 import { type FechaEspecialNueva, HorarioEspecialModalComponent } from '../components/horario/horario-especial-modal.component';
 import { type ColumnaDeHorario, type FilaDeHorario, HorarioFilasTableComponent } from '../components/horario/horario-filas-table.component';
 import { type CalendarioDeFestivos, FestivosStore } from '../state/festivos.store';
-import { ahoraEn, type FechaEspecial, siguienteId } from '../state/horarios.core.mjs';
+import { ahoraEn, diaRepetido, type FechaEspecial, siguienteId } from '../state/horarios.core.mjs';
 import { HorariosStore } from '../state/horarios.store';
 
 type Borrador = Omit<CalendarioDeFestivos, 'id'>;
@@ -40,6 +41,7 @@ const aFecha = (iso: string): Date => new Date(`${iso}T12:00:00`);
 @Component({
   selector: 'sc-festivos-editor-page',
   imports: [
+    FestivosOficialesModalComponent,
     HorarioEspecialModalComponent,
     HorarioFilasTableComponent,
     ScButtonComponent,
@@ -231,6 +233,28 @@ export class FestivosEditorPageComponent implements DirtyAware, OnInit {
       return { ...f, days };
     });
     this.diaDialog.set(null);
+  }
+
+  /* ── Añadir festivos ya definidos: de otra lista o de un calendario oficial por país o región ───────────────────────── */
+
+  protected readonly oficialesDialog = signal(false);
+  /** Las otras listas de festivos, para aplicarlas enteras. */
+  protected readonly otrasListas = computed(() => this.store.items().filter((c) => c.id !== this.calendarioId));
+
+  protected anadirOficiales(nuevos: readonly FestivoNuevo[]): void {
+    let anadidos = 0;
+    this.form.update((f) => {
+      const days = [...f.days];
+      for (const n of nuevos) {
+        // Un día no se repite: el mismo día de cada año, o la misma fecha de un año, ya está.
+        if (diaRepetido(days, { id: -1, ...n }) !== null) continue;
+        days.push({ ...n, id: siguienteId(days) });
+        anadidos++;
+      }
+      return { ...f, days };
+    });
+    this.oficialesDialog.set(false);
+    if (anadidos > 0) this.resultado.contar(this.translate.instant('repositories.festivos.x.official.added', { count: anadidos }));
   }
 
   protected quitarDia(id: number): void {

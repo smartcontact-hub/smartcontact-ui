@@ -84,6 +84,11 @@
       <section class="horario__reglas" [attr.aria-label]="'repositories.horarios.x.rules.title' | translate">
         <sc-horario-reglas
           [semana]="form().week"
+        [horarioId]="form().weekId ?? null"
+        [opcionesDeHorarios]="opcionesDeHorarios()"
+        [compartidoCon]="compartidoCon()"
+        (cambiarHorario)="cambiarHorario($event)"
+        (gestionarHorarios)="irAHorarios($event)"
           [periodos]="form().periods"
           [especiales]="form().specials"
           [zona]="form().timezone"
@@ -120,11 +125,15 @@
 </div>
 
 @if (datosDialog()) {
-  <sc-horario-datos-modal [datos]="{ name: form().name, timezone: form().timezone, description: form().description }" (guardar)="guardarDatos($event)" (cerrado)="datosDialog.set(false)" />
+  <sc-horario-datos-modal [datos]="{ name: form().name, timezone: form().timezone, description: form().description, outMessage: form().outMessage ?? '' }" (guardar)="guardarDatos($event)" (cerrado)="datosDialog.set(false)" />
+}
+
+@if (compartidoDialog()) {
+  <sc-horario-compartido-modal [nombre]="nombreDelHorario()" [cuantos]="compartidoCon()" (elegido)="resolverCompartido($event)" (cerrado)="compartidoDialog.set(false)" />
 }
 
 @if (semanaDialog()) {
-  <sc-horario-semana-modal [semanaInicial]="form().week" [mensajeInicial]="form().outMessage ?? ''" (guardar)="guardarSemana($event)" (cerrado)="semanaDialog.set(false)" />
+  <sc-horario-semana-modal [semanaInicial]="form().week" [nombre]="nombreDelHorario()" (guardar)="guardarSemana($event)" (cerrado)="semanaDialog.set(false)" />
 }
 
 @if (periodoDialog(); as dialog) {

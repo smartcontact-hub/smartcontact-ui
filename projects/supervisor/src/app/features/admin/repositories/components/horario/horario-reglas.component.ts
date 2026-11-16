@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TooltipModule } from 'primeng/tooltip';
-import { ScButtonComponent, ScMultiSelectComponent, ScSectionCardComponent, ScSelectButtonComponent, ScTagComponent } from '@smartcontact-hub/components';
+import { ScButtonComponent, ScMultiSelectComponent, ScSectionCardComponent, ScSelectButtonComponent, ScSelectComponent, ScTagComponent } from '@smartcontact-hub/components';
 
 import { LanguageService } from '@core/services/language.service';
 import { injectLangChange } from '@core/utils/lang-change';
@@ -27,7 +27,7 @@ const CLAVES_DIA = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const;
  */
 @Component({
   selector: 'sc-horario-reglas',
-  imports: [ScButtonComponent, ScMultiSelectComponent, ScSectionCardComponent, ScSelectButtonComponent, ScTagComponent, TooltipModule, TranslateModule],
+  imports: [ScButtonComponent, ScMultiSelectComponent, ScSectionCardComponent, ScSelectButtonComponent, ScSelectComponent, ScTagComponent, TooltipModule, TranslateModule],
   templateUrl: './horario-reglas.component.html',
   styleUrl: './horario-reglas.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -38,6 +38,11 @@ export class HorarioReglasComponent {
   private readonly lang = injectLangChange();
 
   readonly semana = input.required<Semana>();
+  /** El horario del que sale la semana (`null`: una semana propia, sin vínculo), y los que se pueden elegir. */
+  readonly horarioId = input<number | null>(null);
+  readonly opcionesDeHorarios = input<readonly { readonly value: number; readonly label: string }[]>([]);
+  /** Cuántos calendarios más usan ese horario. */
+  readonly compartidoCon = input(0);
   readonly periodos = input.required<readonly Periodo[]>();
   readonly especiales = input.required<readonly FechaEspecial[]>();
   readonly zona = input('Europe/Madrid');
@@ -50,6 +55,8 @@ export class HorarioReglasComponent {
   });
 
   readonly editarSemana = output<void>();
+  readonly cambiarHorario = output<number>();
+  readonly gestionarHorarios = output<MouseEvent>();
   readonly anadirPeriodo = output<void>();
   readonly abrirPeriodo = output<number>();
   readonly eliminarPeriodo = output<number>();

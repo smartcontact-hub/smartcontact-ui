@@ -71,9 +71,22 @@
       />
     </div>
 
+    <!-- El periodo usa un horario (semana tipo) que otros calendarios pueden usar también. -->
     <div class="field">
-      <span class="field__label sc-text-caption-semibold" id="periodo-semana-rotulo">{{ 'repositories.horarios.period_week' | translate }}</span>
-      <sc-horario-semana role="group" aria-labelledby="periodo-semana-rotulo" prefijo="periodo" [semana]="semana()" [falta]="faltaDeSemana()" (semanaChange)="semana.set($event)" />
+      <sc-select
+        inputId="periodo-horario"
+        filter
+        required
+        [label]="'repositories.horariosTipo.x.picker.label' | translate"
+        [placeholder]="'repositories.horariosTipo.x.picker.placeholder' | translate"
+        [filterPlaceholder]="'repositories.horariosTipo.x.picker.search' | translate"
+        [helperText]="resumenDeSemana()"
+        [options]="opcionesDeHorarios()"
+        optionLabel="label"
+        optionValue="value"
+        [value]="weekId()"
+        (valueChange)="weekId.set($any($event))"
+      />
     </div>
   </div>
 

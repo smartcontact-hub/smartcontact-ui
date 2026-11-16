@@ -96,12 +96,26 @@
               [value]="verPasados() ? 'pasados' : 'proximos'"
               (valueChange)="verPasados.set($event === 'pasados')"
             />
+            <!-- Los que ya vienen definidos: otra lista, o el calendario oficial de un país o región. -->
+            <sc-button
+              filasBarra
+              size="sm"
+              variant="secondary"
+              appearance="outlined"
+              icon="download"
+              [label]="'repositories.festivos.x.official.open' | translate"
+              (clicked)="oficialesDialog.set(true)"
+            />
           </sc-horario-filas-table>
         </div>
       </sc-subsection>
     </sc-section-card>
   </div>
 </div>
+
+@if (oficialesDialog()) {
+  <sc-festivos-oficiales-modal [listas]="otrasListas()" [existentes]="form().days" (anadir)="anadirOficiales($event)" (cerrado)="oficialesDialog.set(false)" />
+}
 
 @if (diaDialog(); as dialog) {
   <sc-horario-especial-modal

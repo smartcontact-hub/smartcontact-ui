@@ -1,0 +1,63 @@
+.oficiales {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-2);
+}
+
+.oficiales__grupo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-75);
+}
+
+.oficiales__titulo {
+  margin: 0;
+}
+
+.oficiales__listas,
+.oficiales__dias-lista {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.oficiales__lista {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-1);
+  padding-block: var(--sc-spacing-0-375);
+}
+
+.oficiales__dias {
+  color: var(--sc-text-secondary);
+}
+
+.oficiales__aplicar {
+  margin-inline-start: auto;
+}
+
+/* La lista de días se desplaza por dentro: el diálogo no crece con ella. */
+.oficiales__dias-lista {
+  max-block-size: calc(var(--sc-spacing-5) * 4);
+  overflow-y: auto;
+}
+
+.oficiales__fila {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-75);
+  padding-block: var(--sc-spacing-0-375);
+}
+
+.oficiales__fecha {
+  min-inline-size: var(--sc-spacing-5);
+  color: var(--sc-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.oficiales__ya {
+  margin-inline-start: auto;
+  color: var(--sc-text-secondary);
+}

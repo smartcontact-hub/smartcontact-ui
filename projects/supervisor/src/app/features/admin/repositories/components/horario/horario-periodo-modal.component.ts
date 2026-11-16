@@ -9,6 +9,7 @@ import {
   ScCustomModalFooterDirective,
   ScDatepickerComponent,
   ScInputTextComponent,
+  ScSelectComponent,
   ScTagComponent,
   ScTextareaComponent,
   ScToggleSwitchComponent,
@@ -23,11 +24,12 @@ import {
   type ColorDePeriodo,
   type Horario,
   type Periodo,
+  resumenDeLaSemana,
   type Semana,
   siguienteId,
   validarPeriodo,
 } from '../../state/horarios.core.mjs';
-import { HorarioSemanaComponent } from './horario-semana.component';
+import { HorariosTipoStore } from '../../state/horarios-tipo.store';
 
 /** Los colores en el orden del tag del DS (Figma): los nueve de etiqueta y, al final, el negro. */
 const ORDEN_DEL_DS = ['gray', 'red', 'orange', 'amber', 'brown', 'green', 'teal', 'blue', 'purple', 'black'] as const;
@@ -42,13 +44,13 @@ const mesDia = (fecha: Date): string => `${dosCifras(fecha.getMonth() + 1)}-${do
 @Component({
   selector: 'sc-horario-periodo-modal',
   imports: [
-    HorarioSemanaComponent,
     ScButtonComponent,
     ScColorDotPickerComponent,
     ScCustomModalComponent,
     ScCustomModalFooterDirective,
     ScDatepickerComponent,
     ScInputTextComponent,
+    ScSelectComponent,
     ScTagComponent,
     ScTextareaComponent,
     ScToggleSwitchComponent,
@@ -62,11 +64,12 @@ const mesDia = (fecha: Date): string => `${dosCifras(fecha.getMonth() + 1)}-${do
 export class HorarioPeriodoModalComponent implements OnInit {
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
+  private readonly tipos = inject(HorariosTipoStore);
 
   /** El periodo que se edita; `null` para uno nuevo. */
   readonly periodo = input<Periodo | null>(null);
   /** El horario al que pertenece: sus otros periodos y su semana habitual. */
-  readonly horario = input.required<Pick<Horario, 'week' | 'periods' | 'specials' | 'holidayCalendarIds'>>();
+  readonly horario = input.required<Pick<Horario, 'week' | 'weekId' | 'periods' | 'specials' | 'holidayCalendarIds'>>();
   /** El año que se está mirando en el calendario: en el que se proponen las fechas. */
   readonly anio = input(new Date().getFullYear());
 
@@ -77,7 +80,21 @@ export class HorarioPeriodoModalComponent implements OnInit {
   protected readonly rango = signal<readonly (Date | null)[] | null>(null);
   protected readonly cadaAnio = signal(true);
   protected readonly color = signal<string>('blue');
-  protected readonly semana = signal<Semana>([]);
+  /** El horario que usa el periodo; su semana se copia al periodo. */
+  protected readonly weekId = signal<number | null>(null);
+  protected readonly semana = computed<Semana>(() => this.tipos.items().find((t) => t.id === this.weekId())?.week ?? [[], [], [], [], [], [], []]);
+  protected readonly opcionesDeHorarios = computed(() => this.tipos.items().map((t) => ({ value: t.id, label: t.name })));
+  /** La semana del horario elegido, en una línea por grupo de días, para ver qué se elige. */
+  protected readonly resumenDeSemana = computed(() => {
+    this.lang();
+    const t = (k: string): string => this.translate.instant(k);
+    return resumenDeLaSemana(
+      this.semana(),
+      ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'].map((d) => t(`repositories.horarios.days_short.${d}`)),
+      t('repositories.horarios.closed'),
+      t('repositories.horarios.all_day'),
+    );
+  });
   protected readonly mensaje = signal('');
   /** Lo que se leerá en la etiqueta de muestra: el nombre, o el del color mientras no lo haya. */
   protected readonly muestra = computed(() => this.nombre().trim() || (this.translate.instant(`labels.color.${this.color()}`) as string));
@@ -99,7 +116,7 @@ export class HorarioPeriodoModalComponent implements OnInit {
     if (!p) {
       const usados = new Set(this.horario().periods.map((x) => x.color));
       this.color.set(COLORES_DE_PERIODO.find((c) => !usados.has(c)) ?? 'blue');
-      this.semana.set(this.horario().week);
+      this.weekId.set(this.horario().weekId ?? this.tipos.items()[0]?.id ?? null);
       return;
     }
     const anio = p.year ?? this.anio();
@@ -108,7 +125,7 @@ export class HorarioPeriodoModalComponent implements OnInit {
     this.nombre.set(p.name);
     this.cadaAnio.set(p.year === null);
     this.color.set(p.color);
-    this.semana.set(p.week);
+    this.weekId.set(p.weekId ?? null);
     this.mensaje.set(p.outMessage ?? '');
     // Uno que cruza el fin de año acaba en el siguiente.
     this.rango.set([new Date(anio, m1 - 1, d1), new Date(p.from > p.to ? anio + 1 : anio, m2 - 1, d2)]);
@@ -124,6 +141,7 @@ export class HorarioPeriodoModalComponent implements OnInit {
       from: desde ? mesDia(desde) : '',
       to: desde ? mesDia(hasta ?? desde) : '',
       year: this.cadaAnio() ? null : (desde?.getFullYear() ?? this.anio()),
+      weekId: this.weekId(),
       week: this.semana(),
       outMessage: this.mensaje().trim(),
     };
@@ -137,10 +155,8 @@ export class HorarioPeriodoModalComponent implements OnInit {
     return validarPeriodo(this.horario(), c);
   });
 
-  protected readonly faltaDeSemana = computed(() => {
-    const f = this.falta();
-    return f?.codigo === 'semana' ? { dia: f.dia, codigo: f.detalle } : null;
-  });
+  /** Sin horario elegido no hay periodo: el periodo siempre usa uno. */
+  protected readonly faltaElHorario = computed(() => this.weekId() === null);
 
   private readonly motivo = computed(() => {
     this.lang();
@@ -158,7 +174,7 @@ export class HorarioPeriodoModalComponent implements OnInit {
     return codigo === 'solape' || codigo === 'cruza_anio' ? this.motivo() : undefined;
   });
   protected readonly motivoApagado = this.motivo;
-  protected readonly puedeGuardar = computed(() => this.falta() === null);
+  protected readonly puedeGuardar = computed(() => this.falta() === null && !this.faltaElHorario());
 
   /** Cuántos días le tocan en el año que se mira, descontados festivos y fechas especiales. */
   protected readonly resumen = computed(() => {
