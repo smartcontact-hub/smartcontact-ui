@@ -12,7 +12,7 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: var(--sc-spacing-0-5);
+  gap: var(--sc-spacing-1);
   min-block-size: 0;
 }
 
@@ -21,8 +21,8 @@
 .vista__barra {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: var(--sc-spacing-0-75) var(--sc-spacing-1);
+  align-items: flex-start;
+  gap: var(--sc-spacing-1) var(--sc-spacing-1-5);
 }
 
 .vista__nav {
@@ -51,7 +51,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--sc-spacing-0-5);
+  gap: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
 }
 
 /* Cada filtro es un `sc-chip` (el `p-chip` de PrimeNG) dentro de un botón con estado. El botón no pinta nada: el chip es el
@@ -106,9 +106,9 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: var(--sc-spacing-0-125);
+  gap: var(--sc-spacing-0-5);
   min-inline-size: 0;
-  padding-inline-start: var(--sc-spacing-1);
+  padding-inline-start: var(--sc-spacing-1-5);
   border-inline-start: 1px solid var(--sc-border-default);
 }
 
@@ -137,14 +137,20 @@
 }
 
 .vista__dia-mensaje {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--sc-spacing-0-25);
-  max-inline-size: var(--sc-spacing-25);
-  overflow: hidden;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sc-spacing-0-375);
   color: var(--sc-text-secondary);
-  text-overflow: ellipsis;
-  white-space: nowrap;
+}
+
+/* El mensaje, hasta dos líneas y con puntos suspensivos si aún no cabe (entero, al pasar el ratón). Sin esto se cortaba a mitad de palabra. */
+.vista__dia-mensaje-texto {
+  display: -webkit-box;
+  min-inline-size: 0;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
 }
 
 .vista__cuerpo {

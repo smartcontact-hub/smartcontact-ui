@@ -56,7 +56,8 @@
         @if (d.mensaje) {
           <!-- El mensaje automático que oiría quien llama si no se le atiende ese día. -->
           <span class="vista__dia-mensaje sc-text-caption-regular" [pTooltip]="d.mensaje" tooltipPosition="bottom">
-            <sc-icon name="chat" size="sm" aria-hidden="true" />{{ d.mensaje }}
+            <sc-icon name="chat" size="sm" aria-hidden="true" />
+            <span class="vista__dia-mensaje-texto">{{ d.mensaje }}</span>
           </span>
         }
       }
