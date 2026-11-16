@@ -89,9 +89,9 @@ export const DATO_PERMITIDO = [
   },
   {
     fichero: 'projects/sc-docs/src/app/pages/lab/horarios.data.ts',
-    texto: "mantenedor: 'Rafa Areses'",
+    texto: "mantenedor: { nombre: 'Rafa Areses'",
     motivo:
-      'el autor que la página Lab enseña bajo cada versión de Horarios, como «Marta Recio» en Guardado: contenido de la página, no una firma del código',
+      'el autor que la página Lab enseña en cada versión de Horarios, como «Marta Recio» en Guardado: contenido de la página, no una firma del código',
   },
   {
     fichero: 'scripts/hooks/cloud-identity.mjs',

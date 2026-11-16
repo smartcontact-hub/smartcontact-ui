@@ -13,11 +13,18 @@
  * hacerlo si la rama se funde o se borra.
  */
 
-/** Quien hizo cada versión: se enseña bajo su título, como en «Guardado». */
+/** Quien hizo una versión: su nombre, sus iniciales para el avatar y el color de ese avatar. */
+export interface HorariosAutor {
+  readonly nombre: string;
+  readonly iniciales: string;
+  readonly color: 'blue' | 'purple';
+}
+
+/** Quien hizo cada versión: se enseña en el pie de su tarjeta, como en «Guardado». */
 const AUTORES = {
-  marta: 'Marta Recio',
-  mantenedor: 'Rafa Areses',
-} as const;
+  marta: { nombre: 'Marta Recio', iniciales: 'MR', color: 'purple' },
+  mantenedor: { nombre: 'Rafa Areses', iniciales: 'RA', color: 'blue' },
+} as const satisfies Record<string, HorariosAutor>;
 
 export interface HorariosEnlace {
   readonly label: string;
@@ -31,7 +38,7 @@ export interface HorariosVersion {
   readonly summary: string;
   /** De dónde sale, si no es una versión por sí misma («Sale del Lab»). */
   readonly origin?: string;
-  readonly author: string;
+  readonly author: HorariosAutor;
   /** Su PR o, si no tiene, su rama. */
   readonly source: HorariosEnlace;
   /** Lo que se abre. Más de uno cuando la versión tiene varias pantallas. */
@@ -42,6 +49,8 @@ export interface HorariosVersion {
 
 export interface HorariosGrupo {
   readonly title: string;
+  /** Qué reúne el grupo, en una línea. */
+  readonly lead: string;
   readonly versions: readonly HorariosVersion[];
 }
 
@@ -53,6 +62,7 @@ const PR = (n: number): HorariosEnlace => ({
 export const HORARIOS: readonly HorariosGrupo[] = [
   {
     title: 'Versiones',
+    lead: 'El Lab y lo que sale de él, la propuesta de referencia y un experimento sobre la pantalla de producción.',
     versions: [
       {
         id: 'lab',
@@ -111,7 +121,7 @@ export const HORARIOS: readonly HorariosGrupo[] = [
           'Sobre la pantalla de producción: el calendario delante, las reglas en segundo plano y el listado con atención, grupos y estado.',
         author: AUTORES.marta,
         source: {
-          label: 'Rama claude/fervent-ride-qlsmzs',
+          label: 'Su rama, sin PR',
           href: 'https://github.com/smartcontact-hub/smartcontact-ui/tree/claude/fervent-ride-qlsmzs',
         },
         links: [{ label: 'Abrir', href: 'https://claude-fervent-ride-qlsmzs.sc-supervisor.pages.dev/admin/horarios' }],
@@ -121,6 +131,7 @@ export const HORARIOS: readonly HorariosGrupo[] = [
   },
   {
     title: 'Para compararlas',
+    lead: 'Las versiones contadas lado a lado, y el punto de partida.',
     versions: [
       {
         id: 'presentacion',
