@@ -214,7 +214,7 @@ cumpla AA y se re-exporte. Entonces esta fila vuelve a `enforce` y esta entrada 
 > **No es una divergencia del Kit: el Kit no modela esta familia.** Es una decisión de
 > color del DS que no se puede rastrear a Figma, y por eso vive aquí.
 
-Los 32 tokens `--sc-label-*` (8 colores × `bg`/`text`/`border`/`dot`) son la paleta de
+Los 36 tokens `--sc-label-*` (9 colores × `bg`/`text`/`border`/`dot`) son la paleta de
 INSIGNIA, curada a mano en `03-palette.css`. Estaban **solo en claro**: `07-dark.css` no
 definía ni uno. Como la paleta primitiva `--sc-color-*` tampoco se remapea en oscuro
 (cero definiciones), en tema oscuro las insignias heredaban el pastel del claro.
