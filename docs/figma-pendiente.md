@@ -1009,6 +1009,9 @@ Figma) y sus entradas de ejemplo. La flecha, **hecha el 2026-11-03**: las 30 (3 
 - **La cabecera mide 58 en el Kit y 56 en el código**: en el `Header` del Kit, `container buttons` mide 32,5; en el código,
   lo más alto es 28 en una caja de 30,5. Es un componente compartido: mirar quién lo usa antes de tocarlo y publicar.
 - ~~**«❖ Alert modal» con superficie blanca** (DD-242)~~ → publicada, y los 22 avisos del Supervisor ya la usan (§65).
+- **Variables sale de «Próximamente» (DD-255, 2026-11-16)**: en los hubs de la página (pasos 01 a 06 y el mapa
+  `3998:532`), la tarjeta Variables pierde la marca y toma el estado de las que abren panel. El COA de 4064 se corrige igual.
+  Horarios salió antes (DD-251) y aquí no consta: mídelo antes.
 - **Enlaces de Figma en los COA** de 4438, 4440 y 4064 (páginas `4077:58411`, `4067:100978` y `3491:35886`): van en los
   prompts de `~/Documents/Claude/2026-10 Empate flujos AED/`; los pega y publica Rafa.
 

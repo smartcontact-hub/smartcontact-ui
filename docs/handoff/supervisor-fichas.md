@@ -99,6 +99,16 @@ El del repaso del Figma del Supervisor y «Fuera del DS», borrada (2026-11-03, 
 El del alta de usuario con marcadores y alta frente a edición (2026-11-04, DD-248, sin trampas propias; su «No hecho»,
 los marcadores del alta de usuario en Figma, sigue en pie): `git show 1f086aca:docs/handoff/supervisor-fichas.md`.
 El de otra tarjeta del hub (2026-11-06, DD-249; su «No hecho» sigue en pie): `git show 3e8c2201:docs/handoff/supervisor-fichas.md`.
+El de Horarios con periodos, fechas especiales y festivos (2026-11-12, DD-251; su «No hecho» sigue en pie): `git show
+8f0fa7e2:docs/handoff/supervisor-fichas.md`; sus dos trampas suben a «Trampas del frente».
+
+## ✅ 2026-11-16 · Variables sale de «Próximamente» en el hub y abre su panel (DD-255)
+
+> **Sello:** rama `claude/reactivar-variables` sobre `main` HEAD `82314519` (#622 fundido).
+
+- **Hecho**: la tarjeta Variables abre su panel (una entrada por variable, que abre la lista buscando su clave) y
+  «Abrir repositorio» lleva a `/admin/variables`. La página ya existía; solo la tapaba la marca de DD-245.
+- **No hecho**: el COA de SISMAC-4064 y el hub en Figma siguen con Variables en «Próximamente» (`figma-pendiente` §64).
 
 ## ✅ 2026-11-13 · El día dice de dónde viene, «Grupos» con nombres y las leyes de los tooltips (DD-254)
 
@@ -135,21 +145,6 @@ El de otra tarjeta del hub (2026-11-06, DD-249; su «No hecho» sigue en pie): `
   regla y el nodo del diseñador VUI; el backend; el COA y el Figma de las pantallas.
 - **Trampa de sonda**: tras pulsar un `sc-selectbutton` que filtra una tabla, contar filas en el acto lee la tabla de
   antes (sumó 6 de 5). Espera con `expect.poll` a que cuadre.
-
-## ✅ 2026-11-12 · Horarios con periodos, fechas especiales y festivos (DD-251)
-
-> **Sello:** rama `claude/calendarios-horarios-especiales-l3z4wx` sobre `main` HEAD `79567b53`.
-
-- **Hecho**: un horario es su semana, sus periodos y sus fechas especiales, con el año al lado (`/admin/horarios`, lista y
-  editor); los festivos, repositorio aparte que cada horario aplica (`/admin/festivos`). Lógica pura en
-  `repositories/state/horarios.core.mjs`; la prueba de aceptación es la hoja de postventa de 2025 (`horarios.test.mjs`).
-- **`sc-datepicker`**: `selectionMode="multiple"` (`dates`), `timeOnly`, `stepMinute` y `ariaLabel`.
-- **No hecho**: decir a qué grupos afecta ANTES de borrar un horario (hoy, la confirmación simple); locución por regla; el nodo
-  de horario de la IVR; el COA y el Figma de la pantalla. Las horas de la semilla «Postventa» son de ejemplo.
-- **Trampa de sonda**: en `p-datepicker` de rango, `fill()` sobre el campo no cambia el modelo y el botón sigue apagado;
-  parece un fallo del diálogo. Elige los dos días en el panel.
-- **Trampa de entorno**: `tools/primeng-doc.mjs` necesita `gh` contra `primefaces/primeng`; en una sesión en la nube sin ese
-  repositorio falla. La API instalada está en `node_modules/primeng/types/primeng-datepicker.d.ts`.
 
 ## SIGUIENTE — sin preguntar
 
@@ -236,6 +231,8 @@ El de otra tarjeta del hub (2026-11-06, DD-249; su «No hecho» sigue en pie): `
   nube no se puede.
 
 **Trampas del frente:**
+- **`p-datepicker` de rango:** `fill()` sobre el campo no cambia el modelo y el botón sigue apagado; elige los dos días en
+  el panel. `tools/primeng-doc.mjs` pide `gh` contra `primefaces/primeng`; sin él, `node_modules/primeng/types/`.
 - **La copia del DS con la tabla en slots** (`C5soC7CxcuKSIFPEDCd3gz`, sección `16862:6447`) se quedó con un
   placeholder del buscador anterior a `main`; lo que manda es el listado del Supervisor (`3118:16995`).
 - **Maestros de Figma con slots:** un marco de documentación a HUG estira las variantes FILL y cambia el maestro; en
