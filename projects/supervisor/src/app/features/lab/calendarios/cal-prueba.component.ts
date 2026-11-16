@@ -8,11 +8,12 @@ import { ScIconComponent } from '@smartcontact-hub/icons';
 
 import { ResultadoAccionService } from '@core/services/resultado-accion.service';
 import { MISIONES, type Mision } from './cal-misiones';
+import { discoveryActivo } from './cal-modo';
 import { CalPapelComponent } from './cal-papel.component';
 import { CalPruebaService, reloj, type Variante } from './cal-prueba.service';
 
-/** Las pantallas donde vive la prueba: el hub de Repositorios y las dos secciones nuevas. */
-const EN_PRUEBA = /^\/admin\/(repositorios|calendarios|horarios)(\/|\?|$)/;
+/** Las pantallas donde vive la prueba: el hub de Repositorios y las dos secciones nuevas, con el modo discovery encendido. */
+const EN_PRUEBA = /^\/admin\/(repositorios|calendarios|semanas)(\/|\?|$)/;
 
 /**
  * PROTOTIPO DE DISCOVERY: la barra del modo prueba. Abajo a la izquierda, junto al menú y fuera del trabajo: quien modera
@@ -201,7 +202,7 @@ export class CalPruebaComponent {
     ),
     { initialValue: this.router.url },
   );
-  protected readonly visible = computed(() => EN_PRUEBA.test(this.url()));
+  protected readonly visible = computed(() => EN_PRUEBA.test(this.url()) && discoveryActivo());
 
   protected readonly abierta = signal(false);
   protected readonly papel = signal(false);
