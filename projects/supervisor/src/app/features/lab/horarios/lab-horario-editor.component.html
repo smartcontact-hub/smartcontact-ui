@@ -1,0 +1,248 @@
+<ng-template #topbarActions>
+  @if (dirty()) {
+    @if (mode() === 'edit') {
+      <span class="sin-guardar sc-text-caption-regular" role="status">Cambios sin guardar</span>
+    }
+    <sc-button variant="secondary" appearance="outlined" label="Deshacer" (clicked)="discard()" />
+  }
+  <sc-button variant="primary" [disabled]="!puedeGuardar()" [pTooltip]="motivo()" tooltipPosition="bottom" tooltipEvent="both" [label]="mode() === 'create' ? 'Crear horario' : 'Guardar'" (clicked)="save()" />
+</ng-template>
+
+<div class="lab">
+  <!-- Cabecera: al editar, lo general cabe en una línea (nombre, zona, estado ahora y quién lo usa); «Datos» lo abre. -->
+  <header class="cab">
+    <div class="cab__titulo">
+      <h1 class="sc-text-title-semibold">{{ form().name.trim() || 'Nuevo horario' }}</h1>
+      @if (mode() === 'edit') {
+        <sc-button variant="secondary" appearance="text" size="sm" icon="edit" [ariaLabel]="t.editarDatos" (clicked)="datosAbiertos.set(true)" />
+      }
+    </div>
+    <div class="cab__datos sc-text-caption-regular">
+      <span class="cab__dato"><sc-icon name="public" size="sm" /> {{ form().timezone.replace('_', ' ') }}</span>
+      @if (form().status === 'inactive') {
+        <sc-tag severity="secondary" value="Inactivo" />
+      } @else {
+        <sc-tag [severity]="estado().clave === 'open' ? 'success' : 'secondary'" [value]="estado().clave === 'open' ? 'Abierto' : 'Cerrado'" />
+        <span>{{ estado().detalle }}</span>
+      }
+      @if (mode() === 'edit') {
+        <span class="cab__sep" aria-hidden="true">·</span>
+        <span>{{ grupos().length === 0 ? 'Ningún grupo lo usa' : 'Lo usan ' + grupos().length + (grupos().length === 1 ? ' grupo' : ' grupos') }}</span>
+      }
+    </div>
+  </header>
+
+  <div class="rejilla">
+    <!-- Columna izquierda: lo general (solo al crear) y la semana habitual. -->
+    <aside class="col-semana">
+      @if (mode() === 'create') {
+        <section class="panel panel--general">
+          <h2 class="panel__titulo sc-text-body-semibold">General</h2>
+          <sc-inputtext inputId="lab-nombre" fluid required label="Nombre" [placeholder]="t.ejemploNombre" [value]="form().name" (valueChange)="update('name', $event)" />
+          <sc-select inputId="lab-zona" filter label="Zona horaria" [options]="zonas()" optionLabel="label" optionValue="value" [value]="form().timezone" (valueChange)="update('timezone', $any($event))" />
+          <sc-inputtext inputId="lab-desc" fluid label="Descripción" [placeholder]="t.opcional" [value]="form().description" (valueChange)="update('description', $event)" />
+        </section>
+      }
+      <section class="panel panel--semana">
+        <div class="panel__cab">
+          <h2 class="panel__titulo sc-text-body-semibold">Semana habitual</h2>
+          <span class="panel__resumen sc-text-caption-regular">{{ resumen() }}</span>
+        </div>
+        <div class="panel__cuerpo">
+          <sc-lab-semana [semana]="form().week" [diaResaltado]="diaResaltado()" (semanaChange)="update('week', $event)" />
+          @if (faltaSemana(); as falta) {
+            <p class="error sc-text-caption-regular" role="alert">Las franjas del {{ ['lunes','martes','miércoles','jueves','viernes','sábado','domingo'][falta.dia] }} se pisan o no son válidas.</p>
+          }
+        </div>
+        <!-- Lo que hay debajo de la semana: cómo leer el calendario y quién manda cuando dos reglas tocan el mismo día. -->
+        <div class="leyenda">
+          <p class="leyenda__titulo sc-text-caption-semibold">Cómo se decide cada día</p>
+          <ol class="leyenda__orden sc-text-caption-regular">
+            <li><span class="muestra muestra--marca"></span>Día especial o festivo</li>
+            <li><span class="muestra muestra--periodo"></span>Periodo (p. ej. verano)</li>
+            <li><span class="muestra"></span>Semana habitual</li>
+          </ol>
+          <p class="leyenda__nota sc-text-caption-regular">Manda el de más arriba. <span class="muestra muestra--cerrado"></span> tachado = cerrado.</p>
+        </div>
+      </section>
+    </aside>
+
+    <!-- Columna derecha: dos filas. Arriba el calendario; en medio, lo elegido; abajo, lo que cambia la semana. -->
+    <div class="col-tiempo">
+      <section class="panel panel--calendario">
+        <sc-lab-calendario
+          [reglas]="reglas()"
+          [calendarios]="calendarios()"
+          [hoy]="hoy()"
+          [resaltadas]="resaltadas()"
+          [(seleccion)]="seleccion"
+          [(inicio)]="inicio"
+          [(vista)]="vista"
+          (diaDeSemana)="senalarDia($event)"
+        />
+
+        <!-- Lo elegido: siempre en el mismo sitio y con la misma altura, así el calendario no salta. -->
+        <div class="elegido" aria-live="polite">
+          @if (elegido(); as e) {
+            <div class="elegido__texto">
+              <span class="elegido__titulo sc-text-body-semibold">{{ e.titulo }}</span>
+              <sc-tag [severity]="e.abierto ? 'success' : 'secondary'" [value]="e.unDia ? (e.abierto ? 'Abierto' : 'Cerrado') : (e.abierto ? 'Con horas' : 'Todo cerrado')" />
+              <span class="sc-text-body-regular">{{ e.unDia && e.abierto ? e.horas : (e.unDia ? '' : e.horas) }}</span>
+              @if (e.origen) {
+                <span class="elegido__origen sc-text-caption-regular">{{ e.origen }}</span>
+              }
+            </div>
+            @if (prueba(); as p) {
+              <div class="comprobar">
+                <label class="sc-text-caption-regular" for="lab-hora-prueba">¿Y a las</label>
+                <sc-datepicker class="comprobar__hora" inputId="lab-hora-prueba" timeOnly size="sm" [showIcon]="false" [ariaLabel]="t.horaPrueba" [value]="horaPrueba()" (valueChange)="$event && horaPrueba.set($event)" />
+                <span class="sc-text-caption-regular">?</span>
+                <sc-tag [severity]="p.abierto ? 'success' : 'secondary'" [value]="p.abierto ? 'Se atiende' : 'No se atiende'" />
+                @if (p.nota) {
+                  <span class="sc-text-caption-regular elegido__origen">{{ p.nota }}</span>
+                }
+              </div>
+            }
+            <div class="elegido__acciones">
+              @if (e.unDia) {
+                @if (e.dueno?.tipo === 'periodo') {
+                  <sc-button variant="secondary" appearance="text" size="sm" label="Editar periodo" (clicked)="periodoDialog.set({ periodo: e.dueno!.periodo, rango: null })" />
+                } @else if (e.dueno?.tipo === 'festivo') {
+                  <sc-button variant="secondary" appearance="text" size="sm" icon="event_busy" [label]="'Abrir ' + e.dueno!.calendario!.name" (clicked)="listaAbierta.set(e.dueno!.calendario)" />
+                } @else if (e.dueno?.tipo === 'semana') {
+                  <sc-button variant="secondary" appearance="text" size="sm" icon="arrow_back" label="Ver en la semana" (clicked)="editarSemanaDe(e.fecha)" />
+                }
+                <sc-button variant="secondary" appearance="outlined" size="sm" [label]="e.dueno?.tipo === 'especial' ? 'Editar este día' : 'Otras horas este día'" (clicked)="cambiarHorasDelDia()" />
+                @if (e.abierto) {
+                  <sc-button variant="secondary" appearance="outlined" size="sm" label="Cerrar este día" (clicked)="cerrarElegidos()" />
+                }
+              } @else {
+                <sc-button variant="secondary" appearance="outlined" size="sm" icon="add" label="Crear periodo con estas fechas" (clicked)="crearPeriodoDeSeleccion()" />
+                <sc-button variant="secondary" appearance="outlined" size="sm" label="Cerrar estos días" (clicked)="cerrarElegidos()" />
+              }
+              <sc-button variant="secondary" appearance="text" size="sm" icon="close" [ariaLabel]="t.soltar" (clicked)="seleccion.set(null)" />
+            </div>
+          } @else {
+            <span class="elegido__vacio sc-text-caption-regular">Elige un día, un rango o una semana en el calendario para cambiarlo aquí mismo.</span>
+          }
+        </div>
+      </section>
+
+      <section class="panel panel--lista">
+        <div class="panel__cab">
+          <h2 class="panel__titulo sc-text-body-semibold">Lo que cambia la semana</h2>
+          <sc-selectbutton size="sm" [ariaLabel]="t.filtrar" [options]="filtros" optionLabel="label" optionValue="value" [allowEmpty]="false" [value]="filtro()" (valueChange)="filtro.set($any($event))" />
+          <span class="panel__hueco"></span>
+          <sc-button variant="secondary" appearance="outlined" size="sm" icon="add" label="Periodo" (clicked)="periodoDialog.set({ periodo: null, rango: null })" />
+          <sc-button variant="secondary" appearance="outlined" size="sm" icon="add" label="Día especial" (clicked)="especialDialog.set({ especial: null, fecha: seleccion()?.desde ?? null })" />
+          <sc-button variant="primary" size="sm" icon="download" label="Festivos" (clicked)="importarAbierto.set(true)" />
+        </div>
+
+        <div class="panel__cuerpo panel__cuerpo--lista">
+          @if (visibles().length === 0) {
+            <div class="vacio">
+              <p class="sc-text-body-semibold">{{ verPasadas() ? 'Nada pasado' : 'Sin excepciones' }}</p>
+              <p class="sc-text-caption-regular">Se atiende con la semana habitual todo el año. Añade festivos de tu país o región, un periodo (p. ej. verano) o elige días en el calendario.</p>
+            </div>
+          } @else {
+            <ul class="filas" role="list">
+              @for (e of visibles(); track e.tipo + e.id) {
+                <li class="fila" (mouseenter)="resaltar(e)" (mouseleave)="resaltar(null)" (focusin)="resaltar(e)" (focusout)="resaltar(null)">
+                  <button type="button" class="fila__abrir" (click)="abrir(e)">
+                    <span class="fila__marca" [attr.data-tipo]="e.tipo" [attr.data-color]="e.color" aria-hidden="true">
+                      <sc-icon [name]="e.tipo === 'periodo' ? 'date_range' : e.tipo === 'lista' ? 'event_busy' : 'event'" size="sm" />
+                    </span>
+                    <span class="fila__nombre sc-text-body-semibold">{{ e.nombre }}</span>
+                    <span class="fila__cuando sc-text-body-regular">{{ e.cuando }}</span>
+                    <span class="fila__horas sc-text-body-regular" [class.fila__horas--cerrado]="e.horas === 'Cerrado'">{{ e.horas }}</span>
+                  </button>
+                  <sc-button variant="secondary" appearance="text" size="sm" icon="close" [ariaLabel]="t.quitar(e.nombre)" (clicked)="quitar(e)" />
+                </li>
+              }
+            </ul>
+          }
+        </div>
+        @if (cuantasPasadas() > 0) {
+          <button type="button" class="pasadas sc-text-caption-semibold" (click)="verPasadas.set(!verPasadas())">
+            {{ verPasadas() ? 'Volver a las próximas' : 'Ver ' + cuantasPasadas() + ' pasadas' }}
+          </button>
+        }
+      </section>
+    </div>
+  </div>
+</div>
+
+<!-- Datos generales al editar: fuera de la vista, porque una vez creado casi no se tocan. -->
+@if (datosAbiertos()) {
+<sc-custom-modal [visible]="true" [title]="t.datos" width="30rem" (closed)="datosAbiertos.set(false)">
+  <div class="dialogo">
+    <sc-inputtext inputId="lab-nombre-e" fluid required label="Nombre" [value]="form().name" (valueChange)="update('name', $event)" />
+    <sc-select inputId="lab-zona-e" filter label="Zona horaria" helperText="Las horas del horario se leen en esta zona." [options]="zonas()" optionLabel="label" optionValue="value" [value]="form().timezone" (valueChange)="update('timezone', $any($event))" />
+    <sc-inputtext inputId="lab-desc-e" fluid label="Descripción" [value]="form().description" (valueChange)="update('description', $event)" />
+    <div class="interruptor">
+      <sc-toggleswitch inputId="lab-activo" [checked]="form().status === 'active'" (checkedChange)="update('status', $event ? 'active' : 'inactive')" />
+      <label for="lab-activo" class="sc-text-body-regular">Activo</label>
+      <span class="sc-text-caption-regular interruptor__ayuda">{{ grupos().length ? 'Si lo apagas, ' + grupos().length + ' grupo(s) dejarán de usarlo.' : 'Solo los activos se pueden elegir en un grupo.' }}</span>
+    </div>
+  </div>
+  <div scCustomModalFooter>
+    <sc-button variant="primary" label="Hecho" (clicked)="datosAbiertos.set(false)" />
+  </div>
+</sc-custom-modal>
+}
+
+<!-- Festivos: elegir una lista que ya existe o traerlos del catálogo por país y región, sin crearlos uno a uno. -->
+@if (importarAbierto()) {
+<sc-custom-modal [visible]="true" [title]="t.festivos" width="35rem" (closed)="importarAbierto.set(false)">
+  <div class="dialogo">
+    @if (listasDisponibles().length > 0) {
+      <div class="bloque">
+        <p class="sc-text-body-semibold bloque__titulo">Listas de Tiempo</p>
+        <ul class="listas" role="list">
+          @for (c of listasDisponibles(); track c.id) {
+            <li class="lista-op">
+              <span class="sc-text-body-regular">{{ c.name }}</span>
+              <span class="sc-text-caption-regular lista-op__n">{{ c.days.length }} días</span>
+              <sc-button variant="secondary" appearance="outlined" size="sm" label="Aplicar" (clicked)="aplicarLista(c.id)" />
+            </li>
+          }
+        </ul>
+      </div>
+    }
+    <div class="bloque">
+      <p class="sc-text-body-semibold bloque__titulo">Del calendario oficial</p>
+      <sc-select inputId="lab-region" label="País o región" [options]="regiones" optionLabel="label" optionValue="value" [value]="region()" (valueChange)="cambiarRegion($any($event))" />
+      <ul class="catalogo" role="list">
+        @for (d of diasRegion(); track d.date) {
+          <li>
+            <label class="catalogo__dia">
+              <sc-checkbox size="sm" [state]="descartados().has(d.date) ? 'none' : 'all'" [ariaLabel]="d.name" (cycle)="alternarDia(d.date)" />
+              <span class="sc-text-body-regular catalogo__fecha">{{ d.date.slice(8) }}/{{ d.date.slice(5, 7) }}</span>
+              <span class="sc-text-body-regular">{{ d.name }}</span>
+            </label>
+          </li>
+        }
+      </ul>
+      <p class="sc-text-caption-regular nota">Datos de ejemplo de 2026 en el laboratorio: en producción vendrían de un servicio oficial y se renovarían cada año.</p>
+      <sc-selectbutton size="sm" [ariaLabel]="t.destino" [options]="destinos" optionLabel="label" optionValue="value" [allowEmpty]="false" [value]="destino()" (valueChange)="destino.set($any($event))" />
+      <p class="sc-text-caption-regular nota">
+        {{ destino() === 'lista' ? (listaExistente() ? 'Ya existe esa lista: se aplicará la que hay.' : 'Se crea una lista en Repositorios › Tiempo › Festivos que otros horarios pueden aplicar: se mantiene una vez.') : 'Se copian como días especiales de este horario: luego puedes cambiar cualquiera (p. ej. abrir de 09:00 a 14:00).' }}
+      </p>
+    </div>
+  </div>
+  <div scCustomModalFooter>
+    <sc-button variant="secondary" appearance="outlined" label="Cancelar" (clicked)="importarAbierto.set(false)" />
+    <sc-button variant="primary" [label]="'Añadir ' + (diasRegion().length - descartados().size) + ' festivos'" [disabled]="diasRegion().length === descartados().size" (clicked)="importar()" />
+  </div>
+</sc-custom-modal>
+}
+
+<!-- Una lista compartida aplicada: se edita en un panel lateral, con el horario a la vista. -->
+<sc-lab-lista-panel [lista]="listaAbierta()" [anio]="+inicio().slice(0, 4)" [hoy]="hoy()" (cerrado)="listaAbierta.set(null)" (dejar)="dejarLista($event)" />
+
+@if (periodoDialog(); as d) {
+  <sc-lab-periodo-modal [periodo]="d.periodo" [rangoInicial]="d.rango" [horario]="form()" [anio]="+inicio().slice(0, 4)" (guardar)="guardarPeriodo($event)" (cerrado)="periodoDialog.set(null)" />
+}
+@if (especialDialog(); as d) {
+  <sc-horario-especial-modal [especial]="d.especial" [fechaInicial]="d.fecha" [existentes]="form().specials" (guardar)="guardarEspeciales($event)" (cerrado)="especialDialog.set(null)" />
+}

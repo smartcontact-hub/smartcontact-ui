@@ -294,7 +294,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 181,
+      "usedInSupervisor": 225,
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "sobreObsoleto": [
         {
@@ -351,7 +351,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 35,
+      "usedInSupervisor": 37,
       "cuando": "Para un sí/no independiente, o para la casilla de un grupo elegido A MEDIAS (tiene tercer estado). Para activar algo al instante, `sc-toggleswitch`.",
       "sobreObsoleto": [],
       "fuente": "projects/ui-smartcontact/src/lib/components/checkbox/sc-checkbox.component.ts"
@@ -409,7 +409,7 @@
         "kit"
       ],
       "retirado": null,
-      "usedInSupervisor": 4,
+      "usedInSupervisor": 5,
       "cuando": "Para elegir un color de una paleta corta y cerrada, con su nombre — el color solo no se puede oír.",
       "sobreObsoleto": [],
       "fuente": "projects/ui-smartcontact/src/lib/components/color-dot-picker/sc-color-dot-picker.component.ts"
@@ -523,7 +523,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 20,
+      "usedInSupervisor": 24,
       "cuando": "Para un modal con contenido propio (un formulario, una tabla, un reproductor): la carcasa que comparten los dos DS. Se abre por `ScDynamicDialogService`, como en ui.smart-contact.com, o con `[(visible)]` si su formulario se ata al estado de la pantalla. Para un aviso con una acción, `sc-alert-modal`.",
       "sobreObsoleto": [],
       "fuente": "projects/ui-smartcontact/src/lib/components/custom-modal/sc-custom-modal.component.ts"
@@ -693,7 +693,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 6,
+      "usedInSupervisor": 8,
       "cuando": "Para elegir una fecha del calendario, cuando importa el día concreto y no un rango relativo («últimos 7 días»).",
       "sobreObsoleto": [],
       "fuente": "projects/ui-smartcontact/src/lib/components/datepicker/sc-datepicker.component.ts"
@@ -822,7 +822,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 3,
+      "usedInSupervisor": 4,
       "cuando": "Para un panel lateral con trabajo que conserva el contexto de detrás.",
       "sobreObsoleto": [],
       "fuente": "projects/ui-smartcontact/src/lib/components/drawer/sc-drawer.component.ts"
@@ -1349,7 +1349,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 52,
+      "usedInSupervisor": 61,
       "cuando": "Para texto de una línea. Si puede ocupar varias, `sc-textarea`.",
       "sobreObsoleto": [],
       "fuente": "projects/ui-smartcontact/src/lib/components/inputtext/sc-inputtext.component.ts"
@@ -1849,7 +1849,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 73,
+      "usedInSupervisor": 77,
       "cuando": "Para elegir UNA de muchas. Si son pocas y caben a la vista, `sc-radiobutton` o `sc-selectbutton` ahorran un clic.",
       "sobreObsoleto": [],
       "fuente": "projects/ui-smartcontact/src/lib/components/select/sc-select.component.ts"
@@ -1888,7 +1888,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 26,
+      "usedInSupervisor": 29,
       "cuando": "Para elegir una opción de 2-4 que se explican solas, todas visibles. Si cambia de COLECCIÓN en vez de filtrar, son pestañas (DD-113).",
       "sobreObsoleto": [],
       "fuente": "projects/ui-smartcontact/src/lib/components/selectbutton/sc-selectbutton.component.ts"
@@ -2047,7 +2047,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 1,
+      "usedInSupervisor": 3,
       "cuando": "Para vistas hermanas de una misma cosa que cambian lo de debajo (Chat y Email, Transcripción y Análisis). Para elegir el valor de un campo, `sc-selectbutton`.",
       "sobreObsoleto": [],
       "fuente": "projects/ui-smartcontact/src/lib/components/tabs/sc-tabs.component.ts"
@@ -2076,7 +2076,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 31,
+      "usedInSupervisor": 37,
       "cuando": "Para clasificar o marcar un estado EN la fila. Si es un contador pegado a algo, `sc-badge`; si el usuario lo puede quitar, `sc-chip`.",
       "sobreObsoleto": [],
       "fuente": "projects/ui-smartcontact/src/lib/components/tag/sc-tag.component.ts"
@@ -2183,7 +2183,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 51,
+      "usedInSupervisor": 56,
       "cuando": "Para encender o apagar algo CON EFECTO INMEDIATO. Si el cambio se guarda al enviar el formulario, `sc-checkbox`.",
       "sobreObsoleto": [],
       "fuente": "projects/ui-smartcontact/src/lib/components/toggleswitch/sc-toggleswitch.component.ts"
