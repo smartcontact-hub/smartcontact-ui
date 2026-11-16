@@ -103,9 +103,7 @@ type Panel =
         @switch (panel().modo) {
           @case ('reglas') {
             <div class="panel">
-              <p class="consejo sc-text-caption-regular">Pulsa un día o arrastra sobre varios para cambiarlos.</p>
-
-              <div class="grupo">
+              <div class="grupo grupo--dos">
                 <sc-inputtext inputId="b-nombre" fluid required size="sm" label="Nombre" placeholder="Por ejemplo, Oficinas Madrid" [value]="cal().nombre" (valueChange)="b.cambiar({ nombre: $event })" />
                 <sc-select inputId="b-zona" size="sm" label="Zona horaria" [options]="zonas" optionLabel="label" optionValue="value" [value]="cal().zona" (valueChange)="b.cambiar({ zona: $any($event) })" />
               </div>
@@ -118,7 +116,8 @@ type Panel =
                   <sc-button variant="secondary" appearance="text" size="sm" icon="add" ariaLabel="Crear un horario nuevo" (clicked)="abrirHorario(0, 'base')" />
                 </div>
                 @if (horarioBase(); as h) {
-                  <sc-cal-semana [semana]="h.semana" />
+                  <sc-cal-semana compacta [semana]="h.semana" />
+                  <p class="pista sc-text-caption-regular">{{ resumenDeSemana(h.semana) }}</p>
                 }
               </div>
 
@@ -145,7 +144,7 @@ type Panel =
               </div>
 
               <div class="grupo">
-                <h2 class="grupo__titulo sc-text-body-semibold">Festivos y días especiales</h2>
+                <h2 class="grupo__titulo sc-text-body-semibold">Días especiales</h2>
                 @for (e of especiales(); track e.id) {
                   <button type="button" class="item" (click)="editar.set(e)" (mouseenter)="resaltar.set('especial:' + e.id)" (mouseleave)="resaltar.set(null)">
                     <i class="item__color" [attr.data-color]="e.franjas.length ? 'warning' : 'danger'"></i>
@@ -279,10 +278,11 @@ type Panel =
     .b__titulo { margin: 0; color: var(--sc-text-heading); }
     .b__anio { color: var(--sc-text-subtle); font-variant-numeric: tabular-nums; }
     .b__pie { margin: 0; min-block-size: 1.5em; color: var(--sc-text-secondary); }
-    .panel { display: flex; flex-direction: column; gap: var(--sc-spacing-1); padding: var(--sc-spacing-1-25); }
+    .panel { display: flex; flex-direction: column; gap: var(--sc-spacing-1-5); padding: var(--sc-spacing-1-25); }
     .consejo { margin: 0; color: var(--sc-text-secondary); }
-    .grupo { display: flex; flex-direction: column; gap: var(--sc-spacing-0-75); padding-block-start: var(--sc-spacing-1); border-block-start: 1px solid var(--sc-border-subtle); }
-    .grupo:first-of-type { padding-block-start: 0; border: 0; }
+    .grupo { display: flex; flex-direction: column; gap: var(--sc-spacing-0-5); }
+    .grupo--dos { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--sc-spacing-0-75); }
+    .grupo--dos > * { min-inline-size: 0; }
     .grupo__titulo { margin: 0; color: var(--sc-text-heading); }
     .fila { display: flex; align-items: flex-end; gap: var(--sc-spacing-0-25); }
     .fila__crece { flex: 1; min-inline-size: 0; }
@@ -291,10 +291,10 @@ type Panel =
     .item, .accion {
       display: flex; align-items: center; gap: var(--sc-spacing-0-75);
       padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
-      border: 1px solid var(--sc-border-subtle); border-radius: var(--sc-radius-md);
-      background: var(--sc-bg-surface); color: var(--sc-text-primary); text-align: start; cursor: pointer;
+      border: 0; border-radius: var(--sc-radius-md);
+      background: color-mix(in srgb, var(--sc-text-heading) 4%, var(--sc-bg-surface)); color: var(--sc-text-primary); text-align: start; cursor: pointer;
       transition-property: background-color, scale; transition-duration: 150ms; transition-timing-function: ease-out;
-      &:hover { background: var(--sc-bg-hover); }
+      &:hover { background: color-mix(in srgb, var(--sc-text-heading) 8%, var(--sc-bg-surface)); }
       &:active { scale: 0.96; }
       &:focus-visible { outline: 2px solid var(--sc-border-focus); outline-offset: 1px; }
     }
@@ -302,12 +302,12 @@ type Panel =
     .accion .sc-text-body-semibold { color: var(--sc-text-heading); }
     .item__texto { display: flex; flex: 1; flex-direction: column; min-inline-size: 0; }
     .item__color { flex: none; inline-size: var(--sc-spacing-0-75); block-size: var(--sc-spacing-0-75); border-radius: var(--sc-radius-xs); }
-    .item__color[data-color='info'] { background: var(--sc-bg-info); }
-    .item__color[data-color='violet'] { background: var(--sc-bg-violet); }
-    .item__color[data-color='success'] { background: var(--sc-bg-success); }
-    .item__color[data-color='primary'] { background: var(--sc-bg-primary); }
-    .item__color[data-color='warning'] { background: var(--sc-bg-warning); }
-    .item__color[data-color='danger'] { background: var(--sc-bg-danger); }
+    .item__color[data-color='info'] { background: color-mix(in srgb, var(--sc-bg-info) 34%, var(--sc-bg-surface)); }
+    .item__color[data-color='violet'] { background: color-mix(in srgb, var(--sc-bg-violet) 30%, var(--sc-bg-surface)); }
+    .item__color[data-color='success'] { background: color-mix(in srgb, var(--sc-bg-success) 30%, var(--sc-bg-surface)); }
+    .item__color[data-color='primary'] { background: color-mix(in srgb, var(--sc-bg-primary) 26%, var(--sc-bg-surface)); }
+    .item__color[data-color='warning'] { background: color-mix(in srgb, var(--sc-bg-warning) 55%, var(--sc-bg-surface)); }
+    .item__color[data-color='danger'] { background: color-mix(in srgb, var(--sc-bg-danger) 72%, var(--sc-bg-surface)); }
     .cabeza { display: flex; align-items: center; gap: var(--sc-spacing-0-25); }
     .cabeza__titulo { margin: 0; color: var(--sc-text-heading); }
     .ficha { display: flex; flex-direction: column; gap: var(--sc-spacing-0-25); padding: var(--sc-spacing-1); border-radius: var(--sc-radius-md); background: var(--sc-bg-subtle); }
@@ -391,7 +391,7 @@ export class CalCalendarioBComponent {
   protected readonly especiales = computed(() => this.store.especiales().filter((e) => this.cal().id !== 0 && e.calendarioIds.includes(this.cal().id)));
   protected readonly pie = computed(() => {
     const iso = this.encima();
-    if (!iso) return 'Pasa por un día para ver qué horas tiene y por qué.';
+    if (!iso) return 'Pulsa un día o arrastra sobre varios para cambiarlos. Pasa por uno para ver sus horas.';
     const d = resolver(this.estado(), this.calPintado(), iso);
     return `${textoDeRango(iso, iso)}: ${this.horasTexto(d.franjas)}. ${porQue(d)}.`;
   });
