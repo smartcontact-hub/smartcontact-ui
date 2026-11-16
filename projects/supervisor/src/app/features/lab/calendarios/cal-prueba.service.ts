@@ -3,6 +3,7 @@ import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs';
 
 import { type Correccion, corregir, type Mision } from './cal-misiones';
+import { activarDiscovery } from './cal-modo';
 import { CalStore } from './cal-store';
 
 export type Variante = 'A' | 'B';
@@ -90,6 +91,7 @@ export class CalPruebaService {
   }
 
   empezar(): void {
+    activarDiscovery();
     this.store.reiniciar(this.mision());
     this.ultima.set(null);
     // El salto a Repositorios suma uno: se empieza en -1 para que la cuenta sea la de la persona.

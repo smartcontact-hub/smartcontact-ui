@@ -126,10 +126,10 @@ export class CalHorariosListaComponent {
   ];
 
   protected crear(): void {
-    void this.router.navigateByUrl('/admin/horarios/crear');
+    void this.router.navigateByUrl('/admin/semanas/crear');
   }
 
   protected abrir(h: Fila): void {
-    void this.router.navigateByUrl(`/admin/horarios/editar/${h.id}`);
+    void this.router.navigateByUrl(`/admin/semanas/editar/${h.id}`);
   }
 }

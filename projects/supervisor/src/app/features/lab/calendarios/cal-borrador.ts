@@ -115,7 +115,7 @@ export class CalBorrador {
     this.store.guardarBorrador(this.clave(), this.cal());
     this.saliendo.set(true);
     const volver = this.esNuevo() ? '/admin/calendarios/crear' : `/admin/calendarios/editar/${this.id()}`;
-    const destino = horarioId ? `/admin/horarios/editar/${horarioId}` : '/admin/horarios/crear';
+    const destino = horarioId ? `/admin/semanas/editar/${horarioId}` : '/admin/semanas/crear';
     void this.router.navigate([destino], { queryParams: { volver, para } });
   }
 

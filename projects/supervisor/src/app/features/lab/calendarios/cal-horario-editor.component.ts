@@ -146,11 +146,11 @@ export class CalHorarioEditorComponent implements DirtyAware {
     this.guardando.set(true);
     const volver = this.volver();
     if (volver) void this.router.navigateByUrl(`${volver}?horario=${hecho.id}&para=${this.para()}`);
-    else void this.router.navigateByUrl('/admin/horarios');
+    else void this.router.navigateByUrl('/admin/semanas');
   }
 
   protected irse(): void {
     this.guardando.set(true);
-    void this.router.navigateByUrl(this.volver() ?? '/admin/horarios');
+    void this.router.navigateByUrl(this.volver() ?? '/admin/semanas');
   }
 }
