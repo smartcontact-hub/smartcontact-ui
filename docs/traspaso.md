@@ -21,7 +21,7 @@
 
 **Lo que sigue funcionando solo (sin que nadie toque nada):**
 
-- Las **5 apps en producción siguen vivas**. Cloudflare reconstruye desde `main`
+- Las **6 apps en producción siguen vivas**. Cloudflare reconstruye desde `main`
   en cada push, así que lo ya desplegado no se cae por sí mismo.
 - El **CI (GitHub Actions) sigue corriendo**: usa el token que GitHub genera solo
   para cada run, no depende de una credencial personal de Rafa.
@@ -37,7 +37,7 @@
 - **El loop de diseño SÍ está cubierto:** Marta tiene el fichero de Figma y el
   plugin Theme Designer, así que puede cambiar tokens desde diseño sin Rafa.
 - **El resto de llaves no se comparte a propósito** (privacidad, decisión de Rafa
-  2026-08-31): Cloudflare (los 4 deploys) y Jira quedan a nombre de Rafa.
+  2026-08-31): Cloudflare (los 6 deploys) y Jira quedan a nombre de Rafa.
 - **El contexto de producto y negocio** (triaje de Jira, el porqué de las cosas)
   vive sobre todo en la cabeza de Rafa (ver §5). Acceso no es conocimiento.
 
@@ -57,7 +57,7 @@ credenciales aquí**, solo dónde viven.
 | Servicio | Para qué | Config en el repo | Dueño | ¿Quién más tiene acceso? | Dónde vive la credencial | Recuperación (email/2FA) |
 | --- | --- | --- | --- | --- | --- | --- |
 | **GitHub org `smartcontact-hub`** | Repo, CI (Actions), paquetes | `.github/workflows/` | Rafa | Marta Recio (`martarecioa`): rol **Maintain** (2026-08-31). Otro colaborador directo: `arebury` _(confirmar: ¿cuenta personal de Rafa?)_ | Privadas: gestor personal de Rafa, no en el repo | Gestor de Rafa (email + 2FA) |
-| **Cloudflare Pages** (cuenta `b8361bb4…`) | Deploy de las 5 apps (`sc-doc`, `sc-supervisor`, `sc-agent`, `sc-cuscare`, `agent-mini`), preview por rama | No en el repo: la config vive en el dashboard (build cmd + `Build output directory = dist/<app>/browser`) | Rafa _(confirmar)_ | _(rellenar)_ | _(gestor de contraseñas)_ | Gestor de Rafa (email + 2FA) |
+| **Cloudflare Pages** (cuenta `b8361bb4…`) | Deploy de las 6 apps (`sc-doc`, `sc-supervisor`, `sc-agent`, `sc-cuscare`, `sc-cuscare-ds`, `agent-mini`), preview por rama | No en el repo: la config vive en el dashboard (build cmd + `Build output directory = dist/<app>/browser`) | Rafa _(confirmar)_ | _(rellenar)_ | _(gestor de contraseñas)_ | Gestor de Rafa (email + 2FA) |
 | **Figma: fichero del DS** (`khNq9dJKNi13pNllrqm6dx`) | Source of truth del diseño; origen del export de tokens | `figma.config.json`, `code-connect/` | Rafa | Marta (diseño): con acceso (2026-08-31) | _(cuenta Figma)_ | Gestor de Rafa |
 | **Plugin Theme Designer** (token que empuja a `design-tokens-sync`) | Loop Figma to código: empuja el export DTCG | Rama `design-tokens-sync` (NO borrar); `tokens-sync.yml` | Rafa | Marta: con acceso (2026-08-31) | _(token GitHub del plugin, en la máquina)_ | Gestor de Rafa (token en su máquina) |
 | **Jira `jira.dvtech.io`** (proyecto SISMAC) | Tickets y contexto de producto (org externa: dvtech) | Referencias en `docs/` y commits | _(rellenar)_ | VAP, Lucas (backend) _(confirmar)_ | _(cuenta dvtech)_ | Vía dvtech (cuenta de empresa) |
