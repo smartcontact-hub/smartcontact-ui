@@ -1,231 +1,289 @@
-<article class="lab">
-  <!-- ── CABECERA ──────────────────────────────────────────────────────────────────────────────
-       El título dice lo que ES la página, no cómo se llama en el menú: «Lab» ya está en el
-       sidebar y en el eyebrow, y repetirlo tres veces no orienta a nadie. La tira de abajo hace
-       de índice y de resumen a la vez — cuántas cosas hay de cada tipo y a un clic de distancia. -->
-  <header class="lab__head">
-    <p class="eyebrow sc-text-caption-semibold">Lab</p>
-    <h1>Lo que estamos probando</h1>
-    <p class="lead sc-text-h3-regular">
-      Ideas a medio cocer, laboratorios para tocar y los enlaces de cada día. Nada de aquí es
-      todavía el sistema.
-    </p>
+<!-- Degradados del Lab, una sola vez: los usan la forma del título y las ilustraciones de las tarjetas
+     (`lab-arte.component.ts`). Los colores, de la paleta del DS (ver la hoja). -->
+<svg class="lab-defs" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="lab-grad-mar" x1="0" y1="0" x2="1" y2="1">
+      <stop class="lab-stop--cian" offset="0" />
+      <stop class="lab-stop--cielo" offset="0.55" />
+      <stop class="lab-stop--hondo" offset="1" />
+    </linearGradient>
+    <radialGradient id="lab-grad-esfera" cx="0.32" cy="0.3" r="0.8">
+      <stop class="lab-stop--brillo" offset="0" />
+      <stop class="lab-stop--cian" offset="0.28" />
+      <stop class="lab-stop--cielo" offset="0.7" />
+      <stop class="lab-stop--hondo" offset="1" />
+    </radialGradient>
+    <radialGradient id="lab-grad-lima" cx="0.4" cy="0.6" r="0.6">
+      <stop class="lab-stop--lima" offset="0" />
+      <stop class="lab-stop--cian" offset="0.6" stop-opacity="0.9" />
+      <stop class="lab-stop--cielo" offset="1" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="lab-grad-cristal" x1="0" y1="0" x2="1" y2="1">
+      <stop class="lab-stop--cian" offset="0" stop-opacity="0.85" />
+      <stop class="lab-stop--cielo" offset="1" stop-opacity="0.75" />
+    </linearGradient>
+  </defs>
+</svg>
 
-    <nav class="jump" aria-label="Secciones de esta página">
-      @for (s of sections(); track s.id) {
-        <button class="jump__item" type="button" (click)="goTo(s.id)">
-          <span class="jump__count sc-text-h3-semibold">{{ s.count }}</span>
-          <span class="jump__label sc-text-caption-semibold">{{ s.label }}</span>
-          <span class="jump__hint sc-text-caption-regular">{{ s.hint }}</span>
-        </button>
-      }
-    </nav>
-  </header>
+<!-- ── TÍTULO ───────────────────────────────────────────────────────────────────────────────────
+     Como la portada: centrado sobre el gris, con la forma de la esquina. Aquí la forma suelta burbujas, que es lo que
+     hace un laboratorio. Debajo, el índice: cada familia con su cifra, a un clic. -->
+<section class="lab-hero">
+  <svg class="lab-hero__forma" viewBox="0 0 420 260" aria-hidden="true" focusable="false">
+    <g class="lab-hero__esfera">
+      <circle cx="300" cy="70" r="150" fill="url(#lab-grad-esfera)" />
+    </g>
+    <g class="lab-hero__cristal">
+      <rect x="70" y="-60" width="230" height="200" rx="28" transform="rotate(-16 185 40)" fill="url(#lab-grad-cristal)" />
+    </g>
+    <g class="lab-hero__brillo">
+      <circle cx="230" cy="120" r="70" fill="url(#lab-grad-lima)" opacity="0.85" />
+    </g>
+  </svg>
+  <svg class="lab-hero__burbujas" viewBox="0 0 200 260" aria-hidden="true" focusable="false">
+    <circle class="lab-burbuja" cx="40" cy="220" r="14" fill="url(#lab-grad-esfera)" />
+    <circle class="lab-burbuja" cx="120" cy="240" r="9" fill="url(#lab-grad-esfera)" />
+    <circle class="lab-burbuja" cx="80" cy="250" r="6" fill="url(#lab-grad-lima)" />
+    <circle class="lab-burbuja" cx="160" cy="230" r="11" fill="url(#lab-grad-cristal)" />
+  </svg>
 
-  <!-- ── EXPLORACIONES ─────────────────────────────────────────────────────────────────────────
-       Lo primero porque es lo que espera una decisión. El color no decora: dice en qué quedó cada
-       una (verde decidida, ámbar esperando, gris archivada) y se ve antes de leer el rótulo. -->
-  <section class="sec" id="sec-exploraciones" #secExploraciones aria-labelledby="t-exploraciones">
-    <header class="sec__head">
-      <h2 id="t-exploraciones" class="sc-text-h2-semibold">Exploraciones</h2>
-      <p class="sec__lead">Cada versión que se probó, con un enlace que no caduca.</p>
+  <h1 class="lab-hero__titulo sc-text-h1-regular">
+    <span class="lab-hero__marca">Lab</span>
+    <span class="lab-hero__producto">lo que estamos probando</span>
+  </h1>
+  <p class="lab-hero__sub sc-text-h3-regular">
+    Ideas a medio cocer, laboratorios para tocar y los enlaces de cada día. Nada de aquí es todavía el sistema.
+  </p>
+</section>
+
+<div class="lab-pagina">
+  <nav class="lab-indice" aria-label="Secciones de esta página">
+    @for (s of sections; track s.id) {
+      <button class="lab-indice__item" type="button" (click)="goTo(s.id)">
+        <sc-icon-tile [icon]="s.icon" size="sm" [tone]="s.id === 'horarios' ? 'brand' : 'default'" />
+        <span class="lab-indice__texto">
+          <span class="lab-indice__label sc-text-body-semibold">{{ s.label }}</span>
+          <span class="lab-indice__hint sc-text-caption-regular">{{ s.hint }}</span>
+        </span>
+        <span class="lab-indice__cifra sc-text-h3-semibold">{{ s.count }}</span>
+      </button>
+    }
+  </nav>
+
+  <!-- ── HORARIOS ───────────────────────────────────────────────────────────────────────────────
+       El frente que se está probando ahora, en la tarjeta grande: cada rama ponía su tarjeta en el Lab de SU rama, y
+       aquí, que se sirve desde `main`, no salía ninguna. -->
+  <section class="lab-sec lab-sec--primera" id="sec-horarios" aria-labelledby="t-horarios">
+    <app-lab-horarios />
+  </section>
+
+  <!-- ── EXPLORACIONES ──────────────────────────────────────────────────────────────────────────
+       Versiones que esperan una decisión. Cada tarjeta lleva el esquema de lo que prueba y su estado encima: verde
+       decidida, ámbar esperando, sin color archivada. -->
+  <section class="lab-sec" id="sec-exploraciones" aria-labelledby="t-exploraciones">
+    <header class="lab-sec__cabeza">
+      <sc-icon-tile icon="compare" />
+      <div>
+        <h2 id="t-exploraciones" class="lab-sec__titulo sc-text-h2-semibold">Exploraciones</h2>
+        <p class="lab-sec__lead sc-text-body-regular">
+          Cada versión que se probó, con un enlace que no caduca. Esperan una decisión.
+        </p>
+      </div>
     </header>
 
-    <div class="cards">
+    <div class="lab-dos">
       @for (ex of explorations; track ex.id) {
-        <article class="card" [attr.data-status]="ex.status" [attr.aria-labelledby]="'expl-' + ex.id">
-          <div class="card__top">
-            <sc-tag [severity]="statusSeverity(ex.status)" [value]="statusLabel[ex.status]" />
-            <span class="card__date sc-text-caption-regular">{{ ex.version.date }}</span>
+        <article class="lab-tarjeta" [attr.aria-labelledby]="'expl-' + ex.id">
+          <div class="lab-tarjeta__arte">
+            <app-lab-arte [tema]="ex.id" [apagada]="ex.status === 'archivada'" />
+            <sc-tag class="lab-tarjeta__estado" [severity]="statusSeverity(ex.status)" [value]="statusLabel[ex.status]" />
           </div>
 
-          <h3 [id]="'expl-' + ex.id" class="card__title sc-text-h3-semibold">{{ ex.title }}</h3>
-          <p class="card__q sc-text-body-regular">{{ ex.objective }}</p>
+          <div class="lab-tarjeta__cuerpo">
+            <p class="lab-tarjeta__fecha sc-text-caption-regular">{{ fecha(ex.version.date) }}</p>
+            <h3 [id]="'expl-' + ex.id" class="lab-tarjeta__titulo sc-text-title-semibold">{{ ex.title }}</h3>
+            <p class="lab-tarjeta__q sc-text-body-regular">{{ ex.objective }}</p>
+            @if (ex.statusNote) {
+              <p class="lab-tarjeta__nota sc-text-caption-regular">{{ ex.statusNote }}</p>
+            }
 
-          @if (ex.statusNote) {
-            <p class="card__note sc-text-caption-regular">{{ ex.statusNote }}</p>
-          }
+            <div class="lab-tarjeta__pie">
+              <a class="lab-enlace sc-text-subtitle-semibold" [href]="ex.live.href" target="_blank" rel="noopener">
+                Abrir <sc-icon name="arrow_outward" [size]="16" />
+              </a>
+              <span class="lab-tarjeta__donde sc-text-caption-regular">{{ ex.live.label }}</span>
+            </div>
 
-          <div class="card__foot">
-            <a class="cta sc-text-body-semibold" [href]="ex.live.href" target="_blank" rel="noopener">
-              Abrir <span class="cta__arrow" aria-hidden="true">↗</span>
-            </a>
-            <span class="card__where sc-text-caption-regular">{{ ex.live.label }}</span>
-          </div>
+            <!-- El historial, plegado: es la mayor parte del texto y casi nunca es lo que se viene a buscar. -->
+            @if (ex.history.length || ex.figma?.length) {
+              <details class="lab-mas">
+                <summary class="lab-mas__resumen sc-text-caption-semibold">
+                  <sc-icon class="lab-mas__galon" name="expand_more" [size]="16" />
+                  {{ ex.history.length }} versión(es) anterior(es){{ ex.figma?.length ? ' · Figma' : '' }}
+                </summary>
 
-          <!-- Lo que solo hace falta a veces, plegado: el historial es el 70 % del texto de esta
-               tarjeta y casi nunca es lo que se viene a buscar. -->
-          @if (ex.history.length || ex.figma?.length) {
-            <details class="more">
-              <summary class="more__summary sc-text-caption-semibold">
-                <span class="more__chevron" aria-hidden="true"></span>
-                {{ ex.history.length }} versión(es) anterior(es){{ ex.figma?.length ? ' · Figma' : '' }}
-              </summary>
-
-              <ol class="versions">
-                @for (v of ex.history; track v.href) {
-                  <li class="version">
-                    <a class="version__link" [href]="v.href" target="_blank" rel="noopener">
-                      <span class="version__date sc-text-caption-regular">{{ v.date }}</span>
-                      <span class="version__behavior sc-text-caption-regular">{{ v.behavior }}</span>
-                    </a>
-                  </li>
-                }
-              </ol>
-
-              @if (ex.figma?.length) {
-                <ul class="figma">
-                  @for (f of ex.figma; track f.href) {
+                <ol class="lab-versiones">
+                  @for (v of ex.history; track v.href) {
                     <li>
-                      <a class="version__link" [href]="f.href" target="_blank" rel="noopener">
-                        <span class="version__behavior sc-text-caption-regular">{{ f.label }} ↗</span>
+                      <a class="lab-version" [href]="v.href" target="_blank" rel="noopener">
+                        <span class="lab-version__fecha sc-text-caption-regular">{{ fecha(v.date) }}</span>
+                        <span class="sc-text-caption-regular">{{ v.behavior }}</span>
                       </a>
                     </li>
                   }
-                </ul>
-              }
-            </details>
-          }
+                  @for (f of ex.figma; track f.href) {
+                    <li>
+                      <a class="lab-version" [href]="f.href" target="_blank" rel="noopener">
+                        <span class="lab-version__fecha sc-text-caption-regular">Figma</span>
+                        <span class="sc-text-caption-regular">{{ f.label }}</span>
+                      </a>
+                    </li>
+                  }
+                </ol>
+              </details>
+            }
+          </div>
         </article>
       }
     </div>
   </section>
 
-  <!-- ── LABORATORIOS ──────────────────────────────────────────────────────────────────────────
-       NO son tarjetas, y es a propósito. Dos rejillas de tarjetas seguidas se leen como lo mismo
-       repetido, y esto es otra cosa: aquí no hay nada que comparar por fuera. Van en filas
-       anchas, numeradas, separadas por una línea — la familia se distingue por su FORMA y no por
-       un color de marca nuevo, que el acento de este sistema es uno solo (`.impeccable.md`). -->
-  <section class="sec" id="sec-laboratorios" #secLaboratorios aria-labelledby="t-laboratorios">
-    <header class="sec__head">
-      <h2 id="t-laboratorios" class="sc-text-h2-semibold">Laboratorios</h2>
-      <p class="sec__lead">Una sola página con el conmutador dentro: comparas sin cambiar de pestaña.</p>
+  <!-- ── LABORATORIOS ───────────────────────────────────────────────────────────────────────────
+       Una página con su conmutador dentro: no hay nada que comparar por fuera. Lo que se toca, en pastillas grises,
+       que son pistas y no botones. -->
+  <section class="lab-sec" id="sec-laboratorios" aria-labelledby="t-laboratorios">
+    <header class="lab-sec__cabeza">
+      <sc-icon-tile icon="science" />
+      <div>
+        <h2 id="t-laboratorios" class="lab-sec__titulo sc-text-h2-semibold">Laboratorios</h2>
+        <p class="lab-sec__lead sc-text-body-regular">
+          Una sola página con el conmutador dentro: comparas sin cambiar de pestaña.
+        </p>
+      </div>
     </header>
 
-    <ol class="benches">
-      @for (lab of labs; track lab.id; let i = $index) {
-        <li class="bench">
-          <span class="bench__n sc-text-caption-semibold" aria-hidden="true">{{ i + 1 }}</span>
-
-          <div class="bench__body">
-            <h3 class="bench__title sc-text-h3-semibold">{{ lab.title }}</h3>
-            <p class="bench__q sc-text-body-regular">{{ lab.question }}</p>
-            <p class="bench__where sc-text-caption-regular">{{ lab.where }}</p>
+    <div class="lab-tres">
+      @for (lab of labs; track lab.id) {
+        <article class="lab-tarjeta" [attr.aria-labelledby]="'lab-' + lab.id">
+          <div class="lab-tarjeta__arte">
+            <app-lab-arte [tema]="lab.id" />
           </div>
 
-          <div class="bench__aside">
-            <!-- Lo que se toca, como una lista de verdad: son los mandos del laboratorio, y un
-                 lector de pantalla tiene que poder contarlos. -->
-            <ul class="knobs" [attr.aria-label]="'Lo que se toca en ' + lab.title">
+          <div class="lab-tarjeta__cuerpo">
+            <h3 [id]="'lab-' + lab.id" class="lab-tarjeta__titulo sc-text-title-semibold">{{ lab.title }}</h3>
+            <p class="lab-tarjeta__q sc-text-body-regular">{{ lab.question }}</p>
+            <ul class="lab-mandos" [attr.aria-label]="'Lo que se toca en ' + lab.title">
               @for (c of lab.controls; track c) {
-                <li class="knob sc-text-caption-regular">{{ c }}</li>
+                <li class="lab-mandos__item sc-text-caption-regular">{{ c }}</li>
               }
             </ul>
-            <a class="cta sc-text-body-semibold" [href]="lab.href" target="_blank" rel="noopener">
-              Abrir <span class="cta__arrow" aria-hidden="true">↗</span>
-            </a>
-            <span class="bench__url sc-text-caption-regular">{{ lab.label }}</span>
+            <p class="lab-tarjeta__nota sc-text-caption-regular">{{ lab.where }}</p>
+
+            <div class="lab-tarjeta__pie">
+              <a class="lab-enlace sc-text-subtitle-semibold" [href]="lab.href" target="_blank" rel="noopener">
+                Abrir <sc-icon name="arrow_outward" [size]="16" />
+              </a>
+              <span class="lab-tarjeta__donde sc-text-caption-regular">{{ lab.label }}</span>
+            </div>
           </div>
-        </li>
+        </article>
       }
-    </ol>
+    </div>
   </section>
 
-  <!-- ── ENLACES ───────────────────────────────────────────────────────────────────────────────
-       Un destino por fila, el dominio bajo el nombre y NADA más: esto es una agenda, no una
-       explicación. Lo que antes eran tres líneas de nota por enlace vive donde se explica de
-       verdad, en la página de cada cosa. -->
-  <section class="sec" id="sec-enlaces" #secEnlaces aria-labelledby="t-enlaces">
-    <header class="sec__head">
-      <h2 id="t-enlaces" class="sc-text-h2-semibold">Enlaces</h2>
-      <p class="sec__lead">Lo desplegado, el repositorio y el Kit, para no memorizar URLs.</p>
+  <!-- ── ENLACES ────────────────────────────────────────────────────────────────────────────────
+       Una agenda: un destino por fila, el dominio debajo y nada más. Lo que hace cada sitio se cuenta en el sitio. -->
+  <section class="lab-sec" id="sec-enlaces" aria-labelledby="t-enlaces">
+    <header class="lab-sec__cabeza">
+      <sc-icon-tile icon="link" />
+      <div>
+        <h2 id="t-enlaces" class="lab-sec__titulo sc-text-h2-semibold">Enlaces</h2>
+        <p class="lab-sec__lead sc-text-body-regular">Lo desplegado, el repositorio y el Kit, para no memorizar URLs.</p>
+      </div>
     </header>
 
-    <div class="groups">
-      @for (group of linkGroups; track group.title) {
-        <section class="group" [attr.aria-label]="group.title">
-          <h3 class="group__title sc-text-caption-semibold">{{ group.title }}</h3>
-          <ul class="links">
-            @for (link of group.links; track link.label) {
-              <li>
-                @if (link.route) {
-                  <a class="link" [routerLink]="link.route">
-                    <span class="link__label sc-text-body-semibold">{{ link.label }}</span>
-                    <span class="link__meta sc-text-caption-regular">En este sitio</span>
-                    <span class="link__arrow" aria-hidden="true">→</span>
-                  </a>
-                } @else if (link.href) {
-                  <a class="link" [href]="link.href" target="_blank" rel="noopener">
-                    <span class="link__label sc-text-body-semibold">{{ link.label }}</span>
-                    <span class="link__meta sc-text-caption-regular">{{ link.meta }}</span>
-                    <span class="link__arrow" aria-hidden="true">↗</span>
-                  </a>
-                }
-              </li>
+    <div class="lab-agenda">
+      <svg class="lab-agenda__trazo" viewBox="0 0 200 120" aria-hidden="true" focusable="false">
+        <path pathLength="1" d="M200 20 C150 24 140 70 100 74 C70 78 50 50 20 60" />
+        <circle cx="100" cy="74" r="12" />
+        <circle cx="100" cy="74" r="5" />
+        <circle cx="20" cy="60" r="12" />
+        <circle cx="20" cy="60" r="5" />
+      </svg>
+
+      <div class="lab-agenda__grupos">
+        @for (group of linkGroups; track group.title) {
+          <section class="lab-grupo" [attr.aria-label]="group.title">
+            <h3 class="lab-grupo__titulo sc-text-caption-semibold">
+              <sc-icon [name]="group.icon" [size]="16" />
+              {{ group.title }}
+            </h3>
+            <ul class="lab-grupo__lista">
+              @for (link of group.links; track link.label) {
+                <li>
+                  @if (link.route) {
+                    <a class="lab-fila" [routerLink]="link.route">
+                      <span class="lab-fila__label sc-text-body-semibold">{{ link.label }}</span>
+                      <span class="lab-fila__meta sc-text-caption-regular">En este sitio</span>
+                      <sc-icon class="lab-fila__flecha" name="chevron_right" [size]="16" />
+                    </a>
+                  } @else if (link.href) {
+                    <a class="lab-fila" [href]="link.href" target="_blank" rel="noopener">
+                      <span class="lab-fila__label sc-text-body-semibold">{{ link.label }}</span>
+                      <span class="lab-fila__meta sc-text-caption-regular">{{ link.meta }}</span>
+                      <sc-icon class="lab-fila__flecha" name="arrow_outward" [size]="16" />
+                    </a>
+                  }
+                </li>
+              }
+            </ul>
+          </section>
+        }
+      </div>
+
+      <p class="lab-agenda__nota sc-text-caption-regular">
+        <sc-icon name="info" [size]="16" />
+        <span>
+          <strong>Preview por rama:</strong> cada rama publica su copia en
+          <code>&lt;rama&gt;.sc-supervisor.pages.dev</code>, con guiones en vez de barras y
+          <strong>cortada a 28 caracteres</strong> (medido el 2026-09-22).
+        </span>
+      </p>
+    </div>
+  </section>
+
+  <!-- ── GUARDADO ───────────────────────────────────────────────────────────────────────────────
+       Bocetos sueltos que no son ni exploración ni laboratorio: se miran. Al final, que es el sitio que les toca. -->
+  <section class="lab-sec" id="sec-guardado" aria-labelledby="t-guardado">
+    <header class="lab-sec__cabeza">
+      <sc-icon-tile icon="bookmark" />
+      <div>
+        <h2 id="t-guardado" class="lab-sec__titulo sc-text-h2-semibold">Guardado</h2>
+        <p class="lab-sec__lead sc-text-body-regular">Bocetos que aún no son del sistema. Se miran, no se comparan.</p>
+      </div>
+    </header>
+
+    <div class="lab-dos">
+      @for (g of guardado; track g.href) {
+        <article class="lab-tarjeta">
+          <div class="lab-tarjeta__arte lab-tarjeta__arte--muestra" [class.lab-tarjeta__arte--imagen]="g.preview === 'imagen'">
+            @if (g.src) {
+              <iframe [src]="g.src" [title]="g.title + ', prototipo'" loading="lazy"></iframe>
+            } @else {
+              <img [src]="g.href" [alt]="g.alt" loading="lazy" />
             }
-          </ul>
-        </section>
+          </div>
+          <div class="lab-tarjeta__cuerpo">
+            <h3 class="lab-tarjeta__titulo sc-text-title-semibold">{{ g.title }}</h3>
+            <p class="lab-tarjeta__nota sc-text-caption-regular">{{ g.by }}</p>
+            <div class="lab-tarjeta__pie">
+              <a class="lab-enlace sc-text-subtitle-semibold" [href]="g.href" target="_blank" rel="noopener">
+                Abrir <sc-icon name="arrow_outward" [size]="16" />
+              </a>
+            </div>
+          </div>
+        </article>
       }
     </div>
-
-    <p class="branch-note sc-text-caption-regular">
-      <strong>Preview por rama:</strong> cada rama publica su copia en
-      <code>&lt;rama&gt;.sc-supervisor.pages.dev</code>, con guiones en vez de barras y
-      <strong>cortada a 28 caracteres</strong> (medido el 2026-09-22).
-    </p>
   </section>
-
-  <!-- ── GUARDADO ──────────────────────────────────────────────────────────────────────────────
-       Piezas sueltas que no son ni exploración ni laboratorio: no se comparan ni se tocan, se
-       miran. Van al final y en pequeño, que es el sitio que les toca. -->
-  <section class="sec" aria-labelledby="t-guardado">
-    <header class="sec__head">
-      <h2 id="t-guardado" class="sc-text-h2-semibold">Guardado</h2>
-      <p class="sec__lead">Bocetos que aún no son del sistema. Se miran, no se comparan.</p>
-    </header>
-
-    <div class="saved">
-      <article class="save">
-        <div class="save__preview">
-          <iframe
-            src="/explorations/skeleton-screen/index.html"
-            title="Pantalla de carga (esqueleto) — prototipo"
-            loading="lazy"
-          ></iframe>
-        </div>
-        <div class="save__body">
-          <h3 class="save__title sc-text-body-semibold">Pantalla de carga (esqueleto)</h3>
-          <p class="save__by sc-text-caption-regular">Marta Recio · jul 2026 · HTML sin tokens</p>
-          <a
-            class="cta cta--sm sc-text-caption-semibold"
-            href="/explorations/skeleton-screen/index.html"
-            target="_blank"
-            rel="noopener"
-            >Abrir <span aria-hidden="true">↗</span></a
-          >
-        </div>
-      </article>
-
-      <article class="save">
-        <div class="save__preview save__preview--image">
-          <img
-            src="/explorations/search-loading/search_loading_icon.gif"
-            alt="Icono animado de carga: una lupa buscando con el texto Cargando resultados"
-            loading="lazy"
-          />
-        </div>
-        <div class="save__body">
-          <h3 class="save__title sc-text-body-semibold">Icono de carga (búsqueda)</h3>
-          <p class="save__by sc-text-caption-regular">Marta Recio · jul 2026 · Lottie y GIF</p>
-          <a
-            class="cta cta--sm sc-text-caption-semibold"
-            href="/explorations/search-loading/search_loading_icon.gif"
-            target="_blank"
-            rel="noopener"
-            >Abrir <span aria-hidden="true">↗</span></a
-          >
-        </div>
-      </article>
-    </div>
-  </section>
-</article>
+</div>

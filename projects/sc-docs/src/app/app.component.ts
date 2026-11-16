@@ -110,7 +110,7 @@ const MARCA = 'Smart Contact UI';
  * Shell de sc-docs, con la estructura de las docs de sistema de diseño de referencia (Primer):
  * cabecera fija arriba con las cinco secciones, lateral SOLO en las secciones que tienen páginas
  * dentro (Fundamentos, Componentes) con sus grupos a la vista, la página en el centro y, a la
- * derecha, «En esta página» leído de sus `h2`. La portada (`/`) va sin lateral y a todo el ancho.
+ * derecha, «En esta página» leído de sus `h2`. La portada (`/`) y el Lab van sin lateral y a todo el ancho.
  *
  * El buscador ⌘K reusa `sc-command-palette` del propio DS (dogfooding): se monta una vez aquí,
  * escucha el atajo global, y le publicamos como comandos las secciones + los componentes.
@@ -174,7 +174,11 @@ export class AppComponent {
     return /[?&]solo=1(&|$)/.test(url) || (url === '/' && this.soloAlArrancar);
   });
 
-  protected readonly esInicio = computed(() => this.ruta() === '/');
+  /**
+   * Las páginas con la composición de la portada: fondo gris, a todo el ancho y sin «En esta página». El Lab la comparte
+   * desde el 2026-11-16: se parece a la portada a propósito y lleva su propio índice arriba.
+   */
+  protected readonly esPortada = computed(() => this.ruta() === '/' || this.ruta() === '/lab');
 
   /** El lateral de la sección en la que estás, o null si la sección es de una sola página. */
   protected readonly seccion = computed<SeccionLateral | null>(() => {
@@ -190,7 +194,7 @@ export class AppComponent {
    */
   protected readonly conIndice = computed(() => {
     const r = this.ruta();
-    return !this.esInicio() && !r.startsWith('/components');
+    return !this.esPortada() && !r.startsWith('/components');
   });
 
   /**
