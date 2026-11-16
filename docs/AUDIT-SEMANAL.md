@@ -13,6 +13,101 @@
 
 ---
 
+## 2026-11-16
+
+> Método: pasada A (deuda de código, ≤5, incluye calidad de copy i18n de las claves nuevas en
+> los cuatro idiomas) + pasada B (deriva de docs) + pasada C (PRs parados >7d) + pasada D (panel
+> de Cloudflare). Contra AGENTS.md/.impeccable.md/customs-catalog.md/DOCS-INDEX.md.
+> Fuentes comparadas: `git log` desde la pasada del 2026-11-02 (57 commits: Horarios y Festivos,
+> el campo de audio, «Pregunta a la IA» y las fichas de sc-docs, la retirada de `azure`); las
+> 191 claves nuevas de `es.json`, `en.json`, `fr.json` y `pt.json` (bloques `horarios`,
+> `festivos` y el calendario), leídas enteras; los dos diálogos y los dos editores de Horarios
+> comparados entre sí; el script `verify` de `package.json` partido por `&&` (52, como dicen los
+> docs); `SITIOS` de `scripts/cf-sites.mjs` (6); las zonas `@sc-gen` de las capas de tokens (10
+> en 5 ficheros); las clases `.sc-text-*` (14) y los tokens `--sc-label-*` (36) contados en las
+> hojas; `LEGACY_PENDIENTES` de `scripts/audit-api-era.mjs` (vacía); PRs abiertos por la API de
+> GitHub; `npm run audit:cf-config` con token. La repetición del esqueleto de los editores
+> (Ctrl+S, miga con nombre, aviso de obligatorio) no se marca: es DD-43.
+> Además, esta pasada tacha cuatro casillas antiguas ya resueltas: las tres de los «38 colores»
+> del catálogo (corregido el 2026-11-02) y la de «los 4 gaps» de `DOCS-INDEX.md` (corregida hoy).
+
+### Deuda de código
+
+- [ ] **P2** El portugués de Horarios y Festivos tutea y el resto de `pt.json` trata de usted.
+      Nueve de las once frases en imperativo de «tu» del fichero están en este bloque
+      (`projects/supervisor/src/assets/i18n/pt.json:1538`, `:1563`, `:1580`, `:1618`, `:1622`,
+      `:1623`, `:1624`, `:1651`, `:1699`), contra 23 líneas en imperativo formal en el resto; y
+      la misma pantalla se contesta a sí misma en `pt.json:1661` («salve antes o horário»).
+      → «Escolha um dia para ver as horas e de onde vêm», «Escolha os dias», «Marque todos os dias
+      que levam o mesmo.», «Escolha as datas do período», «Marque pelo menos um dia», «…: edite-a
+      na lista», «Adicione pelo menos uma faixa», «Escolha primeiro para que dias copiar», «Os que
+      adicionar ficarão fechados…». [arréglalo; gate-able en parte: un guard podría avisar de un
+      imperativo de segunda persona informal en `pt.json`, con su lista de verbos]
+- [ ] **P2** El formulario de grupo tiene dos campos distintos para adjuntar un audio y el
+      criterio solo vive en un comentario de la plantilla (`:896-898`) y en su commit: `sc-audio-picker` en música de espera y audio
+      saliente (`projects/supervisor/src/app/features/admin/groups/pages/group-form-page.component.html:899`)
+      y `sc-fileupload` en los demás audios (`:495`, `:919`), «hasta que se decida el evolutivo». El componente se declara
+      a sí mismo un hueco del DS que se rehará
+      (`projects/supervisor/src/app/shared/components/audio-picker/audio-picker.component.ts:15-17`),
+      pero `docs/inventory.md:109` sigue diciendo «Quedan **2**» y `.impeccable.md:78-80`,
+      «2 componentes locales». → apuntarlo como tercer hueco en el inventario, con su disparador
+      en el roadmap (el evolutivo de la subida de archivos), y una fila en las bifurcaciones de
+      `AGENTS.md` que diga cuál de los dos se usa para un audio. [arréglalo]
+- [ ] **P3** Inglés de los avisos de uso de un horario: «they will be always open» no se dice
+      así (`projects/supervisor/src/assets/i18n/en.json:1646`, `:1647`, `:1657`, `:1658`)
+      → «they will always be open» / «it will always be open». Y `en.json:1570` escribe
+      «Colour» cuando el resto del fichero usa «Color» (`:1113`, `:1146`, `:1377`)
+      → «Color in the calendar». [arréglalo]
+
+### Deriva de docs
+
+- [x] `AGENTS.md:319` decía «una de las 12 clases `.sc-text-*`» y `AGENTS.md:222`, «una de las 14»:
+      el mismo doc con dos cifras. Contadas hoy en las hojas de tokens: **14**. Corregido en esta
+      pasada. [gate-able: un guard debería contar las clases `.sc-text-*` de la hoja y compararlas
+      con las cifras que citan `AGENTS.md` y sc-docs]
+- [x] `AGENTS.md:613` afirmaba que «16 library components still use» `@Input()/@Output()` y que
+      eran los únicos permitidos; `LEGACY_PENDIENTES` está **vacía** desde el 2026-08-30
+      (`scripts/audit-api-era.mjs:58`, con su comentario en `:48-52`). Quien leyera la guía
+      buscaría 16 excepciones que no existen. Corregido en esta pasada.
+- [x] `docs/DOCS-INDEX.md:62` describía la tarjeta de `CLAUDE.md` con «7 preguntas» y «las 9 zonas
+      `@sc-gen`»; la tarjeta tiene **8** (`CLAUDE.md:26-33`) y las zonas son **10** (`CLAUDE.md:58-62`,
+      contadas hoy en las capas). Corregido en esta pasada. [gate-able: las dos cifras salen de
+      contar líneas de la tarjeta y marcas `@sc-gen`]
+- [x] `.impeccable.md:91-93` situaba los bloques `@sc-gen` en dos ficheros (`01-primitive` y
+      `04-component`); viven en **cinco** (`01`, `02`, `04`, `05`, `07`), como ya avisa
+      `CLAUDE.md:58`. Es el doc que dice qué es sagrado, y dejaba tres ficheros generados sin
+      nombrar. Y `.impeccable.md:114-115` mandaba correr la batería entera de e2e tras un cambio
+      visual, contra DD-154 y `CLAUDE.md:53-54` (solo las pruebas de lo tocado; la batería la corre
+      el CI). Corregidos los dos en esta pasada.
+- [x] `docs/customs-catalog.md:217` decía «Los 32 tokens `--sc-label-*` (8 colores × …)»; hoy son
+      **36** (9 colores: se sumó `brown`, también en oscuro,
+      `projects/design-tokens/src/lib/styles/tokens/layers/07-dark.css:447`). Corregido en esta
+      pasada.
+- [x] `docs/traspaso.md:24` decía «5 apps en producción», `:40` «los 4 deploys» y `:60` listaba
+      cinco proyectos: tres cifras en el mismo doc y ninguna la buena. `SITIOS` tiene **6**
+      (faltaba `sc-cuscare-ds`). Corregido en esta pasada. [gate-able: es la tercera vez que una
+      app nueva no llega a este doc; un guard debería comparar las cifras de apps y deploys de
+      `traspaso.md` y `.impeccable.md` con el tamaño de `SITIOS`]
+- [ ] El Worker de «Pregunta a la IA» no está en el inventario de servicios externos de
+      `docs/traspaso.md:56-62`, que es su fuente única. Se publica a mano
+      (`docs/handoff/design-system.md:189`), fuera de los seis sitios (`scripts/cf-sites.mjs:35`),
+      y sc-docs lo llama en un subdominio personal de `workers.dev`
+      (`projects/sc-docs/src/app/shared/ask-ai/ask-ai.service.ts:9`): si esa cuenta cambia, el chat
+      de la doc publicada deja de contestar y ningún gate lo ve. → añadir su fila (para qué, dónde
+      vive la config, dueño, quién más tiene acceso); los datos de acceso solo los sabe Rafa.
+      [arréglalo]
+
+### Trabajo sin mergear
+
+sin hallazgos: los cinco PRs abiertos (#614, #616, #617, #618 y #619, borradores del lab de
+Horarios) tienen entre 2 y 3 días.
+
+### Panel de Cloudflare
+
+sin hallazgos: `npm run audit:cf-config`, con token, da ✓ en los seis proyectos (medido hoy).
+
+---
+
 ## 2026-11-02 (segunda pasada, tras los cambios del día)
 
 > Método: pasada A (deuda de código, ≤5) + pasada B (deriva de docs) + pasada C (PRs parados >7d) +
@@ -109,7 +204,7 @@ sin hallazgos.
 
 ### Deriva de docs
 
-- [ ] `docs/customs-catalog.md:753` sigue afirmando que el gate de paridad cruza «**38 colores**»
+- [x] `docs/customs-catalog.md:753` sigue afirmando que el gate de paridad cruza «**38 colores**»
       y que la lista `diverge` de `scripts/color-map.mjs` tiene «**10 filas**». Medido hoy
       importando ese módulo: `ENFORCE` tiene **76** filas y `DIVERGE` **1** (77 en `COLOR`). Es
       el mismo desfase de las secciones 2026-09-21 y 2026-10-12 (entonces `:680` y `:721`; la
@@ -145,7 +240,7 @@ sin hallazgos.
 
 ### Deriva de docs
 
-- [ ] `docs/customs-catalog.md:721` afirma que el gate de paridad cruza «**38 colores**» y que la
+- [x] `docs/customs-catalog.md:721` afirma que el gate de paridad cruza «**38 colores**» y que la
       lista `diverge` de `scripts/color-map.mjs` tiene «**10 filas**». Medido hoy importando ese
       módulo: **73** filas `enforce` y **4** `diverge` (77 en total). Es el mismo desfase de la
       sección 2026-09-21, que sigue sin corregirse (entonces citaba `:680`; la línea se ha
@@ -263,7 +358,7 @@ no comprobado (sin `CLOUDFLARE_API_TOKEN` en este entorno).
 
 ### Deriva de docs
 
-- [ ] `docs/customs-catalog.md:680` sigue citando conteos de `scripts/color-map.mjs` fechados
+- [x] `docs/customs-catalog.md:680` sigue citando conteos de `scripts/color-map.mjs` fechados
       2026-08-13 (38 filas `enforce`, 10 `diverge`) que la migración de esta semana (`395824f`,
       #193 — «el guard ya no deja escribir un color a mano») dejó atrás: contado hoy sobre el
       propio array, hay **51** filas `enforce` y **4** `diverge` (`form.field.icon.color:59`,
@@ -390,7 +485,7 @@ no comprobado (sin `CLOUDFLARE_API_TOKEN` en este entorno).
       compare esa cifra contra la que citan estos ficheros cerraría la clase entera, como ya hace
       CHECK J con los pasos con nombre de `ci.yml`]
 
-- [ ] `docs/DOCS-INDEX.md:31` describe `docs/inventory.md` como "cada componente + wrapper/pure +
+- [x] `docs/DOCS-INDEX.md:31` describe `docs/inventory.md` como "cada componente + wrapper/pure +
       **los 4 gaps abiertos**", pero `docs/inventory.md:86` dice explícitamente "Quedan **2**" (con
       una sección "Cerrados (verificado 2026-08-13)" para los otros dos), y `.impeccable.md:76` ya
       se corrigió a "2" ese mismo día. El puntero de `DOCS-INDEX.md` es el único que se quedó en 4,
