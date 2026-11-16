@@ -64,39 +64,43 @@
       <p class="cabecera__error sc-text-caption-regular" role="alert">{{ nameError() }}</p>
     }
 
-    <section class="horario__calendario" [attr.aria-label]="'repositories.horarios.section_calendar' | translate">
-      <sc-horario-vista
-        [reglas]="reglas()"
-        [calendarios]="calendarios()"
-        [zona]="form().timezone"
-        [(diaElegido)]="diaDelAnio"
-        (cambiarDia)="cambiarDia($event)"
-        (editarPeriodo)="abrirPeriodo($event)"
-        (editarSemana)="editarSemana()"
-        (editarFestivos)="editarFestivos($event)"
-      />
-    </section>
+    <!-- Pantalla dividida: a la izquierda (30 %) las reglas, siempre a la vista; a la derecha (70 %) el calendario. -->
+    <div class="horario__cuerpo">
+      <section class="horario__reglas" [attr.aria-label]="'repositories.horarios.x.rules.title' | translate">
+        <sc-horario-reglas
+          [semana]="form().week"
+          [periodos]="form().periods"
+          [especiales]="form().specials"
+          [zona]="form().timezone"
+          [calendarios]="calendarios()"
+          [festivosAplicados]="form().holidayCalendarIds"
+          [festivosHref]="festivosHref"
+          (editarSemana)="editarSemana()"
+          (anadirPeriodo)="periodoDialog.set({ periodo: null })"
+          (abrirPeriodo)="abrirPeriodo($event)"
+          (eliminarPeriodo)="eliminarPeriodo($event)"
+          (anadirEspecial)="especialDialog.set({ especial: null, fecha: null, mes: diaDelAnio() })"
+          (abrirEspecial)="abrirEspecial($event)"
+          (eliminarEspecial)="eliminarEspecial($event)"
+          (cambiarFestivos)="ponerFestivos($event)"
+          (gestionarFestivos)="irAFestivos($event)"
+        />
+      </section>
 
-    <section class="horario__reglas" [attr.aria-label]="'repositories.horarios.x.rules.title' | translate">
-      <sc-horario-reglas
-        [semana]="form().week"
-        [periodos]="form().periods"
-        [especiales]="form().specials"
-        [zona]="form().timezone"
-        [calendarios]="calendarios()"
-        [festivosAplicados]="form().holidayCalendarIds"
-        [festivosHref]="festivosHref"
-        (editarSemana)="editarSemana()"
-        (anadirPeriodo)="periodoDialog.set({ periodo: null })"
-        (abrirPeriodo)="abrirPeriodo($event)"
-        (eliminarPeriodo)="eliminarPeriodo($event)"
-        (anadirEspecial)="especialDialog.set({ especial: null, fecha: null, mes: diaDelAnio() })"
-        (abrirEspecial)="abrirEspecial($event)"
-        (eliminarEspecial)="eliminarEspecial($event)"
-        (cambiarFestivos)="ponerFestivos($event)"
-        (gestionarFestivos)="irAFestivos($event)"
-      />
-    </section>
+      <section class="horario__calendario" [attr.aria-label]="'repositories.horarios.section_calendar' | translate">
+        <sc-horario-vista
+          [reglas]="reglas()"
+          [calendarios]="calendarios()"
+          [zona]="form().timezone"
+          [(diaElegido)]="diaDelAnio"
+          (cambiarDia)="cambiarDia($event)"
+          (editarPeriodo)="abrirPeriodo($event)"
+          (editarSemana)="editarSemana()"
+          (editarFestivos)="editarFestivos($event)"
+        />
+      </section>
+
+    </div>
   </div>
 </div>
 

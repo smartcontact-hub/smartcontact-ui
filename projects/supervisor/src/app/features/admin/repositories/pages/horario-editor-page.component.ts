@@ -224,8 +224,13 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
     if (raw === null) {
       this.seedFromDuplicate();
       this.dirtyState.markPristine();
-      // Un horario nuevo empieza por su nombre: el diálogo de datos se abre solo.
-      if (!this.form().name) this.datosDialog.set(true);
+      // Un horario nuevo empieza por su nombre: el diálogo de datos se abre solo. Y con los festivos nacionales ya aplicados.
+      if (!this.form().name) {
+        const nacionales = this.calendarios().find((c) => c.name === 'Festivos España');
+        if (nacionales) this.form.update((f) => ({ ...f, holidayCalendarIds: [nacionales.id] }));
+        this.dirtyState.markPristine();
+        this.datosDialog.set(true);
+      }
       return;
     }
     const horario = this.store.items().find((h) => h.id === Number(raw));

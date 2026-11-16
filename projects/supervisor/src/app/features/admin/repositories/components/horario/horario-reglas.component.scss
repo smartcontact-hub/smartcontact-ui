@@ -1,22 +1,13 @@
-/* Las reglas en segundo plano: una fila de tres `sc-section-card`; dos por debajo de 72 rem y una por debajo de 44. */
+/* Las reglas, a la vista: tres `sc-section-card` apiladas en la columna izquierda. */
 :host {
   display: block;
   container-type: inline-size;
 }
 
+/* Las tres tarjetas, apiladas: viven en la columna izquierda de la pantalla dividida. */
 .reglas {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  align-items: start;
-  column-gap: var(--sc-spacing-1);
-
-  @container (max-width: 72rem) {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  @container (max-width: 44rem) {
-    grid-template-columns: minmax(0, 1fr);
-  }
+  display: flex;
+  flex-direction: column;
 }
 
 /* El contenido de cada tarjeta, a 14 entre bloques. */

@@ -47,19 +47,38 @@
   color: var(--sc-text-danger);
 }
 
-/* El calendario: un panel que se estira al alto de la ventana (menos la barra y los márgenes), con la rejilla
- * repartiéndose lo que quede. En pantallas bajas no baja de 34 rem para que el mes respire. */
+/* Pantalla dividida (experimento): las reglas a la izquierda (3 partes) y el calendario a la derecha (7), los dos con el alto de
+ * la ventana (menos la barra y los márgenes). Cada columna se desplaza por su cuenta. Por debajo de 1200, una sobre otra. */
+.horario__cuerpo {
+  display: grid;
+  grid-template-columns: minmax(22rem, 3fr) minmax(0, 7fr);
+  align-items: start;
+  gap: var(--sc-spacing-1);
+
+  @media (max-width: 1199px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.horario__reglas {
+  min-inline-size: 0;
+  max-block-size: max(34rem, calc(100dvh - var(--sc-topbar-height) - 11 * var(--sc-spacing-1)));
+  overflow-y: auto;
+
+  @media (max-width: 1199px) {
+    max-block-size: none;
+    overflow-y: visible;
+  }
+}
+
+/* El calendario: un panel que se estira al alto de la ventana. En pantallas bajas no baja de 34 rem para que el mes respire. */
 .horario__calendario {
   display: flex;
   flex-direction: column;
+  min-inline-size: 0;
   block-size: max(34rem, calc(100dvh - var(--sc-topbar-height) - 11 * var(--sc-spacing-1)));
   padding: var(--sc-spacing-1);
   border: 1px solid var(--sc-border-default);
   border-radius: var(--sc-radius-lg);
   background: var(--sc-bg-surface);
-}
-
-/* Las reglas, en segundo plano: debajo del calendario, con el aire que ya traen sus tarjetas. */
-.horario__reglas {
-  margin-block-start: var(--sc-spacing-1);
 }

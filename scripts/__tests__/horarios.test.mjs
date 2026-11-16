@@ -13,6 +13,7 @@ import {
   estadoEn,
   fechasEntre,
   horaDe,
+  duenoDe,
   minutosDe,
   normalizarHorario,
   periodosSeSolapan,
@@ -209,20 +210,25 @@ test('una franja de madrugada no puede pisar la primera del día siguiente', () 
   assert.deepEqual(validarSemana([[], [], [[540, 540]], [], [], [], []]), { dia: 2, codigo: 'vacia' });
 });
 
-test('dos periodos no comparten fechas', () => {
+test('dos periodos pueden pisarse: manda el más concreto', () => {
   const verano = postventa.periods[0];
-  const julio = { id: 2, name: 'Julio', color: 'green', from: '07-01', to: '07-31', year: null, week: verano.week };
-  assert.equal(periodosSeSolapan(verano, julio), true);
-  assert.equal(validarPeriodo(postventa, julio).codigo, 'solape');
-  assert.equal(validarPeriodo(postventa, julio).con.name, 'Verano');
-  assert.equal(validarPeriodo(postventa, { ...julio, from: '09-01', to: '09-30' }), null);
-  // El propio periodo, al editarse, no choca consigo.
+  const julio = { id: 2, name: 'Julio', color: 'green', from: '07-01', to: '07-31', year: null, week: [[[600, 700]], [], [], [], [], [], []] };
+  // Solo se rechaza el idéntico: pisarse es legal.
+  assert.equal(validarPeriodo(postventa, julio), null);
+  assert.equal(validarPeriodo(postventa, { ...julio, from: verano.from, to: verano.to })?.codigo, 'solape');
   assert.equal(validarPeriodo(postventa, { ...verano, to: '09-15' }), null);
-  // De años distintos no chocan; uno de un año contra uno anual, sí.
+  // Semana Santa (más corto) gana a la primavera; fuera de ella, manda la primavera.
+  const primavera = { id: 3, name: 'Primavera', color: 'amber', from: '03-20', to: '06-20', year: null, week: verano.week };
+  const santa = { id: 4, name: 'Semana Santa', color: 'purple', from: '03-30', to: '04-06', year: null, week: verano.week };
+  const h = { ...postventa, periods: [primavera, santa], specials: [], holidayCalendarIds: [] };
+  assert.equal(duenoDe(h, '2026-04-02', []).periodo.name, 'Semana Santa');
+  assert.equal(duenoDe(h, '2026-05-10', []).periodo.name, 'Primavera');
+  // Un día especial manda sobre cualquier periodo.
+  const conEspecial = { ...h, specials: [{ id: 1, name: 'Huelga', date: '2026-04-02', yearly: false, slots: [] }] };
+  assert.equal(duenoDe(conEspecial, '2026-04-02', []).tipo, 'especial');
+  // Los que se pisan siguen detectándose como solape de fechas.
+  assert.equal(periodosSeSolapan(verano, julio), true);
   assert.equal(periodosSeSolapan({ ...julio, year: 2026 }, { ...julio, id: 3, year: 2027 }), false);
-  assert.equal(periodosSeSolapan({ ...julio, year: 2026 }, verano), true);
-  // Uno que cruza el año choca con enero.
-  assert.equal(periodosSeSolapan({ ...julio, from: '12-15', to: '01-15' }, { ...julio, id: 3, from: '01-10', to: '01-20' }), true);
 });
 
 test('lo que le falta a un periodo', () => {

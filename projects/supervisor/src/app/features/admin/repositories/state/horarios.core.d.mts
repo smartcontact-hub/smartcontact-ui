@@ -107,6 +107,7 @@ export function fechasEntre(desde: string, hasta: string): string[];
 export function rejillaDelAnio(anio: number): { mes: number; huecos: number; fechas: string[] }[];
 export function ahoraEn(zona: string, cuando?: Date): Momento;
 
+export function amplitud(periodo: Pick<Periodo, 'from' | 'to'>): number;
 export function periodoCubre(periodo: Pick<Periodo, 'from' | 'to' | 'year'>, iso: string): boolean;
 export function duenoDe(horario: Reglas, iso: string, calendarios?: readonly CalendarioDeFestivos[]): Dueno;
 export function resolverDia(horario: Reglas, iso: string, calendarios?: readonly CalendarioDeFestivos[]): DiaResuelto;

@@ -8,7 +8,7 @@
  * cerrado). Además puede aplicar calendarios de festivos, que son listas de días cerrados compartidas entre horarios.
  *
  * CADA FECHA TIENE UN ÚNICO DUEÑO, y se busca en este orden: fecha especial propia › festivo aplicado › periodo ›
- * semana habitual. No hay prioridades numéricas: dos periodos no pueden compartir fechas (`validarPeriodo`).
+ * semana habitual. No hay prioridades numéricas: entre dos periodos que se pisan manda el más concreto, el más corto.
  *
  * LAS FRANJAS son pares de minutos desde las 00:00, `[inicio, fin]`. Un fin menor o igual que el inicio cruza la
  * medianoche («23:00–07:00» es `[1380, 420]`) y pertenece al día en que empieza: su tramo de madrugada vale al día
@@ -111,6 +111,14 @@ export function periodoCubre(periodo, iso) {
   return periodo.from <= periodo.to ? md >= periodo.from && md <= periodo.to : md >= periodo.from || md <= periodo.to;
 }
 
+/** Cuántos días dura un periodo (contados en un año bisiesto de referencia; uno que cruza el fin de año suma el salto). */
+export function amplitud(periodo) {
+  const dia = (md) => Math.floor(Date.parse(`2024-${md}T00:00:00.000Z`) / DIA);
+  const desde = dia(periodo.from);
+  const hasta = dia(periodo.to);
+  return (hasta >= desde ? hasta - desde : hasta - desde + 366) + 1;
+}
+
 /** La entrada de una lista de días (fechas especiales o festivos) que cae en esa fecha: la de ese año antes que la anual. */
 function entradaDe(dias, iso) {
   const lista = dias ?? [];
@@ -135,7 +143,12 @@ export function duenoDe(horario, iso, calendarios = []) {
     if (festivo) return { tipo: 'festivo', especial: null, festivo, calendario, periodo: null, franjas: [] };
   }
   const dia = diaDeLaSemana(iso);
-  const periodo = (horario.periods ?? []).find((p) => periodoCubre(p, iso)) ?? null;
+  // Si dos periodos cubren la fecha, manda el más concreto (el más corto): Semana Santa gana a la primavera. A igual
+  // duración, el de un solo año gana al que se repite.
+  const periodo =
+    (horario.periods ?? [])
+      .filter((p) => periodoCubre(p, iso))
+      .sort((a, b) => amplitud(a) - amplitud(b) || Number(b.year != null) - Number(a.year != null))[0] ?? null;
   if (periodo) return { tipo: 'periodo', especial: null, festivo: null, calendario: null, periodo, franjas: periodo.week?.[dia] ?? [] };
   return { tipo: 'semana', especial: null, festivo: null, calendario: null, periodo: null, franjas: horario.week?.[dia] ?? [] };
 }
@@ -299,7 +312,8 @@ export function validarPeriodo(horario, periodo) {
   if (!String(periodo.name ?? '').trim()) return { codigo: 'nombre' };
   if (!MES_DIA.test(periodo.from ?? '') || !MES_DIA.test(periodo.to ?? '')) return { codigo: 'fechas' };
   if ((periodo.year ?? null) !== null && periodo.from > periodo.to) return { codigo: 'cruza_anio' };
-  const choque = (horario.periods ?? []).find((p) => p.id !== periodo.id && periodosSeSolapan(p, periodo));
+  // Los periodos pueden pisarse (manda el más concreto); solo se rechaza el idéntico, que nunca se sabría cuál manda.
+  const choque = (horario.periods ?? []).find((p) => p.id !== periodo.id && p.from === periodo.from && p.to === periodo.to && (p.year ?? null) === (periodo.year ?? null));
   if (choque) return { codigo: 'solape', con: choque };
   const semana = validarSemana(periodo.week);
   if (semana) return { codigo: 'semana', dia: semana.dia, detalle: semana.codigo };

@@ -10,6 +10,6 @@ export type { CalendarioDeFestivos, Festivo } from './horarios.core.mjs';
 export const FestivosStore = createRepoStore<CalendarioDeFestivos>('FestivosStore', {
   storageKey: 'sc-festivos-repo',
   versionKey: 'sc-festivos-repo-v',
-  currentVersion: 1,
+  currentVersion: 2,
   defaults: FESTIVOS_SEMILLA,
 });
