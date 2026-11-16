@@ -71,7 +71,7 @@ const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'o
  * Cinco familias, y cada una responde a algo distinto:
  *
  *   · HORARIOS      — el frente que se prueba ahora, con todas sus versiones y quién hizo cada una.
- *   · EXPLORACIONES — versiones que se comparan abriendo enlaces; esperan una decisión.
+ *   · EXPLORACIONES — versiones que se comparan abriendo enlaces; cada tarjeta dice en qué quedó.
  *   · LABORATORIOS  — una página con su conmutador dentro; se usan.
  *   · ENLACES       — la agenda de destinos.
  *   · GUARDADO      — bocetos que se miran.
@@ -198,7 +198,7 @@ export class LabComponent {
       label: 'Horarios',
       hint: 'Se prueba ahora',
     },
-    { id: 'exploraciones', icon: 'compare', count: EXPLORATIONS.length, label: 'Exploraciones', hint: 'Esperan decisión' },
+    { id: 'exploraciones', icon: 'compare', count: EXPLORATIONS.length, label: 'Exploraciones', hint: 'Lo que se comparó' },
     { id: 'laboratorios', icon: 'science', count: this.labs.length, label: 'Laboratorios', hint: 'Para tocar' },
     {
       id: 'enlaces',
