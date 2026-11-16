@@ -1,235 +1,273 @@
-<header class="cx-head">
+<header class="cx-cab">
   <h1>Conexión de variables</h1>
-  <p class="cx-intro">
-    Una variable de Figma solo llega a la pantalla si la cadena entera está enganchada:
-    <strong>la capa</strong> tiene que usar la variable, <strong>el tema</strong> tiene que
-    publicar el token y <strong>el CSS de PrimeNG</strong> tiene que leerlo. Si un eslabón falla,
-    el componente sigue viéndose bien: por eso hay que medirlo, no mirarlo.
-  </p>
-  <p class="cx-intro">
-    Aquí está el estado de cada variable de los 18 componentes que publica el showcase del
-    consumidor. Se anotan <strong>variables y estados, nunca valores</strong>: un valor caduca al
-    siguiente export, el estado de conexión no.
+  <p class="cx-cab__entradilla sc-text-h3-regular">
+    Si cambias una variable en Figma y se manda el tema, ¿llega a la pantalla? Este mapa lo dice variable a variable.
   </p>
 
   @if (status(); as m) {
-    <p class="cx-meta">
-      {{ m.total }} filas · {{ m.componentes }} componentes · medido el {{ m.medidoEl }} sobre el
-      Kit de Figma y <code>{{ m.fuente.web }}</code> ·
-      <a href="https://github.com/smartcontact-hub/smartcontact-ui/blob/main/docs/conexion-variables.csv" target="_blank" rel="noopener">
-        el mismo dato en CSV
-      </a>
+    <p class="cx-cab__nota sc-text-caption-regular">
+      {{ m.total }} filas de {{ m.componentes }} componentes, cruzando el Kit de Figma con el CSS de
+      <code>{{ m.fuente.web }}</code>.
     </p>
+  }
+
+  @if (frescura(); as fr) {
+    <div class="cx-fresco" [class.is-vieja]="fr.vieja">
+      <sc-icon name="schedule" [size]="20" [tone]="fr.vieja ? 'warning' : 'subtle'" />
+      <p class="cx-fresco__texto sc-text-body-regular">Medido el {{ fr.fecha }}, hace {{ fr.dias }} días.</p>
+      @if (fr.vieja) {
+        <sc-tag severity="warn" value="Conviene volver a medir" />
+      }
+      <span class="cx-fresco__enlaces sc-text-body-regular">
+        <a [href]="urlMetodo" target="_blank" rel="noopener">Cómo se mide</a>
+        <a [href]="urlCsv" target="_blank" rel="noopener">El dato en CSV</a>
+      </span>
+    </div>
   }
 </header>
 
 @if (error()) {
-  <p class="cx-error">
-    No se pudo cargar <code>/variables/_variables-status.json</code>. Se regenera con
-    <code>npm run variables:map</code>.
+  <p class="cx-error sc-text-body-regular">
+    No se pudo cargar <code>/variables/_variables-status.json</code>. Se regenera con <code>npm run variables:map</code>.
   </p>
 } @else if (!status()) {
-  <p class="cx-cargando">Cargando el mapa…</p>
+  <p class="cx-cargando sc-text-body-regular">Cargando el mapa…</p>
 } @else {
-  <!-- ── La leyenda ES el resumen: define el veredicto y da su recuento ───────── -->
-  <section class="cx-bloque" aria-labelledby="cx-veredictos">
-    <h2 id="cx-veredictos">Qué significa cada veredicto</h2>
-    <p class="cx-lead">
-      Seis salen solos de cruzar las dos preguntas: ¿la usa una capa de Figma? ¿la lee el CSS de
-      PrimeNG?
+  @let m = status()!;
+  <!-- ── La cadena: de una variable salen dos caminos, y solo uno llega a la pantalla ── -->
+  @let c = cadena();
+  <section class="cx-bloque" aria-labelledby="cx-cadena">
+    <h2 id="cx-cadena" class="sc-text-h2-semibold">La cadena</h2>
+    <p class="cx-lead sc-text-body-regular">
+      El tema se genera desde las variables, no desde el dibujo. Así que cada variable tiene dos caminos, y el que
+      importa es el de la pantalla.
     </p>
-    <dl class="cx-leyenda">
-      @for (v of delCruce; track v.nombre) {
-        <div class="cx-leyenda__item">
-          <dt>
-            <span class="cx-pill sc-text-caption-regular" [class]="'cx-pill--' + v.tono">{{ v.nombre }}</span>
-            <span class="cx-leyenda__n sc-text-body-regular">{{ cuenta()[v.nombre] ?? 0 }}</span>
-          </dt>
-          <dd>{{ v.que }}</dd>
+
+    <div class="cx-cadena">
+      <div class="cx-nodo">
+        <sc-icon-tile icon="tune" tone="brand" />
+        <p class="sc-text-body-semibold">Variable del Kit</p>
+        <p class="cx-nodo__sub sc-text-caption-regular">{{ c.variables }} en estos componentes</p>
+      </div>
+
+      <svg class="cx-ramas" viewBox="0 0 80 200" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+        <path d="M0 100 C 40 100, 40 50, 80 50" />
+        <path d="M0 100 C 40 100, 40 150, 80 150" />
+      </svg>
+
+      <div class="cx-destinos">
+        <div class="cx-destino">
+          <sc-icon-tile icon="desktop_windows" />
+          <div class="cx-destino__cuerpo">
+            <p class="sc-text-body-semibold">La pantalla</p>
+            <p class="cx-destino__sub sc-text-caption-regular">
+              {{ c.lee.n }} de {{ c.variables }} las lee el CSS de PrimeNG
+            </p>
+            <span class="cx-medidor" aria-hidden="true">
+              <span class="cx-medidor__lleno is-llega" [style.width]="c.lee.pct + '%'"></span>
+            </span>
+          </div>
+          <p class="cx-destino__pct sc-text-h1-semibold">{{ c.lee.pct }} %</p>
         </div>
-      }
-    </dl>
 
-    <p class="cx-lead cx-lead--sep">
-      Los otros tres no los ve el cruce. Hace falta abrir el nodo o el CSS, y por eso solo los
-      pone una revisión a mano.
-    </p>
-    <dl class="cx-leyenda">
-      @for (v of deRevision; track v.nombre) {
-        <div class="cx-leyenda__item">
-          <dt>
-            <span class="cx-pill sc-text-caption-regular" [class]="'cx-pill--' + v.tono">{{ v.nombre }}</span>
-            <span class="cx-leyenda__n sc-text-body-regular">{{ cuenta()[v.nombre] ?? 0 }}</span>
-          </dt>
-          <dd>{{ v.que }}</dd>
+        <div class="cx-destino">
+          <sc-icon-tile icon="draw" />
+          <div class="cx-destino__cuerpo">
+            <p class="sc-text-body-semibold">El dibujo del Kit</p>
+            <p class="cx-destino__sub sc-text-caption-regular">
+              {{ c.dibuja.n }} de {{ c.variables }} las usa alguna capa. Las demás viajan igual.
+            </p>
+            <span class="cx-medidor" aria-hidden="true">
+              <span class="cx-medidor__lleno is-dibujo" [style.width]="c.dibuja.pct + '%'"></span>
+            </span>
+          </div>
+          <p class="cx-destino__pct sc-text-h1-semibold">{{ c.dibuja.pct }} %</p>
         </div>
-      }
-    </dl>
-  </section>
+      </div>
+    </div>
 
-  <!-- ── El resumen por componente, y el detalle al abrirlo ──────────────────── -->
-  <section class="cx-bloque" aria-labelledby="cx-componentes">
-    <h2 id="cx-componentes">Componente a componente</h2>
-    <p class="cx-lead">
-      Abre uno para ver sus variables una a una. Es lo que hay que mirar al empezar una card:
-      qué está enganchado, qué no, y dónde.
-    </p>
-
-    <div class="cx-scroll">
-    <table class="cx-tabla cx-tabla--resumen">
-      <caption class="cx-sr">Estado de conexión por componente</caption>
-      <thead>
-        <tr>
-          <th scope="col">Componente</th>
-          <th scope="col" class="cx-num">Filas</th>
-          <th scope="col" class="cx-num">Conectadas</th>
-          <th scope="col" class="cx-num">A mirar</th>
-          <th scope="col" class="cx-num">Revisadas a mano</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (r of resumen(); track r.componente) {
-          <tr class="cx-fila-comp" [class.is-open]="abierto() === r.componente">
-            <th scope="row">
-              <button type="button" class="cx-abrir" (click)="abrir(r.componente)"
-                      [attr.aria-expanded]="abierto() === r.componente">
-                <span class="cx-chevron" aria-hidden="true">›</span>{{ r.componente }}
-              </button>
-            </th>
-            <td class="cx-num">{{ r.total }}</td>
-            <td class="cx-num">{{ r.conectada }}</td>
-            <td class="cx-num" [class.cx-num--alerta]="r.problema > 0">{{ r.problema }}</td>
-            <td class="cx-num">{{ r.revisadas }}</td>
-          </tr>
-
-          @if (abierto() === r.componente) {
-            <tr class="cx-detalle">
-              <td colspan="5">
-                <div class="cx-filtros">
-                  <span class="cx-filtros__et sc-text-caption-regular">Filtrar:</span>
-                  @for (v of veredictos; track v.nombre) {
-                    <button type="button" class="cx-chip" [class.is-active]="filtro() === v.nombre"
-                            (click)="filtrar(v.nombre)">{{ v.nombre }}</button>
-                  }
-                </div>
-
-                <div class="cx-scroll">
-                <table class="cx-tabla cx-tabla--vars">
-                  <thead>
-                    <tr>
-                      <th scope="col">Variable en Figma</th>
-                      <th scope="col">Token del tema</th>
-                      <th scope="col">¿La usa una capa?</th>
-                      <th scope="col">¿La lee PrimeNG?</th>
-                      <th scope="col">Veredicto</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    @for (f of filasAbiertas(); track f.variable + f.token) {
-                      <tr>
-                        <th scope="row"><code>{{ f.variable || '—' }}</code></th>
-                        <td><code>{{ f.token || '—' }}</code></td>
-                        <td>{{ f.usaFigma || '—' }}</td>
-                        <td>{{ f.leeWeb || '—' }}</td>
-                        <td>
-                          <span class="cx-pill sc-text-caption-regular" [class]="'cx-pill--' + tono(f.veredicto)">{{ f.veredicto }}</span>
-                        </td>
-                      </tr>
-                      @if (f.motivo) {
-                        <tr class="cx-nota">
-                          <td colspan="5">
-                            @if (f.capa) { <span class="cx-nota__et">Capa</span> {{ f.capa }} }
-                            @if (f.selector) { <span class="cx-nota__et">CSS</span> <code>{{ f.selector }}</code> }
-                            <span class="cx-nota__et">Por qué</span> {{ f.motivo }}
-                          </td>
-                        </tr>
-                      }
-                    } @empty {
-                      <tr><td colspan="5" class="cx-vacio">Ninguna fila con ese veredicto.</td></tr>
-                    }
-                  </tbody>
-                </table>
-                </div>
-              </td>
-            </tr>
-          }
-        }
-      </tbody>
-    </table>
+    <div class="cx-vuelta">
+      <sc-icon name="sync_alt" [size]="20" tone="subtle" />
+      <p class="sc-text-body-regular">
+        <strong>Al revés, desde la web:</strong> de los {{ c.web.de }} valores que lee el CSS, {{ c.web.n }} salen del
+        Kit ({{ c.web.pct }} %). El resto no se gobierna desde Figma: {{ c.resto }}.
+      </p>
     </div>
   </section>
 
-  <!-- ── Lo que se ató, con su prueba ────────────────────────────────────────── -->
-  <section class="cx-bloque" aria-labelledby="cx-atadas">
-    <h2 id="cx-atadas">Lo que se ató <span class="cx-n sc-text-body-regular">{{ atadas().length }}</span></h2>
-    <p class="cx-lead">
-      Solo se ata cuando la variable ya existe, el CSS la lee y el valor no cambia: no mueve un
-      píxel, con una excepción anotada abajo. Cinco de las doce estaban
-      <strong>mal apuntadas</strong> y no sueltas: señalaban a la variable del estado vecino o a la
-      de otro componente, así que el cruce las daba por buenas y solo se vieron abriendo el nodo.
-    </p>
-    <ul class="cx-lista">
-      @for (f of atadas(); track f.componente + f.variable) {
-        <li>
-          <p class="cx-lista__t"><strong>{{ f.componente }}</strong> · <code>{{ f.variable }}</code></p>
-          <p class="cx-lista__d sc-text-body-regular">{{ f.motivo }}</p>
-          <p class="cx-lista__m">
-            @if (f.capa) { {{ f.capa }} · }
-            @if (f.selector) { <code>{{ f.selector }}</code> }
-          </p>
-        </li>
+  <!-- ── Los veredictos: una barra con todas las filas y, debajo, qué es cada tramo ── -->
+  <section class="cx-bloque" aria-labelledby="cx-veredictos">
+    <h2 id="cx-veredictos" class="sc-text-h2-semibold">Qué significa cada veredicto</h2>
+
+    <div class="cx-barra cx-barra--grande" role="img"
+         [attr.aria-label]="'Reparto de las ' + m.total + ' filas por grupo'">
+      @for (g of leyenda(); track g.id) {
+        @if (g.n) {
+          <span class="cx-barra__tramo" [class]="'is-' + g.id" [style.width]="ancho(g.n, m.total)"></span>
+        }
       }
-    </ul>
+    </div>
+
+    <div class="cx-grupos">
+      @for (g of leyenda(); track g.id) {
+        <article class="cx-grupo">
+          <header class="cx-grupo__cab">
+            <span class="cx-punto" [class]="'is-' + g.id" aria-hidden="true"></span>
+            <h3 class="sc-text-body-semibold">{{ g.titulo }}</h3>
+            <span class="cx-grupo__n sc-text-body-semibold">{{ g.n }}</span>
+          </header>
+          <p class="cx-grupo__que sc-text-caption-regular">{{ g.que }}</p>
+          <dl class="cx-grupo__lista">
+            @for (v of g.veredictos; track v.nombre) {
+              <div class="cx-grupo__item" [class.is-cero]="!v.n">
+                <dt>
+                  <sc-tag [severity]="g.severidad" [value]="v.nombre" />
+                  <span class="cx-grupo__vn sc-text-caption-regular">{{ v.n }}</span>
+                </dt>
+                <dd class="sc-text-caption-regular">{{ v.que }}</dd>
+              </div>
+            }
+          </dl>
+        </article>
+      }
+    </div>
   </section>
 
-  <!-- ── Lo que espera una decisión ──────────────────────────────────────────── -->
+  <!-- ── Componente a componente: una tarjeta cada uno, y el detalle al abrirla ───── -->
+  <section class="cx-bloque" aria-labelledby="cx-componentes">
+    <h2 id="cx-componentes" class="sc-text-h2-semibold">Componente a componente</h2>
+    <p class="cx-lead sc-text-body-regular">
+      Primero los que tienen algo que no llega. Abre uno para ver sus variables: es lo que hay que mirar al empezar
+      una card.
+    </p>
+
+    <div class="cx-comps">
+      @for (k of componentes(); track k.nombre) {
+        <button type="button" class="cx-comp" [class.is-open]="abierto() === k.nombre"
+                [attr.aria-expanded]="abierto() === k.nombre" aria-controls="cx-detalle"
+                (click)="abrir(k.nombre)">
+          <span class="cx-comp__cab">
+            <span class="cx-comp__nombre sc-text-body-semibold">{{ k.etiqueta }}</span>
+            <span class="cx-comp__total sc-text-caption-regular">{{ k.total }}</span>
+          </span>
+          <span class="cx-barra" aria-hidden="true">
+            @for (g of grupos; track g.id) {
+              @if (k.grupos[g.id]) {
+                <span class="cx-barra__tramo" [class]="'is-' + g.id" [style.width]="ancho(k.grupos[g.id], k.total)"></span>
+              }
+            }
+          </span>
+          @if (k.grupos['no-llega']) {
+            <span class="cx-comp__estado is-malo sc-text-caption-regular">
+              <sc-icon name="error" [size]="16" tone="error" />
+              {{ k.grupos['no-llega'] }} no {{ k.grupos['no-llega'] === 1 ? 'llega' : 'llegan' }}
+            </span>
+          } @else {
+            <span class="cx-comp__estado sc-text-caption-regular">
+              <sc-icon name="check_circle" [size]="16" tone="success" />
+              Todo llega
+            </span>
+          }
+        </button>
+      }
+    </div>
+
+    @if (abierto(); as comp) {
+      <div class="cx-detalle" id="cx-detalle">
+        <div class="cx-detalle__cab">
+          <h3 class="sc-text-title-semibold">{{ comp === '(fuera de componente)' ? 'Fuera de componente' : comp }}</h3>
+          <sc-button appearance="text" variant="secondary" size="sm" icon="close" label="Cerrar"
+                     (clicked)="abrir(comp)" />
+        </div>
+
+        <div class="cx-filtros" role="group" aria-label="Filtrar por veredicto">
+          @for (v of filtrosAbierto(); track v.nombre) {
+            <button type="button" class="cx-chip sc-text-caption-regular" [class.is-active]="filtro() === v.nombre"
+                    [attr.aria-pressed]="filtro() === v.nombre" (click)="filtrar(v.nombre)">
+              {{ v.nombre }} <span class="cx-chip__n">{{ v.n }}</span>
+            </button>
+          }
+        </div>
+
+        <div class="cx-scroll">
+          <table class="cx-tabla">
+            <caption class="cx-sr">Variables de {{ comp }}</caption>
+            <thead>
+              <tr class="sc-text-caption-semibold">
+                <th scope="col">Variable en Figma</th>
+                <th scope="col">Token del tema</th>
+                <th scope="col">¿La usa una capa?</th>
+                <th scope="col">¿La lee PrimeNG?</th>
+                <th scope="col">Veredicto</th>
+              </tr>
+            </thead>
+            <tbody class="sc-text-body-regular">
+              @for (f of filasAbiertas(); track f.variable + f.token) {
+                <tr [class.con-nota]="f.motivo">
+                  <th scope="row"><code>{{ f.variable || '—' }}</code></th>
+                  <td><code>{{ f.token || '—' }}</code></td>
+                  <td [class.is-no]="f.usaFigma === 'no'">{{ f.usaFigma || '—' }}</td>
+                  <td [class.is-no]="f.leeWeb === 'no'">{{ f.leeWeb || '—' }}</td>
+                  <td>
+                    <span class="cx-tabla__tags">
+                      <sc-tag [severity]="severidadDe(f.veredicto)" [value]="f.veredicto" />
+                      @if (f.accionable === 'HECHO') {
+                        <sc-tag severity="info" value="atada en la revisión" />
+                      }
+                    </span>
+                  </td>
+                </tr>
+                @if (f.motivo) {
+                  <tr class="cx-nota">
+                    <td colspan="5" class="sc-text-caption-regular">
+                      {{ f.motivo }}
+                      @if (f.capa || f.selector) {
+                        <span class="cx-nota__donde">
+                          @if (f.capa) { {{ f.capa }} }
+                          @if (f.selector) { <code>{{ f.selector }}</code> }
+                        </span>
+                      }
+                    </td>
+                  </tr>
+                }
+              } @empty {
+                <tr><td colspan="5" class="cx-vacio">Ninguna fila con ese veredicto.</td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+  </section>
+
+  <!-- ── Lo que espera una decisión ───────────────────────────────────────────── -->
   <section class="cx-bloque" aria-labelledby="cx-abiertas">
-    <h2 id="cx-abiertas">Lo que queda abierto <span class="cx-n sc-text-body-regular">{{ abiertas().length }}</span></h2>
-    <p class="cx-lead">
-      Esto es un mapa, no una lista de arreglos: aquí no se toca nada, se dice <strong>qué lado
-      manda</strong> y por qué. En todos estos casos el valor llega bien a producción, porque el
-      tema se genera desde las variables; lo que diverge es el dibujo del Kit, que enseña algo que
-      el producto no pinta. Lo que pide un cambio en el código del consumidor va con su petición
-      entera en
-      <a href="https://github.com/smartcontact-hub/smartcontact-ui/blob/main/docs/conexion-variables.md" target="_blank" rel="noopener">el método</a>.
+    <h2 id="cx-abiertas" class="sc-text-h2-semibold">Lo que queda abierto</h2>
+    <p class="cx-lead sc-text-body-regular">
+      Aquí no se arregla nada: cada caso dice qué lado manda y por qué. En casi todos el valor ya llega bien y lo que
+      se desvía es el dibujo del Kit.
     </p>
-    <ul class="cx-lista">
-      @for (f of abiertas(); track f.componente + f.variable) {
-        <li>
-          <p class="cx-lista__t">
-            <strong>{{ f.componente }}</strong> · <code>{{ f.variable }}</code>
-            <span class="cx-pill cx-pill--aviso sc-text-caption-regular">{{ f.accionable }}</span>
-          </p>
-          <p class="cx-lista__d sc-text-body-regular">{{ f.motivo }}</p>
-          <p class="cx-lista__m">
-            @if (f.capa) { {{ f.capa }} }
-            @if (f.selector) { · <code>{{ f.selector }}</code> }
-          </p>
-        </li>
-      }
-    </ul>
-  </section>
 
-  <!-- ── Lo que NO se puede atar, para que nadie lo intente otra vez ─────────── -->
-  <section class="cx-bloque" aria-labelledby="cx-nunca">
-    <h2 id="cx-nunca">Lo que no se ata</h2>
-    <ul class="cx-lista cx-lista--simple">
-      <li>
-        <strong>El anillo de foco.</strong> Esa capa dibuja el hueco más el anillo, que es la suma
-        de dos tokens, y Figma no suma. Son 34 filas y ninguna es un fallo.
-      </li>
-      <li>
-        <strong>Lo que Figma no dibuja.</strong> Sombras, estilos de línea, duraciones y estados
-        que el Kit no representa. El valor viaja igual.
-      </li>
-      <li>
-        <strong>Lo que viene igual del PrimeOne.</strong> Sin decisión explícita no se toca: no es
-        deuda nuestra.
-      </li>
-      <li>
-        <strong>Los valores.</strong> Ni el 3 del anillo, ni el 1 de los bordes, ni el relleno del
-        Chip. Esto es un mapa de conexión, no un cambio de diseño.
-      </li>
-    </ul>
+    <div class="cx-abiertas">
+      @for (a of abiertas(); track a.clave) {
+        <article class="cx-abierta">
+          <header class="cx-abierta__cab">
+            <sc-tag [severity]="a.severidad" [value]="a.etiqueta" />
+            @if (a.matiz) {
+              <span class="cx-abierta__matiz sc-text-caption-regular">{{ a.matiz }}</span>
+            }
+          </header>
+          <h3 class="cx-abierta__titulo sc-text-body-semibold">
+            {{ a.componente }} <code>{{ a.variable }}</code>
+          </h3>
+          <p class="cx-abierta__motivo sc-text-body-regular" [class.is-entero]="leidas().has(a.clave)">{{ a.motivo }}</p>
+          <div class="cx-abierta__pie">
+            <sc-button appearance="link" variant="primary" size="sm"
+                       [label]="leidas().has(a.clave) ? 'Leer menos' : 'Leer entero'"
+                       [ariaExpanded]="leidas().has(a.clave)" (clicked)="leer(a.clave)" />
+          </div>
+        </article>
+      }
+    </div>
   </section>
 }
