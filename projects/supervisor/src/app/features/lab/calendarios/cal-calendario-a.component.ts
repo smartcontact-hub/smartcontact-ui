@@ -284,7 +284,7 @@ export class CalCalendarioAComponent {
   protected readonly encima = signal<string | null>(null);
   protected readonly verFestivos = signal(false);
   protected readonly editar = signal<DiaEspecial | null>(null);
-  protected readonly nuevoEspecial = signal(false);
+  protected readonly nuevoEspecial = signal(this.store.tomarAtajo() !== null);
 
   /** Lo que se pinta: el estado guardado con este calendario tal como está ahora (sin guardar). */
   private readonly estado = computed(() => {
@@ -340,7 +340,11 @@ export class CalCalendarioAComponent {
   }
 
   protected anadirEspecial(): void {
-    if (this.b.esNuevo() && !this.b.guardar(true)) return;
+    if (this.b.esNuevo()) {
+      this.store.dejarAtajo([]);
+      if (!this.b.guardar(true)) this.store.tomarAtajo();
+      return;
+    }
     this.nuevoEspecial.set(true);
   }
 

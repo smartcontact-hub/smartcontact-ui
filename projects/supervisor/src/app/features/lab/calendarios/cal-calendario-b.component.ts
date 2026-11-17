@@ -362,7 +362,7 @@ export class CalCalendarioBComponent {
   protected readonly resaltar = signal<string | null>(null);
   protected readonly encima = signal<string | null>(null);
   protected readonly editar = signal<DiaEspecial | null>(null);
-  protected readonly atajo = signal<readonly string[] | null>(null);
+  protected readonly atajo = signal<readonly string[] | null>(this.store.tomarAtajo());
   protected readonly impacto = signal<{ nombre: string; usos: ReturnType<typeof usosDe> } | null>(null);
 
   /** El estado con este calendario tal como está ahora y, si hay un periodo abierto, con él puesto. */
@@ -554,7 +554,11 @@ export class CalCalendarioBComponent {
   }
 
   protected abrirAtajo(fechas: readonly string[]): void {
-    if (this.b.esNuevo() && !this.b.guardar(true)) return;
+    if (this.b.esNuevo()) {
+      this.store.dejarAtajo(fechas);
+      if (!this.b.guardar(true)) this.store.tomarAtajo();
+      return;
+    }
     this.atajo.set(fechas);
   }
 

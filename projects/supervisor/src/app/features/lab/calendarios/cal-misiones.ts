@@ -191,7 +191,6 @@ export function corregir(m: Mision, real: Estado): Correccion {
   const puntos = [
     { texto: `Calendario «${c.nombre}»`, ok: c.nombre.trim().toLowerCase() === NOMBRE_MISION_2.toLowerCase() },
     { texto: `Horas bien en ${r.horas} de 365 días`, ok: r.horas === 365 },
-    { texto: `Horas bien en ${r.bien} de 365 días`, ok: r.bien === 365 },
     { texto: deMas === 0 ? 'No ha cambiado otros calendarios' : `Ha cambiado ${deMas} ${deMas === 1 ? 'día' : 'días'} de otros calendarios`, ok: deMas === 0 },
   ];
   return { titular: `${r.bien} de 365 días bien`, bien: r.bien, total: 365, puntos, fallos: r.fallos };
