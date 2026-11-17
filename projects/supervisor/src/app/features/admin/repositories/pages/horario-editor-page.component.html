@@ -20,7 +20,8 @@
      debajo, las reglas en segundo plano (semana habitual, periodos, fechas especiales). Los datos generales se fueron
      a un diálogo tras el lápiz de la cabecera; «Activo» se queda a la vista. -->
 <div class="page">
-  <div class="page__inner page__inner--list horario">
+  <!-- Al crear, el ancho de un editor (como Plantillas); al editar, el calendario ocupa toda la pantalla. -->
+  <div class="page__inner horario" [class.page__inner--list]="mode() === 'edit'">
     <header class="cabecera">
       <div class="cabecera__titulo">
         <h1 class="page__heading sc-text-title-semibold">{{ form().name.trim() || ('repositories.horarios.create_title' | translate) }}</h1>

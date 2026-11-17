@@ -32,6 +32,10 @@
   gap: var(--sc-spacing-0-5);
 }
 
+.vista__vista {
+  margin-inline-start: auto;
+}
+
 .vista__mes {
   inline-size: var(--sc-spacing-12-5);
 }
@@ -51,30 +55,13 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
+  gap: var(--sc-spacing-0-5) var(--sc-spacing-1-5);
 }
 
-/* Cada filtro es un `sc-chip` (el `p-chip` de PrimeNG) dentro de un botón con estado. El botón no pinta nada: el chip es el
- * aspecto. Aplicado, el chip lleva el check; sin aplicar, queda más tenue. */
-.filtro {
-  padding: 0;
-  border: 0;
-  border-radius: var(--sc-radius-full);
-  background: transparent;
-  cursor: pointer;
-
-  &:focus-visible {
-    outline: 2px solid var(--sc-border-focus);
-    outline-offset: 2px;
-  }
-
-  &--apagado {
-    opacity: 0.65;
-
-    &:hover {
-      opacity: 1;
-    }
-  }
+/* Cada capa es una casilla del DS (`sc-checkbox`) con su punto de color: marcada o no se ve de un vistazo. Sin marcar, el
+ * nombre pierde fuerza, como los días de esa capa en el calendario. */
+.filtro--apagado {
+  color: var(--sc-text-secondary);
 }
 
 /* El punto de color de una capa: contenido proyectado del chip. Sin color (la semana habitual), un anillo vacío. */
@@ -513,5 +500,19 @@
   .dia,
   .mini {
     transition: none;
+  }
+}
+
+/* En un ancho estrecho (el editor al crear), el día elegido baja a su propia fila y deja la navegación y la vista en la primera. */
+@container (max-width: 62rem) {
+  .vista__vista {
+    order: 2;
+  }
+
+  .vista__dia {
+    order: 3;
+    flex: 1 1 100%;
+    padding-inline-start: 0;
+    border-inline-start: 0;
   }
 }

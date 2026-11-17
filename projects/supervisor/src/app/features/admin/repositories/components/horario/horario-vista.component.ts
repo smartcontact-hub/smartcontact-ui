@@ -19,7 +19,7 @@ import {
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TooltipModule } from 'primeng/tooltip';
 import { ScIconComponent } from '@smartcontact-hub/icons';
-import { ScButtonComponent, ScChipComponent, ScSelectButtonComponent, ScSelectComponent, ScTagComponent } from '@smartcontact-hub/components';
+import { ScButtonComponent, ScCheckboxComponent, ScSelectButtonComponent, ScSelectComponent, ScTagComponent } from '@smartcontact-hub/components';
 
 import { LanguageService } from '@core/services/language.service';
 import { injectLangChange } from '@core/utils/lang-change';
@@ -100,7 +100,7 @@ const diasDelMes = (anio: number, mes: number): number => new Date(Date.UTC(anio
  */
 @Component({
   selector: 'sc-horario-vista',
-  imports: [ScButtonComponent, ScChipComponent, ScIconComponent, ScSelectButtonComponent, ScSelectComponent, ScTagComponent, TooltipModule, TranslateModule],
+  imports: [ScButtonComponent, ScCheckboxComponent, ScIconComponent, ScSelectButtonComponent, ScSelectComponent, ScTagComponent, TooltipModule, TranslateModule],
   templateUrl: './horario-vista.component.html',
   styleUrl: './horario-vista.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

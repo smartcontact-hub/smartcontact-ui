@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import type { GroupRef } from '@smartcontact-hub/components';
 
 import { injectLangChange } from '@core/utils/lang-change';
 
@@ -46,10 +47,13 @@ export class HorariosTipoPageComponent {
     {
       key: 'uses',
       labelKey: 'repositories.horariosTipo.col_uses',
-      kind: 'count',
-      width: '160px',
+      kind: 'groups',
+      width: '280px',
+      // Los calendarios que lo usan: «—» si ninguno, su nombre si es uno y, con varios, la cifra con sus nombres al pasar.
       accessor: (h) => String(this.servicio.cuantos(h.id)),
-      emptyDash: true,
+      groups: (h) => this.servicio.usos(h.id).map((u): GroupRef => ({ id: u.calendario.id, name: u.calendario.name, active: u.calendario.status === 'active' })),
+      groupsDisplay: 'adaptive',
+      groupsAriaKey: 'repositories.horariosTipo.uses_aria',
       sortable: true,
     },
   ];

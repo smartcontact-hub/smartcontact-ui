@@ -57,6 +57,7 @@
     </div>
 
     <sc-selectbutton
+      class="vista__vista"
       size="sm"
       [ariaLabel]="'repositories.horarios.x.view.label' | translate"
       [options]="opcionesDeVista()"
@@ -68,15 +69,14 @@
     />
   </header>
 
-  <!-- Los filtros: `sc-chip` de PrimeNG. Aplicado lleva el check; sin aplicar, no. El punto (contenido proyectado, como el
-       ejemplo «Template» del chip) lleva el color de la capa en el calendario; la semana habitual no lleva color: punto vacío. -->
+  <!-- Las capas, como la lista «Mis calendarios» de un calendario: una casilla por capa, con su color. Marcada, está en el
+       calendario; sin marcar, sus días pierden el color y se atenúan. El punto lleva el color de la capa; la semana habitual no
+       lleva color, así que su punto es un anillo vacío. -->
   <div class="vista__filtros" role="group" [attr.aria-label]="'repositories.horarios.x.layers.label' | translate">
     @for (capa of capas(); track capa.clave) {
-      <button type="button" class="filtro" [class.filtro--apagado]="!capa.activa" [attr.aria-pressed]="capa.activa" (click)="alternar(capa.clave)">
-        <sc-chip [label]="capa.etiqueta" [icon]="capa.activa ? 'check' : null">
-          <span class="punto" [attr.data-color]="capa.color" aria-hidden="true"></span>
-        </sc-chip>
-      </button>
+      <sc-checkbox class="filtro" [class.filtro--apagado]="!capa.activa" [state]="capa.activa ? 'all' : 'none'" (cycle)="alternar(capa.clave)">
+        <span class="punto" [attr.data-color]="capa.color" aria-hidden="true"></span>{{ capa.etiqueta }}
+      </sc-checkbox>
     }
     @if (hayFiltros()) {
       <sc-button size="sm" variant="secondary" appearance="text" [label]="'repositories.horarios.x.layers.show_all' | translate" (clicked)="mostrarTodo()" />

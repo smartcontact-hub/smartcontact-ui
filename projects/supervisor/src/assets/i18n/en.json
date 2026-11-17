@@ -1746,7 +1746,9 @@
       "name_placeholder": "E.g.: Office 9 to 6",
       "edit_breadcrumb": "Edit schedule",
       "create_submit": "Create schedule",
-      "col_uses": "Calendars using it",
+      "col_uses": "Calendars",
+      "uses_aria": "Used in {{count}} calendars",
+      "uses_aria_one": "Used in 1 calendar",
       "toasts": {
         "created": "Schedule “{{name}}” created",
         "updated": "Schedule “{{name}}” updated",

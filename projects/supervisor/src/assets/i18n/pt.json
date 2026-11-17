@@ -1746,7 +1746,9 @@
       "name_placeholder": "Ex.: Escritório das 9 às 18",
       "edit_breadcrumb": "Editar horário",
       "create_submit": "Criar horário",
-      "col_uses": "Calendários que o usam",
+      "col_uses": "Calendários",
+      "uses_aria": "Usado em {{count}} calendários",
+      "uses_aria_one": "Usado em 1 calendário",
       "toasts": {
         "created": "Horário «{{name}}» criado",
         "updated": "Horário «{{name}}» atualizado",
