@@ -15,7 +15,7 @@ const esFestivo = (m: string): m is keyof typeof FESTIVOS => m in FESTIVOS;
  * - La versión llega en la dirección (`?variante=A` separado, `?variante=B` junto) y manda sobre la que se eligió antes.
  * - Con una prueba en curso se enciende el modo discovery, para que Repositorios lleve a los Calendarios del prototipo.
  * - `reiniciar` deja los datos de partida de la tarea del festivo; `comprobar` corrige la gemela que tocó
- *   (`festivo-1`, 28 de enero; `festivo-2`, 15 de mayo), mire la versión que mire, porque las dos guardan en el mismo sitio.
+ *   (`festivo-1`, 28 de enero; `festivo-2`, 7 de octubre), mire la versión que mire, porque las dos guardan en el mismo sitio.
  */
 export function provideCalPruebaComun(): EnvironmentProviders {
   return provideAppInitializer(() => {

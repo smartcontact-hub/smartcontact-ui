@@ -189,7 +189,7 @@ export interface Festivo {
  */
 export const FESTIVOS: Readonly<Record<'festivo-1' | 'festivo-2', Festivo>> = {
   'festivo-1': { dia: '01-28', calendarioIds: [6, 5] },
-  'festivo-2': { dia: '05-15', calendarioIds: [1, 2] },
+  'festivo-2': { dia: '10-07', calendarioIds: [1, 2] },
 };
 
 /**
