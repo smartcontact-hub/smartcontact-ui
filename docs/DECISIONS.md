@@ -42,6 +42,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | El globo de columnas de las listas: candado en la columna fija, el asa de seis puntos del DS (`drag_indicator`) y «Restablecer» al pie con su icono, apagado mientras todo está como de partida; la cabecera, solo el título (enmienda DD-176) | DD-257 |
 > | Variables sale de «Próximamente» en el hub de Repositorios: abre su panel, una entrada por variable que abre la lista buscando su clave (`?buscar=`), y «Abrir repositorio» lleva a su página · quedan seis «Próximamente» (enmienda DD-245 §4 y DD-251 §6) | DD-255 |
 > | Las dos tablas de asignación enseñan solo los canales marcados (el agente en General; el grupo, los de sus agentes), sin candado ni enlace (enmienda DD-217 §13 y DD-187 §2) | DD-250 |
 > | El alta de usuario lleva los marcadores de paso del grupo y del agente: Identidad dice lo que falta, Acceso y Servicios asignados «Revisada» al dejarlas · sin «Falta: …» sobre el resumen · cierra la deuda de DD-222 §5 | DD-248 |
@@ -180,6 +181,46 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-257 · 2026-11-17 — El globo de columnas: candado en la fija, asa de seis puntos y «Restablecer» al pie, apagado sin cambios
+
+**Contexto** · El globo de columnas de las listas (`sc-column-toggle`, el «Column Toggle» de primeng.dev, DD-176) ponía
+«Restablecer» arriba, junto al título y siempre encendido; la columna fija salía con la casilla apagada y sin nada en el
+hueco del asa; y el asa era `drag_handle`, dos rayas. Una captura de referencia (revisión visual,
+2026-11-17) lo pide con un candado en la fija, el asa de seis puntos y «Restablecer» al pie y apagado; con su icono, que
+la captura no lleva (decisión de producto, 2026-11-17).
+
+**Decisión** ·
+1. **La fija lleva `lock`** en el sitio del asa, del mismo tono (`--sc-border-strong`). Su casilla sigue marcada y apagada,
+   y su fila no se resalta al pasar: no hace nada.
+2. **El asa es `drag_indicator`**, la que el DS ya usa para arrastrar (`sc-datatable` con filas reordenables, los niveles
+   de Tipificaciones). Al pasar por una fila movible se oscurece (`--sc-icon-secondary`, 120 ms, solo `color`).
+3. **«Restablecer» baja al pie**, tras la raya que cerraba la cabecera, con `restart_alt` (`SC_ICONS.restablecer`), y va
+   **apagado mientras columnas, orden y anchos son los de partida** (`isDefaultPrefs`, en `column-prefs.ts`; lo pasa quien
+   guarda con `[canReset]`). La cabecera se queda con el título, sin raya. El icono del pie cae en la columna de las asas.
+4. **Al restablecer, el botón se apaga a sí mismo**: el foco, que se quedaría en `<body>`, vuelve a la primera columna
+   movible.
+
+**Razón** · Arriba, «Restablecer» competía con el título y se ofrecía aunque no hubiera nada que deshacer: deshace lo
+elegido de un clic y estaba siempre a mano. Al pie y apagado, además, dice si lo que se ve es lo de partida. El candado
+contesta por qué esa casilla no se desmarca; sin él, la fila parecía rota. Y dos rayas se leen como «menú»: los seis
+puntos son el asa del resto del DS (un icono, un significado, DD-200).
+
+**Descartadas** ·
+- *Esconder «Restablecer» mientras no hay cambios*: el pie aparecería y desaparecería, y el sitio del botón no se aprende.
+- *«Restablecer» sin icono, como la captura*: decisión de producto; además `restart_alt` es el icono reservado para
+  restablecer (`SC_ICONS`) y es el que lleva en sc-docs.
+- *Un texto oculto «siempre visible» en la fija*: cambiaba el nombre accesible de su casilla, y casilla marcada y
+  apagada ya lo dice al lector.
+- *Cambiar también `sc-column-selector` de la librería*: ninguna lista del Supervisor lo usa (solo la demo de sc-docs, el
+  laboratorio de tablas y CusCare DS); igualarlo es su propio cambio, y arrastra a todas las apps.
+
+**Consecuencias** · Enmienda DD-176 (cabecera con título y «Restablecer», asa `bars`). Pruebas:
+`columnas-en-una-lista.spec.ts` (candado, asa, «Restablecer» al pie apagado, se enciende al cambiar y se apaga al
+restablecer con el foco en la lista; en rojo con la plantilla anterior). La copia del globo en CusCare DS (en inglés) no
+cambia. En el Kit no hay globo de columnas: nada que reflejar.
 
 ---
 

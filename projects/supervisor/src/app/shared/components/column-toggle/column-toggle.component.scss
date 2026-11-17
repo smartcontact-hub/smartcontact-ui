@@ -9,21 +9,21 @@
 
 /* EL GLOBO DE COLUMNAS, el «Column Toggle» de primeng.dev/table (DD-176). Sus utilidades de Tailwind, en el paso del Kit
  * más cercano y en los tokens semánticos que salen de los mismos de Aura (medido en primeng.dev el 2026-10-05):
- *   · cabecera `px-4 py-3` (16 · 12) → 15,75 · 12,25, con la raya `border-surface-200` → `--sc-border-default` (slate-200);
+ *   · cabecera `px-4 py-3` (16 · 12) → 15,75 · 12,25; sin la raya del ejemplo desde que «Restablecer» baja al pie
+ *     (DD-257): el título solo no necesita separarse de su lista, y la raya pasa al pie, sobre «Restablecer»;
  *   · título `text-sm font-semibold` → `sc-text-body-semibold` (14);
  *   · lista `py-2` (8) → 8,75, y `max-h-80 overflow-auto`, que solo hace falta con muchas (las que llevan buscador);
  *   · fila `px-3 py-1.5 mx-1 gap-2 rounded-md` (12 · 6 · 4 · 8 · 6) → 12,25 · 5,25 · 3,5 · 8,75 · radio md, y
  *     `hover:bg-surface-100` → `--sc-bg-hover`; se arrastra (`cursor-move`), salvo la fija;
- *   · asa `bars` de 14 en `text-surface-400` → `drag_handle` en `--sc-border-strong` (slate-400): decorativa, sin texto;
+ *   · asa `bars` de 14 en `text-surface-400` → `drag_indicator` en `--sc-border-strong` (slate-400), la de seis puntos
+ *     que el DS ya usa para arrastrar filas (`sc-datatable`, niveles de Tipificaciones), DD-257: decorativa, sin texto;
+ *     la fija lleva en su sitio un candado del mismo tono;
  *   · nombre `text-sm` → `sc-text-body-regular`.
  * Botón, Popover y casilla son los nativos, con los tokens del preset: el editor de temas de PrimeNG los lee tal cual. */
 .column-toggle__header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--sc-spacing-0-625);
-  padding: var(--sc-spacing-0-875) var(--sc-spacing-1-125);
-  border-block-end: 1px solid var(--sc-border-default);
+  padding: var(--sc-spacing-0-875) var(--sc-spacing-1-125) 0;
 }
 
 .column-toggle__title {
@@ -57,7 +57,7 @@
   cursor: move;
   user-select: none;
 
-  &:hover {
+  &:hover:not(.column-toggle__row--locked) {
     background: var(--sc-bg-hover);
   }
 }
@@ -67,9 +67,19 @@
   cursor: default;
 }
 
-.column-toggle__handle {
+.column-toggle__handle,
+.column-toggle__lock {
   flex: none;
   color: var(--sc-border-strong);
+}
+
+/* Al pasar por una fila que se mueve, su asa se oscurece: dice qué se arrastra sin animar nada. */
+.column-toggle__handle {
+  transition: color var(--sc-transition-fast) var(--sc-easing-default);
+}
+
+.column-toggle__row:hover:not(.column-toggle__row--locked, .column-toggle__row--static) .column-toggle__handle {
+  color: var(--sc-icon-secondary);
 }
 
 .column-toggle__label {
@@ -81,11 +91,17 @@
   cursor: default;
 }
 
-/* La fija no se mueve, y mientras se busca no se ordena: sin asa a la vista, y su hueco se queda para que las casillas
- * sigan en columna. */
-.column-toggle__row--locked .column-toggle__handle,
+/* Mientras se busca no se ordena: sin asa a la vista, y su hueco se queda para que las casillas sigan en columna. La
+ * fija lleva su candado. */
 .column-toggle__row--static .column-toggle__handle {
   visibility: hidden;
+}
+
+/* «Restablecer», al pie (DD-257), tras la raya que antes cerraba la cabecera. Su icono, en la columna de las asas: el
+ * relleno del botón de texto (`sm`) más este, 7, lo deja a 0,75 de ellas (medido a 1440). */
+.column-toggle__footer {
+  padding: var(--sc-spacing-0-375) var(--sc-spacing-0-5);
+  border-block-start: 1px solid var(--sc-border-default);
 }
 
 .column-toggle__empty {

@@ -45,3 +45,13 @@ export function normalizePrefs(choices: readonly ColumnDef[], stored: unknown): 
 
   return { order, visible: order.filter((k) => visibleSet.has(k)), widths };
 }
+
+/**
+ * Si lo guardado es lo de partida: las mismas columnas, en el mismo orden, y sin anchos arrastrados. Con eso, el globo
+ * apaga «Restablecer» (DD-257): no hay nada que deshacer.
+ */
+export function isDefaultPrefs(choices: readonly ColumnDef[], prefs: ColumnPrefs): boolean {
+  const partida = normalizePrefs(choices, undefined);
+  const igual = (a: readonly string[], b: readonly string[]) => a.length === b.length && a.every((k, i) => k === b[i]);
+  return igual(partida.order, prefs.order) && igual(partida.visible, prefs.visible) && !Object.keys(prefs.widths).length;
+}
