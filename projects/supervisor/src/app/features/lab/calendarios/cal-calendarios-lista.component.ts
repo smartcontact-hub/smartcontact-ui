@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal, type Temp
 import { Router } from '@angular/router';
 import { type MenuItem } from 'primeng/api';
 import { TooltipModule } from 'primeng/tooltip';
-import { type GroupRef, type ScColumnCellContext, type ScColumnDef, ScButtonComponent, ScGroupPopoverComponent } from '@smartcontact-hub/components';
+import { type ColumnDef, type GroupRef, type ScColumnCellContext, type ScColumnDef, ScButtonComponent, ScGroupPopoverComponent } from '@smartcontact-hub/components';
 import { ScIconComponent } from '@smartcontact-hub/icons';
 
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
@@ -49,6 +49,8 @@ interface Fila extends Calendario {
       [sortFn]="ordenar"
       [rowMenu]="menu"
       rowOpenable
+      [columnChoices]="elegibles"
+      columnStorageKey="sc-cal-calendarios-columnas"
       tableTestId="cal-calendarios"
       (rowOpen)="abrir($event)"
     />
@@ -138,6 +140,17 @@ export class CalCalendariosListaComponent {
   private readonly festivosTpl = viewChild<TemplateRef<ScColumnCellContext<Fila>>>('festivosTpl');
   private readonly especialesTpl = viewChild<TemplateRef<ScColumnCellContext<Fila>>>('especialesTpl');
   private readonly usanTpl = viewChild<TemplateRef<ScColumnCellContext<Fila>>>('usanTpl');
+
+  /** El globo de columnas, como en el resto de listas del Supervisor. */
+  protected readonly elegibles: readonly ColumnDef[] = [
+    { key: 'nombre', label: 'Nombre', locked: true },
+    { key: 'ahora', label: 'Ahora' },
+    { key: 'semana', label: 'Semana' },
+    { key: 'horario', label: 'Horario' },
+    { key: 'festivos', label: 'Festivos de' },
+    { key: 'especiales', label: 'Días especiales' },
+    { key: 'usan', label: 'Lo usan' },
+  ];
 
   protected readonly columnas = computed<readonly ScColumnDef<Fila>[]>(() => [
     { field: 'nombre', header: 'Nombre', sortable: true, cellTemplate: this.nombreTpl() },

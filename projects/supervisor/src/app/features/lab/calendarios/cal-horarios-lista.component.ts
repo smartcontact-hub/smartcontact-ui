@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, type TemplateRef, viewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { type MenuItem } from 'primeng/api';
-import { type GroupRef, type ScColumnCellContext, type ScColumnDef, ScButtonComponent, ScGroupPopoverComponent } from '@smartcontact-hub/components';
+import { type ColumnDef, type GroupRef, type ScColumnCellContext, type ScColumnDef, ScButtonComponent, ScGroupPopoverComponent } from '@smartcontact-hub/components';
 import { ScIconComponent } from '@smartcontact-hub/icons';
 
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
@@ -40,6 +40,8 @@ interface Fila extends Horario {
       [sortFn]="ordenar"
       [rowMenu]="menu"
       rowOpenable
+      [columnChoices]="elegibles"
+      columnStorageKey="sc-cal-horarios-columnas"
       tableTestId="cal-horarios"
       (rowOpen)="abrir($event)"
     />
@@ -91,6 +93,14 @@ export class CalHorariosListaComponent {
   private readonly semanaTpl = viewChild<TemplateRef<ScColumnCellContext<Fila>>>('semanaTpl');
   private readonly resumenTpl = viewChild<TemplateRef<ScColumnCellContext<Fila>>>('resumenTpl');
   private readonly usosTpl = viewChild<TemplateRef<ScColumnCellContext<Fila>>>('usosTpl');
+
+  /** El globo de columnas, como en el resto de listas del Supervisor. */
+  protected readonly elegibles: readonly ColumnDef[] = [
+    { key: 'nombre', label: 'Nombre', locked: true },
+    { key: 'semana', label: 'Semana' },
+    { key: 'resumen', label: 'Horas' },
+    { key: 'usos', label: 'Se usa en' },
+  ];
 
   protected readonly columnas = computed<readonly ScColumnDef<Fila>[]>(() => [
     { field: 'nombre', header: 'Nombre', sortable: true, cellTemplate: this.nombreTpl() },
