@@ -38,7 +38,7 @@ import {
 } from '../../state/horarios.core.mjs';
 
 type Reglas = Pick<Horario, 'week' | 'periods' | 'specials' | 'holidayCalendarIds'> & { readonly outMessage?: string; readonly ownHolidays?: Horario['ownHolidays'] };
-export type VistaDeHorario = 'year' | 'month' | 'week' | 'day';
+export type VistaDeHorario = 'year' | 'quarter' | 'month' | 'week';
 
 /** Cuántos años atrás se puede mirar y cuántos adelante se planifica. */
 export const ANIOS_ATRAS = 5;
@@ -55,6 +55,8 @@ interface Celda {
   readonly horas: readonly string[];
   /** Una fecha especial o un festivo trae nombre propio: es lo que se escribe en la celda. */
   readonly nombre: string | null;
+  /** Lo decide la semana habitual: no se pinta, porque es lo de siempre y solo importan las excepciones. */
+  readonly habitual: boolean;
   readonly fuera: boolean;
   readonly apagada: boolean;
   readonly aria: string;
@@ -156,7 +158,7 @@ export class HorarioVistaComponent {
 
   protected readonly opcionesDeVista = computed(() => {
     this.lang();
-    return (['day', 'week', 'month', 'year'] as const).map((v) => ({ value: v, label: this.translate.instant(`repositories.horarios.x.view.${v}`) as string }));
+    return (['week', 'month', 'quarter', 'year'] as const).map((v) => ({ value: v, label: this.translate.instant(`repositories.horarios.x.view.${v}`) as string }));
   });
 
   protected cambiarVista(vista: VistaDeHorario | null): void {
@@ -171,7 +173,6 @@ export class HorarioVistaComponent {
 
   private mover(fecha: string, pasos: number): string {
     const v = this.vista();
-    if (v === 'day') return sumarDias(fecha, pasos);
     if (v === 'week') return sumarDias(fecha, pasos * 7);
     const anio = Number(fecha.slice(0, 4));
     const mes = Number(fecha.slice(5, 7)) - 1;
@@ -179,7 +180,7 @@ export class HorarioVistaComponent {
       const resto = fecha.slice(5);
       return `${anio + pasos}-${resto === '02-29' && diasDelMes(anio + pasos, 1) < 29 ? '02-28' : resto}`;
     }
-    const destino = new Date(Date.UTC(anio, mes + pasos, 1));
+    const destino = new Date(Date.UTC(anio, mes + pasos * (v === 'quarter' ? 3 : 1), 1));
     return `${destino.getUTCFullYear()}-${dosCifras(destino.getUTCMonth() + 1)}-${dosCifras(Math.min(Number(fecha.slice(8)), diasDelMes(destino.getUTCFullYear(), destino.getUTCMonth())))}`;
   }
 
@@ -220,7 +221,6 @@ export class HorarioVistaComponent {
     const lunes = sumarDias(f, -diaDeLaSemana(f));
     const corto = new Intl.DateTimeFormat(this.language.locale(), { day: 'numeric', month: 'short' });
     if (this.vista() === 'week') return `${corto.format(aFecha(lunes))} – ${corto.format(aFecha(sumarDias(lunes, 6)))}`;
-    if (this.vista() === 'day') return new Intl.DateTimeFormat(this.language.locale(), { weekday: 'long', day: 'numeric' }).format(aFecha(f));
     return '';
   });
 
@@ -234,7 +234,6 @@ export class HorarioVistaComponent {
     const apagadas = this.apagadas();
     const r = this.reglas();
     const lista: Omit<Capa, 'activa'>[] = [
-      { clave: 'week', etiqueta: t('week'), color: null, icono: 'view_week' },
       ...r.periods.map((p) => ({ clave: `period:${p.id}`, etiqueta: p.name, color: p.color as string, icono: 'date_range' })),
       ...(r.holidayCalendarIds.length > 0 || (r.ownHolidays?.length ?? 0) > 0 ? [{ clave: 'holiday', etiqueta: t('holiday'), color: 'red', icono: 'flag' }] : []),
       ...(r.specials.length > 0 ? [{ clave: 'special', etiqueta: t('special'), color: 'purple', icono: 'event' }] : []),
@@ -295,11 +294,12 @@ export class HorarioVistaComponent {
     const capa = dia.tipo === 'periodo' && dia.periodo ? `period:${dia.periodo.id}` : dia.tipo === 'semana' ? 'week' : dia.tipo === 'festivo' ? 'holiday' : 'special';
     const abierto = dia.tramos.length > 0;
     const apagadas = this.apagadas();
-    const apagada = apagadas.has(capa) || (!abierto && apagadas.has('closed'));
+    const habitual = dia.tipo === 'semana';
+    const apagada = !habitual && (apagadas.has(capa) || (!abierto && apagadas.has('closed')));
     // Solo lo que se sale de lo habitual lleva color, y cada capa pinta lo suyo, así que los filtros conviven: el festivo,
     // rojo; la fecha especial, morado; el periodo, el suyo. La semana habitual es el fondo, sin color. Un día cerrado
     // es gris. Una capa apagada pierde su color.
-    const color = apagada ? null : colorDeDueno(dia, abierto);
+    const color = apagada || habitual ? null : colorDeDueno(dia, abierto);
     return {
       fecha,
       numero: Number(fecha.slice(8)),
@@ -307,8 +307,9 @@ export class HorarioVistaComponent {
       capa,
       color,
       abierto,
-      horas: this.horas(dia),
+      horas: habitual ? [] : this.horas(dia),
       nombre: dia.especial?.name ?? dia.festivo?.name ?? null,
+      habitual,
       fuera: mesVisible !== null && Number(fecha.slice(5, 7)) - 1 !== mesVisible,
       apagada,
       aria: `${this.formatos().dia.format(aFecha(fecha))}: ${abierto ? this.horas(dia).join(', ') : this.translate.instant('repositories.horarios.closed')}. ${this.motivo(dia)}`,
@@ -318,8 +319,11 @@ export class HorarioVistaComponent {
   /** Año: los doce meses, como una hoja de calendario. */
   protected readonly meses = computed(() => {
     this.lang();
-    if (this.vista() !== 'year') return [];
-    return rejillaDelAnio(this.anio()).map((m) => ({
+    const v = this.vista();
+    if (v !== 'year' && v !== 'quarter') return [];
+    const todos = rejillaDelAnio(this.anio());
+    const trimestre = Math.floor(this.mes() / 3) * 3;
+    return (v === 'year' ? todos : todos.slice(trimestre, trimestre + 3)).map((m) => ({
       nombre: this.formatos().mes.format(aFecha(m.fechas[0])),
       huecos: Array.from({ length: m.huecos }),
       celdas: m.fechas.map((f) => this.celda(f, null)),
@@ -341,12 +345,12 @@ export class HorarioVistaComponent {
   protected readonly columnas = computed(() => {
     this.lang();
     const v = this.vista();
-    if (v !== 'week' && v !== 'day') return [];
+    if (v !== 'week') return [];
     const f = this.fechaAncla();
-    const fechas = v === 'day' ? [f] : Array.from({ length: 7 }, (_, i) => sumarDias(sumarDias(f, -diaDeLaSemana(f)), i));
+    const fechas = Array.from({ length: 7 }, (_, i) => sumarDias(sumarDias(f, -diaDeLaSemana(f)), i));
     return fechas.map((fecha) => {
       const celda = this.celda(fecha, null);
-      const bloques: Bloque[] = celda.dia.tramos.map(([a, b]) => ({ top: (a / MINUTOS_DEL_DIA) * 100, alto: ((b - a) / MINUTOS_DEL_DIA) * 100, texto: textoDeFranja([a, b]) }));
+      const bloques: Bloque[] = celda.habitual ? [] : celda.dia.tramos.map(([a, b]) => ({ top: (a / MINUTOS_DEL_DIA) * 100, alto: ((b - a) / MINUTOS_DEL_DIA) * 100, texto: textoDeFranja([a, b]) }));
       return { celda, bloques, cabecera: `${this.formatos().diaSemana.format(aFecha(fecha)).replace(/\.$/, '')} ${celda.numero}` };
     });
   });
@@ -363,7 +367,7 @@ export class HorarioVistaComponent {
   private readonly lienzo = viewChild<ElementRef<HTMLElement>>('lienzo');
   private readonly alAbrirLaLinea = effect(() => {
     const v = this.vista();
-    if (v !== 'week' && v !== 'day') return;
+    if (v !== 'week') return;
     untracked(() =>
       afterNextRender(
         () => {
@@ -431,7 +435,7 @@ export class HorarioVistaComponent {
     if (fecha === base) return;
     this.diaElegido.set(fecha);
     const v = this.vista();
-    const visible = v === 'year' ? fecha.slice(0, 4) === String(this.anio()) : v === 'month' ? fecha.slice(0, 7) === this.fechaAncla().slice(0, 7) : v === 'week' ? sumarDias(fecha, -diaDeLaSemana(fecha)) === sumarDias(this.fechaAncla(), -diaDeLaSemana(this.fechaAncla())) : fecha === this.fechaAncla();
+    const visible = v === 'year' ? fecha.slice(0, 4) === String(this.anio()) : v === 'month' ? fecha.slice(0, 7) === this.fechaAncla().slice(0, 7) : v === 'quarter' ? this.meses().some((m) => m.celdas.some((c) => c.fecha === fecha)) : sumarDias(fecha, -diaDeLaSemana(fecha)) === sumarDias(this.fechaAncla(), -diaDeLaSemana(this.fechaAncla()));
     if (!visible) this.ancla.set(fecha);
     afterNextRender(() => this.host.nativeElement.querySelector<HTMLElement>(`[data-fecha="${fecha}"]`)?.focus(), { injector: this.injector });
   }
@@ -440,7 +444,7 @@ export class HorarioVistaComponent {
   private readonly primeraVisible = computed(() => {
     const f = this.fechaAncla();
     const v = this.vista();
-    return v === 'year' ? `${this.anio()}-01-01` : v === 'month' ? `${f.slice(0, 7)}-01` : v === 'week' ? sumarDias(f, -diaDeLaSemana(f)) : f;
+    return v === 'year' ? `${this.anio()}-01-01` : v === 'month' ? `${f.slice(0, 7)}-01` : v === 'quarter' ? this.meses()[0]?.celdas[0]?.fecha ?? f : sumarDias(f, -diaDeLaSemana(f));
   });
 
   /** El único día con `tabindex=0`: el elegido si se ve; si no, el primero. Las flechas hacen el resto. */
@@ -452,7 +456,7 @@ export class HorarioVistaComponent {
 
   private readonly fechasVisibles = computed(() => {
     const v = this.vista();
-    if (v === 'year') return new Set(this.meses().flatMap((m) => m.celdas.map((c) => c.fecha)));
+    if (v === 'year' || v === 'quarter') return new Set(this.meses().flatMap((m) => m.celdas.map((c) => c.fecha)));
     if (v === 'month') return new Set(this.semanas().map((c) => c.fecha));
     return new Set(this.columnas().map((c) => c.celda.fecha));
   });

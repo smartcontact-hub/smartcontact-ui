@@ -83,7 +83,6 @@
           [rows]="3"
           [label]="'repositories.horarios.x.message.label' | translate"
           [placeholder]="'repositories.horarios.x.message.placeholder' | translate"
-          [helperText]="(variante() === 'festivo' ? 'repositories.horarios.x.message.help_holiday' : 'repositories.horarios.x.message.help_special') | translate"
           [value]="mensaje()"
           (valueChange)="mensaje.set($event)"
         />

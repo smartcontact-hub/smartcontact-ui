@@ -595,3 +595,8 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+/* Trimestre: tres meses en una fila (gana a las columnas del año a cualquier ancho). */
+.anio.anio--trimestre {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}

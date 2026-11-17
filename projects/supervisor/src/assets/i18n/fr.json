@@ -1665,6 +1665,7 @@
           "day": "Jour",
           "week": "Semaine",
           "month": "Mois",
+          "quarter": "Trimestre",
           "year": "Année"
         },
         "nav": {

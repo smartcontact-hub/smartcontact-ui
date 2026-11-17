@@ -63,9 +63,9 @@
   </header>
 
   <div class="vista__cuerpo" (keydown)="teclado($event)">
-    @switch (vista()) {
+    @switch (vista() === 'quarter' ? 'year' : vista()) {
       @case ('year') {
-        <div class="anio" role="group" [attr.aria-label]="'repositories.horarios.calendar.aria' | translate: { year: anio() }">
+        <div class="anio" [class.anio--trimestre]="vista() === 'quarter'" role="group" [attr.aria-label]="'repositories.horarios.calendar.aria' | translate: { year: anio() }">
           @for (m of meses(); track $index) {
             <section class="anio__mes">
               <h3 class="anio__nombre sc-text-caption-semibold">{{ m.nombre }}</h3>
@@ -137,7 +137,7 @@
                   @for (h of c.horas; track h) {
                     <span class="evento sc-text-caption-semibold" [attr.data-color]="c.color ?? (c.apagada ? 'gray' : 'green')"><span class="evento__texto">{{ h }}</span></span>
                   }
-                } @else if (!c.nombre) {
+                } @else if (!c.nombre && !c.habitual) {
                   <span class="evento evento--cerrado sc-text-caption-regular" data-color="gray"><span class="evento__texto">{{ 'repositories.horarios.closed' | translate }}</span></span>
                 }
               </span>
@@ -188,7 +188,7 @@
                     {{ b.texto }}
                   </div>
                 }
-                @if (!col.celda.abierto) {
+                @if (!col.celda.abierto && !col.celda.habitual) {
                   <span class="linea__cerrado sc-text-caption-regular">{{ 'repositories.horarios.closed' | translate }}</span>
                 }
                 @if (lineaAhora(); as ahora) {
