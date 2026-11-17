@@ -166,19 +166,23 @@ export class AppComponent {
   /**
    * ¿Es una story suelta (`?solo=1`)? Entonces no hay cabecera ni lateral. Antes de la primera navegación `router.url`
    * aún vale `/`: se lee del hash para no pintar el marco un instante y quitarlo después (el iframe de un ancho fijo lo
-   * enseñaría parpadeando).
+   * enseñaría parpadeando). Las puertas de una prueba con usuarios (`/prueba/…`, DD-256) también van sueltas: las abre
+   * gente que no sabe qué es este sitio.
    */
-  private readonly soloAlArrancar = /[?&]solo=1(&|$)/.test(document.location.hash);
+  private readonly soloAlArrancar = /[?&]solo=1(&|$)|^#\/prueba\//.test(document.location.hash);
   protected readonly solo = computed(() => {
     const url = this.url();
-    return /[?&]solo=1(&|$)/.test(url) || (url === '/' && this.soloAlArrancar);
+    return /[?&]solo=1(&|$)/.test(url) || url.startsWith('/prueba/') || (url === '/' && this.soloAlArrancar);
   });
 
   /**
    * Las páginas con la composición de la portada: fondo gris, a todo el ancho y sin «En esta página». El Lab la comparte
-   * desde el 2026-11-16: se parece a la portada a propósito y lleva su propio índice arriba.
+   * desde el 2026-11-16: se parece a la portada a propósito y lleva su propio índice arriba. La sala de una prueba con
+   * personas (`/lab/pruebas/…`, DD-256) también: es del Lab y no lleva más que lo que se usa.
    */
-  protected readonly esPortada = computed(() => this.ruta() === '/' || this.ruta() === '/lab');
+  protected readonly esPortada = computed(
+    () => this.ruta() === '/' || this.ruta() === '/lab' || this.ruta().startsWith('/lab/pruebas/'),
+  );
 
   /** El lateral de la sección en la que estás, o null si la sección es de una sola página. */
   protected readonly seccion = computed<SeccionLateral | null>(() => {

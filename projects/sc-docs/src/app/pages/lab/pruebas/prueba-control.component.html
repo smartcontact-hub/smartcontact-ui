@@ -1,0 +1,331 @@
+<!-- La sala de una prueba con personas (DD-256). Lo mínimo que se usa, en el orden en que se usa: el marcador con las
+     versiones, las personas y sus códigos, y qué arreglar. Lo demás, plegado al final. -->
+@if (plan(); as p) {
+  <div class="pc">
+    <header class="pc-cab pc-entra">
+      <a class="pc-volver sc-text-body-semibold" routerLink="/lab"><sc-icon name="arrow_back" [size]="16" /> Lab</a>
+      <div class="pc-cab__ante">
+        <span class="sc-text-caption-semibold">Prueba con personas</span>
+        <sc-tag [value]="estado[p.estado]" severity="secondary" />
+      </div>
+      <h1 class="pc-titulo sc-text-h1-regular">{{ p.titulo }}</h1>
+      <p class="pc-pregunta sc-text-h3-regular">{{ p.pregunta }}</p>
+    </header>
+
+    @if (veredicto(); as v) {
+      <section class="pc-marcador" aria-labelledby="pc-veredicto">
+        <h2 id="pc-veredicto" class="pc-veredicto pc-entra sc-text-h3-semibold" aria-live="polite">
+          {{ v.personas ? v.frase : 'Cuando llegue el primer resultado, aquí verás cuál gana.' }}
+        </h2>
+        <div class="pc-versiones">
+          @for (ver of marcador(); track ver.id; let i = $index) {
+            <article
+              class="pc-version pc-entra"
+              [class.is-gana]="ver.gana"
+              [style.--i]="i"
+              [attr.aria-labelledby]="'pc-v-' + ver.id"
+            >
+              <div class="pc-version__cab">
+                <span class="pc-letra sc-text-body-semibold" aria-hidden="true">{{ ver.letra }}</span>
+                <h3 [id]="'pc-v-' + ver.id" class="pc-version__nombre sc-text-subtitle-semibold">{{ ver.nombre }}</h3>
+                @if (ver.gana) {
+                  <sc-tag severity="success" value="Gana" />
+                }
+                <a
+                  class="pc-enlace sc-text-body-semibold"
+                  [href]="ver.url"
+                  target="_blank"
+                  rel="noopener"
+                  [attr.aria-label]="'Abrir ' + ver.nombre + ' en otra pestaña'"
+                >
+                  Abrir <sc-icon name="arrow_outward" [size]="16" />
+                </a>
+              </div>
+              @if (ver.intentos) {
+                <p class="pc-cifra">
+                  <span class="pc-cifra__n sc-text-display-regular">{{ ver.limpias }}</span>
+                  <span class="pc-cifra__de sc-text-body-regular">de {{ ver.intentos }} bien y sin ayuda</span>
+                </p>
+              }
+              <div class="pc-barra" aria-hidden="true">
+                <span class="pc-barra__relleno" [style.--p]="ver.proporcion"></span>
+              </div>
+              @if (!ver.intentos) {
+                <p class="pc-version__mas sc-text-caption-regular">Sin resultados todavía</p>
+              } @else if (ver.seq !== null || ver.tot !== null) {
+                <p class="pc-version__mas sc-text-caption-regular">
+                  @if (ver.seq !== null) {
+                    <span><abbr title="Single Ease Question: facilidad de 1 a 7">SEQ</abbr> {{ coma(ver.seq) }}</span>
+                  }
+                  @if (ver.tot !== null) {
+                    <span><abbr title="Time on Task: tiempo de lo que salió bien">ToT</abbr> {{ tiempo(ver.tot * 1000) }}</span>
+                  }
+                </p>
+              }
+            </article>
+          }
+        </div>
+      </section>
+    }
+
+    <section
+      class="pc-panel pc-panel--dos pc-entra"
+      [class.is-encima]="arrastrando()"
+      aria-label="Personas y resultados"
+      (dragover)="sobre($event, true)"
+      (dragleave)="sobre($event, false)"
+      (drop)="soltar($event)"
+    >
+      <div class="pc-panel__parte" role="group" aria-labelledby="pc-personas">
+        <div class="pc-panel__cab">
+          <h2 id="pc-personas" class="sc-text-subtitle-semibold">Personas</h2>
+          <span class="pc-cuenta sc-text-body-regular">{{ recibidas() }} de {{ p.personas }}</span>
+        </div>
+        <ul class="pc-puntos" role="list">
+          @for (f of personas(); track f.quien; let i = $index) {
+            <li class="pc-puntos__item" [style.--i]="i">
+              <button
+                type="button"
+                class="pc-punto sc-text-body-semibold"
+                [class.is-recibido]="f.recibido"
+                [class.is-copiado]="copiado() === f.quien"
+                [attr.aria-label]="'Copiar el enlace de ' + f.quien + (f.recibido ? ', ya terminó' : '')"
+                (click)="copiar(f.enlace, f.quien, 'Enlace de ' + f.quien + ' copiado')"
+              >
+                <span class="pc-punto__texto">{{ f.quien }}</span>
+                <sc-icon class="pc-punto__hecho" name="check" [size]="20" />
+              </button>
+            </li>
+          }
+        </ul>
+        <p class="pc-nota sc-text-caption-regular">
+          Pulsa a una persona para copiar su enlace. Antes, haz tú el
+          <a [href]="enlaceEnsayo()" target="_blank" rel="noopener">ensayo</a>: no cuenta y marca el camino corto.
+        </p>
+        <sc-button
+          class="pc-panel__accion"
+          variant="secondary"
+          appearance="text"
+          size="sm"
+          [icon]="copiado() === 'todos' ? 'check' : 'content_copy'"
+          label="Copiar todos los enlaces"
+          (clicked)="copiarTodos()"
+        />
+      </div>
+
+      <div class="pc-panel__parte" role="group" aria-labelledby="pc-pegar">
+        <div class="pc-panel__cab">
+          <h2 id="pc-pegar" class="sc-text-subtitle-semibold">Resultados</h2>
+        </div>
+        <sc-textarea
+          label="Pega aquí los códigos que te manden"
+          placeholder="SCP1.…"
+          [rows]="3"
+          fluid
+          [value]="pegado()"
+          (valueChange)="alEscribir($event)"
+        />
+        <p class="pc-nota sc-text-caption-regular">Se quedan en este navegador, no van a ningún servidor.</p>
+        <input #fichero class="pc-fichero" type="file" accept=".json,application/json" multiple (change)="subir($event)" />
+        <sc-button
+          class="pc-panel__accion"
+          variant="secondary"
+          appearance="text"
+          size="sm"
+          icon="upload"
+          label="Subir archivos .json"
+          (clicked)="fichero.click()"
+        />
+      </div>
+    </section>
+
+    @if (resultados().length) {
+      <section class="pc-panel pc-arreglos pc-entra" aria-labelledby="pc-arreglos">
+        <div class="pc-arreglos__cab">
+          <h2 id="pc-arreglos" class="sc-text-subtitle-semibold">Qué arreglar</h2>
+          <div class="pc-arreglos__acciones">
+            <sc-button
+              variant="secondary"
+              appearance="text"
+              size="sm"
+              [icon]="copiado() === 'informe' ? 'check' : 'content_copy'"
+              label="Copiar informe"
+              (clicked)="copiarInforme()"
+            />
+            <sc-button
+              variant="secondary"
+              appearance="text"
+              size="sm"
+              icon="download"
+              label="Descargar CSV"
+              (clicked)="descargarCsv()"
+            />
+          </div>
+        </div>
+        @if (arreglos().length) {
+          <ol class="pc-arreglos__lista" role="list">
+            @for (h of arreglos(); track h.regla + h.version + h.titulo; let i = $index) {
+              <li class="pc-arreglo" [style.--i]="i">
+                <span class="pc-arreglo__n sc-text-h3-regular" aria-hidden="true">{{ i + 1 }}</span>
+                <div class="pc-arreglo__texto">
+                  <div class="pc-arreglo__titular">
+                    <p class="sc-text-body-semibold">{{ h.titulo }}</p>
+                    <sc-tag [severity]="gravedad[h.gravedad].severidad" [value]="gravedad[h.gravedad].texto" />
+                  </div>
+                  <p class="sc-text-body-regular">{{ h.accion }}</p>
+                  <p class="pc-nota sc-text-caption-regular">{{ h.evidencia }}</p>
+                </div>
+              </li>
+            }
+          </ol>
+          @if (arreglosDeMas()) {
+            <p class="pc-nota sc-text-caption-regular">Y {{ arreglosDeMas() }} más en el informe.</p>
+          }
+        } @else {
+          <p class="pc-nota sc-text-body-regular">Con estos datos no sale nada que arreglar.</p>
+        }
+      </section>
+    }
+
+    <details class="pc-detalle">
+      <summary class="pc-detalle__resumen sc-text-body-semibold">
+        <sc-icon class="pc-galon" name="expand_more" [size]="20" />
+        Todo el detalle
+      </summary>
+      <div class="pc-panel pc-detalle__cuerpo">
+        @if (resultados().length) {
+          @for (t of tablas(); track t.titulo) {
+            <section class="pc-bloque" [attr.aria-label]="'Métricas de ' + t.titulo">
+              <h3 class="sc-text-body-semibold">Métricas{{ tablas().length > 1 ? ' de ' + t.titulo : '' }}</h3>
+              <div class="pc-tabla-caja">
+                <table class="pc-tabla sc-text-body-regular">
+                  <thead>
+                    <tr>
+                      <th scope="col"><span class="pc-oculto">Métrica</span></th>
+                      @for (n of t.versiones; track n) {
+                        <th scope="col" class="sc-text-caption-semibold">{{ n }}</th>
+                      }
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (f of t.filas; track f.sigla) {
+                      <tr>
+                        <th scope="row" class="sc-text-body-semibold"><abbr [title]="f.nombre">{{ f.sigla }}</abbr></th>
+                        @for (x of f.valores; track $index) {
+                          <td>{{ x }}</td>
+                        }
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+              <dl class="pc-siglas sc-text-caption-regular">
+                @for (f of t.filas; track f.sigla) {
+                  <div>
+                    <dt>{{ f.sigla }}</dt>
+                    <dd>{{ f.nombre }}</dd>
+                  </div>
+                }
+              </dl>
+            </section>
+          }
+
+          <section class="pc-bloque" aria-labelledby="pc-personas-detalle">
+            <h3 id="pc-personas-detalle" class="sc-text-body-semibold">Persona a persona</h3>
+            <ul class="pc-gente" role="list">
+              @for (d of detalle(); track d.quien) {
+                <li class="pc-gente__persona">
+                  <div class="pc-gente__cab">
+                    <span class="sc-text-body-semibold">{{ d.esEnsayo ? 'Ensayo' : d.quien }}</span>
+                    <span class="pc-nota sc-text-caption-regular">
+                      {{ d.orden }}{{ d.prefiere ? ', ' + d.prefiere : '' }}
+                    </span>
+                    @if (d.esEnsayo) {
+                      <sc-tag severity="secondary" value="No cuenta" />
+                    }
+                    <sc-button
+                      class="pc-gente__quitar"
+                      variant="secondary"
+                      appearance="text"
+                      size="sm"
+                      icon="close"
+                      label="Quitar"
+                      [ariaLabel]="'Quitar ' + (d.esEnsayo ? 'el ensayo' : d.quien)"
+                      (clicked)="quitar(d.quien)"
+                    />
+                  </div>
+                  @if (d.porque) {
+                    <p class="pc-cita sc-text-body-regular">«{{ d.porque }}»</p>
+                  }
+                  @for (s of d.pasos; track s.mision) {
+                    <p class="pc-gente__paso sc-text-caption-regular">
+                      <span class="pc-gente__version sc-text-caption-semibold">{{ s.nombre }}</span>
+                      <sc-tag [severity]="s.resultado.severidad" [value]="s.resultado.texto" />
+                      {{ s.tiempo }}, {{ s.clics }} {{ s.clics === 1 ? 'clic' : 'clics' }}, SEQ {{ s.facilidad ?? '—' }}.
+                      Primer clic: {{ s.primerClic ?? '—' }}.
+                      @if (s.falta) {
+                        Faltó: {{ s.falta }}.
+                      }
+                      @if (s.ayudas.length) {
+                        Ayuda {{ s.ayudas.join('; ') }}.
+                      }
+                      @if (s.enVacio.length) {
+                        En vacío: {{ s.enVacio.join('; ') }}.
+                      }
+                    </p>
+                  }
+                </li>
+              }
+            </ul>
+          </section>
+        }
+
+        <div class="pc-guia">
+          <section class="pc-bloque" aria-labelledby="pc-sesion">
+            <h3 id="pc-sesion" class="sc-text-body-semibold">Cómo acompañarla</h3>
+            <ul class="pc-lista sc-text-body-regular">
+              <li>En llamada, con su pantalla compartida; grábala si te deja.</li>
+              <li>No le ayudes: si se atasca, que pulse «Necesito ayuda» y entonces sí.</li>
+              <li>Pídele que piense en voz alta: explica las cifras mejor que ellas solas.</li>
+            </ul>
+          </section>
+          <section class="pc-bloque" aria-labelledby="pc-tarea">
+            <h3 id="pc-tarea" class="sc-text-body-semibold">La tarea</h3>
+            @for (t of p.tareas; track t.id) {
+              <p class="sc-text-body-semibold">{{ t.titulo }}</p>
+              <ol class="pc-lista sc-text-body-regular">
+                @for (g of t.gemelas; track $index) {
+                  <li>{{ g }}</li>
+                }
+              </ol>
+            }
+            <p class="pc-nota sc-text-caption-regular">
+              Cada persona hace una en cada versión, en el orden en que le tocan: el mismo trabajo con otros datos.
+              {{ p.correccion ?? 'Al acabar cada una, quien modera marca si salió bien.' }}
+            </p>
+          </section>
+          <section class="pc-bloque" aria-labelledby="pc-regla">
+            <h3 id="pc-regla" class="sc-text-body-semibold">Cómo se decide</h3>
+            <ol class="pc-lista sc-text-body-regular">
+              <li>Gana la que más personas resuelven bien y sin ayuda.</li>
+              <li>Si empatan, la que les resulta más fácil.</li>
+              <li>Luego el tiempo, solo si una tarda la mitad más.</li>
+              <li>Al final, la que prefieren.</li>
+            </ol>
+            <p class="pc-nota sc-text-caption-regular">{{ hacenFalta() }}</p>
+          </section>
+        </div>
+      </div>
+    </details>
+  </div>
+
+  <p class="pc-aviso sc-text-body-semibold" [class.is-visible]="avisoVisible()" role="status">{{ aviso() }}</p>
+} @else {
+  <div class="pc">
+    <header class="pc-cab">
+      <a class="pc-volver sc-text-body-semibold" routerLink="/lab"><sc-icon name="arrow_back" [size]="16" /> Lab</a>
+      <h1 class="pc-titulo sc-text-h1-regular">Esta prueba no existe</h1>
+      <p class="pc-pregunta sc-text-h3-regular">Las pruebas se dan de alta en <code>pruebas.data.ts</code>.</p>
+    </header>
+  </div>
+}

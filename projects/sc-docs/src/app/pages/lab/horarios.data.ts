@@ -150,6 +150,36 @@ export const HORARIOS: readonly HorariosAutoria[] = [
         ],
       },
       {
+        title: 'Discovery con posventa',
+        versions: [
+          {
+            id: 'discovery-ab',
+            title: 'Calendarios A y B, con modo prueba',
+            summary:
+              'El calendario de un servicio de dos maneras: A por piezas y el año al lado, B el año como sitio de trabajo.',
+            source: PR(626),
+            links: [{ label: 'Abrir', href: 'https://claude-discovery-horarios.sc-supervisor.pages.dev/admin/calendarios' }],
+          },
+          {
+            id: 'discovery-b-visual',
+            title: 'B, más visual y con Días especiales',
+            summary: 'B en una pantalla, la semana dibujada en las tablas y los días especiales como repositorio propio.',
+            origin: 'Sale de A y B',
+            source: {
+              label: 'Su rama, sin PR',
+              href: 'https://github.com/smartcontact-hub/smartcontact-ui/tree/claude/discovery-horarios-visual',
+            },
+            links: [
+              { label: 'Calendarios', href: 'https://claude-discovery-horarios-vi.sc-supervisor.pages.dev/admin/calendarios' },
+              {
+                label: 'Días especiales',
+                href: 'https://claude-discovery-horarios-vi.sc-supervisor.pages.dev/admin/dias-especiales',
+              },
+            ],
+          },
+        ],
+      },
+      {
         title: 'Para compararlas',
         versions: [
           {

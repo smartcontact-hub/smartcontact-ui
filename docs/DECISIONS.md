@@ -224,6 +224,79 @@ cambia. En el Kit no hay globo de columnas: nada que reflejar.
 
 ---
 
+## DD-256 · 2026-11-16 — Un modo prueba común para desempatar versiones con personas
+
+**Contexto** · El discovery de Horarios (rama `claude/discovery-horarios`) montó su propio modo prueba para comparar dos
+versiones con compañeros de posventa: contaba clics, saltos de pantalla y ayudas, y corregía la misión. Servía solo para
+esa rama, enseñaba un reloj a quien probaba (mete prisa y cambia cómo trabaja) y los resultados se juntaban a mano. Se
+pidió (2026-11-16) tenerlo para cualquier comparación entre prototipos, lo más fácil de usar y de entender posible, y
+estrenarlo con Horarios A y B.
+
+**Decisión** ·
+1. **Cada versión es un enlace** (otra rama o la misma con un parámetro). Una prueba es un plan en
+   `projects/sc-docs/src/app/pages/lab/pruebas/pruebas.data.ts`: la pregunta, las versiones, de una a tres tareas con una
+   **misión gemela por versión** (el mismo trabajo con otros datos) y cuántas personas.
+2. **El Lab de sc-docs es la sala de control** (`/#/lab/pruebas/<id>`): un enlace por persona con el orden de versiones
+   rotado (P1 A→B, P2 B→A…), la guía de quien modera, la caja donde se pegan los resultados y el veredicto. Las puertas
+   de cada persona (`/#/prueba/<id>/P3` y su `…/fin`) van sin el marco del sitio.
+3. **El Supervisor es la sala de pruebas**: una capa en `core/prueba/` que llega a toda rama con `main`, se carga aparte
+   (`@defer`) y solo con el enlace de una prueba en `localhost` o en un preview de rama, nunca en producción. Enseña la
+   tarea, «Necesito ayuda», «He terminado» y la pregunta de facilidad; mide sin enseñar reloj ni contadores.
+4. **La sesión viaja en el enlace** (`#prueba=…`); de una rama a otra cruza en él, y en la misma rama sigue en la
+   pestaña. Al acabar, la persona copia un código `SCP1.…` y se lo manda a quien modera. Sin servidor.
+5. **Corregir es opcional**: la rama registra `reiniciar` y `comprobar` con `registrarPrueba`; si no, quien modera marca
+   si salió bien.
+6. **La regla de decisión**, igual para todas (`prueba.core.mjs`, `veredicto`): gana quien más veces se resuelve bien y
+   sin ayuda; si empatan, la facilidad (pregunta única 1–7); luego el tiempo, solo con un 50 % de diferencia; al final,
+   la preferencia. Una diferencia cuenta con la prueba de signos exacta a p < 0,10 (con 6 personas, 5 a 0); si no, la
+   página dice «Empate» y decide lo que se vio en las sesiones.
+7. **La skill del repo `probar-prototipos`** monta una prueba de punta a punta: plan, ganchos en la rama, alta, ensayo y
+   lectura del resultado.
+8. **Tras la prueba, un informe con las siglas de siempre** (`informe`, `csvDeResultados` e `informeEnTexto` en
+   `prueba.core.mjs`): TSR (bien y sin ayuda; con ayuda cuenta como fallo, y lleva su intervalo del 95 % de Wald
+   ajustado), ToT (media geométrica del tiempo de lo que salió bien), SEQ (facilidad 1–7), FCS (primer clic igual al del
+   ensayo), Lostness (Smith, 1996: más de 0,4 es perderse; el camino corto sale del ensayo), ayuda, clics en vacío y
+   preferencia. De los datos salen solos los **accionables**, cada uno con lo que se vio (con su cifra) y qué hacer, por
+   gravedad: la tarea no sale (TSR por debajo del 78 %), se atascan en una pantalla (dos o más piden ayuda en la misma),
+   el primer clic se va a otro sitio (FCS por debajo del 50 %), parece pulsable y no lo es (el mismo clic en vacío en dos
+   o más personas), se percibe difícil (SEQ por debajo de 5,5), se pierden (Lostness por encima de 0,4), es lenta (ToT
+   1,5 veces la más rápida) y gusta más pero funciona peor. Las referencias son medias del sector (MeasuringU), no metas.
+   El informe se copia en Markdown o se descarga en CSV, una fila por intento, para seguir trabajando con él.
+9. **La sala enseña lo mínimo que se usa** (enmienda §2): el marcador (cada versión con su enlace, cuántas veces salió
+   bien y sin ayuda y su barra), un punto por persona que copia su enlace y se enciende al llegar su código, la caja que
+   coge los códigos al pegarlos y los tres accionables más graves. Las métricas, persona a persona, cómo acompañar la
+   sesión, la tarea y la regla van plegadas en «Todo el detalle». Sirve igual para cualquier prueba del plan.
+
+**Razón** · Con 5 a 10 personas lo que separa versiones es si la tarea sale o no sin ayuda; lo demás explica por qué. El
+umbral se fija para que la herramienta diga «empate» cuando los datos no alcanzan, en vez de dar ganadora con 4 a 2. Los
+enlaces y el código copiado hacen que funcione con cualquier rama sin instalar nada y sin que un dato salga del navegador
+de nadie sin que lo decida (el repo es público).
+
+**Descartadas** ·
+- *Mapas de calor* (heatmap.js y similares): con 6 personas no dicen nada que no diga el primer clic, y heatmap.js no
+  publica desde 2016.
+- *PostHog u otra analítica de terceros*: datos de compañeros en un servicio externo, con consentimiento y cookies; y su
+  grabación es rrweb, que aquí sobra (abajo).
+- *Grabar la pantalla (rrweb) en la primera versión*: la llamada con pantalla compartida ya graba si la persona quiere, y
+  añade peso y datos sensibles.
+- *SUS*: diez preguntas para una tarea; la pregunta única de facilidad (SEQ) mide lo mismo por tarea.
+- *Un servidor que recoja los resultados*: con un moderador por sesión, copiar un código basta y no guarda datos de nadie.
+- *Llamarlo «kit»*: en este proyecto el Kit es el de Figma.
+- *La retención como métrica de la prueba*: es de analítica de producto (si la gente vuelve días después); en una sesión
+  con una tarea, lo que se mide es si sale (TSR) y cuánto cuesta (ToT, SEQ).
+- *Enseñar todas las métricas de entrada*: la sala se usa con la persona al otro lado de la llamada; a la vista, solo lo
+  que decide y lo que hay que arreglar.
+
+**Consecuencias** · Supervisor: `core/prueba/` (arranque en `main.ts`, capa en `app.component.html`). sc-docs: rutas
+`lab/pruebas/:id`, `prueba/:id/:participante` y `…/fin`, y la sección «Pruebas con personas» del Lab. Pruebas:
+`scripts/__tests__/prueba-usuarios.test.mjs` (orden rotado, gemelas, códec, hosts permitidos, lectura de códigos y la
+regla) y `prueba-informe.test.mjs` (métricas, accionables, CSV e informe). Frente nuevo:
+`docs/handoff/pruebas-usuarios.md`. Queda: que la rama del discovery traiga `main`, lea
+`?variante=`, registre sus ganchos para `festivo-1` y `festivo-2` y esconda su barra antigua; la capa solo existe en el
+Supervisor.
+
+---
+
 ## DD-255 · 2026-11-16 — Variables sale de «Próximamente» en el hub de Repositorios y abre su panel
 
 **Contexto** · DD-245 §4 dejó en «Próximamente» los ocho destinos que el COA del hub (SISMAC-4064, v2) da por no

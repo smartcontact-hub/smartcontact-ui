@@ -42,3 +42,9 @@
 <sc-command-palette />
 <sc-keyboard-shortcuts [groups]="shortcutGroups" />
 <router-outlet />
+<!-- Prueba con usuarios (DD-256): solo con el enlace de una prueba y en previews de rama; su código se descarga aparte. -->
+@if (enPrueba) {
+  @defer {
+    <sc-prueba-capa />
+  }
+}
