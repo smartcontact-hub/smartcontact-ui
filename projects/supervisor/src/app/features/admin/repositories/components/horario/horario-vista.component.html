@@ -34,6 +34,18 @@
       }
     </div>
 
+    <sc-selectbutton
+      class="vista__vista"
+      size="sm"
+      [ariaLabel]="'repositories.horarios.x.view.label' | translate"
+      [options]="opcionesDeVista()"
+      optionLabel="label"
+      optionValue="value"
+      [allowEmpty]="false"
+      [value]="vista()"
+      (valueChange)="cambiarVista($any($event))"
+    />
+
     <!-- Las capas, como la lista «Mis calendarios» de un calendario: una casilla por capa, con su color. Marcada, está en el
          calendario; sin marcar, sus días pierden el color y se atenúan. El punto lleva el color de la capa; la semana habitual no
          lleva color, así que su punto es un anillo vacío. -->
@@ -48,18 +60,6 @@
         <sc-button size="sm" variant="secondary" appearance="text" [label]="'repositories.horarios.x.layers.show_all' | translate" (clicked)="mostrarTodo()" />
       }
     </div>
-
-    <sc-selectbutton
-      class="vista__vista"
-      size="sm"
-      [ariaLabel]="'repositories.horarios.x.view.label' | translate"
-      [options]="opcionesDeVista()"
-      optionLabel="label"
-      optionValue="value"
-      [allowEmpty]="false"
-      [value]="vista()"
-      (valueChange)="cambiarVista($any($event))"
-    />
   </header>
 
   <div class="vista__cuerpo" (keydown)="teclado($event)">
@@ -124,21 +124,23 @@
               (click)="elegir(c.fecha)"
             >
               <span class="dia__num sc-text-caption-semibold" [class.dia__num--hoy]="esHoy(c.fecha)">{{ c.numero }}</span>
-              @if (c.nombre) {
-                <span class="dia__nombre dia__nombre--{{ c.dia.tipo }} sc-text-caption-semibold">
-                  <sc-icon [name]="c.dia.tipo === 'festivo' ? 'flag' : 'event'" size="sm" aria-hidden="true" />
-                  <span class="dia__nombre-texto">{{ c.nombre }}</span>
-                </span>
-              }
-              @if (c.abierto) {
-                <span class="dia__horas sc-text-caption-regular">
+              <!-- Cada cosa del día es un evento en píldora, con el color de su capa (como los eventos de un calendario): el
+                   nombre del festivo o de la fecha especial y cada tramo abierto. -->
+              <span class="dia__eventos">
+                @if (c.nombre) {
+                  <span class="evento evento--nombre sc-text-caption-semibold" [attr.data-color]="c.color ?? 'gray'">
+                    <sc-icon [name]="c.dia.tipo === 'festivo' ? 'flag' : 'event'" size="sm" aria-hidden="true" />
+                    <span class="evento__texto">{{ c.nombre }}</span>
+                  </span>
+                }
+                @if (c.abierto) {
                   @for (h of c.horas; track h) {
-                    <span>{{ h }}</span>
+                    <span class="evento sc-text-caption-semibold" [attr.data-color]="c.color ?? (c.apagada ? 'gray' : 'green')"><span class="evento__texto">{{ h }}</span></span>
                   }
-                </span>
-              } @else if (!c.nombre) {
-                <span class="dia__cerrado sc-text-caption-regular">{{ 'repositories.horarios.closed' | translate }}</span>
-              }
+                } @else if (!c.nombre) {
+                  <span class="evento evento--cerrado sc-text-caption-regular" data-color="gray"><span class="evento__texto">{{ 'repositories.horarios.closed' | translate }}</span></span>
+                }
+              </span>
             </button>
           }
         </div>
@@ -179,7 +181,7 @@
                 @for (b of col.bloques; track b.top) {
                   <div
                     class="bloque sc-text-caption-semibold"
-                    [attr.data-color]="col.celda.color"
+                    [attr.data-color]="col.celda.color ?? (col.celda.apagada ? 'gray' : 'green')"
                     [style.top.%]="b.top"
                     [style.height.%]="b.alto"
                   >

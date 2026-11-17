@@ -32,10 +32,6 @@
   gap: var(--sc-spacing-0-5);
 }
 
-.vista__vista {
-  margin-inline-start: auto;
-}
-
 .vista__mes {
   inline-size: var(--sc-spacing-12-5);
 }
@@ -53,7 +49,7 @@
 
 .vista__filtros {
   display: flex;
-  flex: 1 1 auto;
+  flex: 1 1 100%;
   flex-wrap: wrap;
   align-items: center;
   gap: var(--sc-spacing-0-5) var(--sc-spacing-1-5);
@@ -225,7 +221,11 @@
 }
 
 /* El dueño tiñe el día, igual que en el año. Gana al cerrado por llevar el atributo. */
-@include tinte('.dia--tinte');
+/* El color va en los eventos del día (píldoras); la celda solo se tiñe cuando está cerrada. */
+.dia--tinte[data-color='gray'] {
+  background: var(--sc-label-gray-bg);
+  color: var(--sc-label-gray-text);
+}
 
 .dia__num {
   display: inline-grid;
@@ -544,4 +544,54 @@
   background: var(--sc-bg-primary);
   color: var(--sc-text-on-primary);
   text-decoration: none;
+}
+
+/* ── Eventos del día: píldoras de color, como los eventos de un calendario ─────────────────────────────────────── */
+
+.dia__eventos {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-25);
+  inline-size: 100%;
+  min-inline-size: 0;
+}
+
+.evento {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-25);
+  min-inline-size: 0;
+  padding: var(--sc-spacing-0-125) var(--sc-spacing-0-5);
+  overflow: hidden;
+  border-inline-start: 3px solid currentColor;
+  border-radius: var(--sc-radius-sm);
+  background: var(--sc-label-gray-bg);
+  color: var(--sc-label-gray-text);
+
+  &--cerrado {
+    border-inline-start-color: transparent;
+    background: transparent;
+  }
+
+  @each $color in ('blue', 'green', 'purple', 'orange', 'teal', 'amber', 'red', 'brown', 'gray') {
+    &[data-color='#{$color}'] {
+      background: var(--sc-label-#{$color}-bg);
+      color: var(--sc-label-#{$color}-text);
+    }
+  }
+
+  &[data-color='black'] {
+    background: color-mix(in srgb, var(--sc-cmp-tag-contrast-background) 10%, var(--sc-bg-surface));
+    color: var(--sc-cmp-tag-contrast-background);
+  }
+
+  &--cerrado[data-color='gray'] {
+    background: transparent;
+  }
+}
+
+.evento__texto {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
