@@ -34,25 +34,18 @@
       }
     </div>
 
-    <!-- El día elegido (hoy, al abrir) junto a los selectores, en dos líneas: la fecha y cómo está; debajo, sus horas y quién las
-         decide. Editar el día o crear una fecha especial está en sus secciones, no aquí. -->
-    <div class="vista__dia" aria-live="polite">
-      @if (detalle(); as d) {
-        <span class="vista__dia-linea">
-          <span class="vista__dia-titulo sc-text-body-semibold">{{ d.corto }}</span>
-          <sc-tag
-            [severity]="d.abierto ? 'success' : 'secondary'"
-            [icon]="d.abierto ? 'check_circle' : 'do_not_disturb_on'"
-            [value]="(d.abierto ? 'repositories.horarios.x.in_hours' : 'repositories.horarios.x.out_of_hours') | translate"
-          />
-        </span>
-        <span class="vista__dia-linea vista__dia-linea--detalle sc-text-caption-regular">
-          <!-- Un día abierto las 24 horas no escribe «todo el día»: la etiqueta «Disponible» ya lo dice. -->
-          @if (d.abierto && d.dia.minutosAbiertos !== 1440) {
-            <span class="vista__dia-horas">{{ d.horas.join(' · ') }}</span>
-          }
-          <span class="vista__dia-dueno"><span class="punto" [attr.data-color]="d.duenoColor" aria-hidden="true"></span>{{ d.motivo }}</span>
-        </span>
+    <!-- Las capas, como la lista «Mis calendarios» de un calendario: una casilla por capa, con su color. Marcada, está en el
+         calendario; sin marcar, sus días pierden el color y se atenúan. El punto lleva el color de la capa; la semana habitual no
+         lleva color, así que su punto es un anillo vacío. -->
+    <div class="vista__filtros" role="group" [attr.aria-label]="'repositories.horarios.x.layers.label' | translate">
+      @for (capa of capas(); track capa.clave) {
+        <sc-checkbox class="filtro" [class.filtro--apagado]="!capa.activa" [state]="capa.activa ? 'all' : 'none'" (cycle)="alternar(capa.clave)">
+          <!-- El punto y el nombre, juntos: el punto es del nombre, no de la casilla. -->
+          <span class="filtro__texto"><span class="punto" [attr.data-color]="capa.color" aria-hidden="true"></span>{{ capa.etiqueta }}</span>
+        </sc-checkbox>
+      }
+      @if (hayFiltros()) {
+        <sc-button size="sm" variant="secondary" appearance="text" [label]="'repositories.horarios.x.layers.show_all' | translate" (clicked)="mostrarTodo()" />
       }
     </div>
 
@@ -68,21 +61,6 @@
       (valueChange)="cambiarVista($any($event))"
     />
   </header>
-
-  <!-- Las capas, como la lista «Mis calendarios» de un calendario: una casilla por capa, con su color. Marcada, está en el
-       calendario; sin marcar, sus días pierden el color y se atenúan. El punto lleva el color de la capa; la semana habitual no
-       lleva color, así que su punto es un anillo vacío. -->
-  <div class="vista__filtros" role="group" [attr.aria-label]="'repositories.horarios.x.layers.label' | translate">
-    @for (capa of capas(); track capa.clave) {
-      <sc-checkbox class="filtro" [class.filtro--apagado]="!capa.activa" [state]="capa.activa ? 'all' : 'none'" (cycle)="alternar(capa.clave)">
-        <!-- El punto y el nombre, juntos: el punto es del nombre, no de la casilla. -->
-        <span class="filtro__texto"><span class="punto" [attr.data-color]="capa.color" aria-hidden="true"></span>{{ capa.etiqueta }}</span>
-      </sc-checkbox>
-    }
-    @if (hayFiltros()) {
-      <sc-button size="sm" variant="secondary" appearance="text" [label]="'repositories.horarios.x.layers.show_all' | translate" (clicked)="mostrarTodo()" />
-    }
-  </div>
 
   <div class="vista__cuerpo" (keydown)="teclado($event)">
     @switch (vista()) {

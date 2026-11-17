@@ -12,7 +12,7 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: var(--sc-spacing-1);
+  gap: var(--sc-spacing-0-75);
   min-block-size: 0;
 }
 
@@ -21,8 +21,8 @@
 .vista__barra {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-start;
-  gap: var(--sc-spacing-1) var(--sc-spacing-1-5);
+  align-items: center;
+  gap: var(--sc-spacing-0-5) var(--sc-spacing-1-5);
 }
 
 .vista__nav {
@@ -53,6 +53,7 @@
 
 .vista__filtros {
   display: flex;
+  flex: 1 1 auto;
   flex-wrap: wrap;
   align-items: center;
   gap: var(--sc-spacing-0-5) var(--sc-spacing-1-5);
@@ -163,7 +164,7 @@
   display: grid;
   flex: 1;
   grid-template-columns: repeat(7, minmax(0, 1fr));
-  grid-template-rows: auto repeat(var(--semanas, 5), minmax(var(--sc-spacing-5), 1fr));
+  grid-template-rows: auto repeat(var(--semanas, 5), minmax(var(--sc-spacing-3), 1fr));
   min-block-size: 0;
   border-block-start: 1px solid var(--sc-border-default);
   border-inline-start: 1px solid var(--sc-border-default);
@@ -283,11 +284,14 @@
 
 /* ── Año ───────────────────────────────────────────────────────────────────────────────────────────────────────── */
 
+/* El año ocupa todo el alto que hay, sin desplazarse: cada mes reparte sus seis semanas en lo que le toca. */
 .anio {
   display: grid;
+  flex: 1;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--sc-spacing-0-75) var(--sc-spacing-1);
-  overflow-y: auto;
+  grid-auto-rows: minmax(0, 1fr);
+  gap: var(--sc-spacing-0-5) var(--sc-spacing-1);
+  min-block-size: 0;
 
   @container (min-width: 52rem) {
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -298,6 +302,12 @@
   }
 }
 
+.anio__mes {
+  display: flex;
+  flex-direction: column;
+  min-block-size: 0;
+}
+
 .anio__nombre {
   margin: 0 0 var(--sc-spacing-0-25);
   text-transform: capitalize;
@@ -305,8 +315,11 @@
 
 .anio__rejilla {
   display: grid;
+  flex: 1;
   grid-template-columns: repeat(7, minmax(0, 1fr));
+  grid-template-rows: auto repeat(6, minmax(0, 1fr));
   gap: 1px;
+  min-block-size: 0;
 }
 
 .anio__inicial {
@@ -316,8 +329,8 @@
 
 .mini {
   position: relative;
-  /* Días bajos, no cuadrados: los doce meses caben a la vez, sin desplazarse. */
-  block-size: var(--sc-spacing-1-5);
+  /* Los días reparten el alto del mes: los doce meses caben a la vez, sin desplazarse. */
+  min-block-size: 0;
   padding: 0;
   border: 0;
   border-radius: var(--sc-radius-sm);
@@ -344,7 +357,6 @@
 
   &--hoy {
     font-weight: 700;
-    text-decoration: underline;
   }
 
   &--elegido {
@@ -525,4 +537,11 @@
     padding-inline-start: 0;
     border-inline-start: 0;
   }
+}
+
+/* Hoy, en la rejilla del año: relleno de marca, como el círculo del mes. */
+.mini.mini--hoy.mini--hoy {
+  background: var(--sc-bg-primary);
+  color: var(--sc-text-on-primary);
+  text-decoration: none;
 }

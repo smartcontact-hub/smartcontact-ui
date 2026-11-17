@@ -8,7 +8,6 @@ import {
   ElementRef,
   inject,
   Injector,
-  type OnInit,
   input,
   model,
   output,
@@ -106,7 +105,7 @@ const diasDelMes = (anio: number, mes: number): number => new Date(Date.UTC(anio
   styleUrl: './horario-vista.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HorarioVistaComponent implements OnInit {
+export class HorarioVistaComponent {
   private readonly translate = inject(TranslateService);
   private readonly language = inject(LanguageService);
   private readonly lang = injectLangChange();
@@ -123,11 +122,6 @@ export class HorarioVistaComponent implements OnInit {
   readonly editarPeriodo = output<number>();
   readonly editarSemana = output<void>();
   readonly editarFestivos = output<number>();
-
-  /** Se abre con hoy elegido: la línea del día dice de entrada qué día es y cómo está. */
-  ngOnInit(): void {
-    if (!this.diaElegido()) this.diaElegido.set(this.hoy());
-  }
 
   /* ── Tiempo: hoy y la hora, en la zona del horario ────────────────────────────────────────────────────────────── */
 

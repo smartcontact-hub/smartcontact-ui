@@ -15,24 +15,22 @@
 .cabecera {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
-  gap: var(--sc-spacing-1);
+  gap: var(--sc-spacing-0-5) var(--sc-spacing-1);
 }
 
+/* El título y la zona horaria, en la misma línea. */
 .cabecera__titulo {
   display: flex;
-  flex-direction: column;
-  gap: var(--sc-spacing-0-25);
-  min-inline-size: 0;
-}
-
-.cabecera__meta {
-  display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: var(--sc-spacing-0-25);
-  margin: 0;
-  color: var(--sc-text-secondary);
+  gap: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
+  min-inline-size: 0;
+
+  .page__heading {
+    margin: 0;
+  }
 }
 
 .cabecera__acciones {
@@ -66,7 +64,7 @@
 
 .horario__reglas {
   min-inline-size: 0;
-  max-block-size: max(34rem, calc(100dvh - var(--sc-topbar-height) - 11 * var(--sc-spacing-1)));
+  max-block-size: max(34rem, calc(100dvh - var(--sc-topbar-height) - 8 * var(--sc-spacing-1)));
   overflow-y: auto;
 
   @media (max-width: 1199px) {
@@ -80,7 +78,7 @@
   display: flex;
   flex-direction: column;
   min-inline-size: 0;
-  block-size: max(34rem, calc(100dvh - var(--sc-topbar-height) - 11 * var(--sc-spacing-1)));
+  block-size: max(34rem, calc(100dvh - var(--sc-topbar-height) - 8 * var(--sc-spacing-1)));
   padding: var(--sc-spacing-1);
   border: 1px solid var(--sc-border-default);
   border-radius: var(--sc-radius-lg);
