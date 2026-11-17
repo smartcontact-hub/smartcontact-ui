@@ -77,16 +77,60 @@
     <app-lab-horarios />
   </section>
 
+  <!-- ── PRUEBAS ────────────────────────────────────────────────────────────────────────────────
+       Versiones que se desempatan con personas (DD-256). La tarjeta lleva a la sala de control: los enlaces de cada
+       persona, qué hacer en la sesión y el veredicto con lo que vayan mandando. El plan vive en `pruebas.data.ts`. -->
+  <section class="lab-sec" id="sec-pruebas" aria-labelledby="t-pruebas">
+    <header class="lab-sec__cabeza">
+      <sc-icon-tile icon="ads_click" />
+      <div>
+        <h2 id="t-pruebas" class="lab-sec__titulo sc-text-h2-semibold">Pruebas con personas</h2>
+        <p class="lab-sec__lead sc-text-body-regular">
+          Para desempatar versiones: cada persona hace la misma tarea en todas, y el resultado dice cuál gana o que no
+          se puede saber.
+        </p>
+      </div>
+    </header>
+
+    <div class="lab-dos">
+      @for (pr of pruebas; track pr.id) {
+        <article class="lab-tarjeta" [attr.aria-labelledby]="'prueba-' + pr.id">
+          <div class="lab-tarjeta__arte">
+            <app-lab-arte tema="prueba" />
+            <sc-tag class="lab-tarjeta__estado" [severity]="pruebaSeverity(pr.estado)" [value]="estadoPrueba[pr.estado]" />
+          </div>
+
+          <div class="lab-tarjeta__cuerpo">
+            <h3 [id]="'prueba-' + pr.id" class="lab-tarjeta__titulo sc-text-subtitle-semibold">{{ pr.titulo }}</h3>
+            <p class="lab-tarjeta__q sc-text-body-regular">{{ pr.pregunta }}</p>
+            @if (pr.resultado) {
+              <p class="lab-tarjeta__nota sc-text-caption-regular">{{ pr.resultado.resumen }}</p>
+            }
+
+            <div class="lab-tarjeta__pie">
+              <a class="lab-enlace sc-text-body-semibold" [routerLink]="['/lab/pruebas', pr.id]">
+                Abrir <sc-icon name="arrow_forward" [size]="16" />
+              </a>
+              <span class="lab-tarjeta__donde sc-text-caption-regular">
+                {{ pr.personas }} personas · {{ pr.versiones.length }} versiones
+              </span>
+            </div>
+          </div>
+        </article>
+      }
+    </div>
+  </section>
+
   <!-- ── EXPLORACIONES ──────────────────────────────────────────────────────────────────────────
-       Versiones que esperan una decisión. Cada tarjeta lleva el esquema de lo que prueba y su estado encima: verde
-       decidida, ámbar esperando, sin color archivada. -->
+       Versiones que se compararon. Cada tarjeta lleva el esquema de lo que prueba y su estado encima: verde
+       decidida, ámbar esperando, sin color archivada. El estado sale de `explorations.data.ts`. -->
   <section class="lab-sec" id="sec-exploraciones" aria-labelledby="t-exploraciones">
     <header class="lab-sec__cabeza">
       <sc-icon-tile icon="compare" />
       <div>
         <h2 id="t-exploraciones" class="lab-sec__titulo sc-text-h2-semibold">Exploraciones</h2>
         <p class="lab-sec__lead sc-text-body-regular">
-          Cada versión que se probó, con un enlace que no caduca. Esperan una decisión.
+          Cada versión que se probó, con un enlace que no caduca y en qué quedó.
         </p>
       </div>
     </header>

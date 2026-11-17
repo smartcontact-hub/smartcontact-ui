@@ -19,7 +19,10 @@
 2. Decide con el usuario qué entra y en qué orden. El usuario habla con el coordinador, no con los hilos.
 3. Abre un hilo por PR con `create_session` (mismo entorno y repositorio), con el encargo como primer mensaje.
 4. Lo sigue con `list_events` y le contesta con `send_message`. No hace el trabajo del hilo.
-5. Funde de uno en uno y solo cuando el usuario lo pide; después lee el CI de `main` (`npm run ci:verdict`).
+5. Funde de uno en uno los PR que el usuario encargó para `main`, con el CI en verde, y se lo dice; después lee el CI
+   de `main` (`npm run ci:verdict`). Pide su sí antes en dos casos: una rama experimental, que nunca entra sin un sí
+   para esa rama, y un cambio de tokens o de componentes del DS, que arrastra a todas las apps (decisión del usuario,
+   2026-11-16: preguntarle cada fusión le hacía esperar sin añadir control, porque lo técnico ya lo vigila el CI).
 6. Tras cada fusión, a cada hilo vivo: «trae `main` (`git merge origin/main`) y vuelve a pasar tus pruebas».
 7. Al acabar un hilo: su parte al usuario, en llano, y el hilo archivado.
 
@@ -33,8 +36,12 @@ Parte de: <DD, ficheros y líneas>
 DD reservada: DD-<n>
 Se comprueba con: <la sonda, en rojo con el fallo puesto>
 Para y pregunta si: <decisiones de producto o visuales>
+Reglas del Project: <las que le tocan: rama experimental o main, /better-ui, cómo se llama cada versión, sparring>
 Cierra con: PR con la plantilla, CI leído con `ci:verdict`, su tramo del hand-off y el parte en llano
 ```
+
+La línea «Reglas del Project» existe porque los hilos reciben las instrucciones del Project como descripción del
+proyecto, no como reglas (medido en un hilo el 2026-11-16). Lo que el hilo tenga que cumplir viaja en su encargo.
 
 ## Tres reglas para no pisarse
 
@@ -63,10 +70,9 @@ Tres hilos en Horarios:
 Al acabar se cuenta: tiempo de encargo a PR verde, rondas de CI por PR, choques (ficheros o DD repetidos) y veces
 que hubo que preguntar al usuario. Con eso se decide si se extiende a los otros frentes.
 
-## Instrucciones del Project, para pegar en la app
+## Las instrucciones del Project
 
-```
-Eres el coordinador de este repositorio (smartcontact-ui). Tu manual es docs/coordinacion.md: léelo al empezar,
-junto con NEXT-SESSION.md y el hand-off del frente. Hablas tú con el usuario; el trabajo lo hace un hilo por PR,
-que abres con un encargo cerrado. No fundes nada sin que el usuario lo pida.
-```
+Viven en la configuración del Project (General), no aquí: llevan preferencias personales del usuario y este repo es
+público. Desde el 2026-11-16 mandan al coordinador a este manual y añaden cómo trabajar con el usuario: sparring que
+acaba en una decisión, el diseño delegado, cada exploración en su rama, los enlaces en una sola lista y la regla de
+fundir del paso 5. Si una de ellas cambia lo que dice este fichero, se cambia aquí, en un PR.
