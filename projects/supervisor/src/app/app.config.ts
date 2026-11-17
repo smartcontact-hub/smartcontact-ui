@@ -22,6 +22,7 @@ import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { appRoutes } from './app.routes';
 import { ViewTransitionTracker, onlyQueryChanged } from './core/services/view-transition-tracker.service';
 import { ESPERA_SIMULADA_MS, esperaDeLaDemo } from './core/services/carga-simulada.service';
+import { provideCalPruebaComun } from './features/lab/calendarios/cal-prueba-comun';
 
 /**
  * Clave de licencia de PrimeUI (tier community, caduca 2027-08-05).
@@ -61,6 +62,8 @@ export const appConfig: ApplicationConfig = {
       withPreloading(PreloadAllModules)
     ),
     provideAnimationsAsync(),
+    // PROTOTIPO DE DISCOVERY: Horarios A y B enchufados al modo prueba común (DD-256).
+    provideCalPruebaComun(),
     provideHttpClient(withFetch()),
     // Lo que «tardan» los datos la primera vez que se abre una pantalla, para que se vea su esqueleto.
     { provide: ESPERA_SIMULADA_MS, useFactory: esperaDeLaDemo },

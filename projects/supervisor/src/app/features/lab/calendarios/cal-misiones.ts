@@ -155,30 +155,7 @@ function tocadosDeMas(inicial: Estado, real: Estado, intactos: readonly number[]
 
 export function corregir(m: Mision, real: Estado): Correccion {
   const inicial = estadoInicial(m);
-  if (m === 1) {
-    const objetivos = [5, 6];
-    const cerrado = (id: number, iso: string): boolean => {
-      const c = real.calendarios.find((x) => x.id === id);
-      return !!c && resolver(real, c, iso).franjas.length === 0;
-    };
-    const otros = inicial.calendarios.map((c) => c.id).filter((id) => !objetivos.includes(id));
-    // Lo que cambia de más en los dos calendarios de la misión: cualquier día de 2025 que no sea el 28 de enero.
-    const deMasEnObjetivos = objetivos.reduce((n, id) => {
-      const a = inicial.calendarios.find((c) => c.id === id)!;
-      const b = real.calendarios.find((c) => c.id === id);
-      if (!b) return n + 365;
-      return n + diasDelAnio(ANIO).filter((iso) => iso !== '2025-01-28' && firma(resolver(inicial, a, iso)) !== firma(resolver(real, b, iso))).length;
-    }, 0);
-    const deMas = tocadosDeMas(inicial, real, otros) + deMasEnObjetivos;
-    const puntos = [
-      { texto: 'Secretaría Barcelona cierra el 28 de enero de 2025', ok: cerrado(5, '2025-01-28') },
-      { texto: 'Oficinas Barcelona cierra el 28 de enero de 2025', ok: cerrado(6, '2025-01-28') },
-      { texto: 'Y los dos cierran también el 28 de enero de 2026', ok: cerrado(5, '2026-01-28') && cerrado(6, '2026-01-28') },
-      { texto: deMas === 0 ? 'No ha cambiado nada más' : `Ha cambiado ${deMas} ${deMas === 1 ? 'día' : 'días'} que no tocaba`, ok: deMas === 0 },
-    ];
-    const bien = puntos.filter((p) => p.ok).length;
-    return { titular: `${bien} de ${puntos.length} comprobaciones bien`, bien, total: puntos.length, puntos, fallos: [] };
-  }
+  if (m === 1) return corregirFestivo(FESTIVOS['festivo-1'], real);
 
   // Misión 2: el calendario nuevo que más se parezca al objetivo (si hay varios), día a día durante 2025.
   const nuevos = real.calendarios.filter((c) => !inicial.calendarios.some((x) => x.id === c.id));
@@ -196,6 +173,70 @@ export function corregir(m: Mision, real: Estado): Correccion {
   ];
   return { titular: `${r.bien} de 365 días bien`, bien: r.bien, total: 365, puntos, fallos: r.fallos };
 }
+
+/* ─────────────────── El festivo del modo prueba común (DD-256): dos gemelas ─────────────────── */
+
+/** Una gemela de la tarea «Dar de alta un festivo»: el mismo trabajo con otro día y otros dos calendarios. */
+export interface Festivo {
+  /** «01-28». */
+  readonly dia: string;
+  readonly calendarioIds: readonly number[];
+}
+
+/**
+ * Las dos gemelas, por la vuelta en que se hacen (no por versión): la 1 es la que la persona hace primero. Las dos
+ * arrancan con los mismos datos (`estadoInicial(1)`), que traen los cuatro calendarios.
+ */
+export const FESTIVOS: Readonly<Record<'festivo-1' | 'festivo-2', Festivo>> = {
+  'festivo-1': { dia: '01-28', calendarioIds: [6, 5] },
+  'festivo-2': { dia: '05-15', calendarioIds: [1, 2] },
+};
+
+/**
+ * Corrige una gemela: cada calendario pedido cierra todo el día ese día en 2025 y en 2026 (cada año), y no cambia
+ * ningún otro día de 2025 en ningún calendario.
+ */
+export function corregirFestivo(f: Festivo, real: Estado): Correccion {
+  const inicial = estadoInicial(1);
+  const cerrado = (id: number, iso: string): boolean => {
+    const c = real.calendarios.find((x) => x.id === id);
+    return !!c && resolver(real, c, iso).franjas.length === 0;
+  };
+  const nombre = (id: number): string => inicial.calendarios.find((c) => c.id === id)?.nombre ?? `Calendario ${id}`;
+  const iso25 = `${ANIO}-${f.dia}`;
+  const iso26 = `${ANIO + 1}-${f.dia}`;
+  const otros = inicial.calendarios.map((c) => c.id).filter((id) => !f.calendarioIds.includes(id));
+  // Lo que cambia de más en los calendarios de la misión: cualquier día de 2025 que no sea el del festivo.
+  const deMasEnObjetivos = f.calendarioIds.reduce((n, id) => {
+    const a = inicial.calendarios.find((c) => c.id === id)!;
+    const b = real.calendarios.find((c) => c.id === id);
+    if (!b) return n + 365;
+    return n + diasDelAnio(ANIO).filter((iso) => iso !== iso25 && firma(resolver(inicial, a, iso)) !== firma(resolver(real, b, iso))).length;
+  }, 0);
+  const deMas = tocadosDeMas(inicial, real, otros) + deMasEnObjetivos;
+  const fecha = fechaLarga(iso25);
+  const faltan = f.calendarioIds.filter((id) => !cerrado(id, iso25));
+  const sinCadaAnio = f.calendarioIds.filter((id) => cerrado(id, iso25) && !cerrado(id, iso26));
+  const puntos = [
+    ...f.calendarioIds.map((id) => ({ texto: `${nombre(id)} cierra el ${fecha}`, ok: !faltan.includes(id) })),
+    { texto: `Y cierran también el ${fechaLarga(iso26)}`, ok: f.calendarioIds.every((id) => cerrado(id, iso26)) },
+    { texto: deMas === 0 ? 'No ha cambiado nada más' : `Ha cambiado ${deMas} ${deMas === 1 ? 'día' : 'días'} que no tocaba`, ok: deMas === 0 },
+  ];
+  const bien = puntos.filter((p) => p.ok).length;
+  const titular =
+    bien === puntos.length
+      ? 'Festivo bien en los dos calendarios'
+      : faltan.length > 0
+        ? `Falta ${faltan.map(nombre).join(' y ')}`
+        : sinCadaAnio.length > 0
+          ? 'No vale para todos los años'
+          : `Ha cambiado ${deMas} ${deMas === 1 ? 'día' : 'días'} que no tocaba`;
+  return { titular, bien, total: puntos.length, puntos, fallos: [] };
+}
+
+const MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+/** «28 de enero de 2025». */
+const fechaLarga = (iso: string): string => `${+iso.slice(8, 10)} de ${MESES[+iso.slice(5, 7) - 1]} de ${iso.slice(0, 4)}`;
 
 /* ─────────────────────────────── El papel de posventa ─────────────────────────────── */
 

@@ -7,6 +7,7 @@ import { ScButtonComponent, ScInputTextComponent, ScSelectButtonComponent } from
 import { ScIconComponent } from '@smartcontact-hub/icons';
 
 import { ResultadoAccionService } from '@core/services/resultado-accion.service';
+import { pruebaEnCurso } from '@core/prueba/prueba-arranque';
 import { MISIONES, type Mision } from './cal-misiones';
 import { discoveryActivo } from './cal-modo';
 import { CalPapelComponent } from './cal-papel.component';
@@ -202,7 +203,7 @@ export class CalPruebaComponent {
     ),
     { initialValue: this.router.url },
   );
-  protected readonly visible = computed(() => EN_PRUEBA.test(this.url()) && discoveryActivo());
+  protected readonly visible = computed(() => EN_PRUEBA.test(this.url()) && discoveryActivo() && !pruebaEnCurso());
 
   protected readonly abierta = signal(false);
   protected readonly papel = signal(false);
