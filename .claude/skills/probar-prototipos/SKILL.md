@@ -30,7 +30,9 @@ control del Lab, y allí está todo.
    - Las versiones: cada una es **un enlace**. Otra rama → su preview; la misma rama con un parámetro →
      `?variante=A`. Nómbralas por lo que son («Separado», «Junto»), no «la buena».
    - De 1 a 3 tareas cortas, cada una con **una misión gemela por versión**: el mismo trabajo con otros datos y la misma
-     dificultad, para que nadie repita en la segunda versión lo que ya resolvió en la primera.
+     dificultad, para que nadie repita en la segunda versión lo que ya resolvió en la primera. Compruébalo en los datos
+     de partida: si el día de una ya es festivo en un calendario (el 15 de mayo es San Isidro en Madrid), esa pide la
+     mitad de trabajo. Un ensayo sin hacer nada debe sacar los mismos puntos en las dos.
    - Personas: 6 por defecto (de 5 a 10). Con menos de 5 la regla nunca da ganadora; dilo antes de empezar.
 
 2. **Prepara cada rama** (si no, la prueba igual funciona: quien modera marca si salió bien):
