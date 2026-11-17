@@ -35,16 +35,19 @@ sobre gris, entrada escalonada de 100 ms, movimiento reducido respetado.
 Apunta al preview de `claude-discovery-horarios`, que es de otro hilo.
 
 **Siguiente:**
-1. La rama del discovery (no la toques desde aquí): trae `main`, lee `?variante=`, registra `reiniciar` y `comprobar`
-   para `festivo-1` (28 de enero, Oficinas Barcelona y Secretaría Barcelona) y `festivo-2` (15 de mayo, Atención
-   Madrid y Soporte Sevilla), y esconde su barra de prueba antigua cuando `pruebaEnCurso()`.
-2. Ensayar la de Horarios en el preview con Playwright (`/#/prueba/horarios/ensayo`) cuando el discovery tenga `main`.
+1. ✅ 2026-11-17 · La rama del discovery (`claude/discovery-horarios`, 66074d23) ya trae `main`, lee `?variante=`,
+   registra `reiniciar` y `comprobar` (`cal-prueba-comun.ts`) y esconde su barra antigua. Ensayado en local con su
+   build: la variante cambia de paso, la corrección llega a la sala y no hay errores.
+2. La gemela 2 pasa del 15 de mayo al 7 de octubre (el 15 de mayo ya era San Isidro en Atención Madrid): el plan, en
+   este PR; `FESTIVOS['festivo-2']`, en la rama del discovery.
 3. Tras las sesiones: `estado: 'decidida'` y `resultado` con el resumen. Los códigos no entran en el repo.
 
 **Trampas:**
 - ⚠️ La capa solo se enciende en `localhost`, `127.0.0.1` y `<rama>.sc-supervisor.pages.dev` (`pruebaPermitida`). En
   producción el enlace de una prueba no hace nada, a propósito.
 - ⚠️ La misión es `<tarea>-<vuelta>`: `festivo-1` es la que la persona hace PRIMERO, no la de la versión A.
+- ⚠️ Las gemelas han de costar lo mismo: mira en los datos de partida que su día no sea ya festivo en ninguna ubicación ni
+  caiga en un periodo de los calendarios que pide. Ensayar sin hacer nada lo delata: las dos deben sacar los mismos puntos.
 - ⚠️ sc-docs no tiene `withComponentInputBinding`: los parámetros de ruta se leen con `ActivatedRoute`.
 - ⚠️ La caja de códigos se vacía en el turno siguiente (`setTimeout`): vaciarla en el mismo deja la señal de '' a '' y el
   texto pegado se queda a la vista.
