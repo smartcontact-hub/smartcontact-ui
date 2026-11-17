@@ -1726,6 +1726,7 @@
             "period_help": "O que ouve quem liga fora das horas deste período, nos seus feriados e fins de semana. Vazio: a do horário."
           },
           "panel": {
+            "from": "De",
             "kind": "Tipo",
             "holiday": "Feriado",
             "closed": "Fechado",

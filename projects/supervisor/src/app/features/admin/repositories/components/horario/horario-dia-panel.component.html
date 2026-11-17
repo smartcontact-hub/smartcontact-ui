@@ -30,16 +30,21 @@
     <sc-horario-franjas [franjas]="franjas()" [etiqueta]="nombre()" (franjasChange)="franjas.set($event)" />
   }
 
+  <!-- Como en un calendario: desde un día hasta otro (vacío, solo ese día). -->
   <div class="panel__fila">
+    <sc-datepicker inputId="dia-desde" [label]="'repositories.horarios.x.panel.from' | translate" [value]="desde()" (valueChange)="ponerDesde($event)" />
+    <span class="panel__guion" aria-hidden="true">–</span>
     <sc-datepicker
       inputId="dia-hasta"
       [label]="'repositories.horarios.x.panel.until' | translate"
-      [helperText]="cuantos() > 1 ? ('repositories.horarios.x.panel.range' | translate: { count: cuantos() }) : ('repositories.horarios.x.panel.until_help' | translate)"
       [minDate]="minimo()"
       [value]="hasta()"
       (valueChange)="ponerHasta($event)"
     />
   </div>
+  @if (cuantos() > 1) {
+    <p class="panel__nota sc-text-caption-regular">{{ 'repositories.horarios.x.panel.range' | translate: { count: cuantos() } }}</p>
+  }
 
   <div class="panel__anual">
     <sc-toggleswitch inputId="dia-anual" [ariaLabel]="'repositories.horarios.x.panel.repeat' | translate" [checked]="cadaAnio()" (checkedChange)="cadaAnio.set($event)" />

@@ -49,9 +49,7 @@
       [ariaLabel]="'repositories.horarios.period_add' | translate"
       (clicked)="anadirPeriodo.emit()"
     />
-    @if (filasDePeriodos().length === 0) {
-      <p class="vacio sc-text-body-regular">{{ 'repositories.horarios.periods_empty_body' | translate }}</p>
-    } @else {
+    @if (filasDePeriodos().length > 0) {
       <ul class="lista" role="list">
         @for (p of filasDePeriodos(); track p.id) {
           <li class="fila">
@@ -96,7 +94,9 @@
       (valueChange)="filtro.set($any($event))"
     />
     @if (filasDeEspeciales().length === 0) {
-      <p class="vacio sc-text-body-regular">{{ (filtro() === 'proximas' ? 'repositories.horarios.specials_empty_body' : 'repositories.horarios.specials_past_empty') | translate }}</p>
+      @if (filtro() !== 'proximas') {
+        <p class="vacio sc-text-body-regular">{{ 'repositories.horarios.specials_past_empty' | translate }}</p>
+      }
     } @else {
       <ul class="lista lista--especiales" role="list">
         @for (e of filasDeEspeciales(); track e.id) {

@@ -70,3 +70,15 @@
 .panel__espacio {
   flex: 1;
 }
+
+.panel__fila {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: end;
+  gap: var(--sc-spacing-0-5);
+}
+
+.panel__guion {
+  padding-block-end: var(--sc-spacing-0-75);
+  color: var(--sc-text-secondary);
+}

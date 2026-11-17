@@ -27,9 +27,15 @@
 
 .vista__nav {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   gap: var(--sc-spacing-0-5);
+}
+
+.vista__barra > .vista__vista {
+  /* El selector de vista (que trae su propio `order`) se queda a la derecha, a la altura de los desplegables. */
+  order: 0;
+  margin-inline-start: auto;
 }
 
 .vista__mes {

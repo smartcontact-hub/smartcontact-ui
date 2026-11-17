@@ -1726,6 +1726,7 @@
             "period_help": "Ce que les appelants entendent hors des horaires de cette période, ses jours fériés et week-ends. Vide : celui de l'horaire."
           },
           "panel": {
+            "from": "Du",
             "kind": "Type",
             "holiday": "Jour férié",
             "closed": "Fermé",

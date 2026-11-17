@@ -72,6 +72,7 @@ export class HorarioDiaPanelComponent {
 
   protected readonly nombre = signal('');
   protected readonly tipo = signal<TipoDeDia>('festivo');
+  protected readonly desde = signal<Date>(new Date());
   protected readonly hasta = signal<Date | null>(null);
   protected readonly cadaAnio = signal(false);
   protected readonly franjas = signal<readonly Franja[]>([[540, 840]]);
@@ -83,6 +84,7 @@ export class HorarioDiaPanelComponent {
       const fecha = this.fecha();
       const e = this.existente();
       untracked(() => {
+        this.desde.set(aFecha(fecha));
         this.hasta.set(null);
         this.intento.set(false);
         if (e) {
@@ -129,15 +131,16 @@ export class HorarioDiaPanelComponent {
 
   /** Las fechas que se escriben: la elegida o, con «Hasta», todas hasta esa. */
   private readonly fechas = computed<readonly string[]>(() => {
+    const inicio = aIso(this.desde());
     const fin = this.hasta() ? aIso(this.hasta()!) : null;
-    const lista = [this.fecha()];
-    if (!fin || fin <= this.fecha()) return lista;
-    for (let d = sumarDias(this.fecha(), 1); d <= fin && lista.length < 366; d = sumarDias(d, 1)) lista.push(d);
+    const lista = [inicio];
+    if (!fin || fin <= inicio) return lista;
+    for (let d = sumarDias(inicio, 1); d <= fin && lista.length < 366; d = sumarDias(d, 1)) lista.push(d);
     return lista;
   });
 
   protected readonly cuantos = computed(() => this.fechas().length);
-  protected readonly minimo = computed(() => aFecha(sumarDias(this.fecha(), 1)));
+  protected readonly minimo = computed(() => aFecha(sumarDias(aIso(this.desde()), 1)));
 
   private readonly candidatos = computed<readonly FechaEspecialNueva[]>(() => {
     const previo = this.existente();
@@ -193,6 +196,12 @@ export class HorarioDiaPanelComponent {
   protected quitar(): void {
     const e = this.existente();
     if (e) this.eliminar.emit({ lista: e.lista, id: e.entrada.id });
+  }
+
+  protected ponerDesde(fecha: Date | null): void {
+    if (!fecha) return;
+    this.desde.set(fecha);
+    if (this.hasta() && aIso(this.hasta()!) <= aIso(fecha)) this.hasta.set(null);
   }
 
   protected ponerHasta(fecha: Date | null): void {

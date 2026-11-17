@@ -1726,6 +1726,7 @@
             "period_help": "Lo que oye quien llama fuera de las horas de este periodo, y en sus festivos y fines de semana. Vacío: el del horario."
           },
           "panel": {
+            "from": "Desde",
             "kind": "Tipo",
             "holiday": "Festivo",
             "closed": "Cerrado",

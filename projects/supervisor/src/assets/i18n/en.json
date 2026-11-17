@@ -1726,6 +1726,7 @@
             "period_help": "What callers hear outside this period's hours, and on its holidays and weekends. Empty: the schedule's."
           },
           "panel": {
+            "from": "From",
             "kind": "Type",
             "holiday": "Holiday",
             "closed": "Closed",
