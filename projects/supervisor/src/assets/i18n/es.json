@@ -1724,6 +1724,28 @@
             "out_help": "Lo que oye quien llama cuando no se le atiende y ningún periodo ni fecha especial dice otra cosa.",
             "period_help": "Lo que oye quien llama fuera de las horas de este periodo, y en sus festivos y fines de semana. Vacío: el del horario."
           },
+          "panel": {
+            "kind": "Tipo",
+            "holiday": "Festivo",
+            "closed": "Cerrado",
+            "open": "Otras horas",
+            "until": "Hasta",
+            "until_help": "Opcional: último día de un rango",
+            "more": "Más opciones",
+            "remove": "Eliminar",
+            "close": "Cerrar",
+            "shared": "Hoy: {{name}} ({{list}})",
+            "range": "{{count}} días",
+            "aria": "Editar el día",
+            "name": "Título",
+            "name_ph": "Ej. Cierre por obras",
+            "save": "Guardar",
+            "repeat": "Cada año"
+          },
+          "quick_holiday": {
+            "cta": "Añadir festivo",
+            "title": "Añadir festivo a un calendario"
+          },
           "switcher": {
           "label": "Calendario",
           "placeholder": "Elige un calendario",

@@ -7,6 +7,12 @@
     (scClickOutside)="closeCreatePanel()"
     [scClickOutsideEnabled]="creating()"
   >
+    @if (config().extraAction; as extra) {
+      <sc-button class="top-bar__cta" type="button" variant="secondary" appearance="outlined" (clicked)="extra.run()">
+        <sc-icon [name]="extra.icon" size="inherit" />
+        <span>{{ extra.labelKey | translate }}</span>
+      </sc-button>
+    }
     <sc-button class="top-bar__cta" type="button" variant="primary" (clicked)="onCreateClick()">
       <sc-icon [name]="plusIcon" size="inherit" />
       <span>{{ createLabelKey() | translate: { entity: entitySingular() } }}</span>

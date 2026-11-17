@@ -118,6 +118,8 @@ export class HorarioVistaComponent {
   /** El día elegido, o `null` si todavía ninguno: no se elige hoy por defecto. */
   readonly diaElegido = model<string | null>(null);
   /** Una fecha especial para el día elegido (crearla o, si ya lo es, editarla). */
+  /** Se eligió un día con el ratón: su fecha y el rectángulo de su celda. */
+  readonly abrirDia = output<{ readonly fecha: string; readonly ancla: DOMRect }>();
   readonly cambiarDia = output<string>();
   readonly editarPeriodo = output<number>();
   readonly editarSemana = output<void>();
@@ -412,8 +414,11 @@ export class HorarioVistaComponent {
     else if (d.tipo === 'semana') this.editarSemana.emit();
   }
 
-  protected elegir(fecha: string): void {
+  /** Elegir un día lo marca y avisa de dónde está (su celda), para que la página ancle junto a ella el panel rápido. */
+  protected elegir(fecha: string, event?: Event): void {
     this.diaElegido.set(fecha);
+    const celda = (event?.currentTarget as HTMLElement | null) ?? null;
+    if (celda) this.abrirDia.emit({ fecha, ancla: celda.getBoundingClientRect() });
   }
 
   /** Teclado: las flechas mueven el día elegido (un día, o una semana arriba y abajo) y la vista lo sigue. */

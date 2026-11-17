@@ -92,7 +92,7 @@
                     [attr.aria-label]="c.aria"
                     [attr.aria-pressed]="c.fecha === seleccion()"
                     [attr.tabindex]="tabIndexDe(c.fecha)"
-                    (click)="elegir(c.fecha)"
+                    (click)="elegir(c.fecha, $event)"
                   >
                     {{ c.numero }}
                   </button>
@@ -121,7 +121,7 @@
               [attr.aria-label]="c.aria"
               [attr.aria-pressed]="c.fecha === seleccion()"
               [attr.tabindex]="tabIndexDe(c.fecha)"
-              (click)="elegir(c.fecha)"
+              (click)="elegir(c.fecha, $event)"
             >
               <span class="dia__num sc-text-caption-semibold" [class.dia__num--hoy]="esHoy(c.fecha)">{{ c.numero }}</span>
               <!-- Cada cosa del día es un evento en píldora, con el color de su capa (como los eventos de un calendario): el
@@ -161,7 +161,7 @@
                 [attr.aria-label]="col.celda.aria"
                 [attr.aria-pressed]="col.celda.fecha === seleccion()"
                 [attr.tabindex]="tabIndexDe(col.celda.fecha)"
-                (click)="elegir(col.celda.fecha)"
+                (click)="elegir(col.celda.fecha, $event)"
               >
                 <span>{{ col.cabecera }}</span>
                 @if (col.celda.nombre) {

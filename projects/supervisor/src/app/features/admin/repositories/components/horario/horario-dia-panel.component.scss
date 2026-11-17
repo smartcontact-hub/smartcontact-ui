@@ -1,0 +1,72 @@
+:host {
+  display: contents;
+}
+
+/* Flota sobre la página, sin fondo: el calendario de detrás sigue vivo. */
+.panel {
+  position: fixed;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1);
+  box-sizing: border-box;
+  max-block-size: calc(100dvh - 2 * var(--sc-spacing-1));
+  overflow-y: auto;
+  padding: var(--sc-spacing-1-5);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-200);
+  background: var(--sc-bg-surface);
+  box-shadow: var(--sc-shadow-dropdown);
+}
+
+.panel__cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sc-spacing-1);
+}
+
+.panel__titulo {
+  margin: 0;
+  color: var(--sc-text-primary);
+}
+
+.panel__nota,
+.panel__error {
+  margin: 0;
+}
+
+.panel__nota {
+  color: var(--sc-text-secondary);
+}
+
+.panel__error {
+  color: var(--sc-text-danger);
+}
+
+.panel__campo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
+}
+
+.panel__rotulo {
+  color: var(--sc-text-secondary);
+}
+
+.panel__anual {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-1);
+}
+
+.panel__pie {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-75);
+  padding-block-start: var(--sc-spacing-0-5);
+}
+
+.panel__espacio {
+  flex: 1;
+}

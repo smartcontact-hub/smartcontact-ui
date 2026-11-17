@@ -1,0 +1,61 @@
+<!-- Sin fondo que bloquee: el calendario sigue activo y otro clic en otro día mueve el panel (role dialog, no modal). -->
+<div class="panel" role="dialog" aria-modal="false" [attr.aria-label]="'repositories.horarios.x.panel.aria' | translate" [style.left]="posicion().left" [style.top]="posicion().top" [style.width]="posicion().width" (keydown.enter)="alIntro($event)">
+  <header class="panel__cabecera">
+    <h3 class="panel__titulo sc-text-body-semibold">{{ titulo() }}</h3>
+    <sc-button size="sm" variant="secondary" appearance="text" [ariaLabel]="'repositories.horarios.x.panel.close' | translate" (clicked)="cerrado.emit()">
+      <sc-icon name="close" size="inherit" />
+    </sc-button>
+  </header>
+
+  @if (nota()) {
+    <p class="panel__nota sc-text-caption-regular">{{ nota() }}</p>
+  }
+
+  <sc-inputtext
+    inputId="dia-nombre"
+    fluid
+    [label]="'repositories.horarios.x.panel.name' | translate"
+    [placeholder]="'repositories.horarios.x.panel.name_ph' | translate"
+    [value]="nombre()"
+    [error]="errorDeNombre()"
+    (valueChange)="nombre.set($event)"
+  />
+
+  <div class="panel__campo">
+    <span class="panel__rotulo sc-text-caption-semibold" id="dia-tipo-rotulo">{{ 'repositories.horarios.x.panel.kind' | translate }}</span>
+    <sc-selectbutton ariaLabelledBy="dia-tipo-rotulo" [options]="tipos()" optionLabel="label" optionValue="value" [allowEmpty]="false" [value]="tipo()" (valueChange)="tipo.set($any($event))" />
+  </div>
+
+  @if (tipo() === 'open') {
+    <sc-horario-franjas [franjas]="franjas()" [etiqueta]="nombre()" (franjasChange)="franjas.set($event)" />
+  }
+
+  <div class="panel__fila">
+    <sc-datepicker
+      inputId="dia-hasta"
+      [label]="'repositories.horarios.x.panel.until' | translate"
+      [helperText]="cuantos() > 1 ? ('repositories.horarios.x.panel.range' | translate: { count: cuantos() }) : ('repositories.horarios.x.panel.until_help' | translate)"
+      [minDate]="minimo()"
+      [value]="hasta()"
+      (valueChange)="ponerHasta($event)"
+    />
+  </div>
+
+  <div class="panel__anual">
+    <sc-toggleswitch inputId="dia-anual" [ariaLabel]="'repositories.horarios.x.panel.repeat' | translate" [checked]="cadaAnio()" (checkedChange)="cadaAnio.set($event)" />
+    <label class="sc-text-body-regular" for="dia-anual">{{ 'repositories.horarios.x.panel.repeat' | translate }}</label>
+  </div>
+
+  @if (error(); as e) {
+    <p class="panel__error sc-text-caption-regular" role="alert">{{ e }}</p>
+  }
+
+  <footer class="panel__pie">
+    <sc-button size="sm" variant="secondary" appearance="text" [label]="'repositories.horarios.x.panel.more' | translate" (clicked)="masOpciones.emit()" />
+    <span class="panel__espacio"></span>
+    @if (existente()) {
+      <sc-button size="sm" variant="danger" appearance="outlined" [label]="'repositories.horarios.x.panel.remove' | translate" (clicked)="quitar()" />
+    }
+    <sc-button size="sm" variant="primary" [label]="'repositories.horarios.x.panel.save' | translate" (clicked)="confirmar()" />
+  </footer>
+</div>

@@ -1724,6 +1724,28 @@
             "out_help": "Ce que les appelants entendent sans réponse, quand aucune période ni date spéciale n'en dit autre chose.",
             "period_help": "Ce que les appelants entendent hors des horaires de cette période, ses jours fériés et week-ends. Vide : celui de l'horaire."
           },
+          "panel": {
+            "kind": "Type",
+            "holiday": "Jour férié",
+            "closed": "Fermé",
+            "open": "Autres horaires",
+            "until": "Jusqu'au",
+            "until_help": "Facultatif : dernier jour d’une plage",
+            "more": "Plus d'options",
+            "remove": "Supprimer",
+            "close": "Fermer",
+            "shared": "Aujourd'hui : {{name}} ({{list}})",
+            "range": "{{count}} jours",
+            "aria": "Modifier le jour",
+            "name": "Titre",
+            "name_ph": "Ex. Fermé pour travaux",
+            "save": "Enregistrer",
+            "repeat": "Chaque année"
+          },
+          "quick_holiday": {
+            "cta": "Ajouter un jour férié",
+            "title": "Ajouter un jour férié à un calendrier"
+          },
           "switcher": {
           "label": "Calendrier",
           "placeholder": "Choisir un calendrier",

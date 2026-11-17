@@ -19,6 +19,7 @@ import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 import { type AlcanceDelCambio, HorarioCompartidoModalComponent } from '../components/horario/horario-compartido-modal.component';
 import { type DatosDeHorario, HorarioDatosModalComponent } from '../components/horario/horario-datos-modal.component';
 import { type FechaEspecialNueva, HorarioEspecialModalComponent } from '../components/horario/horario-especial-modal.component';
+import { type DiaDelPanel, HorarioDiaPanelComponent } from '../components/horario/horario-dia-panel.component';
 import { HorarioPeriodoModalComponent } from '../components/horario/horario-periodo-modal.component';
 import { HorarioReglasComponent } from '../components/horario/horario-reglas.component';
 import { HorarioSemanaModalComponent } from '../components/horario/horario-semana-modal.component';
@@ -30,6 +31,7 @@ import { subcanalesConHorario } from '../state/horario-uso.service';
 import {
   duenoDe,
   type FechaEspecial,
+  ID_DE_PROPIOS,
   type Horario,
   type Periodo,
   type Semana,
@@ -67,6 +69,7 @@ const FALTA_NOMBRE = 'repositories.horarios.errors.name_required';
   imports: [
     HorarioCompartidoModalComponent,
     HorarioDatosModalComponent,
+    HorarioDiaPanelComponent,
     HorarioEspecialModalComponent,
     HorarioPeriodoModalComponent,
     HorarioReglasComponent,
@@ -193,6 +196,67 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
       return { ...f, ownHolidays: days };
     });
     this.propioDialog.set(null);
+  }
+
+  /* ── Panel rápido de un día: anclado a su celda, sin bloquear el calendario ──────────────────────────────────────── */
+
+  protected readonly diaPanel = signal<{ readonly fecha: string; readonly ancla: DOMRect } | null>(null);
+
+  protected abrirDia(dia: { readonly fecha: string; readonly ancla: DOMRect }): void {
+    this.diaPanel.set(dia);
+  }
+
+  /** Lo que ya hay ese día y es de este horario: una fecha especial o un festivo propio. */
+  protected readonly existenteDelPanel = computed<{ readonly lista: 'especial' | 'propio'; readonly entrada: FechaEspecial } | null>(() => {
+    const p = this.diaPanel();
+    if (!p) return null;
+    const dueno = duenoDe(this.form(), p.fecha, this.calendarios());
+    if (dueno.tipo === 'especial' && dueno.especial) return { lista: 'especial', entrada: dueno.especial };
+    if (dueno.tipo === 'festivo' && dueno.calendario?.id === ID_DE_PROPIOS && dueno.festivo) return { lista: 'propio', entrada: { ...dueno.festivo, slots: [] } };
+    return null;
+  });
+
+  /** Qué decide el día cuando no es suyo (un festivo de una lista): para que se vea antes de escribir encima. */
+  protected readonly notaDelPanel = computed(() => {
+    const p = this.diaPanel();
+    if (!p || this.existenteDelPanel()) return '';
+    const dueno = duenoDe(this.form(), p.fecha, this.calendarios());
+    return dueno.tipo === 'festivo' && dueno.festivo && dueno.calendario
+      ? this.translate.instant('repositories.horarios.x.panel.shared', { name: dueno.festivo.name, list: dueno.calendario.name })
+      : '';
+  });
+
+  protected readonly todasLasFechas = computed<readonly FechaEspecial[]>(() => [...this.form().specials, ...this.propiosComoEspeciales()]);
+
+  protected guardarDia(r: DiaDelPanel): void {
+    // Cambiar de tipo es pasar la fecha de una lista a la otra: se quita de donde estaba y se añade como nueva.
+    const destino = r.tipo === 'festivo' ? 'propio' : 'especial';
+    let dias = r.dias;
+    if (r.previo && r.previo.lista !== destino) {
+      this.form.update((f) =>
+        r.previo!.lista === 'especial'
+          ? { ...f, specials: f.specials.filter((e) => e.id !== r.previo!.id) }
+          : { ...f, ownHolidays: (f.ownHolidays ?? []).filter((d) => d.id !== r.previo!.id) },
+      );
+      dias = dias.map((d, i) => (i === 0 ? { ...d, id: null } : d));
+    }
+    if (destino === 'propio') this.guardarPropios(dias);
+    else this.guardarEspeciales(dias);
+    this.diaPanel.set(null);
+  }
+
+  protected eliminarDelPanel(e: { readonly lista: 'especial' | 'propio'; readonly id: number }): void {
+    if (e.lista === 'especial') this.quitarEspecial(e.id);
+    else void this.eliminarPropio(e.id);
+    this.diaPanel.set(null);
+  }
+
+  protected masOpcionesDelPanel(): void {
+    const p = this.diaPanel();
+    if (!p) return;
+    this.diaPanel.set(null);
+    if (this.existenteDelPanel()?.lista === 'propio') this.abrirPropio(this.existenteDelPanel()!.entrada.id);
+    else this.cambiarDia(p.fecha);
   }
 
   /* ── Datos generales (nombre, zona, descripción): en su diálogo (experimento) ──────────────────────────────────── */

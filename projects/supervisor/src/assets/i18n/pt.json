@@ -1724,6 +1724,28 @@
             "out_help": "O que ouve quem liga sem atendimento, quando nenhum período nem data especial diz outra coisa.",
             "period_help": "O que ouve quem liga fora das horas deste período, nos seus feriados e fins de semana. Vazio: a do horário."
           },
+          "panel": {
+            "kind": "Tipo",
+            "holiday": "Feriado",
+            "closed": "Fechado",
+            "open": "Outros horários",
+            "until": "Até",
+            "until_help": "Opcional: último dia de um intervalo",
+            "more": "Mais opções",
+            "remove": "Eliminar",
+            "close": "Fechar",
+            "shared": "Hoje: {{name}} ({{list}})",
+            "range": "{{count}} dias",
+            "aria": "Editar o dia",
+            "name": "Título",
+            "name_ph": "Ex. Fechado por obras",
+            "save": "Guardar",
+            "repeat": "Todos os anos"
+          },
+          "quick_holiday": {
+            "cta": "Adicionar feriado",
+            "title": "Adicionar um feriado a um calendário"
+          },
           "switcher": {
           "label": "Calendário",
           "placeholder": "Escolha um calendário",

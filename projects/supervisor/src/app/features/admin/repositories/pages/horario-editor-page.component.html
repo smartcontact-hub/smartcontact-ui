@@ -121,6 +121,7 @@
           [zona]="form().timezone"
           [(diaElegido)]="diaDelAnio"
           (cambiarDia)="cambiarDia($event)"
+          (abrirDia)="abrirDia($event)"
           (editarPeriodo)="abrirPeriodo($event)"
           (editarSemana)="editarSemana()"
           (editarFestivos)="editarFestivos($event)"
@@ -130,6 +131,20 @@
     </div>
   </div>
 </div>
+
+@if (diaPanel(); as panel) {
+  <sc-horario-dia-panel
+    [fecha]="panel.fecha"
+    [ancla]="panel.ancla"
+    [existente]="existenteDelPanel()"
+    [nota]="notaDelPanel()"
+    [existentes]="todasLasFechas()"
+    (guardar)="guardarDia($event)"
+    (eliminar)="eliminarDelPanel($event)"
+    (masOpciones)="masOpcionesDelPanel()"
+    (cerrado)="diaPanel.set(null)"
+  />
+}
 
 @if (datosDialog()) {
   <sc-horario-datos-modal [datos]="{ name: form().name, timezone: form().timezone, description: form().description, outMessage: form().outMessage ?? '' }" (guardar)="guardarDatos($event)" (cerrado)="datosDialog.set(false)" />

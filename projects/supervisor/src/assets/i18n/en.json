@@ -1724,6 +1724,28 @@
             "out_help": "What callers hear when nobody answers and no period or special date says otherwise.",
             "period_help": "What callers hear outside this period's hours, and on its holidays and weekends. Empty: the schedule's."
           },
+          "panel": {
+            "kind": "Type",
+            "holiday": "Holiday",
+            "closed": "Closed",
+            "open": "Other hours",
+            "until": "Until",
+            "until_help": "Optional: last day of a range",
+            "more": "More options",
+            "remove": "Delete",
+            "close": "Close",
+            "shared": "Today: {{name}} ({{list}})",
+            "range": "{{count}} days",
+            "aria": "Edit the day",
+            "name": "Title",
+            "name_ph": "E.g. Closed for works",
+            "save": "Save",
+            "repeat": "Every year"
+          },
+          "quick_holiday": {
+            "cta": "Add holiday",
+            "title": "Add a holiday to a calendar"
+          },
           "switcher": {
           "label": "Calendar",
           "placeholder": "Choose a calendar",

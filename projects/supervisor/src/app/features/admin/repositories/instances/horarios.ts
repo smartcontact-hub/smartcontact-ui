@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import type { GroupRef } from '@smartcontact-hub/components';
 
@@ -6,11 +6,12 @@ import { injectLangChange } from '@core/utils/lang-change';
 import { GroupsStore } from '@features/admin/groups/state/groups.store';
 
 import { DIAS_DE_LA_SEMANA } from '../components/horario/horario-semana.component';
+import { type FestivoRapido, FestivoRapidoModalComponent } from '../components/horario/festivo-rapido-modal.component';
 import { RepoListPageComponent } from '../components/repo-list-page.component';
 import { RepoColumnDef, RepoPageConfig } from '../components/repo-types';
 import { HorarioUsoService, subcanalesConHorario } from '../state/horario-uso.service';
 import { FestivosStore } from '../state/festivos.store';
-import { ahoraEn, diaDeLaSemana, estadoEn, horaDe, resumenDeLaSemana, sumarDias } from '../state/horarios.core.mjs';
+import { ahoraEn, siguienteId, diaDeLaSemana, estadoEn, horaDe, resumenDeLaSemana, sumarDias } from '../state/horarios.core.mjs';
 import { type Horario, HorariosStore } from '../state/horarios.store';
 
 interface Datos {
@@ -75,8 +76,13 @@ const columnas = (d: Datos): readonly RepoColumnDef<Horario>[] => [
 
 @Component({
   selector: 'sc-horarios-page',
-  imports: [RepoListPageComponent],
-  template: `<sc-repo-list-page [config]="config" [store]="store" />`,
+  imports: [FestivoRapidoModalComponent, RepoListPageComponent],
+  template: `
+    <sc-repo-list-page [config]="config" [store]="store" />
+    @if (festivoRapido()) {
+      <sc-festivo-rapido-modal [calendarios]="store.items()" (guardar)="anadirFestivo($event)" (cerrado)="festivoRapido.set(false)" />
+    }
+  `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HorariosPageComponent {
@@ -86,6 +92,17 @@ export class HorariosPageComponent {
   private readonly groupsStore = inject(GroupsStore);
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
+
+  protected readonly festivoRapido = signal(false);
+
+  /** «Añadir festivo»: un día de cierre propio del calendario elegido (sin pasar por su editor). */
+  protected anadirFestivo(f: FestivoRapido): void {
+    const h = this.store.items().find((x) => x.id === f.calendarioId);
+    if (!h) return;
+    const dias = h.ownHolidays ?? [];
+    this.store.updateItem(h.id, { ...h, ownHolidays: [...dias, { id: siguienteId(dias), name: f.name, date: f.date, yearly: f.yearly, message: '' }] });
+    this.festivoRapido.set(false);
+  }
 
   /** Los grupos que atienden con cada horario (DD-152): los que lo tienen en un subcanal que lo usa de verdad (DD-252). */
   private readonly gruposPorHorario = computed(() => {
@@ -128,6 +145,7 @@ export class HorariosPageComponent {
 
   protected readonly config: RepoPageConfig<Horario> = {
     titleKey: 'repositories.horarios.title',
+    extraAction: { labelKey: 'repositories.horarios.x.quick_holiday.cta', icon: 'event_busy', run: () => this.festivoRapido.set(true) },
     entitySingularKey: 'repositories.horarios.singular',
     createTitleKey: 'repositories.horarios.create_title',
     entityPluralKey: 'repositories.horarios.plural',
