@@ -391,7 +391,12 @@ export class CalCalendarioBComponent {
   protected readonly especiales = computed(() => this.store.especiales().filter((e) => this.cal().id !== 0 && e.calendarioIds.includes(this.cal().id)));
   protected readonly pie = computed(() => {
     const iso = this.encima();
-    if (!iso) return 'Pulsa un día o arrastra sobre varios para cambiarlos. Pasa por uno para ver sus horas.';
+    if (!iso) {
+      const modo = this.panel().modo;
+      if (modo === 'periodo') return 'Arrastra sobre el año para cambiar las fechas del periodo.';
+      if (modo === 'horario') return 'Guarda o cancela el horario para volver a elegir días.';
+      return 'Pulsa un día o arrastra sobre varios para cambiarlos. Pasa por uno para ver sus horas.';
+    }
     const d = resolver(this.estado(), this.calPintado(), iso);
     return `${textoDeRango(iso, iso)}: ${this.horasTexto(d.franjas)}. ${porQue(d)}.`;
   });
@@ -441,7 +446,19 @@ export class CalCalendarioBComponent {
     return dias.length <= 62 ? dias : [];
   }
 
+  /**
+   * Lo que se pulsa o arrastra en el año. Con un periodo abierto no se tira lo escrito: el año le cambia las fechas (es lo
+   * que se espera al arrastrar con él delante). Con un horario a medio editar, el año no lo toca: primero se guarda o se
+   * cancela.
+   */
   protected elegir(r: Rango | null): void {
+    const p = this.panel();
+    if (p.modo === 'periodo') {
+      if (!r) return;
+      this.tocarPeriodo({ desde: r.desde.slice(5), hasta: r.hasta.slice(5), anio: p.periodo.anio === null ? null : +r.desde.slice(0, 4) });
+      return;
+    }
+    if (p.modo === 'horario') return;
     this.panel.set(r ? { modo: 'seleccion', rango: r } : { modo: 'reglas' });
   }
 
