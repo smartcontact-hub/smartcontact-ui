@@ -163,6 +163,27 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
             <circle class="arte__raya--claro" cx="396" cy="168" r="6" />
           </g>
         }
+        @case ('prueba') {
+          <!-- Pruebas con usuarios (DD-256): dos versiones lado a lado, una con su ✓, y la barra de la prueba debajo. -->
+          <g class="arte__formas">
+            <circle cx="380" cy="40" r="90" fill="url(#lab-grad-esfera)" />
+            <circle cx="60" cy="190" r="60" fill="url(#lab-grad-lima)" />
+          </g>
+          <g class="arte__capa">
+            @for (x of [70, 236]; track x; let i = $index) {
+              <rect class="arte__ventana" [attr.x]="x" y="34" width="140" height="104" rx="12" />
+              <rect class="arte__raya arte__raya--fuerte" [attr.x]="x + 16" y="54" width="60" height="7" rx="3.5" />
+              <rect class="arte__raya" [attr.x]="x + 16" y="72" width="100" height="5" rx="2.5" />
+              <rect class="arte__raya" [attr.x]="x + 16" y="84" width="84" height="5" rx="2.5" />
+              <rect [class]="i === 1 ? 'arte__acento' : 'arte__campo'" [attr.x]="x + 16" y="106" width="56" height="16" rx="8" />
+            }
+            <circle class="arte__flotante" cx="364" cy="44" r="16" />
+            <path class="arte__raya--claro" d="M357 44l5 5 9-10" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--sc-bg-surface)" />
+            <rect class="arte__panel arte__panel--borde" x="120" y="156" width="200" height="28" rx="14" />
+            <rect class="arte__raya" x="136" y="167" width="52" height="6" rx="3" />
+            <rect class="arte__acento" x="252" y="162" width="58" height="16" rx="8" />
+          </g>
+        }
       }
     </svg>
   `,
