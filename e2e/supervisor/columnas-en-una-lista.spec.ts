@@ -10,11 +10,13 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  * su asa, su casilla (`p-checkbox`) y su nombre, que se arrastra para ordenar (`cdkDrag`). Medido en primeng.dev el
  * 2026-10-05: botón de 28 de alto, globo de 288, cabecera de 53 con raya abajo, filas de 32. El botón ya no va en
  * `small`: a la altura del buscador de su barra (DD-180, lo fija `listados-ordenar-columnas.spec.ts`). Lo que fija, en Agentes:
- *   1. el botón dice «Columnas» y abre su globo: el título, «Restablecer» y una fila por columna, en el orden de la tabla,
- *      cada una con su asa y su casilla; Nombre, marcada y fija;
+ *   1. el botón dice «Columnas» y abre su globo: el título, una fila por columna, en el orden de la tabla, cada una con
+ *      su asa de seis puntos y su casilla; Nombre, marcada, fija y con candado en el sitio del asa; y al pie,
+ *      «Restablecer» con su icono, apagado mientras todo está como de partida (DD-257);
  *   2. desmarcar una la oculta, y volver a marcarla la deja donde estaba;
  *   3. arrastrar una fila mueve la columna en la tabla, y sigue ahí al volver a la página;
- *   4. «Restablecer» vuelve al orden y a las columnas de partida;
+ *   4. «Restablecer» se enciende al cambiar algo, vuelve al orden y a las columnas de partida, se apaga y deja el foco en
+ *      la lista;
  *   5. las cabeceras de la tabla no se arrastran;
  *   6. con el teclado y sin arrastrar (WCAG 2.1.1, lo que el ejemplo no trae y DD-162 ya pedía): al abrir, el foco
  *      entra en la lista; las flechas van de una columna a otra, Espacio la marca o desmarca, Alt+↑/↓ la mueve, ninguna
@@ -52,21 +54,31 @@ test('el botón «Columnas» dice en el foco que abre un diálogo, y si ya está
   await expect(boton(page)).toHaveAttribute('aria-expanded', 'false');
 });
 
-test('el botón «Columnas» abre su globo: título, «Restablecer» y una fila por columna, con su asa y su casilla', async ({ page }) => {
+test('el botón «Columnas» abre su globo: título, una fila por columna con su asa y su casilla, y «Restablecer» al pie', async ({ page }) => {
   await goto(page, 'admin/agentes');
   await expect(boton(page).locator('.p-button-label'), 'solo icono, sin texto').toHaveCount(0);
   await expect(boton(page).locator('.sc-icon-font--view_column'), 'el icono de columnas').toHaveCount(1);
   await boton(page).click();
   await expect(globo(page)).toBeVisible();
-  await expect(globo(page).locator('.column-toggle__title')).toHaveText('Columnas');
-  await expect(globo(page).getByRole('button', { name: 'Restablecer' })).toBeVisible();
+  await expect(globo(page).locator('.column-toggle__header')).toHaveText('Columnas');
   const enGlobo = (await filas(page).locator('.column-toggle__label').allTextContents()).map((t) => t.trim());
   const enTabla = await cabeceras(page);
   expect(enGlobo.filter((t) => enTabla.includes(t)), 'las visibles, en el orden de la tabla').toEqual(enTabla);
-  await expect(filas(page).first().locator('.column-toggle__handle'), 'el asa').toHaveCount(1);
   await expect(globo(page).locator('p-checkbox').first(), 'la casilla nativa').toBeVisible();
   await expect(casilla(page, 'Nombre')).toBeChecked();
   await expect(casilla(page, 'Nombre')).toBeDisabled();
+
+  // La fija, con candado y sin asa; las demás, con el asa de seis puntos del DS (DD-257).
+  const fija = filas(page).filter({ has: page.locator('.column-toggle__label', { hasText: /^Nombre$/ }) });
+  await expect(fija.locator('sc-icon[name="lock"]'), 'el candado de la fija').toHaveCount(1);
+  await expect(fija.locator('.column-toggle__handle'), 'la fija no se arrastra').toHaveCount(0);
+  await expect(filas(page).nth(1).locator('sc-icon.column-toggle__handle[name="drag_indicator"]'), 'el asa').toHaveCount(1);
+
+  // «Restablecer», al pie y con su icono; apagado, porque todo está como de partida.
+  const restablecer = globo(page).locator('.column-toggle__footer').getByRole('button', { name: 'Restablecer' });
+  await expect(restablecer).toBeVisible();
+  await expect(restablecer.locator('.sc-icon-font--restart_alt'), 'su icono').toHaveCount(1);
+  await expect(restablecer, 'sin nada que deshacer').toBeDisabled();
 });
 
 test('desmarcar una columna la oculta, y volver a marcarla la deja donde estaba', async ({ page }) => {
@@ -108,14 +120,19 @@ test('arrastrar una fila mueve la columna en la tabla, y se queda al volver', as
   await expect.poll(async () => (await cabeceras(page)).slice(1, 3)).toEqual([segunda, primera]);
 });
 
-test('«Restablecer» vuelve al orden y a las columnas de partida', async ({ page }) => {
+test('«Restablecer» se enciende al cambiar algo, vuelve a lo de partida, se apaga y deja el foco en la lista', async ({ page }) => {
   await goto(page, 'admin/agentes');
   const antes = await cabeceras(page);
   await boton(page).click();
+  const restablecer = globo(page).getByRole('button', { name: 'Restablecer' });
+  await expect(restablecer).toBeDisabled();
   await casilla(page, 'Canales').click();
   await expect.poll(() => cabeceras(page)).not.toContain('Canales');
-  await globo(page).getByRole('button', { name: 'Restablecer' }).click();
+  await expect(restablecer, 'hay algo que deshacer').toBeEnabled();
+  await restablecer.click();
   await expect.poll(() => cabeceras(page)).toEqual(antes);
+  await expect(restablecer, 'ya está como de partida').toBeDisabled();
+  await expect.poll(() => enfocada(page), 'el foco no se pierde en la página').not.toBeNull();
 });
 
 test('las cabeceras de la tabla no se arrastran', async ({ page }) => {

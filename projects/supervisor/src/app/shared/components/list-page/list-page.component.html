@@ -62,6 +62,7 @@
               class="page__columns"
               [options]="columnOptions()"
               [visible]="prefs.visible"
+              [canReset]="columnsChanged()"
               (visibleChange)="onVisibleChange($event)"
               (reorder)="reorderColumns($event.from, $event.to)"
               (restore)="resetColumns()"
