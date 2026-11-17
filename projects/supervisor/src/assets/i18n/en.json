@@ -1675,12 +1675,13 @@
           "year": "Year"
         },
         "layers": {
+          "button": "Filters",
           "label": "Show",
           "week": "Regular week",
           "holiday": "Holidays",
           "special": "Special dates",
           "closed": "Closed",
-          "show_all": "Show all"
+          "show_all": "Clear filters"
         },
         "day": {
           "pick": "Pick a day to see its hours and edit it",

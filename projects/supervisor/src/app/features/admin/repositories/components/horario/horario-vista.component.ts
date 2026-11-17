@@ -16,6 +16,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { PopoverModule } from 'primeng/popover';
 import { TooltipModule } from 'primeng/tooltip';
 import { ScIconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent, ScCheckboxComponent, ScSelectButtonComponent, ScSelectComponent, ScTagComponent } from '@smartcontact-hub/components';
@@ -102,7 +103,7 @@ const diasDelMes = (anio: number, mes: number): number => new Date(Date.UTC(anio
  */
 @Component({
   selector: 'sc-horario-vista',
-  imports: [ScButtonComponent, ScCheckboxComponent, ScIconComponent, ScSelectButtonComponent, ScSelectComponent, ScTagComponent, TooltipModule, TranslateModule],
+  imports: [ScButtonComponent, ScCheckboxComponent, ScIconComponent, ScSelectButtonComponent, ScSelectComponent, ScTagComponent, PopoverModule, TooltipModule, TranslateModule],
   templateUrl: './horario-vista.component.html',
   styleUrl: './horario-vista.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -243,6 +244,14 @@ export class HorarioVistaComponent {
   });
 
   protected readonly hayFiltros = computed(() => this.apagadas().size > 0);
+
+  /** El botón de filtros dice cuántas capas están apagadas. */
+  protected readonly textoDeFiltros = computed(() => {
+    this.lang();
+    const n = this.apagadas().size;
+    const base = this.translate.instant('repositories.horarios.x.layers.button') as string;
+    return n > 0 ? `${base} · ${n}` : base;
+  });
 
   protected alternar(clave: string): void {
     this.apagadas.update((s) => {

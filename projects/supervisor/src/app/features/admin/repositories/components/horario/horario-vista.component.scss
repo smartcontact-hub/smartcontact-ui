@@ -32,10 +32,22 @@
   gap: var(--sc-spacing-0-5);
 }
 
-.vista__barra > .vista__vista {
-  /* El selector de vista (que trae su propio `order`) se queda a la derecha, a la altura de los desplegables. */
-  order: 0;
+.vista__acciones {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
   margin-inline-start: auto;
+}
+
+/* La lista de filtros del botón: cuelga del body, así que lleva su propio hueco. */
+.filtros {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-75);
+}
+
+.filtros__borrar {
+  align-self: flex-start;
 }
 
 .vista__mes {

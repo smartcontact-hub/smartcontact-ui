@@ -1675,12 +1675,13 @@
           "year": "Ano"
         },
         "layers": {
+          "button": "Filtros",
           "label": "Mostrar",
           "week": "Semana habitual",
           "holiday": "Feriados",
           "special": "Datas especiais",
           "closed": "Fechado",
-          "show_all": "Mostrar tudo"
+          "show_all": "Limpar filtros"
         },
         "day": {
           "pick": "Escolha um dia para ver as suas horas e editá-lo",

@@ -151,3 +151,17 @@ sc-section-card {
   display: block;
   margin-block-end: var(--sc-spacing-1);
 }
+
+/* Un subtítulo dentro de una tarjeta (periodos, festivos propios) con su botón de añadir. */
+.sub {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-block-start: var(--sc-spacing-0-5);
+  padding-block-start: var(--sc-spacing-0-75);
+  border-block-start: 1px solid var(--sc-border-default);
+}
+
+.sub__titulo {
+  margin: 0;
+}

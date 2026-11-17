@@ -37,18 +37,11 @@
       }
     </ul>
     <a class="repo-link sc-text-caption-semibold" href="/admin/horarios-tipo" (click)="gestionarHorarios.emit($event)">{{ 'repositories.horariosTipo.x.picker.manage' | translate }}</a>
-  </sc-section-card>
-
-  <sc-section-card titleKey="repositories.horarios.section_periods" surface="card" icon="date_range">
-    <sc-button
-      scSectionActions
-      variant="secondary"
-      appearance="text"
-      size="sm"
-      icon="add"
-      [ariaLabel]="'repositories.horarios.period_add' | translate"
-      (clicked)="anadirPeriodo.emit()"
-    />
+    <!-- Los periodos, en la misma tarjeta que la semana: son semanas distintas para una época del año. -->
+    <div class="sub">
+      <h3 class="sub__titulo sc-text-body-semibold">{{ 'repositories.horarios.section_periods' | translate }}</h3>
+      <sc-button variant="secondary" appearance="text" size="sm" icon="add" [ariaLabel]="'repositories.horarios.period_add' | translate" (clicked)="anadirPeriodo.emit()" />
+    </div>
     @if (filasDePeriodos().length > 0) {
       <ul class="lista" role="list">
         @for (p of filasDePeriodos(); track p.id) {
@@ -134,22 +127,11 @@
       />
       <a class="repo-link sc-text-caption-semibold" [href]="festivosHref()" (click)="gestionarFestivos.emit($event)">{{ 'repositories.horarios.manage_holidays' | translate }}</a>
     </div>
-  </sc-section-card>
-
-  <!-- Los festivos propios: los días de cierre que añade el cliente (el patrón de su ciudad, un cierre de empresa…). Se pueden repetir cada año. -->
-  <sc-section-card titleKey="repositories.horarios.x.own.title" surface="card" icon="flag">
-    <sc-button
-      scSectionActions
-      variant="secondary"
-      appearance="text"
-      size="sm"
-      icon="add"
-      [ariaLabel]="'repositories.horarios.x.own.add' | translate"
-      (clicked)="anadirPropio.emit()"
-    />
-    @if (filasDePropios().length === 0) {
-      <p class="vacio sc-text-body-regular">{{ 'repositories.horarios.x.own.empty' | translate }}</p>
-    } @else {
+    <div class="sub">
+      <h3 class="sub__titulo sc-text-body-semibold">{{ 'repositories.horarios.x.own.title' | translate }}</h3>
+      <sc-button variant="secondary" appearance="text" size="sm" icon="add" [ariaLabel]="'repositories.horarios.x.own.add' | translate" (clicked)="anadirPropio.emit()" />
+    </div>
+    @if (filasDePropios().length > 0) {
       <ul class="lista" role="list">
         @for (d of filasDePropios(); track d.id) {
           <li class="fila">
