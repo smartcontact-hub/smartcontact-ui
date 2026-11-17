@@ -103,7 +103,11 @@
           (anadirEspecial)="especialDialog.set({ especial: null, fecha: null, mes: diaDelAnio() })"
           (abrirEspecial)="abrirEspecial($event)"
           (eliminarEspecial)="eliminarEspecial($event)"
-          (cambiarFestivos)="ponerFestivos($event)"
+          [propios]="form().ownHolidays ?? []"
+        (anadirPropio)="propioDialog.set({ dia: null })"
+        (abrirPropio)="abrirPropio($event)"
+        (eliminarPropio)="eliminarPropio($event)"
+        (cambiarFestivos)="ponerFestivos($event)"
           (gestionarFestivos)="irAFestivos($event)"
         />
       </section>
@@ -135,6 +139,16 @@
 
 @if (semanaDialog()) {
   <sc-horario-semana-modal [semanaInicial]="form().week" [nombre]="nombreDelHorario()" (guardar)="guardarSemana($event)" (cerrado)="semanaDialog.set(false)" />
+}
+
+@if (propioDialog(); as dialog) {
+  <sc-horario-especial-modal
+    variante="festivo"
+    [especial]="dialog.dia"
+    [existentes]="propiosComoEspeciales()"
+    (guardar)="guardarPropios($event)"
+    (cerrado)="propioDialog.set(null)"
+  />
 }
 
 @if (periodoDialog(); as dialog) {

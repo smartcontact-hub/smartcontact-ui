@@ -135,4 +135,41 @@
       <a class="repo-link sc-text-caption-semibold" [href]="festivosHref()" (click)="gestionarFestivos.emit($event)">{{ 'repositories.horarios.manage_holidays' | translate }}</a>
     </div>
   </sc-section-card>
+
+  <!-- Los festivos propios: los días de cierre que añade el cliente (el patrón de su ciudad, un cierre de empresa…). Se pueden repetir cada año. -->
+  <sc-section-card titleKey="repositories.horarios.x.own.title" surface="card" icon="flag">
+    <sc-button
+      scSectionActions
+      variant="secondary"
+      appearance="text"
+      size="sm"
+      icon="add"
+      [ariaLabel]="'repositories.horarios.x.own.add' | translate"
+      (clicked)="anadirPropio.emit()"
+    />
+    @if (filasDePropios().length === 0) {
+      <p class="vacio sc-text-body-regular">{{ 'repositories.horarios.x.own.empty' | translate }}</p>
+    } @else {
+      <ul class="lista" role="list">
+        @for (d of filasDePropios(); track d.id) {
+          <li class="fila">
+            <span class="hoja hoja--festivo" aria-hidden="true">
+              <span class="hoja__mes sc-text-caption-semibold">{{ d.mes }}</span>
+              <span class="hoja__dia sc-text-body-semibold">{{ d.dia }}</span>
+            </span>
+            <span class="fila__cuerpo">
+              <span class="fila__nombre sc-text-body-regular">{{ d.nombre }}</span>
+              <span class="fila__detalle sc-text-caption-regular">
+                @if (d.repite) { {{ 'repositories.horarios.x.rules.yearly' | translate }} } @else { {{ d.anio }} }
+              </span>
+            </span>
+            <span class="fila__acciones">
+              <sc-button variant="secondary" appearance="text" size="sm" icon="edit" [ariaLabel]="('repositories.festivos.day_edit' | translate) + ' ' + d.nombre" (clicked)="abrirPropio.emit(d.id)" />
+              <sc-button variant="secondary" appearance="text" size="sm" icon="delete" [ariaLabel]="('common.delete' | translate) + ' ' + d.nombre" (clicked)="eliminarPropio.emit(d.id)" />
+            </span>
+          </li>
+        }
+      </ul>
+    }
+  </sc-section-card>
 </div>

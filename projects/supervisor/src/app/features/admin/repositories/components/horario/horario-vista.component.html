@@ -75,7 +75,8 @@
   <div class="vista__filtros" role="group" [attr.aria-label]="'repositories.horarios.x.layers.label' | translate">
     @for (capa of capas(); track capa.clave) {
       <sc-checkbox class="filtro" [class.filtro--apagado]="!capa.activa" [state]="capa.activa ? 'all' : 'none'" (cycle)="alternar(capa.clave)">
-        <span class="punto" [attr.data-color]="capa.color" aria-hidden="true"></span>{{ capa.etiqueta }}
+        <!-- El punto y el nombre, juntos: el punto es del nombre, no de la casilla. -->
+        <span class="filtro__texto"><span class="punto" [attr.data-color]="capa.color" aria-hidden="true"></span>{{ capa.etiqueta }}</span>
       </sc-checkbox>
     }
     @if (hayFiltros()) {

@@ -1606,6 +1606,7 @@
       "owner": {
         "special": "Date spéciale «\u00a0{{name}}\u00a0»",
         "holiday": "Jour férié «\u00a0{{name}}\u00a0» ({{calendar}})",
+        "holiday_own": "Jour férié propre « {{name}} »",
         "period": "Période «\u00a0{{name}}\u00a0»",
         "week": "Semaine habituelle"
       },
@@ -1727,6 +1728,11 @@
           "label": "Calendrier",
           "placeholder": "Choisir un calendrier",
           "search": "Rechercher un calendrier…"
+        },
+        "own": {
+          "title": "Jours fériés propres",
+          "add": "Ajouter un jour férié propre",
+          "empty": "Les jours de fermeture propres à ce client, comme celui de son saint patron. Ils peuvent se répéter chaque année."
         },
         "week_modal": {
           "hint": "Les plages de chaque jour, à la minute près. Elles s'appliquent au calendrier à l'enregistrement.",

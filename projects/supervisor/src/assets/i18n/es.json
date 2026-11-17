@@ -1606,6 +1606,7 @@
       "owner": {
         "special": "Fecha especial «{{name}}»",
         "holiday": "Festivo «{{name}}» ({{calendar}})",
+        "holiday_own": "Festivo propio «{{name}}»",
         "period": "Periodo «{{name}}»",
         "week": "Semana habitual"
       },
@@ -1727,6 +1728,11 @@
           "label": "Calendario",
           "placeholder": "Elige un calendario",
           "search": "Buscar calendario…"
+        },
+        "own": {
+          "title": "Festivos propios",
+          "add": "Añadir festivo propio",
+          "empty": "Los días de cierre que solo tiene este cliente, como el de su patrón. Se pueden repetir cada año."
         },
         "week_modal": {
           "hint": "Las franjas de cada día, con la hora exacta. Se aplican al calendario al guardar.",

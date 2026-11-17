@@ -1606,6 +1606,7 @@
       "owner": {
         "special": "Special date “{{name}}”",
         "holiday": "Holiday “{{name}}” ({{calendar}})",
+        "holiday_own": "Own holiday “{{name}}”",
         "period": "Period “{{name}}”",
         "week": "Regular week"
       },
@@ -1727,6 +1728,11 @@
           "label": "Calendar",
           "placeholder": "Choose a calendar",
           "search": "Search calendar…"
+        },
+        "own": {
+          "title": "Own holidays",
+          "add": "Add own holiday",
+          "empty": "Closing days only this client has, such as its patron saint. They can repeat every year."
         },
         "week_modal": {
           "hint": "Each day's time ranges, down to the exact minute. They apply to the calendar when saved.",

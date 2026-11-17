@@ -302,3 +302,31 @@ test('el mensaje automático: el propio del día, si no el del periodo, si no el
   assert.equal(mensajeDe(h, '2026-07-11', cals).texto, 'Horario de verano');
   assert.equal(mensajeDe(h, '2026-02-07', cals).texto, 'Fuera de horario');
 });
+
+test('los festivos propios del calendario: cierran, mandan sobre la lista compartida y heredan el mensaje del periodo', () => {
+  const lj = [[480, 840]];
+  const h = {
+    outMessage: 'Fuera de horario',
+    week: [lj, lj, lj, lj, lj, [], []],
+    periods: [],
+    specials: [],
+    holidayCalendarIds: [1],
+    ownHolidays: [
+      { id: 1, name: 'El patrón', date: '2000-01-28', yearly: true },
+      { id: 2, name: 'Día cualquiera', date: '2026-03-10', yearly: false, message: 'Hoy cerramos por fiesta local' },
+    ],
+  };
+  const lista = [{ id: 1, name: 'Compartida', description: '', status: 'active', days: [{ id: 1, name: 'Año Nuevo', date: '2000-01-01', yearly: true }] }];
+  // Un festivo propio cerrado cada año.
+  assert.equal(duenoDe(h, '2027-01-28', lista).tipo, 'festivo');
+  assert.equal(resolverDia(h, '2027-01-28', lista).tramos.length, 0);
+  assert.equal(duenoDe(h, '2027-01-28', lista).calendario.id, 0);
+  // El de una fecha concreta solo vale ese año, y trae su mensaje.
+  assert.equal(duenoDe(h, '2026-03-10', lista).tipo, 'festivo');
+  assert.equal(duenoDe(h, '2027-03-10', lista).tipo, 'semana');
+  assert.equal(mensajeDe(h, '2026-03-10', lista).texto, 'Hoy cerramos por fiesta local');
+  // Sin mensaje propio hereda el del horario.
+  assert.equal(mensajeDe(h, '2027-01-28', lista).texto, 'Fuera de horario');
+  // Los de la lista compartida siguen valiendo.
+  assert.equal(duenoDe(h, '2027-01-01', lista).tipo, 'festivo');
+});

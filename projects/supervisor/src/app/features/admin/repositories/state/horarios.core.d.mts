@@ -56,6 +56,8 @@ export interface Horario {
   readonly specials: readonly FechaEspecial[];
   /** Los calendarios de festivos que aplica. */
   readonly holidayCalendarIds: readonly number[];
+  /** Los festivos propios de este calendario, los que añade el cliente (se pueden repetir cada año). */
+  readonly ownHolidays?: readonly Festivo[];
 }
 
 /** Un día cerrado de un calendario de festivos. */
@@ -77,7 +79,7 @@ export interface CalendarioDeFestivos {
   readonly days: readonly Festivo[];
 }
 
-type Reglas = Pick<Horario, 'week' | 'periods' | 'specials' | 'holidayCalendarIds'> & { readonly outMessage?: string };
+type Reglas = Pick<Horario, 'week' | 'periods' | 'specials' | 'holidayCalendarIds'> & { readonly outMessage?: string; readonly ownHolidays?: readonly Festivo[] };
 
 export type TipoDeDueno = 'especial' | 'festivo' | 'periodo' | 'semana';
 
@@ -113,6 +115,7 @@ export type FaltaDePeriodo =
   | { readonly codigo: 'semana'; readonly dia: number; readonly detalle: CodigoDeSemana };
 
 export const MINUTOS_DEL_DIA: number;
+export const ID_DE_PROPIOS: number;
 export const COLORES_DE_PERIODO: readonly ColorDePeriodo[];
 
 export function minutosDe(texto: string | null | undefined): number | null;

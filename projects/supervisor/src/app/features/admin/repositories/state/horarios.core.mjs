@@ -20,6 +20,8 @@
  */
 
 const DIA = 86_400_000;
+/** El «calendario de festivos» que forman los festivos propios de un calendario: sin id real, no está en ninguna lista. */
+export const ID_DE_PROPIOS = 0;
 export const MINUTOS_DEL_DIA = 1440;
 
 /** Los colores que puede llevar un periodo: los del tag del sistema (los nueve de etiqueta y el negro, que es su variante «contrast»). */
@@ -128,7 +130,10 @@ function entradaDe(dias, iso) {
 /** Los calendarios de festivos que aplica el horario, sin los inactivos. */
 function aplicados(horario, calendarios) {
   const ids = new Set(horario.holidayCalendarIds ?? []);
-  return (calendarios ?? []).filter((c) => ids.has(c.id) && c.status !== 'inactive');
+  const compartidos = (calendarios ?? []).filter((c) => ids.has(c.id) && c.status !== 'inactive');
+  // Los festivos propios del calendario (los que añade el cliente) van primero: son suyos y mandan sobre una lista compartida.
+  const propios = horario.ownHolidays ?? [];
+  return propios.length > 0 ? [{ id: ID_DE_PROPIOS, name: '', description: '', status: 'active', days: propios }, ...compartidos] : compartidos;
 }
 
 /**
@@ -164,7 +169,7 @@ export function mensajeDe(horario, iso, calendarios = []) {
   const propio = dueno.tipo === 'especial' ? dueno.especial?.message : dueno.tipo === 'festivo' ? dueno.festivo?.message : '';
   if ((propio ?? '').trim()) return { texto: propio.trim(), origen: dueno.tipo };
   // Lo que valdría el día sin la fecha especial ni el festivo: su periodo o la semana habitual.
-  const debajo = duenoDe({ ...horario, specials: [] }, iso, []);
+  const debajo = duenoDe({ ...horario, specials: [], ownHolidays: [] }, iso, []);
   if (debajo.periodo?.outMessage?.trim()) return { texto: debajo.periodo.outMessage.trim(), origen: 'periodo' };
   return { texto: (horario.outMessage ?? '').trim(), origen: 'semana' };
 }
@@ -386,6 +391,7 @@ export function normalizarHorario(crudo) {
     periods: (Array.isArray(resto.periods) ? resto.periods : []).map((p) => ({ ...p, year: p.year ?? null, outMessage: p.outMessage ?? '', weekId: p.weekId ?? null, week: semanaLimpia(p.week) })),
     specials: (Array.isArray(resto.specials) ? resto.specials : []).map((s) => ({ ...s, yearly: !!s.yearly, message: s.message ?? '', slots: Array.isArray(s.slots) ? s.slots : [] })),
     holidayCalendarIds: Array.isArray(resto.holidayCalendarIds) ? resto.holidayCalendarIds : [],
+    ownHolidays: (Array.isArray(resto.ownHolidays) ? resto.ownHolidays : []).map((d) => ({ ...d, yearly: !!d.yearly, message: d.message ?? '' })),
   };
 }
 

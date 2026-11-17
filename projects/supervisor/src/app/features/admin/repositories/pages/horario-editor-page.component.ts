@@ -52,6 +52,7 @@ const VACIO: Borrador = {
   periods: [],
   specials: [],
   holidayCalendarIds: [],
+  ownHolidays: [],
 };
 
 const FALTA_NOMBRE = 'repositories.horarios.errors.name_required';
@@ -125,12 +126,12 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
    */
   protected readonly reglas = computed(
     () => {
-      const { week, periods, specials, holidayCalendarIds, outMessage } = this.form();
-      return { week, periods, specials, holidayCalendarIds, outMessage };
+      const { week, periods, specials, holidayCalendarIds, outMessage, ownHolidays } = this.form();
+      return { week, periods, specials, holidayCalendarIds, outMessage, ownHolidays };
     },
     {
       equal: (a, b) =>
-        a.week === b.week && a.periods === b.periods && a.specials === b.specials && a.holidayCalendarIds === b.holidayCalendarIds && a.outMessage === b.outMessage,
+        a.week === b.week && a.periods === b.periods && a.specials === b.specials && a.holidayCalendarIds === b.holidayCalendarIds && a.outMessage === b.outMessage && a.ownHolidays === b.ownHolidays,
     },
   );
 
@@ -163,6 +164,36 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
       return ciudad;
     }
   });
+
+  /* ── Festivos propios: los días de cierre que añade el cliente ───────────────────────────────────────────────────── */
+
+  protected readonly propioDialog = signal<{ readonly dia: FechaEspecial | null } | null>(null);
+  /** Los propios, con la forma de una fecha especial, que es la que entiende el diálogo (sin franjas: un festivo cierra). */
+  protected readonly propiosComoEspeciales = computed<readonly FechaEspecial[]>(() => (this.form().ownHolidays ?? []).map((d) => ({ ...d, slots: [] })));
+
+  protected abrirPropio(id: number): void {
+    const dia = this.propiosComoEspeciales().find((d) => d.id === id);
+    if (dia) this.propioDialog.set({ dia });
+  }
+
+  protected async eliminarPropio(id: number): Promise<void> {
+    const dia = (this.form().ownHolidays ?? []).find((d) => d.id === id);
+    if (!dia || !(await this.confirmarQuitar('repositories.festivos.day_delete_title', dia.name))) return;
+    this.form.update((f) => ({ ...f, ownHolidays: (f.ownHolidays ?? []).filter((d) => d.id !== id) }));
+    this.resultado.contar(this.translate.instant('repositories.festivos.day_deleted', { name: dia.name }));
+  }
+
+  protected guardarPropios(nuevos: readonly FechaEspecialNueva[]): void {
+    this.form.update((f) => {
+      let days = [...(f.ownHolidays ?? [])];
+      for (const { slots: _slots, ...nuevo } of nuevos) {
+        if (nuevo.id !== null) days = days.map((d) => (d.id === nuevo.id ? { ...nuevo, id: nuevo.id! } : d));
+        else days.push({ ...nuevo, id: siguienteId(days) });
+      }
+      return { ...f, ownHolidays: days };
+    });
+    this.propioDialog.set(null);
+  }
 
   /* ── Datos generales (nombre, zona, descripción): en su diálogo (experimento) ──────────────────────────────────── */
 

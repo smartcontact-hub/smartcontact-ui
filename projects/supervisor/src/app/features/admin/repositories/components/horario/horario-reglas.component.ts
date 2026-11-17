@@ -10,6 +10,7 @@ import {
   ahoraEn,
   type CalendarioDeFestivos,
   type FechaEspecial,
+  type Festivo,
   type Periodo,
   type Franja,
   type Semana,
@@ -49,6 +50,8 @@ export class HorarioReglasComponent {
   readonly calendarios = input.required<readonly CalendarioDeFestivos[]>();
   readonly festivosAplicados = input.required<readonly number[]>();
   readonly festivosHref = input('/admin/festivos');
+  /** Los festivos propios del calendario, los que añade el cliente. */
+  readonly propios = input<readonly Festivo[]>([]);
   protected readonly cerradoTexto = computed(() => {
     this.lang();
     return this.translate.instant('repositories.horarios.closed') as string;
@@ -63,6 +66,9 @@ export class HorarioReglasComponent {
   readonly anadirEspecial = output<void>();
   readonly abrirEspecial = output<number>();
   readonly eliminarEspecial = output<number>();
+  readonly anadirPropio = output<void>();
+  readonly abrirPropio = output<number>();
+  readonly eliminarPropio = output<number>();
   readonly cambiarFestivos = output<number[]>();
   readonly gestionarFestivos = output<MouseEvent>();
 
@@ -133,6 +139,20 @@ export class HorarioReglasComponent {
           tramos: e.slots.map(textoDeFranja),
           cerrado,
         };
+      });
+  });
+
+  /** Los festivos propios, por orden en el año: casi todos se repiten cada año, así que sin años pasados que ocultar. */
+  protected readonly filasDePropios = computed(() => {
+    this.lang();
+    const mes = new Intl.DateTimeFormat(this.language.locale(), { month: 'short' });
+    const anio = new Intl.DateTimeFormat(this.language.locale(), { year: 'numeric' });
+    const clave = (d: Festivo): string => (d.yearly ? `0000${d.date.slice(4)}` : d.date.slice(5) + d.date.slice(0, 4));
+    return [...this.propios()]
+      .sort((a, b) => clave(a).localeCompare(clave(b)))
+      .map((d) => {
+        const iso = d.yearly ? `2024${d.date.slice(4)}` : d.date;
+        return { id: d.id, nombre: d.name, dia: Number(iso.slice(8)), mes: mes.format(aFecha(iso)).replace('.', ''), repite: d.yearly, anio: d.yearly ? '' : anio.format(aFecha(iso)), mensaje: !!d.message };
       });
   });
 

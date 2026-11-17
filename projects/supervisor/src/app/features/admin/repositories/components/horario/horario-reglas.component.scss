@@ -125,6 +125,12 @@ sc-section-card {
   &__mes {
     text-transform: uppercase;
   }
+
+  /* El festivo propio, en el rojo que esa capa lleva en el calendario. */
+  &--festivo {
+    background: var(--sc-label-red-bg);
+    color: var(--sc-label-red-text);
+  }
 }
 
 .festivos {

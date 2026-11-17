@@ -60,6 +60,16 @@
 
 /* Cada capa es una casilla del DS (`sc-checkbox`) con su punto de color: marcada o no se ve de un vistazo. Sin marcar, el
  * nombre pierde fuerza, como los días de esa capa en el calendario. */
+.filtro__texto {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-25);
+
+  .punto {
+    margin-inline-end: 0;
+  }
+}
+
 .filtro--apagado {
   color: var(--sc-text-secondary);
 }

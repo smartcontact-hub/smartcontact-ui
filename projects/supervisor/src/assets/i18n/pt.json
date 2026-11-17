@@ -1606,6 +1606,7 @@
       "owner": {
         "special": "Data especial «{{name}}»",
         "holiday": "Feriado «{{name}}» ({{calendar}})",
+        "holiday_own": "Feriado próprio «{{name}}»",
         "period": "Período «{{name}}»",
         "week": "Semana habitual"
       },
@@ -1727,6 +1728,11 @@
           "label": "Calendário",
           "placeholder": "Escolha um calendário",
           "search": "Procurar calendário…"
+        },
+        "own": {
+          "title": "Feriados próprios",
+          "add": "Adicionar feriado próprio",
+          "empty": "Os dias de encerramento só deste cliente, como o do seu padroeiro. Podem repetir-se todos os anos."
         },
         "week_modal": {
           "hint": "As faixas de cada dia, ao minuto. Aplicam-se ao calendário ao guardar.",

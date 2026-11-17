@@ -30,6 +30,7 @@ import {
   type DiaResuelto,
   diaDeLaSemana,
   type Horario,
+  ID_DE_PROPIOS,
   MINUTOS_DEL_DIA,
   rejillaDelAnio,
   resolverDia,
@@ -37,7 +38,7 @@ import {
   textoDeFranja,
 } from '../../state/horarios.core.mjs';
 
-type Reglas = Pick<Horario, 'week' | 'periods' | 'specials' | 'holidayCalendarIds'> & { readonly outMessage?: string };
+type Reglas = Pick<Horario, 'week' | 'periods' | 'specials' | 'holidayCalendarIds'> & { readonly outMessage?: string; readonly ownHolidays?: Horario['ownHolidays'] };
 export type VistaDeHorario = 'year' | 'month' | 'week' | 'day';
 
 /** Cuántos años atrás se puede mirar y cuántos adelante se planifica. */
@@ -239,7 +240,7 @@ export class HorarioVistaComponent implements OnInit {
     const lista: Omit<Capa, 'activa'>[] = [
       { clave: 'week', etiqueta: t('week'), color: null, icono: 'view_week' },
       ...r.periods.map((p) => ({ clave: `period:${p.id}`, etiqueta: p.name, color: p.color as string, icono: 'date_range' })),
-      ...(r.holidayCalendarIds.length > 0 ? [{ clave: 'holiday', etiqueta: t('holiday'), color: 'red', icono: 'flag' }] : []),
+      ...(r.holidayCalendarIds.length > 0 || (r.ownHolidays?.length ?? 0) > 0 ? [{ clave: 'holiday', etiqueta: t('holiday'), color: 'red', icono: 'flag' }] : []),
       ...(r.specials.length > 0 ? [{ clave: 'special', etiqueta: t('special'), color: 'purple', icono: 'event' }] : []),
       { clave: 'closed', etiqueta: t('closed'), color: 'gray', icono: 'do_not_disturb_on' },
     ];
@@ -288,7 +289,7 @@ export class HorarioVistaComponent implements OnInit {
   private motivo(dia: DiaResuelto): string {
     const t = (clave: string, params?: Record<string, unknown>): string => this.translate.instant(`repositories.horarios.owner.${clave}`, params);
     if (dia.especial) return t('special', { name: dia.especial.name });
-    if (dia.festivo) return t('holiday', { name: dia.festivo.name, calendar: dia.calendario?.name });
+    if (dia.festivo) return dia.calendario?.id === ID_DE_PROPIOS ? t('holiday_own', { name: dia.festivo.name }) : t('holiday', { name: dia.festivo.name, calendar: dia.calendario?.name });
     if (dia.periodo) return t('period', { name: dia.periodo.name });
     return t('week');
   }
