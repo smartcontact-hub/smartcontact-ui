@@ -24,6 +24,8 @@ export function provideCalPruebaComun(): EnvironmentProviders {
     if (pruebaEnCurso()) activarDiscovery();
 
     const store = inject(CalStore);
+    // Un calendario cargado de periodos y días especiales, para ver cómo aguanta la pantalla. Nunca durante una prueba.
+    if (new URLSearchParams(window.location.search).has('estres') && !pruebaEnCurso()) store.estresar();
     registrarPrueba({
       reiniciar: () => {
         activarDiscovery();

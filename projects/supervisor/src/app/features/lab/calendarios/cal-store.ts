@@ -1,6 +1,6 @@
 import { computed, effect, Injectable, signal } from '@angular/core';
 
-import { estadoInicial, type Mision } from './cal-misiones';
+import { conEstres, estadoInicial, type Mision } from './cal-misiones';
 import { type Calendario, COLORES, type DiaEspecial, type Estado, type Horario, nombreLibre, siguienteId } from './cal-modelo';
 
 const CLAVE = 'sc-cal-prueba-estado-v1';
@@ -43,6 +43,11 @@ export class CalStore {
   reiniciar(m: Mision): void {
     this.borradores.clear();
     this._estado.set(estadoInicial(m));
+  }
+
+  /** Carga el caso de estrés (`?estres` en la dirección) sobre lo que haya. */
+  estresar(): void {
+    this._estado.update(conEstres);
   }
 
   calendario(id: number): Calendario | undefined {

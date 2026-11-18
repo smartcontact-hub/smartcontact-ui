@@ -173,6 +173,46 @@ export function corregir(m: Mision, real: Estado): Correccion {
   return { titular: `${r.bien} de 365 días bien`, bien: r.bien, total: 365, puntos, fallos: r.fallos };
 }
 
+/* ─────────────── Caso de estrés: un calendario cargado, para ver cómo aguanta la pantalla ─────────────── */
+
+/** El calendario que se carga con `?estres` en la dirección. */
+export const CALENDARIO_ESTRES = 4;
+
+/**
+ * Atención Canarias con cinco periodos y siete días especiales más: con `?estres` en la dirección, el prototipo lo carga
+ * sobre los datos que haya. No entra en ninguna misión.
+ */
+export function conEstres(e: Estado): Estado {
+  if (e.especiales.some((x) => x.id >= 100)) return e;
+  const colores = ['info', 'violet', 'success', 'primary'] as const;
+  const periodos = (
+    [
+      ['Verano', '07-01', '08-31'],
+      ['Semana Santa', '04-14', '04-20'],
+      ['Navidad', '12-22', '01-06'],
+      ['Campaña de rebajas', '01-07', '02-28'],
+      ['Inventario', '09-29', '10-03'],
+    ] as const
+  ).map(([nombre, desde, hasta], i) => ({ id: i + 1, nombre, desde, hasta, anio: null, horarioId: 2, locucion: null, color: colores[i % 4]! }));
+  const dias: readonly [string, string, boolean][] = [
+    ['Día de Canarias', '2025-05-30', true],
+    ['Fiesta de la empresa', '2025-10-07', false],
+    ['Formación anual', '2025-03-12', true],
+    ['Inventario de cierre', '2025-12-30', false],
+    ['Puente de diciembre', '2025-12-05', true],
+    ['Corpus Christi', '2025-06-19', false],
+    ['Carnaval', '2025-03-04', true],
+  ];
+  const especiales: DiaEspecial[] = dias.map(([nombre, fecha, cadaAnio], i) => ({
+    id: 100 + i, nombre, fechas: [fecha], cadaAnio, franjas: i % 3 === 0 ? [] : [fr('09:00', '14:00')], locucion: null, calendarioIds: [CALENDARIO_ESTRES],
+  }));
+  return {
+    ...e,
+    calendarios: e.calendarios.map((c) => (c.id === CALENDARIO_ESTRES ? { ...c, periodos } : c)),
+    especiales: [...e.especiales, ...especiales],
+  };
+}
+
 /* ─────────────────── El festivo del modo prueba común (DD-256): dos gemelas ─────────────────── */
 
 /** Una gemela de la tarea «Dar de alta un festivo»: el mismo trabajo con otro día y otros dos calendarios. */
