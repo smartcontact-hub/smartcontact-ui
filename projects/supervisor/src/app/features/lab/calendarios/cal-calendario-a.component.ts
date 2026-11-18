@@ -5,7 +5,6 @@ import {
   ScDatepickerComponent,
   ScInputTextComponent,
   ScSectionCardComponent,
-  ScSelectButtonComponent,
   ScSelectComponent,
   ScToggleSwitchComponent,
 } from '@smartcontact-hub/components';
@@ -20,13 +19,13 @@ import {
   festivosDe,
   HOY,
   isoDe,
-  LOCUCIONES,
   type Periodo,
   resolver,
   resumenDeFestivos,
   textoDeFranjas,
   UBICACIONES,
   usosDe,
+  resumenDeSemana,
   ZONAS,
 } from './cal-modelo';
 import { CalSemanaComponent } from './cal-semana.component';
@@ -52,7 +51,6 @@ const aIso = (d: Date): string => isoDe(Date.UTC(d.getFullYear(), d.getMonth(), 
     ScDatepickerComponent,
     ScInputTextComponent,
     ScSectionCardComponent,
-    ScSelectButtonComponent,
     ScSelectComponent,
     ScToggleSwitchComponent,
     TooltipModule,
@@ -75,7 +73,7 @@ const aIso = (d: Date): string => isoDe(Date.UTC(d.getFullYear(), d.getMonth(), 
               </div>
             </sc-section-card>
 
-            <sc-section-card titleKey="Horario de todo el año" hintKey="El que vale cuando no manda un periodo, un festivo o un día especial." surface="subtle" icon="schedule">
+            <sc-section-card titleKey="Horario de todo el año" hintKey="Salvo periodos, festivos y días especiales." surface="subtle" icon="schedule">
               <div class="bloque">
                 <div class="fila-horario">
                   <sc-select
@@ -91,16 +89,13 @@ const aIso = (d: Date): string => isoDe(Date.UTC(d.getFullYear(), d.getMonth(), 
                   <sc-button variant="secondary" appearance="outlined" icon="edit" label="Editar este horario" (clicked)="b.irAlHorario(cal().horarioId, 'base')" />
                 </div>
                 @if (horarioBase(); as h) {
-                  <sc-cal-semana [semana]="h.semana" />
-                  <p class="pista sc-text-caption-regular">{{ usoTexto(h.id) }}</p>
+                  <sc-cal-semana compacta [semana]="h.semana" />
+                  <p class="pista sc-text-caption-regular">{{ resumenDeSemana(h.semana) }}. {{ usoTexto(h.id) }}</p>
                 }
-                <div class="field">
-                  <sc-select inputId="cal-locucion" label="Fuera de horario suena" [options]="locuciones" optionLabel="label" optionValue="value" [value]="cal().locucion" (valueChange)="b.cambiar({ locucion: $any($event) })" />
-                </div>
               </div>
             </sc-section-card>
 
-            <sc-section-card titleKey="Periodos" hintKey="Fechas en las que se usa otro horario. Si dos se pisan, manda el más corto." surface="subtle" icon="date_range">
+            <sc-section-card titleKey="Periodos" hintKey="Fechas con otro horario. Si se pisan, manda el más corto." surface="subtle" icon="date_range">
               <div class="bloque">
                 @for (p of cal().periodos; track p.id) {
                   <div class="periodo" [attr.data-color]="p.color">
@@ -129,17 +124,6 @@ const aIso = (d: Date): string => isoDe(Date.UTC(d.getFullYear(), d.getMonth(), 
                           (valueChange)="elegirHorario($any($event), 'periodo-' + p.id)"
                         />
                       </div>
-                      <div class="field">
-                        <sc-select
-                          [inputId]="'periodo-locucion-' + p.id"
-                          label="Fuera de horario suena"
-                          [options]="locucionesPeriodo"
-                          optionLabel="label"
-                          optionValue="value"
-                          [value]="p.locucion ?? ''"
-                          (valueChange)="b.cambiarPeriodo(p.id, { locucion: $any($event) || null })"
-                        />
-                      </div>
                     </div>
                     <div class="periodo__pie">
                       <div class="switch-field">
@@ -157,10 +141,10 @@ const aIso = (d: Date): string => isoDe(Date.UTC(d.getFullYear(), d.getMonth(), 
               </div>
             </sc-section-card>
 
-            <sc-section-card titleKey="Festivos oficiales" hintKey="Se cargan solos cada año para la ubicación que elijas." surface="subtle" icon="flag">
+            <sc-section-card titleKey="Festivos oficiales" hintKey="Se cargan solos cada año según la ubicación." surface="subtle" icon="flag">
               <div class="bloque">
                 <div class="field">
-                  <sc-select inputId="cal-ubicacion" filter label="Festivos de" [options]="ubicaciones" optionLabel="label" optionValue="value" [value]="cal().ubicacion ?? ''" (valueChange)="b.cambiar({ ubicacion: $any($event) || null })" />
+                  <sc-select inputId="cal-ubicacion" filter ariaLabel="Festivos de" [options]="ubicaciones" optionLabel="label" optionValue="value" [value]="cal().ubicacion ?? ''" (valueChange)="b.cambiar({ ubicacion: $any($event) || null })" />
                 </div>
                 <p class="pista sc-text-body-regular">{{ resumenFestivos() }}</p>
                 @if (festivos().length) {
@@ -176,7 +160,7 @@ const aIso = (d: Date): string => isoDe(Date.UTC(d.getFullYear(), d.getMonth(), 
               </div>
             </sc-section-card>
 
-            <sc-section-card titleKey="Festivos y días especiales propios" hintKey="Los del cliente: cerrados todo el día o con otras horas. Uno puede valer para varios calendarios." surface="subtle" icon="event_busy">
+            <sc-section-card titleKey="Días especiales" hintKey="Cerrados o con otras horas. Uno vale para varios calendarios." surface="subtle" icon="event_busy">
               <div class="bloque">
                 @for (e of especiales(); track e.id) {
                   <button type="button" class="especial" (click)="editar.set(e)">
@@ -193,8 +177,6 @@ const aIso = (d: Date): string => isoDe(Date.UTC(d.getFullYear(), d.getMonth(), 
           <aside class="a__resultado">
             <sc-section-card [titleKey]="'Así queda ' + anio" surface="card" icon="calendar_month">
               <div class="bloque">
-                <sc-selectbutton size="sm" ariaLabel="Colorear por" [options]="lentes" optionLabel="label" optionValue="value" [allowEmpty]="false" [value]="lente()" (valueChange)="lente.set($any($event))" />
-                <sc-cal-anio [anio]="anio" [dias]="vista().dias" [hoy]="hoy" [seleccion]="dia()" [resaltar]="resaltar()" (seleccionChange)="dia.set($event)" (encima)="encima.set($event)" />
                 <ul class="leyenda" role="list">
                   @for (l of vista().leyenda; track l.clave) {
                     <li>
@@ -204,6 +186,7 @@ const aIso = (d: Date): string => isoDe(Date.UTC(d.getFullYear(), d.getMonth(), 
                     </li>
                   }
                 </ul>
+                <sc-cal-anio [anio]="anio" [dias]="vista().dias" [hoy]="hoy" [seleccion]="dia()" [resaltar]="resaltar()" (seleccionChange)="dia.set($event)" (encima)="encima.set($event)" />
                 <p class="detalle sc-text-body-regular" aria-live="polite">{{ detalle() }}</p>
               </div>
             </sc-section-card>
@@ -257,22 +240,22 @@ const aIso = (d: Date): string => isoDe(Date.UTC(d.getFullYear(), d.getMonth(), 
     .leyenda__item {
       display: inline-flex; align-items: center; gap: var(--sc-spacing-0-375);
       padding: var(--sc-spacing-0-25) var(--sc-spacing-0-5);
-      border: 1px solid var(--sc-border-subtle); border-radius: var(--sc-radius-full);
-      background: var(--sc-bg-surface); color: var(--sc-text-primary); cursor: pointer;
+      border: 1px solid transparent; border-radius: var(--sc-radius-full);
+      background: transparent; color: var(--sc-text-primary); cursor: pointer;
       transition-property: background-color, border-color, scale; transition-duration: 150ms; transition-timing-function: ease-out;
       &:hover { background: var(--sc-bg-hover); }
       &:active { scale: 0.96; }
       &:focus-visible { outline: 2px solid var(--sc-border-focus); outline-offset: 1px; }
     }
     .leyenda__item--on { border-color: var(--sc-border-primary); background: var(--sc-bg-primary-subtle); }
-    .leyenda__item i { inline-size: var(--sc-spacing-0-75); block-size: var(--sc-spacing-0-75); border-radius: var(--sc-radius-xs); border: 1px solid var(--sc-border-subtle); background: var(--sc-bg-surface); }
-    .leyenda__item i[data-tono='cerrado'] { background: var(--sc-bg-subtle); }
-    .leyenda__item i[data-tono='t-info'] { background: var(--sc-bg-info-subtle); border-color: var(--sc-border-info); }
-    .leyenda__item i[data-tono='t-violet'] { background: var(--sc-bg-violet-subtle); border-color: var(--sc-border-violet); }
-    .leyenda__item i[data-tono='t-success'] { background: var(--sc-bg-success-subtle); border-color: var(--sc-border-success); }
-    .leyenda__item i[data-tono='t-primary'] { background: var(--sc-bg-primary-subtle); border-color: var(--sc-border-primary); }
-    .leyenda__item i[data-tono='t-warning'] { background: var(--sc-bg-warning-subtle); border-color: var(--sc-border-warning); }
-    .leyenda__item i[data-tono='t-danger'] { background: var(--sc-bg-danger-subtle); border-color: var(--sc-border-danger); }
+    .leyenda__item i { inline-size: var(--sc-spacing-0-75); block-size: var(--sc-spacing-0-75); border-radius: var(--sc-radius-xs); background: color-mix(in srgb, var(--sc-text-heading) 6%, var(--sc-bg-surface)); }
+    .leyenda__item i[data-tono='cerrado'] { background: transparent; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--sc-text-heading) 14%, transparent); }
+    .leyenda__item i[data-tono='t-info'] { background: color-mix(in srgb, var(--sc-bg-info) 34%, var(--sc-bg-surface)); }
+    .leyenda__item i[data-tono='t-violet'] { background: color-mix(in srgb, var(--sc-bg-violet) 30%, var(--sc-bg-surface)); }
+    .leyenda__item i[data-tono='t-success'] { background: color-mix(in srgb, var(--sc-bg-success) 30%, var(--sc-bg-surface)); }
+    .leyenda__item i[data-tono='t-primary'] { background: color-mix(in srgb, var(--sc-bg-primary) 26%, var(--sc-bg-surface)); }
+    .leyenda__item i[data-tono='t-warning'] { background: color-mix(in srgb, var(--sc-bg-warning) 55%, var(--sc-bg-surface)); }
+    .leyenda__item i[data-tono='t-danger'] { background: color-mix(in srgb, var(--sc-bg-danger) 72%, var(--sc-bg-surface)); }
     .leyenda__n { color: var(--sc-text-secondary); font-variant-numeric: tabular-nums; }
     .detalle { margin: 0; min-block-size: 3em; color: var(--sc-text-secondary); }
   `,
@@ -286,13 +269,8 @@ export class CalCalendarioAComponent {
   protected readonly hoy = HOY;
   protected readonly cal = this.b.cal;
   protected readonly zonas = ZONAS;
-  protected readonly locuciones = LOCUCIONES.map((l) => ({ value: l, label: l }));
-  protected readonly locucionesPeriodo = [{ value: '', label: 'La del calendario' }, ...this.locuciones];
+  protected readonly resumenDeSemana = resumenDeSemana;
   protected readonly ubicaciones = [{ value: '', label: 'Sin festivos oficiales' }, ...UBICACIONES.map((u) => ({ value: u.id, label: u.etiqueta }))];
-  protected readonly lentes = [
-    { value: 'horas', label: 'Horas' },
-    { value: 'locucion', label: 'Locución' },
-  ];
 
   protected readonly lente = signal<Lente>('horas');
   protected readonly resaltar = signal<string | null>(null);
@@ -300,7 +278,7 @@ export class CalCalendarioAComponent {
   protected readonly encima = signal<string | null>(null);
   protected readonly verFestivos = signal(false);
   protected readonly editar = signal<DiaEspecial | null>(null);
-  protected readonly nuevoEspecial = signal(false);
+  protected readonly nuevoEspecial = signal(this.store.tomarAtajo() !== null);
 
   /** Lo que se pinta: el estado guardado con este calendario tal como está ahora (sin guardar). */
   private readonly estado = computed(() => {
@@ -356,7 +334,11 @@ export class CalCalendarioAComponent {
   }
 
   protected anadirEspecial(): void {
-    if (this.b.esNuevo() && !this.b.guardar(true)) return;
+    if (this.b.esNuevo()) {
+      this.store.dejarAtajo([]);
+      if (!this.b.guardar(true)) this.store.tomarAtajo();
+      return;
+    }
     this.nuevoEspecial.set(true);
   }
 

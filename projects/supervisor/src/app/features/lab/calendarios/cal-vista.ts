@@ -32,7 +32,7 @@ export function porQue(d: DiaResuelto): string {
 }
 
 export const etiquetaDe = (d: DiaResuelto): string =>
-  `${fechaConDia(d.fecha)}: ${textoDeFranjas(d.franjas)}. ${porQue(d)}. Fuera de horario suena ${d.locucion}.`;
+  `${fechaConDia(d.fecha)}: ${textoDeFranjas(d.franjas)}. ${porQue(d)}.`;
 
 /** Los días del año con su color y la leyenda, con cuántos días lleva cada cosa. */
 export function vistaDelAnio(estado: Estado, cal: Calendario, anio: number, lente: Lente): { dias: Map<string, DiaVista>; leyenda: EntradaDeLeyenda[] } {
@@ -66,13 +66,13 @@ export function vistaDelAnio(estado: Estado, cal: Calendario, anio: number, lent
       texto = 'Festivos oficiales';
     } else if (cerrado) {
       v = { tono: 'cerrado', clave: 'cerrado', etiqueta };
-      texto = 'Cerrado por el horario';
+      texto = 'Cerrado';
     } else if (d.periodo) {
       v = { tono: `t-${d.periodo.color}`, clave: `periodo:${d.periodo.id}`, etiqueta };
       texto = `${d.periodo.nombre}, ${mesDiaCorto(d.periodo.desde)} a ${mesDiaCorto(d.periodo.hasta)}`;
     } else {
       v = { tono: 'abierto', clave: 'base', etiqueta };
-      texto = `Resto del año: ${d.horario?.nombre ?? 'sin horario'}`;
+      texto = d.horario?.nombre ?? 'Sin horario';
     }
     dias.set(iso, v);
     anotar({ clave: v.clave, tono: v.tono, texto });

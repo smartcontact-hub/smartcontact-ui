@@ -97,7 +97,7 @@ export const MISIONES: Record<Mision, { readonly titulo: string; readonly enunci
   2: {
     titulo: 'Montar el calendario complejo de posventa',
     enunciado: `Crea el calendario «${NOMBRE_MISION_2}» para que funcione en 2025 tal como dice el papel de posventa.`,
-    nota: 'La locución de bienvenida (AU_01) la pone el flujo del servicio, no el calendario.',
+    nota: 'Solo cuentan las horas: lo que suena lo decide el diseño de voz.',
   },
 };
 
@@ -121,7 +121,7 @@ export interface Correccion {
 
 const describir = (estado: Estado, cal: Calendario, iso: string): string => {
   const d = resolver(estado, cal, iso);
-  return `${textoDeFranjas(d.franjas)}, fuera de horario ${d.locucion}`;
+  return textoDeFranjas(d.franjas);
 };
 
 function compararAnio(objetivo: Estado, calObj: Calendario, real: Estado, calReal: Calendario): { bien: number; horas: number; fallos: Fallo[] } {
@@ -168,7 +168,6 @@ export function corregir(m: Mision, real: Estado): Correccion {
   const puntos = [
     { texto: `Calendario «${c.nombre}»`, ok: c.nombre.trim().toLowerCase() === NOMBRE_MISION_2.toLowerCase() },
     { texto: `Horas bien en ${r.horas} de 365 días`, ok: r.horas === 365 },
-    { texto: `Horas y locución bien en ${r.bien} de 365 días`, ok: r.bien === 365 },
     { texto: deMas === 0 ? 'No ha cambiado otros calendarios' : `Ha cambiado ${deMas} ${deMas === 1 ? 'día' : 'días'} de otros calendarios`, ok: deMas === 0 },
   ];
   return { titular: `${r.bien} de 365 días bien`, bien: r.bien, total: 365, puntos, fallos: r.fallos };
@@ -253,12 +252,12 @@ export function colorDelPapel(iso: string): ColorDelPapel {
 }
 
 export const LEYENDA_DEL_PAPEL: readonly { readonly color: ColorDelPapel; readonly texto: string }[] = [
-  { color: 'rojo', texto: 'Festivos y fines de semana del curso. Suena AU_03 todo el día y no entran llamadas.' },
-  { color: 'naranja', texto: 'Festivos y fines de semana de verano. Suena AU_04 todo el día y no entran llamadas.' },
-  { color: 'blanco', texto: 'De 08:00 a 14:00 y de 15:30 a 18:00. Fuera de este horario suena AU_03. Dentro, AU_01.' },
-  { color: 'amarillo', texto: 'De 08:00 a 14:00. Fuera de este horario suena AU_03. Dentro, AU_01.' },
-  { color: 'azul', texto: 'De 08:00 a 15:00. Fuera de este horario suena AU_04. Dentro, AU_01.' },
-  { color: 'verde', texto: 'De 08:00 a 15:00. Fuera de este horario suena AU_05. Dentro, AU_01.' },
+  { color: 'rojo', texto: 'Festivos y fines de semana del curso. No entran llamadas.' },
+  { color: 'naranja', texto: 'Festivos y fines de semana de verano. No entran llamadas.' },
+  { color: 'blanco', texto: 'De 08:00 a 14:00 y de 15:30 a 18:00.' },
+  { color: 'amarillo', texto: 'De 08:00 a 14:00.' },
+  { color: 'azul', texto: 'De 08:00 a 15:00.' },
+  { color: 'verde', texto: 'De 08:00 a 15:00.' },
 ];
 
 export const TABLA_DEL_PAPEL = {

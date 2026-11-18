@@ -8,13 +8,12 @@ import {
   ScDatepickerComponent,
   ScInputTextComponent,
   ScSelectButtonComponent,
-  ScSelectComponent,
   ScToggleSwitchComponent,
 } from '@smartcontact-hub/components';
 
 import { ResultadoAccionService } from '@core/services/resultado-accion.service';
 import { HorarioFranjasComponent } from '@features/admin/repositories/components/horario/horario-franjas.component';
-import { type DiaEspecial, fechaCorta, type Franja, HOY, isoDe, LOCUCIONES, ubicacion } from './cal-modelo';
+import { type DiaEspecial, fechaCorta, type Franja, HOY, isoDe, ubicacion } from './cal-modelo';
 import { CalStore } from './cal-store';
 
 const aFecha = (iso: string): Date => new Date(+iso.slice(0, 4), +iso.slice(5, 7) - 1, +iso.slice(8, 10));
@@ -36,7 +35,6 @@ const aIso = (d: Date): string => isoDe(Date.UTC(d.getFullYear(), d.getMonth(), 
     ScDatepickerComponent,
     ScInputTextComponent,
     ScSelectButtonComponent,
-    ScSelectComponent,
     ScToggleSwitchComponent,
     TooltipModule,
   ],
@@ -73,17 +71,6 @@ const aIso = (d: Date): string => isoDe(Date.UTC(d.getFullYear(), d.getMonth(), 
           @if (como() === 'horas') {
             <sc-horario-franjas [franjas]="franjas()" etiqueta="este día" (franjasChange)="franjas.set($event)" />
           }
-          <div class="field">
-            <sc-select
-              inputId="festivo-locucion"
-              label="Fuera de horario suena"
-              [options]="opcionesLocucion"
-              optionLabel="label"
-              optionValue="value"
-              [value]="locucion() ?? ''"
-              (valueChange)="locucion.set($any($event) || null)"
-            />
-          </div>
         </div>
 
         <div class="bloque">
@@ -159,7 +146,6 @@ export class CalFestivoDialogoComponent implements OnInit {
     { value: 'cerrado', label: 'Cerrado todo el día' },
     { value: 'horas', label: 'Abre con otras horas' },
   ];
-  protected readonly opcionesLocucion = [{ value: '', label: 'La del periodo en que cae' }, ...LOCUCIONES.map((l) => ({ value: l, label: l }))];
 
   protected readonly calendarios = computed(() =>
     this.store.calendarios().map((c) => ({ id: c.id, nombre: c.nombre, pista: ubicacion(c.ubicacion)?.etiqueta ?? 'Sin festivos oficiales' })),

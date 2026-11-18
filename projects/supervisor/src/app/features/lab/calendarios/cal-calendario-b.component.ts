@@ -4,7 +4,6 @@ import {
   ScButtonComponent,
   ScDatepickerComponent,
   ScInputTextComponent,
-  ScSelectButtonComponent,
   ScSelectComponent,
   ScToggleSwitchComponent,
 } from '@smartcontact-hub/components';
@@ -22,7 +21,6 @@ import {
   fechasEntre,
   HOY,
   isoDe,
-  LOCUCIONES,
   mesDiaCorto,
   type Periodo,
   resolver,
@@ -65,7 +63,6 @@ type Panel =
     ScDatepickerComponent,
     ScIconComponent,
     ScInputTextComponent,
-    ScSelectButtonComponent,
     ScSelectComponent,
     ScToggleSwitchComponent,
     TooltipModule,
@@ -75,9 +72,7 @@ type Panel =
       <section class="b__lienzo" aria-label="El año">
         <header class="b__barra">
           <h1 class="b__titulo sc-text-title-semibold">{{ cal().nombre.trim() || 'Nuevo calendario' }} <span class="b__anio">{{ anio }}</span></h1>
-          <sc-selectbutton size="sm" ariaLabel="Colorear por" [options]="lentes" optionLabel="label" optionValue="value" [allowEmpty]="false" [value]="lente()" (valueChange)="lente.set($any($event))" />
-        </header>
-        <ul class="leyenda" role="list">
+          <ul class="leyenda" role="list">
           @for (l of vista().leyenda; track l.clave) {
             <li>
               <button type="button" class="leyenda__item sc-text-caption-regular" [class.leyenda__item--on]="resaltar() === l.clave" [attr.aria-pressed]="resaltar() === l.clave" (click)="resaltar.set(resaltar() === l.clave ? null : l.clave)">
@@ -85,7 +80,8 @@ type Panel =
               </button>
             </li>
           }
-        </ul>
+          </ul>
+        </header>
         <sc-cal-anio
           class="b__anio-rejilla"
           tamano="grande"
@@ -105,9 +101,7 @@ type Panel =
         @switch (panel().modo) {
           @case ('reglas') {
             <div class="panel">
-              <p class="consejo sc-text-body-regular"><sc-icon name="touch_app" size="sm" />Pulsa un día o arrastra sobre varios para cambiarlos.</p>
-
-              <div class="grupo">
+              <div class="grupo grupo--dos">
                 <sc-inputtext inputId="b-nombre" fluid required size="sm" label="Nombre" placeholder="Por ejemplo, Oficinas Madrid" [value]="cal().nombre" (valueChange)="b.cambiar({ nombre: $event })" />
                 <sc-select inputId="b-zona" size="sm" label="Zona horaria" [options]="zonas" optionLabel="label" optionValue="value" [value]="cal().zona" (valueChange)="b.cambiar({ zona: $any($event) })" />
               </div>
@@ -120,9 +114,9 @@ type Panel =
                   <sc-button variant="secondary" appearance="text" size="sm" icon="add" ariaLabel="Crear un horario nuevo" (clicked)="abrirHorario(0, 'base')" />
                 </div>
                 @if (horarioBase(); as h) {
-                  <sc-cal-semana [semana]="h.semana" />
+                  <sc-cal-semana compacta [semana]="h.semana" />
+                  <p class="pista sc-text-caption-regular">{{ resumenDeSemana(h.semana) }}</p>
                 }
-                <sc-select inputId="b-locucion" size="sm" label="Fuera de horario suena" [options]="locuciones" optionLabel="label" optionValue="value" [value]="cal().locucion" (valueChange)="b.cambiar({ locucion: $any($event) })" />
               </div>
 
               <div class="grupo">
@@ -148,7 +142,7 @@ type Panel =
               </div>
 
               <div class="grupo">
-                <h2 class="grupo__titulo sc-text-body-semibold">Festivos y días especiales</h2>
+                <h2 class="grupo__titulo sc-text-body-semibold">Días especiales</h2>
                 @for (e of especiales(); track e.id) {
                   <button type="button" class="item" (click)="editar.set(e)" (mouseenter)="resaltar.set('especial:' + e.id)" (mouseleave)="resaltar.set(null)">
                     <i class="item__color" [attr.data-color]="e.franjas.length ? 'warning' : 'danger'"></i>
@@ -176,7 +170,6 @@ type Panel =
                 <div class="ficha">
                   <p class="ficha__horas sc-text-title-semibold">{{ horasTexto(d.franjas) }}</p>
                   <p class="sc-text-body-regular">{{ porQue(d) }}</p>
-                  <p class="pista sc-text-caption-regular">Fuera de horario suena {{ d.locucion }}</p>
                 </div>
               } @else {
                 <p class="pista sc-text-body-regular">{{ resumenRango(r) }}</p>
@@ -224,7 +217,6 @@ type Panel =
               @if (horario(p.horarioId); as h) {
                 <sc-cal-semana [semana]="h.semana" />
               }
-              <sc-select inputId="b-periodo-locucion" size="sm" label="Fuera de horario suena" [options]="locucionesPeriodo" optionLabel="label" optionValue="value" [value]="p.locucion ?? ''" (valueChange)="tocarPeriodo({ locucion: $any($event) || null })" />
               <div class="pie">
                 @if (!$any(panel()).nuevo) {
                   <sc-button class="pie__izq" variant="danger" appearance="text" size="sm" icon="close" label="Quitar" (clicked)="quitarPeriodo(p)" />
@@ -280,14 +272,16 @@ type Panel =
     }
     .b__lienzo { display: flex; flex-direction: column; gap: var(--sc-spacing-1); padding: var(--sc-spacing-1-25) var(--sc-spacing-1-5); overflow: auto; }
     .b__panel { overflow-y: auto; }
-    .b__barra { display: flex; align-items: center; justify-content: space-between; gap: var(--sc-spacing-1); }
+    .b__barra { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--sc-spacing-0-5) var(--sc-spacing-1-5); }
+    .b__anio-rejilla { flex: 1; }
     .b__titulo { margin: 0; color: var(--sc-text-heading); }
     .b__anio { color: var(--sc-text-subtle); font-variant-numeric: tabular-nums; }
     .b__pie { margin: 0; min-block-size: 1.5em; color: var(--sc-text-secondary); }
-    .panel { display: flex; flex-direction: column; gap: var(--sc-spacing-1); padding: var(--sc-spacing-1-25); }
-    .consejo { display: flex; align-items: center; gap: var(--sc-spacing-0-5); margin: 0; padding: var(--sc-spacing-0-75) var(--sc-spacing-1); border-radius: var(--sc-radius-md); background: var(--sc-bg-primary-subtle); color: var(--sc-text-heading); }
-    .grupo { display: flex; flex-direction: column; gap: var(--sc-spacing-0-75); padding-block-start: var(--sc-spacing-1); border-block-start: 1px solid var(--sc-border-subtle); }
-    .grupo:first-of-type { padding-block-start: 0; border: 0; }
+    .panel { display: flex; flex-direction: column; gap: var(--sc-spacing-1-5); padding: var(--sc-spacing-1-25); }
+    .consejo { margin: 0; color: var(--sc-text-secondary); }
+    .grupo { display: flex; flex-direction: column; gap: var(--sc-spacing-0-5); }
+    .grupo--dos { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--sc-spacing-0-75); }
+    .grupo--dos > * { min-inline-size: 0; }
     .grupo__titulo { margin: 0; color: var(--sc-text-heading); }
     .fila { display: flex; align-items: flex-end; gap: var(--sc-spacing-0-25); }
     .fila__crece { flex: 1; min-inline-size: 0; }
@@ -296,10 +290,10 @@ type Panel =
     .item, .accion {
       display: flex; align-items: center; gap: var(--sc-spacing-0-75);
       padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
-      border: 1px solid var(--sc-border-subtle); border-radius: var(--sc-radius-md);
-      background: var(--sc-bg-surface); color: var(--sc-text-primary); text-align: start; cursor: pointer;
+      border: 0; border-radius: var(--sc-radius-md);
+      background: color-mix(in srgb, var(--sc-text-heading) 4%, var(--sc-bg-surface)); color: var(--sc-text-primary); text-align: start; cursor: pointer;
       transition-property: background-color, scale; transition-duration: 150ms; transition-timing-function: ease-out;
-      &:hover { background: var(--sc-bg-hover); }
+      &:hover { background: color-mix(in srgb, var(--sc-text-heading) 8%, var(--sc-bg-surface)); }
       &:active { scale: 0.96; }
       &:focus-visible { outline: 2px solid var(--sc-border-focus); outline-offset: 1px; }
     }
@@ -307,12 +301,12 @@ type Panel =
     .accion .sc-text-body-semibold { color: var(--sc-text-heading); }
     .item__texto { display: flex; flex: 1; flex-direction: column; min-inline-size: 0; }
     .item__color { flex: none; inline-size: var(--sc-spacing-0-75); block-size: var(--sc-spacing-0-75); border-radius: var(--sc-radius-xs); }
-    .item__color[data-color='info'] { background: var(--sc-bg-info); }
-    .item__color[data-color='violet'] { background: var(--sc-bg-violet); }
-    .item__color[data-color='success'] { background: var(--sc-bg-success); }
-    .item__color[data-color='primary'] { background: var(--sc-bg-primary); }
-    .item__color[data-color='warning'] { background: var(--sc-bg-warning); }
-    .item__color[data-color='danger'] { background: var(--sc-bg-danger); }
+    .item__color[data-color='info'] { background: color-mix(in srgb, var(--sc-bg-info) 34%, var(--sc-bg-surface)); }
+    .item__color[data-color='violet'] { background: color-mix(in srgb, var(--sc-bg-violet) 30%, var(--sc-bg-surface)); }
+    .item__color[data-color='success'] { background: color-mix(in srgb, var(--sc-bg-success) 30%, var(--sc-bg-surface)); }
+    .item__color[data-color='primary'] { background: color-mix(in srgb, var(--sc-bg-primary) 26%, var(--sc-bg-surface)); }
+    .item__color[data-color='warning'] { background: color-mix(in srgb, var(--sc-bg-warning) 55%, var(--sc-bg-surface)); }
+    .item__color[data-color='danger'] { background: color-mix(in srgb, var(--sc-bg-danger) 72%, var(--sc-bg-surface)); }
     .cabeza { display: flex; align-items: center; gap: var(--sc-spacing-0-25); }
     .cabeza__titulo { margin: 0; color: var(--sc-text-heading); }
     .ficha { display: flex; flex-direction: column; gap: var(--sc-spacing-0-25); padding: var(--sc-spacing-1); border-radius: var(--sc-radius-md); background: var(--sc-bg-subtle); }
@@ -324,22 +318,22 @@ type Panel =
     .leyenda__item {
       display: inline-flex; align-items: center; gap: var(--sc-spacing-0-375);
       padding: var(--sc-spacing-0-25) var(--sc-spacing-0-5);
-      border: 1px solid var(--sc-border-subtle); border-radius: var(--sc-radius-full);
-      background: var(--sc-bg-surface); color: var(--sc-text-primary); cursor: pointer;
+      border: 1px solid transparent; border-radius: var(--sc-radius-full);
+      background: transparent; color: var(--sc-text-primary); cursor: pointer;
       transition-property: background-color, border-color, scale; transition-duration: 150ms; transition-timing-function: ease-out;
       &:hover { background: var(--sc-bg-hover); }
       &:active { scale: 0.96; }
       &:focus-visible { outline: 2px solid var(--sc-border-focus); outline-offset: 1px; }
     }
     .leyenda__item--on { border-color: var(--sc-border-primary); background: var(--sc-bg-primary-subtle); }
-    .leyenda__item i { inline-size: var(--sc-spacing-0-75); block-size: var(--sc-spacing-0-75); border-radius: var(--sc-radius-xs); border: 1px solid var(--sc-border-subtle); background: var(--sc-bg-surface); }
-    .leyenda__item i[data-tono='cerrado'] { background: var(--sc-bg-subtle); }
-    .leyenda__item i[data-tono='t-info'] { background: var(--sc-bg-info-subtle); border-color: var(--sc-border-info); }
-    .leyenda__item i[data-tono='t-violet'] { background: var(--sc-bg-violet-subtle); border-color: var(--sc-border-violet); }
-    .leyenda__item i[data-tono='t-success'] { background: var(--sc-bg-success-subtle); border-color: var(--sc-border-success); }
-    .leyenda__item i[data-tono='t-primary'] { background: var(--sc-bg-primary-subtle); border-color: var(--sc-border-primary); }
-    .leyenda__item i[data-tono='t-warning'] { background: var(--sc-bg-warning-subtle); border-color: var(--sc-border-warning); }
-    .leyenda__item i[data-tono='t-danger'] { background: var(--sc-bg-danger-subtle); border-color: var(--sc-border-danger); }
+    .leyenda__item i { inline-size: var(--sc-spacing-0-75); block-size: var(--sc-spacing-0-75); border-radius: var(--sc-radius-xs); background: color-mix(in srgb, var(--sc-text-heading) 6%, var(--sc-bg-surface)); }
+    .leyenda__item i[data-tono='cerrado'] { background: transparent; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--sc-text-heading) 14%, transparent); }
+    .leyenda__item i[data-tono='t-info'] { background: color-mix(in srgb, var(--sc-bg-info) 34%, var(--sc-bg-surface)); }
+    .leyenda__item i[data-tono='t-violet'] { background: color-mix(in srgb, var(--sc-bg-violet) 30%, var(--sc-bg-surface)); }
+    .leyenda__item i[data-tono='t-success'] { background: color-mix(in srgb, var(--sc-bg-success) 30%, var(--sc-bg-surface)); }
+    .leyenda__item i[data-tono='t-primary'] { background: color-mix(in srgb, var(--sc-bg-primary) 26%, var(--sc-bg-surface)); }
+    .leyenda__item i[data-tono='t-warning'] { background: color-mix(in srgb, var(--sc-bg-warning) 55%, var(--sc-bg-surface)); }
+    .leyenda__item i[data-tono='t-danger'] { background: color-mix(in srgb, var(--sc-bg-danger) 72%, var(--sc-bg-surface)); }
     .leyenda__n { color: var(--sc-text-secondary); font-variant-numeric: tabular-nums; }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -353,13 +347,7 @@ export class CalCalendarioBComponent {
   protected readonly hoy = HOY;
   protected readonly cal = this.b.cal;
   protected readonly zonas = ZONAS;
-  protected readonly locuciones = LOCUCIONES.map((l) => ({ value: l, label: l }));
-  protected readonly locucionesPeriodo = [{ value: '', label: 'La del calendario' }, ...this.locuciones];
   protected readonly ubicaciones = [{ value: '', label: 'Sin festivos oficiales' }, ...UBICACIONES.map((u) => ({ value: u.id, label: u.etiqueta }))];
-  protected readonly lentes = [
-    { value: 'horas', label: 'Horas' },
-    { value: 'locucion', label: 'Locución' },
-  ];
   protected readonly porQue = porQue;
 
   protected readonly panel = signal<Panel>({ modo: 'reglas' });
@@ -367,7 +355,7 @@ export class CalCalendarioBComponent {
   protected readonly resaltar = signal<string | null>(null);
   protected readonly encima = signal<string | null>(null);
   protected readonly editar = signal<DiaEspecial | null>(null);
-  protected readonly atajo = signal<readonly string[] | null>(null);
+  protected readonly atajo = signal<readonly string[] | null>(this.store.tomarAtajo());
   protected readonly impacto = signal<{ nombre: string; usos: ReturnType<typeof usosDe> } | null>(null);
 
   /** El estado con este calendario tal como está ahora y, si hay un periodo abierto, con él puesto. */
@@ -396,9 +384,14 @@ export class CalCalendarioBComponent {
   protected readonly especiales = computed(() => this.store.especiales().filter((e) => this.cal().id !== 0 && e.calendarioIds.includes(this.cal().id)));
   protected readonly pie = computed(() => {
     const iso = this.encima();
-    if (!iso) return 'Pasa por un día para ver qué horas tiene y por qué.';
+    if (!iso) {
+      const modo = this.panel().modo;
+      if (modo === 'periodo') return 'Arrastra sobre el año para cambiar las fechas del periodo.';
+      if (modo === 'horario') return 'Guarda o cancela el horario para volver a elegir días.';
+      return 'Pulsa un día o arrastra sobre varios para cambiarlos. Pasa por uno para ver sus horas.';
+    }
     const d = resolver(this.estado(), this.calPintado(), iso);
-    return `${textoDeRango(iso, iso)}: ${this.horasTexto(d.franjas)}. ${porQue(d)}. Fuera de horario suena ${d.locucion}.`;
+    return `${textoDeRango(iso, iso)}: ${this.horasTexto(d.franjas)}. ${porQue(d)}.`;
   });
 
   protected horario(id: number) {
@@ -446,7 +439,19 @@ export class CalCalendarioBComponent {
     return dias.length <= 62 ? dias : [];
   }
 
+  /**
+   * Lo que se pulsa o arrastra en el año. Con un periodo abierto no se tira lo escrito: el año le cambia las fechas (es lo
+   * que se espera al arrastrar con él delante). Con un horario a medio editar, el año no lo toca: primero se guarda o se
+   * cancela.
+   */
   protected elegir(r: Rango | null): void {
+    const p = this.panel();
+    if (p.modo === 'periodo') {
+      if (!r) return;
+      this.tocarPeriodo({ desde: r.desde.slice(5), hasta: r.hasta.slice(5), anio: p.periodo.anio === null ? null : +r.desde.slice(0, 4) });
+      return;
+    }
+    if (p.modo === 'horario') return;
     this.panel.set(r ? { modo: 'seleccion', rango: r } : { modo: 'reglas' });
   }
 
@@ -559,7 +564,11 @@ export class CalCalendarioBComponent {
   }
 
   protected abrirAtajo(fechas: readonly string[]): void {
-    if (this.b.esNuevo() && !this.b.guardar(true)) return;
+    if (this.b.esNuevo()) {
+      this.store.dejarAtajo(fechas);
+      if (!this.b.guardar(true)) this.store.tomarAtajo();
+      return;
+    }
     this.atajo.set(fechas);
   }
 

@@ -311,7 +311,8 @@ export function resolver(estado: Estado, cal: Calendario, iso: string): DiaResue
 }
 
 /** Lo que se compara en la prueba: las horas del día y lo que suena fuera de ellas. */
-export const firma = (d: DiaResuelto): string => `${claveFranjas(d.franjas)}|${d.locucion}`;
+/** Lo que se corrige de un día: sus horas. La locución es cosa del diseño de voz, no del calendario. */
+export const firma = (d: DiaResuelto): string => claveFranjas(d.franjas);
 
 /** «Abierto hasta las 14:00», «Cerrado, abre mañana a las 08:00». */
 export function ahoraEn(estado: Estado, cal: Calendario): { abierto: boolean; texto: string } {
@@ -345,8 +346,8 @@ export function nombreLibre(base: string, usados: readonly string[]): string {
 }
 
 export const ZONAS: readonly { readonly value: string; readonly label: string }[] = [
-  { value: 'Europe/Madrid', label: 'Península y Baleares (Europe/Madrid)' },
-  { value: 'Atlantic/Canary', label: 'Canarias (Atlantic/Canary)' },
-  { value: 'America/Lima', label: 'Perú (America/Lima)' },
-  { value: 'America/Mexico_City', label: 'México (America/Mexico_City)' },
+  { value: 'Europe/Madrid', label: 'Península y Baleares' },
+  { value: 'Atlantic/Canary', label: 'Canarias' },
+  { value: 'America/Lima', label: 'Perú' },
+  { value: 'America/Mexico_City', label: 'México' },
 ];

@@ -120,6 +120,20 @@ export class CalStore {
     else this.guardarEspecial({ ...x, calendarioIds: ids });
   }
 
+  /** El atajo que se pidió en un calendario nuevo: guardarlo cambia de ruta (crear → editar/:id) y la pantalla se
+   *  vuelve a crear, así que el diálogo se abre al llegar en vez de perderse. */
+  private atajoPendiente: readonly string[] | null = null;
+
+  dejarAtajo(fechas: readonly string[]): void {
+    this.atajoPendiente = fechas;
+  }
+
+  tomarAtajo(): readonly string[] | null {
+    const f = this.atajoPendiente;
+    this.atajoPendiente = null;
+    return f;
+  }
+
   guardarBorrador(clave: string, c: Calendario): void {
     this.borradores.set(clave, c);
   }
