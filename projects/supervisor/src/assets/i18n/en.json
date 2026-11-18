@@ -1723,6 +1723,11 @@
           "edit": "Edit details"
         },
         "rules": {
+          "kind_all": "All",
+          "kind_special": "Special",
+          "kind_holiday": "Holidays",
+          "kind_filter": "Kind of day",
+          "general_hint": "Rest of the year",
           "general": "General schedule",
           "rest": "Rest of the year",
           "title": "Calendar rules",

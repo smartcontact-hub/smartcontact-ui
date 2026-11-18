@@ -1723,6 +1723,11 @@
           "edit": "Editar dados"
         },
         "rules": {
+          "kind_all": "Tudo",
+          "kind_special": "Especiais",
+          "kind_holiday": "Feriados",
+          "kind_filter": "Tipo de dia",
+          "general_hint": "Resto do ano",
           "general": "Horário geral",
           "rest": "Resto do ano",
           "title": "Regras do calendário",

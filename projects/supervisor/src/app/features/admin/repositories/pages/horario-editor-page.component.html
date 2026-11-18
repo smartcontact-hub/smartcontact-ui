@@ -26,14 +26,7 @@
       <div class="cabecera__titulo">
         <h1 class="page__heading sc-text-title-semibold">{{ form().name.trim() || ('repositories.horarios.create_title' | translate) }}</h1>
         <!-- La zona como etiqueta con su hora de referencia («Madrid · GMT+1»); la descripción, al pasar el ratón. -->
-        <sc-tag
-          variant="label"
-          labelColor="teal"
-          icon="schedule"
-          [value]="zonaCorta()"
-          [pTooltip]="form().timezone + (form().description ? ' · ' + form().description : '')"
-          tooltipPosition="bottom"
-        />
+        <span class="cabecera__zona sc-text-caption-regular" [pTooltip]="form().timezone + (form().description ? ' · ' + form().description : '')" tooltipPosition="bottom">{{ zonaCorta() }}</span>
       </div>
       <div class="cabecera__acciones">
         <!-- El calendario sobre el que se opera: cambia de uno a otro sin volver a la lista, con buscador. -->

@@ -13,38 +13,40 @@
       [ariaLabel]="'repositories.horarios.period_add' | translate"
       (clicked)="anadirPeriodo.emit()"
     />
-    @if (filasDePeriodos().length > 0) {
-      <ul class="lista lista--periodos" role="list">
-        @for (p of filasDePeriodos(); track p.id) {
-          <li class="fila fila--periodo">
-            <span class="fila__cuerpo">
-              <span class="fila__cuerpo fila__cuerpo--linea">
-                @if (p.color === 'black') {
-                  <sc-tag class="fila__etiqueta" severity="contrast" [value]="p.nombre" />
-                } @else {
-                  <sc-tag class="fila__etiqueta" variant="label" [bordered]="false" [labelColor]="$any(p.color)" [value]="p.nombre" />
-                }
-                <span class="fila__fechas sc-text-caption-regular" [pTooltip]="p.fechas + (p.repite ? ' · ' + ('repositories.horarios.x.rules.yearly' | translate) : '')" showOnEllipsis tooltipPosition="top">{{ p.fechas }}@if (p.repite) { · {{ 'repositories.horarios.x.rules.yearly' | translate }} }</span>
-              </span>
-              <!-- Su horario: el nombre y las horas, a la vista sin abrirlo. -->
-              <span class="fila__detalle sc-text-caption-regular" [pTooltip]="p.horario + ' · ' + p.resumen" showOnEllipsis tooltipPosition="top">{{ p.horario }} · {{ p.resumen }}</span>
+    <ul class="lista lista--periodos" role="list">
+      <!-- El horario general, el primero y con el mismo estilo que un periodo: etiqueta gris, y debajo su horario. -->
+      <li class="fila fila--periodo">
+        <span class="fila__cuerpo">
+          <span class="fila__cuerpo fila__cuerpo--linea">
+            <sc-tag class="fila__etiqueta" variant="label" [bordered]="false" labelColor="gray" [value]="'repositories.horarios.x.rules.general' | translate" />
+            <span class="fila__fechas sc-text-caption-regular">{{ 'repositories.horarios.x.rules.general_hint' | translate }}</span>
+          </span>
+          <span class="fila__detalle sc-text-caption-regular" [pTooltip]="nombreGeneral() + ' · ' + resumenGeneral()" showOnEllipsis tooltipPosition="top">{{ nombreGeneral() }} · {{ resumenGeneral() }}</span>
+        </span>
+        <span class="fila__acciones fila__acciones--hover">
+          <sc-button variant="secondary" appearance="text" size="sm" icon="edit" [ariaLabel]="'repositories.horarios.x.general_modal.title' | translate" (clicked)="editarSemana.emit()" />
+        </span>
+      </li>
+      @for (p of filasDePeriodos(); track p.id) {
+        <li class="fila fila--periodo">
+          <span class="fila__cuerpo">
+            <span class="fila__cuerpo fila__cuerpo--linea">
+              @if (p.color === 'black') {
+                <sc-tag class="fila__etiqueta" severity="contrast" [value]="p.nombre" />
+              } @else {
+                <sc-tag class="fila__etiqueta" variant="label" [bordered]="false" [labelColor]="$any(p.color)" [value]="p.nombre" />
+              }
+              <span class="fila__fechas sc-text-caption-regular" [pTooltip]="p.fechas + (p.repite ? ' · ' + ('repositories.horarios.x.rules.yearly' | translate) : '')" showOnEllipsis tooltipPosition="top">{{ p.fechas }}@if (p.repite) { · {{ 'repositories.horarios.x.rules.yearly' | translate }} }</span>
             </span>
-            <!-- El lápiz y la papelera aparecen al pasar por la fila (o al llegar con el teclado). -->
-            <span class="fila__acciones fila__acciones--hover">
-              <sc-button variant="secondary" appearance="text" size="sm" icon="edit" [ariaLabel]="('repositories.horarios.period_edit' | translate) + ' ' + p.nombre" (clicked)="abrirPeriodo.emit(p.id)" />
-              <sc-button variant="secondary" appearance="text" size="sm" icon="delete" [ariaLabel]="('common.delete' | translate) + ' ' + p.nombre" (clicked)="eliminarPeriodo.emit(p.id)" />
-            </span>
-          </li>
-        }
-      </ul>
-    }
-
-    <!-- El horario general: lo que vale fuera de los periodos, con sus horas al lado. -->
-    <div class="general">
-      <h3 class="general__titulo sc-text-body-semibold">{{ 'repositories.horarios.x.rules.general' | translate }}</h3>
-      <span class="general__horas sc-text-body-regular" [pTooltip]="resumenGeneral()" showOnEllipsis tooltipPosition="top">{{ resumenGeneral() }}</span>
-      <sc-button variant="secondary" appearance="text" size="sm" icon="edit" [ariaLabel]="'repositories.horarios.x.general_modal.title' | translate" (clicked)="editarSemana.emit()" />
-    </div>
+            <span class="fila__detalle sc-text-caption-regular" [pTooltip]="p.horario + ' · ' + p.resumen" showOnEllipsis tooltipPosition="top">{{ p.horario }} · {{ p.resumen }}</span>
+          </span>
+          <span class="fila__acciones fila__acciones--hover">
+            <sc-button variant="secondary" appearance="text" size="sm" icon="edit" [ariaLabel]="('repositories.horarios.period_edit' | translate) + ' ' + p.nombre" (clicked)="abrirPeriodo.emit(p.id)" />
+            <sc-button variant="secondary" appearance="text" size="sm" icon="delete" [ariaLabel]="('common.delete' | translate) + ' ' + p.nombre" (clicked)="eliminarPeriodo.emit(p.id)" />
+          </span>
+        </li>
+      }
+    </ul>
     <a class="repo-link sc-text-caption-semibold" href="/admin/horarios-tipo" (click)="gestionarHorarios.emit($event)">{{ 'repositories.horariosTipo.x.picker.manage' | translate }}</a>
   </sc-section-card>
 
@@ -58,81 +60,70 @@
       [ariaLabel]="'repositories.horarios.special_add' | translate"
       (clicked)="anadirEspecial.emit()"
     />
-    <sc-selectbutton
-      size="sm"
-      [ariaLabel]="'repositories.horarios.specials_filter' | translate"
-      [options]="filtroDeEspeciales()"
-      optionLabel="label"
-      optionValue="value"
-      [allowEmpty]="false"
-      [value]="filtro()"
-      (valueChange)="filtro.set($any($event))"
-    />
-    @if (filasDeEspeciales().length === 0) {
+    <!-- Qué se ve: todo, solo fechas especiales o solo festivos; y cuándo (próximas, pasadas, todas). -->
+    <div class="filtros-fechas">
+      <sc-selectbutton
+        size="sm"
+        [ariaLabel]="'repositories.horarios.x.rules.kind_filter' | translate"
+        [options]="filtroDeTipo()"
+        optionLabel="label"
+        optionValue="value"
+        [allowEmpty]="false"
+        [value]="tipoFiltro()"
+        (valueChange)="tipoFiltro.set($any($event))"
+      />
+      <sc-select
+        size="sm"
+        [ariaLabel]="'repositories.horarios.specials_filter' | translate"
+        [options]="filtroDeEspeciales()"
+        optionLabel="label"
+        optionValue="value"
+        [value]="filtro()"
+        (valueChange)="filtro.set($any($event))"
+      />
+    </div>
+    @if (filasDeFechas().length === 0) {
       @if (filtro() !== 'proximas') {
         <p class="vacio sc-text-body-regular">{{ 'repositories.horarios.specials_past_empty' | translate }}</p>
       }
     } @else {
       <ul class="lista lista--especiales" role="list">
-        @for (e of filasDeEspeciales(); track e.id) {
+        @for (e of filasDeFechas(); track e.clave) {
           <li class="fila">
-            <span class="hoja" aria-hidden="true">
+            <span class="hoja" [class.hoja--festivo]="e.tipo === 'festivo'" aria-hidden="true">
               <span class="hoja__mes sc-text-caption-semibold">{{ e.mes }}</span>
               <span class="hoja__dia sc-text-body-semibold">{{ e.dia }}</span>
             </span>
             <span class="fila__cuerpo">
               <span class="fila__nombre sc-text-body-regular">{{ e.nombre }}</span>
-              <span class="fila__detalle sc-text-caption-regular">{{ e.tramos.length ? e.tramos.join(' · ') : e.cerrado }}@if (e.repite) { · {{ 'repositories.horarios.x.rules.yearly' | translate }} } @else if (e.anio) { · {{ e.anio }} }</span>
+              <span class="fila__detalle sc-text-caption-regular">{{ e.detalle }}@if (e.repite) { · {{ 'repositories.horarios.x.rules.yearly' | translate }} } @else if (e.anio) { · {{ e.anio }} }</span>
             </span>
             <span class="fila__acciones">
-              <sc-button variant="secondary" appearance="text" size="sm" icon="edit" [ariaLabel]="('repositories.horarios.special_edit' | translate) + ' ' + e.nombre" (clicked)="abrirEspecial.emit(e.id)" />
-              <sc-button variant="secondary" appearance="text" size="sm" icon="delete" [ariaLabel]="('common.delete' | translate) + ' ' + e.nombre" (clicked)="eliminarEspecial.emit(e.id)" />
+              <sc-button variant="secondary" appearance="text" size="sm" icon="edit" [ariaLabel]="('repositories.horarios.special_edit' | translate) + ' ' + e.nombre" (clicked)="e.tipo === 'festivo' ? abrirPropio.emit(e.id) : abrirEspecial.emit(e.id)" />
+              <sc-button variant="secondary" appearance="text" size="sm" icon="delete" [ariaLabel]="('common.delete' | translate) + ' ' + e.nombre" (clicked)="e.tipo === 'festivo' ? eliminarPropio.emit(e.id) : eliminarEspecial.emit(e.id)" />
             </span>
           </li>
         }
       </ul>
     }
-    <div class="festivos">
-      <sc-multiselect
-        inputId="horario-festivos"
-        display="chip"
-        chipOverflow="fit"
-        size="sm"
-        [filter]="true"
-        [label]="'repositories.horarios.holiday_calendars' | translate"
-        [placeholder]="'repositories.horarios.holiday_calendars_placeholder' | translate"
-        [options]="opcionesDeFestivos()"
-        optionLabel="label"
-        optionValue="value"
-        [value]="$any(festivosAplicados())"
-        (valueChange)="cambiarFestivos.emit($any($event) ?? [])"
-      />
-      <a class="repo-link sc-text-caption-semibold" [href]="festivosHref()" (click)="gestionarFestivos.emit($event)">{{ 'repositories.horarios.manage_holidays' | translate }}</a>
-    </div>
-    @if (filasDePropios().length > 0) {
-      <div class="sub">
-        <h3 class="sub__titulo sc-text-body-semibold">{{ 'repositories.horarios.x.own.title' | translate }}</h3>
+    @if (tipoFiltro() !== 'especiales') {
+      <div class="festivos">
+        <sc-multiselect
+          inputId="horario-festivos"
+          display="chip"
+          chipOverflow="fit"
+          size="sm"
+          [filter]="true"
+          [label]="'repositories.horarios.holiday_calendars' | translate"
+          [placeholder]="'repositories.horarios.holiday_calendars_placeholder' | translate"
+          [options]="opcionesDeFestivos()"
+          optionLabel="label"
+          optionValue="value"
+          [value]="$any(festivosAplicados())"
+          (valueChange)="cambiarFestivos.emit($any($event) ?? [])"
+        />
+        <a class="repo-link sc-text-caption-semibold" [href]="festivosHref()" (click)="gestionarFestivos.emit($event)">{{ 'repositories.horarios.manage_holidays' | translate }}</a>
       </div>
-      <ul class="lista" role="list">
-        @for (d of filasDePropios(); track d.id) {
-          <li class="fila">
-            <span class="hoja hoja--festivo" aria-hidden="true">
-              <span class="hoja__mes sc-text-caption-semibold">{{ d.mes }}</span>
-              <span class="hoja__dia sc-text-body-semibold">{{ d.dia }}</span>
-            </span>
-            <span class="fila__cuerpo">
-              <span class="fila__nombre sc-text-body-regular">{{ d.nombre }}</span>
-              <span class="fila__detalle sc-text-caption-regular">
-                @if (d.repite) { {{ 'repositories.horarios.x.rules.yearly' | translate }} } @else { {{ d.anio }} }
-              </span>
-            </span>
-            <span class="fila__acciones">
-              <sc-button variant="secondary" appearance="text" size="sm" icon="edit" [ariaLabel]="('repositories.festivos.day_edit' | translate) + ' ' + d.nombre" (clicked)="abrirPropio.emit(d.id)" />
-              <sc-button variant="secondary" appearance="text" size="sm" icon="delete" [ariaLabel]="('common.delete' | translate) + ' ' + d.nombre" (clicked)="eliminarPropio.emit(d.id)" />
-            </span>
-          </li>
-        }
-      </ul>
     }
   </sc-section-card>
 </div>

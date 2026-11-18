@@ -127,7 +127,23 @@ export class HorarioReglasComponent {
     ];
   });
 
-  protected readonly filasDeEspeciales = computed(() => {
+  /** Qué se ve en la lista: todo, solo fechas especiales o solo festivos propios. */
+  protected readonly tipoFiltro = signal<'todo' | 'especiales' | 'festivos'>('todo');
+  protected readonly filtroDeTipo = computed(() => {
+    this.lang();
+    const t = (k: string): string => this.translate.instant(k);
+    return [
+      { value: 'todo', label: t('repositories.horarios.x.rules.kind_all') },
+      { value: 'especiales', label: t('repositories.horarios.x.rules.kind_special') },
+      { value: 'festivos', label: t('repositories.horarios.x.rules.kind_holiday') },
+    ];
+  });
+
+  /** El nombre del horario general y su semana en una línea, con el mismo formato que el de un periodo. */
+  protected readonly nombreGeneral = computed(() => this.opcionesDeHorarios().find((o) => o.value === this.horarioId())?.label ?? '');
+
+  /** Las fechas especiales y los festivos propios, juntos y por orden en el año, con el filtro de tipo y el de cuándo. */
+  protected readonly filasDeFechas = computed(() => {
     this.lang();
     const hoy = ahoraEn(this.zona()).fecha;
     const anio = hoy.slice(0, 4);
@@ -135,36 +151,28 @@ export class HorarioReglasComponent {
     const conAnio = new Intl.DateTimeFormat(this.language.locale(), { year: 'numeric' });
     const cerrado = this.translate.instant('repositories.horarios.closed') as string;
     const filtro = this.filtro();
-    const clave = (e: FechaEspecial): string => (e.yearly ? `${anio}${e.date.slice(4)}` : e.date);
-    return this.especiales()
-      .filter((e) => filtro === 'todas' || (!e.yearly && e.date < hoy) === (filtro === 'pasadas'))
-      .sort((a, b) => clave(a).localeCompare(clave(b)))
-      .map((e) => {
-        const iso = e.yearly ? `2024${e.date.slice(4)}` : e.date;
+    const tipo = this.tipoFiltro();
+    const clave = (e: { date: string; yearly: boolean }): string => (e.yearly ? `${anio}${e.date.slice(4)}` : e.date);
+    const filas = [
+      ...(tipo === 'festivos' ? [] : this.especiales().map((e) => ({ tipo: 'especial' as const, e, detalle: e.slots.length ? e.slots.map(textoDeFranja).join(' · ') : cerrado }))),
+      ...(tipo === 'especiales' ? [] : this.propios().map((e) => ({ tipo: 'festivo' as const, e: { ...e, slots: [] as Franja[] }, detalle: cerrado }))),
+    ];
+    return filas
+      .filter((f) => filtro === 'todas' || (!f.e.yearly && f.e.date < hoy) === (filtro === 'pasadas'))
+      .sort((a, b) => clave(a.e).localeCompare(clave(b.e)))
+      .map((f) => {
+        const iso = f.e.yearly ? `2024${f.e.date.slice(4)}` : f.e.date;
         return {
-          id: e.id,
-          nombre: e.name,
+          clave: `${f.tipo}-${f.e.id}`,
+          tipo: f.tipo,
+          id: f.e.id,
+          nombre: f.e.name,
           dia: Number(iso.slice(8)),
           mes: mes.format(aFecha(iso)).replace('.', ''),
-          anio: e.yearly ? '' : conAnio.format(aFecha(iso)),
-          repite: e.yearly,
-          tramos: e.slots.map(textoDeFranja),
-          cerrado,
+          anio: f.e.yearly ? '' : conAnio.format(aFecha(iso)),
+          repite: f.e.yearly,
+          detalle: f.detalle,
         };
-      });
-  });
-
-  /** Los festivos propios, por orden en el año: casi todos se repiten cada año, así que sin años pasados que ocultar. */
-  protected readonly filasDePropios = computed(() => {
-    this.lang();
-    const mes = new Intl.DateTimeFormat(this.language.locale(), { month: 'short' });
-    const anio = new Intl.DateTimeFormat(this.language.locale(), { year: 'numeric' });
-    const clave = (d: Festivo): string => (d.yearly ? `0000${d.date.slice(4)}` : d.date.slice(5) + d.date.slice(0, 4));
-    return [...this.propios()]
-      .sort((a, b) => clave(a).localeCompare(clave(b)))
-      .map((d) => {
-        const iso = d.yearly ? `2024${d.date.slice(4)}` : d.date;
-        return { id: d.id, nombre: d.name, dia: Number(iso.slice(8)), mes: mes.format(aFecha(iso)).replace('.', ''), repite: d.yearly, anio: d.yearly ? '' : anio.format(aFecha(iso)), mensaje: !!d.message };
       });
   });
 
