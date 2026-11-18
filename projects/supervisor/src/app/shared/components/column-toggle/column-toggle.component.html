@@ -22,14 +22,6 @@
   <ng-template #content>
     <div class="column-toggle__header">
       <span class="column-toggle__title sc-text-body-semibold" [id]="titleId">{{ 'common.columns' | translate }}</span>
-      <sc-button
-        variant="secondary"
-        appearance="text"
-        size="sm"
-        icon="restart_alt"
-        [label]="'common.columns_reset' | translate"
-        (clicked)="onReset()"
-      />
     </div>
     @if (searchable()) {
       <div class="column-toggle__search">
@@ -62,7 +54,12 @@
           cdkDragPreviewClass="column-toggle-drag-preview"
           (focusin)="current.set(opt.key)"
         >
-          <sc-icon class="column-toggle__handle" name="drag_handle" size="sm" aria-hidden="true" />
+          <!-- La fija lleva candado donde las demás llevan el asa: dice por qué su casilla no se desmarca ni la fila se mueve. -->
+          @if (opt.locked) {
+            <sc-icon class="column-toggle__lock" name="lock" size="sm" aria-hidden="true" />
+          } @else {
+            <sc-icon class="column-toggle__handle" name="drag_indicator" size="sm" aria-hidden="true" />
+          }
           <p-checkbox
             [inputId]="inputIdOf(opt.key)"
             [value]="opt.key"
@@ -77,6 +74,19 @@
       } @empty {
         <p class="column-toggle__empty sc-text-body-regular">{{ 'labels.no_results.title' | translate }}</p>
       }
+    </div>
+    <!-- «Restablecer», al pie y apagado mientras todo está como de partida: arriba, junto al título, competía con él y
+         se ofrecía aun sin nada que deshacer. -->
+    <div class="column-toggle__footer">
+      <sc-button
+        variant="secondary"
+        appearance="text"
+        size="sm"
+        icon="restart_alt"
+        [label]="'common.columns_reset' | translate"
+        [disabled]="!canReset()"
+        (clicked)="onReset()"
+      />
     </div>
     <span class="visually-hidden" aria-live="polite">{{ announcement() }}</span>
   </ng-template>

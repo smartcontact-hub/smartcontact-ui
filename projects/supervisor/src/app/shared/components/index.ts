@@ -25,7 +25,7 @@ export { ListPageComponent } from './list-page/list-page.component';
 // Elegir y ordenar columnas: el «Column Toggle» de primeng.dev/table (DD-176), en las listas y en la tabla de contactos.
 export { ColumnToggleComponent } from './column-toggle/column-toggle.component';
 export type { ColumnToggleOption } from './column-toggle/column-toggle.component';
-export { normalizePrefs } from './column-toggle/column-prefs';
+export { isDefaultPrefs, normalizePrefs } from './column-toggle/column-prefs';
 export type { ColumnPrefs } from './column-toggle/column-prefs';
 
 // La barra de toda tabla de asignar: filtro, buscador y cifra de asignados (DD-243).

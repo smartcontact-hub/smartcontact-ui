@@ -60,7 +60,7 @@ export const PRUEBAS: readonly PlanDePrueba[] = [
         titulo: 'Dar de alta un festivo',
         gemelas: [
           'Cada 28 de enero, Santo Tomás de Aquino, no se atiende en todo el día ni en Oficinas Barcelona ni en Secretaría Barcelona. Dalo de alta para que valga todos los años.',
-          'Cada 15 de mayo, fiesta de la empresa, no se atiende en todo el día ni en Atención Madrid ni en Soporte Sevilla. Dalo de alta para que valga todos los años.',
+          'Cada 7 de octubre, fiesta de la empresa, no se atiende en todo el día ni en Atención Madrid ni en Soporte Sevilla. Dalo de alta para que valga todos los años.',
         ],
       },
     ],
