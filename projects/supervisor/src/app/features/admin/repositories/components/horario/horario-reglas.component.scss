@@ -159,7 +159,6 @@ sc-section-card {
   justify-content: space-between;
   margin-block-start: var(--sc-spacing-0-5);
   padding-block-start: var(--sc-spacing-0-75);
-  border-block-start: 1px solid var(--sc-border-default);
 }
 
 .sub__titulo {
@@ -185,4 +184,26 @@ sc-section-card {
   .fila__acciones--hover {
     opacity: 1;
   }
+}
+
+/* El horario general: título, sus horas a continuación (se recortan si no caben) y el lápiz. */
+.general {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-75);
+  margin-block-start: var(--sc-spacing-0-5);
+}
+
+.general__titulo {
+  flex: none;
+  margin: 0;
+}
+
+.general__horas {
+  flex: 1;
+  min-inline-size: 0;
+  overflow: hidden;
+  color: var(--sc-text-secondary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

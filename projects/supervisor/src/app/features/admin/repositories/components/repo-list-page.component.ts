@@ -306,6 +306,11 @@ export class RepoListPageComponent<T extends RepoEntity> {
   }
 
   protected onCreateClick(): void {
+    const propio = this.config().crearAlPulsar;
+    if (propio) {
+      propio();
+      return;
+    }
     const base = this.config().editRoute;
     if (base) {
       void this.router.navigateByUrl(`${base}/crear`);

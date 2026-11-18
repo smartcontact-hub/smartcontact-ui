@@ -76,7 +76,18 @@
               <h4 class="filtros__titulo sc-text-caption-semibold">{{ grupo.titulo }}</h4>
               @for (capa of grupo.capas; track capa.clave) {
                 <sc-checkbox class="filtro" [class.filtro--apagado]="!capa.activa" [state]="capa.activa ? 'all' : 'none'" (cycle)="alternar(capa.clave)">
-                  <span class="filtro__texto"><span class="punto" [attr.data-color]="capa.color" aria-hidden="true"></span>{{ capa.etiqueta }}</span>
+                  <span class="filtro__texto">
+                    @if (capa.grupo === 'periods') {
+                      <!-- Cada periodo con su etiqueta de color, la misma que en la lista de periodos. -->
+                      @if (capa.color === 'black') {
+                        <sc-tag severity="contrast" [value]="capa.etiqueta" />
+                      } @else {
+                        <sc-tag variant="label" [bordered]="false" [labelColor]="$any(capa.color)" [value]="capa.etiqueta" />
+                      }
+                    } @else {
+                      <span class="punto" [attr.data-color]="capa.color" aria-hidden="true"></span>{{ capa.etiqueta }}
+                    }
+                  </span>
                 </sc-checkbox>
               }
             </section>

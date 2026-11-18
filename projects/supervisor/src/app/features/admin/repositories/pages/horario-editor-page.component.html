@@ -98,11 +98,11 @@
           [calendarios]="calendarios()"
           [festivosAplicados]="form().holidayCalendarIds"
           [festivosHref]="festivosHref"
-          (editarSemana)="editarSemana()"
+          (editarSemana)="generalDialog.set(true)"
           (anadirPeriodo)="periodoDialog.set({ periodo: null })"
           (abrirPeriodo)="abrirPeriodo($event)"
           (eliminarPeriodo)="eliminarPeriodo($event)"
-          (anadirEspecial)="especialDialog.set({ especial: null, fecha: null, mes: diaDelAnio() })"
+          (anadirEspecial)="especialDialog.set({ especial: null, fecha: null, mes: diaDelAnio(), elegir: true })"
           (abrirEspecial)="abrirEspecial($event)"
           (eliminarEspecial)="eliminarEspecial($event)"
           [propios]="form().ownHolidays ?? []"
@@ -147,6 +147,16 @@
   />
 }
 
+@if (generalDialog()) {
+  <sc-horario-general-modal
+    [horarioId]="form().weekId ?? null"
+    [opciones]="opcionesDeHorarios()"
+    (guardar)="cambiarHorario($event); generalDialog.set(false)"
+    (editarHoras)="generalDialog.set(false); editarSemana()"
+    (cerrado)="generalDialog.set(false)"
+  />
+}
+
 @if (datosDialog()) {
   <sc-horario-datos-modal [datos]="{ name: form().name, timezone: form().timezone, description: form().description, outMessage: form().outMessage ?? '' }" (guardar)="guardarDatos($event)" (cerrado)="datosDialog.set(false)" />
 }
@@ -185,8 +195,10 @@
     [especial]="dialog.especial"
     [fechaInicial]="dialog.fecha"
     [mesInicial]="dialog.mes ?? null"
+    [elegirTipo]="dialog.elegir ?? false"
     [existentes]="form().specials"
     (guardar)="guardarEspeciales($event)"
+    (guardarFestivos)="guardarFestivosDelEspecial($event)"
     (cerrado)="especialDialog.set(null)"
   />
 }

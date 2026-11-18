@@ -31,3 +31,43 @@
   display: inline-flex;
   margin-block-start: var(--sc-spacing-0-5);
 }
+
+/* Elegir qué se añade (fecha especial o festivo): dos tarjetas, una marcada. */
+.tipos-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sc-spacing-0-75);
+  margin-block-end: var(--sc-spacing-1-5);
+}
+
+.tipo-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sc-spacing-0-25);
+  padding: var(--sc-spacing-1);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-md);
+  background: var(--sc-bg-surface);
+  color: var(--sc-text-primary);
+  text-align: start;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--sc-bg-hover);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-border-focus);
+    outline-offset: 1px;
+  }
+}
+
+.tipo-card--elegida {
+  border-color: var(--sc-border-primary);
+  box-shadow: inset 0 0 0 1px var(--sc-border-primary);
+}
+
+.tipo-card__ayuda {
+  color: var(--sc-text-secondary);
+}

@@ -56,6 +56,9 @@ export class HorarioEspecialModalComponent implements OnInit {
 
   /** `festivo`: un día de un calendario de festivos, que siempre es cerrado (sin modo ni franjas). */
   readonly variante = input<'especial' | 'festivo'>('especial');
+  /** Al añadir desde la lista de reglas: lo primero es elegir si es una fecha especial o un festivo (tarjetas). */
+  readonly elegirTipo = input(false);
+  protected readonly tipoActual = signal<'especial' | 'festivo'>('especial');
   /** La que se edita; `null` para añadir. */
   readonly especial = input<FechaEspecial | null>(null);
   /** Al añadir, el día que ya viene marcado (el elegido en el calendario del año). */
@@ -70,6 +73,8 @@ export class HorarioEspecialModalComponent implements OnInit {
   readonly existentes = input<readonly FechaEspecial[]>([]);
 
   readonly guardar = output<readonly FechaEspecialNueva[]>();
+  /** Con `elegirTipo`, lo que se guardó como festivo (va a los festivos propios del calendario). */
+  readonly guardarFestivos = output<readonly FechaEspecialNueva[]>();
   readonly cerrado = output<void>();
 
   protected readonly nombre = signal('');
@@ -82,10 +87,10 @@ export class HorarioEspecialModalComponent implements OnInit {
 
   /** La raíz de sus textos: los de la fecha especial o los del festivo. */
   protected readonly claves = computed(() => {
-    const festivo = this.variante() === 'festivo';
+    const festivo = this.tipoActual() === 'festivo';
     const editando = this.especial() !== null;
     return {
-      titulo: festivo
+      titulo: this.elegirTipo() && !editando ? 'repositories.horarios.x.kind.title' : festivo
         ? editando ? 'repositories.festivos.day_edit' : 'repositories.festivos.day_add'
         : editando ? 'repositories.horarios.special_edit' : 'repositories.horarios.special_add',
       nombre: festivo ? 'repositories.festivos.day_name_placeholder' : 'repositories.horarios.special_name_placeholder',
@@ -102,6 +107,7 @@ export class HorarioEspecialModalComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    this.tipoActual.set(this.variante());
     const e = this.especial();
     if (e) {
       this.nombre.set(e.name);
@@ -123,7 +129,7 @@ export class HorarioEspecialModalComponent implements OnInit {
       name: this.nombre().trim(),
       date: aIso(fecha),
       yearly: this.cadaAnio(),
-      slots: this.modo() === 'open' ? this.franjas() : [],
+      slots: this.tipoActual() === 'especial' && this.modo() === 'open' ? this.franjas() : [],
       message: this.mensaje().trim(),
     })),
   );
@@ -138,7 +144,7 @@ export class HorarioEspecialModalComponent implements OnInit {
   });
 
   private readonly codigoDeFranjas = computed(() => {
-    if (this.modo() !== 'open') return null;
+    if (this.tipoActual() !== 'especial' || this.modo() !== 'open') return null;
     return this.franjas().length === 0 ? 'ninguna' : validarFranjas(this.franjas());
   });
 
@@ -202,6 +208,7 @@ export class HorarioEspecialModalComponent implements OnInit {
 
   protected confirmar(): void {
     if (!this.puedeGuardar()) return this.nombreTocado.set(true);
-    this.guardar.emit(this.candidatas());
+    if (this.elegirTipo() && this.tipoActual() === 'festivo') this.guardarFestivos.emit(this.candidatas());
+    else this.guardar.emit(this.candidatas());
   }
 }

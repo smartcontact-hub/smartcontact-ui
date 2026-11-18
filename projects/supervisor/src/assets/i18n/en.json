@@ -1674,6 +1674,19 @@
           "month": "Month",
           "year": "Year"
         },
+        "general_modal": {
+          "title": "General schedule",
+          "help": "What applies outside the periods.",
+          "edit_hours": "Edit the hours"
+        },
+        "kind": {
+          "title": "Add special date or holiday",
+          "label": "What to add",
+          "especial_title": "Special date",
+          "especial_hint": "A day with its own hours, or closed",
+          "festivo_title": "Holiday",
+          "festivo_hint": "A closing day for this calendar"
+        },
         "layers": {
           "group_holidays": "Holidays",
           "group_other": "Other",
@@ -1710,6 +1723,7 @@
           "edit": "Edit details"
         },
         "rules": {
+          "general": "General schedule",
           "rest": "Rest of the year",
           "title": "Calendar rules",
           "week_edit": "Edit the regular week",

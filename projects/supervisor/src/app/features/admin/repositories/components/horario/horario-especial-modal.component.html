@@ -4,6 +4,17 @@
   [title]="claves().titulo | translate"
   (closed)="cerrado.emit()"
 >
+  @if (elegirTipo() && !especial()) {
+    <!-- Lo primero: qué se añade. Dos tarjetas, una elegida; debajo, lo que se configura de eso. -->
+    <div class="tipos-cards" role="radiogroup" [attr.aria-label]="'repositories.horarios.x.kind.label' | translate">
+      @for (t of ['especial', 'festivo']; track t) {
+        <button type="button" class="tipo-card" role="radio" [class.tipo-card--elegida]="tipoActual() === t" [attr.aria-checked]="tipoActual() === t" (click)="tipoActual.set($any(t))">
+          <span class="tipo-card__titulo sc-text-body-semibold">{{ 'repositories.horarios.x.kind.' + t + '_title' | translate }}</span>
+          <span class="tipo-card__ayuda sc-text-caption-regular">{{ 'repositories.horarios.x.kind.' + t + '_hint' | translate }}</span>
+        </button>
+      }
+    </div>
+  }
   <div (keydown.enter)="alPulsarIntro($event)" class="modal-horario modal-horario--especial">
     <!-- Al añadir, el calendario a la vista: se marcan de una vez todos los días que llevan lo mismo. Al editar, un día. -->
     <div class="modal-horario__fechas">
@@ -50,7 +61,7 @@
         />
       </div>
 
-      @if (variante() === 'especial') {
+      @if (tipoActual() === 'especial') {
       <div class="field">
         <span class="field__label sc-text-caption-semibold" id="especial-modo-rotulo">{{ 'repositories.horarios.special_mode' | translate }}</span>
         <sc-selectbutton
@@ -65,7 +76,7 @@
       </div>
       }
 
-      @if (modo() === 'open') {
+      @if (tipoActual() === 'especial' && modo() === 'open') {
         <div class="field">
           <span class="field__label sc-text-caption-semibold">{{ 'repositories.horarios.special_slots' | translate }}</span>
           <sc-horario-franjas [franjas]="franjas()" [etiqueta]="nombre()" (franjasChange)="franjas.set($event)" />

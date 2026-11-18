@@ -1674,6 +1674,19 @@
           "month": "Mes",
           "year": "Año"
         },
+        "general_modal": {
+          "title": "Horario general",
+          "help": "Lo que vale fuera de los periodos.",
+          "edit_hours": "Editar las horas"
+        },
+        "kind": {
+          "title": "Añadir fecha especial o festivo",
+          "label": "Qué se añade",
+          "especial_title": "Fecha especial",
+          "especial_hint": "Un día con sus propias horas, o cerrado",
+          "festivo_title": "Festivo",
+          "festivo_hint": "Un día de cierre de este calendario"
+        },
         "layers": {
           "group_holidays": "Festivos",
           "group_other": "Otros",
@@ -1710,6 +1723,7 @@
           "edit": "Editar datos"
         },
         "rules": {
+          "general": "Horario general",
           "rest": "Resto del año",
           "title": "Reglas del calendario",
           "week_edit": "Editar la semana habitual",

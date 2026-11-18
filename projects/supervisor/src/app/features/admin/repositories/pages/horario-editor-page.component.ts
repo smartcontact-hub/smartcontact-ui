@@ -20,6 +20,7 @@ import { type AlcanceDelCambio, HorarioCompartidoModalComponent } from '../compo
 import { type DatosDeHorario, HorarioDatosModalComponent } from '../components/horario/horario-datos-modal.component';
 import { type FechaEspecialNueva, HorarioEspecialModalComponent } from '../components/horario/horario-especial-modal.component';
 import { type DiaDelPanel, HorarioDiaPanelComponent } from '../components/horario/horario-dia-panel.component';
+import { HorarioGeneralModalComponent } from '../components/horario/horario-general-modal.component';
 import { HorarioPeriodoModalComponent } from '../components/horario/horario-periodo-modal.component';
 import { HorarioReglasComponent } from '../components/horario/horario-reglas.component';
 import { HorarioSemanaModalComponent } from '../components/horario/horario-semana-modal.component';
@@ -71,6 +72,7 @@ const FALTA_NOMBRE = 'repositories.horarios.errors.name_required';
     HorarioDatosModalComponent,
     HorarioDiaPanelComponent,
     HorarioEspecialModalComponent,
+    HorarioGeneralModalComponent,
     HorarioPeriodoModalComponent,
     HorarioReglasComponent,
     HorarioSemanaModalComponent,
@@ -537,7 +539,7 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
 
   /** El diálogo de una fecha especial: `null` cerrado; con `especial: null`, para añadir (con `fecha`, ya marcada; si
    *  no, abre en el mes de `mes`). */
-  protected readonly especialDialog = signal<{ readonly especial: FechaEspecial | null; readonly fecha: string | null; readonly mes?: string | null } | null>(null);
+  protected readonly especialDialog = signal<{ readonly especial: FechaEspecial | null; readonly fecha: string | null; readonly mes?: string | null; readonly elegir?: boolean } | null>(null);
   /** El día que se eligió en el año (`null` si ninguno): «Nueva fecha especial» abre en su mes (DD-254). */
   protected readonly diaDelAnio = signal<string | null>(null);
 
@@ -551,8 +553,17 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
   /* ── Lo que decide el día elegido, en su sitio (DD-254) ─────────────────────────────────────────────────────────── */
 
   /** «Editar semana»: abre la semana habitual en su diálogo. */
+  /** El lápiz del horario general: elegir cuál es (y desde ahí, editar sus horas). */
+  protected readonly generalDialog = signal(false);
+
   protected editarSemana(): void {
     this.semanaDialog.set(true);
+  }
+
+  /** Lo que se guardó como festivo en el diálogo de añadir: va a los festivos propios. */
+  protected guardarFestivosDelEspecial(dias: readonly FechaEspecialNueva[]): void {
+    this.guardarPropios(dias);
+    this.especialDialog.set(null);
   }
 
   /** «Editar festivos»: el calendario que decide ese día; sale del horario, así que con cambios pide guardar antes. */

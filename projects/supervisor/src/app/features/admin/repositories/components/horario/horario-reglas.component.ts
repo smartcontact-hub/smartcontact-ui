@@ -73,6 +73,13 @@ export class HorarioReglasComponent {
   readonly cambiarFestivos = output<number[]>();
   readonly gestionarFestivos = output<MouseEvent>();
 
+  /** Las horas del horario general en una línea («L–J 08:00–14:00; V 08:00–14:00»). */
+  protected readonly resumenGeneral = computed(() => {
+    this.lang();
+    const t = (k: string): string => this.translate.instant(k);
+    return resumenDeLaSemana(this.semana(), CLAVES_DIA.map((d) => t(`repositories.horarios.days_short.${d}`)), t('repositories.horarios.closed'), t('repositories.horarios.all_day'));
+  });
+
   /** La semana en grupos de días seguidos con las mismas franjas («Lun–Jue 09:00–18:00», «Sáb–Dom Cerrado»): tres filas, no siete. */
   protected readonly dias = computed(() => {
     this.lang();

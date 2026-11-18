@@ -1674,6 +1674,19 @@
           "month": "Mois",
           "year": "Année"
         },
+        "general_modal": {
+          "title": "Horaire général",
+          "help": "Ce qui vaut en dehors des périodes.",
+          "edit_hours": "Modifier les heures"
+        },
+        "kind": {
+          "title": "Ajouter une date spéciale ou un jour férié",
+          "label": "Quoi ajouter",
+          "especial_title": "Date spéciale",
+          "especial_hint": "Un jour avec ses propres heures, ou fermé",
+          "festivo_title": "Jour férié",
+          "festivo_hint": "Un jour de fermeture de ce calendrier"
+        },
         "layers": {
           "group_holidays": "Jours fériés",
           "group_other": "Autres",
@@ -1710,6 +1723,7 @@
           "edit": "Modifier les données"
         },
         "rules": {
+          "general": "Horaire général",
           "rest": "Reste de l'année",
           "title": "Règles du calendrier",
           "week_edit": "Modifier la semaine habituelle",

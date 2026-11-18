@@ -79,10 +79,6 @@
   flex-direction: column;
   min-inline-size: 0;
   block-size: max(34rem, calc(100dvh - var(--sc-topbar-height) - 8 * var(--sc-spacing-1)));
-  padding: var(--sc-spacing-1);
-  border: 1px solid var(--sc-border-default);
-  border-radius: var(--sc-radius-lg);
-  background: var(--sc-bg-surface);
 }
 
 /* «Calendario activo»: el interruptor pegado a su texto. */

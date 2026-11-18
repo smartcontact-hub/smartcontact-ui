@@ -39,39 +39,12 @@
       </ul>
     }
 
-    <div class="sub">
-      <h3 class="sub__titulo sc-text-body-semibold">{{ 'repositories.horarios.x.rules.rest' | translate }}</h3>
-      <sc-button
-        variant="secondary"
-        appearance="text"
-        size="sm"
-        icon="edit"
-        [ariaLabel]="'repositories.horariosTipo.x.edit' | translate"
-        (clicked)="editarSemana.emit()"
-      />
+    <!-- El horario general: lo que vale fuera de los periodos, con sus horas al lado. -->
+    <div class="general">
+      <h3 class="general__titulo sc-text-body-semibold">{{ 'repositories.horarios.x.rules.general' | translate }}</h3>
+      <span class="general__horas sc-text-body-regular" [pTooltip]="resumenGeneral()" showOnEllipsis tooltipPosition="top">{{ resumenGeneral() }}</span>
+      <sc-button variant="secondary" appearance="text" size="sm" icon="edit" [ariaLabel]="'repositories.horarios.x.general_modal.title' | translate" (clicked)="editarSemana.emit()" />
     </div>
-    <sc-select
-      class="horario-sel"
-      inputId="horario-sel"
-      size="sm"
-      filter
-      [label]="'repositories.horariosTipo.x.picker.label' | translate"
-      [placeholder]="'repositories.horariosTipo.x.picker.placeholder' | translate"
-      [filterPlaceholder]="'repositories.horariosTipo.x.picker.search' | translate"
-      [options]="opcionesDeHorarios()"
-      optionLabel="label"
-      optionValue="value"
-      [value]="horarioId()"
-      (valueChange)="cambiarHorario.emit($any($event))"
-    />
-    <ul class="semana" role="list">
-      @for (dia of dias(); track $index) {
-        <li class="semana__dia">
-          <span class="semana__nombre sc-text-body-semibold">{{ dia.etiqueta }}</span>
-          <span class="semana__tramos sc-text-body-regular" [class.semana__tramos--cerrado]="dia.tramos.length === 0">{{ dia.tramos.length ? dia.tramos.join(' · ') : cerradoTexto() }}</span>
-        </li>
-      }
-    </ul>
     <a class="repo-link sc-text-caption-semibold" href="/admin/horarios-tipo" (click)="gestionarHorarios.emit($event)">{{ 'repositories.horariosTipo.x.picker.manage' | translate }}</a>
   </sc-section-card>
 
@@ -136,11 +109,10 @@
       />
       <a class="repo-link sc-text-caption-semibold" [href]="festivosHref()" (click)="gestionarFestivos.emit($event)">{{ 'repositories.horarios.manage_holidays' | translate }}</a>
     </div>
-    <div class="sub">
-      <h3 class="sub__titulo sc-text-body-semibold">{{ 'repositories.horarios.x.own.title' | translate }}</h3>
-      <sc-button variant="secondary" appearance="text" size="sm" icon="add" [ariaLabel]="'repositories.horarios.x.own.add' | translate" (clicked)="anadirPropio.emit()" />
-    </div>
     @if (filasDePropios().length > 0) {
+      <div class="sub">
+        <h3 class="sub__titulo sc-text-body-semibold">{{ 'repositories.horarios.x.own.title' | translate }}</h3>
+      </div>
       <ul class="lista" role="list">
         @for (d of filasDePropios(); track d.id) {
           <li class="fila">

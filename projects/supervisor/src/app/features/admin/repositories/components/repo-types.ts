@@ -79,8 +79,8 @@ export interface RepoFieldDef {
  */
 export interface RepoPageConfig<T extends RepoEntity> {
   readonly titleKey: string;
-  /** Una segunda acción de la barra, junto a «Nuevo» (p. ej. «Añadir festivo» en los calendarios). */
-  readonly extraAction?: { readonly labelKey: string; readonly icon: string; readonly run: () => void };
+  /** Si el alta no es un panel ni una página sino un diálogo propio de la lista: «Nuevo» lo llama en vez de navegar. */
+  readonly crearAlPulsar?: () => void;
   readonly entitySingularKey: string;
   /** El título del alta, con su género («Nueva tipificación»). Sin él, el genérico «Nuevo/a {{entity}}». */
   readonly createTitleKey?: string;
