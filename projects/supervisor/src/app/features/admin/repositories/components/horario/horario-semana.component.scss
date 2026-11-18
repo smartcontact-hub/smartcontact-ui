@@ -1,5 +1,4 @@
 :host {
-  container-type: inline-size;
   display: flex;
   flex-direction: column;
   gap: var(--sc-spacing-1);
@@ -17,18 +16,20 @@
  * (`display: contents`) caen en ella. Entre días, aire, sin líneas (DD-113). */
 .semana__dia {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  justify-items: start;
+  grid-template-columns: 8rem minmax(0, 1fr);
+  align-items: center;
+  column-gap: var(--sc-spacing-1);
   row-gap: var(--sc-spacing-0-5);
 }
 
 .semana {
-  gap: var(--sc-spacing-1);
+  gap: var(--sc-spacing-0-5);
 }
 
 /* El botón del día: píldora vacía si está cerrado; con el color de acción y un check si está abierto. */
 .semana__dia-btn {
   display: inline-flex;
+  justify-self: start;
   align-items: center;
   gap: var(--sc-spacing-0-25);
   padding: var(--sc-spacing-0-375) var(--sc-spacing-1);
@@ -62,10 +63,12 @@
 }
 
 .semana__cerrado {
+  grid-column: 2;
   color: var(--sc-text-secondary);
 }
 
 .semana__error {
+  grid-column: 2;
   margin: 0;
 }
 
@@ -86,25 +89,7 @@
   min-inline-size: var(--sc-spacing-12-5);
 }
 
-/* Con sitio, la semana en tres columnas: lunes, martes y miércoles; jueves, viernes y sábado; y el domingo, suelto. */
-@container (min-width: 40rem) {
-  .semana {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    align-items: start;
-    gap: var(--sc-spacing-1) var(--sc-spacing-2);
-  }
-
-}
-
 .semana__copiar-item {
+  margin-block-start: var(--sc-spacing-0-5);
   list-style: none;
-}
-
-@container (min-width: 40rem) {
-  /* En tres columnas, el domingo va solo en su fila: la copia de franjas se pone a su lado, en las otras dos. */
-  .semana__copiar-item {
-    grid-column: 2 / span 2;
-    align-self: end;
-  }
 }

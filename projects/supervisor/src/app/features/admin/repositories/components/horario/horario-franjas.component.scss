@@ -19,17 +19,11 @@
   color: var(--sc-text-secondary);
 }
 
-/* Dentro de la semana, sus filas entran en la rejilla del día (nombre · interruptor · franjas): cada una, en la tercera
- * columna. Fuera (la fecha especial), una columna como siempre. */
+/* Dentro de la semana, a la derecha del botón del día: las franjas en la misma línea (se pasan a la siguiente si no caben),
+ * con «Añadir franja» al final. Fuera (la fecha especial), una columna como siempre. */
 :host(.semana__franjas) {
-  display: contents;
-
-  .franjas__fila,
-  .franjas__mas {
-    grid-column: 1;
-  }
-
-  .franjas__mas {
-    justify-self: start;
-  }
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sc-spacing-0-5) var(--sc-spacing-1-5);
 }

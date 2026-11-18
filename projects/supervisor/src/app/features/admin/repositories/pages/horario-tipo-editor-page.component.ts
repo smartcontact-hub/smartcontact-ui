@@ -69,11 +69,11 @@ const FALTA_NOMBRE = 'repositories.horarios.errors.name_required';
                 [value]="form().description"
                 (valueChange)="update('description', $event)"
               />
-              </div>
               <!-- El color del horario, de los del DS: es el del texto de sus horas en la lista y en los calendarios. -->
               <div class="campo-color">
                 <span class="sc-text-caption-semibold">{{ 'repositories.horariosTipo.x.color' | translate }}</span>
                 <sc-color-dot-picker [options]="colores()" [value]="form().color ?? 'blue'" (valueChange)="update('color', $any($event))" [ariaLabel]="'repositories.horariosTipo.x.color' | translate" />
+              </div>
               </div>
             </div>
           </sc-subsection>
@@ -144,11 +144,24 @@ const FALTA_NOMBRE = 'repositories.horarios.errors.name_required';
       gap: var(--sc-spacing-1);
     }
 
+    /* Nombre, descripción y color en una fila; con menos ancho, el color baja a su propia fila. */
     .par {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: var(--sc-spacing-1);
       align-items: start;
+
+      .campo-color {
+        grid-column: 1 / -1;
+      }
+
+      @media (min-width: 1400px) {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+
+        .campo-color {
+          grid-column: auto;
+        }
+      }
 
       @media (max-width: 40rem) {
         grid-template-columns: 1fr;
