@@ -2,13 +2,20 @@
   @for (dia of dias(); track dia.indice) {
     <!-- Como un interruptor de ficha (`switch-field`): el interruptor y, detrás, el día como su rótulo. -->
     <li class="semana__dia">
-      <sc-toggleswitch
-        [inputId]="prefijo() + '-dia-' + dia.indice"
-        [ariaLabel]="dia.nombre"
-        [checked]="dia.franjas.length > 0"
-        (checkedChange)="abrir(dia.indice, $event)"
-      />
-      <label class="semana__nombre sc-text-body-regular" [for]="prefijo() + '-dia-' + dia.indice">{{ dia.nombre }}</label>
+      <!-- El día es un botón que se pulsa para abrirlo o cerrarlo: marcado (con su check) abre y enseña sus franjas; sin marcar, cerrado. -->
+      <button
+        type="button"
+        class="semana__dia-btn sc-text-body-semibold"
+        [class.semana__dia-btn--abierto]="dia.franjas.length > 0"
+        [id]="prefijo() + '-dia-' + dia.indice"
+        [attr.aria-pressed]="dia.franjas.length > 0"
+        (click)="abrir(dia.indice, dia.franjas.length === 0)"
+      >
+        @if (dia.franjas.length > 0) {
+          <sc-icon name="check" size="sm" aria-hidden="true" />
+        }
+        {{ dia.nombre }}
+      </button>
       @if (dia.franjas.length > 0) {
         <sc-horario-franjas class="semana__franjas" [franjas]="dia.franjas" [etiqueta]="dia.nombre" (franjasChange)="ponerDia(dia.indice, $event)" />
       } @else {
@@ -19,38 +26,40 @@
       }
     </li>
   }
+  <!-- «Copiar las franjas»: ocupa el hueco que deja el domingo, a su lado. -->
+  <li class="semana__copiar-item">
+    <div class="semana__copiar">
+      <sc-select
+        class="semana__origen"
+        [label]="'repositories.horarios.copy_from' | translate"
+        [options]="opcionesDeDia()"
+        optionLabel="label"
+        optionValue="value"
+        [value]="origen()"
+        (valueChange)="elegirOrigen($event)"
+      />
+      <sc-multiselect
+        class="semana__destinos"
+        [label]="'repositories.horarios.copy_to' | translate"
+        [placeholder]="'repositories.horarios.copy_to_placeholder' | translate"
+        [options]="destinosPosibles()"
+        optionLabel="label"
+        optionValue="value"
+        [maxSelectedLabels]="7"
+        [value]="destinos()"
+        (valueChange)="destinos.set($any($event))"
+      />
+      <sc-button
+        variant="secondary"
+        appearance="outlined"
+        icon="content_copy"
+        [disabled]="destinos().length === 0"
+        [pTooltip]="destinos().length === 0 ? ('repositories.horarios.copy_disabled' | translate) : ''"
+        tooltipPosition="top"
+        tooltipEvent="both"
+        [label]="'repositories.horarios.copy' | translate"
+        (clicked)="copiar()"
+      />
+    </div>
+  </li>
 </ul>
-
-<div class="semana__copiar">
-  <sc-select
-    class="semana__origen"
-    [label]="'repositories.horarios.copy_from' | translate"
-    [options]="opcionesDeDia()"
-    optionLabel="label"
-    optionValue="value"
-    [value]="origen()"
-    (valueChange)="elegirOrigen($event)"
-  />
-  <sc-multiselect
-    class="semana__destinos"
-    [label]="'repositories.horarios.copy_to' | translate"
-    [placeholder]="'repositories.horarios.copy_to_placeholder' | translate"
-    [options]="destinosPosibles()"
-    optionLabel="label"
-    optionValue="value"
-    [maxSelectedLabels]="7"
-    [value]="destinos()"
-    (valueChange)="destinos.set($any($event))"
-  />
-  <sc-button
-    variant="secondary"
-    appearance="outlined"
-    icon="content_copy"
-    [disabled]="destinos().length === 0"
-    [pTooltip]="destinos().length === 0 ? ('repositories.horarios.copy_disabled' | translate) : ''"
-    tooltipPosition="top"
-    tooltipEvent="both"
-    [label]="'repositories.horarios.copy' | translate"
-    (clicked)="copiar()"
-  />
-</div>

@@ -39,9 +39,12 @@ const FALTA_NOMBRE = 'repositories.horarios.errors.name_required';
     </ng-template>
 
     <div class="page">
-      <div class="page__inner">
+      <div class="page__inner page__inner--list">
         <h1 class="page__heading sc-text-title-semibold">{{ form().name.trim() || ('repositories.horariosTipo.create_title' | translate) }}</h1>
 
+        <!-- Todo en una vista, sin desplazarse: a la izquierda lo que se configura (datos y semana); a la derecha, dónde se usa. -->
+        <div class="cuerpo">
+          <div class="cuerpo__izq">
         <sc-section-card titleKey="repositories.horariosTipo.x.section_general" surface="subtle" icon="tune">
           <sc-subsection>
             <div class="bloque">
@@ -84,6 +87,8 @@ const FALTA_NOMBRE = 'repositories.horarios.errors.name_required';
           </sc-subsection>
         </sc-section-card>
 
+          </div>
+          <div class="cuerpo__der">
         <sc-section-card titleKey="repositories.horariosTipo.x.section_uses" surface="subtle" icon="calendar_month">
           <sc-subsection>
             <div class="bloque">
@@ -103,6 +108,8 @@ const FALTA_NOMBRE = 'repositories.horarios.errors.name_required';
             </div>
           </sc-subsection>
         </sc-section-card>
+          </div>
+        </div>
       </div>
     </div>
   `,
@@ -111,6 +118,24 @@ const FALTA_NOMBRE = 'repositories.horarios.errors.name_required';
       display: block;
       height: 100%;
       background: var(--sc-bg-canvas);
+    }
+
+    .cuerpo {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 19rem;
+      gap: var(--sc-spacing-1);
+      align-items: start;
+
+      @media (max-width: 1099px) {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .cuerpo__izq,
+    .cuerpo__der {
+      display: flex;
+      flex-direction: column;
+      gap: var(--sc-spacing-1);
     }
 
     .bloque {
