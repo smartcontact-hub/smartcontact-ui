@@ -53,7 +53,7 @@
  * la ventana (menos la barra y los márgenes). Cada columna se desplaza por su cuenta. Por debajo de 1200, una sobre otra. */
 .horario__cuerpo {
   display: grid;
-  grid-template-columns: minmax(19rem, 1fr) minmax(0, 3.4fr);
+  grid-template-columns: minmax(22rem, 1fr) minmax(0, 2.9fr);
   align-items: start;
   gap: var(--sc-spacing-1);
 

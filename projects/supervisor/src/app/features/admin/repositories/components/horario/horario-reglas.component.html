@@ -13,6 +13,7 @@
       [ariaLabel]="'repositories.horarios.period_add' | translate"
       (clicked)="anadirPeriodo.emit()"
     />
+    <sc-subsection>
     <ul class="lista lista--periodos" role="list">
       <!-- El horario general, el primero y con el mismo estilo que un periodo: etiqueta gris, y debajo su horario. -->
       <li class="fila fila--periodo">
@@ -48,8 +49,9 @@
       }
     </ul>
     <dl class="enlaces">
-      <div scFactRow size="sm" icon="schedule" [label]="'repositories.horariosTipo.x.picker.manage' | translate" href="/admin/horarios-tipo" (open)="gestionarHorarios.emit($event)"></div>
+      <div scFactRow size="sm" tone="brand" icon="schedule" [label]="'repositories.horariosTipo.x.picker.manage' | translate" href="/admin/horarios-tipo" (open)="gestionarHorarios.emit($event)"></div>
     </dl>
+    </sc-subsection>
   </sc-section-card>
 
   <sc-section-card titleKey="repositories.horarios.section_specials" surface="subtle" icon="event">
@@ -62,6 +64,7 @@
       [ariaLabel]="'repositories.horarios.special_add' | translate"
       (clicked)="anadirEspecial.emit()"
     />
+    <sc-subsection>
     <!-- Qué se ve: tipo (fechas especiales, festivos) y cuándo (próximas, pasadas), en un menú de filtros. -->
     <sc-horario-filtro-menu
       [etiqueta]="'repositories.horarios.x.layers.button' | translate"
@@ -112,9 +115,10 @@
           (valueChange)="cambiarFestivos.emit($any($event) ?? [])"
         />
         <dl class="enlaces">
-          <div scFactRow size="sm" icon="flag" [label]="'repositories.horarios.manage_holidays' | translate" [href]="festivosHref()" (open)="gestionarFestivos.emit($event)"></div>
+          <div scFactRow size="sm" tone="brand" icon="flag" [label]="'repositories.horarios.manage_holidays' | translate" [href]="festivosHref()" (open)="gestionarFestivos.emit($event)"></div>
         </dl>
       </div>
     }
+    </sc-subsection>
   </sc-section-card>
 </div>
