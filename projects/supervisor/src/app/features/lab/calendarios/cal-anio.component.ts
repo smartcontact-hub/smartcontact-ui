@@ -67,11 +67,15 @@ const normal = (a: string, b: string): Rango => (a <= b ? { desde: a, hasta: b }
       gap: var(--sc-spacing-1) var(--sc-spacing-1-25);
       user-select: none;
     }
-    :host(.grande) { grid-template-columns: repeat(4, minmax(0, 1fr)); align-content: start; gap: var(--sc-spacing-1) var(--sc-spacing-2); }
-    :host(.grande) .dia { aspect-ratio: 1; }
-    /* Que el año quepa sin scroll en pantallas bajas: las casillas se aplanan antes que esconder meses. */
-    @media (max-height: 860px) { :host(.grande) .dia { aspect-ratio: 1.3; } }
-    @media (max-height: 780px) { :host(.grande) .dia { aspect-ratio: 1.6; } }
+    /* Grande: el año llena el alto que le dan (tres filas de meses, seis semanas cada uno), sea cual sea la leyenda o la
+       pantalla, así no hay scroll ni franja vacía. Las casillas toman la forma que sobra en vez de ser cuadradas. */
+    :host(.grande) {
+      grid-template-columns: repeat(4, minmax(0, 1fr)); grid-template-rows: repeat(3, minmax(0, 1fr));
+      gap: var(--sc-spacing-1) var(--sc-spacing-2); min-block-size: 27rem;
+    }
+    :host(.grande) .mes { display: flex; flex-direction: column; min-block-size: 0; }
+    :host(.grande) .mes__rejilla { flex: 1; min-block-size: 0; grid-template-rows: auto repeat(6, minmax(0, 1fr)); }
+    :host(.grande) .dia { aspect-ratio: auto; min-block-size: 0; }
     .mes { min-inline-size: 0; }
     .mes__nombre { margin: 0 0 var(--sc-spacing-0-25); color: var(--sc-text-heading); text-transform: capitalize; }
     .mes__rejilla { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: var(--sc-spacing-0-25) var(--sc-spacing-0-125); }

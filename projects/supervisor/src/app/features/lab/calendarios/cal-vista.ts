@@ -5,7 +5,6 @@ import {
   diasDelAnio,
   type Estado,
   fechaConDia,
-  mesDiaCorto,
   resolver,
   textoDeFranjas,
 } from './cal-modelo';
@@ -69,13 +68,26 @@ export function vistaDelAnio(estado: Estado, cal: Calendario, anio: number, lent
       texto = 'Cerrado';
     } else if (d.periodo) {
       v = { tono: `t-${d.periodo.color}`, clave: `periodo:${d.periodo.id}`, etiqueta };
-      texto = `${d.periodo.nombre}, ${mesDiaCorto(d.periodo.desde)} a ${mesDiaCorto(d.periodo.hasta)}`;
+      texto = d.periodo.nombre;
     } else {
       v = { tono: 'abierto', clave: 'base', etiqueta };
       texto = d.horario?.nombre ?? 'Sin horario';
     }
     dias.set(iso, v);
     anotar({ clave: v.clave, tono: v.tono, texto });
+  }
+
+  // Con muchos días especiales la leyenda no cabe: se agrupan en «cerrados» y «con otras horas» (el detalle, en el panel).
+  const especiales = [...leyenda.values()].filter((e) => e.clave.startsWith('especial:'));
+  if (especiales.length > 2) {
+    const grupo = (tono: string): string => (tono === 't-danger' ? 'especial:cerrado' : 'especial:horas');
+    for (const [iso, v] of dias) if (v.clave.startsWith('especial:')) dias.set(iso, { ...v, clave: grupo(v.tono) });
+    for (const e of especiales) {
+      leyenda.delete(e.clave);
+      const clave = grupo(e.tono);
+      const previa = leyenda.get(clave);
+      leyenda.set(clave, { clave, tono: e.tono, texto: e.tono === 't-danger' ? 'Días especiales cerrados' : 'Días especiales con otras horas', cuenta: (previa?.cuenta ?? 0) + e.cuenta });
+    }
   }
 
   const orden = (e: EntradaDeLeyenda): number =>

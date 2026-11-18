@@ -260,20 +260,26 @@ type Panel =
     }
   `,
   styles: `
-    :host { display: block; height: 100%; background: var(--sc-bg-canvas); }
+    :host { display: block; height: 100%; background: var(--sc-bg-surface); }
+    /* Lienzo sin marco y panel acoplado: una sola línea, de la barra superior al suelo, los separa. */
     .b {
-      display: grid; grid-template-columns: minmax(0, 7fr) minmax(20rem, 3fr); gap: var(--sc-spacing-1-5);
-      block-size: 100%; padding: var(--sc-spacing-1-5) var(--sc-spacing-2); box-sizing: border-box;
+      display: grid; grid-template-columns: minmax(0, 7fr) minmax(20rem, 3fr);
+      block-size: 100%; box-sizing: border-box;
     }
-    .b__lienzo, .b__panel {
-      min-inline-size: 0; min-block-size: 0;
-      border: 1px solid var(--sc-border-subtle); border-radius: var(--sc-radius-lg);
-      background: var(--sc-bg-surface);
+    .b__lienzo, .b__panel { min-inline-size: 0; min-block-size: 0; }
+    .b__lienzo { display: flex; flex-direction: column; gap: var(--sc-spacing-1); padding: var(--sc-spacing-1-5) var(--sc-spacing-2); overflow: auto; }
+    .b__panel {
+      border-inline-start: 1px solid var(--sc-border-subtle);
+      overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-gutter: stable;
     }
-    .b__lienzo { display: flex; flex-direction: column; gap: var(--sc-spacing-1); padding: var(--sc-spacing-1-25) var(--sc-spacing-1-5); overflow: auto; }
-    .b__panel { overflow-y: auto; }
+    /* Si hay más abajo, el pie del panel se funde con el fondo: avisa de que sigue. Al final ocupa su propio hueco. */
+    .b__panel::after {
+      content: ''; position: sticky; inset-block-end: 0; display: block;
+      block-size: var(--sc-spacing-2);
+      background: linear-gradient(transparent, var(--sc-bg-surface)); pointer-events: none;
+    }
     .b__barra { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--sc-spacing-0-5) var(--sc-spacing-1-5); }
-    .b__anio-rejilla { flex: 1; }
+    .b__anio-rejilla { flex: 1; min-block-size: 0; }
     .b__titulo { margin: 0; color: var(--sc-text-heading); }
     .b__anio { color: var(--sc-text-subtle); font-variant-numeric: tabular-nums; }
     .b__pie { margin: 0; min-block-size: 1.5em; color: var(--sc-text-secondary); }
