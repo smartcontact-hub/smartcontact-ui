@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 
 import { formDirtyGuard } from '@core/guards';
+import { aDiscovery, entrarEnDiscovery } from '@features/lab/calendarios/cal-modo';
 
 /**
  * Repository routes — hub at `/admin/repositorios` plus 9 instance pages
@@ -70,9 +71,11 @@ export const REPOSITORIES_ROUTES: Routes = [
     ],
   },
   {
-    /* El horario tiene su editor, como la agenda: su semana, sus periodos y sus fechas especiales, con el año al lado. */
+    /* El horario tiene su editor, como la agenda: su semana, sus periodos y sus fechas especiales, con el año al lado.
+     * Con el modo discovery encendido (prototipo de Calendarios), salta a los horarios del prototipo. */
     path: 'horarios',
     data: repoInstanceEnAdmin('repositories.horarios.title'),
+    canActivate: [aDiscovery],
     children: [
       { path: '', loadComponent: () => import('./instances/horarios').then((m) => m.HorariosPageComponent) },
       {
@@ -85,6 +88,50 @@ export const REPOSITORIES_ROUTES: Routes = [
         path: 'editar/:id',
         data: { breadcrumb: { labelKey: 'repositories.horarios.edit_breadcrumb' } },
         loadComponent: () => import('./pages/horario-editor-page.component').then((m) => m.HorarioEditorPageComponent),
+        canDeactivate: [formDirtyGuard],
+      },
+    ],
+  },
+  {
+    /* Discovery de Horarios (prototipo, rama experimental): el calendario que usa un servicio, con su año. Según la
+     * variante del modo prueba se ve el camino A (separado) o el B (junto). Entrar enciende el modo discovery. */
+    path: 'calendarios',
+    data: repoInstanceEnAdmin('repositories.calendarios.title'),
+    canActivate: [entrarEnDiscovery],
+    children: [
+      { path: '', loadComponent: () => import('@features/lab/calendarios/cal-calendarios-lista.component').then((m) => m.CalCalendariosListaComponent) },
+      {
+        path: 'crear',
+        data: { breadcrumb: { labelKey: 'repositories.calendarios.create_title' } },
+        loadComponent: () => import('@features/lab/calendarios/cal-calendario-pagina.component').then((m) => m.CalCalendarioPaginaComponent),
+        canDeactivate: [formDirtyGuard],
+      },
+      {
+        path: 'editar/:id',
+        data: { breadcrumb: { labelKey: 'repositories.calendarios.edit_breadcrumb' } },
+        loadComponent: () => import('@features/lab/calendarios/cal-calendario-pagina.component').then((m) => m.CalCalendarioPaginaComponent),
+        canDeactivate: [formDirtyGuard],
+      },
+    ],
+  },
+  {
+    /* Discovery de Horarios: el horario del prototipo, una semana tipo que comparten varios calendarios. En su propia
+     * ruta para no pisar la de hoy; la miga dice «Horarios». */
+    path: 'semanas',
+    data: repoInstanceEnAdmin('repositories.horarios.title'),
+    canActivate: [entrarEnDiscovery],
+    children: [
+      { path: '', loadComponent: () => import('@features/lab/calendarios/cal-horarios-lista.component').then((m) => m.CalHorariosListaComponent) },
+      {
+        path: 'crear',
+        data: { breadcrumb: { labelKey: 'repositories.horarios.create_title' } },
+        loadComponent: () => import('@features/lab/calendarios/cal-horario-editor.component').then((m) => m.CalHorarioEditorComponent),
+        canDeactivate: [formDirtyGuard],
+      },
+      {
+        path: 'editar/:id',
+        data: { breadcrumb: { labelKey: 'repositories.horarios.edit_breadcrumb' } },
+        loadComponent: () => import('@features/lab/calendarios/cal-horario-editor.component').then((m) => m.CalHorarioEditorComponent),
         canDeactivate: [formDirtyGuard],
       },
     ],
