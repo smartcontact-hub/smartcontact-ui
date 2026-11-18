@@ -1688,6 +1688,8 @@
           "festivo_hint": "Un día de cierre de este calendario"
         },
         "layers": {
+          "select_all": "Seleccionar todo",
+          "deselect_all": "Deseleccionar todo",
           "group_holidays": "Festivos",
           "group_other": "Otros",
           "own": "Festivos propios",
@@ -1723,8 +1725,10 @@
           "edit": "Editar datos"
         },
         "rules": {
+          "group_kind": "Tipo",
+          "group_when": "Cuándo",
           "kind_all": "Todo",
-          "kind_special": "Especiales",
+          "kind_special": "Fechas especiales",
           "kind_holiday": "Festivos",
           "kind_filter": "Tipo de día",
           "general_hint": "El resto del año",

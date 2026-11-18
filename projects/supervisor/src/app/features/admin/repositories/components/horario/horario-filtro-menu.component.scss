@@ -1,0 +1,94 @@
+:host {
+  display: inline-flex;
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-25);
+}
+
+.menu__borrar {
+  align-self: flex-start;
+}
+
+.bloque {
+  position: relative;
+}
+
+.bloque__fila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sc-spacing-0-5);
+  padding-block: var(--sc-spacing-0-375);
+}
+
+.bloque__flecha {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sc-spacing-0-25);
+  border: 0;
+  border-radius: var(--sc-radius-sm);
+  background: transparent;
+  color: var(--sc-icon-secondary);
+  cursor: pointer;
+
+  &:hover {
+    background: var(--sc-bg-hover);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-border-focus);
+  }
+}
+
+.bloque--abierto .bloque__flecha {
+  background: var(--sc-bg-hover);
+}
+
+/* La lista del bloque, a la izquierda del menú: el botón está al borde derecho de la pantalla. */
+.submenu {
+  position: absolute;
+  inset-block-start: calc(-1 * var(--sc-spacing-0-5));
+  inset-inline-end: calc(100% + var(--sc-spacing-1-5));
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-75);
+  inline-size: max-content;
+  min-inline-size: 14rem;
+  padding: var(--sc-spacing-1);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-200);
+  background: var(--sc-bg-surface);
+  box-shadow: var(--sc-shadow-dropdown);
+}
+
+.item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-25);
+}
+
+.punto {
+  display: inline-block;
+  flex: none;
+  inline-size: var(--sc-spacing-0-5);
+  block-size: var(--sc-spacing-0-5);
+  border: 1px solid var(--sc-icon-secondary);
+  border-radius: var(--sc-radius-full);
+
+  @each $color in ('blue', 'green', 'purple', 'orange', 'teal', 'amber', 'red', 'brown', 'gray') {
+    &[data-color='#{$color}'] {
+      border-color: var(--sc-label-#{$color}-text);
+      background: var(--sc-label-#{$color}-text);
+    }
+  }
+}
+
+.submenu--derecha {
+  inset-inline-start: calc(100% + var(--sc-spacing-1-5));
+  inset-inline-end: auto;
+}

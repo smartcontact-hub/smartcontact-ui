@@ -17,7 +17,6 @@ import {
   viewChild,
 } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { PopoverModule } from 'primeng/popover';
 import { TooltipModule } from 'primeng/tooltip';
 import { ScIconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent, ScCheckboxComponent, ScSelectButtonComponent, ScSelectComponent, ScTagComponent } from '@smartcontact-hub/components';
@@ -40,6 +39,8 @@ import {
 } from '../../state/horarios.core.mjs';
 
 type Reglas = Pick<Horario, 'week' | 'periods' | 'specials' | 'holidayCalendarIds'> & { readonly outMessage?: string; readonly ownHolidays?: Horario['ownHolidays'] };
+import { type FiltroGrupo, HorarioFiltroMenuComponent } from './horario-filtro-menu.component';
+
 export type VistaDeHorario = 'year' | 'quarter' | 'month' | 'week';
 
 /** Cuántos años atrás se puede mirar y cuántos adelante se planifica. */
@@ -106,7 +107,7 @@ const diasDelMes = (anio: number, mes: number): number => new Date(Date.UTC(anio
  */
 @Component({
   selector: 'sc-horario-vista',
-  imports: [ScButtonComponent, ScCheckboxComponent, ScIconComponent, ScSelectButtonComponent, ScSelectComponent, ScTagComponent, PopoverModule, TooltipModule, TranslateModule],
+  imports: [ScButtonComponent, ScCheckboxComponent, ScIconComponent, ScSelectButtonComponent, ScSelectComponent, ScTagComponent, HorarioFiltroMenuComponent, TooltipModule, TranslateModule],
   templateUrl: './horario-vista.component.html',
   styleUrl: './horario-vista.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -256,6 +257,25 @@ export class HorarioVistaComponent {
       .map((g) => ({ clave: g, titulo: this.translate.instant(titulos[g]) as string, capas: this.capas().filter((c) => c.grupo === g) }))
       .filter((g) => g.capas.length > 0);
   });
+
+  /** Los bloques del menú de filtros, con la forma que pide. */
+  protected readonly gruposDelMenu = computed<readonly FiltroGrupo[]>(() =>
+    this.gruposDeCapas().map((g) => ({
+      clave: g.clave,
+      titulo: g.titulo,
+      items: g.capas.map((c) => ({ clave: c.clave, etiqueta: c.etiqueta, activo: c.activa, color: c.color, tag: g.clave === 'periods' })),
+    })),
+  );
+
+  /** Marca o quita todas las capas de un bloque a la vez. */
+  protected ponerGrupo(r: { readonly clave: string; readonly activo: boolean }): void {
+    const claves = this.capas().filter((c) => c.grupo === r.clave).map((c) => c.clave);
+    this.apagadas.update((s) => {
+      const n = new Set(s);
+      for (const c of claves) r.activo ? n.delete(c) : n.add(c);
+      return n;
+    });
+  }
 
   protected readonly hayFiltros = computed(() => this.apagadas().size > 0);
 

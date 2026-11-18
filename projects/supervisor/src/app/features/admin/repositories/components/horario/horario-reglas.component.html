@@ -3,7 +3,7 @@
      con su acción en la cabecera (`scSectionActions`). -->
 <div class="reglas">
   <!-- Periodos: lo que cambia durante el año (verano, campaña…), cada uno con su horario. Lo que vale el resto del año va debajo. -->
-  <sc-section-card titleKey="repositories.horarios.section_periods" surface="card" icon="date_range">
+  <sc-section-card titleKey="repositories.horarios.section_periods" surface="subtle" icon="date_range">
     <sc-button
       scSectionActions
       variant="secondary"
@@ -47,10 +47,12 @@
         </li>
       }
     </ul>
-    <a class="repo-link sc-text-caption-semibold" href="/admin/horarios-tipo" (click)="gestionarHorarios.emit($event)">{{ 'repositories.horariosTipo.x.picker.manage' | translate }}</a>
+    <dl class="enlaces">
+      <div scFactRow size="sm" icon="schedule" [label]="'repositories.horariosTipo.x.picker.manage' | translate" href="/admin/horarios-tipo" (open)="gestionarHorarios.emit($event)"></div>
+    </dl>
   </sc-section-card>
 
-  <sc-section-card titleKey="repositories.horarios.section_specials" surface="card" icon="event">
+  <sc-section-card titleKey="repositories.horarios.section_specials" surface="subtle" icon="event">
     <sc-button
       scSectionActions
       variant="secondary"
@@ -60,33 +62,20 @@
       [ariaLabel]="'repositories.horarios.special_add' | translate"
       (clicked)="anadirEspecial.emit()"
     />
-    <!-- Qué se ve: todo, solo fechas especiales o solo festivos; y cuándo (próximas, pasadas, todas). -->
-    <div class="filtros-fechas">
-      <sc-selectbutton
-        size="sm"
-        [ariaLabel]="'repositories.horarios.x.rules.kind_filter' | translate"
-        [options]="filtroDeTipo()"
-        optionLabel="label"
-        optionValue="value"
-        [allowEmpty]="false"
-        [value]="tipoFiltro()"
-        (valueChange)="tipoFiltro.set($any($event))"
-      />
-      <sc-select
-        size="sm"
-        [ariaLabel]="'repositories.horarios.specials_filter' | translate"
-        [options]="filtroDeEspeciales()"
-        optionLabel="label"
-        optionValue="value"
-        [value]="filtro()"
-        (valueChange)="filtro.set($any($event))"
-      />
-    </div>
-    @if (filasDeFechas().length === 0) {
-      @if (filtro() !== 'proximas') {
-        <p class="vacio sc-text-body-regular">{{ 'repositories.horarios.specials_past_empty' | translate }}</p>
-      }
-    } @else {
+    <!-- Qué se ve: tipo (fechas especiales, festivos) y cuándo (próximas, pasadas), en un menú de filtros. -->
+    <sc-horario-filtro-menu
+      [etiqueta]="'repositories.horarios.x.layers.button' | translate"
+      [borrarEtiqueta]="'repositories.horarios.x.layers.show_all' | translate"
+      [seleccionarTodo]="'repositories.horarios.x.layers.select_all' | translate"
+      [deseleccionarTodo]="'repositories.horarios.x.layers.deselect_all' | translate"
+      [ariaLabel]="'repositories.horarios.specials_filter' | translate"
+      lado="derecha"
+      [grupos]="gruposDeFechas()"
+      (alternar)="alternarFecha($event)"
+      (ponerGrupo)="ponerGrupoFecha($event)"
+      (borrar)="verTodasLasFechas()"
+    />
+    @if (filasDeFechas().length > 0) {
       <ul class="lista lista--especiales" role="list">
         @for (e of filasDeFechas(); track e.clave) {
           <li class="fila">
@@ -106,7 +95,7 @@
         }
       </ul>
     }
-    @if (tipoFiltro() !== 'especiales') {
+    @if (verFestivos()) {
       <div class="festivos">
         <sc-multiselect
           inputId="horario-festivos"
@@ -122,7 +111,9 @@
           [value]="$any(festivosAplicados())"
           (valueChange)="cambiarFestivos.emit($any($event) ?? [])"
         />
-        <a class="repo-link sc-text-caption-semibold" [href]="festivosHref()" (click)="gestionarFestivos.emit($event)">{{ 'repositories.horarios.manage_holidays' | translate }}</a>
+        <dl class="enlaces">
+          <div scFactRow size="sm" icon="flag" [label]="'repositories.horarios.manage_holidays' | translate" [href]="festivosHref()" (open)="gestionarFestivos.emit($event)"></div>
+        </dl>
       </div>
     }
   </sc-section-card>

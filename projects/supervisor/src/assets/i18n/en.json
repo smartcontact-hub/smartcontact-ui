@@ -1688,6 +1688,8 @@
           "festivo_hint": "A closing day for this calendar"
         },
         "layers": {
+          "select_all": "Select all",
+          "deselect_all": "Deselect all",
           "group_holidays": "Holidays",
           "group_other": "Other",
           "own": "Own holidays",
@@ -1723,8 +1725,10 @@
           "edit": "Edit details"
         },
         "rules": {
+          "group_kind": "Kind",
+          "group_when": "When",
           "kind_all": "All",
-          "kind_special": "Special",
+          "kind_special": "Special dates",
           "kind_holiday": "Holidays",
           "kind_filter": "Kind of day",
           "general_hint": "Rest of the year",

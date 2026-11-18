@@ -1,0 +1,54 @@
+<sc-button
+  variant="secondary"
+  appearance="outlined"
+  size="sm"
+  icon="filter_list"
+  ariaHasPopup="dialog"
+  [label]="textoDelBoton()"
+  (clicked)="pop.toggle($event)"
+/>
+<p-popover #pop [style]="{ width: '16rem' }" [focusOnShow]="false" (onHide)="abierto.set(null)">
+  <ng-template #content>
+    <div class="menu" role="group" [attr.aria-label]="ariaLabel()">
+      <sc-button class="menu__borrar" size="sm" variant="secondary" appearance="text" icon="close" [disabled]="apagados() === 0" [label]="borrarEtiqueta()" (clicked)="borrar.emit()" />
+      @for (g of grupos(); track g.clave) {
+        <div class="bloque" [class.bloque--abierto]="abierto() === g.clave">
+          <div class="bloque__fila">
+            <sc-checkbox class="bloque__casilla" [state]="estado(g)" (cycle)="alternarBloque(g)">
+              <span class="sc-text-body-regular">{{ g.titulo }}</span>
+            </sc-checkbox>
+            <button type="button" class="bloque__flecha" [attr.aria-expanded]="abierto() === g.clave" [attr.aria-label]="g.titulo" (click)="abrir(g.clave)">
+              <sc-icon name="chevron_right" size="sm" aria-hidden="true" />
+            </button>
+          </div>
+          @if (abierto() === g.clave) {
+            <!-- La lista de lo suyo, al lado (a la izquierda: el botón está al borde derecho de la pantalla). -->
+            <div class="submenu" [class.submenu--derecha]="lado() === 'derecha'" role="group" [attr.aria-label]="g.titulo">
+              <sc-button
+                class="menu__borrar"
+                size="sm"
+                variant="secondary"
+                appearance="text"
+                [label]="estado(g) === 'none' ? seleccionarTodo() : deseleccionarTodo()"
+                (clicked)="ponerGrupo.emit({ clave: g.clave, activo: estado(g) === 'none' })"
+              />
+              @for (i of g.items; track i.clave) {
+                <sc-checkbox [state]="i.activo ? 'all' : 'none'" (cycle)="alternar.emit(i.clave)">
+                  @if (i.tag && i.color) {
+                    @if (i.color === 'black') {
+                      <sc-tag severity="contrast" [value]="i.etiqueta" />
+                    } @else {
+                      <sc-tag variant="label" [bordered]="false" [labelColor]="$any(i.color)" [value]="i.etiqueta" />
+                    }
+                  } @else {
+                    <span class="item"><span class="punto" [attr.data-color]="i.color ?? null" aria-hidden="true"></span>{{ i.etiqueta }}</span>
+                  }
+                </sc-checkbox>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </ng-template>
+</p-popover>

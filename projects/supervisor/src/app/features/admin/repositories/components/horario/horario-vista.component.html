@@ -37,14 +37,16 @@
     <!-- Vista y filtros, a la derecha, a la altura de los desplegables. Los filtros son un botón con su lista (como el de un
          calendario de equipo): una casilla por capa que hay en este calendario, con el punto de su color. -->
     <div class="vista__acciones">
-      <sc-button
-        variant="secondary"
-        appearance="outlined"
-        size="sm"
-        icon="filter_list"
-        ariaHasPopup="dialog"
-        [label]="textoDeFiltros()"
-        (clicked)="filtros.toggle($event)"
+      <sc-horario-filtro-menu
+        [etiqueta]="'repositories.horarios.x.layers.button' | translate"
+        [borrarEtiqueta]="'repositories.horarios.x.layers.show_all' | translate"
+        [seleccionarTodo]="'repositories.horarios.x.layers.select_all' | translate"
+        [deseleccionarTodo]="'repositories.horarios.x.layers.deselect_all' | translate"
+        [ariaLabel]="'repositories.horarios.x.layers.label' | translate"
+        [grupos]="gruposDelMenu()"
+        (alternar)="alternar($event)"
+        (ponerGrupo)="ponerGrupo($event)"
+        (borrar)="mostrarTodo()"
       />
       <sc-selectbutton
         class="vista__vista"
@@ -58,43 +60,6 @@
         (valueChange)="cambiarVista($any($event))"
       />
     </div>
-    <p-popover #filtros [style]="{ width: '18rem' }" [focusOnShow]="false">
-      <ng-template #content>
-        <div class="filtros" role="group" [attr.aria-label]="'repositories.horarios.x.layers.label' | translate">
-          <sc-button
-            class="filtros__borrar"
-            size="sm"
-            variant="secondary"
-            appearance="text"
-            icon="close"
-            [disabled]="!hayFiltros()"
-            [label]="'repositories.horarios.x.layers.show_all' | translate"
-            (clicked)="mostrarTodo()"
-          />
-          @for (grupo of gruposDeCapas(); track grupo.clave) {
-            <section class="filtros__bloque" [attr.aria-label]="grupo.titulo">
-              <h4 class="filtros__titulo sc-text-caption-semibold">{{ grupo.titulo }}</h4>
-              @for (capa of grupo.capas; track capa.clave) {
-                <sc-checkbox class="filtro" [class.filtro--apagado]="!capa.activa" [state]="capa.activa ? 'all' : 'none'" (cycle)="alternar(capa.clave)">
-                  <span class="filtro__texto">
-                    @if (capa.grupo === 'periods') {
-                      <!-- Cada periodo con su etiqueta de color, la misma que en la lista de periodos. -->
-                      @if (capa.color === 'black') {
-                        <sc-tag severity="contrast" [value]="capa.etiqueta" />
-                      } @else {
-                        <sc-tag variant="label" [bordered]="false" [labelColor]="$any(capa.color)" [value]="capa.etiqueta" />
-                      }
-                    } @else {
-                      <span class="punto" [attr.data-color]="capa.color" aria-hidden="true"></span>{{ capa.etiqueta }}
-                    }
-                  </span>
-                </sc-checkbox>
-              }
-            </section>
-          }
-        </div>
-      </ng-template>
-    </p-popover>
   </header>
 
   <div class="vista__cuerpo" (keydown)="teclado($event)">

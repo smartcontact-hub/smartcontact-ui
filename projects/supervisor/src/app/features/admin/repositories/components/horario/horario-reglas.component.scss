@@ -207,3 +207,8 @@ sc-section-card {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+/* Los enlaces de «gestionar»: icono en su baldosa y texto, que se subraya al pasar (`scFactRow` del DS, como el resumen del grupo). */
+.enlaces {
+  margin: 0;
+}

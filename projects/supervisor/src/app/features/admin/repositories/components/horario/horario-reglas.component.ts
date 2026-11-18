@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TooltipModule } from 'primeng/tooltip';
-import { ScButtonComponent, ScMultiSelectComponent, ScSectionCardComponent, ScSelectButtonComponent, ScSelectComponent, ScTagComponent } from '@smartcontact-hub/components';
+import { ScButtonComponent, ScFactRowComponent, ScMultiSelectComponent, ScSectionCardComponent, ScSelectButtonComponent, ScSelectComponent, ScTagComponent } from '@smartcontact-hub/components';
 
 import { LanguageService } from '@core/services/language.service';
 import { injectLangChange } from '@core/utils/lang-change';
@@ -18,6 +18,8 @@ import {
   textoDeFranja,
 } from '../../state/horarios.core.mjs';
 
+import { type FiltroGrupo, HorarioFiltroMenuComponent } from './horario-filtro-menu.component';
+
 const aFecha = (iso: string): Date => new Date(`${iso}T12:00:00`);
 const CLAVES_DIA = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const;
 
@@ -29,7 +31,7 @@ const CLAVES_DIA = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const;
  */
 @Component({
   selector: 'sc-horario-reglas',
-  imports: [ScButtonComponent, ScMultiSelectComponent, ScSectionCardComponent, ScSelectButtonComponent, ScSelectComponent, ScTagComponent, TooltipModule, TranslateModule],
+  imports: [HorarioFiltroMenuComponent, ScButtonComponent, ScFactRowComponent, ScMultiSelectComponent, ScSectionCardComponent, ScSelectButtonComponent, ScSelectComponent, ScTagComponent, TooltipModule, TranslateModule],
   templateUrl: './horario-reglas.component.html',
   styleUrl: './horario-reglas.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -115,29 +117,49 @@ export class HorarioReglasComponent {
     }));
   });
 
-  /** Las fechas especiales: próximas (por defecto), pasadas o todas. Las que se repiten cada año nunca pasan. */
-  protected readonly filtro = signal<'proximas' | 'pasadas' | 'todas'>('proximas');
-  protected readonly filtroDeEspeciales = computed(() => {
+  /* Los filtros de la lista de fechas: tipo (especiales, festivos) y cuándo (próximas, pasadas). Las que se repiten cada año nunca pasan. */
+  protected readonly verEspeciales = signal(true);
+  protected readonly verFestivos = signal(true);
+  protected readonly verProximas = signal(true);
+  protected readonly verPasadas = signal(true);
+
+  protected readonly gruposDeFechas = computed<readonly FiltroGrupo[]>(() => {
     this.lang();
     const t = (k: string): string => this.translate.instant(k);
     return [
-      { value: 'proximas', label: t('repositories.horarios.specials_upcoming') },
-      { value: 'pasadas', label: t('repositories.horarios.specials_past') },
-      { value: 'todas', label: t('repositories.horarios.x.rules.specials_all') },
+      {
+        clave: 'tipo',
+        titulo: t('repositories.horarios.x.rules.group_kind'),
+        items: [
+          { clave: 'especiales', etiqueta: t('repositories.horarios.x.rules.kind_special'), activo: this.verEspeciales(), color: 'purple' },
+          { clave: 'festivos', etiqueta: t('repositories.horarios.x.rules.kind_holiday'), activo: this.verFestivos(), color: 'red' },
+        ],
+      },
+      {
+        clave: 'cuando',
+        titulo: t('repositories.horarios.x.rules.group_when'),
+        items: [
+          { clave: 'proximas', etiqueta: t('repositories.horarios.specials_upcoming'), activo: this.verProximas() },
+          { clave: 'pasadas', etiqueta: t('repositories.horarios.specials_past'), activo: this.verPasadas() },
+        ],
+      },
     ];
   });
 
-  /** Qué se ve en la lista: todo, solo fechas especiales o solo festivos propios. */
-  protected readonly tipoFiltro = signal<'todo' | 'especiales' | 'festivos'>('todo');
-  protected readonly filtroDeTipo = computed(() => {
-    this.lang();
-    const t = (k: string): string => this.translate.instant(k);
-    return [
-      { value: 'todo', label: t('repositories.horarios.x.rules.kind_all') },
-      { value: 'especiales', label: t('repositories.horarios.x.rules.kind_special') },
-      { value: 'festivos', label: t('repositories.horarios.x.rules.kind_holiday') },
-    ];
-  });
+  private readonly interruptor = { especiales: this.verEspeciales, festivos: this.verFestivos, proximas: this.verProximas, pasadas: this.verPasadas };
+
+  protected alternarFecha(clave: string): void {
+    const s = this.interruptor[clave as keyof typeof this.interruptor];
+    s.update((v) => !v);
+  }
+
+  protected ponerGrupoFecha(r: { readonly clave: string; readonly activo: boolean }): void {
+    for (const c of r.clave === 'tipo' ? (['especiales', 'festivos'] as const) : (['proximas', 'pasadas'] as const)) this.interruptor[c].set(r.activo);
+  }
+
+  protected verTodasLasFechas(): void {
+    for (const s of Object.values(this.interruptor)) s.set(true);
+  }
 
   /** El nombre del horario general y su semana en una línea, con el mismo formato que el de un periodo. */
   protected readonly nombreGeneral = computed(() => this.opcionesDeHorarios().find((o) => o.value === this.horarioId())?.label ?? '');
@@ -150,15 +172,13 @@ export class HorarioReglasComponent {
     const mes = new Intl.DateTimeFormat(this.language.locale(), { month: 'short' });
     const conAnio = new Intl.DateTimeFormat(this.language.locale(), { year: 'numeric' });
     const cerrado = this.translate.instant('repositories.horarios.closed') as string;
-    const filtro = this.filtro();
-    const tipo = this.tipoFiltro();
     const clave = (e: { date: string; yearly: boolean }): string => (e.yearly ? `${anio}${e.date.slice(4)}` : e.date);
     const filas = [
-      ...(tipo === 'festivos' ? [] : this.especiales().map((e) => ({ tipo: 'especial' as const, e, detalle: e.slots.length ? e.slots.map(textoDeFranja).join(' · ') : cerrado }))),
-      ...(tipo === 'especiales' ? [] : this.propios().map((e) => ({ tipo: 'festivo' as const, e: { ...e, slots: [] as Franja[] }, detalle: cerrado }))),
+      ...(!this.verEspeciales() ? [] : this.especiales().map((e) => ({ tipo: 'especial' as const, e, detalle: e.slots.length ? e.slots.map(textoDeFranja).join(' · ') : cerrado }))),
+      ...(!this.verFestivos() ? [] : this.propios().map((e) => ({ tipo: 'festivo' as const, e: { ...e, slots: [] as Franja[] }, detalle: cerrado }))),
     ];
     return filas
-      .filter((f) => filtro === 'todas' || (!f.e.yearly && f.e.date < hoy) === (filtro === 'pasadas'))
+      .filter((f) => ((!f.e.yearly && f.e.date < hoy) ? this.verPasadas() : this.verProximas()))
       .sort((a, b) => clave(a.e).localeCompare(clave(b.e)))
       .map((f) => {
         const iso = f.e.yearly ? `2024${f.e.date.slice(4)}` : f.e.date;
