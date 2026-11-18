@@ -17,6 +17,8 @@ export interface RepoColumnDef<T extends RepoEntity> {
   readonly labelKey: string;
   readonly kind: RepoColumnKind;
   readonly accessor: (item: T) => string;
+  /** Un color del DS para el texto de la celda (el del texto de una etiqueta); sin él, el de siempre. */
+  readonly colorOf?: (item: T) => string | null | undefined;
   /** CSS width applied to the cell (e.g. `'192px'`, `'25%'`). Defaults to `auto`. */
   readonly width?: string;
   /** Mark the primary "name" column so it renders bolder. */

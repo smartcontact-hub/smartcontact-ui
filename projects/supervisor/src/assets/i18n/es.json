@@ -1825,6 +1825,7 @@
       "in_use_bulk": "Los usan {{count}} calendarios: se quedarán con su semana, sin vínculo.",
       "in_use_bulk_one": "Los usa 1 calendario: se quedará con su semana, sin vínculo.",
       "x": {
+        "color": "Color",
         "edit": "Editar horario",
         "edit_named": "Editar «{{name}}»",
         "picker": {

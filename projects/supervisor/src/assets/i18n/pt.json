@@ -1825,6 +1825,7 @@
       "in_use_bulk": "{{count}} calendários usam-nos: ficam com a sua semana, sem ligação.",
       "in_use_bulk_one": "1 calendário usa-os: fica com a sua semana, sem ligação.",
       "x": {
+        "color": "Cor",
         "edit": "Editar horário",
         "edit_named": "Editar «{{name}}»",
         "picker": {

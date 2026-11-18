@@ -29,26 +29,30 @@
 .grupo__tramos {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--sc-spacing-0-25);
+  gap: var(--sc-spacing-0-25) var(--sc-spacing-0-75);
   min-inline-size: 0;
 }
 
 .pildora {
   display: inline-block;
-  padding: var(--sc-spacing-0-125) var(--sc-spacing-0-5);
-  border-radius: var(--sc-radius-sm);
+  padding-block: var(--sc-spacing-0-125);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 
+  /* Solo el color del texto de la etiqueta del DS, sin su fondo ni su forma. */
   @each $color in ('blue', 'green', 'purple', 'orange', 'teal', 'amber', 'red', 'brown', 'gray') {
     &[data-color='#{$color}'] {
-      background: var(--sc-label-#{$color}-bg);
       color: var(--sc-label-#{$color}-text);
     }
+  }
+
+  &[data-color='black'] {
+    color: var(--sc-cmp-tag-contrast-background);
   }
 }
 
 .pildora--cerrado {
+  color: var(--sc-text-secondary) !important;
   font-weight: 400;
 }
 

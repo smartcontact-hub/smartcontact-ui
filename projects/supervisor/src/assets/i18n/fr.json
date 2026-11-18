@@ -1825,6 +1825,7 @@
       "in_use_bulk": "{{count}} calendriers les utilisent : ils garderont leur semaine, sans lien.",
       "in_use_bulk_one": "1 calendrier les utilise : il gardera sa semaine, sans lien.",
       "x": {
+        "color": "Couleur",
         "edit": "Modifier l'horaire",
         "edit_named": "Modifier « {{name}} »",
         "picker": {

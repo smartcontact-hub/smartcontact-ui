@@ -39,6 +39,8 @@ export interface HorarioTipo {
   readonly name: string;
   readonly description: string;
   readonly week: Semana;
+  /** Un color del DS que identifica al horario (como el de una etiqueta). */
+  readonly color?: ColorDePeriodo;
 }
 
 export interface Horario {

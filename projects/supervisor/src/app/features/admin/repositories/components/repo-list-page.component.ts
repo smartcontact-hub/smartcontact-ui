@@ -282,6 +282,13 @@ export class RepoListPageComponent<T extends RepoEntity> {
   /** El texto entero al pasar el ratón, solo en las columnas que recortan: con un dato más largo que lo medido, la
    *  celda corta con «…» (DD-124). */
   /** El texto entero de una celda que se corta, para su tooltip (`showOnEllipsis`); vacío, sin tooltip. */
+  /** El color del texto de una celda, si su columna lo pide: el del texto de una etiqueta del DS (el negro es el de la etiqueta «contrast»). */
+  protected textColor(item: T, key: string): string | null {
+    const color = this.config().columns.find((c) => c.key === key)?.colorOf?.(item);
+    if (!color) return null;
+    return color === 'black' ? 'var(--sc-cmp-tag-contrast-background)' : `var(--sc-label-${color}-text)`;
+  }
+
   protected cellTitle(item: T, key: string): string {
     return this.isKind(key, 'truncate') ? this.getCellValue(item, key) : '';
   }

@@ -58,6 +58,7 @@ export class HorariosTipoPageComponent {
       key: 'week',
       labelKey: 'repositories.horarios.col_week',
       kind: 'truncate',
+      colorOf: (h) => h.color,
       accessor: (h) => resumenDeLaSemana(h.week, this.textos().dias, this.textos().cerrado, this.textos().siempre),
     },
     {

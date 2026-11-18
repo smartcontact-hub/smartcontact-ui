@@ -18,6 +18,7 @@ import {
   textoDeFranja,
 } from '../../state/horarios.core.mjs';
 
+import { HorariosTipoStore } from '../../state/horarios-tipo.store';
 import { HorarioSemanaResumenComponent } from './horario-semana-resumen.component';
 import { type FiltroGrupo, HorarioFiltroMenuComponent } from './horario-filtro-menu.component';
 
@@ -161,6 +162,10 @@ export class HorarioReglasComponent {
   protected verTodasLasFechas(): void {
     for (const s of Object.values(this.interruptor)) s.set(true);
   }
+
+  private readonly tiposDeHorario = inject(HorariosTipoStore);
+  /** El color del horario general: el que lleva el horario. */
+  protected readonly colorGeneral = computed(() => this.tiposDeHorario.items().find((t) => t.id === this.horarioId())?.color ?? 'green');
 
   /** El nombre del horario general y su semana en una línea, con el mismo formato que el de un periodo. */
   protected readonly nombreGeneral = computed(() => this.opcionesDeHorarios().find((o) => o.value === this.horarioId())?.label ?? '');

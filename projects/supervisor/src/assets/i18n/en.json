@@ -1825,6 +1825,7 @@
       "in_use_bulk": "{{count}} calendars use them: they will keep their week, unlinked.",
       "in_use_bulk_one": "1 calendar uses them: it will keep its week, unlinked.",
       "x": {
+        "color": "Color",
         "edit": "Edit schedule",
         "edit_named": "Edit “{{name}}”",
         "picker": {

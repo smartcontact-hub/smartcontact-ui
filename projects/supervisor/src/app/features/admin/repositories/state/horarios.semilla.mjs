@@ -192,6 +192,9 @@ const DESCRIPCIONES_DE_HORARIO = {
   11: 'Ejemplo con muchos tramos por día, para probar cómo se ve',
 };
 
+/** Un color por horario, de los del DS (el del texto de una etiqueta). */
+const COLORES_DE_HORARIO = { 1: 'blue', 2: 'teal', 3: 'purple', 4: 'brown', 5: 'gray', 6: 'orange', 7: 'red', 8: 'amber', 9: 'green', 10: 'blue', 11: 'purple' };
+
 /** Un horario con muchas franjas por día (incluidas algunas a minuto exacto): sirve para estresar cómo se representa. */
 const MUCHAS_FRANJAS = [
   [480, 600],
@@ -207,7 +210,7 @@ const MUCHAS_FRANJAS = [
 export const HORARIOS_TIPO_SEMILLA = [
   ...separados.horarios,
   { id: separados.horarios.length + 1, name: 'Turnos con pausas (muchas franjas)', description: '', week: [MUCHAS_FRANJAS, MUCHAS_FRANJAS, MUCHAS_FRANJAS, MUCHAS_FRANJAS, MUCHAS_FRANJAS.slice(0, 4), [[600, 840], [900, 1020]], []] },
-].map((h) => ({ ...h, name: NOMBRES_DE_HORARIO[h.id] ?? h.name, description: DESCRIPCIONES_DE_HORARIO[h.id] ?? h.description }));
+].map((h) => ({ ...h, name: NOMBRES_DE_HORARIO[h.id] ?? h.name, description: DESCRIPCIONES_DE_HORARIO[h.id] ?? h.description, color: COLORES_DE_HORARIO[h.id] ?? 'blue' }));
 
 /** Dónde se usa cada horario además de en calendarios y grupos: el VUI (dato de ejemplo; aún no hay modelo del VUI). */
 export const HORARIOS_EN_EL_VUI = new Set([1, 7, 10]);
