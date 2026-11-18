@@ -2,17 +2,54 @@
 <!-- Las reglas, en segundo plano: una fila de tres `sc-section-card` (semana habitual, periodos, fechas especiales), cada una
      con su acción en la cabecera (`scSectionActions`). -->
 <div class="reglas">
-  <sc-section-card titleKey="repositories.horarios.section_week" surface="card" icon="view_week">
+  <!-- Periodos: lo que cambia durante el año (verano, campaña…), cada uno con su horario. Lo que vale el resto del año va debajo. -->
+  <sc-section-card titleKey="repositories.horarios.section_periods" surface="card" icon="date_range">
     <sc-button
       scSectionActions
       variant="secondary"
       appearance="text"
       size="sm"
-      icon="edit"
-      [ariaLabel]="'repositories.horariosTipo.x.edit' | translate"
-      (clicked)="editarSemana.emit()"
+      icon="add"
+      [ariaLabel]="'repositories.horarios.period_add' | translate"
+      (clicked)="anadirPeriodo.emit()"
     />
-    <!-- El calendario no lleva la semana dentro: elige un horario, que otros calendarios pueden usar también. -->
+    @if (filasDePeriodos().length > 0) {
+      <ul class="lista lista--periodos" role="list">
+        @for (p of filasDePeriodos(); track p.id) {
+          <li class="fila fila--periodo">
+            <span class="fila__cuerpo">
+              <span class="fila__cuerpo fila__cuerpo--linea">
+                @if (p.color === 'black') {
+                  <sc-tag class="fila__etiqueta" severity="contrast" [value]="p.nombre" />
+                } @else {
+                  <sc-tag class="fila__etiqueta" variant="label" [bordered]="false" [labelColor]="$any(p.color)" [value]="p.nombre" />
+                }
+                <span class="fila__fechas sc-text-caption-regular" [pTooltip]="p.fechas + (p.repite ? ' · ' + ('repositories.horarios.x.rules.yearly' | translate) : '')" showOnEllipsis tooltipPosition="top">{{ p.fechas }}@if (p.repite) { · {{ 'repositories.horarios.x.rules.yearly' | translate }} }</span>
+              </span>
+              <!-- Su horario: el nombre y las horas, a la vista sin abrirlo. -->
+              <span class="fila__detalle sc-text-caption-regular" [pTooltip]="p.horario + ' · ' + p.resumen" showOnEllipsis tooltipPosition="top">{{ p.horario }} · {{ p.resumen }}</span>
+            </span>
+            <!-- El lápiz y la papelera aparecen al pasar por la fila (o al llegar con el teclado). -->
+            <span class="fila__acciones fila__acciones--hover">
+              <sc-button variant="secondary" appearance="text" size="sm" icon="edit" [ariaLabel]="('repositories.horarios.period_edit' | translate) + ' ' + p.nombre" (clicked)="abrirPeriodo.emit(p.id)" />
+              <sc-button variant="secondary" appearance="text" size="sm" icon="delete" [ariaLabel]="('common.delete' | translate) + ' ' + p.nombre" (clicked)="eliminarPeriodo.emit(p.id)" />
+            </span>
+          </li>
+        }
+      </ul>
+    }
+
+    <div class="sub">
+      <h3 class="sub__titulo sc-text-body-semibold">{{ 'repositories.horarios.x.rules.rest' | translate }}</h3>
+      <sc-button
+        variant="secondary"
+        appearance="text"
+        size="sm"
+        icon="edit"
+        [ariaLabel]="'repositories.horariosTipo.x.edit' | translate"
+        (clicked)="editarSemana.emit()"
+      />
+    </div>
     <sc-select
       class="horario-sel"
       inputId="horario-sel"
@@ -21,7 +58,6 @@
       [label]="'repositories.horariosTipo.x.picker.label' | translate"
       [placeholder]="'repositories.horariosTipo.x.picker.placeholder' | translate"
       [filterPlaceholder]="'repositories.horariosTipo.x.picker.search' | translate"
-      [helperText]="compartidoCon() > 0 ? ('repositories.horariosTipo.x.picker.shared' | translate: { count: compartidoCon() }) : undefined"
       [options]="opcionesDeHorarios()"
       optionLabel="label"
       optionValue="value"
@@ -37,33 +73,6 @@
       }
     </ul>
     <a class="repo-link sc-text-caption-semibold" href="/admin/horarios-tipo" (click)="gestionarHorarios.emit($event)">{{ 'repositories.horariosTipo.x.picker.manage' | translate }}</a>
-    <!-- Los periodos, en la misma tarjeta que la semana: son semanas distintas para una época del año. -->
-    <div class="sub">
-      <h3 class="sub__titulo sc-text-body-semibold">{{ 'repositories.horarios.section_periods' | translate }}</h3>
-      <sc-button variant="secondary" appearance="text" size="sm" icon="add" [ariaLabel]="'repositories.horarios.period_add' | translate" (clicked)="anadirPeriodo.emit()" />
-    </div>
-    @if (filasDePeriodos().length > 0) {
-      <ul class="lista" role="list">
-        @for (p of filasDePeriodos(); track p.id) {
-          <li class="fila">
-            <!-- La etiqueta del periodo (`sc-tag` de etiqueta, con su color del DS) y, a su lado, sus fechas: si no caben, se
-                 recortan y se leen enteras al pasar el ratón. -->
-            <span class="fila__cuerpo fila__cuerpo--linea">
-              @if (p.color === 'black') {
-                <sc-tag class="fila__etiqueta" severity="contrast" [value]="p.nombre" />
-              } @else {
-                <sc-tag class="fila__etiqueta" variant="label" [bordered]="false" [labelColor]="$any(p.color)" [value]="p.nombre" />
-              }
-              <span class="fila__fechas sc-text-caption-regular" [pTooltip]="p.fechas + (p.repite ? ' · ' + ('repositories.horarios.x.rules.yearly' | translate) : '')" showOnEllipsis tooltipPosition="top">{{ p.fechas }}@if (p.repite) { · {{ 'repositories.horarios.x.rules.yearly' | translate }} }</span>
-            </span>
-            <span class="fila__acciones">
-              <sc-button variant="secondary" appearance="text" size="sm" icon="edit" [ariaLabel]="('repositories.horarios.period_edit' | translate) + ' ' + p.nombre" (clicked)="abrirPeriodo.emit(p.id)" />
-              <sc-button variant="secondary" appearance="text" size="sm" icon="delete" [ariaLabel]="('common.delete' | translate) + ' ' + p.nombre" (clicked)="eliminarPeriodo.emit(p.id)" />
-            </span>
-          </li>
-        }
-      </ul>
-    }
   </sc-section-card>
 
   <sc-section-card titleKey="repositories.horarios.section_specials" surface="card" icon="event">

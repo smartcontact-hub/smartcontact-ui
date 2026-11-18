@@ -72,6 +72,8 @@ export class HorarioPeriodoModalComponent implements OnInit {
   readonly horario = input.required<Pick<Horario, 'week' | 'weekId' | 'periods' | 'specials' | 'holidayCalendarIds'>>();
   /** El año que se está mirando en el calendario: en el que se proponen las fechas. */
   readonly anio = input(new Date().getFullYear());
+  /** Al crear desde un arrastre en el calendario: los días que se marcaron (`AAAA-MM-DD`). */
+  readonly rangoInicial = input<{ readonly desde: string; readonly hasta: string } | null>(null);
 
   readonly guardar = output<Periodo>();
   readonly cerrado = output<void>();
@@ -117,6 +119,8 @@ export class HorarioPeriodoModalComponent implements OnInit {
       const usados = new Set(this.horario().periods.map((x) => x.color));
       this.color.set(COLORES_DE_PERIODO.find((c) => !usados.has(c)) ?? 'blue');
       this.weekId.set(this.horario().weekId ?? this.tipos.items()[0]?.id ?? null);
+      const r = this.rangoInicial();
+      if (r) this.rango.set([new Date(`${r.desde}T12:00:00`), new Date(`${r.hasta}T12:00:00`)]);
       return;
     }
     const anio = p.year ?? this.anio();

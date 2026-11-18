@@ -165,3 +165,24 @@ sc-section-card {
 .sub__titulo {
   margin: 0;
 }
+
+/* Un periodo: su nombre y fechas arriba y su horario debajo; sus acciones salen al pasar por la fila. */
+.fila--periodo {
+  align-items: flex-start;
+}
+
+.fila__acciones--hover {
+  opacity: 0;
+  transition: opacity 150ms ease-out;
+}
+
+.fila:hover .fila__acciones--hover,
+.fila:focus-within .fila__acciones--hover {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .fila__acciones--hover {
+    opacity: 1;
+  }
+}

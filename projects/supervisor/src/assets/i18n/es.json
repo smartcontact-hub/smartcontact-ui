@@ -1675,6 +1675,9 @@
           "year": "Año"
         },
         "layers": {
+          "group_holidays": "Festivos",
+          "group_other": "Otros",
+          "own": "Festivos propios",
           "button": "Filtros",
           "label": "Mostrar",
           "week": "Semana habitual",
@@ -1707,6 +1710,7 @@
           "edit": "Editar datos"
         },
         "rules": {
+          "rest": "Resto del año",
           "title": "Reglas del calendario",
           "week_edit": "Editar la semana habitual",
           "week_hint": "Lo que vale cuando nada más manda.",

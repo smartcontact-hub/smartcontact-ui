@@ -71,10 +71,15 @@
             [label]="'repositories.horarios.x.layers.show_all' | translate"
             (clicked)="mostrarTodo()"
           />
-          @for (capa of capas(); track capa.clave) {
-            <sc-checkbox class="filtro" [class.filtro--apagado]="!capa.activa" [state]="capa.activa ? 'all' : 'none'" (cycle)="alternar(capa.clave)">
-              <span class="filtro__texto"><span class="punto" [attr.data-color]="capa.color" aria-hidden="true"></span>{{ capa.etiqueta }}</span>
-            </sc-checkbox>
+          @for (grupo of gruposDeCapas(); track grupo.clave) {
+            <section class="filtros__bloque" [attr.aria-label]="grupo.titulo">
+              <h4 class="filtros__titulo sc-text-caption-semibold">{{ grupo.titulo }}</h4>
+              @for (capa of grupo.capas; track capa.clave) {
+                <sc-checkbox class="filtro" [class.filtro--apagado]="!capa.activa" [state]="capa.activa ? 'all' : 'none'" (cycle)="alternar(capa.clave)">
+                  <span class="filtro__texto"><span class="punto" [attr.data-color]="capa.color" aria-hidden="true"></span>{{ capa.etiqueta }}</span>
+                </sc-checkbox>
+              }
+            </section>
           }
         </div>
       </ng-template>
@@ -104,6 +109,9 @@
                     [class.mini--hoy]="esHoy(c.fecha)"
                     [class.mini--elegido]="c.fecha === seleccion()"
                     [class.mini--apagado]="c.apagada"
+                    [class.mini--rango]="enRango(c.fecha)"
+                    (pointerdown)="empezar(c.fecha, $event)"
+                    (pointerenter)="pasar(c.fecha)"
                     [class.sc-text-caption-regular]="!esHoy(c.fecha)"
                     [class.sc-text-caption-semibold]="esHoy(c.fecha)"
                     [attr.data-color]="c.color"
@@ -135,6 +143,9 @@
               [class.dia--fuera]="c.fuera"
               [class.dia--elegido]="c.fecha === seleccion()"
               [class.dia--apagado]="c.apagada"
+              [class.dia--rango]="enRango(c.fecha)"
+              (pointerdown)="empezar(c.fecha, $event)"
+              (pointerenter)="pasar(c.fecha)"
               [attr.data-color]="c.color"
               [attr.data-fecha]="c.fecha"
               [attr.aria-label]="c.aria"

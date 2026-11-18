@@ -473,7 +473,13 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
   /* ── Periodos ─────────────────────────────────────────────────────────────────────────────────────────────────── */
 
   /** El diálogo de un periodo: `null` cerrado; con `periodo: null`, para añadir. */
-  protected readonly periodoDialog = signal<{ readonly periodo: Periodo | null } | null>(null);
+  protected readonly periodoDialog = signal<{ readonly periodo: Periodo | null; readonly rango?: { readonly desde: string; readonly hasta: string } } | null>(null);
+
+  /** Arrastrar de un día a otro en el calendario abre el periodo con esos días ya marcados. */
+  protected periodoDesdeRango(rango: { readonly desde: string; readonly hasta: string }): void {
+    this.diaPanel.set(null);
+    this.periodoDialog.set({ periodo: null, rango });
+  }
   protected readonly anioDeTrabajo = new Date().getFullYear();
 
   protected guardarPeriodo(periodo: Periodo): void {

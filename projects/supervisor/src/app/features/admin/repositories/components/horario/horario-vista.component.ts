@@ -5,6 +5,7 @@ import {
   computed,
   DestroyRef,
   effect,
+  HostListener,
   ElementRef,
   inject,
   Injector,
@@ -71,6 +72,8 @@ interface Bloque {
 
 interface Capa {
   readonly clave: string;
+  /** El bloque del filtro al que pertenece: periodos, festivos u otros. */
+  readonly grupo: 'periods' | 'holidays' | 'other';
   readonly etiqueta: string;
   /** El color de su punto; `null` es la semana habitual, que no lleva color en el calendario (punto vacío). */
   readonly color: string | null;
@@ -235,12 +238,23 @@ export class HorarioVistaComponent {
     const apagadas = this.apagadas();
     const r = this.reglas();
     const lista: Omit<Capa, 'activa'>[] = [
-      ...r.periods.map((p) => ({ clave: `period:${p.id}`, etiqueta: p.name, color: p.color as string, icono: 'date_range' })),
-      ...(r.holidayCalendarIds.length > 0 || (r.ownHolidays?.length ?? 0) > 0 ? [{ clave: 'holiday', etiqueta: t('holiday'), color: 'red', icono: 'flag' }] : []),
-      ...(r.specials.length > 0 ? [{ clave: 'special', etiqueta: t('special'), color: 'purple', icono: 'event' }] : []),
-      { clave: 'closed', etiqueta: t('closed'), color: 'gray', icono: 'do_not_disturb_on' },
+      ...r.periods.map((p) => ({ clave: `period:${p.id}`, grupo: 'periods' as const, etiqueta: p.name, color: p.color as string, icono: 'date_range' })),
+      // Cada lista de festivos aplicada es su capa, y los festivos propios la suya: se apaga una sin tocar las otras.
+      ...r.holidayCalendarIds.map((id) => ({ clave: `holiday:${id}`, grupo: 'holidays' as const, etiqueta: this.calendarios().find((c) => c.id === id)?.name ?? t('holiday'), color: 'red', icono: 'flag' })),
+      ...((r.ownHolidays?.length ?? 0) > 0 ? [{ clave: `holiday:${ID_DE_PROPIOS}`, grupo: 'holidays' as const, etiqueta: t('own'), color: 'red', icono: 'flag' }] : []),
+      ...(r.specials.length > 0 ? [{ clave: 'special', grupo: 'other' as const, etiqueta: t('special'), color: 'purple', icono: 'event' }] : []),
+      { clave: 'closed', grupo: 'other' as const, etiqueta: t('closed'), color: 'gray', icono: 'do_not_disturb_on' },
     ];
     return lista.map((c) => ({ ...c, activa: !apagadas.has(c.clave) }));
+  });
+
+  /** Las capas por bloques, para el botón de filtros: periodos, festivos y el resto. Un bloque sin capas no sale. */
+  protected readonly gruposDeCapas = computed(() => {
+    this.lang();
+    const titulos = { periods: 'repositories.horarios.section_periods', holidays: 'repositories.horarios.x.layers.group_holidays', other: 'repositories.horarios.x.layers.group_other' } as const;
+    return (['periods', 'holidays', 'other'] as const)
+      .map((g) => ({ clave: g, titulo: this.translate.instant(titulos[g]) as string, capas: this.capas().filter((c) => c.grupo === g) }))
+      .filter((g) => g.capas.length > 0);
   });
 
   protected readonly hayFiltros = computed(() => this.apagadas().size > 0);
@@ -300,7 +314,7 @@ export class HorarioVistaComponent {
 
   private celda(fecha: string, mesVisible: number | null): Celda {
     const dia = resolverDia(this.reglas(), fecha, this.calendarios());
-    const capa = dia.tipo === 'periodo' && dia.periodo ? `period:${dia.periodo.id}` : dia.tipo === 'semana' ? 'week' : dia.tipo === 'festivo' ? 'holiday' : 'special';
+    const capa = dia.tipo === 'periodo' && dia.periodo ? `period:${dia.periodo.id}` : dia.tipo === 'semana' ? 'week' : dia.tipo === 'festivo' ? `holiday:${dia.calendario?.id}` : 'special';
     const abierto = dia.tramos.length > 0;
     const apagadas = this.apagadas();
     const habitual = dia.tipo === 'semana';
@@ -428,7 +442,44 @@ export class HorarioVistaComponent {
   }
 
   /** Elegir un día lo marca y avisa de dónde está (su celda), para que la página ancle junto a ella el panel rápido. */
+  /* ── Arrastrar de un día a otro: un rango, que se configura como periodo ─────────────────────────────────────────── */
+
+  readonly rangoElegido = output<{ readonly desde: string; readonly hasta: string }>();
+  protected readonly arrastre = signal<{ readonly desde: string; readonly hasta: string } | null>(null);
+  private suprimirClic = false;
+
+  protected empezar(fecha: string, event: PointerEvent): void {
+    if (event.button !== 0) return;
+    this.arrastre.set({ desde: fecha, hasta: fecha });
+  }
+
+  protected pasar(fecha: string): void {
+    const a = this.arrastre();
+    if (a && a.hasta !== fecha) this.arrastre.set({ ...a, hasta: fecha });
+  }
+
+  protected enRango(fecha: string): boolean {
+    const a = this.arrastre();
+    if (!a || a.desde === a.hasta) return false;
+    const [d, h] = a.desde < a.hasta ? [a.desde, a.hasta] : [a.hasta, a.desde];
+    return fecha >= d && fecha <= h;
+  }
+
+  @HostListener('document:pointerup')
+  protected terminar(): void {
+    const a = this.arrastre();
+    if (!a) return;
+    this.arrastre.set(null);
+    if (a.desde === a.hasta) return;
+    this.suprimirClic = true;
+    setTimeout(() => (this.suprimirClic = false));
+    const [desde, hasta] = a.desde < a.hasta ? [a.desde, a.hasta] : [a.hasta, a.desde];
+    this.rangoElegido.emit({ desde, hasta });
+  }
+
+  /** Elegir un día lo marca y avisa de dónde está (su celda), para que la página ancle junto a ella el panel rápido. */
   protected elegir(fecha: string, event?: Event): void {
+    if (this.suprimirClic) return;
     this.diaElegido.set(fecha);
     const celda = (event?.currentTarget as HTMLElement | null) ?? null;
     if (celda) this.abrirDia.emit({ fecha, ancla: celda.getBoundingClientRect() });

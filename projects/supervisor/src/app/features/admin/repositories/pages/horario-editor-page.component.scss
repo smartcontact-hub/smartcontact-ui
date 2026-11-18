@@ -84,3 +84,8 @@
   border-radius: var(--sc-radius-lg);
   background: var(--sc-bg-surface);
 }
+
+/* «Calendario activo»: el interruptor pegado a su texto. */
+.cabecera__acciones .switch-field {
+  gap: var(--sc-spacing-0-5);
+}

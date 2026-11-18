@@ -117,10 +117,12 @@ export class HorarioDiaPanelComponent {
   protected readonly tipos = computed(() => {
     this.lang();
     const t = (k: string): string => this.translate.instant(`repositories.horarios.x.panel.${k}`);
+    // «Otras horas» ya no se ofrece: solo aparece para una fecha especial que ya las tiene, para no perderlas al editarla.
+    const conHoras = (this.existente()?.entrada.slots.length ?? 0) > 0;
     return [
       { value: 'festivo', label: t('holiday') },
       { value: 'closed', label: t('closed') },
-      { value: 'open', label: t('open') },
+      ...(conHoras ? [{ value: 'open', label: t('open') }] : []),
     ];
   });
 

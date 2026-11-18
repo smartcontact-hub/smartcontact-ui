@@ -1675,6 +1675,9 @@
           "year": "Année"
         },
         "layers": {
+          "group_holidays": "Jours fériés",
+          "group_other": "Autres",
+          "own": "Jours fériés propres",
           "button": "Filtres",
           "label": "Afficher",
           "week": "Semaine habituelle",
@@ -1707,6 +1710,7 @@
           "edit": "Modifier les données"
         },
         "rules": {
+          "rest": "Reste de l'année",
           "title": "Règles du calendrier",
           "week_edit": "Modifier la semaine habituelle",
           "week_hint": "Ce qui vaut quand rien d'autre ne s'applique.",

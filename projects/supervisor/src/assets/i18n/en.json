@@ -1675,6 +1675,9 @@
           "year": "Year"
         },
         "layers": {
+          "group_holidays": "Holidays",
+          "group_other": "Other",
+          "own": "Own holidays",
           "button": "Filters",
           "label": "Show",
           "week": "Regular week",
@@ -1707,6 +1710,7 @@
           "edit": "Edit details"
         },
         "rules": {
+          "rest": "Rest of the year",
           "title": "Calendar rules",
           "week_edit": "Edit the regular week",
           "week_hint": "What applies when nothing else does.",

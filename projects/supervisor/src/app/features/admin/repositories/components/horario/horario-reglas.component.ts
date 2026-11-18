@@ -13,6 +13,7 @@ import {
   type Festivo,
   type Periodo,
   type Franja,
+  resumenDeLaSemana,
   type Semana,
   textoDeFranja,
 } from '../../state/horarios.core.mjs';
@@ -94,7 +95,11 @@ export class HorarioReglasComponent {
     this.lang();
     const dia = new Intl.DateTimeFormat(this.language.locale(), { day: 'numeric', month: 'short' });
     const conAnio = new Intl.DateTimeFormat(this.language.locale(), { day: 'numeric', month: 'short', year: 'numeric' });
+    const t = (k: string): string => this.translate.instant(k);
+    const abreviados = CLAVES_DIA.map((d) => t(`repositories.horarios.days_short.${d}`));
     return this.periodos().map((p) => ({
+      horario: this.opcionesDeHorarios().find((o) => o.value === p.weekId)?.label ?? '',
+      resumen: resumenDeLaSemana(p.week, abreviados, t('repositories.horarios.closed'), t('repositories.horarios.all_day')),
       id: p.id,
       nombre: p.name,
       color: p.color,

@@ -618,3 +618,40 @@
 .anio.anio--trimestre {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
+
+/* El rango que se arrastra de un día a otro (se configura como periodo al soltar). Las celdas no se seleccionan como texto. */
+.dia,
+.mini {
+  user-select: none;
+}
+
+.dia.dia--rango,
+.mini.mini--rango {
+  background: var(--sc-bg-primary-subtle, var(--sc-bg-hover));
+  outline: 1px solid var(--sc-border-primary);
+  outline-offset: -1px;
+}
+
+/* Los bloques del botón de filtros: periodos, festivos y el resto, cada uno con su título. */
+.filtros__bloque {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
+}
+
+.filtros__titulo {
+  margin: 0;
+  color: var(--sc-text-secondary);
+}
+
+/* Trimestre: tres meses compactos arriba, sin estirar sus semanas a todo el alto. */
+.anio.anio--trimestre {
+  grid-auto-rows: auto;
+  align-content: start;
+  gap: var(--sc-spacing-1);
+
+  .anio__rejilla {
+    grid-template-rows: auto repeat(6, var(--sc-spacing-2-25));
+    flex: none;
+  }
+}
