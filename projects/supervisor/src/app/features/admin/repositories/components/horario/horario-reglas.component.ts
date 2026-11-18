@@ -18,6 +18,7 @@ import {
   textoDeFranja,
 } from '../../state/horarios.core.mjs';
 
+import { HorarioSemanaResumenComponent } from './horario-semana-resumen.component';
 import { type FiltroGrupo, HorarioFiltroMenuComponent } from './horario-filtro-menu.component';
 
 const aFecha = (iso: string): Date => new Date(`${iso}T12:00:00`);
@@ -31,7 +32,7 @@ const CLAVES_DIA = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const;
  */
 @Component({
   selector: 'sc-horario-reglas',
-  imports: [HorarioFiltroMenuComponent, ScButtonComponent, ScFactRowComponent, ScMultiSelectComponent, ScSectionCardComponent, ScSelectButtonComponent, ScSelectComponent, ScSubsectionComponent, ScTagComponent, TooltipModule, TranslateModule],
+  imports: [HorarioFiltroMenuComponent, HorarioSemanaResumenComponent, ScButtonComponent, ScFactRowComponent, ScMultiSelectComponent, ScSectionCardComponent, ScSelectButtonComponent, ScSelectComponent, ScSubsectionComponent, ScTagComponent, TooltipModule, TranslateModule],
   templateUrl: './horario-reglas.component.html',
   styleUrl: './horario-reglas.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -108,7 +109,7 @@ export class HorarioReglasComponent {
     const abreviados = CLAVES_DIA.map((d) => t(`repositories.horarios.days_short.${d}`));
     return this.periodos().map((p) => ({
       horario: this.opcionesDeHorarios().find((o) => o.value === p.weekId)?.label ?? '',
-      resumen: resumenDeLaSemana(p.week, abreviados, t('repositories.horarios.closed'), t('repositories.horarios.all_day')),
+      semana: p.week,
       id: p.id,
       nombre: p.name,
       color: p.color,

@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import type { GroupRef } from '@smartcontact-hub/components';
 
 import { injectLangChange } from '@core/utils/lang-change';
 
@@ -8,6 +7,8 @@ import { DIAS_DE_LA_SEMANA } from '../components/horario/horario-semana.componen
 import { RepoListPageComponent } from '../components/repo-list-page.component';
 import { RepoColumnDef, RepoPageConfig } from '../components/repo-types';
 import { resumenDeLaSemana } from '../state/horarios.core.mjs';
+import { HORARIOS_EN_EL_VUI } from '../state/horarios.semilla.mjs';
+import { HorarioUsoService } from '../state/horario-uso.service';
 import { HorariosTipoService } from '../state/horarios-tipo.service';
 import { type HorarioTipo, HorariosTipoStore } from '../state/horarios-tipo.store';
 
@@ -36,8 +37,23 @@ export class HorariosTipoPageComponent {
     };
   });
 
+  private readonly uso = inject(HorarioUsoService);
+
+  /** «Calendarios, Grupos, VUI»: los sitios donde se usa el horario. Los calendarios, por su `weekId`; los grupos, por los calendarios
+   *  con los que atienden; el VUI, por ahora un dato de ejemplo. «—» si no lo usa nadie. */
+  protected usadoEn(id: number): string {
+    this.lang();
+    const calendarios = this.servicio.usos(id);
+    const sitios: string[] = [];
+    if (calendarios.length > 0) sitios.push(this.translate.instant('repositories.horariosTipo.use_calendars') as string);
+    if (this.uso.grupos(new Set(calendarios.map((u) => u.calendario.id))).length > 0) sitios.push(this.translate.instant('repositories.horariosTipo.use_groups') as string);
+    if (HORARIOS_EN_EL_VUI.has(id)) sitios.push(this.translate.instant('repositories.horariosTipo.use_vui') as string);
+    return sitios.length > 0 ? sitios.join(', ') : '—';
+  }
+
   private readonly columnas: readonly RepoColumnDef<HorarioTipo>[] = [
     { key: 'name', labelKey: 'repositories.columns.name', kind: 'text', accessor: (i) => i.name, emphasis: true, sortable: true },
+    { key: 'description', labelKey: 'repositories.columns.description', kind: 'truncate', accessor: (i) => i.description, sortable: true },
     {
       key: 'week',
       labelKey: 'repositories.horarios.col_week',
@@ -47,13 +63,10 @@ export class HorariosTipoPageComponent {
     {
       key: 'uses',
       labelKey: 'repositories.horariosTipo.col_uses',
-      kind: 'groups',
-      width: '280px',
-      // Los calendarios que lo usan: «—» si ninguno, su nombre si es uno y, con varios, la cifra con sus nombres al pasar.
-      accessor: (h) => String(this.servicio.cuantos(h.id)),
-      groups: (h) => this.servicio.usos(h.id).map((u): GroupRef => ({ id: u.calendario.id, name: u.calendario.name, active: u.calendario.status === 'active' })),
-      groupsDisplay: 'adaptive',
-      groupsAriaKey: 'repositories.horariosTipo.uses_aria',
+      kind: 'truncate',
+      width: '240px',
+      // Dónde se usa, en una línea y separado por comas: Calendarios, Grupos, VUI (cada uno solo si de verdad lo usa).
+      accessor: (h) => this.usadoEn(h.id),
       sortable: true,
     },
   ];

@@ -1,0 +1,57 @@
+:host {
+  display: block;
+  min-inline-size: 0;
+}
+
+.semana {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Cada grupo de días: sus días a la izquierda, fijos, y sus tramos a continuación, que bajan de línea si son muchos. */
+.grupo {
+  display: grid;
+  grid-template-columns: 3.6rem minmax(0, 1fr);
+  align-items: start;
+  gap: var(--sc-spacing-0-5);
+}
+
+.grupo__dias {
+  white-space: nowrap;
+  padding-block: var(--sc-spacing-0-125);
+  color: var(--sc-text-secondary);
+}
+
+.grupo__tramos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sc-spacing-0-25);
+  min-inline-size: 0;
+}
+
+.pildora {
+  display: inline-block;
+  padding: var(--sc-spacing-0-125) var(--sc-spacing-0-5);
+  border-radius: var(--sc-radius-sm);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+
+  @each $color in ('blue', 'green', 'purple', 'orange', 'teal', 'amber', 'red', 'brown', 'gray') {
+    &[data-color='#{$color}'] {
+      background: var(--sc-label-#{$color}-bg);
+      color: var(--sc-label-#{$color}-text);
+    }
+  }
+}
+
+.pildora--cerrado {
+  font-weight: 400;
+}
+
+.pildora--mas {
+  cursor: default;
+}

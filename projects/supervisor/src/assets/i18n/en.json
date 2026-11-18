@@ -1804,7 +1804,10 @@
       "name_placeholder": "E.g.: Office 9 to 6",
       "edit_breadcrumb": "Edit schedule",
       "create_submit": "Create schedule",
-      "col_uses": "Calendars",
+      "col_uses": "Used in",
+      "use_calendars": "Calendars",
+      "use_groups": "Groups",
+      "use_vui": "VUI",
       "uses_aria": "Used in {{count}} calendars",
       "uses_aria_one": "Used in 1 calendar",
       "toasts": {

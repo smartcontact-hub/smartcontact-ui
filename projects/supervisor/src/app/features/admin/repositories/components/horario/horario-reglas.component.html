@@ -22,7 +22,8 @@
             <sc-tag class="fila__etiqueta" variant="label" [bordered]="false" labelColor="gray" [value]="'repositories.horarios.x.rules.general' | translate" />
             <span class="fila__fechas sc-text-caption-regular">{{ 'repositories.horarios.x.rules.general_hint' | translate }}</span>
           </span>
-          <span class="fila__detalle sc-text-caption-regular" [pTooltip]="nombreGeneral() + ' · ' + resumenGeneral()" showOnEllipsis tooltipPosition="top">{{ nombreGeneral() }} · {{ resumenGeneral() }}</span>
+          <span class="fila__horario sc-text-caption-semibold">{{ nombreGeneral() }}</span>
+          <sc-horario-semana-resumen [semana]="semana()" color="green" />
         </span>
         <span class="fila__acciones fila__acciones--hover">
           <sc-button variant="secondary" appearance="text" size="sm" icon="edit" [ariaLabel]="'repositories.horarios.x.general_modal.title' | translate" (clicked)="editarSemana.emit()" />
@@ -39,7 +40,8 @@
               }
               <span class="fila__fechas sc-text-caption-regular" [pTooltip]="p.fechas + (p.repite ? ' · ' + ('repositories.horarios.x.rules.yearly' | translate) : '')" showOnEllipsis tooltipPosition="top">{{ p.fechas }}@if (p.repite) { · {{ 'repositories.horarios.x.rules.yearly' | translate }} }</span>
             </span>
-            <span class="fila__detalle sc-text-caption-regular" [pTooltip]="p.horario + ' · ' + p.resumen" showOnEllipsis tooltipPosition="top">{{ p.horario }} · {{ p.resumen }}</span>
+            <span class="fila__horario sc-text-caption-semibold">{{ p.horario }}</span>
+            <sc-horario-semana-resumen [semana]="p.semana" [color]="p.color === 'black' ? 'gray' : p.color" />
           </span>
           <span class="fila__acciones fila__acciones--hover">
             <sc-button variant="secondary" appearance="text" size="sm" icon="edit" [ariaLabel]="('repositories.horarios.period_edit' | translate) + ' ' + p.nombre" (clicked)="abrirPeriodo.emit(p.id)" />

@@ -2,4 +2,5 @@ import type { CalendarioDeFestivos, Horario, HorarioTipo } from './horarios.core
 
 export const HORARIOS_SEMILLA: readonly Horario[];
 export const HORARIOS_TIPO_SEMILLA: readonly HorarioTipo[];
+export const HORARIOS_EN_EL_VUI: ReadonlySet<number>;
 export const FESTIVOS_SEMILLA: readonly CalendarioDeFestivos[];

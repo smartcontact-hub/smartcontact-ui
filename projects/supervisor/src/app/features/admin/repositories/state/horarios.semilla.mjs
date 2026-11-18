@@ -177,5 +177,37 @@ const NOMBRES_DE_HORARIO = { 8: 'Jornada intensiva (8–15)', 9: 'Postventa (vie
 /** Los calendarios de ejemplo, cada uno apuntando a su horario. */
 export const HORARIOS_SEMILLA = separados.calendarios;
 
+/** Para qué sirve cada horario, en una línea. */
+const DESCRIPCIONES_DE_HORARIO = {
+  1: 'Oficina estándar, de lunes a viernes',
+  2: 'Primer turno del centro de atención',
+  3: 'Segundo turno, hasta las 23:00',
+  4: 'Turno de noche, cruza la medianoche',
+  5: 'Cobertura reducida del fin de semana',
+  6: 'Atención a Latinoamérica por la tarde',
+  7: 'Urgencias, todos los días a todas horas',
+  8: 'Horario corto de verano',
+  9: 'Postventa, con el viernes más corto',
+  10: 'Jornada partida con cierre del viernes a las 14:00',
+  11: 'Ejemplo con muchos tramos por día, para probar cómo se ve',
+};
+
+/** Un horario con muchas franjas por día (incluidas algunas a minuto exacto): sirve para estresar cómo se representa. */
+const MUCHAS_FRANJAS = [
+  [480, 600],
+  [615, 720],
+  [735, 840],
+  [854, 960],
+  [975, 1080],
+  [1095, 1200],
+  [1215, 1320],
+];
+
 /** Los horarios (semanas tipo) de ejemplo: «Horario Verano» lo usan tres calendarios. */
-export const HORARIOS_TIPO_SEMILLA = separados.horarios.map((h) => ({ ...h, name: NOMBRES_DE_HORARIO[h.id] ?? h.name }));
+export const HORARIOS_TIPO_SEMILLA = [
+  ...separados.horarios,
+  { id: separados.horarios.length + 1, name: 'Turnos con pausas (muchas franjas)', description: '', week: [MUCHAS_FRANJAS, MUCHAS_FRANJAS, MUCHAS_FRANJAS, MUCHAS_FRANJAS, MUCHAS_FRANJAS.slice(0, 4), [[600, 840], [900, 1020]], []] },
+].map((h) => ({ ...h, name: NOMBRES_DE_HORARIO[h.id] ?? h.name, description: DESCRIPCIONES_DE_HORARIO[h.id] ?? h.description }));
+
+/** Dónde se usa cada horario además de en calendarios y grupos: el VUI (dato de ejemplo; aún no hay modelo del VUI). */
+export const HORARIOS_EN_EL_VUI = new Set([1, 7, 10]);

@@ -1804,7 +1804,10 @@
       "name_placeholder": "Ej.: Oficina de 9 a 18",
       "edit_breadcrumb": "Editar horario",
       "create_submit": "Crear horario",
-      "col_uses": "Calendarios",
+      "col_uses": "Se usa en",
+      "use_calendars": "Calendarios",
+      "use_groups": "Grupos",
+      "use_vui": "VUI",
       "uses_aria": "Usado en {{count}} calendarios",
       "uses_aria_one": "Usado en 1 calendario",
       "toasts": {

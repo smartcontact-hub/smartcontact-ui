@@ -167,10 +167,17 @@ sc-section-card {
 
 /* Un periodo: su nombre y fechas arriba y su horario debajo; sus acciones salen al pasar por la fila. */
 .fila--periodo {
+  position: relative;
   align-items: flex-start;
 }
 
 .fila__acciones--hover {
+  /* Flotan sobre la esquina de la fila: así no le quitan ancho a los tramos. */
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-end: 0;
+  border-radius: var(--sc-radius-md);
+  background: var(--sc-bg-surface);
   opacity: 0;
   transition: opacity 150ms ease-out;
 }
@@ -211,4 +218,24 @@ sc-section-card {
 /* Los enlaces de «gestionar»: icono en su baldosa y texto, que se subraya al pasar (`scFactRow` del DS, como el resumen del grupo). */
 .enlaces {
   margin: 0;
+}
+
+/* El nombre del horario, sobre sus tramos de colores. */
+.fila__horario {
+  color: var(--sc-text-primary);
+}
+
+.fila--periodo .fila__cuerpo {
+  gap: var(--sc-spacing-0-5);
+}
+
+/* Los periodos no se desplazan por dentro: un horario con muchas franjas crece, no se corta. */
+.lista--periodos {
+  max-block-size: none;
+  overflow: visible;
+}
+
+/* El resumen de la semana usa todo el ancho de la fila: si no, sus píldoras bajaban de línea de una en una. */
+.fila--periodo .fila__cuerpo > sc-horario-semana-resumen {
+  align-self: stretch;
 }
