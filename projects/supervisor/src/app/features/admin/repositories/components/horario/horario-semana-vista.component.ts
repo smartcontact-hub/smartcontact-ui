@@ -15,7 +15,7 @@ const horaTexto = (m: number): string => `${Math.floor(m / 60)}:${dosCifras(m % 
 
 /**
  * La semana de un horario de un vistazo: una fila por día con la línea de las 24 horas y, sobre ella, los tramos en que se atiende,
- * con las horas de cada día a la derecha y el total arriba. Solo la semana habitual (sin periodos ni fechas especiales): cada
+ * con las horas de cada día a la derecha. Solo la semana habitual (sin periodos ni fechas especiales): cada
  * semana es igual a la anterior. Un día cerrado se ve deshabilitado (letra tachada, línea rayada y «Cerrado»). El día de hoy lleva
  * la letra subrayada. Pieza propia del experimento.
  */
@@ -74,10 +74,5 @@ export class HorarioSemanaVistaComponent {
         aria: `${largo.format(aFecha(fecha))}: ${dia.tramos.length > 0 ? barras.map((b) => b.texto).join(', ') : (nota ?? cerrado)}`,
       };
     });
-  });
-
-  protected readonly total = computed(() => {
-    this.lang();
-    return this.translate.instant('repositories.horarios.sv.total', { hours: this.formatoHoras(this.dias().reduce((s, d) => s + d.minutos, 0)) }) as string;
   });
 }

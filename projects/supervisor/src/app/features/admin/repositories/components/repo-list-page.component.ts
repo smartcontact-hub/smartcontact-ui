@@ -32,7 +32,8 @@ import {
   ScTagComponent as TagComponent,
 } from '@smartcontact-hub/components';
 import { RepoFormPanelComponent, RepoFormSubmission } from './repo-form-panel.component';
-import { RepoEntity, RepoPageConfig, RepoStore } from './repo-types';
+import { HorarioSemanaMiniComponent } from './horario/horario-semana-mini.component';
+import { RepoColumnDef, RepoEntity, RepoPageConfig, RepoStore } from './repo-types';
 import { injectLangChange } from '@core/utils/lang-change';
 import { copyName } from '@shared/utils/copy-name';
 import { hoy } from '@shared/utils/today';
@@ -57,6 +58,7 @@ import { injectBorradoSimple } from '@features/admin/services/confirmar-borrado'
     CeldaVaciaComponent,
     GroupPopoverComponent,
     ClickOutsideDirective,
+    HorarioSemanaMiniComponent,
     IconComponent,
     ListPageComponent,
     RepoFormPanelComponent,
@@ -282,6 +284,11 @@ export class RepoListPageComponent<T extends RepoEntity> {
   /** El texto entero al pasar el ratón, solo en las columnas que recortan: con un dato más largo que lo medido, la
    *  celda corta con «…» (DD-124). */
   /** El texto entero de una celda que se corta, para su tooltip (`showOnEllipsis`); vacío, sin tooltip. */
+  /** La semana de una celda de horario, si su columna la pide. */
+  protected semanaDe(item: T, key: string): ReturnType<NonNullable<RepoColumnDef<T>['semana']>> | null {
+    return this.config().columns.find((c) => c.key === key)?.semana?.(item) ?? null;
+  }
+
   protected cellTitle(item: T, key: string): string {
     return this.isKind(key, 'truncate') ? this.getCellValue(item, key) : '';
   }

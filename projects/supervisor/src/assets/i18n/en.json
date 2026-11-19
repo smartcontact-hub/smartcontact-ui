@@ -1529,6 +1529,7 @@
         "open": "Served",
         "closed": "Not served"
       },
+      "col_schedule": "Schedule",
       "col_availability": "Availability",
       "col_use": "Use",
       "section_uses": "Where it is used",

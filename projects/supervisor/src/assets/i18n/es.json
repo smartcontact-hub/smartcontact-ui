@@ -1529,6 +1529,7 @@
         "open": "Se atiende",
         "closed": "No se atiende"
       },
+      "col_schedule": "Horario",
       "col_availability": "Disponibilidad",
       "col_use": "Uso",
       "section_uses": "Dónde se usa",

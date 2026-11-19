@@ -1529,6 +1529,7 @@
         "open": "Assuré",
         "closed": "Non assuré"
       },
+      "col_schedule": "Horaire",
       "col_availability": "Disponibilité",
       "col_use": "Utilisation",
       "section_uses": "Où il est utilisé",

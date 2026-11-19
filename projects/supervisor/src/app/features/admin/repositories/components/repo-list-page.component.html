@@ -108,6 +108,9 @@
       <!-- Estado con el `tag` del DS y su severidad (DD-76): Figma dibuja así el estado
            de Agentes. El tono lo declara cada instancia en su `statusMap`. -->
       <sc-tag [severity]="status.tone" [value]="status.labelKey | translate" />
+    } @else if (semanaDe(item, col.field); as sem) {
+      <!-- La semana en pequeño: siete rayas sobre las 24 horas. -->
+      <sc-horario-semana-mini [semana]="$any(sem)" [etiqueta]="getCellValue(item, col.field)" />
     } @else if (showDash(item, col.field)) {
       <sc-celda-vacia />
     } @else {
