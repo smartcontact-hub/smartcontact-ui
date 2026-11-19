@@ -11,6 +11,7 @@ import {
   ScMultiSelectComponent,
   ScSectionCardComponent,
   ScSelectButtonComponent,
+  ScTagComponent,
   ScSelectComponent,
   ScSubsectionComponent,
   ScToggleSwitchComponent,
@@ -39,6 +40,7 @@ import {
   duenoDe,
   type FechaEspecial,
   type Horario,
+  normalizarHorario,
   type Periodo,
   resumenDeLaSemana,
   type Semana,
@@ -50,13 +52,14 @@ import { HorariosStore } from '../state/horarios.store';
 
 type Borrador = Omit<Horario, 'id'>;
 
-const LABORABLE = [[540, 1080]] as const;
 const VACIO: Borrador = {
   name: '',
   timezone: 'Europe/Madrid',
   description: '',
   status: 'active',
-  week: [LABORABLE, LABORABLE, LABORABLE, LABORABLE, LABORABLE, [], []],
+  // De primeras, sin configurar: ningún día tiene franjas ni está cerrado.
+  week: [[], [], [], [], [], [], []],
+  closedDays: [],
   periods: [],
   specials: [],
   holidayCalendarIds: [],
@@ -86,6 +89,7 @@ const aFecha = (iso: string): Date => new Date(`${iso}T12:00:00`);
     ScMultiSelectComponent,
     ScSectionCardComponent,
     ScSelectButtonComponent,
+    ScTagComponent,
     ScSelectComponent,
     ScSubsectionComponent,
     ScToggleSwitchComponent,
@@ -226,6 +230,7 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
     }));
   });
   protected readonly usoActual = computed(() => this.usos().find((u) => u.tipo === this.usoVista())?.items ?? []);
+  protected readonly iconoDeUso = computed(() => ICONO_DE_USO[this.usoVista()]);
   protected readonly usoNada = computed(() => (this.lang(), this.translate.instant(`repositories.horarios.uses_none_${CLAVE_DE_USO[this.usoVista()]}`) as string));
 
   /** La ayuda de «Activo», siempre: quién lo usa y qué pasa al apagarlo (DD-152), o dónde se usa si nadie lo usa. */
@@ -281,7 +286,7 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
     this.mode.set('edit');
     this.horarioId = horario.id;
     this.nombreGuardado.set(horario.name);
-    const { id: _id, ...datos } = horario;
+    const { id: _id, ...datos } = normalizarHorario(horario as unknown as Record<string, unknown>) as Horario;
     this.form.set(datos);
     this.dirtyState.markPristine();
   }
@@ -295,8 +300,22 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
       void this.router.navigateByUrl('/admin/horarios', { replaceUrl: true });
       return;
     }
-    const { id: _id, ...datos } = origen;
+    const { id: _id, ...datos } = normalizarHorario(origen as unknown as Record<string, unknown>) as Horario;
     this.form.set({ ...datos, name: nombreDeCopia(origen.name, this.store.items().map((h) => h.name)) });
+  }
+
+  /** Las franjas de la semana cambian: un día con franjas deja de estar cerrado; quitarlas todas lo deja sin configurar, no cerrado. */
+  protected ponerSemana(week: Semana): void {
+    this.form.update((f) => ({ ...f, week, closedDays: (f.closedDays ?? []).filter((d) => (week[d] ?? []).length === 0) }));
+  }
+
+  /** Marca o desmarca un día como cerrado; cerrarlo borra sus franjas. */
+  protected cerrarDia(dia: number, cerrado: boolean): void {
+    this.form.update((f) => ({
+      ...f,
+      week: cerrado ? f.week.map((x, i) => (i === dia ? [] : x)) : f.week,
+      closedDays: cerrado ? [...new Set([...(f.closedDays ?? []), dia])].sort() : (f.closedDays ?? []).filter((d) => d !== dia),
+    }));
   }
 
   protected update<K extends keyof Borrador>(key: K, value: Borrador[K]): void {

@@ -16,7 +16,7 @@
  * `sc-horario-franjas`), así que el nombre se centra con la PRIMERA franja. Entre días, aire, sin líneas (DD-113). */
 .semana__dia {
   display: grid;
-  grid-template-columns: 7rem minmax(0, 1fr);
+  grid-template-columns: 7rem minmax(0, 1fr) auto;
   align-items: center;
   column-gap: var(--sc-spacing-1);
   row-gap: var(--sc-spacing-0-25);
@@ -31,7 +31,7 @@
 }
 
 .semana__error {
-  grid-column: 2;
+  grid-column: 2 / -1;
   margin: 0;
 }
 
@@ -43,4 +43,51 @@
   display: flex;
   flex-direction: column;
   gap: var(--sc-spacing-0-5);
+}
+
+.semana__cerrado {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  padding: var(--sc-spacing-0-375) var(--sc-spacing-1);
+  border-radius: var(--sc-radius-md);
+  background: var(--sc-bg-danger-subtle);
+  color: var(--sc-text-danger);
+  justify-self: start;
+}
+
+.semana__dia--cerrado .semana__nombre {
+  color: var(--sc-text-danger);
+}
+
+/* El reloj tachado que cierra o reabre el día; puesto, en rojo suave. */
+.semana__cierre {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--sc-spacing-2-5);
+  block-size: var(--sc-spacing-2-5);
+  padding: 0;
+  border: 0;
+  border-radius: var(--sc-radius-md);
+  background: transparent;
+  color: var(--sc-text-subtle);
+  cursor: pointer;
+  transition-property: background-color, color;
+  transition-duration: 150ms;
+
+  &:hover {
+    background: var(--sc-bg-hover);
+    color: var(--sc-text-primary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-border-focus);
+    outline-offset: 1px;
+  }
+
+  &--puesto {
+    background: var(--sc-bg-danger-subtle);
+    color: var(--sc-text-danger);
+  }
 }

@@ -34,6 +34,8 @@ export interface Horario {
   readonly description: string;
   readonly status: string;
   readonly week: Semana;
+  /** Los días (0 = lunes) marcados como cerrados. Un día sin franjas y sin marcar está sin configurar. */
+  readonly closedDays?: readonly number[];
   readonly periods: readonly Periodo[];
   readonly specials: readonly FechaEspecial[];
   /** Los calendarios de festivos que aplica. */

@@ -12,50 +12,65 @@ export const ICONO_DE_USO: Readonly<Record<TipoDeUso, string>> = { grupos: 'grou
 /** La clave de traducción de cada sitio (`repositories.horarios.uses.<clave>`). */
 export const CLAVE_DE_USO: Readonly<Record<TipoDeUso, string>> = { grupos: 'groups', calendarios: 'calendars' };
 
+export interface ItemDeUso {
+  readonly nombre: string;
+  /** Etiquetas del sitio: los canales de un grupo, el ámbito de un calendario. */
+  readonly etiquetas: readonly string[];
+  readonly grupoId?: number;
+}
+
 export interface UsoDeHorario {
   readonly tipo: TipoDeUso;
-  readonly items: readonly { readonly nombre: string; readonly detalle?: string; readonly grupoId?: number }[];
+  readonly items: readonly ItemDeUso[];
 }
 
 /**
- * Datos de EJEMPLO para estresar la pantalla: dónde más se usan los horarios además de en los grupos (que son reales). El
- * modelo aún no guarda estos vínculos: son nombres inventados, por id de horario, para ver cómo se reflejan en la tabla y
- * en «Dónde se usa» cuando un horario se usa en muchos sitios.
+ * Datos de EJEMPLO para estresar la pantalla: el modelo aún no guarda estos vínculos, así que cada horario recibe, por su id,
+ * una lista inventada de grupos y de calendarios (de 2 a 9 de cada), para ver cómo se reflejan cuando un horario se usa en muchos
+ * sitios. Los grupos reales (los que lo tienen en un canal) van delante.
  */
-const EJEMPLOS: Readonly<Record<number, Partial<Record<Exclude<TipoDeUso, 'grupos'>, readonly string[]>>>> = {
-  1: { calendarios: ['Calendario laboral España', 'Calendario Barcelona', 'Calendario Madrid'] },
-  2: { calendarios: ['Calendario laboral España'] },
-  3: { calendarios: ['Calendario laboral España'] },
-  4: { calendarios: ['Calendario de guardias'] },
-  5: { calendarios: ['Calendario de festivos'] },
-  6: { calendarios: ['Calendario México', 'Calendario Colombia'] },
-  7: { calendarios: ['Calendario de guardias'] },
-  8: { calendarios: ['Calendario de verano'] },
-  9: { calendarios: ['Calendario laboral España', 'Calendario de verano'] },
-};
+const GRUPOS = [
+  'Atención al cliente', 'Soporte técnico', 'Ventas', 'Postventa', 'Reclamaciones', 'Facturación', 'Retención', 'Cobros',
+  'Seguros', 'Onboarding', 'Empresas', 'Particulares', 'VIP', 'Back office', 'Incidencias', 'Logística',
+];
+const CANALES = ['Web Chat', 'WhatsApp', 'Email', 'Voz', 'SMS', 'Telegram'];
+const CALENDARIOS: readonly (readonly [string, string])[] = [
+  ['Calendario laboral España', 'España'], ['Calendario Barcelona', 'Cataluña'], ['Calendario Madrid', 'Madrid'],
+  ['Calendario México', 'México'], ['Calendario Colombia', 'Colombia'], ['Calendario de guardias', 'Interno'],
+  ['Calendario de verano', 'Estacional'], ['Calendario de festivos', 'Festivos'], ['Calendario de campañas', 'Marketing'],
+  ['Calendario Portugal', 'Portugal'],
+];
+
+function ejemplo(id: number): { grupos: ItemDeUso[]; calendarios: ItemDeUso[] } {
+  const nGrupos = 2 + ((id * 5) % 8);
+  const nCal = 2 + ((id * 3) % 5);
+  return {
+    grupos: Array.from({ length: nGrupos }, (_, k) => ({
+      nombre: GRUPOS[(id * 3 + k * 5) % GRUPOS.length],
+      etiquetas: CANALES.filter((_, c) => (c + k + id) % 3 !== 0).slice(0, 1 + ((k + id) % 3)),
+    })),
+    calendarios: Array.from({ length: nCal }, (_, k) => {
+      const [nombre, ambito] = CALENDARIOS[(id + k * 3) % CALENDARIOS.length];
+      return { nombre, etiquetas: [ambito] };
+    }),
+  };
+}
 
 /** Dónde se usa un horario: los grupos de verdad (con el canal) y los demás sitios (calendarios), de ejemplo. Solo los sitios que lo usan. */
 export function usosDelHorario(id: number | null, grupos: readonly Group[]): readonly UsoDeHorario[] {
   if (id === null) return [];
-  const usos: UsoDeHorario[] = [];
   const mios = grupos.filter((g) => subcanalesConHorario(g).some((s) => s.id === id));
-  if (mios.length > 0) {
-    usos.push({
-      tipo: 'grupos',
-      items: mios.map((g) => ({
-        nombre: g.name,
-        grupoId: g.id,
-        detalle: subcanalesConHorario(g)
-          .filter((s) => s.id === id)
-          .map((s) => (s.sub === 'chat' ? 'Web Chat' : 'WhatsApp'))
-          .join(' · '),
-      })),
-    });
-  }
-  const ejemplo = EJEMPLOS[id] ?? {};
-  for (const tipo of TIPOS_DE_USO.filter((t): t is Exclude<TipoDeUso, 'grupos'> => t !== 'grupos')) {
-    const nombres = ejemplo[tipo];
-    if (nombres?.length) usos.push({ tipo, items: nombres.map((nombre) => ({ nombre })) });
-  }
-  return usos;
+  const reales: ItemDeUso[] = mios.map((g) => ({
+    nombre: g.name,
+    grupoId: g.id,
+    etiquetas: subcanalesConHorario(g)
+      .filter((s) => s.id === id)
+      .map((s) => (s.sub === 'chat' ? 'Web Chat' : 'WhatsApp')),
+  }));
+  const ej = ejemplo(id);
+  const nombresReales = new Set(reales.map((r) => r.nombre));
+  return [
+    { tipo: 'grupos', items: [...reales, ...ej.grupos.filter((g) => !nombresReales.has(g.nombre))] },
+    { tipo: 'calendarios', items: ej.calendarios },
+  ];
 }

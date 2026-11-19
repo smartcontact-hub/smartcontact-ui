@@ -23,6 +23,7 @@
 .sv__rejilla {
   --col-dia: var(--sc-spacing-2-5);
   --col-horas: var(--sc-spacing-4);
+  --col-cierre: var(--sc-spacing-2-5);
 
   display: flex;
   flex-direction: column;
@@ -33,7 +34,7 @@
 .sv__ejes {
   position: relative;
   block-size: var(--sc-spacing-1-5);
-  margin-inline: var(--col-dia) var(--col-horas);
+  margin-inline: var(--col-dia) calc(var(--col-horas) + var(--col-cierre));
   color: var(--sc-text-secondary);
   font-size: var(--sc-font-size-caption);
   font-variant-numeric: tabular-nums;
@@ -78,7 +79,7 @@
 
 .fila {
   display: grid;
-  grid-template-columns: var(--col-dia) minmax(0, 1fr) var(--col-horas);
+  grid-template-columns: var(--col-dia) minmax(0, 1fr) var(--col-horas) var(--col-cierre);
   align-items: center;
 }
 
@@ -90,14 +91,18 @@
   color: var(--sc-text-secondary);
 }
 
-/* Hoy: la letra dentro de un círculo de acción. */
-.fila--hoy .fila__letra {
+/* Todas las letras ocupan el mismo círculo (invisible salvo hoy), así la de hoy no desplaza a las demás. */
+.fila__letra {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   inline-size: var(--sc-spacing-2);
   block-size: var(--sc-spacing-2);
   border-radius: var(--sc-radius-full);
+}
+
+/* Hoy: la letra dentro de un círculo de acción. */
+.fila--hoy .fila__letra {
   background: var(--sc-bg-primary);
   color: var(--sc-text-on-primary);
 }
@@ -109,8 +114,16 @@
   inline-size: 2px;
   translate: -50% 0;
   background: var(--sc-text-danger);
-  pointer-events: none;
+  cursor: help;
   z-index: 1;
+
+  /* Un área de apuntado más ancha que la raya, para dar con ella con el ratón. */
+  &::after {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    inset-inline: -6px;
+  }
 
   &::before {
     content: '';
@@ -344,5 +357,38 @@
 
   &:active {
     cursor: grabbing;
+  }
+}
+
+/* El botón de «día cerrado»: un reloj tachado; puesto, en rojo suave. */
+.cierre {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  justify-self: end;
+  inline-size: var(--sc-spacing-2);
+  block-size: var(--sc-spacing-2);
+  padding: 0;
+  border: 0;
+  border-radius: var(--sc-radius-md);
+  background: transparent;
+  color: var(--sc-text-subtle);
+  cursor: pointer;
+  transition-property: background-color, color;
+  transition-duration: 150ms;
+
+  &:hover {
+    background: var(--sc-bg-hover);
+    color: var(--sc-text-primary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-border-focus);
+    outline-offset: 1px;
+  }
+
+  &--puesto {
+    background: var(--sc-bg-danger-subtle);
+    color: var(--sc-text-danger);
   }
 }

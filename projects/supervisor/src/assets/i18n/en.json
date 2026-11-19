@@ -1521,6 +1521,9 @@
       "days_open": "Days served",
       "no_days_open": "No day is served yet.",
       "sv": {
+        "now": "Current time",
+        "mark_closed": "Mark the day as closed",
+        "reopen": "Reopen the day",
         "remove": "Remove the slot",
         "day_closed": "Closed day",
         "total": "{{hours}} a week",

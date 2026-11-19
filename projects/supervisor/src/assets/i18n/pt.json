@@ -1521,6 +1521,9 @@
       "days_open": "Dias atendidos",
       "no_days_open": "Nenhum dia é atendido ainda.",
       "sv": {
+        "now": "Hora atual",
+        "mark_closed": "Marcar o dia como fechado",
+        "reopen": "Reabrir o dia",
         "remove": "Remover o intervalo",
         "day_closed": "Dia fechado",
         "total": "{{hours}} por semana",

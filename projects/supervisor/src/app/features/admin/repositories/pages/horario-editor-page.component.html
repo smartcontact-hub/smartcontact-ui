@@ -69,9 +69,21 @@
               </sc-selectbutton>
             </div>
             @if (vista() === 'semana') {
-              <sc-horario-semana-vista [semana]="form().week" [zona]="form().timezone" (semanaChange)="update('week', $event)" />
+              <sc-horario-semana-vista
+                [semana]="form().week"
+                [cerrados]="form().closedDays ?? []"
+                [zona]="form().timezone"
+                (semanaChange)="ponerSemana($event)"
+                (cierreChange)="cerrarDia($event.dia, $event.cerrado)"
+              />
             } @else {
-              <sc-horario-semana [semana]="form().week" [falta]="faltaDeSemana()" (semanaChange)="update('week', $event)" />
+              <sc-horario-semana
+                [semana]="form().week"
+                [cerrados]="form().closedDays ?? []"
+                [falta]="faltaDeSemana()"
+                (semanaChange)="ponerSemana($event)"
+                (cierreChange)="cerrarDia($event.dia, $event.cerrado)"
+              />
             }
           </sc-subsection>
         </sc-section-card>
@@ -139,16 +151,21 @@
               <p class="usos__nada sc-text-body-regular">{{ usoNada() }}</p>
             } @else {
               <ul class="usos__lista" role="list">
-                @for (i of usoActual(); track i.nombre) {
-                  <li class="usos__fila">
-                    @if (i.grupoId) {
-                      <a class="usos__enlace sc-text-body-regular" [routerLink]="['/admin/grupos/editar', i.grupoId]">{{ i.nombre }}</a>
-                    } @else {
-                      <span class="sc-text-body-regular">{{ i.nombre }}</span>
-                    }
-                    @if (i.detalle) {
-                      <span class="usos__canales sc-text-caption-regular">{{ i.detalle }}</span>
-                    }
+                @for (i of usoActual(); track $index) {
+                  <li class="uso">
+                    <span class="uso__icono" aria-hidden="true"><sc-icon [name]="iconoDeUso()" [size]="16" /></span>
+                    <span class="uso__cuerpo">
+                      @if (i.grupoId) {
+                        <a class="uso__nombre uso__nombre--enlace sc-text-body-semibold" [routerLink]="['/admin/grupos/editar', i.grupoId]">{{ i.nombre }}</a>
+                      } @else {
+                        <span class="uso__nombre sc-text-body-semibold">{{ i.nombre }}</span>
+                      }
+                      <span class="uso__etiquetas">
+                        @for (e of i.etiquetas; track e) {
+                          <sc-tag severity="secondary" [value]="e" />
+                        }
+                      </span>
+                    </span>
                   </li>
                 }
               </ul>

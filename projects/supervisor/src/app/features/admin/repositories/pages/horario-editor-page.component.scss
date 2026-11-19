@@ -138,17 +138,58 @@
 .usos__lista {
   display: flex;
   flex-direction: column;
-  gap: var(--sc-spacing-0-25);
+  gap: var(--sc-spacing-0-5);
+  max-block-size: 16rem;
   margin: 0;
   padding: 0;
+  overflow-y: auto;
   list-style: none;
 }
 
-.usos__fila {
+/* Cada sitio: su icono en un círculo, el nombre y sus etiquetas. */
+.uso {
   display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-75);
+  padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
+  border: 1px solid var(--sc-border-subtle);
+  border-radius: var(--sc-radius-md);
+  background: var(--sc-bg-surface);
+}
+
+.uso__icono {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--sc-spacing-2-5);
+  block-size: var(--sc-spacing-2-5);
+  border-radius: var(--sc-radius-full);
+  background: var(--sc-bg-hover);
+  color: var(--sc-text-secondary);
+}
+
+.uso__cuerpo {
+  display: flex;
+  flex: 1;
   flex-wrap: wrap;
-  align-items: baseline;
-  gap: var(--sc-spacing-0-5);
+  align-items: center;
+  gap: var(--sc-spacing-0-25) var(--sc-spacing-0-75);
+  min-inline-size: 0;
+}
+
+.uso__nombre--enlace {
+  color: var(--sc-text-link);
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.uso__etiquetas {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--sc-spacing-0-25);
 }
 
 /* Los botones para cambiar de vista, arriba del bloque del horario. */

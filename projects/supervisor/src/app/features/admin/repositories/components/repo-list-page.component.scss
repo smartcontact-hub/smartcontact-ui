@@ -48,3 +48,39 @@
 /* El panel de fila y el menú contextual propios murieron en la Ola 2: ambos
  * los sustituye el <p-menu> compartido, y el botón usa `.rules-kebab-btn`,
  * el kebab global de `main.scss`. */
+
+/* Columna de etiquetas: una línea, sin cortar; el «+N» abre el resto. */
+.chips {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  white-space: nowrap;
+}
+
+.chips__mas {
+  padding: var(--sc-spacing-0-125) var(--sc-spacing-0-75);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-full);
+  background: var(--sc-bg-surface);
+  color: var(--sc-text-primary);
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--sc-bg-hover);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-border-focus);
+    outline-offset: 1px;
+  }
+}
+
+.chips__resto {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}

@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { ScSelectButtonComponent } from '@smartcontact-hub/components';
+import { ScIconComponent } from '@smartcontact-hub/icons';
+import { TooltipModule } from 'primeng/tooltip';
 
 import { injectLangChange } from '@core/utils/lang-change';
 
@@ -15,7 +16,7 @@ export const DIAS_DE_LA_SEMANA = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun
  */
 @Component({
   selector: 'sc-horario-semana',
-  imports: [HorarioFranjasComponent, ScSelectButtonComponent, TranslateModule],
+  imports: [HorarioFranjasComponent, ScIconComponent, TooltipModule, TranslateModule],
   templateUrl: './horario-semana.component.html',
   styleUrl: './horario-semana.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -29,7 +30,10 @@ export class HorarioSemanaComponent {
   readonly falta = input<{ readonly dia: number; readonly codigo: CodigoDeSemana } | null>(null);
   /** Distingue los `id` cuando hay dos semanas en pantalla (la habitual y la de un periodo). */
   readonly prefijo = input('semana');
+  /** Los días (0 = lunes) marcados como cerrados. */
+  readonly cerrados = input<readonly number[]>([]);
   readonly semanaChange = output<Semana>();
+  readonly cierreChange = output<{ readonly dia: number; readonly cerrado: boolean }>();
 
   protected readonly dias = computed(() => {
     this.lang();
@@ -37,31 +41,15 @@ export class HorarioSemanaComponent {
       indice,
       nombre: this.translate.instant(`repositories.horarios.days.${clave}`) as string,
       franjas: this.semana()[indice] ?? [],
+      cerrado: this.cerrados().includes(indice) && (this.semana()[indice] ?? []).length === 0,
     }));
   });
 
-  /** Los días que se atienden (los de los botones marcados) y sus filas con franjas. */
-  protected readonly abiertos = computed(() => this.dias().filter((d) => d.franjas.length > 0).map((d) => d.indice));
-  protected readonly diasAbiertos = computed(() => this.dias().filter((d) => d.franjas.length > 0));
-  protected readonly opcionesDeBoton = computed(() => {
-    this.lang();
-    return DIAS_DE_LA_SEMANA.map((clave, indice) => ({ value: indice, label: this.translate.instant(`repositories.horarios.days_short.${clave}`) as string }));
-  });
-
-  /** Marcar un día lo abre con las franjas del día abierto más cercano; desmarcarlo lo cierra. Todo en un solo cambio. */
-  protected elegirDias(valor: unknown): void {
-    const marcados = new Set((valor as readonly number[] | null) ?? []);
-    const semana = this.semana();
-    const nueva = semana.map((franjas, dia) => {
-      if (!marcados.has(dia)) return [];
-      if (franjas.length > 0) return franjas;
-      const vecino = [...Array(6).keys()].map((n) => semana[(dia + 6 - n) % 7] ?? []).find((f) => f.length > 0);
-      return vecino ?? ([[540, 1080]] as Franja[]);
-    });
-    this.semanaChange.emit(nueva);
-  }
-
   protected ponerDia(dia: number, franjas: readonly Franja[]): void {
     this.semanaChange.emit(this.semana().map((f, i) => (i === dia ? franjas : f)));
+  }
+
+  protected alternarCierre(dia: number, cerrado: boolean): void {
+    this.cierreChange.emit({ dia, cerrado });
   }
 }

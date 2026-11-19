@@ -10,7 +10,7 @@
       @for (d of dias(); track d.fecha) {
         <li class="fila" [class.fila--hoy]="d.esHoy" [class.fila--cerrada]="d.cerrado">
           <span class="fila__dia">
-            <span class="fila__letra sc-text-body-semibold">{{ d.letra }}</span>
+            <span class="fila__letra sc-text-body-semibold" [attr.title]="d.esHoy ? ('repositories.horarios.sv.today' | translate) : null">{{ d.letra }}</span>
           </span>
           <!-- La línea del día: se aprieta en un hueco y se arrastra, sin soltar, hasta donde se quiera; al soltar queda un tramo. -->
           <span
@@ -42,7 +42,7 @@
                 }
                 @if (b.editable) {
                   <button type="button" class="barra__quitar" [attr.aria-label]="'repositories.horarios.sv.remove' | translate" (pointerdown)="$event.stopPropagation()" (click)="quitar(d.indice, b.idx)">
-                    <sc-icon name="close" [size]="12" aria-hidden="true" />
+                    <sc-icon name="delete" [size]="14" aria-hidden="true" />
                   </button>
                   <span class="asa asa--fin" aria-hidden="true" (pointerdown)="empezarBorde($event, d.indice, b.idx, 'fin')"></span>
                 }
@@ -52,13 +52,32 @@
               <span class="seleccion sc-text-caption-semibold" [style.left.%]="s.izq" [style.width.%]="s.ancho">{{ s.texto }}</span>
             }
             @if (d.ahora !== null) {
-              <span class="ahora" [style.left.%]="d.ahora" [attr.title]="d.ahoraTexto" aria-hidden="true"></span>
+              <span
+                class="ahora"
+                [style.left.%]="d.ahora"
+                [pTooltip]="('repositories.horarios.sv.now' | translate) + ' · ' + d.ahoraTexto"
+                tooltipPosition="top"
+                (pointerdown)="$event.stopPropagation()"
+              ></span>
             }
             @if (d.nota) {
               <span class="pista__nota sc-text-caption-semibold"><sc-icon name="block" [size]="14" aria-hidden="true" />{{ d.nota }}</span>
             }
           </span>
           <span class="fila__horas sc-text-body-semibold" [class.fila__horas--nada]="d.minutos === 0">{{ d.horas }}</span>
+          <!-- El día cerrado se marca a propósito: un día sin tramos puede estar solo sin configurar. -->
+          <button
+            type="button"
+            class="cierre"
+            [class.cierre--puesto]="d.marcado"
+            [attr.aria-pressed]="d.marcado"
+            [attr.aria-label]="(d.marcado ? 'repositories.horarios.sv.reopen' : 'repositories.horarios.sv.mark_closed') | translate: { day: d.nombre }"
+            [pTooltip]="(d.marcado ? 'repositories.horarios.sv.reopen' : 'repositories.horarios.sv.mark_closed') | translate"
+            tooltipPosition="left"
+            (click)="alternarCierre(d.indice, !d.marcado)"
+          >
+            <sc-icon name="alarm_off" [size]="16" aria-hidden="true" />
+          </button>
         </li>
       }
     </ul>

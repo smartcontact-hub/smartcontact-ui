@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, input, output, signal } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TooltipModule } from 'primeng/tooltip';
 import { ScIconComponent } from '@smartcontact-hub/icons';
 
 import { LanguageService } from '@core/services/language.service';
@@ -53,7 +54,7 @@ interface Arrastre {
  */
 @Component({
   selector: 'sc-horario-semana-vista',
-  imports: [ScIconComponent, TranslateModule],
+  imports: [ScIconComponent, TooltipModule, TranslateModule],
   templateUrl: './horario-semana-vista.component.html',
   styleUrl: './horario-semana-vista.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -70,7 +71,10 @@ export class HorarioSemanaVistaComponent {
 
   readonly semana = input.required<Semana>();
   readonly zona = input('Europe/Madrid');
+  /** Los días (0 = lunes) marcados como cerrados. */
+  readonly cerrados = input<readonly number[]>([]);
   readonly semanaChange = output<Semana>();
+  readonly cierreChange = output<{ readonly dia: number; readonly cerrado: boolean }>();
 
   /** El instante de ahora en la zona del horario; se refresca cada minuto. */
   private readonly ahora = signal(Date.now());
@@ -80,6 +84,10 @@ export class HorarioSemanaVistaComponent {
 
   /** Las marcas de horas del eje: una por hora (con poco ancho se esconden las impares); la 23 se omite para que no pise al 24. */
   protected readonly marcas = Array.from({ length: 25 }, (_, i) => i).filter((m) => m !== 23);
+
+  protected alternarCierre(dia: number, cerrado: boolean): void {
+    this.cierreChange.emit({ dia, cerrado });
+  }
 
   private readonly arrastre = signal<Arrastre | null>(null);
 
@@ -92,6 +100,7 @@ export class HorarioSemanaVistaComponent {
     const hoy = this.hoy();
     const drag = this.arrastre();
     const semana = this.semana();
+    const cerrados = new Set(this.cerrados());
     const letra = new Intl.DateTimeFormat(this.language.locale(), { weekday: 'narrow' });
     const largo = new Intl.DateTimeFormat(this.language.locale(), { weekday: 'long' });
     const cerrado = this.translate.instant('repositories.horarios.closed') as string;
@@ -143,8 +152,10 @@ export class HorarioSemanaVistaComponent {
         ahoraTexto: fecha === hoy ? horaTexto(this.momento().minutos) : '',
         barras,
         seleccion,
-        cerrado: minutos === 0 && !seleccion,
-        nota: minutos === 0 && !seleccion ? cerrado : null,
+        cerrado: cerrados.has(i) && minutos === 0 && !seleccion,
+        nota: cerrados.has(i) && minutos === 0 && !seleccion ? cerrado : null,
+        marcado: cerrados.has(i),
+        nombre: largo.format(aFecha(fecha)),
         horas: minutos > 0 ? this.formatoHoras(minutos) : '—',
         minutos,
         aria: `${largo.format(aFecha(fecha))}: ${barras.length > 0 ? barras.map((b) => b.texto).join(', ') : cerrado}`,

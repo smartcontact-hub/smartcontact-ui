@@ -351,6 +351,10 @@ export function normalizarHorario(crudo) {
     description: resto.description ?? '',
     status: resto.status ?? 'active',
     week: Array.isArray(resto.week) ? semanaLimpia(resto.week) : semanaDeTexto(schedule),
+    // Los días que se han marcado como cerrados; sin el dato (horarios de antes), los que no tienen franjas.
+    closedDays: Array.isArray(resto.closedDays)
+      ? resto.closedDays
+      : (Array.isArray(resto.week) ? semanaLimpia(resto.week) : semanaDeTexto(schedule)).flatMap((f, i) => (f.length === 0 ? [i] : [])),
     periods: (Array.isArray(resto.periods) ? resto.periods : []).map((p) => ({ ...p, year: p.year ?? null, week: semanaLimpia(p.week) })),
     specials: (Array.isArray(resto.specials) ? resto.specials : []).map((s) => ({ ...s, yearly: !!s.yearly, slots: Array.isArray(s.slots) ? s.slots : [] })),
     holidayCalendarIds: Array.isArray(resto.holidayCalendarIds) ? resto.holidayCalendarIds : [],

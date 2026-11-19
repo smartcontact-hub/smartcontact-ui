@@ -37,6 +37,7 @@ import { injectLangChange } from '@core/utils/lang-change';
 import { copyName } from '@shared/utils/copy-name';
 import { hoy } from '@shared/utils/today';
 import { ResultadoAccionService } from '@core/services';
+import { PopoverModule } from 'primeng/popover';
 import { TooltipModule } from 'primeng/tooltip';
 import { injectBorradoSimple } from '@features/admin/services/confirmar-borrado';
 
@@ -52,6 +53,7 @@ import { injectBorradoSimple } from '@features/admin/services/confirmar-borrado'
   selector: 'sc-repo-list-page',
   imports: [
     TooltipModule,
+    PopoverModule,
     EmptyStateComponent,
     ButtonComponent,
     CeldaVaciaComponent,
@@ -272,6 +274,15 @@ export class RepoListPageComponent<T extends RepoEntity> {
   }
 
   /** La cifra de una relación abre la ficha; con `countOpensSection`, ya en esa sección (Equipos: sus agentes, COA SISMAC-4453). */
+  /** Para `kind === 'chips'`: las etiquetas de la fila (vacío si no tiene ninguna); `null` si la columna es de otro tipo. */
+  protected chipsFor(item: T, field: string): { visibles: readonly string[]; resto: readonly string[] } | null {
+    const column = this.config().columns.find((c) => c.key === field);
+    if (column?.kind !== 'chips' || !column.chips) return null;
+    const todas = column.chips(item);
+    const max = column.chipsMax ?? 2;
+    return { visibles: todas.slice(0, max), resto: todas.slice(max) };
+  }
+
   protected onCountOpen(item: T, field: string): void {
     const base = this.config().editRoute;
     const seccion = this.config().columns.find((c) => c.key === field)?.countOpensSection;

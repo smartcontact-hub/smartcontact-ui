@@ -10,7 +10,7 @@ export interface RepoEntity {
 }
 
 /** Visual presentation for a column. `count` es una cifra: la lista la escribe con el separador de miles del idioma. */
-export type RepoColumnKind = 'text' | 'truncate' | 'status' | 'count' | 'date' | 'groups';
+export type RepoColumnKind = 'text' | 'truncate' | 'status' | 'count' | 'date' | 'groups' | 'chips';
 
 export interface RepoColumnDef<T extends RepoEntity> {
   readonly key: string;
@@ -34,6 +34,9 @@ export interface RepoColumnDef<T extends RepoEntity> {
   readonly emptyAsZero?: boolean;
   /** Para `kind === 'groups'` con editor propio: pulsar la cifra abre la ficha en esta sección (`?seccion=`), no arriba. */
   readonly countOpensSection?: string;
+  /** Para `kind === 'chips'`: las etiquetas de la fila; se enseñan las primeras (`chipsMax`) y el resto, tras un «+N» que lo abre. */
+  readonly chips?: (item: T) => readonly string[];
+  readonly chipsMax?: number;
   /** Una celda sin dato dice «—» (`sc-celda-vacia`, DD-197) en vez de quedarse en blanco. */
   readonly emptyDash?: boolean;
   /** La cabecera ordena de menor a mayor y al revés: las cifras, por su valor; las fechas, por día; el texto, por su letra. */

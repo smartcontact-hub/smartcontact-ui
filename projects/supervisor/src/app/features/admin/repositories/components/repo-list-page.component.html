@@ -104,6 +104,27 @@
           (activated)="onCountOpen(item, col.field)"
         />
       }
+    } @else if (chipsFor(item, col.field); as c) {
+      <!-- Etiquetas: las primeras a la vista y, si hay más, un «+N» que al pulsarlo enseña el resto. -->
+      @if (c.visibles.length === 0) {
+        <sc-celda-vacia />
+      } @else {
+        <span class="chips">
+          @for (v of c.visibles; track $index) {
+            <sc-tag severity="secondary" [value]="v" />
+          }
+          @if (c.resto.length > 0) {
+            <button type="button" class="chips__mas sc-text-caption-semibold" (click)="$event.stopPropagation(); masChips.toggle($event)" [attr.aria-label]="'+' + c.resto.length">+{{ c.resto.length }}</button>
+            <p-popover #masChips>
+              <ul class="chips__resto" role="list">
+                @for (v of c.resto; track $index) {
+                  <li class="sc-text-body-regular">{{ v }}</li>
+                }
+              </ul>
+            </p-popover>
+          }
+        </span>
+      }
     } @else if (getStatusEntry(item, col.field); as status) {
       <!-- Estado con el `tag` del DS y su severidad (DD-76): Figma dibuja así el estado
            de Agentes. El tono lo declara cada instancia en su `statusMap`. -->

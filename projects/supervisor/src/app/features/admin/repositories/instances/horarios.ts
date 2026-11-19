@@ -10,11 +10,12 @@ import { RepoColumnDef, RepoPageConfig } from '../components/repo-types';
 import { HorarioUsoService } from '../state/horario-uso.service';
 import { CLAVE_DE_USO, usosDelHorario } from '../state/horario-usos';
 import { FestivosStore } from '../state/festivos.store';
-import { ahoraEn, estadoEn, resumenDeLaSemana } from '../state/horarios.core.mjs';
+import { ahoraEn, estadoEn, gruposDeLaSemana, MINUTOS_DEL_DIA, resumenDeLaSemana, textoDeFranja } from '../state/horarios.core.mjs';
 import { type Horario, HorariosStore } from '../state/horarios.store';
 
 interface Datos {
   readonly resumen: (h: Horario) => string;
+  readonly tramos: (h: Horario) => readonly string[];
   readonly ahora: (h: Horario) => string;
   readonly uso: (h: Horario) => string;
 }
@@ -29,11 +30,13 @@ const columnas = (d: Datos): readonly RepoColumnDef<Horario>[] => [
   { key: 'description', labelKey: 'repositories.columns.description', kind: 'truncate', accessor: (i) => i.description, sortable: true },
   {
     key: 'week',
-    // El horario, en una línea de texto (se corta con «…» y se lee entero al pasar el ratón).
+    // El horario, en etiquetas: «L–V 09:00–18:00», y con más tramos un «+N» que enseña el resto.
     labelKey: 'repositories.horarios.col_schedule',
-    kind: 'truncate',
-    width: '240px',
+    kind: 'chips',
+    width: '340px',
     accessor: d.resumen,
+    chips: d.tramos,
+    chipsMax: 2,
   },
   {
     key: 'status',
@@ -100,6 +103,14 @@ export class HorariosPageComponent {
     icon: 'schedule',
     breadcrumbExtraKey: 'repositories.horarios.title',
     columns: columnas({
+      tramos: (h) => {
+        const { dias, siempre } = this.textos();
+        return gruposDeLaSemana(h.week).map((g) =>
+          g.desde === 0 && g.hasta === 6 && g.franjas.length === 1 && g.franjas[0][0] === 0 && g.franjas[0][1] === MINUTOS_DEL_DIA
+            ? siempre
+            : `${g.desde === g.hasta ? dias[g.desde] : `${dias[g.desde]}–${dias[g.hasta]}`} ${g.franjas.map(textoDeFranja).join(', ')}`,
+        );
+      },
       resumen: (h) => resumenDeLaSemana(h.week, this.textos().dias, this.textos().cerrado, this.textos().siempre),
       // Se pregunta en la zona del horario: «ahora» en México no es «ahora» en Madrid.
       ahora: (h) => {

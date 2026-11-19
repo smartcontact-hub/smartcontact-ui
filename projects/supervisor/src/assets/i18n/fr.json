@@ -1521,6 +1521,9 @@
       "days_open": "Jours assurés",
       "no_days_open": "Aucun jour n'est encore assuré.",
       "sv": {
+        "now": "Heure actuelle",
+        "mark_closed": "Marquer le jour comme fermé",
+        "reopen": "Rouvrir le jour",
         "remove": "Supprimer la plage",
         "day_closed": "Jour fermé",
         "total": "{{hours}} par semaine",
