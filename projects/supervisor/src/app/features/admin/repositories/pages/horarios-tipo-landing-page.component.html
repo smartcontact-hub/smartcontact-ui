@@ -102,6 +102,13 @@
         <p class="panel__descripcion sc-text-body-regular">{{ p.descripcion }}</p>
       }
 
+      <!-- Lo primero que se hace: editar o duplicar, bajo la descripción; después, la línea y toda la info del horario. -->
+      <div class="panel__acciones">
+        <sc-button size="sm" variant="primary" icon="edit" [label]="'common.edit' | translate" (clicked)="editar(p.id)" />
+        <sc-button size="sm" variant="secondary" appearance="outlined" icon="content_copy" [label]="'repositories.horariosTipo.landing.duplicate' | translate" (clicked)="duplicar(p.id)" />
+      </div>
+
+      <div class="panel__info">
       <section class="panel__bloque">
         <h3 class="panel__titulo sc-text-caption-semibold">{{ 'repositories.horariosTipo.landing.drawer_hours' | translate }}</h3>
         <p class="panel__franja sc-text-title-semibold">{{ p.franja }} <span class="panel__dias sc-text-body-regular">{{ p.dias }}</span></p>
@@ -142,10 +149,8 @@
         }
       </section>
 
-      <div class="panel__acciones">
-        <sc-button size="sm" variant="primary" icon="edit" [label]="'common.edit' | translate" (clicked)="editar(p.id)" />
-        <sc-button size="sm" variant="secondary" appearance="outlined" icon="content_copy" [label]="'repositories.horariosTipo.landing.duplicate' | translate" (clicked)="duplicar(p.id)" />
-        <sc-button class="panel__eliminar" size="sm" variant="danger" appearance="outlined" icon="delete" [label]="'common.delete' | translate" (clicked)="eliminar(p.id)" />
+        <!-- Eliminar, al final y discreto: es lo que menos se hace y no se pulsa por error junto a editar. -->
+        <sc-button class="panel__eliminar" size="sm" variant="danger" appearance="text" icon="delete" [label]="'repositories.horariosTipo.landing.delete' | translate" (clicked)="eliminar(p.id)" />
       </div>
     </div>
   }

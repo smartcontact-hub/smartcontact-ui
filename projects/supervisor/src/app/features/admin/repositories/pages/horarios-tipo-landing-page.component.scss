@@ -67,7 +67,7 @@
   list-style: none;
 }
 
-/* La tarjeta del horario: horizontal, con el icono del momento a la izquierda y una raya de su tono: no se parece a la del hub. */
+/* La tarjeta del horario: horizontal, con el icono del momento a la izquierda y sin borde de color: no se parece a la del hub. */
 .h-card {
   display: flex;
   align-items: center;
@@ -75,7 +75,6 @@
   inline-size: 100%;
   padding: var(--sc-spacing-0-75) var(--sc-spacing-1);
   border: 1px solid var(--sc-border-default);
-  border-inline-start: 4px solid var(--tono-strong);
   border-radius: var(--sc-radius-md);
   background: var(--sc-bg-surface);
   color: var(--sc-text-primary);
@@ -96,9 +95,8 @@
 }
 
 .h-card--elegida {
-  border-color: var(--tono-border);
-  border-inline-start-color: var(--tono-strong);
-  background: var(--tono-bg);
+  background: var(--sc-bg-hover);
+  box-shadow: inset 0 0 0 1px var(--sc-border-default);
 }
 
 .h-card__texto {
@@ -208,10 +206,18 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--sc-spacing-0-5);
-  padding-block-start: var(--sc-spacing-1);
+}
+
+/* Debajo de la línea, toda la info del horario. */
+.panel__info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1-5);
+  padding-block-start: var(--sc-spacing-1-5);
   border-block-start: 1px solid var(--sc-border-default);
 }
 
 .panel__eliminar {
-  margin-inline-start: auto;
+  align-self: flex-start;
+  margin-inline-start: calc(-1 * var(--sc-spacing-0-5));
 }

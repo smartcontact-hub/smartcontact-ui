@@ -1798,6 +1798,7 @@
     },
     "horariosTipo": {
         "landing": {
+          "delete": "Delete schedule",
           "filter_all": "All",
           "filter_label": "Time of day",
           "search": "Search schedules…",

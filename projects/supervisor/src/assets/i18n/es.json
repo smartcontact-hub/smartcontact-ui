@@ -1798,6 +1798,7 @@
     },
     "horariosTipo": {
         "landing": {
+          "delete": "Eliminar horario",
           "filter_all": "Todos",
           "filter_label": "Momento del día",
           "search": "Buscar horarios…",
