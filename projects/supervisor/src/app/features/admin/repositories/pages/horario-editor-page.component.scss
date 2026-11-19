@@ -94,3 +94,15 @@
 .titulo__activo {
   gap: var(--sc-spacing-0-5);
 }
+
+/* Nombre y zona horaria, uno al lado del otro; con poco ancho, uno debajo del otro. */
+.par {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--sc-spacing-1);
+  align-items: start;
+
+  @media (max-width: 40rem) {
+    grid-template-columns: 1fr;
+  }
+}

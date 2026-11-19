@@ -1517,7 +1517,7 @@
         "title_bulk": "Delete {{count}} schedules?"
       },
       "section_week_view": "Week",
-      "section_week_view_hint": "When it is served in a specific week",
+      "section_week_view_hint": "When each day is served",
       "days_open": "Days served",
       "no_days_open": "No day is served yet.",
       "sv": {

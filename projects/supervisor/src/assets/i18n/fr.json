@@ -1517,7 +1517,7 @@
         "title_bulk": "Supprimer {{count}} horaires\u00a0?"
       },
       "section_week_view": "Semaine",
-      "section_week_view_hint": "Quand on répond une semaine donnée",
+      "section_week_view_hint": "Quand chaque jour est assuré",
       "days_open": "Jours assurés",
       "no_days_open": "Aucun jour n'est encore assuré.",
       "sv": {

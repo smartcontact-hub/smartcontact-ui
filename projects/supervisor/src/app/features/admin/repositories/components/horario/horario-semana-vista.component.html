@@ -1,16 +1,6 @@
 <div class="sv">
-  <!-- El título dice qué semana es y cuántas horas se atiende en ella; a la derecha, moverse de una a otra. -->
-  <header class="sv__cab">
-    <div class="sv__titulo">
-      <h3 class="sv__rango sc-text-body-semibold">{{ rango() }}</h3>
-      <span class="sv__total sc-text-caption-regular">{{ total() }}</span>
-    </div>
-    <div class="sv__nav">
-      <sc-button size="sm" variant="secondary" appearance="outlined" icon="chevron_left" [ariaLabel]="'repositories.horarios.sv.prev' | translate" (clicked)="ir(-1)" />
-      <sc-button size="sm" variant="secondary" appearance="outlined" [disabled]="esLaDeHoy()" [label]="'repositories.horarios.sv.today' | translate" (clicked)="irAHoy()" />
-      <sc-button size="sm" variant="secondary" appearance="outlined" icon="chevron_right" [ariaLabel]="'repositories.horarios.sv.next' | translate" (clicked)="ir(1)" />
-    </div>
-  </header>
+  <!-- Cuántas horas se atiende en la semana. -->
+  <p class="sv__total sc-text-body-semibold">{{ total() }}</p>
 
   <div class="sv__rejilla">
     <div class="sv__ejes" aria-hidden="true">
@@ -24,7 +14,6 @@
         <li class="fila" [class.fila--hoy]="d.esHoy" [class.fila--cerrada]="d.cerrado">
           <span class="fila__dia">
             <span class="fila__letra sc-text-body-semibold">{{ d.letra }}</span>
-            <span class="fila__numero sc-text-caption-regular">{{ d.numero }}</span>
           </span>
           <!-- La línea del día: sobre fondo rosa («no se atiende»), cada tramo abierto en verde, a su minuto. -->
           <span class="pista" role="img" [attr.aria-label]="d.aria">
@@ -36,7 +25,7 @@
               </span>
             }
             @if (d.nota) {
-              <span class="pista__nota sc-text-caption-regular">{{ d.nota }}</span>
+              <span class="pista__nota sc-text-caption-semibold"><sc-icon name="block" [size]="14" aria-hidden="true" />{{ d.nota }}</span>
             }
           </span>
           <span class="fila__horas sc-text-body-semibold" [class.fila__horas--nada]="d.minutos === 0">{{ d.horas }}</span>

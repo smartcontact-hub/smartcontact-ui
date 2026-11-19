@@ -43,8 +43,9 @@
       <div class="horario__reglas">
         <sc-section-card titleKey="repositories.horarios.section_general" surface="subtle" icon="tune">
           <sc-subsection>
+            <!-- Compacto: nombre y zona horaria en una fila, y la descripción debajo; sin textos de ayuda. -->
             <div class="bloque">
-              <div class="field">
+              <div class="par">
                 <sc-inputtext
                   inputId="horario-name"
                   fluid
@@ -57,23 +58,10 @@
                   (valueChange)="update('name', $event)"
                   (focusout)="dejarNombre($event)"
                 />
-              </div>
-              <div class="field">
-                <sc-inputtext
-                  inputId="horario-description"
-                  fluid
-                  [label]="'repositories.columns.description' | translate"
-                  [placeholder]="'repositories.placeholders.description' | translate"
-                  [value]="form().description"
-                  (valueChange)="update('description', $event)"
-                />
-              </div>
-              <div class="field">
                 <sc-select
                   inputId="horario-zona"
                   filter
                   [label]="'repositories.horarios.timezone' | translate"
-                  [helperText]="'repositories.horarios.timezone_help' | translate"
                   [options]="zonas()"
                   optionLabel="label"
                   optionValue="value"
@@ -81,11 +69,19 @@
                   (valueChange)="update('timezone', $any($event))"
                 />
               </div>
+              <sc-inputtext
+                inputId="horario-description"
+                fluid
+                [label]="'repositories.columns.description' | translate"
+                [placeholder]="'repositories.placeholders.description' | translate"
+                [value]="form().description"
+                (valueChange)="update('description', $event)"
+              />
             </div>
           </sc-subsection>
         </sc-section-card>
 
-        <sc-section-card anchorId="horario-semana" titleKey="repositories.horarios.section_week" hintKey="repositories.horarios.section_week_hint" surface="subtle" icon="schedule">
+        <sc-section-card anchorId="horario-semana" titleKey="repositories.horarios.section_week" surface="subtle" icon="schedule">
           <sc-subsection>
             <div class="bloque">
               <sc-horario-semana [semana]="form().week" [falta]="faltaDeSemana()" (semanaChange)="update('week', $event)" />
@@ -99,7 +95,7 @@
         <!-- La semana de verdad: cuándo se atiende en una semana concreta, con las reglas aplicadas a sus fechas. -->
         <sc-section-card titleKey="repositories.horarios.section_week_view" hintKey="repositories.horarios.section_week_view_hint" surface="subtle" icon="calendar_view_week">
           <sc-subsection>
-            <sc-horario-semana-vista [reglas]="reglas()" [calendarios]="calendarios()" [zona]="form().timezone" />
+            <sc-horario-semana-vista [semana]="form().week" [zona]="form().timezone" />
           </sc-subsection>
         </sc-section-card>
 

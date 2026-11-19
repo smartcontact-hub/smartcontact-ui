@@ -1517,7 +1517,7 @@
         "title_bulk": "Eliminar {{count}} horários?"
       },
       "section_week_view": "Semana",
-      "section_week_view_hint": "Quando se atende numa semana concreta",
+      "section_week_view_hint": "Quando cada dia é atendido",
       "days_open": "Dias atendidos",
       "no_days_open": "Nenhum dia é atendido ainda.",
       "sv": {

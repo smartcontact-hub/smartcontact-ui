@@ -19,11 +19,11 @@
   grid-template-columns: 7rem minmax(0, 1fr);
   align-items: center;
   column-gap: var(--sc-spacing-1);
-  row-gap: var(--sc-spacing-0-5);
+  row-gap: var(--sc-spacing-0-25);
 }
 
 .semana {
-  gap: var(--sc-spacing-1);
+  gap: var(--sc-spacing-0-75);
 }
 
 .semana__nombre {

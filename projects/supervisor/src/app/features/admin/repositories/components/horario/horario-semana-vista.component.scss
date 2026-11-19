@@ -14,34 +14,9 @@
   gap: var(--sc-spacing-1);
 }
 
-.sv__cab {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--sc-spacing-0-75);
-}
-
-.sv__titulo {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: var(--sc-spacing-0-75);
-}
-
-.sv__rango {
-  margin: 0;
-  text-transform: capitalize;
-}
-
 .sv__total {
-  color: var(--sc-text-secondary);
+  margin: 0;
   font-variant-numeric: tabular-nums;
-}
-
-.sv__nav {
-  display: inline-flex;
-  gap: var(--sc-spacing-0-5);
 }
 
 /* Las tres columnas de la rejilla (día · línea · horas) las comparten el eje y las filas. */
@@ -86,7 +61,7 @@
   }
 }
 
-@container (max-width: 34rem) {
+@container (max-width: 40rem) {
   .sv__marca--impar {
     display: none;
   }
@@ -121,10 +96,6 @@
   text-decoration: underline;
   text-decoration-thickness: 2px;
   text-underline-offset: var(--sc-spacing-0-25);
-}
-
-.fila__numero {
-  font-variant-numeric: tabular-nums;
 }
 
 /* La línea de las 24 horas, en neutros del DS: fondo gris claro con una raya por hora y otra más marcada cada seis. */
@@ -165,7 +136,8 @@
   white-space: nowrap;
 }
 
-/* Un día cerrado se ve a la primera: su letra y su número tachados y en gris, y su línea rayada en diagonal, sin horas. */
+/* Un día cerrado se ve DESHABILITADO: su letra, tachada y apagada; su línea, gris liso con rayas marcadas, y «Cerrado» con el
+ * icono de bloqueo. Nada de verde ni de barras. */
 .fila--cerrada {
   .fila__dia {
     color: var(--sc-text-subtle);
@@ -174,8 +146,9 @@
   }
 
   .pista {
-    background-color: var(--sc-bg-hover);
-    background-image: repeating-linear-gradient(135deg, transparent 0, transparent 5px, var(--sc-border-default) 5px, var(--sc-border-default) 6px);
+    background-color: var(--sc-border-subtle);
+    background-image: repeating-linear-gradient(135deg, transparent 0, transparent 5px, var(--sc-border-default) 5px, var(--sc-border-default) 7px);
+    opacity: 0.85;
   }
 
   .pista__nota {
@@ -189,6 +162,7 @@
   inset: 0;
   display: flex;
   align-items: center;
+  gap: var(--sc-spacing-0-5);
   padding-inline: var(--sc-spacing-0-75);
   color: var(--sc-text-secondary);
 }
