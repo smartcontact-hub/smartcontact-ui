@@ -116,6 +116,8 @@ export class HorariosTipoLandingPageComponent {
   /* ── Edición dentro del panel: contraída para un horario que ya existe, abierta para uno nuevo ─────────────────── */
 
   protected readonly editando = signal(false);
+  /** Adónde se vuelve con «Atrás»: lo que se veía antes de entrar en edición o en un alta. Vacío, solo queda cerrar el panel. */
+  protected readonly atras = signal<readonly { seleccion: number | 'nuevo' | null }[]>([]);
   protected readonly intento = signal(false);
   protected readonly borrador = signal<{ name: string; description: string; week: Semana }>({ name: '', description: '', week: SEMANA_NUEVA });
 
@@ -200,21 +202,27 @@ export class HorariosTipoLandingPageComponent {
       .filter((s) => s.cards.length > 0);
   });
 
-  /** La semana como filas: cada grupo de días con sus tramos («Lun–Vie · 09:00–18:00»); sin tramos, cerrado. */
-  private filasDeSemana(week: Semana): readonly { etiqueta: string; tramos: readonly string[] }[] {
-    const nombre = (i: number): string => (this.translate.instant(`repositories.horarios.days.${CLAVES_DIA[i]}`) as string).slice(0, 3);
-    const grupos: { desde: number; hasta: number; franjas: Semana[number] }[] = [];
+  /** La semana como filas: los días que comparten las mismas horas van juntos aunque no sean seguidos (L, X y V), con sus tramos;
+   *  sin tramos, cerrado. En el orden del primer día de cada grupo. */
+  private filasDeSemana(week: Semana): readonly { dias: readonly number[]; etiqueta: string; tramos: readonly string[] }[] {
+    const grupos = new Map<string, { dias: number[]; franjas: Semana[number] }>();
     for (let d = 0; d < 7; d++) {
       const franjas = week[d] ?? [];
-      const ultimo = grupos[grupos.length - 1];
-      if (ultimo && JSON.stringify(ultimo.franjas) === JSON.stringify(franjas)) ultimo.hasta = d;
-      else grupos.push({ desde: d, hasta: d, franjas });
+      const clave = JSON.stringify(franjas);
+      const g = grupos.get(clave);
+      if (g) g.dias.push(d);
+      else grupos.set(clave, { dias: [d], franjas });
     }
-    return grupos.map((g) => ({
-      etiqueta: g.desde === g.hasta ? nombre(g.desde) : `${nombre(g.desde)}–${nombre(g.hasta)}`,
-      tramos: g.franjas.map((f) => textoDeFranja(f)),
-    }));
+    return [...grupos.values()].map((g) => ({ dias: g.dias, etiqueta: this.etiquetaDeDias(g.dias), tramos: g.franjas.map((f) => textoDeFranja(f)) }));
   }
+
+  /** Las iniciales de los siete días (L M X J V S D), en el idioma. */
+  protected readonly iniciales = computed(() => {
+    this.lang();
+    const f = new Intl.DateTimeFormat(this.translate.currentLang || 'es', { weekday: 'narrow' });
+    return Array.from({ length: 7 }, (_, i) => f.format(new Date(2024, 0, 1 + i, 12)));
+  });
+  protected readonly diasDeLaSemana = [0, 1, 2, 3, 4, 5, 6] as const;
 
   /** ¿Está el panel en modo edición? Un horario nuevo, siempre; uno que existe, tras «Editar». */
   protected readonly edicion = computed(() => this.seleccion() === 'nuevo' || this.editando());
@@ -247,11 +255,24 @@ export class HorariosTipoLandingPageComponent {
   });
 
   protected abrir(id: number): void {
+    this.atras.set([]);
     this.seleccion.update((s) => (s === id ? null : id));
   }
 
   protected cerrar(): void {
+    this.atras.set([]);
     this.seleccion.set(null);
+  }
+
+  /** «Atrás»: vuelve a lo que se veía antes, hasta que no hay más y solo queda cerrar. */
+  protected volver(): void {
+    const previo = this.atras().at(-1);
+    if (!previo) return;
+    this.atras.update((a) => a.slice(0, -1));
+    this.intento.set(false);
+    this.editando.set(false);
+    this.seleccion.set(previo.seleccion);
+    this.borrador.set(this.desdeGuardado(typeof previo.seleccion === 'number' ? previo.seleccion : null));
   }
 
   /** «Nuevo horario»: el panel de alta, con el formulario ya abierto. */
@@ -263,6 +284,7 @@ export class HorariosTipoLandingPageComponent {
 
   /** «Editar»: abre la edición del panel. */
   protected editar(): void {
+    this.atras.update((a) => [...a, { seleccion: this.seleccion() }]);
     this.editando.set(true);
   }
 
@@ -270,16 +292,15 @@ export class HorariosTipoLandingPageComponent {
   protected duplicar(id: number): void {
     const h = this.store.items().find((x) => x.id === id);
     if (!h) return;
+    this.atras.update((a) => [...a, { seleccion: this.seleccion() }]);
     this.seleccion.set('nuevo');
     this.borrador.set({ name: nombreDeCopia(h.name, this.store.items().map((x) => x.name)), description: h.description, week: h.week });
     this.editando.set(true);
   }
 
   protected cancelar(): void {
-    if (this.seleccion() === 'nuevo') {
-      this.seleccion.set(null);
-      return;
-    }
+    if (this.atras().length > 0) return this.volver();
+    if (this.seleccion() === 'nuevo') return this.cerrar();
     this.borrador.set(this.desdeGuardado(this.seleccion() as number));
     this.intento.set(false);
     this.editando.set(false);
@@ -295,6 +316,7 @@ export class HorariosTipoLandingPageComponent {
     const datos = { name: b.name.trim(), description: b.description.trim() };
     if (this.seleccion() === 'nuevo') {
       const creado = this.store.addItem({ ...datos, week: b.week });
+      this.atras.set([]);
       this.seleccion.set(creado.id);
       this.resultado.contar(this.translate.instant('repositories.horariosTipo.toasts.created', { name: creado.name }));
       return;
@@ -303,6 +325,7 @@ export class HorariosTipoLandingPageComponent {
     this.store.updateItem(id, datos);
     // La semana nueva llega, además, a todos los calendarios que usan este horario.
     this.servicio.actualizarSemana(id, b.week);
+    this.atras.set([]);
     this.editando.set(false);
     this.resultado.contar(this.translate.instant('repositories.horariosTipo.toasts.updated', { name: datos.name }));
   }

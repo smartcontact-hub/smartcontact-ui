@@ -191,6 +191,11 @@ const DESCRIPCIONES_DE_HORARIO = {
   10: 'Jornada partida con cierre del viernes a las 14:00',
   11: 'Ejemplo con 4 franjas por día, el máximo, para probar cómo se ve',
   12: 'Cobertura de madrugada, de lunes a viernes',
+  13: 'Atención solo tres días a la semana',
+  14: 'Refuerzo de tarde, solo martes y jueves',
+  15: 'Mezcla de mañanas y tardes según el día, con el sábado reducido',
+  16: 'Cada día de la semana tiene una franja distinta: prueba del caso más cargado',
+  17: 'Guardia nocturna de viernes y sábado, con relevo a las 04:00 del día siguiente para la supervisión del equipo',
 };
 
 /** Un horario con el máximo de franjas por día, 4 (incluidas algunas a minuto exacto): sirve para estresar cómo se representa. */
@@ -205,6 +210,11 @@ const MUCHAS_FRANJAS = [
 export const HORARIOS_TIPO_SEMILLA = [
   ...separados.horarios,
   { id: separados.horarios.length + 1, name: 'Turnos con pausas (4 franjas)', description: '', week: [MUCHAS_FRANJAS, MUCHAS_FRANJAS, MUCHAS_FRANJAS, MUCHAS_FRANJAS, MUCHAS_FRANJAS.slice(0, 3), [[600, 840], [900, 1020]], []] },
+  { id: separados.horarios.length + 3, name: 'Lunes, miércoles y viernes', description: '', week: [[[540, 840]], [], [[540, 840]], [], [[540, 840]], [], []] },
+  { id: separados.horarios.length + 4, name: 'Martes y jueves de tarde', description: '', week: [[], [[960, 1200]], [], [[960, 1200]], [], [], []] },
+  { id: separados.horarios.length + 5, name: 'Semana irregular', description: '', week: [[[540, 840]], [[960, 1200]], [[540, 840]], [[960, 1200]], [[540, 840]], [[600, 720]], []] },
+  { id: separados.horarios.length + 6, name: 'Cada día distinto (7 franjas)', description: '', week: [[[480, 720]], [[540, 780]], [[600, 840]], [[660, 900]], [[720, 960]], [[780, 1020]], [[840, 1080]]] },
+  { id: separados.horarios.length + 7, name: 'Guardias de viernes y sábado noche', description: '', week: [[], [], [], [], [[1320, 240]], [[1320, 240]], []] },
   { id: separados.horarios.length + 2, name: 'Turno Madrugada', description: '', week: [[[0, 360]], [[0, 360]], [[0, 360]], [[0, 360]], [[0, 360]], [], []] },
 ].map((h) => ({ ...h, name: NOMBRES_DE_HORARIO[h.id] ?? h.name, description: DESCRIPCIONES_DE_HORARIO[h.id] ?? h.description }));
 

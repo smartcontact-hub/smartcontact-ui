@@ -85,7 +85,7 @@
      mismos campos pasan a ser editables, sin borde. «Nuevo horario» y «Duplicar» abren el panel ya en edición. -->
 <sc-drawer
   position="right"
-  width="30rem"
+  width="var(--sc-spacing-25)"
   topOffset="var(--sc-spacing-4)"
   [docked]="true"
   [modal]="false"
@@ -95,6 +95,10 @@
 >
   @if (panel(); as p) {
     <div class="panel" [class.panel--edicion]="edicion()" [attr.data-tono]="p.tono">
+      <!-- «Atrás» solo aparece si hay a dónde volver (de editar o de un alta a lo que se veía); sin historial, queda cerrar. -->
+      @if (atras().length > 0) {
+        <sc-button class="panel__atras" size="sm" variant="secondary" appearance="text" icon="arrow_back" [label]="'common.back' | translate" (clicked)="volver()" />
+      }
       <!-- Arriba: el momento a la izquierda y, a la derecha del todo en la misma línea, sus botones; debajo, pegada, la descripción. -->
       <div class="panel__intro">
         <div class="panel__cabecera">
@@ -152,9 +156,15 @@
           @if (edicion()) {
             <sc-horario-semana prefijo="horario-panel" [semana]="borrador().week" [falta]="faltaDeSemana()" (semanaChange)="cambiar('week', $event)" />
           } @else {
-            <dl class="filas">
+            <!-- Cada grupo de días con las mismas horas: una tira de los siete días (los suyos, marcados) y sus horas a la derecha. -->
+            <ul class="semana-filas">
               @for (f of p.filas; track $index) {
-                <div scFactRow size="sm" tone="brand" [icon]="f.tramos.length > 0 ? 'event_available' : 'event_busy'" [label]="f.etiqueta">
+                <li class="semana-fila" [attr.aria-label]="f.etiqueta + ': ' + (f.tramos.length > 0 ? f.tramos.join(', ') : ('repositories.horarios.closed' | translate))">
+                  <span class="tira" [class.tira--cerrado]="f.tramos.length === 0" aria-hidden="true">
+                    @for (d of diasDeLaSemana; track d) {
+                      <span class="tira__dia" [class.tira__dia--on]="f.dias.includes(d)">{{ iniciales()[d] }}</span>
+                    }
+                  </span>
                   @if (f.tramos.length > 0) {
                     <span class="valor valor--horas">
                       @for (t of f.tramos; track $index) {
@@ -167,9 +177,9 @@
                   } @else {
                     <span class="valor valor--cerrado">{{ 'repositories.horarios.closed' | translate }}</span>
                   }
-                </div>
+                </li>
               }
-            </dl>
+            </ul>
           }
         </section>
 

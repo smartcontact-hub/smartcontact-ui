@@ -327,3 +327,61 @@
     text-align: start;
   }
 }
+
+/* «Atrás» del panel: arriba a la izquierda, solo con historial. */
+.panel__atras {
+  align-self: flex-start;
+  margin-inline-start: calc(-1 * var(--sc-spacing-0-5));
+}
+
+/* La semana en lectura: por cada grupo de días con las mismas horas, la tira de los siete días (marcados los suyos, con el tono del
+ * momento) y sus horas a la derecha. Sin baldosa: la baldosa azul se queda para «Se usa en». */
+.semana-filas {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-75);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.semana-fila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sc-spacing-1);
+}
+
+.tira {
+  display: inline-flex;
+  flex: none;
+  gap: var(--sc-spacing-0-125);
+}
+
+.tira__dia {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--sc-spacing-1-5);
+  block-size: var(--sc-spacing-1-5);
+  border-radius: var(--sc-radius-sm);
+  color: var(--sc-text-subtle);
+  font-size: var(--sc-font-size-caption);
+  font-weight: 600;
+}
+
+.tira__dia--on {
+  background: var(--tono-bg);
+  color: var(--tono-text);
+}
+
+.tira--cerrado .tira__dia--on {
+  background: var(--sc-bg-hover);
+  color: var(--sc-text-secondary);
+}
+
+.semana-fila .valor {
+  min-inline-size: 0;
+  font-size: var(--sc-font-size-caption);
+  line-height: var(--sc-line-height-caption);
+}
