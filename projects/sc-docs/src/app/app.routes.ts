@@ -186,4 +186,12 @@ export const routes: Routes = [
     pathMatch: 'full',
     loadComponent: () => import('./pages/inicio/inicio.component').then((m) => m.InicioComponent),
   },
+
+  // Cualquier otra dirección: una página que lo dice y ofrece buscar o volver al inicio. Sin ella el router cancelaba la
+  // navegación y la doc se quedaba en blanco. Va la ÚLTIMA: el router prueba las rutas en orden.
+  {
+    path: '**',
+    loadComponent: () =>
+      import('./pages/no-encontrada/no-encontrada.component').then((m) => m.NoEncontradaComponent),
+  },
 ];

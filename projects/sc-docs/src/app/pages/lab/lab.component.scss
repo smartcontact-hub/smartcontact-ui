@@ -68,6 +68,15 @@
     pointer-events: none;
   }
 
+  /* De pie sobre el borde de abajo del título, delante de las burbujas, con el pulgar hacia el título. Se ancla al
+     centro y no al borde: así guarda siempre la misma distancia al título, que es lo que no puede pisar. */
+  &__mascota {
+    position: absolute;
+    right: calc(50% + 24.5rem);
+    bottom: 0;
+    width: 6.5rem;
+  }
+
   &__titulo {
     position: relative;
     display: flex;
@@ -578,6 +587,13 @@
 }
 
 /* ─────────── Estrecho ─────────── */
+
+/* Por debajo de este ancho no cabe al lado del título sin pisarlo: se va (es decorado). */
+@media (max-width: 70rem) {
+  .lab-hero__mascota {
+    display: none;
+  }
+}
 
 @media (max-width: 56rem) {
   .lab-dos,

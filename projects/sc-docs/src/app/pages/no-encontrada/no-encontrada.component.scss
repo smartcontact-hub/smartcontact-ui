@@ -1,0 +1,79 @@
+/* Una sola columna centrada, a media altura de la pantalla: la mascota, qué pasó y las dos salidas. El marco y el
+ * padding los pone `.demo-main` del shell. */
+:host {
+  display: block;
+}
+
+.nf {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: calc(100vh - var(--demo-alto-cabecera) - 12rem);
+  justify-content: center;
+  padding: var(--sc-spacing-3) 0 var(--sc-spacing-4);
+  text-align: center;
+
+  &__mascota {
+    width: 9.5rem;
+    margin-bottom: var(--sc-spacing-1-5);
+  }
+
+  &__titulo {
+    margin: 0;
+    color: var(--sc-text-primary);
+    text-wrap: balance;
+  }
+
+  &__texto {
+    max-width: 30rem;
+    margin: var(--sc-spacing-0-5) 0 0;
+    color: var(--sc-text-secondary);
+    text-wrap: pretty;
+  }
+
+  /* La dirección, en su cajita: se lee como lo que es, algo que alguien escribió o pegó. */
+  &__direccion {
+    padding: 0 var(--sc-spacing-0-375);
+    border-radius: var(--sc-radius-sm);
+    background: var(--sc-bg-hover);
+    color: var(--sc-text-primary);
+    overflow-wrap: anywhere;
+  }
+
+  &__acciones {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: var(--sc-spacing-0-75) var(--sc-spacing-1-5);
+    margin-top: var(--sc-spacing-1-5);
+  }
+
+  &__enlace {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-25);
+    color: var(--sc-text-link);
+    text-decoration: none;
+
+    sc-icon {
+      transition: transform var(--sc-transition-fast) var(--sc-easing-default);
+    }
+
+    &:hover sc-icon {
+      transform: translateX(2px);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--sc-border-focus);
+      outline-offset: 2px;
+      border-radius: var(--sc-radius-md);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nf__enlace sc-icon {
+    transition: none;
+  }
+}

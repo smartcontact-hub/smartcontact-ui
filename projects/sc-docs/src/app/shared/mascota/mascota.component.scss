@@ -1,0 +1,172 @@
+/* La mascota toma el ancho que le dé quien la pone; el alto sale del dibujo. */
+:host {
+  /* Los colores, de la paleta del DS. Los azules del casco y la sombra del cuerpo se mezclan con un poco de violeta
+     y de azul grisáceo para quedarse en el tono pervinca del dibujo original, más suave que el azul de marca. */
+  --mascota-tinta: var(--sc-color-blue-700);
+  --mascota-cuerpo: var(--sc-color-slate-0);
+  --mascota-sombra: color-mix(in srgb, var(--sc-color-sky-100) 60%, var(--sc-color-blue-100));
+  --mascota-casco: color-mix(in srgb, var(--sc-color-sky-300) 75%, var(--sc-color-violet-300));
+  --mascota-casco-claro: color-mix(in srgb, var(--sc-color-sky-200) 75%, var(--sc-color-violet-200));
+  --mascota-casco-panel: color-mix(in srgb, var(--sc-color-sky-300) 70%, var(--sc-color-blue-300));
+  --mascota-casco-oscuro: color-mix(in srgb, var(--sc-color-sky-400) 50%, var(--sc-color-blue-400));
+
+  display: inline-block;
+  line-height: 0;
+}
+
+/* En oscuro, la tinta azul marino se perdería contra el fondo: brazos, piernas y ojos pasan a un gris azulado claro, y
+   el cuerpo baja un punto de blanco para no deslumbrar. */
+:host-context(.sc-dark) {
+  --mascota-tinta: var(--sc-color-blue-200);
+  --mascota-cuerpo: var(--sc-color-slate-100);
+  --mascota-sombra: color-mix(in srgb, var(--sc-color-sky-200) 45%, var(--sc-color-blue-200));
+}
+
+.m {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.m__tinta {
+  fill: var(--mascota-tinta);
+}
+
+.m__sombra {
+  fill: var(--mascota-sombra);
+}
+
+.m__luz {
+  fill: var(--mascota-cuerpo);
+}
+
+/* El filo del cuerpo: medio trazo, porque la otra mitad cae fuera del recorte. */
+.m__perfil {
+  fill: none;
+  stroke: var(--mascota-sombra);
+  stroke-width: 5;
+}
+
+.m__casco-base {
+  fill: var(--mascota-casco);
+}
+
+.m__casco-claro {
+  fill: var(--mascota-casco-claro);
+}
+
+.m__casco-panel {
+  fill: var(--mascota-casco-panel);
+}
+
+.m__casco-oscuro {
+  fill: var(--mascota-casco-oscuro);
+}
+
+/* ─────────── Movimiento ───────────
+   Los ejes, en las coordenadas del dibujo (`transform-box: view-box`): los pies para la caída, la base del cuerpo para
+   la respiración, el hombro para el pulgar, el ala izquierda para el casco y el centro de la mirada para los ojos. El
+   saludo lo arranca el componente (`saluda()`); aquí solo se dice desde dónde gira cada parte. */
+.m__todo,
+.m__tronco,
+.m__brazo,
+.m__casco,
+.m__ojos,
+.m__parpados {
+  transform-box: view-box;
+}
+
+.m__todo {
+  transform-origin: 240px 655px;
+}
+
+.m__tronco {
+  transform-origin: 230px 505px;
+}
+
+.m__brazo {
+  transform-origin: 350px 333px;
+}
+
+.m__casco {
+  transform-origin: 80px 205px;
+}
+
+.m__ojos,
+.m__parpados {
+  transform-origin: 270px 205px;
+}
+
+/* Al aparecer: cae, aplasta un poco al tocar el suelo y se endereza; luego respira dos veces y entrecierra los ojos.
+   Todo acaba antes de los 5 s. */
+.m--entra {
+  .m__todo {
+    animation: mascota-cae 760ms var(--sc-easing-default) both;
+  }
+
+  .m__tronco {
+    animation: mascota-respira 2s ease-in-out 800ms 2;
+  }
+
+  .m__parpados {
+    animation: mascota-ojos 700ms var(--sc-easing-default) 2600ms;
+  }
+}
+
+@keyframes mascota-cae {
+  0% {
+    opacity: 0;
+    transform: translateY(-40px) scale(0.96, 1.04);
+  }
+
+  45% {
+    opacity: 1;
+    transform: translateY(0) scale(1.05, 0.93);
+  }
+
+  65% {
+    transform: translateY(-8px) scale(0.98, 1.02);
+  }
+
+  82% {
+    transform: translateY(0) scale(1.01, 0.99);
+  }
+
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes mascota-respira {
+  0%,
+  100% {
+    transform: none;
+  }
+
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes mascota-ojos {
+  0%,
+  100% {
+    transform: none;
+  }
+
+  40% {
+    transform: translateY(3px) scale(1.06, 0.6);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .m--entra {
+    .m__todo,
+    .m__tronco,
+    .m__parpados {
+      animation: none;
+    }
+  }
+}
