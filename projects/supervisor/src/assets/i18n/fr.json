@@ -1532,6 +1532,7 @@
       },
       "col_schedule": "Horaire",
       "uses": {
+        "calendars": "Calendriers",
         "groups": "Groupes",
         "vui": "VUI",
         "mailboxes": "Boîtes mail",
@@ -1545,6 +1546,9 @@
       "view_label": "Vue de l’horaire",
       "view_slots_hint": "Saisissez les heures de chaque jour et copiez les plages d’un jour vers d’autres",
       "precise_title": "Ajuster avec précision",
+      "uses_none_groups": "Aucun groupe n'utilise encore cet horaire.",
+      "uses_none_vui": "Aucun flux VUI ne l'utilise encore.",
+      "uses_none_calendars": "Aucun calendrier ne l'utilise encore.",
       "col_availability": "Disponibilité",
       "col_use": "Utilisation",
       "section_uses": "Où il est utilisé",

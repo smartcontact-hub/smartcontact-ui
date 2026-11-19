@@ -1532,6 +1532,7 @@
       },
       "col_schedule": "Schedule",
       "uses": {
+        "calendars": "Calendars",
         "groups": "Groups",
         "vui": "VUI",
         "mailboxes": "Mailboxes",
@@ -1545,6 +1546,9 @@
       "view_label": "Schedule view",
       "view_slots_hint": "Type the hours of each day and copy the slots of one day to others",
       "precise_title": "Fine-tune",
+      "uses_none_groups": "No group uses this schedule yet.",
+      "uses_none_vui": "No VUI flow uses it yet.",
+      "uses_none_calendars": "No calendar uses it yet.",
       "col_availability": "Availability",
       "col_use": "Use",
       "section_uses": "Where it is used",

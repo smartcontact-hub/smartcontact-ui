@@ -107,27 +107,15 @@
   }
 }
 
-/* Dónde se usa, por sitios: el título de cada uno con su cifra y debajo sus nombres. */
-.usos {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sc-spacing-0-75);
-}
-
-.usos__grupo {
-  display: grid;
-  grid-template-columns: 7.5rem minmax(0, 1fr);
-  align-items: baseline;
+/* El texto de una opción de los botones, con su icono delante. */
+.opcion {
+  display: inline-flex;
+  align-items: center;
   gap: var(--sc-spacing-0-5);
 }
 
-.usos__titulo {
-  margin: 0;
+.opcion__cifra {
   color: var(--sc-text-secondary);
-}
-
-.usos__cifra {
-  margin-inline-start: var(--sc-spacing-0-25);
   font-weight: 400;
 }
 

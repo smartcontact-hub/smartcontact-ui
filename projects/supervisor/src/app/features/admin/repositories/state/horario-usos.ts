@@ -3,11 +3,14 @@ import type { Group } from '@features/admin/groups/data/groups-data';
 import { subcanalesConHorario } from './horario-uso.service';
 
 /** Los sitios donde se usa un horario, en el orden en que se enseñan. */
-export type TipoDeUso = 'grupos' | 'vui' | 'buzones' | 'agendas' | 'equipos' | 'campanas';
-export const TIPOS_DE_USO: readonly TipoDeUso[] = ['grupos', 'vui', 'buzones', 'agendas', 'equipos', 'campanas'];
+export type TipoDeUso = 'grupos' | 'vui' | 'calendarios';
+export const TIPOS_DE_USO: readonly TipoDeUso[] = ['grupos', 'vui', 'calendarios'];
+
+/** El icono (Material Symbols) de cada sitio: grupos, el del Diseñador VUI y calendarios. */
+export const ICONO_DE_USO: Readonly<Record<TipoDeUso, string>> = { grupos: 'groups', vui: 'account_tree', calendarios: 'calendar_month' };
 
 /** La clave de traducción de cada sitio (`repositories.horarios.uses.<clave>`). */
-export const CLAVE_DE_USO: Readonly<Record<TipoDeUso, string>> = { grupos: 'groups', vui: 'vui', buzones: 'mailboxes', agendas: 'agendas', equipos: 'teams', campanas: 'campaigns' };
+export const CLAVE_DE_USO: Readonly<Record<TipoDeUso, string>> = { grupos: 'groups', vui: 'vui', calendarios: 'calendars' };
 
 export interface UsoDeHorario {
   readonly tipo: TipoDeUso;
@@ -20,18 +23,18 @@ export interface UsoDeHorario {
  * en «Dónde se usa» cuando un horario se usa en muchos sitios.
  */
 const EJEMPLOS: Readonly<Record<number, Partial<Record<Exclude<TipoDeUso, 'grupos'>, readonly string[]>>>> = {
-  1: { vui: ['Atención telefónica', 'Menú principal'], buzones: ['soporte@', 'info@'], agendas: ['Citas de oficina'], equipos: ['Soporte N1', 'Soporte N2', 'Comercial'], campanas: ['Bienvenida a clientes'] },
-  2: { buzones: ['soporte@'], equipos: ['Soporte N1'] },
-  3: { equipos: ['Soporte N2'] },
-  4: { vui: ['Urgencias nocturnas'], equipos: ['Guardias'] },
-  5: { buzones: ['guardia@'], campanas: ['Promo de fin de semana'] },
-  6: { vui: ['Atención LATAM'], agendas: ['Citas LATAM'], equipos: ['Equipo LATAM'] },
-  7: { vui: ['Urgencias'], equipos: ['Guardias'] },
-  8: { agendas: ['Citas de verano'], campanas: ['Campaña de verano', 'Rebajas'] },
-  9: { vui: ['Postventa'], buzones: ['postventa@'], agendas: ['Revisiones'], equipos: ['Postventa'], campanas: ['Encuesta de satisfacción'] },
+  1: { vui: ['Atención telefónica', 'Menú principal', 'Autoservicio de pedidos'], calendarios: ['Calendario laboral España', 'Calendario Barcelona', 'Calendario Madrid'] },
+  2: { vui: ['Atención telefónica'], calendarios: ['Calendario laboral España'] },
+  3: { calendarios: ['Calendario laboral España'] },
+  4: { vui: ['Urgencias nocturnas'], calendarios: ['Calendario de guardias'] },
+  5: { vui: ['Guardia de fin de semana'], calendarios: ['Calendario de festivos'] },
+  6: { vui: ['Atención LATAM'], calendarios: ['Calendario México', 'Calendario Colombia'] },
+  7: { vui: ['Urgencias'], calendarios: ['Calendario de guardias'] },
+  8: { calendarios: ['Calendario de verano'] },
+  9: { vui: ['Postventa', 'Encuesta de satisfacción'], calendarios: ['Calendario laboral España', 'Calendario de verano'] },
 };
 
-/** Dónde se usa un horario: los grupos de verdad (con el canal) y los demás sitios, de ejemplo. Solo los sitios que lo usan. */
+/** Dónde se usa un horario: los grupos de verdad (con el canal) y los demás sitios (VUI y calendarios), de ejemplo. Solo los sitios que lo usan. */
 export function usosDelHorario(id: number | null, grupos: readonly Group[]): readonly UsoDeHorario[] {
   if (id === null) return [];
   const usos: UsoDeHorario[] = [];

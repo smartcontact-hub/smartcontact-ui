@@ -3,6 +3,7 @@ import { LocationStrategy } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TooltipModule } from 'primeng/tooltip';
+import { ScIconComponent } from '@smartcontact-hub/icons';
 import {
   ScButtonComponent,
   ScDividerComponent,
@@ -32,7 +33,7 @@ import { HorarioPeriodoModalComponent } from '../components/horario/horario-peri
 import { DIAS_DE_LA_SEMANA, HorarioSemanaComponent } from '../components/horario/horario-semana.component';
 import { FestivosStore } from '../state/festivos.store';
 import { subcanalesConHorario } from '../state/horario-uso.service';
-import { CLAVE_DE_USO, usosDelHorario } from '../state/horario-usos';
+import { CLAVE_DE_USO, ICONO_DE_USO, TIPOS_DE_USO, type TipoDeUso, usosDelHorario } from '../state/horario-usos';
 import {
   ahoraEn,
   duenoDe,
@@ -73,6 +74,7 @@ const aFecha = (iso: string): Date => new Date(`${iso}T12:00:00`);
   selector: 'sc-horario-editor-page',
   imports: [
     RouterLink,
+    ScIconComponent,
     HorarioSemanaVistaComponent,
     HorarioEspecialModalComponent,
     HorarioFilasTableComponent,
@@ -204,19 +206,27 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
   protected readonly vistas = computed(() => {
     this.lang();
     return [
-      { value: 'semana', label: this.translate.instant('repositories.horarios.view_week') as string },
-      { value: 'franjas', label: this.translate.instant('repositories.horarios.view_slots') as string },
+      { value: 'semana', icono: 'calendar_view_week', label: this.translate.instant('repositories.horarios.view_week') as string },
+      { value: 'franjas', icono: 'schedule', label: this.translate.instant('repositories.horarios.view_slots') as string },
     ];
   });
 
-  /** Dónde se usa: por sitios (grupos, VUI, buzones, agendas, equipos, campañas), cada uno con sus nombres. */
-  protected readonly usos = computed(() => {
+  /** Dónde se usa: por sitios (grupos, VUI, calendarios), cada uno con sus nombres. */
+  protected readonly usos = computed(() => usosDelHorario(this.mode() === 'edit' ? this.horarioId : null, this.groupsStore.groups()));
+
+  /** Qué sitio se ve en «Dónde se usa». */
+  protected readonly usoVista = signal<TipoDeUso>('grupos');
+  protected readonly opcionesDeUso = computed(() => {
     this.lang();
-    return usosDelHorario(this.mode() === 'edit' ? this.horarioId : null, this.groupsStore.groups()).map((u) => ({
-      ...u,
-      titulo: this.translate.instant(`repositories.horarios.uses.${CLAVE_DE_USO[u.tipo]}`) as string,
+    return TIPOS_DE_USO.map((t) => ({
+      value: t,
+      label: this.translate.instant(`repositories.horarios.uses.${CLAVE_DE_USO[t]}`) as string,
+      icono: ICONO_DE_USO[t],
+      cuantos: this.usos().find((u) => u.tipo === t)?.items.length ?? 0,
     }));
   });
+  protected readonly usoActual = computed(() => this.usos().find((u) => u.tipo === this.usoVista())?.items ?? []);
+  protected readonly usoNada = computed(() => (this.lang(), this.translate.instant(`repositories.horarios.uses_none_${CLAVE_DE_USO[this.usoVista()]}`) as string));
 
   /** La ayuda de «Activo», siempre: quién lo usa y qué pasa al apagarlo (DD-152), o dónde se usa si nadie lo usa. */
   protected readonly ayudaDeActivo = computed(() => {

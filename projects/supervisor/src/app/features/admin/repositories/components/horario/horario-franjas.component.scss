@@ -11,6 +11,13 @@
   gap: var(--sc-spacing-0-5);
 }
 
+/* Cada tramo (las dos horas y su ✕) sobre un fondito, para que se vea que son una sola unidad y no cuatro campos sueltos. */
+:host(.semana__franjas) .franjas__fila {
+  padding: var(--sc-spacing-0-375) var(--sc-spacing-0-5);
+  border-radius: var(--sc-radius-md);
+  background: var(--sc-bg-hover);
+}
+
 .franjas__hora {
   inline-size: var(--sc-spacing-5);
 }

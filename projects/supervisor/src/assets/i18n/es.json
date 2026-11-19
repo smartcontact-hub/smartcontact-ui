@@ -1532,6 +1532,7 @@
       },
       "col_schedule": "Horario",
       "uses": {
+        "calendars": "Calendarios",
         "groups": "Grupos",
         "vui": "VUI",
         "mailboxes": "Buzones de email",
@@ -1545,6 +1546,9 @@
       "view_label": "Vista del horario",
       "view_slots_hint": "Escribe las horas de cada día y copia las franjas de un día a otros",
       "precise_title": "Ajustar con precisión",
+      "uses_none_groups": "Ningún grupo atiende con este horario todavía.",
+      "uses_none_vui": "Ningún flujo del VUI lo usa todavía.",
+      "uses_none_calendars": "Ningún calendario lo usa todavía.",
       "col_availability": "Disponibilidad",
       "col_use": "Uso",
       "section_uses": "Dónde se usa",
