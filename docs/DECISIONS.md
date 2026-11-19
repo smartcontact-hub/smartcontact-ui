@@ -42,6 +42,8 @@
 >
 > | Tema | DD |
 > |---|---|
+> | El globo de columnas de las listas: candado en la columna fija, el asa de seis puntos del DS (`drag_indicator`) y «Restablecer» al pie con su icono, apagado mientras todo está como de partida; la cabecera, solo el título (enmienda DD-176) | DD-257 |
+> | Variables sale de «Próximamente» en el hub de Repositorios: abre su panel, una entrada por variable que abre la lista buscando su clave (`?buscar=`), y «Abrir repositorio» lleva a su página · quedan seis «Próximamente» (enmienda DD-245 §4 y DD-251 §6) | DD-255 |
 > | Las dos tablas de asignación enseñan solo los canales marcados (el agente en General; el grupo, los de sus agentes), sin candado ni enlace (enmienda DD-217 §13 y DD-187 §2) | DD-250 |
 > | El alta de usuario lleva los marcadores de paso del grupo y del agente: Identidad dice lo que falta, Acceso y Servicios asignados «Revisada» al dejarlas · sin «Falta: …» sobre el resumen · cierra la deuda de DD-222 §5 | DD-248 |
 > | El día elegido en el año del horario ofrece editar lo que lo decide (su periodo, la semana, sus festivos) y aparte «Cambiar solo este día» · «Nueva fecha especial» abre en el mes elegido (`sc-datepicker` con `defaultDate`) · «Grupos» de Horarios con los nombres · las leyes de los tooltips: posición declarada, abajo en la barra, sin punto final, partido en dos iguales, y el tope del Kit a 252 (`audit:tooltips`; enmienda DD-253 §2) | DD-254 |
@@ -179,6 +181,149 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-257 · 2026-11-17 — El globo de columnas: candado en la fija, asa de seis puntos y «Restablecer» al pie, apagado sin cambios
+
+**Contexto** · El globo de columnas de las listas (`sc-column-toggle`, el «Column Toggle» de primeng.dev, DD-176) ponía
+«Restablecer» arriba, junto al título y siempre encendido; la columna fija salía con la casilla apagada y sin nada en el
+hueco del asa; y el asa era `drag_handle`, dos rayas. Una captura de referencia (revisión visual,
+2026-11-17) lo pide con un candado en la fija, el asa de seis puntos y «Restablecer» al pie y apagado; con su icono, que
+la captura no lleva (decisión de producto, 2026-11-17).
+
+**Decisión** ·
+1. **La fija lleva `lock`** en el sitio del asa, del mismo tono (`--sc-border-strong`). Su casilla sigue marcada y apagada,
+   y su fila no se resalta al pasar: no hace nada.
+2. **El asa es `drag_indicator`**, la que el DS ya usa para arrastrar (`sc-datatable` con filas reordenables, los niveles
+   de Tipificaciones). Al pasar por una fila movible se oscurece (`--sc-icon-secondary`, 120 ms, solo `color`).
+3. **«Restablecer» baja al pie**, tras la raya que cerraba la cabecera, con `restart_alt` (`SC_ICONS.restablecer`), y va
+   **apagado mientras columnas, orden y anchos son los de partida** (`isDefaultPrefs`, en `column-prefs.ts`; lo pasa quien
+   guarda con `[canReset]`). La cabecera se queda con el título, sin raya. El icono del pie cae en la columna de las asas.
+4. **Al restablecer, el botón se apaga a sí mismo**: el foco, que se quedaría en `<body>`, vuelve a la primera columna
+   movible.
+
+**Razón** · Arriba, «Restablecer» competía con el título y se ofrecía aunque no hubiera nada que deshacer: deshace lo
+elegido de un clic y estaba siempre a mano. Al pie y apagado, además, dice si lo que se ve es lo de partida. El candado
+contesta por qué esa casilla no se desmarca; sin él, la fila parecía rota. Y dos rayas se leen como «menú»: los seis
+puntos son el asa del resto del DS (un icono, un significado, DD-200).
+
+**Descartadas** ·
+- *Esconder «Restablecer» mientras no hay cambios*: el pie aparecería y desaparecería, y el sitio del botón no se aprende.
+- *«Restablecer» sin icono, como la captura*: decisión de producto; además `restart_alt` es el icono reservado para
+  restablecer (`SC_ICONS`) y es el que lleva en sc-docs.
+- *Un texto oculto «siempre visible» en la fija*: cambiaba el nombre accesible de su casilla, y casilla marcada y
+  apagada ya lo dice al lector.
+- *Cambiar también `sc-column-selector` de la librería*: ninguna lista del Supervisor lo usa (solo la demo de sc-docs, el
+  laboratorio de tablas y CusCare DS); igualarlo es su propio cambio, y arrastra a todas las apps.
+
+**Consecuencias** · Enmienda DD-176 (cabecera con título y «Restablecer», asa `bars`). Pruebas:
+`columnas-en-una-lista.spec.ts` (candado, asa, «Restablecer» al pie apagado, se enciende al cambiar y se apaga al
+restablecer con el foco en la lista; en rojo con la plantilla anterior). La copia del globo en CusCare DS (en inglés) no
+cambia. En el Kit no hay globo de columnas: nada que reflejar.
+
+---
+
+## DD-256 · 2026-11-16 — Un modo prueba común para desempatar versiones con personas
+
+**Contexto** · El discovery de Horarios (rama `claude/discovery-horarios`) montó su propio modo prueba para comparar dos
+versiones con compañeros de posventa: contaba clics, saltos de pantalla y ayudas, y corregía la misión. Servía solo para
+esa rama, enseñaba un reloj a quien probaba (mete prisa y cambia cómo trabaja) y los resultados se juntaban a mano. Se
+pidió (2026-11-16) tenerlo para cualquier comparación entre prototipos, lo más fácil de usar y de entender posible, y
+estrenarlo con Horarios A y B.
+
+**Decisión** ·
+1. **Cada versión es un enlace** (otra rama o la misma con un parámetro). Una prueba es un plan en
+   `projects/sc-docs/src/app/pages/lab/pruebas/pruebas.data.ts`: la pregunta, las versiones, de una a tres tareas con una
+   **misión gemela por versión** (el mismo trabajo con otros datos) y cuántas personas.
+2. **El Lab de sc-docs es la sala de control** (`/#/lab/pruebas/<id>`): un enlace por persona con el orden de versiones
+   rotado (P1 A→B, P2 B→A…), la guía de quien modera, la caja donde se pegan los resultados y el veredicto. Las puertas
+   de cada persona (`/#/prueba/<id>/P3` y su `…/fin`) van sin el marco del sitio.
+3. **El Supervisor es la sala de pruebas**: una capa en `core/prueba/` que llega a toda rama con `main`, se carga aparte
+   (`@defer`) y solo con el enlace de una prueba en `localhost` o en un preview de rama, nunca en producción. Enseña la
+   tarea, «Necesito ayuda», «He terminado» y la pregunta de facilidad; mide sin enseñar reloj ni contadores.
+4. **La sesión viaja en el enlace** (`#prueba=…`); de una rama a otra cruza en él, y en la misma rama sigue en la
+   pestaña. Al acabar, la persona copia un código `SCP1.…` y se lo manda a quien modera. Sin servidor.
+5. **Corregir es opcional**: la rama registra `reiniciar` y `comprobar` con `registrarPrueba`; si no, quien modera marca
+   si salió bien.
+6. **La regla de decisión**, igual para todas (`prueba.core.mjs`, `veredicto`): gana quien más veces se resuelve bien y
+   sin ayuda; si empatan, la facilidad (pregunta única 1–7); luego el tiempo, solo con un 50 % de diferencia; al final,
+   la preferencia. Una diferencia cuenta con la prueba de signos exacta a p < 0,10 (con 6 personas, 5 a 0); si no, la
+   página dice «Empate» y decide lo que se vio en las sesiones.
+7. **La skill del repo `probar-prototipos`** monta una prueba de punta a punta: plan, ganchos en la rama, alta, ensayo y
+   lectura del resultado.
+8. **Tras la prueba, un informe con las siglas de siempre** (`informe`, `csvDeResultados` e `informeEnTexto` en
+   `prueba.core.mjs`): TSR (bien y sin ayuda; con ayuda cuenta como fallo, y lleva su intervalo del 95 % de Wald
+   ajustado), ToT (media geométrica del tiempo de lo que salió bien), SEQ (facilidad 1–7), FCS (primer clic igual al del
+   ensayo), Lostness (Smith, 1996: más de 0,4 es perderse; el camino corto sale del ensayo), ayuda, clics en vacío y
+   preferencia. De los datos salen solos los **accionables**, cada uno con lo que se vio (con su cifra) y qué hacer, por
+   gravedad: la tarea no sale (TSR por debajo del 78 %), se atascan en una pantalla (dos o más piden ayuda en la misma),
+   el primer clic se va a otro sitio (FCS por debajo del 50 %), parece pulsable y no lo es (el mismo clic en vacío en dos
+   o más personas), se percibe difícil (SEQ por debajo de 5,5), se pierden (Lostness por encima de 0,4), es lenta (ToT
+   1,5 veces la más rápida) y gusta más pero funciona peor. Las referencias son medias del sector (MeasuringU), no metas.
+   El informe se copia en Markdown o se descarga en CSV, una fila por intento, para seguir trabajando con él.
+9. **La sala enseña lo mínimo que se usa** (enmienda §2): el marcador (cada versión con su enlace, cuántas veces salió
+   bien y sin ayuda y su barra), un punto por persona que copia su enlace y se enciende al llegar su código, la caja que
+   coge los códigos al pegarlos y los tres accionables más graves. Las métricas, persona a persona, cómo acompañar la
+   sesión, la tarea y la regla van plegadas en «Todo el detalle». Sirve igual para cualquier prueba del plan.
+
+**Razón** · Con 5 a 10 personas lo que separa versiones es si la tarea sale o no sin ayuda; lo demás explica por qué. El
+umbral se fija para que la herramienta diga «empate» cuando los datos no alcanzan, en vez de dar ganadora con 4 a 2. Los
+enlaces y el código copiado hacen que funcione con cualquier rama sin instalar nada y sin que un dato salga del navegador
+de nadie sin que lo decida (el repo es público).
+
+**Descartadas** ·
+- *Mapas de calor* (heatmap.js y similares): con 6 personas no dicen nada que no diga el primer clic, y heatmap.js no
+  publica desde 2016.
+- *PostHog u otra analítica de terceros*: datos de compañeros en un servicio externo, con consentimiento y cookies; y su
+  grabación es rrweb, que aquí sobra (abajo).
+- *Grabar la pantalla (rrweb) en la primera versión*: la llamada con pantalla compartida ya graba si la persona quiere, y
+  añade peso y datos sensibles.
+- *SUS*: diez preguntas para una tarea; la pregunta única de facilidad (SEQ) mide lo mismo por tarea.
+- *Un servidor que recoja los resultados*: con un moderador por sesión, copiar un código basta y no guarda datos de nadie.
+- *Llamarlo «kit»*: en este proyecto el Kit es el de Figma.
+- *La retención como métrica de la prueba*: es de analítica de producto (si la gente vuelve días después); en una sesión
+  con una tarea, lo que se mide es si sale (TSR) y cuánto cuesta (ToT, SEQ).
+- *Enseñar todas las métricas de entrada*: la sala se usa con la persona al otro lado de la llamada; a la vista, solo lo
+  que decide y lo que hay que arreglar.
+
+**Consecuencias** · Supervisor: `core/prueba/` (arranque en `main.ts`, capa en `app.component.html`). sc-docs: rutas
+`lab/pruebas/:id`, `prueba/:id/:participante` y `…/fin`, y la sección «Pruebas con personas» del Lab. Pruebas:
+`scripts/__tests__/prueba-usuarios.test.mjs` (orden rotado, gemelas, códec, hosts permitidos, lectura de códigos y la
+regla) y `prueba-informe.test.mjs` (métricas, accionables, CSV e informe). Frente nuevo:
+`docs/handoff/pruebas-usuarios.md`. Queda: que la rama del discovery traiga `main`, lea
+`?variante=`, registre sus ganchos para `festivo-1` y `festivo-2` y esconda su barra antigua; la capa solo existe en el
+Supervisor.
+
+---
+
+## DD-255 · 2026-11-16 — Variables sale de «Próximamente» en el hub de Repositorios y abre su panel
+
+**Contexto** · DD-245 §4 dejó en «Próximamente» los ocho destinos que el COA del hub (SISMAC-4064, v2) da por no
+implementados, Variables entre ellos: su tarjeta lleva la marca, `aria-disabled` y no abre nada. Pero Variables tenía su
+página desde antes de ese COA (`/admin/variables`: la lista de `repo-list-page` con su alta y su edición en panel, DD-124
+y DD-163) y sus pruebas (`list-table-grammar`, `nombre-repetido-paneles`). En sc-supervisor.pages.dev la tarjeta no se
+podía pulsar, y el usuario pidió volver a activarla (2026-11-16).
+
+**Decisión** ·
+1. **Variables sale de «Próximamente»** (enmienda DD-245 §4; de los ocho quedan seis, tras Horarios en DD-251 §6). Su
+   tarjeta abre el panel como las demás, y «Abrir repositorio» lleva a `/admin/variables`.
+2. **Una entrada por variable**, con su nombre y su clave (`{agente}`). Sin editor en su propia ruta, cada entrada abre la
+   lista ya buscando su clave (`?buscar=`, DD-164): queda su fila sola.
+
+**Razón** · La página existía y funcionaba, así que «Próximamente» decía del prototipo algo que no era verdad. Donde el
+prototipo ya resolvió algo, el que se queda corto es el COA (DD-245, «Razón»).
+
+**Descartadas** ·
+- *Entradas que llevan a la lista entera, sin buscar*: el panel promete que cada entrada lleva a su sitio (DD-179 §4), y
+  la lista entera obliga a buscarla otra vez.
+- *Abrir la edición de esa variable desde su entrada (`?editar=`, como Plantillas)*: `repo-list-page` solo lee `buscar`;
+  añadirlo es cambiar la pieza común de los diez repositorios de lista para uno.
+- *La tarjeta que entra directa en su página, sin panel*: sería la única que no abre panel sin ser «Próximamente».
+
+**Consecuencias** · Enmienda DD-245 §4 y el recuento de DD-251 §6 (de siete a seis). Pruebas: `repositorios-hub.spec.ts`
+(la de «Próximamente», de siete a seis, y una nueva para Variables, en rojo con la marca puesta). Fuera del repo: el COA
+de SISMAC-4064 y el hub en Figma siguen con Variables en «Próximamente» (`figma-pendiente` §64, «Queda»).
 
 ---
 

@@ -45,7 +45,7 @@ import { CargaSimuladaService, ResultadoAccionService, UndoStackService } from '
 import { escapeSearch } from '@core/utils/escape-search';
 import { injectLangChange } from '@core/utils/lang-change';
 
-import { type ColumnPrefs, normalizePrefs } from '../column-toggle/column-prefs';
+import { type ColumnPrefs, isDefaultPrefs, normalizePrefs } from '../column-toggle/column-prefs';
 import { ColumnToggleComponent } from '../column-toggle/column-toggle.component';
 import { TooltipModule } from 'primeng/tooltip';
 
@@ -479,6 +479,13 @@ export class ListPageComponent<T extends { readonly id: number | string }> imple
   protected readonly columnPrefs = computed<ColumnPrefs | null>(() => {
     const choices = this.columnChoices();
     return choices ? normalizePrefs(choices, this.storedPrefs()) : null;
+  });
+
+  /** «Restablecer» se enciende cuando hay algo que deshacer: columnas, orden o anchos arrastrados (DD-257). */
+  protected readonly columnsChanged = computed(() => {
+    const prefs = this.columnPrefs();
+    const choices = this.columnChoices();
+    return !!prefs && !!choices && !isDefaultPrefs(choices, prefs);
   });
 
   /** Las opciones del selector, en el orden de la tabla: la etiqueta, y fija la que no se puede quitar. */

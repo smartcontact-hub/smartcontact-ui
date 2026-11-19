@@ -8,14 +8,26 @@ card, y la rutina con la que se lee un tema nuevo.
 - **El dato, en Excel**: [`conexion-variables.csv`](./conexion-variables.csv).
 - Los dos salen de la MISMA ejecución de `npm run variables:map`, así que no pueden divergir.
 
+**Cada cosa vive en un solo sitio.** Las cifras de hoy las calcula la página desde el dato; lo que
+significa cada veredicto está en
+[`veredictos.ts`](../projects/sc-docs/src/app/pages/conexion/veredictos.ts), que la página pinta.
+Este documento es el MÉTODO y la historia de cada pasada: no copia cifras vivas, porque una cifra
+copiada se desfasa en cuanto se vuelve a medir.
+
 ---
 
-## La foto en cifras (2026-09-05)
+## La foto en una frase
 
 La pregunta de negocio es una: **si cambio algo en mi Figma y les paso el tema, ¿les funciona?**
 
-| | Cifra | Qué significa |
-|---|---|---|
+Casi siempre sí. De lo que hoy se puede gobernar desde Figma llega casi todo, y lo que no se
+controla no está roto: **no está modelado**, y son sobre todo sombras y animaciones. Las cifras,
+calculadas del dato, están en la página, en «La cadena».
+
+**La excepción que rompe la promesa** es el modal a medida: el tema le manda sus valores y no lee
+ninguno (ver «Peticiones abiertas al consumidor»).
+
+---|---|---|
 | **De tu Figma a su web** | **723 de 731 = 99%** | De tus variables, casi todas llegan. Las 8 que no: 2 auxiliares de dibujo, 3 que no usa nadie, 3 detalles del anillo de foco y del alto del Avatar |
 | **De su web a tu Figma** | **723 de 802 = 90%** | Su CSS lee 802 valores y 723 salen de una variable tuya. Los **79 restantes no los puedes tocar** porque tu Kit no los modela: **45 sombras, 15 duraciones, 13 estilos de línea**, 6 sueltos |
 | **Tu dibujo** | **639 de 731 = 87%** | Las otras 92 **viajan igual**: el tema se hace desde las variables, no desde los dibujos. El valor llega bien; lo que puede enseñar otra cosa es el Kit |
@@ -47,10 +59,29 @@ exporta igual. **«Se ve bien» es el síntoma de este defecto, no su ausencia**
 
 ## Los once veredictos
 
-Seis salen solos de cruzar las dos preguntas:
+Qué significa cada uno vive en
+[`veredictos.ts`](../projects/sc-docs/src/app/pages/conexion/veredictos.ts), y la página lo pinta.
+Aquí va solo cómo se asigna.
 
-| Veredicto | ¿La usa una capa? | ¿La lee PrimeNG? | Qué significa |
-|---|---|---|---|
+Seis salen solos de cruzar las dos preguntas (`veredicto()` en
+[`scripts/variables-map.mjs`](../scripts/variables-map.mjs)):
+
+| Veredicto | ¿La usa una capa? | ¿La lee PrimeNG? |
+|---|---|---|
+| **conectada** | sí | sí |
+| **Figma no la usa** | no | sí |
+| **espejismo** | sí | no |
+| **muerta** | no | no |
+| **solo web** | — (no hay variable) | sí |
+| **solo Figma** | sí | — (no hay token) |
+
+Los otros cinco **no los ve el cruce**, porque hace falta abrir el nodo o el CSS: solo los pone una
+revisión a mano (las `revisiones` del crudo), y son los que más cuestan de encontrar. Dos abren un
+caso, **mal apuntada** y **muerta en el tema**, y tres lo cierran: **conectada por el primitivo**,
+**viaja por `--sc-*`** y **no es un hallazgo**. Este último se anota **con el motivo**: un mapa que
+solo guarda los aciertos hace repetir el trabajo descartado.
+
+---|---|---|---|
 | **conectada** | sí | sí | La cadena entera está enganchada |
 | **Figma no la usa** | no | sí | El valor viaja igual. Lo que puede desviarse es el dibujo |
 | **espejismo** | sí | no | Se ve bien en el Kit y no llega a la pantalla |
@@ -181,6 +212,7 @@ no se ha quedado viejo.
 | Derivado para Excel | [`conexion-variables.csv`](./conexion-variables.csv) |
 | Deriva + guard | [`scripts/variables-map.mjs`](../scripts/variables-map.mjs) |
 | Página | `projects/sc-docs/src/app/pages/conexion/` |
+| Qué significa cada veredicto | `projects/sc-docs/src/app/pages/conexion/veredictos.ts` |
 
 ```bash
 npm run variables:map
@@ -208,22 +240,9 @@ suelto al CI, entonces sí entran en juego el test de paridad
 ## Estado del 2026-09-04
 
 817 filas, 18 componentes, medidas contra el Kit de Figma y el CSS que sirve
-`ui.smart-contact.com`.
+`ui.smart-contact.com`. El recuento por veredicto, en la página.
 
-| Veredicto | Nº |
-|---|---|
-| conectada | 636 |
-| Figma no la usa | 88 |
-| solo web | 79 |
-| espejismo | 3 |
-| muerta | 3 |
-| solo Figma | 3 |
-| conectada por el primitivo | 2 |
-| muerta en el tema | 1 |
-| viaja por `--sc-*` | 1 |
-| no es un hallazgo | 1 |
-
-De las 87 «Figma no la usa»: 34 son el anillo de foco (no atables), 41 llevan `FALTA DIBUJARLO` (el
+De las «Figma no la usa»: 34 son el anillo de foco (no atables), 41 llevan `FALTA DIBUJARLO` (el
 Kit no dibuja esa variante o ese estado) y el resto se cerraron abriendo el nodo.
 
 **12 variables atadas** en la primera pasada, unas 92 capas en total. **5 estaban mal apuntadas y 7

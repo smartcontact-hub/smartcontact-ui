@@ -1,596 +1,787 @@
 /*
- * LAB · rehecho el 2026-09-22.
- *
- * Tres familias y tres lenguajes visuales, para que se sepa qué es cada cosa antes de leerla:
- * la EXPLORACIÓN lleva el color de su estado, el LABORATORIO va en violeta (no espera veredicto,
- * se usa) y el ENLACE es una fila desnuda. El color sale siempre de un rol del sistema
- * (`--sc-bg-*`, `--sc-text-*`, `--sc-border-*`), nunca de una familia: DD-99.
+ * LAB · rehecho el 2026-11-16 con la composición de la portada (`inicio.component.scss`): título centrado sobre el gris
+ * con la forma de la esquina, tarjetas blancas de radio grande con sombra mínima, ilustraciones con degradados de la
+ * paleta y movimiento al entrar. Mismo ancho útil que la portada (62rem) y el mismo ritmo: entre secciones el doble de
+ * aire que dentro de ellas. El color sale de los roles del sistema (`--sc-bg-*`, `--sc-text-*`), nunca de una familia
+ * nueva: DD-99. La tarjeta grande de Horarios vive en `lab-horarios.component.scss`; las ilustraciones de las
+ * tarjetas, en `lab-arte.component.ts`.
  */
 
 :host {
   display: block;
 }
 
-.lab {
-  /* La medida de lectura acota el TEXTO; las rejillas usan el ancho entero, que para comparar
-     tarjetas lado a lado es lo que vale. */
-  --measure: 62ch;
-  /* La misma curva y duración en toda la página: un solo lenguaje de movimiento (better-ui). */
-  --ease: cubic-bezier(0.2, 0, 0, 1);
-  --fast: 150ms;
+/* ─────────── Degradados ─────────── */
 
-  max-width: 76rem;
+.lab-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
 }
 
-.lab > * + * {
-  margin-top: var(--sc-spacing-4);
+.lab-stop--cian {
+  stop-color: var(--sc-color-cyan-300);
 }
 
-/* ── CABECERA ───────────────────────────────────────────────────────────────────────────────── */
-
-.eyebrow {
-  margin: 0 0 var(--sc-spacing-0-5);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--sc-text-accent);
+.lab-stop--cielo {
+  stop-color: var(--sc-color-sky-500);
 }
 
-.lab__head h1 {
-  margin: 0;
-  max-width: var(--measure);
-  font-size: var(--sc-font-size-800);
-  line-height: var(--sc-line-height-800);
-  font-weight: var(--sc-font-weight-semibold);
-  letter-spacing: -0.01em;
-  color: var(--sc-text-heading);
+.lab-stop--hondo {
+  stop-color: var(--sc-color-sky-700);
 }
 
-/* La entradilla, como la de la cabecera de cada página: `.sc-text-h3-regular` en la plantilla. */
-.lead {
-  margin: var(--sc-spacing-1) 0 0;
-  max-width: var(--measure);
-  color: var(--sc-text-secondary);
+.lab-stop--brillo {
+  stop-color: var(--sc-color-cyan-100);
 }
 
-/* El índice: tres destinos con su cifra. Es lo que hace la página UBICABLE — antes había que
-   bajar 2.809px para saber qué había. */
-.jump {
+.lab-stop--lima {
+  stop-color: var(--sc-color-emerald-300);
+}
+
+/* ─────────── Título ─────────── */
+
+.lab-hero {
+  position: relative;
+  overflow: hidden;
+  padding: var(--sc-spacing-5) var(--sc-spacing-1-5) var(--sc-spacing-3);
+  text-align: center;
+
+  &__forma {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: min(30rem, 45vw);
+    height: auto;
+    pointer-events: none;
+  }
+
+  /* Las burbujas, a la izquierda: suben despacio y se desvanecen, cada una a su ritmo. */
+  &__burbujas {
+    position: absolute;
+    left: 6%;
+    bottom: 0;
+    width: min(12rem, 22vw);
+    height: auto;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  &__titulo {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: baseline;
+    gap: 0 var(--sc-spacing-0-875);
+    margin: 0;
+    font-family: var(--demo-letra-marca);
+  }
+
+  &__marca {
+    font-weight: var(--sc-font-weight-semibold);
+    letter-spacing: -0.02em;
+  }
+
+  &__producto {
+    color: var(--sc-text-secondary);
+    font-family: var(--demo-letra-marca-fina);
+    font-style: italic;
+    font-weight: var(--sc-font-weight-regular);
+  }
+
+  &__sub {
+    position: relative;
+    max-width: 40rem;
+    margin: var(--sc-spacing-0-5) auto 0;
+    color: var(--sc-text-primary);
+  }
+}
+
+/* ─────────── Página ─────────── */
+
+.lab-pagina {
+  width: min(100% - 2 * var(--sc-spacing-1-5), 62rem);
+  margin: 0 auto;
+}
+
+/* El índice: las cinco familias con su cifra. Hace la página UBICABLE desde arriba. */
+.lab-indice {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
-  gap: var(--sc-spacing-0-875);
-  margin-top: var(--sc-spacing-2);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr));
+  gap: var(--sc-spacing-0-75);
 }
 
-.jump__item {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  grid-template-areas:
-    'count label'
-    'count hint';
+.lab-indice__item {
+  display: flex;
   align-items: center;
-  gap: 0 var(--sc-spacing-0-875);
-  /* Radio concéntrico: 12 de padding dentro de un radio de 16 deja el interior en 4 si algún día
-     lleva algo con caja propia. */
+  gap: var(--sc-spacing-0-75);
   padding: var(--sc-spacing-0-875) var(--sc-spacing-1);
-  border: 1px solid var(--sc-border-subtle);
-  border-radius: var(--sc-radius-lg);
+  border: 0;
+  border-radius: var(--sc-radius-xl);
   background: var(--sc-bg-surface);
+  box-shadow: var(--sc-shadow-xs);
+  color: inherit;
   text-align: start;
   cursor: pointer;
-  /* Solo lo que cambia. `transition: all` haría trabajar al navegador en propiedades que nunca
-     se mueven aquí. */
   transition:
-    border-color var(--fast) var(--ease),
-    background var(--fast) var(--ease),
-    box-shadow var(--fast) var(--ease);
+    box-shadow var(--sc-transition-base) ease-out,
+    transform var(--sc-transition-base) var(--demo-ease-salida);
+
+  &:hover {
+    box-shadow: var(--sc-shadow-card);
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: scale(0.98);
+    transition-duration: var(--sc-transition-fast);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-border-focus);
+    outline-offset: 2px;
+  }
 }
 
-.jump__item:hover {
-  border-color: var(--sc-border-accent);
-  background: var(--sc-bg-hover);
-  box-shadow: var(--sc-shadow-sm);
+.lab-indice__texto {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 
-.jump__item:focus-visible {
-  outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
-  outline-offset: var(--sc-focus-ring-offset);
+.lab-indice__label {
+  color: var(--sc-text-primary);
 }
 
-.jump__count {
-  grid-area: count;
+.lab-indice__hint {
+  color: var(--sc-text-subtle);
+}
+
+.lab-indice__cifra {
+  margin-inline-start: auto;
   color: var(--sc-text-accent);
   font-variant-numeric: tabular-nums;
 }
 
-.jump__label {
-  grid-area: label;
-  color: var(--sc-text-primary);
+/* ─────────── Secciones ─────────── */
+
+.lab-sec {
+  margin-top: var(--sc-spacing-4);
+  /* El índice lleva aquí con `scrollIntoView`: sin esto, la cabecera fija tapa el título. */
+  scroll-margin-top: var(--sc-spacing-5);
+
+  &--primera {
+    margin-top: var(--sc-spacing-2);
+  }
 }
 
-.jump__hint {
-  grid-area: hint;
-  color: var(--sc-text-subtle);
-}
-
-/* ── SECCIÓN ────────────────────────────────────────────────────────────────────────────────── */
-
-/* Contenedor de consulta: lo que hay dentro se adapta al ANCHO DE LA SECCIÓN, no al de la
- * ventana. El sidebar del showcase se pliega, así que la misma ventana da dos anchos distintos
- * a esta página y una media query de viewport se equivocaría en uno de los dos. */
-.sec {
-  container-type: inline-size;
-}
-
-.sec__head {
+.lab-sec__cabeza {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sc-spacing-1);
   margin-bottom: var(--sc-spacing-1-5);
 }
 
-.sec__head h2 {
+.lab-sec__titulo {
   margin: 0;
+  color: var(--sc-text-primary);
   letter-spacing: -0.01em;
-  color: var(--sc-text-heading);
 }
 
-.sec__lead {
-  margin: var(--sc-spacing-0-375) 0 0;
-  max-width: var(--measure);
-  font-size: var(--sc-font-size-200);
-  line-height: var(--sc-line-height-200);
+.lab-sec__lead {
+  margin: var(--sc-spacing-0-25) 0 0;
   color: var(--sc-text-secondary);
 }
 
-/* ── TARJETAS ───────────────────────────────────────────────────────────────────────────────── */
-
-.cards {
+.lab-dos,
+.lab-tres {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(22rem, 1fr));
-  gap: var(--sc-spacing-1-25);
+  gap: var(--sc-spacing-1-5);
 }
 
-.card {
-  position: relative;
+.lab-dos {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.lab-tres {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+/* ─────────── Tarjetas ───────────
+ *
+ * Como las pequeñas de la portada: blancas, radio xl, sombra mínima que crece al pasar, y arriba su ilustración con
+ * el filo redondeado por dentro (radio de la tarjeta menos su margen).
+ */
+
+.lab-tarjeta {
   display: flex;
   flex-direction: column;
-  gap: var(--sc-spacing-0-75);
-  padding: var(--sc-spacing-1-5);
-  /* El borde estructura (dice dónde acaba la tarjeta); la sombra solo aparece al levantarla con
-     el ratón, que es cuando hay elevación que comunicar. */
-  border: 1px solid var(--sc-border-subtle);
+  min-width: 0;
+  overflow: hidden;
   border-radius: var(--sc-radius-xl);
   background: var(--sc-bg-surface);
-  overflow: hidden;
+  box-shadow: var(--sc-shadow-xs);
   transition:
-    border-color var(--fast) var(--ease),
-    box-shadow var(--fast) var(--ease);
+    box-shadow var(--sc-transition-base) ease-out,
+    transform var(--sc-transition-base) var(--demo-ease-salida);
+
+  &:hover {
+    box-shadow: var(--sc-shadow-card);
+    transform: translateY(-2px);
+  }
 }
 
-/* La franja de estado: 3px arriba, a todo lo ancho. Es la primera cosa que se ve de la tarjeta y
-   dice en qué quedó sin gastar una palabra. El `::before` y no un elemento, que no es contenido. */
-.card::before {
-  content: '';
+.lab-tarjeta__arte {
+  position: relative;
+  margin: var(--sc-spacing-0-5) var(--sc-spacing-0-5) 0;
+  overflow: hidden;
+  border-radius: var(--sc-radius-lg);
+}
+
+.lab-tarjeta__estado {
   position: absolute;
-  inset-block-start: 0;
-  inset-inline: 0;
-  block-size: 3px;
-  background: var(--sc-bg-secondary);
+  top: var(--sc-spacing-0-75);
+  left: var(--sc-spacing-0-75);
 }
 
-.card[data-status='oficial']::before {
-  background: var(--sc-bg-success);
-}
-
-.card[data-status='en-revision']::before {
-  background: var(--sc-bg-warning);
-}
-
-.card:hover {
-  border-color: var(--sc-border-strong);
-  box-shadow: var(--sc-shadow-card);
-}
-
-.card__top {
+.lab-tarjeta__cuerpo {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--sc-spacing-0-75);
+  flex-direction: column;
+  flex: 1;
+  gap: var(--sc-spacing-0-5);
+  padding: var(--sc-spacing-1) var(--sc-spacing-1-5) var(--sc-spacing-1-5);
 }
 
-.card__date {
+.lab-tarjeta__fecha {
+  margin: 0;
   color: var(--sc-text-subtle);
   font-variant-numeric: tabular-nums;
 }
 
-.card__title {
+.lab-tarjeta__titulo {
   margin: 0;
   color: var(--sc-text-heading);
 }
 
-/* La pregunta que responde la exploración, que es lo que de verdad se viene a leer. */
-.card__q {
+.lab-tarjeta__q {
   margin: 0;
   color: var(--sc-text-primary);
 }
 
-.card__note {
+.lab-tarjeta__nota {
   margin: 0;
   color: var(--sc-text-secondary);
 }
 
-/* Siempre en dos filas, aunque el dominio quepa al lado: con `flex-wrap` unas tarjetas partían y
- * otras no, y la rejilla perdía el ritmo — la llamada de una caía donde en la vecina estaba la URL.
- * Un pie que siempre mide igual vale más que ahorrar una línea en la mitad de los casos. */
-.card__foot {
+/* Quién lo hizo: el mismo avatar, nombre y caption que las autorías de Horarios. */
+.lab-autor {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sc-spacing-0-25) var(--sc-spacing-0-5);
+  margin: 0;
+}
+
+.lab-autor__avatar {
+  display: inline-flex;
+}
+
+.lab-autor__nombre {
+  color: var(--sc-text-primary);
+}
+
+.lab-autor__meta {
+  color: var(--sc-text-secondary);
+}
+
+/* Siempre en dos filas, la llamada y debajo el dominio: con `flex-wrap` unas tarjetas partían y otras no, y la
+   llamada de una caía donde en la vecina estaba la URL. */
+.lab-tarjeta__pie {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: var(--sc-spacing-0-25);
   margin-top: auto;
-  padding-top: var(--sc-spacing-0-5);
+  padding-top: var(--sc-spacing-0-75);
 }
 
-.card__where {
+.lab-tarjeta__donde {
   color: var(--sc-text-subtle);
   overflow-wrap: anywhere;
 }
 
-/* La llamada. La flecha se separa 2px al pasar por encima: el movimiento mínimo que dice «esto
-   te lleva fuera», y solo en `translate`, que compone la GPU. */
-.cta {
+/* La llamada: como «Ver los componentes» de la portada, con la flecha que se separa al pasar. */
+.lab-enlace {
   display: inline-flex;
   align-items: center;
-  gap: var(--sc-spacing-0-375);
+  gap: var(--sc-spacing-0-25);
   color: var(--sc-text-link);
   text-decoration: none;
+
+  sc-icon {
+    transition: transform var(--sc-transition-base) var(--demo-ease-salida);
+  }
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &:hover sc-icon {
+    transform: translate(2px, -2px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-border-focus);
+    outline-offset: 2px;
+    border-radius: var(--sc-radius-sm);
+  }
 }
 
-.cta:hover {
-  text-decoration: underline;
-}
-
-.cta__arrow {
-  transition: translate var(--fast) var(--ease);
-}
-
-.cta:hover .cta__arrow {
-  translate: 2px -2px;
-}
-
-.cta--sm {
-  gap: var(--sc-spacing-0-25);
-}
-
-/* Lo que se consulta de vez en cuando, plegado. */
-.more {
-  margin-top: var(--sc-spacing-0-25);
-  border-top: 1px solid var(--sc-border-subtle);
+/* El historial plegado. */
+.lab-mas {
+  margin-top: var(--sc-spacing-0-5);
   padding-top: var(--sc-spacing-0-75);
+  border-top: 1px solid var(--sc-border-subtle);
 }
 
-.more__summary {
+.lab-mas__resumen {
   display: flex;
   align-items: center;
-  gap: var(--sc-spacing-0-5);
+  gap: var(--sc-spacing-0-375);
   color: var(--sc-text-secondary);
   cursor: pointer;
   list-style: none;
+
+  &::-webkit-details-marker {
+    display: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-border-focus);
+    outline-offset: 2px;
+    border-radius: var(--sc-radius-sm);
+  }
 }
 
-.more__summary::-webkit-details-marker {
-  display: none;
+.lab-mas__galon {
+  transition: rotate var(--sc-transition-base) var(--demo-ease-salida);
 }
 
-.more__summary:focus-visible {
-  outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
-  outline-offset: var(--sc-focus-ring-offset);
+.lab-mas[open] .lab-mas__galon {
+  rotate: 180deg;
 }
 
-/* El galón, dibujado con bordes: gira 90° al abrir. Un icono de fuente aquí sería una dependencia
-   para dos líneas de CSS. */
-.more__chevron {
-  inline-size: 0;
-  block-size: 0;
-  border-block: 4px solid transparent;
-  border-inline-start: 5px solid currentcolor;
-  transition: rotate var(--fast) var(--ease);
-}
-
-.more[open] .more__chevron {
-  rotate: 90deg;
-}
-
-.versions,
-.figma {
-  margin: var(--sc-spacing-0-75) 0 0;
-  padding: 0;
-  list-style: none;
+.lab-versiones {
   display: flex;
   flex-direction: column;
-  gap: var(--sc-spacing-0-25);
+  gap: var(--sc-spacing-0-125);
+  margin: var(--sc-spacing-0-5) 0 0;
+  padding: 0;
+  list-style: none;
 }
 
-.version__link {
+.lab-version {
   display: grid;
-  grid-template-columns: auto 1fr;
-  gap: var(--sc-spacing-0-625);
+  grid-template-columns: 5.5rem 1fr;
+  gap: var(--sc-spacing-0-5);
   padding: var(--sc-spacing-0-375) var(--sc-spacing-0-5);
-  /* 8 dentro de una tarjeta de 16 con 21 de relleno: el interior es siempre menor que el exterior. */
-  border-radius: var(--sc-radius-sm);
+  border-radius: var(--sc-radius-md);
   color: var(--sc-text-secondary);
   text-decoration: none;
-  transition: background var(--fast) var(--ease);
+  transition: background var(--sc-transition-fast) ease-out;
+
+  &:hover {
+    background: var(--sc-bg-hover);
+    color: var(--sc-text-primary);
+  }
 }
 
-.version__link:hover {
-  background: var(--sc-bg-hover);
-  color: var(--sc-text-primary);
-}
-
-.version__date {
+.lab-version__fecha {
   color: var(--sc-text-subtle);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 
-/* ── LABORATORIOS ─────────────────────────────────────────────────────────────────────────────
- *
- * Filas anchas y numeradas, sin caja. Lo que separa una de otra es una línea, que es lo que hace
- * falta cuando el contenido ya va en dos columnas: una caja aquí sería una caja dentro de nada.
- */
-
-.benches {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  border-top: 1px solid var(--sc-border-subtle);
-}
-
-.bench {
-  display: grid;
-  /* El número, el cuerpo y los mandos. A partir de 52rem de ANCHO DEL CONTENEDOR, no de la
-     ventana: esta lista puede vivir en un hueco estrecho aunque la pantalla sea ancha. */
-  grid-template-columns: auto 1fr;
-  gap: var(--sc-spacing-0-5) var(--sc-spacing-1-25);
-  padding: var(--sc-spacing-1-5) 0;
-  border-bottom: 1px solid var(--sc-border-subtle);
-}
-
-/* El número es ordinal, no decoración: dice que son dos y en qué orden. Va en el tono más
- * apagado que sigue leyéndose, para numerar sin competir con el título. */
-.bench__n {
-  color: var(--sc-text-subtle);
-  font-variant-numeric: tabular-nums;
-  padding-top: 0.2em; /* alineación óptica con la mayúscula del título, que sube más que la cifra */
-}
-
-.bench__body {
-  min-inline-size: 0;
-}
-
-.bench__title {
-  margin: 0;
-  color: var(--sc-text-heading);
-}
-
-.bench__q {
+/* Lo que se toca en un laboratorio: pastillas grises, pistas y no botones. */
+.lab-mandos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sc-spacing-0-375);
   margin: var(--sc-spacing-0-25) 0 0;
-  max-inline-size: var(--measure);
-  color: var(--sc-text-primary);
-}
-
-.bench__where {
-  margin: var(--sc-spacing-0-5) 0 0;
-  max-inline-size: var(--measure);
-  color: var(--sc-text-secondary);
-}
-
-.bench__aside {
-  grid-column: 2;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--sc-spacing-0-5) var(--sc-spacing-1);
-}
-
-.bench__url {
-  color: var(--sc-text-subtle);
-  overflow-wrap: anywhere;
-}
-
-/* Los mandos, en una línea y separados por su propio punto: son tres palabras, no tres botones,
-   y meterlas en pastillas de color las haría parecer pulsables. */
-.knobs {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--sc-spacing-0-5);
-  margin: 0;
   padding: 0;
   list-style: none;
+}
+
+.lab-mandos__item {
+  padding: var(--sc-spacing-0-125) var(--sc-spacing-0-5);
+  border-radius: var(--sc-radius-full);
+  background: var(--sc-bg-subtle);
   color: var(--sc-text-secondary);
 }
 
-.knob + .knob::before {
-  content: '·';
-  margin-inline-end: var(--sc-spacing-0-5);
-  color: var(--sc-text-disabled);
+/* ─────────── Enlaces ─────────── */
+
+.lab-agenda {
+  position: relative;
+  overflow: hidden;
+  padding: var(--sc-spacing-2) var(--sc-spacing-2-5);
+  border-radius: var(--sc-radius-2xl);
+  background: var(--sc-bg-surface);
+  box-shadow: var(--sc-shadow-xs);
 }
 
-@container (min-width: 52rem) {
-  .bench {
-    grid-template-columns: auto 1fr auto;
-    align-items: start;
-  }
+.lab-agenda__trazo {
+  position: absolute;
+  right: 0;
+  bottom: var(--sc-spacing-5);
+  width: 13rem;
+  fill: none;
+  stroke: var(--sc-border-default);
+  stroke-width: 1.5;
+  overflow: visible;
+  pointer-events: none;
 
-  .bench__aside {
-    grid-column: 3;
-    flex-direction: column;
-    align-items: flex-end;
-    text-align: end;
-  }
-
-  .knobs {
-    justify-content: flex-end;
+  circle {
+    fill: var(--sc-bg-surface);
   }
 }
 
-/* ── ENLACES ────────────────────────────────────────────────────────────────────────────────── */
-
-.groups {
+.lab-agenda__grupos {
+  position: relative;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
   gap: var(--sc-spacing-2);
 }
 
-.group__title {
-  margin: 0 0 var(--sc-spacing-0-625);
+.lab-grupo__titulo {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-375);
+  margin: 0 0 var(--sc-spacing-0-5);
   padding-bottom: var(--sc-spacing-0-5);
   border-bottom: 1px solid var(--sc-border-subtle);
   color: var(--sc-text-subtle);
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
-.links {
-  margin: 0;
-  padding: 0;
-  list-style: none;
+.lab-grupo__lista {
   display: flex;
   flex-direction: column;
   gap: var(--sc-spacing-0-125);
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-/* Una fila: nombre arriba, dominio debajo, flecha a la derecha. Sin nota: lo que hace cada sitio
-   se cuenta dentro del sitio. */
-.link {
+.lab-fila {
   display: grid;
   grid-template-columns: 1fr auto;
   grid-template-areas:
-    'label arrow'
-    'meta  arrow';
+    'label flecha'
+    'meta  flecha';
   align-items: center;
   gap: 0 var(--sc-spacing-0-75);
-  padding: var(--sc-spacing-0-625) var(--sc-spacing-0-75);
+  margin-inline: calc(-1 * var(--sc-spacing-0-75));
+  padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
   border-radius: var(--sc-radius-md);
   text-decoration: none;
-  transition: background var(--fast) var(--ease);
+  transition: background var(--sc-transition-fast) ease-out;
+
+  &:hover {
+    background: var(--sc-bg-hover);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-border-focus);
+    outline-offset: 2px;
+  }
 }
 
-.link:hover {
-  background: var(--sc-bg-hover);
-}
-
-.link:focus-visible {
-  outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
-  outline-offset: var(--sc-focus-ring-offset);
-}
-
-.link__label {
+.lab-fila__label {
   grid-area: label;
   color: var(--sc-text-primary);
 }
 
-.link__meta {
+.lab-fila__meta {
   grid-area: meta;
   color: var(--sc-text-subtle);
   overflow-wrap: anywhere;
 }
 
-.link__arrow {
-  grid-area: arrow;
+.lab-fila__flecha {
+  grid-area: flecha;
   color: var(--sc-icon-subtle);
   transition:
-    translate var(--fast) var(--ease),
-    color var(--fast) var(--ease);
+    transform var(--sc-transition-base) var(--demo-ease-salida),
+    color var(--sc-transition-fast) ease-out;
 }
 
-.link:hover .link__arrow {
+.lab-fila:hover .lab-fila__flecha {
   color: var(--sc-icon-link);
-  translate: 2px 0;
+  transform: translateX(2px);
 }
 
-.branch-note {
+.lab-agenda__nota {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sc-spacing-0-5);
   margin: var(--sc-spacing-2) 0 0;
-  padding: var(--sc-spacing-1);
-  border: 1px solid var(--sc-border-info-subtle);
+  padding: var(--sc-spacing-0-75) var(--sc-spacing-1);
   border-radius: var(--sc-radius-lg);
   background: var(--sc-bg-info-subtle);
   color: var(--sc-text-secondary);
+
+  sc-icon {
+    flex: none;
+    color: var(--sc-icon-info);
+  }
+
+  code {
+    color: var(--sc-text-primary);
+  }
 }
 
-.branch-note code {
-  color: var(--sc-text-primary);
+/* ─────────── Guardado ─────────── */
+
+.lab-tarjeta__arte--muestra {
+  block-size: 11rem;
+  background: var(--sc-bg-default);
+
+  iframe {
+    inline-size: 200%;
+    block-size: 200%;
+    border: 0;
+    /* La miniatura enseña el doble de pantalla a la mitad de tamaño: un boceto se reconoce por su forma. */
+    scale: 0.5;
+    transform-origin: top left;
+    pointer-events: none;
+  }
 }
 
-/* ── GUARDADO ───────────────────────────────────────────────────────────────────────────────── */
-
-.saved {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
-  gap: var(--sc-spacing-1-25);
-}
-
-.save {
-  display: flex;
-  flex-direction: column;
-  border: 1px solid var(--sc-border-subtle);
-  border-radius: var(--sc-radius-xl);
-  background: var(--sc-bg-surface);
-  overflow: hidden;
-}
-
-.save__preview {
-  block-size: 9rem;
-  border-bottom: 1px solid var(--sc-border-subtle);
-  background: var(--sc-bg-canvas);
-  overflow: hidden;
-}
-
-.save__preview iframe {
-  inline-size: 200%;
-  block-size: 200%;
-  border: 0;
-  /* La miniatura enseña el doble de pantalla a la mitad de tamaño: un boceto se reconoce por su
-     forma, no por su letra. */
-  scale: 0.5;
-  transform-origin: top left;
-}
-
-.save__preview--image {
+.lab-tarjeta__arte--imagen {
   display: grid;
   place-items: center;
+
+  img {
+    max-inline-size: 60%;
+    max-block-size: 80%;
+    /* El filo de la imagen, al 10 %: profundidad sin que parezca suciedad. */
+    outline: 1px solid oklch(0 0 0 / 0.1);
+  }
 }
 
-.save__preview--image img {
-  max-inline-size: 60%;
-  max-block-size: 80%;
-  /* El filo de la imagen, al 10 %: le da profundidad sin que parezca suciedad (better-ui). */
-  outline: 1px solid oklch(0 0 0 / 0.1);
-}
-
-:root:not([data-theme='light']) .save__preview--image img {
+:host-context(.sc-dark) .lab-tarjeta__arte--imagen img {
   outline-color: oklch(1 0 0 / 0.1);
 }
 
-.save__body {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sc-spacing-0-375);
-  padding: var(--sc-spacing-1);
+/* ─────────── Estrecho ─────────── */
+
+@media (max-width: 56rem) {
+  .lab-dos,
+  .lab-tres {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .lab-agenda {
+    padding: var(--sc-spacing-1-5);
+  }
+
+  .lab-agenda__trazo {
+    display: none;
+  }
 }
 
-.save__title {
-  margin: 0;
-  color: var(--sc-text-heading);
+@media (max-width: 40rem) {
+  .lab-hero {
+    padding-top: var(--sc-spacing-3);
+  }
+
+  .lab-hero__titulo {
+    font-size: var(--sc-font-size-650);
+    line-height: var(--sc-line-height-650);
+  }
 }
 
-.save__by {
-  margin: 0;
-  color: var(--sc-text-subtle);
+/* ─────────── Movimiento ───────────
+ *
+ * El de la portada: al cargar, el título y el índice suben escalonados y la forma de la esquina entra y luego flota muy
+ * despacio; las burbujas suben sin parar, cada una a su ritmo. Las secciones de abajo suben al entrar en pantalla
+ * (animación ligada al scroll donde la hay; con `translate`, para no pisar el `transform` del hover de las tarjetas).
+ * Al pasar por una tarjeta, se levanta y su ilustración se acerca. Con «reducir movimiento», todo quieto.
+ */
+
+@keyframes lab-sube {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
 }
 
-/* Quien no quiere movimiento no lo tiene: aquí todo lo que se mueve es decorativo. */
+@keyframes lab-entra {
+  from {
+    opacity: 0;
+    translate: 0 18px;
+  }
+}
+
+@keyframes lab-entra-forma {
+  from {
+    opacity: 0;
+    transform: translate(28px, -20px) scale(0.94);
+  }
+}
+
+@keyframes lab-flota-a {
+  50% {
+    transform: translate(-10px, 8px);
+  }
+}
+
+@keyframes lab-flota-b {
+  50% {
+    transform: translate(8px, -6px) rotate(-2deg);
+  }
+}
+
+@keyframes lab-burbuja {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(0.6);
+  }
+
+  20% {
+    opacity: 0.9;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(-220px) scale(1);
+  }
+}
+
+@keyframes lab-dibuja {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+
+.lab-hero__forma {
+  animation: lab-entra-forma 1100ms var(--demo-ease-salida) backwards;
+}
+
+.lab-hero__esfera,
+.lab-hero__cristal,
+.lab-hero__brillo,
+.lab-burbuja {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.lab-hero__esfera {
+  animation: lab-flota-a 16s ease-in-out 1100ms infinite;
+}
+
+.lab-hero__cristal {
+  animation: lab-flota-b 21s ease-in-out 1100ms infinite;
+}
+
+.lab-hero__brillo {
+  animation: lab-flota-b 13s ease-in-out 1100ms infinite reverse;
+}
+
+.lab-burbuja {
+  opacity: 0;
+  animation: lab-burbuja 7s ease-in 600ms infinite;
+
+  &:nth-child(2) {
+    animation-duration: 9s;
+    animation-delay: 2.2s;
+  }
+
+  &:nth-child(3) {
+    animation-duration: 6s;
+    animation-delay: 3.8s;
+  }
+
+  &:nth-child(4) {
+    animation-duration: 10s;
+    animation-delay: 1.4s;
+  }
+}
+
+.lab-hero__titulo {
+  animation: lab-sube 700ms var(--demo-ease-salida) backwards;
+}
+
+.lab-hero__producto {
+  animation: lab-sube 700ms var(--demo-ease-salida) 140ms backwards;
+}
+
+.lab-hero__sub {
+  animation: lab-sube 700ms var(--demo-ease-salida) 220ms backwards;
+}
+
+.lab-indice__item {
+  animation: lab-entra 700ms var(--demo-ease-salida) backwards;
+
+  @for $i from 1 through 5 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{180 + ($i - 1) * 60}ms;
+    }
+  }
+}
+
+.lab-agenda__trazo path {
+  stroke-dasharray: 1;
+}
+
+@supports (animation-timeline: view()) {
+  .lab-sec__cabeza,
+  .lab-tarjeta,
+  .lab-agenda {
+    animation: lab-entra linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 40%;
+  }
+
+  .lab-agenda__trazo path {
+    animation: lab-dibuja linear both;
+    animation-timeline: view();
+    animation-range: entry 10% cover 40%;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .lab {
-    --fast: 1ms;
+  .lab-hero__forma,
+  .lab-hero__esfera,
+  .lab-hero__cristal,
+  .lab-hero__brillo,
+  .lab-hero__titulo,
+  .lab-hero__producto,
+  .lab-hero__sub,
+  .lab-indice__item,
+  .lab-sec__cabeza,
+  .lab-tarjeta,
+  .lab-agenda,
+  .lab-agenda__trazo path {
+    animation: none;
+  }
+
+  /* Sin movimiento, las burbujas se quedan quietas y a la vista. */
+  .lab-burbuja {
+    animation: none;
+    opacity: 0.8;
+  }
+
+  .lab-indice__item,
+  .lab-tarjeta,
+  .lab-enlace sc-icon,
+  .lab-fila__flecha,
+  .lab-mas__galon {
+    transition: none;
+    transform: none !important;
   }
 }

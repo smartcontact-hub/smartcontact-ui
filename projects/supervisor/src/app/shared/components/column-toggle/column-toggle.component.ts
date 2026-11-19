@@ -34,7 +34,8 @@ const BUSCADOR_DESDE = 12;
 /**
  * ELEGIR Y ORDENAR COLUMNAS: el «Column Toggle» de primeng.dev/table, tal cual (DD-176, sustituye el Listbox de DD-162).
  * El botón con su icono (outlined, secondary), a la altura del buscador de su barra; el Popover sin relleno; arriba, el
- * título y «Restablecer»; una fila por columna con su asa, su casilla nativa y su nombre, que se arrastra para ordenar.
+ * título; una fila por columna con su asa, su casilla nativa y su nombre, que se arrastra para ordenar; la fija, con un
+ * candado en el sitio del asa; y al pie, «Restablecer», apagado mientras no hay nada que deshacer (DD-257).
  *
  * Lo único que el ejemplo no trae es ordenar sin arrastrar (WCAG 2.1.1 y 2.5.7, que DD-162 ya pedía): la lista es una
  * sola parada del tabulador, las flechas van de una columna a otra, Alt+↑/↓ mueve la enfocada. Y, con muchas columnas,
@@ -72,6 +73,9 @@ export class ColumnToggleComponent {
   readonly visible = input.required<readonly string[]>();
   /** Tamaño del botón: el de la barra donde va (`sm` junto a botones pequeños). */
   readonly size = input<'sm' | 'md'>('md');
+  /** Si hay algo que restablecer: con las columnas, el orden y los anchos de partida, «Restablecer» va apagado. Lo sabe
+   *  quien guarda (`isDefaultPrefs`). */
+  readonly canReset = input(true);
 
   readonly visibleChange = output<readonly string[]>();
   /** Mover una columna de un puesto a otro de la lista entera (arrastrando o con Alt+↑/↓). */
@@ -175,7 +179,8 @@ export class ColumnToggleComponent {
 
   /**
    * Al abrir, el foco entra en la lista, en la columna en curso: el globo cuelga de `<body>` y, sin esto, con el teclado
-   * no se llegaba (medido el 2026-10-05, DD-162). Se enfoca aquí y no con `focusOnShow`, que iría a «Restablecer».
+   * no se llegaba (medido el 2026-10-05, DD-162). Se enfoca aquí y no con `focusOnShow`, que no sabe cuál es la columna
+   * en curso.
    */
   protected onShow(): void {
     this.open.set(true);
@@ -195,9 +200,15 @@ export class ColumnToggleComponent {
     }
   }
 
+  /** Restablecer apaga su propio botón: el foco, que se quedaría en `<body>`, vuelve a la primera columna movible. */
   protected onReset(): void {
     this.announcement.set('');
+    this.current.set(null);
     this.restore.emit();
+    setTimeout(() => {
+      const key = this.movable()[0]?.key;
+      if (key) this.focus(key);
+    });
   }
 
   /** Lo que dice el lector tras mover: la columna y su puesto («Email, 3 de 10»). */

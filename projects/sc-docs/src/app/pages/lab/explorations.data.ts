@@ -113,9 +113,9 @@ export const EXPLORATIONS: readonly Exploration[] = [
       commit: '6e183821',
     },
     objective: '¿Qué forma de ficha deja editar más rápido sin perder de vista el resto?',
-    status: 'en-revision',
+    status: 'oficial',
     statusNote:
-      'Grupo, decidido: índice lateral y resumen en una columna a la derecha, según la visión de producto de grupos (DD-121). Agente y usuario siguen con pestañas hasta validarlo en grupos.',
+      'Decidido y en el Supervisor: las tres fichas llevan el índice lateral y el resumen en una columna a la derecha. Grupo, desde DD-121; agente y usuario dejaron las pestañas en DD-122. Las tres formas de la rama quedan de referencia.',
     live: {
       label: 'comparar-fichas.sc-supervisor.pages.dev',
       href: 'https://comparar-fichas.sc-supervisor.pages.dev/admin/agentes?variante=e',

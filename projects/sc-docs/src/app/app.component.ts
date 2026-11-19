@@ -110,7 +110,7 @@ const MARCA = 'Smart Contact UI';
  * Shell de sc-docs, con la estructura de las docs de sistema de diseño de referencia (Primer):
  * cabecera fija arriba con las cinco secciones, lateral SOLO en las secciones que tienen páginas
  * dentro (Fundamentos, Componentes) con sus grupos a la vista, la página en el centro y, a la
- * derecha, «En esta página» leído de sus `h2`. La portada (`/`) va sin lateral y a todo el ancho.
+ * derecha, «En esta página» leído de sus `h2`. La portada (`/`) y el Lab van sin lateral y a todo el ancho.
  *
  * El buscador ⌘K reusa `sc-command-palette` del propio DS (dogfooding): se monta una vez aquí,
  * escucha el atajo global, y le publicamos como comandos las secciones + los componentes.
@@ -166,15 +166,23 @@ export class AppComponent {
   /**
    * ¿Es una story suelta (`?solo=1`)? Entonces no hay cabecera ni lateral. Antes de la primera navegación `router.url`
    * aún vale `/`: se lee del hash para no pintar el marco un instante y quitarlo después (el iframe de un ancho fijo lo
-   * enseñaría parpadeando).
+   * enseñaría parpadeando). Las puertas de una prueba con usuarios (`/prueba/…`, DD-256) también van sueltas: las abre
+   * gente que no sabe qué es este sitio.
    */
-  private readonly soloAlArrancar = /[?&]solo=1(&|$)/.test(document.location.hash);
+  private readonly soloAlArrancar = /[?&]solo=1(&|$)|^#\/prueba\//.test(document.location.hash);
   protected readonly solo = computed(() => {
     const url = this.url();
-    return /[?&]solo=1(&|$)/.test(url) || (url === '/' && this.soloAlArrancar);
+    return /[?&]solo=1(&|$)/.test(url) || url.startsWith('/prueba/') || (url === '/' && this.soloAlArrancar);
   });
 
-  protected readonly esInicio = computed(() => this.ruta() === '/');
+  /**
+   * Las páginas con la composición de la portada: fondo gris, a todo el ancho y sin «En esta página». El Lab la comparte
+   * desde el 2026-11-16: se parece a la portada a propósito y lleva su propio índice arriba. La sala de una prueba con
+   * personas (`/lab/pruebas/…`, DD-256) también: es del Lab y no lleva más que lo que se usa.
+   */
+  protected readonly esPortada = computed(
+    () => this.ruta() === '/' || this.ruta() === '/lab' || this.ruta().startsWith('/lab/pruebas/'),
+  );
 
   /** El lateral de la sección en la que estás, o null si la sección es de una sola página. */
   protected readonly seccion = computed<SeccionLateral | null>(() => {
@@ -190,7 +198,7 @@ export class AppComponent {
    */
   protected readonly conIndice = computed(() => {
     const r = this.ruta();
-    return !this.esInicio() && !r.startsWith('/components');
+    return !this.esPortada() && !r.startsWith('/components');
   });
 
   /**

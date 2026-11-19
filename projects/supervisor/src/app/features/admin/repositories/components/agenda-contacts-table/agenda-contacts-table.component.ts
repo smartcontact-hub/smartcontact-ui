@@ -26,7 +26,7 @@ import {
 } from '@smartcontact-hub/components';
 
 import { injectLangChange } from '@core/utils/lang-change';
-import { ColumnToggleComponent, normalizePrefs } from '@shared/components';
+import { ColumnToggleComponent, isDefaultPrefs, normalizePrefs } from '@shared/components';
 
 import { contactoCoincide } from '../../state/agenda-contacts.core.mjs';
 import type { AgendaContact } from '../../state/agendas.store';
@@ -146,6 +146,8 @@ export class AgendaContactsTableComponent {
 
   private readonly stored = signal<unknown>(this.leerColumnas());
   protected readonly prefs = computed(() => normalizePrefs(this.choices(), this.stored()));
+  /** «Restablecer», encendido solo si las columnas o su orden no son los de partida (DD-257). */
+  protected readonly columnsChanged = computed(() => !isDefaultPrefs(this.choices(), this.prefs()));
 
   protected readonly toggleOptions = computed(() => {
     const choices = this.choices();

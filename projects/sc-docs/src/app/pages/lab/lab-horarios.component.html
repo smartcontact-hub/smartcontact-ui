@@ -1,0 +1,118 @@
+<article class="hz">
+  <div class="hz__cabeza">
+    <div class="hz__texto">
+      <p class="hz__eyebrow sc-text-caption-semibold">
+        <span class="hz__pulso" aria-hidden="true"></span>
+        Se prueba ahora
+      </p>
+      <h2 id="t-horarios" class="hz__titular sc-text-h2-semibold">
+        <span class="hz__pre">Horarios,</span>
+        en todas sus versiones
+      </h2>
+      <p class="hz__lead sc-text-body-regular">
+        Cada versión con quién la hizo. Los enlaces abren el preview de su rama, que se actualiza con cada push.
+      </p>
+    </div>
+
+    <!-- La ilustración: la semana por tramos, el estado y el mes con calor. Piezas del DS, de adorno. -->
+    <div class="hz-ilus" inert aria-hidden="true">
+      <svg class="hz-ilus__trazo" viewBox="0 0 200 180" focusable="false">
+        <path pathLength="1" d="M30 0 C40 50 20 70 46 96 C70 120 120 110 150 140 M46 96 L10 170" />
+        <circle cx="46" cy="96" r="15" />
+        <circle cx="46" cy="96" r="7" />
+        <circle cx="150" cy="140" r="15" />
+        <circle cx="150" cy="140" r="7" />
+      </svg>
+
+      <div class="hz-ilus__ventana">
+        <span class="hz-ilus__puntos"><i></i><i></i><i></i></span>
+        <div class="hz-semana">
+          <div class="hz-semana__horas">
+            @for (h of horas; track h) {
+              <span class="sc-text-caption-regular" [style.inset-inline-start.%]="pos(h)">{{ h }}</span>
+            }
+          </div>
+          @for (d of semana; track d.dia; let i = $index) {
+            <div class="hz-semana__dia" [style.--i]="i">
+              <span class="hz-semana__letra sc-text-caption-regular">{{ d.dia }}</span>
+              <span class="hz-semana__pista" [class.hz-semana__pista--cerrada]="!d.tramos.length">
+                @for (t of d.tramos; track t.desde) {
+                  <span
+                    class="hz-semana__tramo"
+                    [style.inset-inline-start.%]="pos(t.desde)"
+                    [style.inline-size.%]="pos(t.hasta) - pos(t.desde)"
+                  ></span>
+                }
+              </span>
+            </div>
+          }
+          <span class="hz-semana__ahora" [style.inset-inline-start.%]="ahora"></span>
+        </div>
+      </div>
+
+      <div class="hz-ilus__estado">
+        <sc-tag value="Abierto" severity="success" icon="schedule" />
+        <span class="sc-text-caption-regular">Cierra a las 18:00</span>
+      </div>
+
+      <div class="hz-ilus__mes">
+        <span class="hz-ilus__mes-titulo sc-text-caption-semibold">Diciembre</span>
+        <span class="hz-ilus__rejilla">
+          @for (c of mes; track $index) {
+            <i [attr.data-calor]="c.calor" [attr.data-tipo]="c.tipo"></i>
+          }
+        </span>
+      </div>
+
+      <sc-icon-tile class="hz-ilus__azulejo" icon="calendar_month" tone="brand" />
+    </div>
+  </div>
+
+  <!-- Un bloque por autoría, todos con el mismo peso; dentro, las versiones en filas como las de «Enlaces». -->
+  @for (a of autorias; track a.autor.nombre; let ai = $index) {
+    <section class="ha" [attr.aria-labelledby]="'ha-' + ai">
+      <header class="ha__cabeza">
+        <span class="ha__avatar" aria-hidden="true">
+          <sc-avatar [label]="a.autor.iniciales" [labelColor]="a.autor.color" />
+        </span>
+        <h3 [id]="'ha-' + ai" class="ha__nombre sc-text-subtitle-semibold">{{ a.autor.nombre }}</h3>
+        <p class="ha__lead sc-text-caption-regular">{{ a.lead }}</p>
+      </header>
+
+      @for (g of a.grupos; track g.title; let gi = $index) {
+        <p [id]="'ha-' + ai + '-' + gi" class="ha__grupo sc-text-caption-semibold">{{ g.title }}</p>
+        <ul class="hf" [attr.aria-labelledby]="'ha-' + ai + '-' + gi">
+          @for (v of g.versions; track v.id) {
+            <li class="hf__fila">
+              <div class="hf__que">
+                <h4 class="hf__titulo sc-text-body-semibold">
+                  {{ v.title }}
+                  @if (v.origin) {
+                    <span class="hf__origen sc-text-caption-semibold">{{ v.origin }}</span>
+                  }
+                </h4>
+                <p class="hf__texto sc-text-caption-regular">{{ v.summary }}</p>
+              </div>
+
+              <div class="hf__donde">
+                <ul class="hf__abrir" [attr.aria-label]="'Abrir ' + v.title">
+                  @for (l of v.links; track l.href) {
+                    <li>
+                      <a class="hf__enlace sc-text-body-semibold" [href]="l.href" target="_blank" rel="noopener">
+                        {{ l.label }}
+                        <sc-icon name="arrow_outward" [size]="16" />
+                      </a>
+                    </li>
+                  }
+                </ul>
+                <a class="hf__fuente sc-text-caption-regular" [href]="v.source.href" target="_blank" rel="noopener">{{
+                  v.source.label
+                }}</a>
+              </div>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+  }
+</article>

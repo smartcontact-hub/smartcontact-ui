@@ -24,6 +24,13 @@
   <meta property="og:url" content="https://sc-doc.pages.dev/">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
+  <!-- Favicon: el isotipo sobre una hoja con la esquina doblada, para que la pestaña de la doc no se
+       confunda con la del Supervisor (que es el isotipo solo). El SVG es la fuente; el .ico (16, 32 y 48)
+       y el apple-touch (180, con fondo: iOS pinta de negro lo transparente) salen de él. `sizes="32x32"`
+       en el .ico es lo que hace que Chrome elija el SVG cuando lo entiende y deje el .ico de reserva. -->
+  <link rel="icon" href="favicon.ico" sizes="32x32">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <!-- Fuente de marca del SCDS: Inter, para TODOS los roles (los text styles del
        Figma son Inter, caption incluida). Open Sans ya no se carga (era solo para
        captions y estas pasaron a Inter). Ya NO se pide a Google: se sirve

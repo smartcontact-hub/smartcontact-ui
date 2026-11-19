@@ -1,0 +1,617 @@
+/*
+ * Horarios, la tarjeta grande del Lab. La forma es la de las tarjetas grandes de la portada (`inicio.component.scss`):
+ * blanca sobre el gris, radio 2xl, titular a dos tonos y una ilustración con capas que se separan al pasar el ratón.
+ * Debajo, un bloque por autoría con sus versiones en filas.
+ *
+ * Tipografía, la misma escala que el resto del Lab: titular en `h2` (24), nombres en `subtitle` (16), títulos y enlaces
+ * en `body` semibold (14) y lo demás en `caption` (12). Nada de tamaños sueltos en esta hoja.
+ */
+
+:host {
+  display: block;
+}
+
+.hz {
+  overflow: hidden;
+  border-radius: var(--sc-radius-2xl);
+  background: var(--sc-bg-surface);
+  box-shadow: var(--sc-shadow-xs);
+}
+
+/* ─────────── Cabecera: texto e ilustración ─────────── */
+
+.hz__cabeza {
+  display: flex;
+  min-height: 20rem;
+}
+
+.hz__texto {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 0 0 44%;
+  padding: var(--sc-spacing-3);
+}
+
+/* «Se prueba ahora», con un punto que late: lo único vivo de la cabecera, y dice que esto no está quieto. */
+.hz__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  margin: 0 0 var(--sc-spacing-1);
+  color: var(--sc-text-success);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.hz__pulso {
+  position: relative;
+  inline-size: 0.5rem;
+  block-size: 0.5rem;
+  border-radius: var(--sc-radius-full);
+  background: var(--sc-bg-success);
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: inherit;
+    animation: hz-late 2.4s ease-out infinite;
+  }
+}
+
+.hz__titular {
+  margin: 0 0 var(--sc-spacing-0-75);
+  color: var(--sc-text-heading);
+}
+
+.hz__pre {
+  display: block;
+  color: var(--sc-text-secondary);
+  font-weight: var(--sc-font-weight-medium);
+}
+
+.hz__lead {
+  margin: 0;
+  color: var(--sc-text-secondary);
+}
+
+/* ─────────── Ilustración ─────────── */
+
+.hz-ilus {
+  position: relative;
+  flex: 1;
+  min-height: 20rem;
+  pointer-events: none;
+  user-select: none;
+}
+
+.hz-ilus__trazo {
+  position: absolute;
+  left: 2%;
+  top: 0;
+  width: 9rem;
+  fill: none;
+  stroke: var(--sc-border-strong);
+  stroke-width: 1.5;
+  overflow: visible;
+
+  circle {
+    fill: var(--sc-bg-surface);
+  }
+}
+
+.hz-ilus__ventana {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 76%;
+  height: 78%;
+  border: 1px solid var(--sc-border-default);
+  border-right: 0;
+  border-bottom: 0;
+  border-top-left-radius: var(--sc-radius-xl);
+  background: var(--sc-bg-default);
+}
+
+.hz-ilus__puntos {
+  display: flex;
+  gap: var(--sc-spacing-0-25);
+  padding: var(--sc-spacing-0-75);
+  border-bottom: 1px solid var(--sc-border-default);
+
+  i {
+    width: 6px;
+    height: 6px;
+    border-radius: var(--sc-radius-full);
+    background: var(--sc-border-strong);
+  }
+}
+
+/* La semana por tramos: una pista por día y, encima, la marca de ahora. */
+.hz-semana {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
+  padding: var(--sc-spacing-1-75) var(--sc-spacing-1-5) var(--sc-spacing-1) var(--sc-spacing-3);
+}
+
+.hz-semana__horas {
+  position: absolute;
+  inset-block-start: var(--sc-spacing-0-5);
+  inset-inline: var(--sc-spacing-3) var(--sc-spacing-1-5);
+  margin-inline-start: var(--sc-spacing-1-25);
+
+  span {
+    position: absolute;
+    translate: -50% 0;
+    color: var(--sc-text-subtle);
+    font-family: var(--sc-font-family-mono);
+  }
+}
+
+.hz-semana__dia {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-75);
+}
+
+.hz-semana__letra {
+  inline-size: var(--sc-spacing-0-5);
+  color: var(--sc-text-secondary);
+  font-family: var(--sc-font-family-mono);
+}
+
+.hz-semana__pista {
+  position: relative;
+  flex: 1;
+  block-size: 0.875rem;
+  border-radius: var(--sc-radius-full);
+  background: var(--sc-bg-subtle);
+
+  &--cerrada {
+    background: repeating-linear-gradient(
+      -45deg,
+      var(--sc-bg-subtle) 0 4px,
+      var(--sc-bg-surface) 4px 8px
+    );
+  }
+}
+
+.hz-semana__tramo {
+  position: absolute;
+  inset-block: 0;
+  border-radius: var(--sc-radius-full);
+  background: linear-gradient(90deg, var(--sc-color-cyan-300), var(--sc-color-sky-500));
+  transform-origin: left center;
+}
+
+/* La marca de ahora: una línea roja de arriba abajo, con su punto. Empieza donde empieza la pista. */
+.hz-semana__ahora {
+  position: absolute;
+  inset-block: var(--sc-spacing-1-75) var(--sc-spacing-0-75);
+  margin-inline-start: calc(var(--sc-spacing-3) + var(--sc-spacing-1-25));
+  inline-size: 0;
+  border-inline-start: 2px solid var(--sc-border-danger);
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset-block-start: -4px;
+    inset-inline-start: -5px;
+    inline-size: 8px;
+    block-size: 8px;
+    border-radius: var(--sc-radius-full);
+    background: var(--sc-border-danger);
+  }
+}
+
+.hz-ilus__estado {
+  position: absolute;
+  left: 30%;
+  top: 8%;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-lg);
+  background: var(--sc-bg-surface);
+  box-shadow: var(--sc-shadow-popover);
+  color: var(--sc-text-secondary);
+  white-space: nowrap;
+}
+
+/* El mes con calor: cada día se tiñe según las horas que abre; el festivo en rojo, el especial en ámbar. */
+.hz-ilus__mes {
+  position: absolute;
+  left: 4%;
+  bottom: 7%;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-375);
+  padding: var(--sc-spacing-0-75);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-lg);
+  background: var(--sc-bg-surface);
+  box-shadow: var(--sc-shadow-popover);
+}
+
+.hz-ilus__mes-titulo {
+  color: var(--sc-text-primary);
+}
+
+.hz-ilus__rejilla {
+  display: grid;
+  grid-template-columns: repeat(7, 0.75rem);
+  gap: 3px;
+
+  i {
+    block-size: 0.75rem;
+    border-radius: 3px;
+    background: var(--sc-bg-subtle);
+  }
+
+  i[data-calor='1'] {
+    background: color-mix(in srgb, var(--sc-color-sky-500) 22%, var(--sc-bg-surface));
+  }
+
+  i[data-calor='2'] {
+    background: color-mix(in srgb, var(--sc-color-sky-500) 50%, var(--sc-bg-surface));
+  }
+
+  i[data-calor='3'] {
+    background: var(--sc-color-sky-500);
+  }
+
+  i[data-tipo='festivo'] {
+    background: var(--sc-bg-danger);
+  }
+
+  i[data-tipo='especial'] {
+    background: var(--sc-bg-warning);
+  }
+}
+
+.hz-ilus__azulejo {
+  position: absolute;
+  right: var(--sc-spacing-2);
+  top: var(--sc-spacing-1-5);
+}
+
+/* ─────────── Autorías ───────────
+ *
+ * Un bloque por persona, todos iguales: avatar, nombre y una línea; debajo, sus versiones en filas, como la agenda de
+ * «Enlaces» (título en cuerpo semibold, el resto en caption). Qué es a la izquierda; qué se abre y su PR a la derecha.
+ */
+
+.ha {
+  padding: var(--sc-spacing-1-5) var(--sc-spacing-3) var(--sc-spacing-2);
+  border-top: 1px solid var(--sc-border-subtle);
+}
+
+.ha__cabeza {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sc-spacing-0-25) var(--sc-spacing-0-75);
+  margin-bottom: var(--sc-spacing-0-75);
+}
+
+.ha__avatar {
+  display: inline-flex;
+}
+
+.ha__nombre {
+  margin: 0;
+  color: var(--sc-text-heading);
+}
+
+.ha__lead {
+  margin: 0;
+  color: var(--sc-text-secondary);
+}
+
+.ha__grupo {
+  margin: var(--sc-spacing-1) 0 var(--sc-spacing-0-25);
+  color: var(--sc-text-subtle);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.hf {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Una versión, en una fila. */
+.hf__fila {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--sc-spacing-0-25) var(--sc-spacing-2);
+  padding: var(--sc-spacing-0-75) 0;
+
+  & + & {
+    border-top: 1px solid var(--sc-border-subtle);
+  }
+}
+
+.hf__titulo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sc-spacing-0-25) var(--sc-spacing-0-5);
+  margin: 0;
+  color: var(--sc-text-heading);
+}
+
+.hf__origen {
+  padding: 0 var(--sc-spacing-0-5);
+  border-radius: var(--sc-radius-full);
+  background: var(--sc-bg-primary-subtle);
+  color: var(--sc-text-link);
+}
+
+.hf__texto {
+  margin: var(--sc-spacing-0-125) 0 0;
+  color: var(--sc-text-secondary);
+}
+
+.hf__donde {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--sc-spacing-0-125);
+}
+
+.hf__abrir {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--sc-spacing-0-25) var(--sc-spacing-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hf__enlace {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-25);
+  color: var(--sc-text-link);
+  white-space: nowrap;
+  text-decoration: none;
+
+  sc-icon {
+    transition: transform var(--sc-transition-base) var(--demo-ease-salida);
+  }
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &:hover sc-icon {
+    transform: translate(2px, -2px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-border-focus);
+    outline-offset: 2px;
+    border-radius: var(--sc-radius-sm);
+  }
+}
+
+.hf__fuente {
+  white-space: nowrap;
+  color: var(--sc-text-secondary);
+  text-decoration: underline;
+  text-decoration-color: var(--sc-border-default);
+  text-underline-offset: 0.2em;
+
+  &:hover {
+    color: var(--sc-text-link);
+    text-decoration-color: currentcolor;
+  }
+}
+
+/* ─────────── Estrecho ─────────── */
+
+@media (max-width: 56rem) {
+  .hz__cabeza {
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .hz__texto {
+    flex: none;
+    padding: var(--sc-spacing-2) var(--sc-spacing-1-5) 0;
+  }
+
+  .hz-ilus {
+    min-height: 19rem;
+  }
+
+  .ha {
+    padding-inline: var(--sc-spacing-1-5);
+  }
+
+  /* La fila se apila: lo que se abre debajo de lo que es, alineado a la izquierda. */
+  .hf__fila {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .hf__donde {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--sc-spacing-0-25) var(--sc-spacing-1);
+  }
+
+  .hf__abrir {
+    justify-content: flex-start;
+  }
+}
+
+/* En un móvil, la ilustración se queda con la semana y el estado: el mes la tapaba. */
+@media (max-width: 40rem) {
+  .hz-ilus {
+    min-height: 19rem;
+  }
+
+  .hz-ilus__mes,
+  .hz-ilus__trazo {
+    display: none;
+  }
+
+  .hz-ilus__ventana {
+    width: 92%;
+  }
+
+  .hz-ilus__estado {
+    left: var(--sc-spacing-1-5);
+    top: var(--sc-spacing-0-5);
+  }
+}
+
+/* ─────────── Movimiento ───────────
+ *
+ * Como la portada: la tarjeta sube al entrar, el trazo se dibuja, los tramos de la semana crecen de izquierda a derecha
+ * día a día y la marca de ahora aparece al final. Al pasar por la cabecera, las capas se separan. Las versiones suben
+ * escalonadas al entrar en pantalla. Solo `transform` y `opacity`; con «reducir movimiento», quieto.
+ */
+
+@keyframes hz-sube {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+/* Con `translate` y no `transform`: la tarjeta de una versión se levanta con `transform` al pasar el ratón, y una
+   animación ligada al scroll que también lo usara se lo comería. */
+@keyframes hz-entra {
+  from {
+    opacity: 0;
+    translate: 0 14px;
+  }
+}
+
+@keyframes hz-dibuja {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+
+@keyframes hz-crece {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes hz-aparece {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes hz-late {
+  to {
+    opacity: 0;
+    transform: scale(2.6);
+  }
+}
+
+.hz {
+  animation: hz-sube 800ms var(--demo-ease-salida) 260ms backwards;
+}
+
+.hz-ilus__trazo path {
+  stroke-dasharray: 1;
+  animation: hz-dibuja 1400ms var(--demo-ease-salida) 700ms backwards;
+}
+
+.hz-ilus__trazo circle {
+  animation: hz-aparece 500ms ease-out 1400ms backwards;
+}
+
+.hz-semana__tramo {
+  animation: hz-crece 900ms var(--demo-ease-salida) backwards;
+  animation-delay: calc(800ms + var(--i, 0) * 70ms);
+}
+
+.hz-semana__ahora {
+  animation: hz-aparece 600ms ease-out 1500ms backwards;
+}
+
+.hz-ilus__estado {
+  animation: hz-sube 700ms var(--demo-ease-salida) 1000ms backwards;
+}
+
+.hz-ilus__mes {
+  animation: hz-sube 700ms var(--demo-ease-salida) 1150ms backwards;
+}
+
+.hz-ilus__ventana,
+.hz-ilus__estado,
+.hz-ilus__mes,
+.hz-ilus__azulejo {
+  transition: transform 600ms var(--demo-ease-salida);
+}
+
+.hz__cabeza:hover {
+  .hz-ilus__ventana {
+    transform: translate(-6px, -6px);
+  }
+
+  .hz-ilus__estado {
+    transform: translate(6px, -10px);
+  }
+
+  .hz-ilus__mes {
+    transform: translate(4px, -12px);
+  }
+
+  .hz-ilus__azulejo {
+    transform: translateY(-8px) rotate(-6deg);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  .hf__fila {
+    animation: hz-entra linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 40%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hz,
+  .hz__pulso::after,
+  .hz-ilus__trazo path,
+  .hz-ilus__trazo circle,
+  .hz-semana__tramo,
+  .hz-semana__ahora,
+  .hz-ilus__estado,
+  .hz-ilus__mes,
+  .hf__fila {
+    animation: none;
+  }
+
+  .hz-ilus__ventana,
+  .hz-ilus__estado,
+  .hz-ilus__mes,
+  .hz-ilus__azulejo,
+  .hf__fila,
+  .hf__enlace sc-icon {
+    transition: none;
+    transform: none !important;
+  }
+}

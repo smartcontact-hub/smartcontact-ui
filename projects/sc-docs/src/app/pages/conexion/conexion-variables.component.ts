@@ -1,5 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 
+import { ScButtonComponent, ScIconTileComponent, ScTagComponent, type ScSeverity } from '@smartcontact-hub/components';
+import { ScIconComponent } from '@smartcontact-hub/icons';
+
+import { GRUPOS, VEREDICTOS, grupoDe, severidadDe, type Grupo } from './veredictos';
+
 /** Una fila del mapa: una variable de Figma, o un token que solo existe en el tema. */
 interface Fila {
   componente: string;
@@ -23,97 +28,53 @@ interface MapaStatus {
   fuente: { figma: string; web: string };
   total: number;
   componentes: number;
-  porVeredicto: Record<string, number>;
-  revisadas: number;
-  atadas: number;
-  pendientes: number;
-  faltaDibujarlo: number;
   filas: Fila[];
 }
 
-/** Los veredictos, en el orden en que interesa leerlos, con la explicación en una línea.
- *  El texto es el mismo que el de `docs/conexion-variables.md`. Los seis primeros salen
- *  solos del cruce; los tres últimos solo los pone una revisión a mano, porque hace falta
- *  abrir el nodo o el CSS para verlos. Los nueve suman el total. */
-const VEREDICTOS: readonly { nombre: string; tono: string; que: string; aMano?: boolean }[] = [
-  {
-    nombre: 'conectada',
-    tono: 'ok',
-    que: 'La usa una capa de Figma y la lee el CSS de PrimeNG. La cadena entera está enganchada.',
-  },
-  {
-    nombre: 'Figma no la usa',
-    tono: 'aviso',
-    que: 'El valor viaja igual, porque el tema se genera desde las variables. Lo que puede desviarse es el dibujo.',
-  },
-  {
-    nombre: 'espejismo',
-    tono: 'malo',
-    que: 'Figma la usa y PrimeNG no la lee nunca. Se ve bien en el Kit y no llega a la pantalla.',
-  },
-  {
-    nombre: 'muerta',
-    tono: 'malo',
-    que: 'No la usa nadie por ningún lado. Ocupa sitio en el modelo y no pinta nada.',
-  },
-  {
-    nombre: 'solo web',
-    tono: 'neutro',
-    que: 'El tema publica el token y Figma no lo modela: sombras, estilos de línea, duraciones y la paleta cruda.',
-  },
-  {
-    nombre: 'solo Figma',
-    tono: 'neutro',
-    que: 'El Kit dibuja algo que no tiene token detrás. O es un auxiliar de dibujo y no hace falta que viaje, o es una divergencia que NO PUEDE viajar: no rompe producción, pero engaña a quien lee el Kit.',
-  },
-  {
-    nombre: 'mal apuntada',
-    tono: 'malo',
-    aMano: true,
-    que: 'Sí está atada, pero a la variable equivocada: la del estado vecino, la de otro componente o una de la librería remota. El cruce la da por buena porque hay enlace; solo se ve abriendo el nodo.',
-  },
-  {
-    nombre: 'muerta en el tema',
-    tono: 'malo',
-    aMano: true,
-    que: 'El tema publica el token y el componente lee otro canal distinto. Hay dos modelos para lo mismo y el del tema no manda.',
-  },
-  {
-    nombre: 'conectada por el primitivo',
-    tono: 'aviso',
-    aMano: true,
-    que: 'Dos variables con nombres distintos apuntan al mismo primitivo, así que hoy coinciden. No está roto, pero si se mueve una y no la otra, el dibujo y la web divergen.',
-  },
-  {
-    nombre: 'viaja por --sc-*',
-    tono: 'ok',
-    aMano: true,
-    que: 'PrimeNG no lo lee, y es correcto: son extensiones nuestras que llegan por el canal --sc-*, la segunda profundidad del modelo.',
-  },
-  {
-    nombre: 'no es un hallazgo',
-    tono: 'ok',
-    aMano: true,
-    que: 'Parecía un fallo y al abrir el nodo no lo era. Se anota para que nadie lo vuelva a investigar.',
-  },
-];
+/** Cuántas filas de cada grupo. Es lo que pintan las barras. */
+type PorGrupo = Record<Grupo, number>;
 
-/** Los veredictos que piden mirar algo: la variable existe y aun así no llega bien.
- *  «Figma no la usa» no entra: el valor viaja igual, lo que puede desviarse es el dibujo. */
-const A_MIRAR = new Set(['espejismo', 'muerta', 'mal apuntada', 'muerta en el tema']);
+/** Las filas de los hallazgos sueltos no son de ningún componente (`scripts/variables-map.mjs`). */
+const FUERA = '(fuera de componente)';
+
+/** A partir de cuántos días la página avisa de que la medición se ha quedado vieja. */
+const DIAS_VIEJA = 60;
+
+/** Lo que el tema publica y el Kit no modela, agrupado por el final del token. */
+const FAMILIAS: Record<string, string> = {
+  shadow: 'sombras',
+  duration: 'duraciones',
+  style: 'estilos de línea',
+};
+
+const URL_REPO = 'https://github.com/smartcontact-hub/smartcontact-ui/blob/main/docs';
+
+/** Quién tiene que moverse: una decisión pendiente avisa, una petición fuera informa, lo demás es deuda del Kit. */
+function severidadAccionable(etiqueta: string): ScSeverity {
+  if (etiqueta.startsWith('Pendiente')) return 'warn';
+  if (etiqueta.startsWith('Petición')) return 'info';
+  return 'secondary';
+}
+
+/** «a, b y c»: la lista como se dice. */
+const enumerar = (xs: string[]) => (xs.length < 2 ? xs.join('') : `${xs.slice(0, -1).join(', ')} y ${xs.at(-1)}`);
+
+const vacio = (): PorGrupo => ({ llega: 0, dibujo: 0, fuera: 0, 'no-llega': 0 });
+const pct = (n: number, de: number) => (de ? Math.round((n / de) * 100) : 0);
 
 /**
- * Mapa de conexión de variables: para cada variable de los 18 componentes que publica el
- * showcase del consumidor, si está enganchada en Figma y si el CSS de PrimeNG la lee.
+ * Mapa de conexión de variables: para cada variable de los componentes que publica el showcase
+ * del consumidor, si está enganchada en Figma y si el CSS de PrimeNG la lee.
  *
- * La página solo PINTA. El dato es un artefacto generado: la medición (puente de Figma +
- * navegador) escribe `public/variables/_variables-raw.json`, y `npm run variables:map`
- * deriva de ahí este JSON y `docs/conexion-variables.csv` en la misma ejecución, así que
- * la página y el Excel no pueden divergir. Mismo patrón que la galería de uso real.
+ * La página solo PINTA, y no escribe a mano ni una cifra: todas salen del JSON. El dato es un
+ * artefacto generado (la medición escribe `public/variables/_variables-raw.json` y
+ * `npm run variables:map` deriva este JSON y `docs/conexion-variables.csv` en la misma
+ * ejecución). Lo que significa cada veredicto vive en `veredictos.ts`; cómo se mide, en
+ * `docs/conexion-variables.md`. Ni una cosa ni la otra se repite aquí.
  */
 @Component({
   selector: 'app-conexion-variables',
-  imports: [],
+  imports: [ScButtonComponent, ScIconComponent, ScIconTileComponent, ScTagComponent],
   templateUrl: './conexion-variables.component.html',
   styleUrl: './conexion-variables.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -122,57 +83,129 @@ export class ConexionVariablesComponent {
   protected readonly status = signal<MapaStatus | null>(null);
   protected readonly error = signal(false);
 
-  /** Componente abierto en el acordeón. `null` = solo el resumen. */
+  /** Componente abierto. `null` = solo las tarjetas. */
   protected readonly abierto = signal<string | null>(null);
   /** Filtro por veredicto dentro del componente abierto. `null` = todos. */
   protected readonly filtro = signal<string | null>(null);
+  /** Las tarjetas de «Lo que queda abierto» que se leen enteras. */
+  protected readonly leidas = signal<ReadonlySet<string>>(new Set());
 
-  protected readonly veredictos = VEREDICTOS;
+  protected readonly grupos = GRUPOS;
+  protected readonly severidadDe = severidadDe;
+  protected readonly urlMetodo = `${URL_REPO}/conexion-variables.md`;
+  protected readonly urlCsv = `${URL_REPO}/conexion-variables.csv`;
 
-  protected readonly cuenta = computed(() => this.status()?.porVeredicto ?? {});
+  private readonly filas = computed(() => this.status()?.filas ?? []);
 
-  /** Los que salen solos del cruce, y los que solo pone una revisión a mano. */
-  protected readonly delCruce = VEREDICTOS.filter((v) => !v.aMano);
-  protected readonly deRevision = VEREDICTOS.filter((v) => v.aMano);
+  /** Cuándo se midió y si conviene repetirlo. La medición es manual: nada la refresca sola. */
+  protected readonly frescura = computed(() => {
+    const s = this.status();
+    if (!s) return null;
+    const medido = new Date(`${s.medidoEl}T00:00:00`);
+    const dias = Math.max(0, Math.floor((Date.now() - medido.getTime()) / 86_400_000));
+    const fecha = medido.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+    return { fecha, dias, vieja: dias > DIAS_VIEJA };
+  });
 
-  /** Resumen por componente: lo que se ve sin abrir nada. */
-  protected readonly resumen = computed(() => {
-    const filas = this.status()?.filas ?? [];
-    const m = new Map<
-      string,
-      { componente: string; total: number; conectada: number; problema: number; revisadas: number }
-    >();
-    for (const f of filas) {
-      const c = f.componente || '(sin componente)';
-      const fila = m.get(c) ?? { componente: c, total: 0, conectada: 0, problema: 0, revisadas: 0 };
-      fila.total++;
-      if (f.veredicto === 'conectada') fila.conectada++;
-      if (A_MIRAR.has(f.veredicto)) fila.problema++;
-      if (f.revisado) fila.revisadas++;
-      m.set(c, fila);
+  /**
+   * Las tres cifras de la cadena. Las dos primeras miran desde Figma (de sus variables, cuántas
+   * dibuja el Kit y cuántas lee PrimeNG); la tercera mira desde la web (de lo que lee el CSS,
+   * cuánto sale del Kit) y dice qué es el resto.
+   */
+  protected readonly cadena = computed(() => {
+    const deComponente = this.filas().filter((f) => f.componente !== FUERA);
+    const variables = deComponente.filter((f) => f.variable);
+    const leidas = deComponente.filter((f) => f.token && f.leeWeb === 'sí');
+    const delKit = leidas.filter((f) => f.variable).length;
+
+    const resto = new Map<string, number>();
+    for (const f of leidas) {
+      if (f.variable) continue;
+      const familia = FAMILIAS[f.token.split('-').pop() ?? ''] ?? 'otros';
+      resto.set(familia, (resto.get(familia) ?? 0) + 1);
     }
-    return [...m.values()].sort((a, b) => a.componente.localeCompare(b.componente));
+
+    const dibuja = variables.filter((f) => f.usaFigma === 'sí').length;
+    const lee = variables.filter((f) => f.leeWeb === 'sí').length;
+    return {
+      variables: variables.length,
+      dibuja: { n: dibuja, pct: pct(dibuja, variables.length) },
+      lee: { n: lee, pct: pct(lee, variables.length) },
+      web: { n: delKit, de: leidas.length, pct: pct(delKit, leidas.length) },
+      resto: enumerar([...resto].sort((a, b) => b[1] - a[1]).map(([familia, n]) => `${n} ${familia}`)),
+    };
+  });
+
+  /** Todas las filas por grupo: la barra grande de la leyenda. */
+  protected readonly porGrupo = computed(() => {
+    const g = vacio();
+    for (const f of this.filas()) g[grupoDe(f.veredicto)]++;
+    return g;
+  });
+
+  /** La leyenda: cada grupo con sus veredictos y cuántas filas tiene cada uno. */
+  protected readonly leyenda = computed(() => {
+    const cuenta = new Map<string, number>();
+    for (const f of this.filas()) cuenta.set(f.veredicto, (cuenta.get(f.veredicto) ?? 0) + 1);
+    return GRUPOS.map((g) => ({
+      ...g,
+      n: this.porGrupo()[g.id],
+      veredictos: VEREDICTOS.filter((v) => v.grupo === g.id).map((v) => ({ ...v, n: cuenta.get(v.nombre) ?? 0 })),
+    }));
+  });
+
+  /** Una tarjeta por componente. Primero los que tienen algo que no llega; luego, por nombre. */
+  protected readonly componentes = computed(() => {
+    const m = new Map<string, { nombre: string; total: number; grupos: PorGrupo }>();
+    for (const f of this.filas()) {
+      const c = m.get(f.componente) ?? { nombre: f.componente, total: 0, grupos: vacio() };
+      c.total++;
+      c.grupos[grupoDe(f.veredicto)]++;
+      m.set(f.componente, c);
+    }
+    return [...m.values()]
+      .map((c) => ({ ...c, etiqueta: c.nombre === FUERA ? 'Fuera de componente' : c.nombre }))
+      .sort((a, b) => b.grupos['no-llega'] - a.grupos['no-llega'] || a.nombre.localeCompare(b.nombre));
+  });
+
+  /** Los veredictos que tiene el componente abierto, para los filtros. */
+  protected readonly filtrosAbierto = computed(() => {
+    const comp = this.abierto();
+    const cuenta = new Map<string, number>();
+    for (const f of this.filas()) {
+      if (f.componente === comp) cuenta.set(f.veredicto, (cuenta.get(f.veredicto) ?? 0) + 1);
+    }
+    return [...cuenta].map(([nombre, n]) => ({ nombre, n })).sort((a, b) => b.n - a.n);
   });
 
   /** Las filas del componente abierto, ya filtradas por veredicto. */
   protected readonly filasAbiertas = computed(() => {
     const comp = this.abierto();
-    if (!comp) return [];
     const v = this.filtro();
-    return (this.status()?.filas ?? []).filter(
-      (f) => (f.componente || '(sin componente)') === comp && (!v || f.veredicto === v),
-    );
+    return this.filas().filter((f) => f.componente === comp && (!v || f.veredicto === v));
   });
 
-  /** Lo que se ató en la última pasada y lo que quedó esperando una decisión. */
-  protected readonly atadas = computed(() =>
-    (this.status()?.filas ?? []).filter((f) => f.accionable === 'HECHO'),
-  );
-  /** Lo que queda abierto: todo accionable que no sea «no» ni «HECHO». */
+  /**
+   * Lo que espera una decisión: todo accionable que no sea «no» ni «HECHO». El accionable viene
+   * en mayúsculas y con un matiz entre paréntesis («FIGMA (el valor ya viaja bien)»): se parte
+   * en etiqueta y matiz para que no grite.
+   */
   protected readonly abiertas = computed(() =>
-    (this.status()?.filas ?? []).filter(
-      (f) => f.accionable && f.accionable !== 'no' && f.accionable !== 'HECHO',
-    ),
+    this.filas()
+      .filter((f) => f.accionable && f.accionable !== 'no' && f.accionable !== 'HECHO')
+      .map((f) => {
+        const [, quien = f.accionable, matiz = ''] = /^([^(]+?)\s*(?:\((.*)\))?$/.exec(f.accionable) ?? [];
+        const etiqueta = quien.charAt(0) + quien.slice(1).toLowerCase();
+        return {
+          clave: `${f.componente}|${f.variable}`,
+          componente: f.componente === FUERA ? 'Fuera de componente' : f.componente,
+          variable: f.variable,
+          etiqueta,
+          matiz,
+          severidad: severidadAccionable(etiqueta),
+          motivo: f.motivo,
+        };
+      }),
   );
 
   constructor() {
@@ -191,8 +224,17 @@ export class ConexionVariablesComponent {
     this.filtro.update((cur) => (cur === veredicto ? null : veredicto));
   }
 
-  /** Clase de tono para pintar el veredicto siempre igual, en la tabla y en la leyenda. */
-  protected tono(veredicto: string): string {
-    return VEREDICTOS.find((v) => v.nombre === veredicto)?.tono ?? 'malo';
+  protected leer(clave: string): void {
+    this.leidas.update((s) => {
+      const n = new Set(s);
+      if (n.has(clave)) n.delete(clave);
+      else n.add(clave);
+      return n;
+    });
+  }
+
+  /** El ancho de un tramo de barra, en porcentaje del total. */
+  protected ancho(n: number, total: number): string {
+    return `${total ? (n / total) * 100 : 0}%`;
   }
 }

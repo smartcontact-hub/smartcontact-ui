@@ -27,6 +27,8 @@ import { DISPATCH_TOAST_KEY } from '@core/utils/toast-life';
 // DS produce exactamente la misma clase de icono que la app hardcodeaba
 // (`exclamation-triangle` → `sc-icon-font sc-icon-font--warning`).
 import { ScConfirmDialogComponent } from '@smartcontact-hub/components';
+import { pruebaEnCurso } from '@core/prueba/prueba-arranque';
+import { PruebaCapaComponent } from '@core/prueba/prueba-capa.component';
 
 type ToastSeverity = 'success' | 'info' | 'warn' | 'error' | 'secondary' | 'contrast';
 
@@ -52,6 +54,7 @@ const APP_SHORTCUT_GROUP: ScShortcutGroup = {
     ScConfirmDialogComponent,
     IconComponent,
     NgTemplateOutlet,
+    PruebaCapaComponent,
     ScKeyboardShortcutsComponent,
     RouterOutlet,
     ToastModule,
@@ -91,6 +94,12 @@ export class AppComponent {
     ...SC_KEYBOARD_SHORTCUTS_DEFAULT_GROUPS,
     APP_SHORTCUT_GROUP,
   ];
+
+  /**
+   * ¿Hay una prueba con usuarios en marcha en esta pestaña (DD-256)? Se mira una vez al arrancar: la sesión llega con
+   * el enlace y cada paso recarga la página. Solo entonces se descarga la capa (`@defer`).
+   */
+  protected readonly enPrueba = pruebaEnCurso();
 
   protected readonly closeIcon = 'close';
   protected readonly dispatchToastKey = DISPATCH_TOAST_KEY;
