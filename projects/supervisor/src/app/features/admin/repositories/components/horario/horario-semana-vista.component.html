@@ -1,0 +1,52 @@
+<div class="sv">
+  <!-- El título dice qué semana es y cuántas horas se atiende en ella; a la derecha, moverse de una a otra. -->
+  <header class="sv__cab">
+    <div class="sv__titulo">
+      <h3 class="sv__rango sc-text-body-semibold">{{ rango() }}</h3>
+      <span class="sv__total sc-text-caption-regular">{{ total() }}</span>
+    </div>
+    <div class="sv__nav">
+      <sc-button size="sm" variant="secondary" appearance="outlined" icon="chevron_left" [ariaLabel]="'repositories.horarios.sv.prev' | translate" (clicked)="ir(-1)" />
+      <sc-button size="sm" variant="secondary" appearance="outlined" [disabled]="esLaDeHoy()" [label]="'repositories.horarios.sv.today' | translate" (clicked)="irAHoy()" />
+      <sc-button size="sm" variant="secondary" appearance="outlined" icon="chevron_right" [ariaLabel]="'repositories.horarios.sv.next' | translate" (clicked)="ir(1)" />
+    </div>
+  </header>
+
+  <div class="sv__rejilla">
+    <div class="sv__ejes" aria-hidden="true">
+      @for (m of marcas; track m) {
+        <span class="sv__marca sc-text-caption-regular" [style.left.%]="(m / 24) * 100" [class.sv__marca--ini]="m === 0" [class.sv__marca--fin]="m === 24">{{ m }}</span>
+      }
+    </div>
+
+    <ul class="sv__filas">
+      @for (d of dias(); track d.fecha) {
+        <li class="fila" [class.fila--hoy]="d.esHoy">
+          <span class="fila__dia">
+            <span class="fila__letra sc-text-body-semibold">{{ d.letra }}</span>
+            <span class="fila__numero sc-text-caption-regular">{{ d.numero }}</span>
+          </span>
+          <!-- La línea del día: sobre fondo rosa («no se atiende»), cada tramo abierto en verde, a su minuto. -->
+          <span class="pista" role="img" [attr.aria-label]="d.aria">
+            @for (b of d.barras; track $index) {
+              <span class="barra sc-text-caption-semibold" [style.left.%]="b.izq" [style.width.%]="b.ancho">
+                @if (b.conTexto) {
+                  {{ b.texto }}
+                }
+              </span>
+            }
+            @if (d.nota) {
+              <span class="pista__nota sc-text-caption-regular">{{ d.nota }}</span>
+            }
+          </span>
+          <span class="fila__horas sc-text-body-semibold" [class.fila__horas--nada]="d.minutos === 0">{{ d.horas }}</span>
+        </li>
+      }
+    </ul>
+  </div>
+
+  <footer class="sv__pie sc-text-caption-regular">
+    <span class="leyenda"><span class="leyenda__marca leyenda__marca--abierto" aria-hidden="true"></span>{{ 'repositories.horarios.sv.open' | translate }}</span>
+    <span class="leyenda"><span class="leyenda__marca leyenda__marca--cerrado" aria-hidden="true"></span>{{ 'repositories.horarios.sv.closed' | translate }}</span>
+  </footer>
+</div>

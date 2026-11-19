@@ -1,23 +1,28 @@
+<!-- Qué días se atienden: un botón por día que se marca o se desmarca (marcado, el día se atiende y sale abajo con sus franjas). -->
+<div class="dias">
+  <span class="field__label sc-text-caption-semibold" [id]="prefijo() + '-dias-rotulo'">{{ 'repositories.horarios.days_open' | translate }}</span>
+  <sc-selectbutton
+    [ariaLabelledBy]="prefijo() + '-dias-rotulo'"
+    multiple
+    [options]="opcionesDeBoton()"
+    optionLabel="label"
+    optionValue="value"
+    [value]="abiertos()"
+    (valueChange)="elegirDias($event)"
+  />
+</div>
+
 <ul class="semana" role="list">
-  @for (dia of dias(); track dia.indice) {
-    <!-- Como un interruptor de ficha (`switch-field`): el interruptor y, detrás, el día como su rótulo. -->
+  @for (dia of diasAbiertos(); track dia.indice) {
     <li class="semana__dia">
-      <sc-toggleswitch
-        [inputId]="prefijo() + '-dia-' + dia.indice"
-        [ariaLabel]="dia.nombre"
-        [checked]="dia.franjas.length > 0"
-        (checkedChange)="abrir(dia.indice, $event)"
-      />
-      <label class="semana__nombre sc-text-body-regular" [for]="prefijo() + '-dia-' + dia.indice">{{ dia.nombre }}</label>
-      @if (dia.franjas.length > 0) {
-        <sc-horario-franjas class="semana__franjas" [franjas]="dia.franjas" [etiqueta]="dia.nombre" (franjasChange)="ponerDia(dia.indice, $event)" />
-      } @else {
-        <span class="semana__cerrado sc-text-body-regular">{{ 'repositories.horarios.closed' | translate }}</span>
-      }
+      <span class="semana__nombre sc-text-body-semibold">{{ dia.nombre }}</span>
+      <sc-horario-franjas class="semana__franjas" [franjas]="dia.franjas" [etiqueta]="dia.nombre" (franjasChange)="ponerDia(dia.indice, $event)" />
       @if (falta()?.dia === dia.indice) {
         <p class="semana__error field__error sc-text-caption-regular" role="alert">{{ 'repositories.horarios.errors.week_' + falta()!.codigo | translate }}</p>
       }
     </li>
+  } @empty {
+    <li class="semana__nada sc-text-body-regular">{{ 'repositories.horarios.no_days_open' | translate }}</li>
   }
 </ul>
 

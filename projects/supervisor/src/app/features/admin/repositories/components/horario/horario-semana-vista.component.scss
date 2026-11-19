@@ -1,0 +1,188 @@
+:host {
+  display: block;
+  min-inline-size: 0;
+}
+
+/* Los radios, concéntricos: el de la pista es el de la barra más el hueco que deja alrededor (2 px arriba y abajo). */
+.sv {
+  --barra-radio: var(--sc-radius-sm);
+  --hueco: var(--sc-spacing-0-125);
+  --pista-alto: var(--sc-spacing-2);
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1);
+}
+
+.sv__cab {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sc-spacing-0-75);
+}
+
+.sv__titulo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sc-spacing-0-75);
+}
+
+.sv__rango {
+  margin: 0;
+  text-transform: capitalize;
+}
+
+.sv__total {
+  color: var(--sc-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.sv__nav {
+  display: inline-flex;
+  gap: var(--sc-spacing-0-5);
+}
+
+/* Las tres columnas de la rejilla (día · línea · horas) las comparten el eje y las filas. */
+.sv__rejilla {
+  --col-dia: var(--sc-spacing-2-5);
+  --col-horas: var(--sc-spacing-4);
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
+}
+
+.sv__ejes {
+  position: relative;
+  block-size: var(--sc-spacing-1-5);
+  margin-inline: var(--col-dia) var(--col-horas);
+  color: var(--sc-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.sv__marca {
+  position: absolute;
+  inset-block-start: 0;
+  translate: -50% 0;
+
+  &--ini {
+    translate: 0 0;
+  }
+
+  &--fin {
+    translate: -100% 0;
+  }
+}
+
+.sv__filas {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fila {
+  display: grid;
+  grid-template-columns: var(--col-dia) minmax(0, 1fr) var(--col-horas);
+  align-items: center;
+}
+
+.fila__dia {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.1;
+  color: var(--sc-text-secondary);
+}
+
+/* Hoy, marcado con algo más que el color: la letra subrayada. */
+.fila--hoy .fila__letra {
+  color: var(--sc-text-primary);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: var(--sc-spacing-0-25);
+}
+
+.fila__numero {
+  font-variant-numeric: tabular-nums;
+}
+
+/* La línea de las 24 horas: fondo rosa («no se atiende») con una raya cada tres horas (12,5 %). */
+.pista {
+  position: relative;
+  block-size: var(--pista-alto);
+  border-radius: calc(var(--barra-radio) + var(--hueco));
+  background-color: var(--sc-label-red-bg);
+  background-image: repeating-linear-gradient(
+    to right,
+    transparent 0,
+    transparent calc(12.5% - 1px),
+    color-mix(in srgb, var(--sc-label-red-border) 50%, transparent) calc(12.5% - 1px),
+    color-mix(in srgb, var(--sc-label-red-border) 50%, transparent) 12.5%
+  );
+  overflow: hidden;
+}
+
+.barra {
+  position: absolute;
+  inset-block: var(--hueco);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--barra-radio);
+  background: var(--sc-label-green-text);
+  color: var(--sc-text-on-primary);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Un día cerrado dice por qué (cerrado, o el nombre del festivo). */
+.pista__nota {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  padding-inline: var(--sc-spacing-0-75);
+  color: var(--sc-label-red-text);
+}
+
+.fila__horas {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+
+.fila__horas--nada {
+  color: var(--sc-text-secondary);
+  font-weight: 400;
+}
+
+.sv__pie {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sc-spacing-1-5);
+  color: var(--sc-text-secondary);
+}
+
+.leyenda {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+}
+
+.leyenda__marca {
+  inline-size: var(--sc-spacing-1);
+  block-size: var(--sc-spacing-0-75);
+  border-radius: var(--barra-radio);
+
+  &--abierto {
+    background: var(--sc-label-green-text);
+  }
+
+  &--cerrado {
+    background: var(--sc-label-red-bg);
+  }
+}

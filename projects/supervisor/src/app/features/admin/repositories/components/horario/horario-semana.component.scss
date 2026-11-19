@@ -12,13 +12,11 @@
   list-style: none;
 }
 
-/* Interruptor · día · franjas, en una rejilla: cada franja es una fila de la tercera columna (`display: contents` en
- * `sc-horario-franjas`), así que el interruptor y el día se centran con la PRIMERA franja sin medir alturas, y las
- * demás franjas, «Añadir franja» y el error caen debajo, en su columna. Entre días, el aire de la escalera, sin
- * líneas (DD-113: nada de bordes entre hermanos). */
+/* Los días abiertos: su nombre y, a la derecha, sus franjas (cada una, una fila de la segunda columna: `display: contents` en
+ * `sc-horario-franjas`), así que el nombre se centra con la PRIMERA franja. Entre días, aire, sin líneas (DD-113). */
 .semana__dia {
   display: grid;
-  grid-template-columns: auto var(--sc-spacing-5) minmax(0, 1fr);
+  grid-template-columns: 7rem minmax(0, 1fr);
   align-items: center;
   column-gap: var(--sc-spacing-1);
   row-gap: var(--sc-spacing-0-5);
@@ -28,19 +26,23 @@
   gap: var(--sc-spacing-1);
 }
 
-sc-toggleswitch,
 .semana__nombre {
   grid-row: 1;
 }
 
-.semana__cerrado {
-  grid-column: 3;
-  grid-row: 1;
+.semana__error {
+  grid-column: 2;
+  margin: 0;
+}
+
+.semana__nada {
   color: var(--sc-text-secondary);
 }
 
-.semana__error {
-  grid-column: 3;
+.dias {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
 }
 
 .semana__copiar {

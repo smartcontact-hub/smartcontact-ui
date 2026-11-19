@@ -1516,6 +1516,18 @@
         "title": "Delete the schedule “{{name}}”?",
         "title_bulk": "Delete {{count}} schedules?"
       },
+      "section_week_view": "Week",
+      "section_week_view_hint": "When it is served in a specific week",
+      "days_open": "Days served",
+      "no_days_open": "No day is served yet.",
+      "sv": {
+        "total": "{{hours}} a week",
+        "prev": "Previous week",
+        "next": "Next week",
+        "today": "Today",
+        "open": "Served",
+        "closed": "Not served"
+      },
       "col_availability": "Availability",
       "col_use": "Use",
       "section_uses": "Where it is used",

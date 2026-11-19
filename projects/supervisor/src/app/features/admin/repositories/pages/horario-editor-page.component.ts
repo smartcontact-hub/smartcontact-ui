@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, HostListener, inject, Injector, type OnInit, signal, type TemplateRef, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, HostListener, inject, type OnInit, signal, type TemplateRef, viewChild } from '@angular/core';
 import { LocationStrategy } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -21,11 +21,11 @@ import { BreadcrumbService, injectAlertModal, ResultadoAccionService } from '@co
 import { LanguageService } from '@core/services/language.service';
 import { injectLangChange } from '@core/utils/lang-change';
 import { GroupsStore } from '@features/admin/groups/state/groups.store';
-import { ayudaDeObligatorio, dejoElCampo, llegarATarjeta, ocasionDeAvisar } from '@shared/utils/alta-secciones';
+import { ayudaDeObligatorio, dejoElCampo, ocasionDeAvisar } from '@shared/utils/alta-secciones';
 import { nombreDeCopia } from '@shared/utils/copy-name';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 
-import { HorarioCalendarioComponent } from '../components/horario/horario-calendario.component';
+import { HorarioSemanaVistaComponent } from '../components/horario/horario-semana-vista.component';
 import { type ColumnaDeHorario, type FilaDeHorario, HorarioFilasTableComponent } from '../components/horario/horario-filas-table.component';
 import { type FechaEspecialNueva, HorarioEspecialModalComponent } from '../components/horario/horario-especial-modal.component';
 import { HorarioPeriodoModalComponent } from '../components/horario/horario-periodo-modal.component';
@@ -72,7 +72,7 @@ const aFecha = (iso: string): Date => new Date(`${iso}T12:00:00`);
   selector: 'sc-horario-editor-page',
   imports: [
     RouterLink,
-    HorarioCalendarioComponent,
+    HorarioSemanaVistaComponent,
     HorarioEspecialModalComponent,
     HorarioFilasTableComponent,
     HorarioPeriodoModalComponent,
@@ -421,29 +421,6 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
   /** El diálogo de una fecha especial: `null` cerrado; con `especial: null`, para añadir (con `fecha`, ya marcada; si
    *  no, abre en el mes de `mes`). */
   protected readonly especialDialog = signal<{ readonly especial: FechaEspecial | null; readonly fecha: string | null; readonly mes?: string | null } | null>(null);
-  /** El día que se eligió en el año (`null` si ninguno): «Nueva fecha especial» abre en su mes (DD-254). */
-  protected readonly diaDelAnio = signal<string | null>(null);
-
-  /** Desde el calendario, «Cambiar solo este día»: si ese día ya es una fecha especial se edita; si no, se añade una con
-   *  el día marcado. */
-  protected cambiarDia(fecha: string): void {
-    const dueno = duenoDe(this.form(), fecha, this.calendarios());
-    this.especialDialog.set({ especial: dueno.especial, fecha });
-  }
-
-  /* ── Lo que decide el día elegido, en su sitio (DD-254) ─────────────────────────────────────────────────────────── */
-
-  private readonly injector = inject(Injector);
-
-  /** «Editar semana»: la tarjeta de la semana habitual, a la vista y con el foco en su título. */
-  protected editarSemana(): void {
-    llegarATarjeta('horario-semana', this.injector);
-  }
-
-  /** «Editar festivos»: el calendario que decide ese día; sale del horario, así que con cambios pide guardar antes. */
-  protected editarFestivos(id: number): void {
-    void this.salirAFestivos(`/admin/festivos/editar/${id}`);
-  }
 
   protected guardarEspeciales(nuevas: readonly FechaEspecialNueva[]): void {
     this.form.update((f) => {

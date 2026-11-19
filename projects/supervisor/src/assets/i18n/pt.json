@@ -1516,6 +1516,18 @@
         "title": "Eliminar o horário «{{name}}»?",
         "title_bulk": "Eliminar {{count}} horários?"
       },
+      "section_week_view": "Semana",
+      "section_week_view_hint": "Quando se atende numa semana concreta",
+      "days_open": "Dias atendidos",
+      "no_days_open": "Nenhum dia é atendido ainda.",
+      "sv": {
+        "total": "{{hours}} por semana",
+        "prev": "Semana anterior",
+        "next": "Semana seguinte",
+        "today": "Hoje",
+        "open": "Atendido",
+        "closed": "Não atendido"
+      },
       "col_availability": "Disponibilidade",
       "col_use": "Uso",
       "section_uses": "Onde é usado",
