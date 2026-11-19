@@ -51,7 +51,7 @@
 .tp-sem__eje,
 .tp-sem__fila {
   display: grid;
-  grid-template-columns: 1.25rem 1fr 3.5rem;
+  grid-template-columns: 1.5rem 1fr 3.5rem;
   align-items: center;
   gap: var(--s-3);
 }
@@ -82,9 +82,57 @@
 .tp-sem__fila.is-vista .tp-sem__letra {
   color: var(--tp-si);
 }
+/* La letra del día es un botón: elige el día entero para copiarlo, pegarle o borrarlo. */
 .tp-sem__letra {
+  justify-self: center;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  padding: 0;
+  border: 0;
+  border-radius: var(--r-xs);
+  background: none;
   color: var(--tp-ink-2);
+  font: inherit;
   text-align: center;
+  cursor: pointer;
+  transition-property: background-color, color;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+  &:hover {
+    background: var(--tp-hair);
+    color: var(--tp-ink);
+  }
+  &:focus-visible {
+    outline: 2px solid var(--tp-accent);
+    outline-offset: 1px;
+  }
+  &.is-elegido {
+    background: var(--tp-accent);
+    color: #fff;
+  }
+}
+/* Lo elegido: el día entero se rodea; una franja suelta, con un aro separado de la barra. */
+.tp-sem__fila.is-dia-elegido .tp-sem__pista {
+  box-shadow: 0 0 0 2px var(--tp-accent);
+}
+.tp-sem__barra.is-elegida {
+  z-index: 2;
+  box-shadow:
+    0 0 0 2px var(--tp-surface),
+    0 0 0 4px var(--tp-accent);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .tp-sem__fila.is-pegado .tp-sem__pista {
+    animation: tp-pegado 900ms var(--tp-ease);
+  }
+}
+@keyframes tp-pegado {
+  from {
+    box-shadow: 0 0 0 4px var(--tp-accent-ring);
+  }
+  to {
+    box-shadow: 0 0 0 0 transparent;
+  }
 }
 .tp-sem__fila.is-hoy .tp-sem__letra {
   color: var(--tp-ink);
@@ -317,7 +365,7 @@
   align-items: center;
   gap: var(--s-1-5);
   margin-block-start: var(--s-1);
-  padding-inline-start: calc(1.25rem + var(--s-3));
+  padding-inline-start: calc(1.5rem + var(--s-3));
 }
 .tp-sem__clave {
   inline-size: 0.75rem;

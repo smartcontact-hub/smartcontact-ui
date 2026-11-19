@@ -124,3 +124,8 @@
     translate: 0 0;
   }
 }
+
+/* Con la barra de guardar a la vista, los avisos suben por encima de ella: no la tapan. */
+.tp-cierre:has(.tp-savebar[data-visible='true']) .tp-toasts {
+  inset-block-end: calc(var(--s-6) + 3.5rem);
+}

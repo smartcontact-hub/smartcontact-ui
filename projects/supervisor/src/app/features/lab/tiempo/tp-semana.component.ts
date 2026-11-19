@@ -1,10 +1,10 @@
-import { booleanAttribute, ChangeDetectionStrategy, Component, computed, HostListener, input, output, signal } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, computed, effect, HostListener, inject, input, output, signal, untracked } from '@angular/core';
 
 import { type Franja, type Semana, validarSemana } from '@features/admin/repositories/state/horarios.core.mjs';
 
 import { TpIconoComponent } from './tp-icono.component';
 import { horaCorta, horas, LETRAS, NOMBRES, semanaDe, type Tramo, tramosDe, trozosDelDia } from './tp-modelo';
-import { type OpcionSeg, TpHoraComponent, TpSegComponent } from './tp-piezas';
+import { type OpcionSeg, TpAvisos, TpHoraComponent, TpSegComponent } from './tp-piezas';
 import { T } from './tp-textos';
 
 const PROBLEMA: Record<string, string> = {
@@ -47,6 +47,34 @@ interface Arrastre {
   movido: boolean;
 }
 
+/** Lo seleccionado en el mapa: un día entero (`franja: null`) o una franja suelta de un día. */
+interface Elegido {
+  readonly dia: number;
+  readonly franja: number | null;
+}
+
+/**
+ * Lo copiado: los días en orden y, de cada uno, sus franjas. Vive fuera del componente, y en la pestaña, a propósito: se
+ * copia en un horario y se pega en otro, aunque entre medias se recargue la página.
+ */
+interface Copiado {
+  readonly dias: readonly number[];
+  readonly franjas: readonly (readonly Franja[])[];
+}
+const CLAVE_COPIADO = 'sc-tp-copiado';
+const PORTAPAPELES = signal<Copiado | null>(
+  (() => {
+    try {
+      const c = JSON.parse(sessionStorage.getItem(CLAVE_COPIADO) ?? 'null') as Copiado | null;
+      return c && Array.isArray(c.dias) && Array.isArray(c.franjas) ? c : null;
+    } catch {
+      return null;
+    }
+  })(),
+);
+
+const enLista = (xs: readonly string[]): string => (xs.length > 1 ? `${xs.slice(0, -1).join(', ')} y ${xs[xs.length - 1]}` : (xs[0] ?? ''));
+
 /** Lo que dice la guía al pasar por una fila: la hora bajo el puntero y, si ahí cabe una franja, hasta dónde iría. */
 interface Guia {
   readonly dia: number;
@@ -62,6 +90,11 @@ interface Guia {
  * día solo vive en un tramo: marcarlo en otro lo mueve. Debajo, cómo queda: la semana dibujada, en verde lo que se
  * trabaja y en rojo lo que no, con las horas escritas en cada barra para que un «19:35» salte a la vista; los bordes de
  * cada barra se arrastran (de 15 en 15 min) y la barra entera se mueve.
+ *
+ * Se selecciona como en una hoja de cálculo: un clic en una barra elige esa franja de ese día y un clic en la letra, el
+ * día entero (con Mayús, de un día a otro; con ⌘, uno más). ⌘C copia, ⌘V pega en los días elegidos o en el día por el
+ * que pasa el puntero (pegar deja ese día igual que lo copiado), ⌘X corta y Supr borra. Va por días, no por filas: borrar
+ * la franja del lunes de una fila «L–V» deja el lunes aparte. Cada acción es un paso de ⌘Z.
  *
  * El dibujo enseña la jornada, de 7:00 a 22:00, y crece solo hasta la primera y la última hora abiertas con una hora de
  * margen: nunca esconde una hora en la que se atiende. «De 0 a 24» enseña el día entero, para pintar de madrugada.
@@ -181,10 +214,22 @@ interface Guia {
             [class.is-mal]="error()?.dia === f.dia"
             [class.is-senalado]="senalado() === f.dia"
             [class.is-vista]="vista()?.dia === f.dia"
-            (mouseenter)="activo.set(f.tramo)"
-            (mouseleave)="activo.set(null)"
+            [class.is-dia-elegido]="diaEntero(f.dia)"
+            [class.is-pegado]="pegados().includes(f.dia)"
+            (mouseenter)="activo.set(f.tramo); encima = f.dia"
+            (mouseleave)="activo.set(null); encima = null"
           >
-            <span class="tp-sem__letra t-small t-strong" [attr.data-tip]="capital(nombres[f.dia])">{{ letras[f.dia] }}</span>
+            <button
+              type="button"
+              class="tp-sem__letra t-small t-strong"
+              [class.is-elegido]="diaEntero(f.dia)"
+              [attr.aria-pressed]="diaEntero(f.dia)"
+              [attr.aria-label]="capital(nombres[f.dia]) + ': elegir para copiar, pegar o borrar'"
+              [attr.data-tip]="capital(nombres[f.dia])"
+              (click)="elegirDia($event, f.dia)"
+            >
+              {{ letras[f.dia] }}
+            </button>
             <span
               class="tp-sem__pista"
               [class.is-cerrada]="f.trozos.length === 0"
@@ -204,10 +249,12 @@ interface Guia {
                   [class.is-movible]="t.movible"
                   [class.is-viva]="t.vivo"
                   [class.is-sale]="f.sale"
+                  [class.is-elegida]="barraElegida(t.de, t.franja)"
                   [style.left.%]="pos(t.desde)"
                   [style.width.%]="largo(t.desde, t.hasta)"
                   [attr.data-tip]="t.vivo || arrastre() ? null : t.texto"
                   (pointerdown)="t.movible && empezar($event, f.dia, t.tramo, t.franja, 'mover')"
+                  (click)="elegirBarra($event, t.de, t.franja)"
                 >
                   @if (t.etiqueta) {
                     <span class="tp-sem__txt t-num">{{ t.etiqueta }}</span>
@@ -273,7 +320,7 @@ interface Guia {
           <span class="tp-sem__clave tp-sem__clave--si"></span>Se atiende
           <span class="tp-sem__clave tp-sem__clave--no"></span>No se atiende
           <span class="tp-spacer"></span>
-          Arrastra sobre el rojo para añadir horas y los bordes para cambiarlas
+          {{ ayuda() }}
         </div>
         @if (error(); as e) {
           <p class="tp-error tp-sem__error" role="alert">
@@ -311,6 +358,16 @@ export class TpSemanaComponent {
   protected readonly vista = signal<{ tramo: number; dia: number } | null>(null);
   /** El mapa enseña el día entero en vez de la jornada. */
   protected readonly dia24 = signal(false);
+  private readonly avisos = inject(TpAvisos);
+  protected readonly seleccion = signal<readonly Elegido[]>([]);
+  /** Los días recién pegados, que se iluminan un momento. */
+  protected readonly pegados = signal<readonly number[]>([]);
+  /** La fila por la que pasa el puntero: ahí pega ⌘V si no hay otros días elegidos. */
+  protected encima: number | null = null;
+  /** El último día elegido, desde el que Mayús elige un rango. */
+  private ancla: number | null = null;
+  /** Tras un arrastre, el clic que llega al soltar no elige. */
+  private trasArrastre = false;
 
   /* Los tramos viven aparte mientras se editan: uno recién añadido aún no tiene días y la semana no puede contarlo. Se
    * recalculan cuando la semana llega de fuera (deshacer, cargar). */
@@ -329,6 +386,180 @@ export class TpSemanaComponent {
 
   protected tramoDe(dia: number): number {
     return this.tramos().findIndex((t) => t.dias.includes(dia));
+  }
+
+  constructor() {
+    // Si la semana cambia desde fuera (deshacer, cargar otro horario), lo elegido ya no apunta a lo mismo.
+    effect(() => {
+      if (this.semana() !== this.ultima) untracked(() => this.seleccion.set([]));
+    });
+  }
+
+  /* ── Elegir, copiar, pegar y borrar ───────────────────────────────────────────────────────────────────────────── */
+
+  protected diaEntero(dia: number): boolean {
+    return this.seleccion().some((x) => x.dia === dia && x.franja === null);
+  }
+
+  protected barraElegida(dia: number, franja: number): boolean {
+    return this.seleccion().some((x) => x.dia === dia && x.franja === franja);
+  }
+
+  /** Lo que dice la leyenda: cómo seguir con lo que hay elegido o copiado. */
+  protected readonly ayuda = computed(() => {
+    if (this.seleccion().length) return '⌘C copia, ⌘V pega, Supr borra y Esc suelta';
+    if (PORTAPAPELES()) return 'Pasa por un día o pulsa su letra, y ⌘V pega lo copiado';
+    return 'Arrastra sobre el rojo para añadir horas; pulsa una barra o un día para copiarlo';
+  });
+
+  protected elegirDia(e: MouseEvent, dia: number): void {
+    const antes = this.seleccion();
+    if (e.shiftKey && this.ancla !== null) {
+      const [a, b] = [Math.min(this.ancla, dia), Math.max(this.ancla, dia)];
+      this.seleccion.set(Array.from({ length: b - a + 1 }, (_, i) => ({ dia: a + i, franja: null })));
+      return;
+    }
+    const ya = this.diaEntero(dia);
+    if (e.metaKey || e.ctrlKey) {
+      this.seleccion.set(ya ? antes.filter((x) => x.dia !== dia) : [...antes.filter((x) => x.dia !== dia), { dia, franja: null }]);
+    } else {
+      this.seleccion.set(ya && antes.length === 1 ? [] : [{ dia, franja: null }]);
+    }
+    this.ancla = dia;
+  }
+
+  protected elegirBarra(e: MouseEvent, dia: number, franja: number): void {
+    if (this.trasArrastre || franja < 0) return;
+    const antes = this.seleccion();
+    const ya = antes.some((x) => x.dia === dia && x.franja === franja);
+    if (e.shiftKey || e.metaKey || e.ctrlKey) {
+      this.seleccion.set(ya ? antes.filter((x) => !(x.dia === dia && x.franja === franja)) : [...antes.filter((x) => !(x.dia === dia && x.franja === null)), { dia, franja }]);
+    } else {
+      this.seleccion.set(ya && antes.length === 1 ? [] : [{ dia, franja }]);
+    }
+    this.ancla = dia;
+  }
+
+  /** Lo elegido que aún existe, y sus días en orden. */
+  private elegido(): { sel: readonly Elegido[]; dias: number[] } {
+    const s = this.semana();
+    const sel = this.seleccion().filter((x) => x.franja === null || !!s[x.dia]?.[x.franja]);
+    return { sel, dias: [...new Set(sel.map((x) => x.dia))].sort((a, b) => a - b) };
+  }
+
+  private textoDe(dias: readonly number[], franjas: readonly (readonly Franja[])[]): string {
+    return dias
+      .map((d, i) => `${this.capital(NOMBRES[d])}: ${franjas[i].length ? franjas[i].map((f) => `${horaCorta(f[0])}–${horaCorta(f[1])}`).join(' y ') : 'cerrado'}`)
+      .join('\n');
+  }
+
+  private copiar(): boolean {
+    const { sel, dias } = this.elegido();
+    if (!dias.length) return false;
+    const s = this.semana();
+    const franjas = dias.map((d) =>
+      sel.some((x) => x.dia === d && x.franja === null)
+        ? [...(s[d] ?? [])]
+        : sel.filter((x) => x.dia === d && x.franja !== null).map((x) => s[d][x.franja!]).sort((a, b) => a[0] - b[0]),
+    );
+    PORTAPAPELES.set({ dias, franjas });
+    try {
+      sessionStorage.setItem(CLAVE_COPIADO, JSON.stringify({ dias, franjas }));
+    } catch {
+      // almacenamiento bloqueado: lo copiado vive hasta recargar
+    }
+    try {
+      void navigator.clipboard?.writeText(this.textoDe(dias, franjas)).catch(() => undefined);
+    } catch {
+      // sin portapapeles del sistema: se pega igual dentro de Horarios
+    }
+    const que = dias.length === 1 ? this.textoDe(dias, franjas).replace(':', '') : enLista(dias.map((d) => NOMBRES[d]));
+    this.avisos.decir(`Copiado: ${que.charAt(0).toLowerCase()}${que.slice(1)}. Señala otro día y pulsa ⌘V`);
+    return true;
+  }
+
+  private pegar(): boolean {
+    const p = PORTAPAPELES();
+    if (!p) return false;
+    let destino = this.elegido().dias;
+    const mismo = destino.length === p.dias.length && destino.every((d, i) => d === p.dias[i]);
+    if (!destino.length || mismo) destino = this.encima !== null ? [this.encima] : [];
+    if (!destino.length) {
+      this.avisos.decir('Señala dónde pegar: pulsa la letra de un día o pasa por su fila');
+      return true;
+    }
+    const antes = JSON.stringify(this.semana());
+    const nueva: Franja[][] = this.semana().map((d) => [...(d ?? [])]);
+    // Un día copiado va a cada día elegido; varios, uno tras otro desde el primero elegido.
+    const tocados: number[] = [];
+    if (p.franjas.length === 1 || destino.length === p.franjas.length) {
+      destino.forEach((d, i) => {
+        nueva[d] = [...p.franjas[p.franjas.length === 1 ? 0 : i]];
+        tocados.push(d);
+      });
+    } else {
+      p.franjas.forEach((fr, i) => {
+        const d = destino[0] + i;
+        if (d > 6) return;
+        nueva[d] = [...fr];
+        tocados.push(d);
+      });
+    }
+    if (JSON.stringify(nueva) === antes) {
+      this.avisos.decir(`${this.capital(enLista(tocados.map((d) => NOMBRES[d])))} ya tiene esas horas: señala otro día`);
+      return true;
+    }
+    this.seleccion.set([]);
+    this.emitir(tramosDe(nueva));
+    this.pegados.set(tocados);
+    setTimeout(() => this.pegados.set([]), 900);
+    this.avisos.decir(`Pegado en ${enLista(tocados.map((d) => NOMBRES[d]))}. ⌘Z lo deshace`);
+    return true;
+  }
+
+  private borrar(corte = false): boolean {
+    const { sel, dias } = this.elegido();
+    if (!dias.length) return false;
+    const nueva: Franja[][] = this.semana().map((d) => [...(d ?? [])]);
+    for (const d of dias) {
+      const entero = sel.some((x) => x.dia === d && x.franja === null);
+      const fuera = new Set(sel.filter((x) => x.dia === d).map((x) => x.franja));
+      nueva[d] = entero ? [] : nueva[d].filter((_, i) => !fuera.has(i));
+    }
+    this.seleccion.set([]);
+    this.emitir(tramosDe(nueva));
+    const todo = dias.every((d) => nueva[d].length === 0);
+    const que = enLista(dias.map((d) => NOMBRES[d]));
+    this.avisos.decir(`${corte ? 'Cortado' : todo ? 'Cerrado' : 'Borrado'}: ${que}. ⌘Z lo deshace`);
+    return true;
+  }
+
+  /** ⌘C, ⌘X, ⌘V y Supr sobre el mapa. Escribiendo en un campo o con un diálogo abierto, el teclado es suyo. */
+  @HostListener('document:keydown', ['$event'])
+  protected teclado(e: KeyboardEvent): void {
+    const el = e.target as HTMLElement | null;
+    if (this.arrastre() || el?.closest('input, textarea, select, [contenteditable="true"], [role="dialog"], sc-tp-modal')) return;
+    const mod = (e.metaKey || e.ctrlKey) && !e.altKey;
+    const k = e.key.toLowerCase();
+    // Con texto seleccionado en la página, ⌘C copia ese texto, como siempre.
+    const hayTexto = (window.getSelection()?.toString() ?? '') !== '';
+    if (mod && !e.shiftKey && k === 'c' && !hayTexto) {
+      if (this.copiar()) e.preventDefault();
+    } else if (mod && !e.shiftKey && k === 'x' && !hayTexto) {
+      if (this.copiar() && this.borrar(true)) e.preventDefault();
+    } else if (mod && !e.shiftKey && k === 'v') {
+      if (this.pegar()) e.preventDefault();
+    } else if (!mod && (e.key === 'Delete' || e.key === 'Backspace')) {
+      if (this.borrar()) e.preventDefault();
+    } else if (e.key === 'Escape' && !this.arrastre()) {
+      this.seleccion.set([]);
+    }
+  }
+
+  /** Pulsar fuera del mapa suelta lo elegido. */
+  @HostListener('document:pointerdown', ['$event'])
+  protected fuera(e: PointerEvent): void {
+    if (this.seleccion().length && !(e.target as HTMLElement | null)?.closest('.tp-sem__mapa, sc-tp-avisos')) this.seleccion.set([]);
   }
 
   /* ── Las horas que se ven ─────────────────────────────────────────────────────────────────────────────────────── */
@@ -411,6 +642,7 @@ export class TpSemanaComponent {
         const etiqueta = ancho * escala < 170 ? '' : tz.arrastre ? `→ ${horaCorta(tz.franja[1])}` : cruza ? `${horaCorta(tz.franja[0])} →` : texto;
         return {
           ...tz,
+          de,
           tramo,
           franja,
           texto,
@@ -608,6 +840,7 @@ export class TpSemanaComponent {
       tramo = i;
     }
     this.guia.set(null);
+    this.seleccion.set([]);
     this.gesto.emit(true);
     this.emitir(tramos);
     this.arrastre.set({ tramo, franja, lado: 'pintar', dia, pista, x0: e.clientX, f0: nueva, rango: this.rango(), antes, movido: false, min: h.min, max: h.max });
@@ -648,6 +881,11 @@ export class TpSemanaComponent {
     if (!a) return;
     // Un clic en lo rojo, sin arrastrar, pone una hora (o lo que quepa).
     if (a.lado === 'pintar' && !a.movido) this.ponerFranja(a.tramo, a.franja, [a.f0[0], Math.min(a.f0[0] + 60, a.max)]);
+    // El clic que sigue a soltar un arrastre no elige la barra.
+    if (a.movido) {
+      this.trasArrastre = true;
+      setTimeout(() => (this.trasArrastre = false));
+    }
     this.arrastre.set(null);
     this.gesto.emit(false);
   }
