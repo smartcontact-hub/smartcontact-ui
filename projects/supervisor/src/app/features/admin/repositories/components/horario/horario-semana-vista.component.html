@@ -28,7 +28,9 @@
                 [class.barra--fija]="!b.editable"
                 [style.left.%]="b.izq"
                 [style.width.%]="b.ancho"
+                [class.barra--movible]="b.editable"
                 [attr.tabindex]="b.editable ? 0 : null"
+                (pointerdown)="b.editable && empezarMover($event, d.indice, b.idx)"
                 (keydown.delete)="b.editable && quitar(d.indice, b.idx)"
                 (keydown.backspace)="b.editable && quitar(d.indice, b.idx)"
               >

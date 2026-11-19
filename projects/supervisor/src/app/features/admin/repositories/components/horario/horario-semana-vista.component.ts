@@ -34,7 +34,7 @@ function unir(franjas: readonly Franja[]): Franja[] {
 /** Lo que se hace con el ratón apretado: abrir un tramo nuevo, o mover el principio o el final de uno que ya está. */
 interface Arrastre {
   readonly dia: number;
-  readonly modo: 'nuevo' | 'ini' | 'fin';
+  readonly modo: 'nuevo' | 'ini' | 'fin' | 'mover';
   /** Qué tramo del día (su posición entre los que se pueden editar); `-1` si es uno nuevo. */
   readonly idx: number;
   /** Donde se apretó (en minutos): el extremo que no se mueve. */
@@ -46,7 +46,8 @@ interface Arrastre {
 /**
  * La semana de un horario, y donde se edita: una fila por día con la línea de las 24 horas. Se aprieta en un hueco y queda elegido en
  * el acto (media hora); sin soltar, se ARRASTRA hasta donde se quiera, como en un calendario de equipo: al soltar queda un tramo
- * abierto. Pasada la pulsación ya no hay nada elegido: el siguiente clic elige otro hueco. Los bordes de un tramo se arrastran para cambiarlo y su × lo quita. Un día sin
+ * abierto. Pasada la pulsación ya no hay nada elegido: el siguiente clic elige otro hueco. Un tramo se agarra por el cuerpo y se mueve
+ * entero dentro del día (de 8–12 a 12–14, por ejemplo); sus bordes se arrastran para cambiarlo y su × lo quita. Un día sin
  * tramos se ve deshabilitado (letra tachada, línea rayada y «Cerrado»). El día de hoy lleva la letra subrayada. Pieza propia del
  * experimento; el ajuste con teclado y al minuto está en el editor de franjas de al lado.
  */
@@ -93,7 +94,11 @@ export class HorarioSemanaVistaComponent {
       // Los tramos que se pueden editar (no cruzan la medianoche), con su posición entre ellos.
       const propios = franjas.filter((f) => !cruzaMedianoche(f)).map((f) => [f[0], f[1]] as [number, number]);
       const editables = propios.map(([a, b], idx) => {
-        if (drag && drag.dia === i && drag.modo !== 'nuevo' && drag.idx === idx) {
+        if (drag && drag.dia === i && drag.modo === 'mover' && drag.idx === idx) {
+          const s = this.desplazamiento(drag, a, b);
+          return [a + s, b + s] as [number, number];
+        }
+        if (drag && drag.dia === i && (drag.modo === 'ini' || drag.modo === 'fin') && drag.idx === idx) {
           const m = limitar(Math.round(drag.actual / PASO) * PASO, 0, MINUTOS_DEL_DIA);
           return drag.modo === 'ini' ? ([Math.min(m, b - PASO), b] as [number, number]) : ([a, Math.max(m, a + PASO)] as [number, number]);
         }
@@ -161,6 +166,21 @@ export class HorarioSemanaVistaComponent {
     this.arrastre.set({ dia, modo: 'nuevo', idx: -1, ancla: m, actual: m });
   }
 
+  /** Cuánto se ha movido un tramo entero (en minutos, de 15 en 15), sin salirse del día. */
+  private desplazamiento(a: Arrastre, ini: number, fin: number): number {
+    return limitar(Math.round((a.actual - a.ancla) / PASO) * PASO, -ini, MINUTOS_DEL_DIA - fin);
+  }
+
+  /** Apretar en el cuerpo de un tramo ya abierto: se agarra entero y se mueve dentro del mismo día. */
+  protected empezarMover(event: PointerEvent, dia: number, idx: number): void {
+    if (event.button !== 0) return;
+    event.stopPropagation();
+    const pista = (event.currentTarget as HTMLElement).closest('.pista') as HTMLElement;
+    pista.setPointerCapture(event.pointerId);
+    const m = this.minutoDe(event, pista);
+    this.arrastre.set({ dia, modo: 'mover', idx, ancla: m, actual: m });
+  }
+
   /** Apretar en el borde de un tramo: mueve su principio o su final. */
   protected empezarBorde(event: PointerEvent, dia: number, idx: number, modo: 'ini' | 'fin'): void {
     if (event.button !== 0) return;
@@ -193,6 +213,11 @@ export class HorarioSemanaVistaComponent {
     const propios = franjas.filter((f) => !cruzaMedianoche(f));
     const f = propios[a.idx];
     if (!f) return;
+    if (a.modo === 'mover') {
+      const s = this.desplazamiento({ ...a, actual: this.minutoDe(event, event.currentTarget as HTMLElement) }, f[0], f[1]);
+      if (s !== 0) this.poner(a.dia, unir([...franjas.filter((x) => x !== f), [f[0] + s, f[1] + s]]));
+      return;
+    }
     const nuevo: Franja = a.modo === 'ini' ? [Math.min(m, f[1] - PASO), f[1]] : [f[0], Math.max(m, f[0] + PASO)];
     this.poner(a.dia, unir([...franjas.filter((x) => x !== f), nuevo]));
   }

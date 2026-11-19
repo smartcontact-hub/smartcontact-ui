@@ -1517,7 +1517,7 @@
         "title_bulk": "Eliminar {{count}} horários?"
       },
       "section_week_view": "Semana",
-      "section_week_view_hint": "Prima um intervalo e, sem largar, arraste para abrir um período; arraste os bordos para o alterar",
+      "section_week_view_hint": "Prima um intervalo e, sem largar, arraste para abrir um período; agarre um período para o mover e arraste os bordos para o alterar",
       "days_open": "Dias atendidos",
       "no_days_open": "Nenhum dia é atendido ainda.",
       "sv": {

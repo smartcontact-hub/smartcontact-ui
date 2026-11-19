@@ -233,6 +233,7 @@
 /* Un tramo: sus bordes se agarran (cursor de redimensionar) y su × lo quita al pasar el ratón o llegar con el foco. */
 .barra {
   cursor: default;
+  touch-action: none;
 
   &:focus-visible {
     outline: 2px solid var(--sc-border-focus);
@@ -302,4 +303,13 @@
   font-variant-numeric: tabular-nums;
   pointer-events: none;
   white-space: nowrap;
+}
+
+/* Un tramo se agarra por el cuerpo (manita) y se mueve entero; sus bordes (`.asa`) siguen con el cursor de redimensionar. */
+.barra--movible {
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
 }

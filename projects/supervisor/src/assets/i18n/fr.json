@@ -1517,7 +1517,7 @@
         "title_bulk": "Supprimer {{count}} horaires\u00a0?"
       },
       "section_week_view": "Semaine",
-      "section_week_view_hint": "Appuyez sur un créneau et, sans relâcher, faites glisser pour ouvrir une plage ; faites glisser ses bords pour la modifier",
+      "section_week_view_hint": "Appuyez sur un créneau et, sans relâcher, faites glisser pour ouvrir une plage ; saisissez une plage pour la déplacer et faites glisser ses bords pour la modifier",
       "days_open": "Jours assurés",
       "no_days_open": "Aucun jour n'est encore assuré.",
       "sv": {
