@@ -22,7 +22,10 @@
  * @typedef {{ readonly id: string, readonly titulo: string, readonly gemelas: readonly string[], readonly nota?: string }} Tarea
  * @typedef {{ readonly id: string, readonly versiones: readonly Version[], readonly tareas: readonly Tarea[], readonly meta?: number }} PlanMinimo
  * @typedef {{ version: string, url: string, mision: string, titulo: string, enunciado: string, nota?: string }} Paso
- * @typedef {{ readonly bien: number, readonly total: number, readonly titular?: string }} Comprobacion
+ * @typedef {{
+ *   readonly bien: number, readonly total: number, readonly titular?: string,
+ *   readonly usos?: Readonly<Record<string, number>>,
+ * }} Comprobacion
  * @typedef {{
  *   version: string, mision: string, ms: number, clics: number, primerClic: string | null,
  *   enVacio: readonly string[], pantallas: readonly string[],
@@ -524,6 +527,7 @@ const coma = (x) => (Math.round(x * 10) / 10).toString().replace('.', ',');
  *   tot: number | null, seq: number | null,
  *   fcs: { bueno: string, aciertos: number, pct: number } | null,
  *   lostness: number | null, ayuda: number | null, enVacio: number, preferida: number,
+ *   usos: readonly { readonly gesto: string, readonly personas: number }[],
  * }} MetricasVersion
  * @typedef {'alta' | 'media' | 'baja'} Gravedad
  * @typedef {{
@@ -531,6 +535,28 @@ const coma = (x) => (Math.round(x * 10) / 10).toString().replace('.', ',');
  *   sigla: string, titulo: string, evidencia: string, accion: string,
  * }} Hallazgo
  */
+
+/**
+ * Los gestos que la rama contó (`comprobacion.usos`): cuántos intentos usaron cada uno al menos una vez, de más a menos.
+ * Explica, no decide: dice si un atajo se descubre solo.
+ * @param {readonly PasoResultado[]} pasos
+ */
+function usosDe(pasos) {
+  /** @type {Map<string, number>} */
+  const por = new Map();
+  for (const p of pasos) {
+    for (const [gesto, veces] of Object.entries(p.comprobacion?.usos ?? {})) {
+      if (typeof veces === 'number' && veces > 0) por.set(gesto, (por.get(gesto) ?? 0) + 1);
+    }
+  }
+  return [...por].map(([gesto, personas]) => ({ gesto, personas })).sort((a, b) => b.personas - a.personas);
+}
+
+/**
+ * Los gestos de una versión en una frase: «copiar 2 de 6, pegar 2 de 6». Vacío si la rama no cuenta ninguno.
+ * @param {Pick<MetricasVersion, 'usos' | 'n'>} m
+ */
+export const gestosEnTexto = (m) => m.usos.map((u) => `${u.gesto} ${u.personas} de ${m.n}`).join(', ');
 
 /**
  * El informe tras la prueba: por tarea y versión, las métricas con su sigla; y los hallazgos, cada uno con lo que se
@@ -582,6 +608,7 @@ export function informe(plan, resultados) {
         ayuda: pasos.length ? pasos.filter((p) => p.ayudas.length).length / pasos.length : null,
         enVacio: pasos.reduce((n, p) => n + p.enVacio.length, 0),
         preferida: personas.filter((r) => r.preferencia?.version === v.id).length,
+        usos: usosDe(pasos),
       };
       return { m, pasos };
     });
@@ -770,7 +797,7 @@ export function csvDeResultados(plan, resultados) {
   const cab = [
     'participante', 'nombre', 'ensayo', 'version', 'nombre_version', 'tarea', 'mision', 'vuelta', 'exito', 'sin_ayuda',
     'comprobacion_bien', 'comprobacion_total', 'lo_que_falta', 'moderador', 'segundos', 'clics', 'clics_en_vacio',
-    'ayudas', 'primer_clic', 'pantallas_visitadas', 'pantallas_distintas', 'seq', 'prefiere', 'por_que',
+    'ayudas', 'primer_clic', 'pantallas_visitadas', 'pantallas_distintas', 'seq', 'prefiere', 'por_que', 'gestos',
   ];
   const sn = (/** @type {boolean | null} */ b) => (b === null ? '' : b ? 'si' : 'no');
   const filas = unicos(resultados.filter((r) => r.prueba === plan.id)).flatMap((r) =>
@@ -783,6 +810,7 @@ export function csvDeResultados(plan, resultados) {
         p.comprobacion?.titular ?? '', p.moderador ?? '', Math.round(p.ms / 1000), p.clics, p.enVacio.length,
         p.ayudas.length, p.primerClic ?? '', p.pantallas.length, new Set(p.pantallas).size, p.facilidad ?? '',
         r.preferencia ? (r.preferencia.version ?? 'igual') : '', r.preferencia?.porque ?? '',
+        Object.entries(p.comprobacion?.usos ?? {}).map(([g, n]) => `${g} ${n}`).join('; '),
       ].map(celda).join(',');
     }),
   );
@@ -816,6 +844,10 @@ export function informeEnTexto(plan, inf, v) {
       l.push(`| ${m.nombre} | ${celdas.join(' | ')} |`);
     }
     l.push('');
+    const gestos = t.versiones.filter((m) => m.usos.length);
+    if (gestos.length) {
+      l.push(`**Gestos usados** (intentos que los usaron al menos una vez): ${gestos.map((m) => (t.versiones.length > 1 ? `${m.nombre}: ${gestosEnTexto(m)}` : gestosEnTexto(m))).join('; ')}.`, '');
+    }
   }
   l.push('## Qué hacer', '');
   if (!inf.hallazgos.length) l.push('Nada destaca en los datos: decide lo que visteis en las sesiones.', '');

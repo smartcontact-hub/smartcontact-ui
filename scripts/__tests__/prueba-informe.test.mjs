@@ -39,7 +39,12 @@ function intento(version, o = {}) {
     enVacio: o.enVacio ?? [],
     pantallas: o.pantallas ?? [],
     ayudas: (o.ayudas ?? []).map((pantalla) => ({ ms: 30000, pantalla })),
-    comprobacion: { bien: o.bien ?? 4, total: 4, ...(o.titular ? { titular: o.titular } : {}) },
+    comprobacion: {
+      bien: o.bien ?? 4,
+      total: 4,
+      ...(o.titular ? { titular: o.titular } : {}),
+      ...(o.usos ? { usos: o.usos } : {}),
+    },
     moderador: null,
     facilidad: o.facil ?? 5,
   };
@@ -178,6 +183,25 @@ test('el CSV tiene una fila por intento, marca el ensayo y escapa comas y comill
   assert.ok(lineas[1].includes('"Horarios, en /admin"'));
   assert.ok(lineas[1].includes('"Me gustó, ""mucho"""'));
   assert.match(lineas[3], /^ensayo,,si,/);
+});
+
+test('los gestos que cuenta la rama dicen cuántos los usaron, sin tocar el veredicto', () => {
+  const rs = [
+    persona('P1', { usos: { copiar: 2, pegar: 2 } }, {}),
+    persona('P2', { usos: { pegar: 1, deshacer: 0 } }, {}),
+    persona('P3', {}, {}),
+  ];
+  const inf = informe(PLAN, rs);
+  assert.deepEqual(metricas(inf, 'A').usos, [
+    { gesto: 'pegar', personas: 2 },
+    { gesto: 'copiar', personas: 1 },
+  ]);
+  assert.deepEqual(metricas(inf, 'B').usos, []);
+  assert.equal(veredicto(PLAN, rs).frase, veredicto(PLAN, [persona('P1'), persona('P2'), persona('P3')]).frase);
+  assert.match(informeEnTexto(PLAN, inf, veredicto(PLAN, rs)), /\*\*Gestos usados\*\* .*Separado: pegar 2 de 3, copiar 1 de 3\./);
+  const [cab, p1] = csvDeResultados(PLAN, rs).split('\n');
+  assert.equal(cab.split(',').at(-1), 'gestos');
+  assert.equal(p1.split(',').at(-1), 'copiar 2; pegar 2');
 });
 
 test('el informe en texto lleva el veredicto, las siglas y qué hacer', () => {

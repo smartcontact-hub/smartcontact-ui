@@ -53,6 +53,8 @@ control del Lab, y allí está todo.
      ```
      La misión es `<tarea>-<vuelta>`: `festivo-1` es la gemela que la persona hace PRIMERO, sea cual sea la versión.
      `comprobar` mira los datos de esa gemela en las dos versiones.
+   - Si quieres saber si un atajo se descubre solo, que `comprobar` devuelva también `usos` (`{ copiar: 2 }`, contado
+     desde `reiniciar`): la sala dice cuántos lo usaron. No decide nada.
    - Que esconda sus propias barras de prueba si las tiene (`pruebaEnCurso()` de `prueba-arranque.ts`).
    - Que el enlace de cada versión abra donde empieza la tarea de verdad (encontrar el sitio es parte de la tarea).
 

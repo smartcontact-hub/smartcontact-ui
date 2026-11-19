@@ -30,6 +30,7 @@ export interface Comprobacion {
   readonly bien: number;
   readonly total: number;
   readonly titular?: string;
+  readonly usos?: Readonly<Record<string, number>>;
 }
 export interface PasoResultado {
   version: string;
@@ -133,6 +134,7 @@ export interface MetricasVersion {
   ayuda: number | null;
   enVacio: number;
   preferida: number;
+  usos: readonly { readonly gesto: string; readonly personas: number }[];
 }
 export interface Hallazgo {
   regla: string;
@@ -153,6 +155,7 @@ export interface Informe {
   nombre(id: string): string;
 }
 export function informe(plan: PlanMinimo, resultados: readonly Resultado[]): Informe;
+export function gestosEnTexto(m: Pick<MetricasVersion, 'usos' | 'n'>): string;
 export function csvDeResultados(plan: PlanMinimo, resultados: readonly Resultado[]): string;
 export function informeEnTexto(
   plan: PlanMinimo & { readonly titulo?: string; readonly pregunta?: string },

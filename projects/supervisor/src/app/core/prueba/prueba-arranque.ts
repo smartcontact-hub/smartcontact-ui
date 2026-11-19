@@ -34,7 +34,12 @@ export interface ResultadoDePaso {
   readonly enVacio: readonly string[];
   readonly pantallas: readonly string[];
   readonly ayudas: readonly { readonly ms: number; readonly pantalla: string }[];
-  readonly comprobacion: { readonly bien: number; readonly total: number; readonly titular?: string } | null;
+  readonly comprobacion: {
+    readonly bien: number;
+    readonly total: number;
+    readonly titular?: string;
+    readonly usos?: Readonly<Record<string, number>>;
+  } | null;
   readonly moderador: 'si' | 'medias' | 'no' | null;
   readonly facilidad: number | null;
 }

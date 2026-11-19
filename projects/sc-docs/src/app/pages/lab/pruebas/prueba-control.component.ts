@@ -8,6 +8,7 @@ import {
   csvDeResultados,
   ENSAYO,
   exito,
+  gestosEnTexto,
   informe,
   informeEnTexto,
   leerResultados,
@@ -261,6 +262,16 @@ export class PruebaControlComponent {
           nombre: 'Personas que se quedarían con ella',
           valores: t.versiones.map((m) => String(m.preferida)),
         },
+        // Solo si la rama cuenta gestos (copiar, pegar…): dice si un atajo se descubre sin explicarlo.
+        ...(t.versiones.some((m) => m.usos.length)
+          ? [
+              {
+                sigla: 'Gestos',
+                nombre: 'Intentos que usaron cada gesto al menos una vez',
+                valores: t.versiones.map((m) => gestosEnTexto(m) || '—'),
+              },
+            ]
+          : []),
       ],
     })),
   );
@@ -447,6 +458,9 @@ export class PruebaControlComponent {
       pantallas: paso.pantallas,
       ayudas: paso.ayudas.map((a) => `a los ${tiempo(a.ms)}, en ${a.pantalla}`),
       facilidad: paso.facilidad,
+      gestos: Object.entries(paso.comprobacion?.usos ?? {})
+        .map(([g, n]) => `${g} ${n}`)
+        .join(', '),
     };
   }
 }

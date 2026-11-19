@@ -275,6 +275,10 @@ estrenarlo con Horarios A y B.
     la llama «Ana (P1)» y el CSV lo lleva en su columna. Se queda en la sesión de la pestaña de sc-docs mientras va y
     vuelve (el Supervisor no lo ve) y viaja solo dentro de su código, hasta el navegador de quien modera. El repo sigue
     sin nombres: la regla, las pruebas y el informe en Markdown cuentan personas, no las nombran.
+12. **Los gestos que cuenta la rama** (enmienda, 2026-11-19). `comprobar` puede devolver `usos` (`{ copiar: 2, pegar: 2 }`,
+    contados desde que empezó la misión) y la sala, el informe en Markdown y el CSV dicen cuántos intentos usaron cada
+    gesto al menos una vez. Responde si un atajo se descubre sin explicarlo; explica, no decide. El cierre de Horarios
+    cuenta elegir, copiar, pegar, cortar, borrar, pintar, arrastrar, deshacer y rehacer (`tp-usos.ts`).
 
 **Razón** · Con 5 a 10 personas lo que separa versiones es si la tarea sale o no sin ayuda; lo demás explica por qué. El
 umbral se fija para que la herramienta diga «empate» cuando los datos no alcanzan, en vez de dar ganadora con 4 a 2. Los
