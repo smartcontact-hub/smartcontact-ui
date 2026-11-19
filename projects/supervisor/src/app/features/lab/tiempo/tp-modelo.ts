@@ -191,3 +191,45 @@ export function trozosDelAnio(p: Pick<Periodo, 'from' | 'to'>): { desde: number;
   const b = pos(p.to) + 1 / 12 / 31;
   return p.from <= p.to ? [{ desde: a, hasta: b }] : [{ desde: a, hasta: 1 }, { desde: 0, hasta: b }];
 }
+
+/* ── La descripción que se escribe sola (cierre de Horarios) ────────────────────────────────────────────────────── */
+
+/** «9:00», «19:35», «24:00»: sin el cero de delante, para que una hora rara salte a la vista. */
+export function horaCorta(minutos: number): string {
+  return `${Math.floor(minutos / 60)}:${String(minutos % 60).padStart(2, '0')}`;
+}
+
+/** Los días de un tramo en letras: seguidos con guion («L–V»), sueltos con coma e «y» («L, X y V»). */
+export function diasEnLetras(dias: readonly number[]): string {
+  const orden = [...dias].sort((a, b) => a - b);
+  const tiras: number[][] = [];
+  for (const d of orden) {
+    const ultima = tiras[tiras.length - 1];
+    if (ultima && ultima[ultima.length - 1] === d - 1) ultima.push(d);
+    else tiras.push([d]);
+  }
+  const partes = tiras.map((t) => (t.length === 1 ? LETRAS[t[0]] : `${LETRAS[t[0]]}–${LETRAS[t[t.length - 1]]}`));
+  return partes.length > 1 ? `${partes.slice(0, -1).join(', ')} y ${partes[partes.length - 1]}` : (partes[0] ?? '');
+}
+
+const es24 = (franjas: readonly Franja[]): boolean => franjas.length === 1 && franjas[0][0] === 0 && franjas[0][1] === 1440;
+
+/**
+ * La descripción de un horario, sacada de su semana: «L–V 8:00–17:00, S 9:00–14:00», con coma entre trozos (DD-183).
+ * Cada trozo es un tramo (los días que comparten horas), en el orden de su primer día; los días cerrados no se nombran.
+ * Así nunca se queda vieja.
+ */
+export function descripcionDe(semana: Semana): string {
+  const tramos = tramosDe(semana).sort((a, b) => Math.min(...a.dias) - Math.min(...b.dias));
+  if (tramos.length === 0) return 'Cerrado toda la semana';
+  if (tramos.length === 1 && tramos[0].dias.length === 7 && es24(tramos[0].franjas)) return 'Abierto 24/7';
+  return tramos
+    .map((t) => `${diasEnLetras(t.dias)} ${es24(t.franjas) ? '24 h' : t.franjas.map((f) => `${horaCorta(f[0])}–${horaCorta(f[1])}`).join(' y ')}`)
+    .join(', ');
+}
+
+/**
+ * El horario tal como lo entiende esta versión: solo su semana. Periodos, días especiales y festivos pasan al
+ * calendario (decisión de producto del 2026-11-19), así que «ahora» se calcula sin ellos aunque el dato los traiga.
+ */
+export const soloSemana = <H extends Reglas>(h: H): H => ({ ...h, periods: [], specials: [], holidayCalendarIds: [] });

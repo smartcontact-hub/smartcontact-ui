@@ -50,8 +50,8 @@ import { EquiposStore } from '../state/equipos.store';
 import { IntencionesStore } from '../state/intenciones.store';
 import { TipificacionesStore } from '../state/tipificaciones.store';
 import { VariablesStore } from '../state/variables.store';
-import { FestivosStore } from '../state/festivos.store';
 import { labHorariosActivo } from '@features/lab/horarios/lab-modo';
+import { descripcionDe } from '@features/lab/tiempo/tp-modelo';
 
 /** Una entrada de un repositorio, en el panel: su nombre, un dato suyo y adónde lleva. */
 interface HubEntrada {
@@ -168,7 +168,6 @@ export class RepositoriosHubPageComponent {
   private readonly mailboxes = inject(MailboxesStore);
   private readonly emailTriggers = inject(EmailTriggersStore);
   private readonly horarios = inject(HorariosStore);
-  private readonly festivos = inject(FestivosStore);
   private readonly equipos = inject(EquiposStore);
   private readonly templates = inject(TemplatesStore);
   private readonly tipificaciones = inject(TipificacionesStore);
@@ -235,19 +234,16 @@ export class RepositoriosHubPageComponent {
           count: () => this.agendas.items().length,
           entradas: () => this.deFilas(this.filas.agendas(this.agendas.items().map((a) => a.id), true), '/admin/agendas'),
         },
-        // Con el laboratorio de Horarios encendido, la tarjeta es «Tiempo» y lleva al rediseño (horarios y festivos).
+        // Con el laboratorio de Horarios encendido (el preview del cierre de Horarios), la tarjeta lleva a su lista.
         labHorariosActivo()
           ? {
               id: 'horarios',
-              labelKey: 'Tiempo',
-              descriptionKey: 'Horarios y festivos: cuándo se atiende y qué días se cierra.',
+              labelKey: 'repositories.horarios.title',
+              descriptionKey: 'repositories.hub.descriptions.horarios',
               icon: 'schedule',
               path: '/lab/tiempo',
-              count: () => this.horarios.items().length + this.festivos.items().length,
-              entradas: () => [
-                ...this.horarios.items().map((h) => ({ id: h.id, nombre: h.name, detalle: h.description, link: `/lab/tiempo/horario/${h.id}` })),
-                ...this.festivos.items().map((c) => ({ id: `f${c.id}`, nombre: c.name, detalle: `${c.days.length} festivos`, link: `/lab/tiempo/festivos/${c.id}` })),
-              ],
+              count: () => this.horarios.items().length,
+              entradas: () => this.horarios.items().map((h) => ({ id: h.id, nombre: h.name, detalle: descripcionDe(h.week), link: `/lab/tiempo/horario/${h.id}` })),
             }
           : {
               id: 'horarios',

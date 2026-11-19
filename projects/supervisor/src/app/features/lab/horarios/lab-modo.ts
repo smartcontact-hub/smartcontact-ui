@@ -7,10 +7,11 @@ import { Router } from '@angular/router';
  * entonces Repositorios lleva a «Tiempo» y las rutas de siempre (/admin/horarios, /admin/festivos) saltan a su versión
  * del laboratorio, así se navega por la app sin caer en la pantalla original. «Volver a la versión original» lo apaga.
  * Sin entrar en el laboratorio, nada cambia: la app y sus pruebas siguen igual. En el preview de la rama premium nace
- * encendido (quien entra por ese dominio viene a ver el rediseño); «Ver la versión original» lo apaga también allí.
+ * encendido (quien entra por ese dominio viene a ver el rediseño). En el cierre de Horarios el preview es el de su rama
+ * y solo Horarios salta: Festivos se queda en su pantalla de siempre, porque pasa al calendario.
  */
 const CLAVE = 'sc-lab-horarios';
-const PREVIEW = 'claude-lab-horarios-premium.sc-supervisor.pages.dev';
+const PREVIEW = 'claude-horarios-cierre.sc-supervisor.pages.dev';
 
 export function labHorariosActivo(): boolean {
   try {

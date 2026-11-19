@@ -79,7 +79,7 @@ export const REPOSITORIES_ROUTES: Routes = [
       {
         path: 'crear',
         data: { breadcrumb: { labelKey: 'repositories.horarios.create_title' } },
-        canActivate: [aLab(() => '/lab/tiempo/horario/nuevo')],
+        canActivate: [aLab(() => '/lab/tiempo/horario/crear')],
         loadComponent: () => import('./pages/horario-editor-page.component').then((m) => m.HorarioEditorPageComponent),
         canDeactivate: [formDirtyGuard],
       },
@@ -105,18 +105,16 @@ export const REPOSITORIES_ROUTES: Routes = [
       ],
     },
     children: [
-      { path: '', canActivate: [aLab(() => '/lab/tiempo?lista=festivos')], loadComponent: () => import('./instances/festivos').then((m) => m.FestivosPageComponent) },
+      { path: '', loadComponent: () => import('./instances/festivos').then((m) => m.FestivosPageComponent) },
       {
         path: 'crear',
         data: { breadcrumb: { labelKey: 'repositories.festivos.create_title' } },
-        canActivate: [aLab(() => '/lab/tiempo/festivos/nueva')],
         loadComponent: () => import('./pages/festivos-editor-page.component').then((m) => m.FestivosEditorPageComponent),
         canDeactivate: [formDirtyGuard],
       },
       {
         path: 'editar/:id',
         data: { breadcrumb: { labelKey: 'repositories.festivos.edit_breadcrumb' } },
-        canActivate: [aLab((r) => `/lab/tiempo/festivos/${r.paramMap.get('id')}`)],
         loadComponent: () => import('./pages/festivos-editor-page.component').then((m) => m.FestivosEditorPageComponent),
         canDeactivate: [formDirtyGuard],
       },

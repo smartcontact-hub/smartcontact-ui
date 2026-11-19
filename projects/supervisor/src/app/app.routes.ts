@@ -96,12 +96,12 @@ export const appRoutes: Routes = [
         loadComponent: () =>
           import('./features/lab/table-lab-page.component').then((m) => m.TableLabPageComponent),
       },
-      /* Laboratorio «Tiempo» (horarios y festivos), versión premium: listado y editores rehechos con su propio aspecto. Lee
-       * y escribe los mismos almacenes que /admin/horarios y /admin/festivos. */
+      /* Cierre de Horarios (sale del laboratorio «Tiempo» premium): la lista en la tabla de Repositorios y el editor de la
+       * semana. Lee y escribe el mismo almacén que /admin/horarios. */
       {
         path: 'lab/tiempo',
         canActivate: [entrarEnLab],
-        data: { breadcrumb: [{ labelKey: 'sidebar.administration', link: false as const }, { labelKey: 'sidebar.repositories', link: '/admin/repositorios' }, { labelKey: 'Tiempo', link: '/lab/tiempo' }] },
+        data: { breadcrumb: [{ labelKey: 'sidebar.administration', link: false as const }, { labelKey: 'sidebar.repositories', link: '/admin/repositorios' }, { labelKey: 'repositories.horarios.title', link: '/lab/tiempo' }] },
         loadChildren: () => import('./features/lab/tiempo/tp-rutas').then((m) => m.tiempoRoutes),
       },
       /* El laboratorio anterior de Horarios lleva aquí a su equivalente de «Tiempo»: un solo rediseño a la vista. */
@@ -109,11 +109,11 @@ export const appRoutes: Routes = [
         path: 'lab/horarios',
         children: [
           { path: '', pathMatch: 'full', redirectTo: '/lab/tiempo' },
-          { path: 'crear', redirectTo: '/lab/tiempo/horario/nuevo' },
+          { path: 'crear', redirectTo: '/lab/tiempo/horario/crear' },
           { path: 'editar/:id', redirectTo: '/lab/tiempo/horario/:id' },
-          { path: 'festivos', pathMatch: 'full', redirectTo: '/lab/tiempo?lista=festivos' },
-          { path: 'festivos/crear', redirectTo: '/lab/tiempo/festivos/nueva' },
-          { path: 'festivos/editar/:id', redirectTo: '/lab/tiempo/festivos/:id' },
+          { path: 'festivos', pathMatch: 'full', redirectTo: '/admin/festivos' },
+          { path: 'festivos/crear', redirectTo: '/admin/festivos/crear' },
+          { path: 'festivos/editar/:id', redirectTo: '/admin/festivos/editar/:id' },
         ],
       },
       {

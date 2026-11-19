@@ -8,14 +8,20 @@ interface ConSalida {
 export const tpSalirGuard: CanDeactivateFn<ConSalida> = (c) => c.puedeSalir();
 
 /**
- * LABORATORIO «Tiempo» premium: el listado (horarios y listas de festivos) y sus dos editores. Lee y escribe los mismos
- * almacenes que /admin/horarios y /admin/festivos, así que lo que se cree aquí se ve allí.
+ * CIERRE DE HORARIOS (sale de la versión premium de «Tiempo»): la lista de horarios, en la tabla de Repositorios, y su
+ * editor. Lee y escribe el mismo almacén que /admin/horarios. El editor responde en las dos formas de ruta: la de la
+ * lista del DS (`crear`, `editar/:id`) y la corta de la premium (`nuevo`, `:id`), para que sus enlaces sigan valiendo.
+ * Las listas de festivos de la premium siguen aquí, sin cambios: pasan al calendario, que queda fuera de este cierre.
  */
+const editor = () => import('./tp-horario.page').then((m) => m.TpHorarioPage);
+
 export const tiempoRoutes: Routes = [
-  { path: '', loadComponent: () => import('./tp-tiempo.page').then((m) => m.TpTiempoPage) },
-  { path: 'horario/nuevo', canDeactivate: [tpSalirGuard], loadComponent: () => import('./tp-horario.page').then((m) => m.TpHorarioPage) },
-  { path: 'horario/:id', canDeactivate: [tpSalirGuard], loadComponent: () => import('./tp-horario.page').then((m) => m.TpHorarioPage) },
-  { path: 'festivos', pathMatch: 'full', redirectTo: '/lab/tiempo?lista=festivos' },
+  { path: '', loadComponent: () => import('./tp-lista.page').then((m) => m.TpListaPage) },
+  { path: 'horario/crear', canDeactivate: [tpSalirGuard], loadComponent: editor },
+  { path: 'horario/nuevo', canDeactivate: [tpSalirGuard], loadComponent: editor },
+  { path: 'horario/editar/:id', canDeactivate: [tpSalirGuard], loadComponent: editor },
+  { path: 'horario/:id', canDeactivate: [tpSalirGuard], loadComponent: editor },
+  { path: 'festivos', pathMatch: 'full', redirectTo: '/admin/festivos' },
   { path: 'festivos/nueva', canDeactivate: [tpSalirGuard], loadComponent: () => import('./tp-festivos.page').then((m) => m.TpFestivosPage) },
   { path: 'festivos/:id', canDeactivate: [tpSalirGuard], loadComponent: () => import('./tp-festivos.page').then((m) => m.TpFestivosPage) },
 ];
