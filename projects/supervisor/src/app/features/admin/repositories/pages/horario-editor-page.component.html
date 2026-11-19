@@ -48,7 +48,7 @@
           titleKey="repositories.horarios.section_schedule"
           [hintKey]="vista() === 'semana' ? null : 'repositories.horarios.view_slots_hint'"
           surface="subtle"
-          icon="calendar_view_week"
+          icon="date_range"
         >
           <sc-subsection>
             <div class="vistas">
@@ -153,7 +153,7 @@
               <ul class="usos__lista" role="list">
                 @for (i of usoActual(); track $index) {
                   <li class="uso">
-                    <span class="uso__icono" aria-hidden="true"><sc-icon [name]="iconoDeUso()" [size]="16" /></span>
+                    <span class="uso__icono" [class.uso__icono--cal]="usoVista() === 'calendarios'" aria-hidden="true"><sc-icon [name]="iconoDeUso()" [size]="16" /></span>
                     <span class="uso__cuerpo">
                       @if (i.grupoId) {
                         <a class="uso__nombre uso__nombre--enlace sc-text-body-semibold" [routerLink]="['/admin/grupos/editar', i.grupoId]">{{ i.nombre }}</a>
@@ -162,7 +162,7 @@
                       }
                       <span class="uso__etiquetas">
                         @for (e of i.etiquetas; track e) {
-                          <sc-tag severity="secondary" [value]="e" />
+                          <sc-tag [severity]="severidadDe(e)" [value]="e" />
                         }
                       </span>
                     </span>

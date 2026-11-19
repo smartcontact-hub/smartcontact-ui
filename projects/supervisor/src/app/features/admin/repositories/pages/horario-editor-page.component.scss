@@ -165,8 +165,13 @@
   inline-size: var(--sc-spacing-2-5);
   block-size: var(--sc-spacing-2-5);
   border-radius: var(--sc-radius-full);
-  background: var(--sc-bg-hover);
-  color: var(--sc-text-secondary);
+  background: var(--sc-bg-info-subtle);
+  color: var(--sc-text-info);
+
+  &--cal {
+    background: var(--sc-bg-warning-subtle);
+    color: var(--sc-text-warning);
+  }
 }
 
 .uso__cuerpo {

@@ -230,6 +230,19 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
     }));
   });
   protected readonly usoActual = computed(() => this.usos().find((u) => u.tipo === this.usoVista())?.items ?? []);
+  /** El color de cada etiqueta: un tono por canal; el ámbito de un calendario, en azul. */
+  protected severidadDe(etiqueta: string): 'info' | 'success' | 'warning' | 'primary' {
+    const porCanal: Record<string, 'info' | 'success' | 'warning' | 'primary'> = {
+      'Web Chat': 'info',
+      WhatsApp: 'success',
+      Email: 'warning',
+      Voz: 'primary',
+      SMS: 'primary',
+      Telegram: 'info',
+    };
+    return porCanal[etiqueta] ?? 'info';
+  }
+
   protected readonly iconoDeUso = computed(() => ICONO_DE_USO[this.usoVista()]);
   protected readonly usoNada = computed(() => (this.lang(), this.translate.instant(`repositories.horarios.uses_none_${CLAVE_DE_USO[this.usoVista()]}`) as string));
 

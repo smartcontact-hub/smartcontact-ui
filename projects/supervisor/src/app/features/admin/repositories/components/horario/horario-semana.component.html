@@ -5,10 +5,11 @@
     <li class="semana__dia" [class.semana__dia--cerrado]="dia.cerrado">
       <span class="semana__nombre sc-text-body-semibold">{{ dia.nombre }}</span>
       @if (dia.cerrado) {
-        <span class="semana__cerrado sc-text-body-semibold"><sc-icon name="alarm_off" [size]="16" aria-hidden="true" />{{ 'repositories.horarios.closed' | translate }}</span>
+        <span class="semana__cerrado" role="img" [attr.aria-label]="'repositories.horarios.closed' | translate"></span>
       } @else {
         <sc-horario-franjas class="semana__franjas" [franjas]="dia.franjas" [conVacia]="true" [etiqueta]="dia.nombre" (franjasChange)="ponerDia(dia.indice, $event)" />
       }
+      @if (dia.cerrado || dia.franjas.length === 0) {
       <button
         type="button"
         class="semana__cierre"
@@ -19,8 +20,9 @@
         tooltipPosition="left"
         (click)="alternarCierre(dia.indice, !dia.cerrado)"
       >
-        <sc-icon name="alarm_off" [size]="18" aria-hidden="true" />
+        <sc-icon name="event_busy" [size]="18" aria-hidden="true" />
       </button>
+      }
       @if (falta()?.dia === dia.indice) {
         <p class="semana__error field__error sc-text-caption-regular" role="alert">{{ 'repositories.horarios.errors.week_' + falta()!.codigo | translate }}</p>
       }

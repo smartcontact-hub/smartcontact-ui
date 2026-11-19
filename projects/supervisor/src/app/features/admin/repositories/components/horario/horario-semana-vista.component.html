@@ -42,7 +42,7 @@
                 }
                 @if (b.editable) {
                   <button type="button" class="barra__quitar" [attr.aria-label]="'repositories.horarios.sv.remove' | translate" (pointerdown)="$event.stopPropagation()" (click)="quitar(d.indice, b.idx)">
-                    <sc-icon name="delete" [size]="14" aria-hidden="true" />
+                    <sc-icon name="close" [size]="12" aria-hidden="true" />
                   </button>
                   <span class="asa asa--fin" aria-hidden="true" (pointerdown)="empezarBorde($event, d.indice, b.idx, 'fin')"></span>
                 }
@@ -60,12 +60,10 @@
                 (pointerdown)="$event.stopPropagation()"
               ></span>
             }
-            @if (d.nota) {
-              <span class="pista__nota sc-text-caption-semibold"><sc-icon name="block" [size]="14" aria-hidden="true" />{{ d.nota }}</span>
-            }
           </span>
-          <span class="fila__horas sc-text-body-semibold" [class.fila__horas--nada]="d.minutos === 0">{{ d.horas }}</span>
+          <span class="fila__horas sc-text-body-semibold">{{ d.minutos > 0 ? d.horas : '' }}</span>
           <!-- El día cerrado se marca a propósito: un día sin tramos puede estar solo sin configurar. -->
+          @if (d.marcado || d.barras.length === 0) {
           <button
             type="button"
             class="cierre"
@@ -76,8 +74,9 @@
             tooltipPosition="left"
             (click)="alternarCierre(d.indice, !d.marcado)"
           >
-            <sc-icon name="alarm_off" [size]="16" aria-hidden="true" />
+            <sc-icon name="event_busy" [size]="16" aria-hidden="true" />
           </button>
+          }
         </li>
       }
     </ul>

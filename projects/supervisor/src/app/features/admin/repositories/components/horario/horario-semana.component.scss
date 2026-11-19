@@ -46,14 +46,10 @@
 }
 
 .semana__cerrado {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--sc-spacing-0-5);
-  padding: var(--sc-spacing-0-375) var(--sc-spacing-1);
+  display: block;
+  block-size: var(--sc-spacing-2-5);
   border-radius: var(--sc-radius-md);
   background: var(--sc-bg-danger-subtle);
-  color: var(--sc-text-danger);
-  justify-self: start;
 }
 
 .semana__dia--cerrado .semana__nombre {
