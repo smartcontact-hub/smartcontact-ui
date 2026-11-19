@@ -47,3 +47,33 @@
   text-decoration: underline;
   text-underline-offset: var(--sc-spacing-0-125);
 }
+
+/* Dónde se usa: cada grupo, con sus canales debajo. */
+.usos {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-75);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.usos__fila {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-125);
+}
+
+.usos__enlace {
+  color: var(--sc-text-link);
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.usos__canales,
+.usos__nada {
+  margin: 0;
+  color: var(--sc-text-secondary);
+}

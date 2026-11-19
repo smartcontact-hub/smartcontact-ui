@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, HostListener, inject, Injector, type OnInit, signal, type TemplateRef, viewChild } from '@angular/core';
 import { LocationStrategy } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TooltipModule } from 'primeng/tooltip';
 import {
@@ -71,6 +71,7 @@ const aFecha = (iso: string): Date => new Date(`${iso}T12:00:00`);
 @Component({
   selector: 'sc-horario-editor-page',
   imports: [
+    RouterLink,
     HorarioCalendarioComponent,
     HorarioEspecialModalComponent,
     HorarioFilasTableComponent,
@@ -266,6 +267,19 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
     if (id === null || this.mode() !== 'edit') return [];
     return this.groupsStore.groups().filter((g) => subcanalesConHorario(g).some((s) => s.id === id));
   });
+  /** Dónde se usa: cada grupo con los canales por los que atiende con este horario (Web Chat, WhatsApp). */
+  protected readonly usos = computed(() => {
+    const id = this.horarioId;
+    return this.grupos().map((g) => ({
+      id: g.id,
+      nombre: g.name,
+      canales: subcanalesConHorario(g)
+        .filter((s) => s.id === id)
+        .map((s) => (s.sub === 'chat' ? 'Web Chat' : 'WhatsApp'))
+        .join(' · '),
+    }));
+  });
+
   /** La ayuda de «Activo», siempre: quién lo usa y qué pasa al apagarlo (DD-152), o dónde se usa si nadie lo usa. */
   protected readonly ayudaDeActivo = computed(() => {
     this.lang();

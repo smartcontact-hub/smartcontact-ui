@@ -20,49 +20,49 @@ interface Datos {
 }
 
 /**
- * Nombre, la semana habitual en una línea, si ahora mismo se atiende, cuántos periodos y fechas especiales lleva,
- * qué grupos lo usan (sus nombres al pasar, como en Tipificaciones: DD-254), su zona y su estado. Lo demás, en su editor.
+ * Nombre, descripción, disponibilidad (si ahora mismo se atiende), estado y uso (qué grupos lo usan, sus nombres al pasar,
+ * como en Tipificaciones: DD-254). Lo demás, en su editor.
  */
 const columnas = (d: Datos): readonly RepoColumnDef<Horario>[] => [
   // Sin ancho: es la columna que crece.
   { key: 'name', labelKey: 'repositories.columns.name', kind: 'text', accessor: (i) => i.name, emphasis: true, sortable: true },
-  { key: 'week', labelKey: 'repositories.horarios.col_week', kind: 'truncate', accessor: d.resumen },
+  { key: 'description', labelKey: 'repositories.columns.description', kind: 'truncate', accessor: (i) => i.description, sortable: true },
   {
     key: 'now',
-    labelKey: 'repositories.horarios.col_now',
+    // Disponibilidad: si ahora mismo se atiende con este horario (en su zona horaria).
+    labelKey: 'repositories.horarios.col_availability',
     kind: 'status',
-    width: '112px',
+    width: '144px',
     accessor: d.ahora,
+    sortable: true,
     statusMap: {
       open: { labelKey: 'repositories.horarios.open', tone: 'success' },
       closed: { labelKey: 'repositories.horarios.closed', tone: 'secondary' },
     },
   },
-  { key: 'periods', labelKey: 'repositories.horarios.col_periods', kind: 'count', width: '104px', accessor: (i) => String(i.periods.length), emptyDash: true, sortable: true },
-  { key: 'specials', labelKey: 'repositories.horarios.col_specials', kind: 'count', width: '144px', accessor: (i) => String(i.specials.length), emptyDash: true, sortable: true },
-  {
-    key: 'groups',
-    labelKey: 'repositories.horarios.col_groups',
-    kind: 'groups',
-    width: '104px',
-    // La cifra ordena y se exporta; la celda enseña el nombre si es uno y la cifra con los nombres al pasar si son más.
-    accessor: (i) => String(d.grupos(i).length),
-    groups: d.grupos,
-    groupsDisplay: 'adaptive',
-    sortable: true,
-  },
-  { key: 'timezone', labelKey: 'repositories.horarios.timezone', kind: 'text', accessor: (i) => i.timezone, width: '176px', sortable: true },
   {
     key: 'status',
     labelKey: 'repositories.columns.status',
     kind: 'status',
-    width: '96px',
+    width: '112px',
     accessor: (i) => i.status,
+    sortable: true,
     statusMap: {
       // En masculino: un horario y un calendario (la clave compartida, «Activa», es de regla y categoría).
       active: { labelKey: 'repositories.horarios.active', tone: 'success' },
       inactive: { labelKey: 'repositories.horarios.inactive', tone: 'secondary' },
     },
+  },
+  {
+    key: 'groups',
+    labelKey: 'repositories.horarios.col_use',
+    kind: 'groups',
+    width: '160px',
+    // Uso: los grupos que atienden con él. La cifra ordena y se exporta; la celda enseña el nombre si es uno y la cifra con los nombres al pasar si son más.
+    accessor: (i) => String(d.grupos(i).length),
+    groups: d.grupos,
+    groupsDisplay: 'adaptive',
+    sortable: true,
   },
 ];
 

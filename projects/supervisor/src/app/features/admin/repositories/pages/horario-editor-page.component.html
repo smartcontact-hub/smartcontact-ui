@@ -44,6 +44,16 @@
                 />
               </div>
               <div class="field">
+                <sc-inputtext
+                  inputId="horario-description"
+                  fluid
+                  [label]="'repositories.columns.description' | translate"
+                  [placeholder]="'repositories.placeholders.description' | translate"
+                  [value]="form().description"
+                  (valueChange)="update('description', $event)"
+                />
+              </div>
+              <div class="field">
                 <sc-select
                   inputId="horario-zona"
                   filter
@@ -54,16 +64,6 @@
                   optionValue="value"
                   [value]="form().timezone"
                   (valueChange)="update('timezone', $any($event))"
-                />
-              </div>
-              <div class="field">
-                <sc-inputtext
-                  inputId="horario-description"
-                  fluid
-                  [label]="'repositories.columns.description' | translate"
-                  [placeholder]="'repositories.placeholders.description' | translate"
-                  [value]="form().description"
-                  (valueChange)="update('description', $event)"
                 />
               </div>
             </div>
@@ -177,6 +177,24 @@
 
       <!-- El resultado: el año, que se repinta con cada cambio de la izquierda. -->
       <div class="horario__resultado">
+        <!-- Dónde se usa este horario: los grupos que atienden con él y por qué canal. Un horario nuevo aún no lo usa nadie. -->
+        <sc-section-card titleKey="repositories.horarios.section_uses" surface="subtle" icon="groups">
+          <sc-subsection>
+            @if (usos().length === 0) {
+              <p class="usos__nada sc-text-body-regular">{{ 'repositories.horarios.uses_none' | translate }}</p>
+            } @else {
+              <ul class="usos" role="list">
+                @for (u of usos(); track u.id) {
+                  <li class="usos__fila">
+                    <a class="usos__enlace sc-text-body-semibold" [routerLink]="['/admin/grupos/editar', u.id]">{{ u.nombre }}</a>
+                    <span class="usos__canales sc-text-caption-regular">{{ u.canales }}</span>
+                  </li>
+                }
+              </ul>
+            }
+          </sc-subsection>
+        </sc-section-card>
+
         <sc-section-card titleKey="repositories.horarios.section_calendar" hintKey="repositories.horarios.section_calendar_hint" surface="subtle" icon="calendar_month">
           <sc-subsection>
             <div class="bloque">

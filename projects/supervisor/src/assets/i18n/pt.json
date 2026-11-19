@@ -1516,6 +1516,10 @@
         "title": "Eliminar o horário «{{name}}»?",
         "title_bulk": "Eliminar {{count}} horários?"
       },
+      "col_availability": "Disponibilidade",
+      "col_use": "Uso",
+      "section_uses": "Onde é usado",
+      "uses_none": "Nenhum grupo usa este horário ainda.",
       "col_week": "Semana habitual",
       "col_now": "Agora",
       "col_periods": "Períodos",

@@ -1516,6 +1516,10 @@
         "title": "Delete the schedule “{{name}}”?",
         "title_bulk": "Delete {{count}} schedules?"
       },
+      "col_availability": "Availability",
+      "col_use": "Use",
+      "section_uses": "Where it is used",
+      "uses_none": "No group uses this schedule yet.",
       "col_week": "Regular week",
       "col_now": "Now",
       "col_periods": "Periods",
