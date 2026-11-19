@@ -55,8 +55,8 @@ export class HorarioSemanaVistaComponent {
     this.desplazamiento.set(0);
   }
 
-  /** Las marcas de horas del eje, cada tres. */
-  protected readonly marcas = Array.from({ length: 9 }, (_, i) => i * 3);
+  /** Las marcas de horas del eje: una por hora (con poco ancho se esconden las impares); la 23 se omite para que no pise al 24. */
+  protected readonly marcas = Array.from({ length: 25 }, (_, i) => i).filter((m) => m !== 23);
 
   private formatoHoras(minutos: number): string {
     const horas = minutos / 60;
@@ -87,6 +87,7 @@ export class HorarioSemanaVistaComponent {
         esHoy: fecha === hoy,
         barras: barras.map((b) => ({ ...b, conTexto: b.ancho >= MIN_ANCHO_PARA_TEXTO })),
         nota,
+        cerrado: dia.minutosAbiertos === 0,
         horas,
         minutos: dia.minutosAbiertos,
         aria: `${largo.format(aFecha(fecha))}: ${dia.tramos.length > 0 ? barras.map((b) => b.texto).join(', ') : (nota ?? cerrado)}`,

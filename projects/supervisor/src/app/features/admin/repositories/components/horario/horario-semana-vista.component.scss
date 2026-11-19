@@ -52,6 +52,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--sc-spacing-0-5);
+  container-type: inline-size;
 }
 
 .sv__ejes {
@@ -59,13 +60,22 @@
   block-size: var(--sc-spacing-1-5);
   margin-inline: var(--col-dia) var(--col-horas);
   color: var(--sc-text-secondary);
+  font-size: var(--sc-font-size-caption);
   font-variant-numeric: tabular-nums;
 }
 
+/* Una marca por hora; las de cada seis horas, más fuertes. Con poco ancho, solo las pares. */
 .sv__marca {
   position: absolute;
   inset-block-start: 0;
   translate: -50% 0;
+  opacity: 0.8;
+
+  &--mayor {
+    color: var(--sc-text-primary);
+    font-weight: 600;
+    opacity: 1;
+  }
 
   &--ini {
     translate: 0 0;
@@ -73,6 +83,12 @@
 
   &--fin {
     translate: -100% 0;
+  }
+}
+
+@container (max-width: 34rem) {
+  .sv__marca--impar {
+    display: none;
   }
 }
 
@@ -111,22 +127,31 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* La línea de las 24 horas: fondo rosa («no se atiende») con una raya cada tres horas (12,5 %). */
+/* La línea de las 24 horas, en neutros del DS: fondo gris claro con una raya por hora y otra más marcada cada seis. */
 .pista {
   position: relative;
   block-size: var(--pista-alto);
   border-radius: calc(var(--barra-radio) + var(--hueco));
-  background-color: var(--sc-label-red-bg);
-  background-image: repeating-linear-gradient(
-    to right,
-    transparent 0,
-    transparent calc(12.5% - 1px),
-    color-mix(in srgb, var(--sc-label-red-border) 50%, transparent) calc(12.5% - 1px),
-    color-mix(in srgb, var(--sc-label-red-border) 50%, transparent) 12.5%
-  );
+  background-color: var(--sc-bg-hover);
+  background-image:
+    repeating-linear-gradient(
+      to right,
+      transparent 0,
+      transparent calc(25% - 1px),
+      var(--sc-border-default) calc(25% - 1px),
+      var(--sc-border-default) 25%
+    ),
+    repeating-linear-gradient(
+      to right,
+      transparent 0,
+      transparent calc(4.1667% - 1px),
+      color-mix(in srgb, var(--sc-border-default) 55%, transparent) calc(4.1667% - 1px),
+      color-mix(in srgb, var(--sc-border-default) 55%, transparent) 4.1667%
+    );
   overflow: hidden;
 }
 
+/* Lo que se atiende: el color de acción del producto. */
 .barra {
   position: absolute;
   inset-block: var(--hueco);
@@ -134,20 +159,38 @@
   align-items: center;
   justify-content: center;
   border-radius: var(--barra-radio);
-  background: var(--sc-label-green-text);
+  background: var(--sc-bg-primary);
   color: var(--sc-text-on-primary);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 
-/* Un día cerrado dice por qué (cerrado, o el nombre del festivo). */
+/* Un día cerrado se ve a la primera: su letra y su número tachados y en gris, y su línea rayada en diagonal, sin horas. */
+.fila--cerrada {
+  .fila__dia {
+    color: var(--sc-text-subtle);
+    text-decoration: line-through;
+    text-decoration-thickness: 1.5px;
+  }
+
+  .pista {
+    background-color: var(--sc-bg-hover);
+    background-image: repeating-linear-gradient(135deg, transparent 0, transparent 5px, var(--sc-border-default) 5px, var(--sc-border-default) 6px);
+  }
+
+  .pista__nota {
+    color: var(--sc-text-secondary);
+  }
+}
+
+/* Dice por qué está cerrado si no es por la semana: «Cerrado» o el nombre del festivo. */
 .pista__nota {
   position: absolute;
   inset: 0;
   display: flex;
   align-items: center;
   padding-inline: var(--sc-spacing-0-75);
-  color: var(--sc-label-red-text);
+  color: var(--sc-text-secondary);
 }
 
 .fila__horas {
@@ -156,33 +199,48 @@
 }
 
 .fila__horas--nada {
-  color: var(--sc-text-secondary);
+  color: var(--sc-text-subtle);
   font-weight: 400;
 }
 
-.sv__pie {
+/* La leyenda, en etiquetas: borde fino, esquina redonda y una muestra de cada cosa. */
+.sv__leyenda {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--sc-spacing-1-5);
-  color: var(--sc-text-secondary);
+  gap: var(--sc-spacing-0-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .leyenda {
   display: inline-flex;
   align-items: center;
   gap: var(--sc-spacing-0-5);
+  padding: var(--sc-spacing-0-25) var(--sc-spacing-0-75);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-full);
+  background: var(--sc-bg-surface);
+  color: var(--sc-text-primary);
 }
 
-.leyenda__marca {
-  inline-size: var(--sc-spacing-1);
+.leyenda__muestra {
+  inline-size: var(--sc-spacing-1-5);
   block-size: var(--sc-spacing-0-75);
   border-radius: var(--barra-radio);
 
   &--abierto {
-    background: var(--sc-label-green-text);
+    background: var(--sc-bg-primary);
   }
 
-  &--cerrado {
-    background: var(--sc-label-red-bg);
+  &--fuera {
+    border: 1px solid var(--sc-border-default);
+    background: var(--sc-bg-hover);
+  }
+
+  &--dia {
+    border: 1px solid var(--sc-border-default);
+    background-color: var(--sc-bg-hover);
+    background-image: repeating-linear-gradient(135deg, transparent 0, transparent 2px, var(--sc-border-default) 2px, var(--sc-border-default) 3px);
   }
 }

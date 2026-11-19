@@ -1521,6 +1521,7 @@
       "days_open": "Dias atendidos",
       "no_days_open": "Nenhum dia é atendido ainda.",
       "sv": {
+        "day_closed": "Dia fechado",
         "total": "{{hours}} por semana",
         "prev": "Semana anterior",
         "next": "Semana seguinte",
