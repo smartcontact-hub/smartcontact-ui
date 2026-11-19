@@ -222,37 +222,83 @@
   margin-inline-start: calc(-1 * var(--sc-spacing-0-5));
 }
 
-/* La edición contraída del panel: una cabecera que se abre, y debajo el formulario. */
-.editar__cabecera {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--sc-spacing-0-25);
-  padding: var(--sc-spacing-0-25) 0;
-  border: 0;
-  background: transparent;
-  color: var(--sc-text-primary);
-  cursor: pointer;
-
-  &:focus-visible {
-    outline: 2px solid var(--sc-border-focus);
-    outline-offset: 2px;
-  }
-}
-
-.editar__cuerpo {
-  margin-block-start: var(--sc-spacing-0-75);
+/* Una tarjeta del panel, como las del resumen del grupo: su título y, debajo, filas con baldosa azul oscuro. */
+.tarjeta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-75);
   padding: var(--sc-spacing-1);
   border: 1px solid var(--sc-border-default);
   border-radius: var(--sc-radius-md);
+  background: var(--sc-bg-surface);
 }
 
-.form {
+.tarjeta__titulo {
+  margin: 0;
+  color: var(--sc-text-secondary);
+}
+
+.filas {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-75);
+  margin: 0;
+}
+
+/* El valor de una fila: más oscuro y en semibold; las horas, en el tono del momento. */
+.valor {
+  font-weight: 600;
+  text-align: end;
+}
+
+.valor__sep {
+  margin-inline: var(--sc-spacing-0-25);
+  color: var(--sc-text-subtle);
+  font-size: 0.75em;
+  font-weight: 400;
+}
+
+[data-tono] .valor:not(.valor--cerrado):not(.valor--lista) {
+  color: var(--tono-text);
+}
+
+.valor--cerrado {
+  color: var(--sc-text-secondary);
+  font-weight: 400;
+}
+
+.valor--lista {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--sc-spacing-0-125);
+}
+
+.valor__enlace {
+  color: var(--sc-text-link);
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.panel__campos {
   display: flex;
   flex-direction: column;
   gap: var(--sc-spacing-1);
 }
 
-.form__acciones {
-  display: flex;
-  gap: var(--sc-spacing-0-5);
+/* Modo edición del panel: los campos sin borde, solo con su fondo; el foco sigue viéndose. */
+.panel--edicion {
+  ::ng-deep :is(.p-inputtext, .p-datepicker-input, .p-select) {
+    border-color: transparent;
+    background: var(--sc-bg-hover);
+    box-shadow: none;
+  }
+
+  ::ng-deep :is(.p-inputtext, .p-datepicker-input, .p-select):focus-visible,
+  ::ng-deep .p-focus {
+    outline: 2px solid var(--sc-border-focus);
+    outline-offset: 1px;
+  }
 }

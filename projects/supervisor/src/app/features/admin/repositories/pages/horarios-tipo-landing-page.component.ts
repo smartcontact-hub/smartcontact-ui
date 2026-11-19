@@ -1,4 +1,3 @@
-import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, type TemplateRef, untracked, viewChild } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -8,6 +7,7 @@ import {
   ScButtonComponent,
   ScDrawerComponent,
   ScEmptyStateComponent,
+  ScFactRowComponent,
   ScInputTextComponent,
   ScSearchComponent,
   ScSelectButtonComponent,
@@ -21,7 +21,7 @@ import { nombreDeCopia } from '@shared/utils/copy-name';
 
 import { HorarioSemanaComponent } from '../components/horario/horario-semana.component';
 import { HorarioSemanaResumenComponent } from '../components/horario/horario-semana-resumen.component';
-import { franjaDeLaSemana, type HorarioTipo, type MomentoDelDia, momentoDelDia, type Semana, validarSemana } from '../state/horarios.core.mjs';
+import { franjaDeLaSemana, type HorarioTipo, type MomentoDelDia, momentoDelDia, type Semana, textoDeFranja, validarSemana } from '../state/horarios.core.mjs';
 import { HORARIOS_EN_EL_VUI } from '../state/horarios.semilla.mjs';
 import { HorarioUsoService } from '../state/horario-uso.service';
 import { HorariosTipoService } from '../state/horarios-tipo.service';
@@ -63,12 +63,12 @@ interface Tarjeta {
   imports: [
     HorarioSemanaComponent,
     HorarioSemanaResumenComponent,
-    NgTemplateOutlet,
     RouterLink,
     ScAvatarComponent,
     ScButtonComponent,
     ScDrawerComponent,
     ScEmptyStateComponent,
+    ScFactRowComponent,
     ScIconComponent,
     ScInputTextComponent,
     ScSearchComponent,
@@ -134,8 +134,8 @@ export class HorariosTipoLandingPageComponent {
     return b.name !== o.name || b.description !== o.description || JSON.stringify(b.week) !== JSON.stringify(o.week);
   });
   protected readonly puedeGuardar = computed(() => !this.faltaElNombre() && !this.faltaDeSemana() && this.sucio());
-  protected readonly cabecera = computed(() => (this.seleccion() === 'nuevo' ? ((this.lang(), this.t('new_title')) as string) : (this.panel()?.nombre ?? null)));
-  protected readonly abierto = computed(() => this.seleccion() === 'nuevo' || !!this.panel());
+  protected readonly cabecera = computed(() => this.panel()?.nombre ?? null);
+  protected readonly abierto = computed(() => !!this.panel());
 
   protected cambiar(campo: 'name' | 'description' | 'week', valor: string | Semana): void {
     this.borrador.update((b) => ({ ...b, [campo]: valor }));
@@ -159,22 +159,19 @@ export class HorariosTipoLandingPageComponent {
     return rachas.join(', ');
   }
 
+  /** El momento, la franja («09:00–18:00») y los días («L–V») de una semana; `null` si no abre ningún día. */
+  private describir(week: Semana): { momento: IdDeMomento; franja: string; dias: string } | null {
+    const momento = momentoDelDia(week);
+    const franja = franjaDeLaSemana(week);
+    if (momento === 'ninguno' || !franja) return null;
+    return { momento, franja: momento === 'todo' ? this.t('all_day') : `${franja.desde}–${franja.hasta}`, dias: this.etiquetaDeDias(franja.dias) };
+  }
+
   private readonly tarjetas = computed<readonly Tarjeta[]>(() => {
     this.lang();
     return this.store.items().flatMap((h) => {
-      const momento = momentoDelDia(h.week);
-      const franja = franjaDeLaSemana(h.week);
-      if (momento === 'ninguno' || !franja) return [];
-      return [
-        {
-          id: h.id,
-          nombre: h.name,
-          descripcion: h.description,
-          momento,
-          franja: momento === 'todo' ? this.t('all_day') : `${franja.desde}–${franja.hasta}`,
-          dias: this.etiquetaDeDias(franja.dias),
-        },
-      ];
+      const d = this.describir(h.week);
+      return d ? [{ id: h.id, nombre: h.name, descripcion: h.description, ...d }] : [];
     });
   });
 
@@ -203,29 +200,49 @@ export class HorariosTipoLandingPageComponent {
       .filter((s) => s.cards.length > 0);
   });
 
-  /** Todo lo del horario abierto en el panel. */
+  /** La semana como filas: cada grupo de días con sus tramos («Lun–Vie · 09:00–18:00»); sin tramos, cerrado. */
+  private filasDeSemana(week: Semana): readonly { etiqueta: string; tramos: readonly string[] }[] {
+    const nombre = (i: number): string => (this.translate.instant(`repositories.horarios.days.${CLAVES_DIA[i]}`) as string).slice(0, 3);
+    const grupos: { desde: number; hasta: number; franjas: Semana[number] }[] = [];
+    for (let d = 0; d < 7; d++) {
+      const franjas = week[d] ?? [];
+      const ultimo = grupos[grupos.length - 1];
+      if (ultimo && JSON.stringify(ultimo.franjas) === JSON.stringify(franjas)) ultimo.hasta = d;
+      else grupos.push({ desde: d, hasta: d, franjas });
+    }
+    return grupos.map((g) => ({
+      etiqueta: g.desde === g.hasta ? nombre(g.desde) : `${nombre(g.desde)}–${nombre(g.hasta)}`,
+      tramos: g.franjas.map((f) => textoDeFranja(f)),
+    }));
+  }
+
+  /** ¿Está el panel en modo edición? Un horario nuevo, siempre; uno que existe, tras «Editar». */
+  protected readonly edicion = computed(() => this.seleccion() === 'nuevo' || this.editando());
+
+  /** Todo lo del horario abierto en el panel. En edición, lo que se enseña (momento, franja, semana) es lo del borrador, en vivo. */
   protected readonly panel = computed(() => {
     this.lang();
     const id = this.seleccion();
-    const h: HorarioTipo | undefined = this.store.items().find((x) => x.id === id);
-    const tarjeta = this.tarjetas().find((c) => c.id === id);
-    if (!h || !tarjeta) return null;
-    const momento = MOMENTOS.find((m) => m.id === tarjeta.momento)!;
-    const calendarios = this.servicio.usos(h.id);
+    const guardado: HorarioTipo | undefined = typeof id === 'number' ? this.store.items().find((x) => x.id === id) : undefined;
+    if (!guardado && id !== 'nuevo') return null;
+    const week = this.edicion() ? this.borrador().week : guardado!.week;
+    const d = this.describir(week) ?? { momento: 'manana' as IdDeMomento, franja: '', dias: '' };
+    const momento = MOMENTOS.find((m) => m.id === d.momento)!;
+    const calendarios = guardado ? this.servicio.usos(guardado.id) : [];
     const grupos = this.uso.grupos(new Set(calendarios.map((u) => u.calendario.id)));
     return {
-      id: h.id,
-      nombre: h.name,
-      descripcion: h.description,
-      semana: h.week,
-      franja: tarjeta.franja,
-      dias: tarjeta.dias,
+      id: guardado?.id ?? null,
+      nombre: guardado?.name ?? this.t('new_title'),
+      descripcion: guardado?.description ?? '',
+      filas: this.filasDeSemana(week),
+      franja: d.franja,
+      dias: d.dias,
       momento: this.t(momento.id),
       icono: momento.icono,
       tono: momento.tono,
       calendarios: calendarios.map((u) => ({ id: u.calendario.id, nombre: u.calendario.name })),
       grupos: grupos.map((g) => g.name),
-      vui: HORARIOS_EN_EL_VUI.has(h.id),
+      vui: guardado ? HORARIOS_EN_EL_VUI.has(guardado.id) : false,
     };
   });
 

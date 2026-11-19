@@ -80,38 +80,9 @@
   </div>
 </div>
 
-<!-- El formulario del horario (nombre, descripción y semana): el mismo para uno nuevo y para editar uno que ya existe. -->
-<ng-template #formulario>
-  <div class="form">
-    <sc-inputtext
-      inputId="horario-nombre"
-      fluid
-      required
-      [label]="'repositories.columns.name' | translate"
-      [placeholder]="'repositories.horariosTipo.name_placeholder' | translate"
-      [value]="borrador().name"
-      [error]="intento() && faltaElNombre() ? ('repositories.horarios.errors.name_required' | translate) : undefined"
-      (valueChange)="cambiar('name', $event)"
-    />
-    <sc-inputtext
-      inputId="horario-descripcion"
-      fluid
-      [label]="'repositories.columns.description' | translate"
-      [placeholder]="'repositories.placeholders.description' | translate"
-      [value]="borrador().description"
-      (valueChange)="cambiar('description', $event)"
-    />
-    <sc-horario-semana prefijo="horario-panel" [semana]="borrador().week" [falta]="faltaDeSemana()" (semanaChange)="cambiar('week', $event)" />
-    <div class="form__acciones">
-      <sc-button size="sm" variant="primary" [disabled]="!puedeGuardar() && !intento() && !faltaElNombre()" [label]="(seleccion() === 'nuevo' ? 'common.create' : 'common.save') | translate" (clicked)="guardar()" />
-      <sc-button size="sm" variant="secondary" appearance="outlined" [label]="'common.cancel' | translate" (clicked)="cancelar()" />
-    </div>
-  </div>
-</ng-template>
-
-<!-- El panel de la tarjeta elegida, a la derecha y sin velo: la página sigue a mano para elegir otra. Con un horario: título,
-     momento, descripción, Editar y Duplicar, la edición (contraída) y, tras la línea, toda su información. «Nuevo horario» y
-     «Duplicar» abren el mismo panel con solo el formulario. -->
+<!-- El panel de la tarjeta elegida, a la derecha y sin velo: la página sigue a mano para elegir otra. Muestra el horario (título,
+     momento, descripción, sus botones y, tras la línea, franja, semana y dónde se usa) y «Editar» no abre otro formulario: esos
+     mismos campos pasan a ser editables, sin borde. «Nuevo horario» y «Duplicar» abren el panel ya en edición. -->
 <sc-drawer
   position="right"
   width="30rem"
@@ -122,37 +93,47 @@
   (visibleChange)="$event || cerrar()"
   [header]="cabecera()"
 >
-  @if (seleccion() === 'nuevo') {
-    <div class="panel">
-      <ng-container *ngTemplateOutlet="formulario" />
-    </div>
-  } @else if (panel(); as p) {
-    <div class="panel" [attr.data-tono]="p.tono">
+  @if (panel(); as p) {
+    <div class="panel" [class.panel--edicion]="edicion()" [attr.data-tono]="p.tono">
       <p class="panel__momento">
         <sc-avatar [icon]="p.icono" [labelColor]="p.tono" aria-hidden="true" />
         <span class="sc-text-caption-semibold">{{ p.momento }}</span>
       </p>
-      @if (p.descripcion) {
+
+      @if (edicion()) {
+        <div class="panel__campos">
+          <sc-inputtext
+            inputId="horario-nombre"
+            fluid
+            required
+            [label]="'repositories.columns.name' | translate"
+            [placeholder]="'repositories.horariosTipo.name_placeholder' | translate"
+            [value]="borrador().name"
+            [error]="intento() && faltaElNombre() ? ('repositories.horarios.errors.name_required' | translate) : undefined"
+            (valueChange)="cambiar('name', $event)"
+          />
+          <sc-inputtext
+            inputId="horario-descripcion"
+            fluid
+            [label]="'repositories.columns.description' | translate"
+            [placeholder]="'repositories.placeholders.description' | translate"
+            [value]="borrador().description"
+            (valueChange)="cambiar('description', $event)"
+          />
+        </div>
+      } @else if (p.descripcion) {
         <p class="panel__descripcion sc-text-body-regular">{{ p.descripcion }}</p>
       }
 
       <div class="panel__acciones">
-        <sc-button size="sm" variant="primary" icon="edit" [label]="'common.edit' | translate" (clicked)="editar()" />
-        <sc-button size="sm" variant="secondary" appearance="outlined" icon="content_copy" [label]="'repositories.horariosTipo.landing.duplicate' | translate" (clicked)="duplicar(p.id)" />
-      </div>
-
-      <!-- La edición del propio horario, contraída: se abre con «Editar» o con su cabecera. -->
-      <section class="editar">
-        <button type="button" class="editar__cabecera sc-text-body-semibold" [attr.aria-expanded]="editando()" (click)="editando.set(!editando())">
-          <sc-icon [name]="editando() ? 'expand_more' : 'chevron_right'" [size]="16" aria-hidden="true" />
-          {{ 'repositories.horariosTipo.landing.edit_section' | translate }}
-        </button>
-        @if (editando()) {
-          <div class="editar__cuerpo">
-            <ng-container *ngTemplateOutlet="formulario" />
-          </div>
+        @if (edicion()) {
+          <sc-button size="sm" variant="primary" [disabled]="!puedeGuardar() && !intento() && !faltaElNombre()" [label]="(seleccion() === 'nuevo' ? 'common.create' : 'common.save') | translate" (clicked)="guardar()" />
+          <sc-button size="sm" variant="secondary" appearance="outlined" [label]="'common.cancel' | translate" (clicked)="cancelar()" />
+        } @else {
+          <sc-button size="sm" variant="primary" icon="edit" [label]="'common.edit' | translate" (clicked)="editar()" />
+          <sc-button size="sm" variant="secondary" appearance="outlined" icon="content_copy" [label]="'repositories.horariosTipo.landing.duplicate' | translate" (clicked)="duplicar(p.id!)" />
         }
-      </section>
+      </div>
 
       <div class="panel__info">
         <section class="panel__bloque">
@@ -160,43 +141,73 @@
           <p class="panel__franja sc-text-title-semibold">{{ p.franja }} <span class="panel__dias sc-text-body-regular">{{ p.dias }}</span></p>
         </section>
 
-        <section class="panel__bloque">
-          <h3 class="panel__titulo sc-text-caption-semibold">{{ 'repositories.horariosTipo.landing.drawer_week' | translate }}</h3>
-          <sc-horario-semana-resumen [semana]="p.semana" [color]="p.tono" />
-        </section>
-
-        <section class="panel__bloque">
-          <h3 class="panel__titulo sc-text-caption-semibold">{{ 'repositories.horariosTipo.landing.drawer_uses' | translate }}</h3>
-          @if (p.calendarios.length === 0 && p.grupos.length === 0 && !p.vui) {
-            <p class="panel__nada sc-text-body-regular">{{ 'repositories.horariosTipo.landing.uses_none' | translate }}</p>
+        <!-- La semana: en lectura, una fila por grupo de días (baldosa azul oscuro y sus horas, como el resumen del grupo); en
+             edición, los mismos días pasan a ser editables. -->
+        <section class="tarjeta">
+          <h3 class="tarjeta__titulo sc-text-caption-semibold">{{ 'repositories.horariosTipo.landing.drawer_week' | translate }}</h3>
+          @if (edicion()) {
+            <sc-horario-semana prefijo="horario-panel" [semana]="borrador().week" [falta]="faltaDeSemana()" (semanaChange)="cambiar('week', $event)" />
           } @else {
-            <dl class="usos">
-              @if (p.calendarios.length > 0) {
-                <dt class="sc-text-caption-semibold">{{ 'repositories.horariosTipo.use_calendars' | translate }}</dt>
-                <dd>
-                  @for (c of p.calendarios; track c.id) {
-                    <a class="usos__enlace sc-text-body-regular" [routerLink]="['/admin/horarios/editar', c.id]">{{ c.nombre }}</a>
+            <dl class="filas">
+              @for (f of p.filas; track $index) {
+                <div scFactRow size="sm" tone="brand" [icon]="f.tramos.length > 0 ? 'event_available' : 'event_busy'" [label]="f.etiqueta">
+                  @if (f.tramos.length > 0) {
+                    <span class="valor">
+                      @for (t of f.tramos; track $index) {
+                        @if ($index > 0) {
+                          <span class="valor__sep">·</span>
+                        }
+                        {{ t }}
+                      }
+                    </span>
+                  } @else {
+                    <span class="valor valor--cerrado">{{ 'repositories.horarios.closed' | translate }}</span>
                   }
-                </dd>
-              }
-              @if (p.grupos.length > 0) {
-                <dt class="sc-text-caption-semibold">{{ 'repositories.horariosTipo.use_groups' | translate }}</dt>
-                <dd>
-                  @for (g of p.grupos; track g) {
-                    <span class="sc-text-body-regular">{{ g }}</span>
-                  }
-                </dd>
-              }
-              @if (p.vui) {
-                <dt class="sc-text-caption-semibold">{{ 'repositories.horariosTipo.use_vui' | translate }}</dt>
-                <dd><span class="sc-text-body-regular">{{ 'repositories.horariosTipo.landing.vui_flows' | translate }}</span></dd>
+                </div>
               }
             </dl>
           }
         </section>
 
-        <!-- Eliminar, al final y discreto: es lo que menos se hace y no se pulsa por error junto a editar. -->
-        <sc-button class="panel__eliminar" size="sm" variant="danger" appearance="text" icon="delete" [label]="'repositories.horariosTipo.landing.delete' | translate" (clicked)="eliminar(p.id)" />
+        @if (p.id !== null) {
+          <section class="tarjeta">
+            <h3 class="tarjeta__titulo sc-text-caption-semibold">{{ 'repositories.horariosTipo.landing.drawer_uses' | translate }}</h3>
+            @if (p.calendarios.length === 0 && p.grupos.length === 0 && !p.vui) {
+              <p class="panel__nada sc-text-body-regular">{{ 'repositories.horariosTipo.landing.uses_none' | translate }}</p>
+            } @else {
+              <dl class="filas">
+                @if (p.calendarios.length > 0) {
+                  <div scFactRow size="sm" tone="brand" icon="calendar_month" [label]="'repositories.horariosTipo.use_calendars' | translate">
+                    <span class="valor valor--lista">
+                      @for (c of p.calendarios; track c.id) {
+                        <a class="valor__enlace" [routerLink]="['/admin/horarios/editar', c.id]">{{ c.nombre }}</a>
+                      }
+                    </span>
+                  </div>
+                }
+                @if (p.grupos.length > 0) {
+                  <div scFactRow size="sm" tone="brand" icon="groups" [label]="'repositories.horariosTipo.use_groups' | translate">
+                    <span class="valor valor--lista">
+                      @for (g of p.grupos; track g) {
+                        <span>{{ g }}</span>
+                      }
+                    </span>
+                  </div>
+                }
+                @if (p.vui) {
+                  <div scFactRow size="sm" tone="brand" icon="account_tree" [label]="'repositories.horariosTipo.use_vui' | translate">
+                    <span class="valor">{{ 'repositories.horariosTipo.landing.vui_flows' | translate }}</span>
+                  </div>
+                }
+              </dl>
+            }
+          </section>
+        }
+
+        @if (!edicion()) {
+          <!-- Eliminar, al final y discreto: es lo que menos se hace y no se pulsa por error junto a editar. -->
+          <sc-button class="panel__eliminar" size="sm" variant="danger" appearance="text" icon="delete" [label]="'repositories.horariosTipo.landing.delete' | translate" (clicked)="eliminar(p.id!)" />
+        }
       </div>
     </div>
   }
