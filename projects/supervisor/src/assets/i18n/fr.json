@@ -1544,7 +1544,7 @@
       "view_week": "Semaine",
       "view_slots": "Plages",
       "view_label": "Vue de l’horaire",
-      "view_slots_hint": "Saisissez les heures de chaque jour et copiez les plages d’un jour vers d’autres",
+      "view_slots_hint": "Saisissez les heures de chaque jour",
       "precise_title": "Ajuster avec précision",
       "uses_none_groups": "Aucun groupe n'utilise encore cet horaire.",
       "uses_none_vui": "Aucun flux VUI ne l'utilise encore.",

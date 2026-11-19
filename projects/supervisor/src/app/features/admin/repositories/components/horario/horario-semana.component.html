@@ -25,37 +25,3 @@
     <li class="semana__nada sc-text-body-regular">{{ 'repositories.horarios.no_days_open' | translate }}</li>
   }
 </ul>
-
-<div class="semana__copiar">
-  <sc-select
-    class="semana__origen"
-    [label]="'repositories.horarios.copy_from' | translate"
-    [options]="opcionesDeDia()"
-    optionLabel="label"
-    optionValue="value"
-    [value]="origen()"
-    (valueChange)="elegirOrigen($event)"
-  />
-  <sc-multiselect
-    class="semana__destinos"
-    [label]="'repositories.horarios.copy_to' | translate"
-    [placeholder]="'repositories.horarios.copy_to_placeholder' | translate"
-    [options]="destinosPosibles()"
-    optionLabel="label"
-    optionValue="value"
-    [maxSelectedLabels]="7"
-    [value]="destinos()"
-    (valueChange)="destinos.set($any($event))"
-  />
-  <sc-button
-    variant="secondary"
-    appearance="outlined"
-    icon="content_copy"
-    [disabled]="destinos().length === 0"
-    [pTooltip]="destinos().length === 0 ? ('repositories.horarios.copy_disabled' | translate) : ''"
-    tooltipPosition="top"
-    tooltipEvent="both"
-    [label]="'repositories.horarios.copy' | translate"
-    (clicked)="copiar()"
-  />
-</div>

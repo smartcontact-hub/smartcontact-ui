@@ -1544,7 +1544,7 @@
       "view_week": "Semana",
       "view_slots": "Períodos",
       "view_label": "Vista do horário",
-      "view_slots_hint": "Escreva as horas de cada dia e copie os períodos de um dia para outros",
+      "view_slots_hint": "Escreva as horas de cada dia",
       "precise_title": "Ajustar com precisão",
       "uses_none_groups": "Nenhum grupo usa este horário ainda.",
       "uses_none_vui": "Nenhum fluxo do VUI o usa ainda.",

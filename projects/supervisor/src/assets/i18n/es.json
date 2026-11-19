@@ -1544,7 +1544,7 @@
       "view_week": "Semana",
       "view_slots": "Franjas",
       "view_label": "Vista del horario",
-      "view_slots_hint": "Escribe las horas de cada día y copia las franjas de un día a otros",
+      "view_slots_hint": "Escribe las horas de cada día",
       "precise_title": "Ajustar con precisión",
       "uses_none_groups": "Ningún grupo atiende con este horario todavía.",
       "uses_none_vui": "Ningún flujo del VUI lo usa todavía.",

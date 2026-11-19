@@ -1544,7 +1544,7 @@
       "view_week": "Week",
       "view_slots": "Slots",
       "view_label": "Schedule view",
-      "view_slots_hint": "Type the hours of each day and copy the slots of one day to others",
+      "view_slots_hint": "Type the hours of each day",
       "precise_title": "Fine-tune",
       "uses_none_groups": "No group uses this schedule yet.",
       "uses_none_vui": "No VUI flow uses it yet.",

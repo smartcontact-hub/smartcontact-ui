@@ -44,20 +44,3 @@
   flex-direction: column;
   gap: var(--sc-spacing-0-5);
 }
-
-.semana__copiar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  /* El hueco entre campos de una fila de `.grid` (`_forms.scss`). */
-  gap: var(--sc-spacing-1-75);
-}
-
-.semana__origen {
-  inline-size: var(--sc-spacing-12-5);
-}
-
-.semana__destinos {
-  flex: 1;
-  min-inline-size: var(--sc-spacing-12-5);
-}

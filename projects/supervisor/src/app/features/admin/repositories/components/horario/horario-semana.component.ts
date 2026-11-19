@@ -1,7 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TooltipModule } from 'primeng/tooltip';
-import { ScButtonComponent, ScMultiSelectComponent, ScSelectButtonComponent, ScSelectComponent } from '@smartcontact-hub/components';
+import { ScSelectButtonComponent } from '@smartcontact-hub/components';
 
 import { injectLangChange } from '@core/utils/lang-change';
 
@@ -16,7 +15,7 @@ export const DIAS_DE_LA_SEMANA = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun
  */
 @Component({
   selector: 'sc-horario-semana',
-  imports: [HorarioFranjasComponent, ScButtonComponent, ScMultiSelectComponent, ScSelectButtonComponent, ScSelectComponent, TooltipModule, TranslateModule],
+  imports: [HorarioFranjasComponent, ScSelectButtonComponent, TranslateModule],
   templateUrl: './horario-semana.component.html',
   styleUrl: './horario-semana.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -62,24 +61,7 @@ export class HorarioSemanaComponent {
     this.semanaChange.emit(nueva);
   }
 
-  protected readonly opcionesDeDia = computed(() => this.dias().map((d) => ({ value: d.indice, label: d.nombre })));
-  protected readonly origen = signal(0);
-  protected readonly destinos = signal<number[]>([]);
-  protected readonly destinosPosibles = computed(() => this.opcionesDeDia().filter((d) => d.value !== this.origen()));
-
   protected ponerDia(dia: number, franjas: readonly Franja[]): void {
     this.semanaChange.emit(this.semana().map((f, i) => (i === dia ? franjas : f)));
-  }
-
-  protected elegirOrigen(valor: unknown): void {
-    this.origen.set(Number(valor));
-    this.destinos.update((d) => d.filter((x) => x !== this.origen()));
-  }
-
-  protected copiar(): void {
-    const franjas = this.semana()[this.origen()] ?? [];
-    const destinos = new Set(this.destinos());
-    this.semanaChange.emit(this.semana().map((f, i) => (destinos.has(i) ? franjas : f)));
-    this.destinos.set([]);
   }
 }
