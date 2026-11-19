@@ -97,6 +97,29 @@ interface Guia {
 /** La pausa que deja «dividir» si cabe: una hora, la de comer. Luego se ajusta arrastrando los bordes. */
 const PAUSA = 60;
 
+/** Donde se pulsó una barra: ahí se queda la raya, y la barrita de acciones corta lo elegido a esa hora. */
+interface Marca {
+  readonly dia: number;
+  readonly min: number;
+}
+
+/** Lo que ofrece la barrita de lo elegido, cada cosa con su tecla: el ratón lo puede todo y el teclado se aprende mirando. */
+type Accion = 'dividir' | 'antes' | 'despues' | 'copiar' | 'pegar' | 'borrar';
+interface BotonDeAccion {
+  readonly accion: Accion;
+  readonly texto: string;
+  readonly tecla: string;
+  readonly aria: string;
+}
+const BOTONES: Record<Accion, BotonDeAccion> = {
+  dividir: { accion: 'dividir', texto: 'Dividir', tecla: 'B', aria: 'B' },
+  antes: { accion: 'antes', texto: 'Quitar antes', tecla: 'Q', aria: 'Q' },
+  despues: { accion: 'despues', texto: 'Quitar después', tecla: 'W', aria: 'W' },
+  copiar: { accion: 'copiar', texto: 'Copiar', tecla: '⌘C', aria: 'Meta+C' },
+  pegar: { accion: 'pegar', texto: 'Pegar', tecla: '⌘V', aria: 'Meta+V' },
+  borrar: { accion: 'borrar', texto: 'Borrar', tecla: 'Supr', aria: 'Delete' },
+};
+
 /**
  * CIERRE DE HORARIOS: la semana, en dos piezas que se miran, en el orden en que se piensa un horario. Primero lo que se
  * escribe, los tramos: unos días que comparten franjas («de lunes a viernes, de 9:00 a 18:00»). Marcar un día en un
@@ -112,7 +135,13 @@ const PAUSA = 60;
  *
  * Sobre una barra, la raya es de corte, como el cabezal de un editor de vídeo, y cruza todos los días de su fila: B (o
  * C) divide ahí y deja una pausa de una hora si cabe, Q quita lo de antes de la raya, W lo de después y Supr la franja
- * entera. Eso sí va por filas, como arrastrar un borde. Con algo elegido, Supr borra lo elegido.
+ * entera. Eso sí va por filas, como arrastrar un borde. Las teclas van escritas en la misma raya.
+ *
+ * Que se vea qué se puede hacer: un clic en una barra deja la raya fija donde se pulsó y abre encima una barrita con
+ * cada acción y su tecla (dividir, quitar antes o después, copiar, borrar). El ratón lo puede todo y el teclado se
+ * aprende mirando. Con algo elegido, las acciones y las teclas van a lo elegido, por días, y la raya de pasar no sale.
+ *
+ * Dos franjas que se tocan al soltar un arrastre se juntan: para atender, de 9 a 14 y de 14 a 18 es de 9 a 18.
  *
  * El dibujo enseña la jornada, de 7:00 a 22:00, y crece solo hasta la primera y la última hora abiertas con una hora de
  * margen: nunca esconde una hora en la que se atiende. Encima, una regla con el día entero en pequeño (lo abierto en
@@ -377,9 +406,50 @@ const PAUSA = 60;
                     [style.left.%]="pos(gu.min)"
                   >
                     @if (gu.dia === f.dia) {
-                      <span class="tp-sem__cursor-hora">{{ hora(gu.min) }}</span>
+                      <span class="tp-sem__cursor-hora" [class.is-izq]="gu.corte && pos(gu.min) < 25" [class.is-der]="gu.corte && pos(gu.min) > 75">
+                        {{ hora(gu.min) }}
+                        @if (gu.corte) {
+                          <!-- Las teclas, en la misma raya: se ven justo cuando sirven. -->
+                          <span class="tp-sem__teclas">
+                            <kbd class="tp-kbd">B</kbd> divide <kbd class="tp-kbd">Q</kbd> quita antes <kbd class="tp-kbd">W</kbd> quita después
+                          </span>
+                        }
+                      </span>
                     }
                   </span>
+                }
+              }
+              <!-- Lo elegido con un clic en una barra: la raya se queda donde se pulsó, en cada día elegido. -->
+              @if (marca(); as mk) {
+                @if (diaElegido(f.dia) && seVe(mk.min) && !arrastre()) {
+                  <span class="tp-sem__cursor is-corte is-fija" aria-hidden="true" [style.left.%]="pos(mk.min)"></span>
+                }
+              }
+              @if (barrita(); as b) {
+                @if (b.dia === f.dia) {
+                  <div
+                    class="tp-sem__barrita"
+                    role="toolbar"
+                    aria-label="Qué hacer con lo elegido"
+                    [class.is-izq]="b.x < 30"
+                    [class.is-der]="b.x > 70"
+                    [style.left.%]="b.x"
+                    (pointerdown)="$event.stopPropagation()"
+                    (pointermove)="$event.stopPropagation()"
+                    (pointerenter)="guia.set(null)"
+                  >
+                    @if (b.min !== null) {
+                      <span class="tp-sem__barrita-hora t-num">{{ hora(b.min) }}</span>
+                    }
+                    @for (a of b.botones; track a.accion) {
+                      <button type="button" class="tp-sem__barrita-btn" [attr.aria-keyshortcuts]="a.aria" (click)="hacer(a.accion)">
+                        {{ a.texto }} <kbd class="tp-kbd">{{ a.tecla }}</kbd>
+                      </button>
+                    }
+                    <button type="button" class="tp-sem__barrita-x" aria-label="Soltar lo elegido" data-tip="Soltar (Esc)" (click)="soltarEleccion()">
+                      <sc-tp-icono nombre="x" [tam]="14" />
+                    </button>
+                  </div>
                 }
               }
               @if (ahora()?.dia === f.dia && seVe(ahora()!.minutos)) {
@@ -435,6 +505,8 @@ export class TpSemanaComponent {
   private nav: { modo: 'desde' | 'hasta' | 'mover'; m0: number; r0: Rango; caja: DOMRect } | null = null;
   private readonly avisos = inject(TpAvisos);
   protected readonly seleccion = signal<readonly Elegido[]>([]);
+  /** Dónde se pulsó la última barra elegida; con días elegidos por su letra, ninguna. */
+  protected readonly marca = signal<Marca | null>(null);
   /** Los días recién pegados, que se iluminan un momento. */
   protected readonly pegados = signal<readonly number[]>([]);
   /** La fila por la que pasa el puntero: ahí pega ⌘V si no hay otros días elegidos. */
@@ -482,14 +554,15 @@ export class TpSemanaComponent {
 
   /** Lo que dice la leyenda: cómo seguir con lo que hay elegido o copiado. */
   protected readonly ayuda = computed(() => {
-    if (this.guia()?.corte) return 'B divide aquí, Q quita lo de antes, W lo de después y Supr la franja entera';
-    if (this.seleccion().length) return '⌘C copia, ⌘V pega, Supr borra y Esc suelta';
+    if (this.guia()?.corte) return 'Pulsa la barra para fijar la raya y ver qué puedes hacer; Supr quita la franja entera';
+    if (this.seleccion().length) return 'Pulsa en otro punto de la barra para mover la raya; Esc suelta lo elegido';
     if (PORTAPAPELES()) return 'Pasa por un día o pulsa su letra, y ⌘V pega lo copiado';
     return 'Arrastra sobre el rojo para añadir horas; pulsa una barra o un día para copiarlo';
   });
 
   protected elegirDia(e: MouseEvent, dia: number): void {
     contarUso('elegir');
+    this.marca.set(null);
     const antes = this.seleccion();
     if (e.shiftKey && this.ancla !== null) {
       const [a, b] = [Math.min(this.ancla, dia), Math.max(this.ancla, dia)];
@@ -505,17 +578,61 @@ export class TpSemanaComponent {
     this.ancla = dia;
   }
 
+  /**
+   * Un clic en una barra la elige y deja la raya donde se pulsó, con la barrita encima. Otro clic en la misma barra mueve
+   * la raya; en el mismo sitio, la suelta. Con Mayús o ⌘ se suman o quitan barras, y la raya va a la última pulsada.
+   */
   protected elegirBarra(e: MouseEvent, dia: number, franja: number): void {
     if (this.trasArrastre || franja < 0) return;
     contarUso('elegir');
+    const pista = (e.currentTarget as HTMLElement).closest('.tp-sem__pista')?.getBoundingClientRect();
+    const m = pista ? this.minutoEn(e, pista) : null;
     const antes = this.seleccion();
     const ya = antes.some((x) => x.dia === dia && x.franja === franja);
+    const mk = this.marca();
     if (e.shiftKey || e.metaKey || e.ctrlKey) {
       this.seleccion.set(ya ? antes.filter((x) => !(x.dia === dia && x.franja === franja)) : [...antes.filter((x) => !(x.dia === dia && x.franja === null)), { dia, franja }]);
     } else {
-      this.seleccion.set(ya && antes.length === 1 ? [] : [{ dia, franja }]);
+      const mismoSitio = ya && antes.length === 1 && (m === null || (mk?.dia === dia && Math.abs(mk.min - m) <= PASO));
+      this.seleccion.set(mismoSitio ? [] : [{ dia, franja }]);
     }
+    const queda = this.seleccion().some((x) => x.dia === dia && x.franja === franja);
+    this.marca.set(queda && m !== null ? { dia, min: m } : this.seleccion().length ? mk : null);
+    this.guia.set(null);
     this.ancla = dia;
+  }
+
+  protected diaElegido(dia: number): boolean {
+    return this.seleccion().some((x) => x.dia === dia);
+  }
+
+  protected soltarEleccion(): void {
+    this.seleccion.set([]);
+    this.marca.set(null);
+  }
+
+  /** La barrita de lo elegido: encima de la última barra pulsada, a la hora de la raya; con días, al principio de su fila. */
+  protected readonly barrita = computed(() => {
+    const sel = this.seleccion();
+    if (!sel.length || this.arrastre()) return null;
+    const mk = this.marca();
+    const conRaya = mk !== null && sel.some((x) => x.dia === mk.dia);
+    const soloDias = sel.every((x) => x.franja === null);
+    const acciones: Accion[] = [...(conRaya ? (['dividir', 'antes', 'despues'] as const) : []), 'copiar', ...(soloDias && PORTAPAPELES() ? (['pegar'] as const) : []), 'borrar'];
+    return {
+      dia: conRaya ? mk.dia : sel[sel.length - 1].dia,
+      min: conRaya ? mk.min : null,
+      x: conRaya ? Math.min(100, Math.max(0, this.pos(mk.min))) : 0,
+      botones: acciones.map((a) => BOTONES[a]),
+    };
+  });
+
+  protected hacer(accion: Accion): void {
+    if (accion === 'dividir' || accion === 'antes' || accion === 'despues') this.cortarElegido(accion);
+    else if (accion === 'copiar') {
+      if (this.copiar()) contarUso('copiar');
+    } else if (accion === 'pegar') this.pegar();
+    else if (this.borrar()) contarUso('borrar');
   }
 
   /** Lo elegido que aún existe, y sus días en orden. */
@@ -657,6 +774,60 @@ export class TpSemanaComponent {
     return true;
   }
 
+  /**
+   * Lo mismo que la raya de corte, pero sobre lo elegido y a la hora de la raya que dejó el clic: va por días, como copiar
+   * y borrar. Elegir el lunes y el martes y pulsar B divide esos dos; los demás días de su fila quedan como estaban.
+   */
+  private cortarElegido(accion: 'dividir' | 'antes' | 'despues'): boolean {
+    const mk = this.marca();
+    const { sel, dias } = this.elegido();
+    if (!mk || !dias.length) return false;
+    const m = mk.min;
+    const nueva: Franja[][] = this.semana().map((d) => [...(d ?? [])]);
+    const hechos = new Set<number>();
+    let pausa = PAUSA;
+    let noCabe = false;
+    for (const d of dias) {
+      const entero = sel.some((x) => x.dia === d && x.franja === null);
+      const cuales = new Set(sel.filter((x) => x.dia === d).map((x) => x.franja));
+      nueva[d] = nueva[d].flatMap((f, i): Franja[] => {
+        const [ini, fin] = f;
+        if ((!entero && !cuales.has(i)) || fin <= ini || m <= ini || m >= fin) return [f];
+        if (accion === 'dividir') {
+          const p = Math.min(PAUSA, Math.floor((fin - m - PASO) / PASO) * PASO);
+          if (m - ini < PASO || p < PASO) {
+            noCabe = true;
+            return [f];
+          }
+          pausa = p;
+          hechos.add(d);
+          return [
+            [ini, m],
+            [m + p, fin],
+          ];
+        }
+        hechos.add(d);
+        return [accion === 'antes' ? [m, fin] : [ini, m]];
+      });
+    }
+    if (!hechos.size) {
+      this.avisos.decir(noCabe ? 'Aquí no cabe una pausa: divide más lejos de los bordes' : `La raya de las ${horaCorta(m)} no cae dentro de lo elegido`);
+      return true;
+    }
+    this.emitir(tramosDe(nueva));
+    contarUso(accion === 'dividir' ? 'dividir' : 'recortar');
+    this.soltarEleccion();
+    const varios = hechos.size > 1;
+    const que =
+      accion === 'dividir'
+        ? `${varios ? 'divididos' : 'dividido'} a las ${horaCorta(m)}, con pausa hasta las ${horaCorta(m + pausa)}`
+        : accion === 'antes'
+          ? `ahora ${varios ? 'empiezan' : 'empieza'} a las ${horaCorta(m)}`
+          : `ahora ${varios ? 'acaban' : 'acaba'} a las ${horaCorta(m)}`;
+    this.avisos.decir(`${this.capital(losDias([...hechos].sort((a, b) => a - b)))}: ${que}. ⌘Z lo deshace`);
+    return true;
+  }
+
   /** ⌘C, ⌘X, ⌘V y Supr sobre el mapa. Escribiendo en un campo o con un diálogo abierto, el teclado es suyo. */
   @HostListener('document:keydown', ['$event'])
   protected teclado(e: KeyboardEvent): void {
@@ -668,6 +839,11 @@ export class TpSemanaComponent {
     const corte = this.guia()?.corte;
     // Supr va antes a lo elegido, si lo hay.
     const borraElegido = (k === 'delete' || k === 'backspace') && this.seleccion().length > 0;
+    // Con algo elegido y su raya, B, Q y W cortan lo elegido, igual que la barrita.
+    if (this.marca() && this.seleccion().length && !mod && !e.altKey && !e.shiftKey && ['b', 'c', 'q', 'w'].includes(k)) {
+      if (this.cortarElegido(k === 'b' || k === 'c' ? 'dividir' : k === 'q' ? 'antes' : 'despues')) e.preventDefault();
+      return;
+    }
     if (corte && !mod && !e.altKey && !e.shiftKey && !borraElegido && ['b', 'c', 'q', 'w', 'delete', 'backspace'].includes(k)) {
       if (this.cortar(k === 'b' || k === 'c' ? 'dividir' : k === 'q' ? 'antes' : k === 'w' ? 'despues' : 'quitar')) e.preventDefault();
       return;
@@ -692,14 +868,14 @@ export class TpSemanaComponent {
         contarUso('borrar');
       }
     } else if (e.key === 'Escape' && !this.arrastre()) {
-      this.seleccion.set([]);
+      this.soltarEleccion();
     }
   }
 
   /** Pulsar fuera del mapa suelta lo elegido. */
   @HostListener('document:pointerdown', ['$event'])
   protected fuera(e: PointerEvent): void {
-    if (this.seleccion().length && !(e.target as HTMLElement | null)?.closest('.tp-sem__mapa, sc-tp-avisos')) this.seleccion.set([]);
+    if (this.seleccion().length && !(e.target as HTMLElement | null)?.closest('.tp-sem__mapa, sc-tp-avisos')) this.soltarEleccion();
   }
 
   /* ── Las horas que se ven ─────────────────────────────────────────────────────────────────────────────────────── */
@@ -1008,7 +1184,7 @@ export class TpSemanaComponent {
   }
 
   /** El minuto (de 15 en 15) bajo el puntero en una pista. */
-  private minutoEn(e: PointerEvent, pista: DOMRect): number {
+  private minutoEn(e: { readonly clientX: number }, pista: DOMRect): number {
     const { desde, hasta } = this.rango();
     const m = desde + Math.round((((e.clientX - pista.left) / pista.width) * (hasta - desde)) / PASO) * PASO;
     return Math.min(hasta, Math.max(desde, m));
@@ -1030,7 +1206,9 @@ export class TpSemanaComponent {
     const h = this.hueco(dia, Math.min(m, 1440 - PASO));
     if (!h) {
       // Sobre una barra: la raya de corte, salvo en sus bordes (ahí se arrastra) y en las que cruzan la medianoche.
-      const t = (e.target as HTMLElement).closest('.tp-sem__asa') ? null : this.filas()[dia].trozos.find((x) => x.movible && m > x.desde && m < x.hasta);
+      // Con algo elegido, manda su raya fija: la de pasar no sale, para que no haya dos.
+      const t =
+        (e.target as HTMLElement).closest('.tp-sem__asa') || this.seleccion().length ? null : this.filas()[dia].trozos.find((x) => x.movible && m > x.desde && m < x.hasta);
       if (!t) {
         if (this.guia()) this.guia.set(null);
         return;
@@ -1098,6 +1276,8 @@ export class TpSemanaComponent {
     const a = this.arrastre();
     if (!a) return;
     if (!a.movido && Math.abs(e.clientX - a.x0) < 3) return;
+    // Arrastrar una barra de verdad suelta lo elegido: la raya fija ya no estaría donde se pulsó.
+    if (!a.movido && this.seleccion().length) this.soltarEleccion();
     a.movido = true;
     // Los píxeles, en minutos de lo que se veía al empezar. Pasarse del borde sigue contando: al soltar, el mapa crece.
     const aMin = (px: number): number => Math.round(((px / a.pista.width) * (a.rango.hasta - a.rango.desde)) / PASO) * PASO;
@@ -1130,6 +1310,9 @@ export class TpSemanaComponent {
     if (a.lado === 'pintar' && !a.movido) this.ponerFranja(a.tramo, a.franja, [a.f0[0], Math.min(a.f0[0] + 60, a.max)]);
     if (a.lado === 'pintar') contarUso('pintar');
     else if (a.movido) contarUso('arrastrar');
+    // Dos franjas que se tocan son una: en atención, de 9 a 14 y de 14 a 18 es de 9 a 18. Dentro del mismo paso de ⌘Z.
+    const junta = this.juntarTocadas(a.tramo);
+    if (junta) this.avisos.decir(`Se tocaban, así que ahora son una: ${junta}. ⌘Z lo deshace`);
     // El clic que sigue a soltar un arrastre no elige la barra.
     if (a.movido) {
       this.trasArrastre = true;
@@ -1137,6 +1320,25 @@ export class TpSemanaComponent {
     }
     this.arrastre.set(null);
     this.gesto.emit(false);
+  }
+
+  /** Junta en una las franjas de un tramo que se tocan (la de noche, no) y dice cuál queda; si no hay, `null`. */
+  private juntarTocadas(tramo: number): string | null {
+    const tramos = this.vivos();
+    const t = tramos[tramo];
+    if (!t) return null;
+    const franjas: Franja[] = [];
+    let junta: Franja | null = null;
+    for (const f of t.franjas) {
+      const prev = franjas[franjas.length - 1];
+      if (prev && prev[1] > prev[0] && f[1] > f[0] && prev[1] === f[0]) {
+        junta = [prev[0], f[1]];
+        franjas[franjas.length - 1] = junta;
+      } else franjas.push(f);
+    }
+    if (!junta) return null;
+    this.emitir(tramos.map((x, i) => (i === tramo ? { ...x, franjas } : x)));
+    return `de ${horaCorta(junta[0])} a ${horaCorta(junta[1])}`;
   }
 
   /** Esc a medio arrastre: todo vuelve a como estaba al empezar. */

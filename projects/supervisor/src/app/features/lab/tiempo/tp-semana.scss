@@ -289,6 +289,106 @@
 .tp-sem__cursor.is-eco {
   opacity: 0.45;
 }
+/* Junto a la hora, las teclas de la raya: se ven justo cuando sirven. Cerca de un borde, el globo se abre hacia dentro. */
+.tp-sem__cursor-hora:has(.tp-sem__teclas) {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding-block: var(--s-0-5);
+  &.is-izq {
+    translate: calc(-1 * var(--s-3)) 0;
+  }
+  &.is-der {
+    translate: calc(-100% + var(--s-3)) 0;
+  }
+}
+.tp-sem__teclas {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
+  font-weight: 450;
+  color: color-mix(in oklch, var(--tp-on-inverse) 78%, transparent);
+  .tp-kbd {
+    margin-inline-start: var(--s-1);
+    background: rgb(255 255 255 / 0.16);
+    box-shadow: none;
+    color: var(--tp-on-inverse);
+  }
+}
+/* La raya fija de lo elegido: del color de la selección, para que se lea como suya. */
+.tp-sem__cursor.is-fija {
+  z-index: 3;
+  background: var(--tp-accent);
+  box-shadow: 0 0 0 1px var(--tp-surface);
+}
+/* La barrita de lo elegido: encima de la barra, en la hora de la raya, con cada acción y su tecla. */
+.tp-sem__barrita {
+  position: absolute;
+  inset-block-end: calc(100% + var(--s-2));
+  inset-inline-start: 0;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  gap: var(--s-0-5);
+  padding: var(--s-0-5);
+  border-radius: var(--r-sm);
+  background: var(--tp-inverse);
+  box-shadow: var(--tp-pop);
+  color: var(--tp-on-inverse);
+  white-space: nowrap;
+  translate: -50% 0;
+  cursor: default;
+  animation: tp-fantasma-in 120ms var(--tp-ease) both;
+  &.is-izq {
+    translate: calc(-1 * var(--s-3)) 0;
+  }
+  &.is-der {
+    translate: calc(-100% + var(--s-3)) 0;
+  }
+}
+.tp-sem__barrita-hora {
+  padding-inline: var(--s-1-5) var(--s-2);
+  border-inline-end: 1px solid rgb(255 255 255 / 0.18);
+  font-size: var(--t-12);
+  font-weight: 600;
+}
+.tp-sem__barrita-btn,
+.tp-sem__barrita-x {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1-5);
+  block-size: 1.75rem;
+  padding-inline: var(--s-2);
+  border: 0;
+  border-radius: var(--r-xs);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: var(--t-12);
+  font-weight: 520;
+  cursor: pointer;
+  transition-property: background-color;
+  transition-duration: 120ms;
+  transition-timing-function: ease-out;
+  &:hover {
+    background: rgb(255 255 255 / 0.12);
+  }
+  &:focus-visible {
+    outline: 2px solid var(--tp-accent-ring);
+    outline-offset: 0;
+  }
+  .tp-kbd {
+    background: rgb(255 255 255 / 0.16);
+    box-shadow: none;
+    color: inherit;
+  }
+}
+.tp-sem__barrita-x {
+  inline-size: 1.75rem;
+  justify-content: center;
+  padding: 0;
+  color: color-mix(in oklch, var(--tp-on-inverse) 70%, transparent);
+}
 .tp-sem__fila:has(.tp-sem__cursor) .tp-sem__letra {
   color: var(--tp-ink);
 }
