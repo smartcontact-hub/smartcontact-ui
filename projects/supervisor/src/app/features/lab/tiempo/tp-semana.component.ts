@@ -82,13 +82,20 @@ const losDias = (dias: readonly number[]): string =>
     ? `de ${NOMBRES[dias[0]]} a ${NOMBRES[dias[dias.length - 1]]}`
     : enLista(dias.map((d) => NOMBRES[d]));
 
-/** Lo que dice la guía al pasar por una fila: la hora bajo el puntero y, si ahí cabe una franja, hasta dónde iría. */
+/**
+ * Lo que dice la guía al pasar por una fila: la hora bajo el puntero y, si ahí cabe una franja, hasta dónde iría. Sobre
+ * una barra es la raya de corte, como el cabezal de un editor de vídeo: `corte` dice qué franja corta.
+ */
 interface Guia {
   readonly dia: number;
   readonly min: number;
   readonly libre: boolean;
   readonly hasta: number;
+  readonly corte?: { readonly tramo: number; readonly franja: number; readonly f: Franja };
 }
+
+/** La pausa que deja «dividir» si cabe: una hora, la de comer. Luego se ajusta arrastrando los bordes. */
+const PAUSA = 60;
 
 /**
  * CIERRE DE HORARIOS: la semana, en dos piezas que se miran, en el orden en que se piensa un horario. Primero lo que se
@@ -102,6 +109,10 @@ interface Guia {
  * día entero (con Mayús, de un día a otro; con ⌘, uno más). ⌘C copia, ⌘V pega en los días elegidos o en el día por el
  * que pasa el puntero (pegar deja ese día igual que lo copiado), ⌘X corta y Supr borra. Va por días, no por filas: borrar
  * la franja del lunes de una fila «L–V» deja el lunes aparte. Cada acción es un paso de ⌘Z.
+ *
+ * Sobre una barra, la raya es de corte, como el cabezal de un editor de vídeo, y cruza todos los días de su fila: B (o
+ * C) divide ahí y deja una pausa de una hora si cabe, Q quita lo de antes de la raya, W lo de después y Supr la franja
+ * entera. Eso sí va por filas, como arrastrar un borde. Con algo elegido, Supr borra lo elegido.
  *
  * El dibujo enseña la jornada, de 7:00 a 22:00, y crece solo hasta la primera y la última hora abiertas con una hora de
  * margen: nunca esconde una hora en la que se atiende. «De 0 a 24» enseña el día entero, para pintar de madrugada.
@@ -303,16 +314,25 @@ interface Guia {
               @for (g of f.fantasmas; track $index) {
                 <span class="tp-sem__fantasma" aria-hidden="true" [style.left.%]="pos(g.desde)" [style.width.%]="largo(g.desde, g.hasta)"></span>
               }
-              <!-- Al pasar por lo rojo: la hora bajo el puntero y la hora que se añadiría con un clic. -->
+              <!-- Al pasar por lo rojo: la hora bajo el puntero y la hora que se añadiría con un clic. Sobre una barra, la raya de corte. -->
               @if (guia(); as gu) {
-                @if (gu.dia === f.dia && !arrastre()) {
-                  @if (gu.libre) {
+                <!-- La raya de corte cruza todos los días de la fila, como el cabezal cruza las pistas: cambian todos. -->
+                @if (!arrastre() && (gu.dia === f.dia || (gu.corte && f.tramo === gu.corte.tramo))) {
+                  @if (gu.libre && gu.dia === f.dia) {
                     <span class="tp-sem__nueva" aria-hidden="true" [style.left.%]="pos(gu.min)" [style.width.%]="largo(gu.min, gu.hasta)">
                       <sc-tp-icono nombre="plus" [tam]="12" />
                     </span>
                   }
-                  <span class="tp-sem__cursor t-num" aria-hidden="true" [style.left.%]="pos(gu.min)">
-                    <span class="tp-sem__cursor-hora">{{ hora(gu.min) }}</span>
+                  <span
+                    class="tp-sem__cursor t-num"
+                    aria-hidden="true"
+                    [class.is-corte]="!!gu.corte"
+                    [class.is-eco]="gu.dia !== f.dia"
+                    [style.left.%]="pos(gu.min)"
+                  >
+                    @if (gu.dia === f.dia) {
+                      <span class="tp-sem__cursor-hora">{{ hora(gu.min) }}</span>
+                    }
                   </span>
                 }
               }
@@ -414,6 +434,7 @@ export class TpSemanaComponent {
 
   /** Lo que dice la leyenda: cómo seguir con lo que hay elegido o copiado. */
   protected readonly ayuda = computed(() => {
+    if (this.guia()?.corte) return 'B divide aquí, Q quita lo de antes, W lo de después y Supr la franja entera';
     if (this.seleccion().length) return '⌘C copia, ⌘V pega, Supr borra y Esc suelta';
     if (PORTAPAPELES()) return 'Pasa por un día o pulsa su letra, y ⌘V pega lo copiado';
     return 'Arrastra sobre el rojo para añadir horas; pulsa una barra o un día para copiarlo';
@@ -545,6 +566,49 @@ export class TpSemanaComponent {
     return true;
   }
 
+  /**
+   * Lo que hacen las teclas con la raya de corte sobre una barra, como en un editor de vídeo: B (o C) divide ahí y deja
+   * una pausa de una hora si cabe; Q quita lo de antes de la raya, W lo de después, y Supr la franja entera. Cambia la
+   * fila de días que comparten esas horas, como arrastrar un borde.
+   */
+  private cortar(accion: 'dividir' | 'antes' | 'despues' | 'quitar'): boolean {
+    const g = this.guia();
+    const c = g?.corte;
+    if (!g || !c) return false;
+    const tramos = this.vivos();
+    const t = tramos[c.tramo];
+    const [ini, fin] = t?.franjas[c.franja] ?? [0, 0];
+    if (!t || ini !== c.f[0] || fin !== c.f[1]) return false;
+    const m = g.min;
+    const dias = losDias(t.dias);
+    let franjas: Franja[];
+    let aviso: string;
+    if (accion === 'dividir') {
+      const pausa = Math.min(PAUSA, Math.floor((fin - m - PASO) / PASO) * PASO);
+      if (m - ini < PASO || pausa < PASO) {
+        this.avisos.decir('Aquí no cabe una pausa: divide más lejos de los bordes');
+        return true;
+      }
+      franjas = t.franjas.flatMap((f, i) => (i === c.franja ? [[ini, m] as Franja, [m + pausa, fin] as Franja] : [f]));
+      aviso = `Dividido a las ${horaCorta(m)}, con pausa hasta las ${horaCorta(m + pausa)}`;
+    } else if (accion === 'antes' || accion === 'despues') {
+      const nueva: Franja = accion === 'antes' ? [m, fin] : [ini, m];
+      if (nueva[1] - nueva[0] < PASO) return true;
+      franjas = t.franjas.map((f, i) => (i === c.franja ? nueva : f));
+      aviso = accion === 'antes' ? `Ahora empieza a las ${horaCorta(m)}` : `Ahora acaba a las ${horaCorta(m)}`;
+    } else {
+      franjas = t.franjas.filter((_, i) => i !== c.franja);
+      aviso = `Quitada la franja de ${horaCorta(ini)} a ${horaCorta(fin)}`;
+    }
+    // Sin franjas, la fila se va y sus días quedan cerrados.
+    this.emitir(franjas.length ? tramos.map((x, i) => (i === c.tramo ? { ...x, franjas } : x)) : tramos.filter((_, i) => i !== c.tramo));
+    contarUso(accion === 'dividir' ? 'dividir' : accion === 'quitar' ? 'borrar' : 'recortar');
+    this.guia.set(null);
+    this.seleccion.set([]);
+    this.avisos.decir(`${this.capital(dias)}: ${aviso.charAt(0).toLowerCase()}${aviso.slice(1)}. ⌘Z lo deshace`);
+    return true;
+  }
+
   /** ⌘C, ⌘X, ⌘V y Supr sobre el mapa. Escribiendo en un campo o con un diálogo abierto, el teclado es suyo. */
   @HostListener('document:keydown', ['$event'])
   protected teclado(e: KeyboardEvent): void {
@@ -552,6 +616,14 @@ export class TpSemanaComponent {
     if (this.arrastre() || el?.closest('input, textarea, select, [contenteditable="true"], [role="dialog"], sc-tp-modal')) return;
     const mod = (e.metaKey || e.ctrlKey) && !e.altKey;
     const k = e.key.toLowerCase();
+    // Con la raya de corte sobre una barra: teclas de editor de vídeo, sin modificadores.
+    const corte = this.guia()?.corte;
+    // Supr va antes a lo elegido, si lo hay.
+    const borraElegido = (k === 'delete' || k === 'backspace') && this.seleccion().length > 0;
+    if (corte && !mod && !e.altKey && !e.shiftKey && !borraElegido && ['b', 'c', 'q', 'w', 'delete', 'backspace'].includes(k)) {
+      if (this.cortar(k === 'b' || k === 'c' ? 'dividir' : k === 'q' ? 'antes' : k === 'w' ? 'despues' : 'quitar')) e.preventDefault();
+      return;
+    }
     // Con texto seleccionado en la página, ⌘C copia ese texto, como siempre.
     const hayTexto = (window.getSelection()?.toString() ?? '') !== '';
     if (mod && !e.shiftKey && k === 'c' && !hayTexto) {
@@ -808,9 +880,16 @@ export class TpSemanaComponent {
     const pista = (e.currentTarget as HTMLElement).getBoundingClientRect();
     const m = this.minutoEn(e, pista);
     const h = this.hueco(dia, Math.min(m, 1440 - PASO));
-    // Sobre una barra la guía se calla: ahí habla la barra.
     if (!h) {
-      if (this.guia()) this.guia.set(null);
+      // Sobre una barra: la raya de corte, salvo en sus bordes (ahí se arrastra) y en las que cruzan la medianoche.
+      const t = (e.target as HTMLElement).closest('.tp-sem__asa') ? null : this.filas()[dia].trozos.find((x) => x.movible && m > x.desde && m < x.hasta);
+      if (!t) {
+        if (this.guia()) this.guia.set(null);
+        return;
+      }
+      const ya = this.guia();
+      if (ya?.dia === dia && ya.min === m && ya.corte) return;
+      this.guia.set({ dia, min: m, libre: false, hasta: m, corte: { tramo: t.tramo, franja: t.franja, f: [t.inicio, t.fin] } });
       return;
     }
     const desde = Math.min(Math.max(m, h.min), h.max - PASO);

@@ -279,6 +279,16 @@
   color: var(--tp-on-inverse);
   white-space: nowrap;
 }
+/* Sobre una barra, la raya es de corte (B divide, Q y W recortan): más gruesa y con un filo claro para verse sobre el verde. */
+.tp-sem__cursor.is-corte {
+  inline-size: 2px;
+  translate: -1px 0;
+  box-shadow: 0 0 0 1px color-mix(in oklch, var(--tp-surface) 80%, transparent);
+}
+/* En los demás días de la fila, la misma raya más suave: dice que el corte también les toca. */
+.tp-sem__cursor.is-eco {
+  opacity: 0.45;
+}
 .tp-sem__fila:has(.tp-sem__cursor) .tp-sem__letra {
   color: var(--tp-ink);
 }
