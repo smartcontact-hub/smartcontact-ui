@@ -12,6 +12,7 @@ import {
   informeEnTexto,
   leerResultados,
   limpio,
+  META,
   numeroDe,
   ordenDeVersiones,
   pSignos,
@@ -131,12 +132,33 @@ export class PruebaControlComponent {
     return p ? informe(p, this.resultados()) : null;
   });
 
-  /** El marcador: cada versión con su letra, su enlace y, si ya hay datos, cuánto se resuelve bien y sin ayuda. */
+  /**
+   * El marcador: cada versión con su letra, su enlace y, si ya hay datos, cuánto se resuelve bien y sin ayuda. Con una
+   * sola versión no hay con qué compararla, y el marcador pasa a ser cada tarea frente a la meta.
+   */
   protected readonly marcador = computed(() => {
     const p = this.plan();
     const v = this.veredicto();
     const inf = this.informe();
     if (!p || !v) return [];
+    if (v.tareas) {
+      return v.tareas.map((t, i) => {
+        const m = inf?.tareas.find((x) => x.id === t.id)?.versiones[0] ?? null;
+        return {
+          id: t.id,
+          letra: String(i + 1),
+          nombre: t.titulo,
+          url: p.versiones[0].url,
+          limpias: t.limpias,
+          intentos: t.intentos,
+          proporcion: t.intentos ? t.limpias / t.intentos : 0,
+          seq: m?.seq ?? null,
+          tot: m?.tot ?? null,
+          gana: t.cumple,
+          sello: 'Cumple',
+        };
+      });
+    }
     const unaTarea = inf?.tareas.length === 1 ? inf.tareas[0] : null;
     return p.versiones.map((ver, i) => {
       const r = v.resumen.find((x) => x.id === ver.id);
@@ -153,6 +175,7 @@ export class PruebaControlComponent {
         seq: m?.seq ?? null,
         tot: m?.tot ?? null,
         gana: v.ganadora === ver.id,
+        sello: 'Gana',
       };
     });
   });
@@ -252,9 +275,16 @@ export class PruebaControlComponent {
     }));
   });
 
+  /** Con una sola versión: la meta de cada tarea, en porcentaje. */
+  protected readonly porcentajeMeta = computed(() => `${Math.round((this.plan()?.meta ?? META) * 100)} %`);
+
   /** Lo que hace falta para que una diferencia cuente con las personas de esta prueba, sacado de la propia regla. */
   protected readonly hacenFalta = computed(() => {
     const n = this.plan()?.personas ?? 0;
+    if (this.plan()?.versiones.length === 1) {
+      const meta = this.plan()?.meta ?? META;
+      return `Con ${n} personas, cumple desde ${Math.ceil(meta * n - 1e-9)} de ${n} en cada tarea.`;
+    }
     const pares: string[] = [];
     for (let b = 0; b < n; b++) {
       let a = b + 1;

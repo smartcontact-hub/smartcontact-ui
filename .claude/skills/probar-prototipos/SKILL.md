@@ -34,6 +34,9 @@ control del Lab, y allí está todo.
      de partida: si el día de una ya es festivo en un calendario (el 15 de mayo es San Isidro en Madrid), esa pide la
      mitad de trabajo. Un ensayo sin hacer nada debe sacar los mismos puntos en las dos.
    - Personas: 6 por defecto (de 5 a 10). Con menos de 5 la regla nunca da ganadora; dilo antes de empezar.
+   - ¿No hay con qué comparar? Una sola versión también vale: cada tarea lleva una sola misión, ordenadas de la más
+     sencilla a la más difícil, y la prueba dice si cada una **cumple** la `meta` del plan (80 % bien y sin ayuda si no
+     dice otra). Es la pregunta «¿sale sin ayuda?», no «¿cuál es mejor?» (DD-256 §10).
 
 2. **Prepara cada rama** (si no, la prueba igual funciona: quien modera marca si salió bien):
    - Que traiga `main` (si no, no tiene el modo prueba).

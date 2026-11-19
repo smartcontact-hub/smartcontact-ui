@@ -15,6 +15,8 @@ export interface PlanMinimo {
   readonly id: string;
   readonly versiones: readonly Version[];
   readonly tareas: readonly Tarea[];
+  /** Con una sola versión: lo que cada tarea tiene que salir bien y sin ayuda para cumplir (0 a 1; si no, `META`). */
+  readonly meta?: number;
 }
 export interface Paso {
   version: string;
@@ -72,17 +74,29 @@ export interface ResumenVersion {
   segundos: number | null;
   preferida: number;
 }
+/** Con una sola versión: cómo le va a cada tarea frente a la meta. */
+export interface CumplimientoTarea {
+  id: string;
+  titulo: string;
+  intentos: number;
+  limpias: number;
+  cumple: boolean;
+}
 export interface Veredicto {
   personas: number;
   resumen: ResumenVersion[];
   ganadora: string | null;
   motivo: Criterio | null;
   frase: string;
+  /** Solo con una versión: la meta y cada tarea frente a ella. */
+  meta?: number;
+  tareas?: CumplimientoTarea[];
 }
 
 export const CODIGO_RESULTADO: string;
 export const UMBRAL: number;
 export const FACTOR_TIEMPO: number;
+export const META: number;
 export function codificar(valor: unknown): string;
 export function decodificar(texto: string): unknown;
 export function numeroDe(participante: string): number;

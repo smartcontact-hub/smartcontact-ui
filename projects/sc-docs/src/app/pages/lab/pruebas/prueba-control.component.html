@@ -15,7 +15,7 @@
     @if (veredicto(); as v) {
       <section class="pc-marcador" aria-labelledby="pc-veredicto">
         <h2 id="pc-veredicto" class="pc-veredicto pc-entra sc-text-h3-semibold" aria-live="polite">
-          {{ v.personas ? v.frase : 'Cuando llegue el primer resultado, aquí verás cuál gana.' }}
+          {{ v.personas ? v.frase : v.tareas ? 'Cuando llegue el primer resultado, aquí verás si cada tarea cumple.' : 'Cuando llegue el primer resultado, aquí verás cuál gana.' }}
         </h2>
         <div class="pc-versiones">
           @for (ver of marcador(); track ver.id; let i = $index) {
@@ -29,7 +29,7 @@
                 <span class="pc-letra sc-text-body-semibold" aria-hidden="true">{{ ver.letra }}</span>
                 <h3 [id]="'pc-v-' + ver.id" class="pc-version__nombre sc-text-subtitle-semibold">{{ ver.nombre }}</h3>
                 @if (ver.gana) {
-                  <sc-tag severity="success" value="Gana" />
+                  <sc-tag severity="success" [value]="ver.sello" />
                 }
                 <a
                   class="pc-enlace sc-text-body-semibold"
@@ -300,18 +300,29 @@
               </ol>
             }
             <p class="pc-nota sc-text-caption-regular">
-              Cada persona hace una en cada versión, en el orden en que le tocan: el mismo trabajo con otros datos.
+              @if (p.versiones.length > 1) {
+                Cada persona hace una en cada versión, en el orden en que le tocan: el mismo trabajo con otros datos.
+              } @else {
+                Cada persona hace las tareas en este orden, de la más sencilla a la más difícil.
+              }
               {{ p.correccion ?? 'Al acabar cada una, quien modera marca si salió bien.' }}
             </p>
           </section>
           <section class="pc-bloque" aria-labelledby="pc-regla">
             <h3 id="pc-regla" class="sc-text-body-semibold">Cómo se decide</h3>
-            <ol class="pc-lista sc-text-body-regular">
-              <li>Gana la que más personas resuelven bien y sin ayuda.</li>
-              <li>Si empatan, la que les resulta más fácil.</li>
-              <li>Luego el tiempo, solo si una tarda la mitad más.</li>
-              <li>Al final, la que prefieren.</li>
-            </ol>
+            @if (p.versiones.length > 1) {
+              <ol class="pc-lista sc-text-body-regular">
+                <li>Gana la que más personas resuelven bien y sin ayuda.</li>
+                <li>Si empatan, la que les resulta más fácil.</li>
+                <li>Luego el tiempo, solo si una tarda la mitad más.</li>
+                <li>Al final, la que prefieren.</li>
+              </ol>
+            } @else {
+              <ol class="pc-lista sc-text-body-regular">
+                <li>Una tarea cumple si sale bien y sin ayuda al menos el {{ porcentajeMeta() }} de las veces.</li>
+                <li>La facilidad, el tiempo y los clics no deciden: dicen dónde mirar.</li>
+              </ol>
+            }
             <p class="pc-nota sc-text-caption-regular">{{ hacenFalta() }}</p>
           </section>
         </div>

@@ -25,7 +25,11 @@ import { pruebaPorId } from './pruebas.data';
           <p class="puerta__ante sc-text-caption-semibold">Prueba de una pantalla del Supervisor</p>
           <h1 id="prueba-inicio-titulo" class="sc-text-h2-semibold">Gracias por echarnos una mano</h1>
           <p class="sc-text-body-regular">
-            Vas a probar {{ p.versiones.length }} versiones de la misma pantalla con
+            @if (p.versiones.length > 1) {
+              Vas a probar {{ p.versiones.length }} versiones de la misma pantalla con
+            } @else {
+              Vas a probar una pantalla con
+            }
             {{ pasos() }} tareas cortas, unos {{ p.minutos }} minutos. Cada tarea empieza con lo que hay que hacer;
             cuando acabes, pulsa «He terminado».
           </p>

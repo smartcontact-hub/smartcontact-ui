@@ -12,12 +12,15 @@
  * preferencia. Cada criterio cuenta solo las veces en que las versiones se separan y aplica una prueba de signos: con
  * 5 a 10 personas, una diferencia solo cuenta si p < 0,10 (el umbral que usa MeasuringU con muestras pequeñas). Con 6
  * personas hace falta un 5 a 0; un 4 a 2 es empate, y entonces decide lo que se vio en las sesiones.
+ *
+ * Con UNA sola versión no hay con qué compararla: la prueba comprueba si cumple. Cada tarea tiene una sola misión, y
+ * cumple si sale bien y sin ayuda al menos la `meta` de las veces (el 80 % si el plan no dice otra: con 6 personas, 5).
  */
 
 /**
  * @typedef {{ readonly id: string, readonly nombre: string, readonly url: string }} Version
  * @typedef {{ readonly id: string, readonly titulo: string, readonly gemelas: readonly string[], readonly nota?: string }} Tarea
- * @typedef {{ readonly id: string, readonly versiones: readonly Version[], readonly tareas: readonly Tarea[] }} PlanMinimo
+ * @typedef {{ readonly id: string, readonly versiones: readonly Version[], readonly tareas: readonly Tarea[], readonly meta?: number }} PlanMinimo
  * @typedef {{ version: string, url: string, mision: string, titulo: string, enunciado: string, nota?: string }} Paso
  * @typedef {{ readonly bien: number, readonly total: number, readonly titular?: string }} Comprobacion
  * @typedef {{
@@ -40,6 +43,9 @@ export const UMBRAL = 0.1;
 
 /** Lo que una versión tiene que tardar de más para que el tiempo cuente: un 50 %. */
 export const FACTOR_TIEMPO = 1.5;
+
+/** Con una sola versión, lo que cada tarea tiene que salir bien y sin ayuda para que cumpla, si el plan no dice otra. */
+export const META = 0.8;
 
 /* ───────────────────────────── El enlace (copia del de `prueba-enlace.core.mjs` del Supervisor) ───────────────────────────── */
 
@@ -343,6 +349,7 @@ export function veredicto(plan, resultados) {
   });
 
   const base = { personas: propios.length, resumen };
+  if (ids.length === 1) return cumplimiento(plan, propios, base);
   if (!propios.length) return { ...base, ganadora: null, motivo: null, frase: 'Aún no hay resultados.' };
 
   for (const c of CRITERIOS) {
@@ -373,6 +380,36 @@ export function veredicto(plan, resultados) {
     ganadora: null,
     motivo: null,
     frase: `Empate: con ${propios.length} ${propios.length === 1 ? 'persona' : 'personas'} los datos no separan las versiones.${pocas} Decide lo que visteis en las sesiones.`,
+  };
+}
+
+/**
+ * Con una sola versión no hay ganadora: cada tarea cumple o no la meta, y la frase dice cuáles no llegan.
+ * @param {PlanMinimo} plan
+ * @param {readonly Resultado[]} propios
+ * @param {{ personas: number, resumen: object[] }} base
+ */
+function cumplimiento(plan, propios, base) {
+  const meta = plan.meta ?? META;
+  const tareas = plan.tareas.map((t) => {
+    const hechos = propios.flatMap((r) => r.pasos.filter((p) => p.mision.startsWith(`${t.id}-`) && limpio(p) !== null));
+    const limpias = hechos.filter((p) => limpio(p) === true).length;
+    return { id: t.id, titulo: t.titulo, intentos: hechos.length, limpias, cumple: hechos.length > 0 && limpias / hechos.length >= meta };
+  });
+  const todo = { ...base, meta, tareas, ganadora: null, motivo: null };
+  if (!propios.length) return { ...todo, frase: 'Aún no hay resultados.' };
+  const porcentaje = `${Math.round(meta * 100)} %`;
+  const pocas = propios.length < 5 ? ' Con menos de 5 personas es solo una pista.' : '';
+  const medidas = tareas.filter((t) => t.intentos > 0);
+  const fallan = medidas.filter((t) => !t.cumple);
+  if (!fallan.length) {
+    const cuales = medidas.length === 1 ? 'la tarea sale' : `las ${medidas.length} tareas salen`;
+    return { ...todo, frase: `Cumple: ${cuales} bien y sin ayuda al menos el ${porcentaje} de las veces.${pocas}` };
+  }
+  const lista = fallan.map((t) => `«${t.titulo}», ${t.limpias} de ${t.intentos}`).join('; ');
+  return {
+    ...todo,
+    frase: `No cumple en ${fallan.length} de ${medidas.length}: ${lista} bien y sin ayuda, y la meta es el ${porcentaje}.${pocas}`,
   };
 }
 
@@ -525,7 +562,7 @@ export function informe(plan, resultados) {
       const anota = (h) => hallazgos.push({ ...h, version: m.id, nombre: m.nombre, tarea });
 
       // TSR: la tarea no sale. Con lo que más falta, si la rama corrige y lo dice.
-      if (m.tsr && m.tsr.pct < REFERENCIAS.tsr) {
+      if (m.tsr && m.tsr.pct < (plan.meta ?? REFERENCIAS.tsr)) {
         const titulares = contar(
           pasos.filter((p) => limpio(p) === false && p.comprobacion?.titular).map((p) => /** @type {string} */ (p.comprobacion?.titular)),
         );
@@ -535,7 +572,7 @@ export function informe(plan, resultados) {
           gravedad: m.tsr.pct < 0.5 ? 'alta' : 'media',
           sigla: 'TSR',
           titulo: `${m.nombre}: la tarea no sale${en}`,
-          evidencia: `TSR ${m.tsr.exitos} de ${m.n} (${pct(m.tsr.pct)}; entre el ${pct(m.tsr.ic[0])} y el ${pct(m.tsr.ic[1])}), por debajo del ${pct(REFERENCIAS.tsr)} de media.${falta ? ` Lo que más falta: «${falta}» (${veces} ${veces === 1 ? 'vez' : 'veces'}).` : ''}`,
+          evidencia: `TSR ${m.tsr.exitos} de ${m.n} (${pct(m.tsr.pct)}; entre el ${pct(m.tsr.ic[0])} y el ${pct(m.tsr.ic[1])}), ${plan.meta ? `por debajo de la meta del ${pct(plan.meta)}` : `por debajo del ${pct(REFERENCIAS.tsr)} de media`}.${falta ? ` Lo que más falta: «${falta}» (${veces} ${veces === 1 ? 'vez' : 'veces'}).` : ''}`,
           accion: falta
             ? `Haz que no se pueda pasar por alto lo que más se queda sin hacer: «${falta}».`
             : 'Busca en las sesiones el paso donde se tuerce: la tarea no sale sola.',

@@ -176,3 +176,66 @@ test('si una persona manda su resultado dos veces, cuenta una', () => {
   const rs = [persona('P1', BIEN, MAL), persona('P1', BIEN, MAL)];
   assert.equal(veredicto(PLAN, rs).personas, 1);
 });
+
+/* Una sola versión: no se compara, se comprueba si cada tarea llega a la meta. */
+const UNA = {
+  id: 'una',
+  versiones: [{ id: 'H', nombre: 'Horarios', url: 'https://claude-a.sc-supervisor.pages.dev/lab/x' }],
+  tareas: [
+    { id: 'facil', titulo: 'Cambiar la hora de cierre', gemelas: ['Cierra a las 19:00'] },
+    { id: 'dificil', titulo: 'Crear un horario partido', gemelas: ['Mañana y tarde'] },
+  ],
+};
+
+/** Una persona en la prueba de una versión: `facil` y `dificil` dicen si le salió bien, y `ayuda` si la pidió. */
+function enUna(p, facil, dificil, ayuda = false) {
+  const paso = (mision, bien) => ({
+    version: 'H',
+    mision,
+    ms: 60000,
+    clics: 8,
+    primerClic: null,
+    enVacio: [],
+    pantallas: [],
+    ayudas: ayuda && mision.startsWith('dificil') ? [{ ms: 1000, pantalla: '/' }] : [],
+    comprobacion: { bien: bien ? 7 : 5, total: 7 },
+    moderador: null,
+    facilidad: 5,
+  });
+  return { v: 1, prueba: 'una', participante: p, orden: ['H'], pasos: [paso('facil-1', facil), paso('dificil-1', dificil)] };
+}
+
+test('con una sola versión, cada persona hace una misión por tarea', () => {
+  assert.deepEqual(
+    pasosDe(UNA, 'P2').map((p) => p.mision),
+    ['facil-1', 'dificil-1'],
+  );
+});
+
+test('con una sola versión no hay ganadora: cumple si cada tarea llega al 80 % bien y sin ayuda', () => {
+  const seis = ['P1', 'P2', 'P3', 'P4', 'P5', 'P6'];
+  const cumple = veredicto(UNA, seis.map((p, i) => enUna(p, true, i > 0)));
+  assert.equal(cumple.ganadora, null);
+  assert.deepEqual(
+    cumple.tareas?.map((t) => [t.limpias, t.intentos, t.cumple]),
+    [
+      [6, 6, true],
+      [5, 6, true],
+    ],
+  );
+  assert.match(cumple.frase, /^Cumple: las 2 tareas/);
+
+  const no = veredicto(UNA, seis.map((p, i) => enUna(p, true, i > 1)));
+  assert.equal(no.tareas?.[1].cumple, false);
+  assert.match(no.frase, /^No cumple en 1 de 2: «Crear un horario partido», 4 de 6/);
+});
+
+test('con una sola versión, pedir ayuda no cuenta y la meta se puede cambiar en el plan', () => {
+  const seis = ['P1', 'P2', 'P3', 'P4', 'P5', 'P6'];
+  const conAyuda = veredicto(UNA, seis.map((p) => enUna(p, true, true, p === 'P1' || p === 'P2')));
+  assert.equal(conAyuda.tareas?.[1].limpias, 4);
+  assert.equal(conAyuda.tareas?.[1].cumple, false);
+  assert.equal(veredicto({ ...UNA, meta: 0.6 }, seis.map((p) => enUna(p, true, p !== 'P1' && p !== 'P2'))).tareas?.[1].cumple, true);
+  assert.match(veredicto(UNA, [enUna('P1', true, true)]).frase, /solo una pista/);
+  assert.equal(veredicto(UNA, []).frase, 'Aún no hay resultados.');
+});

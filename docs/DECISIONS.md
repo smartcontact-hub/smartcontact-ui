@@ -266,6 +266,11 @@ estrenarlo con Horarios A y B.
    bien y sin ayuda y su barra), un punto por persona que copia su enlace y se enciende al llegar su código, la caja que
    coge los códigos al pegarlos y los tres accionables más graves. Las métricas, persona a persona, cómo acompañar la
    sesión, la tarea y la regla van plegadas en «Todo el detalle». Sirve igual para cualquier prueba del plan.
+10. **Una sola versión: comprobar en vez de comparar** (enmienda, 2026-11-19). Un plan con una versión no tiene rival:
+    cada tarea lleva una sola misión, de la más sencilla a la más difícil, y **cumple** si sale bien y sin ayuda al menos
+    la `meta` del plan (el 80 % si no dice otra: con 6 personas, 5). El veredicto dice qué tareas no llegan y con qué
+    cifra; el marcador pasa a ser una tarjeta por tarea con «Cumple», y el accionable de TSR se lee contra la meta.
+    La estrena el cierre de Horarios (`horarios-cierre`: hora de cierre, viernes con otro horario y jornada partida).
 
 **Razón** · Con 5 a 10 personas lo que separa versiones es si la tarea sale o no sin ayuda; lo demás explica por qué. El
 umbral se fija para que la herramienta diga «empate» cuando los datos no alcanzan, en vez de dar ganadora con 4 a 2. Los
