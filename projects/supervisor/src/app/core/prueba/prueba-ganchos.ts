@@ -4,7 +4,7 @@
  *
  *   reiniciar(mision)   deja los datos como deben estar al empezar esa misión.
  *   comprobar(mision)   corrige lo que hay ahora contra lo que pedía la misión. Si existe, manda sobre lo que marque
- *                       quien modera.
+ *                       quien modera. Puede contar además qué usó la persona de la pantalla (`usos`): explica, no decide.
  *
  * La misión llega como `<tarea>-<vuelta>` («festivo-1», «festivo-2»): la vuelta dice qué gemela tocó. Se registra al
  * arrancar la rama, por ejemplo con `provideAppInitializer(() => registrarPrueba({ … }))` en su configuración, para que
@@ -20,6 +20,11 @@ export interface ComprobacionDePrueba {
   readonly total: number;
   /** Lo que se lee de un vistazo: «362 de 365 días bien». */
   readonly titular?: string;
+  /**
+   * Cuántas veces usó la persona algo de la pantalla durante la misión, por nombre: `{ copiar: 2, pegar: 2 }`. Sirve
+   * para saber si una función se descubre sola; no cuenta para el veredicto.
+   */
+  readonly usos?: Readonly<Record<string, number>>;
 }
 
 export interface GanchosDePrueba {

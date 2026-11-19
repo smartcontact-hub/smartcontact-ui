@@ -6,6 +6,7 @@ import { HORARIOS_SEMILLA } from '@features/admin/repositories/state/horarios.se
 import { HorariosStore } from '@features/admin/repositories/state/horarios.store';
 
 import { NOMBRES } from './tp-modelo';
+import { ponerUsosACero, usosDelEditor } from './tp-usos';
 
 /**
  * LA PRUEBA CON PERSONAS DEL CIERRE DE HORARIOS (modo prueba común, DD-256): tres misiones de menos a más, sobre la
@@ -19,6 +20,9 @@ import { NOMBRES } from './tp-modelo';
  *
  * Se corrige día a día (7 de 7 es que salió bien) y solo lo GUARDADO: guardar es parte de la tarea. El titular se repite
  * igual entre personas a propósito («Sin guardar», «Mal: viernes») para que el informe cuente lo que más falta.
+ *
+ * Con la corrección van los gestos que usó (`tp-usos.ts`: elegir, copiar, pegar, pintar, deshacer…), contados desde que
+ * empezó la misión: dicen si copiar y pegar se descubre sin explicarlo. No cuentan para el veredicto.
  */
 
 const LJ: Franja = [540, 840];
@@ -75,8 +79,15 @@ export function comprobarMision(items: readonly Horario[], mision: string): { bi
 export function registrarPruebaDeHorarios(injector: Injector): void {
   const store = injector.get(HorariosStore);
   registrarPrueba({
-    // Cada misión empieza con la semilla: ni lo que hizo la anterior ni un ensayo previo.
-    reiniciar: () => store.setItems(() => HORARIOS_SEMILLA),
-    comprobar: (mision) => comprobarMision(store.items(), mision) ?? { bien: 0, total: 1, titular: 'Misión desconocida' },
+    // Cada misión empieza con la semilla (ni lo que hizo la anterior ni un ensayo previo) y sin gestos contados.
+    reiniciar: () => {
+      store.setItems(() => HORARIOS_SEMILLA);
+      ponerUsosACero();
+    },
+    comprobar: (mision) => {
+      const c = comprobarMision(store.items(), mision) ?? { bien: 0, total: 1, titular: 'Misión desconocida' };
+      const usos = usosDelEditor();
+      return Object.keys(usos).length ? { ...c, usos } : c;
+    },
   });
 }

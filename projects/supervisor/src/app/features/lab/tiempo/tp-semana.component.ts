@@ -6,6 +6,7 @@ import { TpIconoComponent } from './tp-icono.component';
 import { horaCorta, horas, LETRAS, NOMBRES, semanaDe, type Tramo, tramosDe, trozosDelDia } from './tp-modelo';
 import { type OpcionSeg, TpAvisos, TpHoraComponent, TpSegComponent } from './tp-piezas';
 import { T } from './tp-textos';
+import { contarUso } from './tp-usos';
 
 const PROBLEMA: Record<string, string> = {
   hora: 'falta una hora o no es válida',
@@ -74,6 +75,12 @@ const PORTAPAPELES = signal<Copiado | null>(
 );
 
 const enLista = (xs: readonly string[]): string => (xs.length > 1 ? `${xs.slice(0, -1).join(', ')} y ${xs[xs.length - 1]}` : (xs[0] ?? ''));
+
+/** Los días de un aviso: tres o más seguidos, «de lunes a viernes»; si no, uno a uno. Van en orden. */
+const losDias = (dias: readonly number[]): string =>
+  dias.length >= 3 && dias.every((d, i) => i === 0 || d === dias[i - 1] + 1)
+    ? `de ${NOMBRES[dias[0]]} a ${NOMBRES[dias[dias.length - 1]]}`
+    : enLista(dias.map((d) => NOMBRES[d]));
 
 /** Lo que dice la guía al pasar por una fila: la hora bajo el puntero y, si ahí cabe una franja, hasta dónde iría. */
 interface Guia {
@@ -413,6 +420,7 @@ export class TpSemanaComponent {
   });
 
   protected elegirDia(e: MouseEvent, dia: number): void {
+    contarUso('elegir');
     const antes = this.seleccion();
     if (e.shiftKey && this.ancla !== null) {
       const [a, b] = [Math.min(this.ancla, dia), Math.max(this.ancla, dia)];
@@ -430,6 +438,7 @@ export class TpSemanaComponent {
 
   protected elegirBarra(e: MouseEvent, dia: number, franja: number): void {
     if (this.trasArrastre || franja < 0) return;
+    contarUso('elegir');
     const antes = this.seleccion();
     const ya = antes.some((x) => x.dia === dia && x.franja === franja);
     if (e.shiftKey || e.metaKey || e.ctrlKey) {
@@ -473,7 +482,7 @@ export class TpSemanaComponent {
     } catch {
       // sin portapapeles del sistema: se pega igual dentro de Horarios
     }
-    const que = dias.length === 1 ? this.textoDe(dias, franjas).replace(':', '') : enLista(dias.map((d) => NOMBRES[d]));
+    const que = dias.length === 1 ? this.textoDe(dias, franjas).replace(':', '') : losDias(dias);
     this.avisos.decir(`Copiado: ${que.charAt(0).toLowerCase()}${que.slice(1)}. Señala otro día y pulsa ⌘V`);
     return true;
   }
@@ -506,14 +515,16 @@ export class TpSemanaComponent {
       });
     }
     if (JSON.stringify(nueva) === antes) {
-      this.avisos.decir(`${this.capital(enLista(tocados.map((d) => NOMBRES[d])))} ya tiene esas horas: señala otro día`);
+      this.avisos.decir(`${this.capital(losDias(tocados))} ${tocados.length > 1 ? 'ya tienen' : 'ya tiene'} esas horas: señala otro día`);
       return true;
     }
     this.seleccion.set([]);
     this.emitir(tramosDe(nueva));
+    contarUso('pegar');
     this.pegados.set(tocados);
     setTimeout(() => this.pegados.set([]), 900);
-    this.avisos.decir(`Pegado en ${enLista(tocados.map((d) => NOMBRES[d]))}. ⌘Z lo deshace`);
+    const donde = losDias(tocados);
+    this.avisos.decir(`Pegado ${donde.startsWith('de ') ? donde : `en ${donde}`}. ⌘Z lo deshace`);
     return true;
   }
 
@@ -529,7 +540,7 @@ export class TpSemanaComponent {
     this.seleccion.set([]);
     this.emitir(tramosDe(nueva));
     const todo = dias.every((d) => nueva[d].length === 0);
-    const que = enLista(dias.map((d) => NOMBRES[d]));
+    const que = losDias(dias);
     this.avisos.decir(`${corte ? 'Cortado' : todo ? 'Cerrado' : 'Borrado'}: ${que}. ⌘Z lo deshace`);
     return true;
   }
@@ -544,13 +555,22 @@ export class TpSemanaComponent {
     // Con texto seleccionado en la página, ⌘C copia ese texto, como siempre.
     const hayTexto = (window.getSelection()?.toString() ?? '') !== '';
     if (mod && !e.shiftKey && k === 'c' && !hayTexto) {
-      if (this.copiar()) e.preventDefault();
+      if (this.copiar()) {
+        e.preventDefault();
+        contarUso('copiar');
+      }
     } else if (mod && !e.shiftKey && k === 'x' && !hayTexto) {
-      if (this.copiar() && this.borrar(true)) e.preventDefault();
+      if (this.copiar() && this.borrar(true)) {
+        e.preventDefault();
+        contarUso('cortar');
+      }
     } else if (mod && !e.shiftKey && k === 'v') {
       if (this.pegar()) e.preventDefault();
     } else if (!mod && (e.key === 'Delete' || e.key === 'Backspace')) {
-      if (this.borrar()) e.preventDefault();
+      if (this.borrar()) {
+        e.preventDefault();
+        contarUso('borrar');
+      }
     } else if (e.key === 'Escape' && !this.arrastre()) {
       this.seleccion.set([]);
     }
@@ -881,6 +901,8 @@ export class TpSemanaComponent {
     if (!a) return;
     // Un clic en lo rojo, sin arrastrar, pone una hora (o lo que quepa).
     if (a.lado === 'pintar' && !a.movido) this.ponerFranja(a.tramo, a.franja, [a.f0[0], Math.min(a.f0[0] + 60, a.max)]);
+    if (a.lado === 'pintar') contarUso('pintar');
+    else if (a.movido) contarUso('arrastrar');
     // El clic que sigue a soltar un arrastre no elige la barra.
     if (a.movido) {
       this.trasArrastre = true;

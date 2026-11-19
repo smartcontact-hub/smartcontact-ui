@@ -14,6 +14,7 @@ import { descripcionDe, horas, minutosDeSemana, soloSemana } from './tp-modelo';
 import { TpAvisos, TpAvisosComponent, TpModalComponent } from './tp-piezas';
 import { TpSemanaComponent } from './tp-semana.component';
 import { T } from './tp-textos';
+import { contarUso } from './tp-usos';
 
 type Borrador = Omit<Horario, 'id'>;
 
@@ -167,6 +168,7 @@ export class TpHorarioPage implements OnInit {
   protected deshacer(): void {
     const p = this.pasado();
     if (!p.length) return;
+    contarUso('deshacer');
     this.futuro.update((f) => [...f, this.form()]);
     this.form.set(p[p.length - 1]);
     this.pasado.set(p.slice(0, -1));
@@ -176,6 +178,7 @@ export class TpHorarioPage implements OnInit {
   protected rehacer(): void {
     const f = this.futuro();
     if (!f.length) return;
+    contarUso('rehacer');
     this.pasado.update((p) => [...p, this.form()]);
     this.form.set(f[f.length - 1]);
     this.futuro.set(f.slice(0, -1));
