@@ -1517,10 +1517,11 @@
         "title_bulk": "Delete {{count}} schedules?"
       },
       "section_week_view": "Week",
-      "section_week_view_hint": "When each day is served",
+      "section_week_view_hint": "Drag over the hours to open a slot; drag its edges to change it",
       "days_open": "Days served",
       "no_days_open": "No day is served yet.",
       "sv": {
+        "remove": "Remove the slot",
         "day_closed": "Closed day",
         "total": "{{hours}} a week",
         "prev": "Previous week",
@@ -1530,6 +1531,15 @@
         "closed": "Not served"
       },
       "col_schedule": "Schedule",
+      "uses": {
+        "groups": "Groups",
+        "vui": "VUI",
+        "mailboxes": "Mailboxes",
+        "agendas": "Agendas",
+        "teams": "Teams",
+        "campaigns": "Campaigns"
+      },
+      "precise_title": "Fine-tune",
       "col_availability": "Availability",
       "col_use": "Use",
       "section_uses": "Where it is used",

@@ -12,14 +12,42 @@
           <span class="fila__dia">
             <span class="fila__letra sc-text-body-semibold">{{ d.letra }}</span>
           </span>
-          <!-- La línea del día: sobre fondo rosa («no se atiende»), cada tramo abierto en verde, a su minuto. -->
-          <span class="pista" role="img" [attr.aria-label]="d.aria">
+          <!-- La línea del día: se aprieta en un hueco y se arrastra, sin soltar, hasta donde se quiera; al soltar queda un tramo. -->
+          <span
+            class="pista"
+            role="group"
+            [attr.aria-label]="d.aria"
+            (pointerdown)="empezar($event, d.indice)"
+            (pointermove)="mover($event)"
+            (pointerup)="soltar($event)"
+            (pointercancel)="cancelar()"
+          >
             @for (b of d.barras; track $index) {
-              <span class="barra sc-text-caption-semibold" [style.left.%]="b.izq" [style.width.%]="b.ancho">
+              <span
+                class="barra sc-text-caption-semibold"
+                [class.barra--fija]="!b.editable"
+                [style.left.%]="b.izq"
+                [style.width.%]="b.ancho"
+                [attr.tabindex]="b.editable ? 0 : null"
+                (keydown.delete)="b.editable && quitar(d.indice, b.idx)"
+                (keydown.backspace)="b.editable && quitar(d.indice, b.idx)"
+              >
+                @if (b.editable) {
+                  <span class="asa asa--ini" aria-hidden="true" (pointerdown)="empezarBorde($event, d.indice, b.idx, 'ini')"></span>
+                }
                 @if (b.conTexto) {
-                  {{ b.texto }}
+                  <span class="barra__texto">{{ b.texto }}</span>
+                }
+                @if (b.editable) {
+                  <button type="button" class="barra__quitar" [attr.aria-label]="'repositories.horarios.sv.remove' | translate" (pointerdown)="$event.stopPropagation()" (click)="quitar(d.indice, b.idx)">
+                    <sc-icon name="close" [size]="12" aria-hidden="true" />
+                  </button>
+                  <span class="asa asa--fin" aria-hidden="true" (pointerdown)="empezarBorde($event, d.indice, b.idx, 'fin')"></span>
                 }
               </span>
+            }
+            @if (d.seleccion; as s) {
+              <span class="seleccion sc-text-caption-semibold" [style.left.%]="s.izq" [style.width.%]="s.ancho">{{ s.texto }}</span>
             }
             @if (d.nota) {
               <span class="pista__nota sc-text-caption-semibold"><sc-icon name="block" [size]="14" aria-hidden="true" />{{ d.nota }}</span>

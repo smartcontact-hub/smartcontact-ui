@@ -32,6 +32,7 @@ import { HorarioPeriodoModalComponent } from '../components/horario/horario-peri
 import { DIAS_DE_LA_SEMANA, HorarioSemanaComponent } from '../components/horario/horario-semana.component';
 import { FestivosStore } from '../state/festivos.store';
 import { subcanalesConHorario } from '../state/horario-uso.service';
+import { CLAVE_DE_USO, usosDelHorario } from '../state/horario-usos';
 import {
   ahoraEn,
   duenoDe,
@@ -198,16 +199,12 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
     if (id === null || this.mode() !== 'edit') return [];
     return this.groupsStore.groups().filter((g) => subcanalesConHorario(g).some((s) => s.id === id));
   });
-  /** Dónde se usa: cada grupo con los canales por los que atiende con este horario (Web Chat, WhatsApp). */
+  /** Dónde se usa: por sitios (grupos, VUI, buzones, agendas, equipos, campañas), cada uno con sus nombres. */
   protected readonly usos = computed(() => {
-    const id = this.horarioId;
-    return this.grupos().map((g) => ({
-      id: g.id,
-      nombre: g.name,
-      canales: subcanalesConHorario(g)
-        .filter((s) => s.id === id)
-        .map((s) => (s.sub === 'chat' ? 'Web Chat' : 'WhatsApp'))
-        .join(' · '),
+    this.lang();
+    return usosDelHorario(this.mode() === 'edit' ? this.horarioId : null, this.groupsStore.groups()).map((u) => ({
+      ...u,
+      titulo: this.translate.instant(`repositories.horarios.uses.${CLAVE_DE_USO[u.tipo]}`) as string,
     }));
   });
 

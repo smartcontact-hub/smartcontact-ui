@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import type { GroupRef } from '@smartcontact-hub/components';
 
 import { injectLangChange } from '@core/utils/lang-change';
 import { GroupsStore } from '@features/admin/groups/state/groups.store';
@@ -8,7 +7,8 @@ import { GroupsStore } from '@features/admin/groups/state/groups.store';
 import { DIAS_DE_LA_SEMANA } from '../components/horario/horario-semana.component';
 import { RepoListPageComponent } from '../components/repo-list-page.component';
 import { RepoColumnDef, RepoPageConfig } from '../components/repo-types';
-import { HorarioUsoService, subcanalesConHorario } from '../state/horario-uso.service';
+import { HorarioUsoService } from '../state/horario-uso.service';
+import { CLAVE_DE_USO, usosDelHorario } from '../state/horario-usos';
 import { FestivosStore } from '../state/festivos.store';
 import { ahoraEn, estadoEn, resumenDeLaSemana } from '../state/horarios.core.mjs';
 import { type Horario, HorariosStore } from '../state/horarios.store';
@@ -16,7 +16,7 @@ import { type Horario, HorariosStore } from '../state/horarios.store';
 interface Datos {
   readonly resumen: (h: Horario) => string;
   readonly ahora: (h: Horario) => string;
-  readonly grupos: (h: Horario) => readonly GroupRef[];
+  readonly uso: (h: Horario) => string;
 }
 
 /**
@@ -51,12 +51,10 @@ const columnas = (d: Datos): readonly RepoColumnDef<Horario>[] => [
   {
     key: 'groups',
     labelKey: 'repositories.horarios.col_use',
-    kind: 'groups',
-    width: '160px',
-    // Uso: los grupos que atienden con él. La cifra ordena y se exporta; la celda enseña el nombre si es uno y la cifra con los nombres al pasar si son más.
-    accessor: (i) => String(d.grupos(i).length),
-    groups: d.grupos,
-    groupsDisplay: 'adaptive',
+    kind: 'truncate',
+    width: '260px',
+    // Uso: los sitios donde se usa, separados por comas («Grupos, VUI, Buzones de email»). El detalle, en el editor.
+    accessor: d.uso,
     sortable: true,
   },
 ];
@@ -75,16 +73,13 @@ export class HorariosPageComponent {
   private readonly translate = inject(TranslateService);
   private readonly lang = injectLangChange();
 
-  /** Los grupos que atienden con cada horario (DD-152): los que lo tienen en un subcanal que lo usa de verdad (DD-252). */
-  private readonly gruposPorHorario = computed(() => {
-    const grupos = new Map<number, GroupRef[]>();
-    for (const g of this.groupsStore.groups()) {
-      for (const id of new Set(subcanalesConHorario(g).map((s) => s.id))) {
-        grupos.set(id, [...(grupos.get(id) ?? []), { id: g.id, name: g.name, active: true }]);
-      }
-    }
-    return grupos;
-  });
+  /** Los sitios donde se usa un horario, en una línea: «Grupos, VUI, Buzones de email». */
+  private usoTexto(id: number): string {
+    this.lang();
+    return usosDelHorario(id, this.groupsStore.groups())
+      .map((u) => this.translate.instant(`repositories.horarios.uses.${CLAVE_DE_USO[u.tipo]}`) as string)
+      .join(', ');
+  }
 
   private readonly textos = computed(() => {
     this.lang();
@@ -111,7 +106,7 @@ export class HorariosPageComponent {
         const { fecha, minutos } = ahoraEn(h.timezone);
         return estadoEn(h, fecha, minutos, this.festivos.items()).abierto ? 'open' : 'closed';
       },
-      grupos: (h) => this.gruposPorHorario().get(h.id) ?? [],
+      uso: (h) => this.usoTexto(h.id),
     }),
     fields: [{ key: 'name', labelKey: 'repositories.columns.name', type: 'text', required: true, placeholderKey: 'repositories.horarios.name_placeholder' }],
     searchKeys: ['name', 'timezone', 'description'],

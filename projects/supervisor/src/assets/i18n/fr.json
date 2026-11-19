@@ -1517,10 +1517,11 @@
         "title_bulk": "Supprimer {{count}} horaires\u00a0?"
       },
       "section_week_view": "Semaine",
-      "section_week_view_hint": "Quand chaque jour est assuré",
+      "section_week_view_hint": "Faites glisser sur les heures pour ouvrir une plage ; faites glisser ses bords pour la modifier",
       "days_open": "Jours assurés",
       "no_days_open": "Aucun jour n'est encore assuré.",
       "sv": {
+        "remove": "Supprimer la plage",
         "day_closed": "Jour fermé",
         "total": "{{hours}} par semaine",
         "prev": "Semaine précédente",
@@ -1530,6 +1531,15 @@
         "closed": "Non assuré"
       },
       "col_schedule": "Horaire",
+      "uses": {
+        "groups": "Groupes",
+        "vui": "VUI",
+        "mailboxes": "Boîtes mail",
+        "agendas": "Agendas",
+        "teams": "Équipes",
+        "campaigns": "Campagnes"
+      },
+      "precise_title": "Ajuster avec précision",
       "col_availability": "Disponibilité",
       "col_use": "Utilisation",
       "section_uses": "Où il est utilisé",

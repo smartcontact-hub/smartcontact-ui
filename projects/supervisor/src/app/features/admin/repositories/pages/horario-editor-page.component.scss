@@ -10,7 +10,7 @@
  * va debajo. */
 .horario {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
   align-items: start;
   /* Solo entre columnas: en una columna, las tarjetas ya traen su margen. */
   column-gap: var(--sc-spacing-2);
@@ -105,4 +105,44 @@
   @media (max-width: 40rem) {
     grid-template-columns: 1fr;
   }
+}
+
+/* Dónde se usa, por sitios: el título de cada uno con su cifra y debajo sus nombres. */
+.usos {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-75);
+}
+
+.usos__grupo {
+  display: grid;
+  grid-template-columns: 7.5rem minmax(0, 1fr);
+  align-items: baseline;
+  gap: var(--sc-spacing-0-5);
+}
+
+.usos__titulo {
+  margin: 0;
+  color: var(--sc-text-secondary);
+}
+
+.usos__cifra {
+  margin-inline-start: var(--sc-spacing-0-25);
+  font-weight: 400;
+}
+
+.usos__lista {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-25);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.usos__fila {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sc-spacing-0-5);
 }

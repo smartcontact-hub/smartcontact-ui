@@ -7,7 +7,7 @@
 .sv {
   --barra-radio: var(--sc-radius-sm);
   --hueco: var(--sc-spacing-0-125);
-  --pista-alto: var(--sc-spacing-2);
+  --pista-alto: var(--sc-spacing-2-5);
 
   display: flex;
   flex-direction: column;
@@ -101,6 +101,10 @@
 /* La línea de las 24 horas, en neutros del DS: fondo gris claro con una raya por hora y otra más marcada cada seis. */
 .pista {
   position: relative;
+  /* Se arrastra sobre ella: sin gestos del navegador (desplazar, seleccionar texto) mientras se aprieta. */
+  cursor: crosshair;
+  touch-action: none;
+  user-select: none;
   block-size: var(--pista-alto);
   border-radius: calc(var(--barra-radio) + var(--hueco));
   background-color: var(--sc-bg-hover);
@@ -217,4 +221,78 @@
     background-color: var(--sc-bg-hover);
     background-image: repeating-linear-gradient(135deg, transparent 0, transparent 2px, var(--sc-border-default) 2px, var(--sc-border-default) 3px);
   }
+}
+
+/* Un tramo: sus bordes se agarran (cursor de redimensionar) y su × lo quita al pasar el ratón o llegar con el foco. */
+.barra {
+  cursor: default;
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-border-focus);
+    outline-offset: 1px;
+  }
+}
+
+.barra--fija {
+  opacity: 0.75;
+  pointer-events: none;
+}
+
+.barra__texto {
+  pointer-events: none;
+}
+
+.asa {
+  position: absolute;
+  inset-block: 0;
+  inline-size: var(--sc-spacing-0-75);
+  cursor: ew-resize;
+
+  &--ini {
+    inset-inline-start: 0;
+  }
+
+  &--fin {
+    inset-inline-end: 0;
+  }
+}
+
+.barra__quitar {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-end: var(--sc-spacing-0-75);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  translate: 0 -50%;
+  padding: 1px;
+  border: 0;
+  border-radius: var(--sc-radius-full);
+  background: color-mix(in srgb, var(--sc-text-on-primary) 25%, transparent);
+  color: var(--sc-text-on-primary);
+  cursor: pointer;
+  opacity: 0;
+  transition-property: opacity;
+  transition-duration: 150ms;
+}
+
+.barra:hover .barra__quitar,
+.barra:focus-within .barra__quitar {
+  opacity: 1;
+}
+
+/* El tramo que se está abriendo mientras se arrastra: contorno de acción y su rango escrito. */
+.seleccion {
+  position: absolute;
+  inset-block: var(--hueco);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px dashed var(--sc-bg-primary);
+  border-radius: var(--barra-radio);
+  background: color-mix(in srgb, var(--sc-bg-primary) 15%, transparent);
+  color: var(--sc-bg-primary);
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+  white-space: nowrap;
 }

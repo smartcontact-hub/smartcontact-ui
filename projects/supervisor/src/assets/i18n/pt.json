@@ -1517,10 +1517,11 @@
         "title_bulk": "Eliminar {{count}} horários?"
       },
       "section_week_view": "Semana",
-      "section_week_view_hint": "Quando cada dia é atendido",
+      "section_week_view_hint": "Arraste sobre as horas para abrir um intervalo; arraste os bordos para o alterar",
       "days_open": "Dias atendidos",
       "no_days_open": "Nenhum dia é atendido ainda.",
       "sv": {
+        "remove": "Remover o intervalo",
         "day_closed": "Dia fechado",
         "total": "{{hours}} por semana",
         "prev": "Semana anterior",
@@ -1530,6 +1531,15 @@
         "closed": "Não atendido"
       },
       "col_schedule": "Horário",
+      "uses": {
+        "groups": "Grupos",
+        "vui": "VUI",
+        "mailboxes": "Caixas de e-mail",
+        "agendas": "Agendas",
+        "teams": "Equipas",
+        "campaigns": "Campanhas"
+      },
+      "precise_title": "Ajustar com precisão",
       "col_availability": "Disponibilidade",
       "col_use": "Uso",
       "section_uses": "Onde é usado",
