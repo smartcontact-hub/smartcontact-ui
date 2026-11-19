@@ -59,7 +59,7 @@
           </div>
         </header>
         <div class="tp-cierre__semana-cuerpo">
-          <sc-tp-semana [semana]="form().week" [ahora]="form().status === 'inactive' ? null : ahoraSemana()" (semanaChange)="update('week', $event)" />
+          <sc-tp-semana [semana]="form().week" [ahora]="form().status === 'inactive' ? null : ahoraSemana()" (semanaChange)="update('week', $event)" (gesto)="gesto($event)" />
         </div>
       </section>
 
@@ -121,7 +121,10 @@
     @if (modo() === 'crear') {
       <button type="button" class="tp-btn tp-btn--ghost tp-btn--sm" (click)="volver()">Cancelar</button>
     } @else {
-      <button type="button" class="tp-btn tp-btn--ghost tp-btn--sm" (click)="discard()">Deshacer</button>
+      <button type="button" class="tp-btn tp-btn--ghost tp-btn--sm" [disabled]="!puedeDeshacer()" data-tip="Un paso atrás" (click)="deshacer()">
+        Deshacer
+        <kbd class="tp-kbd">⌘Z</kbd>
+      </button>
     }
     <button type="button" class="tp-btn tp-btn--primary tp-btn--sm" [disabled]="!puedeGuardar()" (click)="save()">
       {{ modo() === 'crear' ? 'Crear horario' : 'Guardar' }}
