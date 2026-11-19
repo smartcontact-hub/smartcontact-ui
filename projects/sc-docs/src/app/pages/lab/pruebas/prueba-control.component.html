@@ -89,12 +89,15 @@
                 class="pc-punto sc-text-body-semibold"
                 [class.is-recibido]="f.recibido"
                 [class.is-copiado]="copiado() === f.quien"
-                [attr.aria-label]="'Copiar el enlace de ' + f.quien + (f.recibido ? ', ya terminó' : '')"
-                (click)="copiar(f.enlace, f.quien, 'Enlace de ' + f.quien + ' copiado')"
+                [attr.aria-label]="'Copiar el enlace de ' + f.etiqueta + (f.recibido ? ', ya terminó' : '')"
+                (click)="copiar(f.enlace, f.quien, 'Enlace de ' + f.etiqueta + ' copiado')"
               >
                 <span class="pc-punto__texto">{{ f.quien }}</span>
                 <sc-icon class="pc-punto__hecho" name="check" [size]="20" />
               </button>
+              @if (f.nombre) {
+                <span class="pc-punto__nombre sc-text-caption-regular" aria-hidden="true">{{ f.nombre }}</span>
+              }
             </li>
           }
         </ul>
@@ -236,7 +239,7 @@
               @for (d of detalle(); track d.quien) {
                 <li class="pc-gente__persona">
                   <div class="pc-gente__cab">
-                    <span class="sc-text-body-semibold">{{ d.esEnsayo ? 'Ensayo' : d.quien }}</span>
+                    <span class="sc-text-body-semibold">{{ d.etiqueta }}</span>
                     <span class="pc-nota sc-text-caption-regular">
                       {{ d.orden }}{{ d.prefiere ? ', ' + d.prefiere : '' }}
                     </span>
@@ -250,7 +253,7 @@
                       size="sm"
                       icon="close"
                       label="Quitar"
-                      [ariaLabel]="'Quitar ' + (d.esEnsayo ? 'el ensayo' : d.quien)"
+                      [ariaLabel]="'Quitar ' + (d.esEnsayo ? 'el ensayo' : d.etiqueta)"
                       (clicked)="quitar(d.quien)"
                     />
                   </div>

@@ -16,6 +16,7 @@ import {
   numeroDe,
   ordenDeVersiones,
   pSignos,
+  quienEs,
   UMBRAL,
   veredicto,
   type Gravedad,
@@ -184,10 +185,19 @@ export class PruebaControlComponent {
   protected readonly personas = computed(() => {
     const p = this.plan();
     if (!p) return [];
-    const recibidos = new Set(this.resultados().map((r) => r.participante));
+    const recibidos = new Map(this.resultados().map((r) => [r.participante, r]));
     return Array.from({ length: p.personas }, (_, i) => {
       const quien = `P${i + 1}`;
-      return { quien, orden: this.ordenEnNombres(p, quien), enlace: this.enlace(p, quien), recibido: recibidos.has(quien) };
+      const r = recibidos.get(quien);
+      return {
+        quien,
+        // Bajo el punto cabe el nombre de pila; el entero, en «Persona a persona».
+        nombre: r?.nombre?.split(' ')[0] ?? '',
+        etiqueta: r ? quienEs(r) : quien,
+        orden: this.ordenEnNombres(p, quien),
+        enlace: this.enlace(p, quien),
+        recibido: !!r,
+      };
     });
   });
 
@@ -263,6 +273,7 @@ export class PruebaControlComponent {
       id ? (p.versiones.find((v) => v.id === id)?.nombre ?? id) : null;
     return this.resultados().map((r) => ({
       quien: r.participante,
+      etiqueta: r.participante === ENSAYO ? 'Ensayo' : quienEs(r),
       esEnsayo: r.participante === ENSAYO,
       orden: this.ordenEnNombres(p, r.participante),
       prefiere: r.preferencia
@@ -325,8 +336,9 @@ export class PruebaControlComponent {
   }
 
   protected quitar(quien: string): void {
-    this.resultados.update((rs) => rs.filter((r) => r.participante !== quien));
-    this.avisar(`Quitado: ${quien === ENSAYO ? 'el ensayo' : quien}`);
+    const r = this.resultados().find((x) => x.participante === quien);
+    this.resultados.update((rs) => rs.filter((x) => x.participante !== quien));
+    this.avisar(`Quitado: ${quien === ENSAYO ? 'el ensayo' : r ? quienEs(r) : quien}`);
   }
 
   protected async copiar(texto: string, clave: string, aviso: string): Promise<void> {
@@ -395,7 +407,7 @@ export class PruebaControlComponent {
     }
     this.resultados.update((rs) => juntar(rs, propios));
     alAnadir?.();
-    const quienes = propios.map((r) => (r.participante === ENSAYO ? 'el ensayo' : r.participante));
+    const quienes = propios.map((r) => (r.participante === ENSAYO ? 'el ensayo' : quienEs(r)));
     this.avisar(`Añadido: ${quienes.join(', ')}`);
   }
 

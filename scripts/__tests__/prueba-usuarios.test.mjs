@@ -15,10 +15,13 @@ import {
   codificar as codificarDocs,
   decodificar as decodificarDocs,
   CODIGO_RESULTADO,
+  csvDeResultados,
   leerResultados,
+  limpiarNombre,
   ordenDeVersiones,
   pasosDe,
   pSignos,
+  quienEs,
   veredicto,
 } from '../../projects/sc-docs/src/app/pages/lab/pruebas/prueba.core.mjs';
 import {
@@ -170,6 +173,24 @@ test('sin resultados no hay veredicto', () => {
   const v = veredicto(PLAN, []);
   assert.equal(v.ganadora, null);
   assert.equal(v.personas, 0);
+});
+
+test('el nombre es opcional: si lo hay, sale junto a su P y en el CSV; si no, la persona es su P', () => {
+  const ana = { ...persona('P1', BIEN, MAL), nombre: '  Ana   María  ' };
+  const [leida] = leerResultados(`${CODIGO_RESULTADO}${codificarDocs(ana)}`);
+  assert.equal(leida.nombre, 'Ana María');
+  assert.equal(quienEs(leida), 'Ana María (P1)');
+
+  const sinNombre = leerResultados(JSON.stringify({ ...persona('P2', BIEN, MAL), nombre: '   ' }))[0];
+  assert.equal('nombre' in sinNombre, false);
+  assert.equal(quienEs(sinNombre), 'P2');
+  // Un nombre que no es texto (un código manipulado) se descarta; uno larguísimo se corta.
+  assert.equal('nombre' in leerResultados(JSON.stringify({ ...persona('P3', BIEN, MAL), nombre: 42 }))[0], false);
+  assert.equal(limpiarNombre('x'.repeat(200)).length, 40);
+
+  const [cab, fila] = csvDeResultados(PLAN, [leida, sinNombre]).split('\n');
+  assert.deepEqual(cab.split(',').slice(0, 3), ['participante', 'nombre', 'ensayo']);
+  assert.deepEqual(fila.split(',').slice(0, 3), ['P1', 'Ana María', 'no']);
 });
 
 test('si una persona manda su resultado dos veces, cuenta una', () => {

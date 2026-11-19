@@ -88,7 +88,8 @@ control del Lab, y allí está todo.
 
 ## Privacidad (el repo es público)
 
-- Las personas son P1, P2…; sus nombres nunca entran en el repo, ni en commits ni en la skill.
+- Las personas son P1, P2…; sus nombres nunca entran en el repo, ni en commits ni en la skill. Si alguien escribe su
+  nombre en la puerta (es opcional), viaja dentro de su código y solo lo ve quien modera, en la sala y en el CSV.
 - Datos reales en las misiones, siempre anonimizados.
 - Los códigos y los `.json` que manda cada persona no se commitean: se quedan en el navegador de quien modera.
 - Nada sale del navegador de la persona hasta que ella copia su código.

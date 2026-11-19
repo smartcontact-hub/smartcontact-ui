@@ -31,7 +31,7 @@
  * }} PasoResultado
  * @typedef {{
  *   v: 1, prueba: string, participante: string, orden: readonly string[], pasos: readonly PasoResultado[],
- *   preferencia?: { readonly version: string | null, readonly porque: string },
+ *   preferencia?: { readonly version: string | null, readonly porque: string }, nombre?: string,
  * }} Resultado
  */
 
@@ -156,6 +156,43 @@ function esResultado(r) {
   return o['v'] === 1 && typeof o['prueba'] === 'string' && typeof o['participante'] === 'string' && Array.isArray(o['pasos']);
 }
 
+/** Lo más largo que se guarda de un nombre. */
+export const NOMBRE_MAX = 40;
+
+/**
+ * El nombre que la persona escribió en la puerta, si quiso: sin espacios de sobra y cortado a `NOMBRE_MAX`. Vacío si
+ * no hay. Viaja solo en su código y se queda en el navegador de quien modera; el repo nunca lo ve.
+ * @param {unknown} nombre
+ */
+export function limpiarNombre(nombre) {
+  return typeof nombre === 'string' ? nombre.replace(/\s+/g, ' ').trim().slice(0, NOMBRE_MAX).trim() : '';
+}
+
+/**
+ * Dónde guarda la puerta el nombre mientras la persona va y vuelve del Supervisor: en la sesión de la pestaña de
+ * sc-docs, que sobrevive al viaje. Al Supervisor no llega.
+ * @param {string} prueba
+ * @param {string} participante
+ */
+export const claveDelNombre = (prueba, participante) => `sc-prueba-nombre:${prueba}/${participante}`;
+
+/**
+ * Cómo se nombra a una persona en la sala: «Ana (P1)» si dijo su nombre; si no, «P1».
+ * @param {Pick<Resultado, 'participante' | 'nombre'>} r
+ */
+export const quienEs = (r) => (r.nombre ? `${r.nombre} (${r.participante})` : r.participante);
+
+/**
+ * Un resultado leído, con el nombre limpio o sin él.
+ * @param {Resultado} r
+ * @returns {Resultado}
+ */
+function conNombreLimpio(r) {
+  const { nombre, ...resto } = r;
+  const limpio = limpiarNombre(nombre);
+  return limpio ? { ...resto, nombre: limpio } : resto;
+}
+
 /**
  * El código que se copia al acabar.
  * @param {Resultado} resultado
@@ -174,7 +211,7 @@ export function leerResultados(texto) {
   for (const m of texto.matchAll(/SCP1\.([A-Za-z0-9_-]+)/g)) {
     try {
       const r = decodificar(m[1]);
-      if (esResultado(r)) leidos.push(r);
+      if (esResultado(r)) leidos.push(conNombreLimpio(r));
     } catch {
       // un código cortado al pegarlo: se ignora
     }
@@ -182,7 +219,7 @@ export function leerResultados(texto) {
   if (leidos.length) return leidos;
   try {
     const j = JSON.parse(texto);
-    for (const r of Array.isArray(j) ? j : [j]) if (esResultado(r)) leidos.push(r);
+    for (const r of Array.isArray(j) ? j : [j]) if (esResultado(r)) leidos.push(conNombreLimpio(r));
   } catch {
     // no es JSON
   }
@@ -725,13 +762,13 @@ const celda = (v) => {
 
 /**
  * Los datos en bruto para una hoja de cálculo: una fila por intento, con cada métrica por intento. El ensayo va
- * marcado. Sin nombres: las personas son P1, P2…
+ * marcado. Las personas son P1, P2…; el nombre va aparte, y solo si la persona lo escribió.
  * @param {PlanMinimo} plan
  * @param {readonly Resultado[]} resultados
  */
 export function csvDeResultados(plan, resultados) {
   const cab = [
-    'participante', 'ensayo', 'version', 'nombre_version', 'tarea', 'mision', 'vuelta', 'exito', 'sin_ayuda',
+    'participante', 'nombre', 'ensayo', 'version', 'nombre_version', 'tarea', 'mision', 'vuelta', 'exito', 'sin_ayuda',
     'comprobacion_bien', 'comprobacion_total', 'lo_que_falta', 'moderador', 'segundos', 'clics', 'clics_en_vacio',
     'ayudas', 'primer_clic', 'pantallas_visitadas', 'pantallas_distintas', 'seq', 'prefiere', 'por_que',
   ];
@@ -740,7 +777,7 @@ export function csvDeResultados(plan, resultados) {
     r.pasos.map((p, i) => {
       const t = plan.tareas.find((x) => p.mision.startsWith(`${x.id}-`));
       return [
-        r.participante, r.participante === ENSAYO ? 'si' : 'no', p.version,
+        r.participante, r.nombre ?? '', r.participante === ENSAYO ? 'si' : 'no', p.version,
         plan.versiones.find((v) => v.id === p.version)?.nombre ?? p.version, t?.titulo ?? '', p.mision, i + 1,
         sn(exito(p)), sn(limpio(p)), p.comprobacion?.bien ?? '', p.comprobacion?.total ?? '',
         p.comprobacion?.titular ?? '', p.moderador ?? '', Math.round(p.ms / 1000), p.clics, p.enVacio.length,

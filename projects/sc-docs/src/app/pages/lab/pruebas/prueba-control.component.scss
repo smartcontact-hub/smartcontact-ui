@@ -282,8 +282,21 @@ abbr[title] {
 }
 
 .pc-puntos__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sc-spacing-0-25);
   animation: pc-aparece 500ms var(--demo-ease-salida) backwards;
   animation-delay: calc(450ms + var(--i, 0) * 50ms);
+}
+
+/* El nombre de pila, si la persona lo dio: del ancho del punto, y si no cabe, con puntos suspensivos. */
+.pc-punto__nombre {
+  max-inline-size: var(--sc-spacing-3);
+  overflow: hidden;
+  color: var(--sc-text-secondary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .pc-punto {

@@ -51,6 +51,8 @@ export interface Resultado {
   orden: readonly string[];
   pasos: readonly PasoResultado[];
   preferencia?: { readonly version: string | null; readonly porque: string };
+  /** El nombre que escribió la persona en la puerta, si quiso. */
+  nombre?: string;
 }
 export interface Sesion {
   v: 1;
@@ -104,6 +106,10 @@ export function ordenDeVersiones(plan: PlanMinimo, participante: string): string
 export function pasosDe(plan: PlanMinimo, participante: string): Paso[];
 export function sesionDe(plan: PlanMinimo, participante: string, fin: string): Sesion;
 export function enlaceDelPrimerPaso(sesion: Sesion): string;
+export const NOMBRE_MAX: number;
+export function limpiarNombre(nombre: unknown): string;
+export function claveDelNombre(prueba: string, participante: string): string;
+export function quienEs(r: Pick<Resultado, 'participante' | 'nombre'>): string;
 export function codigoDeResultado(resultado: Resultado): string;
 export function leerResultados(texto: string): Resultado[];
 export function pSignos(a: number, b: number): number;

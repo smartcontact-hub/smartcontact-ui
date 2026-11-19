@@ -271,6 +271,10 @@ estrenarlo con Horarios A y B.
     la `meta` del plan (el 80 % si no dice otra: con 6 personas, 5). El veredicto dice qué tareas no llegan y con qué
     cifra; el marcador pasa a ser una tarjeta por tarea con «Cumple», y el accionable de TSR se lee contra la meta.
     La estrena el cierre de Horarios (`horarios-cierre`: hora de cierre, viernes con otro horario y jornada partida).
+11. **El nombre, si la persona quiere** (enmienda, 2026-11-19). La puerta pide un nombre opcional; si lo escribe, la sala
+    la llama «Ana (P1)» y el CSV lo lleva en su columna. Se queda en la sesión de la pestaña de sc-docs mientras va y
+    vuelve (el Supervisor no lo ve) y viaja solo dentro de su código, hasta el navegador de quien modera. El repo sigue
+    sin nombres: la regla, las pruebas y el informe en Markdown cuentan personas, no las nombran.
 
 **Razón** · Con 5 a 10 personas lo que separa versiones es si la tarea sale o no sin ayuda; lo demás explica por qué. El
 umbral se fija para que la herramienta diga «empate» cuando los datos no alcanzan, en vez de dar ganadora con 4 a 2. Los
