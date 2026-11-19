@@ -95,43 +95,47 @@
 >
   @if (panel(); as p) {
     <div class="panel" [class.panel--edicion]="edicion()" [attr.data-tono]="p.tono">
-      <p class="panel__momento">
-        <sc-avatar [icon]="p.icono" [labelColor]="p.tono" aria-hidden="true" />
-        <span class="sc-text-caption-semibold">{{ p.momento }}</span>
-      </p>
-
-      @if (edicion()) {
-        <div class="panel__campos">
-          <sc-inputtext
-            inputId="horario-nombre"
-            fluid
-            required
-            [label]="'repositories.columns.name' | translate"
-            [placeholder]="'repositories.horariosTipo.name_placeholder' | translate"
-            [value]="borrador().name"
-            [error]="intento() && faltaElNombre() ? ('repositories.horarios.errors.name_required' | translate) : undefined"
-            (valueChange)="cambiar('name', $event)"
-          />
-          <sc-inputtext
-            inputId="horario-descripcion"
-            fluid
-            [label]="'repositories.columns.description' | translate"
-            [placeholder]="'repositories.placeholders.description' | translate"
-            [value]="borrador().description"
-            (valueChange)="cambiar('description', $event)"
-          />
+      <!-- Arriba: el momento a la izquierda y, a la derecha del todo en la misma línea, sus botones; debajo, pegada, la descripción. -->
+      <div class="panel__intro">
+        <div class="panel__cabecera">
+          <p class="panel__momento">
+            <sc-avatar [icon]="p.icono" [labelColor]="p.tono" aria-hidden="true" />
+            <span class="sc-text-caption-semibold">{{ p.momento }}</span>
+          </p>
+          <div class="panel__acciones">
+            @if (edicion()) {
+              <sc-button size="sm" variant="primary" [disabled]="!puedeGuardar() && !intento() && !faltaElNombre()" [label]="(seleccion() === 'nuevo' ? 'common.create' : 'common.save') | translate" (clicked)="guardar()" />
+              <sc-button size="sm" variant="secondary" appearance="outlined" [label]="'common.cancel' | translate" (clicked)="cancelar()" />
+            } @else {
+              <sc-button size="sm" variant="primary" icon="edit" [label]="'common.edit' | translate" (clicked)="editar()" />
+              <sc-button size="sm" variant="secondary" appearance="outlined" icon="content_copy" [label]="'repositories.horariosTipo.landing.duplicate' | translate" (clicked)="duplicar(p.id!)" />
+            }
+          </div>
         </div>
-      } @else if (p.descripcion) {
-        <p class="panel__descripcion sc-text-body-regular">{{ p.descripcion }}</p>
-      }
 
-      <div class="panel__acciones">
         @if (edicion()) {
-          <sc-button size="sm" variant="primary" [disabled]="!puedeGuardar() && !intento() && !faltaElNombre()" [label]="(seleccion() === 'nuevo' ? 'common.create' : 'common.save') | translate" (clicked)="guardar()" />
-          <sc-button size="sm" variant="secondary" appearance="outlined" [label]="'common.cancel' | translate" (clicked)="cancelar()" />
-        } @else {
-          <sc-button size="sm" variant="primary" icon="edit" [label]="'common.edit' | translate" (clicked)="editar()" />
-          <sc-button size="sm" variant="secondary" appearance="outlined" icon="content_copy" [label]="'repositories.horariosTipo.landing.duplicate' | translate" (clicked)="duplicar(p.id!)" />
+          <div class="panel__campos">
+            <sc-inputtext
+              inputId="horario-nombre"
+              fluid
+              required
+              [label]="'repositories.columns.name' | translate"
+              [placeholder]="'repositories.horariosTipo.name_placeholder' | translate"
+              [value]="borrador().name"
+              [error]="intento() && faltaElNombre() ? ('repositories.horarios.errors.name_required' | translate) : undefined"
+              (valueChange)="cambiar('name', $event)"
+            />
+            <sc-inputtext
+              inputId="horario-descripcion"
+              fluid
+              [label]="'repositories.columns.description' | translate"
+              [placeholder]="'repositories.placeholders.description' | translate"
+              [value]="borrador().description"
+              (valueChange)="cambiar('description', $event)"
+            />
+          </div>
+        } @else if (p.descripcion) {
+          <p class="panel__descripcion sc-text-body-regular">{{ p.descripcion }}</p>
         }
       </div>
 
@@ -143,8 +147,8 @@
 
         <!-- La semana: en lectura, una fila por grupo de días (baldosa azul oscuro y sus horas, como el resumen del grupo); en
              edición, los mismos días pasan a ser editables. -->
-        <section class="tarjeta">
-          <h3 class="tarjeta__titulo sc-text-caption-semibold">{{ 'repositories.horariosTipo.landing.drawer_week' | translate }}</h3>
+        <section class="bloque-info">
+          <h3 class="panel__titulo sc-text-caption-semibold">{{ 'repositories.horariosTipo.landing.drawer_week' | translate }}</h3>
           @if (edicion()) {
             <sc-horario-semana prefijo="horario-panel" [semana]="borrador().week" [falta]="faltaDeSemana()" (semanaChange)="cambiar('week', $event)" />
           } @else {
@@ -152,7 +156,7 @@
               @for (f of p.filas; track $index) {
                 <div scFactRow size="sm" tone="brand" [icon]="f.tramos.length > 0 ? 'event_available' : 'event_busy'" [label]="f.etiqueta">
                   @if (f.tramos.length > 0) {
-                    <span class="valor">
+                    <span class="valor valor--horas">
                       @for (t of f.tramos; track $index) {
                         @if ($index > 0) {
                           <span class="valor__sep">·</span>
@@ -170,12 +174,12 @@
         </section>
 
         @if (p.id !== null) {
-          <section class="tarjeta">
-            <h3 class="tarjeta__titulo sc-text-caption-semibold">{{ 'repositories.horariosTipo.landing.drawer_uses' | translate }}</h3>
+          <section class="bloque-info">
+            <h3 class="panel__titulo sc-text-caption-semibold">{{ 'repositories.horariosTipo.landing.drawer_uses' | translate }}</h3>
             @if (p.calendarios.length === 0 && p.grupos.length === 0 && !p.vui) {
               <p class="panel__nada sc-text-body-regular">{{ 'repositories.horariosTipo.landing.uses_none' | translate }}</p>
             } @else {
-              <dl class="filas">
+              <dl class="filas filas--apiladas">
                 @if (p.calendarios.length > 0) {
                   <div scFactRow size="sm" tone="brand" icon="calendar_month" [label]="'repositories.horariosTipo.use_calendars' | translate">
                     <span class="valor valor--lista">

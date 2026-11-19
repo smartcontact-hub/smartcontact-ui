@@ -204,8 +204,9 @@
 
 .panel__acciones {
   display: flex;
-  flex-wrap: wrap;
+  flex: none;
   gap: var(--sc-spacing-0-5);
+  margin-inline-start: auto;
 }
 
 /* Debajo de la línea, toda la info del horario. */
@@ -222,20 +223,25 @@
   margin-inline-start: calc(-1 * var(--sc-spacing-0-5));
 }
 
-/* Una tarjeta del panel, como las del resumen del grupo: su título y, debajo, filas con baldosa azul oscuro. */
-.tarjeta {
+/* Un bloque de información del panel, sin recuadro: su título y, debajo, filas con baldosa azul oscuro. */
+.bloque-info {
   display: flex;
   flex-direction: column;
   gap: var(--sc-spacing-0-75);
-  padding: var(--sc-spacing-1);
-  border: 1px solid var(--sc-border-default);
-  border-radius: var(--sc-radius-md);
-  background: var(--sc-bg-surface);
 }
 
-.tarjeta__titulo {
-  margin: 0;
-  color: var(--sc-text-secondary);
+/* El momento y los botones, en una línea, y la descripción pegada debajo. */
+.panel__intro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
+}
+
+.panel__cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sc-spacing-1);
 }
 
 .filas {
@@ -258,7 +264,7 @@
   font-weight: 400;
 }
 
-[data-tono] .valor:not(.valor--cerrado):not(.valor--lista) {
+[data-tono] .valor--horas {
   color: var(--tono-text);
 }
 
@@ -300,5 +306,24 @@
   ::ng-deep .p-focus {
     outline: 2px solid var(--sc-border-focus);
     outline-offset: 1px;
+  }
+}
+
+/* «Dónde se usa»: la baldosa con su título y, debajo, dónde se usa (a la izquierda, bajo el título), no al otro lado de la fila. */
+.filas--apiladas {
+  ::ng-deep .sc-fact-row__value {
+    flex-basis: 100%;
+    justify-content: flex-start;
+    margin: var(--sc-spacing-0-25) 0 0;
+    padding-inline-start: calc(var(--sc-spacing-1-75) + var(--sc-spacing-0-5));
+    text-align: start;
+  }
+
+  .valor--lista {
+    align-items: flex-start;
+  }
+
+  .valor {
+    text-align: start;
   }
 }
