@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { ScButtonComponent, ScInputTextComponent } from '@smartcontact-hub/components';
-import { ScIconComponent } from '@smartcontact-hub/icons';
 
 import { claveDelNombre, ENSAYO, enlaceDelPrimerPaso, limpiarNombre, NOMBRE_MAX, sesionDe } from './prueba.core.mjs';
 import { pruebaPorId } from './pruebas.data';
@@ -18,21 +17,22 @@ import { pruebaPorId } from './pruebas.data';
  * El nombre es opcional: si la persona lo escribe, sale en la sala junto a su P y en el CSV. Se guarda en la sesión de
  * esta pestaña (`claveDelNombre`) mientras va y vuelve del Supervisor, que nunca lo ve, y el final lo mete en su código.
  * El ensayo no lo pide: es de quien modera.
+ *
+ * El pulgar arriba de bienvenida es un GIF aligerado a WebP (`public/pruebas/gracias.webp`); con el movimiento reducido
+ * se queda quieto en su mejor fotograma. Decorado: el título ya da las gracias.
  */
 @Component({
   selector: 'app-prueba-inicio',
-  imports: [ScButtonComponent, ScIconComponent, ScInputTextComponent],
+  imports: [ScButtonComponent, ScInputTextComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="puerta">
       @if (plan(); as p) {
         <article class="puerta__tarjeta" aria-labelledby="prueba-inicio-titulo">
-          <div class="sello" aria-hidden="true">
-            <span class="sello__rayo"></span>
-            <span class="sello__rayo"></span>
-            <span class="sello__rayo"></span>
-            <sc-icon class="sello__pulgar" name="thumb_up" filled [size]="32" />
-          </div>
+          <picture class="puerta__gracias">
+            <source srcset="/pruebas/gracias-quieto.webp" media="(prefers-reduced-motion: reduce)" />
+            <img src="/pruebas/gracias.webp" alt="" width="320" height="224" />
+          </picture>
           <p class="puerta__ante sc-text-caption-semibold">Prueba de una pantalla del Supervisor</p>
           <h1 id="prueba-inicio-titulo" class="sc-text-h2-semibold">Gracias por echarnos una mano</h1>
           <p class="sc-text-body-regular">
@@ -93,37 +93,9 @@ import { pruebaPorId } from './pruebas.data';
     .puerta__nombre { flex: 1; min-inline-size: 0; }
     .puerta__quien { color: var(--sc-text-secondary); }
 
-    /* Un pulgar arriba que entra con un saludo: sube, cabecea dos veces y suelta tres destellos. Decorado. */
-    .sello { position: relative; display: grid; place-items: center; inline-size: var(--sc-spacing-5); block-size: var(--sc-spacing-5); margin-block-end: var(--sc-spacing-0-5); border-radius: var(--sc-radius-full); background: var(--sc-bg-primary-subtle); color: var(--sc-bg-primary); }
-    .sello__pulgar { transform-origin: 35% 85%; }
-    .sello__rayo { position: absolute; inset-block-start: 12%; inset-inline-start: 64%; inline-size: var(--sc-spacing-0-25); block-size: var(--sc-spacing-0-75); border-radius: var(--sc-radius-full); background: currentColor; opacity: 0; transform-origin: 50% 300%; }
-    .sello__rayo:nth-child(1) { rotate: 10deg; }
-    .sello__rayo:nth-child(2) { rotate: 45deg; }
-    .sello__rayo:nth-child(3) { rotate: 80deg; }
-    @media (prefers-reduced-motion: no-preference) {
-      .sello__pulgar { animation: sello-saludo 1300ms cubic-bezier(0.3, 0, 0.2, 1) 200ms both; }
-      .sello__rayo { animation: sello-destello 700ms ease-out 650ms both; }
-      .sello:hover .sello__pulgar { animation-name: sello-otra; }
-    }
-    @keyframes sello-saludo {
-      0% { transform: translateY(40%) rotate(-35deg) scale(0.4); opacity: 0; }
-      30% { transform: translateY(0) rotate(8deg) scale(1.08); opacity: 1; }
-      45% { transform: rotate(-10deg) scale(1); }
-      60% { transform: rotate(6deg); }
-      75% { transform: rotate(-4deg); }
-      100% { transform: none; }
-    }
-    @keyframes sello-otra {
-      0%, 100% { transform: none; }
-      25% { transform: rotate(-10deg); }
-      50% { transform: rotate(6deg); }
-      75% { transform: rotate(-4deg); }
-    }
-    @keyframes sello-destello {
-      0% { opacity: 0; scale: 1 0.2; translate: 0 30%; }
-      40% { opacity: 1; scale: 1 1; translate: 0 0; }
-      100% { opacity: 0; scale: 1 0.6; translate: 0 -40%; }
-    }
+    /* El pulgar de bienvenida, más pequeño que el original para que se vea nítido en pantallas densas. */
+    .puerta__gracias { display: block; margin-block-end: var(--sc-spacing-0-5); }
+    .puerta__gracias img { display: block; inline-size: var(--sc-spacing-12-5); block-size: auto; border-radius: var(--sc-radius-lg); }
   `,
 })
 export class PruebaInicioComponent {
