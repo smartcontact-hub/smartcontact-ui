@@ -4,7 +4,7 @@ import { type Franja, type Semana, validarSemana } from '@features/admin/reposit
 
 import { TpIconoComponent } from './tp-icono.component';
 import { horaCorta, horas, LETRAS, NOMBRES, semanaDe, type Tramo, tramosDe, trozosDelDia } from './tp-modelo';
-import { TpHoraComponent } from './tp-piezas';
+import { type OpcionSeg, TpHoraComponent, TpSegComponent } from './tp-piezas';
 import { T } from './tp-textos';
 
 const PROBLEMA: Record<string, string> = {
@@ -20,6 +20,15 @@ type Lado = 0 | 1 | 'mover' | 'pintar';
 /** Arrastrar va de 15 en 15 minutos; el teclado, igual (y de hora en hora con Mayús). */
 const PASO = 15;
 
+/** Las horas que enseña el mapa, en minutos. */
+interface Rango {
+  readonly desde: number;
+  readonly hasta: number;
+}
+/** La jornada: de 7:00 a 22:00 como poco. Así se ve de cerca lo que se trabaja, sin la madrugada vacía. */
+const JORNADA: Rango = { desde: 420, hasta: 1320 };
+const DIA: Rango = { desde: 0, hasta: 1440 };
+
 interface Arrastre {
   readonly tramo: number;
   readonly franja: number;
@@ -30,6 +39,8 @@ interface Arrastre {
   readonly f0: Franja;
   readonly min: number;
   readonly max: number;
+  /** Las horas que enseñaba el mapa al empezar: no cambian mientras se arrastra, aunque la franja salga de ellas. */
+  readonly rango: Rango;
   /** Los tramos de antes de empezar: Esc los devuelve. */
   readonly antes: Tramo[];
   /** Si el puntero se ha movido: pintar sin moverse es un clic, que pone una hora. */
@@ -45,11 +56,15 @@ interface Guia {
 }
 
 /**
- * CIERRE DE HORARIOS: la semana, en dos piezas que se miran. Arriba, la semana dibujada en una cuadrícula de 24 h: en
- * verde lo que se trabaja, en rojo lo que no, con las horas escritas en cada barra para que un «19:35» salte a la
- * vista; los bordes de cada barra se arrastran (de 15 en 15 min) y la barra entera se mueve. Debajo, los tramos: unos
- * días que comparten franjas. Marcar un día en un tramo le copia esas horas, así que copiar el lunes a martes, miércoles
- * y jueves son tres clics y ningún diálogo. Un día solo vive en un tramo: marcarlo en otro lo mueve.
+ * CIERRE DE HORARIOS: la semana, en dos piezas que se miran, en el orden en que se piensa un horario. Primero lo que se
+ * escribe, los tramos: unos días que comparten franjas («de lunes a viernes, de 9:00 a 18:00»). Marcar un día en un
+ * tramo le copia esas horas, así que copiar el lunes a martes, miércoles y jueves son tres clics y ningún diálogo. Un
+ * día solo vive en un tramo: marcarlo en otro lo mueve. Debajo, cómo queda: la semana dibujada, en verde lo que se
+ * trabaja y en rojo lo que no, con las horas escritas en cada barra para que un «19:35» salte a la vista; los bordes de
+ * cada barra se arrastran (de 15 en 15 min) y la barra entera se mueve.
+ *
+ * El dibujo enseña la jornada, de 7:00 a 22:00, y crece solo hasta la primera y la última hora abiertas con una hora de
+ * margen: nunca esconde una hora en la que se atiende. «De 0 a 24» enseña el día entero, para pintar de madrugada.
  *
  * Lo que hace que se sienta a mano: al pasar por lo rojo, una raya dice la hora bajo el puntero y un bloque fantasma
  * dice lo que se añadiría; arrastrar sobre lo rojo pinta una franja nueva y un clic pone una hora. Pasar por un día de
@@ -58,127 +73,10 @@ interface Guia {
  */
 @Component({
   selector: 'sc-tp-semana',
-  imports: [TpHoraComponent, TpIconoComponent],
+  imports: [TpHoraComponent, TpIconoComponent, TpSegComponent],
   template: `
     <div class="tp-sem" [class.tp-sem--compacta]="compacta()" [class.is-arrastrando]="arrastre() !== null" [attr.data-arrastre]="arrastre()?.lado ?? null">
-      <!-- La semana dibujada -->
-      <div class="tp-sem__mapa" role="group" [attr.aria-label]="resumenAccesible()">
-        <div class="tp-sem__eje t-micro t-3 t-num" aria-hidden="true">
-          <span></span>
-          <span class="tp-sem__horas">
-            @for (h of marcas; track h) {
-              <span [style.left.%]="(h / 24) * 100">{{ h }}</span>
-            }
-          </span>
-          <span></span>
-        </div>
-        @for (f of filas(); track f.dia) {
-          <div
-            class="tp-sem__fila"
-            [class.is-on]="filaEncendida(f.dia)"
-            [class.is-hoy]="ahora()?.dia === f.dia"
-            [class.is-mal]="error()?.dia === f.dia"
-            [class.is-senalado]="senalado() === f.dia"
-            [class.is-vista]="vista()?.dia === f.dia"
-            (mouseenter)="activo.set(f.tramo)"
-            (mouseleave)="activo.set(null)"
-          >
-            <span class="tp-sem__letra t-small t-strong" [attr.data-tip]="capital(nombres[f.dia])">{{ letras[f.dia] }}</span>
-            <span
-              class="tp-sem__pista"
-              [class.is-cerrada]="f.trozos.length === 0"
-              (pointerdown)="pintar($event, f.dia)"
-              (pointermove)="apuntar($event, f.dia)"
-              (pointerleave)="guia.set(null)"
-            >
-              <span class="tp-sem__guias" aria-hidden="true"></span>
-              @for (t of f.trozos; track $index) {
-                <span
-                  class="tp-sem__barra"
-                  [class.is-arrastre]="t.arrastre"
-                  [class.is-movible]="t.movible"
-                  [class.is-viva]="t.vivo"
-                  [class.is-sale]="f.sale"
-                  [style.left.%]="(t.desde / 1440) * 100"
-                  [style.width.%]="((t.hasta - t.desde) / 1440) * 100"
-                  [attr.data-tip]="t.vivo || arrastre() ? null : t.texto"
-                  (pointerdown)="t.movible && empezar($event, f.dia, t.tramo, t.franja, 'mover')"
-                >
-                  @if (t.etiqueta) {
-                    <span class="tp-sem__txt t-num">{{ t.etiqueta }}</span>
-                  }
-                  @if (t.vivo) {
-                    <span class="tp-sem__globo t-num" aria-hidden="true">{{ t.texto }}</span>
-                  }
-                  @if (t.asaInicio) {
-                    <span
-                      class="tp-sem__asa tp-sem__asa--ini"
-                      role="slider"
-                      tabindex="0"
-                      [attr.aria-label]="capital(nombres[f.dia]) + ', empieza'"
-                      aria-valuemin="0"
-                      aria-valuemax="1440"
-                      [attr.aria-valuenow]="t.inicio"
-                      [attr.aria-valuetext]="hora(t.inicio)"
-                      (pointerdown)="empezar($event, f.dia, t.tramo, t.franja, 0)"
-                      (keydown)="tecla($event, f.dia, t.tramo, t.franja, 0)"
-                    ></span>
-                  }
-                  @if (t.asaFin) {
-                    <span
-                      class="tp-sem__asa tp-sem__asa--fin"
-                      role="slider"
-                      tabindex="0"
-                      [attr.aria-label]="capital(nombres[f.dia]) + ', acaba'"
-                      aria-valuemin="0"
-                      aria-valuemax="1440"
-                      [attr.aria-valuenow]="t.fin"
-                      [attr.aria-valuetext]="hora(t.fin)"
-                      (pointerdown)="empezar($event, f.dia, t.tramo, t.franja, 1)"
-                      (keydown)="tecla($event, f.dia, t.tramo, t.franja, 1)"
-                    ></span>
-                  }
-                </span>
-              }
-              <!-- Lo que tendría este día si se marca en la fila que se está mirando. -->
-              @for (g of f.fantasmas; track $index) {
-                <span class="tp-sem__fantasma" aria-hidden="true" [style.left.%]="(g.desde / 1440) * 100" [style.width.%]="((g.hasta - g.desde) / 1440) * 100"></span>
-              }
-              <!-- Al pasar por lo rojo: la hora bajo el puntero y la hora que se añadiría con un clic. -->
-              @if (guia(); as gu) {
-                @if (gu.dia === f.dia && !arrastre()) {
-                  @if (gu.libre) {
-                    <span class="tp-sem__nueva" aria-hidden="true" [style.left.%]="(gu.min / 1440) * 100" [style.width.%]="((gu.hasta - gu.min) / 1440) * 100">
-                      <sc-tp-icono nombre="plus" [tam]="12" />
-                    </span>
-                  }
-                  <span class="tp-sem__cursor t-num" aria-hidden="true" [style.left.%]="(gu.min / 1440) * 100">
-                    <span class="tp-sem__cursor-hora">{{ hora(gu.min) }}</span>
-                  </span>
-                }
-              }
-              @if (ahora()?.dia === f.dia) {
-                <span class="tp-sem__ahora" [style.left.%]="(ahora()!.minutos / 1440) * 100" data-tip="Ahora"></span>
-              }
-            </span>
-            <span class="tp-sem__total t-small t-num" [class.is-cerrado]="f.minutos === 0">{{ f.minutos === 0 ? 'Cerrado' : horasTxt(f.minutos) }}</span>
-          </div>
-        }
-        <div class="tp-sem__leyenda t-micro t-3" aria-hidden="true">
-          <span class="tp-sem__clave tp-sem__clave--si"></span>Se atiende
-          <span class="tp-sem__clave tp-sem__clave--no"></span>No se atiende
-          <span class="tp-spacer"></span>
-          Arrastra sobre el rojo para añadir horas y los bordes para cambiarlas
-        </div>
-        @if (error(); as e) {
-          <p class="tp-error tp-sem__error" role="alert">
-            <sc-tp-icono nombre="alert" [tam]="14" />
-            {{ capital(nombres[e.dia]) }}: {{ problema[e.codigo] }}
-          </p>
-        }
-      </div>
-
-      <!-- Los tramos que la forman -->
+      <!-- Lo que se escribe: los días que comparten horas -->
       <div class="tp-sem__tramos-cab">
         <span class="t-eyebrow">Días que comparten horas</span>
         <span class="t-micro t-3">Marca un día para darle las horas de su fila</span>
@@ -257,6 +155,133 @@ interface Guia {
           <span class="t-micro t-3">Cerrado {{ cerradosTexto() }}</span>
         }
       </div>
+
+      <!-- Cómo queda: la semana dibujada, que también se edita -->
+      <div class="tp-sem__mapa" role="group" [attr.aria-label]="resumenAccesible()">
+        <div class="tp-sem__mapa-cab">
+          <span class="t-eyebrow">Así queda la semana</span>
+          @if (vistas(); as vs) {
+            <sc-tp-seg pequeno [etiqueta]="t.horasQueSeVen" [opciones]="vs" [valor]="dia24() ? 'dia' : 'jornada'" (cambio)="dia24.set($event === 'dia')" />
+          }
+        </div>
+        <div class="tp-sem__eje t-micro t-3 t-num" aria-hidden="true">
+          <span></span>
+          <span class="tp-sem__horas">
+            @for (h of marcas(); track h) {
+              <span [class.is-ini]="h === rango().desde" [class.is-fin]="h === rango().hasta" [style.left.%]="pos(h)">{{ h / 60 }}</span>
+            }
+          </span>
+          <span></span>
+        </div>
+        @for (f of filas(); track f.dia) {
+          <div
+            class="tp-sem__fila"
+            [class.is-on]="filaEncendida(f.dia)"
+            [class.is-hoy]="ahora()?.dia === f.dia"
+            [class.is-mal]="error()?.dia === f.dia"
+            [class.is-senalado]="senalado() === f.dia"
+            [class.is-vista]="vista()?.dia === f.dia"
+            (mouseenter)="activo.set(f.tramo)"
+            (mouseleave)="activo.set(null)"
+          >
+            <span class="tp-sem__letra t-small t-strong" [attr.data-tip]="capital(nombres[f.dia])">{{ letras[f.dia] }}</span>
+            <span
+              class="tp-sem__pista"
+              [class.is-cerrada]="f.trozos.length === 0"
+              (pointerdown)="pintar($event, f.dia)"
+              (pointermove)="apuntar($event, f.dia)"
+              (pointerleave)="guia.set(null)"
+            >
+              <span class="tp-sem__guias" aria-hidden="true">
+                @for (l of lineas(); track l.m) {
+                  <span class="tp-sem__guia" [class.is-fuerte]="l.fuerte" [style.left.%]="l.x"></span>
+                }
+              </span>
+              @for (t of f.trozos; track $index) {
+                <span
+                  class="tp-sem__barra"
+                  [class.is-arrastre]="t.arrastre"
+                  [class.is-movible]="t.movible"
+                  [class.is-viva]="t.vivo"
+                  [class.is-sale]="f.sale"
+                  [style.left.%]="pos(t.desde)"
+                  [style.width.%]="largo(t.desde, t.hasta)"
+                  [attr.data-tip]="t.vivo || arrastre() ? null : t.texto"
+                  (pointerdown)="t.movible && empezar($event, f.dia, t.tramo, t.franja, 'mover')"
+                >
+                  @if (t.etiqueta) {
+                    <span class="tp-sem__txt t-num">{{ t.etiqueta }}</span>
+                  }
+                  @if (t.vivo) {
+                    <span class="tp-sem__globo t-num" aria-hidden="true">{{ t.texto }}</span>
+                  }
+                  @if (t.asaInicio) {
+                    <span
+                      class="tp-sem__asa tp-sem__asa--ini"
+                      role="slider"
+                      tabindex="0"
+                      [attr.aria-label]="capital(nombres[f.dia]) + ', empieza'"
+                      aria-valuemin="0"
+                      aria-valuemax="1440"
+                      [attr.aria-valuenow]="t.inicio"
+                      [attr.aria-valuetext]="hora(t.inicio)"
+                      (pointerdown)="empezar($event, f.dia, t.tramo, t.franja, 0)"
+                      (keydown)="tecla($event, f.dia, t.tramo, t.franja, 0)"
+                    ></span>
+                  }
+                  @if (t.asaFin) {
+                    <span
+                      class="tp-sem__asa tp-sem__asa--fin"
+                      role="slider"
+                      tabindex="0"
+                      [attr.aria-label]="capital(nombres[f.dia]) + ', acaba'"
+                      aria-valuemin="0"
+                      aria-valuemax="1440"
+                      [attr.aria-valuenow]="t.fin"
+                      [attr.aria-valuetext]="hora(t.fin)"
+                      (pointerdown)="empezar($event, f.dia, t.tramo, t.franja, 1)"
+                      (keydown)="tecla($event, f.dia, t.tramo, t.franja, 1)"
+                    ></span>
+                  }
+                </span>
+              }
+              <!-- Lo que tendría este día si se marca en la fila que se está mirando. -->
+              @for (g of f.fantasmas; track $index) {
+                <span class="tp-sem__fantasma" aria-hidden="true" [style.left.%]="pos(g.desde)" [style.width.%]="largo(g.desde, g.hasta)"></span>
+              }
+              <!-- Al pasar por lo rojo: la hora bajo el puntero y la hora que se añadiría con un clic. -->
+              @if (guia(); as gu) {
+                @if (gu.dia === f.dia && !arrastre()) {
+                  @if (gu.libre) {
+                    <span class="tp-sem__nueva" aria-hidden="true" [style.left.%]="pos(gu.min)" [style.width.%]="largo(gu.min, gu.hasta)">
+                      <sc-tp-icono nombre="plus" [tam]="12" />
+                    </span>
+                  }
+                  <span class="tp-sem__cursor t-num" aria-hidden="true" [style.left.%]="pos(gu.min)">
+                    <span class="tp-sem__cursor-hora">{{ hora(gu.min) }}</span>
+                  </span>
+                }
+              }
+              @if (ahora()?.dia === f.dia && seVe(ahora()!.minutos)) {
+                <span class="tp-sem__ahora" [style.left.%]="pos(ahora()!.minutos)" data-tip="Ahora"></span>
+              }
+            </span>
+            <span class="tp-sem__total t-small t-num" [class.is-cerrado]="f.minutos === 0">{{ f.minutos === 0 ? 'Cerrado' : horasTxt(f.minutos) }}</span>
+          </div>
+        }
+        <div class="tp-sem__leyenda t-micro t-3" aria-hidden="true">
+          <span class="tp-sem__clave tp-sem__clave--si"></span>Se atiende
+          <span class="tp-sem__clave tp-sem__clave--no"></span>No se atiende
+          <span class="tp-spacer"></span>
+          Arrastra sobre el rojo para añadir horas y los bordes para cambiarlas
+        </div>
+        @if (error(); as e) {
+          <p class="tp-error tp-sem__error" role="alert">
+            <sc-tp-icono nombre="alert" [tam]="14" />
+            {{ capital(nombres[e.dia]) }}: {{ problema[e.codigo] }}
+          </p>
+        }
+      </div>
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -276,7 +301,6 @@ export class TpSemanaComponent {
   protected readonly letras = LETRAS;
   protected readonly nombres = NOMBRES;
   protected readonly problema = PROBLEMA;
-  protected readonly marcas = [0, 3, 6, 9, 12, 15, 18, 21, 24];
   protected readonly capital = (s: string): string => s.charAt(0).toUpperCase() + s.slice(1);
   protected readonly horasTxt = horas;
   protected readonly hora = horaCorta;
@@ -285,6 +309,8 @@ export class TpSemanaComponent {
   protected readonly guia = signal<Guia | null>(null);
   /** El día de una fila de tramos por el que pasa el puntero: el mapa enseña cómo quedaría. */
   protected readonly vista = signal<{ tramo: number; dia: number } | null>(null);
+  /** El mapa enseña el día entero en vez de la jornada. */
+  protected readonly dia24 = signal(false);
 
   /* Los tramos viven aparte mientras se editan: uno recién añadido aún no tiene días y la semana no puede contarlo. Se
    * recalculan cuando la semana llega de fuera (deshacer, cargar). */
@@ -305,11 +331,74 @@ export class TpSemanaComponent {
     return this.tramos().findIndex((t) => t.dias.includes(dia));
   }
 
+  /* ── Las horas que se ven ─────────────────────────────────────────────────────────────────────────────────────── */
+
+  /** La jornada de esta semana: de 7:00 a 22:00, o más si abre antes o cierra después, con una hora de margen. */
+  protected readonly jornada = computed<Rango>(() => {
+    const s = this.semana();
+    const trozos = [0, 1, 2, 3, 4, 5, 6].flatMap((d) => trozosDelDia(s, d));
+    if (!trozos.length) return JORNADA;
+    const ini = Math.min(...trozos.map((t) => t.desde));
+    const fin = Math.max(...trozos.map((t) => t.hasta));
+    return {
+      desde: Math.max(0, Math.min(JORNADA.desde, Math.floor(ini / 60) * 60 - 60)),
+      hasta: Math.min(1440, Math.max(JORNADA.hasta, Math.ceil(fin / 60) * 60 + 60)),
+    };
+  });
+
+  /** Lo que enseña el mapa. Mientras se arrastra no cambia: la escala no se mueve bajo el dedo. */
+  protected readonly rango = computed<Rango>(() => this.arrastre()?.rango ?? (this.dia24() ? DIA : this.jornada()));
+
+  /** Jornada o 24 h; si la jornada ya es el día entero, no hay nada que elegir. */
+  protected readonly vistas = computed<readonly OpcionSeg[] | null>(() => {
+    const j = this.jornada();
+    if (j.desde === 0 && j.hasta === 1440) return null;
+    return [
+      { valor: 'jornada', etiqueta: `De ${j.desde / 60} a ${j.hasta / 60}` },
+      { valor: 'dia', etiqueta: 'De 0 a 24' },
+    ];
+  });
+
+  /** Las horas escritas encima: cada hora en la jornada; cada tres, si se ven más de 16. */
+  protected readonly marcas = computed(() => {
+    const { desde, hasta } = this.rango();
+    const cada = hasta - desde > 960 ? 180 : 60;
+    const out: number[] = [];
+    for (let m = Math.ceil(desde / cada) * cada; m <= hasta; m += cada) out.push(m);
+    return out;
+  });
+
+  /** La cuadrícula: una raya cada hora, más marcada cada tres. */
+  protected readonly lineas = computed(() => {
+    const { desde, hasta } = this.rango();
+    const out: { m: number; x: number; fuerte: boolean }[] = [];
+    for (let m = Math.ceil((desde + 1) / 60) * 60; m < hasta; m += 60) out.push({ m, x: this.pos(m), fuerte: m % 180 === 0 });
+    return out;
+  });
+
+  /** Dónde cae un minuto en el mapa, en %, sin salirse de lo que se ve. */
+  protected pos(m: number): number {
+    const r = this.rango();
+    return ((Math.min(Math.max(m, r.desde), r.hasta) - r.desde) / (r.hasta - r.desde)) * 100;
+  }
+
+  protected largo(desde: number, hasta: number): number {
+    return this.pos(hasta) - this.pos(desde);
+  }
+
+  protected seVe(m: number): boolean {
+    const r = this.rango();
+    return m >= r.desde && m <= r.hasta;
+  }
+
   protected readonly filas = computed(() => {
     const s = this.semana();
     const tramos = this.tramos();
     const a = this.arrastre();
     const v = this.vista();
+    // Las horas caben en la barra según lo que ocupa en pantalla, no en el reloj: en la jornada caben antes.
+    const { desde: r0, hasta: r1 } = this.rango();
+    const escala = 1440 / (r1 - r0);
     return [0, 1, 2, 3, 4, 5, 6].map((dia) => {
       const trozos = trozosDelDia(s, dia).map((tz) => {
         // El trozo que viene de la víspera es la cola de una franja de la víspera: su fin se arrastra desde aquí.
@@ -319,7 +408,7 @@ export class TpSemanaComponent {
         const cruza = tz.franja[1] <= tz.franja[0];
         const ancho = tz.hasta - tz.desde;
         const texto = tz.arrastre ? `Viene de la víspera, hasta las ${horaCorta(tz.franja[1])}` : `${horaCorta(tz.franja[0])}–${horaCorta(tz.franja[1])}`;
-        const etiqueta = ancho < 170 ? '' : tz.arrastre ? `→ ${horaCorta(tz.franja[1])}` : cruza ? `${horaCorta(tz.franja[0])} →` : texto;
+        const etiqueta = ancho * escala < 170 ? '' : tz.arrastre ? `→ ${horaCorta(tz.franja[1])}` : cruza ? `${horaCorta(tz.franja[0])} →` : texto;
         return {
           ...tz,
           tramo,
@@ -448,8 +537,9 @@ export class TpSemanaComponent {
 
   /** El minuto (de 15 en 15) bajo el puntero en una pista. */
   private minutoEn(e: PointerEvent, pista: DOMRect): number {
-    const m = Math.round((((e.clientX - pista.left) / pista.width) * 1440) / PASO) * PASO;
-    return Math.min(1440, Math.max(0, m));
+    const { desde, hasta } = this.rango();
+    const m = desde + Math.round((((e.clientX - pista.left) / pista.width) * (hasta - desde)) / PASO) * PASO;
+    return Math.min(hasta, Math.max(desde, m));
   }
 
   /** El hueco libre de un día alrededor de un minuto, o `null` si ahí ya hay horas o no cabe una franja. */
@@ -485,7 +575,7 @@ export class TpSemanaComponent {
     const f0 = this.vivos()[tramo].franjas[franja];
     this.guia.set(null);
     this.gesto.emit(true);
-    this.arrastre.set({ tramo, franja, lado, dia, pista, x0: e.clientX, f0, antes: this.vivos(), movido: false, ...this.limites(dia, tramo, franja, lado) });
+    this.arrastre.set({ tramo, franja, lado, dia, pista, x0: e.clientX, f0, rango: this.rango(), antes: this.vivos(), movido: false, ...this.limites(dia, tramo, franja, lado) });
   }
 
   /**
@@ -520,7 +610,7 @@ export class TpSemanaComponent {
     this.guia.set(null);
     this.gesto.emit(true);
     this.emitir(tramos);
-    this.arrastre.set({ tramo, franja, lado: 'pintar', dia, pista, x0: e.clientX, f0: nueva, antes, movido: false, min: h.min, max: h.max });
+    this.arrastre.set({ tramo, franja, lado: 'pintar', dia, pista, x0: e.clientX, f0: nueva, rango: this.rango(), antes, movido: false, min: h.min, max: h.max });
   }
 
   @HostListener('document:pointermove', ['$event'])
@@ -529,7 +619,9 @@ export class TpSemanaComponent {
     if (!a) return;
     if (!a.movido && Math.abs(e.clientX - a.x0) < 3) return;
     a.movido = true;
-    const aMin = (px: number): number => Math.round(((px / a.pista.width) * 1440) / PASO) * PASO;
+    // Los píxeles, en minutos de lo que se veía al empezar. Pasarse del borde sigue contando: al soltar, el mapa crece.
+    const aMin = (px: number): number => Math.round(((px / a.pista.width) * (a.rango.hasta - a.rango.desde)) / PASO) * PASO;
+    const enPista = (x: number): number => a.rango.desde + aMin(x - a.pista.left);
     const dentro = (n: number): number => Math.min(a.max, Math.max(a.min, n));
     if (a.lado === 'mover') {
       const largo = a.f0[1] - a.f0[0];
@@ -539,14 +631,14 @@ export class TpSemanaComponent {
     }
     if (a.lado === 'pintar') {
       // Desde donde se pulsó hasta el puntero, hacia un lado o hacia el otro.
-      const m = dentro(aMin(e.clientX - a.pista.left));
+      const m = dentro(enPista(e.clientX));
       const ini = Math.min(a.f0[0], m);
       const fin = Math.max(a.f0[0] + PASO, m);
       this.ponerFranja(a.tramo, a.franja, [Math.min(ini, a.max - PASO), Math.min(Math.max(fin, ini + PASO), a.max)]);
       return;
     }
     // Solo se mueve un borde: el otro es el de cuando empezó el arrastre.
-    const m = dentro(aMin(e.clientX - a.pista.left));
+    const m = dentro(enPista(e.clientX));
     this.ponerFranja(a.tramo, a.franja, a.lado === 0 ? [m, a.f0[1]] : [a.f0[0], m]);
   }
 

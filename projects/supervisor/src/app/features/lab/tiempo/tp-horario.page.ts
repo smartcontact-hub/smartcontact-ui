@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, HostListener, inject, type OnInit, signal, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { pruebaEnCurso } from '@core/prueba/prueba-arranque';
 
 import { ahoraEn, diaDeLaSemana, type Horario, validarSemana } from '@features/admin/repositories/state/horarios.core.mjs';
 import { HorariosStore } from '@features/admin/repositories/state/horarios.store';
@@ -58,6 +59,8 @@ export class TpHorarioPage implements OnInit {
   protected readonly sitios = sitios;
 
   protected readonly modo = signal<'crear' | 'editar'>('crear');
+  /** Con una prueba con personas en marcha, la barra de guardar deja sitio a la suya. */
+  protected readonly enPrueba = pruebaEnCurso();
   protected readonly horarioId = signal<number | null>(null);
   protected readonly form = signal<Borrador>(VACIO);
   private readonly sucio = createFormDirtyState(() => this.form());

@@ -25,6 +25,7 @@ export const T = {
   diasDelTramo: (i: number): string => `Días del tramo ${i + 1}`,
   quitarTramo: (i: number): string => `Quitar tramo ${i + 1}`,
   quitarFranja: 'Quitar franja',
+  horasQueSeVen: 'Horas que se ven',
   desde: 'Desde',
   hasta: 'Hasta',
   hora: 'Hora',

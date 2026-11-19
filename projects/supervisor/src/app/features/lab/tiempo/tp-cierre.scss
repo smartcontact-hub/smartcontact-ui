@@ -114,3 +114,13 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* Con una prueba con personas en marcha, su barra va abajo a la izquierda: la de guardar se va a la derecha para que
+   ninguna tape a la otra. */
+.tp-cierre.tp--prueba .tp-savebar {
+  inset-inline: auto var(--s-5);
+  translate: 0 calc(100% + var(--s-8));
+  &[data-visible='true'] {
+    translate: 0 0;
+  }
+}

@@ -275,7 +275,7 @@ export const LABS: readonly Lab[] = [
     id: 'lab-horarios-cierre',
     title: 'Horarios, para cerrar',
     question: '¿Qué queda de Horarios si periodos, días especiales y festivos se van al calendario?',
-    controls: ['Semana en verde y rojo', 'Pintar y arrastrar horas, con ⌘Z', 'Descripción que se escribe sola', '«Aplicado en» y aviso al guardar'],
+    controls: ['Primero los días y sus horas, debajo cómo queda', 'Pintar y arrastrar horas, con ⌘Z', 'De 7 a 22, o de 0 a 24', '«Aplicado en» y aviso al guardar'],
     where: 'Entra por Repositorios › Horarios; abre uno y cambia sus horas.',
     // Vive en su rama experimental: el preview de la rama, no producción. Ese dominio entra ya en esta versión.
     href: 'https://claude-horarios-cierre.sc-supervisor.pages.dev/lab/tiempo',
