@@ -13,6 +13,7 @@ import {
 import { AUTORES, HORARIOS_FICHAS, HORARIOS_YA_ESTA, type HorariosAutor } from './horarios.data';
 import { LabArteComponent } from './lab-arte.component';
 import { LabHorariosComponent } from './lab-horarios.component';
+import { MascotaComponent } from '../../shared/mascota/mascota.component';
 import { ESTADO_PRUEBA, PRUEBAS, type EstadoPrueba } from './pruebas/pruebas.data';
 
 /** Un destino del directorio. `route` = navega dentro de este mismo sitio. */
@@ -92,6 +93,7 @@ const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'o
     ScTagComponent,
     LabArteComponent,
     LabHorariosComponent,
+    MascotaComponent,
   ],
   templateUrl: './lab.component.html',
   styleUrl: './lab.component.scss',
