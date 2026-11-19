@@ -8,13 +8,16 @@ import {
   csvDeResultados,
   ENSAYO,
   exito,
+  gestosEnTexto,
   informe,
   informeEnTexto,
   leerResultados,
   limpio,
+  META,
   numeroDe,
   ordenDeVersiones,
   pSignos,
+  quienEs,
   UMBRAL,
   veredicto,
   type Gravedad,
@@ -131,12 +134,33 @@ export class PruebaControlComponent {
     return p ? informe(p, this.resultados()) : null;
   });
 
-  /** El marcador: cada versión con su letra, su enlace y, si ya hay datos, cuánto se resuelve bien y sin ayuda. */
+  /**
+   * El marcador: cada versión con su letra, su enlace y, si ya hay datos, cuánto se resuelve bien y sin ayuda. Con una
+   * sola versión no hay con qué compararla, y el marcador pasa a ser cada tarea frente a la meta.
+   */
   protected readonly marcador = computed(() => {
     const p = this.plan();
     const v = this.veredicto();
     const inf = this.informe();
     if (!p || !v) return [];
+    if (v.tareas) {
+      return v.tareas.map((t, i) => {
+        const m = inf?.tareas.find((x) => x.id === t.id)?.versiones[0] ?? null;
+        return {
+          id: t.id,
+          letra: String(i + 1),
+          nombre: t.titulo,
+          url: p.versiones[0].url,
+          limpias: t.limpias,
+          intentos: t.intentos,
+          proporcion: t.intentos ? t.limpias / t.intentos : 0,
+          seq: m?.seq ?? null,
+          tot: m?.tot ?? null,
+          gana: t.cumple,
+          sello: 'Cumple',
+        };
+      });
+    }
     const unaTarea = inf?.tareas.length === 1 ? inf.tareas[0] : null;
     return p.versiones.map((ver, i) => {
       const r = v.resumen.find((x) => x.id === ver.id);
@@ -153,6 +177,7 @@ export class PruebaControlComponent {
         seq: m?.seq ?? null,
         tot: m?.tot ?? null,
         gana: v.ganadora === ver.id,
+        sello: 'Gana',
       };
     });
   });
@@ -161,10 +186,19 @@ export class PruebaControlComponent {
   protected readonly personas = computed(() => {
     const p = this.plan();
     if (!p) return [];
-    const recibidos = new Set(this.resultados().map((r) => r.participante));
+    const recibidos = new Map(this.resultados().map((r) => [r.participante, r]));
     return Array.from({ length: p.personas }, (_, i) => {
       const quien = `P${i + 1}`;
-      return { quien, orden: this.ordenEnNombres(p, quien), enlace: this.enlace(p, quien), recibido: recibidos.has(quien) };
+      const r = recibidos.get(quien);
+      return {
+        quien,
+        // Bajo el punto cabe el nombre de pila; el entero, en «Persona a persona».
+        nombre: r?.nombre?.split(' ')[0] ?? '',
+        etiqueta: r ? quienEs(r) : quien,
+        orden: this.ordenEnNombres(p, quien),
+        enlace: this.enlace(p, quien),
+        recibido: !!r,
+      };
     });
   });
 
@@ -228,6 +262,16 @@ export class PruebaControlComponent {
           nombre: 'Personas que se quedarían con ella',
           valores: t.versiones.map((m) => String(m.preferida)),
         },
+        // Solo si la rama cuenta gestos (copiar, pegar…): dice si un atajo se descubre sin explicarlo.
+        ...(t.versiones.some((m) => m.usos.length)
+          ? [
+              {
+                sigla: 'Gestos',
+                nombre: 'Intentos que usaron cada gesto al menos una vez',
+                valores: t.versiones.map((m) => gestosEnTexto(m) || '—'),
+              },
+            ]
+          : []),
       ],
     })),
   );
@@ -240,6 +284,7 @@ export class PruebaControlComponent {
       id ? (p.versiones.find((v) => v.id === id)?.nombre ?? id) : null;
     return this.resultados().map((r) => ({
       quien: r.participante,
+      etiqueta: r.participante === ENSAYO ? 'Ensayo' : quienEs(r),
       esEnsayo: r.participante === ENSAYO,
       orden: this.ordenEnNombres(p, r.participante),
       prefiere: r.preferencia
@@ -252,9 +297,16 @@ export class PruebaControlComponent {
     }));
   });
 
+  /** Con una sola versión: la meta de cada tarea, en porcentaje. */
+  protected readonly porcentajeMeta = computed(() => `${Math.round((this.plan()?.meta ?? META) * 100)} %`);
+
   /** Lo que hace falta para que una diferencia cuente con las personas de esta prueba, sacado de la propia regla. */
   protected readonly hacenFalta = computed(() => {
     const n = this.plan()?.personas ?? 0;
+    if (this.plan()?.versiones.length === 1) {
+      const meta = this.plan()?.meta ?? META;
+      return `Con ${n} personas, cumple desde ${Math.ceil(meta * n - 1e-9)} de ${n} en cada tarea.`;
+    }
     const pares: string[] = [];
     for (let b = 0; b < n; b++) {
       let a = b + 1;
@@ -295,8 +347,9 @@ export class PruebaControlComponent {
   }
 
   protected quitar(quien: string): void {
-    this.resultados.update((rs) => rs.filter((r) => r.participante !== quien));
-    this.avisar(`Quitado: ${quien === ENSAYO ? 'el ensayo' : quien}`);
+    const r = this.resultados().find((x) => x.participante === quien);
+    this.resultados.update((rs) => rs.filter((x) => x.participante !== quien));
+    this.avisar(`Quitado: ${quien === ENSAYO ? 'el ensayo' : r ? quienEs(r) : quien}`);
   }
 
   protected async copiar(texto: string, clave: string, aviso: string): Promise<void> {
@@ -365,7 +418,7 @@ export class PruebaControlComponent {
     }
     this.resultados.update((rs) => juntar(rs, propios));
     alAnadir?.();
-    const quienes = propios.map((r) => (r.participante === ENSAYO ? 'el ensayo' : r.participante));
+    const quienes = propios.map((r) => (r.participante === ENSAYO ? 'el ensayo' : quienEs(r)));
     this.avisar(`Añadido: ${quienes.join(', ')}`);
   }
 
@@ -405,6 +458,9 @@ export class PruebaControlComponent {
       pantallas: paso.pantallas,
       ayudas: paso.ayudas.map((a) => `a los ${tiempo(a.ms)}, en ${a.pantalla}`),
       facilidad: paso.facilidad,
+      gestos: Object.entries(paso.comprobacion?.usos ?? {})
+        .map(([g, n]) => `${g} ${n}`)
+        .join(', '),
     };
   }
 }

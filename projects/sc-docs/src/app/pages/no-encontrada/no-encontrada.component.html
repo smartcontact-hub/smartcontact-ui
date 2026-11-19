@@ -1,0 +1,16 @@
+<section class="nf" aria-labelledby="nf-titulo">
+  <app-mascota class="nf__mascota" />
+
+  <h1 id="nf-titulo" class="nf__titulo sc-text-h2-semibold">Esta página no existe</h1>
+  <p class="nf__texto sc-text-body-regular">
+    No hay nada en <code class="nf__direccion">{{ direccion }}</code>. Puede que el enlace sea antiguo o que esta parte
+    de la doc siga en obras.
+  </p>
+
+  <div class="nf__acciones">
+    <sc-button label="Buscar en la doc" icon="search" (clicked)="buscar()" />
+    <a class="nf__enlace sc-text-body-semibold" routerLink="/">
+      Ir al inicio <sc-icon name="arrow_forward" [size]="16" />
+    </a>
+  </div>
+</section>

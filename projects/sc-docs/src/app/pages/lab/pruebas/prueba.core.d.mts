@@ -15,6 +15,8 @@ export interface PlanMinimo {
   readonly id: string;
   readonly versiones: readonly Version[];
   readonly tareas: readonly Tarea[];
+  /** Con una sola versión: lo que cada tarea tiene que salir bien y sin ayuda para cumplir (0 a 1; si no, `META`). */
+  readonly meta?: number;
 }
 export interface Paso {
   version: string;
@@ -28,6 +30,7 @@ export interface Comprobacion {
   readonly bien: number;
   readonly total: number;
   readonly titular?: string;
+  readonly usos?: Readonly<Record<string, number>>;
 }
 export interface PasoResultado {
   version: string;
@@ -49,6 +52,8 @@ export interface Resultado {
   orden: readonly string[];
   pasos: readonly PasoResultado[];
   preferencia?: { readonly version: string | null; readonly porque: string };
+  /** El nombre que escribió la persona en la puerta, si quiso. */
+  nombre?: string;
 }
 export interface Sesion {
   v: 1;
@@ -72,17 +77,29 @@ export interface ResumenVersion {
   segundos: number | null;
   preferida: number;
 }
+/** Con una sola versión: cómo le va a cada tarea frente a la meta. */
+export interface CumplimientoTarea {
+  id: string;
+  titulo: string;
+  intentos: number;
+  limpias: number;
+  cumple: boolean;
+}
 export interface Veredicto {
   personas: number;
   resumen: ResumenVersion[];
   ganadora: string | null;
   motivo: Criterio | null;
   frase: string;
+  /** Solo con una versión: la meta y cada tarea frente a ella. */
+  meta?: number;
+  tareas?: CumplimientoTarea[];
 }
 
 export const CODIGO_RESULTADO: string;
 export const UMBRAL: number;
 export const FACTOR_TIEMPO: number;
+export const META: number;
 export function codificar(valor: unknown): string;
 export function decodificar(texto: string): unknown;
 export function numeroDe(participante: string): number;
@@ -90,6 +107,10 @@ export function ordenDeVersiones(plan: PlanMinimo, participante: string): string
 export function pasosDe(plan: PlanMinimo, participante: string): Paso[];
 export function sesionDe(plan: PlanMinimo, participante: string, fin: string): Sesion;
 export function enlaceDelPrimerPaso(sesion: Sesion): string;
+export const NOMBRE_MAX: number;
+export function limpiarNombre(nombre: unknown): string;
+export function claveDelNombre(prueba: string, participante: string): string;
+export function quienEs(r: Pick<Resultado, 'participante' | 'nombre'>): string;
 export function codigoDeResultado(resultado: Resultado): string;
 export function leerResultados(texto: string): Resultado[];
 export function pSignos(a: number, b: number): number;
@@ -113,6 +134,7 @@ export interface MetricasVersion {
   ayuda: number | null;
   enVacio: number;
   preferida: number;
+  usos: readonly { readonly gesto: string; readonly personas: number }[];
 }
 export interface Hallazgo {
   regla: string;
@@ -133,6 +155,7 @@ export interface Informe {
   nombre(id: string): string;
 }
 export function informe(plan: PlanMinimo, resultados: readonly Resultado[]): Informe;
+export function gestosEnTexto(m: Pick<MetricasVersion, 'usos' | 'n'>): string;
 export function csvDeResultados(plan: PlanMinimo, resultados: readonly Resultado[]): string;
 export function informeEnTexto(
   plan: PlanMinimo & { readonly titulo?: string; readonly pregunta?: string },

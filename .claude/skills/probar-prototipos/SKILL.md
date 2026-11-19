@@ -34,6 +34,9 @@ control del Lab, y allí está todo.
      de partida: si el día de una ya es festivo en un calendario (el 15 de mayo es San Isidro en Madrid), esa pide la
      mitad de trabajo. Un ensayo sin hacer nada debe sacar los mismos puntos en las dos.
    - Personas: 6 por defecto (de 5 a 10). Con menos de 5 la regla nunca da ganadora; dilo antes de empezar.
+   - ¿No hay con qué comparar? Una sola versión también vale: cada tarea lleva una sola misión, ordenadas de la más
+     sencilla a la más difícil, y la prueba dice si cada una **cumple** la `meta` del plan (80 % bien y sin ayuda si no
+     dice otra). Es la pregunta «¿sale sin ayuda?», no «¿cuál es mejor?» (DD-256 §10).
 
 2. **Prepara cada rama** (si no, la prueba igual funciona: quien modera marca si salió bien):
    - Que traiga `main` (si no, no tiene el modo prueba).
@@ -50,6 +53,8 @@ control del Lab, y allí está todo.
      ```
      La misión es `<tarea>-<vuelta>`: `festivo-1` es la gemela que la persona hace PRIMERO, sea cual sea la versión.
      `comprobar` mira los datos de esa gemela en las dos versiones.
+   - Si quieres saber si un atajo se descubre solo, que `comprobar` devuelva también `usos` (`{ copiar: 2 }`, contado
+     desde `reiniciar`): la sala dice cuántos lo usaron. No decide nada.
    - Que esconda sus propias barras de prueba si las tiene (`pruebaEnCurso()` de `prueba-arranque.ts`).
    - Que el enlace de cada versión abra donde empieza la tarea de verdad (encontrar el sitio es parte de la tarea).
 
@@ -85,7 +90,8 @@ control del Lab, y allí está todo.
 
 ## Privacidad (el repo es público)
 
-- Las personas son P1, P2…; sus nombres nunca entran en el repo, ni en commits ni en la skill.
+- Las personas son P1, P2…; sus nombres nunca entran en el repo, ni en commits ni en la skill. Si alguien escribe su
+  nombre en la puerta (es opcional), viaja dentro de su código y solo lo ve quien modera, en la sala y en el CSV.
 - Datos reales en las misiones, siempre anonimizados.
 - Los códigos y los `.json` que manda cada persona no se commitean: se quedan en el navegador de quien modera.
 - Nada sale del navegador de la persona hasta que ella copia su código.
