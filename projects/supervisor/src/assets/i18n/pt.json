@@ -1539,6 +1539,11 @@
         "teams": "Equipas",
         "campaigns": "Campanhas"
       },
+      "section_schedule": "Horário",
+      "view_week": "Semana",
+      "view_slots": "Períodos",
+      "view_label": "Vista do horário",
+      "view_slots_hint": "Escreva as horas de cada dia e copie os períodos de um dia para outros",
       "precise_title": "Ajustar com precisão",
       "col_availability": "Disponibilidade",
       "col_use": "Uso",

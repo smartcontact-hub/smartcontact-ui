@@ -146,3 +146,9 @@
   align-items: baseline;
   gap: var(--sc-spacing-0-5);
 }
+
+/* Los botones para cambiar de vista, arriba del bloque del horario. */
+.vistas {
+  display: flex;
+  margin-block-end: var(--sc-spacing-1);
+}

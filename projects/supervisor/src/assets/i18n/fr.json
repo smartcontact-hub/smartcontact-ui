@@ -1539,6 +1539,11 @@
         "teams": "Équipes",
         "campaigns": "Campagnes"
       },
+      "section_schedule": "Horaire",
+      "view_week": "Semaine",
+      "view_slots": "Plages",
+      "view_label": "Vue de l’horaire",
+      "view_slots_hint": "Saisissez les heures de chaque jour et copiez les plages d’un jour vers d’autres",
       "precise_title": "Ajuster avec précision",
       "col_availability": "Disponibilité",
       "col_use": "Utilisation",

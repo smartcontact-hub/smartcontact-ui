@@ -1539,6 +1539,11 @@
         "teams": "Teams",
         "campaigns": "Campaigns"
       },
+      "section_schedule": "Schedule",
+      "view_week": "Week",
+      "view_slots": "Slots",
+      "view_label": "Schedule view",
+      "view_slots_hint": "Type the hours of each day and copy the slots of one day to others",
       "precise_title": "Fine-tune",
       "col_availability": "Availability",
       "col_use": "Use",

@@ -41,12 +41,33 @@
       <!-- A la izquierda y lo que más ocupa: la semana, donde se edita (se arrastra sobre las horas). Debajo, plegado, el ajuste al
            minuto y con teclado. -->
       <div class="horario__reglas">
-        <sc-section-card anchorId="horario-semana" titleKey="repositories.horarios.section_week_view" hintKey="repositories.horarios.section_week_view_hint" surface="subtle" icon="calendar_view_week">
+        <!-- Un solo bloque con las dos formas de editar el horario, que se cambian con los botones de arriba: «Semana» (se arrastra sobre
+             las horas) y «Franjas» (se escriben las horas de cada día y se copian). Las dos editan lo mismo. -->
+        <sc-section-card
+          anchorId="horario-semana"
+          titleKey="repositories.horarios.section_schedule"
+          [hintKey]="vista() === 'semana' ? 'repositories.horarios.section_week_view_hint' : 'repositories.horarios.view_slots_hint'"
+          surface="subtle"
+          icon="calendar_view_week"
+        >
           <sc-subsection>
-            <sc-horario-semana-vista [semana]="form().week" [zona]="form().timezone" (semanaChange)="update('week', $event)" />
-          </sc-subsection>
-          <sc-subsection titleKey="repositories.horarios.precise_title" collapsible initiallyCollapsed>
-            <sc-horario-semana [semana]="form().week" [falta]="faltaDeSemana()" (semanaChange)="update('week', $event)" />
+            <div class="vistas">
+              <sc-selectbutton
+                size="sm"
+                [ariaLabel]="'repositories.horarios.view_label' | translate"
+                [options]="vistas()"
+                optionLabel="label"
+                optionValue="value"
+                [allowEmpty]="false"
+                [value]="vista()"
+                (valueChange)="vista.set($any($event))"
+              />
+            </div>
+            @if (vista() === 'semana') {
+              <sc-horario-semana-vista [semana]="form().week" [zona]="form().timezone" (semanaChange)="update('week', $event)" />
+            } @else {
+              <sc-horario-semana [semana]="form().week" [falta]="faltaDeSemana()" (semanaChange)="update('week', $event)" />
+            }
           </sc-subsection>
         </sc-section-card>
       </div>

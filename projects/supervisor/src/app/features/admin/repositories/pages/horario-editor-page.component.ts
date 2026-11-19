@@ -199,6 +199,16 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
     if (id === null || this.mode() !== 'edit') return [];
     return this.groupsStore.groups().filter((g) => subcanalesConHorario(g).some((s) => s.id === id));
   });
+  /** Qué forma de editar la semana se ve: «Semana» (arrastrar sobre las horas) o «Franjas» (escribir las horas de cada día). */
+  protected readonly vista = signal<'semana' | 'franjas'>('semana');
+  protected readonly vistas = computed(() => {
+    this.lang();
+    return [
+      { value: 'semana', label: this.translate.instant('repositories.horarios.view_week') as string },
+      { value: 'franjas', label: this.translate.instant('repositories.horarios.view_slots') as string },
+    ];
+  });
+
   /** Dónde se usa: por sitios (grupos, VUI, buzones, agendas, equipos, campañas), cada uno con sus nombres. */
   protected readonly usos = computed(() => {
     this.lang();
