@@ -12,14 +12,20 @@
  * preferencia. Cada criterio cuenta solo las veces en que las versiones se separan y aplica una prueba de signos: con
  * 5 a 10 personas, una diferencia solo cuenta si p < 0,10 (el umbral que usa MeasuringU con muestras pequeñas). Con 6
  * personas hace falta un 5 a 0; un 4 a 2 es empate, y entonces decide lo que se vio en las sesiones.
+ *
+ * Con UNA sola versión no hay con qué compararla: la prueba comprueba si cumple. Cada tarea tiene una sola misión, y
+ * cumple si sale bien y sin ayuda al menos la `meta` de las veces (el 80 % si el plan no dice otra: con 6 personas, 5).
  */
 
 /**
  * @typedef {{ readonly id: string, readonly nombre: string, readonly url: string }} Version
  * @typedef {{ readonly id: string, readonly titulo: string, readonly gemelas: readonly string[], readonly nota?: string }} Tarea
- * @typedef {{ readonly id: string, readonly versiones: readonly Version[], readonly tareas: readonly Tarea[] }} PlanMinimo
+ * @typedef {{ readonly id: string, readonly versiones: readonly Version[], readonly tareas: readonly Tarea[], readonly meta?: number }} PlanMinimo
  * @typedef {{ version: string, url: string, mision: string, titulo: string, enunciado: string, nota?: string }} Paso
- * @typedef {{ readonly bien: number, readonly total: number, readonly titular?: string }} Comprobacion
+ * @typedef {{
+ *   readonly bien: number, readonly total: number, readonly titular?: string,
+ *   readonly usos?: Readonly<Record<string, number>>,
+ * }} Comprobacion
  * @typedef {{
  *   version: string, mision: string, ms: number, clics: number, primerClic: string | null,
  *   enVacio: readonly string[], pantallas: readonly string[],
@@ -28,7 +34,7 @@
  * }} PasoResultado
  * @typedef {{
  *   v: 1, prueba: string, participante: string, orden: readonly string[], pasos: readonly PasoResultado[],
- *   preferencia?: { readonly version: string | null, readonly porque: string },
+ *   preferencia?: { readonly version: string | null, readonly porque: string }, nombre?: string,
  * }} Resultado
  */
 
@@ -40,6 +46,9 @@ export const UMBRAL = 0.1;
 
 /** Lo que una versión tiene que tardar de más para que el tiempo cuente: un 50 %. */
 export const FACTOR_TIEMPO = 1.5;
+
+/** Con una sola versión, lo que cada tarea tiene que salir bien y sin ayuda para que cumpla, si el plan no dice otra. */
+export const META = 0.8;
 
 /* ───────────────────────────── El enlace (copia del de `prueba-enlace.core.mjs` del Supervisor) ───────────────────────────── */
 
@@ -150,6 +159,43 @@ function esResultado(r) {
   return o['v'] === 1 && typeof o['prueba'] === 'string' && typeof o['participante'] === 'string' && Array.isArray(o['pasos']);
 }
 
+/** Lo más largo que se guarda de un nombre. */
+export const NOMBRE_MAX = 40;
+
+/**
+ * El nombre que la persona escribió en la puerta, si quiso: sin espacios de sobra y cortado a `NOMBRE_MAX`. Vacío si
+ * no hay. Viaja solo en su código y se queda en el navegador de quien modera; el repo nunca lo ve.
+ * @param {unknown} nombre
+ */
+export function limpiarNombre(nombre) {
+  return typeof nombre === 'string' ? nombre.replace(/\s+/g, ' ').trim().slice(0, NOMBRE_MAX).trim() : '';
+}
+
+/**
+ * Dónde guarda la puerta el nombre mientras la persona va y vuelve del Supervisor: en la sesión de la pestaña de
+ * sc-docs, que sobrevive al viaje. Al Supervisor no llega.
+ * @param {string} prueba
+ * @param {string} participante
+ */
+export const claveDelNombre = (prueba, participante) => `sc-prueba-nombre:${prueba}/${participante}`;
+
+/**
+ * Cómo se nombra a una persona en la sala: «Ana (P1)» si dijo su nombre; si no, «P1».
+ * @param {Pick<Resultado, 'participante' | 'nombre'>} r
+ */
+export const quienEs = (r) => (r.nombre ? `${r.nombre} (${r.participante})` : r.participante);
+
+/**
+ * Un resultado leído, con el nombre limpio o sin él.
+ * @param {Resultado} r
+ * @returns {Resultado}
+ */
+function conNombreLimpio(r) {
+  const { nombre, ...resto } = r;
+  const limpio = limpiarNombre(nombre);
+  return limpio ? { ...resto, nombre: limpio } : resto;
+}
+
 /**
  * El código que se copia al acabar.
  * @param {Resultado} resultado
@@ -168,7 +214,7 @@ export function leerResultados(texto) {
   for (const m of texto.matchAll(/SCP1\.([A-Za-z0-9_-]+)/g)) {
     try {
       const r = decodificar(m[1]);
-      if (esResultado(r)) leidos.push(r);
+      if (esResultado(r)) leidos.push(conNombreLimpio(r));
     } catch {
       // un código cortado al pegarlo: se ignora
     }
@@ -176,7 +222,7 @@ export function leerResultados(texto) {
   if (leidos.length) return leidos;
   try {
     const j = JSON.parse(texto);
-    for (const r of Array.isArray(j) ? j : [j]) if (esResultado(r)) leidos.push(r);
+    for (const r of Array.isArray(j) ? j : [j]) if (esResultado(r)) leidos.push(conNombreLimpio(r));
   } catch {
     // no es JSON
   }
@@ -343,6 +389,7 @@ export function veredicto(plan, resultados) {
   });
 
   const base = { personas: propios.length, resumen };
+  if (ids.length === 1) return cumplimiento(plan, propios, base);
   if (!propios.length) return { ...base, ganadora: null, motivo: null, frase: 'Aún no hay resultados.' };
 
   for (const c of CRITERIOS) {
@@ -373,6 +420,36 @@ export function veredicto(plan, resultados) {
     ganadora: null,
     motivo: null,
     frase: `Empate: con ${propios.length} ${propios.length === 1 ? 'persona' : 'personas'} los datos no separan las versiones.${pocas} Decide lo que visteis en las sesiones.`,
+  };
+}
+
+/**
+ * Con una sola versión no hay ganadora: cada tarea cumple o no la meta, y la frase dice cuáles no llegan.
+ * @param {PlanMinimo} plan
+ * @param {readonly Resultado[]} propios
+ * @param {{ personas: number, resumen: object[] }} base
+ */
+function cumplimiento(plan, propios, base) {
+  const meta = plan.meta ?? META;
+  const tareas = plan.tareas.map((t) => {
+    const hechos = propios.flatMap((r) => r.pasos.filter((p) => p.mision.startsWith(`${t.id}-`) && limpio(p) !== null));
+    const limpias = hechos.filter((p) => limpio(p) === true).length;
+    return { id: t.id, titulo: t.titulo, intentos: hechos.length, limpias, cumple: hechos.length > 0 && limpias / hechos.length >= meta };
+  });
+  const todo = { ...base, meta, tareas, ganadora: null, motivo: null };
+  if (!propios.length) return { ...todo, frase: 'Aún no hay resultados.' };
+  const porcentaje = `${Math.round(meta * 100)} %`;
+  const pocas = propios.length < 5 ? ' Con menos de 5 personas es solo una pista.' : '';
+  const medidas = tareas.filter((t) => t.intentos > 0);
+  const fallan = medidas.filter((t) => !t.cumple);
+  if (!fallan.length) {
+    const cuales = medidas.length === 1 ? 'la tarea sale' : `las ${medidas.length} tareas salen`;
+    return { ...todo, frase: `Cumple: ${cuales} bien y sin ayuda al menos el ${porcentaje} de las veces.${pocas}` };
+  }
+  const lista = fallan.map((t) => `«${t.titulo}», ${t.limpias} de ${t.intentos}`).join('; ');
+  return {
+    ...todo,
+    frase: `No cumple en ${fallan.length} de ${medidas.length}: ${lista} bien y sin ayuda, y la meta es el ${porcentaje}.${pocas}`,
   };
 }
 
@@ -450,6 +527,7 @@ const coma = (x) => (Math.round(x * 10) / 10).toString().replace('.', ',');
  *   tot: number | null, seq: number | null,
  *   fcs: { bueno: string, aciertos: number, pct: number } | null,
  *   lostness: number | null, ayuda: number | null, enVacio: number, preferida: number,
+ *   usos: readonly { readonly gesto: string, readonly personas: number }[],
  * }} MetricasVersion
  * @typedef {'alta' | 'media' | 'baja'} Gravedad
  * @typedef {{
@@ -457,6 +535,28 @@ const coma = (x) => (Math.round(x * 10) / 10).toString().replace('.', ',');
  *   sigla: string, titulo: string, evidencia: string, accion: string,
  * }} Hallazgo
  */
+
+/**
+ * Los gestos que la rama contó (`comprobacion.usos`): cuántos intentos usaron cada uno al menos una vez, de más a menos.
+ * Explica, no decide: dice si un atajo se descubre solo.
+ * @param {readonly PasoResultado[]} pasos
+ */
+function usosDe(pasos) {
+  /** @type {Map<string, number>} */
+  const por = new Map();
+  for (const p of pasos) {
+    for (const [gesto, veces] of Object.entries(p.comprobacion?.usos ?? {})) {
+      if (typeof veces === 'number' && veces > 0) por.set(gesto, (por.get(gesto) ?? 0) + 1);
+    }
+  }
+  return [...por].map(([gesto, personas]) => ({ gesto, personas })).sort((a, b) => b.personas - a.personas);
+}
+
+/**
+ * Los gestos de una versión en una frase: «copiar 2 de 6, pegar 2 de 6». Vacío si la rama no cuenta ninguno.
+ * @param {Pick<MetricasVersion, 'usos' | 'n'>} m
+ */
+export const gestosEnTexto = (m) => m.usos.map((u) => `${u.gesto} ${u.personas} de ${m.n}`).join(', ');
 
 /**
  * El informe tras la prueba: por tarea y versión, las métricas con su sigla; y los hallazgos, cada uno con lo que se
@@ -508,6 +608,7 @@ export function informe(plan, resultados) {
         ayuda: pasos.length ? pasos.filter((p) => p.ayudas.length).length / pasos.length : null,
         enVacio: pasos.reduce((n, p) => n + p.enVacio.length, 0),
         preferida: personas.filter((r) => r.preferencia?.version === v.id).length,
+        usos: usosDe(pasos),
       };
       return { m, pasos };
     });
@@ -525,7 +626,7 @@ export function informe(plan, resultados) {
       const anota = (h) => hallazgos.push({ ...h, version: m.id, nombre: m.nombre, tarea });
 
       // TSR: la tarea no sale. Con lo que más falta, si la rama corrige y lo dice.
-      if (m.tsr && m.tsr.pct < REFERENCIAS.tsr) {
+      if (m.tsr && m.tsr.pct < (plan.meta ?? REFERENCIAS.tsr)) {
         const titulares = contar(
           pasos.filter((p) => limpio(p) === false && p.comprobacion?.titular).map((p) => /** @type {string} */ (p.comprobacion?.titular)),
         );
@@ -535,7 +636,7 @@ export function informe(plan, resultados) {
           gravedad: m.tsr.pct < 0.5 ? 'alta' : 'media',
           sigla: 'TSR',
           titulo: `${m.nombre}: la tarea no sale${en}`,
-          evidencia: `TSR ${m.tsr.exitos} de ${m.n} (${pct(m.tsr.pct)}; entre el ${pct(m.tsr.ic[0])} y el ${pct(m.tsr.ic[1])}), por debajo del ${pct(REFERENCIAS.tsr)} de media.${falta ? ` Lo que más falta: «${falta}» (${veces} ${veces === 1 ? 'vez' : 'veces'}).` : ''}`,
+          evidencia: `TSR ${m.tsr.exitos} de ${m.n} (${pct(m.tsr.pct)}; entre el ${pct(m.tsr.ic[0])} y el ${pct(m.tsr.ic[1])}), ${plan.meta ? `por debajo de la meta del ${pct(plan.meta)}` : `por debajo del ${pct(REFERENCIAS.tsr)} de media`}.${falta ? ` Lo que más falta: «${falta}» (${veces} ${veces === 1 ? 'vez' : 'veces'}).` : ''}`,
           accion: falta
             ? `Haz que no se pueda pasar por alto lo que más se queda sin hacer: «${falta}».`
             : 'Busca en las sesiones el paso donde se tuerce: la tarea no sale sola.',
@@ -688,27 +789,28 @@ const celda = (v) => {
 
 /**
  * Los datos en bruto para una hoja de cálculo: una fila por intento, con cada métrica por intento. El ensayo va
- * marcado. Sin nombres: las personas son P1, P2…
+ * marcado. Las personas son P1, P2…; el nombre va aparte, y solo si la persona lo escribió.
  * @param {PlanMinimo} plan
  * @param {readonly Resultado[]} resultados
  */
 export function csvDeResultados(plan, resultados) {
   const cab = [
-    'participante', 'ensayo', 'version', 'nombre_version', 'tarea', 'mision', 'vuelta', 'exito', 'sin_ayuda',
+    'participante', 'nombre', 'ensayo', 'version', 'nombre_version', 'tarea', 'mision', 'vuelta', 'exito', 'sin_ayuda',
     'comprobacion_bien', 'comprobacion_total', 'lo_que_falta', 'moderador', 'segundos', 'clics', 'clics_en_vacio',
-    'ayudas', 'primer_clic', 'pantallas_visitadas', 'pantallas_distintas', 'seq', 'prefiere', 'por_que',
+    'ayudas', 'primer_clic', 'pantallas_visitadas', 'pantallas_distintas', 'seq', 'prefiere', 'por_que', 'gestos',
   ];
   const sn = (/** @type {boolean | null} */ b) => (b === null ? '' : b ? 'si' : 'no');
   const filas = unicos(resultados.filter((r) => r.prueba === plan.id)).flatMap((r) =>
     r.pasos.map((p, i) => {
       const t = plan.tareas.find((x) => p.mision.startsWith(`${x.id}-`));
       return [
-        r.participante, r.participante === ENSAYO ? 'si' : 'no', p.version,
+        r.participante, r.nombre ?? '', r.participante === ENSAYO ? 'si' : 'no', p.version,
         plan.versiones.find((v) => v.id === p.version)?.nombre ?? p.version, t?.titulo ?? '', p.mision, i + 1,
         sn(exito(p)), sn(limpio(p)), p.comprobacion?.bien ?? '', p.comprobacion?.total ?? '',
         p.comprobacion?.titular ?? '', p.moderador ?? '', Math.round(p.ms / 1000), p.clics, p.enVacio.length,
         p.ayudas.length, p.primerClic ?? '', p.pantallas.length, new Set(p.pantallas).size, p.facilidad ?? '',
         r.preferencia ? (r.preferencia.version ?? 'igual') : '', r.preferencia?.porque ?? '',
+        Object.entries(p.comprobacion?.usos ?? {}).map(([g, n]) => `${g} ${n}`).join('; '),
       ].map(celda).join(',');
     }),
   );
@@ -742,6 +844,10 @@ export function informeEnTexto(plan, inf, v) {
       l.push(`| ${m.nombre} | ${celdas.join(' | ')} |`);
     }
     l.push('');
+    const gestos = t.versiones.filter((m) => m.usos.length);
+    if (gestos.length) {
+      l.push(`**Gestos usados** (intentos que los usaron al menos una vez): ${gestos.map((m) => (t.versiones.length > 1 ? `${m.nombre}: ${gestosEnTexto(m)}` : gestosEnTexto(m))).join('; ')}.`, '');
+    }
   }
   l.push('## Qué hacer', '');
   if (!inf.hallazgos.length) l.push('Nada destaca en los datos: decide lo que visteis en las sesiones.', '');

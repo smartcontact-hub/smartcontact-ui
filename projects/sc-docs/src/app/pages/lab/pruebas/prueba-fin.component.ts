@@ -3,7 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { ScButtonComponent, ScSelectButtonComponent, ScTextareaComponent } from '@smartcontact-hub/components';
 
-import { codigoDeResultado, decodificar, type Resultado } from './prueba.core.mjs';
+import { claveDelNombre, codigoDeResultado, decodificar, limpiarNombre, type Resultado } from './prueba.core.mjs';
 
 const ORDINALES = ['La primera', 'La segunda', 'La tercera', 'La cuarta'];
 
@@ -13,6 +13,8 @@ const ORDINALES = ['La primera', 'La segunda', 'La tercera', 'La cuarta'];
  * envía solo: no hay servidor, y así ningún dato sale del navegador sin que la persona lo decida.
  *
  * Las versiones se nombran por su orden («la primera que usaste»), no por su nombre en el plan, que ya las juzga.
+ *
+ * Si la persona escribió su nombre en la puerta, lo recoge de la sesión de la pestaña y lo mete en su código.
  */
 @Component({
   selector: 'app-prueba-fin',
@@ -23,7 +25,7 @@ const ORDINALES = ['La primera', 'La segunda', 'La tercera', 'La cuarta'];
       @if (medido(); as r) {
         <article class="puerta__tarjeta" aria-labelledby="prueba-fin-titulo">
           <p class="puerta__ante sc-text-caption-semibold">Prueba terminada</p>
-          <h1 id="prueba-fin-titulo" class="sc-text-h2-semibold">Ya está. Gracias.</h1>
+          <h1 id="prueba-fin-titulo" class="sc-text-h2-semibold">Ya está. Gracias{{ nombre() ? ', ' + nombre() : '' }}.</h1>
 
           @if (opciones().length > 1) {
             <div class="campo">
@@ -92,14 +94,30 @@ export class PruebaFinComponent {
     ];
   });
 
+  /** El nombre que dejó en la puerta, si quiso. */
+  protected readonly nombre = computed(() => {
+    const r = this.medido();
+    if (!r) return '';
+    try {
+      return limpiarNombre(sessionStorage.getItem(claveDelNombre(r.prueba, r.participante)));
+    } catch {
+      return '';
+    }
+  });
+
   protected readonly preferida = signal<string | null>(null);
   protected readonly porque = signal('');
   protected readonly copiado = signal(false);
 
-  /** El resultado completo: lo medido y la preferencia. */
+  /** El resultado completo: lo medido, la preferencia y el nombre, si lo hay. */
   private completo(r: Resultado): Resultado {
     const pref = this.preferida();
-    return { ...r, preferencia: { version: pref ? pref : null, porque: this.porque().trim() } };
+    const nombre = this.nombre();
+    return {
+      ...r,
+      preferencia: { version: pref ? pref : null, porque: this.porque().trim() },
+      ...(nombre ? { nombre } : {}),
+    };
   }
 
   protected async copiar(r: Resultado): Promise<void> {

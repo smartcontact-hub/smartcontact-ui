@@ -127,6 +127,18 @@ export const HORARIOS: readonly HorariosAutoria[] = [
             tarjeta: 'lab-tiempo-premium',
           },
           {
+            id: 'cierre',
+            title: 'Horarios, para cerrar',
+            summary: 'Solo la semana, en verde y rojo y con bordes que se arrastran; la lista dice dónde se aplica cada uno.',
+            origin: 'Sale de la premium',
+            source: PR(635),
+            links: [
+              { label: 'Lista', href: 'https://claude-horarios-cierre.sc-supervisor.pages.dev/lab/tiempo' },
+              { label: 'Editor', href: 'https://claude-horarios-cierre.sc-supervisor.pages.dev/lab/tiempo/horario/1' },
+            ],
+            tarjeta: 'lab-horarios-cierre',
+          },
+          {
             id: 'referencia',
             title: 'Propuesta de referencia',
             summary: 'Calendarios montado tal cual con las piezas del DS, sin rediseñar. Una versión con tres pantallas.',

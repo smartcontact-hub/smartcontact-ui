@@ -43,6 +43,7 @@ export const ESTADO_PRUEBA: Record<EstadoPrueba, string> = {
 };
 
 const DISCOVERY = 'https://claude-discovery-horarios.sc-supervisor.pages.dev/admin/repositorios';
+const CIERRE = 'https://claude-horarios-cierre.sc-supervisor.pages.dev/lab/tiempo';
 
 export const PRUEBAS: readonly PlanDePrueba[] = [
   {
@@ -68,6 +69,44 @@ export const PRUEBAS: readonly PlanDePrueba[] = [
     minutos: 15,
     estado: 'preparada',
     correccion: 'Comprueba que el festivo está en los dos calendarios que pide la misión, todo el día y cada año.',
+  },
+  {
+    // Una sola versión: no compara, comprueba si cada tarea llega a la meta. Las misiones van de menos a más, y la
+    // rama las corrige sola (`tp-prueba.ts` en claude/horarios-cierre) con la semilla de horarios de partida.
+    id: 'horarios-cierre',
+    titulo: 'Horarios, para cerrar: ¿sale sin ayuda?',
+    pregunta:
+      '¿Cambia posventa un horario sin ayuda, de lo más sencillo (una hora de cierre) a lo más difícil (una jornada partida nueva)?',
+    versiones: [{ id: 'H', nombre: 'Horarios, para cerrar', url: CIERRE }],
+    tareas: [
+      {
+        id: 'cierre',
+        titulo: 'Cambiar la hora de cierre',
+        gemelas: [
+          'Desde el lunes, el Horario General cierra a las 19:00 en vez de a las 18:00, de lunes a viernes. Cámbialo para todo lo que lo usa.',
+        ],
+      },
+      {
+        id: 'viernes',
+        titulo: 'Dar otro horario al viernes',
+        gemelas: [
+          'En el Turno Mañana, los viernes se sale antes: ese día se atiende de 7:00 a 14:00. El resto de la semana sigue igual.',
+        ],
+      },
+      {
+        id: 'nuevo',
+        titulo: 'Crear un horario de jornada partida',
+        gemelas: [
+          'Crea el horario de Recambios Valencia: de lunes a jueves, de 9:00 a 14:00 y de 16:00 a 19:00; los viernes, de 8:00 a 15:00; los sábados, de 10:00 a 13:00, y los domingos, cerrado.',
+        ],
+      },
+    ],
+    meta: 0.8,
+    personas: 6,
+    minutos: 15,
+    estado: 'preparada',
+    correccion:
+      'Comprueba sola, día a día, lo que queda guardado: si falta guardar, si se guardó como copia o qué días no cuadran.',
   },
 ];
 
