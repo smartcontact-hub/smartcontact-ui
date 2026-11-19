@@ -281,6 +281,33 @@ export function partesDeLaSemana(semana, dias, cerrado, siempre) {
   return partes;
 }
 
+/**
+ * En qué momento del día está un horario, por cuándo empieza su primera franja de la semana: `madrugada` (00:00–06:00),
+ * `manana` (06:00–12:00), `tarde` (12:00–20:00) y `noche` (20:00–24:00). Un horario que cubre el día entero es `todo`; uno sin
+ * ninguna franja, `ninguno`.
+ */
+export function momentoDelDia(semana) {
+  const franjas = (semana ?? []).flat();
+  if (franjas.length === 0) return 'ninguno';
+  if (franjas.some((f) => f[0] === 0 && f[1] >= MINUTOS_DEL_DIA)) return 'todo';
+  const inicio = Math.min(...franjas.map((f) => f[0]));
+  return inicio < 360 ? 'madrugada' : inicio < 720 ? 'manana' : inicio < 1200 ? 'tarde' : 'noche';
+}
+
+/**
+ * La franja a la que afecta un horario, en una línea: desde que empieza el primer tramo hasta que acaba el último (el más
+ * tardío de la semana) y los días que abre. `{ desde, hasta, dias }` con las horas ya escritas y `dias` como lista de
+ * índices (0 = lunes). Sin tramos, `null`.
+ */
+export function franjaDeLaSemana(semana) {
+  const abiertos = (semana ?? []).flatMap((franjas, d) => (franjas.length > 0 ? [d] : []));
+  if (abiertos.length === 0) return null;
+  const todas = (semana ?? []).flat();
+  const primera = todas.reduce((a, f) => (f[0] < a[0] ? f : a), todas[0]);
+  const ultima = todas.reduce((a, f) => (f[1] > a[1] ? f : a), todas[0]);
+  return { desde: textoDeFranja([primera[0], primera[0]]).split('–')[0], hasta: textoDeFranja([ultima[0], ultima[1]]).split('–')[1], dias: abiertos };
+}
+
 /** Cuántos días de un año son de cada dueño: la semana habitual, cada periodo, los festivos y las fechas especiales. */
 export function coberturaAnual(horario, anio, calendarios = []) {
   const a = String(anio).padStart(4, '0');

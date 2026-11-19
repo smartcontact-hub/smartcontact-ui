@@ -1797,6 +1797,25 @@
       }
     },
     "horariosTipo": {
+        "landing": {
+          "filter_all": "Tous",
+          "filter_label": "Moment de la journée",
+          "search": "Rechercher des horaires…",
+          "manana": "Matin",
+          "tarde": "Après-midi",
+          "noche": "Nuit",
+          "madrugada": "Petit matin",
+          "todo": "24 heures",
+          "all_day": "Toute la journée",
+          "every_day": "Tous les jours",
+          "drawer_hours": "Plage",
+          "drawer_week": "Semaine",
+          "drawer_uses": "Utilisé dans",
+          "uses_none": "Aucun calendrier, groupe ni VUI ne l’utilise encore.",
+          "vui_flows": "Flux du VUI",
+          "duplicate": "Dupliquer",
+          "no_results": "Aucun horaire ne correspond à « {{query}} »."
+        },
       "title": "Horaires",
       "singular": "horaire",
       "create_title": "Nouvel horaire",

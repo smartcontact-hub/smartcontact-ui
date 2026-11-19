@@ -1,0 +1,152 @@
+<!-- «Nuevo horario», en la barra de arriba como en el resto de listas. -->
+<ng-template #topbarActions>
+  <sc-button class="top-bar__cta" type="button" variant="primary" (clicked)="nuevo()">
+    <sc-icon name="add" size="inherit" />
+    <span>{{ 'repositories.horariosTipo.create_title' | translate }}</span>
+  </sc-button>
+</ng-template>
+
+<div class="landing">
+  <div class="landing__inner page__inner page__inner--hub">
+    <h1 class="page__heading sc-text-title-semibold">{{ 'repositories.horariosTipo.title' | translate }}</h1>
+
+    <!-- Qué momento se ve y un buscador, en una línea, como el hub de Repositorios. -->
+    <div class="landing__toolbar">
+      <sc-selectbutton
+        size="sm"
+        [options]="opcionesFiltro()"
+        optionLabel="label"
+        optionValue="value"
+        [allowEmpty]="false"
+        [value]="filtro()"
+        (valueChange)="filtro.set($any($event))"
+        [ariaLabel]="'repositories.horariosTipo.landing.filter_label' | translate"
+      />
+      <sc-search
+        class="landing__search"
+        [placeholder]="'repositories.horariosTipo.landing.search' | translate"
+        [clearAriaLabel]="'labels.clear_search' | translate"
+        [value]="query()"
+        (valueChange)="query.set($event)"
+      />
+    </div>
+
+    @if (secciones().length > 0) {
+      <div class="momentos">
+        @for (s of secciones(); track s.id) {
+          <section class="momento" [attr.data-tono]="s.tono" [attr.aria-labelledby]="'momento-' + s.id">
+            <h2 class="momento__titulo sc-text-caption-semibold" [id]="'momento-' + s.id">
+              <sc-icon [name]="s.icono" [size]="14" aria-hidden="true" />
+              {{ s.titulo }}
+              <span class="momento__cifra">{{ s.cards.length }}</span>
+              <span class="momento__linea" aria-hidden="true"></span>
+            </h2>
+            <ul class="momento__rejilla">
+              @for (c of s.cards; track c.id) {
+                <li>
+                  <!-- La tarjeta: icono del momento, nombre y la franja a la que afecta. Pulsarla abre su panel. -->
+                  <button
+                    type="button"
+                    class="h-card"
+                    [class.h-card--elegida]="seleccion() === c.id"
+                    [attr.aria-expanded]="seleccion() === c.id"
+                    [attr.aria-label]="c.nombre + ', ' + c.franja + ', ' + c.dias"
+                    (click)="abrir(c.id)"
+                  >
+                    <sc-avatar class="h-card__icono" [icon]="s.icono" [labelColor]="s.tono" aria-hidden="true" />
+                    <span class="h-card__texto">
+                      <span class="h-card__nombre sc-text-body-semibold">{{ c.nombre }}</span>
+                      <span class="h-card__franja sc-text-caption-regular"><strong>{{ c.franja }}</strong> · {{ c.dias }}</span>
+                    </span>
+                    <sc-icon class="h-card__flecha" name="chevron_right" [size]="16" aria-hidden="true" />
+                  </button>
+                </li>
+              }
+            </ul>
+          </section>
+        }
+      </div>
+    } @else {
+      <sc-empty-state
+        icon="search_off"
+        titleKey="labels.no_results.title"
+        bodyKey="repositories.horariosTipo.landing.no_results"
+        [params]="{ query: query() }"
+        ctaKey="labels.clear_search"
+        ctaIcon="close"
+        (cta)="query.set('')"
+      />
+    }
+  </div>
+</div>
+
+<!-- El panel de la tarjeta elegida, a la derecha y sin velo: la página sigue a mano para elegir otra. Todo lo del horario y,
+     al pie, sus acciones: editar, duplicar y eliminar. -->
+<sc-drawer
+  position="right"
+  width="var(--sc-spacing-25)"
+  topOffset="var(--sc-spacing-4)"
+  [docked]="true"
+  [modal]="false"
+  [visible]="!!panel()"
+  (visibleChange)="$event || cerrar()"
+  [header]="panel()?.nombre ?? null"
+>
+  @if (panel(); as p) {
+    <div class="panel" [attr.data-tono]="p.tono">
+      <p class="panel__momento">
+        <sc-avatar [icon]="p.icono" [labelColor]="p.tono" aria-hidden="true" />
+        <span class="sc-text-caption-semibold">{{ p.momento }}</span>
+      </p>
+      @if (p.descripcion) {
+        <p class="panel__descripcion sc-text-body-regular">{{ p.descripcion }}</p>
+      }
+
+      <section class="panel__bloque">
+        <h3 class="panel__titulo sc-text-caption-semibold">{{ 'repositories.horariosTipo.landing.drawer_hours' | translate }}</h3>
+        <p class="panel__franja sc-text-title-semibold">{{ p.franja }} <span class="panel__dias sc-text-body-regular">{{ p.dias }}</span></p>
+      </section>
+
+      <section class="panel__bloque">
+        <h3 class="panel__titulo sc-text-caption-semibold">{{ 'repositories.horariosTipo.landing.drawer_week' | translate }}</h3>
+        <sc-horario-semana-resumen [semana]="p.semana" [color]="p.tono" />
+      </section>
+
+      <section class="panel__bloque">
+        <h3 class="panel__titulo sc-text-caption-semibold">{{ 'repositories.horariosTipo.landing.drawer_uses' | translate }}</h3>
+        @if (p.calendarios.length === 0 && p.grupos.length === 0 && !p.vui) {
+          <p class="panel__nada sc-text-body-regular">{{ 'repositories.horariosTipo.landing.uses_none' | translate }}</p>
+        } @else {
+          <dl class="usos">
+            @if (p.calendarios.length > 0) {
+              <dt class="sc-text-caption-semibold">{{ 'repositories.horariosTipo.use_calendars' | translate }}</dt>
+              <dd>
+                @for (c of p.calendarios; track c.id) {
+                  <a class="usos__enlace sc-text-body-regular" [routerLink]="['/admin/horarios/editar', c.id]">{{ c.nombre }}</a>
+                }
+              </dd>
+            }
+            @if (p.grupos.length > 0) {
+              <dt class="sc-text-caption-semibold">{{ 'repositories.horariosTipo.use_groups' | translate }}</dt>
+              <dd>
+                @for (g of p.grupos; track g) {
+                  <span class="sc-text-body-regular">{{ g }}</span>
+                }
+              </dd>
+            }
+            @if (p.vui) {
+              <dt class="sc-text-caption-semibold">{{ 'repositories.horariosTipo.use_vui' | translate }}</dt>
+              <dd><span class="sc-text-body-regular">{{ 'repositories.horariosTipo.landing.vui_flows' | translate }}</span></dd>
+            }
+          </dl>
+        }
+      </section>
+
+      <div class="panel__acciones">
+        <sc-button size="sm" variant="primary" icon="edit" [label]="'common.edit' | translate" (clicked)="editar(p.id)" />
+        <sc-button size="sm" variant="secondary" appearance="outlined" icon="content_copy" [label]="'repositories.horariosTipo.landing.duplicate' | translate" (clicked)="duplicar(p.id)" />
+        <sc-button class="panel__eliminar" size="sm" variant="danger" appearance="outlined" icon="delete" [label]="'common.delete' | translate" (clicked)="eliminar(p.id)" />
+      </div>
+    </div>
+  }
+</sc-drawer>

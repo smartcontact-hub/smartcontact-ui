@@ -94,7 +94,7 @@ export const REPOSITORIES_ROUTES: Routes = [
     path: 'horarios-tipo',
     data: repoInstanceEnAdmin('repositories.horariosTipo.title'),
     children: [
-      { path: '', loadComponent: () => import('./instances/horarios-tipo').then((m) => m.HorariosTipoPageComponent) },
+      { path: '', loadComponent: () => import('./pages/horarios-tipo-landing-page.component').then((m) => m.HorariosTipoLandingPageComponent) },
       {
         path: 'crear',
         data: { breadcrumb: { labelKey: 'repositories.horariosTipo.create_title' } },

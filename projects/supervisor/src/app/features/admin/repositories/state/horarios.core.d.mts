@@ -144,6 +144,10 @@ export function estadoEn(
 ): { abierto: boolean; cambia: Momento | null };
 
 export function gruposDeLaSemana(semana: Semana): { desde: number; hasta: number; franjas: readonly Franja[] }[];
+export type MomentoDelDia = 'madrugada' | 'manana' | 'tarde' | 'noche' | 'todo' | 'ninguno';
+export function momentoDelDia(semana: Semana): MomentoDelDia;
+export function franjaDeLaSemana(semana: Semana): { readonly desde: string; readonly hasta: string; readonly dias: readonly number[] } | null;
+
 export interface ParteDeTexto {
   readonly texto: string;
   readonly fuerte?: boolean;

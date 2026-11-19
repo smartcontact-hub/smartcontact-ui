@@ -1,0 +1,217 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.landing {
+  flex: 1;
+  overflow-y: auto;
+  background: var(--sc-bg-canvas);
+}
+
+.landing__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  margin-block-end: var(--sc-spacing-2);
+}
+
+.landing__search {
+  display: block;
+  inline-size: var(--sc-spacing-18);
+  max-inline-size: 100%;
+}
+
+/* El tono de cada momento: de los de etiqueta del DS. Lo leen su título, el borde de la tarjeta y el panel. */
+@each $tono in ('amber', 'orange', 'purple', 'blue', 'gray') {
+  [data-tono='#{$tono}'] {
+    --tono-text: var(--sc-label-#{$tono}-text);
+    --tono-bg: var(--sc-label-#{$tono}-bg);
+    --tono-border: var(--sc-label-#{$tono}-border);
+    --tono-strong: var(--sc-label-#{$tono}-dot);
+  }
+}
+
+.momentos {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-2);
+}
+
+.momento__titulo {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  margin: 0 0 var(--sc-spacing-0-75);
+  color: var(--tono-text);
+}
+
+.momento__cifra {
+  color: var(--sc-text-secondary);
+  font-weight: 400;
+}
+
+.momento__linea {
+  flex: 1;
+  block-size: 1px;
+  background: var(--sc-border-default);
+}
+
+.momento__rejilla {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+  gap: var(--sc-spacing-0-75);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* La tarjeta del horario: horizontal, con el icono del momento a la izquierda y una raya de su tono: no se parece a la del hub. */
+.h-card {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-1);
+  inline-size: 100%;
+  padding: var(--sc-spacing-0-75) var(--sc-spacing-1);
+  border: 1px solid var(--sc-border-default);
+  border-inline-start: 4px solid var(--tono-strong);
+  border-radius: var(--sc-radius-md);
+  background: var(--sc-bg-surface);
+  color: var(--sc-text-primary);
+  text-align: start;
+  cursor: pointer;
+  transition:
+    background-color 150ms ease-out,
+    box-shadow 150ms ease-out;
+
+  &:hover {
+    background: var(--sc-bg-hover);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-border-focus);
+    outline-offset: 2px;
+  }
+}
+
+.h-card--elegida {
+  border-color: var(--tono-border);
+  border-inline-start-color: var(--tono-strong);
+  background: var(--tono-bg);
+}
+
+.h-card__texto {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-125);
+  min-inline-size: 0;
+}
+
+.h-card__nombre,
+.h-card__franja {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.h-card__franja {
+  color: var(--sc-text-secondary);
+
+  strong {
+    color: var(--sc-text-primary);
+    font-weight: 600;
+  }
+}
+
+.h-card__flecha {
+  flex: none;
+  color: var(--sc-icon-secondary);
+}
+
+/* ── El panel ──────────────────────────────────────────────────────────────────────────────────────────────────── */
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1-5);
+  padding-block-end: var(--sc-spacing-1);
+}
+
+.panel__momento {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  margin: 0;
+  color: var(--tono-text);
+}
+
+.panel__descripcion {
+  margin: 0;
+  color: var(--sc-text-secondary);
+}
+
+.panel__bloque {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
+}
+
+.panel__titulo {
+  margin: 0;
+  color: var(--sc-text-secondary);
+}
+
+.panel__franja {
+  margin: 0;
+}
+
+.panel__dias {
+  margin-inline-start: var(--sc-spacing-0-5);
+  color: var(--sc-text-secondary);
+}
+
+.panel__nada {
+  margin: 0;
+  color: var(--sc-text-secondary);
+}
+
+.usos {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: var(--sc-spacing-0-5) var(--sc-spacing-1);
+  margin: 0;
+
+  dt {
+    padding-block-start: var(--sc-spacing-0-125);
+    color: var(--sc-text-secondary);
+  }
+
+  dd {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sc-spacing-0-25);
+    margin: 0;
+  }
+}
+
+.usos__enlace {
+  color: var(--sc-text-link);
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.panel__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sc-spacing-0-5);
+  padding-block-start: var(--sc-spacing-1);
+  border-block-start: 1px solid var(--sc-border-default);
+}
+
+.panel__eliminar {
+  margin-inline-start: auto;
+}

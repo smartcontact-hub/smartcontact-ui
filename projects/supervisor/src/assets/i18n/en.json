@@ -1797,6 +1797,25 @@
       }
     },
     "horariosTipo": {
+        "landing": {
+          "filter_all": "All",
+          "filter_label": "Time of day",
+          "search": "Search schedules…",
+          "manana": "Morning",
+          "tarde": "Afternoon",
+          "noche": "Night",
+          "madrugada": "Early morning",
+          "todo": "24 hours",
+          "all_day": "All day",
+          "every_day": "Every day",
+          "drawer_hours": "Time slot",
+          "drawer_week": "Week",
+          "drawer_uses": "Used in",
+          "uses_none": "No calendar, group or VUI uses it yet.",
+          "vui_flows": "VUI flows",
+          "duplicate": "Duplicate",
+          "no_results": "No schedules match \"{{query}}\"."
+        },
       "title": "Schedules",
       "singular": "schedule",
       "create_title": "New schedule",

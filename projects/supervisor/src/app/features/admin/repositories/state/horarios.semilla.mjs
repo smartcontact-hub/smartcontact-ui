@@ -190,6 +190,7 @@ const DESCRIPCIONES_DE_HORARIO = {
   9: 'Postventa, con el viernes más corto',
   10: 'Jornada partida con cierre del viernes a las 14:00',
   11: 'Ejemplo con 4 franjas por día, el máximo, para probar cómo se ve',
+  12: 'Cobertura de madrugada, de lunes a viernes',
 };
 
 /** Un horario con el máximo de franjas por día, 4 (incluidas algunas a minuto exacto): sirve para estresar cómo se representa. */
@@ -204,6 +205,7 @@ const MUCHAS_FRANJAS = [
 export const HORARIOS_TIPO_SEMILLA = [
   ...separados.horarios,
   { id: separados.horarios.length + 1, name: 'Turnos con pausas (4 franjas)', description: '', week: [MUCHAS_FRANJAS, MUCHAS_FRANJAS, MUCHAS_FRANJAS, MUCHAS_FRANJAS, MUCHAS_FRANJAS.slice(0, 3), [[600, 840], [900, 1020]], []] },
+  { id: separados.horarios.length + 2, name: 'Turno Madrugada', description: '', week: [[[0, 360]], [[0, 360]], [[0, 360]], [[0, 360]], [[0, 360]], [], []] },
 ].map((h) => ({ ...h, name: NOMBRES_DE_HORARIO[h.id] ?? h.name, description: DESCRIPCIONES_DE_HORARIO[h.id] ?? h.description }));
 
 /** Dónde se usa cada horario además de en calendarios y grupos: el VUI (dato de ejemplo; aún no hay modelo del VUI). */

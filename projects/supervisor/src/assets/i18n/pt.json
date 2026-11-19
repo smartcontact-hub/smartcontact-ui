@@ -1797,6 +1797,25 @@
       }
     },
     "horariosTipo": {
+        "landing": {
+          "filter_all": "Todos",
+          "filter_label": "Momento do dia",
+          "search": "Procurar horários…",
+          "manana": "Manhã",
+          "tarde": "Tarde",
+          "noche": "Noite",
+          "madrugada": "Madrugada",
+          "todo": "24 horas",
+          "all_day": "Todo o dia",
+          "every_day": "Todos os dias",
+          "drawer_hours": "Faixa",
+          "drawer_week": "Semana",
+          "drawer_uses": "Usado em",
+          "uses_none": "Nenhum calendário, grupo ou VUI o usa ainda.",
+          "vui_flows": "Fluxos do VUI",
+          "duplicate": "Duplicar",
+          "no_results": "Nenhum horário corresponde a «{{query}}»."
+        },
       "title": "Horários",
       "singular": "horário",
       "create_title": "Novo horário",
