@@ -26,8 +26,8 @@ const LUNES = '2024-01-01';
   styles: `
     :host {
       display: block;
-      inline-size: 100%;
-      max-inline-size: 7.5rem;
+      inline-size: 7.5rem;
+      max-inline-size: 100%;
     }
 
     .mini {
