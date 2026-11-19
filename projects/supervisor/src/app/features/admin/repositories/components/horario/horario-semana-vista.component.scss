@@ -140,9 +140,17 @@
   white-space: nowrap;
 }
 
-/* Un día cerrado se ve DESHABILITADO: su letra, tachada y apagada; su línea, gris liso con rayas marcadas, y «Cerrado» con el
- * icono de bloqueo. Nada de verde ni de barras. */
+/* Un día cerrado se ve DESHABILITADO: toda la fila con poca opacidad (letra, línea y horas), la letra tachada, la línea rayada y
+ * «Cerrado» con el icono de bloqueo. Al pasar el ratón sube un poco: se puede arrastrar para abrirlo. */
 .fila--cerrada {
+  opacity: 0.4;
+  transition-property: opacity;
+  transition-duration: 150ms;
+
+  &:hover {
+    opacity: 0.7;
+  }
+
   .fila__dia {
     color: var(--sc-text-subtle);
     text-decoration: line-through;
@@ -152,7 +160,6 @@
   .pista {
     background-color: var(--sc-border-subtle);
     background-image: repeating-linear-gradient(135deg, transparent 0, transparent 5px, var(--sc-border-default) 5px, var(--sc-border-default) 7px);
-    opacity: 0.85;
   }
 
   .pista__nota {
