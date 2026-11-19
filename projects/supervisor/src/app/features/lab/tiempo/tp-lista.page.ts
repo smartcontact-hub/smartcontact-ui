@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signal, type TemplateRef, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signal, type TemplateRef, viewChild, ViewEncapsulation } from '@angular/core';
 import { ScTagComponent, type ScColumnCellContext } from '@smartcontact-hub/components';
 import { TooltipModule } from 'primeng/tooltip';
 
@@ -9,7 +9,7 @@ import { type Horario, HorariosStore } from '@features/admin/repositories/state/
 
 import { estadoDeHorario } from '../horarios/lab-horarios-estado';
 import { AplicadoEn, sitios, TIPOS_DE_USO, type Uso } from './tp-aplicado';
-import { descripcionDe, soloSemana, trozosDelDia } from './tp-modelo';
+import { descripcionDe, horaCorta, LETRAS, soloSemana, trozosDelDia } from './tp-modelo';
 
 /** Cuántas etiquetas caben en la celda antes del «+N». */
 const A_LA_VISTA = 2;
@@ -28,7 +28,23 @@ const A_LA_VISTA = 2;
 
     <ng-template #horarioTpl let-h>
       <span class="tl-horario">
-        <span class="tl-mini" role="img" [attr.aria-label]="descripcion(h)">
+        <!-- Al pasar por la semana en miniatura, la semana día a día, con sus horas. -->
+        <ng-template #semanaTpl>
+          <span class="tl-pop">
+            @for (d of mini(h); track d.dia) {
+              <span class="tl-pop__dia">
+                <span class="tl-pop__letra">{{ letras[d.dia] }}</span>
+                <span class="tl-pop__pista">
+                  @for (t of d.trozos; track $index) {
+                    <i [style.inset-inline-start.%]="(t.desde / 1440) * 100" [style.inline-size.%]="((t.hasta - t.desde) / 1440) * 100"></i>
+                  }
+                </span>
+                <span class="tl-pop__horas" [class.is-cerrado]="!d.texto">{{ d.texto || 'Cerrado' }}</span>
+              </span>
+            }
+          </span>
+        </ng-template>
+        <span class="tl-mini" role="img" [attr.aria-label]="descripcion(h)" [pTooltip]="semanaTpl" tooltipPosition="right" tooltipStyleClass="tl-pop-tip" [showDelay]="120">
           @for (d of mini(h); track d.dia) {
             <span class="tl-mini__dia">
               @for (t of d.trozos; track $index) {
@@ -96,6 +112,56 @@ const A_LA_VISTA = 2;
       inset-block: 0;
       background: var(--sc-bg-success);
     }
+    /* Se puede mirar de cerca: crece un poco con un muelle al pasar por encima. */
+    .tl-mini {
+      cursor: zoom-in;
+      transition: scale 320ms cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .tl-mini:hover {
+      scale: 1.12;
+    }
+    /* El globo de la semana es más ancho que un tooltip de texto. Esta hoja no se encapsula (todo cuelga de «tl-»),
+       así que llega al globo, que se pinta fuera de la tabla. */
+    .p-tooltip.tl-pop-tip {
+      max-inline-size: none;
+    }
+    .tl-pop {
+      display: grid;
+      gap: var(--sc-spacing-0-5);
+      padding-block: var(--sc-spacing-0-25);
+      font-variant-numeric: tabular-nums;
+    }
+    .tl-pop__dia {
+      display: grid;
+      grid-template-columns: 0.75rem 6rem auto;
+      align-items: center;
+      gap: var(--sc-spacing-1);
+      white-space: nowrap;
+    }
+    .tl-pop__letra {
+      font-weight: 600;
+      opacity: 0.7;
+    }
+    .tl-pop__pista {
+      position: relative;
+      block-size: 0.375rem;
+      border-radius: 0.1875rem;
+      background: color-mix(in srgb, var(--sc-bg-danger) 45%, transparent);
+      overflow: hidden;
+    }
+    .tl-pop__pista i {
+      position: absolute;
+      inset-block: 0;
+      background: var(--sc-bg-success);
+    }
+    .tl-pop__horas.is-cerrado {
+      opacity: 0.6;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .tl-mini {
+        transition: none;
+      }
+    }
     .tl-usos {
       display: flex;
       align-items: center;
@@ -115,6 +181,7 @@ const A_LA_VISTA = 2;
       color: var(--sc-text-subtle);
     }
   `,
+  encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TpListaPage {
@@ -124,6 +191,7 @@ export class TpListaPage {
 
   protected readonly tipos = TIPOS_DE_USO;
   protected readonly aLaVista = A_LA_VISTA;
+  protected readonly letras = LETRAS;
 
   /** El reloj: «ahora» se recalcula cada 30 s. */
   private readonly reloj = signal(new Date());
@@ -158,8 +226,12 @@ export class TpListaPage {
       .join(', ');
   }
 
-  protected mini(h: Horario): { dia: number; trozos: { desde: number; hasta: number }[] }[] {
-    return [0, 1, 2, 3, 4, 5, 6].map((dia) => ({ dia, trozos: trozosDelDia(h.week, dia) }));
+  protected mini(h: Horario): { dia: number; trozos: { desde: number; hasta: number }[]; texto: string }[] {
+    return [0, 1, 2, 3, 4, 5, 6].map((dia) => ({
+      dia,
+      trozos: trozosDelDia(h.week, dia),
+      texto: (h.week[dia] ?? []).map((f) => `${horaCorta(f[0])}–${horaCorta(f[1])}`).join(' y '),
+    }));
   }
 
   private estado(h: Horario): ReturnType<typeof estadoDeHorario> {

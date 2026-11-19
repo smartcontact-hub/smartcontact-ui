@@ -29,7 +29,10 @@
         <div class="tp-head__meta">
           <span class="tp-meta tp-cierre__desc" data-tip="Se escribe sola con las horas de la semana">
             <sc-tp-icono nombre="sparkle" [tam]="14" />
-            <span class="t-num">{{ descripcion() }}</span>
+            <!-- Cambia con las horas: cada versión entra con un fundido corto, así se nota que se ha escrito sola. -->
+            @for (d of [descripcion()]; track d) {
+              <span class="t-num tp-cierre__desc-txt">{{ d }}</span>
+            }
           </span>
           <span class="tp-sep"></span>
           <label class="tp-meta">
@@ -59,7 +62,7 @@
           </div>
         </header>
         <div class="tp-cierre__semana-cuerpo">
-          <sc-tp-semana [semana]="form().week" [ahora]="form().status === 'inactive' ? null : ahoraSemana()" (semanaChange)="update('week', $event)" />
+          <sc-tp-semana [semana]="form().week" [ahora]="form().status === 'inactive' ? null : ahoraSemana()" (semanaChange)="update('week', $event)" (gesto)="gesto($event)" />
         </div>
       </section>
 
@@ -81,8 +84,8 @@
               <p class="t-small t-2">Puedes cambiarlo sin afectar a nadie. Se aplica desde el servicio, el grupo, el canal de WhatsApp o el calendario que lo use.</p>
             </div>
           } @else {
-            @for (g of usos(); track g.tipo) {
-              <div class="tp-uso">
+            @for (g of usos(); track g.tipo; let gi = $index) {
+              <div class="tp-uso tp-cierre__entra" [style.--i]="gi + 3">
                 <span class="t-eyebrow">{{ g.titulo }}</span>
                 <ul class="tp-uso__lista" role="list">
                   @for (u of g.usos; track u.nombre + u.detalle) {
@@ -107,34 +110,44 @@
     </div>
   </div>
 
-  <!-- Guardar: aparece cuando hay algo que guardar -->
-  <div class="tp-savebar" [attr.data-visible]="modo() === 'crear' || dirty()" role="region" [attr.aria-label]="t.guardar">
-    <span class="tp-savebar__msg">
-      <span class="tp-savebar__dot"></span>
-      {{ modo() === 'crear' ? 'Horario nuevo' : 'Cambios sin guardar' }}
-      @if (motivo()) {
-        <span class="tp-savebar__why">{{ motivo() }}</span>
-      } @else if (modo() === 'editar' && nUsos() > 0) {
-        <span class="tp-savebar__why">Afecta a {{ sitios(nUsos()) }}</span>
-      }
-    </span>
-    @if (modo() === 'crear') {
-      <button type="button" class="tp-btn tp-btn--ghost tp-btn--sm" (click)="volver()">Cancelar</button>
+  <!-- Guardar: aparece cuando hay algo que guardar; al guardar se queda un momento diciéndolo y se va. -->
+  <div class="tp-savebar tp-cierre__bar" [attr.data-visible]="modo() === 'crear' || dirty() || !!guardado()" [attr.data-guardado]="!!guardado()" role="region" [attr.aria-label]="t.guardar">
+    @if (guardado(); as g) {
+      <span class="tp-savebar__msg tp-cierre__ok" role="status">
+        <span class="tp-cierre__ok-ico"><sc-tp-icono nombre="check" [tam]="12" /></span>
+        {{ g }}
+      </span>
     } @else {
-      <button type="button" class="tp-btn tp-btn--ghost tp-btn--sm" (click)="discard()">Deshacer</button>
+      <span class="tp-savebar__msg">
+        <span class="tp-savebar__dot"></span>
+        {{ modo() === 'crear' ? 'Horario nuevo' : 'Cambios sin guardar' }}
+        @if (motivo()) {
+          <span class="tp-savebar__why">{{ motivo() }}</span>
+        } @else if (modo() === 'editar' && nUsos() > 0) {
+          <span class="tp-savebar__why">Afecta a {{ sitios(nUsos()) }}</span>
+        }
+      </span>
+      @if (modo() === 'crear') {
+        <button type="button" class="tp-btn tp-btn--ghost tp-btn--sm" (click)="volver()">Cancelar</button>
+      } @else {
+        <button type="button" class="tp-btn tp-btn--ghost tp-btn--sm" [disabled]="!puedeDeshacer()" data-tip="Un paso atrás" (click)="deshacer()">
+          Deshacer
+          <kbd class="tp-kbd">⌘Z</kbd>
+        </button>
+      }
+      <button type="button" class="tp-btn tp-btn--primary tp-btn--sm" [disabled]="!puedeGuardar()" (click)="save()">
+        {{ modo() === 'crear' ? 'Crear horario' : 'Guardar' }}
+        <kbd class="tp-kbd">⌘S</kbd>
+      </button>
     }
-    <button type="button" class="tp-btn tp-btn--primary tp-btn--sm" [disabled]="!puedeGuardar()" (click)="save()">
-      {{ modo() === 'crear' ? 'Crear horario' : 'Guardar' }}
-      <kbd class="tp-kbd">⌘S</kbd>
-    </button>
   </div>
 
   <!-- Guardar un horario que se usa: una sola confirmación que dice a quién afecta -->
   @if (confirmando()) {
     <sc-tp-modal [titulo]="'Este cambio afecta a ' + sitios(nUsos())" subtitulo="Todos pasarán a usar las horas nuevas en cuanto guardes." icono="alert" ancho="30rem" (cerrar)="cancelarGuardar()">
       <div class="tp-afecta">
-        @for (g of usos(); track g.tipo) {
-          <div class="tp-afecta__grupo">
+        @for (g of usos(); track g.tipo; let gi = $index) {
+          <div class="tp-afecta__grupo tp-cierre__entra" [style.--i]="gi + 1">
             <span class="tp-afecta__tipo t-micro t-3">
               <sc-tp-icono [nombre]="tipos[g.tipo].icono" [tam]="12" />
               {{ g.titulo }}
@@ -149,9 +162,12 @@
             </span>
           </div>
         }
-        <p class="tp-afecta__cambio t-small t-2">
-          Queda así: <span class="t-strong t-num">{{ descripcion() }}</span>
-        </p>
+        <dl class="tp-afecta__cambio t-small">
+          <dt class="t-3">Antes</dt>
+          <dd class="t-3 t-num tp-afecta__antes">{{ descripcionAntes() }}</dd>
+          <dt class="t-2">Ahora</dt>
+          <dd class="t-strong t-num">{{ descripcion() }}</dd>
+        </dl>
       </div>
       <div tpPie class="tp-modal__acciones">
         <button type="button" class="tp-btn tp-btn--ghost" (click)="cancelarGuardar()">Cancelar</button>

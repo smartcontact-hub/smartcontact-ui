@@ -12,6 +12,22 @@
     color: var(--tp-si);
   }
 }
+/* Cada vez que la descripción se reescribe entra con un fundido corto: se nota que la escribe la semana. */
+.tp-cierre__desc-txt {
+  animation: tp-desc-in 220ms var(--tp-sale, ease-out) both;
+}
+@keyframes tp-desc-in {
+  from {
+    opacity: 0.2;
+    filter: blur(2px);
+  }
+}
+
+/* Lo que entra en cascada (los grupos de «Aplicado en», los de la confirmación): uno detrás de otro, 50 ms. */
+.tp-cierre__entra {
+  animation: tp-rise 360ms var(--tp-sale, ease-out) both;
+  animation-delay: calc(var(--i, 0) * 50ms);
+}
 
 /* ── La rejilla: la semana manda; dónde se aplica, al lado y estrecho ───────────────────────────────────────────── */
 
@@ -64,6 +80,15 @@
   align-items: center;
   gap: var(--s-3);
   min-inline-size: 0;
+
+  .tp-mark {
+    transition-property: scale;
+    transition-duration: 320ms;
+    transition-timing-function: var(--tp-muelle, ease-out);
+  }
+  &:hover .tp-mark {
+    scale: 1.08;
+  }
 }
 .tp-uso__txt {
   display: flex;
@@ -104,9 +129,46 @@
   gap: var(--s-1);
   font-weight: 540;
 }
+/* El antes y el después, alineados con los grupos de arriba. */
 .tp-afecta__cambio {
+  display: grid;
+  grid-template-columns: 7rem minmax(0, 1fr);
+  gap: var(--s-1) var(--s-3);
+  margin: 0;
   padding-block-start: var(--s-3);
   border-block-start: 1px solid var(--tp-hair);
+
+  dd {
+    margin: 0;
+  }
+}
+.tp-afecta__antes {
+  text-decoration: line-through;
+  text-decoration-color: color-mix(in oklch, var(--tp-ink-3) 60%, transparent);
+}
+
+/* ── Recién guardado: la barra se queda un momento con su check ─────────────────────────────────────────────────── */
+
+.tp-cierre__ok {
+  animation: tp-desc-in 200ms var(--tp-sale, ease-out) both;
+  margin-inline-end: var(--s-2);
+  padding-block: var(--s-1-5);
+}
+.tp-cierre__ok-ico {
+  display: grid;
+  place-items: center;
+  inline-size: 1.125rem;
+  block-size: 1.125rem;
+  border-radius: var(--r-full);
+  background: var(--tp-si);
+  color: #fff;
+  animation: tp-ok-pop 420ms var(--tp-muelle, ease-out) both;
+}
+@keyframes tp-ok-pop {
+  from {
+    scale: 0.4;
+    opacity: 0;
+  }
 }
 
 @media (max-width: 64rem) {

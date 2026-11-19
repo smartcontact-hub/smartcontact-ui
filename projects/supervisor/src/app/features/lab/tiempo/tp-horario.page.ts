@@ -67,7 +67,10 @@ export class TpHorarioPage implements OnInit {
   private readonly reloj = signal(new Date());
   constructor() {
     const id = setInterval(() => this.reloj.set(new Date()), 30_000);
-    inject(DestroyRef).onDestroy(() => clearInterval(id));
+    inject(DestroyRef).onDestroy(() => {
+      clearInterval(id);
+      clearTimeout(this.guardadoId);
+    });
   }
 
   protected readonly ahora = computed(() => ahoraEn(this.form().timezone, this.reloj()));
@@ -80,6 +83,8 @@ export class TpHorarioPage implements OnInit {
   protected readonly faltaSemana = computed(() => validarSemana(this.form().week));
   /** La descripción no se escribe: sale de la semana y se guarda con ella, así nunca dice otra cosa que las horas. */
   protected readonly descripcion = computed(() => descripcionDe(this.form().week));
+  /** La de como estaba guardado: la confirmación enseña el antes y el después. */
+  protected readonly descripcionAntes = computed(() => (this.dirty() ? descripcionDe(this.sucio.pristineValue().week) : this.descripcion()));
   protected readonly zonas = computed(() => {
     const conocidas = typeof Intl.supportedValuesOf === 'function' ? Intl.supportedValuesOf('timeZone') : [];
     return [...new Set([this.form().timezone, 'UTC', ...conocidas])].sort();
@@ -124,12 +129,73 @@ export class TpHorarioPage implements OnInit {
   }
 
   protected update<K extends keyof Borrador>(key: K, value: Borrador[K]): void {
+    this.apuntar(key);
     this.form.update((f) => ({ ...f, [key]: value }));
+  }
+
+  /* ── Deshacer y rehacer: ⌘Z y ⇧⌘Z, paso a paso ──────────────────────────────────────────────────────────────────── */
+
+  /** Lo que había antes de cada cambio. Un arrastre entero es un paso, y escribir el nombre de seguido, otro. */
+  private readonly pasado = signal<readonly Borrador[]>([]);
+  private readonly futuro = signal<readonly Borrador[]>([]);
+  protected readonly puedeDeshacer = computed(() => this.pasado().length > 0);
+  private enGesto = false;
+  private ultimoCambio: { key: keyof Borrador; t: number } | null = null;
+
+  private apuntar(key: keyof Borrador): void {
+    if (this.enGesto) return;
+    const ahora = Date.now();
+    const seguido = this.ultimoCambio?.key === key && key === 'name' && ahora - this.ultimoCambio.t < 1500;
+    this.ultimoCambio = { key, t: ahora };
+    if (seguido) return;
+    this.pasado.update((p) => [...p.slice(-49), this.form()]);
+    this.futuro.set([]);
+  }
+
+  /** La semana avisa al empezar y al acabar un arrastre: todo lo de en medio es un paso. */
+  protected gesto(empieza: boolean): void {
+    if (empieza) {
+      this.apuntar('week');
+      this.enGesto = true;
+      return;
+    }
+    this.enGesto = false;
+    this.ultimoCambio = null;
+    // Un arrastre cancelado (Esc) o que no movió nada no deja un paso vacío.
+    const p = this.pasado();
+    if (p.length && JSON.stringify(p[p.length - 1].week) === JSON.stringify(this.form().week)) this.pasado.set(p.slice(0, -1));
+  }
+
+  protected deshacer(): void {
+    const p = this.pasado();
+    if (!p.length) return;
+    this.futuro.update((f) => [...f, this.form()]);
+    this.form.set(p[p.length - 1]);
+    this.pasado.set(p.slice(0, -1));
+    this.ultimoCambio = null;
+  }
+
+  protected rehacer(): void {
+    const f = this.futuro();
+    if (!f.length) return;
+    this.pasado.update((p) => [...p, this.form()]);
+    this.form.set(f[f.length - 1]);
+    this.futuro.set(f.slice(0, -1));
+    this.ultimoCambio = null;
+  }
+
+  private olvidar(): void {
+    this.pasado.set([]);
+    this.futuro.set([]);
+    this.ultimoCambio = null;
   }
 
   /* ── Guardar: si se usa en algún sitio, se dice antes ─────────────────────────────────────────────────────────── */
 
   protected readonly confirmando = signal(false);
+  /** Recién guardado: la barra de guardar se queda un momento diciéndolo, con su check, antes de irse. */
+  protected readonly guardado = signal<string | null>(null);
+  private guardadoId: ReturnType<typeof setTimeout> | undefined;
   /** La salida que espera a que se confirme el guardado (Guardar y salir con el horario en uso). */
   private trasGuardar: ((v: boolean) => void) | null = null;
 
@@ -159,7 +225,10 @@ export class TpHorarioPage implements OnInit {
     this.store.updateItem(this.horarioId()!, draft);
     this.form.set(draft);
     this.sucio.markPristine();
-    this.avisos.decir(this.nUsos() > 0 ? `Cambios guardados en ${sitios(this.nUsos())}` : 'Cambios guardados');
+    this.olvidar();
+    clearTimeout(this.guardadoId);
+    this.guardado.set(this.nUsos() > 0 ? `Guardado en ${sitios(this.nUsos())}` : 'Guardado');
+    this.guardadoId = setTimeout(() => this.guardado.set(null), 1600);
     this.salirTrasGuardar(true);
   }
 
@@ -171,6 +240,7 @@ export class TpHorarioPage implements OnInit {
     const copia = this.store.addItem({ ...draft, name: nombreDeCopia(draft.name, this.store.items().map((h) => h.name)) });
     this.form.set(this.sucio.pristineValue());
     this.sucio.markPristine();
+    this.olvidar();
     this.salirTrasGuardar(false);
     void this.router
       .navigateByUrl(`${LISTA}/horario/${copia.id}`)
@@ -190,6 +260,7 @@ export class TpHorarioPage implements OnInit {
 
   protected discard(): void {
     this.form.set(this.sucio.pristineValue());
+    this.olvidar();
   }
 
   protected volver(): void {
@@ -224,9 +295,22 @@ export class TpHorarioPage implements OnInit {
 
   @HostListener('document:keydown', ['$event'])
   protected tecla(e: KeyboardEvent): void {
-    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 's') {
+    if (!(e.metaKey || e.ctrlKey) || this.confirmando() || this.saliendo()) return;
+    const k = e.key.toLowerCase();
+    if (k === 's') {
       e.preventDefault();
-      if (!this.confirmando() && !this.saliendo()) this.save();
+      this.save();
+      return;
+    }
+    // En un campo de texto, deshacer es el del campo; fuera, el de la pantalla.
+    const t = e.target as HTMLElement | null;
+    if (t?.matches('input:not([type=checkbox]):not([type=radio]), textarea, [contenteditable="true"]')) return;
+    if ((k === 'z' && e.shiftKey) || k === 'y') {
+      e.preventDefault();
+      this.rehacer();
+    } else if (k === 'z') {
+      e.preventDefault();
+      this.deshacer();
     }
   }
 }

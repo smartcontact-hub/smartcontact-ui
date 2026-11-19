@@ -281,4 +281,14 @@ export const LABS: readonly Lab[] = [
     href: 'https://claude-horarios-cierre.sc-supervisor.pages.dev/lab/tiempo',
     label: 'claude-horarios-cierre.sc-supervisor.pages.dev/lab/tiempo',
   },
+  {
+    id: 'lab-horarios-pulido',
+    title: 'Horarios, pulido a mano',
+    question: '¿Cómo se siente Horarios si la semana se toca como un objeto: pintar, arrastrar, deshacer?',
+    controls: ['Pintar horas sobre lo rojo', 'Ver cómo quedaría un día antes de marcarlo', 'Deshacer paso a paso', 'Antes y después al guardar'],
+    where: 'Entra por Repositorios › Horarios; abre uno y arrastra sobre lo rojo.',
+    // Sale de «Horarios, para cerrar» y vive en su propia rama: el preview de la rama, que entra ya en esta versión.
+    href: 'https://claude-horarios-pulido.sc-supervisor.pages.dev/lab/tiempo',
+    label: 'claude-horarios-pulido.sc-supervisor.pages.dev/lab/tiempo',
+  },
 ];

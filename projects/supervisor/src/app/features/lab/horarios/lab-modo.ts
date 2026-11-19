@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
  * y solo Horarios salta: Festivos se queda en su pantalla de siempre, porque pasa al calendario.
  */
 const CLAVE = 'sc-lab-horarios';
-const PREVIEW = 'claude-horarios-cierre.sc-supervisor.pages.dev';
+const PREVIEW = 'claude-horarios-pulido.sc-supervisor.pages.dev';
 
 export function labHorariosActivo(): boolean {
   try {

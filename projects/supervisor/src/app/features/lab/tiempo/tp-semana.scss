@@ -13,6 +13,9 @@
   --tp-si-borde: #0f6b3b;
   --tp-no: color-mix(in oklch, var(--tp-danger) 13%, var(--tp-surface));
   --tp-no-raya: color-mix(in oklch, var(--tp-danger) 22%, var(--tp-surface));
+  /* Lo que se toca responde con un muelle: llega un pelo más allá y vuelve. Lo que se desplaza, con la curva de salida. */
+  --tp-muelle: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --tp-sale: cubic-bezier(0.16, 1, 0.3, 1);
 }
 .sc-dark .tp,
 .sc-dark .tp-capa {
@@ -30,6 +33,12 @@
 .tp-sem.is-arrastrando {
   cursor: ew-resize;
   user-select: none;
+}
+.tp-sem[data-arrastre='mover'] {
+  cursor: grabbing;
+}
+.tp-sem[data-arrastre='pintar'] {
+  cursor: col-resize;
 }
 .tp-sem__mapa {
   display: flex;
@@ -63,8 +72,11 @@
   transition-duration: 150ms;
   transition-timing-function: ease-out;
 }
-.tp-sem__mapa:has(.tp-sem__fila.is-on) .tp-sem__fila:not(.is-on) {
+.tp-sem__mapa:has(.tp-sem__fila.is-on) .tp-sem__fila:not(.is-on, .is-vista) {
   opacity: 0.4;
+}
+.tp-sem__fila.is-vista .tp-sem__letra {
+  color: var(--tp-si);
 }
 .tp-sem__letra {
   color: var(--tp-ink-2);
@@ -80,6 +92,8 @@
   block-size: 2rem;
   border-radius: var(--r-sm);
   background: var(--tp-no);
+  cursor: pointer;
+  touch-action: pan-y;
   transition-property: box-shadow;
   transition-duration: 150ms;
   transition-timing-function: ease-out;
@@ -107,19 +121,44 @@
     inset 0 1px 0 rgb(255 255 255 / 0.16),
     0 1px 2px color-mix(in oklch, var(--tp-si) 40%, transparent);
   color: #fff;
-  transition-property: left, width, box-shadow;
-  transition-duration: 200ms;
-  transition-timing-function: var(--tp-ease);
+  cursor: default;
+  transition-property: left, width, box-shadow, translate, opacity;
+  transition-duration: 220ms;
+  transition-timing-function: var(--tp-sale);
+  /* Una barra que aparece (un día que se marca, una franja nueva) crece desde su sitio. */
+  animation: tp-barra-in 260ms var(--tp-sale) both;
+  transform-origin: left center;
 
   &.is-movible {
     cursor: grab;
   }
+  &.is-movible:hover {
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.2),
+      0 2px 6px color-mix(in oklch, var(--tp-si) 45%, transparent);
+  }
   &.is-arrastre {
     background: repeating-linear-gradient(135deg, var(--tp-si) 0 4px, color-mix(in oklch, var(--tp-si) 78%, var(--tp-surface)) 4px 8px);
   }
+  /* La que se arrastra se levanta: un píxel arriba y una sombra que la separa del resto. */
   &.is-viva {
-    box-shadow: 0 0 0 2px var(--tp-surface), 0 0 0 4px var(--tp-si);
-    transition-property: box-shadow;
+    z-index: 4;
+    translate: 0 -1px;
+    box-shadow:
+      0 0 0 2px var(--tp-surface),
+      0 0 0 4px var(--tp-si),
+      0 6px 14px -4px color-mix(in oklch, var(--tp-si) 55%, transparent);
+    transition-property: box-shadow, translate;
+  }
+  /* El día que saldría de la fila que se mira: lo suyo se apaga. */
+  &.is-sale {
+    opacity: 0.28;
+  }
+}
+@keyframes tp-barra-in {
+  from {
+    opacity: 0;
+    scale: 0.6 1;
   }
 }
 .tp-sem.is-arrastrando .tp-sem__barra {
@@ -150,6 +189,77 @@
   font-weight: 560;
   white-space: nowrap;
   pointer-events: none;
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--s-1-5);
+  box-shadow: 0 4px 12px -2px oklch(0 0 0 / 0.25);
+  animation: tp-globo-in 180ms var(--tp-muelle) both;
+}
+.tp-sem__globo-dur {
+  font-weight: 450;
+  color: color-mix(in oklch, var(--tp-on-inverse) 62%, transparent);
+}
+@keyframes tp-globo-in {
+  from {
+    opacity: 0;
+    translate: -50% 0.25rem;
+    scale: 0.9;
+  }
+}
+/* Lo que se añadiría con un clic: un bloque verde en fantasma desde la hora bajo el puntero. */
+.tp-sem__nueva,
+.tp-sem__fantasma {
+  position: absolute;
+  inset-block: 0.1875rem;
+  border-radius: var(--r-xs);
+  pointer-events: none;
+}
+.tp-sem__nueva {
+  display: grid;
+  place-items: center;
+  background: color-mix(in oklch, var(--tp-si) 16%, var(--tp-surface));
+  box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--tp-si) 60%, transparent);
+  color: var(--tp-si);
+  animation: tp-fantasma-in 140ms var(--tp-sale) both;
+}
+/* Las horas que tendría un día si se marca en la fila que se mira. */
+.tp-sem__fantasma {
+  background: repeating-linear-gradient(135deg, color-mix(in oklch, var(--tp-si) 32%, transparent) 0 4px, color-mix(in oklch, var(--tp-si) 16%, transparent) 4px 8px);
+  box-shadow: inset 0 0 0 1.5px var(--tp-si);
+  animation: tp-fantasma-in 180ms var(--tp-sale) both;
+}
+@keyframes tp-fantasma-in {
+  from {
+    opacity: 0;
+  }
+}
+/* La raya de la hora bajo el puntero, con su hora escrita al lado. */
+.tp-sem__cursor {
+  position: absolute;
+  inset-block: -0.125rem;
+  z-index: 3;
+  inline-size: 1px;
+  background: var(--tp-ink);
+  pointer-events: none;
+}
+/* La hora, en un globo encima de la raya: el mismo que sale al arrastrar, así se lee igual. */
+.tp-sem__cursor-hora {
+  position: absolute;
+  inset-block-end: calc(100% + 0.25rem);
+  inset-inline-start: 0;
+  translate: -50% 0;
+  padding: 0 var(--s-1-5);
+  border-radius: var(--r-xs);
+  background: var(--tp-inverse);
+  box-shadow: 0 4px 12px -2px oklch(0 0 0 / 0.25);
+  font-size: var(--t-11);
+  font-weight: 560;
+  line-height: 1.25rem;
+  color: var(--tp-on-inverse);
+  white-space: nowrap;
+}
+.tp-sem__fila:has(.tp-sem__cursor) .tp-sem__letra {
+  color: var(--tp-ink);
 }
 /* Los bordes que se arrastran: una zona de 12 px y un asa que aparece al pasar. */
 .tp-sem__asa {
@@ -321,14 +431,16 @@
   color: var(--tp-ink-3);
   cursor: pointer;
   transition-property: background-color, color, box-shadow, scale;
-  transition-duration: 150ms;
-  transition-timing-function: ease-out;
+  transition-duration: 150ms, 150ms, 150ms, 320ms;
+  transition-timing-function: ease-out, ease-out, ease-out, var(--tp-muelle);
 
   &:hover {
     color: var(--tp-ink);
+    scale: 1.06;
   }
   &:active {
-    scale: 0.96;
+    scale: 0.9;
+    transition-duration: 150ms, 150ms, 150ms, 80ms;
   }
   &[aria-pressed='true'] {
     background: var(--tp-si);
