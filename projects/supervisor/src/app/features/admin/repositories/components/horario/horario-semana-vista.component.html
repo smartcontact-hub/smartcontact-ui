@@ -51,6 +51,9 @@
             @if (d.seleccion; as s) {
               <span class="seleccion sc-text-caption-semibold" [style.left.%]="s.izq" [style.width.%]="s.ancho">{{ s.texto }}</span>
             }
+            @if (d.ahora !== null) {
+              <span class="ahora" [style.left.%]="d.ahora" [attr.title]="d.ahoraTexto" aria-hidden="true"></span>
+            }
             @if (d.nota) {
               <span class="pista__nota sc-text-caption-semibold"><sc-icon name="block" [size]="14" aria-hidden="true" />{{ d.nota }}</span>
             }

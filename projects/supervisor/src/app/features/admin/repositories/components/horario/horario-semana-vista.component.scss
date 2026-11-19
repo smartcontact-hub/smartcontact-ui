@@ -90,12 +90,39 @@
   color: var(--sc-text-secondary);
 }
 
-/* Hoy, marcado con algo más que el color: la letra subrayada. */
+/* Hoy: la letra dentro de un círculo de acción. */
 .fila--hoy .fila__letra {
-  color: var(--sc-text-primary);
-  text-decoration: underline;
-  text-decoration-thickness: 2px;
-  text-underline-offset: var(--sc-spacing-0-25);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--sc-spacing-2);
+  block-size: var(--sc-spacing-2);
+  border-radius: var(--sc-radius-full);
+  background: var(--sc-bg-primary);
+  color: var(--sc-text-on-primary);
+}
+
+/* El momento actual sobre la línea de hoy: una raya vertical que atraviesa la pista. */
+.ahora {
+  position: absolute;
+  inset-block: 0;
+  inline-size: 2px;
+  translate: -50% 0;
+  background: var(--sc-text-danger);
+  pointer-events: none;
+  z-index: 1;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset-block-start: -1px;
+    inset-inline-start: 50%;
+    inline-size: var(--sc-spacing-0-75);
+    block-size: var(--sc-spacing-0-75);
+    translate: -50% 0;
+    border-radius: var(--sc-radius-full);
+    background: inherit;
+  }
 }
 
 /* La línea de las 24 horas, en neutros del DS: fondo gris claro con una raya por hora y otra más marcada cada seis. */
@@ -143,27 +170,33 @@
 /* Un día cerrado se ve DESHABILITADO: toda la fila con poca opacidad (letra, línea y horas), la letra tachada, la línea rayada y
  * «Cerrado» con el icono de bloqueo. Al pasar el ratón sube un poco: se puede arrastrar para abrirlo. */
 .fila--cerrada {
-  opacity: 0.4;
+  opacity: 0.75;
   transition-property: opacity;
   transition-duration: 150ms;
 
   &:hover {
-    opacity: 0.7;
+    opacity: 1;
   }
 
   .fila__dia {
-    color: var(--sc-text-subtle);
+    color: var(--sc-text-danger);
     text-decoration: line-through;
     text-decoration-thickness: 1.5px;
   }
 
   .pista {
-    background-color: var(--sc-border-subtle);
-    background-image: repeating-linear-gradient(135deg, transparent 0, transparent 5px, var(--sc-border-default) 5px, var(--sc-border-default) 7px);
+    background-color: var(--sc-bg-danger-subtle);
+    background-image: repeating-linear-gradient(
+      135deg,
+      transparent 0,
+      transparent 5px,
+      color-mix(in srgb, var(--sc-border-danger) 35%, transparent) 5px,
+      color-mix(in srgb, var(--sc-border-danger) 35%, transparent) 7px
+    );
   }
 
   .pista__nota {
-    color: var(--sc-text-secondary);
+    color: var(--sc-text-danger);
   }
 }
 
@@ -224,9 +257,9 @@
   }
 
   &--dia {
-    border: 1px solid var(--sc-border-default);
-    background-color: var(--sc-bg-hover);
-    background-image: repeating-linear-gradient(135deg, transparent 0, transparent 2px, var(--sc-border-default) 2px, var(--sc-border-default) 3px);
+    border: 1px solid var(--sc-border-danger);
+    background-color: var(--sc-bg-danger-subtle);
+    background-image: repeating-linear-gradient(135deg, transparent 0, transparent 2px, color-mix(in srgb, var(--sc-border-danger) 45%, transparent) 2px, color-mix(in srgb, var(--sc-border-danger) 45%, transparent) 3px);
   }
 }
 

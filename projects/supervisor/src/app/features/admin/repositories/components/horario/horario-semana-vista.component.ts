@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, input, output, signal } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ScIconComponent } from '@smartcontact-hub/icons';
 
@@ -63,11 +63,19 @@ export class HorarioSemanaVistaComponent {
   private readonly language = inject(LanguageService);
   private readonly lang = injectLangChange();
 
+  constructor() {
+    const id = setInterval(() => this.ahora.set(Date.now()), 60_000);
+    inject(DestroyRef).onDestroy(() => clearInterval(id));
+  }
+
   readonly semana = input.required<Semana>();
   readonly zona = input('Europe/Madrid');
   readonly semanaChange = output<Semana>();
 
-  private readonly hoy = computed(() => ahoraEn(this.zona()).fecha);
+  /** El instante de ahora en la zona del horario; se refresca cada minuto. */
+  private readonly ahora = signal(Date.now());
+  private readonly momento = computed(() => ahoraEn(this.zona(), new Date(this.ahora())));
+  private readonly hoy = computed(() => this.momento().fecha);
   private readonly lunes = computed(() => sumarDias(this.hoy(), -diaDeLaSemana(this.hoy())));
 
   /** Las marcas de horas del eje: una por hora (con poco ancho se esconden las impares); la 23 se omite para que no pise al 24. */
@@ -131,6 +139,8 @@ export class HorarioSemanaVistaComponent {
         fecha,
         letra: letra.format(aFecha(fecha)),
         esHoy: fecha === hoy,
+        ahora: fecha === hoy ? (this.momento().minutos / MINUTOS_DEL_DIA) * 100 : null,
+        ahoraTexto: fecha === hoy ? horaTexto(this.momento().minutos) : '',
         barras,
         seleccion,
         cerrado: minutos === 0 && !seleccion,
