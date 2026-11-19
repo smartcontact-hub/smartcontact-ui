@@ -4,7 +4,7 @@ import { type Franja, type Semana, validarSemana } from '@features/admin/reposit
 
 import { TpIconoComponent } from './tp-icono.component';
 import { horaCorta, horas, LETRAS, NOMBRES, semanaDe, type Tramo, tramosDe, trozosDelDia } from './tp-modelo';
-import { type OpcionSeg, TpAvisos, TpHoraComponent, TpSegComponent } from './tp-piezas';
+import { TpAvisos, TpHoraComponent } from './tp-piezas';
 import { T } from './tp-textos';
 import { contarUso } from './tp-usos';
 
@@ -115,7 +115,9 @@ const PAUSA = 60;
  * entera. Eso sí va por filas, como arrastrar un borde. Con algo elegido, Supr borra lo elegido.
  *
  * El dibujo enseña la jornada, de 7:00 a 22:00, y crece solo hasta la primera y la última hora abiertas con una hora de
- * margen: nunca esconde una hora en la que se atiende. «De 0 a 24» enseña el día entero, para pintar de madrugada.
+ * margen: nunca esconde una hora en la que se atiende. Encima, una regla con el día entero en pequeño (lo abierto en
+ * verde) enmarca lo que se ve, como la barra de zoom de un editor de vídeo: se arrastra el marco o sus bordes, y un doble
+ * clic enseña las 24 h, para pintar de madrugada.
  *
  * Lo que hace que se sienta a mano: al pasar por lo rojo, una raya dice la hora bajo el puntero y un bloque fantasma
  * dice lo que se añadiría; arrastrar sobre lo rojo pinta una franja nueva y un clic pone una hora. Pasar por un día de
@@ -124,7 +126,7 @@ const PAUSA = 60;
  */
 @Component({
   selector: 'sc-tp-semana',
-  imports: [TpHoraComponent, TpIconoComponent, TpSegComponent],
+  imports: [TpHoraComponent, TpIconoComponent],
   template: `
     <div class="tp-sem" [class.tp-sem--compacta]="compacta()" [class.is-arrastrando]="arrastre() !== null" [attr.data-arrastre]="arrastre()?.lado ?? null">
       <!-- Lo que se escribe: los días que comparten horas -->
@@ -211,9 +213,53 @@ const PAUSA = 60;
       <div class="tp-sem__mapa" role="group" [attr.aria-label]="resumenAccesible()">
         <div class="tp-sem__mapa-cab">
           <span class="t-eyebrow">Así queda la semana</span>
-          @if (vistas(); as vs) {
-            <sc-tp-seg pequeno [etiqueta]="t.horasQueSeVen" [opciones]="vs" [valor]="dia24() ? 'dia' : 'jornada'" (cambio)="dia24.set($event === 'dia')" />
-          }
+          <!-- Las horas que se ven: el día entero en pequeño, con lo abierto en verde y lo que se ve enmarcado. -->
+          <div class="tp-sem__nav" role="group" [attr.aria-label]="t.horasQueSeVen">
+            <span class="tp-sem__nav-txt t-micro t-3 t-num">Se ve de {{ rango().desde / 60 }} a {{ rango().hasta / 60 }}</span>
+            <span
+              class="tp-sem__nav-pista"
+              [attr.data-tip]="'Arrastra el marco o sus bordes para elegir qué horas se ven. Doble clic: el día entero'"
+              (pointerdown)="navEmpezar($event)"
+              (pointermove)="navMover($event)"
+              (pointerup)="navSoltar($event)"
+              (pointercancel)="navSoltar($event)"
+              (dblclick)="navDiaEntero()"
+            >
+              <!-- Una marca cada seis horas: 6, 12 y 18. -->
+              @for (q of [25, 50, 75]; track q) {
+                <span class="tp-sem__nav-marca" [style.left.%]="q"></span>
+              }
+              @for (a of abiertas(); track a.desde) {
+                <span class="tp-sem__nav-abierto" [style.left.%]="a.desde / 14.4" [style.width.%]="(a.hasta - a.desde) / 14.4"></span>
+              }
+              <span class="tp-sem__nav-fuera" [style.width.%]="rango().desde / 14.4"></span>
+              <span class="tp-sem__nav-fuera is-fin" [style.width.%]="(1440 - rango().hasta) / 14.4"></span>
+              <span class="tp-sem__nav-marco" [style.left.%]="rango().desde / 14.4" [style.width.%]="(rango().hasta - rango().desde) / 14.4">
+                <span
+                  class="tp-sem__nav-asa is-ini"
+                  role="slider"
+                  tabindex="0"
+                  aria-label="Se ve desde"
+                  aria-valuemin="0"
+                  aria-valuemax="1440"
+                  [attr.aria-valuenow]="rango().desde"
+                  [attr.aria-valuetext]="hora(rango().desde)"
+                  (keydown)="navTecla($event, 'desde')"
+                ></span>
+                <span
+                  class="tp-sem__nav-asa is-fin"
+                  role="slider"
+                  tabindex="0"
+                  aria-label="Se ve hasta"
+                  aria-valuemin="0"
+                  aria-valuemax="1440"
+                  [attr.aria-valuenow]="rango().hasta"
+                  [attr.aria-valuetext]="hora(rango().hasta)"
+                  (keydown)="navTecla($event, 'hasta')"
+                ></span>
+              </span>
+            </span>
+          </div>
         </div>
         <div class="tp-sem__eje t-micro t-3 t-num" aria-hidden="true">
           <span></span>
@@ -383,8 +429,10 @@ export class TpSemanaComponent {
   protected readonly guia = signal<Guia | null>(null);
   /** El día de una fila de tramos por el que pasa el puntero: el mapa enseña cómo quedaría. */
   protected readonly vista = signal<{ tramo: number; dia: number } | null>(null);
-  /** El mapa enseña el día entero en vez de la jornada. */
-  protected readonly dia24 = signal(false);
+  /** Las horas que se ven, si se eligieron en la regla de 24 h; `null` es la jornada, que se ajusta sola. */
+  protected readonly ventana = signal<Rango | null>(null);
+  /** El arrastre en la regla: qué se mueve, desde qué minuto y cómo estaba al empezar. */
+  private nav: { modo: 'desde' | 'hasta' | 'mover'; m0: number; r0: Rango; caja: DOMRect } | null = null;
   private readonly avisos = inject(TpAvisos);
   protected readonly seleccion = signal<readonly Elegido[]>([]);
   /** Los días recién pegados, que se iluminan un momento. */
@@ -669,18 +717,118 @@ export class TpSemanaComponent {
     };
   });
 
-  /** Lo que enseña el mapa. Mientras se arrastra no cambia: la escala no se mueve bajo el dedo. */
-  protected readonly rango = computed<Rango>(() => this.arrastre()?.rango ?? (this.dia24() ? DIA : this.jornada()));
-
-  /** Jornada o 24 h; si la jornada ya es el día entero, no hay nada que elegir. */
-  protected readonly vistas = computed<readonly OpcionSeg[] | null>(() => {
-    const j = this.jornada();
-    if (j.desde === 0 && j.hasta === 1440) return null;
-    return [
-      { valor: 'jornada', etiqueta: `De ${j.desde / 60} a ${j.hasta / 60}` },
-      { valor: 'dia', etiqueta: 'De 0 a 24' },
-    ];
+  /**
+   * Las horas abiertas en algún día de la semana, juntas: lo verde de la regla. Y lo que no se puede dejar fuera de la
+   * vista, redondeado a horas: nunca se esconde una hora en la que se atiende.
+   */
+  protected readonly abiertas = computed<Rango[]>(() => {
+    const s = this.semana();
+    const trozos = [0, 1, 2, 3, 4, 5, 6]
+      .flatMap((d) => trozosDelDia(s, d))
+      .map((t) => ({ desde: t.desde, hasta: t.hasta }))
+      .sort((a, b) => a.desde - b.desde);
+    const out: Rango[] = [];
+    for (const t of trozos) {
+      const u = out[out.length - 1];
+      if (u && t.desde <= u.hasta) out[out.length - 1] = { desde: u.desde, hasta: Math.max(u.hasta, t.hasta) };
+      else out.push(t);
+    }
+    return out;
   });
+  private readonly imprescindible = computed<Rango | null>(() => {
+    const a = this.abiertas();
+    return a.length ? { desde: Math.floor(a[0].desde / 60) * 60, hasta: Math.ceil(a[a.length - 1].hasta / 60) * 60 } : null;
+  });
+
+  /** Lo que enseña el mapa. Mientras se arrastra una barra no cambia: la escala no se mueve bajo el dedo. */
+  protected readonly rango = computed<Rango>(() => {
+    const a = this.arrastre();
+    if (a) return a.rango;
+    const v = this.ventana();
+    const n = this.imprescindible();
+    if (!v) return this.jornada();
+    return n ? { desde: Math.min(v.desde, n.desde), hasta: Math.max(v.hasta, n.hasta) } : v;
+  });
+
+  /* ── La regla de 24 h: arrastrar el marco o sus bordes ─────────────────────────────────────────────────────────── */
+
+  private horaEn(e: PointerEvent, caja: DOMRect): number {
+    return Math.min(1440, Math.max(0, Math.round((((e.clientX - caja.left) / caja.width) * 1440) / 60) * 60));
+  }
+
+  /** Lo pedido, dentro del día, con 4 h como poco y sin dejar fuera horas abiertas. */
+  private ponerVentana(r: Rango): void {
+    const n = this.imprescindible();
+    let { desde, hasta } = r;
+    if (n) {
+      desde = Math.min(desde, n.desde);
+      hasta = Math.max(hasta, n.hasta);
+    }
+    desde = Math.max(0, Math.min(desde, 1440 - 240));
+    hasta = Math.min(1440, Math.max(hasta, desde + 240));
+    const j = this.jornada();
+    this.ventana.set(desde === j.desde && hasta === j.hasta ? null : { desde, hasta });
+  }
+
+  protected navEmpezar(e: PointerEvent): void {
+    if (e.button !== 0) return;
+    const el = e.currentTarget as HTMLElement;
+    const caja = el.getBoundingClientRect();
+    const m = this.horaEn(e, caja);
+    const r = this.rango();
+    const asa = (e.target as HTMLElement).closest('.tp-sem__nav-asa');
+    let modo: 'desde' | 'hasta' | 'mover';
+    if (asa) modo = asa.classList.contains('is-ini') ? 'desde' : 'hasta';
+    else if (m > r.desde && m < r.hasta) modo = 'mover';
+    else {
+      // Fuera del marco: el borde más cercano salta ahí y se sigue arrastrando.
+      modo = m <= r.desde ? 'desde' : 'hasta';
+      this.ponerVentana(modo === 'desde' ? { desde: m, hasta: r.hasta } : { desde: r.desde, hasta: m });
+    }
+    e.preventDefault();
+    el.setPointerCapture(e.pointerId);
+    this.nav = { modo, m0: m, r0: this.rango(), caja };
+  }
+
+  protected navMover(e: PointerEvent): void {
+    const n = this.nav;
+    if (!n) return;
+    const m = this.horaEn(e, n.caja);
+    if (n.modo === 'desde') this.ponerVentana({ desde: m, hasta: n.r0.hasta });
+    else if (n.modo === 'hasta') this.ponerVentana({ desde: n.r0.desde, hasta: m });
+    else {
+      // El marco se mueve entero y se para donde dejaría fuera una hora abierta: moverlo nunca lo estira.
+      const largo = n.r0.hasta - n.r0.desde;
+      const abierto = this.imprescindible();
+      const min = Math.max(0, abierto ? abierto.hasta - largo : 0);
+      const max = Math.min(1440 - largo, abierto ? abierto.desde : 1440);
+      const desde = Math.min(max, Math.max(min, n.r0.desde + m - n.m0));
+      this.ponerVentana({ desde, hasta: desde + largo });
+    }
+  }
+
+  protected navSoltar(e: PointerEvent): void {
+    if (!this.nav) return;
+    this.nav = null;
+    (e.currentTarget as HTMLElement).releasePointerCapture?.(e.pointerId);
+  }
+
+  /** Doble clic: el día entero; otra vez, la jornada. */
+  protected navDiaEntero(): void {
+    const r = this.rango();
+    if (r.desde === 0 && r.hasta === 1440) this.ventana.set(null);
+    else this.ponerVentana(DIA);
+  }
+
+  protected navTecla(e: KeyboardEvent, lado: 'desde' | 'hasta'): void {
+    const r = this.rango();
+    const paso = e.key === 'ArrowLeft' || e.key === 'ArrowDown' ? -60 : e.key === 'ArrowRight' || e.key === 'ArrowUp' ? 60 : 0;
+    const fin = e.key === 'Home' ? 0 : e.key === 'End' ? 1440 : null;
+    if (!paso && fin === null) return;
+    e.preventDefault();
+    const m = fin ?? (lado === 'desde' ? r.desde : r.hasta) + paso;
+    this.ponerVentana(lado === 'desde' ? { desde: m, hasta: r.hasta } : { desde: r.desde, hasta: m });
+  }
 
   /** Las horas escritas encima: cada hora en la jornada; cada tres, si se ven más de 16. */
   protected readonly marcas = computed(() => {
