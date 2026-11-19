@@ -1825,6 +1825,9 @@
       "in_use_bulk": "Los usan {{count}} calendarios: se quedarán con su semana, sin vínculo.",
       "in_use_bulk_one": "Los usa 1 calendario: se quedará con su semana, sin vínculo.",
       "x": {
+        "section_identity": "Identidad",
+        "identity_hint": "Nombre y descripción",
+        "week_hint": "Hasta 4 franjas por día",
         "color": "Color",
         "edit": "Editar horario",
         "edit_named": "Editar «{{name}}»",

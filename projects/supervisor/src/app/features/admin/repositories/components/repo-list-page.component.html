@@ -88,7 +88,6 @@
     [class.table__cell--emphasis]="isEmphasis(col.field)"
     [class.table__cell--truncate]="isKind(col.field, 'truncate')"
     [pTooltip]="cellTitle(item, col.field)" showOnEllipsis tooltipPosition="top"
-    [style.color]="textColor(item, col.field)"
     [class.sc-text-body-semibold]="isEmphasis(col.field)"
     [class.sc-text-body-regular]="!isEmphasis(col.field)"
   >
@@ -124,7 +123,11 @@
       } @else {
         <sc-tag [severity]="status.tone" [value]="status.labelKey | translate" />
       }
-    } @else if (false) {
+    } @else if (partsFor(item, col.field); as partes) {
+      <!-- Texto con peso: las horas en negrita y los separadores pequeños y apagados, para que el foco esté en las horas. -->
+      @for (p of partes; track $index) {
+        <span [class.celda-fuerte]="p.fuerte" [class.celda-sep]="p.sep">{{ p.texto }}</span>{{ ' ' }}
+      }
     } @else if (showDash(item, col.field)) {
       <sc-celda-vacia />
     } @else {

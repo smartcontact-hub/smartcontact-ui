@@ -61,3 +61,14 @@
     color: var(--sc-text-secondary);
   }
 }
+
+/* Texto de celda con peso: las horas en negrita; los separadores, más pequeños y apagados. */
+.celda-fuerte {
+  font-weight: 600;
+}
+
+.celda-sep {
+  margin-inline: var(--sc-spacing-0-125);
+  color: var(--sc-text-subtle);
+  font-size: 0.75em;
+}

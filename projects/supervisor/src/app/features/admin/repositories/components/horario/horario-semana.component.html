@@ -11,9 +11,6 @@
         [attr.aria-pressed]="dia.franjas.length > 0"
         (click)="abrir(dia.indice, dia.franjas.length === 0)"
       >
-        @if (dia.franjas.length > 0) {
-          <sc-icon name="check" size="sm" aria-hidden="true" />
-        }
         {{ dia.nombre }}
       </button>
       @if (dia.franjas.length > 0) {

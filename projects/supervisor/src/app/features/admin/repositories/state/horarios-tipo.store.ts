@@ -10,7 +10,7 @@ export type { HorarioTipo } from './horarios.core.mjs';
 export const HorariosTipoStore = createRepoStore<HorarioTipo>('HorariosTipoStore', {
   storageKey: 'sc-horarios-tipo-repo',
   versionKey: 'sc-horarios-tipo-repo-v',
-  currentVersion: 3,
+  currentVersion: 4,
   defaults: HORARIOS_TIPO_SEMILLA,
   normalize: (item) => normalizarHorarioTipo(item as unknown as Record<string, unknown>),
 });

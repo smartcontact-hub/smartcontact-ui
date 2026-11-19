@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, HostL
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { type ColorDotOption, ScButtonComponent, ScColorDotPickerComponent, ScInputTextComponent, ScSectionCardComponent, ScSubsectionComponent } from '@smartcontact-hub/components';
+import { ScButtonComponent, ScInputTextComponent, ScSectionCardComponent, ScSubsectionComponent } from '@smartcontact-hub/components';
 
 import type { DirtyAware } from '@core/guards';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
@@ -13,14 +13,14 @@ import { nombreDeCopia } from '@shared/utils/copy-name';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 
 import { HorarioSemanaComponent } from '../components/horario/horario-semana.component';
-import { COLORES_DE_PERIODO, type ColorDePeriodo, type HorarioTipo, validarSemana, type Semana } from '../state/horarios.core.mjs';
+import { type HorarioTipo, validarSemana, type Semana } from '../state/horarios.core.mjs';
 import { HorariosTipoService } from '../state/horarios-tipo.service';
 import { HorariosTipoStore } from '../state/horarios-tipo.store';
 
 type Borrador = Omit<HorarioTipo, 'id'>;
 
 const LABORABLE = [[540, 1080]] as const;
-const VACIO: Borrador = { name: '', description: '', color: 'blue', week: [LABORABLE, LABORABLE, LABORABLE, LABORABLE, LABORABLE, [], []] };
+const VACIO: Borrador = { name: '', description: '', week: [LABORABLE, LABORABLE, LABORABLE, LABORABLE, LABORABLE, [], []] };
 const FALTA_NOMBRE = 'repositories.horarios.errors.name_required';
 
 /**
@@ -29,7 +29,7 @@ const FALTA_NOMBRE = 'repositories.horarios.errors.name_required';
  */
 @Component({
   selector: 'sc-horario-tipo-editor-page',
-  imports: [HorarioSemanaComponent, RouterLink, ScButtonComponent, ScColorDotPickerComponent, ScInputTextComponent, ScSectionCardComponent, ScSubsectionComponent, TranslateModule],
+  imports: [HorarioSemanaComponent, RouterLink, ScButtonComponent, ScInputTextComponent, ScSectionCardComponent, ScSubsectionComponent, TranslateModule],
   template: `
     <ng-template #topbarActions>
       @if (formDirty()) {
@@ -45,11 +45,10 @@ const FALTA_NOMBRE = 'repositories.horarios.errors.name_required';
         <!-- Todo en una vista, sin desplazarse: a la izquierda lo que se configura (datos y semana); a la derecha, dónde se usa. -->
         <div class="cuerpo">
           <div class="cuerpo__izq">
+        <!-- Un solo bloque «General»: identidad y semana habitual, cada una en su subsección (como la ficha de un grupo). -->
         <sc-section-card titleKey="repositories.horariosTipo.x.section_general" surface="subtle" icon="tune">
-          <sc-subsection>
-            <div class="bloque">
-              <!-- Nombre y descripción, uno al lado del otro. -->
-              <div class="par">
+          <sc-subsection titleKey="repositories.horariosTipo.x.section_identity" hintKey="repositories.horariosTipo.x.identity_hint">
+            <div class="par">
               <sc-inputtext
                 inputId="horario-tipo-nombre"
                 fluid
@@ -69,21 +68,10 @@ const FALTA_NOMBRE = 'repositories.horarios.errors.name_required';
                 [value]="form().description"
                 (valueChange)="update('description', $event)"
               />
-              <!-- El color del horario, de los del DS: es el del texto de sus horas en la lista y en los calendarios. -->
-              <div class="campo-color">
-                <span class="sc-text-caption-semibold">{{ 'repositories.horariosTipo.x.color' | translate }}</span>
-                <sc-color-dot-picker [options]="colores()" [value]="form().color ?? 'blue'" (valueChange)="update('color', $any($event))" [ariaLabel]="'repositories.horariosTipo.x.color' | translate" />
-              </div>
-              </div>
             </div>
           </sc-subsection>
-        </sc-section-card>
-
-        <sc-section-card titleKey="repositories.horarios.section_week" surface="subtle" icon="view_week">
-          <sc-subsection>
-            <div class="bloque">
-              <sc-horario-semana prefijo="horario-tipo" [semana]="form().week" [falta]="faltaDeSemana()" (semanaChange)="update('week', $event)" />
-            </div>
+          <sc-subsection titleKey="repositories.horarios.section_week" hintKey="repositories.horariosTipo.x.week_hint">
+            <sc-horario-semana prefijo="horario-tipo" [semana]="form().week" [falta]="faltaDeSemana()" (semanaChange)="update('week', $event)" />
           </sc-subsection>
         </sc-section-card>
 
@@ -144,34 +132,16 @@ const FALTA_NOMBRE = 'repositories.horarios.errors.name_required';
       gap: var(--sc-spacing-1);
     }
 
-    /* Nombre, descripción y color en una fila; con menos ancho, el color baja a su propia fila. */
+    /* Nombre y descripción, uno al lado del otro. */
     .par {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: var(--sc-spacing-1);
       align-items: start;
 
-      .campo-color {
-        grid-column: 1 / -1;
-      }
-
-      @media (min-width: 1400px) {
-        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
-
-        .campo-color {
-          grid-column: auto;
-        }
-      }
-
       @media (max-width: 40rem) {
         grid-template-columns: 1fr;
       }
-    }
-
-    .campo-color {
-      display: flex;
-      flex-direction: column;
-      gap: var(--sc-spacing-0-5);
     }
 
     .nota {
@@ -229,16 +199,6 @@ export class HorarioTipoEditorPageComponent implements DirtyAware, OnInit {
   private readonly dirtyState = createFormDirtyState(() => this.form());
   readonly formDirty = this.dirtyState.dirty;
 
-  /** Los colores del DS en el orden de la etiqueta; el punto lleva el color del texto que tendrá. */
-  protected readonly colores = computed<readonly ColorDotOption[]>(() => {
-    this.lang();
-    return (['gray', 'red', 'orange', 'amber', 'brown', 'green', 'teal', 'blue', 'purple', 'black'] as const).map((c) => ({
-      value: c,
-      label: this.translate.instant(`labels.color.${c}`) as string,
-      color: c === 'black' ? 'var(--sc-cmp-tag-contrast-background)' : `var(--sc-label-${c}-text)`,
-    }));
-  });
-
   protected readonly faltaDeSemana = computed(() => validarSemana(this.form().week));
   protected readonly faltaElNombre = computed(() => !this.form().name.trim());
   protected readonly ocasion = ocasionDeAvisar({
@@ -278,9 +238,7 @@ export class HorarioTipoEditorPageComponent implements DirtyAware, OnInit {
       this.horarioId = null;
       this.idActual.set(null);
       this.nombreGuardado.set(null);
-      // Un horario nuevo estrena un color que no tenga otro, si queda alguno.
-      const usados = new Set(this.store.items().map((h) => h.color));
-      this.form.set({ ...VACIO, color: (COLORES_DE_PERIODO.find((c) => c !== 'black' && !usados.has(c)) ?? 'blue') as ColorDePeriodo });
+      this.form.set(VACIO);
       const seed = this.route.snapshot.queryParamMap.get('seedFromId');
       const origen = seed ? this.store.items().find((h) => h.id === Number(seed)) : undefined;
       if (origen) {
@@ -326,7 +284,7 @@ export class HorarioTipoEditorPageComponent implements DirtyAware, OnInit {
       return;
     }
     // La semana nueva llega, además, a todos los calendarios que usan este horario.
-    this.store.updateItem(this.horarioId!, { name: draft.name, description: draft.description, color: draft.color });
+    this.store.updateItem(this.horarioId!, { name: draft.name, description: draft.description });
     this.servicio.actualizarSemana(this.horarioId!, draft.week as Semana);
     this.nombreGuardado.set(draft.name);
     this.form.set(draft);

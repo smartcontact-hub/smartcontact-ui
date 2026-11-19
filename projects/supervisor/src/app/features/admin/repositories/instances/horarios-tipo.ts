@@ -6,7 +6,7 @@ import { injectLangChange } from '@core/utils/lang-change';
 import { DIAS_DE_LA_SEMANA } from '../components/horario/horario-semana.component';
 import { RepoListPageComponent } from '../components/repo-list-page.component';
 import { RepoColumnDef, RepoPageConfig } from '../components/repo-types';
-import { resumenDeLaSemana } from '../state/horarios.core.mjs';
+import { partesDeLaSemana, resumenDeLaSemana } from '../state/horarios.core.mjs';
 import { HORARIOS_EN_EL_VUI } from '../state/horarios.semilla.mjs';
 import { HorarioUsoService } from '../state/horario-uso.service';
 import { HorariosTipoService } from '../state/horarios-tipo.service';
@@ -58,7 +58,7 @@ export class HorariosTipoPageComponent {
       key: 'week',
       labelKey: 'repositories.horarios.col_week',
       kind: 'truncate',
-      colorOf: (h) => h.color,
+      parts: (h) => partesDeLaSemana(h.week, this.textos().dias, this.textos().cerrado, this.textos().siempre),
       accessor: (h) => resumenDeLaSemana(h.week, this.textos().dias, this.textos().cerrado, this.textos().siempre),
     },
     {

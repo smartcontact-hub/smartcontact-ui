@@ -260,6 +260,27 @@ export function resumenDeLaSemana(semana, dias, cerrado, siempre) {
     .join('; ');
 }
 
+/**
+ * La misma semana que `resumenDeLaSemana`, pero en partes con su peso: los días («L–J»), las horas (en negrita) y los separadores
+ * (pequeños y apagados: «·» entre franjas de un mismo día y «/» entre grupos de días), para que el foco esté en las horas.
+ * `{ texto, fuerte?, sep? }[]`.
+ */
+export function partesDeLaSemana(semana, dias, cerrado, siempre) {
+  const grupos = gruposDeLaSemana(semana);
+  if (grupos.length === 0) return [{ texto: cerrado }];
+  if (grupos.length === 1 && grupos[0].desde === 0 && grupos[0].hasta === 6 && mismasFranjas(grupos[0].franjas, [[0, MINUTOS_DEL_DIA]])) return [{ texto: siempre, fuerte: true }];
+  const partes = [];
+  grupos.forEach((g, i) => {
+    if (i > 0) partes.push({ texto: '/', sep: true });
+    partes.push({ texto: g.desde === g.hasta ? dias[g.desde] : `${dias[g.desde]}–${dias[g.hasta]}` });
+    g.franjas.forEach((f, j) => {
+      if (j > 0) partes.push({ texto: '·', sep: true });
+      partes.push({ texto: textoDeFranja(f), fuerte: true });
+    });
+  });
+  return partes;
+}
+
 /** Cuántos días de un año son de cada dueño: la semana habitual, cada periodo, los festivos y las fechas especiales. */
 export function coberturaAnual(horario, anio, calendarios = []) {
   const a = String(anio).padStart(4, '0');

@@ -59,6 +59,7 @@ const aMinutos = (hora: Date): number => hora.getHours() * 60 + hora.getMinutes(
         />
       </div>
     }
+    @if (franjas().length < max()) {
     <sc-button
       class="franjas__mas"
       variant="secondary"
@@ -68,12 +69,15 @@ const aMinutos = (hora: Date): number => hora.getHours() * 60 + hora.getMinutes(
       [label]="'repositories.horarios.slot_add' | translate"
       (clicked)="anadir()"
     />
+    }
   `,
   styleUrl: './horario-franjas.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HorarioFranjasComponent {
   readonly franjas = input.required<readonly Franja[]>();
+  /** Cuántas franjas admite un día; al llegar, «Añadir franja» desaparece. */
+  readonly max = input(4);
   /** A qué día pertenecen, para el nombre accesible de cada hora («Inicio, lunes»). */
   readonly etiqueta = input('');
   readonly franjasChange = output<readonly Franja[]>();

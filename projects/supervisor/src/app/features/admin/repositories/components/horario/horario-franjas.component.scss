@@ -25,5 +25,10 @@
   flex-direction: row;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--sc-spacing-0-5) var(--sc-spacing-1-5);
+  gap: var(--sc-spacing-0-5) var(--sc-spacing-1);
+
+  /* Con hasta 4 franjas por día, caben las cuatro en una línea: cada una, más apretada. */
+  .franjas__fila {
+    gap: var(--sc-spacing-0-25);
+  }
 }

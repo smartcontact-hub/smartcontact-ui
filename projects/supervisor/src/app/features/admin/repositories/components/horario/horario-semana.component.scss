@@ -16,7 +16,7 @@
  * (`display: contents`) caen en ella. Entre días, aire, sin líneas (DD-113). */
 .semana__dia {
   display: grid;
-  grid-template-columns: 8rem minmax(0, 1fr);
+  grid-template-columns: 6.5rem minmax(0, 1fr);
   align-items: center;
   column-gap: var(--sc-spacing-1);
   row-gap: var(--sc-spacing-0-5);

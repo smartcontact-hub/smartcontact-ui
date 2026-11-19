@@ -39,8 +39,6 @@ export interface HorarioTipo {
   readonly name: string;
   readonly description: string;
   readonly week: Semana;
-  /** Un color del DS que identifica al horario (como el de una etiqueta). */
-  readonly color?: ColorDePeriodo;
 }
 
 export interface Horario {
@@ -146,6 +144,12 @@ export function estadoEn(
 ): { abierto: boolean; cambia: Momento | null };
 
 export function gruposDeLaSemana(semana: Semana): { desde: number; hasta: number; franjas: readonly Franja[] }[];
+export interface ParteDeTexto {
+  readonly texto: string;
+  readonly fuerte?: boolean;
+  readonly sep?: boolean;
+}
+export function partesDeLaSemana(semana: Semana, dias: readonly string[], cerrado: string, siempre: string): readonly ParteDeTexto[];
 export function resumenDeLaSemana(semana: Semana, dias: readonly string[], cerrado: string, siempre: string): string;
 export function coberturaAnual(
   horario: Reglas,

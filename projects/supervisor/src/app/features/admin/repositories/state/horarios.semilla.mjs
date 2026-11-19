@@ -189,28 +189,22 @@ const DESCRIPCIONES_DE_HORARIO = {
   8: 'Horario corto de verano',
   9: 'Postventa, con el viernes más corto',
   10: 'Jornada partida con cierre del viernes a las 14:00',
-  11: 'Ejemplo con muchos tramos por día, para probar cómo se ve',
+  11: 'Ejemplo con 4 franjas por día, el máximo, para probar cómo se ve',
 };
 
-/** Un color por horario, de los del DS (el del texto de una etiqueta). */
-const COLORES_DE_HORARIO = { 1: 'blue', 2: 'teal', 3: 'purple', 4: 'brown', 5: 'gray', 6: 'orange', 7: 'red', 8: 'amber', 9: 'green', 10: 'blue', 11: 'purple' };
-
-/** Un horario con muchas franjas por día (incluidas algunas a minuto exacto): sirve para estresar cómo se representa. */
+/** Un horario con el máximo de franjas por día, 4 (incluidas algunas a minuto exacto): sirve para estresar cómo se representa. */
 const MUCHAS_FRANJAS = [
   [480, 600],
   [615, 720],
   [735, 840],
   [854, 960],
-  [975, 1080],
-  [1095, 1200],
-  [1215, 1320],
 ];
 
 /** Los horarios (semanas tipo) de ejemplo: «Horario Verano» lo usan tres calendarios. */
 export const HORARIOS_TIPO_SEMILLA = [
   ...separados.horarios,
-  { id: separados.horarios.length + 1, name: 'Turnos con pausas (muchas franjas)', description: '', week: [MUCHAS_FRANJAS, MUCHAS_FRANJAS, MUCHAS_FRANJAS, MUCHAS_FRANJAS, MUCHAS_FRANJAS.slice(0, 4), [[600, 840], [900, 1020]], []] },
-].map((h) => ({ ...h, name: NOMBRES_DE_HORARIO[h.id] ?? h.name, description: DESCRIPCIONES_DE_HORARIO[h.id] ?? h.description, color: COLORES_DE_HORARIO[h.id] ?? 'blue' }));
+  { id: separados.horarios.length + 1, name: 'Turnos con pausas (4 franjas)', description: '', week: [MUCHAS_FRANJAS, MUCHAS_FRANJAS, MUCHAS_FRANJAS, MUCHAS_FRANJAS, MUCHAS_FRANJAS.slice(0, 3), [[600, 840], [900, 1020]], []] },
+].map((h) => ({ ...h, name: NOMBRES_DE_HORARIO[h.id] ?? h.name, description: DESCRIPCIONES_DE_HORARIO[h.id] ?? h.description }));
 
 /** Dónde se usa cada horario además de en calendarios y grupos: el VUI (dato de ejemplo; aún no hay modelo del VUI). */
 export const HORARIOS_EN_EL_VUI = new Set([1, 7, 10]);

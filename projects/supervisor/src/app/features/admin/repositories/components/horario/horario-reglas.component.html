@@ -23,7 +23,7 @@
             <span class="fila__fechas sc-text-caption-regular">{{ 'repositories.horarios.x.rules.general_hint' | translate }}</span>
           </span>
           <span class="fila__horario sc-text-caption-semibold">{{ nombreGeneral() }}</span>
-          <sc-horario-semana-resumen [semana]="semana()" [color]="colorGeneral()" />
+          <sc-horario-semana-resumen [semana]="semana()" [color]="colorGeneral" />
         </span>
         <span class="fila__acciones fila__acciones--hover">
           <sc-button variant="secondary" appearance="text" size="sm" icon="edit" [ariaLabel]="'repositories.horarios.x.general_modal.title' | translate" (clicked)="editarSemana.emit()" />
