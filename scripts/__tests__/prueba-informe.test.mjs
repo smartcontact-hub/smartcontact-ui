@@ -173,11 +173,11 @@ test('el CSV tiene una fila por intento, marca el ensayo y escapa comas y comill
   ];
   const lineas = csvDeResultados(PLAN, rs).trim().split('\n');
   assert.equal(lineas.length, 1 + 4);
-  assert.match(lineas[0], /^participante,ensayo,version,/);
-  assert.match(lineas[1], /^P1,no,A,Separado,/);
+  assert.match(lineas[0], /^participante,nombre,ensayo,version,/);
+  assert.match(lineas[1], /^P1,,no,A,Separado,/);
   assert.ok(lineas[1].includes('"Horarios, en /admin"'));
   assert.ok(lineas[1].includes('"Me gustó, ""mucho"""'));
-  assert.match(lineas[3], /^ensayo,si,/);
+  assert.match(lineas[3], /^ensayo,,si,/);
 });
 
 test('el informe en texto lleva el veredicto, las siglas y qué hacer', () => {
