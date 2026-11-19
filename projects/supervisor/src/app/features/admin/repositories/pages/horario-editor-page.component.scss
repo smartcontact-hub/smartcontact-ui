@@ -77,3 +77,20 @@
   margin: 0;
   color: var(--sc-text-secondary);
 }
+
+/* El título y, a su lado, «Activo». */
+.titulo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sc-spacing-0-75) var(--sc-spacing-1-5);
+  margin-block-end: var(--sc-spacing-1-5);
+
+  .page__heading {
+    margin: 0;
+  }
+}
+
+.titulo__activo {
+  gap: var(--sc-spacing-0-5);
+}

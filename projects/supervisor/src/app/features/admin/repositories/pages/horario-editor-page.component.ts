@@ -100,6 +100,7 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
   private readonly festivosStore = inject(FestivosStore);
   private readonly groupsStore = inject(GroupsStore);
   private readonly resultado = inject(ResultadoAccionService);
+  private readonly alertModal = injectAlertModal();
   private readonly translate = inject(TranslateService);
   private readonly language = inject(LanguageService);
   private readonly lang = injectLangChange();
@@ -191,76 +192,6 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
   });
 
   /** Las cabeceras de las dos tablas, en el idioma de la app. */
-  protected readonly columnasDePeriodos = computed<readonly ColumnaDeHorario[]>(() => {
-    this.lang();
-    const t = (k: string): string => this.translate.instant(`repositories.horarios.cols.${k}`);
-    return [
-      { campo: 'nombre', titulo: t('period'), etiqueta: true },
-      { campo: 'fechas', titulo: t('dates') },
-      { campo: 'semana', titulo: t('week') },
-    ];
-  });
-
-  protected readonly columnasDeEspeciales = computed<readonly ColumnaDeHorario[]>(() => {
-    this.lang();
-    const t = (k: string): string => this.translate.instant(`repositories.horarios.cols.${k}`);
-    return [
-      // El nombre nombra la fila, como en la agenda (DD-193): primero.
-      { campo: 'nombre', titulo: t('name') },
-      { campo: 'fecha', titulo: t('date') },
-      { campo: 'horas', titulo: t('hours') },
-    ];
-  });
-
-  protected readonly periodos = computed<readonly FilaDeHorario[]>(() => {
-    this.lang();
-    const dia = new Intl.DateTimeFormat(this.language.locale(), { day: 'numeric', month: 'short' });
-    const conAnio = new Intl.DateTimeFormat(this.language.locale(), { day: 'numeric', month: 'short', year: 'numeric' });
-    return this.form().periods.map((p) => {
-      const desde = dia.format(aFecha(`2024-${p.from}`));
-      // La repetición va en la fecha (DD-252): lo de un año lleva su año; lo que se repite, no. Una columna aparte no cabía.
-      const fechas = `${desde} – ${(p.year === null ? dia : conAnio).format(aFecha(`${p.year ?? 2024}-${p.to}`))}`;
-      return { id: p.id, color: p.color, celdas: { nombre: p.name, fechas, semana: this.resumen(p.week) } };
-    });
-  });
-
-  /** Las fechas de un año que ya pasó (en la zona del horario). Las que se repiten nunca pasan. */
-  private readonly esPasada = (e: FechaEspecial): boolean => !e.yearly && e.date < ahoraEn(this.form().timezone).fecha;
-  protected readonly verPasadas = signal(false);
-  protected readonly filtroDeEspeciales = computed(() => {
-    this.lang();
-    return [
-      { value: 'proximas', label: this.translate.instant('repositories.horarios.specials_upcoming') },
-      { value: 'pasadas', label: this.translate.instant('repositories.horarios.specials_past') },
-    ];
-  });
-
-  /** Las fechas especiales, por orden en el año: primero las que se repiten, por día, y luego las de un año, por fecha. */
-  protected readonly especiales = computed<readonly FilaDeHorario[]>(() => {
-    this.lang();
-    const conAnio = new Intl.DateTimeFormat(this.language.locale(), { day: 'numeric', month: 'short', year: 'numeric' });
-    const sinAnio = new Intl.DateTimeFormat(this.language.locale(), { day: 'numeric', month: 'short' });
-    const pasadas = this.verPasadas();
-    return [...this.form().specials]
-      .filter((e) => this.esPasada(e) === pasadas)
-      .sort((a, b) => Number(b.yearly) - Number(a.yearly) || (a.yearly ? a.date.slice(5).localeCompare(b.date.slice(5)) : a.date.localeCompare(b.date)))
-      .map((e) => ({
-        id: e.id,
-        celdas: {
-          // Con su año si es de uno; sin año si se repite, como los periodos.
-          fecha: (e.yearly ? sinAnio : conAnio).format(aFecha(e.yearly ? `2024${e.date.slice(4)}` : e.date)),
-          nombre: e.name,
-          horas: e.slots.length > 0 ? e.slots.map(textoDeFranja).join(', ') : this.translate.instant('repositories.horarios.closed'),
-        },
-      }));
-  });
-
-  protected readonly opcionesDeFestivos = computed(() =>
-    this.calendarios()
-      .filter((c) => c.status !== 'inactive' || this.form().holidayCalendarIds.includes(c.id))
-      .map((c) => ({ value: c.id, label: c.name })),
-  );
-
   /** Los grupos que atienden con este horario (DD-152): cambiarlo les cambia a ellos. */
   protected readonly grupos = computed(() => {
     const id = this.horarioId;
@@ -353,90 +284,6 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
 
   protected update<K extends keyof Borrador>(key: K, value: Borrador[K]): void {
     this.form.update((f) => ({ ...f, [key]: value }));
-  }
-
-  protected ponerFestivos(ids: unknown): void {
-    this.update('holidayCalendarIds', (ids as number[]) ?? []);
-  }
-
-  /* ── Periodos ─────────────────────────────────────────────────────────────────────────────────────────────────── */
-
-  /** El diálogo de un periodo: `null` cerrado; con `periodo: null`, para añadir. */
-  protected readonly periodoDialog = signal<{ readonly periodo: Periodo | null } | null>(null);
-  protected readonly anioDeTrabajo = new Date().getFullYear();
-
-  protected guardarPeriodo(periodo: Periodo): void {
-    this.form.update((f) => {
-      const existe = f.periods.some((p) => p.id === periodo.id);
-      return { ...f, periods: existe ? f.periods.map((p) => (p.id === periodo.id ? periodo : p)) : [...f.periods, periodo] };
-    });
-    this.periodoDialog.set(null);
-  }
-
-  protected abrirPeriodo(id: number): void {
-    const periodo = this.form().periods.find((p) => p.id === id);
-    if (periodo) this.periodoDialog.set({ periodo });
-  }
-
-  /** Desde el «⋮», como un contacto de la agenda: pregunta y quita; Deshacer lo devuelve hasta que se guarda. */
-  protected async eliminarPeriodo(id: number): Promise<void> {
-    const periodo = this.form().periods.find((p) => p.id === id);
-    if (!periodo || !(await this.confirmarQuitar('repositories.horarios.period_delete_title', periodo.name))) return;
-    this.quitarPeriodo(id);
-    this.resultado.contar(this.translate.instant('repositories.horarios.period_deleted', { name: periodo.name }));
-  }
-
-  protected abrirEspecial(id: number): void {
-    const especial = this.form().specials.find((e) => e.id === id);
-    if (especial) this.especialDialog.set({ especial, fecha: null });
-  }
-
-  protected async eliminarEspecial(id: number): Promise<void> {
-    const especial = this.form().specials.find((e) => e.id === id);
-    if (!especial || !(await this.confirmarQuitar('repositories.horarios.special_delete_title', especial.name))) return;
-    this.quitarEspecial(id);
-    this.resultado.contar(this.translate.instant('repositories.horarios.special_deleted', { name: especial.name }));
-  }
-
-  private readonly alertModal = injectAlertModal();
-
-  private confirmarQuitar(titulo: string, name: string): Promise<boolean> {
-    return this.alertModal({
-      variant: 'error',
-      surface: 'plain',
-      title: this.translate.instant(titulo, { name }),
-      message: this.translate.instant('common.delete_dialog.body'),
-      actionLabel: this.translate.instant('common.delete'),
-      secondaryActionLabel: this.translate.instant('common.cancel'),
-    });
-  }
-
-  protected quitarPeriodo(id: number): void {
-    this.form.update((f) => ({ ...f, periods: f.periods.filter((p) => p.id !== id) }));
-    this.periodoDialog.set(null);
-  }
-
-  /* ── Fechas especiales ────────────────────────────────────────────────────────────────────────────────────────── */
-
-  /** El diálogo de una fecha especial: `null` cerrado; con `especial: null`, para añadir (con `fecha`, ya marcada; si
-   *  no, abre en el mes de `mes`). */
-  protected readonly especialDialog = signal<{ readonly especial: FechaEspecial | null; readonly fecha: string | null; readonly mes?: string | null } | null>(null);
-
-  protected guardarEspeciales(nuevas: readonly FechaEspecialNueva[]): void {
-    this.form.update((f) => {
-      let specials = [...f.specials];
-      for (const nueva of nuevas) {
-        if (nueva.id !== null) specials = specials.map((e) => (e.id === nueva.id ? { ...nueva, id: nueva.id! } : e));
-        else specials.push({ ...nueva, id: siguienteId(specials) });
-      }
-      return { ...f, specials };
-    });
-    this.especialDialog.set(null);
-  }
-
-  protected quitarEspecial(id: number): void {
-    this.form.update((f) => ({ ...f, specials: f.specials.filter((e) => e.id !== id) }));
-    this.especialDialog.set(null);
   }
 
   /* ── Guardar ──────────────────────────────────────────────────────────────────────────────────────────────────── */
