@@ -20,7 +20,7 @@ interface Datos {
 }
 
 /**
- * Nombre, descripción, horario (la semana en pequeño), estado y uso (qué grupos lo usan, sus nombres al pasar,
+ * Nombre, descripción, horario (la semana en texto), estado y uso (qué grupos lo usan, sus nombres al pasar,
  * como en Tipificaciones: DD-254). Lo demás, en su editor.
  */
 const columnas = (d: Datos): readonly RepoColumnDef<Horario>[] => [
@@ -29,12 +29,11 @@ const columnas = (d: Datos): readonly RepoColumnDef<Horario>[] => [
   { key: 'description', labelKey: 'repositories.columns.description', kind: 'truncate', accessor: (i) => i.description, sortable: true },
   {
     key: 'week',
-    // El horario, en pequeño: las siete rayas de la semana sobre las 24 horas. Su texto sirve para ordenar, buscar y exportar.
+    // El horario, en una línea de texto (se corta con «…» y se lee entero al pasar el ratón).
     labelKey: 'repositories.horarios.col_schedule',
-    kind: 'text',
-    width: '176px',
+    kind: 'truncate',
+    width: '240px',
     accessor: d.resumen,
-    semana: (h) => h.week,
   },
   {
     key: 'status',

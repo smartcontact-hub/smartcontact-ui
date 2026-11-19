@@ -17,8 +17,6 @@ export interface RepoColumnDef<T extends RepoEntity> {
   readonly labelKey: string;
   readonly kind: RepoColumnKind;
   readonly accessor: (item: T) => string;
-  /** La semana de la fila, para pintarla en pequeño en la celda (rayas por día sobre las 24 horas). El `accessor` es su texto: orden, búsqueda y exportación. */
-  readonly semana?: (item: T) => readonly (readonly (readonly [number, number])[])[];
   /** CSS width applied to the cell (e.g. `'192px'`, `'25%'`). Defaults to `auto`. */
   readonly width?: string;
   /** Mark the primary "name" column so it renders bolder. */
