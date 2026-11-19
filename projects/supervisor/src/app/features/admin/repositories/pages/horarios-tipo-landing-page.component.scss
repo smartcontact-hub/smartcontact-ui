@@ -221,3 +221,38 @@
   align-self: flex-start;
   margin-inline-start: calc(-1 * var(--sc-spacing-0-5));
 }
+
+/* La edición contraída del panel: una cabecera que se abre, y debajo el formulario. */
+.editar__cabecera {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-25);
+  padding: var(--sc-spacing-0-25) 0;
+  border: 0;
+  background: transparent;
+  color: var(--sc-text-primary);
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-border-focus);
+    outline-offset: 2px;
+  }
+}
+
+.editar__cuerpo {
+  margin-block-start: var(--sc-spacing-0-75);
+  padding: var(--sc-spacing-1);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-md);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1);
+}
+
+.form__acciones {
+  display: flex;
+  gap: var(--sc-spacing-0-5);
+}

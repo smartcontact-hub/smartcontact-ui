@@ -95,18 +95,6 @@ export const REPOSITORIES_ROUTES: Routes = [
     data: repoInstanceEnAdmin('repositories.horariosTipo.title'),
     children: [
       { path: '', loadComponent: () => import('./pages/horarios-tipo-landing-page.component').then((m) => m.HorariosTipoLandingPageComponent) },
-      {
-        path: 'crear',
-        data: { breadcrumb: { labelKey: 'repositories.horariosTipo.create_title' } },
-        loadComponent: () => import('./pages/horario-tipo-editor-page.component').then((m) => m.HorarioTipoEditorPageComponent),
-        canDeactivate: [formDirtyGuard],
-      },
-      {
-        path: 'editar/:id',
-        data: { breadcrumb: { labelKey: 'repositories.horariosTipo.edit_breadcrumb' } },
-        loadComponent: () => import('./pages/horario-tipo-editor-page.component').then((m) => m.HorarioTipoEditorPageComponent),
-        canDeactivate: [formDirtyGuard],
-      },
     ],
   },
   {

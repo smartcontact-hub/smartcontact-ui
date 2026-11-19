@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal, type TemplateRef, viewChild } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { NgTemplateOutlet } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, signal, type TemplateRef, untracked, viewChild } from '@angular/core';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   type LabelColor,
@@ -7,6 +8,7 @@ import {
   ScButtonComponent,
   ScDrawerComponent,
   ScEmptyStateComponent,
+  ScInputTextComponent,
   ScSearchComponent,
   ScSelectButtonComponent,
 } from '@smartcontact-hub/components';
@@ -15,9 +17,11 @@ import { ScIconComponent } from '@smartcontact-hub/icons';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { injectAlertModal, ResultadoAccionService } from '@core/services';
 import { injectLangChange } from '@core/utils/lang-change';
+import { nombreDeCopia } from '@shared/utils/copy-name';
 
+import { HorarioSemanaComponent } from '../components/horario/horario-semana.component';
 import { HorarioSemanaResumenComponent } from '../components/horario/horario-semana-resumen.component';
-import { franjaDeLaSemana, type HorarioTipo, type MomentoDelDia, momentoDelDia } from '../state/horarios.core.mjs';
+import { franjaDeLaSemana, type HorarioTipo, type MomentoDelDia, momentoDelDia, type Semana, validarSemana } from '../state/horarios.core.mjs';
 import { HORARIOS_EN_EL_VUI } from '../state/horarios.semilla.mjs';
 import { HorarioUsoService } from '../state/horario-uso.service';
 import { HorariosTipoService } from '../state/horarios-tipo.service';
@@ -34,6 +38,9 @@ const MOMENTOS = [
 
 type IdDeMomento = (typeof MOMENTOS)[number]['id'];
 const TODOS = 'todos';
+const LABORABLE = [[540, 1080]] as const;
+/** La semana con la que arranca un horario nuevo: de lunes a viernes, de 9 a 18. */
+const SEMANA_NUEVA: Semana = [LABORABLE, LABORABLE, LABORABLE, LABORABLE, LABORABLE, [], []];
 const CLAVES_DIA = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const;
 
 interface Tarjeta {
@@ -54,13 +61,16 @@ interface Tarjeta {
 @Component({
   selector: 'sc-horarios-tipo-landing-page',
   imports: [
+    HorarioSemanaComponent,
     HorarioSemanaResumenComponent,
+    NgTemplateOutlet,
     RouterLink,
     ScAvatarComponent,
     ScButtonComponent,
     ScDrawerComponent,
     ScEmptyStateComponent,
     ScIconComponent,
+    ScInputTextComponent,
     ScSearchComponent,
     ScSelectButtonComponent,
     TranslateModule,
@@ -73,7 +83,7 @@ export class HorariosTipoLandingPageComponent {
   private readonly store = inject(HorariosTipoStore);
   private readonly servicio = inject(HorariosTipoService);
   private readonly uso = inject(HorarioUsoService);
-  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
   private readonly translate = inject(TranslateService);
   private readonly resultado = inject(ResultadoAccionService);
   private readonly alertModal = injectAlertModal();
@@ -83,11 +93,53 @@ export class HorariosTipoLandingPageComponent {
 
   constructor() {
     useTopbarActions(this.topbarActions);
+    // Un enlace desde fuera (el hub de Repositorios) puede traer el horario que se abre: `?abrir=3`.
+    const abrir = Number(this.route.snapshot.queryParamMap.get('abrir'));
+    if (abrir) this.seleccion.set(abrir);
+    // Al cambiar de horario (o abrir uno nuevo), el borrador parte de lo guardado y la edición vuelve a estar contraída.
+    effect(() => {
+      const s = this.seleccion();
+      untracked(() => {
+        this.intento.set(false);
+        if (s === 'nuevo') return;
+        this.editando.set(false);
+        this.borrador.set(this.desdeGuardado(s));
+      });
+    });
   }
 
   protected readonly query = signal('');
   protected readonly filtro = signal<string>(TODOS);
-  protected readonly seleccion = signal<number | null>(null);
+  /** El horario abierto en el panel; `'nuevo'` es el panel de alta (sin horario guardado). */
+  protected readonly seleccion = signal<number | 'nuevo' | null>(null);
+
+  /* ── Edición dentro del panel: contraída para un horario que ya existe, abierta para uno nuevo ─────────────────── */
+
+  protected readonly editando = signal(false);
+  protected readonly intento = signal(false);
+  protected readonly borrador = signal<{ name: string; description: string; week: Semana }>({ name: '', description: '', week: SEMANA_NUEVA });
+
+  private desdeGuardado(id: number | null): { name: string; description: string; week: Semana } {
+    const h = this.store.items().find((x) => x.id === id);
+    return h ? { name: h.name, description: h.description, week: h.week } : { name: '', description: '', week: SEMANA_NUEVA };
+  }
+
+  protected readonly faltaDeSemana = computed(() => validarSemana(this.borrador().week));
+  protected readonly faltaElNombre = computed(() => !this.borrador().name.trim());
+  private readonly sucio = computed(() => {
+    const s = this.seleccion();
+    if (s === 'nuevo') return true;
+    const o = this.desdeGuardado(s);
+    const b = this.borrador();
+    return b.name !== o.name || b.description !== o.description || JSON.stringify(b.week) !== JSON.stringify(o.week);
+  });
+  protected readonly puedeGuardar = computed(() => !this.faltaElNombre() && !this.faltaDeSemana() && this.sucio());
+  protected readonly cabecera = computed(() => (this.seleccion() === 'nuevo' ? ((this.lang(), this.t('new_title')) as string) : (this.panel()?.nombre ?? null)));
+  protected readonly abierto = computed(() => this.seleccion() === 'nuevo' || !!this.panel());
+
+  protected cambiar(campo: 'name' | 'description' | 'week', valor: string | Semana): void {
+    this.borrador.update((b) => ({ ...b, [campo]: valor }));
+  }
 
   private t(clave: string, params?: Record<string, unknown>): string {
     return this.translate.instant(`repositories.horariosTipo.landing.${clave}`, params) as string;
@@ -185,16 +237,57 @@ export class HorariosTipoLandingPageComponent {
     this.seleccion.set(null);
   }
 
+  /** «Nuevo horario»: el panel de alta, con el formulario ya abierto. */
   protected nuevo(): void {
-    void this.router.navigateByUrl('/admin/horarios-tipo/crear');
+    this.borrador.set({ name: '', description: '', week: SEMANA_NUEVA });
+    this.editando.set(true);
+    this.seleccion.set('nuevo');
   }
 
-  protected editar(id: number): void {
-    void this.router.navigateByUrl(`/admin/horarios-tipo/editar/${id}`);
+  /** «Editar»: abre la edición del panel. */
+  protected editar(): void {
+    this.editando.set(true);
   }
 
+  /** «Duplicar»: el panel de alta con una copia del horario y un nombre que no se repite. */
   protected duplicar(id: number): void {
-    void this.router.navigate(['/admin/horarios-tipo/crear'], { queryParams: { seedFromId: id } });
+    const h = this.store.items().find((x) => x.id === id);
+    if (!h) return;
+    this.seleccion.set('nuevo');
+    this.borrador.set({ name: nombreDeCopia(h.name, this.store.items().map((x) => x.name)), description: h.description, week: h.week });
+    this.editando.set(true);
+  }
+
+  protected cancelar(): void {
+    if (this.seleccion() === 'nuevo') {
+      this.seleccion.set(null);
+      return;
+    }
+    this.borrador.set(this.desdeGuardado(this.seleccion() as number));
+    this.intento.set(false);
+    this.editando.set(false);
+  }
+
+  protected guardar(): void {
+    if (this.faltaElNombre() || this.faltaDeSemana()) {
+      this.intento.set(true);
+      return;
+    }
+    if (!this.puedeGuardar()) return;
+    const b = this.borrador();
+    const datos = { name: b.name.trim(), description: b.description.trim() };
+    if (this.seleccion() === 'nuevo') {
+      const creado = this.store.addItem({ ...datos, week: b.week });
+      this.seleccion.set(creado.id);
+      this.resultado.contar(this.translate.instant('repositories.horariosTipo.toasts.created', { name: creado.name }));
+      return;
+    }
+    const id = this.seleccion() as number;
+    this.store.updateItem(id, datos);
+    // La semana nueva llega, además, a todos los calendarios que usan este horario.
+    this.servicio.actualizarSemana(id, b.week);
+    this.editando.set(false);
+    this.resultado.contar(this.translate.instant('repositories.horariosTipo.toasts.updated', { name: datos.name }));
   }
 
   protected async eliminar(id: number): Promise<void> {

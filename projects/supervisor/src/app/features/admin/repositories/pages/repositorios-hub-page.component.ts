@@ -261,7 +261,8 @@ export class RepositoriosHubPageComponent {
               id: h.id,
               nombre: h.name,
               detalle: h.description,
-              link: `/admin/horarios-tipo/editar/${h.id}`,
+              link: '/admin/horarios-tipo',
+              queryParams: { abrir: h.id },
             })),
         },
         {

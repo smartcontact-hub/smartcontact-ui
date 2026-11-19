@@ -1798,6 +1798,8 @@
     },
     "horariosTipo": {
         "landing": {
+          "new_title": "Nouvel horaire",
+          "edit_section": "Modifier l'horaire",
           "delete": "Supprimer l'horaire",
           "filter_all": "Tous",
           "filter_label": "Moment de la journée",
