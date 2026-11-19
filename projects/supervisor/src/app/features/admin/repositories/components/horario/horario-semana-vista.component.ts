@@ -9,8 +9,10 @@ import { ahoraEn, cruzaMedianoche, diaDeLaSemana, type Franja, MINUTOS_DEL_DIA, 
 
 /** Los tramos más cortos que esto no llevan su texto dentro de la barra (no cabría): se lee en la fila. */
 const MIN_ANCHO_PARA_TEXTO = 13;
-/** Lo que se ajusta al arrastrar, en minutos. */
+/** Lo que se ajusta al mover el borde de un tramo, en minutos. */
 const PASO = 15;
+/** El hueco que se elige al apretar (como en un calendario de equipo): media hora. */
+const HUECO = 30;
 const aFecha = (iso: string): Date => new Date(`${iso}T12:00:00`);
 const dosCifras = (n: number): string => String(n).padStart(2, '0');
 const horaTexto = (m: number): string => `${Math.floor(m / 60)}:${dosCifras(m % 60)}`;
@@ -42,9 +44,9 @@ interface Arrastre {
 }
 
 /**
- * La semana de un horario, y donde se edita: una fila por día con la línea de las 24 horas. Se aprieta en un hueco y se ARRASTRA, sin
- * soltar, hasta donde se quiera, como en un calendario de equipo: al soltar queda un tramo abierto. Un clic suelto, sin arrastrar,
- * no hace nada (el siguiente clic elige otro hueco). Los bordes de un tramo se arrastran para cambiarlo y su × lo quita. Un día sin
+ * La semana de un horario, y donde se edita: una fila por día con la línea de las 24 horas. Se aprieta en un hueco y queda elegido en
+ * el acto (media hora); sin soltar, se ARRASTRA hasta donde se quiera, como en un calendario de equipo: al soltar queda un tramo
+ * abierto. Pasada la pulsación ya no hay nada elegido: el siguiente clic elige otro hueco. Los bordes de un tramo se arrastran para cambiarlo y su × lo quita. Un día sin
  * tramos se ve deshabilitado (letra tachada, línea rayada y «Cerrado»). El día de hoy lleva la letra subrayada. Pieza propia del
  * experimento; el ajuste con teclado y al minuto está en el editor de franjas de al lado.
  */
@@ -115,9 +117,8 @@ export class HorarioSemanaVistaComponent {
       }));
       let seleccion: { izq: number; ancho: number; texto: string } | null = null;
       if (drag && drag.dia === i && drag.modo === 'nuevo') {
-        const a = limitar(Math.round(Math.min(drag.ancla, drag.actual) / PASO) * PASO, 0, MINUTOS_DEL_DIA);
-        const b = limitar(Math.round(Math.max(drag.ancla, drag.actual) / PASO) * PASO, 0, MINUTOS_DEL_DIA);
-        if (b > a) seleccion = { izq: (a / MINUTOS_DEL_DIA) * 100, ancho: ((b - a) / MINUTOS_DEL_DIA) * 100, texto: rangoTexto(a, b) };
+        const [a, b] = this.rangoElegido(drag);
+        seleccion = { izq: (a / MINUTOS_DEL_DIA) * 100, ancho: ((b - a) / MINUTOS_DEL_DIA) * 100, texto: rangoTexto(a, b) };
       }
       const minutos = todos.reduce((s, t) => s + (t.b - t.a), 0);
       return {
@@ -143,9 +144,17 @@ export class HorarioSemanaVistaComponent {
     return limitar(((event.clientX - r.left) / r.width) * MINUTOS_DEL_DIA, 0, MINUTOS_DEL_DIA);
   }
 
-  /** Apretar en un hueco: empieza un tramo nuevo desde ahí. */
+  /** El rango de un hueco elegido: el hueco apretado y, si se arrastra, todos los de en medio hasta el hueco donde está el ratón. */
+  private rangoElegido(a: Arrastre): [number, number] {
+    const hueco = (m: number): number => limitar(Math.floor(m / HUECO) * HUECO, 0, MINUTOS_DEL_DIA - HUECO);
+    const x = hueco(a.ancla);
+    const y = hueco(a.actual);
+    return [Math.min(x, y), Math.max(x, y) + HUECO];
+  }
+
+  /** Apretar en un hueco: queda elegido en el acto (media hora) y se amplía arrastrando sin soltar. Apretar sobre un tramo ya abierto no elige nada. */
   protected empezar(event: PointerEvent, dia: number): void {
-    if (event.button !== 0) return;
+    if (event.button !== 0 || (event.target as HTMLElement).closest('.barra')) return;
     const pista = event.currentTarget as HTMLElement;
     pista.setPointerCapture(event.pointerId);
     const m = this.minutoDe(event, pista);
@@ -168,7 +177,7 @@ export class HorarioSemanaVistaComponent {
     this.arrastre.set({ ...a, actual: this.minutoDe(event, event.currentTarget as HTMLElement) });
   }
 
-  /** Soltar: el tramo queda. Un clic sin arrastrar no deja nada. */
+  /** Soltar: el hueco elegido (o el rango arrastrado) queda como tramo abierto. */
   protected soltar(event: PointerEvent): void {
     const a = this.arrastre();
     if (!a) return;
@@ -177,9 +186,7 @@ export class HorarioSemanaVistaComponent {
     const m = limitar(Math.round(this.minutoDe(event, event.currentTarget as HTMLElement) / PASO) * PASO, 0, MINUTOS_DEL_DIA);
     const franjas = this.semana()[a.dia] ?? [];
     if (a.modo === 'nuevo') {
-      const ini = Math.round(a.ancla / PASO) * PASO;
-      const [x, y] = [Math.min(ini, m), Math.max(ini, m)];
-      if (y - x < PASO) return;
+      const [x, y] = this.rangoElegido({ ...a, actual: this.minutoDe(event, event.currentTarget as HTMLElement) });
       this.poner(a.dia, unir([...franjas, [x, y]]));
       return;
     }

@@ -1517,7 +1517,7 @@
         "title_bulk": "¿Eliminar {{count}} horarios?"
       },
       "section_week_view": "Semana",
-      "section_week_view_hint": "Arrastra sobre las horas para abrir un tramo; arrastra sus bordes para cambiarlo",
+      "section_week_view_hint": "Pulsa un hueco y, sin soltar, arrástralo para abrir un tramo; arrastra sus bordes para cambiarlo",
       "days_open": "Días que se atienden",
       "no_days_open": "Ningún día se atiende todavía.",
       "sv": {

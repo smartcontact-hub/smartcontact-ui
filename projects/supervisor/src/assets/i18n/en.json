@@ -1517,7 +1517,7 @@
         "title_bulk": "Delete {{count}} schedules?"
       },
       "section_week_view": "Week",
-      "section_week_view_hint": "Drag over the hours to open a slot; drag its edges to change it",
+      "section_week_view_hint": "Press a slot and, without releasing, drag to open a time range; drag its edges to change it",
       "days_open": "Days served",
       "no_days_open": "No day is served yet.",
       "sv": {
