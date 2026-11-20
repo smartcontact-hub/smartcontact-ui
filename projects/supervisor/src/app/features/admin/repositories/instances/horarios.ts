@@ -39,17 +39,6 @@ const columnas = (d: Datos): readonly RepoColumnDef<Horario>[] => [
     schedule: d.celda,
     scheduleMax: 2,
   },
-  {
-    key: 'groups',
-    labelKey: 'repositories.horarios.col_use',
-    kind: 'uses',
-    width: '260px',
-    // Uso: los sitios donde se usa (Grupos, Calendarios), cada uno con su cifra y, al pasar el ratón, sus nombres.
-    accessor: d.uso,
-    uses: d.usos,
-    hideBelow: 880,
-    sortable: true,
-  },
 ];
 
 @Component({

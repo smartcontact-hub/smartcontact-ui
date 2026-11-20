@@ -7,6 +7,7 @@ import { ScIconComponent } from '@smartcontact-hub/icons';
 import { LanguageService } from '@core/services/language.service';
 import { injectLangChange } from '@core/utils/lang-change';
 
+import { HorarioFranjasComponent } from './horario-franjas.component';
 import { ahoraEn, cruzaMedianoche, diaDeLaSemana, type Franja, MINUTOS_DEL_DIA, type Semana, sumarDias } from '../../state/horarios.core.mjs';
 
 /** Los tramos más cortos que esto no llevan su texto dentro de la barra (no cabría): se lee en la fila. */
@@ -55,7 +56,7 @@ interface Arrastre {
  */
 @Component({
   selector: 'sc-horario-semana-vista',
-  imports: [ScIconComponent, ScToggleSwitchComponent, TooltipModule, TranslateModule],
+  imports: [HorarioFranjasComponent, ScIconComponent, ScToggleSwitchComponent, TooltipModule, TranslateModule],
   templateUrl: './horario-semana-vista.component.html',
   styleUrl: './horario-semana-vista.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -74,6 +75,8 @@ export class HorarioSemanaVistaComponent {
   readonly zona = input('Europe/Madrid');
   /** Los días (0 = lunes) marcados como cerrados. */
   readonly cerrados = input<readonly number[]>([]);
+  /** Lo que le pasa a la semana (`validarSemana`), para decirlo bajo su día; `null` si vale. */
+  readonly falta = input<{ readonly dia: number; readonly codigo: string } | null>(null);
   readonly semanaChange = output<Semana>();
   readonly cierreChange = output<{ readonly dia: number; readonly cerrado: boolean }>();
 
@@ -85,6 +88,11 @@ export class HorarioSemanaVistaComponent {
 
   /** Las marcas de horas del eje: una por hora (con poco ancho se esconden las impares); la 23 se omite para que no pise al 24. */
   protected readonly marcas = Array.from({ length: 25 }, (_, i) => i).filter((m) => m !== 23);
+
+  /** Las franjas de un día, escritas a mano en sus campos. */
+  protected ponerDia(dia: number, franjas: readonly Franja[]): void {
+    this.semanaChange.emit(this.semana().map((f, i) => (i === dia ? franjas : f)));
+  }
 
   protected alternarCierre(dia: number, cerrado: boolean): void {
     this.cierreChange.emit({ dia, cerrado });
@@ -156,6 +164,7 @@ export class HorarioSemanaVistaComponent {
         cerrado: cerrados.has(i) && minutos === 0 && !seleccion,
         nota: cerrados.has(i) && minutos === 0 && !seleccion ? cerrado : null,
         marcado: cerrados.has(i),
+        franjas,
         nombre: largo.format(aFecha(fecha)),
         horas: minutos > 0 ? this.formatoHoras(minutos) : '—',
         minutos,

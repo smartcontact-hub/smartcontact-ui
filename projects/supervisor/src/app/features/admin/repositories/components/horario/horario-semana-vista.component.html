@@ -69,6 +69,12 @@
               {{ 'repositories.horarios.closed' | translate }}
             </label>
           }
+          @if (!d.cerrado) {
+            <sc-horario-franjas class="semana__franjas fila__franjas" [franjas]="d.franjas" [conVacia]="true" [etiqueta]="d.nombre" (franjasChange)="ponerDia(d.indice, $event)" />
+          }
+          @if (falta()?.dia === d.indice) {
+            <p class="fila__error field__error sc-text-caption-regular" role="alert">{{ 'repositories.horarios.errors.week_' + falta()!.codigo | translate }}</p>
+          }
         </li>
       }
     </ul>

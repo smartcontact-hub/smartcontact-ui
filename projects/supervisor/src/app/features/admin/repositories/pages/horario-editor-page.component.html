@@ -33,45 +33,19 @@
         <sc-section-card
           anchorId="horario-semana"
           titleKey="repositories.horarios.section_schedule"
-          [hintKey]="vista() === 'semana' ? null : 'repositories.horarios.view_slots_hint'"
           surface="subtle"
           icon="date_range"
         >
           <sc-subsection>
-            <div class="vistas">
-              <sc-selectbutton
-                size="sm"
-                [ariaLabel]="'repositories.horarios.view_label' | translate"
-                [options]="vistas()"
-                optionLabel="label"
-                optionValue="value"
-                [allowEmpty]="false"
-                [value]="vista()"
-                (valueChange)="vista.set($any($event))"
-              >
-                <!-- Cada vista con su icono (Material Symbols) delante del texto. -->
-                <ng-template #item let-o>
-                  <span class="opcion"><sc-icon [name]="o.icono" [size]="16" aria-hidden="true" />{{ o.label }}</span>
-                </ng-template>
-              </sc-selectbutton>
-            </div>
-            @if (vista() === 'semana') {
-              <sc-horario-semana-vista
-                [semana]="form().week"
-                [cerrados]="form().closedDays ?? []"
-                [zona]="form().timezone"
-                (semanaChange)="ponerSemana($event)"
-                (cierreChange)="cerrarDia($event.dia, $event.cerrado)"
-              />
-            } @else {
-              <sc-horario-semana
-                [semana]="form().week"
-                [cerrados]="form().closedDays ?? []"
-                [falta]="faltaDeSemana()"
-                (semanaChange)="ponerSemana($event)"
-                (cierreChange)="cerrarDia($event.dia, $event.cerrado)"
-              />
-            }
+            <!-- Una sola vista: el mapa de la semana (se arrastra sobre las horas) y, bajo cada día, sus franjas para escribir las horas. -->
+            <sc-horario-semana-vista
+              [semana]="form().week"
+              [cerrados]="form().closedDays ?? []"
+              [zona]="form().timezone"
+              [falta]="faltaDeSemana()"
+              (semanaChange)="ponerSemana($event)"
+              (cierreChange)="cerrarDia($event.dia, $event.cerrado)"
+            />
           </sc-subsection>
         </sc-section-card>
       </div>

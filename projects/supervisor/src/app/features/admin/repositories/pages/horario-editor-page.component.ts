@@ -30,7 +30,7 @@ import { HorarioSemanaVistaComponent } from '../components/horario/horario-seman
 import { type ColumnaDeHorario, type FilaDeHorario, HorarioFilasTableComponent } from '../components/horario/horario-filas-table.component';
 import { type FechaEspecialNueva, HorarioEspecialModalComponent } from '../components/horario/horario-especial-modal.component';
 import { HorarioPeriodoModalComponent } from '../components/horario/horario-periodo-modal.component';
-import { DIAS_DE_LA_SEMANA, HorarioSemanaComponent } from '../components/horario/horario-semana.component';
+import { DIAS_DE_LA_SEMANA } from '../components/horario/horario-semana.component';
 import { FestivosStore } from '../state/festivos.store';
 import { subcanalesConHorario } from '../state/horario-uso.service';
 import { CLAVE_DE_USO, ICONO_DE_USO, TIPOS_DE_USO, type TipoDeUso, usosDelHorario } from '../state/horario-usos';
@@ -81,7 +81,6 @@ const aFecha = (iso: string): Date => new Date(`${iso}T12:00:00`);
     HorarioEspecialModalComponent,
     HorarioFilasTableComponent,
     HorarioPeriodoModalComponent,
-    HorarioSemanaComponent,
     ScButtonComponent,
     ScDividerComponent,
     ScInputTextComponent,
@@ -204,16 +203,7 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
     return this.groupsStore.groups().filter((g) => subcanalesConHorario(g).some((s) => s.id === id));
   });
   /** Qué forma de editar la semana se ve: «Semana» (arrastrar sobre las horas) o «Franjas» (escribir las horas de cada día). */
-  protected readonly vista = signal<'semana' | 'franjas'>('semana');
-  protected readonly vistas = computed(() => {
-    this.lang();
-    return [
-      { value: 'semana', icono: 'calendar_view_week', label: this.translate.instant('repositories.horarios.view_week') as string },
-      { value: 'franjas', icono: 'schedule', label: this.translate.instant('repositories.horarios.view_slots') as string },
-    ];
-  });
-
-  /** Dónde se usa: por sitios (grupos, VUI, calendarios), cada uno con sus nombres. */
+  /** Dónde se usa: por sitios (grupos y calendarios), cada uno con sus nombres. */
   protected readonly usos = computed(() => usosDelHorario(this.mode() === 'edit' ? this.horarioId : null, this.groupsStore.groups()));
 
   /** Qué sitio se ve en «Dónde se usa». */

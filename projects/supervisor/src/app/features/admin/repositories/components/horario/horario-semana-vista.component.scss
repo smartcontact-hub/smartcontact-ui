@@ -83,6 +83,16 @@
   align-items: center;
 }
 
+.fila__franjas {
+  grid-column: 2;
+  padding-block: var(--sc-spacing-0-25) var(--sc-spacing-0-75);
+}
+
+.fila__error {
+  grid-column: 2;
+  margin: 0;
+}
+
 .fila__dia {
   display: flex;
   flex-direction: column;
