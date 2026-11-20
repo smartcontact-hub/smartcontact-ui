@@ -111,7 +111,7 @@
       } @else {
         <span class="usos">
           @for (u of usos; track u.label) {
-            <span class="uso" [class.uso--cal]="u.tone === 'warning'" [pTooltip]="usoTip" tooltipPosition="top" tabindex="0">
+            <span class="uso" [pTooltip]="usoTip" tooltipPosition="top" tabindex="0">
               <sc-icon [name]="u.icon" [size]="16" aria-hidden="true" />{{ u.label }} <span class="uso__cifra">{{ u.names.length }}</span>
             </span>
             <ng-template #usoTip>

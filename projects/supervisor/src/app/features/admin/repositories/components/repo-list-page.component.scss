@@ -159,12 +159,8 @@
   display: inline-flex;
   align-items: center;
   gap: var(--sc-spacing-0-25);
-  color: var(--sc-text-info);
+  color: var(--sc-text-primary);
   cursor: default;
-
-  &--cal {
-    color: var(--sc-text-warning);
-  }
 
   &:focus-visible {
     outline: 2px solid var(--sc-border-focus);
