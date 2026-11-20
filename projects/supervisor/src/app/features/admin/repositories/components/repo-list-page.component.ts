@@ -32,7 +32,7 @@ import {
   ScTagComponent as TagComponent,
 } from '@smartcontact-hub/components';
 import { RepoFormPanelComponent, RepoFormSubmission } from './repo-form-panel.component';
-import { RepoEntity, RepoPageConfig, RepoStore } from './repo-types';
+import { RepoEntity, RepoPageConfig, RepoStore, ScheduleCell } from './repo-types';
 import { injectLangChange } from '@core/utils/lang-change';
 import { copyName } from '@shared/utils/copy-name';
 import { hoy } from '@shared/utils/today';
@@ -274,13 +274,13 @@ export class RepoListPageComponent<T extends RepoEntity> {
   }
 
   /** La cifra de una relación abre la ficha; con `countOpensSection`, ya en esa sección (Equipos: sus agentes, COA SISMAC-4453). */
-  /** Para `kind === 'chips'`: las etiquetas de la fila (vacío si no tiene ninguna); `null` si la columna es de otro tipo. */
-  protected chipsFor(item: T, field: string): { visibles: readonly string[]; resto: readonly string[] } | null {
+  /** Para `kind === 'schedule'`: el horario de la fila, con los grupos visibles y el resto; `null` si la columna es de otro tipo. */
+  protected scheduleFor(item: T, field: string): { cell: ScheduleCell; visibles: ScheduleCell['groups']; resto: ScheduleCell['groups'] } | null {
     const column = this.config().columns.find((c) => c.key === field);
-    if (column?.kind !== 'chips' || !column.chips) return null;
-    const todas = column.chips(item);
-    const max = column.chipsMax ?? 2;
-    return { visibles: todas.slice(0, max), resto: todas.slice(max) };
+    if (column?.kind !== 'schedule' || !column.schedule) return null;
+    const cell = column.schedule(item);
+    const max = column.scheduleMax ?? 2;
+    return { cell, visibles: cell.groups.slice(0, max), resto: cell.groups.slice(max) };
   }
 
   protected onCountOpen(item: T, field: string): void {

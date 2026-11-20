@@ -104,26 +104,46 @@
           (activated)="onCountOpen(item, col.field)"
         />
       }
-    } @else if (chipsFor(item, col.field); as c) {
-      <!-- Etiquetas: las primeras a la vista y, si hay más, un «+N» que al pulsarlo enseña el resto. -->
-      @if (c.visibles.length === 0) {
+    } @else if (scheduleFor(item, col.field); as c) {
+      <!-- Horario: grupos de días con su franja y su barra de 24 h; el detalle por día, en el tooltip; con más grupos, un «+N» que abre el resto. -->
+      @if (c.cell.groups.length === 0) {
         <sc-celda-vacia />
       } @else {
-        <span class="chips">
-          @for (v of c.visibles; track $index) {
-            <sc-tag severity="secondary" [value]="v" />
+        <span class="sched" [pTooltip]="tip" tooltipPosition="top" tooltipStyleClass="sched-tooltip">
+          @for (g of c.visibles; track $index) {
+            <span class="sched__grupo">
+              <span class="sched__linea">
+                <sc-tag severity="info" [value]="g.label" />
+                <span class="sched__texto sc-text-caption-regular">{{ g.text }}</span>
+              </span>
+              <span class="sched__barra" aria-hidden="true">
+                @for (t of g.segments; track $index) {
+                  <span class="sched__tramo" [style.left.%]="t.left" [style.width.%]="t.width"></span>
+                }
+              </span>
+            </span>
           }
           @if (c.resto.length > 0) {
-            <button type="button" class="chips__mas sc-text-caption-semibold" (click)="$event.stopPropagation(); masChips.toggle($event)" [attr.aria-label]="'+' + c.resto.length">+{{ c.resto.length }}</button>
+            <button type="button" class="sched__mas sc-text-caption-semibold" (click)="$event.stopPropagation(); masChips.toggle($event)" [attr.aria-label]="'+' + c.resto.length">+{{ c.resto.length }}</button>
             <p-popover #masChips>
-              <ul class="chips__resto" role="list">
-                @for (v of c.resto; track $index) {
-                  <li class="sc-text-body-regular">{{ v }}</li>
+              <ul class="sched__resto" role="list">
+                @for (g of c.resto; track $index) {
+                  <li class="sc-text-body-regular">{{ g.label }} {{ g.text }}</li>
                 }
               </ul>
             </p-popover>
           }
         </span>
+        <ng-template #tip>
+          <div class="sched-tip">
+            @for (d of c.cell.days; track $index) {
+              <div class="sched-tip__fila">
+                <span>{{ d.name }}</span>
+                <span [class.sched-tip__cerrado]="d.closed || d.text === '—'">{{ d.text }}</span>
+              </div>
+            }
+          </div>
+        </ng-template>
       }
     } @else if (getStatusEntry(item, col.field); as status) {
       <!-- Estado con el `tag` del DS y su severidad (DD-76): Figma dibuja así el estado

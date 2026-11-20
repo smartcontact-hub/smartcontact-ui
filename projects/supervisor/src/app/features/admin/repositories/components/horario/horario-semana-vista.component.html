@@ -62,20 +62,12 @@
             }
           </span>
           <span class="fila__horas sc-text-body-semibold">{{ d.minutos > 0 ? d.horas : '' }}</span>
-          <!-- El día cerrado se marca a propósito: un día sin tramos puede estar solo sin configurar. -->
+          <!-- El día cerrado se marca a propósito (un día sin tramos puede estar solo sin configurar) y solo se ofrece sin tramos. -->
           @if (d.marcado || d.barras.length === 0) {
-          <button
-            type="button"
-            class="cierre"
-            [class.cierre--puesto]="d.marcado"
-            [attr.aria-pressed]="d.marcado"
-            [attr.aria-label]="(d.marcado ? 'repositories.horarios.sv.reopen' : 'repositories.horarios.sv.mark_closed') | translate: { day: d.nombre }"
-            [pTooltip]="(d.marcado ? 'repositories.horarios.sv.reopen' : 'repositories.horarios.sv.mark_closed') | translate"
-            tooltipPosition="left"
-            (click)="alternarCierre(d.indice, !d.marcado)"
-          >
-            <sc-icon name="event_busy" [size]="16" aria-hidden="true" />
-          </button>
+            <label class="cierre sc-text-caption-semibold">
+              <sc-toggleswitch size="sm" [ariaLabel]="('repositories.horarios.closed' | translate) + ': ' + d.nombre" [checked]="d.marcado" (checkedChange)="alternarCierre(d.indice, $event)" />
+              {{ 'repositories.horarios.closed' | translate }}
+            </label>
           }
         </li>
       }

@@ -49,15 +49,47 @@
  * los sustituye el <p-menu> compartido, y el botón usa `.rules-kebab-btn`,
  * el kebab global de `main.scss`. */
 
-/* Columna de etiquetas: una línea, sin cortar; el «+N» abre el resto. */
-.chips {
+/* Columna de horario: los grupos de días en línea, cada uno con su franja y una barra de 24 h; el «+N» abre el resto. */
+.sched {
   display: inline-flex;
   align-items: center;
-  gap: var(--sc-spacing-0-5);
+  gap: var(--sc-spacing-1);
   white-space: nowrap;
 }
 
-.chips__mas {
+.sched__grupo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-25);
+  min-inline-size: 8rem;
+}
+
+.sched__linea {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+}
+
+.sched__texto {
+  color: var(--sc-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.sched__barra {
+  position: relative;
+  block-size: var(--sc-spacing-0-5);
+  border-radius: var(--sc-radius-full);
+  background: var(--sc-bg-hover);
+  overflow: hidden;
+}
+
+.sched__tramo {
+  position: absolute;
+  inset-block: 0;
+  background: var(--sc-bg-info);
+}
+
+.sched__mas {
   padding: var(--sc-spacing-0-125) var(--sc-spacing-0-75);
   border: 1px solid var(--sc-border-default);
   border-radius: var(--sc-radius-full);
@@ -76,11 +108,32 @@
   }
 }
 
-.chips__resto {
+.sched__resto {
   display: flex;
   flex-direction: column;
   gap: var(--sc-spacing-0-5);
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+/* El detalle por día, en el tooltip del DS: el día y sus horas, y «Cerrado» atenuado. */
+.sched-tip {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-25);
+  font-size: var(--sc-font-size-caption);
+  font-variant-numeric: tabular-nums;
+}
+
+.sched-tip__fila {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--sc-spacing-0-75);
+  white-space: nowrap;
+}
+
+.sched-tip__cerrado {
+  opacity: 0.6;
+  font-style: italic;
 }

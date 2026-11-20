@@ -6,7 +6,7 @@ import { GroupsStore } from '@features/admin/groups/state/groups.store';
 
 import { DIAS_DE_LA_SEMANA } from '../components/horario/horario-semana.component';
 import { RepoListPageComponent } from '../components/repo-list-page.component';
-import { RepoColumnDef, RepoPageConfig } from '../components/repo-types';
+import { RepoColumnDef, RepoPageConfig, ScheduleCell } from '../components/repo-types';
 import { HorarioUsoService } from '../state/horario-uso.service';
 import { CLAVE_DE_USO, usosDelHorario } from '../state/horario-usos';
 import { FestivosStore } from '../state/festivos.store';
@@ -15,7 +15,7 @@ import { type Horario, HorariosStore } from '../state/horarios.store';
 
 interface Datos {
   readonly resumen: (h: Horario) => string;
-  readonly tramos: (h: Horario) => readonly string[];
+  readonly celda: (h: Horario) => ScheduleCell;
   readonly ahora: (h: Horario) => string;
   readonly uso: (h: Horario) => string;
 }
@@ -30,26 +30,13 @@ const columnas = (d: Datos): readonly RepoColumnDef<Horario>[] => [
   { key: 'description', labelKey: 'repositories.columns.description', kind: 'truncate', accessor: (i) => i.description, sortable: true },
   {
     key: 'week',
-    // El horario, en etiquetas: «L–V 09:00–18:00», y con más tramos un «+N» que enseña el resto.
+    // El horario dibujado: grupos de días con su franja y su barra de 24 h; el detalle por día, en el tooltip.
     labelKey: 'repositories.horarios.col_schedule',
-    kind: 'chips',
-    width: '340px',
+    kind: 'schedule',
+    width: '360px',
     accessor: d.resumen,
-    chips: d.tramos,
-    chipsMax: 2,
-  },
-  {
-    key: 'status',
-    labelKey: 'repositories.columns.status',
-    kind: 'status',
-    width: '112px',
-    accessor: (i) => i.status,
-    sortable: true,
-    statusMap: {
-      // En masculino: un horario y un calendario (la clave compartida, «Activa», es de regla y categoría).
-      active: { labelKey: 'repositories.horarios.active', tone: 'success' },
-      inactive: { labelKey: 'repositories.horarios.inactive', tone: 'secondary' },
-    },
+    schedule: d.celda,
+    scheduleMax: 2,
   },
   {
     key: 'groups',
@@ -88,6 +75,7 @@ export class HorariosPageComponent {
     this.lang();
     return {
       dias: DIAS_DE_LA_SEMANA.map((d) => this.translate.instant(`repositories.horarios.days_short.${d}`) as string),
+      diasLargos: DIAS_DE_LA_SEMANA.map((d) => this.translate.instant(`repositories.horarios.days.${d}`) as string),
       cerrado: this.translate.instant('repositories.horarios.closed') as string,
       siempre: this.translate.instant('repositories.horarios.all_day') as string,
     };
@@ -103,13 +91,33 @@ export class HorariosPageComponent {
     icon: 'schedule',
     breadcrumbExtraKey: 'repositories.horarios.title',
     columns: columnas({
-      tramos: (h) => {
-        const { dias, siempre } = this.textos();
-        return gruposDeLaSemana(h.week).map((g) =>
-          g.desde === 0 && g.hasta === 6 && g.franjas.length === 1 && g.franjas[0][0] === 0 && g.franjas[0][1] === MINUTOS_DEL_DIA
-            ? siempre
-            : `${g.desde === g.hasta ? dias[g.desde] : `${dias[g.desde]}–${dias[g.hasta]}`} ${g.franjas.map(textoDeFranja).join(', ')}`,
-        );
+      celda: (h) => {
+        const { dias, diasLargos, cerrado, siempre } = this.textos();
+        const cerrados = new Set(h.closedDays ?? []);
+        const grupos = gruposDeLaSemana(h.week).map((g) => {
+          const todoElDia = g.desde === 0 && g.hasta === 6 && g.franjas.length === 1 && g.franjas[0][0] === 0 && g.franjas[0][1] === MINUTOS_DEL_DIA;
+          return {
+            label: todoElDia ? siempre : g.desde === g.hasta ? dias[g.desde] : `${dias[g.desde]}–${dias[g.hasta]}`,
+            text: todoElDia ? '' : g.franjas.map(textoDeFranja).join(', '),
+            segments: g.franjas.flatMap((f): { left: number; width: number }[] =>
+              f[1] > f[0]
+                ? [{ left: (f[0] / MINUTOS_DEL_DIA) * 100, width: ((f[1] - f[0]) / MINUTOS_DEL_DIA) * 100 }]
+                : [
+                    { left: (f[0] / MINUTOS_DEL_DIA) * 100, width: ((MINUTOS_DEL_DIA - f[0]) / MINUTOS_DEL_DIA) * 100 },
+                    ...(f[1] > 0 ? [{ left: 0, width: (f[1] / MINUTOS_DEL_DIA) * 100 }] : []),
+                  ],
+            ),
+          };
+        });
+        return {
+          groups: grupos,
+          days: diasLargos.map((name, i) => {
+            const fr = h.week[i] ?? [];
+            return fr.length > 0
+              ? { name, text: fr.map(textoDeFranja).join(', '), closed: false }
+              : { name, text: cerrados.has(i) ? cerrado : '—', closed: cerrados.has(i) };
+          }),
+        };
       },
       resumen: (h) => resumenDeLaSemana(h.week, this.textos().dias, this.textos().cerrado, this.textos().siempre),
       // Se pregunta en la zona del horario: «ahora» en México no es «ahora» en Madrid.

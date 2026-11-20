@@ -20,21 +20,8 @@
   <!-- Arquetipo de editor con su resultado al lado (`page__inner--resultado`: 1600 desde 1340, como las fichas con
        resumen). Las reglas y el año lado a lado: el año se repinta con cada cambio; por debajo de 1340 va debajo. -->
   <div class="page__inner page__inner--resultado">
-    <!-- El título y, pegado a él, «Activo»: se enciende y se apaga con frecuencia, así que va a la vista. Su ayuda (quién lo usa y
-         qué pasa al apagarlo, DD-152) va en el tooltip y en la descripción del interruptor. -->
     <div class="titulo">
       <h1 class="page__heading sc-text-title-semibold">{{ form().name.trim() || ('repositories.horarios.create_title' | translate) }}</h1>
-      <div class="switch-field titulo__activo" [pTooltip]="ayudaDeActivo()" tooltipPosition="bottom">
-        <sc-toggleswitch
-          inputId="horario-activo"
-          ariaDescribedBy="horario-activo-ayuda"
-          [ariaLabel]="'repositories.horarios.active' | translate"
-          [checked]="form().status === 'active'"
-          (checkedChange)="update('status', $event ? 'active' : 'inactive')"
-        />
-        <label class="switch-field__label sc-text-body-regular" for="horario-activo">{{ 'repositories.horarios.active' | translate }}</label>
-        <p id="horario-activo-ayuda" class="visually-hidden">{{ ayudaDeActivo() }}</p>
-      </div>
     </div>
 
     <div class="horario">
@@ -162,7 +149,7 @@
                       }
                       <span class="uso__etiquetas">
                         @for (e of i.etiquetas; track e) {
-                          <sc-tag [severity]="severidadDe(e)" [value]="e" />
+                          <sc-tag [severity]="tonoDeUso()" [value]="e" />
                         }
                       </span>
                     </span>

@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, input, output, signal } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TooltipModule } from 'primeng/tooltip';
+import { ScToggleSwitchComponent } from '@smartcontact-hub/components';
 import { ScIconComponent } from '@smartcontact-hub/icons';
 
 import { LanguageService } from '@core/services/language.service';
@@ -54,7 +55,7 @@ interface Arrastre {
  */
 @Component({
   selector: 'sc-horario-semana-vista',
-  imports: [ScIconComponent, TooltipModule, TranslateModule],
+  imports: [ScIconComponent, ScToggleSwitchComponent, TooltipModule, TranslateModule],
   templateUrl: './horario-semana-vista.component.html',
   styleUrl: './horario-semana-vista.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

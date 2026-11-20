@@ -138,7 +138,7 @@
 .usos__lista {
   display: flex;
   flex-direction: column;
-  gap: var(--sc-spacing-0-5);
+  gap: var(--sc-spacing-0-125);
   max-block-size: 16rem;
   margin: 0;
   padding: 0;
@@ -146,30 +146,25 @@
   list-style: none;
 }
 
-/* Cada sitio: su icono en un círculo, el nombre y sus etiquetas. */
+/* Cada sitio: su icono (del color del tipo, sin fondo ni borde), el nombre y sus etiquetas. */
 .uso {
   display: flex;
   align-items: center;
-  gap: var(--sc-spacing-0-75);
-  padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
-  border: 1px solid var(--sc-border-subtle);
+  gap: var(--sc-spacing-0-5);
+  padding: var(--sc-spacing-0-25) var(--sc-spacing-0-5);
   border-radius: var(--sc-radius-md);
-  background: var(--sc-bg-surface);
+
+  &:hover {
+    background: var(--sc-bg-hover);
+  }
 }
 
 .uso__icono {
   display: inline-flex;
   flex: none;
-  align-items: center;
-  justify-content: center;
-  inline-size: var(--sc-spacing-2-5);
-  block-size: var(--sc-spacing-2-5);
-  border-radius: var(--sc-radius-full);
-  background: var(--sc-bg-info-subtle);
   color: var(--sc-text-info);
 
   &--cal {
-    background: var(--sc-bg-warning-subtle);
     color: var(--sc-text-warning);
   }
 }

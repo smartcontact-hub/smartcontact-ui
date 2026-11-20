@@ -10,18 +10,10 @@
         <sc-horario-franjas class="semana__franjas" [franjas]="dia.franjas" [conVacia]="true" [etiqueta]="dia.nombre" (franjasChange)="ponerDia(dia.indice, $event)" />
       }
       @if (dia.cerrado || dia.franjas.length === 0) {
-      <button
-        type="button"
-        class="semana__cierre"
-        [class.semana__cierre--puesto]="dia.cerrado"
-        [attr.aria-pressed]="dia.cerrado"
-        [attr.aria-label]="(dia.cerrado ? 'repositories.horarios.sv.reopen' : 'repositories.horarios.sv.mark_closed') | translate"
-        [pTooltip]="(dia.cerrado ? 'repositories.horarios.sv.reopen' : 'repositories.horarios.sv.mark_closed') | translate"
-        tooltipPosition="left"
-        (click)="alternarCierre(dia.indice, !dia.cerrado)"
-      >
-        <sc-icon name="event_busy" [size]="18" aria-hidden="true" />
-      </button>
+        <label class="semana__cierre sc-text-caption-semibold">
+          <sc-toggleswitch size="sm" [ariaLabel]="('repositories.horarios.closed' | translate) + ': ' + dia.nombre" [checked]="dia.cerrado" (checkedChange)="alternarCierre(dia.indice, $event)" />
+          {{ 'repositories.horarios.closed' | translate }}
+        </label>
       }
       @if (falta()?.dia === dia.indice) {
         <p class="semana__error field__error sc-text-caption-regular" role="alert">{{ 'repositories.horarios.errors.week_' + falta()!.codigo | translate }}</p>

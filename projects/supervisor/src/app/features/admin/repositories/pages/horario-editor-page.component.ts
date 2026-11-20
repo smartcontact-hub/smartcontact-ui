@@ -14,7 +14,6 @@ import {
   ScTagComponent,
   ScSelectComponent,
   ScSubsectionComponent,
-  ScToggleSwitchComponent,
 } from '@smartcontact-hub/components';
 
 import type { DirtyAware } from '@core/guards';
@@ -92,7 +91,6 @@ const aFecha = (iso: string): Date => new Date(`${iso}T12:00:00`);
     ScTagComponent,
     ScSelectComponent,
     ScSubsectionComponent,
-    ScToggleSwitchComponent,
     TooltipModule,
     TranslateModule,
   ],
@@ -230,28 +228,11 @@ export class HorarioEditorPageComponent implements DirtyAware, OnInit {
     }));
   });
   protected readonly usoActual = computed(() => this.usos().find((u) => u.tipo === this.usoVista())?.items ?? []);
-  /** El color de cada etiqueta: un tono por canal; el ámbito de un calendario, en azul. */
-  protected severidadDe(etiqueta: string): 'info' | 'success' | 'warning' | 'primary' {
-    const porCanal: Record<string, 'info' | 'success' | 'warning' | 'primary'> = {
-      'Web Chat': 'info',
-      WhatsApp: 'success',
-      Email: 'warning',
-      Voz: 'primary',
-      SMS: 'primary',
-      Telegram: 'info',
-    };
-    return porCanal[etiqueta] ?? 'info';
-  }
+  /** El color de cada sitio, una regla única: los grupos, en azul (info); los calendarios, en ámbar (warning). Icono y etiquetas lo comparten. */
+  protected readonly tonoDeUso = computed<'info' | 'warning'>(() => (this.usoVista() === 'grupos' ? 'info' : 'warning'));
 
   protected readonly iconoDeUso = computed(() => ICONO_DE_USO[this.usoVista()]);
   protected readonly usoNada = computed(() => (this.lang(), this.translate.instant(`repositories.horarios.uses_none_${CLAVE_DE_USO[this.usoVista()]}`) as string));
-
-  /** La ayuda de «Activo», siempre: quién lo usa y qué pasa al apagarlo (DD-152), o dónde se usa si nadie lo usa. */
-  protected readonly ayudaDeActivo = computed(() => {
-    this.lang();
-    const n = this.grupos().length;
-    return this.translate.instant(n === 0 ? 'repositories.horarios.active_hint' : `repositories.horarios.inactive_hint${n === 1 ? '_one' : ''}`, { count: n }) as string;
-  });
 
   /* ── Ir a Festivos: sale del horario, así que con cambios pide guardar antes, como «Gestionar en Repositorios» del
    *    grupo (SISMAC-4058). Con Cmd+clic o el botón central se abre en otra pestaña sin preguntar. ─────────────────── */

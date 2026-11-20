@@ -10,7 +10,7 @@ export interface RepoEntity {
 }
 
 /** Visual presentation for a column. `count` es una cifra: la lista la escribe con el separador de miles del idioma. */
-export type RepoColumnKind = 'text' | 'truncate' | 'status' | 'count' | 'date' | 'groups' | 'chips';
+export type RepoColumnKind = 'text' | 'truncate' | 'status' | 'count' | 'date' | 'groups' | 'schedule';
 
 export interface RepoColumnDef<T extends RepoEntity> {
   readonly key: string;
@@ -34,14 +34,29 @@ export interface RepoColumnDef<T extends RepoEntity> {
   readonly emptyAsZero?: boolean;
   /** Para `kind === 'groups'` con editor propio: pulsar la cifra abre la ficha en esta sección (`?seccion=`), no arriba. */
   readonly countOpensSection?: string;
-  /** Para `kind === 'chips'`: las etiquetas de la fila; se enseñan las primeras (`chipsMax`) y el resto, tras un «+N» que lo abre. */
-  readonly chips?: (item: T) => readonly string[];
-  readonly chipsMax?: number;
+  /** Para `kind === 'schedule'`: el horario de la fila para dibujarlo (grupos de días con su barra de 24 h y el detalle por día). */
+  readonly schedule?: (item: T) => ScheduleCell;
+  /** Para `kind === 'schedule'`: cuántos grupos se ven en la celda; el resto, tras un «+N». */
+  readonly scheduleMax?: number;
   /** Una celda sin dato dice «—» (`sc-celda-vacia`, DD-197) en vez de quedarse en blanco. */
   readonly emptyDash?: boolean;
   /** La cabecera ordena de menor a mayor y al revés: las cifras, por su valor; las fechas, por día; el texto, por su letra. */
   readonly sortable?: boolean;
 
+}
+
+/** Un horario para la celda de una lista: «L–V 09:00–18:00» con su barra de 24 h. */
+export interface ScheduleGroup {
+  readonly label: string;
+  readonly text: string;
+  /** Tramos de la barra, en % del día. */
+  readonly segments: readonly { readonly left: number; readonly width: number }[];
+}
+
+export interface ScheduleCell {
+  readonly groups: readonly ScheduleGroup[];
+  /** El detalle por día, para el tooltip. */
+  readonly days: readonly { readonly name: string; readonly text: string; readonly closed: boolean }[];
 }
 
 export interface RepoStatusEntry {

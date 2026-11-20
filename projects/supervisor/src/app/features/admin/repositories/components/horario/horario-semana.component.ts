@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { ScIconComponent } from '@smartcontact-hub/icons';
-import { TooltipModule } from 'primeng/tooltip';
+import { ScToggleSwitchComponent } from '@smartcontact-hub/components';
 
 import { injectLangChange } from '@core/utils/lang-change';
 
@@ -16,7 +15,7 @@ export const DIAS_DE_LA_SEMANA = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun
  */
 @Component({
   selector: 'sc-horario-semana',
-  imports: [HorarioFranjasComponent, ScIconComponent, TooltipModule, TranslateModule],
+  imports: [HorarioFranjasComponent, ScToggleSwitchComponent, TranslateModule],
   templateUrl: './horario-semana.component.html',
   styleUrl: './horario-semana.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
