@@ -1,20 +1,22 @@
-import { ChangeDetectionStrategy, Component, computed, HostListener, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, HostListener, inject, input, output, signal, untracked } from '@angular/core';
 
 import { type Franja, type Semana, validarSemana } from '@features/admin/repositories/state/horarios.core.mjs';
 
 import { TpIconoComponent } from './tp-icono.component';
-import { horaCorta, LETRAS, NOMBRES, trozosDelDia } from './tp-modelo';
+import { CORTOS, horaCorta, LETRAS, NOMBRES, trozosDelDia } from './tp-modelo';
 import { TpHoraComponent } from './tp-piezas';
 import { PROBLEMA } from './tp-semana.component';
 import { contarUso } from './tp-usos';
 
-/** Arrastrar va de 15 en 15 minutos; el teclado, igual (y de hora en hora con Mayús). */
+/** Arrastrar va de 15 en 15 minutos. */
 const PASO = 15;
 /** El primer día que se abre, sin otro del que copiar: de 9:00 a 18:00. */
 const PRIMERA: Franja = [540, 1080];
 /** Una pausa dura una hora y, si cabe, va de 14:00 a 15:00. */
 const PAUSA = 60;
 const COMIDA = 840;
+/** Lo menos que enseña la vista elegida en la regla: cuatro horas. */
+const VISTA_MINIMA = 240;
 
 /** Lo que se arrastra: el inicio, el fin, la franja entera o una franja nueva que se pinta sobre lo vacío. */
 type Lado = 0 | 1 | 'mover' | 'pintar';
@@ -33,61 +35,124 @@ interface Arrastre {
   readonly f0: Franja;
   readonly min: number;
   readonly max: number;
-  /** Las horas que se veían al empezar: no cambian mientras se arrastra; al soltar, el mapa se ajusta. */
+  /** Las horas que se veían al empezar: no cambian mientras se arrastra; al soltar, la vista se ajusta. */
   readonly rango: Rango;
   /** La semana de antes de empezar: Esc la devuelve. */
   readonly antes: Semana;
-  movido: boolean;
+  readonly movido: boolean;
+  /** Los días que siguen a este y se mueven con él; y si este era una copia que aún no se había tocado. */
+  readonly siguen: readonly number[];
+  readonly copia: boolean;
 }
 
-/** Tras cambiar un día que compartía horas: los días que seguían igual y las horas que tenían. */
+/**
+ * Tras cambiar un día: los días que lo siguieron solos (se abrieron copiándolo), los que tenían sus mismas horas sin
+ * seguirlo (se ofrecen) y las horas de antes, para «Solo el lunes».
+ */
 interface Oferta {
   readonly dia: number;
   readonly dias: readonly number[];
+  readonly siguen: readonly number[];
   readonly previas: readonly Franja[];
 }
+
+type IconoDeAyuda = 'alert' | 'copy' | 'check' | 'info';
 
 const igual = (a: readonly Franja[], b: readonly Franja[]): boolean => a.length === b.length && a.every((f, i) => f[0] === b[i][0] && f[1] === b[i][1]);
 const cruza = (f: Franja): boolean => f[1] <= f[0];
 const enLista = (xs: readonly string[]): string => (xs.length > 1 ? `${xs.slice(0, -1).join(', ')} y ${xs[xs.length - 1]}` : (xs[0] ?? ''));
+const capital = (s: string): string => s.charAt(0).toUpperCase() + s.slice(1);
+const copiar = (fs: readonly Franja[]): Franja[] => fs.map((f) => [f[0], f[1]] as Franja);
+/** Un hueco entre dos franjas de una hora o menos: una pausa. */
+const esPausa = (h: { readonly min: number; readonly max: number }): boolean => h.max - h.min <= 60 && h.min > 0 && h.max < 1440;
 
 /**
- * CIERRE DE HORARIOS, la semana en una lista de siete días. Cada fila es un día y lo tiene todo: la letra lo abre o lo
- * cierra, la barra se arrastra (bordes, la franja entera, o pintar en lo vacío) y a la derecha las horas, que se
- * escriben. Un día que se abre trae las horas del día abierto de arriba, así que abrir de lunes a viernes son cinco
- * clics. «Días que comparten horas» ya no es un control: al cambiar un día que compartía horas, se ofrece cambiar
- * también los demás. Las horas que se ven se ajustan solas a lo abierto; el día entero solo con turnos de noche.
- * Siete filas fijas: nada salta al abrir, cerrar o partir un día.
+ * CIERRE DE HORARIOS, la semana en una lista de siete días. Arriba, una línea de ayuda que dice lo único que hace falta
+ * ahora: cómo empezar, «¿También M, X, J y V?» tras cambiar un día que compartía horas, o qué está mal. Cada fila es un
+ * día y lo tiene todo: el interruptor lo abre o lo cierra, la barra se arrastra (bordes, la franja entera, o pintar en
+ * lo vacío) y a la derecha cada franja en su caja, con las horas que se escriben. Abrir un día trae las horas del día
+ * abierto de arriba y lo SIGUE mientras no se toque: se hace el lunes y el resto de la semana va detrás, sin preguntar.
+ * Las horas que se ven se ajustan solas a lo abierto, y la regla de 24 h deja elegir otras.
+ * Siete filas fijas y una ayuda de una línea: nada salta al abrir, cerrar o partir un día.
  */
 @Component({
   selector: 'sc-tp-dias',
   imports: [TpIconoComponent, TpHoraComponent],
   template: `
     <div class="tp-dias" [class.is-arrastrando]="arrastre() !== null" [attr.data-arrastre]="arrastre()?.lado ?? null" role="group" aria-label="La semana, día a día">
-      <div class="tp-dias__eje t-micro t-3 t-num" aria-hidden="true">
-        <span class="tp-dias__horas-eje">
+      <!-- La ayuda: arriba, donde se empieza a leer, y una sola cosa a la vez. -->
+      <div class="tp-dias__ayuda" [attr.data-tono]="ayuda().tono" role="status" aria-live="polite">
+        <sc-tp-icono [nombre]="ayuda().icono" [tam]="16" />
+        <span class="tp-dias__ayuda-txt">{{ ayuda().texto }}</span>
+        @if (ofertaVisible(); as o) {
+          <span class="tp-dias__ayuda-acc">
+            @if (o.dias.length) {
+              <button type="button" class="tp-btn tp-btn--sm tp-btn--primary" (click)="aplicarOferta()">Sí, {{ o.dias.length === 1 ? 'también' : 'a los ' + o.dias.length }}</button>
+            }
+            <button type="button" class="tp-btn tp-btn--sm tp-btn--ghost" (click)="soloEse()">Solo {{ nombreCon(o.dia) }}</button>
+          </span>
+        }
+      </div>
+
+      <div class="tp-dias__eje t-micro t-3 t-num">
+        <span class="tp-dias__horas-eje" aria-hidden="true">
           @for (h of marcas(); track h) {
             <span [class.is-ini]="h === rango().desde" [class.is-fin]="h === rango().hasta" [style.left.%]="pos(h)">{{ h / 60 }}</span>
           }
         </span>
-      </div>
-      @for (f of filas(); track f.dia) {
-        <div
-          class="tp-dias__fila"
-          [attr.data-dia]="f.dia"
-          [class.is-abierto]="f.abierto"
-          [class.is-mal]="f.mal"
-          [class.is-ofrecido]="oferta()?.dias?.includes(f.dia) ?? false"
-        >
-          <button
-            type="button"
-            class="tp-chip tp-dias__dia"
-            [attr.aria-pressed]="f.abierto"
-            [attr.aria-label]="capital(nombres[f.dia])"
-            [attr.data-tip]="(f.abierto ? 'Cerrar el ' : 'Abrir el ') + nombres[f.dia]"
-            (click)="alternar(f.dia)"
+        <!-- Las horas que se ven: solas se ajustan a lo abierto; la regla deja elegir otras. -->
+        <div class="tp-dias__vista" role="group" aria-label="Horas que se ven">
+          <span class="tp-dias__vista-txt">Se ve de {{ rango().desde / 60 }} a {{ rango().hasta / 60 }}</span>
+          <span
+            class="tp-sem__nav-pista tp-dias__regla"
+            data-tip="Arrastra el marco o sus bordes. Doble clic: el día entero"
+            (pointerdown)="navEmpezar($event)"
+            (pointermove)="navMover($event)"
+            (pointerup)="navSoltar($event)"
+            (pointercancel)="navSoltar($event)"
+            (dblclick)="navDiaEntero()"
           >
-            {{ letras[f.dia] }}
+            @for (q of [25, 50, 75]; track q) {
+              <span class="tp-sem__nav-marca" [style.left.%]="q"></span>
+            }
+            @for (a of abiertas(); track a.desde) {
+              <span class="tp-sem__nav-abierto" [style.left.%]="a.desde / 14.4" [style.width.%]="(a.hasta - a.desde) / 14.4"></span>
+            }
+            <span class="tp-sem__nav-fuera" [style.width.%]="rango().desde / 14.4"></span>
+            <span class="tp-sem__nav-fuera is-fin" [style.width.%]="(1440 - rango().hasta) / 14.4"></span>
+            <span class="tp-sem__nav-marco" [style.left.%]="rango().desde / 14.4" [style.width.%]="(rango().hasta - rango().desde) / 14.4">
+              <span
+                class="tp-sem__nav-asa is-ini"
+                role="slider"
+                tabindex="0"
+                aria-label="Se ve desde"
+                aria-valuemin="0"
+                aria-valuemax="1440"
+                [attr.aria-valuenow]="rango().desde"
+                [attr.aria-valuetext]="hora(rango().desde)"
+                (keydown)="navTecla($event, 'desde')"
+              ></span>
+              <span
+                class="tp-sem__nav-asa is-fin"
+                role="slider"
+                tabindex="0"
+                aria-label="Se ve hasta"
+                aria-valuemin="0"
+                aria-valuemax="1440"
+                [attr.aria-valuenow]="rango().hasta"
+                [attr.aria-valuetext]="hora(rango().hasta)"
+                (keydown)="navTecla($event, 'hasta')"
+              ></span>
+            </span>
+          </span>
+        </div>
+      </div>
+
+      @for (f of filas(); track f.dia) {
+        <div class="tp-dias__fila" [attr.data-dia]="f.dia" [class.is-abierto]="f.abierto" [class.is-mal]="f.mal" [class.is-ofrecido]="f.ofrecido">
+          <button type="button" role="switch" class="tp-dias__dia" [attr.aria-checked]="f.abierto" [attr.aria-label]="capital(nombres[f.dia])" (click)="alternar(f.dia)">
+            <span class="tp-dias__interruptor" aria-hidden="true"></span>
+            <span class="tp-dias__dia-nombre">{{ capital(cortos[f.dia]) }}</span>
           </button>
           <span class="tp-sem__pista tp-dias__pista" [class.is-cerrada]="!f.abierto" (pointerdown)="pintar($event, f.dia)" (pointermove)="apuntar($event, f.dia)" (pointerleave)="guia.set(null)">
             <span class="tp-sem__guias" aria-hidden="true">
@@ -108,33 +173,12 @@ const enLista = (xs: readonly string[]): string => (xs.length > 1 ? `${xs.slice(
                 @if (t.viva) {
                   <span class="tp-sem__globo t-num" aria-hidden="true">{{ t.texto }}</span>
                 }
+                <!-- Los bordes, para el ratón: con el teclado, las horas se escriben (y las flechas suben o bajan 15 min). -->
                 @if (t.asaIni) {
-                  <span
-                    class="tp-sem__asa tp-sem__asa--ini"
-                    role="slider"
-                    tabindex="0"
-                    [attr.aria-label]="capital(nombres[f.dia]) + ', empieza'"
-                    aria-valuemin="0"
-                    aria-valuemax="1440"
-                    [attr.aria-valuenow]="t.franja[0]"
-                    [attr.aria-valuetext]="hora(t.franja[0])"
-                    (pointerdown)="empezar($event, f.dia, t.j, 0)"
-                    (keydown)="tecla($event, f.dia, t.j, 0)"
-                  ></span>
+                  <span class="tp-sem__asa tp-sem__asa--ini" aria-hidden="true" (pointerdown)="empezar($event, f.dia, t.j, 0)"></span>
                 }
                 @if (t.asaFin) {
-                  <span
-                    class="tp-sem__asa tp-sem__asa--fin"
-                    role="slider"
-                    tabindex="0"
-                    [attr.aria-label]="capital(nombres[f.dia]) + ', acaba'"
-                    aria-valuemin="0"
-                    aria-valuemax="1440"
-                    [attr.aria-valuenow]="t.franja[1]"
-                    [attr.aria-valuetext]="hora(t.franja[1])"
-                    (pointerdown)="empezar($event, f.dia, t.j, 1)"
-                    (keydown)="tecla($event, f.dia, t.j, 1)"
-                  ></span>
+                  <span class="tp-sem__asa tp-sem__asa--fin" aria-hidden="true" (pointerdown)="empezar($event, f.dia, t.j, 1)"></span>
                 }
               </span>
             }
@@ -155,14 +199,14 @@ const enLista = (xs: readonly string[]): string => (xs.length > 1 ? `${xs.slice(
           <div class="tp-dias__horas">
             @if (f.abierto) {
               @for (fr of f.franjas; track $index; let j = $index) {
-                <span class="tp-dias__franja">
+                <span class="tp-dias__franja" [attr.data-franja]="j">
                   <sc-tp-hora [valor]="fr[0]" [etiqueta]="capital(nombres[f.dia]) + ', abre'" (cambio)="ponerHora(f.dia, j, 0, $event)" />
                   <span class="tp-franja__a" aria-hidden="true"></span>
                   <sc-tp-hora [valor]="fr[1]" fin [etiqueta]="capital(nombres[f.dia]) + ', cierra'" (cambio)="ponerHora(f.dia, j, 1, $event)" />
                   @if (fr[0] === 0 && fr[1] === 1440) {
-                    <span class="tp-pill tp-franja__noche">24 h</span>
+                    <span class="tp-dias__marca">24 h</span>
                   } @else if (fr[1] <= fr[0]) {
-                    <span class="tp-pill tp-pill--accent tp-franja__noche" data-tip="Acaba al día siguiente"><sc-tp-icono nombre="moon" [tam]="12" />+1</span>
+                    <span class="tp-dias__marca" data-tip="Acaba al día siguiente"><sc-tp-icono nombre="moon" [tam]="12" />+1</span>
                   }
                 </span>
               }
@@ -179,28 +223,9 @@ const enLista = (xs: readonly string[]): string => (xs.length > 1 ? `${xs.slice(
             } @else {
               <span class="tp-dias__cerrado t-small">Cerrado</span>
             }
-            @if (oferta(); as o) {
-              @if (o.dia === f.dia) {
-                <div class="tp-dias__oferta" role="group" aria-label="Cambiar también otros días">
-                  <span class="t-small">¿También {{ diasTexto(o.dias) }}?</span>
-                  <button type="button" class="tp-dias__oferta-si" (click)="aplicarOferta()">Sí</button>
-                  <button type="button" class="tp-dias__oferta-x" aria-label="Solo este día" data-tip="Solo este día (Esc)" (click)="oferta.set(null)">
-                    <sc-tp-icono nombre="x" [tam]="14" />
-                  </button>
-                </div>
-              }
-            }
           </div>
         </div>
       }
-      <p class="tp-dias__pie t-micro" [class.tp-error]="!!error()" [attr.role]="error() ? 'alert' : null">
-        @if (error(); as e) {
-          <sc-tp-icono nombre="alert" [tam]="14" />
-          {{ capital(nombres[e.dia]) }}: {{ problema[e.codigo] }}
-        } @else if (vacia()) {
-          Pulsa la letra de un día para abrirlo; los que abras después copian sus horas.
-        }
-      </p>
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -213,17 +238,25 @@ export class TpDiasComponent {
   /** `true` al empezar un arrastre y `false` al acabarlo: lo que cambia entre medias es un solo paso de deshacer. */
   readonly gesto = output<boolean>();
 
-  protected readonly letras = LETRAS;
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   protected readonly nombres = NOMBRES;
-  protected readonly problema = PROBLEMA;
+  protected readonly cortos = CORTOS;
   protected readonly hora = horaCorta;
-  protected readonly capital = (s: string): string => s.charAt(0).toUpperCase() + s.slice(1);
+  protected readonly capital = capital;
   protected readonly arrastre = signal<Arrastre | null>(null);
-  /** Al pasar por lo vacío: la hora bajo el puntero y la hora que se añadiría con un clic. */
+  /** Al pasar por lo vacío: la hora bajo el puntero y lo que se añadiría con un clic. */
   protected readonly guia = signal<{ dia: number; min: number; hasta: number } | null>(null);
   protected readonly oferta = signal<Oferta | null>(null);
-  /** El día recién abierto con horas copiadas: cambiarlo no ofrece cambiar los demás (abrir el sábado y acortarlo no es tocar L–V). */
-  private recien: number | null = null;
+  /** Lo que pasó solo y conviene decir (dos franjas que se tocaban y ahora son una), hasta el siguiente cambio. */
+  protected readonly aviso = signal<string | null>(null);
+  /** Las horas que se ven, si se eligieron en la regla; `null` es que se ajustan solas a lo abierto. */
+  protected readonly ventana = signal<Rango | null>(null);
+  /**
+   * Quién sigue a quién: el día abierto copiando a otro lo sigue hasta que se toca (o se cierra). Cambiar un día cambia
+   * con él a los que lo siguen, y a los que siguen a esos: se hace el lunes y la semana va detrás.
+   */
+  private readonly sigue = new Map<number, number>();
+  private nav: { modo: 'desde' | 'hasta' | 'mover'; m0: number; r0: Rango; caja: DOMRect } | null = null;
 
   /* La semana de ahora mismo, aunque lo emitido aún no haya vuelto por la entrada (varios movimientos de un arrastre). */
   private entrada: Semana | null = null;
@@ -238,19 +271,163 @@ export class TpDiasComponent {
   }
   private emitir(s: Semana): void {
     this.local = s;
+    this.aviso.set(null);
     this.semanaChange.emit(s);
+  }
+
+  constructor() {
+    // Una semana que no salió de aquí (⌘Z, ⇧⌘Z) deja sin sentido la pregunta y el aviso de lo último que se hizo.
+    effect(() => {
+      if (this.semana() !== this.local)
+        untracked(() => {
+          this.oferta.set(null);
+          this.aviso.set(null);
+        });
+    });
   }
 
   protected readonly vacia = computed(() => this.semana().every((d) => d.length === 0));
   protected readonly error = computed(() => validarSemana(this.semana()));
+  /** La oferta se calla mientras el día tiene un error: primero se arregla, luego se ofrece. */
+  protected readonly ofertaVisible = computed(() => {
+    const o = this.oferta();
+    return o && this.error()?.dia !== o.dia ? o : null;
+  });
 
-  /** Las horas que se ven: una hora antes de la primera apertura y una después del último cierre, diez como poco. */
-  protected readonly rango = computed<Rango>(() => this.arrastre()?.rango ?? ajuste(this.semana()));
+  /** Una línea, lo más urgente primero: lo que está mal, «¿También…?», lo que pasó solo, cómo empezar, cómo se edita. */
+  protected readonly ayuda = computed<{ texto: string; icono: IconoDeAyuda; tono: string }>(() => {
+    const e = this.error();
+    if (e) return { texto: `${capital(NOMBRES[e.dia])}: ${PROBLEMA[e.codigo]}.`, icono: 'alert', tono: 'error' };
+    const o = this.ofertaVisible();
+    if (o?.dias.length) return { texto: `¿${this.diasTexto(o.dias)} también, como ${this.nombreCon(o.dia)}?`, icono: 'copy', tono: 'oferta' };
+    if (o) {
+      const texto = this.siguenTexto(o.siguen, o.dia, '');
+      return { texto, icono: 'copy', tono: 'aviso' };
+    }
+    const a = this.aviso();
+    if (a) return { texto: a, icono: 'check', tono: 'aviso' };
+    if (this.vacia()) return { texto: 'Activa un día para abrirlo. Los siguientes copian sus horas.', icono: 'info', tono: 'guia' };
+    return { texto: 'Arrastra la barra o escribe las horas. Desactiva un día para cerrarlo.', icono: 'info', tono: 'neutro' };
+  });
+
+  /* ── Las horas que se ven ─────────────────────────────────────────────────────────────────────────────────────── */
+
+  /** Lo abierto de la semana, en tramos que no se pisan (lo de la víspera incluido), para la regla. */
+  protected readonly abiertas = computed<Rango[]>(() => {
+    const s = this.semana();
+    const trozos = [0, 1, 2, 3, 4, 5, 6]
+      .flatMap((d) => trozosDelDia(s, d))
+      .map((t) => ({ desde: t.desde, hasta: t.hasta }))
+      .sort((a, b) => a.desde - b.desde);
+    const out: Rango[] = [];
+    for (const t of trozos) {
+      const u = out[out.length - 1];
+      if (u && t.desde <= u.hasta) out[out.length - 1] = { desde: u.desde, hasta: Math.max(u.hasta, t.hasta) };
+      else out.push(t);
+    }
+    return out;
+  });
+  /** Lo que la vista nunca deja fuera: de la primera hora abierta a la última. */
+  private readonly imprescindible = computed<Rango | null>(() => {
+    const a = this.abiertas();
+    return a.length ? { desde: Math.floor(a[0].desde / 60) * 60, hasta: Math.ceil(a[a.length - 1].hasta / 60) * 60 } : null;
+  });
+  private readonly automatica = computed(() => ajuste(this.semana()));
+  protected readonly rango = computed<Rango>(() => {
+    const a = this.arrastre();
+    if (a) return a.rango;
+    const v = this.ventana();
+    const n = this.imprescindible();
+    if (!v) return this.automatica();
+    return n ? { desde: Math.min(v.desde, n.desde), hasta: Math.max(v.hasta, n.hasta) } : v;
+  });
+
+  private horaEn(e: PointerEvent, caja: DOMRect): number {
+    return Math.min(1440, Math.max(0, Math.round((((e.clientX - caja.left) / caja.width) * 1440) / 60) * 60));
+  }
+
+  /** Lo pedido, dentro del día, con cuatro horas como poco y sin dejar fuera horas abiertas. Si es lo de siempre, vuelve a ajustarse solo. */
+  private ponerVentana(r: Rango): void {
+    const n = this.imprescindible();
+    let { desde, hasta } = r;
+    if (n) {
+      desde = Math.min(desde, n.desde);
+      hasta = Math.max(hasta, n.hasta);
+    }
+    desde = Math.max(0, Math.min(desde, 1440 - VISTA_MINIMA));
+    hasta = Math.min(1440, Math.max(hasta, desde + VISTA_MINIMA));
+    const auto = this.automatica();
+    this.ventana.set(desde === auto.desde && hasta === auto.hasta ? null : { desde, hasta });
+  }
+
+  protected navEmpezar(e: PointerEvent): void {
+    if (e.button !== 0) return;
+    const el = e.currentTarget as HTMLElement;
+    const caja = el.getBoundingClientRect();
+    const m = this.horaEn(e, caja);
+    const r = this.rango();
+    const asa = (e.target as HTMLElement).closest('.tp-sem__nav-asa');
+    let modo: 'desde' | 'hasta' | 'mover';
+    if (asa) modo = asa.classList.contains('is-ini') ? 'desde' : 'hasta';
+    else if (m > r.desde && m < r.hasta) modo = 'mover';
+    else {
+      // Fuera del marco: el borde más cercano salta ahí y se sigue arrastrando.
+      modo = m <= r.desde ? 'desde' : 'hasta';
+      this.ponerVentana(modo === 'desde' ? { desde: m, hasta: r.hasta } : { desde: r.desde, hasta: m });
+    }
+    e.preventDefault();
+    el.setPointerCapture?.(e.pointerId);
+    this.nav = { modo, m0: m, r0: this.rango(), caja };
+  }
+
+  protected navMover(e: PointerEvent): void {
+    const n = this.nav;
+    if (!n) return;
+    const m = this.horaEn(e, n.caja);
+    if (n.modo === 'desde') this.ponerVentana({ desde: m, hasta: n.r0.hasta });
+    else if (n.modo === 'hasta') this.ponerVentana({ desde: n.r0.desde, hasta: m });
+    else {
+      // El marco se mueve entero y se para donde dejaría fuera una hora abierta: moverlo nunca lo estira.
+      const largo = n.r0.hasta - n.r0.desde;
+      const abierto = this.imprescindible();
+      const min = Math.max(0, abierto ? abierto.hasta - largo : 0);
+      const max = Math.min(1440 - largo, abierto ? abierto.desde : 1440);
+      const desde = Math.min(max, Math.max(min, n.r0.desde + m - n.m0));
+      this.ponerVentana({ desde, hasta: desde + largo });
+    }
+  }
+
+  protected navSoltar(e: PointerEvent): void {
+    if (!this.nav) return;
+    this.nav = null;
+    (e.currentTarget as HTMLElement).releasePointerCapture?.(e.pointerId);
+  }
+
+  /** Doble clic: el día entero; otra vez, lo que se ajusta solo. */
+  protected navDiaEntero(): void {
+    const r = this.rango();
+    if (r.desde === 0 && r.hasta === 1440) this.ventana.set(null);
+    else this.ponerVentana({ desde: 0, hasta: 1440 });
+  }
+
+  protected navTecla(e: KeyboardEvent, lado: 'desde' | 'hasta'): void {
+    const r = this.rango();
+    const paso = e.key === 'ArrowLeft' || e.key === 'ArrowDown' ? -60 : e.key === 'ArrowRight' || e.key === 'ArrowUp' ? 60 : 0;
+    const fin = e.key === 'Home' ? 0 : e.key === 'End' ? 1440 : null;
+    if (!paso && fin === null) return;
+    e.preventDefault();
+    const m = fin ?? (lado === 'desde' ? r.desde : r.hasta) + paso;
+    this.ponerVentana(lado === 'desde' ? { desde: m, hasta: r.hasta } : { desde: r.desde, hasta: m });
+  }
+
+  /* ── Las filas ────────────────────────────────────────────────────────────────────────────────────────────────── */
 
   protected readonly filas = computed(() => {
     const s = this.semana();
     const a = this.arrastre();
     const mal = this.error()?.dia ?? -1;
+    const o = this.ofertaVisible();
+    const ofrecidos = o ? [...o.dias, ...o.siguen] : [];
     return LETRAS.map((_, dia) => {
       const propias = s[dia] ?? [];
       const trozos = trozosDelDia(s, dia).map((t) => {
@@ -265,7 +442,7 @@ export class TpDiasComponent {
           texto: `${horaCorta(t.franja[0])}–${horaCorta(t.franja[1])}`,
         };
       });
-      return { dia, abierto: propias.length > 0, franjas: propias, trozos, mal: mal === dia, pausa: dondePausa(propias) };
+      return { dia, abierto: propias.length > 0, franjas: propias, trozos, mal: mal === dia, ofrecido: ofrecidos.includes(dia), pausa: dondePausa(propias) };
     });
   });
 
@@ -281,7 +458,7 @@ export class TpDiasComponent {
   protected readonly lineas = computed(() => {
     const { desde, hasta } = this.rango();
     const out: { m: number; fuerte: boolean }[] = [];
-    for (let m = desde + 60; m < hasta; m += 60) out.push({ m, fuerte: m % 180 === 0 });
+    for (let m = Math.ceil((desde + 1) / 60) * 60; m < hasta; m += 60) out.push({ m, fuerte: m % 180 === 0 });
     return out;
   });
 
@@ -294,41 +471,97 @@ export class TpDiasComponent {
     return m >= desde && m <= hasta;
   }
 
-  /** «el martes» o, con varios, sus letras: «M, X, J y V». */
+  /** «El martes» o, con varios, sus letras: «M, X, J y V». */
   protected diasTexto(dias: readonly number[]): string {
-    return dias.length === 1 ? `el ${NOMBRES[dias[0]]}` : enLista(dias.map((d) => LETRAS[d]));
+    return dias.length === 1 ? `El ${NOMBRES[dias[0]]}` : enLista(dias.map((d) => LETRAS[d]));
+  }
+  /** «el lunes». */
+  protected nombreCon(dia: number): string {
+    return `el ${NOMBRES[dia]}`;
+  }
+  /** «M, X, J y V siguen al lunes mientras no los toques», o con «copian el lunes y lo siguen» al abrirlos. */
+  private siguenTexto(dias: readonly number[], dia: number, copian: '' | 'copian'): string {
+    const uno = dias.length === 1;
+    const verbo = copian ? `${uno ? 'copia' : 'copian'} ${this.nombreCon(dia)} y lo ${uno ? 'sigue' : 'siguen'}` : `${uno ? 'sigue' : 'siguen'} al ${NOMBRES[dia]}`;
+    return `${this.diasTexto(dias)} ${verbo} mientras no ${uno ? 'lo' : 'los'} toques.`;
   }
 
   /* ── Abrir y cerrar, horas, pausa ─────────────────────────────────────────────────────────────────────────────── */
 
-  /** Abrir un día trae las horas del día abierto más cercano por arriba (o por abajo); el primero, de 9:00 a 18:00. */
+  /**
+   * Abrir un día trae las horas del día abierto más cercano por arriba (o por abajo) y lo sigue desde entonces; el
+   * primero, de 9:00 a 18:00. Cerrar un día lo suelta, y suelta a los que lo seguían (cerrar no se contagia).
+   */
   protected alternar(dia: number): void {
     const s = this.actual();
     this.oferta.set(null);
     if (s[dia].length) {
       contarUso('cerrar');
+      this.soltarDe(dia);
       this.emitir(s.map((f, d) => (d === dia ? [] : f)));
       return;
     }
     contarUso('abrir');
-    this.recien = dia;
     const orden = [...Array.from({ length: dia }, (_, k) => dia - 1 - k), ...Array.from({ length: 6 - dia }, (_, k) => dia + 1 + k)];
     const fuente = orden.find((d) => s[d].length > 0);
-    const franjas: Franja[] = fuente === undefined ? [[...PRIMERA]] : s[fuente].map((f) => [f[0], f[1]] as Franja);
-    this.emitir(s.map((f, d) => (d === dia ? franjas : f)));
+    this.emitir(s.map((f, d) => (d === dia ? (fuente === undefined ? [[...PRIMERA]] : copiar(s[fuente])) : f)));
+    if (fuente === undefined) return;
+    this.sigue.set(dia, fuente);
+    // Se dice desde el primero de la cadena: abrir M, X, J y V tras el lunes es «M, X, J y V copian el lunes».
+    const ahora = this.actual();
+    let raiz = fuente;
+    for (let k = 0, arriba = this.sigue.get(raiz); k < 7 && arriba !== undefined && this.seguidores(arriba, ahora).includes(raiz); k++, arriba = this.sigue.get(raiz)) raiz = arriba;
+    this.aviso.set(this.siguenTexto(this.seguidores(raiz, ahora), raiz, 'copian'));
   }
 
+  /** Un día deja de seguir al suyo y nadie lo sigue a él. */
+  private soltarDe(dia: number): void {
+    this.sigue.delete(dia);
+    for (const [d, fuente] of this.sigue) if (fuente === dia) this.sigue.delete(d);
+  }
+
+  /**
+   * Los días que van detrás de uno: los que se abrieron copiándolo, y los que copiaron a esos, mientras sigan con sus
+   * mismas horas. Lo de las horas cuida de ⌘Z: un día que ya no es igual, por lo que sea, no se arrastra.
+   */
+  private seguidores(dia: number, s: Semana): number[] {
+    const out: number[] = [];
+    const pendientes = [dia];
+    while (pendientes.length) {
+      const de = pendientes.pop()!;
+      for (const [d, fuente] of this.sigue) {
+        if (fuente !== de || d === dia || out.includes(d) || !s[d]?.length || !igual(s[d], s[dia])) continue;
+        out.push(d);
+        pendientes.push(d);
+      }
+    }
+    return out.sort((a, b) => a - b);
+  }
+
+  /** La semana con un día cambiado y los que lo siguen, iguales a él. */
+  private conDia(s: Semana, dia: number, franjas: readonly Franja[], siguen: readonly number[]): Semana {
+    return s.map((f, d) => (d === dia ? [...franjas] : siguen.includes(d) ? copiar(franjas) : f));
+  }
+
+  /**
+   * Escribir una hora. Cerrar a las 00:00 es cerrar a medianoche (24:00). Abrir después de la hora de cierre mueve el
+   * cierre con la franja entera, como en una agenda; la noche se escribe en el cierre (de 22:00 a 06:00 lleva «+1»).
+   */
   protected ponerHora(dia: number, j: number, lado: 0 | 1, minutos: number): void {
-    const f = this.actual()[dia]?.[j];
-    if (!f) return;
+    const x = this.actual()[dia]?.[j];
+    if (!x) return;
     contarUso('escribir');
+    let f: Franja;
+    if (lado === 1) f = [x[0], minutos === 0 && x[0] > 0 ? 1440 : minutos];
+    else if (!cruza(x) && minutos >= x[1]) f = [minutos, Math.min(1440, minutos + (x[1] - x[0]))];
+    else f = [minutos, x[1]];
     this.cambiarDia(
       dia,
-      this.actual()[dia].map((x, k) => (k === j ? ((lado === 0 ? [minutos, x[1]] : [x[0], minutos]) as Franja) : x)),
+      this.actual()[dia].map((y, k) => (k === j ? f : y)),
     );
   }
 
-  /** Parte en dos la franja más larga con una hora de pausa: de 14:00 a 15:00 si cabe, si no en medio. */
+  /** Parte en dos la franja con una hora de pausa: de 14:00 a 15:00 si cabe, si no en medio. */
   protected pausa(dia: number): void {
     const fs = this.actual()[dia];
     const j = dondePausa(fs);
@@ -348,38 +581,59 @@ export class TpDiasComponent {
     this.cambiarDia(dia, [...fs.slice(0, n - 2), [fs[n - 2][0], fs[n - 1][1]]]);
   }
 
+  /** Cambiar un día a mano: deja de seguir al suyo y se lleva con él a los que lo siguen. */
   private cambiarDia(dia: number, franjas: readonly Franja[]): void {
     const s = this.actual();
-    const previas = s[dia];
-    this.emitir(s.map((f, d) => (d === dia ? [...franjas] : f)));
-    this.ofrecer(dia, previas);
+    const copia = this.sigue.has(dia);
+    const siguen = this.seguidores(dia, s);
+    this.sigue.delete(dia);
+    this.emitir(this.conDia(s, dia, franjas, siguen));
+    this.ofrecer(dia, s[dia], siguen, copia);
   }
 
   /**
-   * Tras cambiar un día: si otros días abiertos tenían sus mismas horas, se ofrece cambiarlos también. Varios cambios
-   * seguidos en el mismo día mantienen la oferta con las horas de antes del primero.
+   * Tras cambiar un día: si otros días abiertos tenían sus mismas horas sin seguirlo, se ofrece cambiarlos también; los
+   * que lo siguen ya cambiaron y se dice. Una copia que se toca por primera vez no ofrece nada: abrir el sábado y acortarlo
+   * no es tocar L–V. Varios cambios seguidos en el mismo día guardan las horas de antes del primero.
    */
-  private ofrecer(dia: number, previas: readonly Franja[]): void {
+  private ofrecer(dia: number, previas: readonly Franja[], siguen: readonly number[], copia: boolean): void {
     const s = this.actual();
-    if (dia !== this.recien) this.recien = null;
-    if (dia === this.recien) {
-      this.oferta.set(null);
-      return;
-    }
     const o = this.oferta();
-    const sigue = o?.dia === dia;
-    const base = sigue ? o.previas : previas;
-    const dias = sigue ? o.dias : s.map((f, d) => (d !== dia && f.length > 0 && igual(f, previas) ? d : -1)).filter((d) => d !== -1);
-    this.oferta.set(dias.length && !igual(s[dia], base) ? { dia, dias, previas: base } : null);
+    const mismo = o?.dia === dia;
+    const base = mismo ? o.previas : previas;
+    const todos = mismo ? [...new Set([...o.siguen, ...siguen])].sort((a, b) => a - b) : siguen;
+    const dias = mismo
+      ? o.dias
+      : copia
+        ? []
+        : s.map((f, d) => (d !== dia && !siguen.includes(d) && f.length > 0 && igual(f, previas) ? d : -1)).filter((d) => d !== -1);
+    this.oferta.set((dias.length || todos.length) && !igual(s[dia], base) ? { dia, dias, siguen: todos, previas: base } : null);
   }
 
+  /** «Sí»: los ofrecidos quedan como el día cambiado y desde ahora lo siguen. */
   protected aplicarOferta(): void {
-    const o = this.oferta();
+    const o = this.ofertaVisible();
     if (!o) return;
     const s = this.actual();
     contarUso('tambien');
     this.oferta.set(null);
-    this.emitir(s.map((f, d) => (o.dias.includes(d) ? s[o.dia].map((x) => [x[0], x[1]] as Franja) : f)));
+    this.emitir(s.map((f, d) => (o.dias.includes(d) ? copiar(s[o.dia]) : f)));
+    for (const d of o.dias) this.sigue.set(d, o.dia);
+    const quien = o.dias.length === 1 ? `el ${NOMBRES[o.dias[0]]} queda` : `${enLista(o.dias.map((d) => LETRAS[d]))} quedan`;
+    this.aviso.set(`Hecho: ${quien} como ${this.nombreCon(o.dia)}. ⌘Z lo deshace.`);
+  }
+
+  /** «Solo el lunes»: los que lo siguieron vuelven a sus horas y dejan de seguirlo; lo ofrecido se queda como estaba. */
+  protected soloEse(): void {
+    const o = this.ofertaVisible();
+    if (!o) return;
+    this.oferta.set(null);
+    if (!o.siguen.length) return;
+    contarUso('separar');
+    const s = this.actual();
+    this.emitir(s.map((f, d) => (o.siguen.includes(d) ? copiar(o.previas) : f)));
+    for (const [d, fuente] of this.sigue) if (fuente === o.dia) this.sigue.delete(d);
+    this.aviso.set(`Solo cambia ${this.nombreCon(o.dia)}. ⌘Z lo deshace.`);
   }
 
   /* ── Arrastrar ────────────────────────────────────────────────────────────────────────────────────────────────── */
@@ -419,10 +673,13 @@ export class TpDiasComponent {
       if (this.guia()) this.guia.set(null);
       return;
     }
-    const desde = Math.min(Math.max(m, h.min), h.max - PASO);
+    // Una pausa de una hora o menos se rellena entera con un clic: así se ve antes de pulsar.
+    const corto = esPausa(h);
+    const desde = corto ? h.min : Math.min(Math.max(m, h.min), h.max - PASO);
+    const hasta = corto ? h.max : Math.min(desde + 60, h.max);
     const ya = this.guia();
-    if (ya?.dia === dia && ya.min === desde) return;
-    this.guia.set({ dia, min: desde, hasta: Math.min(desde + 60, h.max) });
+    if (ya?.dia === dia && ya.min === desde && ya.hasta === hasta) return;
+    this.guia.set({ dia, min: desde, hasta });
   }
 
   protected empezar(e: PointerEvent, dia: number, j: number, lado: Lado): void {
@@ -433,7 +690,8 @@ export class TpDiasComponent {
     const s = this.actual();
     this.guia.set(null);
     this.gesto.emit(true);
-    this.arrastre.set({ dia, franja: j, lado, pista, x0: e.clientX, f0: s[dia][j], rango: this.rango(), antes: s, movido: false, ...this.limites(dia, j, lado) });
+    const lazos = { siguen: this.seguidores(dia, s), copia: this.sigue.has(dia) };
+    this.arrastre.set({ dia, franja: j, lado, pista, x0: e.clientX, f0: s[dia][j], rango: this.rango(), antes: s, movido: false, ...lazos, ...this.limites(dia, j, lado) });
   }
 
   /** Pintar sobre lo vacío: nace una franja donde se pulsa y crece hacia donde se arrastre. En un día cerrado, lo abre. */
@@ -452,66 +710,82 @@ export class TpDiasComponent {
     const j = franjas.filter((f) => f[0] < desde).length;
     this.guia.set(null);
     this.gesto.emit(true);
-    this.emitir(antes.map((f, d) => (d === dia ? [...franjas.slice(0, j), nueva, ...franjas.slice(j)] : f)));
-    this.arrastre.set({ dia, franja: j, lado: 'pintar', pista, x0: e.clientX, f0: nueva, rango: this.rango(), antes, movido: false, min: h.min, max: h.max });
+    const lazos = { siguen: this.seguidores(dia, antes), copia: this.sigue.has(dia) };
+    this.emitir(this.conDia(antes, dia, [...franjas.slice(0, j), nueva, ...franjas.slice(j)], lazos.siguen));
+    this.arrastre.set({ dia, franja: j, lado: 'pintar', pista, x0: e.clientX, f0: nueva, rango: this.rango(), antes, movido: false, ...lazos, min: h.min, max: h.max });
   }
 
+  /** Una franja a mitad de arrastre: los días que siguen a este se mueven con él, a la vista. */
   private ponerFranja(dia: number, j: number, f: Franja): void {
     const s = this.actual();
-    this.emitir(s.map((x, d) => (d === dia ? x.map((y, k) => (k === j ? f : y)) : x)));
+    this.emitir(this.conDia(s, dia, s[dia].map((y, k) => (k === j ? f : y)), this.arrastre()?.siguen ?? []));
   }
 
   @HostListener('document:pointermove', ['$event'])
   protected mover(e: PointerEvent): void {
-    const a = this.arrastre();
+    let a = this.arrastre();
     if (!a) return;
     if (!a.movido && Math.abs(e.clientX - a.x0) < 3) return;
-    if (!a.movido) this.arrastre.set({ ...a, movido: true });
-    a.movido = true;
-    const aMin = (px: number): number => Math.round(((px / a.pista.width) * (a.rango.hasta - a.rango.desde)) / PASO) * PASO;
-    const enPista = (x: number): number => a.rango.desde + aMin(x - a.pista.left);
-    const dentro = (n: number): number => Math.min(a.max, Math.max(a.min, n));
+    if (!a.movido) {
+      a = { ...a, movido: true };
+      this.arrastre.set(a);
+    }
+    const { rango: r, pista, max, min, f0 } = a;
+    const aMin = (px: number): number => Math.round(((px / pista.width) * (r.hasta - r.desde)) / PASO) * PASO;
+    const enPista = (x: number): number => r.desde + aMin(x - pista.left);
+    const dentro = (n: number): number => Math.min(max, Math.max(min, n));
     if (a.lado === 'mover') {
-      const largo = a.f0[1] - a.f0[0];
-      const desde = Math.min(a.max - largo, Math.max(a.min, a.f0[0] + aMin(e.clientX - a.x0)));
+      const largo = f0[1] - f0[0];
+      const desde = Math.min(max - largo, Math.max(min, f0[0] + aMin(e.clientX - a.x0)));
       this.ponerFranja(a.dia, a.franja, [desde, desde + largo]);
       return;
     }
     if (a.lado === 'pintar') {
       const m = dentro(enPista(e.clientX));
-      const ini = Math.min(a.f0[0], m);
-      const fin = Math.max(a.f0[0] + PASO, m);
-      this.ponerFranja(a.dia, a.franja, [Math.min(ini, a.max - PASO), Math.min(Math.max(fin, ini + PASO), a.max)]);
+      const ini = Math.min(f0[0], m);
+      const fin = Math.max(f0[0] + PASO, m);
+      this.ponerFranja(a.dia, a.franja, [Math.min(ini, max - PASO), Math.min(Math.max(fin, ini + PASO), max)]);
       return;
     }
     const m = dentro(enPista(e.clientX));
-    this.ponerFranja(a.dia, a.franja, a.lado === 0 ? [m, a.f0[1]] : [a.f0[0], m]);
+    this.ponerFranja(a.dia, a.franja, a.lado === 0 ? [m, f0[1]] : [f0[0], m]);
   }
 
   @HostListener('document:pointerup')
   protected soltar(): void {
     const a = this.arrastre();
     if (!a) return;
-    // Un clic en lo vacío, sin arrastrar, pone una hora (o lo que quepa).
-    if (a.lado === 'pintar' && !a.movido) this.ponerFranja(a.dia, a.franja, [a.f0[0], Math.min(a.f0[0] + 60, a.max)]);
+    if (a.lado === 'pintar' && !a.movido) {
+      // Un clic en lo vacío pone una hora; en una pausa de una hora o menos, la rellena entera.
+      this.ponerFranja(a.dia, a.franja, esPausa(a) ? [a.min, a.max] : [a.f0[0], Math.min(a.f0[0] + 60, a.max)]);
+    }
     if (a.lado === 'pintar') contarUso('pintar');
     else if (a.movido) contarUso('arrastrar');
-    this.juntarTocadas(a.dia);
+    const junta = this.juntarTocadas(a.dia, a.siguen);
     this.arrastre.set(null);
     this.gesto.emit(false);
-    this.ofrecer(a.dia, a.antes[a.dia]);
+    if (!igual(this.actual()[a.dia], a.antes[a.dia])) this.sigue.delete(a.dia);
+    this.ofrecer(a.dia, a.antes[a.dia], a.siguen, a.copia);
+    if (junta) this.aviso.set(`Se tocaban, así que ahora es una sola franja: ${junta}. ⌘Z lo deshace.`);
+    // Un clic en una barra, sin arrastrarla, lleva a sus horas: ahí se escriben.
+    if (a.lado === 'mover' && !a.movido) this.host.nativeElement.querySelector<HTMLInputElement>(`.tp-dias__fila[data-dia="${a.dia}"] [data-franja="${a.franja}"] input`)?.focus();
   }
 
-  /** Dos franjas que se tocan son una: en atención, de 9 a 14 y de 14 a 18 es de 9 a 18. */
-  private juntarTocadas(dia: number): void {
+  /** Dos franjas que se tocan son una: en atención, de 9 a 14 y de 14 a 18 es de 9 a 18. Dice cuál queda. */
+  private juntarTocadas(dia: number, siguen: readonly number[]): string | null {
     const s = this.actual();
     const franjas: Franja[] = [];
+    let junta: Franja | null = null;
     for (const f of s[dia]) {
       const prev = franjas[franjas.length - 1];
-      if (prev && !cruza(prev) && !cruza(f) && prev[1] === f[0]) franjas[franjas.length - 1] = [prev[0], f[1]];
-      else franjas.push(f);
+      if (prev && !cruza(prev) && !cruza(f) && prev[1] === f[0]) {
+        junta = [prev[0], f[1]];
+        franjas[franjas.length - 1] = junta;
+      } else franjas.push(f);
     }
-    if (franjas.length !== s[dia].length) this.emitir(s.map((x, d) => (d === dia ? franjas : x)));
+    if (!junta) return null;
+    this.emitir(this.conDia(s, dia, franjas, siguen));
+    return `de ${horaCorta(junta[0])} a ${horaCorta(junta[1])}`;
   }
 
   /** Esc: a medio arrastre, todo vuelve a como estaba; si no, se descarta la oferta. */
@@ -527,32 +801,9 @@ export class TpDiasComponent {
     this.emitir(a.antes);
     this.gesto.emit(false);
   }
-
-  /** Pulsar fuera del día de la oferta la descarta: lo siguiente ya es otra cosa. */
-  @HostListener('document:pointerdown', ['$event'])
-  protected fuera(e: PointerEvent): void {
-    const o = this.oferta();
-    if (!o) return;
-    const fila = (e.target as HTMLElement | null)?.closest?.('.tp-dias__fila');
-    if (fila?.getAttribute('data-dia') !== String(o.dia)) this.oferta.set(null);
-  }
-
-  /** Flechas en un borde: 15 minutos; con Mayús, una hora. */
-  protected tecla(e: KeyboardEvent, dia: number, j: number, lado: 0 | 1): void {
-    const paso = e.key === 'ArrowRight' || e.key === 'ArrowUp' ? 1 : e.key === 'ArrowLeft' || e.key === 'ArrowDown' ? -1 : 0;
-    if (!paso || j < 0) return;
-    e.preventDefault();
-    const { min, max } = this.limites(dia, j, lado);
-    const f = this.actual()[dia][j];
-    const m = Math.min(max, Math.max(min, f[lado] + paso * (e.shiftKey ? 60 : PASO)));
-    this.cambiarDia(
-      dia,
-      this.actual()[dia].map((x, k) => (k === j ? ((lado === 0 ? [m, f[1]] : [f[0], m]) as Franja) : x)),
-    );
-  }
 }
 
-/** Las horas que se ven: con turnos de noche o 24 h, el día entero; si no, una hora de margen y diez horas como poco. */
+/** Las horas que se ven solas: con turnos de noche o 24 h, el día entero; si no, una hora de margen y diez horas como poco. */
 function ajuste(s: Semana): Rango {
   const fs = s.flat();
   if (fs.some((f) => cruza(f) || (f[0] === 0 && f[1] === 1440))) return { desde: 0, hasta: 1440 };
@@ -566,7 +817,7 @@ function ajuste(s: Semana): Rango {
   return { desde, hasta };
 }
 
-/** La franja donde cabe una pausa de una hora con una hora a cada lado (la más larga), o -1. Una sola pausa por día. */
+/** Si cabe una pausa de una hora con una hora a cada lado: solo en un día de una franja que no pase de medianoche. */
 function dondePausa(fs: readonly Franja[]): number {
   if (fs.length !== 1) return -1;
   return !cruza(fs[0]) && fs[0][1] - fs[0][0] >= PAUSA + 120 ? 0 : -1;

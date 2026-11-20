@@ -1,8 +1,9 @@
 /**
  * CUÁNTO SE USA CADA GESTO DEL EDITOR, para la prueba con personas (DD-256): elegir, copiar, pegar, cortar, borrar,
- * pintar, arrastrar, dividir y recortar con la raya, deshacer y rehacer; en la lista de días, abrir, cerrar, escribir las horas y
- * «¿También…?». La prueba lo pone a cero al empezar cada misión y lo manda con su corrección
- * (`tp-prueba.ts`), así se sabe si un atajo se descubre solo sin que nadie lo explique. Explica, no decide.
+ * pintar, arrastrar, dividir y recortar con la raya, deshacer y rehacer; en la lista de días, abrir, cerrar, escribir
+ * las horas, «¿También…?» y «Solo el lunes» (separar los días que lo seguían). La prueba lo pone a cero al empezar cada
+ * misión y lo manda con su corrección (`tp-prueba.ts`), así se sabe si un atajo se descubre solo sin que nadie lo
+ * explique. Explica, no decide.
  *
  * Solo cuenta, en memoria: ni guarda ni envía nada, y una recarga a mitad de misión lo pone a cero. Fuera de una prueba
  * nadie lo lee.
@@ -22,7 +23,8 @@ export type Uso =
   | 'abrir'
   | 'cerrar'
   | 'escribir'
-  | 'tambien';
+  | 'tambien'
+  | 'separar';
 
 let cuenta: Partial<Record<Uso, number>> = {};
 

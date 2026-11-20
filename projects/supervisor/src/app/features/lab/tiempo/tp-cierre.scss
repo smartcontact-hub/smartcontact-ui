@@ -1,61 +1,149 @@
 /*
- * CIERRE DE HORARIOS: el editor de un horario que ya solo es su semana. La semana a la izquierda y dónde se aplica a la
- * derecha, en una pantalla. Hoja global (ViewEncapsulation.None) que cuelga entera de `.tp`; el sistema se explica en
+ * CIERRE DE HORARIOS: el editor de un horario que ya solo es su semana. Arriba, quién es y, en su tarjeta, dónde se
+ * aplica; debajo, la semana. Hoja global (ViewEncapsulation.None) que cuelga entera de `.tp`; el sistema se explica en
  * tp-base.scss.
  */
 
+/* ── La cabecera: quién es a la izquierda; dónde se aplica, en su tarjeta, a la derecha ──────────────────────────── */
+
+.tp-cierre .tp-lienzo {
+  container: lienzo / inline-size;
+}
+.tp-cierre__cabeza {
+  display: grid;
+  flex: none;
+  grid-template-columns: minmax(0, 1fr) minmax(24rem, 34rem);
+  align-items: start;
+  gap: var(--s-6);
+}
+.tp-cierre__quien {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  min-inline-size: 0;
+}
+/* Las horas en una frase: lo primero que se lee después del nombre. */
 .tp-cierre__desc {
-  font-weight: 540;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1-5);
+  align-self: flex-start;
+  margin: 0;
+  font-size: var(--t-14);
+  font-weight: 560;
   color: var(--tp-ink);
 
   sc-tp-icono {
     color: var(--tp-si);
   }
 }
+/* Los dos ajustes, con su nombre a la vista y forma de control: se ve que se tocan. */
+.tp-cierre__ajustes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-2) var(--s-6);
+  margin-block-start: var(--s-2);
+}
+.tp-cierre__ajuste {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  cursor: pointer;
+}
+.tp-cierre__select {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1-5);
+  block-size: 2rem;
+  padding-inline: var(--s-2);
+  border-radius: var(--r-sm);
+  background: var(--tp-surface);
+  box-shadow: var(--tp-ring);
+  color: var(--tp-ink-3);
+  transition-property: box-shadow;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
 
-/* ── La rejilla: la semana manda; dónde se aplica, al lado y estrecho ───────────────────────────────────────────── */
+  &:hover {
+    box-shadow: var(--tp-ring-hover);
+  }
+  &:focus-within {
+    box-shadow: 0 0 0 1px var(--tp-accent), 0 0 0 3px var(--tp-accent-ring);
+  }
+  select {
+    appearance: none;
+    field-sizing: content;
+    max-inline-size: 14rem;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    font-size: var(--t-13);
+    font-weight: 540;
+    color: var(--tp-ink);
+    cursor: pointer;
+    outline: none;
+  }
+}
+
+/* ── Aplicado en: su tarjeta, cada sitio con su icono ───────────────────────────────────────────────────────────── */
+
+.tp-cierre__aplicado {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+  padding: var(--s-4) var(--s-5);
+}
+.tp-cierre__aplicado-cab {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-2);
+}
+.tp-cierre__usos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-2) var(--s-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.tp-cierre__usa {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  min-inline-size: 0;
+}
+.tp-cierre__usa-txt {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+.tp-cierre__usos-nota,
+.tp-cierre__libre {
+  display: flex;
+  align-items: center;
+  gap: var(--s-1-5);
+  margin: 0;
+}
+.tp-cierre__libre sc-tp-icono {
+  color: var(--tp-si);
+}
+
+/* Sin sitio para dos columnas, la tarjeta baja debajo de quién es. */
+@container lienzo (max-width: 62rem) {
+  .tp-cierre__cabeza {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ── La semana ──────────────────────────────────────────────────────────────────────────────────────────────────── */
 
 .tp-cierre__rejilla {
   display: flex;
   flex: 1;
   flex-direction: column;
   gap: var(--s-3);
-}
-/* Aplicado en: una línea, cada sitio con su icono; el detalle, al pasar. */
-.tp-cierre__uso {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--s-2) var(--s-3);
-  padding-inline: var(--s-1);
-}
-.tp-cierre__usos {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--s-1-5);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.tp-cierre__usa {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--s-1-5);
-  padding: var(--s-0-5) var(--s-2) var(--s-0-5) var(--s-0-5);
-  border-radius: var(--r-full);
-  background: var(--tp-surface);
-  box-shadow: var(--tp-ring);
-}
-.tp-cierre__usos-nota,
-.tp-cierre__libre {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--s-1-5);
-}
-.tp-cierre__libre .tp-icono,
-.tp-cierre__libre sc-tp-icono {
-  color: var(--tp-si);
 }
 .tp-cierre__semana-cuerpo {
   container: semana / inline-size;
@@ -65,9 +153,6 @@
 .tp-cierre:has(.tp-savebar[data-visible='true']) .tp-lienzo {
   padding-block-end: 5rem;
 }
-
-/* ── Aplicado en ────────────────────────────────────────────────────────────────────────────────────────────────── */
-
 
 /* ── La confirmación de guardar: a quién afecta ─────────────────────────────────────────────────────────────────── */
 

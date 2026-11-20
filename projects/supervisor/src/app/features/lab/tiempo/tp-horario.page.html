@@ -1,8 +1,11 @@
 <div class="tp tp-editor tp-cierre" [class.tp--prueba]="enPrueba">
   <div class="tp-lienzo">
-    <!-- Cabecera: el nombre se edita donde se lee; debajo, la descripción que se escribe sola, la zona y si está activo. -->
-    <header class="tp-head tp-stagger" style="--i: 0">
-      <div class="tp-head__main">
+    <!--
+      Cabecera, en dos columnas: a la izquierda quién es (nombre, si ahora se atiende, las horas en una frase y sus dos
+      ajustes); a la derecha, dónde se aplica, en su tarjeta, a la vista antes de tocar nada.
+    -->
+    <header class="tp-cierre__cabeza tp-stagger" style="--i: 0">
+      <div class="tp-cierre__quien">
         <button type="button" class="tp-head__back" (click)="volver()">
           <sc-tp-icono nombre="arrow-left" [tam]="14" />
           Horarios
@@ -26,58 +29,70 @@
             </span>
           }
         </div>
-        <div class="tp-head__meta">
-          <span class="tp-meta tp-cierre__desc" data-tip="Se escribe sola con las horas de la semana">
-            <sc-tp-icono nombre="sparkle" [tam]="14" />
-            <span class="t-num">{{ descripcion() }}</span>
-          </span>
-          <span class="tp-sep"></span>
-          <label class="tp-meta">
-            <sc-tp-icono nombre="globe" [tam]="14" />
-            <select class="tp-meta__select" [attr.aria-label]="t.zona" [value]="form().timezone" (change)="update('timezone', $any($event.target).value)">
-              @for (z of zonas(); track z) {
-                <option [value]="z" [selected]="z === form().timezone">{{ z.replace('_', ' ') }}</option>
-              }
-            </select>
+        <p class="tp-cierre__desc t-num" data-tip="Se escribe sola con las horas de la semana">
+          <sc-tp-icono nombre="sparkle" [tam]="14" />
+          {{ descripcion() }}
+        </p>
+        <div class="tp-cierre__ajustes">
+          <label class="tp-cierre__ajuste">
+            <span class="t-small t-3">Zona horaria</span>
+            <span class="tp-cierre__select">
+              <sc-tp-icono nombre="globe" [tam]="14" />
+              <select [attr.aria-label]="t.zona" [value]="form().timezone" (change)="update('timezone', $any($event.target).value)">
+                @for (z of zonas(); track z) {
+                  <option [value]="z" [selected]="z === form().timezone">{{ z.replace('_', ' ') }}</option>
+                }
+              </select>
+              <sc-tp-icono nombre="chevron-down" [tam]="14" />
+            </span>
           </label>
-          <span class="tp-sep"></span>
-          <label class="tp-meta tp-meta--switch">
+          <label class="tp-cierre__ajuste">
             <button type="button" class="tp-switch" role="switch" [attr.aria-checked]="form().status !== 'inactive'" [attr.aria-label]="t.activo" (click)="update('status', form().status === 'inactive' ? 'active' : 'inactive')"></button>
-            {{ form().status === 'inactive' ? 'Inactivo' : 'Activo' }}
+            <span class="t-small">{{ form().status === 'inactive' ? 'Inactivo' : 'Activo' }}</span>
           </label>
         </div>
       </div>
-    </header>
 
-    <div class="tp-cierre__rejilla">
-      <!-- Dónde se aplica: una línea encima de la semana, a la vista antes de tocar nada. La semana se queda todo el ancho. -->
-      <section class="tp-cierre__uso tp-stagger" style="--i: 1" [attr.aria-label]="t.aplicadoEn">
-        <span class="t-eyebrow tp-cierre__uso-titulo">Aplicado en</span>
+      <!-- Dónde se aplica: su tarjeta, cada sitio con el icono y el color de su tipo. -->
+      <section class="tp-card tp-cierre__aplicado" [attr.aria-label]="t.aplicadoEn">
+        <header class="tp-cierre__aplicado-cab">
+          <h2 class="t-title">Aplicado en</h2>
+          @if (nUsos() > 0) {
+            <span class="t-small t-3 t-num">{{ sitios(nUsos()) }}</span>
+          }
+        </header>
         @if (nUsos() === 0) {
-          <span class="tp-cierre__libre t-small t-2">
+          <p class="tp-cierre__libre t-small t-2">
             <sc-tp-icono nombre="check" [tam]="14" />
-            {{ modo() === 'crear' ? 'Aún no se aplica en ningún sitio' : 'No se aplica en ningún sitio' }}: puedes cambiarlo sin afectar a nadie
-          </span>
+            {{ modo() === 'crear' ? 'Aún no se aplica en ningún sitio' : 'No se aplica en ningún sitio' }}: puedes cambiarlo sin afectar a nadie.
+          </p>
         } @else {
           <ul class="tp-cierre__usos" role="list">
             @for (g of usos(); track g.tipo) {
               @for (u of g.usos; track u.nombre + u.detalle) {
-                <li class="tp-cierre__usa" [attr.data-tip]="g.titulo + ': ' + u.detalle">
-                  <span class="tp-mark tp-mark--periodo tp-mark--sm" [style.--c]="'var(--tp-p-' + tipos[u.tipo].color + ')'"><sc-tp-icono [nombre]="tipos[u.tipo].icono" [tam]="12" /></span>
-                  <span class="t-small t-strong">{{ u.nombre }}</span>
+                <li class="tp-cierre__usa">
+                  <span class="tp-mark tp-mark--periodo tp-mark--sm" [style.--c]="'var(--tp-p-' + tipos[u.tipo].color + ')'" [attr.data-tip]="tipos[u.tipo].uno">
+                    <sc-tp-icono [nombre]="tipos[u.tipo].icono" [tam]="14" />
+                  </span>
+                  <span class="tp-cierre__usa-txt">
+                    <span class="t-small t-strong t-trunc">{{ u.nombre }}</span>
+                    <span class="t-micro t-3 t-trunc">{{ u.detalle }}</span>
+                  </span>
                 </li>
               }
             }
           </ul>
-          <span class="tp-cierre__usos-nota t-micro t-2">
+          <p class="tp-cierre__usos-nota t-micro t-2">
             <sc-tp-icono nombre="info" [tam]="14" />
-            Si lo cambias, cambia en {{ nUsos() === 1 ? 'ese sitio' : 'los ' + nUsos() + ' sitios' }}. Al guardar te lo recordamos.
-          </span>
+            Si lo cambias, cambia en {{ nUsos() === 1 ? 'ese sitio' : 'los ' + nUsos() }}. Al guardar te lo recordamos.
+          </p>
         }
       </section>
+    </header>
 
+    <div class="tp-cierre__rejilla">
       <!-- La semana -->
-      <section class="tp-card tp-cierre__semana tp-stagger" style="--i: 2">
+      <section class="tp-card tp-cierre__semana tp-stagger" style="--i: 1">
         <header class="tp-card__head">
           <div class="tp-card__title">
             <h2 class="t-title">Semana</h2>
