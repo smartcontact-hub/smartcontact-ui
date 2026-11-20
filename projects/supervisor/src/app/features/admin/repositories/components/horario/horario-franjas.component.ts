@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { TooltipModule } from 'primeng/tooltip';
 import { ScButtonComponent, ScDatepickerComponent, ScTagComponent } from '@smartcontact-hub/components';
 
 import { cruzaMedianoche, type Franja, MINUTOS_DEL_DIA } from '../../state/horarios.core.mjs';
@@ -20,7 +21,7 @@ const aMinutos = (hora: Date): number => hora.getHours() * 60 + hora.getMinutes(
  */
 @Component({
   selector: 'sc-horario-franjas',
-  imports: [ScButtonComponent, ScDatepickerComponent, ScTagComponent, TranslateModule],
+  imports: [TooltipModule, ScButtonComponent, ScDatepickerComponent, ScTagComponent, TranslateModule],
   template: `
     @for (fila of filas(); track $index) {
       <div class="franjas__fila">
@@ -28,6 +29,7 @@ const aMinutos = (hora: Date): number => hora.getHours() * 60 + hora.getMinutes(
         <sc-datepicker
           class="franjas__hora"
           timeOnly
+          size="sm"
           [placeholder]="'repositories.horarios.time_placeholder' | translate"
           [showIcon]="false"
           [ariaLabel]="('repositories.horarios.slot_start_aria' | translate: { day: etiqueta() })"
@@ -38,6 +40,7 @@ const aMinutos = (hora: Date): number => hora.getHours() * 60 + hora.getMinutes(
         <sc-datepicker
           class="franjas__hora"
           timeOnly
+          size="sm"
           [placeholder]="'repositories.horarios.time_placeholder' | translate"
           [showIcon]="false"
           [ariaLabel]="('repositories.horarios.slot_end_aria' | translate: { day: etiqueta() })"
@@ -67,7 +70,9 @@ const aMinutos = (hora: Date): number => hora.getHours() * 60 + hora.getMinutes(
       appearance="text"
       size="sm"
       icon="add"
-      [label]="'repositories.horarios.slot_add' | translate"
+      [ariaLabel]="'repositories.horarios.slot_add' | translate"
+      [pTooltip]="'repositories.horarios.slot_add' | translate"
+      tooltipPosition="top"
       (clicked)="anadir()"
     />
     }

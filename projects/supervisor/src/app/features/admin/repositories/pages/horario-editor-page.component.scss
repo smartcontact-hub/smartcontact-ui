@@ -6,10 +6,17 @@
   background: var(--sc-bg-canvas);
 }
 
-/* El horario ocupa todo el ancho; debajo, «General» y «Dónde se usa» una al lado de la otra (en una columna con poco ancho). */
+/* El horario (lo que más ocupa) a la izquierda y «General» a su derecha; «Dónde se usa» debajo, a todo el ancho. Las dos tarjetas de la
+ * derecha son hijas directas de la rejilla (`display: contents`) para colocarse cada una donde toca. */
 .horario {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 2fr);
+  column-gap: var(--sc-spacing-2);
+  align-items: start;
+
+  @media (max-width: 1099px) {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 .horario__reglas {
@@ -17,23 +24,25 @@
 }
 
 .horario__resultado {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  column-gap: var(--sc-spacing-2);
-  min-inline-size: 0;
+  display: contents;
 
-  /* Las dos tarjetas miden lo mismo de alto. */
-  > sc-section-card {
-    display: flex;
-    flex-direction: column;
+  > sc-section-card:first-child {
+    grid-column: 2;
+    grid-row: 1;
 
-    ::ng-deep > .section-card {
-      flex: 1;
+    @media (max-width: 1099px) {
+      grid-column: 1;
+      grid-row: auto;
     }
   }
 
-  @media (max-width: 899px) {
-    grid-template-columns: minmax(0, 1fr);
+  > sc-section-card:last-child {
+    grid-column: 1 / -1;
+    grid-row: 2;
+
+    @media (max-width: 1099px) {
+      grid-row: auto;
+    }
   }
 }
 

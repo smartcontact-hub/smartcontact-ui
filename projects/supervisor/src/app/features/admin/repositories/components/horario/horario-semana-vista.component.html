@@ -62,13 +62,6 @@
             }
           </span>
           <span class="fila__horas sc-text-body-semibold">{{ d.minutos > 0 ? d.horas : '' }}</span>
-          <!-- El día cerrado se marca a propósito (un día sin tramos puede estar solo sin configurar) y solo se ofrece sin tramos. -->
-          @if (d.marcado || d.barras.length === 0) {
-            <label class="cierre sc-text-caption-semibold">
-              <sc-toggleswitch size="sm" [ariaLabel]="('repositories.horarios.closed' | translate) + ': ' + d.nombre" [checked]="d.marcado" (checkedChange)="alternarCierre(d.indice, $event)" />
-              {{ 'repositories.horarios.closed' | translate }}
-            </label>
-          }
           <!-- Las franjas al lado del mapa (con poco ancho, debajo) y, con franjas, «copiar a los días de abajo». -->
           <span class="fila__franjas">
             @if (!d.cerrado) {
@@ -85,6 +78,13 @@
                   <sc-icon name="content_copy" [size]="16" aria-hidden="true" />
                 </button>
               }
+            }
+            <!-- El día cerrado se marca a propósito (un día sin tramos puede estar solo sin configurar) y solo se ofrece sin tramos. -->
+            @if (d.marcado || d.barras.length === 0) {
+              <label class="cierre sc-text-caption-semibold">
+                <sc-toggleswitch size="sm" [ariaLabel]="('repositories.horarios.closed' | translate) + ': ' + d.nombre" [checked]="d.marcado" (checkedChange)="alternarCierre(d.indice, $event)" />
+                {{ 'repositories.horarios.closed' | translate }}
+              </label>
             }
           </span>
           @if (falta()?.dia === d.indice) {

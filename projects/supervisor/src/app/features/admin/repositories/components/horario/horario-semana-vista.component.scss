@@ -7,7 +7,7 @@
 .sv {
   --barra-radio: var(--sc-radius-sm);
   --hueco: var(--sc-spacing-0-125);
-  --pista-alto: var(--sc-spacing-2-5);
+  --pista-alto: var(--sc-spacing-2);
 
   display: flex;
   flex-direction: column;
@@ -22,9 +22,8 @@
 /* Las tres columnas de la rejilla (día · línea · horas) las comparten el eje y las filas. */
 .sv__rejilla {
   --col-dia: var(--sc-spacing-2-5);
-  --col-horas: var(--sc-spacing-4);
-  --col-cierre: 6.5rem;
-  --col-franjas: 26rem;
+  --col-horas: var(--sc-spacing-3);
+    --col-franjas: 19.5rem;
 
   display: flex;
   flex-direction: column;
@@ -35,7 +34,7 @@
 .sv__ejes {
   position: relative;
   block-size: var(--sc-spacing-1-5);
-  margin-inline: var(--col-dia) calc(var(--col-franjas) + var(--col-horas) + var(--col-cierre));
+  margin-inline: var(--col-dia) calc(var(--col-franjas) + var(--col-horas));
   color: var(--sc-text-secondary);
   font-size: var(--sc-font-size-caption);
   font-variant-numeric: tabular-nums;
@@ -63,7 +62,7 @@
   }
 }
 
-@container (max-width: 40rem) {
+@container (max-width: 60rem) {
   .sv__marca--impar {
     display: none;
   }
@@ -72,7 +71,7 @@
 .sv__filas {
   display: flex;
   flex-direction: column;
-  gap: var(--sc-spacing-0-5);
+  gap: var(--sc-spacing-0-25);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -80,12 +79,12 @@
 
 .fila {
   display: grid;
-  grid-template-columns: var(--col-dia) minmax(0, 1fr) var(--col-franjas) var(--col-horas) var(--col-cierre);
+  grid-template-columns: var(--col-dia) minmax(0, 1fr) var(--col-franjas) var(--col-horas);
   column-gap: var(--sc-spacing-0-5);
   align-items: center;
 }
 
-/* Las franjas, en la columna de al lado del mapa; con poco ancho (contenedor de menos de 56 rem), debajo de él. */
+/* Las franjas, en la columna de al lado del mapa; con poco ancho (contenedor de menos de 44 rem), debajo de él. */
 .fila__franjas {
   grid-column: 3;
   grid-row: 1;
@@ -97,10 +96,6 @@
 
 .fila__horas {
   grid-column: 4;
-}
-
-.cierre {
-  grid-column: 5;
 }
 
 .copiar {
@@ -130,7 +125,7 @@
   }
 }
 
-@container (max-width: 56rem) {
+@container (max-width: 44rem) {
   .sv__ejes,
   .fila {
     --col-franjas: 0px;
@@ -407,7 +402,6 @@
 .cierre {
   display: inline-flex;
   align-items: center;
-  justify-self: end;
   gap: var(--sc-spacing-0-5);
   color: var(--sc-text-secondary);
   cursor: pointer;
