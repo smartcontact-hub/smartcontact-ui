@@ -1,9 +1,9 @@
 <div class="tp tp-editor tp-cierre" [class.tp--prueba]="enPrueba">
   <div class="tp-lienzo">
     <!--
-      Cabecera, en dos columnas. A la izquierda, quién es: el nombre con sus horas en una frase debajo y, al lado, tras un
-      divisor, lo de ahora («Ahora cerrado, abre a las 9:00», dicho con su palabra para que no se lea como el estado del
-      horario), la zona horaria y si está activo. A la derecha, dónde se aplica, en su tarjeta, a la vista antes de tocar nada.
+      Cabecera: quién es (el nombre con sus horas por grupos de días debajo y, al lado, tras un divisor, lo de ahora, la
+      zona horaria y si está activo) y, en una línea a lo ancho, dónde se aplica, a la vista antes de tocar nada.
+      «Ahora cerrado, abre a las 9:00» va dicho con su palabra para que no se lea como el estado del horario.
     -->
     <header class="tp-cierre__cabeza tp-stagger" style="--i: 0">
       <div class="tp-cierre__quien">
@@ -21,7 +21,41 @@
               [autofocus]="modo() === 'crear'"
               (input)="update('name', $any($event.target).value)"
             />
-            <p class="tp-cierre__desc t-num" data-tip="Se escribe sola con las horas de la semana">{{ descripcion() }}</p>
+            <!--
+              Las horas, por grupos de días: el día pesa, la hora se lee, lo que une va callado. En dos líneas como mucho;
+              lo que no cabe, en «+N», que enseña el resto al pasar o al llegar con el teclado.
+            -->
+            <ul class="tp-cierre__resumen t-num" [scCabe]="2" (scCabeFuera)="resumenFuera.set($event)" [attr.aria-label]="descripcion()" role="list">
+              @for (g of resumen(); track g.dias) {
+                <li class="tp-cierre__grupo">
+                  <span class="tp-cierre__grupo-dias">{{ g.dias }}</span>
+                  @for (h of g.horas; track $index; let ultima = $last) {
+                    <span class="tp-cierre__grupo-horas">{{ h }}</span>
+                    @if (!ultima) {
+                      <span class="tp-cierre__y" aria-hidden="true">y</span>
+                    }
+                  }
+                </li>
+              } @empty {
+                <li class="tp-cierre__grupo tp-cierre__grupo--cerrado">Cerrado toda la semana</li>
+              }
+              <li class="tp-mas" data-mas>
+                <button type="button" class="tp-mas__btn" [attr.aria-label]="verResumen()">+{{ resumenFuera() }}</button>
+                <span class="tp-mas__pop">
+                  @for (g of resumen().slice(resumen().length - resumenFuera()); track g.dias) {
+                    <span class="tp-cierre__grupo">
+                      <span class="tp-cierre__grupo-dias">{{ g.dias }}</span>
+                      @for (h of g.horas; track $index; let ultima = $last) {
+                        <span class="tp-cierre__grupo-horas">{{ h }}</span>
+                        @if (!ultima) {
+                          <span class="tp-cierre__y" aria-hidden="true">y</span>
+                        }
+                      }
+                    </span>
+                  }
+                </span>
+              </li>
+            </ul>
           </div>
           <div class="tp-cierre__props">
             @if (ahoraTexto(); as a) {
@@ -47,39 +81,53 @@
         </div>
       </div>
 
-      <!-- Dónde se aplica: su tarjeta, cada sitio con el icono y el color de su tipo. -->
-      <section class="tp-card tp-cierre__aplicado" [attr.aria-label]="t.aplicadoEn">
-        <header class="tp-cierre__aplicado-cab">
-          <h2 class="t-title">Aplicado en</h2>
+      <!--
+        Dónde se aplica: su propia caja, en una línea a lo ancho bajo el nombre (no al lado, donde dejaba un hueco según
+        cuántos sitios hubiera). Cada sitio, con el icono y el color de su tipo, su nombre y su detalle.
+      -->
+      <section class="tp-cierre__aplicado" [attr.aria-label]="t.aplicadoEn">
+        <h2 class="tp-cierre__aplicado-tit">
+          Aplicado en
           @if (nUsos() > 0) {
-            <span class="t-small t-3 t-num">{{ sitios(nUsos()) }}</span>
+            <span class="t-3 t-num">{{ sitios(nUsos()) }}</span>
           }
-        </header>
+        </h2>
         @if (nUsos() === 0) {
-          <p class="tp-cierre__libre t-small t-2">
+          <p class="tp-cierre__libre">
             <sc-tp-icono nombre="check" [tam]="14" />
             {{ modo() === 'crear' ? 'Aún no se aplica en ningún sitio' : 'No se aplica en ningún sitio' }}: puedes cambiarlo sin afectar a nadie.
           </p>
         } @else {
-          <ul class="tp-cierre__usos" role="list">
-            @for (g of usos(); track g.tipo) {
-              @for (u of g.usos; track u.nombre + u.detalle) {
-                <li class="tp-cierre__usa">
-                  <span class="tp-mark tp-mark--periodo tp-mark--sm" [style.--c]="'var(--tp-p-' + tipos[u.tipo].color + ')'" [attr.data-tip]="tipos[u.tipo].uno">
-                    <sc-tp-icono [nombre]="tipos[u.tipo].icono" [tam]="14" />
-                  </span>
-                  <span class="tp-cierre__usa-txt">
-                    <span class="t-small t-strong t-trunc">{{ u.nombre }}</span>
-                    <span class="t-micro t-3 t-trunc">{{ u.detalle }}</span>
-                  </span>
-                </li>
-              }
+          <!-- Una línea de sitios; los que no caben, en «+N», con su tipo y su detalle al pasar. -->
+          <ul class="tp-cierre__usos" role="list" [scCabe]="1" (scCabeFuera)="usosFuera.set($event)">
+            @for (u of usosPlanos(); track u.tipo + u.nombre + u.detalle) {
+              <li class="tp-cierre__usa">
+                <span class="tp-mark tp-mark--periodo tp-mark--sm" [style.--c]="'var(--tp-p-' + tipos[u.tipo].color + ')'" [attr.data-tip]="tipos[u.tipo].uno">
+                  <sc-tp-icono [nombre]="tipos[u.tipo].icono" [tam]="14" />
+                </span>
+                <span class="tp-cierre__usa-nombre">{{ u.nombre }}</span>
+                <span class="tp-cierre__usa-detalle">{{ u.detalle }}</span>
+              </li>
             }
+            <li class="tp-mas" data-mas>
+              <button type="button" class="tp-mas__btn" [attr.aria-label]="verUsos()">+{{ usosFuera() }}</button>
+              <span class="tp-mas__pop tp-mas__pop--lista">
+                @for (u of usosPlanos().slice(usosPlanos().length - usosFuera()); track u.tipo + u.nombre + u.detalle) {
+                  <span class="tp-cierre__usa tp-cierre__usa--suelto">
+                    <span class="tp-mark tp-mark--periodo tp-mark--sm" [style.--c]="'var(--tp-p-' + tipos[u.tipo].color + ')'">
+                      <sc-tp-icono [nombre]="tipos[u.tipo].icono" [tam]="14" />
+                    </span>
+                    <span class="tp-cierre__usa-nombre">{{ u.nombre }}</span>
+                    <span class="tp-cierre__usa-detalle">{{ u.detalle }}</span>
+                  </span>
+                }
+              </span>
+            </li>
           </ul>
-          <p class="tp-cierre__usos-nota t-micro t-2">
+          <!-- El aviso, callado en su icono: la barra de guardar ya dice «Afecta a N sitios» en cuanto cambias algo. -->
+          <span class="tp-cierre__usos-nota" role="note" tabindex="0" [attr.aria-label]="avisoUsos()" [attr.data-tip]="avisoUsos()">
             <sc-tp-icono nombre="info" [tam]="14" />
-            Si lo cambias, cambia en {{ nUsos() === 1 ? 'ese sitio' : 'los ' + nUsos() }}. Al guardar te lo recordamos.
-          </p>
+          </span>
         }
       </section>
     </header>
@@ -90,7 +138,12 @@
         <header class="tp-card__head">
           <div class="tp-card__title">
             <h2 class="t-title">Semana</h2>
-            <span class="t-small t-3 t-num">{{ horasSemana() }} a la semana</span>
+            <span class="t-small t-3 t-num">
+              @for (c of [horasSemana()]; track c.texto) {
+                <span class="tp-cuenta" [class.is-viva]="c.viva" [class.is-baja]="c.baja">{{ c.texto }}</span>
+              }
+              a la semana
+            </span>
           </div>
         </header>
         <div class="tp-cierre__semana-cuerpo">

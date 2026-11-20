@@ -220,12 +220,20 @@ const es24 = (franjas: readonly Franja[]): boolean => franjas.length === 1 && fr
  * Así nunca se queda vieja.
  */
 export function descripcionDe(semana: Semana): string {
-  const tramos = tramosDe(semana).sort((a, b) => Math.min(...a.dias) - Math.min(...b.dias));
-  if (tramos.length === 0) return 'Cerrado toda la semana';
-  if (tramos.length === 1 && tramos[0].dias.length === 7 && es24(tramos[0].franjas)) return 'Abierto 24/7';
-  return tramos
-    .map((t) => `${diasEnLetras(t.dias)} ${es24(t.franjas) ? '24 h' : t.franjas.map((f) => `${horaCorta(f[0])}–${horaCorta(f[1])}`).join(' y ')}`)
-    .join(', ');
+  const grupos = resumenDe(semana);
+  if (grupos.length === 0) return 'Cerrado toda la semana';
+  if (grupos.length === 1 && grupos[0].dias === 'L–D' && grupos[0].horas[0] === '24 h') return 'Abierto 24/7';
+  return grupos.map((g) => `${g.dias} ${g.horas.join(' y ')}`).join(', ');
+}
+
+/**
+ * Lo mismo que la descripción, en piezas para pintarla con pesos distintos: cada grupo de días que comparten horas
+ * («L–V») con sus franjas («9:00–14:00», «16:00–19:00», o «24 h»). Sin grupos, la semana está cerrada.
+ */
+export function resumenDe(semana: Semana): { readonly dias: string; readonly horas: readonly string[] }[] {
+  return tramosDe(semana)
+    .sort((a, b) => Math.min(...a.dias) - Math.min(...b.dias))
+    .map((t) => ({ dias: diasEnLetras(t.dias), horas: es24(t.franjas) ? ['24 h'] : t.franjas.map((f) => `${horaCorta(f[0])}–${horaCorta(f[1])}`) }));
 }
 
 /**

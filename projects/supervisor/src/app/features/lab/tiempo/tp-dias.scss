@@ -351,9 +351,106 @@
 .tp-dias__quitar {
   color: var(--tp-ink-3);
 }
+/* El «x» va al borde de la tarjeta: su tooltip se abre hacia dentro, no se sale. */
+.tp-dias__quitar[data-tip]::after {
+  inset-inline-start: auto;
+  inset-inline-end: 0;
+  translate: 0 0.125rem;
+}
+.tp-dias__quitar[data-tip]:hover::after,
+.tp-dias__quitar[data-tip]:focus-visible::after {
+  translate: 0 0;
+}
 .tp-dias__cerrado {
   padding-inline: var(--s-1);
   color: var(--tp-ink-3);
+}
+
+/*
+ * «+N»: un día con más franjas de las que caben al lado de su barra. Va del verde de las cajas (son franjas) y al pasar
+ * enseña el día entero: cada franja con sus horas y, entre ellas, cada pausa con su «Quitar». Si abajo no cabe (la barra
+ * de guardar tapa), se abre hacia arriba: lo decide `orientar()` al llegar.
+ */
+.tp-mas__btn.tp-dias__mas-btn {
+  block-size: 2rem;
+  padding-inline: var(--s-2);
+  border-radius: var(--r-sm);
+  background: var(--tp-franja-fondo);
+  box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--tp-si) 22%, transparent);
+  font-size: var(--t-13);
+  color: color-mix(in oklch, var(--tp-si) 75%, var(--tp-ink));
+
+  .tp-mas:hover > &,
+  .tp-mas:focus-within > & {
+    background: color-mix(in oklch, var(--tp-si) 18%, var(--tp-surface));
+    color: color-mix(in oklch, var(--tp-si) 60%, var(--tp-ink));
+  }
+}
+.tp-mas__pop.tp-dias__mas-pop {
+  inset-inline: auto 0;
+  align-items: stretch;
+  gap: var(--s-1);
+  max-inline-size: none;
+  padding: var(--s-2);
+}
+.tp-dias__mas--arriba > .tp-mas__pop.tp-dias__mas-pop {
+  inset-block: auto calc(100% + var(--s-2));
+  translate: 0 0.25rem;
+
+  &::before {
+    inset-block: 100% auto;
+  }
+}
+.tp-dias__mas-tit {
+  padding: var(--s-0-5) var(--s-1) var(--s-1);
+  font-size: var(--t-12);
+  font-weight: 620;
+  color: var(--tp-ink-2);
+}
+.tp-dias__mas-pausa {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  padding-inline: var(--s-1) 0;
+  font-size: var(--t-12);
+  color: var(--tp-ink-3);
+
+  .tp-btn {
+    color: var(--tp-ink-3);
+  }
+}
+/* Mientras se arrastra, ninguna lista tapa las barras. */
+.tp-dias.is-arrastrando .tp-mas__pop {
+  visibility: hidden;
+}
+
+/*
+ * La cascada: los días que siguen al que se cambia llegan tras él, más despacio cuanto más lejos (`--k`, filas de
+ * distancia). Al arrastrar el lunes, de martes a viernes van detrás como una ola.
+ */
+.tp-dias__fila .tp-sem__barra {
+  transition-duration: calc(140ms + var(--k, 0) * 45ms);
+}
+/* La copia que llega: al abrir un día, sus barras bajan (o suben) desde la fila de la que copian. */
+@media (prefers-reduced-motion: no-preference) {
+  .tp-dias__fila.is-baja .tp-sem__barra {
+    animation: tp-dias-llega 320ms var(--tp-ease) both;
+  }
+  .tp-dias__fila.is-baja .tp-dias__franja {
+    animation: tp-dias-aparece 240ms ease-out both;
+  }
+}
+@keyframes tp-dias-llega {
+  from {
+    translate: 0 var(--salto, 0);
+    opacity: 0.5;
+  }
+}
+@keyframes tp-dias-aparece {
+  from {
+    opacity: 0;
+  }
 }
 
 /* Sin sitio, la columna de las horas se ajusta a lo que tiene y «Ver de … a …» se va: las horas se ven solas. */
@@ -362,6 +459,12 @@
     grid-template-columns: 4.25rem minmax(0, 1fr) auto;
   }
   .tp-dias__vista {
+    display: none;
+  }
+}
+/* Con la barra estrecha, las horas impares y las pegadas a los extremos se callan: «18 1920» no se lee. */
+@container semana (max-width: 52rem) {
+  .tp-dias__horas-eje span:is(.is-impar, .is-junto):not(.is-ini, .is-fin) {
     display: none;
   }
 }

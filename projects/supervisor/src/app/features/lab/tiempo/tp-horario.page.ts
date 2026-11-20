@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, HostListener, inject, type OnInit, signal, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, HostListener, inject, linkedSignal, type OnInit, signal, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { pruebaEnCurso } from '@core/prueba/prueba-arranque';
 
@@ -11,7 +11,8 @@ import { estadoDeHorario } from '../horarios/lab-horarios-estado';
 import { AplicadoEn, sitios, TIPOS_DE_USO } from './tp-aplicado';
 import { TpDiasComponent } from './tp-dias.component';
 import { TpIconoComponent } from './tp-icono.component';
-import { descripcionDe, horas, minutosDeSemana, soloSemana } from './tp-modelo';
+import { descripcionDe, horas, minutosDeSemana, resumenDe, soloSemana } from './tp-modelo';
+import { TpCabeDirective } from './tp-cabe.directive';
 import { TpAvisos, TpAvisosComponent, TpModalComponent } from './tp-piezas';
 import { TpSemanaComponent } from './tp-semana.component';
 import { T } from './tp-textos';
@@ -42,7 +43,7 @@ const LISTA = '/lab/tiempo';
  */
 @Component({
   selector: 'sc-tp-horario',
-  imports: [TpAvisosComponent, TpDiasComponent, TpIconoComponent, TpModalComponent, TpSemanaComponent],
+  imports: [TpAvisosComponent, TpCabeDirective, TpDiasComponent, TpIconoComponent, TpModalComponent, TpSemanaComponent],
   templateUrl: './tp-horario.page.html',
   // Hojas globales repartidas por dueño: cada una cabe en el presupuesto de estilos por componente.
   styleUrls: ['./tp-base.scss', './tp-piezas.scss', './tp-capas.scss', './tp-semana.scss', './tp-dias.scss', './tp-cierre.scss'],
@@ -89,10 +90,22 @@ export class TpHorarioPage implements OnInit {
     if (e.clave === 'inactive') return null;
     return { abierto: e.clave === 'open', titulo: e.clave === 'open' ? 'abierto' : 'cerrado', detalle: enFrase(e.detalle) };
   });
-  protected readonly horasSemana = computed(() => horas(minutosDeSemana(this.form().week)));
+  /**
+   * Las horas a la semana, con hacia dónde se movieron: la cifra entra desde abajo si sube y desde arriba si baja. La
+   * primera no se anima (`viva` es falso): solo cuenta lo que cambia.
+   */
+  protected readonly horasSemana = linkedSignal<number, { texto: string; minutos: number; baja: boolean; viva: boolean }>({
+    source: () => minutosDeSemana(this.form().week),
+    computation: (minutos, antes) => ({ texto: horas(minutos), minutos, baja: !!antes && minutos < antes.value.minutos, viva: !!antes }),
+  });
   protected readonly faltaSemana = computed(() => validarSemana(this.form().week));
   /** La descripción no se escribe: sale de la semana y se guarda con ella, así nunca dice otra cosa que las horas. */
   protected readonly descripcion = computed(() => descripcionDe(this.form().week));
+  /** La misma descripción en grupos de días, para pintarla con pesos distintos. */
+  protected readonly resumen = computed(() => resumenDe(this.form().week));
+  /** Los grupos que no caben en sus dos líneas: van en «+N». */
+  protected readonly resumenFuera = signal(0);
+  protected readonly verResumen = computed(() => `Ver ${this.resumenFuera()} más`);
   protected readonly zonas = computed(() => {
     const conocidas = typeof Intl.supportedValuesOf === 'function' ? Intl.supportedValuesOf('timeZone') : [];
     return [...new Set([this.form().timezone, 'UTC', ...conocidas])].sort();
@@ -102,6 +115,11 @@ export class TpHorarioPage implements OnInit {
 
   protected readonly usos = computed(() => this.aplicado.agrupados(this.horarioId()));
   protected readonly nUsos = computed(() => this.usos().reduce((n, g) => n + g.usos.length, 0));
+  /** Los sitios en una lista, por tipo: en una línea, y los que no caben, en «+N». */
+  protected readonly usosPlanos = computed(() => this.usos().flatMap((g) => g.usos));
+  protected readonly usosFuera = signal(0);
+  protected readonly verUsos = computed(() => `Ver ${this.usosFuera()} sitios más`);
+  protected readonly avisoUsos = computed(() => `Si lo cambias, cambia en ${this.nUsos() === 1 ? 'ese sitio' : `los ${this.nUsos()}`}`);
 
   /** Un horario que no abre ningún día no se guarda: no serviría para nada. */
   protected readonly sinDias = computed(() => this.form().week.every((d) => !d?.length));
