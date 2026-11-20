@@ -158,7 +158,8 @@ const BOTONES: Record<Accion, BotonDeAccion> = {
   imports: [TpHoraComponent, TpIconoComponent],
   template: `
     <div class="tp-sem" [class.tp-sem--compacta]="compacta()" [class.is-arrastrando]="arrastre() !== null" [attr.data-arrastre]="arrastre()?.lado ?? null">
-      <!-- Lo que se escribe: los días que comparten horas -->
+      <!-- Lo que se escribe: los días que comparten horas. Con sitio, en una columna a la izquierda del mapa. -->
+      <div class="tp-sem__escribir">
       <div class="tp-sem__tramos-cab">
         <span class="t-eyebrow">Días que comparten horas</span>
         <span class="t-micro t-3">Marca un día para darle las horas de su fila</span>
@@ -246,6 +247,7 @@ const BOTONES: Record<Accion, BotonDeAccion> = {
         } @else if (cerrados().length > 0 && cerrados().length < 7) {
           <span class="t-micro t-3">Cerrado {{ cerradosTexto() }}</span>
         }
+      </div>
       </div>
 
       <!-- Cómo queda: la semana dibujada, que también se edita -->

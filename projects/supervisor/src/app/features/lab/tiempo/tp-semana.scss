@@ -42,11 +42,68 @@
   flex-direction: column;
   gap: var(--s-1-5);
 }
+.tp-sem__escribir {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  min-inline-size: 0;
+}
 /* Debajo de lo que se escribe, y separado: es otro grupo (cómo queda). */
-.tp-sem__pie + .tp-sem__mapa {
+.tp-sem__escribir + .tp-sem__mapa {
   margin-block-start: var(--s-1);
   padding-block-start: var(--s-4);
   border-block-start: 1px solid var(--tp-hair);
+}
+
+/*
+ * Con sitio, lo que se escribe va en una columna a la izquierda y el mapa a la derecha: añadir una fila de días crece
+ * hacia abajo y el mapa no se mueve. Cada fila, en dos líneas: los días y sus acciones, y debajo las horas.
+ */
+@container semana (min-width: 60rem) {
+  .tp-sem:not(.tp-sem--compacta) {
+    display: grid;
+    grid-template-columns: minmax(20rem, 23rem) minmax(0, 1fr);
+    align-items: start;
+    gap: 0;
+
+    > .tp-sem__escribir + .tp-sem__mapa {
+      margin: 0;
+      padding: 0 0 0 var(--s-6);
+      border-block-start: 0;
+      border-inline-start: 1px solid var(--tp-hair);
+    }
+    > .tp-sem__escribir {
+      padding-inline-end: var(--s-6);
+    }
+    .tp-sem__tramos-cab {
+      flex-direction: column;
+      gap: var(--s-1);
+      /* A la altura del título del mapa, que va centrado con su regla. */
+      padding-block-start: var(--s-2);
+    }
+    .tp-tramo__dias {
+      order: 0;
+    }
+    .tp-tramo__acc {
+      order: 1;
+      margin-inline-start: auto;
+    }
+    .tp-tramo > .tp-spacer {
+      display: none;
+    }
+    .tp-tramo__franjas {
+      order: 2;
+      flex-basis: 100%;
+    }
+    .tp-tramo__guia {
+      order: 3;
+      flex-basis: 100%;
+      /* Debajo de las horas, la flecha ya no apunta a las bolitas. */
+      sc-tp-icono {
+        display: none;
+      }
+    }
+  }
 }
 .tp-sem__eje,
 .tp-sem__fila {

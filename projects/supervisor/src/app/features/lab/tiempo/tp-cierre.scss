@@ -16,29 +16,51 @@
 /* ── La rejilla: la semana manda; dónde se aplica, al lado y estrecho ───────────────────────────────────────────── */
 
 .tp-cierre__rejilla {
-  display: grid;
+  display: flex;
   flex: 1;
-  grid-template-columns: minmax(0, 1fr) 20rem;
-  align-items: start;
-  gap: var(--s-5);
+  flex-direction: column;
+  gap: var(--s-3);
+}
+/* Aplicado en: una línea, cada sitio con su icono; el detalle, al pasar. */
+.tp-cierre__uso {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-2) var(--s-3);
+  padding-inline: var(--s-1);
+}
+.tp-cierre__usos {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-1-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.tp-cierre__usa {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1-5);
+  padding: var(--s-0-5) var(--s-2) var(--s-0-5) var(--s-0-5);
+  border-radius: var(--r-full);
+  background: var(--tp-surface);
+  box-shadow: var(--tp-ring);
+}
+.tp-cierre__usos-nota,
+.tp-cierre__libre {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1-5);
+}
+.tp-cierre__libre .tp-icono,
+.tp-cierre__libre sc-tp-icono {
+  color: var(--tp-si);
 }
 .tp-cierre__semana-cuerpo {
+  container: semana / inline-size;
   padding: var(--s-1) var(--s-5) var(--s-5);
 }
-.tp-cierre__uso-cuerpo {
-  display: flex;
-  flex-direction: column;
-  gap: var(--s-4);
-  padding: 0 var(--s-5) var(--s-5);
-}
-.tp-cierre__libre {
-  padding: var(--s-6) var(--s-2) var(--s-4);
-
-  .tp-vacio__ico {
-    color: var(--tp-si);
-  }
-}
-
 /* Con la barra de guardar a la vista, la última fila nunca queda debajo. */
 .tp-cierre:has(.tp-savebar[data-visible='true']) .tp-lienzo {
   padding-block-end: 5rem;
@@ -46,44 +68,6 @@
 
 /* ── Aplicado en ────────────────────────────────────────────────────────────────────────────────────────────────── */
 
-.tp-uso {
-  display: flex;
-  flex-direction: column;
-  gap: var(--s-1-5);
-}
-.tp-uso__lista {
-  display: flex;
-  flex-direction: column;
-  gap: var(--s-1);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.tp-uso__fila {
-  display: flex;
-  align-items: center;
-  gap: var(--s-3);
-  min-inline-size: 0;
-}
-.tp-uso__txt {
-  display: flex;
-  flex-direction: column;
-  min-inline-size: 0;
-}
-.tp-uso__nota {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--s-1-5);
-  padding: var(--s-2) var(--s-3);
-  border-radius: var(--r-sm);
-  background: var(--tp-subtle);
-  box-shadow: inset 0 0 0 1px var(--tp-hair);
-
-  sc-tp-icono {
-    margin-block-start: 0.0625rem;
-    color: var(--tp-ink-3);
-  }
-}
 
 /* ── La confirmación de guardar: a quién afecta ─────────────────────────────────────────────────────────────────── */
 
@@ -109,11 +93,7 @@
   border-block-start: 1px solid var(--tp-hair);
 }
 
-@media (max-width: 64rem) {
-  .tp-cierre__rejilla {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
+
 
 /* Con una prueba con personas en marcha, su barra va abajo a la izquierda: la de guardar se va a la derecha para que
    ninguna tape a la otra. */
