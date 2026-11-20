@@ -83,6 +83,12 @@ export class TpHorarioPage implements OnInit {
   /* ── Cabecera ─────────────────────────────────────────────────────────────────────────────────────────────────── */
 
   protected readonly estado = computed(() => estadoDeHorario({ id: 0, ...soloSemana(this.form()) }, [], this.reloj()));
+  /** «Cerrado, abre a las 9:00»: lo de ahora, en una frase con su etiqueta. Un horario inactivo no tiene «ahora». */
+  protected readonly ahoraTexto = computed(() => {
+    const e = this.estado();
+    if (e.clave === 'inactive') return null;
+    return { abierto: e.clave === 'open', titulo: e.clave === 'open' ? 'Abierto' : 'Cerrado', detalle: enFrase(e.detalle) };
+  });
   protected readonly horasSemana = computed(() => horas(minutosDeSemana(this.form().week)));
   protected readonly faltaSemana = computed(() => validarSemana(this.form().week));
   /** La descripción no se escribe: sale de la semana y se guarda con ella, así nunca dice otra cosa que las horas. */
@@ -318,4 +324,19 @@ export class TpHorarioPage implements OnInit {
       this.deshacer();
     }
   }
+}
+
+const DIA_ENTERO: Readonly<Record<string, string>> = { lun: 'el lunes', mar: 'el martes', mié: 'el miércoles', jue: 'el jueves', vie: 'el viernes', sáb: 'el sábado', dom: 'el domingo' };
+
+/** «abre lun 09:00» del listado, dicho entero: «abre el lunes a las 9:00»; medianoche, con su nombre. */
+function enFrase(detalle: string): string {
+  if (detalle === 'siempre') return 'siempre';
+  if (detalle === 'sin próximas horas') return 'sin horas para abrir';
+  const m = /^(abre|cierra) (?:(.+) )?(\d{2}):(\d{2})$/.exec(detalle);
+  if (!m) return detalle;
+  const [, verbo, cuando, hh, mm] = m;
+  const h = Number(hh);
+  const dia = !cuando ? '' : cuando === 'mañana' ? 'mañana ' : `${DIA_ENTERO[cuando] ?? `el ${cuando}`} `;
+  if ((h === 0 || h === 24) && mm === '00') return `${verbo} ${cuando === 'mañana' ? '' : dia}a medianoche`;
+  return `${verbo} ${dia}${h === 1 ? 'a la' : 'a las'} ${h}:${mm}`;
 }

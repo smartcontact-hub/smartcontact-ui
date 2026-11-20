@@ -4,7 +4,7 @@
  * tp-base.scss.
  */
 
-/* ── La cabecera: quién es a la izquierda; dónde se aplica, en su tarjeta, a la derecha ──────────────────────────── */
+/* ── La cabecera: quién es y sus propiedades a la izquierda; dónde se aplica, en su tarjeta, a la derecha ────────── */
 
 .tp-cierre .tp-lienzo {
   container: lienzo / inline-size;
@@ -19,37 +19,89 @@
 .tp-cierre__quien {
   display: flex;
   flex-direction: column;
-  gap: var(--s-2);
+  gap: var(--s-1);
   min-inline-size: 0;
 }
-/* Las horas en una frase: lo primero que se lee después del nombre. */
+.tp-cierre__nombre {
+  align-self: flex-start;
+  margin-block-start: var(--s-1);
+}
+/* Las horas en una frase, pegadas al nombre: son su subtítulo. Se escriben solas, así que no se tocan. */
 .tp-cierre__desc {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--s-1-5);
   align-self: flex-start;
   margin: 0;
   font-size: var(--t-14);
-  font-weight: 560;
-  color: var(--tp-ink);
+  font-weight: 520;
+  color: var(--tp-ink-2);
+}
 
-  sc-tp-icono {
-    color: var(--tp-si);
+/* Las propiedades, cada una con su etiqueta a la izquierda: se leen de un vistazo y no se confunden entre sí. */
+.tp-cierre__props {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  align-items: center;
+  gap: var(--s-0-5) var(--s-6);
+  margin: var(--s-3) 0 0;
+  font-size: var(--t-13);
+}
+.tp-cierre__prop {
+  display: contents;
+
+  dt {
+    color: var(--tp-ink-3);
+    font-weight: 500;
+  }
+  dd {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+    min-block-size: 2rem;
+    margin: 0;
+    min-inline-size: 0;
   }
 }
-/* Los dos ajustes, con su nombre a la vista y forma de control: se ve que se tocan. */
-.tp-cierre__ajustes {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--s-2) var(--s-6);
-  margin-block-start: var(--s-2);
+.tp-cierre__ahora {
+  color: var(--tp-ink-2);
+
+  strong {
+    font-weight: 620;
+    color: var(--tp-ink);
+  }
 }
-.tp-cierre__ajuste {
+.tp-cierre__estado {
   display: inline-flex;
   align-items: center;
   gap: var(--s-2);
+  block-size: 2rem;
+  margin-inline-start: calc(-1 * var(--s-1-5));
+  padding-inline: var(--s-1-5);
+  border: 0;
+  border-radius: var(--r-sm);
+  background: transparent;
+  font: inherit;
+  font-weight: 540;
+  color: var(--tp-ink);
   cursor: pointer;
+  transition-property: background-color;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+
+  &:hover {
+    background: var(--tp-muted);
+  }
+  &:focus-visible {
+    outline: 2px solid var(--tp-accent);
+    outline-offset: 1px;
+  }
+  &[aria-checked='true'] .tp-switch {
+    background: var(--tp-accent);
+    &::after {
+      translate: 0.875rem 0;
+    }
+  }
+  &[aria-checked='false'] {
+    color: var(--tp-ink-3);
+  }
 }
 .tp-cierre__select {
   position: relative;

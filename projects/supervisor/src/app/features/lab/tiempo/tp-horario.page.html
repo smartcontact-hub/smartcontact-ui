@@ -1,8 +1,9 @@
 <div class="tp tp-editor tp-cierre" [class.tp--prueba]="enPrueba">
   <div class="tp-lienzo">
     <!--
-      Cabecera, en dos columnas: a la izquierda quién es (nombre, si ahora se atiende, las horas en una frase y sus dos
-      ajustes); a la derecha, dónde se aplica, en su tarjeta, a la vista antes de tocar nada.
+      Cabecera, en dos columnas. A la izquierda, quién es: el nombre, sus horas en una frase y sus propiedades, cada una con
+      su etiqueta (Ahora, Zona horaria, Estado), para que «Cerrado» no se lea como el estado del horario. A la derecha, dónde
+      se aplica, en su tarjeta, a la vista antes de tocar nada.
     -->
     <header class="tp-cierre__cabeza tp-stagger" style="--i: 0">
       <div class="tp-cierre__quien">
@@ -10,47 +11,49 @@
           <sc-tp-icono nombre="arrow-left" [tam]="14" />
           Horarios
         </button>
-        <div class="tp-head__title">
-          <input
-            class="tp-inline tp-head__name t-display"
-            [attr.aria-label]="t.nombreHorario"
-            [placeholder]="t.ejemploHorario"
-            [value]="form().name"
-            [autofocus]="modo() === 'crear'"
-            (input)="update('name', $any($event.target).value)"
-          />
-          @if (form().status === 'inactive') {
-            <span class="tp-pill tp-pill--inactive"><span class="tp-dot tp-dot--inactive"></span>Inactivo</span>
-          } @else {
-            <span class="tp-pill" [class.tp-pill--open]="estado().clave === 'open'">
-              <span class="tp-dot" [class.tp-dot--open]="estado().clave === 'open'"></span>
-              {{ estado().clave === 'open' ? 'Abierto' : 'Cerrado' }}
-              <span class="tp-pill__extra t-num">{{ estado().detalle }}</span>
-            </span>
+        <input
+          class="tp-inline tp-head__name tp-cierre__nombre t-display"
+          [attr.aria-label]="t.nombreHorario"
+          [placeholder]="t.ejemploHorario"
+          [value]="form().name"
+          [autofocus]="modo() === 'crear'"
+          (input)="update('name', $any($event.target).value)"
+        />
+        <p class="tp-cierre__desc t-num" data-tip="Se escribe sola con las horas de la semana">{{ descripcion() }}</p>
+        <dl class="tp-cierre__props">
+          @if (ahoraTexto(); as a) {
+            <div class="tp-cierre__prop">
+              <dt>Ahora</dt>
+              <dd class="tp-cierre__ahora t-num">
+                <span class="tp-dot" [class.tp-dot--open]="a.abierto"></span>
+                <span><strong>{{ a.titulo }}</strong>, {{ a.detalle }}</span>
+              </dd>
+            </div>
           }
-        </div>
-        <p class="tp-cierre__desc t-num" data-tip="Se escribe sola con las horas de la semana">
-          <sc-tp-icono nombre="sparkle" [tam]="14" />
-          {{ descripcion() }}
-        </p>
-        <div class="tp-cierre__ajustes">
-          <label class="tp-cierre__ajuste">
-            <span class="t-small t-3">Zona horaria</span>
-            <span class="tp-cierre__select">
-              <sc-tp-icono nombre="globe" [tam]="14" />
-              <select [attr.aria-label]="t.zona" [value]="form().timezone" (change)="update('timezone', $any($event.target).value)">
-                @for (z of zonas(); track z) {
-                  <option [value]="z" [selected]="z === form().timezone">{{ z.replace('_', ' ') }}</option>
-                }
-              </select>
-              <sc-tp-icono nombre="chevron-down" [tam]="14" />
-            </span>
-          </label>
-          <label class="tp-cierre__ajuste">
-            <button type="button" class="tp-switch" role="switch" [attr.aria-checked]="form().status !== 'inactive'" [attr.aria-label]="t.activo" (click)="update('status', form().status === 'inactive' ? 'active' : 'inactive')"></button>
-            <span class="t-small">{{ form().status === 'inactive' ? 'Inactivo' : 'Activo' }}</span>
-          </label>
-        </div>
+          <div class="tp-cierre__prop">
+            <dt><label for="tp-zona">Zona horaria</label></dt>
+            <dd>
+              <span class="tp-cierre__select">
+                <sc-tp-icono nombre="globe" [tam]="14" />
+                <select id="tp-zona" [value]="form().timezone" (change)="update('timezone', $any($event.target).value)">
+                  @for (z of zonas(); track z) {
+                    <option [value]="z" [selected]="z === form().timezone">{{ z.replace('_', ' ') }}</option>
+                  }
+                </select>
+                <sc-tp-icono nombre="chevron-down" [tam]="14" />
+              </span>
+            </dd>
+          </div>
+          <div class="tp-cierre__prop">
+            <dt>Estado</dt>
+            <dd>
+              <button type="button" class="tp-cierre__estado" role="switch" [attr.aria-checked]="form().status !== 'inactive'" (click)="update('status', form().status === 'inactive' ? 'active' : 'inactive')">
+                <span class="tp-switch" aria-hidden="true"></span>
+                {{ form().status === 'inactive' ? 'Inactivo' : 'Activo' }}
+              </button>
+            </dd>
+          </div>
+        </dl>
       </div>
 
       <!-- Dónde se aplica: su tarjeta, cada sitio con el icono y el color de su tipo. -->

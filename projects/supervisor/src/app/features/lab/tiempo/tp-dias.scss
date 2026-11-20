@@ -2,7 +2,7 @@
  * LABORATORIO «Tiempo», cierre de Horarios: la semana en una lista de siete días (tp-dias.component.ts). Arriba, la
  * ayuda de una línea; en cada fila, el interruptor del día, la barra y cada franja en su caja. Lo que no se atiende va en
  * gris: un día cerrado no es un error, y el rojo queda para los errores. Las piezas de la barra (pista, asas, globo, raya
- * de «ahora», regla de 24 h) son las de tp-semana.scss. Hoja global (ViewEncapsulation.None) que cuelga entera de `.tp`.
+ * de «ahora») son las de tp-semana.scss; aquí, la raya de ahora va en el color de «Hoy». Hoja global (ViewEncapsulation.None) que cuelga entera de `.tp`.
  */
 
 .tp-dias {
@@ -104,15 +104,48 @@
   grid-column: 3;
   display: flex;
   align-items: center;
-  gap: var(--s-2);
+  gap: var(--s-1-5);
   padding-inline-start: var(--s-2);
-}
-.tp-dias__vista-txt {
   white-space: nowrap;
 }
-.tp-dias__regla {
-  flex: 1;
-  max-inline-size: 10rem;
+/* «Ver de 8 a 19»: cada hora, un desplegable pequeño que se lee como parte de la frase. */
+.tp-dias__vista-sel {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  block-size: 1.5rem;
+  border-radius: var(--r-xs);
+  background: var(--tp-surface);
+  box-shadow: var(--tp-ring);
+  transition-property: box-shadow;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+
+  &:hover {
+    box-shadow: var(--tp-ring-hover);
+  }
+  &:focus-within {
+    box-shadow: 0 0 0 1px var(--tp-accent), 0 0 0 3px var(--tp-accent-ring);
+  }
+  select {
+    appearance: none;
+    field-sizing: content;
+    min-inline-size: 2.25rem;
+    block-size: 100%;
+    padding-inline: var(--s-2);
+    border: 0;
+    background: transparent;
+    font: inherit;
+    font-weight: 600;
+    text-align: center;
+    color: var(--tp-ink);
+    cursor: pointer;
+    outline: none;
+  }
+}
+.tp-dias__vista-btn {
+  margin-inline-start: var(--s-1);
+  color: var(--tp-ink-3);
 }
 
 /* ── Cada día ───────────────────────────────────────────────────────────────────────────────────────────────────── */
@@ -186,7 +219,32 @@
   }
 }
 .tp-dias__dia-nombre {
+  display: inline-flex;
+  flex-direction: column;
   min-inline-size: 1.75rem;
+  line-height: 1.1;
+}
+/* Hoy, dicho con su nombre bajo el día y en el color de la raya de ahora: se leen juntos. */
+.tp-dias__hoy {
+  font-size: var(--t-11);
+  font-weight: 650;
+  color: var(--tp-accent-ink);
+}
+.tp-dias .tp-sem__ahora {
+  inset-block: -0.125rem;
+  background: var(--tp-accent);
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset-block-start: -0.1875rem;
+    inset-inline-start: -0.1875rem;
+    inline-size: 0.5rem;
+    block-size: 0.5rem;
+    border-radius: var(--r-full);
+    background: var(--tp-accent);
+    box-shadow: 0 0 0 2px var(--tp-surface);
+  }
 }
 /* Los días que cambiaría «¿También…?»: su nombre, con el aro de lo elegido. */
 .tp-dias__fila.is-ofrecido .tp-dias__dia {
@@ -267,12 +325,12 @@
   color: var(--tp-ink-3);
 }
 
-/* Sin sitio, la columna de las horas se ajusta a lo que tiene y la regla se va: las horas se ven solas. */
+/* Sin sitio, la columna de las horas se ajusta a lo que tiene y «Ver de … a …» se va: las horas se ven solas. */
 @container semana (max-width: 44rem) {
   .tp-dias {
     grid-template-columns: 4.25rem minmax(0, 1fr) auto;
   }
-  .tp-dias__regla {
+  .tp-dias__vista {
     display: none;
   }
 }

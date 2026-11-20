@@ -72,7 +72,8 @@ const esPausa = (h: { readonly min: number; readonly max: number }): boolean => 
  * día y lo tiene todo: el interruptor lo abre o lo cierra, la barra se arrastra (bordes, la franja entera, o pintar en
  * lo vacío) y a la derecha cada franja en su caja, con las horas que se escriben. Abrir un día trae las horas del día
  * abierto de arriba y lo SIGUE mientras no se toque: se hace el lunes y el resto de la semana va detrás, sin preguntar.
- * Las horas que se ven se ajustan solas a lo abierto, y la regla de 24 h deja elegir otras.
+ * Las horas que se ven se ajustan solas a lo abierto, y «Ver de … a …» deja elegir otras. Hoy lleva su nombre y la raya
+ * de ahora; Intro en una hora baja a la misma hora del día siguiente, como en una hoja de cálculo.
  * Siete filas fijas y una ayuda de una línea: nada salta al abrir, cerrar o partir un día.
  */
 @Component({
@@ -100,59 +101,49 @@ const esPausa = (h: { readonly min: number; readonly max: number }): boolean => 
             <span [class.is-ini]="h === rango().desde" [class.is-fin]="h === rango().hasta" [style.left.%]="pos(h)">{{ h / 60 }}</span>
           }
         </span>
-        <!-- Las horas que se ven: solas se ajustan a lo abierto; la regla deja elegir otras. -->
+        <!-- Las horas que se ven: solas se ajustan a lo abierto; dos desplegables dejan elegir otras. -->
         <div class="tp-dias__vista" role="group" aria-label="Horas que se ven">
-          <span class="tp-dias__vista-txt">Se ve de {{ rango().desde / 60 }} a {{ rango().hasta / 60 }}</span>
-          <span
-            class="tp-sem__nav-pista tp-dias__regla"
-            data-tip="Arrastra el marco o sus bordes. Doble clic: el día entero"
-            (pointerdown)="navEmpezar($event)"
-            (pointermove)="navMover($event)"
-            (pointerup)="navSoltar($event)"
-            (pointercancel)="navSoltar($event)"
-            (dblclick)="navDiaEntero()"
-          >
-            @for (q of [25, 50, 75]; track q) {
-              <span class="tp-sem__nav-marca" [style.left.%]="q"></span>
-            }
-            @for (a of abiertas(); track a.desde) {
-              <span class="tp-sem__nav-abierto" [style.left.%]="a.desde / 14.4" [style.width.%]="(a.hasta - a.desde) / 14.4"></span>
-            }
-            <span class="tp-sem__nav-fuera" [style.width.%]="rango().desde / 14.4"></span>
-            <span class="tp-sem__nav-fuera is-fin" [style.width.%]="(1440 - rango().hasta) / 14.4"></span>
-            <span class="tp-sem__nav-marco" [style.left.%]="rango().desde / 14.4" [style.width.%]="(rango().hasta - rango().desde) / 14.4">
-              <span
-                class="tp-sem__nav-asa is-ini"
-                role="slider"
-                tabindex="0"
-                aria-label="Se ve desde"
-                aria-valuemin="0"
-                aria-valuemax="1440"
-                [attr.aria-valuenow]="rango().desde"
-                [attr.aria-valuetext]="hora(rango().desde)"
-                (keydown)="navTecla($event, 'desde')"
-              ></span>
-              <span
-                class="tp-sem__nav-asa is-fin"
-                role="slider"
-                tabindex="0"
-                aria-label="Se ve hasta"
-                aria-valuemin="0"
-                aria-valuemax="1440"
-                [attr.aria-valuenow]="rango().hasta"
-                [attr.aria-valuetext]="hora(rango().hasta)"
-                (keydown)="navTecla($event, 'hasta')"
-              ></span>
-            </span>
+          <span>Ver de</span>
+          <span class="tp-dias__vista-sel">
+            <select aria-label="Ver desde" (change)="verDesde($any($event.target).value)">
+              @for (h of horasDesde(); track h.m) {
+                <option [value]="h.m" [selected]="h.m === rango().desde" [disabled]="h.no">{{ h.m / 60 }}</option>
+              }
+            </select>
           </span>
+          <span>a</span>
+          <span class="tp-dias__vista-sel">
+            <select aria-label="Ver hasta" (change)="verHasta($any($event.target).value)">
+              @for (h of horasHasta(); track h.m) {
+                <option [value]="h.m" [selected]="h.m === rango().hasta" [disabled]="h.no">{{ h.m / 60 }}</option>
+              }
+            </select>
+          </span>
+          @if (ventana()) {
+            <button type="button" class="tp-btn tp-btn--ghost tp-btn--sm tp-dias__vista-btn" data-tip="Volver a ajustarse a lo abierto" (click)="ventana.set(null)">Ajustar</button>
+          } @else if (rango().desde > 0 || rango().hasta < 1440) {
+            <button type="button" class="tp-btn tp-btn--ghost tp-btn--sm tp-dias__vista-btn" (click)="ponerVentana({ desde: 0, hasta: 1440 })">Todo el día</button>
+          }
         </div>
       </div>
 
       @for (f of filas(); track f.dia) {
         <div class="tp-dias__fila" [attr.data-dia]="f.dia" [class.is-abierto]="f.abierto" [class.is-mal]="f.mal" [class.is-ofrecido]="f.ofrecido">
-          <button type="button" role="switch" class="tp-dias__dia" [attr.aria-checked]="f.abierto" [attr.aria-label]="capital(nombres[f.dia])" (click)="alternar(f.dia)">
+          <button
+            type="button"
+            role="switch"
+            class="tp-dias__dia"
+            [attr.aria-checked]="f.abierto"
+            [attr.aria-label]="capital(nombres[f.dia]) + (f.hoy ? ', hoy' : '')"
+            (click)="alternar(f.dia)"
+          >
             <span class="tp-dias__interruptor" aria-hidden="true"></span>
-            <span class="tp-dias__dia-nombre">{{ capital(cortos[f.dia]) }}</span>
+            <span class="tp-dias__dia-nombre">
+              {{ capital(cortos[f.dia]) }}
+              @if (f.hoy) {
+                <span class="tp-dias__hoy">Hoy</span>
+              }
+            </span>
           </button>
           <span class="tp-sem__pista tp-dias__pista" [class.is-cerrada]="!f.abierto" (pointerdown)="pintar($event, f.dia)" (pointermove)="apuntar($event, f.dia)" (pointerleave)="guia.set(null)">
             <span class="tp-sem__guias" aria-hidden="true">
@@ -193,10 +184,10 @@ const esPausa = (h: { readonly min: number; readonly max: number }): boolean => 
               }
             }
             @if (ahora()?.dia === f.dia && seVe(ahora()!.minutos)) {
-              <span class="tp-sem__ahora" [style.left.%]="pos(ahora()!.minutos)" [attr.data-tip]="guia()?.dia === f.dia ? null : 'Ahora'"></span>
+              <span class="tp-sem__ahora" [style.left.%]="pos(ahora()!.minutos)" [attr.data-tip]="guia()?.dia === f.dia ? null : 'Ahora, ' + hora(ahora()!.minutos)"></span>
             }
           </span>
-          <div class="tp-dias__horas">
+          <div class="tp-dias__horas" (keydown.enter)="bajar($event, f.dia, 1)" (keydown.shift.enter)="bajar($event, f.dia, -1)">
             @if (f.abierto) {
               @for (fr of f.franjas; track $index; let j = $index) {
                 <span class="tp-dias__franja" [attr.data-franja]="j">
@@ -256,7 +247,6 @@ export class TpDiasComponent {
    * con él a los que lo siguen, y a los que siguen a esos: se hace el lunes y la semana va detrás.
    */
   private readonly sigue = new Map<number, number>();
-  private nav: { modo: 'desde' | 'hasta' | 'mover'; m0: number; r0: Rango; caja: DOMRect } | null = null;
 
   /* La semana de ahora mismo, aunque lo emitido aún no haya vuelto por la entrada (varios movimientos de un arrastre). */
   private entrada: Semana | null = null;
@@ -312,7 +302,7 @@ export class TpDiasComponent {
 
   /* ── Las horas que se ven ─────────────────────────────────────────────────────────────────────────────────────── */
 
-  /** Lo abierto de la semana, en tramos que no se pisan (lo de la víspera incluido), para la regla. */
+  /** Lo abierto de la semana, en tramos que no se pisan (lo de la víspera incluido): lo que la vista no deja fuera. */
   protected readonly abiertas = computed<Rango[]>(() => {
     const s = this.semana();
     const trozos = [0, 1, 2, 3, 4, 5, 6]
@@ -342,12 +332,8 @@ export class TpDiasComponent {
     return n ? { desde: Math.min(v.desde, n.desde), hasta: Math.max(v.hasta, n.hasta) } : v;
   });
 
-  private horaEn(e: PointerEvent, caja: DOMRect): number {
-    return Math.min(1440, Math.max(0, Math.round((((e.clientX - caja.left) / caja.width) * 1440) / 60) * 60));
-  }
-
   /** Lo pedido, dentro del día, con cuatro horas como poco y sin dejar fuera horas abiertas. Si es lo de siempre, vuelve a ajustarse solo. */
-  private ponerVentana(r: Rango): void {
+  protected ponerVentana(r: Rango): void {
     const n = this.imprescindible();
     let { desde, hasta } = r;
     if (n) {
@@ -360,64 +346,22 @@ export class TpDiasComponent {
     this.ventana.set(desde === auto.desde && hasta === auto.hasta ? null : { desde, hasta });
   }
 
-  protected navEmpezar(e: PointerEvent): void {
-    if (e.button !== 0) return;
-    const el = e.currentTarget as HTMLElement;
-    const caja = el.getBoundingClientRect();
-    const m = this.horaEn(e, caja);
-    const r = this.rango();
-    const asa = (e.target as HTMLElement).closest('.tp-sem__nav-asa');
-    let modo: 'desde' | 'hasta' | 'mover';
-    if (asa) modo = asa.classList.contains('is-ini') ? 'desde' : 'hasta';
-    else if (m > r.desde && m < r.hasta) modo = 'mover';
-    else {
-      // Fuera del marco: el borde más cercano salta ahí y se sigue arrastrando.
-      modo = m <= r.desde ? 'desde' : 'hasta';
-      this.ponerVentana(modo === 'desde' ? { desde: m, hasta: r.hasta } : { desde: r.desde, hasta: m });
-    }
-    e.preventDefault();
-    el.setPointerCapture?.(e.pointerId);
-    this.nav = { modo, m0: m, r0: this.rango(), caja };
+  /** Las horas que se pueden elegir en «Ver de … a …»: las que dejarían fuera algo abierto, o menos de cuatro horas, no. */
+  protected readonly horasDesde = computed(() => {
+    const n = this.imprescindible();
+    const { hasta } = this.rango();
+    return Array.from({ length: 21 }, (_, k) => k * 60).map((m) => ({ m, no: (n !== null && m > n.desde) || m > hasta - VISTA_MINIMA }));
+  });
+  protected readonly horasHasta = computed(() => {
+    const n = this.imprescindible();
+    const { desde } = this.rango();
+    return Array.from({ length: 21 }, (_, k) => 240 + k * 60).map((m) => ({ m, no: (n !== null && m < n.hasta) || m < desde + VISTA_MINIMA }));
+  });
+  protected verDesde(v: string): void {
+    this.ponerVentana({ desde: Number(v), hasta: this.rango().hasta });
   }
-
-  protected navMover(e: PointerEvent): void {
-    const n = this.nav;
-    if (!n) return;
-    const m = this.horaEn(e, n.caja);
-    if (n.modo === 'desde') this.ponerVentana({ desde: m, hasta: n.r0.hasta });
-    else if (n.modo === 'hasta') this.ponerVentana({ desde: n.r0.desde, hasta: m });
-    else {
-      // El marco se mueve entero y se para donde dejaría fuera una hora abierta: moverlo nunca lo estira.
-      const largo = n.r0.hasta - n.r0.desde;
-      const abierto = this.imprescindible();
-      const min = Math.max(0, abierto ? abierto.hasta - largo : 0);
-      const max = Math.min(1440 - largo, abierto ? abierto.desde : 1440);
-      const desde = Math.min(max, Math.max(min, n.r0.desde + m - n.m0));
-      this.ponerVentana({ desde, hasta: desde + largo });
-    }
-  }
-
-  protected navSoltar(e: PointerEvent): void {
-    if (!this.nav) return;
-    this.nav = null;
-    (e.currentTarget as HTMLElement).releasePointerCapture?.(e.pointerId);
-  }
-
-  /** Doble clic: el día entero; otra vez, lo que se ajusta solo. */
-  protected navDiaEntero(): void {
-    const r = this.rango();
-    if (r.desde === 0 && r.hasta === 1440) this.ventana.set(null);
-    else this.ponerVentana({ desde: 0, hasta: 1440 });
-  }
-
-  protected navTecla(e: KeyboardEvent, lado: 'desde' | 'hasta'): void {
-    const r = this.rango();
-    const paso = e.key === 'ArrowLeft' || e.key === 'ArrowDown' ? -60 : e.key === 'ArrowRight' || e.key === 'ArrowUp' ? 60 : 0;
-    const fin = e.key === 'Home' ? 0 : e.key === 'End' ? 1440 : null;
-    if (!paso && fin === null) return;
-    e.preventDefault();
-    const m = fin ?? (lado === 'desde' ? r.desde : r.hasta) + paso;
-    this.ponerVentana(lado === 'desde' ? { desde: m, hasta: r.hasta } : { desde: r.desde, hasta: m });
+  protected verHasta(v: string): void {
+    this.ponerVentana({ desde: this.rango().desde, hasta: Number(v) });
   }
 
   /* ── Las filas ────────────────────────────────────────────────────────────────────────────────────────────────── */
@@ -428,6 +372,7 @@ export class TpDiasComponent {
     const mal = this.error()?.dia ?? -1;
     const o = this.ofertaVisible();
     const ofrecidos = o ? [...o.dias, ...o.siguen] : [];
+    const hoy = this.ahora()?.dia ?? -1;
     return LETRAS.map((_, dia) => {
       const propias = s[dia] ?? [];
       const trozos = trozosDelDia(s, dia).map((t) => {
@@ -442,7 +387,7 @@ export class TpDiasComponent {
           texto: `${horaCorta(t.franja[0])}–${horaCorta(t.franja[1])}`,
         };
       });
-      return { dia, abierto: propias.length > 0, franjas: propias, trozos, mal: mal === dia, ofrecido: ofrecidos.includes(dia), pausa: dondePausa(propias) };
+      return { dia, abierto: propias.length > 0, franjas: propias, trozos, mal: mal === dia, ofrecido: ofrecidos.includes(dia), pausa: dondePausa(propias), hoy: hoy === dia };
     });
   });
 
@@ -634,6 +579,30 @@ export class TpDiasComponent {
     this.emitir(s.map((f, d) => (o.siguen.includes(d) ? copiar(o.previas) : f)));
     for (const [d, fuente] of this.sigue) if (fuente === o.dia) this.sigue.delete(d);
     this.aviso.set(`Solo cambia ${this.nombreCon(o.dia)}. ⌘Z lo deshace.`);
+  }
+
+  /**
+   * Intro en una hora baja a la misma hora del siguiente día abierto (Mayús+Intro, al de arriba), como en una hoja de
+   * cálculo: escribir la semana entera sin el ratón. Antes, la hora escrita se fija (lo hace el campo).
+   */
+  protected bajar(e: Event, dia: number, paso: 1 | -1): void {
+    const campo = e.target as HTMLElement;
+    if (!(campo instanceof HTMLInputElement) || (paso === 1 && (e as KeyboardEvent).shiftKey)) return;
+    const caja = campo.closest<HTMLElement>('[data-franja]');
+    if (!caja) return;
+    const j = Number(caja.dataset['franja']);
+    const lado = [...caja.querySelectorAll('input')].indexOf(campo);
+    e.preventDefault();
+    setTimeout(() => {
+      const s = this.actual();
+      for (let d = dia + paso; d >= 0 && d < 7; d += paso) {
+        if (!s[d]?.length) continue;
+        const fila = this.host.nativeElement.querySelector(`.tp-dias__fila[data-dia="${d}"]`);
+        const cajas = fila?.querySelectorAll<HTMLElement>('[data-franja]') ?? [];
+        cajas[Math.min(j, cajas.length - 1)]?.querySelectorAll('input')[lado]?.focus();
+        return;
+      }
+    });
   }
 
   /* ── Arrastrar ────────────────────────────────────────────────────────────────────────────────────────────────── */
