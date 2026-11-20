@@ -32,7 +32,7 @@ import {
   ScTagComponent as TagComponent,
 } from '@smartcontact-hub/components';
 import { RepoFormPanelComponent, RepoFormSubmission } from './repo-form-panel.component';
-import { RepoEntity, RepoPageConfig, RepoStore, ScheduleCell } from './repo-types';
+import { RepoEntity, RepoPageConfig, RepoStore, ScheduleCell, UseEntry } from './repo-types';
 import { injectLangChange } from '@core/utils/lang-change';
 import { copyName } from '@shared/utils/copy-name';
 import { hoy } from '@shared/utils/today';
@@ -274,6 +274,12 @@ export class RepoListPageComponent<T extends RepoEntity> {
   }
 
   /** La cifra de una relación abre la ficha; con `countOpensSection`, ya en esa sección (Equipos: sus agentes, COA SISMAC-4453). */
+  /** Para `kind === 'uses'`: los sitios donde se usa la fila; `null` si la columna es de otro tipo. */
+  protected usesFor(item: T, field: string): readonly UseEntry[] | null {
+    const column = this.config().columns.find((c) => c.key === field);
+    return column?.kind === 'uses' && column.uses ? column.uses(item) : null;
+  }
+
   /** Para `kind === 'schedule'`: el horario de la fila, con los grupos visibles y el resto; `null` si la columna es de otro tipo. */
   protected scheduleFor(item: T, field: string): { cell: ScheduleCell; visibles: ScheduleCell['groups']; resto: ScheduleCell['groups'] } | null {
     const column = this.config().columns.find((c) => c.key === field);

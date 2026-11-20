@@ -147,3 +147,43 @@
   opacity: 0.6;
   font-style: italic;
 }
+
+/* Columna de uso: un sitio por etiqueta con su icono y su cifra; el tooltip lista cuáles. */
+.usos {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-1);
+}
+
+.uso {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-25);
+  color: var(--sc-text-info);
+  cursor: default;
+
+  &--cal {
+    color: var(--sc-text-warning);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-border-focus);
+    outline-offset: 2px;
+    border-radius: var(--sc-radius-sm);
+  }
+}
+
+.uso__cifra {
+  color: var(--sc-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.uso-tip {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-25);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--sc-font-size-caption);
+}

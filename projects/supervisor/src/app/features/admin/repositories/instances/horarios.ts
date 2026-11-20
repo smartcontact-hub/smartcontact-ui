@@ -6,9 +6,9 @@ import { GroupsStore } from '@features/admin/groups/state/groups.store';
 
 import { DIAS_DE_LA_SEMANA } from '../components/horario/horario-semana.component';
 import { RepoListPageComponent } from '../components/repo-list-page.component';
-import { RepoColumnDef, RepoPageConfig, ScheduleCell } from '../components/repo-types';
+import { RepoColumnDef, RepoPageConfig, ScheduleCell, UseEntry } from '../components/repo-types';
 import { HorarioUsoService } from '../state/horario-uso.service';
-import { CLAVE_DE_USO, usosDelHorario } from '../state/horario-usos';
+import { CLAVE_DE_USO, ICONO_DE_USO, usosDelHorario } from '../state/horario-usos';
 import { FestivosStore } from '../state/festivos.store';
 import { ahoraEn, estadoEn, gruposDeLaSemana, MINUTOS_DEL_DIA, resumenDeLaSemana, textoDeFranja } from '../state/horarios.core.mjs';
 import { type Horario, HorariosStore } from '../state/horarios.store';
@@ -18,6 +18,7 @@ interface Datos {
   readonly celda: (h: Horario) => ScheduleCell;
   readonly ahora: (h: Horario) => string;
   readonly uso: (h: Horario) => string;
+  readonly usos: (h: Horario) => readonly UseEntry[];
 }
 
 /**
@@ -41,10 +42,11 @@ const columnas = (d: Datos): readonly RepoColumnDef<Horario>[] => [
   {
     key: 'groups',
     labelKey: 'repositories.horarios.col_use',
-    kind: 'truncate',
+    kind: 'uses',
     width: '260px',
-    // Uso: los sitios donde se usa, separados por comas («Grupos, VUI, Buzones de email»). El detalle, en el editor.
+    // Uso: los sitios donde se usa (Grupos, Calendarios), cada uno con su cifra y, al pasar el ratón, sus nombres.
     accessor: d.uso,
+    uses: d.usos,
     sortable: true,
   },
 ];
@@ -126,6 +128,15 @@ export class HorariosPageComponent {
         return estadoEn(h, fecha, minutos, this.festivos.items()).abierto ? 'open' : 'closed';
       },
       uso: (h) => this.usoTexto(h.id),
+      usos: (h) => {
+        this.lang();
+        return usosDelHorario(h.id, this.groupsStore.groups()).map((u) => ({
+          label: this.translate.instant(`repositories.horarios.uses.${CLAVE_DE_USO[u.tipo]}`) as string,
+          icon: ICONO_DE_USO[u.tipo],
+          tone: u.tipo === 'grupos' ? ('info' as const) : ('warning' as const),
+          names: u.items.map((i) => i.nombre),
+        }));
+      },
     }),
     fields: [{ key: 'name', labelKey: 'repositories.columns.name', type: 'text', required: true, placeholderKey: 'repositories.horarios.name_placeholder' }],
     searchKeys: ['name', 'timezone', 'description'],

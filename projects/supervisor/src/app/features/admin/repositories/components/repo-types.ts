@@ -10,7 +10,7 @@ export interface RepoEntity {
 }
 
 /** Visual presentation for a column. `count` es una cifra: la lista la escribe con el separador de miles del idioma. */
-export type RepoColumnKind = 'text' | 'truncate' | 'status' | 'count' | 'date' | 'groups' | 'schedule';
+export type RepoColumnKind = 'text' | 'truncate' | 'status' | 'count' | 'date' | 'groups' | 'schedule' | 'uses';
 
 export interface RepoColumnDef<T extends RepoEntity> {
   readonly key: string;
@@ -36,6 +36,8 @@ export interface RepoColumnDef<T extends RepoEntity> {
   readonly countOpensSection?: string;
   /** Para `kind === 'schedule'`: el horario de la fila para dibujarlo (grupos de días con su barra de 24 h y el detalle por día). */
   readonly schedule?: (item: T) => ScheduleCell;
+  /** Para `kind === 'uses'`: los sitios donde se usa la fila (grupos, calendarios…), cada uno con su nombre, cifra y los nombres para el tooltip. */
+  readonly uses?: (item: T) => readonly UseEntry[];
   /** Para `kind === 'schedule'`: cuántos grupos se ven en la celda; el resto, tras un «+N». */
   readonly scheduleMax?: number;
   /** Una celda sin dato dice «—» (`sc-celda-vacia`, DD-197) en vez de quedarse en blanco. */
@@ -57,6 +59,13 @@ export interface ScheduleCell {
   readonly groups: readonly ScheduleGroup[];
   /** El detalle por día, para el tooltip. */
   readonly days: readonly { readonly name: string; readonly lines: readonly string[]; readonly closed: boolean }[];
+}
+
+export interface UseEntry {
+  readonly label: string;
+  readonly icon: string;
+  readonly tone: 'info' | 'warning';
+  readonly names: readonly string[];
 }
 
 export interface RepoStatusEntry {

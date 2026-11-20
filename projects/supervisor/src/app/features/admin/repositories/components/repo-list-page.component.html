@@ -104,6 +104,26 @@
           (activated)="onCountOpen(item, col.field)"
         />
       }
+    } @else if (usesFor(item, col.field); as usos) {
+      <!-- Uso: un sitio por etiqueta (icono, nombre y cifra); al pasar el ratón, a cuáles se refiere. -->
+      @if (usos.length === 0) {
+        <sc-celda-vacia />
+      } @else {
+        <span class="usos">
+          @for (u of usos; track u.label) {
+            <span class="uso" [class.uso--cal]="u.tone === 'warning'" [pTooltip]="usoTip" tooltipPosition="top" tabindex="0">
+              <sc-icon [name]="u.icon" [size]="16" aria-hidden="true" />{{ u.label }} <span class="uso__cifra">{{ u.names.length }}</span>
+            </span>
+            <ng-template #usoTip>
+              <ul class="uso-tip" role="list">
+                @for (n of u.names; track $index) {
+                  <li>{{ n }}</li>
+                }
+              </ul>
+            </ng-template>
+          }
+        </span>
+      }
     } @else if (scheduleFor(item, col.field); as c) {
       <!-- Horario: grupos de días con su franja y su barra de 24 h; el detalle por día, en el tooltip; con más grupos, un «+N» que abre el resto. -->
       @if (c.cell.groups.length === 0) {
