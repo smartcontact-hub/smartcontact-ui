@@ -50,18 +50,15 @@
               (input)="update('description', $any($event.target).value)"
             />
             <!--
-              Las horas, por grupos de días: el día pesa, la hora se lee, lo que une va callado. En dos líneas como mucho;
-              lo que no cabe, en «+N», que enseña el resto al pasar o al llegar con el teclado.
+              Las horas, por grupos de días, como en la tabla de la lista: el día en su etiqueta del DS y sus horas
+              separadas por comas. En dos líneas como mucho; lo que no cabe, en «+N», que enseña el resto al pasar.
             -->
             <ul class="tp-cierre__resumen t-num" [scCabe]="2" (scCabeFuera)="resumenFuera.set($event)" [attr.aria-label]="descripcion()" role="list">
               @for (g of resumen(); track g.dias) {
                 <li class="tp-cierre__grupo">
-                  <span class="tp-cierre__grupo-dias">{{ g.dias }}</span>
+                  <sc-tag severity="info" [value]="g.dias" />
                   @for (h of g.horas; track $index; let ultima = $last) {
-                    <span class="tp-cierre__grupo-horas">{{ h }}</span>
-                    @if (!ultima) {
-                      <span class="tp-cierre__y" aria-hidden="true">y</span>
-                    }
+                    <span class="tp-cierre__grupo-horas">{{ h }}{{ ultima ? '' : ',' }}</span>
                   }
                 </li>
               } @empty {
@@ -72,12 +69,9 @@
                 <span class="tp-mas__pop">
                   @for (g of resumen().slice(resumen().length - resumenFuera()); track g.dias) {
                     <span class="tp-cierre__grupo">
-                      <span class="tp-cierre__grupo-dias">{{ g.dias }}</span>
+                      <sc-tag severity="info" [value]="g.dias" />
                       @for (h of g.horas; track $index; let ultima = $last) {
-                        <span class="tp-cierre__grupo-horas">{{ h }}</span>
-                        @if (!ultima) {
-                          <span class="tp-cierre__y" aria-hidden="true">y</span>
-                        }
+                        <span class="tp-cierre__grupo-horas">{{ h }}{{ ultima ? '' : ',' }}</span>
                       }
                     </span>
                   }

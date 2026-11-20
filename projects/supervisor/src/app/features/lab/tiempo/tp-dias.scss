@@ -14,7 +14,7 @@
 
   display: grid;
   /* Las horas, en una columna de ancho fijo: añadir una pausa no estrecha la barra. */
-  grid-template-columns: max-content minmax(0, 1fr) 23.5rem;
+  grid-template-columns: max-content minmax(0, 1fr) 26.5rem;
   column-gap: var(--s-3);
   row-gap: var(--s-1-5);
 }
@@ -31,42 +31,16 @@
 
 /* ── La ayuda: una línea, arriba, y una sola cosa a la vez ──────────────────────────────────────────────────────── */
 
+/* La ayuda: el aviso del DS (`sc-message`) a lo ancho y, si ofrece copiar, sus dos botones al lado. */
 .tp-dias__ayuda {
   grid-column: 1 / -1;
   display: flex;
   align-items: center;
   gap: var(--s-2);
-  min-block-size: 2.5rem;
   margin-block-end: var(--s-2);
-  padding: var(--s-1) var(--s-1) var(--s-1) var(--s-3);
-  border-radius: var(--r-md);
-  background: var(--tp-muted);
-  color: var(--tp-ink-2);
-  font-size: var(--t-13);
-  line-height: var(--sc-line-height-body-2);
-  font-weight: var(--sc-font-weight-regular);
-  transition-property: background-color, color;
-  transition-duration: 200ms;
-  transition-timing-function: ease-out;
-
-  sc-tp-icono {
-    flex: none;
-  }
-  &[data-tono='guia'],
-  &[data-tono='oferta'] {
-    background: var(--tp-accent-soft);
-    color: var(--tp-accent-ink);
-  }
-  &[data-tono='aviso'] {
-    background: var(--tp-franja-fondo);
-    color: color-mix(in oklch, var(--tp-si) 75%, var(--tp-ink));
-  }
-  &[data-tono='error'] {
-    background: var(--tp-danger-soft);
-    color: var(--tp-danger-ink);
-  }
 }
-.tp-dias__ayuda-txt {
+.tp-dias__ayuda-msg {
+  display: block;
   flex: 1;
   min-inline-size: 0;
 }
@@ -260,7 +234,7 @@
 .tp-dias__horas {
   display: flex;
   align-items: center;
-  gap: var(--s-2);
+  gap: var(--s-3);
   min-inline-size: 0;
   padding-inline-start: var(--s-2);
 }
@@ -268,32 +242,18 @@
   position: relative;
   display: inline-flex;
   align-items: center;
-  gap: var(--s-0-5);
-  block-size: 2rem;
-  padding-inline: var(--s-0-5);
+  gap: var(--s-1);
+  /* Sin caja propia: las dos horas ya son campos del DS, con su borde. La franja se agrupa por el aire (entre franjas,
+   * el doble que dentro) y se marca entera con el aro al escribir o al elegir su barra. */
   border-radius: var(--r-sm);
-  background: var(--tp-franja-fondo);
-  box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--tp-si) 22%, transparent);
 
   .tp-dias__fila.is-mal & {
-    background: var(--tp-danger-soft);
-    box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--tp-danger) 35%, transparent);
+    box-shadow: 0 0 0 2px var(--tp-danger);
   }
 }
-.tp-dias__horas .tp-hora {
-  inline-size: 3.25rem;
-  block-size: 1.625rem;
-  border-color: transparent;
-  border-radius: var(--r-xs);
-  background: transparent;
-}
-.tp-dias__horas .tp-hora:hover {
-  border-color: color-mix(in oklch, var(--tp-si) 45%, transparent);
-  background: var(--tp-surface);
-}
-.tp-dias__horas .tp-hora:focus {
-  border-color: color-mix(in oklch, var(--tp-accent) 40%, transparent);
-  background: var(--tp-surface);
+/* Cada hora, el selector de hora del DS: ancho para «00:00» y su relleno, sin icono (como en la ficha de horario). */
+.tp-dias__hora {
+  inline-size: 4rem;
 }
 /* Escribir en una franja la resalta entera, con su barra: se edita la franja, no una hora suelta. Elegir su barra, igual. */
 .tp-dias__franja:focus-within,
@@ -303,9 +263,6 @@
 /* La barra elegida ya lleva su aro (`is-elegida`): el contorno del foco sobra. */
 .tp-dias .tp-sem__barra:focus {
   outline: none;
-}
-.tp-dias__horas .tp-hora[aria-invalid='true'] {
-  border-color: var(--tp-danger);
 }
 .tp-dias__franja .tp-franja__a {
   background: color-mix(in oklch, var(--tp-si) 45%, transparent);
@@ -380,7 +337,8 @@
 }
 .tp-dias__pausa,
 .tp-dias__quitar {
-  color: var(--tp-ink-3);
+  flex: none;
+  white-space: nowrap;
 }
 /* El «x» va al borde de la tarjeta: su tooltip se abre hacia dentro, no se sale. */
 .tp-dias__quitar[data-tip]::after {
@@ -402,20 +360,23 @@
  * enseña el día entero: cada franja con sus horas y, entre ellas, cada pausa con su «Quitar». Si abajo no cabe (la barra
  * de guardar tapa), se abre hacia arriba: lo decide `orientar()` al llegar.
  */
+/* «+N»: el mismo que en la tabla de la lista, neutro y con su borde; las franjas ya no van en caja verde. */
 .tp-mas__btn.tp-dias__mas-btn {
-  block-size: 2rem;
+  block-size: 1.75rem;
   padding-inline: var(--s-2);
-  border-radius: var(--r-sm);
-  background: var(--tp-franja-fondo);
-  box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--tp-si) 22%, transparent);
-  font-size: var(--t-13);
-  line-height: var(--sc-line-height-body-2);
-  color: color-mix(in oklch, var(--tp-si) 75%, var(--tp-ink));
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-full);
+  background: var(--sc-bg-surface);
+  box-shadow: none;
+  font-size: var(--sc-font-size-caption);
+  line-height: var(--sc-line-height-caption);
+  font-weight: var(--sc-font-weight-semibold);
+  color: var(--sc-text-primary);
 
   .tp-mas:hover > &,
   .tp-mas:focus-within > & {
-    background: color-mix(in oklch, var(--tp-si) 18%, var(--tp-surface));
-    color: color-mix(in oklch, var(--tp-si) 60%, var(--tp-ink));
+    border-color: var(--sc-border-strong);
+    background: var(--sc-bg-secondary-subtle);
   }
 }
 .tp-mas__pop.tp-dias__mas-pop {

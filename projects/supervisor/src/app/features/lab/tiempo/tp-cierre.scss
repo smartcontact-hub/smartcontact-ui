@@ -95,8 +95,8 @@
   }
 }
 /*
- * Las horas bajo el nombre, por grupos de días: el día pesa (en su pastilla, que es por donde se busca), la hora se lee
- * y la «y» que las une va callada. Entre grupos, el doble de aire que dentro: se agrupan sin comas ni rayas.
+ * Las horas bajo el nombre, por grupos de días, como en la tabla de la lista: el día en su etiqueta del DS (`sc-tag`
+ * info) y sus horas. Entre grupos, el doble de aire que dentro.
  */
 .tp-cierre__resumen {
   /* Fluye como una frase: un grupo largo se parte donde haga falta y «+N» sigue al último que cabe. */
@@ -122,27 +122,10 @@
 .tp-cierre__resumen > .tp-mas {
   vertical-align: middle;
 }
-.tp-cierre__grupo-dias {
-  display: inline-flex;
-  align-items: center;
-  block-size: 1.375rem;
-  padding-inline: var(--s-1-5);
-  border-radius: var(--r-xs);
-  background: var(--tp-muted);
-  font-size: var(--t-12);
-  line-height: var(--sc-line-height-caption);
-  font-weight: var(--sc-font-weight-semibold);
-  color: var(--tp-ink);
-}
 .tp-cierre__grupo-horas {
   font-weight: var(--sc-font-weight-regular);
   white-space: nowrap;
   color: var(--tp-ink-2);
-}
-.tp-cierre__y {
-  font-size: var(--t-12);
-  line-height: var(--sc-line-height-caption);
-  color: var(--tp-ink-4);
 }
 .tp-cierre__grupo--cerrado {
   color: var(--tp-ink-3);
@@ -271,9 +254,10 @@
   align-items: center;
   gap: var(--s-2) var(--s-5);
   padding: var(--s-2) var(--s-4);
-  border-radius: var(--r-lg);
-  background: var(--tp-surface);
-  box-shadow: var(--tp-ring);
+  /* La misma caja que la sección de la semana: su radio, su borde y su fondo. */
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-400);
+  background: var(--sc-bg-surface);
   font-size: var(--t-13);
   line-height: var(--sc-line-height-body-2);
 }

@@ -13,7 +13,8 @@
 
 .tp,
 .tp-capa {
-  --tp-canvas: #f5f5f7;
+  /* El suelo de toda la plataforma (`--sc-bg-canvas`: blanco en claro); las cajas se separan por su borde. */
+  --tp-canvas: var(--sc-bg-canvas);
   --tp-surface: #ffffff;
   --tp-subtle: #fafafb;
   --tp-muted: #f0f0f3;
@@ -27,9 +28,10 @@
   --tp-inverse: #15172a;
   --tp-on-inverse: #f4f4f8;
 
-  --tp-accent: #5b5bd6;
-  --tp-accent-hover: #4e4ec9;
-  --tp-accent-ink: #4040b2;
+  /* El acento es el del DS (`accent`, azul): el mismo de las etiquetas de días de la tabla. */
+  --tp-accent: var(--sc-bg-accent);
+  --tp-accent-hover: var(--sc-bg-accent-hover);
+  --tp-accent-ink: var(--sc-text-info);
   --tp-accent-soft: color-mix(in oklch, var(--tp-accent) 10%, var(--tp-surface));
   --tp-accent-ring: color-mix(in oklch, var(--tp-accent) 28%, transparent);
 
@@ -108,7 +110,7 @@
 
 .sc-dark .tp,
 .sc-dark .tp-capa {
-  --tp-canvas: #0a0b10;
+  --tp-canvas: var(--sc-bg-canvas);
   --tp-surface: #12131a;
   --tp-subtle: #15161e;
   --tp-muted: #1c1d27;
@@ -121,9 +123,9 @@
   --tp-hair-strong: rgb(255 255 255 / 0.12);
   --tp-inverse: #eeeff5;
   --tp-on-inverse: #12131a;
-  --tp-accent: #7b7bf0;
-  --tp-accent-hover: #8d8df4;
-  --tp-accent-ink: #a9a9fb;
+  --tp-accent: var(--sc-bg-accent);
+  --tp-accent-hover: var(--sc-bg-accent-hover);
+  --tp-accent-ink: var(--sc-text-info);
   --tp-open-ink: #4fd389;
   --tp-warn-ink: #f2b24d;
   --tp-danger-ink: #ff7b80;
@@ -177,7 +179,8 @@ sc-tp-festivos {
   :where(h1, h2, h3, h4, p) {
     margin: 0;
   }
-  :where(button, input, select) {
+  /* Solo los controles propios: los de PrimeNG (clase `p-…`) traen su letra y su color, que van en una capa y perderían. */
+  :where(button, input, select):where(:not([class^='p-'], [class*=' p-'])) {
     font: inherit;
     color: inherit;
   }

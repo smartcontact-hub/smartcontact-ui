@@ -294,7 +294,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 235,
+      "usedInSupervisor": 242,
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "sobreObsoleto": [
         {
@@ -693,7 +693,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 8,
+      "usedInSupervisor": 10,
       "cuando": "Para elegir una fecha del calendario, cuando importa el día concreto y no un rango relativo («últimos 7 días»).",
       "sobreObsoleto": [],
       "fuente": "projects/ui-smartcontact/src/lib/components/datepicker/sc-datepicker.component.ts"
@@ -1403,7 +1403,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 7,
+      "usedInSupervisor": 8,
       "cuando": "Para un aviso EN LA PÁGINA, junto a lo que explica. Si es el resultado de una acción y puede desaparecer, `sc-toast`.",
       "sobreObsoleto": [],
       "fuente": "projects/ui-smartcontact/src/lib/components/message/sc-message.component.ts"
@@ -1849,7 +1849,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 78,
+      "usedInSupervisor": 80,
       "cuando": "Para elegir UNA de muchas. Si son pocas y caben a la vista, `sc-radiobutton` o `sc-selectbutton` ahorran un clic.",
       "sobreObsoleto": [],
       "fuente": "projects/ui-smartcontact/src/lib/components/select/sc-select.component.ts"
@@ -2076,7 +2076,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 40,
+      "usedInSupervisor": 44,
       "cuando": "Para clasificar o marcar un estado EN la fila. Si es un contador pegado a algo, `sc-badge`; si el usuario lo puede quitar, `sc-chip`.",
       "sobreObsoleto": [],
       "fuente": "projects/ui-smartcontact/src/lib/components/tag/sc-tag.component.ts"

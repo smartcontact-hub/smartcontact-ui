@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, HostListener, inject, linkedSignal, type OnInit, signal, type TemplateRef, viewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { ScButtonComponent, ScSectionCardComponent, ScSelectComponent } from '@smartcontact-hub/components';
+import { ScButtonComponent, ScSectionCardComponent, ScSelectComponent, ScTagComponent } from '@smartcontact-hub/components';
 import { TooltipModule } from 'primeng/tooltip';
 
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
@@ -49,7 +49,7 @@ const LISTA = '/lab/tiempo';
  */
 @Component({
   selector: 'sc-tp-horario',
-  imports: [ScButtonComponent, ScSectionCardComponent, ScSelectComponent, TooltipModule, TranslateModule, TpAvisosComponent, TpCabeDirective, TpDiasComponent, TpIconoComponent, TpModalComponent, TpSemanaComponent],
+  imports: [ScButtonComponent, ScSectionCardComponent, ScSelectComponent, ScTagComponent, TooltipModule, TranslateModule, TpAvisosComponent, TpCabeDirective, TpDiasComponent, TpIconoComponent, TpModalComponent, TpSemanaComponent],
   templateUrl: './tp-horario.page.html',
   // Hojas globales repartidas por dueño: cada una cabe en el presupuesto de estilos por componente.
   styleUrls: ['./tp-base.scss', './tp-piezas.scss', './tp-capas.scss', './tp-semana.scss', './tp-dias.scss', './tp-cierre.scss'],

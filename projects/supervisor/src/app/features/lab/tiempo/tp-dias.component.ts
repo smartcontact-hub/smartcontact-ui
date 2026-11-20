@@ -2,11 +2,18 @@ import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, HostListener, inject, input, output, signal, untracked } from '@angular/core';
 
 import { type Franja, type Semana, validarSemana } from '@features/admin/repositories/state/horarios.core.mjs';
-import { ScToggleSwitchComponent } from '@smartcontact-hub/components';
+import {
+  ScButtonComponent,
+  ScDatepickerComponent,
+  ScMessageComponent,
+  ScSelectComponent,
+  ScTagComponent,
+  ScToggleSwitchComponent,
+} from '@smartcontact-hub/components';
+import { TooltipModule } from 'primeng/tooltip';
 
 import { TpIconoComponent } from './tp-icono.component';
 import { CORTOS, horaCorta, LETRAS, NOMBRES, trozosDelDia } from './tp-modelo';
-import { TpHoraComponent } from './tp-piezas';
 import { PROBLEMA } from './tp-semana.component';
 import { contarUso } from './tp-usos';
 
@@ -61,6 +68,10 @@ interface Oferta {
 }
 
 type IconoDeAyuda = 'alert' | 'copy' | 'check' | 'info';
+/** El icono de cada aviso, con los nombres del DS. */
+const ICONO_AYUDA: Record<IconoDeAyuda, string> = { alert: 'warning', copy: 'content_copy', check: 'check_circle', info: 'info' };
+/** El tono de cada aviso, en la severidad de \`sc-message\`: la guía y la oferta, info; lo hecho, éxito; un problema, error. */
+const SEVERIDAD: Record<string, 'secondary' | 'info' | 'success' | 'danger'> = { neutro: 'secondary', guia: 'info', oferta: 'info', aviso: 'success', error: 'danger' };
 
 const igual = (a: readonly Franja[], b: readonly Franja[]): boolean => a.length === b.length && a.every((f, i) => f[0] === b[i][0] && f[1] === b[i][1]);
 const cruza = (f: Franja): boolean => f[1] <= f[0];
@@ -102,19 +113,21 @@ const esPausa = (h: { readonly min: number; readonly max: number }): boolean => 
  */
 @Component({
   selector: 'sc-tp-dias',
-  imports: [NgTemplateOutlet, ScToggleSwitchComponent, TpIconoComponent, TpHoraComponent],
+  imports: [NgTemplateOutlet, ScButtonComponent, ScDatepickerComponent, ScMessageComponent, ScSelectComponent, ScTagComponent, ScToggleSwitchComponent, TooltipModule, TpIconoComponent],
   template: `
     <div class="tp-dias" [class.is-arrastrando]="arrastre() !== null" [attr.data-arrastre]="arrastre()?.lado ?? null" role="group" aria-label="La semana, día a día">
       <!-- La ayuda: arriba, donde se empieza a leer, y una sola cosa a la vez. -->
-      <div class="tp-dias__ayuda" [attr.data-tono]="ayuda().tono" role="status" aria-live="polite">
-        <sc-tp-icono [nombre]="ayuda().icono" [tam]="16" />
-        <span class="tp-dias__ayuda-txt">{{ ayuda().texto }}</span>
+      <!-- El aviso del DS (\`sc-message\`): su color dice qué es (guía, oferta, hecho o problema) y la oferta lleva sus botones. -->
+      <div class="tp-dias__ayuda" [attr.data-tono]="ayuda().tono">
+        <sc-message class="tp-dias__ayuda-msg" [severity]="severidad()" [icon]="ICONO_AYUDA[ayuda().icono]">
+          <span role="status" aria-live="polite">{{ ayuda().texto }}</span>
+        </sc-message>
         @if (ofertaVisible(); as o) {
           <span class="tp-dias__ayuda-acc">
             @if (o.dias.length) {
-              <button type="button" class="tp-btn tp-btn--sm tp-btn--primary" (click)="aplicarOferta()">Sí, {{ o.dias.length === 1 ? 'también' : 'a los ' + o.dias.length }}</button>
+              <sc-button size="sm" [label]="'Sí, ' + (o.dias.length === 1 ? 'también' : 'a los ' + o.dias.length)" (clicked)="aplicarOferta()" />
             }
-            <button type="button" class="tp-btn tp-btn--sm tp-btn--ghost" (click)="soloEse()">Solo {{ nombreCon(o.dia) }}</button>
+            <sc-button size="sm" variant="secondary" appearance="outlined" [label]="'Solo ' + nombreCon(o.dia)" (clicked)="soloEse()" />
           </span>
         }
       </div>
@@ -128,25 +141,45 @@ const esPausa = (h: { readonly min: number; readonly max: number }): boolean => 
         <!-- Las horas que se ven: solas se ajustan a lo abierto; dos desplegables dejan elegir otras. -->
         <div class="tp-dias__vista" role="group" aria-label="Horas que se ven">
           <span>Ver de</span>
-          <span class="tp-dias__vista-sel">
-            <select aria-label="Ver desde" (change)="verDesde($any($event.target).value)">
-              @for (h of horasDesde(); track h.m) {
-                <option [value]="h.m" [selected]="h.m === rango().desde" [disabled]="h.no">{{ h.m / 60 }}</option>
-              }
-            </select>
-          </span>
+          <sc-select
+            class="tp-dias__vista-sel"
+            size="sm"
+            ariaLabel="Ver desde"
+            appendTo="body"
+            [options]="horasDesde()"
+            optionLabel="label"
+            optionValue="m"
+            optionDisabled="no"
+            [value]="rango().desde"
+            (valueChange)="verDesde($any($event))"
+          />
           <span>a</span>
-          <span class="tp-dias__vista-sel">
-            <select aria-label="Ver hasta" (change)="verHasta($any($event.target).value)">
-              @for (h of horasHasta(); track h.m) {
-                <option [value]="h.m" [selected]="h.m === rango().hasta" [disabled]="h.no">{{ h.m / 60 }}</option>
-              }
-            </select>
-          </span>
+          <sc-select
+            class="tp-dias__vista-sel"
+            size="sm"
+            ariaLabel="Ver hasta"
+            appendTo="body"
+            [options]="horasHasta()"
+            optionLabel="label"
+            optionValue="m"
+            optionDisabled="no"
+            [value]="rango().hasta"
+            (valueChange)="verHasta($any($event))"
+          />
           @if (ventana()) {
-            <button type="button" class="tp-btn tp-btn--ghost tp-btn--sm tp-dias__vista-btn" data-tip="Volver a ajustarse a lo abierto" (click)="ventana.set(null)">Ajustar</button>
+            <sc-button
+              class="tp-dias__vista-btn"
+              size="sm"
+              variant="secondary"
+              appearance="text"
+              label="Ajustar"
+              pTooltip="Volver a ajustarse a lo abierto"
+              tooltipPosition="top"
+              tooltipEvent="both"
+              (clicked)="ventana.set(null)"
+            />
           } @else if (rango().desde > 0 || rango().hasta < 1440) {
-            <button type="button" class="tp-btn tp-btn--ghost tp-btn--sm tp-dias__vista-btn" (click)="ponerVentana({ desde: 0, hasta: 1440 })">Todo el día</button>
+            <sc-button class="tp-dias__vista-btn" size="sm" variant="secondary" appearance="text" label="Todo el día" (clicked)="ponerVentana({ desde: 0, hasta: 1440 })" />
           }
         </div>
       </div>
@@ -265,9 +298,7 @@ const esPausa = (h: { readonly min: number; readonly max: number }): boolean => 
                       @if (j > 0) {
                         <span class="tp-dias__mas-pausa t-num">
                           <span>Pausa de {{ hora(f.franjas[j - 1][1]) }} a {{ hora(fr[0]) }}</span>
-                          <button type="button" class="tp-btn tp-btn--ghost tp-btn--sm" [attr.aria-label]="'Quitar la pausa de ' + hora(f.franjas[j - 1][1]) + ' a ' + hora(fr[0])" (click)="quitarPausa(f.dia, j)">
-                            Quitar
-                          </button>
+                          <sc-button size="sm" variant="secondary" appearance="text" label="Quitar" [ariaLabel]="'Quitar la pausa de ' + hora(f.franjas[j - 1][1]) + ' a ' + hora(fr[0])" (clicked)="quitarPausa(f.dia, j)" />
                         </span>
                       }
                       <ng-container [ngTemplateOutlet]="caja" [ngTemplateOutletContext]="{ $implicit: fr, dia: f.dia, j, n: f.franjas.length }" />
@@ -280,34 +311,36 @@ const esPausa = (h: { readonly min: number; readonly max: number }): boolean => 
                   mucho): juntar 9–14 con 22–2 daría de 9 a 2. La × de cada caja, en cambio, quita esa franja.
                 -->
                 <!-- Al pasar o al llegar con el teclado, la barra enseña el hueco que se rellena. -->
-                <button
-                  type="button"
-                  class="tp-btn tp-btn--ghost tp-btn--sm tp-dias__pausa tp-dias__quitar"
-                  [attr.aria-label]="'Quitar la pausa de ' + hora(f.franjas[0][1]) + ' a ' + hora(f.franjas[1][0])"
+                <sc-button
+                  class="tp-dias__pausa tp-dias__quitar"
+                  size="sm"
+                  variant="secondary"
+                  appearance="text"
+                  icon="close"
+                  label="Quitar pausa"
+                  [ariaLabel]="'Quitar la pausa de ' + hora(f.franjas[0][1]) + ' a ' + hora(f.franjas[1][0])"
                   (pointerenter)="verRelleno(f.dia)"
-                  (focus)="verRelleno(f.dia)"
+                  (focusin)="verRelleno(f.dia)"
                   (pointerleave)="relleno.set(null)"
-                  (blur)="relleno.set(null)"
-                  (click)="relleno.set(null); quitarPausa(f.dia, 1)"
-                >
-                  <sc-tp-icono nombre="minus" [tam]="14" />
-                  Quitar pausa
-                </button>
+                  (focusout)="relleno.set(null)"
+                  (clicked)="relleno.set(null); quitarPausa(f.dia, 1)"
+                />
               } @else if (f.pausa !== -1) {
                 <!-- Al pasar o al llegar con el teclado, la barra enseña dónde cae la pausa antes del clic. -->
-                <button
-                  type="button"
-                  class="tp-btn tp-btn--ghost tp-btn--sm tp-dias__pausa"
-                  [attr.aria-label]="'Añadir una pausa de ' + previaTexto(f.dia)"
+                <sc-button
+                  class="tp-dias__pausa"
+                  size="sm"
+                  variant="secondary"
+                  appearance="text"
+                  icon="add"
+                  label="Añadir pausa"
+                  [ariaLabel]="'Añadir una pausa de ' + previaTexto(f.dia)"
                   (pointerenter)="verPausa(f.dia)"
-                  (focus)="verPausa(f.dia)"
+                  (focusin)="verPausa(f.dia)"
                   (pointerleave)="corte.set(null)"
-                  (blur)="corte.set(null)"
-                  (click)="corte.set(null); pausa(f.dia)"
-                >
-                  <sc-tp-icono nombre="plus" [tam]="14" />
-                  Añadir pausa
-                </button>
+                  (focusout)="corte.set(null)"
+                  (clicked)="corte.set(null); pausa(f.dia)"
+                />
               }
             } @else {
               <span class="tp-dias__cerrado t-small">Cerrado</span>
@@ -320,13 +353,32 @@ const esPausa = (h: { readonly min: number; readonly max: number }): boolean => 
     <!-- Una franja, en su caja: sus dos horas, que se escriben, y «+1» o «24 h» si toca. -->
     <ng-template #caja let-fr let-dia="dia" let-j="j" let-n="n">
       <span class="tp-dias__franja" [attr.data-franja]="j" [class.is-elegida]="elegida()?.dia === dia && elegida()?.j === j">
-        <sc-tp-hora [valor]="fr[0]" [etiqueta]="etiqueta(dia, j, n) + ', abre'" (cambio)="ponerHora(dia, j, 0, $event)" />
+        <!-- Cada hora, el selector de hora del DS, como en la ficha de horario (una hora → \`sc-datepicker\` de solo hora). -->
+        <sc-datepicker
+          class="tp-dias__hora"
+          size="sm"
+          timeOnly
+          placeholder="hh:mm"
+          [showIcon]="false"
+          [ariaLabel]="etiqueta(dia, j, n) + ', abre'"
+          [value]="aHora(fr[0])"
+          (valueChange)="ponerHoraDe(dia, j, 0, $event)"
+        />
         <span class="tp-franja__a" aria-hidden="true"></span>
-        <sc-tp-hora [valor]="fr[1]" fin [etiqueta]="etiqueta(dia, j, n) + ', cierra'" (cambio)="ponerHora(dia, j, 1, $event)" />
+        <sc-datepicker
+          class="tp-dias__hora"
+          size="sm"
+          timeOnly
+          placeholder="hh:mm"
+          [showIcon]="false"
+          [ariaLabel]="etiqueta(dia, j, n) + ', cierra'"
+          [value]="aHora(fr[1])"
+          (valueChange)="ponerHoraDe(dia, j, 1, $event)"
+        />
         @if (fr[0] === 0 && fr[1] === 1440) {
-          <span class="tp-dias__marca">24 h</span>
+          <sc-tag class="tp-dias__marca" severity="success" value="24 h" />
         } @else if (fr[1] <= fr[0]) {
-          <span class="tp-dias__marca" data-tip="Acaba al día siguiente"><sc-tp-icono nombre="moon" [tam]="12" />+1</span>
+          <sc-tag class="tp-dias__marca" severity="secondary" value="+1" pTooltip="Acaba al día siguiente" tooltipPosition="top" />
         }
         <!-- Con más de una franja, cada caja se quita con su × (aparece al pasar o al llegar con el teclado). Con una sola, se cierra el día. -->
         @if (n > 1) {
@@ -334,7 +386,9 @@ const esPausa = (h: { readonly min: number; readonly max: number }): boolean => 
             type="button"
             class="tp-dias__borrar"
             [attr.aria-label]="'Quitar la franja de ' + hora(fr[0]) + ' a ' + hora(fr[1])"
-            [attr.data-tip]="'Quitar la franja de ' + hora(fr[0]) + ' a ' + hora(fr[1])"
+            [pTooltip]="'Quitar la franja de ' + hora(fr[0]) + ' a ' + hora(fr[1])"
+            tooltipPosition="top"
+            tooltipEvent="both"
             (click)="quitarFranja(dia, j)"
           >
             <sc-tp-icono nombre="x" [tam]="10" />
@@ -436,6 +490,8 @@ export class TpDiasComponent {
   });
 
   /** Una línea, lo más urgente primero: lo que está mal, «¿También…?», lo que pasó solo, cómo empezar, cómo se edita. */
+  protected readonly ICONO_AYUDA = ICONO_AYUDA;
+  protected readonly severidad = computed(() => SEVERIDAD[this.ayuda().tono] ?? 'secondary');
   protected readonly ayuda = computed<{ texto: string; icono: IconoDeAyuda; tono: string }>(() => {
     const e = this.error();
     if (e) return { texto: `${capital(NOMBRES[e.dia])}: ${PROBLEMA[e.codigo]}.`, icono: 'alert', tono: 'error' };
@@ -508,17 +564,17 @@ export class TpDiasComponent {
   protected readonly horasDesde = computed(() => {
     const n = this.imprescindible();
     const { hasta } = this.rango();
-    return Array.from({ length: 21 }, (_, k) => k * 60).map((m) => ({ m, no: (n !== null && m > n.desde) || m > hasta - VISTA_MINIMA }));
+    return Array.from({ length: 21 }, (_, k) => k * 60).map((m) => ({ m, label: String(m / 60), no: (n !== null && m > n.desde) || m > hasta - VISTA_MINIMA }));
   });
   protected readonly horasHasta = computed(() => {
     const n = this.imprescindible();
     const { desde } = this.rango();
-    return Array.from({ length: 21 }, (_, k) => 240 + k * 60).map((m) => ({ m, no: (n !== null && m < n.hasta) || m < desde + VISTA_MINIMA }));
+    return Array.from({ length: 21 }, (_, k) => 240 + k * 60).map((m) => ({ m, label: String(m / 60), no: (n !== null && m < n.hasta) || m < desde + VISTA_MINIMA }));
   });
-  protected verDesde(v: string): void {
+  protected verDesde(v: number | string): void {
     this.ponerVentana({ desde: Number(v), hasta: this.rango().hasta });
   }
-  protected verHasta(v: string): void {
+  protected verHasta(v: number | string): void {
     this.ponerVentana({ desde: this.rango().desde, hasta: Number(v) });
   }
 
@@ -667,6 +723,23 @@ export class TpDiasComponent {
    * Escribir una hora. Cerrar a las 00:00 es cerrar a medianoche (24:00). Abrir después de la hora de cierre mueve el
    * cierre con la franja entera, como en una agenda; la noche se escribe en el cierre (de 22:00 a 06:00 lleva «+1»).
    */
+  /** La hora de un minuto del día, para el selector del DS; la misma fecha para el mismo minuto, para no repintarlo en balde. */
+  private readonly fechas = new Map<number, Date>();
+  protected aHora(minutos: number): Date {
+    const m = minutos % 1440;
+    let d = this.fechas.get(m);
+    if (!d) {
+      d = new Date(2000, 0, 1, Math.floor(m / 60), m % 60);
+      this.fechas.set(m, d);
+    }
+    return d;
+  }
+  /** Lo que devuelve el selector, en minutos. Vaciado no cambia la franja: se quita con su ×. */
+  protected ponerHoraDe(dia: number, j: number, lado: 0 | 1, hora: Date | null): void {
+    if (!hora) return;
+    this.ponerHora(dia, j, lado, hora.getHours() * 60 + hora.getMinutes());
+  }
+
   protected ponerHora(dia: number, j: number, lado: 0 | 1, minutos: number): void {
     const x = this.actual()[dia]?.[j];
     if (!x) return;
