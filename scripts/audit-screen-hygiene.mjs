@@ -443,6 +443,8 @@ if (process.argv[1] && process.argv[1].endsWith('audit-screen-hygiene.mjs')) {
   )
     .split('\n')
     .filter(Boolean)
+    // LABORATORIO «Tiempo» premium (rama experimental que no se funde): su propio sistema visual, fuera del DS a propósito.
+    .filter((f) => !f.includes('/features/lab/tiempo/'))
     .sort();
 
   if (!ficheros.length) {

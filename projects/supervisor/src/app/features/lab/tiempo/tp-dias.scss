@@ -1,0 +1,467 @@
+/*
+ * LABORATORIO «Tiempo», cierre de Horarios: la semana en una lista de siete días (tp-dias.component.ts). Arriba, la
+ * ayuda de una línea; en cada fila, el interruptor del día, la barra y cada franja en su caja. Lo que no se atiende va en
+ * gris: un día cerrado no es un error, y el rojo queda para los errores. Las piezas de la barra (pista, asas, globo, raya
+ * de «ahora») son las de tp-semana.scss; aquí, la raya de ahora va en el color de «Hoy». Hoja global (ViewEncapsulation.None) que cuelga entera de `.tp`.
+ */
+
+.tp-dias {
+  /* Gris en vez de rojo, para todas las piezas de la barra que lo leen. */
+  --tp-no: var(--tp-muted);
+  --tp-no-raya: color-mix(in oklch, var(--tp-ink) 10%, var(--tp-muted));
+  /* Una franja, en la barra y en su caja: el mismo verde, para que se lean como la misma cosa. */
+  --tp-franja-fondo: color-mix(in oklch, var(--tp-si) 10%, var(--tp-surface));
+
+  display: grid;
+  /*
+   * Las horas, en una columna de ancho fijo: añadir una pausa no estrecha la barra. Cabe la fila más ancha, dos franjas con
+   * el aire entre ellas y «Quitar pausa».
+   */
+  grid-template-columns: max-content minmax(0, 1fr) 29rem;
+  column-gap: var(--s-3);
+  row-gap: var(--s-1-5);
+}
+.tp-dias.is-arrastrando {
+  cursor: ew-resize;
+  user-select: none;
+}
+.tp-dias[data-arrastre='mover'] {
+  cursor: grabbing;
+}
+.tp-dias[data-arrastre='pintar'] {
+  cursor: col-resize;
+}
+
+/* ── La ayuda: una línea, arriba, y una sola cosa a la vez ──────────────────────────────────────────────────────── */
+
+/* La ayuda: el aviso del DS (`sc-message`) a lo ancho y, si ofrece copiar, sus dos botones al lado. */
+.tp-dias__ayuda {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  margin-block-end: var(--s-2);
+}
+.tp-dias__ayuda-msg {
+  display: block;
+  flex: 1;
+  min-inline-size: 0;
+}
+.tp-dias__ayuda-acc {
+  display: inline-flex;
+  flex: none;
+  gap: var(--s-1);
+}
+
+/* ── El eje y las horas que se ven ──────────────────────────────────────────────────────────────────────────────── */
+
+.tp-dias__eje,
+.tp-dias__fila {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  align-items: center;
+}
+.tp-dias__horas-eje {
+  grid-column: 2;
+  position: relative;
+  block-size: 1rem;
+  span {
+    position: absolute;
+    translate: -50% 0;
+  }
+  /* Las de los bordes, hacia dentro: no se salen de la pista. */
+  span.is-ini {
+    translate: 0 0;
+  }
+  span.is-fin {
+    translate: -100% 0;
+  }
+}
+.tp-dias__vista {
+  grid-column: 3;
+  display: flex;
+  align-items: center;
+  gap: var(--s-1-5);
+  padding-inline-start: var(--s-2);
+  white-space: nowrap;
+}
+/* «Ver de 8 a 19»: cada hora, un desplegable pequeño que se lee como parte de la frase. */
+.tp-dias__vista-sel {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  block-size: 1.5rem;
+  border-radius: var(--r-xs);
+  background: var(--tp-surface);
+  box-shadow: var(--tp-ring);
+  transition-property: box-shadow;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+
+  &:hover {
+    box-shadow: var(--tp-ring-hover);
+  }
+  &:focus-within {
+    box-shadow: 0 0 0 1px var(--tp-accent), 0 0 0 3px var(--tp-accent-ring);
+  }
+  select {
+    appearance: none;
+    field-sizing: content;
+    min-inline-size: 2.25rem;
+    block-size: 100%;
+    padding-inline: var(--s-2);
+    border: 0;
+    background: transparent;
+    font: inherit;
+    font-weight: var(--sc-font-weight-semibold);
+    text-align: center;
+    color: var(--tp-ink);
+    cursor: pointer;
+    outline: none;
+  }
+}
+.tp-dias__vista-btn {
+  margin-inline-start: var(--s-1);
+  color: var(--tp-ink-3);
+}
+
+/* ── Cada día ───────────────────────────────────────────────────────────────────────────────────────────────────── */
+
+.tp-dias__fila {
+  position: relative;
+  block-size: 2.5rem;
+}
+/*
+ * El día: el interruptor del DS (`sc-toggleswitch`) y su nombre como etiqueta, que también lo pulsa. Encendido, en el
+ * verde de las barras (`--tp-si`, el mismo hex) para que interruptor y barra digan lo mismo con el mismo color.
+ */
+.tp-dias__dia {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1-5);
+  /* El aire de alrededor es el del anillo que marca los días que copiarían al de arriba. */
+  margin-inline-start: calc(-1 * var(--s-1-5));
+  padding: var(--s-1) var(--s-1-5);
+  border-radius: var(--r-sm);
+  color: var(--tp-ink-3);
+
+  /* Los tokens del interruptor se heredan: se dicen aquí, sin tocar las clases de dentro del componente. */
+  --p-toggleswitch-checked-background: var(--tp-si);
+  --p-toggleswitch-checked-hover-background: var(--tp-si-borde);
+
+  &.is-abierto {
+    color: var(--tp-ink);
+  }
+}
+/* Todos los días con el mismo relleno, para que el de hoy, en su pastilla, no se salga de la columna. */
+.tp-dias__dia-nombre {
+  display: inline-flex;
+  justify-content: center;
+  min-inline-size: 2.5rem;
+  margin-inline-start: calc(-1 * var(--s-1));
+  padding: var(--s-0-5) var(--s-1-5);
+  border-radius: var(--r-full);
+  cursor: pointer;
+}
+/*
+ * Hoy, sin palabra: el día en una pastilla clara del color de la raya de ahora, que se leen juntas. Clara y no rellena:
+ * el azul lleno es del foco y de lo elegido, y un «Vie» relleno se leía como algo elegido.
+ */
+.tp-dias__dia-nombre.is-hoy {
+  background: var(--sc-bg-info-subtle);
+  color: var(--sc-text-info);
+}
+.tp-dias .tp-sem__ahora {
+  /* La raya es fina, pero la zona que saca su tooltip («Ahora, 7:57») es más ancha: se encuentra sin apuntar fino. */
+  inset-block: -0.125rem;
+  inline-size: 0.75rem;
+  margin-inline-start: -0.375rem;
+  background: linear-gradient(
+    to right,
+    transparent calc(50% - 3px),
+    var(--tp-surface) calc(50% - 3px) calc(50% - 1px),
+    var(--tp-accent) calc(50% - 1px) calc(50% + 1px),
+    var(--tp-surface) calc(50% + 1px) calc(50% + 3px),
+    transparent calc(50% + 3px)
+  );
+  box-shadow: none;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset-block-start: -0.1875rem;
+    inset-inline-start: calc(50% - 0.25rem);
+    inline-size: 0.5rem;
+    block-size: 0.5rem;
+    border-radius: var(--r-full);
+    background: var(--tp-accent);
+    box-shadow: 0 0 0 2px var(--tp-surface);
+  }
+}
+/*
+ * Los días que cambiaría «¿También…?»: su pista, teñida del azul claro de la ayuda, sin aro. El aro es del foco: con
+ * cuatro aros a la vez no se sabía dónde estaba uno.
+ */
+.tp-dias__fila.is-ofrecido .tp-sem__pista:not(.is-cerrada) {
+  background-color: var(--sc-bg-info-subtle);
+}
+.tp-dias__pista.is-cerrada {
+  background: var(--tp-hatch), var(--tp-muted);
+}
+.tp-dias__fila.is-mal .tp-sem__pista {
+  box-shadow: 0 0 0 2px var(--tp-danger);
+}
+.tp-dias__fila:hover .tp-sem__asa::before {
+  opacity: 1;
+}
+/* La pausa que pondría un clic al pasar por una barra: un hueco de una hora, con su hora encima. */
+.tp-dias__corte {
+  position: absolute;
+  inset-block: 0.1875rem;
+  z-index: 3;
+  border-inline: 1.5px dashed var(--tp-si);
+  background: color-mix(in oklch, var(--tp-surface) 78%, var(--tp-si));
+  pointer-events: none;
+
+  .tp-sem__globo {
+    inset-block-end: calc(100% + 0.375rem);
+  }
+}
+/* El hueco que rellenaría «Quitar pausa»: del verde de la barra, a rayas, con cómo queda el día encima. */
+.tp-dias__corte--relleno {
+  border-inline-color: var(--tp-si);
+  background: repeating-linear-gradient(135deg, color-mix(in oklch, var(--tp-si) 55%, var(--tp-surface)) 0 4px, color-mix(in oklch, var(--tp-si) 30%, var(--tp-surface)) 4px 8px);
+}
+.tp-dias__pista.is-cortando .tp-sem__barra.is-movible {
+  cursor: pointer;
+}
+
+/* ── Las horas: cada franja en su caja, del verde de su barra; se escriben donde se leen ────────────────────────── */
+
+/* Entre franjas, el doble de aire que dentro (7 · 14 · 28): cada par de horas se lee como una pieza. */
+.tp-dias__horas {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-2);
+  min-inline-size: 0;
+  padding-inline-start: var(--s-2);
+}
+.tp-dias__franja {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
+  /* Sin caja propia: las dos horas ya son campos del DS, con su borde. La franja se agrupa por el aire (entre franjas,
+   * el doble que dentro) y se marca entera con el aro al escribir o al elegir su barra. */
+  border-radius: var(--r-sm);
+
+  .tp-dias__fila.is-mal & {
+    box-shadow: 0 0 0 2px var(--tp-danger);
+  }
+}
+/* Cada hora, el selector de hora del DS: ancho para «00:00» y su relleno, sin icono (como en la ficha de horario). */
+.tp-dias__hora {
+  inline-size: 4rem;
+}
+/*
+ * Un solo aro a la vez, el del foco. Escribir en una hora lleva el aro del campo del DS y nada más: su barra se queda
+ * entera y las demás del día se apagan, para ver qué barra se está escribiendo sin otro aro. Una barra elegida con un
+ * clic lleva el suyo (`is-elegida`), que es su foco: el contorno del navegador sobra.
+ */
+.tp-dias .tp-sem__barra {
+  transition-property: opacity;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+}
+.tp-dias__fila.has-foco .tp-sem__barra:not(.is-enlazada) {
+  opacity: 0.35;
+}
+.tp-dias .tp-sem__barra:focus {
+  outline: none;
+}
+.tp-dias__franja .tp-franja__a {
+  background: color-mix(in oklch, var(--tp-si) 45%, transparent);
+}
+/*
+ * La × de una franja: en el aire que la separa de la siguiente, a su altura, no en su esquina, donde se montaba sobre el
+ * aro del campo con el foco. Aparece al pasar por la franja o al llegar con el teclado; se pulsa en un aro de 1,5rem
+ * aunque se vea más pequeña. El icono es la X del DS (quitar).
+ */
+.tp-dias__borrar {
+  position: absolute;
+  z-index: 2;
+  inset-block-start: 50%;
+  inset-inline-end: calc(-0.5 * (var(--sc-spacing-2) + 1rem));
+  display: grid;
+  place-items: center;
+  inline-size: 1rem;
+  block-size: 1rem;
+  padding: 0;
+  border: 0;
+  border-radius: var(--sc-radius-full);
+  background: transparent;
+  font-size: var(--sc-font-size-caption);
+  color: var(--sc-icon-secondary);
+  cursor: pointer;
+  opacity: 0;
+  translate: 0 -50%;
+  transition-property: opacity, background-color, color;
+  transition-duration: 120ms;
+  transition-timing-function: ease-out;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -0.25rem;
+  }
+  .tp-dias__franja:hover > &,
+  .tp-dias__franja:focus-within > & {
+    opacity: 1;
+  }
+  &:hover {
+    background: var(--sc-bg-danger-subtle);
+    color: var(--sc-text-danger);
+  }
+  &:focus-visible {
+    outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
+    outline-offset: 1px;
+  }
+}
+/* En la lista de «+N», las franjas van una debajo de otra: la × va al final de la suya, dentro de la lista. */
+.tp-dias__mas-pop .tp-dias__franja {
+  padding-inline-end: calc(1rem + var(--s-3));
+}
+.tp-dias__mas-pop .tp-dias__borrar {
+  inset-inline-end: 0;
+}
+/* El «+» de la franja nueva al pasar: el de añadir del DS, a la talla del texto pequeño. */
+.tp-dias .tp-sem__nueva {
+  font-size: var(--sc-font-size-caption);
+}
+.tp-dias.is-arrastrando .tp-dias__borrar {
+  visibility: hidden;
+}
+
+/* «+1» y «24 h», dentro de la caja de su franja. */
+.tp-dias__marca {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-0-5);
+  margin-inline: var(--s-0-5) var(--s-1);
+  font-size: var(--t-11);
+  line-height: var(--sc-line-height-caption);
+  font-weight: var(--sc-font-weight-semibold);
+  color: color-mix(in oklch, var(--tp-si) 75%, var(--tp-ink));
+}
+.tp-dias__pausa,
+.tp-dias__quitar {
+  flex: none;
+  white-space: nowrap;
+}
+/* El «x» va al borde de la tarjeta: su tooltip se abre hacia dentro, no se sale. */
+.tp-dias__quitar[data-tip]::after {
+  inset-inline-start: auto;
+  inset-inline-end: 0;
+  translate: 0 0.125rem;
+}
+.tp-dias__quitar[data-tip]:hover::after,
+.tp-dias__quitar[data-tip]:focus-visible::after {
+  translate: 0 0;
+}
+.tp-dias__cerrado {
+  padding-inline: var(--s-1);
+  color: var(--tp-ink-3);
+}
+
+/*
+ * «+N»: un día con más franjas de las que caben al lado de su barra. Al pulsarlo, el globo de PrimeNG enseña el día
+ * entero: cada franja con sus horas y, entre ellas, cada pausa con su «Quitar». PrimeNG lo coloca (abajo o arriba).
+ */
+.tp-dias__mas-lista {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--s-1);
+}
+/*
+ * Un día con muchas franjas no trepa por encima de la barra de arriba: la lista se queda en un alto que cabe abajo o
+ * arriba de la fila y lo demás se desplaza dentro (Intro a una hora de abajo la trae a la vista). El borde de aire
+ * deja ver entero el aro de foco de las cajas de los extremos.
+ */
+.tp-dias__mas-cuerpo {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--s-1);
+  max-block-size: min(22rem, 45vh);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--s-0-5);
+  margin: calc(-1 * var(--s-0-5));
+}
+.tp-dias__mas-tit {
+  padding: var(--s-0-5) var(--s-1) var(--s-1);
+  font-size: var(--t-12);
+  line-height: var(--sc-line-height-caption);
+  font-weight: var(--sc-font-weight-semibold);
+  color: var(--tp-ink-2);
+}
+.tp-dias__mas-pausa {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  padding-inline: var(--s-1) 0;
+  font-size: var(--t-12);
+  line-height: var(--sc-line-height-caption);
+  color: var(--tp-ink-3);
+
+  .tp-btn {
+    color: var(--tp-ink-3);
+  }
+}
+
+/*
+ * La cascada: los días que siguen al que se cambia llegan tras él, más despacio cuanto más lejos (`--k`, filas de
+ * distancia). Al arrastrar el lunes, de martes a viernes van detrás como una ola.
+ */
+.tp-dias__fila .tp-sem__barra {
+  transition-duration: calc(140ms + var(--k, 0) * 45ms);
+}
+/* La copia que llega: al abrir un día, sus barras bajan (o suben) desde la fila de la que copian. */
+@media (prefers-reduced-motion: no-preference) {
+  .tp-dias__fila.is-baja .tp-sem__barra {
+    animation: tp-dias-llega 320ms var(--tp-ease) both;
+  }
+  .tp-dias__fila.is-baja .tp-dias__franja {
+    animation: tp-dias-aparece 240ms ease-out both;
+  }
+}
+@keyframes tp-dias-llega {
+  from {
+    translate: 0 var(--salto, 0);
+    opacity: 0.5;
+  }
+}
+@keyframes tp-dias-aparece {
+  from {
+    opacity: 0;
+  }
+}
+
+/* Sin sitio, la columna de las horas se ajusta a lo que tiene y «Ver de … a …» se va: las horas se ven solas. */
+@container semana (max-width: 44rem) {
+  .tp-dias {
+    grid-template-columns: max-content minmax(0, 1fr) auto;
+  }
+  .tp-dias__vista {
+    display: none;
+  }
+}
+/* Con la barra estrecha, las horas impares y las pegadas a los extremos se callan: «18 1920» no se lee. */
+@container semana (max-width: 52rem) {
+  .tp-dias__horas-eje span:is(.is-impar, .is-junto):not(.is-ini, .is-fin) {
+    display: none;
+  }
+}

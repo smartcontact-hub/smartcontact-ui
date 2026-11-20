@@ -50,6 +50,8 @@ import { EquiposStore } from '../state/equipos.store';
 import { IntencionesStore } from '../state/intenciones.store';
 import { TipificacionesStore } from '../state/tipificaciones.store';
 import { VariablesStore } from '../state/variables.store';
+import { labHorariosActivo } from '@features/lab/horarios/lab-modo';
+import { descripcionDe } from '@features/lab/tiempo/tp-modelo';
 
 /** Una entrada de un repositorio, en el panel: su nombre, un dato suyo y adónde lleva. */
 interface HubEntrada {
@@ -232,21 +234,32 @@ export class RepositoriosHubPageComponent {
           count: () => this.agendas.items().length,
           entradas: () => this.deFilas(this.filas.agendas(this.agendas.items().map((a) => a.id), true), '/admin/agendas'),
         },
-        {
-          id: 'horarios',
-          labelKey: 'repositories.horarios.title',
-          descriptionKey: 'repositories.hub.descriptions.horarios',
-          icon: 'schedule',
-          path: '/admin/horarios',
-          count: () => this.horarios.items().length,
-          entradas: () =>
-            this.horarios.items().map((h) => ({
-              id: h.id,
-              nombre: h.name,
-              detalle: h.description,
-              link: `/admin/horarios/editar/${h.id}`,
-            })),
-        },
+        // Con el laboratorio de Horarios encendido (el preview del cierre de Horarios), la tarjeta lleva a su lista.
+        labHorariosActivo()
+          ? {
+              id: 'horarios',
+              labelKey: 'repositories.horarios.title',
+              descriptionKey: 'repositories.hub.descriptions.horarios',
+              icon: 'schedule',
+              path: '/lab/tiempo',
+              count: () => this.horarios.items().length,
+              entradas: () => this.horarios.items().map((h) => ({ id: h.id, nombre: h.name, detalle: descripcionDe(h.week), link: `/lab/tiempo/horario/${h.id}` })),
+            }
+          : {
+              id: 'horarios',
+              labelKey: 'repositories.horarios.title',
+              descriptionKey: 'repositories.hub.descriptions.horarios',
+              icon: 'schedule',
+              path: '/admin/horarios',
+              count: () => this.horarios.items().length,
+              entradas: () =>
+                this.horarios.items().map((h) => ({
+                  id: h.id,
+                  nombre: h.name,
+                  detalle: h.description,
+                  link: `/admin/horarios/editar/${h.id}`,
+                })),
+            },
         {
           id: 'emails',
           labelKey: 'repositories.emails.title',

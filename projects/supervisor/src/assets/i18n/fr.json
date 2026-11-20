@@ -1517,6 +1517,8 @@
         "title_bulk": "Supprimer {{count}} horaires\u00a0?"
       },
       "col_week": "Semaine habituelle",
+      "col_schedule": "Horaire",
+      "col_applied": "Appliqué à",
       "col_now": "Maintenant",
       "col_periods": "Périodes",
       "col_specials": "Dates spéciales",

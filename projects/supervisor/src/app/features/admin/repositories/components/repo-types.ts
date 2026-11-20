@@ -23,6 +23,8 @@ export interface RepoColumnDef<T extends RepoEntity> {
   readonly emphasis?: boolean;
   /** For `kind === 'status'`: maps the raw value to a translated label + tone. */
   readonly statusMap?: Readonly<Record<string, RepoStatusEntry>>;
+  /** Para `kind === 'status'`: una línea gris detrás de la etiqueta («cierra 18:00»), ya traducida; vacía, nada. */
+  readonly statusDetail?: (item: T) => string;
   /** Para `kind === 'groups'`: los grupos que usan la fila, para el desplegable de «Grupos» de siempre. */
   readonly groups?: (item: T) => readonly GroupRef[];
   /** Para `kind === 'groups'`: lo que oye el lector en la cifra, si no son solo grupos («N grupos y agentes»). Lleva
@@ -38,6 +40,8 @@ export interface RepoColumnDef<T extends RepoEntity> {
   readonly emptyDash?: boolean;
   /** La cabecera ordena de menor a mayor y al revés: las cifras, por su valor; las fechas, por día; el texto, por su letra. */
   readonly sortable?: boolean;
+  /** Con `columnChoices`: `false` la deja fuera al principio, para sacarla desde «Columnas». */
+  readonly defaultVisible?: boolean;
 
 }
 

@@ -1517,6 +1517,8 @@
         "title_bulk": "Delete {{count}} schedules?"
       },
       "col_week": "Regular week",
+      "col_schedule": "Schedule",
+      "col_applied": "Applied in",
       "col_now": "Now",
       "col_periods": "Periods",
       "col_specials": "Special dates",

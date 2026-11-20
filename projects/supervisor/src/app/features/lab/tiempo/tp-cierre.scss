@@ -1,0 +1,429 @@
+/*
+ * CIERRE DE HORARIOS: el editor de un horario que ya solo es su semana. Arriba, quién es y, en su tarjeta, dónde se
+ * aplica; debajo, la semana. Hoja global (ViewEncapsulation.None) que cuelga entera de `.tp`; el sistema se explica en
+ * tp-base.scss.
+ */
+
+/* ── La cabecera: quién es, con lo de ahora en la línea del nombre; debajo, a lo ancho, dónde se aplica ─────────── */
+
+.tp-cierre .tp-lienzo {
+  container: lienzo / inline-size;
+}
+.tp-cierre__cabeza {
+  /* Encima de la semana: las listas de «+N» se abren sobre ella. */
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+.tp-cierre__quien {
+  container: quien / inline-size;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+  min-inline-size: 0;
+}
+/*
+ * El nombre con sus horas debajo y, al lado, tras un divisor que se desvanece en los extremos, lo de ahora, la zona y si
+ * la zona horaria: menos alto y todo a un vistazo. El nombre cede ancho (sus horas pasan a dos líneas) antes que bajar lo de
+ * al lado; sin sitio para los dos, van uno debajo del otro y el divisor sobra.
+ */
+.tp-cierre__linea {
+  display: flex;
+  align-items: center;
+  gap: var(--s-6);
+  margin-block-start: var(--s-1);
+  min-inline-size: 0;
+}
+.tp-cierre__id {
+  display: flex;
+  flex: 0 1 auto;
+  flex-direction: column;
+  gap: var(--s-1);
+  min-inline-size: 0;
+}
+/*
+ * El nombre y la descripción: texto con su lápiz, que abre el renombrado en el sitio del DS. El botón sobresale lo que su
+ * relleno le quita a la caja, para que el texto quede alineado con las horas de debajo.
+ */
+.tp-cierre__nombre,
+.tp-cierre__desc {
+  display: flex;
+  margin: 0;
+  min-inline-size: 0;
+  max-inline-size: calc(100% + 2 * var(--s-1));
+  margin-inline: calc(-1 * var(--s-1));
+
+  > sc-inline-rename-cell {
+    flex: 1;
+    min-inline-size: 20rem;
+  }
+}
+.tp-cierre__desc {
+  color: var(--sc-text-secondary);
+}
+.tp-cierre__editable {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
+  min-inline-size: 0;
+  padding: 0 var(--s-1);
+  border: 0;
+  border-radius: var(--sc-radius-100);
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  text-align: start;
+  cursor: text;
+  transition-property: background-color;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+
+  &:hover {
+    background: var(--sc-bg-secondary-hover);
+  }
+  &:focus-visible {
+    outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
+    outline-offset: var(--sc-focus-ring-offset);
+  }
+  &.is-vacio {
+    color: var(--sc-text-subtle);
+  }
+}
+.tp-cierre__editable-texto {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* El lápiz dice que se puede cambiar: callado en reposo, entero al pasar o al llegar con el teclado. */
+.tp-cierre__lapiz {
+  flex: none;
+  color: var(--sc-icon-secondary);
+  opacity: 0;
+  transition: opacity 150ms ease-out;
+
+  .tp-cierre__editable:hover > &,
+  .tp-cierre__editable:focus-visible > &,
+  .tp-cierre__editable.is-vacio > & {
+    opacity: 1;
+  }
+}
+.tp-cierre__props {
+  position: relative;
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-1-5) var(--s-4);
+  max-inline-size: 20rem;
+  padding-inline-start: var(--s-6);
+  font-size: var(--t-13);
+  line-height: var(--sc-line-height-body-2);
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset-block: calc(-1 * var(--s-1));
+    inset-inline-start: 0;
+    inline-size: 1px;
+    background: linear-gradient(to bottom, transparent, var(--tp-hair-strong) 25%, var(--tp-hair-strong) 75%, transparent);
+  }
+}
+@container quien (max-width: 36rem) {
+  .tp-cierre__linea {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--s-3);
+  }
+  .tp-cierre__props {
+    max-inline-size: none;
+    padding-inline-start: 0;
+
+    &::before {
+      display: none;
+    }
+  }
+}
+/*
+ * Las horas bajo el nombre, por grupos de días, como en la tabla de la lista: el día en su etiqueta del DS (`sc-tag`
+ * info) y sus horas. Entre grupos, el doble de aire que dentro.
+ */
+.tp-cierre__resumen {
+  /* Fluye como una frase: un grupo largo se parte donde haga falta y «+N» sigue al último que cabe. */
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--t-14);
+  line-height: 1.75rem;
+}
+.tp-cierre__grupo {
+  display: inline;
+  margin-inline-end: var(--s-4);
+
+  > * {
+    display: inline-block;
+    margin-inline-end: var(--s-1-5);
+    vertical-align: middle;
+  }
+  > :last-child {
+    margin-inline-end: 0;
+  }
+}
+.tp-cierre__resumen > .tp-mas {
+  vertical-align: middle;
+}
+.tp-cierre__grupo-horas {
+  font-weight: var(--sc-font-weight-regular);
+  white-space: nowrap;
+  color: var(--tp-ink-2);
+}
+.tp-cierre__grupo--cerrado {
+  color: var(--tp-ink-3);
+}
+
+/*
+ * «+N»: lo que no cabe en su línea, contado. En la cabecera y en «Aplicado en» el resto sale en el tooltip del DS (al
+ * pasar o al llegar con el teclado); en un día, en el globo de PrimeNG al pulsarlo.
+ */
+.tp-mas {
+  position: relative;
+  display: inline-flex;
+}
+/* El disparador es el badge numérico del DS (`sc-badge` secondary): el botón no pone caja propia, solo el foco. */
+.tp-mas__btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: var(--sc-radius-200);
+  background: transparent;
+  font: inherit;
+  cursor: default;
+
+  &:focus-visible {
+    outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
+    outline-offset: var(--sc-focus-ring-offset);
+  }
+}
+/* El resto, en el tooltip del DS: cada grupo o sitio en su línea, la clave a la izquierda. */
+.tp-cierre__tip {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--sc-spacing-0-25) var(--sc-spacing-0-75);
+  font-variant-numeric: tabular-nums;
+}
+.tp-cierre__tip-clave {
+  font-weight: var(--sc-font-weight-semibold);
+  white-space: nowrap;
+}
+/* Una franja no se parte por su guion: el salto de línea va entre franjas. */
+.tp-cierre__tip-franja {
+  white-space: nowrap;
+}
+/* El globo del DS es estrecho para una semana con horas: este, algo más ancho, como el de la lista (cuelga del body). */
+.tp-cierre__globo {
+  max-inline-size: 20rem;
+}
+/* Lo de ahora, como la columna «Ahora» de la lista: la etiqueta del DS y su detalle en una línea. */
+.tp-cierre__ahora {
+  display: inline-flex;
+  flex-basis: 100%;
+  align-items: center;
+  gap: var(--s-1);
+}
+.tp-cierre__ahora-tit,
+.tp-cierre__ahora-detalle {
+  color: var(--sc-text-secondary);
+}
+/* La zona, con el desplegable del DS: ancho para «America/Argentina/Buenos Aires» sin moverse al cambiar. */
+.tp-cierre__zona {
+  inline-size: 15rem;
+}
+
+/*
+ * ── Aplicado en: una franja a lo ancho, cada sitio con el icono y el color de su tipo, en una línea; los que no caben,
+ * en «+N». Sin cajas por sitio: el icono ya los separa.
+ */
+
+.tp-cierre__aplicado {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-2) var(--s-5);
+  padding: var(--s-2) var(--s-4);
+  /* La misma caja que la sección de la semana: su radio, su borde y su fondo. */
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-400);
+  background: var(--sc-bg-surface);
+  font-size: var(--t-13);
+  line-height: var(--sc-line-height-body-2);
+}
+.tp-cierre__aplicado-tit {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--s-1-5);
+  margin: 0;
+  font-size: var(--t-13);
+  line-height: var(--sc-line-height-body-2);
+  font-weight: var(--sc-font-weight-semibold);
+  white-space: nowrap;
+  color: var(--tp-ink);
+
+  span {
+    font-weight: var(--sc-font-weight-regular);
+  }
+}
+.tp-cierre__usos {
+  display: flex;
+  flex: 1 1 18rem;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-2) var(--s-5);
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.tp-cierre__usa {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+.tp-cierre__usa-nombre,
+.tp-cierre__usa-detalle {
+  overflow: hidden;
+  max-inline-size: 14rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.tp-cierre__usa-nombre {
+  font-weight: var(--sc-font-weight-semibold);
+  color: var(--tp-ink);
+}
+.tp-cierre__usa-detalle {
+  font-size: var(--t-12);
+  line-height: var(--sc-line-height-caption);
+  color: var(--tp-ink-3);
+}
+.tp-cierre__usos-nota,
+.tp-cierre__libre {
+  display: flex;
+  align-items: center;
+  gap: var(--s-1-5);
+  margin: 0;
+}
+.tp-cierre__usos-nota {
+  justify-content: center;
+  inline-size: 1.75rem;
+  block-size: 1.75rem;
+  margin-inline-start: auto;
+  border-radius: var(--r-sm);
+  color: var(--tp-ink-3);
+  cursor: help;
+
+  &:hover {
+    background: var(--tp-muted);
+    color: var(--tp-ink-2);
+  }
+  &:focus-visible {
+    outline: 2px solid var(--tp-accent);
+    outline-offset: 1px;
+  }
+  /* Al borde de la franja: su tooltip se abre hacia dentro. */
+  &[data-tip]::after {
+    inset-inline-start: auto;
+    inset-inline-end: 0;
+    translate: 0 0.125rem;
+  }
+  &[data-tip]:hover::after,
+  &[data-tip]:focus-visible::after {
+    translate: 0 0;
+  }
+}
+.tp-cierre__libre {
+  color: var(--tp-ink-2);
+}
+.tp-cierre__libre sc-tp-icono {
+  color: var(--tp-si);
+}
+
+/* ── La semana ──────────────────────────────────────────────────────────────────────────────────────────────────── */
+
+.tp-cierre__rejilla {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+/* Las horas de la semana, a la derecha de la cabecera de la sección, calladas como su aclaración. */
+.tp-cierre__cuenta {
+  color: var(--sc-text-subtle);
+}
+/*
+ * La sección del DS recorta lo de dentro a su radio (`overflow: clip`); aquí las listas de «+N» y los globos de la pausa
+ * se abren hacia fuera de la caja, así que en esta se dejan ver.
+ */
+.tp-cierre .tp-cierre__semana .section-card {
+  overflow: visible;
+}
+.tp-cierre__semana {
+  position: relative;
+}
+/* El aire lo ponen la sección y `.sub-section`, como en el resto de fichas. */
+.tp-cierre__semana-cuerpo {
+  container: semana / inline-size;
+}
+/* El total de la semana cuenta: al cambiar, la cifra entra desde abajo si sube y desde arriba si baja. */
+.tp-cuenta {
+  display: inline-block;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .tp-cuenta.is-viva {
+    animation: tp-cuenta 220ms var(--tp-ease) both;
+  }
+  .tp-cuenta.is-viva.is-baja {
+    animation-name: tp-cuenta-baja;
+  }
+}
+@keyframes tp-cuenta {
+  from {
+    opacity: 0;
+    translate: 0 0.4em;
+  }
+}
+@keyframes tp-cuenta-baja {
+  from {
+    opacity: 0;
+    translate: 0 -0.4em;
+  }
+}
+
+/* ── La confirmación de guardar: a quién afecta ─────────────────────────────────────────────────────────────────── */
+
+.tp-afecta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+.tp-afecta__grupo {
+  display: grid;
+  grid-template-columns: 7rem minmax(0, 1fr);
+  align-items: baseline;
+  gap: var(--s-3);
+}
+.tp-afecta__tipo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
+  font-weight: var(--sc-font-weight-semibold);
+}
+.tp-afecta__cambio {
+  padding-block-start: var(--s-3);
+  border-block-start: 1px solid var(--tp-hair);
+}
+
+

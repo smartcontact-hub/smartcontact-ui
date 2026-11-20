@@ -589,7 +589,7 @@
     },
     {
       "selector": "sc-custom-modal",
-      "usedInSupervisor": 22
+      "usedInSupervisor": 26
     },
     {
       "selector": "sc-empty-state",
@@ -605,7 +605,7 @@
     },
     {
       "selector": "sc-inline-rename-cell",
-      "usedInSupervisor": 2
+      "usedInSupervisor": 4
     },
     {
       "selector": "sc-inputtags",
@@ -613,7 +613,7 @@
     },
     {
       "selector": "sc-message",
-      "usedInSupervisor": 7
+      "usedInSupervisor": 8
     },
     {
       "selector": "sc-panel",
@@ -641,7 +641,7 @@
     },
     {
       "selector": "sc-tabs",
-      "usedInSupervisor": 1
+      "usedInSupervisor": 3
     },
     {
       "selector": "sc-textarea",

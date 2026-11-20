@@ -1,0 +1,75 @@
+<sc-custom-modal
+  [visible]="true"
+  width="44rem"
+  [title]="(periodo() ? 'repositories.horarios.period_edit' : 'repositories.horarios.period_add') | translate"
+  (closed)="cerrado.emit()"
+>
+  <div (keydown.enter)="alPulsarIntro($event)" class="modal-horario">
+    <!-- Dos grupos (AGENTS, UX 9): lo que define el periodo, a 14 entre campos; y su semana, a 28. -->
+    <div class="bloque">
+      <div class="grid grid--2">
+        <div class="field">
+          <sc-inputtext
+            inputId="periodo-nombre"
+            fluid
+            required
+            [label]="'repositories.columns.name' | translate"
+            [placeholder]="'repositories.horarios.period_name_placeholder' | translate"
+            [value]="nombre()"
+            [helperText]="ayudaDeNombre()"
+            [error]="errorDeNombre()"
+            (valueChange)="escribirNombre($event)"
+            (focusout)="dejarNombre($event)"
+          />
+        </div>
+        <div class="field">
+          <sc-datepicker
+            inputId="periodo-fechas"
+            selectionMode="range"
+            required
+            [label]="'repositories.horarios.period_dates' | translate"
+            [placeholder]="'repositories.horarios.period_dates_placeholder' | translate"
+            [range]="rango()"
+            [error]="errorDeFechas()"
+            [helperText]="resumen()"
+            (rangeChange)="rango.set($event)"
+          />
+        </div>
+      </div>
+
+      <div class="switch-field">
+        <sc-toggleswitch inputId="periodo-anual" [ariaLabel]="'repositories.horarios.repeat_yearly' | translate" [checked]="cadaAnio()" (checkedChange)="cadaAnio.set($event)" />
+        <div class="switch-field__copy">
+          <label class="switch-field__label sc-text-body-regular" for="periodo-anual">{{ 'repositories.horarios.repeat_yearly' | translate }}</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <span class="field__label sc-text-caption-semibold">{{ 'repositories.horarios.period_color' | translate }}</span>
+        <sc-color-dot-picker [options]="colores()" [value]="color()" (valueChange)="color.set($event)" [ariaLabel]="'repositories.horarios.period_color' | translate" />
+      </div>
+    </div>
+
+    <div class="field">
+      <span class="field__label sc-text-caption-semibold" id="periodo-semana-rotulo">{{ 'repositories.horarios.period_week' | translate }}</span>
+      <sc-lab-semana role="group" aria-labelledby="periodo-semana-rotulo" [semana]="semana()" (semanaChange)="semana.set($event)" />
+      @if (faltaDeSemana(); as falta) {
+        <p class="sc-text-caption-regular periodo__error" role="alert">Las franjas del {{ dias[falta.dia] }} se pisan o no son válidas.</p>
+      }
+    </div>
+  </div>
+
+  <div scCustomModalFooter>
+    <sc-button size="sm" variant="secondary" appearance="outlined" [label]="'common.cancel' | translate" (clicked)="cerrado.emit()" />
+    <sc-button
+      size="sm"
+      variant="primary"
+      [disabled]="!puedeGuardar()"
+      [pTooltip]="motivoApagado()"
+      tooltipPosition="top"
+      tooltipEvent="both"
+      [label]="(periodo() ? 'common.save' : 'common.create') | translate"
+      (clicked)="confirmar()"
+    />
+  </div>
+</sc-custom-modal>

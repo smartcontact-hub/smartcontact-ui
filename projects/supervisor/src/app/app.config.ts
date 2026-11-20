@@ -1,4 +1,4 @@
-import { ApplicationConfig, inject, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig, inject, Injector, provideAppInitializer, provideZoneChangeDetection } from '@angular/core';
 import {
   PreloadAllModules,
   provideRouter,
@@ -22,6 +22,7 @@ import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { appRoutes } from './app.routes';
 import { ViewTransitionTracker, onlyQueryChanged } from './core/services/view-transition-tracker.service';
 import { ESPERA_SIMULADA_MS, esperaDeLaDemo } from './core/services/carga-simulada.service';
+import { pruebaEnCurso } from './core/prueba/prueba-arranque';
 
 /**
  * Clave de licencia de PrimeUI (tier community, caduca 2027-08-05).
@@ -62,6 +63,13 @@ export const appConfig: ApplicationConfig = {
     ),
     provideAnimationsAsync(),
     provideHttpClient(withFetch()),
+    // Con una prueba con personas en marcha (DD-256), las misiones del cierre de Horarios saben empezar limpias y
+    // corregirse solas. Sin prueba no se descarga nada.
+    provideAppInitializer(() => {
+      if (!pruebaEnCurso()) return;
+      const injector = inject(Injector);
+      return import('./features/lab/tiempo/tp-prueba').then((m) => m.registrarPruebaDeHorarios(injector));
+    }),
     // Lo que «tardan» los datos la primera vez que se abre una pantalla, para que se vea su esqueleto.
     { provide: ESPERA_SIMULADA_MS, useFactory: esperaDeLaDemo },
     // SCDS theme frontier — `provideSmartContactUi` envuelve `providePrimeNG`

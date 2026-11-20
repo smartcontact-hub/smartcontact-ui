@@ -1,0 +1,810 @@
+/*
+ * LABORATORIO «Tiempo»: la semana en líneas de 24 h. En el cierre de Horarios va en
+ * verde (se atiende) y rojo (no se atiende), con las horas escritas en cada barra y los bordes que se arrastran.
+ * Hoja global (ViewEncapsulation.None) que cuelga entera de `.tp`; ver tp-base.scss para el sistema.
+ */
+
+/* ── Semana: siete líneas de 24 h, en verde y rojo ──────────────────────────────────────────────────────────────── */
+
+.tp,
+.tp-capa,
+.tp-globo {
+  /* Se atiende: un verde que lleva texto blanco encima (4,6:1). No se atiende: un rojo lavado que no grita. */
+  --tp-si: #16834a;
+  --tp-si-borde: #0f6b3b;
+  --tp-no: color-mix(in oklch, var(--tp-danger) 13%, var(--tp-surface));
+  --tp-no-raya: color-mix(in oklch, var(--tp-danger) 22%, var(--tp-surface));
+}
+.sc-dark .tp,
+.sc-dark .tp-capa,
+.sc-dark .tp-globo {
+  --tp-si: #1f9d5a;
+  --tp-si-borde: #2bb36a;
+  --tp-no: color-mix(in oklch, var(--tp-danger) 18%, var(--tp-surface));
+  --tp-no-raya: color-mix(in oklch, var(--tp-danger) 28%, var(--tp-surface));
+}
+
+.tp-sem {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+.tp-sem.is-arrastrando {
+  cursor: ew-resize;
+  user-select: none;
+}
+.tp-sem[data-arrastre='mover'] {
+  cursor: grabbing;
+}
+.tp-sem[data-arrastre='pintar'] {
+  cursor: col-resize;
+}
+.tp-sem__mapa {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1-5);
+}
+.tp-sem__escribir {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  min-inline-size: 0;
+}
+/* Debajo de lo que se escribe, y separado: es otro grupo (cómo queda). */
+.tp-sem__escribir + .tp-sem__mapa {
+  margin-block-start: var(--s-1);
+  padding-block-start: var(--s-4);
+  border-block-start: 1px solid var(--tp-hair);
+}
+
+/*
+ * Con sitio, lo que se escribe va en una columna a la izquierda y el mapa a la derecha: añadir una fila de días crece
+ * hacia abajo y el mapa no se mueve. Cada fila, en dos líneas: los días y sus acciones, y debajo las horas.
+ */
+@container semana (min-width: 60rem) {
+  .tp-sem:not(.tp-sem--compacta) {
+    display: grid;
+    grid-template-columns: minmax(20rem, 23rem) minmax(0, 1fr);
+    align-items: start;
+    gap: 0;
+
+    > .tp-sem__escribir + .tp-sem__mapa {
+      margin: 0;
+      padding: 0 0 0 var(--s-6);
+      border-block-start: 0;
+      border-inline-start: 1px solid var(--tp-hair);
+    }
+    > .tp-sem__escribir {
+      padding-inline-end: var(--s-6);
+    }
+    .tp-sem__tramos-cab {
+      flex-direction: column;
+      gap: var(--s-1);
+      /* A la altura del título del mapa, que va centrado con su regla. */
+      padding-block-start: var(--s-2);
+    }
+    .tp-tramo__dias {
+      order: 0;
+    }
+    .tp-tramo__acc {
+      order: 1;
+      margin-inline-start: auto;
+    }
+    .tp-tramo > .tp-spacer {
+      display: none;
+    }
+    .tp-tramo__franjas {
+      order: 2;
+      flex-basis: 100%;
+    }
+    .tp-tramo__guia {
+      order: 3;
+      flex-basis: 100%;
+      /* Debajo de las horas, la flecha ya no apunta a las bolitas. */
+      sc-tp-icono {
+        display: none;
+      }
+    }
+  }
+}
+.tp-sem__eje,
+.tp-sem__fila {
+  display: grid;
+  grid-template-columns: 1.5rem 1fr 3.5rem;
+  align-items: center;
+  gap: var(--s-3);
+}
+.tp-sem__horas {
+  position: relative;
+  block-size: 1rem;
+  span {
+    position: absolute;
+    translate: -50% 0;
+  }
+  /* Las de los bordes, hacia dentro: no se salen de la pista. */
+  span.is-ini {
+    translate: 0 0;
+  }
+  span.is-fin {
+    translate: -100% 0;
+  }
+}
+.tp-sem__fila {
+  block-size: 2.25rem;
+  transition-property: opacity;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+}
+.tp-sem__mapa:has(.tp-sem__fila.is-on) .tp-sem__fila:not(.is-on, .is-vista) {
+  opacity: 0.4;
+}
+.tp-sem__fila.is-vista .tp-sem__letra {
+  color: var(--tp-si);
+}
+/* La letra del día es un botón: elige el día entero para copiarlo, pegarle o borrarlo. */
+.tp-sem__letra {
+  justify-self: center;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  padding: 0;
+  border: 0;
+  border-radius: var(--r-xs);
+  background: none;
+  color: var(--tp-ink-2);
+  font: inherit;
+  text-align: center;
+  cursor: pointer;
+  transition-property: background-color, color;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+  &:hover {
+    background: var(--tp-hair);
+    color: var(--tp-ink);
+  }
+  &:focus-visible {
+    outline: 2px solid var(--tp-accent);
+    outline-offset: 1px;
+  }
+  &.is-elegido {
+    background: var(--tp-accent);
+    color: #fff;
+  }
+}
+/* Lo elegido: el día entero se rodea; una franja suelta, con un aro separado de la barra. */
+.tp-sem__fila.is-dia-elegido .tp-sem__pista {
+  box-shadow: 0 0 0 2px var(--tp-accent);
+}
+.tp-sem__barra.is-elegida {
+  z-index: 2;
+  box-shadow:
+    0 0 0 2px var(--tp-surface),
+    0 0 0 4px var(--tp-accent);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .tp-sem__fila.is-pegado .tp-sem__pista {
+    animation: tp-pegado 900ms var(--tp-ease);
+  }
+}
+@keyframes tp-pegado {
+  from {
+    box-shadow: 0 0 0 4px var(--tp-accent-ring);
+  }
+  to {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+.tp-sem__fila.is-hoy .tp-sem__letra {
+  color: var(--tp-ink);
+  text-decoration: underline 2px;
+  text-underline-offset: 3px;
+}
+.tp-sem__pista {
+  position: relative;
+  block-size: 2rem;
+  border-radius: var(--r-sm);
+  background: var(--tp-no);
+  /* Lo rojo se pinta: un clic pone una hora y arrastrar, las que se quieran. */
+  cursor: pointer;
+  touch-action: pan-y;
+  transition-property: box-shadow;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+}
+/* La cuadrícula: una línea cada hora y una más marcada cada tres (9, 12, 15…), se vea la jornada o el día entero. */
+.tp-sem__guias {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+.tp-sem__guia {
+  position: absolute;
+  inset-block: 0;
+  inline-size: 1px;
+  margin-inline-start: -1px;
+  background: color-mix(in oklch, var(--tp-no-raya) 45%, transparent);
+  &.is-fuerte {
+    background: var(--tp-no-raya);
+  }
+}
+.tp-sem__barra {
+  position: absolute;
+  inset-block: 0.1875rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-inline-size: 0.25rem;
+  border-radius: var(--r-xs);
+  background: var(--tp-si);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.16),
+    0 1px 2px color-mix(in oklch, var(--tp-si) 40%, transparent);
+  color: #fff;
+  transition-property: left, width, box-shadow;
+  transition-duration: 200ms;
+  transition-timing-function: var(--tp-ease);
+
+  &.is-movible {
+    cursor: grab;
+  }
+  &.is-arrastre {
+    background: repeating-linear-gradient(135deg, var(--tp-si) 0 4px, color-mix(in oklch, var(--tp-si) 78%, var(--tp-surface)) 4px 8px);
+  }
+  &.is-viva {
+    box-shadow: 0 0 0 2px var(--tp-surface), 0 0 0 4px var(--tp-si);
+    transition-property: box-shadow;
+  }
+  /* El día que saldría de la fila que se mira: lo suyo se apaga. */
+  &.is-sale {
+    opacity: 0.28;
+  }
+}
+.tp-sem.is-arrastrando .tp-sem__barra {
+  transition-property: box-shadow;
+}
+.tp-sem__txt {
+  overflow: hidden;
+  padding-inline: var(--s-2);
+  font-size: var(--t-12);
+  font-weight: var(--sc-font-weight-regular);
+  white-space: nowrap;
+  text-overflow: clip;
+  pointer-events: none;
+}
+/* Mientras se arrastra, las horas van en un globo encima, aunque la barra sea estrecha. */
+.tp-sem__globo {
+  position: absolute;
+  inset-block-end: calc(100% + 0.5rem);
+  inset-inline-start: 50%;
+  z-index: 5;
+  translate: -50% 0;
+  padding: var(--s-0-5) var(--s-2);
+  border-radius: var(--r-xs);
+  background: var(--tp-inverse);
+  color: var(--tp-on-inverse);
+  font-size: var(--t-12);
+  font-weight: var(--sc-font-weight-regular);
+  white-space: nowrap;
+  pointer-events: none;
+}
+/* Lo que se añadiría con un clic: un bloque verde en fantasma desde la hora bajo el puntero. */
+.tp-sem__nueva,
+.tp-sem__fantasma {
+  position: absolute;
+  inset-block: 0.1875rem;
+  border-radius: var(--r-xs);
+  pointer-events: none;
+  animation: tp-fantasma-in 160ms var(--tp-ease) both;
+}
+.tp-sem__nueva {
+  display: grid;
+  place-items: center;
+  background: color-mix(in oklch, var(--tp-si) 16%, var(--tp-surface));
+  box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--tp-si) 60%, transparent);
+  color: var(--tp-si);
+}
+/* Las horas que tendría un día si se marca en la fila que se mira. */
+.tp-sem__fantasma {
+  background: repeating-linear-gradient(135deg, color-mix(in oklch, var(--tp-si) 32%, transparent) 0 4px, color-mix(in oklch, var(--tp-si) 16%, transparent) 4px 8px);
+  box-shadow: inset 0 0 0 1.5px var(--tp-si);
+}
+@keyframes tp-fantasma-in {
+  from {
+    opacity: 0;
+  }
+}
+/* La raya de la hora bajo el puntero, con la hora en un globo encima: el mismo que sale al arrastrar. */
+.tp-sem__cursor {
+  position: absolute;
+  inset-block: -0.125rem;
+  z-index: 3;
+  inline-size: 1px;
+  background: var(--tp-ink);
+  pointer-events: none;
+}
+.tp-sem__cursor-hora {
+  position: absolute;
+  inset-block-end: calc(100% + 0.25rem);
+  inset-inline-start: 0;
+  translate: -50% 0;
+  padding: 0 var(--s-1-5);
+  border-radius: var(--r-xs);
+  background: var(--tp-inverse);
+  font-size: var(--t-11);
+  font-weight: var(--sc-font-weight-regular);
+  line-height: 1.25rem;
+  color: var(--tp-on-inverse);
+  white-space: nowrap;
+}
+/* Sobre una barra, la raya es de corte (B divide, Q y W recortan): más gruesa y con un filo claro para verse sobre el verde. */
+.tp-sem__cursor.is-corte {
+  inline-size: 2px;
+  translate: -1px 0;
+  box-shadow: 0 0 0 1px color-mix(in oklch, var(--tp-surface) 80%, transparent);
+}
+/* En los demás días de la fila, la misma raya más suave: dice que el corte también les toca. */
+.tp-sem__cursor.is-eco {
+  opacity: 0.45;
+}
+/* Junto a la hora, las teclas de la raya: se ven justo cuando sirven. Cerca de un borde, el globo se abre hacia dentro. */
+.tp-sem__cursor-hora:has(.tp-sem__teclas) {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding-block: var(--s-0-5);
+  &.is-izq {
+    translate: calc(-1 * var(--s-3)) 0;
+  }
+  &.is-der {
+    translate: calc(-100% + var(--s-3)) 0;
+  }
+}
+.tp-sem__globo-franja {
+  padding-inline-end: var(--s-2);
+  border-inline-end: 1px solid rgb(255 255 255 / 0.18);
+  font-weight: var(--sc-font-weight-regular);
+  color: color-mix(in oklch, var(--tp-on-inverse) 78%, transparent);
+}
+.tp-sem__teclas {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
+  font-weight: var(--sc-font-weight-regular);
+  color: color-mix(in oklch, var(--tp-on-inverse) 78%, transparent);
+  .tp-kbd {
+    margin-inline-start: var(--s-1);
+    background: rgb(255 255 255 / 0.16);
+    box-shadow: none;
+    color: var(--tp-on-inverse);
+  }
+}
+/* La raya fija de lo elegido: del color de la selección, para que se lea como suya. */
+.tp-sem__cursor.is-fija {
+  z-index: 3;
+  background: var(--tp-accent);
+  box-shadow: 0 0 0 1px var(--tp-surface);
+}
+/* La barrita de lo elegido: encima de la barra, en la hora de la raya, con cada acción y su tecla. */
+.tp-sem__barrita {
+  position: absolute;
+  inset-block-end: calc(100% + var(--s-2));
+  inset-inline-start: 0;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  gap: var(--s-0-5);
+  padding: var(--s-0-5);
+  border-radius: var(--r-sm);
+  background: var(--tp-inverse);
+  box-shadow: var(--tp-pop);
+  color: var(--tp-on-inverse);
+  white-space: nowrap;
+  translate: -50% 0;
+  cursor: default;
+  animation: tp-fantasma-in 120ms var(--tp-ease) both;
+  &.is-izq {
+    translate: calc(-1 * var(--s-3)) 0;
+  }
+  &.is-der {
+    translate: calc(-100% + var(--s-3)) 0;
+  }
+  /* Con días elegidos por su letra, la barrita empieza donde empieza la fila: no tapa las letras de los otros días. */
+  &.is-inicio {
+    translate: 0 0;
+  }
+}
+.tp-sem__barrita-hora {
+  padding-inline: var(--s-1-5) var(--s-2);
+  border-inline-end: 1px solid rgb(255 255 255 / 0.18);
+  font-size: var(--t-12);
+  font-weight: var(--sc-font-weight-semibold);
+}
+.tp-sem__barrita-btn,
+.tp-sem__barrita-x {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1-5);
+  block-size: 1.75rem;
+  padding-inline: var(--s-2);
+  border: 0;
+  border-radius: var(--r-xs);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: var(--t-12);
+  font-weight: var(--sc-font-weight-regular);
+  cursor: pointer;
+  transition-property: background-color;
+  transition-duration: 120ms;
+  transition-timing-function: ease-out;
+  &:hover {
+    background: rgb(255 255 255 / 0.12);
+  }
+  &:focus-visible {
+    outline: 2px solid var(--tp-accent-ring);
+    outline-offset: 0;
+  }
+  .tp-kbd {
+    background: rgb(255 255 255 / 0.16);
+    box-shadow: none;
+    color: inherit;
+  }
+}
+.tp-sem__barrita-x {
+  inline-size: 1.75rem;
+  justify-content: center;
+  padding: 0;
+  color: color-mix(in oklch, var(--tp-on-inverse) 70%, transparent);
+}
+.tp-sem__fila:has(.tp-sem__cursor) .tp-sem__letra {
+  color: var(--tp-ink);
+}
+/* Los bordes que se arrastran: una zona de 12 px y un asa que aparece al pasar. */
+.tp-sem__asa {
+  position: absolute;
+  inset-block: -0.1875rem;
+  z-index: 2;
+  inline-size: 0.75rem;
+  cursor: ew-resize;
+  touch-action: none;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset-block: 0.5rem;
+    inset-inline-start: 50%;
+    inline-size: 0.25rem;
+    margin-inline-start: -0.125rem;
+    border-radius: var(--r-full);
+    background: #fff;
+    box-shadow: 0 0 0 1px var(--tp-si-borde);
+    opacity: 0;
+    transition-property: opacity;
+    transition-duration: 120ms;
+    transition-timing-function: ease-out;
+  }
+  &:hover::before,
+  &:focus-visible::before,
+  .tp-sem__barra.is-viva &::before,
+  .tp-sem__fila:hover &::before {
+    opacity: 1;
+  }
+  &:focus-visible {
+    outline: 2px solid var(--tp-accent);
+    outline-offset: 0;
+    border-radius: var(--r-xs);
+  }
+}
+.tp-sem__asa--ini {
+  inset-inline-start: -0.375rem;
+}
+.tp-sem__asa--fin {
+  inset-inline-end: -0.375rem;
+}
+.tp-sem__ahora {
+  position: absolute;
+  inset-block: -0.25rem;
+  z-index: 3;
+  inline-size: 2px;
+  margin-inline-start: -1px;
+  border-radius: var(--r-full);
+  background: var(--tp-ink);
+  box-shadow: 0 0 0 2px var(--tp-surface);
+}
+.tp-sem__total {
+  text-align: end;
+  color: var(--tp-ink-2);
+  font-weight: var(--sc-font-weight-semibold);
+
+  &.is-cerrado {
+    color: var(--tp-danger-ink);
+  }
+}
+.tp-sem__fila.is-mal .tp-sem__pista {
+  box-shadow: 0 0 0 2px var(--tp-danger);
+}
+.tp-sem__fila.is-senalado .tp-sem__pista {
+  animation: tp-senal 900ms ease-out 2;
+}
+@keyframes tp-senal {
+  0% {
+    box-shadow: 0 0 0 0 var(--tp-accent-ring);
+  }
+  40% {
+    box-shadow: 0 0 0 4px var(--tp-accent-ring);
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+.tp-sem__leyenda {
+  display: flex;
+  align-items: center;
+  gap: var(--s-1-5);
+  margin-block-start: var(--s-1);
+  padding-inline-start: calc(1.5rem + var(--s-3));
+}
+.tp-sem__clave {
+  inline-size: 0.75rem;
+  block-size: 0.5rem;
+  border-radius: 0.125rem;
+  & + & {
+    margin-inline-start: var(--s-2);
+  }
+}
+.tp-sem__clave--si {
+  background: var(--tp-si);
+}
+.tp-sem__clave--no {
+  margin-inline-start: var(--s-2);
+  background: var(--tp-no-raya);
+}
+.tp-sem__error {
+  margin-block-start: var(--s-1);
+}
+.tp-sem__mapa-cab {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  min-block-size: 1.75rem;
+  margin-block-end: var(--s-1);
+}
+/* La regla de 24 h: el día entero en pequeño, con lo abierto en verde; el marco es lo que se ve en el mapa. */
+.tp-sem__nav {
+  display: grid;
+  grid-template-columns: auto 12rem;
+  column-gap: var(--s-2);
+  align-items: center;
+}
+.tp-sem__nav-txt {
+  grid-row: 1;
+  white-space: nowrap;
+}
+.tp-sem__nav-pista {
+  position: relative;
+  grid-row: 1;
+  grid-column: 2;
+  block-size: 1.25rem;
+  border-radius: var(--r-xs);
+  background: var(--tp-no);
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
+}
+.tp-sem__nav-abierto {
+  position: absolute;
+  inset-block: 0.3125rem;
+  border-radius: 2px;
+  background: var(--tp-si);
+  pointer-events: none;
+}
+/* Lo que no se ve, apagado. */
+.tp-sem__nav-fuera {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  border-radius: var(--r-xs) 0 0 var(--r-xs);
+  background: color-mix(in oklch, var(--tp-surface) 62%, transparent);
+  pointer-events: none;
+  &.is-fin {
+    inset-inline: auto 0;
+    border-radius: 0 var(--r-xs) var(--r-xs) 0;
+  }
+}
+.tp-sem__nav-marco {
+  position: absolute;
+  inset-block: -2px;
+  border-radius: var(--r-xs);
+  box-shadow: inset 0 0 0 2px var(--tp-ink);
+  cursor: grab;
+  .tp-sem__nav-pista:active & {
+    cursor: grabbing;
+  }
+}
+/* Los bordes del marco: se arrastran, y con el foco, las flechas mueven una hora. */
+.tp-sem__nav-asa {
+  position: absolute;
+  inset-block: 0;
+  inline-size: 0.75rem;
+  cursor: ew-resize;
+  outline: none;
+  &::after {
+    content: '';
+    position: absolute;
+    inset-block: 0.25rem;
+    inset-inline-start: 50%;
+    inline-size: 0.1875rem;
+    translate: -50% 0;
+    border-radius: 2px;
+    background: var(--tp-ink);
+  }
+  &.is-ini {
+    inset-inline-start: -0.375rem;
+  }
+  &.is-fin {
+    inset-inline-end: -0.375rem;
+  }
+  &:focus-visible::after {
+    box-shadow: 0 0 0 3px var(--tp-accent-ring);
+  }
+}
+.tp-sem__nav-marca {
+  position: absolute;
+  inset-block: 0.1875rem;
+  inline-size: 1px;
+  background: var(--tp-no-raya);
+  pointer-events: none;
+}
+.tp-sem__tramos-cab {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-3);
+  margin-block-end: calc(-1 * var(--s-2));
+}
+
+.tp-tramos {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.tp-tramo {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-2) var(--s-4);
+  padding: var(--s-2) var(--s-2) var(--s-2) var(--s-4);
+  border-radius: var(--r-md);
+  background: var(--tp-subtle);
+  box-shadow: inset 0 0 0 1px var(--tp-hair);
+  transition-property: box-shadow;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset-block: var(--s-2);
+    inset-inline-start: 0;
+    inline-size: 0.1875rem;
+    border-radius: 0 var(--r-full) var(--r-full) 0;
+    background: var(--tp-si);
+  }
+  &.is-on {
+    box-shadow:
+      inset 0 0 0 1px color-mix(in oklch, var(--tp-si) 40%, transparent),
+      0 0 0 3px color-mix(in oklch, var(--tp-si) 10%, transparent);
+  }
+}
+.tp-tramo__acc {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-0-5);
+}
+.tp-tramo__dias {
+  display: flex;
+  align-items: center;
+  gap: var(--s-1);
+}
+.tp-chip {
+  inline-size: 1.75rem;
+  block-size: 1.75rem;
+  padding: 0;
+  border: 0;
+  border-radius: var(--r-full);
+  background: var(--tp-surface);
+  box-shadow: var(--tp-ring);
+  font-size: var(--t-12);
+  font-weight: var(--sc-font-weight-semibold);
+  color: var(--tp-ink-3);
+  cursor: pointer;
+  transition-property: background-color, color, box-shadow, scale;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+
+  &:hover {
+    color: var(--tp-ink);
+  }
+  &:active {
+    scale: 0.96;
+  }
+  &[aria-pressed='true'] {
+    background: var(--tp-si);
+    color: #fff;
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.2),
+      0 1px 3px color-mix(in oklch, var(--tp-si) 45%, transparent);
+  }
+  /* Un día que ya vive en otra fila: se puede traer, pero se ve que no está libre. */
+  &.is-otro {
+    color: var(--tp-ink-4);
+  }
+}
+.tp-tramo__24[aria-pressed='true'] {
+  background: color-mix(in oklch, var(--tp-si) 14%, transparent);
+  color: color-mix(in oklch, var(--tp-si) 75%, var(--tp-ink));
+}
+.tp-tramo__franjas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-2) var(--s-3);
+}
+.tp-tramo__siempre {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1-5);
+  block-size: 2rem;
+}
+.tp-franja {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1-5);
+}
+.tp-franja__a {
+  inline-size: 0.5rem;
+  block-size: 1px;
+  background: var(--tp-ink-4);
+}
+.tp-franja__noche {
+  block-size: 1.25rem;
+  gap: var(--s-1);
+  padding-inline: var(--s-1-5);
+}
+.tp-franja__x {
+  margin-inline-start: calc(-1 * var(--s-1));
+  color: var(--tp-ink-3);
+}
+.tp-tramo__mas {
+  align-self: flex-start;
+  color: var(--tp-ink-3);
+}
+/* La fila de un horario nuevo, aún sin días: dice qué hacer, al lado de las bolitas. */
+.tp-tramo__guia {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
+  align-self: center;
+  color: var(--tp-accent-ink);
+  font-weight: var(--sc-font-weight-regular);
+}
+.tp-sem__pie {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-2) var(--s-3);
+}
+.tp-sem--compacta {
+  gap: var(--s-3);
+  .tp-sem__fila {
+    block-size: 1.375rem;
+  }
+  .tp-sem__pista {
+    block-size: 0.875rem;
+  }
+}

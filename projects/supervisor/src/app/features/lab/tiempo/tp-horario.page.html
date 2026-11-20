@@ -1,0 +1,217 @@
+<!--
+  Guardar y Deshacer suben a la barra de arriba, como en las demás fichas: apagado mientras falte algo, con el motivo en
+  su tooltip; «Deshacer», solo con cambios, vuelve a lo guardado (⌘Z sigue yendo paso a paso).
+-->
+<ng-template #topbarActions>
+  @if (modo() === 'editar' && dirty()) {
+    <span class="form-save-reason sc-text-caption-regular" role="status">{{ 'common.unsaved_changes' | translate }}</span>
+  }
+  @if (dirty()) {
+    <sc-button variant="secondary" appearance="outlined" [label]="'common.undo' | translate" (clicked)="discard()" />
+  }
+  <sc-button
+    variant="primary"
+    [disabled]="!puedeGuardar()"
+    [pTooltip]="motivo()"
+    tooltipPosition="bottom"
+    tooltipEvent="both"
+    [label]="(modo() === 'crear' ? 'repositories.horarios.create_submit' : 'common.save') | translate"
+    (clicked)="save()"
+  />
+</ng-template>
+
+<div class="tp tp-editor tp-cierre" [class.tp--prueba]="enPrueba" [attr.data-sin-guardar]="modo() === 'crear' || dirty()">
+  <div class="tp-lienzo">
+    <!--
+      Cabecera: quién es (el nombre, su descripción y sus horas por grupos de días debajo y, al lado, tras un divisor, lo
+      de ahora y la zona horaria). Sin botón de volver: se vuelve por la miga de pan, como en el resto del Supervisor y, en una línea a lo ancho, dónde se aplica, a la vista antes de tocar nada. Sin «Activo / Inactivo»:
+      un horario no hace nada solo, lo que se enciende o se apaga es dónde se aplica.
+      «Ahora cerrado, abre a las 9:00» va dicho con su palabra para que no se lea como el estado del horario.
+    -->
+    <header class="tp-cierre__cabeza tp-stagger" style="--i: 0">
+      <div class="tp-cierre__quien">
+        <div class="tp-cierre__linea">
+          <div class="tp-cierre__id">
+            <!--
+              El nombre y su descripción, con el renombrado en el sitio del DS (`sc-inline-rename-cell`): se leen como
+              texto, con su lápiz; un clic los abre en su campo. Intro o ✓ lo deja, Esc o × vuelve a lo de antes, y salir del
+              campo se queda con lo escrito (lo escrito cuenta ya mientras se escribe: «Guardar» y su motivo lo ven).
+            -->
+            <h1 class="tp-cierre__nombre sc-text-title-semibold" data-texto="name" (input)="enVivo('name', $event)" (focusout)="salir('name', $event)">
+              @if (editando() === 'name') {
+                <sc-inline-rename-cell [initialValue]="form().name" [placeholder]="t.ejemploHorario" [ariaLabel]="t.nombreHorario" (commit)="cerrarEdicion('name', $event)" (cancelled)="cancelarEdicion('name')" />
+              } @else {
+                <button type="button" class="tp-cierre__editable" data-campo="name" [class.is-vacio]="!form().name" [attr.aria-label]="t.cambiarNombre(form().name)" (click)="editar('name')">
+                  <span class="tp-cierre__editable-texto">{{ form().name || t.ejemploHorario }}</span>
+                  <sc-icon class="tp-cierre__lapiz" name="edit" size="inherit" [weight]="600" aria-hidden="true" />
+                </button>
+              }
+            </h1>
+            <p class="tp-cierre__desc sc-text-body-regular" data-texto="description" (input)="enVivo('description', $event)" (focusout)="salir('description', $event)">
+              @if (editando() === 'description') {
+                <sc-inline-rename-cell [initialValue]="form().description ?? ''" [placeholder]="t.anadeDescripcion" [ariaLabel]="t.descripcion" (commit)="cerrarEdicion('description', $event)" (cancelled)="cancelarEdicion('description')" />
+              } @else {
+                <button type="button" class="tp-cierre__editable" data-campo="description" [class.is-vacio]="!form().description" [attr.aria-label]="t.cambiarDescripcion(form().description ?? '')" (click)="editar('description')">
+                  <span class="tp-cierre__editable-texto">{{ form().description || t.anadeDescripcion }}</span>
+                  <sc-icon class="tp-cierre__lapiz" name="edit" size="inherit" aria-hidden="true" />
+                </button>
+              }
+            </p>
+            <!--
+              Las horas, por grupos de días, como en la tabla de la lista: el día en su etiqueta del DS y sus horas
+              separadas por comas. En dos líneas como mucho; lo que no cabe, en «+N», que enseña el resto en el tooltip del DS
+              (al pasar o al llegar con el teclado), como la columna «Grupos» de las listas.
+            -->
+            <ul class="tp-cierre__resumen t-num" [scCabe]="2" (scCabeFuera)="resumenFuera.set($event)" [attr.aria-label]="descripcion()" role="list">
+              @for (g of resumen(); track g.dias) {
+                <li class="tp-cierre__grupo">
+                  <sc-tag severity="info" [value]="g.dias" />
+                  @for (h of g.horas; track $index; let ultima = $last) {
+                    <span class="tp-cierre__grupo-horas">{{ h }}{{ ultima ? '' : ',' }}</span>
+                  }
+                </li>
+              } @empty {
+                <li class="tp-cierre__grupo tp-cierre__grupo--cerrado">Cerrado toda la semana</li>
+              }
+              <li class="tp-mas" data-mas>
+                <button type="button" class="tp-mas__btn" [attr.aria-label]="verResumen()" [pTooltip]="restoResumen" tooltipPosition="top" tooltipEvent="both" tooltipStyleClass="tp-cierre__globo">
+                  <sc-badge variant="secondary" size="xl" [label]="'+' + resumenFuera()" />
+                </button>
+                <ng-template #restoResumen>
+                  <span class="tp-cierre__tip">
+                    @for (g of resumen().slice(resumen().length - resumenFuera()); track g.dias) {
+                      <span class="tp-cierre__tip-clave">{{ g.dias }}</span>
+                      <span>
+                        @for (f of g.horas; track $index; let ultima = $last) {
+                          <span class="tp-cierre__tip-franja">{{ f }}</span>{{ ultima ? '' : ', ' }}
+                        }
+                      </span>
+                    }
+                  </span>
+                </ng-template>
+              </li>
+            </ul>
+          </div>
+          <div class="tp-cierre__props">
+            @if (ahoraTexto(); as a) {
+              <!-- Lo de ahora, con la pieza de la columna «Ahora» de la lista: la etiqueta del DS y su detalle, sin punto. -->
+              <span class="tp-cierre__ahora">
+                <span class="tp-cierre__ahora-tit sc-text-caption-regular">Ahora</span>
+                <sc-tag [severity]="a.abierto ? 'success' : 'secondary'" [value]="(a.abierto ? 'repositories.horarios.open' : 'repositories.horarios.closed') | translate" />
+                <span class="tp-cierre__ahora-detalle sc-text-caption-regular t-num">{{ a.detalle }}</span>
+              </span>
+            }
+            <!-- La zona, con el desplegable del DS que usa la ficha de horario: con buscador, que son cientos. -->
+            <sc-select
+              class="tp-cierre__zona"
+              inputId="tp-zona"
+              filter
+              [ariaLabel]="t.zona"
+              [options]="zonas()"
+              optionLabel="label"
+              optionValue="value"
+              [value]="form().timezone"
+              (valueChange)="update('timezone', $any($event))"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!--
+        Dónde se aplica: su propia caja, en una línea a lo ancho bajo el nombre (no al lado, donde dejaba un hueco según
+        cuántos sitios hubiera). Cada sitio, con el icono y el color de su tipo, su nombre y su detalle.
+      -->
+      <section class="tp-cierre__aplicado" [attr.aria-label]="t.aplicadoEn">
+        <h2 class="tp-cierre__aplicado-tit">
+          Aplicado en
+          @if (nUsos() > 0) {
+            <span class="t-3 t-num">{{ sitios(nUsos()) }}</span>
+          }
+        </h2>
+        @if (nUsos() === 0) {
+          <p class="tp-cierre__libre">
+            <sc-icon name="check" size="inherit" />
+            {{ modo() === 'crear' ? 'Aún no se aplica en ningún sitio' : 'No se aplica en ningún sitio' }}: puedes cambiarlo sin afectar a nadie.
+          </p>
+        } @else {
+          <!-- Una línea de sitios; los que no caben, en «+N», con su tipo y su detalle en el tooltip del DS. -->
+          <ul class="tp-cierre__usos" role="list" [scCabe]="1" (scCabeFuera)="usosFuera.set($event)">
+            @for (u of usosPlanos(); track u.tipo + u.nombre + u.detalle) {
+              <li class="tp-cierre__usa">
+                <span class="tp-mark tp-mark--periodo tp-mark--sm" [style.--c]="'var(--tp-p-' + tipos[u.tipo].color + ')'" [pTooltip]="tipos[u.tipo].uno" tooltipPosition="top">
+                  @if (simbolos[u.tipo]; as simbolo) {
+                    <sc-icon [name]="simbolo" [size]="14" />
+                  } @else {
+                    <sc-channel-icon channel="whatsapp" />
+                  }
+                </span>
+                <span class="tp-cierre__usa-nombre">{{ u.nombre }}</span>
+                <span class="tp-cierre__usa-detalle">{{ u.detalle }}</span>
+              </li>
+            }
+            <li class="tp-mas" data-mas>
+              <button type="button" class="tp-mas__btn" [attr.aria-label]="verUsos()" [attr.aria-describedby]="'tp-usos-resto'" [pTooltip]="restoUsos" tooltipPosition="top" tooltipEvent="both" tooltipStyleClass="tp-cierre__globo">
+                <sc-badge variant="secondary" size="xl" [label]="'+' + usosFuera()" />
+              </button>
+              <!-- Los sitios que no caben, para el lector: los dice después de la cifra (un texto `hidden` vale como descripción). -->
+              <span id="tp-usos-resto" hidden>{{ restoDeUsos() }}</span>
+              <ng-template #restoUsos>
+                <span class="tp-cierre__tip">
+                  @for (u of usosPlanos().slice(usosPlanos().length - usosFuera()); track u.tipo + u.nombre + u.detalle) {
+                    <span class="tp-cierre__tip-clave">{{ u.nombre }}</span>
+                    <span>{{ tipos[u.tipo].uno }}, {{ u.detalle }}</span>
+                  }
+                </span>
+              </ng-template>
+            </li>
+          </ul>
+          <!-- El aviso, callado en su icono: la barra de guardar ya dice «Afecta a N sitios» en cuanto cambias algo. -->
+          <span class="tp-cierre__usos-nota" role="note" tabindex="0" [attr.aria-label]="avisoUsos()" [pTooltip]="avisoUsos()" tooltipPosition="top" tooltipEvent="both">
+            <sc-icon name="info" [size]="14" />
+          </span>
+        }
+      </section>
+    </header>
+
+    <div class="tp-cierre__rejilla">
+      <!--
+        La semana, en la sección del DS: caja blanca con borde (`surface="card"`) y su espaciado de siempre. A la derecha de
+        la cabecera, las horas de la semana y, al crear, «Vaciar la semana» (solo el icono; ⌘Z la devuelve).
+      -->
+      <sc-section-card class="tp-cierre__semana tp-stagger" style="--i: 1" surface="card" titleKey="repositories.horarios.section_week">
+        <span scSectionActions class="tp-cierre__cuenta sc-text-caption-regular t-num">
+          @for (c of [horasSemana()]; track c.texto) {
+            <span class="tp-cuenta" [class.is-viva]="c.viva" [class.is-baja]="c.baja">{{ c.texto }}</span>
+          }
+          a la semana
+        </span>
+        @if (modo() === 'crear') {
+          <sc-button
+            scSectionActions
+            class="tp-cierre__vaciar"
+            variant="secondary"
+            appearance="text"
+            size="sm"
+            icon="restart_alt"
+            iconOnly
+            [ariaLabel]="t.vaciarSemana"
+            [disabled]="sinDias()"
+            (clicked)="vaciarSemana()"
+          />
+        }
+        <div class="sub-section tp-cierre__semana-cuerpo">
+          @if (columna) {
+            <sc-tp-semana [semana]="form().week" [ahora]="ahoraSemana()" (semanaChange)="update('week', $event)" (gesto)="gesto($event)" />
+          } @else {
+            <sc-tp-dias [semana]="form().week" [ahora]="ahoraSemana()" (semanaChange)="update('week', $event)" (gesto)="gesto($event)" />
+          }
+        </div>
+      </sc-section-card>
+    </div>
+  </div>
+
+  <!-- Los avisos del mapa de la versión anterior (`?variante=columna`); los de la lista salen en el toast del sistema. -->
+  @if (columna) {
+    <sc-tp-avisos />
+  }
+</div>

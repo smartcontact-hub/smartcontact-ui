@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 
 import { formDirtyGuard } from '@core/guards';
+import { aLab } from '@features/lab/horarios/lab-modo';
 
 /**
  * Repository routes — hub at `/admin/repositorios` plus 9 instance pages
@@ -74,16 +75,18 @@ export const REPOSITORIES_ROUTES: Routes = [
     path: 'horarios',
     data: repoInstanceEnAdmin('repositories.horarios.title'),
     children: [
-      { path: '', loadComponent: () => import('./instances/horarios').then((m) => m.HorariosPageComponent) },
+      { path: '', canActivate: [aLab(() => '/lab/tiempo')], loadComponent: () => import('./instances/horarios').then((m) => m.HorariosPageComponent) },
       {
         path: 'crear',
         data: { breadcrumb: { labelKey: 'repositories.horarios.create_title' } },
+        canActivate: [aLab(() => '/lab/tiempo/horario/crear')],
         loadComponent: () => import('./pages/horario-editor-page.component').then((m) => m.HorarioEditorPageComponent),
         canDeactivate: [formDirtyGuard],
       },
       {
         path: 'editar/:id',
         data: { breadcrumb: { labelKey: 'repositories.horarios.edit_breadcrumb' } },
+        canActivate: [aLab((r) => `/lab/tiempo/horario/${r.paramMap.get('id')}`)],
         loadComponent: () => import('./pages/horario-editor-page.component').then((m) => m.HorarioEditorPageComponent),
         canDeactivate: [formDirtyGuard],
       },
