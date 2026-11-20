@@ -46,7 +46,7 @@
 | `sc-bulk-action-bar` | CUSTOM | experimental (sin maestro en el Kit) | — | 3 inputs | sc-message sc-button | ✓ | 2 |
 | `sc-bulk-edit-menu` | CUSTOM | experimental (sin maestro en el Kit) | — | 2 inputs | sc-select sc-button | ✓ | — |
 | `sc-bulk-transcription-modal` | CUSTOM | experimental (sin maestro en el Kit) | — | 16 inputs | sc-icon-tile sc-button sc-toggleswitch | ✓ | — |
-| `sc-button` | EXTENDED | ready | primeng/button, primeng/tooltip | 20 inputs | — | ✓ | 234 |
+| `sc-button` | EXTENDED | ready | primeng/button, primeng/tooltip | 20 inputs | — | ✓ | 235 |
 | `sc-card` | STANDARD | ready | primeng/card | 3 inputs | — | ✓ | — |
 | `sc-checkbox` | CUSTOM | ready | — | 6 inputs | — | ✓ | 37 |
 | `sc-chip` | EXTENDED | ready | primeng/chip | 9 inputs | — | ✓ | 5 |
@@ -89,8 +89,8 @@
 | `sc-progressspinner` | EXTENDED | ready | primeng/progressspinner | 4 inputs | — | ✓ | — |
 | `sc-radiobutton` | EXTENDED | ready | primeng/radiobutton | 7 inputs | — | ✓ | 3 |
 | `sc-search` | EXTENDED | experimental (sin maestro en el Kit) | primeng/iconfield, primeng/inputicon, primeng/inputtext | 11 inputs | — | ✓ | 10 |
-| `sc-section-card` | CUSTOM | ready | — | 9 inputs | sc-button | ✓ | 46 |
-| `sc-select` | EXTENDED | ready | primeng/select | 30 inputs | sc-field-label sc-field-msg | ✓ | 77 |
+| `sc-section-card` | CUSTOM | ready | — | 9 inputs | sc-button | ✓ | 47 |
+| `sc-select` | EXTENDED | ready | primeng/select | 30 inputs | sc-field-label sc-field-msg | ✓ | 78 |
 | `sc-selectbutton` | EXTENDED | ready | primeng/selectbutton | 15 inputs | sc-field-msg | ✓ | 31 |
 | `sc-skeleton` | EXTENDED | ready | primeng/skeleton | 6 inputs | — | ✓ | 1 |
 | `sc-slot` | CUSTOM | experimental (sin maestro en el Kit) | — | 4 inputs | — | ✓ | 12 |
@@ -101,7 +101,7 @@
 | `sc-tag` | EXTENDED | ready | primeng/tag, primeng/tooltip | 8 inputs | — | ✓ | 40 |
 | `sc-textarea` | EXTENDED | ready | primeng/textarea | 20 inputs | sc-field-label sc-button sc-field-msg | ✓ | 7 |
 | `sc-toast` | EXTENDED | ready | primeng/toast | 6 inputs | — | ✓ | — |
-| `sc-toggleswitch` | EXTENDED | ready | primeng/toggleswitch | 8 inputs | — | ✓ | 56 |
+| `sc-toggleswitch` | EXTENDED | ready | primeng/toggleswitch | 8 inputs | — | ✓ | 57 |
 <!-- @audit:components:end -->
 
 ## Gaps abiertos (el consumidor real los necesita; el DS aún no los cubre)

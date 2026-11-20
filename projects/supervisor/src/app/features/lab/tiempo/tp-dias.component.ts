@@ -2,6 +2,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, effect, ElementRef, HostListener, inject, input, output, signal, untracked } from '@angular/core';
 
 import { type Franja, type Semana, validarSemana } from '@features/admin/repositories/state/horarios.core.mjs';
+import { ScToggleSwitchComponent } from '@smartcontact-hub/components';
 
 import { TpIconoComponent } from './tp-icono.component';
 import { CORTOS, horaCorta, LETRAS, NOMBRES, trozosDelDia } from './tp-modelo';
@@ -101,7 +102,7 @@ const esPausa = (h: { readonly min: number; readonly max: number }): boolean => 
  */
 @Component({
   selector: 'sc-tp-dias',
-  imports: [NgTemplateOutlet, TpIconoComponent, TpHoraComponent],
+  imports: [NgTemplateOutlet, ScToggleSwitchComponent, TpIconoComponent, TpHoraComponent],
   template: `
     <div class="tp-dias" [class.is-arrastrando]="arrastre() !== null" [attr.data-arrastre]="arrastre()?.lado ?? null" role="group" aria-label="La semana, día a día">
       <!-- La ayuda: arriba, donde se empieza a leer, y una sola cosa a la vez. -->
@@ -161,18 +162,20 @@ const esPausa = (h: { readonly min: number; readonly max: number }): boolean => 
           [style.--k]="f.lejos"
           [style.--salto]="baja()?.dia === f.dia ? 'calc(' + baja()!.filas + ' * ' + pasoDeFila + ')' : null"
         >
-          <button
-            type="button"
-            role="switch"
-            class="tp-dias__dia"
-            [attr.aria-checked]="f.abierto"
-            [attr.aria-label]="capital(nombres[f.dia]) + (f.hoy ? ', hoy' : '')"
-            (click)="alternar(f.dia)"
-          >
-            <span class="tp-dias__interruptor" aria-hidden="true"></span>
+          <!--
+            El interruptor del DS, en el verde de las barras: lo encendido y lo abierto son la misma cosa. El nombre es su
+            etiqueta, así que se pulsa entero.
+          -->
+          <span class="tp-dias__dia" [class.is-abierto]="f.abierto">
+            <sc-toggleswitch
+              [checked]="f.abierto"
+              [inputId]="'tp-dia-' + f.dia"
+              [ariaLabel]="capital(nombres[f.dia]) + (f.hoy ? ', hoy' : '')"
+              (checkedChange)="alternar(f.dia)"
+            />
             <!-- Hoy, sin palabra: el día en una pastilla del color de la raya de ahora (el lector oye «hoy»). -->
-            <span class="tp-dias__dia-nombre" [class.is-hoy]="f.hoy">{{ capital(cortos[f.dia]) }}</span>
-          </button>
+            <label class="tp-dias__dia-nombre sc-text-body-semibold" [class.is-hoy]="f.hoy" [for]="'tp-dia-' + f.dia">{{ capital(cortos[f.dia]) }}</label>
+          </span>
           <span class="tp-sem__pista tp-dias__pista" [class.is-cerrada]="!f.abierto" [class.is-cortando]="corte()?.dia === f.dia && !arrastre()" (pointerdown)="pintar($event, f.dia)" (pointermove)="apuntar($event, f.dia)" (pointerleave)="guia.set(null); corte.set(null)">
             <span class="tp-sem__guias" aria-hidden="true">
               @for (l of lineas(); track l.m) {
@@ -976,7 +979,7 @@ export class TpDiasComponent {
       }
       this.alternar(dia);
       this.aviso.set(`${capital(this.nombreCon(dia))} queda cerrado. ⌘Z lo deshace.`);
-      setTimeout(() => this.host.nativeElement.querySelector<HTMLElement>(`.tp-dias__fila[data-dia="${dia}"] .tp-dias__dia`)?.focus());
+      setTimeout(() => this.host.nativeElement.querySelector<HTMLElement>(`#tp-dia-${dia}`)?.focus());
     } else if (e.key === 'Enter') {
       e.preventDefault();
       this.elegida.set(null);

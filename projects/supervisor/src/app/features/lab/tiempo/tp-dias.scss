@@ -14,7 +14,7 @@
 
   display: grid;
   /* Las horas, en una columna de ancho fijo: añadir una pausa no estrecha la barra. */
-  grid-template-columns: 4.25rem minmax(0, 1fr) 23.5rem;
+  grid-template-columns: max-content minmax(0, 1fr) 23.5rem;
   column-gap: var(--s-3);
   row-gap: var(--s-1-5);
 }
@@ -43,6 +43,7 @@
   background: var(--tp-muted);
   color: var(--tp-ink-2);
   font-size: var(--t-13);
+  line-height: var(--sc-line-height-body-2);
   font-weight: var(--sc-font-weight-regular);
   transition-property: background-color, color;
   transition-duration: 200ms;
@@ -154,68 +155,26 @@
   position: relative;
   block-size: 2.5rem;
 }
-/* El día: un interruptor con su nombre, que se lee como lo que es (abre o cierra) y se pulsa entero. */
+/*
+ * El día: el interruptor del DS (`sc-toggleswitch`) y su nombre como etiqueta, que también lo pulsa. Encendido, en el
+ * verde de las barras (`--tp-si`, el mismo hex) para que interruptor y barra digan lo mismo con el mismo color.
+ */
 .tp-dias__dia {
   display: inline-flex;
   align-items: center;
-  gap: var(--s-2);
-  block-size: 2rem;
+  gap: var(--s-1-5);
+  /* El aire de alrededor es el del anillo que marca los días que copiarían al de arriba. */
   margin-inline-start: calc(-1 * var(--s-1-5));
-  padding-inline: var(--s-1-5);
-  border: 0;
+  padding: var(--s-1) var(--s-1-5);
   border-radius: var(--r-sm);
-  background: transparent;
-  font: inherit;
-  font-size: var(--t-13);
-  font-weight: var(--sc-font-weight-semibold);
   color: var(--tp-ink-3);
-  cursor: pointer;
-  transition-property: background-color, color;
-  transition-duration: 150ms;
-  transition-timing-function: ease-out;
 
-  &:hover {
-    background: var(--tp-muted);
-    color: var(--tp-ink);
-  }
-  &:focus-visible {
-    outline: 2px solid var(--tp-accent);
-    outline-offset: 1px;
-  }
-  &[aria-checked='true'] {
-    color: var(--tp-ink);
-  }
-}
-.tp-dias__interruptor {
-  position: relative;
-  flex: none;
-  inline-size: 1.75rem;
-  block-size: 1rem;
-  border-radius: var(--r-full);
-  background: var(--tp-sunken);
-  transition-property: background-color;
-  transition-duration: 200ms;
-  transition-timing-function: var(--tp-ease);
+  /* Los tokens del interruptor se heredan: se dicen aquí, sin tocar las clases de dentro del componente. */
+  --p-toggleswitch-checked-background: var(--tp-si);
+  --p-toggleswitch-checked-hover-background: var(--tp-si-borde);
 
-  &::after {
-    content: '';
-    position: absolute;
-    inset-block-start: 0.125rem;
-    inset-inline-start: 0.125rem;
-    inline-size: 0.75rem;
-    block-size: 0.75rem;
-    border-radius: var(--r-full);
-    background: #fff;
-    box-shadow: 0 1px 2px oklch(0 0 0 / 0.2), 0 0 0 0.5px oklch(0 0 0 / 0.06);
-    transition-property: translate;
-    transition-duration: 200ms;
-    transition-timing-function: var(--tp-ease);
-  }
-  [aria-checked='true'] > & {
-    background: var(--tp-si);
-    &::after {
-      translate: 0.75rem 0;
-    }
+  &.is-abierto {
+    color: var(--tp-ink);
   }
 }
 /* Todos los días con el mismo relleno, para que el de hoy, en su pastilla, no se salga de la columna. */
@@ -226,7 +185,7 @@
   margin-inline-start: calc(-1 * var(--s-1));
   padding: var(--s-0-5) var(--s-1-5);
   border-radius: var(--r-full);
-  line-height: 1.2;
+  cursor: pointer;
 }
 /* Hoy, sin palabra: el día en una pastilla del color de la raya de ahora, que se leen juntas. */
 .tp-dias__dia-nombre.is-hoy {
@@ -415,6 +374,7 @@
   gap: var(--s-0-5);
   margin-inline: var(--s-0-5) var(--s-1);
   font-size: var(--t-11);
+  line-height: var(--sc-line-height-caption);
   font-weight: var(--sc-font-weight-semibold);
   color: color-mix(in oklch, var(--tp-si) 75%, var(--tp-ink));
 }
@@ -449,6 +409,7 @@
   background: var(--tp-franja-fondo);
   box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--tp-si) 22%, transparent);
   font-size: var(--t-13);
+  line-height: var(--sc-line-height-body-2);
   color: color-mix(in oklch, var(--tp-si) 75%, var(--tp-ink));
 
   .tp-mas:hover > &,
@@ -475,6 +436,7 @@
 .tp-dias__mas-tit {
   padding: var(--s-0-5) var(--s-1) var(--s-1);
   font-size: var(--t-12);
+  line-height: var(--sc-line-height-caption);
   font-weight: var(--sc-font-weight-semibold);
   color: var(--tp-ink-2);
 }
@@ -485,6 +447,7 @@
   gap: var(--s-3);
   padding-inline: var(--s-1) 0;
   font-size: var(--t-12);
+  line-height: var(--sc-line-height-caption);
   color: var(--tp-ink-3);
 
   .tp-btn {
@@ -527,7 +490,7 @@
 /* Sin sitio, la columna de las horas se ajusta a lo que tiene y «Ver de … a …» se va: las horas se ven solas. */
 @container semana (max-width: 44rem) {
   .tp-dias {
-    grid-template-columns: 4.25rem minmax(0, 1fr) auto;
+    grid-template-columns: max-content minmax(0, 1fr) auto;
   }
   .tp-dias__vista {
     display: none;

@@ -99,8 +99,8 @@
   --tp-ease: cubic-bezier(0.2, 0, 0, 1);
 
   font-family: var(--sc-font-family-primary);
-  font-size: var(--t-14);
-  line-height: 1.43;
+  font-size: var(--sc-font-size-body-2);
+  line-height: var(--sc-line-height-body-2);
   color: var(--tp-ink);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -187,36 +187,36 @@ sc-tp-festivos {
   }
 }
 
-/* ── Tipografía: seis tamaños, nada más ─────────────────────────────────────────────────────────────────────────── */
+/* ── Tipografía: cada clase es un estilo de texto del DS (Title, Subtitle, Body y Caption) ──────────────────────────── */
 
 .t-display {
-  font-size: var(--t-24);
-  line-height: 2rem;
+  font-size: var(--sc-font-size-title);
+  line-height: var(--sc-line-height-title);
   font-weight: var(--sc-font-weight-semibold);
 }
 .t-title {
-  font-size: var(--t-16);
-  line-height: 1.5rem;
+  font-size: var(--sc-font-size-subtitle-1);
+  line-height: var(--sc-line-height-subtitle-1);
   font-weight: var(--sc-font-weight-semibold);
 }
 .t-body {
-  font-size: var(--t-14);
-  line-height: 1.25rem;
+  font-size: var(--sc-font-size-body-2);
+  line-height: var(--sc-line-height-body-2);
 }
 .t-strong {
   font-weight: var(--sc-font-weight-semibold);
 }
 .t-small {
-  font-size: var(--t-13);
-  line-height: 1.125rem;
+  font-size: var(--sc-font-size-body-2);
+  line-height: var(--sc-line-height-body-2);
 }
 .t-micro {
-  font-size: var(--t-12);
-  line-height: 1rem;
+  font-size: var(--sc-font-size-caption);
+  line-height: var(--sc-line-height-caption);
 }
 .t-eyebrow {
-  font-size: var(--t-11);
-  line-height: 0.875rem;
+  font-size: var(--sc-font-size-caption);
+  line-height: var(--sc-line-height-caption);
   font-weight: var(--sc-font-weight-semibold);
   letter-spacing: 0.06em;
   text-transform: uppercase;

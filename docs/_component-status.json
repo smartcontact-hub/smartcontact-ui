@@ -294,7 +294,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 234,
+      "usedInSupervisor": 235,
       "cuando": "Para una ACCIÓN. Si navega a otro sitio sin cambiar nada, debería ser un enlace.",
       "sobreObsoleto": [
         {
@@ -1792,7 +1792,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 46,
+      "usedInSupervisor": 47,
       "cuando": "Para una sección con título dentro de un formulario o una ficha.",
       "sobreObsoleto": [],
       "fuente": "projects/ui-smartcontact/src/lib/components/section-card/sc-section-card.component.ts"
@@ -1849,7 +1849,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 77,
+      "usedInSupervisor": 78,
       "cuando": "Para elegir UNA de muchas. Si son pocas y caben a la vista, `sc-radiobutton` o `sc-selectbutton` ahorran un clic.",
       "sobreObsoleto": [],
       "fuente": "projects/ui-smartcontact/src/lib/components/select/sc-select.component.ts"
@@ -2183,7 +2183,7 @@
       "estado": "ready",
       "faltas": [],
       "retirado": null,
-      "usedInSupervisor": 56,
+      "usedInSupervisor": 57,
       "cuando": "Para encender o apagar algo CON EFECTO INMEDIATO. Si el cambio se guarda al enviar el formulario, `sc-checkbox`.",
       "sobreObsoleto": [],
       "fuente": "projects/ui-smartcontact/src/lib/components/toggleswitch/sc-toggleswitch.component.ts"

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, HostListener, inject, linkedSignal, type OnInit, signal, type TemplateRef, viewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { ScButtonComponent } from '@smartcontact-hub/components';
+import { ScButtonComponent, ScSectionCardComponent, ScSelectComponent } from '@smartcontact-hub/components';
 import { TooltipModule } from 'primeng/tooltip';
 
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
@@ -49,7 +49,7 @@ const LISTA = '/lab/tiempo';
  */
 @Component({
   selector: 'sc-tp-horario',
-  imports: [ScButtonComponent, TooltipModule, TranslateModule, TpAvisosComponent, TpCabeDirective, TpDiasComponent, TpIconoComponent, TpModalComponent, TpSemanaComponent],
+  imports: [ScButtonComponent, ScSectionCardComponent, ScSelectComponent, TooltipModule, TranslateModule, TpAvisosComponent, TpCabeDirective, TpDiasComponent, TpIconoComponent, TpModalComponent, TpSemanaComponent],
   templateUrl: './tp-horario.page.html',
   // Hojas globales repartidas por dueño: cada una cabe en el presupuesto de estilos por componente.
   styleUrls: ['./tp-base.scss', './tp-piezas.scss', './tp-capas.scss', './tp-semana.scss', './tp-dias.scss', './tp-cierre.scss'],
@@ -133,9 +133,10 @@ export class TpHorarioPage implements OnInit {
   /** Los grupos que no caben en sus dos líneas: van en «+N». */
   protected readonly resumenFuera = signal(0);
   protected readonly verResumen = computed(() => `Ver ${this.resumenFuera()} más`);
+  /** Las zonas que conoce el navegador, para el desplegable del DS (con buscador); la del horario siempre está. */
   protected readonly zonas = computed(() => {
     const conocidas = typeof Intl.supportedValuesOf === 'function' ? Intl.supportedValuesOf('timeZone') : [];
-    return [...new Set([this.form().timezone, 'UTC', ...conocidas])].sort();
+    return [...new Set([this.form().timezone, 'UTC', ...conocidas])].sort().map((z) => ({ value: z, label: z.replaceAll('_', ' ') }));
   });
 
   /* ── Dónde se aplica ──────────────────────────────────────────────────────────────────────────────────────────── */
@@ -202,7 +203,7 @@ export class TpHorarioPage implements OnInit {
     this.update('week', VACIO.week);
     this.avisos.decir('Semana vacía. ⌘Z la devuelve.');
     // El botón se apaga con la semana vacía: el foco pasa al lunes, que es por donde se vuelve a empezar.
-    setTimeout(() => document.querySelector<HTMLElement>('.tp-dias__fila[data-dia="0"] .tp-dias__dia')?.focus());
+    setTimeout(() => document.querySelector<HTMLElement>('#tp-dia-0')?.focus());
   }
 
   protected update<K extends keyof Borrador>(key: K, value: Borrador[K]): void {

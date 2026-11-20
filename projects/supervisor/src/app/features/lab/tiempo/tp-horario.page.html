@@ -92,15 +92,18 @@
                 <span>Ahora <strong>{{ a.titulo }}</strong>, {{ a.detalle }}</span>
               </span>
             }
-            <span class="tp-cierre__select" [attr.data-tip]="t.zona">
-              <sc-tp-icono nombre="globe" [tam]="14" />
-              <select [attr.aria-label]="t.zona" [value]="form().timezone" (change)="update('timezone', $any($event.target).value)">
-                @for (z of zonas(); track z) {
-                  <option [value]="z" [selected]="z === form().timezone">{{ z.replace('_', ' ') }}</option>
-                }
-              </select>
-              <sc-tp-icono nombre="chevron-down" [tam]="14" />
-            </span>
+            <!-- La zona, con el desplegable del DS que usa la ficha de horario: con buscador, que son cientos. -->
+            <sc-select
+              class="tp-cierre__zona"
+              inputId="tp-zona"
+              filter
+              [ariaLabel]="t.zona"
+              [options]="zonas()"
+              optionLabel="label"
+              optionValue="value"
+              [value]="form().timezone"
+              (valueChange)="update('timezone', $any($event))"
+            />
           </div>
         </div>
       </div>
@@ -157,35 +160,39 @@
     </header>
 
     <div class="tp-cierre__rejilla">
-      <!-- La semana -->
-      <section class="tp-card tp-cierre__semana tp-stagger" style="--i: 1">
-        <header class="tp-card__head">
-          <div class="tp-card__title">
-            <h2 class="t-title">Semana</h2>
-            <span class="t-small t-3 t-num">
-              @for (c of [horasSemana()]; track c.texto) {
-                <span class="tp-cuenta" [class.is-viva]="c.viva" [class.is-baja]="c.baja">{{ c.texto }}</span>
-              }
-              a la semana
-            </span>
-          </div>
-          <!-- Al crear, vaciar la semana para empezar de cero: solo el icono, a la derecha; ⌘Z la devuelve. -->
-          @if (modo() === 'crear') {
-            <span class="tp-spacer"></span>
-            <button type="button" class="tp-btn tp-btn--ghost tp-btn--icon tp-btn--sm tp-cierre__vaciar" [attr.aria-label]="t.vaciarSemana" [attr.data-tip]="t.vaciarSemana" [disabled]="sinDias()" (click)="vaciarSemana()">
-              <sc-tp-icono nombre="reiniciar" [tam]="16" />
-            </button>
+      <!--
+        La semana, en la sección del DS: caja blanca con borde (`surface="card"`) y su espaciado de siempre. A la derecha de
+        la cabecera, las horas de la semana y, al crear, «Vaciar la semana» (solo el icono; ⌘Z la devuelve).
+      -->
+      <sc-section-card class="tp-cierre__semana tp-stagger" style="--i: 1" surface="card" titleKey="repositories.horarios.section_week">
+        <span scSectionActions class="tp-cierre__cuenta sc-text-caption-regular t-num">
+          @for (c of [horasSemana()]; track c.texto) {
+            <span class="tp-cuenta" [class.is-viva]="c.viva" [class.is-baja]="c.baja">{{ c.texto }}</span>
           }
-        </header>
-        <div class="tp-cierre__semana-cuerpo">
+          a la semana
+        </span>
+        @if (modo() === 'crear') {
+          <sc-button
+            scSectionActions
+            class="tp-cierre__vaciar"
+            variant="secondary"
+            appearance="text"
+            size="sm"
+            icon="restart_alt"
+            iconOnly
+            [ariaLabel]="t.vaciarSemana"
+            [disabled]="sinDias()"
+            (clicked)="vaciarSemana()"
+          />
+        }
+        <div class="sub-section tp-cierre__semana-cuerpo">
           @if (columna) {
             <sc-tp-semana [semana]="form().week" [ahora]="ahoraSemana()" (semanaChange)="update('week', $event)" (gesto)="gesto($event)" />
           } @else {
             <sc-tp-dias [semana]="form().week" [ahora]="ahoraSemana()" (semanaChange)="update('week', $event)" (gesto)="gesto($event)" />
           }
         </div>
-      </section>
-
+      </sc-section-card>
     </div>
   </div>
 

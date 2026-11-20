@@ -55,6 +55,7 @@
   field-sizing: content;
   min-inline-size: 16ch;
   font-size: var(--t-14);
+  line-height: var(--sc-line-height-body-2);
   color: var(--tp-ink-2);
 }
 .tp-cierre__props {
@@ -67,6 +68,7 @@
   max-inline-size: 20rem;
   padding-inline-start: var(--s-6);
   font-size: var(--t-13);
+  line-height: var(--sc-line-height-body-2);
 
   &::before {
     content: '';
@@ -128,6 +130,7 @@
   border-radius: var(--r-xs);
   background: var(--tp-muted);
   font-size: var(--t-12);
+  line-height: var(--sc-line-height-caption);
   font-weight: var(--sc-font-weight-semibold);
   color: var(--tp-ink);
 }
@@ -138,6 +141,7 @@
 }
 .tp-cierre__y {
   font-size: var(--t-12);
+  line-height: var(--sc-line-height-caption);
   color: var(--tp-ink-4);
 }
 .tp-cierre__grupo--cerrado {
@@ -163,6 +167,7 @@
   box-shadow: inset 0 0 0 1px var(--tp-hair-strong);
   font: inherit;
   font-size: var(--t-12);
+  line-height: var(--sc-line-height-caption);
   font-weight: var(--sc-font-weight-semibold);
   font-variant-numeric: tabular-nums;
   color: var(--tp-ink-2);
@@ -250,40 +255,9 @@
     color: var(--tp-ink);
   }
 }
-.tp-cierre__select {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--s-1-5);
-  block-size: 2rem;
-  padding-inline: var(--s-2);
-  border-radius: var(--r-sm);
-  background: var(--tp-surface);
-  box-shadow: var(--tp-ring);
-  color: var(--tp-ink-3);
-  transition-property: box-shadow;
-  transition-duration: 150ms;
-  transition-timing-function: ease-out;
-
-  &:hover {
-    box-shadow: var(--tp-ring-hover);
-  }
-  &:focus-within {
-    box-shadow: 0 0 0 1px var(--tp-accent), 0 0 0 3px var(--tp-accent-ring);
-  }
-  select {
-    appearance: none;
-    field-sizing: content;
-    max-inline-size: 14rem;
-    border: 0;
-    background: transparent;
-    font: inherit;
-    font-size: var(--t-13);
-    font-weight: var(--sc-font-weight-regular);
-    color: var(--tp-ink);
-    cursor: pointer;
-    outline: none;
-  }
+/* La zona, con el desplegable del DS: ancho para «America/Argentina/Buenos Aires» sin moverse al cambiar. */
+.tp-cierre__zona {
+  inline-size: 15rem;
 }
 
 /*
@@ -301,6 +275,7 @@
   background: var(--tp-surface);
   box-shadow: var(--tp-ring);
   font-size: var(--t-13);
+  line-height: var(--sc-line-height-body-2);
 }
 .tp-cierre__aplicado-tit {
   display: inline-flex;
@@ -308,6 +283,7 @@
   gap: var(--s-1-5);
   margin: 0;
   font-size: var(--t-13);
+  line-height: var(--sc-line-height-body-2);
   font-weight: var(--sc-font-weight-semibold);
   white-space: nowrap;
   color: var(--tp-ink);
@@ -347,6 +323,7 @@
 }
 .tp-cierre__usa-detalle {
   font-size: var(--t-12);
+  line-height: var(--sc-line-height-caption);
   color: var(--tp-ink-3);
 }
 .tp-cierre__usos-nota,
@@ -399,23 +376,27 @@
   flex-direction: column;
   gap: var(--s-3);
 }
-/* «Vaciar la semana», al borde de la tarjeta: su tooltip se abre hacia dentro. */
-.tp-cierre__vaciar[data-tip]::after {
-  inset-inline-start: auto;
-  inset-inline-end: 0;
-  translate: 0 0.125rem;
+/* Las horas de la semana, a la derecha de la cabecera de la sección, calladas como su aclaración. */
+.tp-cierre__cuenta {
+  color: var(--sc-text-subtle);
 }
-.tp-cierre__vaciar[data-tip]:hover::after,
-.tp-cierre__vaciar[data-tip]:focus-visible::after {
-  translate: 0 0;
+/*
+ * La sección del DS recorta lo de dentro a su radio (`overflow: clip`); aquí las listas de «+N» y los globos de la pausa
+ * se abren hacia fuera de la caja, así que en esta se dejan ver.
+ */
+.tp-cierre .tp-cierre__semana .section-card {
+  overflow: visible;
 }
 /* Con la lista de «+N» de un día abierta hacia arriba, la semana pasa por encima de la cabecera: la lista no queda debajo. */
+.tp-cierre__semana {
+  position: relative;
+}
 .tp-cierre__semana:has(.tp-mas:hover, .tp-mas:focus-within) {
   z-index: 3;
 }
+/* El aire lo ponen la sección y `.sub-section`, como en el resto de fichas. */
 .tp-cierre__semana-cuerpo {
   container: semana / inline-size;
-  padding: var(--s-1) var(--s-5) var(--s-5);
 }
 /* El total de la semana cuenta: al cambiar, la cifra entra desde abajo si sube y desde arriba si baja. */
 .tp-cuenta {
