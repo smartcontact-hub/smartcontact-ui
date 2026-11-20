@@ -83,11 +83,11 @@ export class TpHorarioPage implements OnInit {
   /* ── Cabecera ─────────────────────────────────────────────────────────────────────────────────────────────────── */
 
   protected readonly estado = computed(() => estadoDeHorario({ id: 0, ...soloSemana(this.form()) }, [], this.reloj()));
-  /** «Cerrado, abre a las 9:00»: lo de ahora, en una frase con su etiqueta. Un horario inactivo no tiene «ahora». */
+  /** «Ahora cerrado, abre a las 9:00»: lo de ahora, en una frase que lo dice. Un horario inactivo no tiene «ahora». */
   protected readonly ahoraTexto = computed(() => {
     const e = this.estado();
     if (e.clave === 'inactive') return null;
-    return { abierto: e.clave === 'open', titulo: e.clave === 'open' ? 'Abierto' : 'Cerrado', detalle: enFrase(e.detalle) };
+    return { abierto: e.clave === 'open', titulo: e.clave === 'open' ? 'abierto' : 'cerrado', detalle: enFrase(e.detalle) };
   });
   protected readonly horasSemana = computed(() => horas(minutosDeSemana(this.form().week)));
   protected readonly faltaSemana = computed(() => validarSemana(this.form().week));

@@ -145,7 +145,7 @@ const esPausa = (h: { readonly min: number; readonly max: number }): boolean => 
               }
             </span>
           </button>
-          <span class="tp-sem__pista tp-dias__pista" [class.is-cerrada]="!f.abierto" (pointerdown)="pintar($event, f.dia)" (pointermove)="apuntar($event, f.dia)" (pointerleave)="guia.set(null)">
+          <span class="tp-sem__pista tp-dias__pista" [class.is-cerrada]="!f.abierto" [class.is-cortando]="corte()?.dia === f.dia && !arrastre()" (pointerdown)="pintar($event, f.dia)" (pointermove)="apuntar($event, f.dia)" (pointerleave)="guia.set(null); corte.set(null)">
             <span class="tp-sem__guias" aria-hidden="true">
               @for (l of lineas(); track l.m) {
                 <span class="tp-sem__guia" [class.is-fuerte]="l.fuerte" [style.left.%]="pos(l.m)"></span>
@@ -154,9 +154,11 @@ const esPausa = (h: { readonly min: number; readonly max: number }): boolean => 
             @for (t of f.trozos; track $index) {
               <span
                 class="tp-sem__barra"
+                [attr.data-j]="t.j"
                 [class.is-arrastre]="t.arrastre"
                 [class.is-movible]="t.movible"
                 [class.is-viva]="t.viva"
+                [class.is-elegida]="foco()?.dia === f.dia && foco()?.j === t.j"
                 [style.left.%]="pos(t.desde)"
                 [style.width.%]="pos(t.hasta) - pos(t.desde)"
                 (pointerdown)="t.movible && empezar($event, f.dia, t.j, 'mover')"
@@ -183,11 +185,24 @@ const esPausa = (h: { readonly min: number; readonly max: number }): boolean => 
                 </span>
               }
             }
+            @if (corte(); as c) {
+              @if (c.dia === f.dia && !arrastre()) {
+                <span class="tp-dias__corte" aria-hidden="true" [style.left.%]="pos(c.desde)" [style.width.%]="pos(c.hasta) - pos(c.desde)">
+                  <span class="tp-sem__globo t-num">Pausa {{ hora(c.desde) }}–{{ hora(c.hasta) }}</span>
+                </span>
+              }
+            }
             @if (ahora()?.dia === f.dia && seVe(ahora()!.minutos)) {
               <span class="tp-sem__ahora" [style.left.%]="pos(ahora()!.minutos)" [attr.data-tip]="guia()?.dia === f.dia ? null : 'Ahora, ' + hora(ahora()!.minutos)"></span>
             }
           </span>
-          <div class="tp-dias__horas" (keydown.enter)="bajar($event, f.dia, 1)" (keydown.shift.enter)="bajar($event, f.dia, -1)">
+          <div
+            class="tp-dias__horas"
+            (keydown.enter)="bajar($event, f.dia, 1)"
+            (keydown.shift.enter)="bajar($event, f.dia, -1)"
+            (focusin)="enfocar($event, f.dia)"
+            (focusout)="foco.set(null)"
+          >
             @if (f.abierto) {
               @for (fr of f.franjas; track $index; let j = $index) {
                 <span class="tp-dias__franja" [attr.data-franja]="j">
@@ -206,7 +221,7 @@ const esPausa = (h: { readonly min: number; readonly max: number }): boolean => 
                   <sc-tp-icono nombre="x" [tam]="14" />
                 </button>
               } @else if (f.pausa !== -1) {
-                <button type="button" class="tp-btn tp-btn--ghost tp-btn--sm tp-dias__pausa" (click)="pausa(f.dia)">
+                <button type="button" class="tp-btn tp-btn--ghost tp-btn--sm tp-dias__pausa" data-tip="De 14:00 a 15:00, o pulsa en la barra donde la quieras" (click)="pausa(f.dia)">
                   <sc-tp-icono nombre="plus" [tam]="14" />
                   Pausa
                 </button>
@@ -237,6 +252,10 @@ export class TpDiasComponent {
   protected readonly arrastre = signal<Arrastre | null>(null);
   /** Al pasar por lo vacío: la hora bajo el puntero y lo que se añadiría con un clic. */
   protected readonly guia = signal<{ dia: number; min: number; hasta: number } | null>(null);
+  /** Al pasar por una barra: dónde iría una pausa de una hora con un clic. */
+  protected readonly corte = signal<{ dia: number; j: number; desde: number; hasta: number } | null>(null);
+  /** La franja cuyas horas se están escribiendo: su caja y su barra se resaltan juntas. */
+  protected readonly foco = signal<{ dia: number; j: number } | null>(null);
   protected readonly oferta = signal<Oferta | null>(null);
   /** Lo que pasó solo y conviene decir (dos franjas que se tocaban y ahora son una), hasta el siguiente cambio. */
   protected readonly aviso = signal<string | null>(null);
@@ -297,7 +316,7 @@ export class TpDiasComponent {
     const a = this.aviso();
     if (a) return { texto: a, icono: 'check', tono: 'aviso' };
     if (this.vacia()) return { texto: 'Activa un día para abrirlo. Los siguientes copian sus horas.', icono: 'info', tono: 'guia' };
-    return { texto: 'Arrastra la barra o escribe las horas. Desactiva un día para cerrarlo.', icono: 'info', tono: 'neutro' };
+    return { texto: 'Arrastra o escribe las horas. Para una pausa, pulsa en la barra donde la quieras.', icono: 'info', tono: 'neutro' };
   });
 
   /* ── Las horas que se ven ─────────────────────────────────────────────────────────────────────────────────────── */
@@ -637,8 +656,10 @@ export class TpDiasComponent {
     if (this.arrastre() || e.pointerType === 'touch') return;
     const pista = (e.currentTarget as HTMLElement).getBoundingClientRect();
     const m = this.minutoEn(e, pista);
+    const barra = (e.target as HTMLElement).closest<HTMLElement>('.tp-sem__barra');
+    this.apuntarCorte(dia, m, barra && !(e.target as HTMLElement).closest('.tp-sem__asa') ? Number(barra.dataset['j']) : -1);
     const h = this.hueco(dia, Math.min(m, 1440 - PASO));
-    if (!h || (e.target as HTMLElement).closest('.tp-sem__barra')) {
+    if (!h || barra) {
       if (this.guia()) this.guia.set(null);
       return;
     }
@@ -651,6 +672,35 @@ export class TpDiasComponent {
     this.guia.set({ dia, min: desde, hasta });
   }
 
+  /** Una pausa de una hora que empieza en el puntero, con un cuarto de hora como poco a cada lado; si no cabe, nada. */
+  private apuntarCorte(dia: number, m: number, j: number): void {
+    const f = j >= 0 ? this.actual()[dia]?.[j] : undefined;
+    let c: { dia: number; j: number; desde: number; hasta: number } | null = null;
+    if (f && !cruza(f) && f[1] - f[0] >= PAUSA + 2 * PASO) {
+      const desde = Math.min(f[1] - PASO - PAUSA, Math.max(f[0] + PASO, Math.round(m / PASO) * PASO));
+      c = { dia, j, desde, hasta: desde + PAUSA };
+    }
+    const ya = this.corte();
+    if (ya?.dia === c?.dia && ya?.j === c?.j && ya?.desde === c?.desde) return;
+    this.corte.set(c);
+  }
+
+  /** Partir una franja con la pausa que se veía al pasar: de una hora, donde se pulsó. */
+  private cortar(c: { dia: number; j: number; desde: number; hasta: number }): void {
+    const fs = this.actual()[c.dia];
+    const f = fs[c.j];
+    if (!f) return;
+    contarUso('dividir');
+    this.corte.set(null);
+    this.cambiarDia(c.dia, [...fs.slice(0, c.j), [f[0], c.desde], [c.hasta, f[1]], ...fs.slice(c.j + 1)]);
+    this.aviso.set(`Pausa de ${horaCorta(c.desde)} a ${horaCorta(c.hasta)}. Sus bordes se arrastran y sus horas se escriben.`);
+  }
+
+  protected enfocar(e: FocusEvent, dia: number): void {
+    const caja = (e.target as HTMLElement).closest<HTMLElement>('[data-franja]');
+    this.foco.set(caja ? { dia, j: Number(caja.dataset['franja']) } : null);
+  }
+
   protected empezar(e: PointerEvent, dia: number, j: number, lado: Lado): void {
     if (e.button !== 0 || j < 0) return;
     e.preventDefault();
@@ -658,6 +708,7 @@ export class TpDiasComponent {
     const pista = (e.currentTarget as HTMLElement).closest('.tp-sem__pista')!.getBoundingClientRect();
     const s = this.actual();
     this.guia.set(null);
+    if (lado !== 'mover') this.corte.set(null);
     this.gesto.emit(true);
     const lazos = { siguen: this.seguidores(dia, s), copia: this.sigue.has(dia) };
     this.arrastre.set({ dia, franja: j, lado, pista, x0: e.clientX, f0: s[dia][j], rango: this.rango(), antes: s, movido: false, ...lazos, ...this.limites(dia, j, lado) });
@@ -724,6 +775,15 @@ export class TpDiasComponent {
   protected soltar(): void {
     const a = this.arrastre();
     if (!a) return;
+    if (a.lado === 'mover' && !a.movido) {
+      // Un clic en una barra, sin arrastrarla: la pausa que se veía al pasar; si no cabe, a sus horas, que ahí se escriben.
+      this.arrastre.set(null);
+      this.gesto.emit(false);
+      const c = this.corte();
+      if (c?.dia === a.dia && c.j === a.franja) this.cortar(c);
+      else this.host.nativeElement.querySelector<HTMLInputElement>(`.tp-dias__fila[data-dia="${a.dia}"] [data-franja="${a.franja}"] input`)?.focus();
+      return;
+    }
     if (a.lado === 'pintar' && !a.movido) {
       // Un clic en lo vacío pone una hora; en una pausa de una hora o menos, la rellena entera.
       this.ponerFranja(a.dia, a.franja, esPausa(a) ? [a.min, a.max] : [a.f0[0], Math.min(a.f0[0] + 60, a.max)]);
@@ -736,8 +796,7 @@ export class TpDiasComponent {
     if (!igual(this.actual()[a.dia], a.antes[a.dia])) this.sigue.delete(a.dia);
     this.ofrecer(a.dia, a.antes[a.dia], a.siguen, a.copia);
     if (junta) this.aviso.set(`Se tocaban, así que ahora es una sola franja: ${junta}. ⌘Z lo deshace.`);
-    // Un clic en una barra, sin arrastrarla, lleva a sus horas: ahí se escriben.
-    if (a.lado === 'mover' && !a.movido) this.host.nativeElement.querySelector<HTMLInputElement>(`.tp-dias__fila[data-dia="${a.dia}"] [data-franja="${a.franja}"] input`)?.focus();
+    this.corte.set(null);
   }
 
   /** Dos franjas que se tocan son una: en atención, de 9 a 14 y de 14 a 18 es de 9 a 18. Dice cuál queda. */

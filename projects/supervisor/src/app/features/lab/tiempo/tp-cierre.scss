@@ -4,7 +4,7 @@
  * tp-base.scss.
  */
 
-/* ── La cabecera: quién es y sus propiedades a la izquierda; dónde se aplica, en su tarjeta, a la derecha ────────── */
+/* ── La cabecera: quién es a la izquierda, con lo de ahora en la línea del nombre; dónde se aplica, a la derecha ─── */
 
 .tp-cierre .tp-lienzo {
   container: lienzo / inline-size;
@@ -17,16 +17,72 @@
   gap: var(--s-6);
 }
 .tp-cierre__quien {
+  container: quien / inline-size;
   display: flex;
   flex-direction: column;
   gap: var(--s-1);
   min-inline-size: 0;
 }
+/*
+ * El nombre con sus horas debajo y, al lado, tras un divisor que se desvanece en los extremos, lo de ahora, la zona y si
+ * está activo: menos alto y todo a un vistazo. El nombre cede ancho (sus horas pasan a dos líneas) antes que bajar lo de
+ * al lado; sin sitio para los dos, van uno debajo del otro y el divisor sobra.
+ */
+.tp-cierre__linea {
+  display: flex;
+  align-items: center;
+  gap: var(--s-6);
+  margin-block-start: var(--s-1);
+  min-inline-size: 0;
+}
+.tp-cierre__id {
+  display: flex;
+  flex: 0 1 auto;
+  flex-direction: column;
+  gap: var(--s-1);
+  min-inline-size: 0;
+}
+/* El campo sobresale lo que sus márgenes negativos le quitan a la caja: sin esto, un nombre más ancho que sus horas se corta. */
 .tp-cierre__nombre {
   align-self: flex-start;
-  margin-block-start: var(--s-1);
+  max-inline-size: calc(100% + 2 * var(--s-2));
 }
-/* Las horas en una frase, pegadas al nombre: son su subtítulo. Se escriben solas, así que no se tocan. */
+.tp-cierre__props {
+  position: relative;
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-1-5) var(--s-4);
+  max-inline-size: 20rem;
+  padding-inline-start: var(--s-6);
+  font-size: var(--t-13);
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset-block: calc(-1 * var(--s-1));
+    inset-inline-start: 0;
+    inline-size: 1px;
+    background: linear-gradient(to bottom, transparent, var(--tp-hair-strong) 25%, var(--tp-hair-strong) 75%, transparent);
+  }
+}
+@container quien (max-width: 36rem) {
+  .tp-cierre__linea {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--s-3);
+  }
+  .tp-cierre__props {
+    max-inline-size: none;
+    padding-inline-start: 0;
+
+    &::before {
+      display: none;
+    }
+  }
+}
+/* Las horas en una frase, bajo el nombre: son su subtítulo. Se escriben solas, así que no se tocan. */
 .tp-cierre__desc {
   align-self: flex-start;
   margin: 0;
@@ -34,34 +90,12 @@
   font-weight: 520;
   color: var(--tp-ink-2);
 }
-
-/* Las propiedades, cada una con su etiqueta a la izquierda: se leen de un vistazo y no se confunden entre sí. */
-.tp-cierre__props {
-  display: grid;
-  grid-template-columns: max-content minmax(0, 1fr);
-  align-items: center;
-  gap: var(--s-0-5) var(--s-6);
-  margin: var(--s-3) 0 0;
-  font-size: var(--t-13);
-}
-.tp-cierre__prop {
-  display: contents;
-
-  dt {
-    color: var(--tp-ink-3);
-    font-weight: 500;
-  }
-  dd {
-    display: flex;
-    align-items: center;
-    gap: var(--s-2);
-    min-block-size: 2rem;
-    margin: 0;
-    min-inline-size: 0;
-  }
-}
 .tp-cierre__ahora {
-  color: var(--tp-ink-2);
+  display: inline-flex;
+  flex-basis: 100%;
+  align-items: center;
+  gap: var(--s-1-5);
+  color: var(--tp-ink-3);
 
   strong {
     font-weight: 620;
