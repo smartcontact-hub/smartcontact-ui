@@ -1,8 +1,9 @@
 <div class="tp tp-editor tp-cierre" [class.tp--prueba]="enPrueba">
   <div class="tp-lienzo">
     <!--
-      Cabecera: quién es (el nombre con sus horas por grupos de días debajo y, al lado, tras un divisor, lo de ahora, la
-      zona horaria y si está activo) y, en una línea a lo ancho, dónde se aplica, a la vista antes de tocar nada.
+      Cabecera: quién es (el nombre con sus horas por grupos de días debajo y, al lado, tras un divisor, lo de ahora y la
+      zona horaria) y, en una línea a lo ancho, dónde se aplica, a la vista antes de tocar nada. Sin «Activo / Inactivo»:
+      un horario no hace nada solo, lo que se enciende o se apaga es dónde se aplica.
       «Ahora cerrado, abre a las 9:00» va dicho con su palabra para que no se lea como el estado del horario.
     -->
     <header class="tp-cierre__cabeza tp-stagger" style="--i: 0">
@@ -73,10 +74,6 @@
               </select>
               <sc-tp-icono nombre="chevron-down" [tam]="14" />
             </span>
-            <button type="button" class="tp-cierre__estado" role="switch" [attr.aria-checked]="form().status !== 'inactive'" (click)="update('status', form().status === 'inactive' ? 'active' : 'inactive')">
-              <span class="tp-switch" aria-hidden="true"></span>
-              {{ form().status === 'inactive' ? 'Inactivo' : 'Activo' }}
-            </button>
           </div>
         </div>
       </div>
@@ -148,9 +145,9 @@
         </header>
         <div class="tp-cierre__semana-cuerpo">
           @if (columna) {
-            <sc-tp-semana [semana]="form().week" [ahora]="form().status === 'inactive' ? null : ahoraSemana()" (semanaChange)="update('week', $event)" (gesto)="gesto($event)" />
+            <sc-tp-semana [semana]="form().week" [ahora]="ahoraSemana()" (semanaChange)="update('week', $event)" (gesto)="gesto($event)" />
           } @else {
-            <sc-tp-dias [semana]="form().week" [ahora]="form().status === 'inactive' ? null : ahoraSemana()" (semanaChange)="update('week', $event)" (gesto)="gesto($event)" />
+            <sc-tp-dias [semana]="form().week" [ahora]="ahoraSemana()" (semanaChange)="update('week', $event)" (gesto)="gesto($event)" />
           }
         </div>
       </section>

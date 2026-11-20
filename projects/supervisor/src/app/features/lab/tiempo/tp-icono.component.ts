@@ -19,6 +19,7 @@ const ICONOS = {
   'arrow-left': ['m12 19-7-7 7-7', 'M19 12H5'],
   'arrow-up-right': ['M7 17 17 7', 'M8 7h9v9'],
   plus: ['M5 12h14', 'M12 5v14'],
+  minus: ['M5 12h14'],
   x: ['M18 6 6 18', 'm6 6 12 12'],
   check: ['M20 6 9 17l-5-5'],
   clock: [c(12, 12, 10), 'M12 6v6l4 2'],

@@ -83,7 +83,12 @@ export class TpHorarioPage implements OnInit {
 
   /* ── Cabecera ─────────────────────────────────────────────────────────────────────────────────────────────────── */
 
-  protected readonly estado = computed(() => estadoDeHorario({ id: 0, ...soloSemana(this.form()) }, [], this.reloj()));
+  /**
+   * Lo de ahora sale solo de la semana. El estado guardado («Inactivo») no cuenta: un horario no hace nada por sí mismo,
+   * lo que se enciende o se apaga es dónde se aplica (el nodo del IVR, el canal). El campo sigue en los datos por
+   * compatibilidad con lo que se migre.
+   */
+  protected readonly estado = computed(() => estadoDeHorario({ id: 0, ...soloSemana(this.form()), status: 'active' }, [], this.reloj()));
   /** «Ahora cerrado, abre a las 9:00»: lo de ahora, en una frase que lo dice. Un horario inactivo no tiene «ahora». */
   protected readonly ahoraTexto = computed(() => {
     const e = this.estado();

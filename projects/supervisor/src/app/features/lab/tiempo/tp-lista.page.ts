@@ -163,7 +163,8 @@ export class TpListaPage {
   }
 
   private estado(h: Horario): ReturnType<typeof estadoDeHorario> {
-    return estadoDeHorario(soloSemana(h), [], this.reloj());
+    // Sin «Inactivo»: lo que no se usa ya lo dice «Aplicado en» («Sin usar»); el estado guardado no cuenta (ver el editor).
+    return estadoDeHorario({ ...soloSemana(h), status: 'active' }, [], this.reloj());
   }
 
   protected readonly config: RepoPageConfig<Horario> = {
@@ -189,7 +190,6 @@ export class TpListaPage {
         statusMap: {
           open: { labelKey: 'repositories.horarios.open', tone: 'success' },
           closed: { labelKey: 'repositories.horarios.closed', tone: 'secondary' },
-          inactive: { labelKey: 'repositories.horarios.inactive', tone: 'secondary' },
         },
         sortable: true,
       },

@@ -16,6 +16,8 @@ const PRIMERA: Franja = [540, 1080];
 /** Una pausa dura una hora y, si cabe, va de 14:00 a 15:00. */
 const PAUSA = 60;
 const COMIDA = 840;
+/** Lo más largo que se lee como pausa (de 14:00 a 17:00): más, son dos turnos y «− Pausa» no se ofrece. */
+const PAUSA_MAXIMA = 180;
 /** Lo menos que enseña la vista elegida en la regla: cuatro horas. */
 const VISTA_MINIMA = 240;
 
@@ -260,15 +262,20 @@ const esPausa = (h: { readonly min: number; readonly max: number }): boolean => 
                     }
                   </span>
                 </span>
-              } @else if (f.franjas.length > 1) {
+              } @else if (f.franjas.length > 1 && f.unible) {
+                <!--
+                  «− Pausa», el par de «+ Pausa»: junta las dos franjas. Solo si lo de en medio es una pausa (tres horas como
+                  mucho): juntar 9–14 con 22–2 daría de 9 a 2. La × de cada caja, en cambio, quita esa franja.
+                -->
                 <button
                   type="button"
-                  class="tp-btn tp-btn--ghost tp-btn--icon tp-btn--sm tp-dias__quitar"
+                  class="tp-btn tp-btn--ghost tp-btn--sm tp-dias__pausa tp-dias__quitar"
                   [attr.aria-label]="'Quitar la pausa de ' + hora(f.franjas[0][1]) + ' a ' + hora(f.franjas[1][0])"
                   [attr.data-tip]="'Quitar la pausa de ' + hora(f.franjas[0][1]) + ' a ' + hora(f.franjas[1][0])"
                   (click)="quitarPausa(f.dia, 1)"
                 >
-                  <sc-tp-icono nombre="x" [tam]="14" />
+                  <sc-tp-icono nombre="minus" [tam]="14" />
+                  Pausa
                 </button>
               } @else if (f.pausa !== -1) {
                 <button type="button" class="tp-btn tp-btn--ghost tp-btn--sm tp-dias__pausa" data-tip="De 14:00 a 15:00, o pulsa en la barra donde la quieras" (click)="pausa(f.dia)">
@@ -294,6 +301,18 @@ const esPausa = (h: { readonly min: number; readonly max: number }): boolean => 
           <span class="tp-dias__marca">24 h</span>
         } @else if (fr[1] <= fr[0]) {
           <span class="tp-dias__marca" data-tip="Acaba al día siguiente"><sc-tp-icono nombre="moon" [tam]="12" />+1</span>
+        }
+        <!-- Con más de una franja, cada caja se quita con su × (aparece al pasar o al llegar con el teclado). Con una sola, se cierra el día. -->
+        @if (n > 1) {
+          <button
+            type="button"
+            class="tp-dias__borrar"
+            [attr.aria-label]="'Quitar la franja de ' + hora(fr[0]) + ' a ' + hora(fr[1])"
+            [attr.data-tip]="'Quitar la franja de ' + hora(fr[0]) + ' a ' + hora(fr[1])"
+            (click)="quitarFranja(dia, j)"
+          >
+            <sc-tp-icono nombre="x" [tam]="10" />
+          </button>
         }
       </span>
     </ng-template>
@@ -478,7 +497,8 @@ export class TpDiasComponent {
         };
       });
       const lejos = origen === null ? 0 : Math.abs(dia - origen);
-      return { dia, abierto: propias.length > 0, franjas: propias, trozos, mal: mal === dia, ofrecido: ofrecidos.includes(dia), pausa: dondePausa(propias), hoy: hoy === dia, lejos };
+      const unible = propias.length === 2 && !cruza(propias[0]) && propias[1][0] - propias[0][1] <= PAUSA_MAXIMA;
+      return { dia, abierto: propias.length > 0, franjas: propias, trozos, mal: mal === dia, ofrecido: ofrecidos.includes(dia), pausa: dondePausa(propias), hoy: hoy === dia, lejos, unible };
     });
   });
 
@@ -637,6 +657,23 @@ export class TpDiasComponent {
     setTimeout(() => {
       const activo = document.activeElement;
       if (!activo || activo === document.body) this.enfocarCaja(dia, j - 1, 1);
+    });
+  }
+
+  /**
+   * Quitar una franja entera (la de la tarde, una pintada sin querer). Lo dice en la ayuda, con ⌘Z para devolverla. Si el
+   * botón se va con ella, el cursor pasa a la franja de antes.
+   */
+  protected quitarFranja(dia: number, j: number): void {
+    const fs = this.actual()[dia];
+    const f = fs[j];
+    if (!f || fs.length < 2) return;
+    contarUso('borrar');
+    this.cambiarDia(dia, fs.filter((_, k) => k !== j));
+    this.aviso.set(`Quitada la franja de ${horaCorta(f[0])} a ${horaCorta(f[1])}. ⌘Z la devuelve.`);
+    setTimeout(() => {
+      const activo = document.activeElement;
+      if (!activo || activo === document.body) this.enfocarCaja(dia, Math.max(0, j - 1), 1);
     });
   }
 

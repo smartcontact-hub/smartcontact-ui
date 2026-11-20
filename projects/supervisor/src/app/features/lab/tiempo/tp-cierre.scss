@@ -27,7 +27,7 @@
 }
 /*
  * El nombre con sus horas debajo y, al lado, tras un divisor que se desvanece en los extremos, lo de ahora, la zona y si
- * está activo: menos alto y todo a un vistazo. El nombre cede ancho (sus horas pasan a dos líneas) antes que bajar lo de
+ * la zona horaria: menos alto y todo a un vistazo. El nombre cede ancho (sus horas pasan a dos líneas) antes que bajar lo de
  * al lado; sin sitio para los dos, van uno debajo del otro y el divisor sobra.
  */
 .tp-cierre__linea {
@@ -236,41 +236,6 @@
   strong {
     font-weight: 620;
     color: var(--tp-ink);
-  }
-}
-.tp-cierre__estado {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--s-2);
-  block-size: 2rem;
-  margin-inline-start: calc(-1 * var(--s-1-5));
-  padding-inline: var(--s-1-5);
-  border: 0;
-  border-radius: var(--r-sm);
-  background: transparent;
-  font: inherit;
-  font-weight: 540;
-  color: var(--tp-ink);
-  cursor: pointer;
-  transition-property: background-color;
-  transition-duration: 150ms;
-  transition-timing-function: ease-out;
-
-  &:hover {
-    background: var(--tp-muted);
-  }
-  &:focus-visible {
-    outline: 2px solid var(--tp-accent);
-    outline-offset: 1px;
-  }
-  &[aria-checked='true'] .tp-switch {
-    background: var(--tp-accent);
-    &::after {
-      translate: 0.875rem 0;
-    }
-  }
-  &[aria-checked='false'] {
-    color: var(--tp-ink-3);
   }
 }
 .tp-cierre__select {

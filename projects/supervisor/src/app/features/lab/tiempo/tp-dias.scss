@@ -14,7 +14,7 @@
 
   display: grid;
   /* Las horas, en una columna de ancho fijo: añadir una pausa no estrecha la barra. */
-  grid-template-columns: 4.25rem minmax(0, 1fr) 19.5rem;
+  grid-template-columns: 4.25rem minmax(0, 1fr) 21.5rem;
   column-gap: var(--s-3);
   row-gap: var(--s-1-5);
 }
@@ -298,6 +298,7 @@
   padding-inline-start: var(--s-2);
 }
 .tp-dias__franja {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: var(--s-0-5);
@@ -337,6 +338,63 @@
 .tp-dias__franja .tp-franja__a {
   background: color-mix(in oklch, var(--tp-si) 45%, transparent);
 }
+/*
+ * La × de una franja: en la esquina de su caja, como al quitar una etiqueta. Aparece al pasar por la caja o al llegar con
+ * el teclado; se pulsa en un aro de 1,5rem aunque se vea más pequeña.
+ */
+.tp-dias__borrar {
+  position: absolute;
+  z-index: 2;
+  inset-block-start: -0.375rem;
+  inset-inline-end: -0.375rem;
+  display: grid;
+  place-items: center;
+  inline-size: 1rem;
+  block-size: 1rem;
+  padding: 0;
+  border: 0;
+  border-radius: var(--r-full);
+  background: var(--tp-surface);
+  box-shadow: var(--tp-ring);
+  color: var(--tp-ink-3);
+  cursor: pointer;
+  opacity: 0;
+  transition-property: opacity, background-color, color;
+  transition-duration: 120ms;
+  transition-timing-function: ease-out;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -0.25rem;
+  }
+  .tp-dias__franja:hover > &,
+  .tp-dias__franja:focus-within > & {
+    opacity: 1;
+  }
+  &:hover {
+    background: var(--tp-danger-soft);
+    color: var(--tp-danger-ink);
+  }
+  &:focus-visible {
+    outline: 2px solid var(--tp-accent);
+    outline-offset: 1px;
+  }
+  /* En la esquina de la derecha: su tooltip se abre hacia dentro. */
+  &[data-tip]::after {
+    inset-inline-start: auto;
+    inset-inline-end: 0;
+    translate: 0 0.125rem;
+  }
+  &[data-tip]:hover::after,
+  &[data-tip]:focus-visible::after {
+    translate: 0 0;
+  }
+}
+.tp-dias.is-arrastrando .tp-dias__borrar {
+  visibility: hidden;
+}
+
 /* «+1» y «24 h», dentro de la caja de su franja. */
 .tp-dias__marca {
   display: inline-flex;
