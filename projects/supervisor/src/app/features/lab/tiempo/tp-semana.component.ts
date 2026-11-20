@@ -8,7 +8,7 @@ import { TpAvisos, TpHoraComponent } from './tp-piezas';
 import { T } from './tp-textos';
 import { contarUso } from './tp-usos';
 
-const PROBLEMA: Record<string, string> = {
+export const PROBLEMA: Record<string, string> = {
   hora: 'falta una hora o no es válida',
   vacia: 'una franja empieza y acaba a la vez',
   solape: 'dos franjas se pisan',

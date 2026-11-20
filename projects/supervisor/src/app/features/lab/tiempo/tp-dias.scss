@@ -1,0 +1,191 @@
+/*
+ * LABORATORIO «Tiempo», cierre de Horarios: la semana en una lista de siete días (tp-dias.component.ts). En cada fila,
+ * la letra que abre o cierra el día, la barra y las horas escritas. Lo que no se atiende va en gris: un día cerrado no es
+ * un error, y el rojo queda para los errores. Las piezas de la barra (pista, asas, globo, raya de «ahora») son las de
+ * tp-semana.scss. Hoja global (ViewEncapsulation.None) que cuelga entera de `.tp`.
+ */
+
+.tp-dias {
+  /* Gris en vez de rojo, para todas las piezas de la barra que lo leen. */
+  --tp-no: var(--tp-muted);
+  --tp-no-raya: color-mix(in oklch, var(--tp-ink) 10%, var(--tp-muted));
+
+  display: grid;
+  /* Las horas, en una columna de ancho fijo: añadir una pausa no estrecha la barra. */
+  grid-template-columns: 1.75rem minmax(0, 1fr) 18.5rem;
+  column-gap: var(--s-3);
+  row-gap: var(--s-1-5);
+}
+.tp-dias.is-arrastrando {
+  cursor: ew-resize;
+  user-select: none;
+}
+.tp-dias[data-arrastre='mover'] {
+  cursor: grabbing;
+}
+.tp-dias[data-arrastre='pintar'] {
+  cursor: col-resize;
+}
+
+.tp-dias__eje,
+.tp-dias__fila {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  align-items: center;
+}
+.tp-dias__horas-eje {
+  grid-column: 2;
+  position: relative;
+  block-size: 1rem;
+  span {
+    position: absolute;
+    translate: -50% 0;
+  }
+  /* Las de los bordes, hacia dentro: no se salen de la pista. */
+  span.is-ini {
+    translate: 0 0;
+  }
+  span.is-fin {
+    translate: -100% 0;
+  }
+}
+.tp-dias__fila {
+  position: relative;
+  block-size: 2.5rem;
+}
+.tp-dias__dia {
+  justify-self: center;
+}
+/* Los días que cambiaría «¿También…?»: su letra, con el aro de lo elegido. */
+.tp-dias__fila.is-ofrecido .tp-dias__dia {
+  box-shadow:
+    0 0 0 2px var(--tp-surface),
+    0 0 0 4px var(--tp-accent);
+}
+.tp-dias__pista.is-cerrada {
+  background: var(--tp-hatch), var(--tp-muted);
+}
+.tp-dias__fila.is-mal .tp-sem__pista {
+  box-shadow: 0 0 0 2px var(--tp-danger);
+}
+.tp-dias__fila:hover .tp-sem__asa::before {
+  opacity: 1;
+}
+
+/* ── Las horas: se leen como texto y se escriben donde se leen ──────────────────────────────────────────────────── */
+
+.tp-dias__horas {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  min-inline-size: 0;
+}
+.tp-dias__franja {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
+}
+.tp-dias__horas .tp-hora {
+  inline-size: 3.5rem;
+  border-color: transparent;
+  background: transparent;
+}
+.tp-dias__fila:hover .tp-hora,
+.tp-dias__horas .tp-hora:hover {
+  border-color: var(--tp-hair-strong);
+}
+.tp-dias__horas .tp-hora:focus {
+  border-color: var(--tp-accent);
+  background: var(--tp-surface);
+}
+.tp-dias__horas .tp-hora[aria-invalid='true'] {
+  border-color: var(--tp-danger);
+}
+.tp-dias__pausa,
+.tp-dias__quitar {
+  color: var(--tp-ink-3);
+}
+.tp-dias__cerrado {
+  padding-inline: var(--s-2);
+  color: var(--tp-ink-3);
+}
+
+/* ── «¿También M, X, J y V?»: debajo de las horas que se acaban de cambiar, hasta que se responde o se hace otra cosa ── */
+
+.tp-dias__oferta {
+  position: absolute;
+  z-index: 6;
+  inset-block-start: calc(100% + 0.25rem);
+  inset-inline-start: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: var(--s-1) var(--s-1) var(--s-1) var(--s-3);
+  border-radius: var(--r-md);
+  background: var(--tp-inverse);
+  box-shadow: var(--tp-pop);
+  color: var(--tp-on-inverse);
+  white-space: nowrap;
+  animation: tp-fantasma-in 160ms var(--tp-ease) both;
+}
+.tp-dias__oferta-si,
+.tp-dias__oferta-x {
+  display: inline-grid;
+  place-items: center;
+  block-size: 1.75rem;
+  border: 0;
+  border-radius: var(--r-sm);
+  font: inherit;
+  cursor: pointer;
+  transition-property: background-color, opacity;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+
+  &:focus-visible {
+    outline: 2px solid var(--tp-accent);
+    outline-offset: 1px;
+  }
+}
+.tp-dias__oferta-si {
+  padding-inline: var(--s-3);
+  background: var(--tp-surface);
+  font-size: var(--t-13);
+  font-weight: 600;
+  color: var(--tp-ink);
+
+  &:hover {
+    background: color-mix(in oklch, var(--tp-surface) 88%, var(--tp-ink));
+  }
+}
+.tp-dias__oferta-x {
+  inline-size: 1.75rem;
+  background: transparent;
+  color: inherit;
+  opacity: 0.72;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+/* Debajo de los días, una línea que siempre ocupa lo mismo: cómo empezar en un horario nuevo, o el error si lo hay. */
+.tp-dias__pie {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: var(--s-1-5);
+  min-block-size: 1.25rem;
+  margin: 0;
+  padding-inline-start: calc(1.75rem + var(--s-3));
+  color: var(--tp-accent-ink);
+  font-weight: 520;
+}
+
+/* Sin sitio, la columna de las horas se ajusta a lo que tiene. */
+@container semana (max-width: 40rem) {
+  .tp-dias {
+    grid-template-columns: 1.75rem minmax(0, 1fr) auto;
+  }
+}

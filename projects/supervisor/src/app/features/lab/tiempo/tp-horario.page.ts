@@ -9,6 +9,7 @@ import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 
 import { estadoDeHorario } from '../horarios/lab-horarios-estado';
 import { AplicadoEn, sitios, TIPOS_DE_USO } from './tp-aplicado';
+import { TpDiasComponent } from './tp-dias.component';
 import { TpIconoComponent } from './tp-icono.component';
 import { descripcionDe, horas, minutosDeSemana, soloSemana } from './tp-modelo';
 import { TpAvisos, TpAvisosComponent, TpModalComponent } from './tp-piezas';
@@ -35,16 +36,16 @@ const LISTA = '/lab/tiempo';
 
 /**
  * CIERRE DE HORARIOS: el editor de un horario, que ya solo es su semana (periodos, días especiales y festivos pasan al
- * calendario). Arriba, el nombre, si ahora se atiende y la descripción, que se escribe sola con las horas. A la
- * izquierda, la semana en verde y rojo y los días que comparten horas; a la derecha, dónde se aplica. Guardar un
+ * calendario). Arriba, el nombre, si ahora se atiende y la descripción, que se escribe sola con las horas; debajo,
+ * dónde se aplica, y la semana, un día por fila (`tp-dias.component.ts`). Guardar un
  * horario que se usa en algún sitio lo dice antes, con la opción de guardar los cambios como una copia.
  */
 @Component({
   selector: 'sc-tp-horario',
-  imports: [TpAvisosComponent, TpIconoComponent, TpModalComponent, TpSemanaComponent],
+  imports: [TpAvisosComponent, TpDiasComponent, TpIconoComponent, TpModalComponent, TpSemanaComponent],
   templateUrl: './tp-horario.page.html',
   // Hojas globales repartidas por dueño: cada una cabe en el presupuesto de estilos por componente.
-  styleUrls: ['./tp-base.scss', './tp-piezas.scss', './tp-capas.scss', './tp-semana.scss', './tp-cierre.scss'],
+  styleUrls: ['./tp-base.scss', './tp-piezas.scss', './tp-capas.scss', './tp-semana.scss', './tp-dias.scss', './tp-cierre.scss'],
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -57,6 +58,8 @@ export class TpHorarioPage implements OnInit {
   private readonly avisos = inject(TpAvisos);
 
   protected readonly tipos = TIPOS_DE_USO;
+  /** La semana se edita en una lista de siete días; `?variante=columna` enseña la versión anterior (días que comparten horas y mapa), para comparar. */
+  protected readonly columna = this.route.snapshot.queryParamMap.get('variante') === 'columna';
   protected readonly sitios = sitios;
 
   protected readonly modo = signal<'crear' | 'editar'>('crear');

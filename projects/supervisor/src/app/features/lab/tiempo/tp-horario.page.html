@@ -85,7 +85,11 @@
           </div>
         </header>
         <div class="tp-cierre__semana-cuerpo">
-          <sc-tp-semana [semana]="form().week" [ahora]="form().status === 'inactive' ? null : ahoraSemana()" (semanaChange)="update('week', $event)" (gesto)="gesto($event)" />
+          @if (columna) {
+            <sc-tp-semana [semana]="form().week" [ahora]="form().status === 'inactive' ? null : ahoraSemana()" (semanaChange)="update('week', $event)" (gesto)="gesto($event)" />
+          } @else {
+            <sc-tp-dias [semana]="form().week" [ahora]="form().status === 'inactive' ? null : ahoraSemana()" (semanaChange)="update('week', $event)" (gesto)="gesto($event)" />
+          }
         </div>
       </section>
 
