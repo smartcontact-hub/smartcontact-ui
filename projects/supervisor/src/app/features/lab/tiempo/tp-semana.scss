@@ -302,6 +302,12 @@
     translate: calc(-100% + var(--s-3)) 0;
   }
 }
+.tp-sem__globo-franja {
+  padding-inline-end: var(--s-2);
+  border-inline-end: 1px solid rgb(255 255 255 / 0.18);
+  font-weight: 450;
+  color: color-mix(in oklch, var(--tp-on-inverse) 78%, transparent);
+}
 .tp-sem__teclas {
   display: inline-flex;
   align-items: center;
@@ -344,6 +350,10 @@
   }
   &.is-der {
     translate: calc(-100% + var(--s-3)) 0;
+  }
+  /* Con días elegidos por su letra, la barrita empieza donde empieza la fila: no tapa las letras de los otros días. */
+  &.is-inicio {
+    translate: 0 0;
   }
 }
 .tp-sem__barrita-hora {

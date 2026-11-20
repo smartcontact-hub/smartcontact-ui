@@ -318,7 +318,7 @@ const BOTONES: Record<Accion, BotonDeAccion> = {
               [class.is-elegido]="diaEntero(f.dia)"
               [attr.aria-pressed]="diaEntero(f.dia)"
               [attr.aria-label]="capital(nombres[f.dia]) + ': elegir para copiar, pegar o borrar'"
-              [attr.data-tip]="capital(nombres[f.dia])"
+              [attr.data-tip]="barrita()?.dia === f.dia ? null : capital(nombres[f.dia])"
               (click)="elegirDia($event, f.dia)"
             >
               {{ letras[f.dia] }}
@@ -345,7 +345,7 @@ const BOTONES: Record<Accion, BotonDeAccion> = {
                   [class.is-elegida]="barraElegida(t.de, t.franja)"
                   [style.left.%]="pos(t.desde)"
                   [style.width.%]="largo(t.desde, t.hasta)"
-                  [attr.data-tip]="t.vivo || arrastre() ? null : t.texto"
+                  [attr.data-tip]="tipDeBarra(t, f.dia)"
                   (pointerdown)="t.movible && empezar($event, f.dia, t.tramo, t.franja, 'mover')"
                   (click)="elegirBarra($event, t.de, t.franja)"
                 >
@@ -407,6 +407,10 @@ const BOTONES: Record<Accion, BotonDeAccion> = {
                   >
                     @if (gu.dia === f.dia) {
                       <span class="tp-sem__cursor-hora" [class.is-izq]="gu.corte && pos(gu.min) < 25" [class.is-der]="gu.corte && pos(gu.min) > 75">
+                        <!-- Una barra estrecha no lleva sus horas escritas: van aquí, y no en un tooltip aparte que se pisaría con este. -->
+                        @if (franjaSinRotulo(gu); as fr) {
+                          <span class="tp-sem__globo-franja">{{ fr }}</span>
+                        }
                         {{ hora(gu.min) }}
                         @if (gu.corte) {
                           <!-- Las teclas, en la misma raya: se ven justo cuando sirven. -->
@@ -431,7 +435,8 @@ const BOTONES: Record<Accion, BotonDeAccion> = {
                     class="tp-sem__barrita"
                     role="toolbar"
                     aria-label="Qué hacer con lo elegido"
-                    [class.is-izq]="b.x < 30"
+                    [class.is-inicio]="b.min === null"
+                    [class.is-izq]="b.min !== null && b.x < 30"
                     [class.is-der]="b.x > 70"
                     [style.left.%]="b.x"
                     (pointerdown)="$event.stopPropagation()"
@@ -453,7 +458,7 @@ const BOTONES: Record<Accion, BotonDeAccion> = {
                 }
               }
               @if (ahora()?.dia === f.dia && seVe(ahora()!.minutos)) {
-                <span class="tp-sem__ahora" [style.left.%]="pos(ahora()!.minutos)" data-tip="Ahora"></span>
+                <span class="tp-sem__ahora" [style.left.%]="pos(ahora()!.minutos)" [attr.data-tip]="guia()?.dia === f.dia || barrita()?.dia === f.dia ? null : 'Ahora'"></span>
               }
             </span>
             <span class="tp-sem__total t-small t-num" [class.is-cerrado]="f.minutos === 0">{{ f.minutos === 0 ? 'Cerrado' : horasTxt(f.minutos) }}</span>
@@ -600,6 +605,23 @@ export class TpSemanaComponent {
     this.marca.set(queda && m !== null ? { dia, min: m } : this.seleccion().length ? mk : null);
     this.guia.set(null);
     this.ancla = dia;
+  }
+
+  /**
+   * El tooltip de una barra, solo cuando no hay otro globo en su fila: al pasar por una barra ya sale la raya con su hora
+   * y sus teclas, y con algo elegido, la barrita. Dos globos a la vez se pisan.
+   */
+  protected tipDeBarra(t: { vivo: boolean; movible: boolean; de: number; franja: number; texto: string }, dia: number): string | null {
+    if (t.vivo || this.arrastre() || this.barraElegida(t.de, t.franja) || this.barrita()?.dia === dia) return null;
+    return t.movible && !this.seleccion().length ? null : t.texto;
+  }
+
+  /** Las horas de la barra bajo la raya, si la barra es tan estrecha que no las lleva escritas. */
+  protected franjaSinRotulo(g: Guia): string | null {
+    const c = g.corte;
+    if (!c) return null;
+    const t = this.filas()[g.dia]?.trozos.find((x) => x.movible && x.tramo === c.tramo && x.franja === c.franja);
+    return t && !t.etiqueta ? t.texto : null;
   }
 
   protected diaElegido(dia: number): boolean {
