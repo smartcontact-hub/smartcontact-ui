@@ -1521,6 +1521,7 @@
       "days_open": "Jours assurés",
       "no_days_open": "Aucun jour n'est encore assuré.",
       "sv": {
+        "copy_down": "Copier les plages de {{day}} vers les jours suivants",
         "now": "Heure actuelle",
         "mark_closed": "Marquer le jour comme fermé",
         "reopen": "Rouvrir le jour",

@@ -24,6 +24,7 @@
   --col-dia: var(--sc-spacing-2-5);
   --col-horas: var(--sc-spacing-4);
   --col-cierre: 6.5rem;
+  --col-franjas: 26rem;
 
   display: flex;
   flex-direction: column;
@@ -34,7 +35,7 @@
 .sv__ejes {
   position: relative;
   block-size: var(--sc-spacing-1-5);
-  margin-inline: var(--col-dia) calc(var(--col-horas) + var(--col-cierre));
+  margin-inline: var(--col-dia) calc(var(--col-franjas) + var(--col-horas) + var(--col-cierre));
   color: var(--sc-text-secondary);
   font-size: var(--sc-font-size-caption);
   font-variant-numeric: tabular-nums;
@@ -79,17 +80,71 @@
 
 .fila {
   display: grid;
-  grid-template-columns: var(--col-dia) minmax(0, 1fr) var(--col-horas) var(--col-cierre);
+  grid-template-columns: var(--col-dia) minmax(0, 1fr) var(--col-franjas) var(--col-horas) var(--col-cierre);
+  column-gap: var(--sc-spacing-0-5);
   align-items: center;
 }
 
+/* Las franjas, en la columna de al lado del mapa; con poco ancho (contenedor de menos de 56 rem), debajo de él. */
 .fila__franjas {
-  grid-column: 2;
-  padding-block: var(--sc-spacing-0-25) var(--sc-spacing-0-75);
+  grid-column: 3;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  min-inline-size: 0;
+}
+
+.fila__horas {
+  grid-column: 4;
+}
+
+.cierre {
+  grid-column: 5;
+}
+
+.copiar {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--sc-spacing-2-5);
+  block-size: var(--sc-spacing-2-5);
+  padding: 0;
+  border: 0;
+  border-radius: var(--sc-radius-md);
+  background: transparent;
+  color: var(--sc-text-secondary);
+  cursor: pointer;
+  transition-property: background-color, color;
+  transition-duration: 150ms;
+
+  &:hover {
+    background: var(--sc-bg-hover);
+    color: var(--sc-text-primary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-border-focus);
+    outline-offset: 1px;
+  }
+}
+
+@container (max-width: 56rem) {
+  .sv__ejes,
+  .fila {
+    --col-franjas: 0px;
+  }
+
+  .fila__franjas {
+    grid-column: 2 / -1;
+    grid-row: 2;
+    padding-block: var(--sc-spacing-0-25) var(--sc-spacing-0-75);
+  }
 }
 
 .fila__error {
-  grid-column: 2;
+  grid-column: 2 / -1;
   margin: 0;
 }
 

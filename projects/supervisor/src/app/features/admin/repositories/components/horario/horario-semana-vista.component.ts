@@ -94,6 +94,12 @@ export class HorarioSemanaVistaComponent {
     this.semanaChange.emit(this.semana().map((f, i) => (i === dia ? franjas : f)));
   }
 
+  /** Copia las franjas de un día a todos los de abajo (hasta el domingo); los que estaban cerrados se abren. */
+  protected copiarAbajo(dia: number): void {
+    const origen = this.semana()[dia] ?? [];
+    this.semanaChange.emit(this.semana().map((f, i) => (i > dia ? origen.map((x): Franja => [x[0], x[1]]) : f)));
+  }
+
   protected alternarCierre(dia: number, cerrado: boolean): void {
     this.cierreChange.emit({ dia, cerrado });
   }

@@ -6,53 +6,34 @@
   background: var(--sc-bg-canvas);
 }
 
-/* Las reglas a un lado y el año al otro. Por debajo de 1340, el corte de las fichas con resumen (`_page.scss`), el año
- * va debajo. */
+/* El horario ocupa todo el ancho; debajo, «General» y «Dónde se usa» una al lado de la otra (en una columna con poco ancho). */
 .horario {
-  display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-  /* Las dos columnas miden lo mismo de alto: la de la izquierda se estira hasta donde llegan las dos tarjetas de la derecha. */
-  align-items: stretch;
-  /* Solo entre columnas: en una columna, las tarjetas ya traen su margen. */
-  column-gap: var(--sc-spacing-2);
-
-  @media (max-width: 1339px) {
-    grid-template-columns: minmax(0, 1fr);
-  }
+  display: flex;
+  flex-direction: column;
 }
 
 .horario__reglas {
-  display: flex;
-  flex-direction: column;
+  min-inline-size: 0;
+}
+
+.horario__resultado {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: var(--sc-spacing-2);
   min-inline-size: 0;
 
+  /* Las dos tarjetas miden lo mismo de alto. */
   > sc-section-card {
     display: flex;
-    flex: 1;
     flex-direction: column;
 
-    /* La tarjeta de dentro (la que se ve) llena el alto: así acaba a la misma altura que las de la derecha. */
     ::ng-deep > .section-card {
       flex: 1;
     }
   }
-}
 
-/* La columna de la derecha (General y Dónde se usa): ocupa lo mismo de alto que la de la izquierda; su última tarjeta se estira
- * para llenar lo que sobre cuando la izquierda es más alta. */
-.horario__resultado {
-  display: flex;
-  flex-direction: column;
-  min-inline-size: 0;
-
-  > sc-section-card:last-child {
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-
-    ::ng-deep > .section-card {
-      flex: 1;
-    }
+  @media (max-width: 899px) {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
@@ -139,7 +120,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--sc-spacing-0-125);
-  max-block-size: 16rem;
+  max-block-size: 12rem;
   margin: 0;
   padding: 0;
   overflow-y: auto;

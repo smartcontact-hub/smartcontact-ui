@@ -69,9 +69,24 @@
               {{ 'repositories.horarios.closed' | translate }}
             </label>
           }
-          @if (!d.cerrado) {
-            <sc-horario-franjas class="semana__franjas fila__franjas" [franjas]="d.franjas" [conVacia]="true" [etiqueta]="d.nombre" (franjasChange)="ponerDia(d.indice, $event)" />
-          }
+          <!-- Las franjas al lado del mapa (con poco ancho, debajo) y, con franjas, «copiar a los días de abajo». -->
+          <span class="fila__franjas">
+            @if (!d.cerrado) {
+              <sc-horario-franjas class="semana__franjas" [franjas]="d.franjas" [conVacia]="true" [etiqueta]="d.nombre" (franjasChange)="ponerDia(d.indice, $event)" />
+              @if (d.franjas.length > 0 && d.indice < 6) {
+                <button
+                  type="button"
+                  class="copiar"
+                  [attr.aria-label]="'repositories.horarios.sv.copy_down' | translate: { day: d.nombre }"
+                  [pTooltip]="'repositories.horarios.sv.copy_down' | translate: { day: d.nombre }"
+                  tooltipPosition="top"
+                  (click)="copiarAbajo(d.indice)"
+                >
+                  <sc-icon name="content_copy" [size]="16" aria-hidden="true" />
+                </button>
+              }
+            }
+          </span>
           @if (falta()?.dia === d.indice) {
             <p class="fila__error field__error sc-text-caption-regular" role="alert">{{ 'repositories.horarios.errors.week_' + falta()!.codigo | translate }}</p>
           }

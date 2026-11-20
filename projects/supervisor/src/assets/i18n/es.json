@@ -1521,6 +1521,7 @@
       "days_open": "Días que se atienden",
       "no_days_open": "Ningún día se atiende todavía.",
       "sv": {
+        "copy_down": "Copiar las franjas de {{day}} a los días de abajo",
         "now": "Hora actual",
         "mark_closed": "Marcar el día como cerrado",
         "reopen": "Reabrir el día",
