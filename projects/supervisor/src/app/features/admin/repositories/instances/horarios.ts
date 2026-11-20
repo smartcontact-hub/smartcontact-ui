@@ -30,6 +30,15 @@ const columnas = (d: Datos): readonly RepoColumnDef<Horario>[] => [
   { key: 'name', labelKey: 'repositories.columns.name', kind: 'text', accessor: (i) => i.name, emphasis: true, sortable: true },
   { key: 'description', labelKey: 'repositories.columns.description', kind: 'truncate', accessor: (i) => i.description, sortable: true, hideBelow: 1000 },
   {
+    key: 'timezone',
+    labelKey: 'repositories.horarios.timezone',
+    kind: 'text',
+    width: '160px',
+    accessor: (h) => h.timezone,
+    sortable: true,
+    hideBelow: 900,
+  },
+  {
     key: 'week',
     // El horario dibujado: grupos de días con su franja y su barra de 24 h; el detalle por día, en el tooltip.
     labelKey: 'repositories.horarios.col_schedule',

@@ -1568,6 +1568,7 @@
       "next_day": "Lendemain",
       "active": "Actif",
       "timezone_help": "Les heures de l’horaire se lisent dans ce fuseau.",
+      "section_identity": "Identité",
       "section_general": "Général",
       "section_week": "Semaine habituelle",
       "section_week_hint": "Les heures d’une semaine normale",

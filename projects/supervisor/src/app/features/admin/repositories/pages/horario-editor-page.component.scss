@@ -6,8 +6,7 @@
   background: var(--sc-bg-canvas);
 }
 
-/* El horario (lo que más ocupa) a la izquierda y «General» a su derecha; «Dónde se usa» debajo, a todo el ancho. Las dos tarjetas de la
- * derecha son hijas directas de la rejilla (`display: contents`) para colocarse cada una donde toca. */
+/* El horario (lo que más ocupa) a la izquierda y a su derecha una sola tarjeta: general (identidad) y dónde se usa. */
 .horario {
   display: grid;
   grid-template-columns: minmax(0, 5fr) minmax(0, 2fr);
@@ -19,31 +18,9 @@
   }
 }
 
-.horario__reglas {
-  min-inline-size: 0;
-}
-
+.horario__reglas,
 .horario__resultado {
-  display: contents;
-
-  > sc-section-card:first-child {
-    grid-column: 2;
-    grid-row: 1;
-
-    @media (max-width: 1099px) {
-      grid-column: 1;
-      grid-row: auto;
-    }
-  }
-
-  > sc-section-card:last-child {
-    grid-column: 1 / -1;
-    grid-row: 2;
-
-    @media (max-width: 1099px) {
-      grid-row: auto;
-    }
-  }
+  min-inline-size: 0;
 }
 
 /* Igual que en las fichas de grupo y de agente. */

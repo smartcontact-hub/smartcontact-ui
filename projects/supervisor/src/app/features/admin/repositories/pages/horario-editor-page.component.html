@@ -52,8 +52,9 @@
 
       <!-- A la derecha: lo general del horario y dónde se usa. -->
       <div class="horario__resultado">
+        <!-- Una sola tarjeta con dos apartados: la identidad del horario y dónde se usa. -->
         <sc-section-card titleKey="repositories.horarios.section_general" surface="subtle" icon="tune">
-          <sc-subsection>
+          <sc-subsection titleKey="repositories.horarios.section_identity">
             <div class="bloque">
               <sc-inputtext
                 inputId="horario-name"
@@ -62,7 +63,6 @@
                 [label]="'repositories.columns.name' | translate"
                 [placeholder]="'repositories.horarios.name_placeholder' | translate"
                 [value]="form().name"
-                [helperText]="nameHint()"
                 [error]="nameError()"
                 (valueChange)="update('name', $event)"
                 (focusout)="dejarNombre($event)"
@@ -87,11 +87,9 @@
               />
             </div>
           </sc-subsection>
-        </sc-section-card>
 
-        <!-- Dónde se usa este horario: tres sitios (grupos, VUI y calendarios), cada uno con su icono y su cifra, que se cambian con los botones. -->
-        <sc-section-card titleKey="repositories.horarios.section_uses" surface="subtle" icon="link">
-          <sc-subsection>
+          <!-- Dónde se usa este horario: grupos y calendarios, cada uno con su icono y su cifra, que se cambian con los botones. -->
+          <sc-subsection titleKey="repositories.horarios.section_uses">
             <div class="vistas">
               <sc-selectbutton
                 size="sm"

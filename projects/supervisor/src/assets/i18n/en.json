@@ -1568,6 +1568,7 @@
       "next_day": "Next day",
       "active": "Active",
       "timezone_help": "The schedule's hours are read in this time zone.",
+      "section_identity": "Identity",
       "section_general": "General",
       "section_week": "Regular week",
       "section_week_hint": "The hours of a normal week",

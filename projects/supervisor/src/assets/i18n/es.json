@@ -1568,6 +1568,7 @@
       "next_day": "Día siguiente",
       "active": "Activo",
       "timezone_help": "Las horas del horario se leen en esta zona.",
+      "section_identity": "Identidad",
       "section_general": "General",
       "section_week": "Semana habitual",
       "section_week_hint": "Las horas de una semana normal",
