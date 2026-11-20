@@ -59,7 +59,7 @@
   border-radius: var(--r-full);
   background: var(--tp-festivo-soft);
   font-size: var(--t-11);
-  font-weight: 600;
+  font-weight: var(--sc-font-weight-semibold);
   line-height: 1.125rem;
   text-align: center;
   color: var(--tp-festivo-ink);
@@ -75,7 +75,7 @@
   place-items: center;
   block-size: 1rem;
   font-size: 0.625rem;
-  font-weight: 600;
+  font-weight: var(--sc-font-weight-semibold);
   color: var(--tp-ink-4);
 }
 .tp-doce__d {
@@ -88,7 +88,7 @@
   border-radius: 0.3125rem;
   background: transparent;
   font-size: var(--t-11);
-  font-weight: 500;
+  font-weight: var(--sc-font-weight-regular);
   line-height: 1;
   color: var(--tp-ink-2);
   cursor: pointer;
@@ -111,12 +111,12 @@
   }
   &.is-hoy {
     box-shadow: inset 0 0 0 1.5px var(--tp-accent);
-    font-weight: 650;
+    font-weight: var(--sc-font-weight-semibold);
     color: var(--tp-accent-ink);
   }
   &.is-f {
     background: var(--tp-festivo);
-    font-weight: 650;
+    font-weight: var(--sc-font-weight-semibold);
     color: #fff;
     box-shadow: 0 1px 2px color-mix(in oklch, var(--tp-festivo) 40%, transparent);
 

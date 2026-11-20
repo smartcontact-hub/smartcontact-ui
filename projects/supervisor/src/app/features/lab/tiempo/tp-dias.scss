@@ -14,7 +14,7 @@
 
   display: grid;
   /* Las horas, en una columna de ancho fijo: añadir una pausa no estrecha la barra. */
-  grid-template-columns: 4.25rem minmax(0, 1fr) 21.5rem;
+  grid-template-columns: 4.25rem minmax(0, 1fr) 23.5rem;
   column-gap: var(--s-3);
   row-gap: var(--s-1-5);
 }
@@ -43,7 +43,7 @@
   background: var(--tp-muted);
   color: var(--tp-ink-2);
   font-size: var(--t-13);
-  font-weight: 520;
+  font-weight: var(--sc-font-weight-regular);
   transition-property: background-color, color;
   transition-duration: 200ms;
   transition-timing-function: ease-out;
@@ -136,7 +136,7 @@
     border: 0;
     background: transparent;
     font: inherit;
-    font-weight: 600;
+    font-weight: var(--sc-font-weight-semibold);
     text-align: center;
     color: var(--tp-ink);
     cursor: pointer;
@@ -167,7 +167,7 @@
   background: transparent;
   font: inherit;
   font-size: var(--t-13);
-  font-weight: 560;
+  font-weight: var(--sc-font-weight-semibold);
   color: var(--tp-ink-3);
   cursor: pointer;
   transition-property: background-color, color;
@@ -218,17 +218,20 @@
     }
   }
 }
+/* Todos los días con el mismo relleno, para que el de hoy, en su pastilla, no se salga de la columna. */
 .tp-dias__dia-nombre {
   display: inline-flex;
-  flex-direction: column;
-  min-inline-size: 1.75rem;
-  line-height: 1.1;
+  justify-content: center;
+  min-inline-size: 2.5rem;
+  margin-inline-start: calc(-1 * var(--s-1));
+  padding: var(--s-0-5) var(--s-1-5);
+  border-radius: var(--r-full);
+  line-height: 1.2;
 }
-/* Hoy, dicho con su nombre bajo el día y en el color de la raya de ahora: se leen juntos. */
-.tp-dias__hoy {
-  font-size: var(--t-11);
-  font-weight: 650;
-  color: var(--tp-accent-ink);
+/* Hoy, sin palabra: el día en una pastilla del color de la raya de ahora, que se leen juntas. */
+.tp-dias__dia-nombre.is-hoy {
+  background: var(--tp-accent);
+  color: #fff;
 }
 .tp-dias .tp-sem__ahora {
   /* La raya es fina, pero la zona que saca su tooltip («Ahora, 7:57») es más ancha: se encuentra sin apuntar fino. */
@@ -283,6 +286,11 @@
   .tp-sem__globo {
     inset-block-end: calc(100% + 0.375rem);
   }
+}
+/* El hueco que rellenaría «Quitar pausa»: del verde de la barra, a rayas, con cómo queda el día encima. */
+.tp-dias__corte--relleno {
+  border-inline-color: var(--tp-si);
+  background: repeating-linear-gradient(135deg, color-mix(in oklch, var(--tp-si) 55%, var(--tp-surface)) 0 4px, color-mix(in oklch, var(--tp-si) 30%, var(--tp-surface)) 4px 8px);
 }
 .tp-dias__pista.is-cortando .tp-sem__barra.is-movible {
   cursor: pointer;
@@ -407,7 +415,7 @@
   gap: var(--s-0-5);
   margin-inline: var(--s-0-5) var(--s-1);
   font-size: var(--t-11);
-  font-weight: 650;
+  font-weight: var(--sc-font-weight-semibold);
   color: color-mix(in oklch, var(--tp-si) 75%, var(--tp-ink));
 }
 .tp-dias__pausa,
@@ -467,7 +475,7 @@
 .tp-dias__mas-tit {
   padding: var(--s-0-5) var(--s-1) var(--s-1);
   font-size: var(--t-12);
-  font-weight: 620;
+  font-weight: var(--sc-font-weight-semibold);
   color: var(--tp-ink-2);
 }
 .tp-dias__mas-pausa {

@@ -46,7 +46,7 @@
 | `sc-bulk-action-bar` | CUSTOM | experimental (sin maestro en el Kit) | — | 3 inputs | sc-message sc-button | ✓ | 2 |
 | `sc-bulk-edit-menu` | CUSTOM | experimental (sin maestro en el Kit) | — | 2 inputs | sc-select sc-button | ✓ | — |
 | `sc-bulk-transcription-modal` | CUSTOM | experimental (sin maestro en el Kit) | — | 16 inputs | sc-icon-tile sc-button sc-toggleswitch | ✓ | — |
-| `sc-button` | EXTENDED | ready | primeng/button, primeng/tooltip | 20 inputs | — | ✓ | 232 |
+| `sc-button` | EXTENDED | ready | primeng/button, primeng/tooltip | 20 inputs | — | ✓ | 234 |
 | `sc-card` | STANDARD | ready | primeng/card | 3 inputs | — | ✓ | — |
 | `sc-checkbox` | CUSTOM | ready | — | 6 inputs | — | ✓ | 37 |
 | `sc-chip` | EXTENDED | ready | primeng/chip | 9 inputs | — | ✓ | 5 |
@@ -98,7 +98,7 @@
 | `sc-sticky-form-header` | CUSTOM | deprecated | — | 4 inputs | sc-button | ✓ | 2 |
 | `sc-subsection` | CUSTOM | ready | — | 6 inputs | — | ✓ | 37 |
 | `sc-tabs` | STANDARD | ready | primeng/tabs | 1 inputs | — | ✓ | 3 |
-| `sc-tag` | EXTENDED | ready | primeng/tag, primeng/tooltip | 8 inputs | — | ✓ | 39 |
+| `sc-tag` | EXTENDED | ready | primeng/tag, primeng/tooltip | 8 inputs | — | ✓ | 40 |
 | `sc-textarea` | EXTENDED | ready | primeng/textarea | 20 inputs | sc-field-label sc-button sc-field-msg | ✓ | 7 |
 | `sc-toast` | EXTENDED | ready | primeng/toast | 6 inputs | — | ✓ | — |
 | `sc-toggleswitch` | EXTENDED | ready | primeng/toggleswitch | 8 inputs | — | ✓ | 56 |

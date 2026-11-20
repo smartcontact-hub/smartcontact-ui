@@ -45,9 +45,17 @@
   min-inline-size: 0;
 }
 /* El campo sobresale lo que sus márgenes negativos le quitan a la caja: sin esto, un nombre más ancho que sus horas se corta. */
-.tp-cierre__nombre {
+.tp-cierre__nombre,
+.tp-cierre__desc {
   align-self: flex-start;
   max-inline-size: calc(100% + 2 * var(--s-2));
+}
+/* La descripción, un paso por debajo del nombre: se lee como su subtítulo y crece con lo que se escribe. */
+.tp-cierre__desc {
+  field-sizing: content;
+  min-inline-size: 16ch;
+  font-size: var(--t-14);
+  color: var(--tp-ink-2);
 }
 .tp-cierre__props {
   position: relative;
@@ -120,12 +128,11 @@
   border-radius: var(--r-xs);
   background: var(--tp-muted);
   font-size: var(--t-12);
-  font-weight: 650;
-  letter-spacing: 0.01em;
+  font-weight: var(--sc-font-weight-semibold);
   color: var(--tp-ink);
 }
 .tp-cierre__grupo-horas {
-  font-weight: 520;
+  font-weight: var(--sc-font-weight-regular);
   white-space: nowrap;
   color: var(--tp-ink-2);
 }
@@ -156,7 +163,7 @@
   box-shadow: inset 0 0 0 1px var(--tp-hair-strong);
   font: inherit;
   font-size: var(--t-12);
-  font-weight: 650;
+  font-weight: var(--sc-font-weight-semibold);
   font-variant-numeric: tabular-nums;
   color: var(--tp-ink-2);
   cursor: default;
@@ -218,8 +225,13 @@
   }
 }
 /* La de los sitios va al final de su línea: se abre hacia dentro. */
-.tp-mas__pop--lista {
+.tp-mas__pop--lista,
+.tp-mas--fin > .tp-mas__pop {
   inset-inline: auto 0;
+}
+/* Una lista de «+N» escondida (para su transición) sigue ocupando sitio: que no saque una barra de desplazamiento. */
+.tp-cierre .tp-lienzo {
+  overflow-x: hidden;
 }
 @media (prefers-reduced-motion: reduce) {
   .tp-mas__pop {
@@ -234,7 +246,7 @@
   color: var(--tp-ink-3);
 
   strong {
-    font-weight: 620;
+    font-weight: var(--sc-font-weight-semibold);
     color: var(--tp-ink);
   }
 }
@@ -267,7 +279,7 @@
     background: transparent;
     font: inherit;
     font-size: var(--t-13);
-    font-weight: 540;
+    font-weight: var(--sc-font-weight-regular);
     color: var(--tp-ink);
     cursor: pointer;
     outline: none;
@@ -296,12 +308,12 @@
   gap: var(--s-1-5);
   margin: 0;
   font-size: var(--t-13);
-  font-weight: 620;
+  font-weight: var(--sc-font-weight-semibold);
   white-space: nowrap;
   color: var(--tp-ink);
 
   span {
-    font-weight: 500;
+    font-weight: var(--sc-font-weight-regular);
   }
 }
 .tp-cierre__usos {
@@ -330,7 +342,7 @@
   text-overflow: ellipsis;
 }
 .tp-cierre__usa-nombre {
-  font-weight: 580;
+  font-weight: var(--sc-font-weight-semibold);
   color: var(--tp-ink);
 }
 .tp-cierre__usa-detalle {
@@ -430,11 +442,6 @@
   }
 }
 
-/* Con la barra de guardar a la vista, la última fila nunca queda debajo. */
-.tp-cierre:has(.tp-savebar[data-visible='true']) .tp-lienzo {
-  padding-block-end: 5rem;
-}
-
 /* ── La confirmación de guardar: a quién afecta ─────────────────────────────────────────────────────────────────── */
 
 .tp-afecta {
@@ -452,7 +459,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--s-1);
-  font-weight: 540;
+  font-weight: var(--sc-font-weight-semibold);
 }
 .tp-afecta__cambio {
   padding-block-start: var(--s-3);
@@ -460,18 +467,3 @@
 }
 
 
-
-/* Con una prueba con personas en marcha, su barra va abajo a la izquierda: la de guardar se va a la derecha para que
-   ninguna tape a la otra. */
-.tp-cierre.tp--prueba .tp-savebar {
-  inset-inline: auto var(--s-5);
-  translate: 0 calc(100% + var(--s-8));
-  &[data-visible='true'] {
-    translate: 0 0;
-  }
-}
-
-/* Con la barra de guardar a la vista, los avisos suben por encima de ella: no la tapan. */
-.tp-cierre:has(.tp-savebar[data-visible='true']) .tp-toasts {
-  inset-block-end: calc(var(--s-6) + 3.5rem);
-}

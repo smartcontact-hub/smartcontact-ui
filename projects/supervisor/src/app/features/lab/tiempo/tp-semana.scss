@@ -265,8 +265,7 @@
   overflow: hidden;
   padding-inline: var(--s-2);
   font-size: var(--t-12);
-  font-weight: 560;
-  letter-spacing: 0.01em;
+  font-weight: var(--sc-font-weight-regular);
   white-space: nowrap;
   text-overflow: clip;
   pointer-events: none;
@@ -283,7 +282,7 @@
   background: var(--tp-inverse);
   color: var(--tp-on-inverse);
   font-size: var(--t-12);
-  font-weight: 560;
+  font-weight: var(--sc-font-weight-regular);
   white-space: nowrap;
   pointer-events: none;
 }
@@ -331,7 +330,7 @@
   border-radius: var(--r-xs);
   background: var(--tp-inverse);
   font-size: var(--t-11);
-  font-weight: 560;
+  font-weight: var(--sc-font-weight-regular);
   line-height: 1.25rem;
   color: var(--tp-on-inverse);
   white-space: nowrap;
@@ -362,14 +361,14 @@
 .tp-sem__globo-franja {
   padding-inline-end: var(--s-2);
   border-inline-end: 1px solid rgb(255 255 255 / 0.18);
-  font-weight: 450;
+  font-weight: var(--sc-font-weight-regular);
   color: color-mix(in oklch, var(--tp-on-inverse) 78%, transparent);
 }
 .tp-sem__teclas {
   display: inline-flex;
   align-items: center;
   gap: var(--s-1);
-  font-weight: 450;
+  font-weight: var(--sc-font-weight-regular);
   color: color-mix(in oklch, var(--tp-on-inverse) 78%, transparent);
   .tp-kbd {
     margin-inline-start: var(--s-1);
@@ -417,7 +416,7 @@
   padding-inline: var(--s-1-5) var(--s-2);
   border-inline-end: 1px solid rgb(255 255 255 / 0.18);
   font-size: var(--t-12);
-  font-weight: 600;
+  font-weight: var(--sc-font-weight-semibold);
 }
 .tp-sem__barrita-btn,
 .tp-sem__barrita-x {
@@ -432,7 +431,7 @@
   color: inherit;
   font: inherit;
   font-size: var(--t-12);
-  font-weight: 520;
+  font-weight: var(--sc-font-weight-regular);
   cursor: pointer;
   transition-property: background-color;
   transition-duration: 120ms;
@@ -514,7 +513,7 @@
 .tp-sem__total {
   text-align: end;
   color: var(--tp-ink-2);
-  font-weight: 540;
+  font-weight: var(--sc-font-weight-semibold);
 
   &.is-cerrado {
     color: var(--tp-danger-ink);
@@ -719,7 +718,7 @@
   background: var(--tp-surface);
   box-shadow: var(--tp-ring);
   font-size: var(--t-12);
-  font-weight: 600;
+  font-weight: var(--sc-font-weight-semibold);
   color: var(--tp-ink-3);
   cursor: pointer;
   transition-property: background-color, color, box-shadow, scale;
@@ -790,7 +789,7 @@
   gap: var(--s-1);
   align-self: center;
   color: var(--tp-accent-ink);
-  font-weight: 520;
+  font-weight: var(--sc-font-weight-regular);
 }
 .tp-sem__pie {
   display: flex;

@@ -40,6 +40,8 @@ export interface RepoColumnDef<T extends RepoEntity> {
   readonly emptyDash?: boolean;
   /** La cabecera ordena de menor a mayor y al revés: las cifras, por su valor; las fechas, por día; el texto, por su letra. */
   readonly sortable?: boolean;
+  /** Con `columnChoices`: `false` la deja fuera al principio, para sacarla desde «Columnas». */
+  readonly defaultVisible?: boolean;
 
 }
 

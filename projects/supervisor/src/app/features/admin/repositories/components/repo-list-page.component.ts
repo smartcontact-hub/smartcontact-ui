@@ -197,7 +197,7 @@ export class RepoListPageComponent<T extends RepoEntity> {
   protected readonly columnDefs = computed<readonly ColumnDef[] | undefined>(() => {
     this.lang();
     if (!this.config().columnChoices) return undefined;
-    return this.config().columns.map((c, i) => ({ key: c.key, label: this.translate.instant(c.labelKey), locked: i === 0 }));
+    return this.config().columns.map((c, i) => ({ key: c.key, label: this.translate.instant(c.labelKey), locked: i === 0, defaultVisible: c.defaultVisible }));
   });
 
   protected readonly columnPrefKey = computed(() => `sc-${this.config().filePrefix}-columns-v1`);

@@ -1,6 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, HostListener, inject, linkedSignal, type OnInit, signal, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, effect, HostListener, inject, linkedSignal, type OnInit, signal, type TemplateRef, viewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
+import { ScButtonComponent } from '@smartcontact-hub/components';
+import { TooltipModule } from 'primeng/tooltip';
+
+import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { pruebaEnCurso } from '@core/prueba/prueba-arranque';
+import { BreadcrumbService } from '@core/services';
 
 import { ahoraEn, diaDeLaSemana, type Horario, validarSemana } from '@features/admin/repositories/state/horarios.core.mjs';
 import { HorariosStore } from '@features/admin/repositories/state/horarios.store';
@@ -37,13 +43,13 @@ const LISTA = '/lab/tiempo';
 
 /**
  * CIERRE DE HORARIOS: el editor de un horario, que ya solo es su semana (periodos, días especiales y festivos pasan al
- * calendario). Arriba, el nombre, si ahora se atiende y la descripción, que se escribe sola con las horas; debajo,
- * dónde se aplica, y la semana, un día por fila (`tp-dias.component.ts`). Guardar un
+ * calendario). Arriba, el nombre, su descripción (la escribe quien lo crea), sus horas y si ahora se atiende; debajo,
+ * dónde se aplica, y la semana, un día por fila (`tp-dias.component.ts`). Guardar y Deshacer, arriba, como en las fichas. Guardar un
  * horario que se usa en algún sitio lo dice antes, con la opción de guardar los cambios como una copia.
  */
 @Component({
   selector: 'sc-tp-horario',
-  imports: [TpAvisosComponent, TpCabeDirective, TpDiasComponent, TpIconoComponent, TpModalComponent, TpSemanaComponent],
+  imports: [ScButtonComponent, TooltipModule, TranslateModule, TpAvisosComponent, TpCabeDirective, TpDiasComponent, TpIconoComponent, TpModalComponent, TpSemanaComponent],
   templateUrl: './tp-horario.page.html',
   // Hojas globales repartidas por dueño: cada una cabe en el presupuesto de estilos por componente.
   styleUrls: ['./tp-base.scss', './tp-piezas.scss', './tp-capas.scss', './tp-semana.scss', './tp-dias.scss', './tp-cierre.scss'],
@@ -73,9 +79,25 @@ export class TpHorarioPage implements OnInit {
 
   /** El reloj: la raya de «ahora» y el estado se mueven solos. */
   private readonly reloj = signal(new Date());
+  /**
+   * Sin botón de volver, se vuelve por la miga de pan, como en las demás fichas: «Horarios» lleva a la lista y el último
+   * tramo dice el nombre guardado (al crear, «Nuevo horario»).
+   */
+  private readonly migas = inject(BreadcrumbService);
+  private readonly nombreGuardado = computed(() => {
+    const id = this.horarioId();
+    return id === null ? null : (this.store.items().find((x) => x.id === id)?.name ?? null);
+  });
+  private readonly migaConNombre = effect(() => this.migas.nombrar(this.route, this.modo() === 'editar' ? this.nombreGuardado() : null));
+  private readonly sinMiga = inject(DestroyRef).onDestroy(() => this.migas.nombrar(this.route, null));
+
+  /** Guardar y Deshacer, en la barra de arriba, como en las demás fichas del Supervisor. */
+  private readonly topbarActions = viewChild<TemplateRef<unknown>>('topbarActions');
+
   constructor() {
     const id = setInterval(() => this.reloj.set(new Date()), 30_000);
     inject(DestroyRef).onDestroy(() => clearInterval(id));
+    useTopbarActions(this.topbarActions);
   }
 
   protected readonly ahora = computed(() => ahoraEn(this.form().timezone, this.reloj()));
@@ -165,6 +187,15 @@ export class TpHorarioPage implements OnInit {
     this.form.set({ ...datos, name: nombreDeCopia(origen.name, this.store.items().map((h) => h.name)) });
   }
 
+  /** La lista de «+N» de la cabecera se abre hacia la izquierda si hacia la derecha se saldría del lienzo. */
+  protected orientar(e: Event): void {
+    const mas = e.currentTarget as HTMLElement;
+    const pop = mas.querySelector<HTMLElement>('.tp-mas__pop');
+    const lienzo = mas.closest<HTMLElement>('.tp-lienzo');
+    if (!pop || !lienzo) return;
+    mas.classList.toggle('tp-mas--fin', mas.getBoundingClientRect().left + pop.offsetWidth > lienzo.getBoundingClientRect().right);
+  }
+
   /** Al crear: todos los días cerrados otra vez, como al empezar. Es un paso más de deshacer. */
   protected vaciarSemana(): void {
     if (this.sinDias()) return;
@@ -246,7 +277,7 @@ export class TpHorarioPage implements OnInit {
 
   private borrador(): Borrador {
     const f = this.form();
-    return { ...f, name: f.name.trim(), description: descripcionDe(f.week) };
+    return { ...f, name: f.name.trim(), description: (f.description ?? '').trim() };
   }
 
   protected save(): void {

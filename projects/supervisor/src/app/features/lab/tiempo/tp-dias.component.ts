@@ -170,12 +170,8 @@ const esPausa = (h: { readonly min: number; readonly max: number }): boolean => 
             (click)="alternar(f.dia)"
           >
             <span class="tp-dias__interruptor" aria-hidden="true"></span>
-            <span class="tp-dias__dia-nombre">
-              {{ capital(cortos[f.dia]) }}
-              @if (f.hoy) {
-                <span class="tp-dias__hoy">Hoy</span>
-              }
-            </span>
+            <!-- Hoy, sin palabra: el día en una pastilla del color de la raya de ahora (el lector oye «hoy»). -->
+            <span class="tp-dias__dia-nombre" [class.is-hoy]="f.hoy">{{ capital(cortos[f.dia]) }}</span>
           </button>
           <span class="tp-sem__pista tp-dias__pista" [class.is-cerrada]="!f.abierto" [class.is-cortando]="corte()?.dia === f.dia && !arrastre()" (pointerdown)="pintar($event, f.dia)" (pointermove)="apuntar($event, f.dia)" (pointerleave)="guia.set(null); corte.set(null)">
             <span class="tp-sem__guias" aria-hidden="true">
@@ -230,6 +226,13 @@ const esPausa = (h: { readonly min: number; readonly max: number }): boolean => 
                 </span>
               }
             }
+            @if (relleno(); as r) {
+              @if (r.dia === f.dia && !arrastre()) {
+                <span class="tp-dias__corte tp-dias__corte--relleno" aria-hidden="true" [style.left.%]="pos(r.desde)" [style.width.%]="pos(r.hasta) - pos(r.desde)">
+                  <span class="tp-sem__globo t-num">Seguido de {{ hora(r.de) }} a {{ hora(r.a) }}</span>
+                </span>
+              }
+            }
             @if (ahora()?.dia === f.dia && seVe(ahora()!.minutos)) {
               <span class="tp-sem__ahora" [style.left.%]="pos(ahora()!.minutos)" [attr.data-tip]="guia()?.dia === f.dia ? null : 'Ahora, ' + hora(ahora()!.minutos)"></span>
             }
@@ -273,20 +276,34 @@ const esPausa = (h: { readonly min: number; readonly max: number }): boolean => 
                   «− Pausa», el par de «+ Pausa»: junta las dos franjas. Solo si lo de en medio es una pausa (tres horas como
                   mucho): juntar 9–14 con 22–2 daría de 9 a 2. La × de cada caja, en cambio, quita esa franja.
                 -->
+                <!-- Al pasar o al llegar con el teclado, la barra enseña el hueco que se rellena. -->
                 <button
                   type="button"
                   class="tp-btn tp-btn--ghost tp-btn--sm tp-dias__pausa tp-dias__quitar"
                   [attr.aria-label]="'Quitar la pausa de ' + hora(f.franjas[0][1]) + ' a ' + hora(f.franjas[1][0])"
-                  [attr.data-tip]="'Quitar la pausa de ' + hora(f.franjas[0][1]) + ' a ' + hora(f.franjas[1][0])"
-                  (click)="quitarPausa(f.dia, 1)"
+                  (pointerenter)="verRelleno(f.dia)"
+                  (focus)="verRelleno(f.dia)"
+                  (pointerleave)="relleno.set(null)"
+                  (blur)="relleno.set(null)"
+                  (click)="relleno.set(null); quitarPausa(f.dia, 1)"
                 >
                   <sc-tp-icono nombre="minus" [tam]="14" />
-                  Pausa
+                  Quitar pausa
                 </button>
               } @else if (f.pausa !== -1) {
-                <button type="button" class="tp-btn tp-btn--ghost tp-btn--sm tp-dias__pausa" data-tip="De 14:00 a 15:00, o elige la barra y pulsa donde la quieras" (click)="pausa(f.dia)">
+                <!-- Al pasar o al llegar con el teclado, la barra enseña dónde cae la pausa antes del clic. -->
+                <button
+                  type="button"
+                  class="tp-btn tp-btn--ghost tp-btn--sm tp-dias__pausa"
+                  [attr.aria-label]="'Añadir una pausa de ' + previaTexto(f.dia)"
+                  (pointerenter)="verPausa(f.dia)"
+                  (focus)="verPausa(f.dia)"
+                  (pointerleave)="corte.set(null)"
+                  (blur)="corte.set(null)"
+                  (click)="corte.set(null); pausa(f.dia)"
+                >
                   <sc-tp-icono nombre="plus" [tam]="14" />
-                  Pausa
+                  Añadir pausa
                 </button>
               }
             } @else {
@@ -349,6 +366,8 @@ export class TpDiasComponent {
   protected readonly guia = signal<{ dia: number; min: number; hasta: number } | null>(null);
   /** Al pasar por una barra: dónde iría una pausa de una hora con un clic. */
   protected readonly corte = signal<{ dia: number; j: number; desde: number; hasta: number } | null>(null);
+  /** Al pasar por «Quitar pausa»: el hueco que se rellena (`desde`–`hasta`) y cómo queda el día (`de`–`a`). */
+  protected readonly relleno = signal<{ dia: number; desde: number; hasta: number; de: number; a: number } | null>(null);
   /**
    * La franja elegida con un clic en su barra: se resalta con su caja, ⌫ la quita, Intro lleva a sus horas y otro clic
    * en ella pone una pausa donde se ve. Se suelta con Esc, al arrastrar o al pulsar en otro sitio.
@@ -664,15 +683,43 @@ export class TpDiasComponent {
     if (aqui && k !== -1 && k !== j) setTimeout(() => this.enfocarCaja(dia, k, lado));
   }
 
-  /** Parte en dos la franja con una hora de pausa: de 14:00 a 15:00 si cabe, si no en medio. */
-  protected pausa(dia: number): void {
+  /** Dónde cae la pausa de «Añadir pausa»: de 14:00 a 15:00 si cabe, si no en medio de la franja. */
+  private dondeCae(dia: number): { j: number; ini: number } | null {
     const fs = this.actual()[dia];
     const j = dondePausa(fs);
-    if (j === -1) return;
+    if (j === -1) return null;
     const [a, b] = fs[j];
     const ini = COMIDA - a >= 60 && b - (COMIDA + PAUSA) >= 60 ? COMIDA : Math.round(((a + b) / 2 - PAUSA / 2) / PASO) * PASO;
+    return { j, ini };
+  }
+
+  /** Parte en dos la franja con una hora de pausa, donde dice `dondeCae`. */
+  protected pausa(dia: number): void {
+    const c = this.dondeCae(dia);
+    if (!c) return;
+    const fs = this.actual()[dia];
+    const [a, b] = fs[c.j];
     contarUso('dividir');
-    this.cambiarDia(dia, [...fs.slice(0, j), [a, ini], [ini + PAUSA, b], ...fs.slice(j + 1)]);
+    this.cambiarDia(dia, [...fs.slice(0, c.j), [a, c.ini], [c.ini + PAUSA, b], ...fs.slice(c.j + 1)]);
+  }
+
+  /** La pausa de «Añadir pausa», dibujada en la barra antes del clic. */
+  protected verPausa(dia: number): void {
+    const c = this.dondeCae(dia);
+    this.corte.set(c ? { dia, j: c.j, desde: c.ini, hasta: c.ini + PAUSA } : null);
+  }
+
+  /** «de 14:00 a 15:00», para que el lector diga lo mismo que la barra enseña. */
+  protected previaTexto(dia: number): string {
+    const c = this.dondeCae(dia);
+    return c ? `${horaCorta(c.ini)} a ${horaCorta(c.ini + PAUSA)}` : '';
+  }
+
+  /** El hueco que rellena «Quitar pausa», dibujado en la barra antes del clic. */
+  protected verRelleno(dia: number): void {
+    const fs = this.actual()[dia];
+    if (fs.length < 2) return;
+    this.relleno.set({ dia, desde: fs[0][1], hasta: fs[1][0], de: fs[0][0], a: fs[1][1] });
   }
 
   /** Quitar la pausa que hay antes de la franja `j`: esa franja y la de antes quedan en una. */
@@ -872,16 +919,15 @@ export class TpDiasComponent {
   }
 
   /**
-   * La lista de «+N» se abre hacia abajo si cabe sobre la barra de guardar y, si no, hacia arriba: se mide al llegar a
-   * ella, porque depende de dónde esté la fila en la pantalla.
+   * La lista de «+N» se abre hacia abajo si cabe en la ventana y, si no, hacia arriba: se mide al llegar a ella, porque
+   * depende de dónde esté la fila en la pantalla.
    */
   protected orientar(e: Event): void {
     const el = e.currentTarget as HTMLElement;
     const pop = el.querySelector<HTMLElement>('.tp-mas__pop');
     if (!pop) return;
     const r = el.getBoundingClientRect();
-    const suelo = document.querySelector('.tp-savebar[data-visible="true"]')?.getBoundingClientRect().top ?? window.innerHeight;
-    const abajo = suelo - r.bottom - 8;
+    const abajo = window.innerHeight - r.bottom - 8;
     el.classList.toggle('tp-dias__mas--arriba', abajo < pop.offsetHeight && r.top > abajo);
   }
 

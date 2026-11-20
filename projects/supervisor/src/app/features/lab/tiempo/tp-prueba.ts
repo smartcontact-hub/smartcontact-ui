@@ -54,8 +54,8 @@ const enLetra = (dias: readonly number[]): string => {
   return n.length > 1 ? `${n.slice(0, -1).join(', ')} y ${n[n.length - 1]}` : (n[0] ?? '');
 };
 
-/** El editor con cambios sin guardar: su barra de guardar está a la vista (en un horario nuevo, siempre). */
-const sinGuardar = (): boolean => document.querySelector('.tp-savebar[data-visible="true"]') !== null;
+/** El editor abierto con cambios sin guardar (en un horario nuevo, siempre): lo marca su raíz, `data-sin-guardar`. */
+const sinGuardar = (): boolean => document.querySelector('.tp-cierre[data-sin-guardar="true"]') !== null;
 
 export function comprobarMision(items: readonly Horario[], mision: string): { bien: number; total: number; titular: string } | null {
   const m = MISIONES[mision];

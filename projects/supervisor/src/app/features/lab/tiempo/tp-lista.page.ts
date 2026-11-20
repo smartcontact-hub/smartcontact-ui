@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signal, type TemplateRef, viewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signal, type TemplateRef, viewChild, ViewEncapsulation } from '@angular/core';
 import { ScTagComponent, type ScColumnCellContext } from '@smartcontact-hub/components';
 import { TooltipModule } from 'primeng/tooltip';
 
@@ -9,16 +9,18 @@ import { type Horario, HorariosStore } from '@features/admin/repositories/state/
 
 import { estadoDeHorario } from '../horarios/lab-horarios-estado';
 import { AplicadoEn, sitios, TIPOS_DE_USO, type Uso } from './tp-aplicado';
-import { descripcionDe, soloSemana, trozosDelDia } from './tp-modelo';
+import { capital, descripcionDe, horaCorta, NOMBRES, resumenDe, soloSemana } from './tp-modelo';
 
 /** Cuántas etiquetas caben en la celda antes del «+N». */
 const A_LA_VISTA = 2;
+/** Cuántas franjas de un día dice el globo; el resto, «y N más» (el editor las enseña todas). */
+const POR_DIA = 4;
 
 /**
  * CIERRE DE HORARIOS: la lista de horarios, en la MISMA tabla que el resto de Repositorios (`sc-repo-list-page`): buscar,
- * columnas, exportar, duplicar y eliminar funcionan igual que en Agendas o Tipificaciones. Lo que cambia son sus
- * columnas: la semana en miniatura (verde se atiende, rojo no) con la descripción que se escribe sola, si ahora se
- * atiende, y dónde se aplica, en etiquetas por tipo. Periodos y días especiales ya no son del horario: son del calendario.
+ * columnas, exportar, duplicar y eliminar funcionan igual que en Agendas o Tipificaciones. A la vista, lo que se busca
+ * al entrar: nombre, descripción y el horario por grupos de días (cada grupo con sus horas; el detalle por día, al
+ * pasar). Si ahora se atiende, la zona horaria y dónde se aplica esperan en «Columnas».
  */
 @Component({
   selector: 'sc-tp-lista',
@@ -27,18 +29,41 @@ const A_LA_VISTA = 2;
     <sc-repo-list-page [config]="config" [store]="store" [cellTemplates]="celdas()" />
 
     <ng-template #horarioTpl let-h>
-      <span class="tl-horario">
-        <span class="tl-mini" role="img" [attr.aria-label]="descripcion(h)">
-          @for (d of mini(h); track d.dia) {
-            <span class="tl-mini__dia">
-              @for (t of d.trozos; track $index) {
-                <i [style.inset-inline-start.%]="(t.desde / 1440) * 100" [style.inline-size.%]="((t.hasta - t.desde) / 1440) * 100"></i>
+      @if (grupos(h); as gs) {
+        @if (gs.length === 0) {
+          <span class="tl-cerrado sc-text-body-regular">Cerrado toda la semana</span>
+        } @else {
+          <!-- El detalle por día, al pasar o al llegar con el teclado; el «+N» solo dice que hay más (la fila abre el horario). -->
+          <span class="tl-sched" role="note" tabindex="0" [pTooltip]="tip" tooltipPosition="top" tooltipEvent="both" tooltipStyleClass="tl-sched-tooltip" [attr.aria-label]="descripcion(h)">
+            @for (g of gs.slice(0, aLaVista); track $index) {
+              <span class="tl-sched__grupo">
+                <sc-tag severity="info" [value]="g.dias" />
+                <span class="tl-sched__horas sc-text-caption-regular">{{ g.horas.join(', ') }}</span>
+              </span>
+            }
+            @if (gs.length > aLaVista) {
+              <span class="tl-sched__mas sc-text-caption-semibold">+{{ gs.length - aLaVista }}</span>
+            }
+          </span>
+          <ng-template #tip>
+            <div class="tl-tip">
+              @for (d of porDia(h); track d.nombre) {
+                <span class="tl-tip__dia">{{ d.nombre }}</span>
+                <span class="tl-tip__horas" [class.is-cerrado]="d.cerrado">
+                  @for (f of d.franjas; track $index; let ultima = $last) {
+                    <span class="tl-tip__franja">{{ f }}</span>{{ ultima ? '' : ', ' }}
+                  } @empty {
+                    Cerrado
+                  }
+                  @if (d.mas) {
+                    y {{ d.mas }} más
+                  }
+                </span>
               }
-            </span>
-          }
-        </span>
-        <span class="tl-horario__txt sc-text-body-regular" [pTooltip]="descripcion(h)" showOnEllipsis tooltipPosition="top">{{ descripcion(h) }}</span>
-      </span>
+            </div>
+          </ng-template>
+        }
+      }
     </ng-template>
 
     <ng-template #aplicadoTpl let-h>
@@ -51,7 +76,7 @@ const A_LA_VISTA = 2;
               <sc-tag variant="label" [labelColor]="tipos[x.tipo].color" [value]="x.nombre" [pTooltip]="tipos[x.tipo].uno + ': ' + x.detalle" tooltipPosition="top" />
             }
             @if (u.length > aLaVista) {
-              <sc-tag class="tl-mas" variant="label" labelColor="gray" [value]="'+' + (u.length - aLaVista)" [pTooltip]="resto(u)" tooltipPosition="top" />
+              <sc-tag class="tl-mas" variant="label" labelColor="gray" [value]="'+' + (u.length - aLaVista)" [pTooltip]="restoDeUsos(u)" tooltipPosition="top" />
             }
           </span>
         }
@@ -59,42 +84,74 @@ const A_LA_VISTA = 2;
     </ng-template>
   `,
   styles: `
-    .tl-horario {
-      display: flex;
+    /* El horario por grupos de días: cada grupo, su etiqueta y sus horas; con un mínimo para que no se apriete y un
+       máximo para que un grupo con muchas franjas no se coma la celda (el resto, al pasar). */
+    .tl-sched {
+      display: inline-flex;
       align-items: center;
-      gap: var(--sc-spacing-0-75);
+      gap: var(--sc-spacing-1);
       min-inline-size: 0;
       max-inline-size: 100%;
-    }
-    .tl-horario__txt {
-      overflow: hidden;
       white-space: nowrap;
+    }
+    .tl-sched__grupo {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--sc-spacing-0-5);
+      min-inline-size: 7rem;
+      max-inline-size: 10.5rem;
+      overflow: hidden;
+    }
+    .tl-sched__grupo > sc-tag {
+      flex: none;
+    }
+    .tl-sched__horas {
+      overflow: hidden;
       text-overflow: ellipsis;
+      color: var(--sc-text-secondary);
       font-variant-numeric: tabular-nums;
     }
-    /* La semana en miniatura: siete rayas de 24 h, lunes arriba; verde lo que se atiende y rojo lo que no. */
-    .tl-mini {
-      display: flex;
+    .tl-sched__mas {
       flex: none;
-      flex-direction: column;
-      gap: 1px;
-      inline-size: 3.5rem;
-      padding: 2px;
-      border-radius: var(--sc-radius-100);
-      background: var(--sc-bg-subtle);
+      padding: var(--sc-spacing-0-125) var(--sc-spacing-0-5);
+      border: 1px solid var(--sc-border-default);
+      border-radius: var(--sc-radius-full);
+      background: var(--sc-bg-surface);
+      color: var(--sc-text-primary);
+      font-variant-numeric: tabular-nums;
     }
-    .tl-mini__dia {
-      position: relative;
-      display: block;
-      block-size: 2px;
-      border-radius: 1px;
-      background: color-mix(in srgb, var(--sc-bg-danger) 22%, transparent);
-      overflow: hidden;
+    .tl-sched:focus-visible {
+      outline: 2px solid var(--sc-border-focus);
+      outline-offset: 2px;
+      border-radius: var(--sc-radius-sm);
     }
-    .tl-mini__dia i {
-      position: absolute;
-      inset-block: 0;
-      background: var(--sc-bg-success);
+    /* El detalle por día, en el globo: el día y sus horas, que se parten en líneas; «Cerrado», atenuado. */
+    .tl-tip {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: var(--sc-spacing-0-25) var(--sc-spacing-0-75);
+      font-variant-numeric: tabular-nums;
+    }
+    .tl-tip__dia {
+      white-space: nowrap;
+    }
+    .tl-tip__horas {
+      text-align: end;
+    }
+    .tl-tip__horas.is-cerrado {
+      opacity: 0.6;
+    }
+    /* Una franja no se parte por su guion: el salto de línea va entre franjas. */
+    .tl-tip__franja {
+      white-space: nowrap;
+    }
+    /* El globo del DS es estrecho para una semana con horas: este, algo más ancho (el globo cuelga del body). */
+    .p-tooltip.tl-sched-tooltip {
+      max-inline-size: 20rem;
+    }
+    .tl-cerrado,
+    .tl-libre {
+      color: var(--sc-text-subtle);
     }
     .tl-usos {
       display: flex;
@@ -111,10 +168,9 @@ const A_LA_VISTA = 2;
     .tl-usos > sc-tag.tl-mas {
       flex: none;
     }
-    .tl-libre {
-      color: var(--sc-text-subtle);
-    }
   `,
+  // Sin encapsular: el globo del horario cuelga del body. Todo va con el prefijo `tl-`, que no sale de esta lista.
+  encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TpListaPage {
@@ -143,23 +199,33 @@ export class TpListaPage {
     return celdas;
   });
 
+  /** Los grupos de días con sus horas, como en la cabecera del editor: «L–V 9:00–14:00, 16:00–19:00». */
+  protected grupos(h: Horario): ReturnType<typeof resumenDe> {
+    return resumenDe(h.week);
+  }
+
+  /** Lo que dice la celda, para el lector: «L–V 9:00–18:00, S 10:00–14:00». */
   protected descripcion(h: Horario): string {
     return descripcionDe(h.week);
+  }
+
+  /** El detalle por día, para el globo: cada día con sus franjas (cuatro como mucho, y «y N más»), o «Cerrado». */
+  protected porDia(h: Horario): { nombre: string; franjas: string[]; mas: number; cerrado: boolean }[] {
+    return NOMBRES.map((n, d) => {
+      const fs = (h.week[d] ?? []).map((f) => `${horaCorta(f[0])}–${horaCorta(f[1])}`);
+      return { nombre: capital(n), franjas: fs.slice(0, POR_DIA), mas: Math.max(0, fs.length - POR_DIA), cerrado: !fs.length };
+    });
   }
 
   protected usos(h: Horario): readonly Uso[] {
     return this.aplicado.de(h.id);
   }
 
-  protected resto(u: readonly Uso[]): string {
+  protected restoDeUsos(u: readonly Uso[]): string {
     return u
       .slice(A_LA_VISTA)
       .map((x) => `${x.nombre} (${TIPOS_DE_USO[x.tipo].uno.toLowerCase()})`)
       .join(', ');
-  }
-
-  protected mini(h: Horario): { dia: number; trozos: { desde: number; hasta: number }[] }[] {
-    return [0, 1, 2, 3, 4, 5, 6].map((dia) => ({ dia, trozos: trozosDelDia(h.week, dia) }));
   }
 
   private estado(h: Horario): ReturnType<typeof estadoDeHorario> {
@@ -177,9 +243,10 @@ export class TpListaPage {
     icon: 'schedule',
     breadcrumbExtraKey: 'repositories.horarios.title',
     columns: [
-      { key: 'name', labelKey: 'repositories.columns.name', kind: 'text', accessor: (h) => h.name, emphasis: true, sortable: true, width: '200px' },
-      // La celda es un dibujo y un texto; buscar, ordenar y exportar leen la descripción.
-      { key: 'horario', labelKey: 'repositories.horarios.col_schedule', kind: 'truncate', accessor: (h) => descripcionDe(h.week) },
+      { key: 'name', labelKey: 'repositories.columns.name', kind: 'text', accessor: (h) => h.name, emphasis: true, sortable: true },
+      { key: 'description', labelKey: 'repositories.columns.description', kind: 'truncate', accessor: (h) => h.description ?? '', sortable: true, emptyDash: true },
+      // La celda es un dibujo; buscar, ordenar y exportar leen la descripción de la semana.
+      { key: 'horario', labelKey: 'repositories.horarios.col_schedule', kind: 'text', width: '360px', accessor: (h) => descripcionDe(h.week) },
       {
         key: 'now',
         labelKey: 'repositories.horarios.col_now',
@@ -192,19 +259,21 @@ export class TpListaPage {
           closed: { labelKey: 'repositories.horarios.closed', tone: 'secondary' },
         },
         sortable: true,
+        defaultVisible: false,
       },
+      { key: 'timezone', labelKey: 'repositories.horarios.timezone', kind: 'text', accessor: (h) => h.timezone, width: '176px', sortable: true, defaultVisible: false },
       {
         key: 'aplicado',
         labelKey: 'repositories.horarios.col_applied',
         kind: 'text',
         width: '340px',
         accessor: (h) => this.aplicado.de(h.id).map((u) => u.nombre).join(', '),
+        defaultVisible: false,
       },
-      { key: 'timezone', labelKey: 'repositories.horarios.timezone', kind: 'text', accessor: (h) => h.timezone, width: '176px', sortable: true },
     ],
     fields: [{ key: 'name', labelKey: 'repositories.columns.name', type: 'text', required: true, placeholderKey: 'repositories.horarios.name_placeholder' }],
     searchKeys: ['name', 'timezone', 'description'],
-    filePrefix: 'horarios-cierre',
+    filePrefix: 'horarios',
     sheetNameKey: 'repositories.horarios.title',
     // Eliminar dice dónde se aplica, con los mismos sitios que la columna; los grupos que lo tenían vuelven a «Siempre».
     uso: {

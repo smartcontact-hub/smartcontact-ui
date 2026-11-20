@@ -1,17 +1,35 @@
-<div class="tp tp-editor tp-cierre" [class.tp--prueba]="enPrueba">
+<!--
+  Guardar y Deshacer suben a la barra de arriba, como en las demás fichas: apagado mientras falte algo, con el motivo en
+  su tooltip; «Deshacer», solo con cambios, vuelve a lo guardado (⌘Z sigue yendo paso a paso).
+-->
+<ng-template #topbarActions>
+  @if (modo() === 'editar' && dirty()) {
+    <span class="form-save-reason sc-text-caption-regular" role="status">{{ 'common.unsaved_changes' | translate }}</span>
+  }
+  @if (dirty()) {
+    <sc-button variant="secondary" appearance="outlined" [label]="'common.undo' | translate" (clicked)="discard()" />
+  }
+  <sc-button
+    variant="primary"
+    [disabled]="!puedeGuardar()"
+    [pTooltip]="motivo()"
+    tooltipPosition="bottom"
+    tooltipEvent="both"
+    [label]="(modo() === 'crear' ? 'repositories.horarios.create_submit' : 'common.save') | translate"
+    (clicked)="save()"
+  />
+</ng-template>
+
+<div class="tp tp-editor tp-cierre" [class.tp--prueba]="enPrueba" [attr.data-sin-guardar]="modo() === 'crear' || dirty()">
   <div class="tp-lienzo">
     <!--
-      Cabecera: quién es (el nombre con sus horas por grupos de días debajo y, al lado, tras un divisor, lo de ahora y la
-      zona horaria) y, en una línea a lo ancho, dónde se aplica, a la vista antes de tocar nada. Sin «Activo / Inactivo»:
+      Cabecera: quién es (el nombre, su descripción y sus horas por grupos de días debajo y, al lado, tras un divisor, lo
+      de ahora y la zona horaria). Sin botón de volver: se vuelve por la miga de pan, como en el resto del Supervisor y, en una línea a lo ancho, dónde se aplica, a la vista antes de tocar nada. Sin «Activo / Inactivo»:
       un horario no hace nada solo, lo que se enciende o se apaga es dónde se aplica.
       «Ahora cerrado, abre a las 9:00» va dicho con su palabra para que no se lea como el estado del horario.
     -->
     <header class="tp-cierre__cabeza tp-stagger" style="--i: 0">
       <div class="tp-cierre__quien">
-        <button type="button" class="tp-head__back" (click)="volver()">
-          <sc-tp-icono nombre="arrow-left" [tam]="14" />
-          Horarios
-        </button>
         <div class="tp-cierre__linea">
           <div class="tp-cierre__id">
             <input
@@ -21,6 +39,15 @@
               [value]="form().name"
               [autofocus]="modo() === 'crear'"
               (input)="update('name', $any($event.target).value)"
+            />
+            <!-- La descripción, bajo el nombre y con su mismo trato: parece texto hasta que la tocas. -->
+            <input
+              class="tp-inline tp-cierre__desc"
+              [attr.aria-label]="t.descripcion"
+              [placeholder]="t.anadeDescripcion"
+              [value]="form().description ?? ''"
+              maxlength="160"
+              (input)="update('description', $any($event.target).value)"
             />
             <!--
               Las horas, por grupos de días: el día pesa, la hora se lee, lo que une va callado. En dos líneas como mucho;
@@ -40,7 +67,7 @@
               } @empty {
                 <li class="tp-cierre__grupo tp-cierre__grupo--cerrado">Cerrado toda la semana</li>
               }
-              <li class="tp-mas" data-mas>
+              <li class="tp-mas" data-mas (pointerenter)="orientar($event)" (focusin)="orientar($event)">
                 <button type="button" class="tp-mas__btn" [attr.aria-label]="verResumen()">+{{ resumenFuera() }}</button>
                 <span class="tp-mas__pop">
                   @for (g of resumen().slice(resumen().length - resumenFuera()); track g.dias) {
@@ -163,30 +190,6 @@
   </div>
 
   <!-- Guardar: aparece cuando hay algo que guardar -->
-  <div class="tp-savebar" [attr.data-visible]="modo() === 'crear' || dirty()" role="region" [attr.aria-label]="t.guardar">
-    <span class="tp-savebar__msg">
-      <span class="tp-savebar__dot"></span>
-      {{ modo() === 'crear' ? 'Horario nuevo' : 'Cambios sin guardar' }}
-      @if (motivo()) {
-        <span class="tp-savebar__why">{{ motivo() }}</span>
-      } @else if (modo() === 'editar' && nUsos() > 0) {
-        <span class="tp-savebar__why">Afecta a {{ sitios(nUsos()) }}</span>
-      }
-    </span>
-    @if (modo() === 'crear') {
-      <button type="button" class="tp-btn tp-btn--ghost tp-btn--sm" (click)="volver()">Cancelar</button>
-    } @else {
-      <button type="button" class="tp-btn tp-btn--ghost tp-btn--sm" [disabled]="!puedeDeshacer()" data-tip="Un paso atrás" (click)="deshacer()">
-        Deshacer
-        <kbd class="tp-kbd">⌘Z</kbd>
-      </button>
-    }
-    <button type="button" class="tp-btn tp-btn--primary tp-btn--sm" [disabled]="!puedeGuardar()" (click)="save()">
-      {{ modo() === 'crear' ? 'Crear horario' : 'Guardar' }}
-      <kbd class="tp-kbd">⌘S</kbd>
-    </button>
-  </div>
-
   <!-- Guardar un horario que se usa: una sola confirmación que dice a quién afecta -->
   @if (confirmando()) {
     <sc-tp-modal [titulo]="'Este cambio afecta a ' + sitios(nUsos())" subtitulo="Todos pasarán a usar las horas nuevas en cuanto guardes." icono="alert" ancho="30rem" (cerrar)="cancelarGuardar()">
